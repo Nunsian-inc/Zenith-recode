@@ -18,14 +18,14 @@ public class MixinTextVisitFactory {
       method = {"iterateFormatted(Ljava/lang/String;ILnet/minecraft/network/chat/Style;Lnet/minecraft/util/FormattedCharSink;)Z"},
       index = 0
    )
-   private static String adjustText(String var0) {
-      return protect(var0);
+   private static String adjustText(String text) {
+      return protect(text);
    }
 
    @Unique
-   private static String protect(String var0) {
-      return var0 != null && ModuleHookDefinitions.class124.active()
-         ? ModuleHookDefinitions.class124.method1645(new ModuleHookDefinitions.Entry5(var0)).text
-         : var0;
+   private static String protect(String text) {
+      return text != null && ModuleHookDefinitions.class124.active()
+         ? ModuleHookDefinitions.class124.method1645(new ModuleHookDefinitions.Entry5(text)).text
+         : text;
    }
 }

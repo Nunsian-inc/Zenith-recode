@@ -16,12 +16,12 @@ public class MixinClientConnectionChannelInit {
       method = {"initChannel(Lio/netty/channel/Channel;)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$addProxy(Channel var1, CallbackInfo var2) {
-      Zenith var3 = Zenith.getInstance();
-      if (var3 != null && var3.getProxies() != null) {
-         ProxyHandler var4 = var3.getProxies().createHandler();
-         if (var4 != null) {
-            var1.pipeline().addFirst("zenith_proxy", var4);
+   private void zenith$addProxy(Channel channel, CallbackInfo callbackInfo) {
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getProxies() != null) {
+         ProxyHandler handler = zenith.getProxies().createHandler();
+         if (handler != null) {
+            channel.pipeline().addFirst("zenith_proxy", handler);
          }
       }
    }

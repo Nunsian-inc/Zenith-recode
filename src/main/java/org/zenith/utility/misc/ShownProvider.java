@@ -117,32 +117,32 @@ public final class ShownProvider {
    private final boolean flag2;
 
    private ShownProvider(
-      String var1, String var2, String var3, ShownProvider.Type var4, String var5, List<String> var6, boolean var7, String var8, boolean var9
+      String text, String str, String str2, ShownProvider.Type type, String clean, List<String> strings, boolean flag, String clean2, boolean flag2
    ) {
-      this.text = var1;
-      this.text2 = var2;
-      this.text3 = var3;
-      this.type = var4;
-      this.text4 = var5;
-      this.items3 = var6;
-      this.flag = var7;
-      this.text5 = var8;
-      this.flag2 = var9;
+      this.text = text;
+      this.text2 = str;
+      this.text3 = str2;
+      this.type = type;
+      this.text4 = clean;
+      this.items3 = strings;
+      this.flag = flag;
+      this.text5 = clean2;
+      this.flag2 = flag2;
    }
 
-   public static ShownProvider method7332(String var0, String var1, String var2, String var3) {
+   public static ShownProvider method7332(String string, String str, String clean, String clean2) {
       return new ShownProvider(
-         var0, var1, "свой API", ShownProvider.Type.OPENAI, var2, List.of(var3 != null && !var3.isBlank() ? var3.strip() : "default"), false, var2, true
+         string, str, "свой API", ShownProvider.Type.OPENAI, clean, List.of(clean2 != null && !clean2.isBlank() ? clean2.strip() : "default"), false, clean, true
       );
    }
 
-   public static void method7333(ShownProvider var0) {
-      items2.removeIf(var1 -> var1.text.equals(var0.text));
-      items2.add(var0);
+   public static void method7333(ShownProvider shownProvider) {
+      items2.removeIf(shownProvider2 -> shownProvider2.text.equals(shownProvider.text));
+      items2.add(shownProvider);
    }
 
-   public static void method7334(ShownProvider var0) {
-      items2.removeIf(var1 -> var1.text.equals(var0.text));
+   public static void method7334(ShownProvider shownProvider) {
+      items2.removeIf(shownProvider2 -> shownProvider2.text.equals(shownProvider.text));
    }
 
    public static List<ShownProvider> method7335() {
@@ -150,9 +150,9 @@ public final class ShownProvider {
    }
 
    public static ShownProvider[] method7336() {
-      var var0 = new ArrayList<>(items);
-      var0.addAll(items2);
-      return (ShownProvider[])var0.toArray(new ShownProvider[0]);
+      var shownProviders = new ArrayList<>(items);
+      shownProviders.addAll(items2);
+      return (ShownProvider[])shownProviders.toArray(new ShownProvider[0]);
    }
 
    public String getText() {
@@ -191,10 +191,10 @@ public final class ShownProvider {
       return this.flag2;
    }
 
-   public static ShownProvider method7337(String var0) {
-      for (ShownProvider var4 : method7336()) {
-         if (var4.text.equalsIgnoreCase(var0)) {
-            return var4;
+   public static ShownProvider method7337(String string) {
+      for (ShownProvider shownProvider : method7336()) {
+         if (shownProvider.text.equalsIgnoreCase(string)) {
+            return shownProvider;
          }
       }
 
@@ -202,8 +202,8 @@ public final class ShownProvider {
    }
 
    @Override
-   public boolean equals(Object var1) {
-      return var1 instanceof ShownProvider var2 && var2.text.equals(this.text);
+   public boolean equals(Object shownProvider) {
+      return shownProvider instanceof ShownProvider shownProvider2 && shownProvider2.text.equals(this.text);
    }
 
    @Override

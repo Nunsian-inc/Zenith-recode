@@ -19,62 +19,62 @@ public final class SettingIcons {
    private SettingIcons() {
    }
 
-   public static SvgIcon resolve(Setting var0, String var1, String var2) {
-      if (var0 == null) {
+   public static SvgIcon resolve(Setting setting, String key, String simpleName) {
+      if (setting == null) {
          return SvgIcon.MODE;
       } else {
-         SvgIcon var3 = explicit(var0.getKey(), var1, var2);
-         if (var3 != null) {
-            return var3;
-         } else if (var0 instanceof ColorSetting) {
+         SvgIcon svgIcon = explicit(setting.getKey(), key, simpleName);
+         if (svgIcon != null) {
+            return svgIcon;
+         } else if (setting instanceof ColorSetting) {
             return SvgIcon.COLOR;
          } else {
-            return var0 instanceof BindSetting ? SvgIcon.KEY : MenuGlyph.forSettingPurpose(var0).svg();
+            return setting instanceof BindSetting ? SvgIcon.KEY : MenuGlyph.forSettingPurpose(setting).svg();
          }
       }
    }
 
-   public static SvgIcon explicit(String var0, String var1, String var2) {
-      if (var0 != null && !var0.isBlank()) {
-         if (var2 != null && !var2.isBlank()) {
-            var var3 = SettingIcons.Registry.MODULES.get(var2);
-            SvgIcon var4 = find(var3, var0, var1);
-            if (var4 != null) {
-               return var4;
+   public static SvgIcon explicit(String key, String str, String simpleName) {
+      if (key != null && !key.isBlank()) {
+         if (simpleName != null && !simpleName.isBlank()) {
+            var map = SettingIcons.Registry.MODULES.get(simpleName);
+            SvgIcon svgIcon = find(map, key, str);
+            if (svgIcon != null) {
+               return svgIcon;
             }
          }
 
-         return find(SettingIcons.Registry.SHARED, var0, var1);
+         return find(SettingIcons.Registry.SHARED, key, str);
       } else {
          return null;
       }
    }
 
-   private static SvgIcon find(Map<String, SvgIcon> var0, String var1, String var2) {
-      if (var0 == null) {
+   private static SvgIcon find(Map<String, SvgIcon> map, String key, String str) {
+      if (map == null) {
          return null;
       } else {
-         if (var2 != null && !var2.isBlank()) {
-            SvgIcon var3 = (SvgIcon)var0.get(var2 + ">" + var1);
-            if (var3 != null) {
-               return var3;
+         if (str != null && !str.isBlank()) {
+            SvgIcon svgIcon = (SvgIcon)map.get(str + ">" + key);
+            if (svgIcon != null) {
+               return svgIcon;
             }
          }
 
-         return (SvgIcon)var0.get(var1);
+         return (SvgIcon)map.get(key);
       }
    }
 
-   private static Map<String, SvgIcon> readEntries(JsonObject var0) {
-      HashMap var1 = new HashMap();
-      if (var0 != null) {
-         for (Entry var3 : var0.entrySet()) {
-            String var4 = ((JsonElement)var3.getValue()).getAsString().toUpperCase(Locale.ROOT).replace('-', '_');
-            var1.put((String)var3.getKey(), SvgIcon.valueOf(var4));
+   private static Map<String, SvgIcon> readEntries(JsonObject jsonObject) {
+      HashMap map = new HashMap();
+      if (jsonObject != null) {
+         for (Entry entry : jsonObject.entrySet()) {
+            String name = ((JsonElement)entry.getValue()).getAsString().toUpperCase(Locale.ROOT).replace('-', '_');
+            map.put((String)entry.getKey(), SvgIcon.valueOf(name));
          }
       }
 
-      return Map.copyOf(var1);
+      return Map.copyOf(map);
    }
 
    private static final class Registry {
@@ -82,28 +82,28 @@ public final class SettingIcons {
       private static final Map<String, Map<String, SvgIcon>> MODULES;
 
       static {
-         String var0 = "/assets/zenith/icons/setting-icons.json";
+         String name = "/assets/zenith/icons/setting-icons.json";
 
          try {
-            try (InputStream var1 = SettingIcons.class.getResourceAsStream(var0)) {
-               if (var1 == null) {
-                  throw new IllegalStateException("Missing setting icon registry: " + var0);
+            try (InputStream resourceAsStream = SettingIcons.class.getResourceAsStream(name)) {
+               if (resourceAsStream == null) {
+                  throw new IllegalStateException("Missing setting icon registry: " + name);
                }
 
-               JsonObject var2 = JsonParser.parseReader(new InputStreamReader(var1, StandardCharsets.UTF_8)).getAsJsonObject();
-               SHARED = SettingIcons.readEntries(var2.getAsJsonObject("keys"));
-               HashMap var3 = new HashMap();
-               JsonObject var4 = var2.getAsJsonObject("modules");
-               if (var4 != null) {
-                  for (Entry var6 : var4.entrySet()) {
-                     var3.put((String)var6.getKey(), SettingIcons.readEntries(((JsonElement)var6.getValue()).getAsJsonObject()));
+               JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8)).getAsJsonObject();
+               SHARED = SettingIcons.readEntries(jsonObject.getAsJsonObject("keys"));
+               HashMap map = new HashMap();
+               JsonObject json = jsonObject.getAsJsonObject("modules");
+               if (json != null) {
+                  for (Entry entry : json.entrySet()) {
+                     map.put((String)entry.getKey(), SettingIcons.readEntries(((JsonElement)entry.getValue()).getAsJsonObject()));
                   }
                }
 
-               MODULES = Map.copyOf(var3);
+               MODULES = Map.copyOf(map);
             }
-         } catch (Exception var9) {
-            throw new IllegalStateException("Invalid setting icon registry: " + var0, var9);
+         } catch (Exception e) {
+            throw new IllegalStateException("Invalid setting icon registry: " + name, e);
          }
       }
    }

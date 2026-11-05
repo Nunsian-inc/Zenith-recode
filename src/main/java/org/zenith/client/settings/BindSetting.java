@@ -10,68 +10,68 @@ public class BindSetting extends Setting {
    private int keyCode;
    private int modifiers;
 
-   public void setKeyCode(int var1) {
-      this.setBind(var1, 0);
+   public void setKeyCode(int keyCode) {
+      this.setBind(keyCode, 0);
    }
 
-   public void setBind(int var1, int var2) {
-      this.keyCode = var1;
-      this.modifiers = KeyName.method6698(var2);
+   public void setBind(int keyCode, int keyModifiers) {
+      this.keyCode = keyCode;
+      this.modifiers = KeyName.method6698(keyModifiers);
       this.nameKey = KeyName.method6702(this.keyCode, this.modifiers);
    }
 
-   public BindSetting(String var1, Supplier<Boolean> var2) {
-      this(var1, "", var2);
+   public BindSetting(String key, Supplier<Boolean> visible) {
+      this(key, "", visible);
    }
 
-   public BindSetting(String var1, String var2, Supplier<Boolean> var3) {
-      super(var1, var2);
-      this.setVisible(var3);
+   public BindSetting(String key, String description, Supplier<Boolean> visible) {
+      super(key, description);
+      this.setVisible(visible);
       this.keyCode = -1;
       this.nameKey = KeyName.method6701(this.keyCode);
    }
 
-   public BindSetting(String var1, int var2, Supplier<Boolean> var3) {
-      this(var1, "", var2, var3);
+   public BindSetting(String text, int keyCode, Supplier<Boolean> visible) {
+      this(text, "", keyCode, visible);
    }
 
-   public BindSetting(String var1, String var2, int var3, Supplier<Boolean> var4) {
-      super(var1, var2);
-      this.setVisible(var4);
-      this.keyCode = var3;
-      this.nameKey = KeyName.method6701(var3);
+   public BindSetting(String text, String description, int keyCode, Supplier<Boolean> visible) {
+      super(text, description);
+      this.setVisible(visible);
+      this.keyCode = keyCode;
+      this.nameKey = KeyName.method6701(keyCode);
    }
 
-   public BindSetting(String var1, int var2) {
-      this(var1, "", var2);
+   public BindSetting(String key, int keyCode) {
+      this(key, "", keyCode);
    }
 
-   public BindSetting(String var1, String var2, int var3) {
-      super(var1, var2);
-      this.keyCode = var3;
-      this.nameKey = KeyName.method6701(var3);
+   public BindSetting(String key, String description, int keyCode) {
+      super(key, description);
+      this.keyCode = keyCode;
+      this.nameKey = KeyName.method6701(keyCode);
    }
 
-   public BindSetting(String var1) {
-      this(var1, "");
+   public BindSetting(String key) {
+      this(key, "");
    }
 
-   public BindSetting(String var1, String var2) {
-      super(var1, var2);
+   public BindSetting(String key, String description) {
+      super(key, description);
       this.keyCode = -1;
       this.nameKey = "";
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.addProperty(String.valueOf(this.key), this.getKeyCode());
-      var1.addProperty(this.key + "_mods", this.modifiers);
+   public void safe(JsonObject json) {
+      json.addProperty(String.valueOf(this.key), this.getKeyCode());
+      json.addProperty(this.key + "_mods", this.modifiers);
    }
 
    @Override
-   public void load(JsonObject var1) {
-      int var2 = var1.has(this.key + "_mods") ? var1.get(this.key + "_mods").getAsInt() : 0;
-      this.setBind(var1.get(String.valueOf(this.key)).getAsInt(), var2);
+   public void load(JsonObject json) {
+      int keyModifiers = json.has(this.key + "_mods") ? json.get(this.key + "_mods").getAsInt() : 0;
+      this.setBind(json.get(String.valueOf(this.key)).getAsInt(), keyModifiers);
    }
 
    @Generated

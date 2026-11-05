@@ -22,18 +22,18 @@ public class MixinOptTrialSpawnerRenderer {
       )}
    )
    private void zenith$spawnerEntity(
-      SpawnerRenderState var1,
-      float var2,
-      Entity var3,
-      EntityRenderDispatcher var4,
-      double var5,
-      double var7,
-      Operation<Void> var9,
-      TrialSpawnerBlockEntity var10,
-      SpawnerRenderState var11,
-      float var12,
-      Vec3 var13
+      SpawnerRenderState spawnerRenderState,
+      float alpha1,
+      Entity entity,
+      EntityRenderDispatcher entityRenderDispatcher,
+      double d,
+      double d2,
+      Operation<Void> operation,
+      TrialSpawnerBlockEntity spawnerBlockEntity,
+      SpawnerRenderState spawnerRenderState2,
+      float f,
+      Vec3 vec
    ) {
-      Util27.method7106(var10, var13, var1, var2, var3, var4, var5, var7, var9);
+      Util27.method7106(spawnerBlockEntity, vec, spawnerRenderState, alpha1, entity, entityRenderDispatcher, d, d2, operation);
    }
 }

@@ -7,9 +7,9 @@ import org.zenith.client.settings.BindSetting;
 public final class HeaderBindSetting extends BindSetting {
    private final Module module;
 
-   public HeaderBindSetting(Module var1) {
+   public HeaderBindSetting(Module sectionPreviewOwner) {
       super("gui.inspector.bind", "gui.inspector.bind.desc");
-      this.module = var1;
+      this.module = sectionPreviewOwner;
    }
 
    @Override
@@ -28,16 +28,16 @@ public final class HeaderBindSetting extends BindSetting {
    }
 
    @Override
-   public void setBind(int var1, int var2) {
-      this.module.setKeyCode(var1);
-      this.module.setKeyModifiers(var1 == -1 ? 0 : KeyName.method6698(var2));
+   public void setBind(int intValue, int keyModifiers) {
+      this.module.setKeyCode(intValue);
+      this.module.setKeyModifiers(intValue == -1 ? 0 : KeyName.method6698(keyModifiers));
    }
 
    @Override
-   public void safe(JsonObject var1) {
+   public void safe(JsonObject json) {
    }
 
    @Override
-   public void load(JsonObject var1) {
+   public void load(JsonObject json) {
    }
 }

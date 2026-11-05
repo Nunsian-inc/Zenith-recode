@@ -13,36 +13,36 @@ public final class BotPendingUpdateManager implements AutoCloseable {
    private int sequence;
    private boolean pendingSequence;
 
-   public void addPendingUpdate(BlockPos var1, BlockState var2, Player var3) {
+   public void addPendingUpdate(BlockPos pos, BlockState blockState, Player botPlayer) {
       this.blockPosToPendingUpdate
          .compute(
-            var1.asLong(),
-            (var3x, var4) -> var4 != null
-               ? var4.withSequence(this.sequence)
-               : new BotPendingUpdateManager.PendingUpdate(this.sequence, var2, var3.position())
+            pos.asLong(),
+            (var3x, pendingUpdate) -> pendingUpdate != null
+               ? pendingUpdate.withSequence(this.sequence)
+               : new BotPendingUpdateManager.PendingUpdate(this.sequence, blockState, botPlayer.position())
          );
    }
 
-   public boolean hasPendingUpdate(BlockPos var1, BlockState var2) {
-      BotPendingUpdateManager.PendingUpdate var3 = (BotPendingUpdateManager.PendingUpdate)this.blockPosToPendingUpdate.get(var1.asLong());
-      if (var3 == null) {
+   public boolean hasPendingUpdate(BlockPos pos, BlockState blockState) {
+      BotPendingUpdateManager.PendingUpdate pendingUpdate = (BotPendingUpdateManager.PendingUpdate)this.blockPosToPendingUpdate.get(pos.asLong());
+      if (pendingUpdate == null) {
          return false;
       } else {
-         var3.setBlockState(var2);
+         pendingUpdate.setBlockState(blockState);
          return true;
       }
    }
 
-   public void processPendingUpdates(int var1, BotWorld var2) {
-      ObjectIterator var3 = this.blockPosToPendingUpdate.long2ObjectEntrySet().iterator();
+   public void processPendingUpdates(int sequence, BotWorld botWorld) {
+      ObjectIterator objectIterator = this.blockPosToPendingUpdate.long2ObjectEntrySet().iterator();
 
-      while (var3.hasNext()) {
-         Entry var4 = (Entry)var3.next();
-         BotPendingUpdateManager.PendingUpdate var5 = (BotPendingUpdateManager.PendingUpdate)var4.getValue();
-         if (var5.sequence <= var1) {
-            BlockPos var6 = BlockPos.of(var4.getLongKey());
-            var3.remove();
-            var2.processPendingUpdate(var6, var5.blockState, var5.playerPos);
+      while (objectIterator.hasNext()) {
+         Entry entry = (Entry)objectIterator.next();
+         BotPendingUpdateManager.PendingUpdate pendingUpdate = (BotPendingUpdateManager.PendingUpdate)entry.getValue();
+         if (pendingUpdate.sequence <= sequence) {
+            BlockPos pos = BlockPos.of(entry.getLongKey());
+            objectIterator.remove();
+            botWorld.processPendingUpdate(pos, pendingUpdate.blockState, pendingUpdate.playerPos);
          }
       }
    }
@@ -71,19 +71,19 @@ public final class BotPendingUpdateManager implements AutoCloseable {
       public int sequence;
       public BlockState blockState;
 
-      public PendingUpdate(int var1, BlockState var2, Vec3 var3) {
-         this.sequence = var1;
-         this.blockState = var2;
-         this.playerPos = var3;
+      public PendingUpdate(int sequence, BlockState blockState, Vec3 playerPos) {
+         this.sequence = sequence;
+         this.blockState = blockState;
+         this.playerPos = playerPos;
       }
 
-      public BotPendingUpdateManager.PendingUpdate withSequence(int var1) {
-         this.sequence = var1;
+      public BotPendingUpdateManager.PendingUpdate withSequence(int sequence) {
+         this.sequence = sequence;
          return this;
       }
 
-      public void setBlockState(BlockState var1) {
-         this.blockState = var1;
+      public void setBlockState(BlockState blockState) {
+         this.blockState = blockState;
       }
    }
 }

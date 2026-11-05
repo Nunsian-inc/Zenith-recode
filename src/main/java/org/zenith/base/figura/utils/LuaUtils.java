@@ -202,14 +202,14 @@ public class LuaUtils {
    }
 
    public static FiguraVec3 parseOneArgVec(String methodName, Object x, Number y, Number z, double defaultArg) {
-      double var10000;
+      double doubleValue;
       if (x instanceof Number n) {
-         var10000 = n.doubleValue();
+         doubleValue = n.doubleValue();
       } else {
-         var10000 = defaultArg;
+         doubleValue = defaultArg;
       }
 
-      return parseVec3(methodName, x, y, z, var10000, var10000, var10000);
+      return parseVec3(methodName, x, y, z, doubleValue, doubleValue, doubleValue);
    }
 
    public static FiguraVec3 nullableVec3(String methodName, Object x, Number y, Number z) {
@@ -334,7 +334,7 @@ public class LuaUtils {
             }
 
             return new ItemStackAPI(stack, new ReadOnlyLuaTable(table));
-         } catch (Exception var13) {
+         } catch (Exception e) {
             throw new LuaError("Could not parse item stack from string: " + string);
          }
       } else {
@@ -509,7 +509,7 @@ public class LuaUtils {
             return BlockStateArgument.block(CommandBuildContext.simple(level.registryAccess(), level.enabledFeatures()))
                .parse(new StringReader(string))
                .getState();
-         } catch (Exception var4) {
+         } catch (Exception e) {
             throw new LuaError("Could not parse block state from string: " + string);
          }
       } else {
@@ -576,7 +576,7 @@ public class LuaUtils {
       if (slot instanceof String s) {
          try {
             return SlotArgument.slot().parse(new StringReader(s));
-         } catch (Exception var5) {
+         } catch (Exception e) {
             throw new LuaError("Unable to get slot \"" + slot + "\"");
          }
       } else if (!(slot instanceof Integer i)) {

@@ -16,33 +16,33 @@ public class WardenCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(((LiteralArgumentBuilder)literal("add").executes(var0 -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(((LiteralArgumentBuilder)literal("add").executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Использование: .warden add <анархия>");
          return 1;
-      })).then(arg("анархия", IntegerArgumentType.integer(1, 999)).executes(var0 -> {
-         int var1x = (Integer)var0.getArgument("анархия", Integer.class);
-         var var2 = AutoWardenModule.INSTANCE.method3950();
-         if (var2.contains(var1x)) {
+      })).then(arg("анархия", IntegerArgumentType.integer(1, 999)).executes(commandContext -> {
+         int var1x = (Integer)commandContext.getArgument("анархия", Integer.class);
+         var integers = AutoWardenModule.INSTANCE.method3950();
+         if (integers.contains(var1x)) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "Анархия " + var1x + " уже в списке");
             return 1;
-         } else if (var2.size() >= 10) {
+         } else if (integers.size() >= 10) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "Можно добавить максимум 10 анархий");
             return 1;
          } else {
-            var2.add(var1x);
+            integers.add(var1x);
             AutoWardenModule.INSTANCE.method3951();
             ChatLogger.method2020(ChatLogger.Type.INFO, "Анархия " + var1x + " добавлена");
             return 1;
          }
       })));
-      var1.then(((LiteralArgumentBuilder)literal("remove").executes(var0 -> {
+      literalArgumentBuilder.then(((LiteralArgumentBuilder)literal("remove").executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Использование: .warden remove <анархия>");
          return 1;
-      })).then(arg("анархия", IntegerArgumentType.integer(1, 999)).executes(var0 -> {
-         int var1x = (Integer)var0.getArgument("анархия", Integer.class);
-         var var2 = AutoWardenModule.INSTANCE.method3950();
-         if (!var2.remove(Integer.valueOf(var1x))) {
+      })).then(arg("анархия", IntegerArgumentType.integer(1, 999)).executes(commandContext -> {
+         int var1x = (Integer)commandContext.getArgument("анархия", Integer.class);
+         var integers = AutoWardenModule.INSTANCE.method3950();
+         if (!integers.remove(Integer.valueOf(var1x))) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "Анархия " + var1x + " не найдена");
             return 1;
          } else {
@@ -51,7 +51,7 @@ public class WardenCommand extends CommandAbstract {
             return 1;
          }
       })));
-      var1.then(literal("list").executes(var0 -> {
+      literalArgumentBuilder.then(literal("list").executes(commandContext -> {
          var var1x = AutoWardenModule.INSTANCE.method3950();
          if (var1x.isEmpty()) {
             ChatLogger.method2020(ChatLogger.Type.INFO, "Список анархий пуст");
@@ -61,13 +61,13 @@ public class WardenCommand extends CommandAbstract {
 
          return 1;
       }));
-      var1.then(literal("clear").executes(var0 -> {
+      literalArgumentBuilder.then(literal("clear").executes(commandContext -> {
          AutoWardenModule.INSTANCE.method3950().clear();
          AutoWardenModule.INSTANCE.method3951();
          ChatLogger.method2020(ChatLogger.Type.INFO, "Список анархий очищен");
          return 1;
       }));
-      var1.executes(var0 -> {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Использование: .warden <add|remove|list|clear>");
          return 1;
       });

@@ -78,14 +78,14 @@ public class FiguraModelPartReader {
       if (partCompound.contains("primary")) {
          try {
             customization.setPrimaryRenderType(RenderTypes.valueOf(partCompound.getStringOr("primary", "")));
-         } catch (Exception var36) {
+         } catch (Exception e) {
          }
       }
 
       if (partCompound.contains("secondary")) {
          try {
             customization.setSecondaryRenderType(RenderTypes.valueOf(partCompound.getStringOr("secondary", "")));
-         } catch (Exception var35) {
+         } catch (Exception e) {
          }
       }
 
@@ -134,7 +134,7 @@ public class FiguraModelPartReader {
       if (partCompound.contains("pt")) {
          try {
             result.parentType = ParentType.valueOf(partCompound.getStringOr("pt", ""));
-         } catch (Exception var34) {
+         } catch (Exception e) {
          }
       }
 
@@ -163,10 +163,10 @@ public class FiguraModelPartReader {
                         Interpolation interpolation;
                         try {
                            interpolation = Interpolation.valueOf(keyframeNbt.getStringOr("int", "").toUpperCase(Locale.US));
-                        } catch (Exception var38) {
+                        } catch (Exception e) {
                            FiguraMod.LOGGER
                               .error("Invalid interpolation type in the model {}, something is wrong with this model!", keyframeNbt.getStringOr("int", ""));
-                           FiguraMod.LOGGER.error("", var38);
+                           FiguraMod.LOGGER.error("", e);
                            continue;
                         }
 

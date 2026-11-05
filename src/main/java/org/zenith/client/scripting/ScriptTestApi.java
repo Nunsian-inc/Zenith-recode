@@ -48,23 +48,23 @@ public final class ScriptTestApi {
    private static synchronized void method5409() {
       if (!flag) {
          flag = true;
-         EventManager.main().subscribe(DrawEvent.class, (byte)3, (var0, var1) -> method5414(((DrawEvent)var1).getCustomDrawContext()));
-         EventManager.main().subscribe(WorldRenderEvent.class, (byte)3, (var0, var1) -> method5415());
+         EventManager.main().subscribe(DrawEvent.class, (byte)3, (obj, obj2) -> method5414(((DrawEvent)obj2).getCustomDrawContext()));
+         EventManager.main().subscribe(WorldRenderEvent.class, (byte)3, (obj, obj2) -> method5415());
       }
    }
 
-   public static void method5410(Storage var0, Script var1, ScriptableObject var2) {
+   public static void method5410(Storage storage, Script workspace, ScriptableObject scope) {
       method5409();
-      var1.method1413(() -> {
-         items2.remove(var1);
-         items3.remove(var1);
-         items6.removeIf(var1x -> var1x[0] == var1);
-         items.remove(var1);
+      workspace.method1413(() -> {
+         items2.remove(workspace);
+         items3.remove(workspace);
+         items6.removeIf(var1x -> var1x[0] == workspace);
+         items.remove(workspace);
       });
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6246(var2, var2);
-      var3.method6274("test", var1x -> {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6246(scope, scope);
+      entry2.method6274("test", var1x -> {
          String var2x = ScriptValueUtils.method6254(var1x, 0, "тест");
-         var var3x = items.computeIfAbsent(var1, var0xx -> new LinkedHashMap<>());
+         var var3x = items.computeIfAbsent(workspace, var0xx -> new LinkedHashMap<>());
          if (var3x.size() >= 200 && !var3x.containsKey(var2x)) {
             throw ScriptValueUtils.method6251("больше 200 тестов");
          } else {
@@ -72,8 +72,8 @@ public final class ScriptTestApi {
             return null;
          }
       });
-      items.remove(var1);
-      var3.method6274(
+      items.remove(workspace);
+      entry2.method6274(
          "assert",
          var0x -> {
             if (!ScriptValueUtils.method6259(var0x, 0, false)) {
@@ -85,8 +85,8 @@ public final class ScriptTestApi {
             }
          }
       );
-      ScriptValueUtils.Entry2 var4 = ScriptValueUtils.method6246(var2, (ScriptableObject)var2.get("assert", var2));
-      var4.method6274(
+      ScriptValueUtils.Entry2 entry22 = ScriptValueUtils.method6246(scope, (ScriptableObject)scope.get("assert", scope));
+      entry22.method6274(
          "eq",
          var0x -> {
             String var1x = ScriptValueUtils.method6271(ScriptValueUtils.arg(var0x, 0), 0).toString();
@@ -104,7 +104,7 @@ public final class ScriptTestApi {
             }
          }
       );
-      var4.method6274("near", var0x -> {
+      entry22.method6274("near", var0x -> {
          double var1x = ScriptValueUtils.method6256(var0x, 0, 0.0);
          double var3x = ScriptValueUtils.method6256(var0x, 1, 0.0);
          double var5x = ScriptValueUtils.method6256(var0x, 2, 1.0E-6);
@@ -114,13 +114,13 @@ public final class ScriptTestApi {
             return true;
          }
       });
-      var4.method6274(
+      entry22.method6274(
          "throws",
          var1x -> {
             var var2x = ScriptValueUtils.method6260(var1x, 0);
 
             try {
-               var2x.call(Context.getCurrentContext(), var2, var2, new Object[0]);
+               var2x.call(Context.getCurrentContext(), scope, scope, new Object[0]);
             } catch (RhinoException var4x) {
                return true;
             }
@@ -130,11 +130,11 @@ public final class ScriptTestApi {
             );
          }
       );
-      ScriptValueUtils.Entry2 var5 = ScriptValueUtils.method6247(var2);
-      var5.method6274(
+      ScriptValueUtils.Entry2 entry23 = ScriptValueUtils.method6247(scope);
+      entry23.method6274(
          "watch",
          var1x -> {
-            var var2x = items2.computeIfAbsent(var1, var0xx -> new LinkedHashMap<>());
+            var var2x = items2.computeIfAbsent(workspace, var0xx -> new LinkedHashMap<>());
             String var3x = ScriptValueUtils.method6254(var1x, 0, "value");
             if (var2x.size() >= 40 && !var2x.containsKey(var3x)) {
                throw ScriptValueUtils.method6251("больше 40 наблюдений");
@@ -148,23 +148,23 @@ public final class ScriptTestApi {
             }
          }
       );
-      var5.method6274("unwatch", var1x -> {
-         var var2x = items2.get(var1);
+      entry23.method6274("unwatch", var1x -> {
+         var var2x = items2.get(workspace);
          if (var2x != null) {
             var2x.remove(ScriptValueUtils.method6254(var1x, 0, ""));
          }
 
          return null;
       });
-      var5.method6274("panel", var1x -> {
+      entry23.method6274("panel", var1x -> {
          boolean var2x = !ScriptValueUtils.method6252(var1x, 0) || ScriptValueUtils.method6259(var1x, 0, true);
-         items3.put(var1, var2x);
+         items3.put(workspace, var2x);
          return var2x;
       });
-      var5.method6274(
+      entry23.method6274(
          "line",
          var1x -> method5411(
-            var1,
+            workspace,
             "line",
             new double[]{
                ScriptValueUtils.method6256(var1x, 0, 0.0),
@@ -179,10 +179,10 @@ public final class ScriptTestApi {
             null
          )
       );
-      var5.method6274(
+      entry23.method6274(
          "box",
          var1x -> method5411(
-            var1,
+            workspace,
             "box",
             new double[]{ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)},
             ScriptValueUtils.method6258(var1x, 3, -43691),
@@ -190,10 +190,10 @@ public final class ScriptTestApi {
             null
          )
       );
-      var5.method6274(
+      entry23.method6274(
          "point",
          var1x -> method5411(
-            var1,
+            workspace,
             "point",
             new double[]{ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)},
             ScriptValueUtils.method6258(var1x, 3, 65365),
@@ -201,10 +201,10 @@ public final class ScriptTestApi {
             null
          )
       );
-      var5.method6274(
+      entry23.method6274(
          "text",
          var1x -> method5411(
-            var1,
+            workspace,
             "text",
             new double[]{ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0), ScriptValueUtils.method6256(var1x, 3, 0.0)},
             ScriptValueUtils.method6258(var1x, 4, -1),
@@ -212,56 +212,56 @@ public final class ScriptTestApi {
             ScriptValueUtils.method6254(var1x, 0, "")
          )
       );
-      var5.method6274("clear", var1x -> {
-         items6.removeIf(var1xx -> var1xx[0] == var1);
-         var var2x = items2.get(var1);
+      entry23.method6274("clear", var1x -> {
+         items6.removeIf(var1xx -> var1xx[0] == workspace);
+         var var2x = items2.get(workspace);
          if (var2x != null) {
             var2x.clear();
          }
 
          return null;
       });
-      var3.method6277("debug", var5.getScriptableObject());
-      ScriptValueUtils.Entry2 var6 = ScriptValueUtils.method6247(var2);
-      var6.method6274("mark", var1x -> {
-         items5.computeIfAbsent(var1, var0xx -> new LinkedHashMap<>()).put(ScriptValueUtils.method6254(var1x, 0, "mark"), System.nanoTime());
+      entry2.method6277("debug", entry23.getScriptableObject());
+      ScriptValueUtils.Entry2 entry24 = ScriptValueUtils.method6247(scope);
+      entry24.method6274("mark", var1x -> {
+         items5.computeIfAbsent(workspace, var0xx -> new LinkedHashMap<>()).put(ScriptValueUtils.method6254(var1x, 0, "mark"), System.nanoTime());
          return null;
       });
-      var6.method6274("end", var1x -> {
+      entry24.method6274("end", var1x -> {
          String var2x = ScriptValueUtils.method6254(var1x, 0, "mark");
-         var var3x = items5.get(var1);
+         var var3x = items5.get(workspace);
          Long var4x = var3x == null ? null : (Long)var3x.remove(var2x);
          if (var4x == null) {
             return null;
          } else {
             double var5x = (System.nanoTime() - var4x) / 1000000.0;
-            method5412(var1, var2x, var5x);
+            method5412(workspace, var2x, var5x);
             return var5x;
          }
       });
-      var6.method6274("measure", var2x -> {
+      entry24.method6274("measure", var2x -> {
          String var3x = ScriptValueUtils.method6254(var2x, 0, "measure");
          var var4x = ScriptValueUtils.method6260(var2x, 1);
          long var5x = System.nanoTime();
 
          Object var7x;
          try {
-            var7x = var4x.call(Context.getCurrentContext(), var2, var2, new Object[0]);
+            var7x = var4x.call(Context.getCurrentContext(), scope, scope, new Object[0]);
          } finally {
-            method5412(var1, var3x, (System.nanoTime() - var5x) / 1000000.0);
+            method5412(workspace, var3x, (System.nanoTime() - var5x) / 1000000.0);
          }
 
          return var7x;
       });
-      var6.method6274(
+      entry24.method6274(
          "report",
          var2x -> {
             ArrayList var3x = new ArrayList();
-            var var4x = items4.get(var1);
+            var var4x = items4.get(workspace);
             if (var4x != null) {
                var4x.forEach(
                   (var2xx, var3xx) -> var3x.add(
-                     ScriptValueUtils.method6247(var2)
+                     ScriptValueUtils.method6247(scope)
                         .method6277("name", var2xx)
                         .method6277("count", var3xx[0])
                         .method6277("totalMs", var3xx[1])
@@ -272,210 +272,210 @@ public final class ScriptTestApi {
                );
             }
 
-            return ScriptValueUtils.method6267(var2, var3x);
+            return ScriptValueUtils.method6267(scope, var3x);
          }
       );
-      var6.method6274("reset", var1x -> {
-         items4.remove(var1);
-         items5.remove(var1);
+      entry24.method6274("reset", var1x -> {
+         items4.remove(workspace);
+         items5.remove(workspace);
          return null;
       });
-      var3.method6277("profile", var6.getScriptableObject());
-      ScriptValueUtils.Entry2 var7 = ScriptValueUtils.method6246(var2, (ScriptableObject)var2.get("events", var2));
-      var7.method6274("every", var2x -> {
+      entry2.method6277("profile", entry24.getScriptableObject());
+      ScriptValueUtils.Entry2 entry25 = ScriptValueUtils.method6246(scope, (ScriptableObject)scope.get("events", scope));
+      entry25.method6274("every", var2x -> {
          int var3x = Mth.clamp(ScriptValueUtils.method6257(var2x, 0, 20), 1, 72000);
-         return (double)var0.method1329(var1, ScriptValueUtils.method6260(var2x, 1), var3x * 50L, true);
+         return (double)storage.method1329(workspace, ScriptValueUtils.method6260(var2x, 1), var3x * 50L, true);
       });
-      var7.method6274("debounce", var3x -> {
+      entry25.method6274("debounce", var3x -> {
          long var4x = (long)Mth.clamp(ScriptValueUtils.method6256(var3x, 0, 200.0), 1.0, 600000.0);
          var var6x = ScriptValueUtils.method6260(var3x, 1);
          Object[][] var7x = new Object[][]{new Object[0]};
          int[] var8x = new int[]{-1};
-         BaseFunction var9x = ScriptValueUtils.method6249(var2, "debounced", var3xx -> var6x.call(Context.getCurrentContext(), var2, var2, var7x[0]));
-         return ScriptValueUtils.method6249(var2, "debounce", var7xx -> {
+         BaseFunction var9x = ScriptValueUtils.method6249(scope, "debounced", var3xx -> var6x.call(Context.getCurrentContext(), scope, scope, var7x[0]));
+         return ScriptValueUtils.method6249(scope, "debounce", var7xx -> {
             var7x[0] = (Object[])var7xx.clone();
             if (var8x[0] >= 0) {
-               var0.method1330(var1, var8x[0]);
+               storage.method1330(workspace, var8x[0]);
             }
 
-            var8x[0] = var0.method1329(var1, var9x, var4x, false);
+            var8x[0] = storage.method1329(workspace, var9x, var4x, false);
             return null;
          });
       });
-      var7.method6274("throttle", var1x -> {
+      entry25.method6274("throttle", var1x -> {
          long var2x = (long)Mth.clamp(ScriptValueUtils.method6256(var1x, 0, 200.0), 1.0, 600000.0);
          var var4x = ScriptValueUtils.method6260(var1x, 1);
          long[] var5x = new long[]{0L};
-         return ScriptValueUtils.method6249(var2, "throttle", var5xx -> {
+         return ScriptValueUtils.method6249(scope, "throttle", var5xx -> {
             long var6x = System.currentTimeMillis();
             if (var6x - var5x[0] < var2x) {
                return null;
             } else {
                var5x[0] = var6x;
-               return var4x.call(Context.getCurrentContext(), var2, var2, var5xx);
+               return var4x.call(Context.getCurrentContext(), scope, scope, var5xx);
             }
          });
       });
-      ScriptableObject var8 = (ScriptableObject)var2.get("script", var2);
-      ScriptValueUtils.Entry2 var9 = ScriptValueUtils.method6246(var2, var8);
-      var9.method6274("keep", var3x -> {
+      ScriptableObject scriptableObject = (ScriptableObject)scope.get("script", scope);
+      ScriptValueUtils.Entry2 entry26 = ScriptValueUtils.method6246(scope, scriptableObject);
+      entry26.method6274("keep", var3x -> {
          String var4x = ScriptValueUtils.method6254(var3x, 0, "state");
-         if (var1.getItems().size() >= 64 && !var1.getItems().containsKey(var4x)) {
+         if (workspace.getItems().size() >= 64 && !workspace.getItems().containsKey(var4x)) {
             throw ScriptValueUtils.method6251("больше 64 сохраняемых значений");
          } else {
-            JsonElement var5x = var0.method1316(var1, var4x);
-            Object var6x = var5x != null ? ScriptValueUtils.method6273(var2, var5x) : ScriptValueUtils.arg(var3x, 1);
-            var1.getItems().put(var4x, var6x);
+            JsonElement var5x = storage.method1316(workspace, var4x);
+            Object var6x = var5x != null ? ScriptValueUtils.method6273(scope, var5x) : ScriptValueUtils.arg(var3x, 1);
+            workspace.getItems().put(var4x, var6x);
             return var6x;
          }
       });
-      var9.method6274("forget", var2x -> {
+      entry26.method6274("forget", var2x -> {
          String var3x = ScriptValueUtils.method6254(var2x, 0, "state");
-         var1.getItems().remove(var3x);
-         var0.method1317(var1, var3x);
+         workspace.getItems().remove(var3x);
+         storage.method1317(workspace, var3x);
          return null;
       });
-      var9.method6274("settingsUI", var1x -> {
+      entry26.method6274("settingsUI", var1x -> {
          Minecraft.getInstance().execute(() -> {
             NLMenuScreen var1xx = Zenith.getInstance().getNLMenuScreen();
             if (var1xx != null) {
-               var1xx.openScriptSettings(var1);
+               var1xx.openScriptSettings(workspace);
             }
          });
          return null;
       });
    }
 
-   private static Object method5411(Script var0, String var1, double[] var2, int var3, double var4, String var6) {
-      if (items6.stream().filter(var1x -> var1x[0] == var0).count() >= 500L) {
+   private static Object method5411(Script workspace, String str, double[] doubles, int n, double d, String str2) {
+      if (items6.stream().filter(var1x -> var1x[0] == workspace).count() >= 500L) {
          return false;
       } else {
-         items6.add(new Object[]{var0, var1, var2, var3, System.currentTimeMillis() + (long)Mth.clamp(var4, 50.0, 120000.0), var6});
+         items6.add(new Object[]{workspace, str, doubles, n, System.currentTimeMillis() + (long)Mth.clamp(d, 50.0, 120000.0), str2});
          return true;
       }
    }
 
-   private static void method5412(Script var0, String var1, double var2) {
-      var var4 = items4.computeIfAbsent(var0, var0x -> new LinkedHashMap<>());
-      if (var4.size() < 200 || var4.containsKey(var1)) {
-         double[] var5 = var4.computeIfAbsent(var1, var0x -> new double[3]);
-         var5[0]++;
-         var5[1] += var2;
-         var5[2] = Math.max(var5[2], var2);
+   private static void method5412(Script workspace, String key, double d) {
+      var map = items4.computeIfAbsent(workspace, var0x -> new LinkedHashMap<>());
+      if (map.size() < 200 || map.containsKey(key)) {
+         double[] doubles = map.computeIfAbsent(key, var0x -> new double[3]);
+         doubles[0]++;
+         doubles[1] += d;
+         doubles[2] = Math.max(doubles[2], d);
       }
    }
 
-   public static String method5413(Storage var0, Script var1) {
-      var var2 = items.get(var1);
-      if (var2 != null && !var2.isEmpty()) {
-         int var3 = 0;
-         ArrayList var4 = new ArrayList();
+   public static String method5413(Storage host, Script workspace) {
+      var map = items.get(workspace);
+      if (map != null && !map.isEmpty()) {
+         int n = 0;
+         ArrayList elements = new ArrayList();
 
-         for (Object var6_o : (Iterable<?>)(Object)(new LinkedHashMap(var2).entrySet())) {
-            Entry var6 = (Entry)var6_o;
-            if (!var1.isRunning() || var1.getScope() == null) {
+         for (Object obj : (Iterable<?>)(Object)(new LinkedHashMap(map).entrySet())) {
+            Entry entry = (Entry)obj;
+            if (!workspace.isRunning() || workspace.getScope() == null) {
                break;
             }
 
             try {
-               ScriptContextFactory.method7410(1000L, (Callable)var6.getValue(), var1.getScope(), new Object[0]);
-               var3++;
-               var0.method1327(var1, "info", "✔ " + (String)var6.getKey());
-            } catch (Throwable var9) {
-               String var8 = Storage.method1325(var9);
-               var4.add((String)var6.getKey() + ": " + var8);
-               var0.method1327(var1, "error", "✘ " + (String)var6.getKey() + " — " + var8);
+               ScriptContextFactory.method7410(1000L, (Callable)entry.getValue(), workspace.getScope(), new Object[0]);
+               n++;
+               host.method1327(workspace, "info", "✔ " + (String)entry.getKey());
+            } catch (Throwable e) {
+               String str = Storage.method1325(e);
+               elements.add((String)entry.getKey() + ": " + str);
+               host.method1327(workspace, "error", "✘ " + (String)entry.getKey() + " — " + str);
             }
          }
 
          return "тесты «"
-            + var1.method1403()
+            + workspace.method1403()
             + "»: прошло "
-            + var3
+            + n
             + " из "
-            + (var3 + var4.size())
-            + (var4.isEmpty() ? "" : " · упали: " + String.join("; ", var4));
+            + (n + elements.size())
+            + (elements.isEmpty() ? "" : " · упали: " + String.join("; ", elements));
       } else {
          return "в скрипте нет тестов: test(\"имя\", function () { assert(...) })";
       }
    }
 
-   private static void method5414(CustomDrawContext var0) {
-      float var1 = 40.0F;
+   private static void method5414(CustomDrawContext customDrawContext) {
+      float y = 40.0F;
 
-      for (Entry var3 : new ArrayList<>(items3.entrySet())) {
-         Script var4 = (Script)var3.getKey();
-         if (Boolean.TRUE.equals(var3.getValue()) && var4.isRunning()) {
-            var var5 = items2.getOrDefault(var4, Map.of());
-            var var6 = items4.getOrDefault(var4, Map.of());
-            Font var7 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-            Font var8 = Fonts.NEW_MEDIUM.getFont(5.0F);
-            ArrayList<String> var9 = new ArrayList();
-            var5.forEach((var1x, var2) -> var9.add(var1x + " = " + var2));
-            var6.forEach(
-               (var1x, var2) -> var9.add(
-                  "⏱ " + var1x + ": " + String.format(Locale.ROOT, "%.2f мс (макс %.2f)", var2[0] == 0.0 ? 0.0 : var2[1] / var2[0], var2[2])
+      for (Entry entry : new ArrayList<>(items3.entrySet())) {
+         Script key = (Script)entry.getKey();
+         if (Boolean.TRUE.equals(entry.getValue()) && key.isRunning()) {
+            var map = items2.getOrDefault(key, Map.of());
+            var map2 = items4.getOrDefault(key, Map.of());
+            Font font = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+            Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+            ArrayList<String> strings = new ArrayList();
+            map.forEach((var1x, str) -> strings.add(var1x + " = " + str));
+            map2.forEach(
+               (var1x, doubles) -> strings.add(
+                  "⏱ " + var1x + ": " + String.format(Locale.ROOT, "%.2f мс (макс %.2f)", doubles[0] == 0.0 ? 0.0 : doubles[1] / doubles[0], doubles[2])
                )
             );
-            long[] var10 = var4.method1409();
-            double var11 = Math.max(0.001, (System.currentTimeMillis() - var10[3]) / 1000.0);
-            var9.add(String.format(Locale.ROOT, "нагрузка: %.1f мс/с · вызовов %d", var10[0] / 1000000.0 / var11, var10[1]));
-            float var13 = var7.width(var4.method1403()) + 12.0F;
+            long[] longs = key.method1409();
+            double d = Math.max(0.001, (System.currentTimeMillis() - longs[3]) / 1000.0);
+            strings.add(String.format(Locale.ROOT, "нагрузка: %.1f мс/с · вызовов %d", longs[0] / 1000000.0 / d, longs[1]));
+            float width = font.width(key.method1403()) + 12.0F;
 
-            for (String var15 : var9) {
-               var13 = Math.max(var13, var8.width(var15) + 12.0F);
+            for (String text : strings) {
+               width = Math.max(width, font2.width(text) + 12.0F);
             }
 
-            var13 = Math.min(var13, 260.0F);
-            float var26 = 12.0F + var9.size() * (var8.height() + 2.0F) + 4.0F;
-            var0.drawRoundedRect(6.0F, var1, var13, var26, ProxyDotRadiusData.method8069(4.0F), new ZenithColor(-1072952302));
-            var0.drawText(var7, var4.method1403(), 12.0F, var1 + 4.0F, new ZenithColor(ScriptDrawApi.method2603()));
-            float var27 = var1 + 12.0F;
+            width = Math.min(width, 260.0F);
+            float height = 12.0F + strings.size() * (font2.height() + 2.0F) + 4.0F;
+            customDrawContext.drawRoundedRect(6.0F, y, width, height, ProxyDotRadiusData.method8069(4.0F), new ZenithColor(-1072952302));
+            customDrawContext.drawText(font, key.method1403(), 12.0F, y + 4.0F, new ZenithColor(ScriptDrawApi.method2603()));
+            float centeredTextY = y + 12.0F;
 
-            for (String var17 : var9) {
-               var0.drawText(var8, var8.clip(var17, var13 - 12.0F), 12.0F, var27, new ZenithColor(-419430401));
-               var27 += var8.height() + 2.0F;
+            for (String name : strings) {
+               customDrawContext.drawText(font2, font2.clip(name, width - 12.0F), 12.0F, centeredTextY, new ZenithColor(-419430401));
+               centeredTextY += font2.height() + 2.0F;
             }
 
-            var1 += var26 + 4.0F;
+            y += height + 4.0F;
          }
       }
 
-      long var18 = System.currentTimeMillis();
+      long now = System.currentTimeMillis();
 
-      for (Object[] var20 : items6) {
-         if (var18 > (Long)var20[4] || !((Script)var20[0]).isRunning()) {
-            items6.remove(var20);
-         } else if ("text".equals(var20[1])) {
-            double[] var21 = (double[])var20[2];
-            Vec3 var22 = ProjectionUtils.method301(new Vec3(var21[0], var21[1], var21[2]));
-            if (!(var22.z <= 0.0) && !(var22.z >= 1.0)) {
-               Font var23 = Fonts.NEW_MEDIUM.getFont(6.0F);
-               String var24 = (String)var20[5];
-               var0.drawText(var23, var24, (float)var22.x - var23.width(var24) / 2.0F, (float)var22.y, new ZenithColor((Integer)var20[3]));
+      for (Object[] objects : items6) {
+         if (now > (Long)objects[4] || !((Script)objects[0]).isRunning()) {
+            items6.remove(objects);
+         } else if ("text".equals(objects[1])) {
+            double[] doubles = (double[])objects[2];
+            Vec3 vec = ProjectionUtils.method301(new Vec3(doubles[0], doubles[1], doubles[2]));
+            if (!(vec.z <= 0.0) && !(vec.z >= 1.0)) {
+               Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+               String text = (String)objects[5];
+               customDrawContext.drawText(font, text, (float)vec.x - font.width(text) / 2.0F, (float)vec.y, new ZenithColor((Integer)objects[3]));
             }
          }
       }
    }
 
    private static void method5415() {
-      for (Object[] var1 : items6) {
-         double[] var2 = (double[])var1[2];
-         int var3 = (Integer)var1[3];
-         String var4 = (String)var1[1];
-         switch (var4) {
+      for (Object[] objects : items6) {
+         double[] doubles = (double[])objects[2];
+         int color = (Integer)objects[3];
+         String str = (String)objects[1];
+         switch (str) {
             case "line":
-               GlowUtil.method2245(new Vec3(var2[0], var2[1], var2[2]), new Vec3(var2[3], var2[4], var2[5]), var3, 2.0F, false);
+               GlowUtil.method2245(new Vec3(doubles[0], doubles[1], doubles[2]), new Vec3(doubles[3], doubles[4], doubles[5]), color, 2.0F, false);
                break;
             case "box":
-               double var6 = Math.floor(var2[0]);
-               double var8 = Math.floor(var2[1]);
-               double var10 = Math.floor(var2[2]);
-               GlowUtil.method2232(new AABB(var6, var8, var10, var6 + 1.0, var8 + 1.0, var10 + 1.0), var3, 2.0F, true, false, false);
+               double minX = Math.floor(doubles[0]);
+               double minY = Math.floor(doubles[1]);
+               double minZ = Math.floor(doubles[2]);
+               GlowUtil.method2232(new AABB(minX, minY, minZ, minX + 1.0, minY + 1.0, minZ + 1.0), color, 2.0F, true, false, false);
                break;
             case "point":
                GlowUtil.method2232(
-                  new AABB(var2[0] - 0.08, var2[1] - 0.08, var2[2] - 0.08, var2[0] + 0.08, var2[1] + 0.08, var2[2] + 0.08), var3, 1.0F, false, true, false
+                  new AABB(doubles[0] - 0.08, doubles[1] - 0.08, doubles[2] - 0.08, doubles[0] + 0.08, doubles[1] + 0.08, doubles[2] + 0.08), color, 1.0F, false, true, false
                );
          }
       }

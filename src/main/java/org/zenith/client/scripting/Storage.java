@@ -100,8 +100,8 @@ public final class Storage {
       try {
          Files.createDirectories(this.path);
          Files.createDirectories(this.path.resolve(".data"));
-      } catch (IOException var2) {
-         logger.error("Не удалось создать папку скриптов", var2);
+      } catch (IOException e) {
+         logger.error("Не удалось создать папку скриптов", e);
       }
 
       this.method1338();
@@ -115,11 +115,11 @@ public final class Storage {
       });
    }
 
-   public void method1292(String var1) {
-      if (var1.length() > 1048576) {
+   public void method1292(String source) {
+      if (source.length() > 1048576) {
          throw new IllegalArgumentException("код больше 1 МБ");
       } else {
-         method1309(var1, "check.js");
+         method1309(source, "check.js");
       }
    }
 
@@ -131,17 +131,17 @@ public final class Storage {
       return this.items.values();
    }
 
-   public Script method1294(String var1) {
-      if (var1 == null) {
+   public Script method1294(String argument) {
+      if (argument == null) {
          return null;
       } else {
-         Script var2 = this.items.get(var1);
-         if (var2 != null) {
-            return var2;
+         Script script = this.items.get(argument);
+         if (script != null) {
+            return script;
          } else {
-            for (Script var4 : this.items.values()) {
-               if (var4.getId().equalsIgnoreCase(var1) || var4.method1403().equalsIgnoreCase(var1)) {
-                  return var4;
+            for (Script script2 : this.items.values()) {
+               if (script2.getId().equalsIgnoreCase(argument) || script2.method1403().equalsIgnoreCase(argument)) {
+                  return script2;
                }
             }
 
@@ -163,260 +163,260 @@ public final class Storage {
       }
    }
 
-   public boolean method1297(Script var1) {
-      JsonObject var2 = this.method1337(var1.getId());
-      return var2.has("enabled") && var2.get("enabled").getAsBoolean();
+   public boolean method1297(Script script) {
+      JsonObject json = this.method1337(script.getId());
+      return json.has("enabled") && json.get("enabled").getAsBoolean();
    }
 
-   public void method1298(Script var1, boolean var2) {
-      this.method1337(var1.getId()).addProperty("enabled", var2);
+   public void method1298(Script workspace, boolean flag) {
+      this.method1337(workspace.getId()).addProperty("enabled", flag);
       this.flag = true;
-      if (var2) {
-         if (!var1.isRunning()) {
-            this.method1308(var1, null);
+      if (flag) {
+         if (!workspace.isRunning()) {
+            this.method1308(workspace, null);
          }
-      } else if (var1.type2 != Script.Type2.STOPPED || !var1.items3.isEmpty()) {
-         this.method1319(var1, true);
-         var1.type2 = Script.Type2.STOPPED;
-         var1.error = "";
+      } else if (workspace.type2 != Script.Type2.STOPPED || !workspace.items3.isEmpty()) {
+         this.method1319(workspace, true);
+         workspace.type2 = Script.Type2.STOPPED;
+         workspace.error = "";
       }
    }
 
-   public void method1299(Script var1) {
-      if (this.method1297(var1)) {
-         this.method1308(var1, var1.isRunning() ? var1.source : null);
+   public void method1299(Script workspace) {
+      if (this.method1297(workspace)) {
+         this.method1308(workspace, workspace.isRunning() ? workspace.source : null);
       } else {
-         var1.longValue9 = this.method1304(var1);
-         this.method1307(var1, this.method1305(var1));
+         workspace.longValue9 = this.method1304(workspace);
+         this.method1307(workspace, this.method1305(workspace));
       }
    }
 
    public void method1300() {
       this.method1301(false);
 
-      for (Script var2 : new ArrayList<>(this.items.values())) {
-         this.method1299(var2);
+      for (Script workspace : new ArrayList<>(this.items.values())) {
+         this.method1299(workspace);
       }
    }
 
-   private void method1301(boolean var1) {
-      ArrayList<Path> var2 = new ArrayList();
+   private void method1301(boolean flag) {
+      ArrayList<Path> paths = new ArrayList();
 
-      try (Stream<java.nio.file.Path> var3 = Files.list(this.path)) {
-         var3.sorted().forEach(var2::add);
-      } catch (UncheckedIOException | IOException var10) {
+      try (Stream<java.nio.file.Path> list = Files.list(this.path)) {
+         list.sorted().forEach(paths::add);
+      } catch (UncheckedIOException | IOException e) {
          return;
       }
 
-      LinkedHashMap var11 = new LinkedHashMap();
+      LinkedHashMap map = new LinkedHashMap();
 
-      for (Path var5 : var2) {
-         String var6 = var5.getFileName().toString();
-         if (!var6.startsWith(".")) {
-            if (Files.isDirectory(var5)) {
-               Path var7 = var5.resolve("main.js");
-               if (!Files.isRegularFile(var7)) {
-                  var7 = var5.resolve("src").resolve("main.js");
+      for (Path path : paths) {
+         String string = path.getFileName().toString();
+         if (!string.startsWith(".")) {
+            if (Files.isDirectory(path)) {
+               Path path2 = path.resolve("main.js");
+               if (!Files.isRegularFile(path2)) {
+                  path2 = path.resolve("src").resolve("main.js");
                }
 
-               if (Files.isRegularFile(var7)) {
-                  var11.put(this.method1302(var11, method1303(var6), var5), new Path[]{var5, var7});
+               if (Files.isRegularFile(path2)) {
+                  map.put(this.method1302(map, method1303(string), path), new Path[]{path, path2});
                }
-            } else if (var6.toLowerCase(Locale.ROOT).endsWith(".js")) {
-               String var17 = method1303(var6.substring(0, var6.length() - 3));
-               if (!var11.containsKey(var17)) {
-                  var11.put(var17, new Path[]{null, var5});
+            } else if (string.toLowerCase(Locale.ROOT).endsWith(".js")) {
+               String key = method1303(string.substring(0, string.length() - 3));
+               if (!map.containsKey(key)) {
+                  map.put(key, new Path[]{null, path});
                }
             }
          }
       }
 
-      var var12 = this.items.entrySet().iterator();
+      var iterator = this.items.entrySet().iterator();
 
-      while (var12.hasNext()) {
-         Map.Entry var14 = (Map.Entry)var12.next();
-         if (!var11.containsKey(var14.getKey())) {
-            this.method1319((Script)var14.getValue(), true);
-            var12.remove();
-            this.method1327((Script)var14.getValue(), "info", "скрипт удалён с диска");
+      while (iterator.hasNext()) {
+         Map.Entry entry = (Map.Entry)iterator.next();
+         if (!map.containsKey(entry.getKey())) {
+            this.method1319((Script)entry.getValue(), true);
+            iterator.remove();
+            this.method1327((Script)entry.getValue(), "info", "скрипт удалён с диска");
          }
       }
 
-      for (Object var15_o : (Iterable<?>)(Object)(var11.entrySet())) {
-         Map.Entry var15 = (Map.Entry)var15_o;
-         if (!this.items.containsKey(var15.getKey())) {
-            Script var16 = new Script(this, (String)var15.getKey(), ((Path[])var15.getValue())[0], ((Path[])var15.getValue())[1]);
-            this.items.put(var16.getId(), var16);
-            var16.longValue9 = this.method1304(var16);
-            this.method1307(var16, this.method1305(var16));
-            var16.type2 = Script.Type2.STOPPED;
-            if (!var1) {
-               this.method1327(var16, "info", "найден новый скрипт");
+      for (Object obj : (Iterable<?>)(Object)(map.entrySet())) {
+         Map.Entry entry = (Map.Entry)obj;
+         if (!this.items.containsKey(entry.getKey())) {
+            Script script = new Script(this, (String)entry.getKey(), ((Path[])entry.getValue())[0], ((Path[])entry.getValue())[1]);
+            this.items.put(script.getId(), script);
+            script.longValue9 = this.method1304(script);
+            this.method1307(script, this.method1305(script));
+            script.type2 = Script.Type2.STOPPED;
+            if (!flag) {
+               this.method1327(script, "info", "найден новый скрипт");
             }
 
-            if (this.method1297(var16)) {
-               this.method1308(var16, null);
+            if (this.method1297(script)) {
+               this.method1308(script, null);
             }
          }
       }
    }
 
-   private String method1302(Map<String, Path[]> var1, String var2, Path var3) {
-      Script var4 = this.items.get(var2);
-      if (var1.containsKey(var2) || var4 != null && !var3.equals(var4.getPath())) {
-         int var5 = 2;
+   private String method1302(Map<String, Path[]> map, String str, Path path) {
+      Script script = this.items.get(str);
+      if (map.containsKey(str) || script != null && !path.equals(script.getPath())) {
+         int n = 2;
 
          while (true) {
-            String var6 = var2 + "~" + var5;
-            Script var7 = this.items.get(var6);
-            if (!var1.containsKey(var6) && (var7 == null || var3.equals(var7.getPath()))) {
-               return var6;
+            String str2 = str + "~" + n;
+            Script script2 = this.items.get(str2);
+            if (!map.containsKey(str2) && (script2 == null || path.equals(script2.getPath()))) {
+               return str2;
             }
 
-            var5++;
+            n++;
          }
       } else {
-         return var2;
+         return str;
       }
    }
 
-   public static String method1303(String var0) {
-      String var1 = var0.replaceAll("[^\\p{L}\\p{N}_.-]", "_");
-      return var1.length() > 48 ? var1.substring(0, 48) : var1;
+   public static String method1303(String string) {
+      String str = string.replaceAll("[^\\p{L}\\p{N}_.-]", "_");
+      return str.length() > 48 ? str.substring(0, 48) : str;
    }
 
-   private long method1304(Script var1) {
-      long var2 = 17L;
+   private long method1304(Script workspace) {
+      long l = 17L;
 
       try {
-         if (var1.getPath() == null) {
-            BasicFileAttributes var8 = Files.readAttributes(var1.getPath2(), BasicFileAttributes.class);
-            var2 = var2 * 31L + var8.lastModifiedTime().toMillis();
-            return var2 * 31L + var8.size();
+         if (workspace.getPath() == null) {
+            BasicFileAttributes attributes = Files.readAttributes(workspace.getPath2(), BasicFileAttributes.class);
+            l = l * 31L + attributes.lastModifiedTime().toMillis();
+            return l * 31L + attributes.size();
          }
 
-         final TreeMap var4 = new TreeMap();
-         Files.walkFileTree(var1.getPath(), EnumSet.noneOf(FileVisitOption.class), 4, new SimpleFileVisitor<Path>() {
-            public FileVisitResult visitFile(Path var1, BasicFileAttributes var2x) {
-               if (!var1.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".js")) {
+         final TreeMap map = new TreeMap();
+         Files.walkFileTree(workspace.getPath(), EnumSet.noneOf(FileVisitOption.class), 4, new SimpleFileVisitor<Path>() {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes var2x) {
+               if (!file.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".js")) {
                   return FileVisitResult.CONTINUE;
                } else {
-                  BasicFileAttributes var3 = var2x;
+                  BasicFileAttributes attributes = var2x;
                   if (var2x.isSymbolicLink()) {
                      try {
-                        var3 = Files.readAttributes(var1, BasicFileAttributes.class);
-                     } catch (IOException var5) {
+                        attributes = Files.readAttributes(file, BasicFileAttributes.class);
+                     } catch (IOException e) {
                         return FileVisitResult.CONTINUE;
                      }
                   }
 
-                  if (var3.isRegularFile()) {
-                     var4.put(var1, new long[]{var3.lastModifiedTime().toMillis(), var3.size()});
+                  if (attributes.isRegularFile()) {
+                     map.put(file, new long[]{attributes.lastModifiedTime().toMillis(), attributes.size()});
                   }
 
                   return FileVisitResult.CONTINUE;
                }
             }
 
-            public FileVisitResult visitFileFailed(Path var1, IOException var2x) {
+            public FileVisitResult visitFileFailed(Path file, IOException var2x) {
                return FileVisitResult.CONTINUE;
             }
 
-            public FileVisitResult postVisitDirectory(Path var1, IOException var2x) {
+            public FileVisitResult postVisitDirectory(Path dir, IOException var2x) {
                return FileVisitResult.CONTINUE;
             }
          });
 
-         for (Object var6_o : (Iterable<?>)(Object)(var4.entrySet())) {
-            Map.Entry var6 = (Map.Entry)var6_o;
-            var2 = var2 * 31L + ((Path)var6.getKey()).toString().hashCode();
-            var2 = var2 * 31L + ((long[])var6.getValue())[0];
-            var2 = var2 * 31L + ((long[])var6.getValue())[1];
+         for (Object obj : (Iterable<?>)(Object)(map.entrySet())) {
+            Map.Entry entry = (Map.Entry)obj;
+            l = l * 31L + ((Path)entry.getKey()).toString().hashCode();
+            l = l * 31L + ((long[])entry.getValue())[0];
+            l = l * 31L + ((long[])entry.getValue())[1];
          }
-      } catch (UncheckedIOException | IOException var7) {
+      } catch (UncheckedIOException | IOException e) {
       }
 
-      return var2;
+      return l;
    }
 
-   private String method1305(Script var1) {
+   private String method1305(Script workspace) {
       try {
-         return this.method1306(var1.getPath2());
-      } catch (Exception var3) {
+         return this.method1306(workspace.getPath2());
+      } catch (Exception e) {
          return "";
       }
    }
 
-   public String method1306(Path var1) throws IOException {
-      if (Files.size(var1) > 1048576L) {
+   public String method1306(Path path2) throws IOException {
+      if (Files.size(path2) > 1048576L) {
          throw new IOException("файл больше 1 МБ");
       } else {
-         String var2 = Files.readString(var1, StandardCharsets.UTF_8);
-         return var2.startsWith("\ufeff") ? var2.substring(1) : var2;
+         String string = Files.readString(path2, StandardCharsets.UTF_8);
+         return string.startsWith("\ufeff") ? string.substring(1) : string;
       }
    }
 
-   private void method1307(Script var1, String var2) {
-      var1.name = var1.getId();
-      var1.text2 = "";
-      var1.version = "";
-      var1.description = "";
-      var1.text3 = "";
-      var1.text4 = "";
-      var1.text5 = "";
-      var1.text6 = "";
-      var1.color = -1;
-      String[] var3 = var2.split("\n", 40);
+   private void method1307(Script workspace, String source) {
+      workspace.name = workspace.getId();
+      workspace.text2 = "";
+      workspace.version = "";
+      workspace.description = "";
+      workspace.text3 = "";
+      workspace.text4 = "";
+      workspace.text5 = "";
+      workspace.text6 = "";
+      workspace.color = -1;
+      String[] strings = source.split("\n", 40);
 
-      for (int var4 = 0; var4 < Math.min(var3.length, 30); var4++) {
-         String var5 = var3[var4].trim();
-         if (var5.startsWith("//")) {
-            var5 = var5.substring(2).trim();
-            if (var5.startsWith("@")) {
-               int var6 = var5.indexOf(32);
-               if (var6 >= 0) {
-                  String var7 = var5.substring(1, var6).toLowerCase(Locale.ROOT);
-                  String var8 = var5.substring(var6 + 1).trim();
-                  if (var8.length() > 120) {
-                     var8 = var8.substring(0, 120);
+      for (int i = 0; i < Math.min(strings.length, 30); i++) {
+         String str = strings[i].trim();
+         if (str.startsWith("//")) {
+            str = str.substring(2).trim();
+            if (str.startsWith("@")) {
+               int indexOf = str.indexOf(32);
+               if (indexOf >= 0) {
+                  String lowerCase = str.substring(1, indexOf).toLowerCase(Locale.ROOT);
+                  String name = str.substring(indexOf + 1).trim();
+                  if (name.length() > 120) {
+                     name = name.substring(0, 120);
                   }
 
-                  switch (var7) {
+                  switch (lowerCase) {
                      case "name":
-                        var1.name = var8;
+                        workspace.name = name;
                         break;
                      case "author":
-                        var1.text2 = var8;
+                        workspace.text2 = name;
                         break;
                      case "version":
-                        var1.version = var8;
+                        workspace.version = name;
                         break;
                      case "description":
-                        var1.description = var8;
+                        workspace.description = name;
                         break;
                      case "tags":
-                        var1.text3 = var8;
+                        workspace.text3 = name;
                         break;
                      case "link":
-                        var1.text4 = var8;
+                        workspace.text4 = name;
                         break;
                      case "net":
-                        var1.text5 = var8;
+                        workspace.text5 = name;
                         break;
                      case "permissions":
                      case "perms":
-                        var1.text6 = var8;
+                        workspace.text6 = name;
                         break;
                      case "color":
                         try {
-                           var1.color = (int)Long.parseLong(var8.replace("#", ""), 16) | 0xFF000000;
-                        } catch (NumberFormatException var13) {
+                           workspace.color = (int)Long.parseLong(name.replace("#", ""), 16) | 0xFF000000;
+                        } catch (NumberFormatException e) {
                         }
                         break;
                      case "api":
                         try {
-                           var1.intValue3 = Integer.parseInt(var8);
-                        } catch (NumberFormatException var12) {
+                           workspace.intValue3 = Integer.parseInt(name);
+                        } catch (NumberFormatException e) {
                         }
                   }
                }
@@ -425,330 +425,330 @@ public final class Storage {
       }
    }
 
-   private void method1308(Script var1, String var2) {
-      String var3;
+   private void method1308(Script workspace, String source) {
+      String str;
       try {
-         var3 = this.method1306(var1.getPath2());
-      } catch (Exception var10) {
-         this.method1323(var1, "не удалось прочитать файл: " + var10.getMessage(), true);
+         str = this.method1306(workspace.getPath2());
+      } catch (Exception e) {
+         this.method1323(workspace, "не удалось прочитать файл: " + e.getMessage(), true);
          return;
       }
 
-      var1.longValue9 = this.method1304(var1);
+      workspace.longValue9 = this.method1304(workspace);
 
-      org.mozilla.javascript.Script var4;
+      org.mozilla.javascript.Script script;
       try {
-         var4 = method1309(var3, var1.getId() + "/main.js");
-      } catch (RhinoException var11) {
-         String var6 = method1325(var11);
-         if (var2 != null && var1.isRunning()) {
-            var1.error = var6;
-            this.method1327(var1, "error", "не собрался, работает прошлая версия: " + var6);
-            this.method1324(var1, var6);
+         script = method1309(str, workspace.getId() + "/main.js");
+      } catch (RhinoException e) {
+         String error = method1325(e);
+         if (source != null && workspace.isRunning()) {
+            workspace.error = error;
+            this.method1327(workspace, "error", "не собрался, работает прошлая версия: " + error);
+            this.method1324(workspace, error);
             return;
          }
 
-         this.method1323(var1, var6, true);
+         this.method1323(workspace, error, true);
          return;
       }
 
-      if (var1.isRunning() || !var1.items3.isEmpty()) {
-         this.method1319(var1, true);
+      if (workspace.isRunning() || !workspace.items3.isEmpty()) {
+         this.method1319(workspace, true);
       }
 
-      OriginUtil.Data2 var5 = OriginUtil.method6921(var1);
-      var1.flag = var5 != null && !var5.mine();
-      this.method1307(var1, var3);
-      if (var1.intValue3 > 3) {
-         this.method1323(var1, "скрипту нужна версия API " + var1.intValue3 + ", у клиента 3", true);
+      OriginUtil.Data2 data2 = OriginUtil.method6921(workspace);
+      workspace.flag = data2 != null && !data2.mine();
+      this.method1307(workspace, str);
+      if (workspace.intValue3 > 3) {
+         this.method1323(workspace, "скрипту нужна версия API " + workspace.intValue3 + ", у клиента 3", true);
       } else {
-         String var12 = this.method1310(var1, var4, var3);
-         if (var12 != null) {
-            if (var2 != null) {
-               this.method1327(var1, "error", "ошибка при запуске, возвращаю прошлую версию: " + var12);
-               this.method1324(var1, var12);
+         String error = this.method1310(workspace, script, str);
+         if (error != null) {
+            if (source != null) {
+               this.method1327(workspace, "error", "ошибка при запуске, возвращаю прошлую версию: " + error);
+               this.method1324(workspace, error);
 
                try {
-                  org.mozilla.javascript.Script var7 = method1309(var2, var1.getId() + "/main.js");
-                  this.method1307(var1, var2);
-                  String var8 = this.method1310(var1, var7, var2);
-                  if (var8 == null) {
-                     var1.error = var12;
+                  org.mozilla.javascript.Script script2 = method1309(source, workspace.getId() + "/main.js");
+                  this.method1307(workspace, source);
+                  String str2 = this.method1310(workspace, script2, source);
+                  if (str2 == null) {
+                     workspace.error = error;
                      return;
                   }
-               } catch (RhinoException var9) {
+               } catch (RhinoException e) {
                }
             }
 
-            this.method1323(var1, var12, true);
+            this.method1323(workspace, error, true);
          }
       }
    }
 
-   public static org.mozilla.javascript.Script method1309(String var0, String var1) {
-      Context var2 = ScriptContextFactory.method7409();
+   public static org.mozilla.javascript.Script method1309(String source, String str) {
+      Context context = ScriptContextFactory.method7409();
 
-      org.mozilla.javascript.Script var3;
+      org.mozilla.javascript.Script compileString;
       try {
-         var3 = var2.compileString(var0, var1, 1, null);
+         compileString = context.compileString(source, str, 1, null);
       } finally {
          Context.exit();
       }
 
-      return var3;
+      return compileString;
    }
 
-   private String method1310(Script var1, org.mozilla.javascript.Script var2, String var3) {
-      var1.error = "";
-      var1.intValue4 = 0;
-      var1.jsonObject = this.method1337(var1.getId());
-      var1.scriptStorageFile = new ScriptStorageFile(this.method1311(var1));
-      Context var4 = ScriptContextFactory.method7409();
+   private String method1310(Script workspace, org.mozilla.javascript.Script script, String source) {
+      workspace.error = "";
+      workspace.intValue4 = 0;
+      workspace.jsonObject = this.method1337(workspace.getId());
+      workspace.scriptStorageFile = new ScriptStorageFile(this.method1311(workspace));
+      Context context = ScriptContextFactory.method7409();
 
       try {
-         var1.scope = ScriptContextFactory.method7408(var4);
-         ScriptModuleApi.method325(this, var1, var1.scope);
-      } catch (RuntimeException var7) {
+         workspace.scope = ScriptContextFactory.method7408(context);
+         ScriptModuleApi.method325(this, workspace, workspace.scope);
+      } catch (RuntimeException e) {
          Context.exit();
-         this.method1320(var1);
-         return "не удалось подготовить окружение: " + var7.getMessage();
+         this.method1320(workspace);
+         return "не удалось подготовить окружение: " + e.getMessage();
       }
 
       Context.exit();
-      var1.type2 = Script.Type2.RUNNING;
+      workspace.type2 = Script.Type2.RUNNING;
 
       try {
-         ScriptContextFactory.method7410(3000L, (var1x, var2x, var3x, var4x) -> var2.exec(var1x, var2x), var1.scope, new Object[0]);
-      } catch (Throwable var6) {
-         var1.type2 = Script.Type2.FAILED;
-         this.method1319(var1, false);
-         return method1325(var6);
+         ScriptContextFactory.method7410(3000L, (var1x, var2x, var3x, var4x) -> script.exec(var1x, var2x), workspace.scope, new Object[0]);
+      } catch (Throwable e) {
+         workspace.type2 = Script.Type2.FAILED;
+         this.method1319(workspace, false);
+         return method1325(e);
       }
 
-      var1.source = var3;
-      this.method1312(var1);
-      this.method1331(var1, Script.Type.ENABLE);
+      workspace.source = source;
+      this.method1312(workspace);
+      this.method1331(workspace, Script.Type.ENABLE);
       this.flag2 = true;
-      this.method1327(var1, "info", "запущен" + (var1.version.isBlank() ? "" : " v" + var1.version));
+      this.method1327(workspace, "info", "запущен" + (workspace.version.isBlank() ? "" : " v" + workspace.version));
       return null;
    }
 
-   private Path method1311(Script var1) {
-      return var1.getPath() != null ? var1.getPath().resolve("storage.json") : this.path.resolve(".data").resolve(var1.getId() + ".json");
+   private Path method1311(Script workspace) {
+      return workspace.getPath() != null ? workspace.getPath().resolve("storage.json") : this.path.resolve(".data").resolve(workspace.getId() + ".json");
    }
 
-   private void method1312(Script var1) {
-      JsonObject var2 = var1.jsonObject.has("modules") && var1.jsonObject.get("modules").isJsonObject()
-         ? var1.jsonObject.getAsJsonObject("modules")
+   private void method1312(Script workspace) {
+      JsonObject jsonObject = workspace.jsonObject.has("modules") && workspace.jsonObject.get("modules").isJsonObject()
+         ? workspace.jsonObject.getAsJsonObject("modules")
          : new JsonObject();
 
-      for (Module1 var4 : var1.items3.values()) {
-         JsonObject var5 = var2.has(var4.getName()) && var2.get(var4.getName()).isJsonObject() ? var2.getAsJsonObject(var4.getName()) : null;
-         if (var5 == null) {
-            if (var4.flag2 && !var4.isEnabledRaw()) {
-               var4.toggle();
+      for (Module1 module1 : workspace.items3.values()) {
+         JsonObject json = jsonObject.has(module1.getName()) && jsonObject.get(module1.getName()).isJsonObject() ? jsonObject.getAsJsonObject(module1.getName()) : null;
+         if (json == null) {
+            if (module1.flag2 && !module1.isEnabledRaw()) {
+               module1.toggle();
             }
          } else {
-            if (var5.has("keyCode")) {
-               var4.setKeyCode(var5.get("keyCode").getAsInt());
+            if (json.has("keyCode")) {
+               module1.setKeyCode(json.get("keyCode").getAsInt());
             }
 
-            if (var5.has("keyModifiers")) {
-               var4.setKeyModifiers(var5.get("keyModifiers").getAsInt());
+            if (json.has("keyModifiers")) {
+               module1.setKeyModifiers(json.get("keyModifiers").getAsInt());
             }
 
-            if (var5.has("enabled") && var5.get("enabled").getAsBoolean() && !var4.isEnabledRaw()) {
-               var4.toggle();
+            if (json.has("enabled") && json.get("enabled").getAsBoolean() && !module1.isEnabledRaw()) {
+               module1.toggle();
             }
          }
       }
    }
 
-   public JsonObject method1313(Script var1, String var2) {
-      JsonObject var3 = var1.jsonObject.has("modules") && var1.jsonObject.get("modules").isJsonObject() ? var1.jsonObject.getAsJsonObject("modules") : null;
-      return var3 != null && var3.has(var2) && var3.get(var2).isJsonObject() ? var3.getAsJsonObject(var2) : null;
+   public JsonObject method1313(Script workspace, String name) {
+      JsonObject jsonObject = workspace.jsonObject.has("modules") && workspace.jsonObject.get("modules").isJsonObject() ? workspace.jsonObject.getAsJsonObject("modules") : null;
+      return jsonObject != null && jsonObject.has(name) && jsonObject.get(name).isJsonObject() ? jsonObject.getAsJsonObject(name) : null;
    }
 
-   public JsonObject method1314(Script var1) {
-      return var1.jsonObject.has("settings") && var1.jsonObject.get("settings").isJsonObject() ? var1.jsonObject.getAsJsonObject("settings") : null;
+   public JsonObject method1314(Script workspace) {
+      return workspace.jsonObject.has("settings") && workspace.jsonObject.get("settings").isJsonObject() ? workspace.jsonObject.getAsJsonObject("settings") : null;
    }
 
-   private void method1315(Script var1) {
-      if (!var1.items3.isEmpty() || !var1.items6.isEmpty()) {
-         JsonObject var2 = this.method1337(var1.getId());
-         boolean var3 = false;
-         JsonObject var4;
-         if (var2.has("modules") && var2.get("modules").isJsonObject()) {
-            var4 = var2.getAsJsonObject("modules");
+   private void method1315(Script workspace) {
+      if (!workspace.items3.isEmpty() || !workspace.items6.isEmpty()) {
+         JsonObject json = this.method1337(workspace.getId());
+         boolean flag = false;
+         JsonObject jsonObject;
+         if (json.has("modules") && json.get("modules").isJsonObject()) {
+            jsonObject = json.getAsJsonObject("modules");
          } else {
-            var4 = new JsonObject();
-            var2.add("modules", var4);
-            var3 = true;
+            jsonObject = new JsonObject();
+            json.add("modules", jsonObject);
+            flag = true;
          }
 
-         for (Module1 var6 : var1.items3.values()) {
-            JsonObject var7 = var6.save();
-            if (!var7.equals(var4.get(var6.getName()))) {
-               var4.add(var6.getName(), var7);
-               var3 = true;
+         for (Module1 module1 : workspace.items3.values()) {
+            JsonObject json2 = module1.save();
+            if (!json2.equals(jsonObject.get(module1.getName()))) {
+               jsonObject.add(module1.getName(), json2);
+               flag = true;
             }
          }
 
-         if (!var1.items6.isEmpty()) {
-            JsonObject var8 = new JsonObject();
+         if (!workspace.items6.isEmpty()) {
+            JsonObject json2 = new JsonObject();
 
-            for (Setting var10 : var1.items6.values()) {
-               var10.safe(var8);
+            for (Setting setting : workspace.items6.values()) {
+               setting.safe(json2);
             }
 
-            if (!var8.equals(var2.get("settings"))) {
-               var2.add("settings", var8);
-               var3 = true;
+            if (!json2.equals(json.get("settings"))) {
+               json.add("settings", json2);
+               flag = true;
             }
          }
 
-         if (var3) {
+         if (flag) {
             this.flag = true;
          }
       }
    }
 
-   public JsonElement method1316(Script var1, String var2) {
-      var var3 = this.items3.get(var1.getId());
-      return var3 == null ? null : (JsonElement)var3.get(var2);
+   public JsonElement method1316(Script workspace, String str) {
+      var map = this.items3.get(workspace.getId());
+      return map == null ? null : (JsonElement)map.get(str);
    }
 
-   public void method1317(Script var1, String var2) {
-      var var3 = this.items3.get(var1.getId());
-      if (var3 != null) {
-         var3.remove(var2);
+   public void method1317(Script workspace, String str) {
+      var map = this.items3.get(workspace.getId());
+      if (map != null) {
+         map.remove(str);
       }
    }
 
-   private void method1318(Script var1) {
-      if (!var1.items.isEmpty()) {
-         var var2 = this.items3.computeIfAbsent(var1.getId(), var0 -> new HashMap<>());
+   private void method1318(Script script) {
+      if (!script.items.isEmpty()) {
+         var map = this.items3.computeIfAbsent(script.getId(), str -> new HashMap<>());
 
          try {
-            ScriptContextFactory.method7410(250L, (var2x, var3, var4x, var5) -> {
-               for (Map.Entry var7 : var1.items.entrySet()) {
+            ScriptContextFactory.method7410(250L, (var2x, scriptable, var4x, objects) -> {
+               for (Map.Entry entry : script.items.entrySet()) {
                   try {
-                     var2.put((String)var7.getKey(), ScriptValueUtils.method6271(var7.getValue(), 0));
-                  } catch (Throwable var9) {
+                     map.put((String)entry.getKey(), ScriptValueUtils.method6271(entry.getValue(), 0));
+                  } catch (Throwable e) {
                   }
                }
 
                return null;
-            }, var1.scope, new Object[0]);
-         } catch (Throwable var4) {
+            }, script.scope, new Object[0]);
+         } catch (Throwable e) {
          }
 
-         var1.items.clear();
+         script.items.clear();
       }
    }
 
-   public void method1319(Script var1, boolean var2) {
-      if (var2 && var1.isRunning()) {
-         this.method1331(var1, Script.Type.DISABLE);
+   public void method1319(Script workspace, boolean flag) {
+      if (flag && workspace.isRunning()) {
+         this.method1331(workspace, Script.Type.DISABLE);
       }
 
-      this.method1318(var1);
-      this.method1315(var1);
+      this.method1318(workspace);
+      this.method1315(workspace);
 
-      for (Module1 var4 : var1.items3.values()) {
-         var4.release();
-         if (var4.isEnabledRaw()) {
-            var4.toggle();
+      for (Module1 module1 : workspace.items3.values()) {
+         module1.release();
+         if (module1.isEnabledRaw()) {
+            module1.toggle();
          }
 
-         Zenith.getInstance().getModuleManager().method2483(var4);
-         this.items2.add(var4);
+         Zenith.getInstance().getModuleManager().method2483(module1);
+         this.items2.add(module1);
       }
 
-      if (!var1.items3.isEmpty()) {
+      if (!workspace.items3.isEmpty()) {
          this.flag2 = true;
       }
 
-      var1.items3.clear();
-      this.method1320(var1);
-      var1.items5.clear();
-      var1.items4.clear();
-      var1.items6.clear();
-      var1.items7.clear();
-      var1.items8.clear();
-      if (var1.scriptStorageFile != null) {
-         var1.scriptStorageFile.flush();
+      workspace.items3.clear();
+      this.method1320(workspace);
+      workspace.items5.clear();
+      workspace.items4.clear();
+      workspace.items6.clear();
+      workspace.items7.clear();
+      workspace.items8.clear();
+      if (workspace.scriptStorageFile != null) {
+         workspace.scriptStorageFile.flush();
       }
 
-      var1.scope = null;
-      if (var1.type2 == Script.Type2.RUNNING) {
-         var1.type2 = Script.Type2.STOPPED;
+      workspace.scope = null;
+      if (workspace.type2 == Script.Type2.RUNNING) {
+         workspace.type2 = Script.Type2.STOPPED;
       }
    }
 
-   private void method1320(Script var1) {
-      for (int var2 = var1.items2.size() - 1; var2 >= 0; var2--) {
+   private void method1320(Script workspace) {
+      for (int i = workspace.items2.size() - 1; i >= 0; i--) {
          try {
-            var1.items2.get(var2).close();
-         } catch (Throwable var4) {
-            logger.warn("Скрипт {}: ошибка при снятии ресурса", var1.getId(), var4);
+            workspace.items2.get(i).close();
+         } catch (Throwable e) {
+            logger.warn("Скрипт {}: ошибка при снятии ресурса", workspace.getId(), e);
          }
       }
 
-      var1.items2.clear();
+      workspace.items2.clear();
    }
 
-   public Object method1321(Script var1, Function var2, Object... var3) {
-      if (var1 != null && var2 != null && var1.isRunning() && var1.scope != null) {
-         Minecraft var4 = Minecraft.getInstance();
-         if (var4 != null && !var4.isSameThread()) {
+   public Object method1321(Script workspace, Function function, Object... scriptableObject) {
+      if (workspace != null && function != null && workspace.isRunning() && workspace.scope != null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft != null && !minecraft.isSameThread()) {
             return null;
          } else {
-            long var5 = System.nanoTime();
+            long nanoTime = System.nanoTime();
 
             try {
-               Object var7 = ScriptContextFactory.method7410(250L, var2, var1.scope, var3);
-               var1.intValue4 = 0;
-               return var7;
-            } catch (ScriptContextFactory.Entry var18) {
-               long var22 = System.currentTimeMillis();
-               if (var18.getMessage() != null && var18.getMessage().contains("памят")) {
-                  this.method1323(var1, var18.getMessage(), true);
+               Object obj = ScriptContextFactory.method7410(250L, function, workspace.scope, scriptableObject);
+               workspace.intValue4 = 0;
+               return obj;
+            } catch (ScriptContextFactory.Entry e) {
+               long now = System.currentTimeMillis();
+               if (e.getMessage() != null && e.getMessage().contains("памят")) {
+                  this.method1323(workspace, e.getMessage(), true);
                } else {
-                  if (var22 - var1.longValue > 30000L) {
-                     var1.longValue = var22;
-                     var1.intValue = 0;
+                  if (now - workspace.longValue > 30000L) {
+                     workspace.longValue = now;
+                     workspace.intValue = 0;
                   }
 
-                  var1.intValue++;
-                  var1.error = var18.getMessage();
-                  if (var1.intValue >= 3) {
-                     this.method1323(var1, "трижды за 30 секунд превысил лимит времени — " + var18.getMessage(), true);
+                  workspace.intValue++;
+                  workspace.error = e.getMessage();
+                  if (workspace.intValue >= 3) {
+                     this.method1323(workspace, "трижды за 30 секунд превысил лимит времени — " + e.getMessage(), true);
                   } else {
-                     this.method1327(var1, "warn", "вызов прерван: " + var18.getMessage() + " (" + var1.intValue + "/3)");
+                     this.method1327(workspace, "warn", "вызов прерван: " + e.getMessage() + " (" + workspace.intValue + "/3)");
                   }
                }
-            } catch (StackOverflowError var19) {
-               this.method1323(var1, "переполнение стека (бесконечная рекурсия?)", true);
-            } catch (Throwable var20) {
-               String var8 = method1325(var20);
-               var1.intValue4++;
-               var1.error = var8;
-               this.method1327(var1, "error", var8);
-               if (var1.intValue4 >= 5) {
-                  this.method1323(var1, "5 ошибок подряд, последняя: " + var8, true);
-               } else if (var1.intValue4 == 1) {
-                  this.method1324(var1, var8);
+            } catch (StackOverflowError e) {
+               this.method1323(workspace, "переполнение стека (бесконечная рекурсия?)", true);
+            } catch (Throwable e) {
+               String error = method1325(e);
+               workspace.intValue4++;
+               workspace.error = error;
+               this.method1327(workspace, "error", error);
+               if (workspace.intValue4 >= 5) {
+                  this.method1323(workspace, "5 ошибок подряд, последняя: " + error, true);
+               } else if (workspace.intValue4 == 1) {
+                  this.method1324(workspace, error);
                }
             } finally {
-               long var12 = System.nanoTime() - var5;
-               var1.longValue4 += var12;
-               var1.longValue5++;
-               if (var12 > var1.longValue6) {
-                  var1.longValue6 = var12;
+               long l = System.nanoTime() - nanoTime;
+               workspace.longValue4 += l;
+               workspace.longValue5++;
+               if (l > workspace.longValue6) {
+                  workspace.longValue6 = l;
                }
 
-               this.method1322(var1, var12);
+               this.method1322(workspace, l);
             }
 
             return null;
@@ -758,148 +758,148 @@ public final class Storage {
       }
    }
 
-   private void method1322(Script var1, long var2) {
-      long var4 = System.nanoTime();
-      if (var4 - var1.longValue2 >= 1000000000L) {
-         if (var1.longValue2 != 0L) {
-            if (var1.longValue3 > 350000000L) {
-               var1.intValue2++;
-               if (var1.intValue2 == 2) {
-                  this.method1327(var1, "warn", "скрипт занимает " + var1.longValue3 / 1000000L + " мс в секунду — игра тормозит");
+   private void method1322(Script workspace, long l) {
+      long nanoTime = System.nanoTime();
+      if (nanoTime - workspace.longValue2 >= 1000000000L) {
+         if (workspace.longValue2 != 0L) {
+            if (workspace.longValue3 > 350000000L) {
+               workspace.intValue2++;
+               if (workspace.intValue2 == 2) {
+                  this.method1327(workspace, "warn", "скрипт занимает " + workspace.longValue3 / 1000000L + " мс в секунду — игра тормозит");
                }
 
-               if (var1.intValue2 >= 5 && var1.isRunning()) {
-                  var1.longValue2 = var4;
-                  var1.longValue3 = 0L;
-                  var1.intValue2 = 0;
-                  this.method1323(var1, "пять секунд подряд занимал больше 350 мс в секунду и тормозил игру", true);
+               if (workspace.intValue2 >= 5 && workspace.isRunning()) {
+                  workspace.longValue2 = nanoTime;
+                  workspace.longValue3 = 0L;
+                  workspace.intValue2 = 0;
+                  this.method1323(workspace, "пять секунд подряд занимал больше 350 мс в секунду и тормозил игру", true);
                   return;
                }
             } else {
-               var1.intValue2 = 0;
+               workspace.intValue2 = 0;
             }
          }
 
-         var1.longValue2 = var4;
-         var1.longValue3 = 0L;
+         workspace.longValue2 = nanoTime;
+         workspace.longValue3 = 0L;
       }
 
-      var1.longValue3 += var2;
+      workspace.longValue3 += l;
    }
 
-   public void method1323(Script var1, String var2, boolean var3) {
-      boolean var4 = var1.isRunning();
-      var1.error = var2;
-      var1.longValue8 = System.currentTimeMillis();
-      this.method1327(var1, "error", var2);
-      if (var4 || !var1.items3.isEmpty()) {
-         var1.type2 = Script.Type2.FAILED;
-         this.method1319(var1, false);
+   public void method1323(Script workspace, String error, boolean flag) {
+      boolean running = workspace.isRunning();
+      workspace.error = error;
+      workspace.longValue8 = System.currentTimeMillis();
+      this.method1327(workspace, "error", error);
+      if (running || !workspace.items3.isEmpty()) {
+         workspace.type2 = Script.Type2.FAILED;
+         this.method1319(workspace, false);
       }
 
-      var1.type2 = Script.Type2.FAILED;
-      if (var3) {
-         this.method1324(var1, "остановлен: " + var2);
-      }
-   }
-
-   private void method1324(Script var1, String var2) {
-      Minecraft var3 = Minecraft.getInstance();
-      if (var3 != null && var3.player != null) {
-         String var4 = var2.length() > 160 ? var2.substring(0, 160) + "…" : var2;
-         ChatLogger.method2020(ChatLogger.Type.ERROR, "[JS] " + var1.method1403() + ": " + var4);
+      workspace.type2 = Script.Type2.FAILED;
+      if (flag) {
+         this.method1324(workspace, "остановлен: " + error);
       }
    }
 
-   public static String method1325(Throwable var0) {
-      if (var0 instanceof JavaScriptException var10) {
-         Object var2 = var10.getValue();
+   private void method1324(Script workspace, String error) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.player != null) {
+         String str = error.length() > 160 ? error.substring(0, 160) + "…" : error;
+         ChatLogger.method2020(ChatLogger.Type.ERROR, "[JS] " + workspace.method1403() + ": " + str);
+      }
+   }
 
-         String var3;
+   public static String method1325(Throwable throwable) {
+      if (throwable instanceof JavaScriptException javaScriptException) {
+         Object obj = javaScriptException.getValue();
+
+         String str;
          try {
-            var3 = String.valueOf(ScriptContextFactory.method7410(250L, (var1x, var2x, var3x, var4) -> {
-               if (var2 instanceof Scriptable var5x) {
+            str = String.valueOf(ScriptContextFactory.method7410(250L, (var1x, var2x, var3x, objects) -> {
+               if (obj instanceof Scriptable var5x) {
                   Object var6x = ScriptValueUtils.method6263(var5x, "message");
-                  return ScriptValueUtils.method6253(var6x) ? Context.toString(var2) : Context.toString(var6x);
+                  return ScriptValueUtils.method6253(var6x) ? Context.toString(obj) : Context.toString(var6x);
                } else {
-                  return Context.toString(var2);
+                  return Context.toString(obj);
                }
             }, null, new Object[0]));
-         } catch (Throwable var6) {
-            var3 = var2 instanceof Scriptable var5 ? "[object " + var5.getClassName() + "]" : String.valueOf(var2);
+         } catch (Throwable e) {
+            str = obj instanceof Scriptable scriptable ? "[object " + scriptable.getClassName() + "]" : String.valueOf(obj);
          }
 
-         return var3 + method1326(var10);
-      } else if (var0 instanceof EcmaError var9) {
-         return var9.getName() + ": " + var9.getErrorMessage() + method1326(var9);
-      } else if (var0 instanceof EvaluatorException var8) {
-         return var8.details() + method1326(var8);
-      } else if (var0 instanceof RhinoException var7) {
-         return var7.details() + method1326(var7);
-      } else if (var0 instanceof ScriptContextFactory.Entry) {
-         return var0.getMessage();
+         return str + method1326(javaScriptException);
+      } else if (throwable instanceof EcmaError ecmaError) {
+         return ecmaError.getName() + ": " + ecmaError.getErrorMessage() + method1326(ecmaError);
+      } else if (throwable instanceof EvaluatorException evaluatorException) {
+         return evaluatorException.details() + method1326(evaluatorException);
+      } else if (throwable instanceof RhinoException rhinoException) {
+         return rhinoException.details() + method1326(rhinoException);
+      } else if (throwable instanceof ScriptContextFactory.Entry) {
+         return throwable.getMessage();
       } else {
-         String var1 = var0.getMessage();
-         return var0.getClass().getSimpleName() + (var1 == null ? "" : ": " + var1);
+         String message = throwable.getMessage();
+         return throwable.getClass().getSimpleName() + (message == null ? "" : ": " + message);
       }
    }
 
-   private static String method1326(RhinoException var0) {
-      String var1 = var0.sourceName();
-      int var2 = var0.lineNumber();
-      if (var1 != null && var2 > 0) {
-         int var3 = var1.lastIndexOf(47);
-         return " (" + (var3 >= 0 ? var1.substring(var3 + 1) : var1) + ":" + var2 + ")";
+   private static String method1326(RhinoException rhinoException) {
+      String sourceName = rhinoException.sourceName();
+      int lineNumber = rhinoException.lineNumber();
+      if (sourceName != null && lineNumber > 0) {
+         int lastIndexOf = sourceName.lastIndexOf(47);
+         return " (" + (lastIndexOf >= 0 ? sourceName.substring(lastIndexOf + 1) : sourceName) + ":" + lineNumber + ")";
       } else {
          return "";
       }
    }
 
-   public void method1327(Script var1, String var2, String var3) {
-      String var4 = var1 == null ? "js" : var1.method1403();
-      if (var3.length() > 2000) {
-         var3 = var3.substring(0, 2000) + "…";
+   public void method1327(Script workspace, String anObject, String error) {
+      String text = workspace == null ? "js" : workspace.method1403();
+      if (error.length() > 2000) {
+         error = error.substring(0, 2000) + "…";
       }
 
-      boolean var5 = "error".equals(var2) || "warn".equals(var2);
-      boolean var6 = var5;
-      long var7 = 0L;
-      long var9 = System.currentTimeMillis();
+      boolean flag = "error".equals(anObject) || "warn".equals(anObject);
+      boolean flag2 = flag;
+      long l = 0L;
+      long now = System.currentTimeMillis();
       synchronized (this.deque) {
-         this.deque.addLast(new Storage.Data2(var9, var4, var2, var3));
+         this.deque.addLast(new Storage.Data2(now, text, anObject, error));
 
          while (this.deque.size() > 1000) {
             this.deque.removeFirst();
          }
 
          this.longValue++;
-         if (!var5) {
-            long[] var12 = this.items4.computeIfAbsent(var4, var0 -> new long[3]);
-            if (var9 - var12[0] >= 1000L) {
-               var7 = var12[2];
-               var12[0] = var9;
-               var12[1] = 0L;
-               var12[2] = 0L;
+         if (!flag) {
+            long[] longs = this.items4.computeIfAbsent(text, str -> new long[3]);
+            if (now - longs[0] >= 1000L) {
+               l = longs[2];
+               longs[0] = now;
+               longs[1] = 0L;
+               longs[2] = 0L;
             }
 
-            if (var12[1] < 20L) {
-               var12[1]++;
-               var6 = true;
+            if (longs[1] < 20L) {
+               longs[1]++;
+               flag2 = true;
             } else {
-               var12[2]++;
+               longs[2]++;
             }
          }
       }
 
-      if (var7 > 0L) {
-         logger.info("[JS:{}] … ещё {} строк не продублировано в лог игры (смотри консоль скриптов)", var4, var7);
+      if (l > 0L) {
+         logger.info("[JS:{}] … ещё {} строк не продублировано в лог игры (смотри консоль скриптов)", text, l);
       }
 
-      if (var6) {
-         if (var5) {
-            logger.warn("[JS:{}] {}", var4, var3);
+      if (flag2) {
+         if (flag) {
+            logger.warn("[JS:{}] {}", text, error);
          } else {
-            logger.info("[JS:{}] {}", var4, var3);
+            logger.info("[JS:{}] {}", text, error);
          }
       }
    }
@@ -910,53 +910,53 @@ public final class Storage {
       }
    }
 
-   public int method1329(Script var1, Function var2, long var3, boolean var5) {
-      if (var1.items5.size() >= 256) {
+   public int method1329(Script workspace, Function function, long l, boolean flag) {
+      if (workspace.items5.size() >= 256) {
          throw ScriptValueUtils.method6251("у скрипта больше 256 таймеров");
       } else {
-         Storage.Entry var6 = new Storage.Entry(++this.intValue, var2, var5 ? Math.max(50L, var3) : var3, var5);
-         var1.items5.add(var6);
-         return var6.intValue;
+         Storage.Entry entry = new Storage.Entry(++this.intValue, function, flag ? Math.max(50L, l) : l, flag);
+         workspace.items5.add(entry);
+         return entry.intValue;
       }
    }
 
-   public void method1330(Script var1, int var2) {
-      for (Storage.Entry var4 : var1.items5) {
-         if (var4.intValue == var2) {
-            var4.cancelled = true;
+   public void method1330(Script workspace, int n) {
+      for (Storage.Entry entry : workspace.items5) {
+         if (entry.intValue == n) {
+            entry.cancelled = true;
          }
       }
    }
 
-   public void method1331(Script var1, Script.Type var2, Object... var3) {
-      for (Function var5 : new ArrayList<>(var1.method1417(var2))) {
-         if (!var1.isRunning() && var2 != Script.Type.DISABLE) {
+   public void method1331(Script workspace, Script.Type type, Object... scriptableObject) {
+      for (Function function : new ArrayList<>(workspace.method1417(type))) {
+         if (!workspace.isRunning() && type != Script.Type.DISABLE) {
             return;
          }
 
-         if (var2 == Script.Type.DISABLE) {
-            Script.Type2 var6 = var1.type2;
-            var1.type2 = Script.Type2.RUNNING;
-            this.method1321(var1, var5, var3);
-            if (var1.type2 == Script.Type2.RUNNING) {
-               var1.type2 = var6;
+         if (type == Script.Type.DISABLE) {
+            Script.Type2 type2 = workspace.type2;
+            workspace.type2 = Script.Type2.RUNNING;
+            this.method1321(workspace, function, scriptableObject);
+            if (workspace.type2 == Script.Type2.RUNNING) {
+               workspace.type2 = type2;
             }
          } else {
-            this.method1321(var1, var5, var3);
+            this.method1321(workspace, function, scriptableObject);
          }
       }
    }
 
-   public void method1332(Script.Type var1, java.util.function.Function<Script, Object[]> var2) {
-      for (Script var4 : new ArrayList<>(this.items.values())) {
-         if (var4.isRunning() && !var4.method1417(var1).isEmpty()) {
-            this.method1331(var4, var1, (Object[])var2.apply(var4));
+   public void method1332(Script.Type type, java.util.function.Function<Script, Object[]> function) {
+      for (Script workspace : new ArrayList<>(this.items.values())) {
+         if (workspace.isRunning() && !workspace.method1417(type).isEmpty()) {
+            this.method1331(workspace, type, (Object[])function.apply(workspace));
          }
       }
    }
 
    @EventTarget(0)
-   public void onTick(TickEvent var1) {
+   public void onTick(TickEvent event) {
       this.ticks++;
       if (this.ticks % 20 == 0) {
          this.method1334();
@@ -975,21 +975,21 @@ public final class Storage {
    }
 
    @EventTarget(0)
-   public void method1333(ChatSendEvent var1) {
-      if (var1.method4603() && var1.getMessage() != null) {
-         String var2 = var1.getMessage().trim();
-         String var3 = Zenith.getInstance().getCommandManager().getPrefix();
-         if (var2.startsWith(var3) && var2.length() > var3.length()) {
-            String var4 = var2.substring(var3.length());
-            int var5 = var4.indexOf(32);
-            String var6 = (var5 < 0 ? var4 : var4.substring(0, var5)).toLowerCase(Locale.ROOT);
-            String var7 = var5 < 0 ? "" : var4.substring(var5 + 1).trim();
+   public void method1333(ChatSendEvent event) {
+      if (event.method4603() && event.getMessage() != null) {
+         String str = event.getMessage().trim();
+         String prefix = Zenith.getInstance().getCommandManager().getPrefix();
+         if (str.startsWith(prefix) && str.length() > prefix.length()) {
+            String str2 = str.substring(prefix.length());
+            int indexOf = str2.indexOf(32);
+            String lowerCase = (indexOf < 0 ? str2 : str2.substring(0, indexOf)).toLowerCase(Locale.ROOT);
+            String str3 = indexOf < 0 ? "" : str2.substring(indexOf + 1).trim();
 
-            for (Script var9 : new ArrayList<>(this.items.values())) {
-               var var10 = var9.isRunning() ? var9.items7.get(var6) : null;
-               if (var10 != null) {
-                  var1.cancel();
-                  this.method1321(var9, var10, var7, ScriptValueUtils.method6268(var9.scope, var7.isEmpty() ? new Object[0] : var7.split("\\s+")));
+            for (Script workspace : new ArrayList<>(this.items.values())) {
+               var function = workspace.isRunning() ? workspace.items7.get(lowerCase) : null;
+               if (function != null) {
+                  event.cancel();
+                  this.method1321(workspace, function, str3, ScriptValueUtils.method6268(workspace.scope, str3.isEmpty() ? new Object[0] : str3.split("\\s+")));
                   return;
                }
             }
@@ -1000,66 +1000,66 @@ public final class Storage {
    private void method1334() {
       this.method1301(false);
 
-      for (Script var2 : new ArrayList<>(this.items.values())) {
-         long var3 = this.method1304(var2);
-         if (var3 != var2.longValue9) {
-            var2.longValue9 = var3;
-            if (this.method1297(var2)) {
-               this.method1327(var2, "info", "файл изменён, перезагружаю");
-               this.method1308(var2, var2.isRunning() ? var2.source : null);
+      for (Script workspace : new ArrayList<>(this.items.values())) {
+         long l = this.method1304(workspace);
+         if (l != workspace.longValue9) {
+            workspace.longValue9 = l;
+            if (this.method1297(workspace)) {
+               this.method1327(workspace, "info", "файл изменён, перезагружаю");
+               this.method1308(workspace, workspace.isRunning() ? workspace.source : null);
             } else {
-               this.method1307(var2, this.method1305(var2));
+               this.method1307(workspace, this.method1305(workspace));
             }
          }
       }
    }
 
    private void method1335() {
-      long var1 = System.currentTimeMillis();
+      long now = System.currentTimeMillis();
 
-      for (Script var4 : new ArrayList<>(this.items.values())) {
-         if (var4.isRunning() && !var4.items5.isEmpty()) {
-            for (Storage.Entry var6 : new ArrayList<>(var4.items5)) {
-               if (!var6.cancelled && var1 >= var6.longValue2) {
-                  if (var6.flag) {
-                     var6.longValue2 = var1 + var6.longValue;
+      for (Script workspace : new ArrayList<>(this.items.values())) {
+         if (workspace.isRunning() && !workspace.items5.isEmpty()) {
+            for (Storage.Entry entry : new ArrayList<>(workspace.items5)) {
+               if (!entry.cancelled && now >= entry.longValue2) {
+                  if (entry.flag) {
+                     entry.longValue2 = now + entry.longValue;
                   } else {
-                     var6.cancelled = true;
+                     entry.cancelled = true;
                   }
 
-                  this.method1321(var4, var6.function);
-                  if (!var4.isRunning()) {
+                  this.method1321(workspace, entry.function);
+                  if (!workspace.isRunning()) {
                      break;
                   }
                }
             }
 
-            var4.items5.removeIf(var0 -> var0.cancelled);
+            workspace.items5.removeIf(entry -> entry.cancelled);
          }
       }
    }
 
    private void method1336() {
-      var var1 = new ArrayList<>(this.items2);
+      var moduleValues = new ArrayList<>(this.items2);
       this.items2.clear();
 
       try {
          if (Zenith.getInstance().getNLMenuScreen() != null) {
-            Zenith.getInstance().getNLMenuScreen().refreshModules(var1);
+            Zenith.getInstance().getNLMenuScreen().refreshModules(moduleValues);
          }
-      } catch (Throwable var3) {
-         logger.warn("Не удалось обновить меню после скриптов", var3);
+      } catch (Throwable e) {
+         logger.warn("Не удалось обновить меню после скриптов", e);
       }
    }
 
    public void flush() {
-      for (Script var2 : this.items.values()) {
-         if (var2.isRunning()) {
-            this.method1315(var2);
+      for (Script workspace : this.items.values()) {
+         if (workspace.isRunning()) {
+            this.method1315(workspace);
          }
 
-         if (var2.scriptStorageFile != null) {
-            var2.scriptStorageFile.flush();
+         if (workspace.scriptStorageFile != null) {
+            workspace.scriptStorageFile.flush();
          }
       }
 
@@ -1069,78 +1069,78 @@ public final class Storage {
       }
    }
 
-   public JsonObject method1337(String var1) {
-      JsonElement var2 = this.jsonObject.get(var1);
-      if (var2 != null && var2.isJsonObject()) {
-         return var2.getAsJsonObject();
+   public JsonObject method1337(String id) {
+      JsonElement jsonElement = this.jsonObject.get(id);
+      if (jsonElement != null && jsonElement.isJsonObject()) {
+         return jsonElement.getAsJsonObject();
       } else {
-         JsonObject var3 = new JsonObject();
-         this.jsonObject.add(var1, var3);
-         return var3;
+         JsonObject json = new JsonObject();
+         this.jsonObject.add(id, json);
+         return json;
       }
    }
 
    private void method1338() {
       try {
          if (Files.isRegularFile(this.path2)) {
-            JsonElement var1 = JsonParser.parseString(Files.readString(this.path2, StandardCharsets.UTF_8));
-            if (var1.isJsonObject()) {
-               this.jsonObject = var1.getAsJsonObject();
+            JsonElement string = JsonParser.parseString(Files.readString(this.path2, StandardCharsets.UTF_8));
+            if (string.isJsonObject()) {
+               this.jsonObject = string.getAsJsonObject();
             }
          }
-      } catch (Exception var2) {
-         logger.warn("Не удалось прочитать состояние скриптов", var2);
+      } catch (Exception e) {
+         logger.warn("Не удалось прочитать состояние скриптов", e);
       }
    }
 
    private void method1339() {
       try {
-         Path var1 = this.path2.resolveSibling(".state.json.tmp");
-         Files.writeString(var1, gson.toJson(this.jsonObject), StandardCharsets.UTF_8);
-         Files.move(var1, this.path2, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-      } catch (Exception var2) {
-         logger.warn("Не удалось сохранить состояние скриптов", var2);
+         Path sibling = this.path2.resolveSibling(".state.json.tmp");
+         Files.writeString(sibling, gson.toJson(this.jsonObject), StandardCharsets.UTF_8);
+         Files.move(sibling, this.path2, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+      } catch (Exception e) {
+         logger.warn("Не удалось сохранить состояние скриптов", e);
       }
    }
 
-   public Script method1340(String var1, String var2) throws IOException {
-      String var3 = method1303(var1);
-      if (!var3.isBlank() && this.method1294(var3) == null && !Files.exists(this.path.resolve(var3))) {
-         Path var4 = this.path.resolve(var3);
-         Files.createDirectories(var4);
-         Files.writeString(var4.resolve("main.js"), ScriptHeaderParser.method1000(var2, var1), StandardCharsets.UTF_8);
+   public Script method1340(String argument, String string) throws IOException {
+      String str = method1303(argument);
+      if (!str.isBlank() && this.method1294(str) == null && !Files.exists(this.path.resolve(str))) {
+         Path dir = this.path.resolve(str);
+         Files.createDirectories(dir);
+         Files.writeString(dir.resolve("main.js"), ScriptHeaderParser.method1000(string, argument), StandardCharsets.UTF_8);
          this.method1301(false);
-         return this.method1294(var3);
+         return this.method1294(str);
       } else {
          throw new IOException("скрипт с таким именем уже есть");
       }
    }
 
-   public Object method1341(Script var1, String var2) {
-      if (var2.length() > 32768) {
+   public Object method1341(Script workspace, String source) {
+      if (source.length() > 32768) {
          throw new IllegalArgumentException("код слишком длинный");
       } else {
-         ScriptableObject var3;
-         if (var1 != null && var1.isRunning()) {
-            var3 = var1.scope;
+         ScriptableObject scope;
+         if (workspace != null && workspace.isRunning()) {
+            scope = workspace.scope;
          } else {
-            Script var4 = this.method1342();
-            var3 = var4.scope;
+            Script script = this.method1342();
+            scope = script.scope;
          }
 
-         org.mozilla.javascript.Script var5 = method1309(var2, "console");
+         org.mozilla.javascript.Script script = method1309(source, "console");
          return ScriptContextFactory.method7410(250L, (var1x, var2x, var3x, var4x) -> {
-            Object var5x = var5.exec(var1x, var2x);
-            if (var5x instanceof Scriptable var6 && !(var5x instanceof Function)) {
+            Object var5x = script.exec(var1x, var2x);
+            if (var5x instanceof Scriptable id && !(var5x instanceof Function)) {
                try {
-                  return gson.toJson(ScriptValueUtils.method6271(var6, 0));
-               } catch (RuntimeException var8) {
+                  return gson.toJson(ScriptValueUtils.method6271(id, 0));
+               } catch (RuntimeException e) {
                   return Context.toString(var5x);
                }
             } else {
                return ScriptValueUtils.method6253(var5x) ? "undefined" : Context.toString(var5x);
             }
-         }, var3, new Object[0]);
+         }, scope, new Object[0]);
       }
    }
 
@@ -1151,10 +1151,10 @@ public final class Storage {
          this.script = new Script(this, "console", null, this.path.resolve(".console.js"));
          this.script.jsonObject = new JsonObject();
          this.script.scriptStorageFile = new ScriptStorageFile(this.path.resolve(".data").resolve(".console.json"));
-         Context var1 = ScriptContextFactory.method7409();
+         Context context = ScriptContextFactory.method7409();
 
          try {
-            this.script.scope = ScriptContextFactory.method7408(var1);
+            this.script.scope = ScriptContextFactory.method7408(context);
             ScriptModuleApi.method325(this, this.script, this.script.scope);
          } finally {
             Context.exit();
@@ -1169,466 +1169,466 @@ public final class Storage {
       if (this.items5 != null) {
          return this.items5;
       } else {
-         LinkedHashMap var1 = new LinkedHashMap();
+         LinkedHashMap map = new LinkedHashMap();
 
          try {
-            Script var2 = this.method1342();
-            ScriptableObject var3 = var2.scope;
+            Script script = this.method1342();
+            ScriptableObject scope = script.scope;
 
-            for (String var7 : ScriptModuleApi.texts) {
-               Object var8 = ScriptableObject.getProperty(var3, var7);
-               var1.put(var7, method1344(var8));
-               if (var8 instanceof ScriptableObject var9) {
-                  for (Object var13 : var9.getAllIds()) {
-                     Object var14 = var9.get(String.valueOf(var13), var9);
-                     if (var14 instanceof ScriptableObject var15 && !(var14 instanceof Function)) {
-                        var1.put(var7 + "." + var13, method1344(var15));
+            for (String text : ScriptModuleApi.texts) {
+               Object property = ScriptableObject.getProperty(scope, text);
+               map.put(text, method1344(property));
+               if (property instanceof ScriptableObject scriptableObject) {
+                  for (Object allId : scriptableObject.getAllIds()) {
+                     Object obj = scriptableObject.get(String.valueOf(allId), scriptableObject);
+                     if (obj instanceof ScriptableObject property2 && !(obj instanceof Function)) {
+                        map.put(text + "." + allId, method1344(property2));
                      }
                   }
                }
             }
-         } catch (Throwable var16) {
-            logger.warn("Не удалось собрать подсказки API", var16);
+         } catch (Throwable e) {
+            logger.warn("Не удалось собрать подсказки API", e);
          }
 
-         this.items5 = var1;
-         return var1;
+         this.items5 = map;
+         return map;
       }
    }
 
-   private static List<String> method1344(Object var0) {
-      ArrayList<String> var1 = new ArrayList<>();
-      if (var0 instanceof ScriptableObject var2) {
-         for (Object var6 : var2.getAllIds()) {
-            var1.add(String.valueOf(var6));
+   private static List<String> method1344(Object property) {
+      ArrayList<String> strings = new ArrayList<>();
+      if (property instanceof ScriptableObject scriptableObject) {
+         for (Object allId : scriptableObject.getAllIds()) {
+            strings.add(String.valueOf(allId));
          }
       }
 
-      var1.sort(String.CASE_INSENSITIVE_ORDER);
-      return var1;
+      strings.sort(String.CASE_INSENSITIVE_ORDER);
+      return strings;
    }
 
-   public List<Path> method1345(Script var1) {
-      ArrayList<Path> var2 = new ArrayList<>();
-      if (var1.getPath() == null) {
-         var2.add(var1.getPath2());
-         return var2;
+   public List<Path> method1345(Script workspace) {
+      ArrayList<Path> paths = new ArrayList<>();
+      if (workspace.getPath() == null) {
+         paths.add(workspace.getPath2());
+         return paths;
       } else {
-         try (Stream<java.nio.file.Path> var3 = Files.walk(var1.getPath(), 4)) {
-            var3.filter(var0 -> Files.isRegularFile(var0))
+         try (Stream<java.nio.file.Path> walk = Files.walk(workspace.getPath(), 4)) {
+            walk.filter(path -> Files.isRegularFile(path))
                .filter(
-                  var0 -> {
-                     String var1x = var0.getFileName().toString().toLowerCase(Locale.ROOT);
+                  path -> {
+                     String var1x = path.getFileName().toString().toLowerCase(Locale.ROOT);
                      return !var1x.equals("storage.json")
                         && !var1x.endsWith(".tmp")
                         && !var1x.startsWith(".")
                         && (var1x.endsWith(".js") || var1x.endsWith(".json") || var1x.endsWith(".md") || var1x.endsWith(".txt"));
                   }
                )
-               .sorted((java.nio.file.Path var1x, java.nio.file.Path var2x) -> var1x.equals(var1.getPath2()) ? -1 : (var2x.equals(var1.getPath2()) ? 1 : var1x.compareTo(var2x)))
+               .sorted((java.nio.file.Path var1x, java.nio.file.Path var2x) -> var1x.equals(workspace.getPath2()) ? -1 : (var2x.equals(workspace.getPath2()) ? 1 : var1x.compareTo(var2x)))
                .limit(200L)
-               .forEach(var2::add);
-         } catch (UncheckedIOException | IOException var8) {
+               .forEach(paths::add);
+         } catch (UncheckedIOException | IOException e) {
          }
 
-         return var2;
+         return paths;
       }
    }
 
-   public Path method1346(Script var1, String var2) throws IOException {
-      if (var1.getPath() == null) {
-         Path var7 = var1.getPath2().toAbsolutePath().normalize();
-         if (!var7.getFileName().toString().equals(Path.of(var2).getFileName().toString())) {
-            throw new IOException("у одиночного скрипта есть только " + var7.getFileName());
+   public Path method1346(Script workspace, String text) throws IOException {
+      if (workspace.getPath() == null) {
+         Path path = workspace.getPath2().toAbsolutePath().normalize();
+         if (!path.getFileName().toString().equals(Path.of(text).getFileName().toString())) {
+            throw new IOException("у одиночного скрипта есть только " + path.getFileName());
          } else {
-            return var7;
+            return path;
          }
       } else {
-         Path var3 = var1.getPath().toAbsolutePath().normalize();
-         Path var4 = var3.resolve(var2).toAbsolutePath().normalize();
-         if (!var4.startsWith(var3)) {
+         Path path = workspace.getPath().toAbsolutePath().normalize();
+         Path path2 = path.resolve(text).toAbsolutePath().normalize();
+         if (!path2.startsWith(path)) {
             throw new IOException("путь вне папки скрипта");
          } else {
-            for (Path var6 : var3.relativize(var4)) {
-               if (var6.toString().startsWith(".")) {
+            for (Path path3 : path.relativize(path2)) {
+               if (path3.toString().startsWith(".")) {
                   throw new IOException("служебные файлы с точкой в начале имени трогать нельзя");
                }
             }
 
-            return var4;
+            return path2;
          }
       }
    }
 
-   public void method1347(Script var1, Path var2, String var3) throws IOException {
-      Path var4 = (var1.getPath() == null ? this.path : var1.getPath()).toAbsolutePath().normalize();
-      Path var5 = var2.toAbsolutePath().normalize();
-      if (!var5.startsWith(var4)) {
+   public void method1347(Script workspace, Path file, String text) throws IOException {
+      Path path = (workspace.getPath() == null ? this.path : workspace.getPath()).toAbsolutePath().normalize();
+      Path target = file.toAbsolutePath().normalize();
+      if (!target.startsWith(path)) {
          throw new IOException("путь вне папки скрипта");
       } else {
-         for (Path var7 : var4.relativize(var5)) {
-            if (var7.toString().startsWith(".")) {
+         for (Path path2 : path.relativize(target)) {
+            if (path2.toString().startsWith(".")) {
                throw new IOException("служебные файлы с точкой в начале имени трогать нельзя");
             }
          }
 
-         if (ScriptStorageFile.method1005(var3) > 1048576) {
+         if (ScriptStorageFile.method1005(text) > 1048576) {
             throw new IOException("файл больше 1 МБ");
          } else {
-            Files.createDirectories(var5.getParent());
-            Path var8 = var5.resolveSibling(var5.getFileName() + ".tmp");
-            Files.writeString(var8, var3, StandardCharsets.UTF_8);
-            Files.move(var8, var5, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-            if (var5.getFileName().toString().equalsIgnoreCase("CHANGELOG.md")) {
+            Files.createDirectories(target.getParent());
+            Path sibling = target.resolveSibling(target.getFileName() + ".tmp");
+            Files.writeString(sibling, text, StandardCharsets.UTF_8);
+            Files.move(sibling, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            if (target.getFileName().toString().equalsIgnoreCase("CHANGELOG.md")) {
                this.items7.clear();
             }
          }
       }
    }
 
-   public static int method1348(Script var0, Path var1) {
-      String var2 = var0.getError();
-      if (var2 != null && !var2.isEmpty() && var1 != null) {
-         Matcher var3 = pattern.matcher(var2);
-         int var4 = -1;
+   public static int method1348(Script workspace, Path file) {
+      String error = workspace.getError();
+      if (error != null && !error.isEmpty() && file != null) {
+         Matcher matcher = pattern.matcher(error);
+         int n = -1;
 
-         while (var3.find()) {
-            if (var1.getFileName().toString().equals(var3.group(1))) {
-               var4 = Integer.parseInt(var3.group(2));
+         while (matcher.find()) {
+            if (file.getFileName().toString().equals(matcher.group(1))) {
+               n = Integer.parseInt(matcher.group(2));
             }
          }
 
-         return var4;
+         return n;
       } else {
          return -1;
       }
    }
 
-   public List<Storage.Data2> method1349(Script var1) {
-      ArrayList<Storage.Data2> var2 = new ArrayList<>();
-      String var3 = var1 == null ? null : var1.method1403();
+   public List<Storage.Data2> method1349(Script workspace) {
+      ArrayList<Storage.Data2> data2s = new ArrayList<>();
+      String anObject = workspace == null ? null : workspace.method1403();
       synchronized (this.deque) {
-         for (Storage.Data2 var6 : this.deque) {
-            if (var3 == null || var6.getText().equals(var3)) {
-               var2.add(var6);
+         for (Storage.Data2 data2 : this.deque) {
+            if (anObject == null || data2.getText().equals(anObject)) {
+               data2s.add(data2);
             }
          }
 
-         return var2;
+         return data2s;
       }
    }
 
-   public void method1350(Script var1, Map<String, String> var2) throws IOException {
-      String var3 = this.method1306(var1.getPath2());
-      String[] var4 = var3.split("\n", -1);
-      LinkedHashMap var5 = new LinkedHashMap(var2);
-      ArrayList var6 = new ArrayList();
-      int var7 = 0;
+   public void method1350(Script script, Map<String, String> map) throws IOException {
+      String str = this.method1306(script.getPath2());
+      String[] strings = str.split("\n", -1);
+      LinkedHashMap map2 = new LinkedHashMap(map);
+      ArrayList elements = new ArrayList();
+      int size = 0;
 
-      for (int var8 = 0; var8 < var4.length; var8++) {
-         String var9 = var4[var8];
-         String var10 = var9.trim();
-         if (var8 < 30 && var10.startsWith("//")) {
-            String var11 = var10.substring(2).trim();
-            if (var11.startsWith("@")) {
-               int var12 = var11.indexOf(32);
-               String var13 = (var12 < 0 ? var11.substring(1) : var11.substring(1, var12)).toLowerCase(Locale.ROOT);
-               if (var5.containsKey(var13)) {
-                  String var14 = clean((String)var5.remove(var13));
-                  if (!var14.isEmpty()) {
-                     var6.add("// @" + var13 + " " + var14);
+      for (int i = 0; i < strings.length; i++) {
+         String str2 = strings[i];
+         String str3 = str2.trim();
+         if (i < 30 && str3.startsWith("//")) {
+            String str4 = str3.substring(2).trim();
+            if (str4.startsWith("@")) {
+               int indexOf = str4.indexOf(32);
+               String lowerCase = (indexOf < 0 ? str4.substring(1) : str4.substring(1, indexOf)).toLowerCase(Locale.ROOT);
+               if (map2.containsKey(lowerCase)) {
+                  String clean2 = clean((String)map2.remove(lowerCase));
+                  if (!clean2.isEmpty()) {
+                     elements.add("// @" + lowerCase + " " + clean2);
                   }
 
-                  var7 = var6.size();
+                  size = elements.size();
                } else {
-                  var6.add(var9);
-                  var7 = var6.size();
+                  elements.add(str2);
+                  size = elements.size();
                }
                continue;
             }
          }
 
-         var6.add(var9);
+         elements.add(str2);
       }
 
-      ArrayList var15 = new ArrayList();
+      ArrayList arrayList = new ArrayList();
 
-      for (Object var17_o : (Iterable<?>)(Object)(var5.entrySet())) {
-         Map.Entry var17 = (Map.Entry)var17_o;
-         String var18 = clean((String)var17.getValue());
-         if (!var18.isEmpty()) {
-            var15.add("// @" + (String)var17.getKey() + " " + var18);
+      for (Object obj : (Iterable<?>)(Object)(map2.entrySet())) {
+         Map.Entry entry = (Map.Entry)obj;
+         String clean2 = clean((String)entry.getValue());
+         if (!clean2.isEmpty()) {
+            arrayList.add("// @" + (String)entry.getKey() + " " + clean2);
          }
       }
 
-      var6.addAll(var7, var15);
-      this.method1347(var1, var1.getPath2(), String.join("\n", var6));
-      this.method1307(var1, this.method1306(var1.getPath2()));
-      var1.longValue9 = this.method1304(var1);
+      elements.addAll(size, arrayList);
+      this.method1347(script, script.getPath2(), String.join("\n", elements));
+      this.method1307(script, this.method1306(script.getPath2()));
+      script.longValue9 = this.method1304(script);
    }
 
-   private static String clean(String var0) {
-      if (var0 == null) {
+   private static String clean(String str) {
+      if (str == null) {
          return "";
       } else {
-         String var1 = var0.replace("\r", " ").replace("\n", " ").trim();
-         return var1.length() > 120 ? var1.substring(0, 120) : var1;
+         String str2 = str.replace("\r", " ").replace("\n", " ").trim();
+         return str2.length() > 120 ? str2.substring(0, 120) : str2;
       }
    }
 
-   public String method1351(Script var1, int var2, String var3) throws IOException {
-      String var4 = var1.getVersion().isBlank() ? "1.0.0" : var1.getVersion();
-      String[] var5 = var4.split("\\.");
-      int[] var6 = new int[3];
+   public String method1351(Script script, int n, String str) throws IOException {
+      String version = script.getVersion().isBlank() ? "1.0.0" : script.getVersion();
+      String[] strings = version.split("\\.");
+      int[] ints = new int[3];
 
-      for (int var7 = 0; var7 < 3; var7++) {
+      for (int i = 0; i < 3; i++) {
          try {
-            var6[var7] = var7 < var5.length ? Integer.parseInt(var5[var7].replaceAll("[^0-9]", "")) : 0;
-         } catch (NumberFormatException var14) {
-            var6[var7] = 0;
+            ints[i] = i < strings.length ? Integer.parseInt(strings[i].replaceAll("[^0-9]", "")) : 0;
+         } catch (NumberFormatException e) {
+            ints[i] = 0;
          }
       }
 
-      var6[var2]++;
+      ints[n]++;
 
-      for (int var15 = var2 + 1; var15 < 3; var15++) {
-         var6[var15] = 0;
+      for (int i = n + 1; i < 3; i++) {
+         ints[i] = 0;
       }
 
-      String var16 = var6[0] + "." + var6[1] + "." + var6[2];
-      this.method1350(var1, Map.of("version", var16));
-      if (var1.getPath() != null) {
-         Path var8 = var1.getPath().resolve("CHANGELOG.md");
-         String var9 = Files.isRegularFile(var8) ? this.method1306(var8) : "# " + var1.method1403() + "\n";
-         String var10 = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
-         String var11 = "\n## v" + var16 + " — " + var10 + "\n" + (var3 != null && !var3.isBlank() ? "- " + clean(var3) : "- обновление") + "\n";
-         int var12 = var9.indexOf("\n## ");
-         String var13 = var12 < 0 ? var9 + var11 : var9.substring(0, var12) + var11 + var9.substring(var12);
-         this.method1347(var1, var8, var13);
+      String str2 = ints[0] + "." + ints[1] + "." + ints[2];
+      this.method1350(script, Map.of("version", str2));
+      if (script.getPath() != null) {
+         Path path = script.getPath().resolve("CHANGELOG.md");
+         String str3 = Files.isRegularFile(path) ? this.method1306(path) : "# " + script.method1403() + "\n";
+         String str4 = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
+         String str5 = "\n## v" + str2 + " — " + str4 + "\n" + (str != null && !str.isBlank() ? "- " + clean(str) : "- обновление") + "\n";
+         int indexOf = str3.indexOf("\n## ");
+         String text = indexOf < 0 ? str3 + str5 : str3.substring(0, indexOf) + str5 + str3.substring(indexOf);
+         this.method1347(script, path, text);
       }
 
-      this.method1299(var1);
-      return var16;
+      this.method1299(script);
+      return str2;
    }
 
-   public List<String> method1352(Script var1, int var2) {
-      ArrayList<String> var3 = new ArrayList<>();
-      if (var1.getPath() == null) {
-         return var3;
+   public List<String> method1352(Script script, int changesLimit) {
+      ArrayList<String> strings = new ArrayList<>();
+      if (script.getPath() == null) {
+         return strings;
       } else {
-         Path var4 = var1.getPath().resolve("CHANGELOG.md");
-         Storage.Data var5 = this.items7.get(var4);
+         Path path = script.getPath().resolve("CHANGELOG.md");
+         Storage.Data data2 = this.items7.get(path);
 
-         Storage.Data var6;
+         Storage.Data data3;
          try {
-            BasicFileAttributes var7 = Files.readAttributes(var4, BasicFileAttributes.class);
-            if (!var7.isRegularFile()) {
-               var6 = data;
+            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+            if (!attributes.isRegularFile()) {
+               data3 = data;
             } else {
-               long var8 = var7.lastModifiedTime().toMillis();
-               if (var5 != null && var5.modified() == var8 && var5.size() == var7.size()) {
-                  var6 = var5;
+               long millis = attributes.lastModifiedTime().toMillis();
+               if (data2 != null && data2.modified() == millis && data2.size() == attributes.size()) {
+                  data3 = data2;
                } else {
-                  ArrayList var10 = new ArrayList();
+                  ArrayList coll = new ArrayList();
 
-                  for (String var14 : this.method1306(var4).split("\n")) {
-                     String var15 = var14.trim();
-                     if (var15.startsWith("## ") || var15.startsWith("- ")) {
-                        var10.add(var15);
+                  for (String str : this.method1306(path).split("\n")) {
+                     String str2 = str.trim();
+                     if (str2.startsWith("## ") || str2.startsWith("- ")) {
+                        coll.add(str2);
                      }
                   }
 
-                  var6 = new Storage.Data(var8, var7.size(), List.copyOf(var10));
+                  data3 = new Storage.Data(millis, attributes.size(), List.copyOf(coll));
                }
             }
-         } catch (IOException var16) {
-            var6 = data;
+         } catch (IOException e) {
+            data3 = data;
          }
 
-         if (var6 != var5) {
-            this.items7.put(var4, var6);
+         if (data3 != data2) {
+            this.items7.put(path, data3);
          }
 
-         for (String var18 : var6.lines()) {
-            var3.add(var18);
-            if (var3.size() >= var2) {
+         for (String line : data3.lines()) {
+            strings.add(line);
+            if (strings.size() >= changesLimit) {
                break;
             }
          }
 
-         return var3;
+         return strings;
       }
    }
 
-   public void method1353(Script var1, Path var2) throws IOException {
-      if (var1.getPath() == null) {
+   public void method1353(Script script, Path path) throws IOException {
+      if (script.getPath() == null) {
          throw new IOException("у одиночного .js нет папки для аватарки");
-      } else if (Files.size(var2) > 4194304L) {
+      } else if (Files.size(path) > 4194304L) {
          throw new IOException("картинка больше 4 МБ");
       } else {
-         byte[] var3 = Files.readAllBytes(var2);
-         int[] var4 = ImageLoader.method231(var3);
-         if (var4[0] <= 2048 && var4[1] <= 2048) {
-            try (NativeImage var5 = NativeImage.read(new ByteArrayInputStream(var3))) {
-               if (var5.getWidth() > 2048 || var5.getHeight() > 2048) {
+         byte[] allBytes = Files.readAllBytes(path);
+         int[] ints = ImageLoader.method231(allBytes);
+         if (ints[0] <= 2048 && ints[1] <= 2048) {
+            try (NativeImage nativeImage = NativeImage.read(new ByteArrayInputStream(allBytes))) {
+               if (nativeImage.getWidth() > 2048 || nativeImage.getHeight() > 2048) {
                   throw new IOException("картинка больше 2048×2048");
                }
-            } catch (IOException var10) {
-               throw var10;
-            } catch (Exception var11) {
+            } catch (IOException e) {
+               throw e;
+            } catch (Exception e) {
                throw new IOException("нужен PNG");
             }
 
-            Files.write(var1.method1412(), var3);
+            Files.write(script.method1412(), allBytes);
          } else {
             throw new IOException("картинка больше 2048×2048");
          }
       }
    }
 
-   public void method1354(Script var1) throws IOException {
-      if (var1.method1412() != null) {
-         Files.deleteIfExists(var1.method1412());
+   public void method1354(Script script) throws IOException {
+      if (script.method1412() != null) {
+         Files.deleteIfExists(script.method1412());
       }
    }
 
-   public Script method1355(Script var1) throws IOException {
-      if (var1.getPath() == null) {
+   public Script method1355(Script script) throws IOException {
+      if (script.getPath() == null) {
          throw new IOException("одиночный .js дублируется копированием файла");
       } else {
-         String var2 = var1.getId() + "_copy";
-         String var3 = var2;
+         String str = script.getId() + "_copy";
+         String argument = str;
 
-         for (int var4 = 2; this.method1294(var3) != null || Files.exists(this.path.resolve(var3)); var4++) {
-            var3 = var2 + var4;
+         for (int i = 2; this.method1294(argument) != null || Files.exists(this.path.resolve(argument)); i++) {
+            argument = str + i;
          }
 
-         Path var12 = this.path.resolve(var3);
+         Path path = this.path.resolve(argument);
 
-         try (Stream<java.nio.file.Path> var5 = Files.walk(var1.getPath())) {
-            for (Path var7 : (Iterable<Path>)var5::iterator) {
-               String var8 = var7.getFileName().toString();
-               if (!var8.equals("storage.json") && !var8.endsWith(".tmp") && !var8.equals(".origin.json")) {
-                  Path var9 = var12.resolve(var1.getPath().relativize(var7).toString());
-                  if (Files.isDirectory(var7)) {
-                     Files.createDirectories(var9);
+         try (Stream<java.nio.file.Path> walk = Files.walk(script.getPath())) {
+            for (Path path2 : (Iterable<Path>)walk::iterator) {
+               String string = path2.getFileName().toString();
+               if (!string.equals("storage.json") && !string.endsWith(".tmp") && !string.equals(".origin.json")) {
+                  Path dir = path.resolve(script.getPath().relativize(path2).toString());
+                  if (Files.isDirectory(path2)) {
+                     Files.createDirectories(dir);
                   } else {
-                     Files.copy(var7, var9);
+                     Files.copy(path2, dir);
                   }
                }
             }
          }
 
          this.method1301(false);
-         Script var13 = this.method1294(var3);
-         if (var13 != null) {
-            this.method1350(var13, Map.of("name", var1.method1403() + " (копия)"));
+         Script script2 = this.method1294(argument);
+         if (script2 != null) {
+            this.method1350(script2, Map.of("name", script.method1403() + " (копия)"));
          }
 
-         return var13;
+         return script2;
       }
    }
 
-   public Script method1356(Script var1, String var2) throws IOException {
-      String var3 = method1303(var2);
-      if (var1.getPath() == null) {
+   public Script method1356(Script script, String string) throws IOException {
+      String argument = method1303(string);
+      if (script.getPath() == null) {
          throw new IOException("переименовать можно только скрипт-папку");
-      } else if (!var3.isBlank() && !var3.equals(var1.getId())) {
-         if (this.method1294(var3) == null && !Files.exists(this.path.resolve(var3))) {
-            boolean var4 = this.method1297(var1);
-            this.method1319(var1, true);
-            var1.type2 = Script.Type2.STOPPED;
+      } else if (!argument.isBlank() && !argument.equals(script.getId())) {
+         if (this.method1294(argument) == null && !Files.exists(this.path.resolve(argument))) {
+            boolean flag = this.method1297(script);
+            this.method1319(script, true);
+            script.type2 = Script.Type2.STOPPED;
 
             try {
-               Files.move(var1.getPath(), this.path.resolve(var3));
-            } catch (IOException var7) {
-               if (var4) {
-                  this.method1308(var1, null);
+               Files.move(script.getPath(), this.path.resolve(argument));
+            } catch (IOException e) {
+               if (flag) {
+                  this.method1308(script, null);
                }
 
                this.flag2 = true;
-               throw var7;
+               throw e;
             }
 
-            JsonElement var5 = this.jsonObject.remove(var1.getId());
-            this.items.remove(var1.getId());
-            if (var5 != null) {
-               this.jsonObject.add(var3, var5);
+            JsonElement jsonElement = this.jsonObject.remove(script.getId());
+            this.items.remove(script.getId());
+            if (jsonElement != null) {
+               this.jsonObject.add(argument, jsonElement);
             }
 
             this.flag = true;
             this.method1301(false);
-            Script var6 = this.method1294(var3);
-            if (var6 != null && var4 && !var6.isRunning()) {
-               this.method1308(var6, null);
+            Script workspace = this.method1294(argument);
+            if (workspace != null && flag && !workspace.isRunning()) {
+               this.method1308(workspace, null);
             }
 
             this.flag2 = true;
-            return var6;
+            return workspace;
          } else {
-            throw new IOException("папка " + var3 + " уже есть");
+            throw new IOException("папка " + argument + " уже есть");
          }
       } else {
-         return var1;
+         return script;
       }
    }
 
-   public void method1357(Script var1) throws IOException {
-      this.method1319(var1, true);
-      var1.type2 = Script.Type2.STOPPED;
-      Path var2 = this.path.resolve(".trash");
-      Files.createDirectories(var2);
-      String var3 = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
-      Path var4 = var1.getPath() == null ? var1.getPath2() : var1.getPath();
-      Files.move(var4, var2.resolve(var1.getId() + "-" + var3 + (var1.getPath() == null ? ".js" : "")));
-      this.jsonObject.remove(var1.getId());
+   public void method1357(Script script) throws IOException {
+      this.method1319(script, true);
+      script.type2 = Script.Type2.STOPPED;
+      Path dir = this.path.resolve(".trash");
+      Files.createDirectories(dir);
+      String str = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
+      Path path2 = script.getPath() == null ? script.getPath2() : script.getPath();
+      Files.move(path2, dir.resolve(script.getId() + "-" + str + (script.getPath() == null ? ".js" : "")));
+      this.jsonObject.remove(script.getId());
       this.flag = true;
-      this.items.remove(var1.getId());
+      this.items.remove(script.getId());
       this.flag2 = true;
    }
 
-   public void method1358(Script var1) throws IOException {
-      Path var2 = this.method1311(var1);
-      var1.scriptStorageFile = null;
-      Files.deleteIfExists(var2);
-      this.method1299(var1);
+   public void method1358(Script script) throws IOException {
+      Path path = this.method1311(script);
+      script.scriptStorageFile = null;
+      Files.deleteIfExists(path);
+      this.method1299(script);
    }
 
-   public void method1359(Script var1) {
-      JsonObject var2 = this.method1337(var1.getId());
-      boolean var3 = var1.isRunning();
-      if (var3) {
-         this.method1319(var1, true);
-         var1.type2 = Script.Type2.STOPPED;
+   public void method1359(Script script) {
+      JsonObject json = this.method1337(script.getId());
+      boolean running = script.isRunning();
+      if (running) {
+         this.method1319(script, true);
+         script.type2 = Script.Type2.STOPPED;
       }
 
-      var2.remove("modules");
-      var2.remove("settings");
+      json.remove("modules");
+      json.remove("settings");
       this.flag = true;
-      if (var3) {
-         this.method1308(var1, null);
+      if (running) {
+         this.method1308(script, null);
       }
    }
 
-   public Path method1360(Script var1) throws IOException {
-      Path var2 = this.path.resolve(".exports");
-      Files.createDirectories(var2);
-      String var3 = var1.getVersion().isBlank() ? "" : "-v" + var1.getVersion();
-      Path var4 = var2.resolve(var1.getId() + var3 + ".zjs");
-      Files.write(var4, OriginUtil.method6919(var1));
-      return var4;
+   public Path method1360(Script script) throws IOException {
+      Path dir = this.path.resolve(".exports");
+      Files.createDirectories(dir);
+      String str = script.getVersion().isBlank() ? "" : "-v" + script.getVersion();
+      Path path = dir.resolve(script.getId() + str + ".zjs");
+      Files.write(path, OriginUtil.method6919(script));
+      return path;
    }
 
    public void shutdown() {
       Server.getInstance().stop();
 
-      for (Script var2 : this.items.values()) {
-         if (var2.isRunning()) {
-            this.method1315(var2);
+      for (Script workspace : this.items.values()) {
+         if (workspace.isRunning()) {
+            this.method1315(workspace);
          }
 
-         if (var2.scriptStorageFile != null) {
-            var2.scriptStorageFile.flush();
+         if (workspace.scriptStorageFile != null) {
+            workspace.scriptStorageFile.flush();
          }
       }
 
@@ -1670,10 +1670,10 @@ public final class Storage {
          return "Data[" + "longValue=" + this.longValue + ", " + "longValue2=" + this.longValue2 + ", " + "items=" + this.items + "]";
       }
 
-      private Data(long var1, long var3, List<String> var5) {
-         this.longValue = var1;
-         this.longValue2 = var3;
-         this.items = var5;
+      private Data(long longValue, long size, List<String> items) {
+         this.longValue = longValue;
+         this.longValue2 = size;
+         this.items = items;
       }
 
       public long modified() {
@@ -1724,11 +1724,11 @@ public final class Storage {
          return "Data2[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + "]";
       }
 
-      public Data2(long var1, String var3, String var4, String var5) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.text3 = var5;
+      public Data2(long longValue, String text, String anObject, String error) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = anObject;
+         this.text3 = error;
       }
 
       public long time() {
@@ -1756,12 +1756,12 @@ public final class Storage {
       public final int intValue;
       public boolean cancelled;
 
-      public Entry(int var1, Function var2, long var3, boolean var5) {
-         this.intValue = var1;
-         this.function = var2;
-         this.longValue = Math.max(0L, var3);
+      public Entry(int intValue, Function function, long l, boolean flag) {
+         this.intValue = intValue;
+         this.function = function;
+         this.longValue = Math.max(0L, l);
          this.longValue2 = System.currentTimeMillis() + this.longValue;
-         this.flag = var5;
+         this.flag = flag;
       }
    }
 }

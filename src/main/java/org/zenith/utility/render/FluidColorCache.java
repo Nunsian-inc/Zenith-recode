@@ -17,50 +17,50 @@ public final class FluidColorCache {
    private FluidColorCache() {
    }
 
-   public static double method7101(double var0, double var2, double var4) {
-      Minecraft var6 = Minecraft.getInstance();
-      if (var6.gameRenderer == null) {
+   public static double method7101(double d, double d2, double d3) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.gameRenderer == null) {
          return 0.0;
       } else {
-         Vec3 var7 = var6.gameRenderer.mainCamera().position();
-         if (var7 == null) {
+         Vec3 position = minecraft.gameRenderer.mainCamera().position();
+         if (position == null) {
             return 0.0;
          } else {
-            double var8 = var0 - var7.x;
-            double var10 = var2 - var7.y;
-            double var12 = var4 - var7.z;
-            return var8 * var8 + var10 * var10 + var12 * var12;
+            double d4 = d - position.x;
+            double d5 = d2 - position.y;
+            double d6 = d3 - position.z;
+            return d4 * d4 + d5 * d5 + d6 * d6;
          }
       }
    }
 
-   public static boolean method7102(Object var0, double var1) {
-      double var3 = OptimizationFlags.doubleValue;
-      if (var1 < var3) {
+   public static boolean method7102(Object obj, double d) {
+      double doubleValue = OptimizationFlags.doubleValue;
+      if (d < doubleValue) {
          return true;
       } else {
-         int var5 = System.identityHashCode(var0) * -1640531527 >>> 28;
-         return var1 < var3 * 4.0 ? (var5 & 1) == 0 : (var5 & 3) == 0;
+         int n = System.identityHashCode(obj) * -1640531527 >>> 28;
+         return d < doubleValue * 4.0 ? (n & 1) == 0 : (n & 3) == 0;
       }
    }
 
-   public static FluidState method7103(ClientLevel var0, BlockPos var1) {
-      long var2 = var0.getGameTime();
-      ClientLevel var4 = weakReference.get();
-      if (var2 == longValue && var4 == var0) {
-         return (FluidState)long2ObjectOpenHashMap.get(var1.asLong());
+   public static FluidState method7103(ClientLevel referent, BlockPos pos) {
+      long gameTime = referent.getGameTime();
+      ClientLevel level = weakReference.get();
+      if (gameTime == longValue && level == referent) {
+         return (FluidState)long2ObjectOpenHashMap.get(pos.asLong());
       } else {
          long2ObjectOpenHashMap.clear();
-         longValue = var2;
-         if (var4 != var0) {
-            weakReference = new WeakReference<>(var0);
+         longValue = gameTime;
+         if (level != referent) {
+            weakReference = new WeakReference<>(referent);
          }
 
          return null;
       }
    }
 
-   public static void method7104(BlockPos var0, FluidState var1) {
-      long2ObjectOpenHashMap.put(var0.asLong(), var1);
+   public static void method7104(BlockPos pos, FluidState fluidState) {
+      long2ObjectOpenHashMap.put(pos.asLong(), fluidState);
    }
 }

@@ -20,7 +20,7 @@ public interface SettingAccess {
 
    Object value();
 
-   boolean value(Object var1);
+   boolean value(Object obj);
 
    default double min() {
       return 0.0;

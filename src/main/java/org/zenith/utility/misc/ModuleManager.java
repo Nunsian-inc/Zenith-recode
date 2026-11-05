@@ -346,54 +346,54 @@ public final class ModuleManager implements MinecraftAccess {
       this.method2481(StreamerModeModule.INSTANCE);
    }
 
-   private void method2481(Module var1) {
-      this.method2482(var1);
+   private void method2481(Module moduleValue) {
+      this.method2482(moduleValue);
    }
 
-   public void method2482(Module var1) {
-      Objects.requireNonNull(var1, "module");
-      if (this.items.stream().anyMatch(var1x -> var1x.getId().equals(var1.getId()))) {
-         throw new IllegalArgumentException("Duplicate module id: " + var1.getId());
+   public void method2482(Module moduleValue) {
+      Objects.requireNonNull(moduleValue, "module");
+      if (this.items.stream().anyMatch(var1x -> var1x.getId().equals(moduleValue.getId()))) {
+         throw new IllegalArgumentException("Duplicate module id: " + moduleValue.getId());
       } else {
-         this.items.add(var1);
+         this.items.add(moduleValue);
       }
    }
 
-   public boolean method2483(Module var1) {
-      if (var1 == null) {
+   public boolean method2483(Module moduleValue) {
+      if (moduleValue == null) {
          return false;
       } else {
-         var1.setToggled(false);
-         return this.items.remove(var1);
+         moduleValue.setToggled(false);
+         return this.items.remove(moduleValue);
       }
    }
 
-   public Module method2484(String var1) {
-      return this.items.stream().filter(var1x -> var1x.getName().equalsIgnoreCase(var1)).findFirst().orElse(null);
+   public Module method2484(String string) {
+      return this.items.stream().filter(var1x -> var1x.getName().equalsIgnoreCase(string)).findFirst().orElse(null);
    }
 
    public Set<Module> method2485() {
-      LinkedHashSet var1 = new LinkedHashSet();
+      LinkedHashSet linkedHashSet = new LinkedHashSet();
 
-      for (Module var3 : this.items) {
-         if (var3.isEnabled()) {
-            var1.add(var3);
+      for (Module moduleValue : this.items) {
+         if (moduleValue.isEnabled()) {
+            linkedHashSet.add(moduleValue);
          }
       }
 
-      return var1;
+      return linkedHashSet;
    }
 
    @EventTarget
-   public void method2486(KeyEvent var1) {
-      if (var1.getIntValue() == 1) {
+   public void method2486(KeyEvent event) {
+      if (event.getIntValue() == 1) {
          if (!BindCapture.isActive() || mc.gui.screen() == null || mc.gui.screen() != Zenith.getInstance().getNLMenuScreen()) {
-            if (KeyName.method6703(MenuModule.INSTANCE.getKeyCode(), MenuModule.INSTANCE.getKeyModifiers(), var1.getKeyCode(), var1.getModifiers())) {
+            if (KeyName.method6703(MenuModule.INSTANCE.getKeyCode(), MenuModule.INSTANCE.getKeyModifiers(), event.getKeyCode(), event.getModifiers())) {
                MenuModule.INSTANCE.toggle();
             } else if (mc.gui.screen() == null) {
-               for (Module var3 : this.items) {
-                  if (KeyName.method6703(var3.getKeyCode(), var3.getKeyModifiers(), var1.getKeyCode(), var1.getModifiers())) {
-                     var3.toggle();
+               for (Module moduleValue : this.items) {
+                  if (KeyName.method6703(moduleValue.getKeyCode(), moduleValue.getKeyModifiers(), event.getKeyCode(), event.getModifiers())) {
+                     moduleValue.toggle();
                   }
                }
             }

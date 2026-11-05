@@ -19,10 +19,10 @@ public class MixinElytraFeatureRenderer {
       cancellable = true
    )
    private void zenith$hideWingsUnderWardrobe(
-      PoseStack var1, SubmitNodeCollector var2, int var3, HumanoidRenderState var4, float var5, float var6, CallbackInfo var7
+      PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int n, HumanoidRenderState humanoidRenderState, float f, float f2, CallbackInfo callbackInfo
    ) {
-      if (var4 instanceof AvatarRenderState var8 && WardrobeRenderer.method6689(var8)) {
-         var7.cancel();
+      if (humanoidRenderState instanceof AvatarRenderState state && WardrobeRenderer.method6689(state)) {
+         callbackInfo.cancel();
       }
    }
 }

@@ -5,37 +5,37 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 public final class VaultKeyResolver {
-   private static volatile VaultKeyResolver.Handler handler = var0 -> null;
+   private static volatile VaultKeyResolver.Handler handler = str -> null;
 
    private VaultKeyResolver() {
    }
 
-   public static void method2859(VaultKeyResolver.Handler var0) {
-      if (var0 != null) {
-         handler = var0;
+   public static void method2859(VaultKeyResolver.Handler handler2) {
+      if (handler2 != null) {
+         handler = handler2;
       }
    }
 
-   public static byte[] method2860(VaultKeyResolver.Type var0, String var1) {
-      byte[] var2 = switch (var0) {
+   public static byte[] method2860(VaultKeyResolver.Type type, String name) {
+      byte[] original = switch (type) {
          case MACHINE -> method2862();
          case ENVELOPE -> {
-            byte[] var3 = handler.resolve(var1);
-            if (var3 == null || var3.length < 32) {
-               throw new IllegalStateException("vault: no server DEK for " + var1 + " (login/server required)");
+            byte[] bytes = handler.resolve(name);
+            if (bytes == null || bytes.length < 32) {
+               throw new IllegalStateException("vault: no server DEK for " + name + " (login/server required)");
             }
 
-            yield var3;
+            yield bytes;
          }
          default -> throw new IllegalStateException();
       };
-      byte[] var4 = method2864(method2863(var2, ("zenith/" + var0 + "/" + var1).getBytes(StandardCharsets.UTF_8)));
-      Arrays.fill(var2, (byte)0);
-      return var4;
+      byte[] bytes = method2864(method2863(original, ("zenith/" + type + "/" + name).getBytes(StandardCharsets.UTF_8)));
+      Arrays.fill(original, (byte)0);
+      return bytes;
    }
 
-   public static byte[] method2861(VaultKeyResolver.Type var0, String var1, byte[] var2) {
-      return method2864(method2863(var2, ("zenith/" + var0 + "/" + var1).getBytes(StandardCharsets.UTF_8)));
+   public static byte[] method2861(VaultKeyResolver.Type type, String str, byte[] original) {
+      return method2864(method2863(original, ("zenith/" + type + "/" + str).getBytes(StandardCharsets.UTF_8)));
    }
 
    private static byte[] method2862() {
@@ -44,22 +44,22 @@ public final class VaultKeyResolver {
       };
    }
 
-   private static byte[] method2863(byte[] var0, byte[] var1) {
-      byte[] var2 = Arrays.copyOf(var0, var0.length + var1.length);
-      System.arraycopy(var1, 0, var2, var0.length, var1.length);
-      return var2;
+   private static byte[] method2863(byte[] original, byte[] bytes) {
+      byte[] bytes2 = Arrays.copyOf(original, original.length + bytes.length);
+      System.arraycopy(bytes, 0, bytes2, original.length, bytes.length);
+      return bytes2;
    }
 
-   private static byte[] method2864(byte[] var0) {
+   private static byte[] method2864(byte[] input) {
       try {
-         return MessageDigest.getInstance("SHA-512").digest(var0);
-      } catch (Exception var2) {
-         throw new RuntimeException(var2);
+         return MessageDigest.getInstance("SHA-512").digest(input);
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 
    public interface Handler {
-      byte[] resolve(String var1);
+      byte[] resolve(String name);
    }
 
    public static enum Type {

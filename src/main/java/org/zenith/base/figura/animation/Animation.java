@@ -136,9 +136,9 @@ public class Animation {
                this.codeFrames.put(item.getKey(), chunk);
                iter.remove();
             }
-         } catch (LuaError var5) {
+         } catch (LuaError e) {
             if (this.owner.luaRuntime != null) {
-               this.owner.luaRuntime.error(var5);
+               this.owner.luaRuntime.error(e);
             }
          }
       }
@@ -158,8 +158,8 @@ public class Animation {
                if (codeTime >= minTime && codeTime < maxTime) {
                   try {
                      this.owner.run(this.codeFrames.get(codeTime), this.owner.animation, this);
-                  } catch (Exception var6) {
-                     this.owner.luaRuntime.error(var6);
+                  } catch (Exception e) {
+                     this.owner.luaRuntime.error(e);
                   }
                }
             }
@@ -486,7 +486,7 @@ public class Animation {
       try {
          this.loop = Animation.LoopMode.valueOf(loop.toUpperCase(Locale.US));
          return this;
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Illegal LoopMode: \"" + loop + "\".");
       }
    }

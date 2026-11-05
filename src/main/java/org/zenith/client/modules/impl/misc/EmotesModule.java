@@ -64,8 +64,8 @@ public final class EmotesModule extends Module {
    private EmotesModule() {
       this.autoF5Duration.setVisible(this.autoF5::isEnabled);
 
-      for (int var1 = 0; var1 < this.animations.length; var1++) {
-         this.animations[var1] = new Animation(160L, 0.0F, Easing.INSTANCE18);
+      for (int i = 0; i < this.animations.length; i++) {
+         this.animations[i] = new Animation(160L, 0.0F, Easing.INSTANCE18);
       }
    }
 
@@ -77,46 +77,46 @@ public final class EmotesModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.flag3 && (!this.autoF5.isEnabled() || System.nanoTime() >= this.longValue)) {
          this.method6890();
       }
    }
 
    @EventTarget
-   public void method6882(KeyEvent var1) {
-      if (var1.isKey(this.wheelBind.getKeyCode()) && this.wheelBind.getKeyCode() != -1) {
-         if (var1.getIntValue() == 1) {
+   public void method6882(KeyEvent event) {
+      if (event.isKey(this.wheelBind.getKeyCode()) && this.wheelBind.getKeyCode() != -1) {
+         if (event.getIntValue() == 1) {
             this.method6886();
-         } else if (var1.getIntValue() == 0) {
+         } else if (event.getIntValue() == 0) {
             this.method6888(true);
          }
       }
    }
 
    @EventTarget
-   public void method6883(MouseButtonEvent var1) {
-      if (this.flag && var1.getIntValue2() == 1) {
-         if (var1.getIntValue() == 0 || var1.getIntValue() == 1) {
-            var1.setCancelled(true);
-            int var2;
-            if ((var2 = this.method6897(this.method6907(), this.method6908(), this.method6906())) != -1) {
-               this.hovered = var2;
-               int var7 = this.intValue * 8 + var2;
-               EmoteInfo var4 = this.method6900(var2);
-               if (var4 == null) {
-                  this.method6902(var7);
-               } else if (var1.getIntValue() == 1) {
-                  this.method6904(var7);
+   public void method6883(MouseButtonEvent event) {
+      if (this.flag && event.getIntValue2() == 1) {
+         if (event.getIntValue() == 0 || event.getIntValue() == 1) {
+            event.setCancelled(true);
+            int hovered;
+            if ((hovered = this.method6897(this.method6907(), this.method6908(), this.method6906())) != -1) {
+               this.hovered = hovered;
+               int favoriteSlot = this.intValue * 8 + hovered;
+               EmoteInfo emoteInfo = this.method6900(hovered);
+               if (emoteInfo == null) {
+                  this.method6902(favoriteSlot);
+               } else if (event.getIntValue() == 1) {
+                  this.method6904(favoriteSlot);
                } else {
-                  this.method6889(var4);
+                  this.method6889(emoteInfo);
                   this.method6888(false);
                }
             } else {
-               int var3;
-               if ((var3 = this.method6898(this.method6907(), this.method6908(), this.method6906())) != 0 && var1.getIntValue() == 0) {
-                  this.method6899(var3, true);
-               } else if (var1.getIntValue() == 1 && mc.player != null) {
+               int n;
+               if ((n = this.method6898(this.method6907(), this.method6908(), this.method6906())) != 0 && event.getIntValue() == 0) {
+                  this.method6899(n, true);
+               } else if (event.getIntValue() == 1 && mc.player != null) {
                   EmoteAccess.method7922(mc.player.getUUID());
                }
             }
@@ -125,21 +125,21 @@ public final class EmotesModule extends Module {
    }
 
    @EventTarget
-   public void method6884(MouseScrollEvent var1) {
-      if (this.flag && var1.getDoubleValue2() != 0.0) {
-         this.method6899(var1.getDoubleValue2() < 0.0 ? 1 : -1, false);
-         var1.setCancelled(true);
+   public void method6884(MouseScrollEvent event) {
+      if (this.flag && event.getDoubleValue2() != 0.0) {
+         this.method6899(event.getDoubleValue2() < 0.0 ? 1 : -1, false);
+         event.setCancelled(true);
       }
    }
 
    @EventTarget(4)
-   public void method6885(ScreenRenderEvent var1) {
+   public void method6885(ScreenRenderEvent event) {
       if (mc.player != null && mc.level != null && mc.gui.screen() == null) {
          if (this.flag) {
             this.method6909(true);
-            EmotesModule.Data var2 = this.method6906();
-            this.hovered = this.method6897(var1.getMenuDrawContext().getMouseX(), var1.getMenuDrawContext().getMouseY(), var2);
-            this.method6891(var1.getMenuDrawContext(), var2);
+            EmotesModule.Data data = this.method6906();
+            this.hovered = this.method6897(event.getMenuDrawContext().getMouseX(), event.getMenuDrawContext().getMouseY(), data);
+            this.method6891(event.getMenuDrawContext(), data);
          }
       } else {
          if (this.flag) {
@@ -150,13 +150,13 @@ public final class EmotesModule extends Module {
 
    private void method6886() {
       if (mc.player != null && mc.level != null && mc.gui.screen() == null) {
-         var var10000 = EmoteAccess.method7917();
-         if (var10000 != null && !var10000.isEmpty()) {
+         var emoteInfos = EmoteAccess.method7917();
+         if (emoteInfos != null && !emoteInfos.isEmpty()) {
             this.flag = true;
             this.hovered = -1;
 
-            for (Animation var4 : this.animations) {
-               var4.method2809(0.0F);
+            for (Animation animation : this.animations) {
+               animation.method2809(0.0F);
             }
 
             this.animation.method2809(0.0F);
@@ -171,11 +171,11 @@ public final class EmotesModule extends Module {
       this.method6888(false);
    }
 
-   private void method6888(boolean var1) {
-      if (var1 && this.flag) {
-         EmoteInfo var2 = this.method6900(this.hovered);
-         if (var2 != null) {
-            this.method6889(var2);
+   private void method6888(boolean flag) {
+      if (flag && this.flag) {
+         EmoteInfo emoteInfo = this.method6900(this.hovered);
+         if (emoteInfo != null) {
+            this.method6889(emoteInfo);
          }
       }
 
@@ -184,8 +184,8 @@ public final class EmotesModule extends Module {
       this.method6909(false);
    }
 
-   private void method6889(EmoteInfo var1) {
-      EmoteAccess.method7920(var1.getText());
+   private void method6889(EmoteInfo emoteInfo) {
+      EmoteAccess.method7920(emoteInfo.getText());
       if (this.autoF5.isEnabled() && mc.options.getCameraType().isFirstPerson()) {
          this.flag3 = true;
          mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
@@ -201,268 +201,268 @@ public final class EmotesModule extends Module {
       }
    }
 
-   private void method6891(MenuDrawContext var1, EmotesModule.Data var2) {
-      ZenithStyle var3 = zenith.getStyleManager().getCurrentStyle();
-      if (var3 != null) {
-         float var4 = Math.clamp(this.animation.method2808(1.0F), 0.0F, 1.0F);
-         float var5 = 0.82F + 0.18F * var4;
-         var1.pose().pushMatrix();
-         var1.pose().translate(var2.floatValue, var2.floatValue2);
-         var1.pose().scale(var5, var5);
-         var1.pose().translate(-var2.floatValue, -var2.floatValue2);
-         this.method6892(var1, var2, var4);
-         this.method6893(var1, var2, var3, var4);
-         this.method6894(var1, var2, var3, var4);
-         this.method6895(var1, var2, var3, var4);
-         var1.pose().popMatrix();
-         this.method6896(var1, var2, var3, var4);
+   private void method6891(MenuDrawContext menuDrawContext, EmotesModule.Data data) {
+      ZenithStyle currentStyle = zenith.getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         float previewAlpha = Math.clamp(this.animation.method2808(1.0F), 0.0F, 1.0F);
+         float x = 0.82F + 0.18F * previewAlpha;
+         menuDrawContext.pose().pushMatrix();
+         menuDrawContext.pose().translate(data.floatValue, data.floatValue2);
+         menuDrawContext.pose().scale(x, x);
+         menuDrawContext.pose().translate(-data.floatValue, -data.floatValue2);
+         this.method6892(menuDrawContext, data, previewAlpha);
+         this.method6893(menuDrawContext, data, currentStyle, previewAlpha);
+         this.method6894(menuDrawContext, data, currentStyle, previewAlpha);
+         this.method6895(menuDrawContext, data, currentStyle, previewAlpha);
+         menuDrawContext.pose().popMatrix();
+         this.method6896(menuDrawContext, data, currentStyle, previewAlpha);
       }
    }
 
-   private void method6892(MenuDrawContext var1, EmotesModule.Data var2, float var3) {
-      float var4;
-      if (!((var4 = zenith.getNLMenuScreen().getBlurPower()) <= 0.0F)) {
-         float var5 = var2.floatValue4 + 7.0F;
+   private void method6892(MenuDrawContext menuDrawContext, EmotesModule.Data data, float previewAlpha) {
+      float blurPower;
+      if (!((blurPower = zenith.getNLMenuScreen().getBlurPower()) <= 0.0F)) {
+         float intValue = data.floatValue4 + 7.0F;
          RenderShaders.method5287(
-            MatrixUtils.method664(var1.pose()),
-            var2.floatValue - var5,
-            var2.floatValue2 - var5,
-            var5 * 2.0F,
-            var5 * 2.0F,
-            var4,
-            ProxyDotRadiusData.method8069(var5),
-            ZenithColor.INSTANCE.method7294(var3 * 0.92F),
+            MatrixUtils.method664(menuDrawContext.pose()),
+            data.floatValue - intValue,
+            data.floatValue2 - intValue,
+            intValue * 2.0F,
+            intValue * 2.0F,
+            blurPower,
+            ProxyDotRadiusData.method8069(intValue),
+            ZenithColor.INSTANCE.method7294(previewAlpha * 0.92F),
             true,
             false
          );
       }
    }
 
-   private void method6893(MenuDrawContext var1, EmotesModule.Data var2, ZenithStyle var3, float var4) {
-      float var5 = 45.0F;
-      float var6 = 45.0F - 2.4F;
-      ZenithColor var7 = var3.getSurfaceDisableBackground().getZenithColor().method7294(var4);
-      ZenithColor var8 = var3.getRightBackground().getZenithColor().method7294(var4 * 0.92F);
-      ZenithColor var9 = var3.getPrimaryColor().getZenithColor().method7294(var4);
+   private void method6893(MenuDrawContext menuDrawContext, EmotesModule.Data data, ZenithStyle currentStyle, float previewAlpha) {
+      float f = 45.0F;
+      float f2 = 45.0F - 2.4F;
+      ZenithColor zenithColor = currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha);
+      ZenithColor zenithColor2 = currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha * 0.92F);
+      ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
 
-      for (int var10 = 0; var10 < 8; var10++) {
-         float var11 = this.animations[var10].method2808(this.hovered == var10 ? 1.0F : 0.0F);
-         float var12 = var2.floatValue4 + var11 * 6.0F;
-         ZenithColor var13 = var7.method7295(var3.getSurfaceEnableBackground().getZenithColor().method7294(var4), var11);
-         ZenithColor var14 = var8.method7295(var9.method7296(0.48F), var11 * 0.86F);
-         var1.pose().pushMatrix();
-         var1.pose().translate(var2.floatValue, var2.floatValue2);
-         var1.pose().rotate((float)Math.toRadians(var10 * var5 + 1.2F));
-         var1.pose().translate(-var2.floatValue, -var2.floatValue2);
+      for (int i = 0; i < 8; i++) {
+         float hover = this.animations[i].method2808(this.hovered == i ? 1.0F : 0.0F);
+         float f3 = data.floatValue4 + hover * 6.0F;
+         ZenithColor zenithColor4 = zenithColor.method7295(currentStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha), hover);
+         ZenithColor zenithColor22 = zenithColor2.method7295(zenithColor3.method7296(0.48F), hover * 0.86F);
+         menuDrawContext.pose().pushMatrix();
+         menuDrawContext.pose().translate(data.floatValue, data.floatValue2);
+         menuDrawContext.pose().rotate((float)Math.toRadians(i * f + 1.2F));
+         menuDrawContext.pose().translate(-data.floatValue, -data.floatValue2);
          RenderShaders.method5276(
-            MatrixUtils.method664(var1.pose()),
-            var2.floatValue - var12,
-            var2.floatValue2 - var12,
-            var12 * 2.0F,
-            var12 * 2.0F,
-            var12 - var2.floatValue3,
-            var6,
+            MatrixUtils.method664(menuDrawContext.pose()),
+            data.floatValue - f3,
+            data.floatValue2 - f3,
+            f3 * 2.0F,
+            f3 * 2.0F,
+            f3 - data.floatValue3,
+            f2,
             0.0F,
-            var13,
-            var14,
-            var14,
-            var13
+            zenithColor4,
+            zenithColor22,
+            zenithColor22,
+            zenithColor4
          );
-         if (var11 > 0.01F) {
+         if (hover > 0.01F) {
             RenderShaders.method5275(
-               MatrixUtils.method664(var1.pose()),
-               var2.floatValue - var12,
-               var2.floatValue2 - var12,
-               var12 * 2.0F,
-               var12 * 2.0F,
-               1.35F + var11,
-               var6,
+               MatrixUtils.method664(menuDrawContext.pose()),
+               data.floatValue - f3,
+               data.floatValue2 - f3,
+               f3 * 2.0F,
+               f3 * 2.0F,
+               1.35F + hover,
+               f2,
                0.0F,
-               var9.method7294(var11 * 0.8F)
+               zenithColor3.method7294(hover * 0.8F)
             );
          }
 
-         var1.pose().popMatrix();
+         menuDrawContext.pose().popMatrix();
       }
    }
 
-   private void method6894(MenuDrawContext var1, EmotesModule.Data var2, ZenithStyle var3, float var4) {
-      float var5 = (var2.floatValue3 + var2.floatValue4) / 2.0F;
+   private void method6894(MenuDrawContext menuDrawContext, EmotesModule.Data data, ZenithStyle currentStyle, float previewAlpha) {
+      float f = (data.floatValue3 + data.floatValue4) / 2.0F;
 
-      for (int var6 = 0; var6 < 8; var6++) {
-         EmoteInfo var7 = this.method6900(var6);
-         float var8 = this.animations[var6].getValue();
-         float var9 = method6910(var6);
-         float var10 = var5 + var8 * 4.0F;
-         float var11 = var2.floatValue + (float)Math.cos(var9) * var10;
-         float var12 = var2.floatValue2 + (float)Math.sin(var9) * var10;
-         float var13 = 36.0F + var8 * 4.0F;
-         ZenithColor var14 = var3.getPanelLeftBackground().getZenithColor().method7294(var4 * (0.72F + var8 * 0.22F));
-         var1.drawRoundedRect(var11 - var13 / 2.0F, var12 - var13 / 2.0F, var13, var13, ProxyDotRadiusData.method8069(9.0F + var8 * 2.0F), var14);
-         if (var7 != null) {
-            float var15 = 31.0F + var8 * 4.0F;
-            var1.drawTexture(var7.getIdentifier(), var11 - var15 / 2.0F, var12 - var15 / 2.0F, var15, var15, ZenithColor.INSTANCE.method7294(var4));
+      for (int i = 0; i < 8; i++) {
+         EmoteInfo emoteInfo = this.method6900(i);
+         float f2 = this.animations[i].getValue();
+         float f3 = method6910(i);
+         float f4 = f + f2 * 4.0F;
+         float f5 = data.floatValue + (float)Math.cos(f3) * f4;
+         float f6 = data.floatValue2 + (float)Math.sin(f3) * f4;
+         float width = 36.0F + f2 * 4.0F;
+         ZenithColor zenithColor = currentStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha * (0.72F + f2 * 0.22F));
+         menuDrawContext.drawRoundedRect(f5 - width / 2.0F, f6 - width / 2.0F, width, width, ProxyDotRadiusData.method8069(9.0F + f2 * 2.0F), zenithColor);
+         if (emoteInfo != null) {
+            float guiScaledWidth = 31.0F + f2 * 4.0F;
+            menuDrawContext.drawTexture(emoteInfo.getIdentifier(), f5 - guiScaledWidth / 2.0F, f6 - guiScaledWidth / 2.0F, guiScaledWidth, guiScaledWidth, ZenithColor.INSTANCE.method7294(previewAlpha));
          } else {
-            float var17 = 5.0F + var8 * 1.5F;
-            ZenithColor var16 = var3.getTextTertiary().getZenithColor().method7294(var4 * (0.62F + var8 * 0.38F));
-            var1.drawRoundedRect(var11 - var17, var12 - 0.75F, var17 * 2.0F, 1.5F, ProxyDotRadiusData.method8069(0.75F), var16);
-            var1.drawRoundedRect(var11 - 0.75F, var12 - var17, 1.5F, var17 * 2.0F, ProxyDotRadiusData.method8069(0.75F), var16);
+            float f7 = 5.0F + f2 * 1.5F;
+            ZenithColor zenithColor2 = currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * (0.62F + f2 * 0.38F));
+            menuDrawContext.drawRoundedRect(f5 - f7, f6 - 0.75F, f7 * 2.0F, 1.5F, ProxyDotRadiusData.method8069(0.75F), zenithColor2);
+            menuDrawContext.drawRoundedRect(f5 - 0.75F, f6 - f7, 1.5F, f7 * 2.0F, ProxyDotRadiusData.method8069(0.75F), zenithColor2);
          }
       }
    }
 
-   private void method6895(MenuDrawContext var1, EmotesModule.Data var2, ZenithStyle var3, float var4) {
-      float var5 = 36.0F;
-      ZenithColor var6 = var3.getLeftBackground().getZenithColor().method7294(var4 * 0.97F);
-      ZenithColor var7 = var3.getTextEnable().getZenithColor().method7294(var4);
-      ZenithColor var8 = var3.getTextSecondary().getZenithColor().method7294(var4);
-      var1.drawRoundedRect(var2.floatValue - var5, var2.floatValue2 - var5, var5 * 2.0F, var5 * 2.0F, ProxyDotRadiusData.method8069(var5), var6);
-      Font var9 = Fonts.NEW_SEMIBOLD.getFont(9.0F);
-      String var10 = Integer.toString(this.intValue + 1);
-      var1.drawText(var9, var10, var2.floatValue - var9.width(var10) / 2.0F, var2.floatValue2 - var9.height() / 2.0F - 3.0F, var7);
-      Font var11 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      String var12 = "СТРАНИЦА";
-      var1.drawText(var11, var12, var2.floatValue - var11.width(var12) / 2.0F, var2.floatValue2 + 9.0F, var8);
-      Font var13 = Fonts.NEW_SEMIBOLD.getFont(7.0F);
-      ZenithColor var14 = this.intValue > 0 ? var7 : var8.method7294(0.45F);
-      ZenithColor var15 = this.intValue < 14 ? var7 : var8.method7294(0.45F);
-      var1.drawText(var13, "‹", var2.floatValue - 24.0F - var13.width("‹") / 2.0F, var2.floatValue2 - var13.height() / 2.0F, var14);
-      var1.drawText(var13, "›", var2.floatValue + 24.0F - var13.width("›") / 2.0F, var2.floatValue2 - var13.height() / 2.0F, var15);
+   private void method6895(MenuDrawContext menuDrawContext, EmotesModule.Data data, ZenithStyle currentStyle, float previewAlpha) {
+      float intValue = 36.0F;
+      ZenithColor zenithColor = currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha * 0.97F);
+      ZenithColor zenithColor2 = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+      ZenithColor zenithColor3 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+      menuDrawContext.drawRoundedRect(data.floatValue - intValue, data.floatValue2 - intValue, intValue * 2.0F, intValue * 2.0F, ProxyDotRadiusData.method8069(intValue), zenithColor);
+      Font font = Fonts.NEW_SEMIBOLD.getFont(9.0F);
+      String string = Integer.toString(this.intValue + 1);
+      menuDrawContext.drawText(font, string, data.floatValue - font.width(string) / 2.0F, data.floatValue2 - font.height() / 2.0F - 3.0F, zenithColor2);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.8F);
+      String text = "СТРАНИЦА";
+      menuDrawContext.drawText(font2, text, data.floatValue - font2.width(text) / 2.0F, data.floatValue2 + 9.0F, zenithColor3);
+      Font font3 = Fonts.NEW_SEMIBOLD.getFont(7.0F);
+      ZenithColor zenithColor4 = this.intValue > 0 ? zenithColor2 : zenithColor3.method7294(0.45F);
+      ZenithColor zenithColor5 = this.intValue < 14 ? zenithColor2 : zenithColor3.method7294(0.45F);
+      menuDrawContext.drawText(font3, "‹", data.floatValue - 24.0F - font3.width("‹") / 2.0F, data.floatValue2 - font3.height() / 2.0F, zenithColor4);
+      menuDrawContext.drawText(font3, "›", data.floatValue + 24.0F - font3.width("›") / 2.0F, data.floatValue2 - font3.height() / 2.0F, zenithColor5);
    }
 
-   private void method6896(MenuDrawContext var1, EmotesModule.Data var2, ZenithStyle var3, float var4) {
-      EmoteInfo var5 = this.method6900(this.hovered);
-      String var6 = this.hovered == -1 ? "Колесо эмоций" : (var5 == null ? "Пустой слот" : var5.getText2());
-      String var7 = this.hovered == -1
+   private void method6896(MenuDrawContext menuDrawContext, EmotesModule.Data data, ZenithStyle currentStyle, float previewAlpha) {
+      EmoteInfo emoteInfo = this.method6900(this.hovered);
+      String text = this.hovered == -1 ? "Колесо эмоций" : (emoteInfo == null ? "Пустой слот" : emoteInfo.getText2());
+      String str = this.hovered == -1
          ? "Колесо мыши — сменить страницу"
-         : (var5 == null ? "ЛКМ — выбрать эмоцию" : "Отпустите бинт — воспроизвести  •  ПКМ — удалить");
-      Font var8 = Fonts.NEW_SEMIBOLD.getFont(7.5F);
-      Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-      float var10 = Math.max(var8.width(var6), var9.width(var7)) + 20.0F;
-      float var11 = var2.floatValue - var10 / 2.0F;
-      float var12 = var2.floatValue2 - var2.floatValue4 - 38.0F;
-      ZenithColor var13 = var3.getLeftBackground().getZenithColor().method7294(var4 * 0.92F);
-      float var14;
-      if ((var14 = zenith.getNLMenuScreen().getBlurPower()) > 0.0F) {
+         : (emoteInfo == null ? "ЛКМ — выбрать эмоцию" : "Отпустите бинт — воспроизвести  •  ПКМ — удалить");
+      Font font = Fonts.NEW_SEMIBOLD.getFont(7.5F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
+      float panelWidth = Math.max(font.width(text), font2.width(str)) + 20.0F;
+      float floatValue = data.floatValue - panelWidth / 2.0F;
+      float y = data.floatValue2 - data.floatValue4 - 38.0F;
+      ZenithColor zenithColor = currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha * 0.92F);
+      float blurPower;
+      if ((blurPower = zenith.getNLMenuScreen().getBlurPower()) > 0.0F) {
          RenderShaders.method5287(
-            MatrixUtils.method664(var1.pose()),
-            var11,
-            var12,
-            var10,
+            MatrixUtils.method664(menuDrawContext.pose()),
+            floatValue,
+            y,
+            panelWidth,
             27.0F,
-            var14,
+            blurPower,
             ProxyDotRadiusData.method8069(7.0F),
-            ZenithColor.INSTANCE.method7294(var4),
+            ZenithColor.INSTANCE.method7294(previewAlpha),
             true,
             false
          );
       }
 
-      var1.drawRoundedRect(var11, var12, var10, 27.0F, ProxyDotRadiusData.method8069(7.0F), var13);
-      var1.drawText(var8, var6, var2.floatValue - var8.width(var6) / 2.0F, var12 + 5.0F, var3.getTextEnable().getZenithColor().method7294(var4));
-      var1.drawText(var9, var7, var2.floatValue - var9.width(var7) / 2.0F, var12 + 16.0F, var3.getTextSecondary().getZenithColor().method7294(var4));
+      menuDrawContext.drawRoundedRect(floatValue, y, panelWidth, 27.0F, ProxyDotRadiusData.method8069(7.0F), zenithColor);
+      menuDrawContext.drawText(font, text, data.floatValue - font.width(text) / 2.0F, y + 5.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawText(font2, str, data.floatValue - font2.width(str) / 2.0F, y + 16.0F, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
    }
 
-   private int method6897(float var1, float var2, EmotesModule.Data var3) {
-      float var4 = var1 - var3.floatValue;
-      float var5 = var2 - var3.floatValue2;
-      double var6;
-      if (!((var6 = Math.sqrt(var4 * var4 + var5 * var5)) < var3.floatValue3) && !(var6 > var3.floatValue4 + 7.0F)) {
-         double var8;
-         if ((var8 = Math.atan2(var5, var4) + (Math.PI / 2)) < 0.0) {
-            var8 += Math.PI * 2;
+   private int method6897(float mouseX, float mouseY, EmotesModule.Data data) {
+      float x = mouseX - data.floatValue;
+      float y = mouseY - data.floatValue2;
+      double d;
+      if (!((d = Math.sqrt(x * x + y * y)) < data.floatValue3) && !(d > data.floatValue4 + 7.0F)) {
+         double d2;
+         if ((d2 = Math.atan2(y, x) + (Math.PI / 2)) < 0.0) {
+            d2 += Math.PI * 2;
          }
 
-         return (int)Math.floor(var8 / (Math.PI * 2) * 8.0);
+         return (int)Math.floor(d2 / (Math.PI * 2) * 8.0);
       } else {
          return -1;
       }
    }
 
-   private int method6898(float var1, float var2, EmotesModule.Data var3) {
-      if (var2 < var3.floatValue2 - 11.0F || var2 > var3.floatValue2 + 11.0F) {
+   private int method6898(float f, float f2, EmotesModule.Data data) {
+      if (f2 < data.floatValue2 - 11.0F || f2 > data.floatValue2 + 11.0F) {
          return 0;
-      } else if (var1 >= var3.floatValue - 33.0F && var1 <= var3.floatValue - 15.0F) {
+      } else if (f >= data.floatValue - 33.0F && f <= data.floatValue - 15.0F) {
          return -1;
       } else {
-         return var1 >= var3.floatValue + 15.0F && var1 <= var3.floatValue + 33.0F ? 1 : 0;
+         return f >= data.floatValue + 15.0F && f <= data.floatValue + 33.0F ? 1 : 0;
       }
    }
 
-   private void method6899(int var1, boolean var2) {
-      if (var1 != 0) {
-         int var3 = this.intValue + Integer.signum(var1);
-         this.intValue = var2 ? Math.floorMod(var3, 15) : Math.clamp((long)var3, 0, 14);
+   private void method6899(int n, boolean flag) {
+      if (n != 0) {
+         int x = this.intValue + Integer.signum(n);
+         this.intValue = flag ? Math.floorMod(x, 15) : Math.clamp((long)x, 0, 14);
          this.hovered = -1;
       }
    }
 
-   private EmoteInfo method6900(int var1) {
-      if (var1 >= 0 && var1 < 8) {
-         String var2 = this.texts[this.intValue * 8 + var1];
-         return var2 == null ? null : EmoteAccess.method7918(var2).orElse(null);
+   private EmoteInfo method6900(int hovered) {
+      if (hovered >= 0 && hovered < 8) {
+         String text = this.texts[this.intValue * 8 + hovered];
+         return text == null ? null : EmoteAccess.method7918(text).orElse(null);
       } else {
          return null;
       }
    }
 
-   private int method6901(int var1) {
-      return this.intValue * 8 + var1;
+   private int method6901(int n) {
+      return this.intValue * 8 + n;
    }
 
-   private void method6902(int var1) {
+   private void method6902(int favoriteSlot) {
       this.method6887();
-      mc.gui.setScreen(new EmoteFavoriteScreen(this, var1));
+      mc.gui.setScreen(new EmoteFavoriteScreen(this, favoriteSlot));
    }
 
-   public void method6903(int var1, String var2) {
-      if (var1 >= 0 && var1 < this.texts.length && !EmoteAccess.method7916().stream().noneMatch(var2::equals)) {
-         for (int var3 = 0; var3 < this.texts.length; var3++) {
-            if (var2.equals(this.texts[var3])) {
-               this.texts[var3] = null;
+   public void method6903(int favoriteSlot, String text) {
+      if (favoriteSlot >= 0 && favoriteSlot < this.texts.length && !EmoteAccess.method7916().stream().noneMatch(text::equals)) {
+         for (int i = 0; i < this.texts.length; i++) {
+            if (text.equals(this.texts[i])) {
+               this.texts[i] = null;
             }
          }
 
-         this.texts[var1] = var2;
+         this.texts[favoriteSlot] = text;
       }
    }
 
-   public void method6904(int var1) {
-      if (var1 >= 0 && var1 < this.texts.length) {
-         this.texts[var1] = null;
+   public void method6904(int favoriteSlot) {
+      if (favoriteSlot >= 0 && favoriteSlot < this.texts.length) {
+         this.texts[favoriteSlot] = null;
       }
    }
 
-   public String method6905(int var1) {
-      return var1 >= 0 && var1 < this.texts.length ? this.texts[var1] : null;
+   public String method6905(int favoriteSlot) {
+      return favoriteSlot >= 0 && favoriteSlot < this.texts.length ? this.texts[favoriteSlot] : null;
    }
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      JsonArray var2 = new JsonArray();
+      JsonObject json = super.save();
+      JsonArray jsonArray = new JsonArray();
 
-      for (String var6 : this.texts) {
-         var2.add((JsonElement)(var6 == null ? JsonNull.INSTANCE : new JsonPrimitive(var6)));
+      for (String text : this.texts) {
+         jsonArray.add((JsonElement)(text == null ? JsonNull.INSTANCE : new JsonPrimitive(text)));
       }
 
-      var1.add("FavoriteEmotes", var2);
-      return var1;
+      json.add("FavoriteEmotes", jsonArray);
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 != null && var1.has("FavoriteEmotes") && var1.get("FavoriteEmotes").isJsonArray()) {
-         JsonArray var2 = var1.getAsJsonArray("FavoriteEmotes");
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json != null && json.has("FavoriteEmotes") && json.get("FavoriteEmotes").isJsonArray()) {
+         JsonArray jsonArray = json.getAsJsonArray("FavoriteEmotes");
          Arrays.fill(this.texts, null);
 
-         for (int var3 = 0; var3 < var2.size() && var3 < this.texts.length; var3++) {
-            JsonElement var4 = var2.get(var3);
-            if (var4.isJsonPrimitive() && var4.getAsJsonPrimitive().isString()) {
-               String var5 = var4.getAsString();
-               if (EmoteAccess.method7919(var5)) {
-                  this.texts[var3] = var5;
+         for (int i = 0; i < jsonArray.size() && i < this.texts.length; i++) {
+            JsonElement jsonElement = jsonArray.get(i);
+            if (jsonElement.isJsonPrimitive() && jsonElement.getAsJsonPrimitive().isString()) {
+               String string = jsonElement.getAsString();
+               if (EmoteAccess.method7919(string)) {
+                  this.texts[i] = string;
                }
             }
          }
@@ -470,11 +470,11 @@ public final class EmotesModule extends Module {
    }
 
    private EmotesModule.Data method6906() {
-      float var1 = Math.min(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
-      float var2 = Math.min(1.0F, var1 / 270.0F);
-      float var3 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-      float var4 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-      return new EmotesModule.Data(var3, var4, 54.0F * var2, 104.0F * var2);
+      float f = Math.min(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+      float f2 = Math.min(1.0F, f / 270.0F);
+      float floatValue = mc.getWindow().getGuiScaledWidth() / 2.0F;
+      float f3 = mc.getWindow().getGuiScaledHeight() / 2.0F;
+      return new EmotesModule.Data(floatValue, f3, 54.0F * f2, 104.0F * f2);
    }
 
    private float method6907() {
@@ -485,12 +485,12 @@ public final class EmotesModule extends Module {
       return (float)(mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / mc.getWindow().getScreenHeight());
    }
 
-   private void method6909(boolean var1) {
+   private void method6909(boolean flag) {
       if (mc.mouseHandler != null) {
-         if (var1 && !this.flag2) {
+         if (flag && !this.flag2) {
             mc.mouseHandler.releaseMouse();
             this.flag2 = true;
-         } else if (!var1 && this.flag2) {
+         } else if (!flag && this.flag2) {
             if (mc.gui.screen() == null) {
                mc.mouseHandler.grabMouse();
             }
@@ -500,8 +500,8 @@ public final class EmotesModule extends Module {
       }
    }
 
-   private static float method6910(int var0) {
-      return (float)((-Math.PI / 2) + (Math.PI * 2) * ((var0 + 0.5) / 8.0));
+   private static float method6910(int n) {
+      return (float)((-Math.PI / 2) + (Math.PI * 2) * ((n + 0.5) / 8.0));
    }
 
    private static final class Data {
@@ -543,11 +543,11 @@ public final class EmotesModule extends Module {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + "]";
       }
 
-      private Data(float var1, float var2, float var3, float var4) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
+      private Data(float floatValue, float f, float f2, float f3) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
       }
 
       public float centerX() {

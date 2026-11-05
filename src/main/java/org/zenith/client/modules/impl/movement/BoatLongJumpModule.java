@@ -22,15 +22,15 @@ public final class BoatLongJumpModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (mc.player.getVehicle() == null) {
             if (mc.player.onGround()) {
                if (mc.options.keyJump.isDown() && !this.flag && mc.player.isSprinting() && this.method1825() != null) {
-                  float var2 = mc.player.getYRot();
-                  double var3 = mc.player.getDeltaMovement().x + -Math.sin(Math.toRadians(var2)) * 0.9F;
-                  double var5 = mc.player.getDeltaMovement().z + Math.cos(Math.toRadians(var2)) * 0.9F;
-                  mc.player.setDeltaMovement(var3, mc.player.getDeltaMovement().y, var5);
+                  float yRot = mc.player.getYRot();
+                  double xd = mc.player.getDeltaMovement().x + -Math.sin(Math.toRadians(yRot)) * 0.9F;
+                  double zd = mc.player.getDeltaMovement().z + Math.cos(Math.toRadians(yRot)) * 0.9F;
+                  mc.player.setDeltaMovement(xd, mc.player.getDeltaMovement().y, zd);
                   this.flag = true;
                }
             } else {
@@ -41,11 +41,11 @@ public final class BoatLongJumpModule extends Module {
    }
 
    private Entity method1825() {
-      AABB var1 = mc.player.getBoundingBox().inflate(1.0);
+      AABB inflate = mc.player.getBoundingBox().inflate(1.0);
 
-      for (Entity var3 : mc.level.entitiesForRendering()) {
-         if (var3 instanceof Boat var4 && !var4.hasPassenger(mc.player) && var4.getBoundingBox().intersects(var1)) {
-            return var4;
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof Boat boat && !boat.hasPassenger(mc.player) && boat.getBoundingBox().intersects(inflate)) {
+            return boat;
          }
       }
 

@@ -18,16 +18,16 @@ public class CoordinateArgumentType implements ArgumentType<Double> {
       return new CoordinateArgumentType();
    }
 
-   public Double parse(StringReader var1) throws CommandSyntaxException {
+   public Double parse(StringReader stringReader) throws CommandSyntaxException {
       try {
-         return Double.parseDouble(var1.readString());
-      } catch (NumberFormatException var3) {
+         return Double.parseDouble(stringReader.readString());
+      } catch (NumberFormatException e) {
          throw new CommandSyntaxException(null, () -> "Не те циферки пишешь родной");
       }
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(EXAMPLES, var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(EXAMPLES, builder);
    }
 
    public Collection<String> getExamples() {

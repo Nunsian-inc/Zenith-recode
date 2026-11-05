@@ -35,127 +35,127 @@ public final class BotPlayerRenderer {
    private final AvatarRenderState state = new AvatarRenderState();
 
    @Nullable
-   public static AvatarRenderer rendererFor(PlayerModelType var0) {
-      EntityRenderDispatcherAccessor var1 = (EntityRenderDispatcherAccessor)(Object)Minecraft.getInstance().getEntityRenderDispatcher();
-      EntityRenderer var2 = var1.zenith$getModelRenderers().get(var0);
-      if (var2 == null) {
-         var2 = var1.zenith$getModelRenderers().get(PlayerModelType.WIDE);
+   public static AvatarRenderer rendererFor(PlayerModelType model) {
+      EntityRenderDispatcherAccessor entityRenderDispatcher = (EntityRenderDispatcherAccessor)(Object)Minecraft.getInstance().getEntityRenderDispatcher();
+      EntityRenderer zenith$getModelRenderer = entityRenderDispatcher.zenith$getModelRenderers().get(model);
+      if (zenith$getModelRenderer == null) {
+         zenith$getModelRenderer = entityRenderDispatcher.zenith$getModelRenderers().get(PlayerModelType.WIDE);
       }
 
-      return var2 instanceof AvatarRenderer var3 ? var3 : null;
+      return zenith$getModelRenderer instanceof AvatarRenderer avatarRenderer ? avatarRenderer : null;
    }
 
    public void render(
-      Player var1,
-      @Nullable BotPlayHandler var2,
-      double var3,
-      double var5,
-      double var7,
-      float var9,
-      PoseStack var10,
-      SubmitNodeCollector var11,
-      int var12,
-      boolean var13
+      Player player,
+      @Nullable BotPlayHandler playHandler,
+      double x,
+      double y,
+      double z,
+      float tickDelta,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int lightCoords,
+      boolean flag
    ) {
-      PlayerSkin var14 = resolveSkin(var1, var2);
-      AvatarRenderer var15 = rendererFor(var14.model());
-      if (var15 != null) {
-         this.fillState(var1, var14, var9, var3, var5, var7, var13);
-         double var16 = Mth.lerp((double)var9, var1.xOld, var1.getX());
-         double var18 = Mth.lerp((double)var9, var1.yOld, var1.getY());
-         double var20 = Mth.lerp((double)var9, var1.zOld, var1.getZ());
-         var10.pushPose();
-         var10.translate(var16 - var3, var18 - var5, var20 - var7);
-         this.state.lightCoords = var12;
+      PlayerSkin skin = resolveSkin(player, playHandler);
+      AvatarRenderer avatarRenderer = rendererFor(skin.model());
+      if (avatarRenderer != null) {
+         this.fillState(player, skin, tickDelta, x, y, z, flag);
+         double d = Mth.lerp((double)tickDelta, player.xOld, player.getX());
+         double d2 = Mth.lerp((double)tickDelta, player.yOld, player.getY());
+         double d3 = Mth.lerp((double)tickDelta, player.zOld, player.getZ());
+         poseStack.pushPose();
+         poseStack.translate(d - x, d2 - y, d3 - z);
+         this.state.lightCoords = lightCoords;
          // 26.3: callers wrap this in OutlineVertexProvider.method1542 and pass its collector
-         var15.submit(this.state, var10, var11, OutlineVertexProvider.method1541(new Vec3(var3, var5, var7)));
+         avatarRenderer.submit(this.state, poseStack, submitNodeCollector, OutlineVertexProvider.method1541(new Vec3(x, y, z)));
 
-         var10.popPose();
+         poseStack.popPose();
       }
    }
 
-   public static PlayerSkin resolveSkin(Player var0, @Nullable BotPlayHandler var1) {
-      if (var1 != null) {
-         PlayerInfo var2 = var1.getPlayerListEntry(var0.getUUID());
-         if (var2 != null) {
+   public static PlayerSkin resolveSkin(Player player, @Nullable BotPlayHandler playHandler) {
+      if (playHandler != null) {
+         PlayerInfo playerListEntry = playHandler.getPlayerListEntry(player.getUUID());
+         if (playerListEntry != null) {
             try {
-               return var2.getSkin();
-            } catch (Exception var4) {
+               return playerListEntry.getSkin();
+            } catch (Exception e) {
             }
          }
       }
 
-      return DefaultPlayerSkin.get(var0.getUUID());
+      return DefaultPlayerSkin.get(player.getUUID());
    }
 
-   private void fillState(Player var1, PlayerSkin var2, float var3, double var4, double var6, double var8, boolean var10) {
-      this.state.x = Mth.lerp((double)var3, var1.xOld, var1.getX());
-      this.state.y = Mth.lerp((double)var3, var1.yOld, var1.getY());
-      this.state.z = Mth.lerp((double)var3, var1.zOld, var1.getZ());
-      this.state.isInvisible = var1.isInvisible();
-      this.state.ageInTicks = var1.tickCount + var3;
-      this.state.boundingBoxWidth = var1.getBbWidth();
-      this.state.boundingBoxHeight = var1.getBbHeight();
-      this.state.eyeHeight = var1.getEyeHeight();
+   private void fillState(Player player, PlayerSkin skin, float tickDelta, double x, double y, double z, boolean flag) {
+      this.state.x = Mth.lerp((double)tickDelta, player.xOld, player.getX());
+      this.state.y = Mth.lerp((double)tickDelta, player.yOld, player.getY());
+      this.state.z = Mth.lerp((double)tickDelta, player.zOld, player.getZ());
+      this.state.isInvisible = player.isInvisible();
+      this.state.ageInTicks = player.tickCount + tickDelta;
+      this.state.boundingBoxWidth = player.getBbWidth();
+      this.state.boundingBoxHeight = player.getBbHeight();
+      this.state.eyeHeight = player.getEyeHeight();
       this.state.passengerOffset = null;
-      this.state.distanceToCameraSq = Mth.lengthSquared(this.state.x - var4, this.state.y - var6, this.state.z - var8);
-      this.state.isDiscrete = var1.isDiscrete();
-      this.state.displayFireAnimation = var1.displayFireAnimation();
+      this.state.distanceToCameraSq = Mth.lengthSquared(this.state.x - x, this.state.y - y, this.state.z - z);
+      this.state.isDiscrete = player.isDiscrete();
+      this.state.displayFireAnimation = player.displayFireAnimation();
       this.state.leashStates = List.of();
-      if (var10 && this.state.distanceToCameraSq < 4096.0) {
-         this.state.nameTag = var1.getDisplayName();
-         this.state.nameTagAttachment = var1.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, var1.getYRot(var3));
+      if (flag && this.state.distanceToCameraSq < 4096.0) {
+         this.state.nameTag = player.getDisplayName();
+         this.state.nameTagAttachment = player.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, player.getYRot(tickDelta));
       } else {
          this.state.nameTag = null;
          this.state.nameTagAttachment = null;
       }
 
-      float var11 = Mth.rotLerp(var3, var1.yHeadRotO, var1.yHeadRot);
-      this.state.bodyRot = Mth.rotLerp(var3, var1.yBodyRotO, var1.yBodyRot);
-      this.state.yRot = Mth.wrapDegrees(var11 - this.state.bodyRot);
-      this.state.xRot = var1.getXRot(var3);
+      float rotLerp = Mth.rotLerp(tickDelta, player.yHeadRotO, player.yHeadRot);
+      this.state.bodyRot = Mth.rotLerp(tickDelta, player.yBodyRotO, player.yBodyRot);
+      this.state.yRot = Mth.wrapDegrees(rotLerp - this.state.bodyRot);
+      this.state.xRot = player.getXRot(tickDelta);
       this.state.isUpsideDown = false;
-      if (!var1.isPassenger() && var1.isAlive()) {
-         this.state.walkAnimationPos = var1.walkAnimation.position(var3);
-         this.state.walkAnimationSpeed = var1.walkAnimation.speed(var3);
+      if (!player.isPassenger() && player.isAlive()) {
+         this.state.walkAnimationPos = player.walkAnimation.position(tickDelta);
+         this.state.walkAnimationSpeed = player.walkAnimation.speed(tickDelta);
       } else {
          this.state.walkAnimationPos = 0.0F;
          this.state.walkAnimationSpeed = 0.0F;
       }
 
       this.state.wornHeadAnimationPos = this.state.walkAnimationPos;
-      this.state.scale = var1.getScale();
-      this.state.ageScale = var1.getAgeScale();
-      this.state.pose = var1.getPose();
-      this.state.bedOrientation = var1.getBedOrientation();
+      this.state.scale = player.getScale();
+      this.state.ageScale = player.getAgeScale();
+      this.state.pose = player.getPose();
+      this.state.bedOrientation = player.getBedOrientation();
       if (this.state.bedOrientation != null) {
-         this.state.eyeHeight = var1.getEyeHeight(Pose.STANDING);
+         this.state.eyeHeight = player.getEyeHeight(Pose.STANDING);
       }
 
-      this.state.isFullyFrozen = var1.isFullyFrozen();
-      this.state.isBaby = var1.isBaby();
-      this.state.isInWater = var1.isInWater();
-      this.state.isAutoSpinAttack = var1.isAutoSpinAttack();
-      this.state.hasRedOverlay = var1.hurtTime > 0 || var1.deathTime > 0;
+      this.state.isFullyFrozen = player.isFullyFrozen();
+      this.state.isBaby = player.isBaby();
+      this.state.isInWater = player.isInWater();
+      this.state.isAutoSpinAttack = player.isAutoSpinAttack();
+      this.state.hasRedOverlay = player.hurtTime > 0 || player.deathTime > 0;
       this.state.wornHeadType = null;
       this.state.wornHeadProfile = null;
       this.state.headItem.clear();
-      this.state.deathTime = var1.deathTime > 0 ? var1.deathTime + var3 : 0.0F;
+      this.state.deathTime = player.deathTime > 0 ? player.deathTime + tickDelta : 0.0F;
       this.state.isInvisibleToPlayer = false;
       this.state.outlineColor = 0;
-      HumanoidMobRenderer.extractHumanoidRenderState(var1, this.state, var3, Minecraft.getInstance().getItemModelResolver());
-      this.state.leftArmPose = getArmPose(var1, HumanoidArm.LEFT);
-      this.state.rightArmPose = getArmPose(var1, HumanoidArm.RIGHT);
-      this.state.skin = var2;
-      this.state.arrowCount = var1.getArrowCount();
-      this.state.stingerCount = var1.getStingerCount();
-      this.state.isSpectator = var1.isSpectator();
-      this.state.showHat = var1.isModelPartShown(PlayerModelPart.HAT);
-      this.state.showJacket = var1.isModelPartShown(PlayerModelPart.JACKET);
-      this.state.showLeftPants = var1.isModelPartShown(PlayerModelPart.LEFT_PANTS_LEG);
-      this.state.showRightPants = var1.isModelPartShown(PlayerModelPart.RIGHT_PANTS_LEG);
-      this.state.showLeftSleeve = var1.isModelPartShown(PlayerModelPart.LEFT_SLEEVE);
-      this.state.showRightSleeve = var1.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE);
+      HumanoidMobRenderer.extractHumanoidRenderState(player, this.state, tickDelta, Minecraft.getInstance().getItemModelResolver());
+      this.state.leftArmPose = getArmPose(player, HumanoidArm.LEFT);
+      this.state.rightArmPose = getArmPose(player, HumanoidArm.RIGHT);
+      this.state.skin = skin;
+      this.state.arrowCount = player.getArrowCount();
+      this.state.stingerCount = player.getStingerCount();
+      this.state.isSpectator = player.isSpectator();
+      this.state.showHat = player.isModelPartShown(PlayerModelPart.HAT);
+      this.state.showJacket = player.isModelPartShown(PlayerModelPart.JACKET);
+      this.state.showLeftPants = player.isModelPartShown(PlayerModelPart.LEFT_PANTS_LEG);
+      this.state.showRightPants = player.isModelPartShown(PlayerModelPart.RIGHT_PANTS_LEG);
+      this.state.showLeftSleeve = player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE);
+      this.state.showRightSleeve = player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE);
       this.state.showCape = false;
       this.state.fallFlyingTimeInTicks = 0.0F;
       this.state.shouldApplyFlyingYRot = false;
@@ -163,28 +163,28 @@ public final class BotPlayerRenderer {
       this.state.scoreText = null;
       this.state.parrotOnLeftShoulder = null;
       this.state.parrotOnRightShoulder = null;
-      this.state.id = var1.getId();
-      ((Handler4)this.state).zenith$setProfileName(var1.getGameProfile().name());
+      this.state.id = player.getId();
+      ((Handler4)this.state).zenith$setProfileName(player.getGameProfile().name());
       this.state.heldOnHead.clear();
    }
 
-   private static ArmPose getArmPose(Player var0, HumanoidArm var1) {
-      ArmPose var2 = getArmPose(var0, var0.getItemInHand(InteractionHand.MAIN_HAND), InteractionHand.MAIN_HAND);
-      ArmPose var3 = getArmPose(var0, var0.getItemInHand(InteractionHand.OFF_HAND), InteractionHand.OFF_HAND);
-      if (var2.isTwoHanded()) {
-         var3 = var0.getItemInHand(InteractionHand.OFF_HAND).isEmpty() ? ArmPose.EMPTY : ArmPose.ITEM;
+   private static ArmPose getArmPose(Player player, HumanoidArm humanoidArm) {
+      ArmPose armPose = getArmPose(player, player.getItemInHand(InteractionHand.MAIN_HAND), InteractionHand.MAIN_HAND);
+      ArmPose armPose2 = getArmPose(player, player.getItemInHand(InteractionHand.OFF_HAND), InteractionHand.OFF_HAND);
+      if (armPose.isTwoHanded()) {
+         armPose2 = player.getItemInHand(InteractionHand.OFF_HAND).isEmpty() ? ArmPose.EMPTY : ArmPose.ITEM;
       }
 
-      return var0.getMainArm() == var1 ? var2 : var3;
+      return player.getMainArm() == humanoidArm ? armPose : armPose2;
    }
 
-   private static ArmPose getArmPose(Player var0, ItemStack var1, InteractionHand var2) {
-      if (var1.isEmpty()) {
+   private static ArmPose getArmPose(Player player, ItemStack itemInHand, InteractionHand interactionHand) {
+      if (itemInHand.isEmpty()) {
          return ArmPose.EMPTY;
       } else {
-         if (var0.getUsedItemHand() == var2 && var0.getUseItemRemainingTicks() > 0) {
-            ItemUseAnimation var3 = var1.getUseAnimation();
-            switch (var3) {
+         if (player.getUsedItemHand() == interactionHand && player.getUseItemRemainingTicks() > 0) {
+            ItemUseAnimation useAnimation = itemInHand.getUseAnimation();
+            switch (useAnimation) {
                case BLOCK:
                   return ArmPose.BLOCK;
                case BOW:
@@ -202,7 +202,7 @@ public final class BotPlayerRenderer {
                case BRUSH:
                   return ArmPose.BRUSH;
             }
-         } else if (!var0.isSwinging() && var1.is(Items.CROSSBOW) && CrossbowItem.isCharged(var1)) {
+         } else if (!player.isSwinging() && itemInHand.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemInHand)) {
             return ArmPose.CROSSBOW_HOLD;
          }
 

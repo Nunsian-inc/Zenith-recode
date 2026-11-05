@@ -24,51 +24,51 @@ public final class CriticalsState {
    private long longValue3 = Long.MIN_VALUE;
    private boolean flag;
 
-   public synchronized void method1706(long var1, long var3) {
-      this.method1714(var3);
-      if (this.longValue2 != 0L && var1 > this.longValue3) {
-         long var5 = var3 - this.longValue2;
-         long var7 = var1 - this.longValue3;
-         double var9 = (double)var5 / var7;
-         if (var5 > 0L && Double.isFinite(var9) && var9 >= 2.0E7 && var9 <= 5.0E9) {
-            this.method1715(var9);
-            double var11 = this.method1716();
-            this.doubleValue2 = this.doubleValue2 + (Math.abs(var9 - var11) - this.doubleValue2) * 0.2;
-            double var13 = method1717(var11, 5.0E7, 1.0E9);
-            double var15 = method1717(Math.max(var13, var9 - this.doubleValue2), 5.0E7, 1.0E9);
-            if (var15 > this.doubleValue) {
-               this.doubleValue = var15;
+   public synchronized void method1706(long gameTime, long nanoTime) {
+      this.method1714(nanoTime);
+      if (this.longValue2 != 0L && gameTime > this.longValue3) {
+         long l = nanoTime - this.longValue2;
+         long l2 = gameTime - this.longValue3;
+         double d = (double)l / l2;
+         if (l > 0L && Double.isFinite(d) && d >= 2.0E7 && d <= 5.0E9) {
+            this.method1715(d);
+            double d2 = this.method1716();
+            this.doubleValue2 = this.doubleValue2 + (Math.abs(d - d2) - this.doubleValue2) * 0.2;
+            double d3 = method1717(d2, 5.0E7, 1.0E9);
+            double doubleValue = method1717(Math.max(d3, d - this.doubleValue2), 5.0E7, 1.0E9);
+            if (doubleValue > this.doubleValue) {
+               this.doubleValue = doubleValue;
             } else {
-               this.doubleValue = this.doubleValue + (var13 - this.doubleValue) * 0.2;
+               this.doubleValue = this.doubleValue + (d3 - this.doubleValue) * 0.2;
             }
          }
-      } else if (this.longValue3 != Long.MIN_VALUE && var1 <= this.longValue3) {
+      } else if (this.longValue3 != Long.MIN_VALUE && gameTime <= this.longValue3) {
          this.arrayDeque.clear();
          this.doubleValue2 = 0.0;
       }
 
-      this.longValue3 = var1;
-      this.longValue2 = var3;
+      this.longValue3 = gameTime;
+      this.longValue2 = nanoTime;
    }
 
-   public synchronized void method1707(long var1) {
-      this.method1714(var1);
+   public synchronized void method1707(long nanoTime) {
+      this.method1714(nanoTime);
       this.doubleValue4 = this.doubleValue3;
       this.flag = true;
    }
 
-   public synchronized boolean method1708(double var1, double var3) {
-      return this.flag && !(var1 <= 0.0) ? this.method1713(System.nanoTime()) + Math.max(0.0, var3) >= var1 : true;
+   public synchronized boolean method1708(double doubleValue, double d) {
+      return this.flag && !(doubleValue <= 0.0) ? this.method1713(System.nanoTime()) + Math.max(0.0, d) >= doubleValue : true;
    }
 
-   public synchronized long method1709(double var1, double var3) {
-      if (this.flag && !(var1 <= 0.0)) {
-         double var5 = var1 - this.method1713(System.nanoTime()) - Math.max(0.0, var3);
-         if (var5 <= 0.0) {
+   public synchronized long method1709(double doubleValue, double d) {
+      if (this.flag && !(doubleValue <= 0.0)) {
+         double d2 = doubleValue - this.method1713(System.nanoTime()) - Math.max(0.0, d);
+         if (d2 <= 0.0) {
             return 0L;
          } else {
-            double var7 = var5 * this.doubleValue;
-            return var7 >= 9.223372E18F ? Long.MAX_VALUE : (long)Math.ceil(var7);
+            double d3 = d2 * this.doubleValue;
+            return d3 >= 9.223372E18F ? Long.MAX_VALUE : (long)Math.ceil(d3);
          }
       } else {
          return 0L;
@@ -108,43 +108,43 @@ public final class CriticalsState {
       this.longValue3 = Long.MIN_VALUE;
    }
 
-   private double method1713(long var1) {
-      this.method1714(var1);
-      double var3 = Math.max(0.0, this.doubleValue3 - this.doubleValue4);
-      double var5 = 0.2 + this.doubleValue2 / this.doubleValue;
-      return Math.max(0.0, var3 - method1717(var5, 0.2, 2.0));
+   private double method1713(long nanoTime) {
+      this.method1714(nanoTime);
+      double d = Math.max(0.0, this.doubleValue3 - this.doubleValue4);
+      double d2 = 0.2 + this.doubleValue2 / this.doubleValue;
+      return Math.max(0.0, d - method1717(d2, 0.2, 2.0));
    }
 
-   private void method1714(long var1) {
-      if (this.longValue != 0L && var1 > this.longValue) {
-         this.doubleValue3 = this.doubleValue3 + (var1 - this.longValue) / this.doubleValue;
+   private void method1714(long longValue) {
+      if (this.longValue != 0L && longValue > this.longValue) {
+         this.doubleValue3 = this.doubleValue3 + (longValue - this.longValue) / this.doubleValue;
       }
 
-      this.longValue = var1;
+      this.longValue = longValue;
    }
 
-   private void method1715(double var1) {
+   private void method1715(double d) {
       if (this.arrayDeque.size() >= 9) {
          this.arrayDeque.removeFirst();
       }
 
-      this.arrayDeque.addLast(var1);
+      this.arrayDeque.addLast(d);
    }
 
    private double method1716() {
-      double[] var1 = new double[this.arrayDeque.size()];
-      int var2 = 0;
+      double[] doubles = new double[this.arrayDeque.size()];
+      int n = 0;
 
-      for (double var4 : this.arrayDeque) {
-         var1[var2++] = var4;
+      for (double d : this.arrayDeque) {
+         doubles[n++] = d;
       }
 
-      Arrays.sort(var1);
-      int var6 = var1.length / 2;
-      return var1.length % 2 == 0 ? (var1[var6 - 1] + var1[var6]) * 0.5 : var1[var6];
+      Arrays.sort(doubles);
+      int n2 = doubles.length / 2;
+      return doubles.length % 2 == 0 ? (doubles[n2 - 1] + doubles[n2]) * 0.5 : doubles[n2];
    }
 
-   private static double method1717(double var0, double var2, double var4) {
-      return Math.max(var2, Math.min(var4, var0));
+   private static double method1717(double d, double d2, double d3) {
+      return Math.max(d2, Math.min(d3, d));
    }
 }

@@ -28,27 +28,27 @@ public class MixinGameMenuScreen {
       method = {"init()V"},
       at = {@At("TAIL")}
    )
-   private void zenith$relayout(CallbackInfo var1) {
-      Screen var2 = (Screen)(Object)this;
-      List<List<AbstractWidget>> var3 = this.zenith$rows(var2);
-      if (!var3.isEmpty()) {
-         float var4 = COLUMN * 2.0F + GAP;
-         float var5 = var3.size() * ROW_HEIGHT + (var3.size() - 1) * GAP;
-         float var6 = MenuTheme.snap((var2.width - var4) / 2.0F);
-         float var7 = MenuTheme.snap((var2.height - var5) / 2.0F);
+   private void zenith$relayout(CallbackInfo callbackInfo) {
+      Screen screen = (Screen)(Object)this;
+      List<List<AbstractWidget>> zenith$rows = this.zenith$rows(screen);
+      if (!zenith$rows.isEmpty()) {
+         float f = COLUMN * 2.0F + GAP;
+         float f2 = zenith$rows.size() * ROW_HEIGHT + (zenith$rows.size() - 1) * GAP;
+         float snap = MenuTheme.snap((screen.width - f) / 2.0F);
+         float snap2 = MenuTheme.snap((screen.height - f2) / 2.0F);
 
-         for (List var9 : var3) {
-            float var10 = var9.size() == 1 ? var4 : COLUMN;
+         for (List zenith$row : zenith$rows) {
+            float f3 = zenith$row.size() == 1 ? f : COLUMN;
 
-            for (int var11 = 0; var11 < var9.size(); var11++) {
-               AbstractWidget var12 = (AbstractWidget)var9.get(var11);
-               var12.setX(Math.round(var6 + var11 * (COLUMN + GAP)));
-               var12.setY(Math.round(var7));
-               var12.setWidth(Math.round(var10));
-               var12.setHeight(Math.round(ROW_HEIGHT));
+            for (int i = 0; i < zenith$row.size(); i++) {
+               AbstractWidget abstractWidget = (AbstractWidget)zenith$row.get(i);
+               abstractWidget.setX(Math.round(snap + i * (COLUMN + GAP)));
+               abstractWidget.setY(Math.round(snap2));
+               abstractWidget.setWidth(Math.round(f3));
+               abstractWidget.setHeight(Math.round(ROW_HEIGHT));
             }
 
-            var7 += ROW_HEIGHT + GAP;
+            snap2 += ROW_HEIGHT + GAP;
          }
       }
    }
@@ -57,27 +57,27 @@ public class MixinGameMenuScreen {
       method = {"render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$beginStyle(GuiGraphicsExtractor var1, int var2, int var3, float var4, CallbackInfo var5) {
-      MenuDrawContext var6 = MenuDrawContext.method8080(var1, var2, var3, var4);
-      MenuSurface.backdrop(var6, var6.guiWidth(), var6.guiHeight(), 0.45F);
-      List<List<AbstractWidget>> var7 = this.zenith$rows((Screen)(Object)this);
-      if (!var7.isEmpty()) {
-         float var8 = Float.MAX_VALUE;
-         float var9 = Float.MAX_VALUE;
-         float var10 = -Float.MAX_VALUE;
-         float var11 = -Float.MAX_VALUE;
+   private void zenith$beginStyle(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo callbackInfo) {
+      MenuDrawContext graphics = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
+      MenuSurface.backdrop(graphics, graphics.guiWidth(), graphics.guiHeight(), 0.45F);
+      List<List<AbstractWidget>> zenith$rows = this.zenith$rows((Screen)(Object)this);
+      if (!zenith$rows.isEmpty()) {
+         float f = Float.MAX_VALUE;
+         float f2 = Float.MAX_VALUE;
+         float f3 = -Float.MAX_VALUE;
+         float f4 = -Float.MAX_VALUE;
 
-         for (List<AbstractWidget> var13 : var7) {
-            for (AbstractWidget var15 : var13) {
-               var8 = Math.min(var8, (float)var15.getX());
-               var9 = Math.min(var9, (float)var15.getY());
-               var10 = Math.max(var10, (float)(var15.getX() + var15.getWidth()));
-               var11 = Math.max(var11, (float)(var15.getY() + var15.getHeight()));
+         for (List<AbstractWidget> zenith$row : zenith$rows) {
+            for (AbstractWidget abstractWidget : zenith$row) {
+               f = Math.min(f, (float)abstractWidget.getX());
+               f2 = Math.min(f2, (float)abstractWidget.getY());
+               f3 = Math.max(f3, (float)(abstractWidget.getX() + abstractWidget.getWidth()));
+               f4 = Math.max(f4, (float)(abstractWidget.getY() + abstractWidget.getHeight()));
             }
          }
 
          MenuSurface.card(
-            var6, var8 - PLATE_PADDING, var9 - PLATE_PADDING, var10 - var8 + PLATE_PADDING * 2.0F, var11 - var9 + PLATE_PADDING * 2.0F, PLATE_RADIUS
+            graphics, f - PLATE_PADDING, f2 - PLATE_PADDING, f3 - f + PLATE_PADDING * 2.0F, f4 - f2 + PLATE_PADDING * 2.0F, PLATE_RADIUS
          );
       }
 
@@ -88,25 +88,25 @@ public class MixinGameMenuScreen {
       method = {"render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V"},
       at = {@At("RETURN")}
    )
-   private void zenith$endStyle(GuiGraphicsExtractor var1, int var2, int var3, float var4, CallbackInfo var5) {
+   private void zenith$endStyle(GuiGraphicsExtractor guiGraphicsExtractor, int n, int n2, float f, CallbackInfo callbackInfo) {
       VanillaOptionStyle.end();
    }
 
-   private List<List<AbstractWidget>> zenith$rows(Screen var1) {
-      ArrayList var2 = new ArrayList();
-      int var3 = Integer.MIN_VALUE;
+   private List<List<AbstractWidget>> zenith$rows(Screen screen) {
+      ArrayList arrayList = new ArrayList();
+      int y = Integer.MIN_VALUE;
 
-      for (GuiEventListener var5 : var1.children()) {
-         if (var5 instanceof AbstractWidget var6 && var6.visible) {
-            if (var6.getY() != var3 || var2.isEmpty()) {
-               var2.add(new ArrayList());
-               var3 = var6.getY();
+      for (GuiEventListener guiEventListener : screen.children()) {
+         if (guiEventListener instanceof AbstractWidget abstractWidget && abstractWidget.visible) {
+            if (abstractWidget.getY() != y || arrayList.isEmpty()) {
+               arrayList.add(new ArrayList());
+               y = abstractWidget.getY();
             }
 
-            ((List)var2.get(var2.size() - 1)).add(var6);
+            ((List)arrayList.get(arrayList.size() - 1)).add(abstractWidget);
          }
       }
 
-      return var2;
+      return arrayList;
    }
 }

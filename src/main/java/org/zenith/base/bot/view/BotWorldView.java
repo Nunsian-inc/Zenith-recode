@@ -70,7 +70,7 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
    private static final double BLOCK_ENTITY_RENDER_DISTANCE_SQ = 2304.0;
    private static final float FOV_DEGREES = 100.0F;
    private static final float HAND_FOV_DEGREES = 70.0F;
-   private static final Comparator<BotWorldView.Section> BY_SORT_KEY = (var0, var1) -> Double.compare(var0.sortKey, var1.sortKey);
+   private static final Comparator<BotWorldView.Section> BY_SORT_KEY = (section, section2) -> Double.compare(section.sortKey, section2.sortKey);
    private final BotClient client;
    private final Map<Long, BotWorldView.Section> sections = new HashMap<>();
    private final Set<Long> dirty = ConcurrentHashMap.newKeySet();
@@ -102,69 +102,69 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
    private volatile String lastError;
    private int lastEyeHeightAge = Integer.MIN_VALUE;
 
-   public BotWorldView(BotClient var1) {
-      this.client = var1;
+   public BotWorldView(BotClient client) {
+      this.client = client;
    }
 
    public GpuTextureView getColorAttachment() {
       return BlitUtils.method6450(this.fbo);
    }
 
-   public boolean renderToFbo(int var1, int var2) {
-      BotWorld var3 = this.client.getWorld();
-      BotPlayer var4 = this.client.getPlayer();
-      if (var3 != null && var4 != null && this.client.isJoined() && var1 > 0 && var2 > 0) {
-         this.bindWorld(var3);
+   public boolean renderToFbo(int width, int height) {
+      BotWorld world = this.client.getWorld();
+      BotPlayer player = this.client.getPlayer();
+      if (world != null && player != null && this.client.isJoined() && width > 0 && height > 0) {
+         this.bindWorld(world);
          this.drainUploads();
-         this.refreshSections(var3, var4);
-         this.scheduleBuilds(var3, var4);
-         this.scheduleEntitySnapshot(var3);
-         this.ensureFbo(var1, var2);
+         this.refreshSections(world, player);
+         this.scheduleBuilds(world, player);
+         this.scheduleEntitySnapshot(world);
+         this.ensureFbo(width, height);
          if (this.fbo == null) {
             return false;
          } else {
-            Matrix4fStack var5 = RenderSystem.getModelViewStack();
+            Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
             RenderSystem.backupProjectionMatrix();
-            var5.pushMatrix();
-            var5.identity();
-            int var6 = ImmediateRenderer.method8007();
-            int var7 = mc.getWindow().getWidth();
-            int var8 = mc.getWindow().getHeight();
-            RenderTarget var9 = mc.gameRenderer.mainRenderTarget();
+            modelViewStack.pushMatrix();
+            modelViewStack.identity();
+            int n = ImmediateRenderer.method8007();
+            int width2 = mc.getWindow().getWidth();
+            int height2 = mc.getWindow().getHeight();
+            RenderTarget mainRenderTarget = mc.gameRenderer.mainRenderTarget();
             synchronized (this.client.getRenderStateLock()) {
-               float var11 = this.client.getTickDelta();
-               this.updateCamera(var3, var4, var11);
-               this.lightmap.update(var3);
+               float tickDelta = this.client.getTickDelta();
+               this.updateCamera(world, player, tickDelta);
+               this.lightmap.update(world);
 
                try {
                   mc.gameRenderer.mainRenderTarget = this.fbo;
-                  float var12 = (float)var1 / var2;
-                  float var13 = 128.0F;
-                  this.projection.setupPerspective(0.05F, var13, 100.0F, var1, var2);
+                  float f = (float)width / height;
+                  float zFar = 128.0F;
+                  this.projection.setupPerspective(0.05F, zFar, 100.0F, width, height);
                   this.positionMatrix.rotation(this.camera.rotation().conjugate(this.rotationConjugate));
                   RenderSystem.setProjectionMatrix(this.zenithProjection.getBuffer(this.projection), ProjectionType.PERSPECTIVE);
-                  float[] var14 = skyColor(var3, var4);
-                  BlitUtils.method6456(this.fbo, ARGB.colorFromFloat(1.0F, var14[0], var14[1], var14[2]));
-                  Vec3 var15 = this.camera.position();
-                  this.drawTerrainLayer(ChunkSectionLayer.SOLID, var15, false);
-                  this.drawTerrainLayer(ChunkSectionLayer.CUTOUT, var15, false);
-                  this.renderEntities(var3, var4, var15, var11);
-                  this.renderBlockEntities(var3, var15, var11);
-                  this.drawTerrainLayer(ChunkSectionLayer.TRANSLUCENT, var15, true);
-                  this.renderHand(var3, var4, var11, var1, var2, var13);
-               } catch (Throwable var21) {
-                  this.lastError = var21.toString();
+                  float[] floats = skyColor(world, player);
+                  BlitUtils.method6456(this.fbo, ARGB.colorFromFloat(1.0F, floats[0], floats[1], floats[2]));
+                  Vec3 position = this.camera.position();
+                  this.drawTerrainLayer(ChunkSectionLayer.SOLID, position, false);
+                  this.drawTerrainLayer(ChunkSectionLayer.CUTOUT, position, false);
+                  this.renderEntities(world, player, position, tickDelta);
+                  this.renderBlockEntities(world, position, tickDelta);
+                  this.drawTerrainLayer(ChunkSectionLayer.TRANSLUCENT, position, true);
+                  this.renderHand(world, player, tickDelta, width, height, zFar);
+               } catch (Throwable e) {
+                  this.lastError = e.toString();
                   if (!this.loggedRenderError) {
                      this.loggedRenderError = true;
                      System.err.println("[BotWorldView] render failed:");
-                     var21.printStackTrace();
+                     e.printStackTrace();
                   }
                } finally {
-                  mc.gameRenderer.mainRenderTarget = var9;
+                  mc.gameRenderer.mainRenderTarget = mainRenderTarget;
                   RenderSystem.restoreProjectionMatrix();
-                  var5.popMatrix();
+                  modelViewStack.popMatrix();
                   this.restoreDispatchers();
-                  ImmediateRenderer.method8008(var6);
+                  ImmediateRenderer.method8008(n);
                }
 
                return true;
@@ -177,59 +177,59 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
 
    // 26.3 Camera only follows the main client (ClientLevel + LocalPlayer), so the bot view places it by hand,
    // same as the old Camera.setup(level, entity, false, false, partialTicks) in first person
-   private void updateCamera(BotWorld var1, BotPlayer var2, float var3) {
-      if (this.camera.entity() != var2) {
-         this.camera.setEntity(var2);
-         this.eyeHeight = this.eyeHeightOld = var2.getEyeHeight();
-         this.heldItem.snap(var2);
-      } else if (var2.tickCount != this.lastEyeHeightAge) {
+   private void updateCamera(BotWorld world, BotPlayer player, float tickDelta) {
+      if (this.camera.entity() != player) {
+         this.camera.setEntity(player);
+         this.eyeHeight = this.eyeHeightOld = player.getEyeHeight();
+         this.heldItem.snap(player);
+      } else if (player.tickCount != this.lastEyeHeightAge) {
          this.eyeHeightOld = this.eyeHeight;
-         this.eyeHeight = this.eyeHeight + (var2.getEyeHeight() - this.eyeHeight) * 0.5F;
-         this.heldItem.tick(var2);
+         this.eyeHeight = this.eyeHeight + (player.getEyeHeight() - this.eyeHeight) * 0.5F;
+         this.heldItem.tick(player);
       }
 
-      this.lastEyeHeightAge = var2.tickCount;
+      this.lastEyeHeightAge = player.tickCount;
       this.camera.place(
          new Vec3(
-            Mth.lerp((double)var3, var2.xo, var2.getX()),
-            Mth.lerp((double)var3, var2.yo, var2.getY()) + Mth.lerp(var3, this.eyeHeightOld, this.eyeHeight),
-            Mth.lerp((double)var3, var2.zo, var2.getZ())
+            Mth.lerp((double)tickDelta, player.xo, player.getX()),
+            Mth.lerp((double)tickDelta, player.yo, player.getY()) + Mth.lerp(tickDelta, this.eyeHeightOld, this.eyeHeight),
+            Mth.lerp((double)tickDelta, player.zo, player.getZ())
          ),
-         var2.getViewYRot(var3),
-         var2.getViewXRot(var3)
+         player.getViewYRot(tickDelta),
+         player.getViewXRot(tickDelta)
       );
    }
 
    public String getDebugStatus() {
-      int var1 = 0;
+      int n = 0;
 
-      for (BotWorldView.Section var3 : this.sections.values()) {
-         if (!var3.buffers.isEmpty()) {
-            var1++;
+      for (BotWorldView.Section section : this.sections.values()) {
+         if (!section.buffers.isEmpty()) {
+            n++;
          }
       }
 
-      StringBuilder var4 = new StringBuilder("mesh ")
-         .append(var1)
+      StringBuilder builder = new StringBuilder("mesh ")
+         .append(n)
          .append('/')
          .append(this.sections.size())
          .append(" | dirty ")
          .append(this.dirty.size())
          .append(" | pending ")
          .append(this.pendingBuilds.get());
-      String var5 = this.lastError;
-      if (var5 != null) {
-         var4.append(" | err: ").append(var5);
+      String lastError = this.lastError;
+      if (lastError != null) {
+         builder.append(" | err: ").append(lastError);
       }
 
-      return var4.toString();
+      return builder.toString();
    }
 
    public void close() {
       this.closed = true;
 
-      for (BotWorldView.Section var2 : this.sections.values()) {
-         var2.closeBuffers();
+      for (BotWorldView.Section section : this.sections.values()) {
+         section.closeBuffers();
       }
 
       this.sections.clear();
@@ -249,59 +249,59 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
    }
 
    @Override
-   public void onBlockChanged(BlockPos var1) {
-      int var2 = SectionPos.blockToSectionCoord(var1.getX() - 1);
-      int var3 = SectionPos.blockToSectionCoord(var1.getX() + 1);
-      int var4 = SectionPos.blockToSectionCoord(var1.getY() - 1);
-      int var5 = SectionPos.blockToSectionCoord(var1.getY() + 1);
-      int var6 = SectionPos.blockToSectionCoord(var1.getZ() - 1);
-      int var7 = SectionPos.blockToSectionCoord(var1.getZ() + 1);
+   public void onBlockChanged(BlockPos pos) {
+      int blockToSectionCoord = SectionPos.blockToSectionCoord(pos.getX() - 1);
+      int n = SectionPos.blockToSectionCoord(pos.getX() + 1);
+      int blockToSectionCoord2 = SectionPos.blockToSectionCoord(pos.getY() - 1);
+      int blockToSectionCoord3 = SectionPos.blockToSectionCoord(pos.getY() + 1);
+      int blockToSectionCoord4 = SectionPos.blockToSectionCoord(pos.getZ() - 1);
+      int blockToSectionCoord5 = SectionPos.blockToSectionCoord(pos.getZ() + 1);
 
-      for (int var8 = var2; var8 <= var3; var8++) {
-         for (int var9 = var4; var9 <= var5; var9++) {
-            for (int var10 = var6; var10 <= var7; var10++) {
-               this.dirty.add(SectionPos.asLong(var8, var9, var10));
+      for (int i = blockToSectionCoord; i <= n; i++) {
+         for (int j = blockToSectionCoord2; j <= blockToSectionCoord3; j++) {
+            for (int k = blockToSectionCoord4; k <= blockToSectionCoord5; k++) {
+               this.dirty.add(SectionPos.asLong(i, j, k));
             }
          }
       }
    }
 
    @Override
-   public void onChunkChanged(int var1, int var2) {
-      BotWorld var3 = this.client.getWorld();
-      if (var3 != null) {
-         int var4 = SectionPos.blockToSectionCoord(var3.getMinY());
-         int var5 = SectionPos.blockToSectionCoord(var3.getMaxY());
+   public void onChunkChanged(int x, int z) {
+      BotWorld world = this.client.getWorld();
+      if (world != null) {
+         int blockToSectionCoord = SectionPos.blockToSectionCoord(world.getMinY());
+         int n = SectionPos.blockToSectionCoord(world.getMaxY());
 
-         for (int var6 = var4; var6 <= var5; var6++) {
-            this.dirty.add(SectionPos.asLong(var1, var6, var2));
-            this.dirty.add(SectionPos.asLong(var1 - 1, var6, var2));
-            this.dirty.add(SectionPos.asLong(var1 + 1, var6, var2));
-            this.dirty.add(SectionPos.asLong(var1, var6, var2 - 1));
-            this.dirty.add(SectionPos.asLong(var1, var6, var2 + 1));
+         for (int i = blockToSectionCoord; i <= n; i++) {
+            this.dirty.add(SectionPos.asLong(x, i, z));
+            this.dirty.add(SectionPos.asLong(x - 1, i, z));
+            this.dirty.add(SectionPos.asLong(x + 1, i, z));
+            this.dirty.add(SectionPos.asLong(x, i, z - 1));
+            this.dirty.add(SectionPos.asLong(x, i, z + 1));
          }
       }
    }
 
    @Override
-   public void onSectionChanged(int var1, int var2, int var3) {
-      this.dirty.add(SectionPos.asLong(var1, var2, var3));
-      this.dirty.add(SectionPos.asLong(var1 - 1, var2, var3));
-      this.dirty.add(SectionPos.asLong(var1 + 1, var2, var3));
-      this.dirty.add(SectionPos.asLong(var1, var2 - 1, var3));
-      this.dirty.add(SectionPos.asLong(var1, var2 + 1, var3));
-      this.dirty.add(SectionPos.asLong(var1, var2, var3 - 1));
-      this.dirty.add(SectionPos.asLong(var1, var2, var3 + 1));
+   public void onSectionChanged(int x, int y, int z) {
+      this.dirty.add(SectionPos.asLong(x, y, z));
+      this.dirty.add(SectionPos.asLong(x - 1, y, z));
+      this.dirty.add(SectionPos.asLong(x + 1, y, z));
+      this.dirty.add(SectionPos.asLong(x, y - 1, z));
+      this.dirty.add(SectionPos.asLong(x, y + 1, z));
+      this.dirty.add(SectionPos.asLong(x, y, z - 1));
+      this.dirty.add(SectionPos.asLong(x, y, z + 1));
    }
 
-   private void bindWorld(BotWorld var1) {
-      if (this.boundWorld != var1) {
+   private void bindWorld(BotWorld boundWorld) {
+      if (this.boundWorld != boundWorld) {
          if (this.boundWorld != null) {
             this.boundWorld.removeRenderListener(this);
          }
 
-         for (BotWorldView.Section var3 : this.sections.values()) {
-            var3.closeBuffers();
+         for (BotWorldView.Section section : this.sections.values()) {
+            section.closeBuffers();
          }
 
          this.sections.clear();
@@ -309,72 +309,72 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
          this.dirty.clear();
          this.drainUploadsDiscarding();
          this.closed = false;
-         this.boundWorld = var1;
-         var1.addRenderListener(this);
+         this.boundWorld = boundWorld;
+         boundWorld.addRenderListener(this);
       }
    }
 
    private void drainUploads() {
-      BotSectionMesher.MeshResult var1;
-      while ((var1 = this.uploads.poll()) != null) {
-         BotWorldView.Section var2 = this.sections.get(var1.sectionPos());
-         if (var2 == null) {
-            discardResult(var1);
+      BotSectionMesher.MeshResult upload;
+      while ((upload = this.uploads.poll()) != null) {
+         BotWorldView.Section section = this.sections.get(upload.sectionPos());
+         if (section == null) {
+            discardResult(upload);
          } else {
-            var2.building = false;
-            var2.closeBuffers();
-            var2.blockEntities = var1.blockEntities();
+            section.building = false;
+            section.closeBuffers();
+            section.blockEntities = upload.blockEntities();
 
-            for (BotSectionMesher.LayerMesh var4 : var1.layers()) {
-               MeshBuffer var5 = new MeshBuffer("zenith bot section");
-               var5.method6583(var4.buffer());
-               var4.allocator().close();
-               var2.buffers.put(var4.layer(), var5);
+            for (BotSectionMesher.LayerMesh layer : upload.layers()) {
+               MeshBuffer meshBuffer = new MeshBuffer("zenith bot section");
+               meshBuffer.method6583(layer.buffer());
+               layer.allocator().close();
+               section.buffers.put(layer.layer(), meshBuffer);
             }
          }
       }
    }
 
    private void drainUploadsDiscarding() {
-      BotSectionMesher.MeshResult var1;
-      while ((var1 = this.uploads.poll()) != null) {
-         discardResult(var1);
+      BotSectionMesher.MeshResult upload;
+      while ((upload = this.uploads.poll()) != null) {
+         discardResult(upload);
       }
    }
 
-   private static void discardResult(BotSectionMesher.MeshResult var0) {
-      for (BotSectionMesher.LayerMesh var2 : var0.layers()) {
-         var2.buffer().close();
-         var2.allocator().close();
+   private static void discardResult(BotSectionMesher.MeshResult upload) {
+      for (BotSectionMesher.LayerMesh layer : upload.layers()) {
+         layer.buffer().close();
+         layer.allocator().close();
       }
    }
 
-   private void refreshSections(BotWorld var1, BotPlayer var2) {
-      int var3 = SectionPos.blockToSectionCoord(Mth.floor(var2.getX()));
-      int var4 = SectionPos.blockToSectionCoord(Mth.floor(var2.getEyeY()));
-      int var5 = SectionPos.blockToSectionCoord(Mth.floor(var2.getZ()));
-      int var6 = SectionPos.blockToSectionCoord(var1.getMinY());
-      int var7 = SectionPos.blockToSectionCoord(var1.getMaxY());
+   private void refreshSections(BotWorld world, BotPlayer player) {
+      int blockToSectionCoord = SectionPos.blockToSectionCoord(Mth.floor(player.getX()));
+      int lastCenterY = SectionPos.blockToSectionCoord(Mth.floor(player.getEyeY()));
+      int lastCenterZ = SectionPos.blockToSectionCoord(Mth.floor(player.getZ()));
+      int lastMinSection = SectionPos.blockToSectionCoord(world.getMinY());
+      int lastMaxSection = SectionPos.blockToSectionCoord(world.getMaxY());
       if (!this.sectionsValid
-         || var3 != this.lastCenterX
-         || var4 != this.lastCenterY
-         || var5 != this.lastCenterZ
-         || var6 != this.lastMinSection
-         || var7 != this.lastMaxSection) {
+         || blockToSectionCoord != this.lastCenterX
+         || lastCenterY != this.lastCenterY
+         || lastCenterZ != this.lastCenterZ
+         || lastMinSection != this.lastMinSection
+         || lastMaxSection != this.lastMaxSection) {
          this.sectionsValid = true;
-         this.lastCenterX = var3;
-         this.lastCenterY = var4;
-         this.lastCenterZ = var5;
-         this.lastMinSection = var6;
-         this.lastMaxSection = var7;
+         this.lastCenterX = blockToSectionCoord;
+         this.lastCenterY = lastCenterY;
+         this.lastCenterZ = lastCenterZ;
+         this.lastMinSection = lastMinSection;
+         this.lastMaxSection = lastMaxSection;
          this.sections
             .entrySet()
             .removeIf(
                var3x -> {
                   long var4x = var3x.getKey();
-                  boolean var6x = Math.abs(SectionPos.x(var4x) - var3) > 5
-                     || Math.abs(SectionPos.z(var4x) - var5) > 5
-                     || Math.abs(SectionPos.y(var4x) - var4) > 5;
+                  boolean var6x = Math.abs(SectionPos.x(var4x) - blockToSectionCoord) > 5
+                     || Math.abs(SectionPos.z(var4x) - lastCenterZ) > 5
+                     || Math.abs(SectionPos.y(var4x) - lastCenterY) > 5;
                   if (var6x) {
                      var3x.getValue().closeBuffers();
                   }
@@ -383,16 +383,16 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
                }
             );
 
-         for (int var8 = var3 - 5; var8 <= var3 + 5; var8++) {
-            for (int var9 = var5 - 5; var9 <= var5 + 5; var9++) {
-               int var10 = Math.max(var4 - 5, var6);
-               int var11 = Math.min(var4 + 5, var7);
+         for (int i = blockToSectionCoord - 5; i <= blockToSectionCoord + 5; i++) {
+            for (int j = lastCenterZ - 5; j <= lastCenterZ + 5; j++) {
+               int n = Math.max(lastCenterY - 5, lastMinSection);
+               int n2 = Math.min(lastCenterY + 5, lastMaxSection);
 
-               for (int var12 = var10; var12 <= var11; var12++) {
-                  long var13 = SectionPos.asLong(var8, var12, var9);
-                  if (!this.sections.containsKey(var13)) {
-                     this.sections.put(var13, new BotWorldView.Section(var13));
-                     this.dirty.add(var13);
+               for (int k = n; k <= n2; k++) {
+                  long pos = SectionPos.asLong(i, k, j);
+                  if (!this.sections.containsKey(pos)) {
+                     this.sections.put(pos, new BotWorldView.Section(pos));
+                     this.dirty.add(pos);
                   }
                }
             }
@@ -400,52 +400,52 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
       }
    }
 
-   private void scheduleBuilds(BotWorld var1, BotPlayer var2) {
+   private void scheduleBuilds(BotWorld world, BotPlayer player) {
       if (!this.dirty.isEmpty() && this.pendingBuilds.get() < 32) {
-         ArrayList<BotWorldView.Section> var3 = new ArrayList();
+         ArrayList<BotWorldView.Section> sections = new ArrayList();
 
-         for (Long var5 : this.dirty) {
-            BotWorldView.Section var6 = this.sections.get(var5);
-            if (var6 == null) {
-               this.dirty.remove(var5);
-            } else if (!var6.building) {
-               var3.add(var6);
+         for (Long l : this.dirty) {
+            BotWorldView.Section section = this.sections.get(l);
+            if (section == null) {
+               this.dirty.remove(l);
+            } else if (!section.building) {
+               sections.add(section);
             }
          }
 
-         if (!var3.isEmpty()) {
-            double var15 = var2.getX();
-            double var16 = var2.getY();
-            double var8 = var2.getZ();
+         if (!sections.isEmpty()) {
+            double x = player.getX();
+            double y = player.getY();
+            double z = player.getZ();
 
-            for (BotWorldView.Section var11 : var3) {
-               var11.sortKey = var11.squaredDistanceTo(var15, var16, var8);
+            for (BotWorldView.Section section : sections) {
+               section.sortKey = section.squaredDistanceTo(x, y, z);
             }
 
-            var3.sort(BY_SORT_KEY);
-            int var17 = 0;
+            sections.sort(BY_SORT_KEY);
+            int n = 0;
 
-            for (BotWorldView.Section var12 : var3) {
-               if (var17 >= 8 || this.pendingBuilds.get() >= 32) {
+            for (BotWorldView.Section section : sections) {
+               if (n >= 8 || this.pendingBuilds.get() >= 32) {
                   break;
                }
 
-               long var13 = var12.pos;
-               if (this.dirty.remove(var13)) {
-                  var12.building = true;
+               long pos = section.pos;
+               if (this.dirty.remove(pos)) {
+                  section.building = true;
                   this.pendingBuilds.incrementAndGet();
-                  var17++;
+                  n++;
                   this.client.execute(() -> {
                      try {
                         if (this.closed) {
                            return;
                         }
 
-                        this.uploads.add(BotSectionMesher.build(var1, var13));
+                        this.uploads.add(BotSectionMesher.build(world, pos));
                      } catch (Throwable var8x) {
                         this.lastError = "mesh: " + var8x;
-                        this.uploads.add(new BotSectionMesher.MeshResult(var13, List.of(), List.of(), true));
-                        this.dirty.add(var13);
+                        this.uploads.add(new BotSectionMesher.MeshResult(pos, List.of(), List.of(), true));
+                        this.dirty.add(pos);
                      } finally {
                         this.pendingBuilds.decrementAndGet();
                      }
@@ -460,21 +460,21 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
       }
    }
 
-   private void scheduleEntitySnapshot(BotWorld var1) {
-      BotWorldView.EntitySnapshot var2 = this.entitySnapshot;
-      if (var2.world() != var1 || var2.version() != var1.getEntitySetVersion()) {
+   private void scheduleEntitySnapshot(BotWorld world) {
+      BotWorldView.EntitySnapshot entitySnapshot = this.entitySnapshot;
+      if (entitySnapshot.world() != world || entitySnapshot.version() != world.getEntitySetVersion()) {
          if (this.entitySnapshotScheduled.compareAndSet(false, true)) {
             this.client.execute(() -> {
                try {
-                  int var2x = var1.getEntitySetVersion();
-                  ArrayList var3 = new ArrayList();
+                  int var2x = world.getEntitySetVersion();
+                  ArrayList entities = new ArrayList();
 
-                  for (Entity var5 : var1.entitiesForRendering()) {
-                     var3.add(var5);
+                  for (Entity entity : world.entitiesForRendering()) {
+                     entities.add(entity);
                   }
 
-                  this.entitySnapshot = new BotWorldView.EntitySnapshot(var1, var2x, var3);
-               } catch (Throwable var9) {
+                  this.entitySnapshot = new BotWorldView.EntitySnapshot(world, var2x, entities);
+               } catch (Throwable e) {
                } finally {
                   this.entitySnapshotScheduled.set(false);
                }
@@ -483,95 +483,95 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
       }
    }
 
-   private void ensureFbo(int var1, int var2) {
-      if (this.fbo == null || this.fbo.width != var1 || this.fbo.height != var2) {
+   private void ensureFbo(int width, int height) {
+      if (this.fbo == null || this.fbo.width != width || this.fbo.height != height) {
          if (this.fbo != null) {
             this.fbo.destroyBuffers();
          }
 
-         this.fbo = BlitUtils.method6448("zenith bot view", var1, var2, true);
+         this.fbo = BlitUtils.method6448("zenith bot view", width, height, true);
       }
    }
 
-   private void drawTerrainLayer(ChunkSectionLayer var1, Vec3 var2, boolean var3) {
-      double var4 = var2.x;
-      double var6 = var2.y;
-      double var8 = var2.z;
-      List<BotWorldView.Section> var10 = this.layerSections;
-      var10.clear();
+   private void drawTerrainLayer(ChunkSectionLayer chunkSectionLayer, Vec3 position, boolean flag) {
+      double x = position.x;
+      double y = position.y;
+      double z = position.z;
+      List<BotWorldView.Section> layerSections = this.layerSections;
+      layerSections.clear();
 
-      for (BotWorldView.Section var12 : this.sections.values()) {
-         if (var12.buffers.containsKey(var1)) {
-            var12.sortKey = var12.squaredDistanceTo(var4, var6, var8);
-            var10.add(var12);
+      for (BotWorldView.Section section : this.sections.values()) {
+         if (section.buffers.containsKey(chunkSectionLayer)) {
+            section.sortKey = section.squaredDistanceTo(x, y, z);
+            layerSections.add(section);
          }
       }
 
-      if (!var10.isEmpty()) {
-         var10.sort(BY_SORT_KEY);
-         if (var3) {
-            Collections.reverse(var10);
+      if (!layerSections.isEmpty()) {
+         layerSections.sort(BY_SORT_KEY);
+         if (flag) {
+            Collections.reverse(layerSections);
          }
 
          RenderState.method1887(2, this.lightmap.getGlTextureView());
-         RenderPipeline var17 = var1.pipeline(false);
-         var var18 = this.layerMeshes;
-         var18.clear();
-         int var13 = 0;
+         RenderPipeline pipeline = chunkSectionLayer.pipeline(false);
+         var layerMeshes = this.layerMeshes;
+         layerMeshes.clear();
+         int n = 0;
 
-         for (BotWorldView.Section var15 : var10) {
-            MeshBuffer var16 = var15.buffers.get(var1);
-            if (var16 != null) {
-               if (var13 == this.layerMatrices.size()) {
+         for (BotWorldView.Section layerSection : layerSections) {
+            MeshBuffer buffer = layerSection.buffers.get(chunkSectionLayer);
+            if (buffer != null) {
+               if (n == this.layerMatrices.size()) {
                   this.layerMatrices.add(new Matrix4f());
                }
 
                this.layerMatrices
-                  .get(var13)
+                  .get(n)
                   .set(this.positionMatrix)
-                  .translate((float)(var15.originX() - var4), (float)(var15.originY() - var6), (float)(var15.originZ() - var8));
-               var18.add(var16);
-               var13++;
+                  .translate((float)(layerSection.originX() - x), (float)(layerSection.originY() - y), (float)(layerSection.originZ() - z));
+               layerMeshes.add(buffer);
+               n++;
             }
          }
 
-         MeshBuffer.method6588(var18, this.layerMatrices.subList(0, var13), var17, this.fbo);
-         var18.clear();
-         var10.clear();
+         MeshBuffer.method6588(layerMeshes, this.layerMatrices.subList(0, n), pipeline, this.fbo);
+         layerMeshes.clear();
+         layerSections.clear();
          RenderState.method1893(2);
       }
    }
 
-   private void renderEntities(BotWorld var1, BotPlayer var2, Vec3 var3, float var4) {
-      EntityRenderDispatcher var5 = mc.getEntityRenderDispatcher();
-      var5.prepare(this.camera, null);
-      BotPlayHandler var7 = this.client.getPlayHandler();
-      boolean var8 = mc.player == null;
-      CameraRenderState var10 = OutlineVertexProvider.method1541(var3);
+   private void renderEntities(BotWorld world, BotPlayer player, Vec3 position, float tickDelta) {
+      EntityRenderDispatcher entityRenderDispatcher = mc.getEntityRenderDispatcher();
+      entityRenderDispatcher.prepare(this.camera, null);
+      BotPlayHandler playHandler = this.client.getPlayHandler();
+      boolean flag = mc.player == null;
+      CameraRenderState camera = OutlineVertexProvider.method1541(position);
 
-      for (Entity var12 : this.entitySnapshot.entities()) {
-         if (var12 != var2 && !var12.isRemoved() && var12.level() == var1 && !(var12.distanceToSqr(var3) > 9216.0)) {
+      for (Entity entity : this.entitySnapshot.entities()) {
+         if (entity != player && !entity.isRemoved() && entity.level() == world && !(entity.distanceToSqr(position) > 9216.0)) {
             try {
-               PoseStack var13 = new PoseStack();
-               var13.mulPose(this.positionMatrix);
-               if (var12 instanceof Player var14) {
-                  int var23 = LightCoordsUtil.getLightCoords(var1, var14.blockPosition());
-                  OutlineVertexProvider.method1542(this.fbo, var6 -> this.playerRenderer.render(var14, var7, var3.x, var3.y, var3.z, var4, var13, var6, var23, true));
-               } else if (!var8 || !(var12 instanceof LivingEntity)) {
-                  double var15 = Mth.lerp((double)var4, var12.xOld, var12.getX());
-                  double var17 = Mth.lerp((double)var4, var12.yOld, var12.getY());
-                  double var19 = Mth.lerp((double)var4, var12.zOld, var12.getZ());
-                  EntityRenderState var21 = var5.extractEntity(var12, var4);
-                  var21.outlineColor = 0;
+               PoseStack poseStack = new PoseStack();
+               poseStack.mulPose(this.positionMatrix);
+               if (entity instanceof Player player2) {
+                  int lightCoords = LightCoordsUtil.getLightCoords(world, player2.blockPosition());
+                  OutlineVertexProvider.method1542(this.fbo, submitNodeCollector -> this.playerRenderer.render(player2, playHandler, position.x, position.y, position.z, tickDelta, poseStack, submitNodeCollector, lightCoords, true));
+               } else if (!flag || !(entity instanceof LivingEntity)) {
+                  double d = Mth.lerp((double)tickDelta, entity.xOld, entity.getX());
+                  double d2 = Mth.lerp((double)tickDelta, entity.yOld, entity.getY());
+                  double d3 = Mth.lerp((double)tickDelta, entity.zOld, entity.getZ());
+                  EntityRenderState extractEntity = entityRenderDispatcher.extractEntity(entity, tickDelta);
+                  extractEntity.outlineColor = 0;
                   // ponytail: one feature pass per entity keeps a broken renderer from taking the rest down; batch if the bot view gets slow
-                  OutlineVertexProvider.method1542(this.fbo, var6 -> var5.submit(var21, var10, var15 - var3.x, var17 - var3.y, var19 - var3.z, var13, var6));
+                  OutlineVertexProvider.method1542(this.fbo, submitNodeCollector -> entityRenderDispatcher.submit(extractEntity, camera, d - position.x, d2 - position.y, d3 - position.z, poseStack, submitNodeCollector));
                }
-            } catch (Throwable var22) {
-               this.lastError = "entity: " + var22;
+            } catch (Throwable e) {
+               this.lastError = "entity: " + e;
                if (!this.loggedRenderError) {
                   this.loggedRenderError = true;
-                  System.err.println("[BotWorldView] entity render failed for " + var12.getType() + ":");
-                  var22.printStackTrace();
+                  System.err.println("[BotWorldView] entity render failed for " + entity.getType() + ":");
+                  e.printStackTrace();
                }
             }
          }
@@ -579,28 +579,28 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
 
    }
 
-   private void renderBlockEntities(BotWorld var1, Vec3 var2, float var3) {
-      BlockEntityRenderDispatcher var4 = mc.getBlockEntityRenderDispatcher();
-      var4.prepare(this.camera.position());
-      CameraRenderState var7 = OutlineVertexProvider.method1541(var2);
+   private void renderBlockEntities(BotWorld world, Vec3 position, float tickDelta) {
+      BlockEntityRenderDispatcher blockEntityRenderDispatcher = mc.getBlockEntityRenderDispatcher();
+      blockEntityRenderDispatcher.prepare(this.camera.position());
+      CameraRenderState camera = OutlineVertexProvider.method1541(position);
 
-      for (BotWorldView.Section var9 : this.sections.values()) {
-         for (BlockEntity var11 : var9.blockEntities) {
-            if (!var11.isRemoved() && var11.getLevel() == var1) {
-               BlockPos var12 = var11.getBlockPos();
-               if (!(var12.distToCenterSqr(var2) > 2304.0)) {
+      for (BotWorldView.Section section : this.sections.values()) {
+         for (BlockEntity blockEntity : section.blockEntities) {
+            if (!blockEntity.isRemoved() && blockEntity.getLevel() == world) {
+               BlockPos blockPos = blockEntity.getBlockPos();
+               if (!(blockPos.distToCenterSqr(position) > 2304.0)) {
                   try {
-                     PoseStack var13 = new PoseStack();
-                     var13.mulPose(this.positionMatrix);
-                     var13.pushPose();
-                     var13.translate(var12.getX() - var2.x, var12.getY() - var2.y, var12.getZ() - var2.z);
-                     BlockEntityRenderState var14 = var4.tryExtractRenderState(var11, var3, null, false);
-                     if (var14 != null) {
-                        OutlineVertexProvider.method1542(this.fbo, var6 -> var4.submit(var14, var13, var6, var7));
+                     PoseStack poseStack = new PoseStack();
+                     poseStack.mulPose(this.positionMatrix);
+                     poseStack.pushPose();
+                     poseStack.translate(blockPos.getX() - position.x, blockPos.getY() - position.y, blockPos.getZ() - position.z);
+                     BlockEntityRenderState tryExtractRenderState = blockEntityRenderDispatcher.tryExtractRenderState(blockEntity, tickDelta, null, false);
+                     if (tryExtractRenderState != null) {
+                        OutlineVertexProvider.method1542(this.fbo, submitNodeCollector -> blockEntityRenderDispatcher.submit(tryExtractRenderState, poseStack, submitNodeCollector, camera));
                      }
 
-                     var13.popPose();
-                  } catch (Throwable var15) {
+                     poseStack.popPose();
+                  } catch (Throwable e) {
                   }
                }
             }
@@ -609,44 +609,44 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
 
    }
 
-   private void renderHand(BotWorld var1, BotPlayer var2, float var3, int var9, int var10, float var5) {
+   private void renderHand(BotWorld world, BotPlayer player, float tickDelta, int width, int height, float zFar) {
       if (this.fbo.getDepthTexture() != null) {
          RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(this.fbo.getDepthTexture(), org.zenith.utility.render.RenderCompat.CLEAR_DEPTH);
       }
 
-      this.handProjection.setupPerspective(0.05F, var5, 70.0F, var9, var10);
+      this.handProjection.setupPerspective(0.05F, zFar, 70.0F, width, height);
       RenderSystem.setProjectionMatrix(this.zenithHandProjection.getBuffer(this.handProjection), ProjectionType.PERSPECTIVE);
       RenderState.method1887(2, this.lightmap.getGlTextureView());
-      PoseStack var7 = new PoseStack();
-      int var8 = LightCoordsUtil.getLightCoords(var1, BlockPos.containing(var2.getEyePosition()));
-      OutlineVertexProvider.method1542(this.fbo, var6 -> this.heldItem.render(var2, this.client.getPlayHandler(), var3, var7, var6, var8));
+      PoseStack poseStack = new PoseStack();
+      int lightCoords = LightCoordsUtil.getLightCoords(world, BlockPos.containing(player.getEyePosition()));
+      OutlineVertexProvider.method1542(this.fbo, submitNodeCollector -> this.heldItem.render(player, this.client.getPlayHandler(), tickDelta, poseStack, submitNodeCollector, lightCoords));
    }
 
    private void restoreDispatchers() {
       if (mc.level != null) {
-         Camera var1 = mc.gameRenderer.mainCamera();
-         mc.getEntityRenderDispatcher().prepare(var1, mc.crosshairPickEntity);
-         mc.getBlockEntityRenderDispatcher().prepare(var1.position());
+         Camera mainCamera = mc.gameRenderer.mainCamera();
+         mc.getEntityRenderDispatcher().prepare(mainCamera, mc.crosshairPickEntity);
+         mc.getBlockEntityRenderDispatcher().prepare(mainCamera.position());
       }
    }
 
-   private static float[] skyColor(BotWorld var0, BotPlayer var1) {
-      float var2 = BotLightmap.getSkyBrightness(var0);
+   private static float[] skyColor(BotWorld world, BotPlayer player) {
+      float skyBrightness = BotLightmap.getSkyBrightness(world);
 
-      org.joml.Vector3fc var3;
+      org.joml.Vector3fc dimensionValue;
       try {
-         var3 = var0.environmentAttributes().getDimensionValue(EnvironmentAttributes.SKY_COLOR);
-      } catch (Exception var5) {
-         var3 = new org.joml.Vector3f(0.47F, 0.65F, 1.0F);
+         dimensionValue = world.environmentAttributes().getDimensionValue(EnvironmentAttributes.SKY_COLOR);
+      } catch (Exception e) {
+         dimensionValue = new org.joml.Vector3f(0.47F, 0.65F, 1.0F);
       }
 
-      return new float[]{var3.x() * var2, var3.y() * var2, var3.z() * var2};
+      return new float[]{dimensionValue.x() * skyBrightness, dimensionValue.y() * skyBrightness, dimensionValue.z() * skyBrightness};
    }
 
    private static final class BotCamera extends Camera {
-      void place(Vec3 var1, float var2, float var3) {
-         this.setPosition(var1);
-         this.setRotation(var2, var3);
+      void place(Vec3 vec, float viewYRot, float viewXRot) {
+         this.setPosition(vec);
+         this.setRotation(viewYRot, viewXRot);
       }
    }
 
@@ -685,10 +685,10 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
       }
       public static final BotWorldView.EntitySnapshot EMPTY = new BotWorldView.EntitySnapshot(null, 0, List.of());
 
-      private EntitySnapshot(BotWorld var1, int var2, List<Entity> var3) {
-         this.world = var1;
-         this.version = var2;
-         this.entities = var3;
+      private EntitySnapshot(BotWorld world, int version, List<Entity> entities) {
+         this.world = world;
+         this.version = version;
+         this.entities = entities;
       }
    }
 
@@ -699,8 +699,8 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
       public boolean building;
       public double sortKey;
 
-      public Section(long var1) {
-         this.pos = var1;
+      public Section(long pos) {
+         this.pos = pos;
       }
 
       public int originX() {
@@ -715,16 +715,16 @@ public final class BotWorldView implements BotWorld.RenderListener, MinecraftAcc
          return SectionPos.z(this.pos) << 4;
       }
 
-      public double squaredDistanceTo(double var1, double var3, double var5) {
-         double var7 = this.originX() + 8.0 - var1;
-         double var9 = this.originY() + 8.0 - var3;
-         double var11 = this.originZ() + 8.0 - var5;
-         return var7 * var7 + var9 * var9 + var11 * var11;
+      public double squaredDistanceTo(double x, double y, double z) {
+         double d = this.originX() + 8.0 - x;
+         double d2 = this.originY() + 8.0 - y;
+         double d3 = this.originZ() + 8.0 - z;
+         return d * d + d2 * d2 + d3 * d3;
       }
 
       public void closeBuffers() {
-         for (MeshBuffer var2 : this.buffers.values()) {
-            var2.close();
+         for (MeshBuffer meshBuffer : this.buffers.values()) {
+            meshBuffer.close();
          }
 
          this.buffers.clear();

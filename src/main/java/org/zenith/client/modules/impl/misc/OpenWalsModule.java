@@ -27,24 +27,24 @@ public final class OpenWalsModule extends Module {
    }
 
    @EventTarget
-   public void method950(CrosshairTargetEvent var1) {
+   public void method950(CrosshairTargetEvent event) {
       if (mc.player != null && mc.level != null) {
-         Rotation var2 = Zenith.getInstance().getRotationManager().method7844();
-         BlockHitResult var3 = TargetUtils.method3216(mc.player.getEyePosition(1.0F), var2, mc.player.blockInteractionRange(), this::method951);
-         if (var3 != null && var3.getType() == Type.BLOCK) {
-            mc.hitResult = var3;
+         Rotation rotation = Zenith.getInstance().getRotationManager().method7844();
+         BlockHitResult hitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotation, mc.player.blockInteractionRange(), this::method951);
+         if (hitResult != null && hitResult.getType() == Type.BLOCK) {
+            mc.hitResult = hitResult;
          }
       }
    }
 
-   private boolean method951(BlockHitResult var1) {
-      if (var1 != null && var1.getType() == Type.BLOCK) {
-         BlockState var2 = mc.level.getBlockState(var1.getBlockPos());
-         if (var2.getBlock() instanceof EnderChestBlock) {
+   private boolean method951(BlockHitResult blockHitResult) {
+      if (blockHitResult != null && blockHitResult.getType() == Type.BLOCK) {
+         BlockState blockState = mc.level.getBlockState(blockHitResult.getBlockPos());
+         if (blockState.getBlock() instanceof EnderChestBlock) {
             return true;
          } else {
-            BlockEntity var3 = mc.level.getBlockEntity(var1.getBlockPos());
-            return var3 instanceof Container && var2.getMenuProvider(mc.level, var1.getBlockPos()) != null;
+            BlockEntity blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
+            return blockEntity instanceof Container && blockState.getMenuProvider(mc.level, blockHitResult.getBlockPos()) != null;
          }
       } else {
          return false;

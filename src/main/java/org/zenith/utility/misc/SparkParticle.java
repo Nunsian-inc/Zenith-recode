@@ -12,38 +12,38 @@ public class SparkParticle extends Particle {
    private Vec3 vec3d;
    private float floatValue = 1.0F;
 
-   public SparkParticle(Vec3 var1, Vec3 var2, int var3, float var4, ZenithColor var5, String var6, float var7, float var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
-      ThreadLocalRandom var9 = ThreadLocalRandom.current();
-      double var10 = Math.toRadians(var9.nextDouble() * 80.0);
-      double var12 = var9.nextDouble() * Math.PI * 2.0;
-      double var14 = Math.sin(var10);
-      double var16 = -Math.cos(var10);
-      this.vec3d = new Vec3(Math.cos(var12) * var14, var16, Math.sin(var12) * var14).normalize();
+   public SparkParticle(Vec3 vec3d, Vec3 vec3d3, int intValue, float floatValue, ZenithColor zenithColor, String text, float nextFloat, float f) {
+      super(vec3d, vec3d3, intValue, floatValue, zenithColor, text, nextFloat, f);
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      double d = Math.toRadians(current.nextDouble() * 80.0);
+      double d2 = current.nextDouble() * Math.PI * 2.0;
+      double d3 = Math.sin(d);
+      double y = -Math.cos(d);
+      this.vec3d = new Vec3(Math.cos(d2) * d3, y, Math.sin(d2) * d3).normalize();
    }
 
-   public void method1448(Vec3 var1, boolean var2, float var3) {
+   public void method1448(Vec3 vec, boolean flag, float scale) {
       this.intValue2 = this.intValue;
-      this.method6572(var1);
+      this.method6572(vec);
       if (this.intValue > 0) {
          this.vec3d2 = this.vec3d;
-         Vec3 var4 = this.vec3d3.scale(var3);
+         Vec3 vec2 = this.vec3d3.scale(scale);
          if (mc.level != null) {
-            int var5 = -1;
-            Vec3 var6 = this.vec3d;
+            int n = -1;
+            Vec3 vec3d = this.vec3d;
 
-            for (int var7 = 1; var7 <= 10; var7++) {
-               var6 = var6.add(var4);
-               if (!mc.level.getBlockState(BlockPos.containing(var6)).isAir()) {
-                  var5 = var7;
+            for (int i = 1; i <= 10; i++) {
+               vec3d = vec3d.add(vec2);
+               if (!mc.level.getBlockState(BlockPos.containing(vec3d)).isAir()) {
+                  n = i;
                   break;
                }
             }
 
-            if (var5 > 0) {
-               float var9 = var5 / 10.0F;
-               this.floatValue = var9 * var9;
-               if (var5 <= 1) {
+            if (n > 0) {
+               float f = n / 10.0F;
+               this.floatValue = f * f;
+               if (n <= 1) {
                   this.intValue = 0;
                   return;
                }
@@ -52,8 +52,8 @@ public class SparkParticle extends Particle {
             }
          }
 
-         this.vec3d = this.vec3d.add(var4);
-         if (var2) {
+         this.vec3d = this.vec3d.add(vec2);
+         if (flag) {
             this.vec3d3 = this.vec3d3.scale(0.9);
             this.vec3d3 = new Vec3(this.vec3d3.x * 0.85, this.vec3d3.y - 0.008, this.vec3d3.z * 0.85);
             if (this.vec3d3.y < -0.5) {
@@ -64,8 +64,8 @@ public class SparkParticle extends Particle {
                this.intValue = 0;
             }
          } else {
-            float var8 = 1.0F - (float)this.intValue / this.intValue3;
-            if (var8 < 0.7F) {
+            float f = 1.0F - (float)this.intValue / this.intValue3;
+            if (f < 0.7F) {
                this.vec3d3 = this.vec3d3.scale(0.995);
             } else {
                this.vec3d3 = this.vec3d3.scale(0.92);
@@ -86,17 +86,17 @@ public class SparkParticle extends Particle {
    }
 
    @Override
-   public float method1449(float var1) {
-      float var2 = this.method6571(var1);
-      float var3;
-      if (var2 < 0.1F) {
-         var3 = var2 / 0.1F;
-      } else if (var2 > 0.7F) {
-         var3 = 1.0F - (var2 - 0.7F) / 0.3F;
+   public float method1449(float f) {
+      float f2 = this.method6571(f);
+      float f3;
+      if (f2 < 0.1F) {
+         f3 = f2 / 0.1F;
+      } else if (f2 > 0.7F) {
+         f3 = 1.0F - (f2 - 0.7F) / 0.3F;
       } else {
-         var3 = 1.0F;
+         f3 = 1.0F;
       }
 
-      return var3 * this.floatValue;
+      return f3 * this.floatValue;
    }
 }

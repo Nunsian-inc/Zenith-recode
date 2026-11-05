@@ -24,12 +24,12 @@ public class GuiStringSetting extends GuiSetting<TextSetting> {
    private BoundsData bounds;
    private SearchBox textBox;
 
-   public GuiStringSetting(TextSetting var1) {
-      super(166.0F, var1);
+   public GuiStringSetting(TextSetting setting) {
+      super(166.0F, setting);
    }
 
-   public GuiStringSetting(TextSetting var1, float var2) {
-      super(var2, var1);
+   public GuiStringSetting(TextSetting setting, float width) {
+      super(width, setting);
    }
 
    @Override
@@ -38,12 +38,12 @@ public class GuiStringSetting extends GuiSetting<TextSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bounds != null && this.bounds.contains(var1, var3) && var5 == Enum3.LEFT) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY) && enum2 == Enum3.LEFT) {
          this.getBox().setSelected(true);
          return true;
       } else {
-         if (!this.getBox().onMouseClicked(var1, var3, var5)) {
+         if (!this.getBox().onMouseClicked(lastClickX, lastClickY, enum2)) {
             this.setting.method2122(this.getBox().getText());
          }
 
@@ -52,106 +52,106 @@ public class GuiStringSetting extends GuiSetting<TextSetting> {
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
+   public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
          this.animationVisible.method2807(this.setting.isVisible());
-         var6 *= this.animationVisible.getValue();
-         SearchBox var8 = this.getBox();
-         if (!var8.isSelected()) {
-            var8.setText(this.setting.getValue());
-            var8.setCursor(this.setting.getValue().length());
+         previewAlpha *= this.animationVisible.getValue();
+         SearchBox box = this.getBox();
+         if (!box.isSelected()) {
+            box.setText(this.setting.getValue());
+            box.setCursor(this.setting.getValue().length());
          }
 
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         Font var10 = Fonts.NEW_REGULAR.getFont(5.4F);
-         float var11 = this.width / 2.0F - GuiStyle.PADDING.intValue();
-         ZenithColor var12 = var7.getTextEnable().getZenithColor().method7294(var6);
-         ZenithColor var13 = var7.getTextSecondary().getZenithColor().method7294(var6);
-         ZenithColor var14 = var7.getPrimaryColor().getZenithColor().method7294(var6);
-         this.drawDefault(var1, var2, var3, "M", this.setting.getName(), this.setting.getDescription(), var9, var10, var4, var5, var11, var12, var13, var14);
-         float var15 = this.width / 2.0F;
-         float var16 = this.getHeight();
-         this.bounds = new BoundsData(var4 + this.width - var15, var5 + (this.getHeight() - var16) / 2.0F, var15, var16);
-         this.focusAnimation.method2807(!(!var8.isSelected() && !this.bounds.contains(var2, var3)));
-         var1.drawRoundedRect(
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
+         float maxWidth = this.width / 2.0F - GuiStyle.PADDING.intValue();
+         ZenithColor zenithColor = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor2 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
+         this.drawDefault(menuDrawContext, x, y, "M", this.setting.getName(), this.setting.getDescription(), font, font2, floatValue, centeredTextY, maxWidth, zenithColor, zenithColor2, zenithColor3);
+         float width = this.width / 2.0F;
+         float height = this.getHeight();
+         this.bounds = new BoundsData(floatValue + this.width - width, centeredTextY + (this.getHeight() - height) / 2.0F, width, height);
+         this.focusAnimation.method2807(!(!box.isSelected() && !this.bounds.contains(x, y)));
+         menuDrawContext.drawRoundedRect(
             this.bounds.getFloatValue(),
             this.bounds.getFloatValue2(),
-            var15,
-            var16,
+            width,
+            height,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() / 2.0F),
-            var7.getFieldSurfaceBackground().getZenithColor().method7294(var6)
+            currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha)
          );
-         var1.drawRoundedBorder(
+         menuDrawContext.drawRoundedBorder(
             this.bounds.getFloatValue(),
             this.bounds.getFloatValue2(),
-            var15,
-            var16,
+            width,
+            height,
             0.1F,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() / 2.0F),
-            var7.getFieldBorder()
+            currentStyle.getFieldBorder()
                .getZenithColor()
-               .method7295(var7.getPrimaryColor().getZenithColor().method7294(0.5F), this.focusAnimation.getValue())
-               .method7294(var6)
+               .method7295(currentStyle.getPrimaryColor().getZenithColor().method7294(0.5F), this.focusAnimation.getValue())
+               .method7294(previewAlpha)
          );
-         Font var17 = Fonts.NEW_MEDIUM.getFont(5.3F);
-         var8.setFont(var17);
-         var8.setWidth(var15 - GuiStyle.PADDING.intValue() * 2.0F);
-         var8.setMaxLength(this.setting.getEntry().getMaxLength());
-         var8.setMasked(this.setting.isFlag());
-         var8.setText2(Zenith.getInstance().getLocalization().translate(this.setting.getText()));
-         var8.method987(
-            var1,
+         Font font3 = Fonts.NEW_MEDIUM.getFont(5.3F);
+         box.setFont(font3);
+         box.setWidth(width - GuiStyle.PADDING.intValue() * 2.0F);
+         box.setMaxLength(this.setting.getEntry().getMaxLength());
+         box.setMasked(this.setting.isFlag());
+         box.setText2(Zenith.getInstance().getLocalization().translate(this.setting.getText()));
+         box.method987(
+            menuDrawContext,
             this.bounds.getFloatValue() + GuiStyle.PADDING.intValue(),
-            this.bounds.getFloatValue2() + (var16 - var17.height()) / 2.0F,
-            var7.getTextEnable().getZenithColor().method7294(var6),
-            var7.getTextTertiary().getZenithColor().method7294(var6)
+            this.bounds.getFloatValue2() + (height - font3.height()) / 2.0F,
+            currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+            currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
       }
    }
 
    @Override
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      SearchBox var4 = this.getBox();
-      if (var4.isSelected()) {
-         if (var1 == 257) {
-            this.setting.method2122(var4.getText());
-            var4.setSelected(false);
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      SearchBox box = this.getBox();
+      if (box.isSelected()) {
+         if (keyCode == 257) {
+            this.setting.method2122(box.getText());
+            box.setSelected(false);
             return true;
          }
 
-         if (var1 == 256) {
-            var4.setSelected(false);
+         if (keyCode == 256) {
+            box.setSelected(false);
             return true;
          }
       }
 
-      boolean var5 = var4.keyPressed(var1, var2, var3);
-      this.pushLive(var4);
-      return var5;
+      boolean keyPressed = box.keyPressed(keyCode, keycode, modifiers);
+      this.pushLive(box);
+      return keyPressed;
    }
 
    @Override
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      SearchBox var3 = this.getBox();
-      boolean var4 = var3.charTyped(var1, var2);
-      this.pushLive(var3);
-      return var4;
+   public boolean charTyped(char codepoint, int n) {
+      SearchBox box = this.getBox();
+      boolean charTyped = box.charTyped(codepoint, n);
+      this.pushLive(box);
+      return charTyped;
    }
 
-   private void pushLive(SearchBox var1) {
+   private void pushLive(SearchBox box) {
       if (this.setting.isLive()) {
-         this.setting.method2122(var1.getText());
+         this.setting.method2122(box.getText());
       }
    }
 

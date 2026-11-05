@@ -37,8 +37,8 @@ public final class ScriptEntityApi {
    private ScriptEntityApi() {
    }
 
-   public static void method6573(float var0) {
-      CONST_floatValues[0] = var0;
+   public static void method6573(float tickDelta) {
+      CONST_floatValues[0] = tickDelta;
    }
 
    public static float method6574() {
@@ -49,188 +49,188 @@ public final class ScriptEntityApi {
       return Minecraft.getInstance();
    }
 
-   public static Object method6576(Scriptable var0, Entity var1) {
-      if (var1 == null) {
+   public static Object method6576(Scriptable scope, Entity entity) {
+      if (entity == null) {
          return null;
       } else {
-         LivingEntity var2 = var1 instanceof LivingEntity var3 ? var3 : null;
-         ScriptValueUtils.Entry2 var4 = ScriptValueUtils.method6247(var0);
-         var4.method6274("id", var1x -> (double)var1.getId());
-         var4.method6274("name", var1x -> var1.getName().getString());
-         var4.method6274("displayName", var1x -> var1.getDisplayName() == null ? var1.getName().getString() : var1.getDisplayName().getString());
-         var4.method6274("type", var1x -> BuiltInRegistries.ENTITY_TYPE.getKey(var1.getType()).toString());
-         var4.method6274("uuid", var1x -> var1.getStringUUID());
-         var4.method6274("x", var1x -> var1.getX());
-         var4.method6274("y", var1x -> var1.getY());
-         var4.method6274("z", var1x -> var1.getZ());
-         var4.method6274("pos", var2x -> ScriptValueUtils.method6270(var0, var1.getX(), var1.getY(), var1.getZ()));
-         var4.method6274("prevPos", var2x -> ScriptValueUtils.method6270(var0, var1.xo, var1.yo, var1.zo));
-         var4.method6274(
+         LivingEntity livingEntity = entity instanceof LivingEntity livingEntity2 ? livingEntity2 : null;
+         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+         entry2.method6274("id", var1x -> (double)entity.getId());
+         entry2.method6274("name", var1x -> entity.getName().getString());
+         entry2.method6274("displayName", var1x -> entity.getDisplayName() == null ? entity.getName().getString() : entity.getDisplayName().getString());
+         entry2.method6274("type", var1x -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString());
+         entry2.method6274("uuid", var1x -> entity.getStringUUID());
+         entry2.method6274("x", var1x -> entity.getX());
+         entry2.method6274("y", var1x -> entity.getY());
+         entry2.method6274("z", var1x -> entity.getZ());
+         entry2.method6274("pos", var2x -> ScriptValueUtils.method6270(scope, entity.getX(), entity.getY(), entity.getZ()));
+         entry2.method6274("prevPos", var2x -> ScriptValueUtils.method6270(scope, entity.xo, entity.yo, entity.zo));
+         entry2.method6274(
             "renderPos",
             var2x -> {
                float var3x = ScriptValueUtils.method6252(var2x, 0) ? (float)ScriptValueUtils.method6256(var2x, 0, 1.0) : method6574();
                return ScriptValueUtils.method6270(
-                  var0,
-                  var1.xo + (var1.getX() - var1.xo) * var3x,
-                  var1.yo + (var1.getY() - var1.yo) * var3x,
-                  var1.zo + (var1.getZ() - var1.zo) * var3x
+                  scope,
+                  entity.xo + (entity.getX() - entity.xo) * var3x,
+                  entity.yo + (entity.getY() - entity.yo) * var3x,
+                  entity.zo + (entity.getZ() - entity.zo) * var3x
                );
             }
          );
-         var4.method6274("velocity", var2x -> {
-            Vec3 var3x = var1.getDeltaMovement();
-            return ScriptValueUtils.method6270(var0, var3x.x, var3x.y, var3x.z);
+         entry2.method6274("velocity", var2x -> {
+            Vec3 var3x = entity.getDeltaMovement();
+            return ScriptValueUtils.method6270(scope, var3x.x, var3x.y, var3x.z);
          });
-         var4.method6274("yaw", var1x -> (double)var1.getYRot());
-         var4.method6274("pitch", var1x -> (double)var1.getXRot());
-         var4.method6274("headYaw", var1x -> (double)var1.getYHeadRot());
-         var4.method6274("eyeY", var1x -> var1.getEyeY());
-         var4.method6274("width", var1x -> (double)var1.getBbWidth());
-         var4.method6274("height", var1x -> (double)var1.getBbHeight());
-         var4.method6274("box", var2x -> method6577(var0, var1.getBoundingBox()));
-         var4.method6274("alive", var1x -> var1.isAlive() && !var1.isRemoved());
-         var4.method6274("isPlayer", var1x -> var1 instanceof Player);
-         var4.method6274("isLiving", var1x -> var2 != null);
-         var4.method6274("isSelf", var1x -> var1 == method6575().player);
-         var4.method6274("isFriend", var1x -> var1 instanceof Player && Zenith.getInstance().getFriends().method7626(var1));
-         var4.method6274("onGround", var1x -> var1.onGround());
-         var4.method6274("sneaking", var1x -> var1.isShiftKeyDown());
-         var4.method6274("sprinting", var1x -> var1.isSprinting());
-         var4.method6274("invisible", var1x -> var1.isInvisible());
-         var4.method6274("onFire", var1x -> var1.isOnFire());
-         var4.method6274("inWater", var1x -> var1.isInWater());
-         var4.method6274("glowing", var1x -> var1.isCurrentlyGlowing());
-         var4.method6274("fallDistance", var1x -> var1.fallDistance);
-         var4.method6274("age", var1x -> (double)var1.tickCount);
-         var4.method6274("distance", var1x -> method6575().player == null ? 0.0 : method6575().player.distanceTo(var1));
-         var4.method6274(
+         entry2.method6274("yaw", var1x -> (double)entity.getYRot());
+         entry2.method6274("pitch", var1x -> (double)entity.getXRot());
+         entry2.method6274("headYaw", var1x -> (double)entity.getYHeadRot());
+         entry2.method6274("eyeY", var1x -> entity.getEyeY());
+         entry2.method6274("width", var1x -> (double)entity.getBbWidth());
+         entry2.method6274("height", var1x -> (double)entity.getBbHeight());
+         entry2.method6274("box", var2x -> method6577(scope, entity.getBoundingBox()));
+         entry2.method6274("alive", var1x -> entity.isAlive() && !entity.isRemoved());
+         entry2.method6274("isPlayer", var1x -> entity instanceof Player);
+         entry2.method6274("isLiving", var1x -> livingEntity != null);
+         entry2.method6274("isSelf", var1x -> entity == method6575().player);
+         entry2.method6274("isFriend", var1x -> entity instanceof Player && Zenith.getInstance().getFriends().method7626(entity));
+         entry2.method6274("onGround", var1x -> entity.onGround());
+         entry2.method6274("sneaking", var1x -> entity.isShiftKeyDown());
+         entry2.method6274("sprinting", var1x -> entity.isSprinting());
+         entry2.method6274("invisible", var1x -> entity.isInvisible());
+         entry2.method6274("onFire", var1x -> entity.isOnFire());
+         entry2.method6274("inWater", var1x -> entity.isInWater());
+         entry2.method6274("glowing", var1x -> entity.isCurrentlyGlowing());
+         entry2.method6274("fallDistance", var1x -> entity.fallDistance);
+         entry2.method6274("age", var1x -> (double)entity.tickCount);
+         entry2.method6274("distance", var1x -> method6575().player == null ? 0.0 : method6575().player.distanceTo(entity));
+         entry2.method6274(
             "distanceTo",
             var1x -> Math.sqrt(
-               var1.distanceToSqr(
+               entity.distanceToSqr(
                   ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)
                )
             )
          );
-         var4.method6274("canSee", var1x -> method6575().player != null && method6575().player.hasLineOfSight(var1));
-         var4.method6274("health", var1x -> var2 == null ? 0.0 : var2.getHealth());
-         var4.method6274("maxHealth", var1x -> var2 == null ? 0.0 : var2.getMaxHealth());
-         var4.method6274("absorption", var1x -> var2 == null ? 0.0 : var2.getAbsorptionAmount());
-         var4.method6274("armor", var1x -> var2 == null ? 0.0 : var2.getArmorValue());
-         var4.method6274("hurtTime", var1x -> var2 == null ? 0.0 : var2.hurtTime);
-         var4.method6274("gliding", var1x -> var2 != null && var2.isFallFlying());
-         var4.method6274("usingItem", var1x -> var2 != null && var2.isUsingItem());
-         var4.method6274("blocking", var1x -> var2 != null && var2.isBlocking());
-         var4.method6274("mainHand", var2x -> var2 == null ? method6579(var0, ItemStack.EMPTY) : method6579(var0, var2.getMainHandItem()));
-         var4.method6274("offHand", var2x -> var2 == null ? method6579(var0, ItemStack.EMPTY) : method6579(var0, var2.getOffhandItem()));
-         var4.method6274("armorItems", var2x -> {
+         entry2.method6274("canSee", var1x -> method6575().player != null && method6575().player.hasLineOfSight(entity));
+         entry2.method6274("health", var1x -> livingEntity == null ? 0.0 : livingEntity.getHealth());
+         entry2.method6274("maxHealth", var1x -> livingEntity == null ? 0.0 : livingEntity.getMaxHealth());
+         entry2.method6274("absorption", var1x -> livingEntity == null ? 0.0 : livingEntity.getAbsorptionAmount());
+         entry2.method6274("armor", var1x -> livingEntity == null ? 0.0 : livingEntity.getArmorValue());
+         entry2.method6274("hurtTime", var1x -> livingEntity == null ? 0.0 : livingEntity.hurtTime);
+         entry2.method6274("gliding", var1x -> livingEntity != null && livingEntity.isFallFlying());
+         entry2.method6274("usingItem", var1x -> livingEntity != null && livingEntity.isUsingItem());
+         entry2.method6274("blocking", var1x -> livingEntity != null && livingEntity.isBlocking());
+         entry2.method6274("mainHand", var2x -> livingEntity == null ? method6579(scope, ItemStack.EMPTY) : method6579(scope, livingEntity.getMainHandItem()));
+         entry2.method6274("offHand", var2x -> livingEntity == null ? method6579(scope, ItemStack.EMPTY) : method6579(scope, livingEntity.getOffhandItem()));
+         entry2.method6274("armorItems", var2x -> {
             ArrayList var3x = new ArrayList();
-            if (var2 != null) {
-               for (EquipmentSlot var7 : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-                  var3x.add(method6579(var0, var2.getItemBySlot(var7)));
+            if (livingEntity != null) {
+               for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+                  var3x.add(method6579(scope, livingEntity.getItemBySlot(slot)));
                }
             }
 
-            return ScriptValueUtils.method6267(var0, var3x);
+            return ScriptValueUtils.method6267(scope, var3x);
          });
-         var4.method6274("effects", var2x -> {
+         entry2.method6274("effects", var2x -> {
             ArrayList var3x = new ArrayList();
-            if (var2 != null) {
-               for (MobEffectInstance var5 : var2.getActiveEffects()) {
-                  var3x.add(method6578(var0, var5));
+            if (livingEntity != null) {
+               for (MobEffectInstance activeEffect : livingEntity.getActiveEffects()) {
+                  var3x.add(method6578(scope, activeEffect));
                }
             }
 
-            return ScriptValueUtils.method6267(var0, var3x);
+            return ScriptValueUtils.method6267(scope, var3x);
          });
-         var4.method6274("ping", var1x -> {
-            if (var1 instanceof Player && method6575().getConnection() != null) {
-               PlayerInfo var2x = method6575().getConnection().getPlayerInfo(var1.getUUID());
+         entry2.method6274("ping", var1x -> {
+            if (entity instanceof Player && method6575().getConnection() != null) {
+               PlayerInfo var2x = method6575().getConnection().getPlayerInfo(entity.getUUID());
                return var2x == null ? 0.0 : var2x.getLatency();
             } else {
                return 0.0;
             }
          });
-         return var4.getScriptableObject();
+         return entry2.getScriptableObject();
       }
    }
 
-   public static Scriptable method6577(Scriptable var0, AABB var1) {
-      return ScriptValueUtils.method6247(var0)
-         .method6277("x1", var1.minX)
-         .method6277("y1", var1.minY)
-         .method6277("z1", var1.minZ)
-         .method6277("x2", var1.maxX)
-         .method6277("y2", var1.maxY)
-         .method6277("z2", var1.maxZ)
-         .method6277("width", var1.getXsize())
-         .method6277("height", var1.getYsize())
-         .method6277("depth", var1.getZsize())
+   public static Scriptable method6577(Scriptable scope, AABB boundingBox) {
+      return ScriptValueUtils.method6247(scope)
+         .method6277("x1", boundingBox.minX)
+         .method6277("y1", boundingBox.minY)
+         .method6277("z1", boundingBox.minZ)
+         .method6277("x2", boundingBox.maxX)
+         .method6277("y2", boundingBox.maxY)
+         .method6277("z2", boundingBox.maxZ)
+         .method6277("width", boundingBox.getXsize())
+         .method6277("height", boundingBox.getYsize())
+         .method6277("depth", boundingBox.getZsize())
          .getScriptableObject();
    }
 
-   public static Scriptable method6578(Scriptable var0, MobEffectInstance var1) {
-      return ScriptValueUtils.method6247(var0)
-         .method6277("id", var1.getEffect().getRegisteredName())
-         .method6277("level", var1.getAmplifier() + 1.0)
-         .method6277("amplifier", (double)var1.getAmplifier())
-         .method6277("duration", (double)var1.getDuration())
-         .method6277("ambient", var1.isAmbient())
+   public static Scriptable method6578(Scriptable scope, MobEffectInstance activeEffect) {
+      return ScriptValueUtils.method6247(scope)
+         .method6277("id", activeEffect.getEffect().getRegisteredName())
+         .method6277("level", activeEffect.getAmplifier() + 1.0)
+         .method6277("amplifier", (double)activeEffect.getAmplifier())
+         .method6277("duration", (double)activeEffect.getDuration())
+         .method6277("ambient", activeEffect.isAmbient())
          .getScriptableObject();
    }
 
-   public static Object method6579(Scriptable var0, ItemStack var1) {
-      ItemStack var2 = var1 == null ? ItemStack.EMPTY : var1;
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var0);
-      String var4 = BuiltInRegistries.ITEM.getKey(var2.getItem()).toString();
-      var3.method6277("empty", var2.isEmpty());
-      var3.method6277("id", var4);
-      var3.method6277("count", (double)var2.getCount());
-      var3.method6277("name", var2.isEmpty() ? "" : var2.getHoverName().getString());
-      var3.method6274("is", var1x -> matches(var4, ScriptValueUtils.method6254(var1x, 0, "")));
-      var3.method6274("details", var2x -> ScriptWorldApi.method4818(var0, var2));
-      var3.method6274("toString", var1x -> var4);
-      if (var2.isEmpty()) {
-         return var3.getScriptableObject();
+   public static Object method6579(Scriptable scope, ItemStack mainHandItem) {
+      ItemStack stack = mainHandItem == null ? ItemStack.EMPTY : mainHandItem;
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      String string = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+      entry2.method6277("empty", stack.isEmpty());
+      entry2.method6277("id", string);
+      entry2.method6277("count", (double)stack.getCount());
+      entry2.method6277("name", stack.isEmpty() ? "" : stack.getHoverName().getString());
+      entry2.method6274("is", var1x -> matches(string, ScriptValueUtils.method6254(var1x, 0, "")));
+      entry2.method6274("details", var2x -> ScriptWorldApi.method4818(scope, stack));
+      entry2.method6274("toString", var1x -> string);
+      if (stack.isEmpty()) {
+         return entry2.getScriptableObject();
       } else {
-         var3.method6277("maxCount", (double)var2.getMaxStackSize());
-         var3.method6277("damage", (double)var2.getDamageValue());
-         var3.method6277("maxDamage", (double)var2.getMaxDamage());
-         var3.method6277("durability", var2.getMaxDamage() <= 0 ? 1.0 : 1.0 - (double)var2.getDamageValue() / var2.getMaxDamage());
-         var3.method6277("damageable", var2.isDamageableItem());
-         var3.method6277("stackable", var2.isStackable());
-         var3.method6277("food", var2.get(DataComponents.FOOD) != null);
-         var3.method6277("block", var2.getItem() instanceof BlockItem);
-         var3.method6277("customName", var2.get(DataComponents.CUSTOM_NAME) != null);
-         var3.method6277("cooldown", method6575().player != null && method6575().player.getCooldowns().isOnCooldown(var2));
-         ArrayList var5 = new ArrayList();
-         ItemLore var6 = var2.get(DataComponents.LORE);
-         if (var6 != null) {
-            for (Component var8 : var6.lines()) {
-               if (var5.size() >= 64) {
+         entry2.method6277("maxCount", (double)stack.getMaxStackSize());
+         entry2.method6277("damage", (double)stack.getDamageValue());
+         entry2.method6277("maxDamage", (double)stack.getMaxDamage());
+         entry2.method6277("durability", stack.getMaxDamage() <= 0 ? 1.0 : 1.0 - (double)stack.getDamageValue() / stack.getMaxDamage());
+         entry2.method6277("damageable", stack.isDamageableItem());
+         entry2.method6277("stackable", stack.isStackable());
+         entry2.method6277("food", stack.get(DataComponents.FOOD) != null);
+         entry2.method6277("block", stack.getItem() instanceof BlockItem);
+         entry2.method6277("customName", stack.get(DataComponents.CUSTOM_NAME) != null);
+         entry2.method6277("cooldown", method6575().player != null && method6575().player.getCooldowns().isOnCooldown(stack));
+         ArrayList arrayList = new ArrayList();
+         ItemLore itemLore = stack.get(DataComponents.LORE);
+         if (itemLore != null) {
+            for (Component line : itemLore.lines()) {
+               if (arrayList.size() >= 64) {
                   break;
                }
 
-               var5.add(var8.getString());
+               arrayList.add(line.getString());
             }
          }
 
-         var3.method6277("lore", ScriptValueUtils.method6267(var0, var5));
-         ArrayList var10 = new ArrayList();
+         entry2.method6277("lore", ScriptValueUtils.method6267(scope, arrayList));
+         ArrayList arrayList2 = new ArrayList();
 
-         for (Entry var9 : var2.getEnchantments().entrySet()) {
-            var10.add(
-               ScriptValueUtils.method6247(var0)
-                  .method6277("id", ((Holder)var9.getKey()).getRegisteredName())
-                  .method6277("level", (double)var9.getIntValue())
+         for (Entry entry : stack.getEnchantments().entrySet()) {
+            arrayList2.add(
+               ScriptValueUtils.method6247(scope)
+                  .method6277("id", ((Holder)entry.getKey()).getRegisteredName())
+                  .method6277("level", (double)entry.getIntValue())
                   .getScriptableObject()
             );
          }
 
-         var3.method6277("enchants", ScriptValueUtils.method6267(var0, var10));
-         var3.method6274("enchant", var1x -> {
+         entry2.method6277("enchants", ScriptValueUtils.method6267(scope, arrayList2));
+         entry2.method6274("enchant", var1x -> {
             String var2x = ScriptValueUtils.method6254(var1x, 0, "");
 
-            for (Entry var4x : var2.getEnchantments().entrySet()) {
+            for (Entry var4x : stack.getEnchantments().entrySet()) {
                if (matches(((Holder)var4x.getKey()).getRegisteredName(), var2x)) {
                   return (double)var4x.getIntValue();
                }
@@ -238,26 +238,26 @@ public final class ScriptEntityApi {
 
             return 0.0;
          });
-         return var3.getScriptableObject();
+         return entry2.getScriptableObject();
       }
    }
 
-   public static boolean matches(String var0, String var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         String var2 = var1.toLowerCase(Locale.ROOT);
-         return var0.equals(var2) || var0.equals("minecraft:" + var2);
+   public static boolean matches(String string, String str) {
+      if (str != null && !str.isEmpty()) {
+         String lowerCase = str.toLowerCase(Locale.ROOT);
+         return string.equals(lowerCase) || string.equals("minecraft:" + lowerCase);
       } else {
          return false;
       }
    }
 
-   public static Object method6580(Scriptable var0, BlockPos var1) {
+   public static Object method6580(Scriptable scope, BlockPos containing) {
       if (method6575().level == null) {
-         ScriptValueUtils.Entry2 var6 = ScriptValueUtils.method6247(var0)
+         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope)
             .method6277("id", "minecraft:air")
-            .method6277("x", (double)var1.getX())
-            .method6277("y", (double)var1.getY())
-            .method6277("z", (double)var1.getZ())
+            .method6277("x", (double)containing.getX())
+            .method6277("y", (double)containing.getY())
+            .method6277("z", (double)containing.getZ())
             .method6277("air", true)
             .method6277("liquid", false)
             .method6277("solid", false)
@@ -265,58 +265,58 @@ public final class ScriptEntityApi {
             .method6277("full", false)
             .method6277("hardness", 0.0)
             .method6277("luminance", 0.0)
-            .method6277("properties", ScriptValueUtils.method6247(var0).getScriptableObject());
-         var6.method6274("is", var0x -> matches("minecraft:air", ScriptValueUtils.method6254(var0x, 0, "")));
-         var6.method6274("toString", var0x -> "minecraft:air");
-         var6.method6274("valueOf", var0x -> "minecraft:air");
-         return var6.getScriptableObject();
+            .method6277("properties", ScriptValueUtils.method6247(scope).getScriptableObject());
+         entry2.method6274("is", var0x -> matches("minecraft:air", ScriptValueUtils.method6254(var0x, 0, "")));
+         entry2.method6274("toString", var0x -> "minecraft:air");
+         entry2.method6274("valueOf", var0x -> "minecraft:air");
+         return entry2.getScriptableObject();
       } else {
-         BlockState var2 = method6575().level.getBlockState(var1);
-         String var3 = BuiltInRegistries.BLOCK.getKey(var2.getBlock()).toString();
-         ScriptValueUtils.Entry2 var4 = ScriptValueUtils.method6247(var0)
-            .method6277("id", var3)
-            .method6277("x", (double)var1.getX())
-            .method6277("y", (double)var1.getY())
-            .method6277("z", (double)var1.getZ())
-            .method6277("air", var2.isAir())
-            .method6277("liquid", !var2.getFluidState().isEmpty())
-            .method6277("solid", var2.isRedstoneConductor(method6575().level, var1))
-            .method6277("replaceable", var2.canBeReplaced())
-            .method6277("full", var2.isCollisionShapeFullBlock(method6575().level, var1))
-            .method6277("hardness", (double)var2.getDestroySpeed(method6575().level, var1))
-            .method6277("luminance", (double)var2.getLightEmission());
-         var4.method6274("is", var1x -> matches(var3, ScriptValueUtils.method6254(var1x, 0, "")));
-         var4.method6274("toString", var1x -> var3);
-         var4.method6274("valueOf", var1x -> var3);
-         ScriptValueUtils.Entry2 var5 = ScriptValueUtils.method6247(var0);
-         var2.getValues().forEach(var1x -> var5.method6277(var1x.property().getName(), var1x.valueName().toLowerCase(Locale.ROOT)));
-         var4.method6277("properties", var5.getScriptableObject());
-         return var4.getScriptableObject();
+         BlockState blockState = method6575().level.getBlockState(containing);
+         String string = BuiltInRegistries.BLOCK.getKey(blockState.getBlock()).toString();
+         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope)
+            .method6277("id", string)
+            .method6277("x", (double)containing.getX())
+            .method6277("y", (double)containing.getY())
+            .method6277("z", (double)containing.getZ())
+            .method6277("air", blockState.isAir())
+            .method6277("liquid", !blockState.getFluidState().isEmpty())
+            .method6277("solid", blockState.isRedstoneConductor(method6575().level, containing))
+            .method6277("replaceable", blockState.canBeReplaced())
+            .method6277("full", blockState.isCollisionShapeFullBlock(method6575().level, containing))
+            .method6277("hardness", (double)blockState.getDestroySpeed(method6575().level, containing))
+            .method6277("luminance", (double)blockState.getLightEmission());
+         entry2.method6274("is", var1x -> matches(string, ScriptValueUtils.method6254(var1x, 0, "")));
+         entry2.method6274("toString", var1x -> string);
+         entry2.method6274("valueOf", var1x -> string);
+         ScriptValueUtils.Entry2 entry22 = ScriptValueUtils.method6247(scope);
+         blockState.getValues().forEach(var1x -> entry22.method6277(var1x.property().getName(), var1x.valueName().toLowerCase(Locale.ROOT)));
+         entry2.method6277("properties", entry22.getScriptableObject());
+         return entry2.getScriptableObject();
       }
    }
 
-   public static Object method6581(Scriptable var0, HitResult var1) {
-      if (var1 != null && var1.getType() != Type.MISS) {
-         Vec3 var2 = var1.getLocation();
-         ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var0).method6277("pos", ScriptValueUtils.method6270(var0, var2.x, var2.y, var2.z));
-         if (var1 instanceof BlockHitResult var4) {
-            var3.method6277("type", "block");
-            var3.method6277("side", var4.getDirection().getSerializedName());
-            var3.method6277("block", method6580(var0, var4.getBlockPos()));
-         } else if (var1 instanceof EntityHitResult var5) {
-            var3.method6277("type", "entity");
-            var3.method6277("entity", method6576(var0, var5.getEntity()));
+   public static Object method6581(Scriptable scope, HitResult hitResult) {
+      if (hitResult != null && hitResult.getType() != Type.MISS) {
+         Vec3 location = hitResult.getLocation();
+         ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope).method6277("pos", ScriptValueUtils.method6270(scope, location.x, location.y, location.z));
+         if (hitResult instanceof BlockHitResult blockHitResult) {
+            entry2.method6277("type", "block");
+            entry2.method6277("side", blockHitResult.getDirection().getSerializedName());
+            entry2.method6277("block", method6580(scope, blockHitResult.getBlockPos()));
+         } else if (hitResult instanceof EntityHitResult entityHitResult) {
+            entry2.method6277("type", "entity");
+            entry2.method6277("entity", method6576(scope, entityHitResult.getEntity()));
          }
 
-         return var3.getScriptableObject();
+         return entry2.getScriptableObject();
       } else {
-         return ScriptValueUtils.method6247(var0).method6277("type", "miss").getScriptableObject();
+         return ScriptValueUtils.method6247(scope).method6277("type", "miss").getScriptableObject();
       }
    }
 
-   public static HitResult method6582(Vec3 var0, Vec3 var1, boolean var2) {
+   public static HitResult method6582(Vec3 eyePosition, Vec3 to, boolean flag) {
       return method6575().level != null && method6575().player != null
-         ? method6575().level.clip(new ClipContext(var0, var1, Block.OUTLINE, var2 ? Fluid.ANY : Fluid.NONE, method6575().player))
+         ? method6575().level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, flag ? Fluid.ANY : Fluid.NONE, method6575().player))
          : null;
    }
 }

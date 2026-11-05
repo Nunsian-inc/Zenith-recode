@@ -105,20 +105,20 @@ public final class AutoFarmRW extends Module {
       this.center = null;
    }
 
-   private void method3881(String var1) {
-      ChatLogger.method2021("AutoFarmRW: " + var1);
+   private void method3881(String str) {
+      ChatLogger.method2021("AutoFarmRW: " + str);
       this.setToggled(false);
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && this.type == AutoFarmRW.Type.WARP && var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && this.type == AutoFarmRW.Type.WARP && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
          this.flag = true;
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.gameMode != null && mc.getConnection() != null) {
          if (!mc.player.isAlive()) {
             this.method3881("сбор остановлен — игрок погиб");
@@ -169,8 +169,8 @@ public final class AutoFarmRW extends Module {
       if (mc.level != this.world) {
          this.method3881("сбор остановлен — мир сменился");
       } else {
-         int var1 = (int)this.radius.getValue3();
-         if (!method3886(this.center, mc.player.blockPosition(), var1 + 8)) {
+         int n = (int)this.radius.getValue3();
+         if (!method3886(this.center, mc.player.blockPosition(), n + 8)) {
             this.method3881("сбор остановлен — игрок ушёл с фермы");
          } else {
             if (this.stopWatch2.method7546((long)this.sellInterval.getValue3() * 1000L)) {
@@ -182,7 +182,7 @@ public final class AutoFarmRW extends Module {
             if (mc.isPaused() || !method3884()) {
                this.harvestProcess.pause();
             } else if (!this.harvestProcess.isActive()) {
-               this.harvestProcess.start(this.center, var1);
+               this.harvestProcess.start(this.center, n);
             }
          }
       }
@@ -201,21 +201,21 @@ public final class AutoFarmRW extends Module {
          && mc.player.containerMenu.getCarried().isEmpty();
    }
 
-   public static boolean method3885(BlockState var0) {
-      if (var0.is(Blocks.PUMPKIN) || var0.is(Blocks.MELON)) {
+   public static boolean method3885(BlockState blockState) {
+      if (blockState.is(Blocks.PUMPKIN) || blockState.is(Blocks.MELON)) {
          return true;
       } else {
-         return !var0.is(Blocks.WHEAT) && !var0.is(Blocks.CARROTS) && !var0.is(Blocks.POTATOES) && !var0.is(Blocks.BEETROOTS)
+         return !blockState.is(Blocks.WHEAT) && !blockState.is(Blocks.CARROTS) && !blockState.is(Blocks.POTATOES) && !blockState.is(Blocks.BEETROOTS)
             ? false
-            : var0.getBlock() instanceof CropBlock var1 && var1.isMaxAge(var0);
+            : blockState.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(blockState);
       }
    }
 
-   public static boolean method3886(BlockPos var0, BlockPos var1, int var2) {
-      if (var0 != null && var1 != null && var2 >= 0) {
-         long var3 = (long)var1.getX() - var0.getX();
-         long var5 = (long)var1.getZ() - var0.getZ();
-         return var3 * var3 + var5 * var5 <= (long)var2 * var2 && Math.abs((long)var1.getY() - var0.getY()) <= 8L;
+   public static boolean method3886(BlockPos center, BlockPos blockPosition, int radius) {
+      if (center != null && blockPosition != null && radius >= 0) {
+         long l = (long)blockPosition.getX() - center.getX();
+         long l2 = (long)blockPosition.getZ() - center.getZ();
+         return l * l + l2 * l2 <= (long)radius * radius && Math.abs((long)blockPosition.getY() - center.getY()) <= 8L;
       } else {
          return false;
       }
@@ -247,8 +247,8 @@ public final class AutoFarmRW extends Module {
       private ItemEntity dropTarget;
       private boolean active;
 
-      public void start(BlockPos var1, int var2) {
-         if (MinecraftAccess.mc.player != null && MinecraftAccess.mc.level != null && var1 != null) {
+      public void start(BlockPos center, int n) {
+         if (MinecraftAccess.mc.player != null && MinecraftAccess.mc.level != null && center != null) {
             if (this.baritone == null) {
                this.baritone = BaritoneAPI.getProvider().getPrimaryBaritone();
                this.baritone.getPathingControlManager().registerProcess(this);
@@ -260,8 +260,8 @@ public final class AutoFarmRW extends Module {
             }
 
             this.world = MinecraftAccess.mc.level;
-            this.center = var1.immutable();
-            this.radius = Math.max(8, Math.min(96, var2));
+            this.center = center.immutable();
+            this.radius = Math.max(8, Math.min(96, n));
             this.scanCursor = 0;
             this.ticks = 0;
             this.lastHarvestTick = 64536;
@@ -271,21 +271,21 @@ public final class AutoFarmRW extends Module {
             this.dropTarget = null;
             this.active = true;
 
-            for (BlockPos var4 : BlockPos.betweenClosed(this.center.offset(-6, -6, -6), this.center.offset(6, 6, 6))) {
-               if (this.withinFarm(var4, this.radius) && this.world.isLoaded(var4) && AutoFarmRW.method3885(this.world.getBlockState(var4))) {
-                  this.crops.add(var4.immutable());
+            for (BlockPos pos : BlockPos.betweenClosed(this.center.offset(-6, -6, -6), this.center.offset(6, 6, 6))) {
+               if (this.withinFarm(pos, this.radius) && this.world.isLoaded(pos) && AutoFarmRW.method3885(this.world.getBlockState(pos))) {
+                  this.crops.add(pos.immutable());
                }
             }
          }
       }
 
       public void pause() {
-         boolean var1 = this.active
+         boolean flag = this.active
             || this.baritone != null && this.baritone.getPathingControlManager().mostRecentInControl().filter(var1x -> var1x == this).isPresent();
          this.active = false;
          this.cropTarget = null;
          this.dropTarget = null;
-         if (this.baritone != null && var1) {
+         if (this.baritone != null && flag) {
             this.baritone.getInputOverrideHandler().clearAllKeys();
             this.baritone.getPathingBehavior().cancelEverything();
          }
@@ -294,8 +294,8 @@ public final class AutoFarmRW extends Module {
       public void close() {
          this.pause();
 
-         for (int var1 = this.settingRestores.size() - 1; var1 >= 0; var1--) {
-            this.settingRestores.get(var1).run();
+         for (int i = this.settingRestores.size() - 1; i >= 0; i--) {
+            this.settingRestores.get(i).run();
          }
 
          this.settingRestores.clear();
@@ -309,34 +309,34 @@ public final class AutoFarmRW extends Module {
          return this.active && this.ticks - this.lastHarvestTick <= 6;
       }
 
-      private <T> void override(Setting<T> var1, T var2) {
-         T var3 = var1.value;
-         this.settingRestores.add(() -> var1.value = var3);
-         var1.value = var2;
+      private <T> void override(Setting<T> allowBreak, T value) {
+         T value2 = allowBreak.value;
+         this.settingRestores.add(() -> allowBreak.value = value2);
+         allowBreak.value = value;
       }
 
       private void configureSettings() {
-         Settings var1 = BaritoneAPI.getSettings();
-         this.override(var1.allowBreak, false);
-         this.override(var1.allowPlace, false);
-         this.override(var1.allowInventory, false);
-         this.override(var1.autoTool, false);
-         this.override(var1.assumeExternalAutoTool, true);
-         this.override(var1.allowParkour, false);
-         this.override(var1.allowParkourPlace, false);
-         this.override(var1.allowSprint, false);
-         this.override(var1.allowDownward, false);
-         this.override(var1.maxFallHeightNoWater, 1);
-         this.override(var1.allowWaterBucketFall, false);
-         this.override(var1.allowVines, false);
-         this.override(var1.walkWhileBreaking, false);
-         this.override(var1.freeLook, true);
-         this.override(var1.blockFreeLook, true);
-         this.override(var1.antiCheatCompatibility, true);
-         this.override(var1.disconnectOnArrival, false);
+         Settings settings = BaritoneAPI.getSettings();
+         this.override(settings.allowBreak, false);
+         this.override(settings.allowPlace, false);
+         this.override(settings.allowInventory, false);
+         this.override(settings.autoTool, false);
+         this.override(settings.assumeExternalAutoTool, true);
+         this.override(settings.allowParkour, false);
+         this.override(settings.allowParkourPlace, false);
+         this.override(settings.allowSprint, false);
+         this.override(settings.allowDownward, false);
+         this.override(settings.maxFallHeightNoWater, 1);
+         this.override(settings.allowWaterBucketFall, false);
+         this.override(settings.allowVines, false);
+         this.override(settings.walkWhileBreaking, false);
+         this.override(settings.freeLook, true);
+         this.override(settings.blockFreeLook, true);
+         this.override(settings.antiCheatCompatibility, true);
+         this.override(settings.disconnectOnArrival, false);
       }
 
-      public PathingCommand onTick(boolean var1, boolean var2) {
+      public PathingCommand onTick(boolean flag, boolean flag2) {
          this.ticks++;
          this.baritone.getInputOverrideHandler().clearAllKeys();
          if (MinecraftAccess.mc.player == null || MinecraftAccess.mc.level != this.world || !MinecraftAccess.mc.player.isAlive()) {
@@ -354,9 +354,9 @@ public final class AutoFarmRW extends Module {
                   this.blacklist.values().removeIf(var1x -> var1x <= this.ticks);
                }
 
-               if ((this.cropTarget != null || this.dropTarget != null) && (var1 || this.ticks - this.targetSince > 400)) {
-                  BlockPos var3 = this.cropTarget != null ? this.cropTarget : this.dropTarget.blockPosition();
-                  this.blacklist.put(var3.immutable(), this.ticks + 600);
+               if ((this.cropTarget != null || this.dropTarget != null) && (flag || this.ticks - this.targetSince > 400)) {
+                  BlockPos cropTarget = this.cropTarget != null ? this.cropTarget : this.dropTarget.blockPosition();
+                  this.blacklist.put(cropTarget.immutable(), this.ticks + 600);
                   this.cropTarget = null;
                   this.dropTarget = null;
                }
@@ -380,13 +380,13 @@ public final class AutoFarmRW extends Module {
                } else if (this.cropTarget == null) {
                   return pauseCommand();
                } else {
-                  var var4 = RotationUtils.reachable(
+                  var reachable = RotationUtils.reachable(
                      this.baritone.getPlayerContext(), this.cropTarget, MinecraftAccess.mc.player.blockInteractionRange()
                   );
-                  if (var4.isEmpty()) {
+                  if (reachable.isEmpty()) {
                      return path(new GoalGetToBlock(this.cropTarget));
                   } else {
-                     this.baritone.getLookBehavior().updateTarget((Rotation)var4.get(), true);
+                     this.baritone.getLookBehavior().updateTarget((Rotation)reachable.get(), true);
                      if (AutoFarmRW.method3885(this.world.getBlockState(this.cropTarget)) && this.baritone.getPlayerContext().isLookingAt(this.cropTarget)) {
                         this.baritone.getInputOverrideHandler().setInputForceState(Input.CLICK_LEFT, true);
                         this.lastHarvestTick = this.ticks;
@@ -402,39 +402,39 @@ public final class AutoFarmRW extends Module {
       }
 
       private void chooseTarget() {
-         double var1 = Double.MAX_VALUE;
-         AABB var3 = new AABB(this.center).inflate(this.radius, 6.0, this.radius);
+         double d = Double.MAX_VALUE;
+         AABB inflate = new AABB(this.center).inflate(this.radius, 6.0, this.radius);
 
-         for (ItemEntity var5 : this.world
+         for (ItemEntity dropTarget : this.world
             .getEntitiesOfClass(
-               ItemEntity.class, var3, var1x -> var1x.isAlive() && AutoFarmRW.items.contains(var1x.getItem().getItem()) && this.canFit(var1x.getItem())
+               ItemEntity.class, inflate, var1x -> var1x.isAlive() && AutoFarmRW.items.contains(var1x.getItem().getItem()) && this.canFit(var1x.getItem())
             )) {
-            if (this.withinFarm(var5.blockPosition(), this.radius) && !this.isBlacklisted(var5.blockPosition())) {
-               double var6 = MinecraftAccess.mc.player.distanceToSqr(var5);
-               if (var6 < var1) {
-                  var1 = var6;
-                  this.dropTarget = var5;
+            if (this.withinFarm(dropTarget.blockPosition(), this.radius) && !this.isBlacklisted(dropTarget.blockPosition())) {
+               double d2 = MinecraftAccess.mc.player.distanceToSqr(dropTarget);
+               if (d2 < d) {
+                  d = d2;
+                  this.dropTarget = dropTarget;
                }
             }
          }
 
-         double var10 = Double.MAX_VALUE;
-         var var11 = this.crops.iterator();
+         double d2 = Double.MAX_VALUE;
+         var iterator = this.crops.iterator();
 
-         while (var11.hasNext()) {
-            BlockPos var7 = (BlockPos)var11.next();
-            if (!this.world.isLoaded(var7) || !AutoFarmRW.method3885(this.world.getBlockState(var7))) {
-               var11.remove();
-            } else if (!this.isBlacklisted(var7)) {
-               double var8 = MinecraftAccess.mc.player.distanceToSqr(var7.getX() + 0.5, var7.getY() + 0.5, var7.getZ() + 0.5);
-               if (var8 < var10) {
-                  var10 = var8;
-                  this.cropTarget = var7;
+         while (iterator.hasNext()) {
+            BlockPos cropTarget = (BlockPos)iterator.next();
+            if (!this.world.isLoaded(cropTarget) || !AutoFarmRW.method3885(this.world.getBlockState(cropTarget))) {
+               iterator.remove();
+            } else if (!this.isBlacklisted(cropTarget)) {
+               double d3 = MinecraftAccess.mc.player.distanceToSqr(cropTarget.getX() + 0.5, cropTarget.getY() + 0.5, cropTarget.getZ() + 0.5);
+               if (d3 < d2) {
+                  d2 = d3;
+                  this.cropTarget = cropTarget;
                }
             }
          }
 
-         if (this.dropTarget == null || !(var1 <= 36.0) && !(var1 <= var10)) {
+         if (this.dropTarget == null || !(d <= 36.0) && !(d <= d2)) {
             this.dropTarget = null;
          } else {
             this.cropTarget = null;
@@ -444,31 +444,31 @@ public final class AutoFarmRW extends Module {
       }
 
       private void scan() {
-         int var1 = this.radius * 2 + 1;
-         byte var2 = 13;
-         int var3 = var1 * var1 * var2;
-         MutableBlockPos var4 = new MutableBlockPos();
+         int n = this.radius * 2 + 1;
+         byte b = 13;
+         int n2 = n * n * b;
+         MutableBlockPos mutablePos = new MutableBlockPos();
 
-         for (int var5 = 0; var5 < 4096; var5++) {
-            int var6 = this.scanCursor;
-            this.scanCursor = (this.scanCursor + 1) % var3;
-            int var7 = var6 / (var1 * var1);
-            int var8 = var6 % (var1 * var1);
-            var4.set(this.center.getX() + var8 % var1 - this.radius, this.center.getY() + var7 - 6, this.center.getZ() + var8 / var1 - this.radius);
-            if (this.withinFarm(var4, this.radius) && this.world.isLoaded(var4)) {
-               if (AutoFarmRW.method3885(this.world.getBlockState(var4))) {
-                  this.crops.add(var4.immutable());
+         for (int i = 0; i < 4096; i++) {
+            int scanCursor = this.scanCursor;
+            this.scanCursor = (this.scanCursor + 1) % n2;
+            int n3 = scanCursor / (n * n);
+            int n4 = scanCursor % (n * n);
+            mutablePos.set(this.center.getX() + n4 % n - this.radius, this.center.getY() + n3 - 6, this.center.getZ() + n4 / n - this.radius);
+            if (this.withinFarm(mutablePos, this.radius) && this.world.isLoaded(mutablePos)) {
+               if (AutoFarmRW.method3885(this.world.getBlockState(mutablePos))) {
+                  this.crops.add(mutablePos.immutable());
                } else {
-                  this.crops.remove(var4);
+                  this.crops.remove(mutablePos);
                }
             }
          }
       }
 
-      private boolean canFit(ItemStack var1) {
-         for (int var2 = 0; var2 < 36; var2++) {
-            ItemStack var3 = MinecraftAccess.mc.player.getInventory().getItem(var2);
-            if (var3.isEmpty() || ItemStack.isSameItemSameComponents(var3, var1) && var3.getCount() < var3.getMaxStackSize()) {
+      private boolean canFit(ItemStack stack) {
+         for (int i = 0; i < 36; i++) {
+            ItemStack stack2 = MinecraftAccess.mc.player.getInventory().getItem(i);
+            if (stack2.isEmpty() || ItemStack.isSameItemSameComponents(stack2, stack) && stack2.getCount() < stack2.getMaxStackSize()) {
                return true;
             }
          }
@@ -476,16 +476,16 @@ public final class AutoFarmRW extends Module {
          return false;
       }
 
-      private boolean withinFarm(BlockPos var1, int var2) {
-         return AutoFarmRW.method3886(this.center, var1, var2);
+      private boolean withinFarm(BlockPos blockPosition, int radius) {
+         return AutoFarmRW.method3886(this.center, blockPosition, radius);
       }
 
-      private boolean isBlacklisted(BlockPos var1) {
-         return this.blacklist.getOrDefault(var1, 0) > this.ticks;
+      private boolean isBlacklisted(BlockPos blockPosition) {
+         return this.blacklist.getOrDefault(blockPosition, 0) > this.ticks;
       }
 
-      private static PathingCommand path(Goal var0) {
-         return new PathingCommand(var0, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
+      private static PathingCommand path(Goal goalBlock) {
+         return new PathingCommand(goalBlock, PathingCommandType.REVALIDATE_GOAL_AND_PATH);
       }
 
       private static PathingCommand pauseCommand() {
@@ -501,11 +501,11 @@ public final class AutoFarmRW extends Module {
       }
 
       public void onLostControl() {
-         boolean var1 = this.active;
+         boolean active = this.active;
          this.active = false;
          this.cropTarget = null;
          this.dropTarget = null;
-         if (this.baritone != null && var1) {
+         if (this.baritone != null && active) {
             this.baritone.getInputOverrideHandler().clearAllKeys();
          }
       }

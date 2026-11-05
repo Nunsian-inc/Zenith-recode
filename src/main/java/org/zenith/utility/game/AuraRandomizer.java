@@ -28,110 +28,110 @@ public class AuraRandomizer implements MinecraftAccess {
    private final Random random = new SecureRandom();
    private Vec3 vec3d = Vec3.ZERO;
 
-   public Vec3 method4673(Vec3 var1, AABB var2, float var3, Vec3 var4, boolean var5) {
-      var var6 = this.method4675(var1, var2, var3, var5);
-      var var7 = this.method4682(var6, var3);
-      Vec3 var8 = this.method4681(var1, var7, var3, var5);
-      if (var8 == null) {
-         var8 = this.method4681(var1, var6, var3, var5);
+   public Vec3 method4673(Vec3 eyePosition, AABB boundingBox, float f, Vec3 vec, boolean enabled) {
+      var vecs = this.method4675(eyePosition, boundingBox, f, enabled);
+      var vecs2 = this.method4682(vecs, f);
+      Vec3 vec2 = this.method4681(eyePosition, vecs2, f, enabled);
+      if (vec2 == null) {
+         vec2 = this.method4681(eyePosition, vecs, f, enabled);
       }
 
-      if (var8 == null) {
-         var8 = this.method4685(var1, var6);
+      if (vec2 == null) {
+         vec2 = this.method4685(eyePosition, vecs);
       }
 
-      this.method4686(var4);
-      return (var8 == null ? var2.getCenter() : var8).add(this.vec3d);
+      this.method4686(vec);
+      return (vec2 == null ? boundingBox.getCenter() : vec2).add(this.vec3d);
    }
 
-   public Vec3 method4674(Vec3 var1, AABB var2, float var3, Vec3 var4, boolean var5) {
-      var var6 = this.method4675(var1, var2, var3, var5);
-      var var7 = this.method4682(var6, var3);
-      Vec3 var8 = this.method4680(var1, var7, var3, var5);
-      if (var8 == null) {
-         var8 = this.method4680(var1, var6, var3, var5);
+   public Vec3 method4674(Vec3 eyePosition, AABB boundingBox, float f, Vec3 vec, boolean enabled) {
+      var vecs = this.method4675(eyePosition, boundingBox, f, enabled);
+      var vecs2 = this.method4682(vecs, f);
+      Vec3 vec2 = this.method4680(eyePosition, vecs2, f, enabled);
+      if (vec2 == null) {
+         vec2 = this.method4680(eyePosition, vecs, f, enabled);
       }
 
-      if (var8 == null) {
-         var8 = this.method4684(var1, var6);
+      if (vec2 == null) {
+         vec2 = this.method4684(eyePosition, vecs);
       }
 
-      this.method4686(var4);
-      return (var8 == null ? var2.getCenter() : var8).add(this.vec3d);
+      this.method4686(vec);
+      return (vec2 == null ? boundingBox.getCenter() : vec2).add(this.vec3d);
    }
 
-   public List<Vec3> method4675(Vec3 var1, AABB var2, float var3, boolean var4) {
-      if (method4677(var1, var2, var3)) {
+   public List<Vec3> method4675(Vec3 eyePosition, AABB boundingBox, float f, boolean enabled) {
+      if (method4677(eyePosition, boundingBox, f)) {
          return new ArrayList<>();
       } else {
-         double var5 = var2.getXsize();
-         double var7 = var2.getYsize();
-         double var9 = var2.getZsize();
-         int var11 = this.method4688(var5);
-         int var12 = this.method4688(var9);
-         int var13 = Math.max(2, 14);
-         double var14 = var7 / (var13 - 1);
-         double var16 = var2.minX;
-         double var18 = var2.minY;
-         double var20 = var2.minZ;
-         double var22 = var11 <= 1 ? 0.0 : var5 / (var11 - 1);
-         double var24 = var12 <= 1 ? 0.0 : var9 / (var12 - 1);
-         List<Vec3> var26 = new ArrayList<>(var13 * var11 * var12);
-         double var27 = (double)var3 * var3;
+         double xsize = boundingBox.getXsize();
+         double ysize = boundingBox.getYsize();
+         double zsize = boundingBox.getZsize();
+         int n = this.method4688(xsize);
+         int n2 = this.method4688(zsize);
+         int n3 = Math.max(2, 14);
+         double d = ysize / (n3 - 1);
+         double minX = boundingBox.minX;
+         double minY = boundingBox.minY;
+         double minZ = boundingBox.minZ;
+         double d2 = n <= 1 ? 0.0 : xsize / (n - 1);
+         double d3 = n2 <= 1 ? 0.0 : zsize / (n2 - 1);
+         List<Vec3> vecs = new ArrayList<>(n3 * n * n2);
+         double d4 = (double)f * f;
 
-         for (int var29 = 0; var29 < var13; var29++) {
-            double var30 = var18 + var29 * var14;
+         for (int i = 0; i < n3; i++) {
+            double y = minY + i * d;
 
-            for (int var32 = 0; var32 < var11; var32++) {
-               double var33 = var16 + var32 * var22;
+            for (int j = 0; j < n; j++) {
+               double x = minX + j * d2;
 
-               for (int var35 = 0; var35 < var12; var35++) {
-                  double var36 = var20 + var35 * var24;
-                  if (!(method4678(var1, var33, var30, var36) > var27)) {
-                     Vec3 var38 = new Vec3(var33, var30, var36);
-                     if (this.method6838(var1, var38, var3, var4)) {
-                        var26.add(var38);
+               for (int k = 0; k < n2; k++) {
+                  double z = minZ + k * d3;
+                  if (!(method4678(eyePosition, x, y, z) > d4)) {
+                     Vec3 vec = new Vec3(x, y, z);
+                     if (this.method6838(eyePosition, vec, f, enabled)) {
+                        vecs.add(vec);
                      }
                   }
                }
             }
          }
 
-         return var26;
+         return vecs;
       }
    }
 
-   public boolean method4676(LivingEntity var1, float var2, boolean var3) {
-      AABB var4 = var1.getBoundingBox();
-      Vec3 var5 = mc.player.getEyePosition();
-      if (method4677(var5, var4, var2)) {
+   public boolean method4676(LivingEntity living, float f, boolean enabled) {
+      AABB boundingBox = living.getBoundingBox();
+      Vec3 eyePosition = mc.player.getEyePosition();
+      if (method4677(eyePosition, boundingBox, f)) {
          return false;
       } else {
-         double var6 = var4.getXsize();
-         double var8 = var4.getYsize();
-         double var10 = var4.getZsize();
-         int var12 = this.method4688(var6);
-         int var13 = this.method4688(var10);
-         int var14 = Math.max(2, 14);
-         double var15 = var8 / (var14 - 1);
-         double var17 = var4.minX;
-         double var19 = var4.minY;
-         double var21 = var4.minZ;
-         double var23 = var12 <= 1 ? 0.0 : var6 / (var12 - 1);
-         double var25 = var13 <= 1 ? 0.0 : var10 / (var13 - 1);
-         double var27 = (double)var2 * var2;
+         double xsize = boundingBox.getXsize();
+         double ysize = boundingBox.getYsize();
+         double zsize = boundingBox.getZsize();
+         int n = this.method4688(xsize);
+         int n2 = this.method4688(zsize);
+         int n3 = Math.max(2, 14);
+         double d = ysize / (n3 - 1);
+         double minX = boundingBox.minX;
+         double minY = boundingBox.minY;
+         double minZ = boundingBox.minZ;
+         double d2 = n <= 1 ? 0.0 : xsize / (n - 1);
+         double d3 = n2 <= 1 ? 0.0 : zsize / (n2 - 1);
+         double d4 = (double)f * f;
 
-         for (int var29 = 0; var29 < var14; var29++) {
-            double var30 = var19 + var29 * var15;
+         for (int i = 0; i < n3; i++) {
+            double y = minY + i * d;
 
-            for (int var32 = 0; var32 < var12; var32++) {
-               double var33 = var17 + var32 * var23;
+            for (int j = 0; j < n; j++) {
+               double x = minX + j * d2;
 
-               for (int var35 = 0; var35 < var13; var35++) {
-                  double var36 = var21 + var35 * var25;
-                  if (!(method4678(var5, var33, var30, var36) > var27)) {
-                     Vec3 var38 = new Vec3(var33, var30, var36);
-                     if (this.method6838(var5, var38, var2, var3)) {
+               for (int k = 0; k < n2; k++) {
+                  double z = minZ + k * d3;
+                  if (!(method4678(eyePosition, x, y, z) > d4)) {
+                     Vec3 vec = new Vec3(x, y, z);
+                     if (this.method6838(eyePosition, vec, f, enabled)) {
                         return true;
                      }
                   }
@@ -143,40 +143,40 @@ public class AuraRandomizer implements MinecraftAccess {
       }
    }
 
-   private static boolean method4677(Vec3 var0, AABB var1, float var2) {
-      double var3 = Math.max(0.0, Math.max(var1.minX - var0.x, var0.x - var1.maxX));
-      double var5 = Math.max(0.0, Math.max(var1.minY - var0.y, var0.y - var1.maxY));
-      double var7 = Math.max(0.0, Math.max(var1.minZ - var0.z, var0.z - var1.maxZ));
-      double var9 = Math.abs((double)var2) + 1.0E-4;
-      return var3 * var3 + var5 * var5 + var7 * var7 > var9 * var9;
+   private static boolean method4677(Vec3 eyePosition, AABB boundingBox, float f) {
+      double d = Math.max(0.0, Math.max(boundingBox.minX - eyePosition.x, eyePosition.x - boundingBox.maxX));
+      double d2 = Math.max(0.0, Math.max(boundingBox.minY - eyePosition.y, eyePosition.y - boundingBox.maxY));
+      double d3 = Math.max(0.0, Math.max(boundingBox.minZ - eyePosition.z, eyePosition.z - boundingBox.maxZ));
+      double d4 = Math.abs((double)f) + 1.0E-4;
+      return d * d + d2 * d2 + d3 * d3 > d4 * d4;
    }
 
-   private static double method4678(Vec3 var0, double var1, double var3, double var5) {
-      double var7 = var1 - var0.x;
-      double var9 = var3 - var0.y;
-      double var11 = var5 - var0.z;
-      return var7 * var7 + var9 * var9 + var11 * var11;
+   private static double method4678(Vec3 eyePosition, double x, double y, double z) {
+      double d = x - eyePosition.x;
+      double d2 = y - eyePosition.y;
+      double d3 = z - eyePosition.z;
+      return d * d + d2 * d2 + d3 * d3;
    }
 
-   private boolean method6838(Vec3 var1, Vec3 var2, float var3, boolean var4) {
-      if (var1.distanceToSqr(var2) > (double)var3 * var3) {
+   private boolean method6838(Vec3 eyePosition, Vec3 vec, float f, boolean enabled) {
+      if (eyePosition.distanceToSqr(vec) > (double)f * f) {
          return false;
-      } else if (var4) {
+      } else if (enabled) {
          return true;
       } else {
-         ClipContext var5 = new ClipContext(var1, var2, Block.COLLIDER, Fluid.NONE, mc.player);
-         BlockHitResult var6 = TargetUtils.method3217(var5, AuraModule.INSTANCE::method6362);
-         return var6.getType() != Type.BLOCK;
+         ClipContext clipContext = new ClipContext(eyePosition, vec, Block.COLLIDER, Fluid.NONE, mc.player);
+         BlockHitResult blockHitResult = TargetUtils.method3217(clipContext, AuraModule.INSTANCE::method6362);
+         return blockHitResult.getType() != Type.BLOCK;
       }
    }
 
-   private Vec3 method4680(Vec3 var1, List<Vec3> var2, float var3, boolean var4) {
-      if (var2 != null && !var2.isEmpty()) {
-         Vec3 var5 = this.method4683(var2);
-         return this.method6838(var1, var5, var3, var4)
-            ? var5
-            : var2.stream().filter(var4x -> this.method6838(var1, var4x, var3, var4)).min(Comparator.comparingDouble(var1x -> {
-               Vec2f var2x = Zenith.getInstance().getRotationManager().method7844().method3131(Rotation.method3128(var1x, var1));
+   private Vec3 method4680(Vec3 eyePosition, List<Vec3> vecs, float f, boolean enabled) {
+      if (vecs != null && !vecs.isEmpty()) {
+         Vec3 vec = this.method4683(vecs);
+         return this.method6838(eyePosition, vec, f, enabled)
+            ? vec
+            : vecs.stream().filter(var4x -> this.method6838(eyePosition, var4x, f, enabled)).min(Comparator.comparingDouble(var1x -> {
+               Vec2f var2x = Zenith.getInstance().getRotationManager().method7844().method3131(Rotation.method3128(var1x, eyePosition));
                return Math.abs(var2x.getFloatValue()) + Math.abs(var2x.getFloatValue2());
             })).orElse(null);
       } else {
@@ -184,86 +184,86 @@ public class AuraRandomizer implements MinecraftAccess {
       }
    }
 
-   private Vec3 method4681(Vec3 var1, List<Vec3> var2, float var3, boolean var4) {
-      if (var2 != null && !var2.isEmpty()) {
-         Vec3 var5 = this.method4683(var2);
-         return this.method6838(var1, var5, var3, var4)
-            ? var5
-            : var2.stream()
-               .filter(var4x -> this.method6838(var1, var4x, var3, var4))
-               .min(Comparator.comparingDouble(var1x -> var1x.distanceToSqr(var5)))
+   private Vec3 method4681(Vec3 eyePosition, List<Vec3> vecs, float f, boolean enabled) {
+      if (vecs != null && !vecs.isEmpty()) {
+         Vec3 vec = this.method4683(vecs);
+         return this.method6838(eyePosition, vec, f, enabled)
+            ? vec
+            : vecs.stream()
+               .filter(var4x -> this.method6838(eyePosition, var4x, f, enabled))
+               .min(Comparator.comparingDouble(var1x -> var1x.distanceToSqr(vec)))
                .orElse(null);
       } else {
          return null;
       }
    }
 
-   private List<Vec3> method4682(List<Vec3> var1, float var2) {
-      if (var1 != null && !var1.isEmpty()) {
-         Vec3 var3 = mc.player.getEyePosition();
-         double var4 = Math.max(0.0, var2 - 0.3);
-         double var6 = var4 * var4;
-         ArrayList<Vec3> var8 = new ArrayList<>();
+   private List<Vec3> method4682(List<Vec3> vecs, float f) {
+      if (vecs != null && !vecs.isEmpty()) {
+         Vec3 eyePosition = mc.player.getEyePosition();
+         double d = Math.max(0.0, f - 0.3);
+         double d2 = d * d;
+         ArrayList<Vec3> vecs2 = new ArrayList<>();
 
-         for (Vec3 var10 : var1) {
-            if (var3.distanceToSqr(var10) < var6) {
-               var8.add(var10);
+         for (Vec3 vec : vecs) {
+            if (eyePosition.distanceToSqr(vec) < d2) {
+               vecs2.add(vec);
             }
          }
 
-         return var8;
+         return vecs2;
       } else {
          return List.of();
       }
    }
 
-   private Vec3 method4683(List<Vec3> var1) {
-      double var2 = 0.0;
-      double var4 = 0.0;
-      double var6 = 0.0;
-      int var8 = var1.size();
+   private Vec3 method4683(List<Vec3> vecs) {
+      double d = 0.0;
+      double d2 = 0.0;
+      double d3 = 0.0;
+      int size = vecs.size();
 
-      for (Vec3 var10 : var1) {
-         var2 += var10.x;
-         var4 += var10.y;
-         var6 += var10.z;
+      for (Vec3 vec : vecs) {
+         d += vec.x;
+         d2 += vec.y;
+         d3 += vec.z;
       }
 
-      return new Vec3(var2 / var8, var4 / var8, var6 / var8);
+      return new Vec3(d / size, d2 / size, d3 / size);
    }
 
-   private Vec3 method4684(Vec3 var1, List<Vec3> var2) {
-      return var2 != null && !var2.isEmpty() ? var2.stream().min(Comparator.comparingDouble(var1x -> {
-         Vec2f var2x = Zenith.getInstance().getRotationManager().method7844().method3131(Rotation.method3128(var1x, var1));
+   private Vec3 method4684(Vec3 eyePosition, List<Vec3> vecs) {
+      return vecs != null && !vecs.isEmpty() ? vecs.stream().min(Comparator.comparingDouble(var1x -> {
+         Vec2f var2x = Zenith.getInstance().getRotationManager().method7844().method3131(Rotation.method3128(var1x, eyePosition));
          return Math.abs(var2x.getFloatValue()) + Math.abs(var2x.getFloatValue2());
       })).orElse(null) : null;
    }
 
-   private Vec3 method4685(Vec3 var1, List<Vec3> var2) {
-      return var2 != null && !var2.isEmpty() ? var2.stream().min(Comparator.comparingDouble(var1x -> var1x.distanceToSqr(var1))).orElse(null) : null;
+   private Vec3 method4685(Vec3 eyePosition, List<Vec3> vecs) {
+      return vecs != null && !vecs.isEmpty() ? vecs.stream().min(Comparator.comparingDouble(var1x -> var1x.distanceToSqr(eyePosition))).orElse(null) : null;
    }
 
-   private void method4686(Vec3 var1) {
-      this.vec3d = this.vec3d.add(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian()).multiply(var1);
+   private void method4686(Vec3 vec) {
+      this.vec3d = this.vec3d.add(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian()).multiply(vec);
    }
 
-   private double method4687(Vec3 var1, Vec3 var2, Rotation var3) {
-      if (var3 == null) {
+   private double method4687(Vec3 vec, Vec3 vec2, Rotation rotation) {
+      if (rotation == null) {
          return Double.POSITIVE_INFINITY;
       } else {
-         Rotation var4 = RotationUtils.method6912(var2.subtract(var1));
-         Vec2f var5 = var3.method3131(var4);
-         return Math.hypot(var5.getFloatValue(), var5.getFloatValue2());
+         Rotation rotation2 = RotationUtils.method6912(vec2.subtract(vec));
+         Vec2f vec2f = rotation.method3131(rotation2);
+         return Math.hypot(vec2f.getFloatValue(), vec2f.getFloatValue2());
       }
    }
 
-   private int method4688(double var1) {
-      if (var1 <= 0.0) {
+   private int method4688(double xsize) {
+      if (xsize <= 0.0) {
          return 1;
       } else {
-         int var3 = (int)Math.ceil(var1 / 0.15) + 1;
-         int var4 = Math.min(var3, 14);
-         return Math.max(2, var4);
+         int n = (int)Math.ceil(xsize / 0.15) + 1;
+         int n2 = Math.min(n, 14);
+         return Math.max(2, n2);
       }
    }
 

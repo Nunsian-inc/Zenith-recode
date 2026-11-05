@@ -22,17 +22,17 @@ public class MacroArgumentType implements ArgumentType<String> {
       return new MacroArgumentType();
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      String var2 = var1.readString();
-      if (KeyName.method6704(var2) == -1) {
-         throw new DynamicCommandExceptionType(var1x -> Component.literal("Нет такой клавиши " + var2)).create(var2);
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      String string = stringReader.readString();
+      if (KeyName.method6704(string) == -1) {
+         throw new DynamicCommandExceptionType(var1x -> Component.literal("Нет такой клавиши " + string)).create(string);
       } else {
-         return var2;
+         return string;
       }
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(Arrays.stream(KeyName.values()).map(var0 -> var0.text), var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(Arrays.stream(KeyName.values()).map(keyName -> keyName.text), builder);
    }
 
    public Collection<String> getExamples() {

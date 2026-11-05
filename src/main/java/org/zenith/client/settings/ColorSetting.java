@@ -9,58 +9,58 @@ public class ColorSetting extends Setting {
    private ZenithColor zenithColor;
    private final ColorSetting.Handler handler;
 
-   public ColorSetting(String var1, ZenithColor var2, Supplier<Boolean> var3, ColorSetting.Handler var4) {
-      this(var1, "", var2, var4);
-      this.setVisible(var3);
+   public ColorSetting(String key, ZenithColor zenithColor, Supplier<Boolean> visible, ColorSetting.Handler handler) {
+      this(key, "", zenithColor, handler);
+      this.setVisible(visible);
    }
 
-   public ColorSetting(String var1, ZenithColor var2, ColorSetting.Handler var3) {
-      this(var1, "", var2, var3);
+   public ColorSetting(String key, ZenithColor zenithColor, ColorSetting.Handler handler) {
+      this(key, "", zenithColor, handler);
    }
 
-   public ColorSetting(String var1, String var2, ZenithColor var3, ColorSetting.Handler var4) {
-      super(var1, var2);
-      if (var3 == null) {
-         throw new RuntimeException(var1 + " color is null");
+   public ColorSetting(String key, String description, ZenithColor zenithColor, ColorSetting.Handler handler) {
+      super(key, description);
+      if (zenithColor == null) {
+         throw new RuntimeException(key + " color is null");
       } else {
-         this.zenithColor = var3;
-         this.setZenithColor(var3);
-         this.handler = var4;
+         this.zenithColor = zenithColor;
+         this.setZenithColor(zenithColor);
+         this.handler = handler;
       }
    }
 
-   public ColorSetting(String var1, ZenithColor var2) {
-      this(var1, "", var2, () -> var2);
+   public ColorSetting(String key, ZenithColor zenithColor) {
+      this(key, "", zenithColor, () -> zenithColor);
    }
 
-   public ColorSetting(String var1, String var2, ZenithColor var3) {
-      this(var1, var2, var3, () -> var3);
+   public ColorSetting(String key, String description, ZenithColor zenithColor) {
+      this(key, description, zenithColor, () -> zenithColor);
    }
 
-   public ColorSetting(String var1, ColorSetting.Handler var2) {
-      this(var1, "", var2.getDefaultColor(), var2);
+   public ColorSetting(String key, ColorSetting.Handler handler) {
+      this(key, "", handler.getDefaultColor(), handler);
    }
 
-   public ColorSetting(String var1, ZenithColor var2, Supplier<Boolean> var3) {
-      this(var1, "", var2, () -> var2);
-      this.setVisible(var3);
+   public ColorSetting(String key, ZenithColor zenithColor, Supplier<Boolean> visible) {
+      this(key, "", zenithColor, () -> zenithColor);
+      this.setVisible(visible);
    }
 
-   public ColorSetting(String var1, String var2, ZenithColor var3, Supplier<Boolean> var4) {
-      this(var1, var2, var3, () -> var3);
-      this.setVisible(var4);
+   public ColorSetting(String key, String description, ZenithColor zenithColor, Supplier<Boolean> visible) {
+      this(key, description, zenithColor, () -> zenithColor);
+      this.setVisible(visible);
    }
 
    public int method1445() {
       return this.zenithColor.method7287();
    }
 
-   public void method1446(int var1) {
-      this.zenithColor = new ZenithColor(var1);
+   public void method1446(int intValue) {
+      this.zenithColor = new ZenithColor(intValue);
    }
 
-   public void setZenithColor(ZenithColor var1) {
-      this.zenithColor = var1;
+   public void setZenithColor(ZenithColor zenithColor) {
+      this.zenithColor = zenithColor;
    }
 
    public void update() {
@@ -70,18 +70,18 @@ public class ColorSetting extends Setting {
       this.zenithColor = this.handler.getDefaultColor();
    }
 
-   public ZenithColor method1447(float var1) {
-      return this.zenithColor.method7294(var1);
+   public ZenithColor method1447(float previewAlpha) {
+      return this.zenithColor.method7294(previewAlpha);
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.addProperty(String.valueOf(this.key), this.method1445());
+   public void safe(JsonObject json) {
+      json.addProperty(String.valueOf(this.key), this.method1445());
    }
 
    @Override
-   public void load(JsonObject var1) {
-      this.method1446(var1.get(String.valueOf(this.key)).getAsInt());
+   public void load(JsonObject json) {
+      this.method1446(json.get(String.valueOf(this.key)).getAsInt());
    }
 
    @Generated

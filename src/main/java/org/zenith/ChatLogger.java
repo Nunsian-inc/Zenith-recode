@@ -11,73 +11,73 @@ public final class ChatLogger implements MinecraftAccess {
    public static final Component text = method2023(ZenithColor.INSTANCE5, ZenithColor.INSTANCE, ZenithColor.INSTANCE7);
    private static final String text2 = "\\u00A7.";
 
-   public static void method2019(String var0) {
-      method2020(ChatLogger.Type.INFO, var0);
+   public static void method2019(String status) {
+      method2020(ChatLogger.Type.INFO, status);
    }
 
-   public static void method2020(ChatLogger.Type var0, String var1) {
+   public static void method2020(ChatLogger.Type type, String string) {
       if (mc.player != null) {
-         ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         MutableComponent var3 = method2023(
-               var2.getPrimaryColor().getZenithColor(), var2.getSecondaryPrimaryColor().getZenithColor(), var2.getTextSecondary().getZenithColor()
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         MutableComponent message = method2023(
+               currentStyle.getPrimaryColor().getZenithColor(), currentStyle.getSecondaryPrimaryColor().getZenithColor(), currentStyle.getTextSecondary().getZenithColor()
             )
             .append(Component.literal(" "))
-            .append(method2025(var1, var0, var2));
-         mc.player.sendSystemMessage(var3);
+            .append(method2025(string, type, currentStyle));
+         mc.player.sendSystemMessage(message);
       }
    }
 
-   public static void method2021(String var0) {
-      method2020(ChatLogger.Type.WARN, var0);
+   public static void method2021(String string) {
+      method2020(ChatLogger.Type.WARN, string);
    }
 
-   public static void method2022(String var0) {
-      method2020(ChatLogger.Type.ERROR, var0);
+   public static void method2022(String status) {
+      method2020(ChatLogger.Type.ERROR, status);
    }
 
-   private static MutableComponent method2023(ZenithColor var0, ZenithColor var1, ZenithColor var2) {
+   private static MutableComponent method2023(ZenithColor zenithColor, ZenithColor zenithColor2, ZenithColor zenithColor7) {
       return Component.empty()
-         .append(method2026("[ ", var2, false))
-         .append(method2027("Zenith", var0.method7303(0.12F), var1.method7303(0.08F), true, 0))
-         .append(method2026(" ]", var2, false));
+         .append(method2026("[ ", zenithColor7, false))
+         .append(method2027("Zenith", zenithColor.method7303(0.12F), zenithColor2.method7303(0.08F), true, 0))
+         .append(method2026(" ]", zenithColor7, false));
    }
 
-   private static MutableComponent method2024(ChatLogger.Type var0, ThemeStyle var1) {
-      ZenithColor var2 = var0.getZenithColor().method7295(var1.getZenithColor(), 0.15F).method7303(0.08F);
-      ZenithColor var3 = var2.method7295(var1.getZenithColor2(), 0.25F);
+   private static MutableComponent method2024(ChatLogger.Type type, ThemeStyle themeStyle) {
+      ZenithColor zenithColor = type.getZenithColor().method7295(themeStyle.getZenithColor(), 0.15F).method7303(0.08F);
+      ZenithColor zenithColor2 = zenithColor.method7295(themeStyle.getZenithColor2(), 0.25F);
       return Component.empty()
-         .append(method2026("<", var1.getZenithColor7(), false))
-         .append(method2027(var0.getText(), var2, var3, true, 0))
-         .append(method2026(">", var1.getZenithColor7(), false));
+         .append(method2026("<", themeStyle.getZenithColor7(), false))
+         .append(method2027(type.getText(), zenithColor, zenithColor2, true, 0))
+         .append(method2026(">", themeStyle.getZenithColor7(), false));
    }
 
-   private static MutableComponent method2025(String var0, ChatLogger.Type var1, ZenithStyle var2) {
-      String var3 = var0 == null ? "" : var0.replaceAll("\\u00A7.", "");
-      int var4 = Math.min(8, var3.codePointCount(0, var3.length()));
-      ZenithColor var5 = var1.getZenithColor().method7295(var2.getPrimaryColor().getZenithColor(), 0.3F).method7303(0.12F);
-      ZenithColor var6 = var2.getTextEnable().getZenithColor().method7295(var2.getSecondaryPrimaryColor().getZenithColor(), 0.15F);
-      return method2027(var3, var5, var6, false, var4);
+   private static MutableComponent method2025(String string, ChatLogger.Type type, ZenithStyle currentStyle) {
+      String text = string == null ? "" : string.replaceAll("\\u00A7.", "");
+      int n = Math.min(8, text.codePointCount(0, text.length()));
+      ZenithColor zenithColor = type.getZenithColor().method7295(currentStyle.getPrimaryColor().getZenithColor(), 0.3F).method7303(0.12F);
+      ZenithColor zenithColor2 = currentStyle.getTextEnable().getZenithColor().method7295(currentStyle.getSecondaryPrimaryColor().getZenithColor(), 0.15F);
+      return method2027(text, zenithColor, zenithColor2, false, n);
    }
 
-   private static MutableComponent method2026(String var0, ZenithColor var1, boolean var2) {
-      return Component.literal(var0).setStyle(Style.EMPTY.withColor(var1.method7287()).withBold(var2));
+   private static MutableComponent method2026(String text, ZenithColor zenithColor7, boolean bold) {
+      return Component.literal(text).setStyle(Style.EMPTY.withColor(zenithColor7.method7287()).withBold(bold));
    }
 
-   private static MutableComponent method2027(String var0, ZenithColor var1, ZenithColor var2, boolean var3, int var4) {
-      MutableComponent var5 = Component.empty();
-      if (var0 != null && !var0.isEmpty()) {
-         int var6 = var0.codePointCount(0, var0.length());
-         int[] var7 = new int[]{0};
-         var0.codePoints().forEach(var7x -> {
-            float var8 = var6 <= 1 ? 0.0F : (float)var7[0] / (var6 - 1);
-            ZenithColor var9 = var1.method7295(var2, var8);
-            boolean var10 = var3 || var7[0] < var4;
-            var5.append(Component.literal(new String(Character.toChars(var7x))).setStyle(Style.EMPTY.withColor(var9.method7287()).withBold(var10)));
-            var7[0]++;
+   private static MutableComponent method2027(String text, ZenithColor zenithColor, ZenithColor zenithColor2, boolean flag, int n) {
+      MutableComponent empty = Component.empty();
+      if (text != null && !text.isEmpty()) {
+         int codePointCount = text.codePointCount(0, text.length());
+         int[] ints = new int[]{0};
+         text.codePoints().forEach(var7x -> {
+            float hover = codePointCount <= 1 ? 0.0F : (float)ints[0] / (codePointCount - 1);
+            ZenithColor zenithColor3 = zenithColor.method7295(zenithColor2, hover);
+            boolean bold = flag || ints[0] < n;
+            empty.append(Component.literal(new String(Character.toChars(var7x))).setStyle(Style.EMPTY.withColor(zenithColor3.method7287()).withBold(bold)));
+            ints[0]++;
          });
-         return var5;
+         return empty;
       } else {
-         return var5;
+         return empty;
       }
    }
 
@@ -105,9 +105,9 @@ public final class ChatLogger implements MinecraftAccess {
       }
 
       @Generated
-      private Type(String var3, ZenithColor var4) {
-         this.text = var3;
-         this.zenithColor = var4;
+      private Type(String text, ZenithColor zenithColor) {
+         this.text = text;
+         this.zenithColor = zenithColor;
       }
    }
 }

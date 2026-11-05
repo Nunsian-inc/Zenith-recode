@@ -16,15 +16,15 @@ public final class Class9 {
    private final float[] floatValues = new float[960];
 
    public Class9() {
-      double var1 = 0.010471975511965976;
-      double var3 = Math.sin(var1) / 1.4142;
-      double var5 = Math.cos(var1);
-      double var7 = 1.0 + var3;
-      this.floatValue = (float)((1.0 + var5) / 2.0 / var7);
-      this.floatValue2 = (float)(-(1.0 + var5) / var7);
-      this.floatValue3 = (float)((1.0 + var5) / 2.0 / var7);
-      this.floatValue4 = (float)(-2.0 * var5 / var7);
-      this.floatValue5 = (float)((1.0 - var3) / var7);
+      double d = 0.010471975511965976;
+      double d2 = Math.sin(d) / 1.4142;
+      double d3 = Math.cos(d);
+      double d4 = 1.0 + d2;
+      this.floatValue = (float)((1.0 + d3) / 2.0 / d4);
+      this.floatValue2 = (float)(-(1.0 + d3) / d4);
+      this.floatValue3 = (float)((1.0 + d3) / 2.0 / d4);
+      this.floatValue4 = (float)(-2.0 * d3 / d4);
+      this.floatValue5 = (float)((1.0 - d2) / d4);
    }
 
    public void reset() {
@@ -33,75 +33,75 @@ public final class Class9 {
       this.floatValue11 = 1.0F;
    }
 
-   public float method1530(short[] var1, float var2, boolean var3) {
-      double var4 = 0.0;
+   public float method1530(short[] shortValues, float f, boolean flag) {
+      double d = 0.0;
 
-      for (int var6 = 0; var6 < var1.length; var6++) {
-         float var7 = var1[var6] / 32768.0F;
-         float var8 = this.floatValue * var7
+      for (int i = 0; i < shortValues.length; i++) {
+         float f2 = shortValues[i] / 32768.0F;
+         float f3 = this.floatValue * f2
             + this.floatValue2 * this.floatValue6
             + this.floatValue3 * this.floatValue7
             - this.floatValue4 * this.floatValue8
             - this.floatValue5 * this.floatValue9;
          this.floatValue7 = this.floatValue6;
-         this.floatValue6 = var7;
+         this.floatValue6 = f2;
          this.floatValue9 = this.floatValue8;
-         this.floatValue8 = Math.abs(var8) < 1.0E-20F ? 0.0F : var8;
-         float var9 = method1533(var8 * var2);
-         this.floatValues[var6] = var9;
-         var4 += var9 * var9;
+         this.floatValue8 = Math.abs(f3) < 1.0E-20F ? 0.0F : f3;
+         float f4 = method1533(f3 * f);
+         this.floatValues[i] = f4;
+         d += f4 * f4;
       }
 
-      float var11 = method1532(Math.sqrt(var4 / var1.length));
-      float var12 = 1.0F;
-      if (var3) {
-         this.floatValue10 = var11 < this.floatValue10 ? var11 : Math.min(-20.0F, this.floatValue10 + 0.05F);
-         float var13 = var11 - this.floatValue10;
-         float var15 = Class9.Entry.clamp((var13 - 6.0F) / 6.0F, 0.0F, 1.0F);
-         var12 = 0.18F + 0.82F * var15;
+      float f2 = method1532(Math.sqrt(d / shortValues.length));
+      float f3 = 1.0F;
+      if (flag) {
+         this.floatValue10 = f2 < this.floatValue10 ? f2 : Math.min(-20.0F, this.floatValue10 + 0.05F);
+         float f4 = f2 - this.floatValue10;
+         float f5 = Class9.Entry.clamp((f4 - 6.0F) / 6.0F, 0.0F, 1.0F);
+         f3 = 0.18F + 0.82F * f5;
       }
 
-      float var14 = var12 > this.floatValue11 ? var12 : this.floatValue11 + (var12 - this.floatValue11) * 0.13F;
-      float var16 = (var14 - this.floatValue11) / var1.length;
+      float f4 = f3 > this.floatValue11 ? f3 : this.floatValue11 + (f3 - this.floatValue11) * 0.13F;
+      float f5 = (f4 - this.floatValue11) / shortValues.length;
 
-      for (int var10 = 0; var10 < var1.length; var10++) {
-         this.floatValue11 += var16;
-         var1[var10] = (short)Math.round(this.floatValues[var10] * this.floatValue11 * 32767.0F);
+      for (int i = 0; i < shortValues.length; i++) {
+         this.floatValue11 += f5;
+         shortValues[i] = (short)Math.round(this.floatValues[i] * this.floatValue11 * 32767.0F);
       }
 
-      this.floatValue11 = var14;
-      return var11;
+      this.floatValue11 = f4;
+      return f2;
    }
 
-   public static float method1531(short[] var0, int var1) {
-      double var2 = 0.0;
+   public static float method1531(short[] shortValues, int length) {
+      double d = 0.0;
 
-      for (int var4 = 0; var4 < var1; var4++) {
-         float var5 = var0[var4] / 32768.0F;
-         var2 += var5 * var5;
+      for (int i = 0; i < length; i++) {
+         float f = shortValues[i] / 32768.0F;
+         d += f * f;
       }
 
-      return method1532(Math.sqrt(var2 / Math.max(1, var1)));
+      return method1532(Math.sqrt(d / Math.max(1, length)));
    }
 
-   public static float method1532(double var0) {
-      return var0 <= 1.0E-5 ? -100.0F : (float)Math.max(-100.0, 20.0 * Math.log10(var0));
+   public static float method1532(double d) {
+      return d <= 1.0E-5 ? -100.0F : (float)Math.max(-100.0, 20.0 * Math.log10(d));
    }
 
-   private static float method1533(float var0) {
-      float var1 = Math.abs(var0);
-      if (var1 <= 0.6F) {
-         return var0;
+   private static float method1533(float sign) {
+      float f = Math.abs(sign);
+      if (f <= 0.6F) {
+         return sign;
       } else {
-         float var2 = (var1 - 0.6F) / 0.4F;
-         float var3 = 0.6F + 0.4F * (float)Math.tanh(var2);
-         return Math.copySign(Math.min(var3, 1.0F), var0);
+         float x = (f - 0.6F) / 0.4F;
+         float f2 = 0.6F + 0.4F * (float)Math.tanh(x);
+         return Math.copySign(Math.min(f2, 1.0F), sign);
       }
    }
 
    private static final class Entry {
-      public static float clamp(float var0, float var1, float var2) {
-         return var0 < var1 ? var1 : Math.min(var0, var2);
+      public static float clamp(float f, float f2, float f3) {
+         return f < f2 ? f2 : Math.min(f, f3);
       }
    }
 }

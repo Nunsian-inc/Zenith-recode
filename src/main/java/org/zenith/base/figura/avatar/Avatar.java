@@ -146,8 +146,8 @@ public final class Avatar {
             this.renderer = new ImmediateAvatarRenderer(this);
             this.createLuaRuntime();
             this.loaded = true;
-         } catch (Exception var5) {
-            FiguraMod.LOGGER.error("Failed to load local avatar {}", this.owner, var5);
+         } catch (Exception e) {
+            FiguraMod.LOGGER.error("Failed to load local avatar {}", this.owner, e);
             this.clean();
             this.nbt = null;
             this.loaded = true;
@@ -189,7 +189,7 @@ public final class Avatar {
                   if (data.contains("loop")) {
                      try {
                         loopMode = Animation.LoopMode.valueOf(data.getStringOr("loop", "").toUpperCase(Locale.US));
-                     } catch (IllegalArgumentException var13) {
+                     } catch (IllegalArgumentException e) {
                      }
                   }
 
@@ -217,8 +217,8 @@ public final class Avatar {
                      value.play();
                   }
                }
-            } catch (RuntimeException var14) {
-               FiguraMod.LOGGER.warn("Failed to load avatar animation at index {}", index, var14);
+            } catch (RuntimeException e) {
+               FiguraMod.LOGGER.warn("Failed to load avatar animation at index {}", index, e);
             }
          }
       }
@@ -309,9 +309,9 @@ public final class Avatar {
       while ((event = this.events.poll()) != null) {
          try {
             event.run();
-         } catch (StackOverflowError | Exception var3) {
+         } catch (StackOverflowError | Exception e) {
             if (this.luaRuntime != null) {
-               this.luaRuntime.error(var3);
+               this.luaRuntime.error(e);
             }
          }
       }
@@ -803,7 +803,7 @@ public final class Avatar {
       for (FiguraInputStream stream : new ArrayList<>(this.openInputStreams)) {
          try {
             stream.close();
-         } catch (IOException var5) {
+         } catch (IOException e) {
          }
       }
 
@@ -812,7 +812,7 @@ public final class Avatar {
       for (FiguraOutputStream stream : new ArrayList<>(this.openOutputStreams)) {
          try {
             stream.close();
-         } catch (IOException var4) {
+         } catch (IOException e) {
          }
       }
 

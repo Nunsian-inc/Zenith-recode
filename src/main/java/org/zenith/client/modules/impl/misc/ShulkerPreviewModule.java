@@ -50,16 +50,16 @@ public class ShulkerPreviewModule extends Module {
    private ShulkerPreviewModule() {
    }
 
-   public static Optional<TooltipComponent> method1387(ItemStack var0) {
+   public static Optional<TooltipComponent> method1387(ItemStack stack) {
       if (INSTANCE.isEnabled() && INSTANCE.method1389()) {
-         if (var0.getItem() instanceof BlockItem var1 && var1.getBlock() instanceof ShulkerBoxBlock) {
-            NonNullList var4 = NonNullList.withSize(27, ItemStack.EMPTY);
-            ItemContainerContents var3 = var0.get(DataComponents.CONTAINER);
-            if (var3 != null) {
-               var3.copyInto(var4);
+         if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock) {
+            NonNullList size = NonNullList.withSize(27, ItemStack.EMPTY);
+            ItemContainerContents itemContainerContents = stack.get(DataComponents.CONTAINER);
+            if (itemContainerContents != null) {
+               itemContainerContents.copyInto(size);
             }
 
-            return Optional.of(new ShulkerPreviewModule.Entry(var4));
+            return Optional.of(new ShulkerPreviewModule.Entry(size));
          } else {
             return Optional.empty();
          }
@@ -68,29 +68,29 @@ public class ShulkerPreviewModule extends Module {
       }
    }
 
-   public static ClientTooltipComponent method1388(TooltipComponent var0) {
-      return var0 instanceof ShulkerPreviewModule.Entry var1 ? new ShulkerTooltipComponent(var1.getDefaultedList()) : null;
+   public static ClientTooltipComponent method1388(TooltipComponent tooltipComponent) {
+      return tooltipComponent instanceof ShulkerPreviewModule.Entry entry ? new ShulkerTooltipComponent(entry.getDefaultedList()) : null;
    }
 
    private boolean method1389() {
       if (this.alwaysShow.isEnabled()) {
          return true;
       } else {
-         int var1 = this.previewKey.getKeyCode();
-         return var1 == -1 ? false : this.previewKey.isVisible() && UseItemUtils.method6522(UseItemUtils.method6509(var1), var1);
+         int keyCode = this.previewKey.getKeyCode();
+         return keyCode == -1 ? false : this.previewKey.isVisible() && UseItemUtils.method6522(UseItemUtils.method6509(keyCode), keyCode);
       }
    }
 
    @EventTarget
-   public void method1390(DrawEvent var1) {
+   public void method1390(DrawEvent event) {
       if (this.worldDisplay.isEnabled() && this.method1389() && mc.player != null && mc.level != null && mc.getEntityRenderDispatcher().camera != null) {
-         CustomDrawContext var2 = var1.getCustomDrawContext();
-         if (var2 != null) {
-            for (Entity var4 : mc.level.entitiesForRendering()) {
-               if (var4 instanceof ItemEntity var5) {
-                  ItemStack var6 = var5.getItem();
-                  if (!var6.isEmpty() && method1396(var6)) {
-                     this.method1391(var2, var5, var6);
+         CustomDrawContext customDrawContext = event.getCustomDrawContext();
+         if (customDrawContext != null) {
+            for (Entity entity : mc.level.entitiesForRendering()) {
+               if (entity instanceof ItemEntity player) {
+                  ItemStack stack = player.getItem();
+                  if (!stack.isEmpty() && method1396(stack)) {
+                     this.method1391(customDrawContext, player, stack);
                   }
                }
             }
@@ -98,105 +98,105 @@ public class ShulkerPreviewModule extends Module {
       }
    }
 
-   private void method1391(CustomDrawContext var1, ItemEntity var2, ItemStack var3) {
-      Vec3 var4 = MathUtils.method2656(var2);
-      AABB var5 = var2.getBoundingBox().move(var4.subtract(var2.position()));
-      Vector4d var6 = this.method1393(var5);
-      if (var6 != null) {
-         ShulkerTooltipComponent var7 = this.method1392(var2, var3);
-         float var8 = this.worldScale.getValue3();
-         float var9 = var7.getWidth(mc.font);
-         float var10 = var7.getHeight(mc.font);
-         float var11 = ((float)var6.x + (float)var6.z) / 2.0F;
-         float var12 = (float)var6.y - 4.0F - var10 * var8 / 2.0F;
-         float var13 = var11 - var9 / 2.0F;
-         float var14 = var12 - var10 / 2.0F;
-         this.pushCenteredScale(var1, var11, var12, var8, var8);
-         var7.extractImage(mc.font, Math.round(var13), Math.round(var14), var7.getWidth(mc.font), var7.getHeight(mc.font), var1);
-         var1.popMatrix();
+   private void method1391(CustomDrawContext customDrawContext, ItemEntity player, ItemStack stack) {
+      Vec3 vec = MathUtils.method2656(player);
+      AABB move = player.getBoundingBox().move(vec.subtract(player.position()));
+      Vector4d vector4d = this.method1393(move);
+      if (vector4d != null) {
+         ShulkerTooltipComponent tooltipComponent = this.method1392(player, stack);
+         float f = this.worldScale.getValue3();
+         float width = tooltipComponent.getWidth(mc.font);
+         float height = tooltipComponent.getHeight(mc.font);
+         float x = ((float)vector4d.x + (float)vector4d.z) / 2.0F;
+         float y = (float)vector4d.y - 4.0F - height * f / 2.0F;
+         float f2 = x - width / 2.0F;
+         float f3 = y - height / 2.0F;
+         this.pushCenteredScale(customDrawContext, x, y, f, f);
+         tooltipComponent.extractImage(mc.font, Math.round(f2), Math.round(f3), tooltipComponent.getWidth(mc.font), tooltipComponent.getHeight(mc.font), customDrawContext);
+         customDrawContext.popMatrix();
       }
    }
 
-   private ShulkerTooltipComponent method1392(ItemEntity var1, ItemStack var2) {
-      ItemContainerContents var3 = var2.get(DataComponents.CONTAINER);
-      ShulkerPreviewModule.Data var4 = this.items.get(var1);
-      if (var4 == null || var4.getContainerComponent() != var3) {
-         var4 = new ShulkerPreviewModule.Data(var3, new ShulkerTooltipComponent(method1397(var2)));
-         this.items.put(var1, var4);
+   private ShulkerTooltipComponent method1392(ItemEntity player, ItemStack stack) {
+      ItemContainerContents containerComponent = stack.get(DataComponents.CONTAINER);
+      ShulkerPreviewModule.Data data = this.items.get(player);
+      if (data == null || data.getContainerComponent() != containerComponent) {
+         data = new ShulkerPreviewModule.Data(containerComponent, new ShulkerTooltipComponent(method1397(stack)));
+         this.items.put(player, data);
       }
 
-      return var4.getShulkerTooltipComponent();
+      return data.getShulkerTooltipComponent();
    }
 
-   private void pushCenteredScale(CustomDrawContext var1, float var2, float var3, float var4, float var5) {
-      var1.pushMatrix();
-      var1.pose().translate(var2, var3);
-      var1.pose().scale(var4, var5);
-      var1.pose().translate(-var2, -var3);
+   private void pushCenteredScale(CustomDrawContext customDrawContext, float x, float y, float f, float y2) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().scale(f, y2);
+      customDrawContext.pose().translate(-x, -y);
    }
 
-   private Vector4d method1393(AABB var1) {
-      Vector4d var2 = null;
+   private Vector4d method1393(AABB move) {
+      Vector4d vector4d = null;
 
-      for (Vec3 var6 : this.method1394(var1)) {
-         if (this.method1395(var6)) {
-            Vec3 var7 = ProjectionUtils.method301(var6);
-            if (var7 != null && !(var7.z <= 0.0)) {
-               if (var2 == null) {
-                  var2 = new Vector4d(var7.x, var7.y, var7.x, var7.y);
+      for (Vec3 vec : this.method1394(move)) {
+         if (this.method1395(vec)) {
+            Vec3 vec2 = ProjectionUtils.method301(vec);
+            if (vec2 != null && !(vec2.z <= 0.0)) {
+               if (vector4d == null) {
+                  vector4d = new Vector4d(vec2.x, vec2.y, vec2.x, vec2.y);
                } else {
-                  var2.x = Math.min(var2.x, var7.x);
-                  var2.y = Math.min(var2.y, var7.y);
-                  var2.z = Math.max(var2.z, var7.x);
-                  var2.w = Math.max(var2.w, var7.y);
+                  vector4d.x = Math.min(vector4d.x, vec2.x);
+                  vector4d.y = Math.min(vector4d.y, vec2.y);
+                  vector4d.z = Math.max(vector4d.z, vec2.x);
+                  vector4d.w = Math.max(vector4d.w, vec2.y);
                }
             }
          }
       }
 
-      return var2;
+      return vector4d;
    }
 
-   private Vec3[] method1394(AABB var1) {
+   private Vec3[] method1394(AABB move) {
       return new Vec3[]{
-         new Vec3(var1.minX, var1.minY, var1.minZ),
-         new Vec3(var1.minX, var1.maxY, var1.minZ),
-         new Vec3(var1.maxX, var1.minY, var1.minZ),
-         new Vec3(var1.maxX, var1.maxY, var1.minZ),
-         new Vec3(var1.minX, var1.minY, var1.maxZ),
-         new Vec3(var1.minX, var1.maxY, var1.maxZ),
-         new Vec3(var1.maxX, var1.minY, var1.maxZ),
-         new Vec3(var1.maxX, var1.maxY, var1.maxZ)
+         new Vec3(move.minX, move.minY, move.minZ),
+         new Vec3(move.minX, move.maxY, move.minZ),
+         new Vec3(move.maxX, move.minY, move.minZ),
+         new Vec3(move.maxX, move.maxY, move.minZ),
+         new Vec3(move.minX, move.minY, move.maxZ),
+         new Vec3(move.minX, move.maxY, move.maxZ),
+         new Vec3(move.maxX, move.minY, move.maxZ),
+         new Vec3(move.maxX, move.maxY, move.maxZ)
       };
    }
 
-   private boolean method1395(Vec3 var1) {
+   private boolean method1395(Vec3 vec) {
       if (mc.gameRenderer != null && mc.gameRenderer.mainCamera() != null) {
-         Vec3 var2 = mc.gameRenderer.mainCamera().position();
-         Vec3 var3 = var1.subtract(var2);
-         float var4 = mc.gameRenderer.mainCamera().xRot();
-         float var5 = mc.gameRenderer.mainCamera().yRot();
-         double var6 = Math.toRadians(var4);
-         double var8 = Math.toRadians(var5);
-         Vec3 var10 = new Vec3(-Math.sin(var8) * Math.cos(var6), -Math.sin(var6), Math.cos(var8) * Math.cos(var6));
-         return var3.dot(var10) > 0.0;
+         Vec3 position = mc.gameRenderer.mainCamera().position();
+         Vec3 vec2 = vec.subtract(position);
+         float xRot = mc.gameRenderer.mainCamera().xRot();
+         float yRot = mc.gameRenderer.mainCamera().yRot();
+         double d = Math.toRadians(xRot);
+         double d2 = Math.toRadians(yRot);
+         Vec3 vec3 = new Vec3(-Math.sin(d2) * Math.cos(d), -Math.sin(d), Math.cos(d2) * Math.cos(d));
+         return vec2.dot(vec3) > 0.0;
       } else {
          return false;
       }
    }
 
-   private static boolean method1396(ItemStack var0) {
-      return var0.getItem() instanceof BlockItem var1 && var1.getBlock() instanceof ShulkerBoxBlock;
+   private static boolean method1396(ItemStack stack) {
+      return stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock;
    }
 
-   private static NonNullList<ItemStack> method1397(ItemStack var0) {
-      NonNullList var1 = NonNullList.withSize(27, ItemStack.EMPTY);
-      ItemContainerContents var2 = var0.get(DataComponents.CONTAINER);
-      if (var2 != null) {
-         var2.copyInto(var1);
+   private static NonNullList<ItemStack> method1397(ItemStack stack) {
+      NonNullList size = NonNullList.withSize(27, ItemStack.EMPTY);
+      ItemContainerContents itemContainerContents = stack.get(DataComponents.CONTAINER);
+      if (itemContainerContents != null) {
+         itemContainerContents.copyInto(size);
       }
 
-      return var1;
+      return size;
    }
 
    private static final class Data {
@@ -228,9 +228,9 @@ public class ShulkerPreviewModule extends Module {
          return "Data[" + "containerComponent=" + this.containerComponent + ", " + "shulkerTooltipComponent=" + this.shulkerTooltipComponent + "]";
       }
 
-      private Data(ItemContainerContents var1, ShulkerTooltipComponent var2) {
-         this.containerComponent = var1;
-         this.shulkerTooltipComponent = var2;
+      private Data(ItemContainerContents containerComponent, ShulkerTooltipComponent shulkerTooltipComponent) {
+         this.containerComponent = containerComponent;
+         this.shulkerTooltipComponent = shulkerTooltipComponent;
       }
 
       public ItemContainerContents getContainerComponent() {
@@ -245,10 +245,10 @@ public class ShulkerPreviewModule extends Module {
    public static final class Entry implements TooltipComponent {
       private final NonNullList<ItemStack> defaultedList = NonNullList.withSize(27, ItemStack.EMPTY);
 
-      public Entry(NonNullList<ItemStack> var1) {
-         for (int var2 = 0; var2 < 27 && var2 < var1.size(); var2++) {
-            ItemStack var3 = (ItemStack)var1.get(var2);
-            this.defaultedList.set(var2, var3.isEmpty() ? ItemStack.EMPTY : var3.copy());
+      public Entry(NonNullList<ItemStack> size) {
+         for (int i = 0; i < 27 && i < size.size(); i++) {
+            ItemStack stack = (ItemStack)size.get(i);
+            this.defaultedList.set(i, stack.isEmpty() ? ItemStack.EMPTY : stack.copy());
          }
       }
 

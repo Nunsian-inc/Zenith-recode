@@ -58,8 +58,8 @@ public class InterfaceHud extends Interface {
       "module.interface.notifications.direction.up"
    );
 
-   public InterfaceHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public InterfaceHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
       EventManager.register(this);
    }
 
@@ -67,48 +67,48 @@ public class InterfaceHud extends Interface {
       return this.entry.isEnabled();
    }
 
-   public void method5084(Module var1, boolean var2) {
-      this.method5085(var1, var2, 3000L);
+   public void method5084(Module moduleValue, boolean enabled) {
+      this.method5085(moduleValue, enabled, 3000L);
    }
 
-   public void method5085(Module var1, boolean var2, long var3) {
-      this.method5088(new InterfaceHud.Entry3(var1, var2, var3));
+   public void method5085(Module moduleValue, boolean enabled, long l) {
+      this.method5088(new InterfaceHud.Entry3(moduleValue, enabled, l));
    }
 
-   public void method5086(String var1, Component var2) {
-      this.method5087(var1, var2, 1500L);
+   public void method5086(String icon, Component literal) {
+      this.method5087(icon, literal, 1500L);
    }
 
-   public void method5087(String var1, Component var2, long var3) {
-      this.method5088(new InterfaceHud.Entry2(var1, var2, var3));
+   public void method5087(String icon, Component literal, long l) {
+      this.method5088(new InterfaceHud.Entry2(icon, literal, l));
    }
 
-   private void method5088(InterfaceHud.Entry var1) {
+   private void method5088(InterfaceHud.Entry entry) {
       if (mc.isSameThread()) {
-         this.deque.addLast(var1);
+         this.deque.addLast(entry);
       } else {
-         mc.execute(() -> this.deque.addLast(var1));
+         mc.execute(() -> this.deque.addLast(entry));
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
-      LocalPlayer var2 = mc.player;
-      if (var2 != null && mc.level != null) {
+   public void onUpdate(UpdateEvent event) {
+      LocalPlayer player = mc.player;
+      if (player != null && mc.level != null) {
          if (this.method5092(this.entry2)) {
-            this.method5090(var2);
+            this.method5090(player);
          } else {
             this.flag = false;
          }
 
          if (this.method5092(this.entry3)) {
-            this.method5091(var2);
+            this.method5091(player);
          } else {
             this.items.clear();
          }
 
          if (this.method5092(this.entry4)) {
-            if (var2.tickCount % 20 == 0) {
+            if (player.tickCount % 20 == 0) {
                this.items2.values().removeIf(InterfaceHud.Entry4::method5101);
             }
          } else {
@@ -120,116 +120,116 @@ public class InterfaceHud extends Interface {
    }
 
    @EventTarget
-   public void method5089(EntityStatusEvent var1) {
+   public void method5089(EntityStatusEvent event) {
       if (this.method5092(this.entry4) && mc.level != null) {
-         ClientboundEntityEventPacket var2 = var1.getEntityStatusS2CPacket();
-         if (var2.getEventId() == 35) {
-            if (var2.getEntity(mc.level) instanceof Player var4 && var4 != mc.player) {
-               InterfaceHud.Entry4 var5 = this.items2.computeIfAbsent(var4.getUUID(), var1x -> new InterfaceHud.Entry4());
-               var5.method5100(var4);
+         ClientboundEntityEventPacket entityStatusS2CPacket = event.getEntityStatusS2CPacket();
+         if (entityStatusS2CPacket.getEventId() == 35) {
+            if (entityStatusS2CPacket.getEntity(mc.level) instanceof Player player && player != mc.player) {
+               InterfaceHud.Entry4 entry4 = this.items2.computeIfAbsent(player.getUUID(), var1x -> new InterfaceHud.Entry4());
+               entry4.method5100(player);
             }
          }
       }
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      Font var2 = Fonts.NEW_MEDIUM.getFont(5.5F);
-      long var3 = System.currentTimeMillis();
-      var var5 = this.deque.iterator();
-      ZenithStyle var6 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      float var7 = this.floatValue;
-      float var8 = this.floatValue2;
-      float var9 = 17.0F;
-      int var10 = 0;
+   public void method8(CustomDrawContext customDrawContext) {
+      Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+      long now = System.currentTimeMillis();
+      var iterator = this.deque.iterator();
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      float floatValue = this.floatValue;
+      float f = this.floatValue2;
+      float f2 = 17.0F;
+      int n = 0;
 
-      while (var5.hasNext()) {
-         InterfaceHud.Entry var11 = (InterfaceHud.Entry)var5.next();
-         if (!var11.flag && var3 - var11.longValue > var11.longValue2) {
-            var11.flag = true;
-            var11.animation2.method2808(0.0F);
+      while (iterator.hasNext()) {
+         InterfaceHud.Entry entry = (InterfaceHud.Entry)iterator.next();
+         if (!entry.flag && now - entry.longValue > entry.longValue2) {
+            entry.flag = true;
+            entry.animation2.method2808(0.0F);
          }
 
-         if (var11.flag && var11.animation2.getValue() < 0.01F) {
-            var5.remove();
+         if (entry.flag && entry.animation2.getValue() < 0.01F) {
+            iterator.remove();
          } else {
-            if (!var11.flag) {
-               if (var11.animation.isDone() && var11.animation.getValue() == 0.0F) {
-                  var11.animation.reset(var10);
+            if (!entry.flag) {
+               if (entry.animation.isDone() && entry.animation.getValue() == 0.0F) {
+                  entry.animation.reset(n);
                }
 
-               var11.animation.method2808(var10);
-               var10++;
+               entry.animation.method2808(n);
+               n++;
             }
 
-            var11.animation2.method2808(var11.flag ? 0.0F : 1.0F);
+            entry.animation2.method2808(entry.flag ? 0.0F : 1.0F);
          }
       }
 
-      for (InterfaceHud.Entry var12 : this.deque) {
-         float var13 = 6.0F;
-         float var14 = var12.animation.getValue() * (var9 + var13);
-         if (var14 < 100.0F) {
-            var12.method5099(var1, var7, var8 + (this.direction.isSelected(0) ? var14 : -var14), var2, var6, var9, this);
+      for (InterfaceHud.Entry entry : this.deque) {
+         float f3 = 6.0F;
+         float f4 = entry.animation.getValue() * (f2 + f3);
+         if (f4 < 100.0F) {
+            entry.method5099(customDrawContext, floatValue, f + (this.direction.isSelected(0) ? f4 : -f4), font, currentStyle, f2, this);
          } else {
-            var12.longValue = System.currentTimeMillis();
+            entry.longValue = System.currentTimeMillis();
          }
       }
    }
 
    @Override
-   public void method2069(CustomDrawContext var1) {
+   public void method2069(CustomDrawContext customDrawContext) {
    }
 
-   private void method5090(Player var1) {
-      MobEffectInstance var2 = var1.getEffect(MobEffects.STRENGTH);
-      if (var2 == null) {
+   private void method5090(Player player) {
+      MobEffectInstance effect = player.getEffect(MobEffects.STRENGTH);
+      if (effect == null) {
          this.flag = false;
       } else {
-         int var3 = var2.getDuration() / 20;
-         if (var3 <= 10 && !this.flag) {
+         int n = effect.getDuration() / 20;
+         if (n <= 10 && !this.flag) {
             this.flag = true;
-            this.method5087("3", this.method5094(method5098("hud.notify.strength"), var3 + " " + method5098("hud.notify.sec")), 3500L);
+            this.method5087("3", this.method5094(method5098("hud.notify.strength"), n + " " + method5098("hud.notify.sec")), 3500L);
          }
 
-         if (var3 > 10) {
+         if (n > 10) {
             this.flag = false;
          }
       }
    }
 
-   private void method5091(Player var1) {
-      HashSet var2 = new HashSet();
+   private void method5091(Player player) {
+      HashSet hashSet = new HashSet();
 
-      for (ItemStack var4 : ArmorSlots.method5384(var1)) {
-         if (var4 != null && !var4.isEmpty() && var4.isDamageableItem()) {
-            String var5 = var4.getItem().getDescriptionId();
-            var2.add(var5);
-            int var6 = var4.getMaxDamage();
-            if (var6 > 0) {
-               int var7 = var6 - var4.getDamageValue();
-               float var8 = var7 * 100.0F / var6;
-               if (var8 <= 15.0F && !this.items.contains(var5)) {
-                  this.items.add(var5);
+      for (ItemStack stack : ArmorSlots.method5384(player)) {
+         if (stack != null && !stack.isEmpty() && stack.isDamageableItem()) {
+            String descriptionId = stack.getItem().getDescriptionId();
+            hashSet.add(descriptionId);
+            int maxDamage = stack.getMaxDamage();
+            if (maxDamage > 0) {
+               int n = maxDamage - stack.getDamageValue();
+               float f = n * 100.0F / maxDamage;
+               if (f <= 15.0F && !this.items.contains(descriptionId)) {
+                  this.items.add(descriptionId);
                   this.method5087(
                      "3",
-                     this.method5094(method5098("hud.notify.durability"), var4.getItem().getName(var4.getItem().getDefaultInstance()).getString() + " • " + String.format("%.1f", var8) + "%"),
+                     this.method5094(method5098("hud.notify.durability"), stack.getItem().getName(stack.getItem().getDefaultInstance()).getString() + " • " + String.format("%.1f", f) + "%"),
                      3500L
                   );
                }
 
-               if (var8 > 15.0F) {
-                  this.items.remove(var5);
+               if (f > 15.0F) {
+                  this.items.remove(descriptionId);
                }
             }
          }
       }
 
-      this.items.retainAll(var2);
+      this.items.retainAll(hashSet);
    }
 
-   private boolean method5092(MultiSelectSetting.Entry var1) {
-      return var1.isEnabled() && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6814() && !UseItemUtils.method6526();
+   private boolean method5092(MultiSelectSetting.Entry entry) {
+      return entry.isEnabled() && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6814() && !UseItemUtils.method6526();
    }
 
    private void method5093() {
@@ -238,15 +238,15 @@ public class InterfaceHud extends Interface {
       this.items2.clear();
    }
 
-   private Component method5094(String var1, String var2) {
-      return this.method5096(var1, Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287())
+   private Component method5094(String name, String str) {
+      return this.method5096(name, Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287())
          .append(Component.literal(" "))
-         .append(this.method5096(var2, Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287()));
+         .append(this.method5096(str, Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287()));
    }
 
-   private Component method5095(Player var1, int var2) {
+   private Component method5095(Player player, int intValue) {
       return this.method5096(
-            var1.getGameProfile().name(), Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()
+            player.getGameProfile().name(), Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()
          )
          .append(
             this.method5096(
@@ -254,22 +254,22 @@ public class InterfaceHud extends Interface {
                Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287()
             )
          )
-         .append(this.method5096(var2 + " ", Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()))
+         .append(this.method5096(intValue + " ", Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()))
          .append(
-            this.method5096(this.method5097(var2) + ".", Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287())
+            this.method5096(this.method5097(intValue) + ".", Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor().method7287())
          );
    }
 
-   private MutableComponent method5096(String var1, int var2) {
-      return Component.literal(var1).setStyle(Style.EMPTY.withColor(var2));
+   private MutableComponent method5096(String name, int color) {
+      return Component.literal(name).setStyle(Style.EMPTY.withColor(color));
    }
 
-   private String method5097(int var1) {
-      int var2 = var1 % 100;
-      if (var2 >= 11 && var2 <= 14) {
+   private String method5097(int intValue) {
+      int n = intValue % 100;
+      if (n >= 11 && n <= 14) {
          return method5098("hud.notify.totems.5");
       } else {
-         return switch (var1 % 10) {
+         return switch (intValue % 10) {
             case 1 -> method5098("hud.notify.totems.1");
             case 2, 3, 4 -> method5098("hud.notify.totems.2");
             default -> method5098("hud.notify.totems.5");
@@ -277,8 +277,8 @@ public class InterfaceHud extends Interface {
       }
    }
 
-   private static String method5098(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String method5098(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    private abstract static class Entry {
@@ -288,53 +288,53 @@ public class InterfaceHud extends Interface {
       public final Animation animation = new Animation(300L, Easing.INSTANCE13);
       public final Animation animation2 = new Animation(300L, Easing.INSTANCE13);
 
-      public Entry(long var1) {
+      public Entry(long l) {
          this.longValue = System.currentTimeMillis();
-         this.longValue2 = var1;
+         this.longValue2 = l;
       }
 
-      public abstract void method5099(CustomDrawContext var1, float var2, float var3, Font var4, ZenithStyle var5, float var6, InterfaceHud var7);
+      public abstract void method5099(CustomDrawContext customDrawContext, float floatValue, float f, Font font, ZenithStyle currentStyle, float f2, InterfaceHud interfaceHud);
    }
 
    private static class Entry2 extends InterfaceHud.Entry {
       public final String text;
       public final Component text2;
 
-      public Entry2(String var1, Component var2, long var3) {
-         super(var3);
-         this.text = var1;
-         this.text2 = var2;
+      public Entry2(String text, Component literal, long l) {
+         super(l);
+         this.text = text;
+         this.text2 = literal;
       }
 
       @Override
-      public void method5099(CustomDrawContext var1, float var2, float var3, Font var4, ZenithStyle var5, float var6, InterfaceHud var7) {
-         float var8 = InterfaceModule.method6801();
-         float var9 = 16.0F;
-         ZenithColor var10 = var5.getHeaderHudBackground().getZenithColor();
-         ZenithColor var11 = var5.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778());
-         ZenithColor var12 = var5.getPrimaryColor().getZenithColor();
-         float var13 = var4.width(this.text2);
-         float var14 = var9 + 4.0F + var13 + 8.0F;
-         var7.height = var6;
-         var7.width = Math.max(var7.width, var14);
-         var2 += (100.0F - var14) / 2.0F;
-         float var15 = this.animation2.getValue();
-         Font var17 = Fonts.ICONS.getFont(this.text.equals("Y") ? 8.0F : 6.0F);
-         var1.pose().pushMatrix();
-         var1.pose().translate(var2 + var14 / 2.0F, var3 + var6 / 2.0F);
-         var1.pose().scale(var15, var15);
-         var1.pose().translate(-(var2 + var14 / 2.0F), -(var3 + var6 / 2.0F));
-         var1.drawBlurHud(var2, var3, var14, var6, 21.0F, ProxyDotRadiusData.method8069(var8), ZenithColor.INSTANCE);
-         var1.drawRoundedRect(var2, var3, var14, var6, ProxyDotRadiusData.method8069(var8), var10);
-         var1.drawRoundedRect(var2, var3, var9, var6, ProxyDotRadiusData.method8069(var8), var11);
-         float var18 = var2 + (var9 - var17.width(this.text)) / 2.0F;
-         float var19 = var3 + (var6 - var17.height()) / 2.0F;
-         var1.drawText(var17, this.text, var18, var19, var12);
-         float var20 = var2 + var9 + 4.0F;
-         float var21 = var3 + (var6 - var4.height()) / 2.0F;
-         var1.drawText(var4, this.text2, var20, var21);
-         var1.pose().popMatrix();
-         var7.method4679(var1, var2, var3, var14, var6, var15);
+      public void method5099(CustomDrawContext customDrawContext, float floatValue, float y, Font font, ZenithStyle zenithStyle, float height, InterfaceHud interfaceHud) {
+         float intValue = InterfaceModule.method6801();
+         float width = 16.0F;
+         ZenithColor zenithColor = zenithStyle.getHeaderHudBackground().getZenithColor();
+         ZenithColor zenithColor2 = zenithStyle.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778());
+         ZenithColor zenithColor3 = zenithStyle.getPrimaryColor().getZenithColor();
+         float f = font.width(this.text2);
+         float width2 = width + 4.0F + f + 8.0F;
+         interfaceHud.height = height;
+         interfaceHud.width = Math.max(interfaceHud.width, width2);
+         floatValue += (100.0F - width2) / 2.0F;
+         float x = this.animation2.getValue();
+         Font font2 = Fonts.ICONS.getFont(this.text.equals("Y") ? 8.0F : 6.0F);
+         customDrawContext.pose().pushMatrix();
+         customDrawContext.pose().translate(floatValue + width2 / 2.0F, y + height / 2.0F);
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.pose().translate(-(floatValue + width2 / 2.0F), -(y + height / 2.0F));
+         customDrawContext.drawBlurHud(floatValue, y, width2, height, 21.0F, ProxyDotRadiusData.method8069(intValue), ZenithColor.INSTANCE);
+         customDrawContext.drawRoundedRect(floatValue, y, width2, height, ProxyDotRadiusData.method8069(intValue), zenithColor);
+         customDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(intValue), zenithColor2);
+         float floatValue2 = floatValue + (width - font2.width(this.text)) / 2.0F;
+         float centeredTextY = y + (height - font2.height()) / 2.0F;
+         customDrawContext.drawText(font2, this.text, floatValue2, centeredTextY, zenithColor3);
+         float floatValue3 = floatValue + width + 4.0F;
+         float y2 = y + (height - font.height()) / 2.0F;
+         customDrawContext.drawText(font, this.text2, floatValue3, y2);
+         customDrawContext.pose().popMatrix();
+         interfaceHud.method4679(customDrawContext, floatValue, y, width2, height, x);
       }
    }
 
@@ -342,50 +342,50 @@ public class InterfaceHud extends Interface {
       public final Module module;
       public final boolean flag;
 
-      public Entry3(Module var1, boolean var2, long var3) {
-         super(var3);
-         this.module = var1;
-         this.flag = var2;
+      public Entry3(Module moduleValue, boolean flag, long l) {
+         super(l);
+         this.module = moduleValue;
+         this.flag = flag;
       }
 
       @Override
-      public void method5099(CustomDrawContext var1, float var2, float var3, Font var4, ZenithStyle var5, float var6, InterfaceHud var7) {
-         float var8 = InterfaceModule.method6801();
-         float var9 = 16.0F;
-         ZenithColor var10 = var5.getHeaderHudBackground().getZenithColor();
-         ZenithColor var11 = var5.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778());
-         ZenithColor var12 = this.flag ? var5.getPrimaryColor().getZenithColor() : var5.getTextSecondary().getZenithColor();
-         ZenithColor var13 = this.flag ? var5.getTextEnable().getZenithColor() : var5.getTextTertiary().getZenithColor();
-         String var14 = this.module.getName();
-         String var15 = "  "
+      public void method5099(CustomDrawContext customDrawContext, float floatValue, float y, Font font, ZenithStyle zenithStyle, float height, InterfaceHud interfaceHud) {
+         float intValue = InterfaceModule.method6801();
+         float width = 16.0F;
+         ZenithColor zenithColor = zenithStyle.getHeaderHudBackground().getZenithColor();
+         ZenithColor zenithColor2 = zenithStyle.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778());
+         ZenithColor zenithColor3 = this.flag ? zenithStyle.getPrimaryColor().getZenithColor() : zenithStyle.getTextSecondary().getZenithColor();
+         ZenithColor zenithColor4 = this.flag ? zenithStyle.getTextEnable().getZenithColor() : zenithStyle.getTextTertiary().getZenithColor();
+         String name = this.module.getName();
+         String text = "  "
             + Zenith.getInstance()
                .getLocalization()
                .translate(this.flag ? "module.interface.notifications.state.enabled" : "module.interface.notifications.state.disabled");
-         float var16 = var4.width(var14);
-         float var17 = var4.width(var15);
-         float var18 = var9 + 4.0F + var16 + var17 + 8.0F;
-         var7.height = var6;
-         var7.width = Math.max(var7.width, var18);
-         var2 += (100.0F - var18) / 2.0F;
-         float var19 = this.animation2.getValue();
-         Font var21 = Fonts.NEW_ICONS.getFont(6.0F);
-         var1.pose().pushMatrix();
-         var1.pose().translate(var2 + var18 / 2.0F, var3 + var6 / 2.0F);
-         var1.pose().scale(var19, var19);
-         var1.pose().translate(-(var2 + var18 / 2.0F), -(var3 + var6 / 2.0F));
-         var1.drawBlurHud(var2, var3, var18, var6, 21.0F, ProxyDotRadiusData.method8069(var8), ZenithColor.INSTANCE);
-         var1.drawRoundedRect(var2, var3, var18, var6, ProxyDotRadiusData.method8069(var8), var10);
-         var1.drawRoundedRect(var2, var3, var9, var6, ProxyDotRadiusData.method8069(var8), var11);
-         String var22 = this.module.getCategory().getIcon();
-         float var23 = var2 + (var9 - var21.width(var22)) / 2.0F;
-         float var24 = var3 + (var6 - var21.height()) / 2.0F;
-         var1.drawText(var21, var22, var23, var24, var12);
-         float var25 = var2 + var9 + 4.0F;
-         float var26 = var3 + (var6 - var4.height()) / 2.0F;
-         var1.drawText(var4, var14, var25, var26, var12);
-         var1.drawText(var4, var15, var25 + var16, var26, var13);
-         var1.pose().popMatrix();
-         var7.method4679(var1, var2, var3, var18, var6, var19);
+         float f = font.width(name);
+         float width2 = font.width(text);
+         float width3 = width + 4.0F + f + width2 + 8.0F;
+         interfaceHud.height = height;
+         interfaceHud.width = Math.max(interfaceHud.width, width3);
+         floatValue += (100.0F - width3) / 2.0F;
+         float x = this.animation2.getValue();
+         Font font2 = Fonts.NEW_ICONS.getFont(6.0F);
+         customDrawContext.pose().pushMatrix();
+         customDrawContext.pose().translate(floatValue + width3 / 2.0F, y + height / 2.0F);
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.pose().translate(-(floatValue + width3 / 2.0F), -(y + height / 2.0F));
+         customDrawContext.drawBlurHud(floatValue, y, width3, height, 21.0F, ProxyDotRadiusData.method8069(intValue), ZenithColor.INSTANCE);
+         customDrawContext.drawRoundedRect(floatValue, y, width3, height, ProxyDotRadiusData.method8069(intValue), zenithColor);
+         customDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(intValue), zenithColor2);
+         String icon = this.module.getCategory().getIcon();
+         float floatValue2 = floatValue + (width - font2.width(icon)) / 2.0F;
+         float centeredTextY = y + (height - font2.height()) / 2.0F;
+         customDrawContext.drawText(font2, icon, floatValue2, centeredTextY, zenithColor3);
+         float floatValue3 = floatValue + width + 4.0F;
+         float centeredTextY2 = y + (height - font.height()) / 2.0F;
+         customDrawContext.drawText(font, name, floatValue3, centeredTextY2, zenithColor3);
+         customDrawContext.drawText(font, text, floatValue3 + f, centeredTextY2, zenithColor4);
+         customDrawContext.pose().popMatrix();
+         interfaceHud.method4679(customDrawContext, floatValue, y, width3, height, x);
       }
    }
 
@@ -393,10 +393,10 @@ public class InterfaceHud extends Interface {
       private long longValue = System.currentTimeMillis();
       private int intValue = 0;
 
-      private void method5100(Player var1) {
+      private void method5100(Player player) {
          this.longValue = System.currentTimeMillis();
          this.intValue++;
-         InterfaceHud.this.method5087("Y", InterfaceHud.this.method5095(var1, this.intValue), 3000L);
+         InterfaceHud.this.method5087("Y", InterfaceHud.this.method5095(player, this.intValue), 3000L);
       }
 
       private boolean method5101() {

@@ -67,83 +67,83 @@ public final class ScriptScreenApi {
       return Minecraft.getInstance();
    }
 
-   public static Scriptable method7044(Script var0) {
-      return items.get(var0);
+   public static Scriptable method7044(Script key) {
+      return items.get(key);
    }
 
-   public static void method7045(Script var0, Scriptable var1) {
-      items.put(var0, var1);
-      var0.method1413(() -> items.remove(var0, var1));
+   public static void method7045(Script workspace, Scriptable scope) {
+      items.put(workspace, scope);
+      workspace.method1413(() -> items.remove(workspace, scope));
    }
 
-   public static void method7046(Script var0, Script.Type var1, Function var2) {
-      ScriptModuleApi.method321(var0, var1, var2);
+   public static void method7046(Script workspace, Script.Type key, Function function) {
+      ScriptModuleApi.method321(workspace, key, function);
    }
 
-   public static String method7047(Screen var0) {
-      if (var0 == null) {
+   public static String method7047(Screen screen) {
+      if (screen == null) {
          return "";
-      } else if (var0 instanceof ChatScreen) {
+      } else if (screen instanceof ChatScreen) {
          return "chat";
-      } else if (var0 instanceof InventoryScreen) {
+      } else if (screen instanceof InventoryScreen) {
          return "inventory";
-      } else if (var0 instanceof CreativeModeInventoryScreen) {
+      } else if (screen instanceof CreativeModeInventoryScreen) {
          return "creative";
-      } else if (var0 instanceof AbstractContainerScreen) {
+      } else if (screen instanceof AbstractContainerScreen) {
          return "container";
-      } else if (var0 instanceof PauseScreen) {
+      } else if (screen instanceof PauseScreen) {
          return "pause";
-      } else if (var0 instanceof DeathScreen) {
+      } else if (screen instanceof DeathScreen) {
          return "death";
-      } else if (var0 instanceof TitleScreen) {
+      } else if (screen instanceof TitleScreen) {
          return "title";
       } else {
-         return var0 instanceof NLMenuScreen ? "clickgui" : "other";
+         return screen instanceof NLMenuScreen ? "clickgui" : "other";
       }
    }
 
-   public static Entity method7048(Object var0) {
-      if (method7043().level != null && !ScriptValueUtils.method6253(var0)) {
-         double var1;
-         if (var0 instanceof Scriptable var3) {
-            if (!(ScriptValueUtils.method6263(var3, "id") instanceof Function var5)) {
+   public static Entity method7048(Object id) {
+      if (method7043().level != null && !ScriptValueUtils.method6253(id)) {
+         double number;
+         if (id instanceof Scriptable scriptable) {
+            if (!(ScriptValueUtils.method6263(scriptable, "id") instanceof Function function)) {
                return null;
             }
 
-            var1 = Context.toNumber(var5.call(Context.getCurrentContext(), var3, var3, new Object[0]));
+            number = Context.toNumber(function.call(Context.getCurrentContext(), scriptable, scriptable, new Object[0]));
          } else {
-            var1 = Context.toNumber(var0);
+            number = Context.toNumber(id);
          }
 
-         return method7043().level.getEntity((int)var1);
+         return method7043().level.getEntity((int)number);
       } else {
          return null;
       }
    }
 
-   public static Scriptable method7049(Script var0, Scriptable var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      var2.method6274("exists", var0x -> method7043().player != null);
-      var2.method6274("name", var0x -> method7043().getUser().getName());
-      var2.method6274("x", var0x -> method7051() == null ? 0.0 : method7051().getX());
-      var2.method6274("y", var0x -> method7051() == null ? 0.0 : method7051().getY());
-      var2.method6274("z", var0x -> method7051() == null ? 0.0 : method7051().getZ());
-      var2.method6274(
+   public static Scriptable method7049(Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("exists", var0x -> method7043().player != null);
+      entry2.method6274("name", var0x -> method7043().getUser().getName());
+      entry2.method6274("x", var0x -> method7051() == null ? 0.0 : method7051().getX());
+      entry2.method6274("y", var0x -> method7051() == null ? 0.0 : method7051().getY());
+      entry2.method6274("z", var0x -> method7051() == null ? 0.0 : method7051().getZ());
+      entry2.method6274(
          "pos",
          var1x -> method7051() == null
-            ? ScriptValueUtils.method6270(var1, 0.0, 0.0, 0.0)
-            : ScriptValueUtils.method6270(var1, method7051().getX(), method7051().getY(), method7051().getZ())
+            ? ScriptValueUtils.method6270(scope, 0.0, 0.0, 0.0)
+            : ScriptValueUtils.method6270(scope, method7051().getX(), method7051().getY(), method7051().getZ())
       );
-      var2.method6274("eyeY", var0x -> method7051() == null ? 0.0 : method7051().getEyeY());
-      var2.method6274("velocity", var1x -> {
+      entry2.method6274("eyeY", var0x -> method7051() == null ? 0.0 : method7051().getEyeY());
+      entry2.method6274("velocity", var1x -> {
          if (method7051() == null) {
-            return ScriptValueUtils.method6270(var1, 0.0, 0.0, 0.0);
+            return ScriptValueUtils.method6270(scope, 0.0, 0.0, 0.0);
          } else {
             Vec3 var2x = method7051().getDeltaMovement();
-            return ScriptValueUtils.method6270(var1, var2x.x, var2x.y, var2x.z);
+            return ScriptValueUtils.method6270(scope, var2x.x, var2x.y, var2x.z);
          }
       });
-      var2.method6274("speed", var0x -> {
+      entry2.method6274("speed", var0x -> {
          if (method7051() == null) {
             return 0.0;
          } else {
@@ -151,74 +151,74 @@ public final class ScriptScreenApi {
             return Math.sqrt(var1x.x * var1x.x + var1x.z * var1x.z);
          }
       });
-      var2.method6274("yaw", var0x -> method7051() == null ? 0.0 : method7051().getYRot());
-      var2.method6274("pitch", var0x -> method7051() == null ? 0.0 : method7051().getXRot());
-      var2.method6274("health", var0x -> method7051() == null ? 0.0 : method7051().getHealth());
-      var2.method6274("maxHealth", var0x -> method7051() == null ? 0.0 : method7051().getMaxHealth());
-      var2.method6274("absorption", var0x -> method7051() == null ? 0.0 : method7051().getAbsorptionAmount());
-      var2.method6274("armor", var0x -> method7051() == null ? 0.0 : method7051().getArmorValue());
-      var2.method6274("hunger", var0x -> method7051() == null ? 0.0 : method7051().getFoodData().getFoodLevel());
-      var2.method6274("saturation", var0x -> method7051() == null ? 0.0 : method7051().getFoodData().getSaturationLevel());
-      var2.method6274("level", var0x -> method7051() == null ? 0.0 : method7051().experienceLevel);
-      var2.method6274("onGround", var0x -> method7051() != null && method7051().onGround());
-      var2.method6274("sneaking", var0x -> method7051() != null && method7051().isShiftKeyDown());
-      var2.method6274("sprinting", var0x -> method7051() != null && method7051().isSprinting());
-      var2.method6274("gliding", var0x -> method7051() != null && method7051().isFallFlying());
-      var2.method6274("swimming", var0x -> method7051() != null && method7051().isSwimming());
-      var2.method6274("inWater", var0x -> method7051() != null && method7051().isInWater());
-      var2.method6274("inLava", var0x -> method7051() != null && method7051().isInLava());
-      var2.method6274("onFire", var0x -> method7051() != null && method7051().isOnFire());
-      var2.method6274("usingItem", var0x -> method7051() != null && method7051().isUsingItem());
-      var2.method6274("riding", var0x -> method7051() != null && method7051().isPassenger());
-      var2.method6274("creative", var0x -> method7051() != null && method7051().isCreative());
-      var2.method6274("flying", var0x -> method7051() != null && method7051().getAbilities().flying);
-      var2.method6274("hurtTime", var0x -> method7051() == null ? 0.0 : method7051().hurtTime);
-      var2.method6274("fallDistance", var0x -> method7051() == null ? 0.0 : method7051().fallDistance);
-      var2.method6274("attackCooldown", var0x -> method7051() == null ? 0.0 : method7051().getAttackStrengthScale(0.5F));
-      var2.method6274("horizontalCollision", var0x -> method7051() != null && method7051().horizontalCollision);
-      var2.method6274(
+      entry2.method6274("yaw", var0x -> method7051() == null ? 0.0 : method7051().getYRot());
+      entry2.method6274("pitch", var0x -> method7051() == null ? 0.0 : method7051().getXRot());
+      entry2.method6274("health", var0x -> method7051() == null ? 0.0 : method7051().getHealth());
+      entry2.method6274("maxHealth", var0x -> method7051() == null ? 0.0 : method7051().getMaxHealth());
+      entry2.method6274("absorption", var0x -> method7051() == null ? 0.0 : method7051().getAbsorptionAmount());
+      entry2.method6274("armor", var0x -> method7051() == null ? 0.0 : method7051().getArmorValue());
+      entry2.method6274("hunger", var0x -> method7051() == null ? 0.0 : method7051().getFoodData().getFoodLevel());
+      entry2.method6274("saturation", var0x -> method7051() == null ? 0.0 : method7051().getFoodData().getSaturationLevel());
+      entry2.method6274("level", var0x -> method7051() == null ? 0.0 : method7051().experienceLevel);
+      entry2.method6274("onGround", var0x -> method7051() != null && method7051().onGround());
+      entry2.method6274("sneaking", var0x -> method7051() != null && method7051().isShiftKeyDown());
+      entry2.method6274("sprinting", var0x -> method7051() != null && method7051().isSprinting());
+      entry2.method6274("gliding", var0x -> method7051() != null && method7051().isFallFlying());
+      entry2.method6274("swimming", var0x -> method7051() != null && method7051().isSwimming());
+      entry2.method6274("inWater", var0x -> method7051() != null && method7051().isInWater());
+      entry2.method6274("inLava", var0x -> method7051() != null && method7051().isInLava());
+      entry2.method6274("onFire", var0x -> method7051() != null && method7051().isOnFire());
+      entry2.method6274("usingItem", var0x -> method7051() != null && method7051().isUsingItem());
+      entry2.method6274("riding", var0x -> method7051() != null && method7051().isPassenger());
+      entry2.method6274("creative", var0x -> method7051() != null && method7051().isCreative());
+      entry2.method6274("flying", var0x -> method7051() != null && method7051().getAbilities().flying);
+      entry2.method6274("hurtTime", var0x -> method7051() == null ? 0.0 : method7051().hurtTime);
+      entry2.method6274("fallDistance", var0x -> method7051() == null ? 0.0 : method7051().fallDistance);
+      entry2.method6274("attackCooldown", var0x -> method7051() == null ? 0.0 : method7051().getAttackStrengthScale(0.5F));
+      entry2.method6274("horizontalCollision", var0x -> method7051() != null && method7051().horizontalCollision);
+      entry2.method6274(
          "moving", var0x -> method7051() != null && (method7051().input.getMoveVector().x != 0.0F || method7051().input.getMoveVector().y != 0.0F)
       );
-      var2.method6274("mainHand", var1x -> ScriptEntityApi.method6579(var1, method7051() == null ? ItemStack.EMPTY : method7051().getMainHandItem()));
-      var2.method6274("offHand", var1x -> ScriptEntityApi.method6579(var1, method7051() == null ? ItemStack.EMPTY : method7051().getOffhandItem()));
-      var2.method6274("armorItems", var1x -> {
+      entry2.method6274("mainHand", var1x -> ScriptEntityApi.method6579(scope, method7051() == null ? ItemStack.EMPTY : method7051().getMainHandItem()));
+      entry2.method6274("offHand", var1x -> ScriptEntityApi.method6579(scope, method7051() == null ? ItemStack.EMPTY : method7051().getOffhandItem()));
+      entry2.method6274("armorItems", var1x -> {
          ArrayList var2x = new ArrayList();
          if (method7051() != null) {
-            for (EquipmentSlot var6 : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-               var2x.add(ScriptEntityApi.method6579(var1, method7051().getItemBySlot(var6)));
+            for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+               var2x.add(ScriptEntityApi.method6579(scope, method7051().getItemBySlot(slot)));
             }
          }
 
-         return ScriptValueUtils.method6267(var1, var2x);
+         return ScriptValueUtils.method6267(scope, var2x);
       });
-      var2.method6274("effects", var1x -> {
+      entry2.method6274("effects", var1x -> {
          ArrayList var2x = new ArrayList();
          if (method7051() != null) {
-            for (MobEffectInstance var4 : method7051().getActiveEffects()) {
-               var2x.add(ScriptEntityApi.method6578(var1, var4));
+            for (MobEffectInstance activeEffect : method7051().getActiveEffects()) {
+               var2x.add(ScriptEntityApi.method6578(scope, activeEffect));
             }
          }
 
-         return ScriptValueUtils.method6267(var1, var2x);
+         return ScriptValueUtils.method6267(scope, var2x);
       });
-      var2.method6274("effect", var1x -> {
+      entry2.method6274("effect", var1x -> {
          if (method7051() == null) {
             return null;
          } else {
             String var2x = ScriptValueUtils.method6254(var1x, 0, "");
 
-            for (MobEffectInstance var4 : method7051().getActiveEffects()) {
-               if (ScriptEntityApi.matches(var4.getEffect().getRegisteredName(), var2x)) {
-                  return ScriptEntityApi.method6578(var1, var4);
+            for (MobEffectInstance activeEffect : method7051().getActiveEffects()) {
+               if (ScriptEntityApi.matches(activeEffect.getEffect().getRegisteredName(), var2x)) {
+                  return ScriptEntityApi.method6578(scope, activeEffect);
                }
             }
 
             return null;
          }
       });
-      var2.method6274("lookingAt", var1x -> ScriptEntityApi.method6581(var1, method7043().hitResult));
-      var2.method6274("wrap", var1x -> ScriptEntityApi.method6576(var1, method7051()));
-      var2.method6274("slot", var0x -> {
+      entry2.method6274("lookingAt", var1x -> ScriptEntityApi.method6581(scope, method7043().hitResult));
+      entry2.method6274("wrap", var1x -> ScriptEntityApi.method6576(scope, method7051()));
+      entry2.method6274("slot", var0x -> {
          if (method7051() == null) {
             return -1.0;
          } else {
@@ -230,7 +230,7 @@ public final class ScriptScreenApi {
             return (double)method7051().getInventory().getSelectedSlot();
          }
       });
-      var2.method6274("attack", var0x -> {
+      entry2.method6274("attack", var0x -> {
          Entity var1x = method7048(ScriptValueUtils.arg(var0x, 0));
          if (method7051() != null && var1x != null && method7043().gameMode != null && var1x != method7051()) {
             if (method7051().distanceTo(var1x) > 6.5) {
@@ -244,7 +244,7 @@ public final class ScriptScreenApi {
             return false;
          }
       });
-      var2.method6274("interact", var0x -> {
+      entry2.method6274("interact", var0x -> {
          Entity var1x = method7048(ScriptValueUtils.arg(var0x, 0));
          if (method7051() != null && var1x != null && method7043().gameMode != null) {
             method7043().gameMode.interact(method7051(), var1x, new net.minecraft.world.phys.EntityHitResult(var1x), method7050(var0x, 1));
@@ -253,7 +253,7 @@ public final class ScriptScreenApi {
             return false;
          }
       });
-      var2.method6274("useItem", var0x -> {
+      entry2.method6274("useItem", var0x -> {
          if (method7051() != null && method7043().gameMode != null) {
             method7043().gameMode.useItem(method7051(), method7050(var0x, 0));
             return true;
@@ -261,7 +261,7 @@ public final class ScriptScreenApi {
             return false;
          }
       });
-      var2.method6274("stopUsing", var0x -> {
+      entry2.method6274("stopUsing", var0x -> {
          if (method7051() != null && method7043().gameMode != null) {
             method7043().gameMode.releaseUsingItem(method7051());
             return true;
@@ -269,28 +269,28 @@ public final class ScriptScreenApi {
             return false;
          }
       });
-      var2.method6274("swing", var0x -> {
+      entry2.method6274("swing", var0x -> {
          if (method7051() != null) {
             org.zenith.utility.game.SwingCompat.swing(method7051(), method7050(var0x, 0));
          }
 
          return null;
       });
-      var2.method6274("jump", var0x -> {
+      entry2.method6274("jump", var0x -> {
          if (method7051() != null && method7051().onGround()) {
             method7051().jumpFromGround();
          }
 
          return null;
       });
-      var2.method6274("setSprinting", var0x -> {
+      entry2.method6274("setSprinting", var0x -> {
          if (method7051() != null) {
             method7051().setSprinting(ScriptValueUtils.method6259(var0x, 0, true));
          }
 
          return null;
       });
-      var2.method6274(
+      entry2.method6274(
          "setVelocity",
          var0x -> {
             if (method7051() != null) {
@@ -303,7 +303,7 @@ public final class ScriptScreenApi {
             return null;
          }
       );
-      var2.method6274(
+      entry2.method6274(
          "addVelocity",
          var0x -> {
             if (method7051() != null) {
@@ -316,7 +316,7 @@ public final class ScriptScreenApi {
             return null;
          }
       );
-      var2.method6274("setLook", var0x -> {
+      entry2.method6274("setLook", var0x -> {
          if (method7051() != null) {
             method7051().setYRot((float)ScriptValueUtils.method6256(var0x, 0, method7051().getYRot()));
             method7051().setXRot(Mth.clamp((float)ScriptValueUtils.method6256(var0x, 1, method7051().getXRot()), -90.0F, 90.0F));
@@ -324,77 +324,77 @@ public final class ScriptScreenApi {
 
          return null;
       });
-      var2.method6277("inventory", method7052(var1));
-      return var2.getScriptableObject();
+      entry2.method6277("inventory", method7052(scope));
+      return entry2.getScriptableObject();
    }
 
-   private static InteractionHand method7050(Object[] var0, int var1) {
-      return "off".equalsIgnoreCase(ScriptValueUtils.method6254(var0, var1, "main")) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+   private static InteractionHand method7050(Object[] objects, int n) {
+      return "off".equalsIgnoreCase(ScriptValueUtils.method6254(objects, n, "main")) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
    }
 
    public static LocalPlayer method7051() {
       return method7043().player;
    }
 
-   private static Scriptable method7052(Scriptable var0) {
-      ScriptValueUtils.Entry2 var1 = ScriptValueUtils.method6247(var0);
-      var1.method6274(
+   private static Scriptable method7052(Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274(
          "slot",
          var1x -> {
             if (method7051() == null) {
-               return ScriptEntityApi.method6579(var0, ItemStack.EMPTY);
+               return ScriptEntityApi.method6579(scope, ItemStack.EMPTY);
             } else {
-               int var2 = ScriptValueUtils.method6257(var1x, 0, 0);
-               return var2 >= 0 && var2 < method7051().getInventory().getContainerSize()
-                  ? ScriptEntityApi.method6579(var0, method7051().getInventory().getItem(var2))
-                  : ScriptEntityApi.method6579(var0, ItemStack.EMPTY);
+               int slot = ScriptValueUtils.method6257(var1x, 0, 0);
+               return slot >= 0 && slot < method7051().getInventory().getContainerSize()
+                  ? ScriptEntityApi.method6579(scope, method7051().getInventory().getItem(slot))
+                  : ScriptEntityApi.method6579(scope, ItemStack.EMPTY);
             }
          }
       );
-      var1.method6274("size", var0x -> method7051() == null ? 0.0 : method7051().getInventory().getContainerSize());
-      var1.method6274("hotbar", var1x -> {
-         ArrayList var2 = new ArrayList();
+      entry2.method6274("size", var0x -> method7051() == null ? 0.0 : method7051().getInventory().getContainerSize());
+      entry2.method6274("hotbar", var1x -> {
+         ArrayList arrayList = new ArrayList();
 
-         for (int var3 = 0; var3 < 9; var3++) {
-            var2.add(ScriptEntityApi.method6579(var0, method7051() == null ? ItemStack.EMPTY : method7051().getInventory().getItem(var3)));
+         for (int i = 0; i < 9; i++) {
+            arrayList.add(ScriptEntityApi.method6579(scope, method7051() == null ? ItemStack.EMPTY : method7051().getInventory().getItem(i)));
          }
 
-         return ScriptValueUtils.method6267(var0, var2);
+         return ScriptValueUtils.method6267(scope, arrayList);
       });
-      var1.method6274("find", var0x -> {
+      entry2.method6274("find", var0x -> {
          if (method7051() == null) {
             return -1.0;
          } else {
             String var1x = ScriptValueUtils.method6254(var0x, 0, "");
 
-            for (int var2 = 0; var2 < 36; var2++) {
-               ItemStack var3 = method7051().getInventory().getItem(var2);
-               if (!var3.isEmpty() && ScriptEntityApi.matches(BuiltInRegistries.ITEM.getKey(var3.getItem()).toString(), var1x)) {
-                  return (double)var2;
+            for (int i = 0; i < 36; i++) {
+               ItemStack stack = method7051().getInventory().getItem(i);
+               if (!stack.isEmpty() && ScriptEntityApi.matches(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(), var1x)) {
+                  return (double)i;
                }
             }
 
             return -1.0;
          }
       });
-      var1.method6274("count", var0x -> {
+      entry2.method6274("count", var0x -> {
          if (method7051() == null) {
             return 0.0;
          } else {
             String var1x = ScriptValueUtils.method6254(var0x, 0, "");
-            int var2 = 0;
+            int n = 0;
 
-            for (int var3 = 0; var3 < method7051().getInventory().getContainerSize(); var3++) {
-               ItemStack var4 = method7051().getInventory().getItem(var3);
-               if (!var4.isEmpty() && ScriptEntityApi.matches(BuiltInRegistries.ITEM.getKey(var4.getItem()).toString(), var1x)) {
-                  var2 += var4.getCount();
+            for (int i = 0; i < method7051().getInventory().getContainerSize(); i++) {
+               ItemStack stack = method7051().getInventory().getItem(i);
+               if (!stack.isEmpty() && ScriptEntityApi.matches(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(), var1x)) {
+                  n += stack.getCount();
                }
             }
 
-            return (double)var2;
+            return (double)n;
          }
       });
-      var1.method6274("screenSlot", var0x -> {
+      entry2.method6274("screenSlot", var0x -> {
          int var1x = ScriptValueUtils.method6257(var0x, 0, 0);
          if (var1x < 9) {
             return 36.0 + var1x;
@@ -404,7 +404,7 @@ public final class ScriptScreenApi {
             return var1x == 40 ? 45.0 : 44.0 - var1x;
          }
       });
-      var1.method6274(
+      entry2.method6274(
          "click",
          var0x -> {
             if (method7051() != null && method7043().gameMode != null) {
@@ -424,21 +424,21 @@ public final class ScriptScreenApi {
             }
          }
       );
-      var1.method6274("swap", var0x -> {
+      entry2.method6274("swap", var0x -> {
          if (method7051() != null && method7043().gameMode != null) {
             int var1x = Mth.clamp(ScriptValueUtils.method6257(var0x, 1, 0), 0, 8);
-            int var2 = ScriptValueUtils.method6257(var0x, 0, 0);
-            if (method7051().containerMenu == method7051().inventoryMenu && var2 == var1x) {
+            int selected = ScriptValueUtils.method6257(var0x, 0, 0);
+            if (method7051().containerMenu == method7051().inventoryMenu && selected == var1x) {
                return true;
             } else {
-               method7043().gameMode.handleContainerInput(method7051().containerMenu.containerId, method7053(var2), var1x, ContainerInput.SWAP, method7051());
+               method7043().gameMode.handleContainerInput(method7051().containerMenu.containerId, method7053(selected), var1x, ContainerInput.SWAP, method7051());
                return true;
             }
          } else {
             return false;
          }
       });
-      var1.method6274(
+      entry2.method6274(
          "drop",
          var0x -> {
             if (method7051() != null && method7043().gameMode != null) {
@@ -457,13 +457,13 @@ public final class ScriptScreenApi {
             }
          }
       );
-      var1.method6274("findBlock", var0x -> {
+      entry2.method6274("findBlock", var0x -> {
          if (method7051() == null) {
             return -1.0;
          } else {
             for (int var1x = 0; var1x < 36; var1x++) {
-               ItemStack var2 = method7051().getInventory().getItem(var1x);
-               if (!var2.isEmpty() && var2.getItem() instanceof BlockItem) {
+               ItemStack stack = method7051().getInventory().getItem(var1x);
+               if (!stack.isEmpty() && stack.getItem() instanceof BlockItem) {
                   return (double)var1x;
                }
             }
@@ -471,7 +471,7 @@ public final class ScriptScreenApi {
             return -1.0;
          }
       });
-      var1.method6274(
+      entry2.method6274(
          "toHotbar",
          var0x -> {
             if (method7051() != null && method7043().gameMode != null) {
@@ -482,66 +482,66 @@ public final class ScriptScreenApi {
                   method7051().getInventory().setSelectedSlot(var1x);
                   return (double)var1x;
                } else {
-                  int var2 = ScriptValueUtils.method6252(var0x, 1)
+                  int selectedSlot = ScriptValueUtils.method6252(var0x, 1)
                      ? Mth.clamp(ScriptValueUtils.method6257(var0x, 1, 0), 0, 8)
                      : method7051().getInventory().getSelectedSlot();
                   method7043()
                      .gameMode
-                     .handleContainerInput(method7051().containerMenu.containerId, method7053(var1x), var2, ContainerInput.SWAP, method7051());
-                  method7051().getInventory().setSelectedSlot(var2);
-                  return (double)var2;
+                     .handleContainerInput(method7051().containerMenu.containerId, method7053(var1x), selectedSlot, ContainerInput.SWAP, method7051());
+                  method7051().getInventory().setSelectedSlot(selectedSlot);
+                  return (double)selectedSlot;
                }
             } else {
                return -1.0;
             }
          }
       );
-      var1.method6274("close", var0x -> {
+      entry2.method6274("close", var0x -> {
          if (method7051() != null) {
             method7051().closeContainer();
          }
 
          return null;
       });
-      var1.method6274("containerOpen", var0x -> method7043().gui.screen() instanceof AbstractContainerScreen && !(method7043().gui.screen() instanceof InventoryScreen));
-      var1.method6274("containerTitle", var0x -> method7043().gui.screen() == null ? "" : method7043().gui.screen().getTitle().getString());
-      var1.method6274("containerSlots", var1x -> {
-         ArrayList var2 = new ArrayList();
+      entry2.method6274("containerOpen", var0x -> method7043().gui.screen() instanceof AbstractContainerScreen && !(method7043().gui.screen() instanceof InventoryScreen));
+      entry2.method6274("containerTitle", var0x -> method7043().gui.screen() == null ? "" : method7043().gui.screen().getTitle().getString());
+      entry2.method6274("containerSlots", var1x -> {
+         ArrayList arrayList = new ArrayList();
          if (method7051() != null) {
-            AbstractContainerMenu var3 = method7051().containerMenu;
+            AbstractContainerMenu containerMenu = method7051().containerMenu;
 
-            for (int var4 = 0; var4 < var3.slots.size() && var4 < 128; var4++) {
-               Slot var5 = var3.slots.get(var4);
-               Scriptable var6 = (Scriptable)ScriptEntityApi.method6579(var0, var5.getItem());
-               var6.put("slot", var6, (double)var4);
-               var6.put("playerInventory", var6, var5.container == method7051().getInventory());
-               var2.add(var6);
+            for (int i = 0; i < containerMenu.slots.size() && i < 128; i++) {
+               Slot slot = containerMenu.slots.get(i);
+               Scriptable scriptable = (Scriptable)ScriptEntityApi.method6579(scope, slot.getItem());
+               scriptable.put("slot", scriptable, (double)i);
+               scriptable.put("playerInventory", scriptable, slot.container == method7051().getInventory());
+               arrayList.add(scriptable);
             }
          }
 
-         return ScriptValueUtils.method6267(var0, var2);
+         return ScriptValueUtils.method6267(scope, arrayList);
       });
-      return var1.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static int method7053(int var0) {
+   public static int method7053(int selected) {
       if (method7051() == null || method7051().containerMenu != method7051().inventoryMenu) {
-         return var0;
-      } else if (var0 < 9) {
-         return 36 + var0;
-      } else if (var0 < 36) {
-         return var0;
-      } else if (var0 == 40) {
+         return selected;
+      } else if (selected < 9) {
+         return 36 + selected;
+      } else if (selected < 36) {
+         return selected;
+      } else if (selected == 40) {
          return 45;
       } else {
-         return var0 < 40 ? 44 - var0 : var0;
+         return selected < 40 ? 44 - selected : selected;
       }
    }
 
-   private static ContainerInput method7054(String var0) {
-      String var1 = var0.toLowerCase(Locale.ROOT);
+   private static ContainerInput method7054(String str) {
+      String lowerCase = str.toLowerCase(Locale.ROOT);
 
-      return switch (var1) {
+      return switch (lowerCase) {
          case "quick_move", "quickmove", "shift" -> ContainerInput.QUICK_MOVE;
          case "swap" -> ContainerInput.SWAP;
          case "clone" -> ContainerInput.CLONE;
@@ -552,69 +552,69 @@ public final class ScriptScreenApi {
       };
    }
 
-   public static Scriptable method7055(Scriptable var0) {
-      ScriptValueUtils.Entry2 var1 = ScriptValueUtils.method6247(var0);
-      var1.method6274("exists", var0x -> method7043().level != null);
-      var1.method6274("time", var0x -> method7043().level == null ? 0.0 : method7043().level.getDefaultClockTime());
-      var1.method6274("day", var0x -> method7043().level == null ? 0.0 : method7043().level.getDefaultClockTime() / 24000L);
-      var1.method6274("dimension", var0x -> method7043().level == null ? "" : method7043().level.dimension().identifier().toString());
-      var1.method6274("raining", var0x -> method7043().level != null && method7043().level.isRaining());
-      var1.method6274("thundering", var0x -> method7043().level != null && method7043().level.isThundering());
-      var1.method6274("players", var1x -> {
-         ArrayList var2 = new ArrayList();
+   public static Scriptable method7055(Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("exists", var0x -> method7043().level != null);
+      entry2.method6274("time", var0x -> method7043().level == null ? 0.0 : method7043().level.getDefaultClockTime());
+      entry2.method6274("day", var0x -> method7043().level == null ? 0.0 : method7043().level.getDefaultClockTime() / 24000L);
+      entry2.method6274("dimension", var0x -> method7043().level == null ? "" : method7043().level.dimension().identifier().toString());
+      entry2.method6274("raining", var0x -> method7043().level != null && method7043().level.isRaining());
+      entry2.method6274("thundering", var0x -> method7043().level != null && method7043().level.isThundering());
+      entry2.method6274("players", var1x -> {
+         ArrayList arrayList = new ArrayList();
          if (method7043().level != null) {
-            for (Player var4 : method7043().level.players()) {
-               if (var4 != method7043().player && var2.size() < 512) {
-                  var2.add(ScriptEntityApi.method6576(var0, var4));
+            for (Player player : method7043().level.players()) {
+               if (player != method7043().player && arrayList.size() < 512) {
+                  arrayList.add(ScriptEntityApi.method6576(scope, player));
                }
             }
          }
 
-         return ScriptValueUtils.method6267(var0, var2);
+         return ScriptValueUtils.method6267(scope, arrayList);
       });
-      var1.method6274("entities", var1x -> {
-         ArrayList var2 = new ArrayList();
-         boolean var3 = !ScriptValueUtils.method6252(var1x, 0) || ScriptValueUtils.method6259(var1x, 0, true);
-         double var4 = ScriptValueUtils.method6256(var1x, 1, 128.0);
+      entry2.method6274("entities", var1x -> {
+         ArrayList arrayList = new ArrayList();
+         boolean flag = !ScriptValueUtils.method6252(var1x, 0) || ScriptValueUtils.method6259(var1x, 0, true);
+         double d = ScriptValueUtils.method6256(var1x, 1, 128.0);
          if (method7043().level != null && method7051() != null) {
-            for (Entity var7 : method7043().level.entitiesForRendering()) {
-               if (var7 != method7051() && (!var3 || var7 instanceof LivingEntity) && !(var7.distanceToSqr(method7051()) > var4 * var4)) {
-                  if (var2.size() >= 1024) {
+            for (Entity entity : method7043().level.entitiesForRendering()) {
+               if (entity != method7051() && (!flag || entity instanceof LivingEntity) && !(entity.distanceToSqr(method7051()) > d * d)) {
+                  if (arrayList.size() >= 1024) {
                      break;
                   }
 
-                  var2.add(ScriptEntityApi.method6576(var0, var7));
+                  arrayList.add(ScriptEntityApi.method6576(scope, entity));
                }
             }
          }
 
-         return ScriptValueUtils.method6267(var0, var2);
+         return ScriptValueUtils.method6267(scope, arrayList);
       });
-      var1.method6274(
+      entry2.method6274(
          "entity",
          var1x -> method7043().level == null
             ? null
-            : ScriptEntityApi.method6576(var0, method7043().level.getEntity(ScriptValueUtils.method6257(var1x, 0, -1)))
+            : ScriptEntityApi.method6576(scope, method7043().level.getEntity(ScriptValueUtils.method6257(var1x, 0, -1)))
       );
-      var1.method6274(
+      entry2.method6274(
          "block",
          var1x -> ScriptEntityApi.method6580(
-            var0,
+            scope,
             BlockPos.containing(
                ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)
             )
          )
       );
-      var1.method6274(
+      entry2.method6274(
          "blockAt",
          var1x -> ScriptEntityApi.method6580(
-            var0,
+            scope,
             BlockPos.containing(
                ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)
             )
          )
       );
-      var1.method6274(
+      entry2.method6274(
          "blockId",
          var0x -> {
             if (method7043().level == null) {
@@ -627,193 +627,193 @@ public final class ScriptScreenApi {
             }
          }
       );
-      var1.method6274("findBlocks", var1x -> {
-         ArrayList var2 = new ArrayList();
+      entry2.method6274("findBlocks", var1x -> {
+         ArrayList arrayList = new ArrayList();
          if (method7043().level != null && method7051() != null) {
-            String var3 = ScriptValueUtils.method6254(var1x, 0, "");
-            int var4 = Mth.clamp(ScriptValueUtils.method6257(var1x, 1, 8), 1, 24);
-            int var5 = Mth.clamp(ScriptValueUtils.method6257(var1x, 2, 256), 1, 2048);
-            BlockPos var6 = method7051().blockPosition();
+            String str = ScriptValueUtils.method6254(var1x, 0, "");
+            int reach = Mth.clamp(ScriptValueUtils.method6257(var1x, 1, 8), 1, 24);
+            int n = Mth.clamp(ScriptValueUtils.method6257(var1x, 2, 256), 1, 2048);
+            BlockPos blockPosition = method7051().blockPosition();
 
-            for (BlockPos var8 : BlockPos.withinManhattan(var6, var4)) {
-               if (ScriptEntityApi.matches(BuiltInRegistries.BLOCK.getKey(method7043().level.getBlockState(var8).getBlock()).toString(), var3)) {
-                  var2.add(ScriptValueUtils.method6270(var0, var8.getX(), var8.getY(), var8.getZ()));
-                  if (var2.size() >= var5) {
+            for (BlockPos pos : BlockPos.withinManhattan(blockPosition, reach)) {
+               if (ScriptEntityApi.matches(BuiltInRegistries.BLOCK.getKey(method7043().level.getBlockState(pos).getBlock()).toString(), str)) {
+                  arrayList.add(ScriptValueUtils.method6270(scope, pos.getX(), pos.getY(), pos.getZ()));
+                  if (arrayList.size() >= n) {
                      break;
                   }
                }
             }
 
-            return ScriptValueUtils.method6267(var0, var2);
+            return ScriptValueUtils.method6267(scope, arrayList);
          } else {
-            return ScriptValueUtils.method6267(var0, var2);
+            return ScriptValueUtils.method6267(scope, arrayList);
          }
       });
-      var1.method6274("raycast", var1x -> {
+      entry2.method6274("raycast", var1x -> {
          if (method7051() == null) {
-            return ScriptEntityApi.method6581(var0, null);
+            return ScriptEntityApi.method6581(scope, null);
          } else {
-            float var2 = (float)ScriptValueUtils.method6256(var1x, 0, method7051().getYRot());
-            float var3 = (float)ScriptValueUtils.method6256(var1x, 1, method7051().getXRot());
-            double var4 = Mth.clamp(ScriptValueUtils.method6256(var1x, 2, 4.5), 0.1, 256.0);
-            Vec3 var6 = method7051().getEyePosition();
-            Vec3 var7 = var6.add(Vec3.directionFromRotation(var3, var2).scale(var4));
-            return ScriptEntityApi.method6581(var0, ScriptEntityApi.method6582(var6, var7, ScriptValueUtils.method6259(var1x, 3, false)));
+            float rotY = (float)ScriptValueUtils.method6256(var1x, 0, method7051().getYRot());
+            float rotX = (float)ScriptValueUtils.method6256(var1x, 1, method7051().getXRot());
+            double scale = Mth.clamp(ScriptValueUtils.method6256(var1x, 2, 4.5), 0.1, 256.0);
+            Vec3 eyePosition = method7051().getEyePosition();
+            Vec3 to = eyePosition.add(Vec3.directionFromRotation(rotX, rotY).scale(scale));
+            return ScriptEntityApi.method6581(scope, ScriptEntityApi.method6582(eyePosition, to, ScriptValueUtils.method6259(var1x, 3, false)));
          }
       });
-      var1.method6274(
+      entry2.method6274(
          "raycastBetween",
          var1x -> {
-            Vec3 var2 = new Vec3(
+            Vec3 vec = new Vec3(
                ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)
             );
-            Vec3 var3 = new Vec3(
+            Vec3 vec2 = new Vec3(
                ScriptValueUtils.method6256(var1x, 3, 0.0), ScriptValueUtils.method6256(var1x, 4, 0.0), ScriptValueUtils.method6256(var1x, 5, 0.0)
             );
-            if (var2.distanceToSqr(var3) > 65536.0) {
+            if (vec.distanceToSqr(vec2) > 65536.0) {
                throw ScriptValueUtils.method6251("луч длиннее 256 блоков");
             } else {
-               return ScriptEntityApi.method6581(var0, ScriptEntityApi.method6582(var2, var3, ScriptValueUtils.method6259(var1x, 6, false)));
+               return ScriptEntityApi.method6581(scope, ScriptEntityApi.method6582(vec, vec2, ScriptValueUtils.method6259(var1x, 6, false)));
             }
          }
       );
-      return var1.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method7056(Script var0, Scriptable var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      var2.method6274("press", var1x -> {
+   public static Scriptable method7056(Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("press", var1x -> {
          KeyMapping var2x = method7059(ScriptValueUtils.method6254(var1x, 0, ""));
-         int var3 = Mth.clamp(ScriptValueUtils.method6257(var1x, 1, 1), 1, 1200);
+         int n = Mth.clamp(ScriptValueUtils.method6257(var1x, 1, 1), 1, 1200);
          var2x.setDown(true);
-         if (var3 == 1 && !var2x.isUnbound()) {
+         if (n == 1 && !var2x.isUnbound()) {
             KeyMapping.click(InputConstants.getKey(var2x.saveString()));
          }
 
-         items2.put(var2x, new int[]{var3});
-         items3.put(var2x, var0);
+         items2.put(var2x, new int[]{n});
+         items3.put(var2x, workspace);
          return null;
       });
-      var2.method6274("hold", var1x -> {
+      entry2.method6274("hold", var1x -> {
          KeyMapping var2x = method7059(ScriptValueUtils.method6254(var1x, 0, ""));
          var2x.setDown(true);
          items2.put(var2x, new int[]{Mth.clamp(ScriptValueUtils.method6257(var1x, 1, 1), 1, 1200)});
-         items3.put(var2x, var0);
+         items3.put(var2x, workspace);
          return null;
       });
-      var2.method6274("release", var0x -> {
+      entry2.method6274("release", var0x -> {
          KeyMapping var1x = method7059(ScriptValueUtils.method6254(var0x, 0, ""));
          method7057(var1x);
          return null;
       });
-      var2.method6274("isDown", var0x -> method7059(ScriptValueUtils.method6254(var0x, 0, "")).isDown());
-      var2.method6274("keyDown", var0x -> org.zenith.utility.misc.KeyCompat.isKeyDown(ScriptValueUtils.method6257(var0x, 0, -1)));
-      var2.method6274("mouseDown", var0x -> org.zenith.utility.misc.KeyCompat.isMouseDown(ScriptValueUtils.method6257(var0x, 0, 0)));
-      var2.method6274("keyName", var0x -> {
+      entry2.method6274("isDown", var0x -> method7059(ScriptValueUtils.method6254(var0x, 0, "")).isDown());
+      entry2.method6274("keyDown", var0x -> org.zenith.utility.misc.KeyCompat.isKeyDown(ScriptValueUtils.method6257(var0x, 0, -1)));
+      entry2.method6274("mouseDown", var0x -> org.zenith.utility.misc.KeyCompat.isMouseDown(ScriptValueUtils.method6257(var0x, 0, 0)));
+      entry2.method6274("keyName", var0x -> {
          int var1x = ScriptValueUtils.method6257(var0x, 0, -1);
          return var1x < 0 ? "" : Type.KEYBOARD.getOrCreate(org.zenith.utility.misc.KeyCompat.toSdl(var1x)).getDisplayName().getString();
       });
-      var0.method1413(() -> {
+      workspace.method1413(() -> {
          for (Entry var2x : new HashMap<>(items3).entrySet()) {
-            if (var2x.getValue() == var0) {
+            if (var2x.getValue() == workspace) {
                method7057((KeyMapping)var2x.getKey());
             }
          }
       });
-      return var2.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   private static void method7057(KeyMapping var0) {
-      items2.remove(var0);
-      items3.remove(var0);
-      long var1 = method7043().getWindow().handle();
-      Key var3 = InputConstants.getKey(var0.saveString());
-      boolean var4 = var3.getType() == Type.MOUSE
-         ? org.zenith.utility.misc.KeyCompat.isMouseDown(var3.getValue())
-         : var3.getValue() >= 0 && org.zenith.utility.misc.KeyCompat.isKeyDown(var3.getValue());
-      var0.setDown(var4);
+   private static void method7057(KeyMapping key) {
+      items2.remove(key);
+      items3.remove(key);
+      long handle = method7043().getWindow().handle();
+      Key key2 = InputConstants.getKey(key.saveString());
+      boolean mouseDown = key2.getType() == Type.MOUSE
+         ? org.zenith.utility.misc.KeyCompat.isMouseDown(key2.getValue())
+         : key2.getValue() >= 0 && org.zenith.utility.misc.KeyCompat.isKeyDown(key2.getValue());
+      key.setDown(mouseDown);
    }
 
    public static void method7058() {
       if (!items2.isEmpty()) {
-         for (Entry var1 : new HashMap<>(items2).entrySet()) {
-            int[] var2 = (int[])var1.getValue();
-            var2[0]--;
-            if (var2[0] <= 0) {
-               method7057((KeyMapping)var1.getKey());
+         for (Entry entry : new HashMap<>(items2).entrySet()) {
+            int[] ints = (int[])entry.getValue();
+            ints[0]--;
+            if (ints[0] <= 0) {
+               method7057((KeyMapping)entry.getKey());
             } else {
-               ((KeyMapping)var1.getKey()).setDown(true);
+               ((KeyMapping)entry.getKey()).setDown(true);
             }
          }
       }
    }
 
-   private static KeyMapping method7059(String var0) {
-      Options var1 = method7043().options;
-      String var2 = var0.toLowerCase(Locale.ROOT);
+   private static KeyMapping method7059(String str) {
+      Options options = method7043().options;
+      String lowerCase = str.toLowerCase(Locale.ROOT);
 
-      return switch (var2) {
-         case "forward" -> var1.keyUp;
-         case "back" -> var1.keyDown;
-         case "left" -> var1.keyLeft;
-         case "right" -> var1.keyRight;
-         case "jump" -> var1.keyJump;
-         case "sneak" -> var1.keyShift;
-         case "sprint" -> var1.keySprint;
-         case "attack" -> var1.keyAttack;
-         case "use" -> var1.keyUse;
-         case "drop" -> var1.keyDrop;
-         case "swap" -> var1.keySwapOffhand;
-         case "inventory" -> var1.keyInventory;
-         case "pick" -> var1.keyPickItem;
-         default -> throw ScriptValueUtils.method6251("неизвестная клавиша действия: " + var0);
+      return switch (lowerCase) {
+         case "forward" -> options.keyUp;
+         case "back" -> options.keyDown;
+         case "left" -> options.keyLeft;
+         case "right" -> options.keyRight;
+         case "jump" -> options.keyJump;
+         case "sneak" -> options.keyShift;
+         case "sprint" -> options.keySprint;
+         case "attack" -> options.keyAttack;
+         case "use" -> options.keyUse;
+         case "drop" -> options.keyDrop;
+         case "swap" -> options.keySwapOffhand;
+         case "inventory" -> options.keyInventory;
+         case "pick" -> options.keyPickItem;
+         default -> throw ScriptValueUtils.method6251("неизвестная клавиша действия: " + str);
       };
    }
 
-   public static Scriptable method7060(Script var0, Scriptable var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      Module[] var3 = new Module[]{null};
-      Supplier var4 = () -> {
-         if (var3[0] == null) {
-            var3[0] = ScriptModuleApi.method324(var0, "rotation");
+   public static Scriptable method7060(Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      Module[] moduleValues = new Module[]{null};
+      Supplier supplier = () -> {
+         if (moduleValues[0] == null) {
+            moduleValues[0] = ScriptModuleApi.method324(workspace, "rotation");
          }
 
-         return var3[0];
+         return moduleValues[0];
       };
-      BiFunction<org.zenith.Rotation, Scriptable, Object> var5 = (var2x, var3x) -> {
+      BiFunction<org.zenith.Rotation, Scriptable, Object> biFunction = (var2x, var3x) -> {
          if (method7051() == null) {
             return null;
          } else {
             float var4x = (float)Mth.clamp(ScriptValueUtils.method6264(var3x, "speed", 180.0), 1.0, 180.0);
             float var5x = (float)Mth.clamp(ScriptValueUtils.method6264(var3x, "pitchSpeed", var4x), 1.0, 180.0);
-            int var6 = (int)Mth.clamp(ScriptValueUtils.method6264(var3x, "priority", 3.0), 0.0, 20.0);
-            int var7 = (int)Mth.clamp(ScriptValueUtils.method6264(var3x, "ticks", 1.0), 1.0, 100.0);
-            Rotation var8 = new Rotation(var2x.getFloatValue(), Mth.clamp(var2x.getFloatValue2(), -90.0F, 90.0F));
-            if (var8.method3137()) {
+            int priority = (int)Mth.clamp(ScriptValueUtils.method6264(var3x, "priority", 3.0), 0.0, 20.0);
+            int intValue = (int)Mth.clamp(ScriptValueUtils.method6264(var3x, "ticks", 1.0), 1.0, 100.0);
+            Rotation rotation = new Rotation(var2x.getFloatValue(), Mth.clamp(var2x.getFloatValue2(), -90.0F, 90.0F));
+            if (rotation.method3137()) {
                return null;
             } else {
-               RotationManager var9 = Zenith.getInstance().getRotationManager();
-               var9.method7848(
-                  new RotationRequest(var8, () -> var9.method7844().method3136(var8, var4x, var5x), var9.getBcCameraTestnerv().getRotationConfig()),
-                  var6,
-                  (Module)var4.get(),
-                  var7
+               RotationManager rotationManager = Zenith.getInstance().getRotationManager();
+               rotationManager.method7848(
+                  new RotationRequest(rotation, () -> rotationManager.method7844().method3136(rotation, var4x, var5x), rotationManager.getBcCameraTestnerv().getRotationConfig()),
+                  priority,
+                  (Module)supplier.get(),
+                  intValue
                );
-               return ScriptValueUtils.method6247(var1)
-                  .method6277("yaw", (double)var8.getFloatValue())
-                  .method6277("pitch", (double)var8.getFloatValue2())
+               return ScriptValueUtils.method6247(scope)
+                  .method6277("yaw", (double)rotation.getFloatValue())
+                  .method6277("pitch", (double)rotation.getFloatValue2())
                   .getScriptableObject();
             }
          }
       };
-      var2.method6274(
+      entry2.method6274(
          "set",
-         var1x -> var5.apply(
+         var1x -> biFunction.apply(
             new Rotation((float)ScriptValueUtils.method6256(var1x, 0, 0.0), (float)ScriptValueUtils.method6256(var1x, 1, 0.0)),
             ScriptValueUtils.method6262(var1x, 2)
          )
       );
-      var2.method6274(
+      entry2.method6274(
          "lookAt",
          var1x -> {
             if (method7051() == null) {
@@ -823,74 +823,74 @@ public final class ScriptScreenApi {
                   new Vec3(ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)),
                   method7051().getEyePosition()
                );
-               return var5.apply(var2x, ScriptValueUtils.method6262(var1x, 3));
+               return biFunction.apply(var2x, ScriptValueUtils.method6262(var1x, 3));
             }
          }
       );
-      var2.method6274(
+      entry2.method6274(
          "angleTo",
          var1x -> {
             if (method7051() == null) {
-               return ScriptValueUtils.method6247(var1).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject();
+               return ScriptValueUtils.method6247(scope).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject();
             } else {
                Rotation var2x = Rotation.method3128(
                   new Vec3(ScriptValueUtils.method6256(var1x, 0, 0.0), ScriptValueUtils.method6256(var1x, 1, 0.0), ScriptValueUtils.method6256(var1x, 2, 0.0)),
                   method7051().getEyePosition()
                );
-               return ScriptValueUtils.method6247(var1)
+               return ScriptValueUtils.method6247(scope)
                   .method6277("yaw", (double)var2x.getFloatValue())
                   .method6277("pitch", (double)var2x.getFloatValue2())
                   .getScriptableObject();
             }
          }
       );
-      var2.method6274(
+      entry2.method6274(
          "server",
          var1x -> {
             if (method7051() == null) {
-               return ScriptValueUtils.method6247(var1).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject();
+               return ScriptValueUtils.method6247(scope).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject();
             } else {
                Rotation var2x = Zenith.getInstance().getRotationManager().method7844();
-               return ScriptValueUtils.method6247(var1)
+               return ScriptValueUtils.method6247(scope)
                   .method6277("yaw", (double)var2x.getFloatValue())
                   .method6277("pitch", (double)var2x.getFloatValue2())
                   .getScriptableObject();
             }
          }
       );
-      var2.method6274(
+      entry2.method6274(
          "camera",
          var1x -> method7051() == null
-            ? ScriptValueUtils.method6247(var1).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject()
-            : ScriptValueUtils.method6247(var1)
+            ? ScriptValueUtils.method6247(scope).method6277("yaw", 0.0).method6277("pitch", 0.0).getScriptableObject()
+            : ScriptValueUtils.method6247(scope)
                .method6277("yaw", (double)method7051().getYRot())
                .method6277("pitch", (double)method7051().getXRot())
                .getScriptableObject()
       );
-      return var2.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method7061(Script var0, Storage var1, Scriptable var2) {
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var2);
-      var3.method6274("msg", var1x -> {
+   public static Scriptable method7061(Script workspace, Storage storage, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("msg", var1x -> {
          if (method7051() != null) {
-            method7051().sendSystemMessage(Component.literal("§7[§b" + var0.method1403() + "§7]§r " + ScriptValueUtils.method6254(var1x, 0, "")));
+            method7051().sendSystemMessage(Component.literal("§7[§b" + workspace.method1403() + "§7]§r " + ScriptValueUtils.method6254(var1x, 0, "")));
          }
 
          return null;
       });
-      var3.method6274("info", var1x -> method7063(var0, "i", ScriptValueUtils.method6254(var1x, 0, "")));
-      var3.method6274("success", var1x -> method7063(var0, "b", ScriptValueUtils.method6254(var1x, 0, "")));
-      var3.method6274("warn", var1x -> method7063(var0, "d", ScriptValueUtils.method6254(var1x, 0, "")));
-      var3.method6274("error", var1x -> method7063(var0, "d", ScriptValueUtils.method6254(var1x, 0, "")));
-      var3.method6274("say", var1x -> {
-         ScriptPermissions.method4(var0, "chat");
+      entry2.method6274("info", var1x -> method7063(workspace, "i", ScriptValueUtils.method6254(var1x, 0, "")));
+      entry2.method6274("success", var1x -> method7063(workspace, "b", ScriptValueUtils.method6254(var1x, 0, "")));
+      entry2.method6274("warn", var1x -> method7063(workspace, "d", ScriptValueUtils.method6254(var1x, 0, "")));
+      entry2.method6274("error", var1x -> method7063(workspace, "d", ScriptValueUtils.method6254(var1x, 0, "")));
+      entry2.method6274("say", var1x -> {
+         ScriptPermissions.method4(workspace, "chat");
          if (method7043().getConnection() == null) {
             return false;
          } else {
             String var2x = ScriptValueUtils.method6254(var1x, 0, "");
             if (!var2x.isBlank() && var2x.length() <= 256) {
-               method7062(var0);
+               method7062(workspace);
                if (var2x.startsWith("/")) {
                   method7043().getConnection().sendCommand(var2x.substring(1));
                } else {
@@ -903,8 +903,8 @@ public final class ScriptScreenApi {
             }
          }
       });
-      var3.method6274("command", var1x -> {
-         ScriptPermissions.method4(var0, "chat");
+      entry2.method6274("command", var1x -> {
+         ScriptPermissions.method4(workspace, "chat");
          if (method7043().getConnection() == null) {
             return false;
          } else {
@@ -914,7 +914,7 @@ public final class ScriptScreenApi {
             }
 
             if (!var2x.isBlank() && var2x.length() <= 256) {
-               method7062(var0);
+               method7062(workspace);
                method7043().getConnection().sendCommand(var2x);
                return true;
             } else {
@@ -922,10 +922,10 @@ public final class ScriptScreenApi {
             }
          }
       });
-      var3.method6274("username", var0x -> method7043().getUser().getName());
-      var3.method6274("server", var0x -> method7043().getCurrentServer() == null ? "" : method7043().getCurrentServer().ip);
-      var3.method6274("fps", var0x -> (double)method7043().getFps());
-      var3.method6274("ping", var0x -> {
+      entry2.method6274("username", var0x -> method7043().getUser().getName());
+      entry2.method6274("server", var0x -> method7043().getCurrentServer() == null ? "" : method7043().getCurrentServer().ip);
+      entry2.method6274("fps", var0x -> (double)method7043().getFps());
+      entry2.method6274("ping", var0x -> {
          if (method7051() != null && method7043().getConnection() != null) {
             PlayerInfo var1x = method7043().getConnection().getPlayerInfo(method7051().getUUID());
             return var1x == null ? 0.0 : var1x.getLatency();
@@ -933,123 +933,123 @@ public final class ScriptScreenApi {
             return 0.0;
          }
       });
-      var3.method6274("inGame", var0x -> method7043().level != null && method7051() != null);
-      var3.method6274("screen", var0x -> method7047(method7043().gui.screen()));
-      var3.method6274("screenOpen", var0x -> method7043().gui.screen() != null);
-      var3.method6274("width", var0x -> (double)method7043().getWindow().getGuiScaledWidth());
-      var3.method6274("height", var0x -> (double)method7043().getWindow().getGuiScaledHeight());
-      var3.method6274("isFriend", var0x -> Zenith.getInstance().getFriends().method7627(ScriptValueUtils.method6254(var0x, 0, "")));
-      var3.method6274("setClipboard", var1x -> {
-         ScriptPermissions.method4(var0, "clipboard");
+      entry2.method6274("inGame", var0x -> method7043().level != null && method7051() != null);
+      entry2.method6274("screen", var0x -> method7047(method7043().gui.screen()));
+      entry2.method6274("screenOpen", var0x -> method7043().gui.screen() != null);
+      entry2.method6274("width", var0x -> (double)method7043().getWindow().getGuiScaledWidth());
+      entry2.method6274("height", var0x -> (double)method7043().getWindow().getGuiScaledHeight());
+      entry2.method6274("isFriend", var0x -> Zenith.getInstance().getFriends().method7627(ScriptValueUtils.method6254(var0x, 0, "")));
+      entry2.method6274("setClipboard", var1x -> {
+         ScriptPermissions.method4(workspace, "clipboard");
          method7043().keyboardHandler.setClipboard(ScriptValueUtils.method6254(var1x, 0, ""));
          return null;
       });
-      var3.method6274("modules", var1x -> {
+      entry2.method6274("modules", var1x -> {
          ArrayList var2x = new ArrayList();
 
-         for (Module var4 : Zenith.getInstance().getModuleManager().getItems()) {
-            if (!var4.isHidden()) {
-               var2x.add(var4.getName());
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+            if (!moduleValue.isHidden()) {
+               var2x.add(moduleValue.getName());
             }
          }
 
-         return ScriptValueUtils.method6267(var2, var2x);
+         return ScriptValueUtils.method6267(scope, var2x);
       });
-      var3.method6274("module", var2x -> {
+      entry2.method6274("module", var2x -> {
          Module var3x = Zenith.getInstance().getModuleManager().method2484(ScriptValueUtils.method6254(var2x, 0, ""));
          if (var3x == null) {
             return null;
          } else {
-            boolean var4 = var3x instanceof Module1 var5 && var5.getScript() != var0;
-            return method7064(var0, var2, var3x, var4);
+            boolean flag = var3x instanceof Module1 module1 && module1.getScript() != workspace;
+            return method7064(workspace, scope, var3x, flag);
          }
       });
-      return var3.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static void method7062(Script var0) {
-      long var1 = System.currentTimeMillis();
-      long[] var3 = items4.computeIfAbsent(var0, var2 -> new long[]{var1, 0L});
-      if (var1 - var3[0] > 3000L) {
-         var3[0] = var1;
-         var3[1] = 0L;
+   public static void method7062(Script workspace) {
+      long now = System.currentTimeMillis();
+      long[] longs = items4.computeIfAbsent(workspace, script -> new long[]{now, 0L});
+      if (now - longs[0] > 3000L) {
+         longs[0] = now;
+         longs[1] = 0L;
       }
 
-      if (++var3[1] > 6L) {
+      if (++longs[1] > 6L) {
          throw ScriptValueUtils.method6251("слишком много сообщений на сервер: не больше 6 за 3 секунды");
       }
    }
 
-   private static Object method7063(Script var0, String var1, String var2) {
-      HudHolder var3 = Zenith.getInstance().getHudHolder();
-      if (var3 != null) {
-         var3.method6972(var1, Component.literal(var0.method1403() + ": " + var2));
+   private static Object method7063(Script workspace, String icon, String str) {
+      HudHolder hudHolder = Zenith.getInstance().getHudHolder();
+      if (hudHolder != null) {
+         hudHolder.method6972(icon, Component.literal(workspace.method1403() + ": " + str));
       }
 
       return null;
    }
 
-   public static Scriptable method7064(Script var0, Scriptable var1, Module var2, boolean var3) {
-      ScriptValueUtils.Entry2 var4 = ScriptValueUtils.method6247(var1);
-      var4.method6277("name", var2.getName());
-      var4.method6277("category", var2.getCategory().getName());
-      Runnable var5 = () -> {
-         if (var3) {
+   public static Scriptable method7064(Script workspace, Scriptable scope, Module moduleValue, boolean flag) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6277("name", moduleValue.getName());
+      entry2.method6277("category", moduleValue.getCategory().getName());
+      Runnable runnable = () -> {
+         if (flag) {
             throw ScriptValueUtils.method6251("модулями другого скрипта управлять нельзя");
          } else {
-            if (!(var2 instanceof Module1)) {
-               ScriptPermissions.method4(var0, "modules");
+            if (!(moduleValue instanceof Module1)) {
+               ScriptPermissions.method4(workspace, "modules");
             }
          }
       };
-      var4.method6274("enabled", var1x -> var2.isEnabled());
-      var4.method6274("toggle", var2x -> {
-         var5.run();
-         var2.toggle();
-         return var2.isEnabled();
+      entry2.method6274("enabled", var1x -> moduleValue.isEnabled());
+      entry2.method6274("toggle", var2x -> {
+         runnable.run();
+         moduleValue.toggle();
+         return moduleValue.isEnabled();
       });
-      var4.method6274("setEnabled", var2x -> {
-         var5.run();
-         var2.setToggled(ScriptValueUtils.method6259(var2x, 0, true));
+      entry2.method6274("setEnabled", var2x -> {
+         runnable.run();
+         moduleValue.setToggled(ScriptValueUtils.method6259(var2x, 0, true));
          return null;
       });
-      var4.method6274("key", var1x -> (double)var2.getKeyCode());
-      var4.method6274("settings", var2x -> {
+      entry2.method6274("key", var1x -> (double)moduleValue.getKeyCode());
+      entry2.method6274("settings", var2x -> {
          ArrayList var3x = new ArrayList();
 
-         for (Setting var5x : var2.getSettings()) {
+         for (Setting var5x : moduleValue.getSettings()) {
             var3x.add(var5x.getKey());
          }
 
-         return ScriptValueUtils.method6267(var1, var3x);
+         return ScriptValueUtils.method6267(scope, var3x);
       });
-      var4.method6274("setting", var3x -> {
+      entry2.method6274("setting", var3x -> {
          String var4x = ScriptValueUtils.method6254(var3x, 0, "");
 
-         for (Setting var6 : var2.getSettings()) {
-            if (var6.getKey().equalsIgnoreCase(var4x) || var6.getName().equalsIgnoreCase(var4x)) {
-               var5.run();
-               return ScriptSettingsApi.method1223(var1, var6);
+         for (Setting setting : moduleValue.getSettings()) {
+            if (setting.getKey().equalsIgnoreCase(var4x) || setting.getName().equalsIgnoreCase(var4x)) {
+               runnable.run();
+               return ScriptSettingsApi.method1223(scope, setting);
             }
          }
 
          return null;
       });
-      return var4.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method7065(Scriptable var0) {
-      ScriptValueUtils.Entry2 var1 = ScriptValueUtils.method6247(var0);
-      var1.method6274("fps", var0x -> (double)method7043().getFps());
-      var1.method6274("paused", var0x -> method7043().isPaused());
-      var1.method6274("width", var0x -> (double)method7043().getWindow().getGuiScaledWidth());
-      var1.method6274("height", var0x -> (double)method7043().getWindow().getGuiScaledHeight());
-      var1.method6274("windowWidth", var0x -> (double)method7043().getWindow().getScreenWidth());
-      var1.method6274("windowHeight", var0x -> (double)method7043().getWindow().getScreenHeight());
-      var1.method6274("fov", var0x -> (double)method7043().options.fov().get().intValue());
-      var1.method6274("sensitivity", var0x -> method7043().options.sensitivity().get());
-      var1.method6274("renderDistance", var0x -> (double)method7043().options.renderDistance().get().intValue());
-      var1.method6274("time", var0x -> (double)System.currentTimeMillis());
-      return var1.getScriptableObject();
+   public static Scriptable method7065(Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("fps", var0x -> (double)method7043().getFps());
+      entry2.method6274("paused", var0x -> method7043().isPaused());
+      entry2.method6274("width", var0x -> (double)method7043().getWindow().getGuiScaledWidth());
+      entry2.method6274("height", var0x -> (double)method7043().getWindow().getGuiScaledHeight());
+      entry2.method6274("windowWidth", var0x -> (double)method7043().getWindow().getScreenWidth());
+      entry2.method6274("windowHeight", var0x -> (double)method7043().getWindow().getScreenHeight());
+      entry2.method6274("fov", var0x -> (double)method7043().options.fov().get().intValue());
+      entry2.method6274("sensitivity", var0x -> method7043().options.sensitivity().get());
+      entry2.method6274("renderDistance", var0x -> (double)method7043().options.renderDistance().get().intValue());
+      entry2.method6274("time", var0x -> (double)System.currentTimeMillis());
+      return entry2.getScriptableObject();
    }
 }

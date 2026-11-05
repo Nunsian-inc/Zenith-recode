@@ -22,177 +22,177 @@ public final class KeyFixNet {
    public String source = "?";
    public String text2 = "";
 
-   public static double method3555(double var0) {
-      double var2 = Math.signum(var0);
-      double var4 = Math.abs(var0);
-      double var6 = 1.0 / (1.0 + 0.3275911 * var4);
-      double var8 = 1.0
-         - ((((1.061405429 * var6 - 1.453152027) * var6 + 1.421413741) * var6 - 0.284496736) * var6 + 0.254829592) * var6 * Math.exp(-var4 * var4);
-      return var2 * var8;
+   public static double method3555(double d) {
+      double d2 = Math.signum(d);
+      double d3 = Math.abs(d);
+      double d4 = 1.0 / (1.0 + 0.3275911 * d3);
+      double d5 = 1.0
+         - ((((1.061405429 * d4 - 1.453152027) * d4 + 1.421413741) * d4 - 0.284496736) * d4 + 0.254829592) * d4 * Math.exp(-d3 * d3);
+      return d2 * d5;
    }
 
-   public static double method3556(double var0) {
-      return 0.5 * var0 * (1.0 + method3555(var0 / Math.sqrt(2.0)));
+   public static double method3556(double d) {
+      return 0.5 * d * (1.0 + method3555(d / Math.sqrt(2.0)));
    }
 
-   public double[] method3557(double[] var1, int var2) {
-      double[] var3 = new double[this.intValue + 8];
-      System.arraycopy(var1, 0, var3, 0, this.intValue);
+   public double[] method3557(double[] doubleValues, int n) {
+      double[] doubles = new double[this.intValue + 8];
+      System.arraycopy(doubleValues, 0, doubles, 0, this.intValue);
 
-      for (int var4 = 0; var4 < 7; var4++) {
-         var3[this.intValue + var4] = var2 >> var4 & 1;
+      for (int i = 0; i < 7; i++) {
+         doubles[this.intValue + i] = n >> i & 1;
       }
 
-      var3[this.intValue + 7] = this.doubleValue;
+      doubles[this.intValue + 7] = this.doubleValue;
 
-      for (int var12 = 0; var12 < this.doubleValues.length; var12++) {
-         double[][] var5 = this.doubleValues[var12];
-         double[] var6 = new double[var5.length];
+      for (int i = 0; i < this.doubleValues.length; i++) {
+         double[][] doubleValue = this.doubleValues[i];
+         double[] doubles2 = new double[doubleValue.length];
 
-         for (int var7 = 0; var7 < var5.length; var7++) {
-            double var8 = this.doubleValues2[var12][var7];
-            double[] var10 = var5[var7];
+         for (int j = 0; j < doubleValue.length; j++) {
+            double d = this.doubleValues2[i][j];
+            double[] doubles3 = doubleValue[j];
 
-            for (int var11 = 0; var11 < var10.length; var11++) {
-               var8 += var10[var11] * var3[var11];
+            for (int k = 0; k < doubles3.length; k++) {
+               d += doubles3[k] * doubles[k];
             }
 
-            var6[var7] = var12 < this.doubleValues.length - 1 ? method3556(var8) : var8;
+            doubles2[j] = i < this.doubleValues.length - 1 ? method3556(d) : d;
          }
 
-         var3 = var6;
+         doubles = doubles2;
       }
 
-      return var3;
+      return doubles;
    }
 
-   public static int method3558(int var0, int var1) {
-      int var2 = var0 & 1;
-      int var3 = var0 >> 1 & 1;
-      int var4 = var0 >> 2;
-      int var5 = var4 % 3 - 1;
-      int var6 = var4 / 3 - 1;
-      return (var6 > 0 ? 1 : 0) | (var6 < 0 ? 2 : 0) | (var5 > 0 ? 4 : 0) | (var5 < 0 ? 8 : 0) | var3 << 4 | var1 & 32 | var2 << 6;
+   public static int method3558(int n, int n2) {
+      int n3 = n & 1;
+      int n4 = n >> 1 & 1;
+      int n5 = n >> 2;
+      int n6 = n5 % 3 - 1;
+      int n7 = n5 / 3 - 1;
+      return (n7 > 0 ? 1 : 0) | (n7 < 0 ? 2 : 0) | (n6 > 0 ? 4 : 0) | (n6 < 0 ? 8 : 0) | n4 << 4 | n2 & 32 | n3 << 6;
    }
 
-   public boolean method3559(double[] var1) {
-      return var1[21] > 0.5 && Math.exp(var1[29] * 2.0) < this.doubleValue2;
+   public boolean method3559(double[] doubleValues) {
+      return doubleValues[21] > 0.5 && Math.exp(doubleValues[29] * 2.0) < this.doubleValue2;
    }
 
-   public int method3560(double[] var1, int var2, Random var3) {
-      double[] var4 = this.method3557(var1, var2);
-      double var5 = Double.NEGATIVE_INFINITY;
+   public int method3560(double[] doubleValues, int n, Random random) {
+      double[] doubles = this.method3557(doubleValues, n);
+      double d = Double.NEGATIVE_INFINITY;
 
-      for (double var10 : var4) {
-         var5 = Math.max(var5, var10);
+      for (double d2 : doubles) {
+         d = Math.max(d, d2);
       }
 
-      double var15 = 0.0;
-      double[] var16 = new double[var4.length];
+      double d2 = 0.0;
+      double[] doubles2 = new double[doubles.length];
 
-      for (int var17 = 0; var17 < var4.length; var17++) {
-         var16[var17] = Math.exp(var4[var17] - var5);
-         var15 += var16[var17];
+      for (int i = 0; i < doubles.length; i++) {
+         doubles2[i] = Math.exp(doubles[i] - d);
+         d2 += doubles2[i];
       }
 
-      double var18 = var3.nextDouble() * var15;
-      double var12 = 0.0;
+      double d3 = random.nextDouble() * d2;
+      double d4 = 0.0;
 
-      for (int var14 = 0; var14 < var16.length; var14++) {
-         var12 += var16[var14];
-         if (var18 < var12) {
-            return method3558(var14, var2);
+      for (int i = 0; i < doubles2.length; i++) {
+         d4 += doubles2[i];
+         if (d3 < d4) {
+            return method3558(i, n);
          }
       }
 
-      return method3558(var16.length - 1, var2);
+      return method3558(doubles2.length - 1, n);
    }
 
-   public static double[] method3561(JsonArray var0) {
-      double[] var1 = new double[var0.size()];
+   public static double[] method3561(JsonArray jsonArray) {
+      double[] doubles = new double[jsonArray.size()];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = var0.get(var2).getAsDouble();
+      for (int i = 0; i < doubles.length; i++) {
+         doubles[i] = jsonArray.get(i).getAsDouble();
       }
 
-      return var1;
+      return doubles;
    }
 
-   public static KeyFixNet method3562(InputStream var0) throws IOException {
-      InputStreamReader var2 = new InputStreamReader(var0, StandardCharsets.UTF_8);
+   public static KeyFixNet method3562(InputStream inputStream) throws IOException {
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 
-      JsonObject var1;
+      JsonObject jsonObject;
       try {
-         var1 = JsonParser.parseReader(var2).getAsJsonObject();
-      } catch (Throwable var15) {
+         jsonObject = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+      } catch (Throwable e) {
          try {
-            var2.close();
-         } catch (Throwable var14) {
-            var15.addSuppressed(var14);
+            inputStreamReader.close();
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var15;
+         throw e;
       }
 
-      var2.close();
-      if (!"neurotest-keyfix-v1".equals(var1.get("format").getAsString())) {
-         throw new IOException("формат " + var1.get("format").getAsString() + ", ждали neurotest-keyfix-v1");
+      inputStreamReader.close();
+      if (!"neurotest-keyfix-v1".equals(jsonObject.get("format").getAsString())) {
+         throw new IOException("формат " + jsonObject.get("format").getAsString() + ", ждали neurotest-keyfix-v1");
       } else {
-         KeyFixNet var16 = new KeyFixNet();
-         var16.doubleValue = var1.get("q").getAsDouble();
-         var16.doubleValue2 = var1.get("max_dist").getAsDouble();
-         var16.intValue = var1.get("nf").getAsInt();
-         var16.source = var1.get("source").getAsString();
-         JsonArray var3 = var1.getAsJsonArray("layers");
-         var16.doubleValues = new double[var3.size()][][];
-         var16.doubleValues2 = new double[var3.size()][];
+         KeyFixNet keyFixNet = new KeyFixNet();
+         keyFixNet.doubleValue = jsonObject.get("q").getAsDouble();
+         keyFixNet.doubleValue2 = jsonObject.get("max_dist").getAsDouble();
+         keyFixNet.intValue = jsonObject.get("nf").getAsInt();
+         keyFixNet.source = jsonObject.get("source").getAsString();
+         JsonArray jsonArray = jsonObject.getAsJsonArray("layers");
+         keyFixNet.doubleValues = new double[jsonArray.size()][][];
+         keyFixNet.doubleValues2 = new double[jsonArray.size()][];
 
-         for (int var4 = 0; var4 < var3.size(); var4++) {
-            JsonObject var5 = var3.get(var4).getAsJsonObject();
-            JsonArray var6 = var5.getAsJsonArray("w");
-            var16.doubleValues[var4] = new double[var6.size()][];
+         for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject json = jsonArray.get(i).getAsJsonObject();
+            JsonArray jsonArray2 = json.getAsJsonArray("w");
+            keyFixNet.doubleValues[i] = new double[jsonArray2.size()][];
 
-            for (int var7 = 0; var7 < var6.size(); var7++) {
-               var16.doubleValues[var4][var7] = method3561(var6.get(var7).getAsJsonArray());
+            for (int j = 0; j < jsonArray2.size(); j++) {
+               keyFixNet.doubleValues[i][j] = method3561(jsonArray2.get(j).getAsJsonArray());
             }
 
-            var16.doubleValues2[var4] = method3561(var5.getAsJsonArray("b"));
+            keyFixNet.doubleValues2[i] = method3561(json.getAsJsonArray("b"));
          }
 
-         JsonObject var17 = var1.getAsJsonObject("ref");
-         JsonArray var18 = var17.getAsJsonArray("x");
-         JsonArray var19 = var17.getAsJsonArray("u");
-         JsonArray var20 = var17.getAsJsonArray("logits");
-         double var8 = 0.0;
+         JsonObject json = jsonObject.getAsJsonObject("ref");
+         JsonArray jsonArray2 = json.getAsJsonArray("x");
+         JsonArray jsonArray3 = json.getAsJsonArray("u");
+         JsonArray jsonArray4 = json.getAsJsonArray("logits");
+         double d = 0.0;
 
-         for (int var10 = 0; var10 < var18.size(); var10++) {
-            double[] var11 = var16.method3557(method3561(var18.get(var10).getAsJsonArray()), var19.get(var10).getAsInt());
-            double[] var12 = method3561(var20.get(var10).getAsJsonArray());
+         for (int i = 0; i < jsonArray2.size(); i++) {
+            double[] doubles = keyFixNet.method3557(method3561(jsonArray2.get(i).getAsJsonArray()), jsonArray3.get(i).getAsInt());
+            double[] doubles2 = method3561(jsonArray4.get(i).getAsJsonArray());
 
-            for (int var13 = 0; var13 < var11.length; var13++) {
-               var8 = Math.max(var8, Math.abs(var11[var13] - var12[var13]));
+            for (int j = 0; j < doubles.length; j++) {
+               d = Math.max(d, Math.abs(doubles[j] - doubles2[j]));
             }
          }
 
-         if (!(var8 < 0.001)) {
-            throw new IOException("эталон поправщика не сошёлся: max |Δлогит| " + var8);
+         if (!(d < 0.001)) {
+            throw new IOException("эталон поправщика не сошёлся: max |Δлогит| " + d);
          } else {
-            var16.text2 = String.format(
+            keyFixNet.text2 = String.format(
                "поправщик клавиш %s: эталон %d строк, max |Δлогит| %.1e, q %.2f, ближе %.1f блока",
-               var16.source,
-               var18.size(),
-               var8,
-               var16.doubleValue,
-               var16.doubleValue2
+               keyFixNet.source,
+               jsonArray2.size(),
+               d,
+               keyFixNet.doubleValue,
+               keyFixNet.doubleValue2
             );
-            return var16;
+            return keyFixNet;
          }
       }
    }
 
-   public static void main(String[] var0) throws IOException {
-      try (InputStream var1 = Files.newInputStream(Path.of(var0[0]))) {
-         System.out.println(method3562(var1).text2);
+   public static void main(String[] strings) throws IOException {
+      try (InputStream inputStream = Files.newInputStream(Path.of(strings[0]))) {
+         System.out.println(method3562(inputStream).text2);
       }
    }
 }

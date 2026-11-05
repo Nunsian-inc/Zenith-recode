@@ -5,9 +5,9 @@ import dev.porno.playerAnim.api.layered.KeyframeAnimationPlayer;
 public final class PreviewEmotePlayer extends KeyframeAnimationPlayer {
    private final EmoteInfo emoteInfo;
 
-   public PreviewEmotePlayer(EmoteInfo var1, int var2) {
-      super(var1.getKeyframeAnimation(), Math.max(0, var2));
-      this.emoteInfo = var1;
+   public PreviewEmotePlayer(EmoteInfo emoteInfo, int n) {
+      super(emoteInfo.getKeyframeAnimation(), Math.max(0, n));
+      this.emoteInfo = emoteInfo;
    }
 
    public EmoteInfo getEmoteInfo() {

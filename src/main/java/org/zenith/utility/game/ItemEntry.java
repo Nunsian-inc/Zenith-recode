@@ -10,11 +10,11 @@ public class ItemEntry {
    private final long longValue;
    private final long longValue2;
 
-   public ItemEntry(ItemStack var1, String var2, int var3, long var4) {
-      this.itemStack = var1 == null ? ItemStack.EMPTY : var1.copy();
-      this.text = var2 == null ? "" : var2;
-      this.intValue = var3;
-      this.longValue = var4;
+   public ItemEntry(ItemStack stack, String text, int intValue, long longValue) {
+      this.itemStack = stack == null ? ItemStack.EMPTY : stack.copy();
+      this.text = text == null ? "" : text;
+      this.intValue = intValue;
+      this.longValue = longValue;
       this.longValue2 = System.currentTimeMillis();
    }
 

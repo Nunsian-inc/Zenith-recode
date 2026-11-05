@@ -22,55 +22,55 @@ public class TextSetting extends Setting {
       return this;
    }
 
-   public TextSetting(String var1, String var2, String var3) {
-      this(var1, "", var2, var3);
+   public TextSetting(String key, String str, String text) {
+      this(key, "", str, text);
    }
 
-   public TextSetting(String var1, String var2, String var3, String var4) {
-      super(var1, var2);
-      this.value = var3;
-      this.text = var4;
+   public TextSetting(String key, String description, String str, String text) {
+      super(key, description);
+      this.value = str;
+      this.text = text;
       this.entry = TextSetting.Entry.method2124();
    }
 
-   public TextSetting(String var1, String var2, String var3, TextSetting.Entry var4) {
-      this(var1, "", var2, var3, var4);
+   public TextSetting(String key, String str, String text, TextSetting.Entry entry) {
+      this(key, "", str, text, entry);
    }
 
-   public TextSetting(String var1, String var2, String var3, String var4, TextSetting.Entry var5) {
-      super(var1, var2);
-      this.value = var3;
-      this.text = var4;
-      this.entry = var5 == null ? TextSetting.Entry.method2124() : var5;
+   public TextSetting(String key, String description, String str, String text, TextSetting.Entry entry) {
+      super(key, description);
+      this.value = str;
+      this.text = text;
+      this.entry = entry == null ? TextSetting.Entry.method2124() : entry;
    }
 
-   public TextSetting(String var1, String var2, String var3, Supplier<Boolean> var4) {
-      this(var1, "", var2, var3, var4);
+   public TextSetting(String key, String str, String text, Supplier<Boolean> visible) {
+      this(key, "", str, text, visible);
    }
 
-   public TextSetting(String var1, String var2, String var3, String var4, Supplier<Boolean> var5) {
-      super(var1, var2);
-      this.value = var3;
-      this.text = var4;
+   public TextSetting(String key, String description, String str, String text, Supplier<Boolean> visible) {
+      super(key, description);
+      this.value = str;
+      this.text = text;
       this.entry = TextSetting.Entry.method2124();
-      this.setVisible(var5);
+      this.setVisible(visible);
    }
 
-   public TextSetting(String var1, String var2, String var3, Supplier<Boolean> var4, TextSetting.Entry var5) {
-      this(var1, "", var2, var3, var4, var5);
+   public TextSetting(String key, String str, String text, Supplier<Boolean> visible, TextSetting.Entry entry) {
+      this(key, "", str, text, visible, entry);
    }
 
-   public TextSetting(String var1, String var2, String var3, String var4, Supplier<Boolean> var5, TextSetting.Entry var6) {
-      super(var1, var2);
-      this.value = var3;
-      this.text = var4;
-      this.entry = var6 == null ? TextSetting.Entry.method2124() : var6;
-      this.setVisible(var5);
+   public TextSetting(String key, String description, String str, String text, Supplier<Boolean> visible, TextSetting.Entry entry) {
+      super(key, description);
+      this.value = str;
+      this.text = text;
+      this.entry = entry == null ? TextSetting.Entry.method2124() : entry;
+      this.setVisible(visible);
    }
 
-   public boolean method2122(String var1) {
-      if (this.entry.method2123(var1)) {
-         this.value = var1;
+   public boolean method2122(String text) {
+      if (this.entry.method2123(text)) {
+         this.value = text;
          return true;
       } else {
          return false;
@@ -78,15 +78,15 @@ public class TextSetting extends Setting {
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.addProperty(String.valueOf(this.key), this.value);
+   public void safe(JsonObject json) {
+      json.addProperty(String.valueOf(this.key), this.value);
    }
 
    @Override
-   public void load(JsonObject var1) {
-      if (var1.has(String.valueOf(this.key))) {
-         String var2 = var1.get(String.valueOf(this.key)).getAsString();
-         this.method2122(var2);
+   public void load(JsonObject json) {
+      if (json.has(String.valueOf(this.key))) {
+         String string = json.get(String.valueOf(this.key)).getAsString();
+         this.method2122(string);
       }
    }
 
@@ -116,8 +116,8 @@ public class TextSetting extends Setting {
    }
 
    @Generated
-   public void setValue(String var1) {
-      this.value = var1;
+   public void setValue(String string) {
+      this.value = string;
    }
 
    public abstract static class Entry {
@@ -127,38 +127,38 @@ public class TextSetting extends Setting {
          this.maxLength = Integer.MAX_VALUE;
       }
 
-      public abstract boolean method2123(String var1);
+      public abstract boolean method2123(String text);
 
       public static TextSetting.Entry method2124() {
          return new TextSetting.Entry(Integer.MAX_VALUE) {
             @Override
-            public boolean method2123(String var1) {
-               return var1 != null;
+            public boolean method2123(String str) {
+               return str != null;
             }
          };
       }
 
-      public static TextSetting.Entry method2125(final int var0) {
-         return new TextSetting.Entry(var0) {
+      public static TextSetting.Entry method2125(final int n) {
+         return new TextSetting.Entry(n) {
             @Override
-            public boolean method2123(String var1) {
-               return var1 != null && var1.length() <= var0;
+            public boolean method2123(String str) {
+               return str != null && str.length() <= n;
             }
          };
       }
 
-      public static TextSetting.Entry method2126(int var0, final Predicate<String> var1) {
-         return new TextSetting.Entry(var0) {
+      public static TextSetting.Entry method2126(int n, final Predicate<String> predicate) {
+         return new TextSetting.Entry(n) {
             @Override
             public boolean method2123(String var1x) {
-               return var1x != null && var1.test(var1x);
+               return var1x != null && predicate.test(var1x);
             }
          };
       }
 
       @Generated
-      public Entry(int var1) {
-         this.maxLength = var1;
+      public Entry(int maxLength) {
+         this.maxLength = maxLength;
       }
 
       @Generated

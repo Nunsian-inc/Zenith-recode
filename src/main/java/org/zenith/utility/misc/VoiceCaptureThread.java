@@ -40,8 +40,8 @@ public final class VoiceCaptureThread implements Runnable {
    private int intValue6;
    private int intValue7;
 
-   public VoiceCaptureThread(VoiceState var1) {
-      this.voiceState = var1;
+   public VoiceCaptureThread(VoiceState voiceState) {
+      this.voiceState = voiceState;
       this.thread = new Thread(this, "Zenith Voice Capture");
       this.thread.setDaemon(true);
       this.thread.setPriority(7);
@@ -57,7 +57,7 @@ public final class VoiceCaptureThread implements Runnable {
 
       try {
          this.thread.join(2000L);
-      } catch (InterruptedException var2) {
+      } catch (InterruptedException e) {
          Thread.currentThread().interrupt();
       }
    }
@@ -68,9 +68,9 @@ public final class VoiceCaptureThread implements Runnable {
          while (this.running) {
             this.method267();
          }
-      } catch (Throwable var5) {
-         logger.error("Голос: поток микрофона упал", var5);
-         this.voiceState.setText("сбой захвата: " + var5);
+      } catch (Throwable e) {
+         logger.error("Голос: поток микрофона упал", e);
+         this.voiceState.setText("сбой захвата: " + e);
       } finally {
          this.method272();
          this.method277();
@@ -79,9 +79,9 @@ public final class VoiceCaptureThread implements Runnable {
    }
 
    private void method267() {
-      VoiceState.Data var1 = this.voiceState.getData();
-      long var2 = System.currentTimeMillis();
-      if (!this.voiceState.method5378(var2, 300L)) {
+      VoiceState.Data data = this.voiceState.getData();
+      long now = System.currentTimeMillis();
+      if (!this.voiceState.method5378(now, 300L)) {
          this.method272();
          if (this.flag) {
             ALC11.alcCaptureStop(this.longValue);
@@ -91,12 +91,12 @@ public final class VoiceCaptureThread implements Runnable {
          this.voiceState.setFloatValue2(-100.0F);
          LockSupport.parkNanos(10000000L);
       } else {
-         String var4 = var1.getText();
-         if (this.longValue != 0L && !var4.equals(this.text)) {
+         String text = data.getText();
+         if (this.longValue != 0L && !text.equals(this.text)) {
             this.method277();
          }
 
-         if (this.longValue != 0L || var2 >= this.longValue2 && this.method275(var4)) {
+         if (this.longValue != 0L || now >= this.longValue2 && this.method275(text)) {
             if (!this.flag) {
                ALC11.alcCaptureStart(this.longValue);
                this.flag = true;
@@ -108,14 +108,14 @@ public final class VoiceCaptureThread implements Runnable {
                logger.info("Голос: микрофон отключён");
                this.voiceState.setText("микрофон отключён");
                this.method277();
-               this.longValue2 = var2 + 3000L;
+               this.longValue2 = now + 3000L;
             } else {
-               int var5 = ALC10.alcGetInteger(this.longValue, 786);
-               if (var5 < 960) {
+               int alcGetInteger = ALC10.alcGetInteger(this.longValue, 786);
+               if (alcGetInteger < 960) {
                   LockSupport.parkNanos(2000000L);
                } else {
                   ALC11.alcCaptureSamples(this.longValue, this.shortValues, 960);
-                  this.method268(this.shortValues, var1);
+                  this.method268(this.shortValues, data);
                }
             }
          } else {
@@ -124,97 +124,97 @@ public final class VoiceCaptureThread implements Runnable {
       }
    }
 
-   private void method268(short[] var1, VoiceState.Data var2) {
-      boolean var3 = var2.isFlag3() && var2.isFlag4() && this.voiceDenoiser.method802(var1, var1.length);
-      float var4 = this.class9.method1530(var1, var2.getFloatValue2(), var2.isFlag3() && !var3);
-      this.voiceState.setFloatValue2(var4);
-      this.method274(var2.getIntValue());
+   private void method268(short[] shortValues, VoiceState.Data data) {
+      boolean flag = data.isFlag3() && data.isFlag4() && this.voiceDenoiser.method802(shortValues, shortValues.length);
+      float f = this.class9.method1530(shortValues, data.getFloatValue2(), data.isFlag3() && !flag);
+      this.voiceState.setFloatValue2(f);
+      this.method274(data.getIntValue());
       if (this.opusEncoder != null) {
          if (this.voiceState.isFlag5()) {
             this.method272();
-            int var11 = this.method273(var1);
-            if (var11 > 0) {
-               this.voiceState.method5381(this.intValue4, this.byteValues, var11);
+            int newLength = this.method273(shortValues);
+            if (newLength > 0) {
+               this.voiceState.method5381(this.intValue4, this.byteValues, newLength);
                this.intValue4 = this.intValue4 + 1 & 65535;
             }
 
             this.voiceState.setFlag6(false);
          } else {
-            boolean var5 = this.voiceState.isFlag2();
-            int var6 = this.voiceState.getIntValue();
-            boolean var7 = var6 != 0;
-            boolean var8;
-            if (var2.isFlag()) {
-               if (var5 || var7) {
+            boolean flag2 = this.voiceState.isFlag2();
+            int intValue = this.voiceState.getIntValue();
+            boolean flag3 = intValue != 0;
+            boolean flag4;
+            if (data.isFlag()) {
+               if (flag2 || flag3) {
                   this.intValue6 = 3;
                }
 
-               var8 = this.intValue6 > 0;
-               if (this.intValue6 > 0 && !var5 && !var7) {
+               flag4 = this.intValue6 > 0;
+               if (this.intValue6 > 0 && !flag2 && !flag3) {
                   this.intValue6--;
                }
             } else {
-               if (var7 || var4 > var2.getFloatValue()) {
+               if (flag3 || f > data.getFloatValue()) {
                   this.intValue7 = 20;
                }
 
-               var8 = this.intValue7 > 0;
+               flag4 = this.intValue7 > 0;
                if (this.intValue7 > 0) {
                   this.intValue7--;
                }
             }
 
-            int var9 = var2.getIntValue3() & 29;
-            int var10 = var7 ? var6 : (this.flag2 && this.intValue5 != var9 && !var5 ? this.intValue5 : var9);
+            int n = data.getIntValue3() & 29;
+            int n2 = flag3 ? intValue : (this.flag2 && this.intValue5 != n && !flag2 ? this.intValue5 : n);
             if (!this.voiceState.method5379()) {
-               var8 = false;
+               flag4 = false;
             }
 
-            if (var8 && this.flag2 && var10 != this.intValue5) {
+            if (flag4 && this.flag2 && n2 != this.intValue5) {
                this.method272();
             }
 
-            if (var8 && !this.flag2) {
+            if (flag4 && !this.flag2) {
                this.flag2 = true;
-               this.intValue5 = var10;
+               this.intValue5 = n2;
                this.opusEncoder.resetState();
-               if (!var2.isFlag()) {
-                  this.method269(var2);
+               if (!data.isFlag()) {
+                  this.method269(data);
                }
             }
 
-            if (var8) {
-               this.method271(var1, var2, 0);
+            if (flag4) {
+               this.method271(shortValues, data, 0);
             } else {
                this.method272();
             }
 
-            this.method270(var1);
+            this.method270(shortValues);
             this.voiceState.setFlag6(this.flag2);
          }
       }
    }
 
-   private void method269(VoiceState.Data var1) {
-      for (int var2 = 0; var2 < this.intValue2; var2++) {
-         int var3 = (this.intValue3 - this.intValue2 + var2 + 2) % 2;
-         this.method271(this.shortValues2[var3], var1, 0);
+   private void method269(VoiceState.Data data) {
+      for (int i = 0; i < this.intValue2; i++) {
+         int n = (this.intValue3 - this.intValue2 + i + 2) % 2;
+         this.method271(this.shortValues2[n], data, 0);
       }
 
       this.intValue2 = 0;
    }
 
-   private void method270(short[] var1) {
-      System.arraycopy(var1, 0, this.shortValues2[this.intValue3], 0, var1.length);
+   private void method270(short[] shortValues) {
+      System.arraycopy(shortValues, 0, this.shortValues2[this.intValue3], 0, shortValues.length);
       this.intValue3 = (this.intValue3 + 1) % 2;
       this.intValue2 = Math.min(2, this.intValue2 + 1);
    }
 
-   private void method271(short[] var1, VoiceState.Data var2, int var3) {
-      int var4 = this.method273(var1);
-      if (var4 > 0) {
-         int var5 = this.intValue5 | var3;
-         this.voiceState.method5380(var5, var2.getIntValue2(), this.intValue4, this.byteValues, var4);
+   private void method271(short[] shortValues, VoiceState.Data data, int n) {
+      int n2 = this.method273(shortValues);
+      if (n2 > 0) {
+         int n3 = this.intValue5 | n;
+         this.voiceState.method5380(n3, data.getIntValue2(), this.intValue4, this.byteValues, n2);
          this.intValue4 = this.intValue4 + 1 & 65535;
       }
    }
@@ -224,24 +224,24 @@ public final class VoiceCaptureThread implements Runnable {
          this.flag2 = false;
          this.intValue6 = 0;
          this.intValue7 = 0;
-         int var1 = 2 | this.intValue5;
-         this.voiceState.method5380(var1, this.voiceState.getData().getIntValue2(), this.intValue4, this.byteValues, 0);
+         int n = 2 | this.intValue5;
+         this.voiceState.method5380(n, this.voiceState.getData().getIntValue2(), this.intValue4, this.byteValues, 0);
          this.intValue4 = this.intValue4 + 1 & 65535;
          this.voiceState.setFlag6(false);
       }
    }
 
-   private int method273(short[] var1) {
+   private int method273(short[] shortValues) {
       try {
-         return this.opusEncoder.encode(var1, 0, 960, this.byteValues, 0, this.byteValues.length);
-      } catch (RuntimeException | OpusException var3) {
-         logger.debug("Голос: кадр не закодирован: {}", var3.toString());
+         return this.opusEncoder.encode(shortValues, 0, 960, this.byteValues, 0, this.byteValues.length);
+      } catch (RuntimeException | OpusException e) {
+         logger.debug("Голос: кадр не закодирован: {}", e.toString());
          this.opusEncoder.resetState();
          return 0;
       }
    }
 
-   private void method274(int var1) {
+   private void method274(int intValue) {
       try {
          if (this.opusEncoder == null) {
             this.opusEncoder = new OpusEncoder(48000, 1, OpusApplication.OPUS_APPLICATION_VOIP);
@@ -254,42 +254,42 @@ public final class VoiceCaptureThread implements Runnable {
             this.intValue = 0;
          }
 
-         if (this.intValue != var1) {
-            this.opusEncoder.setBitrate(var1);
-            this.intValue = var1;
+         if (this.intValue != intValue) {
+            this.opusEncoder.setBitrate(intValue);
+            this.intValue = intValue;
          }
-      } catch (OpusException var3) {
-         logger.error("Голос: кодер Opus не создан: {}", var3.toString());
+      } catch (OpusException e) {
+         logger.error("Голос: кодер Opus не создан: {}", e.toString());
          this.voiceState.setText("кодек недоступен");
          this.opusEncoder = null;
       }
    }
 
-   private boolean method275(String var1) {
-      long var2 = ALC11.alcCaptureOpenDevice(var1.isEmpty() ? null : var1, 48000, 4353, 24000);
-      if (var2 == 0L && !var1.isEmpty()) {
-         logger.info("Голос: микрофон «{}» недоступен, беру системный", var1);
-         var2 = ALC11.alcCaptureOpenDevice((CharSequence)null, 48000, 4353, 24000);
+   private boolean method275(String text) {
+      long alcCaptureOpenDevice = ALC11.alcCaptureOpenDevice(text.isEmpty() ? null : text, 48000, 4353, 24000);
+      if (alcCaptureOpenDevice == 0L && !text.isEmpty()) {
+         logger.info("Голос: микрофон «{}» недоступен, беру системный", text);
+         alcCaptureOpenDevice = ALC11.alcCaptureOpenDevice((CharSequence)null, 48000, 4353, 24000);
       }
 
-      if (var2 == 0L) {
+      if (alcCaptureOpenDevice == 0L) {
          this.voiceState.setText("микрофон не открывается");
          this.longValue2 = System.currentTimeMillis() + 3000L;
          return false;
       } else {
-         this.longValue = var2;
-         this.text = var1;
+         this.longValue = alcCaptureOpenDevice;
+         this.text = text;
          this.flag = false;
          this.voiceState.setText("");
-         String var4 = ALC10.alcGetString(this.longValue, 784);
-         this.voiceState.method5382(var4);
-         logger.info("Голос: микрофон открыт — {}", var4);
+         String alcGetString = ALC10.alcGetString(this.longValue, 784);
+         this.voiceState.method5382(alcGetString);
+         logger.info("Голос: микрофон открыт — {}", alcGetString);
          return true;
       }
    }
 
    private void method276() {
-      for (int var1 = ALC10.alcGetInteger(this.longValue, 786); var1 >= 960; var1 -= 960) {
+      for (int i = ALC10.alcGetInteger(this.longValue, 786); i >= 960; i -= 960) {
          ALC11.alcCaptureSamples(this.longValue, this.shortValues, 960);
       }
    }

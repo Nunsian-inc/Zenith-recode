@@ -428,8 +428,8 @@ public class FiguraVec3 extends FiguraVector<FiguraVec3, FiguraMat3> {
          return vec.offseted(d.doubleValue());
       }
 
-      String var10002 = a.getClass().getSimpleName();
-      throw new LuaError("Invalid types to __add: " + var10002 + ", " + b.getClass().getSimpleName());
+      String simpleName = a.getClass().getSimpleName();
+      throw new LuaError("Invalid types to __add: " + simpleName + ", " + b.getClass().getSimpleName());
    }
 
    @LuaWhitelist
@@ -453,8 +453,8 @@ public class FiguraVec3 extends FiguraVector<FiguraVec3, FiguraMat3> {
          return vec.scaled(-1.0).offset(d.doubleValue());
       }
 
-      String var10002 = a.getClass().getSimpleName();
-      throw new LuaError("Invalid types to __sub: " + var10002 + ", " + b.getClass().getSimpleName());
+      String simpleName = a.getClass().getSimpleName();
+      throw new LuaError("Invalid types to __sub: " + simpleName + ", " + b.getClass().getSimpleName());
    }
 
    @LuaWhitelist
@@ -483,8 +483,8 @@ public class FiguraVec3 extends FiguraVector<FiguraVec3, FiguraMat3> {
          return vec.scaled(d.doubleValue());
       }
 
-      String var10002 = a.getClass().getSimpleName();
-      throw new LuaError("Invalid types to __mul: " + var10002 + ", " + b.getClass().getSimpleName());
+      String simpleName = a.getClass().getSimpleName();
+      throw new LuaError("Invalid types to __mul: " + simpleName + ", " + b.getClass().getSimpleName());
    }
 
    @LuaWhitelist
@@ -513,8 +513,8 @@ public class FiguraVec3 extends FiguraVector<FiguraVec3, FiguraMat3> {
          return of(d / rvec.x, d / rvec.y, d / rvec.z);
       }
 
-      String var10002 = lhs.getClass().getSimpleName();
-      throw new LuaError("Invalid types to __div: " + var10002 + ", " + rhs.getClass().getSimpleName());
+      String simpleName = lhs.getClass().getSimpleName();
+      throw new LuaError("Invalid types to __div: " + simpleName + ", " + rhs.getClass().getSimpleName());
    }
 
    @LuaWhitelist
@@ -536,8 +536,8 @@ public class FiguraVec3 extends FiguraVector<FiguraVec3, FiguraMat3> {
       } else if (rhs instanceof FiguraVec3 vec) {
          return this.mod(vec);
       } else {
-         String var10002 = this.getClass().getSimpleName();
-         throw new LuaError("Invalid types to __mod: " + var10002 + ", " + rhs.getClass().getSimpleName());
+         String simpleName = this.getClass().getSimpleName();
+         throw new LuaError("Invalid types to __mod: " + simpleName + ", " + rhs.getClass().getSimpleName());
       }
    }
 
@@ -687,8 +687,8 @@ public class FiguraVec3 extends FiguraVector<FiguraVec3, FiguraMat3> {
                case '_':
                   break;
                default:
-                  char var10002 = key.charAt(i);
-                  throw new LuaError("Invalid key to __newindex: invalid swizzle character: " + var10002);
+                  char charAt = key.charAt(i);
+                  throw new LuaError("Invalid key to __newindex: invalid swizzle character: " + charAt);
             }
          }
       }

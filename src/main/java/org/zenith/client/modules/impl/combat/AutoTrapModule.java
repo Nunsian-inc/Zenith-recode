@@ -183,22 +183,22 @@ public final class AutoTrapModule extends Module {
    }
 
    @EventTarget
-   public void method2428(Event5 var1) {
+   public void method2428(Event5 event) {
       if (!UseItemUtils.method6526() && mc.gameMode != null) {
-         int var2 = mc.player.tickCount;
-         if (this.intValue != (-32768 << 16 | 0) && var2 < this.intValue) {
+         int tickCount = mc.player.tickCount;
+         if (this.intValue != (-32768 << 16 | 0) && tickCount < this.intValue) {
             this.reset();
          }
 
-         if (this.intValue != var2) {
-            this.intValue = var2;
-            this.method2431(var2);
+         if (this.intValue != tickCount) {
+            this.intValue = tickCount;
+            this.method2431(tickCount);
          }
 
-         Rotation var3 = this.rotation;
-         if (var3 != null) {
+         Rotation rotation = this.rotation;
+         if (rotation != null) {
             rotationManager.method7849(
-               new RotationRequest(var3, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var3), bcCameraTestnerv.getRotationConfig()),
+               new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                10,
                this
             );
@@ -207,28 +207,28 @@ public final class AutoTrapModule extends Module {
    }
 
    @EventTarget
-   public void method2429(Event9 var1) {
-      AutoTrapModule.Data2 var2 = this.data2;
-      if (var2 != null && mc.player != null && mc.gameMode != null) {
-         int var3 = mc.player.tickCount;
-         if (this.intValue2 != var3) {
-            this.intValue2 = var3;
+   public void method2429(Event9 event) {
+      AutoTrapModule.Data2 data2 = this.data2;
+      if (data2 != null && mc.player != null && mc.gameMode != null) {
+         int tickCount = mc.player.tickCount;
+         if (this.intValue2 != tickCount) {
+            this.intValue2 = tickCount;
             this.data2 = null;
-            if (this.intValue5 != var3 && this.method2455(var2.getData6())) {
-               AutoTrapModule.Type var4 = var2.getData6().getType();
-               BlockPos var5 = var2.getData6().pos();
+            if (this.intValue5 != tickCount && this.method2455(data2.getData6())) {
+               AutoTrapModule.Type type = data2.getData6().getType();
+               BlockPos pos = data2.getData6().pos();
                this.flag = true;
-               if (this.method2459(var2, var3)) {
-                  if (var4 == AutoTrapModule.Type.PICKUP) {
-                     this.items2.remove(var5);
+               if (this.method2459(data2, tickCount)) {
+                  if (type == AutoTrapModule.Type.PICKUP) {
+                     this.items2.remove(pos);
                   }
 
-                  if (var4 == AutoTrapModule.Type.ANVIL) {
-                     this.intValue4 = var3;
+                  if (type == AutoTrapModule.Type.ANVIL) {
+                     this.intValue4 = tickCount;
                   }
 
-                  this.items.put(var5, new AutoTrapModule.Data(var4, var3 + this.method2446()));
-                  this.intValue3 = var3;
+                  this.items.put(pos, new AutoTrapModule.Data(type, tickCount + this.method2446()));
+                  this.intValue3 = tickCount;
                }
             }
          }
@@ -236,56 +236,56 @@ public final class AutoTrapModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         this.placementQueue.method2815(var1.getPacket3());
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         this.placementQueue.method2815(event.getPacket3());
          if (this.flag) {
-            if (var1.getPacket3() instanceof ClientboundBlockUpdatePacket var2) {
-               this.queue.add(new AutoTrapModule.Data3(var2.getPos().immutable(), var2.getBlockState()));
-            } else if (var1.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket var3) {
-               var3.runUpdates((var1x, var2x) -> this.queue.add(new AutoTrapModule.Data3(var1x.immutable(), var2x)));
+            if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+               this.queue.add(new AutoTrapModule.Data3(blockUpdatePacket.getPos().immutable(), blockUpdatePacket.getBlockState()));
+            } else if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+               blocksUpdatePacket.runUpdates((var1x, var2x) -> this.queue.add(new AutoTrapModule.Data3(var1x.immutable(), var2x)));
             }
          }
       }
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
-      this.class33.onMoveInput(var1);
+   public void onMoveInput(MoveInputEvent event) {
+      this.class33.onMoveInput(event);
       if (this.rotation != null && mc.player != null) {
-         MovementInputUtils.method7426(var1, rotationManager.method7844().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), mc.player.getYRot());
       }
    }
 
    @EventTarget
-   public void method2430(WorldRenderEvent var1) {
+   public void method2430(WorldRenderEvent event) {
       if (this.render.isEnabled() && mc.player != null) {
-         int var2 = zenith.getStyleManager().getClientColor(0).method7287();
+         int color = zenith.getStyleManager().getClientColor(0).method7287();
          if (this.playerEntity != null) {
-            for (AABB var4 : this.items5) {
-               Vec3 var5 = new Vec3((var4.minX + var4.maxX) * 0.5, var4.minY + 0.05, (var4.minZ + var4.maxZ) * 0.5);
-               GlowUtil.method2230(new AABB(var5.subtract(0.05, 0.05, 0.05), var5.add(0.05, 0.05, 0.05)), ColorUtils.method6439(var2, 0.6F), 1.0F);
+            for (AABB aabb : this.items5) {
+               Vec3 vec = new Vec3((aabb.minX + aabb.maxX) * 0.5, aabb.minY + 0.05, (aabb.minZ + aabb.maxZ) * 0.5);
+               GlowUtil.method2230(new AABB(vec.subtract(0.05, 0.05, 0.05), vec.add(0.05, 0.05, 0.05)), ColorUtils.method6439(color, 0.6F), 1.0F);
             }
          }
 
-         for (BlockPos var10 : this.items.keySet()) {
-            GlowUtil.method2230(method2475(var10, 0.9), ColorUtils.method6439(var2, 0.45F), 1.0F);
+         for (BlockPos blockPos : this.items.keySet()) {
+            GlowUtil.method2230(method2475(blockPos, 0.9), ColorUtils.method6439(color, 0.45F), 1.0F);
          }
 
          if (this.blockPos != null) {
-            GlowUtil.method2230(method2475(this.blockPos, 0.96), var2, 1.5F);
+            GlowUtil.method2230(method2475(this.blockPos, 0.96), color, 1.5F);
          }
 
-         long var9 = System.currentTimeMillis();
-         var var11 = this.items3.iterator();
+         long now = System.currentTimeMillis();
+         var iterator = this.items3.iterator();
 
-         while (var11.hasNext()) {
-            AutoTrapModule.Data5 var6 = (AutoTrapModule.Data5)var11.next();
-            float var7;
-            if ((var7 = (float)(var9 - var6.time()) / 350.0F) >= 1.0F) {
-               var11.remove();
+         while (iterator.hasNext()) {
+            AutoTrapModule.Data5 data5 = (AutoTrapModule.Data5)iterator.next();
+            float f;
+            if ((f = (float)(now - data5.time()) / 350.0F) >= 1.0F) {
+               iterator.remove();
             } else {
-               GlowUtil.method2230(method2475(var6.pos(), 0.5 + 0.5 * var7), ColorUtils.method6439(var2, 1.0F - var7), 1.5F);
+               GlowUtil.method2230(method2475(data5.pos(), 0.5 + 0.5 * f), ColorUtils.method6439(color, 1.0F - f), 1.5F);
             }
          }
       } else {
@@ -293,13 +293,13 @@ public final class AutoTrapModule extends Module {
       }
    }
 
-   private void method2431(int var1) {
+   private void method2431(int tickCount) {
       this.data2 = null;
       this.blockPos = null;
       this.rotation = null;
-      this.method2469(var1);
-      this.placementQueue.method2816(var1);
-      this.method2470(var1);
+      this.method2469(tickCount);
+      this.placementQueue.method2816(tickCount);
+      this.method2470(tickCount);
       this.flag = !this.items.isEmpty();
       this.items2.keySet().removeIf(var1x -> !this.method2458(var1x));
       if (!this.method2464()) {
@@ -308,15 +308,15 @@ public final class AutoTrapModule extends Module {
          this.items6 = List.of();
       } else {
          if (this.class33.method5304()) {
-            this.intValue5 = var1;
+            this.intValue5 = tickCount;
          }
 
-         Player var2 = this.method2465() ? this.method2466() : null;
-         if (var2 != this.playerEntity) {
+         Player playerEntity = this.method2465() ? this.method2466() : null;
+         if (playerEntity != this.playerEntity) {
             this.arrayDeque.clear();
          }
 
-         this.playerEntity = var2;
+         this.playerEntity = playerEntity;
          if (this.playerEntity == null) {
             this.method2472();
          } else {
@@ -329,23 +329,23 @@ public final class AutoTrapModule extends Module {
             this.method2437();
          }
 
-         this.items6 = this.method2432(var1);
+         this.items6 = this.method2432(tickCount);
          this.method2436();
          if (!this.items6.isEmpty()
-            && !(var1 - this.intValue3 <= this.delay.getValue3())) {
+            && !(tickCount - this.intValue3 <= this.delay.getValue3())) {
             this.data2 = this.method2451();
             if (this.data2 != null && this.data2.getData6().getType().flag2) {
                this.blockPos = this.data2.getData6().pos();
                this.rotation = rotationManager.getRotation2();
             } else if (this.data2 == null || !this.data2.getData6().getType().flag || !this.layout.isSelected(0)) {
-               BlockPos var3 = this.data2 == null ? null : this.data2.getData6().pos();
+               BlockPos pos = this.data2 == null ? null : this.data2.getData6().pos();
 
-               for (AutoTrapModule.Data6 var5 : this.items6) {
-                  if (!var5.pos().equals(var3)) {
-                     AutoTrapModule.Data4 var6 = this.method2448(var5);
-                     if (var6 != null) {
-                        this.blockPos = var5.pos();
-                        this.rotation = var6.rotation();
+               for (AutoTrapModule.Data6 data6 : this.items6) {
+                  if (!data6.pos().equals(pos)) {
+                     AutoTrapModule.Data4 data4 = this.method2448(data6);
+                     if (data4 != null) {
+                        this.blockPos = data6.pos();
+                        this.rotation = data4.rotation();
                         return;
                      }
                   }
@@ -355,71 +355,71 @@ public final class AutoTrapModule extends Module {
       }
    }
 
-   private List<AutoTrapModule.Data6> method2432(int var1) {
-      ArrayList<AutoTrapModule.Data6> var2 = new ArrayList<>();
+   private List<AutoTrapModule.Data6> method2432(int tickCount) {
+      ArrayList<AutoTrapModule.Data6> data6s = new ArrayList<>();
       if (this.entry3.isEnabled() && this.lavaPickup.isEnabled() && this.method2460(AutoTrapModule.Type.PICKUP)) {
-         int var3 = Math.round(this.lavaPickupDelay.getValue3());
+         int n = Math.round(this.lavaPickupDelay.getValue3());
 
-         for (Entry var5 : this.items2.entrySet()) {
-            if (this.playerEntity == null || var1 - (Integer)var5.getValue() >= var3) {
-               var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.PICKUP, (BlockPos)var5.getKey()));
+         for (Entry entry : this.items2.entrySet()) {
+            if (this.playerEntity == null || tickCount - (Integer)entry.getValue() >= n) {
+               data6s.add(new AutoTrapModule.Data6(AutoTrapModule.Type.PICKUP, (BlockPos)entry.getKey()));
             }
          }
       }
 
       if (this.playerEntity == null) {
-         return var2;
+         return data6s;
       } else {
-         AutoTrapModule.Type var12 = this.method2433();
-         if (var12 != null) {
-            for (BlockPos var15 : this.items4) {
-               var2.add(new AutoTrapModule.Data6(var12, var15));
+         AutoTrapModule.Type type = this.method2433();
+         if (type != null) {
+            for (BlockPos blockPos : this.items4) {
+               data6s.add(new AutoTrapModule.Data6(type, blockPos));
             }
          }
 
-         AABB var14 = this.playerEntity.getBoundingBox();
-         if ((var12 != null || this.entry.isEnabled() || this.entry2.isEnabled()) && !this.method2440(var14)) {
-            return var2;
+         AABB boundingBox = this.playerEntity.getBoundingBox();
+         if ((type != null || this.entry.isEnabled() || this.entry2.isEnabled()) && !this.method2440(boundingBox)) {
+            return data6s;
          } else {
-            List<BlockPos> var6 = this.method2441(var14);
-            boolean var7 = this.playerEntity.fireImmune() || this.playerEntity.hasEffect(MobEffects.FIRE_RESISTANCE);
-            boolean var8 = this.playerEntity.isInLava() || this.method2435(var14);
-            if (this.entry3.isEnabled() && !var7 && !var8 && this.method2460(AutoTrapModule.Type.LAVA)) {
-               for (BlockPos var10 : var6) {
-                  var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.LAVA, var10));
+            List<BlockPos> poses = this.method2441(boundingBox);
+            boolean flag = this.playerEntity.fireImmune() || this.playerEntity.hasEffect(MobEffects.FIRE_RESISTANCE);
+            boolean flag2 = this.playerEntity.isInLava() || this.method2435(boundingBox);
+            if (this.entry3.isEnabled() && !flag && !flag2 && this.method2460(AutoTrapModule.Type.LAVA)) {
+               for (BlockPos blockPos : poses) {
+                  data6s.add(new AutoTrapModule.Data6(AutoTrapModule.Type.LAVA, blockPos));
                }
 
-               for (BlockPos var19 : var6) {
-                  var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.LAVA, var19.above()));
+               for (BlockPos pos : poses) {
+                  data6s.add(new AutoTrapModule.Data6(AutoTrapModule.Type.LAVA, pos.above()));
                }
             }
 
             if (this.entry4.isEnabled()
-               && !var7
-               && !var8
+               && !flag
+               && !flag2
                && !this.playerEntity.isOnFire()
                && !this.playerEntity.isInWater()
                && this.method2460(AutoTrapModule.Type.FIRE)) {
-               for (BlockPos var20 : var6) {
-                  var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.FIRE, var20));
+               for (BlockPos blockPos : poses) {
+                  data6s.add(new AutoTrapModule.Data6(AutoTrapModule.Type.FIRE, blockPos));
                }
             }
 
             if (this.entry5.isEnabled()
-               && var1 - this.intValue4 >= 20
+               && tickCount - this.intValue4 >= 20
                && this.method2460(AutoTrapModule.Type.ANVIL)
-               && (!var6.isEmpty())) {
-               BlockPos var18 = (BlockPos)var6.getFirst();
+               && (!poses.isEmpty())) {
+               BlockPos pos = (BlockPos)poses.getFirst();
 
-               for (int var21 = 6; var21 >= 3; var21--) {
-                  BlockPos var11 = var18.above(var21);
-                  if (this.method2434(var18.above(), var11)) {
-                     var2.add(new AutoTrapModule.Data6(AutoTrapModule.Type.ANVIL, var11));
+               for (int i = 6; i >= 3; i--) {
+                  BlockPos above = pos.above(i);
+                  if (this.method2434(pos.above(), above)) {
+                     data6s.add(new AutoTrapModule.Data6(AutoTrapModule.Type.ANVIL, above));
                   }
                }
             }
 
-            return var2;
+            return data6s;
          }
       }
    }
@@ -432,9 +432,9 @@ public final class AutoTrapModule extends Module {
       }
    }
 
-   private boolean method2434(BlockPos var1, BlockPos var2) {
-      for (int var3 = var1.getY(); var3 < var2.getY(); var3++) {
-         if (!FallingBlock.isFree(mc.level.getBlockState(new BlockPos(var1.getX(), var3, var1.getZ())))) {
+   private boolean method2434(BlockPos above, BlockPos pos) {
+      for (int i = above.getY(); i < pos.getY(); i++) {
+         if (!FallingBlock.isFree(mc.level.getBlockState(new BlockPos(above.getX(), i, above.getZ())))) {
             return false;
          }
       }
@@ -442,17 +442,17 @@ public final class AutoTrapModule extends Module {
       return true;
    }
 
-   private boolean method2435(AABB var1) {
-      AABB var2 = var1.inflate(1.0);
+   private boolean method2435(AABB boundingBox) {
+      AABB inflate = boundingBox.inflate(1.0);
 
-      for (BlockPos var4 : this.items2.keySet()) {
-         if (var2.intersects(new AABB(var4))) {
+      for (BlockPos pos : this.items2.keySet()) {
+         if (inflate.intersects(new AABB(pos))) {
             return true;
          }
       }
 
-      for (Entry var6 : this.items.entrySet()) {
-         if (((AutoTrapModule.Data)var6.getValue()).getType() == AutoTrapModule.Type.LAVA && var2.intersects(new AABB((BlockPos)var6.getKey()))) {
+      for (Entry entry : this.items.entrySet()) {
+         if (((AutoTrapModule.Data)entry.getValue()).getType() == AutoTrapModule.Type.LAVA && inflate.intersects(new AABB((BlockPos)entry.getKey()))) {
             return true;
          }
       }
@@ -464,34 +464,34 @@ public final class AutoTrapModule extends Module {
       if (this.swap.isSelected(1)
          && !this.class33.pending()
          && (this.playerEntity != null || !this.items2.isEmpty())) {
-         ArrayList<AutoTrapModule.Type> var1 = new ArrayList();
+         ArrayList<AutoTrapModule.Type> types = new ArrayList();
          if (this.playerEntity != null) {
             if (this.entry.isEnabled()) {
-               var1.add(AutoTrapModule.Type.WEB);
+               types.add(AutoTrapModule.Type.WEB);
             } else if (this.entry2.isEnabled()) {
-               var1.add(AutoTrapModule.Type.SNOW);
+               types.add(AutoTrapModule.Type.SNOW);
             }
 
             if (this.entry3.isEnabled()) {
-               var1.add(AutoTrapModule.Type.LAVA);
+               types.add(AutoTrapModule.Type.LAVA);
             }
 
             if (this.entry4.isEnabled()) {
-               var1.add(AutoTrapModule.Type.FIRE);
+               types.add(AutoTrapModule.Type.FIRE);
             }
 
             if (this.entry5.isEnabled()) {
-               var1.add(AutoTrapModule.Type.ANVIL);
+               types.add(AutoTrapModule.Type.ANVIL);
             }
          }
 
          if (!this.items2.isEmpty() && this.lavaPickup.isEnabled()) {
-            var1.add(AutoTrapModule.Type.PICKUP);
+            types.add(AutoTrapModule.Type.PICKUP);
          }
 
-         for (AutoTrapModule.Type var3 : var1) {
-            if (!this.method2460(var3) && this.class33.method5302(var1x -> method2462(var3, var1x))) {
-               this.class33.method5303(var1x -> method2462(var3, var1x));
+         for (AutoTrapModule.Type type : types) {
+            if (!this.method2460(type) && this.class33.method5302(var1x -> method2462(type, var1x))) {
+               this.class33.method5303(var1x -> method2462(type, var1x));
                return;
             }
          }
@@ -499,167 +499,167 @@ public final class AutoTrapModule extends Module {
    }
 
    private void method2437() {
-      ArrayList<List> var1 = new ArrayList();
-      Vec3 var2 = this.method2444();
-      int var3 = this.method2445();
-      if (this.predict.isSelected(3) || var3 == 0) {
-         var1.add(List.of(this.playerEntity.getBoundingBox()));
+      ArrayList<List> lists = new ArrayList();
+      Vec3 vec = this.method2444();
+      int n = this.method2445();
+      if (this.predict.isSelected(3) || n == 0) {
+         lists.add(List.of(this.playerEntity.getBoundingBox()));
       } else if (this.predict.isSelected(2)) {
-         double var4 = method2473(var2);
-         Vec3 var6 = Vec3.directionFromRotation(0.0F, this.playerEntity.getYHeadRot()).scale(var4);
-         var1.add(this.method2443(new Vec3(var6.x, var2.y, var6.z), var3));
+         double scale = method2473(vec);
+         Vec3 vec2 = Vec3.directionFromRotation(0.0F, this.playerEntity.getYHeadRot()).scale(scale);
+         lists.add(this.method2443(new Vec3(vec2.x, vec.y, vec2.z), n));
       } else if (this.predict.isSelected(1)) {
-         float var9 = this.zoneSpread.getValue3();
+         float f = this.zoneSpread.getValue3();
 
-         for (float var8 : new float[]{0.0F, -var9 * 0.5F, var9 * 0.5F, -var9, var9}) {
-            var1.add(this.method2443(method2474(var2, var8), var3));
-            if (method2473(var2) < 0.03) {
+         for (float angdeg : new float[]{0.0F, -f * 0.5F, f * 0.5F, -f, f}) {
+            lists.add(this.method2443(method2474(vec, angdeg), n));
+            if (method2473(vec) < 0.03) {
                break;
             }
          }
       } else {
-         var1.add(this.method2443(var2, var3));
+         lists.add(this.method2443(vec, n));
       }
 
-      this.items5 = (List<AABB>)var1.getFirst();
-      AABB var10 = this.playerEntity.getBoundingBox();
-      AABB var11 = this.items5.getLast();
-      if (!this.method2439(var10) && !this.method2439(var11)) {
-         LinkedHashSet var13 = new LinkedHashSet();
+      this.items5 = (List<AABB>)lists.getFirst();
+      AABB boundingBox = this.playerEntity.getBoundingBox();
+      AABB aabb = this.items5.getLast();
+      if (!this.method2439(boundingBox) && !this.method2439(aabb)) {
+         LinkedHashSet linkedHashSet = new LinkedHashSet();
 
-         for (List var16 : var1) {
-            this.method2438(var13, (AABB)var16.getLast());
+         for (List list : lists) {
+            this.method2438(linkedHashSet, (AABB)list.getLast());
          }
 
-         for (int var15 = this.items5.size() - 2; var15 >= 0; var15--) {
-            this.method2438(var13, this.items5.get(var15));
+         for (int i = this.items5.size() - 2; i >= 0; i--) {
+            this.method2438(linkedHashSet, this.items5.get(i));
          }
 
-         this.items4 = new ArrayList<>(var13);
+         this.items4 = new ArrayList<>(linkedHashSet);
       } else {
          this.items4 = List.of();
       }
    }
 
-   private void method2438(Set<BlockPos> var1, AABB var2) {
-      List<BlockPos> var3 = this.method2441(var2);
-      boolean var4 = this.layout.isSelected(1);
-      boolean var5 = var3.stream().anyMatch(this::method2457);
-      boolean var6 = !var4 || var3.stream().map(BlockPos::above).anyMatch(this::method2457);
-      if (!var5) {
-         var1.addAll(var3);
+   private void method2438(Set<BlockPos> poses, AABB boundingBox) {
+      List<BlockPos> poses2 = this.method2441(boundingBox);
+      boolean selected = this.layout.isSelected(1);
+      boolean anyMatch = poses2.stream().anyMatch(this::method2457);
+      boolean flag = !selected || poses2.stream().map(BlockPos::above).anyMatch(this::method2457);
+      if (!anyMatch) {
+         poses.addAll(poses2);
       }
 
-      if (!var6) {
-         for (BlockPos var8 : var3) {
-            var1.add(var8.above());
+      if (!flag) {
+         for (BlockPos pos : poses2) {
+            poses.add(pos.above());
          }
       }
    }
 
-   private boolean method2439(AABB var1) {
-      var var2 = this.method2441(var1);
-      boolean var3 = var2.stream().anyMatch(this::method2457);
-      return !this.layout.isSelected(1) ? var3 : var3 && var2.stream().map(BlockPos::above).anyMatch(this::method2457);
+   private boolean method2439(AABB boundingBox) {
+      var poses = this.method2441(boundingBox);
+      boolean anyMatch = poses.stream().anyMatch(this::method2457);
+      return !this.layout.isSelected(1) ? anyMatch : anyMatch && poses.stream().map(BlockPos::above).anyMatch(this::method2457);
    }
 
-   private boolean method2440(AABB var1) {
-      return this.method2441(var1).stream().anyMatch(this::method2457);
+   private boolean method2440(AABB boundingBox) {
+      return this.method2441(boundingBox).stream().anyMatch(this::method2457);
    }
 
-   private List<BlockPos> method2441(AABB var1) {
-      int var2 = Mth.floor(var1.minY + 0.001);
-      int var3 = Mth.floor(var1.minX + 0.001);
-      int var4 = Mth.floor(var1.maxX - 0.001);
-      int var5 = Mth.floor(var1.minZ + 0.001);
-      int var6 = Mth.floor(var1.maxZ - 0.001);
-      double var7 = (var1.minX + var1.maxX) * 0.5;
-      double var9 = (var1.minZ + var1.maxZ) * 0.5;
-      ArrayList var11 = new ArrayList(4);
+   private List<BlockPos> method2441(AABB boundingBox) {
+      int y = Mth.floor(boundingBox.minY + 0.001);
+      int n = Mth.floor(boundingBox.minX + 0.001);
+      int n2 = Mth.floor(boundingBox.maxX - 0.001);
+      int n3 = Mth.floor(boundingBox.minZ + 0.001);
+      int n4 = Mth.floor(boundingBox.maxZ - 0.001);
+      double d = (boundingBox.minX + boundingBox.maxX) * 0.5;
+      double d2 = (boundingBox.minZ + boundingBox.maxZ) * 0.5;
+      ArrayList arrayList = new ArrayList(4);
 
-      for (int var12 = var3; var12 <= var4; var12++) {
-         for (int var13 = var5; var13 <= var6; var13++) {
-            BlockPos var14 = this.method2442(new BlockPos(var12, var2, var13));
-            if (!var11.contains(var14)) {
-               var11.add(var14);
+      for (int i = n; i <= n2; i++) {
+         for (int j = n3; j <= n4; j++) {
+            BlockPos pos = this.method2442(new BlockPos(i, y, j));
+            if (!arrayList.contains(pos)) {
+               arrayList.add(pos);
             }
          }
       }
 
-      var11.sort(Comparator.comparingDouble((net.minecraft.core.BlockPos var4x) -> {
-         double var5x = var4x.getX() + 0.5 - var7;
-         double var7x = var4x.getZ() + 0.5 - var9;
+      arrayList.sort(Comparator.comparingDouble((net.minecraft.core.BlockPos var4x) -> {
+         double var5x = var4x.getX() + 0.5 - d;
+         double var7x = var4x.getZ() + 0.5 - d2;
          return var5x * var5x + var7x * var7x;
       }));
-      return var11;
+      return arrayList;
    }
 
-   private BlockPos method2442(BlockPos var1) {
-      BlockState var2 = mc.level.getBlockState(var1);
-      if (!var2.canBeReplaced() && !var2.is(Blocks.COBWEB) && !var2.is(Blocks.POWDER_SNOW)) {
-         VoxelShape var3 = var2.getCollisionShape(mc.level, var1);
-         if (!var3.isEmpty() && var3.max(Axis.Y) < 1.0) {
-            return var1.above();
+   private BlockPos method2442(BlockPos pos) {
+      BlockState blockState = mc.level.getBlockState(pos);
+      if (!blockState.canBeReplaced() && !blockState.is(Blocks.COBWEB) && !blockState.is(Blocks.POWDER_SNOW)) {
+         VoxelShape collisionShape = blockState.getCollisionShape(mc.level, pos);
+         if (!collisionShape.isEmpty() && collisionShape.max(Axis.Y) < 1.0) {
+            return pos.above();
          }
       }
 
-      return var1;
+      return pos;
    }
 
-   private List<AABB> method2443(Vec3 var1, int var2) {
-      List<AABB> var3 = new ArrayList<>(var2 + 1);
-      AABB var4 = this.playerEntity.getBoundingBox();
-      var3.add(var4);
-      double var5 = var1.x;
-      double var7 = this.playerEntity.onGround() && var1.y <= 0.0 ? -0.0784 : var1.y;
-      double var9 = var1.z;
+   private List<AABB> method2443(Vec3 vec, int n) {
+      List<AABB> aabbs = new ArrayList<>(n + 1);
+      AABB boundingBox = this.playerEntity.getBoundingBox();
+      aabbs.add(boundingBox);
+      double x = vec.x;
+      double y = this.playerEntity.onGround() && vec.y <= 0.0 ? -0.0784 : vec.y;
+      double z = vec.z;
 
-      for (int var11 = 0; var11 < var2; var11++) {
-         Vec3 var12 = new Vec3(var5, var7, var9);
-         Vec3 var13 = Entity.collideBoundingBox(this.playerEntity, var12, var4, mc.level, List.of());
-         boolean var14 = var7 < 0.0 && var13.y > var7 + 1.0E-4;
-         boolean var15 = var7 > 0.0 && var13.y < var7 - 1.0E-4;
-         if (Math.abs(var13.x - var5) > 1.0E-4) {
-            var5 = 0.0;
+      for (int i = 0; i < n; i++) {
+         Vec3 movement = new Vec3(x, y, z);
+         Vec3 collideBoundingBox = Entity.collideBoundingBox(this.playerEntity, movement, boundingBox, mc.level, List.of());
+         boolean flag = y < 0.0 && collideBoundingBox.y > y + 1.0E-4;
+         boolean flag2 = y > 0.0 && collideBoundingBox.y < y - 1.0E-4;
+         if (Math.abs(collideBoundingBox.x - x) > 1.0E-4) {
+            x = 0.0;
          }
 
-         if (Math.abs(var13.z - var9) > 1.0E-4) {
-            var9 = 0.0;
+         if (Math.abs(collideBoundingBox.z - z) > 1.0E-4) {
+            z = 0.0;
          }
 
-         var4 = var4.move(var13);
-         var3.add(var4);
-         var7 = var14 ? -0.0784 : ((var15 ? 0.0 : var7) - 0.08) * 0.98;
+         boundingBox = boundingBox.move(collideBoundingBox);
+         aabbs.add(boundingBox);
+         y = flag ? -0.0784 : ((flag2 ? 0.0 : y) - 0.08) * 0.98;
       }
 
-      return var3;
+      return aabbs;
    }
 
    private Vec3 method2444() {
       if (this.arrayDeque.size() < 2) {
          return Vec3.ZERO;
       } else {
-         Vec3[] var1 = this.arrayDeque.toArray(new Vec3[0]);
-         double var2 = 0.0;
-         double var4 = 0.0;
-         double var6 = 0.0;
+         Vec3[] vecs = this.arrayDeque.toArray(new Vec3[0]);
+         double x = 0.0;
+         double y = 0.0;
+         double d = 0.0;
 
-         for (int var8 = 1; var8 < var1.length; var8++) {
-            double var9 = var8;
-            var2 += (var1[var8].x - var1[var8 - 1].x) * var9;
-            var4 += (var1[var8].z - var1[var8 - 1].z) * var9;
-            var6 += var9;
+         for (int i = 1; i < vecs.length; i++) {
+            double d2 = i;
+            x += (vecs[i].x - vecs[i - 1].x) * d2;
+            y += (vecs[i].z - vecs[i - 1].z) * d2;
+            d += d2;
          }
 
-         var2 /= var6;
-         var4 /= var6;
-         double var13 = var1[var1.length - 1].y - var1[var1.length - 2].y;
-         if (Math.hypot(var2, var4) < 0.03) {
-            var2 = 0.0;
-            var4 = 0.0;
+         x /= d;
+         y /= d;
+         double y2 = vecs[vecs.length - 1].y - vecs[vecs.length - 2].y;
+         if (Math.hypot(x, y) < 0.03) {
+            x = 0.0;
+            y = 0.0;
          }
 
-         return new Vec3(var2, var13, var4);
+         return new Vec3(x, y2, y);
       }
    }
 
@@ -675,54 +675,54 @@ public final class AutoTrapModule extends Module {
       if (mc.getConnection() == null) {
          return 0;
       } else {
-         PlayerInfo var1 = mc.getConnection().getPlayerInfo(mc.player.getUUID());
-         return var1 == null ? 0 : Math.max(0, var1.getLatency());
+         PlayerInfo playerInfo = mc.getConnection().getPlayerInfo(mc.player.getUUID());
+         return playerInfo == null ? 0 : Math.max(0, playerInfo.getLatency());
       }
    }
 
-   private AutoTrapModule.Data4 method2448(AutoTrapModule.Data6 var1) {
-      if (this.method2460(var1.getType()) && this.method2455(var1)) {
-         if (var1.getType() == AutoTrapModule.Type.PICKUP) {
-            return this.method2449(var1.pos());
+   private AutoTrapModule.Data4 method2448(AutoTrapModule.Data6 data6) {
+      if (this.method2460(data6.getType()) && this.method2455(data6)) {
+         if (data6.getType() == AutoTrapModule.Type.PICKUP) {
+            return this.method2449(data6.pos());
          } else {
-            BlockPos var2 = var1.pos();
-            Vec3 var3 = mc.player.getEyePosition();
-            double var4 = this.method2468();
-            Rotation var6 = rotationManager.getRotation2();
-            AutoTrapModule.Data4 var7 = null;
-            double var8 = Double.MAX_VALUE;
+            BlockPos pos = data6.pos();
+            Vec3 eyePosition = mc.player.getEyePosition();
+            double blockInteractionRange = this.method2468();
+            Rotation rotation2 = rotationManager.getRotation2();
+            AutoTrapModule.Data4 data4 = null;
+            double d = Double.MAX_VALUE;
 
-            for (Direction var13 : Direction.values()) {
-               BlockPos var14 = var2.relative(var13);
-               BlockState var15 = mc.level.getBlockState(var14);
-               if (this.method2450(var1.getType(), var14, var15)) {
-                  VoxelShape var16 = var15.getShape(mc.level, var14);
-                  if (!var16.isEmpty()) {
-                     Direction var17 = var13.getOpposite();
+            for (Direction direction : Direction.values()) {
+               BlockPos relative = pos.relative(direction);
+               BlockState blockState = mc.level.getBlockState(relative);
+               if (this.method2450(data6.getType(), relative, blockState)) {
+                  VoxelShape shape = blockState.getShape(mc.level, relative);
+                  if (!shape.isEmpty()) {
+                     Direction opposite = direction.getOpposite();
 
-                     for (AABB var19 : var16.toAabbs()) {
-                        AABB var20 = var19.move(var14);
+                     for (AABB aabb : shape.toAabbs()) {
+                        AABB move = aabb.move(relative);
 
-                        for (double var24 : CONST_doubleValues) {
-                           for (double var29 : CONST_doubleValues) {
-                              Vec3 var31 = this.method2454(var20, var17, var24, var29);
-                              if (!(var3.distanceToSqr(var31) > var4 * var4)) {
-                                 Rotation var32 = RotationUtils.method6913(var31);
-                                 BlockHitResult var33 = this.method2453(var3, var32, var4, Fluid.NONE);
-                                 double var34;
-                                 if (var33.getType() == HitResult.Type.BLOCK
-                                    && !var33.isInside()
-                                    && var33.getBlockPos().equals(var14)
-                                    && var33.getDirection() == var17
+                        for (double alpha1 : CONST_doubleValues) {
+                           for (double d2 : CONST_doubleValues) {
+                              Vec3 vec = this.method2454(move, opposite, alpha1, d2);
+                              if (!(eyePosition.distanceToSqr(vec) > blockInteractionRange * blockInteractionRange)) {
+                                 Rotation rotation = RotationUtils.method6913(vec);
+                                 BlockHitResult blockHitResult = this.method2453(eyePosition, rotation, blockInteractionRange, Fluid.NONE);
+                                 double d3;
+                                 if (blockHitResult.getType() == HitResult.Type.BLOCK
+                                    && !blockHitResult.isInside()
+                                    && blockHitResult.getBlockPos().equals(relative)
+                                    && blockHitResult.getDirection() == opposite
                                     && (
-                                          var34 = var6.method3131(var32).method5327()
-                                             + var3.distanceTo(var31) * 2.0
-                                             + (var13 == Direction.DOWN ? 0 : 3)
-                                             + (Math.abs(var24 - 0.5) + Math.abs(var29 - 0.5)) * 6.0
+                                          d3 = rotation2.method3131(rotation).method5327()
+                                             + eyePosition.distanceTo(vec) * 2.0
+                                             + (direction == Direction.DOWN ? 0 : 3)
+                                             + (Math.abs(alpha1 - 0.5) + Math.abs(d2 - 0.5)) * 6.0
                                        )
-                                       < var8) {
-                                    var8 = var34;
-                                    var7 = new AutoTrapModule.Data4(var32);
+                                       < d) {
+                                    d = d3;
+                                    data4 = new AutoTrapModule.Data4(rotation);
                                  }
                               }
                            }
@@ -732,78 +732,78 @@ public final class AutoTrapModule extends Module {
                }
             }
 
-            return var7;
+            return data4;
          }
       } else {
          return null;
       }
    }
 
-   private AutoTrapModule.Data4 method2449(BlockPos var1) {
-      Vec3 var2 = mc.player.getEyePosition();
-      double var3 = this.method2468();
-      double var5 = mc.player.blockInteractionRange();
-      Rotation var7 = rotationManager.getRotation2();
-      AutoTrapModule.Data4 var8 = null;
-      double var9 = Double.MAX_VALUE;
+   private AutoTrapModule.Data4 method2449(BlockPos pos) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      double d = this.method2468();
+      double blockInteractionRange = mc.player.blockInteractionRange();
+      Rotation rotation2 = rotationManager.getRotation2();
+      AutoTrapModule.Data4 data4 = null;
+      double d2 = Double.MAX_VALUE;
 
-      for (double var14 : CONST_doubleValues2) {
-         for (double var19 : CONST_doubleValues2) {
-            for (double var24 : CONST_doubleValues2) {
-               Vec3 var26 = new Vec3(var1.getX() + var14, var1.getY() + var24 * 0.85, var1.getZ() + var19);
-               if (!(var2.distanceToSqr(var26) > var3 * var3)) {
-                  Rotation var27 = RotationUtils.method6913(var26);
-                  BlockHitResult var28 = this.method2453(var2, var27, var5, Fluid.SOURCE_ONLY);
-                  double var29;
-                  if (var28.getType() == HitResult.Type.BLOCK && var28.getBlockPos().equals(var1) && (var29 = var7.method3131(var27).method5327()) < var9) {
-                     var9 = var29;
-                     var8 = new AutoTrapModule.Data4(var27);
+      for (double d3 : CONST_doubleValues2) {
+         for (double d4 : CONST_doubleValues2) {
+            for (double d5 : CONST_doubleValues2) {
+               Vec3 vec = new Vec3(pos.getX() + d3, pos.getY() + d5 * 0.85, pos.getZ() + d4);
+               if (!(eyePosition.distanceToSqr(vec) > d * d)) {
+                  Rotation rotation = RotationUtils.method6913(vec);
+                  BlockHitResult blockHitResult = this.method2453(eyePosition, rotation, blockInteractionRange, Fluid.SOURCE_ONLY);
+                  double d6;
+                  if (blockHitResult.getType() == HitResult.Type.BLOCK && blockHitResult.getBlockPos().equals(pos) && (d6 = rotation2.method3131(rotation).method5327()) < d2) {
+                     d2 = d6;
+                     data4 = new AutoTrapModule.Data4(rotation);
                   }
                }
             }
          }
       }
 
-      return var8;
+      return data4;
    }
 
-   private boolean method2450(AutoTrapModule.Type var1, BlockPos var2, BlockState var3) {
-      if (var3.canBeReplaced()) {
+   private boolean method2450(AutoTrapModule.Type type, BlockPos relative, BlockState blockState) {
+      if (blockState.canBeReplaced()) {
          return false;
       } else {
-         return var1 != AutoTrapModule.Type.FIRE || !CampfireBlock.canLight(var3) && !CandleBlock.canLight(var3) && !CandleCakeBlock.canLight(var3)
-            ? var1.flag2 || mc.player.isShiftKeyDown() || var3.getMenuProvider(mc.level, var2) == null
+         return type != AutoTrapModule.Type.FIRE || !CampfireBlock.canLight(blockState) && !CandleBlock.canLight(blockState) && !CandleCakeBlock.canLight(blockState)
+            ? type.flag2 || mc.player.isShiftKeyDown() || blockState.getMenuProvider(mc.level, relative) == null
             : false;
       }
    }
 
    private AutoTrapModule.Data2 method2451() {
-      Rotation var1 = rotationManager.getRotation2();
-      if (var1 == null) {
+      Rotation rotation2 = rotationManager.getRotation2();
+      if (rotation2 == null) {
          return null;
       } else {
-         Vec3 var2 = mc.player.getEyePosition();
-         double var3 = mc.player.blockInteractionRange();
-         BlockHitResult var5 = this.method2453(var2, var1, this.method2468(), Fluid.NONE);
-         BlockHitResult var6 = this.method2453(var2, var1, var3, Fluid.NONE);
-         BlockHitResult var7 = this.method2453(var2, var1, var3, Fluid.SOURCE_ONLY);
+         Vec3 eyePosition = mc.player.getEyePosition();
+         double blockInteractionRange = mc.player.blockInteractionRange();
+         BlockHitResult blockHitResult = this.method2453(eyePosition, rotation2, this.method2468(), Fluid.NONE);
+         BlockHitResult blockHitResult2 = this.method2453(eyePosition, rotation2, blockInteractionRange, Fluid.NONE);
+         BlockHitResult blockHitResult3 = this.method2453(eyePosition, rotation2, blockInteractionRange, Fluid.SOURCE_ONLY);
 
-         for (AutoTrapModule.Data6 var9 : this.items6) {
-            if (this.method2460(var9.getType()) && this.method2455(var9)) {
-               BlockHitResult var10 = switch (var9.getType()) {
-                  case LAVA -> var6;
-                  case PICKUP -> var7;
-                  default -> var5;
+         for (AutoTrapModule.Data6 data6 : this.items6) {
+            if (this.method2460(data6.getType()) && this.method2455(data6)) {
+               BlockHitResult blockHitResult4 = switch (data6.getType()) {
+                  case LAVA -> blockHitResult2;
+                  case PICKUP -> blockHitResult3;
+                  default -> blockHitResult;
                };
-               if (var10.getType() == HitResult.Type.BLOCK
-                  && !var10.isInside()
-                  && this.method2452(var9.getType(), var10).equals(var9.pos())
+               if (blockHitResult4.getType() == HitResult.Type.BLOCK
+                  && !blockHitResult4.isInside()
+                  && this.method2452(data6.getType(), blockHitResult4).equals(data6.pos())
                   && (
-                     var9.getType() == AutoTrapModule.Type.PICKUP
-                        || mc.level.getBlockState(var10.getBlockPos()).canBeReplaced()
-                        || this.method2450(var9.getType(), var10.getBlockPos(), mc.level.getBlockState(var10.getBlockPos()))
+                     data6.getType() == AutoTrapModule.Type.PICKUP
+                        || mc.level.getBlockState(blockHitResult4.getBlockPos()).canBeReplaced()
+                        || this.method2450(data6.getType(), blockHitResult4.getBlockPos(), mc.level.getBlockState(blockHitResult4.getBlockPos()))
                   )) {
-                  return new AutoTrapModule.Data2(var9, var10);
+                  return new AutoTrapModule.Data2(data6, blockHitResult4);
                }
             }
          }
@@ -812,73 +812,73 @@ public final class AutoTrapModule extends Module {
       }
    }
 
-   private BlockPos method2452(AutoTrapModule.Type var1, BlockHitResult var2) {
-      return switch (var1) {
-         case LAVA, FIRE -> var2.getBlockPos().relative(var2.getDirection());
-         default -> mc.level.getBlockState(var2.getBlockPos()).canBeReplaced() ? var2.getBlockPos() : var2.getBlockPos().relative(var2.getDirection());
-         case PICKUP -> var2.getBlockPos();
+   private BlockPos method2452(AutoTrapModule.Type type, BlockHitResult blockHitResult) {
+      return switch (type) {
+         case LAVA, FIRE -> blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
+         default -> mc.level.getBlockState(blockHitResult.getBlockPos()).canBeReplaced() ? blockHitResult.getBlockPos() : blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
+         case PICKUP -> blockHitResult.getBlockPos();
       };
    }
 
-   private BlockHitResult method2453(Vec3 var1, Rotation var2, double var3, Fluid var5) {
-      Vec3 var6 = var1.add(var2.method3135().scale(var3));
-      return mc.level.clip(new ClipContext(var1, var6, Block.OUTLINE, var5, mc.player));
+   private BlockHitResult method2453(Vec3 eyePosition, Rotation rotation2, double blockInteractionRange, Fluid fluid) {
+      Vec3 to = eyePosition.add(rotation2.method3135().scale(blockInteractionRange));
+      return mc.level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, fluid, mc.player));
    }
 
-   private Vec3 method2454(AABB var1, Direction var2, double var3, double var5) {
-      double var7 = Mth.lerp(var3, var1.minX, var1.maxX);
-      double var9 = Mth.lerp(var5, var1.minY, var1.maxY);
-      double var11 = Mth.lerp(var5, var1.minZ, var1.maxZ);
-      double var13 = Mth.lerp(var3, var1.minZ, var1.maxZ);
+   private Vec3 method2454(AABB move, Direction opposite, double alpha1, double d) {
+      double x = Mth.lerp(alpha1, move.minX, move.maxX);
+      double y = Mth.lerp(d, move.minY, move.maxY);
+      double z = Mth.lerp(d, move.minZ, move.maxZ);
+      double z2 = Mth.lerp(alpha1, move.minZ, move.maxZ);
 
-      return switch (var2) {
-         case UP -> new Vec3(var7, var1.maxY, var11);
-         case DOWN -> new Vec3(var7, var1.minY, var11);
-         case NORTH -> new Vec3(var7, var9, var1.minZ);
-         case SOUTH -> new Vec3(var7, var9, var1.maxZ);
-         case WEST -> new Vec3(var1.minX, var9, var13);
-         case EAST -> new Vec3(var1.maxX, var9, var13);
+      return switch (opposite) {
+         case UP -> new Vec3(x, move.maxY, z);
+         case DOWN -> new Vec3(x, move.minY, z);
+         case NORTH -> new Vec3(x, y, move.minZ);
+         case SOUTH -> new Vec3(x, y, move.maxZ);
+         case WEST -> new Vec3(move.minX, y, z2);
+         case EAST -> new Vec3(move.maxX, y, z2);
       };
    }
 
-   private boolean method2455(AutoTrapModule.Data6 var1) {
-      BlockPos var2 = var1.pos();
-      if (!mc.level.isInWorldBounds(var2) || !mc.level.getWorldBorder().isWithinBounds(var2)) {
+   private boolean method2455(AutoTrapModule.Data6 data6) {
+      BlockPos pos = data6.pos();
+      if (!mc.level.isInWorldBounds(pos) || !mc.level.getWorldBorder().isWithinBounds(pos)) {
          return false;
-      } else if (var1.getType() == AutoTrapModule.Type.PICKUP) {
-         return this.method2458(var2);
+      } else if (data6.getType() == AutoTrapModule.Type.PICKUP) {
+         return this.method2458(pos);
       } else {
-         boolean var10000 = this.items.containsKey(var2);
+         boolean containsKey = this.items.containsKey(pos);
 
-         if (var10000) {
+         if (containsKey) {
             return false;
          } else {
-            BlockState var3 = mc.level.getBlockState(var2);
-            switch (var1.getType()) {
+            BlockState blockState = mc.level.getBlockState(pos);
+            switch (data6.getType()) {
                case LAVA:
-                  if (!var3.isAir() && (!var3.canBeReplaced() || !var3.getFluidState().isEmpty())) {
+                  if (!blockState.isAir() && (!blockState.canBeReplaced() || !blockState.getFluidState().isEmpty())) {
                      return false;
                   }
 
-                  if (!this.method2456(var2)) {
+                  if (!this.method2456(pos)) {
                      return false;
                   }
                   break;
                case FIRE:
-                  BlockPos var4 = var2.below();
-                  if (!var3.isAir() || !mc.level.getBlockState(var4).isFaceSturdy(mc.level, var4, Direction.UP)) {
+                  BlockPos below = pos.below();
+                  if (!blockState.isAir() || !mc.level.getBlockState(below).isFaceSturdy(mc.level, below, Direction.UP)) {
                      return false;
                   }
                   break;
                default:
-                  if (!var3.canBeReplaced()) {
+                  if (!blockState.canBeReplaced()) {
                      return false;
                   }
             }
 
             if (this.protectSelf.isEnabled()) {
-               AABB var5 = mc.player.getBoundingBox().expandTowards(mc.player.getDeltaMovement()).inflate(0.2, 0.0, 0.2);
-               return !var5.intersects(new AABB(var2));
+               AABB inflate = mc.player.getBoundingBox().expandTowards(mc.player.getDeltaMovement()).inflate(0.2, 0.0, 0.2);
+               return !inflate.intersects(new AABB(pos));
             } else {
                return true;
             }
@@ -886,73 +886,73 @@ public final class AutoTrapModule extends Module {
       }
    }
 
-   private boolean method2456(BlockPos var1) {
+   private boolean method2456(BlockPos pos) {
       if (!this.protectSelf.isEnabled()) {
          return true;
       } else {
-         double var2 = var1.getX() + 0.5 - mc.player.getX();
-         double var4 = var1.getZ() + 0.5 - mc.player.getZ();
-         return Math.hypot(var2, var4) >= 3.0 || var1.getY() + 1 < mc.player.getBlockY();
+         double x = pos.getX() + 0.5 - mc.player.getX();
+         double y = pos.getZ() + 0.5 - mc.player.getZ();
+         return Math.hypot(x, y) >= 3.0 || pos.getY() + 1 < mc.player.getBlockY();
       }
    }
 
-   private boolean method2457(BlockPos var1) {
-      AutoTrapModule.Data var2 = this.items.get(var1);
-      if (var2 != null && var2.getType().flag) {
+   private boolean method2457(BlockPos pos) {
+      AutoTrapModule.Data data = this.items.get(pos);
+      if (data != null && data.getType().flag) {
          return true;
       } else {
-         BlockState var3 = mc.level.getBlockState(var1);
-         return var3.is(Blocks.COBWEB) || var3.is(Blocks.POWDER_SNOW);
+         BlockState blockState = mc.level.getBlockState(pos);
+         return blockState.is(Blocks.COBWEB) || blockState.is(Blocks.POWDER_SNOW);
       }
    }
 
-   private boolean method2458(BlockPos var1) {
-      return mc.level.getFluidState(var1).is(Fluids.LAVA);
+   private boolean method2458(BlockPos pos) {
+      return mc.level.getFluidState(pos).is(Fluids.LAVA);
    }
 
-   private boolean method2459(AutoTrapModule.Data2 var1, int var2) {
-      AutoTrapModule.Type var3 = var1.getData6().getType();
-      InteractionHand var4 = InteractionHand.MAIN_HAND;
-      int var5 = -1;
-      if (method2462(var3, mc.player.getOffhandItem())) {
-         var4 = InteractionHand.OFF_HAND;
-      } else if (!method2462(var3, mc.player.getMainHandItem())) {
-         int var6;
-         if ((var6 = this.method2461(var3)) == -1) {
+   private boolean method2459(AutoTrapModule.Data2 data2, int tickCount) {
+      AutoTrapModule.Type type = data2.getData6().getType();
+      InteractionHand hand = InteractionHand.MAIN_HAND;
+      int selectedSlot = -1;
+      if (method2462(type, mc.player.getOffhandItem())) {
+         hand = InteractionHand.OFF_HAND;
+      } else if (!method2462(type, mc.player.getMainHandItem())) {
+         int selected;
+         if ((selected = this.method2461(type)) == -1) {
             return false;
          }
 
-         var5 = mc.player.getInventory().getSelectedSlot();
-         mc.player.getInventory().setSelectedSlot(var6);
+         selectedSlot = mc.player.getInventory().getSelectedSlot();
+         mc.player.getInventory().setSelectedSlot(selected);
       }
 
-      int var12 = PlacementQueue.method2811(var4);
-      Item var7 = mc.player.getItemInHand(var4).getItem();
+      int intValue = PlacementQueue.method2811(hand);
+      Item rawType = mc.player.getItemInHand(hand).getItem();
 
-      InteractionResult var8;
+      InteractionResult useItem;
       try {
-         var8 = var3.flag2
-            ? mc.gameMode.useItem(mc.player, var4)
-            : mc.gameMode.useItemOn(mc.player, var4, var1.getBlockHitResult());
+         useItem = type.flag2
+            ? mc.gameMode.useItem(mc.player, hand)
+            : mc.gameMode.useItemOn(mc.player, hand, data2.getBlockHitResult());
       } finally {
-         if (var5 != -1) {
-            mc.player.getInventory().setSelectedSlot(var5);
+         if (selectedSlot != -1) {
+            mc.player.getInventory().setSelectedSlot(selectedSlot);
             mc.gameMode.ensureHasSentCarriedItem();
          }
       }
 
-      if (!var8.consumesAction()) {
+      if (!useItem.consumesAction()) {
          return false;
       } else {
-         if (var3 == AutoTrapModule.Type.WEB || var3 == AutoTrapModule.Type.ANVIL || var7 == Items.FIRE_CHARGE) {
-            this.placementQueue.method2812(var1.getData6().pos().asLong(), var12, var7, var2 + this.method2446() + 2);
+         if (type == AutoTrapModule.Type.WEB || type == AutoTrapModule.Type.ANVIL || rawType == Items.FIRE_CHARGE) {
+            this.placementQueue.method2812(data2.getData6().pos().asLong(), intValue, rawType, tickCount + this.method2446() + 2);
          }
 
-         if (var8 instanceof Success var9 && var9.swingSource() == SwingSource.PREDICTED) {
+         if (useItem instanceof Success success && success.swingSource() == SwingSource.PREDICTED) {
             if (this.hideSwing.isEnabled()) {
                mc.getConnection().send(ServerboundPunchPacket.INSTANCE);
             } else {
-               org.zenith.utility.game.SwingCompat.swing(mc.player, var4);
+               org.zenith.utility.game.SwingCompat.swing(mc.player, hand);
             }
          }
 
@@ -960,39 +960,39 @@ public final class AutoTrapModule extends Module {
       }
    }
 
-   private boolean method2460(AutoTrapModule.Type var1) {
-      return !method2462(var1, mc.player.getOffhandItem()) && !method2462(var1, mc.player.getMainHandItem()) ? this.method2461(var1) != -1 : true;
+   private boolean method2460(AutoTrapModule.Type type) {
+      return !method2462(type, mc.player.getOffhandItem()) && !method2462(type, mc.player.getMainHandItem()) ? this.method2461(type) != -1 : true;
    }
 
-   private int method2461(AutoTrapModule.Type var1) {
-      for (int var2 = 0; var2 < 9; var2++) {
-         if (method2462(var1, mc.player.getInventory().getItem(var2))) {
-            return var2;
+   private int method2461(AutoTrapModule.Type type) {
+      for (int i = 0; i < 9; i++) {
+         if (method2462(type, mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   private static boolean method2462(AutoTrapModule.Type var0, ItemStack var1) {
-      return switch (var0) {
-         case WEB -> var1.is(Items.COBWEB);
-         case SNOW -> var1.is(Items.POWDER_SNOW_BUCKET);
-         case LAVA -> var1.is(Items.LAVA_BUCKET);
-         case FIRE -> var1.is(Items.FLINT_AND_STEEL) || var1.is(Items.FIRE_CHARGE);
-         case ANVIL -> var1.is(ItemTags.ANVIL);
-         case PICKUP -> var1.is(Items.BUCKET);
+   private static boolean method2462(AutoTrapModule.Type type, ItemStack offhandItem) {
+      return switch (type) {
+         case WEB -> offhandItem.is(Items.COBWEB);
+         case SNOW -> offhandItem.is(Items.POWDER_SNOW_BUCKET);
+         case LAVA -> offhandItem.is(Items.LAVA_BUCKET);
+         case FIRE -> offhandItem.is(Items.FLINT_AND_STEEL) || offhandItem.is(Items.FIRE_CHARGE);
+         case ANVIL -> offhandItem.is(ItemTags.ANVIL);
+         case PICKUP -> offhandItem.is(Items.BUCKET);
       };
    }
 
-   private static boolean method2463(AutoTrapModule.Type var0, BlockState var1) {
-      return switch (var0) {
-         case WEB -> var1.is(Blocks.COBWEB);
-         case SNOW -> var1.is(Blocks.POWDER_SNOW);
-         case LAVA -> var1.getFluidState().is(Fluids.LAVA);
-         case FIRE -> var1.is(BlockTags.FIRE);
-         case ANVIL -> var1.is(BlockTags.ANVIL);
-         case PICKUP -> !var1.getFluidState().is(Fluids.LAVA);
+   private static boolean method2463(AutoTrapModule.Type type, BlockState state) {
+      return switch (type) {
+         case WEB -> state.is(Blocks.COBWEB);
+         case SNOW -> state.is(Blocks.POWDER_SNOW);
+         case LAVA -> state.getFluidState().is(Fluids.LAVA);
+         case FIRE -> state.is(BlockTags.FIRE);
+         case ANVIL -> state.is(BlockTags.ANVIL);
+         case PICKUP -> !state.getFluidState().is(Fluids.LAVA);
       };
    }
 
@@ -1011,81 +1011,81 @@ public final class AutoTrapModule extends Module {
    }
 
    private Player method2466() {
-      double var1 = this.range.getValue3() + 2.0;
-      LivingEntity var3 = AuraModule.INSTANCE.getLivingEntity22();
-      Player var4 = null;
-      double var5 = Double.MAX_VALUE;
+      double d = this.range.getValue3() + 2.0;
+      LivingEntity livingEntity22 = AuraModule.INSTANCE.getLivingEntity22();
+      Player player = null;
+      double d2 = Double.MAX_VALUE;
 
-      for (Player var8 : mc.level.players()) {
-         double var9;
-         double var11;
-         if (this.method2467(var8)
-            && !((var9 = mc.player.distanceTo(var8)) > var1)
-            && (var11 = var9 - (var8 == var3 ? 100 : 0) - (var8 == this.playerEntity ? 0.5 : 0.0)) < var5) {
-            var5 = var11;
-            var4 = var8;
+      for (Player player2 : mc.level.players()) {
+         double d3;
+         double d4;
+         if (this.method2467(player2)
+            && !((d3 = mc.player.distanceTo(player2)) > d)
+            && (d4 = d3 - (player2 == livingEntity22 ? 100 : 0) - (player2 == this.playerEntity ? 0.5 : 0.0)) < d2) {
+            d2 = d4;
+            player = player2;
          }
       }
 
-      return var4;
+      return player;
    }
 
-   private boolean method2467(Player var1) {
-      return var1 != mc.player
-         && CrystalAuraModule.method5901(var1)
-         && !Zenith.getInstance().getFriends().method7626(var1)
-         && !AntiBotModule.INSTANCE.method2785(var1);
+   private boolean method2467(Player player) {
+      return player != mc.player
+         && CrystalAuraModule.method5901(player)
+         && !Zenith.getInstance().getFriends().method7626(player)
+         && !AntiBotModule.INSTANCE.method2785(player);
    }
 
    private double method2468() {
       return Math.min((double)this.range.getValue3(), mc.player.blockInteractionRange());
    }
 
-   private void method2469(int var1) {
-      AutoTrapModule.Data3 var2;
-      while ((var2 = this.queue.poll()) != null) {
-         AutoTrapModule.Data var3 = this.items.remove(var2.pos());
-         if (var3 != null) {
-            long var4 = var2.pos().asLong();
-            if (!method2463(var3.getType(), var2.state())) {
-               this.placementQueue.method2814(var4);
+   private void method2469(int tickCount) {
+      AutoTrapModule.Data3 data3;
+      while ((data3 = this.queue.poll()) != null) {
+         AutoTrapModule.Data data = this.items.remove(data3.pos());
+         if (data != null) {
+            long l = data3.pos().asLong();
+            if (!method2463(data.getType(), data3.state())) {
+               this.placementQueue.method2814(l);
             } else {
-               this.placementQueue.method2813(var4);
-               if (var3.getType() == AutoTrapModule.Type.LAVA) {
-                  this.items2.put(var2.pos(), var1);
+               this.placementQueue.method2813(l);
+               if (data.getType() == AutoTrapModule.Type.LAVA) {
+                  this.items2.put(data3.pos(), tickCount);
                }
 
-               if (var3.getType().flag) {
+               if (data.getType().flag) {
                   this.method2471();
                }
 
-               if (this.render.isEnabled() && var3.getType() != AutoTrapModule.Type.PICKUP) {
-                  this.items3.add(new AutoTrapModule.Data5(var2.pos(), System.currentTimeMillis()));
+               if (this.render.isEnabled() && data.getType() != AutoTrapModule.Type.PICKUP) {
+                  this.items3.add(new AutoTrapModule.Data5(data3.pos(), System.currentTimeMillis()));
                }
             }
          }
       }
    }
 
-   private void method2470(int var1) {
-      var var2 = this.items.entrySet().iterator();
+   private void method2470(int tickCount) {
+      var iterator = this.items.entrySet().iterator();
 
-      while (var2.hasNext()) {
-         Entry var3 = (Entry)var2.next();
-         if (((AutoTrapModule.Data)var3.getValue()).getIntValue() < var1) {
-            if (((AutoTrapModule.Data)var3.getValue()).getType() == AutoTrapModule.Type.LAVA && this.method2458((BlockPos)var3.getKey())) {
-               this.items2.put((BlockPos)var3.getKey(), var1);
+      while (iterator.hasNext()) {
+         Entry entry = (Entry)iterator.next();
+         if (((AutoTrapModule.Data)entry.getValue()).getIntValue() < tickCount) {
+            if (((AutoTrapModule.Data)entry.getValue()).getType() == AutoTrapModule.Type.LAVA && this.method2458((BlockPos)entry.getKey())) {
+               this.items2.put((BlockPos)entry.getKey(), tickCount);
             }
 
-            var2.remove();
+            iterator.remove();
          }
       }
    }
 
    private void method2471() {
-      long var1;
-      if ((var1 = System.currentTimeMillis()) - this.longValue >= 2000L) {
-         this.longValue = var1;
+      long now;
+      if ((now = System.currentTimeMillis()) - this.longValue >= 2000L) {
+         this.longValue = now;
          Island.method2878(Zenith.getInstance().getLocalization().translate("hud.island.trap"));
       }
    }
@@ -1117,21 +1117,21 @@ public final class AutoTrapModule extends Module {
       this.intValue4 = -16384 << 16 | 0;
    }
 
-   private static double method2473(Vec3 var0) {
-      return Math.hypot(var0.x, var0.z);
+   private static double method2473(Vec3 vec) {
+      return Math.hypot(vec.x, vec.z);
    }
 
-   private static Vec3 method2474(Vec3 var0, float var1) {
-      double var2;
-      double var4 = Math.cos(var2 = Math.toRadians(var1));
-      double var6 = Math.sin(var2);
-      return new Vec3(var0.x * var4 - var0.z * var6, var0.y, var0.x * var6 + var0.z * var4);
+   private static Vec3 method2474(Vec3 vec, float angdeg) {
+      double d;
+      double d2 = Math.cos(d = Math.toRadians(angdeg));
+      double d3 = Math.sin(d);
+      return new Vec3(vec.x * d2 - vec.z * d3, vec.y, vec.x * d3 + vec.z * d2);
    }
 
-   private static AABB method2475(BlockPos var0, double var1) {
-      double var3 = 0.5 * Mth.clamp(var1, 0.05, 1.0);
-      Vec3 var5 = Vec3.atCenterOf(var0);
-      return new AABB(var5.subtract(var3, var3, var3), var5.add(var3, var3, var3));
+   private static AABB method2475(BlockPos blockPos, double d) {
+      double x = 0.5 * Mth.clamp(d, 0.05, 1.0);
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos);
+      return new AABB(atCenterOf.subtract(x, x, x), atCenterOf.add(x, x, x));
    }
 
    private static final class Data {
@@ -1163,9 +1163,9 @@ public final class AutoTrapModule extends Module {
          return "Data[" + "type=" + this.type + ", " + "intValue=" + this.intValue + "]";
       }
 
-      private Data(AutoTrapModule.Type var1, int var2) {
-         this.type = var1;
-         this.intValue = var2;
+      private Data(AutoTrapModule.Type type, int intValue) {
+         this.type = type;
+         this.intValue = intValue;
       }
 
       public AutoTrapModule.Type getType() {
@@ -1206,9 +1206,9 @@ public final class AutoTrapModule extends Module {
          return "Data2[" + "data6=" + this.data6 + ", " + "blockHitResult=" + this.blockHitResult + "]";
       }
 
-      private Data2(AutoTrapModule.Data6 var1, BlockHitResult var2) {
-         this.data6 = var1;
-         this.blockHitResult = var2;
+      private Data2(AutoTrapModule.Data6 data6, BlockHitResult blockHitResult) {
+         this.data6 = data6;
+         this.blockHitResult = blockHitResult;
       }
 
       public AutoTrapModule.Data6 getData6() {
@@ -1249,9 +1249,9 @@ public final class AutoTrapModule extends Module {
          return "Data3[" + "blockPos=" + this.blockPos + ", " + "blockState=" + this.blockState + "]";
       }
 
-      private Data3(BlockPos var1, BlockState var2) {
-         this.blockPos = var1;
-         this.blockState = var2;
+      private Data3(BlockPos blockPos, BlockState blockState) {
+         this.blockPos = blockPos;
+         this.blockState = blockState;
       }
 
       public BlockPos pos() {
@@ -1287,8 +1287,8 @@ public final class AutoTrapModule extends Module {
          return "Data4[" + "rotation=" + this.rotation + "]";
       }
 
-      private Data4(Rotation var1) {
-         this.rotation = var1;
+      private Data4(Rotation rotation) {
+         this.rotation = rotation;
       }
    }
 
@@ -1321,9 +1321,9 @@ public final class AutoTrapModule extends Module {
          return "Data5[" + "blockPos=" + this.blockPos + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data5(BlockPos var1, long var2) {
-         this.blockPos = var1;
-         this.longValue = var2;
+      private Data5(BlockPos blockPos, long longValue) {
+         this.blockPos = blockPos;
+         this.longValue = longValue;
       }
 
       public BlockPos pos() {
@@ -1364,9 +1364,9 @@ public final class AutoTrapModule extends Module {
          return "Data6[" + "type=" + this.type + ", " + "blockPos=" + this.blockPos + "]";
       }
 
-      private Data6(AutoTrapModule.Type var1, BlockPos var2) {
-         this.type = var1;
-         this.blockPos = var2;
+      private Data6(AutoTrapModule.Type type, BlockPos blockPos) {
+         this.type = type;
+         this.blockPos = blockPos;
       }
 
       public AutoTrapModule.Type getType() {
@@ -1389,9 +1389,9 @@ public final class AutoTrapModule extends Module {
       private final boolean flag;
       private final boolean flag2;
 
-      private Type(boolean var3, boolean var4) {
-         this.flag = var3;
-         this.flag2 = var4;
+      private Type(boolean flag, boolean flag2) {
+         this.flag = flag;
+         this.flag2 = flag2;
       }
    }
 }

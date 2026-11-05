@@ -7,21 +7,21 @@ import org.zenith.utility.misc.EnchantMatcher;
 public class EnchantedItemMatcher extends ItemMatcher {
    public final ArrayList<EnchantMatcher> arrayList = new ArrayList<>();
 
-   public EnchantedItemMatcher(ItemStack var1, String var2, String var3, ItemMatcher.Type var4) {
-      super(var1, var2, var3, var4);
+   public EnchantedItemMatcher(ItemStack itemStack, String text, String str, ItemMatcher.Type type) {
+      super(itemStack, text, str, type);
    }
 
-   public EnchantedItemMatcher(ItemStack var1, String var2, ItemMatcher.Type var3) {
-      super(var1, var2, var3);
+   public EnchantedItemMatcher(ItemStack defaultInstance, String text, ItemMatcher.Type type) {
+      super(defaultInstance, text, type);
    }
 
    @Override
-   public boolean method2672(ItemStack var1) {
-      if (!super.method2672(var1)) {
+   public boolean method2672(ItemStack stack) {
+      if (!super.method2672(stack)) {
          return false;
       } else {
-         for (EnchantMatcher var3 : this.arrayList) {
-            if (!var3.method1746(var1)) {
+         for (EnchantMatcher array : this.arrayList) {
+            if (!array.method1746(stack)) {
                return false;
             }
          }
@@ -30,8 +30,8 @@ public class EnchantedItemMatcher extends ItemMatcher {
       }
    }
 
-   public void method4844(EnchantMatcher var1) {
-      this.arrayList.add(var1);
+   public void method4844(EnchantMatcher enchantMatcher) {
+      this.arrayList.add(enchantMatcher);
    }
 
    public ArrayList<EnchantMatcher> getArrayList() {

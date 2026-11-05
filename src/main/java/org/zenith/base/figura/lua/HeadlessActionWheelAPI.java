@@ -11,119 +11,119 @@ public final class HeadlessActionWheelAPI {
    }
 
    public static LuaTable create() {
-      final LuaTable var0 = chainTable();
-      final LuaTable var1 = new LuaTable();
-      final LuaValue[] var2 = new LuaValue[]{LuaValue.NIL};
-      var0.set("newPage", new VarArgFunction() {
+      final LuaTable luaTable = chainTable();
+      final LuaTable luaTable2 = new LuaTable();
+      final LuaValue[] luaValues = new LuaValue[]{LuaValue.NIL};
+      luaTable.set("newPage", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            int var2x = HeadlessActionWheelAPI.argumentOffset(var1x, var0);
-            LuaValue var3 = var1x.arg(var2x);
-            LuaTable var4 = HeadlessActionWheelAPI.newPage(var3);
-            if (var3.isstring()) {
-               var1.rawset(var3, var4);
+            int var2x = HeadlessActionWheelAPI.argumentOffset(var1x, luaTable);
+            LuaValue luaValue = var1x.arg(var2x);
+            LuaTable page = HeadlessActionWheelAPI.newPage(luaValue);
+            if (luaValue.isstring()) {
+               luaTable2.rawset(luaValue, page);
             }
 
-            return var4;
+            return page;
          }
       });
-      var0.set("newAction", new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
+      luaTable.set("newAction", new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
             return HeadlessActionWheelAPI.newAction();
          }
       });
-      var0.set("setPage", new VarArgFunction() {
+      luaTable.set("setPage", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            LuaValue var2x = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, var0));
-            var2[0] = var2x.isstring() ? var1.get(var2x) : var2x;
-            return var0;
+            LuaValue var2x = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, luaTable));
+            luaValues[0] = var2x.isstring() ? luaTable2.get(var2x) : var2x;
+            return luaTable;
          }
       });
-      var0.set("getPage", new VarArgFunction() {
+      luaTable.set("getPage", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            LuaValue var2 = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, var0));
-            return (Varargs)(var2.isnil() ? var1 : var1.get(var2));
+            LuaValue luaValue = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, luaTable));
+            return (Varargs)(luaValue.isnil() ? luaTable2 : luaTable2.get(luaValue));
          }
       });
-      var0.set("getCurrentPage", new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            return var2[0];
+      luaTable.set("getCurrentPage", new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            return luaValues[0];
          }
       });
-      var0.set("execute", returning(var0));
-      var0.set("isEnabled", constant(LuaValue.FALSE));
-      var0.set("getSelected", constant(LuaValue.ZERO));
-      var0.set("getSelectedAction", constant(LuaValue.NIL));
-      return var0;
+      luaTable.set("execute", returning(luaTable));
+      luaTable.set("isEnabled", constant(LuaValue.FALSE));
+      luaTable.set("getSelected", constant(LuaValue.ZERO));
+      luaTable.set("getSelectedAction", constant(LuaValue.NIL));
+      return luaTable;
    }
 
-   private static LuaTable newPage(LuaValue var0) {
-      final LuaTable var1 = chainTable();
-      final LuaTable var2 = new LuaTable();
-      var1.rawset("keepSlots", LuaValue.FALSE);
-      var1.rawset("__title", var0);
-      var1.rawset("__slotsShift", LuaValue.ONE);
-      var1.set("newAction", new VarArgFunction() {
+   private static LuaTable newPage(LuaValue luaValue) {
+      final LuaTable luaTable = chainTable();
+      final LuaTable luaTable2 = new LuaTable();
+      luaTable.rawset("keepSlots", LuaValue.FALSE);
+      luaTable.rawset("__title", luaValue);
+      luaTable.rawset("__slotsShift", LuaValue.ONE);
+      luaTable.set("newAction", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            int var2x = HeadlessActionWheelAPI.argumentOffset(var1x, var1);
-            LuaValue var3 = var1x.arg(var2x);
-            int var4 = var3.isint() && var3.checkint() > 0 ? var3.checkint() : HeadlessActionWheelAPI.firstFreeIndex(var2);
-            LuaTable var5 = HeadlessActionWheelAPI.newAction();
-            var2.rawset(var4, var5);
-            return var5;
+            int var2x = HeadlessActionWheelAPI.argumentOffset(var1x, luaTable);
+            LuaValue luaValue2 = var1x.arg(var2x);
+            int checkint = luaValue2.isint() && luaValue2.checkint() > 0 ? luaValue2.checkint() : HeadlessActionWheelAPI.firstFreeIndex(luaTable2);
+            LuaTable action = HeadlessActionWheelAPI.newAction();
+            luaTable2.rawset(checkint, action);
+            return action;
          }
       });
-      var1.set("getAction", new VarArgFunction() {
+      luaTable.set("getAction", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            LuaValue var2x = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, var1));
-            return var2x.isint() && var2x.checkint() > 0 ? var2.get(var2x) : LuaValue.NIL;
+            LuaValue var2x = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, luaTable));
+            return var2x.isint() && var2x.checkint() > 0 ? luaTable2.get(var2x) : LuaValue.NIL;
          }
       });
-      VarArgFunction var3 = new VarArgFunction() {
+      VarArgFunction varArgFunction = new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            int var2x = HeadlessActionWheelAPI.argumentOffset(var1x, var1);
-            LuaValue var3 = var1x.arg(var2x);
-            LuaValue var4 = var1x.arg(var2x + 1);
-            int var5 = var3.isint() && var3.checkint() > 0 ? var3.checkint() : HeadlessActionWheelAPI.firstFreeIndex(var2);
-            var2.rawset(var5, var4);
-            return var1;
+            int var2x = HeadlessActionWheelAPI.argumentOffset(var1x, luaTable);
+            LuaValue luaValue2 = var1x.arg(var2x);
+            LuaValue luaValue3 = var1x.arg(var2x + 1);
+            int checkint = luaValue2.isint() && luaValue2.checkint() > 0 ? luaValue2.checkint() : HeadlessActionWheelAPI.firstFreeIndex(luaTable2);
+            luaTable2.rawset(checkint, luaValue3);
+            return luaTable;
          }
       };
-      var1.set("setAction", var3);
-      var1.set("action", var3);
-      var1.set("getActions", constant(var2));
-      var1.set("getTitle", constant(var0));
-      var1.set("setKeepSlots", new VarArgFunction() {
+      luaTable.set("setAction", varArgFunction);
+      luaTable.set("action", varArgFunction);
+      luaTable.set("getActions", constant(luaTable2));
+      luaTable.set("getTitle", constant(luaValue));
+      luaTable.set("setKeepSlots", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            LuaValue var2 = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, var1));
-            var1.rawset("keepSlots", LuaValue.valueOf(var2.toboolean()));
-            return var1;
+            LuaValue luaValue2 = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, luaTable));
+            luaTable.rawset("keepSlots", LuaValue.valueOf(luaValue2.toboolean()));
+            return luaTable;
          }
       });
-      var1.set("shouldKeepSlots", new VarArgFunction() {
+      luaTable.set("shouldKeepSlots", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            return var1.rawget("keepSlots");
+            return luaTable.rawget("keepSlots");
          }
       });
-      var1.set("setSlotsShift", new VarArgFunction() {
+      luaTable.set("setSlotsShift", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            LuaValue var2 = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, var1));
-            var1.rawset("__slotsShift", (LuaValue)(var2.isint() ? var2 : LuaValue.ONE));
-            return var1;
+            LuaValue luaValue2 = var1x.arg(HeadlessActionWheelAPI.argumentOffset(var1x, luaTable));
+            luaTable.rawset("__slotsShift", (LuaValue)(luaValue2.isint() ? luaValue2 : LuaValue.ONE));
+            return luaTable;
          }
       });
-      var1.set("slotsShift", var1.get("setSlotsShift"));
-      var1.set("getSlotsShift", new VarArgFunction() {
+      luaTable.set("slotsShift", luaTable.get("setSlotsShift"));
+      luaTable.set("getSlotsShift", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            return var1.rawget("__slotsShift");
+            return luaTable.rawget("__slotsShift");
          }
       });
-      return var1;
+      return luaTable;
    }
 
    private static LuaTable newAction() {
-      final LuaTable var0 = chainTable();
-      var0.rawset("__toggled", LuaValue.FALSE);
-      String[][] var1 = new String[][]{
+      final LuaTable luaTable = chainTable();
+      luaTable.rawset("__toggled", LuaValue.FALSE);
+      String[][] stringses = new String[][]{
          {"Title", "title"},
          {"ToggleTitle", "toggleTitle"},
          {"Item", "item"},
@@ -142,99 +142,99 @@ public final class HeadlessActionWheelAPI {
          {"Scroll", "scroll"}
       };
 
-      for (String[] var5 : var1) {
-         installProperty(var0, var5[0], var5[1]);
+      for (String[] strings : stringses) {
+         installProperty(luaTable, strings[0], strings[1]);
       }
 
-      var0.set("setToggled", new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            LuaValue var2 = var1.arg(HeadlessActionWheelAPI.argumentOffset(var1, var0));
-            var0.rawset("__toggled", LuaValue.valueOf(var2.toboolean()));
-            return var0;
+      luaTable.set("setToggled", new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            LuaValue luaValue = varargs.arg(HeadlessActionWheelAPI.argumentOffset(varargs, luaTable));
+            luaTable.rawset("__toggled", LuaValue.valueOf(luaValue.toboolean()));
+            return luaTable;
          }
       });
-      var0.set("toggled", var0.get("setToggled"));
-      var0.set("isToggled", new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            return var0.rawget("__toggled");
+      luaTable.set("toggled", luaTable.get("setToggled"));
+      luaTable.set("isToggled", new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            return luaTable.rawget("__toggled");
          }
       });
-      return var0;
+      return luaTable;
    }
 
-   private static void installProperty(LuaTable var0, String var1, String var2) {
-      VarArgFunction var3 = new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            int var2x = HeadlessActionWheelAPI.argumentOffset(var1, var0);
+   private static void installProperty(LuaTable luaTable, String str, String str2) {
+      VarArgFunction varArgFunction = new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            int var2x = HeadlessActionWheelAPI.argumentOffset(varargs, luaTable);
             Object var3x;
-            if (var1.narg() - var2x + 1 <= 1) {
-               var3x = var1.arg(var2x);
+            if (varargs.narg() - var2x + 1 <= 1) {
+               var3x = varargs.arg(var2x);
             } else {
-               LuaTable var4 = new LuaTable();
+               LuaTable luaTable2 = new LuaTable();
 
-               for (int var5 = var2x; var5 <= var1.narg(); var5++) {
-                  var4.rawset(var5 - var2x + 1, var1.arg(var5));
+               for (int i = var2x; i <= varargs.narg(); i++) {
+                  luaTable2.rawset(i - var2x + 1, varargs.arg(i));
                }
 
-               var3x = var4;
+               var3x = luaTable2;
             }
 
-            var0.rawset("__" + var2, (LuaValue)var3x);
-            return var0;
+            luaTable.rawset("__" + str2, (LuaValue)var3x);
+            return luaTable;
          }
       };
-      var0.set("set" + var1, var3);
-      var0.set(decapitalize(var1), var3);
-      if (var1.equals("LeftClick") || var1.equals("RightClick") || var1.equals("Toggle") || var1.equals("Untoggle") || var1.equals("Scroll")) {
-         var0.set("on" + var1, var3);
+      luaTable.set("set" + str, varArgFunction);
+      luaTable.set(decapitalize(str), varArgFunction);
+      if (str.equals("LeftClick") || str.equals("RightClick") || str.equals("Toggle") || str.equals("Untoggle") || str.equals("Scroll")) {
+         luaTable.set("on" + str, varArgFunction);
       }
 
-      var0.set("get" + var1, new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            return var0.rawget("__" + var2);
+      luaTable.set("get" + str, new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            return luaTable.rawget("__" + str2);
          }
       });
    }
 
    private static LuaTable chainTable() {
-      LuaTable var0 = new LuaTable();
-      LuaTable var1 = new LuaTable();
-      var1.set("__index", new TwoArgFunction() {
-         public LuaValue call(LuaValue var1, LuaValue var2) {
-            return HeadlessActionWheelAPI.returning(var1);
+      LuaTable luaTable = new LuaTable();
+      LuaTable luaTable2 = new LuaTable();
+      luaTable2.set("__index", new TwoArgFunction() {
+         public LuaValue call(LuaValue luaValue, LuaValue luaValue2) {
+            return HeadlessActionWheelAPI.returning(luaValue);
          }
       });
-      var0.setmetatable(var1);
-      return var0;
+      luaTable.setmetatable(luaTable2);
+      return luaTable;
    }
 
-   private static int argumentOffset(Varargs var0, LuaValue var1) {
-      return var0.narg() > 0 && var0.arg1().raweq(var1) ? 2 : 1;
+   private static int argumentOffset(Varargs varargs, LuaValue luaValue) {
+      return varargs.narg() > 0 && varargs.arg1().raweq(luaValue) ? 2 : 1;
    }
 
-   private static int firstFreeIndex(LuaTable var0) {
-      int var1 = 1;
+   private static int firstFreeIndex(LuaTable luaTable) {
+      int n = 1;
 
-      while (!var0.rawget(var1).isnil()) {
-         var1++;
+      while (!luaTable.rawget(n).isnil()) {
+         n++;
       }
 
-      return var1;
+      return n;
    }
 
-   private static VarArgFunction returning(LuaValue var0) {
+   private static VarArgFunction returning(LuaValue luaValue) {
       return new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            return var0;
+         public Varargs invoke(Varargs varargs) {
+            return luaValue;
          }
       };
    }
 
-   private static VarArgFunction constant(LuaValue var0) {
-      return returning(var0);
+   private static VarArgFunction constant(LuaValue luaValue) {
+      return returning(luaValue);
    }
 
-   private static String decapitalize(String var0) {
-      return Character.toLowerCase(var0.charAt(0)) + var0.substring(1);
+   private static String decapitalize(String str) {
+      return Character.toLowerCase(str.charAt(0)) + str.substring(1);
    }
 }

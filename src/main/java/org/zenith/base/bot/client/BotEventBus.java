@@ -6,19 +6,19 @@ import com.darkmagician6.eventapi.events.Event;
 public final class BotEventBus {
    private final EventBus bus = new EventBus();
 
-   public void register(Object var1) {
-      this.bus.register(var1);
+   public void register(Object obj) {
+      this.bus.register(obj);
    }
 
-   public void register(Object var1, Class<? extends Event> var2) {
-      this.bus.register(var1, var2);
+   public void register(Object obj, Class<? extends Event> clazz) {
+      this.bus.register(obj, clazz);
    }
 
-   public void unregister(Object var1) {
-      this.bus.unregister(var1);
+   public void unregister(Object obj) {
+      this.bus.unregister(obj);
    }
 
-   public Event call(Event var1) {
-      return this.bus.call(var1);
+   public Event call(Event event) {
+      return this.bus.call(event);
    }
 }

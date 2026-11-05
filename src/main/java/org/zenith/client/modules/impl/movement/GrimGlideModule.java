@@ -52,13 +52,13 @@ public final class GrimGlideModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.intValue > 0) {
          this.intValue--;
       }
 
-      boolean var2 = mc.player != null && mc.level != null && mc.player.isFallFlying();
-      if (!var2) {
+      boolean flag = mc.player != null && mc.level != null && mc.player.isFallFlying();
+      if (!flag) {
          if (this.flag2) {
             Util13.method2404(1.0F);
             this.flag2 = false;
@@ -71,9 +71,9 @@ public final class GrimGlideModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (mc.player != null) {
-         if (var1.method7100() && var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         if (event.method7100() && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> {
                this.intValue = 2;
                this.flag = true;
@@ -82,9 +82,9 @@ public final class GrimGlideModule extends Module {
                }
             });
          } else {
-            if (var1.method7099() && var1.getPacket3() instanceof ServerboundMovePlayerPacket var2 && !PacketUtils.getItems().contains(var2)) {
+            if (event.method7099() && event.getPacket3() instanceof ServerboundMovePlayerPacket movePlayerPacket && !PacketUtils.getItems().contains(movePlayerPacket)) {
                if (mc.player.isFallFlying() && this.intValue == 0 && !this.flag) {
-                  var1.setPacket2(new StatusOnly(true, true));
+                  event.setPacket2(new StatusOnly(true, true));
                }
 
                this.flag = false;
@@ -93,17 +93,17 @@ public final class GrimGlideModule extends Module {
       }
    }
 
-   public Vec3 method5976(Vec3 var1, Vec3 var2, Vec3 var3) {
+   public Vec3 method5976(Vec3 vec, Vec3 returnValue, Vec3 lookAngle) {
       if (this.isEnabled() && mc.player != null) {
-         Vec3 var4 = ElytraMath.method5974(mc.player, var1, var3, 3.2);
+         Vec3 vec2 = ElytraMath.method5974(mc.player, vec, lookAngle, 3.2);
          if (this.intValue >= 1) {
-            double var5 = Math.toRadians(mc.player.getYRot());
-            return var4.multiply(0.99F, 0.98F, 0.99F).add(-Math.sin(var5) * 0.09F, 0.03F, Math.cos(var5) * 0.09F);
+            double d = Math.toRadians(mc.player.getYRot());
+            return vec2.multiply(0.99F, 0.98F, 0.99F).add(-Math.sin(d) * 0.09F, 0.03F, Math.cos(d) * 0.09F);
          } else {
-            return var4.multiply(0.3F, 0.3F, 0.3F);
+            return vec2.multiply(0.3F, 0.3F, 0.3F);
          }
       } else {
-         return var2;
+         return returnValue;
       }
    }
 }

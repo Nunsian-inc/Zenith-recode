@@ -88,19 +88,19 @@ public final class WorldModule extends Module {
    }
 
    @EventTarget
-   public void method5649(BackgroundRenderEvent var1) {
+   public void method5649(BackgroundRenderEvent event) {
       if (this.method5648()) {
-         var1.setFloatValue(this.fogDistance.getValue3());
-         var1.setColor(this.fogColor.method1445());
-         var1.setCancelled(true);
+         event.setFloatValue(this.fogDistance.getValue3());
+         event.setColor(this.fogColor.method1445());
+         event.setCancelled(true);
       }
    }
 
-   public void method5650(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
+   public void method5650(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height, float previewAlpha) {
       if (this.method5648()) {
-         float var7 = 1.0F - Math.clamp((this.fogDistance.getValue3() - 10.0F) / 245.0F, 0.0F, 1.0F);
-         ZenithColor var8 = this.fogColor.getZenithColor().method7294(var6 * (0.25F + 0.6F * var7));
-         var1.drawRect(var2, var3, var4, var5, var8);
+         float f = 1.0F - Math.clamp((this.fogDistance.getValue3() - 10.0F) / 245.0F, 0.0F, 1.0F);
+         ZenithColor zenithColor = this.fogColor.getZenithColor().method7294(previewAlpha * (0.25F + 0.6F * f));
+         customDrawContext.drawRect(floatValue, y, width, height, zenithColor);
       }
    }
 
@@ -109,7 +109,7 @@ public final class WorldModule extends Module {
    }
 
    public float method5652() {
-      float var1 = this.method5644();
-      return var1 < 0.0F ? 1.0F : 0.7F + var1 * 0.55F;
+      float f = this.method5644();
+      return f < 0.0F ? 1.0F : 0.7F + f * 0.55F;
    }
 }

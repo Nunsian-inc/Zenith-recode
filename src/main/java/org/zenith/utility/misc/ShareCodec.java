@@ -28,131 +28,131 @@ public final class ShareCodec {
    private ShareCodec() {
    }
 
-   public static List<CloudPackets.Data9> method6721(String var0, String var1, String var2, float var3) {
-      ArrayList var4 = new ArrayList(3);
-      method6722(var4, "@fb:", var0, 0);
-      method6722(var4, "@fw:", var1, 0);
-      method6722(var4, "@fp:", var2, Float.floatToIntBits(var3));
-      return var4;
+   public static List<CloudPackets.Data9> method6721(String str, String str2, String str3, float f) {
+      ArrayList arrayList = new ArrayList(3);
+      method6722(arrayList, "@fb:", str, 0);
+      method6722(arrayList, "@fw:", str2, 0);
+      method6722(arrayList, "@fp:", str3, Float.floatToIntBits(f));
+      return arrayList;
    }
 
-   private static void method6722(List<CloudPackets.Data9> var0, String var1, String var2, int var3) {
-      if (var2 != null && !var2.isBlank()) {
-         var0.add(new CloudPackets.Data9(var1 + method6728(var2), 63, var3));
+   private static void method6722(List<CloudPackets.Data9> data9s, String str, String str2, int floatToIntBits) {
+      if (str2 != null && !str2.isBlank()) {
+         data9s.add(new CloudPackets.Data9(str + method6728(str2), 63, floatToIntBits));
       }
    }
 
-   public static boolean method6723(String var0) {
-      return !(var0 == null || !var0.startsWith("@fb:") && !var0.startsWith("@fw:") && !var0.startsWith("@fp:"));
+   public static boolean method6723(String text) {
+      return !(text == null || !text.startsWith("@fb:") && !text.startsWith("@fw:") && !text.startsWith("@fp:"));
    }
 
-   public static ShareCodec.Data2 method6724(long var0, List<CloudPackets.Data9> var2) {
-      if (var2 != null) {
-         boolean var10000;
+   public static ShareCodec.Data2 method6724(long uid, List<CloudPackets.Data9> items) {
+      if (items != null) {
+         boolean empty;
          label54: {
-            if (var2 != null) {
-               if (var2.isEmpty()) {
-                  var10000 = true;
+            if (items != null) {
+               if (items.isEmpty()) {
+                  empty = true;
                   break label54;
                }
             }
 
-            var10000 = var2.isEmpty();
+            empty = items.isEmpty();
          }
 
-         if (!var10000) {
-            ShareCodec.Data var3 = items2.get(var0);
-            if (var3 != null && var3.getItems() == var2) {
-               return var3.getData2();
+         if (!empty) {
+            ShareCodec.Data data = items2.get(uid);
+            if (data != null && data.getItems() == items) {
+               return data.getData2();
             }
 
-            String var4 = "";
-            String var5 = "";
-            String var6 = "";
-            float var7 = 0.4F;
-            boolean var8 = false;
+            String text = "";
+            String str = "";
+            String str2 = "";
+            float floatValue = 0.4F;
+            boolean flag = false;
 
-            for (CloudPackets.Data9 var10 : var2) {
-               String var11 = var10.getText();
-               if (var10.getIntValue() == 63 && var11 != null) {
-                  if (var11.startsWith("@fb:")) {
-                     var4 = method6726(var11.substring("@fb:".length()));
-                     var8 |= var4.isEmpty();
-                  } else if (var11.startsWith("@fw:")) {
-                     var5 = method6726(var11.substring("@fw:".length()));
-                     var8 |= var5.isEmpty();
-                  } else if (var11.startsWith("@fp:")) {
-                     var6 = method6726(var11.substring("@fp:".length()));
-                     var8 |= var6.isEmpty();
-                     float var12;
-                     var7 = Float.isFinite(var12 = Float.intBitsToFloat(var10.getIntValue2())) ? Math.max(0.1F, Math.min(2.0F, var12)) : 0.4F;
+            for (CloudPackets.Data9 data9 : items) {
+               String text2 = data9.getText();
+               if (data9.getIntValue() == 63 && text2 != null) {
+                  if (text2.startsWith("@fb:")) {
+                     text = method6726(text2.substring("@fb:".length()));
+                     flag |= text.isEmpty();
+                  } else if (text2.startsWith("@fw:")) {
+                     str = method6726(text2.substring("@fw:".length()));
+                     flag |= str.isEmpty();
+                  } else if (text2.startsWith("@fp:")) {
+                     str2 = method6726(text2.substring("@fp:".length()));
+                     flag |= str2.isEmpty();
+                     float intBitsToFloat;
+                     floatValue = Float.isFinite(intBitsToFloat = Float.intBitsToFloat(data9.getIntValue2())) ? Math.max(0.1F, Math.min(2.0F, intBitsToFloat)) : 0.4F;
                   }
                }
             }
 
-            ShareCodec.Data2 var13 = new ShareCodec.Data2(var4, var5, var6, var7);
-            if (!var8) {
-               items2.put(var0, new ShareCodec.Data(var2, var13));
+            ShareCodec.Data2 data2 = new ShareCodec.Data2(text, str, str2, floatValue);
+            if (!flag) {
+               items2.put(uid, new ShareCodec.Data(items, data2));
             }
 
-            return var13;
+            return data2;
          }
       }
 
-      items2.remove(var0);
+      items2.remove(uid);
       return ShareCodec.Data2.INSTANCE;
    }
 
-   public static void method6725(Set<Long> var0) {
-      items2.keySet().retainAll(var0);
+   public static void method6725(Set<Long> longs) {
+      items2.keySet().retainAll(longs);
    }
 
-   private static String method6726(String var0) {
-      var var1 = items;
-      long var2 = System.currentTimeMillis();
-      if (var1 != null) {
-         boolean var10000;
+   private static String method6726(String key) {
+      var map = items;
+      long now = System.currentTimeMillis();
+      if (map != null) {
+         boolean containsKey;
          label22: {
-            if (var1 != null) {
-               if (var1.isEmpty()) {
-                  var10000 = false;
+            if (map != null) {
+               if (map.isEmpty()) {
+                  containsKey = false;
                   break label22;
                }
             }
 
-            var10000 = var1.containsKey(var0);
+            containsKey = map.containsKey(key);
          }
 
-         if (var10000 || var2 - longValue < 5000L) {
-            return var1.getOrDefault(var0, "");
+         if (containsKey || now - longValue < 5000L) {
+            return map.getOrDefault(key, "");
          }
       }
 
-      var1 = method6727();
-      longValue = var2;
-      return var1.getOrDefault(var0, "");
+      map = method6727();
+      longValue = now;
+      return map.getOrDefault(key, "");
    }
 
    private static synchronized Map<String, String> method6727() {
-      HashMap var0 = new HashMap();
+      HashMap map = new HashMap();
 
-      for (AvatarUtil.Data var2 : AvatarUtil.method6671()) {
-         String var3 = org.zenith.utility.config.AvatarUtil.method7257(var2.getPath());
-         if (!var3.isBlank()) {
-            var0.put(method6728(var3), var3);
+      for (AvatarUtil.Data data : AvatarUtil.method6671()) {
+         String str = org.zenith.utility.config.AvatarUtil.method7257(data.getPath());
+         if (!str.isBlank()) {
+            map.put(method6728(str), str);
          }
       }
 
-      items = var0;
-      return var0;
+      items = map;
+      return map;
    }
 
-   public static String method6728(String var0) {
+   public static String method6728(String str) {
       try {
-         byte[] var1 = MessageDigest.getInstance("SHA-256").digest(var0.toLowerCase(Locale.ROOT).getBytes(StandardCharsets.UTF_8));
-         return HexFormat.of().formatHex(var1).substring(0, 32);
-      } catch (NoSuchAlgorithmException var2) {
-         throw new IllegalStateException("SHA-256 недоступен", var2);
+         byte[] digest = MessageDigest.getInstance("SHA-256").digest(str.toLowerCase(Locale.ROOT).getBytes(StandardCharsets.UTF_8));
+         return HexFormat.of().formatHex(digest).substring(0, 32);
+      } catch (NoSuchAlgorithmException e) {
+         throw new IllegalStateException("SHA-256 недоступен", e);
       }
    }
 
@@ -185,9 +185,9 @@ public final class ShareCodec {
          return "Data[" + "items=" + this.items + ", " + "data2=" + this.data2 + "]";
       }
 
-      private Data(List<CloudPackets.Data9> var1, ShareCodec.Data2 var2) {
-         this.items = var1;
-         this.data2 = var2;
+      private Data(List<CloudPackets.Data9> items, ShareCodec.Data2 data2) {
+         this.items = items;
+         this.data2 = data2;
       }
 
       public List<CloudPackets.Data9> getItems() {
@@ -239,11 +239,11 @@ public final class ShareCodec {
       }
       public static final ShareCodec.Data2 INSTANCE = new ShareCodec.Data2("", "", "", 0.4F);
 
-      public Data2(String var1, String var2, String var3, float var4) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
-         this.floatValue = var4;
+      public Data2(String text, String str, String str2, float floatValue) {
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.floatValue = floatValue;
       }
 
       public String body() {

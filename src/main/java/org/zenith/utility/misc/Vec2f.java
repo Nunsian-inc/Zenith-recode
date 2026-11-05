@@ -4,9 +4,9 @@ public class Vec2f {
    private final float floatValue;
    private final float floatValue2;
 
-   public Vec2f(float var1, float var2) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
+   public Vec2f(float floatValue, float f) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
    }
 
    public float method5327() {
@@ -25,11 +25,11 @@ public class Vec2f {
       return new net.minecraft.world.phys.Vec2(this.floatValue, this.floatValue2);
    }
 
-   public boolean method5329(float var1) {
-      return this.method5330(var1, var1);
+   public boolean method5329(float f) {
+      return this.method5330(f, f);
    }
 
-   public boolean method5330(float var1, float var2) {
-      return Math.abs(this.floatValue) <= var1 && Math.abs(this.floatValue2) <= var2;
+   public boolean method5330(float f, float f2) {
+      return Math.abs(this.floatValue) <= f && Math.abs(this.floatValue2) <= f2;
    }
 }

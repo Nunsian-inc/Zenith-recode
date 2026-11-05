@@ -14,7 +14,7 @@ public final class Util30 {
       TextureManager zenith$getTextureManager();
 
       @Nullable
-      MapAtlas.Data zenith$getAtlasSlot(int var1);
+      MapAtlas.Data zenith$getAtlasSlot(int n);
    }
 
    public interface Handler2 {
@@ -23,15 +23,15 @@ public final class Util30 {
    }
 
    public interface Handler3 {
-      void zenith$setAtlasSlot(@Nullable MapAtlas.Data var1);
+      void zenith$setAtlasSlot(@Nullable MapAtlas.Data data);
 
       @Nullable
       MapAtlas.Data zenith$getAtlasSlot();
 
       @Nullable
-      default MapAtlas.Data method7747(@Nullable Identifier var1) {
-         MapAtlas.Data var2 = this.zenith$getAtlasSlot();
-         return var2 != null && var2.method6153().equals(var1) ? var2 : null;
+      default MapAtlas.Data method7747(@Nullable Identifier id) {
+         MapAtlas.Data zenith$getAtlasSlot = this.zenith$getAtlasSlot();
+         return zenith$getAtlasSlot != null && zenith$getAtlasSlot.method6153().equals(id) ? zenith$getAtlasSlot : null;
       }
    }
 }

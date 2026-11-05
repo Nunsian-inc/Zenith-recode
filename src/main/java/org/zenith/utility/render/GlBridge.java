@@ -19,7 +19,7 @@ public final class GlBridge {
    }
 
    public static boolean isOpenGl() {
-      return RenderSystem.getDevice() instanceof FrontendGpuDevice var0 && var0.backend instanceof GlDevice;
+      return RenderSystem.getDevice() instanceof FrontendGpuDevice frontendGpuDevice && frontendGpuDevice.backend instanceof GlDevice;
    }
 
    public static GlDevice device() {
@@ -30,8 +30,8 @@ public final class GlBridge {
       return (GlCommandEncoder)((FrontendCommandEncoder)RenderSystem.getDevice().createCommandEncoder()).backend();
    }
 
-   public static int fbo(GpuTextureView var0, @Nullable GpuTextureView var1) {
-      GlDevice var2 = device();
-      return var2.frameBufferCache().getFbo(var2.directStateAccess(), Collections.singletonList((GlTextureView)var0), (GlTextureView)var1);
+   public static int fbo(GpuTextureView colorTextureView, @Nullable GpuTextureView depthTextureView) {
+      GlDevice glDevice = device();
+      return glDevice.frameBufferCache().getFbo(glDevice.directStateAccess(), Collections.singletonList((GlTextureView)colorTextureView), (GlTextureView)depthTextureView);
    }
 }

@@ -17,56 +17,56 @@ public final class SnowVisibility {
       return visible && !floatArrayBuffer.isEmpty();
    }
 
-   public static void setVisible(boolean var0) {
-      visible = var0;
+   public static void setVisible(boolean flag) {
+      visible = flag;
    }
 
    public static FloatArrayBuffer getFloatArrayBuffer() {
       return floatArrayBuffer;
    }
 
-   public static void method2401(int var0, int var1, int var2) {
-      intValue = var0;
-      intValue2 = var1;
-      intValue3 = var2;
+   public static void method2401(int n, int n2, int n3) {
+      intValue = n;
+      intValue2 = n2;
+      intValue3 = n3;
    }
 
-   public static void method2402(Glowboost var0) {
+   public static void method2402(Glowboost glowboost) {
       if (isVisible()) {
-         var0.method3235(0.0F);
-         float var1 = 0.25F;
+         glowboost.method3235(0.0F);
+         float f = 0.25F;
 
-         for (int var2 = 0; var2 < floatArrayBuffer.getIntValue(); var2++) {
-            int var3 = method2403(floatArrayBuffer.method383(var2, 0), floatArrayBuffer.method384(var2, 0), floatArrayBuffer.method385(var2, 0));
-            int var4 = method2403(floatArrayBuffer.method383(var2, 1), floatArrayBuffer.method384(var2, 1), floatArrayBuffer.method385(var2, 1));
-            int var5 = method2403(floatArrayBuffer.method383(var2, 2), floatArrayBuffer.method384(var2, 2), floatArrayBuffer.method385(var2, 2));
-            int var6 = method2403(floatArrayBuffer.method383(var2, 3), floatArrayBuffer.method384(var2, 3), floatArrayBuffer.method385(var2, 3));
-            var0.method3239(
-               floatArrayBuffer.method380(var2, 0) * var1,
-               floatArrayBuffer.method381(var2, 0) * var1,
-               floatArrayBuffer.method382(var2, 0) * var1,
-               floatArrayBuffer.method380(var2, 1) * var1,
-               floatArrayBuffer.method381(var2, 1) * var1,
-               floatArrayBuffer.method382(var2, 1) * var1,
-               floatArrayBuffer.method380(var2, 2) * var1,
-               floatArrayBuffer.method381(var2, 2) * var1,
-               floatArrayBuffer.method382(var2, 2) * var1,
-               floatArrayBuffer.method380(var2, 3) * var1,
-               floatArrayBuffer.method381(var2, 3) * var1,
-               floatArrayBuffer.method382(var2, 3) * var1,
-               var3,
-               var4,
-               var5,
-               var6
+         for (int i = 0; i < floatArrayBuffer.getIntValue(); i++) {
+            int n = method2403(floatArrayBuffer.method383(i, 0), floatArrayBuffer.method384(i, 0), floatArrayBuffer.method385(i, 0));
+            int n2 = method2403(floatArrayBuffer.method383(i, 1), floatArrayBuffer.method384(i, 1), floatArrayBuffer.method385(i, 1));
+            int n3 = method2403(floatArrayBuffer.method383(i, 2), floatArrayBuffer.method384(i, 2), floatArrayBuffer.method385(i, 2));
+            int n4 = method2403(floatArrayBuffer.method383(i, 3), floatArrayBuffer.method384(i, 3), floatArrayBuffer.method385(i, 3));
+            glowboost.method3239(
+               floatArrayBuffer.method380(i, 0) * f,
+               floatArrayBuffer.method381(i, 0) * f,
+               floatArrayBuffer.method382(i, 0) * f,
+               floatArrayBuffer.method380(i, 1) * f,
+               floatArrayBuffer.method381(i, 1) * f,
+               floatArrayBuffer.method382(i, 1) * f,
+               floatArrayBuffer.method380(i, 2) * f,
+               floatArrayBuffer.method381(i, 2) * f,
+               floatArrayBuffer.method382(i, 2) * f,
+               floatArrayBuffer.method380(i, 3) * f,
+               floatArrayBuffer.method381(i, 3) * f,
+               floatArrayBuffer.method382(i, 3) * f,
+               n,
+               n2,
+               n3,
+               n4
             );
          }
       }
    }
 
-   private static int method2403(float var0, float var1, float var2) {
-      float var3 = Math.max(0.0F, var0 * CONST_floatValues[0] + var1 * CONST_floatValues[1] + var2 * CONST_floatValues[2]);
-      float var4 = 0.42F + 0.58F * var3;
-      int var5 = Math.clamp((long)((int)(var4 * 255.0F + 0.5F)), 0, 255);
-      return 0xFF000000 | var5 << 16 | var5 << 8 | Math.min(255, var5 + 8);
+   private static int method2403(float f, float f2, float f3) {
+      float f4 = Math.max(0.0F, f * CONST_floatValues[0] + f2 * CONST_floatValues[1] + f3 * CONST_floatValues[2]);
+      float f5 = 0.42F + 0.58F * f4;
+      int n = Math.clamp((long)((int)(f5 * 255.0F + 0.5F)), 0, 255);
+      return 0xFF000000 | n << 16 | n << 8 | Math.min(255, n + 8);
    }
 }

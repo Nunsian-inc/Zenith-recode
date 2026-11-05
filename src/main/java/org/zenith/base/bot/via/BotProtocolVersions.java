@@ -38,14 +38,14 @@ public final class BotProtocolVersions {
    private BotProtocolVersions() {
    }
 
-   public static String label(int var0) {
-      for (BotProtocolVersions.Entry var2 : ENTRIES) {
-         if (var2.protocol() == var0) {
-            return var2.label();
+   public static String label(int selectedProtocolVersion) {
+      for (BotProtocolVersions.Entry entry : ENTRIES) {
+         if (entry.protocol() == selectedProtocolVersion) {
+            return entry.label();
          }
       }
 
-      return var0 <= 0 ? ENTRIES.get(0).label() : "#" + var0;
+      return selectedProtocolVersion <= 0 ? ENTRIES.get(0).label() : "#" + selectedProtocolVersion;
    }
 
    public static final class Entry {
@@ -77,9 +77,9 @@ public final class BotProtocolVersions {
          return "Entry[" + "protocol=" + this.protocol + ", " + "label=" + this.label + "]";
       }
 
-      public Entry(int var1, String var2) {
-         this.protocol = var1;
-         this.label = var2;
+      public Entry(int protocol, String label) {
+         this.protocol = protocol;
+         this.label = label;
       }
    }
 }

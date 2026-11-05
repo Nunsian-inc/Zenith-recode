@@ -68,155 +68,155 @@ public class PlayerSimulation implements ZenithAccess {
    private boolean flag11 = false;
 
    public PlayerSimulation(
-      Player var1,
-      PlayerSimulation.Entry var2,
-      Vec3 var3,
-      Vec3 var4,
-      AABB var5,
-      float var6,
-      float var7,
-      boolean var8,
-      float var9,
-      int var10,
-      boolean var11,
-      boolean var12,
-      boolean var13,
-      boolean var14,
-      boolean var15,
-      boolean var16,
-      boolean var17,
-      boolean var18,
-      Pose var19,
-      boolean var20,
-      boolean var21,
-      Object2DoubleMap<TagKey<Fluid>> var22,
-      HashSet<TagKey<Fluid>> var23
+      Player playerEntity,
+      PlayerSimulation.Entry entry,
+      Vec3 vec3d,
+      Vec3 vec3d2,
+      AABB box,
+      float floatValue,
+      float xRot,
+      boolean flag,
+      float fallDistance,
+      int intValue,
+      boolean jumping,
+      boolean fallFlying,
+      boolean flag2,
+      boolean horizontalCollision,
+      boolean verticalCollision,
+      boolean inWater,
+      boolean swimming,
+      boolean underWater,
+      Pose entityPose,
+      boolean inSneakingPose,
+      boolean visuallyCrawling,
+      Object2DoubleMap<TagKey<Fluid>> object2DoubleMap,
+      HashSet<TagKey<Fluid>> hashSet
    ) {
-      this.playerEntity = var1;
-      this.entry = var2;
-      this.vec3d = var3;
-      this.vec3d2 = var4;
-      this.box = var5;
-      this.floatValue = var6;
-      this.floatValue2 = var7;
-      this.flag = var8;
-      this.floatValue3 = var9;
-      this.intValue = var10;
-      this.flag2 = var11;
-      this.flag3 = var12;
-      this.flag4 = var13;
-      this.flag5 = var14;
-      this.flag6 = var15;
-      this.flag7 = var16;
-      this.flag8 = var17;
-      this.flag9 = var18;
-      this.entityPose = var19;
-      this.inSneakingPose = var20;
-      this.flag10 = var21;
-      this.object2DoubleMap = var22;
-      this.hashSet = var23;
+      this.playerEntity = playerEntity;
+      this.entry = entry;
+      this.vec3d = vec3d;
+      this.vec3d2 = vec3d2;
+      this.box = box;
+      this.floatValue = floatValue;
+      this.floatValue2 = xRot;
+      this.flag = flag;
+      this.floatValue3 = fallDistance;
+      this.intValue = intValue;
+      this.flag2 = jumping;
+      this.flag3 = fallFlying;
+      this.flag4 = flag2;
+      this.flag5 = horizontalCollision;
+      this.flag6 = verticalCollision;
+      this.flag7 = inWater;
+      this.flag8 = swimming;
+      this.flag9 = underWater;
+      this.entityPose = entityPose;
+      this.inSneakingPose = inSneakingPose;
+      this.flag10 = visuallyCrawling;
+      this.object2DoubleMap = object2DoubleMap;
+      this.hashSet = hashSet;
    }
 
-   public static PlayerSimulation method6031(int var0) {
-      PlayerSimulation var1 = method6033(PlayerSimulation.Entry.method6092(mc.player.input.keyPresses));
+   public static PlayerSimulation method6031(int n) {
+      PlayerSimulation playerSimulation = method6033(PlayerSimulation.Entry.method6092(mc.player.input.keyPresses));
 
-      for (int var2 = 0; var2 < var0; var2++) {
-         var1.tick();
+      for (int i = 0; i < n; i++) {
+         playerSimulation.tick();
       }
 
-      return var1;
+      return playerSimulation;
    }
 
-   public static PlayerSimulation method6032(Player var0, int var1) {
-      PlayerSimulation var2 = method6034(var0, PlayerSimulation.Entry.method6093(var0));
+   public static PlayerSimulation method6032(Player player, int scale) {
+      PlayerSimulation playerSimulation = method6034(player, PlayerSimulation.Entry.method6093(player));
 
-      for (int var3 = 0; var3 < var1; var3++) {
-         var2.tick();
+      for (int i = 0; i < scale; i++) {
+         playerSimulation.tick();
       }
 
-      return var2;
+      return playerSimulation;
    }
 
-   public static PlayerSimulation method6033(PlayerSimulation.Entry var0) {
-      LocalPlayer var1 = mc.player;
+   public static PlayerSimulation method6033(PlayerSimulation.Entry entry) {
+      LocalPlayer player = mc.player;
       return new PlayerSimulation(
-         var1,
-         var0,
-         var1.position(),
-         var1.getDeltaMovement(),
-         var1.getBoundingBox(),
+         player,
+         entry,
+         player.position(),
+         player.getDeltaMovement(),
+         player.getBoundingBox(),
          Zenith.getInstance().getRotationManager().method7844().getFloatValue(),
          Zenith.getInstance().getRotationManager().method7844().getFloatValue2(),
-         var1.isSprinting(),
-         (float)var1.fallDistance,
-         var1.noJumpDelay,
-         var1.jumping,
-         var1.isFallFlying(),
-         var1.onGround(),
-         var1.horizontalCollision,
-         var1.verticalCollision,
-         var1.isInWater(),
-         var1.isSwimming(),
-         var1.isUnderWater(),
-         var1.getPose(),
-         var1.isCrouching(),
-         var1.isVisuallyCrawling(),
-         zenith$fluidHeights(var1),
-         zenith$eyeFluids(var1)
+         player.isSprinting(),
+         (float)player.fallDistance,
+         player.noJumpDelay,
+         player.jumping,
+         player.isFallFlying(),
+         player.onGround(),
+         player.horizontalCollision,
+         player.verticalCollision,
+         player.isInWater(),
+         player.isSwimming(),
+         player.isUnderWater(),
+         player.getPose(),
+         player.isCrouching(),
+         player.isVisuallyCrawling(),
+         zenith$fluidHeights(player),
+         zenith$eyeFluids(player)
       );
    }
 
    // 26.3 replaced Entity#fluidHeight/#fluidOnEyes with EntityFluidInteraction; rebuild the same snapshot
-   private static Object2DoubleArrayMap<TagKey<Fluid>> zenith$fluidHeights(net.minecraft.world.entity.Entity var0) {
-      Object2DoubleArrayMap<TagKey<Fluid>> var1 = new Object2DoubleArrayMap<>();
-      for (TagKey<Fluid> var2 : java.util.List.of(net.minecraft.tags.FluidTags.WATER, net.minecraft.tags.FluidTags.LAVA)) {
-         double var3 = var0.getFluidHeight(var2);
-         if (var3 > 0.0) {
-            var1.put(var2, var3);
+   private static Object2DoubleArrayMap<TagKey<Fluid>> zenith$fluidHeights(net.minecraft.world.entity.Entity player) {
+      Object2DoubleArrayMap<TagKey<Fluid>> object2DoubleArrayMap = new Object2DoubleArrayMap<>();
+      for (TagKey<Fluid> type : java.util.List.of(net.minecraft.tags.FluidTags.WATER, net.minecraft.tags.FluidTags.LAVA)) {
+         double fluidHeight = player.getFluidHeight(type);
+         if (fluidHeight > 0.0) {
+            object2DoubleArrayMap.put(type, fluidHeight);
          }
       }
 
-      return var1;
+      return object2DoubleArrayMap;
    }
 
-   private static HashSet<TagKey<Fluid>> zenith$eyeFluids(net.minecraft.world.entity.Entity var0) {
-      HashSet<TagKey<Fluid>> var1 = new HashSet<>();
-      for (TagKey<Fluid> var2 : java.util.List.of(net.minecraft.tags.FluidTags.WATER, net.minecraft.tags.FluidTags.LAVA)) {
-         if (var0.isEyeInFluid(var2)) {
-            var1.add(var2);
+   private static HashSet<TagKey<Fluid>> zenith$eyeFluids(net.minecraft.world.entity.Entity player) {
+      HashSet<TagKey<Fluid>> tagKeys = new HashSet<>();
+      for (TagKey<Fluid> type : java.util.List.of(net.minecraft.tags.FluidTags.WATER, net.minecraft.tags.FluidTags.LAVA)) {
+         if (player.isEyeInFluid(type)) {
+            tagKeys.add(type);
          }
       }
 
-      return var1;
+      return tagKeys;
    }
 
-   public static PlayerSimulation method6034(Player var0, PlayerSimulation.Entry var1) {
-      Vec3 var2 = var0.getPositionCodec().getBase();
-      Vec3 var3 = ((Handler6)var0).zenithDLC$getServerDelta();
+   public static PlayerSimulation method6034(Player player, PlayerSimulation.Entry entry) {
+      Vec3 base = player.getPositionCodec().getBase();
+      Vec3 zenithDLC$getServerDelta = ((Handler6)player).zenithDLC$getServerDelta();
       return new PlayerSimulation(
-         var0,
-         var1,
-         var2,
-         var3.scale(0.5),
-         var0.getDimensions(var0.getPose()).makeBoundingBox(var2),
-         var0.getInterpolation() == null || var0.getInterpolation().target() == null ? var0.getYRot() : var0.getInterpolation().target().yRot(),
-         var0.getInterpolation() == null || var0.getInterpolation().target() == null ? var0.getXRot() : var0.getInterpolation().target().xRot(),
-         var0.isSprinting(),
-         (float)var0.fallDistance,
-         var0.noJumpDelay,
-         var0.jumping,
-         var0.isFallFlying(),
-         var0.onGround(),
-         var0.horizontalCollision,
-         var0.verticalCollision,
-         var0.isInWater(),
-         var0.isSwimming(),
-         var0.isUnderWater(),
-         var0.getPose(),
-         var0.isCrouching(),
-         var0.isVisuallyCrawling(),
-         zenith$fluidHeights(var0),
-         zenith$eyeFluids(var0)
+         player,
+         entry,
+         base,
+         zenithDLC$getServerDelta.scale(0.5),
+         player.getDimensions(player.getPose()).makeBoundingBox(base),
+         player.getInterpolation() == null || player.getInterpolation().target() == null ? player.getYRot() : player.getInterpolation().target().yRot(),
+         player.getInterpolation() == null || player.getInterpolation().target() == null ? player.getXRot() : player.getInterpolation().target().xRot(),
+         player.isSprinting(),
+         (float)player.fallDistance,
+         player.noJumpDelay,
+         player.jumping,
+         player.isFallFlying(),
+         player.onGround(),
+         player.horizontalCollision,
+         player.verticalCollision,
+         player.isInWater(),
+         player.isSwimming(),
+         player.isUnderWater(),
+         player.getPose(),
+         player.isCrouching(),
+         player.isVisuallyCrawling(),
+         zenith$fluidHeights(player),
+         zenith$eyeFluids(player)
       );
    }
 
@@ -246,33 +246,33 @@ public class PlayerSimulation implements ZenithAccess {
          }
 
          this.flag2 = this.entry.keyPresses.jump();
-         double var1 = this.vec3d2.x;
-         double var3 = this.vec3d2.y;
-         double var5 = this.vec3d2.z;
+         double x = this.vec3d2.x;
+         double y = this.vec3d2.y;
+         double z = this.vec3d2.z;
          if (Math.abs(this.vec3d2.x) < 0.003) {
-            var1 = 0.0;
+            x = 0.0;
          }
 
          if (Math.abs(this.vec3d2.y) < 0.003) {
-            var3 = 0.0;
+            y = 0.0;
          }
 
          if (Math.abs(this.vec3d2.z) < 0.003) {
-            var5 = 0.0;
+            z = 0.0;
          }
 
          if (this.flag4) {
             this.flag3 = false;
          }
 
-         this.vec3d2 = new Vec3(var1, var3, var5);
+         this.vec3d2 = new Vec3(x, y, z);
          if (this.flag2 && this.playerEntity.isAffectedByFluids()) {
-            double var7 = this.method6064() ? this.method6079(FluidTags.LAVA) : this.method6079(FluidTags.WATER);
-            boolean var9 = this.isFlag7() && var7 > 0.0;
-            double var10 = this.method6063();
-            if (!var9 || this.flag4 && !(var7 > var10)) {
-               if (!this.method6064() || this.flag4 && !(var7 > var10)) {
-                  if ((this.flag4 || var9 && var7 <= var10) && this.intValue == 0) {
+            double d = this.method6064() ? this.method6079(FluidTags.LAVA) : this.method6079(FluidTags.WATER);
+            boolean flag = this.isFlag7() && d > 0.0;
+            double d2 = this.method6063();
+            if (!flag || this.flag4 && !(d > d2)) {
+               if (!this.method6064() || this.flag4 && !(d > d2)) {
+                  if ((this.flag4 || flag && d <= d2) && this.intValue == 0) {
                      this.method6044();
                      this.intValue = 10;
                   }
@@ -286,155 +286,155 @@ public class PlayerSimulation implements ZenithAccess {
             this.intValue = 0;
          }
 
-         float var12 = this.entry.floatValue2 * 0.98F;
-         float var8 = this.entry.floatValue * 0.98F;
-         float var13 = 0.0F;
+         float f = this.entry.floatValue2 * 0.98F;
+         float z2 = this.entry.floatValue * 0.98F;
+         float y2 = 0.0F;
          if (this.method6084(MobEffects.SLOW_FALLING) || this.method6084(MobEffects.LEVITATION)) {
             this.method6043();
          }
 
-         this.method6035(new Vec3(var12, var13, var8));
+         this.method6035(new Vec3(f, y2, z2));
       }
    }
 
-   private void method6035(Vec3 var1) {
+   private void method6035(Vec3 vec) {
       if (this.flag8 && !this.playerEntity.isPassenger()) {
-         double var2 = this.method6082().y;
-         double var4 = var2 < -0.2 ? 0.085 : 0.06;
-         BlockPos var6 = new BlockPos(Mth.floor(this.vec3d.x), Mth.floor(this.vec3d.y + 1.0 - 0.1), Mth.floor(this.vec3d.z));
-         if (var2 <= 0.0 || this.entry.keyPresses.jump() || !this.playerEntity.level().getBlockState(var6).getFluidState().isEmpty()) {
-            this.vec3d2 = this.vec3d2.add(0.0, (var2 - this.vec3d2.y) * var4, 0.0);
+         double y = this.method6082().y;
+         double d = y < -0.2 ? 0.085 : 0.06;
+         BlockPos pos = new BlockPos(Mth.floor(this.vec3d.x), Mth.floor(this.vec3d.y + 1.0 - 0.1), Mth.floor(this.vec3d.z));
+         if (y <= 0.0 || this.entry.keyPresses.jump() || !this.playerEntity.level().getBlockState(pos).getFluidState().isEmpty()) {
+            this.vec3d2 = this.vec3d2.add(0.0, (y - this.vec3d2.y) * d, 0.0);
          }
       }
 
-      double var18 = this.vec3d2.y;
-      double var19 = this.method6057();
-      boolean var20 = this.vec3d2.y <= 0.0;
+      double y = this.vec3d2.y;
+      double d = this.method6057();
+      boolean flag = this.vec3d2.y <= 0.0;
       if (this.isFlag7() && this.playerEntity.isAffectedByFluids()) {
-         double var24 = this.vec3d.y;
-         float var27 = this.isFlag() ? 0.9F : 0.8F;
-         float var29 = 0.02F;
-         float var31 = (float)this.method6086(Attributes.WATER_MOVEMENT_EFFICIENCY);
+         double y2 = this.vec3d.y;
+         float xScale = this.isFlag() ? 0.9F : 0.8F;
+         float speed = 0.02F;
+         float f = (float)this.method6086(Attributes.WATER_MOVEMENT_EFFICIENCY);
          if (!this.flag4) {
-            var31 *= 0.5F;
+            f *= 0.5F;
          }
 
-         if (var31 > 0.0F) {
-            var27 += (0.54600006F - var27) * var31;
-            var29 += (this.method6040() - var29) * var31;
+         if (f > 0.0F) {
+            xScale += (0.54600006F - xScale) * f;
+            speed += (this.method6040() - speed) * f;
          }
 
          if (this.method6084(MobEffects.DOLPHINS_GRACE)) {
-            var27 = 0.96F;
+            xScale = 0.96F;
          }
 
-         this.method6037(var29, var1);
+         this.method6037(speed, vec);
          this.method6041(this.vec3d2);
-         Vec3 var32 = this.vec3d2;
+         Vec3 vec3d2 = this.vec3d2;
          if (this.flag5 && this.method6046()) {
-            var32 = new Vec3(var32.x, 0.2, var32.z);
+            vec3d2 = new Vec3(vec3d2.x, 0.2, vec3d2.z);
          }
 
-         this.vec3d2 = var32.multiply(var27, 0.8, var27);
-         Vec3 var33 = this.method6058(var19, var20, this.vec3d2);
-         this.vec3d2 = var33;
-         if (this.flag5 && this.method6055(var33.x, var33.y + 0.6 - this.vec3d.y + var24, var33.z)) {
-            this.vec3d2 = new Vec3(var33.x, 0.3, var33.z);
+         this.vec3d2 = vec3d2.multiply(xScale, 0.8, xScale);
+         Vec3 vec3d22 = this.method6058(d, flag, this.vec3d2);
+         this.vec3d2 = vec3d22;
+         if (this.flag5 && this.method6055(vec3d22.x, vec3d22.y + 0.6 - this.vec3d.y + y2, vec3d22.z)) {
+            this.vec3d2 = new Vec3(vec3d22.x, 0.3, vec3d22.z);
          }
       } else if (this.method6064() && this.playerEntity.isAffectedByFluids()) {
-         double var23 = this.vec3d.y;
-         this.method6037(0.02F, var1);
+         double y2 = this.vec3d.y;
+         this.method6037(0.02F, vec);
          this.method6041(this.vec3d2);
          if (this.method6079(FluidTags.LAVA) <= this.method6063()) {
             this.vec3d2 = this.vec3d2.multiply(0.5, 0.8, 0.5);
-            this.vec3d2 = this.method6058(var19, var20, this.vec3d2);
+            this.vec3d2 = this.method6058(d, flag, this.vec3d2);
          } else {
             this.vec3d2 = this.vec3d2.scale(0.5);
          }
 
-         if (var19 != 0.0) {
-            this.vec3d2 = this.vec3d2.add(0.0, -var19 / 4.0, 0.0);
+         if (d != 0.0) {
+            this.vec3d2 = this.vec3d2.add(0.0, -d / 4.0, 0.0);
          }
 
-         if (this.flag5 && this.method6055(this.vec3d2.x, this.vec3d2.y + 0.6 - this.vec3d.y + var23, this.vec3d2.z)) {
+         if (this.flag5 && this.method6055(this.vec3d2.x, this.vec3d2.y + 0.6 - this.vec3d.y + y2, this.vec3d2.z)) {
             this.vec3d2 = new Vec3(this.vec3d2.x, 0.3, this.vec3d2.z);
          }
       } else if (this.flag3) {
-         Vec3 var9 = this.vec3d2;
-         Vec3 var10 = this.method6082();
-         float var11 = this.floatValue2 * (float) (Math.PI / 180.0);
-         double var12 = Math.sqrt(var10.x * var10.x + var10.z * var10.z);
-         double var14 = this.vec3d2.horizontalDistance();
-         double var16 = Mth.square(Mth.cos(var11));
-         var9 = this.vec3d2.add(0.0, var19 * (-1.0 + var16 * 0.75), 0.0);
-         if (var9.y < 0.0 && var12 > 0.0) {
-            double var7 = var9.y * -0.1 * var16;
-            var9 = var9.add(var10.x * var7 / var12, var7, var10.z * var7 / var12);
+         Vec3 vec3d2 = this.vec3d2;
+         Vec3 vec2 = this.method6082();
+         float f = this.floatValue2 * (float) (Math.PI / 180.0);
+         double d2 = Math.sqrt(vec2.x * vec2.x + vec2.z * vec2.z);
+         double horizontalDistance = this.vec3d2.horizontalDistance();
+         double square = Mth.square(Mth.cos(f));
+         vec3d2 = this.vec3d2.add(0.0, d * (-1.0 + square * 0.75), 0.0);
+         if (vec3d2.y < 0.0 && d2 > 0.0) {
+            double y2 = vec3d2.y * -0.1 * square;
+            vec3d2 = vec3d2.add(vec2.x * y2 / d2, y2, vec2.z * y2 / d2);
          }
 
-         if (var11 < 0.0F && var12 > 0.0) {
-            double var21 = var14 * -Mth.sin(var11) * 0.04;
-            var9 = var9.add(-var10.x * var21 / var12, var21 * 3.2, -var10.z * var21 / var12);
+         if (f < 0.0F && d2 > 0.0) {
+            double d3 = horizontalDistance * -Mth.sin(f) * 0.04;
+            vec3d2 = vec3d2.add(-vec2.x * d3 / d2, d3 * 3.2, -vec2.z * d3 / d2);
          }
 
-         if (var12 > 0.0) {
-            var9 = var9.add((var10.x / var12 * var14 - var9.x) * 0.1, 0.0, (var10.z / var12 * var14 - var9.z) * 0.1);
+         if (d2 > 0.0) {
+            vec3d2 = vec3d2.add((vec2.x / d2 * horizontalDistance - vec3d2.x) * 0.1, 0.0, (vec2.z / d2 * horizontalDistance - vec3d2.z) * 0.1);
          }
 
-         this.vec3d2 = var9.multiply(0.99, 0.98, 0.99);
+         this.vec3d2 = vec3d2.multiply(0.99, 0.98, 0.99);
          this.method6041(this.vec3d2);
       } else {
-         BlockPos var22 = this.method6062();
-         float var8 = this.flag4 ? this.playerEntity.level().getBlockState(var22).getBlock().getFriction() : 1.0F;
-         float var26 = var8 * 0.91F;
-         Vec3 var28 = this.method6036(var1, var8);
-         double var30 = var28.y;
+         BlockPos pos = this.method6062();
+         float friction = this.flag4 ? this.playerEntity.level().getBlockState(pos).getBlock().getFriction() : 1.0F;
+         float f = friction * 0.91F;
+         Vec3 vec2 = this.method6036(vec, friction);
+         double y2 = vec2.y;
          if (this.method6084(MobEffects.LEVITATION)) {
-            MobEffectInstance var13 = this.method6085(MobEffects.LEVITATION);
-            if (var13 != null) {
-               var30 += (0.05 * (var13.getAmplifier() + 1) - var28.y) * 0.2;
+            MobEffectInstance mobEffectInstance = this.method6085(MobEffects.LEVITATION);
+            if (mobEffectInstance != null) {
+               y2 += (0.05 * (mobEffectInstance.getAmplifier() + 1) - vec2.y) * 0.2;
             }
-         } else if (this.playerEntity.level().isClientSide() && !this.playerEntity.level().hasChunkAt(var22)) {
-            var30 = this.vec3d.y > this.playerEntity.level().getMinY() ? -0.1 : 0.0;
-         } else if (var19 != 0.0) {
-            var30 -= var19;
+         } else if (this.playerEntity.level().isClientSide() && !this.playerEntity.level().hasChunkAt(pos)) {
+            y2 = this.vec3d.y > this.playerEntity.level().getMinY() ? -0.1 : 0.0;
+         } else if (d != 0.0) {
+            y2 -= d;
          }
 
          if (this.playerEntity.shouldDiscardFriction()) {
-            this.vec3d2 = new Vec3(var28.x, var30, var28.z);
+            this.vec3d2 = new Vec3(vec2.x, y2, vec2.z);
          } else {
-            this.vec3d2 = new Vec3(var28.x * var26, var30 * 0.98F, var28.z * var26);
+            this.vec3d2 = new Vec3(vec2.x * f, y2 * 0.98F, vec2.z * f);
          }
       }
 
       if (this.playerEntity.getAbilities().flying && !this.playerEntity.isPassenger()) {
-         this.vec3d2 = new Vec3(this.vec3d2.x, var18 * 0.6, this.vec3d2.z);
+         this.vec3d2 = new Vec3(this.vec3d2.x, y * 0.6, this.vec3d2.z);
          this.method6043();
       }
    }
 
-   private Vec3 method6036(Vec3 var1, float var2) {
-      this.method6037(this.method6038(var2), var1);
+   private Vec3 method6036(Vec3 vec, float friction) {
+      this.method6037(this.method6038(friction), vec);
       this.vec3d2 = this.method6045(this.vec3d2);
       this.method6041(this.vec3d2);
-      Vec3 var3 = this.vec3d2;
-      BlockPos var4 = this.method6089(this.vec3d);
-      BlockState var5 = this.method6090(var4);
+      Vec3 vec3d2 = this.vec3d2;
+      BlockPos pos = this.method6089(this.vec3d);
+      BlockState blockState = this.method6090(pos);
       if ((this.flag5 || this.flag2)
-         && (this.method6046() || var5 != null && var5.is(Blocks.POWDER_SNOW) && PowderSnowBlock.canEntityWalkOnPowderSnow(this.playerEntity))) {
-         var3 = new Vec3(var3.x, 0.2, var3.z);
+         && (this.method6046() || blockState != null && blockState.is(Blocks.POWDER_SNOW) && PowderSnowBlock.canEntityWalkOnPowderSnow(this.playerEntity))) {
+         vec3d2 = new Vec3(vec3d2.x, 0.2, vec3d2.z);
       }
 
-      return var3;
+      return vec3d2;
    }
 
-   private void method6037(float var1, Vec3 var2) {
-      Vec3 var3 = Entity.getInputVector(var2, var1, this.floatValue);
-      this.vec3d2 = this.vec3d2.add(var3);
+   private void method6037(float speed, Vec3 vec) {
+      Vec3 inputVector = Entity.getInputVector(vec, speed, this.floatValue);
+      this.vec3d2 = this.vec3d2.add(inputVector);
    }
 
-   private float method6038(float var1) {
-      return this.flag4 ? this.method6040() * (0.21600002F / (var1 * var1 * var1)) : this.method6039();
+   private float method6038(float friction) {
+      return this.flag4 ? this.method6040() * (0.21600002F / (friction * friction * friction)) : this.method6039();
    }
 
    private float method6039() {
@@ -445,81 +445,81 @@ public class PlayerSimulation implements ZenithAccess {
       return (float)this.method6086(Attributes.MOVEMENT_SPEED);
    }
 
-   private void method6041(Vec3 var1) {
-      Vec3 var2 = this.method6048(var1);
-      Vec3 var3 = this.method6042(var2);
-      if (var3.lengthSqr() > 1.0E-7) {
-         this.vec3d = this.vec3d.add(var3);
-         this.box = this.box.move(var3);
+   private void method6041(Vec3 vec3d2) {
+      Vec3 movement = this.method6048(vec3d2);
+      Vec3 vec = this.method6042(movement);
+      if (vec.lengthSqr() > 1.0E-7) {
+         this.vec3d = this.vec3d.add(vec);
+         this.box = this.box.move(vec);
       }
 
-      boolean var4 = !Mth.equal(var2.x, var3.x);
-      boolean var5 = !Mth.equal(var2.z, var3.z);
-      this.flag5 = var4 || var5;
-      this.flag6 = var2.y != var3.y;
-      this.flag4 = this.flag6 && var2.y < 0.0;
+      boolean flag = !Mth.equal(movement.x, vec.x);
+      boolean flag2 = !Mth.equal(movement.z, vec.z);
+      this.flag5 = flag || flag2;
+      this.flag6 = movement.y != vec.y;
+      this.flag4 = this.flag6 && movement.y < 0.0;
       if (!this.isFlag7()) {
          this.method6065();
       }
 
       if (this.flag4) {
          this.method6043();
-      } else if (var2.y < 0.0) {
-         this.floatValue3 = this.floatValue3 - (float)var2.y;
+      } else if (movement.y < 0.0) {
+         this.floatValue3 = this.floatValue3 - (float)movement.y;
       }
 
-      Vec3 var6 = this.vec3d2;
+      Vec3 vec3d22 = this.vec3d2;
       if (this.flag5 || this.flag6) {
-         this.vec3d2 = new Vec3(var4 ? 0.0 : var6.x, this.flag4 ? 0.0 : var6.y, var5 ? 0.0 : var6.z);
+         this.vec3d2 = new Vec3(flag ? 0.0 : vec3d22.x, this.flag4 ? 0.0 : vec3d22.y, flag2 ? 0.0 : vec3d22.z);
       }
 
-      float var7 = this.method6059();
-      this.vec3d2 = this.vec3d2.multiply(var7, 1.0, var7);
+      float xScale = this.method6059();
+      this.vec3d2 = this.vec3d2.multiply(xScale, 1.0, xScale);
    }
 
-   private Vec3 method6042(Vec3 var1) {
-      AABB var2 = this.box;
-      java.util.List<net.minecraft.world.phys.shapes.VoxelShape> var3 = Collections.emptyList();
-      Vec3 var4;
-      if (var1.lengthSqr() == 0.0) {
-         var4 = var1;
+   private Vec3 method6042(Vec3 movement) {
+      AABB box = this.box;
+      java.util.List<net.minecraft.world.phys.shapes.VoxelShape> emptyList = Collections.emptyList();
+      Vec3 vec;
+      if (movement.lengthSqr() == 0.0) {
+         vec = movement;
       } else {
-         var4 = Entity.collideBoundingBox(this.playerEntity, var1, var2, this.playerEntity.level(), var3);
+         vec = Entity.collideBoundingBox(this.playerEntity, movement, box, this.playerEntity.level(), emptyList);
       }
 
-      boolean var5 = var1.x != var4.x;
-      boolean var6 = var1.y != var4.y;
-      boolean var7 = var1.z != var4.z;
-      boolean var8 = this.flag4 || var6 && var1.y < 0.0;
-      if (this.playerEntity.maxUpStep() > 0.0F && var8 && (var5 || var7)) {
-         Vec3 var9 = Entity.collideBoundingBox(
-            this.playerEntity, new Vec3(var1.x, this.playerEntity.maxUpStep(), var1.z), var2, this.playerEntity.level(), var3
+      boolean flag = movement.x != vec.x;
+      boolean flag2 = movement.y != vec.y;
+      boolean flag3 = movement.z != vec.z;
+      boolean flag4 = this.flag4 || flag2 && movement.y < 0.0;
+      if (this.playerEntity.maxUpStep() > 0.0F && flag4 && (flag || flag3)) {
+         Vec3 collideBoundingBox = Entity.collideBoundingBox(
+            this.playerEntity, new Vec3(movement.x, this.playerEntity.maxUpStep(), movement.z), box, this.playerEntity.level(), emptyList
          );
-         Vec3 var10 = Entity.collideBoundingBox(
+         Vec3 collideBoundingBox2 = Entity.collideBoundingBox(
             this.playerEntity,
             new Vec3(0.0, this.playerEntity.maxUpStep(), 0.0),
-            var2.expandTowards(var1.x, 0.0, var1.z),
+            box.expandTowards(movement.x, 0.0, movement.z),
             this.playerEntity.level(),
-            var3
+            emptyList
          );
-         Vec3 var11 = Entity.collideBoundingBox(
-               this.playerEntity, new Vec3(var1.x, 0.0, var1.z), var2.move(var10), this.playerEntity.level(), var3
+         Vec3 vec2 = Entity.collideBoundingBox(
+               this.playerEntity, new Vec3(movement.x, 0.0, movement.z), box.move(collideBoundingBox2), this.playerEntity.level(), emptyList
             )
-            .add(var10);
-         if (var10.y < this.playerEntity.maxUpStep() && var11.horizontalDistanceSqr() > var9.horizontalDistanceSqr()) {
-            var9 = var11;
+            .add(collideBoundingBox2);
+         if (collideBoundingBox2.y < this.playerEntity.maxUpStep() && vec2.horizontalDistanceSqr() > collideBoundingBox.horizontalDistanceSqr()) {
+            collideBoundingBox = vec2;
          }
 
-         if (var9.horizontalDistanceSqr() > var4.horizontalDistanceSqr()) {
-            return var9.add(
+         if (collideBoundingBox.horizontalDistanceSqr() > vec.horizontalDistanceSqr()) {
+            return collideBoundingBox.add(
                Entity.collideBoundingBox(
-                  this.playerEntity, new Vec3(0.0, -var9.y + var1.y, 0.0), var2.move(var9), this.playerEntity.level(), var3
+                  this.playerEntity, new Vec3(0.0, -collideBoundingBox.y + movement.y, 0.0), box.move(collideBoundingBox), this.playerEntity.level(), emptyList
                )
             );
          }
       }
 
-      return var4;
+      return vec;
    }
 
    private void method6043() {
@@ -527,110 +527,110 @@ public class PlayerSimulation implements ZenithAccess {
    }
 
    public void method6044() {
-      float var1 = this.method6052();
-      if (!(var1 <= 1.0E-5F)) {
-         this.vec3d2 = new Vec3(this.vec3d2.x, Math.max((double)var1, this.vec3d2.y), this.vec3d2.z);
+      float f = this.method6052();
+      if (!(f <= 1.0E-5F)) {
+         this.vec3d2 = new Vec3(this.vec3d2.x, Math.max((double)f, this.vec3d2.y), this.vec3d2.z);
          if (this.isFlag()) {
-            float var2 = (float)Math.toRadians(this.floatValue);
-            this.vec3d2 = this.vec3d2.add(-Mth.sin(var2) * 0.2, 0.0, Mth.cos(var2) * 0.2);
+            float f2 = (float)Math.toRadians(this.floatValue);
+            this.vec3d2 = this.vec3d2.add(-Mth.sin(f2) * 0.2, 0.0, Mth.cos(f2) * 0.2);
          }
       }
    }
 
-   private Vec3 method6045(Vec3 var1) {
+   private Vec3 method6045(Vec3 vec3d2) {
       if (!this.method6046()) {
-         return var1;
+         return vec3d2;
       } else {
          this.method6043();
-         double var2 = Mth.clamp(var1.x, -0.15F, 0.15F);
-         double var4 = Mth.clamp(var1.z, -0.15F, 0.15F);
-         double var6 = Math.max(var1.y, -0.15F);
-         if (var6 < 0.0 && !this.method6090(this.method6089(this.vec3d)).is(Blocks.SCAFFOLDING) && this.method6072()) {
-            var6 = 0.0;
+         double x = Mth.clamp(vec3d2.x, -0.15F, 0.15F);
+         double z = Mth.clamp(vec3d2.z, -0.15F, 0.15F);
+         double y = Math.max(vec3d2.y, -0.15F);
+         if (y < 0.0 && !this.method6090(this.method6089(this.vec3d)).is(Blocks.SCAFFOLDING) && this.method6072()) {
+            y = 0.0;
          }
 
-         return new Vec3(var2, var6, var4);
+         return new Vec3(x, y, z);
       }
    }
 
    public boolean method6046() {
-      BlockPos var1 = this.method6089(this.vec3d);
-      BlockState var2 = this.method6090(var1);
-      return var2.is(BlockTags.CLIMBABLE) ? true : var2.getBlock() instanceof TrapDoorBlock && this.method6047(var1, var2);
+      BlockPos pos = this.method6089(this.vec3d);
+      BlockState blockState = this.method6090(pos);
+      return blockState.is(BlockTags.CLIMBABLE) ? true : blockState.getBlock() instanceof TrapDoorBlock && this.method6047(pos, blockState);
    }
 
-   private boolean method6047(BlockPos var1, BlockState var2) {
-      if (!var2.getValue(TrapDoorBlock.OPEN)) {
+   private boolean method6047(BlockPos pos, BlockState blockState) {
+      if (!blockState.getValue(TrapDoorBlock.OPEN)) {
          return false;
       } else {
-         BlockState var3 = this.playerEntity.level().getBlockState(var1.below());
-         return var3.is(Blocks.LADDER) && var3.getValue(LadderBlock.FACING).equals(var2.getValue(TrapDoorBlock.FACING));
+         BlockState blockState2 = this.playerEntity.level().getBlockState(pos.below());
+         return blockState2.is(Blocks.LADDER) && blockState2.getValue(LadderBlock.FACING).equals(blockState.getValue(TrapDoorBlock.FACING));
       }
    }
 
-   private Vec3 method6048(Vec3 var1) {
-      double var2 = this.playerEntity.maxUpStep();
-      if (var1.y <= 0.0 && !this.playerEntity.getAbilities().flying && this.method6049() && this.method6050(var2)) {
-         double var4 = var1.x;
-         double var6 = var1.z;
-         double var8 = 0.05;
-         double var10 = Math.signum(var4) * var8;
+   private Vec3 method6048(Vec3 vec3d2) {
+      double maxUpStep = this.playerEntity.maxUpStep();
+      if (vec3d2.y <= 0.0 && !this.playerEntity.getAbilities().flying && this.method6049() && this.method6050(maxUpStep)) {
+         double x = vec3d2.x;
+         double z = vec3d2.z;
+         double d = 0.05;
+         double d2 = Math.signum(x) * d;
 
-         double var12;
-         for (var12 = Math.signum(var6) * var8; var4 != 0.0 && this.method6051(var4, 0.0, var2); var4 -= var10) {
-            if (Math.abs(var4) <= var8) {
-               var4 = 0.0;
+         double d3;
+         for (d3 = Math.signum(z) * d; x != 0.0 && this.method6051(x, 0.0, maxUpStep); x -= d2) {
+            if (Math.abs(x) <= d) {
+               x = 0.0;
                break;
             }
          }
 
-         while (var6 != 0.0 && this.method6051(0.0, var6, var2)) {
-            if (Math.abs(var6) <= var8) {
-               var6 = 0.0;
+         while (z != 0.0 && this.method6051(0.0, z, maxUpStep)) {
+            if (Math.abs(z) <= d) {
+               z = 0.0;
                break;
             }
 
-            var6 -= var12;
+            z -= d3;
          }
 
-         while (var4 != 0.0 && var6 != 0.0 && this.method6051(var4, var6, var2)) {
-            if (Math.abs(var4) <= var8) {
-               var4 = 0.0;
+         while (x != 0.0 && z != 0.0 && this.method6051(x, z, maxUpStep)) {
+            if (Math.abs(x) <= d) {
+               x = 0.0;
             } else {
-               var4 -= var10;
+               x -= d2;
             }
 
-            if (Math.abs(var6) <= var8) {
-               var6 = 0.0;
+            if (Math.abs(z) <= d) {
+               z = 0.0;
                break;
             }
 
-            var6 -= var12;
+            z -= d3;
          }
 
-         if (var1.x != var4 || var1.z != var6) {
+         if (vec3d2.x != x || vec3d2.z != z) {
             this.flag11 = true;
          }
 
-         var1 = new Vec3(var4, var1.y, var6);
+         vec3d2 = new Vec3(x, vec3d2.y, z);
       }
 
-      return var1;
+      return vec3d2;
    }
 
    public boolean method6049() {
       return this.entry.keyPresses.shift() || this.entry.flag;
    }
 
-   private boolean method6050(double var1) {
-      return this.flag4 || this.floatValue3 < var1 && !this.method6051(0.0, 0.0, var1 - this.floatValue3);
+   private boolean method6050(double maxUpStep) {
+      return this.flag4 || this.floatValue3 < maxUpStep && !this.method6051(0.0, 0.0, maxUpStep - this.floatValue3);
    }
 
-   private boolean method6051(double var1, double var3, double var5) {
-      AABB var7 = this.box;
+   private boolean method6051(double x, double z, double maxUpStep) {
+      AABB box = this.box;
       return this.playerEntity
          .level()
-         .noCollision(this.playerEntity, new AABB(var7.minX + var1, var7.minY - var5 - 1.0E-5, var7.minZ + var3, var7.maxX + var1, var7.minY, var7.maxZ + var3));
+         .noCollision(this.playerEntity, new AABB(box.minX + x, box.minY - maxUpStep - 1.0E-5, box.minZ + z, box.maxX + x, box.minY, box.maxZ + z));
    }
 
    private boolean isFlag() {
@@ -643,66 +643,66 @@ public class PlayerSimulation implements ZenithAccess {
 
    private float method6053() {
       if (this.method6084(MobEffects.JUMP_BOOST)) {
-         MobEffectInstance var1 = this.method6085(MobEffects.JUMP_BOOST);
-         return 0.1F * (var1.getAmplifier() + 1);
+         MobEffectInstance mobEffectInstance = this.method6085(MobEffects.JUMP_BOOST);
+         return 0.1F * (mobEffectInstance.getAmplifier() + 1);
       } else {
          return 0.0F;
       }
    }
 
    private float method6054() {
-      float var1 = 0.0F;
-      Block var2 = this.method6090(this.method6089(this.vec3d)).getBlock();
-      if (var2 != null) {
-         var1 = var2.getJumpFactor();
+      float jumpFactor = 0.0F;
+      Block block = this.method6090(this.method6089(this.vec3d)).getBlock();
+      if (block != null) {
+         jumpFactor = block.getJumpFactor();
       }
 
-      float var3 = 0.0F;
-      Block var4 = this.method6090(this.method6062()).getBlock();
-      if (var4 != null) {
-         var3 = var4.getJumpFactor();
+      float f = 0.0F;
+      Block block2 = this.method6090(this.method6062()).getBlock();
+      if (block2 != null) {
+         f = block2.getJumpFactor();
       }
 
-      return var1 == 1.0F ? var3 : var1;
+      return jumpFactor == 1.0F ? f : jumpFactor;
    }
 
-   private boolean method6055(double var1, double var3, double var5) {
-      return this.method6056(this.box.move(var1, var3, var5));
+   private boolean method6055(double x, double ya, double z) {
+      return this.method6056(this.box.move(x, ya, z));
    }
 
-   private boolean method6056(AABB var1) {
-      return this.playerEntity.level().noCollision(this.playerEntity, var1) && !this.playerEntity.level().containsAnyLiquid(var1);
+   private boolean method6056(AABB move) {
+      return this.playerEntity.level().noCollision(this.playerEntity, move) && !this.playerEntity.level().containsAnyLiquid(move);
    }
 
    private double method6057() {
-      double var1 = this.playerEntity.isNoGravity() ? 0.0 : this.method6086(Attributes.GRAVITY);
-      return this.vec3d2.y <= 0.0 && this.method6084(MobEffects.SLOW_FALLING) ? Math.min(var1, 0.01) : var1;
+      double d = this.playerEntity.isNoGravity() ? 0.0 : this.method6086(Attributes.GRAVITY);
+      return this.vec3d2.y <= 0.0 && this.method6084(MobEffects.SLOW_FALLING) ? Math.min(d, 0.01) : d;
    }
 
-   private Vec3 method6058(double var1, boolean var3, Vec3 var4) {
-      if (var1 != 0.0 && !this.isFlag()) {
-         double var5 = var3 && Math.abs(var4.y - 0.005) >= 0.003 && Math.abs(var4.y - var1 / 16.0) < 0.003 ? -0.003 : var4.y - var1 / 16.0;
-         return new Vec3(var4.x, var5, var4.z);
+   private Vec3 method6058(double d, boolean flag, Vec3 vec3d2) {
+      if (d != 0.0 && !this.isFlag()) {
+         double y = flag && Math.abs(vec3d2.y - 0.005) >= 0.003 && Math.abs(vec3d2.y - d / 16.0) < 0.003 ? -0.003 : vec3d2.y - d / 16.0;
+         return new Vec3(vec3d2.x, y, vec3d2.z);
       } else {
-         return var4;
+         return vec3d2;
       }
    }
 
    private float method6059() {
-      BlockState var1 = this.method6090(this.method6089(this.vec3d));
-      float var2 = var1.getBlock().getSpeedFactor();
-      if (!var1.is(Blocks.WATER) && !var1.is(Blocks.BUBBLE_COLUMN)) {
-         var2 = var2 == 1.0F ? this.method6090(this.method6062()).getBlock().getSpeedFactor() : var2;
+      BlockState blockState = this.method6090(this.method6089(this.vec3d));
+      float speedFactor = blockState.getBlock().getSpeedFactor();
+      if (!blockState.is(Blocks.WATER) && !blockState.is(Blocks.BUBBLE_COLUMN)) {
+         speedFactor = speedFactor == 1.0F ? this.method6090(this.method6062()).getBlock().getSpeedFactor() : speedFactor;
       }
 
-      return Mth.lerp((float)this.method6086(Attributes.MOVEMENT_EFFICIENCY), var2, 1.0F);
+      return Mth.lerp((float)this.method6086(Attributes.MOVEMENT_EFFICIENCY), speedFactor, 1.0F);
    }
 
    private void method6060() {
       this.vec3d2 = this.vec3d2.add(0.0, -0.04F, 0.0);
    }
 
-   private void method6061(TagKey<Fluid> var1) {
+   private void method6061(TagKey<Fluid> tagKey) {
       this.vec3d2 = this.vec3d2.add(0.0, 0.04F, 0.0);
    }
 
@@ -724,8 +724,8 @@ public class PlayerSimulation implements ZenithAccess {
 
    private void method6065() {
       if (this.playerEntity.getVehicle() instanceof Boat) {
-         Boat var1 = (Boat)this.playerEntity.getVehicle();
-         if (!var1.isUnderWater()) {
+         Boat vehicle = (Boat)this.playerEntity.getVehicle();
+         if (!vehicle.isUnderWater()) {
             this.flag7 = false;
             return;
          }
@@ -754,31 +754,31 @@ public class PlayerSimulation implements ZenithAccess {
       if (!this.method6073(Pose.SWIMMING)) {
          this.flag10 = this.entityPose == Pose.SWIMMING && !this.isFlag7();
       } else {
-         Pose var1;
+         Pose pose;
          if (this.flag3) {
-            var1 = Pose.FALL_FLYING;
+            pose = Pose.FALL_FLYING;
          } else if (this.playerEntity.isSleeping()) {
-            var1 = Pose.SLEEPING;
+            pose = Pose.SLEEPING;
          } else if (this.flag8) {
-            var1 = Pose.SWIMMING;
+            pose = Pose.SWIMMING;
          } else if (this.playerEntity.isAutoSpinAttack()) {
-            var1 = Pose.SPIN_ATTACK;
+            pose = Pose.SPIN_ATTACK;
          } else if (this.method6072() && !this.playerEntity.getAbilities().flying) {
-            var1 = Pose.CROUCHING;
+            pose = Pose.CROUCHING;
          } else {
-            var1 = Pose.STANDING;
+            pose = Pose.STANDING;
          }
 
-         Pose var2;
-         if (this.playerEntity.isSpectator() || this.playerEntity.isPassenger() || this.method6073(var1)) {
-            var2 = var1;
+         Pose entityPose;
+         if (this.playerEntity.isSpectator() || this.playerEntity.isPassenger() || this.method6073(pose)) {
+            entityPose = pose;
          } else if (this.method6073(Pose.CROUCHING)) {
-            var2 = Pose.CROUCHING;
+            entityPose = Pose.CROUCHING;
          } else {
-            var2 = Pose.SWIMMING;
+            entityPose = Pose.SWIMMING;
          }
 
-         this.method6074(var2);
+         this.method6074(entityPose);
          this.flag10 = this.entityPose == Pose.SWIMMING && !this.isFlag7();
       }
    }
@@ -798,9 +798,9 @@ public class PlayerSimulation implements ZenithAccess {
       }
 
       if (this.shouldSlowDown()) {
-         float var1 = (float)this.method6086(Attributes.SNEAKING_SPEED);
-         this.entry.floatValue2 *= var1;
-         this.entry.floatValue *= var1;
+         float f = (float)this.method6086(Attributes.SNEAKING_SPEED);
+         this.entry.floatValue2 *= f;
+         this.entry.floatValue *= f;
       }
    }
 
@@ -814,13 +814,13 @@ public class PlayerSimulation implements ZenithAccess {
       }
 
       if (this.flag) {
-         boolean var1 = !this.method6071() || !this.canSprint();
-         boolean var2 = var1 || this.flag5 && !this.playerEntity.minorHorizontalCollision || this.isFlag7() && !this.method6078();
+         boolean flag = !this.method6071() || !this.canSprint();
+         boolean flag2 = flag || this.flag5 && !this.playerEntity.minorHorizontalCollision || this.isFlag7() && !this.method6078();
          if (this.flag8) {
-            if (!this.flag4 && !this.entry.keyPresses.shift() && var1 || !this.isFlag7()) {
+            if (!this.flag4 && !this.entry.keyPresses.shift() && flag || !this.isFlag7()) {
                this.flag = false;
             }
-         } else if (var2) {
+         } else if (flag2) {
             this.flag = false;
          }
       }
@@ -850,8 +850,8 @@ public class PlayerSimulation implements ZenithAccess {
    }
 
    private boolean isRidingCamel() {
-      Entity var1 = this.playerEntity.getVehicle();
-      return var1 != null && var1.getType() == net.minecraft.world.entity.EntityTypes.CAMEL;
+      Entity vehicle = this.playerEntity.getVehicle();
+      return vehicle != null && vehicle.getType() == net.minecraft.world.entity.EntityTypes.CAMEL;
    }
 
    private boolean method6071() {
@@ -870,32 +870,32 @@ public class PlayerSimulation implements ZenithAccess {
       return this.entry.keyPresses.shift();
    }
 
-   private boolean method6073(Pose var1) {
-      return this.playerEntity.level().noCollision(this.playerEntity, this.playerEntity.getDimensions(var1).makeBoundingBox(this.vec3d).deflate(1.0E-7));
+   private boolean method6073(Pose pose) {
+      return this.playerEntity.level().noCollision(this.playerEntity, this.playerEntity.getDimensions(pose).makeBoundingBox(this.vec3d).deflate(1.0E-7));
    }
 
-   private void method6074(Pose var1) {
-      if (this.entityPose != var1 || !this.box.equals(this.playerEntity.getDimensions(var1).makeBoundingBox(this.vec3d))) {
-         this.entityPose = var1;
-         this.box = this.playerEntity.getDimensions(var1).makeBoundingBox(this.vec3d);
+   private void method6074(Pose entityPose) {
+      if (this.entityPose != entityPose || !this.box.equals(this.playerEntity.getDimensions(entityPose).makeBoundingBox(this.vec3d))) {
+         this.entityPose = entityPose;
+         this.box = this.playerEntity.getDimensions(entityPose).makeBoundingBox(this.vec3d);
       }
    }
 
    private void method6075() {
       this.flag9 = this.hashSet.contains(FluidTags.WATER);
       this.hashSet.clear();
-      double var1 = this.method6076() - 0.11111111F;
+      double y = this.method6076() - 0.11111111F;
       if (!(
-         this.playerEntity.getVehicle() instanceof Boat var4
-            && !var4.isUnderWater()
-            && var4.getBoundingBox().maxY >= var1
-            && var4.getBoundingBox().minY <= var1
+         this.playerEntity.getVehicle() instanceof Boat boat
+            && !boat.isUnderWater()
+            && boat.getBoundingBox().maxY >= y
+            && boat.getBoundingBox().minY <= y
       )) {
-         BlockPos var8 = BlockPos.containing(this.vec3d.x, var1, this.vec3d.z);
-         FluidState var5 = this.playerEntity.level().getFluidState(var8);
-         double var6 = var8.getY() + var5.getHeight(this.playerEntity.level(), var8);
-         if (var6 > var1) {
-            this.hashSet.addAll(var5.typeHolder().tags().toList());
+         BlockPos containing = BlockPos.containing(this.vec3d.x, y, this.vec3d.z);
+         FluidState fluidState = this.playerEntity.level().getFluidState(containing);
+         double d = containing.getY() + fluidState.getHeight(this.playerEntity.level(), containing);
+         if (d > y) {
+            this.hashSet.addAll(fluidState.typeHolder().tags().toList());
          }
       }
    }
@@ -912,46 +912,46 @@ public class PlayerSimulation implements ZenithAccess {
       return this.flag9 && this.isFlag7();
    }
 
-   private double method6079(TagKey<Fluid> var1) {
-      return this.object2DoubleMap.getDouble(var1);
+   private double method6079(TagKey<Fluid> tagKey) {
+      return this.object2DoubleMap.getDouble(tagKey);
    }
 
-   private boolean method6080(TagKey<Fluid> var1, double var2) {
+   private boolean method6080(TagKey<Fluid> tag, double scale) {
       if (this.method6081()) {
          return false;
       } else {
-         AABB var4 = this.box.deflate(0.001);
-         int var5 = Mth.floor(var4.minX);
-         int var6 = Mth.ceil(var4.maxX);
-         int var7 = Mth.floor(var4.minY);
-         int var8 = Mth.ceil(var4.maxY);
-         int var9 = Mth.floor(var4.minZ);
-         int var10 = Mth.ceil(var4.maxZ);
-         double var11 = 0.0;
-         boolean var13 = true;
-         boolean var14 = false;
-         Vec3 var15 = Vec3.ZERO;
-         int var16 = 0;
-         MutableBlockPos var17 = new MutableBlockPos();
+         AABB deflate = this.box.deflate(0.001);
+         int n = Mth.floor(deflate.minX);
+         int n2 = Mth.ceil(deflate.maxX);
+         int n3 = Mth.floor(deflate.minY);
+         int n4 = Mth.ceil(deflate.maxY);
+         int n5 = Mth.floor(deflate.minZ);
+         int n6 = Mth.ceil(deflate.maxZ);
+         double d = 0.0;
+         boolean flag = true;
+         boolean flag2 = false;
+         Vec3 vec = Vec3.ZERO;
+         int n7 = 0;
+         MutableBlockPos mutablePos = new MutableBlockPos();
 
-         for (int var18 = var5; var18 < var6; var18++) {
-            for (int var19 = var7; var19 < var8; var19++) {
-               for (int var20 = var9; var20 < var10; var20++) {
-                  var17.set(var18, var19, var20);
-                  FluidState var21 = this.playerEntity.level().getFluidState(var17);
-                  if (var21.is(var1)) {
-                     double var22 = var19 + var21.getHeight(this.playerEntity.level(), var17);
-                     if (var22 >= var4.minY) {
-                        var14 = true;
-                        var11 = Math.max(var22 - var4.minY, var11);
-                        if (var13) {
-                           Vec3 var24 = var21.getFlow(this.playerEntity.level(), var17);
-                           if (var11 < 0.4) {
-                              var24 = var24.scale(var11);
+         for (int i = n; i < n2; i++) {
+            for (int j = n3; j < n4; j++) {
+               for (int k = n5; k < n6; k++) {
+                  mutablePos.set(i, j, k);
+                  FluidState fluidState = this.playerEntity.level().getFluidState(mutablePos);
+                  if (fluidState.is(tag)) {
+                     double d2 = j + fluidState.getHeight(this.playerEntity.level(), mutablePos);
+                     if (d2 >= deflate.minY) {
+                        flag2 = true;
+                        d = Math.max(d2 - deflate.minY, d);
+                        if (flag) {
+                           Vec3 flow = fluidState.getFlow(this.playerEntity.level(), mutablePos);
+                           if (d < 0.4) {
+                              flow = flow.scale(d);
                            }
 
-                           var15 = var15.add(var24);
-                           var16++;
+                           vec = vec.add(flow);
+                           n7++;
                         }
                      }
                   }
@@ -959,59 +959,59 @@ public class PlayerSimulation implements ZenithAccess {
             }
          }
 
-         if (var15.length() > 0.0) {
-            if (var16 > 0) {
-               var15 = var15.scale(1.0 / var16);
+         if (vec.length() > 0.0) {
+            if (n7 > 0) {
+               vec = vec.scale(1.0 / n7);
             }
 
-            var15 = var15.scale(var2);
-            if (Math.abs(this.vec3d2.x) < 0.003 && Math.abs(this.vec3d2.z) < 0.003 && var15.length() < 0.0045) {
-               var15 = var15.normalize().scale(0.0045);
+            vec = vec.scale(scale);
+            if (Math.abs(this.vec3d2.x) < 0.003 && Math.abs(this.vec3d2.z) < 0.003 && vec.length() < 0.0045) {
+               vec = vec.normalize().scale(0.0045);
             }
 
-            this.vec3d2 = this.vec3d2.add(var15);
+            this.vec3d2 = this.vec3d2.add(vec);
          }
 
-         this.object2DoubleMap.put(var1, var11);
-         return var14;
+         this.object2DoubleMap.put(tag, d);
+         return flag2;
       }
    }
 
    private boolean method6081() {
-      AABB var1 = this.box.inflate(1.0);
-      int var2 = Mth.floor(var1.minX);
-      int var3 = Mth.ceil(var1.maxX);
-      int var4 = Mth.floor(var1.minZ);
-      int var5 = Mth.ceil(var1.maxZ);
-      return !this.playerEntity.level().hasChunksAt(var2, var4, var3, var5);
+      AABB inflate = this.box.inflate(1.0);
+      int x0 = Mth.floor(inflate.minX);
+      int x1 = Mth.ceil(inflate.maxX);
+      int z0 = Mth.floor(inflate.minZ);
+      int z1 = Mth.ceil(inflate.maxZ);
+      return !this.playerEntity.level().hasChunksAt(x0, z0, x1, z1);
    }
 
    private Vec3 method6082() {
       return this.method6083(this.floatValue2, this.floatValue);
    }
 
-   private Vec3 method6083(float var1, float var2) {
-      float var3 = (float)(var1 * Math.PI / 180.0);
-      float var4 = (float)(-var2 * Math.PI / 180.0);
-      float var5 = Mth.cos(var4);
-      float var6 = Mth.sin(var4);
-      float var7 = Mth.cos(var3);
-      float var8 = Mth.sin(var3);
-      return new Vec3(var6 * var7, -var8, var5 * var7);
+   private Vec3 method6083(float f, float floatValue) {
+      float f2 = (float)(f * Math.PI / 180.0);
+      float f3 = (float)(-floatValue * Math.PI / 180.0);
+      float f4 = Mth.cos(f3);
+      float f5 = Mth.sin(f3);
+      float f6 = Mth.cos(f2);
+      float f7 = Mth.sin(f2);
+      return new Vec3(f5 * f6, -f7, f4 * f6);
    }
 
-   public boolean method6084(Holder<MobEffect> var1) {
-      MobEffectInstance var2 = this.playerEntity.getEffect(var1);
-      return var2 != null && var2.getDuration() >= this.intValue2;
+   public boolean method6084(Holder<MobEffect> effect) {
+      MobEffectInstance mobEffectInstance = this.playerEntity.getEffect(effect);
+      return mobEffectInstance != null && mobEffectInstance.getDuration() >= this.intValue2;
    }
 
-   private MobEffectInstance method6085(Holder<MobEffect> var1) {
-      MobEffectInstance var2 = this.playerEntity.getEffect(var1);
-      return var2 != null && var2.getDuration() >= this.intValue2 ? var2 : null;
+   private MobEffectInstance method6085(Holder<MobEffect> effect) {
+      MobEffectInstance mobEffectInstance = this.playerEntity.getEffect(effect);
+      return mobEffectInstance != null && mobEffectInstance.getDuration() >= this.intValue2 ? mobEffectInstance : null;
    }
 
-   public double method6086(Holder<Attribute> var1) {
-      return this.playerEntity.getAttributes().getValue(var1);
+   public double method6086(Holder<Attribute> attribute) {
+      return this.playerEntity.getAttributes().getValue(attribute);
    }
 
    public PlayerSimulation method6087() {
@@ -1046,12 +1046,12 @@ public class PlayerSimulation implements ZenithAccess {
       return new BlockPos(Mth.floor(this.vec3d.x), Mth.floor(this.vec3d.y), Mth.floor(this.vec3d.z));
    }
 
-   public BlockPos method6089(Vec3 var1) {
-      return new BlockPos(Mth.floor(var1.x), Mth.floor(var1.y), Mth.floor(var1.z));
+   public BlockPos method6089(Vec3 vec3d) {
+      return new BlockPos(Mth.floor(vec3d.x), Mth.floor(vec3d.y), Mth.floor(vec3d.z));
    }
 
-   public BlockState method6090(BlockPos var1) {
-      return this.playerEntity.level().getBlockState(var1);
+   public BlockState method6090(BlockPos pos) {
+      return this.playerEntity.level().getBlockState(pos);
    }
 
    public static class Entry extends ClientInput {
@@ -1061,16 +1061,16 @@ public class PlayerSimulation implements ZenithAccess {
       public Input keyPresses;
       public static final double CONST_doubleValue = 0.121;
 
-      public Entry(Input var1) {
-         this.keyPresses = var1;
+      public Entry(Input keyPresses) {
+         this.keyPresses = keyPresses;
       }
 
       private PlayerSimulation.Entry method6091() {
-         PlayerSimulation.Entry var1 = new PlayerSimulation.Entry(this.keyPresses);
-         var1.flag = this.flag;
-         var1.floatValue = this.floatValue;
-         var1.floatValue2 = this.floatValue2;
-         return var1;
+         PlayerSimulation.Entry entry = new PlayerSimulation.Entry(this.keyPresses);
+         entry.flag = this.flag;
+         entry.floatValue = this.floatValue;
+         entry.floatValue2 = this.floatValue2;
+         return entry;
       }
 
       public void update() {
@@ -1106,21 +1106,21 @@ public class PlayerSimulation implements ZenithAccess {
             + ")";
       }
 
-      public static PlayerSimulation.Entry method6092(Input var0) {
-         return new PlayerSimulation.Entry(var0);
+      public static PlayerSimulation.Entry method6092(Input keyPresses) {
+         return new PlayerSimulation.Entry(keyPresses);
       }
 
-      public static PlayerSimulation.Entry method6093(Player var0) {
-         Vec3 var1 = var0.position().subtract(new Vec3(var0.xo, var0.yo, var0.zo));
-         double var2 = var1.horizontalDistanceSqr();
-         Input var4 = new Input(false, false, false, false, !var0.onGround(), var0.isShiftKeyDown(), var2 >= 0.014641);
-         if (var2 > 0.0025000000000000005) {
-            double var5 = MovementInputUtils.method7424(var1, var0.getYRot());
-            double var7 = Mth.wrapDegrees(var5);
-            var4 = MovementInputUtils.method7428(var4, var7);
+      public static PlayerSimulation.Entry method6093(Player player) {
+         Vec3 vec = player.position().subtract(new Vec3(player.xo, player.yo, player.zo));
+         double horizontalDistanceSqr = vec.horizontalDistanceSqr();
+         Input input = new Input(false, false, false, false, !player.onGround(), player.isShiftKeyDown(), horizontalDistanceSqr >= 0.014641);
+         if (horizontalDistanceSqr > 0.0025000000000000005) {
+            double angle = MovementInputUtils.method7424(vec, player.getYRot());
+            double d = Mth.wrapDegrees(angle);
+            input = MovementInputUtils.method7428(input, d);
          }
 
-         return new PlayerSimulation.Entry(var4);
+         return new PlayerSimulation.Entry(input);
       }
    }
 }

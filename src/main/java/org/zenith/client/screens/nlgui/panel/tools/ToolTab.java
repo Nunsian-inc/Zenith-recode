@@ -44,14 +44,14 @@ public abstract class ToolTab extends SectionPanel {
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      long var7 = System.currentTimeMillis();
-      if (var7 - this.lastFrame > 400L) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float panelAlpha, float f, float y) {
+      long now = System.currentTimeMillis();
+      if (now - this.lastFrame > 400L) {
          this.shown();
       }
 
-      this.lastFrame = var7;
-      super.render(var1, var2, var3, var4, var5, var6);
+      this.lastFrame = now;
+      super.render(menuDrawContext, lastClickX, lastClickY, panelAlpha, f, y);
    }
 
    public void shown() {
@@ -61,316 +61,316 @@ public abstract class ToolTab extends SectionPanel {
       this.asideReplayFrom = Integer.MAX_VALUE;
    }
 
-   public void replayMainFrom(int var1) {
+   public void replayMainFrom(int replayFrom) {
       this.replayAt = System.currentTimeMillis();
-      this.replayFrom = var1;
+      this.replayFrom = replayFrom;
    }
 
-   public void replayAsideFrom(int var1) {
+   public void replayAsideFrom(int asideReplayFrom) {
       this.asideReplayAt = System.currentTimeMillis();
-      this.asideReplayFrom = var1;
+      this.asideReplayFrom = asideReplayFrom;
    }
 
-   public float hot(String var1, boolean var2) {
-      return this.hovers.computeIfAbsent(var1, var0 -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   public float hot(String anObject, boolean contains) {
+      return this.hovers.computeIfAbsent(anObject, hover -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
    }
 
-   public void mark(String var1) {
-      this.marks.put(var1, System.currentTimeMillis());
+   public void mark(String str) {
+      this.marks.put(str, System.currentTimeMillis());
    }
 
-   public float since(String var1, long var2) {
-      Long var4 = this.marks.get(var1);
-      return var4 == null ? 1.0F : Math.min(1.0F, (float)(System.currentTimeMillis() - var4) / (float)var2);
+   public float since(String str, long l) {
+      Long mark = this.marks.get(str);
+      return mark == null ? 1.0F : Math.min(1.0F, (float)(System.currentTimeMillis() - mark) / (float)l);
    }
 
-   public float pressed(String var1) {
-      return Smooth.press(this.marks.getOrDefault(var1, 0L), 340L);
+   public float pressed(String key) {
+      return Smooth.press(this.marks.getOrDefault(key, 0L), 340L);
    }
 
-   private static float curve(long var0, int var2) {
-      float var3 = (float)(System.currentTimeMillis() - var0 - Math.min(var2, 14) * 34L) / 320.0F;
-      if (var3 <= 0.0F) {
+   private static float curve(long asideReplayAt, int n) {
+      float f = (float)(System.currentTimeMillis() - asideReplayAt - Math.min(n, 14) * 34L) / 320.0F;
+      if (f <= 0.0F) {
          return 0.0F;
-      } else if (var3 >= 1.0F) {
+      } else if (f >= 1.0F) {
          return 1.0F;
       } else {
-         float var4 = 1.0F - var3;
-         return 1.0F - var4 * var4 * var4;
+         float f2 = 1.0F - f;
+         return 1.0F - f2 * f2 * f2;
       }
    }
 
    @Override
-   public float entryEnter(int var1, boolean var2) {
-      if (var2) {
-         return var1 >= this.asideReplayFrom && this.asideReplayAt > this.asideAt
-            ? curve(this.asideReplayAt, var1 - this.asideReplayFrom)
-            : curve(this.asideAt, var1 + 1);
+   public float entryEnter(int n, boolean flag) {
+      if (flag) {
+         return n >= this.asideReplayFrom && this.asideReplayAt > this.asideAt
+            ? curve(this.asideReplayAt, n - this.asideReplayFrom)
+            : curve(this.asideAt, n + 1);
       } else {
-         return var1 >= this.replayFrom && this.replayAt > this.enteredAt ? curve(this.replayAt, var1 - this.replayFrom) : curve(this.enteredAt, var1);
+         return n >= this.replayFrom && this.replayAt > this.enteredAt ? curve(this.replayAt, n - this.replayFrom) : curve(this.enteredAt, n);
       }
    }
 
-   public SectionPanel.AsideRenderer entering(int var1, SectionPanel.AsideRenderer var2) {
-      return var2;
+   public SectionPanel.AsideRenderer entering(int n, SectionPanel.AsideRenderer asideRenderer) {
+      return asideRenderer;
    }
 
-   public static float pulse(float var0) {
-      return 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 1000.0 * var0 * Math.PI * 2.0);
+   public static float pulse(float f) {
+      return 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 1000.0 * f * Math.PI * 2.0);
    }
 
-   public static ZenithColor cardFill(ZenithStyle var0, float var1) {
-      return var0.getFieldSurfaceBackground().getZenithColor().method7295(var0.getDisableActiveBg().getZenithColor(), 0.35F + var1 * 0.55F);
+   public static ZenithColor cardFill(ZenithStyle zenithStyle, float hot) {
+      return zenithStyle.getFieldSurfaceBackground().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), 0.35F + hot * 0.55F);
    }
 
-   public static void card(MenuDrawContext var0, ZenithStyle var1, float var2, float var3, float var4, float var5, float var6, float var7) {
-      ProxyDotRadiusData var8 = ProxyDotRadiusData.method8069(CARD_ROUND);
-      var0.drawRoundedRect(var2, var3, var4, var5, var8, cardFill(var1, var6).method7294(var7));
-      var0.drawRoundedBorder(var2, var3, var4, var5, 0.15F, var8, var1.getFieldBorder().getZenithColor().method7294(2.0F + var6 * 2.0F).method7294(var7));
+   public static void card(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, float height, float hot, float previewAlpha) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(CARD_ROUND);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, cardFill(zenithStyle, hot).method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(floatValue, y, width, height, 0.15F, headerRadius, zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F + hot * 2.0F).method7294(previewAlpha));
    }
 
    public static void accentCard(
-      MenuDrawContext var0, ZenithStyle var1, float var2, float var3, float var4, float var5, float var6, float var7, ZenithColor var8, float var9
+      MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, float height, float hot, float previewAlpha, ZenithColor zenithColor, float hover
    ) {
-      ProxyDotRadiusData var10 = ProxyDotRadiusData.method8069(CARD_ROUND);
-      var0.drawRoundedRect(var2, var3, var4, var5, var10, cardFill(var1, var6).method7295(var8.method7292(0.16F), var9).method7294(var7));
-      var0.drawRoundedBorder(
-         var2,
-         var3,
-         var4,
-         var5,
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(CARD_ROUND);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, cardFill(zenithStyle, hot).method7295(zenithColor.method7292(0.16F), hover).method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(
+         floatValue,
+         y,
+         width,
+         height,
          0.2F,
-         var10,
-         var1.getFieldBorder().getZenithColor().method7294(2.0F + var6 * 2.0F).method7295(var8.method7292(0.6F), var9).method7294(var7)
+         headerRadius,
+         zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F + hot * 2.0F).method7295(zenithColor.method7292(0.6F), hover).method7294(previewAlpha)
       );
    }
 
-   public static void tile(MenuDrawContext var0, ZenithStyle var1, float var2, float var3, float var4, ZenithColor var5, float var6, float var7) {
-      ProxyDotRadiusData var8 = ProxyDotRadiusData.method8069(var4 * 0.28F);
-      var0.drawRoundedRect(
-         var2, var3, var4, var4, var8, var1.getPanelLeftBackground().getZenithColor().method7295(var5.method7292(0.3F), var6).method7294(var7)
+   public static void tile(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, ZenithColor zenithColor, float hover, float previewAlpha) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(width * 0.28F);
+      menuDrawContext.drawRoundedRect(
+         floatValue, y, width, width, headerRadius, zenithStyle.getPanelLeftBackground().getZenithColor().method7295(zenithColor.method7292(0.3F), hover).method7294(previewAlpha)
       );
    }
 
-   public static float pill(MenuDrawContext var0, Font var1, float var2, float var3, String var4, ZenithColor var5, float var6) {
-      float var7 = var1.width(var4) + 8.0F;
-      float var8 = var1.height() + 3.6F;
-      var0.drawRoundedRect(var2, var3, var7, var8, ProxyDotRadiusData.method8069(var8 / 2.0F), var5.method7292(0.16F).method7294(var6));
-      var0.drawText(var1, var4, var2 + 4.0F, var3 + 1.8F, var5.method7294(var6));
-      return var7;
+   public static float pill(MenuDrawContext menuDrawContext, Font font, float floatValue, float centeredTextY, String text, ZenithColor zenithColor, float previewAlpha) {
+      float width = font.width(text) + 8.0F;
+      float height = font.height() + 3.6F;
+      menuDrawContext.drawRoundedRect(floatValue, centeredTextY, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7292(0.16F).method7294(previewAlpha));
+      menuDrawContext.drawText(font, text, floatValue + 4.0F, centeredTextY + 1.8F, zenithColor.method7294(previewAlpha));
+      return width;
    }
 
-   public static float pillWidth(Font var0, String var1) {
-      return var0.width(var1) + 8.0F;
+   public static float pillWidth(Font font, String text) {
+      return font.width(text) + 8.0F;
    }
 
-   public static void dot(MenuDrawContext var0, float var1, float var2, float var3, ZenithColor var4, float var5, float var6) {
-      var0.drawRoundedRect(
-         var1 - var3 / 2.0F, var2 - var3 / 2.0F, var3, var3, ProxyDotRadiusData.method8069(var3 / 2.0F), var4.method7294(var6 * (1.0F - 0.45F * var5))
+   public static void dot(MenuDrawContext menuDrawContext, float f, float f2, float width, ZenithColor zenithColor, float pulse, float previewAlpha) {
+      menuDrawContext.drawRoundedRect(
+         f - width / 2.0F, f2 - width / 2.0F, width, width, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor.method7294(previewAlpha * (1.0F - 0.45F * pulse))
       );
    }
 
-   public static void caption(MenuDrawContext var0, ZenithStyle var1, String var2, float var3, float var4, float var5) {
-      Font var6 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      var0.drawText(var6, HoverInfo.spaced(var2.toUpperCase(Locale.ROOT)), var3, var4, var1.getTextTertiary().getZenithColor().method7294(var5));
+   public static void caption(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, String str, float floatValue, float centeredTextY, float previewAlpha) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+      menuDrawContext.drawText(font, HoverInfo.spaced(str.toUpperCase(Locale.ROOT)), floatValue, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
    }
 
    public boolean button(
-      MenuDrawContext var1,
-      ZenithStyle var2,
-      String var3,
-      BoundsData var4,
-      MenuGlyph var5,
-      String var6,
-      int var7,
-      boolean var8,
-      int var9,
-      int var10,
-      float var11
+      MenuDrawContext menuDrawContext,
+      ZenithStyle zenithStyle,
+      String str,
+      BoundsData boundsData,
+      MenuGlyph menuGlyph,
+      String name,
+      int n,
+      boolean flag,
+      int lastClickX,
+      int lastClickY,
+      float previewAlpha
    ) {
-      boolean var12 = var8 && var4.contains(var9, var10);
-      float var13 = this.hot("btn:" + var3, var12);
-      ZenithColor var14 = var7 == 2 ? DANGER : var2.getPrimaryColor().getZenithColor();
-      ProxyDotRadiusData var15 = ProxyDotRadiusData.method8069(Math.min(CARD_ROUND, var4.height() / 2.0F));
-      boolean var16 = this.pressFx.begin(var1, "btn:" + var3, var4);
-      ZenithColor var17 = cardFill(var2, var13);
-      if (!var8) {
-         var17 = var2.getFieldSurfaceBackground().getZenithColor().method7295(var2.getDisableActiveBg().getZenithColor(), 0.25F);
-      } else if (var7 == 1) {
-         var17 = var17.method7295(var14.method7292(0.2F), 0.55F + var13 * 0.45F);
-      } else if (var7 == 2) {
-         var17 = var17.method7295(var14.method7292(0.14F), 0.25F + var13 * 0.5F);
+      boolean contains = flag && boundsData.contains(lastClickX, lastClickY);
+      float hot = this.hot("btn:" + str, contains);
+      ZenithColor zenithColor = n == 2 ? DANGER : zenithStyle.getPrimaryColor().getZenithColor();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(Math.min(CARD_ROUND, boundsData.height() / 2.0F));
+      boolean begin = this.pressFx.begin(menuDrawContext, "btn:" + str, boundsData);
+      ZenithColor cardFill2 = cardFill(zenithStyle, hot);
+      if (!flag) {
+         cardFill2 = zenithStyle.getFieldSurfaceBackground().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), 0.25F);
+      } else if (n == 1) {
+         cardFill2 = cardFill2.method7295(zenithColor.method7292(0.2F), 0.55F + hot * 0.45F);
+      } else if (n == 2) {
+         cardFill2 = cardFill2.method7295(zenithColor.method7292(0.14F), 0.25F + hot * 0.5F);
       }
 
-      var1.drawRoundedRect(var4.getFloatValue(), var4.getFloatValue2(), var4.width(), var4.height(), var15, var17.method7294(var11));
-      ZenithColor var18 = !var8
-         ? var2.getFieldBorder().getZenithColor().method7294(1.5F)
-         : (var7 == 0 ? var2.getFieldBorder().getZenithColor().method7294(2.0F + var13 * 2.5F) : var14.method7292(0.22F + var13 * 0.3F));
-      var1.drawRoundedBorder(var4.getFloatValue(), var4.getFloatValue2(), var4.width(), var4.height(), 0.18F, var15, var18.method7294(var11));
-      this.pressFx.ink(var1, "btn:" + var3, var4, var15.getFloatValue(), (var7 == 0 ? ZenithColor.INSTANCE : var14).method7292(0.22F), var11);
-      Font var19 = Fonts.NEW_MEDIUM.getFont(var4.height() >= 18.0F ? 5.2F : 4.8F);
-      ZenithColor var20 = !var8
-         ? var2.getTextTertiary().getZenithColor()
+      menuDrawContext.drawRoundedRect(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, cardFill2.method7294(previewAlpha));
+      ZenithColor zenithColor2 = !flag
+         ? zenithStyle.getFieldBorder().getZenithColor().method7294(1.5F)
+         : (n == 0 ? zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F + hot * 2.5F) : zenithColor.method7292(0.22F + hot * 0.3F));
+      menuDrawContext.drawRoundedBorder(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.18F, headerRadius, zenithColor2.method7294(previewAlpha));
+      this.pressFx.ink(menuDrawContext, "btn:" + str, boundsData, headerRadius.getFloatValue(), (n == 0 ? ZenithColor.INSTANCE : zenithColor).method7292(0.22F), previewAlpha);
+      Font font = Fonts.NEW_MEDIUM.getFont(boundsData.height() >= 18.0F ? 5.2F : 4.8F);
+      ZenithColor zenithColor3 = !flag
+         ? zenithStyle.getTextTertiary().getZenithColor()
          : (
-            var7 == 0
-               ? var2.getTextSecondary().getZenithColor().method7295(var2.getTextEnable().getZenithColor(), var13)
-               : var14.method7295(ZenithColor.INSTANCE, 0.2F + var13 * 0.45F)
+            n == 0
+               ? zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hot)
+               : zenithColor.method7295(ZenithColor.INSTANCE, 0.2F + hot * 0.45F)
          );
-      float var21 = var5 == null ? 0.0F : 10.0F;
-      String var22 = var19.clip(var6, var4.width() - 10.0F - var21);
-      float var23 = var19.width(var22) + var21;
-      float var24 = var4.getFloatValue() + (var4.width() - var23) / 2.0F;
-      if (var5 != null) {
-         var5.draw(var1, var24, var4.getFloatValue2() + (var4.height() - 6.0F) / 2.0F, var20.method7294(var11));
-         var24 += var21;
+      float f = menuGlyph == null ? 0.0F : 10.0F;
+      String clip = font.clip(name, boundsData.width() - 10.0F - f);
+      float f2 = font.width(clip) + f;
+      float floatValue = boundsData.getFloatValue() + (boundsData.width() - f2) / 2.0F;
+      if (menuGlyph != null) {
+         menuGlyph.draw(menuDrawContext, floatValue, boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F, zenithColor3.method7294(previewAlpha));
+         floatValue += f;
       }
 
-      var1.drawText(var19, var22, var24, var4.getFloatValue2() + (var4.height() - var19.height()) / 2.0F, var20.method7294(var11));
-      this.pressFx.end(var1, var16);
-      return var12;
+      menuDrawContext.drawText(font, clip, floatValue, boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F, zenithColor3.method7294(previewAlpha));
+      this.pressFx.end(menuDrawContext, begin);
+      return contains;
    }
 
-   public void pressButton(String var1, double var2, double var4) {
-      this.pressFx.press("btn:" + var1, var2, var4);
+   public void pressButton(String str, double lastClickX, double lastClickY) {
+      this.pressFx.press("btn:" + str, lastClickX, lastClickY);
    }
 
-   public void shimmer(MenuDrawContext var1, BoundsData var2, ZenithColor var3, float var4) {
-      float var5 = (float)(System.currentTimeMillis() % 1600L) / 1600.0F;
-      float var6 = var2.width() * 0.35F;
-      float var7 = var2.getFloatValue() - var6 + (var2.width() + var6) * var5;
-      float var8 = Math.max(var2.getFloatValue(), var7);
-      float var9 = Math.min(var2.getFloatValue() + var2.width(), var7 + var6);
-      if (!(var9 - var8 < 1.0F)) {
-         float var10 = (var8 + var9) / 2.0F;
-         float var11 = 1.0F - Math.abs(var10 - (var7 + var6 / 2.0F)) / (var6 / 2.0F + 0.01F);
-         var1.drawRoundedRect(
-            var8,
-            var2.getFloatValue2() + 1.0F,
-            var9 - var8,
-            var2.height() - 2.0F,
-            ProxyDotRadiusData.method8069(Math.min(4.0F, (var2.height() - 2.0F) / 2.0F)),
-            var3.method7292(0.12F * Math.max(0.3F, var11)).method7294(var4)
+   public void shimmer(MenuDrawContext menuDrawContext, BoundsData boundsData, ZenithColor zenithColor, float previewAlpha) {
+      float f = (float)(System.currentTimeMillis() % 1600L) / 1600.0F;
+      float f2 = boundsData.width() * 0.35F;
+      float f3 = boundsData.getFloatValue() - f2 + (boundsData.width() + f2) * f;
+      float floatValue = Math.max(boundsData.getFloatValue(), f3);
+      float f4 = Math.min(boundsData.getFloatValue() + boundsData.width(), f3 + f2);
+      if (!(f4 - floatValue < 1.0F)) {
+         float f5 = (floatValue + f4) / 2.0F;
+         float f6 = 1.0F - Math.abs(f5 - (f3 + f2 / 2.0F)) / (f2 / 2.0F + 0.01F);
+         menuDrawContext.drawRoundedRect(
+            floatValue,
+            boundsData.getFloatValue2() + 1.0F,
+            f4 - floatValue,
+            boundsData.height() - 2.0F,
+            ProxyDotRadiusData.method8069(Math.min(4.0F, (boundsData.height() - 2.0F) / 2.0F)),
+            zenithColor.method7292(0.12F * Math.max(0.3F, f6)).method7294(previewAlpha)
          );
       }
    }
 
-   public void drawSwitch(MenuDrawContext var1, String var2, float var3, float var4, float var5, float var6, boolean var7, float var8, ZenithStyle var9) {
-      float var10 = this.switches.computeIfAbsent(var2, var1x -> new Animation(220L, var7 ? 1.0F : 0.0F, Easing.INSTANCE15)).method2808(var7 ? 1.0F : 0.0F);
-      ZenithColor var11 = var9.getFieldBorder().getZenithColor().method7294(3.0F);
-      var1.drawRoundedRect(
-         var3, var4, var5, var6, ProxyDotRadiusData.method8069(var6 / 2.0F), var11.method7295(var9.getPrimaryColor().getZenithColor(), var10).method7294(var8)
+   public void drawSwitch(MenuDrawContext menuDrawContext, String key, float floatValue, float y, float width, float height, boolean enabled, float previewAlpha, ZenithStyle zenithStyle) {
+      float hover = this.switches.computeIfAbsent(key, var1x -> new Animation(220L, enabled ? 1.0F : 0.0F, Easing.INSTANCE15)).method2808(enabled ? 1.0F : 0.0F);
+      ZenithColor zenithColor = zenithStyle.getFieldBorder().getZenithColor().method7294(3.0F);
+      menuDrawContext.drawRoundedRect(
+         floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha)
       );
-      float var12 = var6 - 2.0F;
-      float var13 = var3 + 1.0F + (var5 - var12 - 2.0F) * var10;
-      float var14 = (float)Math.sin(var10 * Math.PI) * 1.5F;
-      var1.drawRoundedRect(
-         var13 - var14 * 0.5F,
-         var4 + 1.0F,
-         var12 + var14,
-         var12,
-         ProxyDotRadiusData.method8069(var12 / 2.0F),
-         var9.getTextSecondary().getZenithColor().method7295(ZenithColor.INSTANCE, var10).method7294(var8)
+      float f = height - 2.0F;
+      float f2 = floatValue + 1.0F + (width - f - 2.0F) * hover;
+      float f3 = (float)Math.sin(hover * Math.PI) * 1.5F;
+      menuDrawContext.drawRoundedRect(
+         f2 - f3 * 0.5F,
+         y + 1.0F,
+         f + f3,
+         f,
+         ProxyDotRadiusData.method8069(f / 2.0F),
+         zenithStyle.getTextSecondary().getZenithColor().method7295(ZenithColor.INSTANCE, hover).method7294(previewAlpha)
       );
    }
 
    public static void progress(
-      MenuDrawContext var0, ZenithStyle var1, float var2, float var3, float var4, float var5, float var6, ZenithColor var7, boolean var8, float var9
+      MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, float height, float f, ZenithColor zenithColor, boolean enabled, float previewAlpha
    ) {
-      ProxyDotRadiusData var10 = ProxyDotRadiusData.method8069(var5 / 2.0F);
-      var0.drawRoundedRect(var2, var3, var4, var5, var10, var1.getDisableActiveBg().getZenithColor().method7294(var9));
-      float var11 = Math.max(0.0F, Math.min(1.0F, var6));
-      if (var11 > 0.001F) {
-         float var12 = Math.max(var5, var4 * var11);
-         var0.drawRoundedRect(var2, var3, var12, var5, var10, var7.method7294(var9));
-         if (var8) {
-            float var13 = (float)(System.currentTimeMillis() % 1200L) / 1200.0F;
-            float var14 = var2 + (var12 + 10.0F) * var13 - 10.0F;
-            float var15 = Math.max(var2, var14);
-            float var16 = Math.min(var2 + var12, var14 + 10.0F);
-            if (var16 > var15) {
-               var0.drawRoundedRect(var15, var3, var16 - var15, var5, var10, ZenithColor.INSTANCE.method7292(0.35F).method7294(var9));
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha));
+      float f2 = Math.max(0.0F, Math.min(1.0F, f));
+      if (f2 > 0.001F) {
+         float width2 = Math.max(height, width * f2);
+         menuDrawContext.drawRoundedRect(floatValue, y, width2, height, headerRadius, zenithColor.method7294(previewAlpha));
+         if (enabled) {
+            float f3 = (float)(System.currentTimeMillis() % 1200L) / 1200.0F;
+            float f4 = floatValue + (width2 + 10.0F) * f3 - 10.0F;
+            float floatValue2 = Math.max(floatValue, f4);
+            float f5 = Math.min(floatValue + width2, f4 + 10.0F);
+            if (f5 > floatValue2) {
+               menuDrawContext.drawRoundedRect(floatValue2, y, f5 - floatValue2, height, headerRadius, ZenithColor.INSTANCE.method7292(0.35F).method7294(previewAlpha));
             }
          }
       }
    }
 
-   public static void skeleton(MenuDrawContext var0, ZenithStyle var1, float var2, float var3, float var4, float var5, int var6, float var7) {
-      float var8 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 420.0 - var6 * 0.7);
-      var0.drawRoundedRect(
-         var2,
-         var3,
-         var4,
-         var5,
-         ProxyDotRadiusData.method8069(Math.min(var5 / 2.0F, 3.0F)),
-         var1.getDisableActiveBg().getZenithColor().method7294(var7 * (0.45F + 0.45F * var8))
+   public static void skeleton(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, float height, int n, float f) {
+      float f2 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 420.0 - n * 0.7);
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         y,
+         width,
+         height,
+         ProxyDotRadiusData.method8069(Math.min(height / 2.0F, 3.0F)),
+         zenithStyle.getDisableActiveBg().getZenithColor().method7294(f * (0.45F + 0.45F * f2))
       );
    }
 
-   public static void bigGlyph(MenuDrawContext var0, MenuGlyph var1, float var2, float var3, float var4, ZenithColor var5) {
-      var0.pushMatrix();
-      var0.pose().translate(var2, var3);
-      var0.pose().scale(var4, var4);
-      var1.draw(var0, -3.0F, -3.0F, var5);
-      var0.popMatrix();
+   public static void bigGlyph(MenuDrawContext menuDrawContext, MenuGlyph menuGlyph, float x, float y, float f, ZenithColor zenithColor) {
+      menuDrawContext.pushMatrix();
+      menuDrawContext.pose().translate(x, y);
+      menuDrawContext.pose().scale(f, f);
+      menuGlyph.draw(menuDrawContext, -3.0F, -3.0F, zenithColor);
+      menuDrawContext.popMatrix();
    }
 
    public void emptyCard(
-      MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5, float var6, MenuGlyph var7, String var8, String var9, float var10
+      MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, float height, MenuGlyph menuGlyph, String capitalize, String description, float previewAlpha
    ) {
-      card(var1, var2, var3, var4, var5, var6, 0.0F, var10);
-      float var11 = (float)Math.sin(System.currentTimeMillis() / 600.0) * 1.2F;
-      float var12 = 20.0F;
-      float var13 = var3 + (var5 - var12) / 2.0F;
-      float var14 = var4 + 9.0F + var11;
-      ZenithColor var15 = var2.getPrimaryColor().getZenithColor();
-      tile(var1, var2, var13, var14, var12, var15, 0.6F, var10);
-      bigGlyph(var1, var7, var13 + var12 / 2.0F, var14 + var12 / 2.0F, 1.5F, var15.method7294(var10));
-      Font var16 = Fonts.NEW_MEDIUM.getFont(5.4F);
-      Font var17 = Fonts.NEW_REGULAR.getFont(4.4F);
-      float var18 = var4 + 9.0F + var12 + 8.0F;
-      var1.drawText(
-         var16,
-         var16.clip(var8, var5 - 12.0F),
-         var3 + (var5 - Math.min(var5 - 12.0F, var16.width(var8))) / 2.0F,
-         var18,
-         var2.getTextEnable().getZenithColor().method7294(var10)
+      card(menuDrawContext, zenithStyle, floatValue, y, width, height, 0.0F, previewAlpha);
+      float f = (float)Math.sin(System.currentTimeMillis() / 600.0) * 1.2F;
+      float width2 = 20.0F;
+      float floatValue2 = floatValue + (width - width2) / 2.0F;
+      float y2 = y + 9.0F + f;
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      tile(menuDrawContext, zenithStyle, floatValue2, y2, width2, zenithColor, 0.6F, previewAlpha);
+      bigGlyph(menuDrawContext, menuGlyph, floatValue2 + width2 / 2.0F, y2 + width2 / 2.0F, 1.5F, zenithColor.method7294(previewAlpha));
+      Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+      float centeredTextY = y + 9.0F + width2 + 8.0F;
+      menuDrawContext.drawText(
+         font,
+         font.clip(capitalize, width - 12.0F),
+         floatValue + (width - Math.min(width - 12.0F, font.width(capitalize))) / 2.0F,
+         centeredTextY,
+         zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
-      var18 += var16.height() + 3.0F;
+      centeredTextY += font.height() + 3.0F;
 
-      for (String var20 : wrapText(var9, var17, var5 - 16.0F, 3)) {
-         var1.drawText(var17, var20, var3 + (var5 - var17.width(var20)) / 2.0F, var18, var2.getTextTertiary().getZenithColor().method7294(var10));
-         var18 += var17.height() + 2.0F;
+      for (String text : wrapText(description, font2, width - 16.0F, 3)) {
+         menuDrawContext.drawText(font2, text, floatValue + (width - font2.width(text)) / 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font2.height() + 2.0F;
       }
    }
 
-   public void drawItem(MenuDrawContext var1, ItemStack var2, float var3, float var4, float var5, float var6) {
-      if (var2 != null && !var2.isEmpty() && !(var6 <= 0.02F) && this.isFullyVisible()) {
-         var1.pose().pushMatrix();
-         var1.pose().translate(var3, var4);
-         float var7 = var5 / 16.0F;
-         var1.pose().scale(var7, var7);
-         var1.item(var2, 0, 0);
-         var1.pose().popMatrix();
+   public void drawItem(MenuDrawContext menuDrawContext, ItemStack itemStack, float x, float y, float f, float previewAlpha) {
+      if (itemStack != null && !itemStack.isEmpty() && !(previewAlpha <= 0.02F) && this.isFullyVisible()) {
+         menuDrawContext.pose().pushMatrix();
+         menuDrawContext.pose().translate(x, y);
+         float x2 = f / 16.0F;
+         menuDrawContext.pose().scale(x2, x2);
+         menuDrawContext.item(itemStack, 0, 0);
+         menuDrawContext.pose().popMatrix();
       }
    }
 
-   public static String fit(Font var0, String var1, float var2) {
-      if (var1 != null && !var1.isEmpty() && !(var2 <= 0.0F)) {
-         if (var0.width(var1) <= var2) {
-            return var1;
+   public static String fit(Font font, String name, float f) {
+      if (name != null && !name.isEmpty() && !(f <= 0.0F)) {
+         if (font.width(name) <= f) {
+            return name;
          } else {
-            String var3 = "..";
-            float var4 = var0.width(var3);
-            if (var4 > var2) {
+            String text = "..";
+            float width = font.width(text);
+            if (width > f) {
                return "";
             } else {
-               int var5 = var1.length();
+               int length = name.length();
 
-               while (var5 > 0 && var0.width(var1.substring(0, var5)) + var4 > var2) {
-                  var5--;
+               while (length > 0 && font.width(name.substring(0, length)) + width > f) {
+                  length--;
                }
 
-               return var5 == 0 ? "" : var1.substring(0, var5) + var3;
+               return length == 0 ? "" : name.substring(0, length) + text;
             }
          }
       } else {

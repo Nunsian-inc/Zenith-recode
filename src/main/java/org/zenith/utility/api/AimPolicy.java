@@ -55,18 +55,18 @@ public final class AimPolicy {
    };
 
    public static AimPolicy method5432() {
-      AimPolicy var0 = method5433(path);
-      if (var0 != null) {
-         return var0;
+      AimPolicy aimPolicy = method5433(path);
+      if (aimPolicy != null) {
+         return aimPolicy;
       } else {
-         var0 = method5434();
-         if (var0 != null) {
-            return var0;
+         aimPolicy = method5434();
+         if (aimPolicy != null) {
+            return aimPolicy;
          } else {
-            for (Path var4 : paths) {
-               var0 = method5433(var4);
-               if (var0 != null) {
-                  return var0;
+            for (Path path2 : paths) {
+               aimPolicy = method5433(path2);
+               if (aimPolicy != null) {
+                  return aimPolicy;
                }
             }
 
@@ -75,132 +75,132 @@ public final class AimPolicy {
       }
    }
 
-   private static AimPolicy method5433(Path var0) {
+   private static AimPolicy method5433(Path path) {
       try {
-         return !Files.isRegularFile(var0) ? null : method5435(Files.readString(var0, StandardCharsets.UTF_8), var0.toAbsolutePath().toString());
-      } catch (Throwable var2) {
-         System.err.println("[AimPolicy] failed to load " + var0 + ": " + var2);
+         return !Files.isRegularFile(path) ? null : method5435(Files.readString(path, StandardCharsets.UTF_8), path.toAbsolutePath().toString());
+      } catch (Throwable e) {
+         System.err.println("[AimPolicy] failed to load " + path + ": " + e);
          return null;
       }
    }
 
    private static AimPolicy method5434() {
       try {
-         AimPolicy var1;
-         try (InputStream var0 = AimPolicy.class.getResourceAsStream("/assets/zenith/aimpipe/aim_policy.json")) {
-            if (var0 == null) {
+         AimPolicy aimPolicy;
+         try (InputStream resourceAsStream = AimPolicy.class.getResourceAsStream("/assets/zenith/aimpipe/aim_policy.json")) {
+            if (resourceAsStream == null) {
                return null;
             }
 
-            var1 = method5435(new String(var0.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/aimpipe/aim_policy.json");
+            aimPolicy = method5435(new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/aimpipe/aim_policy.json");
          }
 
-         return var1;
-      } catch (Throwable var5) {
-         System.err.println("[AimPolicy] failed to load /assets/zenith/aimpipe/aim_policy.json: " + var5);
+         return aimPolicy;
+      } catch (Throwable e) {
+         System.err.println("[AimPolicy] failed to load /assets/zenith/aimpipe/aim_policy.json: " + e);
          return null;
       }
    }
 
-   private static AimPolicy method5435(String var0, String var1) {
-      AimPolicy var2 = method5436(JsonParser.parseString(var0).getAsJsonObject());
+   private static AimPolicy method5435(String string, String str) {
+      AimPolicy aimPolicy = method5436(JsonParser.parseString(string).getAsJsonObject());
       System.out
          .println(
             "[AimPolicy] loaded "
-               + var1
+               + str
                + " (planner="
-               + var2.intValue3
+               + aimPolicy.intValue3
                + ", motor="
-               + var2.intValue4
+               + aimPolicy.intValue4
                + ", bins="
-               + var2.intValue5
+               + aimPolicy.intValue5
                + "/"
-               + var2.intValue6
+               + aimPolicy.intValue6
                + ", cadence="
-               + var2.intValue
+               + aimPolicy.intValue
                + ", z="
-               + var2.intValue10
+               + aimPolicy.intValue10
                + ")"
          );
-      return var2;
+      return aimPolicy;
    }
 
-   private static AimPolicy method5436(JsonObject var0) {
-      int var1 = var0.has("format_version") ? var0.get("format_version").getAsInt() : 1;
-      if (var1 != 5) {
-         throw new IllegalStateException("unsupported artifact format_version " + var1 + " (expected 5; retrain and re-run policy/export.py)");
+   private static AimPolicy method5436(JsonObject jsonObject) {
+      int n = jsonObject.has("format_version") ? jsonObject.get("format_version").getAsInt() : 1;
+      if (n != 5) {
+         throw new IllegalStateException("unsupported artifact format_version " + n + " (expected 5; retrain and re-run policy/export.py)");
       } else {
-         AimPolicy var2 = new AimPolicy();
-         JsonArray var3 = var0.getAsJsonArray("feature_spec");
-         var2.entrys = new AimPolicy.Entry[var3.size()];
+         AimPolicy aimPolicy = new AimPolicy();
+         JsonArray jsonArray = jsonObject.getAsJsonArray("feature_spec");
+         aimPolicy.entrys = new AimPolicy.Entry[jsonArray.size()];
 
-         for (int var4 = 0; var4 < var3.size(); var4++) {
-            JsonObject var5 = var3.get(var4).getAsJsonObject();
-            var2.entrys[var4] = new AimPolicy.Entry(
-               var5.get("index").getAsInt(),
-               "mu".equals(var5.get("transform").getAsString()),
-               var5.get("scale").getAsFloat(),
-               var5.get("mean").getAsFloat(),
-               var5.get("std").getAsFloat()
+         for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject json = jsonArray.get(i).getAsJsonObject();
+            aimPolicy.entrys[i] = new AimPolicy.Entry(
+               json.get("index").getAsInt(),
+               "mu".equals(json.get("transform").getAsString()),
+               json.get("scale").getAsFloat(),
+               json.get("mean").getAsFloat(),
+               json.get("std").getAsFloat()
             );
          }
 
-         var2.intValues = new int[2][];
-         var2.intValues2 = new int[2][];
-         String[] var9 = new String[]{"bins_yaw", "bins_pitch"};
+         aimPolicy.intValues = new int[2][];
+         aimPolicy.intValues2 = new int[2][];
+         String[] strings = new String[]{"bins_yaw", "bins_pitch"};
 
-         for (int var10 = 0; var10 < 2; var10++) {
-            JsonArray var6 = var0.getAsJsonArray(var9[var10]);
-            var2.intValues[var10] = new int[var6.size()];
-            var2.intValues2[var10] = new int[var6.size()];
+         for (int i = 0; i < 2; i++) {
+            JsonArray jsonArray2 = jsonObject.getAsJsonArray(strings[i]);
+            aimPolicy.intValues[i] = new int[jsonArray2.size()];
+            aimPolicy.intValues2[i] = new int[jsonArray2.size()];
 
-            for (int var7 = 0; var7 < var6.size(); var7++) {
-               JsonObject var8 = var6.get(var7).getAsJsonObject();
-               var2.intValues[var10][var7] = var8.get("lo").getAsInt();
-               var2.intValues2[var10][var7] = var8.get("hi").getAsInt();
+            for (int j = 0; j < jsonArray2.size(); j++) {
+               JsonObject json = jsonArray2.get(j).getAsJsonObject();
+               aimPolicy.intValues[i][j] = json.get("lo").getAsInt();
+               aimPolicy.intValues2[i][j] = json.get("hi").getAsInt();
             }
          }
 
-         JsonObject var11 = var0.getAsJsonObject("sampling");
-         var2.floatValue = var11.get("temperature").getAsFloat();
-         var2.floatValue2 = var11.get("top_p").getAsFloat();
-         var2.intValue = var0.getAsJsonObject("planner").get("ticks").getAsInt();
-         JsonObject var12 = var0.getAsJsonObject("model");
-         var2.intValue2 = var12.get("in_dim").getAsInt();
-         var2.intValue3 = var12.get("hidden").getAsInt();
-         var2.intValue4 = var12.get("motor_hidden").getAsInt();
-         var2.intValue5 = var12.get("n_bins_yaw").getAsInt();
-         var2.intValue6 = var12.get("n_bins_pitch").getAsInt();
-         var2.intValue7 = var12.get("zero_bin_yaw").getAsInt();
-         var2.intValue8 = var12.get("zero_bin_pitch").getAsInt();
-         var2.intValue9 = var12.get("bin_embed").getAsInt();
-         var2.intValue10 = var12.get("z_dim").getAsInt();
-         var2.intValue11 = var12.get("prior_hidden").getAsInt();
-         JsonObject var13 = var0.getAsJsonObject("weights");
-         var2.floatValues = method5439(var13.getAsJsonArray("planner_weight_ih"));
-         var2.floatValues2 = method5439(var13.getAsJsonArray("planner_weight_hh"));
-         var2.floatValues3 = method5438(var13.getAsJsonArray("planner_bias_ih"));
-         var2.floatValues4 = method5438(var13.getAsJsonArray("planner_bias_hh"));
-         var2.floatValues5 = method5439(var13.getAsJsonArray("intent_weight"));
-         var2.floatValues6 = method5438(var13.getAsJsonArray("intent_bias"));
-         var2.floatValues7 = method5439(var13.getAsJsonArray("yaw_embedding"));
-         var2.floatValues8 = method5439(var13.getAsJsonArray("pitch_embedding"));
-         var2.floatValues9 = method5439(var13.getAsJsonArray("motor_weight_ih"));
-         var2.floatValues10 = method5439(var13.getAsJsonArray("motor_weight_hh"));
-         var2.floatValues11 = method5438(var13.getAsJsonArray("motor_bias_ih"));
-         var2.floatValues12 = method5438(var13.getAsJsonArray("motor_bias_hh"));
-         var2.floatValues13 = method5439(var13.getAsJsonArray("yaw_head_weight"));
-         var2.floatValues14 = method5438(var13.getAsJsonArray("yaw_head_bias"));
-         var2.floatValues15 = method5439(var13.getAsJsonArray("pitch_context_weight"));
-         var2.floatValues16 = method5438(var13.getAsJsonArray("pitch_context_bias"));
-         var2.floatValues17 = method5439(var13.getAsJsonArray("pitch_head_weight"));
-         var2.floatValues18 = method5438(var13.getAsJsonArray("pitch_head_bias"));
-         var2.floatValues19 = method5439(var13.getAsJsonArray("prior_weight_0"));
-         var2.floatValues20 = method5438(var13.getAsJsonArray("prior_bias_0"));
-         var2.floatValues21 = method5439(var13.getAsJsonArray("prior_weight_1"));
-         var2.floatValues22 = method5438(var13.getAsJsonArray("prior_bias_1"));
-         var2.method5437();
-         return var2;
+         JsonObject json = jsonObject.getAsJsonObject("sampling");
+         aimPolicy.floatValue = json.get("temperature").getAsFloat();
+         aimPolicy.floatValue2 = json.get("top_p").getAsFloat();
+         aimPolicy.intValue = jsonObject.getAsJsonObject("planner").get("ticks").getAsInt();
+         JsonObject jsonObject2 = jsonObject.getAsJsonObject("model");
+         aimPolicy.intValue2 = jsonObject2.get("in_dim").getAsInt();
+         aimPolicy.intValue3 = jsonObject2.get("hidden").getAsInt();
+         aimPolicy.intValue4 = jsonObject2.get("motor_hidden").getAsInt();
+         aimPolicy.intValue5 = jsonObject2.get("n_bins_yaw").getAsInt();
+         aimPolicy.intValue6 = jsonObject2.get("n_bins_pitch").getAsInt();
+         aimPolicy.intValue7 = jsonObject2.get("zero_bin_yaw").getAsInt();
+         aimPolicy.intValue8 = jsonObject2.get("zero_bin_pitch").getAsInt();
+         aimPolicy.intValue9 = jsonObject2.get("bin_embed").getAsInt();
+         aimPolicy.intValue10 = jsonObject2.get("z_dim").getAsInt();
+         aimPolicy.intValue11 = jsonObject2.get("prior_hidden").getAsInt();
+         JsonObject jsonObject3 = jsonObject.getAsJsonObject("weights");
+         aimPolicy.floatValues = method5439(jsonObject3.getAsJsonArray("planner_weight_ih"));
+         aimPolicy.floatValues2 = method5439(jsonObject3.getAsJsonArray("planner_weight_hh"));
+         aimPolicy.floatValues3 = method5438(jsonObject3.getAsJsonArray("planner_bias_ih"));
+         aimPolicy.floatValues4 = method5438(jsonObject3.getAsJsonArray("planner_bias_hh"));
+         aimPolicy.floatValues5 = method5439(jsonObject3.getAsJsonArray("intent_weight"));
+         aimPolicy.floatValues6 = method5438(jsonObject3.getAsJsonArray("intent_bias"));
+         aimPolicy.floatValues7 = method5439(jsonObject3.getAsJsonArray("yaw_embedding"));
+         aimPolicy.floatValues8 = method5439(jsonObject3.getAsJsonArray("pitch_embedding"));
+         aimPolicy.floatValues9 = method5439(jsonObject3.getAsJsonArray("motor_weight_ih"));
+         aimPolicy.floatValues10 = method5439(jsonObject3.getAsJsonArray("motor_weight_hh"));
+         aimPolicy.floatValues11 = method5438(jsonObject3.getAsJsonArray("motor_bias_ih"));
+         aimPolicy.floatValues12 = method5438(jsonObject3.getAsJsonArray("motor_bias_hh"));
+         aimPolicy.floatValues13 = method5439(jsonObject3.getAsJsonArray("yaw_head_weight"));
+         aimPolicy.floatValues14 = method5438(jsonObject3.getAsJsonArray("yaw_head_bias"));
+         aimPolicy.floatValues15 = method5439(jsonObject3.getAsJsonArray("pitch_context_weight"));
+         aimPolicy.floatValues16 = method5438(jsonObject3.getAsJsonArray("pitch_context_bias"));
+         aimPolicy.floatValues17 = method5439(jsonObject3.getAsJsonArray("pitch_head_weight"));
+         aimPolicy.floatValues18 = method5438(jsonObject3.getAsJsonArray("pitch_head_bias"));
+         aimPolicy.floatValues19 = method5439(jsonObject3.getAsJsonArray("prior_weight_0"));
+         aimPolicy.floatValues20 = method5438(jsonObject3.getAsJsonArray("prior_bias_0"));
+         aimPolicy.floatValues21 = method5439(jsonObject3.getAsJsonArray("prior_weight_1"));
+         aimPolicy.floatValues22 = method5438(jsonObject3.getAsJsonArray("prior_bias_1"));
+         aimPolicy.method5437();
+         return aimPolicy;
       }
    }
 
@@ -227,24 +227,24 @@ public final class AimPolicy {
       }
    }
 
-   private static float[] method5438(JsonArray var0) {
-      float[] var1 = new float[var0.size()];
+   private static float[] method5438(JsonArray jsonArray) {
+      float[] floats = new float[jsonArray.size()];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = var0.get(var2).getAsFloat();
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
       }
 
-      return var1;
+      return floats;
    }
 
-   private static float[][] method5439(JsonArray var0) {
-      float[][] var1 = new float[var0.size()][];
+   private static float[][] method5439(JsonArray jsonArray) {
+      float[][] floatses = new float[jsonArray.size()][];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = method5438(var0.get(var2).getAsJsonArray());
+      for (int i = 0; i < floatses.length; i++) {
+         floatses[i] = method5438(jsonArray.get(i).getAsJsonArray());
       }
 
-      return var1;
+      return floatses;
    }
 
    public static final class Entry {
@@ -254,12 +254,12 @@ public final class AimPolicy {
       public final float floatValue2;
       public final float floatValue3;
 
-      public Entry(int var1, boolean var2, float var3, float var4, float var5) {
-         this.intValue = var1;
-         this.flag = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
+      public Entry(int intValue, boolean flag, float floatValue, float f, float f2) {
+         this.intValue = intValue;
+         this.flag = flag;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
       }
    }
 }

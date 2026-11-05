@@ -19,38 +19,38 @@ public class Class30 {
       this.method4722();
    }
 
-   public Class30 method4711(int var1, Handler5 var2) {
-      return this.method4714(var1, var2, () -> true, 0);
+   public Class30 method4711(int intValue, Handler5 handler5) {
+      return this.method4714(intValue, handler5, () -> true, 0);
    }
 
-   public Class30 method4712(int var1, Handler5 var2, BooleanSupplier var3) {
-      return this.method4714(var1, var2, var3, 0);
+   public Class30 method4712(int intValue, Handler5 handler5, BooleanSupplier booleanSupplier) {
+      return this.method4714(intValue, handler5, booleanSupplier, 0);
    }
 
-   public Class30 method4713(int var1, Handler5 var2, int var3) {
-      return this.method4714(var1, var2, () -> true, var3);
+   public Class30 method4713(int intValue, Handler5 handler5, int n) {
+      return this.method4714(intValue, handler5, () -> true, n);
    }
 
-   public Class30 method4714(int var1, Handler5 var2, BooleanSupplier var3, int var4) {
-      this.items.add(new Class30.Entry3(var1, var2, var3, var4));
+   public Class30 method4714(int intValue, Handler5 handler5, BooleanSupplier booleanSupplier, int n) {
+      this.items.add(new Class30.Entry3(intValue, handler5, booleanSupplier, n));
       Collections.sort(this.items);
       return this;
    }
 
-   public Class30 method4715(int var1, Handler5 var2) {
-      return this.method4718(var1, var2, () -> true, 0);
+   public Class30 method4715(int ticks, Handler5 handler5) {
+      return this.method4718(ticks, handler5, () -> true, 0);
    }
 
-   public Class30 method4716(int var1, Handler5 var2, BooleanSupplier var3) {
-      return this.method4718(var1, var2, var3, 0);
+   public Class30 method4716(int ticks, Handler5 handler5, BooleanSupplier booleanSupplier) {
+      return this.method4718(ticks, handler5, booleanSupplier, 0);
    }
 
-   public Class30 method4717(int var1, Handler5 var2, int var3) {
-      return this.method4718(var1, var2, () -> true, var3);
+   public Class30 method4717(int ticks, Handler5 handler5, int intValue) {
+      return this.method4718(ticks, handler5, () -> true, intValue);
    }
 
-   public Class30 method4718(int var1, Handler5 var2, BooleanSupplier var3, int var4) {
-      this.items2.add(new Class30.Entry4(var1, var2, var3, var4));
+   public Class30 method4718(int ticks, Handler5 handler5, BooleanSupplier booleanSupplier, int intValue) {
+      this.items2.add(new Class30.Entry4(ticks, handler5, booleanSupplier, intValue));
       Collections.sort(this.items2);
       return this;
    }
@@ -82,11 +82,11 @@ public class Class30 {
 
    public void update() {
       if ((!this.items.isEmpty() || !this.items2.isEmpty()) && !this.flag) {
-         this.items.forEach(var1 -> {
+         this.items.forEach(entry3 -> {
             if (this.intValue < this.items.size()) {
-               Class30.Entry3 var2 = this.items.get(this.intValue);
-               if (var2.getBooleanSupplier().getAsBoolean() && this.stopWatch.method317(var2.getIntValue())) {
-                  var2.getHandler5().method4767();
+               Class30.Entry3 entry32 = this.items.get(this.intValue);
+               if (entry32.getBooleanSupplier().getAsBoolean() && this.stopWatch.method317(entry32.getIntValue())) {
+                  entry32.getHandler5().method4767();
                   this.intValue++;
                   this.method4719();
                   if (this.handler.method4725(this.intValue, this.items.size())) {
@@ -96,11 +96,11 @@ public class Class30 {
                }
             }
          });
-         this.items2.forEach(var1 -> {
+         this.items2.forEach(entry4 -> {
             if (this.intValue2 < this.items2.size()) {
-               Class30.Entry4 var2 = this.items2.get(this.intValue2);
-               if (var2.getBooleanSupplier().getAsBoolean() && var2.getTicks() <= 0) {
-                  var2.getHandler5().method4767();
+               Class30.Entry4 entry42 = this.items2.get(this.intValue2);
+               if (entry42.getBooleanSupplier().getAsBoolean() && entry42.getTicks() <= 0) {
+                  entry42.getHandler5().method4767();
                   this.intValue2++;
                   this.method4719();
                   if (this.handler.method4725(this.intValue2, this.items2.size())) {
@@ -109,7 +109,7 @@ public class Class30 {
                   }
                }
 
-               var2.method4734();
+               entry42.method4734();
             }
          });
          this.intValue = Math.min(this.intValue, this.items.size());
@@ -117,8 +117,8 @@ public class Class30 {
       }
    }
 
-   public Class30 method4723(Class30.Handler var1) {
-      this.handler = var1;
+   public Class30 method4723(Class30.Handler handler) {
+      this.handler = handler;
       return this;
    }
 
@@ -162,31 +162,31 @@ public class Class30 {
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated
-   public void setIntValue2(int var1) {
-      this.intValue2 = var1;
+   public void setIntValue2(int n) {
+      this.intValue2 = n;
    }
 
    @Generated
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
    public static class Entry implements Class30.Handler {
       private final int intValue;
       private int intValue2;
 
-      public Entry(int var1) {
-         this.intValue = var1 - 1;
+      public Entry(int n) {
+         this.intValue = n - 1;
       }
 
       @Override
-      public boolean method4725(int var1, int var2) {
-         return var1 >= var2 && this.intValue2 < this.intValue;
+      public boolean method4725(int n, int n2) {
+         return n >= n2 && this.intValue2 < this.intValue;
       }
 
       @Override
@@ -202,8 +202,8 @@ public class Class30 {
 
    public static class Entry2 implements Class30.Handler {
       @Override
-      public boolean method4725(int var1, int var2) {
-         return var1 >= var2;
+      public boolean method4725(int n, int n2) {
+         return n >= n2;
       }
 
       @Override
@@ -222,15 +222,15 @@ public class Class30 {
       private BooleanSupplier booleanSupplier;
       private int intValue2;
 
-      public Entry3(int var1, Handler5 var2, BooleanSupplier var3, int var4) {
-         this.intValue = var1;
-         this.handler5 = var2;
-         this.booleanSupplier = var3;
-         this.intValue2 = var4;
+      public Entry3(int intValue, Handler5 handler5, BooleanSupplier booleanSupplier, int n) {
+         this.intValue = intValue;
+         this.handler5 = handler5;
+         this.booleanSupplier = booleanSupplier;
+         this.intValue2 = n;
       }
 
-      public int compareTo(Class30.Entry3 var1) {
-         return Integer.compare(var1.getIntValue2(), this.getIntValue2());
+      public int compareTo(Class30.Entry3 entry3) {
+         return Integer.compare(entry3.getIntValue2(), this.getIntValue2());
       }
 
       @Generated
@@ -254,26 +254,26 @@ public class Class30 {
       }
 
       @Generated
-      public Class30.Entry3 method4729(int var1) {
-         this.intValue = var1;
+      public Class30.Entry3 method4729(int intValue) {
+         this.intValue = intValue;
          return this;
       }
 
       @Generated
-      public Class30.Entry3 method4730(Handler5 var1) {
-         this.handler5 = var1;
+      public Class30.Entry3 method4730(Handler5 handler5) {
+         this.handler5 = handler5;
          return this;
       }
 
       @Generated
-      public Class30.Entry3 method4731(BooleanSupplier var1) {
-         this.booleanSupplier = var1;
+      public Class30.Entry3 method4731(BooleanSupplier booleanSupplier) {
+         this.booleanSupplier = booleanSupplier;
          return this;
       }
 
       @Generated
-      public Class30.Entry3 method4732(int var1) {
-         this.intValue2 = var1;
+      public Class30.Entry3 method4732(int n) {
+         this.intValue2 = n;
          return this;
       }
    }
@@ -284,15 +284,15 @@ public class Class30 {
       private BooleanSupplier booleanSupplier;
       private int intValue;
 
-      public Entry4(int var1, Handler5 var2, BooleanSupplier var3, int var4) {
-         this.ticks = var1;
-         this.handler5 = var2;
-         this.booleanSupplier = var3;
-         this.intValue = var4;
+      public Entry4(int ticks, Handler5 handler5, BooleanSupplier booleanSupplier, int intValue) {
+         this.ticks = ticks;
+         this.handler5 = handler5;
+         this.booleanSupplier = booleanSupplier;
+         this.intValue = intValue;
       }
 
-      public int compareTo(Class30.Entry4 var1) {
-         return Integer.compare(var1.getIntValue(), this.getIntValue());
+      public int compareTo(Class30.Entry4 entry4) {
+         return Integer.compare(entry4.getIntValue(), this.getIntValue());
       }
 
       public void method4734() {
@@ -320,32 +320,32 @@ public class Class30 {
       }
 
       @Generated
-      public Class30.Entry4 method4735(int var1) {
-         this.ticks = var1;
+      public Class30.Entry4 method4735(int ticks) {
+         this.ticks = ticks;
          return this;
       }
 
       @Generated
-      public Class30.Entry4 method4736(Handler5 var1) {
-         this.handler5 = var1;
+      public Class30.Entry4 method4736(Handler5 handler5) {
+         this.handler5 = handler5;
          return this;
       }
 
       @Generated
-      public Class30.Entry4 method4737(BooleanSupplier var1) {
-         this.booleanSupplier = var1;
+      public Class30.Entry4 method4737(BooleanSupplier booleanSupplier) {
+         this.booleanSupplier = booleanSupplier;
          return this;
       }
 
       @Generated
-      public Class30.Entry4 method4738(int var1) {
-         this.intValue = var1;
+      public Class30.Entry4 method4738(int intValue) {
+         this.intValue = intValue;
          return this;
       }
    }
 
    public interface Handler {
-      boolean method4725(int var1, int var2);
+      boolean method4725(int intValue, int size);
 
       void method4726();
 

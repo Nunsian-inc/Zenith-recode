@@ -48,193 +48,193 @@ public final class BurstSumModel {
    private final float[] floatValues8;
 
    private BurstSumModel(
-      BurstSumModel.Data[] var1,
-      float[] var2,
-      float[] var3,
-      float var4,
-      float[][] var5,
-      float[] var6,
-      float[][] var7,
-      float[] var8,
-      float[][] var9,
-      float[] var10
+      BurstSumModel.Data[] datas,
+      float[] floatValues,
+      float[] floatValues2,
+      float floatValue,
+      float[][] floatValues3,
+      float[] floatValues4,
+      float[][] floatValues5,
+      float[] floatValues6,
+      float[][] floatValues7,
+      float[] floatValues8
    ) {
-      this.datas = var1;
-      this.floatValues = var2;
-      this.floatValues2 = var3;
-      this.floatValue = var4;
-      this.floatValues3 = var5;
-      this.floatValues4 = var6;
-      this.floatValues5 = var7;
-      this.floatValues6 = var8;
-      this.floatValues7 = var9;
-      this.floatValues8 = var10;
+      this.datas = datas;
+      this.floatValues = floatValues;
+      this.floatValues2 = floatValues2;
+      this.floatValue = floatValue;
+      this.floatValues3 = floatValues3;
+      this.floatValues4 = floatValues4;
+      this.floatValues5 = floatValues5;
+      this.floatValues6 = floatValues6;
+      this.floatValues7 = floatValues7;
+      this.floatValues8 = floatValues8;
    }
 
-   public int[] method479(float[] var1) {
-      float[] var2 = this.method480(var1);
-      if (var2 == null) {
+   public int[] method479(float[] floats) {
+      float[] floats2 = this.method480(floats);
+      if (floats2 == null) {
          return null;
       } else {
-         float[] var3 = method487(var2, this.floatValues3, this.floatValues4, true);
-         float[] var4 = method487(var3, this.floatValues5, this.floatValues6, true);
-         float[] var5 = method487(var4, this.floatValues7, this.floatValues8, false);
-         int[] var6 = new int[2];
+         float[] floats3 = method487(floats2, this.floatValues3, this.floatValues4, true);
+         float[] floats4 = method487(floats3, this.floatValues5, this.floatValues6, true);
+         float[] floats5 = method487(floats4, this.floatValues7, this.floatValues8, false);
+         int[] ints = new int[2];
 
-         for (int var7 = 0; var7 < var6.length; var7++) {
-            double var8 = var5[var7] * this.floatValues2[var7] + this.floatValues[var7];
-            var8 = Math.signum(var8) * Math.expm1(Math.abs(var8)) * this.floatValue;
-            if (!Double.isFinite(var8) || var8 < -2.1474836E9F || var8 > 2.147483647E9) {
+         for (int i = 0; i < ints.length; i++) {
+            double d = floats5[i] * this.floatValues2[i] + this.floatValues[i];
+            d = Math.signum(d) * Math.expm1(Math.abs(d)) * this.floatValue;
+            if (!Double.isFinite(d) || d < -2.1474836E9F || d > 2.147483647E9) {
                return null;
             }
 
-            var6[var7] = (int)Math.round(var8);
+            ints[i] = (int)Math.round(d);
          }
 
-         return var6;
+         return ints;
       }
    }
 
-   private float[] method480(float[] var1) {
-      if (var1 != null && var1.length == this.datas.length) {
-         float[] var2 = new float[this.datas.length];
+   private float[] method480(float[] floats) {
+      if (floats != null && floats.length == this.datas.length) {
+         float[] floats2 = new float[this.datas.length];
 
-         for (int var3 = 0; var3 < var2.length; var3++) {
-            float var4 = method486(var1[var3], this.datas[var3]);
-            var4 = (var4 - this.datas[var3].getFloatValue2()) / this.datas[var3].getFloatValue3();
-            if (!Float.isFinite(var4)) {
+         for (int i = 0; i < floats2.length; i++) {
+            float f = method486(floats[i], this.datas[i]);
+            f = (f - this.datas[i].getFloatValue2()) / this.datas[i].getFloatValue3();
+            if (!Float.isFinite(f)) {
                return null;
             }
 
-            var2[var3] = var4;
+            floats2[i] = f;
          }
 
-         return var2;
+         return floats2;
       } else {
          return null;
       }
    }
 
    public static BurstSumModel method481() {
-      for (Path var4 : paths) {
-         BurstSumModel var0 = method482(var4);
-         if (var0 != null) {
-            return var0;
+      for (Path path : paths) {
+         BurstSumModel burstSumModel = method482(path);
+         if (burstSumModel != null) {
+            return burstSumModel;
          }
       }
 
-      for (Path var9 : paths2) {
-         BurstSumModel var5 = method482(var9);
-         if (var5 != null) {
-            return var5;
+      for (Path path : paths2) {
+         BurstSumModel burstSumModel = method482(path);
+         if (burstSumModel != null) {
+            return burstSumModel;
          }
       }
 
       return method483();
    }
 
-   private static BurstSumModel method482(Path var0) {
+   private static BurstSumModel method482(Path path) {
       try {
-         return !Files.isRegularFile(var0) ? null : method484(Files.readString(var0, StandardCharsets.UTF_8), var0.toAbsolutePath().toString());
-      } catch (Throwable var2) {
-         System.err.println("[BurstSumModel] failed to load " + var0 + ": " + var2);
+         return !Files.isRegularFile(path) ? null : method484(Files.readString(path, StandardCharsets.UTF_8), path.toAbsolutePath().toString());
+      } catch (Throwable e) {
+         System.err.println("[BurstSumModel] failed to load " + path + ": " + e);
          return null;
       }
    }
 
    private static BurstSumModel method483() {
       try {
-         BurstSumModel var1;
-         try (InputStream var0 = BurstSumModel.class.getResourceAsStream("/assets/zenith/aimpipe/burst_sum_model.json")) {
-            if (var0 == null) {
+         BurstSumModel burstSumModel;
+         try (InputStream resourceAsStream = BurstSumModel.class.getResourceAsStream("/assets/zenith/aimpipe/burst_sum_model.json")) {
+            if (resourceAsStream == null) {
                return null;
             }
 
-            var1 = method484(new String(var0.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/aimpipe/burst_sum_model.json");
+            burstSumModel = method484(new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/aimpipe/burst_sum_model.json");
          }
 
-         return var1;
-      } catch (Throwable var5) {
-         System.err.println("[BurstSumModel] failed to load /assets/zenith/aimpipe/burst_sum_model.json: " + var5);
+         return burstSumModel;
+      } catch (Throwable e) {
+         System.err.println("[BurstSumModel] failed to load /assets/zenith/aimpipe/burst_sum_model.json: " + e);
          return null;
       }
    }
 
-   private static BurstSumModel method484(String var0, String var1) {
-      JsonObject var2 = JsonParser.parseString(var0).getAsJsonObject();
-      if (var2.get("format_version").getAsInt() != 1) {
+   private static BurstSumModel method484(String string, String str) {
+      JsonObject jsonObject = JsonParser.parseString(string).getAsJsonObject();
+      if (jsonObject.get("format_version").getAsInt() != 1) {
          throw new IllegalStateException("unsupported burst-sum model format");
       } else {
-         JsonArray var3 = var2.getAsJsonArray("feature_spec");
-         if (var3.size() != texts.length) {
+         JsonArray jsonArray = jsonObject.getAsJsonArray("feature_spec");
+         if (jsonArray.size() != texts.length) {
             throw new IllegalStateException("burst-sum feature count mismatch");
          } else {
-            BurstSumModel.Data[] var4 = new BurstSumModel.Data[var3.size()];
+            BurstSumModel.Data[] datas = new BurstSumModel.Data[jsonArray.size()];
 
-            for (int var5 = 0; var5 < var4.length; var5++) {
-               JsonObject var6 = var3.get(var5).getAsJsonObject();
-               if (!texts[var5].equals(var6.get("name").getAsString())) {
-                  throw new IllegalStateException("burst-sum feature order mismatch at " + var5);
+            for (int i = 0; i < datas.length; i++) {
+               JsonObject json = jsonArray.get(i).getAsJsonObject();
+               if (!texts[i].equals(json.get("name").getAsString())) {
+                  throw new IllegalStateException("burst-sum feature order mismatch at " + i);
                }
 
-               var4[var5] = new BurstSumModel.Data(
-                  var6.get("transform").getAsString(), var6.get("scale").getAsFloat(), var6.get("mean").getAsFloat(), var6.get("std").getAsFloat()
+               datas[i] = new BurstSumModel.Data(
+                  json.get("transform").getAsString(), json.get("scale").getAsFloat(), json.get("mean").getAsFloat(), json.get("std").getAsFloat()
                );
-               if (!Float.isFinite(var4[var5].getFloatValue3()) || var4[var5].getFloatValue3() <= 0.0F) {
+               if (!Float.isFinite(datas[i].getFloatValue3()) || datas[i].getFloatValue3() <= 0.0F) {
                   throw new IllegalStateException("invalid burst-sum feature normalization");
                }
             }
 
-            JsonObject var20 = var2.has("output_transform") ? var2.getAsJsonObject("output_transform") : var2.getAsJsonObject("output");
-            if (var20.has("type") && !"signed_mu".equals(var20.get("type").getAsString())) {
+            JsonObject json = jsonObject.has("output_transform") ? jsonObject.getAsJsonObject("output_transform") : jsonObject.getAsJsonObject("output");
+            if (json.has("type") && !"signed_mu".equals(json.get("type").getAsString())) {
                throw new IllegalStateException("unsupported burst-sum output transform");
             } else {
-               float var21 = var20.get("scale").getAsFloat();
-               float[] var7 = method488(var20.getAsJsonArray("mean"));
-               float[] var8 = method488(var20.getAsJsonArray("std"));
-               float[][] var9;
-               float[] var10;
-               float[][] var11;
-               float[] var12;
-               float[][] var13;
-               float[] var14;
-               if (var2.has("network")) {
-                  JsonObject var15 = var2.getAsJsonObject("network");
-                  if (!"tanh".equals(var15.get("activation").getAsString())) {
+               float floatValue = json.get("scale").getAsFloat();
+               float[] floatValues = method488(json.getAsJsonArray("mean"));
+               float[] floatValues2 = method488(json.getAsJsonArray("std"));
+               float[][] floatValues3;
+               float[] floatValues4;
+               float[][] floatses;
+               float[] floats;
+               float[][] floatValues32;
+               float[] floatValues42;
+               if (jsonObject.has("network")) {
+                  JsonObject jsonObject2 = jsonObject.getAsJsonObject("network");
+                  if (!"tanh".equals(jsonObject2.get("activation").getAsString())) {
                      throw new IllegalStateException("unsupported burst-sum activation");
                   }
 
-                  JsonArray var16 = var15.getAsJsonArray("layers");
-                  if (var16.size() != 3) {
+                  JsonArray jsonArray2 = jsonObject2.getAsJsonArray("layers");
+                  if (jsonArray2.size() != 3) {
                      throw new IllegalStateException("burst-sum network must contain three layers");
                   }
 
-                  JsonObject var17 = var16.get(0).getAsJsonObject();
-                  JsonObject var18 = var16.get(1).getAsJsonObject();
-                  JsonObject var19 = var16.get(2).getAsJsonObject();
-                  var9 = method489(var17.getAsJsonArray("weight"));
-                  var10 = method488(var17.getAsJsonArray("bias"));
-                  var11 = method489(var18.getAsJsonArray("weight"));
-                  var12 = method488(var18.getAsJsonArray("bias"));
-                  var13 = method489(var19.getAsJsonArray("weight"));
-                  var14 = method488(var19.getAsJsonArray("bias"));
+                  JsonObject jsonObject3 = jsonArray2.get(0).getAsJsonObject();
+                  JsonObject jsonObject4 = jsonArray2.get(1).getAsJsonObject();
+                  JsonObject jsonObject5 = jsonArray2.get(2).getAsJsonObject();
+                  floatValues3 = method489(jsonObject3.getAsJsonArray("weight"));
+                  floatValues4 = method488(jsonObject3.getAsJsonArray("bias"));
+                  floatses = method489(jsonObject4.getAsJsonArray("weight"));
+                  floats = method488(jsonObject4.getAsJsonArray("bias"));
+                  floatValues32 = method489(jsonObject5.getAsJsonArray("weight"));
+                  floatValues42 = method488(jsonObject5.getAsJsonArray("bias"));
                } else {
-                  JsonObject var22 = var2.getAsJsonObject("weights");
-                  var9 = method489(var22.getAsJsonArray("layer_0_weight"));
-                  var10 = method488(var22.getAsJsonArray("layer_0_bias"));
-                  var11 = method489(var22.getAsJsonArray("layer_1_weight"));
-                  var12 = method488(var22.getAsJsonArray("layer_1_bias"));
-                  var13 = method489(var22.getAsJsonArray("layer_2_weight"));
-                  var14 = method488(var22.getAsJsonArray("layer_2_bias"));
+                  JsonObject jsonObject2 = jsonObject.getAsJsonObject("weights");
+                  floatValues3 = method489(jsonObject2.getAsJsonArray("layer_0_weight"));
+                  floatValues4 = method488(jsonObject2.getAsJsonArray("layer_0_bias"));
+                  floatses = method489(jsonObject2.getAsJsonArray("layer_1_weight"));
+                  floats = method488(jsonObject2.getAsJsonArray("layer_1_bias"));
+                  floatValues32 = method489(jsonObject2.getAsJsonArray("layer_2_weight"));
+                  floatValues42 = method488(jsonObject2.getAsJsonArray("layer_2_bias"));
                }
 
-               method485(var9, var10, var4.length, "layer 0");
-               method485(var11, var12, var10.length, "layer 1");
-               method485(var13, var14, var12.length, "layer 2");
-               if (var14.length == 2 && var7.length == 2 && var8.length == 2 && Float.isFinite(var21) && !(var21 <= 0.0F)) {
-                  BurstSumModel var23 = new BurstSumModel(var4, var7, var8, var21, var9, var10, var11, var12, var13, var14);
-                  System.out.println("[BurstSumModel] loaded " + var1 + " (features=" + var4.length + ", hidden=" + var10.length + ")");
-                  return var23;
+               method485(floatValues3, floatValues4, datas.length, "layer 0");
+               method485(floatses, floats, floatValues4.length, "layer 1");
+               method485(floatValues32, floatValues42, floats.length, "layer 2");
+               if (floatValues42.length == 2 && floatValues.length == 2 && floatValues2.length == 2 && Float.isFinite(floatValue) && !(floatValue <= 0.0F)) {
+                  BurstSumModel burstSumModel = new BurstSumModel(datas, floatValues, floatValues2, floatValue, floatValues3, floatValues4, floatses, floats, floatValues32, floatValues42);
+                  System.out.println("[BurstSumModel] loaded " + str + " (features=" + datas.length + ", hidden=" + floatValues4.length + ")");
+                  return burstSumModel;
                } else {
                   throw new IllegalStateException("invalid burst-sum output shape");
                }
@@ -243,63 +243,63 @@ public final class BurstSumModel {
       }
    }
 
-   private static void method485(float[][] var0, float[] var1, int var2, String var3) {
-      if (var0.length != var1.length) {
-         throw new IllegalStateException(var3 + " output size mismatch");
+   private static void method485(float[][] floatValues3, float[] floatValues4, int length, String str) {
+      if (floatValues3.length != floatValues4.length) {
+         throw new IllegalStateException(str + " output size mismatch");
       } else {
-         for (float[] var7 : var0) {
-            if (var7.length != var2) {
-               throw new IllegalStateException(var3 + " input size mismatch");
+         for (float[] floats : floatValues3) {
+            if (floats.length != length) {
+               throw new IllegalStateException(str + " input size mismatch");
             }
          }
       }
    }
 
-   private static float method486(float var0, BurstSumModel.Data var1) {
-      String var2 = var1.getText();
+   private static float method486(float f, BurstSumModel.Data data) {
+      String text = data.getText();
 
-      return switch (var2) {
-         case "mu" -> (float)(Math.signum(var0) * Math.log1p(Math.abs(var0) / var1.getFloatValue()));
-         case "log" -> (float)Math.log1p(Math.max(var0, 0.0F));
-         case "lin", "linear" -> var0;
-         default -> throw new IllegalStateException("unknown burst-sum feature transform " + var1.getText());
+      return switch (text) {
+         case "mu" -> (float)(Math.signum(f) * Math.log1p(Math.abs(f) / data.getFloatValue()));
+         case "log" -> (float)Math.log1p(Math.max(f, 0.0F));
+         case "lin", "linear" -> f;
+         default -> throw new IllegalStateException("unknown burst-sum feature transform " + data.getText());
       };
    }
 
-   private static float[] method487(float[] var0, float[][] var1, float[] var2, boolean var3) {
-      float[] var4 = new float[var2.length];
+   private static float[] method487(float[] floats, float[][] floatValues3, float[] floatValues4, boolean flag) {
+      float[] floats2 = new float[floatValues4.length];
 
-      for (int var5 = 0; var5 < var4.length; var5++) {
-         double var6 = var2[var5];
+      for (int i = 0; i < floats2.length; i++) {
+         double x = floatValues4[i];
 
-         for (int var8 = 0; var8 < var0.length; var8++) {
-            var6 += var1[var5][var8] * var0[var8];
+         for (int j = 0; j < floats.length; j++) {
+            x += floatValues3[i][j] * floats[j];
          }
 
-         var4[var5] = var3 ? (float)Math.tanh(var6) : (float)var6;
+         floats2[i] = flag ? (float)Math.tanh(x) : (float)x;
       }
 
-      return var4;
+      return floats2;
    }
 
-   private static float[] method488(JsonArray var0) {
-      float[] var1 = new float[var0.size()];
+   private static float[] method488(JsonArray jsonArray) {
+      float[] floats = new float[jsonArray.size()];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = var0.get(var2).getAsFloat();
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
       }
 
-      return var1;
+      return floats;
    }
 
-   private static float[][] method489(JsonArray var0) {
-      float[][] var1 = new float[var0.size()][];
+   private static float[][] method489(JsonArray jsonArray) {
+      float[][] floatses = new float[jsonArray.size()][];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = method488(var0.get(var2).getAsJsonArray());
+      for (int i = 0; i < floatses.length; i++) {
+         floatses[i] = method488(jsonArray.get(i).getAsJsonArray());
       }
 
-      return var1;
+      return floatses;
    }
 
    private static final class Data {
@@ -341,11 +341,11 @@ public final class BurstSumModel {
          return "Data[" + "text=" + this.text + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data(String var1, float var2, float var3, float var4) {
-         this.text = var1;
-         this.floatValue = var2;
-         this.floatValue2 = var3;
-         this.floatValue3 = var4;
+      private Data(String text, float floatValue, float f, float f2) {
+         this.text = text;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
       }
 
       public String getText() {

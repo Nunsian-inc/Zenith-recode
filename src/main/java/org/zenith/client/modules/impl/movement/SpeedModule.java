@@ -147,15 +147,15 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6592(SprintUpdateEvent var1) {
+   public void method6592(SprintUpdateEvent event) {
       if (this.flag) {
-         var1.setFlag2(false);
+         event.setFlag2(false);
          this.flag = false;
       }
    }
 
    @EventTarget(4)
-   public void method6593(UpdateEvent var1) {
+   public void method6593(UpdateEvent event) {
       if (this.intValue2 > 0) {
          this.intValue2--;
       }
@@ -168,19 +168,19 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6594(MovementCorrectionEvent var1) {
+   public void method6594(MovementCorrectionEvent event) {
       if (this.method6603() && mc.player != null) {
          Util13.method2404(1.7F);
          if (this.ticks > 3) {
-            double var2 = 0.03;
+            double d = 0.03;
             if (this.ticks % 2 == 0) {
                mc.player.push(0.0, 0.03F, 0.0);
-               var2 = mc.player.onGround() ? 0.085 : 0.03;
+               d = mc.player.onGround() ? 0.085 : 0.03;
             }
 
             if (this.method6609()) {
-               double var4 = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
-               mc.player.push(-Math.sin(var4) * var2, 0.0, Math.cos(var4) * var2);
+               double d2 = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
+               mc.player.push(-Math.sin(d2) * d, 0.0, Math.cos(d2) * d);
             }
          }
 
@@ -189,7 +189,7 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.method6603() && mc.player != null) {
          if (mc.player.verticalCollision) {
             this.intValue++;
@@ -204,7 +204,7 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6595(PostMotionEvent var1) {
+   public void method6595(PostMotionEvent event) {
       if (this.method6603() && mc.player != null && mc.getConnection() != null) {
          if (this.ticks % 2 == 0) {
             Util13.method2404(0.3F);
@@ -214,9 +214,9 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (this.method6603()) {
-         if (var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> {
                if (this.ticks % 2 == 1) {
                   this.ticks++;
@@ -229,7 +229,7 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6596(PostMotionEvent var1) {
+   public void method6596(PostMotionEvent event) {
       if (this.method6601()) {
          if (this.method6599()) {
             this.method6600();
@@ -244,21 +244,21 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6597(MovementCorrectionEvent var1) {
+   public void method6597(MovementCorrectionEvent event) {
       if (this.method6601()) {
          if (this.method6599()) {
             this.method6600();
          } else {
             Util13.method2404(this.grim72FastTimer.getValue3());
             if (this.ticks > 3) {
-               double var2 = 0.03;
+               double d = 0.03;
                if (this.ticks % 2 == 0) {
                   mc.player.push(0.0, 0.03, 0.0);
-                  var2 = mc.player.onGround() ? 0.085 : 0.03;
+                  d = mc.player.onGround() ? 0.085 : 0.03;
                }
 
-               double var4 = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
-               mc.player.push(-Math.sin(var4) * var2, 0.0, Math.cos(var4) * var2);
+               double d2 = MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input));
+               mc.player.push(-Math.sin(d2) * d, 0.0, Math.cos(d2) * d);
             }
 
             this.ticks++;
@@ -267,8 +267,8 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6598(PacketEvent var1) {
-      if (this.method6601() && var1.method7100() && var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+   public void method6598(PacketEvent event) {
+      if (this.method6601() && event.method7100() && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
          mc.execute(() -> {
             if (!this.method6599()) {
                if (this.ticks % 2 == 1) {
@@ -299,24 +299,24 @@ public final class SpeedModule extends Module {
       return this.mode.isSelected(4);
    }
 
-   private void method6602(MoveInputEvent var1) {
-      boolean var2;
-      if (var2 = mc.player.isSprinting()) {
+   private void method6602(MoveInputEvent event) {
+      boolean sprinting;
+      if (sprinting = mc.player.isSprinting()) {
          mc.player.setSprinting(false);
       }
 
-      PlayerSimulation var3 = PlayerSimulation.method6031(1);
-      if (var2) {
+      PlayerSimulation playerSimulation = PlayerSimulation.method6031(1);
+      if (sprinting) {
          mc.player.setSprinting(true);
       }
 
-      AABB var4 = var3.box.inflate(this.collisionRadius.getValue3(), this.collisionRadius.getValue3(), this.collisionRadius.getValue3());
-      Object var5 = null;
+      AABB inflate = playerSimulation.box.inflate(this.collisionRadius.getValue3(), this.collisionRadius.getValue3(), this.collisionRadius.getValue3());
+      Object player = null;
       if (!this.onlyAura.isEnabled()) {
          if (AuraModule.INSTANCE.method6358() == null) {
-            for (Entity var7 : mc.level.entitiesForRendering()) {
-               if (var7 != mc.player && (var7 instanceof LivingEntity || var7 instanceof Boat) && var4.intersects(var7.getBoundingBox())) {
-                  var5 = var7;
+            for (Entity entity : mc.level.entitiesForRendering()) {
+               if (entity != mc.player && (entity instanceof LivingEntity || entity instanceof Boat) && inflate.intersects(entity.getBoundingBox())) {
+                  player = entity;
                   break;
                }
             }
@@ -326,29 +326,29 @@ public final class SpeedModule extends Module {
             return;
          }
 
-         if (var4.intersects(AuraModule.INSTANCE.method6358().getBoundingBox())) {
-            var5 = AuraModule.INSTANCE.method6358();
+         if (inflate.intersects(AuraModule.INSTANCE.method6358().getBoundingBox())) {
+            player = AuraModule.INSTANCE.method6358();
          }
       }
 
-      if (var5 instanceof Player) {
-         Vec3 var23 = var3.vec3d;
-         Vec3 var24 = (ReachV3Module.INSTANCE.isEnabled() && ReachV3Module.INSTANCE.getVec3d2() != null
-               ? ((Entity)var5).dimensions.makeBoundingBox(ReachV3Module.INSTANCE.getVec3d2())
-               : (var5 instanceof Player ? PlayerSimulation.method6032((Player)var5, 2).box : ((Entity)var5).getBoundingBox()))
+      if (player instanceof Player) {
+         Vec3 vec3d = playerSimulation.vec3d;
+         Vec3 center = (ReachV3Module.INSTANCE.isEnabled() && ReachV3Module.INSTANCE.getVec3d2() != null
+               ? ((Entity)player).dimensions.makeBoundingBox(ReachV3Module.INSTANCE.getVec3d2())
+               : (player instanceof Player ? PlayerSimulation.method6032((Player)player, 2).box : ((Entity)player).getBoundingBox()))
             .getCenter();
-         double var8 = var24.x - var23.x;
-         double var10 = var24.z - var23.z;
-         double var12 = Math.sqrt(var8 * var8 + var10 * var10);
-         double var14 = this.speed.getValue3();
-         double var16 = 0.0;
-         double var18 = Math.max(0.0, var12 - var16);
-         double var20 = Math.min(var14, var18);
-         double[] var22 = new double[]{var8 * var20, var10 * var20};
-         mc.player.push(var22[0], 0.0, var22[1]);
+         double d = center.x - vec3d.x;
+         double d2 = center.z - vec3d.z;
+         double d3 = Math.sqrt(d * d + d2 * d2);
+         double d4 = this.speed.getValue3();
+         double d5 = 0.0;
+         double d6 = Math.max(0.0, d3 - d5);
+         double d7 = Math.min(d4, d6);
+         double[] doubles = new double[]{d * d7, d2 * d7};
+         mc.player.push(doubles[0], 0.0, doubles[1]);
          if (this.mode.isSelected(0)) {
             if (mc.player.wasSprinting) {
-               mc.player.push(-var22[0], 0.0, -var22[1]);
+               mc.player.push(-doubles[0], 0.0, -doubles[1]);
             }
 
             mc.player.setSprinting(false);
@@ -356,7 +356,7 @@ public final class SpeedModule extends Module {
             this.flag = true;
          }
 
-         if (mc.player.getBoundingBox().intersects(((Entity)var5).getBoundingBox())) {
+         if (mc.player.getBoundingBox().intersects(((Entity)player).getBoundingBox())) {
             this.intValue2 = 3;
             return;
          }
@@ -370,7 +370,7 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6604(UpdateEvent var1) {
+   public void method6604(UpdateEvent event) {
       if (this.method6606() && mc.player != null && mc.level != null) {
          if (this.method6609()) {
             mc.player.setSprinting(true);
@@ -389,22 +389,22 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void method6605(Event5 var1) {
+   public void method6605(Event5 event) {
       if (this.method6606()
          && mc.player != null
          && mc.level != null
          && this.method6609()
          && !mc.player.onGround()
          && mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-         float var2 = (float)Math.toDegrees(
+         float yRot = (float)Math.toDegrees(
             MovementInputUtils.method7427(mc.player.getYRot(), ViaCompat.method4846(mc.player.input), ViaCompat.method4847(mc.player.input))
          );
          if (this.ticks > 0) {
-            double var3 = Math.abs(mc.player.getY() - this.doubleValue);
-            Math.max(0.0, 1.0 - var3);
-            float var7 = 75.0F;
-            Rotation var8 = new Rotation(var2, var7);
-            zenith.getRotationManager().method7849(new RotationRequest(var8, () -> var8, bcCameraTestnerv.getRotationConfig()), 2, this);
+            double d = Math.abs(mc.player.getY() - this.doubleValue);
+            Math.max(0.0, 1.0 - d);
+            float xRot = 75.0F;
+            Rotation rotation = new Rotation(yRot, xRot);
+            zenith.getRotationManager().method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 2, this);
          }
       }
    }
@@ -419,9 +419,9 @@ public final class SpeedModule extends Module {
 
    private void method6608() {
       if (mc.player != null) {
-         Slot var1;
+         Slot slot;
          if (mc.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-            var1 = InventoryUtils.method916(
+            slot = InventoryUtils.method916(
                List.of(
                   Items.NETHERITE_CHESTPLATE,
                   Items.DIAMOND_CHESTPLATE,
@@ -430,14 +430,14 @@ public final class SpeedModule extends Module {
                   Items.GOLDEN_CHESTPLATE,
                   Items.LEATHER_CHESTPLATE
                ),
-               Comparator.comparingInt(var0 -> var0.index)
+               Comparator.comparingInt(slot2 -> slot2.index)
             );
          } else {
-            var1 = InventoryUtils.method912(mc.player.inventoryMenu, Items.ELYTRA, Comparator.comparingInt(var0 -> var0.index), var0 -> true);
+            slot = InventoryUtils.method912(mc.player.inventoryMenu, Items.ELYTRA, Comparator.comparingInt(slot2 -> slot2.index), slot2 -> true);
          }
 
-         if (var1 != null) {
-            InventoryUtils.method934(var1, 6, true, false);
+         if (slot != null) {
+            InventoryUtils.method934(slot, 6, true, false);
          }
       }
    }
@@ -447,57 +447,57 @@ public final class SpeedModule extends Module {
    }
 
    @EventTarget
-   public void onCustomUpdate(UpdateEvent var1) {
+   public void onCustomUpdate(UpdateEvent event) {
       if (this.isCustomMode() && mc.player != null && mc.level != null) {
          this.handleCustomMove(mc.player);
       }
    }
 
    /** Custom: каждый тик ставит горизонтальную скорость по вводу; в воздухе — с множителем, без ввода — стоп. */
-   private void handleCustomMove(LocalPlayer var1) {
-      float var2 = this.customBaseSpeed.getValue3();
-      MobEffectInstance var3 = var1.getEffect(MobEffects.SPEED);
-      if (var3 != null) {
-         var2 = switch (var3.getAmplifier()) {
+   private void handleCustomMove(LocalPlayer player) {
+      float f = this.customBaseSpeed.getValue3();
+      MobEffectInstance effect = player.getEffect(MobEffects.SPEED);
+      if (effect != null) {
+         f = switch (effect.getAmplifier()) {
             case 0 -> this.customSpeedI.getValue3();
             case 1 -> this.customSpeedII.getValue3();
             default -> this.customSpeedIII.getValue3();
          };
       }
 
-      MobEffectInstance var4 = var1.getEffect(MobEffects.SLOWNESS);
-      if (var4 != null) {
-         var2 *= switch (var4.getAmplifier()) {
+      MobEffectInstance mobEffectInstance = player.getEffect(MobEffects.SLOWNESS);
+      if (mobEffectInstance != null) {
+         f *= switch (mobEffectInstance.getAmplifier()) {
             case 0 -> this.customSlowI.getValue3();
             case 1 -> this.customSlowII.getValue3();
             default -> this.customSlowIII.getValue3();
          };
       }
 
-      if (this.customDamageBoost.isEnabled() && var1.hurtTime > 0) {
-         var2 += this.customDamageSpeed.getValue3();
+      if (this.customDamageBoost.isEnabled() && player.hurtTime > 0) {
+         f += this.customDamageSpeed.getValue3();
       }
 
-      if (this.customAutoJump.isEnabled() && this.method6609() && var1.onGround() && !mc.options.keyJump.isDown()) {
-         var1.jumpFromGround();
+      if (this.customAutoJump.isEnabled() && this.method6609() && player.onGround() && !mc.options.keyJump.isDown()) {
+         player.jumpFromGround();
       }
 
-      if (!var1.isInWater() && !var1.onGround() && !var1.isFallFlying()) {
-         this.setHorizontalSpeed(var1, var2 * this.customAirMultiplier.getValue3());
+      if (!player.isInWater() && !player.onGround() && !player.isFallFlying()) {
+         this.setHorizontalSpeed(player, f * this.customAirMultiplier.getValue3());
       }
 
-      if (var1.onGround()) {
-         this.setHorizontalSpeed(var1, var2);
+      if (player.onGround()) {
+         this.setHorizontalSpeed(player, f);
       }
    }
 
-   private void setHorizontalSpeed(LocalPlayer var1, double var2) {
-      Vec3 var4 = var1.getDeltaMovement();
+   private void setHorizontalSpeed(LocalPlayer player, double d) {
+      Vec3 deltaMovement = player.getDeltaMovement();
       if (!this.method6609()) {
-         var1.setDeltaMovement(0.0, var4.y, 0.0);
+         player.setDeltaMovement(0.0, deltaMovement.y, 0.0);
       } else {
-         double var5 = MovementInputUtils.method7427(var1.getYRot(), ViaCompat.method4846(var1.input), ViaCompat.method4847(var1.input));
-         var1.setDeltaMovement(-Math.sin(var5) * var2, var4.y, Math.cos(var5) * var2);
+         double d2 = MovementInputUtils.method7427(player.getYRot(), ViaCompat.method4846(player.input), ViaCompat.method4847(player.input));
+         player.setDeltaMovement(-Math.sin(d2) * d, deltaMovement.y, Math.cos(d2) * d);
       }
    }
 

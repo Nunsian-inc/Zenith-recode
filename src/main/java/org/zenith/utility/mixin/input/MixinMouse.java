@@ -34,15 +34,15 @@ public class MixinMouse {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void onMouseButton(long var1, MouseButtonInfo var3, int var4, CallbackInfo var5) {
-      int var6 = org.zenith.utility.misc.KeyCompat.mouseToGlfw(var3.button());
-      int var7 = org.zenith.utility.misc.KeyCompat.modsToGlfw(var3.modifiers());
-      if (var6 != -1 && var1 == MinecraftAccess.mc.getWindow().handle()) {
-         EventManager.call(new KeyEvent(var4, var6, var7));
-         MouseButtonEvent var8 = new MouseButtonEvent(var6, var4);
-         EventManager.call(var8);
-         if (var8.isCancelled()) {
-            var5.cancel();
+   private void onMouseButton(long l, MouseButtonInfo mouseButtonInfo, int intValue, CallbackInfo callbackInfo) {
+      int mouseToGlfw = org.zenith.utility.misc.KeyCompat.mouseToGlfw(mouseButtonInfo.button());
+      int modifiers = org.zenith.utility.misc.KeyCompat.modsToGlfw(mouseButtonInfo.modifiers());
+      if (mouseToGlfw != -1 && l == MinecraftAccess.mc.getWindow().handle()) {
+         EventManager.call(new KeyEvent(intValue, mouseToGlfw, modifiers));
+         MouseButtonEvent event = new MouseButtonEvent(mouseToGlfw, intValue);
+         EventManager.call(event);
+         if (event.isCancelled()) {
+            callbackInfo.cancel();
          }
       }
    }
@@ -55,11 +55,11 @@ public class MixinMouse {
       )},
       cancellable = true
    )
-   public void onMouseScrollHook(long var1, double var3, double var5, CallbackInfo var7) {
-      MouseScrollEvent var8 = new MouseScrollEvent(var3, var5);
-      EventManager.call(var8);
-      if (var8.isCancelled()) {
-         var7.cancel();
+   public void onMouseScrollHook(long l, double doubleValue, double d, CallbackInfo callbackInfo) {
+      MouseScrollEvent event = new MouseScrollEvent(doubleValue, d);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -70,8 +70,8 @@ public class MixinMouse {
          target = "Lnet/minecraft/client/MouseHandler;isMouseGrabbed()Z"
       )
    )
-   public boolean onIsCursorLocked(MouseHandler var1) {
-      return var1.isMouseGrabbed() || this.isAnim();
+   public boolean onIsCursorLocked(MouseHandler mouseHandler) {
+      return mouseHandler.isMouseGrabbed() || this.isAnim();
    }
 
    @WrapWithCondition(
@@ -83,19 +83,19 @@ public class MixinMouse {
       require = 1,
       allow = 1
    )
-   private boolean modifyMouseRotationInput(LocalPlayer var1, double var2, double var4) {
-      MouseRotationEvent var6 = new MouseRotationEvent(var2, var4, this.accumulatedDX, this.accumulatedDY);
-      EventManager.call(var6);
-      if (var6.isCancelled()) {
+   private boolean modifyMouseRotationInput(LocalPlayer player, double doubleValue, double d) {
+      MouseRotationEvent event = new MouseRotationEvent(doubleValue, d, this.accumulatedDX, this.accumulatedDY);
+      EventManager.call(event);
+      if (event.isCancelled()) {
          return false;
       } else {
-         var1.turn(var6.getDoubleValue(), var6.getDoubleValue2());
+         player.turn(event.getDoubleValue(), event.getDoubleValue2());
          return false;
       }
    }
 
    @Unique
    private boolean isAnim() {
-      return Minecraft.getInstance().gui.screen() instanceof Handler3 var2 && var2.zenith$betterMinecraft$isClosingAnimation();
+      return Minecraft.getInstance().gui.screen() instanceof Handler3 handler3 && handler3.zenith$betterMinecraft$isClosingAnimation();
    }
 }

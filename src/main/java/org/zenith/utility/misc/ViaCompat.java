@@ -12,30 +12,30 @@ public final class ViaCompat {
    private ViaCompat() {
    }
 
-   public static float method4846(ClientInput var0) {
-      return var0.getMoveVector().y;
+   public static float method4846(ClientInput input) {
+      return input.getMoveVector().y;
    }
 
-   public static float method4847(ClientInput var0) {
-      return var0.getMoveVector().x;
+   public static float method4847(ClientInput input) {
+      return input.getMoveVector().x;
    }
 
-   public static void method4848(ClientInput var0, float var1) {
-      method4850(var0, var1, method4847(var0));
+   public static void method4848(ClientInput input, float movementMultiplier) {
+      method4850(input, movementMultiplier, method4847(input));
    }
 
-   public static void method4849(ClientInput var0, float var1) {
-      method4850(var0, method4846(var0), var1);
+   public static void method4849(ClientInput input, float movementMultiplier) {
+      method4850(input, method4846(input), movementMultiplier);
    }
 
-   public static void method4850(ClientInput var0, float var1, float var2) {
-      Input var3 = var0.keyPresses;
-      var0.keyPresses = new Input(var1 > 0.0F, var1 < 0.0F, var2 > 0.0F, var2 < 0.0F, var3.jump(), var3.shift(), var3.sprint());
-      ((ViaCompat.Handler)var0).zenith$setMovementVector(new net.minecraft.world.phys.Vec2(var2, var1));
+   public static void method4850(ClientInput input, float movementMultiplier, float x) {
+      Input keyPresses = input.keyPresses;
+      input.keyPresses = new Input(movementMultiplier > 0.0F, movementMultiplier < 0.0F, x > 0.0F, x < 0.0F, keyPresses.jump(), keyPresses.shift(), keyPresses.sprint());
+      ((ViaCompat.Handler)input).zenith$setMovementVector(new net.minecraft.world.phys.Vec2(x, movementMultiplier));
    }
 
-   public static net.minecraft.world.phys.Vec2 method4851(net.minecraft.world.phys.Vec2 var0) {
-      return method4852() ? var0 : var0.normalized();
+   public static net.minecraft.world.phys.Vec2 method4851(net.minecraft.world.phys.Vec2 vec) {
+      return method4852() ? vec : vec.normalized();
    }
 
    private static boolean method4852() {
@@ -44,13 +44,13 @@ public final class ViaCompat {
       } else {
          try {
             return ViaFabricPlus.api().targetVersion().olderThanOrEqualTo(ProtocolVersion.v1_21_4);
-         } catch (Throwable var1) {
+         } catch (Throwable e) {
             return false;
          }
       }
    }
 
    public interface Handler {
-      void zenith$setMovementVector(net.minecraft.world.phys.Vec2 var1);
+      void zenith$setMovementVector(net.minecraft.world.phys.Vec2 vec);
    }
 }

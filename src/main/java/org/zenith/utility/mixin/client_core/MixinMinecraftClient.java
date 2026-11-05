@@ -92,7 +92,7 @@ public abstract class MixinMinecraftClient {
    public abstract boolean isLevelRunningNormally();
 
    @Shadow
-   public abstract float getTickTargetMillis(float var1);
+   public abstract float getTickTargetMillis(float f);
 
    @Inject(
       method = {"runTick(Z)V"},
@@ -102,11 +102,11 @@ public abstract class MixinMinecraftClient {
          shift = Shift.BEFORE
       )}
    )
-   private void hookPacketProcess(boolean var1, CallbackInfo var2) {
+   private void hookPacketProcess(boolean flag, CallbackInfo callbackInfo) {
       EventManager.call(new PacketProcessEndEvent());
-      int var3 = this.zenith$renderTickCounter.advanceGameTime(Util.getMillis());
+      int advanceGameTime = this.zenith$renderTickCounter.advanceGameTime(Util.getMillis());
 
-      for (int var4 = 0; var4 < Math.min(10, var3); var4++) {
+      for (int i = 0; i < Math.min(10, advanceGameTime); i++) {
          EventManager.call(new PacketProcessStartEvent());
       }
    }
@@ -119,7 +119,7 @@ public abstract class MixinMinecraftClient {
          shift = Shift.AFTER
       )}
    )
-   private void hookTickRender(boolean var1, CallbackInfo var2) {
+   private void hookTickRender(boolean flag, CallbackInfo callbackInfo) {
       this.zenith$renderTickCounter.updatePauseState(this.pause);
       this.zenith$renderTickCounter.updateFrozenState(!this.isLevelRunningNormally());
    }
@@ -128,7 +128,7 @@ public abstract class MixinMinecraftClient {
       method = {"tick()V"},
       at = {@At("HEAD")}
    )
-   private void hookTickEvent(CallbackInfo var1) {
+   private void hookTickEvent(CallbackInfo callbackInfo) {
       EventManager.call(new TickEvent());
    }
 
@@ -136,7 +136,7 @@ public abstract class MixinMinecraftClient {
       at = {@At("HEAD")},
       method = {"close()V"}
    )
-   private void stop(CallbackInfo var1) {
+   private void stop(CallbackInfo callbackInfo) {
       Zenith.getInstance().shutdown();
    }
 
@@ -145,9 +145,9 @@ public abstract class MixinMinecraftClient {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$skipInputWithoutPlayer(CallbackInfo var1) {
+   private void zenith$skipInputWithoutPlayer(CallbackInfo callbackInfo) {
       if (this.player == null || this.gameMode == null) {
-         var1.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -159,11 +159,11 @@ public abstract class MixinMinecraftClient {
          ordinal = 0
       )
    )
-   public void injectHandleInputEventss(ClientPacketListener var1, Packet var2) {
-      Event9 var3 = new Event9();
-      EventManager.call(var3);
-      if (!var3.isCancelled()) {
-         var1.send(var2);
+   public void injectHandleInputEventss(ClientPacketListener clientPacketListener, Packet packet) {
+      Event9 event = new Event9();
+      EventManager.call(event);
+      if (!event.isCancelled()) {
+         clientPacketListener.send(packet);
       }
    }
 
@@ -175,11 +175,11 @@ public abstract class MixinMinecraftClient {
          ordinal = 0
       )
    )
-   public void injectHandleInputEventsss(MultiPlayerGameMode var1, Player var2) {
-      StopUsingItemEvent var3 = new StopUsingItemEvent();
-      EventManager.call(var3);
-      if (!var3.isCancelled()) {
-         var1.releaseUsingItem(var2);
+   public void injectHandleInputEventsss(MultiPlayerGameMode multiPlayerGameMode, Player player) {
+      StopUsingItemEvent event = new StopUsingItemEvent();
+      EventManager.call(event);
+      if (!event.isCancelled()) {
+         multiPlayerGameMode.releaseUsingItem(player);
       }
    }
 
@@ -191,13 +191,13 @@ public abstract class MixinMinecraftClient {
          ordinal = 0
       )}
    )
-   public void injectHandleInputEvents(CallbackInfo var1) {
+   public void injectHandleInputEvents(CallbackInfo callbackInfo) {
       EventManager.call(new HandleInputPostEvent());
-      Event9 var2 = new Event9();
-      EventManager.call(var2);
-      if (!var2.isCancelled()) {
-         HandleInputEvent var3 = new HandleInputEvent();
-         EventManager.call(var3);
+      Event9 event = new Event9();
+      EventManager.call(event);
+      if (!event.isCancelled()) {
+         HandleInputEvent event2 = new HandleInputEvent();
+         EventManager.call(event2);
       }
    }
 
@@ -208,8 +208,8 @@ public abstract class MixinMinecraftClient {
          target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"
       )
    )
-   private boolean zenith$autoMineHoldAttack(boolean var1) {
-      return var1 || AutoMineModule.INSTANCE.method4352();
+   private boolean zenith$autoMineHoldAttack(boolean flag) {
+      return flag || AutoMineModule.INSTANCE.method4352();
    }
 
    @WrapWithCondition(
@@ -219,7 +219,7 @@ public abstract class MixinMinecraftClient {
          target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;stopDestroyBlock()V"
       )}
    )
-   private boolean zenith$keepAuraDig(MultiPlayerGameMode var1) {
+   private boolean zenith$keepAuraDig(MultiPlayerGameMode multiPlayerGameMode) {
       return !CrystalAuraModule.INSTANCE.method5743();
    }
 
@@ -227,9 +227,9 @@ public abstract class MixinMinecraftClient {
       method = {"getTickTargetMillis(F)F"},
       at = {@At("RETURN")}
    )
-   private float zenith$applyTimerSpeed(float var1) {
-      float var2 = Util13.getFloatValue();
-      return var2 == 1.0F ? var1 : var1 / var2;
+   private float zenith$applyTimerSpeed(float f) {
+      float floatValue = Util13.getFloatValue();
+      return floatValue == 1.0F ? f : f / floatValue;
    }
 
    @Inject(
@@ -240,24 +240,24 @@ public abstract class MixinMinecraftClient {
       )},
       cancellable = true
    )
-   public void doItemUseHook(CallbackInfo var1) {
+   public void doItemUseHook(CallbackInfo callbackInfo) {
       if (this.player != null && this.gameMode != null) {
-         Event9 var2 = new Event9();
-         EventManager.call(var2);
-         if (var2.isCancelled()) {
-            var1.cancel();
+         Event9 event = new Event9();
+         EventManager.call(event);
+         if (event.isCancelled()) {
+            callbackInfo.cancel();
          } else {
             if (NoInteractModule.INSTANCE.isEnabled()) {
-               for (InteractionHand var6 : InteractionHand.values()) {
-                  if (!this.player.getItemInHand(var6).isEmpty()) {
-                     InteractionResult var7 = this.gameMode.useItem(this.player, var6);
-                     if (var7.consumesAction()) {
-                        if (var7 instanceof Success var8 && var8.swingSource().equals(SwingSource.PREDICTED)) {
-                           org.zenith.utility.game.SwingCompat.swing(this.player, var6);
+               for (InteractionHand hand : InteractionHand.values()) {
+                  if (!this.player.getItemInHand(hand).isEmpty()) {
+                     InteractionResult useItem = this.gameMode.useItem(this.player, hand);
+                     if (useItem.consumesAction()) {
+                        if (useItem instanceof Success success && success.swingSource().equals(SwingSource.PREDICTED)) {
+                           org.zenith.utility.game.SwingCompat.swing(this.player, hand);
                         }
 
-                        this.player.itemUsed(var6);
-                        var1.cancel();
+                        this.player.itemUsed(hand);
+                        callbackInfo.cancel();
                         return;
                      }
                   }
@@ -265,7 +265,7 @@ public abstract class MixinMinecraftClient {
             }
          }
       } else {
-         var1.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -277,11 +277,11 @@ public abstract class MixinMinecraftClient {
       )},
       cancellable = true
    )
-   public void handleInputEventsHook(CallbackInfo var1) {
-      Event7 var2 = new Event7();
-      EventManager.call(var2);
-      if (var2.isCancelled()) {
-         var1.cancel();
+   public void handleInputEventsHook(CallbackInfo callbackInfo) {
+      Event7 event = new Event7();
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -289,7 +289,7 @@ public abstract class MixinMinecraftClient {
       method = {"resizeGui()V"},
       at = {@At("TAIL")}
    )
-   private void captureResize(CallbackInfo var1) {
+   private void captureResize(CallbackInfo callbackInfo) {
       Zenith.getInstance().getKawaseBlur().method7367();
       ProjectionUtils.method300();
    }
@@ -303,7 +303,7 @@ public abstract class MixinMinecraftClient {
          shift = Shift.BEFORE
       )}
    )
-   private void captureRessize(boolean var1, CallbackInfo var2) {
+   private void captureRessize(boolean flag, CallbackInfo callbackInfo) {
       ImmediateRenderer.method8009();
       UniformStorage.endFrame();
       HintedText.endFrame();
@@ -312,7 +312,7 @@ public abstract class MixinMinecraftClient {
 
    // old GameRenderer.pick(F) hook: 26.3 moved crosshair picking to Minecraft
    @Inject(method = {"pick(F)V"}, at = {@At("RETURN")})
-   private void zenith$crosshairTarget(float var1, CallbackInfo var2) {
+   private void zenith$crosshairTarget(float f, CallbackInfo callbackInfo) {
       EventManager.call(new org.zenith.client.events.CrosshairTargetEvent());
    }
 

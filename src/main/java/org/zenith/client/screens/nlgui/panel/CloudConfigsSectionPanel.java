@@ -119,16 +119,16 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    private final Set<String> applying = ConcurrentHashMap.newKeySet();
    private final ConfigInfoPage page = new ConfigInfoPage(new ConfigInfoPage.Host() {
       @Override
-      public void apply(String var1, int var2) {
-         CloudConfigsSectionPanel.this.loadMode = var2;
-         CloudConfigsSectionPanel.this.applyLocal(Zenith.getInstance().getManager(), var1);
+      public void apply(String appliedName, int loadMode) {
+         CloudConfigsSectionPanel.this.loadMode = loadMode;
+         CloudConfigsSectionPanel.this.applyLocal(Zenith.getInstance().getManager(), appliedName);
       }
 
       @Override
-      public void report(String var1, boolean var2) {
-         CloudConfigsSectionPanel.this.status = var2 ? "!" + var1 : var1;
+      public void report(String str, boolean messageError) {
+         CloudConfigsSectionPanel.this.status = messageError ? "!" + str : str;
          CloudConfigsSectionPanel.this.statusAt = System.currentTimeMillis();
-         CloudConfigsSectionPanel.this.page.message(var1, var2);
+         CloudConfigsSectionPanel.this.page.message(str, messageError);
          CloudConfigsSectionPanel.this.bump();
       }
 
@@ -159,7 +159,7 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    private volatile List<StoreApi.Data> codes = List.of();
    private final Map<UUID, CloudCard> cardVisuals = new LinkedHashMap<UUID, CloudCard>(16, 0.75F, true) {
       @Override
-      public boolean removeEldestEntry(Entry<UUID, CloudCard> var1) {
+      public boolean removeEldestEntry(Entry<UUID, CloudCard> eldest) {
          return this.size() > 96;
       }
    };
@@ -231,14 +231,14 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void selectTab(int var1) {
-      if (var1 != this.getActiveTab()) {
+   public void selectTab(int activeTab) {
+      if (activeTab != this.getActiveTab()) {
          this.status = "";
          this.disarm();
          this.selectedCloud = null;
       }
 
-      super.selectTab(var1);
+      super.selectTab(activeTab);
    }
 
    @Override
@@ -272,10 +272,10 @@ public class CloudConfigsSectionPanel extends SectionPanel {
 
    @Override
    public void tick() {
-      ConfigSyncService var1 = ConfigSyncService.getInstance();
-      var1.method676();
-      if (var1.revision() != this.seenSync) {
-         this.seenSync = var1.revision();
+      ConfigSyncService configSyncService = ConfigSyncService.getInstance();
+      configSyncService.method676();
+      if (configSyncService.revision() != this.seenSync) {
+         this.seenSync = configSyncService.revision();
          this.invalidate();
       }
 
@@ -284,15 +284,15 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.invalidate();
       }
 
-      int var2 = Zenith.getInstance().getManager().method7770();
-      if (var2 != this.seenSummaries) {
-         this.seenSummaries = var2;
+      int seenSummaries = Zenith.getInstance().getManager().method7770();
+      if (seenSummaries != this.seenSummaries) {
+         this.seenSummaries = seenSummaries;
          this.invalidate();
       }
 
-      String var3 = this.searchQuery();
-      if (!var3.equals(this.seenQuery)) {
-         this.seenQuery = var3;
+      String searchQuery = this.searchQuery();
+      if (!searchQuery.equals(this.seenQuery)) {
+         this.seenQuery = searchQuery;
          this.invalidate();
       }
 
@@ -306,47 +306,47 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.bump();
       }
 
-      long var4 = System.currentTimeMillis();
-      if (var4 - this.lastFetch > 15000L) {
-         this.lastFetch = var4;
-         StoreApi var6 = store();
-         if (var6 != null) {
-            var6.method1969("LIBRARY", this.kind())
+      long now = System.currentTimeMillis();
+      if (now - this.lastFetch > 15000L) {
+         this.lastFetch = now;
+         StoreApi storeApi = store();
+         if (storeApi != null) {
+            storeApi.method1969("LIBRARY", this.kind())
                .whenComplete((var1x, var2x) -> this.accept(var1xx -> this.library = var1xx, (List<StoreApi.Data2>)var1x, var2x));
          }
       }
    }
 
-   private StoreApi.Data2 findEntry(UUID var1) {
-      for (List var3 : List.of(this.mine, this.library, this.market)) {
-         for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-            StoreApi.Data2 var5 = (StoreApi.Data2)var5_o;
-            if (var5.getUUID().equals(var1)) {
-               return var5;
+   private StoreApi.Data2 findEntry(UUID uuid) {
+      for (List list : List.of(this.mine, this.library, this.market)) {
+         for (Object obj : (Iterable<?>)(Object)(list)) {
+            StoreApi.Data2 data2 = (StoreApi.Data2)obj;
+            if (data2.getUUID().equals(uuid)) {
+               return data2;
             }
          }
       }
 
-      return this.taken().all().stream().filter(var1x -> var1x.getUUID().equals(var1)).findFirst().orElse(null);
+      return this.taken().all().stream().filter(var1x -> var1x.getUUID().equals(uuid)).findFirst().orElse(null);
    }
 
-   private void accept(Consumer<List<StoreApi.Data2>> var1, List<StoreApi.Data2> var2, Throwable var3) {
-      if (var3 == null) {
-         var1.accept(Collections.unmodifiableList(new ArrayList(var2)));
+   private void accept(Consumer<List<StoreApi.Data2>> consumer, List<StoreApi.Data2> data2s, Throwable throwable) {
+      if (throwable == null) {
+         consumer.accept(Collections.unmodifiableList(new ArrayList(data2s)));
       } else {
-         this.status = shortError(var3);
+         this.status = shortError(throwable);
          this.statusAt = System.currentTimeMillis();
       }
 
       this.bump();
    }
 
-   private void fetchCodes(UUID var1) {
-      StoreApi var2 = store();
-      if (var2 != null) {
-         this.codesFor = var1;
+   private void fetchCodes(UUID codesFor) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         this.codesFor = codesFor;
          this.codes = List.of();
-         var2.method1980(var1).whenComplete((var1x, var2x) -> {
+         storeApi.method1980(codesFor).whenComplete((var1x, var2x) -> {
             if (var2x == null) {
                this.codes = Collections.unmodifiableList(new ArrayList<>(var1x));
             } else {
@@ -368,8 +368,8 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       this.revision++;
    }
 
-   private void report(String var1) {
-      this.status = var1;
+   private void report(String status) {
+      this.status = status;
       this.statusAt = System.currentTimeMillis();
       this.bump();
    }
@@ -389,73 +389,73 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    private String syncLine() {
-      ConfigSyncService var1 = ConfigSyncService.getInstance();
-      if (var1.method670()) {
+      ConfigSyncService configSyncService = ConfigSyncService.getInstance();
+      if (configSyncService.method670()) {
          return t("gui.configs.sync.busy");
-      } else if (!var1.isFlag()) {
-         return var1.getLongValue() == 0L ? t("gui.configs.sync.waiting") : t("gui.configs.sync.offline");
+      } else if (!configSyncService.isFlag()) {
+         return configSyncService.getLongValue() == 0L ? t("gui.configs.sync.waiting") : t("gui.configs.sync.offline");
       } else {
          return t("gui.configs.sync.ok");
       }
    }
 
-   private float headerButtonWidth(Font var1) {
-      return Math.max(var1.width("+  " + t("gui.configs.creator.new")), var1.width(t("gui.configs.creator.cancel"))) + 16.0F;
+   private float headerButtonWidth(Font font) {
+      return Math.max(font.width("+  " + t("gui.configs.creator.new")), font.width(t("gui.configs.creator.cancel"))) + 16.0F;
    }
 
    @Override
-   public void renderMainHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = var5 + GuiStyle.PADDING.intValue();
-      Font var10 = Fonts.NEW_MEDIUM.getFont(4.6F);
-      float var11 = this.headerButtonWidth(var10);
-      this.headerButton = new BoundsData(var4 + var6 - 8.0F - var11, var9, var11, 11.0F);
-      boolean var12 = this.headerButton.contains(var2, var3);
-      float var13 = this.animation("hdr:button", 140).method2808(var12 ? 1.0F : 0.0F);
-      ZenithColor var14 = var8.getPrimaryColor().getZenithColor();
-      ProxyDotRadiusData var15 = ProxyDotRadiusData.method8069(5.5F);
-      boolean var16 = this.pressFx.begin(var1, "hdr:button", this.headerButton);
-      String var17 = this.headerLabel();
-      ZenithColor var18 = !this.creatorOpen
-         ? var14.method7292(0.18F + 0.16F * var13)
-         : var8.getDisableActiveBg().getZenithColor().method7294(0.55F + 0.45F * var13);
-      ZenithColor var19 = !this.creatorOpen
-         ? var14.method7295(ZenithColor.INSTANCE, 0.25F + 0.4F * var13)
-         : var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), 0.4F + 0.6F * var13);
-      var1.drawRoundedRect(this.headerButton.getFloatValue(), var9, var11, 11.0F, var15, var18.method7294(var7));
-      this.pressFx.ink(var1, "hdr:button", this.headerButton, 5.5F, ZenithColor.INSTANCE.method7292(0.22F), var7);
-      var1.drawText(
-         var10, var17, this.headerButton.getFloatValue() + (var11 - var10.width(var17)) / 2.0F, var9 + (11.0F - var10.height()) / 2.0F, var19.method7294(var7)
+   public void renderMainHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float y = f2 + GuiStyle.PADDING.intValue();
+      Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+      float headerButtonWidth = this.headerButtonWidth(font);
+      this.headerButton = new BoundsData(f + f3 - 8.0F - headerButtonWidth, y, headerButtonWidth, 11.0F);
+      boolean contains = this.headerButton.contains(lastClickX, lastClickY);
+      float f4 = this.animation("hdr:button", 140).method2808(contains ? 1.0F : 0.0F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(5.5F);
+      boolean begin = this.pressFx.begin(menuDrawContext, "hdr:button", this.headerButton);
+      String headerLabel = this.headerLabel();
+      ZenithColor zenithColor2 = !this.creatorOpen
+         ? zenithColor.method7292(0.18F + 0.16F * f4)
+         : zenithStyle.getDisableActiveBg().getZenithColor().method7294(0.55F + 0.45F * f4);
+      ZenithColor zenithColor3 = !this.creatorOpen
+         ? zenithColor.method7295(ZenithColor.INSTANCE, 0.25F + 0.4F * f4)
+         : zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), 0.4F + 0.6F * f4);
+      menuDrawContext.drawRoundedRect(this.headerButton.getFloatValue(), y, headerButtonWidth, 11.0F, headerRadius, zenithColor2.method7294(previewAlpha));
+      this.pressFx.ink(menuDrawContext, "hdr:button", this.headerButton, 5.5F, ZenithColor.INSTANCE.method7292(0.22F), previewAlpha);
+      menuDrawContext.drawText(
+         font, headerLabel, this.headerButton.getFloatValue() + (headerButtonWidth - font.width(headerLabel)) / 2.0F, y + (11.0F - font.height()) / 2.0F, zenithColor3.method7294(previewAlpha)
       );
-      this.pressFx.end(var1, var16);
-      if (var12) {
-         HoverInfo.request(var17, t("gui.configs.saveNew.desc"));
+      this.pressFx.end(menuDrawContext, begin);
+      if (contains) {
+         HoverInfo.request(headerLabel, t("gui.configs.saveNew.desc"));
       }
 
-      ConfigSyncService var20 = ConfigSyncService.getInstance();
-      ZenithColor var21 = var20.method670() ? var14 : (var20.isFlag() ? OK : var8.getTextTertiary().getZenithColor());
-      float var22 = var20.method670() ? 0.55F + 0.45F * (float)Math.abs(Math.sin(System.currentTimeMillis() / 300.0)) : 1.0F;
-      float var23 = var9 + 5.5F - 1.5F;
-      BoundsData var24 = new BoundsData(var4 + 8.0F, var9, this.headerButton.getFloatValue() - var4 - 8.0F - 6.0F, 11.0F);
-      this.pressFx.ink(var1, "hdr:sync", var24, 5.5F, var14.method7292(0.16F), var7);
-      float var25 = Math.max(0.0F, this.pressFx.dip("hdr:sync"));
-      var1.drawRoundedRect(
-         var4 + 8.0F - var25 * 1.5F,
-         var23 - var25 * 1.5F,
-         3.0F + var25 * 3.0F,
-         3.0F + var25 * 3.0F,
-         ProxyDotRadiusData.method8069(1.5F + var25 * 1.5F),
-         var21.method7294(var7 * var22)
+      ConfigSyncService configSyncService = ConfigSyncService.getInstance();
+      ZenithColor zenithColor4 = configSyncService.method670() ? zenithColor : (configSyncService.isFlag() ? OK : zenithStyle.getTextTertiary().getZenithColor());
+      float f5 = configSyncService.method670() ? 0.55F + 0.45F * (float)Math.abs(Math.sin(System.currentTimeMillis() / 300.0)) : 1.0F;
+      float f6 = y + 5.5F - 1.5F;
+      BoundsData boundsData = new BoundsData(f + 8.0F, y, this.headerButton.getFloatValue() - f - 8.0F - 6.0F, 11.0F);
+      this.pressFx.ink(menuDrawContext, "hdr:sync", boundsData, 5.5F, zenithColor.method7292(0.16F), previewAlpha);
+      float f7 = Math.max(0.0F, this.pressFx.dip("hdr:sync"));
+      menuDrawContext.drawRoundedRect(
+         f + 8.0F - f7 * 1.5F,
+         f6 - f7 * 1.5F,
+         3.0F + f7 * 3.0F,
+         3.0F + f7 * 3.0F,
+         ProxyDotRadiusData.method8069(1.5F + f7 * 1.5F),
+         zenithColor4.method7294(previewAlpha * f5)
       );
-      String var26 = this.syncLine();
-      var1.drawText(
-         var10,
-         CloudCard.fit(var10, var26, this.headerButton.getFloatValue() - var4 - 8.0F - 14.0F),
-         var4 + 8.0F + 6.0F,
-         var9 + (11.0F - var10.height()) / 2.0F,
-         var8.getTextSecondary().getZenithColor().method7294(var7)
+      String syncLine = this.syncLine();
+      menuDrawContext.drawText(
+         font,
+         CloudCard.fit(font, syncLine, this.headerButton.getFloatValue() - f - 8.0F - 14.0F),
+         f + 8.0F + 6.0F,
+         y + (11.0F - font.height()) / 2.0F,
+         zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
       );
-      if (new BoundsData(var4 + 8.0F, var9, this.headerButton.getFloatValue() - var4 - 8.0F, 11.0F).contains(var2, var3)) {
-         HoverInfo.request(var26, var20.getLastError().isEmpty() ? t("gui.configs.sync.desc") : var20.getLastError());
+      if (new BoundsData(f + 8.0F, y, this.headerButton.getFloatValue() - f - 8.0F, 11.0F).contains(lastClickX, lastClickY)) {
+         HoverInfo.request(syncLine, configSyncService.getLastError().isEmpty() ? t("gui.configs.sync.desc") : configSyncService.getLastError());
       }
    }
 
@@ -465,69 +465,69 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      BoundsData var6 = this.mainHeaderBounds();
-      if (var6 != null && var6.contains(var1, var3)) {
-         if (var5 == Enum3.LEFT && this.headerButton != null && this.headerButton.contains(var1, var3)) {
-            this.pressFx.press("hdr:button", var1, var3);
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      BoundsData mainHeaderBounds = this.mainHeaderBounds();
+      if (mainHeaderBounds != null && mainHeaderBounds.contains(lastClickX, lastClickY)) {
+         if (enum2 == Enum3.LEFT && this.headerButton != null && this.headerButton.contains(lastClickX, lastClickY)) {
+            this.pressFx.press("hdr:button", lastClickX, lastClickY);
             this.toggleCreator();
             Zenith.getInstance().getClientSounds().method1570(false);
-         } else if (var5 == Enum3.LEFT) {
-            this.pressFx.press("hdr:sync", var1, var3);
+         } else if (enum2 == Enum3.LEFT) {
+            this.pressFx.press("hdr:sync", lastClickX, lastClickY);
             ConfigSyncService.getInstance().method675();
          }
 
          return true;
-      } else if (this.selectedLocal != null && var5 == Enum3.LEFT && this.page.mouseClicked(var1, var3)) {
+      } else if (this.selectedLocal != null && enum2 == Enum3.LEFT && this.page.mouseClicked(lastClickX, lastClickY)) {
          return true;
       } else {
-         if (this.creatorOpen && var5 == Enum3.LEFT) {
-            BoundsData var7 = this.nameField.bounds();
-            if (this.savePill != null && this.savePill.contains(var1, var3)) {
-               this.pressFx.press("creator:save", var1, var3);
+         if (this.creatorOpen && enum2 == Enum3.LEFT) {
+            BoundsData bounds = this.nameField.bounds();
+            if (this.savePill != null && this.savePill.contains(lastClickX, lastClickY)) {
+               this.pressFx.press("creator:save", lastClickX, lastClickY);
                this.saveTemplate(0);
                return true;
             }
 
-            boolean var8 = var7 != null && var7.contains(var1, var3);
-            this.nameField.setFocused(var8);
-            if (var8) {
+            boolean focused = bounds != null && bounds.contains(lastClickX, lastClickY);
+            this.nameField.setFocused(focused);
+            if (focused) {
                return true;
             }
          }
 
-         return super.onMouseClicked(var1, var3, var5);
+         return super.onMouseClicked(lastClickX, lastClickY, enum2);
       }
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      if (this.selectedLocal != null && this.page.isTyping() && this.page.keyPressed(var1, var3)) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      if (this.selectedLocal != null && this.page.isTyping() && this.page.keyPressed(keyCode, modifiers)) {
          return true;
       } else if (this.creatorOpen && this.nameField.isFocused()) {
-         if (var1 == 257 || var1 == 335) {
+         if (keyCode == 257 || keyCode == 335) {
             this.saveTemplate(0);
-         } else if (var1 == 256) {
+         } else if (keyCode == 256) {
             this.nameField.setFocused(false);
          } else {
-            this.nameField.keyPressed(var1, var3);
+            this.nameField.keyPressed(keyCode, modifiers);
          }
 
          return true;
       } else {
-         return super.keyPressed(var1, var2, var3);
+         return super.keyPressed(keyCode, keycode, modifiers);
       }
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      if (this.selectedLocal != null && this.page.isTyping() && this.page.charTyped(var1)) {
+   public boolean charTyped(char codepoint, int n) {
+      if (this.selectedLocal != null && this.page.isTyping() && this.page.charTyped(codepoint)) {
          return true;
       } else if (this.creatorOpen && this.nameField.isFocused()) {
-         this.nameField.charTyped(var1);
+         this.nameField.charTyped(codepoint);
          return true;
       } else {
-         return super.charTyped(var1, var2);
+         return super.charTyped(codepoint, n);
       }
    }
 
@@ -539,263 +539,263 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       this.invalidate();
    }
 
-   private void renderCreatorField(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = this.creatorAnimation.method2808(1.0F);
-      float var10 = var7 * Math.min(1.0F, var9 * 1.6F);
-      float var11 = (1.0F - var9) * -4.0F;
-      BoundsData var12 = new BoundsData(var4 + 8.0F, var5 + 1.0F + var11, var6 - 16.0F, 22.0F);
-      boolean var13 = var12.contains(var2, var3);
-      float var14 = this.animation("creator:field", 140).method2808(!var13 && !this.nameField.isFocused() ? 0.0F : 1.0F);
-      ScriptsSectionPanel.card(var1, var8, var12.getFloatValue(), var12.getFloatValue2(), var12.width(), var12.height(), var14 * 0.6F, var10);
-      Font var15 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      String var16 = t("gui.configs.creator.save");
-      float var17 = var15.width(var16) + 14.0F;
-      float var18 = 14.0F;
+   private void renderCreatorField(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float f4, ZenithStyle currentStyle) {
+      float f5 = this.creatorAnimation.method2808(1.0F);
+      float previewAlpha = f4 * Math.min(1.0F, f5 * 1.6F);
+      float f6 = (1.0F - f5) * -4.0F;
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F + f6, f3 - 16.0F, 22.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hover = this.animation("creator:field", 140).method2808(!contains && !this.nameField.isFocused() ? 0.0F : 1.0F);
+      ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hover * 0.6F, previewAlpha);
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      String text = t("gui.configs.creator.save");
+      float width = font.width(text) + 14.0F;
+      float height = 14.0F;
       this.savePill = new BoundsData(
-         var12.getFloatValue() + var12.width() - var17 - 4.0F, var12.getFloatValue2() + (var12.height() - var18) / 2.0F, var17, var18
+         boundsData.getFloatValue() + boundsData.width() - width - 4.0F, boundsData.getFloatValue2() + (boundsData.height() - height) / 2.0F, width, height
       );
-      boolean var19 = this.savePill.contains(var2, var3);
-      float var20 = this.animation("creator:save", 120).method2808(var19 ? 1.0F : 0.0F);
-      ZenithColor var21 = var8.getPrimaryColor().getZenithColor();
-      boolean var22 = this.pressFx.begin(var1, "creator:save", this.savePill);
-      var1.drawRoundedRect(
+      boolean flag = this.savePill.contains(lastClickX, lastClickY);
+      float f7 = this.animation("creator:save", 120).method2808(flag ? 1.0F : 0.0F);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      boolean begin = this.pressFx.begin(menuDrawContext, "creator:save", this.savePill);
+      menuDrawContext.drawRoundedRect(
          this.savePill.getFloatValue(),
          this.savePill.getFloatValue2(),
-         var17,
-         var18,
-         ProxyDotRadiusData.method8069(var18 / 2.0F),
-         var21.method7292(0.22F + 0.4F * var20).method7294(var10)
+         width,
+         height,
+         ProxyDotRadiusData.method8069(height / 2.0F),
+         zenithColor.method7292(0.22F + 0.4F * f7).method7294(previewAlpha)
       );
-      this.pressFx.ink(var1, "creator:save", this.savePill, var18 / 2.0F, ZenithColor.INSTANCE.method7292(0.25F), var10);
-      var1.drawText(
-         var15,
-         var16,
+      this.pressFx.ink(menuDrawContext, "creator:save", this.savePill, height / 2.0F, ZenithColor.INSTANCE.method7292(0.25F), previewAlpha);
+      menuDrawContext.drawText(
+         font,
+         text,
          this.savePill.getFloatValue() + 7.0F,
-         this.savePill.getFloatValue2() + (var18 - var15.height()) / 2.0F,
-         var21.method7295(ZenithColor.INSTANCE, 0.3F + 0.6F * var20).method7294(var10)
+         this.savePill.getFloatValue2() + (height - font.height()) / 2.0F,
+         zenithColor.method7295(ZenithColor.INSTANCE, 0.3F + 0.6F * f7).method7294(previewAlpha)
       );
-      this.pressFx.end(var1, var22);
+      this.pressFx.end(menuDrawContext, begin);
       MenuGlyph.TEXT
          .draw(
-            var1,
-            var12.getFloatValue() + 6.0F,
-            var12.getFloatValue2() + (var12.height() - 6.0F) / 2.0F,
-            var8.getTextTertiary().getZenithColor().method7295(var21, var14).method7294(var10)
+            menuDrawContext,
+            boundsData.getFloatValue() + 6.0F,
+            boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F,
+            currentStyle.getTextTertiary().getZenithColor().method7295(zenithColor, hover).method7294(previewAlpha)
          );
-      float var23 = var12.getFloatValue() + 16.0F;
-      float var24 = this.savePill.getFloatValue() - 5.0F - var23;
+      float floatValue = boundsData.getFloatValue() + 16.0F;
+      float shownWidth = this.savePill.getFloatValue() - 5.0F - floatValue;
       this.nameField
          .render(
-            var1,
-            var15,
-            var23,
-            var12.getFloatValue2() + (var12.height() - 16.0F) / 2.0F,
-            var24,
-            var10,
+            menuDrawContext,
+            font,
+            floatValue,
+            boundsData.getFloatValue2() + (boundsData.height() - 16.0F) / 2.0F,
+            shownWidth,
+            previewAlpha,
             t("gui.configs.creator.hint"),
             ZenithColor.INSTANCE.method7293(0),
             ZenithColor.INSTANCE.method7293(0),
-            var21,
-            var8.getTextEnable().getZenithColor(),
-            var8.getTextTertiary().getZenithColor()
+            zenithColor,
+            currentStyle.getTextEnable().getZenithColor(),
+            currentStyle.getTextTertiary().getZenithColor()
          );
-      if (var19) {
-         HoverInfo.request(var16, t("gui.configs.template.full.desc"));
+      if (flag) {
+         HoverInfo.request(text, t("gui.configs.template.full.desc"));
       }
    }
 
-   private void renderTemplate(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, int var9) {
-      float var10 = this.creatorAnimation.method2808(1.0F);
-      float var11 = Math.max(0.0F, Math.min(1.0F, var10 * 1.8F - (var9 + 1) * 0.15F));
-      float var12 = var7 * var11;
-      float var13 = (1.0F - var11) * -4.0F;
-      BoundsData var14 = new BoundsData(var4 + 8.0F, var5 + 1.0F + var13, var6 - 16.0F, 16.0F);
-      boolean var15 = var14.contains(var2, var3);
-      float var16 = this.animation("template:" + var9, 140).method2808(var15 ? 1.0F : 0.0F);
-      ScriptsSectionPanel.card(var1, var8, var14.getFloatValue(), var14.getFloatValue2(), var14.width(), var14.height(), var16, var12);
-      ZenithColor var17 = var8.getPrimaryColor().getZenithColor();
-      TEMPLATE_GLYPHS[var9]
+   private void renderTemplate(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float f4, ZenithStyle currentStyle, int n) {
+      float f5 = this.creatorAnimation.method2808(1.0F);
+      float f6 = Math.max(0.0F, Math.min(1.0F, f5 * 1.8F - (n + 1) * 0.15F));
+      float previewAlpha = f4 * f6;
+      float f7 = (1.0F - f6) * -4.0F;
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F + f7, f3 - 16.0F, 16.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.animation("template:" + n, 140).method2808(contains ? 1.0F : 0.0F);
+      ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      TEMPLATE_GLYPHS[n]
          .draw(
-            var1,
-            var14.getFloatValue() + 7.0F,
-            var14.getFloatValue2() + (var14.height() - 6.0F) / 2.0F,
-            (var15 ? var17 : var8.getTextSecondary().getZenithColor()).method7294(var12)
+            menuDrawContext,
+            boundsData.getFloatValue() + 7.0F,
+            boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F,
+            (contains ? zenithColor : currentStyle.getTextSecondary().getZenithColor()).method7294(previewAlpha)
          );
-      Font var18 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var19 = Fonts.NEW_REGULAR.getFont(4.3F);
-      String var20 = t(TEMPLATE_KEYS[var9]);
-      var1.drawText(
-         var18,
-         var20,
-         var14.getFloatValue() + 18.0F,
-         var14.getFloatValue2() + (var14.height() - var18.height()) / 2.0F,
-         var8.getTextEnable().getZenithColor().method7294(var12)
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+      String text = t(TEMPLATE_KEYS[n]);
+      menuDrawContext.drawText(
+         font,
+         text,
+         boundsData.getFloatValue() + 18.0F,
+         boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+         currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
-      String var21 = var15 ? t("gui.configs.template.go") : t(TEMPLATE_KEYS[var9] + ".short");
-      float var22 = var14.getFloatValue() + var14.width() - 7.0F - var19.width(var21);
-      var1.drawText(
-         var19,
-         CloudCard.fit(var19, var21, var14.width() - 30.0F - var18.width(var20)),
-         Math.max(var22, var14.getFloatValue() + 24.0F + var18.width(var20)),
-         var14.getFloatValue2() + (var14.height() - var19.height()) / 2.0F,
-         (var15 ? var17 : var8.getTextTertiary().getZenithColor()).method7294(var12)
+      String str = contains ? t("gui.configs.template.go") : t(TEMPLATE_KEYS[n] + ".short");
+      float f8 = boundsData.getFloatValue() + boundsData.width() - 7.0F - font2.width(str);
+      menuDrawContext.drawText(
+         font2,
+         CloudCard.fit(font2, str, boundsData.width() - 30.0F - font.width(text)),
+         Math.max(f8, boundsData.getFloatValue() + 24.0F + font.width(text)),
+         boundsData.getFloatValue2() + (boundsData.height() - font2.height()) / 2.0F,
+         (contains ? zenithColor : currentStyle.getTextTertiary().getZenithColor()).method7294(previewAlpha)
       );
-      if (var15) {
-         HoverInfo.request(var20, t(TEMPLATE_KEYS[var9] + ".desc"));
+      if (contains) {
+         HoverInfo.request(text, t(TEMPLATE_KEYS[n] + ".desc"));
       }
    }
 
-   private void saveTemplate(int var1) {
-      String var2 = this.nameField.get() == null ? "" : this.nameField.get().strip();
-      if (var2.isEmpty()) {
-         var2 = t("gui.configs.creator.defaultName") + " " + new SimpleDateFormat("dd.MM HH-mm", Locale.ROOT).format(new Date());
+   private void saveTemplate(int n) {
+      String argument = this.nameField.get() == null ? "" : this.nameField.get().strip();
+      if (argument.isEmpty()) {
+         argument = t("gui.configs.creator.defaultName") + " " + new SimpleDateFormat("dd.MM HH-mm", Locale.ROOT).format(new Date());
       }
 
-      boolean[] var3 = TEMPLATE_PARTS[Math.max(0, Math.min(TEMPLATE_PARTS.length - 1, var1))];
-      boolean var4 = Zenith.getInstance().getManager().method7780(var2, var3[0], var3[1], var3[2]);
-      if (!var4) {
+      boolean[] flags = TEMPLATE_PARTS[Math.max(0, Math.min(TEMPLATE_PARTS.length - 1, n))];
+      boolean flag = Zenith.getInstance().getManager().method7780(argument, flags[0], flags[1], flags[2]);
+      if (!flag) {
          this.report(t("gui.configs.report.writeFailed"));
       } else {
-         this.selectedLocal = var2 + "." + "Zenith".toLowerCase(Locale.ROOT);
+         this.selectedLocal = argument + "." + "Zenith".toLowerCase(Locale.ROOT);
          this.selectedCloud = null;
          this.nameField.clear();
          this.nameField.setFocused(false);
          this.creatorOpen = false;
-         this.report(t("gui.configs.report.created") + " " + var2);
+         this.report(t("gui.configs.report.created") + " " + argument);
          this.invalidate();
       }
    }
 
-   private void hero(String var1, String var2, String[][] var3) {
+   private void hero(String text, String description, String[][] stringses) {
       this.custom(
          50.0F,
-         (var3x, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = var6 + 8.0F;
-            float var12 = var8 - 16.0F;
-            float var13 = var7 + 2.0F;
-            float var14 = 43.0F;
-            ZenithColor var15 = var10.getPrimaryColor().getZenithColor();
-            ProxyDotRadiusData var16 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.9F);
-            var3x.drawRoundedRect(var11, var13, var12, var14, var16, ScriptsSectionPanel.cardFill(var10, 0.2F).method7294(var9));
-            ScriptsSectionPanel.flowGlow(var3x, var11, var13, var12, var14, var16, var15, 0.45F, var9);
-            var3x.drawRoundedBorder(var11, var13, var12, var14, 0.2F, var16, var15.method7292(0.28F).method7294(var9));
-            Font var17 = Fonts.NEW_SEMIBOLD.getFont(6.4F);
-            Font var18 = Fonts.NEW_REGULAR.getFont(4.3F);
-            Font var19 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-            Font var20 = Fonts.NEW_MEDIUM.getFont(3.8F);
-            var3x.drawText(var17, var1, var11 + 9.0F, var13 + 8.0F, var10.getTextEnable().getZenithColor().method7294(var9));
-            float var21 = 0.0F;
+         (var3x, n, n2, f, f2, f3, previewAlpha, currentStyle) -> {
+            float floatValue = f + 8.0F;
+            float width = f3 - 16.0F;
+            float y = f2 + 2.0F;
+            float height = 43.0F;
+            ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+            ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.9F);
+            var3x.drawRoundedRect(floatValue, y, width, height, headerRadius, ScriptsSectionPanel.cardFill(currentStyle, 0.2F).method7294(previewAlpha));
+            ScriptsSectionPanel.flowGlow(var3x, floatValue, y, width, height, headerRadius, zenithColor, 0.45F, previewAlpha);
+            var3x.drawRoundedBorder(floatValue, y, width, height, 0.2F, headerRadius, zenithColor.method7292(0.28F).method7294(previewAlpha));
+            Font font = Fonts.NEW_SEMIBOLD.getFont(6.4F);
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+            Font font3 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+            Font font4 = Fonts.NEW_MEDIUM.getFont(3.8F);
+            var3x.drawText(font, text, floatValue + 9.0F, y + 8.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            float f4 = 0.0F;
 
-            for (String[] var25 : var3) {
-               var21 += Math.max(var19.width(var25[0]), var20.width(var25[1])) + 12.0F;
+            for (String[] strings : stringses) {
+               f4 += Math.max(font3.width(strings[0]), font4.width(strings[1])) + 12.0F;
             }
 
-            float var26 = var13 + 11.0F + var17.height();
+            float centeredTextY = y + 11.0F + font.height();
 
-            for (String var30 : wrapText(var2, var18, var12 - 18.0F - var21, 2)) {
-               var3x.drawText(var18, var30, var11 + 9.0F, var26, var10.getTextTertiary().getZenithColor().method7294(var9));
-               var26 += var18.height() + 1.5F;
+            for (String str : wrapText(description, font2, width - 18.0F - f4, 2)) {
+               var3x.drawText(font2, str, floatValue + 9.0F, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               centeredTextY += font2.height() + 1.5F;
             }
 
-            float var28 = var11 + var12 - 9.0F;
+            float f5 = floatValue + width - 9.0F;
 
-            for (int var31 = var3.length - 1; var31 >= 0; var31--) {
-               float var32 = Math.max(var19.width(var3[var31][0]), var20.width(var3[var31][1]));
-               var28 -= var32;
+            for (int i = stringses.length - 1; i >= 0; i--) {
+               float f6 = Math.max(font3.width(stringses[i][0]), font4.width(stringses[i][1]));
+               f5 -= f6;
                var3x.drawText(
-                  var19,
-                  var3[var31][0],
-                  var28 + (var32 - var19.width(var3[var31][0])) / 2.0F,
-                  var13 + 10.0F,
-                  var10.getTextEnable().getZenithColor().method7294(var9)
+                  font3,
+                  stringses[i][0],
+                  f5 + (f6 - font3.width(stringses[i][0])) / 2.0F,
+                  y + 10.0F,
+                  currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                );
                var3x.drawText(
-                  var20,
-                  var3[var31][1],
-                  var28 + (var32 - var20.width(var3[var31][1])) / 2.0F,
-                  var13 + 13.0F + var19.height(),
-                  var10.getTextTertiary().getZenithColor().method7294(var9)
+                  font4,
+                  stringses[i][1],
+                  f5 + (f6 - font4.width(stringses[i][1])) / 2.0F,
+                  y + 13.0F + font3.height(),
+                  currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               var28 -= 12.0F;
+               f5 -= 12.0F;
             }
          }
       );
    }
 
-   private float drawPill(MenuDrawContext var1, int var2, int var3, BoundsData var4, String var5, String var6, boolean var7, float var8, ZenithStyle var9) {
-      BoundsData var10 = ScriptMarketTab.pillRect(var4, var4.getFloatValue() + var4.width() - 7.0F, var6);
-      boolean var11 = var10.contains(var2, var3);
-      float var12 = this.animation("pill:" + var5, 120).method2808(var11 ? 1.0F : 0.0F);
-      ScriptMarketTab.drawPill(var1, var9, var10, var6, var7, var12, false, var8);
-      this.pillHot = this.pillHot || var11;
-      return var10.getFloatValue();
+   private float drawPill(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, BoundsData boundsData, String pillKey, String pillText, boolean have, float previewAlpha, ZenithStyle zenithStyle) {
+      BoundsData pillRect = ScriptMarketTab.pillRect(boundsData, boundsData.getFloatValue() + boundsData.width() - 7.0F, pillText);
+      boolean contains = pillRect.contains(lastClickX, lastClickY);
+      float hot = this.animation("pill:" + pillKey, 120).method2808(contains ? 1.0F : 0.0F);
+      ScriptMarketTab.drawPill(menuDrawContext, zenithStyle, pillRect, pillText, have, hot, false, previewAlpha);
+      this.pillHot = this.pillHot || contains;
+      return pillRect.getFloatValue();
    }
 
-   private void avatar(MenuDrawContext var1, String var2, StoreApi.Data2 var3, float var4, float var5, float var6, float var7) {
-      ScriptMarketTab.cloudAvatar(var1, var3, var2, letterColor(var2), var4, var5, var6, var7);
+   private void avatar(MenuDrawContext menuDrawContext, String display, StoreApi.Data2 cloudTwin, float floatValue, float cardAvatarY, float size, float previewAlpha) {
+      ScriptMarketTab.cloudAvatar(menuDrawContext, cloudTwin, display, letterColor(display), floatValue, cardAvatarY, size, previewAlpha);
    }
 
-   private void card(MenuDrawContext var1, ZenithStyle var2, BoundsData var3, String var4, String var5, boolean var6, boolean var7, float var8) {
-      float var9 = this.animation("row:" + var4, 140).method2808(var6 ? 1.0F : 0.0F);
-      float var10 = this.animation("sel:" + var4, 160).method2808(var7 ? 1.0F : 0.0F);
-      ScriptMarketTab.drawCard(var1, var2, var3, var9, var10, 0.0F, letterColor(var5), var8);
+   private void card(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, BoundsData boundsData, String cardKey, String name, boolean contains, boolean flag, float previewAlpha) {
+      float hot = this.animation("row:" + cardKey, 140).method2808(contains ? 1.0F : 0.0F);
+      float f = this.animation("sel:" + cardKey, 160).method2808(flag ? 1.0F : 0.0F);
+      ScriptMarketTab.drawCard(menuDrawContext, currentStyle, boundsData, hot, f, 0.0F, letterColor(name), previewAlpha);
    }
 
    private void statusRow() {
-      this.asideCustom(14.0F, (var1, var2, var3, var4, var5, var6, var7, var8) -> {
-         long var9 = System.currentTimeMillis() - this.statusAt;
-         if (!this.status.isEmpty() && var9 <= 8000L) {
-            float var11 = var9 > 7000L ? 1.0F - (float)(var9 - 7000L) / 1000.0F : Math.min(1.0F, (float)var9 / 180.0F);
-            Font var12 = Fonts.NEW_REGULAR.getFont(4.3F);
-            String var13 = this.status;
-            boolean var14 = var13.equals(t("gui.configs.report.writeFailed")) || var13.startsWith("!");
-            if (var13.startsWith("!")) {
-               var13 = var13.substring(1);
+      this.asideCustom(14.0F, (menuDrawContext, n, n2, f, f2, f3, f4, zenithStyle) -> {
+         long l = System.currentTimeMillis() - this.statusAt;
+         if (!this.status.isEmpty() && l <= 8000L) {
+            float f5 = l > 7000L ? 1.0F - (float)(l - 7000L) / 1000.0F : Math.min(1.0F, (float)l / 180.0F);
+            Font font = Fonts.NEW_REGULAR.getFont(4.3F);
+            String status = this.status;
+            boolean flag = status.equals(t("gui.configs.report.writeFailed")) || status.startsWith("!");
+            if (status.startsWith("!")) {
+               status = status.substring(1);
             }
 
-            var1.drawText(var12, CloudCard.fit(var12, var13, var6 - 16.0F), var4 + 8.0F, var5 + 4.0F, (var14 ? ERROR : OK).method7294(var7 * var11));
+            menuDrawContext.drawText(font, CloudCard.fit(font, status, f3 - 16.0F), f + 8.0F, f2 + 4.0F, (flag ? ERROR : OK).method7294(f4 * f5));
          }
       });
    }
 
    private void buildLocal() {
-      Manager var1 = Zenith.getInstance().getManager();
-      List<CloudConfigsSectionPanel.LocalFile> var2 = this.localFiles(var1);
-      if (this.selectedLocal != null && var2.stream().noneMatch(var1x -> var1x.name().equals(this.selectedLocal))) {
+      Manager manager = Zenith.getInstance().getManager();
+      List<CloudConfigsSectionPanel.LocalFile> localFiles = this.localFiles(manager);
+      if (this.selectedLocal != null && localFiles.stream().noneMatch(var1x -> var1x.name().equals(this.selectedLocal))) {
          this.selectedLocal = null;
       }
 
-      int var3 = 0;
-      int var4 = 0;
+      int n = 0;
+      int n2 = 0;
 
-      for (CloudConfigsSectionPanel.LocalFile var6 : var2) {
-         StoreApi.Data2 var7 = this.cloudTwin(var6.name());
-         if (var7 != null) {
-            var3++;
-            var4 += var7.getIntValue();
+      for (CloudConfigsSectionPanel.LocalFile localFile : localFiles) {
+         StoreApi.Data2 cloudTwin = this.cloudTwin(localFile.name());
+         if (cloudTwin != null) {
+            n++;
+            n2 += cloudTwin.getIntValue();
          }
       }
 
-      int[] var11 = liveCounts();
-      String var12 = t("gui.configs.current.line").replace("{m}", String.valueOf(var11[0])).replace("{b}", String.valueOf(var11[1]))
+      int[] ints = liveCounts();
+      String description = t("gui.configs.current.line").replace("{m}", String.valueOf(ints[0])).replace("{b}", String.valueOf(ints[1]))
          + (this.appliedName.isEmpty() ? "" : " · " + t("gui.configs.current.from").replace("{n}", display(this.appliedName)));
       this.hero(
          t("gui.configs.hero.local"),
-         var12,
+         description,
          new String[][]{
-            {String.valueOf(var2.size()), t("gui.configs.hero.files")},
-            {var3 + "/" + var2.size(), t("gui.configs.hero.synced")},
-            {String.valueOf(var4), t("gui.configs.hero.likes")}
+            {String.valueOf(localFiles.size()), t("gui.configs.hero.files")},
+            {n + "/" + localFiles.size(), t("gui.configs.hero.synced")},
+            {String.valueOf(n2), t("gui.configs.hero.likes")}
          }
       );
       if (this.creatorOpen) {
          this.custom(26.0F, this::renderCreatorField);
 
-         for (int var13 = 0; var13 < TEMPLATE_KEYS.length; var13++) {
-            final int var13_i = var13;
+         for (int i = 0; i < TEMPLATE_KEYS.length; i++) {
+            final int var13_i = i;
             this.custom(
                19.0F,
-               (var2x, var3x, var4x, var5, var6x, var7x, var8x, var9x) -> this.renderTemplate(var2x, var3x, var4x, var5, var6x, var7x, var8x, var9x, var13_i),
+               (var2x, var3x, var4x, f, var6x, var7x, var8x, var9x) -> this.renderTemplate(var2x, var3x, var4x, f, var6x, var7x, var8x, var9x, var13_i),
                () -> this.saveTemplate(var13_i),
                null
             );
@@ -804,42 +804,42 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.gap(6.0F);
       }
 
-      for (CloudConfigsSectionPanel.LocalFile var8 : var2) {
-         CloudConfigsSectionPanel.FileRow var9 = new CloudConfigsSectionPanel.FileRow(var1, var8);
-         this.custom(40.0F, var9::render, var9::apply, () -> var8.name().equals(this.selectedLocal), var9::click);
+      for (CloudConfigsSectionPanel.LocalFile localFile : localFiles) {
+         CloudConfigsSectionPanel.FileRow fileRow = new CloudConfigsSectionPanel.FileRow(manager, localFile);
+         this.custom(40.0F, fileRow::render, fileRow::apply, () -> localFile.name().equals(this.selectedLocal), fileRow::click);
       }
 
-      if (var2.isEmpty()) {
+      if (localFiles.isEmpty()) {
          this.emptyState(
             this.searchQuery().isEmpty() ? "gui.configs.empty.local" : "gui.configs.empty.query",
             this.searchQuery().isEmpty() ? "gui.configs.empty.local.desc" : "gui.configs.empty.query.local.desc"
          );
       }
 
-      List<StoreApi.Data2> var15 = this.arrange(this.sharedEntries());
-      if (this.selectedCloud != null && var15.stream().noneMatch(var1x -> var1x.getUUID().equals(this.selectedCloud))) {
+      List<StoreApi.Data2> arrange = this.arrange(this.sharedEntries());
+      if (this.selectedCloud != null && arrange.stream().noneMatch(var1x -> var1x.getUUID().equals(this.selectedCloud))) {
          this.selectedCloud = null;
       }
 
-      if (!var15.isEmpty()) {
+      if (!arrange.isEmpty()) {
          this.gap(GuiStyle.PADDING.intValue());
          this.caption("gui.configs.caption.shared");
 
-         for (StoreApi.Data2 var18 : var15) {
-            CloudConfigsSectionPanel.EntryRow var10 = new CloudConfigsSectionPanel.EntryRow(var18);
-            this.custom(40.0F, var10::render, var10::primary, () -> var18.getUUID().equals(this.selectedCloud), var10::click);
+         for (StoreApi.Data2 entry : arrange) {
+            CloudConfigsSectionPanel.EntryRow entryRow = new CloudConfigsSectionPanel.EntryRow(entry);
+            this.custom(40.0F, entryRow::render, entryRow::primary, () -> entry.getUUID().equals(this.selectedCloud), entryRow::click);
          }
       }
 
-      StoreApi.Data2 var17 = this.find(var15);
-      if (var17 != null) {
+      StoreApi.Data2 cloudTwin = this.find(arrange);
+      if (cloudTwin != null) {
          this.selectedLocal = null;
-         this.buildEntryAside(var17, false);
-         if (this.taken().contains(var17.getUUID())) {
+         this.buildEntryAside(cloudTwin, false);
+         if (this.taken().contains(cloudTwin.getUUID())) {
             this.asideDanger("forget", "gui.configs.forget", "gui.configs.forget.desc", () -> {
-               this.taken().forget(var17.getUUID());
+               this.taken().forget(cloudTwin.getUUID());
                this.selectedCloud = null;
-               this.report(t("gui.configs.report.forgotten") + " " + var17.name());
+               this.report(t("gui.configs.report.forgotten") + " " + cloudTwin.name());
             });
          }
 
@@ -851,102 +851,102 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       } else if (this.selectedLocal != null) {
          this.page.open(this.selectedLocal, display(this.selectedLocal));
          this.asideFull(
-            (var1x, var2x, var3x, var4x, var5, var6x, var7x, var8x) -> this.page
+            (var1x, var2x, var3x, var4x, y, var6x, var7x, var8x) -> this.page
                .render(
                   var1x,
                   var2x,
                   var3x,
                   var4x,
-                  var5,
+                  y,
                   var6x,
-                  NLMenuScreen.contentBottom - var5 - GuiStyle.PADDING.intValue() * 4.0F - HoverInfo.boxHeight(),
+                  NLMenuScreen.contentBottom - y - GuiStyle.PADDING.intValue() * 4.0F - HoverInfo.boxHeight(),
                   var7x,
                   var8x
                )
          );
       } else {
-         this.buildLocalAside(var1, var2.size());
+         this.buildLocalAside(manager, localFiles.size());
       }
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
-      return this.selectedLocal != null && this.page.mouseScrolled(var1, var3, var7) ? true : super.mouseScrolled(var1, var3, var5, var7);
+   public boolean mouseScrolled(double lastClickX, double lastClickY, double d, double verticalAmount) {
+      return this.selectedLocal != null && this.page.mouseScrolled(lastClickX, lastClickY, verticalAmount) ? true : super.mouseScrolled(lastClickX, lastClickY, d, verticalAmount);
    }
 
    private List<StoreApi.Data2> sharedEntries() {
-      LinkedHashMap var1 = new LinkedHashMap();
+      LinkedHashMap map = new LinkedHashMap();
 
-      for (StoreApi.Data2 var3 : this.taken().all()) {
-         if (this.kind().equalsIgnoreCase(var3.kind()) && !var3.mine()) {
-            var1.put(var3.getUUID(), var3);
+      for (StoreApi.Data2 data2 : this.taken().all()) {
+         if (this.kind().equalsIgnoreCase(data2.kind()) && !data2.mine()) {
+            map.put(data2.getUUID(), data2);
          }
       }
 
-      for (StoreApi.Data2 var5 : this.library) {
-         if (!var5.mine()) {
-            var1.put(var5.getUUID(), var5);
+      for (StoreApi.Data2 data2 : this.library) {
+         if (!data2.mine()) {
+            map.put(data2.getUUID(), data2);
          }
       }
 
-      return new ArrayList<>(var1.values());
+      return new ArrayList<>(map.values());
    }
 
    private static int[] liveCounts() {
-      int var0 = 0;
-      int var1 = 0;
+      int n = 0;
+      int n2 = 0;
 
-      for (Module var3 : Zenith.getInstance().getModuleManager().getItems()) {
-         if (var3.isEnabled()) {
-            var0++;
+      for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+         if (moduleValue.isEnabled()) {
+            n++;
          }
 
-         if (var3.getKeyCode() > 0) {
-            var1++;
+         if (moduleValue.getKeyCode() > 0) {
+            n2++;
          }
       }
 
-      return new int[]{var0, var1};
+      return new int[]{n, n2};
    }
 
-   public static ZenithColor letterColor(String var0) {
-      int var1 = var0 == null ? 0 : var0.toLowerCase(Locale.ROOT).hashCode();
-      return new ZenithColor(LETTER_COLORS[Math.floorMod(var1, LETTER_COLORS.length)]);
+   public static ZenithColor letterColor(String display) {
+      int x = display == null ? 0 : display.toLowerCase(Locale.ROOT).hashCode();
+      return new ZenithColor(LETTER_COLORS[Math.floorMod(x, LETTER_COLORS.length)]);
    }
 
-   private static void letterTile(MenuDrawContext var0, String var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithColor var7 = letterColor(var1);
-      var0.drawRoundedRect(var2, var3, var4, var4, ProxyDotRadiusData.method8069(var4 * 0.3F), var7.method7294(var5 * (0.22F + 0.25F * var6)));
-      Font var8 = Fonts.NEW_MEDIUM.getFont(var4 * 0.48F);
-      String var9 = var1 != null && !var1.isEmpty() ? var1.substring(0, 1).toUpperCase(Locale.ROOT) : "?";
-      var0.drawText(
-         var8,
-         var9,
-         var2 + (var4 - var8.width(var9)) / 2.0F,
-         var3 + (var4 - var8.height()) / 2.0F,
-         var7.method7295(new ZenithColor(255, 255, 255), 0.35F).method7294(var5)
+   private static void letterTile(MenuDrawContext menuDrawContext, String display, float floatValue, float y, float width, float previewAlpha, float f) {
+      ZenithColor zenithColor = letterColor(display);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, width, ProxyDotRadiusData.method8069(width * 0.3F), zenithColor.method7294(previewAlpha * (0.22F + 0.25F * f)));
+      Font font = Fonts.NEW_MEDIUM.getFont(width * 0.48F);
+      String upperCase = display != null && !display.isEmpty() ? display.substring(0, 1).toUpperCase(Locale.ROOT) : "?";
+      menuDrawContext.drawText(
+         font,
+         upperCase,
+         floatValue + (width - font.width(upperCase)) / 2.0F,
+         y + (width - font.height()) / 2.0F,
+         zenithColor.method7295(new ZenithColor(255, 255, 255), 0.35F).method7294(previewAlpha)
       );
    }
 
-   private StoreApi.Data2 cloudTwin(String var1) {
-      return ConfigSyncService.getInstance().method672(display(var1));
+   private StoreApi.Data2 cloudTwin(String name) {
+      return ConfigSyncService.getInstance().method672(display(name));
    }
 
-   private void buildLocalAside(Manager var1, int var2) {
+   private void buildLocalAside(Manager manager, int size) {
       if (this.selectedLocal == null) {
-         int[] var7 = liveCounts();
-         ConfigSyncService var8 = ConfigSyncService.getInstance();
+         int[] ints = liveCounts();
+         ConfigSyncService configSyncService = ConfigSyncService.getInstance();
          this.asideCaption("gui.configs.caption.overview");
-         String var9 = String.valueOf(var2);
-         this.asideInfo("gui.configs.info.files", () -> var9, "gui.configs.info.files.desc");
-         this.asideInfo("gui.configs.info.modules", () -> String.valueOf(var7[0]), "gui.configs.info.modules.desc");
-         this.asideInfo("gui.configs.info.binds", () -> String.valueOf(var7[1]), "gui.configs.info.binds.desc");
+         String str = String.valueOf(size);
+         this.asideInfo("gui.configs.info.files", () -> str, "gui.configs.info.files.desc");
+         this.asideInfo("gui.configs.info.modules", () -> String.valueOf(ints[0]), "gui.configs.info.modules.desc");
+         this.asideInfo("gui.configs.info.binds", () -> String.valueOf(ints[1]), "gui.configs.info.binds.desc");
          this.asideInfo("gui.configs.info.applied", () -> this.appliedName.isEmpty() ? "—" : display(this.appliedName), "gui.configs.info.applied.desc");
          this.asideInfo("gui.configs.info.sync", this::syncLine, "gui.configs.sync.desc");
          this.asideCaption("gui.configs.caption.actions");
          this.asideAction("gui.configs.saveNew", MenuGlyph.COPY, () -> this.creatorOpen ? "" : "+", this::toggleCreator, "gui.configs.saveNew.desc");
          this.asideAction(
-            "gui.configs.syncNow", MenuGlyph.CLOUD, () -> var8.method670() ? t("gui.scripts.market.busy") : "", var8::method675, "gui.configs.syncNow.desc"
+            "gui.configs.syncNow", MenuGlyph.CLOUD, () -> configSyncService.method670() ? t("gui.scripts.market.busy") : "", configSyncService::method675, "gui.configs.syncNow.desc"
          );
          this.asideAction(
             "gui.configs.openFolder", MenuGlyph.STORAGE, () -> "", () -> org.zenith.utility.misc.OsOpen.file(Manager.file), "gui.configs.openFolder.desc"
@@ -959,46 +959,46 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          this.asideAction("gui.configs.redeem", MenuGlyph.KEY, () -> "", this::redeem, "gui.configs.redeem.desc");
          this.statusRow();
       } else {
-         String var3 = this.selectedLocal;
-         File var4 = new File(Manager.file, var3);
-         StoreApi.Data2 var5 = this.cloudTwin(var3);
-         this.asideHeader(display(var3), var5, () -> CloudCard.size(var4.length()) + "  ·  " + DATE.format(new Date(var4.lastModified())));
+         String selectedLocal = this.selectedLocal;
+         File file = new File(Manager.file, selectedLocal);
+         StoreApi.Data2 cloudTwin = this.cloudTwin(selectedLocal);
+         this.asideHeader(display(selectedLocal), cloudTwin, () -> CloudCard.size(file.length()) + "  ·  " + DATE.format(new Date(file.lastModified())));
          this.asideCaption("gui.configs.caption.changes");
-         Manager.Data var6 = var1.method7772(var3);
-         if (var6 == null) {
+         Manager.Data data = manager.method7772(selectedLocal);
+         if (data == null) {
             this.asideHint("…");
          } else {
-            this.changes(var6);
+            this.changes(data);
          }
 
          this.asideCaption("gui.configs.caption.apply");
          this.asideChips(this.loadModeChips, () -> this.loadMode, var1x -> this.loadMode = var1x, "gui.configs.load.desc");
-         this.asideAction("apply", MenuGlyph.CHECK, "gui.configs.apply", null, 1, "gui.configs.apply.desc", () -> this.applyLocal(var1, var3));
+         this.asideAction("apply", MenuGlyph.CHECK, "gui.configs.apply", null, 1, "gui.configs.apply.desc", () -> this.applyLocal(manager, selectedLocal));
          this.asideAction("overwrite", MenuGlyph.COPY, "gui.configs.overwrite", null, 0, "gui.configs.overwrite.desc", () -> {
-            var1.method7779(var3);
-            this.report(t("gui.configs.report.saved") + " " + display(var3));
+            manager.method7779(selectedLocal);
+            this.report(t("gui.configs.report.saved") + " " + display(selectedLocal));
          });
          this.asideCaption("gui.configs.caption.cloud");
          this.asideInfo(
             "gui.configs.info.sync",
-            () -> t("gui.configs.sync.state." + ConfigSyncService.getInstance().method671(display(var3)).name().toLowerCase(Locale.ROOT)),
+            () -> t("gui.configs.sync.state." + ConfigSyncService.getInstance().method671(display(selectedLocal)).name().toLowerCase(Locale.ROOT)),
             "gui.configs.sync.desc"
          );
-         if (var5 == null) {
+         if (cloudTwin == null) {
             this.asideAction("gui.configs.syncNow", MenuGlyph.CLOUD, () -> "", ConfigSyncService.getInstance()::method675, "gui.configs.syncNow.desc");
          } else {
-            this.asideInfo("gui.configs.inCloud", () -> "v" + var5.getLongValue2() + " · ♥ " + var5.getIntValue(), "gui.configs.inCloud.desc");
-            this.publication(var5);
+            this.asideInfo("gui.configs.inCloud", () -> "v" + cloudTwin.getLongValue2() + " · ♥ " + cloudTwin.getIntValue(), "gui.configs.inCloud.desc");
+            this.publication(cloudTwin);
          }
 
          this.asideDanger("delete-local", "gui.configs.deleteEverywhere", "gui.configs.deleteEverywhere.desc", () -> {
-            var1.method7786(var3);
+            manager.method7786(selectedLocal);
             this.selectedLocal = null;
-            if (var3.equals(this.appliedName)) {
+            if (selectedLocal.equals(this.appliedName)) {
                this.appliedName = "";
             }
 
-            this.report(t("gui.configs.report.deleted") + " " + display(var3));
+            this.report(t("gui.configs.report.deleted") + " " + display(selectedLocal));
          });
          this.statusRow();
          this.asideAction("gui.scripts.market.back", MenuGlyph.RESET, () -> "", () -> {
@@ -1008,92 +1008,92 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       }
    }
 
-   private void changes(Manager.Data var1) {
-      ArrayList<String> var2 = new ArrayList();
-      ArrayList<String> var3 = new ArrayList();
+   private void changes(Manager.Data data) {
+      ArrayList<String> strings = new ArrayList();
+      ArrayList<String> strings2 = new ArrayList();
       if (this.loadMode != 2) {
-         for (Module var5 : Zenith.getInstance().getModuleManager().getItems()) {
-            if (var5 != InterfaceModule.INSTANCE && var5 != MenuModule.INSTANCE) {
-               boolean var6 = var5.isEnabled();
-               boolean var7 = var1.getItems().contains(var5.getId());
-               if (var7 && !var6) {
-                  var2.add(var5.getName());
-               } else if (!var7 && var6) {
-                  var3.add(var5.getName());
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+            if (moduleValue != InterfaceModule.INSTANCE && moduleValue != MenuModule.INSTANCE) {
+               boolean enabled = moduleValue.isEnabled();
+               boolean contains = data.getItems().contains(moduleValue.getId());
+               if (contains && !enabled) {
+                  strings.add(moduleValue.getName());
+               } else if (!contains && enabled) {
+                  strings2.add(moduleValue.getName());
                }
             }
          }
       }
 
-      var2.sort(String.CASE_INSENSITIVE_ORDER);
-      var3.sort(String.CASE_INSENSITIVE_ORDER);
+      strings.sort(String.CASE_INSENSITIVE_ORDER);
+      strings2.sort(String.CASE_INSENSITIVE_ORDER);
       if (this.loadMode == 2) {
-         this.asideHint(t(var1.isFlag() ? "gui.configs.changes.theme" : "gui.configs.changes.noTheme"));
-      } else if (var2.isEmpty() && var3.isEmpty()) {
+         this.asideHint(t(data.isFlag() ? "gui.configs.changes.theme" : "gui.configs.changes.noTheme"));
+      } else if (strings.isEmpty() && strings2.isEmpty()) {
          this.asideHint(t("gui.configs.changes.none"));
       } else {
-         Font var10 = Fonts.NEW_REGULAR.getFont(4.6F);
-         Font var11 = Fonts.NEW_MEDIUM.getFont(5.0F);
-         ArrayList<String[]> var12 = new ArrayList();
+         Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+         ArrayList<String[]> stringses = new ArrayList();
 
-         for (String var8 : var2.subList(0, Math.min(5, var2.size()))) {
-            var12.add(new String[]{"+", var8});
+         for (String sub : strings.subList(0, Math.min(5, strings.size()))) {
+            stringses.add(new String[]{"+", sub});
          }
 
-         for (String var16 : var3.subList(0, Math.min(5, var3.size()))) {
-            var12.add(new String[]{"−", var16});
+         for (String sub : strings2.subList(0, Math.min(5, strings2.size()))) {
+            stringses.add(new String[]{"−", sub});
          }
 
-         int var15 = var2.size() + var3.size() - var12.size();
-         float var17 = var10.height() + 3.0F;
-         float var9 = var11.height() + 6.0F + var12.size() * var17 + (var15 > 0 ? var17 : 0.0F) + 4.0F;
+         int n = strings.size() + strings2.size() - stringses.size();
+         float f = font.height() + 3.0F;
+         float f2 = font2.height() + 6.0F + stringses.size() * f + (n > 0 ? f : 0.0F) + 4.0F;
          this.asideCustom(
-            var9 + GuiStyle.PADDING.intValue(),
-            (var7x, var8x, var9x, var10x, var11x, var12x, var13, var14) -> {
+            f2 + GuiStyle.PADDING.intValue(),
+            (var7x, var8x, var9x, var10x, var11x, var12x, previewAlpha, zenithStyle) -> {
                float var15x = var10x + 8.0F;
-               String var16x = "+" + var2.size();
-               String var17x = "−" + var3.size();
-               var7x.drawText(var11, var16x, var15x, var11x, CHANGE_ON.method7294(var13));
+               String var16x = "+" + strings.size();
+               String var17x = "−" + strings2.size();
+               var7x.drawText(font2, var16x, var15x, var11x, CHANGE_ON.method7294(previewAlpha));
                var7x.drawText(
-                  var10,
+                  font,
                   t("gui.configs.changes.on"),
-                  var15x + var11.width(var16x) + 3.0F,
+                  var15x + font2.width(var16x) + 3.0F,
                   var11x + 0.5F,
-                  var14.getTextTertiary().getZenithColor().method7294(var13)
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               float var18 = var15x + var11.width(var16x) + 3.0F + var10.width(t("gui.configs.changes.on")) + 10.0F;
-               var7x.drawText(var11, var17x, var18, var11x, CHANGE_OFF.method7294(var13));
+               float floatValue = var15x + font2.width(var16x) + 3.0F + font.width(t("gui.configs.changes.on")) + 10.0F;
+               var7x.drawText(font2, var17x, floatValue, var11x, CHANGE_OFF.method7294(previewAlpha));
                var7x.drawText(
-                  var10,
+                  font,
                   t("gui.configs.changes.off"),
-                  var18 + var11.width(var17x) + 3.0F,
+                  floatValue + font2.width(var17x) + 3.0F,
                   var11x + 0.5F,
-                  var14.getTextTertiary().getZenithColor().method7294(var13)
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               float var19 = var11x + var11.height() + 6.0F;
+               float centeredTextY = var11x + font2.height() + 6.0F;
 
-               for (String[] var21 : var12) {
-                  boolean var22 = var21[0].equals("+");
+               for (String[] strings3 : stringses) {
+                  boolean flag = strings3[0].equals("+");
                   var7x.drawRoundedRect(
-                     var15x, var19 + 1.0F, 3.0F, var10.height() - 1.0F, ProxyDotRadiusData.method8069(1.5F), (var22 ? CHANGE_ON : CHANGE_OFF).method7294(var13)
+                     var15x, centeredTextY + 1.0F, 3.0F, font.height() - 1.0F, ProxyDotRadiusData.method8069(1.5F), (flag ? CHANGE_ON : CHANGE_OFF).method7294(previewAlpha)
                   );
                   var7x.drawText(
-                     var10,
-                     CloudCard.fit(var10, var21[1], var12x - 16.0F - 8.0F),
+                     font,
+                     CloudCard.fit(font, strings3[1], var12x - 16.0F - 8.0F),
                      var15x + 7.0F,
-                     var19,
-                     var14.getTextSecondary().getZenithColor().method7294(var13)
+                     centeredTextY,
+                     zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
                   );
-                  var19 += var17;
+                  centeredTextY += f;
                }
 
-               if (var15 > 0) {
+               if (n > 0) {
                   var7x.drawText(
-                     var10,
-                     t("gui.configs.changes.more").replace("{n}", String.valueOf(var15)),
+                     font,
+                     t("gui.configs.changes.more").replace("{n}", String.valueOf(n)),
                      var15x + 7.0F,
-                     var19,
-                     var14.getTextTertiary().getZenithColor().method7294(var13)
+                     centeredTextY,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                   );
                }
             }
@@ -1101,47 +1101,47 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       }
    }
 
-   private static String ago(long var0) {
-      long var2 = Math.max(0L, (System.currentTimeMillis() - var0) / 1000L);
-      if (var2 < 60L) {
+   private static String ago(long modified) {
+      long l = Math.max(0L, (System.currentTimeMillis() - modified) / 1000L);
+      if (l < 60L) {
          return t("gui.party.ago.now");
-      } else if (var2 < 3600L) {
-         return t("gui.party.ago.min").replace("{n}", String.valueOf(var2 / 60L));
+      } else if (l < 3600L) {
+         return t("gui.party.ago.min").replace("{n}", String.valueOf(l / 60L));
       } else {
-         return var2 < 86400L
-            ? t("gui.party.ago.hour").replace("{n}", String.valueOf(var2 / 3600L))
-            : t("gui.party.ago.day").replace("{n}", String.valueOf(var2 / 86400L));
+         return l < 86400L
+            ? t("gui.party.ago.hour").replace("{n}", String.valueOf(l / 3600L))
+            : t("gui.party.ago.day").replace("{n}", String.valueOf(l / 86400L));
       }
    }
 
-   private void applyLocal(Manager var1, String var2) {
-      if (this.applying.add(var2)) {
-         var1.method7768(var2, this.loadMode()).whenComplete((var2x, var3) -> {
-            this.applying.remove(var2);
-            boolean var4 = var3 == null && Boolean.TRUE.equals(var2x);
-            if (var4) {
-               this.appliedName = var2;
+   private void applyLocal(Manager manager, String appliedName) {
+      if (this.applying.add(appliedName)) {
+         manager.method7768(appliedName, this.loadMode()).whenComplete((var2x, throwable) -> {
+            this.applying.remove(appliedName);
+            boolean flag = throwable == null && Boolean.TRUE.equals(var2x);
+            if (flag) {
+               this.appliedName = appliedName;
             }
 
-            String var5 = t(var4 ? "gui.configs.report.applied" : "gui.configs.report.unreadable") + " " + display(var2);
-            this.report(var4 ? var5 : "!" + var5);
-            this.page.message(var5, !var4);
+            String str = t(flag ? "gui.configs.report.applied" : "gui.configs.report.unreadable") + " " + display(appliedName);
+            this.report(flag ? str : "!" + str);
+            this.page.message(str, !flag);
          });
       }
    }
 
-   private List<CloudConfigsSectionPanel.LocalFile> localFiles(Manager var1) {
-      String var2 = "." + "Zenith".toLowerCase(Locale.ROOT);
-      String var3 = this.searchQuery();
-      ArrayList<CloudConfigsSectionPanel.LocalFile> var4 = new ArrayList<>();
+   private List<CloudConfigsSectionPanel.LocalFile> localFiles(Manager manager) {
+      String suffix = "." + "Zenith".toLowerCase(Locale.ROOT);
+      String searchQuery = this.searchQuery();
+      ArrayList<CloudConfigsSectionPanel.LocalFile> localFiles = new ArrayList<>();
 
-      for (String var6 : var1.method7785()) {
-         if (var6.toLowerCase(Locale.ROOT).endsWith(var2)) {
-            File var7 = new File(Manager.file, var6);
-            if (var7.isFile()) {
-               String var8 = var6.substring(0, var6.length() - var2.length());
-               if (!var8.equalsIgnoreCase("current_config") && (var3.isEmpty() || var8.toLowerCase(Locale.ROOT).contains(var3))) {
-                  var4.add(new CloudConfigsSectionPanel.LocalFile(var6, var8, "", var7.length(), var7.lastModified()));
+      for (String child : manager.method7785()) {
+         if (child.toLowerCase(Locale.ROOT).endsWith(suffix)) {
+            File file = new File(Manager.file, child);
+            if (file.isFile()) {
+               String display = child.substring(0, child.length() - suffix.length());
+               if (!display.equalsIgnoreCase("current_config") && (searchQuery.isEmpty() || display.toLowerCase(Locale.ROOT).contains(searchQuery))) {
+                  localFiles.add(new CloudConfigsSectionPanel.LocalFile(child, display, "", file.length(), file.lastModified()));
                }
             }
          }
@@ -1149,143 +1149,143 @@ public class CloudConfigsSectionPanel extends SectionPanel {
 
       switch (this.localSort) {
          case 1:
-            var4.sort(Comparator.comparingLong(CloudConfigsSectionPanel.LocalFile::modified).reversed());
+            localFiles.sort(Comparator.comparingLong(CloudConfigsSectionPanel.LocalFile::modified).reversed());
             break;
          case 2:
-            var4.sort(Comparator.comparingLong(CloudConfigsSectionPanel.LocalFile::size).reversed());
+            localFiles.sort(Comparator.comparingLong(CloudConfigsSectionPanel.LocalFile::size).reversed());
             break;
          default:
-            var4.sort(Comparator.comparing(var0 -> var0.display().toLowerCase(Locale.ROOT)));
+            localFiles.sort(Comparator.comparing(localFile -> localFile.display().toLowerCase(Locale.ROOT)));
       }
 
-      return var4;
+      return localFiles;
    }
 
-   private List<StoreApi.Data2> arrange(List<StoreApi.Data2> var1) {
-      String var2 = this.searchQuery();
-      ArrayList<StoreApi.Data2> var3 = new ArrayList<>();
+   private List<StoreApi.Data2> arrange(List<StoreApi.Data2> sharedEntries) {
+      String searchQuery = this.searchQuery();
+      ArrayList<StoreApi.Data2> data2s = new ArrayList<>();
 
-      for (StoreApi.Data2 var5 : var1) {
-         if (var2.isEmpty() || matches(var5, var2)) {
-            var3.add(var5);
+      for (StoreApi.Data2 sharedEntry : sharedEntries) {
+         if (searchQuery.isEmpty() || matches(sharedEntry, searchQuery)) {
+            data2s.add(sharedEntry);
          }
       }
 
       switch (this.cloudSort) {
          case 1:
-            var3.sort(Comparator.comparing(var0 -> blank(var0.name()).toLowerCase(Locale.ROOT)));
+            data2s.sort(Comparator.comparing(data2 -> blank(data2.name()).toLowerCase(Locale.ROOT)));
             break;
          case 2:
-            var3.sort(Comparator.comparingInt(StoreApi.Data2::getIntValue).reversed());
+            data2s.sort(Comparator.comparingInt(StoreApi.Data2::getIntValue).reversed());
             break;
          case 3:
-            var3.sort(Comparator.comparingLong(StoreApi.Data2::getLongValue).reversed());
+            data2s.sort(Comparator.comparingLong(StoreApi.Data2::getLongValue).reversed());
             break;
          default:
-            var3.sort(Comparator.comparingLong(StoreApi.Data2::getLongValue4).reversed());
+            data2s.sort(Comparator.comparingLong(StoreApi.Data2::getLongValue4).reversed());
       }
 
-      return var3;
+      return data2s;
    }
 
-   private static boolean matches(StoreApi.Data2 var0, String var1) {
-      return blank(var0.name()).toLowerCase(Locale.ROOT).contains(var1)
-         || blank(var0.getText8()).toLowerCase(Locale.ROOT).contains(var1)
-         || blank(var0.server()).toLowerCase(Locale.ROOT).contains(var1);
+   private static boolean matches(StoreApi.Data2 sharedEntry, String searchQuery) {
+      return blank(sharedEntry.name()).toLowerCase(Locale.ROOT).contains(searchQuery)
+         || blank(sharedEntry.getText8()).toLowerCase(Locale.ROOT).contains(searchQuery)
+         || blank(sharedEntry.server()).toLowerCase(Locale.ROOT).contains(searchQuery);
    }
 
-   private StoreApi.Data2 find(List<StoreApi.Data2> var1) {
-      return var1.stream().filter(var1x -> var1x.getUUID().equals(this.selectedCloud)).findFirst().orElse(null);
+   private StoreApi.Data2 find(List<StoreApi.Data2> arrange) {
+      return arrange.stream().filter(var1x -> var1x.getUUID().equals(this.selectedCloud)).findFirst().orElse(null);
    }
 
-   private static String cardHover(StoreApi.Data2 var0) {
-      StringBuilder var1 = new StringBuilder();
-      if (var0.description() != null && !var0.description().isBlank()) {
-         var1.append(var0.description()).append(' ');
+   private static String cardHover(StoreApi.Data2 entry) {
+      StringBuilder builder = new StringBuilder();
+      if (entry.description() != null && !entry.description().isBlank()) {
+         builder.append(entry.description()).append(' ');
       }
 
-      var1.append(CloudCard.size(var0.getLongValue()));
-      if (var0.server() != null && !var0.server().isBlank()) {
-         var1.append(" · ").append(var0.server());
+      builder.append(CloudCard.size(entry.getLongValue()));
+      if (entry.server() != null && !entry.server().isBlank()) {
+         builder.append(" · ").append(entry.server());
       }
 
-      var1.append(" · ").append(DATE.format(new Date(var0.getLongValue4())));
-      var1.append(". ").append(t("gui.configs.card.hover"));
-      return var1.toString();
+      builder.append(" · ").append(DATE.format(new Date(entry.getLongValue4())));
+      builder.append(". ").append(t("gui.configs.card.hover"));
+      return builder.toString();
    }
 
-   private void buildEntryAside(StoreApi.Data2 var1, boolean var2) {
-      if (var1 == null) {
+   private void buildEntryAside(StoreApi.Data2 cloudTwin, boolean flag) {
+      if (cloudTwin == null) {
          this.asideCaption("gui.configs.caption.card");
          this.asideHint(t("gui.configs.aside.pickCard"));
       } else {
-         UUID var3 = var1.getUUID();
+         UUID uuid = cloudTwin.getUUID();
          this.asideHeader(
-            var1.name(), var1, () -> "v" + var1.getLongValue2() + "  ·  " + blankToDash(var1.getText8()) + "  ·  " + CloudCard.size(var1.getLongValue())
+            cloudTwin.name(), cloudTwin, () -> "v" + cloudTwin.getLongValue2() + "  ·  " + blankToDash(cloudTwin.getText8()) + "  ·  " + CloudCard.size(cloudTwin.getLongValue())
          );
-         this.preview(var1);
-         this.description(var1);
+         this.preview(cloudTwin);
+         this.description(cloudTwin);
          this.asideCaption("gui.scripts.caption.actions");
          this.asideAction(
-            "download", MenuGlyph.STORAGE, "gui.configs.download", "gui.configs.download.sub", 1, "gui.configs.download.desc", () -> this.download(var1)
+            "download", MenuGlyph.STORAGE, "gui.configs.download", "gui.configs.download.sub", 1, "gui.configs.download.desc", () -> this.download(cloudTwin)
          );
          this.asideAction(
             "like",
             MenuGlyph.HEART,
-            t(var1.isFlag3() ? "gui.configs.unlike" : "gui.configs.like") + " · " + var1.getIntValue(),
+            t(cloudTwin.isFlag3() ? "gui.configs.unlike" : "gui.configs.like") + " · " + cloudTwin.getIntValue(),
             null,
             0,
             "gui.configs.like.desc",
-            () -> this.toggleLike(var3)
+            () -> this.toggleLike(uuid)
          );
          this.asideCaption("gui.scripts.market.caption.about");
-         this.asideInfo("gui.scripts.market.info.updated", () -> ago(var1.getLongValue4()), "gui.scripts.market.info.updated.desc");
-         if (!var2) {
-            this.asideInfo("gui.configs.author", () -> blankToDash(var1.getText8()), "gui.configs.author.desc");
+         this.asideInfo("gui.scripts.market.info.updated", () -> ago(cloudTwin.getLongValue4()), "gui.scripts.market.info.updated.desc");
+         if (!flag) {
+            this.asideInfo("gui.configs.author", () -> blankToDash(cloudTwin.getText8()), "gui.configs.author.desc");
          }
 
-         this.asideInfo("gui.configs.server", () -> blankToDash(var1.server()), "gui.configs.server.desc");
+         this.asideInfo("gui.configs.server", () -> blankToDash(cloudTwin.server()), "gui.configs.server.desc");
       }
    }
 
-   private void publication(StoreApi.Data2 var1) {
-      UUID var2 = var1.getUUID();
+   private void publication(StoreApi.Data2 cloudTwin) {
+      UUID uuid = cloudTwin.getUUID();
       this.asideCaption("gui.configs.caption.visibility");
       this.asideChips(
-         this.entryVisibilityChips, () -> visibilityIndex(var1.getText7()), var2x -> this.changeVisibility(var1, var2x), "gui.configs.visibility.desc"
+         this.entryVisibilityChips, () -> visibilityIndex(cloudTwin.getText7()), var2x -> this.changeVisibility(cloudTwin, var2x), "gui.configs.visibility.desc"
       );
-      this.asideAction("push", MenuGlyph.CLOUD, "gui.configs.push", "gui.configs.push.sub", 0, "gui.configs.push.desc", () -> this.pushContent(var1));
+      this.asideAction("push", MenuGlyph.CLOUD, "gui.configs.push", "gui.configs.push.sub", 0, "gui.configs.push.desc", () -> this.pushContent(cloudTwin));
       this.asideCaption("gui.configs.caption.codes");
       this.asideAction("issue-code", MenuGlyph.KEY, "gui.configs.issueCode", "gui.configs.issueCode.sub", 0, "gui.configs.issueCode.desc", () -> {
          StoreApi var2x = store();
          if (var2x != null) {
-            var2x.method1979(var2, 1).whenComplete((var2xx, var3) -> {
-               if (var3 != null) {
-                  this.status = shortError(var3);
+            var2x.method1979(uuid, 1).whenComplete((var2xx, throwable) -> {
+               if (throwable != null) {
+                  this.status = shortError(throwable);
                   this.statusAt = System.currentTimeMillis();
                }
 
-               this.fetchCodes(var2);
+               this.fetchCodes(uuid);
             });
          }
       });
-      if (var2.equals(this.codesFor)) {
-         for (StoreApi.Data var4 : this.codes) {
-            boolean var5 = "ACTIVE".equalsIgnoreCase(var4.getText2());
-            this.row(var4.getText())
+      if (uuid.equals(this.codesFor)) {
+         for (StoreApi.Data code : this.codes) {
+            boolean equalsIgnoreCase = "ACTIVE".equalsIgnoreCase(code.getText2());
+            this.row(code.getText())
                .icon(MenuGlyph.KEY)
-               .value(() -> lower(var4.getText2()))
-               .description(var5 ? "gui.configs.code.active.desc" : "gui.configs.code.used.desc")
+               .value(() -> lower(code.getText2()))
+               .description(equalsIgnoreCase ? "gui.configs.code.active.desc" : "gui.configs.code.used.desc")
                .onRightClick(() -> {
-                  StoreApi var3 = store();
-                  if (var3 != null) {
-                     var3.method1981(var2, var4.getUUID()).whenComplete((var2xx, var3x) -> {
+                  StoreApi storeApi = store();
+                  if (storeApi != null) {
+                     storeApi.method1981(uuid, code.getUUID()).whenComplete((var2xx, var3x) -> {
                         if (var3x != null) {
                            this.status = shortError(var3x);
                            this.statusAt = System.currentTimeMillis();
                         }
 
-                        this.fetchCodes(var2);
+                        this.fetchCodes(uuid);
                      });
                   }
                })
@@ -1298,156 +1298,156 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       }
    }
 
-   private void asideHeader(String var1, StoreApi.Data2 var2, Supplier<String> var3) {
+   private void asideHeader(String display, StoreApi.Data2 cloudTwin, Supplier<String> supplier) {
       this.asideCustom(
          46.0F,
-         (var4, var5, var6, var7, var8, var9, var10, var11) -> {
-            float var12 = 34.0F;
-            this.avatar(var4, var1, var2, var7 + 8.0F, var8 + 5.0F, var12, var10);
-            Font var13 = Fonts.NEW_SEMIBOLD.getFont(5.8F);
-            Font var14 = Fonts.NEW_REGULAR.getFont(4.3F);
-            float var15 = var7 + 8.0F + var12 + 7.0F;
-            var4.drawText(
-               var13, CloudCard.fit(var13, var1, var7 + var9 - 8.0F - var15), var15, var8 + 9.0F, var11.getTextEnable().getZenithColor().method7294(var10)
+         (menuDrawContext, n, n2, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float size = 34.0F;
+            this.avatar(menuDrawContext, display, cloudTwin, f + 8.0F, f2 + 5.0F, size, previewAlpha);
+            Font font = Fonts.NEW_SEMIBOLD.getFont(5.8F);
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+            float floatValue = f + 8.0F + size + 7.0F;
+            menuDrawContext.drawText(
+               font, CloudCard.fit(font, display, f + f3 - 8.0F - floatValue), floatValue, f2 + 9.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
             );
-            var4.drawText(
-               var14,
-               CloudCard.fit(var14, (String)var3.get(), var7 + var9 - 8.0F - var15),
-               var15,
-               var8 + 11.0F + var13.height(),
-               var11.getTextTertiary().getZenithColor().method7294(var10)
+            menuDrawContext.drawText(
+               font2,
+               CloudCard.fit(font2, (String)supplier.get(), f + f3 - 8.0F - floatValue),
+               floatValue,
+               f2 + 11.0F + font.height(),
+               zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
          }
       );
    }
 
-   private void preview(StoreApi.Data2 var1) {
-      if (var1.hasPreview()) {
-         float var2 = this.asideWidth() - 16.0F;
-         float var3 = var2 * 9.0F / 16.0F;
-         UUID var4 = var1.getUUID();
+   private void preview(StoreApi.Data2 cloudTwin) {
+      if (cloudTwin.hasPreview()) {
+         float f = this.asideWidth() - 16.0F;
+         float height = f * 9.0F / 16.0F;
+         UUID uuid = cloudTwin.getUUID();
          this.asideCustom(
-            var3 + GuiStyle.PADDING.intValue(),
-            (var4x, var5, var6, var7, var8, var9, var10, var11) -> {
-               float var12 = var7 + 8.0F;
-               float var13 = var9 - 16.0F;
-               Identifier var14 = CloudPreviewTextureCache.get(var4, var1.getText6());
-               ProxyDotRadiusData var15 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.5F);
-               if (var14 == null) {
-                  float var19 = 0.7F + 0.3F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 300.0));
-                  var4x.drawRoundedRect(var12, var8, var13, var3, var15, var11.getSurfaceEnableBackground().getZenithColor().method7294(var10 * 2.0F));
-                  Font var17 = Fonts.NEW_REGULAR.getFont(4.6F);
-                  String var18 = t("gui.configs.previewLoading");
+            height + GuiStyle.PADDING.intValue(),
+            (var4x, n, n2, f2, y, f3, f4, zenithStyle) -> {
+               float floatValue = f2 + 8.0F;
+               float width = f3 - 16.0F;
+               Identifier texture = CloudPreviewTextureCache.get(uuid, cloudTwin.getText6());
+               ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.5F);
+               if (texture == null) {
+                  float f5 = 0.7F + 0.3F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 300.0));
+                  var4x.drawRoundedRect(floatValue, y, width, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(f4 * 2.0F));
+                  Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+                  String text = t("gui.configs.previewLoading");
                   var4x.drawText(
-                     var17,
-                     var18,
-                     var12 + (var13 - var17.width(var18)) / 2.0F,
-                     var8 + (var3 - var17.height()) / 2.0F,
-                     var11.getTextTertiary().getZenithColor().method7294(var10 * var19)
+                     font,
+                     text,
+                     floatValue + (width - font.width(text)) / 2.0F,
+                     y + (height - font.height()) / 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(f4 * f5)
                   );
                } else {
-                  float var16 = this.previewFade.computeIfAbsent(var4, var0 -> new Animation(260L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
-                  if (var16 < 1.0F) {
+                  float f5 = this.previewFade.computeIfAbsent(uuid, uuid2 -> new Animation(260L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+                  if (f5 < 1.0F) {
                      var4x.drawRoundedRect(
-                        var12, var8, var13, var3, var15, var11.getSurfaceEnableBackground().getZenithColor().method7294(var10 * 2.0F * (1.0F - var16))
+                        floatValue, y, width, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(f4 * 2.0F * (1.0F - f5))
                      );
                   }
 
-                  var4x.drawRoundedTexture(var14, var12, var8, var13, var3, var15, new ZenithColor(255, 255, 255).method7294(var10 * var16));
+                  var4x.drawRoundedTexture(texture, floatValue, y, width, height, headerRadius, new ZenithColor(255, 255, 255).method7294(f4 * f5));
                }
             }
          );
       }
    }
 
-   private void description(StoreApi.Data2 var1) {
-      String var2 = var1.description();
-      if (var2 != null && !var2.isBlank()) {
-         Font var3 = Fonts.NEW_REGULAR.getFont(4.8F);
-         float var4 = this.asideWidth() - 16.0F;
-         List<String> var5 = wrapText(var2, var3, var4, 6);
-         float var6 = var3.height() + 1.5F;
-         this.asideCustom(var5.size() * var6 + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, var6x, var7, var8, var9, var10) -> {
-            float var11 = var7;
+   private void description(StoreApi.Data2 cloudTwin) {
+      String description = cloudTwin.description();
+      if (description != null && !description.isBlank()) {
+         Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+         float shownWidth = this.asideWidth() - 16.0F;
+         List<String> strings = wrapText(description, font, shownWidth, 6);
+         float f = font.height() + 1.5F;
+         this.asideCustom(strings.size() * f + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, var6x, f2, f3, previewAlpha, zenithStyle) -> {
+            float centeredTextY = f2;
 
-            for (String var13 : var5) {
-               var3x.drawText(var3, var13, var6x + 8.0F, var11, var10.getTextSecondary().getZenithColor().method7294(var9));
-               var11 += var6;
+            for (String text : strings) {
+               var3x.drawText(font, text, var6x + 8.0F, centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+               centeredTextY += f;
             }
          });
       }
    }
 
-   private void asideHint(String var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.8F);
-      float var3 = this.asideWidth() - 16.0F;
-      List<String> var4 = wrapText(var1, var2, var3, 8);
-      float var5 = var2.height() + 1.5F;
-      this.asideCustom(var4.size() * var5 + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, var6, var7, var8, var9, var10) -> {
-         float var11 = var7;
+   private void asideHint(String description) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      float shownWidth = this.asideWidth() - 16.0F;
+      List<String> strings = wrapText(description, font, shownWidth, 8);
+      float f = font.height() + 1.5F;
+      this.asideCustom(strings.size() * f + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, f2, f3, f4, previewAlpha, zenithStyle) -> {
+         float centeredTextY = f3;
 
-         for (String var13 : var4) {
-            var3x.drawText(var2, var13, var6 + 8.0F, var11, var10.getTextTertiary().getZenithColor().method7294(var9));
-            var11 += var5;
+         for (String text : strings) {
+            var3x.drawText(font, text, f2 + 8.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY += f;
          }
       });
    }
 
-   private void emptyState(String var1, String var2) {
-      Font var3 = Fonts.NEW_MEDIUM.getFont(5.4F);
-      Font var4 = Fonts.NEW_REGULAR.getFont(4.8F);
-      List<String> var5 = wrapText(t(var2), var4, this.mainWidth() - 32.0F, 4);
-      float var6 = var4.height() + 2.0F;
-      float var7 = 30.0F;
+   private void emptyState(String key, String str) {
+      Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.8F);
+      List<String> strings = wrapText(t(str), font2, this.mainWidth() - 32.0F, 4);
+      float f = font2.height() + 2.0F;
+      float f2 = 30.0F;
       this.custom(
-         var7 + var3.height() + 6.0F + var5.size() * var6 + GuiStyle.PADDING.intValue() * 2.0F, (var6x, var7x, var8, var9, var10, var11, var12, var13) -> {
-            String var14 = t(var1);
-            var6x.drawText(var3, var14, var9 + (var11 - var3.width(var14)) / 2.0F, var10 + var7, var13.getTextSecondary().getZenithColor().method7294(var12));
-            float var15 = var10 + var7 + var3.height() + 6.0F;
+         f2 + font.height() + 6.0F + strings.size() * f + GuiStyle.PADDING.intValue() * 2.0F, (var6x, var7x, n, f3, f4, f5, previewAlpha, zenithStyle) -> {
+            String text = t(key);
+            var6x.drawText(font, text, f3 + (f5 - font.width(text)) / 2.0F, f4 + f2, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+            float centeredTextY = f4 + f2 + font.height() + 6.0F;
 
-            for (String var17 : var5) {
-               var6x.drawText(var4, var17, var9 + (var11 - var4.width(var17)) / 2.0F, var15, var13.getTextTertiary().getZenithColor().method7294(var12));
-               var15 += var6;
+            for (String text2 : strings) {
+               var6x.drawText(font2, text2, f3 + (f5 - font2.width(text2)) / 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               centeredTextY += f;
             }
          }
       );
    }
 
-   private void asideChips(ChipStrip var1, IntSupplier var2, IntConsumer var3, String var4) {
-      float var5 = this.asideWidth() - 16.0F;
-      this.asideCustom(var1.height(var5) + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, var6, var7, var8, var9, var10) -> {
-         var1.render(var3x, var4x, var5x, var6 + 8.0F, var7, var8 - 16.0F, var2.getAsInt(), var9, var10);
-         if (var1.hovered() >= 0) {
-            HoverInfo.request(var1.label(var1.hovered()), t(var4));
+   private void asideChips(ChipStrip loadModeChips, IntSupplier intSupplier, IntConsumer intConsumer, String key) {
+      float width = this.asideWidth() - 16.0F;
+      this.asideCustom(loadModeChips.height(width) + GuiStyle.PADDING.intValue(), (var3x, var4x, var5x, f, y, f2, previewAlpha, zenithStyle) -> {
+         loadModeChips.render(var3x, var4x, var5x, f + 8.0F, y, f2 - 16.0F, intSupplier.getAsInt(), previewAlpha, zenithStyle);
+         if (loadModeChips.hovered() >= 0) {
+            HoverInfo.request(loadModeChips.label(loadModeChips.hovered()), t(key));
          }
       }, () -> {
-         int var3x = var1.hovered();
+         int var3x = loadModeChips.hovered();
          if (var3x >= 0) {
-            var3.accept(var3x);
+            intConsumer.accept(var3x);
             this.invalidate();
          }
       }, null);
    }
 
-   private Animation animation(String var1, int var2) {
-      return this.hoverAnimations.computeIfAbsent(var1, var1x -> new Animation(var2, 0.0F, Easing.INSTANCE12));
+   private Animation animation(String key, int duration) {
+      return this.hoverAnimations.computeIfAbsent(key, var1x -> new Animation(duration, 0.0F, Easing.INSTANCE12));
    }
 
-   private void asideAction(String var1, MenuGlyph var2, String var3, String var4, int var5, String var6, Runnable var7) {
-      this.asideAction(var3, var2, () -> "", var7, var6);
+   private void asideAction(String str, MenuGlyph icon, String label, String str2, int n, String description, Runnable onClick) {
+      this.asideAction(label, icon, () -> "", onClick, description);
    }
 
-   private void asideDanger(String var1, String var2, String var3, Runnable var4) {
-      this.asideAction(var2, MenuGlyph.CLOSE, () -> var1.equals(this.armedKey) ? t("gui.scripts.market.again") : "", () -> {
-         if (var1.equals(this.armedKey)) {
+   private void asideDanger(String armedKey, String label, String description, Runnable runnable) {
+      this.asideAction(label, MenuGlyph.CLOSE, () -> armedKey.equals(this.armedKey) ? t("gui.scripts.market.again") : "", () -> {
+         if (armedKey.equals(this.armedKey)) {
             this.disarm();
-            var4.run();
+            runnable.run();
          } else {
-            this.armedKey = var1;
+            this.armedKey = armedKey;
             this.armedAt = System.currentTimeMillis();
             this.invalidate();
          }
-      }, var3);
+      }, description);
    }
 
    private void disarm() {
@@ -1455,20 +1455,20 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       this.armedAt = 0L;
    }
 
-   private void upload(String var1) {
-      StoreApi var2 = store();
-      File var3 = new File(Manager.file, var1);
-      if (var2 != null && var3.isFile()) {
+   private void upload(String child) {
+      StoreApi storeApi = store();
+      File file = new File(Manager.file, child);
+      if (storeApi != null && file.isFile()) {
          try {
-            byte[] var4 = Files.readAllBytes(var3.toPath());
-            var2.method1972("config", display(var1), var3.getName(), "", VISIBILITY[this.uploadVisibility], var4, null, 0L).whenComplete((var1x, var2x) -> {
+            byte[] allBytes = Files.readAllBytes(file.toPath());
+            storeApi.method1972("config", display(child), file.getName(), "", VISIBILITY[this.uploadVisibility], allBytes, null, 0L).whenComplete((var1x, var2x) -> {
                this.status = var2x == null ? t("gui.configs.report.uploaded") + " " + var1x.name() : shortError(var2x);
                ConfigSyncService.getInstance().method675();
                this.statusAt = System.currentTimeMillis();
                this.refetch();
                this.bump();
             });
-         } catch (Exception var5) {
+         } catch (Exception e) {
             this.report(t("gui.configs.report.readFailed"));
          }
       } else {
@@ -1476,44 +1476,44 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       }
    }
 
-   private void pushContent(StoreApi.Data2 var1) {
-      StoreApi var2 = store();
-      ConfigFile var3 = Zenith.getInstance().getManager().method7783(var1.name());
-      if (var2 != null && var3 != null) {
+   private void pushContent(StoreApi.Data2 cloudTwin) {
+      StoreApi storeApi = store();
+      ConfigFile configFile = Zenith.getInstance().getManager().method7783(cloudTwin.name());
+      if (storeApi != null && configFile != null) {
          try {
-            byte[] var4 = Files.readAllBytes(var3.getFile().toPath());
-            var2.method1972(var1.kind(), var1.name(), var1.fileName(), var1.description(), var1.getText7(), var4, var1.getUUID(), var1.getLongValue2())
+            byte[] allBytes = Files.readAllBytes(configFile.getFile().toPath());
+            storeApi.method1972(cloudTwin.kind(), cloudTwin.name(), cloudTwin.fileName(), cloudTwin.description(), cloudTwin.getText7(), allBytes, cloudTwin.getUUID(), cloudTwin.getLongValue2())
                .whenComplete((var1x, var2x) -> {
                   this.status = var2x == null ? t("gui.configs.report.updatedTo") + " v" + var1x.getLongValue2() : shortError(var2x);
                   this.statusAt = System.currentTimeMillis();
                   this.refetch();
                   this.bump();
                });
-         } catch (Exception var5) {
+         } catch (Exception e) {
             this.report(t("gui.configs.report.readFailed"));
          }
       } else {
-         this.report(t("gui.configs.report.noLocal").replace("{n}", var1.name()));
+         this.report(t("gui.configs.report.noLocal").replace("{n}", cloudTwin.name()));
       }
    }
 
-   private void download(StoreApi.Data2 var1) {
-      StoreApi var2 = store();
-      if (var2 != null) {
-         var2.method1970(var1.getUUID()).whenComplete((var2x, var3) -> {
-            if (var3 != null) {
-               this.status = shortError(var3);
+   private void download(StoreApi.Data2 cloudTwin) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1970(cloudTwin.getUUID()).whenComplete((var2x, throwable) -> {
+            if (throwable != null) {
+               this.status = shortError(throwable);
                this.statusAt = System.currentTimeMillis();
                this.bump();
             } else {
                try {
-                  File var4 = saveDownloaded(var1, var2x);
-                  if (!var1.mine()) {
-                     this.taken().remember(var1);
+                  File file = saveDownloaded(cloudTwin, var2x);
+                  if (!cloudTwin.mine()) {
+                     this.taken().remember(cloudTwin);
                   }
 
-                  this.status = t("gui.configs.report.downloaded").replace("{n}", display(var4.getName()));
-               } catch (Exception var5) {
+                  this.status = t("gui.configs.report.downloaded").replace("{n}", display(file.getName()));
+               } catch (Exception e) {
                   this.status = t("gui.configs.report.writeFailed");
                }
 
@@ -1528,77 +1528,77 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       return "." + "Zenith".toLowerCase(Locale.ROOT);
    }
 
-   public static File targetFile(StoreApi.Data2 var0) {
-      String var1 = recordedFile(var0.getUUID());
-      return var1 != null ? new File(Manager.file, var1) : new File(Manager.file, safeName(var0.name()) + extension());
+   public static File targetFile(StoreApi.Data2 entry) {
+      String child = recordedFile(entry.getUUID());
+      return child != null ? new File(Manager.file, child) : new File(Manager.file, safeName(entry.name()) + extension());
    }
 
-   public static File downloadTarget(StoreApi.Data2 var0, byte[] var1) {
-      String var2 = recordedFile(var0.getUUID());
-      if (var2 != null) {
-         return new File(Manager.file, var2);
+   public static File downloadTarget(StoreApi.Data2 cloudTwin, byte[] bytes) {
+      String child = recordedFile(cloudTwin.getUUID());
+      if (child != null) {
+         return new File(Manager.file, child);
       } else {
-         String var3 = safeName(var0.name());
-         File var4 = new File(Manager.file, var3 + extension());
-         if (var4.exists() && !sameContent(var4, var1)) {
-            for (int var5 = 2; var5 < 1000; var5++) {
-               File var6 = new File(Manager.file, var3 + " (" + var5 + ")" + extension());
-               if (!var6.exists() || sameContent(var6, var1)) {
-                  return var6;
+         String str = safeName(cloudTwin.name());
+         File file = new File(Manager.file, str + extension());
+         if (file.exists() && !sameContent(file, bytes)) {
+            for (int i = 2; i < 1000; i++) {
+               File file2 = new File(Manager.file, str + " (" + i + ")" + extension());
+               if (!file2.exists() || sameContent(file2, bytes)) {
+                  return file2;
                }
             }
 
-            return new File(Manager.file, var3 + " (" + UUID.randomUUID() + ")" + extension());
+            return new File(Manager.file, str + " (" + UUID.randomUUID() + ")" + extension());
          } else {
-            return var4;
+            return file;
          }
       }
    }
 
-   public static File saveDownloaded(StoreApi.Data2 var0, byte[] var1) throws IOException {
+   public static File saveDownloaded(StoreApi.Data2 cloudTwin, byte[] bytes) throws IOException {
       synchronized (DOWNLOADED_FILES) {
-         File var3 = downloadTarget(var0, var1);
-         var3.getParentFile().mkdirs();
-         Files.write(var3.toPath(), var1);
-         recordFile(var0.getUUID(), var3.getName());
-         return var3;
+         File file = downloadTarget(cloudTwin, bytes);
+         file.getParentFile().mkdirs();
+         Files.write(file.toPath(), bytes);
+         recordFile(cloudTwin.getUUID(), file.getName());
+         return file;
       }
    }
 
-   private static boolean sameContent(File var0, byte[] var1) {
+   private static boolean sameContent(File file, byte[] bytes) {
       try {
-         return var0.isFile() && var0.length() == var1.length && Arrays.equals(Files.readAllBytes(var0.toPath()), var1);
-      } catch (Exception var3) {
+         return file.isFile() && file.length() == bytes.length && Arrays.equals(Files.readAllBytes(file.toPath()), bytes);
+      } catch (Exception e) {
          return false;
       }
    }
 
-   private static String recordedFile(UUID var0) {
-      if (var0 == null) {
+   private static String recordedFile(UUID uuid) {
+      if (uuid == null) {
          return null;
       } else {
          synchronized (DOWNLOADED_FILES) {
             loadDownloadedFiles();
-            String var2 = DOWNLOADED_FILES.get(var0.toString());
-            return var2 != null && !new File(Manager.file, var2).isFile() ? null : var2;
+            String child = DOWNLOADED_FILES.get(uuid.toString());
+            return child != null && !new File(Manager.file, child).isFile() ? null : child;
          }
       }
    }
 
-   private static void recordFile(UUID var0, String var1) {
-      if (var0 != null) {
+   private static void recordFile(UUID uuid, String name) {
+      if (uuid != null) {
          synchronized (DOWNLOADED_FILES) {
             loadDownloadedFiles();
-            if (!var1.equals(DOWNLOADED_FILES.get(var0.toString()))) {
-               DOWNLOADED_FILES.put(var0.toString(), var1);
+            if (!name.equals(DOWNLOADED_FILES.get(uuid.toString()))) {
+               DOWNLOADED_FILES.put(uuid.toString(), name);
 
                while (DOWNLOADED_FILES.size() > 1024) {
                   DOWNLOADED_FILES.remove(DOWNLOADED_FILES.keySet().iterator().next());
                }
 
-               JsonObject var3 = new JsonObject();
-               DOWNLOADED_FILES.forEach(var3::addProperty);
-               CloudJsonIo.method5993(Zenith.file.toPath().resolve("cloud-config-files.json"), var3);
+               JsonObject json = new JsonObject();
+               DOWNLOADED_FILES.forEach(json::addProperty);
+               CloudJsonIo.method5993(Zenith.file.toPath().resolve("cloud-config-files.json"), json);
             }
          }
       }
@@ -1607,25 +1607,25 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    private static void loadDownloadedFiles() {
       if (!downloadedFilesLoaded) {
          downloadedFilesLoaded = true;
-         JsonObject var0 = CloudJsonIo.method5992(Zenith.file.toPath().resolve("cloud-config-files.json"));
-         if (var0 != null) {
-            for (Map.Entry var2 : var0.entrySet()) {
+         JsonObject json = CloudJsonIo.method5992(Zenith.file.toPath().resolve("cloud-config-files.json"));
+         if (json != null) {
+            for (Map.Entry entry : json.entrySet()) {
                try {
-                  String var3 = ((JsonElement)var2.getValue()).getAsString();
-                  if (!var3.isBlank() && var3.indexOf(47) < 0 && var3.indexOf(92) < 0 && !var3.contains("..")) {
-                     DOWNLOADED_FILES.put(UUID.fromString((String)var2.getKey()).toString(), var3);
+                  String string = ((JsonElement)entry.getValue()).getAsString();
+                  if (!string.isBlank() && string.indexOf(47) < 0 && string.indexOf(92) < 0 && !string.contains("..")) {
+                     DOWNLOADED_FILES.put(UUID.fromString((String)entry.getKey()).toString(), string);
                   }
-               } catch (RuntimeException var4) {
+               } catch (RuntimeException e) {
                }
             }
          }
       }
    }
 
-   private void toggleLike(UUID var1) {
-      StoreApi var2 = store();
-      if (var2 != null) {
-         var2.method1978(var1).whenComplete((var1x, var2x) -> {
+   private void toggleLike(UUID uuid) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1978(uuid).whenComplete((var1x, var2x) -> {
             if (var2x != null) {
                this.status = shortError(var2x);
                this.statusAt = System.currentTimeMillis();
@@ -1638,10 +1638,10 @@ public class CloudConfigsSectionPanel extends SectionPanel {
    }
 
    private void redeem() {
-      String var1 = this.codeSetting.getValue();
-      StoreApi var2 = store();
-      if (var2 != null && var1 != null && !var1.isBlank()) {
-         var2.method1986(var1.trim()).whenComplete((var1x, var2x) -> {
+      String str = this.codeSetting.getValue();
+      StoreApi storeApi = store();
+      if (storeApi != null && str != null && !str.isBlank()) {
+         storeApi.method1986(str.trim()).whenComplete((var1x, var2x) -> {
             this.status = var2x == null ? t("gui.configs.report.access") + " " + var1x.name() : shortError(var2x);
             this.statusAt = System.currentTimeMillis();
             this.codeSetting.setValue("");
@@ -1653,11 +1653,11 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       }
    }
 
-   private void changeVisibility(StoreApi.Data2 var1, int var2) {
-      StoreApi var3 = store();
-      if (var3 != null && var2 >= 0 && var2 < VISIBILITY.length) {
-         if (visibilityIndex(var1.getText7()) != var2) {
-            var3.method1974(var1.getUUID(), null, null, VISIBILITY[var2]).whenComplete((var1x, var2x) -> {
+   private void changeVisibility(StoreApi.Data2 cloudTwin, int n) {
+      StoreApi storeApi = store();
+      if (storeApi != null && n >= 0 && n < VISIBILITY.length) {
+         if (visibilityIndex(cloudTwin.getText7()) != n) {
+            storeApi.method1974(cloudTwin.getUUID(), null, null, VISIBILITY[n]).whenComplete((var1x, var2x) -> {
                if (var2x != null) {
                   this.status = shortError(var2x);
                   this.statusAt = System.currentTimeMillis();
@@ -1678,15 +1678,15 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       };
    }
 
-   private static int visibilityIndex(String var0) {
-      if (var0 == null) {
+   private static int visibilityIndex(String str) {
+      if (str == null) {
          return 0;
       } else {
-         String var1 = var0.toUpperCase(Locale.ROOT);
+         String upperCase = str.toUpperCase(Locale.ROOT);
 
-         for (int var2 = 0; var2 < VISIBILITY.length; var2++) {
-            if (VISIBILITY[var2].equals(var1)) {
-               return var2;
+         for (int i = 0; i < VISIBILITY.length; i++) {
+            if (VISIBILITY[i].equals(upperCase)) {
+               return i;
             }
          }
 
@@ -1694,83 +1694,83 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       }
    }
 
-   private static String display(String var0) {
-      String var1 = "." + "Zenith".toLowerCase(Locale.ROOT);
-      return var0 != null && var0.toLowerCase(Locale.ROOT).endsWith(var1) ? var0.substring(0, var0.length() - var1.length()) : blank(var0);
+   private static String display(String selectedLocal) {
+      String suffix = "." + "Zenith".toLowerCase(Locale.ROOT);
+      return selectedLocal != null && selectedLocal.toLowerCase(Locale.ROOT).endsWith(suffix) ? selectedLocal.substring(0, selectedLocal.length() - suffix.length()) : blank(selectedLocal);
    }
 
-   private static String plural(int var0, String var1, String var2, String var3) {
-      int var4 = var0 % 100;
-      if (var4 >= 11 && var4 <= 14) {
-         return var3;
+   private static String plural(int n, String str, String str2, String str3) {
+      int n2 = n % 100;
+      if (n2 >= 11 && n2 <= 14) {
+         return str3;
       } else {
-         return switch (var0 % 10) {
-            case 1 -> var1;
-            case 2, 3, 4 -> var2;
-            default -> var3;
+         return switch (n % 10) {
+            case 1 -> str;
+            case 2, 3, 4 -> str2;
+            default -> str3;
          };
       }
    }
 
-   private static String blank(String var0) {
-      return var0 == null ? "" : var0;
+   private static String blank(String name) {
+      return name == null ? "" : name;
    }
 
-   private static String lower(String var0) {
-      return var0 != null && !var0.isBlank() ? var0.toLowerCase(Locale.ROOT) : "-";
+   private static String lower(String str) {
+      return str != null && !str.isBlank() ? str.toLowerCase(Locale.ROOT) : "-";
    }
 
-   private static String blankToDash(String var0) {
-      return var0 != null && !var0.isBlank() ? var0 : "-";
+   private static String blankToDash(String server) {
+      return server != null && !server.isBlank() ? server : "-";
    }
 
-   public static String safeName(String var0) {
-      StringBuilder var1 = new StringBuilder();
-      String var2 = var0 == null ? "" : var0.strip();
+   public static String safeName(String name) {
+      StringBuilder builder = new StringBuilder();
+      String str = name == null ? "" : name.strip();
 
-      for (int var3 = 0; var3 < var2.length() && var1.length() < 80; var3++) {
-         char var4 = var2.charAt(var3);
-         boolean var5 = var4 < ' ' || var4 == 127 || "\\/:*?\"<>|".indexOf(var4) >= 0;
-         var1.append(var5 ? '_' : var4);
+      for (int i = 0; i < str.length() && builder.length() < 80; i++) {
+         char charAt = str.charAt(i);
+         boolean flag = charAt < ' ' || charAt == 127 || "\\/:*?\"<>|".indexOf(charAt) >= 0;
+         builder.append(flag ? '_' : charAt);
       }
 
-      String var7 = var1.toString().strip();
+      String str2 = builder.toString().strip();
 
-      while (var7.endsWith(".") || var7.endsWith(" ")) {
-         var7 = var7.substring(0, var7.length() - 1);
+      while (str2.endsWith(".") || str2.endsWith(" ")) {
+         str2 = str2.substring(0, str2.length() - 1);
       }
 
-      boolean var8 = false;
+      boolean flag = false;
 
-      for (int var9 = 0; var9 < var7.length(); var9++) {
-         if (Character.isLetterOrDigit(var7.charAt(var9))) {
-            var8 = true;
+      for (int i = 0; i < str2.length(); i++) {
+         if (Character.isLetterOrDigit(str2.charAt(i))) {
+            flag = true;
             break;
          }
       }
 
-      if (!var8) {
+      if (!flag) {
          return "config";
       } else {
-         int var10 = var7.indexOf(46);
-         String var6 = var10 < 0 ? var7 : var7.substring(0, var10);
-         return RESERVED.contains(var6.toLowerCase(Locale.ROOT)) ? "_" + var7 : var7;
+         int indexOf = str2.indexOf(46);
+         String str3 = indexOf < 0 ? str2 : str2.substring(0, indexOf);
+         return RESERVED.contains(str3.toLowerCase(Locale.ROOT)) ? "_" + str2 : str2;
       }
    }
 
-   private static String shortError(Throwable var0) {
-      Throwable var1 = var0;
+   private static String shortError(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      String var2 = var1.getMessage();
-      if (var2 == null || var2.isBlank()) {
-         var2 = var1.getClass().getSimpleName();
+      String message = throwable2.getMessage();
+      if (message == null || message.isBlank()) {
+         message = throwable2.getClass().getSimpleName();
       }
 
-      return "!" + (var2.length() > 40 ? var2.substring(0, 39) + "…" : var2);
+      return "!" + (message.length() > 40 ? message.substring(0, 39) + "…" : message);
    }
 
    public void openCloudTab() {
@@ -1788,66 +1788,66 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       private final String description;
       private boolean downloadHot;
 
-      private EntryRow(StoreApi.Data2 var2) {
-         this.entry = var2;
-         this.have = CloudConfigsSectionPanel.targetFile(var2).isFile();
-         this.cardKey = "cloud:" + var2.getUUID();
-         this.pillKey = "dl:" + var2.getUUID();
-         this.version = "v" + var2.getLongValue2();
-         this.likes = "♥ " + var2.getIntValue();
-         this.description = var2.description() != null && !var2.description().isBlank() ? var2.description().replace('\n', ' ') : null;
+      private EntryRow(StoreApi.Data2 entry) {
+         this.entry = entry;
+         this.have = CloudConfigsSectionPanel.targetFile(entry).isFile();
+         this.cardKey = "cloud:" + entry.getUUID();
+         this.pillKey = "dl:" + entry.getUUID();
+         this.version = "v" + entry.getLongValue2();
+         this.likes = "♥ " + entry.getIntValue();
+         this.description = entry.description() != null && !entry.description().isBlank() ? entry.description().replace('\n', ' ') : null;
       }
 
-      private void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-         BoundsData var9 = new BoundsData(var4 + 8.0F, var5, var6 - 16.0F, 36.0F);
-         boolean var10 = var9.contains(var2, var3);
+      private void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float y, float f2, float previewAlpha, ZenithStyle currentStyle) {
+         BoundsData boundsData = new BoundsData(f + 8.0F, y, f2 - 16.0F, 36.0F);
+         boolean contains = boundsData.contains(lastClickX, lastClickY);
          CloudConfigsSectionPanel.this.card(
-            var1, var8, var9, this.cardKey, this.entry.name(), var10, this.entry.getUUID().equals(CloudConfigsSectionPanel.this.selectedCloud), var7
+            menuDrawContext, currentStyle, boundsData, this.cardKey, this.entry.name(), contains, this.entry.getUUID().equals(CloudConfigsSectionPanel.this.selectedCloud), previewAlpha
          );
-         CloudConfigsSectionPanel.this.avatar(var1, this.entry.name(), this.entry, var9.getFloatValue() + 7.0F, ScriptMarketTab.cardAvatarY(var9), 22.0F, var7);
+         CloudConfigsSectionPanel.this.avatar(menuDrawContext, this.entry.name(), this.entry, boundsData.getFloatValue() + 7.0F, ScriptMarketTab.cardAvatarY(boundsData), 22.0F, previewAlpha);
          CloudConfigsSectionPanel.this.pillHot = false;
-         float var11 = CloudConfigsSectionPanel.this.drawPill(
-            var1,
-            var2,
-            var3,
-            var9,
+         float drawPill = CloudConfigsSectionPanel.this.drawPill(
+            menuDrawContext,
+            lastClickX,
+            lastClickY,
+            boundsData,
             this.pillKey,
             SectionPanel.t(this.have ? "gui.market.config.redownload" : "gui.market.config.download"),
             this.have,
-            var7,
-            var8
+            previewAlpha,
+            currentStyle
          );
-         this.downloadHot = var10 && CloudConfigsSectionPanel.this.pillHot;
-         float var12 = ScriptMarketTab.cardTextX(var9);
-         float var13 = var11 - 7.0F;
-         ScriptMarketTab.CardLines var14 = ScriptMarketTab.cardLines(var9);
+         this.downloadHot = contains && CloudConfigsSectionPanel.this.pillHot;
+         float cardTextX = ScriptMarketTab.cardTextX(boundsData);
+         float f3 = drawPill - 7.0F;
+         ScriptMarketTab.CardLines cardLines = ScriptMarketTab.cardLines(boundsData);
          ScriptMarketTab.drawTitleLine(
-            var1,
-            var8,
+            menuDrawContext,
+            currentStyle,
             this.entry.name(),
             this.version,
             this.entry.getIntValue() <= 0 && !this.entry.isFlag3() ? "" : this.likes,
-            this.entry.isFlag3() ? var8.getHeartIcon().getZenithColor() : null,
-            var12,
-            var13,
-            var14.title(),
-            var7
+            this.entry.isFlag3() ? currentStyle.getHeartIcon().getZenithColor() : null,
+            cardTextX,
+            f3,
+            cardLines.title(),
+            previewAlpha
          );
-         ScriptMarketTab.drawDescription(var1, var8, this.description, null, var12, var13, var14.note(), var7);
-         ArrayList var15 = new ArrayList();
-         var15.add(
+         ScriptMarketTab.drawDescription(menuDrawContext, currentStyle, this.description, null, cardTextX, f3, cardLines.note(), previewAlpha);
+         ArrayList elements = new ArrayList();
+         elements.add(
             this.entry.mine()
                ? SectionPanel.t(CloudConfigsSectionPanel.VISIBILITY_NAMES[CloudConfigsSectionPanel.visibilityIndex(this.entry.getText7())])
                : CloudConfigsSectionPanel.blankToDash(this.entry.getText8())
          );
-         var15.add(CloudCard.size(this.entry.getLongValue()));
-         var15.add(CloudConfigsSectionPanel.ago(this.entry.getLongValue4()));
+         elements.add(CloudCard.size(this.entry.getLongValue()));
+         elements.add(CloudConfigsSectionPanel.ago(this.entry.getLongValue4()));
          if (this.entry.server() != null && !this.entry.server().isBlank()) {
-            var15.add(this.entry.server());
+            elements.add(this.entry.server());
          }
 
-         ScriptMarketTab.drawMeta(var1, String.join("  ·  ", var15), var8.getTextTertiary().getZenithColor(), var12, var12, var13, var14.meta(), var7);
-         if (var10) {
+         ScriptMarketTab.drawMeta(menuDrawContext, String.join("  ·  ", elements), currentStyle.getTextTertiary().getZenithColor(), cardTextX, cardTextX, f3, cardLines.meta(), previewAlpha);
+         if (contains) {
             HoverInfo.request(
                this.entry.name(), this.downloadHot ? SectionPanel.t("gui.configs.download.desc") : CloudConfigsSectionPanel.cardHover(this.entry)
             );
@@ -1876,61 +1876,61 @@ public class CloudConfigsSectionPanel extends SectionPanel {
       private final String pillKey;
       private boolean applyHot;
 
-      private FileRow(Manager var2, CloudConfigsSectionPanel.LocalFile var3) {
-         this.manager = var2;
-         this.file = var3;
-         this.summary = var2.method7772(var3.name());
-         this.twin = CloudConfigsSectionPanel.this.cloudTwin(var3.name());
+      private FileRow(Manager manager, CloudConfigsSectionPanel.LocalFile file) {
+         this.manager = manager;
+         this.file = file;
+         this.summary = manager.method7772(file.name());
+         this.twin = CloudConfigsSectionPanel.this.cloudTwin(file.name());
          this.inCloud = this.twin != null;
-         this.cardKey = "file:" + var3.name();
-         this.pillKey = "apply:" + var3.name();
+         this.cardKey = "file:" + file.name();
+         this.pillKey = "apply:" + file.name();
       }
 
-      private void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-         boolean var9 = this.file.name().equals(CloudConfigsSectionPanel.this.selectedLocal);
-         BoundsData var10 = new BoundsData(var4 + 8.0F, var5, var6 - 16.0F, 36.0F);
-         boolean var11 = var10.contains(var2, var3);
-         CloudConfigsSectionPanel.this.card(var1, var8, var10, this.cardKey, this.file.display(), var11, var9, var7);
-         CloudConfigsSectionPanel.this.avatar(var1, this.file.display(), null, var10.getFloatValue() + 7.0F, ScriptMarketTab.cardAvatarY(var10), 22.0F, var7);
-         boolean var12 = this.file.name().equals(CloudConfigsSectionPanel.this.appliedName);
+      private void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float y, float f2, float previewAlpha, ZenithStyle currentStyle) {
+         boolean flag = this.file.name().equals(CloudConfigsSectionPanel.this.selectedLocal);
+         BoundsData boundsData = new BoundsData(f + 8.0F, y, f2 - 16.0F, 36.0F);
+         boolean contains = boundsData.contains(lastClickX, lastClickY);
+         CloudConfigsSectionPanel.this.card(menuDrawContext, currentStyle, boundsData, this.cardKey, this.file.display(), contains, flag, previewAlpha);
+         CloudConfigsSectionPanel.this.avatar(menuDrawContext, this.file.display(), null, boundsData.getFloatValue() + 7.0F, ScriptMarketTab.cardAvatarY(boundsData), 22.0F, previewAlpha);
+         boolean have = this.file.name().equals(CloudConfigsSectionPanel.this.appliedName);
          CloudConfigsSectionPanel.this.pillHot = false;
-         float var13 = CloudConfigsSectionPanel.this.drawPill(
-            var1, var2, var3, var10, this.pillKey, SectionPanel.t(var12 ? "gui.configs.tag.applied" : "gui.configs.applyShort"), var12, var7, var8
+         float drawPill = CloudConfigsSectionPanel.this.drawPill(
+            menuDrawContext, lastClickX, lastClickY, boundsData, this.pillKey, SectionPanel.t(have ? "gui.configs.tag.applied" : "gui.configs.applyShort"), have, previewAlpha, currentStyle
          );
-         this.applyHot = var11 && CloudConfigsSectionPanel.this.pillHot;
-         ZenithColor var14 = var8.getPrimaryColor().getZenithColor();
-         float var15 = ScriptMarketTab.cardTextX(var10);
-         float var16 = var13 - 7.0F;
-         ScriptMarketTab.CardLines var17 = ScriptMarketTab.cardLines(var10);
-         ScriptMarketTab.drawTitleLine(var1, var8, this.file.display(), "", "", null, var15, var16, var17.title(), var7);
-         String var18 = this.summary == null
+         this.applyHot = contains && CloudConfigsSectionPanel.this.pillHot;
+         ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+         float cardTextX = ScriptMarketTab.cardTextX(boundsData);
+         float f3 = drawPill - 7.0F;
+         ScriptMarketTab.CardLines cardLines = ScriptMarketTab.cardLines(boundsData);
+         ScriptMarketTab.drawTitleLine(menuDrawContext, currentStyle, this.file.display(), "", "", null, cardTextX, f3, cardLines.title(), previewAlpha);
+         String description = this.summary == null
             ? "…"
             : SectionPanel.t("gui.configs.row.meta")
                .replace("{m}", String.valueOf(this.summary.getItems().size()))
                .replace("{b}", String.valueOf(this.summary.getIntValue()));
-         ScriptMarketTab.drawDescription(var1, var8, var18, null, var15, var16, var17.note(), var7);
-         float var19 = var17.meta();
-         ConfigSyncService.Type var20 = ConfigSyncService.getInstance().method671(this.file.display());
-         String var21 = SectionPanel.t("gui.configs.sync.state." + var20.name().toLowerCase(Locale.ROOT));
+         ScriptMarketTab.drawDescription(menuDrawContext, currentStyle, description, null, cardTextX, f3, cardLines.note(), previewAlpha);
+         float meta = cardLines.meta();
+         ConfigSyncService.Type type = ConfigSyncService.getInstance().method671(this.file.display());
+         String text = SectionPanel.t("gui.configs.sync.state." + type.name().toLowerCase(Locale.ROOT));
 
-         ZenithColor var22 = switch (var20) {
+         ZenithColor zenithColor2 = switch (type) {
             case SYNCED -> CloudConfigsSectionPanel.OK;
             case ERROR -> CloudConfigsSectionPanel.ERROR;
-            case LOCAL -> var8.getTextTertiary().getZenithColor();
-            default -> var14;
+            case LOCAL -> currentStyle.getTextTertiary().getZenithColor();
+            default -> zenithColor;
          };
-         float var23 = ScriptMarketTab.drawChip(var1, var21, var22.method7292(0.14F), var22, var15, var19, var7);
+         float drawChip = ScriptMarketTab.drawChip(menuDrawContext, text, zenithColor2.method7292(0.14F), zenithColor2, cardTextX, meta, previewAlpha);
          if (this.inCloud) {
-            String var24 = SectionPanel.t(CloudConfigsSectionPanel.VISIBILITY_NAMES[CloudConfigsSectionPanel.visibilityIndex(this.twin.getText7())])
+            String name = SectionPanel.t(CloudConfigsSectionPanel.VISIBILITY_NAMES[CloudConfigsSectionPanel.visibilityIndex(this.twin.getText7())])
                + "  ·  v"
                + this.twin.getLongValue2()
                + (this.twin.getIntValue() > 0 ? "  ·  ♥ " + this.twin.getIntValue() : "");
-            var23 = ScriptMarketTab.drawMeta(var1, var24, var14, var23, var15, var16, var19, var7);
+            drawChip = ScriptMarketTab.drawMeta(menuDrawContext, name, zenithColor, drawChip, cardTextX, f3, meta, previewAlpha);
          }
 
-         String var25 = CloudCard.size(this.file.size()) + "  ·  " + CloudConfigsSectionPanel.ago(this.file.modified());
-         ScriptMarketTab.drawMeta(var1, var25, var8.getTextTertiary().getZenithColor(), var23, var15, var16, var19, var7);
-         if (var11) {
+         String name = CloudCard.size(this.file.size()) + "  ·  " + CloudConfigsSectionPanel.ago(this.file.modified());
+         ScriptMarketTab.drawMeta(menuDrawContext, name, currentStyle.getTextTertiary().getZenithColor(), drawChip, cardTextX, f3, meta, previewAlpha);
+         if (contains) {
             HoverInfo.request(this.file.display(), SectionPanel.t(this.applyHot ? "gui.configs.apply.desc" : "gui.configs.row.desc"));
          }
       }
@@ -1995,12 +1995,12 @@ public class CloudConfigsSectionPanel extends SectionPanel {
          return "LocalFile[" + "name=" + this.name + ", " + "display=" + this.display + ", " + "meta=" + this.meta + ", " + "size=" + this.size + ", " + "modified=" + this.modified + "]";
       }
 
-      private LocalFile(String var1, String var2, String var3, long var4, long var6) {
-         this.name = var1;
-         this.display = var2;
-         this.meta = var3;
-         this.size = var4;
-         this.modified = var6;
+      private LocalFile(String name, String display, String meta, long size, long modified) {
+         this.name = name;
+         this.display = display;
+         this.meta = meta;
+         this.size = size;
+         this.modified = modified;
       }
    }
 }

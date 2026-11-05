@@ -23,19 +23,19 @@ public abstract class MixinClientConnection implements MinecraftAccess {
    private PacketListener packetListener;
 
    @Shadow
-   public abstract void send(Packet<?> var1);
+   public abstract void send(Packet<?> packet);
 
    @Inject(
       method = {"genericsFtw(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;)V"},
       at = {@At("HEAD")},
       cancellable = true
    )
-   private static <T extends PacketListener> void triggerReceivePacketEvent(Packet<T> var0, PacketListener var1, CallbackInfo var2) {
+   private static <T extends PacketListener> void triggerReceivePacketEvent(Packet<T> packet, PacketListener packetListener, CallbackInfo callbackInfo) {
       if (EventManager.hasListeners(PacketEvent.class)) {
-         PacketEvent var3 = new PacketEvent(PacketEvent.Type.RECEIVE, var0, var1);
-         EventManager.call(var3);
-         if (var3.isCancelled()) {
-            var2.cancel();
+         PacketEvent event = new PacketEvent(PacketEvent.Type.RECEIVE, packet, packetListener);
+         EventManager.call(event);
+         if (event.isCancelled()) {
+            callbackInfo.cancel();
          }
       }
    }
@@ -45,33 +45,33 @@ public abstract class MixinClientConnection implements MinecraftAccess {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void triggerSendPacketEvent(Packet<?> var1, CallbackInfo var2) {
+   public void triggerSendPacketEvent(Packet<?> packet, CallbackInfo callbackInfo) {
       if (!this.stackOverflowFix) {
          if (EventManager.hasListeners(OutgoingPacketEvent.class)) {
-            OutgoingPacketEvent var3 = new OutgoingPacketEvent(var1);
-            EventManager.call(var3);
-            if (var3.isCancelled()) {
-               var2.cancel();
+            OutgoingPacketEvent event = new OutgoingPacketEvent(packet);
+            EventManager.call(event);
+            if (event.isCancelled()) {
+               callbackInfo.cancel();
                return;
             }
          }
 
-         Packet var8 = var1;
+         Packet packet2 = packet;
          if (EventManager.hasListeners(PacketEvent.class)) {
-            PacketEvent var4 = new PacketEvent(PacketEvent.Type.SENT, var1);
-            EventManager.call(var4);
-            if (var4.isCancelled()) {
-               var2.cancel();
+            PacketEvent event = new PacketEvent(PacketEvent.Type.SENT, packet);
+            EventManager.call(event);
+            if (event.isCancelled()) {
+               callbackInfo.cancel();
                return;
             }
 
-            var8 = var4.getPacket3();
-            if (var8 != var1) {
-               var2.cancel();
+            packet2 = event.getPacket3();
+            if (packet2 != packet) {
+               callbackInfo.cancel();
 
                try {
                   this.stackOverflowFix = true;
-                  this.send(var8);
+                  this.send(packet2);
                } finally {
                   this.stackOverflowFix = false;
                }
@@ -79,7 +79,7 @@ public abstract class MixinClientConnection implements MinecraftAccess {
          }
 
          if (EventManager.hasListeners(SendPacketEvent.class)) {
-            EventManager.call(new SendPacketEvent(var8));
+            EventManager.call(new SendPacketEvent(packet2));
          }
       }
    }

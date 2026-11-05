@@ -8,8 +8,8 @@ public class EntityStatusEvent implements Event {
    private final ClientboundEntityEventPacket entityStatusS2CPacket;
 
    @Generated
-   public EntityStatusEvent(ClientboundEntityEventPacket var1) {
-      this.entityStatusS2CPacket = var1;
+   public EntityStatusEvent(ClientboundEntityEventPacket entityStatusS2CPacket) {
+      this.entityStatusS2CPacket = entityStatusS2CPacket;
    }
 
    @Generated

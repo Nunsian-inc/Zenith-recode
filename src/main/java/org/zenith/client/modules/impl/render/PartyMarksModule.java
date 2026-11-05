@@ -78,24 +78,24 @@ public final class PartyMarksModule extends Module {
    private PartyMarksModule() {
    }
 
-   public static PartyMarksModule.Data2 method5419(String var0) {
-      for (PartyMarksModule.Data2 var2 : items) {
-         if (var2.key().equals(var0)) {
-            return var2;
+   public static PartyMarksModule.Data2 method5419(String text) {
+      for (PartyMarksModule.Data2 data2 : items) {
+         if (data2.key().equals(text)) {
+            return data2;
          }
       }
 
       return items.get(items.size() - 1);
    }
 
-   public void method5420(long var1) {
-      this.longValue = var1;
+   public void method5420(long longValue) {
+      this.longValue = longValue;
       this.longValue2 = 0L;
       this.setToggled(true);
    }
 
-   public void method5421(long var1) {
-      this.longValue2 = var1;
+   public void method5421(long longValue) {
+      this.longValue2 = longValue;
       this.longValue = 0L;
       this.setToggled(true);
    }
@@ -118,79 +118,79 @@ public final class PartyMarksModule extends Module {
    }
 
    @EventTarget
-   public void method5422(KeyEvent var1) {
-      if (this.markKey.getKeyCode() > 0 && var1.isPress(this.markKey.getKeyCode())) {
+   public void method5422(KeyEvent event) {
+      if (this.markKey.getKeyCode() > 0 && event.isPress(this.markKey.getKeyCode())) {
          this.method5424();
       } else {
-         int var2 = CloudWaypointsModule.INSTANCE.getMarkBind().getKeyCode();
-         if (var2 > 0 && var1.isPress(var2)) {
-            long var3 = System.currentTimeMillis();
-            if (var3 - this.longValue3 < 350L) {
+         int keyCode = CloudWaypointsModule.INSTANCE.getMarkBind().getKeyCode();
+         if (keyCode > 0 && event.isPress(keyCode)) {
+            long now = System.currentTimeMillis();
+            if (now - this.longValue3 < 350L) {
                this.longValue3 = 0L;
                this.method5424();
             } else {
-               this.longValue3 = var3;
+               this.longValue3 = now;
             }
          }
       }
    }
 
-   public PartyMarksModule.Data method5423(BlockHitResult var1) {
-      if (var1 != null && var1.getType() != Type.MISS && mc.level != null) {
-         Block var2 = mc.level.getBlockState(var1.getBlockPos()).getBlock();
-         String var3 = BuiltInRegistries.BLOCK.getKey(var2).getPath();
-         String var4;
-         if (var3.contains("spawner")) {
-            var4 = "spawner";
-         } else if (var3.contains("chest") || var3.equals("barrel") || var3.contains("shulker_box") || var3.equals("hopper")) {
-            var4 = "loot";
-         } else if (var3.contains("portal") || var3.equals("end_gateway") || var3.contains("obsidian")) {
-            var4 = "portal";
-         } else if (var3.endsWith("_ore") || var3.equals("ancient_debris") || var3.contains("amethyst")) {
-            var4 = "mine";
-         } else if (var3.equals("farmland")
-            || var3.equals("wheat")
-            || var3.equals("carrots")
-            || var3.equals("potatoes")
-            || var3.equals("beetroots")
-            || var3.contains("melon")
-            || var3.contains("pumpkin")
-            || var3.equals("sugar_cane")
-            || var3.equals("nether_wart")
-            || var3.equals("cactus")
-            || var3.equals("bamboo")) {
-            var4 = "farm";
-         } else if (var3.endsWith("_bed")
-            || var3.equals("crafting_table")
-            || var3.contains("furnace")
-            || var3.equals("enchanting_table")
-            || var3.equals("anvil")
-            || var3.equals("respawn_anchor")) {
-            var4 = "base";
-         } else if (!var3.equals("lava") && !var3.equals("magma_block") && !var3.equals("tnt") && !var3.contains("sculk")) {
-            var4 = "pin";
+   public PartyMarksModule.Data method5423(BlockHitResult blockHitResult) {
+      if (blockHitResult != null && blockHitResult.getType() != Type.MISS && mc.level != null) {
+         Block block = mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
+         String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
+         String text;
+         if (path.contains("spawner")) {
+            text = "spawner";
+         } else if (path.contains("chest") || path.equals("barrel") || path.contains("shulker_box") || path.equals("hopper")) {
+            text = "loot";
+         } else if (path.contains("portal") || path.equals("end_gateway") || path.contains("obsidian")) {
+            text = "portal";
+         } else if (path.endsWith("_ore") || path.equals("ancient_debris") || path.contains("amethyst")) {
+            text = "mine";
+         } else if (path.equals("farmland")
+            || path.equals("wheat")
+            || path.equals("carrots")
+            || path.equals("potatoes")
+            || path.equals("beetroots")
+            || path.contains("melon")
+            || path.contains("pumpkin")
+            || path.equals("sugar_cane")
+            || path.equals("nether_wart")
+            || path.equals("cactus")
+            || path.equals("bamboo")) {
+            text = "farm";
+         } else if (path.endsWith("_bed")
+            || path.equals("crafting_table")
+            || path.contains("furnace")
+            || path.equals("enchanting_table")
+            || path.equals("anvil")
+            || path.equals("respawn_anchor")) {
+            text = "base";
+         } else if (!path.equals("lava") && !path.equals("magma_block") && !path.equals("tnt") && !path.contains("sculk")) {
+            text = "pin";
          } else {
-            var4 = "danger";
+            text = "danger";
          }
 
-         String var5 = var4.equals("pin") ? var2.getName().getString() : method5431("cloud.mark.icon." + var4);
-         return new PartyMarksModule.Data(var4, var5.length() > 32 ? var5.substring(0, 32) : var5);
+         String string = text.equals("pin") ? block.getName().getString() : method5431("cloud.mark.icon." + text);
+         return new PartyMarksModule.Data(text, string.length() > 32 ? string.substring(0, 32) : string);
       } else {
          return new PartyMarksModule.Data("pin", method5431("cloud.mark.icon.pin"));
       }
    }
 
    public boolean method5424() {
-      Cloud var1 = cloud();
-      if (var1 != null && mc.player != null && mc.level != null && var1.getPartyMember().method1136()) {
-         Vec3 var2 = mc.player.getEyePosition();
-         Rotation var3 = new Rotation(mc.player.getYRot(), mc.player.getXRot());
-         BlockHitResult var4 = TargetUtils.method3205(var2, 256.0, var3, false);
-         Vec3 var5 = var4 != null && var4.getType() != Type.MISS ? Vec3.atBottomCenterOf(var4.getBlockPos().above()) : mc.player.position();
-         PartyMarksModule.Data var6 = this.method5423(var4);
-         PartyMarksModule.Data2 var7 = method5419(var6.getText());
-         String var8 = this.markName.getValue() != null && !this.markName.getValue().isBlank() ? this.markName.getValue().strip() : var6.name();
-         var1.getPartyMember().method1160(0L, var1.method7911(), var1.method7913(), var5.x, var5.y, var5.z, var8, var7.key(), var7.color());
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && mc.player != null && mc.level != null && cloud2.getPartyMember().method1136()) {
+         Vec3 eyePosition = mc.player.getEyePosition();
+         Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
+         BlockHitResult blockHitResult = TargetUtils.method3205(eyePosition, 256.0, rotation, false);
+         Vec3 atBottomCenterOf = blockHitResult != null && blockHitResult.getType() != Type.MISS ? Vec3.atBottomCenterOf(blockHitResult.getBlockPos().above()) : mc.player.position();
+         PartyMarksModule.Data data = this.method5423(blockHitResult);
+         PartyMarksModule.Data2 data2 = method5419(data.getText());
+         String name = this.markName.getValue() != null && !this.markName.getValue().isBlank() ? this.markName.getValue().strip() : data.name();
+         cloud2.getPartyMember().method1160(0L, cloud2.method7911(), cloud2.method7913(), atBottomCenterOf.x, atBottomCenterOf.y, atBottomCenterOf.z, name, data2.key(), data2.color());
          if (mc.player != null) {
             mc.player.playSound(SoundEvents.NOTE_BLOCK_BELL.value(), 0.6F, 1.4F);
          }
@@ -202,63 +202,63 @@ public final class PartyMarksModule extends Module {
    }
 
    @EventTarget
-   public void method5425(DrawEvent var1) {
-      Cloud var2 = cloud();
-      if (var2 != null && mc.level != null && mc.player != null) {
-         ZenithStyle var3 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var3 != null) {
-            CustomDrawContext var4 = var1.getCustomDrawContext();
-            MenuDrawContext var5 = MenuDrawContext.method8080(var4, 0, 0, var1.getTickDelta());
-            String var6 = var2.method7911();
-            String var7 = var2.method7913();
-            Vec3 var8 = mc.getEntityRenderDispatcher().camera.position();
-            float var9 = this.scale.getValue3() / 100.0F;
-            double var10 = this.maxDistance.getValue3();
-            PartyMember var12 = var2.getPartyMember();
+   public void method5425(DrawEvent event) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && mc.level != null && mc.player != null) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            CustomDrawContext customDrawContext = event.getCustomDrawContext();
+            MenuDrawContext menuDrawContext = MenuDrawContext.method8080(customDrawContext, 0, 0, event.getTickDelta());
+            String anObject = cloud2.method7911();
+            String str = cloud2.method7913();
+            Vec3 position = mc.getEntityRenderDispatcher().camera.position();
+            float f = this.scale.getValue3() / 100.0F;
+            double d = this.maxDistance.getValue3();
+            PartyMember partyMember = cloud2.getPartyMember();
             if (this.showMarks.isEnabled()) {
-               for (PartyMember.Data12 var14 : var12.method1138()) {
-                  if (var14.server().equals(var6)
-                     && var14.dimension().equals(var7)
-                     && method5429(var14.getDoubleValue(), var14.getDoubleValue2(), var14.getDoubleValue3())) {
-                     Vec3 var15 = new Vec3(var14.getDoubleValue(), var14.getDoubleValue2() + 0.5, var14.getDoubleValue3());
-                     double var16 = var8.distanceTo(var15);
-                     boolean var18 = var14.getLongValue() == this.longValue;
-                     if (!(var16 > var10) || var18) {
-                        PartyMarksModule.Data2 var19 = method5419(var14.getText4());
-                        ZenithColor var20 = new ZenithColor(var14.color() == -1 ? var19.color() : var14.color());
-                        this.method5426(var5, var3, var15, var8, var19.glyph(), method5430(var14.name()), meters(var16), var20, var16, var9, var18);
+               for (PartyMember.Data12 data12 : partyMember.method1138()) {
+                  if (data12.server().equals(anObject)
+                     && data12.dimension().equals(str)
+                     && method5429(data12.getDoubleValue(), data12.getDoubleValue2(), data12.getDoubleValue3())) {
+                     Vec3 vec = new Vec3(data12.getDoubleValue(), data12.getDoubleValue2() + 0.5, data12.getDoubleValue3());
+                     double d2 = position.distanceTo(vec);
+                     boolean flag = data12.getLongValue() == this.longValue;
+                     if (!(d2 > d) || flag) {
+                        PartyMarksModule.Data2 data2 = method5419(data12.getText4());
+                        ZenithColor zenithColor2 = new ZenithColor(data12.color() == -1 ? data2.color() : data12.color());
+                        this.method5426(menuDrawContext, currentStyle, vec, position, data2.glyph(), method5430(data12.name()), meters(d2), zenithColor2, d2, f, flag);
                      }
                   }
                }
             }
 
             if (this.showDeaths.isEnabled()) {
-               long var22 = this.deathMinutes.getValue3() <= 0.0F ? 0L : System.currentTimeMillis() - (long)this.deathMinutes.getValue3() * 60000L;
+               long l = this.deathMinutes.getValue3() <= 0.0F ? 0L : System.currentTimeMillis() - (long)this.deathMinutes.getValue3() * 60000L;
 
-               for (PartyMember.Data4 var24 : var12.method1139()) {
-                  boolean var17 = var24.getLongValue() == this.longValue2;
-                  if (var24.server().equals(var6)
-                     && var24.dimension().equals(var7)
-                     && (var24.time() >= var22 || var17)
-                     && method5429(var24.getDoubleValue(), var24.getDoubleValue2(), var24.getDoubleValue3())) {
-                     Vec3 var25 = new Vec3(var24.getDoubleValue(), var24.getDoubleValue2() + 0.5, var24.getDoubleValue3());
-                     double var26 = var8.distanceTo(var25);
-                     if (!(var26 > var10) || var17) {
-                        String var21 = (var24.uid() == var2.getLongValue() ? method5431("cloud.death.mine") : method5430(var24.name()))
+               for (PartyMember.Data4 data4 : partyMember.method1139()) {
+                  boolean flag = data4.getLongValue() == this.longValue2;
+                  if (data4.server().equals(anObject)
+                     && data4.dimension().equals(str)
+                     && (data4.time() >= l || flag)
+                     && method5429(data4.getDoubleValue(), data4.getDoubleValue2(), data4.getDoubleValue3())) {
+                     Vec3 vec = new Vec3(data4.getDoubleValue(), data4.getDoubleValue2() + 0.5, data4.getDoubleValue3());
+                     double d2 = position.distanceTo(vec);
+                     if (!(d2 > d) || flag) {
+                        String text = (data4.uid() == cloud2.getLongValue() ? method5431("cloud.death.mine") : method5430(data4.name()))
                            + " · "
-                           + var24.getItems().size();
+                           + data4.getItems().size();
                         this.method5426(
-                           var5,
-                           var3,
-                           var25,
-                           var8,
+                           menuDrawContext,
+                           currentStyle,
+                           vec,
+                           position,
                            MenuGlyph.CLOSE,
-                           var21,
-                           meters(var26),
+                           text,
+                           meters(d2),
                            zenithColor,
-                           var26,
-                           var9,
-                           var17 || var24.uid() == var2.getLongValue() && System.currentTimeMillis() - var24.time() < 600000L
+                           d2,
+                           f,
+                           flag || data4.uid() == cloud2.getLongValue() && System.currentTimeMillis() - data4.time() < 600000L
                         );
                      }
                   }
@@ -269,97 +269,97 @@ public final class PartyMarksModule extends Module {
    }
 
    private void method5426(
-      MenuDrawContext var1,
-      ZenithStyle var2,
-      Vec3 var3,
-      Vec3 var4,
-      MenuGlyph var5,
-      String var6,
-      String var7,
-      ZenithColor var8,
-      double var9,
-      float var11,
-      boolean var12
+      MenuDrawContext menuDrawContext,
+      ZenithStyle currentStyle,
+      Vec3 vec,
+      Vec3 position,
+      MenuGlyph glyph,
+      String text,
+      String meters,
+      ZenithColor zenithColor,
+      double d,
+      float f,
+      boolean flag
    ) {
-      if (ProjectionUtils.method302(var3)) {
-         Vec3 var13 = ProjectionUtils.method301(var3);
-         this.method5427(var1, var2, (float)var13.x, (float)var13.y, var5, var6, var7, var8, var9, var11);
-      } else if (var12 && this.compass.isEnabled()) {
-         this.method5428(var1, var2, var3, var4, var5, var7, var8, var11);
+      if (ProjectionUtils.method302(vec)) {
+         Vec3 vec2 = ProjectionUtils.method301(vec);
+         this.method5427(menuDrawContext, currentStyle, (float)vec2.x, (float)vec2.y, glyph, text, meters, zenithColor, d, f);
+      } else if (flag && this.compass.isEnabled()) {
+         this.method5428(menuDrawContext, currentStyle, vec, position, glyph, meters, zenithColor, f);
       }
    }
 
    private void method5427(
-      MenuDrawContext var1, ZenithStyle var2, float var3, float var4, MenuGlyph var5, String var6, String var7, ZenithColor var8, double var9, float var11
+      MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float x, float y, MenuGlyph glyph, String text, String meters, ZenithColor zenithColor, double d, float f
    ) {
-      Font var12 = Fonts.NEW_MEDIUM.getFont(6.5F);
-      float var13 = Mth.clamp((float)((var9 - 8.0) / 200.0), 0.0F, 1.0F);
-      float var14 = (1.0F - 0.25F * var13) * var11;
-      float var15 = GuiStyle.PADDING.intValue();
-      float var16 = 9.0F;
-      float var17 = Math.max(var12.height() + var15, var16 + 3.0F);
-      float var18 = var15 + var16 + 3.0F + var12.width(var6) + var15;
-      float var19 = var15 + var12.width(var7) + var15;
-      float var20 = var18 + var19;
-      float var21 = 9.0F;
-      float var22 = var3 - var20 / 2.0F;
-      float var23 = var4 - var21 - var17;
-      var1.pushMatrix();
-      var1.pose().translate(var3, var4);
-      var1.pose().scale(var14, var14);
-      var1.pose().translate(-var3, -var4);
-      ProxyDotRadiusData var24 = ProxyDotRadiusData.method8069(var17 / 2.0F);
-      var1.drawRoundedRect(var22, var23, var20, var17, var24, var2.getHudBackground().getZenithColor());
-      var1.drawRoundedRect(var22 + 1.5F, var23 + (var17 - var16) / 2.0F, var16, var16, ProxyDotRadiusData.method8069(var16 / 2.0F), var8.method7294(0.9F));
-      var5.draw(var1, var22 + 1.5F + (var16 - 6.0F) / 2.0F, var23 + (var17 - 6.0F) / 2.0F, new ZenithColor(255, 255, 255));
-      float var25 = var23 + (var17 - var12.height()) / 2.0F;
-      var1.drawText(var12, var6, var22 + 1.5F + var16 + 4.0F, var25, var2.getTextEnable().getZenithColor());
-      var1.drawText(var12, var7, var22 + var18 + var15 * 0.5F, var25, var2.getTextTertiary().getZenithColor());
-      var1.drawRect(var3 - 0.5F, var23 + var17, 1.0F, var21 - 2.0F, var8.method7294(0.8F));
-      var1.drawRoundedRect(var3 - 1.5F, var4 - 1.5F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), var8);
-      var1.popMatrix();
+      Font font = Fonts.NEW_MEDIUM.getFont(6.5F);
+      float f2 = Mth.clamp((float)((d - 8.0) / 200.0), 0.0F, 1.0F);
+      float x2 = (1.0F - 0.25F * f2) * f;
+      float intValue = GuiStyle.PADDING.intValue();
+      float width = 9.0F;
+      float height = Math.max(font.height() + intValue, width + 3.0F);
+      float f3 = intValue + width + 3.0F + font.width(text) + intValue;
+      float f4 = intValue + font.width(meters) + intValue;
+      float width2 = f3 + f4;
+      float f5 = 9.0F;
+      float floatValue = x - width2 / 2.0F;
+      float y2 = y - f5 - height;
+      menuDrawContext.pushMatrix();
+      menuDrawContext.pose().translate(x, y);
+      menuDrawContext.pose().scale(x2, x2);
+      menuDrawContext.pose().translate(-x, -y);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
+      menuDrawContext.drawRoundedRect(floatValue, y2, width2, height, headerRadius, currentStyle.getHudBackground().getZenithColor());
+      menuDrawContext.drawRoundedRect(floatValue + 1.5F, y2 + (height - width) / 2.0F, width, width, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor.method7294(0.9F));
+      glyph.draw(menuDrawContext, floatValue + 1.5F + (width - 6.0F) / 2.0F, y2 + (height - 6.0F) / 2.0F, new ZenithColor(255, 255, 255));
+      float centeredTextY = y2 + (height - font.height()) / 2.0F;
+      menuDrawContext.drawText(font, text, floatValue + 1.5F + width + 4.0F, centeredTextY, currentStyle.getTextEnable().getZenithColor());
+      menuDrawContext.drawText(font, meters, floatValue + f3 + intValue * 0.5F, centeredTextY, currentStyle.getTextTertiary().getZenithColor());
+      menuDrawContext.drawRect(x - 0.5F, y2 + height, 1.0F, f5 - 2.0F, zenithColor.method7294(0.8F));
+      menuDrawContext.drawRoundedRect(x - 1.5F, y - 1.5F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor);
+      menuDrawContext.popMatrix();
    }
 
-   private void method5428(MenuDrawContext var1, ZenithStyle var2, Vec3 var3, Vec3 var4, MenuGlyph var5, String var6, ZenithColor var7, float var8) {
-      double var9 = var3.x - var4.x;
-      double var11 = var3.z - var4.z;
-      float var13 = (float)Math.toDegrees(Math.atan2(var11, var9)) - 90.0F;
-      float var14 = Mth.wrapDegrees(var13 - mc.getEntityRenderDispatcher().camera.yRot());
-      double var15 = Math.toRadians(var14);
-      float var17 = this.compassRadius.getValue3() * var8;
-      float var18 = mc.getWindow().getGuiScaledWidth() / 2.0F + (float)Math.sin(var15) * var17;
-      float var19 = mc.getWindow().getGuiScaledHeight() / 2.0F - (float)Math.cos(var15) * var17;
-      Font var20 = Fonts.NEW_REGULAR.getFont(6.0F);
-      float var21 = 8.0F;
-      float var22 = var21 + 3.0F;
-      float var23 = 1.5F + var21 + 3.0F + var20.width(var6) + 4.0F;
-      float var24 = var18 - var23 / 2.0F;
-      float var25 = var19 - var22 / 2.0F;
-      var1.drawRoundedRect(var24, var25, var23, var22, ProxyDotRadiusData.method8069(var22 / 2.0F), var2.getHudBackground().getZenithColor());
-      var1.drawRoundedRect(var24 + 1.5F, var25 + 1.5F, var21, var21, ProxyDotRadiusData.method8069(var21 / 2.0F), var7);
-      var5.draw(var1, var24 + 1.5F + (var21 - 6.0F) / 2.0F, var25 + 1.5F + (var21 - 6.0F) / 2.0F, new ZenithColor(255, 255, 255));
-      var1.drawText(var20, var6, var24 + 1.5F + var21 + 3.0F, var25 + (var22 - var20.height()) / 2.0F, var2.getTextSecondary().getZenithColor());
+   private void method5428(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, Vec3 vec, Vec3 position, MenuGlyph glyph, String meters, ZenithColor zenithColor, float f) {
+      double x = vec.x - position.x;
+      double y = vec.z - position.z;
+      float f2 = (float)Math.toDegrees(Math.atan2(y, x)) - 90.0F;
+      float angdeg = Mth.wrapDegrees(f2 - mc.getEntityRenderDispatcher().camera.yRot());
+      double d = Math.toRadians(angdeg);
+      float f3 = this.compassRadius.getValue3() * f;
+      float f4 = mc.getWindow().getGuiScaledWidth() / 2.0F + (float)Math.sin(d) * f3;
+      float f5 = mc.getWindow().getGuiScaledHeight() / 2.0F - (float)Math.cos(d) * f3;
+      Font font = Fonts.NEW_REGULAR.getFont(6.0F);
+      float width = 8.0F;
+      float height = width + 3.0F;
+      float width2 = 1.5F + width + 3.0F + font.width(meters) + 4.0F;
+      float floatValue = f4 - width2 / 2.0F;
+      float y2 = f5 - height / 2.0F;
+      menuDrawContext.drawRoundedRect(floatValue, y2, width2, height, ProxyDotRadiusData.method8069(height / 2.0F), currentStyle.getHudBackground().getZenithColor());
+      menuDrawContext.drawRoundedRect(floatValue + 1.5F, y2 + 1.5F, width, width, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor);
+      glyph.draw(menuDrawContext, floatValue + 1.5F + (width - 6.0F) / 2.0F, y2 + 1.5F + (width - 6.0F) / 2.0F, new ZenithColor(255, 255, 255));
+      menuDrawContext.drawText(font, meters, floatValue + 1.5F + width + 3.0F, y2 + (height - font.height()) / 2.0F, currentStyle.getTextSecondary().getZenithColor());
    }
 
-   private static String meters(double var0) {
-      return var0 >= 1000.0 ? Math.round(var0 / 100.0) / 10.0 + "k" : Math.round(var0) + "m";
+   private static String meters(double d) {
+      return d >= 1000.0 ? Math.round(d / 100.0) / 10.0 + "k" : Math.round(d) + "m";
    }
 
-   private static boolean method5429(double var0, double var2, double var4) {
-      return Double.isFinite(var0)
-         && Double.isFinite(var2)
-         && Double.isFinite(var4)
-         && Math.abs(var0) <= 3.0E7
-         && Math.abs(var4) <= 3.0E7
-         && Math.abs(var2) <= 100000.0;
+   private static boolean method5429(double doubleValue, double d, double d2) {
+      return Double.isFinite(doubleValue)
+         && Double.isFinite(d)
+         && Double.isFinite(d2)
+         && Math.abs(doubleValue) <= 3.0E7
+         && Math.abs(d2) <= 3.0E7
+         && Math.abs(d) <= 100000.0;
    }
 
-   private static String method5430(String var0) {
-      return var0 == null ? "" : (var0.length() > 32 ? var0.substring(0, 32) : var0);
+   private static String method5430(String name) {
+      return name == null ? "" : (name.length() > 32 ? name.substring(0, 32) : name);
    }
 
-   private static String method5431(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String method5431(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    public static final class Data {
@@ -391,9 +391,9 @@ public final class PartyMarksModule extends Module {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + "]";
       }
 
-      public Data(String var1, String var2) {
-         this.text = var1;
-         this.text2 = var2;
+      public Data(String text, String str) {
+         this.text = text;
+         this.text2 = str;
       }
 
       public String getText() {
@@ -439,10 +439,10 @@ public final class PartyMarksModule extends Module {
          return "Data2[" + "text=" + this.text + ", " + "menuGlyph=" + this.menuGlyph + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data2(String var1, MenuGlyph var2, int var3) {
-         this.text = var1;
-         this.menuGlyph = var2;
-         this.intValue = var3;
+      public Data2(String text, MenuGlyph menuGlyph, int intValue) {
+         this.text = text;
+         this.menuGlyph = menuGlyph;
+         this.intValue = intValue;
       }
 
       public String key() {

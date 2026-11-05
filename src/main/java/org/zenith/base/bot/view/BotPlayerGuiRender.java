@@ -19,48 +19,48 @@ public final class BotPlayerGuiRender {
    }
 
    public static void drawEntity(
-      GuiGraphicsExtractor var0, int var1, int var2, int var3, int var4, int var5, float var6, float var7, float var8, BotPlayer var9, @Nullable BotPlayHandler var10
+      GuiGraphicsExtractor guiGraphicsExtractor, int x0, int y0, int x1, int y1, int n, float f, float xo, float yo, BotPlayer player, @Nullable BotPlayHandler playHandler
    ) {
-      float var11 = (var1 + var3) / 2.0F;
-      float var12 = (var2 + var4) / 2.0F;
-      var0.enableScissor(var1, var2, var3, var4);
-      float var13 = (float)Math.atan((var11 - var7) / 40.0F);
-      float var14 = (float)Math.atan((var12 - var8) / 40.0F);
-      Quaternionf var15 = new Quaternionf().rotateZ((float) Math.PI);
-      var15.mul(new Quaternionf().rotateX(var14 * 20.0F * (float) (Math.PI / 180.0)));
-      float var16 = var9.getScale();
-      Vector3f var17 = new Vector3f(0.0F, var9.getBbHeight() / 2.0F + var6 * var16, 0.0F);
-      float var18 = var5 / var16;
-      PoseStack var19 = MatrixUtils.method666(var0.pose());
-      var19.translate(var11, var12, 50.0F);
-      var19.scale(var18, var18, -var18);
-      var19.translate(var17.x, var17.y, var17.z);
-      var19.rotate(var15);
+      float xo2 = (x0 + x1) / 2.0F;
+      float yo2 = (y0 + y1) / 2.0F;
+      guiGraphicsExtractor.enableScissor(x0, y0, x1, y1);
+      float f2 = (float)Math.atan((xo2 - xo) / 40.0F);
+      float f3 = (float)Math.atan((yo2 - yo) / 40.0F);
+      Quaternionf rotateZ = new Quaternionf().rotateZ((float) Math.PI);
+      rotateZ.mul(new Quaternionf().rotateX(f3 * 20.0F * (float) (Math.PI / 180.0)));
+      float scale = player.getScale();
+      Vector3f vec = new Vector3f(0.0F, player.getBbHeight() / 2.0F + f * scale, 0.0F);
+      float xScale = n / scale;
+      PoseStack poseStack = MatrixUtils.method666(guiGraphicsExtractor.pose());
+      poseStack.translate(xo2, yo2, 50.0F);
+      poseStack.scale(xScale, xScale, -xScale);
+      poseStack.translate(vec.x, vec.y, vec.z);
+      poseStack.rotate(rotateZ);
       ScissorFlusher.flush();
-      Minecraft var20 = Minecraft.getInstance();
-      synchronized (var9.networkHandler.getClient().getRenderStateLock()) {
-         float var23 = var9.yBodyRot;
-         float var24 = var9.getYRot();
-         float var25 = var9.getXRot();
-         float var26 = var9.yHeadRotO;
-         float var27 = var9.yHeadRot;
-         var9.yBodyRot = 180.0F + var13 * 20.0F;
-         var9.setYRot(180.0F + var13 * 40.0F);
-         var9.setXRot(-var14 * 20.0F);
-         var9.yHeadRot = var9.getYRot();
-         var9.yHeadRotO = var9.getYRot();
+      Minecraft minecraft = Minecraft.getInstance();
+      synchronized (player.networkHandler.getClient().getRenderStateLock()) {
+         float yBodyRot = player.yBodyRot;
+         float yRot = player.getYRot();
+         float xRot = player.getXRot();
+         float yHeadRotO = player.yHeadRotO;
+         float yHeadRot = player.yHeadRot;
+         player.yBodyRot = 180.0F + f2 * 20.0F;
+         player.setYRot(180.0F + f2 * 40.0F);
+         player.setXRot(-f3 * 20.0F);
+         player.yHeadRot = player.getYRot();
+         player.yHeadRotO = player.getYRot();
 
          try {
-            OutlineVertexProvider.method1542(var21 -> RENDERER.render(var9, var10, var9.getX(), var9.getY(), var9.getZ(), 1.0F, var19, var21, 15728880, false));
+            OutlineVertexProvider.method1542(submitNodeCollector -> RENDERER.render(player, playHandler, player.getX(), player.getY(), player.getZ(), 1.0F, poseStack, submitNodeCollector, 15728880, false));
          } finally {
-            var9.yBodyRot = var23;
-            var9.setYRot(var24);
-            var9.setXRot(var25);
-            var9.yHeadRotO = var26;
-            var9.yHeadRot = var27;
+            player.yBodyRot = yBodyRot;
+            player.setYRot(yRot);
+            player.setXRot(xRot);
+            player.yHeadRotO = yHeadRotO;
+            player.yHeadRot = yHeadRot;
          }
       }
 
-      var0.disableScissor();
+      guiGraphicsExtractor.disableScissor();
    }
 }

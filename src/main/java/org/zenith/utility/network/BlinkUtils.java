@@ -8,7 +8,7 @@ public final class BlinkUtils {
    private BlinkUtils() {
    }
 
-   public static boolean method1444(Packet<?> var0) {
-      return var0 instanceof ServerboundMovePlayerPacket || var0 instanceof ServerboundMoveVehiclePacket;
+   public static boolean method1444(Packet<?> packet) {
+      return packet instanceof ServerboundMovePlayerPacket || packet instanceof ServerboundMoveVehiclePacket;
    }
 }

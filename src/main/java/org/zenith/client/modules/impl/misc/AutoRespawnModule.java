@@ -19,7 +19,7 @@ public final class AutoRespawnModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (mc.gui.screen() instanceof DeathScreen && mc.player.deathTime > 5) {
             mc.player.respawn();

@@ -20,10 +20,10 @@ import org.zenith.utility.misc.TextureId;
 import org.zenith.utility.render.ShapeRenderer;
 
 public final class FriendSkinResolver implements MinecraftAccess {
-   private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "antidumper228-loader");
-      var1.setDaemon(true);
-      return var1;
+   private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "antidumper228-loader");
+      thread.setDaemon(true);
+      return thread;
    });
    private static final Map<String, Identifier> CACHE = new ConcurrentHashMap<>();
    private static final Map<String, Boolean> LOADING = new ConcurrentHashMap<>();
@@ -33,79 +33,79 @@ public final class FriendSkinResolver implements MinecraftAccess {
    private FriendSkinResolver() {
    }
 
-   public static Identifier resolveSkin(String var0) {
-      if (var0 != null && !var0.isBlank()) {
-         String var1 = var0.trim().toLowerCase();
-         Identifier var2 = getOnlineSkin(var0);
-         if (var2 != null) {
-            CACHE.put(var1, var2);
-            return var2;
+   public static Identifier resolveSkin(String anotherString) {
+      if (anotherString != null && !anotherString.isBlank()) {
+         String lowerCase = anotherString.trim().toLowerCase();
+         Identifier onlineSkin = getOnlineSkin(anotherString);
+         if (onlineSkin != null) {
+            CACHE.put(lowerCase, onlineSkin);
+            return onlineSkin;
          } else {
-            Identifier var3 = CACHE.get(var1);
-            if (var3 != null) {
-               return var3;
+            Identifier id = CACHE.get(lowerCase);
+            if (id != null) {
+               return id;
             } else {
-               long var4 = System.currentTimeMillis();
-               Long var6 = FAILED_UNTIL.get(var1);
-               if (var6 != null && var6 > var4) {
+               long now = System.currentTimeMillis();
+               Long l = FAILED_UNTIL.get(lowerCase);
+               if (l != null && l > now) {
                   return DefaultPlayerSkin.getDefaultSkin().body().texturePath();
                } else {
-                  if (LOADING.putIfAbsent(var1, Boolean.TRUE) == null) {
-                     Identifier var7 = getExternalTextureId(var1);
+                  if (LOADING.putIfAbsent(lowerCase, Boolean.TRUE) == null) {
+                     Identifier externalTextureId = getExternalTextureId(lowerCase);
                      EXECUTOR.execute(() -> {
-                        boolean var9 = false /* VF: Semaphore variable */;
+                        boolean flag = false /* VF: Semaphore variable */;
 
                         label82: {
                            label83: {
                               try {
-                                 var9 = true;
-                                 byte[] var3x = downloadHeadPng(var0.trim());
+                                 flag = true;
+                                 byte[] var3x = downloadHeadPng(anotherString.trim());
                                  if (var3x == null || var3x.length <= 0) {
-                                    FAILED_UNTIL.put(var1, System.currentTimeMillis() + 30000L);
-                                    var9 = false;
+                                    FAILED_UNTIL.put(lowerCase, System.currentTimeMillis() + 30000L);
+                                    flag = false;
                                  } else {
-                                    boolean var10000;
+                                    boolean containsKey;
                                     label61: {
                                        if (LOADING != null) {
                                           if (LOADING.isEmpty()) {
-                                             var10000 = false;
+                                             containsKey = false;
                                              break label61;
                                           }
                                        }
 
-                                       var10000 = LOADING.containsKey(var1);
+                                       containsKey = LOADING.containsKey(lowerCase);
                                     }
 
-                                    if (!var10000) {
-                                       var9 = false;
+                                    if (!containsKey) {
+                                       flag = false;
                                        break label82;
                                     }
 
-                                    ShapeRenderer.method7178(new TextureId(var7), var3x);
-                                    CACHE.put(var1, var7);
-                                    EXTERNAL_TEXTURES.add(var7);
-                                    FAILED_UNTIL.remove(var1);
-                                    var9 = false;
+                                    ShapeRenderer.method7178(new TextureId(externalTextureId), var3x);
+                                    CACHE.put(lowerCase, externalTextureId);
+                                    EXTERNAL_TEXTURES.add(externalTextureId);
+                                    FAILED_UNTIL.remove(lowerCase);
+                                    flag = false;
                                  }
                                  break label83;
-                              } catch (Exception var10) {
-                                 FAILED_UNTIL.put(var1, System.currentTimeMillis() + 30000L);
-                                 var9 = false;
+                              } catch (Exception e) {
+                                 FAILED_UNTIL.put(lowerCase, System.currentTimeMillis() + 30000L);
+                                 flag = false;
                               } finally {
-                                 if (var9) {
-                                    LOADING.remove(var1);
+                                 if (flag) {
+                                    LOADING.remove(lowerCase);
                                  }
                               }
 
-                              LOADING.remove(var1);
+                              LOADING.remove(lowerCase);
                               return;
                            }
 
-                           LOADING.remove(var1);
+                           LOADING.remove(lowerCase);
                            return;
                         }
 
-                        LOADING.remove(var1);
+                        LOADING.remove(lowerCase);
                      });
                   }
 
@@ -119,32 +119,32 @@ public final class FriendSkinResolver implements MinecraftAccess {
    }
 
    public static void clearExternalCache() {
-      Set<Identifier> var0 = Set.copyOf(EXTERNAL_TEXTURES);
+      Set<Identifier> ids = Set.copyOf(EXTERNAL_TEXTURES);
 
-      for (Identifier var2 : var0) {
+      for (Identifier location : ids) {
          try {
-            mc.getTextureManager().release(var2);
-         } catch (Exception var4) {
+            mc.getTextureManager().release(location);
+         } catch (Exception e) {
          }
       }
 
       EXTERNAL_TEXTURES.clear();
-      CACHE.entrySet().removeIf(var1 -> var0.contains(var1.getValue()));
+      CACHE.entrySet().removeIf(entry -> ids.contains(entry.getValue()));
       FAILED_UNTIL.clear();
       LOADING.clear();
    }
 
-   private static Identifier getOnlineSkin(String var0) {
+   private static Identifier getOnlineSkin(String anotherString) {
       if (mc.getConnection() == null) {
          return null;
       } else {
-         for (PlayerInfo var2 : mc.getConnection().getOnlinePlayers()) {
-            if (var2 != null && var2.getProfile() != null && var2.getProfile().name() != null && var2.getProfile().name().equalsIgnoreCase(var0)) {
-               if (var2.getSkin() == null) {
+         for (PlayerInfo onlinePlayer : mc.getConnection().getOnlinePlayers()) {
+            if (onlinePlayer != null && onlinePlayer.getProfile() != null && onlinePlayer.getProfile().name() != null && onlinePlayer.getProfile().name().equalsIgnoreCase(anotherString)) {
+               if (onlinePlayer.getSkin() == null) {
                   return null;
                }
 
-               return var2.getSkin().body().texturePath();
+               return onlinePlayer.getSkin().body().texturePath();
             }
          }
 
@@ -152,49 +152,49 @@ public final class FriendSkinResolver implements MinecraftAccess {
       }
    }
 
-   private static Identifier getExternalTextureId(String var0) {
-      UUID var1 = UUID.nameUUIDFromBytes(("friend_skin_" + var0).getBytes(StandardCharsets.UTF_8));
-      return new TextureId("friend_heads/" + var1.toString().replace("-", "")).getIdentifier();
+   private static Identifier getExternalTextureId(String lowerCase) {
+      UUID nameUUIDFromBytes = UUID.nameUUIDFromBytes(("friend_skin_" + lowerCase).getBytes(StandardCharsets.UTF_8));
+      return new TextureId("friend_heads/" + nameUUIDFromBytes.toString().replace("-", "")).getIdentifier();
    }
 
    // $VF: Could not verify finally blocks. A semaphore variable has been added to preserve control flow.
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   private static byte[] downloadHeadPng(String var0) throws Exception {
-      String var1 = URLEncoder.encode(var0, StandardCharsets.UTF_8).replace("+", "%20");
-      String var2 = "https://minotar.net/helm/" + var1 + "/100.png";
-      HttpURLConnection var3 = (HttpURLConnection)URI.create(var2).toURL().openConnection();
-      var3.setConnectTimeout(2500);
-      var3.setReadTimeout(2500);
-      var3.setRequestProperty("User-Agent", "Sasske228");
-      int var4;
-      if ((var4 = var3.getResponseCode()) >= 200 && var4 < 300) {
-         boolean var16 = false /* VF: Semaphore variable */;
+   private static byte[] downloadHeadPng(String str) throws Exception {
+      String str2 = URLEncoder.encode(str, StandardCharsets.UTF_8).replace("+", "%20");
+      String str3 = "https://minotar.net/helm/" + str2 + "/100.png";
+      HttpURLConnection openConnection = (HttpURLConnection)URI.create(str3).toURL().openConnection();
+      openConnection.setConnectTimeout(2500);
+      openConnection.setReadTimeout(2500);
+      openConnection.setRequestProperty("User-Agent", "Sasske228");
+      int responseCode;
+      if ((responseCode = openConnection.getResponseCode()) >= 200 && responseCode < 300) {
+         boolean flag = false /* VF: Semaphore variable */;
 
-         byte[] var9;
+         byte[] byteArray;
          try {
-            var16 = true;
+            flag = true;
 
             try (
-               InputStream var5 = var3.getInputStream();
-               ByteArrayOutputStream var6 = new ByteArrayOutputStream();
+               InputStream inputStream = openConnection.getInputStream();
+               ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ) {
-               byte[] var7 = new byte[4096];
+               byte[] bytes = new byte[4096];
 
-               int var8;
-               while ((var8 = var5.read(var7)) != -1) {
-                  var6.write(var7, 0, var8);
+               int len;
+               while ((len = inputStream.read(bytes)) != -1) {
+                  byteArrayOutputStream.write(bytes, 0, len);
                }
 
-               var9 = var6.toByteArray();
+               byteArray = byteArrayOutputStream.toByteArray();
             }
          } finally {
-            if (var16) {
-               var3.disconnect();
+            if (flag) {
+               openConnection.disconnect();
             }
          }
 
-         var3.disconnect();
-         return var9;
+         openConnection.disconnect();
+         return byteArray;
       } else {
          return null;
       }

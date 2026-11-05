@@ -34,32 +34,32 @@ public final class MsdfFont implements MinecraftAccess {
    private final float baseline;
 
    private MsdfFont(
-      String var1,
-      AbstractTexture var2,
-      FontData.AtlasData var3,
-      FontData.MetricsData var4,
-      MsdfGlyph[] var5,
-      int var6,
-      Int2ObjectMap<Int2FloatMap> var7,
-      String var8,
-      float var9,
-      float var10
+      String name,
+      AbstractTexture texture,
+      FontData.AtlasData atlas,
+      FontData.MetricsData metrics,
+      MsdfGlyph[] glyphTable,
+      int glyphOffset,
+      Int2ObjectMap<Int2FloatMap> kernings,
+      String hintedFace,
+      float ascent,
+      float baseline
    ) {
-      this.ascent = var9;
-      this.baseline = var10;
-      this.name = var1;
-      this.texture = var2;
-      this.atlas = var3;
-      this.metrics = var4;
-      this.glyphTable = var5;
-      this.glyphOffset = var6;
-      this.kernings = var7;
-      this.hintedFace = var8;
+      this.ascent = ascent;
+      this.baseline = baseline;
+      this.name = name;
+      this.texture = texture;
+      this.atlas = atlas;
+      this.metrics = metrics;
+      this.glyphTable = glyphTable;
+      this.glyphOffset = glyphOffset;
+      this.kernings = kernings;
+      this.hintedFace = hintedFace;
    }
 
-   public float kerning(int var1, int var2) {
-      Int2FloatMap var3 = (Int2FloatMap)this.kernings.get(var1);
-      return var3 == null ? 0.0F : var3.get(var2);
+   public float kerning(int charAt, int n) {
+      Int2FloatMap kerning = (Int2FloatMap)this.kernings.get(charAt);
+      return kerning == null ? 0.0F : kerning.get(n);
    }
 
    public int getTextureId() {
@@ -70,185 +70,185 @@ public final class MsdfFont implements MinecraftAccess {
       return this.texture.getTextureView();
    }
 
-   private MsdfGlyph glyph(int var1) {
-      int var2 = var1 - this.glyphOffset;
-      return var2 >= 0 && var2 < this.glyphTable.length ? this.glyphTable[var2] : null;
+   private MsdfGlyph glyph(int codePoint) {
+      int n = codePoint - this.glyphOffset;
+      return n >= 0 && n < this.glyphTable.length ? this.glyphTable[n] : null;
    }
 
-   public boolean hasGlyph(int var1) {
-      return this.glyph(var1) != null;
+   public boolean hasGlyph(int codePoint) {
+      return this.glyph(codePoint) != null;
    }
 
-   public MsdfGlyph getGlyph(int var1) {
-      return this.glyph(var1);
+   public MsdfGlyph getGlyph(int charAt) {
+      return this.glyph(charAt);
    }
 
-   public void applyGlyphs(Matrix4f var1, VertexConsumer var2, String var3, float var4, float var5, float var6, float var7, float var8, float var9, int var10) {
-      int var11 = -1;
-      boolean var12 = false;
+   public void applyGlyphs(Matrix4f matrix, VertexConsumer consumer, String text, float size, float f, float f2, float floatValue, float f3, float z, int color) {
+      int charAt = -1;
+      boolean flag = false;
 
-      for (int var13 = 0; var13 < var3.length(); var13++) {
-         char var14 = var3.charAt(var13);
-         if (var12) {
-            var12 = false;
-         } else if (var14 == 167) {
-            var12 = true;
+      for (int i = 0; i < text.length(); i++) {
+         char codePoint = text.charAt(i);
+         if (flag) {
+            flag = false;
+         } else if (codePoint == 167) {
+            flag = true;
          } else {
-            MsdfGlyph var15 = this.glyph(var14);
-            if (var15 == null) {
-               char var16 = normalizeGlyphChar(var14);
-               var15 = var16 == var14 ? null : this.glyph(var16);
-               if (var15 == null) {
+            MsdfGlyph glyph = this.glyph(codePoint);
+            if (glyph == null) {
+               char c = normalizeGlyphChar(codePoint);
+               glyph = c == codePoint ? null : this.glyph(c);
+               if (glyph == null) {
                   continue;
                }
 
-               var14 = var16;
+               codePoint = c;
             }
 
-            Int2FloatMap var17 = (Int2FloatMap)this.kernings.get(var11);
-            if (var17 != null) {
-               var7 += var17.get(var14) * var4;
+            Int2FloatMap kerning = (Int2FloatMap)this.kernings.get(charAt);
+            if (kerning != null) {
+               floatValue += kerning.get(codePoint) * size;
             }
 
-            var7 += var15.apply(var1, var2, var4, var7, var8, var9, var10) + var5 + var6;
-            var11 = var14;
+            floatValue += glyph.apply(matrix, consumer, size, floatValue, f3, z, color) + f + f2;
+            charAt = codePoint;
          }
       }
    }
 
    public void applyGlyphs(
-      Matrix4f var1, VertexConsumer var2, String var3, float var4, float var5, float var6, float var7, float var8, float var9, GlowColor var10
+      Matrix4f matrix4f, VertexConsumer consumer, String text, float size, float f, float f2, float floatValue, float f3, float z, GlowColor glowColor
    ) {
-      int var11 = -1;
-      boolean var12 = false;
+      int charAt = -1;
+      boolean flag = false;
 
-      for (int var13 = 0; var13 < var3.length(); var13++) {
-         char var14 = var3.charAt(var13);
-         if (var12) {
-            var12 = false;
-         } else if (var14 == 167) {
-            var12 = true;
+      for (int i = 0; i < text.length(); i++) {
+         char codePoint = text.charAt(i);
+         if (flag) {
+            flag = false;
+         } else if (codePoint == 167) {
+            flag = true;
          } else {
-            MsdfGlyph var15 = this.glyph(var14);
-            if (var15 == null) {
-               char var16 = normalizeGlyphChar(var14);
-               var15 = var16 == var14 ? null : this.glyph(var16);
-               if (var15 == null) {
+            MsdfGlyph glyph = this.glyph(codePoint);
+            if (glyph == null) {
+               char c = normalizeGlyphChar(codePoint);
+               glyph = c == codePoint ? null : this.glyph(c);
+               if (glyph == null) {
                   continue;
                }
 
-               var14 = var16;
+               codePoint = c;
             }
 
-            Int2FloatMap var17 = (Int2FloatMap)this.kernings.get(var11);
-            if (var17 != null) {
-               var7 += var17.get(var14) * var4;
+            Int2FloatMap kerning = (Int2FloatMap)this.kernings.get(charAt);
+            if (kerning != null) {
+               floatValue += kerning.get(codePoint) * size;
             }
 
-            var7 += var15.apply(var1, var2, var4, var7, var8, var9, var10) + var5 + var6;
-            var11 = var14;
+            floatValue += glyph.apply(matrix4f, consumer, size, floatValue, f3, z, glowColor) + f + f2;
+            charAt = codePoint;
          }
       }
    }
 
-   public float getWidth(String var1, float var2) {
-      if (var1 != null && !var1.isEmpty()) {
-         var1 = NameProtectModule.method5149(var1);
-         Float var3 = this.unitWidthCache.get(var1);
-         if (var3 == null) {
-            var3 = this.computeUnitWidth(var1);
+   public float getWidth(String text, float size) {
+      if (text != null && !text.isEmpty()) {
+         text = NameProtectModule.method5149(text);
+         Float unitWidth = this.unitWidthCache.get(text);
+         if (unitWidth == null) {
+            unitWidth = this.computeUnitWidth(text);
             if (this.unitWidthCache.size() >= 4096) {
                this.unitWidthCache.clear();
             }
 
-            this.unitWidthCache.put(var1, var3);
+            this.unitWidthCache.put(text, unitWidth);
          }
 
-         return var3 * var2;
+         return unitWidth * size;
       } else {
          return 0.0F;
       }
    }
 
-   private float computeUnitWidth(String var1) {
-      int var2 = -1;
-      float var3 = 0.0F;
-      boolean var4 = false;
+   private float computeUnitWidth(String text) {
+      int charAt = -1;
+      float f = 0.0F;
+      boolean flag = false;
 
-      for (int var5 = 0; var5 < var1.length(); var5++) {
-         char var6 = var1.charAt(var5);
-         if (var4) {
-            var4 = false;
-         } else if (var6 == 167) {
-            var4 = true;
+      for (int i = 0; i < text.length(); i++) {
+         char codePoint = text.charAt(i);
+         if (flag) {
+            flag = false;
+         } else if (codePoint == 167) {
+            flag = true;
          } else {
-            MsdfGlyph var7 = this.glyph(var6);
-            if (var7 == null) {
-               char var8 = normalizeGlyphChar(var6);
-               var7 = var8 == var6 ? null : this.glyph(var8);
-               if (var7 == null) {
+            MsdfGlyph glyph = this.glyph(codePoint);
+            if (glyph == null) {
+               char c = normalizeGlyphChar(codePoint);
+               glyph = c == codePoint ? null : this.glyph(c);
+               if (glyph == null) {
                   continue;
                }
 
-               var6 = var8;
+               codePoint = c;
             }
 
-            Int2FloatMap var9 = (Int2FloatMap)this.kernings.get(var2);
-            if (var9 != null) {
-               var3 += var9.get(var6);
+            Int2FloatMap kerning = (Int2FloatMap)this.kernings.get(charAt);
+            if (kerning != null) {
+               f += kerning.get(codePoint);
             }
 
-            var3 += var7.getWidth(1.0F);
-            var2 = var6;
+            f += glyph.getWidth(1.0F);
+            charAt = codePoint;
          }
       }
 
-      return var3;
+      return f;
    }
 
-   public int fitPrefix(String var1, float var2, float var3, float var4) {
-      int var5 = -1;
-      float var6 = 0.0F;
-      boolean var7 = false;
-      int var8 = 0;
+   public int fitPrefix(String name, float size, float f, float width) {
+      int charAt = -1;
+      float f2 = 0.0F;
+      boolean flag = false;
+      int n = 0;
 
-      for (int var9 = 0; var9 < var1.length(); var9++) {
-         char var10 = var1.charAt(var9);
-         if (var7) {
-            var7 = false;
-         } else if (var10 == 167) {
-            var7 = true;
+      for (int i = 0; i < name.length(); i++) {
+         char codePoint = name.charAt(i);
+         if (flag) {
+            flag = false;
+         } else if (codePoint == 167) {
+            flag = true;
          } else {
-            MsdfGlyph var11 = this.glyph(var10);
-            if (var11 == null) {
-               char var12 = normalizeGlyphChar(var10);
-               var11 = var12 == var10 ? null : this.glyph(var12);
-               if (var11 != null) {
-                  var10 = var12;
+            MsdfGlyph glyph = this.glyph(codePoint);
+            if (glyph == null) {
+               char c = normalizeGlyphChar(codePoint);
+               glyph = c == codePoint ? null : this.glyph(c);
+               if (glyph != null) {
+                  codePoint = c;
                }
             }
 
-            if (var11 != null) {
-               Int2FloatMap var13 = (Int2FloatMap)this.kernings.get(var5);
-               if (var13 != null) {
-                  var6 += var13.get(var10);
+            if (glyph != null) {
+               Int2FloatMap kerning = (Int2FloatMap)this.kernings.get(charAt);
+               if (kerning != null) {
+                  f2 += kerning.get(codePoint);
                }
 
-               var6 += var11.getWidth(1.0F);
-               var5 = var10;
+               f2 += glyph.getWidth(1.0F);
+               charAt = codePoint;
             }
          }
 
-         if (!(var6 * var2 + var3 > var4)) {
-            var8 = var9 + 1;
+         if (!(f2 * size + f > width)) {
+            n = i + 1;
          }
       }
 
-      return var8;
+      return n;
    }
 
-   public static char normalizeGlyphChar(char var0) {
-      return switch (var0) {
+   public static char normalizeGlyphChar(char codePoint) {
+      return switch (codePoint) {
          case '«', '»' -> '"';
          case '·' -> '•';
          case '×' -> 'x';
@@ -286,53 +286,53 @@ public final class MsdfFont implements MinecraftAccess {
          case 'Ј' -> 'J';
          case 'ѕ' -> 's';
          case 'Ѕ' -> 'S';
-         default -> var0;
+         default -> codePoint;
       };
    }
 
-   public static String normalizeSmallCaps(String var0) {
-      int var1 = var0.length();
+   public static String normalizeSmallCaps(String text) {
+      int length = text.length();
 
-      for (int var2 = 0; var2 < var1; var2++) {
-         char var3 = var0.charAt(var2);
-         if (normalizeGlyphChar(var3) != var3) {
-            StringBuilder var4 = new StringBuilder(var1);
-            var4.append(var0, 0, var2);
+      for (int i = 0; i < length; i++) {
+         char charAt = text.charAt(i);
+         if (normalizeGlyphChar(charAt) != charAt) {
+            StringBuilder builder = new StringBuilder(length);
+            builder.append(text, 0, i);
 
-            for (int var5 = var2; var5 < var1; var5++) {
-               var4.append(normalizeGlyphChar(var0.charAt(var5)));
+            for (int j = i; j < length; j++) {
+               builder.append(normalizeGlyphChar(text.charAt(j)));
             }
 
-            return var4.toString();
+            return builder.toString();
          }
       }
 
-      return var0;
+      return text;
    }
 
-   public float getTextWidth(Component var1, float var2) {
-      return this.getTextWidthWithVanillaFallback(var1, var2);
+   public float getTextWidth(Component text, float size) {
+      return this.getTextWidthWithVanillaFallback(text, size);
    }
 
-   private float getTextWidthWithVanillaFallback(Component var1, float var2) {
+   private float getTextWidthWithVanillaFallback(Component text, float size) {
       Font vanillaFont = mc.font;
       float width = 0.0F;
 
-      for (FormattedTextProcessor.TextSegment segment : FormattedTextProcessor.processText(var1, -1)) {
+      for (FormattedTextProcessor.TextSegment segment : FormattedTextProcessor.processText(text, -1)) {
          for (FormattedTextProcessor.TextRun run : FormattedTextProcessor.splitRuns(this, segment)) {
-            width += run.msdf() ? this.getWidth(run.text(), var2) : vanillaFont.width(run.sequence()) * this.vanillaTextScale(vanillaFont, var2);
+            width += run.msdf() ? this.getWidth(run.text(), size) : vanillaFont.width(run.sequence()) * this.vanillaTextScale(vanillaFont, size);
          }
       }
 
       return width;
    }
 
-   private float vanillaTextScale(Font var1, float var2) {
-      return var2 / Math.max(1.0F, 9.0F);
+   private float vanillaTextScale(Font vanillaFont, float size) {
+      return size / Math.max(1.0F, 9.0F);
    }
 
-   public org.zenith.base.font.Font getFont(float var1) {
-      return new org.zenith.base.font.Font(this, var1);
+   public org.zenith.base.font.Font getFont(float px) {
+      return new org.zenith.base.font.Font(this, px);
    }
 
    public static MsdfFont.Builder builder() {
@@ -379,8 +379,8 @@ public final class MsdfFont implements MinecraftAccess {
       private Builder() {
       }
 
-      public MsdfFont.Builder hinted(String var1) {
-         this.hintedFace = var1;
+      public MsdfFont.Builder hinted(String hintedFace) {
+         this.hintedFace = hintedFace;
          return this;
       }
 
@@ -389,91 +389,91 @@ public final class MsdfFont implements MinecraftAccess {
          return this;
       }
 
-      public MsdfFont.Builder name(String var1) {
-         this.name = var1;
+      public MsdfFont.Builder name(String name) {
+         this.name = name;
          return this;
       }
 
-      public MsdfFont.Builder data(String var1) {
-         this.dataIdentifer = Zenith.method1501("fonts/msdf/" + var1 + ".json");
+      public MsdfFont.Builder data(String str) {
+         this.dataIdentifer = Zenith.method1501("fonts/msdf/" + str + ".json");
          return this;
       }
 
-      public MsdfFont.Builder data(Identifier var1) {
-         this.dataIdentifer = var1;
+      public MsdfFont.Builder data(Identifier dataIdentifer) {
+         this.dataIdentifer = dataIdentifer;
          return this;
       }
 
-      public MsdfFont.Builder atlas(String var1) {
-         this.atlasIdentifier = Zenith.method1501("fonts/msdf/" + var1 + ".png");
+      public MsdfFont.Builder atlas(String str) {
+         this.atlasIdentifier = Zenith.method1501("fonts/msdf/" + str + ".png");
          return this;
       }
 
-      public MsdfFont.Builder atlas(Identifier var1) {
-         this.atlasIdentifier = var1;
+      public MsdfFont.Builder atlas(Identifier atlasIdentifier) {
+         this.atlasIdentifier = atlasIdentifier;
          return this;
       }
 
       public MsdfFont build() {
-         FontData var1 = ResourceProvider.fromJsonToInstance(this.dataIdentifer, FontData.class);
-         AbstractTexture var2 = MinecraftAccess.mc.getTextureManager().getTexture(this.atlasIdentifier);
-         if (var1 == null) {
+         FontData fontData = ResourceProvider.fromJsonToInstance(this.dataIdentifer, FontData.class);
+         AbstractTexture texture = MinecraftAccess.mc.getTextureManager().getTexture(this.atlasIdentifier);
+         if (fontData == null) {
             throw new RuntimeException(
                "Failed to read font data file: "
                   + this.dataIdentifer.toString()
                   + "; Are you sure this is json file? Try to check the correctness of its syntax."
             );
          } else {
-            float var3 = var1.atlas().width();
-            float var4 = var1.atlas().height();
-            int var5 = Integer.MAX_VALUE;
-            int var6 = Integer.MIN_VALUE;
+            float width = fontData.atlas().width();
+            float height = fontData.atlas().height();
+            int unicode = Integer.MAX_VALUE;
+            int n = Integer.MIN_VALUE;
 
-            for (FontData.GlyphData var8 : var1.glyphs()) {
-               int var9 = var8.unicode();
-               if (var9 < var5) {
-                  var5 = var9;
+            for (FontData.GlyphData glyph : fontData.glyphs()) {
+               int unicode2 = glyph.unicode();
+               if (unicode2 < unicode) {
+                  unicode = unicode2;
                }
 
-               if (var9 > var6) {
-                  var6 = var9;
+               if (unicode2 > n) {
+                  n = unicode2;
                }
             }
 
-            MsdfGlyph[] var15;
-            int var16;
-            if (var5 > var6) {
-               var15 = new MsdfGlyph[0];
-               var16 = 0;
+            MsdfGlyph[] glyphTable;
+            int glyphOffset;
+            if (unicode > n) {
+               glyphTable = new MsdfGlyph[0];
+               glyphOffset = 0;
             } else {
-               var16 = var5;
-               var15 = new MsdfGlyph[var6 - var5 + 1];
+               glyphOffset = unicode;
+               glyphTable = new MsdfGlyph[n - unicode + 1];
 
-               for (FontData.GlyphData var10 : var1.glyphs()) {
-                  var15[var10.unicode() - var16] = new MsdfGlyph(var10, var3, var4);
+               for (FontData.GlyphData glyph : fontData.glyphs()) {
+                  glyphTable[glyph.unicode() - glyphOffset] = new MsdfGlyph(glyph, width, height);
                }
             }
 
-            Int2ObjectOpenHashMap var18 = new Int2ObjectOpenHashMap();
-            var1.kernings().forEach(var1x -> {
-               Int2FloatMap var2x = (Int2FloatMap)var18.computeIfAbsent(var1x.leftChar(), var0x -> new Int2FloatOpenHashMap());
+            Int2ObjectOpenHashMap int2ObjectOpenHashMap = new Int2ObjectOpenHashMap();
+            fontData.kernings().forEach(var1x -> {
+               Int2FloatMap var2x = (Int2FloatMap)int2ObjectOpenHashMap.computeIfAbsent(var1x.leftChar(), var0x -> new Int2FloatOpenHashMap());
                var2x.put(var1x.rightChar(), var1x.advance());
             });
-            float var19 = var1.metrics().ascender() > 0.0F ? var1.metrics().ascender() : 0.7F;
-            float var11 = var19;
+            float ascender = fontData.metrics().ascender() > 0.0F ? fontData.metrics().ascender() : 0.7F;
+            float baseline = ascender;
             if (this.capCentered) {
-               for (FontData.GlyphData var13 : var1.glyphs()) {
-                  if (var13.unicode() == 72 && var13.planeBounds() != null) {
-                     float var14 = var13.planeBounds().top() + var13.planeBounds().bottom();
-                     if (var14 > 0.0F && var14 < var19) {
-                        var11 = (var19 + var14) / 2.0F;
+               for (FontData.GlyphData glyph : fontData.glyphs()) {
+                  if (glyph.unicode() == 72 && glyph.planeBounds() != null) {
+                     float f = glyph.planeBounds().top() + glyph.planeBounds().bottom();
+                     if (f > 0.0F && f < ascender) {
+                        baseline = (ascender + f) / 2.0F;
                      }
                      break;
                   }
                }
             }
 
-            return new MsdfFont(this.name, var2, var1.atlas(), var1.metrics(), var15, var16, var18, this.hintedFace, var19, var11);
+            return new MsdfFont(this.name, texture, fontData.atlas(), fontData.metrics(), glyphTable, glyphOffset, int2ObjectOpenHashMap, this.hintedFace, ascender, baseline);
          }
       }
    }

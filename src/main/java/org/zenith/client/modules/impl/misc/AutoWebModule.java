@@ -72,14 +72,14 @@ public final class AutoWebModule extends Module {
    }
 
    @EventTarget
-   public void method278(Event9 var1) {
+   public void method278(Event9 event) {
       if (mc.player != null && mc.level != null) {
          if (!AutoTrapModule.INSTANCE.isEnabled() || !AutoTrapModule.INSTANCE.method2427()) {
-            if (!var1.isCancelled() && mc.player.tickCount % 2 == 0) {
-               BlockHitResult var2 = this.handler != null ? this.handler.isRotate(Zenith.getInstance().getRotationManager().method7844()) : null;
-               if (var2 != null && mc.player.getItemInHand(this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND).getItem() == Items.COBWEB) {
-                  UseItemUtils.method6514(var2, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
-                  GlowUtil.method2230(new AABB(var2.getBlockPos()), -1, 1.0F);
+            if (!event.isCancelled() && mc.player.tickCount % 2 == 0) {
+               BlockHitResult rotate = this.handler != null ? this.handler.isRotate(Zenith.getInstance().getRotationManager().method7844()) : null;
+               if (rotate != null && mc.player.getItemInHand(this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND).getItem() == Items.COBWEB) {
+                  UseItemUtils.method6514(rotate, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                  GlowUtil.method2230(new AABB(rotate.getBlockPos()), -1, 1.0F);
                   this.rotation = null;
                   this.handler = null;
                }
@@ -89,15 +89,15 @@ public final class AutoWebModule extends Module {
    }
 
    @EventTarget
-   public void method279(Event5 var1) {
+   public void method279(Event5 event) {
       if (!AutoTrapModule.INSTANCE.isEnabled() || !AutoTrapModule.INSTANCE.method2427()) {
          this.playerEntity = this.method284();
          if (this.playerEntity != null) {
             this.method280();
-            Rotation var2 = this.rotation;
-            if (var2 != null) {
+            Rotation rotation = this.rotation;
+            if (rotation != null) {
                rotationManager.method7849(
-                  new RotationRequest(var2, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var2), bcCameraTestnerv.getRotationConfig()),
+                  new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                   5,
                   this
                );
@@ -116,29 +116,29 @@ public final class AutoWebModule extends Module {
          this.method281();
 
          try {
-            Slot var1 = InventoryUtils.method909(mc.player.inventoryMenu, var0 -> var0.getItem().getItem() == Items.COBWEB);
-            byte var2 = 0;
-            if (var1 != null) {
-               BlockPos var3 = this.playerEntity.blockPosition();
-               AABB var4 = this.playerEntity.getBoundingBox().inflate(this.searchXZ.getValue3(), this.search.getValue3(), this.searchXZ.getValue3());
-               this.list = UseItemUtils.method6506(var3, (int)Math.ceil(this.searchXZ.getValue3()), (int)Math.ceil(this.search.getValue3()))
+            Slot slot = InventoryUtils.method909(mc.player.inventoryMenu, slot2 -> slot2.getItem().getItem() == Items.COBWEB);
+            byte b = 0;
+            if (slot != null) {
+               BlockPos blockPosition = this.playerEntity.blockPosition();
+               AABB inflate = this.playerEntity.getBoundingBox().inflate(this.searchXZ.getValue3(), this.search.getValue3(), this.searchXZ.getValue3());
+               this.list = UseItemUtils.method6506(blockPosition, (int)Math.ceil(this.searchXZ.getValue3()), (int)Math.ceil(this.search.getValue3()))
                   .stream()
                   .filter(var1x -> {
                      BlockState var2x = mc.level.getBlockState(var1x);
-                     return var2x.isAir() && var4.intersects(var1x.getX(), var1x.getY(), var1x.getZ(), var1x.getX() + 1, var1x.getY() + 1, var1x.getZ() + 1);
+                     return var2x.isAir() && inflate.intersects(var1x.getX(), var1x.getY(), var1x.getZ(), var1x.getX() + 1, var1x.getY() + 1, var1x.getZ() + 1);
                   })
-                  .sorted(Comparator.comparingDouble(var1x -> var1x.distSqr(var3)))
+                  .sorted(Comparator.comparingDouble(var1x -> var1x.distSqr(blockPosition)))
                   .toList();
                this.items = new HashSet<>(this.list);
-               Vec3 var5 = mc.player.getEyePosition(1.0F);
+               Vec3 eyePosition = mc.player.getEyePosition(1.0F);
 
                label84:
-               for (BlockPos var7 : this.list) {
-                  BlockState var9 = mc.level.getBlockState(var7);
-                  if (var9.canBeReplaced() && !var9.isAir()) {
-                     Rotation var8 = RotationUtils.method6912(new Vec3(var7.getX() + 0.5F, var7.getY() + 0.5F, var7.getZ() + 0.5F));
-                     BlockHitResult var18 = TargetUtils.method3216(var5, var8, 3.0, var1x -> var1x != null && this.items.contains(var1x.getBlockPos()));
-                     if (var18 != null && var18.getType() != Type.MISS) {
+               for (BlockPos pos : this.list) {
+                  BlockState blockState = mc.level.getBlockState(pos);
+                  if (blockState.canBeReplaced() && !blockState.isAir()) {
+                     Rotation rotation = RotationUtils.method6912(new Vec3(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F));
+                     BlockHitResult blockHitResult = TargetUtils.method3216(eyePosition, rotation, 3.0, var1x -> var1x != null && this.items.contains(var1x.getBlockPos()));
+                     if (blockHitResult != null && blockHitResult.getType() != Type.MISS) {
                         this.handler = var1x -> {
                            BlockHitResult var2x = TargetUtils.method3216(
                               mc.player.getEyePosition(1.0F),
@@ -150,32 +150,32 @@ public final class AutoWebModule extends Module {
                            );
                            return var2x != null && var2x.getType() != Type.MISS ? var2x : null;
                         };
-                        this.rotation = var8;
+                        this.rotation = rotation;
                      }
                   } else {
-                     Direction[] var10 = Direction.values();
-                     int var11 = var10.length;
-                     int var12 = 0;
+                     Direction[] values = Direction.values();
+                     int length = values.length;
+                     int n = 0;
 
                      while (true) {
-                        if (var12 < var11) {
-                           Direction var13 = var10[var12];
-                           Vec3 var14 = Vec3.atCenterOf(var7).add(Vec3.atLowerCornerOf(var13.getUnitVec3i()).scale(0.5));
-                           Rotation var15 = RotationUtils.method6913(var14);
-                           BlockHitResult var16 = TargetUtils.method3216(
-                              var5,
-                              var15,
+                        if (n < length) {
+                           Direction direction = values[n];
+                           Vec3 location = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(direction.getUnitVec3i()).scale(0.5));
+                           Rotation rotation = RotationUtils.method6913(location);
+                           BlockHitResult blockHitResult = TargetUtils.method3216(
+                              eyePosition,
+                              rotation,
                               this.distance.getValue3(),
                               var1x -> var1x != null
                                  && !mc.level.getBlockState(var1x.getBlockPos()).canBeReplaced()
                                  && this.items.contains(var1x.getBlockPos().relative(var1x.getDirection()))
                            );
-                           if (var16 == null || var16.getType() == Type.MISS) {
-                              var12++;
+                           if (blockHitResult == null || blockHitResult.getType() == Type.MISS) {
+                              n++;
                               continue;
                            }
 
-                           if (var2 == 0) {
+                           if (b == 0) {
                               this.handler = var1x -> {
                                  BlockHitResult var2x = TargetUtils.method3216(
                                     mc.player.getEyePosition(1.0F),
@@ -187,15 +187,15 @@ public final class AutoWebModule extends Module {
                                  );
                                  return var2x != null && var2x.getType() != Type.MISS ? var2x : null;
                               };
-                              this.rotation = var15;
+                              this.rotation = rotation;
                            } else {
-                              this.rotation2 = var15;
+                              this.rotation2 = rotation;
                            }
 
-                           var2++;
+                           b++;
                         }
 
-                        if (var2 == 2) {
+                        if (b == 2) {
                            break label84;
                         }
                         break;
@@ -204,13 +204,13 @@ public final class AutoWebModule extends Module {
                }
 
                if (KeyBindUtils.method2630(AutoWebModule.class) && (KeyBindUtils.method2630(AutoTotemModule.class) || this.hand.isSelected(0))) {
-                  if (var2 > 0) {
+                  if (b > 0) {
                      if (mc.player.getItemInHand(this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND).getItem() != Items.COBWEB) {
                         KeyBindUtils.method2627(
-                           AutoWebModule.class, () -> InventoryUtils.method900(var1, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, true)
+                           AutoWebModule.class, () -> InventoryUtils.method900(slot, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, true)
                         );
                         if (this.slot == null) {
-                           this.slot = var1;
+                           this.slot = slot;
                         }
                      }
                   } else if (this.slot != null) {
@@ -219,8 +219,8 @@ public final class AutoWebModule extends Module {
                   }
                }
             }
-         } catch (Exception var17) {
-            var17.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
@@ -233,8 +233,8 @@ public final class AutoWebModule extends Module {
 
    private void method282() {
       if (this.slot != null) {
-         Slot var1 = this.slot;
-         KeyBindUtils.method2627(AutoWebModule.class, () -> InventoryUtils.method900(var1, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, true));
+         Slot slot = this.slot;
+         KeyBindUtils.method2627(AutoWebModule.class, () -> InventoryUtils.method900(slot, this.hand.isSelected(0) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, true));
          this.slot = null;
       }
    }
@@ -252,9 +252,9 @@ public final class AutoWebModule extends Module {
    }
 
    @EventTarget
-   private void method283(MoveInputEvent var1) {
+   private void method283(MoveInputEvent event) {
       if (this.handler != null) {
-         MovementInputUtils.method7426(var1, zenith.getRotationManager().method7844().getFloatValue(), mc.player.getYRot());
+         MovementInputUtils.method7426(event, zenith.getRotationManager().method7844().getFloatValue(), mc.player.getYRot());
       }
    }
 
@@ -263,15 +263,15 @@ public final class AutoWebModule extends Module {
          .players()
          .stream()
          .filter(
-            var1 -> var1 != mc.player
-               && !Zenith.getInstance().getFriends().method7626(var1)
-               && mc.player.distanceToSqr(var1) < (this.distance.getValue3() + 0.1) * (this.distance.getValue3() + 0.1)
+            player -> player != mc.player
+               && !Zenith.getInstance().getFriends().method7626(player)
+               && mc.player.distanceToSqr(player) < (this.distance.getValue3() + 0.1) * (this.distance.getValue3() + 0.1)
          )
-         .min(Comparator.comparingDouble(var0 -> mc.player.distanceToSqr(var0) - (var0 == AuraModule.INSTANCE.getLivingEntity22() ? 100 : 0)))
+         .min(Comparator.comparingDouble(entity -> mc.player.distanceToSqr(entity) - (entity == AuraModule.INSTANCE.getLivingEntity22() ? 100 : 0)))
          .orElse(null);
    }
 
    public interface Handler {
-      BlockHitResult isRotate(Rotation var1);
+      BlockHitResult isRotate(Rotation rotation);
    }
 }

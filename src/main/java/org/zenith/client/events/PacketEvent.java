@@ -20,8 +20,8 @@ public class PacketEvent implements Event {
    }
 
    @Generated
-   public PacketEvent(BotClient var1, Packet<?> var2) {
-      this.botClient = var1;
-      this.packet = var2;
+   public PacketEvent(BotClient botClient, Packet<?> packet) {
+      this.botClient = botClient;
+      this.packet = packet;
    }
 }

@@ -74,16 +74,16 @@ public class Keyframe implements Comparable<Keyframe> {
       try {
          try {
             return Keyframe.KeyframeValue.literal(Double.parseDouble(source));
-         } catch (NumberFormatException var9) {
+         } catch (NumberFormatException e) {
             try {
                String exprSrc = "return " + source;
                LuaValue chunk = this.owner.loadScript(chunkName, exprSrc);
                return chunk == null ? null : Keyframe.KeyframeValue.function(chunk, chunkName);
-            } catch (LuaError var8) {
+            } catch (LuaError ex) {
                try {
                   LuaValue chunkx = this.owner.loadScript(chunkName, source);
                   return chunkx == null ? null : Keyframe.KeyframeValue.function(chunkx, chunkName);
-               } catch (LuaError var7) {
+               } catch (LuaError e2) {
                   String trailers = "";
                   if (this.part.formatVersion >= 2) {
                      trailers = "\n\n§6If you opened a 4.12 model file in 5.0, your keyframes might be corrupted.§r\n§6You'll have to manually fix them; note that the X and Y values on rotation,§r\n§6 as well as the X value on position, need to be negated.§r";
@@ -93,8 +93,8 @@ public class Keyframe implements Comparable<Keyframe> {
                      String.format(
                         "Syntax error in keyframe [%s]:\n\nNot a valid expression, because:\n%s\nNot a valid block, because:\n%s\n\nscript:\n%s%s",
                         chunkName,
-                        trimErrorMessage(var8.getMessage()),
-                        trimErrorMessage(var7.getMessage()),
+                        trimErrorMessage(ex.getMessage()),
+                        trimErrorMessage(e2.getMessage()),
                         source,
                         trailers
                      )
@@ -102,9 +102,9 @@ public class Keyframe implements Comparable<Keyframe> {
                }
             }
          }
-      } catch (Exception var10) {
+      } catch (Exception e) {
          if (this.owner.luaRuntime != null) {
-            this.owner.luaRuntime.error(var10);
+            this.owner.luaRuntime.error(e);
          }
 
          return null;
@@ -137,11 +137,11 @@ public class Keyframe implements Comparable<Keyframe> {
             return this.evaluate(cache[idx], delta);
          }
 
-         String var10002 = this.generateChunkName(idx);
-         throw new LuaError("Can't compile keyframe [" + var10002 + "] (code: " + code[idx] + ")");
-      } catch (Exception var6) {
+         String chunkName = this.generateChunkName(idx);
+         throw new LuaError("Can't compile keyframe [" + chunkName + "] (code: " + code[idx] + ")");
+      } catch (Exception e) {
          if (this.owner.luaRuntime != null) {
-            this.owner.luaRuntime.error(var6);
+            this.owner.luaRuntime.error(e);
          }
 
          return 0.0;

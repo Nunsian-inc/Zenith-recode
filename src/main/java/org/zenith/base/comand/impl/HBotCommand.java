@@ -20,30 +20,30 @@ public class HBotCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(
          literal("connect")
             .then(
                ((RequiredArgumentBuilder)arg("name", StringArgumentType.word())
-                     .executes(var0 -> connect(StringArgumentType.getString(var0, "name"), null, null)))
+                     .executes(context -> connect(StringArgumentType.getString(context, "name"), null, null)))
                   .then(
                      ((RequiredArgumentBuilder)arg("address", StringArgumentType.word())
-                           .executes(var0 -> connect(StringArgumentType.getString(var0, "name"), StringArgumentType.getString(var0, "address"), null)))
+                           .executes(context -> connect(StringArgumentType.getString(context, "name"), StringArgumentType.getString(context, "address"), null)))
                         .then(
                            arg("proxy", StringArgumentType.greedyString())
                               .executes(
-                                 var0 -> connect(
-                                    StringArgumentType.getString(var0, "name"),
-                                    StringArgumentType.getString(var0, "address"),
-                                    StringArgumentType.getString(var0, "proxy")
+                                 context -> connect(
+                                    StringArgumentType.getString(context, "name"),
+                                    StringArgumentType.getString(context, "address"),
+                                    StringArgumentType.getString(context, "proxy")
                                  )
                               )
                         )
                   )
             )
       );
-      var1.then(literal("disconnect").then(arg("name", StringArgumentType.word()).executes(var0 -> {
-         String var1x = StringArgumentType.getString(var0, "name");
+      literalArgumentBuilder.then(literal("disconnect").then(arg("name", StringArgumentType.word()).executes(context -> {
+         String var1x = StringArgumentType.getString(context, "name");
          if (var1x.equalsIgnoreCase("all")) {
             HeadlessBots.disconnectAll();
             ChatLogger.method2019("Все headless-боты отключены");
@@ -55,26 +55,26 @@ public class HBotCommand extends CommandAbstract {
 
          return 1;
       })));
-      var1.then(literal("list").executes(var0 -> {
+      literalArgumentBuilder.then(literal("list").executes(commandContext -> {
          if (HeadlessBots.all().isEmpty()) {
             ChatLogger.method2019("Нет активных headless-ботов");
             return 1;
          } else {
-            for (BotClient var2 : HeadlessBots.all()) {
-               ChatLogger.method2019(var2.name() + " — " + var2.getPhase());
+            for (BotClient botClient : HeadlessBots.all()) {
+               ChatLogger.method2019(botClient.name() + " — " + botClient.getPhase());
             }
 
             return 1;
          }
       }));
-      var1.then(literal("say").then(arg("name", StringArgumentType.word()).then(arg("message", StringArgumentType.greedyString()).executes(var0 -> {
-         BotClient var1x = requireBot(StringArgumentType.getString(var0, "name"));
+      literalArgumentBuilder.then(literal("say").then(arg("name", StringArgumentType.word()).then(arg("message", StringArgumentType.greedyString()).executes(context -> {
+         BotClient var1x = requireBot(StringArgumentType.getString(context, "name"));
          if (var1x == null) {
             return 1;
          } else {
-            String var2 = StringArgumentType.getString(var0, "message");
-            if (var1x.sendChat(var2)) {
-               ChatLogger.method2019("Бот " + var1x.name() + " отправил: " + var2);
+            String string = StringArgumentType.getString(context, "message");
+            if (var1x.sendChat(string)) {
+               ChatLogger.method2019("Бот " + var1x.name() + " отправил: " + string);
             } else {
                ChatLogger.method2022("Бот " + var1x.name() + " ещё не в игре");
             }
@@ -82,21 +82,21 @@ public class HBotCommand extends CommandAbstract {
             return 1;
          }
       }))));
-      var1.then(
+      literalArgumentBuilder.then(
          literal("module")
             .then(
                arg("name", StringArgumentType.word())
-                  .then(arg("module", StringArgumentType.word()).then(arg("state", StringArgumentType.word()).executes(var0 -> {
-                     BotClient var1x = requireBot(StringArgumentType.getString(var0, "name"));
+                  .then(arg("module", StringArgumentType.word()).then(arg("state", StringArgumentType.word()).executes(context -> {
+                     BotClient var1x = requireBot(StringArgumentType.getString(context, "name"));
                      if (var1x == null) {
                         return 1;
                      } else {
-                        String var2 = StringArgumentType.getString(var0, "module");
-                        boolean var3 = StringArgumentType.getString(var0, "state").equalsIgnoreCase("on");
+                        String string = StringArgumentType.getString(context, "module");
+                        boolean equalsIgnoreCase = StringArgumentType.getString(context, "state").equalsIgnoreCase("on");
                         var1x.execute(() -> {
-                           boolean var3x = var1x.getModules().setEnabled(var2, var3);
+                           boolean var3x = var1x.getModules().setEnabled(string, equalsIgnoreCase);
                            report(
-                              var3x ? "Бот " + var1x.name() + ": модуль " + var2 + (var3 ? " включен" : " выключен") : "Модуль " + var2 + " не найден",
+                              var3x ? "Бот " + var1x.name() + ": модуль " + string + (equalsIgnoreCase ? " включен" : " выключен") : "Модуль " + string + " не найден",
                               var3x
                            );
                         });
@@ -105,13 +105,13 @@ public class HBotCommand extends CommandAbstract {
                   })))
             )
       );
-      var1.then(literal("modules").then(arg("name", StringArgumentType.word()).executes(var0 -> {
-         BotClient var1x = requireBot(StringArgumentType.getString(var0, "name"));
+      literalArgumentBuilder.then(literal("modules").then(arg("name", StringArgumentType.word()).executes(context -> {
+         BotClient var1x = requireBot(StringArgumentType.getString(context, "name"));
          if (var1x == null) {
             return 1;
          } else {
-            for (BotModule var3 : var1x.getModules().getModules()) {
-               ChatLogger.method2019(var3.getName() + " — " + (var3.isEnabled() ? "вкл" : "выкл"));
+            for (BotModule botModule : var1x.getModules().getModules()) {
+               ChatLogger.method2019(botModule.getName() + " — " + (botModule.isEnabled() ? "вкл" : "выкл"));
             }
 
             return 1;
@@ -119,39 +119,39 @@ public class HBotCommand extends CommandAbstract {
       })));
    }
 
-   private static int connect(String var0, String var1, String var2) {
-      String var3 = var1;
-      if (var1 == null) {
-         ServerData var4 = Minecraft.getInstance().getCurrentServer();
-         if (var4 == null) {
+   private static int connect(String string, String str, String proxy) {
+      String input = str;
+      if (str == null) {
+         ServerData currentServer = Minecraft.getInstance().getCurrentServer();
+         if (currentServer == null) {
             ChatLogger.method2022("Не подключён к серверу — укажи адрес: .hbot connect <ник> <host:port>");
             return 1;
          }
 
-         var3 = var4.ip;
+         input = currentServer.ip;
       }
 
-      ServerAddress var6 = ServerAddress.parseString(var3);
-      BotClient var5 = HeadlessBots.connect(BotClientConfig.offline(var0, var6.getHost(), var6.getPort(), var2, HeadlessBots.getProtocolVersion(var0)));
-      ChatLogger.method2019("Бот " + var5.name() + " подключается к " + var3);
+      ServerAddress serverAddress = ServerAddress.parseString(input);
+      BotClient connect = HeadlessBots.connect(BotClientConfig.offline(string, serverAddress.getHost(), serverAddress.getPort(), proxy, HeadlessBots.getProtocolVersion(string)));
+      ChatLogger.method2019("Бот " + connect.name() + " подключается к " + input);
       return 1;
    }
 
-   private static BotClient requireBot(String var0) {
-      BotClient var1 = HeadlessBots.get(var0);
-      if (var1 == null) {
-         ChatLogger.method2022("Бот " + var0 + " не найден");
+   private static BotClient requireBot(String string) {
+      BotClient botClient = HeadlessBots.get(string);
+      if (botClient == null) {
+         ChatLogger.method2022("Бот " + string + " не найден");
       }
 
-      return var1;
+      return botClient;
    }
 
-   private static void report(String var0, boolean var1) {
+   private static void report(String status, boolean flag) {
       Minecraft.getInstance().execute(() -> {
-         if (var1) {
-            ChatLogger.method2019(var0);
+         if (flag) {
+            ChatLogger.method2019(status);
          } else {
-            ChatLogger.method2022(var0);
+            ChatLogger.method2022(status);
          }
       });
    }

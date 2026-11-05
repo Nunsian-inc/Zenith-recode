@@ -15,22 +15,22 @@ public enum AutoPotionBrewingEnum {
    public final String text;
    private final List<Item> items;
 
-   private AutoPotionBrewingEnum(String var3, Item... var4) {
-      this.text = var3;
-      this.items = List.of(var4);
+   private AutoPotionBrewingEnum(String text, Item... elements) {
+      this.text = text;
+      this.items = List.of(elements);
    }
 
    public List<Item> method6() {
-      List<Item> var1 = new ArrayList<>(this.items.size() + 1);
-      var1.add(Items.NETHER_WART);
-      var1.addAll(this.items);
-      return var1;
+      List<Item> items = new ArrayList<>(this.items.size() + 1);
+      items.add(Items.NETHER_WART);
+      items.addAll(this.items);
+      return items;
    }
 
-   public static AutoPotionBrewingEnum method7(String var0) {
-      for (AutoPotionBrewingEnum var4 : values()) {
-         if (var4.text.equals(var0)) {
-            return var4;
+   public static AutoPotionBrewingEnum method7(String anObject) {
+      for (AutoPotionBrewingEnum autoPotionBrewingEnum : values()) {
+         if (autoPotionBrewingEnum.text.equals(anObject)) {
+            return autoPotionBrewingEnum;
          }
       }
 

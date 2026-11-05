@@ -50,13 +50,13 @@ public class Module implements Comparable<Module>, ZenithAccess {
       }
    }
 
-   public Module(String var1, String var2, String var3, ModuleCategory var4) {
+   public Module(String text, String name, String str, ModuleCategory category) {
       this.info = null;
-      this.text = var1;
-      this.name = var2;
-      this.nameLower = var2.toLowerCase(Locale.ROOT);
-      this.category = var4;
-      this.description = var3 == null ? "" : var3;
+      this.text = text;
+      this.name = name;
+      this.nameLower = name.toLowerCase(Locale.ROOT);
+      this.category = category;
+      this.description = str == null ? "" : str;
       this.botModule = false;
       this.enabled = false;
       this.keyCode = -1;
@@ -94,12 +94,12 @@ public class Module implements Comparable<Module>, ZenithAccess {
       return this.enabled;
    }
 
-   public void setToggled(boolean var1) {
-      if (var1 && !this.isEnabledRaw()) {
+   public void setToggled(boolean toggled) {
+      if (toggled && !this.isEnabledRaw()) {
          this.toggle();
       }
 
-      if (!var1 && this.isEnabledRaw()) {
+      if (!toggled && this.isEnabledRaw()) {
          this.toggle();
       }
    }
@@ -155,15 +155,15 @@ public class Module implements Comparable<Module>, ZenithAccess {
    }
 
    public List<Setting> getSettings() {
-      return Arrays.stream(this.getClass().getDeclaredFields()).map(var1 -> {
+      return Arrays.stream(this.getClass().getDeclaredFields()).map(field -> {
          try {
-            var1.setAccessible(true);
-            return var1.get(this);
-         } catch (IllegalAccessException var3) {
-            var3.printStackTrace();
+            field.setAccessible(true);
+            return field.get(this);
+         } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return null;
          }
-      }).filter(var0 -> var0 instanceof Setting).map(var0 -> (Setting)var0).collect(Collectors.toList());
+      }).filter(obj -> obj instanceof Setting).map(obj -> (Setting)obj).collect(Collectors.toList());
    }
 
    public boolean isRenderSetting() {
@@ -171,80 +171,80 @@ public class Module implements Comparable<Module>, ZenithAccess {
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("enabled", this.enabled);
-      var1.addProperty("priority", this.priority);
-      var1.addProperty("keyCode", this.keyCode);
-      var1.addProperty("keyModifiers", this.keyModifiers);
-      JsonObject var2 = new JsonObject();
+      JsonObject json = new JsonObject();
+      json.addProperty("enabled", this.enabled);
+      json.addProperty("priority", this.priority);
+      json.addProperty("keyCode", this.keyCode);
+      json.addProperty("keyModifiers", this.keyModifiers);
+      JsonObject jsonObject = new JsonObject();
 
-      for (Setting var4 : this.getSettings()) {
-         var4.safe(var2);
+      for (Setting setting : this.getSettings()) {
+         setting.safe(jsonObject);
       }
 
-      var1.add("Settings", var2);
-      return var1;
+      json.add("Settings", jsonObject);
+      return json;
    }
 
-   public void load(JsonObject var1) {
-      if (var1 != null) {
-         Boolean var2 = null;
+   public void load(JsonObject json) {
+      if (json != null) {
+         Boolean flag = null;
 
          try {
-            var2 = var1.has("enabled") ? var1.get("enabled").getAsBoolean() : null;
-            if (var1.has("priority")) {
-               this.priority = var1.get("priority").getAsBoolean();
+            flag = json.has("enabled") ? json.get("enabled").getAsBoolean() : null;
+            if (json.has("priority")) {
+               this.priority = json.get("priority").getAsBoolean();
             }
 
-            if (var1.has("keyCode")) {
-               this.setKeyCode(var1.get("keyCode").getAsInt());
+            if (json.has("keyCode")) {
+               this.setKeyCode(json.get("keyCode").getAsInt());
             }
 
-            this.keyModifiers = var1.has("keyModifiers") ? var1.get("keyModifiers").getAsInt() : 0;
-         } catch (Exception var11) {
-            var11.printStackTrace();
+            this.keyModifiers = json.has("keyModifiers") ? json.get("keyModifiers").getAsInt() : 0;
+         } catch (Exception e) {
+            e.printStackTrace();
          }
 
-         JsonObject var3 = null;
+         JsonObject jsonObject = null;
 
          try {
-            var3 = var1.getAsJsonObject("Settings");
-         } catch (Exception var10) {
-            var10.printStackTrace();
+            jsonObject = json.getAsJsonObject("Settings");
+         } catch (Exception e) {
+            e.printStackTrace();
          }
 
-         if (var3 != null) {
-            for (Setting var5 : this.getSettings()) {
-               String var6 = var5.getKey();
-               if (var3.has(var6) || var5 instanceof GroupSetting) {
+         if (jsonObject != null) {
+            for (Setting setting : this.getSettings()) {
+               String key = setting.getKey();
+               if (jsonObject.has(key) || setting instanceof GroupSetting) {
                   try {
-                     var5.load(var3);
-                  } catch (Exception var9) {
-                     System.err.println("[Config] bad value " + this.name + "#" + var6 + ": " + var9);
+                     setting.load(jsonObject);
+                  } catch (Exception e) {
+                     System.err.println("[Config] bad value " + this.name + "#" + key + ": " + e);
                   }
                }
             }
          }
 
          try {
-            if (var2 != null) {
-               if (var2 && !this.isEnabledRaw()) {
+            if (flag != null) {
+               if (flag && !this.isEnabledRaw()) {
                   this.toggle();
                }
 
-               if (!var2 && this.isEnabledRaw()) {
+               if (!flag && this.isEnabledRaw()) {
                   this.toggle();
                }
             }
-         } catch (Exception var8) {
-            var8.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
 
    @Override
-   public boolean equals(Object var1) {
-      return this == var1;
+   public boolean equals(Object obj) {
+      return this == obj;
    }
 
    @Override
@@ -252,8 +252,8 @@ public class Module implements Comparable<Module>, ZenithAccess {
       return System.identityHashCode(this);
    }
 
-   public int compareTo(@NotNull Module var1) {
-      return var1.getName().compareTo(this.name);
+   public int compareTo(@NotNull Module moduleValue) {
+      return moduleValue.getName().compareTo(this.name);
    }
 
    public boolean isPremium() {
@@ -301,33 +301,33 @@ public class Module implements Comparable<Module>, ZenithAccess {
    }
 
    @Generated
-   public void setInfo(ModuleInfo var1) {
-      this.info = var1;
+   public void setInfo(ModuleInfo info) {
+      this.info = info;
    }
 
    @Generated
-   public void setName(String var1) {
-      this.name = var1;
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Generated
-   public void setEnabled(boolean var1) {
-      this.enabled = var1;
+   public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
    }
 
    @Generated
-   public void setPriority(boolean var1) {
-      this.priority = var1;
+   public void setPriority(boolean priority) {
+      this.priority = priority;
    }
 
    @Generated
-   public void setKeyCode(int var1) {
-      this.keyCode = var1;
+   public void setKeyCode(int keyCode) {
+      this.keyCode = keyCode;
    }
 
    @Generated
-   public void setKeyModifiers(int var1) {
-      this.keyModifiers = var1;
+   public void setKeyModifiers(int keyModifiers) {
+      this.keyModifiers = keyModifiers;
    }
 
    @Generated

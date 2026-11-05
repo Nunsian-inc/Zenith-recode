@@ -31,10 +31,10 @@ public final class PartyPlayerInfo {
    private volatile List<CloudPackets.Data9> items = List.of();
    private volatile int intValue2;
 
-   public PartyPlayerInfo(long var1, String var3, String var4) {
-      this.longValue = var1;
-      this.text = var3;
-      this.text2 = var4;
+   public PartyPlayerInfo(long longValue, String text, String anotherString) {
+      this.longValue = longValue;
+      this.text = text;
+      this.text2 = anotherString;
    }
 
    public long uid() {
@@ -53,8 +53,8 @@ public final class PartyPlayerInfo {
       return (this.intValue2 & 1) != 0;
    }
 
-   public void setIntValue2(int var1) {
-      this.intValue2 = var1;
+   public void setIntValue2(int intValue) {
+      this.intValue2 = intValue;
    }
 
    public String server() {
@@ -69,8 +69,8 @@ public final class PartyPlayerInfo {
       return this.text3.startsWith("singleplayer") ? "одиночная игра" : this.text3;
    }
 
-   public boolean method3291(String var1, String var2) {
-      return this.method3292() && this.text3.equals(var1) && this.text4.equals(var2);
+   public boolean method3291(String anObject, String str) {
+      return this.method3292() && this.text3.equals(anObject) && this.text4.equals(str);
    }
 
    public double getDoubleValue() {
@@ -98,8 +98,8 @@ public final class PartyPlayerInfo {
    }
 
    public boolean method3292() {
-      long var1 = this.longValue2;
-      return var1 != 0L && System.currentTimeMillis() - var1 <= 15000L;
+      long l = this.longValue2;
+      return l != 0L && System.currentTimeMillis() - l <= 15000L;
    }
 
    public boolean method3293() {
@@ -112,17 +112,17 @@ public final class PartyPlayerInfo {
       } else if (this.longValue3 == 0L) {
          return new Vec3(this.doubleValue, this.doubleValue2, this.doubleValue3);
       } else {
-         long var1 = Math.max(1L, this.longValue2 - this.longValue3);
-         double var3 = (double)(System.currentTimeMillis() - this.longValue2) / var1;
-         if (var3 <= 0.0) {
+         long l = Math.max(1L, this.longValue2 - this.longValue3);
+         double d = (double)(System.currentTimeMillis() - this.longValue2) / l;
+         if (d <= 0.0) {
             return new Vec3(this.doubleValue4, this.doubleValue5, this.doubleValue6);
          } else {
-            return var3 >= 1.0
+            return d >= 1.0
                ? new Vec3(this.doubleValue, this.doubleValue2, this.doubleValue3)
                : new Vec3(
-                  this.doubleValue4 + (this.doubleValue - this.doubleValue4) * var3,
-                  this.doubleValue5 + (this.doubleValue2 - this.doubleValue5) * var3,
-                  this.doubleValue6 + (this.doubleValue3 - this.doubleValue6) * var3
+                  this.doubleValue4 + (this.doubleValue - this.doubleValue4) * d,
+                  this.doubleValue5 + (this.doubleValue2 - this.doubleValue5) * d,
+                  this.doubleValue6 + (this.doubleValue3 - this.doubleValue6) * d
                );
          }
       }
@@ -152,57 +152,57 @@ public final class PartyPlayerInfo {
       return this.items;
    }
 
-   public void method3295(CloudPackets.Data5 var1) {
-      this.text3 = var1.server();
-      this.text4 = var1.dimension();
+   public void method3295(CloudPackets.Data5 data5) {
+      this.text3 = data5.server();
+      this.text4 = data5.dimension();
    }
 
-   public void method3296(CloudPackets.Data2 var1) {
-      if (method3300(var1.getDoubleValue(), 3.2E7)
-         && method3300(var1.getDoubleValue2(), 3.2E7)
-         && method3300(var1.getDoubleValue3(), 3.2E7)
-         && Float.isFinite(var1.getFloatValue())
-         && Float.isFinite(var1.getFloatValue2())) {
-         long var2 = System.currentTimeMillis();
-         double var4 = var1.getDoubleValue() - this.doubleValue;
-         double var6 = var1.getDoubleValue2() - this.doubleValue2;
-         double var8 = var1.getDoubleValue3() - this.doubleValue3;
-         boolean var10 = this.longValue2 == 0L || var4 * var4 + var6 * var6 + var8 * var8 > 64.0;
-         this.doubleValue4 = var10 ? var1.getDoubleValue() : this.doubleValue;
-         this.doubleValue5 = var10 ? var1.getDoubleValue2() : this.doubleValue2;
-         this.doubleValue6 = var10 ? var1.getDoubleValue3() : this.doubleValue3;
+   public void method3296(CloudPackets.Data2 data2) {
+      if (method3300(data2.getDoubleValue(), 3.2E7)
+         && method3300(data2.getDoubleValue2(), 3.2E7)
+         && method3300(data2.getDoubleValue3(), 3.2E7)
+         && Float.isFinite(data2.getFloatValue())
+         && Float.isFinite(data2.getFloatValue2())) {
+         long now = System.currentTimeMillis();
+         double d = data2.getDoubleValue() - this.doubleValue;
+         double d2 = data2.getDoubleValue2() - this.doubleValue2;
+         double d3 = data2.getDoubleValue3() - this.doubleValue3;
+         boolean flag = this.longValue2 == 0L || d * d + d2 * d2 + d3 * d3 > 64.0;
+         this.doubleValue4 = flag ? data2.getDoubleValue() : this.doubleValue;
+         this.doubleValue5 = flag ? data2.getDoubleValue2() : this.doubleValue2;
+         this.doubleValue6 = flag ? data2.getDoubleValue3() : this.doubleValue3;
          this.longValue3 = this.longValue2;
-         this.doubleValue = var1.getDoubleValue();
-         this.doubleValue2 = var1.getDoubleValue2();
-         this.doubleValue3 = var1.getDoubleValue3();
-         this.floatValue = var1.getFloatValue();
-         this.floatValue2 = var1.getFloatValue2();
-         this.longValue2 = var2;
+         this.doubleValue = data2.getDoubleValue();
+         this.doubleValue2 = data2.getDoubleValue2();
+         this.doubleValue3 = data2.getDoubleValue3();
+         this.floatValue = data2.getFloatValue();
+         this.floatValue2 = data2.getFloatValue2();
+         this.longValue2 = now;
       }
    }
 
-   public void method3297(CloudPackets.Data3 var1) {
-      if (method3300(var1.getFloatValue(), 1000000.0)
-         && method3300(var1.getFloatValue3(), 1000000.0)
-         && method3300(var1.getFloatValue2(), 1000000.0)
-         && !(var1.getFloatValue2() <= 0.0F)) {
-         this.floatValue3 = var1.getFloatValue();
-         this.floatValue4 = var1.getFloatValue2();
-         this.floatValue5 = var1.getFloatValue3();
-         this.intValue = var1.getIntValue();
+   public void method3297(CloudPackets.Data3 data3) {
+      if (method3300(data3.getFloatValue(), 1000000.0)
+         && method3300(data3.getFloatValue3(), 1000000.0)
+         && method3300(data3.getFloatValue2(), 1000000.0)
+         && !(data3.getFloatValue2() <= 0.0F)) {
+         this.floatValue3 = data3.getFloatValue();
+         this.floatValue4 = data3.getFloatValue2();
+         this.floatValue5 = data3.getFloatValue3();
+         this.intValue = data3.getIntValue();
       }
    }
 
-   public void method3298(CloudPackets.Data11 var1) {
-      this.data7s = var1.getData7s();
+   public void method3298(CloudPackets.Data11 data11) {
+      this.data7s = data11.getData7s();
    }
 
-   public void method3299(CloudPackets.Data15 var1) {
-      this.items = var1.getItems();
+   public void method3299(CloudPackets.Data15 data15) {
+      this.items = data15.getItems();
    }
 
-   private static boolean method3300(double var0, double var2) {
-      return Double.isFinite(var0) && Math.abs(var0) <= var2;
+   private static boolean method3300(double doubleValue, double d) {
+      return Double.isFinite(doubleValue) && Math.abs(doubleValue) <= d;
    }
 
    @Override

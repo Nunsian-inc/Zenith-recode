@@ -15,9 +15,9 @@ public class MixinKeyboard {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void triggerKeyEvent(long var1, int var3, net.minecraft.client.input.KeyEvent var4, CallbackInfo var5) {
-      if (org.zenith.utility.misc.KeyCompat.toGlfw(var4.key()) != -1) {
-         EventManager.call(new KeyEvent(var3, org.zenith.utility.misc.KeyCompat.toGlfw(var4.key()), org.zenith.utility.misc.KeyCompat.modsToGlfw(var4.modifiers())));
+   public void triggerKeyEvent(long l, int intValue, net.minecraft.client.input.KeyEvent event, CallbackInfo callbackInfo) {
+      if (org.zenith.utility.misc.KeyCompat.toGlfw(event.key()) != -1) {
+         EventManager.call(new KeyEvent(intValue, org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers())));
       }
    }
 }

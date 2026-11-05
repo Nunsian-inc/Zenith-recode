@@ -29,6 +29,6 @@ public final class FiguraWings {
    }
 
    public interface Submit {
-      void submit(PoseStack var1);
+      void submit(PoseStack pivotStack);
    }
 }

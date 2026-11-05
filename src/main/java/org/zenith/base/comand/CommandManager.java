@@ -86,19 +86,19 @@ public class CommandManager {
    }
 
    public Set<String> commandNames() {
-      HashSet<String> var1 = new HashSet<>();
+      HashSet<String> strings = new HashSet<>();
 
-      for (CommandNode var3 : this.dispatcher.getRoot().getChildren()) {
-         var1.add(var3.getName().toLowerCase(Locale.ROOT));
+      for (CommandNode commandNode : this.dispatcher.getRoot().getChildren()) {
+         strings.add(commandNode.getName().toLowerCase(Locale.ROOT));
       }
 
-      return var1;
+      return strings;
    }
 
-   public void registerCommand(CommandAbstract var1) {
-      if (var1 != null) {
-         var1.register(this.dispatcher);
-         this.commands.add(var1);
+   public void registerCommand(CommandAbstract friendCommand) {
+      if (friendCommand != null) {
+         friendCommand.register(this.dispatcher);
+         this.commands.add(friendCommand);
       }
    }
 

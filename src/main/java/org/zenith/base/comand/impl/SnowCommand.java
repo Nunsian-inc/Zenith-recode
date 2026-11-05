@@ -27,36 +27,36 @@ public class SnowCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var0 -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "snow fill [радиус] | snow stats | snow check | snow clear");
          return 1;
       });
-      var1.then(
+      literalArgumentBuilder.then(
          ((LiteralArgumentBuilder)literal("fill").executes(var1x -> this.fill(24)))
             .then(arg("radius", IntegerArgumentType.integer(1, 64)).executes(var1x -> this.fill(IntegerArgumentType.getInteger(var1x, "radius"))))
       );
-      var1.then(literal("stats").executes(var1x -> {
+      literalArgumentBuilder.then(literal("stats").executes(var1x -> {
          this.stats();
          return 1;
       }));
-      var1.then(literal("check").executes(var1x -> {
+      literalArgumentBuilder.then(literal("check").executes(var1x -> {
          this.check();
          return 1;
       }));
-      var1.then(
+      literalArgumentBuilder.then(
          ((LiteralArgumentBuilder)literal("mesh").executes(var1x -> this.mesh(24)))
             .then(arg("radius", IntegerArgumentType.integer(1, 64)).executes(var1x -> this.mesh(IntegerArgumentType.getInteger(var1x, "radius"))))
       );
-      var1.then(literal("show").executes(var0 -> {
+      literalArgumentBuilder.then(literal("show").executes(commandContext -> {
          SnowVisibility.setVisible(!SnowVisibility.isVisible());
          ChatLogger.method2020(ChatLogger.Type.INFO, "Снег: отладочная отрисовка " + (SnowVisibility.isVisible() ? "включена" : "выключена"));
          return 1;
       }));
-      var1.then(
+      literalArgumentBuilder.then(
          literal("shader")
             .executes(
-               var0 -> {
+               commandContext -> {
                   ChatLogger.method2020(
                      ChatLogger.Type.INFO,
                      SnowShader.method390() ? "Снег: шейдер загружен, слой идёт через него" : "Снег: шейдер НЕ загружен (" + SnowShader.method389() + ")"
@@ -65,26 +65,26 @@ public class SnowCommand extends CommandAbstract {
                }
             )
       );
-      var1.then(literal("screen").executes(var0 -> {
+      literalArgumentBuilder.then(literal("screen").executes(commandContext -> {
          boolean var1x = SnowShader.method388();
          ChatLogger.method2020(ChatLogger.Type.INFO, "Снег: экранный слой " + (var1x ? "включён" : "выключен"));
          return 1;
       }));
-      var1.then(literal("clear").executes(var0 -> {
+      literalArgumentBuilder.then(literal("clear").executes(commandContext -> {
          VOXELS.clear();
          ChatLogger.method2020(ChatLogger.Type.INFO, "Снег: хранилище очищено");
          return 1;
       }));
    }
 
-   private int fill(int var1) {
-      LocalPlayer var2 = Minecraft.getInstance().player;
-      if (var2 != null && var2.level() != null) {
+   private int fill(int integer) {
+      LocalPlayer player = Minecraft.getInstance().player;
+      if (player != null && player.level() != null) {
          VOXELS.clear();
-         long var3 = System.nanoTime();
-         SnowStats.Entry var5 = SnowStats.method803(var2.level(), VOXELS, var2.getBlockX(), var2.getBlockY(), var2.getBlockZ(), var1, 0.35F);
-         long var6 = (System.nanoTime() - var3) / 1000L;
-         ChatLogger.method2020(ChatLogger.Type.INFO, "Снег: " + var5 + ", за " + var6 + " мкс");
+         long nanoTime = System.nanoTime();
+         SnowStats.Entry entry = SnowStats.method803(player.level(), VOXELS, player.getBlockX(), player.getBlockY(), player.getBlockZ(), integer, 0.35F);
+         long l = (System.nanoTime() - nanoTime) / 1000L;
+         ChatLogger.method2020(ChatLogger.Type.INFO, "Снег: " + entry + ", за " + l + " мкс");
          this.stats();
          return 1;
       } else {
@@ -93,34 +93,34 @@ public class SnowCommand extends CommandAbstract {
       }
    }
 
-   private int mesh(int var1) {
-      LocalPlayer var2 = Minecraft.getInstance().player;
-      if (var2 == null) {
+   private int mesh(int integer) {
+      LocalPlayer player = Minecraft.getInstance().player;
+      if (player == null) {
          ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: нет мира");
          return 1;
       } else if (VOXELS.method4906() == 0) {
          ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: хранилище пустое, сначала snow fill");
          return 1;
       } else {
-         int var3 = var1 * 2 * 4;
-         int var4 = Class32.method4911(var2.getBlockX() - var1);
-         int var5 = Class32.method4911(var2.getBlockY() - 8);
-         int var6 = Class32.method4911(var2.getBlockZ() - var1);
-         byte var7 = 96;
-         long var8 = System.nanoTime();
-         MeshImporter.Entry var10 = MeshImporter.method658(VOXELS, SnowVisibility.getFloatArrayBuffer(), var4, var5, var6, var3, var7, var3);
-         long var11 = (System.nanoTime() - var8) / 1000L;
-         SnowVisibility.method2401(var4, var5, var6);
+         int n = integer * 2 * 4;
+         int n2 = Class32.method4911(player.getBlockX() - integer);
+         int n3 = Class32.method4911(player.getBlockY() - 8);
+         int n4 = Class32.method4911(player.getBlockZ() - integer);
+         byte b = 96;
+         long nanoTime = System.nanoTime();
+         MeshImporter.Entry entry = MeshImporter.method658(VOXELS, SnowVisibility.getFloatArrayBuffer(), n2, n3, n4, n, b, n);
+         long l = (System.nanoTime() - nanoTime) / 1000L;
+         SnowVisibility.method2401(n2, n3, n4);
          ChatLogger.method2020(
             ChatLogger.Type.INFO,
             "Снег: сетка — "
-               + var10
+               + entry
                + ", квадратов "
                + SnowVisibility.getFloatArrayBuffer().getIntValue()
                + ", память "
                + SnowVisibility.getFloatArrayBuffer().method386() / 1024L
                + " КБ, за "
-               + var11
+               + l
                + " мкс"
          );
          return 1;
@@ -143,14 +143,14 @@ public class SnowCommand extends CommandAbstract {
    }
 
    private void check() {
-      List<String> var1 = MeshValidator.method6095(VOXELS);
-      if (var1.isEmpty()) {
+      List<String> strings = MeshValidator.method6095(VOXELS);
+      if (strings.isEmpty()) {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Снег: проверка пройдена, ошибок нет");
       } else {
-         ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: найдено проблем — " + var1.size());
+         ChatLogger.method2020(ChatLogger.Type.WARN, "Снег: найдено проблем — " + strings.size());
 
-         for (String var3 : var1) {
-            ChatLogger.method2020(ChatLogger.Type.WARN, "  " + var3);
+         for (String str : strings) {
+            ChatLogger.method2020(ChatLogger.Type.WARN, "  " + str);
          }
       }
    }

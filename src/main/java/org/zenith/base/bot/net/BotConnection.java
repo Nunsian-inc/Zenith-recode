@@ -98,55 +98,55 @@ public final class BotConnection extends SimpleChannelInboundHandler<Packet<?>> 
    private BotConnection() {
    }
 
-   public static BotConnection connect(String var0, int var1, @Nullable String var2) throws UnknownHostException {
-      return connect(var0, var1, var2, -1);
+   public static BotConnection connect(String host, int port, @Nullable String proxy) throws UnknownHostException {
+      return connect(host, port, proxy, -1);
    }
 
-   public static BotConnection connect(String var0, int var1, @Nullable String var2, int var3) throws UnknownHostException {
-      BotConnection var4 = new BotConnection();
-      if (BotVia.isTranslationNeeded(var3)) {
+   public static BotConnection connect(String host, int port, @Nullable String proxy, int viaProtocolVersion) throws UnknownHostException {
+      BotConnection botConnection = new BotConnection();
+      if (BotVia.isTranslationNeeded(viaProtocolVersion)) {
          if (BotVia.ensureInitialized()) {
-            var4.viaProtocolVersion = var3;
+            botConnection.viaProtocolVersion = viaProtocolVersion;
          } else {
-            LOGGER.warn("ViaVersion unavailable, connecting to {}:{} with native protocol", var0, var1);
+            LOGGER.warn("ViaVersion unavailable, connecting to {}:{} with native protocol", host, port);
          }
       }
 
-      BotProxy var5 = BotProxy.parse(var2);
-      if (var5 == null) {
-         InetSocketAddress var6 = resolve(var0, var1);
-         var4.bootstrap(null).connect(var6.getAddress(), var6.getPort()).syncUninterruptibly();
+      BotProxy botProxy = BotProxy.parse(proxy);
+      if (botProxy == null) {
+         InetSocketAddress inetSocketAddress = resolve(host, port);
+         botConnection.bootstrap(null).connect(inetSocketAddress.getAddress(), inetSocketAddress.getPort()).syncUninterruptibly();
       } else {
-         ProxyHandler var7 = var5.createHandler();
-         var4.bootstrap(var7).connect(InetSocketAddress.createUnresolved(var0, var1)).syncUninterruptibly();
-         var7.connectFuture().syncUninterruptibly();
+         ProxyHandler handler = botProxy.createHandler();
+         botConnection.bootstrap(handler).connect(InetSocketAddress.createUnresolved(host, port)).syncUninterruptibly();
+         handler.connectFuture().syncUninterruptibly();
       }
 
-      return var4;
+      return botConnection;
    }
 
-   private static InetSocketAddress resolve(String var0, int var1) throws UnknownHostException {
-      ServerAddress var2 = new ServerAddress(var0, var1);
-      return ServerNameResolver.DEFAULT.resolveAddress(var2).map(ResolvedServerAddress::asInetSocketAddress).orElseThrow(() -> new UnknownHostException(var0));
+   private static InetSocketAddress resolve(String host, int port) throws UnknownHostException {
+      ServerAddress serverAddress = new ServerAddress(host, port);
+      return ServerNameResolver.DEFAULT.resolveAddress(serverAddress).map(ResolvedServerAddress::asInetSocketAddress).orElseThrow(() -> new UnknownHostException(host));
    }
 
-   private Bootstrap bootstrap(@Nullable final ProxyHandler var1) {
+   private Bootstrap bootstrap(@Nullable final ProxyHandler handler) {
       return (Bootstrap)((Bootstrap)((Bootstrap)new Bootstrap().group((EventLoopGroup)IO_GROUP.get())).channel(NioSocketChannel.class))
          .handler(new ChannelInitializer<Channel>() {
             public void initChannel(Channel var1x) {
                try {
                   var1x.config().setOption(ChannelOption.TCP_NODELAY, true);
-               } catch (ChannelException var3) {
+               } catch (ChannelException e) {
                }
 
-               ChannelPipeline var2 = var1x.pipeline();
-               var2.addLast("timeout", new ReadTimeoutHandler(30));
-               if (var1 != null) {
-                  var2.addLast("proxy", var1);
+               ChannelPipeline pipeline = var1x.pipeline();
+               pipeline.addLast("timeout", new ReadTimeoutHandler(30));
+               if (handler != null) {
+                  pipeline.addLast("proxy", handler);
                }
 
-               BotConnection.addClientHandlers(var2);
-               BotConnection.this.addFlowControlHandler(var2);
+               BotConnection.addClientHandlers(pipeline);
+               BotConnection.this.addFlowControlHandler(pipeline);
                if (BotConnection.this.viaProtocolVersion > 0) {
                   BotVia.injectPipeline(var1x, BotConnection.this.viaProtocolVersion);
                }
@@ -154,201 +154,201 @@ public final class BotConnection extends SimpleChannelInboundHandler<Packet<?>> 
          });
    }
 
-   private static void addClientHandlers(ChannelPipeline var0) {
-      var0.addLast("splitter", new Varint21FrameDecoder(null))
+   private static void addClientHandlers(ChannelPipeline pipeline) {
+      pipeline.addLast("splitter", new Varint21FrameDecoder(null))
          .addLast(new ChannelHandler[]{new FlowControlHandler()})
          .addLast("inbound_config", new Inbound())
          .addLast("prepender", new Varint21LengthFieldPrepender())
          .addLast("encoder", new PacketEncoder<ServerHandshakePacketListener>(HandshakeProtocols.SERVERBOUND));
    }
 
-   private void addFlowControlHandler(ChannelPipeline var1) {
-      var1.addLast("hackfix", new ChannelOutboundHandlerAdapter() {
-         public void write(ChannelHandlerContext var1, Object var2, ChannelPromise var3) throws Exception {
-            super.write(var1, var2, var3);
+   private void addFlowControlHandler(ChannelPipeline pipeline) {
+      pipeline.addLast("hackfix", new ChannelOutboundHandlerAdapter() {
+         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+            super.write(ctx, msg, promise);
          }
       }).addLast("packet_handler", this);
    }
 
-   public void startLogin(String var1, int var2, ClientLoginPacketListener var3) {
-      this.prePlayStateListener = var3;
+   public void startLogin(String host, int port, ClientLoginPacketListener prePlayStateListener) {
+      this.prePlayStateListener = prePlayStateListener;
       this.submit(var3x -> {
-         var3x.transitionInbound(LoginProtocols.CLIENTBOUND, var3);
-         var3x.sendImmediately(new ClientIntentionPacket(SharedConstants.getCurrentVersion().protocolVersion(), var1, var2, ClientIntent.LOGIN), null, true);
+         var3x.transitionInbound(LoginProtocols.CLIENTBOUND, prePlayStateListener);
+         var3x.sendImmediately(new ClientIntentionPacket(SharedConstants.getCurrentVersion().protocolVersion(), host, port, ClientIntent.LOGIN), null, true);
          var3x.transitionOutbound(LoginProtocols.SERVERBOUND);
       });
    }
 
-   public void channelActive(ChannelHandlerContext var1) throws Exception {
-      super.channelActive(var1);
-      this.channel = var1.channel();
+   public void channelActive(ChannelHandlerContext ctx) throws Exception {
+      super.channelActive(ctx);
+      this.channel = ctx.channel();
       this.address = this.channel.remoteAddress();
-      DisconnectionDetails var2 = this.pendingDisconnectionInfo;
-      if (var2 != null) {
-         this.disconnect(var2);
+      DisconnectionDetails pendingDisconnectionInfo = this.pendingDisconnectionInfo;
+      if (pendingDisconnectionInfo != null) {
+         this.disconnect(pendingDisconnectionInfo);
       }
    }
 
-   public void channelInactive(ChannelHandlerContext var1) {
+   public void channelInactive(ChannelHandlerContext ctx) {
       this.disconnect(Component.translatable("disconnect.endOfStream"));
    }
 
-   public void exceptionCaught(ChannelHandlerContext var1, Throwable var2) {
-      if (var2 instanceof SkipPacketEncoderException) {
-         LOGGER.debug("Skipping packet due to errors", var2.getCause());
+   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+      if (cause instanceof SkipPacketEncoderException) {
+         LOGGER.debug("Skipping packet due to errors", cause.getCause());
       } else {
-         boolean var3 = !this.errored;
+         boolean flag = !this.errored;
          this.errored = true;
          if (this.channel != null && this.channel.isOpen()) {
-            if (var2 instanceof TimeoutException) {
-               LOGGER.debug("Timeout", var2);
+            if (cause instanceof TimeoutException) {
+               LOGGER.debug("Timeout", cause);
                this.disconnect(Component.translatable("disconnect.timeout"));
             } else {
-               MutableComponent var4 = Component.translatable("disconnect.genericReason", "Internal Exception: " + var2);
-               PacketListener var5 = this.packetListener;
-               DisconnectionDetails var6 = var5 != null ? var5.createDisconnectionInfo(var4, var2) : new DisconnectionDetails(var4);
-               if (var3) {
-                  LOGGER.debug("Failed to send packet", var2);
-                  this.disconnect(var6);
+               MutableComponent translatable = Component.translatable("disconnect.genericReason", "Internal Exception: " + cause);
+               PacketListener packetListener = this.packetListener;
+               DisconnectionDetails disconnectionInfo = packetListener != null ? packetListener.createDisconnectionInfo(translatable, cause) : new DisconnectionDetails(translatable);
+               if (flag) {
+                  LOGGER.debug("Failed to send packet", cause);
+                  this.disconnect(disconnectionInfo);
                   this.tryDisableAutoRead();
                } else {
-                  LOGGER.debug("Double fault", var2);
-                  this.disconnect(var6);
+                  LOGGER.debug("Double fault", cause);
+                  this.disconnect(disconnectionInfo);
                }
             }
          }
       }
    }
 
-   public void channelRead0(ChannelHandlerContext var1, Packet<?> var2) {
+   public void channelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet) {
       if (this.channel != null && this.channel.isOpen()) {
-         PacketListener var3 = this.packetListener;
-         if (var3 == null) {
+         PacketListener packetListener = this.packetListener;
+         if (packetListener == null) {
             throw new IllegalStateException("Received a packet before the packet listener was initialized");
-         } else if (var3.shouldHandleMessage(var2)) {
-            if (var3 instanceof BotCommonHandler var4) {
-               var4.firePacketEvent(var2);
-               if (var2 instanceof BundlePacket var5) {
-                  for (Object var7_o : (Iterable<?>)(Object)(var5.subPackets())) {
-                     Packet var7 = (Packet)var7_o;
-                     var4.firePacketEvent(var7);
+         } else if (packetListener.shouldHandleMessage(packet)) {
+            if (packetListener instanceof BotCommonHandler botCommonHandler) {
+               botCommonHandler.firePacketEvent(packet);
+               if (packet instanceof BundlePacket bundlePacket) {
+                  for (Object subPacket : (Iterable<?>)(Object)(bundlePacket.subPackets())) {
+                     Packet subPacket2 = (Packet)subPacket;
+                     botCommonHandler.firePacketEvent(subPacket2);
                   }
                }
             }
 
             try {
-               handlePacket(var2, var3);
-            } catch (RunningOnDifferentThreadException var8) {
-            } catch (RejectedExecutionException var9) {
+               handlePacket(packet, packetListener);
+            } catch (RunningOnDifferentThreadException e) {
+            } catch (RejectedExecutionException e) {
                this.disconnect(Component.translatable("multiplayer.disconnect.server_shutdown"));
-            } catch (ClassCastException var10) {
-               LOGGER.error("Received {} that couldn't be processed", var2.getClass(), var10);
+            } catch (ClassCastException e) {
+               LOGGER.error("Received {} that couldn't be processed", packet.getClass(), e);
                this.disconnect(Component.translatable("multiplayer.disconnect.invalid_packet"));
             }
          }
       }
    }
 
-   private static <T extends PacketListener> void handlePacket(Packet<T> var0, PacketListener var1) {
-      ((Packet)var0).handle(var1);
+   private static <T extends PacketListener> void handlePacket(Packet<T> packet, PacketListener packetListener) {
+      ((Packet)packet).handle(packetListener);
    }
 
-   public <T extends PacketListener> void transitionInbound(ProtocolInfo<T> var1, T var2) {
-      Objects.requireNonNull(var2, "packetListener");
-      if (var1.flow() != PacketFlow.CLIENTBOUND) {
-         throw new IllegalStateException("Invalid inbound protocol: " + var1.id());
-      } else if (var1.id() != var2.protocol()) {
-         throw new IllegalStateException("Listener protocol (" + var2.protocol() + ") does not match requested one " + var1);
+   public <T extends PacketListener> void transitionInbound(ProtocolInfo<T> bind, T packetListener) {
+      Objects.requireNonNull(packetListener, "packetListener");
+      if (bind.flow() != PacketFlow.CLIENTBOUND) {
+         throw new IllegalStateException("Invalid inbound protocol: " + bind.id());
+      } else if (bind.id() != packetListener.protocol()) {
+         throw new IllegalStateException("Listener protocol (" + packetListener.protocol() + ") does not match requested one " + bind);
       } else {
-         this.packetListener = var2;
+         this.packetListener = packetListener;
          this.prePlayStateListener = null;
-         InboundConfigurationTask var3 = UnconfiguredPipelineHandler.setupInboundProtocol(var1);
-         BundlerInfo var4 = var1.bundlerInfo();
-         if (var4 != null) {
-            PacketBundlePacker var5 = new PacketBundlePacker(var4);
-            var3 = var3.andThen(var1x -> var1x.pipeline().addAfter("decoder", "bundler", var5));
+         InboundConfigurationTask setupInboundProtocol = UnconfiguredPipelineHandler.setupInboundProtocol(bind);
+         BundlerInfo bundlerInfo = bind.bundlerInfo();
+         if (bundlerInfo != null) {
+            PacketBundlePacker packetBundlePacker = new PacketBundlePacker(bundlerInfo);
+            setupInboundProtocol = setupInboundProtocol.andThen(var1x -> var1x.pipeline().addAfter("decoder", "bundler", packetBundlePacker));
          }
 
-         syncUninterruptibly(this.channel.writeAndFlush(var3));
+         syncUninterruptibly(this.channel.writeAndFlush(setupInboundProtocol));
       }
    }
 
-   public void transitionOutbound(ProtocolInfo<?> var1) {
-      if (var1.flow() != PacketFlow.SERVERBOUND) {
-         throw new IllegalStateException("Invalid outbound protocol: " + var1.id());
+   public void transitionOutbound(ProtocolInfo<?> bind) {
+      if (bind.flow() != PacketFlow.SERVERBOUND) {
+         throw new IllegalStateException("Invalid outbound protocol: " + bind.id());
       } else {
-         OutboundConfigurationTask var2 = UnconfiguredPipelineHandler.setupOutboundProtocol(var1);
-         BundlerInfo var3 = var1.bundlerInfo();
-         if (var3 != null) {
-            PacketBundleUnpacker var4 = new PacketBundleUnpacker(var3);
-            var2 = var2.andThen(var1x -> var1x.pipeline().addAfter("encoder", "unbundler", var4));
+         OutboundConfigurationTask setupOutboundProtocol = UnconfiguredPipelineHandler.setupOutboundProtocol(bind);
+         BundlerInfo bundlerInfo = bind.bundlerInfo();
+         if (bundlerInfo != null) {
+            PacketBundleUnpacker packetBundleUnpacker = new PacketBundleUnpacker(bundlerInfo);
+            setupOutboundProtocol = setupOutboundProtocol.andThen(var1x -> var1x.pipeline().addAfter("encoder", "unbundler", packetBundleUnpacker));
          }
 
-         syncUninterruptibly(this.channel.writeAndFlush(var2));
+         syncUninterruptibly(this.channel.writeAndFlush(setupOutboundProtocol));
       }
    }
 
-   private static void syncUninterruptibly(ChannelFuture var0) {
+   private static void syncUninterruptibly(ChannelFuture writeAndFlush) {
       try {
-         var0.syncUninterruptibly();
-      } catch (Exception var2) {
-         if (!(var2 instanceof ClosedChannelException)) {
-            throw var2;
+         writeAndFlush.syncUninterruptibly();
+      } catch (Exception e) {
+         if (!(e instanceof ClosedChannelException)) {
+            throw e;
          }
 
          LOGGER.info("Connection closed during protocol change");
       }
    }
 
-   public void send(Packet<?> var1) {
-      this.send(var1, null);
+   public void send(Packet<?> resourcePackPacket) {
+      this.send(resourcePackPacket, null);
    }
 
-   public void send(Packet<?> var1, @Nullable ChannelFutureListener var2) {
-      this.send(var1, var2, true);
+   public void send(Packet<?> resourcePackPacket, @Nullable ChannelFutureListener thenRun) {
+      this.send(resourcePackPacket, thenRun, true);
    }
 
-   public void send(Packet<?> var1, @Nullable ChannelFutureListener var2, boolean var3) {
+   public void send(Packet<?> resourcePackPacket, @Nullable ChannelFutureListener thenRun, boolean flag) {
       if (this.isOpen()) {
          this.handleQueuedTasks();
-         this.sendImmediately(var1, var2, var3);
+         this.sendImmediately(resourcePackPacket, thenRun, flag);
       } else {
-         this.queuedTasks.add(var3x -> var3x.sendImmediately(var1, var2, var3));
+         this.queuedTasks.add(var3x -> var3x.sendImmediately(resourcePackPacket, thenRun, flag));
       }
    }
 
-   public void submit(Consumer<BotConnection> var1) {
+   public void submit(Consumer<BotConnection> consumer) {
       if (this.isOpen()) {
          this.handleQueuedTasks();
-         var1.accept(this);
+         consumer.accept(this);
       } else {
-         this.queuedTasks.add(var1);
+         this.queuedTasks.add(consumer);
       }
    }
 
-   private void sendImmediately(Packet<?> var1, @Nullable ChannelFutureListener var2, boolean var3) {
+   private void sendImmediately(Packet<?> resourcePackPacket, @Nullable ChannelFutureListener thenRun, boolean flag) {
       if (this.channel.eventLoop().inEventLoop()) {
-         this.sendInternal(var1, var2, var3);
+         this.sendInternal(resourcePackPacket, thenRun, flag);
       } else {
-         this.channel.eventLoop().execute(() -> this.sendInternal(var1, var2, var3));
+         this.channel.eventLoop().execute(() -> this.sendInternal(resourcePackPacket, thenRun, flag));
       }
    }
 
-   private void sendInternal(Packet<?> var1, @Nullable ChannelFutureListener var2, boolean var3) {
-      ChannelFuture var4 = var3 ? this.channel.writeAndFlush(var1) : this.channel.write(var1);
-      if (var2 != null) {
-         var4.addListener(var2);
+   private void sendInternal(Packet<?> resourcePackPacket, @Nullable ChannelFutureListener thenRun, boolean flag) {
+      ChannelFuture writeAndFlush = flag ? this.channel.writeAndFlush(resourcePackPacket) : this.channel.write(resourcePackPacket);
+      if (thenRun != null) {
+         writeAndFlush.addListener(thenRun);
       }
 
-      var4.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+      writeAndFlush.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
    }
 
    private void handleQueuedTasks() {
       if (this.channel != null && this.channel.isOpen()) {
-         Consumer var2;
+         Consumer queuedTask;
          synchronized (this.queuedTasks) {
-            while ((var2 = this.queuedTasks.poll()) != null) {
-               var2.accept(this);
+            while ((queuedTask = this.queuedTasks.poll()) != null) {
+               queuedTask.accept(this);
             }
          }
       }
@@ -356,8 +356,8 @@ public final class BotConnection extends SimpleChannelInboundHandler<Packet<?>> 
 
    public void tick() {
       this.handleQueuedTasks();
-      if (this.packetListener instanceof TickablePacketListener var1) {
-         var1.tick();
+      if (this.packetListener instanceof TickablePacketListener tickablePacketListener) {
+         tickablePacketListener.tick();
       }
 
       if (!this.isOpen() && !this.disconnected) {
@@ -369,43 +369,43 @@ public final class BotConnection extends SimpleChannelInboundHandler<Packet<?>> 
       }
    }
 
-   public void disconnect(Component var1) {
-      this.disconnect(new DisconnectionDetails(var1));
+   public void disconnect(Component literal) {
+      this.disconnect(new DisconnectionDetails(literal));
    }
 
-   public void disconnect(DisconnectionDetails var1) {
+   public void disconnect(DisconnectionDetails pendingDisconnectionInfo) {
       if (this.channel == null) {
-         this.pendingDisconnectionInfo = var1;
+         this.pendingDisconnectionInfo = pendingDisconnectionInfo;
       }
 
       if (this.isOpen()) {
          this.channel.close().awaitUninterruptibly();
-         this.disconnectionInfo = var1;
+         this.disconnectionInfo = pendingDisconnectionInfo;
       }
    }
 
-   public void setupEncryption(Cipher var1, Cipher var2) {
+   public void setupEncryption(Cipher cipher, Cipher cipher2) {
       this.encrypted = true;
-      this.channel.pipeline().addBefore("splitter", "decrypt", new CipherDecoder(var1));
-      this.channel.pipeline().addBefore("prepender", "encrypt", new CipherEncoder(var2));
+      this.channel.pipeline().addBefore("splitter", "decrypt", new CipherDecoder(cipher));
+      this.channel.pipeline().addBefore("prepender", "encrypt", new CipherEncoder(cipher2));
    }
 
    public boolean isEncrypted() {
       return this.encrypted;
    }
 
-   public void setCompressionThreshold(int var1, boolean var2) {
-      if (var1 >= 0) {
-         if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder var3) {
-            var3.setThreshold(var1, var2);
+   public void setCompressionThreshold(int compressionThreshold, boolean validateDecompressed) {
+      if (compressionThreshold >= 0) {
+         if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder compressionDecoder) {
+            compressionDecoder.setThreshold(compressionThreshold, validateDecompressed);
          } else {
-            this.channel.pipeline().addAfter("splitter", "decompress", new CompressionDecoder(var1, var2));
+            this.channel.pipeline().addAfter("splitter", "decompress", new CompressionDecoder(compressionThreshold, validateDecompressed));
          }
 
-         if (this.channel.pipeline().get("compress") instanceof CompressionEncoder var5) {
-            var5.setThreshold(var1);
+         if (this.channel.pipeline().get("compress") instanceof CompressionEncoder compressionEncoder) {
+            compressionEncoder.setThreshold(compressionThreshold);
          } else {
-            this.channel.pipeline().addAfter("prepender", "compress", new CompressionEncoder(var1));
+            this.channel.pipeline().addAfter("prepender", "compress", new CompressionEncoder(compressionThreshold));
          }
       } else {
          if (this.channel.pipeline().get("decompress") instanceof CompressionDecoder) {
@@ -426,13 +426,13 @@ public final class BotConnection extends SimpleChannelInboundHandler<Packet<?>> 
          }
 
          this.disconnected = true;
-         PacketListener var1 = this.packetListener;
-         PacketListener var2 = var1 != null ? var1 : this.prePlayStateListener;
-         if (var2 != null) {
-            DisconnectionDetails var3 = Objects.requireNonNullElseGet(
+         PacketListener packetListener = this.packetListener;
+         PacketListener prePlayStateListener = packetListener != null ? packetListener : this.prePlayStateListener;
+         if (prePlayStateListener != null) {
+            DisconnectionDetails nonNullElseGet = Objects.requireNonNullElseGet(
                this.disconnectionInfo, () -> new DisconnectionDetails(Component.translatable("multiplayer.disconnect.generic"))
             );
-            var2.onDisconnect(var3);
+            prePlayStateListener.onDisconnect(nonNullElseGet);
          }
       }
    }

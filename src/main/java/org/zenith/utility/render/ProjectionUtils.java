@@ -25,11 +25,11 @@ public final class ProjectionUtils implements MinecraftAccess {
    private static final Vector4f vector4f = new Vector4f();
 
    public static void method299() {
-      Window var0 = mc.getWindow();
+      Window window = mc.getWindow();
       CONST_intValues[0] = 0;
       CONST_intValues[1] = 0;
-      CONST_intValues[2] = Math.max(1, var0.getWidth());
-      CONST_intValues[3] = Math.max(1, var0.getHeight());
+      CONST_intValues[2] = Math.max(1, window.getWidth());
+      CONST_intValues[3] = Math.max(1, window.getHeight());
       flag = true;
    }
 
@@ -38,86 +38,86 @@ public final class ProjectionUtils implements MinecraftAccess {
    }
 
    @NotNull
-   public static Vec3 method301(Vec3 var0) {
+   public static Vec3 method301(Vec3 vec) {
       if (!flag) {
          method299();
       }
 
-      Vec3 var1 = mc.getEntityRenderDispatcher().camera.position();
-      float var2 = (float)(var0.x - var1.x);
-      float var3 = (float)(var0.y - var1.y);
-      float var4 = (float)(var0.z - var1.z);
-      boolean var5 = mc.isSameThread();
-      Vector3f var6 = var5 ? vector3f : new Vector3f();
-      Vector4f var7 = var5 ? vector4f : new Vector4f();
-      Vector4f var8 = var7.set(var2, var3, var4, 1.0F).mul(GlowUtil.getMatrix4f3());
-      GlowUtil.getMatrix4f().project(var8.x(), var8.y(), var8.z(), CONST_intValues, var6);
-      double var9 = mc.getWindow().getGuiScale();
-      return new Vec3(var6.x / var9, (mc.getWindow().getHeight() - var6.y) / var9, var6.z);
+      Vec3 position = mc.getEntityRenderDispatcher().camera.position();
+      float x = (float)(vec.x - position.x);
+      float y = (float)(vec.y - position.y);
+      float z = (float)(vec.z - position.z);
+      boolean sameThread = mc.isSameThread();
+      Vector3f winCoordsDest = sameThread ? vector3f : new Vector3f();
+      Vector4f vector4f2 = sameThread ? vector4f : new Vector4f();
+      Vector4f vec2 = vector4f2.set(x, y, z, 1.0F).mul(GlowUtil.getMatrix4f3());
+      GlowUtil.getMatrix4f().project(vec2.x(), vec2.y(), vec2.z(), CONST_intValues, winCoordsDest);
+      double guiScale = mc.getWindow().getGuiScale();
+      return new Vec3(winCoordsDest.x / guiScale, (mc.getWindow().getHeight() - winCoordsDest.y) / guiScale, winCoordsDest.z);
    }
 
-   public static boolean method302(Vec3 var0) {
-      Camera var1 = mc.getEntityRenderDispatcher().camera;
-      Rotation var2 = RotationUtils.method6913(var0);
-      return Math.abs(Mth.wrapDegrees(var2.getFloatValue() - var1.yRot())) < 90.0F
-            && Math.abs(Mth.wrapDegrees(var2.getFloatValue2() - var1.xRot())) < 60.0F
-         || method303(new AABB(BlockPos.containing(var0)));
+   public static boolean method302(Vec3 vec3d) {
+      Camera camera = mc.getEntityRenderDispatcher().camera;
+      Rotation rotation = RotationUtils.method6913(vec3d);
+      return Math.abs(Mth.wrapDegrees(rotation.getFloatValue() - camera.yRot())) < 90.0F
+            && Math.abs(Mth.wrapDegrees(rotation.getFloatValue2() - camera.xRot())) < 60.0F
+         || method303(new AABB(BlockPos.containing(vec3d)));
    }
 
-   public static boolean method303(AABB var0) {
-      Frustum var1 = FrustumHolder.getFrustum();
-      return var0 != null && var1 != null && var1.isVisible(var0);
+   public static boolean method303(AABB move) {
+      Frustum frustum = FrustumHolder.getFrustum();
+      return move != null && frustum != null && frustum.isVisible(move);
    }
 
-   public static boolean method304(Vector4d var0) {
-      return var0 == null || var0.x < 0.0 && var0.z < 1.0 || var0.y < 0.0 && var0.w < 1.0;
+   public static boolean method304(Vector4d vector4d) {
+      return vector4d == null || vector4d.x < 0.0 && vector4d.z < 1.0 || vector4d.y < 0.0 && vector4d.w < 1.0;
    }
 
-   public static double method305(Vector4d var0) {
-      return var0.x + (var0.z - var0.x) / 2.0;
+   public static double method305(Vector4d vector4d) {
+      return vector4d.x + (vector4d.z - vector4d.x) / 2.0;
    }
 
    @NotNull
-   public static Vec3[] method306(Entity var0, Vec3 var1) {
-      AABB var2 = var0.getBoundingBox();
-      AABB var3 = new AABB(
-         var2.minX - var0.getX() + var1.x - 0.1F,
-         var2.minY - var0.getY() + var1.y - 0.1F,
-         var2.minZ - var0.getZ() + var1.z - 0.1F,
-         var2.maxX - var0.getX() + var1.x + 0.1F,
-         var2.maxY - var0.getY() + var1.y + 0.1F,
-         var2.maxZ - var0.getZ() + var1.z + 0.1F
+   public static Vec3[] method306(Entity player, Vec3 vec) {
+      AABB boundingBox = player.getBoundingBox();
+      AABB aabb = new AABB(
+         boundingBox.minX - player.getX() + vec.x - 0.1F,
+         boundingBox.minY - player.getY() + vec.y - 0.1F,
+         boundingBox.minZ - player.getZ() + vec.z - 0.1F,
+         boundingBox.maxX - player.getX() + vec.x + 0.1F,
+         boundingBox.maxY - player.getY() + vec.y + 0.1F,
+         boundingBox.maxZ - player.getZ() + vec.z + 0.1F
       );
       return new Vec3[]{
-         new Vec3(var3.minX, var3.minY, var3.minZ),
-         new Vec3(var3.minX, var3.maxY, var3.minZ),
-         new Vec3(var3.maxX, var3.minY, var3.minZ),
-         new Vec3(var3.maxX, var3.maxY, var3.minZ),
-         new Vec3(var3.minX, var3.minY, var3.maxZ),
-         new Vec3(var3.minX, var3.maxY, var3.maxZ),
-         new Vec3(var3.maxX, var3.minY, var3.maxZ),
-         new Vec3(var3.maxX, var3.maxY, var3.maxZ)
+         new Vec3(aabb.minX, aabb.minY, aabb.minZ),
+         new Vec3(aabb.minX, aabb.maxY, aabb.minZ),
+         new Vec3(aabb.maxX, aabb.minY, aabb.minZ),
+         new Vec3(aabb.maxX, aabb.maxY, aabb.minZ),
+         new Vec3(aabb.minX, aabb.minY, aabb.maxZ),
+         new Vec3(aabb.minX, aabb.maxY, aabb.maxZ),
+         new Vec3(aabb.maxX, aabb.minY, aabb.maxZ),
+         new Vec3(aabb.maxX, aabb.maxY, aabb.maxZ)
       };
    }
 
-   public static Vector4d method307(Entity var0) {
-      Vector4d var1 = null;
+   public static Vector4d method307(Entity player) {
+      Vector4d vector4d = null;
 
-      for (Vec3 var5 : method306(var0, MathUtils.method2656(var0))) {
-         var5 = method301(var5);
-         if (var5.z > 0.0 && var5.z < 1.0) {
-            if (var1 == null) {
-               var1 = new Vector4d(var5.x, var5.y, var5.z, 0.0);
+      for (Vec3 vec : method306(player, MathUtils.method2656(player))) {
+         vec = method301(vec);
+         if (vec.z > 0.0 && vec.z < 1.0) {
+            if (vector4d == null) {
+               vector4d = new Vector4d(vec.x, vec.y, vec.z, 0.0);
             }
 
-            var1.x = Math.min(var5.x, var1.x);
-            var1.y = Math.min(var5.y, var1.y);
-            var1.z = Math.max(var5.x, var1.z);
-            var1.w = Math.max(var5.y, var1.w);
+            vector4d.x = Math.min(vec.x, vector4d.x);
+            vector4d.y = Math.min(vec.y, vector4d.y);
+            vector4d.z = Math.max(vec.x, vector4d.z);
+            vector4d.w = Math.max(vec.y, vector4d.w);
          }
       }
 
-      return var1;
+      return vector4d;
    }
 
    @Generated

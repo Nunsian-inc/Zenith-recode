@@ -73,88 +73,88 @@ public class RawDiffFeatures extends Util22 {
    private float floatValue21 = 0.0F;
    private float floatValue22 = 0.0F;
 
-   public Rotation method3699(Class6 var1, Rotation var2) {
-      return this.method3700(var1, var2, this.method3719());
+   public Rotation method3699(Class6 class2, Rotation rotation) {
+      return this.method3700(class2, rotation, this.method3719());
    }
 
-   public Rotation method3700(Class6 var1, Rotation var2, LivingEntity var3) {
-      Rotation var4 = rotationManager.method7844();
+   public Rotation method3700(Class6 class2, Rotation rotation, LivingEntity livingEntity) {
+      Rotation rotation2 = rotationManager.method7844();
       this.method3720();
       if (!jointCodebook.method2545()) {
          this.method3721();
-         return var4;
+         return rotation2;
       } else {
          mc.player.tick();
-         if (var2 == null || var2.method3137()) {
+         if (rotation == null || rotation.method3137()) {
             this.method3721();
-            return var4;
-         } else if (var3 != null && var3.isAlive()) {
-            int var5 = var3.getId();
-            if (this.intValue != var5) {
+            return rotation2;
+         } else if (livingEntity != null && livingEntity.isAlive()) {
+            int id = livingEntity.getId();
+            if (this.intValue != id) {
                this.method3721();
-               this.intValue = var5;
+               this.intValue = id;
             }
 
-            RawDiffFeatures.Entry var6 = this.method3705(var4, var3);
-            if (var6 == null) {
+            RawDiffFeatures.Entry entry = this.method3705(rotation2, livingEntity);
+            if (entry == null) {
                this.method3721();
-               return var4;
+               return rotation2;
             } else {
-               String[] var7 = jointCodebook.method2539();
-               float[] var8 = this.method3703(var6, var7);
-               int var9 = jointCodebook.method2538();
-               if (var8 != null && var8.length == var9 && this.method3725(var8)) {
-                  this.floatValues = (float[])var8.clone();
-                  JointCodebook.Entry7 var10 = jointCodebook.method2546(var8, var6.floatValue25, var6.floatValue26);
-                  if (var10 == null) {
+               String[] strings = jointCodebook.method2539();
+               float[] floatValues = this.method3703(entry, strings);
+               int n = jointCodebook.method2538();
+               if (floatValues != null && floatValues.length == n && this.method3725(floatValues)) {
+                  this.floatValues = (float[])floatValues.clone();
+                  JointCodebook.Entry7 entry7 = jointCodebook.method2546(floatValues, entry.floatValue25, entry.floatValue26);
+                  if (entry7 == null) {
                      this.entry7 = null;
-                     return var4;
+                     return rotation2;
                   } else {
-                     RawDiffFeatures.Entry2 var11 = this.method3707(var10.getFloatValue(), var10.getFloatValue2());
-                     if (var11 == null) {
+                     RawDiffFeatures.Entry2 entry2 = this.method3707(entry7.getFloatValue(), entry7.getFloatValue2());
+                     if (entry2 == null) {
                         this.entry7 = null;
-                        return var4;
+                        return rotation2;
                      } else {
-                        RawDiffFeatures.Entry2 var12 = this.method3708(var11);
-                        if (var12 != null && this.isFinite(var12.floatValue) && this.isFinite(var12.floatValue2)) {
-                           var12 = this.method3709(var6, var12);
-                           if (var12 != null && this.isFinite(var12.floatValue) && this.isFinite(var12.floatValue2)) {
-                              this.entry7 = var10.method2593(
-                                 var12.floatValue,
-                                 var12.floatValue2,
-                                 var6.floatValue25,
-                                 var6.floatValue26,
-                                 var12.floatValue3,
-                                 var12.floatValue4,
-                                 var12.floatValue5,
-                                 var12.floatValue6,
-                                 var12.floatValue7,
-                                 var12.floatValue8
+                        RawDiffFeatures.Entry2 entry22 = this.method3708(entry2);
+                        if (entry22 != null && this.isFinite(entry22.floatValue) && this.isFinite(entry22.floatValue2)) {
+                           entry22 = this.method3709(entry, entry22);
+                           if (entry22 != null && this.isFinite(entry22.floatValue) && this.isFinite(entry22.floatValue2)) {
+                              this.entry7 = entry7.method2593(
+                                 entry22.floatValue,
+                                 entry22.floatValue2,
+                                 entry.floatValue25,
+                                 entry.floatValue26,
+                                 entry22.floatValue3,
+                                 entry22.floatValue4,
+                                 entry22.floatValue5,
+                                 entry22.floatValue6,
+                                 entry22.floatValue7,
+                                 entry22.floatValue8
                               );
                               this.floatValue5 = this.floatValue3;
                               this.floatValue6 = this.floatValue4;
-                              this.floatValue3 = var12.floatValue5;
-                              this.floatValue4 = var12.floatValue6;
-                              Rotation var13 = var4.method3140(var12.floatValue, var12.floatValue2);
-                              return new Rotation(var13.getFloatValue(), Mth.clamp(var13.getFloatValue2(), -90.0F, 90.0F));
+                              this.floatValue3 = entry22.floatValue5;
+                              this.floatValue4 = entry22.floatValue6;
+                              Rotation rotation3 = rotation2.method3140(entry22.floatValue, entry22.floatValue2);
+                              return new Rotation(rotation3.getFloatValue(), Mth.clamp(rotation3.getFloatValue2(), -90.0F, 90.0F));
                            } else {
                               this.entry7 = null;
-                              return var4;
+                              return rotation2;
                            }
                         } else {
                            this.entry7 = null;
-                           return var4;
+                           return rotation2;
                         }
                      }
                   }
                } else {
                   this.method3721();
-                  return var4;
+                  return rotation2;
                }
             }
          } else {
             this.method3721();
-            return var4;
+            return rotation2;
          }
       }
    }
@@ -171,229 +171,229 @@ public class RawDiffFeatures extends Util22 {
       this.method3721();
    }
 
-   private float[] method3703(RawDiffFeatures.Entry var1, String[] var2) {
-      if (var1 != null && var2 != null && var2.length != 0) {
-         float[] var3 = new float[var2.length];
+   private float[] method3703(RawDiffFeatures.Entry entry, String[] strings) {
+      if (entry != null && strings != null && strings.length != 0) {
+         float[] floats = new float[strings.length];
 
-         for (int var4 = 0; var4 < var2.length; var4++) {
-            float var5 = this.method3704(var1, var2[var4]);
-            if (!this.isFinite(var5)) {
+         for (int i = 0; i < strings.length; i++) {
+            float floatValue = this.method3704(entry, strings[i]);
+            if (!this.isFinite(floatValue)) {
                return null;
             }
 
-            var3[var4] = var5;
+            floats[i] = floatValue;
          }
 
-         return var3;
+         return floats;
       } else {
          return null;
       }
    }
 
-   private float method3704(RawDiffFeatures.Entry var1, String var2) {
-      if (var2 == null) {
+   private float method3704(RawDiffFeatures.Entry entry, String str) {
+      if (str == null) {
          return Float.NaN;
       } else {
-         switch (var2) {
+         switch (str) {
             case "raw_center_Diffyaw":
-               return this.method3717(var1.floatValue, var1.floatValue45);
+               return this.method3717(entry.floatValue, entry.floatValue45);
             case "raw_center_Diffpitch":
-               return this.method3717(var1.floatValue2, var1.floatValue45);
+               return this.method3717(entry.floatValue2, entry.floatValue45);
             case "raw_min_Diffyaw":
-               return this.method3717(var1.floatValue3, var1.floatValue45);
+               return this.method3717(entry.floatValue3, entry.floatValue45);
             case "raw_max_Diffyaw":
-               return this.method3717(var1.floatValue4, var1.floatValue45);
+               return this.method3717(entry.floatValue4, entry.floatValue45);
             case "raw_min_Diffpitch":
-               return this.method3717(var1.floatValue5, var1.floatValue45);
+               return this.method3717(entry.floatValue5, entry.floatValue45);
             case "raw_max_Diffpitch":
-               return this.method3717(var1.floatValue6, var1.floatValue45);
+               return this.method3717(entry.floatValue6, entry.floatValue45);
             case "raw_width_Diffyaw":
-               return this.method3717(var1.floatValue7, var1.floatValue45);
+               return this.method3717(entry.floatValue7, entry.floatValue45);
             case "raw_height_Diffpitch":
-               return this.method3717(var1.floatValue8, var1.floatValue45);
+               return this.method3717(entry.floatValue8, entry.floatValue45);
             case "raw_target_x_norm":
-               return var1.floatValue9;
+               return entry.floatValue9;
             case "raw_target_y_norm":
-               return var1.floatValue10;
+               return entry.floatValue10;
             case "raw_distance":
-               return var1.floatValue12;
+               return entry.floatValue12;
             case "raw_delta_center_Diffyaw":
-               return this.method3717(var1.floatValue16, var1.floatValue45);
+               return this.method3717(entry.floatValue16, entry.floatValue45);
             case "raw_delta_center_Diffpitch":
-               return this.method3717(var1.floatValue17, var1.floatValue45);
+               return this.method3717(entry.floatValue17, entry.floatValue45);
             case "raw_delta_distance":
-               return var1.floatValue18;
+               return entry.floatValue18;
             case "raw_inside_box":
-               return var1.flag ? 1.0F : 0.0F;
+               return entry.flag ? 1.0F : 0.0F;
             case "raw_inside_ticks_clamped":
-               return var1.floatValue14;
+               return entry.floatValue14;
             case "outside_box_ticks":
-               return var1.floatValue15;
+               return entry.floatValue15;
             case "yaw_vel":
-               return this.method3716(var1.floatValue25, var1.floatValue45);
+               return this.method3716(entry.floatValue25, entry.floatValue45);
             case "pitch_vel":
-               return this.method3716(var1.floatValue26, var1.floatValue45);
+               return this.method3716(entry.floatValue26, entry.floatValue45);
             case "yaw_acc":
-               return this.method3716(var1.floatValue27, var1.floatValue45);
+               return this.method3716(entry.floatValue27, entry.floatValue45);
             case "pitch_acc":
-               return this.method3716(var1.floatValue28, var1.floatValue45);
+               return this.method3716(entry.floatValue28, entry.floatValue45);
             case "normalized_center_yaw":
-               return var1.floatValue31;
+               return entry.floatValue31;
             case "normalized_center_pitch":
-               return var1.floatValue32;
+               return entry.floatValue32;
             case "yaw_jerk":
-               return this.method3716(var1.floatValue29, var1.floatValue45);
+               return this.method3716(entry.floatValue29, entry.floatValue45);
             case "pitch_jerk":
-               return this.method3716(var1.floatValue30, var1.floatValue45);
+               return this.method3716(entry.floatValue30, entry.floatValue45);
             case "ang_dist":
-               return this.method3717(var1.floatValue33, var1.floatValue45);
+               return this.method3717(entry.floatValue33, entry.floatValue45);
             case "dir_sin":
-               return var1.floatValue34;
+               return entry.floatValue34;
             case "dir_cos":
-               return var1.floatValue35;
+               return entry.floatValue35;
             case "t_since_entered_box":
-               return var1.floatValue36;
+               return entry.floatValue36;
             case "t_since_left_box":
-               return var1.floatValue37;
+               return entry.floatValue37;
             case "effort_fatigue":
-               return var1.floatValue38;
+               return entry.floatValue38;
             case "active_burst_ticks":
-               return var1.floatValue39;
+               return entry.floatValue39;
             case "input_forward":
-               return var1.floatValue40;
+               return entry.floatValue40;
             case "input_backward":
-               return var1.floatValue41;
+               return entry.floatValue41;
             case "input_left":
-               return var1.floatValue42;
+               return entry.floatValue42;
             case "input_right":
-               return var1.floatValue43;
+               return entry.floatValue43;
             case "input_jump":
-               return var1.floatValue44;
+               return entry.floatValue44;
             case "diff_y":
-               return var1.floatValue11;
+               return entry.floatValue11;
             case "distance_xz":
-               return var1.floatValue13;
+               return entry.floatValue13;
             case "target_motion_x":
-               return var1.floatValue19;
+               return entry.floatValue19;
             case "target_motion_y":
-               return var1.floatValue20;
+               return entry.floatValue20;
             case "target_motion_z":
-               return var1.floatValue21;
+               return entry.floatValue21;
             case "player_motion_x":
-               return var1.floatValue22;
+               return entry.floatValue22;
             case "player_motion_y":
-               return var1.floatValue23;
+               return entry.floatValue23;
             case "player_motion_z":
-               return var1.floatValue24;
+               return entry.floatValue24;
             case "v18_geometry_unstable":
-               return var1.floatValue46;
+               return entry.floatValue46;
             case "v18_geometry_confidence":
-               return var1.floatValue47;
+               return entry.floatValue47;
             case "v18_inside_confidence":
-               return var1.floatValue48;
+               return entry.floatValue48;
             case "v18_close_overlap":
-               return var1.floatValue49;
+               return entry.floatValue49;
             case "v18_center_absmax":
-               return var1.floatValue50;
+               return entry.floatValue50;
             case "v18_prev_vel_absmax":
-               return var1.floatValue51;
+               return entry.floatValue51;
             case "v18_nearest_yaw_error":
-               return var1.floatValue52;
+               return entry.floatValue52;
             case "v18_nearest_pitch_error":
-               return var1.floatValue53;
+               return entry.floatValue53;
             case "v18_aim_yaw_error":
-               return var1.floatValue54;
+               return entry.floatValue54;
             case "v18_aim_pitch_error":
-               return var1.floatValue55;
+               return entry.floatValue55;
             case "prev_action_yaw_count":
-               return var1.floatValue56;
+               return entry.floatValue56;
             case "prev_action_pitch_count":
-               return var1.floatValue57;
+               return entry.floatValue57;
             case "prev2_action_yaw_count":
-               return var1.floatValue58;
+               return entry.floatValue58;
             case "prev2_action_pitch_count":
-               return var1.floatValue59;
+               return entry.floatValue59;
             default:
                return Float.NaN;
          }
       }
    }
 
-   private RawDiffFeatures.Entry method3705(Rotation var1, LivingEntity var2) {
-      if (var1 != null && var2 != null) {
-         AABB var3 = var2.getBoundingBox();
-         Vec3 var4 = mc.player.position();
-         Vec3 var5 = mc.player.getEyePosition();
-         Vec3 var6 = var3.getCenter();
-         Rotation var7 = RotationUtils.method6912(var6.subtract(var5));
-         Vec2f var8 = var1.method3131(var7);
-         float var9 = var8.getFloatValue();
-         float var10 = var8.getFloatValue2();
-         if (this.isFinite(var9) && this.isFinite(var10)) {
-            float var11 = Float.MAX_VALUE;
-            float var12 = -Float.MAX_VALUE;
-            float var13 = Float.MAX_VALUE;
-            float var14 = -Float.MAX_VALUE;
-            Vec3[] var15 = new Vec3[]{
-               new Vec3(var3.minX, var3.minY, var3.minZ),
-               new Vec3(var3.minX, var3.minY, var3.maxZ),
-               new Vec3(var3.minX, var3.maxY, var3.minZ),
-               new Vec3(var3.minX, var3.maxY, var3.maxZ),
-               new Vec3(var3.maxX, var3.minY, var3.minZ),
-               new Vec3(var3.maxX, var3.minY, var3.maxZ),
-               new Vec3(var3.maxX, var3.maxY, var3.minZ),
-               new Vec3(var3.maxX, var3.maxY, var3.maxZ)
+   private RawDiffFeatures.Entry method3705(Rotation rotation, LivingEntity livingEntity) {
+      if (rotation != null && livingEntity != null) {
+         AABB boundingBox = livingEntity.getBoundingBox();
+         Vec3 position = mc.player.position();
+         Vec3 eyePosition = mc.player.getEyePosition();
+         Vec3 center = boundingBox.getCenter();
+         Rotation rotation2 = RotationUtils.method6912(center.subtract(eyePosition));
+         Vec2f vec2f = rotation.method3131(rotation2);
+         float floatValue = vec2f.getFloatValue();
+         float y = vec2f.getFloatValue2();
+         if (this.isFinite(floatValue) && this.isFinite(y)) {
+            float f = Float.MAX_VALUE;
+            float floatValue2 = -Float.MAX_VALUE;
+            float y2 = Float.MAX_VALUE;
+            float y3 = -Float.MAX_VALUE;
+            Vec3[] vecs = new Vec3[]{
+               new Vec3(boundingBox.minX, boundingBox.minY, boundingBox.minZ),
+               new Vec3(boundingBox.minX, boundingBox.minY, boundingBox.maxZ),
+               new Vec3(boundingBox.minX, boundingBox.maxY, boundingBox.minZ),
+               new Vec3(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ),
+               new Vec3(boundingBox.maxX, boundingBox.minY, boundingBox.minZ),
+               new Vec3(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ),
+               new Vec3(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ),
+               new Vec3(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ)
             };
 
-            for (Vec3 var19 : var15) {
-               Rotation var20 = RotationUtils.method6912(var19.subtract(var5));
-               Vec2f var21 = var1.method3131(var20);
-               float var22 = var21.getFloatValue2();
-               if (this.isFinite(var21.getFloatValue()) && this.isFinite(var22)) {
-                  float var23 = this.method3718(var21.getFloatValue(), var9);
-                  var11 = Math.min(var11, var23);
-                  var12 = Math.max(var12, var23);
-                  var13 = Math.min(var13, var22);
-                  var14 = Math.max(var14, var22);
+            for (Vec3 vec : vecs) {
+               Rotation rotation3 = RotationUtils.method6912(vec.subtract(eyePosition));
+               Vec2f vec2f2 = rotation.method3131(rotation3);
+               float floatValue3 = vec2f2.getFloatValue2();
+               if (this.isFinite(vec2f2.getFloatValue()) && this.isFinite(floatValue3)) {
+                  float f2 = this.method3718(vec2f2.getFloatValue(), floatValue);
+                  f = Math.min(f, f2);
+                  floatValue2 = Math.max(floatValue2, f2);
+                  y2 = Math.min(y2, floatValue3);
+                  y3 = Math.max(y3, floatValue3);
                }
             }
 
-            if (var11 == Float.MAX_VALUE) {
-               var11 = var9;
-               var12 = var9;
-               var13 = var10;
-               var14 = var10;
+            if (f == Float.MAX_VALUE) {
+               f = floatValue;
+               floatValue2 = floatValue;
+               y2 = y;
+               y3 = y;
             }
 
-            float var43 = var12 - var11;
-            float var44 = var14 - var13;
-            boolean var45 = var11 <= 0.0F && var12 >= 0.0F;
-            boolean var46 = var13 <= 0.0F && var14 >= 0.0F;
-            boolean var47 = var45 && var46;
-            float var48 = 0.0F;
-            if (var45 && Math.abs(var43) > 1.0E-6F) {
-               var48 = Mth.clamp((0.0F - var11) / var43, 0.0F, 1.0F);
+            float f2 = floatValue2 - f;
+            float f3 = y3 - y2;
+            boolean flag = f <= 0.0F && floatValue2 >= 0.0F;
+            boolean flag2 = y2 <= 0.0F && y3 >= 0.0F;
+            boolean flag3 = flag && flag2;
+            float f4 = 0.0F;
+            if (flag && Math.abs(f2) > 1.0E-6F) {
+               f4 = Mth.clamp((0.0F - f) / f2, 0.0F, 1.0F);
             }
 
-            float var49 = 0.0F;
-            if (var46 && Math.abs(var44) > 1.0E-6F) {
-               var49 = Mth.clamp((0.0F - var13) / var44, 0.0F, 1.0F);
+            float f5 = 0.0F;
+            if (flag2 && Math.abs(f3) > 1.0E-6F) {
+               f5 = Mth.clamp((0.0F - y2) / f3, 0.0F, 1.0F);
             }
 
-            float var50 = 0.0F;
-            float var24 = 0.0F;
+            float f6 = 0.0F;
+            float f7 = 0.0F;
             if (this.flag2) {
-               var50 = Mth.wrapDegrees(var1.getFloatValue() - this.floatValue7);
-               var24 = var1.getFloatValue2() - this.floatValue8;
+               f6 = Mth.wrapDegrees(rotation.getFloatValue() - this.floatValue7);
+               f7 = rotation.getFloatValue2() - this.floatValue8;
             }
 
-            float var25 = var50 - this.floatValue9;
-            float var26 = var24 - this.floatValue10;
-            float var27 = var25 - this.floatValue11;
-            float var28 = var26 - this.floatValue12;
-            this.floatValue17 = var47 ? Mth.clamp(this.floatValue17 + 1.0F, 0.0F, 50.0F) : 0.0F;
-            this.floatValue18 = var47 ? 0.0F : Math.min(this.floatValue18 + 1.0F, 8.0F);
-            if (var47) {
+            float f8 = f6 - this.floatValue9;
+            float f9 = f7 - this.floatValue10;
+            float f10 = f8 - this.floatValue11;
+            float f11 = f9 - this.floatValue12;
+            this.floatValue17 = flag3 ? Mth.clamp(this.floatValue17 + 1.0F, 0.0F, 50.0F) : 0.0F;
+            this.floatValue18 = flag3 ? 0.0F : Math.min(this.floatValue18 + 1.0F, 8.0F);
+            if (flag3) {
                this.floatValue19 = Mth.clamp(this.flag4 ? this.floatValue19 + 1.0F : 1.0F, 0.0F, 176.0F);
                this.floatValue20 = 0.0F;
             } else {
@@ -401,103 +401,103 @@ public class RawDiffFeatures extends Util22 {
                this.floatValue20 = Mth.clamp(this.flag4 ? 1.0F : this.floatValue20 + 1.0F, 0.0F, 8.0F);
             }
 
-            this.method3706(var43, var44, var50, var24, var47);
-            float var29 = (float)(var6.x - var5.x);
-            float var30 = Math.abs((float)(var6.y - var5.y));
-            float var31 = (float)(var6.z - var5.z);
-            float var32 = this.hypot(var29, var31);
-            float var33 = this.hypot(var32, var30);
-            float var34 = this.flag3 ? this.hypot(this.floatValue15, this.floatValue16) : var33;
-            float var35 = this.flag3 ? Mth.wrapDegrees(var9 - this.floatValue13) : 0.0F;
-            float var36 = this.flag3 ? var10 - this.floatValue14 : 0.0F;
-            float var37 = var33 - var34;
-            Vec3 var38 = this.flag3 ? var6.subtract(this.doubleValue, this.doubleValue2, this.doubleValue3) : Vec3.ZERO;
-            if (!this.method3726(var38) || var38.lengthSqr() <= 1.0E-10) {
-               Vec3 var39 = var2.getDeltaMovement();
-               var38 = this.method3726(var39) ? var39 : Vec3.ZERO;
+            this.method3706(f2, f3, f6, f7, flag3);
+            float hypot = (float)(center.x - eyePosition.x);
+            float y4 = Math.abs((float)(center.y - eyePosition.y));
+            float y5 = (float)(center.z - eyePosition.z);
+            float hypot2 = this.hypot(hypot, y5);
+            float hypot3 = this.hypot(hypot2, y4);
+            float hypot4 = this.flag3 ? this.hypot(this.floatValue15, this.floatValue16) : hypot3;
+            float f12 = this.flag3 ? Mth.wrapDegrees(floatValue - this.floatValue13) : 0.0F;
+            float f13 = this.flag3 ? y - this.floatValue14 : 0.0F;
+            float f14 = hypot3 - hypot4;
+            Vec3 deltaMovement = this.flag3 ? center.subtract(this.doubleValue, this.doubleValue2, this.doubleValue3) : Vec3.ZERO;
+            if (!this.method3726(deltaMovement) || deltaMovement.lengthSqr() <= 1.0E-10) {
+               Vec3 vec = livingEntity.getDeltaMovement();
+               deltaMovement = this.method3726(vec) ? vec : Vec3.ZERO;
             }
 
-            Vec3 var51 = this.flag3 ? var4.subtract(this.doubleValue4, this.doubleValue5, this.doubleValue6) : Vec3.ZERO;
-            if (!this.method3726(var51) || var51.lengthSqr() <= 1.0E-10) {
-               Vec3 var40 = mc.player.getDeltaMovement();
-               var51 = this.method3726(var40) ? var40 : Vec3.ZERO;
+            Vec3 vec = this.flag3 ? position.subtract(this.doubleValue4, this.doubleValue5, this.doubleValue6) : Vec3.ZERO;
+            if (!this.method3726(vec) || vec.lengthSqr() <= 1.0E-10) {
+               Vec3 deltaMovement2 = mc.player.getDeltaMovement();
+               vec = this.method3726(deltaMovement2) ? deltaMovement2 : Vec3.ZERO;
             }
 
-            float var52 = jointCodebook.method2540();
-            if (this.isFinite(var52) && !(var52 <= 0.0F)) {
-               RawDiffFeatures.Entry var41 = new RawDiffFeatures.Entry();
-               var41.floatValue = var9;
-               var41.floatValue2 = var10;
-               var41.floatValue3 = var11;
-               var41.floatValue4 = var12;
-               var41.floatValue5 = var13;
-               var41.floatValue6 = var14;
-               var41.floatValue7 = var43;
-               var41.floatValue8 = var44;
-               var41.floatValue9 = var48;
-               var41.floatValue10 = var49;
-               var41.floatValue11 = var30;
-               var41.floatValue12 = var33;
-               var41.floatValue13 = var32;
-               var41.flag = var47;
-               var41.floatValue14 = this.floatValue17;
-               var41.floatValue15 = this.floatValue18;
-               var41.floatValue16 = var35;
-               var41.floatValue17 = var36;
-               var41.floatValue18 = var37;
-               var41.floatValue19 = (float)var38.x;
-               var41.floatValue20 = (float)var38.y;
-               var41.floatValue21 = (float)var38.z;
-               var41.floatValue22 = (float)var51.x;
-               var41.floatValue23 = (float)var51.y;
-               var41.floatValue24 = (float)var51.z;
-               var41.floatValue25 = var50;
-               var41.floatValue26 = var24;
-               var41.floatValue27 = var25;
-               var41.floatValue28 = var26;
-               var41.floatValue29 = var27;
-               var41.floatValue30 = var28;
-               var41.floatValue31 = var9 / Math.max(Math.abs(var43), 0.1F);
-               var41.floatValue32 = var10 / Math.max(Math.abs(var44), 0.1F);
-               var41.floatValue33 = this.hypot(var9, var10);
-               float var42 = (float)Math.atan2(var10, var9);
-               var41.floatValue34 = (float)Math.sin(var42);
-               var41.floatValue35 = (float)Math.cos(var42);
-               var41.floatValue36 = this.floatValue19;
-               var41.floatValue37 = this.floatValue20;
-               var41.floatValue38 = this.floatValue21;
-               var41.floatValue39 = this.floatValue22;
-               var41.floatValue40 = mc.player.input.keyPresses.forward() ? 1.0F : 0.0F;
-               var41.floatValue41 = mc.player.input.keyPresses.backward() ? 1.0F : 0.0F;
-               var41.floatValue42 = mc.player.input.keyPresses.left() ? 1.0F : 0.0F;
-               var41.floatValue43 = mc.player.input.keyPresses.right() ? 1.0F : 0.0F;
-               var41.floatValue44 = mc.player.input.keyPresses.jump() ? 1.0F : 0.0F;
-               var41.floatValue45 = var52;
-               var41.floatValue56 = this.floatValue3;
-               var41.floatValue57 = this.floatValue4;
-               var41.floatValue58 = this.floatValue5;
-               var41.floatValue59 = this.floatValue6;
-               this.method3722(var41);
+            float floatValue3 = jointCodebook.method2540();
+            if (this.isFinite(floatValue3) && !(floatValue3 <= 0.0F)) {
+               RawDiffFeatures.Entry entry = new RawDiffFeatures.Entry();
+               entry.floatValue = floatValue;
+               entry.floatValue2 = y;
+               entry.floatValue3 = f;
+               entry.floatValue4 = floatValue2;
+               entry.floatValue5 = y2;
+               entry.floatValue6 = y3;
+               entry.floatValue7 = f2;
+               entry.floatValue8 = f3;
+               entry.floatValue9 = f4;
+               entry.floatValue10 = f5;
+               entry.floatValue11 = y4;
+               entry.floatValue12 = hypot3;
+               entry.floatValue13 = hypot2;
+               entry.flag = flag3;
+               entry.floatValue14 = this.floatValue17;
+               entry.floatValue15 = this.floatValue18;
+               entry.floatValue16 = f12;
+               entry.floatValue17 = f13;
+               entry.floatValue18 = f14;
+               entry.floatValue19 = (float)deltaMovement.x;
+               entry.floatValue20 = (float)deltaMovement.y;
+               entry.floatValue21 = (float)deltaMovement.z;
+               entry.floatValue22 = (float)vec.x;
+               entry.floatValue23 = (float)vec.y;
+               entry.floatValue24 = (float)vec.z;
+               entry.floatValue25 = f6;
+               entry.floatValue26 = f7;
+               entry.floatValue27 = f8;
+               entry.floatValue28 = f9;
+               entry.floatValue29 = f10;
+               entry.floatValue30 = f11;
+               entry.floatValue31 = floatValue / Math.max(Math.abs(f2), 0.1F);
+               entry.floatValue32 = y / Math.max(Math.abs(f3), 0.1F);
+               entry.floatValue33 = this.hypot(floatValue, y);
+               float f15 = (float)Math.atan2(y, floatValue);
+               entry.floatValue34 = (float)Math.sin(f15);
+               entry.floatValue35 = (float)Math.cos(f15);
+               entry.floatValue36 = this.floatValue19;
+               entry.floatValue37 = this.floatValue20;
+               entry.floatValue38 = this.floatValue21;
+               entry.floatValue39 = this.floatValue22;
+               entry.floatValue40 = mc.player.input.keyPresses.forward() ? 1.0F : 0.0F;
+               entry.floatValue41 = mc.player.input.keyPresses.backward() ? 1.0F : 0.0F;
+               entry.floatValue42 = mc.player.input.keyPresses.left() ? 1.0F : 0.0F;
+               entry.floatValue43 = mc.player.input.keyPresses.right() ? 1.0F : 0.0F;
+               entry.floatValue44 = mc.player.input.keyPresses.jump() ? 1.0F : 0.0F;
+               entry.floatValue45 = floatValue3;
+               entry.floatValue56 = this.floatValue3;
+               entry.floatValue57 = this.floatValue4;
+               entry.floatValue58 = this.floatValue5;
+               entry.floatValue59 = this.floatValue6;
+               this.method3722(entry);
                this.flag2 = true;
-               this.floatValue7 = var1.getFloatValue();
-               this.floatValue8 = var1.getFloatValue2();
-               this.floatValue9 = var50;
-               this.floatValue10 = var24;
-               this.floatValue11 = var25;
-               this.floatValue12 = var26;
+               this.floatValue7 = rotation.getFloatValue();
+               this.floatValue8 = rotation.getFloatValue2();
+               this.floatValue9 = f6;
+               this.floatValue10 = f7;
+               this.floatValue11 = f8;
+               this.floatValue12 = f9;
                this.flag3 = true;
-               this.floatValue13 = var9;
-               this.floatValue14 = var10;
-               this.floatValue15 = var32;
-               this.floatValue16 = var30;
-               this.doubleValue = var6.x;
-               this.doubleValue2 = var6.y;
-               this.doubleValue3 = var6.z;
-               this.doubleValue4 = var4.x;
-               this.doubleValue5 = var4.y;
-               this.doubleValue6 = var4.z;
-               this.flag4 = var47;
-               return var41;
+               this.floatValue13 = floatValue;
+               this.floatValue14 = y;
+               this.floatValue15 = hypot2;
+               this.floatValue16 = y4;
+               this.doubleValue = center.x;
+               this.doubleValue2 = center.y;
+               this.doubleValue3 = center.z;
+               this.doubleValue4 = position.x;
+               this.doubleValue5 = position.y;
+               this.doubleValue6 = position.z;
+               this.flag4 = flag3;
+               return entry;
             } else {
                return null;
             }
@@ -509,39 +509,39 @@ public class RawDiffFeatures extends Util22 {
       }
    }
 
-   private void method3706(float var1, float var2, float var3, float var4, boolean var5) {
-      float var6 = Math.max(Math.abs(var1) * 0.4F, 0.25F);
-      float var7 = Math.max(Math.abs(var2) * 0.4F, 0.18F);
-      float var8 = (float)Math.sqrt(this.method3724(var3 / var6) + this.method3724(var4 / var7));
-      var8 = Math.min(var8, 1.5F);
-      if (var8 > 0.18F) {
+   private void method3706(float f, float f2, float f3, float f4, boolean flag) {
+      float f5 = Math.max(Math.abs(f) * 0.4F, 0.25F);
+      float f6 = Math.max(Math.abs(f2) * 0.4F, 0.18F);
+      float f7 = (float)Math.sqrt(this.method3724(f3 / f5) + this.method3724(f4 / f6));
+      f7 = Math.min(f7, 1.5F);
+      if (f7 > 0.18F) {
          this.floatValue22 = Math.min(this.floatValue22 + 1.0F, 20.0F);
-         this.floatValue21 = Math.min(this.floatValue21 + var8 * 0.055F, 1.0F);
+         this.floatValue21 = Math.min(this.floatValue21 + f7 * 0.055F, 1.0F);
       } else {
          this.floatValue22 = Math.max(this.floatValue22 - 2.0F, 0.0F);
-         float var9 = var5 ? 0.14F : 0.08F;
-         this.floatValue21 = Math.max(this.floatValue21 - var9, 0.0F);
+         float f8 = flag ? 0.14F : 0.08F;
+         this.floatValue21 = Math.max(this.floatValue21 - f8, 0.0F);
       }
    }
 
-   private RawDiffFeatures.Entry2 method3707(float var1, float var2) {
-      return this.isFinite(var1) && this.isFinite(var2) ? new RawDiffFeatures.Entry2(var1, var2) : null;
+   private RawDiffFeatures.Entry2 method3707(float floatValue, float f) {
+      return this.isFinite(floatValue) && this.isFinite(f) ? new RawDiffFeatures.Entry2(floatValue, f) : null;
    }
 
-   private RawDiffFeatures.Entry2 method3708(RawDiffFeatures.Entry2 var1) {
-      if (var1 == null) {
+   private RawDiffFeatures.Entry2 method3708(RawDiffFeatures.Entry2 entry2) {
+      if (entry2 == null) {
          return null;
       } else {
-         float var2 = jointCodebook.method2540();
-         if (this.isFinite(var2) && !(var2 <= 0.0F)) {
-            float var3 = var1.floatValue / var2 + this.floatValue;
-            float var4 = var1.floatValue2 / var2 + this.floatValue2;
-            if (this.isFinite(var3) && this.isFinite(var4)) {
-               int var5 = Math.round(var3);
-               int var6 = Math.round(var4);
-               this.floatValue = var3 - var5;
-               this.floatValue2 = var4 - var6;
-               return new RawDiffFeatures.Entry2(var5 * var2, var6 * var2, var3, var4, var5, var6, this.floatValue, this.floatValue2);
+         float floatValue = jointCodebook.method2540();
+         if (this.isFinite(floatValue) && !(floatValue <= 0.0F)) {
+            float f = entry2.floatValue / floatValue + this.floatValue;
+            float floatValue2 = entry2.floatValue2 / floatValue + this.floatValue2;
+            if (this.isFinite(f) && this.isFinite(floatValue2)) {
+               int n = Math.round(f);
+               int n2 = Math.round(floatValue2);
+               this.floatValue = f - n;
+               this.floatValue2 = floatValue2 - n2;
+               return new RawDiffFeatures.Entry2(n * floatValue, n2 * floatValue, f, floatValue2, n, n2, this.floatValue, this.floatValue2);
             } else {
                this.floatValue = 0.0F;
                this.floatValue2 = 0.0F;
@@ -555,29 +555,29 @@ public class RawDiffFeatures extends Util22 {
       }
    }
 
-   private RawDiffFeatures.Entry2 method3709(RawDiffFeatures.Entry var1, RawDiffFeatures.Entry2 var2) {
-      if (var1 != null && var2 != null) {
-         RawDiffFeatures.Entry2 var3 = this.method3710(var1, var2);
-         if (var3 != null) {
-            return var3;
+   private RawDiffFeatures.Entry2 method3709(RawDiffFeatures.Entry entry, RawDiffFeatures.Entry2 entry2) {
+      if (entry != null && entry2 != null) {
+         RawDiffFeatures.Entry2 entry22 = this.method3710(entry, entry2);
+         if (entry22 != null) {
+            return entry22;
          } else {
-            RawDiffFeatures.Entry2 var4 = this.method3713(var1, var2);
-            return var4 != null ? var4 : var2;
+            RawDiffFeatures.Entry2 entry23 = this.method3713(entry, entry2);
+            return entry23 != null ? entry23 : entry2;
          }
       } else {
-         return var2;
+         return entry2;
       }
    }
 
-   private RawDiffFeatures.Entry2 method3710(RawDiffFeatures.Entry var1, RawDiffFeatures.Entry2 var2) {
-      if (var1 != null && var2 != null && !var1.flag && !(var1.floatValue15 < 3.0F)) {
-         float var3 = var1.floatValue52;
-         float var4 = var1.floatValue53;
-         float var5 = Math.max(Math.abs(var3), Math.abs(var4));
-         if (this.isFinite(var5) && !(var5 < 6.0F)) {
-            boolean var6 = this.method3711(var3, var2.floatValue5);
-            boolean var7 = this.method3711(var4, var2.floatValue6);
-            if (!var6 && !var7) {
+   private RawDiffFeatures.Entry2 method3710(RawDiffFeatures.Entry entry, RawDiffFeatures.Entry2 entry2) {
+      if (entry != null && entry2 != null && !entry.flag && !(entry.floatValue15 < 3.0F)) {
+         float sign = entry.floatValue52;
+         float f = entry.floatValue53;
+         float floatValue = Math.max(Math.abs(sign), Math.abs(f));
+         if (this.isFinite(floatValue) && !(floatValue < 6.0F)) {
+            boolean flag = this.method3711(sign, entry2.floatValue5);
+            boolean flag2 = this.method3711(f, entry2.floatValue6);
+            if (!flag && !flag2) {
                this.intValue2 = 0;
                return null;
             } else {
@@ -586,9 +586,9 @@ public class RawDiffFeatures extends Util22 {
                   return null;
                } else {
                   this.intValue2 = 0;
-                  float var8 = var6 ? this.method3712(var3, 18.0F) : var2.floatValue5;
-                  float var9 = var7 ? this.method3712(var4, 10.0F) : var2.floatValue6;
-                  return this.method3715(var8, var9);
+                  float floatValue2 = flag ? this.method3712(sign, 18.0F) : entry2.floatValue5;
+                  float f2 = flag2 ? this.method3712(f, 10.0F) : entry2.floatValue6;
+                  return this.method3715(floatValue2, f2);
                }
             }
          } else {
@@ -601,52 +601,52 @@ public class RawDiffFeatures extends Util22 {
       }
    }
 
-   private boolean method3711(float var1, float var2) {
-      if (!this.isFinite(var1) || Math.abs(var1) < 6.0F) {
+   private boolean method3711(float sign, float floatValue) {
+      if (!this.isFinite(sign) || Math.abs(sign) < 6.0F) {
          return false;
       } else {
-         return this.isFinite(var2) && !(Math.abs(var2) <= 1.0F) ? Math.signum(var1) != Math.signum(var2) : true;
+         return this.isFinite(floatValue) && !(Math.abs(floatValue) <= 1.0F) ? Math.signum(sign) != Math.signum(floatValue) : true;
       }
    }
 
-   private float method3712(float var1, float var2) {
-      float var3 = Mth.clamp(Math.abs(var1) * 0.12F, 2.0F, var2);
-      return Math.copySign((float)Math.round(var3), var1);
+   private float method3712(float sign, float max) {
+      float f = Mth.clamp(Math.abs(sign) * 0.12F, 2.0F, max);
+      return Math.copySign((float)Math.round(f), sign);
    }
 
-   private RawDiffFeatures.Entry2 method3713(RawDiffFeatures.Entry var1, RawDiffFeatures.Entry2 var2) {
-      if (var1 != null && var2 != null && var1.flag && !(var1.floatValue14 < 6.0F)) {
-         float var3 = var2.floatValue5;
-         float var4 = var2.floatValue6;
-         boolean var5 = false;
-         if (this.method3714(var3, var2.floatValue3, var1.floatValue56, 1.15F, 8.0F)) {
-            var3 = 0.0F;
-            var5 = true;
+   private RawDiffFeatures.Entry2 method3713(RawDiffFeatures.Entry entry, RawDiffFeatures.Entry2 entry2) {
+      if (entry != null && entry2 != null && entry.flag && !(entry.floatValue14 < 6.0F)) {
+         float floatValue = entry2.floatValue5;
+         float f = entry2.floatValue6;
+         boolean flag = false;
+         if (this.method3714(floatValue, entry2.floatValue3, entry.floatValue56, 1.15F, 8.0F)) {
+            floatValue = 0.0F;
+            flag = true;
          }
 
-         if (this.method3714(var4, var2.floatValue4, var1.floatValue57, 1.0F, 4.0F)) {
-            var4 = 0.0F;
-            var5 = true;
+         if (this.method3714(f, entry2.floatValue4, entry.floatValue57, 1.0F, 4.0F)) {
+            f = 0.0F;
+            flag = true;
          }
 
-         return var5 ? this.method3715(var3, var4) : null;
+         return flag ? this.method3715(floatValue, f) : null;
       } else {
          return null;
       }
    }
 
-   private boolean method3714(float var1, float var2, float var3, float var4, float var5) {
-      return this.isFinite(var1) && this.isFinite(var2) && this.isFinite(var3) && Math.abs(var1) == 1.0F && Math.abs(var2) <= var4 && Math.abs(var3) <= var5;
+   private boolean method3714(float floatValue, float f, float floatValue2, float f2, float f3) {
+      return this.isFinite(floatValue) && this.isFinite(f) && this.isFinite(floatValue2) && Math.abs(floatValue) == 1.0F && Math.abs(f) <= f2 && Math.abs(floatValue2) <= f3;
    }
 
-   private RawDiffFeatures.Entry2 method3715(float var1, float var2) {
-      float var3 = jointCodebook.method2540();
-      if (this.isFinite(var3) && !(var3 <= 0.0F) && this.isFinite(var1) && this.isFinite(var2)) {
-         var1 = Math.round(var1);
-         var2 = Math.round(var2);
+   private RawDiffFeatures.Entry2 method3715(float floatValue, float f) {
+      float floatValue2 = jointCodebook.method2540();
+      if (this.isFinite(floatValue2) && !(floatValue2 <= 0.0F) && this.isFinite(floatValue) && this.isFinite(f)) {
+         floatValue = Math.round(floatValue);
+         f = Math.round(f);
          this.floatValue = 0.0F;
          this.floatValue2 = 0.0F;
-         return new RawDiffFeatures.Entry2(var1 * var3, var2 * var3, var1, var2, var1, var2, 0.0F, 0.0F);
+         return new RawDiffFeatures.Entry2(floatValue * floatValue2, f * floatValue2, floatValue, f, floatValue, f, 0.0F, 0.0F);
       } else {
          this.floatValue = 0.0F;
          this.floatValue2 = 0.0F;
@@ -654,22 +654,22 @@ public class RawDiffFeatures extends Util22 {
       }
    }
 
-   private float method3716(float var1, float var2) {
-      return this.isFinite(var1) && this.isFinite(var2) && !(var2 <= 0.0F) ? Math.round(var1 / var2) : 0.0F;
+   private float method3716(float floatValue, float f) {
+      return this.isFinite(floatValue) && this.isFinite(f) && !(f <= 0.0F) ? Math.round(floatValue / f) : 0.0F;
    }
 
-   private float method3717(float var1, float var2) {
-      return this.isFinite(var1) && this.isFinite(var2) && !(var2 <= 0.0F) ? var1 / var2 : 0.0F;
+   private float method3717(float floatValue, float f) {
+      return this.isFinite(floatValue) && this.isFinite(f) && !(f <= 0.0F) ? floatValue / f : 0.0F;
    }
 
-   private float method3718(float var1, float var2) {
-      float var3 = var1 - var2;
-      return !Float.isFinite(var3) ? var1 : var2 + Mth.wrapDegrees(var3);
+   private float method3718(float floatValue, float f) {
+      float angle = floatValue - f;
+      return !Float.isFinite(angle) ? floatValue : f + Mth.wrapDegrees(angle);
    }
 
    private LivingEntity method3719() {
-      LivingEntity var1 = AuraModule.INSTANCE.method6358();
-      return var1 != null && var1.isAlive() ? var1 : null;
+      LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+      return livingEntity != null && livingEntity.isAlive() ? livingEntity : null;
    }
 
    private void method3720() {
@@ -718,72 +718,72 @@ public class RawDiffFeatures extends Util22 {
       this.floatValue22 = 0.0F;
    }
 
-   private void method3722(RawDiffFeatures.Entry var1) {
-      if (var1 != null) {
-         float var2 = jointCodebook.method2541();
-         float var3 = jointCodebook.method2542();
-         float var4 = jointCodebook.method2543();
-         float var5 = Math.max(0.05F, jointCodebook.method2544());
-         float var6 = this.method3717(var1.floatValue, var1.floatValue45);
-         float var7 = this.method3717(var1.floatValue2, var1.floatValue45);
-         float var8 = this.method3717(var1.floatValue3, var1.floatValue45);
-         float var9 = this.method3717(var1.floatValue4, var1.floatValue45);
-         float var10 = this.method3717(var1.floatValue5, var1.floatValue45);
-         float var11 = this.method3717(var1.floatValue6, var1.floatValue45);
-         float var12 = Math.abs(this.method3717(var1.floatValue7, var1.floatValue45));
-         float var13 = Math.abs(this.method3717(var1.floatValue8, var1.floatValue45));
-         float var14 = Math.max(Math.abs(var6), Math.abs(var7));
-         float var15 = Math.max(
-            Math.abs(this.method3716(var1.floatValue25, var1.floatValue45)), Math.abs(this.method3716(var1.floatValue26, var1.floatValue45))
+   private void method3722(RawDiffFeatures.Entry entry) {
+      if (entry != null) {
+         float f = jointCodebook.method2541();
+         float f2 = jointCodebook.method2542();
+         float max = jointCodebook.method2543();
+         float f3 = Math.max(0.05F, jointCodebook.method2544());
+         float f4 = this.method3717(entry.floatValue, entry.floatValue45);
+         float f5 = this.method3717(entry.floatValue2, entry.floatValue45);
+         float f6 = this.method3717(entry.floatValue3, entry.floatValue45);
+         float f7 = this.method3717(entry.floatValue4, entry.floatValue45);
+         float f8 = this.method3717(entry.floatValue5, entry.floatValue45);
+         float f9 = this.method3717(entry.floatValue6, entry.floatValue45);
+         float f10 = Math.abs(this.method3717(entry.floatValue7, entry.floatValue45));
+         float f11 = Math.abs(this.method3717(entry.floatValue8, entry.floatValue45));
+         float f12 = Math.max(Math.abs(f4), Math.abs(f5));
+         float f13 = Math.max(
+            Math.abs(this.method3716(entry.floatValue25, entry.floatValue45)), Math.abs(this.method3716(entry.floatValue26, entry.floatValue45))
          );
-         boolean var16 = var1.flag;
-         float var17 = var1.floatValue13;
-         float var18 = Mth.clamp(var2 / Math.max(var12, 1.0E-6F), 0.0F, 1.0F);
-         float var19 = Mth.clamp(var3 / Math.max(var13, 1.0E-6F), 0.0F, 1.0F);
-         float var20 = var16 ? Mth.clamp(var4 / Math.max(var14, 1.0E-6F), 0.0F, 1.0F) : 1.0F;
-         float var21 = Mth.clamp(var17 / Math.max(var5, 1.0E-6F), 0.0F, 1.0F);
-         float var22 = Math.min(Math.min(var18, var19), Math.min(var20, var21));
-         boolean var23 = var22 < 0.999F;
-         boolean var24 = var17 < var5 || var16 && var23;
-         float var25 = this.method3723(var8, var9);
-         float var26 = this.method3723(var10, var11);
-         float var27 = var24 ? Mth.clamp(var6, -var4, var4) : var6;
-         float var28 = var24 ? Mth.clamp(var7, -var4, var4) : var7;
-         var1.floatValue46 = var23 ? 1.0F : 0.0F;
-         var1.floatValue47 = var22;
-         var1.floatValue48 = (var16 ? 1.0F : 0.0F) * var22;
-         var1.floatValue49 = var24 ? 1.0F : 0.0F;
-         var1.floatValue50 = var14;
-         var1.floatValue51 = var15;
-         var1.floatValue52 = var25;
-         var1.floatValue53 = var26;
-         var1.floatValue54 = var27;
-         var1.floatValue55 = var28;
+         boolean flag = entry.flag;
+         float f14 = entry.floatValue13;
+         float f15 = Mth.clamp(f / Math.max(f10, 1.0E-6F), 0.0F, 1.0F);
+         float f16 = Mth.clamp(f2 / Math.max(f11, 1.0E-6F), 0.0F, 1.0F);
+         float f17 = flag ? Mth.clamp(max / Math.max(f12, 1.0E-6F), 0.0F, 1.0F) : 1.0F;
+         float f18 = Mth.clamp(f14 / Math.max(f3, 1.0E-6F), 0.0F, 1.0F);
+         float f19 = Math.min(Math.min(f15, f16), Math.min(f17, f18));
+         boolean flag2 = f19 < 0.999F;
+         boolean flag3 = f14 < f3 || flag && flag2;
+         float f20 = this.method3723(f6, f7);
+         float f21 = this.method3723(f8, f9);
+         float f22 = flag3 ? Mth.clamp(f4, -max, max) : f4;
+         float f23 = flag3 ? Mth.clamp(f5, -max, max) : f5;
+         entry.floatValue46 = flag2 ? 1.0F : 0.0F;
+         entry.floatValue47 = f19;
+         entry.floatValue48 = (flag ? 1.0F : 0.0F) * f19;
+         entry.floatValue49 = flag3 ? 1.0F : 0.0F;
+         entry.floatValue50 = f12;
+         entry.floatValue51 = f13;
+         entry.floatValue52 = f20;
+         entry.floatValue53 = f21;
+         entry.floatValue54 = f22;
+         entry.floatValue55 = f23;
       }
    }
 
-   private float method3723(float var1, float var2) {
-      if (var1 <= 0.0F && var2 >= 0.0F) {
+   private float method3723(float f, float f2) {
+      if (f <= 0.0F && f2 >= 0.0F) {
          return 0.0F;
       } else {
-         return Math.abs(var1) <= Math.abs(var2) ? var1 : var2;
+         return Math.abs(f) <= Math.abs(f2) ? f : f2;
       }
    }
 
-   private float hypot(float var1, float var2) {
-      return (float)Math.sqrt(var1 * var1 + var2 * var2);
+   private float hypot(float hypot, float y) {
+      return (float)Math.sqrt(hypot * hypot + y * y);
    }
 
-   private float method3724(float var1) {
-      return var1 * var1;
+   private float method3724(float f) {
+      return f * f;
    }
 
-   private boolean method3725(float[] var1) {
-      if (var1 == null) {
+   private boolean method3725(float[] floatValues) {
+      if (floatValues == null) {
          return false;
       } else {
-         for (float var5 : var1) {
-            if (!this.isFinite(var5)) {
+         for (float floatValue : floatValues) {
+            if (!this.isFinite(floatValue)) {
                return false;
             }
          }
@@ -792,12 +792,12 @@ public class RawDiffFeatures extends Util22 {
       }
    }
 
-   private boolean isFinite(float var1) {
-      return !Float.isNaN(var1) && !Float.isInfinite(var1);
+   private boolean isFinite(float floatValue) {
+      return !Float.isNaN(floatValue) && !Float.isInfinite(floatValue);
    }
 
-   private boolean method3726(Vec3 var1) {
-      return var1 != null && this.isFinite((float)var1.x) && this.isFinite((float)var1.y) && this.isFinite((float)var1.z);
+   private boolean method3726(Vec3 deltaMovement) {
+      return deltaMovement != null && this.isFinite((float)deltaMovement.x) && this.isFinite((float)deltaMovement.y) && this.isFinite((float)deltaMovement.z);
    }
 
    private static final class Entry {
@@ -873,19 +873,19 @@ public class RawDiffFeatures extends Util22 {
       public final float floatValue7;
       public final float floatValue8;
 
-      public Entry2(float var1, float var2) {
-         this(var1, var2, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+      public Entry2(float floatValue, float f) {
+         this(floatValue, f, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
       }
 
-      public Entry2(float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
+      public Entry2(float floatValue, float f, float floatValue2, float f2, float floatValue3, float f3, float floatValue4, float f4) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = floatValue2;
+         this.floatValue4 = f2;
+         this.floatValue5 = floatValue3;
+         this.floatValue6 = f3;
+         this.floatValue7 = floatValue4;
+         this.floatValue8 = f4;
       }
    }
 }

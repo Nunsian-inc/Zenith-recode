@@ -6,5 +6,5 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 public interface IUpperPartHelper {
    boolean playerAnimator$isUpperPart();
 
-   void playerAnimator$setUpperPart(boolean var1);
+   void playerAnimator$setUpperPart(boolean flag);
 }

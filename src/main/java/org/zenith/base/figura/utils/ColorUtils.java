@@ -42,7 +42,7 @@ public class ColorUtils {
          if (i != null) {
             return intToRGB(i);
          }
-      } catch (Exception var5) {
+      } catch (Exception e) {
       }
 
       return hexStringToRGB(hex, fallback);
@@ -68,7 +68,7 @@ public class ColorUtils {
 
          try {
             return intToRGB(Integer.parseInt(hex.substring(0, 6), 16));
-         } catch (Exception var41) {
+         } catch (Exception e) {
             return fallback;
          }
       } else {
@@ -88,8 +88,8 @@ public class ColorUtils {
 
    public static String rgbToHex(FiguraVec3 rgb) {
       String color = Integer.toHexString(rgbToInt(rgb));
-      String var10000 = "0".repeat(Math.max(6 - color.length(), 0));
-      return var10000 + color;
+      String repeat = "0".repeat(Math.max(6 - color.length(), 0));
+      return repeat + color;
    }
 
    public static int rgbaToIntABGR(FiguraVec4 rgba) {

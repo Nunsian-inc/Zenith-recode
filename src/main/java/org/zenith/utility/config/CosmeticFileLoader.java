@@ -21,12 +21,12 @@ public final class CosmeticFileLoader {
    private final String text3;
    private final CosmeticFileLoader.Type type;
 
-   private CosmeticFileLoader(Map<String, byte[]> var1, String var2, String var3, String var4, CosmeticFileLoader.Type var5) {
-      this.items = var1;
-      this.text = var2;
-      this.text2 = var3;
-      this.text3 = var4;
-      this.type = var5;
+   private CosmeticFileLoader(Map<String, byte[]> items, String text, String str, String str2, CosmeticFileLoader.Type type) {
+      this.items = items;
+      this.text = text;
+      this.text2 = str;
+      this.text3 = str2;
+      this.type = type;
    }
 
    public CosmeticFileLoader.Type getType() {
@@ -45,30 +45,30 @@ public final class CosmeticFileLoader {
       return this.text3;
    }
 
-   public byte[] method7338(String var1) {
-      return var1 == null ? null : this.items.get(var1);
+   public byte[] method7338(String text) {
+      return text == null ? null : this.items.get(text);
    }
 
-   public String method7339(String var1) {
-      byte[] var2 = this.method7338(var1);
-      return var2 == null ? null : new String(var2, StandardCharsets.UTF_8);
+   public String method7339(String text) {
+      byte[] bytes = this.method7338(text);
+      return bytes == null ? null : new String(bytes, StandardCharsets.UTF_8);
    }
 
    public Map<String, byte[]> getItems() {
       return this.items;
    }
 
-   public byte[] method7340(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         byte[] var2 = this.items.get(var1);
-         if (var2 != null) {
-            return var2;
+   public byte[] method7340(String key) {
+      if (key != null && !key.isBlank()) {
+         byte[] bytes = this.items.get(key);
+         if (bytes != null) {
+            return bytes;
          } else {
-            String var3 = method7342(var1).toLowerCase(Locale.ROOT);
+            String lowerCase = method7342(key).toLowerCase(Locale.ROOT);
 
-            for (Entry var5 : this.items.entrySet()) {
-               if (method7342((String)var5.getKey()).toLowerCase(Locale.ROOT).equals(var3)) {
-                  return (byte[])var5.getValue();
+            for (Entry entry : this.items.entrySet()) {
+               if (method7342((String)entry.getKey()).toLowerCase(Locale.ROOT).equals(lowerCase)) {
+                  return (byte[])entry.getValue();
                }
             }
 
@@ -80,92 +80,92 @@ public final class CosmeticFileLoader {
    }
 
    public byte[] method7341() {
-      for (Entry var2 : this.items.entrySet()) {
-         if (method7343((String)var2.getKey())) {
-            return (byte[])var2.getValue();
+      for (Entry entry : this.items.entrySet()) {
+         if (method7343((String)entry.getKey())) {
+            return (byte[])entry.getValue();
          }
       }
 
       return null;
    }
 
-   private static String method7342(String var0) {
-      int var1 = Math.max(var0.lastIndexOf(47), var0.lastIndexOf(92));
-      return var1 < 0 ? var0 : var0.substring(var1 + 1);
+   private static String method7342(String key) {
+      int n = Math.max(key.lastIndexOf(47), key.lastIndexOf(92));
+      return n < 0 ? key : key.substring(n + 1);
    }
 
-   private static boolean method7343(String var0) {
-      return var0.toLowerCase(Locale.ROOT).endsWith(".png");
+   private static boolean method7343(String key) {
+      return key.toLowerCase(Locale.ROOT).endsWith(".png");
    }
 
-   public static CosmeticFileLoader method7344(Path var0) throws IOException {
-      CosmeticFileLoader var2;
-      try (InputStream var1 = Files.newInputStream(var0)) {
-         var2 = method7345(var1);
+   public static CosmeticFileLoader method7344(Path path) throws IOException {
+      CosmeticFileLoader cosmeticFileLoader;
+      try (InputStream inputStream = Files.newInputStream(path)) {
+         cosmeticFileLoader = method7345(inputStream);
       }
 
-      return var2;
+      return cosmeticFileLoader;
    }
 
-   public static CosmeticFileLoader method7345(InputStream var0) throws IOException {
-      LinkedHashMap var1 = new LinkedHashMap();
+   public static CosmeticFileLoader method7345(InputStream byteArrayInputStream) throws IOException {
+      LinkedHashMap map = new LinkedHashMap();
 
-      ZipEntry var3;
-      try (ZipInputStream var2 = new ZipInputStream(var0)) {
-         while ((var3 = var2.getNextEntry()) != null) {
-            if (!var3.isDirectory()) {
-               var1.put(var3.getName(), method7347(var2));
+      ZipEntry nextEntry;
+      try (ZipInputStream zipInputStream = new ZipInputStream(byteArrayInputStream)) {
+         while ((nextEntry = zipInputStream.getNextEntry()) != null) {
+            if (!nextEntry.isDirectory()) {
+               map.put(nextEntry.getName(), method7347(zipInputStream));
             }
          }
       }
 
-      String var14 = null;
-      String var15 = null;
-      String var4 = null;
-      String var5 = null;
-      String var6 = null;
+      String key = null;
+      String str = null;
+      String key2 = null;
+      String key3 = null;
+      String key4 = null;
 
-      for (Object var8_o : (Iterable<?>)(Object)(var1.entrySet())) {
-         Entry var8 = (Entry)var8_o;
-         String var9 = (String)var8.getKey();
-         String var10 = var9.toLowerCase(Locale.ROOT);
-         if (var10.endsWith(".obj")) {
-            var14 = var9;
-         } else if (var10.endsWith(".mtl")) {
-            var6 = var9;
-         } else if (var10.endsWith(".json")) {
-            String var11 = method7346((byte[])var8.getValue());
-            if (var11.contains("minecraft:geometry")) {
-               var15 = var9;
-            } else if (var11.contains("\"Techne\"")) {
-               var4 = var9;
-            } else if (var11.contains("\"animations\"")) {
-               var5 = var9;
+      for (Object obj : (Iterable<?>)(Object)(map.entrySet())) {
+         Entry entry = (Entry)obj;
+         String key5 = (String)entry.getKey();
+         String lowerCase = key5.toLowerCase(Locale.ROOT);
+         if (lowerCase.endsWith(".obj")) {
+            key = key5;
+         } else if (lowerCase.endsWith(".mtl")) {
+            key4 = key5;
+         } else if (lowerCase.endsWith(".json")) {
+            String str2 = method7346((byte[])entry.getValue());
+            if (str2.contains("minecraft:geometry")) {
+               str = key5;
+            } else if (str2.contains("\"Techne\"")) {
+               key2 = key5;
+            } else if (str2.contains("\"animations\"")) {
+               key3 = key5;
             }
          }
       }
 
-      String var16 = var14 != null ? var14 : (var15 != null ? var15 : var4);
-      CosmeticFileLoader.Type var17 = var14 != null
+      String text = key != null ? key : (str != null ? str : key2);
+      CosmeticFileLoader.Type type = key != null
          ? CosmeticFileLoader.Type.WAVEFRONT
-         : (var15 != null ? CosmeticFileLoader.Type.BEDROCK : (var4 != null ? CosmeticFileLoader.Type.TECHNE : CosmeticFileLoader.Type.EMPTY));
-      return new CosmeticFileLoader(Collections.unmodifiableMap(var1), var16, var5, var6, var17);
+         : (str != null ? CosmeticFileLoader.Type.BEDROCK : (key2 != null ? CosmeticFileLoader.Type.TECHNE : CosmeticFileLoader.Type.EMPTY));
+      return new CosmeticFileLoader(Collections.unmodifiableMap(map), text, key3, key4, type);
    }
 
-   private static String method7346(byte[] var0) {
-      return new String(var0, 0, Math.min(var0.length, 512), StandardCharsets.UTF_8);
+   private static String method7346(byte[] bytes) {
+      return new String(bytes, 0, Math.min(bytes.length, 512), StandardCharsets.UTF_8);
    }
 
-   private static byte[] method7347(InputStream var0) throws IOException {
-      ByteArrayOutputStream var1 = new ByteArrayOutputStream(8192);
-      byte[] var2 = new byte[8192];
+   private static byte[] method7347(InputStream zipInputStream) throws IOException {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(8192);
+      byte[] bytes = new byte[8192];
 
-      int var3;
-      while ((var3 = var0.read(var2)) > 0) {
-         var1.write(var2, 0, var3);
+      int len;
+      while ((len = zipInputStream.read(bytes)) > 0) {
+         byteArrayOutputStream.write(bytes, 0, len);
       }
 
-      return var1.toByteArray();
+      return byteArrayOutputStream.toByteArray();
    }
 
    public static enum Type {

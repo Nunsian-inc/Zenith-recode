@@ -23,7 +23,7 @@ public final class AutoPayModule extends Module {
       "autopay.maxAmount",
       "100000",
       "autopay.maxAmount.empty",
-      TextSetting.Entry.method2126(12, var0 -> var0.isEmpty() || var0.chars().allMatch(Character::isDigit))
+      TextSetting.Entry.method2126(12, str -> str.isEmpty() || str.chars().allMatch(Character::isDigit))
    );
    private final StopWatch stopWatch = new StopWatch();
    private long longValue = -1L;
@@ -39,20 +39,20 @@ public final class AutoPayModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         long var2 = ScoreboardUtils.method5530(mc.level.getScoreboard(), mc.player.getScoreboardName());
-         if (var2 >= 0L) {
-            this.longValue = var2;
+         long longValue = ScoreboardUtils.method5530(mc.level.getScoreboard(), mc.player.getScoreboardName());
+         if (longValue >= 0L) {
+            this.longValue = longValue;
          }
 
          if (this.longValue >= 0L) {
-            String var4 = this.nick.getValue().trim();
-            long var5 = method1220(this.maxAmount.getValue().trim());
-            if (!var4.isEmpty() && var5 >= 0L) {
-               long var7 = this.longValue - var5;
-               if (var7 > 0L && this.stopWatch.method7546(5000L)) {
-                  mc.player.connection.sendCommand("pay " + var4 + " " + var7);
+            String str = this.nick.getValue().trim();
+            long l = method1220(this.maxAmount.getValue().trim());
+            if (!str.isEmpty() && l >= 0L) {
+               long l2 = this.longValue - l;
+               if (l2 > 0L && this.stopWatch.method7546(5000L)) {
+                  mc.player.connection.sendCommand("pay " + str + " " + l2);
                   this.stopWatch.reset();
                }
             }
@@ -60,13 +60,13 @@ public final class AutoPayModule extends Module {
       }
    }
 
-   private static long method1220(String var0) {
-      if (var0.isEmpty()) {
+   private static long method1220(String str) {
+      if (str.isEmpty()) {
          return -1L;
       } else {
          try {
-            return Long.parseLong(var0);
-         } catch (NumberFormatException var2) {
+            return Long.parseLong(str);
+         } catch (NumberFormatException e) {
             return -1L;
          }
       }

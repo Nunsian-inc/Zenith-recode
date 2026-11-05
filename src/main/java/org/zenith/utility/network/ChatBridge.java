@@ -67,32 +67,32 @@ public final class ChatBridge implements MinecraftAccess {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
-      long var2 = System.currentTimeMillis();
-      if (var2 - this.lastPoll >= 200L) {
-         this.lastPoll = var2;
+   public void onUpdate(UpdateEvent event) {
+      long now = System.currentTimeMillis();
+      if (now - this.lastPoll >= 200L) {
+         this.lastPoll = now;
          this.method499();
          this.flush();
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         Packet var2 = var1.getPacket3();
-         Component var3 = null;
-         if (var2 instanceof ClientboundSystemChatPacket var4) {
-            var3 = var4.content();
-         } else if (var2 instanceof ClientboundDisguisedChatPacket var5) {
-            var3 = var5.message();
-         } else if (var2 instanceof ClientboundPlayerChatPacket var6) {
-            var3 = var6.unsignedContent().orElse(null);
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         Packet packet3 = event.getPacket3();
+         Component content = null;
+         if (packet3 instanceof ClientboundSystemChatPacket systemChatPacket) {
+            content = systemChatPacket.content();
+         } else if (packet3 instanceof ClientboundDisguisedChatPacket disguisedChatPacket) {
+            content = disguisedChatPacket.message();
+         } else if (packet3 instanceof ClientboundPlayerChatPacket playerChatPacket) {
+            content = playerChatPacket.unsignedContent().orElse(null);
          }
 
-         if (var3 != null) {
-            String var7 = pattern.matcher(var3.getString()).replaceAll("").trim();
-            if (!var7.isEmpty()) {
-               this.write("chat| " + var7);
+         if (content != null) {
+            String str = pattern.matcher(content.getString()).replaceAll("").trim();
+            if (!str.isEmpty()) {
+               this.write("chat| " + str);
             }
          }
       }
@@ -104,7 +104,7 @@ public final class ChatBridge implements MinecraftAccess {
       } else {
          try {
             return Files.readAllLines(this.file2.toPath(), StandardCharsets.UTF_8).size();
-         } catch (Exception var2) {
+         } catch (Exception e) {
             return 0;
          }
       }
@@ -112,32 +112,32 @@ public final class ChatBridge implements MinecraftAccess {
 
    private void method499() {
       if (this.file2.exists()) {
-         long var1 = this.file2.length();
-         long var3 = this.file2.lastModified();
-         if (var1 != this.longValue2 || var3 != this.longValue3) {
-            List var5;
+         long length = this.file2.length();
+         long lastModified = this.file2.lastModified();
+         if (length != this.longValue2 || lastModified != this.longValue3) {
+            List allLines;
             try {
-               var5 = Files.readAllLines(this.file2.toPath(), StandardCharsets.UTF_8);
-            } catch (Exception var10) {
+               allLines = Files.readAllLines(this.file2.toPath(), StandardCharsets.UTF_8);
+            } catch (Exception e) {
                return;
             }
 
-            this.longValue2 = var1;
-            this.longValue3 = var3;
-            if (var5.size() <= this.intValue) {
-               if (var5.size() < this.intValue) {
+            this.longValue2 = length;
+            this.longValue3 = lastModified;
+            if (allLines.size() <= this.intValue) {
+               if (allLines.size() < this.intValue) {
                   this.intValue = 0;
                   this.longValue2 = -1L;
                }
             } else {
-               for (int var6 = this.intValue; var6 < var5.size(); var6++) {
-                  String var7 = ((String)var5.get(var6)).trim();
-                  this.intValue = var6 + 1;
-                  if (!var7.isEmpty() && !var7.startsWith("#")) {
+               for (int i = this.intValue; i < allLines.size(); i++) {
+                  String str = ((String)allLines.get(i)).trim();
+                  this.intValue = i + 1;
+                  if (!str.isEmpty() && !str.startsWith("#")) {
                      try {
-                        this.method500(var7);
-                     } catch (Exception var9) {
-                        this.write("error| " + var7 + " -> " + var9);
+                        this.method500(str);
+                     } catch (Exception e) {
+                        this.write("error| " + str + " -> " + e);
                      }
                   }
                }
@@ -146,28 +146,28 @@ public final class ChatBridge implements MinecraftAccess {
       }
    }
 
-   private void method500(String var1) {
-      String[] var2 = var1.split("\\s+", 2);
-      String var3 = var2[0].toLowerCase(Locale.ROOT);
-      String var4 = var2.length > 1 ? var2[1] : "";
-      this.write("> " + var1);
-      switch (var3) {
+   private void method500(String str) {
+      String[] strings = str.split("\\s+", 2);
+      String lowerCase = strings[0].toLowerCase(Locale.ROOT);
+      String content = strings.length > 1 ? strings[1] : "";
+      this.write("> " + str);
+      switch (lowerCase) {
          case "cmd":
             if (mc.getConnection() == null) {
                return;
             }
 
-            mc.getConnection().sendCommand(var4.startsWith("/") ? var4.substring(1) : var4);
+            mc.getConnection().sendCommand(content.startsWith("/") ? content.substring(1) : content);
             break;
          case "chat":
             if (mc.getConnection() == null) {
                return;
             }
 
-            mc.getConnection().sendChat(var4);
+            mc.getConnection().sendChat(content);
             break;
          case "module":
-            this.method501(var4);
+            this.method501(content);
             break;
          case "pos":
             this.method502();
@@ -179,7 +179,7 @@ public final class ChatBridge implements MinecraftAccess {
             this.method504();
             break;
          case "click":
-            this.method506(var4);
+            this.method506(content);
             break;
          case "close":
             if (mc.player != null) {
@@ -193,20 +193,20 @@ public final class ChatBridge implements MinecraftAccess {
             this.method505();
             break;
          default:
-            this.write("unknown| " + var3);
+            this.write("unknown| " + lowerCase);
       }
    }
 
-   private void method501(String var1) {
-      String[] var2 = var1.split("\\s+");
-      if (var2.length != 0 && !var2[0].isEmpty()) {
-         Module var3 = Zenith.getInstance().getModuleManager().method2484(var2[0]);
-         if (var3 == null) {
-            this.write("module| не найден " + var2[0]);
+   private void method501(String content) {
+      String[] strings = content.split("\\s+");
+      if (strings.length != 0 && !strings[0].isEmpty()) {
+         Module moduleValue = Zenith.getInstance().getModuleManager().method2484(strings[0]);
+         if (moduleValue == null) {
+            this.write("module| не найден " + strings[0]);
          } else {
-            boolean var4 = var2.length < 2 ? !var3.isEnabled() : var2[1].equalsIgnoreCase("on");
-            var3.setToggled(var4);
-            this.write("module| " + var3.getName() + " = " + var3.isEnabled());
+            boolean equalsIgnoreCase = strings.length < 2 ? !moduleValue.isEnabled() : strings[1].equalsIgnoreCase("on");
+            moduleValue.setToggled(equalsIgnoreCase);
+            this.write("module| " + moduleValue.getName() + " = " + moduleValue.isEnabled());
          }
       }
    }
@@ -231,18 +231,18 @@ public final class ChatBridge implements MinecraftAccess {
 
    private void method503() {
       if (mc.level != null && mc.player != null) {
-         for (Player var2 : mc.level.players()) {
-            if (var2 != mc.player) {
+         for (Player player : mc.level.players()) {
+            if (player != mc.player) {
                this.write(
                   String.format(
                      Locale.ROOT,
                      "player| %s %.0f %.0f %.0f dist=%.1f hand=%s",
-                     var2.getGameProfile().name(),
-                     var2.getX(),
-                     var2.getY(),
-                     var2.getZ(),
-                     mc.player.distanceTo(var2),
-                     this.method507(var2.getMainHandItem())
+                     player.getGameProfile().name(),
+                     player.getX(),
+                     player.getY(),
+                     player.getZ(),
+                     mc.player.distanceTo(player),
+                     this.method507(player.getMainHandItem())
                   )
                );
             }
@@ -254,14 +254,14 @@ public final class ChatBridge implements MinecraftAccess {
 
    private void method504() {
       if (mc.player != null && mc.player.containerMenu != null) {
-         AbstractContainerMenu var1 = mc.player.containerMenu;
-         this.write("screen| syncId=" + var1.containerId + " slots=" + var1.slots.size());
-         int var2 = Math.max(0, var1.slots.size() - 36);
+         AbstractContainerMenu containerMenu = mc.player.containerMenu;
+         this.write("screen| syncId=" + containerMenu.containerId + " slots=" + containerMenu.slots.size());
+         int n = Math.max(0, containerMenu.slots.size() - 36);
 
-         for (int var3 = 0; var3 < var2; var3++) {
-            ItemStack var4 = var1.getSlot(var3).getItem();
-            if (!var4.isEmpty()) {
-               this.write("slot| " + var3 + " " + this.method507(var4));
+         for (int i = 0; i < n; i++) {
+            ItemStack mainHandItem = containerMenu.getSlot(i).getItem();
+            if (!mainHandItem.isEmpty()) {
+               this.write("slot| " + i + " " + this.method507(mainHandItem));
             }
          }
       } else {
@@ -270,54 +270,54 @@ public final class ChatBridge implements MinecraftAccess {
    }
 
    private void method505() {
-      if (mc.crosshairPickEntity instanceof Player var1) {
+      if (mc.crosshairPickEntity instanceof Player player) {
          this.write(
-            "target| " + var1.getGameProfile().name() + " main=" + this.method507(var1.getMainHandItem()) + " off=" + this.method507(var1.getOffhandItem())
+            "target| " + player.getGameProfile().name() + " main=" + this.method507(player.getMainHandItem()) + " off=" + this.method507(player.getOffhandItem())
          );
       } else {
          this.write("target| нет цели");
       }
    }
 
-   private void method506(String var1) {
+   private void method506(String content) {
       if (mc.player != null && mc.gameMode != null && mc.player.containerMenu != null) {
-         String[] var2 = var1.split("\\s+");
-         int var3 = Integer.parseInt(var2[0]);
-         int var4 = var2.length > 1 ? Integer.parseInt(var2[1]) : 0;
-         mc.gameMode.handleContainerInput(mc.player.containerMenu.containerId, var3, var4, ContainerInput.PICKUP, mc.player);
-         this.write("click| " + var3 + " button=" + var4);
+         String[] strings = content.split("\\s+");
+         int slotNum = Integer.parseInt(strings[0]);
+         int buttonNum = strings.length > 1 ? Integer.parseInt(strings[1]) : 0;
+         mc.gameMode.handleContainerInput(mc.player.containerMenu.containerId, slotNum, buttonNum, ContainerInput.PICKUP, mc.player);
+         this.write("click| " + slotNum + " button=" + buttonNum);
       }
    }
 
-   private String method507(ItemStack var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         StringBuilder var2 = new StringBuilder(var1.getItem().toString());
-         var2.append(" x").append(var1.getCount());
-         String var3 = pattern.matcher(var1.getHoverName().getString()).replaceAll("");
-         var2.append(" \"").append(var3).append('"');
-         var var4 = Names.method4519(var1);
-         if (!var4.isEmpty()) {
-            var2.append(" ench=").append(String.join(",", var4));
+   private String method507(ItemStack mainHandItem) {
+      if (mainHandItem != null && !mainHandItem.isEmpty()) {
+         StringBuilder builder = new StringBuilder(mainHandItem.getItem().toString());
+         builder.append(" x").append(mainHandItem.getCount());
+         String str = pattern.matcher(mainHandItem.getHoverName().getString()).replaceAll("");
+         builder.append(" \"").append(str).append('"');
+         var elements = Names.method4519(mainHandItem);
+         if (!elements.isEmpty()) {
+            builder.append(" ench=").append(String.join(",", elements));
          }
 
-         ItemLore var5 = var1.get(DataComponents.LORE);
-         if (var5 != null && !var5.lines().isEmpty()) {
-            var2.append(" lore=").append(var5.lines().size());
+         ItemLore itemLore = mainHandItem.get(DataComponents.LORE);
+         if (itemLore != null && !itemLore.lines().isEmpty()) {
+            builder.append(" lore=").append(itemLore.lines().size());
          }
 
-         return var2.toString();
+         return builder.toString();
       } else {
          return "-";
       }
    }
 
-   private synchronized void write(String var1) {
+   private synchronized void write(String str) {
       if (this.printWriter == null) {
          this.method508();
       }
 
       if (this.printWriter != null) {
-         this.printWriter.println("[" + dateTimeFormatter.format(LocalTime.now()) + "] " + var1);
+         this.printWriter.println("[" + dateTimeFormatter.format(LocalTime.now()) + "] " + str);
          this.dirty = true;
          if (System.currentTimeMillis() - this.longValue >= 200L) {
             this.flush();
@@ -336,7 +336,7 @@ public final class ChatBridge implements MinecraftAccess {
    private void method508() {
       try {
          this.printWriter = new PrintWriter(new BufferedWriter(new FileWriter(this.file3, true)), false);
-      } catch (Exception var2) {
+      } catch (Exception e) {
          this.printWriter = null;
       }
    }
@@ -347,10 +347,10 @@ public final class ChatBridge implements MinecraftAccess {
             return;
          }
 
-         File var1 = new File(this.file, "out.old.log");
-         Files.deleteIfExists(var1.toPath());
-         this.file3.renameTo(var1);
-      } catch (Exception var2) {
+         File file = new File(this.file, "out.old.log");
+         Files.deleteIfExists(file.toPath());
+         this.file3.renameTo(file);
+      } catch (Exception e) {
       }
    }
 }

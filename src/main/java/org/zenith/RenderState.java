@@ -51,15 +51,15 @@ public final class RenderState {
       method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA, BlendFactor.ONE, BlendFactor.ZERO);
    }
 
-   public static void method1874(BlendFactor var0, BlendFactor var1) {
-      method1875(var0, var1, var0, var1);
+   public static void method1874(BlendFactor blendFactor, BlendFactor blendFactor2) {
+      method1875(blendFactor, blendFactor2, blendFactor, blendFactor2);
    }
 
-   public static void method1875(BlendFactor var0, BlendFactor var1, BlendFactor var2, BlendFactor var3) {
-      sourceFactor = var0;
-      destFactor = var1;
-      sourceFactor2 = var2;
-      destFactor2 = var3;
+   public static void method1875(BlendFactor blendFactor, BlendFactor destFactor3, BlendFactor sourceFactor22, BlendFactor destFactor22) {
+      sourceFactor = blendFactor;
+      destFactor = destFactor3;
+      sourceFactor2 = sourceFactor22;
+      destFactor2 = destFactor22;
    }
 
    public static void method1876() {
@@ -80,9 +80,9 @@ public final class RenderState {
       flag4 = false;
    }
 
-   public static void method1880(CompareOp var0) {
-      depthTestFunction = var0;
-      flag4 = var0 != CompareOp.ALWAYS_PASS;
+   public static void method1880(CompareOp compareOp) {
+      depthTestFunction = compareOp;
+      flag4 = compareOp != CompareOp.ALWAYS_PASS;
    }
 
    public static boolean isFlag4() {
@@ -93,15 +93,15 @@ public final class RenderState {
       flag4 = false;
    }
 
-   public static void method1882(boolean var0) {
-      flag3 = var0;
+   public static void method1882(boolean flag) {
+      flag3 = flag;
    }
 
-   public static void method1883(float var0, float var1, float var2, float var3) {
-      floatValue = var0;
-      floatValue2 = var1;
-      floatValue3 = var2;
-      alpha = var3;
+   public static void method1883(float f, float floatValue4, float floatValue5, float previewAlpha) {
+      floatValue = f;
+      floatValue2 = floatValue4;
+      floatValue3 = floatValue5;
+      alpha = previewAlpha;
    }
 
    public static void method1884() {
@@ -132,51 +132,51 @@ public final class RenderState {
       return floatValue == 1.0F && floatValue2 == 1.0F && floatValue3 == 1.0F && alpha == 1.0F;
    }
 
-   public static void method1887(int var0, @Nullable GpuTextureView var1) {
-      method1888(var0, var1, FilterMode.NEAREST);
+   public static void method1887(int n, @Nullable GpuTextureView glTextureView) {
+      method1888(n, glTextureView, FilterMode.NEAREST);
    }
 
-   public static void method1888(int var0, @Nullable GpuTextureView var1, FilterMode var2) {
-      if (var0 >= 0 && var0 < gpuTextureViews.length) {
-         gpuTextureViews[var0] = var1;
-         filterModes[var0] = var2;
+   public static void method1888(int n, @Nullable GpuTextureView glTextureView, FilterMode filterMode) {
+      if (n >= 0 && n < gpuTextureViews.length) {
+         gpuTextureViews[n] = glTextureView;
+         filterModes[n] = filterMode;
       }
    }
 
-   public static void method1889(int var0, @Nullable GpuTextureView var1) {
-      method1888(var0, var1, FilterMode.LINEAR);
+   public static void method1889(int n, @Nullable GpuTextureView colorTextureView) {
+      method1888(n, colorTextureView, FilterMode.LINEAR);
    }
 
-   public static void method1890(int var0, @Nullable Identifier var1) {
-      method1888(var0, TextureFilterUtils.method7269(var1), TextureFilterUtils.method7268(var1));
+   public static void method1890(int n, @Nullable Identifier identifier) {
+      method1888(n, TextureFilterUtils.method7269(identifier), TextureFilterUtils.method7268(identifier));
    }
 
-   public static void method1891(int var0, @Nullable AbstractTexture var1) {
-      method1887(var0, TextureFilterUtils.method7270(var1));
+   public static void method1891(int n, @Nullable AbstractTexture texture) {
+      method1887(n, TextureFilterUtils.method7270(texture));
    }
 
-   public static void method1892(int var0, int var1) {
-      method1887(var0, (GpuTextureView)null);
+   public static void method1892(int n, int n2) {
+      method1887(n, (GpuTextureView)null);
    }
 
-   public static void method1893(int var0) {
-      method1887(var0, (GpuTextureView)null);
+   public static void method1893(int n) {
+      method1887(n, (GpuTextureView)null);
    }
 
    @Nullable
-   public static GpuTextureView method1894(int var0) {
-      return var0 >= 0 && var0 < gpuTextureViews.length ? gpuTextureViews[var0] : null;
+   public static GpuTextureView method1894(int n) {
+      return n >= 0 && n < gpuTextureViews.length ? gpuTextureViews[n] : null;
    }
 
-   public static FilterMode method1895(int var0) {
-      FilterMode var1 = var0 >= 0 && var0 < filterModes.length ? filterModes[var0] : null;
-      return var1 != null ? var1 : FilterMode.NEAREST;
+   public static FilterMode method1895(int n) {
+      FilterMode filterMode = n >= 0 && n < filterModes.length ? filterModes[n] : null;
+      return filterMode != null ? filterMode : FilterMode.NEAREST;
    }
 
-   public static GpuSampler method1896(int var0) {
-      FilterMode var1 = method1895(var0);
-      AddressMode var2 = TextureFilterUtils.method7271(method1894(var0));
-      return RenderSystem.getSamplerCache().getSampler(var2, var2, var1, var1, false);
+   public static GpuSampler method1896(int n) {
+      FilterMode minFilter = method1895(n);
+      AddressMode addressModeU = TextureFilterUtils.method7271(method1894(n));
+      return RenderSystem.getSamplerCache().getSampler(addressModeU, addressModeU, minFilter, minFilter, false);
    }
 
    public static void method1897() {
@@ -184,8 +184,8 @@ public final class RenderState {
       Arrays.fill(filterModes, null);
    }
 
-   public static void method1898(String var0) {
-      text = var0;
+   public static void method1898(String str) {
+      text = str;
    }
 
    @Nullable
@@ -197,25 +197,25 @@ public final class RenderState {
       text = null;
    }
 
-   public static void method1900(int var0, int var1, int var2, int var3) {
-      RenderSystem.enableScissorForRenderTypeDraws(var0, var1, var2, var3);
+   public static void method1900(int x, int y, int width, int height) {
+      RenderSystem.enableScissorForRenderTypeDraws(x, y, width, height);
    }
 
    public static void method1901() {
       RenderSystem.disableScissorForRenderTypeDraws();
    }
 
-   public static void method1902(float var0) {
-      floatValue4 = var0;
+   public static void method1902(float floatValue) {
+      floatValue4 = floatValue;
    }
 
    public static float getFloatValue4() {
       return floatValue4;
    }
 
-   public static void method1903(boolean var0, boolean var1, boolean var2, boolean var3) {
-      flag5 = var0 || var1 || var2;
-      flag6 = var3;
+   public static void method1903(boolean flag, boolean flag2, boolean flag3, boolean flag4) {
+      flag5 = flag || flag2 || flag3;
+      flag6 = flag4;
    }
 
    public static boolean isFlag5() {
@@ -230,27 +230,27 @@ public final class RenderState {
       return new RenderState.Data2(flag, sourceFactor, destFactor, sourceFactor2, destFactor2, flag2, depthTestFunction, flag3);
    }
 
-   public static void method1905(RenderState.Data2 var0) {
-      flag = var0.isFlag();
-      sourceFactor = var0.getSourceFactor();
-      destFactor = var0.getDestFactor();
-      sourceFactor2 = var0.getSourceFactor2();
-      destFactor2 = var0.getDestFactor2();
-      flag2 = var0.isFlag2();
-      depthTestFunction = var0.getDepthTestFunction();
-      flag3 = var0.isFlag3();
+   public static void method1905(RenderState.Data2 data2) {
+      flag = data2.isFlag();
+      sourceFactor = data2.getSourceFactor();
+      destFactor = data2.getDestFactor();
+      sourceFactor2 = data2.getSourceFactor2();
+      destFactor2 = data2.getDestFactor2();
+      flag2 = data2.isFlag2();
+      depthTestFunction = data2.getDepthTestFunction();
+      flag3 = data2.isFlag3();
    }
 
    public static RenderState.Data method1906() {
       return new RenderState.Data(method1904(), flag4, method1885(), (GpuTextureView[])gpuTextureViews.clone(), (FilterMode[])filterModes.clone());
    }
 
-   public static void method1907(RenderState.Data var0) {
-      method1905(var0.getData2());
-      flag4 = var0.isFlag();
-      method1883(var0.getFloatValues()[0], var0.getFloatValues()[1], var0.getFloatValues()[2], var0.getFloatValues()[3]);
-      System.arraycopy(var0.getGpuTextureViews(), 0, gpuTextureViews, 0, gpuTextureViews.length);
-      System.arraycopy(var0.getFilterModes(), 0, filterModes, 0, filterModes.length);
+   public static void method1907(RenderState.Data data) {
+      method1905(data.getData2());
+      flag4 = data.isFlag();
+      method1883(data.getFloatValues()[0], data.getFloatValues()[1], data.getFloatValues()[2], data.getFloatValues()[3]);
+      System.arraycopy(data.getGpuTextureViews(), 0, gpuTextureViews, 0, gpuTextureViews.length);
+      System.arraycopy(data.getFilterModes(), 0, filterModes, 0, filterModes.length);
    }
 
    public static void reset() {
@@ -308,12 +308,12 @@ public final class RenderState {
          return "Data[" + "data2=" + this.data2 + ", " + "flag=" + this.flag + ", " + "floatValues=" + this.floatValues + ", " + "gpuTextureViews=" + this.gpuTextureViews + ", " + "filterModes=" + this.filterModes + "]";
       }
 
-      public Data(RenderState.Data2 var1, boolean var2, float[] var3, GpuTextureView[] var4, FilterMode[] var5) {
-         this.data2 = var1;
-         this.flag = var2;
-         this.floatValues = var3;
-         this.gpuTextureViews = var4;
-         this.filterModes = var5;
+      public Data(RenderState.Data2 data2, boolean flag, float[] floatValues, GpuTextureView[] gpuTextureViews, FilterMode[] filterModes) {
+         this.data2 = data2;
+         this.flag = flag;
+         this.floatValues = floatValues;
+         this.gpuTextureViews = gpuTextureViews;
+         this.filterModes = filterModes;
       }
 
       public RenderState.Data2 getData2() {
@@ -396,15 +396,15 @@ public final class RenderState {
          return "Data2[" + "flag=" + this.flag + ", " + "sourceFactor=" + this.sourceFactor + ", " + "destFactor=" + this.destFactor + ", " + "sourceFactor2=" + this.sourceFactor2 + ", " + "destFactor2=" + this.destFactor2 + ", " + "flag2=" + this.flag2 + ", " + "depthTestFunction=" + this.depthTestFunction + ", " + "flag3=" + this.flag3 + "]";
       }
 
-      public Data2(boolean var1, BlendFactor var2, BlendFactor var3, BlendFactor var4, BlendFactor var5, boolean var6, CompareOp var7, boolean var8) {
-         this.flag = var1;
-         this.sourceFactor = var2;
-         this.destFactor = var3;
-         this.sourceFactor2 = var4;
-         this.destFactor2 = var5;
-         this.flag2 = var6;
-         this.depthTestFunction = var7;
-         this.flag3 = var8;
+      public Data2(boolean flag, BlendFactor sourceFactor, BlendFactor destFactor, BlendFactor sourceFactor2, BlendFactor destFactor2, boolean flag2, CompareOp depthTestFunction, boolean flag3) {
+         this.flag = flag;
+         this.sourceFactor = sourceFactor;
+         this.destFactor = destFactor;
+         this.sourceFactor2 = sourceFactor2;
+         this.destFactor2 = destFactor2;
+         this.flag2 = flag2;
+         this.depthTestFunction = depthTestFunction;
+         this.flag3 = flag3;
       }
 
       public BlendFunction method1908() {

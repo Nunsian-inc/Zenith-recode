@@ -24,9 +24,9 @@ public final class AntiInvisibleModule extends Module {
    }
 
    @EventTarget
-   public void method5168(LivingRenderColorEvent var1) {
-      var1.setColor(this.colorSetting.getZenithColor().method7287());
-      var1.cancel();
+   public void method5168(LivingRenderColorEvent event) {
+      event.setColor(this.colorSetting.getZenithColor().method7287());
+      event.cancel();
    }
 
    @Generated

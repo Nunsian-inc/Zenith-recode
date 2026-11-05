@@ -12,47 +12,47 @@ public class GroupSetting extends Setting {
    private final List<Setting> items;
    private boolean active;
 
-   public GroupSetting(String var1, Setting... var2) {
-      this(var1, "", () -> true, var2);
+   public GroupSetting(String key, Setting... copyOfRange) {
+      this(key, "", () -> true, copyOfRange);
    }
 
-   public GroupSetting(String var1, String var2, Setting... var3) {
-      this(var1, var2, () -> true, var3);
+   public GroupSetting(String key, String description, Setting... copyOfRange) {
+      this(key, description, () -> true, copyOfRange);
    }
 
-   public GroupSetting(String var1, Supplier<Boolean> var2, Setting... var3) {
-      this(var1, "", var2, var3);
+   public GroupSetting(String key, Supplier<Boolean> visible, Setting... copyOfRange) {
+      this(key, "", visible, copyOfRange);
    }
 
-   public GroupSetting(String var1, String var2, Supplier<Boolean> var3, Setting... var4) {
-      super(var1, var2);
-      this.setVisible(var3);
-      this.items = Lists.newArrayList(Arrays.asList(var4));
+   public GroupSetting(String key, String description, Supplier<Boolean> visible, Setting... copyOfRange) {
+      super(key, description);
+      this.setVisible(visible);
+      this.items = Lists.newArrayList(Arrays.asList(copyOfRange));
       this.active = false;
    }
 
-   public <T extends Setting> T method2786(int var1) {
-      return (T)this.items.get(var1);
+   public <T extends Setting> T method2786(int n) {
+      return (T)this.items.get(n);
    }
 
    public void toggle() {
       this.active = !this.active;
    }
 
-   private void method2787(Consumer<Setting> var1) {
-      this.items.forEach(var1);
+   private void method2787(Consumer<Setting> action) {
+      this.items.forEach(action);
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      this.method2787(var1x -> var1x.safe(var1));
+   public void safe(JsonObject jsonObject) {
+      this.method2787(var1x -> var1x.safe(jsonObject));
    }
 
    @Override
-   public void load(JsonObject var1) {
+   public void load(JsonObject jsonObject) {
       this.method2787(var1x -> {
-         if (var1.has(var1x.getKey())) {
-            var1x.load(var1);
+         if (jsonObject.has(var1x.getKey())) {
+            var1x.load(jsonObject);
          }
       });
    }

@@ -47,57 +47,57 @@ public final class Index {
    private static final int CONST_intValue = 3;
    private static final long CONST_longValue = 1500L;
 
-   public Index(Path var1, Supplier<List<String>> var2) {
-      this.path = var1;
-      this.supplier = var2;
-      this.path2 = var1.getParent() == null ? null : var1.getParent().resolve("pack");
+   public Index(Path path, Supplier<List<String>> supplier) {
+      this.path = path;
+      this.supplier = supplier;
+      this.path2 = path.getParent() == null ? null : path.getParent().resolve("pack");
    }
 
    private Path method1452() {
       if (this.path2 == null) {
          return null;
       } else {
-         Path var1 = this.path2.resolve("index.json");
-         return Files.isRegularFile(var1) ? var1 : null;
+         Path path = this.path2.resolve("index.json");
+         return Files.isRegularFile(path) ? path : null;
       }
    }
 
    public List<CosmeticItemInfo> method1453() {
-      Path var1 = this.method1452();
-      if (var1 != null) {
-         var var2 = method1471(method1469(var1));
-         if (!var2.isEmpty()) {
+      Path path = this.method1452();
+      if (path != null) {
+         var cosmeticItemInfos = method1471(method1469(path));
+         if (!cosmeticItemInfos.isEmpty()) {
             this.lastError = "";
-            logger.info("Косметика: каталог из локального пака {} ({} элементов)", var1, var2.size());
-            return var2;
+            logger.info("Косметика: каталог из локального пака {} ({} элементов)", path, cosmeticItemInfos.size());
+            return cosmeticItemInfos;
          }
 
-         logger.warn("Косметика: локальный каталог {} пуст или битый — идём на узел", var1);
+         logger.warn("Косметика: локальный каталог {} пуст или битый — идём на узел", path);
       }
 
-      Path var7 = this.path.resolve("index.json");
-      boolean var3 = Files.isRegularFile(var7);
-      if (var3 && !this.flag) {
-         var var4 = method1471(method1469(var7));
-         if (!var4.isEmpty()) {
-            return var4;
+      Path path2 = this.path.resolve("index.json");
+      boolean regularFile = Files.isRegularFile(path2);
+      if (regularFile && !this.flag) {
+         var cosmeticItemInfos = method1471(method1469(path2));
+         if (!cosmeticItemInfos.isEmpty()) {
+            return cosmeticItemInfos;
          }
 
          logger.warn("Косметика: кеш каталога пуст или битый — перечитываем с узла");
       }
 
-      byte[] var8 = this.method1468("/cosmetics/index.json", duration2);
-      var var5 = method1471(var8);
-      if (!var5.isEmpty()) {
+      byte[] bytes = this.method1468("/cosmetics/index.json", duration2);
+      var cosmeticItemInfos = method1471(bytes);
+      if (!cosmeticItemInfos.isEmpty()) {
          this.flag = false;
-         method1470(var7, var8);
-         return var5;
+         method1470(path2, bytes);
+         return cosmeticItemInfos;
       } else {
-         if (var3) {
-            var var6 = method1471(method1469(var7));
-            if (!var6.isEmpty()) {
-               logger.info("Косметика: узел недоступен, каталог из кеша ({} элементов)", var6.size());
-               return var6;
+         if (regularFile) {
+            var cosmeticItemInfos2 = method1471(method1469(path2));
+            if (!cosmeticItemInfos2.isEmpty()) {
+               logger.info("Косметика: узел недоступен, каталог из кеша ({} элементов)", cosmeticItemInfos2.size());
+               return cosmeticItemInfos2;
             }
          }
 
@@ -113,228 +113,228 @@ public final class Index {
    public byte[] method1455() {
       try {
          return this.method1465("/cosmetics/overrides.json", duration2);
-      } catch (IOException var2) {
-         logger.debug("Косметика: общей подгонки на узле нет ({})", var2.getMessage());
+      } catch (IOException e) {
+         logger.debug("Косметика: общей подгонки на узле нет ({})", e.getMessage());
          return null;
       }
    }
 
-   public String method1456(byte[] var1, String var2) {
-      String var3 = this.method1463("/cosmetics/overrides");
+   public String method1456(byte[] bytes, String str) {
+      String str2 = this.method1463("/cosmetics/overrides");
 
-      for (int var4 = 1; var4 <= 3; var4++) {
+      for (int i = 1; i <= 3; i++) {
          try {
-            HttpRequest var5 = HttpRequest.newBuilder(URI.create(var3))
+            HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(str2))
                .timeout(duration2)
                .header("User-Agent", "ZenithDLC")
                .header("Content-Type", "application/json; charset=utf-8")
-               .header("X-Zenith-Secret", var2 == null ? "" : var2)
-               .POST(BodyPublishers.ofByteArray(var1))
+               .header("X-Zenith-Secret", str == null ? "" : str)
+               .POST(BodyPublishers.ofByteArray(bytes))
                .build();
-            HttpResponse var6 = this.method1466().send(var5, BodyHandlers.ofString());
-            if (var6.statusCode() == 200) {
+            HttpResponse send = this.method1466().send(httpRequest, BodyHandlers.ofString());
+            if (send.statusCode() == 200) {
                this.lastError = "";
-               return (String)var6.body();
+               return (String)send.body();
             }
 
-            this.lastError = var3 + " — узел ответил " + var6.statusCode();
-            logger.warn("Косметика: публикация подгонки — {} {}", var6.statusCode(), var6.body());
+            this.lastError = str2 + " — узел ответил " + send.statusCode();
+            logger.warn("Косметика: публикация подгонки — {} {}", send.statusCode(), send.body());
             return null;
-         } catch (InterruptedException var7) {
+         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             this.lastError = "публикация прервана";
             return null;
-         } catch (RuntimeException | IOException var8) {
-            this.lastError = var3 + " — " + var8.getMessage();
-            if (var4 >= 3) {
-               logger.warn("Косметика: публикация подгонки не дошла после {} попыток: {}", var4, var8.toString());
+         } catch (RuntimeException | IOException e) {
+            this.lastError = str2 + " — " + e.getMessage();
+            if (i >= 3) {
+               logger.warn("Косметика: публикация подгонки не дошла после {} попыток: {}", i, e.toString());
                return null;
             }
 
-            logger.warn("Косметика: публикация подгонки — попытка {} не дошла: {}", var4, var8.toString());
-            method1457(1500L * var4);
+            logger.warn("Косметика: публикация подгонки — попытка {} не дошла: {}", i, e.toString());
+            method1457(1500L * i);
          }
       }
 
       return null;
    }
 
-   private static void method1457(long var0) {
+   private static void method1457(long millis) {
       try {
-         Thread.sleep(var0);
-      } catch (InterruptedException var3) {
+         Thread.sleep(millis);
+      } catch (InterruptedException e) {
          Thread.currentThread().interrupt();
       }
    }
 
-   public byte[] method1458(CosmeticItemInfo var1) throws IOException {
+   public byte[] method1458(CosmeticItemInfo cosmeticItemInfo) throws IOException {
       if (this.path2 != null) {
-         Path var2 = this.path2.resolve("blobs").resolve(var1.getText6() + ".model");
-         if (Files.isRegularFile(var2)) {
-            byte[] var3 = Files.readAllBytes(var2);
-            if (method1472(var3, var1.getText6())) {
-               return var3;
+         Path path = this.path2.resolve("blobs").resolve(cosmeticItemInfo.getText6() + ".model");
+         if (Files.isRegularFile(path)) {
+            byte[] allBytes = Files.readAllBytes(path);
+            if (method1472(allBytes, cosmeticItemInfo.getText6())) {
+               return allBytes;
             }
 
-            logger.warn("Косметика: {} в локальном паке не совпал с хешем — качаем с узла", var1.getText6());
+            logger.warn("Косметика: {} в локальном паке не совпал с хешем — качаем с узла", cosmeticItemInfo.getText6());
          }
       }
 
-      Path var4 = this.method1462(var1);
-      if (Files.isRegularFile(var4)) {
-         byte[] var5 = Files.readAllBytes(var4);
-         if (method1472(var5, var1.getText6())) {
-            return var5;
+      Path path = this.method1462(cosmeticItemInfo);
+      if (Files.isRegularFile(path)) {
+         byte[] allBytes = Files.readAllBytes(path);
+         if (method1472(allBytes, cosmeticItemInfo.getText6())) {
+            return allBytes;
          }
 
-         logger.warn("Косметика: {} в кеше битый — перекачиваем", var1.getText6());
-         Files.deleteIfExists(var4);
+         logger.warn("Косметика: {} в кеше битый — перекачиваем", cosmeticItemInfo.getText6());
+         Files.deleteIfExists(path);
       }
 
-      byte[] var6 = this.method1465("/cosmetics/blobs/" + var1.getText6() + ".model", duration3);
-      if (!method1472(var6, var1.getText6())) {
-         throw new IOException("хеш скачанной модели не совпал: " + var1.getText6());
+      byte[] allBytes = this.method1465("/cosmetics/blobs/" + cosmeticItemInfo.getText6() + ".model", duration3);
+      if (!method1472(allBytes, cosmeticItemInfo.getText6())) {
+         throw new IOException("хеш скачанной модели не совпал: " + cosmeticItemInfo.getText6());
       } else {
-         method1470(var4, var6);
-         return var6;
+         method1470(path, allBytes);
+         return allBytes;
       }
    }
 
-   public boolean method1459(CosmeticItemInfo var1) {
-      return Files.isRegularFile(this.method1462(var1));
+   public boolean method1459(CosmeticItemInfo cosmeticItemInfo) {
+      return Files.isRegularFile(this.method1462(cosmeticItemInfo));
    }
 
    public long method1460() {
-      long var1 = 0L;
+      long l = 0L;
 
-      try (Stream<java.nio.file.Path> var3 = Files.list(this.path)) {
-         for (Path var5 : var3.toList()) {
-            var1 += Files.size(var5);
+      try (Stream<java.nio.file.Path> list = Files.list(this.path)) {
+         for (Path path : list.toList()) {
+            l += Files.size(path);
          }
-      } catch (RuntimeException | IOException var8) {
+      } catch (RuntimeException | IOException e) {
       }
 
-      return var1;
+      return l;
    }
 
    public long method1461() {
-      long var1 = 0L;
+      long l = 0L;
 
-      try (Stream<java.nio.file.Path> var3 = Files.list(this.path)) {
-         for (Path var5 : var3.toList()) {
-            long var6 = Files.size(var5);
-            if (Files.deleteIfExists(var5)) {
-               var1 += var6;
+      try (Stream<java.nio.file.Path> list = Files.list(this.path)) {
+         for (Path path : list.toList()) {
+            long size = Files.size(path);
+            if (Files.deleteIfExists(path)) {
+               l += size;
             }
          }
-      } catch (RuntimeException | IOException var10) {
-         logger.warn("Косметика: кеш стёрся не полностью: {}", var10.toString());
+      } catch (RuntimeException | IOException e) {
+         logger.warn("Косметика: кеш стёрся не полностью: {}", e.toString());
       }
 
       this.flag = true;
-      return var1;
+      return l;
    }
 
    public Path getPath() {
       return this.path;
    }
 
-   private Path method1462(CosmeticItemInfo var1) {
-      return this.path.resolve(var1.getText6() + ".model");
+   private Path method1462(CosmeticItemInfo cosmeticItemInfo) {
+      return this.path.resolve(cosmeticItemInfo.getText6() + ".model");
    }
 
-   private String method1463(String var1) {
-      var var2 = this.method1464();
-      return var2.isEmpty() ? var1 : (String)var2.get(0) + var1;
+   private String method1463(String str) {
+      var strings = this.method1464();
+      return strings.isEmpty() ? str : (String)strings.get(0) + str;
    }
 
    private List<String> method1464() {
-      List<String> var1 = this.supplier.get();
-      ArrayList var2 = new ArrayList();
-      if (var1 != null) {
-         for (String var4 : var1) {
-            if (var4 != null && !var4.isBlank()) {
-               String var5 = var4.strip();
+      List<String> strings = this.supplier.get();
+      ArrayList arrayList = new ArrayList();
+      if (strings != null) {
+         for (String str : strings) {
+            if (str != null && !str.isBlank()) {
+               String str2 = str.strip();
 
-               while (var5.endsWith("/")) {
-                  var5 = var5.substring(0, var5.length() - 1);
+               while (str2.endsWith("/")) {
+                  str2 = str2.substring(0, str2.length() - 1);
                }
 
-               if (!var2.contains(var5)) {
-                  var2.add(var5);
+               if (!arrayList.contains(str2)) {
+                  arrayList.add(str2);
                }
             }
          }
       }
 
-      return RegionUtil.method2043(var2, this.text7);
+      return RegionUtil.method2043(arrayList, this.text7);
    }
 
-   private byte[] method1465(String var1, Duration var2) throws IOException {
-      List<String> var3 = this.method1464();
-      if (var3.isEmpty()) {
-         return this.method1467(var1, var2);
+   private byte[] method1465(String str, Duration duration2) throws IOException {
+      List<String> strings = this.method1464();
+      if (strings.isEmpty()) {
+         return this.method1467(str, duration2);
       } else {
-         IOException var4 = null;
+         IOException ioException = null;
 
-         for (String var6 : var3) {
+         for (String str2 : strings) {
             try {
-               byte[] var7 = this.method1467(var6 + var1, var2);
-               this.text7 = var6;
-               return var7;
-            } catch (IOException var8) {
+               byte[] bytes = this.method1467(str2 + str, duration2);
+               this.text7 = str2;
+               return bytes;
+            } catch (IOException e) {
                if (Thread.currentThread().isInterrupted()) {
-                  throw var8;
+                  throw e;
                }
 
-               var4 = var8;
+               ioException = e;
             }
          }
 
-         throw var4;
+         throw ioException;
       }
    }
 
    private HttpClient method1466() {
-      HttpClient var1 = this.httpClient;
-      if (var1 == null) {
-         var1 = HttpClients.method2671(duration, Redirect.NORMAL);
-         this.httpClient = var1;
+      HttpClient httpClient = this.httpClient;
+      if (httpClient == null) {
+         httpClient = HttpClients.method2671(duration, Redirect.NORMAL);
+         this.httpClient = httpClient;
       }
 
-      return var1;
+      return httpClient;
    }
 
-   private byte[] method1467(String var1, Duration var2) throws IOException {
-      HttpRequest var3;
+   private byte[] method1467(String str, Duration duration2) throws IOException {
+      HttpRequest httpRequest;
       try {
-         var3 = HttpRequest.newBuilder(URI.create(var1)).timeout(var2).header("User-Agent", "ZenithDLC").GET().build();
-      } catch (RuntimeException var6) {
-         throw new IOException("неверный адрес " + var1, var6);
+         httpRequest = HttpRequest.newBuilder(URI.create(str)).timeout(duration2).header("User-Agent", "ZenithDLC").GET().build();
+      } catch (RuntimeException e) {
+         throw new IOException("неверный адрес " + str, e);
       }
 
       try {
-         HttpResponse var4 = this.method1466().send(var3, BodyHandlers.ofByteArray());
-         if (var4.statusCode() != 200) {
-            throw new IOException("узел ответил " + var4.statusCode() + " на " + var1);
+         HttpResponse send = this.method1466().send(httpRequest, BodyHandlers.ofByteArray());
+         if (send.statusCode() != 200) {
+            throw new IOException("узел ответил " + send.statusCode() + " на " + str);
          } else {
-            return (byte[])var4.body();
+            return (byte[])send.body();
          }
-      } catch (InterruptedException var5) {
+      } catch (InterruptedException e) {
          Thread.currentThread().interrupt();
-         throw new IOException("загрузка прервана", var5);
+         throw new IOException("загрузка прервана", e);
       }
    }
 
-   private byte[] method1468(String var1, Duration var2) {
+   private byte[] method1468(String str, Duration duration2) {
       try {
-         byte[] var3 = this.method1465(var1, var2);
+         byte[] bytes = this.method1465(str, duration2);
          this.lastError = "";
-         return var3;
-      } catch (IOException var5) {
-         String var4 = this.method1463(var1);
-         this.lastError = var4 + " — " + var5.getMessage();
-         logger.info("Косметика: {} недоступен ({})", var4, var5.getMessage());
+         return bytes;
+      } catch (IOException e) {
+         String str2 = this.method1463(str);
+         this.lastError = str2 + " — " + e.getMessage();
+         logger.info("Косметика: {} недоступен ({})", str2, e.getMessage());
          return null;
       }
    }
@@ -343,51 +343,51 @@ public final class Index {
       return this.lastError;
    }
 
-   private static byte[] method1469(Path var0) {
+   private static byte[] method1469(Path path) {
       try {
-         return Files.readAllBytes(var0);
-      } catch (IOException var2) {
-         logger.warn("Косметика: не читается {}", var0, var2);
+         return Files.readAllBytes(path);
+      } catch (IOException e) {
+         logger.warn("Косметика: не читается {}", path, e);
          return null;
       }
    }
 
-   private static void method1470(Path var0, byte[] var1) {
-      if (var1 != null) {
+   private static void method1470(Path path, byte[] bytes) {
+      if (bytes != null) {
          try {
-            Files.createDirectories(var0.getParent());
-            Path var2 = var0.resolveSibling(var0.getFileName() + ".tmp");
-            Files.write(var2, var1);
-            Files.move(var2, var0, StandardCopyOption.REPLACE_EXISTING);
-         } catch (IOException var3) {
-            logger.warn("Косметика: не записать кеш {}", var0, var3);
+            Files.createDirectories(path.getParent());
+            Path sibling = path.resolveSibling(path.getFileName() + ".tmp");
+            Files.write(sibling, bytes);
+            Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING);
+         } catch (IOException e) {
+            logger.warn("Косметика: не записать кеш {}", path, e);
          }
       }
    }
 
-   private static List<CosmeticItemInfo> method1471(byte[] var0) {
-      if (var0 != null && var0.length != 0) {
+   private static List<CosmeticItemInfo> method1471(byte[] bytes) {
+      if (bytes != null && bytes.length != 0) {
          try {
-            JsonObject var1 = JsonParser.parseString(new String(var0, StandardCharsets.UTF_8)).getAsJsonObject();
-            if (var1.has("items") && var1.get("items").isJsonArray()) {
-               JsonArray var2 = var1.getAsJsonArray("items");
-               List<CosmeticItemInfo> var3 = new ArrayList<>(var2.size());
+            JsonObject jsonObject = JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();
+            if (jsonObject.has("items") && jsonObject.get("items").isJsonArray()) {
+               JsonArray jsonArray = jsonObject.getAsJsonArray("items");
+               List<CosmeticItemInfo> cosmeticItemInfos = new ArrayList<>(jsonArray.size());
 
-               for (JsonElement var5 : var2) {
-                  if (var5.isJsonObject()) {
-                     CosmeticItemInfo var6 = CosmeticItemInfo.method7748(var5.getAsJsonObject());
-                     if (var6 != null) {
-                        var3.add(var6);
+               for (JsonElement json : jsonArray) {
+                  if (json.isJsonObject()) {
+                     CosmeticItemInfo cosmeticItemInfo = CosmeticItemInfo.method7748(json.getAsJsonObject());
+                     if (cosmeticItemInfo != null) {
+                        cosmeticItemInfos.add(cosmeticItemInfo);
                      }
                   }
                }
 
-               return var3;
+               return cosmeticItemInfos;
             } else {
                return List.of();
             }
-         } catch (RuntimeException var7) {
-            logger.warn("Косметика: каталог не разобрался: {}", var7.toString());
+         } catch (RuntimeException e) {
+            logger.warn("Косметика: каталог не разобрался: {}", e.toString());
             return List.of();
          }
       } else {
@@ -395,23 +395,23 @@ public final class Index {
       }
    }
 
-   private static boolean method1472(byte[] var0, String var1) {
-      return var1 != null && !var1.isBlank() ? method1473(var0).equalsIgnoreCase(var1) : true;
+   private static boolean method1472(byte[] allBytes, String anotherString) {
+      return anotherString != null && !anotherString.isBlank() ? method1473(allBytes).equalsIgnoreCase(anotherString) : true;
    }
 
-   private static String method1473(byte[] var0) {
+   private static String method1473(byte[] allBytes) {
       try {
-         byte[] var1 = MessageDigest.getInstance("SHA-256").digest(var0);
-         StringBuilder var2 = new StringBuilder(var1.length * 2);
+         byte[] digest = MessageDigest.getInstance("SHA-256").digest(allBytes);
+         StringBuilder builder = new StringBuilder(digest.length * 2);
 
-         for (int var6 : var1) {
-            var2.append(Character.forDigit(var6 >> 4 & 15, 16));
-            var2.append(Character.forDigit(var6 & 15, 16));
+         for (int n : digest) {
+            builder.append(Character.forDigit(n >> 4 & 15, 16));
+            builder.append(Character.forDigit(n & 15, 16));
          }
 
-         return var2.toString();
-      } catch (NoSuchAlgorithmException var7) {
-         throw new IllegalStateException("SHA-256 недоступен", var7);
+         return builder.toString();
+      } catch (NoSuchAlgorithmException e) {
+         throw new IllegalStateException("SHA-256 недоступен", e);
       }
    }
 }

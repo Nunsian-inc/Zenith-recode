@@ -63,34 +63,34 @@ public class GuiModuleElement extends Element {
    private int lastIndex;
    private final List<GuiSetting<?>> settings = new ArrayList<>();
 
-   public GuiModuleElement(Module var1) {
-      this.module = var1;
-      if (var1.isEnabled()) {
+   public GuiModuleElement(Module moduleValue) {
+      this.module = moduleValue;
+      if (moduleValue.isEnabled()) {
          this.animationEnable.method2809(1.0F);
       }
 
-      if (var1.isRenderSetting()) {
-         for (Setting var3 : var1.getSettings()) {
-            if (var3 instanceof SliderSetting var4) {
-               this.settings.add(new GuiNumberSetting(var4));
-            } else if (var3 instanceof ModeSetting var5) {
-               this.settings.add(new GuiModeSetting(var5));
-            } else if (var3 instanceof MultiSelectSetting var6) {
-               this.settings.add(new GuiMultiBooleanSetting(var6));
-            } else if (var3 instanceof BooleanSetting var7) {
-               this.settings.add(new GuiBooleanSetting(var7));
-            } else if (var3 instanceof ColorSetting var8) {
-               this.settings.add(new GuiColorSetting(var8));
-            } else if (var3 instanceof ButtonSetting var9) {
-               this.settings.add(new GuiButtonSetting(var9));
-            } else if (var3 instanceof BlockListSetting var10) {
-               this.settings.add(new GuiItemSelectSetting(var10));
-            } else if (var3 instanceof BindSetting var11) {
-               this.settings.add(new GuiKeySetting(var11));
-            } else if (var3 instanceof TextSetting var12) {
-               this.settings.add(new GuiStringSetting(var12));
-            } else if (var3 instanceof GroupSetting var13) {
-               this.settings.add(new GuiWindowSetting(var13));
+      if (moduleValue.isRenderSetting()) {
+         for (Setting setting : moduleValue.getSettings()) {
+            if (setting instanceof SliderSetting sliderSetting) {
+               this.settings.add(new GuiNumberSetting(sliderSetting));
+            } else if (setting instanceof ModeSetting modeSetting) {
+               this.settings.add(new GuiModeSetting(modeSetting));
+            } else if (setting instanceof MultiSelectSetting multiSelectSetting) {
+               this.settings.add(new GuiMultiBooleanSetting(multiSelectSetting));
+            } else if (setting instanceof BooleanSetting booleanSetting) {
+               this.settings.add(new GuiBooleanSetting(booleanSetting));
+            } else if (setting instanceof ColorSetting colorSetting) {
+               this.settings.add(new GuiColorSetting(colorSetting));
+            } else if (setting instanceof ButtonSetting buttonSetting) {
+               this.settings.add(new GuiButtonSetting(buttonSetting));
+            } else if (setting instanceof BlockListSetting blockListSetting) {
+               this.settings.add(new GuiItemSelectSetting(blockListSetting));
+            } else if (setting instanceof BindSetting bindSetting) {
+               this.settings.add(new GuiKeySetting(bindSetting));
+            } else if (setting instanceof TextSetting textSetting) {
+               this.settings.add(new GuiStringSetting(textSetting));
+            } else if (setting instanceof GroupSetting groupSetting) {
+               this.settings.add(new GuiWindowSetting(groupSetting));
             }
          }
       }
@@ -108,7 +108,7 @@ public class GuiModuleElement extends Element {
             + (
                this.hasSettings()
                   ? GuiStyle.PADDING * 2
-                     + this.settings.stream().filter(GuiSetting::isVisible).mapToDouble(var0 -> var0.getAnimHeight() + 6.0F * var0.getVisibleProgress()).sum()
+                     + this.settings.stream().filter(GuiSetting::isVisible).mapToDouble(setting -> setting.getAnimHeight() + 6.0F * setting.getVisibleProgress()).sum()
                      + -6.0
                      + GuiStyle.PADDING * 2
                   : 0.0
@@ -129,13 +129,13 @@ public class GuiModuleElement extends Element {
       return this.module.isEnabled();
    }
 
-   public void setSearchVisible(boolean var1) {
-      this.searchVisible = var1;
+   public void setSearchVisible(boolean searchVisible) {
+      this.searchVisible = searchVisible;
    }
 
-   public void resetSearchVisible(boolean var1) {
-      this.searchVisible = var1;
-      this.searchVisibleAnimation.method2809(var1 ? 1.0F : 0.0F);
+   public void resetSearchVisible(boolean searchVisible) {
+      this.searchVisible = searchVisible;
+      this.searchVisibleAnimation.method2809(searchVisible ? 1.0F : 0.0F);
    }
 
    public float updateSearchVisible() {
@@ -150,204 +150,204 @@ public class GuiModuleElement extends Element {
       return !(!this.searchVisible && !(this.searchVisibleAnimation.getValue() > 0.01F));
    }
 
-   public void renderPriority(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      float var7 = var4 + GuiStyle.PADDING * 2;
-      float var8 = var5 + 23.0F + GuiStyle.PADDING * 2;
-      float var9 = (float)(Mth.lerp((double)this.animationEnable.getValue(), 0.5, 1.0) * var6);
-      float var10 = 6.0F;
+   public void renderPriority(MenuDrawContext menuDrawContext, float x, float y, float f, float f2, float previewAlpha) {
+      float f3 = f + GuiStyle.PADDING * 2;
+      float f4 = f2 + 23.0F + GuiStyle.PADDING * 2;
+      float f5 = (float)(Mth.lerp((double)this.animationEnable.getValue(), 0.5, 1.0) * previewAlpha);
+      float f6 = 6.0F;
 
-      for (GuiSetting var12 : this.settings) {
-         if (var12.isVisible()) {
-            var12.renderPriority(var1, var2, var3, var7, var8, var6, var9);
-            var8 += var12.getAnimHeight() + var10 * var12.getVisibleProgress();
+      for (GuiSetting setting : this.settings) {
+         if (setting.isVisible()) {
+            setting.renderPriority(menuDrawContext, x, y, f3, f4, previewAlpha, f5);
+            f4 += setting.getAnimHeight() + f6 * setting.getVisibleProgress();
          }
       }
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, int var7) {
-      this.render(var1, var2, var3, var4, var5, var6, var7, null);
+   public void render(MenuDrawContext menuDrawContext, float lastClickX, float lastClickY, float animationPosX, float animationPosY, float previewAlpha, int lastIndex) {
+      this.render(menuDrawContext, lastClickX, lastClickY, animationPosX, animationPosY, previewAlpha, lastIndex, null);
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, int var7, BoundsData var8) {
+   public void render(MenuDrawContext menuDrawContext, float lastClickX, float lastClickY, float animationPosX, float animationPosY, float previewAlpha, int lastIndex, BoundsData boundsData) {
       if (!this.positionInitialized) {
-         this.animationPosX = var4;
-         this.animationPosY = var5;
-         this.lastX = var4;
-         this.lastY = var5;
+         this.animationPosX = animationPosX;
+         this.animationPosY = animationPosY;
+         this.lastX = animationPosX;
+         this.lastY = animationPosY;
          this.positionInitialized = true;
-         this.lastIndex = var7;
-      } else if ((var4 != this.lastX || var5 != this.lastY) && var7 != this.lastIndex) {
+         this.lastIndex = lastIndex;
+      } else if ((animationPosX != this.lastX || animationPosY != this.lastY) && lastIndex != this.lastIndex) {
          this.animated = true;
-         this.lastX = var4;
-         this.lastY = var5;
+         this.lastX = animationPosX;
+         this.lastY = animationPosY;
       }
 
       if (this.animated) {
-         this.animationPosX = Math.round(Mth.lerp(0.4F, this.animationPosX, var4));
-         this.animationPosY = Math.round(Mth.lerp(0.4F, this.animationPosY, var5));
-         if (Math.abs(this.animationPosX - var4) < 2.0F && Math.abs(this.animationPosY - var5) < 2.0F) {
+         this.animationPosX = Math.round(Mth.lerp(0.4F, this.animationPosX, animationPosX));
+         this.animationPosY = Math.round(Mth.lerp(0.4F, this.animationPosY, animationPosY));
+         if (Math.abs(this.animationPosX - animationPosX) < 2.0F && Math.abs(this.animationPosY - animationPosY) < 2.0F) {
             this.animated = false;
          } else {
-            var4 = this.animationPosX;
-            var5 = this.animationPosY;
+            animationPosX = this.animationPosX;
+            animationPosY = this.animationPosY;
          }
       } else {
-         this.animationPosX = var4;
-         this.animationPosY = var5;
+         this.animationPosX = animationPosX;
+         this.animationPosY = animationPosY;
       }
 
-      this.lastIndex = var7;
-      ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var9 != null) {
-         this.bounds = new BoundsData(var4, var5, this.getWidth(), 23.0F);
-         float var10 = this.bounds.width();
-         float var11 = this.getHeight();
-         boolean var12 = this.isEnable();
-         this.animationEnable.method2807(var12);
-         int var13 = !this.bounds.contains(var2, var3) || var8 != null && !var8.contains(var2, var3) ? 0 : 1;
-         this.animationHovered.method2808(var12 ? 1.0F : (var13 != 0 ? 0.6F : 0.0F));
-         float var14 = this.animationHovered.getValue();
-         float var15 = var5 + GuiStyle.PADDING * 2;
-         float var16 = Mth.lerpInt(this.animationEnable.getValue(), 0, 5 + GuiStyle.PADDING);
-         ZenithColor var17 = var9.getPrimaryColor().getZenithColor();
-         ZenithColor var18 = var9.getTextSecondary().getZenithColor();
-         ZenithColor var19 = var9.getTextEnable().getZenithColor();
-         var1.drawRoundedRectBatched(
-            var4,
-            var5,
-            var10,
-            var11,
+      this.lastIndex = lastIndex;
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         this.bounds = new BoundsData(animationPosX, animationPosY, this.getWidth(), 23.0F);
+         float width = this.bounds.width();
+         float height = this.getHeight();
+         boolean enable = this.isEnable();
+         this.animationEnable.method2807(enable);
+         int n = !this.bounds.contains(lastClickX, lastClickY) || boundsData != null && !boundsData.contains(lastClickX, lastClickY) ? 0 : 1;
+         this.animationHovered.method2808(enable ? 1.0F : (n != 0 ? 0.6F : 0.0F));
+         float hover = this.animationHovered.getValue();
+         float f = animationPosY + GuiStyle.PADDING * 2;
+         float lerpInt = Mth.lerpInt(this.animationEnable.getValue(), 0, 5 + GuiStyle.PADDING);
+         ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+         ZenithColor zenithColor2 = currentStyle.getTextSecondary().getZenithColor();
+         ZenithColor zenithColor3 = currentStyle.getTextEnable().getZenithColor();
+         menuDrawContext.drawRoundedRectBatched(
+            animationPosX,
+            animationPosY,
+            width,
+            height,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()),
-            var9.getSurfaceDisableBackground().getZenithColor().method7294(var6)
+            currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha)
          );
-         var1.drawRoundedRectBatched(
-            var4,
-            var5,
-            var10,
+         menuDrawContext.drawRoundedRectBatched(
+            animationPosX,
+            animationPosY,
+            width,
             23.0F,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()),
-            var9.getHeaderDisableBackground()
+            currentStyle.getHeaderDisableBackground()
                .getZenithColor()
-               .method7295(var9.getSurfaceEnableBackground().getZenithColor(), this.animationEnable.getValue())
-               .method7294(var6)
+               .method7295(currentStyle.getSurfaceEnableBackground().getZenithColor(), this.animationEnable.getValue())
+               .method7294(previewAlpha)
          );
-         var1.flushRoundedRects();
-         float var20 = var4 + GuiStyle.PADDING * 2 + var16;
-         Font var21 = Fonts.NEW_MEDIUM.getFont(6.0F);
-         Font var22 = Fonts.NEW_ICONS.getFont(6.0F);
-         float var23 = var4 + var10 - GuiStyle.PADDING * 3 - 12.0F - var20;
-         var1.drawText(
-            var21, var21.clip(this.module.getName(), var23), var20, var5 + (23.0F - var21.height()) / 2.0F, var18.method7295(var19, var14).method7294(var6)
+         menuDrawContext.flushRoundedRects();
+         float floatValue = animationPosX + GuiStyle.PADDING * 2 + lerpInt;
+         Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+         Font font2 = Fonts.NEW_ICONS.getFont(6.0F);
+         float width2 = animationPosX + width - GuiStyle.PADDING * 3 - 12.0F - floatValue;
+         menuDrawContext.drawText(
+            font, font.clip(this.module.getName(), width2), floatValue, animationPosY + (23.0F - font.height()) / 2.0F, zenithColor2.method7295(zenithColor3, hover).method7294(previewAlpha)
          );
-         var1.drawText(
-            var22,
+         menuDrawContext.drawText(
+            font2,
             "O",
-            var4 + GuiStyle.PADDING * 2,
-            var5 + (23.0F - var22.height()) / 2.0F,
-            ZenithColor.INSTANCE8.method7295(var17, this.animationEnable.getValue()).method7294(var6)
+            animationPosX + GuiStyle.PADDING * 2,
+            animationPosY + (23.0F - font2.height()) / 2.0F,
+            ZenithColor.INSTANCE8.method7295(zenithColor, this.animationEnable.getValue()).method7294(previewAlpha)
          );
-         float var24 = 12.0F;
-         float var25 = 7.0F;
-         float var26 = var4 + var10 - GuiStyle.PADDING * 2 - var24;
-         var1.drawRoundedRectBatched(
-            var26,
-            var15,
-            var24,
-            var25,
+         float width3 = 12.0F;
+         float height2 = 7.0F;
+         float floatValue2 = animationPosX + width - GuiStyle.PADDING * 2 - width3;
+         menuDrawContext.drawRoundedRectBatched(
+            floatValue2,
+            f,
+            width3,
+            height2,
             ProxyDotRadiusData.method8069(2.5F),
-            var9.getDisableActiveBg().getZenithColor().method7295(var17, this.animationEnable.getValue()).method7294(var6)
+            currentStyle.getDisableActiveBg().getZenithColor().method7295(zenithColor, this.animationEnable.getValue()).method7294(previewAlpha)
          );
-         float var27 = Mth.lerp(this.animationEnable.getValue(), 1.0F, var24 - 1.0F - 5.0F);
-         var1.drawRoundedRectBatched(
-            var26 + var27,
-            var15 + 1.0F,
+         float f2 = Mth.lerp(this.animationEnable.getValue(), 1.0F, width3 - 1.0F - 5.0F);
+         menuDrawContext.drawRoundedRectBatched(
+            floatValue2 + f2,
+            f + 1.0F,
             5.0F,
             5.0F,
             ProxyDotRadiusData.method8069(1.5F),
-            var9.getTextTertiary().getZenithColor().method7295(var19, var14).method7294(var6)
+            currentStyle.getTextTertiary().getZenithColor().method7295(zenithColor3, hover).method7294(previewAlpha)
          );
-         String var35 = this.getBindText();
+         String bindText = this.getBindText();
          this.bindAnimation.method2807(!(!this.binding && this.module.getKeyCode() == -1));
-         Font var28 = Fonts.NEW_MEDIUM.getFont(4.5F);
-         Font var29 = Fonts.NEW_ICONS.getFont(4.2F);
-         float var30 = var28.width(var35);
-         float var31 = GuiStyle.PADDING.intValue() / 2.0F + var30 + GuiStyle.PADDING.intValue() / 3.0F + 3.75F + GuiStyle.PADDING.intValue() / 2.0F;
-         float var32 = var26 - GuiStyle.PADDING.intValue() - 7.0F - GuiStyle.PADDING.intValue() / 2.0F - var31;
-         this.bindBounds = new BoundsData(var32, var15, var31, var25);
-         var1.drawRoundedRectBatched(
-            var32,
-            var15,
-            var31,
-            var25,
+         Font font3 = Fonts.NEW_MEDIUM.getFont(4.5F);
+         Font font4 = Fonts.NEW_ICONS.getFont(4.2F);
+         float width4 = font3.width(bindText);
+         float width5 = GuiStyle.PADDING.intValue() / 2.0F + width4 + GuiStyle.PADDING.intValue() / 3.0F + 3.75F + GuiStyle.PADDING.intValue() / 2.0F;
+         float floatValue3 = floatValue2 - GuiStyle.PADDING.intValue() - 7.0F - GuiStyle.PADDING.intValue() / 2.0F - width5;
+         this.bindBounds = new BoundsData(floatValue3, f, width5, height2);
+         menuDrawContext.drawRoundedRectBatched(
+            floatValue3,
+            f,
+            width5,
+            height2,
             ProxyDotRadiusData.method8069(1.5F),
-            var9.getDisableActiveBg().getZenithColor().method7295(var17.method7294(0.15F), this.bindAnimation.getValue()).method7294(var6)
+            currentStyle.getDisableActiveBg().getZenithColor().method7295(zenithColor.method7294(0.15F), this.bindAnimation.getValue()).method7294(previewAlpha)
          );
-         var1.flushRoundedRects();
-         var1.drawText(
-            var28,
-            var35,
-            var32 + GuiStyle.PADDING.intValue() / 2.0F,
-            var15 + (var25 - var28.height()) / 2.0F,
-            var9.getTextTertiary().getZenithColor().method7295(var17, this.bindAnimation.getValue()).method7294(var6)
+         menuDrawContext.flushRoundedRects();
+         menuDrawContext.drawText(
+            font3,
+            bindText,
+            floatValue3 + GuiStyle.PADDING.intValue() / 2.0F,
+            f + (height2 - font3.height()) / 2.0F,
+            currentStyle.getTextTertiary().getZenithColor().method7295(zenithColor, this.bindAnimation.getValue()).method7294(previewAlpha)
          );
-         var1.drawText(
-            var29,
+         menuDrawContext.drawText(
+            font4,
             "N",
-            var32 + GuiStyle.PADDING.intValue() / 2.0F + var30 + GuiStyle.PADDING.intValue() / 3.0F,
-            var15 + GuiStyle.PADDING.intValue() / 2.0F,
-            var9.getTextTertiary().getZenithColor().method7295(var17, this.bindAnimation.getValue()).method7294(var6)
+            floatValue3 + GuiStyle.PADDING.intValue() / 2.0F + width4 + GuiStyle.PADDING.intValue() / 3.0F,
+            f + GuiStyle.PADDING.intValue() / 2.0F,
+            currentStyle.getTextTertiary().getZenithColor().method7295(zenithColor, this.bindAnimation.getValue()).method7294(previewAlpha)
          );
 
          try {
-            var27 = var4 + GuiStyle.PADDING * 2;
-            float var37 = var5 + 23.0F + GuiStyle.PADDING * 2;
-            float var38 = Mth.lerp(this.animationEnable.getValue(), Mth.lerp(this.animationHovered.getValue(), 0.5F, 1.0F), 1.0F) * var6;
-            var30 = 6.0F;
+            f2 = animationPosX + GuiStyle.PADDING * 2;
+            float f3 = animationPosY + 23.0F + GuiStyle.PADDING * 2;
+            float previewAlpha2 = Mth.lerp(this.animationEnable.getValue(), Mth.lerp(this.animationHovered.getValue(), 0.5F, 1.0F), 1.0F) * previewAlpha;
+            width4 = 6.0F;
 
-            for (GuiSetting var41 : this.settings) {
-               if (var41.isVisible()) {
-                  var41.render(var1, var2, var3, var27, var37, var38);
-                  var37 += var41.getAnimHeight() + var30 * var41.getVisibleProgress();
+            for (GuiSetting setting : this.settings) {
+               if (setting.isVisible()) {
+                  setting.render(menuDrawContext, lastClickX, lastClickY, f2, f3, previewAlpha2);
+                  f3 += setting.getAnimHeight() + width4 * setting.getVisibleProgress();
                }
             }
-         } catch (Exception var34) {
-            var34.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
 
-   public boolean onMousePriorityClicked(double var1, double var3, Enum3 var5) {
-      byte var6 = 0;
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      byte b = 0;
 
-      for (GuiSetting var8 : this.settings) {
-         if (var8.isVisible() && var8.onMousePriorityClicked(var1, var3, var5)) {
-            var6 = 1;
+      for (GuiSetting setting : this.settings) {
+         if (setting.isVisible() && setting.onMousePriorityClicked(lastClickX, lastClickY, enum2)) {
+            b = 1;
          }
       }
 
-      return (var6 != 0);
+      return (b != 0);
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bindBounds != null && this.bindBounds.contains(var1, var3)) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      if (this.bindBounds != null && this.bindBounds.contains(lastClickX, lastClickY)) {
          this.binding = true;
          return true;
-      } else if (this.binding && var5.getIntValue() > 2) {
-         this.module.setKeyCode(var5.getIntValue());
+      } else if (this.binding && enum2.getIntValue() > 2) {
+         this.module.setKeyCode(enum2.getIntValue());
          this.binding = false;
          return true;
-      } else if (this.bounds != null && this.bounds.contains(var1, var3)) {
-         if (var5 == Enum3.LEFT || var5 == Enum3.RIGHT) {
+      } else if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
+         if (enum2 == Enum3.LEFT || enum2 == Enum3.RIGHT) {
             this.module.toggle();
-         } else if (var5 == Enum3.MIDDLE) {
+         } else if (enum2 == Enum3.MIDDLE) {
             this.binding = true;
          }
 
          return true;
       } else {
-         for (GuiSetting var7 : this.settings) {
-            if (var7.isVisible() && var7.onMouseClicked(var1, var3, var5)) {
+         for (GuiSetting setting : this.settings) {
+            if (setting.isVisible() && setting.onMouseClicked(lastClickX, lastClickY, enum2)) {
                return true;
             }
          }
@@ -356,45 +356,45 @@ public class GuiModuleElement extends Element {
       }
    }
 
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
-      byte var9 = 0;
+   public boolean mouseScrolled(double d, double d2, double d3, double d4) {
+      byte b = 0;
 
-      for (GuiSetting var11 : this.settings) {
-         if (var11.isVisible() && var11.onMousePriorityScroll(var1, var3, var5, var7)) {
-            var9 = 1;
+      for (GuiSetting setting : this.settings) {
+         if (setting.isVisible() && setting.onMousePriorityScroll(d, d2, d3, d4)) {
+            b = 1;
          }
       }
 
-      return (var9 != 0);
+      return (b != 0);
    }
 
    @Override
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
-      for (GuiSetting var7 : this.settings) {
-         var7.onMouseReleased(var1, var3, var5);
+   public void onMouseReleased(double d, double d2, Enum3 enum2) {
+      for (GuiSetting setting : this.settings) {
+         setting.onMouseReleased(d, d2, enum2);
       }
 
-      super.onMouseReleased(var1, var3, var5);
+      super.onMouseReleased(d, d2, enum2);
    }
 
    @Override
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (!this.binding) {
-         for (GuiSetting var5 : this.settings) {
-            if (var5.isVisible() && var5.keyPressed(var1, var2, var3)) {
+         for (GuiSetting setting : this.settings) {
+            if (setting.isVisible() && setting.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
-         return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+         return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
       } else {
-         if (var1 != 256 && var1 != 261 && var1 != 259) {
-            this.module.setKeyCode(var1);
+         if (keyCode != 256 && keyCode != 261 && keyCode != 259) {
+            this.module.setKeyCode(keyCode);
          } else {
             this.module.setKeyCode(-1);
          }
@@ -405,47 +405,47 @@ public class GuiModuleElement extends Element {
    }
 
    @Override
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      for (GuiSetting var4 : this.settings) {
-         if (var4.isVisible() && var4.charTyped(var1, var2)) {
+   public boolean charTyped(char codepoint, int n) {
+      for (GuiSetting setting : this.settings) {
+         if (setting.isVisible() && setting.charTyped(codepoint, n)) {
             return true;
          }
       }
 
-      return super.charTyped(new CharacterEvent(var1));
+      return super.charTyped(new CharacterEvent(codepoint));
    }
 
    private String getBindText() {
       if (this.binding) {
          return this.getBindingDots();
       } else {
-         String var1 = "n/a";
-         int var2;
-         if ((var2 = this.module.getKeyCode()) != -1 && var2 != 0) {
+         String upperCase = "n/a";
+         int keyCode;
+         if ((keyCode = this.module.getKeyCode()) != -1 && keyCode != 0) {
             try {
-               String var3 = KeyName.method6701(var2);
-               if (var3 != null && !var3.isBlank()) {
-                  var1 = var3.toUpperCase();
+               String str = KeyName.method6701(keyCode);
+               if (str != null && !str.isBlank()) {
+                  upperCase = str.toUpperCase();
                }
-            } catch (Exception var4) {
+            } catch (Exception e) {
             }
          }
 
-         return var1;
+         return upperCase;
       }
    }
 
    private String getBindingDots() {
-      int var1;
-      if ((var1 = (int)(System.currentTimeMillis() / 500L % 3L)) == 0) {
+      int n;
+      if ((n = (int)(System.currentTimeMillis() / 500L % 3L)) == 0) {
          return ".";
       } else {
-         return var1 == 1 ? ".." : "...";
+         return n == 1 ? ".." : "...";
       }
    }
 
@@ -455,7 +455,7 @@ public class GuiModuleElement extends Element {
    }
 
    @Generated
-   public void setPositionInitialized(boolean var1) {
-      this.positionInitialized = var1;
+   public void setPositionInitialized(boolean positionInitialized) {
+      this.positionInitialized = positionInitialized;
    }
 }

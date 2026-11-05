@@ -17,193 +17,193 @@ public final class Coord {
    private final String text6;
    private final Map<String, String> items;
 
-   private Coord(String var1, Map<String, String> var2) {
-      this.text6 = var1;
-      this.items = var2;
+   private Coord(String lowerCase, Map<String, String> items) {
+      this.text6 = lowerCase;
+      this.items = items;
    }
 
    public String kind() {
       return this.text6;
    }
 
-   public String method5169(String var1, String var2) {
-      String var3 = this.items.get(var1);
-      return var3 != null && !var3.isEmpty() ? var3 : var2;
+   public String method5169(String str, String str2) {
+      String str3 = this.items.get(str);
+      return str3 != null && !str3.isEmpty() ? str3 : str2;
    }
 
-   public int method5170(String var1, int var2) {
+   public int method5170(String str, int n) {
       try {
-         String var3 = this.items.get(var1);
-         return var3 != null && !var3.isEmpty() ? Integer.parseInt(var3.trim()) : var2;
-      } catch (NumberFormatException var4) {
-         return var2;
+         String str2 = this.items.get(str);
+         return str2 != null && !str2.isEmpty() ? Integer.parseInt(str2.trim()) : n;
+      } catch (NumberFormatException e) {
+         return n;
       }
    }
 
-   public static Coord.Entry method5171(String var0) {
-      return new Coord.Entry(var0);
+   public static Coord.Entry method5171(String text) {
+      return new Coord.Entry(text);
    }
 
-   public static Coord.Data method5172(String var0) {
-      if (var0 == null || var0.isEmpty()) {
+   public static Coord.Data method5172(String body) {
+      if (body == null || body.isEmpty()) {
          return new Coord.Data("", List.of());
-      } else if (var0.indexOf("[z:") < 0) {
-         return new Coord.Data(var0, List.of());
+      } else if (body.indexOf("[z:") < 0) {
+         return new Coord.Data(body, List.of());
       } else {
-         ArrayList var1 = new ArrayList();
-         StringBuilder var2 = new StringBuilder();
-         boolean var3 = false;
-         int var4 = 0;
+         ArrayList items = new ArrayList();
+         StringBuilder builder = new StringBuilder();
+         boolean broken = false;
+         int start = 0;
 
-         while (var4 < var0.length()) {
-            int var5 = var0.indexOf("[z:", var4);
-            if (var5 < 0) {
-               var2.append(var0, var4, var0.length());
+         while (start < body.length()) {
+            int indexOf = body.indexOf("[z:", start);
+            if (indexOf < 0) {
+               builder.append(body, start, body.length());
                break;
             }
 
-            int var6 = var0.indexOf(93, var5);
-            if (var6 < 0 || var6 - var5 > 900) {
-               if (method5173(var0, var5)) {
-                  var2.append(var0, var4, var5);
-                  var3 = true;
+            int endIndex = body.indexOf(93, indexOf);
+            if (endIndex < 0 || endIndex - indexOf > 900) {
+               if (method5173(body, indexOf)) {
+                  builder.append(body, start, indexOf);
+                  broken = true;
                } else {
-                  var2.append(var0, var4, var0.length());
+                  builder.append(body, start, body.length());
                }
                break;
             }
 
-            Coord var7 = method5175(var0.substring(var5 + "[z:".length(), var6));
-            if (var7 == null) {
-               var2.append(var0, var4, var6 + 1);
+            Coord coord = method5175(body.substring(indexOf + "[z:".length(), endIndex));
+            if (coord == null) {
+               builder.append(body, start, endIndex + 1);
             } else {
-               var2.append(var0, var4, var5);
-               var1.add(var7);
+               builder.append(body, start, indexOf);
+               items.add(coord);
             }
 
-            var4 = var6 + 1;
+            start = endIndex + 1;
          }
 
-         return new Coord.Data(var2.toString().strip(), var1, var3);
+         return new Coord.Data(builder.toString().strip(), items, broken);
       }
    }
 
-   private static boolean method5173(String var0, int var1) {
-      int var2 = var1 + "[z:".length();
+   private static boolean method5173(String body, int indexOf) {
+      int index = indexOf + "[z:".length();
 
-      int var3;
-      for (var3 = 0; var2 < var0.length() && var0.charAt(var2) >= 'a' && var0.charAt(var2) <= 'z'; var3++) {
-         var2++;
+      int n;
+      for (n = 0; index < body.length() && body.charAt(index) >= 'a' && body.charAt(index) <= 'z'; n++) {
+         index++;
       }
 
-      return var3 > 0 && var2 < var0.length() && var0.charAt(var2) == '|';
+      return n > 0 && index < body.length() && body.charAt(index) == '|';
    }
 
-   public static String method5174(String var0, int var1) {
-      if (var0 != null && var1 > 0) {
-         if (var0.length() <= var1) {
-            return var0;
+   public static String method5174(String body, int n) {
+      if (body != null && n > 0) {
+         if (body.length() <= n) {
+            return body;
          } else {
-            int var2 = var1;
-            int var3 = 0;
+            int n2 = n;
+            int fromIndex = 0;
 
-            while (var3 < var0.length()) {
-               int var4 = var0.indexOf("[z:", var3);
-               if (var4 < 0 || var4 >= var2) {
+            while (fromIndex < body.length()) {
+               int indexOf = body.indexOf("[z:", fromIndex);
+               if (indexOf < 0 || indexOf >= n2) {
                   break;
                }
 
-               int var5 = var0.indexOf(93, var4);
-               if (var5 < 0 || var5 >= var2) {
-                  var2 = var4;
+               int indexOf2 = body.indexOf(93, indexOf);
+               if (indexOf2 < 0 || indexOf2 >= n2) {
+                  n2 = indexOf;
                   break;
                }
 
-               var3 = var5 + 1;
+               fromIndex = indexOf2 + 1;
             }
 
-            return var0.substring(0, Math.max(0, var2)).stripTrailing();
+            return body.substring(0, Math.max(0, n2)).stripTrailing();
          }
       } else {
          return "";
       }
    }
 
-   private static Coord method5175(String var0) {
-      if (var0.isEmpty()) {
+   private static Coord method5175(String str) {
+      if (str.isEmpty()) {
          return null;
       } else {
-         String[] var1 = var0.split("\\|");
-         String var2 = var1[0].trim().toLowerCase(Locale.ROOT);
-         if (!var2.isEmpty() && var2.chars().allMatch(var0x -> var0x >= 97 && var0x <= 122)) {
-            LinkedHashMap var3 = new LinkedHashMap();
+         String[] strings = str.split("\\|");
+         String lowerCase = strings[0].trim().toLowerCase(Locale.ROOT);
+         if (!lowerCase.isEmpty() && lowerCase.chars().allMatch(var0x -> var0x >= 97 && var0x <= 122)) {
+            LinkedHashMap items = new LinkedHashMap();
 
-            for (int var4 = 1; var4 < var1.length; var4++) {
-               int var5 = var1[var4].indexOf(61);
-               if (var5 > 0) {
-                  var3.put(var1[var4].substring(0, var5).trim().toLowerCase(Locale.ROOT), method5176(var1[var4].substring(var5 + 1)));
+            for (int i = 1; i < strings.length; i++) {
+               int indexOf = strings[i].indexOf(61);
+               if (indexOf > 0) {
+                  items.put(strings[i].substring(0, indexOf).trim().toLowerCase(Locale.ROOT), method5176(strings[i].substring(indexOf + 1)));
                }
             }
 
-            return new Coord(var2, var3);
+            return new Coord(lowerCase, items);
          } else {
             return null;
          }
       }
    }
 
-   private static String escape(String var0) {
-      StringBuilder var1 = new StringBuilder(var0.length() + 8);
+   private static String escape(String str) {
+      StringBuilder builder = new StringBuilder(str.length() + 8);
 
-      for (int var2 = 0; var2 < var0.length(); var2++) {
-         char var3 = var0.charAt(var2);
-         switch (var3) {
+      for (int i = 0; i < str.length(); i++) {
+         char charAt = str.charAt(i);
+         switch (charAt) {
             case '\t':
             case '\n':
             case '\r':
-               var1.append(' ');
+               builder.append(' ');
                break;
             case '%':
-               var1.append("%25");
+               builder.append("%25");
                break;
             case '[':
-               var1.append("%5B");
+               builder.append("%5B");
                break;
             case ']':
-               var1.append("%5D");
+               builder.append("%5D");
                break;
             case '|':
-               var1.append("%7C");
+               builder.append("%7C");
                break;
             default:
-               var1.append(var3);
+               builder.append(charAt);
          }
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
-   private static String method5176(String var0) {
-      if (var0.indexOf(37) < 0) {
-         return var0;
+   private static String method5176(String str) {
+      if (str.indexOf(37) < 0) {
+         return str;
       } else {
-         StringBuilder var1 = new StringBuilder(var0.length());
+         StringBuilder builder = new StringBuilder(str.length());
 
-         for (int var2 = 0; var2 < var0.length(); var2++) {
-            char var3 = var0.charAt(var2);
-            if (var3 == '%' && var2 + 2 < var0.length()) {
+         for (int i = 0; i < str.length(); i++) {
+            char charAt = str.charAt(i);
+            if (charAt == '%' && i + 2 < str.length()) {
                try {
-                  var1.append((char)Integer.parseInt(var0.substring(var2 + 1, var2 + 3), 16));
-                  var2 += 2;
+                  builder.append((char)Integer.parseInt(str.substring(i + 1, i + 3), 16));
+                  i += 2;
                   continue;
-               } catch (NumberFormatException var5) {
+               } catch (NumberFormatException e) {
                }
             }
 
-            var1.append(var3);
+            builder.append(charAt);
          }
 
-         return var1.toString();
+         return builder.toString();
       }
    }
 
@@ -241,28 +241,28 @@ public final class Coord {
          return "Data[" + "text=" + this.text + ", " + "items=" + this.items + ", " + "broken=" + this.broken + "]";
       }
 
-      public Data(String var1, List<Coord> var2) {
-         this(var1, var2, false);
+      public Data(String body, List<Coord> items) {
+         this(body, items, false);
       }
 
-      public Data(String var1, List<Coord> var2, boolean var3) {
-         this.text = var1;
-         this.items = var2;
-         this.broken = var3;
+      public Data(String text, List<Coord> items, boolean broken) {
+         this.text = text;
+         this.items = items;
+         this.broken = broken;
       }
 
-      public Coord method5179(String var1) {
-         for (Coord var3 : this.items) {
-            if (var3.kind().equals(var1)) {
-               return var3;
+      public Coord method5179(String anObject) {
+         for (Coord coord : this.items) {
+            if (coord.kind().equals(anObject)) {
+               return coord;
             }
          }
 
          return null;
       }
 
-      public boolean method5180(String var1) {
-         return this.method5179(var1) != null;
+      public boolean method5180(String anObject) {
+         return this.method5179(anObject) != null;
       }
 
       public List<Coord> getItems() {
@@ -278,32 +278,32 @@ public final class Coord {
       private final String text;
       private final Map<String, String> items = new LinkedHashMap<>();
 
-      private Entry(String var1) {
-         this.text = var1;
+      private Entry(String text) {
+         this.text = text;
       }
 
-      public Coord.Entry method5177(String var1, String var2) {
-         if (var2 != null && !var2.isBlank()) {
-            this.items.put(var1, var2.strip());
+      public Coord.Entry method5177(String str, String dimension) {
+         if (dimension != null && !dimension.isBlank()) {
+            this.items.put(str, dimension.strip());
          }
 
          return this;
       }
 
-      public Coord.Entry method5178(String var1, int var2) {
-         this.items.put(var1, Integer.toString(var2));
+      public Coord.Entry method5178(String str, int z) {
+         this.items.put(str, Integer.toString(z));
          return this;
       }
 
       @Override
       public String toString() {
-         StringBuilder var1 = new StringBuilder("[z:").append(this.text);
+         StringBuilder builder = new StringBuilder("[z:").append(this.text);
 
-         for (Map.Entry var3 : this.items.entrySet()) {
-            var1.append('|').append((String)var3.getKey()).append('=').append(Coord.escape((String)var3.getValue()));
+         for (Map.Entry entry : this.items.entrySet()) {
+            builder.append('|').append((String)entry.getKey()).append('=').append(Coord.escape((String)entry.getValue()));
          }
 
-         return var1.append(']').toString();
+         return builder.append(']').toString();
       }
    }
 }

@@ -73,10 +73,10 @@ public final class AutoCapchaModule extends Module {
       "капч", "captcha", "введите код", "введи код", "код с карты", "введите номер", "номер с картин", "с картинки", "картинке", "введите число"
    };
    private static final String[] texts2 = new String[]{"успеш", "passed", "verified"};
-   private static final ExecutorService executorService = Executors.newCachedThreadPool(var0 -> {
-      Thread var1 = new Thread(var0, "auto-capcha");
-      var1.setDaemon(true);
-      return var1;
+   private static final ExecutorService executorService = Executors.newCachedThreadPool(task -> {
+      Thread thread = new Thread(task, "auto-capcha");
+      thread.setDaemon(true);
+      return thread;
    });
    private final Map<Integer, int[]> items = new ConcurrentHashMap<>();
    private final Map<Integer, double[]> items2 = new ConcurrentHashMap<>();
@@ -111,93 +111,93 @@ public final class AutoCapchaModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         Packet var2 = var1.getPacket3();
-         AutoCapchaModule.Data var3 = this.method157();
-         if (var2 instanceof ClientboundLoginPacket || var2 instanceof ClientboundRespawnPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         Packet packet3 = event.getPacket3();
+         AutoCapchaModule.Data data = this.method157();
+         if (packet3 instanceof ClientboundLoginPacket || packet3 instanceof ClientboundRespawnPacket) {
             this.resetState(true);
             this.log("join detected, armed");
-         } else if (var2 instanceof ClientboundPlayerPositionPacket var9) {
-            PositionMoveRotation var5 = var9.change();
-            this.look = new double[]{var5.position().x, var5.position().y, var5.position().z, var5.yRot()};
-         } else if (var2 instanceof ClientboundAddEntityPacket var4
-            && (var4.getType() == net.minecraft.world.entity.EntityTypes.ITEM_FRAME || var4.getType() == net.minecraft.world.entity.EntityTypes.GLOW_ITEM_FRAME)) {
-            this.items2.put(var4.getId(), new double[]{var4.getX(), var4.getY(), var4.getZ(), var4.getData()});
-         } else if (var2 instanceof ClientboundSetEntityDataPacket var8) {
-            this.method148(var8, var3);
-         } else if (var2 instanceof ClientboundMapItemDataPacket var7) {
-            this.method149(var7.mapId().id(), var7.colorPatch().orElse(null), var3);
+         } else if (packet3 instanceof ClientboundPlayerPositionPacket playerPositionPacket) {
+            PositionMoveRotation change = playerPositionPacket.change();
+            this.look = new double[]{change.position().x, change.position().y, change.position().z, change.yRot()};
+         } else if (packet3 instanceof ClientboundAddEntityPacket addEntityPacket
+            && (addEntityPacket.getType() == net.minecraft.world.entity.EntityTypes.ITEM_FRAME || addEntityPacket.getType() == net.minecraft.world.entity.EntityTypes.GLOW_ITEM_FRAME)) {
+            this.items2.put(addEntityPacket.getId(), new double[]{addEntityPacket.getX(), addEntityPacket.getY(), addEntityPacket.getZ(), addEntityPacket.getData()});
+         } else if (packet3 instanceof ClientboundSetEntityDataPacket setEntityDataPacket) {
+            this.method148(setEntityDataPacket, data);
+         } else if (packet3 instanceof ClientboundMapItemDataPacket mapItemDataPacket) {
+            this.method149(mapItemDataPacket.mapId().id(), mapItemDataPacket.colorPatch().orElse(null), data);
          } else {
-            String var6 = packetText(var2);
-            if (var6 != null) {
-               this.method150(var6, var3);
+            String content = packetText(packet3);
+            if (content != null) {
+               this.method150(content, data);
             }
          }
       }
    }
 
-   private void method148(ClientboundSetEntityDataPacket var1, AutoCapchaModule.Data var2) {
-      for (DataValue var4 : var1.packedItems()) {
-         if (var4.value() instanceof ItemStack var5) {
-            MapId var8 = var5.get(DataComponents.MAP_ID);
-            if (var8 != null) {
-               this.items3.put(var1.id(), var8.id());
+   private void method148(ClientboundSetEntityDataPacket setEntityDataPacket, AutoCapchaModule.Data data) {
+      for (DataValue packedItem : setEntityDataPacket.packedItems()) {
+         if (packedItem.value() instanceof ItemStack stack) {
+            MapId mapId = stack.get(DataComponents.MAP_ID);
+            if (mapId != null) {
+               this.items3.put(setEntityDataPacket.id(), mapId.id());
                this.lastTileTime = System.currentTimeMillis();
-               this.method151(var2);
+               this.method151(data);
             }
-         } else if (var4.id() == ItemFrameEntityAccessor.getRotationData().id() && var4.value() instanceof Integer var6) {
-            this.items4.put(var1.id(), var6);
+         } else if (packedItem.id() == ItemFrameEntityAccessor.getRotationData().id() && packedItem.value() instanceof Integer n) {
+            this.items4.put(setEntityDataPacket.id(), n);
             this.lastTileTime = System.currentTimeMillis();
          }
       }
    }
 
-   private void method149(int var1, MapPatch var2, AutoCapchaModule.Data var3) {
-      if (var2 != null && var2.width() > 0 && var2.height() > 0) {
-         byte[] var4 = var2.mapColors();
-         int var5 = var2.width();
-         int var6 = var2.height();
-         if (var4.length >= var5 * var6) {
+   private void method149(int lastMapId, MapPatch mapPatch, AutoCapchaModule.Data data) {
+      if (mapPatch != null && mapPatch.width() > 0 && mapPatch.height() > 0) {
+         byte[] mapColors = mapPatch.mapColors();
+         int width = mapPatch.width();
+         int height = mapPatch.height();
+         if (mapColors.length >= width * height) {
             synchronized (this.obj) {
-               int[] var8 = this.items.computeIfAbsent(var1, var0 -> new int[16384]);
+               int[] ints = this.items.computeIfAbsent(lastMapId, n -> new int[16384]);
 
-               for (int var9 = 0; var9 < var6; var9++) {
-                  int var10;
-                  if ((var10 = var2.startY() + var9) >= 0 && var10 < 128) {
-                     for (int var11 = 0; var11 < var5; var11++) {
-                        int var12;
-                        if ((var12 = var2.startX() + var11) >= 0 && var12 < 128) {
-                           var8[var12 + var10 * 128] = var4[var11 + var9 * var5] & 255;
+               for (int i = 0; i < height; i++) {
+                  int n;
+                  if ((n = mapPatch.startY() + i) >= 0 && n < 128) {
+                     for (int j = 0; j < width; j++) {
+                        int n2;
+                        if ((n2 = mapPatch.startX() + j) >= 0 && n2 < 128) {
+                           ints[n2 + n * 128] = mapColors[j + i * width] & 255;
                         }
                      }
                   }
                }
             }
 
-            this.lastMapId = var1;
+            this.lastMapId = lastMapId;
             this.lastTileTime = System.currentTimeMillis();
-            this.method151(var3);
+            this.method151(data);
          }
       }
    }
 
-   private void method150(String var1, AutoCapchaModule.Data var2) {
-      if (!var1.isBlank()) {
-         String var3 = var1.toLowerCase(Locale.ROOT);
+   private void method150(String content, AutoCapchaModule.Data data) {
+      if (!content.isBlank()) {
+         String lowerCase = content.toLowerCase(Locale.ROOT);
 
-         for (String var7 : texts) {
-            if (var3.contains(var7)) {
+         for (String text : texts) {
+            if (lowerCase.contains(text)) {
                this.keywordTime = System.currentTimeMillis();
-               this.log("captcha prompt: " + CaptchaLogger.trim(var1));
-               this.method151(var2);
+               this.log("captcha prompt: " + CaptchaLogger.trim(content));
+               this.method151(data);
                return;
             }
          }
 
-         for (String var11 : texts2) {
-            if (var3.contains(var11)) {
-               this.log("captcha accepted: " + CaptchaLogger.trim(var1));
+         for (String str : texts2) {
+            if (lowerCase.contains(str)) {
+               this.log("captcha accepted: " + CaptchaLogger.trim(content));
                this.resetState(false);
                return;
             }
@@ -205,14 +205,14 @@ public final class AutoCapchaModule extends Module {
       }
    }
 
-   private void method151(AutoCapchaModule.Data var1) {
-      if (var1 != null && (this.lastMapId >= 0 || !this.items3.isEmpty())) {
-         long var2 = System.currentTimeMillis();
-         boolean var4 = this.joinTime != 0L && var2 - this.joinTime <= 15000L;
-         boolean var5 = this.keywordTime != 0L && var2 - this.keywordTime <= 10000L;
-         if (var4 || var5) {
+   private void method151(AutoCapchaModule.Data data) {
+      if (data != null && (this.lastMapId >= 0 || !this.items3.isEmpty())) {
+         long now = System.currentTimeMillis();
+         boolean flag = this.joinTime != 0L && now - this.joinTime <= 15000L;
+         boolean flag2 = this.keywordTime != 0L && now - this.keywordTime <= 10000L;
+         if (flag || flag2) {
             if (this.atomicBoolean.compareAndSet(false, true)) {
-               long var6 = this.atomicLong.get();
+               long l = this.atomicLong.get();
                executorService.submit(() -> {
                   label62: {
                      label63: {
@@ -220,24 +220,24 @@ public final class AutoCapchaModule extends Module {
                            try {
                               while (true) {
                                  long var4x;
-                                 if (var6 == this.atomicLong.get() && (var4x = System.currentTimeMillis() - this.lastTileTime) < 700L) {
+                                 if (l == this.atomicLong.get() && (var4x = System.currentTimeMillis() - this.lastTileTime) < 700L) {
                                     Thread.sleep(700L - var4x);
                                  } else {
-                                    if (var6 != this.atomicLong.get()) {
+                                    if (l != this.atomicLong.get()) {
                                        break label62;
                                     }
 
-                                    this.awaitFullWall(var6);
-                                    this.method152(var1, var6);
+                                    this.awaitFullWall(l);
+                                    this.method152(data, l);
                                     break label63;
                                  }
                               }
-                           } catch (InterruptedException var9) {
+                           } catch (InterruptedException e) {
                               Thread.currentThread().interrupt();
                            }
-                        } catch (Throwable var10) {
+                        } catch (Throwable e) {
                            this.atomicBoolean.set(false);
-                           throw var10;
+                           throw e;
                         }
 
                         this.atomicBoolean.set(false);
@@ -255,12 +255,12 @@ public final class AutoCapchaModule extends Module {
       }
    }
 
-   private void awaitFullWall(long var1) throws InterruptedException {
-      long var3 = System.currentTimeMillis() + 5000L;
+   private void awaitFullWall(long l) throws InterruptedException {
+      long l2 = System.currentTimeMillis() + 5000L;
 
-      while (var1 == this.atomicLong.get() && System.currentTimeMillis() < var3) {
-         AutoCapchaModule.Data2 var5 = this.method156();
-         if (var5 == null || var5.tiles() >= var5.cols() * var5.rows()) {
+      while (l == this.atomicLong.get() && System.currentTimeMillis() < l2) {
+         AutoCapchaModule.Data2 data2 = this.method156();
+         if (data2 == null || data2.tiles() >= data2.cols() * data2.rows()) {
             return;
          }
 
@@ -268,43 +268,43 @@ public final class AutoCapchaModule extends Module {
       }
    }
 
-   private void method152(AutoCapchaModule.Data var1, long var2) {
-      if (var2 == this.atomicLong.get() && this.isEnabledRaw() && this.atomicBoolean2.compareAndSet(false, true)) {
-         AutoCapchaModule.Data2 var6 = this.method156();
-         BufferedImage var4;
-         int var5;
-         if (var6 != null) {
-            var4 = var6.image();
-            var5 = var6.hash();
-            method158(var1, "prepared wall " + var6.cols() + "x" + var6.rows() + " tiles=" + var6.tiles());
+   private void method152(AutoCapchaModule.Data data, long l) {
+      if (l == this.atomicLong.get() && this.isEnabledRaw() && this.atomicBoolean2.compareAndSet(false, true)) {
+         AutoCapchaModule.Data2 data2 = this.method156();
+         BufferedImage image;
+         int lastAttemptHash;
+         if (data2 != null) {
+            image = data2.image();
+            lastAttemptHash = data2.hash();
+            method158(data, "prepared wall " + data2.cols() + "x" + data2.rows() + " tiles=" + data2.tiles());
          } else {
-            int[] var7 = this.cloneBuffer(this.lastMapId);
-            if (var7 == null || isUniform(var7)) {
+            int[] cloneBuffer = this.cloneBuffer(this.lastMapId);
+            if (cloneBuffer == null || isUniform(cloneBuffer)) {
                this.atomicBoolean2.set(false);
                return;
             }
 
-            var4 = render(var7);
-            var5 = Arrays.hashCode(var7);
-            method158(var1, "prepared map " + this.lastMapId);
+            image = render(cloneBuffer);
+            lastAttemptHash = Arrays.hashCode(cloneBuffer);
+            method158(data, "prepared map " + this.lastMapId);
          }
 
-         long var10 = System.currentTimeMillis();
-         if (var5 == this.lastAttemptHash && var10 - this.lastAttemptTime < 6000L) {
+         long now = System.currentTimeMillis();
+         if (lastAttemptHash == this.lastAttemptHash && now - this.lastAttemptTime < 6000L) {
             this.atomicBoolean2.set(false);
          } else {
-            this.lastAttemptHash = var5;
-            BufferedImage var9 = resizeForApi(var4);
-            executorService.submit(() -> this.method153(var9, var1, var2));
+            this.lastAttemptHash = lastAttemptHash;
+            BufferedImage im = resizeForApi(image);
+            executorService.submit(() -> this.method153(im, data, l));
          }
       }
    }
 
    // $VF: Could not verify finally blocks. A semaphore variable has been added to preserve control flow.
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   private void method153(BufferedImage var1, AutoCapchaModule.Data var2, long var3) {
-      String var5 = null;
-      boolean var17 = false /* VF: Semaphore variable */;
+   private void method153(BufferedImage im, AutoCapchaModule.Data data, long l) {
+      String str = null;
+      boolean flag = false /* VF: Semaphore variable */;
 
       label177: {
          label176: {
@@ -312,98 +312,98 @@ public final class AutoCapchaModule extends Module {
                label189: {
                   label190: {
                      try {
-                        var17 = true;
-                        int var6 = 1;
+                        flag = true;
+                        int n = 1;
 
                         while (true) {
                            label182: {
                               label161:
-                              if (var6 <= 3) {
-                                 if (var3 != this.atomicLong.get()) {
-                                    var17 = false;
+                              if (n <= 3) {
+                                 if (l != this.atomicLong.get()) {
+                                    flag = false;
                                     break label177;
                                  }
 
                                  if (!this.isEnabledRaw()) {
-                                    var17 = false;
+                                    flag = false;
                                     break label177;
                                  }
 
-                                 if (!var2.isConnected()) {
-                                    var17 = false;
+                                 if (!data.isConnected()) {
+                                    flag = false;
                                     break label177;
                                  }
 
-                                 StoreApi var7 = Zenith.getInstance().getStoreApi();
-                                 if (var7 == null || Cloud.accountUid() <= 0L) {
-                                    var5 = "Cloud account is not ready";
-                                    method158(var2, var5);
-                                    method159(var2.label() + ": облако ещё не готово для решения капчи", true);
-                                    var17 = false;
+                                 StoreApi storeApi = Zenith.getInstance().getStoreApi();
+                                 if (storeApi == null || Cloud.accountUid() <= 0L) {
+                                    str = "Cloud account is not ready";
+                                    method158(data, str);
+                                    method159(data.label() + ": облако ещё не готово для решения капчи", true);
+                                    flag = false;
                                     break label176;
                                  }
 
                                  try {
-                                    method158(var2, "Cloud captcha attempt " + var6 + "/3");
-                                    int var8 = this.method154(var2);
-                                    byte[] var9 = encodePng(var1);
-                                    String var10 = var7.method1984(var9, var8, var8).join();
-                                    if (isSafeAnswer(var10)) {
-                                       String var11 = var10.trim();
-                                       if (var8 > 0 && var11.length() != var8) {
-                                          var5 = "answer length " + var11.length() + " != " + var8;
-                                          method158(var2, var5 + ": " + CaptchaLogger.trim(var11));
-                                          Thread.sleep(1000L * var6);
+                                    method158(data, "Cloud captcha attempt " + n + "/3");
+                                    int expectedLength = this.method154(data);
+                                    byte[] src = encodePng(im);
+                                    String content = storeApi.method1984(src, expectedLength, expectedLength).join();
+                                    if (isSafeAnswer(content)) {
+                                       String content2 = content.trim();
+                                       if (expectedLength > 0 && content2.length() != expectedLength) {
+                                          str = "answer length " + content2.length() + " != " + expectedLength;
+                                          method158(data, str + ": " + CaptchaLogger.trim(content2));
+                                          Thread.sleep(1000L * n);
                                           break label182;
                                        }
 
-                                       if (this.method155(var2, var11)) {
-                                          method158(var2, "answer sent: " + var11);
-                                          method159(var2.label() + ": капча решена -> " + var11, false);
+                                       if (this.method155(data, content2)) {
+                                          method158(data, "answer sent: " + content2);
+                                          method159(data.label() + ": капча решена -> " + content2, false);
                                           this.resetState(false);
-                                          var17 = false;
+                                          flag = false;
                                        } else {
-                                          method159(var2.label() + ": не удалось отправить ответ капчи", true);
-                                          var17 = false;
+                                          method159(data.label() + ": не удалось отправить ответ капчи", true);
+                                          flag = false;
                                        }
                                        break label175;
                                     }
 
-                                    if (var10 != null && !var10.isBlank()) {
-                                       var5 = "Cloud returned an unsafe answer";
-                                       method158(var2, var5 + ": " + CaptchaLogger.trim(var10));
+                                    if (content != null && !content.isBlank()) {
+                                       str = "Cloud returned an unsafe answer";
+                                       method158(data, str + ": " + CaptchaLogger.trim(content));
                                        break label161;
                                     }
 
-                                    method158(var2, "Cloud returned no answer on attempt " + var6);
-                                 } catch (InterruptedException var18) {
+                                    method158(data, "Cloud returned no answer on attempt " + n);
+                                 } catch (InterruptedException e) {
                                     Thread.currentThread().interrupt();
-                                    var17 = false;
+                                    flag = false;
                                     break label189;
-                                 } catch (Exception var19) {
-                                    var5 = rootMessage(var19);
-                                    method158(var2, "Cloud attempt " + var6 + " failed: " + var5);
-                                    if (isFinalFailure(var19)) {
+                                 } catch (Exception e) {
+                                    str = rootMessage(e);
+                                    method158(data, "Cloud attempt " + n + " failed: " + str);
+                                    if (isFinalFailure(e)) {
                                        break label161;
                                     }
                                  }
 
-                                 Thread.sleep(1000L * var6);
+                                 Thread.sleep(1000L * n);
                                  break label182;
                               }
 
-                              method159(var2.label() + ": капча не решена" + (var5 == null ? "" : " (" + var5 + ")"), true);
-                              var17 = false;
+                              method159(data.label() + ": капча не решена" + (str == null ? "" : " (" + str + ")"), true);
+                              flag = false;
                               break label190;
                            }
 
-                           var6++;
+                           n++;
                         }
-                     } catch (InterruptedException var20) {
+                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        var17 = false;
+                        flag = false;
                      } finally {
-                        if (var17) {
+                        if (flag) {
                            this.lastAttemptTime = System.currentTimeMillis();
                            this.atomicBoolean2.set(false);
                         }
@@ -438,115 +438,115 @@ public final class AutoCapchaModule extends Module {
       this.atomicBoolean2.set(false);
    }
 
-   private int method154(AutoCapchaModule.Data var1) {
-      ClientPacketListener var2 = var1.getClientPlayNetworkHandler();
-      return var2 != null && var2.getServerData() != null && var2.getServerData().ip.toLowerCase(Locale.ROOT).contains("funtime.su") ? 5 : 0;
+   private int method154(AutoCapchaModule.Data data) {
+      ClientPacketListener clientPlayNetworkHandler = data.getClientPlayNetworkHandler();
+      return clientPlayNetworkHandler != null && clientPlayNetworkHandler.getServerData() != null && clientPlayNetworkHandler.getServerData().ip.toLowerCase(Locale.ROOT).contains("funtime.su") ? 5 : 0;
    }
 
-   private boolean method155(AutoCapchaModule.Data var1, String var2) {
-      ClientPacketListener var3 = var1.getClientPlayNetworkHandler();
-      if (var3 == null) {
+   private boolean method155(AutoCapchaModule.Data data, String content) {
+      ClientPacketListener clientPlayNetworkHandler = data.getClientPlayNetworkHandler();
+      if (clientPlayNetworkHandler == null) {
          return false;
       } else {
          Minecraft.getInstance().execute(() -> {
-            if (var2.startsWith("/")) {
-               var3.sendCommand(var2.substring(1));
+            if (content.startsWith("/")) {
+               clientPlayNetworkHandler.sendCommand(content.substring(1));
             } else {
-               var3.sendChat(var2);
+               clientPlayNetworkHandler.sendChat(content);
             }
 
-            System.out.println(var2);
+            System.out.println(content);
          });
          return true;
       }
    }
 
    private AutoCapchaModule.Data2 method156() {
-      HashMap var1 = new HashMap();
+      HashMap map = new HashMap();
 
-      for (Entry var3 : this.items3.entrySet()) {
-         double[] var4 = this.items2.get(var3.getKey());
-         if (var4 != null) {
-            boolean var40;
+      for (Entry entry : this.items3.entrySet()) {
+         double[] doubles = this.items2.get(entry.getKey());
+         if (doubles != null) {
+            boolean containsKey;
             label122: {
-               var var10000 = this.items;
-               Object var10001 = var3.getValue();
-               if (var10000 != null) {
-                  if (var10000.isEmpty()) {
-                     var40 = false;
+               var items = this.items;
+               Object obj = entry.getValue();
+               if (items != null) {
+                  if (items.isEmpty()) {
+                     containsKey = false;
                      break label122;
                   }
                }
 
-               var40 = var10000.containsKey(var10001);
+               containsKey = items.containsKey(obj);
             }
 
-            int var5;
-            if (var40 && (var5 = (int)var4[3]) >= 2 && var5 <= 5) {
-               double var6 = var5 >= 4 ? var4[0] : var4[2];
-               long var8 = (long)var5 << 40 ^ Math.round(var6 * 4.0) & 1099511627775L;
-               ((java.util.List)var1.computeIfAbsent(var8, var0 -> new ArrayList<>())).add(new int[]{(Integer)var3.getKey(), (Integer)var3.getValue()});
+            int n;
+            if (containsKey && (n = (int)doubles[3]) >= 2 && n <= 5) {
+               double d = n >= 4 ? doubles[0] : doubles[2];
+               long key = (long)n << 40 ^ Math.round(d * 4.0) & 1099511627775L;
+               ((java.util.List)map.computeIfAbsent(key, obj -> new ArrayList<>())).add(new int[]{(Integer)entry.getKey(), (Integer)entry.getValue()});
             }
          }
       }
 
-      List<int[]> var29 = this.choosePlane(var1);
-      if (var29 != null && (!var29.isEmpty())) {
-         double[] var30 = this.items2.get(((int[])var29.getFirst())[0]);
-         if (var30 == null) {
+      List<int[]> plane = this.choosePlane(map);
+      if (plane != null && (!plane.isEmpty())) {
+         double[] doubles = this.items2.get(((int[])plane.getFirst())[0]);
+         if (doubles == null) {
             return null;
          } else {
-            int var31;
-            boolean var32 = (var31 = (int)var30[3]) >= 4;
-            double var33 = Double.MAX_VALUE;
-            double var34 = -Double.MAX_VALUE;
-            double var10 = Double.MAX_VALUE;
-            double var12 = -Double.MAX_VALUE;
+            int n;
+            boolean flag = (n = (int)doubles[3]) >= 4;
+            double d = Double.MAX_VALUE;
+            double d2 = -Double.MAX_VALUE;
+            double d3 = Double.MAX_VALUE;
+            double d4 = -Double.MAX_VALUE;
 
-            for (int[] var15 : var29) {
-               double[] var16 = this.items2.get(var15[0]);
-               if (var16 != null) {
-                  double var17 = var32 ? var16[2] : var16[0];
-                  var33 = Math.min(var33, var17);
-                  var34 = Math.max(var34, var17);
-                  var10 = Math.min(var10, var16[1]);
-                  var12 = Math.max(var12, var16[1]);
+            for (int[] ints : plane) {
+               double[] doubles2 = this.items2.get(ints[0]);
+               if (doubles2 != null) {
+                  double d5 = flag ? doubles2[2] : doubles2[0];
+                  d = Math.min(d, d5);
+                  d2 = Math.max(d2, d5);
+                  d3 = Math.min(d3, doubles2[1]);
+                  d4 = Math.max(d4, doubles2[1]);
                }
             }
 
-            int var35 = (int)Math.round(var34 - var33) + 1;
-            int var36 = (int)Math.round(var12 - var10) + 1;
-            if (var35 >= 1 && var36 >= 1 && var35 <= 8 && var36 <= 8 && var35 * var36 >= 2) {
-               BufferedImage var37 = new BufferedImage(var35 * 128, var36 * 128, 1);
-               Graphics2D var38 = var37.createGraphics();
-               var38.setColor(Color.WHITE);
-               var38.fillRect(0, 0, var37.getWidth(), var37.getHeight());
-               int var18 = 1;
-               int var19 = 0;
+            int n2 = (int)Math.round(d2 - d) + 1;
+            int n3 = (int)Math.round(d4 - d3) + 1;
+            if (n2 >= 1 && n3 >= 1 && n2 <= 8 && n3 <= 8 && n2 * n3 >= 2) {
+               BufferedImage bufferedImage = new BufferedImage(n2 * 128, n3 * 128, 1);
+               Graphics2D graphics = bufferedImage.createGraphics();
+               graphics.setColor(Color.WHITE);
+               graphics.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+               int intValue = 1;
+               int n4 = 0;
 
-               for (int[] var21 : var29) {
-                  int[] var22 = this.cloneBuffer(var21[1]);
-                  double[] var23 = this.items2.get(var21[0]);
-                  if (var22 != null && var23 != null) {
-                     int var24 = this.items4.getOrDefault(var21[0], 0) & 3;
-                     var22 = rotateClockwise(var22, var24);
-                     double var25 = var32 ? var23[2] : var23[0];
+               for (int[] ints : plane) {
+                  int[] cloneBuffer = this.cloneBuffer(ints[1]);
+                  double[] doubles2 = this.items2.get(ints[0]);
+                  if (cloneBuffer != null && doubles2 != null) {
+                     int n5 = this.items4.getOrDefault(ints[0], 0) & 3;
+                     cloneBuffer = rotateClockwise(cloneBuffer, n5);
+                     double d5 = flag ? doubles2[2] : doubles2[0];
 
-                     int var27 = switch (var31) {
-                        case 3, 4 -> (int)Math.round(var25 - var33);
-                        default -> (int)Math.round(var34 - var25);
+                     int n6 = switch (n) {
+                        case 3, 4 -> (int)Math.round(d5 - d);
+                        default -> (int)Math.round(d2 - d5);
                      };
-                     int var28 = (int)Math.round(var12 - var23[1]);
-                     if (var27 >= 0 && var27 < var35 && var28 >= 0 && var28 < var36) {
-                        var38.drawImage(render(var22), var27 * 128, var28 * 128, null);
-                        var18 = ((var18 * 31 + var21[1]) * 31 + Arrays.hashCode(var22)) * 31 + var27 * 17 + var28;
-                        var19++;
+                     int n7 = (int)Math.round(d4 - doubles2[1]);
+                     if (n6 >= 0 && n6 < n2 && n7 >= 0 && n7 < n3) {
+                        graphics.drawImage(render(cloneBuffer), n6 * 128, n7 * 128, null);
+                        intValue = ((intValue * 31 + ints[1]) * 31 + Arrays.hashCode(cloneBuffer)) * 31 + n6 * 17 + n7;
+                        n4++;
                      }
                   }
                }
 
-               var38.dispose();
-               return var19 == 0 ? null : new AutoCapchaModule.Data2(var37, var18, var35, var36, var19);
+               graphics.dispose();
+               return n4 == 0 ? null : new AutoCapchaModule.Data2(bufferedImage, intValue, n2, n3, n4);
             } else {
                return null;
             }
@@ -556,71 +556,71 @@ public final class AutoCapchaModule extends Module {
       }
    }
 
-   private List<int[]> choosePlane(Map<Long, List<int[]>> var1) {
-      if (var1.isEmpty()) {
+   private List<int[]> choosePlane(Map<Long, List<int[]>> map) {
+      if (map.isEmpty()) {
          return null;
       } else {
-         List var2 = null;
-         double var3 = -1.0;
-         double[] var5 = this.look;
-         if (var5 != null) {
-            double var6;
-            double var8 = -Math.sin(var6 = Math.toRadians(var5[3]));
-            double var10 = Math.cos(var6);
+         List list = null;
+         double d = -1.0;
+         double[] look = this.look;
+         if (look != null) {
+            double d2;
+            double d3 = -Math.sin(d2 = Math.toRadians(look[3]));
+            double d4 = Math.cos(d2);
 
-            for (List var13 : var1.values()) {
-               double var14 = 0.0;
-               double var16 = 0.0;
-               int var18 = 0;
+            for (List list2 : map.values()) {
+               double d5 = 0.0;
+               double d6 = 0.0;
+               int n = 0;
 
-               for (Object var20_o : (Iterable<?>)(Object)(var13)) {
-                  int[] var20 = (int[])var20_o;
-                  double[] var21 = this.items2.get(var20[0]);
-                  if (var21 != null) {
-                     var14 += var21[0];
-                     var16 += var21[2];
-                     var18++;
+               for (Object obj : (Iterable<?>)(Object)(list2)) {
+                  int[] ints = (int[])obj;
+                  double[] doubles = this.items2.get(ints[0]);
+                  if (doubles != null) {
+                     d5 += doubles[0];
+                     d6 += doubles[2];
+                     n++;
                   }
                }
 
-               if (var18 != 0) {
-                  var14 /= var18;
-                  var16 /= var18;
-                  double var32 = var14 - var5[0];
-                  double var33 = var16 - var5[2];
-                  double var23;
-                  double var25;
-                  double var27;
-                  if (!((var23 = Math.sqrt(var32 * var32 + var33 * var33)) < 0.01)
-                     && !(var23 > 32.0)
-                     && (var27 = (var25 = var32 / var23 * var8 + var33 / var23 * var10) < 0.2 ? -1.0 : var25 * 100.0 / (1.0 + var23)) > var3) {
-                     var3 = var27;
-                     var2 = var13;
+               if (n != 0) {
+                  d5 /= n;
+                  d6 /= n;
+                  double d7 = d5 - look[0];
+                  double d8 = d6 - look[2];
+                  double d9;
+                  double d10;
+                  double d11;
+                  if (!((d9 = Math.sqrt(d7 * d7 + d8 * d8)) < 0.01)
+                     && !(d9 > 32.0)
+                     && (d11 = (d10 = d7 / d9 * d3 + d8 / d9 * d4) < 0.2 ? -1.0 : d10 * 100.0 / (1.0 + d9)) > d) {
+                     d = d11;
+                     list = list2;
                   }
                }
             }
          }
 
-         if (var2 == null) {
-            for (List var7 : var1.values()) {
-               if (var2 == null || var7.size() > var2.size()) {
-                  var2 = var7;
+         if (list == null) {
+            for (List list2 : map.values()) {
+               if (list == null || list2.size() > list.size()) {
+                  list = list2;
                }
             }
          }
 
-         return var2;
+         return list;
       }
    }
 
-   private int[] cloneBuffer(int var1) {
+   private int[] cloneBuffer(int lastMapId) {
       synchronized (this.obj) {
-         int[] var3 = this.items.get(var1);
-         return var3 == null ? null : (int[])var3.clone();
+         int[] ints = this.items.get(lastMapId);
+         return ints == null ? null : (int[])ints.clone();
       }
    }
 
-   private void resetState(boolean var1) {
+   private void resetState(boolean flag) {
       this.atomicLong.incrementAndGet();
       synchronized (this.obj) {
          this.items.clear();
@@ -637,136 +637,136 @@ public final class AutoCapchaModule extends Module {
       this.lastAttemptTime = 0L;
       this.lastTileTime = System.currentTimeMillis();
       this.keywordTime = 0L;
-      this.joinTime = var1 ? System.currentTimeMillis() : 0L;
+      this.joinTime = flag ? System.currentTimeMillis() : 0L;
    }
 
    private AutoCapchaModule.Data method157() {
-      ClientPacketListener var1 = Minecraft.getInstance().getConnection();
-      return var1 == null ? null : new AutoCapchaModule.Data(var1, "main");
+      ClientPacketListener connection = Minecraft.getInstance().getConnection();
+      return connection == null ? null : new AutoCapchaModule.Data(connection, "main");
    }
 
-   private void log(String var1) {
-      CaptchaLogger.log("[main] " + var1);
+   private void log(String str) {
+      CaptchaLogger.log("[main] " + str);
    }
 
-   private static void method158(AutoCapchaModule.Data var0, String var1) {
-      CaptchaLogger.log("[" + var0.label() + "] " + var1);
+   private static void method158(AutoCapchaModule.Data data, String str) {
+      CaptchaLogger.log("[" + data.label() + "] " + str);
    }
 
-   private static String packetText(Packet<?> var0) {
-      if (var0 instanceof ClientboundSystemChatPacket var6) {
-         return var6.content().getString();
-      } else if (var0 instanceof ClientboundDisguisedChatPacket var5) {
-         return var5.message().getString();
-      } else if (var0 instanceof ClientboundPlayerChatPacket var4) {
-         return var4.unsignedContent().map(net.minecraft.network.chat.Component::getString).orElse(var4.body().content());
-      } else if (var0 instanceof ClientboundSetActionBarTextPacket var3) {
-         return var3.text().getString();
-      } else if (var0 instanceof ClientboundSetSubtitleTextPacket var2) {
-         return var2.text().getString();
+   private static String packetText(Packet<?> packet3) {
+      if (packet3 instanceof ClientboundSystemChatPacket systemChatPacket) {
+         return systemChatPacket.content().getString();
+      } else if (packet3 instanceof ClientboundDisguisedChatPacket disguisedChatPacket) {
+         return disguisedChatPacket.message().getString();
+      } else if (packet3 instanceof ClientboundPlayerChatPacket playerChatPacket) {
+         return playerChatPacket.unsignedContent().map(net.minecraft.network.chat.Component::getString).orElse(playerChatPacket.body().content());
+      } else if (packet3 instanceof ClientboundSetActionBarTextPacket setActionBarTextPacket) {
+         return setActionBarTextPacket.text().getString();
+      } else if (packet3 instanceof ClientboundSetSubtitleTextPacket setSubtitleTextPacket) {
+         return setSubtitleTextPacket.text().getString();
       } else {
-         return var0 instanceof ClientboundSetTitleTextPacket var1 ? var1.text().getString() : null;
+         return packet3 instanceof ClientboundSetTitleTextPacket setTitleTextPacket ? setTitleTextPacket.text().getString() : null;
       }
    }
 
-   private static boolean isSafeAnswer(String var0) {
-      if (var0 == null) {
+   private static boolean isSafeAnswer(String content) {
+      if (content == null) {
          return false;
       } else {
-         String var1 = var0.trim();
-         return !var1.isEmpty() && var1.length() <= 64
-            ? var1.codePoints().allMatch(var0x -> Character.isLetterOrDigit(var0x) || var0x == 95 || var0x == 45)
+         String str = content.trim();
+         return !str.isEmpty() && str.length() <= 64
+            ? str.codePoints().allMatch(var0x -> Character.isLetterOrDigit(var0x) || var0x == 95 || var0x == 45)
             : false;
       }
    }
 
-   private static int[] rotateClockwise(int[] var0, int var1) {
-      int[] var2 = var0;
+   private static int[] rotateClockwise(int[] cloneBuffer, int n) {
+      int[] ints = cloneBuffer;
 
-      for (int var3 = 0; var3 < var1; var3++) {
-         int[] var4 = new int[16384];
+      for (int i = 0; i < n; i++) {
+         int[] ints2 = new int[16384];
 
-         for (int var5 = 0; var5 < 128; var5++) {
-            for (int var6 = 0; var6 < 128; var6++) {
-               var4[var6 + var5 * 128] = var2[var5 + (127 - var6) * 128];
+         for (int j = 0; j < 128; j++) {
+            for (int k = 0; k < 128; k++) {
+               ints2[k + j * 128] = ints[j + (127 - k) * 128];
             }
          }
 
-         var2 = var4;
+         ints = ints2;
       }
 
-      return var2;
+      return ints;
    }
 
-   private static BufferedImage resizeForApi(BufferedImage var0) {
-      if (var0.getWidth() == 250 && var0.getHeight() == 150) {
-         return var0;
+   private static BufferedImage resizeForApi(BufferedImage image) {
+      if (image.getWidth() == 250 && image.getHeight() == 150) {
+         return image;
       } else {
-         BufferedImage var1 = new BufferedImage(250, 150, 1);
-         Graphics2D var2 = var1.createGraphics();
-         var2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-         var2.drawImage(var0, 0, 0, 250, 150, null);
-         var2.dispose();
-         return var1;
+         BufferedImage bufferedImage = new BufferedImage(250, 150, 1);
+         Graphics2D graphics = bufferedImage.createGraphics();
+         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+         graphics.drawImage(image, 0, 0, 250, 150, null);
+         graphics.dispose();
+         return bufferedImage;
       }
    }
 
-   private static byte[] encodePng(BufferedImage var0) throws Exception {
-      ByteArrayOutputStream var1 = new ByteArrayOutputStream();
-      if (!ImageIO.write(var0, "png", var1)) {
+   private static byte[] encodePng(BufferedImage im) throws Exception {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      if (!ImageIO.write(im, "png", byteArrayOutputStream)) {
          throw new IllegalStateException("PNG encoder is unavailable");
       } else {
-         return var1.toByteArray();
+         return byteArrayOutputStream.toByteArray();
       }
    }
 
-   private static String rootMessage(Throwable var0) {
-      Throwable var1 = var0;
+   private static String rootMessage(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      String var2 = var1.getMessage();
-      return var2 != null && !var2.isBlank() ? var2 : var1.getClass().getSimpleName();
+      String message = throwable2.getMessage();
+      return message != null && !message.isBlank() ? message : throwable2.getClass().getSimpleName();
    }
 
-   private static boolean isFinalFailure(Throwable var0) {
-      Throwable var1 = var0;
+   private static boolean isFinalFailure(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      int var3;
-      return !(var1 instanceof StoreApi.Entry var2) ? false : (var3 = var2.getIntValue()) == 503 || var3 >= 400 && var3 < 500 && var3 != 429;
+      int intValue;
+      return !(throwable2 instanceof StoreApi.Entry entry) ? false : (intValue = entry.getIntValue()) == 503 || intValue >= 400 && intValue < 500 && intValue != 429;
    }
 
-   private static BufferedImage render(int[] var0) {
-      BufferedImage var1 = new BufferedImage(128, 128, 1);
+   private static BufferedImage render(int[] cloneBuffer) {
+      BufferedImage bufferedImage = new BufferedImage(128, 128, 1);
 
-      for (int var2 = 0; var2 < 128; var2++) {
-         for (int var3 = 0; var3 < 128; var3++) {
-            int var4;
-            if ((var4 = MapColor.getColorFromPackedId(var0[var3 + var2 * 128])) >>> 24 == 0) {
-               var4 = 255 << 16 | (char)-1;
+      for (int i = 0; i < 128; i++) {
+         for (int j = 0; j < 128; j++) {
+            int colorFromPackedId;
+            if ((colorFromPackedId = MapColor.getColorFromPackedId(cloneBuffer[j + i * 128])) >>> 24 == 0) {
+               colorFromPackedId = 255 << 16 | (char)-1;
             }
 
-            var1.setRGB(var3, var2, var4 & (255 << 16 | (char)-1));
+            bufferedImage.setRGB(j, i, colorFromPackedId & (255 << 16 | (char)-1));
          }
       }
 
-      return var1;
+      return bufferedImage;
    }
 
-   private static boolean isUniform(int[] var0) {
-      int var1 = var0[0];
-      int[] var2 = var0;
-      int var3 = var0.length;
+   private static boolean isUniform(int[] cloneBuffer) {
+      int n = cloneBuffer[0];
+      int[] ints = cloneBuffer;
+      int length = cloneBuffer.length;
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         int var5;
-         if ((var5 = var2[var4]) != var1) {
+      for (int i = 0; i < length; i++) {
+         int n2;
+         if ((n2 = ints[i]) != n) {
             return false;
          }
       }
@@ -774,12 +774,12 @@ public final class AutoCapchaModule extends Module {
       return true;
    }
 
-   private static void method159(String var0, boolean var1) {
+   private static void method159(String string, boolean flag) {
       Minecraft.getInstance().execute(() -> {
-         if (var1) {
-            ChatLogger.method2021(var0);
+         if (flag) {
+            ChatLogger.method2021(string);
          } else {
-            ChatLogger.method2019(var0);
+            ChatLogger.method2019(string);
          }
       });
    }
@@ -813,9 +813,9 @@ public final class AutoCapchaModule extends Module {
          return "Data[" + "clientPlayNetworkHandler=" + this.clientPlayNetworkHandler + ", " + "text=" + this.text + "]";
       }
 
-      private Data(ClientPacketListener var1, String var2) {
-         this.clientPlayNetworkHandler = var1;
-         this.text = var2;
+      private Data(ClientPacketListener clientPlayNetworkHandler, String text) {
+         this.clientPlayNetworkHandler = clientPlayNetworkHandler;
+         this.text = text;
       }
 
       private boolean isConnected() {
@@ -875,12 +875,12 @@ public final class AutoCapchaModule extends Module {
          return "Data2[" + "bufferedImage=" + this.bufferedImage + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "intValue4=" + this.intValue4 + "]";
       }
 
-      private Data2(BufferedImage var1, int var2, int var3, int var4, int var5) {
-         this.bufferedImage = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
-         this.intValue3 = var4;
-         this.intValue4 = var5;
+      private Data2(BufferedImage bufferedImage, int intValue, int n, int n2, int n3) {
+         this.bufferedImage = bufferedImage;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.intValue4 = n3;
       }
 
       public BufferedImage image() {

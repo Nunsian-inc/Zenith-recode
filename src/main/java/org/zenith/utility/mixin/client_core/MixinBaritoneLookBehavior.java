@@ -19,10 +19,10 @@ public abstract class MixinBaritoneLookBehavior {
       cancellable = true,
       require = 0
    )
-   private void zenith$interceptLook(Rotation var1, boolean var2, CallbackInfo var3) {
-      if (var1 != null && RotationLock.method2706()) {
-         RotationLock.method2707(var1.getYaw(), var1.getPitch());
-         var3.cancel();
+   private void zenith$interceptLook(Rotation rotation, boolean flag, CallbackInfo callbackInfo) {
+      if (rotation != null && RotationLock.method2706()) {
+         RotationLock.method2707(rotation.getYaw(), rotation.getPitch());
+         callbackInfo.cancel();
       }
    }
 }

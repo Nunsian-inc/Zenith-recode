@@ -5,7 +5,7 @@ import org.zenith.utility.game.Class28;
 import org.zenith.utility.render.Glowboost;
 
 public final class Class42 {
-   public static final Class42.Handler handler = (var0, var2, var4) -> false;
+   public static final Class42.Handler handler = (d, d2, d3) -> false;
    private static Class42.Handler handler2 = handler;
    private static final float CONST_floatValue = 0.008333334F;
    private static final int CONST_intValue = 900;
@@ -39,244 +39,244 @@ public final class Class42 {
    private final boolean[] flags;
    private float time;
 
-   public static void method7379(Class42.Handler var0) {
-      handler2 = var0 == null ? handler : var0;
+   public static void method7379(Class42.Handler handler22) {
+      handler2 = handler22 == null ? handler : handler22;
    }
 
-   public static Class42 method7380(int var0, Class28 var1, int var2, float var3) {
-      return new Class42(var0, var1, var2, var3);
+   public static Class42 method7380(int intValue, Class28 class2, int n, float floatValue) {
+      return new Class42(intValue, class2, n, floatValue);
    }
 
-   public boolean method7381(int var1, int var2, float var3) {
-      return this.intValue == var1 && this.intValue2 == var2 && Math.abs(this.floatValue - var3) < 1.0E-4F;
+   public boolean method7381(int intValue, int n, float floatValue) {
+      return this.intValue == intValue && this.intValue2 == n && Math.abs(this.floatValue - floatValue) < 1.0E-4F;
    }
 
-   private Class42(int var1, Class28 var2, int var3, float var4) {
-      this.intValue = var1;
-      this.intValue2 = Math.max(1, var3);
-      this.floatValue = var4;
-      this.doubleValue = var2.doubleValue;
-      this.doubleValue2 = var2.doubleValue2;
-      this.doubleValue3 = var2.doubleValue3;
-      boolean var5 = var1 == 2;
-      this.floatValue2 = var5 ? 4.2F : 3.4F;
-      this.floatValue3 = var5 ? 4.4F : 3.2F;
-      this.floatValue4 = var5 ? 0.42F : 0.28F;
-      this.floatValue5 = var5 ? 0.74F : 0.55F;
-      this.floatValue6 = var5 ? 0.35F : 0.45F;
-      this.floatValue7 = var5 ? 14.0F : 10.0F;
-      int var6 = this.intValue2;
-      this.floatValues = new float[var6];
-      this.floatValues2 = new float[var6];
-      this.floatValues3 = new float[var6];
-      this.floatValues4 = new float[var6];
-      this.floatValues5 = new float[var6];
-      this.floatValues6 = new float[var6];
-      this.floatValues8 = new float[var6];
-      this.floatValues9 = new float[var6];
-      this.floatValues10 = new float[var6];
-      this.floatValues11 = new float[var6];
-      this.floatValues12 = new float[var6];
-      this.floatValues13 = new float[var6];
-      this.floatValues7 = new float[var6];
-      this.floatValues14 = new float[var6];
-      this.flags = new boolean[var6];
-      long var7 = var2.longValue2;
+   private Class42(int intValue, Class28 class2, int n, float floatValue) {
+      this.intValue = intValue;
+      this.intValue2 = Math.max(1, n);
+      this.floatValue = floatValue;
+      this.doubleValue = class2.doubleValue;
+      this.doubleValue2 = class2.doubleValue2;
+      this.doubleValue3 = class2.doubleValue3;
+      boolean flag = intValue == 2;
+      this.floatValue2 = flag ? 4.2F : 3.4F;
+      this.floatValue3 = flag ? 4.4F : 3.2F;
+      this.floatValue4 = flag ? 0.42F : 0.28F;
+      this.floatValue5 = flag ? 0.74F : 0.55F;
+      this.floatValue6 = flag ? 0.35F : 0.45F;
+      this.floatValue7 = flag ? 14.0F : 10.0F;
+      int n2 = this.intValue2;
+      this.floatValues = new float[n2];
+      this.floatValues2 = new float[n2];
+      this.floatValues3 = new float[n2];
+      this.floatValues4 = new float[n2];
+      this.floatValues5 = new float[n2];
+      this.floatValues6 = new float[n2];
+      this.floatValues8 = new float[n2];
+      this.floatValues9 = new float[n2];
+      this.floatValues10 = new float[n2];
+      this.floatValues11 = new float[n2];
+      this.floatValues12 = new float[n2];
+      this.floatValues13 = new float[n2];
+      this.floatValues7 = new float[n2];
+      this.floatValues14 = new float[n2];
+      this.flags = new boolean[n2];
+      long longValue = class2.longValue2;
 
-      for (int var9 = 0; var9 < var6; var9++) {
-         float var10 = (var9 + Glowboost.method3268(var7, var9, 3) * 0.8F) / var6 * (float) (Math.PI * 2);
-         double var11 = Mth.cos(var10);
-         double var13 = Mth.sin(var10);
-         double var15 = -var13;
-         float var19 = Glowboost.method3268(var7, var9, 0) * (float) (Math.PI * 2);
-         float var20 = var5 ? 0.15F + Glowboost.method3268(var7, var9, 1) * 1.55F : 0.22F + Glowboost.method3268(var7, var9, 1) * 1.15F;
-         float var21 = Mth.sin(var20);
-         float var22 = Mth.cos(var20);
-         float var23 = Mth.cos(var19);
-         float var24 = Mth.sin(var19);
-         double var25 = var11 * var22 + var15 * var23 * var21;
-         double var27 = var24 * var21 + (var5 ? 0.35 : 0.0);
-         double var29 = var13 * var22 + var11 * var23 * var21;
-         float var31 = var5 ? (2.0F + Glowboost.method3268(var7, var9, 2) * 4.5F) * var4 : (1.4F + Glowboost.method3268(var7, var9, 2) * 2.6F) * var4;
-         this.floatValues4[var9] = (float)(var25 * var31);
-         this.floatValues5[var9] = (float)(var27 * var31);
-         this.floatValues6[var9] = (float)(var29 * var31);
-         double var32 = Math.sqrt(var25 * var25 + var27 * var27 + var29 * var29);
-         if (var32 < 1.0E-6) {
-            var25 = 0.0;
-            var27 = 1.0;
-            var29 = 0.0;
-            var32 = 1.0;
+      for (int i = 0; i < n2; i++) {
+         float f = (i + Glowboost.method3268(longValue, i, 3) * 0.8F) / n2 * (float) (Math.PI * 2);
+         double d = Mth.cos(f);
+         double d2 = Mth.sin(f);
+         double d3 = -d2;
+         float f2 = Glowboost.method3268(longValue, i, 0) * (float) (Math.PI * 2);
+         float f3 = flag ? 0.15F + Glowboost.method3268(longValue, i, 1) * 1.55F : 0.22F + Glowboost.method3268(longValue, i, 1) * 1.15F;
+         float f4 = Mth.sin(f3);
+         float f5 = Mth.cos(f3);
+         float f6 = Mth.cos(f2);
+         float f7 = Mth.sin(f2);
+         double d4 = d * f5 + d3 * f6 * f4;
+         double d5 = f7 * f4 + (flag ? 0.35 : 0.0);
+         double d6 = d2 * f5 + d * f6 * f4;
+         float f8 = flag ? (2.0F + Glowboost.method3268(longValue, i, 2) * 4.5F) * floatValue : (1.4F + Glowboost.method3268(longValue, i, 2) * 2.6F) * floatValue;
+         this.floatValues4[i] = (float)(d4 * f8);
+         this.floatValues5[i] = (float)(d5 * f8);
+         this.floatValues6[i] = (float)(d6 * f8);
+         double d7 = Math.sqrt(d4 * d4 + d5 * d5 + d6 * d6);
+         if (d7 < 1.0E-6) {
+            d4 = 0.0;
+            d5 = 1.0;
+            d6 = 0.0;
+            d7 = 1.0;
          }
 
-         this.floatValues8[var9] = (float)(var25 / var32);
-         this.floatValues9[var9] = (float)(var27 / var32);
-         this.floatValues10[var9] = (float)(var29 / var32);
-         this.floatValues11[var9] = this.floatValues8[var9];
-         this.floatValues12[var9] = this.floatValues9[var9];
-         this.floatValues13[var9] = this.floatValues10[var9];
+         this.floatValues8[i] = (float)(d4 / d7);
+         this.floatValues9[i] = (float)(d5 / d7);
+         this.floatValues10[i] = (float)(d6 / d7);
+         this.floatValues11[i] = this.floatValues8[i];
+         this.floatValues12[i] = this.floatValues9[i];
+         this.floatValues13[i] = this.floatValues10[i];
       }
    }
 
-   public void method7382(float var1) {
-      if (!(var1 <= this.time)) {
-         int var2;
-         for (var2 = 0; this.time < var1 && var2 < 900; var2++) {
+   public void method7382(float time) {
+      if (!(time <= this.time)) {
+         int n;
+         for (n = 0; this.time < time && n < 900; n++) {
             this.method7383();
             this.time += 0.008333334F;
          }
 
-         if (var2 >= 900) {
-            this.time = var1;
+         if (n >= 900) {
+            this.time = time;
          }
       }
    }
 
    private void method7383() {
-      float var1 = Math.max(0.0F, 1.0F - this.floatValue2 * 0.008333334F);
+      float f = Math.max(0.0F, 1.0F - this.floatValue2 * 0.008333334F);
 
-      for (int var2 = 0; var2 < this.intValue2; var2++) {
-         if (this.floatValues14[var2] > 0.0F) {
-            this.floatValues14[var2] = Math.max(0.0F, this.floatValues14[var2] - 0.045833334F);
+      for (int i = 0; i < this.intValue2; i++) {
+         if (this.floatValues14[i] > 0.0F) {
+            this.floatValues14[i] = Math.max(0.0F, this.floatValues14[i] - 0.045833334F);
          }
 
-         if (!this.flags[var2]) {
-            this.floatValues4[var2] = this.floatValues4[var2] * var1;
-            this.floatValues5[var2] = this.floatValues5[var2] * var1;
-            this.floatValues6[var2] = this.floatValues6[var2] * var1;
-            this.floatValues7[var2] = Math.max(-this.floatValue7, this.floatValues7[var2] - this.floatValue3 * 0.008333334F);
-            float var3 = this.floatValues4[var2];
-            float var4 = this.floatValues5[var2] + this.floatValues7[var2];
-            float var5 = this.floatValues6[var2];
-            float var6 = this.floatValues[var2];
-            float var7 = this.floatValues2[var2];
-            float var8 = this.floatValues3[var2];
-            float var9 = var6 + var3 * 0.008333334F;
-            float var10 = var7 + var4 * 0.008333334F;
-            float var11 = var8 + var5 * 0.008333334F;
-            boolean var12 = false;
-            boolean var13 = false;
-            if (this.method7384(var9, var7, var8)) {
-               var3 = -var3 * this.floatValue4;
-               var9 = var6;
-               var12 = true;
+         if (!this.flags[i]) {
+            this.floatValues4[i] = this.floatValues4[i] * f;
+            this.floatValues5[i] = this.floatValues5[i] * f;
+            this.floatValues6[i] = this.floatValues6[i] * f;
+            this.floatValues7[i] = Math.max(-this.floatValue7, this.floatValues7[i] - this.floatValue3 * 0.008333334F);
+            float f2 = this.floatValues4[i];
+            float f3 = this.floatValues5[i] + this.floatValues7[i];
+            float f4 = this.floatValues6[i];
+            float floatValue = this.floatValues[i];
+            float f5 = this.floatValues2[i];
+            float f6 = this.floatValues3[i];
+            float floatValue2 = floatValue + f2 * 0.008333334F;
+            float f7 = f5 + f3 * 0.008333334F;
+            float f8 = f6 + f4 * 0.008333334F;
+            boolean flag = false;
+            boolean flag2 = false;
+            if (this.method7384(floatValue2, f5, f6)) {
+               f2 = -f2 * this.floatValue4;
+               floatValue2 = floatValue;
+               flag = true;
             }
 
-            if (this.method7384(var9, var10, var8)) {
-               if (var4 < 0.0F) {
-                  var13 = true;
+            if (this.method7384(floatValue2, f7, f6)) {
+               if (f3 < 0.0F) {
+                  flag2 = true;
                }
 
-               var4 = -var4 * this.floatValue4;
-               var10 = var7;
-               var3 *= this.floatValue5;
-               var5 *= this.floatValue5;
-               var12 = true;
+               f3 = -f3 * this.floatValue4;
+               f7 = f5;
+               f2 *= this.floatValue5;
+               f4 *= this.floatValue5;
+               flag = true;
             }
 
-            if (this.method7384(var9, var10, var11)) {
-               var5 = -var5 * this.floatValue4;
-               var11 = var8;
-               var12 = true;
+            if (this.method7384(floatValue2, f7, f8)) {
+               f4 = -f4 * this.floatValue4;
+               f8 = f6;
+               flag = true;
             }
 
-            this.floatValues[var2] = var9;
-            this.floatValues2[var2] = var10;
-            this.floatValues3[var2] = var11;
-            float var14 = var3 * var3 + var4 * var4 + var5 * var5;
-            if (var14 > 1.0E-8F) {
-               float var15 = 1.0F / Mth.sqrt(var14);
-               this.floatValues8[var2] = var3 * var15;
-               this.floatValues9[var2] = var4 * var15;
-               this.floatValues10[var2] = var5 * var15;
+            this.floatValues[i] = floatValue2;
+            this.floatValues2[i] = f7;
+            this.floatValues3[i] = f8;
+            float x = f2 * f2 + f3 * f3 + f4 * f4;
+            if (x > 1.0E-8F) {
+               float f9 = 1.0F / Mth.sqrt(x);
+               this.floatValues8[i] = f2 * f9;
+               this.floatValues9[i] = f3 * f9;
+               this.floatValues10[i] = f4 * f9;
             }
 
-            if (var12) {
-               this.floatValues4[var2] = var3;
-               this.floatValues5[var2] = var4;
-               this.floatValues6[var2] = var5;
-               this.floatValues7[var2] = 0.0F;
-               this.floatValues14[var2] = 1.0F;
-               if (var13 && var14 < this.floatValue6 * this.floatValue6) {
-                  this.flags[var2] = true;
-                  this.floatValues4[var2] = 0.0F;
-                  this.floatValues5[var2] = 0.0F;
-                  this.floatValues6[var2] = 0.0F;
-                  this.floatValues7[var2] = 0.0F;
+            if (flag) {
+               this.floatValues4[i] = f2;
+               this.floatValues5[i] = f3;
+               this.floatValues6[i] = f4;
+               this.floatValues7[i] = 0.0F;
+               this.floatValues14[i] = 1.0F;
+               if (flag2 && x < this.floatValue6 * this.floatValue6) {
+                  this.flags[i] = true;
+                  this.floatValues4[i] = 0.0F;
+                  this.floatValues5[i] = 0.0F;
+                  this.floatValues6[i] = 0.0F;
+                  this.floatValues7[i] = 0.0F;
                }
             }
          }
       }
    }
 
-   private boolean method7384(float var1, float var2, float var3) {
-      return handler2.solid(this.doubleValue + var1, this.doubleValue2 + var2, this.doubleValue3 + var3);
+   private boolean method7384(float f, float f2, float f3) {
+      return handler2.solid(this.doubleValue + f, this.doubleValue2 + f2, this.doubleValue3 + f3);
    }
 
-   public double method7385(int var1) {
-      return this.doubleValue + this.floatValues[var1];
+   public double method7385(int n) {
+      return this.doubleValue + this.floatValues[n];
    }
 
-   public double method7386(int var1) {
-      return this.doubleValue2 + this.floatValues2[var1];
+   public double method7386(int n) {
+      return this.doubleValue2 + this.floatValues2[n];
    }
 
-   public double method7387(int var1) {
-      return this.doubleValue3 + this.floatValues3[var1];
+   public double method7387(int n) {
+      return this.doubleValue3 + this.floatValues3[n];
    }
 
-   public float method7388(int var1) {
-      return this.flags[var1] ? 0.0F : this.floatValues4[var1];
+   public float method7388(int n) {
+      return this.flags[n] ? 0.0F : this.floatValues4[n];
    }
 
-   public float method7389(int var1) {
-      return this.flags[var1] ? 0.0F : this.floatValues5[var1] + this.floatValues7[var1];
+   public float method7389(int n) {
+      return this.flags[n] ? 0.0F : this.floatValues5[n] + this.floatValues7[n];
    }
 
-   public float method7390(int var1) {
-      return this.flags[var1] ? 0.0F : this.floatValues6[var1];
+   public float method7390(int n) {
+      return this.flags[n] ? 0.0F : this.floatValues6[n];
    }
 
-   public float method7391(int var1) {
-      float var2 = this.method7388(var1);
-      float var3 = this.method7389(var1);
-      float var4 = this.method7390(var1);
-      return Mth.sqrt(var2 * var2 + var3 * var3 + var4 * var4);
+   public float method7391(int n) {
+      float f = this.method7388(n);
+      float f2 = this.method7389(n);
+      float f3 = this.method7390(n);
+      return Mth.sqrt(f * f + f2 * f2 + f3 * f3);
    }
 
-   public float method7392(int var1) {
-      return this.floatValues11[var1];
+   public float method7392(int n) {
+      return this.floatValues11[n];
    }
 
-   public float method7393(int var1) {
-      return this.floatValues12[var1];
+   public float method7393(int n) {
+      return this.floatValues12[n];
    }
 
-   public float method7394(int var1) {
-      return this.floatValues13[var1];
+   public float method7394(int n) {
+      return this.floatValues13[n];
    }
 
-   public float method7395(int var1) {
-      return this.floatValues8[var1];
+   public float method7395(int n) {
+      return this.floatValues8[n];
    }
 
-   public float method7396(int var1) {
-      return this.floatValues9[var1];
+   public float method7396(int n) {
+      return this.floatValues9[n];
    }
 
-   public float method7397(int var1) {
-      return this.floatValues10[var1];
+   public float method7397(int n) {
+      return this.floatValues10[n];
    }
 
-   public float method7398(int var1) {
-      return this.floatValues14[var1];
+   public float method7398(int n) {
+      return this.floatValues14[n];
    }
 
-   public boolean method7399(int var1) {
-      return this.flags[var1];
+   public boolean method7399(int n) {
+      return this.flags[n];
    }
 
    public interface Handler {
-      boolean solid(double var1, double var3, double var5);
+      boolean solid(double d, double d2, double d3);
    }
 }

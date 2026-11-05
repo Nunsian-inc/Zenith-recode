@@ -571,76 +571,76 @@ public final class WeatherPresets {
       }
    );
 
-   private WeatherPresets(String var1, WeatherPresets.Data[] var2) {
-      this.text = var1;
-      this.datas = var2;
+   private WeatherPresets(String text, WeatherPresets.Data[] datas) {
+      this.text = text;
+      this.datas = datas;
    }
 
-   public WeatherPresets.Data method5994(float var1) {
-      float var2 = var1 % 24.0F;
-      if (var2 < 0.0F) {
-         var2 += 24.0F;
+   public WeatherPresets.Data method5994(float floatValue) {
+      float f = floatValue % 24.0F;
+      if (f < 0.0F) {
+         f += 24.0F;
       }
 
-      int var3 = 0;
+      int n = 0;
 
-      while (var3 < this.datas.length && this.datas[var3].getFloatValue() <= var2) {
-         var3++;
+      while (n < this.datas.length && this.datas[n].getFloatValue() <= f) {
+         n++;
       }
 
-      WeatherPresets.Data var4 = this.datas[var3 % this.datas.length];
-      WeatherPresets.Data var5 = this.datas[(var3 - 1 + this.datas.length) % this.datas.length];
-      float var6 = method5995(var5.getFloatValue(), var4.getFloatValue());
-      float var7 = var6 <= 0.0F ? 0.0F : Math.clamp(method5995(var5.getFloatValue(), var2) / var6, 0.0F, 1.0F);
-      var7 = var7 * var7 * (3.0F - 2.0F * var7);
+      WeatherPresets.Data data = this.datas[n % this.datas.length];
+      WeatherPresets.Data data2 = this.datas[(n - 1 + this.datas.length) % this.datas.length];
+      float f2 = method5995(data2.getFloatValue(), data.getFloatValue());
+      float f3 = f2 <= 0.0F ? 0.0F : Math.clamp(method5995(data2.getFloatValue(), f) / f2, 0.0F, 1.0F);
+      f3 = f3 * f3 * (3.0F - 2.0F * f3);
       return new WeatherPresets.Data(
-         var2,
-         method5997(var5.getFloatValues(), var4.getFloatValues(), var7),
-         method5997(var5.getFloatValues2(), var4.getFloatValues2(), var7),
-         method5997(var5.getFloatValues3(), var4.getFloatValues3(), var7),
-         method5997(var5.getFloatValues4(), var4.getFloatValues4(), var7),
-         method5997(var5.getFloatValues5(), var4.getFloatValues5(), var7),
-         method5996(var5.getFloatValue2(), var4.getFloatValue2(), var7),
-         method5996(var5.getFloatValue3(), var4.getFloatValue3(), var7),
-         method5996(var5.getFloatValue4(), var4.getFloatValue4(), var7),
-         method5996(var5.getFloatValue5(), var4.getFloatValue5(), var7),
-         method5996(var5.getFloatValue6(), var4.getFloatValue6(), var7),
-         method5997(var5.getFloatValues6(), var4.getFloatValues6(), var7),
-         method5996(var5.getFloatValue7(), var4.getFloatValue7(), var7),
-         method5996(var5.getFloatValue8(), var4.getFloatValue8(), var7),
-         method5996(var5.getFloatValue9(), var4.getFloatValue9(), var7),
-         method5996(var5.getFloatValue10(), var4.getFloatValue10(), var7),
-         method5996(var5.getFloatValue11(), var4.getFloatValue11(), var7),
-         method5996(var5.getFloatValue12(), var4.getFloatValue12(), var7),
-         method5998(var5.getIntValue(), var4.getIntValue(), var7),
-         method5996(var5.getFloatValue13(), var4.getFloatValue13(), var7),
-         method5996(var5.getFloatValue14(), var4.getFloatValue14(), var7)
+         f,
+         method5997(data2.getFloatValues(), data.getFloatValues(), f3),
+         method5997(data2.getFloatValues2(), data.getFloatValues2(), f3),
+         method5997(data2.getFloatValues3(), data.getFloatValues3(), f3),
+         method5997(data2.getFloatValues4(), data.getFloatValues4(), f3),
+         method5997(data2.getFloatValues5(), data.getFloatValues5(), f3),
+         method5996(data2.getFloatValue2(), data.getFloatValue2(), f3),
+         method5996(data2.getFloatValue3(), data.getFloatValue3(), f3),
+         method5996(data2.getFloatValue4(), data.getFloatValue4(), f3),
+         method5996(data2.getFloatValue5(), data.getFloatValue5(), f3),
+         method5996(data2.getFloatValue6(), data.getFloatValue6(), f3),
+         method5997(data2.getFloatValues6(), data.getFloatValues6(), f3),
+         method5996(data2.getFloatValue7(), data.getFloatValue7(), f3),
+         method5996(data2.getFloatValue8(), data.getFloatValue8(), f3),
+         method5996(data2.getFloatValue9(), data.getFloatValue9(), f3),
+         method5996(data2.getFloatValue10(), data.getFloatValue10(), f3),
+         method5996(data2.getFloatValue11(), data.getFloatValue11(), f3),
+         method5996(data2.getFloatValue12(), data.getFloatValue12(), f3),
+         method5998(data2.getIntValue(), data.getIntValue(), f3),
+         method5996(data2.getFloatValue13(), data.getFloatValue13(), f3),
+         method5996(data2.getFloatValue14(), data.getFloatValue14(), f3)
       );
    }
 
-   private static float method5995(float var0, float var1) {
-      float var2 = var1 - var0;
-      return var2 <= 0.0F ? var2 + 24.0F : var2;
+   private static float method5995(float floatValue, float f) {
+      float f2 = f - floatValue;
+      return f2 <= 0.0F ? f2 + 24.0F : f2;
    }
 
-   private static float method5996(float var0, float var1, float var2) {
-      return var0 + (var1 - var0) * var2;
+   private static float method5996(float f, float f2, float f3) {
+      return f + (f2 - f) * f3;
    }
 
-   private static float[] method5997(float[] var0, float[] var1, float var2) {
-      return new float[]{method5996(var0[0], var1[0], var2), method5996(var0[1], var1[1], var2), method5996(var0[2], var1[2], var2)};
+   private static float[] method5997(float[] floatValues, float[] floats, float f) {
+      return new float[]{method5996(floatValues[0], floats[0], f), method5996(floatValues[1], floats[1], f), method5996(floatValues[2], floats[2], f)};
    }
 
-   private static int method5998(int var0, int var1, float var2) {
-      int var3 = method5999(var0 >>> 24, var1 >>> 24, var2);
-      int var4 = method5999(var0 >> 16 & 0xFF, var1 >> 16 & 0xFF, var2);
-      int var5 = method5999(var0 >> 8 & 0xFF, var1 >> 8 & 0xFF, var2);
-      int var6 = method5999(var0 & 0xFF, var1 & 0xFF, var2);
-      return var3 << 24 | var4 << 16 | var5 << 8 | var6;
+   private static int method5998(int intValue, int n, float f) {
+      int n2 = method5999(intValue >>> 24, n >>> 24, f);
+      int n3 = method5999(intValue >> 16 & 0xFF, n >> 16 & 0xFF, f);
+      int n4 = method5999(intValue >> 8 & 0xFF, n >> 8 & 0xFF, f);
+      int n5 = method5999(intValue & 0xFF, n & 0xFF, f);
+      return n2 << 24 | n3 << 16 | n4 << 8 | n5;
    }
 
-   private static int method5999(int var0, int var1, float var2) {
-      return Math.clamp((long)((int)(var0 + (var1 - var0) * var2 + 0.5F)), 0, 255);
+   private static int method5999(int n, int n2, float f) {
+      return Math.clamp((long)((int)(n + (n2 - n) * f + 0.5F)), 0, 255);
    }
 
    public static final class Data {
@@ -768,49 +768,49 @@ public final class WeatherPresets {
       }
 
       public Data(
-         float var1,
-         float[] var2,
-         float[] var3,
-         float[] var4,
-         float[] var5,
-         float[] var6,
-         float var7,
-         float var8,
-         float var9,
-         float var10,
-         float var11,
-         float[] var12,
-         float var13,
-         float var14,
-         float var15,
-         float var16,
-         float var17,
-         float var18,
-         int var19,
-         float var20,
-         float var21
+         float floatValue,
+         float[] floatValues,
+         float[] floatValues2,
+         float[] floatValues3,
+         float[] floatValues4,
+         float[] floatValues5,
+         float f,
+         float f2,
+         float f3,
+         float f4,
+         float f5,
+         float[] floatValues6,
+         float f6,
+         float f7,
+         float f8,
+         float f9,
+         float f10,
+         float f11,
+         int intValue,
+         float f12,
+         float f13
       ) {
-         this.floatValue = var1;
-         this.floatValues = var2;
-         this.floatValues2 = var3;
-         this.floatValues3 = var4;
-         this.floatValues4 = var5;
-         this.floatValues5 = var6;
-         this.floatValue2 = var7;
-         this.floatValue3 = var8;
-         this.floatValue4 = var9;
-         this.floatValue5 = var10;
-         this.floatValue6 = var11;
-         this.floatValues6 = var12;
-         this.floatValue7 = var13;
-         this.floatValue8 = var14;
-         this.floatValue9 = var15;
-         this.floatValue10 = var16;
-         this.floatValue11 = var17;
-         this.floatValue12 = var18;
-         this.intValue = var19;
-         this.floatValue13 = var20;
-         this.floatValue14 = var21;
+         this.floatValue = floatValue;
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.floatValues3 = floatValues3;
+         this.floatValues4 = floatValues4;
+         this.floatValues5 = floatValues5;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValues6 = floatValues6;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
+         this.floatValue10 = f9;
+         this.floatValue11 = f10;
+         this.floatValue12 = f11;
+         this.intValue = intValue;
+         this.floatValue13 = f12;
+         this.floatValue14 = f13;
       }
 
       public float getFloatValue() {

@@ -14,7 +14,7 @@ public class MixinOptSpriteAtlasTexture {
       method = {"upload(Lnet/minecraft/client/renderer/texture/SpriteLoader$Preparations;)V"},
       at = {@At("RETURN")}
    )
-   private void zenith$onCreate(Preparations var1, CallbackInfo var2) {
+   private void zenith$onCreate(Preparations preparations, CallbackInfo callbackInfo) {
       Util20.method5135();
    }
 
@@ -22,7 +22,7 @@ public class MixinOptSpriteAtlasTexture {
       method = {"clearTextureData()V"},
       at = {@At("RETURN")}
    )
-   private void zenith$onClear(CallbackInfo var1) {
+   private void zenith$onClear(CallbackInfo callbackInfo) {
       Util20.method5135();
    }
 }

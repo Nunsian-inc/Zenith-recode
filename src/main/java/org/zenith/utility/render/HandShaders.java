@@ -20,63 +20,63 @@ public class HandShaders {
 
    public static void method6278() {
       if (!initialized) {
-         long var0 = System.currentTimeMillis();
-         if (var0 < longValue) {
+         long now = System.currentTimeMillis();
+         if (now < longValue) {
             return;
          }
 
          try {
             shaderProgram = method6280("sirius_aqua");
             initialized = true;
-         } catch (Exception var3) {
-            longValue = var0 + 5000L;
+         } catch (Exception e) {
+            longValue = now + 5000L;
             System.err.println("Failed to initialize hand shaders!");
-            var3.printStackTrace();
+            e.printStackTrace();
          }
       }
    }
 
-   public static ShaderProgram method6279(String var0) {
-      if (var0 == null || var0.isBlank()) {
+   public static ShaderProgram method6279(String anObject) {
+      if (anObject == null || anObject.isBlank()) {
          return shaderProgram;
-      } else if (items2.contains(var0)) {
+      } else if (items2.contains(anObject)) {
          return shaderProgram;
       } else {
          try {
-            return method6280(var0);
-         } catch (Exception var2) {
-            items2.add(var0);
-            System.err.println("Failed to initialize hand shader: " + var0);
-            var2.printStackTrace();
+            return method6280(anObject);
+         } catch (Exception e) {
+            items2.add(anObject);
+            System.err.println("Failed to initialize hand shader: " + anObject);
+            e.printStackTrace();
             return shaderProgram;
          }
       }
    }
 
-   private static ShaderProgram method6280(String var0) {
-      ShaderProgram var1 = items.get(var0);
-      if (var1 == null) {
-         var1 = new ShaderProgram("hand", var0, "smoke");
-         items.put(var0, var1);
+   private static ShaderProgram method6280(String anObject) {
+      ShaderProgram shaderProgram2 = items.get(anObject);
+      if (shaderProgram2 == null) {
+         shaderProgram2 = new ShaderProgram("hand", anObject, "smoke");
+         items.put(anObject, shaderProgram2);
       }
 
-      if ("sirius_aqua".equals(var0)) {
-         shaderProgram = var1;
+      if ("sirius_aqua".equals(anObject)) {
+         shaderProgram = shaderProgram2;
       }
 
-      return var1;
+      return shaderProgram2;
    }
 
    public static void method6281() {
       if (mc != null && mc.getWindow() != null) {
-         int var0 = mc.getWindow().getWidth();
-         int var1 = mc.getWindow().getHeight();
-         if (simpleFramebuffer == null || simpleFramebuffer.width != var0 || simpleFramebuffer.height != var1) {
+         int width = mc.getWindow().getWidth();
+         int height = mc.getWindow().getHeight();
+         if (simpleFramebuffer == null || simpleFramebuffer.width != width || simpleFramebuffer.height != height) {
             if (simpleFramebuffer != null) {
                simpleFramebuffer.destroyBuffers();
             }
 
-            simpleFramebuffer = BlitUtils.method6448("zenith hand copy", var0, var1, true);
+            simpleFramebuffer = BlitUtils.method6448("zenith hand copy", width, height, true);
          }
       }
    }

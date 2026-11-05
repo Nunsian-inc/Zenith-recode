@@ -65,34 +65,34 @@ public final class AutoDuelsModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.player.connection != null) {
-         double var2 = Math.sqrt(
+         double d = Math.sqrt(
             Math.pow(this.doubleValue - mc.player.getX(), 2.0)
                + Math.pow(this.doubleValue2 - mc.player.getY(), 2.0)
                + Math.pow(this.doubleValue3 - mc.player.getZ(), 2.0)
          );
-         if (var2 > 500.0) {
+         if (d > 500.0) {
             this.setToggled(false);
          } else {
             this.doubleValue = mc.player.getX();
             this.doubleValue2 = mc.player.getY();
             this.doubleValue3 = mc.player.getZ();
             if (this.stopWatch.method7546(600L)) {
-               List<String> var4 = this.method5981();
-               this.intValue = var4.size();
+               List<String> list = this.method5981();
+               this.intValue = list.size();
                this.method5978();
-               Collections.shuffle(var4);
+               Collections.shuffle(list);
 
-               for (String var6 : var4) {
-                  if (!this.items.contains(var6)
-                     && !var6.equals(mc.getUser().getName())
-                     && (!this.noFriends.isEnabled() || !Zenith.getInstance().getFriends().method7627(var6))) {
-                     long var7 = this.items2.getOrDefault(var6, 0L);
-                     if (System.currentTimeMillis() - var7 >= 31000L) {
-                        mc.player.connection.sendCommand("duel " + var6);
-                        this.items.add(var6);
-                        this.items2.put(var6, System.currentTimeMillis());
+               for (String name : list) {
+                  if (!this.items.contains(name)
+                     && !name.equals(mc.getUser().getName())
+                     && (!this.noFriends.isEnabled() || !Zenith.getInstance().getFriends().method7627(name))) {
+                     long l = this.items2.getOrDefault(name, 0L);
+                     if (System.currentTimeMillis() - l >= 31000L) {
+                        mc.player.connection.sendCommand("duel " + name);
+                        this.items.add(name);
+                        this.items2.put(name, System.currentTimeMillis());
                         this.stopWatch.reset();
                         break;
                      }
@@ -115,34 +115,34 @@ public final class AutoDuelsModule extends Module {
    }
 
    private void method5979() {
-      if (mc.player.containerMenu instanceof ChestMenu var1 && mc.gui.screen() instanceof AbstractContainerScreen var2) {
-         String var7 = var2.getTitle().getString();
-         if (var7.contains("Выбор набора")) {
-            ArrayList var4 = new ArrayList();
+      if (mc.player.containerMenu instanceof ChestMenu chestMenu && mc.gui.screen() instanceof AbstractContainerScreen containerScreen) {
+         String string = containerScreen.getTitle().getString();
+         if (string.contains("Выбор набора")) {
+            ArrayList list = new ArrayList();
 
-            for (int var5 = 0; var5 < this.mode.getItems2().size(); var5++) {
-               if (this.mode.method5227(var5)) {
-                  var4.add(var5);
+            for (int i = 0; i < this.mode.getItems2().size(); i++) {
+               if (this.mode.method5227(i)) {
+                  list.add(i);
                }
             }
 
-            Collections.shuffle(var4);
-            if (!var4.isEmpty()) {
-               mc.gameMode.handleContainerInput(var1.containerId, (Integer)var4.getFirst(), 0, ContainerInput.PICKUP, mc.player);
+            Collections.shuffle(list);
+            if (!list.isEmpty()) {
+               mc.gameMode.handleContainerInput(chestMenu.containerId, (Integer)list.getFirst(), 0, ContainerInput.PICKUP, mc.player);
             }
-         } else if (var7.contains("Настройка поединка")) {
-            mc.gameMode.handleContainerInput(var1.containerId, 0, 0, ContainerInput.PICKUP, mc.player);
+         } else if (string.contains("Настройка поединка")) {
+            mc.gameMode.handleContainerInput(chestMenu.containerId, 0, 0, ContainerInput.PICKUP, mc.player);
          }
       }
    }
 
    @EventTarget
-   public void method5980(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() instanceof ClientboundSystemChatPacket var2) {
-         String var6 = var2.content().getString().toLowerCase(Locale.ROOT);
-         boolean var4 = var6.contains("начало") && var6.contains("через") && var6.contains("секунд");
-         boolean var5 = var6.contains("дуэли » во время поединка запрещено использовать команды");
-         if (var4 || var5) {
+   public void method5980(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+         String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
+         boolean flag = lowerCase.contains("начало") && lowerCase.contains("через") && lowerCase.contains("секунд");
+         boolean contains = lowerCase.contains("дуэли » во время поединка запрещено использовать команды");
+         if (flag || contains) {
             mc.execute(() -> this.setToggled(false));
          }
       }
@@ -154,8 +154,8 @@ public final class AutoDuelsModule extends Module {
          .getOnlinePlayers()
          .stream()
          .map(PlayerInfo::getProfile)
-         .map(var0 -> var0.name())
-         .filter(var0 -> pattern.matcher(var0).matches())
+         .map(gameProfile -> gameProfile.name())
+         .filter(input -> pattern.matcher(input).matches())
          .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
    }
 

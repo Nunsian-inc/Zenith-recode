@@ -25,42 +25,42 @@ public final class ScriptPermissions {
    private ScriptPermissions() {
    }
 
-   public static Set<String> method(Script var0) {
-      LinkedHashSet var1 = new LinkedHashSet();
+   public static Set<String> method(Script workspace) {
+      LinkedHashSet linkedHashSet = new LinkedHashSet();
 
-      for (String var5 : Script.pattern.split(var0.text6)) {
-         String var6 = var5.strip().toLowerCase(Locale.ROOT);
-         if (items.containsKey(var6)) {
-            var1.add(var6);
+      for (String str : Script.pattern.split(workspace.text6)) {
+         String lowerCase = str.strip().toLowerCase(Locale.ROOT);
+         if (items.containsKey(lowerCase)) {
+            linkedHashSet.add(lowerCase);
          }
       }
 
-      if (var0.method1406()) {
-         var1.add("net");
+      if (workspace.method1406()) {
+         linkedHashSet.add("net");
       }
 
-      return var1;
+      return linkedHashSet;
    }
 
-   public static boolean method2(Script var0) {
-      return var0.flag;
+   public static boolean method2(Script workspace) {
+      return workspace.flag;
    }
 
-   public static boolean method3(Script var0, String var1) {
-      return !method2(var0) || method(var0).contains(var1);
+   public static boolean method3(Script workspace, String key) {
+      return !method2(workspace) || method(workspace).contains(key);
    }
 
-   public static void method4(Script var0, String var1) {
-      if (!method3(var0, var1)) {
+   public static void method4(Script workspace, String key) {
+      if (!method3(workspace, key)) {
          throw ScriptValueUtils.method6251(
-            "скрипту из маркета нужно разрешение «" + items.getOrDefault(var1, var1) + "»: автор должен добавить в шапку // @permissions " + var1
+            "скрипту из маркета нужно разрешение «" + items.getOrDefault(key, key) + "»: автор должен добавить в шапку // @permissions " + key
          );
       }
    }
 
-   public static String method5(Script var0) {
-      var var1 = method(var0).stream().map(items::get).toList();
-      return String.join(", ", var1);
+   public static String method5(Script script) {
+      var elements = method(script).stream().map(items::get).toList();
+      return String.join(", ", elements);
    }
 
    static {

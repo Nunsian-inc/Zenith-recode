@@ -38,108 +38,108 @@ public final class UserSearchClient {
    private UserSearchClient() {
    }
 
-   public static synchronized List<UserSearchClient.Data> method4758(String var0) {
-      return items.get(key(var0));
+   public static synchronized List<UserSearchClient.Data> method4758(String typedName) {
+      return items.get(key(typedName));
    }
 
-   public static boolean method4759(String var0) {
-      return var0 == null || var0.strip().length() < 2;
+   public static boolean method4759(String typedName) {
+      return typedName == null || typedName.strip().length() < 2;
    }
 
-   public static CompletableFuture<List<UserSearchClient.Data>> method4760(String var0, int var1) {
-      String var2 = var0 == null ? "" : var0.strip();
-      if (var2.length() < 2) {
+   public static CompletableFuture<List<UserSearchClient.Data>> method4760(String searchQuery, int n) {
+      String typedName = searchQuery == null ? "" : searchQuery.strip();
+      if (typedName.length() < 2) {
          return CompletableFuture.completedFuture(List.of());
       } else {
-         var var3 = method4758(var2);
-         if (var3 != null) {
-            return CompletableFuture.completedFuture(var3);
+         var datas = method4758(typedName);
+         if (datas != null) {
+            return CompletableFuture.completedFuture(datas);
          } else {
-            JsonObject var4 = new JsonObject();
-            var4.addProperty("query", var2);
-            var4.addProperty("limit", Math.max(1, Math.min(25, var1)));
-            var4.addProperty("token", SiteSession.method2289());
-            byte[] var5 = var4.toString().getBytes(StandardCharsets.UTF_8);
-            return method4763(var5, RegionUtil.method2043(RegionUtil.method2037(), host), 0).thenApply(var1x -> {
+            JsonObject json = new JsonObject();
+            json.addProperty("query", typedName);
+            json.addProperty("limit", Math.max(1, Math.min(25, n)));
+            json.addProperty("token", SiteSession.method2289());
+            byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
+            return method4763(bytes, RegionUtil.method2043(RegionUtil.method2037(), host), 0).thenApply(var1x -> {
                var var2x = method4765(var1x);
-               method4761(var2, var2x);
+               method4761(typedName, var2x);
                return var2x;
             });
          }
       }
    }
 
-   private static synchronized void method4761(String var0, List<UserSearchClient.Data> var1) {
+   private static synchronized void method4761(String typedName, List<UserSearchClient.Data> datas) {
       if (items.size() >= 64) {
          items.clear();
       }
 
-      items.put(key(var0), var1);
+      items.put(key(typedName), datas);
    }
 
    public static synchronized void method4762() {
       items.clear();
    }
 
-   private static String key(String var0) {
-      return var0 == null ? "" : var0.strip().toLowerCase(Locale.ROOT);
+   private static String key(String typedName) {
+      return typedName == null ? "" : typedName.strip().toLowerCase(Locale.ROOT);
    }
 
-   private static CompletableFuture<JsonObject> method4763(byte[] var0, List<String> var1, int var2) {
-      String var3 = (String)var1.get(var2);
-      boolean var4 = var2 + 1 >= var1.size();
-      long var5 = Cloud.accountUid();
-      if (var5 <= 0L) {
+   private static CompletableFuture<JsonObject> method4763(byte[] bytes, List<String> strings, int n) {
+      String str = (String)strings.get(n);
+      boolean flag = n + 1 >= strings.size();
+      long accountUid = Cloud.accountUid();
+      if (accountUid <= 0L) {
          return CompletableFuture.failedFuture(new IllegalStateException("аккаунт ещё не готов"));
       } else {
-         long var7 = Util18.method4489();
+         long l = Util18.method4489();
 
-         HttpRequest var9;
-         String var10;
+         HttpRequest httpRequest;
+         String str2;
          try {
-            Builder var11 = HttpRequest.newBuilder(URI.create(var3 + "/user/search"))
+            Builder header = HttpRequest.newBuilder(URI.create(str + "/user/search"))
                .timeout(duration)
                .header("Content-Type", "application/json; charset=utf-8")
-               .header("X-Nexus-Uid", Long.toString(var5))
-               .header("X-Nexus-Time", Long.toString(var7))
-               .header("X-Nexus-Sign", method4766(var5, var7, var0));
-            var10 = CloudTicket.method1373();
-            if (var10 != null) {
-               var11.header("Authorization", "Nexus " + var10);
+               .header("X-Nexus-Uid", Long.toString(accountUid))
+               .header("X-Nexus-Time", Long.toString(l))
+               .header("X-Nexus-Sign", method4766(accountUid, l, bytes));
+            str2 = CloudTicket.method1373();
+            if (str2 != null) {
+               header.header("Authorization", "Nexus " + str2);
             }
 
-            var9 = var11.POST(BodyPublishers.ofByteArray(var0)).build();
-         } catch (RuntimeException var12) {
-            return CompletableFuture.failedFuture(var12);
+            httpRequest = header.POST(BodyPublishers.ofByteArray(bytes)).build();
+         } catch (RuntimeException e) {
+            return CompletableFuture.failedFuture(e);
          }
 
-         return httpClient.sendAsync(var9, BodyHandlers.ofByteArray()).handle((var6, var7x) -> {
+         return httpClient.sendAsync(httpRequest, BodyHandlers.ofByteArray()).handle((httpResponse, var7x) -> {
             if (var7x != null) {
-               return !var4 ? method4763(var0, var1, var2 + 1) : CompletableFuture.failedFuture(var7x);
+               return !flag ? method4763(bytes, strings, n + 1) : CompletableFuture.failedFuture(var7x);
             } else {
-               Util18.method4491((HttpResponse<?>)var6);
-               int var8 = var6.statusCode();
-               JsonObject var9x = SiteHttpClient.method2415(var6.body());
-               if (SiteHttpClient.method2414(var8, var9x)) {
-                  if (!var4) {
-                     return method4763(var0, var1, var2 + 1);
+               Util18.method4491((HttpResponse<?>)httpResponse);
+               int statusCode = httpResponse.statusCode();
+               JsonObject var9x = SiteHttpClient.method2415(httpResponse.body());
+               if (SiteHttpClient.method2414(statusCode, var9x)) {
+                  if (!flag) {
+                     return method4763(bytes, strings, n + 1);
                   }
 
                   if (var9x == null) {
-                     return CompletableFuture.failedFuture(new IllegalStateException("сайт ответил " + var8));
+                     return CompletableFuture.failedFuture(new IllegalStateException("сайт ответил " + statusCode));
                   }
                }
 
-               if (var10 != null && (var8 == 401 || var8 == 403)) {
+               if (str2 != null && (statusCode == 401 || statusCode == 403)) {
                   CloudTicket.invalidate();
                }
 
                try {
                   JsonObject var10x = method4764(var9x);
-                  if (var8 / 100 != 2) {
-                     return CompletableFuture.failedFuture(new IllegalStateException("сайт ответил " + var8));
+                  if (statusCode / 100 != 2) {
+                     return CompletableFuture.failedFuture(new IllegalStateException("сайт ответил " + statusCode));
                   } else {
-                     host = var3;
+                     host = str;
                      return CompletableFuture.completedFuture(var10x);
                   }
                } catch (RuntimeException var11x) {
@@ -150,52 +150,52 @@ public final class UserSearchClient {
       }
    }
 
-   private static JsonObject method4764(JsonObject var0) {
-      int var1;
+   private static JsonObject method4764(JsonObject json) {
+      int n;
       try {
-         var1 = var0.has("status") && !var0.get("status").isJsonNull() ? var0.get("status").getAsInt() : 0;
-      } catch (RuntimeException var3) {
-         var1 = 1;
+         n = json.has("status") && !json.get("status").isJsonNull() ? json.get("status").getAsInt() : 0;
+      } catch (RuntimeException e) {
+         n = 1;
       }
 
-      if (var1 == 0) {
-         return var0;
+      if (n == 0) {
+         return json;
       } else {
-         throw new IllegalStateException(var0.has("message") && var0.get("message").isJsonPrimitive() ? var0.get("message").getAsString() : "отказ сайта");
+         throw new IllegalStateException(json.has("message") && json.get("message").isJsonPrimitive() ? json.get("message").getAsString() : "отказ сайта");
       }
    }
 
-   private static List<UserSearchClient.Data> method4765(JsonObject var0) {
-      ArrayList var1 = new ArrayList();
-      JsonArray var2 = var0.getAsJsonArray("items");
-      if (var2 == null) {
+   private static List<UserSearchClient.Data> method4765(JsonObject json) {
+      ArrayList coll = new ArrayList();
+      JsonArray jsonArray = json.getAsJsonArray("items");
+      if (jsonArray == null) {
          return List.of();
       } else {
-         for (JsonElement var4 : var2) {
+         for (JsonElement jsonElement : jsonArray) {
             try {
-               JsonObject var5 = var4.getAsJsonObject();
-               String var6 = var5.has("name") && !var5.get("name").isJsonNull() ? var5.get("name").getAsString() : "";
-               long var7 = var5.has("user_id") && !var5.get("user_id").isJsonNull() ? var5.get("user_id").getAsLong() : 0L;
-               if (!var6.isBlank() && var6.length() <= 32) {
-                  var1.add(new UserSearchClient.Data(var7, var6));
+               JsonObject jsonObject = jsonElement.getAsJsonObject();
+               String string = jsonObject.has("name") && !jsonObject.get("name").isJsonNull() ? jsonObject.get("name").getAsString() : "";
+               long longValue = jsonObject.has("user_id") && !jsonObject.get("user_id").isJsonNull() ? jsonObject.get("user_id").getAsLong() : 0L;
+               if (!string.isBlank() && string.length() <= 32) {
+                  coll.add(new UserSearchClient.Data(longValue, string));
                }
-            } catch (RuntimeException var9) {
+            } catch (RuntimeException e) {
             }
          }
 
-         return List.copyOf(var1);
+         return List.copyOf(coll);
       }
    }
 
-   private static String method4766(long var0, long var2, byte[] var4) {
+   private static String method4766(long accountUid, long l, byte[] bytes) {
       try {
-         Mac var5 = Mac.getInstance("HmacSHA256");
-         var5.init(new SecretKeySpec(Cloud.getText2().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-         var5.update(("nexus-cloud-api-v1\n" + var0 + "\n" + var2 + "\nPOST\n/user/search\n").getBytes(StandardCharsets.UTF_8));
-         var5.update(MessageDigest.getInstance("SHA-256").digest(var4));
-         return Base64.getUrlEncoder().withoutPadding().encodeToString(var5.doFinal());
-      } catch (Exception var6) {
-         throw new IllegalStateException("HmacSHA256 недоступен", var6);
+         Mac mac = Mac.getInstance("HmacSHA256");
+         mac.init(new SecretKeySpec(Cloud.getText2().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+         mac.update(("nexus-cloud-api-v1\n" + accountUid + "\n" + l + "\nPOST\n/user/search\n").getBytes(StandardCharsets.UTF_8));
+         mac.update(MessageDigest.getInstance("SHA-256").digest(bytes));
+         return Base64.getUrlEncoder().withoutPadding().encodeToString(mac.doFinal());
+      } catch (Exception e) {
+         throw new IllegalStateException("HmacSHA256 недоступен", e);
       }
    }
 
@@ -232,9 +232,9 @@ public final class UserSearchClient {
          return "Data[" + "longValue=" + this.longValue + ", " + "text=" + this.text + "]";
       }
 
-      public Data(long var1, String var3) {
-         this.longValue = var1;
-         this.text = var3;
+      public Data(long longValue, String text) {
+         this.longValue = longValue;
+         this.text = text;
       }
 
       public long uid() {

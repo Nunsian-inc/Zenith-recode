@@ -10,59 +10,59 @@ public final class HeadlessConfigAPI {
    }
 
    public static LuaTable create() {
-      final LuaTable var0 = new LuaTable();
-      final LuaTable var1 = new LuaTable();
-      final LuaValue[] var2 = new LuaValue[]{LuaValue.valueOf("avatar")};
-      VarArgFunction var3 = new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            LuaValue var2x = var1.arg(HeadlessConfigAPI.argumentOffset(var1, var0));
+      final LuaTable luaTable = new LuaTable();
+      final LuaTable luaTable2 = new LuaTable();
+      final LuaValue[] luaValues = new LuaValue[]{LuaValue.valueOf("avatar")};
+      VarArgFunction varArgFunction = new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            LuaValue var2x = varargs.arg(HeadlessConfigAPI.argumentOffset(varargs, luaTable));
             if (!var2x.isnil()) {
-               var2[0] = LuaValue.valueOf(var2x.checkjstring());
+               luaValues[0] = LuaValue.valueOf(var2x.checkjstring());
             }
 
-            return var0;
+            return luaTable;
          }
       };
-      var0.set("setName", var3);
-      var0.set("name", var3);
-      var0.set("getName", new VarArgFunction() {
-         public Varargs invoke(Varargs var1) {
-            return var2[0];
+      luaTable.set("setName", varArgFunction);
+      luaTable.set("name", varArgFunction);
+      luaTable.set("getName", new VarArgFunction() {
+         public Varargs invoke(Varargs varargs) {
+            return luaValues[0];
          }
       });
-      var0.set("save", new VarArgFunction() {
+      luaTable.set("save", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            int var2x = HeadlessConfigAPI.argumentOffset(var1x, var0);
-            LuaValue var3 = var1x.arg(var2x);
-            if (!var3.isnil()) {
-               HeadlessConfigAPI.currentStore(var1, var2[0]).rawset(var3, var1x.arg(var2x + 1));
+            int var2x = HeadlessConfigAPI.argumentOffset(var1x, luaTable);
+            LuaValue luaValue = var1x.arg(var2x);
+            if (!luaValue.isnil()) {
+               HeadlessConfigAPI.currentStore(luaTable2, luaValues[0]).rawset(luaValue, var1x.arg(var2x + 1));
             }
 
-            return var0;
+            return luaTable;
          }
       });
-      var0.set("load", new VarArgFunction() {
+      luaTable.set("load", new VarArgFunction() {
          public Varargs invoke(Varargs var1x) {
-            LuaTable var2x = HeadlessConfigAPI.currentStore(var1, var2[0]);
-            LuaValue var3 = var1x.arg(HeadlessConfigAPI.argumentOffset(var1x, var0));
-            return (Varargs)(var3.isnil() ? var2x : var2x.rawget(var3));
+            LuaTable var2x = HeadlessConfigAPI.currentStore(luaTable2, luaValues[0]);
+            LuaValue luaValue = var1x.arg(HeadlessConfigAPI.argumentOffset(var1x, luaTable));
+            return (Varargs)(luaValue.isnil() ? var2x : var2x.rawget(luaValue));
          }
       });
-      return var0;
+      return luaTable;
    }
 
-   private static LuaTable currentStore(LuaTable var0, LuaValue var1) {
-      LuaValue var2 = var0.rawget(var1);
-      if (var2.istable()) {
-         return var2.checktable();
+   private static LuaTable currentStore(LuaTable luaTable, LuaValue luaValue) {
+      LuaValue rawget = luaTable.rawget(luaValue);
+      if (rawget.istable()) {
+         return rawget.checktable();
       }
 
-      LuaTable var3 = new LuaTable();
-      var0.rawset(var1, var3);
-      return var3;
+      LuaTable luaTable2 = new LuaTable();
+      luaTable.rawset(luaValue, luaTable2);
+      return luaTable2;
    }
 
-   private static int argumentOffset(Varargs var0, LuaValue var1) {
-      return var0.narg() > 0 && var0.arg1().raweq(var1) ? 2 : 1;
+   private static int argumentOffset(Varargs varargs, LuaValue luaTable) {
+      return varargs.narg() > 0 && varargs.arg1().raweq(luaTable) ? 2 : 1;
    }
 }

@@ -19,18 +19,18 @@ public class TimedBlockPos {
       EventManager.register(this);
    }
 
-   public void method474(BlockPos var1) {
-      this.blockPos = var1;
+   public void method474(BlockPos blockPos) {
+      this.blockPos = blockPos;
       this.stopWatch.reset();
    }
 
-   public void method475(BlockPos var1) {
-      this.blockPos2 = var1;
+   public void method475(BlockPos blockPos2) {
+      this.blockPos2 = blockPos2;
       this.stopWatch.reset();
    }
 
    @EventTarget
-   public void method476(WorldRenderEvent var1) {
+   public void method476(WorldRenderEvent event) {
       if (this.blockPos != null && this.blockPos2 != null && !this.stopWatch.method7546(5000L)) {
          GlowUtil.method2230(
             new AABB(new Vec3(this.blockPos), new Vec3(this.blockPos2)).inflate(1.5, 0.0, 1.5),

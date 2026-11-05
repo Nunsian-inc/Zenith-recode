@@ -23,8 +23,8 @@ public class BlockListSetting extends Setting {
    private volatile BlockListSetting.Data data;
    private static final Gson gson = new Gson();
 
-   public void method1612(List<String> var1) {
-      this.items = var1;
+   public void method1612(List<String> items) {
+      this.items = items;
       this.version++;
    }
 
@@ -32,86 +32,86 @@ public class BlockListSetting extends Setting {
       return this.version;
    }
 
-   public BlockListSetting(String var1, List<String> var2) {
-      this(var1, "", var2, () -> true);
+   public BlockListSetting(String key, List<String> items) {
+      this(key, "", items, () -> true);
    }
 
-   public BlockListSetting(String var1, List<String> var2, Supplier<Boolean> var3) {
-      this(var1, "", var2, var3);
+   public BlockListSetting(String key, List<String> items, Supplier<Boolean> supplier) {
+      this(key, "", items, supplier);
    }
 
-   public BlockListSetting(String var1, String var2, List<String> var3, Supplier<Boolean> var4) {
-      super(var1, var2);
-      this.items = var3;
+   public BlockListSetting(String key, String description, List<String> items, Supplier<Boolean> supplier) {
+      super(key, description);
+      this.items = items;
    }
 
    public List<String> getItems() {
       return this.items;
    }
 
-   public void method1613(String var1) {
-      this.items.add(var1);
+   public void method1613(String str) {
+      this.items.add(str);
       this.version++;
    }
 
-   public void remove(String var1) {
-      this.items.remove(var1);
+   public void remove(String str) {
+      this.items.remove(str);
       this.version++;
    }
 
-   public boolean contains(String var1) {
-      return this.method1614().contains(var1);
+   public boolean contains(String str) {
+      return this.method1614().contains(str);
    }
 
    private Set<String> method1614() {
-      var var1 = this.items;
-      int var2 = this.version;
-      BlockListSetting.Data var3 = this.data;
-      if (var3 == null || var3.version() != var2 || var3.getItems() != var1) {
-         Object[] var4 = var1.toArray();
-         Set<String> var5 = new HashSet<>(Math.max(16, var4.length * 2));
+      var items = this.items;
+      int version = this.version;
+      BlockListSetting.Data data = this.data;
+      if (data == null || data.version() != version || data.getItems() != items) {
+         Object[] objects = items.toArray();
+         Set<String> strings = new HashSet<>(Math.max(16, objects.length * 2));
 
-         for (Object var9 : var4) {
-            var5.add((String)var9);
+         for (Object obj : objects) {
+            strings.add((String)obj);
          }
 
-         var3 = new BlockListSetting.Data(var2, var1, var5);
-         this.data = var3;
+         data = new BlockListSetting.Data(version, items, strings);
+         this.data = data;
       }
 
-      return var3.getItems2();
+      return data.getItems2();
    }
 
-   private static String method1615(Block var0) {
-      return items2.computeIfAbsent(var0, var0x -> var0x.getDescriptionId().replace("block.minecraft.", ""));
+   private static String method1615(Block block) {
+      return items2.computeIfAbsent(block, var0x -> var0x.getDescriptionId().replace("block.minecraft.", ""));
    }
 
-   private static String method1616(Item var0) {
-      return items3.computeIfAbsent(var0, var0x -> var0x.getDescriptionId().replace("item.minecraft.", ""));
+   private static String method1616(Item key) {
+      return items3.computeIfAbsent(key, var0x -> var0x.getDescriptionId().replace("item.minecraft.", ""));
    }
 
-   public void method1617(Block var1) {
-      this.method1613(var1.getDescriptionId().replace("block.minecraft.", ""));
+   public void method1617(Block key) {
+      this.method1613(key.getDescriptionId().replace("block.minecraft.", ""));
    }
 
-   public void method1618(Item var1) {
-      this.method1613(var1.getDescriptionId().replace("item.minecraft.", ""));
+   public void method1618(Item item) {
+      this.method1613(item.getDescriptionId().replace("item.minecraft.", ""));
    }
 
-   public void method1619(Block var1) {
-      this.remove(var1.getDescriptionId().replace("block.minecraft.", ""));
+   public void method1619(Block key) {
+      this.remove(key.getDescriptionId().replace("block.minecraft.", ""));
    }
 
-   public void method1620(Item var1) {
-      this.remove(var1.getDescriptionId().replace("item.minecraft.", ""));
+   public void method1620(Item item) {
+      this.remove(item.getDescriptionId().replace("item.minecraft.", ""));
    }
 
-   public boolean method1621(Block var1) {
-      return this.contains(method1615(var1));
+   public boolean method1621(Block block) {
+      return this.contains(method1615(block));
    }
 
-   public boolean method1622(Item var1) {
-      return this.contains(method1616(var1));
+   public boolean method1622(Item key) {
+      return this.contains(method1616(key));
    }
 
    public void clear() {
@@ -120,17 +120,17 @@ public class BlockListSetting extends Setting {
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.add(String.valueOf(this.key), gson.toJsonTree(this.getItems()));
+   public void safe(JsonObject json) {
+      json.add(String.valueOf(this.key), gson.toJsonTree(this.getItems()));
    }
 
    @Override
-   public void load(JsonObject var1) {
-      Type var2 = (new TypeToken<List<String>>() {}).getType();
-      JsonElement var3 = var1.get(String.valueOf(this.key));
-      if (var3 != null && var3.isJsonArray()) {
-         List var4 = (List)gson.fromJson(var3, var2);
-         this.method1612(var4);
+   public void load(JsonObject json) {
+      Type type = (new TypeToken<List<String>>() {}).getType();
+      JsonElement jsonElement = json.get(String.valueOf(this.key));
+      if (jsonElement != null && jsonElement.isJsonArray()) {
+         List items = (List)gson.fromJson(jsonElement, type);
+         this.method1612(items);
       }
    }
 
@@ -168,10 +168,10 @@ public class BlockListSetting extends Setting {
          return "Data[" + "intValue=" + this.intValue + ", " + "items=" + this.items + ", " + "items2=" + this.items2 + "]";
       }
 
-      private Data(int var1, List<String> var2, Set<String> var3) {
-         this.intValue = var1;
-         this.items = var2;
-         this.items2 = var3;
+      private Data(int intValue, List<String> items, Set<String> strings) {
+         this.intValue = intValue;
+         this.items = items;
+         this.items2 = strings;
       }
 
       public int version() {

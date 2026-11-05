@@ -7,9 +7,9 @@ public class PartyUpdateEvent implements Event {
    private final PartyPlayerInfo partyPlayerInfo;
    private final boolean flag;
 
-   public PartyUpdateEvent(PartyPlayerInfo var1, boolean var2) {
-      this.partyPlayerInfo = var1;
-      this.flag = var2;
+   public PartyUpdateEvent(PartyPlayerInfo partyPlayerInfo, boolean flag) {
+      this.partyPlayerInfo = partyPlayerInfo;
+      this.flag = flag;
    }
 
    public PartyPlayerInfo getPartyPlayerInfo() {

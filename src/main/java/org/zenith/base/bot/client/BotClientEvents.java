@@ -3,15 +3,15 @@ package org.zenith.base.bot.client;
 import net.minecraft.network.chat.Component;
 
 public interface BotClientEvents {
-   default void onPhaseChanged(BotClient var1, BotPhase var2, BotPhase var3) {
+   default void onPhaseChanged(BotClient botClient, BotPhase botPhase, BotPhase phase) {
    }
 
-   default void onJoined(BotClient var1) {
+   default void onJoined(BotClient botClient) {
    }
 
-   default void onChat(BotClient var1, Component var2) {
+   default void onChat(BotClient botClient, Component decorate) {
    }
 
-   default void onDisconnected(BotClient var1, Component var2) {
+   default void onDisconnected(BotClient botClient, Component literal) {
    }
 }

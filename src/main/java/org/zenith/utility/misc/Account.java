@@ -12,32 +12,32 @@ public class Account {
    private String text3 = "";
    private long longValue = System.currentTimeMillis();
 
-   public static Account method5470(String var0) {
-      Account var1 = new Account();
-      var1.type = Account.Type.OFFLINE;
-      var1.name = var0;
-      var1.text = offlineUuid(var0).toString();
-      return var1;
+   public static Account method5470(String name) {
+      Account account = new Account();
+      account.type = Account.Type.OFFLINE;
+      account.name = name;
+      account.text = offlineUuid(name).toString();
+      return account;
    }
 
-   public static Account method5471(String var0, UUID var1, String var2, String var3) {
-      Account var4 = new Account();
-      var4.type = Account.Type.MICROSOFT;
-      var4.name = var0;
-      var4.text = var1.toString();
-      var4.text2 = var2;
-      var4.text3 = var3;
-      return var4;
+   public static Account method5471(String name, UUID uuid, String str, String str2) {
+      Account account = new Account();
+      account.type = Account.Type.MICROSOFT;
+      account.name = name;
+      account.text = uuid.toString();
+      account.text2 = str;
+      account.text3 = str2;
+      return account;
    }
 
-   public static UUID offlineUuid(String var0) {
-      return UUID.nameUUIDFromBytes(("OfflinePlayer:" + var0).getBytes(StandardCharsets.UTF_8));
+   public static UUID offlineUuid(String name) {
+      return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
    }
 
    public UUID method5472() {
       try {
          return UUID.fromString(this.text);
-      } catch (Exception var2) {
+      } catch (Exception e) {
          return offlineUuid(this.name);
       }
    }
@@ -77,33 +77,33 @@ public class Account {
    }
 
    @Generated
-   public void setType(Account.Type var1) {
-      this.type = var1;
+   public void setType(Account.Type type) {
+      this.type = type;
    }
 
    @Generated
-   public void setName(String var1) {
-      this.name = var1;
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Generated
-   public void setText(String var1) {
-      this.text = var1;
+   public void setText(String text) {
+      this.text = text;
    }
 
    @Generated
-   public void setText2(String var1) {
-      this.text2 = var1;
+   public void setText2(String str) {
+      this.text2 = str;
    }
 
    @Generated
-   public void setText3(String var1) {
-      this.text3 = var1;
+   public void setText3(String str) {
+      this.text3 = str;
    }
 
    @Generated
-   public void setLongValue(long var1) {
-      this.longValue = var1;
+   public void setLongValue(long longValue) {
+      this.longValue = longValue;
    }
 
    public static enum Type {

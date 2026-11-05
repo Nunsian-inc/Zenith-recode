@@ -30,23 +30,23 @@ public final class BotAvatarCache {
    private static final long RETRY_MIN_MS = 30000L;
    private static final long RETRY_MAX_MS = 300000L;
    private static final Map<String, BotAvatarCache.Retry> retryAfter = new ConcurrentHashMap<>();
-   private static final ThreadPoolExecutor loader = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(128), var0 -> {
-      Thread var1 = new Thread(var0, "bot-avatar-loader");
-      var1.setDaemon(true);
-      return var1;
+   private static final ThreadPoolExecutor loader = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(128), task -> {
+      Thread thread = new Thread(task, "bot-avatar-loader");
+      thread.setDaemon(true);
+      return thread;
    });
 
    private BotAvatarCache() {
    }
 
-   public static Identifier prewarm(String var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         String var1 = var0.toLowerCase(Locale.ROOT);
-         Identifier var2 = nameToId.get(var1);
-         if (var2 != null) {
-            return var2;
+   public static Identifier prewarm(String selected) {
+      if (selected != null && !selected.isEmpty()) {
+         String lowerCase = selected.toLowerCase(Locale.ROOT);
+         Identifier id = nameToId.get(lowerCase);
+         if (id != null) {
+            return id;
          } else {
-            requestLoad(var0, var1);
+            requestLoad(selected, lowerCase);
             return null;
          }
       } else {
@@ -54,140 +54,140 @@ public final class BotAvatarCache {
       }
    }
 
-   private static void requestLoad(String var0, String var1) {
-      BotAvatarCache.Retry var2 = retryAfter.get(var1);
-      if (var2 == null || System.currentTimeMillis() >= var2.at()) {
-         long var3 = generation.get();
-         long var5 = requestIds.incrementAndGet();
-         if (loading.putIfAbsent(var1, var5) == null) {
-            Runnable var7 = () -> {
+   private static void requestLoad(String selected, String lowerCase) {
+      BotAvatarCache.Retry retry = retryAfter.get(lowerCase);
+      if (retry == null || System.currentTimeMillis() >= retry.at()) {
+         long l = generation.get();
+         long incrementAndGet = requestIds.incrementAndGet();
+         if (loading.putIfAbsent(lowerCase, incrementAndGet) == null) {
+            Runnable command = () -> {
                try {
-                  byte[] var6 = fetch(var0, var1);
-                  if (var6 == null || var6.length == 0) {
-                     markFailed(var1, var3);
-                     loading.remove(var1, var5);
+                  byte[] buf = fetch(selected, lowerCase);
+                  if (buf == null || buf.length == 0) {
+                     markFailed(lowerCase, l);
+                     loading.remove(lowerCase, incrementAndGet);
                      return;
                   }
 
                   NativeImage var7x;
-                  try (ByteArrayInputStream var8 = new ByteArrayInputStream(var6)) {
-                     var7x = NativeImage.read(var8);
+                  try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buf)) {
+                     var7x = NativeImage.read(byteArrayInputStream);
                   }
 
-                  Minecraft var15 = Minecraft.getInstance();
+                  Minecraft minecraft = Minecraft.getInstance();
 
                   try {
-                     var15.execute(() -> install(var1, var7x, var3, var5));
-                  } catch (Throwable var12) {
+                     minecraft.execute(() -> install(lowerCase, var7x, l, incrementAndGet));
+                  } catch (Throwable e) {
                      var7x.close();
-                     loading.remove(var1, var5);
+                     loading.remove(lowerCase, incrementAndGet);
                   }
-               } catch (Throwable var14) {
-                  markFailed(var1, var3);
-                  loading.remove(var1, var5);
+               } catch (Throwable e) {
+                  markFailed(lowerCase, l);
+                  loading.remove(lowerCase, incrementAndGet);
                }
             };
 
             try {
-               loader.execute(var7);
-            } catch (RejectedExecutionException var9) {
-               loading.remove(var1, var5);
+               loader.execute(command);
+            } catch (RejectedExecutionException e) {
+               loading.remove(lowerCase, incrementAndGet);
             }
          }
       }
    }
 
-   private static void install(String var0, NativeImage var1, long var2, long var4) {
-      DynamicTexture var6 = null;
-      boolean var7 = false;
+   private static void install(String lowerCase, NativeImage image, long l, long incrementAndGet) {
+      DynamicTexture dynamicTexture = null;
+      boolean flag = false;
 
       try {
-         if (var2 == generation.get()) {
-            Minecraft var8 = Minecraft.getInstance();
-            Identifier var9 = Identifier.fromNamespaceAndPath("zenith", "bot_avatar/" + Integer.toHexString(var0.hashCode()));
-            var6 = new DynamicTexture(() -> "zenith", var1);
-            var8.getTextureManager().register(var9, var6);
-            var7 = true;
-            nameToId.put(var0, var9);
-            retryAfter.remove(var0);
+         if (l == generation.get()) {
+            Minecraft minecraft = Minecraft.getInstance();
+            Identifier location = Identifier.fromNamespaceAndPath("zenith", "bot_avatar/" + Integer.toHexString(lowerCase.hashCode()));
+            dynamicTexture = new DynamicTexture(() -> "zenith", image);
+            minecraft.getTextureManager().register(location, dynamicTexture);
+            flag = true;
+            nameToId.put(lowerCase, location);
+            retryAfter.remove(lowerCase);
             return;
          }
-      } catch (Throwable var13) {
+      } catch (Throwable e) {
          return;
       } finally {
-         if (!var7) {
-            if (var6 != null) {
-               var6.close();
+         if (!flag) {
+            if (dynamicTexture != null) {
+               dynamicTexture.close();
             } else {
-               var1.close();
+               image.close();
             }
          }
 
-         loading.remove(var0, var4);
+         loading.remove(lowerCase, incrementAndGet);
       }
    }
 
-   private static void markFailed(String var0, long var1) {
-      if (var1 == generation.get()) {
-         BotAvatarCache.Retry var3 = retryAfter.get(var0);
-         long var4 = var3 == null ? 30000L : Math.min(var3.backoff() * 2L, 300000L);
-         retryAfter.put(var0, new BotAvatarCache.Retry(System.currentTimeMillis() + var4, var4));
+   private static void markFailed(String lowerCase, long l) {
+      if (l == generation.get()) {
+         BotAvatarCache.Retry retry = retryAfter.get(lowerCase);
+         long backoff = retry == null ? 30000L : Math.min(retry.backoff() * 2L, 300000L);
+         retryAfter.put(lowerCase, new BotAvatarCache.Retry(System.currentTimeMillis() + backoff, backoff));
       }
    }
 
-   private static byte[] fetch(String var0, String var1) throws Exception {
-      Path var2 = cacheDir().resolve(Integer.toHexString(var1.hashCode()) + ".png");
+   private static byte[] fetch(String selected, String lowerCase) throws Exception {
+      Path path = cacheDir().resolve(Integer.toHexString(lowerCase.hashCode()) + ".png");
 
       try {
-         if (Files.isRegularFile(var2)) {
-            byte[] var3 = Files.readAllBytes(var2);
-            if (var3.length > 0) {
-               return var3;
+         if (Files.isRegularFile(path)) {
+            byte[] allBytes = Files.readAllBytes(path);
+            if (allBytes.length > 0) {
+               return allBytes;
             }
          }
-      } catch (Exception var6) {
+      } catch (Exception e) {
       }
 
-      byte[] var7 = download(String.format("https://minotar.net/helm/%s/64.png", var0));
-      if (var7 != null && var7.length > 0) {
+      byte[] bytes = download(String.format("https://minotar.net/helm/%s/64.png", selected));
+      if (bytes != null && bytes.length > 0) {
          try {
-            Files.createDirectories(var2.getParent());
-            Files.write(var2, var7);
-         } catch (Exception var5) {
+            Files.createDirectories(path.getParent());
+            Files.write(path, bytes);
+         } catch (Exception e) {
          }
       }
 
-      return var7;
+      return bytes;
    }
 
    private static Path cacheDir() {
       return Minecraft.getInstance().gameDirectory.toPath().resolve("zenith").resolve("bot_avatars");
    }
 
-   private static byte[] download(String var0) throws Exception {
-      HttpURLConnection var1 = (HttpURLConnection)new URL(var0).openConnection();
-      var1.setConnectTimeout(5000);
-      var1.setReadTimeout(5000);
-      var1.setRequestProperty("User-Agent", "Zenith");
+   private static byte[] download(String spec) throws Exception {
+      HttpURLConnection openConnection = (HttpURLConnection)new URL(spec).openConnection();
+      openConnection.setConnectTimeout(5000);
+      openConnection.setReadTimeout(5000);
+      openConnection.setRequestProperty("User-Agent", "Zenith");
 
-      byte[] var3;
-      try (InputStream var2 = var1.getInputStream()) {
-         var3 = var2.readAllBytes();
+      byte[] allBytes;
+      try (InputStream inputStream = openConnection.getInputStream()) {
+         allBytes = inputStream.readAllBytes();
       } finally {
-         var1.disconnect();
+         openConnection.disconnect();
       }
 
-      return var3;
+      return allBytes;
    }
 
    public static void clear() {
       generation.incrementAndGet();
-      Minecraft var0 = Minecraft.getInstance();
-      if (var0 != null && var0.getTextureManager() != null) {
-         for (Identifier var2 : nameToId.values()) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.getTextureManager() != null) {
+         for (Identifier location : nameToId.values()) {
             try {
-               var0.getTextureManager().release(var2);
-            } catch (Throwable var4) {
+               minecraft.getTextureManager().release(location);
+            } catch (Throwable e) {
             }
          }
       }
@@ -226,9 +226,9 @@ public final class BotAvatarCache {
          return "Retry[" + "at=" + this.at + ", " + "backoff=" + this.backoff + "]";
       }
 
-      private Retry(long var1, long var3) {
-         this.at = var1;
-         this.backoff = var3;
+      private Retry(long at, long backoff) {
+         this.at = at;
+         this.backoff = backoff;
       }
    }
 }

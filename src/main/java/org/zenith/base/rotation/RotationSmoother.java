@@ -10,65 +10,65 @@ import org.zenith.Rotation;
 public final class RotationSmoother implements MinecraftAccess {
    private static final RotationSmoother.Entry entry = new RotationSmoother.Entry();
 
-   public static Rotation method7954(Vec3 var0) {
-      return method7955(entry, var0);
+   public static Rotation method7954(Vec3 location) {
+      return method7955(entry, location);
    }
 
-   public static Rotation method7955(RotationSmoother.Entry var0, Vec3 var1) {
-      return method7957(var0, RotationUtils.method6913(var1));
+   public static Rotation method7955(RotationSmoother.Entry entry, Vec3 location) {
+      return method7957(entry, RotationUtils.method6913(location));
    }
 
-   public static Rotation method7956(Rotation var0) {
-      return method7957(entry, var0);
+   public static Rotation method7956(Rotation rotation) {
+      return method7957(entry, rotation);
    }
 
-   public static Rotation method7957(RotationSmoother.Entry var0, Rotation var1) {
-      return method7959(var0, var1, 34.0F, 18.0F, 0.55F);
+   public static Rotation method7957(RotationSmoother.Entry entry, Rotation rotation) {
+      return method7959(entry, rotation, 34.0F, 18.0F, 0.55F);
    }
 
-   public static Rotation method7958(Rotation var0, float var1, float var2, float var3) {
-      return method7959(entry, var0, var1, var2, var3);
+   public static Rotation method7958(Rotation rotation, float f, float f2, float f3) {
+      return method7959(entry, rotation, f, f2, f3);
    }
 
-   public static Rotation method7959(RotationSmoother.Entry var0, Rotation var1, float var2, float var3, float var4) {
-      RotationSmoother.Entry var5 = var0 == null ? entry : var0;
-      Rotation var6 = var5.rotation == null ? RotationUtils.method6911() : var5.rotation;
-      Rotation var7 = method7961(var5, var6, var1, var2, var3, var4);
-      return var1;
+   public static Rotation method7959(RotationSmoother.Entry entry2, Rotation rotation, float f, float f2, float f3) {
+      RotationSmoother.Entry entry3 = entry2 == null ? entry : entry2;
+      Rotation rotation2 = entry3.rotation == null ? RotationUtils.method6911() : entry3.rotation;
+      Rotation rotation3 = method7961(entry3, rotation2, rotation, f, f2, f3);
+      return rotation;
    }
 
-   public static Rotation method7960(Rotation var0, Rotation var1, float var2, float var3, float var4) {
-      return method7961(entry, var0, var1, var2, var3, var4);
+   public static Rotation method7960(Rotation rotation, Rotation rotation2, float f, float f2, float f3) {
+      return method7961(entry, rotation, rotation2, f, f2, f3);
    }
 
-   public static Rotation method7961(RotationSmoother.Entry var0, Rotation var1, Rotation var2, float var3, float var4, float var5) {
-      RotationSmoother.Entry var6 = var0 == null ? entry : var0;
-      method7964(var6);
-      float var7 = Mth.wrapDegrees(var2.getFloatValue() - var1.getFloatValue());
-      float var8 = var2.getFloatValue2() - var1.getFloatValue2();
-      float var9 = (float)Math.hypot(var7, var8);
-      float var10 = Mth.clamp(var9 / 12.0F, 0.0F, 1.0F);
-      float var11 = Mth.clamp(var9 / 45.0F, 0.18F, 1.0F);
-      method7965(var6, var10);
-      float var12 = Mth.clamp(var5 * var6.smoothScale, 0.08F, 0.95F);
-      float var13 = method7968(var7, var3 * var6.floatValue3, var12, var11);
-      float var14 = method7968(var8, var4 * var6.floatValue3, var12, var11);
-      float var15 = method7966(var7, var6.floatValue4 + var6.floatValue6, var10);
-      float var16 = method7966(var8, var6.floatValue5 + var6.floatValue7, var10);
-      float var17 = Mth.clamp(var7 + var15, -var13, var13);
-      float var18 = Mth.clamp(var8 + var16, -var14, var14);
-      var6.floatValue = Mth.lerp(var12, var6.floatValue, var17);
-      var6.floatValue2 = Mth.lerp(var12, var6.floatValue2, var18);
-      var6.floatValue = method7967(var6.floatValue, var7, var9);
-      var6.floatValue2 = method7967(var6.floatValue2, var8, var9);
-      Rotation var19 = var1.method3140(var6.floatValue, var6.floatValue2);
-      return var19.method3139(var1);
+   public static Rotation method7961(RotationSmoother.Entry entry2, Rotation rotation, Rotation rotation2, float f, float f2, float f3) {
+      RotationSmoother.Entry entry3 = entry2 == null ? entry : entry2;
+      method7964(entry3);
+      float x = Mth.wrapDegrees(rotation2.getFloatValue() - rotation.getFloatValue());
+      float x2 = rotation2.getFloatValue2() - rotation.getFloatValue2();
+      float hypot = (float)Math.hypot(x, x2);
+      float f4 = Mth.clamp(hypot / 12.0F, 0.0F, 1.0F);
+      float f5 = Mth.clamp(hypot / 45.0F, 0.18F, 1.0F);
+      method7965(entry3, f4);
+      float alpha1 = Mth.clamp(f3 * entry3.smoothScale, 0.08F, 0.95F);
+      float max = method7968(x, f * entry3.floatValue3, alpha1, f5);
+      float max2 = method7968(x2, f2 * entry3.floatValue3, alpha1, f5);
+      float f6 = method7966(x, entry3.floatValue4 + entry3.floatValue6, f4);
+      float f7 = method7966(x2, entry3.floatValue5 + entry3.floatValue7, f4);
+      float f8 = Mth.clamp(x + f6, -max, max);
+      float f9 = Mth.clamp(x2 + f7, -max2, max2);
+      entry3.floatValue = Mth.lerp(alpha1, entry3.floatValue, f8);
+      entry3.floatValue2 = Mth.lerp(alpha1, entry3.floatValue2, f9);
+      entry3.floatValue = method7967(entry3.floatValue, x, hypot);
+      entry3.floatValue2 = method7967(entry3.floatValue2, x2, hypot);
+      Rotation rotation3 = rotation.method3140(entry3.floatValue, entry3.floatValue2);
+      return rotation3.method3139(rotation);
    }
 
-   public static void method7962(Rotation var0) {
-      if (mc.player != null && var0 != null) {
-         mc.player.setYRot(var0.getFloatValue());
-         mc.player.setXRot(var0.getFloatValue2());
+   public static void method7962(Rotation rotation) {
+      if (mc.player != null && rotation != null) {
+         mc.player.setYRot(rotation.getFloatValue());
+         mc.player.setXRot(rotation.getFloatValue2());
       }
    }
 
@@ -76,59 +76,59 @@ public final class RotationSmoother implements MinecraftAccess {
       method7963(entry);
    }
 
-   public static void method7963(RotationSmoother.Entry var0) {
-      RotationSmoother.Entry var1 = var0 == null ? entry : var0;
-      var1.reset();
+   public static void method7963(RotationSmoother.Entry entry2) {
+      RotationSmoother.Entry entry3 = entry2 == null ? entry : entry2;
+      entry3.reset();
    }
 
-   private static void method7964(RotationSmoother.Entry var0) {
-      if (var0.intValue-- <= 0) {
-         var0.intValue = method7969(3, 9);
-         var0.floatValue3 = method7970(0.86F, 1.18F);
-         var0.smoothScale = method7970(0.82F, 1.08F);
-         var0.floatValue4 = method7971(0.18F);
-         var0.floatValue5 = method7971(0.11F);
+   private static void method7964(RotationSmoother.Entry entry) {
+      if (entry.intValue-- <= 0) {
+         entry.intValue = method7969(3, 9);
+         entry.floatValue3 = method7970(0.86F, 1.18F);
+         entry.smoothScale = method7970(0.82F, 1.08F);
+         entry.floatValue4 = method7971(0.18F);
+         entry.floatValue5 = method7971(0.11F);
       }
    }
 
-   private static void method7965(RotationSmoother.Entry var0, float var1) {
-      float var2 = 0.025F + var1 * 0.08F;
-      var0.floatValue6 = Mth.lerp(0.22F, var0.floatValue6, method7971(var2));
-      var0.floatValue7 = Mth.lerp(0.22F, var0.floatValue7, method7971(var2 * 0.65F));
+   private static void method7965(RotationSmoother.Entry entry, float f) {
+      float bound = 0.025F + f * 0.08F;
+      entry.floatValue6 = Mth.lerp(0.22F, entry.floatValue6, method7971(bound));
+      entry.floatValue7 = Mth.lerp(0.22F, entry.floatValue7, method7971(bound * 0.65F));
    }
 
-   private static float method7966(float var0, float var1, float var2) {
-      float var3 = Math.signum(var0);
-      float var4 = 0.0F;
-      if (Math.abs(var0) > 8.0F) {
-         var4 = Mth.clamp(var0 * method7970(0.01F, 0.035F), -1.15F, 1.15F);
+   private static float method7966(float x, float f, float f2) {
+      float f3 = Math.signum(x);
+      float f4 = 0.0F;
+      if (Math.abs(x) > 8.0F) {
+         f4 = Mth.clamp(x * method7970(0.01F, 0.035F), -1.15F, 1.15F);
       }
 
-      return var4 + var1 * var2 + var3 * method7970(0.0F, 0.018F) * var2;
+      return f4 + f * f2 + f3 * method7970(0.0F, 0.018F) * f2;
    }
 
-   private static float method7967(float var0, float var1, float var2) {
-      return !(var2 > 2.0F) && Math.signum(var0) != Math.signum(var1) ? var0 * method7970(0.35F, 0.7F) : var0;
+   private static float method7967(float floatValue, float x, float hypot) {
+      return !(hypot > 2.0F) && Math.signum(floatValue) != Math.signum(x) ? floatValue * method7970(0.35F, 0.7F) : floatValue;
    }
 
-   private static float method7968(float var0, float var1, float var2, float var3) {
-      float var4 = Math.abs(var0);
-      float var5 = Math.max(0.1F, var1);
-      float var6 = Mth.clamp(var4 / 35.0F, 0.22F, 1.0F);
-      float var7 = 0.72F + var3 * method7970(0.22F, 0.38F);
-      return Math.max(Rotation.method3138(), var5 * var6 * var2 * var7);
+   private static float method7968(float x, float f, float alpha1, float f2) {
+      float f3 = Math.abs(x);
+      float f4 = Math.max(0.1F, f);
+      float f5 = Mth.clamp(f3 / 35.0F, 0.22F, 1.0F);
+      float f6 = 0.72F + f2 * method7970(0.22F, 0.38F);
+      return Math.max(Rotation.method3138(), f4 * f5 * alpha1 * f6);
    }
 
-   private static int method7969(int var0, int var1) {
-      return ThreadLocalRandom.current().nextInt(var0, var1 + 1);
+   private static int method7969(int origin, int n) {
+      return ThreadLocalRandom.current().nextInt(origin, n + 1);
    }
 
-   private static float method7970(float var0, float var1) {
-      return (float)ThreadLocalRandom.current().nextDouble(var0, var1);
+   private static float method7970(float origin, float bound) {
+      return (float)ThreadLocalRandom.current().nextDouble(origin, bound);
    }
 
-   private static float method7971(float var0) {
-      return method7970(-var0, var0);
+   private static float method7971(float bound) {
+      return method7970(-bound, bound);
    }
 
    @Generated

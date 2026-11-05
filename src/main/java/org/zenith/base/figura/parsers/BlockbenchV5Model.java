@@ -181,7 +181,7 @@ public class BlockbenchV5Model extends BlockbenchCommonTypes.ModelFormat {
       final String uuid;
 
       @Nullable
-      public abstract CompoundTag toNBT(BlockbenchParser2.Intermediary var1);
+      public abstract CompoundTag toNBT(BlockbenchParser2.Intermediary target);
 
       public OutlinerItem(String uuid) {
          this.uuid = uuid;

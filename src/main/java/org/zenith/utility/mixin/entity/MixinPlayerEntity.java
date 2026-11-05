@@ -30,11 +30,11 @@ public abstract class MixinPlayerEntity {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void isPushedByFluids(CallbackInfoReturnable<Boolean> var1) {
-      EntityPushEvent var2 = new EntityPushEvent(EntityPushEvent.Type.WATER);
-      EventManager.call(var2);
-      if (var2.isCancelled()) {
-         var1.setReturnValue(false);
+   public void isPushedByFluids(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      EntityPushEvent event = new EntityPushEvent(EntityPushEvent.Type.WATER);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 
@@ -45,8 +45,8 @@ public abstract class MixinPlayerEntity {
          target = "Lnet/minecraft/world/entity/player/Player;getLookAngle()Lnet/minecraft/world/phys/Vec3;"
       )
    )
-   public Vec3 fixSwing(Player var1) {
-      return (Object)this != Minecraft.getInstance().player ? var1.getLookAngle() : Zenith.getInstance().getRotationManager().method7844().method3135();
+   public Vec3 fixSwing(Player player) {
+      return (Object)this != Minecraft.getInstance().player ? player.getLookAngle() : Zenith.getInstance().getRotationManager().method7844().method3135();
    }
 
    @Redirect(
@@ -56,12 +56,12 @@ public abstract class MixinPlayerEntity {
          target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;"
       )
    )
-   private Vec3 hookSlowVelocity(Vec3 var1, double var2, double var4, double var6) {
+   private Vec3 hookSlowVelocity(Vec3 vec, double xScale, double yScale, double zScale) {
       if ((Object)this == Minecraft.getInstance().player && AutoSprintModule.INSTANCE.isEnabled() && AutoSprintModule.INSTANCE.method6417()) {
-         var2 = var6 = AutoSprintModule.INSTANCE.method6419();
+         xScale = zScale = AutoSprintModule.INSTANCE.method6419();
       }
 
-      return var1.multiply(var2, var4, var6);
+      return vec.multiply(xScale, yScale, zScale);
    }
 
    @WrapWithCondition(
@@ -72,8 +72,8 @@ public abstract class MixinPlayerEntity {
          ordinal = 0
       )}
    )
-   private boolean hookSlowVelocity(Player var1, boolean var2) {
-      return (Object)this != Minecraft.getInstance().player ? true : AutoSprintModule.INSTANCE.isEnabled() && AutoSprintModule.INSTANCE.method6417() || var2;
+   private boolean hookSlowVelocity(Player player, boolean flag) {
+      return (Object)this != Minecraft.getInstance().player ? true : AutoSprintModule.INSTANCE.isEnabled() && AutoSprintModule.INSTANCE.method6417() || flag;
    }
 
    @ModifyExpressionValue(
@@ -83,10 +83,10 @@ public abstract class MixinPlayerEntity {
          target = "Lnet/minecraft/world/entity/player/Player;isSprinting()Z"
       )}
    )
-   private boolean hookSlowVelocity(boolean var1) {
+   private boolean hookSlowVelocity(boolean flag) {
       return (Object)this == Minecraft.getInstance().player && AutoSprintModule.INSTANCE.isEnabled() && AutoSprintModule.INSTANCE.method6417()
          ? Minecraft.getInstance().player.isSprinting()
-         : var1;
+         : flag;
    }
 
    @Inject(
@@ -94,9 +94,9 @@ public abstract class MixinPlayerEntity {
       at = {@At("RETURN")},
       cancellable = true
    )
-   public void reachBlock(CallbackInfoReturnable<Double> var1) {
+   public void reachBlock(CallbackInfoReturnable<Double> callbackInfoReturnable) {
       if ((Object)this == Minecraft.getInstance().player && ModuleHookDefinitions.class122.active()) {
-         var1.setReturnValue(ModuleHookDefinitions.method6118(ModuleHookDefinitions.class122, (Double)var1.getReturnValue()));
+         callbackInfoReturnable.setReturnValue(ModuleHookDefinitions.method6118(ModuleHookDefinitions.class122, (Double)callbackInfoReturnable.getReturnValue()));
       }
    }
 
@@ -104,16 +104,16 @@ public abstract class MixinPlayerEntity {
       method = {"attack(Lnet/minecraft/world/entity/Entity;)V"},
       at = {@At("RETURN")}
    )
-   public void eventAttackEnd(Entity var1, CallbackInfo var2) {
-      EventManager.call(new AttackEvent(var1, AttackEvent.Type.POST));
+   public void eventAttackEnd(Entity entity, CallbackInfo callbackInfo) {
+      EventManager.call(new AttackEvent(entity, AttackEvent.Type.POST));
    }
 
    @Inject(
       method = {"attack(Lnet/minecraft/world/entity/Entity;)V"},
       at = {@At("HEAD")}
    )
-   public void eventAttackHEad(Entity var1, CallbackInfo var2) {
-      EventManager.call(new AttackEvent(var1, AttackEvent.Type.PRE));
+   public void eventAttackHEad(Entity entity, CallbackInfo callbackInfo) {
+      EventManager.call(new AttackEvent(entity, AttackEvent.Type.PRE));
    }
 
    @Inject(
@@ -121,9 +121,9 @@ public abstract class MixinPlayerEntity {
       at = {@At("RETURN")},
       cancellable = true
    )
-   public void reach(CallbackInfoReturnable<Double> var1) {
+   public void reach(CallbackInfoReturnable<Double> callbackInfoReturnable) {
       if ((Object)this == Minecraft.getInstance().player && ModuleHookDefinitions.class12.active()) {
-         var1.setReturnValue(ModuleHookDefinitions.method6118(ModuleHookDefinitions.class12, (Double)var1.getReturnValue()));
+         callbackInfoReturnable.setReturnValue(ModuleHookDefinitions.method6118(ModuleHookDefinitions.class12, (Double)callbackInfoReturnable.getReturnValue()));
       }
    }
 
@@ -134,12 +134,12 @@ public abstract class MixinPlayerEntity {
          target = "Lnet/minecraft/world/entity/player/Player;getYRot()F"
       )}
    )
-   private float hookFixRotation(float var1) {
+   private float hookFixRotation(float f) {
       if ((Object)this != Minecraft.getInstance().player) {
-         return var1;
+         return f;
       } else {
-         Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return var2 == null ? var1 : var2.getFloatValue();
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         return currentRotation == null ? f : currentRotation.getFloatValue();
       }
    }
 
@@ -149,7 +149,7 @@ public abstract class MixinPlayerEntity {
          floatValue = 5.0F
       )}
    )
-   private float zenith$airBreakDivisor(float var1) {
-      return (Object)this != Minecraft.getInstance().player ? var1 : FastBreakModule.INSTANCE.method5660(var1);
+   private float zenith$airBreakDivisor(float f) {
+      return (Object)this != Minecraft.getInstance().player ? f : FastBreakModule.INSTANCE.method5660(f);
    }
 }

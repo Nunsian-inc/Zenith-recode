@@ -19,8 +19,8 @@ public class MovementCorrectionEvent implements Event {
    }
 
    @Generated
-   public MovementCorrectionEvent(float var1, Vec3 var2) {
-      this.speed = var1;
-      this.vec3d = var2;
+   public MovementCorrectionEvent(float speed, Vec3 vec3d) {
+      this.speed = speed;
+      this.vec3d = vec3d;
    }
 }

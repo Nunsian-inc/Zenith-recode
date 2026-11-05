@@ -83,7 +83,7 @@ public final class OptimizationModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       this.method2739();
    }
 

@@ -93,33 +93,33 @@ public final class CosmeticPartInfo {
    }
 
    public CosmeticPartInfo(
-      String var1,
-      String var2,
-      String var3,
-      String var4,
-      CosmeticType var5,
-      CosmeticPartInfo.Type var6,
-      List<String> var7,
-      List<String> var8,
-      String var9,
-      int var10,
-      CosmeticPartInfo.Data var11,
-      CosmeticPartInfo.Data var12,
-      String var13
+      String text,
+      String str,
+      String str2,
+      String str3,
+      CosmeticType cosmeticType,
+      CosmeticPartInfo.Type type,
+      List<String> items,
+      List<String> strings,
+      String str4,
+      int intValue,
+      CosmeticPartInfo.Data data,
+      CosmeticPartInfo.Data data2,
+      String str5
    ) {
-      this.text = var1;
-      this.text2 = var2;
-      this.text3 = var3;
-      this.text4 = var4;
-      this.cosmeticType = var5;
-      this.type = var6;
-      this.items = var7;
-      this.items2 = var8;
-      this.text5 = var9;
-      this.intValue = var10;
-      this.data = var11;
-      this.data2 = var12;
-      this.text6 = var13;
+      this.text = text;
+      this.text2 = str;
+      this.text3 = str2;
+      this.text4 = str3;
+      this.cosmeticType = cosmeticType;
+      this.type = type;
+      this.items = items;
+      this.items2 = strings;
+      this.text5 = str4;
+      this.intValue = intValue;
+      this.data = data;
+      this.data2 = data2;
+      this.text6 = str5;
    }
 
    public boolean method6492() {
@@ -130,75 +130,75 @@ public final class CosmeticPartInfo {
       return this.text2 != null && !this.text2.isBlank() ? this.text2 : this.text4;
    }
 
-   public static CosmeticPartInfo method6494(JsonObject var0, String var1) {
-      if (var0 == null) {
+   public static CosmeticPartInfo method6494(JsonObject json, String str) {
+      if (json == null) {
          return null;
       } else {
-         String var2 = method6496(var0, "id", "");
-         if (var2.isBlank()) {
+         String text = method6496(json, "id", "");
+         if (text.isBlank()) {
             return null;
          } else {
-            JsonObject var3 = var0.has("locationRotation") && var0.get("locationRotation").isJsonObject() ? var0.getAsJsonObject("locationRotation") : null;
+            JsonObject jsonObject = json.has("locationRotation") && json.get("locationRotation").isJsonObject() ? json.getAsJsonObject("locationRotation") : null;
             return new CosmeticPartInfo(
-               var2,
-               method6496(var0, "name", ""),
-               method6496(var0, "categoryId", ""),
-               var1,
-               CosmeticType.method1684(method6496(var0, "type", "")),
-               CosmeticPartInfo.Type.method6499(method6496(var0, "sourceFormat", "")),
-               method6498(var0, "conflictGroups"),
-               method6498(var0, "hidePartBody"),
-               method6496(var0, "rarity", ""),
-               method6497(var0, "price"),
-               CosmeticPartInfo.Data.method6500(method6495(var3, "normal"), CosmeticPartInfo.Data.INSTANCE),
-               CosmeticPartInfo.Data.method6500(method6495(var3, "gui"), CosmeticPartInfo.Data.INSTANCE),
-               method6496(var0, "hash256", "")
+               text,
+               method6496(json, "name", ""),
+               method6496(json, "categoryId", ""),
+               str,
+               CosmeticType.method1684(method6496(json, "type", "")),
+               CosmeticPartInfo.Type.method6499(method6496(json, "sourceFormat", "")),
+               method6498(json, "conflictGroups"),
+               method6498(json, "hidePartBody"),
+               method6496(json, "rarity", ""),
+               method6497(json, "price"),
+               CosmeticPartInfo.Data.method6500(method6495(jsonObject, "normal"), CosmeticPartInfo.Data.INSTANCE),
+               CosmeticPartInfo.Data.method6500(method6495(jsonObject, "gui"), CosmeticPartInfo.Data.INSTANCE),
+               method6496(json, "hash256", "")
             );
          }
       }
    }
 
-   private static JsonObject method6495(JsonObject var0, String var1) {
-      return var0 != null && var0.has(var1) && var0.get(var1).isJsonObject() ? var0.getAsJsonObject(var1) : null;
+   private static JsonObject method6495(JsonObject jsonObject, String memberName) {
+      return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonObject() ? jsonObject.getAsJsonObject(memberName) : null;
    }
 
-   private static String method6496(JsonObject var0, String var1, String var2) {
+   private static String method6496(JsonObject json, String memberName, String str) {
       try {
-         return var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsString() : var2;
-      } catch (RuntimeException var4) {
-         return var2;
+         return json.has(memberName) && json.get(memberName).isJsonPrimitive() ? json.get(memberName).getAsString() : str;
+      } catch (RuntimeException e) {
+         return str;
       }
    }
 
-   private static int method6497(JsonObject var0, String var1) {
+   private static int method6497(JsonObject json, String memberName) {
       try {
-         return var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsInt() : 0;
-      } catch (RuntimeException var3) {
+         return json.has(memberName) && json.get(memberName).isJsonPrimitive() ? json.get(memberName).getAsInt() : 0;
+      } catch (RuntimeException e) {
          return 0;
       }
    }
 
-   private static List<String> method6498(JsonObject var0, String var1) {
-      ArrayList var2 = new ArrayList(2);
-      if (!var0.has(var1)) {
-         return List.copyOf(var2);
+   private static List<String> method6498(JsonObject json, String memberName) {
+      ArrayList coll = new ArrayList(2);
+      if (!json.has(memberName)) {
+         return List.copyOf(coll);
       } else {
-         JsonElement var3 = var0.get(var1);
+         JsonElement jsonElement = json.get(memberName);
 
          try {
-            if (var3.isJsonArray()) {
-               for (JsonElement var5 : var3.getAsJsonArray()) {
-                  if (var5.isJsonPrimitive()) {
-                     var2.add(var5.getAsString());
+            if (jsonElement.isJsonArray()) {
+               for (JsonElement json2 : jsonElement.getAsJsonArray()) {
+                  if (json2.isJsonPrimitive()) {
+                     coll.add(json2.getAsString());
                   }
                }
-            } else if (var3.isJsonPrimitive()) {
-               var2.add(var3.getAsString());
+            } else if (jsonElement.isJsonPrimitive()) {
+               coll.add(jsonElement.getAsString());
             }
-         } catch (RuntimeException var6) {
+         } catch (RuntimeException e) {
          }
 
-         return List.copyOf(var2);
+         return List.copyOf(coll);
       }
    }
 
@@ -319,44 +319,44 @@ public final class CosmeticPartInfo {
       }
       public static final CosmeticPartInfo.Data INSTANCE = new CosmeticPartInfo.Data(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-      public Data(float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
-         this.floatValue9 = var9;
+      public Data(float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
       }
 
-      public static CosmeticPartInfo.Data method6500(JsonObject var0, CosmeticPartInfo.Data var1) {
-         if (var0 == null) {
-            return var1;
+      public static CosmeticPartInfo.Data method6500(JsonObject json, CosmeticPartInfo.Data data) {
+         if (json == null) {
+            return data;
          } else {
-            float[] var2 = method6501(var0.get("location"), 0.0F);
-            float[] var3 = method6501(var0.get("rotation"), 0.0F);
-            float[] var4 = method6501(var0.get("scale"), 1.0F);
-            return new CosmeticPartInfo.Data(var2[0], var2[1], var2[2], var3[0], var3[1], var3[2], var4[0], var4[1], var4[2]);
+            float[] floats = method6501(json.get("location"), 0.0F);
+            float[] floats2 = method6501(json.get("rotation"), 0.0F);
+            float[] floats3 = method6501(json.get("scale"), 1.0F);
+            return new CosmeticPartInfo.Data(floats[0], floats[1], floats[2], floats2[0], floats2[1], floats2[2], floats3[0], floats3[1], floats3[2]);
          }
       }
 
-      private static float[] method6501(JsonElement var0, float var1) {
-         float[] var2 = new float[]{var1, var1, var1};
-         if (var0 != null && var0.isJsonArray()) {
-            JsonArray var3 = var0.getAsJsonArray();
+      private static float[] method6501(JsonElement jsonElement, float f) {
+         float[] floats = new float[]{f, f, f};
+         if (jsonElement != null && jsonElement.isJsonArray()) {
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-            for (int var4 = 0; var4 < 3 && var4 < var3.size(); var4++) {
+            for (int i = 0; i < 3 && i < jsonArray.size(); i++) {
                try {
-                  var2[var4] = var3.get(var4).getAsFloat();
-               } catch (RuntimeException var6) {
+                  floats[i] = jsonArray.get(i).getAsFloat();
+               } catch (RuntimeException e) {
                }
             }
 
-            return var2;
+            return floats;
          } else {
-            return var2;
+            return floats;
          }
       }
 
@@ -403,13 +403,13 @@ public final class CosmeticPartInfo {
       TECHNE,
       UNKNOWN;
 
-      public static CosmeticPartInfo.Type method6499(String var0) {
-         if (var0 == null) {
+      public static CosmeticPartInfo.Type method6499(String str) {
+         if (str == null) {
             return UNKNOWN;
          } else {
-            String var1 = var0.strip().toLowerCase(Locale.ROOT);
+            String lowerCase = str.strip().toLowerCase(Locale.ROOT);
 
-            return switch (var1) {
+            return switch (lowerCase) {
                case "wavefront" -> WAVEFRONT;
                case "bedrock" -> BEDROCK;
                case "techne2", "techne" -> TECHNE;

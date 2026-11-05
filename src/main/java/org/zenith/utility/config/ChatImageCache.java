@@ -51,10 +51,10 @@ public final class ChatImageCache {
    private static long longValue;
    private static long longValue2;
    private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-      1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(128), var0 -> {
-         Thread var1 = new Thread(var0, "zenith-chat-image");
-         var1.setDaemon(true);
-         return var1;
+      1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(128), task -> {
+         Thread thread = new Thread(task, "zenith-chat-image");
+         thread.setDaemon(true);
+         return thread;
       }
    );
    private static final int CONST_intValue2 = 2048;
@@ -62,29 +62,29 @@ public final class ChatImageCache {
    private ChatImageCache() {
    }
 
-   public static Identifier get(String var0) {
-      if (var0 != null && !var0.isBlank() && var0.startsWith("https://")) {
+   public static Identifier get(String key) {
+      if (key != null && !key.isBlank() && key.startsWith("https://")) {
          synchronized (linkedHashMap) {
-            ChatImageCache.Entry var2 = linkedHashMap.get(var0);
-            if (var2 != null) {
-               var2.longValue2 = System.currentTimeMillis();
-               return var2.getIdentifier();
+            ChatImageCache.Entry entry = linkedHashMap.get(key);
+            if (entry != null) {
+               entry.longValue2 = System.currentTimeMillis();
+               return entry.getIdentifier();
             }
          }
 
-         if (items2.contains(var0)) {
+         if (items2.contains(key)) {
             return null;
          } else {
-            Long var6 = items3.get(var0);
-            if (var6 != null && System.currentTimeMillis() < var6) {
+            Long l = items3.get(key);
+            if (l != null && System.currentTimeMillis() < l) {
                return null;
-            } else if (!items.add(var0)) {
+            } else if (!items.add(key)) {
                return null;
             } else {
                try {
-                  threadPoolExecutor.execute(() -> load(var0));
-               } catch (RejectedExecutionException var4) {
-                  items.remove(var0);
+                  threadPoolExecutor.execute(() -> load(key));
+               } catch (RejectedExecutionException e) {
+                  items.remove(key);
                }
 
                return null;
@@ -95,256 +95,256 @@ public final class ChatImageCache {
       }
    }
 
-   private static void load(String var0) {
+   private static void load(String key) {
       if (items2.size() > 4096) {
          items2.clear();
       }
 
       try {
-         byte[] var1 = method1494(var0);
-         boolean var2 = var1 != null;
-         if (var1 == null) {
+         byte[] buf = method1494(key);
+         boolean flag = buf != null;
+         if (buf == null) {
             method1499();
-            var1 = method1493(var0);
+            buf = method1493(key);
          }
 
-         if (var1 == null || var1.length == 0) {
-            items2.add(var0);
-            items.remove(var0);
+         if (buf == null || buf.length == 0) {
+            items2.add(key);
+            items.remove(key);
             return;
          }
 
-         if (var1.length >= 1048576) {
-            items2.add(var0);
-            items.remove(var0);
+         if (buf.length >= 1048576) {
+            items2.add(key);
+            items.remove(key);
             return;
          }
 
-         if (!method1490(var1)) {
-            if (var2) {
-               method1496(var0);
+         if (!method1490(buf)) {
+            if (flag) {
+               method1496(key);
             }
 
-            items2.add(var0);
-            items.remove(var0);
+            items2.add(key);
+            items.remove(key);
             return;
          }
 
-         NativeImage var3;
+         NativeImage image;
          try {
-            var3 = method1491(var1);
-         } catch (Exception var5) {
-            if (var2 && method1496(var0)) {
-               items.remove(var0);
+            image = method1491(buf);
+         } catch (Exception e) {
+            if (flag && method1496(key)) {
+               items.remove(key);
                return;
             }
 
-            throw var5;
+            throw e;
          }
 
-         if (!var2) {
-            method1495(var0, var1);
+         if (!flag) {
+            method1495(key, buf);
          }
 
-         Minecraft.getInstance().execute(() -> method1486(var0, var3));
-      } catch (Throwable var6) {
+         Minecraft.getInstance().execute(() -> method1486(key, image));
+      } catch (Throwable e) {
          if (items3.size() > 4096) {
             items3.clear();
          }
 
-         items3.put(var0, System.currentTimeMillis() + 30000L);
-         items.remove(var0);
+         items3.put(key, System.currentTimeMillis() + 30000L);
+         items.remove(key);
       }
    }
 
-   private static void method1486(String var0, NativeImage var1) {
-      DynamicTexture var2 = null;
-      boolean var3 = false;
+   private static void method1486(String key, NativeImage image) {
+      DynamicTexture dynamicTexture = null;
+      boolean flag = false;
 
       try {
-         Identifier var4 = Identifier.fromNamespaceAndPath("zenith", "chat_image/" + method1498(var0));
-         long var5 = (long)var1.getWidth() * var1.getHeight() * 4L;
-         int var7 = var1.getWidth();
-         int var8 = var1.getHeight();
-         var2 = new DynamicTexture(() -> "zenith", var1);
-         Minecraft.getInstance().getTextureManager().register(var4, var2);
-         var3 = true;
-         TextureFilterUtils.smooth(var4);
-         items4.put(var4, (long)var7 << 32 | var8 & 4294967295L);
-         method1487(var0, var4, var5);
-      } catch (Throwable var12) {
+         Identifier location = Identifier.fromNamespaceAndPath("zenith", "chat_image/" + method1498(key));
+         long l = (long)image.getWidth() * image.getHeight() * 4L;
+         int width = image.getWidth();
+         int height = image.getHeight();
+         dynamicTexture = new DynamicTexture(() -> "zenith", image);
+         Minecraft.getInstance().getTextureManager().register(location, dynamicTexture);
+         flag = true;
+         TextureFilterUtils.smooth(location);
+         items4.put(location, (long)width << 32 | height & 4294967295L);
+         method1487(key, location, l);
+      } catch (Throwable e) {
       } finally {
-         if (!var3) {
-            if (var2 != null) {
-               var2.close();
+         if (!flag) {
+            if (dynamicTexture != null) {
+               dynamicTexture.close();
             } else {
-               var1.close();
+               image.close();
             }
          }
 
-         items.remove(var0);
+         items.remove(key);
       }
    }
 
-   private static void method1487(String var0, Identifier var1, long var2) {
-      ArrayList<Identifier> var4 = new ArrayList();
-      long var5 = System.currentTimeMillis();
+   private static void method1487(String key, Identifier location, long l) {
+      ArrayList<Identifier> ids = new ArrayList();
+      long now = System.currentTimeMillis();
       synchronized (linkedHashMap) {
-         ChatImageCache.Entry var8 = linkedHashMap.put(var0, new ChatImageCache.Entry(var1, var2));
-         longValue = longValue + (var2 - (var8 == null ? 0L : var8.bytes()));
-         var var9 = linkedHashMap.entrySet().iterator();
+         ChatImageCache.Entry entry = linkedHashMap.put(key, new ChatImageCache.Entry(location, l));
+         longValue = longValue + (l - (entry == null ? 0L : entry.bytes()));
+         var iterator = linkedHashMap.entrySet().iterator();
 
-         while (longValue > 100663296L && linkedHashMap.size() > 1 && var9.hasNext()) {
-            Map.Entry var10 = (Map.Entry)var9.next();
-            if (!((String)var10.getKey()).equals(var0) && (var5 - ((ChatImageCache.Entry)var10.getValue()).longValue2 >= 10000L || longValue > 201326592L)) {
-               longValue = longValue - ((ChatImageCache.Entry)var10.getValue()).bytes();
-               var4.add(((ChatImageCache.Entry)var10.getValue()).getIdentifier());
-               var9.remove();
+         while (longValue > 100663296L && linkedHashMap.size() > 1 && iterator.hasNext()) {
+            Map.Entry entry2 = (Map.Entry)iterator.next();
+            if (!((String)entry2.getKey()).equals(key) && (now - ((ChatImageCache.Entry)entry2.getValue()).longValue2 >= 10000L || longValue > 201326592L)) {
+               longValue = longValue - ((ChatImageCache.Entry)entry2.getValue()).bytes();
+               ids.add(((ChatImageCache.Entry)entry2.getValue()).getIdentifier());
+               iterator.remove();
             }
          }
       }
 
-      for (Identifier var14 : var4) {
-         items4.remove(var14);
-         Minecraft.getInstance().getTextureManager().release(var14);
+      for (Identifier id : ids) {
+         items4.remove(id);
+         Minecraft.getInstance().getTextureManager().release(id);
       }
    }
 
-   public static int method1488(Identifier var0) {
-      Long var1 = var0 == null ? null : items4.get(var0);
-      return var1 == null ? 0 : (int)(var1 >>> 32);
+   public static int method1488(Identifier texture) {
+      Long l = texture == null ? null : items4.get(texture);
+      return l == null ? 0 : (int)(l >>> 32);
    }
 
-   public static int method1489(Identifier var0) {
-      Long var1 = var0 == null ? null : items4.get(var0);
-      return var1 == null ? 0 : (int)(var1 & 4294967295L);
+   public static int method1489(Identifier texture) {
+      Long l = texture == null ? null : items4.get(texture);
+      return l == null ? 0 : (int)(l & 4294967295L);
    }
 
-   private static boolean method1490(byte[] var0) {
+   private static boolean method1490(byte[] buf) {
       try {
-         int[] var1 = ImageLoader.method231(var0);
-         return var1[0] > 0 && var1[1] > 0 && var1[0] <= 2048 && var1[1] <= 2048;
-      } catch (Exception var2) {
+         int[] ints = ImageLoader.method231(buf);
+         return ints[0] > 0 && ints[1] > 0 && ints[0] <= 2048 && ints[1] <= 2048;
+      } catch (Exception e) {
          return false;
       }
    }
 
-   private static NativeImage method1491(byte[] var0) throws Exception {
+   private static NativeImage method1491(byte[] buf) throws Exception {
       try {
-         NativeImage var2;
-         try (ByteArrayInputStream var1 = new ByteArrayInputStream(var0)) {
-            var2 = NativeImage.read(var1);
+         NativeImage nativeImage;
+         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buf)) {
+            nativeImage = NativeImage.read(byteArrayInputStream);
          }
 
-         return var2;
-      } catch (Exception var6) {
-         return method1492(var0);
+         return nativeImage;
+      } catch (Exception e) {
+         return method1492(buf);
       }
    }
 
-   private static NativeImage method1492(byte[] var0) throws Exception {
-      ByteArrayInputStream var2 = new ByteArrayInputStream(var0);
+   private static NativeImage method1492(byte[] buf) throws Exception {
+      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buf);
 
-      BufferedImage var1;
+      BufferedImage bufferedImage;
       try {
-         var1 = ImageIO.read(var2);
-      } catch (Throwable var8) {
+         bufferedImage = ImageIO.read(byteArrayInputStream);
+      } catch (Throwable e) {
          try {
-            var2.close();
-         } catch (Throwable var7) {
-            var8.addSuppressed(var7);
+            byteArrayInputStream.close();
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var8;
+         throw e;
       }
 
-      var2.close();
-      if (var1 == null) {
+      byteArrayInputStream.close();
+      if (bufferedImage == null) {
          throw new IllegalStateException("формат картинки не распознан");
       } else {
-         int var9 = var1.getWidth();
-         int var3 = var1.getHeight();
-         NativeImage var4 = new NativeImage(Format.RGBA, var9, var3, false);
+         int width = bufferedImage.getWidth();
+         int height = bufferedImage.getHeight();
+         NativeImage nativeImage = new NativeImage(Format.RGBA, width, height, false);
 
-         for (int var5 = 0; var5 < var3; var5++) {
-            for (int var6 = 0; var6 < var9; var6++) {
-               var4.setPixel(var6, var5, var1.getRGB(var6, var5));
+         for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+               nativeImage.setPixel(j, i, bufferedImage.getRGB(j, i));
             }
          }
 
-         return var4;
+         return nativeImage;
       }
    }
 
-   private static byte[] method1493(String var0) throws Exception {
-      URL var1 = new URL(var0);
-      if ("https".equalsIgnoreCase(var1.getProtocol()) && RegionUtil.method2044(var1.getHost())) {
-         HttpURLConnection var2 = (HttpURLConnection)var1.openConnection();
-         var2.setInstanceFollowRedirects(false);
-         var2.setConnectTimeout(6000);
-         var2.setReadTimeout(10000);
-         var2.setRequestProperty("User-Agent", "Zenith");
+   private static byte[] method1493(String key) throws Exception {
+      URL url = new URL(key);
+      if ("https".equalsIgnoreCase(url.getProtocol()) && RegionUtil.method2044(url.getHost())) {
+         HttpURLConnection openConnection = (HttpURLConnection)url.openConnection();
+         openConnection.setInstanceFollowRedirects(false);
+         openConnection.setConnectTimeout(6000);
+         openConnection.setReadTimeout(10000);
+         openConnection.setRequestProperty("User-Agent", "Zenith");
 
-         byte[] var5;
+         byte[] nBytes;
          try {
-            int var3 = var2.getResponseCode();
-            if (var3 == 404 || var3 == 410) {
+            int responseCode = openConnection.getResponseCode();
+            if (responseCode == 404 || responseCode == 410) {
                return null;
             }
 
-            if (var3 != 200) {
-               throw new IllegalStateException("сайт ответил " + var3);
+            if (responseCode != 200) {
+               throw new IllegalStateException("сайт ответил " + responseCode);
             }
 
-            try (InputStream var4 = var2.getInputStream()) {
-               var5 = var4.readNBytes(1048576);
+            try (InputStream inputStream = openConnection.getInputStream()) {
+               nBytes = inputStream.readNBytes(1048576);
             }
          } finally {
-            var2.disconnect();
+            openConnection.disconnect();
          }
 
-         return var5;
+         return nBytes;
       } else {
          return null;
       }
    }
 
-   private static byte[] method1494(String var0) {
+   private static byte[] method1494(String key) {
       try {
-         Path var1 = method1497().resolve(method1498(var0) + ".img");
-         if (Files.isRegularFile(var1)) {
-            byte[] var2 = Files.readAllBytes(var1);
-            return var2.length == 0 ? null : var2;
+         Path path = method1497().resolve(method1498(key) + ".img");
+         if (Files.isRegularFile(path)) {
+            byte[] allBytes = Files.readAllBytes(path);
+            return allBytes.length == 0 ? null : allBytes;
          }
-      } catch (Exception var3) {
+      } catch (Exception e) {
       }
 
       return null;
    }
 
-   private static void method1495(String var0, byte[] var1) {
+   private static void method1495(String key, byte[] buf) {
       try {
-         Path var2 = method1497();
-         Files.createDirectories(var2);
-         String var3 = method1498(var0) + ".img";
-         Path var4 = var2.resolve(var3);
-         Path var5 = var2.resolve(var3 + ".tmp");
-         Files.write(var5, var1);
+         Path dir = method1497();
+         Files.createDirectories(dir);
+         String str = method1498(key) + ".img";
+         Path target = dir.resolve(str);
+         Path source = dir.resolve(str + ".tmp");
+         Files.write(source, buf);
 
          try {
-            Files.move(var5, var4, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-         } catch (AtomicMoveNotSupportedException var7) {
-            Files.move(var5, var4, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+         } catch (AtomicMoveNotSupportedException e) {
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
          }
-      } catch (Exception var8) {
+      } catch (Exception e) {
       }
    }
 
-   private static boolean method1496(String var0) {
+   private static boolean method1496(String key) {
       try {
-         Files.deleteIfExists(method1497().resolve(method1498(var0) + ".img"));
+         Files.deleteIfExists(method1497().resolve(method1498(key) + ".img"));
          return true;
-      } catch (Exception var2) {
+      } catch (Exception e) {
          return false;
       }
    }
@@ -353,28 +353,28 @@ public final class ChatImageCache {
       return Zenith.file.toPath().resolve("chat-images");
    }
 
-   private static String method1498(String var0) {
+   private static String method1498(String key) {
       try {
-         MessageDigest var1 = MessageDigest.getInstance("SHA-256");
-         byte[] var2 = var1.digest(var0.getBytes(StandardCharsets.UTF_8));
-         byte[] var3 = new byte[8];
-         System.arraycopy(var2, 0, var3, 0, 8);
-         return HexFormat.of().formatHex(var3).toLowerCase(Locale.ROOT);
-      } catch (Exception var4) {
-         return Integer.toHexString(var0.hashCode());
+         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+         byte[] digest = messageDigest.digest(key.getBytes(StandardCharsets.UTF_8));
+         byte[] bytes = new byte[8];
+         System.arraycopy(digest, 0, bytes, 0, 8);
+         return HexFormat.of().formatHex(bytes).toLowerCase(Locale.ROOT);
+      } catch (Exception e) {
+         return Integer.toHexString(key.hashCode());
       }
    }
 
    private static void method1499() throws InterruptedException {
-      long var0 = System.currentTimeMillis();
-      long var2;
+      long now = System.currentTimeMillis();
+      long millis;
       synchronized (ChatImageCache.class) {
-         var2 = Math.max(0L, longValue2 - var0);
-         longValue2 = Math.max(var0, longValue2) + 60L;
+         millis = Math.max(0L, longValue2 - now);
+         longValue2 = Math.max(now, longValue2) + 60L;
       }
 
-      if (var2 > 0L) {
-         Thread.sleep(var2);
+      if (millis > 0L) {
+         Thread.sleep(millis);
       }
    }
 
@@ -383,9 +383,9 @@ public final class ChatImageCache {
       private final long longValue;
       private volatile long longValue2 = System.currentTimeMillis();
 
-      private Entry(Identifier var1, long var2) {
-         this.identifier = var1;
-         this.longValue = var2;
+      private Entry(Identifier identifier, long longValue) {
+         this.identifier = identifier;
+         this.longValue = longValue;
       }
 
       private Identifier getIdentifier() {

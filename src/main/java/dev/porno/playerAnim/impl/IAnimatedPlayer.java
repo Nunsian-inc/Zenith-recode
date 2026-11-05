@@ -13,8 +13,8 @@ public interface IAnimatedPlayer extends IPlayer {
    AnimationApplier playerAnimator_getAnimation();
 
    @Nullable
-   IAnimation playerAnimator_getAnimation(@NotNull Identifier var1);
+   IAnimation playerAnimator_getAnimation(@NotNull Identifier id);
 
    @Nullable
-   IAnimation playerAnimator_setAnimation(@NotNull Identifier var1, @Nullable IAnimation var2);
+   IAnimation playerAnimator_setAnimation(@NotNull Identifier id, @Nullable IAnimation animation);
 }

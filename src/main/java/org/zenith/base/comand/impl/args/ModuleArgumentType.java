@@ -21,17 +21,17 @@ public class ModuleArgumentType implements ArgumentType<Module> {
       return new ModuleArgumentType();
    }
 
-   public Module parse(StringReader var1) throws CommandSyntaxException {
-      Module var2 = Zenith.getInstance().getModuleManager().method2484(var1.readString());
-      if (var2 == null) {
-         throw new DynamicCommandExceptionType(var0 -> Component.literal(var0.toString() + " не существует.")).create(var1.readString());
+   public Module parse(StringReader stringReader) throws CommandSyntaxException {
+      Module moduleValue = Zenith.getInstance().getModuleManager().method2484(stringReader.readString());
+      if (moduleValue == null) {
+         throw new DynamicCommandExceptionType(obj -> Component.literal(obj.toString() + " не существует.")).create(stringReader.readString());
       } else {
-         return var2;
+         return moduleValue;
       }
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(Zenith.getInstance().getModuleManager().getItems().stream().map(Module::getName), var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(Zenith.getInstance().getModuleManager().getItems().stream().map(Module::getName), builder);
    }
 
    public Collection<String> getExamples() {

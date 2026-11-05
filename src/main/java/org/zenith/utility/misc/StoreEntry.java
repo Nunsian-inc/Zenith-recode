@@ -56,37 +56,37 @@ public final class StoreEntry {
    public static final String text5 = "FRIENDS";
    public static final String text6 = "PRIVATE";
 
-   public StoreEntry(String var1, String var2, String var3, int var4, long var5, List<Data1> var7) {
-      Objects.requireNonNull(var1, "userId");
-      var3 = var3 != null && !var3.isBlank() ? var3 : "PUBLIC";
-      var7 = var7 == null ? List.of() : List.copyOf(var7);
-      this.text = var1;
-      this.text2 = var2;
-      this.text3 = var3;
-      this.intValue = var4;
-      this.longValue = var5;
-      this.items = var7;
+   public StoreEntry(String text, String str, String str2, int intValue, long longValue, List<Data1> items) {
+      Objects.requireNonNull(text, "userId");
+      str2 = str2 != null && !str2.isBlank() ? str2 : "PUBLIC";
+      items = items == null ? List.of() : List.copyOf(items);
+      this.text = text;
+      this.text2 = str;
+      this.text3 = str2;
+      this.intValue = intValue;
+      this.longValue = longValue;
+      this.items = items;
    }
 
    public List<String> method1680() {
-      List<String> var1 = new ArrayList<>(this.items.size());
+      List<String> strings = new ArrayList<>(this.items.size());
 
-      for (Data1 var3 : this.items) {
-         var1.add(var3.getText());
+      for (Data1 data1 : this.items) {
+         strings.add(data1.getText());
       }
 
-      return var1;
+      return strings;
    }
 
    public boolean isEmpty() {
       return this.items.isEmpty();
    }
 
-   public boolean method1681(StoreEntry var1) {
-      if (var1 == null) {
+   public boolean method1681(StoreEntry storeEntry) {
+      if (storeEntry == null) {
          return true;
       } else {
-         return this.intValue != var1.intValue ? this.intValue > var1.intValue : this.longValue > var1.longValue;
+         return this.intValue != storeEntry.intValue ? this.intValue > storeEntry.intValue : this.longValue > storeEntry.longValue;
       }
    }
 

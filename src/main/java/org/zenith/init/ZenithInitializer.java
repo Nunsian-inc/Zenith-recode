@@ -30,9 +30,9 @@ public class ZenithInitializer implements ClientModInitializer {
       ensureBaritoneSettingsExist();
       new Zenith();
       Zenith.getInstance().init();
-      LivingEntityRenderLayerRegistrationCallback.EVENT.register((LivingEntityRenderLayerRegistrationCallback)(var0, var1, var2, var3) -> {
-         if (var1 instanceof AvatarRenderer var4) {
-            var2.register(new WardrobeFeatureRenderer(var4));
+      LivingEntityRenderLayerRegistrationCallback.EVENT.register((LivingEntityRenderLayerRegistrationCallback)(entityType, livingEntityRenderer, registrationHelper, context) -> {
+         if (livingEntityRenderer instanceof AvatarRenderer renderer) {
+            registrationHelper.register(new WardrobeFeatureRenderer(renderer));
          }
       });
       ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
@@ -40,7 +40,7 @@ public class ZenithInitializer implements ClientModInitializer {
             return Zenith.method1501("after_shader_load");
          }
 
-         public void onResourceManagerReload(ResourceManager var1) {
+         public void onResourceManagerReload(ResourceManager resourceManager) {
             LightUtil.invalidate();
             PostEffectManager.method2823();
             KawaseShaderKey.method5167();
@@ -57,27 +57,27 @@ public class ZenithInitializer implements ClientModInitializer {
 
    private static void ensureBaritoneSettingsExist() {
       try {
-         Path var0 = Minecraft.getInstance().gameDirectory.toPath().resolve("baritone").resolve("settings.txt");
-         if (Files.notExists(var0)) {
-            Files.createDirectories(var0.getParent());
-            Files.createFile(var0);
+         Path path = Minecraft.getInstance().gameDirectory.toPath().resolve("baritone").resolve("settings.txt");
+         if (Files.notExists(path)) {
+            Files.createDirectories(path.getParent());
+            Files.createFile(path);
          }
 
-         ensureSettingPresent(var0);
-      } catch (IOException var1) {
+         ensureSettingPresent(path);
+      } catch (IOException e) {
       }
    }
 
-   private static void ensureSettingPresent(Path var0) throws IOException {
-      List<String> var1 = Files.readAllLines(var0);
+   private static void ensureSettingPresent(Path path) throws IOException {
+      List<String> allLines = Files.readAllLines(path);
 
-      for (String var3 : var1) {
-         if (var3.trim().equalsIgnoreCase("chunkCaching false")) {
+      for (String allLine : allLines) {
+         if (allLine.trim().equalsIgnoreCase("chunkCaching false")) {
             return;
          }
       }
 
-      String var4 = var1.isEmpty() ? "" : System.lineSeparator();
-      Files.writeString(var0, var4 + "chunkCaching false", StandardOpenOption.APPEND);
+      String lineSeparator = allLines.isEmpty() ? "" : System.lineSeparator();
+      Files.writeString(path, lineSeparator + "chunkCaching false", StandardOpenOption.APPEND);
    }
 }

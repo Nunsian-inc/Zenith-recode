@@ -7,9 +7,9 @@ public class CloudWaypointEvent implements Event {
    private final CloudPackets.Data10 data10;
    private final boolean flag;
 
-   public CloudWaypointEvent(CloudPackets.Data10 var1, boolean var2) {
-      this.data10 = var1;
-      this.flag = var2;
+   public CloudWaypointEvent(CloudPackets.Data10 data10, boolean flag) {
+      this.data10 = data10;
+      this.flag = flag;
    }
 
    public CloudPackets.Data10 getData10() {

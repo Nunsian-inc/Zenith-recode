@@ -107,7 +107,7 @@ public final class PlayerAnimationRegistry {
          if (component != null) {
             return component.getString();
          }
-      } catch (Exception var3) {
+      } catch (Exception e) {
       }
 
       return arg.replace("\"", "");

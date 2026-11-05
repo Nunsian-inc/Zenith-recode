@@ -34,26 +34,26 @@ public final class NoPushModule extends Module {
    }
 
    @EventTarget
-   public void method6590(EntityPushEvent var1) {
-      switch (var1.getType()) {
+   public void method6590(EntityPushEvent event) {
+      switch (event.getType()) {
          case COLLISION:
-            var1.setCancelled(this.ignoreSetting.method5227(2));
+            event.setCancelled(this.ignoreSetting.method5227(2));
             break;
          case WATER:
-            var1.setCancelled(this.ignoreSetting.method5227(0));
+            event.setCancelled(this.ignoreSetting.method5227(0));
             break;
          case BLOCK:
-            var1.setCancelled(this.ignoreSetting.method5227(1));
+            event.setCancelled(this.ignoreSetting.method5227(1));
       }
    }
 
    @EventTarget
-   public void method6591(BlockCollisionEvent var1) {
-      Block var2 = var1.getBlock();
-      if (var2.equals(Blocks.POWDER_SNOW)) {
-         var1.setCancelled(this.ignoreSetting.method5227(3));
-      } else if (var2.equals(Blocks.SWEET_BERRY_BUSH)) {
-         var1.setCancelled(this.ignoreSetting.method5227(4));
+   public void method6591(BlockCollisionEvent event) {
+      Block block = event.getBlock();
+      if (block.equals(Blocks.POWDER_SNOW)) {
+         event.setCancelled(this.ignoreSetting.method5227(3));
+      } else if (block.equals(Blocks.SWEET_BERRY_BUSH)) {
+         event.setCancelled(this.ignoreSetting.method5227(4));
       }
    }
 }

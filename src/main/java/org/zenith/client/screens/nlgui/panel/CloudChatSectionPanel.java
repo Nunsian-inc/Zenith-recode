@@ -164,13 +164,13 @@ public class CloudChatSectionPanel extends SectionPanel {
       256, 0.75F, true
    ) {
       @Override
-      public boolean removeEldestEntry(Entry<CloudChatSectionPanel.BubbleKey, CloudChatSectionPanel.BubbleLayout> var1) {
+      public boolean removeEldestEntry(Entry<CloudChatSectionPanel.BubbleKey, CloudChatSectionPanel.BubbleLayout> eldest) {
          return this.size() > 768;
       }
    };
    private static final Map<CloudChatSectionPanel.ClipKey, String> CLIPS = new LinkedHashMap<CloudChatSectionPanel.ClipKey, String>(64, 0.75F, true) {
       @Override
-      public boolean removeEldestEntry(Entry<CloudChatSectionPanel.ClipKey, String> var1) {
+      public boolean removeEldestEntry(Entry<CloudChatSectionPanel.ClipKey, String> eldest) {
          return this.size() > 256;
       }
    };
@@ -180,8 +180,8 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private static CloudConnectionState state() {
-      Cloud var0 = cloud();
-      return var0 == null ? null : var0.state();
+      Cloud cloud2 = cloud();
+      return cloud2 == null ? null : cloud2.state();
    }
 
    private static StoreApi store() {
@@ -215,8 +215,8 @@ public class CloudChatSectionPanel extends SectionPanel {
    public String emptyText() {
       if (this.getActiveTab() == 1) {
          if (!siteMode()) {
-            CloudConnectionState var4 = state();
-            if (var4 == null) {
+            CloudConnectionState cloudConnectionState = state();
+            if (cloudConnectionState == null) {
                return "gui.friends.reason.down";
             }
          }
@@ -230,22 +230,22 @@ public class CloudChatSectionPanel extends SectionPanel {
          if (global().method2166()) {
             return "gui.chat.empty.global";
          } else {
-            String var3 = global().error();
-            return var3 != null && !var3.isEmpty() ? clipText(var3) : "gui.chat.loading";
+            String error = global().error();
+            return error != null && !error.isEmpty() ? clipText(error) : "gui.chat.loading";
          }
       } else {
-         CloudConnectionState var1 = state();
-         if (var1 == null) {
+         CloudConnectionState cloudConnectionState = state();
+         if (cloudConnectionState == null) {
             return "gui.friends.reason.down";
-         } else if (var1.method8035()) {
+         } else if (cloudConnectionState.method8035()) {
             return "gui.chat.empty.global";
          } else {
-            String var2 = var1.note();
-            if (var2 == null || var2.isBlank()) {
-               var2 = var1.getLastError();
+            String note = cloudConnectionState.note();
+            if (note == null || note.isBlank()) {
+               note = cloudConnectionState.getLastError();
             }
 
-            return var2 != null && !var2.isBlank() ? var1.getType().label() + " — " + var2 : var1.getType().label();
+            return note != null && !note.isBlank() ? cloudConnectionState.getType().label() + " — " + note : cloudConnectionState.getType().label();
          }
       }
    }
@@ -301,7 +301,7 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.invalidate();
       }
 
-      long var1 = System.currentTimeMillis();
+      long now = System.currentTimeMillis();
       if (siteMode()) {
          if (this.getActiveTab() == 0) {
             global().method2167();
@@ -309,72 +309,72 @@ public class CloudChatSectionPanel extends SectionPanel {
             direct().method4863();
          }
 
-         int var3 = global().revision() * 31 + direct().revision();
-         if (var3 != this.seenSiteRevision) {
-            this.seenSiteRevision = var3;
+         int seenSiteRevision = global().revision() * 31 + direct().revision();
+         if (seenSiteRevision != this.seenSiteRevision) {
+            this.seenSiteRevision = seenSiteRevision;
             this.revision++;
          }
       } else {
-         if (this.getActiveTab() == 0 && var1 - this.lastRoster > 5000L) {
-            this.lastRoster = var1;
+         if (this.getActiveTab() == 0 && now - this.lastRoster > 5000L) {
+            this.lastRoster = now;
             this.fetchRoster();
          }
 
-         Cloud var11 = cloud();
-         if (var11 != null && var11.getPartyMember().getIntValue() != this.seenDirectSeq) {
-            this.seenDirectSeq = var11.getPartyMember().getIntValue();
-            if (var11.getPartyMember().getLongValue2() == this.peerUid) {
+         Cloud cloud2 = cloud();
+         if (cloud2 != null && cloud2.getPartyMember().getIntValue() != this.seenDirectSeq) {
+            this.seenDirectSeq = cloud2.getPartyMember().getIntValue();
+            if (cloud2.getPartyMember().getLongValue2() == this.peerUid) {
                this.lastPoll = 0L;
             }
          }
 
-         if (this.getActiveTab() == 1 && this.hasPeer() && (this.peerUid != this.polledPeer || var1 - this.lastPoll > 2000L)) {
-            this.lastPoll = var1;
+         if (this.getActiveTab() == 1 && this.hasPeer() && (this.peerUid != this.polledPeer || now - this.lastPoll > 2000L)) {
+            this.lastPoll = now;
             this.polledPeer = this.peerUid;
             this.fetchConversation(this.peerUid);
          }
       }
 
-      int var12 = this.countForChange();
-      String var4 = this.statusForChange();
-      int var5 = Math.round(this.mainWidth());
-      boolean var6 = this.getActiveTab() != this.lastTab;
-      boolean var7 = !var4.equals(this.lastStatus);
-      String var8 = this.searchQuery() == null ? "" : this.searchQuery();
-      boolean var9 = !var8.equals(this.lastQuery);
-      if (var12 != this.lastCount || var6 || var5 != this.lastColumn || var7 || var9) {
-         boolean var10 = var12 > this.lastCount && this.lastCount >= 0 && !var6;
-         this.lastCount = var12;
+      int countForChange = this.countForChange();
+      String statusForChange = this.statusForChange();
+      int lastColumn = Math.round(this.mainWidth());
+      boolean flag = this.getActiveTab() != this.lastTab;
+      boolean flag2 = !statusForChange.equals(this.lastStatus);
+      String searchQuery = this.searchQuery() == null ? "" : this.searchQuery();
+      boolean flag3 = !searchQuery.equals(this.lastQuery);
+      if (countForChange != this.lastCount || flag || lastColumn != this.lastColumn || flag2 || flag3) {
+         boolean flag4 = countForChange > this.lastCount && this.lastCount >= 0 && !flag;
+         this.lastCount = countForChange;
          this.lastTab = this.getActiveTab();
-         this.lastColumn = var5;
-         this.lastStatus = var4;
-         this.lastQuery = var8;
-         if (var10) {
+         this.lastColumn = lastColumn;
+         this.lastStatus = statusForChange;
+         this.lastQuery = searchQuery;
+         if (flag4) {
             this.messageArrival.reset(0.0F);
             this.messageArrival.method2810(1.0F);
          }
 
-         if (var6) {
+         if (flag) {
             this.focusInput();
             this.listReveal.reset(0.0F);
             this.listReveal.method2810(1.0F);
             this.pickerOpen = false;
          }
 
-         if (var6 || var7) {
+         if (flag || flag2) {
             this.ghosts.clear();
             this.knownNodeGlobal.clear();
             this.knownNodeDirect.clear();
             this.knownSiteGlobal.clear();
          }
 
-         if (var9 && this.getActiveTab() == 1 && var8.length() >= 2) {
-            UserSearchClient.method4760(var8, 8).whenComplete((var1x, var2) -> this.revision++);
+         if (flag3 && this.getActiveTab() == 1 && searchQuery.length() >= 2) {
+            UserSearchClient.method4760(searchQuery, 8).whenComplete((var1x, throwable) -> this.revision++);
          }
 
          this.deleteMenuMessage = 0L;
          this.invalidate();
-         if (this.stickToEnd || var6) {
+         if (this.stickToEnd || flag) {
             this.stickToEnd = true;
             this.scrollToEnd();
          }
@@ -387,42 +387,42 @@ public class CloudChatSectionPanel extends SectionPanel {
       } else if (siteMode()) {
          return global().method2164().size() * 131 + global().getOnline().size();
       } else {
-         CloudConnectionState var1 = state();
-         return var1 == null ? 0 : this.countGlobal(var1);
+         CloudConnectionState cloudConnectionState = state();
+         return cloudConnectionState == null ? 0 : this.countGlobal(cloudConnectionState);
       }
    }
 
-   private int countGlobal(CloudConnectionState var1) {
-      Cloud var2 = cloud();
-      int var3 = 0;
+   private int countGlobal(CloudConnectionState cloudConnectionState) {
+      Cloud cloud2 = cloud();
+      int n = 0;
 
-      for (CloudPackets.Data13 var5 : var1.getArrayDeque()) {
-         if (var5.getIntValue() == 0 && (var2 == null || !var2.prefs().method3316(var5.username()))) {
-            var3++;
+      for (CloudPackets.Data13 data13 : cloudConnectionState.getArrayDeque()) {
+         if (data13.getIntValue() == 0 && (cloud2 == null || !cloud2.prefs().method3316(data13.username()))) {
+            n++;
          }
       }
 
-      return var3;
+      return n;
    }
 
    private String statusForChange() {
       if (siteMode()) {
          return (global().isLive() ? "live" : "poll") + (direct().isLive() ? "+" : "-") + (this.hasPeer() ? this.openPeerUid() : 0L);
       } else {
-         CloudConnectionState var1 = state();
-         return var1 == null ? "none" : var1.getType().name();
+         CloudConnectionState cloudConnectionState = state();
+         return cloudConnectionState == null ? "none" : cloudConnectionState.getType().name();
       }
    }
 
    private void fetchRoster() {
-      StoreApi var1 = store();
-      if (var1 != null) {
-         var1.method1963().whenComplete((var1x, var2) -> {
-            if (var2 == null) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1963().whenComplete((var1x, throwable) -> {
+            if (throwable == null) {
                this.online = Collections.unmodifiableList(new ArrayList<>(var1x));
                this.error = "";
             } else {
-               this.error = shortError(var2);
+               this.error = shortError(throwable);
             }
 
             this.revision++;
@@ -430,16 +430,16 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private void fetchConversation(long var1) {
-      StoreApi var3 = store();
-      if (var3 != null) {
-         var3.method1964(var1, 200).whenComplete((var3x, var4) -> {
-            if (var4 == null) {
+   private void fetchConversation(long peerUid) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1964(peerUid, 200).whenComplete((var3x, throwable) -> {
+            if (throwable == null) {
                if (!var3x.isEmpty()) {
-                  this.rememberPreview(var1, var3x.get(var3x.size() - 1).text());
+                  this.rememberPreview(peerUid, var3x.get(var3x.size() - 1).text());
                }
 
-               if (var1 != this.peerUid) {
+               if (peerUid != this.peerUid) {
                   return;
                }
 
@@ -449,11 +449,11 @@ public class CloudChatSectionPanel extends SectionPanel {
 
                this.error = "";
             } else {
-               if (var1 != this.peerUid) {
+               if (peerUid != this.peerUid) {
                   return;
                }
 
-               this.error = shortError(var4);
+               this.error = shortError(throwable);
             }
 
             this.revision++;
@@ -461,25 +461,25 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private void rememberPreview(long var1, String var3) {
-      if (this.previews.size() >= 64 && !this.previews.containsKey(var1)) {
+   private void rememberPreview(long peerUid, String text) {
+      if (this.previews.size() >= 64 && !this.previews.containsKey(peerUid)) {
          this.previews.keySet().stream().findFirst().ifPresent(this.previews::remove);
       }
 
-      this.previews.put(var1, var3);
+      this.previews.put(peerUid, text);
    }
 
-   private List<CloudPackets.Data13> globalMessages(CloudConnectionState var1) {
-      Cloud var2 = cloud();
-      ArrayList<CloudPackets.Data13> var3 = new ArrayList<>();
+   private List<CloudPackets.Data13> globalMessages(CloudConnectionState cloudConnectionState) {
+      Cloud cloud2 = cloud();
+      ArrayList<CloudPackets.Data13> data13s = new ArrayList<>();
 
-      for (CloudPackets.Data13 var5 : var1.getArrayDeque()) {
-         if (var5.getIntValue() == 0 && (var2 == null || !var2.prefs().method3316(var5.username()))) {
-            var3.add(var5);
+      for (CloudPackets.Data13 data13 : cloudConnectionState.getArrayDeque()) {
+         if (data13.getIntValue() == 0 && (cloud2 == null || !cloud2.prefs().method3316(data13.username()))) {
+            data13s.add(data13);
          }
       }
 
-      return var3;
+      return data13s;
    }
 
    @Override
@@ -500,66 +500,66 @@ public class CloudChatSectionPanel extends SectionPanel {
       if (siteMode()) {
          this.buildSiteGlobal();
       } else {
-         CloudConnectionState var1 = state();
-         Cloud var2 = cloud();
-         if (var1 != null && var2 != null) {
-            long var3 = var2.getLongValue();
-            List<CloudPackets.Data13> var5 = this.globalMessages(var1);
-            CloudPackets.Data13 var6 = var5.isEmpty() ? null : (CloudPackets.Data13)var5.get(var5.size() - 1);
-            LinkedHashMap var7 = new LinkedHashMap();
+         CloudConnectionState cloudConnectionState = state();
+         Cloud cloud2 = cloud();
+         if (cloudConnectionState != null && cloud2 != null) {
+            long longValue = cloud2.getLongValue();
+            List<CloudPackets.Data13> globalMessages = this.globalMessages(cloudConnectionState);
+            CloudPackets.Data13 data13 = globalMessages.isEmpty() ? null : (CloudPackets.Data13)globalMessages.get(globalMessages.size() - 1);
+            LinkedHashMap map = new LinkedHashMap();
 
-            for (CloudPackets.Data13 var9 : var5) {
-               if (var9.getLongValue3() > 0L) {
-                  var7.put(var9.getLongValue3(), var9);
+            for (CloudPackets.Data13 globalMessage : globalMessages) {
+               if (globalMessage.getLongValue3() > 0L) {
+                  map.put(globalMessage.getLongValue3(), globalMessage);
                }
             }
 
-            int var23 = this.ghosts.size();
-            this.knownNodeGlobal.forEach((var4, var5x) -> {
-               if (!var7.containsKey(var4)) {
-                  this.ghosts.add(new CloudChatSectionPanel.Ghost(0, var5x.username(), "", var5x.text(), var5x.time(), var3 != 0L && var5x.uid() == var3));
+            int size = this.ghosts.size();
+            this.knownNodeGlobal.forEach((key, var5x) -> {
+               if (!map.containsKey(key)) {
+                  this.ghosts.add(new CloudChatSectionPanel.Ghost(0, var5x.username(), "", var5x.text(), var5x.time(), longValue != 0L && var5x.uid() == longValue));
                }
             });
-            this.forgetGone(var23);
+            this.forgetGone(size);
             this.knownNodeGlobal.clear();
-            this.knownNodeGlobal.putAll(var7);
-            String var24 = null;
-            boolean var10 = false;
-            long var11 = 0L;
+            this.knownNodeGlobal.putAll(map);
+            String author = null;
+            boolean mine = false;
+            long daySeparator = 0L;
 
-            for (Object var14 : this.mergeWithGhosts(var5, 0)) {
-               if (var14 instanceof CloudChatSectionPanel.Ghost var25) {
-                  boolean var26 = !var25.mine && (!var25.author.equals(var24) || var10);
-                  var11 = this.daySeparator(var11, var25.time);
-                  var26 = var26 || this.dayBroke && !var25.mine;
+            for (Object mergeWithGhost : this.mergeWithGhosts(globalMessages, 0)) {
+               if (mergeWithGhost instanceof CloudChatSectionPanel.Ghost ghost) {
+                  boolean showName = !ghost.mine && (!ghost.author.equals(author) || mine);
+                  daySeparator = this.daySeparator(daySeparator, ghost.time);
+                  showName = showName || this.dayBroke && !ghost.mine;
                   this.dayBroke = false;
-                  var24 = var25.author;
-                  var10 = var25.mine;
-                  this.ghostBubble(var25, var26);
+                  author = ghost.author;
+                  mine = ghost.mine;
+                  this.ghostBubble(ghost, showName);
                } else {
-                  CloudPackets.Data13 var15 = (CloudPackets.Data13)var14;
-                  boolean var16 = var3 != 0L && var15.uid() == var3;
-                  String var17 = var15.username();
-                  boolean var18 = !var16 && (!var17.equals(var24) || var10);
-                  var11 = this.daySeparator(var11, var15.time());
-                  var18 = var18 || this.dayBroke && !var16;
+                  CloudPackets.Data13 mergeWithGhost2 = (CloudPackets.Data13)mergeWithGhost;
+                  boolean flag = longValue != 0L && mergeWithGhost2.uid() == longValue;
+                  String username = mergeWithGhost2.username();
+                  boolean showName = !flag && (!username.equals(author) || mine);
+                  daySeparator = this.daySeparator(daySeparator, mergeWithGhost2.time());
+                  showName = showName || this.dayBroke && !flag;
                   this.dayBroke = false;
-                  var24 = var17;
-                  var10 = var16;
-                  long var19 = var15.uid();
-                  long var21 = var15.getLongValue3();
+                  author = username;
+                  mine = flag;
+                  long uid = mergeWithGhost2.uid();
+                  long deleteMenuMessage = mergeWithGhost2.getLongValue3();
                   this.bubble(
-                     var17,
-                     var19,
+                     username,
+                     uid,
                      "",
-                     var15.text(),
-                     var15.time(),
-                     var16,
-                     var18,
-                     var15 == var6,
+                     mergeWithGhost2.text(),
+                     mergeWithGhost2.time(),
+                     flag,
+                     showName,
+                     mergeWithGhost2 == data13,
                      false,
-                     var16 ? null : () -> this.selectFromChat(var19, var17),
-                     var16 && var21 > 0L ? () -> this.openDeleteMenu(var21) : null
+                     flag ? null : () -> this.selectFromChat(uid, username),
+                     flag && deleteMenuMessage > 0L ? () -> this.openDeleteMenu(deleteMenuMessage) : null
                   );
                }
             }
@@ -569,143 +569,143 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private void forgetGone(int var1) {
-      if (this.ghosts.size() - var1 > 4) {
-         this.ghosts.subList(var1, this.ghosts.size()).clear();
+   private void forgetGone(int size) {
+      if (this.ghosts.size() - size > 4) {
+         this.ghosts.subList(size, this.ghosts.size()).clear();
       }
    }
 
    private void buildSiteGlobal() {
-      CloudChatClient var1 = global();
-      long var2 = var1.getLongValue();
-      List<CloudChatClient.Data3> var4 = var1.method2164();
-      CloudChatClient.Data3 var5 = var1.getData3();
-      if (var5 != null) {
-         this.pinnedBar(var5);
+      CloudChatClient cloudChatClient = global();
+      long longValue = cloudChatClient.getLongValue();
+      List<CloudChatClient.Data3> globalMessages = cloudChatClient.method2164();
+      CloudChatClient.Data3 data3 = cloudChatClient.getData3();
+      if (data3 != null) {
+         this.pinnedBar(data3);
       }
 
-      CloudChatClient.Data3 var6 = var4.isEmpty() ? null : (CloudChatClient.Data3)var4.get(var4.size() - 1);
-      LinkedHashMap var7 = new LinkedHashMap();
+      CloudChatClient.Data3 data32 = globalMessages.isEmpty() ? null : (CloudChatClient.Data3)globalMessages.get(globalMessages.size() - 1);
+      LinkedHashMap map = new LinkedHashMap();
 
-      for (CloudChatClient.Data3 var9 : var4) {
-         if (var9.getLongValue() > 0L) {
-            var7.put(var9.getLongValue(), var9);
+      for (CloudChatClient.Data3 globalMessage : globalMessages) {
+         if (globalMessage.getLongValue() > 0L) {
+            map.put(globalMessage.getLongValue(), globalMessage);
          }
       }
 
-      int var24 = this.ghosts.size();
+      int size = this.ghosts.size();
       this.knownSiteGlobal
          .forEach(
             (var4x, var5x) -> {
-               if (!var7.containsKey(var4x)) {
+               if (!map.containsKey(var4x)) {
                   this.ghosts
                      .add(
                         new CloudChatSectionPanel.Ghost(
-                           2, var5x.name(), var5x.role(), var5x.body(), var5x.getLongValue3(), var2 != 0L && var5x.getLongValue2() == var2
+                           2, var5x.name(), var5x.role(), var5x.body(), var5x.getLongValue3(), longValue != 0L && var5x.getLongValue2() == longValue
                         )
                      );
                }
             }
          );
-      this.forgetGone(var24);
+      this.forgetGone(size);
       this.knownSiteGlobal.clear();
-      this.knownSiteGlobal.putAll(var7);
-      String var25 = null;
-      boolean var10 = false;
-      long var11 = 0L;
+      this.knownSiteGlobal.putAll(map);
+      String author = null;
+      boolean mine = false;
+      long daySeparator = 0L;
 
-      for (Object var14 : this.mergeWithGhosts(var4, 2)) {
-         if (var14 instanceof CloudChatSectionPanel.Ghost var26) {
-            boolean var27 = !var26.mine && (!var26.author.equals(var25) || var10);
-            var11 = this.daySeparator(var11, var26.time);
-            var27 = var27 || this.dayBroke && !var26.mine;
+      for (Object mergeWithGhost : this.mergeWithGhosts(globalMessages, 2)) {
+         if (mergeWithGhost instanceof CloudChatSectionPanel.Ghost ghost) {
+            boolean showName = !ghost.mine && (!ghost.author.equals(author) || mine);
+            daySeparator = this.daySeparator(daySeparator, ghost.time);
+            showName = showName || this.dayBroke && !ghost.mine;
             this.dayBroke = false;
-            var25 = var26.author;
-            var10 = var26.mine;
-            this.ghostBubble(var26, var27);
+            author = ghost.author;
+            mine = ghost.mine;
+            this.ghostBubble(ghost, showName);
          } else {
-            CloudChatClient.Data3 var15 = (CloudChatClient.Data3)var14;
-            boolean var16 = var2 != 0L && var15.getLongValue2() == var2;
-            boolean var17 = !var16 && (!var15.name().equals(var25) || var10);
-            var11 = this.daySeparator(var11, var15.getLongValue3());
-            var17 = var17 || this.dayBroke && !var16;
+            CloudChatClient.Data3 mergeWithGhost2 = (CloudChatClient.Data3)mergeWithGhost;
+            boolean flag = longValue != 0L && mergeWithGhost2.getLongValue2() == longValue;
+            boolean showName = !flag && (!mergeWithGhost2.name().equals(author) || mine);
+            daySeparator = this.daySeparator(daySeparator, mergeWithGhost2.getLongValue3());
+            showName = showName || this.dayBroke && !flag;
             this.dayBroke = false;
-            var25 = var15.name();
-            var10 = var16;
-            long var18 = var15.getLongValue2();
-            String var20 = var15.name();
-            long var21 = var15.getLongValue();
-            boolean var23 = var16 || global().isFlag();
+            author = mergeWithGhost2.name();
+            mine = flag;
+            long uid = mergeWithGhost2.getLongValue2();
+            String name = mergeWithGhost2.name();
+            long deleteMenuMessage = mergeWithGhost2.getLongValue();
+            boolean flag2 = flag || global().isFlag();
             this.bubble(
-               var20,
-               var18,
-               var15.role(),
-               var15.body(),
-               var15.getLongValue3(),
-               var16,
-               var17,
-               var15 == var6,
+               name,
+               uid,
+               mergeWithGhost2.role(),
+               mergeWithGhost2.body(),
+               mergeWithGhost2.getLongValue3(),
+               flag,
+               showName,
+               mergeWithGhost2 == data32,
                false,
-               var16 ? null : () -> this.selectFromChat(var18, var20),
-               var23 ? () -> this.openDeleteMenu(var21) : null
+               flag ? null : () -> this.selectFromChat(uid, name),
+               flag2 ? () -> this.openDeleteMenu(deleteMenuMessage) : null
             );
          }
       }
    }
 
-   private void pinnedBar(CloudChatClient.Data3 var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.4F);
-      var var3 = wrap(var1.name() + ": " + Coord.method5172(var1.body()).text(), var2, this.mainWidth() - 16.0F - 6.0F - 8.0F);
-      float var4 = 6.0F + Math.min(2, var3.size()) * (var2.height() + 1.0F);
+   private void pinnedBar(CloudChatClient.Data3 data3) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      var strings = wrap(data3.name() + ": " + Coord.method5172(data3.body()).text(), font, this.mainWidth() - 16.0F - 6.0F - 8.0F);
+      float height = 6.0F + Math.min(2, strings.size()) * (font.height() + 1.0F);
       this.custom(
-         var4 + 3.0F,
-         (var3x, var4x, var5, var6, var7, var8, var9, var10) -> {
+         height + 3.0F,
+         (var3x, var4x, n, f, y, f2, previewAlpha, zenithStyle) -> {
             var3x.drawRoundedRect(
-               var6 + 8.0F,
-               var7,
-               var8 - 16.0F,
-               var4,
+               f + 8.0F,
+               y,
+               f2 - 16.0F,
+               height,
                ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.5F),
-               var10.getPrimaryColor().getZenithColor().method7294(var9 * 0.16F)
+               zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.16F)
             );
-            MenuGlyph.PIN.draw(var3x, var6 + 8.0F + 3.0F, var7 + 3.0F, var10.getPrimaryColor().getZenithColor().method7294(var9));
-            float var11 = var7 + 3.0F;
+            MenuGlyph.PIN.draw(var3x, f + 8.0F + 3.0F, y + 3.0F, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+            float centeredTextY = y + 3.0F;
 
-            for (int var12 = 0; var12 < var3.size() && var12 < 2; var12++) {
+            for (int i = 0; i < strings.size() && i < 2; i++) {
                var3x.drawText(
-                  var2, (String)var3.get(var12), var6 + 8.0F + 3.0F + 6.0F + 4.0F, var11, var10.getTextSecondary().getZenithColor().method7294(var9)
+                  font, (String)strings.get(i), f + 8.0F + 3.0F + 6.0F + 4.0F, centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
                );
-               var11 += var2.height() + 1.0F;
+               centeredTextY += font.height() + 1.0F;
             }
          }
       );
    }
 
-   private void openDeleteMenu(long var1) {
-      this.openDeleteMenu(var1, 0L);
+   private void openDeleteMenu(long deleteMenuMessage) {
+      this.openDeleteMenu(deleteMenuMessage, 0L);
    }
 
-   private void openDeleteMenu(long var1, long var3) {
-      if (var1 > 0L) {
-         this.deleteMenuMessage = var1;
-         this.deleteMenuPeer = var3;
-         BoundsData var5 = this.lastRightClickBounds();
-         this.deleteMenuAnchorTop = var5 == null ? Float.NaN : var5.getFloatValue2();
+   private void openDeleteMenu(long deleteMenuMessage, long deleteMenuPeer) {
+      if (deleteMenuMessage > 0L) {
+         this.deleteMenuMessage = deleteMenuMessage;
+         this.deleteMenuPeer = deleteMenuPeer;
+         BoundsData lastRightClickBounds = this.lastRightClickBounds();
+         this.deleteMenuAnchorTop = lastRightClickBounds == null ? Float.NaN : lastRightClickBounds.getFloatValue2();
       }
    }
 
-   private boolean clickDeleteMenu(double var1, double var3) {
-      if (this.deleteMenuMessage != 0L && this.deleteMenuBounds != null && this.deleteMenuBounds.contains(var1, var3)) {
-         long var5 = this.deleteMenuMessage;
-         long var7 = this.deleteMenuPeer;
+   private boolean clickDeleteMenu(double lastClickX, double lastClickY) {
+      if (this.deleteMenuMessage != 0L && this.deleteMenuBounds != null && this.deleteMenuBounds.contains(lastClickX, lastClickY)) {
+         long deleteMenuMessage = this.deleteMenuMessage;
+         long deleteMenuPeer = this.deleteMenuPeer;
          this.deleteMenuMessage = 0L;
          this.deleteMenuPeer = 0L;
          if (siteMode()) {
-            this.deleteOwnMessage(var5);
-         } else if (var7 != 0L) {
-            this.deleteNodeDirect(var7, var5);
+            this.deleteOwnMessage(deleteMenuMessage);
+         } else if (deleteMenuPeer != 0L) {
+            this.deleteNodeDirect(deleteMenuPeer, deleteMenuMessage);
          } else {
-            this.deleteNodeMessage(var5);
+            this.deleteNodeMessage(deleteMenuMessage);
          }
 
          return true;
@@ -714,59 +714,59 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private void deleteNodeMessage(long var1) {
-      Cloud var3 = cloud();
-      if (var3 != null && var1 > 0L) {
-         var3.method7909(var1);
+   private void deleteNodeMessage(long deleteMenuMessage) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && deleteMenuMessage > 0L) {
+         cloud2.method7909(deleteMenuMessage);
       }
    }
 
-   private void deleteNodeDirect(long var1, long var3) {
-      StoreApi var5 = store();
-      if (var5 != null && var3 > 0L) {
-         var5.method1967(var1, var3).whenComplete((var3x, var4) -> {
-            if (var4 == null) {
+   private void deleteNodeDirect(long deleteMenuPeer, long deleteMenuMessage) {
+      StoreApi storeApi = store();
+      if (storeApi != null && deleteMenuMessage > 0L) {
+         storeApi.method1967(deleteMenuPeer, deleteMenuMessage).whenComplete((var3x, throwable) -> {
+            if (throwable == null) {
                synchronized (this.conversationLock) {
-                  var var6 = new ArrayList<>(this.conversation);
-                  var6.removeIf(var2 -> var2.getLongValue() == var3);
-                  this.conversation = Collections.unmodifiableList(var6);
+                  var list = new ArrayList<>(this.conversation);
+                  list.removeIf(data3 -> data3.getLongValue() == deleteMenuMessage);
+                  this.conversation = Collections.unmodifiableList(list);
                }
             }
 
-            this.error = var4 == null ? "" : shortError(var4);
+            this.error = throwable == null ? "" : shortError(throwable);
             this.revision++;
          });
       }
    }
 
-   private void deleteOwnMessage(long var1) {
-      if (siteMode() && var1 > 0L) {
-         global().method2169(var1).whenComplete((var1x, var2) -> {
-            this.error = var2 == null ? "" : siteError(var2);
+   private void deleteOwnMessage(long deleteMenuMessage) {
+      if (siteMode() && deleteMenuMessage > 0L) {
+         global().method2169(deleteMenuMessage).whenComplete((var1x, throwable) -> {
+            this.error = throwable == null ? "" : siteError(throwable);
             this.revision++;
          });
       }
    }
 
-   private void selectFromChat(long var1, String var3) {
-      Cloud var4 = cloud();
-      if (var4 == null || var1 != var4.getLongValue()) {
-         if (!siteMode() || var1 != global().getLongValue()) {
-            if (var1 != this.selectedUid || this.cardClosing) {
+   private void selectFromChat(long selectedUid, String selectedName) {
+      Cloud cloud2 = cloud();
+      if (cloud2 == null || selectedUid != cloud2.getLongValue()) {
+         if (!siteMode() || selectedUid != global().getLongValue()) {
+            if (selectedUid != this.selectedUid || this.cardClosing) {
                this.cardReveal.reset(0.0F);
                this.cardReveal.method2810(1.0F);
             }
 
             this.cardClosing = false;
-            this.selectedUid = var1;
-            this.selectedName = var3;
-            CloudConnectionState var5 = state();
-            PartyPlayerInfo var6 = var5 == null ? null : var5.method8039(var1);
-            this.selectedMcName = var6 == null ? "" : var6.getText2();
+            this.selectedUid = selectedUid;
+            this.selectedName = selectedName;
+            CloudConnectionState cloudConnectionState = state();
+            PartyPlayerInfo partyPlayerInfo = cloudConnectionState == null ? null : cloudConnectionState.method8039(selectedUid);
+            this.selectedMcName = partyPlayerInfo == null ? "" : partyPlayerInfo.getText2();
 
-            for (StoreApi.Data4 var8 : this.online) {
-               if (var8.uid() == var1) {
-                  this.selectedMcName = var8.getText2();
+            for (StoreApi.Data4 data4 : this.online) {
+               if (data4.uid() == selectedUid) {
+                  this.selectedMcName = data4.getText2();
                   break;
                }
             }
@@ -787,38 +787,38 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void buildSelectedAside() {
-      Cloud var1 = cloud();
-      CloudConnectionState var2 = state();
-      boolean var3 = var1 != null && var1.getFriends().method6442(this.selectedName);
-      boolean var4 = var2 != null && var2.method8061(this.selectedName);
+      Cloud cloud2 = cloud();
+      CloudConnectionState cloudConnectionState = state();
+      boolean flag = cloud2 != null && cloud2.getFriends().method6442(this.selectedName);
+      boolean flag2 = cloudConnectionState != null && cloudConnectionState.method8061(this.selectedName);
       this.asideCustom(
          24.0F + GuiStyle.PADDING.intValue(),
-         (var1x, var2x, var3x, var4x, var5, var6, var7, var8) -> {
-            float var9 = this.cardReveal.method2808(this.cardClosing ? 0.0F : 1.0F);
-            float var10 = (1.0F - var9) * 10.0F;
-            float var11 = var7 * var9;
-            this.avatar(var1x, this.selectedUid, this.selectedName, var4x + 8.0F + var10, var5, 24.0F, var11, var8);
-            Font var12 = Fonts.NEW_MEDIUM.getFont(5.6F);
-            Font var13 = Fonts.NEW_REGULAR.getFont(4.4F);
-            float var14 = var4x + 8.0F + 24.0F + 5.0F + var10;
-            float var15 = var6 - 16.0F - 24.0F - 5.0F;
-            var1x.drawText(var12, clip(this.selectedName, var12, var15), var14, var5 + 2.0F, var8.getTextEnable().getZenithColor().method7294(var11));
-            String var16 = this.selectedMcName.isEmpty() ? t("gui.chat.mcUnknown") : this.selectedMcName;
+         (var1x, var2x, var3x, var4x, animationPosY, f, f2, zenithStyle) -> {
+            float f3 = this.cardReveal.method2808(this.cardClosing ? 0.0F : 1.0F);
+            float f4 = (1.0F - f3) * 10.0F;
+            float previewAlpha = f2 * f3;
+            this.avatar(var1x, this.selectedUid, this.selectedName, var4x + 8.0F + f4, animationPosY, 24.0F, previewAlpha, zenithStyle);
+            Font font = Fonts.NEW_MEDIUM.getFont(5.6F);
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+            float floatValue = var4x + 8.0F + 24.0F + 5.0F + f4;
+            float maxWidth = f - 16.0F - 24.0F - 5.0F;
+            var1x.drawText(font, clip(this.selectedName, font, maxWidth), floatValue, animationPosY + 2.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            String name = this.selectedMcName.isEmpty() ? t("gui.chat.mcUnknown") : this.selectedMcName;
             var1x.drawText(
-               var13, clip(var16, var13, var15), var14, var5 + 2.0F + var12.height() + 3.0F, var8.getTextTertiary().getZenithColor().method7294(var11)
+               font2, clip(name, font2, maxWidth), floatValue, animationPosY + 2.0F + font.height() + 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
          }
       );
-      if (siteMode() || var3 && !var4) {
+      if (siteMode() || flag && !flag2) {
          this.asideAction("gui.friends.write", MenuGlyph.CHAT, () -> t("gui.chat.write.direct"), () -> {
             this.openPeer(this.selectedUid, this.selectedName);
             this.selectTab(1);
          }, "gui.chat.write.desc");
       }
 
-      if (var4) {
+      if (flag2) {
          this.asideInfo("gui.chat.request", () -> t("gui.chat.request.sent"), "gui.chat.request.desc");
-      } else if (!var3) {
+      } else if (!flag) {
          this.asideAction("gui.chat.addFriend", MenuGlyph.FRIENDS, () -> t("gui.chat.addFriend.value"), () -> {
             Cloud var1x = cloud();
             boolean var2x = var1x != null && var1x.method7904(0, this.selectedName);
@@ -839,170 +839,170 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void buildSiteOnlineAside() {
-      CloudChatClient var1 = global();
+      CloudChatClient cloudChatClient = global();
       this.asideCaption("gui.chat.caption.online");
       this.asideInfo("gui.chat.total", () -> String.valueOf(global().getOnline().size()), "gui.chat.online.desc");
       this.asideInfo("gui.chat.messagesTotal", () -> String.valueOf(global().getData2().getIntValue()), "gui.chat.messagesTotal.desc");
       this.asideInfo("gui.chat.link", () -> t(global().isLive() ? "gui.chat.link.live" : "gui.chat.link.slow"), "gui.chat.link.desc");
-      if (!var1.error().isEmpty()) {
+      if (!cloudChatClient.error().isEmpty()) {
          this.asideInfo("gui.chat.error", () -> clipText(global().error()), "gui.chat.error.site.desc");
       }
 
-      int var2 = 0;
+      int n = 0;
 
-      for (CloudChatClient.Data var4 : var1.getOnline()) {
-         int var5 = var2++;
-         long var6 = var4.getLongValue();
-         String var8 = var4.name();
-         this.asideCustom(24.0F, (var6x, var7, var8x, var9, var10, var11, var12, var13) -> {
-            float var14 = this.reveal(var5);
-            this.renderMemberRow(var6x, var9 + (1.0F - var14) * 8.0F, var10, var11, var12 * var14, var13, var6, var8, var4.role());
-         }, () -> this.selectFromChat(var6, var8), () -> var6 == this.selectedUid);
+      for (CloudChatClient.Data data : cloudChatClient.getOnline()) {
+         int n2 = n++;
+         long longValue = data.getLongValue();
+         String name = data.name();
+         this.asideCustom(24.0F, (var6x, n3, var8x, f, f2, f3, f4, zenithStyle) -> {
+            float reveal = this.reveal(n2);
+            this.renderMemberRow(var6x, f + (1.0F - reveal) * 8.0F, f2, f3, f4 * reveal, zenithStyle, longValue, name, data.role());
+         }, () -> this.selectFromChat(longValue, name), () -> longValue == this.selectedUid);
       }
 
-      if (var1.getOnline().isEmpty()) {
+      if (cloudChatClient.getOnline().isEmpty()) {
          this.asideInfo("gui.chat.listEmpty", () -> "", "gui.chat.listEmpty.site.desc");
       }
    }
 
    private void buildNodeOnlineAside() {
-      CloudConnectionState var1 = state();
+      CloudConnectionState cloudConnectionState = state();
       this.asideCaption("gui.chat.caption.nowInCloud");
       this.asideInfo("gui.chat.total", () -> {
-         CloudConnectionState var0 = state();
-         return var0 != null && var0.method8035() ? String.valueOf(var0.getIntValue()) : "-";
+         CloudConnectionState state2 = state();
+         return state2 != null && state2.method8035() ? String.valueOf(state2.getIntValue()) : "-";
       }, "gui.chat.total.desc");
       this.asideInfo("gui.chat.ofThemFriends", () -> {
-         CloudConnectionState var0 = state();
-         return var0 == null ? "-" : String.valueOf(var0.method8045());
+         CloudConnectionState state2 = state();
+         return state2 == null ? "-" : String.valueOf(state2.method8045());
       }, "gui.chat.ofThemFriends.desc");
       this.asideInfo("gui.chat.site", () -> t("gui.chat.site.absent"), "gui.chat.site.desc");
       if (!this.error.isEmpty()) {
          this.asideInfo("gui.chat.error", () -> this.error, "gui.chat.error.list.desc");
       }
 
-      List<StoreApi.Data4> var2 = this.online;
-      if (!var2.isEmpty()) {
+      List<StoreApi.Data4> online = this.online;
+      if (!online.isEmpty()) {
          this.asideCaption("gui.chat.caption.online");
-         Cloud var3 = cloud();
-         long var4 = var3 == null ? 0L : var3.getLongValue();
-         int var6 = 0;
+         Cloud cloud2 = cloud();
+         long longValue = cloud2 == null ? 0L : cloud2.getLongValue();
+         int n = 0;
 
-         for (StoreApi.Data4 var8 : var2) {
-            boolean var9 = var8.uid() == var4;
-            int var10 = var6++;
-            this.asideCustom(24.0F, (var4x, var5, var6x, var7, var8x, var9x, var10x, var11) -> {
-               float var12 = this.reveal(var10);
-               this.renderOnlineRow(var4x, var7 + (1.0F - var12) * 8.0F, var8x, var9x, var10x * var12, var11, var8, var9);
-            }, () -> this.selectFromChat(var8.uid(), var8.username()), () -> false);
+         for (StoreApi.Data4 data4 : online) {
+            boolean flag = data4.uid() == longValue;
+            int n2 = n++;
+            this.asideCustom(24.0F, (var4x, n3, var6x, f, var8x, var9x, var10x, zenithStyle) -> {
+               float reveal = this.reveal(n2);
+               this.renderOnlineRow(var4x, f + (1.0F - reveal) * 8.0F, var8x, var9x, var10x * reveal, zenithStyle, data4, flag);
+            }, () -> this.selectFromChat(data4.uid(), data4.username()), () -> false);
          }
       } else {
-         this.asideInfo(var1 != null && var1.method8035() ? "gui.chat.listEmpty" : "gui.chat.noLink", () -> "", "gui.chat.listEmpty.desc");
+         this.asideInfo(cloudConnectionState != null && cloudConnectionState.method8035() ? "gui.chat.listEmpty" : "gui.chat.noLink", () -> "", "gui.chat.listEmpty.desc");
       }
    }
 
-   private void renderMemberRow(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6, long var7, String var9, String var10) {
-      float var11 = var2 + 8.0F;
-      this.avatar(var1, var7, var9, var11, var3 + 4.0F, 16.0F, var5, var6);
-      Font var12 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var13 = Fonts.NEW_REGULAR.getFont(4.2F);
-      float var14 = var11 + 16.0F + 4.0F;
-      float var15 = var4 - 16.0F - 16.0F - 4.0F;
-      float var16 = var3 + (24.0F - var12.height() - var13.height() - 1.0F) / 2.0F;
-      var1.drawText(var12, clip(var9, var12, var15), var14, var16, var6.getTextEnable().getZenithColor().method7294(var5));
-      var1.drawText(var13, clip(roleLabel(var10), var13, var15), var14, var16 + var12.height() + 1.0F, roleColor(var10, var6).method7294(var5));
+   private void renderMemberRow(MenuDrawContext menuDrawContext, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, long longValue, String name, String role) {
+      float floatValue = f + 8.0F;
+      this.avatar(menuDrawContext, longValue, name, floatValue, f2 + 4.0F, 16.0F, previewAlpha, zenithStyle);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+      float floatValue2 = floatValue + 16.0F + 4.0F;
+      float maxWidth = f3 - 16.0F - 16.0F - 4.0F;
+      float centeredTextY = f2 + (24.0F - font.height() - font2.height() - 1.0F) / 2.0F;
+      menuDrawContext.drawText(font, clip(name, font, maxWidth), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawText(font2, clip(roleLabel(role), font2, maxWidth), floatValue2, centeredTextY + font.height() + 1.0F, roleColor(role, zenithStyle).method7294(previewAlpha));
    }
 
-   private void renderOnlineRow(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6, StoreApi.Data4 var7, boolean var8) {
-      float var9 = var2 + 8.0F;
-      this.avatar(var1, var7.uid(), var7.username(), var9, var3 + 4.0F, 16.0F, var5, var6);
-      Font var10 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var11 = Fonts.NEW_REGULAR.getFont(4.2F);
-      float var12 = var9 + 16.0F + 4.0F;
-      float var13 = var4 - 16.0F - 16.0F - 4.0F;
-      float var14 = var3 + (24.0F - var10.height() - var11.height() - 1.0F) / 2.0F;
-      var1.drawText(
-         var10,
-         clip(var7.username(), var10, var13),
-         var12,
-         var14,
-         (var8 ? var6.getPrimaryColor().getZenithColor() : var6.getTextEnable().getZenithColor()).method7294(var5)
+   private void renderOnlineRow(MenuDrawContext menuDrawContext, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, StoreApi.Data4 data4, boolean flag) {
+      float floatValue = f + 8.0F;
+      this.avatar(menuDrawContext, data4.uid(), data4.username(), floatValue, f2 + 4.0F, 16.0F, previewAlpha, zenithStyle);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+      float floatValue2 = floatValue + 16.0F + 4.0F;
+      float maxWidth = f3 - 16.0F - 16.0F - 4.0F;
+      float centeredTextY = f2 + (24.0F - font.height() - font2.height() - 1.0F) / 2.0F;
+      menuDrawContext.drawText(
+         font,
+         clip(data4.username(), font, maxWidth),
+         floatValue2,
+         centeredTextY,
+         (flag ? zenithStyle.getPrimaryColor().getZenithColor() : zenithStyle.getTextEnable().getZenithColor()).method7294(previewAlpha)
       );
-      String var15 = var8 ? t("gui.chat.you") : var7.getText2();
-      var1.drawText(var11, clip(var15, var11, var13), var12, var14 + var10.height() + 1.0F, var6.getTextTertiary().getZenithColor().method7294(var5));
+      String name = flag ? t("gui.chat.you") : data4.getText2();
+      menuDrawContext.drawText(font2, clip(name, font2, maxWidth), floatValue2, centeredTextY + font.height() + 1.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
    }
 
    private void buildDirect() {
       if (!this.hasPeer()) {
          this.knownNodeDirect.clear();
          this.knownDirectPeer = -1L;
-         this.ghosts.removeIf(var0 -> var0.feed == 1);
+         this.ghosts.removeIf(ghost -> ghost.feed == 1);
       } else if (siteMode()) {
          this.buildSiteConversation();
       } else {
          if (this.peerUid != this.knownDirectPeer) {
             this.knownDirectPeer = this.peerUid;
             this.knownNodeDirect.clear();
-            this.ghosts.removeIf(var0 -> var0.feed == 1);
+            this.ghosts.removeIf(ghost -> ghost.feed == 1);
          }
 
-         Cloud var1 = cloud();
-         long var2 = var1 == null ? 0L : var1.getLongValue();
-         List<StoreApi.Data3> var4 = this.conversation;
-         StoreApi.Data3 var5 = var4.isEmpty() ? null : (StoreApi.Data3)var4.get(var4.size() - 1);
-         LinkedHashMap var6 = new LinkedHashMap();
+         Cloud cloud2 = cloud();
+         long longValue = cloud2 == null ? 0L : cloud2.getLongValue();
+         List<StoreApi.Data3> conversation = this.conversation;
+         StoreApi.Data3 data3 = conversation.isEmpty() ? null : (StoreApi.Data3)conversation.get(conversation.size() - 1);
+         LinkedHashMap map = new LinkedHashMap();
 
-         for (StoreApi.Data3 var8 : var4) {
-            if (var8.getLongValue() > 0L) {
-               var6.put(var8.getLongValue(), var8);
+         for (StoreApi.Data3 data32 : conversation) {
+            if (data32.getLongValue() > 0L) {
+               map.put(data32.getLongValue(), data32);
             }
          }
 
-         int var20 = this.ghosts.size();
+         int size = this.ghosts.size();
          this.knownNodeDirect.forEach((var4x, var5x) -> {
-            if (!var6.containsKey(var4x)) {
-               this.ghosts.add(new CloudChatSectionPanel.Ghost(1, var5x.getText(), "", var5x.text(), var5x.time(), var5x.getLongValue2() == var2));
+            if (!map.containsKey(var4x)) {
+               this.ghosts.add(new CloudChatSectionPanel.Ghost(1, var5x.getText(), "", var5x.text(), var5x.time(), var5x.getLongValue2() == longValue));
             }
          });
-         this.forgetGone(var20);
+         this.forgetGone(size);
          this.knownNodeDirect.clear();
-         this.knownNodeDirect.putAll(var6);
-         String var21 = null;
-         boolean var9 = false;
-         long var10 = 0L;
+         this.knownNodeDirect.putAll(map);
+         String author = null;
+         boolean mine = false;
+         long daySeparator = 0L;
 
-         for (Object var13 : this.mergeWithGhosts(var4, 1)) {
-            if (var13 instanceof CloudChatSectionPanel.Ghost var22) {
-               boolean var23 = !var22.mine && (!var22.author.equals(var21) || var9);
-               var10 = this.daySeparator(var10, var22.time);
-               var23 = var23 || this.dayBroke && !var22.mine;
+         for (Object mergeWithGhost : this.mergeWithGhosts(conversation, 1)) {
+            if (mergeWithGhost instanceof CloudChatSectionPanel.Ghost ghost2) {
+               boolean showName = !ghost2.mine && (!ghost2.author.equals(author) || mine);
+               daySeparator = this.daySeparator(daySeparator, ghost2.time);
+               showName = showName || this.dayBroke && !ghost2.mine;
                this.dayBroke = false;
-               var21 = var22.author;
-               var9 = var22.mine;
-               this.ghostBubble(var22, var23);
+               author = ghost2.author;
+               mine = ghost2.mine;
+               this.ghostBubble(ghost2, showName);
             } else {
-               StoreApi.Data3 var14 = (StoreApi.Data3)var13;
-               boolean var15 = var14.getLongValue2() == var2;
-               String var16 = var14.getText();
-               boolean var17 = !var15 && (!var16.equals(var21) || var9);
-               var10 = this.daySeparator(var10, var14.time());
-               var17 = var17 || this.dayBroke && !var15;
+               StoreApi.Data3 mergeWithGhost2 = (StoreApi.Data3)mergeWithGhost;
+               boolean flag = mergeWithGhost2.getLongValue2() == longValue;
+               String text = mergeWithGhost2.getText();
+               boolean showName = !flag && (!text.equals(author) || mine);
+               daySeparator = this.daySeparator(daySeparator, mergeWithGhost2.time());
+               showName = showName || this.dayBroke && !flag;
                this.dayBroke = false;
-               var21 = var16;
-               var9 = var15;
-               long var18 = var14.getLongValue();
+               author = text;
+               mine = flag;
+               long deleteMenuMessage = mergeWithGhost2.getLongValue();
                this.bubble(
-                  var16,
-                  var15 ? 0L : this.peerUid,
+                  text,
+                  flag ? 0L : this.peerUid,
                   "",
-                  var14.text(),
-                  var14.time(),
-                  var15,
-                  var17,
-                  var14 == var5,
+                  mergeWithGhost2.text(),
+                  mergeWithGhost2.time(),
+                  flag,
+                  showName,
+                  mergeWithGhost2 == data3,
                   false,
                   null,
-                  var15 && var18 > 0L ? () -> this.openDeleteMenu(var18, this.peerUid) : null
+                  flag && deleteMenuMessage > 0L ? () -> this.openDeleteMenu(deleteMenuMessage, this.peerUid) : null
                );
             }
          }
@@ -1010,24 +1010,24 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void buildSiteConversation() {
-      CloudDmClient var1 = direct();
-      long var2 = var1.getLongValue();
-      List<CloudDmClient.Data> var4 = var1.method4857();
-      CloudDmClient.Data var5 = var4.isEmpty() ? null : (CloudDmClient.Data)var4.get(var4.size() - 1);
-      long var6 = 0L;
-      boolean var8 = false;
-      String var9 = null;
+      CloudDmClient cloudDmClient = direct();
+      long longValue = cloudDmClient.getLongValue();
+      List<CloudDmClient.Data> datas = cloudDmClient.method4857();
+      CloudDmClient.Data data = datas.isEmpty() ? null : (CloudDmClient.Data)datas.get(datas.size() - 1);
+      long daySeparator = 0L;
+      boolean flag = false;
+      String peerName = null;
 
-      for (CloudDmClient.Data var11 : var4) {
-         boolean var12 = var11.getLongValue2() != var2;
-         String var13 = var12 ? "" : var1.getPeerName();
-         boolean var14 = !var12 && (!var13.equals(var9) || var8);
-         var6 = this.daySeparator(var6, var11.getLongValue4());
-         var14 = var14 || this.dayBroke && !var12;
+      for (CloudDmClient.Data data2 : datas) {
+         boolean mine = data2.getLongValue2() != longValue;
+         String str = mine ? "" : cloudDmClient.getPeerName();
+         boolean flag2 = !mine && (!str.equals(peerName) || flag);
+         daySeparator = this.daySeparator(daySeparator, data2.getLongValue4());
+         flag2 = flag2 || this.dayBroke && !mine;
          this.dayBroke = false;
-         var9 = var13;
-         var8 = var12;
-         this.bubble(var13, var12 ? 0L : var2, "", var11.body(), var11.getLongValue4(), var12, var14, var11 == var5, var12 && var11.read(), null);
+         peerName = str;
+         flag = mine;
+         this.bubble(str, mine ? 0L : longValue, "", data2.body(), data2.getLongValue4(), mine, flag2, data2 == data, mine && data2.read(), null);
       }
    }
 
@@ -1040,33 +1040,33 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void buildSiteThreads() {
-      CloudDmClient var1 = direct();
-      String var2 = this.searchQuery() == null ? "" : this.searchQuery().trim();
-      if (var2.length() >= 2) {
-         List<UserSearchClient.Data> var3 = UserSearchClient.method4758(var2);
-         if (var3 != null && !var3.isEmpty()) {
+      CloudDmClient cloudDmClient = direct();
+      String typedName = this.searchQuery() == null ? "" : this.searchQuery().trim();
+      if (typedName.length() >= 2) {
+         List<UserSearchClient.Data> datas = UserSearchClient.method4758(typedName);
+         if (datas != null && !datas.isEmpty()) {
             this.asideCaption("gui.chat.caption.firstMessage");
-            int var4 = 0;
+            int n = 0;
 
-            for (UserSearchClient.Data var6 : var3) {
-               int var7 = var4++;
-               long var8 = var6.uid();
-               String var10 = var6.name();
+            for (UserSearchClient.Data data : datas) {
+               int n2 = n++;
+               long uid = data.uid();
+               String name = data.name();
                this.asideCustom(
                   24.0F,
-                  (var5, var6x, var7x, var8x, var9x, var10x, var11x, var12x) -> {
-                     float var13 = this.reveal(var7);
+                  (menuDrawContext, var6x, var7x, var8x, var9x, var10x, var11x, var12x) -> {
+                     float reveal = this.reveal(n2);
                      this.renderThreadRow(
-                        var5, var6x, var7x, var8x + (1.0F - var13) * 8.0F, var9x, var10x, var11x * var13, var12x, var8, var10, t("gui.chat.startNew"), 0, null
+                        menuDrawContext, var6x, var7x, var8x + (1.0F - reveal) * 8.0F, var9x, var10x, var11x * reveal, var12x, uid, name, t("gui.chat.startNew"), 0, null
                      );
                   },
-                  () -> this.openPeer(var8, var10),
-                  () -> var8 == direct().getLongValue()
+                  () -> this.openPeer(uid, name),
+                  () -> uid == direct().getLongValue()
                );
             }
-         } else if (UserSearchClient.method4759(var2)) {
+         } else if (UserSearchClient.method4759(typedName)) {
             this.asideInfo("gui.chat.search", () -> t("gui.chat.search.short"), "gui.chat.search.desc");
-         } else if (var3 == null) {
+         } else if (datas == null) {
             this.asideInfo("gui.chat.search", () -> t("gui.chat.search.wait"), "gui.chat.search.desc");
          } else {
             this.asideInfo("gui.chat.search", () -> t("gui.chat.search.none"), "gui.chat.search.desc");
@@ -1074,239 +1074,239 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
 
       this.asideCaption("gui.chat.caption.threads");
-      if (!var1.error().isEmpty()) {
+      if (!cloudDmClient.error().isEmpty()) {
          this.asideInfo("gui.chat.error", () -> clipText(direct().error()), "gui.chat.error.site.desc");
       }
 
-      int var16 = 0;
-      boolean var17 = false;
+      int n = 0;
+      boolean flag = false;
 
-      for (CloudDmClient.Data2 var19 : var1.method4856()) {
-         if (var2.isEmpty() || var19.getText().toLowerCase(Locale.ROOT).contains(var2.toLowerCase(Locale.ROOT))) {
-            var17 = true;
-            long var20 = var19.getLongValue();
-            String var9 = var19.getText();
-            String var21 = var19.isFlag() ? t("gui.chat.mePrefix") + " " + previewOf(var19.getText3()) : previewOf(var19.getText3());
-            int var11 = var19.getIntValue();
-            long var12 = var19.getLongValue2();
-            String var14 = var12 > 0L ? TIME.format(new Date(var12)) : null;
-            int var15;
-            int var22 = var15 = var16++;
+      for (CloudDmClient.Data2 data2 : cloudDmClient.method4856()) {
+         if (typedName.isEmpty() || data2.getText().toLowerCase(Locale.ROOT).contains(typedName.toLowerCase(Locale.ROOT))) {
+            flag = true;
+            long longValue = data2.getLongValue();
+            String text = data2.getText();
+            String str = data2.isFlag() ? t("gui.chat.mePrefix") + " " + previewOf(data2.getText3()) : previewOf(data2.getText3());
+            int intValue = data2.getIntValue();
+            long date = data2.getLongValue2();
+            String text2 = date > 0L ? TIME.format(new Date(date)) : null;
+            int n2;
+            int n3 = n2 = n++;
             this.asideCustom(
                24.0F,
-               (var8x, var9x, var10x, var11x, var12x, var13, var14x, var15x) -> {
-                  float var16x = this.reveal(var15);
+               (var8x, var9x, var10x, var11x, var12x, width, var14x, var15x) -> {
+                  float var16x = this.reveal(n2);
                   this.renderThreadRow(
-                     var8x, var9x, var10x, var11x + (1.0F - var16x) * 8.0F, var12x, var13, var14x * var16x, var15x, var20, var9, var21, var11, var14
+                     var8x, var9x, var10x, var11x + (1.0F - var16x) * 8.0F, var12x, width, var14x * var16x, var15x, longValue, text, str, intValue, text2
                   );
                },
-               () -> this.openPeer(var20, var9),
-               () -> var20 == direct().getLongValue()
+               () -> this.openPeer(longValue, text),
+               () -> longValue == direct().getLongValue()
             );
          }
       }
 
-      if (!var17 && var2.isEmpty()) {
+      if (!flag && typedName.isEmpty()) {
          this.asideInfo("gui.chat.emptyThreads", () -> "", "gui.chat.emptyThreads.desc");
       }
    }
 
    private void buildNodeContacts() {
-      Cloud var1 = cloud();
-      CloudConnectionState var2 = state();
-      if (var1 != null && var2 != null) {
+      Cloud cloud2 = cloud();
+      CloudConnectionState cloudConnectionState = state();
+      if (cloud2 != null && cloudConnectionState != null) {
          this.asideCaption("gui.chat.caption.contacts");
          this.asideInfo("gui.chat.threads", () -> t("gui.chat.threads.gameOnly"), "gui.chat.threads.desc");
          if (!this.error.isEmpty()) {
             this.asideInfo("gui.chat.error", () -> this.error, "gui.chat.error.list.desc");
          }
 
-         boolean var3 = false;
-         int var4 = 0;
+         boolean flag = false;
+         int n = 0;
 
-         for (String var6 : var1.getFriends().all()) {
-            if (!var2.method8061(var6)) {
-               long var7 = var2.uidOf(var6);
-               if (var7 <= 0L && var1.prefs() != null) {
-                  var7 = var1.prefs().method3311(var6);
+         for (String selected : cloud2.getFriends().all()) {
+            if (!cloudConnectionState.method8061(selected)) {
+               long uidOf = cloudConnectionState.uidOf(selected);
+               if (uidOf <= 0L && cloud2.prefs() != null) {
+                  uidOf = cloud2.prefs().method3311(selected);
                }
 
-               if (var7 > 0L) {
-                  long var9 = var7;
-                  var3 = true;
-                  PartyPlayerInfo var11 = var2.method8044(var6);
-                  String var12 = var11 == null ? var6 : var11.username();
-                  boolean var13 = var11 != null;
-                  int var14 = var4++;
+               if (uidOf > 0L) {
+                  long key = uidOf;
+                  flag = true;
+                  PartyPlayerInfo partyPlayerInfo = cloudConnectionState.method8044(selected);
+                  String username = partyPlayerInfo == null ? selected : partyPlayerInfo.username();
+                  boolean flag2 = partyPlayerInfo != null;
+                  int n2 = n++;
                   this.asideCustom(
                      24.0F,
-                     (var6x, var7x, var8, var9x, var10, var11x, var12x, var13x) -> {
-                        float var14x = this.reveal(var14);
+                     (var6x, var7x, lastClickY, var9x, y, var11x, var12x, var13x) -> {
+                        float var14x = this.reveal(n2);
                         this.renderContact(
-                           var6x, var7x, var8, var9x + (1.0F - var14x) * 8.0F, var10, var11x, var12x * var14x, var13x, var9, var12, var13, var9 == this.peerUid
+                           var6x, var7x, lastClickY, var9x + (1.0F - var14x) * 8.0F, y, var11x, var12x * var14x, var13x, key, username, flag2, key == this.peerUid
                         );
                      },
-                     () -> this.openPeer(var9, var12),
-                     () -> var9 == this.peerUid
+                     () -> this.openPeer(key, username),
+                     () -> key == this.peerUid
                   );
                }
             }
          }
 
-         if (!var3) {
+         if (!flag) {
             this.asideInfo("gui.chat.emptyContacts", () -> "", "gui.chat.emptyContacts.desc");
          }
       }
    }
 
    private void renderThreadRow(
-      MenuDrawContext var1,
-      int var2,
-      int var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      ZenithStyle var8,
-      long var9,
-      String var11,
-      String var12,
-      int var13,
-      String var14
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      float floatValue,
+      float y,
+      float width,
+      float previewAlpha,
+      ZenithStyle zenithStyle,
+      long uid,
+      String name,
+      String str,
+      int intValue,
+      String text
    ) {
-      float var15 = this.selectFade
-         .computeIfAbsent(var9, var0 -> new Animation(160L, 0.0F, Easing.INSTANCE12))
-         .method2808(var9 == this.openPeerUid() ? 1.0F : 0.0F);
-      float var16 = this.contactHover
-         .computeIfAbsent(var9, var0 -> new Animation(130L, 0.0F, Easing.INSTANCE12))
-         .method2808(new BoundsData(var4, var5, var6, 24.0F).contains(var2, var3) ? 1.0F : 0.0F);
-      float var17 = Math.max(var15, var16 * 0.45F);
-      if (var17 > 0.002F) {
-         var1.drawRoundedRect(
-            var4 + 8.0F - 2.0F,
-            var5 + 1.0F,
-            var6 - 16.0F + 4.0F,
+      float f = this.selectFade
+         .computeIfAbsent(uid, l -> new Animation(160L, 0.0F, Easing.INSTANCE12))
+         .method2808(uid == this.openPeerUid() ? 1.0F : 0.0F);
+      float f2 = this.contactHover
+         .computeIfAbsent(uid, l -> new Animation(130L, 0.0F, Easing.INSTANCE12))
+         .method2808(new BoundsData(floatValue, y, width, 24.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+      float f3 = Math.max(f, f2 * 0.45F);
+      if (f3 > 0.002F) {
+         menuDrawContext.drawRoundedRect(
+            floatValue + 8.0F - 2.0F,
+            y + 1.0F,
+            width - 16.0F + 4.0F,
             22.0F,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.5F),
-            var8.getDisableActiveBg().getZenithColor().method7294(var7 * var17)
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f3)
          );
       }
 
-      float var18 = var4 + 8.0F;
-      this.avatar(var1, var9, var11, var18, var5 + 4.0F, 16.0F, var7, var8);
-      Font var19 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var20 = Fonts.NEW_REGULAR.getFont(4.2F);
-      Font var21 = Fonts.NEW_REGULAR.getFont(3.8F);
-      float var22 = var18 + 16.0F + 4.0F;
-      float var23 = var4 + var6 - 8.0F;
-      float var24 = var5 + (24.0F - var19.height() - var20.height() - 1.0F) / 2.0F;
-      float var25 = var23 - var22;
-      if (var14 != null) {
-         float var26 = var21.width(var14);
-         var1.drawText(var21, var14, var23 - var26, var24 + 1.0F, var8.getTextTertiary().getZenithColor().method7294(var7 * 0.8F));
-         var25 -= var26 + 3.0F;
+      float floatValue2 = floatValue + 8.0F;
+      this.avatar(menuDrawContext, uid, name, floatValue2, y + 4.0F, 16.0F, previewAlpha, zenithStyle);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+      Font font3 = Fonts.NEW_REGULAR.getFont(3.8F);
+      float floatValue3 = floatValue2 + 16.0F + 4.0F;
+      float f4 = floatValue + width - 8.0F;
+      float centeredTextY = y + (24.0F - font.height() - font2.height() - 1.0F) / 2.0F;
+      float maxWidth = f4 - floatValue3;
+      if (text != null) {
+         float width2 = font3.width(text);
+         menuDrawContext.drawText(font3, text, f4 - width2, centeredTextY + 1.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F));
+         maxWidth -= width2 + 3.0F;
       }
 
-      var1.drawText(var19, clip(var11, var19, var25), var22, var24, var8.getTextEnable().getZenithColor().method7294(var7));
-      float var34 = var23 - var22;
-      float var27 = this.unreadPop.computeIfAbsent(var9, var0 -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(var13 > 0 ? 1.0F : 0.0F);
-      if (var27 > 0.01F) {
-         Font var28 = Fonts.NEW_MEDIUM.getFont(4.2F);
-         String var29 = var13 > 99 ? "99+" : String.valueOf(var13);
-         float var30 = Math.max(8.0F, var28.width(var29) + 5.0F);
-         float var31 = 7.0F;
-         float var32 = var24 + var19.height() + 1.0F;
-         float var33 = 0.6F + 0.4F * var27;
-         var1.pushMatrix();
-         var1.pose().translate(var23 - var30 / 2.0F, var32 + var31 / 2.0F);
-         var1.pose().scale(var33, var33);
-         var1.drawRoundedRect(
-            -var30 / 2.0F,
-            -var31 / 2.0F,
-            var30,
-            var31,
-            ProxyDotRadiusData.method8069(var31 / 2.0F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * var27)
+      menuDrawContext.drawText(font, clip(name, font, maxWidth), floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      float maxWidth2 = f4 - floatValue3;
+      float hover = this.unreadPop.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(intValue > 0 ? 1.0F : 0.0F);
+      if (hover > 0.01F) {
+         Font font4 = Fonts.NEW_MEDIUM.getFont(4.2F);
+         String text2 = intValue > 99 ? "99+" : String.valueOf(intValue);
+         float width2 = Math.max(8.0F, font4.width(text2) + 5.0F);
+         float height = 7.0F;
+         float f5 = centeredTextY + font.height() + 1.0F;
+         float x = 0.6F + 0.4F * hover;
+         menuDrawContext.pushMatrix();
+         menuDrawContext.pose().translate(f4 - width2 / 2.0F, f5 + height / 2.0F);
+         menuDrawContext.pose().scale(x, x);
+         menuDrawContext.drawRoundedRect(
+            -width2 / 2.0F,
+            -height / 2.0F,
+            width2,
+            height,
+            ProxyDotRadiusData.method8069(height / 2.0F),
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * hover)
          );
-         var1.drawText(var28, var29, -var28.width(var29) / 2.0F, -var28.height() / 2.0F, new ZenithColor(255, 255, 255).method7294(var7 * var27));
-         var1.popMatrix();
-         var34 -= var30 * var27 + 3.0F;
+         menuDrawContext.drawText(font4, text2, -font4.width(text2) / 2.0F, -font4.height() / 2.0F, new ZenithColor(255, 255, 255).method7294(previewAlpha * hover));
+         menuDrawContext.popMatrix();
+         maxWidth2 -= width2 * hover + 3.0F;
       }
 
-      var1.drawText(
-         var20,
-         clip(var12, var20, var34),
-         var22,
-         var24 + var19.height() + 1.0F,
-         var8.getTextTertiary().getZenithColor().method7295(var8.getTextSecondary().getZenithColor(), var27).method7294(var7)
+      menuDrawContext.drawText(
+         font2,
+         clip(str, font2, maxWidth2),
+         floatValue3,
+         centeredTextY + font.height() + 1.0F,
+         zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextSecondary().getZenithColor(), hover).method7294(previewAlpha)
       );
    }
 
    private void renderContact(
-      MenuDrawContext var1,
-      int var2,
-      int var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      ZenithStyle var8,
-      long var9,
-      String var11,
-      boolean var12,
-      boolean var13
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      float floatValue,
+      float y,
+      float width,
+      float previewAlpha,
+      ZenithStyle zenithStyle,
+      long key,
+      String username,
+      boolean flag,
+      boolean flag2
    ) {
-      float var14 = this.selectFade.computeIfAbsent(var9, var0 -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(var13 ? 1.0F : 0.0F);
-      float var15 = this.contactHover
-         .computeIfAbsent(var9, var0 -> new Animation(130L, 0.0F, Easing.INSTANCE12))
-         .method2808(new BoundsData(var4, var5, var6, 24.0F).contains(var2, var3) ? 1.0F : 0.0F);
-      float var16 = Math.max(var14, var15 * 0.45F);
-      if (var16 > 0.002F) {
-         var1.drawRoundedRect(
-            var4 + 8.0F - 2.0F,
-            var5 + 1.0F,
-            var6 - 16.0F + 4.0F,
+      float f = this.selectFade.computeIfAbsent(key, l -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(flag2 ? 1.0F : 0.0F);
+      float f2 = this.contactHover
+         .computeIfAbsent(key, l -> new Animation(130L, 0.0F, Easing.INSTANCE12))
+         .method2808(new BoundsData(floatValue, y, width, 24.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+      float f3 = Math.max(f, f2 * 0.45F);
+      if (f3 > 0.002F) {
+         menuDrawContext.drawRoundedRect(
+            floatValue + 8.0F - 2.0F,
+            y + 1.0F,
+            width - 16.0F + 4.0F,
             22.0F,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.5F),
-            var8.getDisableActiveBg().getZenithColor().method7294(var7 * var16)
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f3)
          );
       }
 
-      float var17 = var4 + 8.0F;
-      this.avatar(var1, var9, var11, var17, var5 + 4.0F, 16.0F, var7, var8);
-      float var18 = this.onlineFade.computeIfAbsent(var9, var0 -> new Animation(300L, 0.0F, Easing.INSTANCE13)).method2808(var12 ? 1.0F : 0.0F);
-      if (var18 > 0.01F) {
-         float var19 = 4.0F * var18;
-         float var20 = var17 + 16.0F - 4.0F + (4.0F - var19) / 2.0F;
-         float var21 = var5 + 20.0F - 4.0F + (4.0F - var19) / 2.0F;
-         var1.drawRoundedRect(
-            var20, var21, var19, var19, ProxyDotRadiusData.method8069(var19 / 2.0F), var8.getFriendColor().getZenithColor().method7294(var7 * var18)
+      float floatValue2 = floatValue + 8.0F;
+      this.avatar(menuDrawContext, key, username, floatValue2, y + 4.0F, 16.0F, previewAlpha, zenithStyle);
+      float f4 = this.onlineFade.computeIfAbsent(key, l -> new Animation(300L, 0.0F, Easing.INSTANCE13)).method2808(flag ? 1.0F : 0.0F);
+      if (f4 > 0.01F) {
+         float width2 = 4.0F * f4;
+         float floatValue3 = floatValue2 + 16.0F - 4.0F + (4.0F - width2) / 2.0F;
+         float y2 = y + 20.0F - 4.0F + (4.0F - width2) / 2.0F;
+         menuDrawContext.drawRoundedRect(
+            floatValue3, y2, width2, width2, ProxyDotRadiusData.method8069(width2 / 2.0F), zenithStyle.getFriendColor().getZenithColor().method7294(previewAlpha * f4)
          );
       }
 
-      Font var25 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var26 = Fonts.NEW_REGULAR.getFont(4.2F);
-      float var27 = var17 + 16.0F + 4.0F;
-      float var22 = var6 - 16.0F - 16.0F - 4.0F;
-      float var23 = var5 + (24.0F - var25.height() - var26.height() - 1.0F) / 2.0F;
-      var1.drawText(var25, clip(var11, var25, var22), var27, var23, var8.getTextEnable().getZenithColor().method7294(var7));
-      String var24 = this.previews.getOrDefault(var9, t(var12 ? "gui.friends.status.online" : "gui.friends.status.offline"));
-      var1.drawText(var26, clip(previewOf(var24), var26, var22), var27, var23 + var25.height() + 1.0F, var8.getTextTertiary().getZenithColor().method7294(var7));
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+      float floatValue3 = floatValue2 + 16.0F + 4.0F;
+      float maxWidth = width - 16.0F - 16.0F - 4.0F;
+      float centeredTextY = y + (24.0F - font.height() - font2.height() - 1.0F) / 2.0F;
+      menuDrawContext.drawText(font, clip(username, font, maxWidth), floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      String body = this.previews.getOrDefault(key, t(flag ? "gui.friends.status.online" : "gui.friends.status.offline"));
+      menuDrawContext.drawText(font2, clip(previewOf(body), font2, maxWidth), floatValue3, centeredTextY + font.height() + 1.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
    }
 
-   public boolean openDirectWith(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         CloudConnectionState var2 = state();
-         long var3 = var2 == null ? 0L : var2.uidOf(var1);
-         if (var3 <= 0L) {
-            Cloud var5 = cloud();
-            var3 = var5 != null && var5.prefs() != null ? var5.prefs().method3311(var1) : 0L;
+   public boolean openDirectWith(String displayName) {
+      if (displayName != null && !displayName.isBlank()) {
+         CloudConnectionState cloudConnectionState = state();
+         long uidOf = cloudConnectionState == null ? 0L : cloudConnectionState.uidOf(displayName);
+         if (uidOf <= 0L) {
+            Cloud cloud2 = cloud();
+            uidOf = cloud2 != null && cloud2.prefs() != null ? cloud2.prefs().method3311(displayName) : 0L;
          }
 
-         if (var3 <= 0L) {
+         if (uidOf <= 0L) {
             return false;
          } else {
-            this.openPeer(var3, var1);
+            this.openPeer(uidOf, displayName);
             this.selectTab(1);
             return true;
          }
@@ -1315,16 +1315,16 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private void openPeer(long var1, String var3) {
+   private void openPeer(long peerUid, String peerName) {
       if (siteMode()) {
-         direct().method4865(var1, var3);
+         direct().method4865(peerUid, peerName);
       } else {
-         if (this.peerUid == var1) {
+         if (this.peerUid == peerUid) {
             return;
          }
 
-         this.peerUid = var1;
-         this.peerName = var3;
+         this.peerUid = peerUid;
+         this.peerName = peerName;
          this.clearConversation();
          this.polledPeer = -1L;
       }
@@ -1352,59 +1352,59 @@ public class CloudChatSectionPanel extends SectionPanel {
 
    @Override
    public float mainHeaderHeight() {
-      boolean var1 = this.getActiveTab() == 1 && this.hasPeer();
-      if (var1) {
+      boolean flag = this.getActiveTab() == 1 && this.hasPeer();
+      if (flag) {
          this.barUid = this.openPeerUid();
          this.barName = this.openPeerName();
       }
 
-      return 24.0F * this.peerBarAnimation.method2808(var1 ? 1.0F : 0.0F);
+      return 24.0F * this.peerBarAnimation.method2808(flag ? 1.0F : 0.0F);
    }
 
    @Override
-   public void renderMainHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      long var9 = this.barUid;
-      String var11 = this.barName;
-      float var12 = this.peerBarAnimation.getValue();
-      var7 *= var12;
-      var5 -= (1.0F - var12) * 4.0F;
-      this.avatar(var1, var9, var11, var4 + 8.0F, var5 + 4.0F, 16.0F, var7, var8);
-      Font var13 = Fonts.NEW_MEDIUM.getFont(5.4F);
-      Font var14 = Fonts.NEW_REGULAR.getFont(4.2F);
-      float var15 = var4 + 8.0F + 16.0F + 5.0F;
-      float var16 = var5 + (24.0F - var13.height() - var14.height() - 1.0F) / 2.0F;
-      float var17 = var6 - 16.0F - 16.0F - 5.0F - 12.0F;
-      var1.drawText(var13, clip(var11, var13, var17), var15, var16, var8.getTextEnable().getZenithColor().method7294(var7));
-      var1.drawText(
-         var14, clip(this.peerUnder(var9), var14, var17), var15, var16 + var13.height() + 1.0F, var8.getTextTertiary().getZenithColor().method7294(var7)
+   public void renderMainHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      long barUid = this.barUid;
+      String barName = this.barName;
+      float f4 = this.peerBarAnimation.getValue();
+      previewAlpha *= f4;
+      f2 -= (1.0F - f4) * 4.0F;
+      this.avatar(menuDrawContext, barUid, barName, f + 8.0F, f2 + 4.0F, 16.0F, previewAlpha, zenithStyle);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+      float floatValue = f + 8.0F + 16.0F + 5.0F;
+      float centeredTextY = f2 + (24.0F - font.height() - font2.height() - 1.0F) / 2.0F;
+      float maxWidth = f3 - 16.0F - 16.0F - 5.0F - 12.0F;
+      menuDrawContext.drawText(font, clip(barName, font, maxWidth), floatValue, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawText(
+         font2, clip(this.peerUnder(barUid), font2, maxWidth), floatValue, centeredTextY + font.height() + 1.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      float var18 = var4 + var6 - 8.0F - 6.0F;
-      float var19 = var5 + 9.0F;
-      float var20 = this.glyphHover
-         .computeIfAbsent("peerClose", var0 -> new Animation(130L, 0.0F, Easing.INSTANCE12))
-         .method2808(new BoundsData(var18 - 3.0F, var19 - 3.0F, 12.0F, 12.0F).contains(var2, var3) ? 1.0F : 0.0F);
+      float floatValue2 = f + f3 - 8.0F - 6.0F;
+      float centeredTextY2 = f2 + 9.0F;
+      float hover = this.glyphHover
+         .computeIfAbsent("peerClose", str -> new Animation(130L, 0.0F, Easing.INSTANCE12))
+         .method2808(new BoundsData(floatValue2 - 3.0F, centeredTextY2 - 3.0F, 12.0F, 12.0F).contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
       MenuGlyph.CLOSE
-         .draw(var1, var18, var19, var8.getTextTertiary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), var20).method7294(var7));
-      var1.drawRect(var4 + 8.0F, var5 + 24.0F - 1.0F, var6 - 16.0F, 1.0F, var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F));
+         .draw(menuDrawContext, floatValue2, centeredTextY2, zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha));
+      menuDrawContext.drawRect(f + 8.0F, f2 + 24.0F - 1.0F, f3 - 16.0F, 1.0F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
    }
 
-   private String peerUnder(long var1) {
+   private String peerUnder(long peerUnderFor) {
       if (siteMode()) {
-         var var9 = direct().method4857();
-         int var10 = var9.size() * 31 + (var9.isEmpty() ? 0 : (int)((CloudDmClient.Data)var9.get(var9.size() - 1)).getLongValue());
-         if (var1 != this.peerUnderFor || var10 != this.peerUnderStamp) {
-            this.peerUnderFor = var1;
-            this.peerUnderStamp = var10;
+         var datas = direct().method4857();
+         int peerUnderStamp = datas.size() * 31 + (datas.isEmpty() ? 0 : (int)((CloudDmClient.Data)datas.get(datas.size() - 1)).getLongValue());
+         if (peerUnderFor != this.peerUnderFor || peerUnderStamp != this.peerUnderStamp) {
+            this.peerUnderFor = peerUnderFor;
+            this.peerUnderStamp = peerUnderStamp;
             this.peerUnderText = t("gui.chat.peer.site");
 
-            for (int var11 = var9.size() - 1; var11 >= 0; var11--) {
-               CloudDmClient.Data var6 = (CloudDmClient.Data)var9.get(var11);
-               if (var6.getLongValue2() == var1) {
-                  Coord var7 = Coord.method5172(var6.body()).method5179("at");
-                  if (var7 != null) {
-                     String var8 = ServerNameUtils.method5643(var7.method5169("s", ""), var7.method5169("m", ""));
-                     if (!var8.isEmpty()) {
-                        this.peerUnderText = var8;
+            for (int i = datas.size() - 1; i >= 0; i--) {
+               CloudDmClient.Data data = (CloudDmClient.Data)datas.get(i);
+               if (data.getLongValue2() == peerUnderFor) {
+                  Coord coord = Coord.method5172(data.body()).method5179("at");
+                  if (coord != null) {
+                     String peerUnderText = ServerNameUtils.method5643(coord.method5169("s", ""), coord.method5169("m", ""));
+                     if (!peerUnderText.isEmpty()) {
+                        this.peerUnderText = peerUnderText;
                      }
                   }
                   break;
@@ -1414,377 +1414,377 @@ public class CloudChatSectionPanel extends SectionPanel {
 
          return this.peerUnderText;
       } else {
-         CloudConnectionState var3 = state();
-         PartyPlayerInfo var4 = var3 == null ? null : var3.method8039(var1);
-         if (var4 == null) {
+         CloudConnectionState cloudConnectionState = state();
+         PartyPlayerInfo partyPlayerInfo = cloudConnectionState == null ? null : cloudConnectionState.method8039(peerUnderFor);
+         if (partyPlayerInfo == null) {
             return t("gui.friends.status.offline");
          } else {
-            String var5 = var4.getText2();
-            return var5.isEmpty() ? t("gui.friends.status.online") : var5;
+            String str = partyPlayerInfo.getText2();
+            return str.isEmpty() ? t("gui.friends.status.online") : str;
          }
       }
    }
 
-   private long daySeparator(long var1, long var3) {
-      long var5 = dayOf(var3);
-      if (var5 != var1 && var3 > 0L) {
+   private long daySeparator(long daySeparator, long time) {
+      long l = dayOf(time);
+      if (l != daySeparator && time > 0L) {
          this.dayBroke = true;
-         String var7 = this.dayLabel(var3);
-         Font var8 = Fonts.NEW_REGULAR.getFont(4.2F);
+         String dayLabel = this.dayLabel(time);
+         Font font = Fonts.NEW_REGULAR.getFont(4.2F);
          this.custom(
-            var8.height() + 7.0F,
-            (var2, var3x, var4, var5x, var6, var7x, var8x, var9) -> var2.drawText(
-               var8, var7, var5x + (var7x - var8.width(var7)) / 2.0F, var6 + 3.0F, var9.getTextTertiary().getZenithColor().method7294(var8x * 0.8F)
+            font.height() + 7.0F,
+            (menuDrawContext, var3x, n, var5x, f, var7x, var8x, zenithStyle) -> menuDrawContext.drawText(
+               font, dayLabel, var5x + (var7x - font.width(dayLabel)) / 2.0F, f + 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(var8x * 0.8F)
             )
          );
-         return var5;
+         return l;
       } else {
-         return var1 == 0L ? var5 : var1;
+         return daySeparator == 0L ? l : daySeparator;
       }
    }
 
-   private static long dayOf(long var0) {
-      if (var0 <= 0L) {
+   private static long dayOf(long time) {
+      if (time <= 0L) {
          return 0L;
       } else {
-         LocalDate var2 = LocalDate.ofInstant(Instant.ofEpochMilli(var0), ZoneId.systemDefault());
-         return var2.getYear() * 1000L + var2.getDayOfYear();
+         LocalDate localDate = LocalDate.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault());
+         return localDate.getYear() * 1000L + localDate.getDayOfYear();
       }
    }
 
-   private String dayLabel(long var1) {
-      long var3 = dayOf(System.currentTimeMillis());
-      long var5 = dayOf(var1);
-      if (var5 == var3) {
+   private String dayLabel(long time) {
+      long l = dayOf(System.currentTimeMillis());
+      long dayOf2 = dayOf(time);
+      if (dayOf2 == l) {
          return t("gui.chat.today");
-      } else if (var5 == var3 - 1L) {
+      } else if (dayOf2 == l - 1L) {
          return t("gui.chat.yesterday");
       } else {
-         String var7 = Zenith.getInstance().getLocalization().getLanguageName();
-         return DAY.computeIfAbsent(var7, var0 -> new SimpleDateFormat("d MMMM", Locale.forLanguageTag(var0))).format(new Date(var1));
+         String languageName = Zenith.getInstance().getLocalization().getLanguageName();
+         return DAY.computeIfAbsent(languageName, languageTag -> new SimpleDateFormat("d MMMM", Locale.forLanguageTag(languageTag))).format(new Date(time));
       }
    }
 
-   private void bubble(String var1, long var2, String var4, String var5, long var6, boolean var8, boolean var9, boolean var10, boolean var11, Runnable var12) {
-      this.bubble(var1, var2, var4, var5, var6, var8, var9, var10, var11, var12, null);
+   private void bubble(String username, long uid, String role, String body, long time, boolean mine, boolean showName, boolean newest, boolean read, Runnable runnable) {
+      this.bubble(username, uid, role, body, time, mine, showName, newest, read, runnable, null);
    }
 
    private void bubble(
-      String var1, long var2, String var4, String var5, long var6, boolean var8, boolean var9, boolean var10, boolean var11, Runnable var12, Runnable var13
+      String username, long uid, String role, String text, long time, boolean mine, boolean showName, boolean newest, boolean read, Runnable onClick, Runnable onRightClick
    ) {
-      this.bubble(var1, var2, var4, var5, var6, var8, var9, var10, var11, var12, var13, 1.0F);
+      this.bubble(username, uid, role, text, time, mine, showName, newest, read, onClick, onRightClick, 1.0F);
    }
 
    private void bubble(
-      String var1,
-      long var2,
-      String var4,
-      String var5,
-      long var6,
-      boolean var8,
-      boolean var9,
-      boolean var10,
-      boolean var11,
-      Runnable var12,
-      Runnable var13,
-      float var14
+      String username,
+      long uid,
+      String role,
+      String text,
+      long time,
+      boolean mine,
+      boolean showName,
+      boolean newest,
+      boolean read,
+      Runnable onClick,
+      Runnable onRightClick,
+      float factor
    ) {
-      Font var15 = Fonts.NEW_MEDIUM.getFont(4.6F);
-      Font var16 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var17 = Fonts.NEW_REGULAR.getFont(4.2F);
-      float var18 = this.mainWidth();
-      CloudChatSectionPanel.BubbleKey var19 = new CloudChatSectionPanel.BubbleKey(
-         var1, var2, var4, var5, var6, var8, var9, var10, var11, var18, Zenith.getInstance().getLocalization().getLanguageName(), var15, var16, var17
+      Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+      Font textFont = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font timeFont = Fonts.NEW_REGULAR.getFont(4.2F);
+      float mainWidth = this.mainWidth();
+      CloudChatSectionPanel.BubbleKey bubbleKey = new CloudChatSectionPanel.BubbleKey(
+         username, uid, role, text, time, mine, showName, newest, read, mainWidth, Zenith.getInstance().getLocalization().getLanguageName(), font, textFont, timeFont
       );
-      CloudChatSectionPanel.BubbleLayout var20 = this.bubbleLayouts.get(var19);
-      if (var20 == null) {
-         var20 = this.layoutBubble(var1, var2, var4, var5, var6, var8, var9, var10, var11, var18, var15, var16, var17);
-         this.bubbleLayouts.put(var19, var20);
+      CloudChatSectionPanel.BubbleLayout bubbleLayout = this.bubbleLayouts.get(bubbleKey);
+      if (bubbleLayout == null) {
+         bubbleLayout = this.layoutBubble(username, uid, role, text, time, mine, showName, newest, read, mainWidth, font, textFont, timeFont);
+         this.bubbleLayouts.put(bubbleKey, bubbleLayout);
       }
 
-      CloudChatSectionPanel.Bubble var21 = var20.shape();
-      float var22 = var21.height();
-      SectionPanel.AsideRenderer var23 = (var3, var4x, var5x, var6x, var7, var8x, var9x, var10x) -> this.renderBubble(
-         var3, var6x, var7, var8x, var9x * var14, var10x, var21
+      CloudChatSectionPanel.Bubble shape = bubbleLayout.shape();
+      float height = shape.height();
+      SectionPanel.AsideRenderer entering = (menuDrawContext, var4x, var5x, var6x, animationPosY, var8x, var9x, var10x) -> this.renderBubble(
+         menuDrawContext, var6x, animationPosY, var8x, var9x * factor, var10x, shape
       );
-      float var24 = (var22 + 3.0F) * var14;
-      if (var14 < 0.999F) {
-         this.custom(var24, var23);
+      float hintsHeight = (height + 3.0F) * factor;
+      if (factor < 0.999F) {
+         this.custom(hintsHeight, entering);
       } else {
-         Coord var25 = var20.coord();
-         if (var25 != null) {
-            this.custom(var24, var23, () -> this.markCoords(var25, var1), () -> var2 == this.selectedUid, var13 != null ? var13 : () -> this.copyCoords(var25));
+         Coord coord = bubbleLayout.coord();
+         if (coord != null) {
+            this.custom(hintsHeight, entering, () -> this.markCoords(coord, username), () -> uid == this.selectedUid, onRightClick != null ? onRightClick : () -> this.copyCoords(coord));
          } else {
-            if (var12 == null && var13 == null) {
-               this.custom(var24, var23);
+            if (onClick == null && onRightClick == null) {
+               this.custom(hintsHeight, entering);
             } else {
-               this.custom(var24, var23, var12, () -> var2 == this.selectedUid, var13);
+               this.custom(hintsHeight, entering, onClick, () -> uid == this.selectedUid, onRightClick);
             }
          }
       }
    }
 
    private CloudChatSectionPanel.BubbleLayout layoutBubble(
-      String var1,
-      long var2,
-      String var4,
-      String var5,
-      long var6,
-      boolean var8,
-      boolean var9,
-      boolean var10,
-      boolean var11,
-      float var12,
-      Font var13,
-      Font var14,
-      Font var15
+      String username,
+      long uid,
+      String role,
+      String text,
+      long time,
+      boolean mine,
+      boolean showName,
+      boolean newest,
+      boolean read,
+      float mainWidth,
+      Font font,
+      Font textFont,
+      Font timeFont
    ) {
-      Coord.Data var16 = Coord.method5172(var5);
-      ArrayList<Coord> var17 = new ArrayList();
+      Coord.Data data = Coord.method5172(text);
+      ArrayList<Coord> cards = new ArrayList();
 
-      for (Coord var19 : var16.getItems()) {
-         if (ChatCards.isCard(var19)) {
-            var17.add(var19);
+      for (Coord coord : data.getItems()) {
+         if (ChatCards.isCard(coord)) {
+            cards.add(coord);
          }
       }
 
-      Coord var34 = var16.method5179("at");
-      String var35 = var34 == null ? "" : ServerNameUtils.method5643(var34.method5169("s", ""), var34.method5169("m", ""));
-      String var20 = var8 ? "" : roleLabel(var4);
-      float var21 = var8 ? 0.0F : 20.0F;
-      float var22 = Math.max(40.0F, (var12 - 16.0F - var21) * 0.78F);
-      List var23 = var16.text().isEmpty() ? new ArrayList() : wrap(var16.text(), var14, var22 - 14.0F);
-      if (var16.isBroken()) {
-         var23.add(t("gui.chat.attachBroken"));
+      Coord coord = data.method5179("at");
+      String str = coord == null ? "" : ServerNameUtils.method5643(coord.method5169("s", ""), coord.method5169("m", ""));
+      String roleLabel2 = mine ? "" : roleLabel(role);
+      float f = mine ? 0.0F : 20.0F;
+      float f2 = Math.max(40.0F, (mainWidth - 16.0F - f) * 0.78F);
+      List lines = data.text().isEmpty() ? new ArrayList() : wrap(data.text(), textFont, f2 - 14.0F);
+      if (data.isBroken()) {
+         lines.add(t("gui.chat.attachBroken"));
       }
 
-      String var24 = var6 > 0L ? TIME.format(new Date(var6)) : "";
-      float var25 = var15.width(var24) + (var11 ? 8.0F : 0.0F);
-      if (!var23.isEmpty() && !var24.isEmpty() && var14.width((String)var23.get(var23.size() - 1)) + 6.0F + var25 > var22 - 14.0F) {
-         var23.add("");
+      String text2 = time > 0L ? TIME.format(new Date(time)) : "";
+      float f3 = timeFont.width(text2) + (read ? 8.0F : 0.0F);
+      if (!lines.isEmpty() && !text2.isEmpty() && textFont.width((String)lines.get(lines.size() - 1)) + 6.0F + f3 > f2 - 14.0F) {
+         lines.add("");
       }
 
-      float var26 = 0.0F;
+      float f4 = 0.0F;
 
-      for (int var27 = 0; var27 < var23.size(); var27++) {
-         float var28 = var14.width((String)var23.get(var27));
-         if (var27 == var23.size() - 1) {
-            var28 += 6.0F + var25;
+      for (int i = 0; i < lines.size(); i++) {
+         float width = textFont.width((String)lines.get(i));
+         if (i == lines.size() - 1) {
+            width += 6.0F + f3;
          }
 
-         var26 = Math.max(var26, var28);
+         f4 = Math.max(f4, width);
       }
 
-      if (var23.isEmpty()) {
-         var26 = Math.max(var26, var25);
+      if (lines.isEmpty()) {
+         f4 = Math.max(f4, f3);
       }
 
-      for (Coord var39 : var17) {
-         var26 = Math.max(var26, ChatCards.width(var39));
+      for (Coord card : cards) {
+         f4 = Math.max(f4, ChatCards.width(card));
       }
 
-      float var38 = 0.0F;
-      if (var9) {
-         var38 = var13.width(var1);
-         if (!var20.isEmpty()) {
-            var38 += 4.0F + Fonts.NEW_REGULAR.getFont(3.8F).width(var20);
+      float width = 0.0F;
+      if (showName) {
+         width = font.width(username);
+         if (!roleLabel2.isEmpty()) {
+            width += 4.0F + Fonts.NEW_REGULAR.getFont(3.8F).width(roleLabel2);
          }
       }
 
-      if (!var35.isEmpty()) {
-         var38 = Math.max(var38, Fonts.NEW_REGULAR.getFont(3.8F).width(var35) + 8.0F);
+      if (!str.isEmpty()) {
+         width = Math.max(width, Fonts.NEW_REGULAR.getFont(3.8F).width(str) + 8.0F);
       }
 
-      var26 = Math.max(var26, var38);
-      float var40 = var22;
+      f4 = Math.max(f4, width);
+      float f5 = f2;
 
-      for (Coord var30 : var17) {
-         var40 = Math.max(var40, ChatCards.width(var30) + 14.0F);
+      for (Coord card : cards) {
+         f5 = Math.max(f5, ChatCards.width(card) + 14.0F);
       }
 
-      boolean var41 = var23.isEmpty() && var17.size() == 1 && var35.isEmpty() && ((Coord)var17.get(0)).kind().equals("st");
-      float var42 = var41 ? Math.max(ChatCards.width((Coord)var17.get(0)), var38) : Math.min(var40, var26 + 14.0F);
-      float var31 = 0.0F;
+      boolean bare = lines.isEmpty() && cards.size() == 1 && str.isEmpty() && ((Coord)cards.get(0)).kind().equals("st");
+      float width2 = bare ? Math.max(ChatCards.width((Coord)cards.get(0)), width) : Math.min(f5, f4 + 14.0F);
+      float f6 = 0.0F;
 
-      for (Coord var33 : var17) {
-         var31 += ChatCards.height(var33) + 2.0F;
+      for (Coord card : cards) {
+         f6 += ChatCards.height(card) + 2.0F;
       }
 
-      float var43 = var41
-         ? (var9 ? var13.height() + 2.0F : 0.0F) + var31 + var15.height() + 1.0F
+      float height = bare
+         ? (showName ? font.height() + 2.0F : 0.0F) + f6 + timeFont.height() + 1.0F
          : 10.0F
-            + (var9 ? var13.height() + 2.0F : 0.0F)
-            + (var35.isEmpty() ? 0.0F : Fonts.NEW_REGULAR.getFont(3.8F).height() + 2.0F)
-            + (var23.isEmpty() ? 0.0F : var23.size() * (var14.height() + 1.5F) - 1.5F)
-            + var31;
-      if (!var41 && var23.isEmpty() && var17.isEmpty()) {
-         var43 += var14.height();
+            + (showName ? font.height() + 2.0F : 0.0F)
+            + (str.isEmpty() ? 0.0F : Fonts.NEW_REGULAR.getFont(3.8F).height() + 2.0F)
+            + (lines.isEmpty() ? 0.0F : lines.size() * (textFont.height() + 1.5F) - 1.5F)
+            + f6;
+      if (!bare && lines.isEmpty() && cards.isEmpty()) {
+         height += textFont.height();
       }
 
-      CloudChatSectionPanel.Bubble var44 = new CloudChatSectionPanel.Bubble(
-         var1, var2, var20, var35, (List<String>)var23, var17, var24, var11, var8, var9, var10, var41, var42, var43, var13, var14, var15
+      CloudChatSectionPanel.Bubble bubble = new CloudChatSectionPanel.Bubble(
+         username, uid, roleLabel2, str, (List<String>)lines, cards, text2, read, mine, showName, newest, bare, width2, height, font, textFont, timeFont
       );
-      return new CloudChatSectionPanel.BubbleLayout(var44, var16.method5179("coord"));
+      return new CloudChatSectionPanel.BubbleLayout(bubble, data.method5179("coord"));
    }
 
-   private List<Object> mergeWithGhosts(List<? extends Object> var1, int var2) {
-      boolean var3 = false;
+   private List<Object> mergeWithGhosts(List<? extends Object> globalMessages, int n) {
+      boolean flag = false;
 
-      for (CloudChatSectionPanel.Ghost var5 : this.ghosts) {
-         if (var5.feed == var2) {
-            var3 = true;
+      for (CloudChatSectionPanel.Ghost ghost : this.ghosts) {
+         if (ghost.feed == n) {
+            flag = true;
             break;
          }
       }
 
-      if (!var3) {
-         return new ArrayList<>(var1);
+      if (!flag) {
+         return new ArrayList<>(globalMessages);
       } else {
-         ArrayList<Object> var7 = new ArrayList<>(var1);
+         ArrayList<Object> arrayList = new ArrayList<>(globalMessages);
 
-         for (CloudChatSectionPanel.Ghost var6 : this.ghosts) {
-            if (var6.feed == var2) {
-               var7.add(var6);
+         for (CloudChatSectionPanel.Ghost ghost : this.ghosts) {
+            if (ghost.feed == n) {
+               arrayList.add(ghost);
             }
          }
 
-         var7.sort(Comparator.comparingLong(CloudChatSectionPanel::timeOf));
-         return var7;
+         arrayList.sort(Comparator.comparingLong(CloudChatSectionPanel::timeOf));
+         return arrayList;
       }
    }
 
-   private static long timeOf(Object var0) {
-      if (var0 instanceof CloudChatSectionPanel.Ghost var4) {
-         return var4.time;
-      } else if (var0 instanceof CloudPackets.Data13 var3) {
-         return var3.time();
-      } else if (var0 instanceof CloudChatClient.Data3 var2) {
-         return var2.getLongValue3();
+   private static long timeOf(Object obj) {
+      if (obj instanceof CloudChatSectionPanel.Ghost ghost) {
+         return ghost.time;
+      } else if (obj instanceof CloudPackets.Data13 data13) {
+         return data13.time();
+      } else if (obj instanceof CloudChatClient.Data3 data3) {
+         return data3.getLongValue3();
       } else {
-         return var0 instanceof StoreApi.Data3 var1 ? var1.time() : 0L;
+         return obj instanceof StoreApi.Data3 data32 ? data32.time() : 0L;
       }
    }
 
-   private void ghostBubble(CloudChatSectionPanel.Ghost var1, boolean var2) {
-      this.bubble(var1.author, 0L, var1.role, var1.body, var1.time, var1.mine, var2, false, false, null, null, var1.factor());
+   private void ghostBubble(CloudChatSectionPanel.Ghost ghost, boolean showName) {
+      this.bubble(ghost.author, 0L, ghost.role, ghost.body, ghost.time, ghost.mine, showName, false, false, null, null, ghost.factor());
    }
 
-   private void markCoords(Coord var1, String var2) {
-      String var3 = CloudWaypointsModule.INSTANCE
+   private void markCoords(Coord coord, String username) {
+      String str = CloudWaypointsModule.INSTANCE
          .method6402(
-            var1.method5170("x", 0) + 0.5,
-            var1.method5170("y", 0) + 0.5,
-            var1.method5170("z", 0) + 0.5,
-            var2,
-            var1.method5169("n", ""),
-            var1.method5169("s", ""),
-            var1.method5169("d", "")
+            coord.method5170("x", 0) + 0.5,
+            coord.method5170("y", 0) + 0.5,
+            coord.method5170("z", 0) + 0.5,
+            username,
+            coord.method5169("n", ""),
+            coord.method5169("s", ""),
+            coord.method5169("d", "")
          );
-      this.notice = t(var3.isEmpty() ? "gui.chat.marked" : var3);
+      this.notice = t(str.isEmpty() ? "gui.chat.marked" : str);
       this.noticeAt = System.currentTimeMillis();
    }
 
-   private void copyCoords(Coord var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2 != null && var2.keyboardHandler != null) {
-         var2.keyboardHandler.setClipboard(ChatCards.coordText(var1));
+   private void copyCoords(Coord coord) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.keyboardHandler != null) {
+         minecraft.keyboardHandler.setClipboard(ChatCards.coordText(coord));
          this.notice = t("gui.chat.coordsCopied");
          this.noticeAt = System.currentTimeMillis();
       }
    }
 
-   private void renderBubble(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6, CloudChatSectionPanel.Bubble var7) {
-      float var8 = var7.newest() ? this.messageArrival.method2808(1.0F) : 1.0F;
-      float var9 = (1.0F - var8) * (var7.mine() ? 12.0F : -12.0F);
-      var5 *= 0.25F + 0.75F * var8;
-      float var10 = var7.mine() ? 0.0F : 20.0F;
-      float var11 = (var7.mine() ? var2 + var4 - 8.0F - var7.width() : var2 + 8.0F + var10) + var9;
-      if (!var7.mine() && var7.showName() && var7.authorUid() > 0L) {
-         this.avatar(var1, var7.authorUid(), var7.author(), var2 + 8.0F + var9, var3, 16.0F, var5, var6);
+   private void renderBubble(MenuDrawContext menuDrawContext, float f, float animationPosY, float f2, float previewAlpha, ZenithStyle zenithStyle, CloudChatSectionPanel.Bubble shape) {
+      float f3 = shape.newest() ? this.messageArrival.method2808(1.0F) : 1.0F;
+      float f4 = (1.0F - f3) * (shape.mine() ? 12.0F : -12.0F);
+      previewAlpha *= 0.25F + 0.75F * f3;
+      float f5 = shape.mine() ? 0.0F : 20.0F;
+      float floatValue = (shape.mine() ? f + f2 - 8.0F - shape.width() : f + 8.0F + f5) + f4;
+      if (!shape.mine() && shape.showName() && shape.authorUid() > 0L) {
+         this.avatar(menuDrawContext, shape.authorUid(), shape.author(), f + 8.0F + f4, animationPosY, 16.0F, previewAlpha, zenithStyle);
       }
 
-      ProxyDotRadiusData var12 = var7.mine() ? new ProxyDotRadiusData(5.0F, 5.0F, 1.5F, 5.0F) : new ProxyDotRadiusData(5.0F, 5.0F, 5.0F, 1.5F);
-      ZenithColor var13 = var7.mine()
-         ? var6.getPrimaryColor().getZenithColor().method7294(var5 * 0.3F)
-         : var6.getSurfaceEnableBackground().getZenithColor().method7294(var5 * 2.2F);
-      if (!var7.bare()) {
-         var1.drawRoundedRectBatched(var11, var3, var7.width(), var7.height(), var12, var13);
-         var1.flushRoundedRects();
+      ProxyDotRadiusData proxyDotRadiusData = shape.mine() ? new ProxyDotRadiusData(5.0F, 5.0F, 1.5F, 5.0F) : new ProxyDotRadiusData(5.0F, 5.0F, 5.0F, 1.5F);
+      ZenithColor zenithColor = shape.mine()
+         ? zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.3F)
+         : zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.2F);
+      if (!shape.bare()) {
+         menuDrawContext.drawRoundedRectBatched(floatValue, animationPosY, shape.width(), shape.height(), proxyDotRadiusData, zenithColor);
+         menuDrawContext.flushRoundedRects();
       }
 
-      float var14 = var7.bare() ? var3 : var3 + 5.0F;
-      float var15 = var11 + (var7.bare() ? 0.0F : 7.0F);
-      if (var7.showName()) {
-         var1.drawText(var7.nameFont(), var7.author(), var15, var14, var6.getPrimaryColor().getZenithColor().method7294(var5));
-         if (!var7.badge().isEmpty()) {
-            Font var16 = Fonts.NEW_REGULAR.getFont(3.8F);
-            var1.drawText(
-               var16, var7.badge(), var15 + var7.nameFont().width(var7.author()) + 4.0F, var14 + 0.6F, roleColor(var7.badge(), var6).method7294(var5 * 0.9F)
+      float centeredTextY = shape.bare() ? animationPosY : animationPosY + 5.0F;
+      float floatValue2 = floatValue + (shape.bare() ? 0.0F : 7.0F);
+      if (shape.showName()) {
+         menuDrawContext.drawText(shape.nameFont(), shape.author(), floatValue2, centeredTextY, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+         if (!shape.badge().isEmpty()) {
+            Font font = Fonts.NEW_REGULAR.getFont(3.8F);
+            menuDrawContext.drawText(
+               font, shape.badge(), floatValue2 + shape.nameFont().width(shape.author()) + 4.0F, centeredTextY + 0.6F, roleColor(shape.badge(), zenithStyle).method7294(previewAlpha * 0.9F)
             );
          }
 
-         var14 += var7.nameFont().height() + 2.0F;
+         centeredTextY += shape.nameFont().height() + 2.0F;
       }
 
-      if (!var7.where().isEmpty()) {
-         Font var19 = Fonts.NEW_REGULAR.getFont(3.8F);
-         MenuGlyph.WORLD.draw(var1, var11 + 7.0F, var14 - 0.5F, var6.getTextTertiary().getZenithColor().method7294(var5 * 0.8F));
-         var1.drawText(var19, var7.where(), var11 + 7.0F + 6.0F + 2.0F, var14, var6.getTextTertiary().getZenithColor().method7294(var5 * 0.9F));
-         var14 += var19.height() + 2.0F;
+      if (!shape.where().isEmpty()) {
+         Font font = Fonts.NEW_REGULAR.getFont(3.8F);
+         MenuGlyph.WORLD.draw(menuDrawContext, floatValue + 7.0F, centeredTextY - 0.5F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F));
+         menuDrawContext.drawText(font, shape.where(), floatValue + 7.0F + 6.0F + 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.9F));
+         centeredTextY += font.height() + 2.0F;
       }
 
-      for (String var17 : var7.lines()) {
-         var1.drawText(var7.textFont(), var17, var11 + 7.0F, var14, var6.getTextEnable().getZenithColor().method7294(var5 * 0.92F));
-         var14 += var7.textFont().height() + 1.5F;
+      for (String line : shape.lines()) {
+         menuDrawContext.drawText(shape.textFont(), line, floatValue + 7.0F, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha * 0.92F));
+         centeredTextY += shape.textFont().height() + 1.5F;
       }
 
-      for (Coord var23 : var7.cards()) {
-         ChatCards.render(var1, var23, var11 + (var7.bare() ? 0.0F : 7.0F), var14, var5, var6);
-         var14 += ChatCards.height(var23) + 2.0F;
+      for (Coord card : shape.cards()) {
+         ChatCards.render(menuDrawContext, card, floatValue + (shape.bare() ? 0.0F : 7.0F), centeredTextY, previewAlpha, zenithStyle);
+         centeredTextY += ChatCards.height(card) + 2.0F;
       }
 
-      if (!var7.time().isEmpty()) {
-         float var22 = var11 + var7.width() - (var7.bare() ? 0.0F : 7.0F) - var7.timeFont().width(var7.time());
-         if (var7.read()) {
+      if (!shape.time().isEmpty()) {
+         float floatValue3 = floatValue + shape.width() - (shape.bare() ? 0.0F : 7.0F) - shape.timeFont().width(shape.time());
+         if (shape.read()) {
             MenuGlyph.CHECK
                .draw(
-                  var1,
-                  var22 - 6.0F - 1.0F,
-                  var3 + var7.height() - (var7.bare() ? 0.0F : 5.0F) - 6.0F,
-                  var6.getPrimaryColor().getZenithColor().method7294(var5)
+                  menuDrawContext,
+                  floatValue3 - 6.0F - 1.0F,
+                  animationPosY + shape.height() - (shape.bare() ? 0.0F : 5.0F) - 6.0F,
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
                );
          }
 
-         var1.drawText(
-            var7.timeFont(),
-            var7.time(),
-            var22,
-            var3 + var7.height() - (var7.bare() ? 0.0F : 5.0F) - var7.timeFont().height() + 0.5F,
-            var6.getTextTertiary().getZenithColor().method7294(var5)
+         menuDrawContext.drawText(
+            shape.timeFont(),
+            shape.time(),
+            floatValue3,
+            animationPosY + shape.height() - (shape.bare() ? 0.0F : 5.0F) - shape.timeFont().height() + 0.5F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
       }
    }
 
-   private void avatar(MenuDrawContext var1, long var2, String var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      Identifier var10 = var2 > 0L ? CloudAvatarCache.get(Long.toString(var2)) : null;
-      ProxyDotRadiusData var11 = ProxyDotRadiusData.method8069(var7 / 2.0F);
-      if (var10 != null) {
-         float var14 = this.avatarFade.computeIfAbsent(var2, var0 -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
-         if (var14 < 1.0F) {
-            var1.drawRoundedRect(var5, var6, var7, var7, var11, var9.getSurfaceEnableBackground().getZenithColor().method7294(var8 * 2.4F * (1.0F - var14)));
+   private void avatar(MenuDrawContext menuDrawContext, long uid, String name, float floatValue, float animationPosY, float height, float previewAlpha, ZenithStyle zenithStyle) {
+      Identifier texture = uid > 0L ? CloudAvatarCache.get(Long.toString(uid)) : null;
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
+      if (texture != null) {
+         float f = this.avatarFade.computeIfAbsent(uid, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+         if (f < 1.0F) {
+            menuDrawContext.drawRoundedRect(floatValue, animationPosY, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F * (1.0F - f)));
          }
 
-         var1.drawRoundedTexture(var10, var5, var6, var7, var7, var11, ZenithColor.INSTANCE.method7294(var8 * var14));
+         menuDrawContext.drawRoundedTexture(texture, floatValue, animationPosY, height, height, headerRadius, ZenithColor.INSTANCE.method7294(previewAlpha * f));
       } else {
-         var1.drawRoundedRect(var5, var6, var7, var7, var11, var9.getSurfaceEnableBackground().getZenithColor().method7294(var8 * 2.4F));
-         String var12 = var4 != null && !var4.isEmpty() ? var4.substring(0, 1).toUpperCase(Locale.ROOT) : "?";
-         Font var13 = Fonts.NEW_MEDIUM.getFont(var7 * 0.5F);
-         var1.drawText(
-            var13,
-            var12,
-            var5 + (var7 - var13.width(var12)) / 2.0F,
-            var6 + (var7 - var13.height()) / 2.0F,
-            var9.getTextTertiary().getZenithColor().method7294(var8)
+         menuDrawContext.drawRoundedRect(floatValue, animationPosY, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F));
+         String upperCase = name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase(Locale.ROOT) : "?";
+         Font font = Fonts.NEW_MEDIUM.getFont(height * 0.5F);
+         menuDrawContext.drawText(
+            font,
+            upperCase,
+            floatValue + (height - font.width(upperCase)) / 2.0F,
+            animationPosY + (height - font.height()) / 2.0F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
       }
    }
@@ -1799,31 +1799,31 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderFooter(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+   public void renderFooter(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float width, float previewAlpha, ZenithStyle zenithStyle) {
       if (this.input == null) {
-         this.input = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.0F), t("gui.chat.inputHint"), var6);
+         this.input = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.0F), t("gui.chat.inputHint"), width);
       }
 
-      int var9 = siteMode() ? (this.getActiveTab() == 1 ? 1000 : 500) : 256;
-      int var10 = siteMode() ? 120 : 0;
-      int var11 = var9 - var10 - (this.pendingTag.isEmpty() ? 0 : this.pendingTag.length() + 1);
-      this.input.setMaxLength(siteMode() ? Math.max(64, var11) : Math.max(1, var11));
-      float var12 = this.errorRoom();
-      float var13 = var5 + GuiStyle.PADDING.intValue() + var12 + 7.0F;
-      var1.drawRect(var4 + 8.0F, var5, var6 - 16.0F, 1.0F, var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F));
+      int n = siteMode() ? (this.getActiveTab() == 1 ? 1000 : 500) : 256;
+      int n2 = siteMode() ? 120 : 0;
+      int n3 = n - n2 - (this.pendingTag.isEmpty() ? 0 : this.pendingTag.length() + 1);
+      this.input.setMaxLength(siteMode() ? Math.max(64, n3) : Math.max(1, n3));
+      float errorRoom = this.errorRoom();
+      float f = y + GuiStyle.PADDING.intValue() + errorRoom + 7.0F;
+      menuDrawContext.drawRect(floatValue + 8.0F, y, width - 16.0F, 1.0F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
       if (!this.error.isEmpty()) {
          this.shownError = this.error;
       }
 
-      float var14 = this.errorAnimation.method2808(this.error.isEmpty() ? 0.0F : 1.0F);
-      if (var14 > 0.01F && !this.shownError.isEmpty()) {
-         Font var15 = Fonts.NEW_REGULAR.getFont(4.2F);
-         var1.drawText(
-            var15,
-            clip(this.shownError, var15, var6 - 16.0F),
-            var4 + 8.0F,
-            var5 + GuiStyle.PADDING.intValue() + (1.0F - var14) * 3.0F,
-            ERROR_COLOR.method7294(var7 * var14)
+      float f2 = this.errorAnimation.method2808(this.error.isEmpty() ? 0.0F : 1.0F);
+      if (f2 > 0.01F && !this.shownError.isEmpty()) {
+         Font font = Fonts.NEW_REGULAR.getFont(4.2F);
+         menuDrawContext.drawText(
+            font,
+            clip(this.shownError, font, width - 16.0F),
+            floatValue + 8.0F,
+            y + GuiStyle.PADDING.intValue() + (1.0F - f2) * 3.0F,
+            ERROR_COLOR.method7294(previewAlpha * f2)
          );
       }
 
@@ -1837,26 +1837,26 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.input.setSelected(true);
       }
 
-      float var29 = this.focusAnimation.method2808(this.input.isSelected() ? 1.0F : 0.0F);
-      var1.drawRoundedRectBatched(
-         var4 + 8.0F,
-         var13 + 2.0F,
-         var6 - 16.0F,
+      float f3 = this.focusAnimation.method2808(this.input.isSelected() ? 1.0F : 0.0F);
+      menuDrawContext.drawRoundedRectBatched(
+         floatValue + 8.0F,
+         f + 2.0F,
+         width - 16.0F,
          16.0F,
          ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() / 2.0F),
-         var8.getPanelLeftBackground().getZenithColor().method7295(var8.getPrimaryColor().getZenithColor(), var29 * 0.18F).method7294(var7)
+         zenithStyle.getPanelLeftBackground().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), f3 * 0.18F).method7294(previewAlpha)
       );
-      var1.flushRoundedRects();
-      float var16 = var13 + 7.0F;
-      float var17 = var4 + 8.0F + 4.0F;
-      this.coordsButton = this.glyphButton(var1, "coords", MenuGlyph.GPS, var17, var16, var2, var3, false, var7, var8);
-      var17 += 11.0F;
-      this.inventoryButton = this.glyphButton(var1, "inventory", MenuGlyph.CHESTPLATE, var17, var16, var2, var3, false, var7, var8);
-      var17 += 11.0F;
-      this.stickerButton = this.glyphButton(var1, "stickers", MenuGlyph.STICKER, var17, var16, var2, var3, this.pickerOpen, var7, var8);
-      var17 += 12.0F;
-      Font var18 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      String var19 = this.getActiveTab() == 1 ? (this.hasPeer() ? this.openPeerName() : t("gui.chat.toWhom")) : t("gui.chat.toAll");
+      menuDrawContext.flushRoundedRects();
+      float centeredTextY = f + 7.0F;
+      float floatValue2 = floatValue + 8.0F + 4.0F;
+      this.coordsButton = this.glyphButton(menuDrawContext, "coords", MenuGlyph.GPS, floatValue2, centeredTextY, lastClickX, lastClickY, false, previewAlpha, zenithStyle);
+      floatValue2 += 11.0F;
+      this.inventoryButton = this.glyphButton(menuDrawContext, "inventory", MenuGlyph.CHESTPLATE, floatValue2, centeredTextY, lastClickX, lastClickY, false, previewAlpha, zenithStyle);
+      floatValue2 += 11.0F;
+      this.stickerButton = this.glyphButton(menuDrawContext, "stickers", MenuGlyph.STICKER, floatValue2, centeredTextY, lastClickX, lastClickY, this.pickerOpen, previewAlpha, zenithStyle);
+      floatValue2 += 12.0F;
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      String openPeerName = this.getActiveTab() == 1 ? (this.hasPeer() ? this.openPeerName() : t("gui.chat.toWhom")) : t("gui.chat.toAll");
       if (!this.notice.isEmpty() && System.currentTimeMillis() - this.noticeAt > 2000L) {
          this.notice = "";
       }
@@ -1865,141 +1865,141 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.shownNotice = this.notice;
       }
 
-      float var20 = this.noticeAnimation.method2808(this.notice.isEmpty() ? 0.0F : 1.0F);
-      Font var21 = Fonts.NEW_REGULAR.getFont(4.4F);
-      float var22 = Math.max(var21.width(var19), this.shownNotice.isEmpty() ? 0.0F : var21.width(this.shownNotice) * var20);
-      float var23 = var4 + var6 - 8.0F - 4.0F;
-      float var24 = var17;
+      float f4 = this.noticeAnimation.method2808(this.notice.isEmpty() ? 0.0F : 1.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+      float f5 = Math.max(font2.width(openPeerName), this.shownNotice.isEmpty() ? 0.0F : font2.width(this.shownNotice) * f4);
+      float f6 = floatValue + width - 8.0F - 4.0F;
+      float floatValue3 = floatValue2;
       if (!this.pendingTag.isEmpty()) {
          this.shownLabel = this.pendingLabel;
       }
 
-      float var25 = this.pendingAnimation.method2808(this.pendingTag.isEmpty() ? 0.0F : 1.0F);
-      if (var25 > 0.01F && !this.shownLabel.isEmpty()) {
-         Font var26 = Fonts.NEW_REGULAR.getFont(4.0F);
-         float var27 = var26.width(this.shownLabel) + 6.0F + 9.0F;
-         var1.drawRoundedRect(
-            var17,
-            var13 + 5.0F,
-            var27 * var25,
+      float f7 = this.pendingAnimation.method2808(this.pendingTag.isEmpty() ? 0.0F : 1.0F);
+      if (f7 > 0.01F && !this.shownLabel.isEmpty()) {
+         Font font3 = Fonts.NEW_REGULAR.getFont(4.0F);
+         float width2 = font3.width(this.shownLabel) + 6.0F + 9.0F;
+         menuDrawContext.drawRoundedRect(
+            floatValue2,
+            f + 5.0F,
+            width2 * f7,
             10.0F,
             ProxyDotRadiusData.method8069(5.0F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * 0.28F * var25)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.28F * f7)
          );
-         float var28 = var25 * var25;
-         var1.drawText(
-            var26, this.shownLabel, var17 + 4.0F, var13 + (20.0F - var26.height()) / 2.0F, var8.getTextEnable().getZenithColor().method7294(var7 * var28)
+         float f8 = f7 * f7;
+         menuDrawContext.drawText(
+            font3, this.shownLabel, floatValue2 + 4.0F, f + (20.0F - font3.height()) / 2.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha * f8)
          );
-         MenuGlyph.CLOSE.draw(var1, var17 + var27 * var25 - 6.0F - 3.0F, var13 + 7.0F, var8.getTextTertiary().getZenithColor().method7294(var7 * var28));
-         this.pendingButton = this.pendingTag.isEmpty() ? null : new BoundsData(var17, var13, var27, 20.0F);
-         var24 = var17 + (var27 + 4.0F) * var25;
+         MenuGlyph.CLOSE.draw(menuDrawContext, floatValue2 + width2 * f7 - 6.0F - 3.0F, f + 7.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * f8));
+         this.pendingButton = this.pendingTag.isEmpty() ? null : new BoundsData(floatValue2, f, width2, 20.0F);
+         floatValue3 = floatValue2 + (width2 + 4.0F) * f7;
       } else {
          this.pendingButton = null;
       }
 
-      this.input.setFont(var18);
-      float var33 = Math.max(var24, var23 - var22 - 6.0F);
-      this.input.setWidth(Math.max(20.0F, var33 - var24));
-      var1.enableScissor(var24, var13 + 2.0F, var33, var13 + 20.0F - 2.0F);
+      this.input.setFont(font);
+      float guiScaledWidth = Math.max(floatValue3, f6 - f5 - 6.0F);
+      this.input.setWidth(Math.max(20.0F, guiScaledWidth - floatValue3));
+      menuDrawContext.enableScissor(floatValue3, f + 2.0F, guiScaledWidth, f + 20.0F - 2.0F);
       this.input
          .method987(
-            var1,
-            var24,
-            var13 + (20.0F - var18.height()) / 2.0F,
-            var8.getTextEnable().getZenithColor().method7294(var7),
-            var8.getTextTertiary().getZenithColor().method7294(var7)
+            menuDrawContext,
+            floatValue3,
+            f + (20.0F - font.height()) / 2.0F,
+            zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
-      var1.disableScissor();
-      float var34 = var13 + (20.0F - var21.height()) / 2.0F;
-      if (var20 < 0.99F) {
-         var1.drawText(
-            var21, var19, var23 - var21.width(var19), var34 + var20 * 3.0F, var8.getTextTertiary().getZenithColor().method7294(var7 * (1.0F - var20))
+      menuDrawContext.disableScissor();
+      float f8 = f + (20.0F - font2.height()) / 2.0F;
+      if (f4 < 0.99F) {
+         menuDrawContext.drawText(
+            font2, openPeerName, f6 - font2.width(openPeerName), f8 + f4 * 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * (1.0F - f4))
          );
       }
 
-      if (var20 > 0.01F && !this.shownNotice.isEmpty()) {
-         var1.drawText(
-            var21,
+      if (f4 > 0.01F && !this.shownNotice.isEmpty()) {
+         menuDrawContext.drawText(
+            font2,
             this.shownNotice,
-            var23 - var21.width(this.shownNotice),
-            var34 - (1.0F - var20) * 3.0F,
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * var20)
+            f6 - font2.width(this.shownNotice),
+            f8 - (1.0F - f4) * 3.0F,
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * f4)
          );
       }
 
-      this.pickerAt = new BoundsData(var4, var13, var6, var7);
+      this.pickerAt = new BoundsData(floatValue, f, width, previewAlpha);
    }
 
    @Override
-   public void renderFloating(MenuDrawContext var1, int var2, int var3, float var4, ZenithStyle var5) {
-      if (var5 != null) {
-         BoundsData var6 = this.pickerAt;
-         float var7 = this.pickerAnimation.method2808(this.pickerOpen ? 1.0F : 0.0F);
-         if (var6 != null && !(var7 <= 0.01F)) {
+   public void renderFloating(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, ZenithStyle zenithStyle) {
+      if (zenithStyle != null) {
+         BoundsData pickerAt = this.pickerAt;
+         float f2 = this.pickerAnimation.method2808(this.pickerOpen ? 1.0F : 0.0F);
+         if (pickerAt != null && !(f2 <= 0.01F)) {
             ScissorFlusher.flush();
-            this.renderPicker(var1, var2, var3, var6.getFloatValue(), var6.getFloatValue2(), var6.width(), var6.height(), var5, var7);
+            this.renderPicker(menuDrawContext, lastClickX, lastClickY, pickerAt.getFloatValue(), pickerAt.getFloatValue2(), pickerAt.width(), pickerAt.height(), zenithStyle, f2);
          } else {
             this.pickerBounds = null;
          }
 
          if (!this.ghosts.isEmpty()) {
-            long var8 = System.currentTimeMillis();
-            this.ghosts.removeIf(var2x -> var8 - var2x.startedAt >= 240L);
+            long now = System.currentTimeMillis();
+            this.ghosts.removeIf(var2x -> now - var2x.startedAt >= 240L);
             this.invalidate();
          }
 
-         this.renderDeleteMenu(var1, var2, var3, var4, var5);
+         this.renderDeleteMenu(menuDrawContext, lastClickX, lastClickY, f, zenithStyle);
       }
    }
 
-   private void renderDeleteMenu(MenuDrawContext var1, int var2, int var3, float var4, ZenithStyle var5) {
-      float var6 = this.deleteMenuAnimation.method2808(this.deleteMenuMessage != 0L ? 1.0F : 0.0F);
-      BoundsData var7 = this.mainViewport();
-      if (!(var6 <= 0.01F) && var7 != null) {
+   private void renderDeleteMenu(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, ZenithStyle zenithStyle) {
+      float f2 = this.deleteMenuAnimation.method2808(this.deleteMenuMessage != 0L ? 1.0F : 0.0F);
+      BoundsData mainViewport = this.mainViewport();
+      if (!(f2 <= 0.01F) && mainViewport != null) {
          ScissorFlusher.flush();
-         Font var8 = Fonts.NEW_MEDIUM.getFont(4.6F);
-         String var9 = t("gui.chat.delete");
-         float var10 = var8.width(var9) + 18.0F;
-         float var11 = 15.0F;
-         float var12 = var7.getFloatValue() + var7.width() - var10 - 7.0F;
-         float var13 = Float.isNaN(this.deleteMenuAnchorTop)
-            ? var7.getFloatValue2() + 4.0F
-            : Math.max(var7.getFloatValue2() + 4.0F, this.deleteMenuAnchorTop - var11 - 2.0F);
-         float var14 = var13 - (1.0F - var6) * 5.0F;
-         float var15 = var4 * var6;
-         this.deleteMenuBounds = new BoundsData(var12, var14, var10, var11);
-         var1.drawRoundedRect(
-            var12,
-            var14,
-            var10,
-            var11,
+         Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+         String text = t("gui.chat.delete");
+         float width = font.width(text) + 18.0F;
+         float height = 15.0F;
+         float floatValue = mainViewport.getFloatValue() + mainViewport.width() - width - 7.0F;
+         float f3 = Float.isNaN(this.deleteMenuAnchorTop)
+            ? mainViewport.getFloatValue2() + 4.0F
+            : Math.max(mainViewport.getFloatValue2() + 4.0F, this.deleteMenuAnchorTop - height - 2.0F);
+         float y = f3 - (1.0F - f2) * 5.0F;
+         float previewAlpha = f * f2;
+         this.deleteMenuBounds = new BoundsData(floatValue, y, width, height);
+         menuDrawContext.drawRoundedRect(
+            floatValue,
+            y,
+            width,
+            height,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.6F),
-            var5.getPanelLeftBackground().getZenithColor().method7294(var15)
+            zenithStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha)
          );
-         var1.drawRoundedBorder(
-            var12,
-            var14,
-            var10,
-            var11,
+         menuDrawContext.drawRoundedBorder(
+            floatValue,
+            y,
+            width,
+            height,
             0.5F,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.6F),
-            var5.getFieldBorder().getZenithColor().method7294(var15 * 2.5F)
+            zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.5F)
          );
-         boolean var16 = this.deleteMenuBounds.contains(var2, var3);
-         float var17 = this.deleteMenuHover.method2808(var16 ? 1.0F : 0.0F);
-         if (var17 > 0.01F) {
-            var1.drawRoundedRect(
-               var12 + 1.0F,
-               var14 + 1.0F,
-               var10 - 2.0F,
-               var11 - 2.0F,
+         boolean contains = this.deleteMenuBounds.contains(lastClickX, lastClickY);
+         float f4 = this.deleteMenuHover.method2808(contains ? 1.0F : 0.0F);
+         if (f4 > 0.01F) {
+            menuDrawContext.drawRoundedRect(
+               floatValue + 1.0F,
+               y + 1.0F,
+               width - 2.0F,
+               height - 2.0F,
                ProxyDotRadiusData.method8069(Math.max(1.0F, GuiStyle.ROUND.intValue() * 0.6F - 1.0F)),
-               var5.getDisableActiveBg().getZenithColor().method7294(var15 * var17)
+               zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f4)
             );
          }
 
-         var1.drawText(
-            var8, var9, var12 + 9.0F, var14 + (var11 - var8.height()) / 2.0F, ERROR_COLOR.method7295(ZenithColor.INSTANCE, var17 * 0.2F).method7294(var15)
+         menuDrawContext.drawText(
+            font, text, floatValue + 9.0F, y + (height - font.height()) / 2.0F, ERROR_COLOR.method7295(ZenithColor.INSTANCE, f4 * 0.2F).method7294(previewAlpha)
          );
       } else {
          this.deleteMenuBounds = null;
@@ -2007,151 +2007,151 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private BoundsData glyphButton(
-      MenuDrawContext var1, String var2, MenuGlyph var3, float var4, float var5, int var6, int var7, boolean var8, float var9, ZenithStyle var10
+      MenuDrawContext menuDrawContext, String key, MenuGlyph menuGlyph, float floatValue, float centeredTextY, int lastClickX, int lastClickY, boolean pickerOpen, float previewAlpha, ZenithStyle zenithStyle
    ) {
-      BoundsData var11 = new BoundsData(var4 - 2.0F, var5 - 3.0F, 10.0F, 12.0F);
-      boolean var12 = var11.contains(var6, var7);
-      float var13 = this.glyphHover.computeIfAbsent(var2, var0 -> new Animation(130L, 0.0F, Easing.INSTANCE12)).method2808(!var12 && !var8 ? 0.0F : 1.0F);
-      if (var13 > 0.01F) {
-         var1.drawRoundedRect(
-            var11.getFloatValue(),
-            var11.getFloatValue2(),
-            var11.width(),
-            var11.height(),
-            ProxyDotRadiusData.method8069(var11.width() / 2.0F),
-            var10.getDisableActiveBg().getZenithColor().method7294(var9 * var13 * 0.55F)
+      BoundsData boundsData = new BoundsData(floatValue - 2.0F, centeredTextY - 3.0F, 10.0F, 12.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hover = this.glyphHover.computeIfAbsent(key, str -> new Animation(130L, 0.0F, Easing.INSTANCE12)).method2808(!contains && !pickerOpen ? 0.0F : 1.0F);
+      if (hover > 0.01F) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
+            ProxyDotRadiusData.method8069(boundsData.width() / 2.0F),
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * hover * 0.55F)
          );
       }
 
-      var3.draw(var1, var4, var5, var10.getTextTertiary().getZenithColor().method7295(var10.getTextEnable().getZenithColor(), var13).method7294(var9));
-      return var11;
+      menuGlyph.draw(menuDrawContext, floatValue, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha));
+      return boundsData;
    }
 
-   private void renderPicker(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, float var9) {
-      StickerPackService var10 = StickerPackService.getInstance();
-      var10.method5508();
-      float var11 = (1.0F - var9) * 10.0F;
-      var7 *= var9;
-      float var12 = 26.0F;
-      int var13 = Math.max(1, (int)((var6 - 16.0F - 6.0F) / var12));
-      var var14 = var10.getItems2();
-      Font var15 = Fonts.NEW_REGULAR.getFont(4.2F);
-      if (var14.isEmpty()) {
-         float var37 = 26.0F;
-         float var38 = var5 - var37 - 4.0F + var11;
-         var1.drawRoundedRect(
-            var4 + 8.0F,
-            var38,
-            var6 - 16.0F,
-            var37,
+   private void renderPicker(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float f, float width, float height, ZenithStyle zenithStyle, float f2) {
+      StickerPackService stickerPackService = StickerPackService.getInstance();
+      stickerPackService.method5508();
+      float f3 = (1.0F - f2) * 10.0F;
+      height *= f2;
+      float width2 = 26.0F;
+      int n = Math.max(1, (int)((width - 16.0F - 6.0F) / width2));
+      var datas = stickerPackService.getItems2();
+      Font font = Fonts.NEW_REGULAR.getFont(4.2F);
+      if (datas.isEmpty()) {
+         float height2 = 26.0F;
+         float y = f - height2 - 4.0F + f3;
+         menuDrawContext.drawRoundedRect(
+            floatValue + 8.0F,
+            y,
+            width - 16.0F,
+            height2,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.6F),
-            var8.getPanelLeftBackground().getZenithColor().method7294(var7)
+            zenithStyle.getPanelLeftBackground().getZenithColor().method7294(height)
          );
-         String var39 = t("gui.chat.stickers.none");
-         var1.drawText(
-            var15,
-            var39,
-            var4 + 8.0F + (var6 - 16.0F - var15.width(var39)) / 2.0F,
-            var38 + (var37 - var15.height()) / 2.0F,
-            var8.getTextTertiary().getZenithColor().method7294(var7)
+         String text = t("gui.chat.stickers.none");
+         menuDrawContext.drawText(
+            font,
+            text,
+            floatValue + 8.0F + (width - 16.0F - font.width(text)) / 2.0F,
+            y + (height2 - font.height()) / 2.0F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(height)
          );
-         this.pickerBounds = new BoundsData(var4 + 8.0F, var38, var6 - 16.0F, var37);
+         this.pickerBounds = new BoundsData(floatValue + 8.0F, y, width - 16.0F, height2);
       } else {
-         int var16 = Math.floorMod(this.pickerPack, var14.size());
-         StickerPackService.Data var17 = (StickerPackService.Data)var14.get(var16);
-         int var18 = Math.min(4, (var17.getItems().size() + var13 - 1) / var13);
-         float var19 = 14.0F + var18 * var12;
-         float var20 = var5 - var19 - 4.0F + var11;
-         var1.drawRoundedRect(
-            var4 + 8.0F,
-            var20,
-            var6 - 16.0F,
-            var19,
+         int floorMod = Math.floorMod(this.pickerPack, datas.size());
+         StickerPackService.Data data = (StickerPackService.Data)datas.get(floorMod);
+         int n2 = Math.min(4, (data.getItems().size() + n - 1) / n);
+         float height2 = 14.0F + n2 * width2;
+         float y = f - height2 - 4.0F + f3;
+         menuDrawContext.drawRoundedRect(
+            floatValue + 8.0F,
+            y,
+            width - 16.0F,
+            height2,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.6F),
-            var8.getPanelLeftBackground().getZenithColor().method7294(var7)
+            zenithStyle.getPanelLeftBackground().getZenithColor().method7294(height)
          );
-         this.pickerBounds = new BoundsData(var4 + 8.0F, var20, var6 - 16.0F, var19);
-         float var21 = var4 + 8.0F + 4.0F;
-         float var22 = var21;
-         float var23 = 0.0F;
+         this.pickerBounds = new BoundsData(floatValue + 8.0F, y, width - 16.0F, height2);
+         float f4 = floatValue + 8.0F + 4.0F;
+         float f5 = f4;
+         float floatValue2 = 0.0F;
 
-         for (int var24 = 0; var24 < var14.size(); var24++) {
-            float var25 = var15.width(((StickerPackService.Data)var14.get(var24)).name()) + 8.0F;
-            if (var24 == var16) {
-               var22 = var21;
-               var23 = var25;
+         for (int i = 0; i < datas.size(); i++) {
+            float f6 = font.width(((StickerPackService.Data)datas.get(i)).name()) + 8.0F;
+            if (i == floorMod) {
+               f5 = f4;
+               floatValue2 = f6;
             }
 
-            var21 += var25 + 3.0F;
+            f4 += f6 + 3.0F;
          }
 
          if (!this.packPlateReady) {
-            this.packPlateX.method2809(var22 - var4);
-            this.packPlateWidth.method2809(var23);
+            this.packPlateX.method2809(f5 - floatValue);
+            this.packPlateWidth.method2809(floatValue2);
             this.packPlateReady = true;
          }
 
-         var1.drawRoundedRect(
-            var4 + this.packPlateX.method2808(var22 - var4),
-            var20 + 2.0F,
-            this.packPlateWidth.method2808(var23),
+         menuDrawContext.drawRoundedRect(
+            floatValue + this.packPlateX.method2808(f5 - floatValue),
+            y + 2.0F,
+            this.packPlateWidth.method2808(floatValue2),
             10.0F,
             ProxyDotRadiusData.method8069(5.0F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * 0.3F)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(height * 0.3F)
          );
-         var21 = var4 + 8.0F + 4.0F;
+         f4 = floatValue + 8.0F + 4.0F;
 
-         for (int var41 = 0; var41 < var14.size(); var41++) {
-            String var43 = ((StickerPackService.Data)var14.get(var41)).name();
-            float var26 = var15.width(var43) + 8.0F;
-            boolean var27 = var41 == var16;
-            boolean var28 = !var27 && var2 >= var21 && var2 <= var21 + var26 && var3 >= var20 + 2.0F && var3 <= var20 + 12.0F;
-            float var29 = this.cellHover.computeIfAbsent("pack:" + var41, var0 -> new Animation(130L, 0.0F, Easing.INSTANCE12)).method2808(var28 ? 1.0F : 0.0F);
-            ZenithColor var30 = var27
-               ? var8.getTextEnable().getZenithColor()
-               : var8.getTextTertiary().getZenithColor().method7295(var8.getTextSecondary().getZenithColor(), var29);
-            var1.drawText(var15, var43, var21 + 4.0F, var20 + 2.0F + (10.0F - var15.height()) / 2.0F, var30.method7294(var7));
-            var21 += var26 + 3.0F;
+         for (int i = 0; i < datas.size(); i++) {
+            String name = ((StickerPackService.Data)datas.get(i)).name();
+            float f6 = font.width(name) + 8.0F;
+            boolean flag = i == floorMod;
+            boolean flag2 = !flag && lastClickX >= f4 && lastClickX <= f4 + f6 && lastClickY >= y + 2.0F && lastClickY <= y + 12.0F;
+            float hover = this.cellHover.computeIfAbsent("pack:" + i, str -> new Animation(130L, 0.0F, Easing.INSTANCE12)).method2808(flag2 ? 1.0F : 0.0F);
+            ZenithColor zenithColor = flag
+               ? zenithStyle.getTextEnable().getZenithColor()
+               : zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextSecondary().getZenithColor(), hover);
+            menuDrawContext.drawText(font, name, f4 + 4.0F, y + 2.0F + (10.0F - font.height()) / 2.0F, zenithColor.method7294(height));
+            f4 += f6 + 3.0F;
          }
 
-         float var42 = var20 + 14.0F;
+         float f6 = y + 14.0F;
 
-         for (int var44 = 0; var44 < var17.getItems().size() && var44 < var18 * var13; var44++) {
-            int var45 = var44 / var13;
-            int var46 = var44 % var13;
-            float var47 = var4 + 8.0F + 3.0F + var46 * var12;
-            float var48 = var42 + var45 * var12;
-            String var49 = var10.method5507(var17.getText(), var17.getItems().get(var44));
-            Identifier var31 = ChatImageCache.get(var49);
-            if (var31 == null) {
-               var1.drawRoundedRect(
-                  var47 + 2.0F,
-                  var48 + 2.0F,
-                  var12 - 4.0F,
-                  var12 - 4.0F,
+         for (int i = 0; i < data.getItems().size() && i < n2 * n; i++) {
+            int n3 = i / n;
+            int n4 = i % n;
+            float floatValue3 = floatValue + 8.0F + 3.0F + n4 * width2;
+            float y2 = f6 + n3 * width2;
+            String key = stickerPackService.method5507(data.getText(), data.getItems().get(i));
+            Identifier texture = ChatImageCache.get(key);
+            if (texture == null) {
+               menuDrawContext.drawRoundedRect(
+                  floatValue3 + 2.0F,
+                  y2 + 2.0F,
+                  width2 - 4.0F,
+                  width2 - 4.0F,
                   ProxyDotRadiusData.method8069(3.0F),
-                  var8.getSurfaceEnableBackground().getZenithColor().method7294(var7 * 1.4F)
+                  zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(height * 1.4F)
                );
             } else {
-               boolean var32 = var2 >= var47 && var2 <= var47 + var12 && var3 >= var48 && var3 <= var48 + var12;
-               float var33 = this.cellHover.computeIfAbsent(var49, var0 -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(var32 ? 1.0F : 0.0F);
-               if (var33 > 0.01F) {
-                  var1.drawRoundedRect(
-                     var47, var48, var12, var12, ProxyDotRadiusData.method8069(4.0F), var8.getDisableActiveBg().getZenithColor().method7294(var7 * var33)
+               boolean flag = lastClickX >= floatValue3 && lastClickX <= floatValue3 + width2 && lastClickY >= y2 && lastClickY <= y2 + width2;
+               float f7 = this.cellHover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(flag ? 1.0F : 0.0F);
+               if (f7 > 0.01F) {
+                  menuDrawContext.drawRoundedRect(
+                     floatValue3, y2, width2, width2, ProxyDotRadiusData.method8069(4.0F), zenithStyle.getDisableActiveBg().getZenithColor().method7294(height * f7)
                   );
                }
 
-               float var34 = this.stickerFade.computeIfAbsent(var49, var0 -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
-               float var35 = (var12 - 4.0F) * (1.0F + var33 * 0.1F);
+               float f8 = this.stickerFade.computeIfAbsent(key, str -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+               float height3 = (width2 - 4.0F) * (1.0F + f7 * 0.1F);
                ChatCards.drawSticker(
-                  var1,
-                  var17.getItems().get(var44),
-                  var31,
-                  var47 + (var12 - var35) / 2.0F,
-                  var48 + (var12 - var35) / 2.0F,
-                  var35,
+                  menuDrawContext,
+                  data.getItems().get(i),
+                  texture,
+                  floatValue3 + (width2 - height3) / 2.0F,
+                  y2 + (width2 - height3) / 2.0F,
+                  height3,
                   ProxyDotRadiusData.method8069(3.0F),
-                  ZenithColor.INSTANCE.method7294(var7 * var34)
+                  ZenithColor.INSTANCE.method7294(height * f8)
                );
             }
          }
@@ -2159,18 +2159,18 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onFooterClicked(double var1, double var3, Enum3 var5) {
-      if (this.pendingButton != null && this.pendingButton.contains(var1, var3)) {
+   public boolean onFooterClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      if (this.pendingButton != null && this.pendingButton.contains(lastClickX, lastClickY)) {
          this.pendingTag = "";
          this.pendingLabel = "";
          return true;
-      } else if (this.coordsButton != null && this.coordsButton.contains(var1, var3)) {
+      } else if (this.coordsButton != null && this.coordsButton.contains(lastClickX, lastClickY)) {
          this.attachCoords();
          return true;
-      } else if (this.inventoryButton != null && this.inventoryButton.contains(var1, var3)) {
+      } else if (this.inventoryButton != null && this.inventoryButton.contains(lastClickX, lastClickY)) {
          this.attachInventory();
          return true;
-      } else if (this.stickerButton != null && this.stickerButton.contains(var1, var3)) {
+      } else if (this.stickerButton != null && this.stickerButton.contains(lastClickX, lastClickY)) {
          this.pickerOpen = !this.pickerOpen;
          if (this.pickerOpen) {
             StickerPackService.getInstance().method5508();
@@ -2184,31 +2184,31 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    private void prepareStickers() {
-      StickerPackService var1 = StickerPackService.getInstance();
-      var1.method5508();
-      if (var1.method5506() && var1.revision() != this.stickersPrepared) {
-         this.stickersPrepared = var1.revision();
-         List<StickerPackService.Data> var2 = var1.getItems2();
+      StickerPackService stickerPackService = StickerPackService.getInstance();
+      stickerPackService.method5508();
+      if (stickerPackService.method5506() && stickerPackService.revision() != this.stickersPrepared) {
+         this.stickersPrepared = stickerPackService.revision();
+         List<StickerPackService.Data> datas = stickerPackService.getItems2();
 
-         for (StickerPackService.Data var4 : var2) {
-            ChatImageCache.get(var1.method5507(var4.getText(), var4.getText3()));
+         for (StickerPackService.Data data : datas) {
+            ChatImageCache.get(stickerPackService.method5507(data.getText(), data.getText3()));
          }
 
-         StickerPackService.Data var6 = (StickerPackService.Data)var2.get(0);
+         StickerPackService.Data data = (StickerPackService.Data)datas.get(0);
 
-         for (String var5 : var6.getItems()) {
-            ChatImageCache.get(var1.method5507(var6.getText(), var5));
+         for (String string : data.getItems()) {
+            ChatImageCache.get(stickerPackService.method5507(data.getText(), string));
          }
       }
    }
 
    private void attachCoords() {
-      String var1 = ChatCompose.inWorld() ? ChatCompose.coordsHere("") : "";
-      if (var1.isEmpty()) {
+      String coordsHere = ChatCompose.inWorld() ? ChatCompose.coordsHere("") : "";
+      if (coordsHere.isEmpty()) {
          this.error = t("gui.chat.notInWorld");
          this.revision++;
       } else {
-         this.pendingTag = var1;
+         this.pendingTag = coordsHere;
          this.pendingLabel = t("gui.chat.attach.coords");
          this.focusInput();
       }
@@ -2222,50 +2222,50 @@ public class CloudChatSectionPanel extends SectionPanel {
          this.error = t("gui.chat.emptyInventory");
          this.revision++;
       } else {
-         String var1 = ChatCompose.inventory(this.getActiveTab() == 1, siteMode());
-         if (var1.isEmpty()) {
+         String inventory = ChatCompose.inventory(this.getActiveTab() == 1, siteMode());
+         if (inventory.isEmpty()) {
             this.error = t("gui.chat.inventoryTooBig");
             this.revision++;
          } else {
-            this.pendingTag = var1;
+            this.pendingTag = inventory;
             this.pendingLabel = t("gui.chat.attach.inventory");
             this.focusInput();
          }
       }
    }
 
-   private boolean clickPicker(double var1, double var3) {
-      if (this.pickerOpen && this.pickerBounds != null && this.pickerBounds.contains(var1, var3)) {
-         var var5 = StickerPackService.getInstance().getItems2();
-         if (var5.isEmpty()) {
+   private boolean clickPicker(double lastClickX, double lastClickY) {
+      if (this.pickerOpen && this.pickerBounds != null && this.pickerBounds.contains(lastClickX, lastClickY)) {
+         var datas = StickerPackService.getInstance().getItems2();
+         if (datas.isEmpty()) {
             return true;
          } else {
-            Font var6 = Fonts.NEW_REGULAR.getFont(4.2F);
-            float var7 = this.pickerBounds.getFloatValue2();
-            if (var3 <= var7 + 12.0F) {
-               float var14 = this.pickerBounds.getFloatValue() + 4.0F;
+            Font font = Fonts.NEW_REGULAR.getFont(4.2F);
+            float f = this.pickerBounds.getFloatValue2();
+            if (lastClickY <= f + 12.0F) {
+               float f2 = this.pickerBounds.getFloatValue() + 4.0F;
 
-               for (int var15 = 0; var15 < var5.size(); var15++) {
-                  float var16 = var6.width(((StickerPackService.Data)var5.get(var15)).name()) + 8.0F;
-                  if (var1 >= var14 && var1 <= var14 + var16) {
-                     this.pickerPack = var15;
+               for (int i = 0; i < datas.size(); i++) {
+                  float f3 = font.width(((StickerPackService.Data)datas.get(i)).name()) + 8.0F;
+                  if (lastClickX >= f2 && lastClickX <= f2 + f3) {
+                     this.pickerPack = i;
                      return true;
                   }
 
-                  var14 += var16 + 3.0F;
+                  f2 += f3 + 3.0F;
                }
 
                return true;
             } else {
-               float var8 = 26.0F;
-               int var9 = Math.max(1, (int)((this.pickerBounds.width() - 6.0F) / var8));
-               int var10 = (int)((var1 - this.pickerBounds.getFloatValue() - 3.0) / var8);
-               int var11 = (int)((var3 - var7 - 14.0) / var8);
-               if (var10 >= 0 && var10 < var9 && var11 >= 0) {
-                  StickerPackService.Data var12 = (StickerPackService.Data)var5.get(Math.floorMod(this.pickerPack, var5.size()));
-                  int var13 = var11 * var9 + var10;
-                  if (var13 >= 0 && var13 < var12.getItems().size()) {
-                     this.sendBody(StickerPackService.method5510(var12.getText(), var12.getItems().get(var13)));
+               float f2 = 26.0F;
+               int n = Math.max(1, (int)((this.pickerBounds.width() - 6.0F) / f2));
+               int n2 = (int)((lastClickX - this.pickerBounds.getFloatValue() - 3.0) / f2);
+               int n3 = (int)((lastClickY - f - 14.0) / f2);
+               if (n2 >= 0 && n2 < n && n3 >= 0) {
+                  StickerPackService.Data data = (StickerPackService.Data)datas.get(Math.floorMod(this.pickerPack, datas.size()));
+                  int n4 = n3 * n + n2;
+                  if (n4 >= 0 && n4 < data.getItems().size()) {
+                     this.sendBody(StickerPackService.method5510(data.getText(), data.getItems().get(n4)));
                      this.pickerOpen = false;
                   }
 
@@ -2281,35 +2281,35 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.clickDeleteMenu(var1, var3)) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      if (this.clickDeleteMenu(lastClickX, lastClickY)) {
          return true;
       } else {
          if (this.deleteMenuMessage != 0L) {
             this.deleteMenuMessage = 0L;
          }
 
-         if (this.clickPicker(var1, var3)) {
+         if (this.clickPicker(lastClickX, lastClickY)) {
             return true;
          } else {
             if (this.pickerOpen) {
-               BoundsData var6 = this.footerBounds();
-               if (var6 == null || !var6.contains(var1, var3)) {
+               BoundsData footerBounds = this.footerBounds();
+               if (footerBounds == null || !footerBounds.contains(lastClickX, lastClickY)) {
                   this.pickerOpen = false;
                }
             }
 
-            BoundsData var8 = this.mainHeaderBounds();
-            if (var8 != null && this.hasPeer() && var8.contains(var1, var3)) {
-               if (var1 >= var8.getFloatValue() + var8.width() - 8.0F - 6.0F - 3.0F) {
+            BoundsData mainHeaderBounds = this.mainHeaderBounds();
+            if (mainHeaderBounds != null && this.hasPeer() && mainHeaderBounds.contains(lastClickX, lastClickY)) {
+               if (lastClickX >= mainHeaderBounds.getFloatValue() + mainHeaderBounds.width() - 8.0F - 6.0F - 3.0F) {
                   this.closePeer();
                }
 
                return true;
             } else {
-               boolean var7 = super.onMouseClicked(var1, var3, var5);
+               boolean flag = super.onMouseClicked(lastClickX, lastClickY, enum2);
                this.focusInput();
-               return var7;
+               return flag;
             }
          }
       }
@@ -2328,14 +2328,14 @@ public class CloudChatSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.input != null && this.input.isSelected()) {
-         if (var1 == 257 || var1 == 335) {
+         if (keyCode == 257 || keyCode == 335) {
             this.send();
             return true;
          }
 
-         if (var1 == 256) {
+         if (keyCode == 256) {
             if (this.deleteMenuMessage != 0L) {
                this.deleteMenuMessage = 0L;
                return true;
@@ -2351,17 +2351,17 @@ public class CloudChatSectionPanel extends SectionPanel {
             return true;
          }
 
-         if (this.input.keyPressed(var1, var2, var3)) {
+         if (this.input.keyPressed(keyCode, keycode, modifiers)) {
             return true;
          }
       }
 
-      return super.keyPressed(var1, var2, var3);
+      return super.keyPressed(keyCode, keycode, modifiers);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      if (this.input != null && this.input.isSelected() && this.input.charTyped(var1, var2)) {
+   public boolean charTyped(char codepoint, int n) {
+      if (this.input != null && this.input.isSelected() && this.input.charTyped(codepoint, n)) {
          if (!this.error.isEmpty()) {
             this.error = "";
             this.revision++;
@@ -2369,33 +2369,33 @@ public class CloudChatSectionPanel extends SectionPanel {
 
          return true;
       } else {
-         return super.charTyped(var1, var2);
+         return super.charTyped(codepoint, n);
       }
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
+   public boolean mouseScrolled(double lastClickX, double lastClickY, double d, double verticalAmount) {
       this.stickToEnd = false;
       this.deleteMenuMessage = 0L;
-      return super.mouseScrolled(var1, var3, var5, var7);
+      return super.mouseScrolled(lastClickX, lastClickY, d, verticalAmount);
    }
 
    private void send() {
-      String var1 = this.input == null ? "" : this.input.getText();
-      String var2 = this.pendingTag;
-      if (var1 != null && !var1.isBlank() || !var2.isEmpty()) {
-         StringBuilder var3 = new StringBuilder(var1 == null ? "" : var1.strip());
-         if (!var2.isEmpty()) {
-            if (var3.length() > 0) {
-               var3.append(' ');
+      String text = this.input == null ? "" : this.input.getText();
+      String pendingTag = this.pendingTag;
+      if (text != null && !text.isBlank() || !pendingTag.isEmpty()) {
+         StringBuilder builder = new StringBuilder(text == null ? "" : text.strip());
+         if (!pendingTag.isEmpty()) {
+            if (builder.length() > 0) {
+               builder.append(' ');
             }
 
-            var3.append(var2);
+            builder.append(pendingTag);
          }
 
-         this.draft = var1 == null ? "" : var1;
-         this.draftTag = var2;
-         if (this.sendBody(var3.toString())) {
+         this.draft = text == null ? "" : text;
+         this.draftTag = pendingTag;
+         if (this.sendBody(builder.toString())) {
             this.input.setText("");
             this.input.setCursor(0);
             this.pendingTag = "";
@@ -2404,8 +2404,8 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private void restoreDraft(Throwable var1, boolean var2) {
-      this.error = var2 ? siteError(var1) : shortError(var1);
+   private void restoreDraft(Throwable throwable, boolean flag) {
+      this.error = flag ? siteError(throwable) : shortError(throwable);
       if (this.input != null && this.input.getText().isEmpty() && !this.draft.isEmpty()) {
          this.input.setText(this.draft);
          this.input.setCursor(this.draft.length());
@@ -2419,14 +2419,14 @@ public class CloudChatSectionPanel extends SectionPanel {
       this.revision++;
    }
 
-   private String labelOfTag(String var1) {
-      Coord var2 = Coord.method5172(var1).getItems().stream().findFirst().orElse(null);
-      if (var2 == null) {
+   private String labelOfTag(String draftTag) {
+      Coord coord = Coord.method5172(draftTag).getItems().stream().findFirst().orElse(null);
+      if (coord == null) {
          return "";
       } else {
-         String var3 = var2.kind();
+         String kind = coord.kind();
 
-         return switch (var3) {
+         return switch (kind) {
             case "coord" -> t("gui.chat.attach.coords");
             case "inv" -> t("gui.chat.attach.inventory");
             default -> "";
@@ -2434,30 +2434,30 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private boolean sendBody(String var1) {
-      boolean var2 = this.getActiveTab() == 1;
-      int var3 = !siteMode() ? 256 : (var2 ? 1000 : 500);
-      String var4 = var1;
+   private boolean sendBody(String string) {
+      boolean flag = this.getActiveTab() == 1;
+      int n = !siteMode() ? 256 : (flag ? 1000 : 500);
+      String body = string;
       if (siteMode()) {
-         String var5 = ChatCompose.whereTag();
-         if (!var5.isEmpty() && var1.length() + var5.length() + 1 <= var3) {
-            var4 = var1 + " " + var5;
+         String whereTag = ChatCompose.whereTag();
+         if (!whereTag.isEmpty() && string.length() + whereTag.length() + 1 <= n) {
+            body = string + " " + whereTag;
          }
       }
 
-      String var10 = Coord.method5174(var4, var3);
-      if (!var10.isBlank() && (var10.length() >= var4.length() || Coord.method5172(var10).getItems().size() >= Coord.method5172(var4).getItems().size())) {
+      String text = Coord.method5174(body, n);
+      if (!text.isBlank() && (text.length() >= body.length() || Coord.method5172(text).getItems().size() >= Coord.method5172(body).getItems().size())) {
          this.stickToEnd = true;
-         if (var2) {
-            long var11 = this.openPeerUid();
-            if (var11 == 0L) {
+         if (flag) {
+            long openPeerUid = this.openPeerUid();
+            if (openPeerUid == 0L) {
                this.error = t("gui.chat.pickPeer");
                this.revision++;
                return false;
             } else if (siteMode()) {
-               direct().method4867(var11, var10).whenComplete((var3x, var4x) -> {
+               direct().method4867(openPeerUid, text).whenComplete((var3x, var4x) -> {
                   if (var4x != null) {
-                     if (this.openPeerUid() == var11) {
+                     if (this.openPeerUid() == openPeerUid) {
                         this.restoreDraft(var4x, true);
                      } else {
                         this.error = siteError(var4x);
@@ -2470,14 +2470,14 @@ public class CloudChatSectionPanel extends SectionPanel {
                });
                return true;
             } else {
-               StoreApi var8 = store();
-               if (var8 == null) {
+               StoreApi storeApi = store();
+               if (storeApi == null) {
                   this.error = t("gui.chat.storeUnavailable");
                   this.revision++;
                   return false;
                } else {
-                  var8.method1966(var11, var10).whenComplete((var4x, var5x) -> {
-                     boolean var6x = this.openPeerUid() != var11;
+                  storeApi.method1966(openPeerUid, text).whenComplete((var4x, var5x) -> {
+                     boolean var6x = this.openPeerUid() != openPeerUid;
                      if (var5x != null) {
                         if (var6x) {
                            this.error = shortError(var5x);
@@ -2494,7 +2494,7 @@ public class CloudChatSectionPanel extends SectionPanel {
                            }
                         }
 
-                        this.rememberPreview(var11, var10);
+                        this.rememberPreview(openPeerUid, text);
                         this.error = "";
                         this.revision++;
                      }
@@ -2503,7 +2503,7 @@ public class CloudChatSectionPanel extends SectionPanel {
                }
             }
          } else if (siteMode()) {
-            global().method2168(var10).whenComplete((var1x, var2x) -> {
+            global().method2168(text).whenComplete((var1x, var2x) -> {
                if (var2x != null) {
                   this.restoreDraft(var2x, true);
                } else {
@@ -2513,12 +2513,12 @@ public class CloudChatSectionPanel extends SectionPanel {
             });
             return true;
          } else {
-            Cloud var6 = cloud();
-            if (var6 != null && var6.method7908(0, var10)) {
+            Cloud cloud2 = cloud();
+            if (cloud2 != null && cloud2.method7908(0, text)) {
                return true;
             } else {
-               CloudConnectionState var7 = state();
-               this.error = var7 != null && !var7.method8035() ? var7.getType().label() : t("gui.chat.sendFailed");
+               CloudConnectionState cloudConnectionState = state();
+               this.error = cloudConnectionState != null && !cloudConnectionState.method8035() ? cloudConnectionState.getType().label() : t("gui.chat.sendFailed");
                this.revision++;
                return false;
             }
@@ -2530,15 +2530,15 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
    }
 
-   private float reveal(int var1) {
-      float var2 = this.listReveal.method2808(1.0F);
-      float var3 = Math.min(0.5F, var1 * 0.06F);
-      return var2 <= var3 ? 0.0F : Math.min(1.0F, (var2 - var3) / Math.max(0.05F, 1.0F - var3));
+   private float reveal(int n) {
+      float f = this.listReveal.method2808(1.0F);
+      float f2 = Math.min(0.5F, n * 0.06F);
+      return f <= f2 ? 0.0F : Math.min(1.0F, (f - f2) / Math.max(0.05F, 1.0F - f2));
    }
 
-   private static String roleLabel(String var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         return switch (var0) {
+   private static String roleLabel(String role) {
+      if (role != null && !role.isEmpty()) {
+         return switch (role) {
             case "Administrator" -> "админ";
             case "Support" -> "саппорт";
             case "Media" -> "медиа";
@@ -2548,127 +2548,127 @@ public class CloudChatSectionPanel extends SectionPanel {
             case "AutoBuy" -> "autobuy";
             case "Alpha" -> "alpha";
             case "User" -> "";
-            default -> var0;
+            default -> role;
          };
       } else {
          return "";
       }
    }
 
-   private static ZenithColor roleColor(String var0, ZenithStyle var1) {
-      if (var0 == null) {
-         return var1.getTextTertiary().getZenithColor();
+   private static ZenithColor roleColor(String role, ZenithStyle zenithStyle) {
+      if (role == null) {
+         return zenithStyle.getTextTertiary().getZenithColor();
       } else {
-         return switch (var0) {
-            case "Administrator", "админ", "Private", "private" -> var1.getPrimaryColor().getZenithColor();
-            case "Support", "саппорт", "Media", "медиа", "Opus", "opus", "Recode", "recode" -> var1.getFriendColor().getZenithColor();
-            default -> var1.getTextTertiary().getZenithColor();
+         return switch (role) {
+            case "Administrator", "админ", "Private", "private" -> zenithStyle.getPrimaryColor().getZenithColor();
+            case "Support", "саппорт", "Media", "медиа", "Opus", "opus", "Recode", "recode" -> zenithStyle.getFriendColor().getZenithColor();
+            default -> zenithStyle.getTextTertiary().getZenithColor();
          };
       }
    }
 
-   private static String previewOf(String var0) {
-      Coord.Data var1 = Coord.method5172(var0);
-      if (!var1.text().isEmpty()) {
-         return var1.text();
-      } else if (var1.isBroken()) {
+   private static String previewOf(String body) {
+      Coord.Data data = Coord.method5172(body);
+      if (!data.text().isEmpty()) {
+         return data.text();
+      } else if (data.isBroken()) {
          return t("gui.chat.attachBroken");
-      } else if (var1.method5180("st")) {
+      } else if (data.method5180("st")) {
          return "стикер";
-      } else if (var1.method5180("coord")) {
+      } else if (data.method5180("coord")) {
          return "координаты";
       } else {
-         return var1.method5180("inv") ? "инвентарь" : "";
+         return data.method5180("inv") ? "инвентарь" : "";
       }
    }
 
-   private static List<String> wrap(String var0, Font var1, float var2) {
-      ArrayList<String> var3 = new ArrayList<>();
-      if (var0 == null) {
-         return var3;
+   private static List<String> wrap(String text, Font font, float f) {
+      ArrayList<String> strings = new ArrayList<>();
+      if (text == null) {
+         return strings;
       } else {
-         StringBuilder var4 = new StringBuilder();
+         StringBuilder builder = new StringBuilder();
 
-         for (String var8 : var0.split(" ")) {
-            while (var1.width(var8) > var2) {
-               if (!var4.isEmpty()) {
-                  var3.add(var4.toString());
-                  var4 = new StringBuilder();
+         for (String str : text.split(" ")) {
+            while (font.width(str) > f) {
+               if (!builder.isEmpty()) {
+                  strings.add(builder.toString());
+                  builder = new StringBuilder();
                }
 
-               int var9 = fitting(var8, var1, var2);
-               var3.add(var8.substring(0, var9));
-               var8 = var8.substring(var9);
+               int endIndex = fitting(str, font, f);
+               strings.add(str.substring(0, endIndex));
+               str = str.substring(endIndex);
             }
 
-            String var10 = var4.isEmpty() ? var8 : var4 + " " + var8;
-            if (var1.width(var10) > var2 && !var4.isEmpty()) {
-               var3.add(var4.toString());
-               var4 = new StringBuilder(var8);
+            String text2 = builder.isEmpty() ? str : builder + " " + str;
+            if (font.width(text2) > f && !builder.isEmpty()) {
+               strings.add(builder.toString());
+               builder = new StringBuilder(str);
             } else {
-               var4 = new StringBuilder(var10);
+               builder = new StringBuilder(text2);
             }
          }
 
-         if (!var4.isEmpty()) {
-            var3.add(var4.toString());
+         if (!builder.isEmpty()) {
+            strings.add(builder.toString());
          }
 
-         if (var3.isEmpty()) {
-            var3.add("");
+         if (strings.isEmpty()) {
+            strings.add("");
          }
 
-         return var3;
+         return strings;
       }
    }
 
-   private static int fitting(String var0, Font var1, float var2) {
-      int var3 = 1;
+   private static int fitting(String str, Font font, float f) {
+      int n = 1;
 
-      while (var3 < var0.length() && var1.width(var0.substring(0, var3 + 1)) <= var2) {
-         var3++;
+      while (n < str.length() && font.width(str.substring(0, n + 1)) <= f) {
+         n++;
       }
 
-      return var3;
+      return n;
    }
 
-   private static String clip(String var0, Font var1, float var2) {
-      if (var0 != null && !(var1.width(var0) <= var2)) {
-         CloudChatSectionPanel.ClipKey var3 = new CloudChatSectionPanel.ClipKey(var0, var1, var2);
-         String var4 = CLIPS.get(var3);
-         if (var4 != null) {
-            return var4;
+   private static String clip(String name, Font font, float maxWidth) {
+      if (name != null && !(font.width(name) <= maxWidth)) {
+         CloudChatSectionPanel.ClipKey clipKey = new CloudChatSectionPanel.ClipKey(name, font, maxWidth);
+         String str = CLIPS.get(clipKey);
+         if (str != null) {
+            return str;
          } else {
-            String var5 = var1.clip(var0, var2);
-            CLIPS.put(var3, var5);
-            return var5;
+            String clip = font.clip(name, maxWidth);
+            CLIPS.put(clipKey, clip);
+            return clip;
          }
       } else {
-         return var0 == null ? "" : var0;
+         return name == null ? "" : name;
       }
    }
 
-   private static String clipText(String var0) {
-      return var0 != null && var0.length() > 40 ? var0.substring(0, 39) + "…" : var0;
+   private static String clipText(String error) {
+      return error != null && error.length() > 40 ? error.substring(0, 39) + "…" : error;
    }
 
-   private static String siteError(Throwable var0) {
-      return !SiteSession.method2291() ? t("gui.chat.site.needLogin") : shortError(var0);
+   private static String siteError(Throwable throwable) {
+      return !SiteSession.method2291() ? t("gui.chat.site.needLogin") : shortError(throwable);
    }
 
-   private static String shortError(Throwable var0) {
-      Throwable var1 = var0;
+   private static String shortError(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      String var2 = var1.getMessage();
-      if (var2 == null || var2.isBlank()) {
-         var2 = var1.getClass().getSimpleName();
+      String message = throwable2.getMessage();
+      if (message == null || message.isBlank()) {
+         message = throwable2.getClass().getSimpleName();
       }
 
-      return clipText(var2);
+      return clipText(message);
    }
 
    private static final class Bubble {
@@ -2776,41 +2776,41 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
 
       private Bubble(
-         String var1,
-         long var2,
-         String var4,
-         String var5,
-         List<String> var6,
-         List<Coord> var7,
-         String var8,
-         boolean var9,
-         boolean var10,
-         boolean var11,
-         boolean var12,
-         boolean var13,
-         float var14,
-         float var15,
-         Font var16,
-         Font var17,
-         Font var18
+         String author,
+         long authorUid,
+         String badge,
+         String where,
+         List<String> lines,
+         List<Coord> cards,
+         String time,
+         boolean read,
+         boolean mine,
+         boolean showName,
+         boolean newest,
+         boolean bare,
+         float width,
+         float height,
+         Font nameFont,
+         Font textFont,
+         Font timeFont
       ) {
-         this.author = var1;
-         this.authorUid = var2;
-         this.badge = var4;
-         this.where = var5;
-         this.lines = var6;
-         this.cards = var7;
-         this.time = var8;
-         this.read = var9;
-         this.mine = var10;
-         this.showName = var11;
-         this.newest = var12;
-         this.bare = var13;
-         this.width = var14;
-         this.height = var15;
-         this.nameFont = var16;
-         this.textFont = var17;
-         this.timeFont = var18;
+         this.author = author;
+         this.authorUid = authorUid;
+         this.badge = badge;
+         this.where = where;
+         this.lines = lines;
+         this.cards = cards;
+         this.time = time;
+         this.read = read;
+         this.mine = mine;
+         this.showName = showName;
+         this.newest = newest;
+         this.bare = bare;
+         this.width = width;
+         this.height = height;
+         this.nameFont = nameFont;
+         this.textFont = textFont;
+         this.timeFont = timeFont;
       }
    }
 
@@ -2904,35 +2904,35 @@ public class CloudChatSectionPanel extends SectionPanel {
       }
 
       private BubbleKey(
-         String var1,
-         long var2,
-         String var4,
-         String var5,
-         long var6,
-         boolean var8,
-         boolean var9,
-         boolean var10,
-         boolean var11,
-         float var12,
-         String var13,
-         Font var14,
-         Font var15,
-         Font var16
+         String author,
+         long authorUid,
+         String role,
+         String body,
+         long time,
+         boolean mine,
+         boolean showName,
+         boolean newest,
+         boolean read,
+         float column,
+         String language,
+         Font nameFont,
+         Font textFont,
+         Font timeFont
       ) {
-         this.author = var1;
-         this.authorUid = var2;
-         this.role = var4;
-         this.body = var5;
-         this.time = var6;
-         this.mine = var8;
-         this.showName = var9;
-         this.newest = var10;
-         this.read = var11;
-         this.column = var12;
-         this.language = var13;
-         this.nameFont = var14;
-         this.textFont = var15;
-         this.timeFont = var16;
+         this.author = author;
+         this.authorUid = authorUid;
+         this.role = role;
+         this.body = body;
+         this.time = time;
+         this.mine = mine;
+         this.showName = showName;
+         this.newest = newest;
+         this.read = read;
+         this.column = column;
+         this.language = language;
+         this.nameFont = nameFont;
+         this.textFont = textFont;
+         this.timeFont = timeFont;
       }
    }
 
@@ -2965,9 +2965,9 @@ public class CloudChatSectionPanel extends SectionPanel {
          return "BubbleLayout[" + "shape=" + this.shape + ", " + "coord=" + this.coord + "]";
       }
 
-      private BubbleLayout(CloudChatSectionPanel.Bubble var1, Coord var2) {
-         this.shape = var1;
-         this.coord = var2;
+      private BubbleLayout(CloudChatSectionPanel.Bubble shape, Coord coord) {
+         this.shape = shape;
+         this.coord = coord;
       }
    }
 
@@ -3005,10 +3005,10 @@ public class CloudChatSectionPanel extends SectionPanel {
          return "ClipKey[" + "text=" + this.text + ", " + "font=" + this.font + ", " + "maxWidth=" + this.maxWidth + "]";
       }
 
-      private ClipKey(String var1, Font var2, float var3) {
-         this.text = var1;
-         this.font = var2;
-         this.maxWidth = var3;
+      private ClipKey(String text, Font font, float maxWidth) {
+         this.text = text;
+         this.font = font;
+         this.maxWidth = maxWidth;
       }
    }
 
@@ -3021,19 +3021,19 @@ public class CloudChatSectionPanel extends SectionPanel {
       private final boolean mine;
       private final long startedAt = System.currentTimeMillis();
 
-      private Ghost(int var1, String var2, String var3, String var4, long var5, boolean var7) {
-         this.feed = var1;
-         this.author = var2;
-         this.role = var3;
-         this.body = var4;
-         this.time = var5;
-         this.mine = var7;
+      private Ghost(int feed, String author, String role, String body, long time, boolean mine) {
+         this.feed = feed;
+         this.author = author;
+         this.role = role;
+         this.body = body;
+         this.time = time;
+         this.mine = mine;
       }
 
       private float factor() {
-         float var1 = 1.0F - (float)(System.currentTimeMillis() - this.startedAt) / 240.0F;
-         var1 = Math.max(0.0F, Math.min(1.0F, var1));
-         return var1 * var1;
+         float f = 1.0F - (float)(System.currentTimeMillis() - this.startedAt) / 240.0F;
+         f = Math.max(0.0F, Math.min(1.0F, f));
+         return f * f;
       }
    }
 }

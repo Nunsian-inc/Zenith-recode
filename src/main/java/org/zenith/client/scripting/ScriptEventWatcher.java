@@ -16,92 +16,92 @@ public final class ScriptEventWatcher {
    private String text = "";
    private Screen screen;
 
-   public ScriptEventWatcher(Storage var1) {
-      this.storage = var1;
+   public ScriptEventWatcher(Storage storage) {
+      this.storage = storage;
    }
 
    public void tick() {
       ScriptScreenApi.method7058();
-      Minecraft var1 = Minecraft.getInstance();
-      ClientLevel var2 = var1.level;
-      if (var2 != this.world) {
-         boolean var3 = this.world == null && var2 != null;
-         boolean var4 = this.world != null && var2 == null;
-         this.world = var2;
-         if (var3) {
-            String var5 = var1.getCurrentServer() == null ? "" : var1.getCurrentServer().ip;
-            this.text = var5;
-            this.storage.method1332(Script.Type.SERVER_JOIN, var1x -> new Object[]{method6415(var1x, "address", var5)});
+      Minecraft minecraft = Minecraft.getInstance();
+      ClientLevel level = minecraft.level;
+      if (level != this.world) {
+         boolean flag = this.world == null && level != null;
+         boolean flag2 = this.world != null && level == null;
+         this.world = level;
+         if (flag) {
+            String ip = minecraft.getCurrentServer() == null ? "" : minecraft.getCurrentServer().ip;
+            this.text = ip;
+            this.storage.method1332(Script.Type.SERVER_JOIN, var1x -> new Object[]{method6415(var1x, "address", ip)});
          }
 
-         if (var4) {
-            String var11 = this.text;
-            this.storage.method1332(Script.Type.SERVER_LEAVE, var1x -> new Object[]{method6415(var1x, "address", var11)});
+         if (flag2) {
+            String text = this.text;
+            this.storage.method1332(Script.Type.SERVER_LEAVE, var1x -> new Object[]{method6415(var1x, "address", text)});
          }
 
-         if (var2 != null) {
+         if (level != null) {
             this.storage
-               .method1332(Script.Type.WORLD_CHANGE, var1x -> new Object[]{method6415(var1x, "dimension", var2.dimension().identifier().toString())});
+               .method1332(Script.Type.WORLD_CHANGE, var1x -> new Object[]{method6415(var1x, "dimension", level.dimension().identifier().toString())});
          }
       }
 
-      if (var1.player != null) {
-         float var6 = var1.player.getHealth();
-         if (this.floatValue >= 0.0F && var6 != this.floatValue) {
-            float var8 = this.floatValue;
-            this.storage.method1332(Script.Type.HEALTH_CHANGE, var2x -> new Object[]{method6416(var2x, var8, var6)});
+      if (minecraft.player != null) {
+         float health = minecraft.player.getHealth();
+         if (this.floatValue >= 0.0F && health != this.floatValue) {
+            float floatValue = this.floatValue;
+            this.storage.method1332(Script.Type.HEALTH_CHANGE, var2x -> new Object[]{method6416(var2x, floatValue, health)});
          }
 
-         this.floatValue = var6;
-         boolean var9 = var1.player.isDeadOrDying() || var6 <= 0.0F;
-         if (var9 && !this.flag) {
-            this.storage.method1332(Script.Type.DEATH, var0 -> new Object[]{method6415(var0, "health", 0.0)});
+         this.floatValue = health;
+         boolean flag = minecraft.player.isDeadOrDying() || health <= 0.0F;
+         if (flag && !this.flag) {
+            this.storage.method1332(Script.Type.DEATH, script -> new Object[]{method6415(script, "health", 0.0)});
          }
 
-         this.flag = var9;
+         this.flag = flag;
       } else {
          this.floatValue = -1.0F;
          this.flag = false;
       }
 
-      Screen var7 = var1.gui.screen();
-      if (var7 != this.screen) {
-         String var10 = ScriptScreenApi.method7047(this.screen);
-         String var12 = ScriptScreenApi.method7047(var7);
-         this.screen = var7;
-         if (!var10.equals(var12)) {
+      Screen screen = minecraft.gui.screen();
+      if (screen != this.screen) {
+         String str = ScriptScreenApi.method7047(this.screen);
+         String anObject = ScriptScreenApi.method7047(screen);
+         this.screen = screen;
+         if (!str.equals(anObject)) {
             this.storage.method1332(Script.Type.SCREEN, var2x -> {
-               Object var3x = method6415(var2x, "screen", var12);
-               ((Scriptable)var3x).put("previous", (Scriptable)var3x, var10);
+               Object var3x = method6415(var2x, "screen", anObject);
+               ((Scriptable)var3x).put("previous", (Scriptable)var3x, str);
                return new Object[]{var3x};
             });
          }
       }
    }
 
-   private static Object method6415(Script var0, String var1, Object var2) {
+   private static Object method6415(Script script, String name, Object ip) {
       ScriptContextFactory.method7409();
 
-      ScriptableObject var3;
+      ScriptableObject scriptableObject;
       try {
-         var3 = ScriptValueUtils.method6247(var0.scope).method6277(var1, var2).getScriptableObject();
+         scriptableObject = ScriptValueUtils.method6247(script.scope).method6277(name, ip).getScriptableObject();
       } finally {
          Context.exit();
       }
 
-      return var3;
+      return scriptableObject;
    }
 
-   private static Object method6416(Script var0, double var1, double var3) {
+   private static Object method6416(Script script, double floatValue, double health) {
       ScriptContextFactory.method7409();
 
-      ScriptableObject var5;
+      ScriptableObject scriptableObject;
       try {
-         var5 = ScriptValueUtils.method6247(var0.scope).method6277("from", var1).method6277("to", var3).getScriptableObject();
+         scriptableObject = ScriptValueUtils.method6247(script.scope).method6277("from", floatValue).method6277("to", health).getScriptableObject();
       } finally {
          Context.exit();
       }
 
-      return var5;
+      return scriptableObject;
    }
 }

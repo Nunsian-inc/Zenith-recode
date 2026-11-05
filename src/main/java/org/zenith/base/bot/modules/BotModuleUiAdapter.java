@@ -18,10 +18,10 @@ public final class BotModuleUiAdapter extends Module {
    private final String botName;
    private final BotModule module;
 
-   public BotModuleUiAdapter(String var1, BotModule var2) {
-      this.botName = var1;
-      this.module = var2;
-      this.setName(var2.getName());
+   public BotModuleUiAdapter(String botName, BotModule botModule) {
+      this.botName = botName;
+      this.module = botModule;
+      this.setName(botModule.getName());
    }
 
    @Override
@@ -40,8 +40,8 @@ public final class BotModuleUiAdapter extends Module {
    }
 
    @Override
-   public void setToggled(boolean var1) {
-      if (var1 != this.module.isEnabled()) {
+   public void setToggled(boolean toggled) {
+      if (toggled != this.module.isEnabled()) {
          this.toggle();
       }
    }
@@ -52,8 +52,8 @@ public final class BotModuleUiAdapter extends Module {
    }
 
    @Override
-   public boolean equals(Object var1) {
-      return var1 instanceof BotModuleUiAdapter var2 && var2.module == this.module;
+   public boolean equals(Object obj) {
+      return obj instanceof BotModuleUiAdapter botModuleUiAdapter && botModuleUiAdapter.module == this.module;
    }
 
    @Override

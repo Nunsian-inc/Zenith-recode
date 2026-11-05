@@ -8,27 +8,27 @@ public final class Class36 implements Resettable {
    private int intValue;
    private int cursor;
 
-   public Class36(AimPolicy var1) {
-      this.aimPolicyRunner = new AimPolicyRunner(var1);
-      this.intValues = new int[var1.intValue][2];
+   public Class36(AimPolicy aimPolicy) {
+      this.aimPolicyRunner = new AimPolicyRunner(aimPolicy);
+      this.intValues = new int[aimPolicy.intValue][2];
    }
 
    @Override
-   public int[] method2865(float[] var1) {
+   public int[] method2865(float[] floats) {
       if (this.cursor >= this.intValue) {
-         int[][] var2 = this.aimPolicyRunner.method6749(var1);
+         int[][] intses = this.aimPolicyRunner.method6749(floats);
 
-         for (int var3 = 0; var3 < this.intValues.length; var3++) {
-            this.intValues[var3][0] = var2[var3][0];
-            this.intValues[var3][1] = var2[var3][1];
+         for (int i = 0; i < this.intValues.length; i++) {
+            this.intValues[i][0] = intses[i][0];
+            this.intValues[i][1] = intses[i][1];
          }
 
          this.intValue = this.intValues.length;
          this.cursor = 0;
       }
 
-      int[] var4 = this.intValues[this.cursor++];
-      return new int[]{var4[0], var4[1]};
+      int[] intValue = this.intValues[this.cursor++];
+      return new int[]{intValue[0], intValue[1]};
    }
 
    @Override

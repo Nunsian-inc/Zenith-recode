@@ -19,10 +19,10 @@ public abstract class MixinSliderWidget {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$style(GuiGraphicsExtractor var1, int var2, int var3, float var4, CallbackInfo var5) {
+   private void zenith$style(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo callbackInfo) {
       if (VanillaOptionStyle.isActive()) {
-         VanillaOptionStyle.drawSlider((AbstractSliderButton)(Object)this, this.value, var1, var2, var3, var4);
-         var5.cancel();
+         VanillaOptionStyle.drawSlider((AbstractSliderButton)(Object)this, this.value, context, mouseX, mouseY, deltaTicks);
+         callbackInfo.cancel();
       }
    }
 }

@@ -46,17 +46,17 @@ public abstract class MixinOptMapTexture implements Util30.Handler2 {
       )}
    )
    private DynamicTexture zenith$allocateInAtlas(
-      Supplier<String> var1, int var2, int var3, boolean var4, Operation<DynamicTexture> var5, @Local(argsOnly = true) MapTextureManager var6
+      Supplier<String> supplier, int n, int n2, boolean flag, Operation<DynamicTexture> operation, @Local(argsOnly = true) MapTextureManager mapTextureManager
    ) {
-      if (OptimizationFlags.flag18 && var2 == 128 && var3 == 128 && var6 instanceof Util30.Handler var7) {
-         MapAtlas.Data var8 = var7.zenith$getAtlasPool().method6151(var7.zenith$getTextureManager());
-         if (var8 != null) {
-            this.zenith$atlasSlot = var8;
+      if (OptimizationFlags.flag18 && n == 128 && n2 == 128 && mapTextureManager instanceof Util30.Handler handler) {
+         MapAtlas.Data zenith$atlasSlot = handler.zenith$getAtlasPool().method6151(handler.zenith$getTextureManager());
+         if (zenith$atlasSlot != null) {
+            this.zenith$atlasSlot = zenith$atlasSlot;
             return null;
          }
       }
 
-      return (DynamicTexture)var5.call(new Object[]{var1, var2, var3, var4});
+      return (DynamicTexture)operation.call(new Object[]{supplier, n, n2, flag});
    }
 
    @WrapOperation(
@@ -66,8 +66,8 @@ public abstract class MixinOptMapTexture implements Util30.Handler2 {
          target = "Lnet/minecraft/resources/Identifier;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/Identifier;"
       )}
    )
-   private Identifier zenith$atlasTextureId(String var1, Operation<Identifier> var2) {
-      return this.zenith$atlasSlot != null ? this.zenith$atlasSlot.method6153() : (Identifier)var2.call(new Object[]{var1});
+   private Identifier zenith$atlasTextureId(String str, Operation<Identifier> operation) {
+      return this.zenith$atlasSlot != null ? this.zenith$atlasSlot.method6153() : (Identifier)operation.call(new Object[]{str});
    }
 
    @WrapOperation(
@@ -77,9 +77,9 @@ public abstract class MixinOptMapTexture implements Util30.Handler2 {
          target = "Lnet/minecraft/client/renderer/texture/TextureManager;register(Lnet/minecraft/resources/Identifier;Lnet/minecraft/client/renderer/texture/AbstractTexture;)V"
       )}
    )
-   private void zenith$skipRegister(TextureManager var1, Identifier var2, AbstractTexture var3, Operation<Void> var4) {
+   private void zenith$skipRegister(TextureManager textureManager, Identifier id, AbstractTexture abstractTexture, Operation<Void> operation) {
       if (this.zenith$atlasSlot == null) {
-         var4.call(new Object[]{var1, var2, var3});
+         operation.call(new Object[]{textureManager, id, abstractTexture});
       }
    }
 
@@ -88,12 +88,12 @@ public abstract class MixinOptMapTexture implements Util30.Handler2 {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$updateAtlas(CallbackInfo var1) {
-      MapAtlas.Data var2 = this.zenith$atlasSlot;
-      if (var2 != null) {
-         var1.cancel();
+   private void zenith$updateAtlas(CallbackInfo callbackInfo) {
+      MapAtlas.Data zenith$atlasSlot = this.zenith$atlasSlot;
+      if (zenith$atlasSlot != null) {
+         callbackInfo.cancel();
          if (this.requiresUpload) {
-            var2.getMapAtlasPage().method5417(var2.getIntValue(), var2.getIntValue2(), this.data.colors);
+            zenith$atlasSlot.getMapAtlasPage().method5417(zenith$atlasSlot.getIntValue(), zenith$atlasSlot.getIntValue2(), this.data.colors);
             this.requiresUpload = false;
          }
       }
@@ -104,9 +104,9 @@ public abstract class MixinOptMapTexture implements Util30.Handler2 {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$keepAtlas(CallbackInfo var1) {
+   private void zenith$keepAtlas(CallbackInfo callbackInfo) {
       if (this.zenith$atlasSlot != null) {
-         var1.cancel();
+         callbackInfo.cancel();
       }
    }
 }

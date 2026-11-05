@@ -39,22 +39,22 @@ public final class BotModuleManager {
    }
 
    @Nullable
-   public static String supportedModuleDescription(String var0) {
-      return var0 == null ? null : SUPPORTED_MODULE_DESCRIPTIONS.get(var0);
+   public static String supportedModuleDescription(String supportedModuleName) {
+      return supportedModuleName == null ? null : SUPPORTED_MODULE_DESCRIPTIONS.get(supportedModuleName);
    }
 
-   public BotModuleManager(BotClient var1) {
-      this.client = var1;
+   public BotModuleManager(BotClient client) {
+      this.client = client;
       this.register(new BotAutoMine());
       this.register(new BotWarpFarm());
-      BotAutoCapcha var2 = new BotAutoCapcha();
-      this.register(var2);
-      var2.setToggled(true);
+      BotAutoCapcha botAutoCapcha = new BotAutoCapcha();
+      this.register(botAutoCapcha);
+      botAutoCapcha.setToggled(true);
    }
 
-   public void register(BotModule var1) {
-      var1.bind(this.client);
-      this.modules.put(var1.getNameLower(), var1);
+   public void register(BotModule botAutoMine) {
+      botAutoMine.bind(this.client);
+      this.modules.put(botAutoMine.getNameLower(), botAutoMine);
    }
 
    public Collection<BotModule> getModules() {
@@ -62,44 +62,44 @@ public final class BotModuleManager {
    }
 
    @Nullable
-   public BotModule getModule(String var1) {
-      return this.modules.get(var1.toLowerCase(Locale.ROOT));
+   public BotModule getModule(String supportedModuleName) {
+      return this.modules.get(supportedModuleName.toLowerCase(Locale.ROOT));
    }
 
    @Nullable
-   public <T extends BotModule> T getModule(Class<T> var1) {
-      for (BotModule var3 : this.modules.values()) {
-         if (var1.isInstance(var3)) {
-            return (T)var3;
+   public <T extends BotModule> T getModule(Class<T> clazz) {
+      for (BotModule botModule : this.modules.values()) {
+         if (clazz.isInstance(botModule)) {
+            return (T)botModule;
          }
       }
 
       return null;
    }
 
-   public boolean setEnabled(String var1, boolean var2) {
-      BotModule var3 = this.getModule(var1);
-      if (var3 == null) {
+   public boolean setEnabled(String supportedModuleName, boolean equalsIgnoreCase) {
+      BotModule botModule = this.getModule(supportedModuleName);
+      if (botModule == null) {
          return false;
       } else {
-         var3.setToggled(var2);
+         botModule.setToggled(equalsIgnoreCase);
          return true;
       }
    }
 
-   public void applySettings(String var1, JsonObject var2) {
-      BotModule var3 = this.getModule(var1);
-      if (var3 != null) {
-         var3.load(var2);
+   public void applySettings(String supportedModuleName, JsonObject jsonObject) {
+      BotModule botModule = this.getModule(supportedModuleName);
+      if (botModule != null) {
+         botModule.load(jsonObject);
       }
    }
 
    public void disableAll() {
-      for (BotModule var2 : this.modules.values()) {
+      for (BotModule botModule : this.modules.values()) {
          try {
-            var2.setToggled(false);
-         } catch (RuntimeException var4) {
-            LOGGER.error("Bot {}: failed to disable module {}", new Object[]{this.client.name(), var2.getName(), var4});
+            botModule.setToggled(false);
+         } catch (RuntimeException e) {
+            LOGGER.error("Bot {}: failed to disable module {}", new Object[]{this.client.name(), botModule.getName(), e});
          }
       }
    }

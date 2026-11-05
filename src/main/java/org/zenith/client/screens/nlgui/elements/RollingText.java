@@ -14,80 +14,80 @@ public final class RollingText {
    private long changedAt = -1L;
    private int direction = 1;
 
-   public void snap(String var1) {
-      this.current = var1;
+   public void snap(String current) {
+      this.current = current;
       this.previous = null;
       this.changedAt = -1L;
    }
 
-   public float draw(MenuDrawContext var1, Font var2, String var3, float var4, float var5, ZenithColor var6, int var7) {
-      if (var3 == null) {
-         var3 = "";
+   public float draw(MenuDrawContext menuDrawContext, Font font, String current, float f, float centeredTextY, ZenithColor zenithColor, int counterDirection) {
+      if (current == null) {
+         current = "";
       }
 
-      long var8 = System.currentTimeMillis();
+      long now = System.currentTimeMillis();
       if (this.current == null) {
-         this.current = var3;
-      } else if (!this.current.equals(var3)) {
+         this.current = current;
+      } else if (!this.current.equals(current)) {
          this.previous = this.current;
-         this.current = var3;
-         this.changedAt = var8;
-         this.direction = var7 >= 0 ? 1 : -1;
+         this.current = current;
+         this.changedAt = now;
+         this.direction = counterDirection >= 0 ? 1 : -1;
       }
 
-      float var10 = var2.width(this.current);
+      float width = font.width(this.current);
       if (this.previous == null) {
-         var1.drawText(var2, this.current, var4 - var10, var5, var6);
-         return var10;
+         menuDrawContext.drawText(font, this.current, f - width, centeredTextY, zenithColor);
+         return width;
       } else {
-         int var11 = this.current.length();
-         int var12 = this.previous.length();
-         int var13 = 0;
+         int length = this.current.length();
+         int n = this.previous.length();
+         int n2 = 0;
 
-         while (var13 < var11 && var13 < var12 && this.current.charAt(var11 - 1 - var13) == this.previous.charAt(var12 - 1 - var13)) {
-            var13++;
+         while (n2 < length && n2 < n && this.current.charAt(length - 1 - n2) == this.previous.charAt(n - 1 - n2)) {
+            n2++;
          }
 
-         long var14 = var8 - this.changedAt;
-         int var16 = Math.max(var11, var12) - var13;
-         if (var14 >= 230L + 22L * Math.max(0, var16 - 1)) {
+         long l = now - this.changedAt;
+         int n3 = Math.max(length, n) - n2;
+         if (l >= 230L + 22L * Math.max(0, n3 - 1)) {
             this.previous = null;
             this.changedAt = -1L;
-            var1.drawText(var2, this.current, var4 - var10, var5, var6);
-            return var10;
+            menuDrawContext.drawText(font, this.current, f - width, centeredTextY, zenithColor);
+            return width;
          } else {
-            float var17 = var6.getIntValue4() / 255.0F;
-            float var18 = var4;
+            float f2 = zenithColor.getIntValue4() / 255.0F;
+            float floatValue = f;
 
-            for (int var19 = 0; var19 < var11; var19++) {
-               String var20 = String.valueOf(this.current.charAt(var11 - 1 - var19));
-               var18 -= var2.width(var20);
-               if (var19 < var13) {
-                  var1.drawText(var2, var20, var18, var5, var6);
+            for (int i = 0; i < length; i++) {
+               String text = String.valueOf(this.current.charAt(length - 1 - i));
+               floatValue -= font.width(text);
+               if (i < n2) {
+                  menuDrawContext.drawText(font, text, floatValue, centeredTextY, zenithColor);
                } else {
-                  float var21 = progress(var14 - (var19 - var13) * 22L);
-                  if (!(var21 <= 0.0F)) {
-                     float var22 = easeOut(var21);
-                     var1.drawText(var2, var20, var18, var5 + this.direction * 3.5F * (1.0F - var22), var6.method7292(var17 * var21));
+                  float progress2 = progress(l - (i - n2) * 22L);
+                  if (!(progress2 <= 0.0F)) {
+                     float easeOut2 = easeOut(progress2);
+                     menuDrawContext.drawText(font, text, floatValue, centeredTextY + this.direction * 3.5F * (1.0F - easeOut2), zenithColor.method7292(f2 * progress2));
                   }
                }
             }
 
-            var18 = var4;
+            floatValue = f;
 
-            for (int var24 = 0; var24 < var12; var24++) {
-               String var25 = String.valueOf(this.previous.charAt(var12 - 1 - var24));
-               var18 -= var2.width(var25);
-               if (var24 >= var13) {
-                  float var26 = progress(var14 - (var24 - var13) * 22L);
-                  if (!(var26 >= 1.0F)) {
-                     float var27 = easeOut(var26);
-                     var1.drawText(var2, var25, var18, var5 - this.direction * 3.5F * var27, var6.method7292(var17 * (1.0F - var26)));
+            for (int i = 0; i < n; i++) {
+               String text = String.valueOf(this.previous.charAt(n - 1 - i));
+               floatValue -= font.width(text);
+               if (i >= n2) {
+                  float progress2 = progress(l - (i - n2) * 22L);
+                  if (!(progress2 >= 1.0F)) {
+                     float easeOut2 = easeOut(progress2);
+                     menuDrawContext.drawText(font, text, floatValue, centeredTextY - this.direction * 3.5F * easeOut2, zenithColor.method7292(f2 * (1.0F - progress2)));
                   }
                }
             }
 
-            return var10;
+            return width;
          }
       }
    }
@@ -96,12 +96,12 @@ public final class RollingText {
       return this.previous != null;
    }
 
-   private static float progress(long var0) {
-      return Mth.clamp((float)var0 / 230.0F, 0.0F, 1.0F);
+   private static float progress(long l) {
+      return Mth.clamp((float)l / 230.0F, 0.0F, 1.0F);
    }
 
-   private static float easeOut(float var0) {
-      float var1 = 1.0F - var0;
-      return 1.0F - var1 * var1 * var1;
+   private static float easeOut(float f) {
+      float f2 = 1.0F - f;
+      return 1.0F - f2 * f2 * f2;
    }
 }

@@ -41,12 +41,12 @@ public class JoinCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var0 -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2019("Используйте: .join <номер грифа> или .join stop");
          return 1;
       });
-      var1.then(literal("stop").executes(var1x -> {
+      literalArgumentBuilder.then(literal("stop").executes(var1x -> {
          if (!this.active) {
             ChatLogger.method2019("Joiner сейчас не запущен");
          } else {
@@ -56,20 +56,20 @@ public class JoinCommand extends CommandAbstract {
 
          return 1;
       }));
-      var1.then(arg("grief", IntegerArgumentType.integer(1)).executes(var1x -> {
+      literalArgumentBuilder.then(arg("grief", IntegerArgumentType.integer(1)).executes(var1x -> {
          this.start((Integer)var1x.getArgument("grief", Integer.class));
          return 1;
       }));
    }
 
-   private void start(int var1) {
-      this.grief = var1;
+   private void start(int grief) {
+      this.grief = grief;
       this.active = true;
       this.targetClicked = false;
       this.clickTimer.reset();
       this.reopenTimer.reset();
       this.timeoutTimer.reset();
-      ChatLogger.method2019("Пробую зайти на гриф #" + var1);
+      ChatLogger.method2019("Пробую зайти на гриф #" + grief);
       if (!this.useCompass()) {
          this.stop();
          ChatLogger.method2022("Компас не найден в хотбаре");
@@ -83,8 +83,8 @@ public class JoinCommand extends CommandAbstract {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (this.active && var1.method7100() && var1.getPacket3() instanceof ClientboundLoginPacket) {
+   public void onPacket(PacketEvent event) {
+      if (this.active && event.method7100() && event.getPacket3() instanceof ClientboundLoginPacket) {
          mc.execute(() -> {
             if (this.active) {
                if (this.targetClicked) {
@@ -99,12 +99,12 @@ public class JoinCommand extends CommandAbstract {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.active && mc.gameMode != null) {
          if (this.timeoutTimer.method7546(30000L)) {
-            int var4 = this.grief;
+            int grief = this.grief;
             this.stop();
-            ChatLogger.method2022("Не удалось зайти на гриф #" + var4 + " за 30 секунд");
+            ChatLogger.method2022("Не удалось зайти на гриф #" + grief + " за 30 секунд");
          } else if (mc.gui.screen() == null) {
             if (this.reopenTimer.method7546(this.targetClicked ? 5000L : 1000L)) {
                this.reopenTimer.reset();
@@ -113,68 +113,68 @@ public class JoinCommand extends CommandAbstract {
             }
          } else {
             this.reopenTimer.reset();
-            if (mc.gui.screen() instanceof ContainerScreen var2 && this.clickTimer.method7546(100L)) {
-               this.handleMenu(var2);
+            if (mc.gui.screen() instanceof ContainerScreen containerScreen && this.clickTimer.method7546(100L)) {
+               this.handleMenu(containerScreen);
             }
          }
       }
    }
 
-   private void handleMenu(ContainerScreen var1) {
-      int var2 = -1;
-      int var3 = -1;
-      int var4 = -1;
-      boolean var5 = false;
-      String var6 = "гриф #" + this.grief;
-      int var7 = var1.getMenu().getContainer().getContainerSize();
+   private void handleMenu(ContainerScreen containerScreen) {
+      int index = -1;
+      int n = -1;
+      int index2 = -1;
+      boolean flag = false;
+      String str = "гриф #" + this.grief;
+      int containerSize = containerScreen.getMenu().getContainer().getContainerSize();
 
-      for (Slot var9 : var1.getMenu().slots) {
-         if (var9.index >= var7) {
+      for (Slot slot : containerScreen.getMenu().slots) {
+         if (slot.index >= containerSize) {
             break;
          }
 
-         ItemStack var10 = var9.getItem();
-         if (!var10.isEmpty()) {
-            String var11 = normalize(var10.getHoverName().getString());
-            if (isTargetGrief(var11, var6)) {
-               var2 = var9.index;
+         ItemStack stack = slot.getItem();
+         if (!stack.isEmpty()) {
+            String str2 = normalize(stack.getHoverName().getString());
+            if (isTargetGrief(str2, str)) {
+               index = slot.index;
             }
 
-            if (var11.contains("гриф #")) {
-               var5 = true;
+            if (str2.contains("гриф #")) {
+               flag = true;
             }
 
-            if (var11.contains("гриферское выживание") && !var11.contains("ru")) {
-               var3 = var9.index;
+            if (str2.contains("гриферское выживание") && !str2.contains("ru")) {
+               n = slot.index;
             }
 
-            if (var11.contains("следующ")) {
-               var4 = var9.index;
+            if (str2.contains("следующ")) {
+               index2 = slot.index;
             }
          }
       }
 
-      if (var2 != -1) {
-         this.click(var2);
+      if (index != -1) {
+         this.click(index);
          this.targetClicked = true;
-      } else if (var3 != -1 && !var5 && ServerHelperModule.INSTANCE.method5181()) {
-         this.click(var3);
-      } else if (var5) {
-         if (var4 != -1) {
-            this.click(var4);
+      } else if (n != -1 && !flag && ServerHelperModule.INSTANCE.method5181()) {
+         this.click(n);
+      } else if (flag) {
+         if (index2 != -1) {
+            this.click(index2);
          } else {
-            int var12 = this.grief;
+            int grief = this.grief;
             this.stop();
             mc.player.closeContainer();
-            ChatLogger.method2022("Гриф #" + var12 + " не найден");
+            ChatLogger.method2022("Гриф #" + grief + " не найден");
          }
       }
    }
 
-   private static boolean isTargetGrief(String var0, String var1) {
-      for (int var2 = var0.indexOf(var1); var2 != -1; var2 = var0.indexOf(var1, var2 + 1)) {
-         int var3 = var2 + var1.length();
-         if (var3 >= var0.length() || !Character.isDigit(var0.charAt(var3))) {
+   private static boolean isTargetGrief(String str, String str2) {
+      for (int i = str.indexOf(str2); i != -1; i = str.indexOf(str2, i + 1)) {
+         int index = i + str2.length();
+         if (index >= str.length() || !Character.isDigit(str.charAt(index))) {
             return true;
          }
       }
@@ -182,17 +182,17 @@ public class JoinCommand extends CommandAbstract {
       return false;
    }
 
-   private void click(int var1) {
-      InventoryUtils.method904(var1, 0, ContainerInput.PICKUP, false);
+   private void click(int index) {
+      InventoryUtils.method904(index, 0, ContainerInput.PICKUP, false);
       this.clickTimer.reset();
    }
 
    private boolean useCompass() {
       if (mc.player != null && mc.gameMode != null && mc.getConnection() != null) {
-         for (int var1 = 0; var1 < 9; var1++) {
-            if (mc.player.getInventory().getItem(var1).is(Items.COMPASS)) {
-               mc.player.getInventory().setSelectedSlot(var1);
-               mc.getConnection().send(new ServerboundSetCarriedItemPacket(var1));
+         for (int i = 0; i < 9; i++) {
+            if (mc.player.getInventory().getItem(i).is(Items.COMPASS)) {
+               mc.player.getInventory().setSelectedSlot(i);
+               mc.getConnection().send(new ServerboundSetCarriedItemPacket(i));
                mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
                return true;
             }
@@ -204,8 +204,8 @@ public class JoinCommand extends CommandAbstract {
       }
    }
 
-   private static String normalize(String var0) {
-      String var1 = ChatFormatting.stripFormatting(var0);
-      return (var1 == null ? var0 : var1).toLowerCase(Locale.ROOT);
+   private static String normalize(String string) {
+      String stripFormatting = ChatFormatting.stripFormatting(string);
+      return (stripFormatting == null ? string : stripFormatting).toLowerCase(Locale.ROOT);
    }
 }

@@ -21,74 +21,74 @@ public final class ScriptIcons {
    private ScriptIcons() {
    }
 
-   public static Identifier get(Script var0) {
-      Path var1 = var0.method1412();
-      if (var1 == null) {
+   public static Identifier get(Script script) {
+      Path path = script.method1412();
+      if (path == null) {
          return null;
       } else {
-         String var2 = var0.getId();
-         long var3 = System.currentTimeMillis();
-         ScriptIcons.Entry var5 = CACHE.get(var2);
-         Long var6 = CHECKED.get(var2);
-         if (var6 != null && var3 - var6 < 1000L) {
-            return var5 == null ? null : var5.id();
+         String id = script.getId();
+         long now = System.currentTimeMillis();
+         ScriptIcons.Entry entry = CACHE.get(id);
+         Long l = CHECKED.get(id);
+         if (l != null && now - l < 1000L) {
+            return entry == null ? null : entry.id();
          } else {
-            CHECKED.put(var2, var3);
+            CHECKED.put(id, now);
 
-            long var7;
+            long millis;
             try {
-               var7 = Files.isRegularFile(var1) ? Files.getLastModifiedTime(var1).toMillis() : 0L;
-            } catch (Exception var14) {
-               var7 = 0L;
+               millis = Files.isRegularFile(path) ? Files.getLastModifiedTime(path).toMillis() : 0L;
+            } catch (Exception e) {
+               millis = 0L;
             }
 
-            if (var7 == 0L) {
-               drop(var2);
+            if (millis == 0L) {
+               drop(id);
                return null;
-            } else if (var5 != null && var5.stamp() == var7) {
-               return var5.id();
+            } else if (entry != null && entry.stamp() == millis) {
+               return entry.id();
             } else {
-               drop(var2);
+               drop(id);
 
                try {
-                  if (Files.size(var1) > 4194304L) {
-                     return reject(var2, var7);
+                  if (Files.size(path) > 4194304L) {
+                     return reject(id, millis);
                   } else {
-                     byte[] var9 = Files.readAllBytes(var1);
-                     int[] var10 = ImageLoader.method231(var9);
-                     if (var10[0] <= 1024 && var10[1] <= 1024) {
-                        NativeImage var11 = NativeImage.read(new ByteArrayInputStream(var9));
-                        Identifier var12 = Zenith.method1501("script_icon/" + var2.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_.-]", "_") + "_" + var7);
+                     byte[] allBytes = Files.readAllBytes(path);
+                     int[] ints = ImageLoader.method231(allBytes);
+                     if (ints[0] <= 1024 && ints[1] <= 1024) {
+                        NativeImage image = NativeImage.read(new ByteArrayInputStream(allBytes));
+                        Identifier location = Zenith.method1501("script_icon/" + id.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_.-]", "_") + "_" + millis);
                         Minecraft.getInstance()
                            .getTextureManager()
-                           .register(var12, new DynamicTexture(() -> "zenith-script-icon", var11));
-                        CACHE.put(var2, new ScriptIcons.Entry(var7, var12));
-                        return var12;
+                           .register(location, new DynamicTexture(() -> "zenith-script-icon", image));
+                        CACHE.put(id, new ScriptIcons.Entry(millis, location));
+                        return location;
                      } else {
-                        return reject(var2, var7);
+                        return reject(id, millis);
                      }
                   }
-               } catch (Exception var13) {
-                  return reject(var2, var7);
+               } catch (Exception e) {
+                  return reject(id, millis);
                }
             }
          }
       }
    }
 
-   private static Identifier reject(String var0, long var1) {
-      CACHE.put(var0, new ScriptIcons.Entry(var1, null));
+   private static Identifier reject(String id, long millis) {
+      CACHE.put(id, new ScriptIcons.Entry(millis, null));
       return null;
    }
 
-   public static void invalidate(Script var0) {
-      CHECKED.remove(var0.getId());
+   public static void invalidate(Script script) {
+      CHECKED.remove(script.getId());
    }
 
-   private static void drop(String var0) {
-      ScriptIcons.Entry var1 = CACHE.remove(var0);
-      if (var1 != null && var1.id() != null) {
-         Minecraft.getInstance().getTextureManager().release(var1.id());
+   private static void drop(String id) {
+      ScriptIcons.Entry entry = CACHE.remove(id);
+      if (entry != null && entry.id() != null) {
+         Minecraft.getInstance().getTextureManager().release(entry.id());
       }
    }
 
@@ -121,9 +121,9 @@ public final class ScriptIcons {
          return "Entry[" + "stamp=" + this.stamp + ", " + "id=" + this.id + "]";
       }
 
-      private Entry(long var1, Identifier var3) {
-         this.stamp = var1;
-         this.id = var3;
+      private Entry(long stamp, Identifier id) {
+         this.stamp = stamp;
+         this.id = id;
       }
    }
 }

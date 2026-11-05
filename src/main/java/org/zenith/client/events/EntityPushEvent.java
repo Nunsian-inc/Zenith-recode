@@ -12,8 +12,8 @@ public class EntityPushEvent extends EventCancellable {
    }
 
    @Generated
-   public EntityPushEvent(EntityPushEvent.Type var1) {
-      this.type = var1;
+   public EntityPushEvent(EntityPushEvent.Type type) {
+      this.type = type;
    }
 
    public static enum Type {

@@ -11,101 +11,101 @@ public interface Easing {
    Easing INSTANCE5 = method2832(0.62, -0.16, 0.8, 0.37);
    Easing INSTANCE6 = method2832(0.25, 1.07, 0.11, 1.1);
    Easing INSTANCE7 = method2832(0.42, 0.0, 0.58, 1.0);
-   Easing INSTANCE8 = (var0, var1, var2, var3) -> {
-      float var4 = var2 * var0 / var3 + var1;
-      return (float)(-2.0 * Math.pow(var4, 3.0) + 3.0 * Math.pow(var4, 2.0));
+   Easing INSTANCE8 = (f, f2, f3, f4) -> {
+      float f5 = f3 * f / f4 + f2;
+      return (float)(-2.0 * Math.pow(f5, 3.0) + 3.0 * Math.pow(f5, 2.0));
    };
-   Easing INSTANCE9 = (var0, var1, var2, var3) -> {
-      float var4 = var2 * var0 / var3 + var1;
-      return var4 < 0.5 ? 4.0F * var4 * var4 * var4 : (float)(1.0 - Math.pow(-2.0F * var4 + 2.0F, 3.0) / 2.0);
+   Easing INSTANCE9 = (f, f2, f3, f4) -> {
+      float f5 = f3 * f / f4 + f2;
+      return f5 < 0.5 ? 4.0F * f5 * f5 * f5 : (float)(1.0 - Math.pow(-2.0F * f5 + 2.0F, 3.0) / 2.0);
    };
-   Easing INSTANCE10 = (var0, var1, var2, var3) -> var2 * var0 / var3 + var1;
-   Easing INSTANCE11 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * (var4 = var0 / var3) * var4 + var1;
+   Easing INSTANCE10 = (f, f2, f3, f4) -> f3 * f / f4 + f2;
+   Easing INSTANCE11 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * (f5 = f / f4) * f5 + f2;
    };
-   Easing INSTANCE12 = (var0, var1, var2, var3) -> {
-      float var4;
-      return -var2 * (var4 = var0 / var3) * (var4 - 2.0F) + var1;
+   Easing INSTANCE12 = (f, f2, f3, f4) -> {
+      float f5;
+      return -f3 * (f5 = f / f4) * (f5 - 2.0F) + f2;
    };
-   Easing INSTANCE13 = (var0, var1, var2, var3) -> {
-      float var4;
-      return (var4 = var0 / (var3 / 2.0F)) < 1.0F ? var2 / 2.0F * var4 * var4 + var1 : -var2 / 2.0F * (--var4 * (var4 - 2.0F) - 1.0F) + var1;
+   Easing INSTANCE13 = (f, f2, f3, f4) -> {
+      float f5;
+      return (f5 = f / (f4 / 2.0F)) < 1.0F ? f3 / 2.0F * f5 * f5 + f2 : -f3 / 2.0F * (--f5 * (f5 - 2.0F) - 1.0F) + f2;
    };
-   Easing INSTANCE14 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * (var4 = var0 / var3) * var4 * var4 + var1;
+   Easing INSTANCE14 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * (f5 = f / f4) * f5 * f5 + f2;
    };
-   Easing INSTANCE15 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * ((var4 = var0 / var3 - 1.0F) * var4 * var4 + 1.0F) + var1;
+   Easing INSTANCE15 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * ((f5 = f / f4 - 1.0F) * f5 * f5 + 1.0F) + f2;
    };
-   Easing INSTANCE16 = (var0, var1, var2, var3) -> {
-      float var4;
-      float var5;
-      return (var4 = var0 / (var3 / 2.0F)) < 1.0F ? var2 / 2.0F * var4 * var4 * var4 + var1 : var2 / 2.0F * ((var5 = var4 - 2.0F) * var5 * var5 + 2.0F) + var1;
+   Easing INSTANCE16 = (f, f2, f3, f4) -> {
+      float f5;
+      float f6;
+      return (f5 = f / (f4 / 2.0F)) < 1.0F ? f3 / 2.0F * f5 * f5 * f5 + f2 : f3 / 2.0F * ((f6 = f5 - 2.0F) * f6 * f6 + 2.0F) + f2;
    };
-   Easing INSTANCE17 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * (var4 = var0 / var3) * var4 * var4 * var4 + var1;
+   Easing INSTANCE17 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * (f5 = f / f4) * f5 * f5 * f5 + f2;
    };
-   Easing INSTANCE18 = (var0, var1, var2, var3) -> {
-      float var4;
-      return -var2 * ((var4 = var0 / var3 - 1.0F) * var4 * var4 * var4 - 1.0F) + var1;
+   Easing INSTANCE18 = (f, f2, f3, f4) -> {
+      float f5;
+      return -f3 * ((f5 = f / f4 - 1.0F) * f5 * f5 * f5 - 1.0F) + f2;
    };
-   Easing INSTANCE19 = (var0, var1, var2, var3) -> {
-      float var4;
-      float var5;
-      return (var4 = var0 / (var3 / 2.0F)) < 1.0F
-         ? var2 / 2.0F * var4 * var4 * var4 * var4 + var1
-         : -var2 / 2.0F * ((var5 = var4 - 2.0F) * var5 * var5 * var5 - 2.0F) + var1;
+   Easing INSTANCE19 = (f, f2, f3, f4) -> {
+      float f5;
+      float f6;
+      return (f5 = f / (f4 / 2.0F)) < 1.0F
+         ? f3 / 2.0F * f5 * f5 * f5 * f5 + f2
+         : -f3 / 2.0F * ((f6 = f5 - 2.0F) * f6 * f6 * f6 - 2.0F) + f2;
    };
-   Easing INSTANCE20 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * (var4 = var0 / var3) * var4 * var4 * var4 * var4 + var1;
+   Easing INSTANCE20 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * (f5 = f / f4) * f5 * f5 * f5 * f5 + f2;
    };
-   Easing INSTANCE21 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * ((var4 = var0 / var3 - 1.0F) * var4 * var4 * var4 * var4 + 1.0F) + var1;
+   Easing INSTANCE21 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * ((f5 = f / f4 - 1.0F) * f5 * f5 * f5 * f5 + 1.0F) + f2;
    };
-   Easing INSTANCE22 = (var0, var1, var2, var3) -> {
-      float var4;
-      float var5;
-      return (var4 = var0 / (var3 / 2.0F)) < 1.0F
-         ? var2 / 2.0F * var4 * var4 * var4 * var4 * var4 + var1
-         : var2 / 2.0F * ((var5 = var4 - 2.0F) * var5 * var5 * var5 * var5 + 2.0F) + var1;
+   Easing INSTANCE22 = (f, f2, f3, f4) -> {
+      float f5;
+      float f6;
+      return (f5 = f / (f4 / 2.0F)) < 1.0F
+         ? f3 / 2.0F * f5 * f5 * f5 * f5 * f5 + f2
+         : f3 / 2.0F * ((f6 = f5 - 2.0F) * f6 * f6 * f6 * f6 + 2.0F) + f2;
    };
-   Easing INSTANCE23 = (var0, var1, var2, var3) -> -var2 * (float)MathUtils.cos(var0 / var3 * (Math.PI / 2)) + var2 + var1;
-   Easing INSTANCE24 = (var0, var1, var2, var3) -> var2 * (float)MathUtils.sin(var0 / var3 * (Math.PI / 2)) + var1;
-   Easing INSTANCE25 = (var0, var1, var2, var3) -> -var2 / 2.0F * ((float)MathUtils.cos(Math.PI * var0 / var3) - 1.0F) + var1;
-   Easing INSTANCE26 = (var0, var1, var2, var3) -> var0 == 0.0F ? var1 : var2 * (float)Math.pow(2.0, 10.0F * (var0 / var3 - 1.0F)) + var1;
-   Easing INSTANCE27 = (var0, var1, var2, var3) -> var0 == var3 ? var1 + var2 : var2 * (-((float)Math.pow(2.0, -10.0F * var0 / var3)) + 1.0F) + var1;
-   Easing INSTANCE28 = (var0, var1, var2, var3) -> {
-      if (var0 == 0.0F) {
-         return var1;
-      } else if (var0 == var3) {
-         return var1 + var2;
+   Easing INSTANCE23 = (f, f2, f3, f4) -> -f3 * (float)MathUtils.cos(f / f4 * (Math.PI / 2)) + f3 + f2;
+   Easing INSTANCE24 = (f, f2, f3, f4) -> f3 * (float)MathUtils.sin(f / f4 * (Math.PI / 2)) + f2;
+   Easing INSTANCE25 = (f, f2, f3, f4) -> -f3 / 2.0F * ((float)MathUtils.cos(Math.PI * f / f4) - 1.0F) + f2;
+   Easing INSTANCE26 = (f, f2, f3, f4) -> f == 0.0F ? f2 : f3 * (float)Math.pow(2.0, 10.0F * (f / f4 - 1.0F)) + f2;
+   Easing INSTANCE27 = (f, f2, f3, f4) -> f == f4 ? f2 + f3 : f3 * (-((float)Math.pow(2.0, -10.0F * f / f4)) + 1.0F) + f2;
+   Easing INSTANCE28 = (f, f2, f3, f4) -> {
+      if (f == 0.0F) {
+         return f2;
+      } else if (f == f4) {
+         return f2 + f3;
       } else {
-         float var4;
-         return (var4 = var0 / (var3 / 2.0F)) < 1.0F
-            ? var2 / 2.0F * (float)Math.pow(2.0, 10.0F * (var4 - 1.0F)) + var1
-            : var2 / 2.0F * (-((float)Math.pow(2.0, -10.0F * --var4)) + 2.0F) + var1;
+         float f5;
+         return (f5 = f / (f4 / 2.0F)) < 1.0F
+            ? f3 / 2.0F * (float)Math.pow(2.0, 10.0F * (f5 - 1.0F)) + f2
+            : f3 / 2.0F * (-((float)Math.pow(2.0, -10.0F * --f5)) + 2.0F) + f2;
       }
    };
-   Easing INSTANCE29 = (var0, var1, var2, var3) -> {
-      float var4;
-      return -var2 * ((float)Math.sqrt(1.0F - (var4 = var0 / var3) * var4) - 1.0F) + var1;
+   Easing INSTANCE29 = (f, f2, f3, f4) -> {
+      float f5;
+      return -f3 * ((float)Math.sqrt(1.0F - (f5 = f / f4) * f5) - 1.0F) + f2;
    };
-   Easing INSTANCE30 = (var0, var1, var2, var3) -> {
-      float var4;
-      return var2 * (float)Math.sqrt(1.0F - (var4 = var0 / var3 - 1.0F) * var4) + var1;
+   Easing INSTANCE30 = (f, f2, f3, f4) -> {
+      float f5;
+      return f3 * (float)Math.sqrt(1.0F - (f5 = f / f4 - 1.0F) * f5) + f2;
    };
-   Easing INSTANCE31 = (var0, var1, var2, var3) -> {
-      float var4;
-      float var5;
-      return (var4 = var0 / (var3 / 2.0F)) < 1.0F
-         ? -var2 / 2.0F * ((float)Math.sqrt(1.0F - var4 * var4) - 1.0F) + var1
-         : var2 / 2.0F * ((float)Math.sqrt(1.0F - (var5 = var4 - 2.0F) * var5) + 1.0F) + var1;
+   Easing INSTANCE31 = (f, f2, f3, f4) -> {
+      float f5;
+      float f6;
+      return (f5 = f / (f4 / 2.0F)) < 1.0F
+         ? -f3 / 2.0F * ((float)Math.sqrt(1.0F - f5 * f5) - 1.0F) + f2
+         : f3 / 2.0F * ((float)Math.sqrt(1.0F - (f6 = f5 - 2.0F) * f6) + 1.0F) + f2;
    };
    Easing.Entry8 entry8 = new Easing.Entry6();
    Easing.Entry8 entry82 = new Easing.Entry4();
@@ -113,108 +113,108 @@ public interface Easing {
    Easing.Entry2 entry2 = new Easing.Entry5();
    Easing.Entry2 entry22 = new Easing.Entry7();
    Easing.Entry2 entry23 = new Easing.Entry3();
-   Easing INSTANCE32 = (var0, var1, var2, var3) -> {
-      if ((var0 = var0 / var3) < 0.36363637F) {
-         return var2 * (7.5625F * var0 * var0) + var1;
-      } else if (var0 < 0.72727275F) {
-         float var7;
-         return var2 * (7.5625F * (var7 = var0 - 0.54545456F) * var7 + 0.75F) + var1;
+   Easing INSTANCE32 = (f, f2, f3, f4) -> {
+      if ((f = f / f4) < 0.36363637F) {
+         return f3 * (7.5625F * f * f) + f2;
+      } else if (f < 0.72727275F) {
+         float f5;
+         return f3 * (7.5625F * (f5 = f - 0.54545456F) * f5 + 0.75F) + f2;
       } else {
-         float var5;
-         float var6;
-         return var0 < 0.90909094F
-            ? var2 * (7.5625F * (var5 = var0 - 0.8181818F) * var5 + 0.9375F) + var1
-            : var2 * (7.5625F * (var6 = var0 - 0.95454544F) * var6 + 0.984375F) + var1;
+         float f5;
+         float f6;
+         return f < 0.90909094F
+            ? f3 * (7.5625F * (f5 = f - 0.8181818F) * f5 + 0.9375F) + f2
+            : f3 * (7.5625F * (f6 = f - 0.95454544F) * f6 + 0.984375F) + f2;
       }
    };
-   Easing INSTANCE33 = (var0, var1, var2, var3) -> var2 - INSTANCE32.ease(var3 - var0, 0.0F, var2, var3) + var1;
-   Easing INSTANCE34 = (var0, var1, var2, var3) -> var0 < var3 / 2.0F
-      ? INSTANCE33.ease(var0 * 2.0F, 0.0F, var2, var3) * 0.5F + var1
-      : INSTANCE32.ease(var0 * 2.0F - var3, 0.0F, var2, var3) * 0.5F + var2 * 0.5F + var1;
+   Easing INSTANCE33 = (f, f2, f3, f4) -> f3 - INSTANCE32.ease(f4 - f, 0.0F, f3, f4) + f2;
+   Easing INSTANCE34 = (f, f2, f3, f4) -> f < f4 / 2.0F
+      ? INSTANCE33.ease(f * 2.0F, 0.0F, f3, f4) * 0.5F + f2
+      : INSTANCE32.ease(f * 2.0F - f4, 0.0F, f3, f4) * 0.5F + f3 * 0.5F + f2;
 
-   static Easing method2832(final double var0, final double var2, final double var4, final double var6) {
+   static Easing method2832(final double d, final double d2, final double d3, final double d4) {
       return new Easing() {
          @Override
-         public float ease(float var1, float var2x, float var3, float var4x) {
-            if (var4x <= 0.0F || var1 <= 0.0F) {
+         public float ease(float f, float var2x, float f2, float var4x) {
+            if (var4x <= 0.0F || f <= 0.0F) {
                return var2x;
-            } else if (var1 >= var4x) {
-               return var2x + var3;
+            } else if (f >= var4x) {
+               return var2x + f2;
             } else {
-               float var5 = var1 / var4x;
-               float var6x = this.method2833((float)var0, (float)var4, var5);
-               float var7 = this.method2836(var6x, (float)var2, (float)var6);
-               return var2x + var3 * var7;
+               float f3 = f / var4x;
+               float var6x = this.method2833((float)d, (float)d3, f3);
+               float f4 = this.method2836(var6x, (float)d2, (float)d4);
+               return var2x + f2 * f4;
             }
          }
 
-         private float method2833(float var1, float var2x, float var3) {
-            float var4x = var3;
-            byte var5 = 8;
+         private float method2833(float f, float var2x, float f2) {
+            float var4x = f2;
+            byte b = 8;
             float var6x = 1.0E-5F;
 
-            for (int var7 = 0; var7 < 8; var7++) {
-               float var8 = this.method2834(var4x, var1, var2x);
-               float var9 = this.method2835(var4x, var1, var2x);
-               if (Math.abs(var8 - var3) < 1.0E-5F || Math.abs(var9) < 1.0E-6F) {
+            for (int i = 0; i < 8; i++) {
+               float f3 = this.method2834(var4x, f, var2x);
+               float f4 = this.method2835(var4x, f, var2x);
+               if (Math.abs(f3 - f2) < 1.0E-5F || Math.abs(f4) < 1.0E-6F) {
                   break;
                }
 
-               var4x -= (var8 - var3) / var9;
+               var4x -= (f3 - f2) / f4;
                var4x = Math.max(0.0F, Math.min(1.0F, var4x));
             }
 
             return var4x;
          }
 
-         private float method2834(float var1, float var2x, float var3) {
-            return 3.0F * (1.0F - var1) * (1.0F - var1) * var1 * var2x + 3.0F * (1.0F - var1) * var1 * var1 * var3 + var1 * var1 * var1;
+         private float method2834(float f, float var2x, float f2) {
+            return 3.0F * (1.0F - f) * (1.0F - f) * f * var2x + 3.0F * (1.0F - f) * f * f * f2 + f * f * f;
          }
 
-         private float method2835(float var1, float var2x, float var3) {
-            return 3.0F * ((1.0F - var1) * (1.0F - 3.0F * var1) * var2x + (2.0F * var1 - 3.0F * var1 * var1) * var3) + 3.0F * var1 * var1;
+         private float method2835(float f, float var2x, float f2) {
+            return 3.0F * ((1.0F - f) * (1.0F - 3.0F * f) * var2x + (2.0F * f - 3.0F * f * f) * f2) + 3.0F * f * f;
          }
 
-         private float method2836(float var1, float var2x, float var3) {
-            return 3.0F * (1.0F - var1) * (1.0F - var1) * var1 * var2x + 3.0F * (1.0F - var1) * var1 * var1 * var3 + var1 * var1 * var1;
+         private float method2836(float f, float var2x, float f2) {
+            return 3.0F * (1.0F - f) * (1.0F - f) * f * var2x + 3.0F * (1.0F - f) * f * f * f2 + f * f * f;
          }
       };
    }
 
-   float ease(float var1, float var2, float var3, float var4);
+   float ease(float f, float f2, float f3, float f4);
 
    public static class Entry extends Easing.Entry8 {
-      public Entry(float var1, float var2) {
-         super(var1, var2);
+      public Entry(float floatValue, float f) {
+         super(floatValue, f);
       }
 
       public Entry() {
       }
 
       @Override
-      public float ease(float var1, float var2, float var3, float var4) {
-         float var5 = this.getFloatValue();
-         float var6 = this.getFloatValue2();
-         if (var1 == 0.0F) {
-            return var2;
-         } else if ((var1 = var1 / (var4 / 2.0F)) == 2.0F) {
-            return var2 + var3;
+      public float ease(float f, float f2, float f3, float f4) {
+         float floatValue = this.getFloatValue();
+         float f5 = this.getFloatValue2();
+         if (f == 0.0F) {
+            return f2;
+         } else if ((f = f / (f4 / 2.0F)) == 2.0F) {
+            return f2 + f3;
          } else {
-            if (var6 == 0.0F) {
-               var6 = var4 * 0.45000002F;
+            if (f5 == 0.0F) {
+               f5 = f4 * 0.45000002F;
             }
 
-            float var7 = 0.0F;
-            if (var5 < Math.abs(var3)) {
-               var5 = var3;
-               var7 = var6 / 4.0F;
+            float f6 = 0.0F;
+            if (floatValue < Math.abs(f3)) {
+               floatValue = f3;
+               f6 = f5 / 4.0F;
             } else {
-               var7 = var6 / (float) (Math.PI * 2) * (float)Math.asin(var3 / var5);
+               f6 = f5 / (float) (Math.PI * 2) * (float)Math.asin(f3 / floatValue);
             }
 
-            return var1 < 1.0F
-               ? -0.5F * (var5 * (float)Math.pow(2.0, 10.0F * --var1) * (float)MathUtils.sin((var1 * var4 - var7) * (Math.PI * 2) / var6)) + var2
-               : var5 * (float)Math.pow(2.0, -10.0F * --var1) * (float)MathUtils.sin((var1 * var4 - var7) * (Math.PI * 2) / var6) * 0.5F + var3 + var2;
+            return f < 1.0F
+               ? -0.5F * (floatValue * (float)Math.pow(2.0, 10.0F * --f) * (float)MathUtils.sin((f * f4 - f6) * (Math.PI * 2) / f5)) + f2
+               : floatValue * (float)Math.pow(2.0, -10.0F * --f) * (float)MathUtils.sin((f * f4 - f6) * (Math.PI * 2) / f5) * 0.5F + f3 + f2;
          }
       }
    }
@@ -227,13 +227,13 @@ public interface Easing {
          this(1.70158F);
       }
 
-      public Entry2(float var1) {
-         this.floatValue = var1;
+      public Entry2(float floatValue) {
+         this.floatValue = floatValue;
       }
 
       @Generated
-      public void setFloatValue(float var1) {
-         this.floatValue = var1;
+      public void setFloatValue(float floatValue) {
+         this.floatValue = floatValue;
       }
 
       @Generated
@@ -246,53 +246,53 @@ public interface Easing {
       public Entry3() {
       }
 
-      public Entry3(float var1) {
-         super(var1);
+      public Entry3(float floatValue) {
+         super(floatValue);
       }
 
       @Override
-      public float ease(float var1, float var2, float var3, float var4) {
-         float var5 = this.getFloatValue();
-         float var6;
-         float var7;
-         float var8;
-         float var9;
-         return (var6 = var1 / (var4 / 2.0F)) < 1.0F
-            ? var3 / 2.0F * (var6 * var6 * (((var8 = var5 * 1.525F) + 1.0F) * var6 - var8)) + var2
-            : var3 / 2.0F * ((var7 = var6 - 2.0F) * var7 * (((var9 = var5 * 1.525F) + 1.0F) * var7 + var9) + 2.0F) + var2;
+      public float ease(float f, float f2, float f3, float f4) {
+         float floatValue = this.getFloatValue();
+         float f5;
+         float f6;
+         float f7;
+         float f8;
+         return (f5 = f / (f4 / 2.0F)) < 1.0F
+            ? f3 / 2.0F * (f5 * f5 * (((f7 = floatValue * 1.525F) + 1.0F) * f5 - f7)) + f2
+            : f3 / 2.0F * ((f6 = f5 - 2.0F) * f6 * (((f8 = floatValue * 1.525F) + 1.0F) * f6 + f8) + 2.0F) + f2;
       }
    }
 
    public static class Entry4 extends Easing.Entry8 {
-      public Entry4(float var1, float var2) {
-         super(var1, var2);
+      public Entry4(float floatValue, float f) {
+         super(floatValue, f);
       }
 
       public Entry4() {
       }
 
       @Override
-      public float ease(float var1, float var2, float var3, float var4) {
-         float var5 = this.getFloatValue();
-         float var6 = this.getFloatValue2();
-         if (var1 == 0.0F) {
-            return var2;
-         } else if ((var1 = var1 / var4) == 1.0F) {
-            return var2 + var3;
+      public float ease(float f, float f2, float f3, float f4) {
+         float floatValue = this.getFloatValue();
+         float f5 = this.getFloatValue2();
+         if (f == 0.0F) {
+            return f2;
+         } else if ((f = f / f4) == 1.0F) {
+            return f2 + f3;
          } else {
-            if (var6 == 0.0F) {
-               var6 = var4 * 0.3F;
+            if (f5 == 0.0F) {
+               f5 = f4 * 0.3F;
             }
 
-            float var7 = 0.0F;
-            if (var5 < Math.abs(var3)) {
-               var5 = var3;
-               var7 = var6 / 4.0F;
+            float f6 = 0.0F;
+            if (floatValue < Math.abs(f3)) {
+               floatValue = f3;
+               f6 = f5 / 4.0F;
             } else {
-               var7 = var6 / (float) (Math.PI * 2) * (float)Math.asin(var3 / var5);
+               f6 = f5 / (float) (Math.PI * 2) * (float)Math.asin(f3 / floatValue);
             }
 
-            return var5 * (float)Math.pow(2.0, -10.0F * var1) * (float)MathUtils.sin((var1 * var4 - var7) * (Math.PI * 2) / var6) + var3 + var2;
+            return floatValue * (float)Math.pow(2.0, -10.0F * f) * (float)MathUtils.sin((f * f4 - f6) * (Math.PI * 2) / f5) + f3 + f2;
          }
       }
    }
@@ -301,48 +301,48 @@ public interface Easing {
       public Entry5() {
       }
 
-      public Entry5(float var1) {
-         super(var1);
+      public Entry5(float floatValue) {
+         super(floatValue);
       }
 
       @Override
-      public float ease(float var1, float var2, float var3, float var4) {
-         float var5 = this.getFloatValue();
-         float var6;
-         return var3 * (var6 = var1 / var4) * var6 * ((var5 + 1.0F) * var6 - var5) + var2;
+      public float ease(float f, float f2, float f3, float f4) {
+         float floatValue = this.getFloatValue();
+         float f5;
+         return f3 * (f5 = f / f4) * f5 * ((floatValue + 1.0F) * f5 - floatValue) + f2;
       }
    }
 
    public static class Entry6 extends Easing.Entry8 {
-      public Entry6(float var1, float var2) {
-         super(var1, var2);
+      public Entry6(float floatValue, float f) {
+         super(floatValue, f);
       }
 
       public Entry6() {
       }
 
       @Override
-      public float ease(float var1, float var2, float var3, float var4) {
-         float var5 = this.getFloatValue();
-         float var6 = this.getFloatValue2();
-         if (var1 == 0.0F) {
-            return var2;
-         } else if ((var1 = var1 / var4) == 1.0F) {
-            return var2 + var3;
+      public float ease(float f, float f2, float f3, float f4) {
+         float floatValue = this.getFloatValue();
+         float f5 = this.getFloatValue2();
+         if (f == 0.0F) {
+            return f2;
+         } else if ((f = f / f4) == 1.0F) {
+            return f2 + f3;
          } else {
-            if (var6 == 0.0F) {
-               var6 = var4 * 0.3F;
+            if (f5 == 0.0F) {
+               f5 = f4 * 0.3F;
             }
 
-            float var7 = 0.0F;
-            if (var5 < Math.abs(var3)) {
-               var5 = var3;
-               var7 = var6 / 4.0F;
+            float f6 = 0.0F;
+            if (floatValue < Math.abs(f3)) {
+               floatValue = f3;
+               f6 = f5 / 4.0F;
             } else {
-               var7 = var6 / (float) (Math.PI * 2) * (float)Math.asin(var3 / var5);
+               f6 = f5 / (float) (Math.PI * 2) * (float)Math.asin(f3 / floatValue);
             }
 
-            return -(var5 * (float)Math.pow(2.0, 10.0F * --var1) * (float)MathUtils.sin((var1 * var4 - var7) * (Math.PI * 2) / var6)) + var2;
+            return -(floatValue * (float)Math.pow(2.0, 10.0F * --f) * (float)MathUtils.sin((f * f4 - f6) * (Math.PI * 2) / f5)) + f2;
          }
       }
    }
@@ -351,15 +351,15 @@ public interface Easing {
       public Entry7() {
       }
 
-      public Entry7(float var1) {
-         super(var1);
+      public Entry7(float floatValue) {
+         super(floatValue);
       }
 
       @Override
-      public float ease(float var1, float var2, float var3, float var4) {
-         float var5 = this.getFloatValue();
-         float var6;
-         return var3 * ((var6 = var1 / var4 - 1.0F) * var6 * ((var5 + 1.0F) * var6 + var5) + 1.0F) + var2;
+      public float ease(float f, float f2, float f3, float f4) {
+         float floatValue = this.getFloatValue();
+         float f5;
+         return f3 * ((f5 = f / f4 - 1.0F) * f5 * ((floatValue + 1.0F) * f5 + floatValue) + 1.0F) + f2;
       }
    }
 
@@ -367,9 +367,9 @@ public interface Easing {
       private float floatValue;
       private float floatValue2;
 
-      public Entry8(float var1, float var2) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
+      public Entry8(float floatValue, float f) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
 
       public Entry8() {
@@ -377,13 +377,13 @@ public interface Easing {
       }
 
       @Generated
-      public void setFloatValue(float var1) {
-         this.floatValue = var1;
+      public void setFloatValue(float floatValue) {
+         this.floatValue = floatValue;
       }
 
       @Generated
-      public void setFloatValue2(float var1) {
-         this.floatValue2 = var1;
+      public void setFloatValue2(float f) {
+         this.floatValue2 = f;
       }
 
       @Generated

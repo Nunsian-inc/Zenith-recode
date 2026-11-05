@@ -17,8 +17,8 @@ public final class Presets {
    private final Path path;
    private final List<Presets.Data> items = new ArrayList<>();
 
-   public Presets(Path var1) {
-      this.path = var1.resolve("presets.json");
+   public Presets(Path path) {
+      this.path = path.resolve("presets.json");
       this.load();
    }
 
@@ -34,19 +34,19 @@ public final class Presets {
       return this.items.size() >= 64;
    }
 
-   public boolean method7737(String var1, Collection<String> var2) {
-      String var3 = clean(var1);
-      if (!var3.isEmpty() && var2 != null && !var2.isEmpty()) {
-         var var4 = List.copyOf(new LinkedHashSet(var2));
-         int var5 = this.indexOf(var3);
-         if (var5 >= 0) {
-            this.items.set(var5, new Presets.Data(var3, var4));
+   public boolean method7737(String string, Collection<String> strings) {
+      String text = clean(string);
+      if (!text.isEmpty() && strings != null && !strings.isEmpty()) {
+         var items = List.copyOf(new LinkedHashSet(strings));
+         int indexOf = this.indexOf(text);
+         if (indexOf >= 0) {
+            this.items.set(indexOf, new Presets.Data(text, items));
             this.method7741();
             return true;
          } else if (this.isFull()) {
             return false;
          } else {
-            this.items.add(new Presets.Data(var3, var4));
+            this.items.add(new Presets.Data(text, items));
             this.method7741();
             return true;
          }
@@ -55,41 +55,41 @@ public final class Presets {
       }
    }
 
-   public boolean method7738(String var1) {
-      int var2 = this.indexOf(var1);
-      if (var2 < 0) {
+   public boolean method7738(String text) {
+      int indexOf = this.indexOf(text);
+      if (indexOf < 0) {
          return false;
       } else {
-         this.items.remove(var2);
+         this.items.remove(indexOf);
          this.method7741();
          return true;
       }
    }
 
-   public Presets.Data method7739(String var1) {
-      int var2 = this.indexOf(var1);
-      return var2 < 0 ? null : this.items.get(var2);
+   public Presets.Data method7739(String text) {
+      int indexOf = this.indexOf(text);
+      return indexOf < 0 ? null : this.items.get(indexOf);
    }
 
    public String method7740() {
-      for (int var1 = 1; var1 <= 65; var1++) {
-         String var2 = "Набор " + var1;
-         if (this.indexOf(var2) < 0) {
-            return var2;
+      for (int i = 1; i <= 65; i++) {
+         String text = "Набор " + i;
+         if (this.indexOf(text) < 0) {
+            return text;
          }
       }
 
       return "Набор";
    }
 
-   private int indexOf(String var1) {
-      String var2 = clean(var1).toLowerCase(Locale.ROOT);
-      if (var2.isEmpty()) {
+   private int indexOf(String text) {
+      String lowerCase = clean(text).toLowerCase(Locale.ROOT);
+      if (lowerCase.isEmpty()) {
          return -1;
       } else {
-         for (int var3 = 0; var3 < this.items.size(); var3++) {
-            if (this.items.get(var3).name().toLowerCase(Locale.ROOT).equals(var2)) {
-               return var3;
+         for (int i = 0; i < this.items.size(); i++) {
+            if (this.items.get(i).name().toLowerCase(Locale.ROOT).equals(lowerCase)) {
+               return i;
             }
          }
 
@@ -97,33 +97,33 @@ public final class Presets {
       }
    }
 
-   private static String clean(String var0) {
-      if (var0 == null) {
+   private static String clean(String string) {
+      if (string == null) {
          return "";
       } else {
-         String var1 = var0.strip();
-         return var1.length() > 32 ? var1.substring(0, 32).strip() : var1;
+         String str = string.strip();
+         return str.length() > 32 ? str.substring(0, 32).strip() : str;
       }
    }
 
    private void load() {
-      JsonObject var1 = JsonIo.method1009(this.path);
-      if (var1 != null && var1.has("presets") && var1.get("presets").isJsonArray()) {
-         for (JsonElement var3 : var1.getAsJsonArray("presets")) {
-            if (var3.isJsonObject()) {
-               JsonObject var4 = var3.getAsJsonObject();
-               String var5 = var4.has("name") && var4.get("name").isJsonPrimitive() ? clean(var4.get("name").getAsString()) : "";
-               if (!var5.isEmpty() && var4.has("items") && var4.get("items").isJsonArray()) {
-                  ArrayList var6 = new ArrayList();
+      JsonObject json = JsonIo.method1009(this.path);
+      if (json != null && json.has("presets") && json.get("presets").isJsonArray()) {
+         for (JsonElement jsonElement : json.getAsJsonArray("presets")) {
+            if (jsonElement.isJsonObject()) {
+               JsonObject jsonObject = jsonElement.getAsJsonObject();
+               String text = jsonObject.has("name") && jsonObject.get("name").isJsonPrimitive() ? clean(jsonObject.get("name").getAsString()) : "";
+               if (!text.isEmpty() && jsonObject.has("items") && jsonObject.get("items").isJsonArray()) {
+                  ArrayList items = new ArrayList();
 
-                  for (JsonElement var8 : var4.getAsJsonArray("items")) {
-                     if (var8.isJsonPrimitive()) {
-                        var6.add(var8.getAsString());
+                  for (JsonElement json2 : jsonObject.getAsJsonArray("items")) {
+                     if (json2.isJsonPrimitive()) {
+                        items.add(json2.getAsString());
                      }
                   }
 
-                  if (!var6.isEmpty() && this.items.size() < 64) {
-                     this.items.add(new Presets.Data(var5, var6));
+                  if (!items.isEmpty() && this.items.size() < 64) {
+                     this.items.add(new Presets.Data(text, items));
                   }
                }
             }
@@ -132,24 +132,24 @@ public final class Presets {
    }
 
    private void method7741() {
-      JsonObject var1 = new JsonObject();
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
 
-      for (Presets.Data var4 : this.items) {
-         JsonObject var5 = new JsonObject();
-         var5.addProperty("name", var4.name());
-         JsonArray var6 = new JsonArray();
+      for (Presets.Data data : this.items) {
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("name", data.name());
+         JsonArray jsonArray2 = new JsonArray();
 
-         for (String var8 : var4.getItems()) {
-            var6.add(var8);
+         for (String string : data.getItems()) {
+            jsonArray2.add(string);
          }
 
-         var5.add("items", var6);
-         var2.add(var5);
+         json2.add("items", jsonArray2);
+         jsonArray.add(json2);
       }
 
-      var1.add("presets", var2);
-      JsonIo.method1010(this.path, var1);
+      json.add("presets", jsonArray);
+      JsonIo.method1010(this.path, json);
    }
 
    public static final class Data {
@@ -181,10 +181,10 @@ public final class Presets {
          return "Data[" + "text=" + this.text + ", " + "items=" + this.items + "]";
       }
 
-      public Data(String var1, List<String> var2) {
-         var2 = List.copyOf(var2);
-         this.text = var1;
-         this.items = var2;
+      public Data(String text, List<String> items) {
+         items = List.copyOf(items);
+         this.text = text;
+         this.items = items;
       }
 
       public String name() {

@@ -25,77 +25,77 @@ public final class VoiceFrameBuffer {
    private int intValue5;
    private long longValue4;
 
-   public static int method8026(int var0, int var1) {
-      return (short)(var0 - var1);
+   public static int method8026(int intValue, int next) {
+      return (short)(intValue - next);
    }
 
-   public synchronized void method8027(int var1, byte[] var2, boolean var3, long var4) {
-      var1 &= 65535;
-      this.longValue2 = var4;
+   public synchronized void method8027(int intValue, byte[] byteValues, boolean flag, long longValue) {
+      intValue &= 65535;
+      this.longValue2 = longValue;
       if (this.type == VoiceFrameBuffer.Type.IDLE) {
          this.clear();
          this.type = VoiceFrameBuffer.Type.BUFFERING;
-         this.longValue = var4;
-         this.next = var1;
-         this.intValue = var1;
+         this.longValue = longValue;
+         this.next = intValue;
+         this.intValue = intValue;
          this.intValue2 = -1;
          this.intValue3 = 0;
-         this.longValue3 = var4;
-         this.intValue4 = var1;
+         this.longValue3 = longValue;
+         this.intValue4 = intValue;
       } else {
-         int var6 = method8026(var1, this.intValue4);
-         if (var6 > 0) {
-            double var7 = var4 - this.longValue3 - var6 * 20.0;
-            this.doubleValue = this.doubleValue + (Math.abs(var7) - this.doubleValue) / 16.0;
-            this.longValue3 = var4;
-            this.intValue4 = var1;
+         int n = method8026(intValue, this.intValue4);
+         if (n > 0) {
+            double d = longValue - this.longValue3 - n * 20.0;
+            this.doubleValue = this.doubleValue + (Math.abs(d) - this.doubleValue) / 16.0;
+            this.longValue3 = longValue;
+            this.intValue4 = intValue;
          }
 
-         int var11 = method8026(var1, this.next);
-         if (var11 < 0) {
+         int n2 = method8026(intValue, this.next);
+         if (n2 < 0) {
             return;
          }
 
-         if (var11 >= 64) {
+         if (n2 >= 64) {
             this.clear();
             this.type = VoiceFrameBuffer.Type.BUFFERING;
-            this.longValue = var4;
-            this.next = var1;
-            this.intValue = var1;
+            this.longValue = longValue;
+            this.next = intValue;
+            this.intValue = intValue;
             this.intValue2 = -1;
          }
       }
 
-      if (var3) {
-         this.intValue2 = var1;
+      if (flag) {
+         this.intValue2 = intValue;
       }
 
-      if (var2 != null && var2.length > 0) {
-         int var10 = var1 & 63;
-         this.byteValues[var10] = var2;
-         this.intValues[var10] = var1;
+      if (byteValues != null && byteValues.length > 0) {
+         int n = intValue & 63;
+         this.byteValues[n] = byteValues;
+         this.intValues[n] = intValue;
       }
 
-      if (method8026(var1, this.intValue) > 0) {
-         this.intValue = var1;
+      if (method8026(intValue, this.intValue) > 0) {
+         this.intValue = intValue;
       }
    }
 
-   public synchronized VoiceFrameBuffer.Data method8028(long var1) {
+   public synchronized VoiceFrameBuffer.Data method8028(long longValue) {
       switch (this.type) {
          case IDLE:
             return VoiceFrameBuffer.Data.INSTANCE;
          case BUFFERING:
-            int var3 = this.method8033();
-            boolean var4 = var3 >= this.method8029() || this.intValue2 != -1 || var3 > 0 && var1 - this.longValue > 400L;
-            if (!var4) {
-               if (var1 - this.longValue2 > 1000L) {
+            int n = this.method8033();
+            boolean flag = n >= this.method8029() || this.intValue2 != -1 || n > 0 && longValue - this.longValue > 400L;
+            if (!flag) {
+               if (longValue - this.longValue2 > 1000L) {
                   this.type = VoiceFrameBuffer.Type.IDLE;
                }
 
                return VoiceFrameBuffer.Data.INSTANCE;
             } else {
-               if (var3 > 0) {
+               if (n > 0) {
                   this.next = this.method8034();
                }
 
@@ -103,40 +103,40 @@ public final class VoiceFrameBuffer {
                this.intValue3 = 0;
             }
          default:
-            this.method8030(var1);
-            int var7 = method8026(this.intValue, this.next) + 1;
-            int var8 = this.method8029();
-            if (var7 > var8 + 4) {
-               int var5 = var7 - var8;
+            this.method8030(longValue);
+            int n2 = method8026(this.intValue, this.next) + 1;
+            int n3 = this.method8029();
+            if (n2 > n3 + 4) {
+               int n4 = n2 - n3;
 
-               for (int var6 = 0; var6 < var5; var6++) {
+               for (int i = 0; i < n4; i++) {
                   this.method8031(this.next);
                   this.next = this.next + 1 & 65535;
                }
             }
 
-            byte[] var9 = this.method8031(this.next);
-            if (var9 != null) {
+            byte[] byteValues = this.method8031(this.next);
+            if (byteValues != null) {
                this.next = this.next + 1 & 65535;
                this.intValue3 = 0;
-               return new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.NORMAL, var9);
+               return new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.NORMAL, byteValues);
             } else if (this.intValue2 == -1 || method8026(this.next, this.intValue2) < 0) {
-               if (var1 - this.longValue2 > 1000L) {
+               if (longValue - this.longValue2 > 1000L) {
                   this.type = VoiceFrameBuffer.Type.IDLE;
                   return VoiceFrameBuffer.Data.INSTANCE3;
                } else if (method8026(this.intValue, this.next) > 0) {
-                  byte[] var11 = this.method8032(this.next + 1 & 65535);
+                  byte[] bytes = this.method8032(this.next + 1 & 65535);
                   this.next = this.next + 1 & 65535;
-                  return var11 != null ? new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.FEC, var11) : VoiceFrameBuffer.Data.INSTANCE2;
+                  return bytes != null ? new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.FEC, bytes) : VoiceFrameBuffer.Data.INSTANCE2;
                } else {
                   if (this.intValue3 == 0) {
                      this.intValue5 = Math.min(8, this.intValue5 + 1);
-                     this.longValue4 = var1;
+                     this.longValue4 = longValue;
                   }
 
                   if (++this.intValue3 > 5) {
                      this.type = VoiceFrameBuffer.Type.BUFFERING;
-                     this.longValue = var1;
+                     this.longValue = longValue;
                      return VoiceFrameBuffer.Data.INSTANCE;
                   } else {
                      return VoiceFrameBuffer.Data.INSTANCE2;
@@ -145,9 +145,9 @@ public final class VoiceFrameBuffer {
             } else if (this.method8033() > 0) {
                this.intValue2 = -1;
                this.next = this.method8034();
-               byte[] var10 = this.method8031(this.next);
+               byte[] bytes = this.method8031(this.next);
                this.next = this.next + 1 & 65535;
-               return var10 == null ? VoiceFrameBuffer.Data.INSTANCE2 : new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.NORMAL, var10);
+               return bytes == null ? VoiceFrameBuffer.Data.INSTANCE2 : new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.NORMAL, bytes);
             } else {
                this.type = VoiceFrameBuffer.Type.IDLE;
                return VoiceFrameBuffer.Data.INSTANCE3;
@@ -166,66 +166,66 @@ public final class VoiceFrameBuffer {
    }
 
    private int method8029() {
-      int var1 = (int)Math.ceil((this.doubleValue * 2.0 + 20.0) / 20.0);
-      return Math.max(2, Math.min(12, var1 + this.intValue5));
+      int n = (int)Math.ceil((this.doubleValue * 2.0 + 20.0) / 20.0);
+      return Math.max(2, Math.min(12, n + this.intValue5));
    }
 
-   private void method8030(long var1) {
-      if (this.intValue5 > 0 && var1 - this.longValue4 > 8000L) {
+   private void method8030(long longValue) {
+      if (this.intValue5 > 0 && longValue - this.longValue4 > 8000L) {
          this.intValue5--;
-         this.longValue4 = var1;
+         this.longValue4 = longValue;
       }
    }
 
-   private byte[] method8031(int var1) {
-      int var2 = var1 & 63;
-      byte[] var3 = this.byteValues[var2];
-      if (var3 != null && this.intValues[var2] == var1) {
-         this.byteValues[var2] = null;
-         return var3;
+   private byte[] method8031(int next) {
+      int n = next & 63;
+      byte[] byteValue = this.byteValues[n];
+      if (byteValue != null && this.intValues[n] == next) {
+         this.byteValues[n] = null;
+         return byteValue;
       } else {
          return null;
       }
    }
 
-   private byte[] method8032(int var1) {
-      int var2 = var1 & 63;
-      byte[] var3 = this.byteValues[var2];
-      return var3 != null && this.intValues[var2] == var1 ? var3 : null;
+   private byte[] method8032(int n) {
+      int n2 = n & 63;
+      byte[] byteValue = this.byteValues[n2];
+      return byteValue != null && this.intValues[n2] == n ? byteValue : null;
    }
 
    private int method8033() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 64; var2++) {
-         if (this.byteValues[var2] != null && method8026(this.intValues[var2], this.next) >= 0) {
-            var1++;
+      for (int i = 0; i < 64; i++) {
+         if (this.byteValues[i] != null && method8026(this.intValues[i], this.next) >= 0) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
    private int method8034() {
-      int var1 = this.next;
-      int var2 = Integer.MAX_VALUE;
+      int next = this.next;
+      int n = Integer.MAX_VALUE;
 
-      for (int var3 = 0; var3 < 64; var3++) {
-         if (this.byteValues[var3] != null) {
-            int var4 = method8026(this.intValues[var3], this.next);
-            if (var4 >= 0 && var4 < var2) {
-               var2 = var4;
-               var1 = this.intValues[var3];
+      for (int i = 0; i < 64; i++) {
+         if (this.byteValues[i] != null) {
+            int n2 = method8026(this.intValues[i], this.next);
+            if (n2 >= 0 && n2 < n) {
+               n = n2;
+               next = this.intValues[i];
             }
          }
       }
 
-      return var1;
+      return next;
    }
 
    private void clear() {
-      for (int var1 = 0; var1 < 64; var1++) {
-         this.byteValues[var1] = null;
+      for (int i = 0; i < 64; i++) {
+         this.byteValues[i] = null;
       }
    }
 
@@ -261,9 +261,9 @@ public final class VoiceFrameBuffer {
       public static final VoiceFrameBuffer.Data INSTANCE2 = new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.PLC, null);
       public static final VoiceFrameBuffer.Data INSTANCE3 = new VoiceFrameBuffer.Data(VoiceFrameBuffer.Type2.END, null);
 
-      public Data(VoiceFrameBuffer.Type2 var1, byte[] var2) {
-         this.type2 = var1;
-         this.byteValues = var2;
+      public Data(VoiceFrameBuffer.Type2 type2, byte[] byteValues) {
+         this.type2 = type2;
+         this.byteValues = byteValues;
       }
 
       public VoiceFrameBuffer.Type2 getType2() {

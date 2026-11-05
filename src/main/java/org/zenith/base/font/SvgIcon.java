@@ -260,21 +260,21 @@ public enum SvgIcon {
 
    private final String glyph;
 
-   private SvgIcon(int var3) {
-      this.glyph = String.valueOf((char)var3);
+   private SvgIcon(int n) {
+      this.glyph = String.valueOf((char)n);
    }
 
    public String glyph() {
       return this.glyph;
    }
 
-   public static Font font(float var0) {
-      return SvgIcon.Atlas.FONT.getFont(var0);
+   public static Font font(float px) {
+      return SvgIcon.Atlas.FONT.getFont(px);
    }
 
-   public void draw(MenuDrawContext var1, float var2, float var3, float var4, ZenithColor var5) {
-      if (var4 > 0.0F && var5.getIntValue4() > 0) {
-         var1.drawText(font(var4), this.glyph, var2, var3, var5);
+   public void draw(MenuDrawContext menuDrawContext, float floatValue, float centeredTextY, float px, ZenithColor zenithColor) {
+      if (px > 0.0F && zenithColor.getIntValue4() > 0) {
+         menuDrawContext.drawText(font(px), this.glyph, floatValue, centeredTextY, zenithColor);
       }
    }
 

@@ -32,10 +32,10 @@ public final class MediaSessionManager {
    private static final int CONST_intValue2 = 96;
    private static final ZenithColor[] zenithColors = new ZenithColor[]{new ZenithColor(-8758017), new ZenithColor(-12965270), new ZenithColor(-5022465)};
    private static final MediaSessionManager INSTANCE = new MediaSessionManager();
-   private final ExecutorService executorService = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "zenith-media");
-      var1.setDaemon(true);
-      return var1;
+   private final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "zenith-media");
+      thread.setDaemon(true);
+      return thread;
    });
    private volatile IMediaSession iMediaSession;
    private volatile MediaInfo mediaInfo;
@@ -84,61 +84,61 @@ public final class MediaSessionManager {
          this.flag = true;
          this.executorService.execute(() -> {
             try {
-               long var1 = System.currentTimeMillis();
-               ArrayList var3 = new ArrayList();
-               ArrayList var4 = new ArrayList();
+               long now = System.currentTimeMillis();
+               ArrayList arrayList = new ArrayList();
+               ArrayList arrayList2 = new ArrayList();
 
-               for (IMediaSession var6 : MediaPlayerInfo.Instance.getMediaSessions()) {
-                  MediaInfo var7 = var6.getMedia();
-                  if (var7 != null && (!var7.getTitle().isEmpty() || !var7.getArtist().isEmpty())) {
-                     var3.add(var6);
-                     var4.add(var7);
+               for (IMediaSession mediaSession : MediaPlayerInfo.Instance.getMediaSessions()) {
+                  MediaInfo media = mediaSession.getMedia();
+                  if (media != null && (!media.getTitle().isEmpty() || !media.getArtist().isEmpty())) {
+                     arrayList.add(mediaSession);
+                     arrayList2.add(media);
                   }
                }
 
-               IMediaSession var25 = this.iMediaSession;
-               int var26 = -1;
+               IMediaSession iMediaSession = this.iMediaSession;
+               int index = -1;
 
-               for (int var27 = 0; var27 < var3.size() && var26 < 0; var27++) {
-                  if (((MediaInfo)var4.get(var27)).getPlaying()) {
-                     var26 = var27;
+               for (int i = 0; i < arrayList.size() && index < 0; i++) {
+                  if (((MediaInfo)arrayList2.get(i)).getPlaying()) {
+                     index = i;
                   }
                }
 
-               for (int var28 = 0; var28 < var3.size() && var26 < 0 && var25 != null; var28++) {
-                  if (((IMediaSession)var3.get(var28)).getOwner().equals(var25.getOwner())) {
-                     var26 = var28;
+               for (int i = 0; i < arrayList.size() && index < 0 && iMediaSession != null; i++) {
+                  if (((IMediaSession)arrayList.get(i)).getOwner().equals(iMediaSession.getOwner())) {
+                     index = i;
                   }
                }
 
-               if (var26 >= 0) {
-                  IMediaSession var29 = (IMediaSession)var3.get(var26);
-                  MediaInfo var8 = (MediaInfo)var4.get(var26);
-                  String var9 = var8.getTitle() + "\u0000" + var8.getArtist();
-                  boolean var10 = !var9.equals(this.text);
-                  boolean var11 = var10 || (this.intValue < 0 ? var1 - this.longValue > 3000L : var1 - this.longValue > 20000L);
-                  byte[] var12 = var11 ? var8.getArtworkPng() : null;
-                  if (var11) {
-                     this.longValue = var1;
+               if (index >= 0) {
+                  IMediaSession iMediaSession2 = (IMediaSession)arrayList.get(index);
+                  MediaInfo mediaInfo = (MediaInfo)arrayList2.get(index);
+                  String text = mediaInfo.getTitle() + "\u0000" + mediaInfo.getArtist();
+                  boolean flag = !text.equals(this.text);
+                  boolean flag2 = flag || (this.intValue < 0 ? now - this.longValue > 3000L : now - this.longValue > 20000L);
+                  byte[] artworkPng = flag2 ? mediaInfo.getArtworkPng() : null;
+                  if (flag2) {
+                     this.longValue = now;
                   }
 
-                  boolean var13 = var12 != null && var12.length > 0 && (var10 || !Arrays.equals(var12, this.byteValues));
-                  BufferedImage var14 = var13 ? method6023(var12) : null;
-                  if (var14 == null) {
-                     var13 = false;
+                  boolean flag3 = artworkPng != null && artworkPng.length > 0 && (flag || !Arrays.equals(artworkPng, this.byteValues));
+                  BufferedImage bufferedImage = flag3 ? method6023(artworkPng) : null;
+                  if (bufferedImage == null) {
+                     flag3 = false;
                   }
 
-                  boolean var15 = var13;
-                  ZenithColor[] var16 = var14 == null ? null : method6026(var14);
-                  int[] var17 = var14 == null ? null : method6024(var14);
-                  int[] var18 = var14 == null ? null : method6016(var14, 96);
-                  NativeImage var19 = var13 ? method6021(var12) : null;
-                  Minecraft.getInstance().execute(() -> this.method6001(var29, var8, var9, var12, var15, var19, var16, var17, var18));
+                  boolean flag4 = flag3;
+                  ZenithColor[] zenithColors = bufferedImage == null ? null : method6026(bufferedImage);
+                  int[] ints = bufferedImage == null ? null : method6024(bufferedImage);
+                  int[] ints2 = bufferedImage == null ? null : method6016(bufferedImage, 96);
+                  NativeImage image = flag3 ? method6021(artworkPng) : null;
+                  Minecraft.getInstance().execute(() -> this.method6001(iMediaSession2, mediaInfo, text, artworkPng, flag4, image, zenithColors, ints, ints2));
                   return;
                }
 
                Minecraft.getInstance().execute(() -> this.iMediaSession = null);
-            } catch (Throwable var23) {
+            } catch (Throwable e) {
                return;
             } finally {
                this.flag = false;
@@ -148,92 +148,92 @@ public final class MediaSessionManager {
    }
 
    private void method6001(
-      IMediaSession var1, MediaInfo var2, String var3, byte[] var4, boolean var5, NativeImage var6, ZenithColor[] var7, int[] var8, int[] var9
+      IMediaSession iMediaSession, MediaInfo mediaInfo, String text, byte[] byteValues, boolean flag, NativeImage image, ZenithColor[] zenithColors2, int[] ints, int[] ints2
    ) {
-      if (!var5 && var6 != null) {
-         var6.close();
+      if (!flag && image != null) {
+         image.close();
       }
 
-      this.iMediaSession = var1;
-      long var10 = System.currentTimeMillis();
-      if (!var3.equals(this.text)) {
-         boolean var12 = this.flag5;
+      this.iMediaSession = iMediaSession;
+      long now = System.currentTimeMillis();
+      if (!text.equals(this.text)) {
+         boolean flag2 = this.flag5;
          this.flag5 = true;
-         this.text = var3;
-         this.longValue3 = var10;
+         this.text = text;
+         this.longValue3 = now;
          this.doubleValue = -1.0;
          this.longValue7 = 0L;
          this.longValue8 = 0L;
          this.doubleValue6 = 0.0;
-         this.flag3 = var12;
+         this.flag3 = flag2;
          this.doubleValue5 = 0.0;
-         this.longValue11 = var10;
-         this.flag4 = var2.getPlaying();
-         MediaPlayerState.getInstance().method1669(var1.getOwner());
-         if (!var5 && this.intValue >= 0) {
+         this.longValue11 = now;
+         this.flag4 = mediaInfo.getPlaying();
+         MediaPlayerState.getInstance().method1669(iMediaSession.getOwner());
+         if (!flag && this.intValue >= 0) {
             this.intValue2 = this.intValue;
             this.intValue = -1;
             this.byteValues = new byte[0];
             this.zenithColors3 = this.zenithColors2;
             this.zenithColors2 = zenithColors;
-            this.longValue4 = var10;
+            this.longValue4 = now;
          }
       }
 
-      if (var2.getPlaying()) {
-         this.longValue9 = var10;
+      if (mediaInfo.getPlaying()) {
+         this.longValue9 = now;
       }
 
-      if (this.flag3 && var2.getPlaying() != this.flag4) {
-         this.doubleValue5 = this.method6003(var10);
-         this.longValue11 = var10;
-         this.flag4 = var2.getPlaying();
+      if (this.flag3 && mediaInfo.getPlaying() != this.flag4) {
+         this.doubleValue5 = this.method6003(now);
+         this.longValue11 = now;
+         this.flag4 = mediaInfo.getPlaying();
       }
 
-      if (var5) {
-         this.byteValues = var4;
+      if (flag) {
+         this.byteValues = byteValues;
          this.intValue2 = this.intValue;
          this.intValue = this.intValue2 == 0 ? 1 : 0;
-         method6022(identifiers[this.intValue], var6);
+         method6022(identifiers[this.intValue], image);
          TextureFilterUtils.smooth(identifiers[this.intValue]);
-         this.flags[this.intValue] = var8 != null && method6015(identifiers2[this.intValue], var8, 64);
-         this.flags2[this.intValue] = var9 != null && method6015(identifiers3[this.intValue], var9, 96);
+         this.flags[this.intValue] = ints != null && method6015(identifiers2[this.intValue], ints, 64);
+         this.flags2[this.intValue] = ints2 != null && method6015(identifiers3[this.intValue], ints2, 96);
          this.zenithColors3 = this.zenithColors2;
-         this.zenithColors2 = var7 == null ? zenithColors : var7;
-         this.longValue4 = var10;
+         this.zenithColors2 = zenithColors2 == null ? zenithColors : zenithColors2;
+         this.longValue4 = now;
       }
 
-      this.mediaInfo = var2;
-      this.longValue2 = var10;
-      this.seenAt = var10;
-      if (var10 - this.longValue8 > 900L && MediaHelperProcess.getInstance().method6859()) {
-         this.longValue8 = var10;
-         MediaHelperProcess.getInstance().method6866(var1.getOwner());
-         if (var10 - this.longValue10 > 3000L) {
-            this.longValue10 = var10;
-            MediaHelperProcess.getInstance().method6868(var1.getOwner());
-            MediaHelperProcess.getInstance().method6863(var1.getOwner());
+      this.mediaInfo = mediaInfo;
+      this.longValue2 = now;
+      this.seenAt = now;
+      if (now - this.longValue8 > 900L && MediaHelperProcess.getInstance().method6859()) {
+         this.longValue8 = now;
+         MediaHelperProcess.getInstance().method6866(iMediaSession.getOwner());
+         if (now - this.longValue10 > 3000L) {
+            this.longValue10 = now;
+            MediaHelperProcess.getInstance().method6868(iMediaSession.getOwner());
+            MediaHelperProcess.getInstance().method6863(iMediaSession.getOwner());
          }
       }
    }
 
-   public void method6002(double var1, double var3, long var5, boolean var7) {
-      long var8 = System.currentTimeMillis();
-      this.doubleValue3 = var1;
-      this.doubleValue4 = var3;
-      this.longValue6 = var5 > 0L && var5 <= var8 ? var5 : var8;
-      this.longValue7 = var8;
-      this.longValue12 = var8;
-      this.flag2 = var7;
-      this.doubleValue6 = var3;
+   public void method6002(double d, double d2, long l, boolean flag) {
+      long now = System.currentTimeMillis();
+      this.doubleValue3 = d;
+      this.doubleValue4 = d2;
+      this.longValue6 = l > 0L && l <= now ? l : now;
+      this.longValue7 = now;
+      this.longValue12 = now;
+      this.flag2 = flag;
+      this.doubleValue6 = d2;
       this.flag3 = true;
-      this.doubleValue5 = var1 + (var7 ? (var8 - this.longValue6) / 1000.0 : 0.0);
-      this.longValue11 = var8;
-      this.flag4 = var7;
+      this.doubleValue5 = d + (flag ? (now - this.longValue6) / 1000.0 : 0.0);
+      this.longValue11 = now;
+      this.flag4 = flag;
    }
 
-   private double method6003(long var1) {
-      return this.doubleValue5 + (this.flag4 ? (var1 - this.longValue11) / 1000.0 : 0.0);
+   private double method6003(long now) {
+      return this.doubleValue5 + (this.flag4 ? (now - this.longValue11) / 1000.0 : 0.0);
    }
 
    private boolean method6004() {
@@ -276,9 +276,9 @@ public final class MediaSessionManager {
       if (this.doubleValue6 > 0.0) {
          return this.doubleValue6;
       } else {
-         double var1 = LyricsFetcher.method529(this.title(), this.method6006());
-         if (var1 > 0.0) {
-            return var1;
+         double d = LyricsFetcher.method529(this.title(), this.method6006());
+         if (d > 0.0) {
+            return d;
          } else if (!this.method6004() && !this.flag3) {
             return this.mediaInfo == null ? 0.0 : this.mediaInfo.getDuration();
          } else {
@@ -291,38 +291,38 @@ public final class MediaSessionManager {
       if (this.mediaInfo == null) {
          return 0.0;
       } else {
-         long var1 = System.currentTimeMillis();
-         if (this.doubleValue >= 0.0 && var1 - this.longValue5 < 2500L) {
-            double var9 = this.method6007() ? (var1 - this.longValue5) / 1000.0 : 0.0;
-            return this.method6010(this.doubleValue + var9);
+         long now = System.currentTimeMillis();
+         if (this.doubleValue >= 0.0 && now - this.longValue5 < 2500L) {
+            double d = this.method6007() ? (now - this.longValue5) / 1000.0 : 0.0;
+            return this.method6010(this.doubleValue + d);
          } else {
-            double var3;
+            double d;
             if (this.method6005()) {
-               double var5 = this.flag2 ? (var1 - this.longValue6) / 1000.0 : 0.0;
-               var3 = this.method6010(this.doubleValue3 + var5);
+               double d2 = this.flag2 ? (now - this.longValue6) / 1000.0 : 0.0;
+               d = this.method6010(this.doubleValue3 + d2);
             } else if (this.flag3) {
-               var3 = this.method6010(this.method6003(var1));
+               d = this.method6010(this.method6003(now));
             } else if (this.method6004()) {
-               var3 = 0.0;
+               d = 0.0;
             } else {
-               double var10 = this.mediaInfo.getPosition();
-               double var7 = this.method6007() ? Math.min(2.0, (var1 - this.longValue2) / 1000.0) : 0.0;
-               var3 = this.method6010(var10 + var7);
+               double position = this.mediaInfo.getPosition();
+               double d2 = this.method6007() ? Math.min(2.0, (now - this.longValue2) / 1000.0) : 0.0;
+               d = this.method6010(position + d2);
             }
 
-            if (Math.abs(var3 - this.doubleValue2) < 1.2 && var3 < this.doubleValue2 && this.method6007()) {
-               var3 = this.doubleValue2;
+            if (Math.abs(d - this.doubleValue2) < 1.2 && d < this.doubleValue2 && this.method6007()) {
+               d = this.doubleValue2;
             }
 
-            this.doubleValue2 = var3;
-            return var3;
+            this.doubleValue2 = d;
+            return d;
          }
       }
    }
 
-   private double method6010(double var1) {
-      double var3 = this.method6008();
-      return var3 > 0.0 ? Math.max(0.0, Math.min(var3, var1)) : Math.max(0.0, var1);
+   private double method6010(double d) {
+      double d2 = this.method6008();
+      return d2 > 0.0 ? Math.max(0.0, Math.min(d2, d)) : Math.max(0.0, d);
    }
 
    public String getText() {
@@ -349,64 +349,64 @@ public final class MediaSessionManager {
       return this.intValue2 < 0 ? null : (this.flags2[this.intValue2] ? identifiers3[this.intValue2] : identifiers[this.intValue2]);
    }
 
-   private static boolean method6015(Identifier var0, int[] var1, int var2) {
+   private static boolean method6015(Identifier location, int[] ints, int width) {
       try {
-         NativeImage var3 = new NativeImage(var2, var2, false);
+         NativeImage nativeImage = new NativeImage(width, width, false);
 
-         for (int var4 = 0; var4 < var2; var4++) {
-            for (int var5 = 0; var5 < var2; var5++) {
-               var3.setPixel(var5, var4, var1[var4 * var2 + var5]);
+         for (int i = 0; i < width; i++) {
+            for (int j = 0; j < width; j++) {
+               nativeImage.setPixel(j, i, ints[i * width + j]);
             }
          }
 
-         Minecraft.getInstance().getTextureManager().register(var0, new DynamicTexture(var0::toString, var3));
-         TextureFilterUtils.smooth(var0);
+         Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(location::toString, nativeImage));
+         TextureFilterUtils.smooth(location);
          return true;
-      } catch (Throwable var6) {
+      } catch (Throwable e) {
          return false;
       }
    }
 
-   private static int[] method6016(BufferedImage var0, int var1) {
-      int var2 = var0.getWidth();
-      int var3 = var0.getHeight();
-      int[] var4 = new int[var1 * var1];
+   private static int[] method6016(BufferedImage bufferedImage, int n) {
+      int width = bufferedImage.getWidth();
+      int height = bufferedImage.getHeight();
+      int[] ints = new int[n * n];
 
-      for (int var5 = 0; var5 < var1; var5++) {
-         for (int var6 = 0; var6 < var1; var6++) {
-            float var7 = (float)(var6 * var2) / var1;
-            float var8 = (float)((var6 + 1) * var2) / var1;
-            float var9 = (float)(var5 * var3) / var1;
-            float var10 = (float)((var5 + 1) * var3) / var1;
-            float var11 = 0.0F;
-            float var12 = 0.0F;
-            float var13 = 0.0F;
-            float var14 = 0.0F;
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            float f = (float)(j * width) / n;
+            float f2 = (float)((j + 1) * width) / n;
+            float f3 = (float)(i * height) / n;
+            float f4 = (float)((i + 1) * height) / n;
+            float f5 = 0.0F;
+            float f6 = 0.0F;
+            float f7 = 0.0F;
+            float f8 = 0.0F;
 
-            for (int var15 = (int)var9; var15 < Math.ceil(var10) && var15 < var3; var15++) {
-               float var16 = Math.min((float)(var15 + 1), var10) - Math.max((float)var15, var9);
+            for (int k = (int)f3; k < Math.ceil(f4) && k < height; k++) {
+               float f9 = Math.min((float)(k + 1), f4) - Math.max((float)k, f3);
 
-               for (int var17 = (int)var7; var17 < Math.ceil(var8) && var17 < var2; var17++) {
-                  float var18 = var16 * (Math.min((float)(var17 + 1), var8) - Math.max((float)var17, var7));
-                  if (!(var18 <= 0.0F)) {
-                     int var19 = var0.getRGB(var17, var15);
-                     var11 += (var19 >> 16 & 0xFF) * var18;
-                     var12 += (var19 >> 8 & 0xFF) * var18;
-                     var13 += (var19 & 0xFF) * var18;
-                     var14 += var18;
+               for (int m = (int)f; m < Math.ceil(f2) && m < width; m++) {
+                  float f10 = f9 * (Math.min((float)(m + 1), f2) - Math.max((float)m, f));
+                  if (!(f10 <= 0.0F)) {
+                     int rgb = bufferedImage.getRGB(m, k);
+                     f5 += (rgb >> 16 & 0xFF) * f10;
+                     f6 += (rgb >> 8 & 0xFF) * f10;
+                     f7 += (rgb & 0xFF) * f10;
+                     f8 += f10;
                   }
                }
             }
 
-            if (var14 <= 0.0F) {
-               var14 = 1.0F;
+            if (f8 <= 0.0F) {
+               f8 = 1.0F;
             }
 
-            var4[var5 * var1 + var6] = 0xFF000000 | (int)(var11 / var14) << 16 | (int)(var12 / var14) << 8 | (int)(var13 / var14);
+            ints[i * n + j] = 0xFF000000 | (int)(f5 / f8) << 16 | (int)(f6 / f8) << 8 | (int)(f7 / f8);
          }
       }
 
-      return var4;
+      return ints;
    }
 
    public Identifier method6017() {
@@ -425,11 +425,11 @@ public final class MediaSessionManager {
       return this.zenithColors2;
    }
 
-   public ZenithColor color(int var1) {
-      float var2 = Math.min(1.0F, (float)(System.currentTimeMillis() - this.longValue4) / 700.0F);
-      ZenithColor var3 = this.zenithColors3[Math.min(var1, this.zenithColors3.length - 1)];
-      ZenithColor var4 = this.zenithColors2[Math.min(var1, this.zenithColors2.length - 1)];
-      return var3.method7295(var4, var2);
+   public ZenithColor color(int n) {
+      float hover = Math.min(1.0F, (float)(System.currentTimeMillis() - this.longValue4) / 700.0F);
+      ZenithColor zenithColor = this.zenithColors3[Math.min(n, this.zenithColors3.length - 1)];
+      ZenithColor zenithColor2 = this.zenithColors2[Math.min(n, this.zenithColors2.length - 1)];
+      return zenithColor.method7295(zenithColor2, hover);
    }
 
    public void playPause() {
@@ -444,26 +444,26 @@ public final class MediaSessionManager {
       this.method6020(IMediaSession::previous);
    }
 
-   public void method6019(double var1) {
-      IMediaSession var3 = this.iMediaSession;
-      if (var3 != null && !(this.method6008() <= 0.0)) {
-         this.doubleValue = this.method6010(var1);
+   public void method6019(double d) {
+      IMediaSession iMediaSession = this.iMediaSession;
+      if (iMediaSession != null && !(this.method6008() <= 0.0)) {
+         this.doubleValue = this.method6010(d);
          this.longValue5 = System.currentTimeMillis();
          this.flag3 = true;
          this.doubleValue5 = this.doubleValue;
          this.longValue11 = this.longValue5;
          this.flag4 = this.method6007();
-         MediaHelperProcess.getInstance().method6860(var3.getOwner(), this.doubleValue);
+         MediaHelperProcess.getInstance().method6860(iMediaSession.getOwner(), this.doubleValue);
       }
    }
 
-   private void method6020(Consumer<IMediaSession> var1) {
-      IMediaSession var2 = this.iMediaSession;
-      if (var2 != null) {
+   private void method6020(Consumer<IMediaSession> consumer) {
+      IMediaSession iMediaSession = this.iMediaSession;
+      if (iMediaSession != null) {
          this.executorService.execute(() -> {
             try {
-               var1.accept(var2);
-            } catch (Throwable var4) {
+               consumer.accept(iMediaSession);
+            } catch (Throwable e) {
             }
 
             Minecraft.getInstance().execute(this::method6000);
@@ -471,182 +471,182 @@ public final class MediaSessionManager {
       }
    }
 
-   private static NativeImage method6021(byte[] var0) {
+   private static NativeImage method6021(byte[] artworkPng) {
       try {
-         ByteBuffer var1 = BufferUtils.createByteBuffer(var0.length).put(var0);
-         var1.flip();
-         return NativeImage.read(var1);
-      } catch (Exception var2) {
+         ByteBuffer bytes = BufferUtils.createByteBuffer(artworkPng.length).put(artworkPng);
+         bytes.flip();
+         return NativeImage.read(bytes);
+      } catch (Exception e) {
          return null;
       }
    }
 
-   private static void method6022(Identifier var0, NativeImage var1) {
-      if (var1 != null) {
+   private static void method6022(Identifier identifier, NativeImage image) {
+      if (image != null) {
          try {
-            Minecraft.getInstance().getTextureManager().register(var0, new DynamicTexture(var0::toString, var1));
-         } catch (Exception var3) {
+            Minecraft.getInstance().getTextureManager().register(identifier, new DynamicTexture(identifier::toString, image));
+         } catch (Exception e) {
          }
       }
    }
 
-   private static BufferedImage method6023(byte[] var0) {
+   private static BufferedImage method6023(byte[] artworkPng) {
       try {
-         return ImageIO.read(new ByteArrayInputStream(var0));
-      } catch (Throwable var2) {
+         return ImageIO.read(new ByteArrayInputStream(artworkPng));
+      } catch (Throwable e) {
          return null;
       }
    }
 
-   private static int[] method6024(BufferedImage var0) {
-      byte var1 = 64;
-      float[][] var2 = new float[3][var1 * var1];
-      int var3 = var0.getWidth();
-      int var4 = var0.getHeight();
+   private static int[] method6024(BufferedImage bufferedImage) {
+      byte b = 64;
+      float[][] floatses = new float[3][b * b];
+      int width = bufferedImage.getWidth();
+      int height = bufferedImage.getHeight();
 
-      for (int var5 = 0; var5 < var1; var5++) {
-         for (int var6 = 0; var6 < var1; var6++) {
-            int var7 = var6 * var3 / var1;
-            int var8 = Math.max(var7 + 1, (var6 + 1) * var3 / var1);
-            int var9 = var5 * var4 / var1;
-            int var10 = Math.max(var9 + 1, (var5 + 1) * var4 / var1);
-            int var11 = Math.max(1, (var8 - var7) / 4);
-            int var12 = Math.max(1, (var10 - var9) / 4);
-            float var13 = 0.0F;
-            float var14 = 0.0F;
-            float var15 = 0.0F;
-            int var16 = 0;
+      for (int i = 0; i < b; i++) {
+         for (int j = 0; j < b; j++) {
+            int n = j * width / b;
+            int n2 = Math.max(n + 1, (j + 1) * width / b);
+            int n3 = i * height / b;
+            int n4 = Math.max(n3 + 1, (i + 1) * height / b);
+            int n5 = Math.max(1, (n2 - n) / 4);
+            int n6 = Math.max(1, (n4 - n3) / 4);
+            float f = 0.0F;
+            float f2 = 0.0F;
+            float f3 = 0.0F;
+            int n7 = 0;
 
-            for (int var17 = var9; var17 < var10; var17 += var12) {
-               for (int var18 = var7; var18 < var8; var18 += var11) {
-                  int var19 = var0.getRGB(Math.min(var3 - 1, var18), Math.min(var4 - 1, var17));
-                  var13 += var19 >> 16 & 0xFF;
-                  var14 += var19 >> 8 & 0xFF;
-                  var15 += var19 & 0xFF;
-                  var16++;
+            for (int k = n3; k < n4; k += n6) {
+               for (int m = n; m < n2; m += n5) {
+                  int rgb = bufferedImage.getRGB(Math.min(width - 1, m), Math.min(height - 1, k));
+                  f += rgb >> 16 & 0xFF;
+                  f2 += rgb >> 8 & 0xFF;
+                  f3 += rgb & 0xFF;
+                  n7++;
                }
             }
 
-            int var37 = var5 * var1 + var6;
-            var2[0][var37] = var13 / var16;
-            var2[1][var37] = var14 / var16;
-            var2[2][var37] = var15 / var16;
+            int n8 = i * b + j;
+            floatses[0][n8] = f / n7;
+            floatses[1][n8] = f2 / n7;
+            floatses[2][n8] = f3 / n7;
          }
       }
 
-      for (int var20 = 0; var20 < 3; var20++) {
-         for (float[] var28 : var2) {
-            method6025(var28, var1, 5);
+      for (int i = 0; i < 3; i++) {
+         for (float[] floats : floatses) {
+            method6025(floats, b, 5);
          }
       }
 
-      int[] var21 = new int[var1 * var1];
+      int[] ints = new int[b * b];
 
-      for (int var23 = 0; var23 < var21.length; var23++) {
-         float var25 = var2[0][var23];
-         float var27 = var2[1][var23];
-         float var29 = var2[2][var23];
-         float[] var30 = Color.RGBtoHSB((int)var25, (int)var27, (int)var29, null);
-         int var31 = Color.HSBtoRGB(var30[0], Math.min(1.0F, var30[1] * 1.25F), Math.min(1.0F, var30[2] * 0.95F));
-         float var32 = (var23 % var1 + 0.5F) / var1 - 0.5F;
-         float var33 = (var23 / var1 + 0.5F) / var1 - 0.5F;
-         float var34 = (float)Math.sqrt(var32 * var32 + var33 * var33);
-         float var35 = Math.max(0.0F, Math.min(1.0F, (0.5F - var34) / 0.2F));
-         var35 = var35 * var35 * (3.0F - 2.0F * var35);
-         var21[var23] = (int)(var35 * 255.0F) << 24 | var31 & 16777215;
+      for (int i = 0; i < ints.length; i++) {
+         float f = floatses[0][i];
+         float f2 = floatses[1][i];
+         float f3 = floatses[2][i];
+         float[] floats = Color.RGBtoHSB((int)f, (int)f2, (int)f3, null);
+         int n = Color.HSBtoRGB(floats[0], Math.min(1.0F, floats[1] * 1.25F), Math.min(1.0F, floats[2] * 0.95F));
+         float f4 = (i % b + 0.5F) / b - 0.5F;
+         float f5 = (i / b + 0.5F) / b - 0.5F;
+         float f6 = (float)Math.sqrt(f4 * f4 + f5 * f5);
+         float f7 = Math.max(0.0F, Math.min(1.0F, (0.5F - f6) / 0.2F));
+         f7 = f7 * f7 * (3.0F - 2.0F * f7);
+         ints[i] = (int)(f7 * 255.0F) << 24 | n & 16777215;
       }
 
-      return var21;
+      return ints;
    }
 
-   private static void method6025(float[] var0, int var1, int var2) {
-      float[] var3 = new float[var0.length];
+   private static void method6025(float[] floats, int n, int n2) {
+      float[] floats2 = new float[floats.length];
 
-      for (int var4 = 0; var4 < var1; var4++) {
-         for (int var5 = 0; var5 < var1; var5++) {
-            float var6 = 0.0F;
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            float f = 0.0F;
 
-            for (int var7 = -var2; var7 <= var2; var7++) {
-               var6 += var0[var4 * var1 + Math.max(0, Math.min(var1 - 1, var5 + var7))];
+            for (int k = -n2; k <= n2; k++) {
+               f += floats[i * n + Math.max(0, Math.min(n - 1, j + k))];
             }
 
-            var3[var4 * var1 + var5] = var6 / (var2 * 2 + 1);
+            floats2[i * n + j] = f / (n2 * 2 + 1);
          }
       }
 
-      for (int var8 = 0; var8 < var1; var8++) {
-         for (int var9 = 0; var9 < var1; var9++) {
-            float var10 = 0.0F;
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            float f = 0.0F;
 
-            for (int var11 = -var2; var11 <= var2; var11++) {
-               var10 += var3[Math.max(0, Math.min(var1 - 1, var8 + var11)) * var1 + var9];
+            for (int k = -n2; k <= n2; k++) {
+               f += floats2[Math.max(0, Math.min(n - 1, i + k)) * n + j];
             }
 
-            var0[var8 * var1 + var9] = var10 / (var2 * 2 + 1);
+            floats[i * n + j] = f / (n2 * 2 + 1);
          }
       }
    }
 
-   private static ZenithColor[] method6026(BufferedImage var0) {
+   private static ZenithColor[] method6026(BufferedImage bufferedImage) {
       try {
-         byte var1 = 32;
-         float[][] var2 = new float[12][5];
-         float[] var3 = new float[4];
+         byte b = 32;
+         float[][] floatses = new float[12][5];
+         float[] floats = new float[4];
 
-         for (int var4 = 0; var4 < var1; var4++) {
-            for (int var5 = 0; var5 < var1; var5++) {
-               int var6 = var0.getRGB(var5 * var0.getWidth() / var1, var4 * var0.getHeight() / var1);
-               int var7 = var6 >> 16 & 0xFF;
-               int var8 = var6 >> 8 & 0xFF;
-               int var9 = var6 & 0xFF;
-               float[] var10 = Color.RGBtoHSB(var7, var8, var9, null);
-               var3[0] += var7;
-               var3[1] += var8;
-               var3[2] += var9;
-               var3[3]++;
-               float var11 = var10[1] * var10[1] * (0.25F + var10[2]);
-               if (!(var10[2] < 0.12F)) {
-                  int var12 = Math.min(11, (int)(var10[0] * 12.0F));
-                  var2[var12][0] = var2[var12][0] + var7 * var11;
-                  var2[var12][1] = var2[var12][1] + var8 * var11;
-                  var2[var12][2] = var2[var12][2] + var9 * var11;
-                  var2[var12][3] = var2[var12][3] + var11;
-                  var2[var12][4]++;
+         for (int i = 0; i < b; i++) {
+            for (int j = 0; j < b; j++) {
+               int rgb = bufferedImage.getRGB(j * bufferedImage.getWidth() / b, i * bufferedImage.getHeight() / b);
+               int n = rgb >> 16 & 0xFF;
+               int n2 = rgb >> 8 & 0xFF;
+               int n3 = rgb & 0xFF;
+               float[] floats2 = Color.RGBtoHSB(n, n2, n3, null);
+               floats[0] += n;
+               floats[1] += n2;
+               floats[2] += n3;
+               floats[3]++;
+               float f = floats2[1] * floats2[1] * (0.25F + floats2[2]);
+               if (!(floats2[2] < 0.12F)) {
+                  int n4 = Math.min(11, (int)(floats2[0] * 12.0F));
+                  floatses[n4][0] = floatses[n4][0] + n * f;
+                  floatses[n4][1] = floatses[n4][1] + n2 * f;
+                  floatses[n4][2] = floatses[n4][2] + n3 * f;
+                  floatses[n4][3] = floatses[n4][3] + f;
+                  floatses[n4][4]++;
                }
             }
          }
 
-         ArrayList<float[]> var14 = new ArrayList<>();
+         ArrayList<float[]> floatses2 = new ArrayList<>();
 
-         for (float[] var21 : var2) {
-            if (var21[3] > 1.0E-4F) {
-               var14.add(var21);
+         for (float[] floats2 : floatses) {
+            if (floats2[3] > 1.0E-4F) {
+               floatses2.add(floats2);
             }
          }
 
-         var14.sort((var0x, var1x) -> Float.compare(var1x[3], var0x[3]));
-         ZenithColor var16 = new ZenithColor((int)(var3[0] / var3[3]), (int)(var3[1] / var3[3]), (int)(var3[2] / var3[3]));
-         ZenithColor[] var18 = new ZenithColor[3];
+         floatses2.sort((var0x, var1x) -> Float.compare(var1x[3], var0x[3]));
+         ZenithColor zenithColor = new ZenithColor((int)(floats[0] / floats[3]), (int)(floats[1] / floats[3]), (int)(floats[2] / floats[3]));
+         ZenithColor[] zenithColors = new ZenithColor[3];
 
-         for (int var20 = 0; var20 < 3; var20++) {
-            if (var20 < var14.size()) {
-               float[] var22 = (float[])var14.get(var20);
-               var18[var20] = method6027(new ZenithColor((int)(var22[0] / var22[3]), (int)(var22[1] / var22[3]), (int)(var22[2] / var22[3])));
+         for (int i = 0; i < 3; i++) {
+            if (i < floatses2.size()) {
+               float[] floats2 = (float[])floatses2.get(i);
+               zenithColors[i] = method6027(new ZenithColor((int)(floats2[0] / floats2[3]), (int)(floats2[1] / floats2[3]), (int)(floats2[2] / floats2[3])));
             } else {
-               var18[var20] = var20 == 0 ? method6027(var16) : var18[0].method7295(var16, 0.5F * var20);
+               zenithColors[i] = i == 0 ? method6027(zenithColor) : zenithColors[0].method7295(zenithColor, 0.5F * i);
             }
          }
 
-         return var18;
-      } catch (Throwable var13) {
+         return zenithColors;
+      } catch (Throwable e) {
          return null;
       }
    }
 
-   private static ZenithColor method6027(ZenithColor var0) {
-      float[] var1 = Color.RGBtoHSB(var0.getIntValue(), var0.getIntValue2(), var0.getIntValue3(), null);
-      float var2 = Math.min(1.0F, Math.max(0.35F, var1[1] * 1.15F));
-      float var3 = Math.min(0.95F, Math.max(0.55F, var1[2]));
-      return new ZenithColor(0xFF000000 | Color.HSBtoRGB(var1[0], var2, var3));
+   private static ZenithColor method6027(ZenithColor zenithColor) {
+      float[] floats = Color.RGBtoHSB(zenithColor.getIntValue(), zenithColor.getIntValue2(), zenithColor.getIntValue3(), null);
+      float saturation = Math.min(1.0F, Math.max(0.35F, floats[1] * 1.15F));
+      float brightness = Math.min(0.95F, Math.max(0.55F, floats[2]));
+      return new ZenithColor(0xFF000000 | Color.HSBtoRGB(floats[0], saturation, brightness));
    }
 }

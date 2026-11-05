@@ -93,36 +93,36 @@ public final class ReplayStrokes implements MinecraftAccess {
    private ReplayStrokes() {
    }
 
-   public void method6649(MouseRotationEvent var1, LivingEntity var2, boolean var3, float var4, boolean var5, double var6) {
-      double var8 = System.nanoTime() / 1000000.0;
-      double var10 = Double.isNaN(this.doubleValue2) ? 16.0 : Mth.clamp(var8 - this.doubleValue2, 0.5, 100.0);
-      this.doubleValue2 = var8;
+   public void method6649(MouseRotationEvent event, LivingEntity livingEntity, boolean enabled, float f, boolean flag, double d) {
+      double d2 = System.nanoTime() / 1000000.0;
+      double d3 = Double.isNaN(this.doubleValue2) ? 16.0 : Mth.clamp(d2 - this.doubleValue2, 0.5, 100.0);
+      this.doubleValue2 = d2;
       this.method6662();
-      double var12 = var1.getDoubleValue() * 0.15;
-      double var14 = var1.getDoubleValue2() * 0.15;
-      double var16 = 1.0 - Math.exp(-var10 / 25.0);
-      this.doubleValue3 = this.doubleValue3 + (var12 / var10 * 1000.0 - this.doubleValue3) * var16;
-      this.doubleValue4 = this.doubleValue4 + (var14 / var10 * 1000.0 - this.doubleValue4) * var16;
-      if (var12 != 0.0 || var14 != 0.0 || Double.isNaN(this.doubleValue5)) {
-         this.doubleValue5 = var8;
+      double d4 = event.getDoubleValue() * 0.15;
+      double d5 = event.getDoubleValue2() * 0.15;
+      double d6 = 1.0 - Math.exp(-d3 / 25.0);
+      this.doubleValue3 = this.doubleValue3 + (d4 / d3 * 1000.0 - this.doubleValue3) * d6;
+      this.doubleValue4 = this.doubleValue4 + (d5 / d3 * 1000.0 - this.doubleValue4) * d6;
+      if (d4 != 0.0 || d5 != 0.0 || Double.isNaN(this.doubleValue5)) {
+         this.doubleValue5 = d2;
       }
 
-      double var18 = mc.player.getYRot();
-      double var20 = mc.player.getXRot();
-      boolean var22 = !mc.options.smoothCamera && !mc.player.isScoping();
-      if (!var22) {
-         this.method6653(var8, false);
+      double yRot = mc.player.getYRot();
+      double xRot = mc.player.getXRot();
+      boolean flag2 = !mc.options.smoothCamera && !mc.player.isScoping();
+      if (!flag2) {
+         this.method6653(d2, false);
          this.method6657();
       } else {
-         if (this.entry == null && var8 >= this.doubleValue17 && var2 != null && var8 - this.doubleValue5 >= var6) {
-            this.method6650(var2, var4, var5, var18, var20);
+         if (this.entry == null && d2 >= this.doubleValue17 && livingEntity != null && d2 - this.doubleValue5 >= d) {
+            this.method6650(livingEntity, f, flag, yRot, xRot);
          }
 
          if (this.entry != null) {
-            this.method6652(var1, var2, var8, var10);
+            this.method6652(event, livingEntity, d2, d3);
          } else {
-            if (var3) {
-               this.method6655(var8, var10, var18 + var12, var20 + var14, var2);
+            if (enabled) {
+               this.method6655(d2, d3, yRot + d4, xRot + d5, livingEntity);
             } else {
                this.method6657();
             }
@@ -130,40 +130,40 @@ public final class ReplayStrokes implements MinecraftAccess {
       }
    }
 
-   private void method6650(LivingEntity var1, float var2, boolean var3, double var4, double var6) {
+   private void method6650(LivingEntity livingEntity, float f, boolean flag, double yRot, double xRot) {
       if (!this.library.isEmpty()) {
-         method6659(var1, var4, var6, this.doubleValues);
-         double var8 = this.doubleValues[0];
-         double var10 = var3 ? this.doubleValues[1] + this.doubleValue * this.doubleValues[4] : 0.0;
-         double var12 = var3 ? this.doubleValues[2] : Math.max(0.0, Math.abs(this.doubleValues[0]) - this.doubleValues[3]);
-         double var14 = Math.hypot(var8, var10);
-         if (!(var12 < 0.4) && !(Math.hypot(this.doubleValues[0], this.doubleValues[1]) > var2) && !(var14 < 0.001)) {
-            ReplayStrokes.Entry var16 = this.method6651(var8, var10, var14);
-            if (var16 == null) {
+         method6659(livingEntity, yRot, xRot, this.doubleValues);
+         double doubleValue = this.doubleValues[0];
+         double y = flag ? this.doubleValues[1] + this.doubleValue * this.doubleValues[4] : 0.0;
+         double d = flag ? this.doubleValues[2] : Math.max(0.0, Math.abs(this.doubleValues[0]) - this.doubleValues[3]);
+         double hypot = Math.hypot(doubleValue, y);
+         if (!(d < 0.4) && !(Math.hypot(this.doubleValues[0], this.doubleValues[1]) > f) && !(hypot < 0.001)) {
+            ReplayStrokes.Entry entry = this.method6651(doubleValue, y, hypot);
+            if (entry == null) {
                this.intValue5++;
             } else {
-               double var17 = var16.doubleValue3 * Math.signum(var8);
-               double var19 = var16.doubleValue4;
-               double var21 = this.doubleValues[0] + var17 * this.doubleValues[3];
-               double var23 = var3 ? this.doubleValues[1] + var19 * this.doubleValues[4] : 0.0;
-               double var25 = Math.hypot(var21, var23);
-               if (!(var25 < 0.001)) {
-                  double var27 = var25 / var16.doubleValue;
-                  double var29 = Math.pow(var27, 0.3) * (0.94 + ThreadLocalRandom.current().nextDouble() * 0.12);
-                  this.entry = var16;
-                  this.flag2 = var3;
+               double d2 = entry.doubleValue3 * Math.signum(doubleValue);
+               double d3 = entry.doubleValue4;
+               double x = this.doubleValues[0] + d2 * this.doubleValues[3];
+               double y2 = flag ? this.doubleValues[1] + d3 * this.doubleValues[4] : 0.0;
+               double hypot2 = Math.hypot(x, y2);
+               if (!(hypot2 < 0.001)) {
+                  double d4 = hypot2 / entry.doubleValue;
+                  double d5 = Math.pow(d4, 0.3) * (0.94 + ThreadLocalRandom.current().nextDouble() * 0.12);
+                  this.entry = entry;
+                  this.flag2 = flag;
                   this.doubleValue7 = 0.0;
-                  this.doubleValue8 = var29;
-                  this.doubleValue9 = var17;
-                  this.doubleValue10 = var19;
-                  this.doubleValue13 = var21;
-                  this.doubleValue14 = var23;
-                  this.doubleValue11 = var4;
-                  this.doubleValue12 = var6;
+                  this.doubleValue8 = d5;
+                  this.doubleValue9 = d2;
+                  this.doubleValue10 = d3;
+                  this.doubleValue13 = x;
+                  this.doubleValue14 = y2;
+                  this.doubleValue11 = yRot;
+                  this.doubleValue12 = xRot;
                   this.doubleValue15 = 0.0;
                   this.doubleValue16 = 0.0;
-                  this.intValue2 = var1.getId();
-                  this.arrayDeque.addLast(var16);
+                  this.intValue2 = livingEntity.getId();
+                  this.arrayDeque.addLast(entry);
 
                   while (this.arrayDeque.size() > 6) {
                      this.arrayDeque.removeFirst();
@@ -171,90 +171,90 @@ public final class ReplayStrokes implements MinecraftAccess {
 
                   this.method6657();
                   this.intValue3++;
-                  this.doubleValue18 = var27;
-                  this.doubleValue19 = Math.toDegrees(Math.abs(method6660(Math.atan2(var10, var8), var16.doubleValue2)));
+                  this.doubleValue18 = d4;
+                  this.doubleValue19 = Math.toDegrees(Math.abs(method6660(Math.atan2(y, doubleValue), entry.doubleValue2)));
                }
             }
          }
       }
    }
 
-   private ReplayStrokes.Entry method6651(double var1, double var3, double var5) {
-      double var7 = Math.atan2(var3, var1);
-      ThreadLocalRandom var9 = ThreadLocalRandom.current();
-      ReplayStrokes.Entry var10 = null;
-      double var11 = Double.MAX_VALUE;
+   private ReplayStrokes.Entry method6651(double doubleValue, double y, double hypot) {
+      double d = Math.atan2(y, doubleValue);
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      ReplayStrokes.Entry entry = null;
+      double d2 = Double.MAX_VALUE;
 
-      for (ReplayStrokes.Entry var14 : this.library) {
-         double var15 = var5 / var14.doubleValue;
-         if (!(var15 < 0.4) && !(var15 > 2.5)) {
-            double var17 = Math.toDegrees(Math.abs(method6660(var7, var14.doubleValue2)));
-            if (!(var17 > 60.0)) {
-               double var19 = Math.log(var15) / Math.log(1.6);
-               double var21 = var17 / 30.0;
-               double var23 = var19 * var19 + var21 * var21 + var9.nextDouble() * 0.6;
-               if (this.arrayDeque.contains(var14)) {
-                  var23++;
+      for (ReplayStrokes.Entry entry2 : this.library) {
+         double d3 = hypot / entry2.doubleValue;
+         if (!(d3 < 0.4) && !(d3 > 2.5)) {
+            double d4 = Math.toDegrees(Math.abs(method6660(d, entry2.doubleValue2)));
+            if (!(d4 > 60.0)) {
+               double d5 = Math.log(d3) / Math.log(1.6);
+               double d6 = d4 / 30.0;
+               double d7 = d5 * d5 + d6 * d6 + current.nextDouble() * 0.6;
+               if (this.arrayDeque.contains(entry2)) {
+                  d7++;
                }
 
-               if (var23 < var11) {
-                  var11 = var23;
-                  var10 = var14;
+               if (d7 < d2) {
+                  d2 = d7;
+                  entry = entry2;
                }
             }
          }
       }
 
-      return var10;
+      return entry;
    }
 
-   private void method6652(MouseRotationEvent var1, LivingEntity var2, double var3, double var5) {
-      if (var2 != null && var2.getId() == this.intValue2 && var2.isAlive()) {
-         double var7 = this.flag2 ? Math.hypot(this.doubleValue3, this.doubleValue4) : Math.abs(this.doubleValue3);
-         if (var7 >= 40.0) {
+   private void method6652(MouseRotationEvent event, LivingEntity livingEntity, double d, double d2) {
+      if (livingEntity != null && livingEntity.getId() == this.intValue2 && livingEntity.isAlive()) {
+         double hypot = this.flag2 ? Math.hypot(this.doubleValue3, this.doubleValue4) : Math.abs(this.doubleValue3);
+         if (hypot >= 40.0) {
             this.intValue4++;
-            this.method6653(var3, true);
+            this.method6653(d, true);
          } else {
-            this.doubleValue7 = this.doubleValue7 + var5 / this.doubleValue8;
-            method6659(var2, this.doubleValue11, this.doubleValue12, this.doubleValues);
-            double var9 = this.doubleValues[0] + this.doubleValue9 * this.doubleValues[3];
-            double var11 = this.flag2 ? this.doubleValues[1] + this.doubleValue10 * this.doubleValues[4] : 0.0;
-            double var13 = 1.0 - Math.exp(-var5 / 70.0);
-            this.doubleValue13 = this.doubleValue13 + (var9 - this.doubleValue13) * var13;
-            this.doubleValue14 = this.doubleValue14 + (var11 - this.doubleValue14) * var13;
+            this.doubleValue7 = this.doubleValue7 + d2 / this.doubleValue8;
+            method6659(livingEntity, this.doubleValue11, this.doubleValue12, this.doubleValues);
+            double d3 = this.doubleValues[0] + this.doubleValue9 * this.doubleValues[3];
+            double d4 = this.flag2 ? this.doubleValues[1] + this.doubleValue10 * this.doubleValues[4] : 0.0;
+            double d5 = 1.0 - Math.exp(-d2 / 70.0);
+            this.doubleValue13 = this.doubleValue13 + (d3 - this.doubleValue13) * d5;
+            this.doubleValue14 = this.doubleValue14 + (d4 - this.doubleValue14) * d5;
             this.entry.method6669(this.doubleValue7, this.doubleValues2);
-            double var15 = this.doubleValues2[0] * this.doubleValue13 - this.doubleValues2[1] * this.doubleValue14;
-            double var17 = this.flag2 ? this.doubleValues2[0] * this.doubleValue14 + this.doubleValues2[1] * this.doubleValue13 : 0.0;
-            double var19 = var15 - this.doubleValue15;
-            double var21 = var17 - this.doubleValue16;
-            double var23 = this.entry.doubleValue5 * Math.hypot(this.doubleValue13, this.doubleValue14) / this.doubleValue8 * 1.3 * var5;
-            double var25 = Math.hypot(var19, var21);
-            if (var25 > var23 && var25 > 0.0) {
-               var19 *= var23 / var25;
-               var21 *= var23 / var25;
+            double d6 = this.doubleValues2[0] * this.doubleValue13 - this.doubleValues2[1] * this.doubleValue14;
+            double d7 = this.flag2 ? this.doubleValues2[0] * this.doubleValue14 + this.doubleValues2[1] * this.doubleValue13 : 0.0;
+            double x = d6 - this.doubleValue15;
+            double y = d7 - this.doubleValue16;
+            double d8 = this.entry.doubleValue5 * Math.hypot(this.doubleValue13, this.doubleValue14) / this.doubleValue8 * 1.3 * d2;
+            double hypot2 = Math.hypot(x, y);
+            if (hypot2 > d8 && hypot2 > 0.0) {
+               x *= d8 / hypot2;
+               y *= d8 / hypot2;
             }
 
-            double var27 = method6654();
-            double var29 = Math.round(var19 / 0.15 / var27) * var27;
-            double var31 = Math.round(var21 / 0.15 / var27) * var27;
-            this.doubleValue15 += var29 * 0.15;
-            this.doubleValue16 += var31 * 0.15;
-            var1.setDoubleValue(var1.getDoubleValue() + var29);
-            var1.setDoubleValue2(var1.getDoubleValue2() + var31);
+            double d9 = method6654();
+            double d10 = Math.round(x / 0.15 / d9) * d9;
+            double d11 = Math.round(y / 0.15 / d9) * d9;
+            this.doubleValue15 += d10 * 0.15;
+            this.doubleValue16 += d11 * 0.15;
+            event.setDoubleValue(event.getDoubleValue() + d10);
+            event.setDoubleValue2(event.getDoubleValue2() + d11);
             if (this.doubleValue7 >= this.entry.method6668()) {
-               this.method6653(var3, true);
+               this.method6653(d, true);
             }
          }
       } else {
-         this.method6653(var3, false);
+         this.method6653(d, false);
       }
    }
 
-   private void method6653(double var1, boolean var3) {
+   private void method6653(double d, boolean flag) {
       if (this.entry != null) {
          this.entry = null;
-         if (var3) {
-            this.doubleValue17 = var1 + 90.0 + ThreadLocalRandom.current().nextDouble() * 110.0;
+         if (flag) {
+            this.doubleValue17 = d + 90.0 + ThreadLocalRandom.current().nextDouble() * 110.0;
          }
 
          this.method6657();
@@ -262,22 +262,22 @@ public final class ReplayStrokes implements MinecraftAccess {
    }
 
    private static double method6654() {
-      double var0 = mc.options.sensitivity().get() * 0.6 + 0.2;
-      return var0 * var0 * var0 * 8.0;
+      double d = mc.options.sensitivity().get() * 0.6 + 0.2;
+      return d * d * d * 8.0;
    }
 
-   private void method6655(double var1, double var3, double var5, double var7, LivingEntity var9) {
-      double var10 = Math.hypot(this.doubleValue3, this.doubleValue4);
-      double[] var12 = new double[]{var1, var5, var7};
+   private void method6655(double d, double d2, double d3, double d4, LivingEntity livingEntity) {
+      double hypot = Math.hypot(this.doubleValue3, this.doubleValue4);
+      double[] doubles = new double[]{d, d3, d4};
       if (this.flag) {
-         this.items.add(var12);
-         if (var1 - this.items.getFirst()[0] > 900.0) {
+         this.items.add(doubles);
+         if (d - this.items.getFirst()[0] > 900.0) {
             this.method6657();
          } else {
-            if (var10 < 10.0) {
-               this.doubleValue6 += var3;
+            if (hypot < 10.0) {
+               this.doubleValue6 += d2;
                if (this.doubleValue6 >= 60.0) {
-                  this.method6656(var9);
+                  this.method6656(livingEntity);
                   this.method6657();
                }
             } else {
@@ -285,13 +285,13 @@ public final class ReplayStrokes implements MinecraftAccess {
             }
          }
       } else {
-         this.arrayDeque2.addLast(var12);
+         this.arrayDeque2.addLast(doubles);
 
          while (this.arrayDeque2.size() > 3) {
             this.arrayDeque2.removeFirst();
          }
 
-         if (var10 >= 40.0) {
+         if (hypot >= 40.0) {
             this.flag = true;
             this.items.clear();
             this.items.addAll(this.arrayDeque2);
@@ -301,45 +301,45 @@ public final class ReplayStrokes implements MinecraftAccess {
       }
    }
 
-   private void method6656(LivingEntity var1) {
-      int var2 = this.items.size();
-      if (var1 != null && var2 >= 4) {
-         double[] var3 = this.items.getFirst();
-         double[] var4 = this.items.get(var2 - 1);
-         double var5 = var4[0] - var3[0];
-         double var7 = var4[1] - var3[1];
-         double var9 = var4[2] - var3[2];
-         double var11 = Math.hypot(var7, var9);
-         if (!(var5 < 50.0) && !(var11 < 1.0)) {
-            method6659(var1, var3[1], var3[2], this.doubleValues);
-            double var13 = this.doubleValues[2];
-            method6659(var1, var4[1], var4[2], this.doubleValues);
-            double var15 = this.doubleValues[2];
-            boolean var17 = var15 <= 2.5 || var15 <= 0.3 * var13;
-            boolean var18 = var13 - var15 >= 0.5 * var11;
-            if (var17 && var18) {
-               double var19 = -this.doubleValues[0] / Math.max(0.001, this.doubleValues[3]);
-               double var21 = -this.doubleValues[1] / Math.max(0.001, this.doubleValues[4]);
-               if (!(Math.abs(var19) > 3.0) && !(Math.abs(var21) > 3.0)) {
-                  double var23 = var19 * (var7 >= 0.0 ? 1.0 : -1.0);
-                  int var25 = Math.min(var2, 160);
-                  float[] var26 = new float[var25];
-                  float[] var27 = new float[var25];
-                  float[] var28 = new float[var25];
-                  double var29 = var7 / var11;
-                  double var31 = var9 / var11;
+   private void method6656(LivingEntity livingEntity) {
+      int size = this.items.size();
+      if (livingEntity != null && size >= 4) {
+         double[] doubles = this.items.getFirst();
+         double[] doubles2 = this.items.get(size - 1);
+         double d = doubles2[0] - doubles[0];
+         double x = doubles2[1] - doubles[1];
+         double y = doubles2[2] - doubles[2];
+         double hypot = Math.hypot(x, y);
+         if (!(d < 50.0) && !(hypot < 1.0)) {
+            method6659(livingEntity, doubles[1], doubles[2], this.doubleValues);
+            double doubleValue = this.doubleValues[2];
+            method6659(livingEntity, doubles2[1], doubles2[2], this.doubleValues);
+            double doubleValue2 = this.doubleValues[2];
+            boolean flag = doubleValue2 <= 2.5 || doubleValue2 <= 0.3 * doubleValue;
+            boolean flag2 = doubleValue - doubleValue2 >= 0.5 * hypot;
+            if (flag && flag2) {
+               double d2 = -this.doubleValues[0] / Math.max(0.001, this.doubleValues[3]);
+               double d3 = -this.doubleValues[1] / Math.max(0.001, this.doubleValues[4]);
+               if (!(Math.abs(d2) > 3.0) && !(Math.abs(d3) > 3.0)) {
+                  double d4 = d2 * (x >= 0.0 ? 1.0 : -1.0);
+                  int n = Math.min(size, 160);
+                  float[] floatValues = new float[n];
+                  float[] floatValues2 = new float[n];
+                  float[] floatValues3 = new float[n];
+                  double d5 = x / hypot;
+                  double d6 = y / hypot;
 
-                  for (int var33 = 0; var33 < var25; var33++) {
-                     int var34 = var25 == var2 ? var33 : (int)Math.round((double)var33 * (var2 - 1) / (var25 - 1));
-                     double[] var35 = this.items.get(var34);
-                     double var36 = var35[1] - var3[1];
-                     double var38 = var35[2] - var3[2];
-                     var26[var33] = (float)(var35[0] - var3[0]);
-                     var27[var33] = (float)((var36 * var29 + var38 * var31) / var11);
-                     var28[var33] = (float)((-var36 * var31 + var38 * var29) / var11);
+                  for (int i = 0; i < n; i++) {
+                     int n2 = n == size ? i : (int)Math.round((double)i * (size - 1) / (n - 1));
+                     double[] doubles3 = this.items.get(n2);
+                     double d7 = doubles3[1] - doubles[1];
+                     double d8 = doubles3[2] - doubles[2];
+                     floatValues[i] = (float)(doubles3[0] - doubles[0]);
+                     floatValues2[i] = (float)((d7 * d5 + d8 * d6) / hypot);
+                     floatValues3[i] = (float)((-d7 * d6 + d8 * d5) / hypot);
                   }
 
-                  this.library.add(new ReplayStrokes.Entry(var11, Math.atan2(var9, var7), var23, var21, var26, var27, var28));
+                  this.library.add(new ReplayStrokes.Entry(hypot, Math.atan2(y, x), d4, d3, floatValues, floatValues2, floatValues3));
                   if (this.library.size() > 600) {
                      this.library.removeFirst();
                   }
@@ -363,46 +363,46 @@ public final class ReplayStrokes implements MinecraftAccess {
    }
 
    private void method6658() {
-      double var1 = 0.0;
+      double d = 0.0;
 
-      for (ReplayStrokes.Entry var4 : this.library) {
-         var1 += var4.doubleValue4;
+      for (ReplayStrokes.Entry entry : this.library) {
+         d += entry.doubleValue4;
       }
 
-      this.doubleValue = this.library.isEmpty() ? 0.0 : var1 / this.library.size();
+      this.doubleValue = this.library.isEmpty() ? 0.0 : d / this.library.size();
    }
 
-   private static void method6659(LivingEntity var0, double var1, double var3, double[] var5) {
-      float var6 = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
-      Vec3 var7 = mc.player.getEyePosition(var6);
-      Vec3 var8 = var0.getPosition(var6);
-      AABB var9 = var0.getBoundingBox().move(var8.x - var0.getX(), var8.y - var0.getY(), var8.z - var0.getZ());
-      Vec3 var10 = var9.getCenter();
-      Rotation var11 = RotationUtils.method6912(var10.subtract(var7));
-      double var12 = Mth.wrapDegrees(var11.getFloatValue() - var1);
-      double var14 = var11.getFloatValue2() - var3;
-      double var16 = Math.max(0.3, var7.distanceTo(var10));
-      double var18 = Math.toDegrees(Math.atan(var9.getXsize() * 0.5 / var16));
-      double var20 = Math.toDegrees(Math.atan(var9.getYsize() * 0.5 / var16));
-      var5[0] = var12;
-      var5[1] = var14;
-      var5[2] = Math.hypot(Math.max(0.0, Math.abs(var12) - var18), Math.max(0.0, Math.abs(var14) - var20));
-      var5[3] = var18;
-      var5[4] = var20;
+   private static void method6659(LivingEntity livingEntity, double yRot, double xRot, double[] doubleValues) {
+      float gameTimeDeltaPartialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+      Vec3 eyePosition = mc.player.getEyePosition(gameTimeDeltaPartialTick);
+      Vec3 position = livingEntity.getPosition(gameTimeDeltaPartialTick);
+      AABB move = livingEntity.getBoundingBox().move(position.x - livingEntity.getX(), position.y - livingEntity.getY(), position.z - livingEntity.getZ());
+      Vec3 center = move.getCenter();
+      Rotation rotation = RotationUtils.method6912(center.subtract(eyePosition));
+      double d = Mth.wrapDegrees(rotation.getFloatValue() - yRot);
+      double d2 = rotation.getFloatValue2() - xRot;
+      double d3 = Math.max(0.3, eyePosition.distanceTo(center));
+      double d4 = Math.toDegrees(Math.atan(move.getXsize() * 0.5 / d3));
+      double d5 = Math.toDegrees(Math.atan(move.getYsize() * 0.5 / d3));
+      doubleValues[0] = d;
+      doubleValues[1] = d2;
+      doubleValues[2] = Math.hypot(Math.max(0.0, Math.abs(d) - d4), Math.max(0.0, Math.abs(d2) - d5));
+      doubleValues[3] = d4;
+      doubleValues[4] = d5;
    }
 
-   private static double method6660(double var0, double var2) {
-      double var4 = var0 - var2;
+   private static double method6660(double d, double d2) {
+      double d3 = d - d2;
 
-      while (var4 > Math.PI) {
-         var4 -= Math.PI * 2;
+      while (d3 > Math.PI) {
+         d3 -= Math.PI * 2;
       }
 
-      while (var4 < -Math.PI) {
-         var4 += Math.PI * 2;
+      while (d3 < -Math.PI) {
+         d3 += Math.PI * 2;
       }
 
-      return var4;
+      return d3;
    }
 
    private static Path method6661() {
@@ -414,15 +414,15 @@ public final class ReplayStrokes implements MinecraftAccess {
          this.completableFuture = CompletableFuture.supplyAsync(ReplayStrokes::method6663);
       } else {
          if (this.completableFuture.isDone() && !this.completableFuture.isCompletedExceptionally()) {
-            var var1 = this.completableFuture.getNow(null);
-            if (var1 != null) {
-               var1.addAll(this.library);
+            var now = this.completableFuture.getNow(null);
+            if (now != null) {
+               now.addAll(this.library);
 
-               while (var1.size() > 600) {
-                  var1.removeFirst();
+               while (now.size() > 600) {
+                  now.removeFirst();
                }
 
-               this.library = var1;
+               this.library = now;
                this.loaded = true;
                this.method6658();
                this.completableFuture = CompletableFuture.completedFuture(null);
@@ -432,32 +432,32 @@ public final class ReplayStrokes implements MinecraftAccess {
    }
 
    private static List<ReplayStrokes.Entry> method6663() {
-      ArrayList<ReplayStrokes.Entry> var0 = new ArrayList<>();
-      Path var1 = method6661();
-      if (!Files.isRegularFile(var1)) {
-         return var0;
+      ArrayList<ReplayStrokes.Entry> entries = new ArrayList<>();
+      Path path = method6661();
+      if (!Files.isRegularFile(path)) {
+         return entries;
       } else {
          try {
             label73: {
-               ArrayList var13;
-               try (BufferedReader var2 = Files.newBufferedReader(var1, StandardCharsets.UTF_8)) {
-                  JsonObject var3 = JsonParser.parseReader(var2).getAsJsonObject();
-                  if (var3.get("format").getAsInt() == 2) {
-                     for (JsonElement var5 : var3.getAsJsonArray("strokes")) {
-                        JsonObject var6 = var5.getAsJsonObject();
-                        float[] var7 = method6664(var6.getAsJsonArray("t"));
-                        float[] var8 = method6664(var6.getAsJsonArray("u"));
-                        float[] var9 = method6664(var6.getAsJsonArray("w"));
-                        if (var7.length >= 2 && var7.length == var8.length && var7.length == var9.length) {
-                           var0.add(
+               ArrayList arrayList;
+               try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                  JsonObject jsonObject = JsonParser.parseReader(bufferedReader).getAsJsonObject();
+                  if (jsonObject.get("format").getAsInt() == 2) {
+                     for (JsonElement json : jsonObject.getAsJsonArray("strokes")) {
+                        JsonObject jsonObject2 = json.getAsJsonObject();
+                        float[] floatValues = method6664(jsonObject2.getAsJsonArray("t"));
+                        float[] floatValues2 = method6664(jsonObject2.getAsJsonArray("u"));
+                        float[] floatValues3 = method6664(jsonObject2.getAsJsonArray("w"));
+                        if (floatValues.length >= 2 && floatValues.length == floatValues2.length && floatValues.length == floatValues3.length) {
+                           entries.add(
                               new ReplayStrokes.Entry(
-                                 var6.get("amp").getAsDouble(),
-                                 var6.get("dir").getAsDouble(),
-                                 var6.get("fx").getAsDouble(),
-                                 var6.get("fy").getAsDouble(),
-                                 var7,
-                                 var8,
-                                 var9
+                                 jsonObject2.get("amp").getAsDouble(),
+                                 jsonObject2.get("dir").getAsDouble(),
+                                 jsonObject2.get("fx").getAsDouble(),
+                                 jsonObject2.get("fy").getAsDouble(),
+                                 floatValues,
+                                 floatValues2,
+                                 floatValues3
                               )
                            );
                         }
@@ -465,98 +465,98 @@ public final class ReplayStrokes implements MinecraftAccess {
                      break label73;
                   }
 
-                  var13 = var0;
+                  arrayList = entries;
                }
 
-               return var13;
+               return arrayList;
             }
-         } catch (Exception var12) {
-            System.err.println("[ReplayAssist] не прочитан " + var1 + ": " + var12);
-            var0.clear();
+         } catch (Exception e) {
+            System.err.println("[ReplayAssist] не прочитан " + path + ": " + e);
+            entries.clear();
          }
 
-         return var0;
+         return entries;
       }
    }
 
-   private static float[] method6664(JsonArray var0) {
-      float[] var1 = new float[var0.size()];
+   private static float[] method6664(JsonArray jsonArray) {
+      float[] floats = new float[jsonArray.size()];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = var0.get(var2).getAsFloat();
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
       }
 
-      return var1;
+      return floats;
    }
 
    public void save() {
       if (this.loaded) {
          this.intValue = 0;
-         var var1 = new ArrayList<>(this.library);
-         CompletableFuture.runAsync(() -> method6665(var1));
+         var entries = new ArrayList<>(this.library);
+         CompletableFuture.runAsync(() -> method6665(entries));
       }
    }
 
-   private static synchronized void method6665(List<ReplayStrokes.Entry> var0) {
-      Path var1 = method6661();
+   private static synchronized void method6665(List<ReplayStrokes.Entry> entries) {
+      Path target = method6661();
 
       try {
-         Files.createDirectories(var1.getParent());
-         Path var2 = var1.resolveSibling("replay_strokes.json.tmp");
+         Files.createDirectories(target.getParent());
+         Path sibling = target.resolveSibling("replay_strokes.json.tmp");
 
-         try (BufferedWriter var3 = Files.newBufferedWriter(var2, StandardCharsets.UTF_8)) {
-            JsonWriter var4 = new JsonWriter(var3);
+         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(sibling, StandardCharsets.UTF_8)) {
+            JsonWriter jsonWriter = new JsonWriter(bufferedWriter);
 
             try {
-               var4.beginObject();
-               var4.name("format").value(2L);
-               var4.name("strokes").beginArray();
+               jsonWriter.beginObject();
+               jsonWriter.name("format").value(2L);
+               jsonWriter.name("strokes").beginArray();
 
-               for (ReplayStrokes.Entry var6 : var0) {
-                  var4.beginObject();
-                  var4.name("amp").value(round(var6.doubleValue));
-                  var4.name("dir").value(round(var6.doubleValue2));
-                  var4.name("fx").value(round(var6.doubleValue3));
-                  var4.name("fy").value(round(var6.doubleValue4));
-                  method6666(var4, "t", var6.floatValues);
-                  method6666(var4, "u", var6.floatValues2);
-                  method6666(var4, "w", var6.floatValues3);
-                  var4.endObject();
+               for (ReplayStrokes.Entry entry : entries) {
+                  jsonWriter.beginObject();
+                  jsonWriter.name("amp").value(round(entry.doubleValue));
+                  jsonWriter.name("dir").value(round(entry.doubleValue2));
+                  jsonWriter.name("fx").value(round(entry.doubleValue3));
+                  jsonWriter.name("fy").value(round(entry.doubleValue4));
+                  method6666(jsonWriter, "t", entry.floatValues);
+                  method6666(jsonWriter, "u", entry.floatValues2);
+                  method6666(jsonWriter, "w", entry.floatValues3);
+                  jsonWriter.endObject();
                }
 
-               var4.endArray();
-               var4.endObject();
-            } catch (Throwable var9) {
+               jsonWriter.endArray();
+               jsonWriter.endObject();
+            } catch (Throwable e) {
                try {
-                  var4.close();
-               } catch (Throwable var8) {
-                  var9.addSuppressed(var8);
+                  jsonWriter.close();
+               } catch (Throwable ex) {
+                  e.addSuppressed(ex);
                }
 
-               throw var9;
+               throw e;
             }
 
-            var4.close();
+            jsonWriter.close();
          }
 
-         Files.move(var2, var1, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-      } catch (Exception var11) {
-         System.err.println("[ReplayAssist] не записан " + var1 + ": " + var11);
+         Files.move(sibling, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+      } catch (Exception e) {
+         System.err.println("[ReplayAssist] не записан " + target + ": " + e);
       }
    }
 
-   private static void method6666(JsonWriter var0, String var1, float[] var2) throws IOException {
-      var0.name(var1).beginArray();
+   private static void method6666(JsonWriter jsonWriter, String name, float[] floatValues) throws IOException {
+      jsonWriter.name(name).beginArray();
 
-      for (float var6 : var2) {
-         var0.value(round(var6));
+      for (float floatValue : floatValues) {
+         jsonWriter.value(round(floatValue));
       }
 
-      var0.endArray();
+      jsonWriter.endArray();
    }
 
-   private static double round(double var0) {
-      return Math.round(var0 * 10000.0) / 10000.0;
+   private static double round(double doubleValue) {
+      return Math.round(doubleValue * 10000.0) / 10000.0;
    }
 
    public int size() {
@@ -592,7 +592,7 @@ public final class ReplayStrokes implements MinecraftAccess {
    }
 
    public String method6667() {
-      String var1 = String.format(
+      String str = String.format(
          Locale.ROOT,
          "replay lib=%d rec+%d played=%d yielded=%d nomatch=%d scale=%.2f ang=%.0f fy=%.2f%s",
          this.library.size(),
@@ -609,7 +609,7 @@ public final class ReplayStrokes implements MinecraftAccess {
       this.intValue3 = 0;
       this.intValue4 = 0;
       this.intValue5 = 0;
-      return var1;
+      return str;
    }
 
    private static final class Entry {
@@ -622,55 +622,55 @@ public final class ReplayStrokes implements MinecraftAccess {
       public final float[] floatValues3;
       public final double doubleValue5;
 
-      public Entry(double var1, double var3, double var5, double var7, float[] var9, float[] var10, float[] var11) {
-         this.doubleValue = var1;
-         this.doubleValue2 = var3;
-         this.doubleValue3 = var5;
-         this.doubleValue4 = var7;
-         this.floatValues = var9;
-         this.floatValues2 = var10;
-         this.floatValues3 = var11;
-         double var12 = 0.0;
+      public Entry(double doubleValue, double d, double d2, double d3, float[] floatValues, float[] floatValues2, float[] floatValues3) {
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.doubleValue4 = d3;
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.floatValues3 = floatValues3;
+         double d4 = 0.0;
 
-         for (int var14 = 1; var14 < var9.length; var14++) {
-            double var15 = var9[var14] - var9[var14 - 1];
-            if (var15 > 0.0) {
-               var12 = Math.max(var12, Math.hypot(var10[var14] - var10[var14 - 1], var11[var14] - var11[var14 - 1]) / var15);
+         for (int i = 1; i < floatValues.length; i++) {
+            double d5 = floatValues[i] - floatValues[i - 1];
+            if (d5 > 0.0) {
+               d4 = Math.max(d4, Math.hypot(floatValues2[i] - floatValues2[i - 1], floatValues3[i] - floatValues3[i - 1]) / d5);
             }
          }
 
-         this.doubleValue5 = var12;
+         this.doubleValue5 = d4;
       }
 
       public double method6668() {
          return this.floatValues[this.floatValues.length - 1];
       }
 
-      public void method6669(double var1, double[] var3) {
-         int var4 = this.floatValues.length;
-         if (var1 <= this.floatValues[0]) {
-            var3[0] = this.floatValues2[0];
-            var3[1] = this.floatValues3[0];
-         } else if (var1 >= this.floatValues[var4 - 1]) {
-            var3[0] = this.floatValues2[var4 - 1];
-            var3[1] = this.floatValues3[var4 - 1];
+      public void method6669(double d, double[] doubleValues2) {
+         int length = this.floatValues.length;
+         if (d <= this.floatValues[0]) {
+            doubleValues2[0] = this.floatValues2[0];
+            doubleValues2[1] = this.floatValues3[0];
+         } else if (d >= this.floatValues[length - 1]) {
+            doubleValues2[0] = this.floatValues2[length - 1];
+            doubleValues2[1] = this.floatValues3[length - 1];
          } else {
-            int var5 = 0;
-            int var6 = var4 - 1;
+            int n = 0;
+            int n2 = length - 1;
 
-            while (var6 - var5 > 1) {
-               int var7 = var5 + var6 >>> 1;
-               if (this.floatValues[var7] <= var1) {
-                  var5 = var7;
+            while (n2 - n > 1) {
+               int n3 = n + n2 >>> 1;
+               if (this.floatValues[n3] <= d) {
+                  n = n3;
                } else {
-                  var6 = var7;
+                  n2 = n3;
                }
             }
 
-            double var11 = this.floatValues[var6] - this.floatValues[var5];
-            double var9 = var11 > 0.0 ? (var1 - this.floatValues[var5]) / var11 : 0.0;
-            var3[0] = this.floatValues2[var5] + (this.floatValues2[var6] - this.floatValues2[var5]) * var9;
-            var3[1] = this.floatValues3[var5] + (this.floatValues3[var6] - this.floatValues3[var5]) * var9;
+            double d2 = this.floatValues[n2] - this.floatValues[n];
+            double d3 = d2 > 0.0 ? (d - this.floatValues[n]) / d2 : 0.0;
+            doubleValues2[0] = this.floatValues2[n] + (this.floatValues2[n2] - this.floatValues2[n]) * d3;
+            doubleValues2[1] = this.floatValues3[n] + (this.floatValues3[n2] - this.floatValues3[n]) * d3;
          }
       }
    }

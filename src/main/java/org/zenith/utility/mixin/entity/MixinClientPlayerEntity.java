@@ -53,21 +53,21 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
    @Unique
    private boolean zenith$rotationPushed;
 
-   public MixinClientPlayerEntity(ClientLevel var1, GameProfile var2) {
-      super(var1, var2);
+   public MixinClientPlayerEntity(ClientLevel level, GameProfile gameProfile) {
+      super(level, gameProfile);
    }
 
    @Shadow
    public abstract void sendIsSprintingIfNeeded();
 
    @Shadow
-   public abstract void updateAutoJump(float var1, float var2);
+   public abstract void updateAutoJump(float f, float y);
 
    @Inject(
       method = {"tick()V"},
       at = {@At("HEAD")}
    )
-   public void tick(CallbackInfo var1) {
+   public void tick(CallbackInfo callbackInfo) {
       dispatchEvent(new UpdateEvent());
    }
 
@@ -79,7 +79,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          shift = Shift.AFTER
       )}
    )
-   public void tickEnd(CallbackInfo var1) {
+   public void tickEnd(CallbackInfo callbackInfo) {
       dispatchEvent(new PlayerTickEvent());
    }
 
@@ -87,7 +87,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       method = {"sendPosition()V"},
       at = {@At("RETURN")}
    )
-   public void motion(CallbackInfo var1) {
+   public void motion(CallbackInfo callbackInfo) {
       dispatchEvent(new PostMotionEvent());
    }
 
@@ -98,10 +98,10 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          target = "Lnet/minecraft/client/player/LocalPlayer;sendIsSprintingIfNeeded()V"
       )
    )
-   public void invokeSprintUpdate(LocalPlayer var1) {
-      SprintPacketEvent var2 = new SprintPacketEvent();
-      dispatchEvent(var2);
-      if (!var2.isCancelled()) {
+   public void invokeSprintUpdate(LocalPlayer player) {
+      SprintPacketEvent event = new SprintPacketEvent();
+      dispatchEvent(event);
+      if (!event.isCancelled()) {
          this.sendIsSprintingIfNeeded();
       }
    }
@@ -111,10 +111,10 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       at = {@At("RETURN")},
       cancellable = true
    )
-   private void zenith$canSprint(boolean var1, CallbackInfoReturnable<Boolean> var2) {
-      SprintUpdateEvent var3 = new SprintUpdateEvent((Boolean)var2.getReturnValue());
-      dispatchEvent(var3);
-      var2.setReturnValue(var3.isCancelled() || var3.isFlag2());
+   private void zenith$canSprint(boolean flag, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      SprintUpdateEvent event = new SprintUpdateEvent((Boolean)callbackInfoReturnable.getReturnValue());
+      dispatchEvent(event);
+      callbackInfoReturnable.setReturnValue(event.isCancelled() || event.isFlag2());
    }
 
    @ModifyExpressionValue(
@@ -124,8 +124,8 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          target = "Lnet/minecraft/client/player/LocalPlayer;minorHorizontalCollision:Z"
       )}
    )
-   private boolean zenith$legacySoftCollision(boolean var1) {
-      return ViaFabricFixModule.INSTANCE.isEnabled() ? false : var1;
+   private boolean zenith$legacySoftCollision(boolean flag) {
+      return ViaFabricFixModule.INSTANCE.isEnabled() ? false : flag;
    }
 
    @Inject(
@@ -133,11 +133,11 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void pushOutOfBlocks(double var1, double var3, CallbackInfo var5) {
-      EntityPushEvent var6 = new EntityPushEvent(EntityPushEvent.Type.BLOCK);
-      dispatchEvent(var6);
-      if (var6.isCancelled()) {
-         var5.cancel();
+   public void pushOutOfBlocks(double d, double d2, CallbackInfo callbackInfo) {
+      EntityPushEvent event = new EntityPushEvent(EntityPushEvent.Type.BLOCK);
+      dispatchEvent(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -148,9 +148,9 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          target = "Lnet/minecraft/client/player/LocalPlayer;getYRot()F"
       )}
    )
-   private float hookSilentRotationYaw(float var1) {
-      Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      return var2 == null ? var1 : var2.getFloatValue();
+   private float hookSilentRotationYaw(float f) {
+      Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+      return currentRotation == null ? f : currentRotation.getFloatValue();
    }
 
    @ModifyExpressionValue(
@@ -160,9 +160,9 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          target = "Lnet/minecraft/client/player/LocalPlayer;getXRot()F"
       )}
    )
-   private float hookSilentRotationPitch(float var1) {
-      Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      return var2 == null ? var1 : var2.getFloatValue2();
+   private float hookSilentRotationPitch(float f) {
+      Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+      return currentRotation == null ? f : currentRotation.getFloatValue2();
    }
 
    @Redirect(
@@ -173,13 +173,13 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       ),
       require = 0
    )
-   private boolean onIsUsingItemRedirect(LocalPlayer var1) {
-      if (var1.isUsingItem()) {
-         NoSlowEvent var2 = new NoSlowEvent();
-         dispatchEvent(var2);
-         return var1.isUsingItem() && var1.getVehicle() == null && !var2.isCancelled();
+   private boolean onIsUsingItemRedirect(LocalPlayer player) {
+      if (player.isUsingItem()) {
+         NoSlowEvent event = new NoSlowEvent();
+         dispatchEvent(event);
+         return player.isUsingItem() && player.getVehicle() == null && !event.isCancelled();
       } else {
-         return var1.isUsingItem() && var1.getVehicle() == null;
+         return player.isUsingItem() && player.getVehicle() == null;
       }
    }
 
@@ -188,11 +188,11 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void closeHandledScreenHook(CallbackInfo var1) {
-      CloseHandledScreenEvent var2 = new CloseHandledScreenEvent(this.minecraft.gui.screen());
-      dispatchEvent(var2);
-      if (var2.isCancelled()) {
-         var1.cancel();
+   private void closeHandledScreenHook(CallbackInfo callbackInfo) {
+      CloseHandledScreenEvent event = new CloseHandledScreenEvent(this.minecraft.gui.screen());
+      dispatchEvent(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -204,35 +204,35 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       )},
       cancellable = true
    )
-   public void onMoveHook(MoverType var1, Vec3 var2, CallbackInfo var3) {
-      PlayerMoveEvent var4 = new PlayerMoveEvent(var2);
-      dispatchEvent(var4);
-      double var5 = this.getX();
-      double var7 = this.getZ();
-      super.move(var1, var4.getVec3d());
-      float var9 = (float)(this.getX() - var5);
-      float var10 = (float)(this.getZ() - var7);
-      this.updateAutoJump(var9, var10);
-      this.addWalkedDistance(Mth.length(var9, var10) * 0.6F);
-      var3.cancel();
+   public void onMoveHook(MoverType moverType, Vec3 vec3d, CallbackInfo callbackInfo) {
+      PlayerMoveEvent event = new PlayerMoveEvent(vec3d);
+      dispatchEvent(event);
+      double x = this.getX();
+      double z = this.getZ();
+      super.move(moverType, event.getVec3d());
+      float f = (float)(this.getX() - x);
+      float y = (float)(this.getZ() - z);
+      this.updateAutoJump(f, y);
+      this.addWalkedDistance(Mth.length(f, y) * 0.6F);
+      callbackInfo.cancel();
    }
 
-   private static void dispatchEvent(Event var0) {
-      EventManager.call(var0);
+   private static void dispatchEvent(Event event) {
+      EventManager.call(event);
    }
 
    @Inject(
       method = {"raycastHitResult(FLnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/phys/HitResult;"},
       at = {@At("HEAD")}
    )
-   private void zenith$pushCrosshairRotation(float var1, Entity var2, CallbackInfoReturnable<HitResult> var3) {
-      Rotation var4 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      if (var4 != null && var2 == Minecraft.getInstance().player) {
-         this.zenith$savedYaw = var2.getYRot();
-         this.zenith$savedPitch = var2.getXRot();
+   private void zenith$pushCrosshairRotation(float f, Entity entity, CallbackInfoReturnable<HitResult> callbackInfoReturnable) {
+      Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+      if (currentRotation != null && entity == Minecraft.getInstance().player) {
+         this.zenith$savedYaw = entity.getYRot();
+         this.zenith$savedPitch = entity.getXRot();
          this.zenith$rotationPushed = true;
-         var2.setYRot(var4.getFloatValue());
-         var2.setXRot(var4.getFloatValue2());
+         entity.setYRot(currentRotation.getFloatValue());
+         entity.setXRot(currentRotation.getFloatValue2());
       }
    }
 
@@ -240,11 +240,11 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
       method = {"raycastHitResult(FLnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/phys/HitResult;"},
       at = {@At("RETURN")}
    )
-   private void zenith$popCrosshairRotation(float var1, Entity var2, CallbackInfoReturnable<HitResult> var3) {
+   private void zenith$popCrosshairRotation(float f, Entity entity, CallbackInfoReturnable<HitResult> callbackInfoReturnable) {
       if (this.zenith$rotationPushed) {
          this.zenith$rotationPushed = false;
-         var2.setYRot(this.zenith$savedYaw);
-         var2.setXRot(this.zenith$savedPitch);
+         entity.setYRot(this.zenith$savedYaw);
+         entity.setXRot(this.zenith$savedPitch);
       }
    }
 
@@ -255,12 +255,12 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          target = "Lnet/minecraft/world/entity/Entity;getViewVector(F)Lnet/minecraft/world/phys/Vec3;"
       )}
    )
-   private static Vec3 zenith$crosshairRotationVector(Vec3 var0, Entity var1, double var2, double var4, float var6) {
-      if (var1 != Minecraft.getInstance().player) {
-         return var0;
+   private static Vec3 zenith$crosshairRotationVector(Vec3 vec, Entity entity, double d, double d2, float f) {
+      if (entity != Minecraft.getInstance().player) {
+         return vec;
       } else {
-         Rotation var7 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return var7 != null ? var7.method3135() : var0;
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         return currentRotation != null ? currentRotation.method3135() : vec;
       }
    }
 
@@ -271,7 +271,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayer {
          target = "Lnet/minecraft/world/entity/EntitySelector;CAN_BE_PICKED:Ljava/util/function/Predicate;"
       )}
    )
-   private static Predicate<Entity> zenith$noFriendDamage(Predicate<Entity> var0) {
-      return !NoFriendDamageModule.INSTANCE.isEnabled() ? var0 : var1 -> var0.test(var1) && !Zenith.getInstance().getFriends().method7626(var1);
+   private static Predicate<Entity> zenith$noFriendDamage(Predicate<Entity> predicate) {
+      return !NoFriendDamageModule.INSTANCE.isEnabled() ? predicate : player -> predicate.test(player) && !Zenith.getInstance().getFriends().method7626(player);
    }
 }

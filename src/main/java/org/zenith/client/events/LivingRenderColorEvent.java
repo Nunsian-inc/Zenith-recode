@@ -12,12 +12,12 @@ public class LivingRenderColorEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setColor(int var1) {
-      this.color = var1;
+   public void setColor(int color) {
+      this.color = color;
    }
 
    @Generated
-   public LivingRenderColorEvent(int var1) {
-      this.color = var1;
+   public LivingRenderColorEvent(int color) {
+      this.color = color;
    }
 }

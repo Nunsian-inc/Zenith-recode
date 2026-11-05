@@ -34,24 +34,24 @@ public final class NoRenderModule extends Module {
    );
 
    private NoRenderModule() {
-      ModuleHookDefinitions.class125.method1646(0, var1 -> {
+      ModuleHookDefinitions.class125.method1646(0, entry -> {
          if (this.method4529()) {
-            var1.cancelled = true;
+            entry.cancelled = true;
          }
       });
-      ModuleHookDefinitions.class126.method1646(0, var1 -> {
+      ModuleHookDefinitions.class126.method1646(0, entry -> {
          if (this.method4527()) {
-            var1.cancelled = true;
+            entry.cancelled = true;
          }
       });
-      ModuleHookDefinitions.class127.method1646(0, var1 -> {
+      ModuleHookDefinitions.class127.method1646(0, entry6 -> {
          if (this.method4531()) {
-            var1.value = 0.0;
+            entry6.value = 0.0;
          }
       });
-      ModuleHookDefinitions.class128.method1646(0, var1 -> {
-         if (this.method4530() || "darkness".equals(var1.text) && this.method4531()) {
-            var1.cancelled = true;
+      ModuleHookDefinitions.class128.method1646(0, entry3 -> {
+         if (this.method4530() || "darkness".equals(entry3.text) && this.method4531()) {
+            entry3.cancelled = true;
          }
       });
    }
@@ -97,14 +97,14 @@ public final class NoRenderModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       this.method4534();
    }
 
    private void method4534() {
-      boolean var1 = this.method4533();
-      if (NoRenderBlocks.enabled != var1) {
-         NoRenderBlocks.enabled = var1;
+      boolean enabled = this.method4533();
+      if (NoRenderBlocks.enabled != enabled) {
+         NoRenderBlocks.enabled = enabled;
          if (mc.level != null && mc.levelRenderer != null) {
             mc.levelExtractor.allChanged();
          }

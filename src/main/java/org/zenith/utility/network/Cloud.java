@@ -112,13 +112,13 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    private volatile Cloud.Data data2;
    private volatile Cloud.Data data3;
 
-   public Cloud(Path var1, Friends var2) {
-      this.path = var1.resolve("nexus-cloud.json");
-      this.friends = var2;
-      this.prefs = new Prefs(var1);
-      this.partyMember = new PartyMember(this, var1);
+   public Cloud(Path path, Friends friends) {
+      this.path = path.resolve("nexus-cloud.json");
+      this.friends = friends;
+      this.prefs = new Prefs(path);
+      this.partyMember = new PartyMember(this, path);
       this.load();
-      var2.setHandler(this);
+      friends.setHandler(this);
       EventManager.register(this);
       RegionUtil.method2042(() -> mc.execute(() -> {
          if (!this.cloudConnectionState.method8035()) {
@@ -151,17 +151,17 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       return this.cloudConnectionState.method8035() && (this.intValue6 & 2) != 0;
    }
 
-   public void method7861(int var1, JsonObject var2) {
+   public void method7861(int n, JsonObject json) {
       if (this.method7860()) {
-         ByteBuffer var3;
+         ByteBuffer byteBuffer;
          try {
-            var3 = CloudPackets.method1799(var1, var2.toString());
-         } catch (RuntimeException var5) {
-            logger.warn("Облако: соц-кадр {} не отправлен: {}", var1, CloudWebSocket.method1956(var5));
+            byteBuffer = CloudPackets.method1799(n, json.toString());
+         } catch (RuntimeException e) {
+            logger.warn("Облако: соц-кадр {} не отправлен: {}", n, CloudWebSocket.method1956(e));
             return;
          }
 
-         this.method7896(var3, 0);
+         this.method7896(byteBuffer, 0);
       }
    }
 
@@ -174,19 +174,19 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    public int method7864() {
-      CloudWebSocket var1 = this.cloudWebSocket;
-      return var1 != null && this.cloudConnectionState.method8035() ? var1.getIntValue() : -1;
+      CloudWebSocket cloudWebSocket = this.cloudWebSocket;
+      return cloudWebSocket != null && this.cloudConnectionState.method8035() ? cloudWebSocket.getIntValue() : -1;
    }
 
    public void method7865() {
-      CloudWebSocket var1 = this.cloudWebSocket;
-      if (var1 != null && this.cloudConnectionState.method8035()) {
-         var1.ping();
+      CloudWebSocket cloudWebSocket = this.cloudWebSocket;
+      if (cloudWebSocket != null && this.cloudConnectionState.method8035()) {
+         cloudWebSocket.ping();
       }
    }
 
-   public void setHandler(Cloud.Handler var1) {
-      this.handler = var1;
+   public void setHandler(Cloud.Handler handler) {
+      this.handler = handler;
    }
 
    public String url() {
@@ -197,19 +197,19 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       return !this.text3.isEmpty();
    }
 
-   public void method7867(String var1) {
-      String var2 = var1.trim();
+   public void method7867(String string) {
+      String str = string.trim();
 
-      while (var2.endsWith("/")) {
-         var2 = var2.substring(0, var2.length() - 1);
+      while (str.endsWith("/")) {
+         str = str.substring(0, str.length() - 1);
       }
 
-      if (!var2.isEmpty() && !var2.endsWith("/ws")) {
-         int var3 = var2.indexOf(47, var2.indexOf("//") + 2);
-         var2 = (var3 < 0 ? var2 : var2.substring(0, var3)) + "/ws";
+      if (!str.isEmpty() && !str.endsWith("/ws")) {
+         int indexOf = str.indexOf(47, str.indexOf("//") + 2);
+         str = (indexOf < 0 ? str : str.substring(0, indexOf)) + "/ws";
       }
 
-      this.text3 = var2;
+      this.text3 = str;
       this.text5 = null;
       this.url = this.method7869();
       this.save();
@@ -226,9 +226,9 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       if (!this.text3.isEmpty()) {
          return this.text3;
       } else {
-         var var1 = RegionUtil.method2040();
-         String var2 = this.text4;
-         return var2 != null && var1.contains(var2) ? var2 : (String)var1.get(0);
+         var strings = RegionUtil.method2040();
+         String str = this.text4;
+         return str != null && strings.contains(str) ? str : (String)strings.get(0);
       }
    }
 
@@ -236,8 +236,8 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       if (!this.text3.isEmpty()) {
          return this.text3;
       } else {
-         String var1 = this.text5;
-         return var1 != null && RegionUtil.method2040().contains(var1) ? var1 : RegionUtil.method2040().get(0);
+         String str = this.text5;
+         return str != null && RegionUtil.method2040().contains(str) ? str : RegionUtil.method2040().get(0);
       }
    }
 
@@ -250,13 +250,13 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    public static long accountUid() {
-      Zenith var0 = Zenith.getInstance();
-      if (var0 != null && var0.getEntry() != null) {
-         String var1 = var0.getEntry().getText2();
-         if (var1 != null && !var1.isBlank()) {
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getEntry() != null) {
+         String str = zenith.getEntry().getText2();
+         if (str != null && !str.isBlank()) {
             try {
-               return Long.parseLong(var1.trim());
-            } catch (NumberFormatException var3) {
+               return Long.parseLong(str.trim());
+            } catch (NumberFormatException e) {
                return 0L;
             }
          } else {
@@ -268,10 +268,10 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    public static String accountName() {
-      Zenith var0 = Zenith.getInstance();
-      if (var0 != null && var0.getEntry() != null) {
-         String var1 = var0.getEntry().getUsername();
-         return var1 == null ? "" : var1;
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getEntry() != null) {
+         String username = zenith.getEntry().getUsername();
+         return username == null ? "" : username;
       } else {
          return "";
       }
@@ -293,25 +293,25 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    private void method7873() {
-      int var1 = Math.max(0, Math.min(this.intValue2, CONST_longValues.length) - 1);
-      long var2 = this.longValue2 > 0L ? this.longValue2 : CONST_longValues[var1];
-      this.longValue3 = method7874(var2);
+      int n = Math.max(0, Math.min(this.intValue2, CONST_longValues.length) - 1);
+      long l = this.longValue2 > 0L ? this.longValue2 : CONST_longValues[n];
+      this.longValue3 = method7874(l);
       this.stopWatch.reset();
    }
 
-   public static long method7874(long var0) {
-      double var2 = 0.8 + ThreadLocalRandom.current().nextDouble() * 0.4;
-      return Math.max(250L, (long)(var0 * var2));
+   public static long method7874(long l) {
+      double d = 0.8 + ThreadLocalRandom.current().nextDouble() * 0.4;
+      return Math.max(250L, (long)(l * d));
    }
 
    private void method7875() {
       this.intValue5++;
-      String var1 = method7876();
+      String str = method7876();
       if (this.intValue5 >= 3) {
-         logger.warn("Облако: uid аккаунта не распознан: «{}» — подключение остановлено", var1);
+         logger.warn("Облако: uid аккаунта не распознан: «{}» — подключение остановлено", str);
          this.flag2 = false;
          this.intValue2 = 0;
-         this.cloudConnectionState.method8037("uid аккаунта не распознан: " + (var1.isEmpty() ? "пусто" : var1));
+         this.cloudConnectionState.method8037("uid аккаунта не распознан: " + (str.isEmpty() ? "пусто" : str));
          this.method7882(CloudConnectionState.Type.FAILED);
       } else {
          logger.debug("Облако: аккаунт ещё не готов (попытка {})", this.intValue5);
@@ -321,10 +321,10 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    private static String method7876() {
-      Zenith var0 = Zenith.getInstance();
-      if (var0 != null && var0.getEntry() != null && var0.getEntry().getText2() != null) {
-         String var1 = var0.getEntry().getText2().trim();
-         return var1.length() > 40 ? var1.substring(0, 40) + "…" : var1;
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getEntry() != null && zenith.getEntry().getText2() != null) {
+         String str = zenith.getEntry().getText2().trim();
+         return str.length() > 40 ? str.substring(0, 40) + "…" : str;
       } else {
          return "";
       }
@@ -377,10 +377,10 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
          this.url = this.method7869();
          this.flag = false;
 
-         URI var1;
+         URI uri;
          try {
-            var1 = new URI(this.url);
-         } catch (URISyntaxException var3) {
+            uri = new URI(this.url);
+         } catch (URISyntaxException e) {
             logger.error("Облако: неверный адрес {}", this.url);
             this.flag2 = false;
             this.intValue2 = 0;
@@ -393,17 +393,17 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
          this.method7882(CloudConnectionState.Type.CONNECTING);
          this.stopWatch2.reset();
          logger.info("Облако: подключение к {} как {}#{} ({}), протокол {}", new Object[]{this.url, accountName(), accountUid(), this.method7871(), 5});
-         CloudWebSocket var2 = new CloudWebSocket(var1, this::method7883, () -> logger.debug("Облако: сокет открыт, ждём CHALLENGE"), this::method7878);
-         this.cloudWebSocket = var2;
-         var2.connect();
+         CloudWebSocket cloudWebSocket = new CloudWebSocket(uri, this::method7883, () -> logger.debug("Облако: сокет открыт, ждём CHALLENGE"), this::method7878);
+         this.cloudWebSocket = cloudWebSocket;
+         cloudWebSocket.connect();
       }
    }
 
-   private void method7877(String var1) {
+   private void method7877(String str) {
       this.prefs.method3308();
-      CloudWebSocket var2;
+      CloudWebSocket cloudWebSocket;
       synchronized (this.obj) {
-         var2 = this.cloudWebSocket;
+         cloudWebSocket = this.cloudWebSocket;
          this.cloudWebSocket = null;
          this.longValue = 0L;
          this.intValue6 = 0;
@@ -411,29 +411,29 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
          this.cloudConnectionState.method8064();
       }
 
-      if (var2 != null) {
-         var2.method1954(var1);
+      if (cloudWebSocket != null) {
+         cloudWebSocket.method1954(str);
       }
 
       this.partyMember.method1151();
    }
 
    @EventTarget
-   private void onTick(TickEvent var1) {
-      CloudWebSocket var2 = this.cloudWebSocket;
-      if (var2 != null && this.cloudConnectionState.method8035() && var2.method1947() > 45000L) {
-         var2.method1950("узел не отвечает 45 с");
-      } else if (var2 != null && this.cloudConnectionState.getType() == CloudConnectionState.Type.CONNECTING && this.stopWatch2.method7546(15000L)) {
-         var2.method1950("узел не ответил за 15 с");
+   private void onTick(TickEvent event) {
+      CloudWebSocket cloudWebSocket = this.cloudWebSocket;
+      if (cloudWebSocket != null && this.cloudConnectionState.method8035() && cloudWebSocket.method1947() > 45000L) {
+         cloudWebSocket.method1950("узел не отвечает 45 с");
+      } else if (cloudWebSocket != null && this.cloudConnectionState.getType() == CloudConnectionState.Type.CONNECTING && this.stopWatch2.method7546(15000L)) {
+         cloudWebSocket.method1950("узел не ответил за 15 с");
       } else {
          this.prefs.flush();
-         if (var2 != null && this.cloudConnectionState.method8035() && (var2.method1948() > 12000L || var2.method1947() > 12000L && var2.method1949() > 3000L)) {
-            var2.ping();
+         if (cloudWebSocket != null && this.cloudConnectionState.method8035() && (cloudWebSocket.method1948() > 12000L || cloudWebSocket.method1947() > 12000L && cloudWebSocket.method1949() > 3000L)) {
+            cloudWebSocket.ping();
          }
 
-         String var3 = this.method7871();
-         if (this.cloudConnectionState.method8035() && !var3.isEmpty() && !this.text6.equals(var3)) {
-            logger.info("Облако: ник сменился {} → {}, перезаход", this.text6, var3);
+         String anObject = this.method7871();
+         if (this.cloudConnectionState.method8035() && !anObject.isEmpty() && !this.text6.equals(anObject)) {
+            logger.info("Облако: ник сменился {} → {}, перезаход", this.text6, anObject);
             this.open();
          } else {
             if (this.intValue3 > 0
@@ -444,7 +444,7 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
             }
 
             if (this.intValue2 != 0 && this.flag2) {
-               if (var2 == null || this.cloudConnectionState.getType() != CloudConnectionState.Type.CONNECTING) {
+               if (cloudWebSocket == null || this.cloudConnectionState.getType() != CloudConnectionState.Type.CONNECTING) {
                   if (this.stopWatch.method7546(this.longValue3)) {
                      this.longValue2 = 0L;
                      this.stopWatch.reset();
@@ -457,11 +457,11 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       }
    }
 
-   private void method7878(CloudWebSocket var1, String var2) {
+   private void method7878(CloudWebSocket cloudWebSocket, String str) {
       mc.execute(() -> {
          synchronized (this.obj) {
-            if (var1 != this.cloudWebSocket) {
-               logger.debug("Облако: старое соединение закрылось ({})", var2);
+            if (cloudWebSocket != this.cloudWebSocket) {
+               logger.debug("Облако: старое соединение закрылось ({})", str);
                return;
             }
 
@@ -477,14 +477,14 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
 
          this.longValue4 = 0L;
          this.partyMember.method1151();
-         String var6 = this.cloudConnectionState.getLastError();
-         this.method7882(var6.isEmpty() ? CloudConnectionState.Type.OFFLINE : CloudConnectionState.Type.FAILED);
-         logger.info("Облако: {}", var2);
+         String lastError = this.cloudConnectionState.getLastError();
+         this.method7882(lastError.isEmpty() ? CloudConnectionState.Type.OFFLINE : CloudConnectionState.Type.FAILED);
+         logger.info("Облако: {}", str);
          if (this.flag2 && this.longValue2 == 0L) {
-            this.cloudConnectionState.method8037(var6.isEmpty() ? var2 : var6);
+            this.cloudConnectionState.method8037(lastError.isEmpty() ? str : lastError);
          }
 
-         if (!this.flag && var6.isEmpty() && this.longValue2 == 0L) {
+         if (!this.flag && lastError.isEmpty() && this.longValue2 == 0L) {
             this.method7879();
          }
 
@@ -498,9 +498,9 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    private void method7879() {
       if (this.text3.isEmpty() && ++this.intValue >= 2) {
          this.intValue = 0;
-         var var1 = RegionUtil.method2040();
-         int var2 = var1.indexOf(this.url);
-         this.text4 = (String)var1.get(var2 < 0 ? 0 : (var2 + 1) % var1.size());
+         var strings = RegionUtil.method2040();
+         int indexOf = strings.indexOf(this.url);
+         this.text4 = (String)strings.get(indexOf < 0 ? 0 : (indexOf + 1) % strings.size());
          if (!this.text4.equals(this.url)) {
             logger.info("Облако: {} не пускает {} раза подряд — дальше {}", new Object[]{this.url, 2, this.text4});
          }
@@ -523,48 +523,48 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       }
    }
 
-   private void method7881(String var1) {
+   private void method7881(String text) {
       CloudTicket.invalidate();
       this.intValue4++;
       if (this.intValue4 >= 6) {
          this.flag2 = false;
          this.longValue2 = 0L;
-         this.cloudConnectionState.method8037("узел не пускает: " + var1 + " — нажми «Переподключиться»");
+         this.cloudConnectionState.method8037("узел не пускает: " + text + " — нажми «Переподключиться»");
          this.method7882(CloudConnectionState.Type.FAILED);
          logger.warn("Облако: {} отказов во входе подряд, автоповтор выключен", this.intValue4);
       } else {
-         long var2 = CONST_longValues2[Math.min(this.intValue4, CONST_longValues2.length) - 1];
-         this.longValue2 = var2;
-         this.cloudConnectionState.method8037("узел не пустил: " + var1 + " — повтор через " + var2 / 60000L + " мин");
-         logger.info("Облако: отказ во входе #{}, повтор через {} мин", this.intValue4, var2 / 60000L);
+         long l = CONST_longValues2[Math.min(this.intValue4, CONST_longValues2.length) - 1];
+         this.longValue2 = l;
+         this.cloudConnectionState.method8037("узел не пустил: " + text + " — повтор через " + l / 60000L + " мин");
+         logger.info("Облако: отказ во входе #{}, повтор через {} мин", this.intValue4, l / 60000L);
       }
    }
 
-   private void method7882(CloudConnectionState.Type var1) {
-      this.cloudConnectionState.setType(var1);
-      if (var1 == CloudConnectionState.Type.ONLINE) {
+   private void method7882(CloudConnectionState.Type type) {
+      this.cloudConnectionState.setType(type);
+      if (type == CloudConnectionState.Type.ONLINE) {
          this.cloudConnectionState.method8036("");
          this.cloudConnectionState.method8037("");
       }
 
-      EventManager.call(new CloudStateEvent(var1));
+      EventManager.call(new CloudStateEvent(type));
    }
 
-   private void method7883(CloudWebSocket var1, ByteBuffer var2) {
-      if (var1 == this.cloudWebSocket) {
-         FriendlyByteBuf var3 = CloudPackets.method1818(var2);
-         if (var3.isReadable()) {
-            short var4 = var3.readUnsignedByte();
-            if ((var4 & 128) != 0 && (var4 & 'ｿ') >= 16) {
+   private void method7883(CloudWebSocket cloudWebSocket, ByteBuffer buffer) {
+      if (cloudWebSocket == this.cloudWebSocket) {
+         FriendlyByteBuf friendlyByteBuf = CloudPackets.method1818(buffer);
+         if (friendlyByteBuf.isReadable()) {
+            short unsignedByte = friendlyByteBuf.readUnsignedByte();
+            if ((unsignedByte & 128) != 0 && (unsignedByte & 'ｿ') >= 16) {
                try {
-                  this.method7884(var1, var4, var3);
-               } catch (RuntimeException var7) {
-                  logger.debug("Облако: битый кадр 0x{} пропущен: {}", Integer.toHexString(var4), CloudWebSocket.method1956(var7));
+                  this.method7884(cloudWebSocket, unsignedByte, friendlyByteBuf);
+               } catch (RuntimeException e) {
+                  logger.debug("Облако: битый кадр 0x{} пропущен: {}", Integer.toHexString(unsignedByte), CloudWebSocket.method1956(e));
                }
             } else {
                synchronized (this.obj) {
-                  if (var1 == this.cloudWebSocket) {
-                     this.method7886(var1, var4, var3);
+                  if (cloudWebSocket == this.cloudWebSocket) {
+                     this.method7886(cloudWebSocket, unsignedByte, friendlyByteBuf);
                   }
                }
             }
@@ -572,82 +572,82 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
       }
    }
 
-   private void method7884(CloudWebSocket var1, int var2, FriendlyByteBuf var3) {
-      if (var2 == 163) {
-         this.method7885(CloudPackets.method1802(var3));
-      } else if (var2 == 165) {
-         CloudPackets.Data18 var7 = CloudPackets.method1804(var3);
+   private void method7884(CloudWebSocket cloudWebSocket, int unsignedByte, FriendlyByteBuf friendlyByteBuf) {
+      if (unsignedByte == 163) {
+         this.method7885(CloudPackets.method1802(friendlyByteBuf));
+      } else if (unsignedByte == 165) {
+         CloudPackets.Data18 data18 = CloudPackets.method1804(friendlyByteBuf);
          mc.execute(() -> {
-            if (var1 == this.cloudWebSocket) {
-               this.partyMember.method1180(var7);
+            if (cloudWebSocket == this.cloudWebSocket) {
+               this.partyMember.method1180(data18);
             }
          });
       } else {
          synchronized (this.obj) {
-            if (var1 == this.cloudWebSocket) {
-               this.method7886(var1, var2, var3);
+            if (cloudWebSocket == this.cloudWebSocket) {
+               this.method7886(cloudWebSocket, unsignedByte, friendlyByteBuf);
             }
          }
       }
    }
 
-   private void method7885(CloudPackets.Data16 var1) {
-      PartyPlayerInfo var2 = this.cloudConnectionState.method8040(var1.uid());
-      Cloud.Handler var3 = this.handler;
-      boolean var4 = var2 != null ? !this.prefs.method3316(var2.username()) : this.partyMember.method1148(var1.uid());
-      if (var4 && var3 != null) {
+   private void method7885(CloudPackets.Data16 data16) {
+      PartyPlayerInfo partyPlayerInfo = this.cloudConnectionState.method8040(data16.uid());
+      Cloud.Handler handler = this.handler;
+      boolean flag = partyPlayerInfo != null ? !this.prefs.method3316(partyPlayerInfo.username()) : this.partyMember.method1148(data16.uid());
+      if (flag && handler != null) {
          try {
-            var3.onVoice(var1);
-         } catch (LinkageError | RuntimeException var6) {
-            logger.debug("Облако: голос не принят: {}", var6.toString());
+            handler.onVoice(data16);
+         } catch (LinkageError | RuntimeException e) {
+            logger.debug("Облако: голос не принят: {}", e.toString());
          }
       }
    }
 
-   private void method7886(CloudWebSocket var1, int var2, FriendlyByteBuf var3) {
-      switch (var2) {
+   private void method7886(CloudWebSocket cloudWebSocket, int unsignedByte, FriendlyByteBuf friendlyByteBuf) {
+      switch (unsignedByte) {
          case 128:
-            this.method7887(var1, CloudPackets.method1800(var3));
+            this.method7887(cloudWebSocket, CloudPackets.method1800(friendlyByteBuf));
             break;
          case 129:
-            this.method7889(CloudPackets.method1801(var3));
+            this.method7889(CloudPackets.method1801(friendlyByteBuf));
             break;
          case 130:
-            CloudPackets.Data var14 = CloudPackets.method1805(var3);
-            this.cloudConnectionState.method8036(var14.getText());
+            CloudPackets.Data data = CloudPackets.method1805(friendlyByteBuf);
+            this.cloudConnectionState.method8036(data.getText());
             this.flag3 = false;
-            if (var14.getIntValue() == 2 && Boolean.FALSE.equals(this.booleanValue)) {
+            if (data.getIntValue() == 2 && Boolean.FALSE.equals(this.booleanValue)) {
                this.booleanValue = null;
             }
 
-            if (var14.getIntValue() == 1) {
+            if (data.getIntValue() == 1) {
                mc.execute(() -> {
                   this.flag2 = false;
-                  this.cloudConnectionState.method8037(var14.getText());
+                  this.cloudConnectionState.method8037(data.getText());
                });
-            } else if (var14.getIntValue() == 2) {
-               mc.execute(() -> this.method7881(var14.getText()));
-            } else if (var14.getIntValue() == 3) {
+            } else if (data.getIntValue() == 2) {
+               mc.execute(() -> this.method7881(data.getText()));
+            } else if (data.getIntValue() == 3) {
                mc.execute(this::method7880);
             }
 
-            logger.warn("Облако: отказ {} — {}", var14.getIntValue(), var14.getText());
+            logger.warn("Облако: отказ {} — {}", data.getIntValue(), data.getText());
             break;
          case 131:
-            this.method7891(CloudPackets.method1806(var3));
+            this.method7891(CloudPackets.method1806(friendlyByteBuf));
             break;
          case 132:
-            this.method7892(CloudPackets.method1807(var3));
+            this.method7892(CloudPackets.method1807(friendlyByteBuf));
             break;
          case 133:
          case 134:
-            this.method7893(CloudPackets.method1806(var3));
+            this.method7893(CloudPackets.method1806(friendlyByteBuf));
             break;
          case 135:
-            this.method7894(CloudPackets.method1808(var3));
+            this.method7894(CloudPackets.method1808(friendlyByteBuf));
             break;
          case 136:
-            this.method7895(CloudPackets.method1809(var3));
+            this.method7895(CloudPackets.method1809(friendlyByteBuf));
             break;
          case 137:
          case 138:
@@ -669,166 +669,166 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
          case 159:
          case 163:
          default:
-            logger.debug("Облако: кадр 0x{} не обрабатывается", Integer.toHexString(var2));
+            logger.debug("Облако: кадр 0x{} не обрабатывается", Integer.toHexString(unsignedByte));
             break;
          case 144:
-            CloudPackets.Data5 var13 = CloudPackets.method1810(var3);
-            PartyPlayerInfo var19 = this.cloudConnectionState.method8040(var13.uid());
-            if (var19 != null) {
-               var19.method3295(var13);
+            CloudPackets.Data5 data5 = CloudPackets.method1810(friendlyByteBuf);
+            PartyPlayerInfo partyPlayerInfo = this.cloudConnectionState.method8040(data5.uid());
+            if (partyPlayerInfo != null) {
+               partyPlayerInfo.method3295(data5);
             }
             break;
          case 145:
-            CloudPackets.Data2 var12 = CloudPackets.method1811(var3);
-            PartyPlayerInfo var18 = this.cloudConnectionState.method8040(var12.uid());
-            if (var18 != null) {
-               var18.method3296(var12);
+            CloudPackets.Data2 data2 = CloudPackets.method1811(friendlyByteBuf);
+            PartyPlayerInfo partyPlayerInfo2 = this.cloudConnectionState.method8040(data2.uid());
+            if (partyPlayerInfo2 != null) {
+               partyPlayerInfo2.method3296(data2);
             }
             break;
          case 146:
-            CloudPackets.Data3 var11 = CloudPackets.method1812(var3);
-            PartyPlayerInfo var17 = this.cloudConnectionState.method8040(var11.uid());
-            if (var17 != null) {
-               var17.method3297(var11);
+            CloudPackets.Data3 data3 = CloudPackets.method1812(friendlyByteBuf);
+            PartyPlayerInfo partyPlayerInfo3 = this.cloudConnectionState.method8040(data3.uid());
+            if (partyPlayerInfo3 != null) {
+               partyPlayerInfo3.method3297(data3);
             }
             break;
          case 147:
-            CloudPackets.Data11 var10 = CloudPackets.method1813(var3);
-            PartyPlayerInfo var16 = this.cloudConnectionState.method8040(var10.uid());
-            if (var16 != null) {
-               var16.method3298(var10);
+            CloudPackets.Data11 data11 = CloudPackets.method1813(friendlyByteBuf);
+            PartyPlayerInfo partyPlayerInfo4 = this.cloudConnectionState.method8040(data11.uid());
+            if (partyPlayerInfo4 != null) {
+               partyPlayerInfo4.method3298(data11);
             }
             break;
          case 148:
-            CloudPackets.Data15 var9 = CloudPackets.method1814(var3);
-            this.cloudConnectionState.method8059(var9.uid(), var9.getText(), var9.getItems());
-            PartyPlayerInfo var15 = this.cloudConnectionState.method8040(var9.uid());
-            if (var15 != null) {
-               var15.method3299(var9);
+            CloudPackets.Data15 data15 = CloudPackets.method1814(friendlyByteBuf);
+            this.cloudConnectionState.method8059(data15.uid(), data15.getText(), data15.getItems());
+            PartyPlayerInfo partyPlayerInfo5 = this.cloudConnectionState.method8040(data15.uid());
+            if (partyPlayerInfo5 != null) {
+               partyPlayerInfo5.method3299(data15);
             }
 
-            mc.execute(() -> this.method7888(var9));
+            mc.execute(() -> this.method7888(data15));
             break;
          case 160:
-            CloudPackets.Data13 var8 = CloudPackets.method1815(var3);
+            CloudPackets.Data13 data13 = CloudPackets.method1815(friendlyByteBuf);
             mc.execute(() -> {
-               this.cloudConnectionState.method8050(var8);
-               EventManager.call(new Event11(var8, var8.uid() == this.longValue));
+               this.cloudConnectionState.method8050(data13);
+               EventManager.call(new Event11(data13, data13.uid() == this.longValue));
             });
             break;
          case 161:
-            CloudPackets.Data10 var7 = CloudPackets.method1817(var3);
-            mc.execute(() -> EventManager.call(new CloudWaypointEvent(var7, var7.uid() == this.longValue)));
+            CloudPackets.Data10 data10 = CloudPackets.method1817(friendlyByteBuf);
+            mc.execute(() -> EventManager.call(new CloudWaypointEvent(data10, data10.uid() == this.longValue)));
             break;
          case 162:
-            long var6 = CloudPackets.method1816(var3);
-            mc.execute(() -> this.cloudConnectionState.method8051(var6));
+            long l = CloudPackets.method1816(friendlyByteBuf);
+            mc.execute(() -> this.cloudConnectionState.method8051(l));
             break;
          case 164:
-            CloudPackets.Data6 var4 = CloudPackets.method1803(var3);
-            PartyPlayerInfo var5 = this.cloudConnectionState.method8040(var4.uid());
-            if (var5 != null) {
-               var5.setIntValue2(var4.getIntValue());
+            CloudPackets.Data6 data6 = CloudPackets.method1803(friendlyByteBuf);
+            PartyPlayerInfo partyPlayerInfo6 = this.cloudConnectionState.method8040(data6.uid());
+            if (partyPlayerInfo6 != null) {
+               partyPlayerInfo6.setIntValue2(data6.getIntValue());
             }
       }
    }
 
-   private void method7887(CloudWebSocket var1, CloudPackets.Data4 var2) {
-      if (var2.protocol() != 5) {
-         String var12 = var2.protocol() > 5
-            ? "узел новее клиента (протокол " + var2.protocol() + " против 5) — обнови сборку"
-            : "узел старее клиента (протокол " + var2.protocol() + " против 5) — обнови узел";
-         this.cloudConnectionState.method8036(var12);
-         logger.error("Облако: {}", var12);
+   private void method7887(CloudWebSocket cloudWebSocket, CloudPackets.Data4 data4) {
+      if (data4.protocol() != 5) {
+         String text = data4.protocol() > 5
+            ? "узел новее клиента (протокол " + data4.protocol() + " против 5) — обнови сборку"
+            : "узел старее клиента (протокол " + data4.protocol() + " против 5) — обнови узел";
+         this.cloudConnectionState.method8036(text);
+         logger.error("Облако: {}", text);
          mc.execute(() -> {
             this.flag2 = false;
-            this.cloudConnectionState.method8037(var12);
-            if (this.cloudWebSocket == var1) {
+            this.cloudConnectionState.method8037(text);
+            if (this.cloudWebSocket == cloudWebSocket) {
                this.method7877("протокол");
             }
 
             this.method7882(CloudConnectionState.Type.FAILED);
-            method7914("Облако: " + var12);
+            method7914("Облако: " + text);
          });
-         var1.method1954("протокол");
+         cloudWebSocket.method1954("протокол");
       } else {
-         long var3 = accountUid();
-         String var5 = accountName();
-         String var6 = this.method7871();
-         UUID var7 = mc.getUser() == null ? null : mc.getUser().getProfileId();
-         byte[] var8 = method7915(var3, var5, var6, var2.getText());
-         String var9 = var7 == null ? "" : var7.toString();
-         this.text6 = var6;
-         var var10 = CloudTicket.method1374().completeOnTimeout(null, 2000L, TimeUnit.MILLISECONDS).exceptionally(var0 -> null);
-         CompletableFuture var11;
-         if (!var2.isFlag()) {
-            var11 = CompletableFuture.completedFuture(null);
+         long l = accountUid();
+         String str = accountName();
+         String str2 = this.method7871();
+         UUID profileId = mc.getUser() == null ? null : mc.getUser().getProfileId();
+         byte[] src = method7915(l, str, str2, data4.getText());
+         String string = profileId == null ? "" : profileId.toString();
+         this.text6 = str2;
+         var exceptionally = CloudTicket.method1374().completeOnTimeout(null, 2000L, TimeUnit.MILLISECONDS).exceptionally(throwable -> null);
+         CompletableFuture completedFuture;
+         if (!data4.isFlag()) {
+            completedFuture = CompletableFuture.completedFuture(null);
          } else {
-            var11 = CompletableFuture.runAsync(() -> {
+            completedFuture = CompletableFuture.runAsync(() -> {
                try {
-                  mc.services().sessionService().joinServer(var7, mc.getUser().getAccessToken(), var2.getText());
+                  mc.services().sessionService().joinServer(profileId, mc.getUser().getAccessToken(), data4.getText());
                } catch (Exception var3x) {
                   logger.warn("Облако: Mojang не подтвердил сессию: {}", CloudWebSocket.method1956(var3x));
                }
-            }, Util.ioPool()).exceptionally(var0 -> null);
+            }, Util.ioPool()).exceptionally(throwable -> null);
          }
 
-         var10.<Void, String>thenCombine(var11, (var0, var1x) -> (String)var0).whenComplete((var8x, var9x) -> {
-            if (var1 == this.cloudWebSocket) {
+         exceptionally.<Void, String>thenCombine(completedFuture, (str3, var1x) -> (String)str3).whenComplete((var8x, var9x) -> {
+            if (cloudWebSocket == this.cloudWebSocket) {
                String var10x = var9x == null && !Boolean.FALSE.equals(this.booleanValue) ? (String)var8x : null;
 
                ByteBuffer var11x;
                try {
-                  var11x = CloudPackets.method1783(var3, var5, var6, var9, "3.5", var8, var10x);
-               } catch (RuntimeException var14) {
-                  String var13 = "вход не собран: " + CloudWebSocket.method1956(var14);
-                  logger.error("Облако: {}", var13);
-                  this.cloudConnectionState.method8036(var13);
-                  var1.method1950(var13);
+                  var11x = CloudPackets.method1783(l, str, str2, string, "3.5", src, var10x);
+               } catch (RuntimeException e) {
+                  String text = "вход не собран: " + CloudWebSocket.method1956(e);
+                  logger.error("Облако: {}", text);
+                  this.cloudConnectionState.method8036(text);
+                  cloudWebSocket.method1950(text);
                   return;
                }
 
                this.flag3 = var10x != null;
                logger.debug("Облако: HELLO {}", var10x != null ? "с билетом сайта" : "без билета");
-               var1.method1951(var11x, 0);
+               cloudWebSocket.method1951(var11x, 0);
             }
          });
       }
    }
 
-   private void method7888(CloudPackets.Data15 var1) {
-      Zenith var2 = Zenith.getInstance();
-      Cosmetics var3 = var2 == null ? null : var2.getCosmetics();
-      if (var3 != null && var1.getText() != null && !var1.getText().isBlank()) {
-         List<Data1> var4 = new ArrayList<>(var1.getItems().size());
+   private void method7888(CloudPackets.Data15 data15) {
+      Zenith zenith = Zenith.getInstance();
+      Cosmetics cosmetics = zenith == null ? null : zenith.getCosmetics();
+      if (cosmetics != null && data15.getText() != null && !data15.getText().isBlank()) {
+         List<Data1> items = new ArrayList<>(data15.getItems().size());
 
-         for (CloudPackets.Data9 var6 : var1.getItems()) {
-            if (var6.getText() != null && !var6.getText().isBlank() && !ShareCodec.method6723(var6.getText())) {
-               var4.add(new Data1(var6.getText(), var6.method1822().name(), var6.getIntValue2()));
+         for (CloudPackets.Data9 data9 : data15.getItems()) {
+            if (data9.getText() != null && !data9.getText().isBlank() && !ShareCodec.method6723(data9.getText())) {
+               items.add(new Data1(data9.getText(), data9.method1822().name(), data9.getIntValue2()));
             }
          }
 
-         var3.method2962(new StoreEntry(Long.toString(var1.uid()), var1.getText(), "PUBLIC", 0, System.currentTimeMillis(), var4), true);
+         cosmetics.method2962(new StoreEntry(Long.toString(data15.uid()), data15.getText(), "PUBLIC", 0, System.currentTimeMillis(), items), true);
       }
    }
 
-   private void method7889(CloudPackets.Data12 var1) {
-      String var2 = this.url;
+   private void method7889(CloudPackets.Data12 data12) {
+      String url = this.url;
       this.flag = true;
-      this.text5 = var2;
+      this.text5 = url;
       if (this.text3.isEmpty()) {
-         this.text4 = var2;
+         this.text4 = url;
       }
 
-      this.longValue = var1.uid();
-      this.intValue6 = var1.getIntValue2();
+      this.longValue = data12.uid();
+      this.intValue6 = data12.getIntValue2();
       this.flag3 = false;
-      this.booleanValue = (var1.getIntValue2() & 4) != 0;
-      this.cloudConnectionState.setIntValue(var1.getIntValue());
-      Util18.method4490(var1.getLongValue2());
+      this.booleanValue = (data12.getIntValue2() & 4) != 0;
+      this.cloudConnectionState.setIntValue(data12.getIntValue());
+      Util18.method4490(data12.getLongValue2());
       logger.info(
          "Облако: вошли как {}#{}, всего {} онлайн{}",
-         new Object[]{var1.username(), var1.uid(), var1.getIntValue(), (var1.getIntValue2() & 4) != 0 ? ", узел проверяет билеты сайта" : ""}
+         new Object[]{data12.username(), data12.uid(), data12.getIntValue(), (data12.getIntValue2() & 4) != 0 ? ", узел проверяет билеты сайта" : ""}
       );
       mc.execute(() -> {
          this.intValue2 = 0;
@@ -847,222 +847,222 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    private void method7890() {
-      StoreApi var1 = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
-      if (var1 != null) {
-         var1.method1965(200).whenComplete((var1x, var2) -> {
-            if (var2 != null) {
-               logger.warn("Облако: история чата не пришла: {}", CloudWebSocket.method1956(var2));
+      StoreApi storeApi = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
+      if (storeApi != null) {
+         storeApi.method1965(200).whenComplete((var1x, error) -> {
+            if (error != null) {
+               logger.warn("Облако: история чата не пришла: {}", CloudWebSocket.method1956(error));
             } else if (!var1x.isEmpty()) {
-               List<CloudPackets.Data13> var3 = new ArrayList<>(var1x.size());
+               List<CloudPackets.Data13> data13s = new ArrayList<>(var1x.size());
 
-               for (StoreApi.Data3 var5 : var1x) {
-                  var3.add(new CloudPackets.Data13(var5.getLongValue2(), var5.getText(), 0, var5.time(), var5.text(), var5.getLongValue()));
+               for (StoreApi.Data3 data3 : var1x) {
+                  data13s.add(new CloudPackets.Data13(data3.getLongValue2(), data3.getText(), 0, data3.time(), data3.text(), data3.getLongValue()));
                }
 
-               mc.execute(() -> this.cloudConnectionState.method8052(var3));
+               mc.execute(() -> this.cloudConnectionState.method8052(data13s));
             }
          });
       }
    }
 
-   private void method7891(CloudPackets.Data8 var1) {
-      boolean var2 = this.cloudConnectionState.method8039(var1.uid()) == null;
-      PartyPlayerInfo var3 = this.cloudConnectionState.method8046(var1);
-      if (var2) {
+   private void method7891(CloudPackets.Data8 data8) {
+      boolean flag = this.cloudConnectionState.method8039(data8.uid()) == null;
+      PartyPlayerInfo partyPlayerInfo = this.cloudConnectionState.method8046(data8);
+      if (flag) {
          mc.execute(() -> {
-            this.cloudConnectionState.method8060(var1.username());
-            this.prefs.method3306(var3.username());
-            this.prefs.method3312(var3.username(), var1.uid());
-            this.prefs.method3314(var3.username(), var3.getText2());
-            boolean var3x = !this.items.add(var1.uid()) && System.currentTimeMillis() - this.longValue5 < 15000L;
-            if (!var3x && !this.prefs.method3315(var3.username())) {
-               method7914(var3.username() + " в сети");
+            this.cloudConnectionState.method8060(data8.username());
+            this.prefs.method3306(partyPlayerInfo.username());
+            this.prefs.method3312(partyPlayerInfo.username(), data8.uid());
+            this.prefs.method3314(partyPlayerInfo.username(), partyPlayerInfo.getText2());
+            boolean var3x = !this.items.add(data8.uid()) && System.currentTimeMillis() - this.longValue5 < 15000L;
+            if (!var3x && !this.prefs.method3315(partyPlayerInfo.username())) {
+               method7914(partyPlayerInfo.username() + " в сети");
             }
 
-            EventManager.call(new PartyUpdateEvent(var3, true));
+            EventManager.call(new PartyUpdateEvent(partyPlayerInfo, true));
          });
       }
    }
 
-   private void method7892(long var1) {
-      PartyPlayerInfo var3 = this.cloudConnectionState.method8047(var1);
-      if (var3 != null) {
+   private void method7892(long l) {
+      PartyPlayerInfo partyPlayerInfo = this.cloudConnectionState.method8047(l);
+      if (partyPlayerInfo != null) {
          mc.execute(() -> {
-            this.items.remove(var1);
-            this.prefs.method3307(var3.username());
+            this.items.remove(l);
+            this.prefs.method3307(partyPlayerInfo.username());
             this.prefs.save();
-            if (!this.prefs.method3315(var3.username())) {
-               method7914(var3.username() + " вышел");
+            if (!this.prefs.method3315(partyPlayerInfo.username())) {
+               method7914(partyPlayerInfo.username() + " вышел");
             }
 
-            EventManager.call(new PartyUpdateEvent(var3, false));
+            EventManager.call(new PartyUpdateEvent(partyPlayerInfo, false));
          });
       }
    }
 
-   private void method7893(CloudPackets.Data8 var1) {
+   private void method7893(CloudPackets.Data8 data8) {
       mc.execute(() -> {
-         if (!this.friends.method6442(var1.username())) {
-            if (this.cloudConnectionState.method8057(var1)) {
-               method7914(var1.username() + " (" + var1.getText2() + ") просится в друзья");
+         if (!this.friends.method6442(data8.username())) {
+            if (this.cloudConnectionState.method8057(data8)) {
+               method7914(data8.username() + " (" + data8.getText2() + ") просится в друзья");
             }
          }
       });
    }
 
-   private void method7894(List<CloudPackets.Data14> var1) {
-      if (var1 == null) {
+   private void method7894(List<CloudPackets.Data14> data14s) {
+      if (data14s == null) {
          logger.warn("Облако: негодный FRIEND_STATUS, список друзей оставлен как есть");
       } else {
          mc.execute(() -> {
-            this.cloudConnectionState.method8063(var1);
-            List<String> var2 = new ArrayList<>(var1.size());
+            this.cloudConnectionState.method8063(data14s);
+            List<String> strings = new ArrayList<>(data14s.size());
 
-            for (CloudPackets.Data14 var4 : var1) {
-               var2.add(var4.username());
+            for (CloudPackets.Data14 data14 : data14s) {
+               strings.add(data14.username());
             }
 
-            if (this.friends.method6444(var2)) {
+            if (this.friends.method6444(strings)) {
                this.friends.save();
             }
          });
       }
    }
 
-   private void method7895(CloudPackets.Data17 var1) {
-      logger.info("Облако: {} — {}", var1.getText(), var1.getIntValue() == 1 ? "это ты сам" : "сейчас не в сети");
+   private void method7895(CloudPackets.Data17 data17) {
+      logger.info("Облако: {} — {}", data17.getText(), data17.getIntValue() == 1 ? "это ты сам" : "сейчас не в сети");
    }
 
-   private void method7896(ByteBuffer var1, int var2) {
-      CloudWebSocket var3 = this.cloudWebSocket;
-      if (var3 != null && this.cloudConnectionState.method8035()) {
-         var3.method1951(var1, var2);
+   private void method7896(ByteBuffer byteBuffer, int intValue) {
+      CloudWebSocket cloudWebSocket = this.cloudWebSocket;
+      if (cloudWebSocket != null && this.cloudConnectionState.method8035()) {
+         cloudWebSocket.method1951(byteBuffer, intValue);
       }
    }
 
-   public void method7897(String var1, String var2) {
-      this.method7896(CloudPackets.method1789(var1, var2), 4);
+   public void method7897(String text, String str) {
+      this.method7896(CloudPackets.method1789(text, str), 4);
    }
 
-   public void method7898(double var1, double var3, double var5, float var7, float var8) {
-      this.method7896(CloudPackets.method1790(var1, var3, var5, var7, var8), 1);
+   public void method7898(double x, double y, double z, float yRot, float xRot) {
+      this.method7896(CloudPackets.method1790(x, y, z, yRot, xRot), 1);
    }
 
-   public void method7899(float var1, float var2, float var3, int var4) {
-      this.method7896(CloudPackets.method1791(var1, var2, var3, var4), 2);
+   public void method7899(float health, float maxHealth, float absorptionAmount, int foodLevel) {
+      this.method7896(CloudPackets.method1791(health, maxHealth, absorptionAmount, foodLevel), 2);
    }
 
-   public void method7900(List<CloudPackets.Data7> var1) {
-      this.method7896(CloudPackets.method1792(var1), 3);
+   public void method7900(List<CloudPackets.Data7> data7s) {
+      this.method7896(CloudPackets.method1792(data7s), 3);
    }
 
-   public void method7901(List<CloudPackets.Data9> var1) {
-      this.method7896(CloudPackets.method1793(this.method7871(), var1), 5);
+   public void method7901(List<CloudPackets.Data9> data9s) {
+      this.method7896(CloudPackets.method1793(this.method7871(), data9s), 5);
    }
 
-   public void method7902(int var1, int var2, int var3, byte[] var4, int var5) {
+   public void method7902(int n, int n2, int n3, byte[] src, int length) {
       if (this.method7863()) {
-         this.method7896(CloudPackets.method1797(var1, var2, var3, var4, var5), -1);
+         this.method7896(CloudPackets.method1797(n, n2, n3, src, length), -1);
       }
    }
 
-   public void method7903(int var1) {
+   public void method7903(int n) {
       if (this.method7863()) {
-         this.method7896(CloudPackets.method1798(var1), 6);
+         this.method7896(CloudPackets.method1798(n), 6);
       }
    }
 
-   public boolean method7904(int var1, String var2) {
-      String var3 = var2.strip();
-      if (var3.isEmpty() || var3.length() > 32) {
+   public boolean method7904(int n, String name) {
+      String username = name.strip();
+      if (username.isEmpty() || username.length() > 32) {
          return false;
       } else if (this.friends.isFull()) {
          return false;
-      } else if (var1 == 0) {
-         if (this.friends.method6442(var3)) {
+      } else if (n == 0) {
+         if (this.friends.method6442(username)) {
             return false;
          } else {
-            this.friends.add(var3);
+            this.friends.add(username);
             this.friends.save();
             return true;
          }
       } else if (!this.method7862()) {
          return false;
       } else {
-         this.method7896(CloudPackets.method1785(var1, var3), 0);
+         this.method7896(CloudPackets.method1785(n, username), 0);
          return true;
       }
    }
 
-   public boolean method7905(String var1) {
+   public boolean method7905(String username) {
       if (!this.cloudConnectionState.method8056()) {
          return false;
-      } else if (this.friends.isFull() && !this.friends.method6442(var1)) {
+      } else if (this.friends.isFull() && !this.friends.method6442(username)) {
          return false;
       } else {
-         this.cloudConnectionState.method8060(var1);
-         if (this.friends.add(var1)) {
+         this.cloudConnectionState.method8060(username);
+         if (this.friends.add(username)) {
             this.friends.save();
          }
 
-         this.method7896(CloudPackets.method1787(var1), 0);
+         this.method7896(CloudPackets.method1787(username), 0);
          return true;
       }
    }
 
-   public boolean method7906(String var1) {
-      this.cloudConnectionState.method8060(var1);
-      this.method7896(CloudPackets.method1788(var1), 0);
+   public boolean method7906(String username) {
+      this.cloudConnectionState.method8060(username);
+      this.method7896(CloudPackets.method1788(username), 0);
       return true;
    }
 
-   public boolean method7907(String var1) {
-      boolean var2 = this.friends.method6443(var1);
-      if (var2) {
+   public boolean method7907(String selected) {
+      boolean flag = this.friends.method6443(selected);
+      if (flag) {
          this.friends.save();
       }
 
-      return var2;
+      return flag;
    }
 
-   public boolean method7908(int var1, String var2) {
-      String var3 = var2.strip();
-      if (var3.isEmpty()) {
+   public boolean method7908(int n, String text) {
+      String str = text.strip();
+      if (str.isEmpty()) {
          return false;
       } else if (!this.method7862()) {
          return false;
       } else {
-         if (var3.length() > 256) {
-            var3 = var3.substring(0, 256);
+         if (str.length() > 256) {
+            str = str.substring(0, 256);
          }
 
-         this.method7896(CloudPackets.method1794(var1, var3), 0);
+         this.method7896(CloudPackets.method1794(n, str), 0);
          return true;
       }
    }
 
-   public void method7909(long var1) {
-      if (var1 > 0L && this.method7862()) {
-         this.method7896(CloudPackets.method1795(var1), 0);
+   public void method7909(long deleteMenuMessage) {
+      if (deleteMenuMessage > 0L && this.method7862()) {
+         this.method7896(CloudPackets.method1795(deleteMenuMessage), 0);
       }
    }
 
-   public void method7910(double var1, double var3, double var5, String var7, int var8, String var9) {
+   public void method7910(double x, double y, double z, String str, int n, String stringUUID) {
       if (this.method7862()) {
-         String var10 = var7.length() > 32 ? var7.substring(0, 32) : var7;
-         this.method7896(CloudPackets.method1796(this.method7911(), this.method7913(), var1, var3, var5, var10, var8, var9 == null ? "" : var9), 0);
+         String str2 = str.length() > 32 ? str.substring(0, 32) : str;
+         this.method7896(CloudPackets.method1796(this.method7911(), this.method7913(), x, y, z, str2, n, stringUUID == null ? "" : stringUUID), 0);
       }
    }
 
    @Override
-   public void method6445(String var1) {
-      this.cloudConnectionState.method8060(var1);
-      this.method7896(CloudPackets.method1785(0, var1), 0);
+   public void method6445(String username) {
+      this.cloudConnectionState.method8060(username);
+      this.method7896(CloudPackets.method1785(0, username), 0);
    }
 
    @Override
-   public void method6446(String var1) {
-      this.method7896(CloudPackets.method1786(var1), 0);
+   public void method6446(String str) {
+      this.method7896(CloudPackets.method1786(str), 0);
    }
 
    @Override
@@ -1071,62 +1071,62 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    public String method7911() {
-      ServerData var1 = mc.getCurrentServer();
-      if (var1 != null && var1.isRealm()) {
+      ServerData currentServer = mc.getCurrentServer();
+      if (currentServer != null && currentServer.isRealm()) {
          return "realms";
       } else {
-         String var2 = var1 == null ? null : var1.ip;
-         if (var2 != null && !var2.isBlank()) {
-            Cloud.Data var7 = this.data;
-            if (var7 != null && var7.getObj() == var2) {
-               return var7.value();
+         String ip = currentServer == null ? null : currentServer.ip;
+         if (ip != null && !ip.isBlank()) {
+            Cloud.Data data = this.data;
+            if (data != null && data.getObj() == ip) {
+               return data.value();
             } else {
-               String var4 = var2.trim().toLowerCase(Locale.ROOT);
-               if (var4.endsWith(":25565")) {
-                  var4 = var4.substring(0, var4.length() - 6);
+               String lowerCase = ip.trim().toLowerCase(Locale.ROOT);
+               if (lowerCase.endsWith(":25565")) {
+                  lowerCase = lowerCase.substring(0, lowerCase.length() - 6);
                }
 
-               String var8 = method7912(var4);
-               this.data = new Cloud.Data(var2, 0L, var8);
-               return var8;
+               String text = method7912(lowerCase);
+               this.data = new Cloud.Data(ip, 0L, text);
+               return text;
             }
          } else if (!mc.isLocalServer()) {
             return "";
          } else {
-            long var3 = accountUid();
-            Cloud.Data var5 = this.data2;
-            if (var5 != null && var5.uid() == var3) {
-               return var5.value();
+            long longValue = accountUid();
+            Cloud.Data data = this.data2;
+            if (data != null && data.uid() == longValue) {
+               return data.value();
             } else {
-               String var6 = "singleplayer:" + var3;
-               this.data2 = new Cloud.Data(null, var3, var6);
-               return var6;
+               String text = "singleplayer:" + longValue;
+               this.data2 = new Cloud.Data(null, longValue, text);
+               return text;
             }
          }
       }
    }
 
-   public static String method7912(String var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         boolean var1 = true;
+   public static String method7912(String lowerCase) {
+      if (lowerCase != null && !lowerCase.isEmpty()) {
+         boolean flag = true;
 
-         for (int var2 = 0; var2 < var0.length(); var2++) {
-            char var3 = var0.charAt(var2);
-            if (var3 != '.' && (var3 < '0' || var3 > '9')) {
-               var1 = false;
+         for (int i = 0; i < lowerCase.length(); i++) {
+            char charAt = lowerCase.charAt(i);
+            if (charAt != '.' && (charAt < '0' || charAt > '9')) {
+               flag = false;
                break;
             }
          }
 
-         if (var1) {
-            return var0;
+         if (flag) {
+            return lowerCase;
          } else {
-            int var4 = var0.lastIndexOf(46);
-            if (var4 <= 0) {
-               return var0;
+            int lastIndexOf = lowerCase.lastIndexOf(46);
+            if (lastIndexOf <= 0) {
+               return lowerCase;
             } else {
-               int var5 = var0.lastIndexOf(46, var4 - 1);
-               return var5 < 0 ? var0 : var0.substring(var5 + 1);
+               int n = lowerCase.lastIndexOf(46, lastIndexOf - 1);
+               return n < 0 ? lowerCase : lowerCase.substring(n + 1);
             }
          }
       } else {
@@ -1135,60 +1135,60 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    public String method7913() {
-      ClientLevel var1 = mc.level;
-      if (var1 == null) {
+      ClientLevel level = mc.level;
+      if (level == null) {
          return "";
       } else {
-         ResourceKey var2 = var1.dimension();
-         Cloud.Data var3 = this.data3;
-         if (var3 != null && var3.getObj() == var2) {
-            return var3.value();
+         ResourceKey dimension = level.dimension();
+         Cloud.Data data = this.data3;
+         if (data != null && data.getObj() == dimension) {
+            return data.value();
          } else {
-            String var4 = var2.identifier().toString();
-            this.data3 = new Cloud.Data(var2, 0L, var4);
-            return var4;
+            String string = dimension.identifier().toString();
+            this.data3 = new Cloud.Data(dimension, 0L, string);
+            return string;
          }
       }
    }
 
-   public static void method7914(String var0) {
-      Zenith var1 = Zenith.getInstance();
-      HudHolder var2 = var1 == null ? null : var1.getHudHolder();
-      if (var2 != null) {
-         var2.method6972("0", Component.literal(" " + var0));
+   public static void method7914(String str) {
+      Zenith zenith = Zenith.getInstance();
+      HudHolder hudHolder = zenith == null ? null : zenith.getHudHolder();
+      if (hudHolder != null) {
+         hudHolder.method6972("0", Component.literal(" " + str));
       }
    }
 
-   private static byte[] method7915(long var0, String var2, String var3, String var4) {
+   private static byte[] method7915(long l, String str, String str2, String text) {
       try {
-         Mac var5 = Mac.getInstance("HmacSHA256");
-         var5.init(new SecretKeySpec(text2.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-         return var5.doFinal((var0 + "\n" + var2 + "\n" + var3 + "\n" + var4).getBytes(StandardCharsets.UTF_8));
-      } catch (GeneralSecurityException var6) {
-         throw new IllegalStateException("HmacSHA256 недоступен", var6);
+         Mac mac = Mac.getInstance("HmacSHA256");
+         mac.init(new SecretKeySpec(text2.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+         return mac.doFinal((l + "\n" + str + "\n" + str2 + "\n" + text).getBytes(StandardCharsets.UTF_8));
+      } catch (GeneralSecurityException e) {
+         throw new IllegalStateException("HmacSHA256 недоступен", e);
       }
    }
 
    private void load() {
-      JsonObject var1 = CloudJsonIo.method5992(this.path);
+      JsonObject json = CloudJsonIo.method5992(this.path);
 
       try {
-         if (var1 != null && var1.has("url") && var1.has("custom") && var1.get("custom").getAsBoolean()) {
-            this.method7867(var1.get("url").getAsString());
+         if (json != null && json.has("url") && json.has("custom") && json.get("custom").getAsBoolean()) {
+            this.method7867(json.get("url").getAsString());
          }
-      } catch (RuntimeException var3) {
-         logger.warn("Облако: {} испорчен, адрес — встроенный: {}", "nexus-cloud.json", CloudWebSocket.method1956(var3));
+      } catch (RuntimeException e) {
+         logger.warn("Облако: {} испорчен, адрес — встроенный: {}", "nexus-cloud.json", CloudWebSocket.method1956(e));
       }
    }
 
    private void save() {
-      JsonObject var1 = new JsonObject();
+      JsonObject json = new JsonObject();
       if (!this.text3.isEmpty()) {
-         var1.addProperty("url", this.text3);
-         var1.addProperty("custom", true);
+         json.addProperty("url", this.text3);
+         json.addProperty("custom", true);
       }
 
-      CloudJsonIo.method5993(this.path, var1);
+      CloudJsonIo.method5993(this.path, json);
    }
 
    private static final class Data {
@@ -1225,10 +1225,10 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
          return "Data[" + "obj=" + this.obj + ", " + "longValue=" + this.longValue + ", " + "text=" + this.text + "]";
       }
 
-      private Data(Object var1, long var2, String var4) {
-         this.obj = var1;
-         this.longValue = var2;
-         this.text = var4;
+      private Data(Object ip, long longValue, String text) {
+         this.obj = ip;
+         this.longValue = longValue;
+         this.text = text;
       }
 
       public Object getObj() {
@@ -1245,6 +1245,6 @@ public final class Cloud implements MinecraftAccess, Friends.Handler {
    }
 
    public interface Handler {
-      void onVoice(CloudPackets.Data16 var1);
+      void onVoice(CloudPackets.Data16 data16);
    }
 }

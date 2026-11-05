@@ -21,83 +21,83 @@ public final class UniformStorage {
    private UniformStorage() {
    }
 
-   public static int method1272(List<float[]> var0) {
-      int[] var1 = new int[var0.size()];
+   public static int method1272(List<float[]> floatses) {
+      int[] intValues = new int[floatses.size()];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = ((float[])var0.get(var2)).length;
+      for (int i = 0; i < intValues.length; i++) {
+         intValues[i] = ((float[])floatses.get(i)).length;
       }
 
-      return method1273(var1);
+      return method1273(intValues);
    }
 
-   public static int method1273(int[] var0) {
-      Std140SizeCalculator var1 = new Std140SizeCalculator();
+   public static int method1273(int[] intValues) {
+      Std140SizeCalculator std140SizeCalculator = new Std140SizeCalculator();
 
-      for (int var5 : var0) {
-         switch (var5) {
+      for (int intValue : intValues) {
+         switch (intValue) {
             case 1:
-               var1.putFloat();
+               std140SizeCalculator.putFloat();
                break;
             case 2:
-               var1.putVec2();
+               std140SizeCalculator.putVec2();
                break;
             case 3:
-               var1.putVec3();
+               std140SizeCalculator.putVec3();
                break;
             case 4:
-               var1.putVec4();
+               std140SizeCalculator.putVec4();
                break;
             case 16:
-               var1.putMat4f();
+               std140SizeCalculator.putMat4f();
                break;
             default:
-               throw new IllegalArgumentException("Неподдерживаемый размер uniform: " + var5);
+               throw new IllegalArgumentException("Неподдерживаемый размер uniform: " + intValue);
          }
       }
 
-      return Mth.roundToward(var1.get(), 16);
+      return Mth.roundToward(std140SizeCalculator.get(), 16);
    }
 
-   public static DynamicGpuDataStorageMapped<UniformStorage.Entry> method1274(String var0, int var1) {
-      DynamicGpuDataStorageMapped var2 = new DynamicGpuDataStorageMapped(var0, var1, 128, 16);
-      items.add(var2);
-      return var2;
+   public static DynamicGpuDataStorageMapped<UniformStorage.Entry> method1274(String label, int intValue) {
+      DynamicGpuDataStorageMapped gpuDataStorageMapped = new DynamicGpuDataStorageMapped(label, intValue, 128, 16);
+      items.add(gpuDataStorageMapped);
+      return gpuDataStorageMapped;
    }
 
-   public static void method1275(DynamicGpuDataStorageMapped<UniformStorage.Entry> var0) {
-      if (items.remove(var0)) {
-         items2.add(var0);
+   public static void method1275(DynamicGpuDataStorageMapped<UniformStorage.Entry> dynamicUniformStorage) {
+      if (items.remove(dynamicUniformStorage)) {
+         items2.add(dynamicUniformStorage);
       }
    }
 
-   public static GpuBufferSlice method1276(DynamicGpuDataStorageMapped<UniformStorage.Entry> var0, List<float[]> var1) {
-      int[] var2 = new int[var1.size()];
-      int var3 = 0;
+   public static GpuBufferSlice method1276(DynamicGpuDataStorageMapped<UniformStorage.Entry> gpuDataStorageMapped, List<float[]> floatses) {
+      int[] intValues = new int[floatses.size()];
+      int n = 0;
 
-      for (int var4 = 0; var4 < var2.length; var4++) {
-         var2[var4] = ((float[])var1.get(var4)).length;
-         var3 += var2[var4];
+      for (int i = 0; i < intValues.length; i++) {
+         intValues[i] = ((float[])floatses.get(i)).length;
+         n += intValues[i];
       }
 
-      float[] var8 = new float[var3];
-      int var5 = 0;
+      float[] floatValues = new float[n];
+      int n2 = 0;
 
-      for (float[] var7 : var1) {
-         System.arraycopy(var7, 0, var8, var5, var7.length);
-         var5 += var7.length;
+      for (float[] floats : floatses) {
+         System.arraycopy(floats, 0, floatValues, n2, floats.length);
+         n2 += floats.length;
       }
 
-      return var0.writeData(new UniformStorage.Entry(var8, var2));
+      return gpuDataStorageMapped.writeData(new UniformStorage.Entry(floatValues, intValues));
    }
 
    public static void endFrame() {
-      for (DynamicGpuDataStorageMapped var1 : items) {
-         var1.endFrame();
+      for (DynamicGpuDataStorageMapped gpuDataStorageMapped : items) {
+         gpuDataStorageMapped.endFrame();
       }
 
-      for (DynamicGpuDataStorageMapped var3 : items2) {
-         var3.close();
+      for (DynamicGpuDataStorageMapped gpuDataStorageMapped : items2) {
+         gpuDataStorageMapped.close();
       }
 
       items2.clear();
@@ -108,49 +108,49 @@ public final class UniformStorage {
       private final float[] floatValues;
       private final int[] intValues;
 
-      public Entry(float[] var1, int[] var2) {
-         this.floatValues = var1;
-         this.intValues = var2;
+      public Entry(float[] floatValues, int[] intValues) {
+         this.floatValues = floatValues;
+         this.intValues = intValues;
       }
 
-      public boolean method1277(int[] var1, float[] var2) {
-         return this.intValues == var1 && Arrays.equals(this.floatValues, var2);
+      public boolean method1277(int[] intValues, float[] floatValues2) {
+         return this.intValues == intValues && Arrays.equals(this.floatValues, floatValues2);
       }
 
       @Override
       public void write(ByteBuffer buffer) {
-         Std140Builder var2 = Std140Builder.intoBuffer(buffer);
-         float[] var3 = this.floatValues;
-         int var4 = 0;
+         Std140Builder intoBuffer = Std140Builder.intoBuffer(buffer);
+         float[] floatValues = this.floatValues;
+         int off = 0;
 
-         for (int var8 : this.intValues) {
-            switch (var8) {
+         for (int intValue : this.intValues) {
+            switch (intValue) {
                case 1:
-                  var2.putFloat(var3[var4]);
+                  intoBuffer.putFloat(floatValues[off]);
                   break;
                case 2:
-                  var2.putVec2(var3[var4], var3[var4 + 1]);
+                  intoBuffer.putVec2(floatValues[off], floatValues[off + 1]);
                   break;
                case 3:
-                  var2.putVec3(var3[var4], var3[var4 + 1], var3[var4 + 2]);
+                  intoBuffer.putVec3(floatValues[off], floatValues[off + 1], floatValues[off + 2]);
                   break;
                case 4:
-                  var2.putVec4(var3[var4], var3[var4 + 1], var3[var4 + 2], var3[var4 + 3]);
+                  intoBuffer.putVec4(floatValues[off], floatValues[off + 1], floatValues[off + 2], floatValues[off + 3]);
                   break;
                case 16:
-                  var2.putMat4f(matrix4f.set(var3, var4));
+                  intoBuffer.putMat4f(matrix4f.set(floatValues, off));
                   break;
                default:
                   throw new IllegalStateException();
             }
 
-            var4 += var8;
+            off += intValue;
          }
       }
 
       @Override
-      public boolean equals(Object var1) {
-         return var1 instanceof UniformStorage.Entry var2 && Arrays.equals(this.intValues, var2.intValues) && Arrays.equals(this.floatValues, var2.floatValues);
+      public boolean equals(Object obj) {
+         return obj instanceof UniformStorage.Entry entry && Arrays.equals(this.intValues, entry.intValues) && Arrays.equals(this.floatValues, entry.floatValues);
       }
 
       @Override

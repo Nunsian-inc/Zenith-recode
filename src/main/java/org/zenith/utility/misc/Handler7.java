@@ -12,7 +12,7 @@ public interface Handler7 {
 
    float getAlpha();
 
-   default float method1449(float var1) {
+   default float method1449(float f) {
       return this.getAlpha();
    }
 

@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(ParticleEngine.class)
 public interface ParticleManagerAccessor {
    @Invoker("makeParticle")
-   <T extends ParticleOptions> Particle figura$createParticle(T var1, double var2, double var4, double var6, double var8, double var10, double var12);
+   <T extends ParticleOptions> Particle figura$createParticle(T effect, double x, double y, double z, double velocityX, double velocityY, double velocityZ);
 }

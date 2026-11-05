@@ -35,129 +35,129 @@ public final class Class25 extends Util22 {
    private long longValue;
    private long longValue2;
 
-   public Rotation method3653(Rotation var1) {
-      Rotation var2 = rotationManager.method7844();
-      float var3 = var2.getFloatValue();
-      float var4 = var2.getFloatValue2();
-      float var5 = var3 + Mth.wrapDegrees(var1.getFloatValue() - var3);
-      float var6 = Mth.clamp(var1.getFloatValue2(), -90.0F, 90.0F);
-      long var7 = System.nanoTime();
-      if (var7 - this.longValue > 250000000L) {
+   public Rotation method3653(Rotation rotation) {
+      Rotation rotation2 = rotationManager.method7844();
+      float floatValue = rotation2.getFloatValue();
+      float f = rotation2.getFloatValue2();
+      float f2 = floatValue + Mth.wrapDegrees(rotation.getFloatValue() - floatValue);
+      float f3 = Mth.clamp(rotation.getFloatValue2(), -90.0F, 90.0F);
+      long nanoTime = System.nanoTime();
+      if (nanoTime - this.longValue > 250000000L) {
          this.active = false;
          this.intValue = 0;
       }
 
-      this.longValue = var7;
+      this.longValue = nanoTime;
       if (this.active) {
-         this.method3654(var3, var5, var6);
+         this.method3654(floatValue, f2, f3);
       }
 
       if (!this.active) {
-         float var9 = (float)Math.hypot(var5 - var3, var6 - var4);
-         if (var9 <= this.floatValue12) {
-            return var2;
+         float hypot = (float)Math.hypot(f2 - floatValue, f3 - f);
+         if (hypot <= this.floatValue12) {
+            return rotation2;
          }
 
-         this.method3655(var3, var4, var5, var6, var9, var7);
+         this.method3655(floatValue, f, f2, f3, hypot, nanoTime);
       }
 
       if (this.intValue > 0) {
          this.intValue--;
-         return var2;
+         return rotation2;
       } else {
-         float var19 = this.method3656(this.floatValue10 / this.floatValue9);
+         float f4 = this.method3656(this.floatValue10 / this.floatValue9);
          this.floatValue10 = Math.min(this.floatValue10 + 1.0F, this.floatValue9);
-         float var10 = this.floatValue10 / this.floatValue9;
-         float var11 = this.method3656(var10);
-         float var12 = method3657(this.floatValue, this.floatValue3, this.floatValue5, var11);
-         float var13 = method3657(this.floatValue2, this.floatValue4, this.floatValue6, var11);
-         float var14 = (float)Math.hypot(this.floatValue5 - this.floatValue, this.floatValue6 - this.floatValue2);
-         float var15 = (var11 - var19) * var14;
-         ThreadLocalRandom var16 = ThreadLocalRandom.current();
-         float var17 = 0.035F * var15 + 0.015F;
-         this.floatValue14 = this.floatValue14 * 0.55F + (float)var16.nextGaussian() * var17;
-         this.floatValue15 = this.floatValue15 * 0.55F + (float)var16.nextGaussian() * var17 * 0.8F;
-         float var18 = 1.0F - var10;
-         var12 += this.floatValue14 * var18;
-         var13 += this.floatValue15 * var18;
-         if (var10 >= 1.0F) {
+         float f5 = this.floatValue10 / this.floatValue9;
+         float f6 = this.method3656(f5);
+         float yRot = method3657(this.floatValue, this.floatValue3, this.floatValue5, f6);
+         float f7 = method3657(this.floatValue2, this.floatValue4, this.floatValue6, f6);
+         float hypot = (float)Math.hypot(this.floatValue5 - this.floatValue, this.floatValue6 - this.floatValue2);
+         float f8 = (f6 - f4) * hypot;
+         ThreadLocalRandom current = ThreadLocalRandom.current();
+         float f9 = 0.035F * f8 + 0.015F;
+         this.floatValue14 = this.floatValue14 * 0.55F + (float)current.nextGaussian() * f9;
+         this.floatValue15 = this.floatValue15 * 0.55F + (float)current.nextGaussian() * f9 * 0.8F;
+         float f10 = 1.0F - f5;
+         yRot += this.floatValue14 * f10;
+         f7 += this.floatValue15 * f10;
+         if (f5 >= 1.0F) {
             this.active = false;
-            this.longValue2 = var7;
+            this.longValue2 = nanoTime;
          }
 
-         var12 = var3 + Mth.wrapDegrees(var12 - var3);
-         return new Rotation(var12, Mth.clamp(var13, -90.0F, 90.0F));
+         yRot = floatValue + Mth.wrapDegrees(yRot - floatValue);
+         return new Rotation(yRot, Mth.clamp(f7, -90.0F, 90.0F));
       }
    }
 
-   private void method3654(float var1, float var2, float var3) {
-      float var4 = var1 + Mth.wrapDegrees(this.floatValue7 - var1);
-      float var5 = var2 - var4;
-      float var6 = var3 - this.floatValue8;
-      float var7 = (float)Math.hypot(var5, var6);
-      if (!(var7 <= 1.0E-4F)) {
-         float var8 = (float)Math.hypot(this.floatValue5 - this.floatValue, this.floatValue6 - this.floatValue2);
-         if (var7 > Math.max(2.5F, var8 * 0.35F)) {
+   private void method3654(float floatValue, float f, float f2) {
+      float f3 = floatValue + Mth.wrapDegrees(this.floatValue7 - floatValue);
+      float x = f - f3;
+      float y = f2 - this.floatValue8;
+      float hypot = (float)Math.hypot(x, y);
+      if (!(hypot <= 1.0E-4F)) {
+         float hypot2 = (float)Math.hypot(this.floatValue5 - this.floatValue, this.floatValue6 - this.floatValue2);
+         if (hypot > Math.max(2.5F, hypot2 * 0.35F)) {
             this.active = false;
          } else {
-            this.floatValue5 += var5;
-            this.floatValue6 = Mth.clamp(this.floatValue6 + var6, -90.0F, 90.0F);
-            this.floatValue3 += var5 * 0.5F;
-            this.floatValue4 += var6 * 0.5F;
-            this.floatValue7 = var2;
-            this.floatValue8 = var3;
+            this.floatValue5 += x;
+            this.floatValue6 = Mth.clamp(this.floatValue6 + y, -90.0F, 90.0F);
+            this.floatValue3 += x * 0.5F;
+            this.floatValue4 += y * 0.5F;
+            this.floatValue7 = f;
+            this.floatValue8 = f2;
          }
       }
    }
 
-   private void method3655(float var1, float var2, float var3, float var4, float var5, long var6) {
-      ThreadLocalRandom var8 = ThreadLocalRandom.current();
-      boolean var9 = var5 < 8.0F && var6 - this.longValue2 < 400000000L;
-      float var10 = var9 ? 1.5F : 3.5F;
-      float var11 = 0.045F + 0.06F * (float)(Math.log(var5 / var10 + 1.0F) / Math.log(2.0));
-      var11 *= (float)Math.exp(var8.nextGaussian() * 0.12);
-      this.floatValue9 = Math.max(1.6F, var11 / 0.05F);
+   private void method3655(float floatValue, float f, float f2, float f3, float hypot, long nanoTime) {
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      boolean flag = hypot < 8.0F && nanoTime - this.longValue2 < 400000000L;
+      float f4 = flag ? 1.5F : 3.5F;
+      float f5 = 0.045F + 0.06F * (float)(Math.log(hypot / f4 + 1.0F) / Math.log(2.0));
+      f5 *= (float)Math.exp(current.nextGaussian() * 0.12);
+      this.floatValue9 = Math.max(1.6F, f5 / 0.05F);
       this.floatValue10 = 0.0F;
-      float var12 = (var3 - var1) / var5;
-      float var13 = (var4 - var2) / var5;
-      float var14 = -var13;
-      float var16;
-      float var17;
-      if (!var9 && !(var5 < 3.0F)) {
-         var16 = method3658(var8, 0.95F, 0.035F, 0.85F, 1.04F);
-         var17 = (float)var8.nextGaussian() * 0.03F * var5;
+      float f6 = (f2 - floatValue) / hypot;
+      float f7 = (f3 - f) / hypot;
+      float f8 = -f7;
+      float f9;
+      float f10;
+      if (!flag && !(hypot < 3.0F)) {
+         f9 = method3658(current, 0.95F, 0.035F, 0.85F, 1.04F);
+         f10 = (float)current.nextGaussian() * 0.03F * hypot;
       } else {
-         var16 = method3658(var8, 0.99F, 0.03F, 0.9F, 1.04F);
-         var17 = (float)var8.nextGaussian() * 0.015F * var5;
+         f9 = method3658(current, 0.99F, 0.03F, 0.9F, 1.04F);
+         f10 = (float)current.nextGaussian() * 0.015F * hypot;
       }
 
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      this.floatValue5 = var1 + (var3 - var1) * var16 + var14 * var17;
-      this.floatValue6 = Mth.clamp(var2 + (var4 - var2) * var16 + var12 * var17, -90.0F, 90.0F);
-      float var18 = var8.nextFloat() < 0.7F ? this.floatValue13 : -this.floatValue13;
-      float var19 = var18 * Math.abs((float)var8.nextGaussian()) * 0.07F * var5;
-      this.floatValue3 = (this.floatValue + this.floatValue5) * 0.5F + var14 * var19;
-      this.floatValue4 = Mth.clamp((this.floatValue2 + this.floatValue6) * 0.5F + var12 * var19, -90.0F, 90.0F);
-      this.floatValue11 = 0.8F + var8.nextFloat() * 0.15F;
-      this.intValue = !var9 && var5 > 25.0F && var8.nextFloat() < 0.5F ? 1 : 0;
-      this.floatValue12 = 0.6F + var8.nextFloat() * 0.7F;
-      this.floatValue7 = var3;
-      this.floatValue8 = var4;
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      this.floatValue5 = floatValue + (f2 - floatValue) * f9 + f8 * f10;
+      this.floatValue6 = Mth.clamp(f + (f3 - f) * f9 + f6 * f10, -90.0F, 90.0F);
+      float f11 = current.nextFloat() < 0.7F ? this.floatValue13 : -this.floatValue13;
+      float f12 = f11 * Math.abs((float)current.nextGaussian()) * 0.07F * hypot;
+      this.floatValue3 = (this.floatValue + this.floatValue5) * 0.5F + f8 * f12;
+      this.floatValue4 = Mth.clamp((this.floatValue2 + this.floatValue6) * 0.5F + f6 * f12, -90.0F, 90.0F);
+      this.floatValue11 = 0.8F + current.nextFloat() * 0.15F;
+      this.intValue = !flag && hypot > 25.0F && current.nextFloat() < 0.5F ? 1 : 0;
+      this.floatValue12 = 0.6F + current.nextFloat() * 0.7F;
+      this.floatValue7 = f2;
+      this.floatValue8 = f3;
       this.active = true;
    }
 
-   private float method3656(float var1) {
-      float var2 = (float)Math.pow(Mth.clamp(var1, 0.0F, 1.0F), this.floatValue11);
-      return var2 * var2 * var2 * (10.0F - 15.0F * var2 + 6.0F * var2 * var2);
+   private float method3656(float f) {
+      float f2 = (float)Math.pow(Mth.clamp(f, 0.0F, 1.0F), this.floatValue11);
+      return f2 * f2 * f2 * (10.0F - 15.0F * f2 + 6.0F * f2 * f2);
    }
 
-   private static float method3657(float var0, float var1, float var2, float var3) {
-      float var4 = 1.0F - var3;
-      return var4 * var4 * var0 + 2.0F * var4 * var3 * var1 + var3 * var3 * var2;
+   private static float method3657(float floatValue, float f, float f2, float f3) {
+      float f4 = 1.0F - f3;
+      return f4 * f4 * floatValue + 2.0F * f4 * f3 * f + f3 * f3 * f2;
    }
 
-   private static float method3658(ThreadLocalRandom var0, float var1, float var2, float var3, float var4) {
-      return Mth.clamp(var1 + (float)var0.nextGaussian() * var2, var3, var4);
+   private static float method3658(ThreadLocalRandom current, float f, float f2, float min, float max) {
+      return Mth.clamp(f + (float)current.nextGaussian() * f2, min, max);
    }
 }

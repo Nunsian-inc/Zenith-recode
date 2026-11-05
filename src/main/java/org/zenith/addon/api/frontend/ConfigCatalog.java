@@ -5,19 +5,19 @@ import java.util.List;
 public interface ConfigCatalog {
    List<ConfigInfo> configs();
 
-   boolean save(String var1, ConfigSaveOptions var2);
+   boolean save(String name, ConfigSaveOptions all);
 
    default boolean save(String name) {
       return this.save(name, ConfigSaveOptions.all());
    }
 
-   boolean load(String var1, ConfigLoadMode var2);
+   boolean load(String name, ConfigLoadMode configLoadMode);
 
    default boolean load(String name) {
       return this.load(name, ConfigLoadMode.ALL);
    }
 
-   boolean delete(String var1);
+   boolean delete(String str);
 
-   boolean rename(String var1, String var2);
+   boolean rename(String str, String str2);
 }

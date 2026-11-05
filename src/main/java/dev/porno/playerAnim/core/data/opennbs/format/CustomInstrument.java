@@ -1,11 +1,11 @@
 package dev.porno.playerAnim.core.data.opennbs.format;
 
 public interface CustomInstrument {
-   void setName(String var1);
+   void setName(String name);
 
-   void setToSongFile(String var1);
+   void setToSongFile(String toSongFile);
 
-   void setsetSoundPitch(byte var1);
+   void setsetSoundPitch(byte b);
 
-   void setPressKey(boolean var1);
+   void setPressKey(boolean pressKey);
 }

@@ -26,10 +26,10 @@ public class MixinParticleManager {
       cancellable = true
    )
    private void zenith$dropParticleWithoutManagerWorld(
-      ParticleOptions var1, double var2, double var4, double var6, double var8, double var10, double var12, CallbackInfoReturnable<Particle> var14
+      ParticleOptions particleOptions, double d, double d2, double d3, double d4, double d5, double d6, CallbackInfoReturnable<Particle> callbackInfoReturnable
    ) {
       if (this.level == null) {
-         var14.setReturnValue(null);
+         callbackInfoReturnable.setReturnValue(null);
       }
    }
 
@@ -38,9 +38,9 @@ public class MixinParticleManager {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$hideTotemEmitter(Entity var1, ParticleOptions var2, int var3, CallbackInfo var4) {
-      if (var2.getType() == ParticleTypes.TOTEM_OF_UNDYING && NoRenderModule.INSTANCE.method4532()) {
-         var4.cancel();
+   private void zenith$hideTotemEmitter(Entity entity, ParticleOptions particleOptions, int n, CallbackInfo callbackInfo) {
+      if (particleOptions.getType() == ParticleTypes.TOTEM_OF_UNDYING && NoRenderModule.INSTANCE.method4532()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -50,10 +50,10 @@ public class MixinParticleManager {
       cancellable = true
    )
    private void zenith$hideTotemParticle(
-      ParticleOptions var1, double var2, double var4, double var6, double var8, double var10, double var12, CallbackInfoReturnable<Particle> var14
+      ParticleOptions particleOptions, double d, double d2, double d3, double d4, double d5, double d6, CallbackInfoReturnable<Particle> callbackInfoReturnable
    ) {
-      if (var1.getType() == ParticleTypes.TOTEM_OF_UNDYING && NoRenderModule.INSTANCE.method4532()) {
-         var14.setReturnValue(null);
+      if (particleOptions.getType() == ParticleTypes.TOTEM_OF_UNDYING && NoRenderModule.INSTANCE.method4532()) {
+         callbackInfoReturnable.setReturnValue(null);
       }
    }
 
@@ -62,9 +62,9 @@ public class MixinParticleManager {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$dropWorldlessParticle(Particle var1, CallbackInfo var2) {
-      if (var1 == null || ((ParticleAccessor)(Object)var1).zenith$getWorld() == null) {
-         var2.cancel();
+   private void zenith$dropWorldlessParticle(Particle particle, CallbackInfo callbackInfo) {
+      if (particle == null || ((ParticleAccessor)(Object)particle).zenith$getWorld() == null) {
+         callbackInfo.cancel();
       }
    }
 }

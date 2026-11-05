@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(SingleQuadParticle.class)
 public interface BillboardParticleAccessor {
    @Accessor("quadSize")
-   void figura$setScale(float var1);
+   void figura$setScale(float f);
 
    @Accessor("rCol")
    float figura$getRed();
@@ -23,5 +23,5 @@ public interface BillboardParticleAccessor {
    float figura$getAlpha();
 
    @Invoker("setAlpha")
-   void figura$setAlpha(float var1);
+   void figura$setAlpha(float f);
 }

@@ -14,38 +14,38 @@ public class BooleanSetting extends Setting {
       return Zenith.getInstance().getLocalization().translate(this.description);
    }
 
-   public BooleanSetting(String var1, boolean var2) {
-      super(var1, "");
-      this.enabled = var2;
+   public BooleanSetting(String key, boolean enabled) {
+      super(key, "");
+      this.enabled = enabled;
       this.description = "";
    }
 
-   public BooleanSetting(String var1, String var2, boolean var3) {
-      super(var1, var2);
-      this.enabled = var3;
-      this.description = var2;
+   public BooleanSetting(String key, String description, boolean enabled) {
+      super(key, description);
+      this.enabled = enabled;
+      this.description = description;
    }
 
-   public BooleanSetting(String var1, String var2, boolean var3, Supplier<Boolean> var4) {
-      super(var1, var2);
-      this.enabled = var3;
-      this.setVisible(var4);
-      this.description = var2;
+   public BooleanSetting(String key, String description, boolean enabled, Supplier<Boolean> visible) {
+      super(key, description);
+      this.enabled = enabled;
+      this.setVisible(visible);
+      this.description = description;
    }
 
-   public BooleanSetting(String var1, boolean var2, Supplier<Boolean> var3) {
-      super(var1, "");
-      this.enabled = var2;
-      this.setVisible(var3);
+   public BooleanSetting(String key, boolean enabled, Supplier<Boolean> visible) {
+      super(key, "");
+      this.enabled = enabled;
+      this.setVisible(visible);
       this.description = "";
    }
 
-   public static BooleanSetting method477(String var0, boolean var1) {
-      return new BooleanSetting(var0, var1);
+   public static BooleanSetting method477(String key, boolean enabled) {
+      return new BooleanSetting(key, enabled);
    }
 
-   public static BooleanSetting method478(String var0) {
-      return new BooleanSetting(var0, true);
+   public static BooleanSetting method478(String key) {
+      return new BooleanSetting(key, true);
    }
 
    public void toggle() {
@@ -53,13 +53,13 @@ public class BooleanSetting extends Setting {
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.addProperty(String.valueOf(this.key), this.isEnabled());
+   public void safe(JsonObject json) {
+      json.addProperty(String.valueOf(this.key), this.isEnabled());
    }
 
    @Override
-   public void load(JsonObject var1) {
-      this.setEnabled(var1.get(String.valueOf(this.key)).getAsBoolean());
+   public void load(JsonObject jsonObject) {
+      this.setEnabled(jsonObject.get(String.valueOf(this.key)).getAsBoolean());
    }
 
    @Generated
@@ -68,7 +68,7 @@ public class BooleanSetting extends Setting {
    }
 
    @Generated
-   public void setEnabled(boolean var1) {
-      this.enabled = var1;
+   public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
    }
 }

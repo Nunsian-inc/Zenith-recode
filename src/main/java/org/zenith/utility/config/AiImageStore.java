@@ -43,157 +43,157 @@ public final class AiImageStore {
       return Zenith.file.toPath().resolve("ai-chats").resolve("images");
    }
 
-   public static boolean method4631(Path var0) {
-      String var1 = var0.getFileName().toString().toLowerCase(Locale.ROOT);
-      return var1.endsWith(".png")
-         || var1.endsWith(".jpg")
-         || var1.endsWith(".jpeg")
-         || var1.endsWith(".gif")
-         || var1.endsWith(".bmp")
-         || var1.endsWith(".webp");
+   public static boolean method4631(Path path) {
+      String lowerCase = path.getFileName().toString().toLowerCase(Locale.ROOT);
+      return lowerCase.endsWith(".png")
+         || lowerCase.endsWith(".jpg")
+         || lowerCase.endsWith(".jpeg")
+         || lowerCase.endsWith(".gif")
+         || lowerCase.endsWith(".bmp")
+         || lowerCase.endsWith(".webp");
    }
 
-   public static String method4632(Path var0) throws IOException {
-      if (Files.size(var0) > 25165824L) {
+   public static String method4632(Path path) throws IOException {
+      if (Files.size(path) > 25165824L) {
          throw new IOException("картинка больше 24 МБ");
       } else {
-         BufferedImage var1;
-         try (InputStream var2 = Files.newInputStream(var0)) {
-            var1 = ImageIO.read(var2);
+         BufferedImage bufferedImage;
+         try (InputStream inputStream = Files.newInputStream(path)) {
+            bufferedImage = ImageIO.read(inputStream);
          }
 
-         if (var1 == null) {
-            throw new IOException("не удалось прочитать " + var0.getFileName() + " (png, jpg, gif, bmp)");
+         if (bufferedImage == null) {
+            throw new IOException("не удалось прочитать " + path.getFileName() + " (png, jpg, gif, bmp)");
          } else {
-            return method4634(var1);
+            return method4634(bufferedImage);
          }
       }
    }
 
-   public static String method4633(NativeImage var0) throws IOException {
-      BufferedImage var1 = new BufferedImage(var0.getWidth(), var0.getHeight(), 2);
+   public static String method4633(NativeImage nativeImage) throws IOException {
+      BufferedImage bufferedImage = new BufferedImage(nativeImage.getWidth(), nativeImage.getHeight(), 2);
 
-      for (int var2 = 0; var2 < var0.getHeight(); var2++) {
-         for (int var3 = 0; var3 < var0.getWidth(); var3++) {
-            var1.setRGB(var3, var2, var0.getPixel(var3, var2));
+      for (int i = 0; i < nativeImage.getHeight(); i++) {
+         for (int j = 0; j < nativeImage.getWidth(); j++) {
+            bufferedImage.setRGB(j, i, nativeImage.getPixel(j, i));
          }
       }
 
-      return method4634(var1);
+      return method4634(bufferedImage);
    }
 
-   private static String method4634(BufferedImage var0) throws IOException {
-      BufferedImage var1 = method4635(var0, 1568, 2);
+   private static String method4634(BufferedImage bufferedImage) throws IOException {
+      BufferedImage im = method4635(bufferedImage, 1568, 2);
       Files.createDirectories(method4630());
-      String var2 = UUID.randomUUID().toString().substring(0, 12) + ".png";
-      ImageIO.write(var1, "png", method4630().resolve(var2).toFile());
-      return var2;
+      String str = UUID.randomUUID().toString().substring(0, 12) + ".png";
+      ImageIO.write(im, "png", method4630().resolve(str).toFile());
+      return str;
    }
 
-   private static BufferedImage method4635(BufferedImage var0, int var1, int var2) {
-      int var3 = var0.getWidth();
-      int var4 = var0.getHeight();
-      double var5 = Math.min(1.0, (double)var1 / Math.max(var3, var4));
-      int var7 = Math.max(1, (int)Math.round(var3 * var5));
-      int var8 = Math.max(1, (int)Math.round(var4 * var5));
-      BufferedImage var9 = new BufferedImage(var7, var8, var2);
-      Graphics2D var10 = var9.createGraphics();
-      var10.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-      var10.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-      if (var2 == 1) {
-         var10.setColor(Color.BLACK);
-         var10.fillRect(0, 0, var7, var8);
+   private static BufferedImage method4635(BufferedImage bufferedImage, int n, int imageType) {
+      int width = bufferedImage.getWidth();
+      int height = bufferedImage.getHeight();
+      double d = Math.min(1.0, (double)n / Math.max(width, height));
+      int width2 = Math.max(1, (int)Math.round(width * d));
+      int height2 = Math.max(1, (int)Math.round(height * d));
+      BufferedImage bufferedImage2 = new BufferedImage(width2, height2, imageType);
+      Graphics2D graphics = bufferedImage2.createGraphics();
+      graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+      if (imageType == 1) {
+         graphics.setColor(Color.BLACK);
+         graphics.fillRect(0, 0, width2, height2);
       }
 
-      var10.drawImage(var0, 0, 0, var7, var8, null);
-      var10.dispose();
-      return var9;
+      graphics.drawImage(bufferedImage, 0, 0, width2, height2, null);
+      graphics.dispose();
+      return bufferedImage2;
    }
 
-   public static AiStreamClient.Data2 method4636(String var0) throws IOException {
-      Path var1 = method4630().resolve(var0);
-      BufferedImage var2 = ImageIO.read(var1.toFile());
-      if (var2 == null) {
-         throw new IOException("картинка " + var0 + " испорчена");
+   public static AiStreamClient.Data2 method4636(String str) throws IOException {
+      Path path = method4630().resolve(str);
+      BufferedImage bufferedImage = ImageIO.read(path.toFile());
+      if (bufferedImage == null) {
+         throw new IOException("картинка " + str + " испорчена");
       } else {
-         BufferedImage var3 = method4635(var2, 1568, 1);
-         ByteArrayOutputStream var4 = new ByteArrayOutputStream();
-         ImageWriter var5 = ImageIO.getImageWritersByFormatName("jpg").next();
+         BufferedImage image = method4635(bufferedImage, 1568, 1);
+         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+         ImageWriter imageWriter = ImageIO.getImageWritersByFormatName("jpg").next();
 
-         try (MemoryCacheImageOutputStream var6 = new MemoryCacheImageOutputStream(var4)) {
-            var5.setOutput(var6);
-            ImageWriteParam var7 = var5.getDefaultWriteParam();
-            var7.setCompressionMode(2);
-            var7.setCompressionQuality(0.85F);
-            var5.write(null, new IIOImage(var3, null, null), var7);
+         try (MemoryCacheImageOutputStream cacheImageOutputStream = new MemoryCacheImageOutputStream(byteArrayOutputStream)) {
+            imageWriter.setOutput(cacheImageOutputStream);
+            ImageWriteParam defaultWriteParam = imageWriter.getDefaultWriteParam();
+            defaultWriteParam.setCompressionMode(2);
+            defaultWriteParam.setCompressionQuality(0.85F);
+            imageWriter.write(null, new IIOImage(image, null, null), defaultWriteParam);
          } finally {
-            var5.dispose();
+            imageWriter.dispose();
          }
 
-         return new AiStreamClient.Data2("image/jpeg", Base64.getEncoder().encodeToString(var4.toByteArray()));
+         return new AiStreamClient.Data2("image/jpeg", Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray()));
       }
    }
 
-   public static Path method4637(String var0) {
-      return method4630().resolve(var0);
+   public static Path method4637(String str) {
+      return method4630().resolve(str);
    }
 
-   public static int[] method4638(String var0) {
-      return items2.getOrDefault(var0, new int[]{1, 1});
+   public static int[] method4638(String key) {
+      return items2.getOrDefault(key, new int[]{1, 1});
    }
 
-   public static Identifier method4639(String var0) {
-      Identifier var1 = items.get(var0);
-      if (var1 != null) {
-         return var1;
-      } else if (items3.contains(var0)) {
+   public static Identifier method4639(String key) {
+      Identifier id = items.get(key);
+      if (id != null) {
+         return id;
+      } else if (items3.contains(key)) {
          return null;
       } else {
-         Path var2 = method4630().resolve(var0);
-         if (!Files.isRegularFile(var2)) {
-            items3.add(var0);
+         Path path = method4630().resolve(key);
+         if (!Files.isRegularFile(path)) {
+            items3.add(key);
             return null;
          } else {
-            NativeImage var3 = null;
+            NativeImage image = null;
 
             try {
-               Identifier var8;
-               try (InputStream var4 = Files.newInputStream(var2)) {
-                  var3 = NativeImage.read(var4);
-                  int var5 = var3.getWidth();
-                  int var6 = var3.getHeight();
-                  Identifier var7 = Identifier.fromNamespaceAndPath("zenith", "ai_image/" + var0.replace(".png", "").toLowerCase(Locale.ROOT));
-                  Minecraft.getInstance().getTextureManager().register(var7, new DynamicTexture(() -> "zenith-ai", var3));
-                  var3 = null;
-                  items2.put(var0, new int[]{var5, var6});
-                  items.put(var0, var7);
-                  var8 = var7;
+               Identifier location;
+               try (InputStream inputStream = Files.newInputStream(path)) {
+                  image = NativeImage.read(inputStream);
+                  int width = image.getWidth();
+                  int height = image.getHeight();
+                  Identifier location2 = Identifier.fromNamespaceAndPath("zenith", "ai_image/" + key.replace(".png", "").toLowerCase(Locale.ROOT));
+                  Minecraft.getInstance().getTextureManager().register(location2, new DynamicTexture(() -> "zenith-ai", image));
+                  image = null;
+                  items2.put(key, new int[]{width, height});
+                  items.put(key, location2);
+                  location = location2;
                }
 
-               return var8;
-            } catch (Exception var11) {
-               if (var3 != null) {
-                  var3.close();
+               return location;
+            } catch (Exception e) {
+               if (image != null) {
+                  image.close();
                }
 
-               items3.add(var0);
+               items3.add(key);
                return null;
             }
          }
       }
    }
 
-   public static void method4640(Collection<String> var0) {
-      if (!var0.isEmpty()) {
-         List<String> var1 = List.copyOf(var0);
-         Minecraft var2 = Minecraft.getInstance();
-         var2.execute(() -> {
-            for (String var3 : var1) {
-               Identifier var4 = items.remove(var3);
-               items2.remove(var3);
-               items3.remove(var3);
-               if (var4 != null) {
-                  var2.getTextureManager().release(var4);
+   public static void method4640(Collection<String> coll) {
+      if (!coll.isEmpty()) {
+         List<String> strings = List.copyOf(coll);
+         Minecraft minecraft = Minecraft.getInstance();
+         minecraft.execute(() -> {
+            for (String str : strings) {
+               Identifier location = items.remove(str);
+               items2.remove(str);
+               items3.remove(str);
+               if (location != null) {
+                  minecraft.getTextureManager().release(location);
                }
             }
          });

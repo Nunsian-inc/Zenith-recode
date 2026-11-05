@@ -56,75 +56,75 @@ public final class BotProxy {
       return "BotProxy[" + "type=" + this.type + ", " + "host=" + this.host + ", " + "port=" + this.port + ", " + "username=" + this.username + ", " + "password=" + this.password + "]";
    }
 
-   public BotProxy(BotProxy.Type var1, String var2, int var3, @Nullable String var4, @Nullable String var5) {
-      this.type = var1;
-      this.host = var2;
-      this.port = var3;
-      this.username = var4;
-      this.password = var5;
+   public BotProxy(BotProxy.Type type, String host, int port, @Nullable String username, @Nullable String password) {
+      this.type = type;
+      this.host = host;
+      this.port = port;
+      this.username = username;
+      this.password = password;
    }
 
    @Nullable
-   public static BotProxy parse(@Nullable String var0) {
-      if (var0 != null && !var0.isBlank()) {
-         String var1 = var0.trim();
-         return var1.contains("://") ? parseUri(var1) : parseLegacy(var1);
+   public static BotProxy parse(@Nullable String proxy) {
+      if (proxy != null && !proxy.isBlank()) {
+         String str = proxy.trim();
+         return str.contains("://") ? parseUri(str) : parseLegacy(str);
       } else {
          return null;
       }
    }
 
-   private static BotProxy parseUri(String var0) {
-      URI var1;
+   private static BotProxy parseUri(String str) {
+      URI uri;
       try {
-         var1 = URI.create(var0);
-      } catch (IllegalArgumentException var6) {
-         throw new IllegalArgumentException("Invalid proxy address", var6);
+         uri = URI.create(str);
+      } catch (IllegalArgumentException e) {
+         throw new IllegalArgumentException("Invalid proxy address", e);
       }
 
-      BotProxy.Type var2 = BotProxy.Type.fromScheme(var1.getScheme());
-      String var3 = var1.getHost();
-      int var4 = var1.getPort();
-      if (var3 != null && !var3.isBlank() && var4 > 0) {
-         BotProxy.Credentials var5 = BotProxy.Credentials.parse(var1.getUserInfo());
-         return new BotProxy(var2, var3, validatePort(var4), var5.username(), var5.password());
+      BotProxy.Type type = BotProxy.Type.fromScheme(uri.getScheme());
+      String host = uri.getHost();
+      int port = uri.getPort();
+      if (host != null && !host.isBlank() && port > 0) {
+         BotProxy.Credentials credentials = BotProxy.Credentials.parse(uri.getUserInfo());
+         return new BotProxy(type, host, validatePort(port), credentials.username(), credentials.password());
       } else {
          throw new IllegalArgumentException("Invalid proxy address");
       }
    }
 
-   private static BotProxy parseLegacy(String var0) {
-      String var1 = var0;
-      BotProxy.Credentials var2 = BotProxy.Credentials.EMPTY;
-      int var3 = var0.lastIndexOf(64);
-      if (var3 >= 0) {
-         var2 = BotProxy.Credentials.parse(var0.substring(0, var3));
-         var1 = var0.substring(var3 + 1);
+   private static BotProxy parseLegacy(String str) {
+      String str2 = str;
+      BotProxy.Credentials credentials = BotProxy.Credentials.EMPTY;
+      int lastIndexOf = str.lastIndexOf(64);
+      if (lastIndexOf >= 0) {
+         credentials = BotProxy.Credentials.parse(str.substring(0, lastIndexOf));
+         str2 = str.substring(lastIndexOf + 1);
       }
 
-      BotProxy.HostPort var4 = BotProxy.HostPort.parse(var1);
-      if (var2 == BotProxy.Credentials.EMPTY && var4.tail().length > 0) {
-         var2 = BotProxy.Credentials.fromTail(var4.tail());
+      BotProxy.HostPort hostPort = BotProxy.HostPort.parse(str2);
+      if (credentials == BotProxy.Credentials.EMPTY && hostPort.tail().length > 0) {
+         credentials = BotProxy.Credentials.fromTail(hostPort.tail());
       }
 
-      return new BotProxy(BotProxy.Type.SOCKS5, var4.host(), var4.port(), var2.username(), var2.password());
+      return new BotProxy(BotProxy.Type.SOCKS5, hostPort.host(), hostPort.port(), credentials.username(), credentials.password());
    }
 
    public ProxyHandler createHandler() {
-      InetSocketAddress var1 = new InetSocketAddress(this.host, this.port);
-      boolean var2 = this.username != null && !this.username.isBlank();
-      String var3 = this.password == null ? "" : this.password;
+      InetSocketAddress inetSocketAddress = new InetSocketAddress(this.host, this.port);
+      boolean flag = this.username != null && !this.username.isBlank();
+      String password = this.password == null ? "" : this.password;
 
       return (ProxyHandler)(switch (this.type) {
-         case SOCKS5 -> var2 ? new Socks5ProxyHandler(var1, this.username, var3) : new Socks5ProxyHandler(var1);
-         case SOCKS4 -> var2 ? new Socks4ProxyHandler(var1, this.username) : new Socks4ProxyHandler(var1);
-         case HTTP -> var2 ? new HttpProxyHandler(var1, this.username, var3) : new HttpProxyHandler(var1);
+         case SOCKS5 -> flag ? new Socks5ProxyHandler(inetSocketAddress, this.username, password) : new Socks5ProxyHandler(inetSocketAddress);
+         case SOCKS4 -> flag ? new Socks4ProxyHandler(inetSocketAddress, this.username) : new Socks4ProxyHandler(inetSocketAddress);
+         case HTTP -> flag ? new HttpProxyHandler(inetSocketAddress, this.username, password) : new HttpProxyHandler(inetSocketAddress);
       });
    }
 
-   private static int validatePort(int var0) {
-      if (var0 >= 1 && var0 <= 65535) {
-         return var0;
+   private static int validatePort(int port) {
+      if (port >= 1 && port <= 65535) {
+         return port;
       } else {
          throw new IllegalArgumentException("Invalid proxy port");
       }
@@ -162,25 +162,25 @@ public final class BotProxy {
       }
       private static final BotProxy.Credentials EMPTY = new BotProxy.Credentials(null, null);
 
-      private Credentials(@Nullable String var1, @Nullable String var2) {
-         this.username = var1;
-         this.password = var2;
+      private Credentials(@Nullable String username, @Nullable String password) {
+         this.username = username;
+         this.password = password;
       }
 
-      private static BotProxy.Credentials parse(@Nullable String var0) {
-         if (var0 != null && !var0.isBlank()) {
-            int var1 = var0.indexOf(58);
-            return var1 < 0 ? new BotProxy.Credentials(var0, null) : new BotProxy.Credentials(var0.substring(0, var1), var0.substring(var1 + 1));
+      private static BotProxy.Credentials parse(@Nullable String userInfo) {
+         if (userInfo != null && !userInfo.isBlank()) {
+            int indexOf = userInfo.indexOf(58);
+            return indexOf < 0 ? new BotProxy.Credentials(userInfo, null) : new BotProxy.Credentials(userInfo.substring(0, indexOf), userInfo.substring(indexOf + 1));
          } else {
             return EMPTY;
          }
       }
 
-      private static BotProxy.Credentials fromTail(String[] var0) {
-         if (var0.length != 0 && !var0[0].isBlank()) {
-            return var0.length == 1
-               ? new BotProxy.Credentials(var0[0], null)
-               : new BotProxy.Credentials(var0[0], String.join(":", Arrays.copyOfRange(var0, 1, var0.length)));
+      private static BotProxy.Credentials fromTail(String[] tail) {
+         if (tail.length != 0 && !tail[0].isBlank()) {
+            return tail.length == 1
+               ? new BotProxy.Credentials(tail[0], null)
+               : new BotProxy.Credentials(tail[0], String.join(":", Arrays.copyOfRange(tail, 1, tail.length)));
          } else {
             return EMPTY;
          }
@@ -221,44 +221,44 @@ public final class BotProxy {
          return "HostPort[" + "host=" + this.host + ", " + "port=" + this.port + ", " + "tail=" + this.tail + "]";
       }
 
-      private HostPort(String var1, int var2, String[] var3) {
-         this.host = var1;
-         this.port = var2;
-         this.tail = var3;
+      private HostPort(String host, int port, String[] tail) {
+         this.host = host;
+         this.port = port;
+         this.tail = tail;
       }
 
-      private static BotProxy.HostPort parse(String var0) {
-         if (var0 == null || var0.isBlank()) {
+      private static BotProxy.HostPort parse(String str) {
+         if (str == null || str.isBlank()) {
             throw new IllegalArgumentException("Invalid proxy address");
-         } else if (var0.startsWith("[")) {
-            int var4 = var0.indexOf(93);
-            if (var4 >= 0 && var4 + 1 < var0.length() && var0.charAt(var4 + 1) == ':') {
-               String var2 = var0.substring(1, var4);
-               String[] var3 = var0.substring(var4 + 2).split(":", -1);
-               return create(var2, var3);
+         } else if (str.startsWith("[")) {
+            int indexOf = str.indexOf(93);
+            if (indexOf >= 0 && indexOf + 1 < str.length() && str.charAt(indexOf + 1) == ':') {
+               String host = str.substring(1, indexOf);
+               String[] copyOfRange = str.substring(indexOf + 2).split(":", -1);
+               return create(host, copyOfRange);
             } else {
                throw new IllegalArgumentException("Invalid proxy address");
             }
          } else {
-            String[] var1 = var0.split(":", -1);
-            if (var1.length < 2) {
+            String[] original = str.split(":", -1);
+            if (original.length < 2) {
                throw new IllegalArgumentException("Invalid proxy address");
             } else {
-               return create(var1[0], Arrays.copyOfRange(var1, 1, var1.length));
+               return create(original[0], Arrays.copyOfRange(original, 1, original.length));
             }
          }
       }
 
-      private static BotProxy.HostPort create(String var0, String[] var1) {
-         if (var0 != null && !var0.isBlank() && var1.length != 0) {
-            int var2;
+      private static BotProxy.HostPort create(String host, String[] copyOfRange) {
+         if (host != null && !host.isBlank() && copyOfRange.length != 0) {
+            int port;
             try {
-               var2 = Integer.parseInt(var1[0]);
-            } catch (NumberFormatException var4) {
-               throw new IllegalArgumentException("Invalid proxy port", var4);
+               port = Integer.parseInt(copyOfRange[0]);
+            } catch (NumberFormatException e) {
+               throw new IllegalArgumentException("Invalid proxy port", e);
             }
 
-            return new BotProxy.HostPort(var0, BotProxy.validatePort(var2), Arrays.copyOfRange(var1, 1, var1.length));
+            return new BotProxy.HostPort(host, BotProxy.validatePort(port), Arrays.copyOfRange(copyOfRange, 1, copyOfRange.length));
          } else {
             throw new IllegalArgumentException("Invalid proxy address");
          }
@@ -270,15 +270,15 @@ public final class BotProxy {
       SOCKS4,
       HTTP;
 
-      private static BotProxy.Type fromScheme(String var0) {
-         if (var0 != null && !var0.isBlank()) {
-            String var1 = var0.toLowerCase(Locale.ROOT);
+      private static BotProxy.Type fromScheme(String scheme) {
+         if (scheme != null && !scheme.isBlank()) {
+            String lowerCase = scheme.toLowerCase(Locale.ROOT);
 
-            return switch (var1) {
+            return switch (lowerCase) {
                case "socks", "socks5" -> SOCKS5;
                case "socks4" -> SOCKS4;
                case "http", "https" -> HTTP;
-               default -> throw new IllegalArgumentException("Unsupported proxy type: " + var0);
+               default -> throw new IllegalArgumentException("Unsupported proxy type: " + scheme);
             };
          } else {
             return SOCKS5;

@@ -9,67 +9,67 @@ public final class VaultResourceLoader {
    private VaultResourceLoader() {
    }
 
-   public static InputStream method2218(String var0) {
-      return method2219("models/" + var0, VaultKeyResolver.Type.ENVELOPE);
+   public static InputStream method2218(String str) {
+      return method2219("models/" + str, VaultKeyResolver.Type.ENVELOPE);
    }
 
-   public static InputStream method2219(String var0, VaultKeyResolver.Type var1) {
-      byte[] var2 = method2221(var0 + ".vault");
-      if (var2 == null) {
-         InputStream var9 = method2222().getResourceAsStream(var0);
-         if (var9 != null) {
-            return var9;
+   public static InputStream method2219(String name, VaultKeyResolver.Type type) {
+      byte[] array = method2221(name + ".vault");
+      if (array == null) {
+         InputStream resourceAsStream = method2222().getResourceAsStream(name);
+         if (resourceAsStream != null) {
+            return resourceAsStream;
          } else {
-            throw new IllegalStateException("vault resource not found: " + var0);
+            throw new IllegalStateException("vault resource not found: " + name);
          }
       } else {
-         byte[] var3 = VaultKeyResolver.method2860(var1, var0);
+         byte[] original = VaultKeyResolver.method2860(type, name);
 
-         ByteArrayInputStream var5;
+         ByteArrayInputStream byteArrayInputStream;
          try {
-            byte[] var4 = VaultCipher.method1853(var2, var3, var0);
-            var5 = new ByteArrayInputStream(var4);
+            byte[] buf = VaultCipher.method1853(array, original, name);
+            byteArrayInputStream = new ByteArrayInputStream(buf);
          } finally {
-            Arrays.fill(var3, (byte)0);
+            Arrays.fill(original, (byte)0);
          }
 
-         return var5;
+         return byteArrayInputStream;
       }
    }
 
-   public static byte[] method2220(String var0, VaultKeyResolver.Type var1) {
-      byte[] var2 = method2221(var0 + ".vault");
-      if (var2 == null) {
-         throw new IllegalStateException("vault resource not found: " + var0 + ".vault");
+   public static byte[] method2220(String name, VaultKeyResolver.Type type) {
+      byte[] array = method2221(name + ".vault");
+      if (array == null) {
+         throw new IllegalStateException("vault resource not found: " + name + ".vault");
       } else {
-         byte[] var3 = VaultKeyResolver.method2860(var1, var0);
+         byte[] original = VaultKeyResolver.method2860(type, name);
 
-         byte[] var4;
+         byte[] bytes;
          try {
-            var4 = VaultCipher.method1853(var2, var3, var0);
+            bytes = VaultCipher.method1853(array, original, name);
          } finally {
-            Arrays.fill(var3, (byte)0);
+            Arrays.fill(original, (byte)0);
          }
 
-         return var4;
+         return bytes;
       }
    }
 
-   private static byte[] method2221(String var0) {
+   private static byte[] method2221(String name) {
       try {
-         byte[] var2;
-         try (InputStream var1 = method2222().getResourceAsStream(var0)) {
-            var2 = var1 == null ? null : var1.readAllBytes();
+         byte[] allBytes;
+         try (InputStream resourceAsStream = method2222().getResourceAsStream(name)) {
+            allBytes = resourceAsStream == null ? null : resourceAsStream.readAllBytes();
          }
 
-         return var2;
-      } catch (IOException var6) {
-         throw new RuntimeException("read " + var0, var6);
+         return allBytes;
+      } catch (IOException e) {
+         throw new RuntimeException("read " + name, e);
       }
    }
 
    private static ClassLoader method2222() {
-      ClassLoader var0 = VaultResourceLoader.class.getClassLoader();
-      return var0 != null ? var0 : ClassLoader.getSystemClassLoader();
+      ClassLoader classLoader = VaultResourceLoader.class.getClassLoader();
+      return classLoader != null ? classLoader : ClassLoader.getSystemClassLoader();
    }
 }

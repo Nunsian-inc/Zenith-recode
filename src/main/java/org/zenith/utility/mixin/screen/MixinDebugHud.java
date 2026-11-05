@@ -15,7 +15,7 @@ public abstract class MixinDebugHud {
       argsOnly = true,
       ordinal = 0
    )
-   private List<String> zenith$randomizeCoords(List<String> var1) {
-      return ScoreboardParser.isActive() ? ScoreboardParser.method7071(var1) : var1;
+   private List<String> zenith$randomizeCoords(List<String> strings) {
+      return ScoreboardParser.isActive() ? ScoreboardParser.method7071(strings) : strings;
    }
 }

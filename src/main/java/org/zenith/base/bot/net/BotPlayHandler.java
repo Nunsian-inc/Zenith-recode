@@ -155,8 +155,8 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
 
    public HashGenerator getComponentHasher() {
       if (this.zenith$componentHasher == null) {
-         RegistryOps var1 = this.registries.createSerializationContext(HashOps.CRC32C_INSTANCE);
-         this.zenith$componentHasher = var1x -> ((HashCode)((com.mojang.serialization.DataResult<HashCode>)(Object)var1x.encodeValue(var1))
+         RegistryOps serializationContext = this.registries.createSerializationContext(HashOps.CRC32C_INSTANCE);
+         this.zenith$componentHasher = var1x -> ((HashCode)((com.mojang.serialization.DataResult<HashCode>)(Object)var1x.encodeValue(serializationContext))
                .<IllegalArgumentException>getOrThrow(var1xx -> new IllegalArgumentException("Failed to hash " + var1x + ": " + var1xx)))
             .asInt();
       }
@@ -168,11 +168,11 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
       return this.playerLoadedSent;
    }
 
-   public BotPlayHandler(BotClient var1, BotConnection var2, BotConnectionState var3) {
-      super(var1, var2, var3);
-      this.profile = var3.profile();
-      this.registries = var3.receivedRegistries();
-      this.enabledFeatures = var3.enabledFeatures();
+   public BotPlayHandler(BotClient client, BotConnection connection, BotConnectionState botConnectionState) {
+      super(client, connection, botConnectionState);
+      this.profile = botConnectionState.profile();
+      this.registries = botConnectionState.receivedRegistries();
+      this.enabledFeatures = botConnectionState.enabledFeatures();
    }
 
    public GameProfile getProfile() {
@@ -202,11 +202,11 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    }
 
    public BotInteractionManager getInteractionManager() {
-      BotInteractionManager var1 = this.interactionManager;
-      if (var1 == null) {
+      BotInteractionManager interactionManager = this.interactionManager;
+      if (interactionManager == null) {
          throw new IllegalStateException("Bot interaction manager is not initialized (no GameJoin yet)");
       } else {
-         return var1;
+         return interactionManager;
       }
    }
 
@@ -221,9 +221,9 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
 
    @Nullable
    public Component getCurrentScreenTitle() {
-      BotPlayer var1 = this.player;
-      if (var1 != null && var1.containerMenu != null) {
-         return var1.containerMenu.containerId == this.currentScreenSyncId ? this.currentScreenTitle : null;
+      BotPlayer player = this.player;
+      if (player != null && player.containerMenu != null) {
+         return player.containerMenu.containerId == this.currentScreenSyncId ? this.currentScreenTitle : null;
       } else {
          return null;
       }
@@ -242,15 +242,15 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    }
 
    @Nullable
-   public PlayerInfo getPlayerListEntry(UUID var1) {
-      return this.playerListEntries.get(var1);
+   public PlayerInfo getPlayerListEntry(UUID uuid) {
+      return this.playerListEntries.get(uuid);
    }
 
    @Nullable
-   public PlayerInfo getPlayerListEntry(String var1) {
-      for (PlayerInfo var3 : this.playerListEntries.values()) {
-         if (var3.getProfile().name().equals(var1)) {
-            return var3;
+   public PlayerInfo getPlayerListEntry(String anObject) {
+      for (PlayerInfo playerInfo : this.playerListEntries.values()) {
+         if (playerInfo.getProfile().name().equals(anObject)) {
+            return playerInfo;
          }
       }
 
@@ -276,27 +276,27 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void tick() {
       if (this.client.getPhase() == BotPhase.PLAY && this.connection.getPacketListener() == this) {
-         BotWorld var1 = this.world;
-         BotPlayer var2 = this.player;
-         BotInteractionManager var3 = this.interactionManager;
-         if (var1 != null && var2 != null && var3 != null) {
-            var1.runQueuedChunkUpdates();
-            var1.getChunkSource().getLightEngine().runLightUpdates();
-            var3.tick();
-            this.client.onBotUpdate(var1, var2);
-            var1.tick(() -> true);
-            var1.tickEntities();
-            this.tickPlayerLoaded(var1, var2);
+         BotWorld world = this.world;
+         BotPlayer player = this.player;
+         BotInteractionManager interactionManager = this.interactionManager;
+         if (world != null && player != null && interactionManager != null) {
+            world.runQueuedChunkUpdates();
+            world.getChunkSource().getLightEngine().runLightUpdates();
+            interactionManager.tick();
+            this.client.onBotUpdate(world, player);
+            world.tick(() -> true);
+            world.tickEntities();
+            this.tickPlayerLoaded(world, player);
          }
 
          this.sendPacket(ServerboundClientTickEndPacket.INSTANCE);
       }
    }
 
-   private void tickPlayerLoaded(BotWorld var1, BotPlayer var2) {
+   private void tickPlayerLoaded(BotWorld world, BotPlayer player) {
       if (!this.playerLoadedSent) {
-         boolean var3 = var1.getChunkSource().getChunk(var2.chunkPosition().x(), var2.chunkPosition().z(), null, false) != null;
-         if (var3 || ++this.loadWaitTicks >= 60) {
+         boolean flag = world.getChunkSource().getChunk(player.chunkPosition().x(), player.chunkPosition().z(), null, false) != null;
+         if (flag || ++this.loadWaitTicks >= 60) {
             this.playerLoadedSent = true;
             this.loadWaitTicks = 0;
             this.sendPacket(new ServerboundPlayerLoadedPacket());
@@ -304,111 +304,111 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
       }
    }
 
-   public void sendChatMessage(String var1) {
-      this.sendPacket(new ServerboundChatPacket(var1, Instant.now(), SaltSupplier.getLong(), null, new Update(0, new BitSet(), (byte)0)));
+   public void sendChatMessage(String text) {
+      this.sendPacket(new ServerboundChatPacket(text, Instant.now(), SaltSupplier.getLong(), null, new Update(0, new BitSet(), (byte)0)));
    }
 
-   public void sendCommand(String var1) {
-      this.sendPacket(new ServerboundChatCommandPacket(var1));
+   public void sendCommand(String command) {
+      this.sendPacket(new ServerboundChatCommandPacket(command));
    }
 
    @Override
    public void handleLogin(ClientboundLoginPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      CommonPlayerSpawnInfo var2 = packet.commonPlayerSpawnInfo();
+      CommonPlayerSpawnInfo commonPlayerSpawnInfo = packet.commonPlayerSpawnInfo();
       this.worldKeys = new LinkedHashSet<>(packet.levels());
       this.chunkLoadDistance = packet.chunkRadius();
       this.simulationDistance = packet.simulationDistance();
       this.secureChatEnforced = packet.enforcesSecureChat();
-      BotInteractionManager var3 = new BotInteractionManager(this);
-      this.interactionManager = var3;
-      ClientLevelData var4 = new ClientLevelData(Difficulty.NORMAL, packet.hardcore(), var2.isFlat());
-      this.worldProperties = var4;
-      BotWorld var5 = new BotWorld(
-         this, var4, var2.dimension(), var2.dimensionType(), this.chunkLoadDistance, this.simulationDistance, var2.isDebug(), var2.seed(), var2.seaLevel()
+      BotInteractionManager botInteractionManager = new BotInteractionManager(this);
+      this.interactionManager = botInteractionManager;
+      ClientLevelData clientLevelData = new ClientLevelData(Difficulty.NORMAL, packet.hardcore(), commonPlayerSpawnInfo.isFlat());
+      this.worldProperties = clientLevelData;
+      BotWorld botWorld = new BotWorld(
+         this, clientLevelData, commonPlayerSpawnInfo.dimension(), commonPlayerSpawnInfo.dimensionType(), this.chunkLoadDistance, this.simulationDistance, commonPlayerSpawnInfo.isDebug(), commonPlayerSpawnInfo.seed(), commonPlayerSpawnInfo.seaLevel()
       );
-      this.world = var5;
-      BotPlayer var6 = new BotPlayer(var5, this, false, false);
-      this.player = var6;
-      var6.init();
-      var6.setId(packet.playerId());
-      var6.setYRot(-180.0F);
-      var5.setBotPlayer(var6);
-      var5.addEntity(var6);
-      var3.copyAbilities(var6);
-      var6.setReducedDebugInfo(packet.reducedDebugInfo());
-      var6.setLastDeathLocation(var2.lastDeathLocation());
-      var6.setPortalCooldown(var2.portalCooldown());
-      var3.setGameModes(var2.gameType(), var2.previousGameType().orElse(null));
+      this.world = botWorld;
+      BotPlayer botPlayer = new BotPlayer(botWorld, this, false, false);
+      this.player = botPlayer;
+      botPlayer.init();
+      botPlayer.setId(packet.playerId());
+      botPlayer.setYRot(-180.0F);
+      botWorld.setBotPlayer(botPlayer);
+      botWorld.addEntity(botPlayer);
+      botInteractionManager.copyAbilities(botPlayer);
+      botPlayer.setReducedDebugInfo(packet.reducedDebugInfo());
+      botPlayer.setLastDeathLocation(commonPlayerSpawnInfo.lastDeathLocation());
+      botPlayer.setPortalCooldown(commonPlayerSpawnInfo.portalCooldown());
+      botInteractionManager.setGameModes(commonPlayerSpawnInfo.gameType(), commonPlayerSpawnInfo.previousGameType().orElse(null));
       this.playerLoadedSent = false;
       this.loadWaitTicks = 0;
       this.initialChunksComing = false;
-      LOGGER.debug("Bot {} joined dimension={} entityId={}", new Object[]{this.client.name(), var2.dimension().identifier(), packet.playerId()});
-      this.client.onGameJoin(var5, var6);
+      LOGGER.debug("Bot {} joined dimension={} entityId={}", new Object[]{this.client.name(), commonPlayerSpawnInfo.dimension().identifier(), packet.playerId()});
+      this.client.onGameJoin(botWorld, botPlayer);
    }
 
    @Override
    public void handleRespawn(ClientboundRespawnPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      BotWorld var3 = this.world;
-      BotInteractionManager var4 = this.interactionManager;
-      if (var2 != null && var3 != null && var4 != null && this.worldProperties != null) {
-         CommonPlayerSpawnInfo var5 = packet.commonPlayerSpawnInfo();
-         ResourceKey var6 = var5.dimension();
-         Holder var7 = var5.dimensionType();
-         boolean var8 = var6 != var2.level().dimension();
-         BotWorld var9 = var3;
-         if (var8) {
-            var var10 = var3.getMapStates();
-            ClientLevelData var11 = new ClientLevelData(this.worldProperties.getDifficulty(), this.worldProperties.isHardcore(), var5.isFlat());
-            this.worldProperties = var11;
-            var9 = new BotWorld(this, var11, var6, var7, this.chunkLoadDistance, this.simulationDistance, var5.isDebug(), var5.seed(), var5.seaLevel());
-            var9.putMapStates(var10);
-            this.world = var9;
+      BotPlayer player = this.player;
+      BotWorld world = this.world;
+      BotInteractionManager interactionManager = this.interactionManager;
+      if (player != null && world != null && interactionManager != null && this.worldProperties != null) {
+         CommonPlayerSpawnInfo commonPlayerSpawnInfo = packet.commonPlayerSpawnInfo();
+         ResourceKey dimension = commonPlayerSpawnInfo.dimension();
+         Holder dimensionType = commonPlayerSpawnInfo.dimensionType();
+         boolean flag = dimension != player.level().dimension();
+         BotWorld botWorld = world;
+         if (flag) {
+            var mapStates = world.getMapStates();
+            ClientLevelData clientLevelData = new ClientLevelData(this.worldProperties.getDifficulty(), this.worldProperties.isHardcore(), commonPlayerSpawnInfo.isFlat());
+            this.worldProperties = clientLevelData;
+            botWorld = new BotWorld(this, clientLevelData, dimension, dimensionType, this.chunkLoadDistance, this.simulationDistance, commonPlayerSpawnInfo.isDebug(), commonPlayerSpawnInfo.seed(), commonPlayerSpawnInfo.seaLevel());
+            botWorld.putMapStates(mapStates);
+            this.world = botWorld;
          }
 
-         if (var2.hasContainerOpen()) {
-            var2.closeContainer();
+         if (player.hasContainerOpen()) {
+            player.closeContainer();
          }
 
-         boolean var13 = packet.shouldKeep((byte)2);
-         BotPlayer var14 = new BotPlayer(var9, this, var13 && var2.isShiftKeyDown(), var13 && var2.isSprinting());
-         var14.setId(var2.getId());
-         this.player = var14;
-         if (var13) {
-            var var12 = var2.getEntityData().getNonDefaultValues();
-            if (var12 != null) {
-               var14.getEntityData().assignValues(var12);
+         boolean shouldKeep = packet.shouldKeep((byte)2);
+         BotPlayer botPlayer = new BotPlayer(botWorld, this, shouldKeep && player.isShiftKeyDown(), shouldKeep && player.isSprinting());
+         botPlayer.setId(player.getId());
+         this.player = botPlayer;
+         if (shouldKeep) {
+            var nonDefaultValues = player.getEntityData().getNonDefaultValues();
+            if (nonDefaultValues != null) {
+               botPlayer.getEntityData().assignValues(nonDefaultValues);
             }
 
-            var14.setDeltaMovement(var2.getDeltaMovement());
-            var14.setYRot(var2.getYRot());
-            var14.setXRot(var2.getXRot());
+            botPlayer.setDeltaMovement(player.getDeltaMovement());
+            botPlayer.setYRot(player.getYRot());
+            botPlayer.setXRot(player.getXRot());
          } else {
-            var14.init();
-            var14.setYRot(-180.0F);
+            botPlayer.init();
+            botPlayer.setYRot(-180.0F);
          }
 
          if (packet.shouldKeep((byte)1)) {
-            var14.getAttributes().assignAllValues(var2.getAttributes());
+            botPlayer.getAttributes().assignAllValues(player.getAttributes());
          } else {
-            var14.getAttributes().assignBaseValues(var2.getAttributes());
+            botPlayer.getAttributes().assignBaseValues(player.getAttributes());
          }
 
-         var9.setBotPlayer(var14);
-         var9.addEntity(var14);
-         var4.copyAbilities(var14);
-         var14.setReducedDebugInfo(var2.isReducedDebugInfo());
-         var14.setLastDeathLocation(var5.lastDeathLocation());
-         var14.setPortalCooldown(var5.portalCooldown());
-         var4.setGameModes(var5.gameType(), var5.previousGameType().orElse(null));
+         botWorld.setBotPlayer(botPlayer);
+         botWorld.addEntity(botPlayer);
+         interactionManager.copyAbilities(botPlayer);
+         botPlayer.setReducedDebugInfo(player.isReducedDebugInfo());
+         botPlayer.setLastDeathLocation(commonPlayerSpawnInfo.lastDeathLocation());
+         botPlayer.setPortalCooldown(commonPlayerSpawnInfo.portalCooldown());
+         interactionManager.setGameModes(commonPlayerSpawnInfo.gameType(), commonPlayerSpawnInfo.previousGameType().orElse(null));
          this.playerLoadedSent = false;
          this.loadWaitTicks = 0;
-         if (var8) {
-            this.client.onGameJoin(var9, var14);
+         if (flag) {
+            this.client.onGameJoin(botWorld, botPlayer);
          } else {
-            this.client.onRespawn(var9, var14);
+            this.client.onRespawn(botWorld, botPlayer);
          }
       }
    }
@@ -423,11 +423,11 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
       this.loadWaitTicks = 0;
       this.client.setPhase(BotPhase.CONFIGURATION);
       this.client.onWorldUnload();
-      BotConnectionState var2 = new BotConnectionState(
+      BotConnectionState botConnectionState = new BotConnectionState(
          this.profile, this.registries, this.enabledFeatures, this.brand, this.serverCookies, this.customReportDetails, this.serverLinks
       );
-      BotConfigHandler var3 = new BotConfigHandler(this.client, this.connection, var2);
-      this.connection.transitionInbound(ConfigurationProtocols.CLIENTBOUND, var3);
+      BotConfigHandler botConfigHandler = new BotConfigHandler(this.client, this.connection, botConnectionState);
+      this.connection.transitionInbound(ConfigurationProtocols.CLIENTBOUND, botConfigHandler);
       this.connection.send(ServerboundConfigurationAcknowledgedPacket.INSTANCE);
       this.connection.transitionOutbound(ConfigurationProtocols.SERVERBOUND);
    }
@@ -436,44 +436,44 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    public void handleBundlePacket(ClientboundBundlePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
 
-      for (Packet var3 : packet.subPackets()) {
-         var3.handle(this);
+      for (Packet subPacket : packet.subPackets()) {
+         subPacket.handle(this);
       }
    }
 
    @Override
    public void handleMovePlayer(ClientboundPlayerPositionPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 == null) {
-         Vec3 var3 = packet.change().position();
-         this.sendPacket(new ServerboundAcceptTeleportationPacket(packet.id(), var3.x, var3.y, var3.z, packet.change().yRot(), packet.change().xRot()));
+      BotPlayer player = this.player;
+      if (player == null) {
+         Vec3 position = packet.change().position();
+         this.sendPacket(new ServerboundAcceptTeleportationPacket(packet.id(), position.x, position.y, position.z, packet.change().yRot(), packet.change().xRot()));
       } else {
-         if (!var2.isPassenger()) {
-            setPosition(packet.change(), packet.relatives(), var2, false);
+         if (!player.isPassenger()) {
+            setPosition(packet.change(), packet.relatives(), player, false);
          }
 
-         this.sendPacket(new ServerboundAcceptTeleportationPacket(packet.id(), var2.getX(), var2.getY(), var2.getZ(), var2.getYRot(), var2.getXRot()));
-         this.sendPacket(new PosRot(var2.getX(), var2.getY(), var2.getZ(), var2.getYRot(), var2.getXRot(), false, false));
+         this.sendPacket(new ServerboundAcceptTeleportationPacket(packet.id(), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot()));
+         this.sendPacket(new PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false));
       }
    }
 
-   private static boolean setPosition(PositionMoveRotation var0, Set<Relative> var1, Entity var2, boolean var3) {
-      PositionMoveRotation var4 = PositionMoveRotation.of(var2);
-      PositionMoveRotation var5 = PositionMoveRotation.calculateAbsolute(var4, var0, var1);
-      boolean var6 = var4.position().distanceToSqr(var5.position()) > 4096.0;
-      if (var3 && !var6) {
-         var2.moveOrInterpolateTo(var5.position(), var5.yRot(), var5.xRot());
-         var2.setDeltaMovement(var5.deltaMovement());
+   private static boolean setPosition(PositionMoveRotation change, Set<Relative> relatives, Entity player, boolean flag) {
+      PositionMoveRotation source = PositionMoveRotation.of(player);
+      PositionMoveRotation absolute = PositionMoveRotation.calculateAbsolute(source, change, relatives);
+      boolean flag2 = source.position().distanceToSqr(absolute.position()) > 4096.0;
+      if (flag && !flag2) {
+         player.moveOrInterpolateTo(absolute.position(), absolute.yRot(), absolute.xRot());
+         player.setDeltaMovement(absolute.deltaMovement());
          return true;
       } else {
-         var2.setPos(var5.position());
-         var2.setDeltaMovement(var5.deltaMovement());
-         var2.setYRot(var5.yRot());
-         var2.setXRot(var5.xRot());
-         PositionMoveRotation var7 = new PositionMoveRotation(var2.oldPosition(), Vec3.ZERO, var2.yRotO, var2.xRotO);
-         PositionMoveRotation var8 = PositionMoveRotation.calculateAbsolute(var7, var0, var1);
-         var2.setOldPosAndRot(var8.position(), var8.yRot(), var8.xRot());
+         player.setPos(absolute.position());
+         player.setDeltaMovement(absolute.deltaMovement());
+         player.setYRot(absolute.yRot());
+         player.setXRot(absolute.xRot());
+         PositionMoveRotation positionMoveRotation = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
+         PositionMoveRotation absolute2 = PositionMoveRotation.calculateAbsolute(positionMoveRotation, change, relatives);
+         player.setOldPosAndRot(absolute2.position(), absolute2.yRot(), absolute2.xRot());
          return false;
       }
    }
@@ -481,15 +481,15 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleRotatePlayer(ClientboundPlayerRotationPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var var3 = Relative.rotation(packet.relativeY(), packet.relativeX());
-         PositionMoveRotation var4 = PositionMoveRotation.of(var2);
-         PositionMoveRotation var5 = PositionMoveRotation.calculateAbsolute(var4, var4.withRotation(packet.yRot(), packet.xRot()), var3);
-         var2.setYRot(var5.yRot());
-         var2.setXRot(var5.xRot());
-         var2.setOldRot();
-         this.sendPacket(new Rot(var2.getYRot(), var2.getXRot(), false, false));
+      BotPlayer player = this.player;
+      if (player != null) {
+         var rotation = Relative.rotation(packet.relativeY(), packet.relativeX());
+         PositionMoveRotation source = PositionMoveRotation.of(player);
+         PositionMoveRotation absolute = PositionMoveRotation.calculateAbsolute(source, source.withRotation(packet.yRot(), packet.xRot()), rotation);
+         player.setYRot(absolute.yRot());
+         player.setXRot(absolute.xRot());
+         player.setOldRot();
+         this.sendPacket(new Rot(player.getYRot(), player.getXRot(), false, false));
       } else {
          this.sendPacket(new Rot(packet.yRot(), packet.xRot(), false, false));
       }
@@ -498,22 +498,22 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleMoveVehicle(ClientboundMoveVehiclePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         Entity var3 = var2.getRootVehicle();
-         if (var3 != var2 && var3.isLocalInstanceAuthoritative()) {
-            net.minecraft.core.PositionAndRotation var6 = packet.movingTo();
-            Vec3 var4 = var6.position();
-            Vec3 var5 = var3.getClientPosition();
-            if (var4.distanceTo(var5) > 1.0E-5F) {
-               if (var3.isInterpolating()) {
-                  var3.getInterpolation().cancel();
+      BotPlayer player = this.player;
+      if (player != null) {
+         Entity rootVehicle = player.getRootVehicle();
+         if (rootVehicle != player && rootVehicle.isLocalInstanceAuthoritative()) {
+            net.minecraft.core.PositionAndRotation movingTo = packet.movingTo();
+            Vec3 position = movingTo.position();
+            Vec3 clientPosition = rootVehicle.getClientPosition();
+            if (position.distanceTo(clientPosition) > 1.0E-5F) {
+               if (rootVehicle.isInterpolating()) {
+                  rootVehicle.getInterpolation().cancel();
                }
 
-               var3.absSnapTo(var4.x(), var4.y(), var4.z(), var6.yRot(), var6.xRot());
+               rootVehicle.absSnapTo(position.x(), position.y(), position.z(), movingTo.yRot(), movingTo.xRot());
             }
 
-            this.connection.send(ServerboundMoveVehiclePacket.fromEntity(var3));
+            this.connection.send(ServerboundMoveVehiclePacket.fromEntity(rootVehicle));
          }
       }
    }
@@ -532,46 +532,46 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleLevelChunkWithLight(ClientboundLevelChunkWithLightPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         int var3 = packet.x();
-         int var4 = packet.z();
-         ClientboundLevelChunkPacketData var5 = packet.chunkData();
-         var2.getChunkSource().loadChunkFromPacket(var3, var4, var5);
-         ClientboundLightUpdatePacketData var6 = packet.lightData();
-         var2.enqueueChunkUpdate(() -> {
-            this.readLightData(var3, var4, var6);
-            LevelChunk var5x = var2.getChunkSource().getChunk(var3, var4, false);
+      BotWorld world = this.world;
+      if (world != null) {
+         int x = packet.x();
+         int z = packet.z();
+         ClientboundLevelChunkPacketData chunkData = packet.chunkData();
+         world.getChunkSource().loadChunkFromPacket(x, z, chunkData);
+         ClientboundLightUpdatePacketData lightData = packet.lightData();
+         world.enqueueChunkUpdate(() -> {
+            this.readLightData(x, z, lightData);
+            LevelChunk var5x = world.getChunkSource().getChunk(x, z, false);
             if (var5x != null) {
-               this.markChunkSectionsReady(var2, var5x);
+               this.markChunkSectionsReady(world, var5x);
             }
          });
       }
    }
 
-   private void markChunkSectionsReady(BotWorld var1, LevelChunk var2) {
-      LevelLightEngine var3 = var1.getChunkSource().getLightEngine();
-      LevelChunkSection[] var4 = var2.getSections();
-      ChunkPos var5 = var2.getPos();
+   private void markChunkSectionsReady(BotWorld world, LevelChunk levelChunk) {
+      LevelLightEngine lightEngine = world.getChunkSource().getLightEngine();
+      LevelChunkSection[] sections = levelChunk.getSections();
+      ChunkPos pos = levelChunk.getPos();
 
-      for (int var6 = 0; var6 < var4.length; var6++) {
-         LevelChunkSection var7 = var4[var6];
-         int var8 = var1.getSectionYFromSectionIndex(var6);
-         var3.updateSectionStatus(SectionPos.of(var5, var8), var7.hasOnlyAir());
+      for (int i = 0; i < sections.length; i++) {
+         LevelChunkSection levelChunkSection = sections[i];
+         int sectionYFromSectionIndex = world.getSectionYFromSectionIndex(i);
+         lightEngine.updateSectionStatus(SectionPos.of(pos, sectionYFromSectionIndex), levelChunkSection.hasOnlyAir());
       }
    }
 
    @Override
    public void handleChunksBiomes(ClientboundChunksBiomesPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         for (ChunkBiomeData var4 : packet.chunkBiomeData()) {
-            var2.getChunkSource().onChunkBiomeData(var4.pos().x(), var4.pos().z(), var4.getReadBuffer());
+      BotWorld world = this.world;
+      if (world != null) {
+         for (ChunkBiomeData chunkBiomeData : packet.chunkBiomeData()) {
+            world.getChunkSource().onChunkBiomeData(chunkBiomeData.pos().x(), chunkBiomeData.pos().z(), chunkBiomeData.getReadBuffer());
          }
 
-         for (ChunkBiomeData var6 : packet.chunkBiomeData()) {
-            var2.resetChunkColor(new ChunkPos(var6.pos().x(), var6.pos().z()));
+         for (ChunkBiomeData chunkBiomeData : packet.chunkBiomeData()) {
+            world.resetChunkColor(new ChunkPos(chunkBiomeData.pos().x(), chunkBiomeData.pos().z()));
          }
       }
    }
@@ -579,22 +579,22 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleForgetLevelChunk(ClientboundForgetLevelChunkPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getChunkSource().unload(packet.pos());
-         ChunkPos var3 = packet.pos();
-         var2.enqueueChunkUpdate(() -> {
-            LevelLightEngine var2x = var2.getLightEngine();
-            var2x.setLightEnabled(var3, false);
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getChunkSource().unload(packet.pos());
+         ChunkPos pos = packet.pos();
+         world.enqueueChunkUpdate(() -> {
+            LevelLightEngine var2x = world.getLightEngine();
+            var2x.setLightEnabled(pos, false);
 
             for (int var3x = var2x.getMinLightSection(); var3x < var2x.getMaxLightSection(); var3x++) {
-               SectionPos var4 = SectionPos.of(var3, var3x);
-               var2x.queueSectionData(LightLayer.BLOCK, var4, null);
-               var2x.queueSectionData(LightLayer.SKY, var4, null);
+               SectionPos sectionPos = SectionPos.of(pos, var3x);
+               var2x.queueSectionData(LightLayer.BLOCK, sectionPos, null);
+               var2x.queueSectionData(LightLayer.SKY, sectionPos, null);
             }
 
-            for (int var5 = var2.getMinSectionY(); var5 <= var2.getMaxSectionY(); var5++) {
-               var2x.updateSectionStatus(SectionPos.of(var3, var5), true);
+            for (int i = world.getMinSectionY(); i <= world.getMaxSectionY(); i++) {
+               var2x.updateSectionStatus(SectionPos.of(pos, i), true);
             }
          });
       }
@@ -603,39 +603,39 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleLightUpdatePacket(ClientboundLightUpdatePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         int var3 = packet.x();
-         int var4 = packet.z();
-         ClientboundLightUpdatePacketData var5 = packet.lightData();
-         var2.enqueueChunkUpdate(() -> this.readLightData(var3, var4, var5));
+      BotWorld world = this.world;
+      if (world != null) {
+         int x = packet.x();
+         int z = packet.z();
+         ClientboundLightUpdatePacketData lightData = packet.lightData();
+         world.enqueueChunkUpdate(() -> this.readLightData(x, z, lightData));
       }
    }
 
-   private void readLightData(int var1, int var2, ClientboundLightUpdatePacketData var3) {
-      BotWorld var4 = this.world;
-      if (var4 != null) {
-         LevelLightEngine var5 = var4.getChunkSource().getLightEngine();
-         BitSet var6 = var3.skyYMask();
-         BitSet var7 = var3.emptySkyYMask();
-         var var8 = var3.skyUpdates().iterator();
-         this.updateLighting(var1, var2, var5, LightLayer.SKY, var6, var7, var8);
-         BitSet var9 = var3.blockYMask();
-         BitSet var10 = var3.emptyBlockYMask();
-         var var11 = var3.blockUpdates().iterator();
-         this.updateLighting(var1, var2, var5, LightLayer.BLOCK, var9, var10, var11);
-         var5.setLightEnabled(new ChunkPos(var1, var2), true);
+   private void readLightData(int x, int z, ClientboundLightUpdatePacketData lightData) {
+      BotWorld world = this.world;
+      if (world != null) {
+         LevelLightEngine lightEngine = world.getChunkSource().getLightEngine();
+         BitSet skyYMask = lightData.skyYMask();
+         BitSet emptySkyYMask = lightData.emptySkyYMask();
+         var iterator = lightData.skyUpdates().iterator();
+         this.updateLighting(x, z, lightEngine, LightLayer.SKY, skyYMask, emptySkyYMask, iterator);
+         BitSet blockYMask = lightData.blockYMask();
+         BitSet emptyBlockYMask = lightData.emptyBlockYMask();
+         var iterator2 = lightData.blockUpdates().iterator();
+         this.updateLighting(x, z, lightEngine, LightLayer.BLOCK, blockYMask, emptyBlockYMask, iterator2);
+         lightEngine.setLightEnabled(new ChunkPos(x, z), true);
       }
    }
 
-   private void updateLighting(int var1, int var2, LevelLightEngine var3, LightLayer var4, BitSet var5, BitSet var6, Iterator<byte[]> var7) {
-      for (int var8 = 0; var8 < var3.getLightSectionCount(); var8++) {
-         int var9 = var3.getMinLightSection() + var8;
-         boolean var10 = var5.get(var8);
-         boolean var11 = var6.get(var8);
-         if (var10 || var11) {
-            var3.queueSectionData(
-               var4, SectionPos.of(var1, var9, var2), var10 ? new DataLayer((byte[])((byte[])var7.next()).clone()) : new DataLayer()
+   private void updateLighting(int x, int z, LevelLightEngine lightEngine, LightLayer layer, BitSet skyYMask, BitSet emptySkyYMask, Iterator<byte[]> iterator) {
+      for (int i = 0; i < lightEngine.getLightSectionCount(); i++) {
+         int y = lightEngine.getMinLightSection() + i;
+         boolean flag = skyYMask.get(i);
+         boolean flag2 = emptySkyYMask.get(i);
+         if (flag || flag2) {
+            lightEngine.queueSectionData(
+               layer, SectionPos.of(x, y, z), flag ? new DataLayer((byte[])((byte[])iterator.next()).clone()) : new DataLayer()
             );
          }
       }
@@ -644,18 +644,18 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleChunkBlocksUpdate(ClientboundSectionBlocksUpdatePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         packet.runUpdates((var1, var2x) -> var2.handleBlockUpdate(var1, var2x, 19));
+      BotWorld world = this.world;
+      if (world != null) {
+         packet.runUpdates((pos, var2x) -> world.handleBlockUpdate(pos, var2x, 19));
       }
    }
 
    @Override
    public void handleBlockUpdate(ClientboundBlockUpdatePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.handleBlockUpdate(packet.getPos(), packet.getBlockState(), 19);
+      BotWorld world = this.world;
+      if (world != null) {
+         world.handleBlockUpdate(packet.getPos(), packet.getBlockState(), 19);
       }
    }
 
@@ -663,9 +663,9 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    public void handleSetChunkCacheRadius(ClientboundSetChunkCacheRadiusPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
       this.chunkLoadDistance = packet.getRadius();
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getChunkSource().updateLoadDistance(packet.getRadius());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getChunkSource().updateLoadDistance(packet.getRadius());
       }
    }
 
@@ -673,40 +673,40 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    public void handleSetSimulationDistance(ClientboundSetSimulationDistancePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
       this.simulationDistance = packet.simulationDistance();
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.setSimulationDistance(this.simulationDistance);
+      BotWorld world = this.world;
+      if (world != null) {
+         world.setSimulationDistance(this.simulationDistance);
       }
    }
 
    @Override
    public void handleSetChunkCacheCenter(ClientboundSetChunkCacheCenterPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getChunkSource().setChunkMapCenter(packet.getX(), packet.getZ());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getChunkSource().setChunkMapCenter(packet.getX(), packet.getZ());
       }
    }
 
    @Override
    public void handleBlockChangedAck(ClientboundBlockChangedAckPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.handlePlayerActionResponse(packet.sequence());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.handlePlayerActionResponse(packet.sequence());
       }
    }
 
    @Override
    public void handleBlockEntityData(ClientboundBlockEntityDataPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getBlockEntity(packet.getPos(), packet.getType()).ifPresent(var2x -> {
-            CompoundTag var3 = packet.getTag();
-            if (!var3.isEmpty()) {
-               try (ScopedCollector var4 = new ScopedCollector(var2x.problemPath(), LOGGER)) {
-                  var2x.loadWithComponents(TagValueInput.create(var4, this.registries, var3));
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getBlockEntity(packet.getPos(), packet.getType()).ifPresent(var2x -> {
+            CompoundTag tag = packet.getTag();
+            if (!tag.isEmpty()) {
+               try (ScopedCollector scopedCollector = new ScopedCollector(var2x.problemPath(), LOGGER)) {
+                  var2x.loadWithComponents(TagValueInput.create(scopedCollector, this.registries, tag));
                }
             }
          });
@@ -716,9 +716,9 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleBlockEvent(ClientboundBlockEventPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.blockEvent(packet.getPos(), packet.getBlock(), packet.getB0(), packet.getB1());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.blockEvent(packet.getPos(), packet.getBlock(), packet.getB0(), packet.getB1());
       }
    }
 
@@ -729,12 +729,12 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleLevelEvent(ClientboundLevelEventPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
+      BotWorld world = this.world;
+      if (world != null) {
          if (packet.isGlobalEvent()) {
-            var2.globalLevelEvent(packet.getType(), packet.getPos(), packet.getData());
+            world.globalLevelEvent(packet.getType(), packet.getPos(), packet.getData());
          } else {
-            var2.levelEvent(packet.getType(), packet.getPos(), packet.getData());
+            world.levelEvent(packet.getType(), packet.getPos(), packet.getData());
          }
       }
    }
@@ -742,16 +742,16 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleAddEntity(ClientboundAddEntityPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
+      BotWorld world = this.world;
+      if (world != null) {
          if (this.removedPlayerVehicleId.isPresent() && this.removedPlayerVehicleId.getAsInt() == packet.getId()) {
             this.removedPlayerVehicleId = OptionalInt.empty();
          }
 
-         Entity var3 = this.createEntity(var2, packet);
-         if (var3 != null) {
-            var3.recreateFromPacket(packet);
-            var2.addEntity(var3);
+         Entity entity = this.createEntity(world, packet);
+         if (entity != null) {
+            entity.recreateFromPacket(packet);
+            world.addEntity(entity);
          } else {
             LOGGER.warn("Bot {}: skipping entity with id {}", this.client.name(), packet.getType());
          }
@@ -759,29 +759,29 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    }
 
    @Nullable
-   private Entity createEntity(BotWorld var1, ClientboundAddEntityPacket var2) {
-      EntityType var3 = var2.getType();
-      if (var3 == net.minecraft.world.entity.EntityTypes.PLAYER) {
-         PlayerInfo var4 = this.getPlayerListEntry(var2.getUUID());
-         if (var4 == null) {
-            LOGGER.warn("Bot {}: server added player prior to sending player info (id {})", this.client.name(), var2.getUUID());
+   private Entity createEntity(BotWorld world, ClientboundAddEntityPacket packet) {
+      EntityType type = packet.getType();
+      if (type == net.minecraft.world.entity.EntityTypes.PLAYER) {
+         PlayerInfo playerListEntry = this.getPlayerListEntry(packet.getUUID());
+         if (playerListEntry == null) {
+            LOGGER.warn("Bot {}: server added player prior to sending player info (id {})", this.client.name(), packet.getUUID());
             return null;
          } else {
-            return new BotRemotePlayer(var1, this, var4.getProfile());
+            return new BotRemotePlayer(world, this, playerListEntry.getProfile());
          }
       } else {
-         return var3.create(var1, EntitySpawnReason.LOAD);
+         return type.create(world, EntitySpawnReason.LOAD);
       }
    }
 
    @Override
    public void handleSetEntityMotion(ClientboundSetEntityMotionPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.id());
-         if (var3 != null) {
-            var3.lerpMotion(packet.movement());
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.id());
+         if (entity != null) {
+            entity.lerpMotion(packet.movement());
          }
       }
    }
@@ -789,11 +789,11 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetEntityData(ClientboundSetEntityDataPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.id());
-         if (var3 != null) {
-            var3.getEntityData().assignValues(packet.packedItems());
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.id());
+         if (entity != null) {
+            entity.getEntityData().assignValues(packet.packedItems());
          }
       }
    }
@@ -801,29 +801,29 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleEntityPositionSync(ClientboundEntityPositionSyncPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      BotPlayer var3 = this.player;
-      if (var2 != null && var3 != null) {
-         Entity var4 = var2.getEntity(packet.id());
-         if (var4 != null) {
-            net.minecraft.world.entity.PositionPath var9 = packet.position();
-            Vec3 var5 = var9.endPosition();
-            var4.getPositionCodec().setBase(var5);
-            if (!var4.isLocalInstanceAuthoritative()) {
-               float var6 = packet.yRot();
-               float var7 = packet.xRot();
-               boolean var8 = var4.position().distanceToSqr(var5) > 4096.0;
-               if (var2.hasEntity(var4) && !var8) {
-                  var4.moveOrInterpolateTo(var9, var6, var7);
+      BotWorld world = this.world;
+      BotPlayer player = this.player;
+      if (world != null && player != null) {
+         Entity entity = world.getEntity(packet.id());
+         if (entity != null) {
+            net.minecraft.world.entity.PositionPath position = packet.position();
+            Vec3 endPosition = position.endPosition();
+            entity.getPositionCodec().setBase(endPosition);
+            if (!entity.isLocalInstanceAuthoritative()) {
+               float yRot = packet.yRot();
+               float xRot = packet.xRot();
+               boolean flag = entity.position().distanceToSqr(endPosition) > 4096.0;
+               if (world.hasEntity(entity) && !flag) {
+                  entity.moveOrInterpolateTo(position, yRot, xRot);
                } else {
-                  var4.snapTo(var5.x, var5.y, var5.z, var6, var7);
-                  if (var4.hasIndirectPassenger(var3)) {
-                     var4.positionRider(var3);
-                     var3.setOldPosAndRot();
+                  entity.snapTo(endPosition.x, endPosition.y, endPosition.z, yRot, xRot);
+                  if (entity.hasIndirectPassenger(player)) {
+                     entity.positionRider(player);
+                     player.setOldPosAndRot();
                   }
                }
 
-               var4.setOnGround(packet.onGround());
+               entity.setOnGround(packet.onGround());
             }
          }
       }
@@ -832,28 +832,28 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleTeleportEntity(ClientboundTeleportEntityPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      BotPlayer var3 = this.player;
-      if (var2 != null && var3 != null) {
-         Entity var4 = var2.getEntity(packet.id());
-         if (var4 == null) {
+      BotWorld world = this.world;
+      BotPlayer player = this.player;
+      if (world != null && player != null) {
+         Entity entity = world.getEntity(packet.id());
+         if (entity == null) {
             if (this.removedPlayerVehicleId.isPresent() && this.removedPlayerVehicleId.getAsInt() == packet.id()) {
                LOGGER.debug("Bot {}: teleport for removed vehicle {}, applying to player", this.client.name(), packet.id());
-               setPosition(packet.change(), packet.relatives(), var3, false);
-               this.connection.send(new PosRot(var3.getX(), var3.getY(), var3.getZ(), var3.getYRot(), var3.getXRot(), false, false));
+               setPosition(packet.change(), packet.relatives(), player, false);
+               this.connection.send(new PosRot(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot(), false, false));
             }
          } else {
-            boolean var5 = packet.relatives().contains(Relative.X)
+            boolean flag = packet.relatives().contains(Relative.X)
                || packet.relatives().contains(Relative.Y)
                || packet.relatives().contains(Relative.Z);
-            boolean var6 = var2.hasEntity(var4) || !var4.isLocalInstanceAuthoritative() || var5;
-            boolean var7 = setPosition(packet.change(), packet.relatives(), var4, var6);
-            var4.setOnGround(packet.onGround());
-            if (!var7 && var4.hasIndirectPassenger(var3)) {
-               var4.positionRider(var3);
-               var3.setOldPosAndRot();
-               if (var4.isLocalInstanceAuthoritative()) {
-                  this.connection.send(ServerboundMoveVehiclePacket.fromEntity(var4));
+            boolean flag2 = world.hasEntity(entity) || !entity.isLocalInstanceAuthoritative() || flag;
+            boolean setPosition2 = setPosition(packet.change(), packet.relatives(), entity, flag2);
+            entity.setOnGround(packet.onGround());
+            if (!setPosition2 && entity.hasIndirectPassenger(player)) {
+               entity.positionRider(player);
+               player.setOldPosAndRot();
+               if (entity.isLocalInstanceAuthoritative()) {
+                  this.connection.send(ServerboundMoveVehiclePacket.fromEntity(entity));
                }
             }
          }
@@ -863,30 +863,30 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleMoveEntity(ClientboundMoveEntityPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = packet.getEntity(var2);
-         if (var3 != null) {
-            if (var3.isLocalInstanceAuthoritative()) {
-               VecDeltaCodec var4 = var3.getPositionCodec();
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = packet.getEntity(world);
+         if (entity != null) {
+            if (entity.isLocalInstanceAuthoritative()) {
+               VecDeltaCodec positionCodec = entity.getPositionCodec();
                if (packet.hasPosition()) {
-                  var4.setBase(packet.getPositionDelta().decode(var4).endPosition());
+                  positionCodec.setBase(packet.getPositionDelta().decode(positionCodec).endPosition());
                }
             } else {
                if (packet.hasPosition()) {
-                  VecDeltaCodec var6 = var3.getPositionCodec();
-                  net.minecraft.world.entity.PositionPath var7 = packet.getPositionDelta().decode(var6);
-                  var6.setBase(var7.endPosition());
+                  VecDeltaCodec positionCodec = entity.getPositionCodec();
+                  net.minecraft.world.entity.PositionPath position = packet.getPositionDelta().decode(positionCodec);
+                  positionCodec.setBase(position.endPosition());
                   if (packet.hasRotation()) {
-                     var3.moveOrInterpolateTo(var7, packet.getYRot(), packet.getXRot());
+                     entity.moveOrInterpolateTo(position, packet.getYRot(), packet.getXRot());
                   } else {
-                     var3.moveOrInterpolateTo(var7);
+                     entity.moveOrInterpolateTo(position);
                   }
                } else if (packet.hasRotation()) {
-                  var3.moveOrInterpolateTo(packet.getYRot(), packet.getXRot());
+                  entity.moveOrInterpolateTo(packet.getYRot(), packet.getXRot());
                }
 
-               var3.setOnGround(packet.isOnGround());
+               entity.setOnGround(packet.isOnGround());
             }
          }
       }
@@ -895,11 +895,11 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleRotateMob(ClientboundRotateHeadPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = packet.getEntity(var2);
-         if (var3 != null) {
-            var3.lerpHeadTo(packet.getYHeadRot(), 3);
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = packet.getEntity(world);
+         if (entity != null) {
+            entity.lerpHeadTo(packet.getYHeadRot(), 3);
          }
       }
    }
@@ -907,17 +907,17 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleRemoveEntities(ClientboundRemoveEntitiesPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      BotPlayer var3 = this.player;
-      if (var2 != null) {
+      BotWorld world = this.world;
+      BotPlayer player = this.player;
+      if (world != null) {
          packet.entityIds().forEach(var3x -> {
-            Entity var4 = var2.getEntity(var3x);
-            if (var4 != null) {
-               if (var3 != null && var4.hasIndirectPassenger(var3)) {
+            Entity entity = world.getEntity(var3x);
+            if (entity != null) {
+               if (player != null && entity.hasIndirectPassenger(player)) {
                   this.removedPlayerVehicleId = OptionalInt.of(var3x);
                }
 
-               var2.removeEntity(var3x, RemovalReason.DISCARDED);
+               world.removeEntity(var3x, RemovalReason.DISCARDED);
             }
          });
       }
@@ -926,12 +926,12 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleAnimate(ClientboundAnimatePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.getId());
-         if (var3 != null) {
-            if (packet.getAction() == ClientboundAnimatePacket.WAKE_UP && var3 instanceof Player var4) {
-               var4.stopSleepInBed(false, false);
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.getId());
+         if (entity != null) {
+            if (packet.getAction() == ClientboundAnimatePacket.WAKE_UP && entity instanceof Player player) {
+               player.stopSleepInBed(false, false);
             }
          }
       }
@@ -940,9 +940,9 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSwingAnimation(net.minecraft.network.protocol.game.ClientboundSwingAnimationPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null && var2.getEntity(packet.entityId()) instanceof LivingEntity var3) {
-         var3.swing(packet.hand(), packet.animation(), false);
+      BotWorld world = this.world;
+      if (world != null && world.getEntity(packet.entityId()) instanceof LivingEntity livingEntity) {
+         livingEntity.swing(packet.hand(), packet.animation(), false);
       }
    }
 
@@ -958,17 +958,17 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleEntityEvent(ClientboundEntityEventPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = packet.getEntity(var2);
-         if (var3 != null) {
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = packet.getEntity(world);
+         if (entity != null) {
             switch (packet.getEventId()) {
                case 21:
                case 35:
                case 63:
                   break;
                default:
-                  var3.handleEntityEvent(packet.getEventId());
+                  entity.handleEntityEvent(packet.getEventId());
             }
          }
       }
@@ -977,29 +977,29 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleEntityLinkPacket(ClientboundSetEntityLinkPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null && var2.getEntity(packet.getSourceId()) instanceof Leashable var3) {
-         var3.setDelayedLeashHolderId(packet.getDestId());
+      BotWorld world = this.world;
+      if (world != null && world.getEntity(packet.getSourceId()) instanceof Leashable leashable) {
+         leashable.setDelayedLeashHolderId(packet.getDestId());
       }
    }
 
    @Override
    public void handleSetEntityPassengersPacket(ClientboundSetPassengersPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      BotPlayer var3 = this.player;
-      if (var2 != null) {
-         Entity var4 = var2.getEntity(packet.getVehicle());
-         if (var4 == null) {
+      BotWorld world = this.world;
+      BotPlayer player = this.player;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.getVehicle());
+         if (entity == null) {
             LOGGER.warn("Bot {}: received passengers for unknown entity", this.client.name());
          } else {
-            var4.ejectPassengers();
+            entity.ejectPassengers();
 
-            for (int var8 : packet.getPassengers()) {
-               Entity var9 = var2.getEntity(var8);
-               if (var9 != null) {
-                  var9.startRiding(var4, true, false);
-                  if (var9 == var3) {
+            for (int passenger : packet.getPassengers()) {
+               Entity entity2 = world.getEntity(passenger);
+               if (entity2 != null) {
+                  entity2.startRiding(entity, true, false);
+                  if (entity2 == player) {
                      this.removedPlayerVehicleId = OptionalInt.empty();
                   }
                }
@@ -1011,25 +1011,25 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleUpdateAttributes(ClientboundUpdateAttributesPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.getEntityId());
-         if (var3 != null) {
-            if (!(var3 instanceof LivingEntity var4)) {
-               throw new IllegalStateException("Server tried to update attributes of a non-living entity (actually: " + var3 + ")");
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.getEntityId());
+         if (entity != null) {
+            if (!(entity instanceof LivingEntity livingEntity)) {
+               throw new IllegalStateException("Server tried to update attributes of a non-living entity (actually: " + entity + ")");
             } else {
-               AttributeMap var5 = var4.getAttributes();
+               AttributeMap attributes = livingEntity.getAttributes();
 
-               for (AttributeSnapshot var7 : packet.getValues()) {
-                  AttributeInstance var8 = var5.getInstance(var7.attribute());
-                  if (var8 == null) {
-                     LOGGER.warn("Bot {}: entity {} does not have attribute {}", new Object[]{this.client.name(), var3, var7.attribute().getRegisteredName()});
+               for (AttributeSnapshot attributeSnapshot : packet.getValues()) {
+                  AttributeInstance attributeInstance = attributes.getInstance(attributeSnapshot.attribute());
+                  if (attributeInstance == null) {
+                     LOGGER.warn("Bot {}: entity {} does not have attribute {}", new Object[]{this.client.name(), entity, attributeSnapshot.attribute().getRegisteredName()});
                   } else {
-                     var8.setBaseValue(var7.base());
-                     var8.removeModifiers();
+                     attributeInstance.setBaseValue(attributeSnapshot.base());
+                     attributeInstance.removeModifiers();
 
-                     for (AttributeModifier var10 : var7.modifiers()) {
-                        var8.addTransientModifier(var10);
+                     for (AttributeModifier modifier : attributeSnapshot.modifiers()) {
+                        attributeInstance.addTransientModifier(modifier);
                      }
                   }
                }
@@ -1041,18 +1041,18 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleUpdateMobEffect(ClientboundUpdateMobEffectPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         if (var2.getEntity(packet.getEntityId()) instanceof LivingEntity var4) {
-            Holder var5 = packet.getEffect();
-            MobEffectInstance var6 = new MobEffectInstance(
-               var5, packet.getEffectDurationTicks(), packet.getEffectAmplifier(), packet.isEffectAmbient(), packet.isEffectVisible(), packet.effectShowsIcon(), null
+      BotWorld world = this.world;
+      if (world != null) {
+         if (world.getEntity(packet.getEntityId()) instanceof LivingEntity livingEntity) {
+            Holder effect = packet.getEffect();
+            MobEffectInstance mobEffectInstance = new MobEffectInstance(
+               effect, packet.getEffectDurationTicks(), packet.getEffectAmplifier(), packet.isEffectAmbient(), packet.isEffectVisible(), packet.effectShowsIcon(), null
             );
             if (!packet.shouldBlend()) {
-               var6.skipBlending();
+               mobEffectInstance.skipBlending();
             }
 
-            var4.forceAddEffect(var6, null);
+            livingEntity.forceAddEffect(mobEffectInstance, null);
          }
       }
    }
@@ -1060,29 +1060,29 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleRemoveMobEffect(ClientboundRemoveMobEffectPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null && packet.getEntity(var2) instanceof LivingEntity var3) {
-         var3.removeEffectNoUpdate(packet.effect());
+      BotWorld world = this.world;
+      if (world != null && packet.getEntity(world) instanceof LivingEntity livingEntity) {
+         livingEntity.removeEffectNoUpdate(packet.effect());
       }
    }
 
    @Override
    public void handleSetEquipment(ClientboundSetEquipmentPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null && var2.getEntity(packet.getEntity()) instanceof LivingEntity var3) {
-         packet.getSlots().forEach(var1 -> var3.setItemSlot((EquipmentSlot)var1.getFirst(), (ItemStack)var1.getSecond()));
+      BotWorld world = this.world;
+      if (world != null && world.getEntity(packet.getEntity()) instanceof LivingEntity livingEntity) {
+         packet.getSlots().forEach(slot -> livingEntity.setItemSlot((EquipmentSlot)slot.getFirst(), (ItemStack)slot.getSecond()));
       }
    }
 
    @Override
    public void handleDamageEvent(ClientboundDamageEventPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.entityId());
-         if (var3 != null) {
-            var3.handleDamageEvent(packet.getSource(var2));
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.entityId());
+         if (entity != null) {
+            entity.handleDamageEvent(packet.getSource(world));
          }
       }
    }
@@ -1090,11 +1090,11 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleHurtAnimation(ClientboundHurtAnimationPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.id());
-         if (var3 != null) {
-            var3.animateHurt(packet.yaw());
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.id());
+         if (entity != null) {
+            entity.animateHurt(packet.yaw());
          }
       }
    }
@@ -1102,13 +1102,13 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleMinecartAlongTrack(ClientboundMoveMinecartPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = packet.getEntity(var2);
-         if (var3 instanceof AbstractMinecart var4
-            && !var3.isLocalInstanceAuthoritative()
-            && var4.getBehavior() instanceof NewMinecartBehavior var5) {
-            var5.lerpSteps.addAll(packet.lerpSteps());
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = packet.getEntity(world);
+         if (entity instanceof AbstractMinecart abstractMinecart
+            && !entity.isLocalInstanceAuthoritative()
+            && abstractMinecart.getBehavior() instanceof NewMinecartBehavior newMinecartBehavior) {
+            newMinecartBehavior.lerpSteps.addAll(packet.lerpSteps());
          }
       }
    }
@@ -1116,30 +1116,30 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleProjectilePowerPacket(ClientboundProjectilePowerPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null && var2.getEntity(packet.getId()) instanceof AbstractHurtingProjectile var3) {
-         var3.accelerationPower = packet.getAccelerationPower();
+      BotWorld world = this.world;
+      if (world != null && world.getEntity(packet.getId()) instanceof AbstractHurtingProjectile hurtingProjectile) {
+         hurtingProjectile.accelerationPower = packet.getAccelerationPower();
       }
    }
 
    @Override
    public void handleTakeItemEntity(ClientboundTakeItemEntityPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         Entity var3 = var2.getEntity(packet.getItemId());
-         if (var3 != null) {
-            if (var3 instanceof ItemEntity var4) {
-               ItemStack var5 = var4.getItem();
-               if (!var5.isEmpty()) {
-                  var5.shrink(packet.getAmount());
+      BotWorld world = this.world;
+      if (world != null) {
+         Entity entity = world.getEntity(packet.getItemId());
+         if (entity != null) {
+            if (entity instanceof ItemEntity itemEntity) {
+               ItemStack stack = itemEntity.getItem();
+               if (!stack.isEmpty()) {
+                  stack.shrink(packet.getAmount());
                }
 
-               if (var5.isEmpty()) {
-                  var2.removeEntity(packet.getItemId(), RemovalReason.DISCARDED);
+               if (stack.isEmpty()) {
+                  world.removeEntity(packet.getItemId(), RemovalReason.DISCARDED);
                }
-            } else if (!(var3 instanceof ExperienceOrb)) {
-               var2.removeEntity(packet.getItemId(), RemovalReason.DISCARDED);
+            } else if (!(entity instanceof ExperienceOrb)) {
+               world.removeEntity(packet.getItemId(), RemovalReason.DISCARDED);
             }
          }
       }
@@ -1148,21 +1148,21 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleExplosion(ClientboundExplodePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         packet.playerKnockback().ifPresent(var2::addDeltaMovement);
+      BotPlayer player = this.player;
+      if (player != null) {
+         packet.playerKnockback().ifPresent(player::addDeltaMovement);
       }
    }
 
    @Override
    public void handleLookAt(ClientboundPlayerLookAtPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      BotPlayer var3 = this.player;
-      if (var2 != null && var3 != null) {
-         Vec3 var4 = packet.getPosition(var2);
-         if (var4 != null) {
-            var3.lookAt(packet.getFromAnchor(), var4);
+      BotWorld world = this.world;
+      BotPlayer player = this.player;
+      if (world != null && player != null) {
+         Vec3 position = packet.getPosition(world);
+         if (position != null) {
+            player.lookAt(packet.getFromAnchor(), position);
          }
       }
    }
@@ -1170,43 +1170,43 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetHealth(ClientboundSetHealthPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var2.updateHealth(packet.getHealth());
-         var2.getFoodData().setFoodLevel(packet.getFood());
-         var2.getFoodData().setSaturation(packet.getSaturation());
+      BotPlayer player = this.player;
+      if (player != null) {
+         player.updateHealth(packet.getHealth());
+         player.getFoodData().setFoodLevel(packet.getFood());
+         player.getFoodData().setSaturation(packet.getSaturation());
       }
    }
 
    @Override
    public void handleSetExperience(ClientboundSetExperiencePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var2.setExperience(packet.getExperienceProgress(), packet.getTotalExperience(), packet.getExperienceLevel());
+      BotPlayer player = this.player;
+      if (player != null) {
+         player.setExperience(packet.getExperienceProgress(), packet.getTotalExperience(), packet.getExperienceLevel());
       }
    }
 
    @Override
    public void handleSetHeldSlot(ClientboundSetHeldSlotPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null && Inventory.isHotbarSlot(packet.slot())) {
-         var2.getInventory().setSelectedSlot(packet.slot());
+      BotPlayer player = this.player;
+      if (player != null && Inventory.isHotbarSlot(packet.slot())) {
+         player.getInventory().setSelectedSlot(packet.slot());
       }
    }
 
    @Override
    public void handleContainerSetSlot(ClientboundContainerSetSlotPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         ItemStack var3 = packet.getItem();
-         int var4 = packet.getSlot();
+      BotPlayer player = this.player;
+      if (player != null) {
+         ItemStack itemStack = packet.getItem();
+         int slot = packet.getSlot();
          if (packet.getContainerId() == 0) {
-            var2.inventoryMenu.setItem(var4, packet.getStateId(), var3);
-         } else if (packet.getContainerId() == var2.containerMenu.containerId) {
-            var2.containerMenu.setItem(var4, packet.getStateId(), var3);
+            player.inventoryMenu.setItem(slot, packet.getStateId(), itemStack);
+         } else if (packet.getContainerId() == player.containerMenu.containerId) {
+            player.containerMenu.setItem(slot, packet.getStateId(), itemStack);
          }
       }
    }
@@ -1214,30 +1214,30 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetCursorItem(ClientboundSetCursorItemPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var2.containerMenu.setCarried(packet.contents());
+      BotPlayer player = this.player;
+      if (player != null) {
+         player.containerMenu.setCarried(packet.contents());
       }
    }
 
    @Override
    public void handleSetPlayerInventory(ClientboundSetPlayerInventoryPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var2.getInventory().setItem(packet.slot(), packet.contents());
+      BotPlayer player = this.player;
+      if (player != null) {
+         player.getInventory().setItem(packet.slot(), packet.contents());
       }
    }
 
    @Override
    public void handleContainerContent(ClientboundContainerSetContentPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
+      BotPlayer player = this.player;
+      if (player != null) {
          if (packet.containerId() == 0) {
-            var2.inventoryMenu.initializeContents(packet.stateId(), packet.items(), packet.carriedItem());
-         } else if (packet.containerId() == var2.containerMenu.containerId) {
-            var2.containerMenu.initializeContents(packet.stateId(), packet.items(), packet.carriedItem());
+            player.inventoryMenu.initializeContents(packet.stateId(), packet.items(), packet.carriedItem());
+         } else if (packet.containerId() == player.containerMenu.containerId) {
+            player.containerMenu.initializeContents(packet.stateId(), packet.items(), packet.carriedItem());
          }
       }
    }
@@ -1245,19 +1245,19 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleContainerSetData(ClientboundContainerSetDataPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null && var2.containerMenu.containerId == packet.getContainerId()) {
-         var2.containerMenu.setData(packet.getId(), packet.getValue());
+      BotPlayer player = this.player;
+      if (player != null && player.containerMenu.containerId == packet.getContainerId()) {
+         player.containerMenu.setData(packet.getId(), packet.getValue());
       }
    }
 
    @Override
    public void handleOpenScreen(ClientboundOpenScreenPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         AbstractContainerMenu var3 = packet.getType().create(packet.getContainerId(), var2.getInventory());
-         var2.containerMenu = var3;
+      BotPlayer player = this.player;
+      if (player != null) {
+         AbstractContainerMenu containerMenu = packet.getType().create(packet.getContainerId(), player.getInventory());
+         player.containerMenu = containerMenu;
          this.currentScreenTitle = packet.getTitle();
          this.currentScreenSyncId = packet.getContainerId();
       }
@@ -1266,24 +1266,24 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleContainerClose(ClientboundContainerClosePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var2.closeScreen();
+      BotPlayer player = this.player;
+      if (player != null) {
+         player.closeScreen();
       }
    }
 
    @Override
    public void handleMerchantOffers(ClientboundMerchantOffersPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         AbstractContainerMenu var3 = var2.containerMenu;
-         if (packet.getContainerId() == var3.containerId && var3 instanceof MerchantMenu var4) {
-            var4.setOffers(packet.getOffers());
-            var4.setXp(packet.getVillagerXp());
-            var4.setMerchantLevel(packet.getVillagerLevel());
-            var4.setShowProgressBar(packet.showProgress());
-            var4.setCanRestock(packet.canRestock());
+      BotPlayer player = this.player;
+      if (player != null) {
+         AbstractContainerMenu containerMenu = player.containerMenu;
+         if (packet.getContainerId() == containerMenu.containerId && containerMenu instanceof MerchantMenu merchantMenu) {
+            merchantMenu.setOffers(packet.getOffers());
+            merchantMenu.setXp(packet.getVillagerXp());
+            merchantMenu.setMerchantLevel(packet.getVillagerLevel());
+            merchantMenu.setShowProgressBar(packet.showProgress());
+            merchantMenu.setCanRestock(packet.canRestock());
          }
       }
    }
@@ -1291,12 +1291,12 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleItemCooldown(ClientboundCooldownPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
+      BotPlayer player = this.player;
+      if (player != null) {
          if (packet.duration() == 0) {
-            var2.getCooldowns().removeCooldown(packet.cooldownGroup());
+            player.getCooldowns().removeCooldown(packet.cooldownGroup());
          } else {
-            var2.getCooldowns().addCooldown(packet.cooldownGroup(), packet.duration());
+            player.getCooldowns().addCooldown(packet.cooldownGroup(), packet.duration());
          }
       }
    }
@@ -1304,26 +1304,26 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handlePlayerAbilities(ClientboundPlayerAbilitiesPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotPlayer var2 = this.player;
-      if (var2 != null) {
-         var2.getAbilities().flying = packet.isFlying();
-         var2.getAbilities().instabuild = packet.canInstabuild();
-         var2.getAbilities().invulnerable = packet.isInvulnerable();
-         var2.getAbilities().mayfly = packet.canFly();
-         var2.getAbilities().setFlyingSpeed(packet.getFlyingSpeed());
-         var2.getAbilities().setWalkingSpeed(packet.getWalkingSpeed());
+      BotPlayer player = this.player;
+      if (player != null) {
+         player.getAbilities().flying = packet.isFlying();
+         player.getAbilities().instabuild = packet.canInstabuild();
+         player.getAbilities().invulnerable = packet.isInvulnerable();
+         player.getAbilities().mayfly = packet.canFly();
+         player.getAbilities().setFlyingSpeed(packet.getFlyingSpeed());
+         player.getAbilities().setWalkingSpeed(packet.getWalkingSpeed());
       }
    }
 
    @Override
    public void handlePlayerCombatKill(ClientboundPlayerCombatKillPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      BotPlayer var3 = this.player;
-      if (var2 != null && var3 != null) {
-         Entity var4 = var2.getEntity(packet.playerId());
-         if (var4 == var3) {
-            var3.requestRespawn();
+      BotWorld world = this.world;
+      BotPlayer player = this.player;
+      if (world != null && player != null) {
+         Entity entity = world.getEntity(packet.playerId());
+         if (entity == player) {
+            player.requestRespawn();
          }
       }
    }
@@ -1331,26 +1331,26 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleGameEvent(ClientboundGameEventPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      Type var3 = packet.getEvent();
-      float var4 = packet.getParam();
-      int var5 = Mth.floor(var4 + 0.5F);
-      if (var3 == ClientboundGameEventPacket.START_RAINING && var2 != null) {
-         var2.setRainLevel(0.0F);
-      } else if (var3 == ClientboundGameEventPacket.STOP_RAINING && var2 != null) {
-         var2.setRainLevel(1.0F);
-      } else if (var3 == ClientboundGameEventPacket.CHANGE_GAME_MODE) {
-         BotInteractionManager var6 = this.interactionManager;
-         if (var6 != null) {
-            var6.setGameMode(GameType.byId(var5));
+      BotWorld world = this.world;
+      Type event = packet.getEvent();
+      float rainLevel = packet.getParam();
+      int id = Mth.floor(rainLevel + 0.5F);
+      if (event == ClientboundGameEventPacket.START_RAINING && world != null) {
+         world.setRainLevel(0.0F);
+      } else if (event == ClientboundGameEventPacket.STOP_RAINING && world != null) {
+         world.setRainLevel(1.0F);
+      } else if (event == ClientboundGameEventPacket.CHANGE_GAME_MODE) {
+         BotInteractionManager interactionManager = this.interactionManager;
+         if (interactionManager != null) {
+            interactionManager.setGameMode(GameType.byId(id));
          }
-      } else if (var3 == ClientboundGameEventPacket.WIN_GAME) {
+      } else if (event == ClientboundGameEventPacket.WIN_GAME) {
          this.sendPacket(new ServerboundClientCommandPacket(Action.PERFORM_RESPAWN));
-      } else if (var3 == ClientboundGameEventPacket.RAIN_LEVEL_CHANGE && var2 != null) {
-         var2.setRainLevel(var4);
-      } else if (var3 == ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE && var2 != null) {
-         var2.setThunderLevel(var4);
-      } else if (var3 == ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START) {
+      } else if (event == ClientboundGameEventPacket.RAIN_LEVEL_CHANGE && world != null) {
+         world.setRainLevel(rainLevel);
+      } else if (event == ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE && world != null) {
+         world.setThunderLevel(rainLevel);
+      } else if (event == ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START) {
          this.initialChunksComing = true;
       }
    }
@@ -1362,9 +1362,9 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetTime(ClientboundSetTimePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.setTime(packet.gameTime());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.setTime(packet.gameTime());
          this.clockManager.handleUpdates(packet.gameTime(), packet.clockUpdates());
       }
    }
@@ -1372,9 +1372,9 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetSpawn(ClientboundSetDefaultSpawnPositionPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.setRespawnData(packet.respawnData());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.setRespawnData(packet.respawnData());
       }
    }
 
@@ -1390,101 +1390,101 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleInitializeBorder(ClientboundInitializeBorderPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         WorldBorder var3 = var2.getWorldBorder();
-         var3.setCenter(packet.getNewCenterX(), packet.getNewCenterZ());
-         long var4 = packet.getLerpTime();
-         if (var4 > 0L) {
-            var3.lerpSizeBetween(packet.getOldSize(), packet.getNewSize(), var4, 0L);
+      BotWorld world = this.world;
+      if (world != null) {
+         WorldBorder worldBorder = world.getWorldBorder();
+         worldBorder.setCenter(packet.getNewCenterX(), packet.getNewCenterZ());
+         long lerpTime = packet.getLerpTime();
+         if (lerpTime > 0L) {
+            worldBorder.lerpSizeBetween(packet.getOldSize(), packet.getNewSize(), lerpTime, 0L);
          } else {
-            var3.setSize(packet.getNewSize());
+            worldBorder.setSize(packet.getNewSize());
          }
 
-         var3.setAbsoluteMaxSize(packet.getNewAbsoluteMaxSize());
-         var3.setWarningBlocks(packet.getWarningBlocks());
-         var3.setWarningTime(packet.getWarningTime());
+         worldBorder.setAbsoluteMaxSize(packet.getNewAbsoluteMaxSize());
+         worldBorder.setWarningBlocks(packet.getWarningBlocks());
+         worldBorder.setWarningTime(packet.getWarningTime());
       }
    }
 
    @Override
    public void handleSetBorderCenter(ClientboundSetBorderCenterPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getWorldBorder().setCenter(packet.getNewCenterX(), packet.getNewCenterZ());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getWorldBorder().setCenter(packet.getNewCenterX(), packet.getNewCenterZ());
       }
    }
 
    @Override
    public void handleSetBorderLerpSize(ClientboundSetBorderLerpSizePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getWorldBorder().lerpSizeBetween(packet.getOldSize(), packet.getNewSize(), packet.getLerpTime(), 0L);
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getWorldBorder().lerpSizeBetween(packet.getOldSize(), packet.getNewSize(), packet.getLerpTime(), 0L);
       }
    }
 
    @Override
    public void handleSetBorderSize(ClientboundSetBorderSizePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getWorldBorder().setSize(packet.getSize());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getWorldBorder().setSize(packet.getSize());
       }
    }
 
    @Override
    public void handleSetBorderWarningDistance(ClientboundSetBorderWarningDistancePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getWorldBorder().setWarningBlocks(packet.getWarningBlocks());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getWorldBorder().setWarningBlocks(packet.getWarningBlocks());
       }
    }
 
    @Override
    public void handleSetBorderWarningDelay(ClientboundSetBorderWarningDelayPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.getWorldBorder().setWarningTime(packet.getWarningDelay());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.getWorldBorder().setWarningTime(packet.getWarningDelay());
       }
    }
 
    @Override
    public void handleMapItemData(ClientboundMapItemDataPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         MapId var3 = packet.mapId();
-         MapItemSavedData var4 = var2.getMapData(var3);
-         if (var4 == null) {
-            var4 = MapItemSavedData.createForClient(packet.scale(), packet.locked(), var2.dimension());
-            var2.putClientsideMapState(var3, var4);
+      BotWorld world = this.world;
+      if (world != null) {
+         MapId mapId = packet.mapId();
+         MapItemSavedData mapData = world.getMapData(mapId);
+         if (mapData == null) {
+            mapData = MapItemSavedData.createForClient(packet.scale(), packet.locked(), world.dimension());
+            world.putClientsideMapState(mapId, mapData);
          }
 
-         packet.applyToMap(var4);
+         packet.applyToMap(mapData);
       }
    }
 
    @Override
    public void handleTickingState(ClientboundTickingStatePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         TickRateManager var3 = var2.tickRateManager();
-         var3.setTickRate(packet.tickRate());
-         var3.setFrozen(packet.isFrozen());
+      BotWorld world = this.world;
+      if (world != null) {
+         TickRateManager tickRateManager = world.tickRateManager();
+         tickRateManager.setTickRate(packet.tickRate());
+         tickRateManager.setFrozen(packet.isFrozen());
       }
    }
 
    @Override
    public void handleTickingStep(ClientboundTickingStepPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      BotWorld var2 = this.world;
-      if (var2 != null) {
-         var2.tickRateManager().setFrozenTicksToRun(packet.tickSteps());
+      BotWorld world = this.world;
+      if (world != null) {
+         world.tickRateManager().setFrozenTicksToRun(packet.tickSteps());
       }
    }
 
@@ -1492,49 +1492,49 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    public void handlePlayerInfoUpdate(ClientboundPlayerInfoUpdatePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
 
-      for (net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry var3 : packet.newEntries()) {
-         BotPlayerListEntry var4 = new BotPlayerListEntry(Objects.requireNonNull(var3.profile()), false);
-         this.playerListEntries.putIfAbsent(var3.profileId(), var4);
+      for (net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry entry : packet.newEntries()) {
+         BotPlayerListEntry botPlayerListEntry = new BotPlayerListEntry(Objects.requireNonNull(entry.profile()), false);
+         this.playerListEntries.putIfAbsent(entry.profileId(), botPlayerListEntry);
       }
 
-      for (net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry var9 : packet.entries()) {
-         PlayerInfo var10 = this.playerListEntries.get(var9.profileId());
-         if (var10 instanceof BotPlayerListEntry var5) {
-            for (net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action var7 : packet.actions()) {
-               this.handlePlayerListAction(var7, var9, var5);
+      for (net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry entry : packet.entries()) {
+         PlayerInfo playerListEntry = this.playerListEntries.get(entry.profileId());
+         if (playerListEntry instanceof BotPlayerListEntry botPlayerListEntry2) {
+            for (net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action action : packet.actions()) {
+               this.handlePlayerListAction(action, entry, botPlayerListEntry2);
             }
          } else {
             LOGGER.warn(
-               "Bot {}: ignoring player info update for unknown player {} ({})", new Object[]{this.client.name(), var9.profileId(), packet.actions()}
+               "Bot {}: ignoring player info update for unknown player {} ({})", new Object[]{this.client.name(), entry.profileId(), packet.actions()}
             );
          }
       }
    }
 
-   private void handlePlayerListAction(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action var1, net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry var2, BotPlayerListEntry var3) {
-      BotPlayer var4 = this.player;
-      switch (var1) {
+   private void handlePlayerListAction(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action action, net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry entry, BotPlayerListEntry botPlayerListEntry) {
+      BotPlayer player = this.player;
+      switch (action) {
          case INITIALIZE_CHAT:
-            var3.resetBotSession(false);
+            botPlayerListEntry.resetBotSession(false);
             break;
          case UPDATE_GAME_MODE:
-            if (var3.getGameMode() != var2.gameMode() && var4 != null && var4.getUUID().equals(var2.profileId())) {
-               var4.onGameModeChanged(var2.gameMode());
+            if (botPlayerListEntry.getGameMode() != entry.gameMode() && player != null && player.getUUID().equals(entry.profileId())) {
+               player.onGameModeChanged(entry.gameMode());
             }
 
-            var3.setBotGameMode(var2.gameMode());
+            botPlayerListEntry.setBotGameMode(entry.gameMode());
             break;
          case UPDATE_LATENCY:
-            var3.setBotLatency(var2.latency());
+            botPlayerListEntry.setBotLatency(entry.latency());
             break;
          case UPDATE_DISPLAY_NAME:
-            var3.setTabListDisplayName(var2.displayName());
+            botPlayerListEntry.setTabListDisplayName(entry.displayName());
             break;
          case UPDATE_HAT:
-            var3.setShowHat(var2.showHat());
+            botPlayerListEntry.setShowHat(entry.showHat());
             break;
          case UPDATE_LIST_ORDER:
-            var3.setTabListOrder(var2.listOrder());
+            botPlayerListEntry.setTabListOrder(entry.listOrder());
          case UPDATE_LISTED:
       }
    }
@@ -1543,28 +1543,28 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    public void handlePlayerInfoRemove(ClientboundPlayerInfoRemovePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
 
-      for (UUID var3 : packet.profileIds()) {
-         this.playerListEntries.remove(var3);
+      for (UUID profileId : packet.profileIds()) {
+         this.playerListEntries.remove(profileId);
       }
    }
 
    @Override
    public void handleAddObjective(ClientboundSetObjectivePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      String var2 = packet.getObjectiveName();
+      String objectiveName = packet.getObjectiveName();
       synchronized (this.scoreboard) {
          if (packet.getMethod() == 0) {
             this.scoreboard
-               .addObjective(var2, ObjectiveCriteria.DUMMY, packet.getDisplayName(), packet.getRenderType(), false, packet.getNumberFormat().orElse(null));
+               .addObjective(objectiveName, ObjectiveCriteria.DUMMY, packet.getDisplayName(), packet.getRenderType(), false, packet.getNumberFormat().orElse(null));
          } else {
-            Objective var4 = this.scoreboard.getObjective(var2);
-            if (var4 != null) {
+            Objective objective = this.scoreboard.getObjective(objectiveName);
+            if (objective != null) {
                if (packet.getMethod() == 1) {
-                  this.scoreboard.removeObjective(var4);
+                  this.scoreboard.removeObjective(objective);
                } else if (packet.getMethod() == 2) {
-                  var4.setRenderType(packet.getRenderType());
-                  var4.setDisplayName(packet.getDisplayName());
-                  var4.setNumberFormat(packet.getNumberFormat().orElse(null));
+                  objective.setRenderType(packet.getRenderType());
+                  objective.setDisplayName(packet.getDisplayName());
+                  objective.setNumberFormat(packet.getNumberFormat().orElse(null));
                }
             }
          }
@@ -1574,34 +1574,34 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetScore(ClientboundSetScorePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      String var2 = packet.objectiveName();
-      ScoreHolder var3 = ScoreHolder.forNameOnly(packet.owner());
+      String objectiveName = packet.objectiveName();
+      ScoreHolder scoreHolder = ScoreHolder.forNameOnly(packet.owner());
       synchronized (this.scoreboard) {
-         Objective var5 = this.scoreboard.getObjective(var2);
-         if (var5 != null) {
-            ScoreAccess var6 = this.scoreboard.getOrCreatePlayerScore(var3, var5, true);
-            var6.set(packet.score());
-            var6.display(packet.display().orElse(null));
-            var6.numberFormatOverride(packet.numberFormat().orElse(null));
+         Objective objective = this.scoreboard.getObjective(objectiveName);
+         if (objective != null) {
+            ScoreAccess orCreatePlayerScore = this.scoreboard.getOrCreatePlayerScore(scoreHolder, objective, true);
+            orCreatePlayerScore.set(packet.score());
+            orCreatePlayerScore.display(packet.display().orElse(null));
+            orCreatePlayerScore.numberFormatOverride(packet.numberFormat().orElse(null));
             return;
          }
       }
 
-      LOGGER.warn("Bot {}: received packet for unknown scoreboard objective: {}", this.client.name(), var2);
+      LOGGER.warn("Bot {}: received packet for unknown scoreboard objective: {}", this.client.name(), objectiveName);
    }
 
    @Override
    public void handleResetScore(ClientboundResetScorePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      String var2 = packet.objectiveName();
-      ScoreHolder var3 = ScoreHolder.forNameOnly(packet.owner());
+      String objectiveName = packet.objectiveName();
+      ScoreHolder player = ScoreHolder.forNameOnly(packet.owner());
       synchronized (this.scoreboard) {
-         if (var2 == null) {
-            this.scoreboard.resetAllPlayerScores(var3);
+         if (objectiveName == null) {
+            this.scoreboard.resetAllPlayerScores(player);
          } else {
-            Objective var5 = this.scoreboard.getObjective(var2);
-            if (var5 != null) {
-               this.scoreboard.resetSinglePlayerScore(var3, var5);
+            Objective objective = this.scoreboard.getObjective(objectiveName);
+            if (objective != null) {
+               this.scoreboard.resetSinglePlayerScore(player, objective);
             }
          }
       }
@@ -1610,10 +1610,10 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleSetDisplayObjective(ClientboundSetDisplayObjectivePacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      String var2 = packet.getObjectiveName();
+      String objectiveName = packet.getObjectiveName();
       synchronized (this.scoreboard) {
-         Objective var4 = var2 == null ? null : this.scoreboard.getObjective(var2);
-         this.scoreboard.setDisplayObjective(packet.getSlot(), var4);
+         Objective objective = objectiveName == null ? null : this.scoreboard.getObjective(objectiveName);
+         this.scoreboard.setDisplayObjective(packet.getSlot(), objective);
       }
    }
 
@@ -1625,41 +1625,41 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
       }
    }
 
-   private void applyTeam(ClientboundSetPlayerTeamPacket var1) {
-      net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action var2 = var1.getTeamAction();
-      PlayerTeam var3;
-      if (var2 == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.ADD) {
-         var3 = this.scoreboard.addPlayerTeam(var1.getName());
+   private void applyTeam(ClientboundSetPlayerTeamPacket packet) {
+      net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action teamAction = packet.getTeamAction();
+      PlayerTeam addPlayerTeam;
+      if (teamAction == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.ADD) {
+         addPlayerTeam = this.scoreboard.addPlayerTeam(packet.getName());
       } else {
-         var3 = this.scoreboard.getPlayerTeam(var1.getName());
-         if (var3 == null) {
-            LOGGER.warn("Bot {}: received packet for unknown team {}", this.client.name(), var1.getName());
+         addPlayerTeam = this.scoreboard.getPlayerTeam(packet.getName());
+         if (addPlayerTeam == null) {
+            LOGGER.warn("Bot {}: received packet for unknown team {}", this.client.name(), packet.getName());
             return;
          }
       }
 
-      var1.getParameters().ifPresent(var1x -> {
-         var3.setDisplayName(var1x.displayName());
-         var3.setColor(var1x.color());
-         var3.unpackOptions(var1x.options());
-         var3.setNameTagVisibility(var1x.nameTagVisibility());
-         var3.setCollisionRule(var1x.collisionRule());
-         var3.setPlayerPrefix(var1x.playerPrefix());
-         var3.setPlayerSuffix(var1x.playerSuffix());
+      packet.getParameters().ifPresent(var1x -> {
+         addPlayerTeam.setDisplayName(var1x.displayName());
+         addPlayerTeam.setColor(var1x.color());
+         addPlayerTeam.unpackOptions(var1x.options());
+         addPlayerTeam.setNameTagVisibility(var1x.nameTagVisibility());
+         addPlayerTeam.setCollisionRule(var1x.collisionRule());
+         addPlayerTeam.setPlayerPrefix(var1x.playerPrefix());
+         addPlayerTeam.setPlayerSuffix(var1x.playerSuffix());
       });
-      net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action var4 = var1.getPlayerAction();
-      if (var4 == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.ADD) {
-         for (String var6 : var1.getPlayers()) {
-            this.scoreboard.addPlayerToTeam(var6, var3);
+      net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action playerAction = packet.getPlayerAction();
+      if (playerAction == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.ADD) {
+         for (String player : packet.getPlayers()) {
+            this.scoreboard.addPlayerToTeam(player, addPlayerTeam);
          }
-      } else if (var4 == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.REMOVE) {
-         for (String var8 : var1.getPlayers()) {
-            this.scoreboard.removePlayerFromTeam(var8, var3);
+      } else if (playerAction == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.REMOVE) {
+         for (String player : packet.getPlayers()) {
+            this.scoreboard.removePlayerFromTeam(player, addPlayerTeam);
          }
       }
 
-      if (var2 == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.REMOVE) {
-         this.scoreboard.removePlayerTeam(var3);
+      if (teamAction == net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket.Action.REMOVE) {
+         this.scoreboard.removePlayerTeam(addPlayerTeam);
       }
    }
 
@@ -1672,20 +1672,20 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handleUpdateTags(ClientboundUpdateTagsPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      var var2 = new ArrayList<>(packet.tags().size());
-      packet.tags().forEach((var2x, var3) -> {
+      var arrayList = new ArrayList<>(packet.tags().size());
+      packet.tags().forEach((var2x, tag) -> {
          if (RegistrySynchronization.isNetworkable((ResourceKey<? extends Registry<?>>)var2x)) {
-            var2.add(this.startTagReload((ResourceKey<? extends Registry<?>>)var2x, var3));
+            arrayList.add(this.startTagReload((ResourceKey<? extends Registry<?>>)var2x, tag));
          }
       });
-      var2.forEach(x -> ((PendingTags)x).apply());
+      arrayList.forEach(x -> ((PendingTags)x).apply());
    }
 
    private <T> PendingTags<T> startTagReload(
-      ResourceKey<? extends Registry<? extends T>> var1, net.minecraft.tags.TagNetworkSerialization.NetworkPayload var2
+      ResourceKey<? extends Registry<? extends T>> name, net.minecraft.tags.TagNetworkSerialization.NetworkPayload tag
    ) {
-      Registry var3 = this.registries.lookupOrThrow(var1);
-      return var3.prepareTagReload(var2.resolve(var3));
+      Registry orThrow = this.registries.lookupOrThrow(name);
+      return orThrow.prepareTagReload(tag.resolve(orThrow));
    }
 
    @Override
@@ -1697,8 +1697,8 @@ public final class BotPlayHandler extends BotCommonHandler implements ClientGame
    @Override
    public void handlePlayerChat(ClientboundPlayerChatPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      Object var2 = packet.unsignedContent() != null ? packet.unsignedContent() : Component.literal(packet.body().content());
-      this.client.onChat(packet.chatType().decorate((Component)var2));
+      Object unsignedContent = packet.unsignedContent() != null ? packet.unsignedContent() : Component.literal(packet.body().content());
+      this.client.onChat(packet.chatType().decorate((Component)unsignedContent));
    }
 
    @Override

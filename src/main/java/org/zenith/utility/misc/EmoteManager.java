@@ -40,28 +40,28 @@ public final class EmoteManager {
    }
 
    public List<Setting> getSettings() {
-      return Arrays.stream(this.getClass().getDeclaredFields()).map(var1 -> {
+      return Arrays.stream(this.getClass().getDeclaredFields()).map(field -> {
          try {
-            var1.setAccessible(true);
-            return var1.get(this);
-         } catch (ReflectiveOperationException var3) {
+            field.setAccessible(true);
+            return field.get(this);
+         } catch (ReflectiveOperationException e) {
             return null;
          }
       }).filter(Setting.class::isInstance).map(Setting.class::cast).collect(Collectors.toList());
    }
 
-   public boolean method1688(String var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      return var2.player != null && this.method1689(var2.player.getUUID(), var1, 0, EmoteManager.Type.LOCAL);
+   public boolean method1688(String text) {
+      Minecraft minecraft = Minecraft.getInstance();
+      return minecraft.player != null && this.method1689(minecraft.player.getUUID(), text, 0, EmoteManager.Type.LOCAL);
    }
 
-   public boolean method1689(UUID var1, String var2, int var3, EmoteManager.Type var4) {
-      if (var1 != null && var4 != null) {
-         EmoteInfo var5 = this.emoteRegistry.method1591(var2).orElse(null);
-         if (var5 == null) {
+   public boolean method1689(UUID uuid, String text, int n, EmoteManager.Type type) {
+      if (uuid != null && type != null) {
+         EmoteInfo emoteInfo = this.emoteRegistry.method1591(text).orElse(null);
+         if (emoteInfo == null) {
             return false;
          } else {
-            method1702(() -> this.method1694(var1, var5, var3, var4));
+            method1702(() -> this.method1694(uuid, emoteInfo, n, type));
             return true;
          }
       } else {
@@ -69,67 +69,67 @@ public final class EmoteManager {
       }
    }
 
-   public void method1690(UUID var1) {
-      if (var1 != null) {
-         method1702(() -> this.method1699(var1));
+   public void method1690(UUID uuid) {
+      if (uuid != null) {
+         method1702(() -> this.method1699(uuid));
       }
    }
 
-   public boolean method1691(UUID var1) {
-      EmoteManager.Data var2 = this.items2.get(var1);
-      return var2 != null && var2.getPreviewEmotePlayer().isActive();
+   public boolean method1691(UUID uuid) {
+      EmoteManager.Data data = this.items2.get(uuid);
+      return data != null && data.getPreviewEmotePlayer().isActive();
    }
 
-   public String method1692(UUID var1) {
-      EmoteManager.Data2 var2 = this.items.get(var1);
-      return var2 == null ? "" : var2.getEmoteInfo().getText();
+   public String method1692(UUID uuid) {
+      EmoteManager.Data2 data2 = this.items.get(uuid);
+      return data2 == null ? "" : data2.getEmoteInfo().getText();
    }
 
    public void method1693() {
       method1702(this::method1701);
    }
 
-   private void method1694(UUID var1, EmoteInfo var2, int var3, EmoteManager.Type var4) {
-      Minecraft var5 = Minecraft.getInstance();
-      if (var5.level != this.clientWorld) {
+   private void method1694(UUID uuid, EmoteInfo emoteInfo, int n, EmoteManager.Type type) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.level != this.clientWorld) {
          this.method1701();
-         this.clientWorld = var5.level;
+         this.clientWorld = minecraft.level;
       }
 
-      if (this.method1698(var5, var1, var4)) {
-         this.method1699(var1);
+      if (this.method1698(minecraft, uuid, type)) {
+         this.method1699(uuid);
       } else {
-         EmoteManager.Data2 var6 = new EmoteManager.Data2(var2, Math.max(0, var3), System.nanoTime(), this.atomicLong.incrementAndGet(), var4);
-         this.items.put(var1, var6);
-         this.method1696(var5, var1, var6);
+         EmoteManager.Data2 data2 = new EmoteManager.Data2(emoteInfo, Math.max(0, n), System.nanoTime(), this.atomicLong.incrementAndGet(), type);
+         this.items.put(uuid, data2);
+         this.method1696(minecraft, uuid, data2);
       }
    }
 
-   private void method1695(Minecraft var1) {
-      if (var1.level != this.clientWorld) {
+   private void method1695(Minecraft minecraft) {
+      if (minecraft.level != this.clientWorld) {
          this.method1701();
-         this.clientWorld = var1.level;
+         this.clientWorld = minecraft.level;
       }
 
-      if (var1.level != null) {
-         long var2 = System.nanoTime();
+      if (minecraft.level != null) {
+         long nanoTime = System.nanoTime();
 
-         for (Entry var5 : new ArrayList<>(this.items.entrySet())) {
-            UUID var6 = (UUID)var5.getKey();
-            EmoteManager.Data2 var7 = (EmoteManager.Data2)var5.getValue();
-            if (this.method1698(var1, var6, var7.getType())) {
-               this.method1699(var6);
+         for (Entry entry : new ArrayList<>(this.items.entrySet())) {
+            UUID key = (UUID)entry.getKey();
+            EmoteManager.Data2 data2 = (EmoteManager.Data2)entry.getValue();
+            if (this.method1698(minecraft, key, data2.getType())) {
+               this.method1699(key);
             } else {
-               AbstractClientPlayer var8 = method1703(var1.level, var6);
-               if (var8 == null) {
-                  if (var2 - var7.getLongValue() > 30000000000L) {
-                     this.method1699(var6);
+               AbstractClientPlayer abstractClientPlayerEntity = method1703(minecraft.level, key);
+               if (abstractClientPlayerEntity == null) {
+                  if (nanoTime - data2.getLongValue() > 30000000000L) {
+                     this.method1699(key);
                   }
                } else {
-                  this.method1697(var8, var7, var2);
-                  EmoteManager.Data var9 = this.items2.get(var6);
-                  if (var9 != null && var9.getLongValue() == var7.getLongValue2() && !var9.getPreviewEmotePlayer().isActive()) {
-                     this.method1699(var6);
+                  this.method1697(abstractClientPlayerEntity, data2, nanoTime);
+                  EmoteManager.Data data = this.items2.get(key);
+                  if (data != null && data.getLongValue() == data2.getLongValue2() && !data.getPreviewEmotePlayer().isActive()) {
+                     this.method1699(key);
                   }
                }
             }
@@ -137,71 +137,71 @@ public final class EmoteManager {
       }
    }
 
-   private void method1696(Minecraft var1, UUID var2, EmoteManager.Data2 var3) {
-      if (var1.level != null) {
-         AbstractClientPlayer var4 = method1703(var1.level, var2);
-         if (var4 != null) {
-            this.method1697(var4, var3, System.nanoTime());
+   private void method1696(Minecraft minecraft, UUID uuid, EmoteManager.Data2 data2) {
+      if (minecraft.level != null) {
+         AbstractClientPlayer abstractClientPlayerEntity = method1703(minecraft.level, uuid);
+         if (abstractClientPlayerEntity != null) {
+            this.method1697(abstractClientPlayerEntity, data2, System.nanoTime());
          }
       }
    }
 
-   private void method1697(AbstractClientPlayer var1, EmoteManager.Data2 var2, long var3) {
-      UUID var5 = var1.getUUID();
-      EmoteManager.Data var6 = this.items2.get(var5);
-      if (var6 == null || var6.getAbstractClientPlayerEntity() != var1 || var6.getLongValue() != var2.getLongValue2()) {
-         if (var6 != null) {
-            method1700(var6);
+   private void method1697(AbstractClientPlayer abstractClientPlayerEntity, EmoteManager.Data2 data2, long nanoTime) {
+      UUID uuid = abstractClientPlayerEntity.getUUID();
+      EmoteManager.Data data = this.items2.get(uuid);
+      if (data == null || data.getAbstractClientPlayerEntity() != abstractClientPlayerEntity || data.getLongValue() != data2.getLongValue2()) {
+         if (data != null) {
+            method1700(data);
          }
 
-         AnimationContainer var7 = new AnimationContainer(null);
-         ((IPlayer)var1).playerAnimator$getAnimationStack().addAnimLayer(1000, var7);
-         long var8 = Math.max(0L, (var3 - var2.getLongValue()) / 50000000L);
-         int var10 = (int)Math.min(2147483647L, var2.getIntValue() + var8);
-         PreviewEmotePlayer var11 = new PreviewEmotePlayer(var2.getEmoteInfo(), var10);
-         var7.setAnim(var11);
-         this.items2.put(var5, new EmoteManager.Data(var1, var7, var11, var2.getLongValue2()));
+         AnimationContainer animationContainer = new AnimationContainer(null);
+         ((IPlayer)abstractClientPlayerEntity).playerAnimator$getAnimationStack().addAnimLayer(1000, animationContainer);
+         long l = Math.max(0L, (nanoTime - data2.getLongValue()) / 50000000L);
+         int n = (int)Math.min(2147483647L, data2.getIntValue() + l);
+         PreviewEmotePlayer previewEmotePlayer = new PreviewEmotePlayer(data2.getEmoteInfo(), n);
+         animationContainer.setAnim(previewEmotePlayer);
+         this.items2.put(uuid, new EmoteManager.Data(abstractClientPlayerEntity, animationContainer, previewEmotePlayer, data2.getLongValue2()));
       }
    }
 
-   private boolean method1698(Minecraft var1, UUID var2, EmoteManager.Type var3) {
-      if (var3 == EmoteManager.Type.CLOUD) {
+   private boolean method1698(Minecraft minecraft, UUID uuid, EmoteManager.Type type) {
+      if (type == EmoteManager.Type.CLOUD) {
          return !this.render.method5222("cosmetics.emotes.render.friends").isEnabled();
       } else {
-         boolean var4 = var1.player != null && var1.player.getUUID().equals(var2);
-         return var4 && !this.render.method5222("cosmetics.emotes.render.self").isEnabled();
+         boolean flag = minecraft.player != null && minecraft.player.getUUID().equals(uuid);
+         return flag && !this.render.method5222("cosmetics.emotes.render.self").isEnabled();
       }
    }
 
-   private void method1699(UUID var1) {
-      this.items.remove(var1);
-      EmoteManager.Data var2 = this.items2.remove(var1);
-      if (var2 != null) {
-         method1700(var2);
+   private void method1699(UUID key) {
+      this.items.remove(key);
+      EmoteManager.Data data = this.items2.remove(key);
+      if (data != null) {
+         method1700(data);
       }
    }
 
-   private static void method1700(EmoteManager.Data var0) {
-      var0.getPreviewEmotePlayer().stop();
-      var0.getAnimationContainer().setAnim(null);
-      ((IPlayer)var0.getAbstractClientPlayerEntity()).playerAnimator$getAnimationStack().removeLayer(var0.getAnimationContainer());
+   private static void method1700(EmoteManager.Data data) {
+      data.getPreviewEmotePlayer().stop();
+      data.getAnimationContainer().setAnim(null);
+      ((IPlayer)data.getAbstractClientPlayerEntity()).playerAnimator$getAnimationStack().removeLayer(data.getAnimationContainer());
    }
 
    private void method1701() {
-      for (EmoteManager.Data var2 : this.items2.values()) {
-         method1700(var2);
+      for (EmoteManager.Data data : this.items2.values()) {
+         method1700(data);
       }
 
       this.items2.clear();
       this.items.clear();
    }
 
-   private static void method1702(Runnable var0) {
-      Minecraft var1 = Minecraft.getInstance();
-      if (!var1.isSameThread()) {
-         var1.execute(var0);
+   private static void method1702(Runnable command) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (!minecraft.isSameThread()) {
+         minecraft.execute(command);
       } else {
-         var0.run();
+         command.run();
       }
    }
 
@@ -209,8 +209,8 @@ public final class EmoteManager {
       this.method1693();
    }
 
-   private static AbstractClientPlayer method1703(ClientLevel var0, UUID var1) {
-      return var0.getPlayerByUUID(var1) instanceof AbstractClientPlayer var3 ? var3 : null;
+   private static AbstractClientPlayer method1703(ClientLevel level, UUID key) {
+      return level.getPlayerByUUID(key) instanceof AbstractClientPlayer player ? player : null;
    }
 
    private static final class Data {
@@ -252,11 +252,11 @@ public final class EmoteManager {
          return "Data[" + "abstractClientPlayerEntity=" + this.abstractClientPlayerEntity + ", " + "animationContainer=" + this.animationContainer + ", " + "previewEmotePlayer=" + this.previewEmotePlayer + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data(AbstractClientPlayer var1, AnimationContainer<PreviewEmotePlayer> var2, PreviewEmotePlayer var3, long var4) {
-         this.abstractClientPlayerEntity = var1;
-         this.animationContainer = var2;
-         this.previewEmotePlayer = var3;
-         this.longValue = var4;
+      private Data(AbstractClientPlayer abstractClientPlayerEntity, AnimationContainer<PreviewEmotePlayer> animationContainer, PreviewEmotePlayer previewEmotePlayer, long longValue) {
+         this.abstractClientPlayerEntity = abstractClientPlayerEntity;
+         this.animationContainer = animationContainer;
+         this.previewEmotePlayer = previewEmotePlayer;
+         this.longValue = longValue;
       }
 
       public AbstractClientPlayer getAbstractClientPlayerEntity() {
@@ -320,12 +320,12 @@ public final class EmoteManager {
          return "Data2[" + "emoteInfo=" + this.emoteInfo + ", " + "intValue=" + this.intValue + ", " + "longValue=" + this.longValue + ", " + "longValue2=" + this.longValue2 + ", " + "type=" + this.type + "]";
       }
 
-      private Data2(EmoteInfo var1, int var2, long var3, long var5, EmoteManager.Type var7) {
-         this.emoteInfo = var1;
-         this.intValue = var2;
-         this.longValue = var3;
-         this.longValue2 = var5;
-         this.type = var7;
+      private Data2(EmoteInfo emoteInfo, int intValue, long longValue, long incrementAndGet, EmoteManager.Type type) {
+         this.emoteInfo = emoteInfo;
+         this.intValue = intValue;
+         this.longValue = longValue;
+         this.longValue2 = incrementAndGet;
+         this.type = type;
       }
 
       public EmoteInfo getEmoteInfo() {

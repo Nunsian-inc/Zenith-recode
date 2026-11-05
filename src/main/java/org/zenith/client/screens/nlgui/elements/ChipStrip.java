@@ -27,22 +27,22 @@ public final class ChipStrip {
    private int lastSelected = Integer.MIN_VALUE;
    private long pulseAt;
 
-   public ChipStrip(String... var1) {
-      this.labels = var1;
-      this.bounds = new BoundsData[var1.length];
-      this.hot = new Animation[var1.length];
+   public ChipStrip(String... labels) {
+      this.labels = labels;
+      this.bounds = new BoundsData[labels.length];
+      this.hot = new Animation[labels.length];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         this.hot[var2] = new Animation(130L, 0.0F, Easing.INSTANCE12);
+      for (int i = 0; i < labels.length; i++) {
+         this.hot[i] = new Animation(130L, 0.0F, Easing.INSTANCE12);
       }
    }
 
-   private static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String t(String label) {
+      return Zenith.getInstance().getLocalization().translate(label);
    }
 
-   private String text(int var1) {
-      return t(this.labels[var1]);
+   private String text(int hovered) {
+      return t(this.labels[hovered]);
    }
 
    private static Font font() {
@@ -50,115 +50,115 @@ public final class ChipStrip {
    }
 
    public float width() {
-      Font var1 = font();
-      float var2 = 0.0F;
+      Font font2 = font();
+      float f = 0.0F;
 
-      for (int var3 = 0; var3 < this.labels.length; var3++) {
-         var2 += var1.width(this.text(var3)) + 10.0F + (var3 == 0 ? 0.0F : 3.0F);
+      for (int i = 0; i < this.labels.length; i++) {
+         f += font2.width(this.text(i)) + 10.0F + (i == 0 ? 0.0F : 3.0F);
       }
 
-      return var2;
+      return f;
    }
 
-   public float height(float var1) {
-      return this.layout(0.0F, 0.0F, var1);
+   public float height(float width) {
+      return this.layout(0.0F, 0.0F, width);
    }
 
-   private float layout(float var1, float var2, float var3) {
-      Font var4 = font();
-      float var5 = var1;
-      float var6 = var2;
+   private float layout(float floatValue, float y, float width) {
+      Font font2 = font();
+      float f = floatValue;
+      float y2 = y;
 
-      for (int var7 = 0; var7 < this.labels.length; var7++) {
-         float var8 = var4.width(this.text(var7)) + 10.0F;
-         if (var5 > var1 && var5 + var8 > var1 + var3 + 0.01F) {
-            var5 = var1;
-            var6 += 14.0F;
+      for (int i = 0; i < this.labels.length; i++) {
+         float width2 = font2.width(this.text(i)) + 10.0F;
+         if (f > floatValue && f + width2 > floatValue + width + 0.01F) {
+            f = floatValue;
+            y2 += 14.0F;
          }
 
-         this.bounds[var7] = new BoundsData(var5, var6, var8, 11.0F);
-         var5 += var8 + 3.0F;
+         this.bounds[i] = new BoundsData(f, y2, width2, 11.0F);
+         f += width2 + 3.0F;
       }
 
-      return var6 - var2 + 11.0F;
+      return y2 - y + 11.0F;
    }
 
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, int var7, float var8, ZenithStyle var9) {
-      this.layout(var4, var5, var6);
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float width, int lastSelected, float previewAlpha, ZenithStyle zenithStyle) {
+      this.layout(floatValue, y, width);
       this.hovered = -1;
 
-      for (int var10 = 0; var10 < this.labels.length; var10++) {
-         if (this.bounds[var10].contains(var2, var3)) {
-            this.hovered = var10;
+      for (int i = 0; i < this.labels.length; i++) {
+         if (this.bounds[i].contains(lastClickX, lastClickY)) {
+            this.hovered = i;
          }
       }
 
-      if (var7 >= 0 && var7 < this.labels.length) {
-         BoundsData var18 = this.bounds[var7];
-         float var11 = var18.getFloatValue() - var4;
-         float var12 = var18.getFloatValue2() - var5;
+      if (lastSelected >= 0 && lastSelected < this.labels.length) {
+         BoundsData bound = this.bounds[lastSelected];
+         float f = bound.getFloatValue() - floatValue;
+         float floatValue2 = bound.getFloatValue2() - y;
          if (!this.plateReady) {
-            this.plateX.method2809(var11);
-            this.plateY.method2809(var12);
-            this.plateWidth.method2809(var18.width());
+            this.plateX.method2809(f);
+            this.plateY.method2809(floatValue2);
+            this.plateWidth.method2809(bound.width());
             this.plateReady = true;
          }
 
-         if (this.lastSelected != var7) {
+         if (this.lastSelected != lastSelected) {
             if (this.lastSelected != Integer.MIN_VALUE) {
                this.pulseAt = System.currentTimeMillis();
             }
 
-            this.lastSelected = var7;
+            this.lastSelected = lastSelected;
          }
 
-         float var13 = var4 + this.plateX.method2808(var11);
-         float var14 = var5 + this.plateY.method2808(var12);
-         float var15 = this.plateWidth.method2808(var18.width());
-         float var16 = this.pulseAt == 0L ? 0.0F : Math.max(0.0F, 1.0F - (float)(System.currentTimeMillis() - this.pulseAt) / 380.0F);
-         var16 *= var16;
-         float var17 = (float)Math.sin(var16 * Math.PI) * 1.2F;
-         var1.drawRoundedRect(
-            var13 - var17,
-            var14 - var17 * 0.5F,
-            var15 + var17 * 2.0F,
-            11.0F + var17,
-            ProxyDotRadiusData.method8069(5.5F + var17 * 0.5F),
-            var9.getDisableActiveBg().getZenithColor().method7294(var8)
+         float floatValue3 = floatValue + this.plateX.method2808(f);
+         float y2 = y + this.plateY.method2808(floatValue2);
+         float width2 = this.plateWidth.method2808(bound.width());
+         float f2 = this.pulseAt == 0L ? 0.0F : Math.max(0.0F, 1.0F - (float)(System.currentTimeMillis() - this.pulseAt) / 380.0F);
+         f2 *= f2;
+         float f3 = (float)Math.sin(f2 * Math.PI) * 1.2F;
+         menuDrawContext.drawRoundedRect(
+            floatValue3 - f3,
+            y2 - f3 * 0.5F,
+            width2 + f3 * 2.0F,
+            11.0F + f3,
+            ProxyDotRadiusData.method8069(5.5F + f3 * 0.5F),
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha)
          );
-         if (var16 > 0.01F) {
-            var1.drawRoundedRect(
-               var13,
-               var14,
-               var15,
+         if (f2 > 0.01F) {
+            menuDrawContext.drawRoundedRect(
+               floatValue3,
+               y2,
+               width2,
                11.0F,
                ProxyDotRadiusData.method8069(5.5F),
-               var9.getPrimaryColor().getZenithColor().method7292(0.22F * var16).method7294(var8)
+               zenithStyle.getPrimaryColor().getZenithColor().method7292(0.22F * f2).method7294(previewAlpha)
             );
          }
       }
 
-      Font var19 = font();
+      Font font2 = font();
 
-      for (int var20 = 0; var20 < this.labels.length; var20++) {
-         BoundsData var21 = this.bounds[var20];
-         boolean var22 = var20 == var7;
-         float var23 = this.hot[var20].method2808(var20 == this.hovered && !var22 ? 1.0F : 0.0F);
-         if (var23 > 0.01F) {
-            var1.drawRoundedRect(
-               var21.getFloatValue(),
-               var21.getFloatValue2(),
-               var21.width(),
+      for (int i = 0; i < this.labels.length; i++) {
+         BoundsData bound = this.bounds[i];
+         boolean flag = i == lastSelected;
+         float hover = this.hot[i].method2808(i == this.hovered && !flag ? 1.0F : 0.0F);
+         if (hover > 0.01F) {
+            menuDrawContext.drawRoundedRect(
+               bound.getFloatValue(),
+               bound.getFloatValue2(),
+               bound.width(),
                11.0F,
                ProxyDotRadiusData.method8069(5.5F),
-               var9.getDisableActiveBg().getZenithColor().method7294(var8 * 0.45F * var23)
+               zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * 0.45F * hover)
             );
          }
 
-         ZenithColor var24 = var22
-            ? var9.getTextEnable().getZenithColor()
-            : var9.getTextTertiary().getZenithColor().method7295(var9.getTextSecondary().getZenithColor(), var23);
-         var1.drawText(var19, this.text(var20), var21.getFloatValue() + 5.0F, var21.getFloatValue2() + (11.0F - var19.height()) / 2.0F, var24.method7294(var8));
+         ZenithColor zenithColor = flag
+            ? zenithStyle.getTextEnable().getZenithColor()
+            : zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextSecondary().getZenithColor(), hover);
+         menuDrawContext.drawText(font2, this.text(i), bound.getFloatValue() + 5.0F, bound.getFloatValue2() + (11.0F - font2.height()) / 2.0F, zenithColor.method7294(previewAlpha));
       }
    }
 
@@ -166,7 +166,7 @@ public final class ChipStrip {
       return this.hovered;
    }
 
-   public String label(int var1) {
-      return var1 >= 0 && var1 < this.labels.length ? this.text(var1) : "";
+   public String label(int hovered) {
+      return hovered >= 0 && hovered < this.labels.length ? this.text(hovered) : "";
    }
 }

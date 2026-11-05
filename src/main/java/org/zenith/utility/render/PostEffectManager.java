@@ -35,29 +35,29 @@ public final class PostEffectManager {
    private PostEffectManager() {
    }
 
-   public static void method2819(PostChain var0, Identifier var1, PostEffectManager.Entry var2) {
-      if (var0 != null && !var2.isEmpty()) {
-         var var3 = method2822(var1);
-         if (!var3.isEmpty()) {
-            List var4 = ((PostEffectProcessorAccessor)(Object)var0).getPasses();
-            CommandEncoder var5 = RenderSystem.getDevice().createCommandEncoder();
+   public static void method2819(PostChain postChain, Identifier identifier, PostEffectManager.Entry entry) {
+      if (postChain != null && !entry.isEmpty()) {
+         var datases = method2822(identifier);
+         if (!datases.isEmpty()) {
+            List passes = ((PostEffectProcessorAccessor)(Object)postChain).getPasses();
+            CommandEncoder commandEncoder = RenderSystem.getDevice().createCommandEncoder();
 
-            for (int var6 = 0; var6 < var4.size() && var6 < var3.size(); var6++) {
-               List<PostEffectManager.Data> var7 = (List)var3.get(var6);
-               if (!var7.isEmpty()) {
-                  PostPass var8 = (PostPass)var4.get(var6);
-                  Map var9 = ((PostEffectPassAccessor)(Object)var8).zenith$uniformBuffers();
-                  GpuBuffer var10 = (GpuBuffer)var9.get("ZenithPost");
-                  if (var10 != null) {
-                     GpuBuffer var11 = method2820(var8, var10).currentBuffer();
-                     var9.put("ZenithPost", var11);
+            for (int i = 0; i < passes.size() && i < datases.size(); i++) {
+               List<PostEffectManager.Data> datas = (List)datases.get(i);
+               if (!datas.isEmpty()) {
+                  PostPass postPass = (PostPass)passes.get(i);
+                  Map zenith$uniformBuffers = ((PostEffectPassAccessor)(Object)postPass).zenith$uniformBuffers();
+                  GpuBuffer gpuBuffer = (GpuBuffer)zenith$uniformBuffers.get("ZenithPost");
+                  if (gpuBuffer != null) {
+                     GpuBuffer currentBuffer = method2820(postPass, gpuBuffer).currentBuffer();
+                     zenith$uniformBuffers.put("ZenithPost", currentBuffer);
 
-                     try (GpuBufferSlice.MappedView var12 = var11.slice().map(false, true)) {
-                        ByteBuffer var13 = var12.data();
-                        Std140Builder var14 = Std140Builder.intoBuffer(var13);
+                     try (GpuBufferSlice.MappedView mappedView = currentBuffer.slice().map(false, true)) {
+                        ByteBuffer data = mappedView.data();
+                        Std140Builder intoBuffer = Std140Builder.intoBuffer(data);
 
-                        for (PostEffectManager.Data var16 : var7) {
-                           method2821(var14, var16.intValue, var2.items.getOrDefault(var16.text, var16.floatValues));
+                        for (PostEffectManager.Data data2 : datas) {
+                           method2821(intoBuffer, data2.intValue, entry.items.getOrDefault(data2.text, data2.floatValues));
                         }
                      }
                   }
@@ -67,88 +67,88 @@ public final class PostEffectManager {
       }
    }
 
-   private static MappableRingBuffer method2820(PostPass var0, GpuBuffer var1) {
-      MappableRingBuffer var2 = items2.get(var0);
-      if (var2 == null) {
-         var2 = new MappableRingBuffer(() -> "zenith ZenithPost", 130, (int)var1.size());
-         items2.put(var0, var2);
-         var1.close();
+   private static MappableRingBuffer method2820(PostPass postPass, GpuBuffer gpuBuffer) {
+      MappableRingBuffer mappableRingBuffer = items2.get(postPass);
+      if (mappableRingBuffer == null) {
+         mappableRingBuffer = new MappableRingBuffer(() -> "zenith ZenithPost", 130, (int)gpuBuffer.size());
+         items2.put(postPass, mappableRingBuffer);
+         gpuBuffer.close();
       } else {
-         var2.rotate();
+         mappableRingBuffer.rotate();
       }
 
-      return var2;
+      return mappableRingBuffer;
    }
 
-   private static void method2821(Std140Builder var0, int var1, float[] var2) {
-      float var3 = var2.length > 0 ? var2[0] : 0.0F;
-      float var4 = var2.length > 1 ? var2[1] : 0.0F;
-      float var5 = var2.length > 2 ? var2[2] : 0.0F;
-      float var6 = var2.length > 3 ? var2[3] : 0.0F;
-      switch (var1) {
+   private static void method2821(Std140Builder intoBuffer, int intValue, float[] floats) {
+      float x = floats.length > 0 ? floats[0] : 0.0F;
+      float y = floats.length > 1 ? floats[1] : 0.0F;
+      float z = floats.length > 2 ? floats[2] : 0.0F;
+      float f = floats.length > 3 ? floats[3] : 0.0F;
+      switch (intValue) {
          case 1:
-            var0.putFloat(var3);
+            intoBuffer.putFloat(x);
             break;
          case 2:
-            var0.putVec2(var3, var4);
+            intoBuffer.putVec2(x, y);
             break;
          case 3:
-            var0.putVec3(var3, var4, var5);
+            intoBuffer.putVec3(x, y, z);
             break;
          default:
-            var0.putVec4(var3, var4, var5, var6);
+            intoBuffer.putVec4(x, y, z, f);
       }
    }
 
-   private static List<List<PostEffectManager.Data>> method2822(Identifier var0) {
-      var var1 = items.get(var0);
-      if (var1 != null) {
-         return var1;
+   private static List<List<PostEffectManager.Data>> method2822(Identifier identifier) {
+      var datases = items.get(identifier);
+      if (datases != null) {
+         return datases;
       } else {
-         var var2 = method2824(var0);
-         items.put(var0, var2);
-         return var2;
+         var datases2 = method2824(identifier);
+         items.put(identifier, datases2);
+         return datases2;
       }
    }
 
    public static void method2823() {
       items.clear();
 
-      for (MappableRingBuffer var1 : items2.values()) {
-         var1.close();
+      for (MappableRingBuffer mappableRingBuffer : items2.values()) {
+         mappableRingBuffer.close();
       }
 
       items2.clear();
    }
 
-   private static List<List<PostEffectManager.Data>> method2824(Identifier var0) {
-      Minecraft var1 = Minecraft.getInstance();
-      if (var1 != null && var1.getResourceManager() != null) {
-         Identifier var2 = Identifier.fromNamespaceAndPath(var0.getNamespace(), "post_effect/" + var0.getPath() + ".json");
-         var var3 = var1.getResourceManager().getResource(var2);
-         if (var3.isEmpty()) {
+   private static List<List<PostEffectManager.Data>> method2824(Identifier identifier) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.getResourceManager() != null) {
+         Identifier location = Identifier.fromNamespaceAndPath(identifier.getNamespace(), "post_effect/" + identifier.getPath() + ".json");
+         var resource = minecraft.getResourceManager().getResource(location);
+         if (resource.isEmpty()) {
             return List.of();
          } else {
             try {
-               ArrayList var13;
-               try (BufferedReader var4 = ((Resource)var3.get()).openAsReader()) {
-                  JsonObject var5 = JsonParser.parseReader(var4).getAsJsonObject();
-                  JsonArray var6 = var5.getAsJsonArray("passes");
-                  if (var6 == null) {
+               ArrayList arrayList;
+               try (BufferedReader openAsReader = ((Resource)resource.get()).openAsReader()) {
+                  JsonObject jsonObject = JsonParser.parseReader(openAsReader).getAsJsonObject();
+                  JsonArray jsonArray = jsonObject.getAsJsonArray("passes");
+                  if (jsonArray == null) {
                      return List.of();
                   }
 
-                  var var7 = new ArrayList<>(var6.size());
+                  var arrayList2 = new ArrayList<>(jsonArray.size());
 
-                  for (int var8 = 0; var8 < var6.size(); var8++) {
-                     var7.add(method2825(var6.get(var8).getAsJsonObject()));
+                  for (int i = 0; i < jsonArray.size(); i++) {
+                     arrayList2.add(method2825(jsonArray.get(i).getAsJsonObject()));
                   }
 
-                  var13 = var7;
+                  arrayList = arrayList2;
                }
 
-               return var13;
-            } catch (Exception var11) {
+               return arrayList;
+            } catch (Exception e) {
                return List.of();
             }
          }
@@ -157,31 +157,31 @@ public final class PostEffectManager {
       }
    }
 
-   private static List<PostEffectManager.Data> method2825(JsonObject var0) {
-      JsonObject var1 = var0.getAsJsonObject("uniforms");
-      if (var1 == null) {
+   private static List<PostEffectManager.Data> method2825(JsonObject jsonObject) {
+      JsonObject json = jsonObject.getAsJsonObject("uniforms");
+      if (json == null) {
          return List.of();
       } else {
-         JsonArray var2 = var1.getAsJsonArray("ZenithPost");
-         if (var2 == null) {
+         JsonArray jsonArray = json.getAsJsonArray("ZenithPost");
+         if (jsonArray == null) {
             return List.of();
          } else {
-            List<Data> var3 = new ArrayList<>(var2.size());
+            List<Data> datas = new ArrayList<>(jsonArray.size());
 
-            for (int var4 = 0; var4 < var2.size(); var4++) {
-               JsonObject var5 = var2.get(var4).getAsJsonObject();
-               String var6 = var5.get("name").getAsString();
-               int var7 = method2826(var5.get("type").getAsString());
-               var3.add(new PostEffectManager.Data(var6, var7, method2827(var5.get("value"), var7)));
+            for (int i = 0; i < jsonArray.size(); i++) {
+               JsonObject jsonObject2 = jsonArray.get(i).getAsJsonObject();
+               String string = jsonObject2.get("name").getAsString();
+               int intValue = method2826(jsonObject2.get("type").getAsString());
+               datas.add(new PostEffectManager.Data(string, intValue, method2827(jsonObject2.get("value"), intValue)));
             }
 
-            return var3;
+            return datas;
          }
       }
    }
 
-   private static int method2826(String var0) {
-      return switch (var0) {
+   private static int method2826(String string) {
+      return switch (string) {
          case "vec2", "ivec2" -> 2;
          case "vec3", "ivec3" -> 3;
          case "vec4", "ivec4" -> 4;
@@ -189,22 +189,22 @@ public final class PostEffectManager {
       };
    }
 
-   private static float[] method2827(JsonElement var0, int var1) {
-      float[] var2 = new float[var1];
-      if (var0 == null) {
-         return var2;
+   private static float[] method2827(JsonElement jsonElement, int intValue) {
+      float[] floats = new float[intValue];
+      if (jsonElement == null) {
+         return floats;
       } else {
-         if (var0.isJsonArray()) {
-            JsonArray var3 = var0.getAsJsonArray();
+         if (jsonElement.isJsonArray()) {
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-            for (int var4 = 0; var4 < var1 && var4 < var3.size(); var4++) {
-               var2[var4] = var3.get(var4).getAsFloat();
+            for (int i = 0; i < intValue && i < jsonArray.size(); i++) {
+               floats[i] = jsonArray.get(i).getAsFloat();
             }
          } else {
-            var2[0] = var0.getAsFloat();
+            floats[0] = jsonElement.getAsFloat();
          }
 
-         return var2;
+         return floats;
       }
    }
 
@@ -242,10 +242,10 @@ public final class PostEffectManager {
          return "Data[" + "text=" + this.text + ", " + "intValue=" + this.intValue + ", " + "floatValues=" + this.floatValues + "]";
       }
 
-      private Data(String var1, int var2, float[] var3) {
-         this.text = var1;
-         this.intValue = var2;
-         this.floatValues = var3;
+      private Data(String text, int intValue, float[] floatValues) {
+         this.text = text;
+         this.intValue = intValue;
+         this.floatValues = floatValues;
       }
 
       public String name() {
@@ -264,23 +264,23 @@ public final class PostEffectManager {
    public static final class Entry {
       private final Map<String, float[]> items = new LinkedHashMap<>();
 
-      public PostEffectManager.Entry method2828(String var1, float var2) {
-         this.items.put(var1, new float[]{var2});
+      public PostEffectManager.Entry method2828(String str, float floatValue) {
+         this.items.put(str, new float[]{floatValue});
          return this;
       }
 
-      public PostEffectManager.Entry method2829(String var1, float var2, float var3) {
-         this.items.put(var1, new float[]{var2, var3});
+      public PostEffectManager.Entry method2829(String str, float f, float f2) {
+         this.items.put(str, new float[]{f, f2});
          return this;
       }
 
-      public PostEffectManager.Entry method2830(String var1, float var2, float var3, float var4) {
-         this.items.put(var1, new float[]{var2, var3, var4});
+      public PostEffectManager.Entry method2830(String str, float f, float f2, float f3) {
+         this.items.put(str, new float[]{f, f2, f3});
          return this;
       }
 
-      public PostEffectManager.Entry method2831(String var1, float var2, float var3, float var4, float var5) {
-         this.items.put(var1, new float[]{var2, var3, var4, var5});
+      public PostEffectManager.Entry method2831(String str, float x, float y, float z, float f) {
+         this.items.put(str, new float[]{x, y, z, f});
          return this;
       }
 

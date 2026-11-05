@@ -185,32 +185,32 @@ public final class AutoTotemModule extends Module {
    }
 
    @EventTarget
-   public void method700(PacketEvent var1) {
-      if (var1.method7100() && mc.player != null) {
-         if (var1.getPacket3() instanceof ClientboundEntityEventPacket var2 && var2.getEventId() == 35 && var2.entityId == mc.player.getId()) {
+   public void method700(PacketEvent event) {
+      if (event.method7100() && mc.player != null) {
+         if (event.getPacket3() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35 && entityEventPacket.entityId == mc.player.getId()) {
             this.booleanValue = Boolean.FALSE;
             this.flag3 = true;
             this.intValue9 = mc.player.tickCount;
             this.log("поп: левая рука на сервере пуста");
-         } else if (var1.getPacket3() instanceof ClientboundContainerSetSlotPacket var3 && var3.getContainerId() == 0 && var3.getSlot() == 45) {
-            this.method701(var3.getItem(), "слот 45");
-         } else if (var1.getPacket3() instanceof ClientboundContainerSetContentPacket var4 && var4.containerId() == 0 && var4.items().size() > 45) {
-            this.method701(var4.items().get(45), "весь инвентарь");
-         } else if (var1.getPacket3() instanceof ClientboundSetPlayerInventoryPacket var5 && var5.slot() == 40) {
-            this.method701(var5.contents(), "слот 40");
-         } else if (var1.getPacket3() instanceof ClientboundPlayerCombatKillPacket var6 && var6.playerId() == mc.player.getId() && !CrystalAuraModule.INSTANCE.isEnabled()) {
-            this.log("СМЕРТЬ: " + var6.message().getString() + ", тотемов в инвентаре " + this.method723());
+         } else if (event.getPacket3() instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket && containerSetSlotPacket.getContainerId() == 0 && containerSetSlotPacket.getSlot() == 45) {
+            this.method701(containerSetSlotPacket.getItem(), "слот 45");
+         } else if (event.getPacket3() instanceof ClientboundContainerSetContentPacket setContentPacket && setContentPacket.containerId() == 0 && setContentPacket.items().size() > 45) {
+            this.method701(setContentPacket.items().get(45), "весь инвентарь");
+         } else if (event.getPacket3() instanceof ClientboundSetPlayerInventoryPacket playerInventoryPacket && playerInventoryPacket.slot() == 40) {
+            this.method701(playerInventoryPacket.contents(), "слот 40");
+         } else if (event.getPacket3() instanceof ClientboundPlayerCombatKillPacket playerCombatKillPacket && playerCombatKillPacket.playerId() == mc.player.getId() && !CrystalAuraModule.INSTANCE.isEnabled()) {
+            this.log("СМЕРТЬ: " + playerCombatKillPacket.message().getString() + ", тотемов в инвентаре " + this.method723());
          }
       }
    }
 
-   private void method701(ItemStack var1, String var2) {
-      boolean var3 = var1.is(Items.TOTEM_OF_UNDYING);
-      this.booleanValue = var3;
-      if (var3 && this.flag) {
+   private void method701(ItemStack contents, String str) {
+      boolean is = contents.is(Items.TOTEM_OF_UNDYING);
+      this.booleanValue = is;
+      if (is && this.flag) {
          this.flag = false;
-         this.log("сервер подтвердил тотем в левой руке (" + var2 + ")");
-      } else if (!var3) {
+         this.log("сервер подтвердил тотем в левой руке (" + str + ")");
+      } else if (!is) {
          if (this.flag
             && mc.player != null
             && mc.player.tickCount > this.intValue11
@@ -220,13 +220,13 @@ public final class AutoTotemModule extends Module {
             this.intValue6++;
          }
 
-         this.log("сервер: в левой руке " + (var1.isEmpty() ? "пусто" : var1.getItem().toString()) + " (" + var2 + ")");
+         this.log("сервер: в левой руке " + (contents.isEmpty() ? "пусто" : contents.getItem().toString()) + " (" + str + ")");
       }
    }
 
    private boolean method702() {
-      int var1 = this.intValue9;
-      return var1 != Integer.MIN_VALUE && mc.player != null && mc.player.tickCount >= var1 && mc.player.tickCount - var1 <= 2 + this.method724();
+      int n = this.intValue9;
+      return n != Integer.MIN_VALUE && mc.player != null && mc.player.tickCount >= n && mc.player.tickCount - n <= 2 + this.method724();
    }
 
    public boolean method703() {
@@ -264,12 +264,12 @@ public final class AutoTotemModule extends Module {
    }
 
    @EventTarget
-   public void method708(HealthUpdateEvent var1) {
+   public void method708(HealthUpdateEvent event) {
       this.method710();
    }
 
    @EventTarget
-   public void method709(Event5 var1) {
+   public void method709(Event5 event) {
       this.method710();
    }
 
@@ -280,22 +280,22 @@ public final class AutoTotemModule extends Module {
 
       this.method731();
       if (!UseItemUtils.method6526() && !mc.player.isDeadOrDying()) {
-         int var1 = mc.player.tickCount;
+         int tickCount = mc.player.tickCount;
          CrystalAuraModule.INSTANCE.method5926();
-         int var2 = 0;
+         int n = 0;
 
-         for (int var3 = 0; var3 < 9; var3++) {
-            if (mc.player.getInventory().getItem(var3).is(Items.TOTEM_OF_UNDYING)) {
-               var2++;
+         for (int i = 0; i < 9; i++) {
+            if (mc.player.getInventory().getItem(i).is(Items.TOTEM_OF_UNDYING)) {
+               n++;
             }
          }
 
-         if (var2 != this.intValue5) {
-            this.log("в хотбаре тотемов: " + var2 + " (было " + Math.max(0, this.intValue5) + "), всего " + this.method723());
-            this.intValue5 = var2;
+         if (n != this.intValue5) {
+            this.log("в хотбаре тотемов: " + n + " (было " + Math.max(0, this.intValue5) + "), всего " + this.method723());
+            this.intValue5 = n;
          }
 
-         if (this.intValue11 > var1) {
+         if (this.intValue11 > tickCount) {
             this.intValue11 = Integer.MIN_VALUE;
             this.intValue = Integer.MIN_VALUE;
             this.intValue2 = Integer.MIN_VALUE;
@@ -309,25 +309,25 @@ public final class AutoTotemModule extends Module {
 
          if (this.flag3) {
             this.flag3 = false;
-            this.intValue10 = var1;
+            this.intValue10 = tickCount;
          }
 
-         boolean var9 = this.method728();
-         boolean var4 = this.method725();
-         if (var4) {
-            this.intValue = var1;
+         boolean flag = this.method728();
+         boolean flag2 = this.method725();
+         if (flag2) {
+            this.intValue = tickCount;
          }
 
          if (this.flag) {
-            if (var1 <= this.intValue7) {
+            if (tickCount <= this.intValue7) {
                return;
             }
 
             if (!this.flag2) {
                this.flag2 = true;
                InventoryUtils.method899();
-               this.intValue7 = var1 + this.method724() + 4;
-               this.log("сервер молчит " + (var1 - this.intValue11) + " т — запрашиваем инвентарь");
+               this.intValue7 = tickCount + this.method724() + 4;
+               this.log("сервер молчит " + (tickCount - this.intValue11) + " т — запрашиваем инвентарь");
                return;
             }
 
@@ -341,46 +341,46 @@ public final class AutoTotemModule extends Module {
             this.intValue6 = 0;
          }
 
-         boolean var5 = this.method711();
-         if (!var4) {
+         boolean flag3 = this.method711();
+         if (!flag2) {
             if (this.slot != null
-               && var5
+               && flag3
                && this.intValue != Integer.MIN_VALUE
-               && var1 - this.intValue >= Math.max(1, Math.round(this.time.getValue3() / 50.0F)) + 20
+               && tickCount - this.intValue >= Math.max(1, Math.round(this.time.getValue3() / 50.0F)) + 20
                && !this.method726()
                && KeyBindUtils.method2629(AutoTotemModule.class)) {
-               Slot var10 = this.slot;
+               Slot slot = this.slot;
                this.slot = null;
-               this.intValue11 = var1;
+               this.intValue11 = tickCount;
                this.flag4 = true;
                this.flag5 = false;
-               this.method714(var10);
+               this.method714(slot);
             } else {
-               this.method715(var1);
+               this.method715(tickCount);
             }
-         } else if (var5) {
-            this.method715(var1);
+         } else if (flag3) {
+            this.method715(tickCount);
          } else {
-            Slot var6 = this.method720();
-            if (var6 != null) {
-               boolean var7 = var9 || this.method727() || this.method726() || mc.player.hurtTime > 0;
-               boolean var8 = var6.index >= 36 && var6.index <= 44;
-               if (!var8 && !var7 && InventorySettingModule.INSTANCE.method2397()) {
+            Slot slot = this.method720();
+            if (slot != null) {
+               boolean flag4 = flag || this.method727() || this.method726() || mc.player.hurtTime > 0;
+               boolean flag5 = slot.index >= 36 && slot.index <= 44;
+               if (!flag5 && !flag4 && InventorySettingModule.INSTANCE.method2397()) {
                   if (KeyBindUtils.method2629(AutoTotemModule.class)) {
-                     this.intValue12 = var1;
+                     this.intValue12 = tickCount;
                      KeyBindUtils.method2628(AutoTotemModule.class, () -> {
                         Slot var1x = this.method720();
                         if (var1x != null && !this.method711()) {
                            this.method712(var1x, mc.player.tickCount);
                         }
                      }, 100);
-                  } else if (this.intValue12 == Integer.MIN_VALUE || var1 - this.intValue12 > 10) {
+                  } else if (this.intValue12 == Integer.MIN_VALUE || tickCount - this.intValue12 > 10) {
                      Zenith.getInstance().getTaskScheduler().method5114(AutoTotemModule.class);
-                     this.log("не дождались остановки за " + (var1 - this.intValue12) + " т — берём тотем на ходу");
-                     this.method712(var6, var1);
+                     this.log("не дождались остановки за " + (tickCount - this.intValue12) + " т — берём тотем на ходу");
+                     this.method712(slot, tickCount);
                   }
                } else {
-                  if (!var8 && !var9 && !var7 && !this.stopWatch.method7546(150L)) {
+                  if (!flag5 && !flag && !flag4 && !this.stopWatch.method7546(150L)) {
                      return;
                   }
 
@@ -388,7 +388,7 @@ public final class AutoTotemModule extends Module {
                      Zenith.getInstance().getTaskScheduler().method5114(AutoTotemModule.class);
                   }
 
-                  this.method712(var6, var1);
+                  this.method712(slot, tickCount);
                }
             }
          }
@@ -399,110 +399,110 @@ public final class AutoTotemModule extends Module {
       return mc.player.getOffhandItem().is(Items.TOTEM_OF_UNDYING) && this.booleanValue != Boolean.FALSE;
    }
 
-   private void method712(Slot var1, int var2) {
-      ItemStack var3 = mc.player.getOffhandItem();
+   private void method712(Slot slot, int tickCount) {
+      ItemStack offhandItem = mc.player.getOffhandItem();
       this.stopWatch.reset();
-      this.intValue11 = var2;
-      int var4 = var1.index >= 36 && var1.index <= 44 ? var1.index - 36 : -1;
-      this.flag4 = var4 == -1;
+      this.intValue11 = tickCount;
+      int selected = slot.index >= 36 && slot.index <= 44 ? slot.index - 36 : -1;
+      this.flag4 = selected == -1;
       this.flag5 = false;
-      if (var4 != -1) {
-         this.method713(var4);
+      if (selected != -1) {
+         this.method713(selected);
          this.flag5 = true;
-         this.log("кладём тотем из хотбара " + var4 + " (смена рук, без кликов по инвентарю)");
+         this.log("кладём тотем из хотбара " + selected + " (смена рук, без кликов по инвентарю)");
       } else {
-         if (this.method722() && this.intValue3 != Integer.MIN_VALUE && var2 - this.intValue3 < 10) {
+         if (this.method722() && this.intValue3 != Integer.MIN_VALUE && tickCount - this.intValue3 < 10) {
             return;
          }
 
-         this.intValue3 = var2;
-         this.method714(var1);
+         this.intValue3 = tickCount;
+         this.method714(slot);
          this.flag5 = true;
-         this.log("кладём тотем из инвентаря, слот " + var1.index + " (клик: в хотбаре тотемов нет)");
+         this.log("кладём тотем из инвентаря, слот " + slot.index + " (клик: в хотбаре тотемов нет)");
       }
 
       this.flag = true;
       this.flag2 = false;
-      this.intValue7 = var2 + this.method724() + 4;
-      if (this.slot == null && !var3.isEmpty() && !var3.is(Items.TOTEM_OF_UNDYING)) {
-         this.slot = var1;
+      this.intValue7 = tickCount + this.method724() + 4;
+      if (this.slot == null && !offhandItem.isEmpty() && !offhandItem.is(Items.TOTEM_OF_UNDYING)) {
+         this.slot = slot;
       }
    }
 
-   private void method713(int var1) {
-      int var2 = mc.player.getInventory().getSelectedSlot();
-      if (var2 != var1) {
-         mc.player.getInventory().setSelectedSlot(var1);
+   private void method713(int selected) {
+      int selectedSlot = mc.player.getInventory().getSelectedSlot();
+      if (selectedSlot != selected) {
+         mc.player.getInventory().setSelectedSlot(selected);
          mc.gameMode.ensureHasSentCarriedItem();
       }
 
       mc.getConnection().send(new ServerboundPlayerActionPacket(Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN));
-      if (var2 != var1) {
-         mc.player.getInventory().setSelectedSlot(var2);
+      if (selectedSlot != selected) {
+         mc.player.getInventory().setSelectedSlot(selectedSlot);
          mc.gameMode.ensureHasSentCarriedItem();
       }
    }
 
-   private void method714(Slot var1) {
+   private void method714(Slot slot) {
       if (!(mc.player.containerMenu instanceof InventoryMenu)) {
          InventoryUtils.closeScreen();
       }
 
-      InventoryMenu var2 = mc.player.inventoryMenu;
-      mc.gameMode.handleContainerInput(var2.containerId, var1.index, 40, ContainerInput.SWAP, mc.player);
+      InventoryMenu inventoryMenu = mc.player.inventoryMenu;
+      mc.gameMode.handleContainerInput(inventoryMenu.containerId, slot.index, 40, ContainerInput.SWAP, mc.player);
       if (mc.gui.screen() == null) {
-         mc.getConnection().send(new ServerboundContainerClosePacket(var2.containerId));
+         mc.getConnection().send(new ServerboundContainerClosePacket(inventoryMenu.containerId));
       }
    }
 
-   private void method715(int var1) {
+   private void method715(int tickCount) {
       if (this.hotbarTotems.isEnabled()
-         && (this.intValue2 == Integer.MIN_VALUE || var1 - this.intValue2 >= 3)
+         && (this.intValue2 == Integer.MIN_VALUE || tickCount - this.intValue2 >= 3)
          && mc.player.containerMenu == mc.player.inventoryMenu) {
-         if (mc.player.hurtTime <= 0 && !this.method727() && (this.intValue4 == Integer.MIN_VALUE || var1 - this.intValue4 >= 20)) {
-            Inventory var2 = mc.player.getInventory();
-            boolean[] var3 = new boolean[9];
+         if (mc.player.hurtTime <= 0 && !this.method727() && (this.intValue4 == Integer.MIN_VALUE || tickCount - this.intValue4 >= 20)) {
+            Inventory inventory = mc.player.getInventory();
+            boolean[] flags = new boolean[9];
 
-            for (Predicate var5 : this.method716()) {
-               int var6 = -1;
+            for (Predicate predicate : this.method716()) {
+               int n = -1;
 
-               for (int var7 = 0; var7 < 9; var7++) {
-                  if (!var3[var7] && var5.test(var2.getItem(var7))) {
-                     var6 = var7;
+               for (int i = 0; i < 9; i++) {
+                  if (!flags[i] && predicate.test(inventory.getItem(i))) {
+                     n = i;
                      break;
                   }
                }
 
-               if (var6 == -1) {
-                  int var12 = this.method717(var5);
-                  if (var12 != -1) {
-                     int var8 = method718(var3, var2);
-                     if (var8 != -1) {
-                        Item var9 = mc.player.inventoryMenu.getSlot(var12).getItem().getItem();
-                        if (this.items.getOrDefault(var9, Integer.MIN_VALUE) <= var1) {
-                           if (var9 != this.item || var8 != this.intValue13 || var1 - this.intValue14 >= 60) {
-                              this.item = var9;
-                              this.intValue13 = var8;
-                              this.intValue14 = var1;
-                              this.method719(var12, var8, var1, "занесли в хотбар " + var9);
+               if (n == -1) {
+                  int index = this.method717(predicate);
+                  if (index != -1) {
+                     int buttonNum = method718(flags, inventory);
+                     if (buttonNum != -1) {
+                        Item key = mc.player.inventoryMenu.getSlot(index).getItem().getItem();
+                        if (this.items.getOrDefault(key, Integer.MIN_VALUE) <= tickCount) {
+                           if (key != this.item || buttonNum != this.intValue13 || tickCount - this.intValue14 >= 60) {
+                              this.item = key;
+                              this.intValue13 = buttonNum;
+                              this.intValue14 = tickCount;
+                              this.method719(index, buttonNum, tickCount, "занесли в хотбар " + key);
                               return;
                            }
 
-                           this.items.put(var9, var1 + 400);
-                           this.log("забивка хотбара зациклилась на " + var9 + " в слот " + var8 + " — не трогаем 20 с");
+                           this.items.put(key, tickCount + 400);
+                           this.log("забивка хотбара зациклилась на " + key + " в слот " + buttonNum + " — не трогаем 20 с");
                         }
                      }
                   }
                } else {
-                  var3[var6] = true;
+                  flags[n] = true;
                }
             }
 
-            int var10 = this.method717(var0 -> var0.is(Items.TOTEM_OF_UNDYING));
-            if (var10 != -1) {
-               for (int var11 = 0; var11 < 9; var11++) {
-                  if (!var3[var11] && !var2.getItem(var11).is(Items.TOTEM_OF_UNDYING) && (var11 != var2.getSelectedSlot() || !mc.player.isUsingItem())) {
-                     this.method719(var10, var11, var1, "тотем в хотбар, слот " + var11);
+            int index = this.method717(stack -> stack.is(Items.TOTEM_OF_UNDYING));
+            if (index != -1) {
+               for (int i = 0; i < 9; i++) {
+                  if (!flags[i] && !inventory.getItem(i).is(Items.TOTEM_OF_UNDYING) && (i != inventory.getSelectedSlot() || !mc.player.isUsingItem())) {
+                     this.method719(index, i, tickCount, "тотем в хотбар, слот " + i);
                      return;
                   }
                }
@@ -512,64 +512,64 @@ public final class AutoTotemModule extends Module {
    }
 
    private List<Predicate<ItemStack>> method716() {
-      ArrayList<Predicate<ItemStack>> var1 = new ArrayList<>();
+      ArrayList<Predicate<ItemStack>> predicates = new ArrayList<>();
       if (this.entry.isEnabled()) {
-         var1.add(var0 -> var0.is(Items.END_CRYSTAL));
+         predicates.add(stack -> stack.is(Items.END_CRYSTAL));
       }
 
       if (this.entry2.isEnabled()) {
-         var1.add(var0 -> var0.is(Items.OBSIDIAN));
+         predicates.add(stack -> stack.is(Items.OBSIDIAN));
       }
 
       if (this.entry3.isEnabled()) {
-         var1.add(var0 -> var0.is(Items.RESPAWN_ANCHOR));
+         predicates.add(stack -> stack.is(Items.RESPAWN_ANCHOR));
       }
 
       if (this.entry4.isEnabled()) {
-         var1.add(var0 -> var0.is(Items.GLOWSTONE));
+         predicates.add(stack -> stack.is(Items.GLOWSTONE));
       }
 
       if (this.entry5.isEnabled()) {
-         var1.add(var0 -> var0.is(ItemTags.PICKAXES));
+         predicates.add(stack -> stack.is(ItemTags.PICKAXES));
       }
 
       if (this.entry6.isEnabled() || CrystalAuraModule.INSTANCE.method5744()) {
-         var1.add(var0 -> var0.is(ItemTags.SWORDS) || var0.is(ItemTags.AXES));
+         predicates.add(stack -> stack.is(ItemTags.SWORDS) || stack.is(ItemTags.AXES));
       }
 
       if (this.entry7.isEnabled()) {
-         var1.add(var0 -> var0.is(Items.GOLDEN_APPLE) || var0.is(Items.ENCHANTED_GOLDEN_APPLE));
+         predicates.add(stack -> stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE));
       }
 
       if (this.entry8.isEnabled()) {
-         var1.add(var0 -> var0.is(Items.ENDER_PEARL));
+         predicates.add(stack -> stack.is(Items.ENDER_PEARL));
       }
 
       if (this.entry9.isEnabled() || CrystalAuraModule.INSTANCE.method5769()) {
-         var1.add(var0 -> var0.is(Items.COBWEB));
+         predicates.add(stack -> stack.is(Items.COBWEB));
       }
 
-      return var1;
+      return predicates;
    }
 
-   private int method717(Predicate<ItemStack> var1) {
-      for (int var2 = 9; var2 <= 35; var2++) {
-         if (var1.test(mc.player.inventoryMenu.getSlot(var2).getItem())) {
-            return var2;
+   private int method717(Predicate<ItemStack> predicate) {
+      for (int i = 9; i <= 35; i++) {
+         if (predicate.test(mc.player.inventoryMenu.getSlot(i).getItem())) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   private static int method718(boolean[] var0, Inventory var1) {
-      for (int var2 = 0; var2 < 3; var2++) {
-         for (int var3 = 0; var3 < 9; var3++) {
-            if (!var0[var3]) {
-               ItemStack var4 = var1.getItem(var3);
-               boolean var5 = var2 == 0 ? var4.isEmpty() : (var2 == 1 ? !var4.is(Items.TOTEM_OF_UNDYING) : true);
-               if (var5) {
-                  return var3;
+   private static int method718(boolean[] flags, Inventory inventory) {
+      for (int i = 0; i < 3; i++) {
+         for (int j = 0; j < 9; j++) {
+            if (!flags[j]) {
+               ItemStack stack = inventory.getItem(j);
+               boolean empty = i == 0 ? stack.isEmpty() : (i == 1 ? !stack.is(Items.TOTEM_OF_UNDYING) : true);
+               if (empty) {
+                  return j;
                }
             }
          }
@@ -578,56 +578,56 @@ public final class AutoTotemModule extends Module {
       return -1;
    }
 
-   private void method719(int var1, int var2, int var3, String var4) {
-      this.intValue2 = var3;
-      mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, var1, var2, ContainerInput.SWAP, mc.player);
+   private void method719(int index, int buttonNum, int tickCount, String str) {
+      this.intValue2 = tickCount;
+      mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, index, buttonNum, ContainerInput.SWAP, mc.player);
       if (mc.gui.screen() == null) {
          mc.getConnection().send(new ServerboundContainerClosePacket(mc.player.inventoryMenu.containerId));
       }
 
-      this.log(var4);
+      this.log(str);
    }
 
    private Slot method720() {
-      Slot var1 = this.method721(var0 -> var0.index >= 36 && var0.index <= 44);
-      return var1 != null ? var1 : this.method721(var0 -> var0.index != 45);
+      Slot slot = this.method721(slot2 -> slot2.index >= 36 && slot2.index <= 44);
+      return slot != null ? slot : this.method721(slot2 -> slot2.index != 45);
    }
 
-   private Slot method721(Predicate<Slot> var1) {
+   private Slot method721(Predicate<Slot> predicate) {
       return InventoryUtils.method912(
          mc.player.inventoryMenu,
          Items.TOTEM_OF_UNDYING,
-         Comparator.<Slot, Boolean>comparing(var0 -> !var0.getItem().isEnchanted()).thenComparing((var0, var1x) -> {
-            CustomData var2 = var0.getItem().get(DataComponents.CUSTOM_DATA);
-            CustomData var3 = var1x.getItem().get(DataComponents.CUSTOM_DATA);
-            if (var2 == null && var3 != null) {
+         Comparator.<Slot, Boolean>comparing(slot -> !slot.getItem().isEnchanted()).thenComparing((slot, var1x) -> {
+            CustomData customData = slot.getItem().get(DataComponents.CUSTOM_DATA);
+            CustomData customData2 = var1x.getItem().get(DataComponents.CUSTOM_DATA);
+            if (customData == null && customData2 != null) {
                return -1;
-            } else if (var2 != null && var3 == null) {
+            } else if (customData != null && customData2 == null) {
                return 1;
-            } else if (var2 == null) {
+            } else if (customData == null) {
                return 0;
             } else {
-               boolean var4 = var2.copyTag().contains("sphereEffect");
-               boolean var5 = var3.copyTag().contains("sphereEffect");
-               if (var4 && !var5) {
+               boolean contains = customData.copyTag().contains("sphereEffect");
+               boolean flag = customData2.copyTag().contains("sphereEffect");
+               if (contains && !flag) {
                   return 1;
-               } else if (!var4 && var5) {
+               } else if (!contains && flag) {
                   return -1;
-               } else if (!var4) {
+               } else if (!contains) {
                   return 0;
                } else {
-                  String var6 = var2.copyTag().get("sphereEffect").toString();
-                  String var7 = var3.copyTag().get("sphereEffect").toString();
-                  return Integer.compare(var7.length(), var6.length());
+                  String string = customData.copyTag().get("sphereEffect").toString();
+                  String str = customData2.copyTag().get("sphereEffect").toString();
+                  return Integer.compare(str.length(), string.length());
                }
             }
-         }).thenComparing(Comparator.comparingInt(var0 -> var0.index)),
-         var1x -> var1x.index != 45 && var1.test(var1x)
+         }).thenComparing(Comparator.comparingInt(slot -> slot.index)),
+         var1x -> var1x.index != 45 && predicate.test(var1x)
       );
    }
 
-   private void log(String var1) {
-      CrystalAuraModule.INSTANCE.method5927(var1);
+   private void log(String str) {
+      CrystalAuraModule.INSTANCE.method5927(str);
    }
 
    private boolean method722() {
@@ -635,23 +635,23 @@ public final class AutoTotemModule extends Module {
    }
 
    private int method723() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < mc.player.getInventory().getContainerSize(); var2++) {
-         if (mc.player.getInventory().getItem(var2).is(Items.TOTEM_OF_UNDYING)) {
-            var1++;
+      for (int i = 0; i < mc.player.getInventory().getContainerSize(); i++) {
+         if (mc.player.getInventory().getItem(i).is(Items.TOTEM_OF_UNDYING)) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
    private int method724() {
       if (mc.getConnection() == null) {
          return 2;
       } else {
-         PlayerInfo var1 = mc.getConnection().getPlayerInfo(mc.player.getUUID());
-         return var1 == null ? 2 : Mth.clamp(Math.round(var1.getLatency() / 50.0F), 0, 20);
+         PlayerInfo playerInfo = mc.getConnection().getPlayerInfo(mc.player.getUUID());
+         return playerInfo == null ? 2 : Mth.clamp(Math.round(playerInfo.getLatency() / 50.0F), 0, 20);
       }
    }
 
@@ -659,20 +659,20 @@ public final class AutoTotemModule extends Module {
       if (UseItemUtils.method6526()) {
          return false;
       } else if (this.isEnabled() && InventoryUtils.method906(Items.TOTEM_OF_UNDYING) != null) {
-         boolean var1 = mc.player.getItemBySlot(EquipmentSlot.CHEST).getItem().equals(Items.ELYTRA);
-         float var2 = mc.player.getHealth() + mc.player.getAbsorptionAmount();
+         boolean flag = mc.player.getItemBySlot(EquipmentSlot.CHEST).getItem().equals(Items.ELYTRA);
+         float f = mc.player.getHealth() + mc.player.getAbsorptionAmount();
          if (mc.player.getCooldowns().isOnCooldown(Items.TOTEM_OF_UNDYING.getDefaultInstance())) {
             return false;
-         } else if (var2 < (var1 ? this.elytraHealthSetting.getValue3() : this.healthSetting.getValue3())) {
+         } else if (f < (flag ? this.elytraHealthSetting.getValue3() : this.healthSetting.getValue3())) {
             return true;
-         } else if (this.predictSetting.isEnabled() && var2 <= this.method732()) {
+         } else if (this.predictSetting.isEnabled() && f <= this.method732()) {
             return true;
          } else if (this.method727()) {
             return true;
          } else if (this.triggerSetting.method5227(6) && this.method726()) {
             return true;
          } else if ((this.triggerSetting.method5227(0) || this.triggerSetting.method5227(4) || this.triggerSetting.method5227(5))
-            && var2 - this.method729() <= this.crystalMargin.getValue3()) {
+            && f - this.method729() <= this.crystalMargin.getValue3()) {
             return true;
          } else {
             return this.triggerSetting.method5227(2)
@@ -695,14 +695,14 @@ public final class AutoTotemModule extends Module {
    }
 
    private boolean method726() {
-      double var1 = this.combatRange.getValue3();
+      double d = this.combatRange.getValue3();
 
-      for (Player var4 : mc.level.players()) {
-         if (var4 != mc.player
-            && CrystalAuraModule.method5901(var4)
-            && mc.player.distanceToSqr(var4) <= var1 * var1
-            && !Zenith.getInstance().getFriends().method7626(var4)
-            && !AntiBotModule.INSTANCE.method2785(var4)) {
+      for (Player player : mc.level.players()) {
+         if (player != mc.player
+            && CrystalAuraModule.method5901(player)
+            && mc.player.distanceToSqr(player) <= d * d
+            && !Zenith.getInstance().getFriends().method7626(player)
+            && !AntiBotModule.INSTANCE.method2785(player)) {
             return true;
          }
       }
@@ -714,8 +714,8 @@ public final class AutoTotemModule extends Module {
       if (this.intValue10 == Integer.MIN_VALUE) {
          return false;
       } else {
-         int var1 = mc.player.tickCount - this.intValue10;
-         return var1 >= 0 && var1 <= 20;
+         int n = mc.player.tickCount - this.intValue10;
+         return n >= 0 && n <= 20;
       }
    }
 
@@ -723,100 +723,100 @@ public final class AutoTotemModule extends Module {
       if (this.method727()) {
          return true;
       } else {
-         float var1 = mc.player.getHealth() + mc.player.getAbsorptionAmount();
+         float f = mc.player.getHealth() + mc.player.getAbsorptionAmount();
          return (this.triggerSetting.method5227(0) || this.triggerSetting.method5227(4) || this.triggerSetting.method5227(5))
-            && this.method729() >= var1 - 0.5F;
+            && this.method729() >= f - 0.5F;
       }
    }
 
    private float method729() {
-      int var1 = mc.player.tickCount;
-      if (this.intValue15 == var1) {
+      int tickCount = mc.player.tickCount;
+      if (this.intValue15 == tickCount) {
          return this.floatValue2;
       } else {
-         this.intValue15 = var1;
+         this.intValue15 = tickCount;
          this.class35.reset();
-         AABB var2 = mc.player.getBoundingBox();
-         float var3 = mc.player.getHealth() + mc.player.getAbsorptionAmount();
-         float var4 = 0.0F;
+         AABB boundingBox = mc.player.getBoundingBox();
+         float f = mc.player.getHealth() + mc.player.getAbsorptionAmount();
+         float f2 = 0.0F;
          if (this.triggerSetting.method5227(0)) {
-            for (EndCrystal var6 : mc.level.getEntitiesOfClass(EndCrystal.class, var2.inflate(12.0), Entity::isAlive)) {
-               var4 = Math.max(var4, this.class35.method5452(var6.position(), 6.0F, mc.player, var2, null, null));
+            for (EndCrystal endCrystal : mc.level.getEntitiesOfClass(EndCrystal.class, boundingBox.inflate(12.0), Entity::isAlive)) {
+               f2 = Math.max(f2, this.class35.method5452(endCrystal.position(), 6.0F, mc.player, boundingBox, null, null));
             }
 
             if (mc.level.dimension() != Level.NETHER) {
-               BlockPos var10 = mc.player.blockPosition();
+               BlockPos blockPosition = mc.player.blockPosition();
 
-               for (BlockPos var7 : BlockPos.betweenClosed(var10.offset(-5, -3, -5), var10.offset(5, 4, 5))) {
-                  BlockState var8 = mc.level.getBlockState(var7);
-                  if (var8.is(Blocks.RESPAWN_ANCHOR) && var8.getValue(RespawnAnchorBlock.CHARGE) > 0) {
-                     BlockPos var9 = var7.immutable();
-                     var4 = Math.max(var4, this.class35.method5452(Vec3.atCenterOf(var9), 5.0F, mc.player, var2, var9, null));
+               for (BlockPos pos : BlockPos.betweenClosed(blockPosition.offset(-5, -3, -5), blockPosition.offset(5, 4, 5))) {
+                  BlockState blockState = mc.level.getBlockState(pos);
+                  if (blockState.is(Blocks.RESPAWN_ANCHOR) && blockState.getValue(RespawnAnchorBlock.CHARGE) > 0) {
+                     BlockPos immutable = pos.immutable();
+                     f2 = Math.max(f2, this.class35.method5452(Vec3.atCenterOf(immutable), 5.0F, mc.player, boundingBox, immutable, null));
                   }
                }
             }
          }
 
          if (this.triggerSetting.method5227(5) && CrystalAuraModule.INSTANCE.isEnabled()) {
-            var4 = Math.max(var4, CrystalAuraModule.INSTANCE.method5742());
+            f2 = Math.max(f2, CrystalAuraModule.INSTANCE.method5742());
          }
 
-         if (this.triggerSetting.method5227(4) && var4 < var3 - this.crystalMargin.getValue3()) {
-            var4 = Math.max(var4, this.method730(var2, var3));
+         if (this.triggerSetting.method5227(4) && f2 < f - this.crystalMargin.getValue3()) {
+            f2 = Math.max(f2, this.method730(boundingBox, f));
          }
 
-         this.floatValue2 = var4;
-         return var4;
+         this.floatValue2 = f2;
+         return f2;
       }
    }
 
-   private float method730(AABB var1, float var2) {
-      ArrayList<Player> var3 = new ArrayList();
+   private float method730(AABB boundingBox, float f) {
+      ArrayList<Player> players = new ArrayList();
 
-      for (Player var5 : mc.level.players()) {
-         if (var5 != mc.player
-            && CrystalAuraModule.method5901(var5)
-            && mc.player.distanceToSqr(var5) <= 100.0
-            && !Zenith.getInstance().getFriends().method7626(var5)) {
-            var3.add(var5);
+      for (Player player : mc.level.players()) {
+         if (player != mc.player
+            && CrystalAuraModule.method5901(player)
+            && mc.player.distanceToSqr(player) <= 100.0
+            && !Zenith.getInstance().getFriends().method7626(player)) {
+            players.add(player);
          }
       }
 
-      if (var3.isEmpty()) {
+      if (players.isEmpty()) {
          return 0.0F;
       } else {
-         float var14 = var2 - this.crystalMargin.getValue3();
-         float var15 = 0.0F;
-         BlockPos var6 = mc.player.blockPosition();
+         float f2 = f - this.crystalMargin.getValue3();
+         float f3 = 0.0F;
+         BlockPos blockPosition = mc.player.blockPosition();
 
-         for (BlockPos var8 : BlockPos.betweenClosed(var6.offset(-4, -2, -4), var6.offset(4, 2, 4))) {
-            BlockState var9 = mc.level.getBlockState(var8);
-            if ((var9.is(Blocks.OBSIDIAN) || var9.is(Blocks.BEDROCK)) && mc.level.isEmptyBlock(var8.above())) {
-               Vec3 var10 = new Vec3(var8.getX() + 0.5, var8.getY() + 1.0, var8.getZ() + 0.5);
-               boolean var11 = false;
+         for (BlockPos pos : BlockPos.betweenClosed(blockPosition.offset(-4, -2, -4), blockPosition.offset(4, 2, 4))) {
+            BlockState blockState = mc.level.getBlockState(pos);
+            if ((blockState.is(Blocks.OBSIDIAN) || blockState.is(Blocks.BEDROCK)) && mc.level.isEmptyBlock(pos.above())) {
+               Vec3 vec = new Vec3(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+               boolean flag = false;
 
-               for (Player var13 : var3) {
-                  if (var13.getEyePosition().distanceToSqr(var10) <= 36.0) {
-                     var11 = true;
+               for (Player player : players) {
+                  if (player.getEyePosition().distanceToSqr(vec) <= 36.0) {
+                     flag = true;
                      break;
                   }
                }
 
-               if (var11) {
-                  AABB var16 = new AABB(var8.getX(), var8.getY() + 1.0, var8.getZ(), var8.getX() + 1.0, var8.getY() + 3.0, var8.getZ() + 1.0);
-                  if (!var16.intersects(var1)
-                     && mc.level.getEntities((Entity) null, var16, var0 -> !(var0 instanceof EndCrystal)).isEmpty()
-                     && !(this.class35.method5453(var10, 6.0F, mc.player, var1) < Math.max(var15, var14))) {
-                     var15 = Math.max(var15, this.class35.method5452(var10, 6.0F, mc.player, var1, null, null));
-                     if (var15 >= var14) {
-                        return var15;
+               if (flag) {
+                  AABB aabb = new AABB(pos.getX(), pos.getY() + 1.0, pos.getZ(), pos.getX() + 1.0, pos.getY() + 3.0, pos.getZ() + 1.0);
+                  if (!aabb.intersects(boundingBox)
+                     && mc.level.getEntities((Entity) null, aabb, entity -> !(entity instanceof EndCrystal)).isEmpty()
+                     && !(this.class35.method5453(vec, 6.0F, mc.player, boundingBox) < Math.max(f3, f2))) {
+                     f3 = Math.max(f3, this.class35.method5452(vec, 6.0F, mc.player, boundingBox, null, null));
+                     if (f3 >= f2) {
+                        return f3;
                      }
                   }
                }
             }
          }
 
-         return var15;
+         return f3;
       }
    }
 
@@ -826,42 +826,42 @@ public final class AutoTotemModule extends Module {
          this.floatValue = Float.NaN;
          this.intValue8 = -1;
       } else {
-         int var1 = mc.player.tickCount;
-         float var2 = mc.player.getHealth() + mc.player.getAbsorptionAmount();
-         if (this.intValue8 > var1) {
+         int tickCount = mc.player.tickCount;
+         float floatValue = mc.player.getHealth() + mc.player.getAbsorptionAmount();
+         if (this.intValue8 > tickCount) {
             this.deque.clear();
             this.floatValue = Float.NaN;
          }
 
          if (!Float.isNaN(this.floatValue)) {
-            float var3 = this.floatValue - var2;
-            if (var3 > 0.0F) {
-               this.deque.addLast(new AutoTotemModule.Entry(var1, var3));
-               this.intValue4 = var1;
+            float f = this.floatValue - floatValue;
+            if (f > 0.0F) {
+               this.deque.addLast(new AutoTotemModule.Entry(tickCount, f));
+               this.intValue4 = tickCount;
             }
          }
 
-         this.floatValue = var2;
-         this.intValue8 = var1;
-         this.method733(var1);
+         this.floatValue = floatValue;
+         this.intValue8 = tickCount;
+         this.method733(tickCount);
       }
    }
 
    private float method732() {
       this.method733(mc.player.tickCount);
-      float var1 = 0.0F;
+      float f = 0.0F;
 
-      for (AutoTotemModule.Entry var3 : this.deque) {
-         var1 = Math.max(var1, var3.floatValue);
+      for (AutoTotemModule.Entry entry : this.deque) {
+         f = Math.max(f, entry.floatValue);
       }
 
-      return var1;
+      return f;
    }
 
-   private void method733(int var1) {
-      int var2 = var1 - (int)this.predictTicksSetting.getValue3() + 1;
+   private void method733(int tickCount) {
+      int n = tickCount - (int)this.predictTicksSetting.getValue3() + 1;
 
-      while (!this.deque.isEmpty() && this.deque.peekFirst().intValue < var2) {
+      while (!this.deque.isEmpty() && this.deque.peekFirst().intValue < n) {
          this.deque.removeFirst();
       }
    }
@@ -1131,9 +1131,9 @@ public final class AutoTotemModule extends Module {
       private final int intValue;
       private final float floatValue;
 
-      private Entry(int var1, float var2) {
-         this.intValue = var1;
-         this.floatValue = var2;
+      private Entry(int intValue, float floatValue) {
+         this.intValue = intValue;
+         this.floatValue = floatValue;
       }
    }
 }

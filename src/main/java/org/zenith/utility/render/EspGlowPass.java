@@ -14,24 +14,24 @@ public final class EspGlowPass {
    private EspGlowPass() {
    }
 
-   public static boolean method2636(FrameGraphBuilder var0, int var1, int var2, TargetBundle var3) {
-      ShaderESPModule var4 = ShaderESPModule.INSTANCE;
-      if (var4 != null && var4.isEnabled()) {
-         PostChain var5 = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.OUTLINE_TARGETS);
-         if (var5 == null) {
+   public static boolean method2636(FrameGraphBuilder frame, int screenWidth, int screenHeight, TargetBundle providedTargets) {
+      ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;
+      if (shaderESPModule != null && shaderESPModule.isEnabled()) {
+         PostChain postChain = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.OUTLINE_TARGETS);
+         if (postChain == null) {
             return false;
          } else {
             PostEffectManager.method2819(
-               var5,
+               postChain,
                identifier,
                new PostEffectManager.Entry()
-                  .method2828("OutlineWidth", var4.method4590())
-                  .method2828("GlowStrength", var4.method4591())
-                  .method2828("FillOpacity", var4.method4592())
-                  .method2828("Pulse", var4.method4594())
-                  .method2828("Radius", var4.method4593())
+                  .method2828("OutlineWidth", shaderESPModule.method4590())
+                  .method2828("GlowStrength", shaderESPModule.method4591())
+                  .method2828("FillOpacity", shaderESPModule.method4592())
+                  .method2828("Pulse", shaderESPModule.method4594())
+                  .method2828("Radius", shaderESPModule.method4593())
             );
-            var5.addToFrame(var0, var1, var2, var3);
+            postChain.addToFrame(frame, screenWidth, screenHeight, providedTargets);
             return true;
          }
       } else {

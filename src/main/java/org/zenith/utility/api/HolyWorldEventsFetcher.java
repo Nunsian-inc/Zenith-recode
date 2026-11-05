@@ -39,104 +39,104 @@ public class HolyWorldEventsFetcher {
       if (!Zenith.getInstance().getServerDetector().method1642()) {
          this.items = List.of();
       } else {
-         HttpURLConnection var1 = null;
+         HttpURLConnection openConnection = null;
 
          try {
-            var1 = (HttpURLConnection)URI.create("https://api.holyworld.me/v1/events").toURL().openConnection();
-            var1.setRequestMethod("GET");
-            var1.setConnectTimeout(5000);
-            var1.setReadTimeout(5000);
-            var1.setRequestProperty("Accept", "application/json");
-            var1.setRequestProperty(
+            openConnection = (HttpURLConnection)URI.create("https://api.holyworld.me/v1/events").toURL().openConnection();
+            openConnection.setRequestMethod("GET");
+            openConnection.setConnectTimeout(5000);
+            openConnection.setReadTimeout(5000);
+            openConnection.setRequestProperty("Accept", "application/json");
+            openConnection.setRequestProperty(
                "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
             );
-            if (var1.getResponseCode() == 200) {
-               List var2;
-               try (BufferedInputStream var3 = new BufferedInputStream(var1.getInputStream())) {
-                  var2 = this.method1719(var3);
+            if (openConnection.getResponseCode() == 200) {
+               List coll;
+               try (BufferedInputStream bufferedInputStream = new BufferedInputStream(openConnection.getInputStream())) {
+                  coll = this.method1719(bufferedInputStream);
                }
 
-               this.items = List.copyOf(var2);
+               this.items = List.copyOf(coll);
                return;
             }
-         } catch (Exception var13) {
+         } catch (Exception e) {
             return;
          } finally {
-            if (var1 != null) {
-               var1.disconnect();
+            if (openConnection != null) {
+               openConnection.disconnect();
             }
          }
       }
    }
 
-   private List<HolyWorldEvent> method1719(InputStream var1) throws IOException {
-      InputStreamReader var3 = new InputStreamReader(var1, StandardCharsets.UTF_8);
+   private List<HolyWorldEvent> method1719(InputStream bufferedInputStream) throws IOException {
+      InputStreamReader inputStreamReader = new InputStreamReader(bufferedInputStream, StandardCharsets.UTF_8);
 
-      JsonElement var2;
+      JsonElement reader;
       try {
-         var2 = JsonParser.parseReader(var3);
-      } catch (Throwable var13) {
+         reader = JsonParser.parseReader(inputStreamReader);
+      } catch (Throwable e) {
          try {
-            var3.close();
-         } catch (Throwable var12) {
-            var13.addSuppressed(var12);
+            inputStreamReader.close();
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var13;
+         throw e;
       }
 
-      var3.close();
-      if (!var2.isJsonObject()) {
+      inputStreamReader.close();
+      if (!reader.isJsonObject()) {
          throw new IOException("HolyWorld events response must be a JSON object");
       } else {
-         TreeMap var14 = new TreeMap();
+         TreeMap map = new TreeMap();
 
-         for (Entry var5 : var2.getAsJsonObject().entrySet()) {
-            int var6 = this.method1720((String)var5.getKey());
-            if (var6 > 0 && ((JsonElement)var5.getValue()).isJsonArray()) {
-               var14.put(var6, ((JsonElement)var5.getValue()).getAsJsonArray());
+         for (Entry entry : reader.getAsJsonObject().entrySet()) {
+            int key = this.method1720((String)entry.getKey());
+            if (key > 0 && ((JsonElement)entry.getValue()).isJsonArray()) {
+               map.put(key, ((JsonElement)entry.getValue()).getAsJsonArray());
             }
          }
 
-         LinkedHashMap var15 = new LinkedHashMap();
+         LinkedHashMap map2 = new LinkedHashMap();
 
-         for (Object var18_o : (Iterable<?>)(Object)(var14.entrySet())) {
-            Entry var18 = (Entry)var18_o;
-            for (JsonElement var8 : (JsonArray)var18.getValue()) {
-               if (var8.isJsonObject()) {
-                  JsonObject var9 = var8.getAsJsonObject();
-                  JsonElement var10 = var9.get("id");
-                  if (var10 != null && var10.isJsonPrimitive()) {
-                     String var11 = var10.getAsString();
-                     if (!var11.isBlank()) {
-                        ((java.util.List)var15.computeIfAbsent(var11, var0 -> new TreeSet<>())).add((Integer)var18.getKey());
+         for (Object obj : (Iterable<?>)(Object)(map.entrySet())) {
+            Entry entry = (Entry)obj;
+            for (JsonElement jsonElement : (JsonArray)entry.getValue()) {
+               if (jsonElement.isJsonObject()) {
+                  JsonObject jsonObject = jsonElement.getAsJsonObject();
+                  JsonElement jsonElement2 = jsonObject.get("id");
+                  if (jsonElement2 != null && jsonElement2.isJsonPrimitive()) {
+                     String string = jsonElement2.getAsString();
+                     if (!string.isBlank()) {
+                        ((java.util.List)map2.computeIfAbsent(string, obj2 -> new TreeSet<>())).add((Integer)entry.getKey());
                      }
                   }
                }
             }
          }
 
-         ArrayList<HolyWorldEvent> var17 = new ArrayList<>();
+         ArrayList<HolyWorldEvent> events = new ArrayList<>();
 
-         for (Object var20_o : (Iterable<?>)(Object)(var15.entrySet())) {
-            Entry var20 = (Entry)var20_o;
-            String var21 = this.method1721((TreeSet<Integer>)var20.getValue());
-            HolyWorldEvent var22 = new HolyWorldEvent((String)var20.getKey(), var21, 0L);
-            if (var22.method7743()) {
-               var17.add(var22);
+         for (Object obj : (Iterable<?>)(Object)(map2.entrySet())) {
+            Entry entry = (Entry)obj;
+            String text = this.method1721((TreeSet<Integer>)entry.getValue());
+            HolyWorldEvent event = new HolyWorldEvent((String)entry.getKey(), text, 0L);
+            if (event.method7743()) {
+               events.add(event);
             }
          }
 
-         return var17;
+         return events;
       }
    }
 
-   private int method1720(String var1) {
-      int var2 = var1.lastIndexOf(95);
-      if (var2 >= 0 && var2 != var1.length() - 1) {
+   private int method1720(String key) {
+      int lastIndexOf = key.lastIndexOf(95);
+      if (lastIndexOf >= 0 && lastIndexOf != key.length() - 1) {
          try {
-            return Integer.parseInt(var1.substring(var2 + 1));
-         } catch (NumberFormatException var4) {
+            return Integer.parseInt(key.substring(lastIndexOf + 1));
+         } catch (NumberFormatException e) {
             return -1;
          }
       } else {
@@ -144,18 +144,18 @@ public class HolyWorldEventsFetcher {
       }
    }
 
-   private String method1721(TreeSet<Integer> var1) {
-      StringBuilder var2 = new StringBuilder();
+   private String method1721(TreeSet<Integer> integers) {
+      StringBuilder builder = new StringBuilder();
 
-      for (int var4 : var1) {
-         if (!var2.isEmpty()) {
-            var2.append(", ");
+      for (int n : integers) {
+         if (!builder.isEmpty()) {
+            builder.append(", ");
          }
 
-         var2.append('#').append(var4);
+         builder.append('#').append(n);
       }
 
-      return var2.toString();
+      return builder.toString();
    }
 
    @Generated

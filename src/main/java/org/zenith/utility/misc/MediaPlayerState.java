@@ -24,10 +24,10 @@ public final class MediaPlayerState {
       return INSTANCE;
    }
 
-   public void method1669(String var1) {
-      String var2 = var1 == null ? "" : var1;
-      if (!var2.equals(this.owner)) {
-         this.owner = var2;
+   public void method1669(String owner) {
+      String str = owner == null ? "" : owner;
+      if (!str.equals(this.owner)) {
+         this.owner = str;
          this.floatValue = -1.0F;
          this.flag = false;
          this.floatValue4 = -1.0F;
@@ -37,17 +37,17 @@ public final class MediaPlayerState {
       }
    }
 
-   public void method1670(float var1) {
-      if (!(var1 < 0.0F)) {
+   public void method1670(float floatValue) {
+      if (!(floatValue < 0.0F)) {
          if (!this.flag) {
-            this.floatValue = var1;
+            this.floatValue = floatValue;
          }
       }
    }
 
-   public void method1671(float var1) {
-      if (var1 >= 0.0F) {
-         this.floatValue5 = var1;
+   public void method1671(float f) {
+      if (f >= 0.0F) {
+         this.floatValue5 = f;
          this.longValue2 = System.currentTimeMillis();
       }
    }
@@ -56,8 +56,8 @@ public final class MediaPlayerState {
       if (System.currentTimeMillis() - this.longValue2 > 600L) {
          return -1.0F;
       } else {
-         float var1 = this.flag && this.floatValue4 > 0.01F ? this.floatValue5 / Math.max(0.05F, this.floatValue3) : this.floatValue5;
-         return Math.min(1.0F, var1);
+         float f = this.flag && this.floatValue4 > 0.01F ? this.floatValue5 / Math.max(0.05F, this.floatValue3) : this.floatValue5;
+         return Math.min(1.0F, f);
       }
    }
 
@@ -77,63 +77,63 @@ public final class MediaPlayerState {
       return this.flag;
    }
 
-   public void method1675(float var1) {
-      IMediaSession var2 = MediaSessionManager.getInstance().getIMediaSession();
-      if (var2 != null) {
-         float var3 = Math.max(0.0F, Math.min(1.0F, var1));
+   public void method1675(float clamp01) {
+      IMediaSession iMediaSession = MediaSessionManager.getInstance().getIMediaSession();
+      if (iMediaSession != null) {
+         float floatValue = Math.max(0.0F, Math.min(1.0F, clamp01));
          this.changedAt = System.currentTimeMillis();
          if (this.flag) {
-            this.floatValue4 = var3;
+            this.floatValue4 = floatValue;
          } else {
-            this.floatValue = var3;
-            MediaHelperProcess.getInstance().method6861(var2.getOwner(), var3);
+            this.floatValue = floatValue;
+            MediaHelperProcess.getInstance().method6861(iMediaSession.getOwner(), floatValue);
          }
       }
    }
 
-   public void method1676(float var1) {
+   public void method1676(float f) {
       if (!this.method1673()) {
-         IMediaSession var2 = MediaSessionManager.getInstance().getIMediaSession();
-         if (var2 != null) {
-            MediaHelperProcess.getInstance().method6863(var2.getOwner());
+         IMediaSession iMediaSession = MediaSessionManager.getInstance().getIMediaSession();
+         if (iMediaSession != null) {
+            MediaHelperProcess.getInstance().method6863(iMediaSession.getOwner());
          }
 
          this.floatValue = 0.5F;
       }
 
-      this.method1675(this.method1674() + var1);
+      this.method1675(this.method1674() + f);
    }
 
-   public void method1677(boolean var1, float var2, boolean var3) {
-      IMediaSession var4 = MediaSessionManager.getInstance().getIMediaSession();
-      long var5 = System.currentTimeMillis();
-      if (var3 && var4 != null) {
-         if (var1) {
-            this.longValue = var5;
+   public void method1677(boolean flag, float f, boolean enabled) {
+      IMediaSession iMediaSession = MediaSessionManager.getInstance().getIMediaSession();
+      long now = System.currentTimeMillis();
+      if (enabled && iMediaSession != null) {
+         if (flag) {
+            this.longValue = now;
             if (!this.flag && this.method1673()) {
                this.floatValue4 = this.floatValue;
-               this.floatValue3 = var2;
+               this.floatValue3 = f;
                this.flag = true;
-               MediaHelperProcess.getInstance().method6862(var4.getOwner(), Math.max(0.0F, this.floatValue4 * var2), 260);
+               MediaHelperProcess.getInstance().method6862(iMediaSession.getOwner(), Math.max(0.0F, this.floatValue4 * f), 260);
             }
          } else {
-            if (this.flag && var5 - this.longValue > 650L) {
-               this.method1678(var4);
+            if (this.flag && now - this.longValue > 650L) {
+               this.method1678(iMediaSession);
             }
          }
       } else {
          if (this.flag) {
-            this.method1678(var4);
+            this.method1678(iMediaSession);
          }
       }
    }
 
-   private void method1678(IMediaSession var1) {
+   private void method1678(IMediaSession iMediaSession) {
       this.flag = false;
       if (this.floatValue4 >= 0.0F) {
          this.floatValue = this.floatValue4;
-         if (var1 != null) {
-            MediaHelperProcess.getInstance().method6862(var1.getOwner(), this.floatValue4, 900);
+         if (iMediaSession != null) {
+            MediaHelperProcess.getInstance().method6862(iMediaSession.getOwner(), this.floatValue4, 900);
          }
       }
 
@@ -141,12 +141,12 @@ public final class MediaPlayerState {
    }
 
    public float method1679() {
-      float var1 = this.method1674();
+      float f = this.method1674();
       if (this.floatValue2 < 0.0F) {
-         this.floatValue2 = var1;
+         this.floatValue2 = f;
       }
 
-      this.floatValue2 = this.floatValue2 + (var1 - this.floatValue2) * 0.25F;
+      this.floatValue2 = this.floatValue2 + (f - this.floatValue2) * 0.25F;
       return this.floatValue2;
    }
 }

@@ -134,8 +134,8 @@ public class BotControlScreen extends CustomScreen {
       return this.botName;
    }
 
-   public BotControlScreen(String var1) {
-      this.botName = var1;
+   public BotControlScreen(String botName) {
+      this.botName = botName;
       this.chatSuggestor = new BotChatInputSuggestor(
          this,
          this.chatField,
@@ -147,18 +147,18 @@ public class BotControlScreen extends CustomScreen {
    }
 
    private BotClient ensureBound() {
-      BotClient var1 = HeadlessBots.get(this.botName);
-      if (var1 != this.boundClient) {
+      BotClient boundClient = HeadlessBots.get(this.botName);
+      if (boundClient != this.boundClient) {
          this.unbind();
-         this.boundClient = var1;
-         if (var1 != null) {
-            this.control = new BotRemoteControl(var1);
+         this.boundClient = boundClient;
+         if (boundClient != null) {
+            this.control = new BotRemoteControl(boundClient);
             this.control.attach();
-            this.view = new BotWorldView(var1);
+            this.view = new BotWorldView(boundClient);
          }
       }
 
-      return var1;
+      return boundClient;
    }
 
    private void unbind() {
@@ -186,35 +186,35 @@ public class BotControlScreen extends CustomScreen {
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3) {
-      BotClient var4 = this.ensureBound();
-      BotPlayer var5 = var4 != null ? var4.getPlayer() : null;
-      boolean var6 = var4 != null && var4.isJoined() && var5 != null;
-      AbstractContainerMenu var7 = var6 ? this.currentUiHandler(var4, var5) : null;
-      boolean var8 = var7 != null;
-      boolean var9 = mc.gui.screen() != this;
-      if (this.chatOpen && (!var6 || var8)) {
+   public void render(MenuDrawContext menuDrawContext, float xo, float yo) {
+      BotClient ensureBound = this.ensureBound();
+      BotPlayer player = ensureBound != null ? ensureBound.getPlayer() : null;
+      boolean flag = ensureBound != null && ensureBound.isJoined() && player != null;
+      AbstractContainerMenu currentUiHandler = flag ? this.currentUiHandler(ensureBound, player) : null;
+      boolean flag2 = currentUiHandler != null;
+      boolean flag3 = mc.gui.screen() != this;
+      if (this.chatOpen && (!flag || flag2)) {
          this.closeChat();
       }
 
       if (this.control != null) {
-         this.control.setUiScreenOpen(var8 || this.chatOpen || var9);
+         this.control.setUiScreenOpen(flag2 || this.chatOpen || flag3);
       }
 
-      this.setCursorLocked(!var9 && var6 && !var8 && !this.chatOpen);
-      var1.drawRoundedRect(0.0F, 0.0F, this.width, this.height, ProxyDotRadiusData.INSTANCE, new ZenithColor(10, 10, 14, 255));
-      if (!var6) {
-         String var14 = t("gui.bot.notInGame");
-         var1.text(mc.font, var14, (this.width - mc.font.width(var14)) / 2, this.height / 2 - 4, -1, true);
-         String var15 = t("gui.bot.escBack");
-         var1.text(mc.font, var15, (this.width - mc.font.width(var15)) / 2, this.height / 2 + 8, -6643542, true);
+      this.setCursorLocked(!flag3 && flag && !flag2 && !this.chatOpen);
+      menuDrawContext.drawRoundedRect(0.0F, 0.0F, this.width, this.height, ProxyDotRadiusData.INSTANCE, new ZenithColor(10, 10, 14, 255));
+      if (!flag) {
+         String str = t("gui.bot.notInGame");
+         menuDrawContext.text(mc.font, str, (this.width - mc.font.width(str)) / 2, this.height / 2 - 4, -1, true);
+         String str2 = t("gui.bot.escBack");
+         menuDrawContext.text(mc.font, str2, (this.width - mc.font.width(str2)) / 2, this.height / 2 + 8, -6643542, true);
       } else {
-         int var10 = mc.getWindow().getWidth();
-         int var11 = mc.getWindow().getHeight();
-         boolean var12 = this.view != null && this.view.renderToFbo(var10, var11);
-         if (var12) {
+         int width = mc.getWindow().getWidth();
+         int height = mc.getWindow().getHeight();
+         boolean flag4 = this.view != null && this.view.renderToFbo(width, height);
+         if (flag4) {
             RenderShaders.method5298(
-               MatrixUtils.method664(var1.pose()),
+               MatrixUtils.method664(menuDrawContext.pose()),
                this.view.getColorAttachment(),
                0.0F,
                0.0F,
@@ -228,95 +228,95 @@ public class BotControlScreen extends CustomScreen {
                0.0F
             );
          } else {
-            String var13 = t("gui.bot.loadingWorld");
-            var1.text(mc.font, var13, (this.width - mc.font.width(var13)) / 2, this.height / 2 - 4, -1, true);
+            String str = t("gui.bot.loadingWorld");
+            menuDrawContext.text(mc.font, str, (this.width - mc.font.width(str)) / 2, this.height / 2 - 4, -1, true);
          }
 
-         this.renderHud(var1, var4, var5);
-         this.renderScoreboardSidebar(var1, var4);
+         this.renderHud(menuDrawContext, ensureBound, player);
+         this.renderScoreboardSidebar(menuDrawContext, ensureBound);
          ScissorFlusher.flush();
-         this.renderChat(var1, var4);
+         this.renderChat(menuDrawContext, ensureBound);
          ScissorFlusher.flush();
-         if (var8) {
-            this.renderContainer(var1, var5, var7, (int)var2, (int)var3);
+         if (flag2) {
+            this.renderContainer(menuDrawContext, player, currentUiHandler, (int)xo, (int)yo);
             ScissorFlusher.flush();
          } else {
             this.hoveredSlotCache = null;
-            this.renderCrosshair(var1);
+            this.renderCrosshair(menuDrawContext);
          }
       }
    }
 
-   private AbstractContainerMenu currentUiHandler(BotClient var1, BotPlayer var2) {
-      BotPlayHandler var3 = var1.getPlayHandler();
-      if (var3 != null && var3.hasOpenScreen()) {
+   private AbstractContainerMenu currentUiHandler(BotClient boundClient, BotPlayer player) {
+      BotPlayHandler playHandler = boundClient.getPlayHandler();
+      if (playHandler != null && playHandler.hasOpenScreen()) {
          this.inventoryOpen = false;
-         return var2.containerMenu;
+         return player.containerMenu;
       } else {
-         return this.inventoryOpen ? var2.inventoryMenu : null;
+         return this.inventoryOpen ? player.inventoryMenu : null;
       }
    }
 
-   private void renderCrosshair(MenuDrawContext var1) {
-      int var2 = this.width / 2;
-      int var3 = this.height / 2;
-      int var4 = -855638017;
-      var1.fill(var2 - 5, var3, var2 + 4, var3 + 1, var4);
-      var1.fill(var2, var3 - 5, var2 + 1, var3 + 4, var4);
+   private void renderCrosshair(MenuDrawContext menuDrawContext) {
+      int x0 = this.width / 2;
+      int y0 = this.height / 2;
+      int col = -855638017;
+      menuDrawContext.fill(x0 - 5, y0, x0 + 4, y0 + 1, col);
+      menuDrawContext.fill(x0, y0 - 5, x0 + 1, y0 + 4, col);
    }
 
-   private void renderChat(MenuDrawContext var1, BotClient var2) {
-      List<ChatMessage> var3 = var2.getChatLog();
-      long var4 = System.currentTimeMillis();
-      this.syncChatCache(var3, var4);
-      var var6 = new ArrayList<>(var3.size());
+   private void renderChat(MenuDrawContext menuDrawContext, BotClient ensureBound) {
+      List<ChatMessage> chatLog = ensureBound.getChatLog();
+      long now = System.currentTimeMillis();
+      this.syncChatCache(chatLog, now);
+      var arrayList = new ArrayList<>(chatLog.size());
       this.chatTotalLines = 0;
 
-      for (ChatMessage var8 : var3) {
-         BotControlScreen.CachedChat var9 = this.chatCache.get(var8);
-         if (var9 != null) {
-            var6.add(var9);
-            this.chatTotalLines = this.chatTotalLines + var9.lines().size();
+      for (ChatMessage chatMessage : chatLog) {
+         BotControlScreen.CachedChat cachedChat = this.chatCache.get(chatMessage);
+         if (cachedChat != null) {
+            arrayList.add(cachedChat);
+            this.chatTotalLines = this.chatTotalLines + cachedChat.lines().size();
          }
       }
 
-      int var20 = this.visibleChatLines();
-      this.chatScrollLines = Mth.clamp(this.chatScrollLines, 0, Math.max(0, this.chatTotalLines - var20));
-      int var21 = this.chatOpen ? this.chatScrollLines : 0;
-      int var22 = this.height - 52;
-      byte var10 = 4;
-      int var11 = 0;
+      int visibleChatLines = this.visibleChatLines();
+      this.chatScrollLines = Mth.clamp(this.chatScrollLines, 0, Math.max(0, this.chatTotalLines - visibleChatLines));
+      int chatScrollLines = this.chatOpen ? this.chatScrollLines : 0;
+      int n = this.height - 52;
+      byte x = 4;
+      int n2 = 0;
 
       label55:
-      for (int var12 = var6.size() - 1; var12 >= 0 && var11 < var20; var12--) {
-         BotControlScreen.CachedChat var13 = (BotControlScreen.CachedChat)var6.get(var12);
-         float var14 = 1.0F;
+      for (int i = arrayList.size() - 1; i >= 0 && n2 < visibleChatLines; i--) {
+         BotControlScreen.CachedChat cachedChat = (BotControlScreen.CachedChat)arrayList.get(i);
+         float f = 1.0F;
          if (!this.chatOpen) {
-            long var15 = var4 - var13.seenAt();
-            if (var15 >= 10000L) {
+            long l = now - cachedChat.seenAt();
+            if (l >= 10000L) {
                break;
             }
 
-            float var17 = (float)(10000L - var15) / 10000.0F * 10.0F;
-            var14 = Mth.clamp(var17, 0.0F, 1.0F);
-            var14 *= var14;
+            float f2 = (float)(10000L - l) / 10000.0F * 10.0F;
+            f = Mth.clamp(f2, 0.0F, 1.0F);
+            f *= f;
          }
 
-         var var24 = var13.lines();
+         var lines = cachedChat.lines();
 
-         for (int var16 = var24.size() - 1; var16 >= 0; var16--) {
-            if (var21 > 0) {
-               var21--;
+         for (int j = lines.size() - 1; j >= 0; j--) {
+            if (chatScrollLines > 0) {
+               chatScrollLines--;
             } else {
-               int var25 = var22 - var11 * 9;
-               int var18 = (int)(var14 * 128.0F);
-               int var19 = (int)(var14 * 255.0F);
-               if (var19 > 8) {
-                  var1.fill(var10 - 2, var25 - 1, var10 + 320 + 2, var25 + 9 - 1, var18 << 24);
-                  var1.text(mc.font, (FormattedCharSequence)var24.get(var16), var10, var25, var19 << 24 | 16777215, true);
+               int y = n - n2 * 9;
+               int n3 = (int)(f * 128.0F);
+               int n4 = (int)(f * 255.0F);
+               if (n4 > 8) {
+                  menuDrawContext.fill(x - 2, y - 1, x + 320 + 2, y + 9 - 1, n3 << 24);
+                  menuDrawContext.text(mc.font, (FormattedCharSequence)lines.get(j), x, y, n4 << 24 | 16777215, true);
                }
 
-               if (++var11 >= var20) {
+               if (++n2 >= visibleChatLines) {
                   break label55;
                }
             }
@@ -324,50 +324,50 @@ public class BotControlScreen extends CustomScreen {
       }
 
       if (this.chatOpen) {
-         this.renderChatField(var1);
+         this.renderChatField(menuDrawContext);
       }
    }
 
-   private void renderChatField(MenuDrawContext var1) {
+   private void renderChatField(MenuDrawContext menuDrawContext) {
       this.clampChatFieldScroll();
       this.chatSuggestor.update(this.originalChatText);
-      String var2 = this.chatField.getText();
-      int var3 = this.height - 16;
-      var1.drawRoundedRect(2.0F, var3, this.width - 2, 14.0F, ProxyDotRadiusData.INSTANCE, new ZenithColor(Integer.MIN_VALUE));
-      byte var4 = 6;
-      int var5 = var3 + 3;
-      int var6 = Mth.clamp(this.chatField.getCursor(), 0, var2.length());
-      String var7 = mc.font.plainSubstrByWidth(var2.substring(this.chatFirstChar), this.chatInnerWidth());
-      if (this.chatField.isFlag() && !var2.isEmpty()) {
-         var1.fill(var4 - 1, var3 + 1, var4 + mc.font.width(var7) + 1, var3 + 13, -2139062144);
+      String text = this.chatField.getText();
+      int y = this.height - 16;
+      menuDrawContext.drawRoundedRect(2.0F, y, this.width - 2, 14.0F, ProxyDotRadiusData.INSTANCE, new ZenithColor(Integer.MIN_VALUE));
+      byte x = 6;
+      int n = y + 3;
+      int n2 = Mth.clamp(this.chatField.getCursor(), 0, text.length());
+      String plainSubstrByWidth = mc.font.plainSubstrByWidth(text.substring(this.chatFirstChar), this.chatInnerWidth());
+      if (this.chatField.isFlag() && !text.isEmpty()) {
+         menuDrawContext.fill(x - 1, y + 1, x + mc.font.width(plainSubstrByWidth) + 1, y + 13, -2139062144);
       }
 
-      if (!var7.isEmpty()) {
-         FormattedCharSequence var8 = this.chatSuggestor.provideRenderText(var7, this.chatFirstChar);
-         var1.text(mc.font, var8, var4, var5, -2039584, true);
+      if (!plainSubstrByWidth.isEmpty()) {
+         FormattedCharSequence provideRenderText = this.chatSuggestor.provideRenderText(plainSubstrByWidth, this.chatFirstChar);
+         menuDrawContext.text(mc.font, provideRenderText, x, n, -2039584, true);
       }
 
-      String var13 = this.chatSuggestor.getSuggestion();
-      boolean var9 = this.chatFirstChar + var7.length() >= var2.length();
-      int var10 = var4 + mc.font.width(var7);
-      if (var13 != null && !var13.isEmpty() && var6 == var2.length() && var9) {
-         var1.text(mc.font, mc.font.plainSubstrByWidth(var13, this.width - 6 - var10), var10, var5, -8355712, true);
+      String suggestion = this.chatSuggestor.getSuggestion();
+      boolean flag = this.chatFirstChar + plainSubstrByWidth.length() >= text.length();
+      int x2 = x + mc.font.width(plainSubstrByWidth);
+      if (suggestion != null && !suggestion.isEmpty() && n2 == text.length() && flag) {
+         menuDrawContext.text(mc.font, mc.font.plainSubstrByWidth(suggestion, this.width - 6 - x2), x2, n, -8355712, true);
       }
 
       if (System.currentTimeMillis() / 300L % 2L == 0L) {
-         int var11 = Mth.clamp(var6 - this.chatFirstChar, 0, var7.length());
-         int var12 = var4 + mc.font.width(var7.substring(0, var11));
-         if (var6 == var2.length()) {
-            var1.text(mc.font, "_", var12, var5, -2039584, true);
+         int endIndex = Mth.clamp(n2 - this.chatFirstChar, 0, plainSubstrByWidth.length());
+         int x3 = x + mc.font.width(plainSubstrByWidth.substring(0, endIndex));
+         if (n2 == text.length()) {
+            menuDrawContext.text(mc.font, "_", x3, n, -2039584, true);
          } else {
-            var1.fill(var12, var5 - 1, var12 + 1, var5 + 10, -3092272);
+            menuDrawContext.fill(x3, n - 1, x3 + 1, n + 10, -3092272);
          }
       }
 
-      var1.pose().pushMatrix();
-      var1.pose().translate(0.0F, 0.0F);
-      this.chatSuggestor.render(var1, var1.getMouseX(), var1.getMouseY());
-      var1.pose().popMatrix();
+      menuDrawContext.pose().pushMatrix();
+      menuDrawContext.pose().translate(0.0F, 0.0F);
+      this.chatSuggestor.render(menuDrawContext, menuDrawContext.getMouseX(), menuDrawContext.getMouseY());
+      menuDrawContext.pose().popMatrix();
    }
 
    private int chatInnerWidth() {
@@ -375,67 +375,67 @@ public class BotControlScreen extends CustomScreen {
    }
 
    private void clampChatFieldScroll() {
-      String var1 = this.chatField.getText();
-      int var2 = Mth.clamp(this.chatField.getCursor(), 0, var1.length());
-      this.chatFirstChar = Mth.clamp(this.chatFirstChar, 0, var1.length());
-      if (var2 < this.chatFirstChar) {
-         this.chatFirstChar = var2;
+      String text = this.chatField.getText();
+      int chatFirstChar = Mth.clamp(this.chatField.getCursor(), 0, text.length());
+      this.chatFirstChar = Mth.clamp(this.chatFirstChar, 0, text.length());
+      if (chatFirstChar < this.chatFirstChar) {
+         this.chatFirstChar = chatFirstChar;
       }
 
-      while (this.chatFirstChar < var2 && mc.font.width(var1.substring(this.chatFirstChar, var2)) > this.chatInnerWidth()) {
+      while (this.chatFirstChar < chatFirstChar && mc.font.width(text.substring(this.chatFirstChar, chatFirstChar)) > this.chatInnerWidth()) {
          this.chatFirstChar++;
       }
    }
 
-   private int chatCharacterX(int var1) {
-      String var2 = this.chatField.getText();
-      int var3 = Mth.clamp(var1, this.chatFirstChar, var2.length());
-      return 6 + mc.font.width(var2.substring(this.chatFirstChar, var3));
+   private int chatCharacterX(int n) {
+      String text = this.chatField.getText();
+      int endIndex = Mth.clamp(n, this.chatFirstChar, text.length());
+      return 6 + mc.font.width(text.substring(this.chatFirstChar, endIndex));
    }
 
-   private void syncChatCache(List<ChatMessage> var1, long var2) {
+   private void syncChatCache(List<ChatMessage> chatLog, long now) {
       if (!this.chatSeeded) {
          this.chatSeeded = true;
 
-         for (ChatMessage var5 : var1) {
-            this.chatCache.put(var5, new BotControlScreen.CachedChat(0L, this.wrapChatLines(var5)));
+         for (ChatMessage chatMessage : chatLog) {
+            this.chatCache.put(chatMessage, new BotControlScreen.CachedChat(0L, this.wrapChatLines(chatMessage)));
          }
       }
 
-      for (ChatMessage var8 : var1) {
-         this.chatCache.computeIfAbsent(var8, var3 -> new BotControlScreen.CachedChat(var2, this.wrapChatLines(var3)));
+      for (ChatMessage key : chatLog) {
+         this.chatCache.computeIfAbsent(key, chatMessage -> new BotControlScreen.CachedChat(now, this.wrapChatLines(chatMessage)));
       }
 
-      if (this.chatCache.size() > var1.size()) {
-         var var7 = Collections.newSetFromMap(new IdentityHashMap());
-         var7.addAll(var1);
-         this.chatCache.keySet().retainAll(var7);
+      if (this.chatCache.size() > chatLog.size()) {
+         var setFromMap = Collections.newSetFromMap(new IdentityHashMap());
+         setFromMap.addAll(chatLog);
+         this.chatCache.keySet().retainAll(setFromMap);
       }
    }
 
-   private List<FormattedCharSequence> wrapChatLines(ChatMessage var1) {
-      return ComponentRenderUtils.wrapComponents(var1.text(), 312, mc.font);
+   private List<FormattedCharSequence> wrapChatLines(ChatMessage chatMessage) {
+      return ComponentRenderUtils.wrapComponents(chatMessage.text(), 312, mc.font);
    }
 
    private int visibleChatLines() {
       return this.chatOpen ? Mth.clamp((this.height - 100) / 9, 4, 20) : 12;
    }
 
-   private void openChat(String var1) {
+   private void openChat(String originalChatText) {
       this.chatOpen = true;
       this.suppressNextChar = true;
       this.chatScrollLines = 0;
       this.chatFirstChar = 0;
       this.chatField.setMaxLength(256);
-      this.chatField.setText(var1);
-      this.chatField.setCursor(var1.length());
+      this.chatField.setText(originalChatText);
+      this.chatField.setCursor(originalChatText.length());
       this.chatField.setSelected(true);
       this.chatField.setFlag(false);
-      this.originalChatText = var1;
+      this.originalChatText = originalChatText;
       this.chatLastMessage = "";
-      BotClient var2 = this.boundClient;
-      this.messageHistoryIndex = var2 != null ? var2.getSentMessages().size() : 0;
-      this.chatSuggestor.reset(var1);
+      BotClient boundClient = this.boundClient;
+      this.messageHistoryIndex = boundClient != null ? boundClient.getSentMessages().size() : 0;
+      this.chatSuggestor.reset(originalChatText);
       this.clearMovementKeys();
    }
 
@@ -452,27 +452,27 @@ public class BotControlScreen extends CustomScreen {
       this.chatSuggestor.clearWindow();
    }
 
-   private void setChatFromHistory(int var1) {
-      BotClient var2 = this.boundClient;
-      if (var2 != null) {
-         var var3 = var2.getSentMessages();
-         int var4 = Mth.clamp(this.messageHistoryIndex + var1, 0, var3.size());
-         if (var4 != this.messageHistoryIndex) {
-            if (var4 == var3.size()) {
-               this.messageHistoryIndex = var4;
+   private void setChatFromHistory(int chatFromHistory) {
+      BotClient boundClient = this.boundClient;
+      if (boundClient != null) {
+         var sentMessages = boundClient.getSentMessages();
+         int messageHistoryIndex = Mth.clamp(this.messageHistoryIndex + chatFromHistory, 0, sentMessages.size());
+         if (messageHistoryIndex != this.messageHistoryIndex) {
+            if (messageHistoryIndex == sentMessages.size()) {
+               this.messageHistoryIndex = messageHistoryIndex;
                this.chatField.setText(this.chatLastMessage);
                this.chatField.setCursor(this.chatLastMessage.length());
             } else {
-               if (this.messageHistoryIndex == var3.size()) {
+               if (this.messageHistoryIndex == sentMessages.size()) {
                   this.chatLastMessage = this.chatField.getText();
                }
 
-               String var5 = (String)var3.get(var4);
-               this.chatField.setText(var5);
-               this.chatField.setCursor(var5.length());
+               String text = (String)sentMessages.get(messageHistoryIndex);
+               this.chatField.setText(text);
+               this.chatField.setCursor(text.length());
                this.chatSuggestor.update(this.originalChatText);
                this.chatSuggestor.setWindowActive(false);
-               this.messageHistoryIndex = var4;
+               this.messageHistoryIndex = messageHistoryIndex;
             }
          }
       }
@@ -485,154 +485,154 @@ public class BotControlScreen extends CustomScreen {
       }
    }
 
-   private void renderHud(MenuDrawContext var1, BotClient var2, BotPlayer var3) {
-      int var4 = this.width / 2;
-      int var5 = this.height;
-      var1.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_TEXTURE, var4 - 91, var5 - 22, 182, 22);
-      int var6 = var3.getInventory().getSelectedSlot();
-      var1.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_SELECTION_TEXTURE, var4 - 91 - 1 + var6 * 20, var5 - 22 - 1, 24, 23);
-      ItemStack var7 = var3.getOffhandItem();
-      if (!var7.isEmpty()) {
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_OFFHAND_LEFT_TEXTURE, var4 - 91 - 29, var5 - 23, 29, 24);
+   private void renderHud(MenuDrawContext menuDrawContext, BotClient ensureBound, BotPlayer player) {
+      int n = this.width / 2;
+      int height = this.height;
+      menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_TEXTURE, n - 91, height - 22, 182, 22);
+      int selectedSlot = player.getInventory().getSelectedSlot();
+      menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_SELECTION_TEXTURE, n - 91 - 1 + selectedSlot * 20, height - 22 - 1, 24, 23);
+      ItemStack offhandItem = player.getOffhandItem();
+      if (!offhandItem.isEmpty()) {
+         menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, HOTBAR_OFFHAND_LEFT_TEXTURE, n - 91 - 29, height - 23, 29, 24);
       }
 
-      int var8 = var5 - 16 - 3;
+      int y = height - 16 - 3;
 
-      for (int var9 = 0; var9 < 9; var9++) {
-         ItemStack var10 = var3.getInventory().getNonEquipmentItems().get(var9);
-         int var11 = var4 - 90 + var9 * 20 + 2;
-         this.drawStack(var1, var10, var11, var8);
+      for (int i = 0; i < 9; i++) {
+         ItemStack nonEquipmentItem = player.getInventory().getNonEquipmentItems().get(i);
+         int x = n - 90 + i * 20 + 2;
+         this.drawStack(menuDrawContext, nonEquipmentItem, x, y);
       }
 
-      if (!var7.isEmpty()) {
-         this.drawStack(var1, var7, var4 - 91 - 26, var8);
+      if (!offhandItem.isEmpty()) {
+         this.drawStack(menuDrawContext, offhandItem, n - 91 - 26, y);
       }
 
-      int var23 = var4 - 91;
-      int var24 = var4 + 91;
-      int var25 = var5 - 39;
-      int var12 = Mth.ceil(var3.getHealth());
-      int var13 = Mth.ceil(var3.getMaxHealth() / 2.0F);
+      int x = n - 91;
+      int n2 = n + 91;
+      int y2 = height - 39;
+      int n3 = Mth.ceil(player.getHealth());
+      int n4 = Mth.ceil(player.getMaxHealth() / 2.0F);
 
-      for (int var14 = 0; var14 < Math.min(var13, 10); var14++) {
-         int var15 = var23 + var14 * 8;
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, HEART_CONTAINER_TEXTURE, var15, var25, 9, 9);
-         if (var14 * 2 + 1 < var12) {
-            var1.blitSprite(RenderPipelines.GUI_TEXTURED, HEART_FULL_TEXTURE, var15, var25, 9, 9);
-         } else if (var14 * 2 + 1 == var12) {
-            var1.blitSprite(RenderPipelines.GUI_TEXTURED, HEART_HALF_TEXTURE, var15, var25, 9, 9);
+      for (int i = 0; i < Math.min(n4, 10); i++) {
+         int x2 = x + i * 8;
+         menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, HEART_CONTAINER_TEXTURE, x2, y2, 9, 9);
+         if (i * 2 + 1 < n3) {
+            menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, HEART_FULL_TEXTURE, x2, y2, 9, 9);
+         } else if (i * 2 + 1 == n3) {
+            menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, HEART_HALF_TEXTURE, x2, y2, 9, 9);
          }
       }
 
-      int var26 = var3.getArmorValue();
-      if (var26 > 0) {
-         int var27 = var25 - 10;
+      int armorValue = player.getArmorValue();
+      if (armorValue > 0) {
+         int y3 = y2 - 10;
 
-         for (int var16 = 0; var16 < 10; var16++) {
-            int var17 = var23 + var16 * 8;
-            if (var16 * 2 + 1 < var26) {
-               var1.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_FULL_TEXTURE, var17, var27, 9, 9);
-            } else if (var16 * 2 + 1 == var26) {
-               var1.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_HALF_TEXTURE, var17, var27, 9, 9);
+         for (int i = 0; i < 10; i++) {
+            int x2 = x + i * 8;
+            if (i * 2 + 1 < armorValue) {
+               menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_FULL_TEXTURE, x2, y3, 9, 9);
+            } else if (i * 2 + 1 == armorValue) {
+               menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_HALF_TEXTURE, x2, y3, 9, 9);
             } else {
-               var1.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_EMPTY_TEXTURE, var17, var27, 9, 9);
+               menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_EMPTY_TEXTURE, x2, y3, 9, 9);
             }
          }
       }
 
-      int var28 = var3.getFoodData().getFoodLevel();
+      int foodLevel = player.getFoodData().getFoodLevel();
 
-      for (int var29 = 0; var29 < 10; var29++) {
-         int var31 = var24 - var29 * 8 - 9;
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, FOOD_EMPTY_TEXTURE, var31, var25, 9, 9);
-         if (var29 * 2 + 1 < var28) {
-            var1.blitSprite(RenderPipelines.GUI_TEXTURED, FOOD_FULL_TEXTURE, var31, var25, 9, 9);
-         } else if (var29 * 2 + 1 == var28) {
-            var1.blitSprite(RenderPipelines.GUI_TEXTURED, FOOD_HALF_TEXTURE, var31, var25, 9, 9);
+      for (int i = 0; i < 10; i++) {
+         int x2 = n2 - i * 8 - 9;
+         menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, FOOD_EMPTY_TEXTURE, x2, y2, 9, 9);
+         if (i * 2 + 1 < foodLevel) {
+            menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, FOOD_FULL_TEXTURE, x2, y2, 9, 9);
+         } else if (i * 2 + 1 == foodLevel) {
+            menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, FOOD_HALF_TEXTURE, x2, y2, 9, 9);
          }
       }
 
-      int var30 = var3.getMaxAirSupply();
-      int var32 = Math.min(var3.getAirSupply(), var30);
-      if (var3.isUnderWater() || var32 < var30) {
-         int var18 = var25 - 10;
-         int var19 = Mth.ceil((var32 - 2.0) * 10.0 / var30);
-         int var20 = Mth.ceil(var32 * 10.0 / var30) - var19;
+      int maxAirSupply = player.getMaxAirSupply();
+      int n5 = Math.min(player.getAirSupply(), maxAirSupply);
+      if (player.isUnderWater() || n5 < maxAirSupply) {
+         int y3 = y2 - 10;
+         int n6 = Mth.ceil((n5 - 2.0) * 10.0 / maxAirSupply);
+         int n7 = Mth.ceil(n5 * 10.0 / maxAirSupply) - n6;
 
-         for (int var21 = 0; var21 < var19 + var20; var21++) {
-            var1.blitSprite(RenderPipelines.GUI_TEXTURED, var21 < var19 ? AIR_TEXTURE : AIR_EMPTY_TEXTURE, var24 - var21 * 8 - 9, var18, 9, 9);
+         for (int i = 0; i < n6 + n7; i++) {
+            menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, i < n6 ? AIR_TEXTURE : AIR_EMPTY_TEXTURE, n2 - i * 8 - 9, y3, 9, 9);
          }
       }
 
-      int var33 = var5 - 32 + 3;
-      var1.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_BACKGROUND_TEXTURE, var23, var33, 182, 5);
-      int var34 = (int)(var3.experienceProgress * 183.0F);
-      if (var34 > 0) {
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_PROGRESS_TEXTURE, 182, 5, 0, 0, var23, var33, var34, 5);
+      int y3 = height - 32 + 3;
+      menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_BACKGROUND_TEXTURE, x, y3, 182, 5);
+      int width = (int)(player.experienceProgress * 183.0F);
+      if (width > 0) {
+         menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_PROGRESS_TEXTURE, 182, 5, 0, 0, x, y3, width, 5);
       }
 
-      if (var3.experienceLevel > 0) {
-         String var35 = String.valueOf(var3.experienceLevel);
-         int var37 = (this.width - mc.font.width(var35)) / 2;
-         int var22 = var5 - 31 - 4;
-         var1.text(mc.font, var35, var37 + 1, var22, -16777216, false);
-         var1.text(mc.font, var35, var37 - 1, var22, -16777216, false);
-         var1.text(mc.font, var35, var37, var22 + 1, -16777216, false);
-         var1.text(mc.font, var35, var37, var22 - 1, -16777216, false);
-         var1.text(mc.font, var35, var37, var22, -8323296, false);
+      if (player.experienceLevel > 0) {
+         String str = String.valueOf(player.experienceLevel);
+         int x2 = (this.width - mc.font.width(str)) / 2;
+         int y4 = height - 31 - 4;
+         menuDrawContext.text(mc.font, str, x2 + 1, y4, -16777216, false);
+         menuDrawContext.text(mc.font, str, x2 - 1, y4, -16777216, false);
+         menuDrawContext.text(mc.font, str, x2, y4 + 1, -16777216, false);
+         menuDrawContext.text(mc.font, str, x2, y4 - 1, -16777216, false);
+         menuDrawContext.text(mc.font, str, x2, y4, -8323296, false);
       }
 
-      String var36 = var2.name() + "  §7" + (int)var3.getX() + " " + (int)var3.getY() + " " + (int)var3.getZ();
-      var1.text(mc.font, var36, 6, 6, -1, true);
-      String var38 = t("gui.bot.escExit");
-      var1.text(mc.font, var38, 6, 17, -6643542, true);
+      String str = ensureBound.name() + "  §7" + (int)player.getX() + " " + (int)player.getY() + " " + (int)player.getZ();
+      menuDrawContext.text(mc.font, str, 6, 6, -1, true);
+      String str2 = t("gui.bot.escExit");
+      menuDrawContext.text(mc.font, str2, 6, 17, -6643542, true);
       if (this.view != null) {
       }
    }
 
-   private void renderScoreboardSidebar(MenuDrawContext var1, BotClient var2) {
-      BotWorld var3 = var2.getWorld();
-      if (var3 != null) {
-         Component var4;
-         List var5;
+   private void renderScoreboardSidebar(MenuDrawContext menuDrawContext, BotClient sidebarClient) {
+      BotWorld world = sidebarClient.getWorld();
+      if (world != null) {
+         Component displayName;
+         List sidebarRows;
          try {
-            synchronized (var2.getRenderStateLock()) {
+            synchronized (sidebarClient.getRenderStateLock()) {
                label120: {
-                  Scoreboard var7 = var3.getScoreboard();
-                  synchronized (var7) {
-                     Objective var9 = null;
-                     PlayerTeam var10 = var7.getPlayersTeam(var2.name());
-                     if (var10 != null) {
-                        DisplaySlot var11 = var10.getColor().map(net.minecraft.world.scores.TeamColor::displaySlot).orElse(null);
-                        if (var11 != null) {
-                           var9 = var7.getDisplayObjective(var11);
+                  Scoreboard scoreboard = world.getScoreboard();
+                  synchronized (scoreboard) {
+                     Objective displayObjective = null;
+                     PlayerTeam playersTeam = scoreboard.getPlayersTeam(sidebarClient.name());
+                     if (playersTeam != null) {
+                        DisplaySlot slot = playersTeam.getColor().map(net.minecraft.world.scores.TeamColor::displaySlot).orElse(null);
+                        if (slot != null) {
+                           displayObjective = scoreboard.getDisplayObjective(slot);
                         }
                      }
 
-                     if (var9 == null) {
-                        var9 = var7.getDisplayObjective(DisplaySlot.SIDEBAR);
+                     if (displayObjective == null) {
+                        displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
                      }
 
-                     if (var9 == null) {
+                     if (displayObjective == null) {
                         this.sidebarTitle = null;
                      } else {
-                        NumberFormat var27 = var9.numberFormatOrDefault(StyledFormat.SIDEBAR_DEFAULT);
-                        List<PlayerScoreEntry> var12 = new ArrayList<>(var7.listPlayerScores(var9));
-                        var12.removeIf(PlayerScoreEntry::isHidden);
-                        var12.sort(net.minecraft.client.gui.Hud.SCORE_DISPLAY_ORDER);
-                        if (var12.size() > 15) {
-                           var12 = var12.subList(0, 15);
+                        NumberFormat numberFormatOrDefault = displayObjective.numberFormatOrDefault(StyledFormat.SIDEBAR_DEFAULT);
+                        List<PlayerScoreEntry> subList = new ArrayList<>(scoreboard.listPlayerScores(displayObjective));
+                        subList.removeIf(PlayerScoreEntry::isHidden);
+                        subList.sort(net.minecraft.client.gui.Hud.SCORE_DISPLAY_ORDER);
+                        if (subList.size() > 15) {
+                           subList = subList.subList(0, 15);
                         }
 
-                        var5 = new ArrayList(var12.size());
+                        sidebarRows = new ArrayList(subList.size());
 
-                        for (PlayerScoreEntry var14 : var12) {
-                           MutableComponent var15 = PlayerTeam.formatNameForTeam(var7.getPlayersTeam(var14.owner()), var14.ownerName());
-                           MutableComponent var16 = var14.formatValue(var27);
-                           var5.add(new BotControlScreen.SidebarRow(var15, var16, mc.font.width(var16)));
+                        for (PlayerScoreEntry sub : subList) {
+                           MutableComponent formatNameForTeam = PlayerTeam.formatNameForTeam(scoreboard.getPlayersTeam(sub.owner()), sub.ownerName());
+                           MutableComponent formatValue = sub.formatValue(numberFormatOrDefault);
+                           sidebarRows.add(new BotControlScreen.SidebarRow(formatNameForTeam, formatValue, mc.font.width(formatValue)));
                         }
 
-                        var4 = var9.getDisplayName();
+                        displayName = displayObjective.getDisplayName();
                         break label120;
                      }
                   }
@@ -641,192 +641,192 @@ public class BotControlScreen extends CustomScreen {
                }
             }
 
-            this.sidebarClient = var2;
-            this.sidebarTitle = var4;
-            this.sidebarRows = (List<BotControlScreen.SidebarRow>)var5;
-         } catch (RuntimeException var21) {
-            if (this.sidebarClient != var2 || this.sidebarTitle == null) {
+            this.sidebarClient = sidebarClient;
+            this.sidebarTitle = displayName;
+            this.sidebarRows = (List<BotControlScreen.SidebarRow>)sidebarRows;
+         } catch (RuntimeException e) {
+            if (this.sidebarClient != sidebarClient || this.sidebarTitle == null) {
                return;
             }
 
-            var4 = this.sidebarTitle;
-            var5 = this.sidebarRows;
+            displayName = this.sidebarTitle;
+            sidebarRows = this.sidebarRows;
          }
 
-         int var6 = mc.font.width(var4);
-         int var22 = var6;
-         int var8 = mc.font.width(": ");
+         int width = mc.font.width(displayName);
+         int n = width;
+         int width2 = mc.font.width(": ");
 
-         for (Object var25_o : (Iterable<?>)(Object)(var5)) {
-            BotControlScreen.SidebarRow var25 = (BotControlScreen.SidebarRow)var25_o;
-            var22 = Math.max(var22, mc.font.width(var25.name()) + (var25.scoreWidth() > 0 ? var8 + var25.scoreWidth() : 0));
+         for (Object sidebarRow : (Iterable<?>)(Object)(sidebarRows)) {
+            BotControlScreen.SidebarRow sidebarRow2 = (BotControlScreen.SidebarRow)sidebarRow;
+            n = Math.max(n, mc.font.width(sidebarRow2.name()) + (sidebarRow2.scoreWidth() > 0 ? width2 + sidebarRow2.scoreWidth() : 0));
          }
 
-         byte var24 = 9;
-         int var26 = var5.size() * var24;
-         int var28 = this.height / 2 + var26 / 3;
-         int var29 = this.width - 3;
-         int var30 = var29 - var22;
-         int var31 = var28 - var26;
-         var1.fill(var30 - 2, var31 - var24 - 1, var29 + 2, var31 - 1, 1711276032);
-         var1.fill(var30 - 2, var31 - 1, var29 + 2, var28, 1275068416);
-         var1.text(mc.font, var4, var30 + var22 / 2 - var6 / 2, var31 - var24, -1, false);
+         byte b = 9;
+         int n2 = sidebarRows.size() * b;
+         int y1 = this.height / 2 + n2 / 3;
+         int n3 = this.width - 3;
+         int x = n3 - n;
+         int n4 = y1 - n2;
+         menuDrawContext.fill(x - 2, n4 - b - 1, n3 + 2, n4 - 1, 1711276032);
+         menuDrawContext.fill(x - 2, n4 - 1, n3 + 2, y1, 1275068416);
+         menuDrawContext.text(mc.font, displayName, x + n / 2 - width / 2, n4 - b, -1, false);
 
-         for (int var32 = 0; var32 < var5.size(); var32++) {
-            BotControlScreen.SidebarRow var33 = (BotControlScreen.SidebarRow)var5.get(var32);
-            int var17 = var31 + var32 * var24;
-            var1.text(mc.font, var33.name(), var30, var17, -1, false);
-            if (var33.scoreWidth() > 0) {
-               var1.text(mc.font, var33.score(), var29 - var33.scoreWidth(), var17, -1, false);
+         for (int i = 0; i < sidebarRows.size(); i++) {
+            BotControlScreen.SidebarRow sidebarRow = (BotControlScreen.SidebarRow)sidebarRows.get(i);
+            int y = n4 + i * b;
+            menuDrawContext.text(mc.font, sidebarRow.name(), x, y, -1, false);
+            if (sidebarRow.scoreWidth() > 0) {
+               menuDrawContext.text(mc.font, sidebarRow.score(), n3 - sidebarRow.scoreWidth(), y, -1, false);
             }
          }
       }
    }
 
-   private void drawStack(MenuDrawContext var1, ItemStack var2, int var3, int var4) {
-      if (!var2.isEmpty()) {
-         var1.fakeItem(var2, var3, var4);
-         var1.itemDecorations(mc.font, var2, var3, var4);
+   private void drawStack(MenuDrawContext menuDrawContext, ItemStack nonEquipmentItem, int x, int y) {
+      if (!nonEquipmentItem.isEmpty()) {
+         menuDrawContext.fakeItem(nonEquipmentItem, x, y);
+         menuDrawContext.itemDecorations(mc.font, nonEquipmentItem, x, y);
       }
    }
 
-   private BotControlScreen.ContainerLayout layoutFor(BotPlayer var1, AbstractContainerMenu var2) {
-      if (var2 == var1.inventoryMenu) {
+   private BotControlScreen.ContainerLayout layoutFor(BotPlayer player, AbstractContainerMenu currentUiHandler) {
+      if (currentUiHandler == player.inventoryMenu) {
          return new BotControlScreen.ContainerLayout(INVENTORY_TEXTURE, 176, 166, 0, 97, false, false);
-      } else if (var2 instanceof ChestMenu var8) {
-         int var9 = var8.getRowCount();
-         return new BotControlScreen.ContainerLayout(GENERIC_54_TEXTURE, 176, 114 + var9 * 18, var9, 8, false, true);
-      } else if (var2 instanceof ShulkerBoxMenu) {
+      } else if (currentUiHandler instanceof ChestMenu chestMenu) {
+         int rowCount = chestMenu.getRowCount();
+         return new BotControlScreen.ContainerLayout(GENERIC_54_TEXTURE, 176, 114 + rowCount * 18, rowCount, 8, false, true);
+      } else if (currentUiHandler instanceof ShulkerBoxMenu) {
          return new BotControlScreen.ContainerLayout(SHULKER_BOX_TEXTURE, 176, 166, 0, 8, false, true);
-      } else if (var2 instanceof HopperMenu) {
+      } else if (currentUiHandler instanceof HopperMenu) {
          return new BotControlScreen.ContainerLayout(HOPPER_TEXTURE, 176, 133, 0, 8, false, true);
-      } else if (var2 instanceof DispenserMenu) {
+      } else if (currentUiHandler instanceof DispenserMenu) {
          return new BotControlScreen.ContainerLayout(DISPENSER_TEXTURE, 176, 166, 0, 8, true, true);
-      } else if (var2 instanceof AbstractFurnaceMenu) {
-         Identifier var7 = var2 instanceof BlastFurnaceMenu
+      } else if (currentUiHandler instanceof AbstractFurnaceMenu) {
+         Identifier texture = currentUiHandler instanceof BlastFurnaceMenu
             ? BLAST_FURNACE_TEXTURE
-            : (var2 instanceof SmokerMenu ? SMOKER_TEXTURE : FURNACE_TEXTURE);
-         return new BotControlScreen.ContainerLayout(var7, 176, 166, 0, 8, true, true);
-      } else if (var2 instanceof CraftingMenu) {
+            : (currentUiHandler instanceof SmokerMenu ? SMOKER_TEXTURE : FURNACE_TEXTURE);
+         return new BotControlScreen.ContainerLayout(texture, 176, 166, 0, 8, true, true);
+      } else if (currentUiHandler instanceof CraftingMenu) {
          return new BotControlScreen.ContainerLayout(CRAFTING_TABLE_TEXTURE, 176, 166, 0, 29, false, true);
       } else {
-         int var3 = 160;
-         int var4 = 142;
+         int n = 160;
+         int n2 = 142;
 
-         for (Slot var6 : var2.slots) {
-            var3 = Math.max(var3, var6.x);
-            var4 = Math.max(var4, var6.y);
+         for (Slot slot : currentUiHandler.slots) {
+            n = Math.max(n, slot.x);
+            n2 = Math.max(n2, slot.y);
          }
 
-         return new BotControlScreen.ContainerLayout(null, Math.max(176, var3 + 16 + 8), var4 + 16 + 8, 0, 8, false, false);
+         return new BotControlScreen.ContainerLayout(null, Math.max(176, n + 16 + 8), n2 + 16 + 8, 0, 8, false, false);
       }
    }
 
-   private void renderContainer(MenuDrawContext var1, BotPlayer var2, AbstractContainerMenu var3, int var4, int var5) {
-      var1.drawRoundedRect(0.0F, 0.0F, this.width, this.height, ProxyDotRadiusData.INSTANCE, new ZenithColor(0, 0, 0, 120));
-      BotControlScreen.ContainerLayout var6 = this.layoutFor(var2, var3);
-      int var7 = (this.width - var6.width()) / 2;
-      int var8 = (this.height - var6.height()) / 2;
-      if (var6.texture() == null) {
-         this.drawSyntheticPanel(var1, var7, var8, var6.width(), var6.height());
+   private void renderContainer(MenuDrawContext menuDrawContext, BotPlayer player, AbstractContainerMenu currentUiHandler, int xo, int yo) {
+      menuDrawContext.drawRoundedRect(0.0F, 0.0F, this.width, this.height, ProxyDotRadiusData.INSTANCE, new ZenithColor(0, 0, 0, 120));
+      BotControlScreen.ContainerLayout layoutFor = this.layoutFor(player, currentUiHandler);
+      int x = (this.width - layoutFor.width()) / 2;
+      int y = (this.height - layoutFor.height()) / 2;
+      if (layoutFor.texture() == null) {
+         this.drawSyntheticPanel(menuDrawContext, x, y, layoutFor.width(), layoutFor.height());
 
-         for (Slot var10 : var3.slots) {
-            this.drawSlotFrame(var1, var7 + var10.x, var8 + var10.y);
+         for (Slot slot : currentUiHandler.slots) {
+            this.drawSlotFrame(menuDrawContext, x + slot.x, y + slot.y);
          }
-      } else if (var6.chestRows() > 0) {
-         var1.blit(RenderPipelines.GUI_TEXTURED, var6.texture(), var7, var8, 0.0F, 0.0F, var6.width(), var6.chestRows() * 18 + 17, 256, 256);
-         var1.blit(RenderPipelines.GUI_TEXTURED, var6.texture(), var7, var8 + var6.chestRows() * 18 + 17, 0.0F, 126.0F, var6.width(), 96, 256, 256);
+      } else if (layoutFor.chestRows() > 0) {
+         menuDrawContext.blit(RenderPipelines.GUI_TEXTURED, layoutFor.texture(), x, y, 0.0F, 0.0F, layoutFor.width(), layoutFor.chestRows() * 18 + 17, 256, 256);
+         menuDrawContext.blit(RenderPipelines.GUI_TEXTURED, layoutFor.texture(), x, y + layoutFor.chestRows() * 18 + 17, 0.0F, 126.0F, layoutFor.width(), 96, 256, 256);
       } else {
-         var1.blit(RenderPipelines.GUI_TEXTURED, var6.texture(), var7, var8, 0.0F, 0.0F, var6.width(), var6.height(), 256, 256);
+         menuDrawContext.blit(RenderPipelines.GUI_TEXTURED, layoutFor.texture(), x, y, 0.0F, 0.0F, layoutFor.width(), layoutFor.height(), 256, 256);
       }
 
-      if (var3 == var2.inventoryMenu) {
-         BotClient var15 = this.boundClient;
+      if (currentUiHandler == player.inventoryMenu) {
+         BotClient boundClient = this.boundClient;
          BotPlayerGuiRender.drawEntity(
-            var1, var7 + 26, var8 + 8, var7 + 75, var8 + 78, 30, 0.0625F, var4, var5, var2, var15 != null ? var15.getPlayHandler() : null
+            menuDrawContext, x + 26, y + 8, x + 75, y + 78, 30, 0.0625F, xo, yo, player, boundClient != null ? boundClient.getPlayHandler() : null
          );
       }
 
-      Slot var16 = this.hoveredSlot(var2, var3, var4, var5);
-      this.hoveredSlotCache = var16;
-      if (var16 != null && var16.isHighlightable()) {
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_BACK_TEXTURE, var7 + var16.x - 4, var8 + var16.y - 4, 24, 24);
+      Slot hoveredSlot = this.hoveredSlot(player, currentUiHandler, xo, yo);
+      this.hoveredSlotCache = hoveredSlot;
+      if (hoveredSlot != null && hoveredSlot.isHighlightable()) {
+         menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_BACK_TEXTURE, x + hoveredSlot.x - 4, y + hoveredSlot.y - 4, 24, 24);
       }
 
-      for (Slot var11 : var3.slots) {
-         if (var11.isActive()) {
-            this.drawStack(var1, var11.getItem(), var7 + var11.x, var8 + var11.y);
+      for (Slot slot : currentUiHandler.slots) {
+         if (slot.isActive()) {
+            this.drawStack(menuDrawContext, slot.getItem(), x + slot.x, y + slot.y);
          }
       }
 
-      if (var16 != null && var16.isHighlightable()) {
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_TEXTURE, var7 + var16.x - 4, var8 + var16.y - 4, 24, 24);
+      if (hoveredSlot != null && hoveredSlot.isHighlightable()) {
+         menuDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_TEXTURE, x + hoveredSlot.x - 4, y + hoveredSlot.y - 4, 24, 24);
       }
 
-      Component var18 = this.containerTitle(var2, var3);
-      int var19 = var6.centerTitle() ? (var6.width() - mc.font.width(var18)) / 2 : var6.titleX();
-      var1.text(mc.font, var18, var7 + var19, var8 + 6, 4210752, false);
-      if (var6.playerInventoryLabel()) {
-         var1.text(mc.font, Component.translatable("container.inventory"), var7 + 8, var8 + var6.height() - 94, 4210752, false);
+      Component containerTitle = this.containerTitle(player, currentUiHandler);
+      int titleX = layoutFor.centerTitle() ? (layoutFor.width() - mc.font.width(containerTitle)) / 2 : layoutFor.titleX();
+      menuDrawContext.text(mc.font, containerTitle, x + titleX, y + 6, 4210752, false);
+      if (layoutFor.playerInventoryLabel()) {
+         menuDrawContext.text(mc.font, Component.translatable("container.inventory"), x + 8, y + layoutFor.height() - 94, 4210752, false);
       }
 
-      ItemStack var12 = var3.getCarried();
-      if (!var12.isEmpty()) {
-         var1.pose().pushMatrix();
-         var1.pose().translate(0.0F, 0.0F);
-         this.drawStack(var1, var12, var4 - 8, var5 - 8);
-         var1.pose().popMatrix();
+      ItemStack carried = currentUiHandler.getCarried();
+      if (!carried.isEmpty()) {
+         menuDrawContext.pose().pushMatrix();
+         menuDrawContext.pose().translate(0.0F, 0.0F);
+         this.drawStack(menuDrawContext, carried, xo - 8, yo - 8);
+         menuDrawContext.pose().popMatrix();
       }
 
-      if (var16 != null && var16.hasItem() && var12.isEmpty()) {
-         ItemStack var13 = var16.getItem();
-         var var14 = var13.getTooltipLines(
-            TooltipContext.of(var2.level()), var2, mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
+      if (hoveredSlot != null && hoveredSlot.hasItem() && carried.isEmpty()) {
+         ItemStack stack = hoveredSlot.getItem();
+         var tooltipLines = stack.getTooltipLines(
+            TooltipContext.of(player.level()), player, mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
          );
-         var1.setTooltipForNextFrame(mc.font, var14, var13.getTooltipImage(), var4, var5, var13.get(DataComponents.TOOLTIP_STYLE));
+         menuDrawContext.setTooltipForNextFrame(mc.font, tooltipLines, stack.getTooltipImage(), xo, yo, stack.get(DataComponents.TOOLTIP_STYLE));
       }
    }
 
-   private void drawSyntheticPanel(MenuDrawContext var1, int var2, int var3, int var4, int var5) {
-      var1.fill(var2 - 1, var3 - 1, var2 + var4 + 1, var3 + var5 + 1, -16777216);
-      var1.fill(var2, var3, var2 + var4, var3 + var5, -3750202);
-      var1.fill(var2, var3, var2 + var4 - 1, var3 + 1, -1);
-      var1.fill(var2, var3 + 1, var2 + 1, var3 + var5 - 1, -1);
-      var1.fill(var2 + 1, var3 + var5 - 1, var2 + var4, var3 + var5, -11184811);
-      var1.fill(var2 + var4 - 1, var3 + 1, var2 + var4, var3 + var5 - 1, -11184811);
+   private void drawSyntheticPanel(MenuDrawContext menuDrawContext, int x, int y, int width, int height) {
+      menuDrawContext.fill(x - 1, y - 1, x + width + 1, y + height + 1, -16777216);
+      menuDrawContext.fill(x, y, x + width, y + height, -3750202);
+      menuDrawContext.fill(x, y, x + width - 1, y + 1, -1);
+      menuDrawContext.fill(x, y + 1, x + 1, y + height - 1, -1);
+      menuDrawContext.fill(x + 1, y + height - 1, x + width, y + height, -11184811);
+      menuDrawContext.fill(x + width - 1, y + 1, x + width, y + height - 1, -11184811);
    }
 
-   private void drawSlotFrame(MenuDrawContext var1, int var2, int var3) {
-      var1.fill(var2 - 1, var3 - 1, var2 + 17, var3 + 17, -7631989);
-      var1.fill(var2 - 1, var3 - 1, var2 + 16, var3, -13158601);
-      var1.fill(var2 - 1, var3, var2, var3 + 16, -13158601);
-      var1.fill(var2, var3 + 16, var2 + 17, var3 + 17, -1);
-      var1.fill(var2 + 16, var3, var2 + 17, var3 + 16, -1);
+   private void drawSlotFrame(MenuDrawContext menuDrawContext, int x1, int y0) {
+      menuDrawContext.fill(x1 - 1, y0 - 1, x1 + 17, y0 + 17, -7631989);
+      menuDrawContext.fill(x1 - 1, y0 - 1, x1 + 16, y0, -13158601);
+      menuDrawContext.fill(x1 - 1, y0, x1, y0 + 16, -13158601);
+      menuDrawContext.fill(x1, y0 + 16, x1 + 17, y0 + 17, -1);
+      menuDrawContext.fill(x1 + 16, y0, x1 + 17, y0 + 16, -1);
    }
 
-   private Component containerTitle(BotPlayer var1, AbstractContainerMenu var2) {
-      if (var2 == var1.inventoryMenu) {
+   private Component containerTitle(BotPlayer player, AbstractContainerMenu currentUiHandler) {
+      if (currentUiHandler == player.inventoryMenu) {
          return Component.translatable("container.crafting");
       } else {
-         BotClient var3 = this.boundClient;
-         BotPlayHandler var4 = var3 != null ? var3.getPlayHandler() : null;
-         Component var5 = var4 != null ? var4.getCurrentScreenTitle() : null;
-         return (Component)(var5 != null ? var5 : Component.literal(t("gui.bot.container")));
+         BotClient boundClient = this.boundClient;
+         BotPlayHandler playHandler = boundClient != null ? boundClient.getPlayHandler() : null;
+         Component currentScreenTitle = playHandler != null ? playHandler.getCurrentScreenTitle() : null;
+         return (Component)(currentScreenTitle != null ? currentScreenTitle : Component.literal(t("gui.bot.container")));
       }
    }
 
    @Nullable
-   private Slot hoveredSlot(BotPlayer var1, AbstractContainerMenu var2, int var3, int var4) {
-      BotControlScreen.ContainerLayout var5 = this.layoutFor(var1, var2);
-      int var6 = (this.width - var5.width()) / 2;
-      int var7 = (this.height - var5.height()) / 2;
+   private Slot hoveredSlot(BotPlayer player, AbstractContainerMenu currentUiHandler, int xo, int yo) {
+      BotControlScreen.ContainerLayout layoutFor = this.layoutFor(player, currentUiHandler);
+      int n = (this.width - layoutFor.width()) / 2;
+      int n2 = (this.height - layoutFor.height()) / 2;
 
-      for (Slot var9 : var2.slots) {
-         if (var9.isActive()) {
-            int var10 = var3 - var6;
-            int var11 = var4 - var7;
-            if (var10 >= var9.x - 1 && var10 < var9.x + 17 && var11 >= var9.y - 1 && var11 < var9.y + 17) {
-               return var9;
+      for (Slot slot : currentUiHandler.slots) {
+         if (slot.isActive()) {
+            int n3 = xo - n;
+            int n4 = yo - n2;
+            if (n3 >= slot.x - 1 && n3 < slot.x + 17 && n4 >= slot.y - 1 && n4 < slot.y + 17) {
+               return slot;
             }
          }
       }
@@ -834,25 +834,25 @@ public class BotControlScreen extends CustomScreen {
       return null;
    }
 
-   private boolean isClickOutsideBounds(BotPlayer var1, AbstractContainerMenu var2, double var3, double var5) {
-      BotControlScreen.ContainerLayout var7 = this.layoutFor(var1, var2);
-      int var8 = (this.width - var7.width()) / 2;
-      int var9 = (this.height - var7.height()) / 2;
-      return var3 < var8 || var5 < var9 || var3 >= var8 + var7.width() || var5 >= var9 + var7.height();
+   private boolean isClickOutsideBounds(BotPlayer player, AbstractContainerMenu currentUiHandler, double xo, double yo) {
+      BotControlScreen.ContainerLayout layoutFor = this.layoutFor(player, currentUiHandler);
+      int n = (this.width - layoutFor.width()) / 2;
+      int n2 = (this.height - layoutFor.height()) / 2;
+      return xo < n || yo < n2 || xo >= n + layoutFor.width() || yo >= n2 + layoutFor.height();
    }
 
    private boolean uiOpen() {
-      BotClient var1 = this.boundClient;
-      BotPlayer var2 = var1 != null ? var1.getPlayer() : null;
-      return var1 != null && var2 != null ? this.currentUiHandler(var1, var2) != null : false;
+      BotClient boundClient = this.boundClient;
+      BotPlayer player = boundClient != null ? boundClient.getPlayer() : null;
+      return boundClient != null && player != null ? this.currentUiHandler(boundClient, player) != null : false;
    }
 
    @Override
    public void mouseMoved(double mouseX, double mouseY) {
       if (this.cursorLocked && this.control != null) {
          if (!Double.isNaN(this.lastMouseX)) {
-            double var5 = mc.getWindow().getGuiScale();
-            this.control.turn((mouseX - this.lastMouseX) * var5, (mouseY - this.lastMouseY) * var5);
+            double guiScale = mc.getWindow().getGuiScale();
+            this.control.turn((mouseX - this.lastMouseX) * guiScale, (mouseY - this.lastMouseY) * guiScale);
          }
 
          this.lastMouseX = mouseX;
@@ -866,27 +866,27 @@ public class BotControlScreen extends CustomScreen {
    }
 
    @Override
-   public void onMouseClicked(double var1, double var3, Enum3 var5) {
+   public void onMouseClicked(double xo, double yo, Enum3 enum2) {
       if (this.chatOpen) {
-         this.chatSuggestor.mouseClicked(var1, var3);
+         this.chatSuggestor.mouseClicked(xo, yo);
       } else if (this.control != null) {
-         BotClient var6 = this.boundClient;
-         BotPlayer var7 = var6 != null ? var6.getPlayer() : null;
-         if (var7 != null) {
-            AbstractContainerMenu var8 = this.currentUiHandler(var6, var7);
-            if (var8 != null) {
-               int var9 = var5 == Enum3.RIGHT ? 1 : 0;
-               Slot var10 = this.hoveredSlot(var7, var8, (int)var1, (int)var3);
-               if (var10 != null) {
-                  ContainerInput var11 = WindowUtils.method5476() ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP;
-                  this.control.clickSlot(var10.index, var9, var11);
-               } else if (!var8.getCarried().isEmpty() && this.isClickOutsideBounds(var7, var8, var1, var3)) {
-                  this.control.clickSlot(64537, var9, ContainerInput.PICKUP);
+         BotClient boundClient = this.boundClient;
+         BotPlayer player = boundClient != null ? boundClient.getPlayer() : null;
+         if (player != null) {
+            AbstractContainerMenu currentUiHandler = this.currentUiHandler(boundClient, player);
+            if (currentUiHandler != null) {
+               int buttonNum = enum2 == Enum3.RIGHT ? 1 : 0;
+               Slot hoveredSlot = this.hoveredSlot(player, currentUiHandler, (int)xo, (int)yo);
+               if (hoveredSlot != null) {
+                  ContainerInput containerInput = WindowUtils.method5476() ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP;
+                  this.control.clickSlot(hoveredSlot.index, buttonNum, containerInput);
+               } else if (!currentUiHandler.getCarried().isEmpty() && this.isClickOutsideBounds(player, currentUiHandler, xo, yo)) {
+                  this.control.clickSlot(64537, buttonNum, ContainerInput.PICKUP);
                }
             } else {
-               if (var5 == Enum3.LEFT) {
+               if (enum2 == Enum3.LEFT) {
                   this.control.pressAttack();
-               } else if (var5 == Enum3.RIGHT) {
+               } else if (enum2 == Enum3.RIGHT) {
                   this.control.pressUse();
                }
             }
@@ -895,11 +895,11 @@ public class BotControlScreen extends CustomScreen {
    }
 
    @Override
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double d, double d2, Enum3 enum2) {
       if (this.control != null) {
-         if (var5 == Enum3.LEFT) {
+         if (enum2 == Enum3.LEFT) {
             this.control.releaseAttack();
-         } else if (var5 == Enum3.RIGHT) {
+         } else if (enum2 == Enum3.RIGHT) {
             this.control.releaseUse();
          }
       }
@@ -910,46 +910,46 @@ public class BotControlScreen extends CustomScreen {
       return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
-      BotClient var4 = this.boundClient;
-      boolean var5 = var4 != null && var4.getPlayHandler() != null && var4.getPlayHandler().hasOpenScreen();
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      BotClient boundClient = this.boundClient;
+      boolean flag = boundClient != null && boundClient.getPlayHandler() != null && boundClient.getPlayHandler().hasOpenScreen();
       if (this.chatOpen) {
-         if (this.chatSuggestor.keyPressed(var1, var2, var3)) {
+         if (this.chatSuggestor.keyPressed(keyCode, keycode, modifiers)) {
             return true;
-         } else if (var1 == 256) {
+         } else if (keyCode == 256) {
             this.closeChat();
             return true;
-         } else if (var1 == 257 || var1 == 335) {
-            String var9 = this.chatField.getText().trim();
-            if (!var9.isEmpty() && var4 != null) {
-               var4.addSentMessage(var9);
-               var4.sendChat(var9);
+         } else if (keyCode == 257 || keyCode == 335) {
+            String anObject = this.chatField.getText().trim();
+            if (!anObject.isEmpty() && boundClient != null) {
+               boundClient.addSentMessage(anObject);
+               boundClient.sendChat(anObject);
             }
 
             this.closeChat();
             return true;
-         } else if (var1 == 265) {
+         } else if (keyCode == 265) {
             this.setChatFromHistory(-1);
             return true;
-         } else if (var1 == 264) {
+         } else if (keyCode == 264) {
             this.setChatFromHistory(1);
             return true;
-         } else if (var1 == 266) {
+         } else if (keyCode == 266) {
             this.chatScrollLines = Mth.clamp(
                this.chatScrollLines + this.visibleChatLines() - 1, 0, Math.max(0, this.chatTotalLines - this.visibleChatLines())
             );
             return true;
-         } else if (var1 == 267) {
+         } else if (keyCode == 267) {
             this.chatScrollLines = Mth.clamp(
                this.chatScrollLines - this.visibleChatLines() + 1, 0, Math.max(0, this.chatTotalLines - this.visibleChatLines())
             );
             return true;
          } else {
-            this.chatField.keyPressed(var1, var2, var3);
+            this.chatField.keyPressed(keyCode, keycode, modifiers);
             return true;
          }
-      } else if (var1 == 256) {
-         if (var5 && this.control != null) {
+      } else if (keyCode == 256) {
+         if (flag && this.control != null) {
             this.control.closeScreen();
             return true;
          } else if (this.inventoryOpen) {
@@ -963,9 +963,9 @@ public class BotControlScreen extends CustomScreen {
             mc.gui.setScreen(new BotScreen());
             return true;
          }
-      } else if (var1 == 69) {
+      } else if (keyCode == 69) {
          if (this.control != null) {
-            if (var5) {
+            if (flag) {
                this.control.closeScreen();
             } else if (this.inventoryOpen) {
                this.inventoryOpen = false;
@@ -976,45 +976,45 @@ public class BotControlScreen extends CustomScreen {
          }
 
          return true;
-      } else if (var1 == 70 && this.control != null && this.uiOpen()) {
-         BotPlayer var6 = var4 != null ? var4.getPlayer() : null;
-         AbstractContainerMenu var7 = var6 != null ? this.currentUiHandler(var4, var6) : null;
-         Slot var8 = this.hoveredSlotCache;
-         if (var7 != null && var8 != null && var7.getCarried().isEmpty()) {
-            this.control.clickSlot(var8.index, 40, ContainerInput.SWAP);
+      } else if (keyCode == 70 && this.control != null && this.uiOpen()) {
+         BotPlayer player = boundClient != null ? boundClient.getPlayer() : null;
+         AbstractContainerMenu currentUiHandler = player != null ? this.currentUiHandler(boundClient, player) : null;
+         Slot hoveredSlotCache = this.hoveredSlotCache;
+         if (currentUiHandler != null && hoveredSlotCache != null && currentUiHandler.getCarried().isEmpty()) {
+            this.control.clickSlot(hoveredSlotCache.index, 40, ContainerInput.SWAP);
          }
 
          return true;
       } else {
          if (this.control != null && !this.uiOpen()) {
-            if (var1 >= 49 && var1 <= 57) {
-               this.wheelSlot = var1 - 49;
+            if (keyCode >= 49 && keyCode <= 57) {
+               this.wheelSlot = keyCode - 49;
                this.control.requestSlot(this.wheelSlot);
                return true;
             }
 
-            if (var1 == 81) {
+            if (keyCode == 81) {
                this.control.requestDrop(WindowUtils.method5475());
                return true;
             }
 
-            if (var1 == 70) {
+            if (keyCode == 70) {
                this.control.requestSwapHands();
                return true;
             }
 
-            if (var1 == 84) {
+            if (keyCode == 84) {
                this.openChat("");
                return true;
             }
 
-            if (var1 == 47) {
+            if (keyCode == 47) {
                this.openChat("/");
                return true;
             }
          }
 
-         return this.updateMovementKey(var1, true) ? true : super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+         return this.updateMovementKey(keyCode, true) ? true : super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
       }
    }
 
@@ -1023,15 +1023,15 @@ public class BotControlScreen extends CustomScreen {
       return this.charTyped((char)input.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.suppressNextChar) {
          this.suppressNextChar = false;
          return true;
       } else if (this.chatOpen) {
-         this.chatField.charTyped(var1, var2);
+         this.chatField.charTyped(codepoint, n);
          return true;
       } else {
-         return super.charTyped(new CharacterEvent(var1));
+         return super.charTyped(new CharacterEvent(codepoint));
       }
    }
 
@@ -1040,8 +1040,8 @@ public class BotControlScreen extends CustomScreen {
       return this.keyReleased(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyReleased(int var1, int var2, int var3) {
-      return this.updateMovementKey(var1, false) ? true : super.keyReleased(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+   public boolean keyReleased(int keyCode, int keycode, int modifiers) {
+      return this.updateMovementKey(keyCode, false) ? true : super.keyReleased(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
    }
 
    @Override
@@ -1049,17 +1049,17 @@ public class BotControlScreen extends CustomScreen {
       if (this.chatOpen && this.chatSuggestor.mouseScrolled(verticalAmount, mouseX, mouseY)) {
          return true;
       } else if (this.chatOpen && verticalAmount != 0.0) {
-         int var13 = Math.max(0, this.chatTotalLines - this.visibleChatLines());
-         this.chatScrollLines = Mth.clamp(this.chatScrollLines + (verticalAmount > 0.0 ? 1 : -1), 0, var13);
+         int max = Math.max(0, this.chatTotalLines - this.visibleChatLines());
+         this.chatScrollLines = Mth.clamp(this.chatScrollLines + (verticalAmount > 0.0 ? 1 : -1), 0, max);
          return true;
       } else {
          if (this.control != null && verticalAmount != 0.0 && !this.uiOpen()) {
-            BotClient var9 = this.boundClient;
-            BotPlayer var10 = var9 != null ? var9.getPlayer() : null;
-            if (var10 != null) {
-               int var11 = var10.getInventory().getSelectedSlot();
-               int var12 = this.wheelSlot >= 0 && this.wheelSlot != var11 ? this.wheelSlot : var11;
-               this.wheelSlot = Math.floorMod(var12 - (int)Math.signum(verticalAmount), 9);
+            BotClient boundClient = this.boundClient;
+            BotPlayer player = boundClient != null ? boundClient.getPlayer() : null;
+            if (player != null) {
+               int selectedSlot = player.getInventory().getSelectedSlot();
+               int wheelSlot = this.wheelSlot >= 0 && this.wheelSlot != selectedSlot ? this.wheelSlot : selectedSlot;
+               this.wheelSlot = Math.floorMod(wheelSlot - (int)Math.signum(verticalAmount), 9);
                this.control.requestSlot(this.wheelSlot);
                return true;
             }
@@ -1069,28 +1069,28 @@ public class BotControlScreen extends CustomScreen {
       }
    }
 
-   private boolean updateMovementKey(int var1, boolean var2) {
-      switch (var1) {
+   private boolean updateMovementKey(int keyCode, boolean keyJump) {
+      switch (keyCode) {
          case 32:
-            this.keyJump = var2;
+            this.keyJump = keyJump;
             break;
          case 65:
-            this.keyLeft = var2;
+            this.keyLeft = keyJump;
             break;
          case 68:
-            this.keyRight = var2;
+            this.keyRight = keyJump;
             break;
          case 83:
-            this.keyBack = var2;
+            this.keyBack = keyJump;
             break;
          case 87:
-            this.keyForward = var2;
+            this.keyForward = keyJump;
             break;
          case 340:
-            this.keySneak = var2;
+            this.keySneak = keyJump;
             break;
          case 341:
-            this.keySprint = var2;
+            this.keySprint = keyJump;
             break;
          default:
             return false;
@@ -1103,18 +1103,18 @@ public class BotControlScreen extends CustomScreen {
       return true;
    }
 
-   private void setCursorLocked(boolean var1) {
-      if (this.cursorLocked != var1) {
-         this.cursorLocked = var1;
+   private void setCursorLocked(boolean cursorLocked) {
+      if (this.cursorLocked != cursorLocked) {
+         this.cursorLocked = cursorLocked;
          this.lastMouseX = Double.NaN;
          this.lastMouseY = Double.NaN;
-         Window var2 = mc.getWindow();
-         double var3 = mc.getWindow().getScreenWidth() / 2.0;
-         double var5 = mc.getWindow().getScreenHeight() / 2.0;
-         if (var1) {
-            InputConstants.grabMouse(var2, var3, var5);
+         Window window = mc.getWindow();
+         double xpos = mc.getWindow().getScreenWidth() / 2.0;
+         double ypos = mc.getWindow().getScreenHeight() / 2.0;
+         if (cursorLocked) {
+            InputConstants.grabMouse(window, xpos, ypos);
          } else {
-            InputConstants.releaseMouse(var2, var3, var5);
+            InputConstants.releaseMouse(window, xpos, ypos);
          }
       }
    }
@@ -1133,8 +1133,8 @@ public class BotControlScreen extends CustomScreen {
       return false;
    }
 
-   private static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String t(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    private static final class CachedChat {
@@ -1166,9 +1166,9 @@ public class BotControlScreen extends CustomScreen {
          return "CachedChat[" + "seenAt=" + this.seenAt + ", " + "lines=" + this.lines + "]";
       }
 
-      private CachedChat(long var1, List<FormattedCharSequence> var3) {
-         this.seenAt = var1;
-         this.lines = var3;
+      private CachedChat(long seenAt, List<FormattedCharSequence> lines) {
+         this.seenAt = seenAt;
+         this.lines = lines;
       }
    }
 
@@ -1227,14 +1227,14 @@ public class BotControlScreen extends CustomScreen {
          return "ContainerLayout[" + "texture=" + this.texture + ", " + "width=" + this.width + ", " + "height=" + this.height + ", " + "chestRows=" + this.chestRows + ", " + "titleX=" + this.titleX + ", " + "centerTitle=" + this.centerTitle + ", " + "playerInventoryLabel=" + this.playerInventoryLabel + "]";
       }
 
-      private ContainerLayout(@Nullable Identifier var1, int var2, int var3, int var4, int var5, boolean var6, boolean var7) {
-         this.texture = var1;
-         this.width = var2;
-         this.height = var3;
-         this.chestRows = var4;
-         this.titleX = var5;
-         this.centerTitle = var6;
-         this.playerInventoryLabel = var7;
+      private ContainerLayout(@Nullable Identifier texture, int width, int height, int chestRows, int titleX, boolean centerTitle, boolean playerInventoryLabel) {
+         this.texture = texture;
+         this.width = width;
+         this.height = height;
+         this.chestRows = chestRows;
+         this.titleX = titleX;
+         this.centerTitle = centerTitle;
+         this.playerInventoryLabel = playerInventoryLabel;
       }
    }
 
@@ -1272,10 +1272,10 @@ public class BotControlScreen extends CustomScreen {
          return "SidebarRow[" + "name=" + this.name + ", " + "score=" + this.score + ", " + "scoreWidth=" + this.scoreWidth + "]";
       }
 
-      private SidebarRow(Component var1, Component var2, int var3) {
-         this.name = var1;
-         this.score = var2;
-         this.scoreWidth = var3;
+      private SidebarRow(Component name, Component score, int scoreWidth) {
+         this.name = name;
+         this.score = score;
+         this.scoreWidth = scoreWidth;
       }
    }
 }

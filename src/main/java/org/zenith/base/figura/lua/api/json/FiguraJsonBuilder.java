@@ -38,34 +38,34 @@ public class FiguraJsonBuilder {
 
    @LuaWhitelist
    public Object __index(LuaValue k) {
-      Boolean var10000;
+      Boolean prettyPrinting;
       if (k.type() != 4) {
-         var10000 = null;
+         prettyPrinting = null;
       } else {
-         String var2 = k.checkjstring();
-         switch (var2) {
+         String checkjstring = k.checkjstring();
+         switch (checkjstring) {
             case "prettyPrinting":
-               var10000 = this.prettyPrinting;
+               prettyPrinting = this.prettyPrinting;
                break;
             case "htmlEscaping":
-               var10000 = this.htmlEscaping;
+               prettyPrinting = this.htmlEscaping;
                break;
             case "serializeNils":
-               var10000 = this.serializeNils;
+               prettyPrinting = this.serializeNils;
                break;
             default:
-               var10000 = null;
+               prettyPrinting = null;
          }
       }
 
-      return var10000;
+      return prettyPrinting;
    }
 
    @LuaWhitelist
    public void __newindex(LuaValue k, LuaValue v) {
       if (k.type() == 4) {
-         String var3 = k.checkjstring();
-         switch (var3) {
+         String checkjstring = k.checkjstring();
+         switch (checkjstring) {
             case "prettyPrinting":
                this.prettyPrinting = v.checkboolean();
                break;

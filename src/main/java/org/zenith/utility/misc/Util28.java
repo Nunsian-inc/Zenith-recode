@@ -13,231 +13,231 @@ public final class Util28 {
    private Util28() {
    }
 
-   public static void method7552(Glowboost var0, Class28 var1, float var2, int var3, float var4, float var5) {
-      float var6 = (float)(var1.doubleValue13 * 0.8 + 0.45) * var4;
-      int var7 = 26 + (int)(var5 * 0.42F);
-      double var8 = var0.getDoubleValue4();
-      double var10 = var0.getDoubleValue5();
-      double var12 = var0.getDoubleValue6();
-      double var14 = var0.getDoubleValue7();
-      double var16 = var0.getDoubleValue8();
-      double var18 = var0.getDoubleValue9();
+   public static void method7552(Glowboost glowboost, Class28 class2, float f, int color, float f2, float f3) {
+      float f4 = (float)(class2.doubleValue13 * 0.8 + 0.45) * f2;
+      int n = 26 + (int)(f3 * 0.42F);
+      double d = glowboost.getDoubleValue4();
+      double d2 = glowboost.getDoubleValue5();
+      double d3 = glowboost.getDoubleValue6();
+      double d4 = glowboost.getDoubleValue7();
+      double d5 = glowboost.getDoubleValue8();
+      double d6 = glowboost.getDoubleValue9();
 
-      for (int var20 = 0; var20 < 3; var20++) {
-         float var21 = var20 * 0.12F;
-         if (!(var2 <= var21)) {
-            float var22 = (var2 - var21) / (1.0F - var21);
-            if (!(var22 >= 1.0F)) {
-               float var23 = (1.0F - var22) * (1.0F - var22) * (var22 < 0.1F ? var22 / 0.1F : 1.0F) * (var20 == 0 ? 1.0F : 0.6F);
-               if (!(var23 < 0.02F)) {
-                  int var24 = ColorUtils.method6439(var3, var23);
-                  float var25 = var6 * (0.12F + Glowboost.easeOut(var22) * (1.0F + var20 * 0.42F));
-                  double var26 = 0.0;
-                  double var28 = 0.0;
-                  double var30 = 0.0;
+      for (int i = 0; i < 3; i++) {
+         float f5 = i * 0.12F;
+         if (!(f <= f5)) {
+            float f6 = (f - f5) / (1.0F - f5);
+            if (!(f6 >= 1.0F)) {
+               float alpha = (1.0F - f6) * (1.0F - f6) * (f6 < 0.1F ? f6 / 0.1F : 1.0F) * (i == 0 ? 1.0F : 0.6F);
+               if (!(alpha < 0.02F)) {
+                  int color2 = ColorUtils.method6439(color, alpha);
+                  float f7 = f4 * (0.12F + Glowboost.easeOut(f6) * (1.0F + i * 0.42F));
+                  double doubleValue = 0.0;
+                  double d7 = 0.0;
+                  double d8 = 0.0;
 
-                  for (int var32 = 0; var32 <= var7; var32++) {
-                     float var33 = (float)var32 / var7 * (float) (Math.PI * 2) + var20 * 0.4F;
-                     double var34 = var25 * (1.0F + 0.05F * Mth.sin(var33 * 5.0F + var1.floatValue + var20));
-                     float var36 = Mth.cos(var33);
-                     float var37 = Mth.sin(var33);
-                     double var38 = var1.doubleValue + (var8 * var36 + var14 * var37) * var34;
-                     double var40 = var1.doubleValue2 + (var10 * var36 + var16 * var37) * var34;
-                     double var42 = var1.doubleValue3 + (var12 * var36 + var18 * var37) * var34;
-                     if (var32 > 0) {
-                        var0.method3236(var26, var28, var30, var38, var40, var42, var24);
+                  for (int j = 0; j <= n; j++) {
+                     float f8 = (float)j / n * (float) (Math.PI * 2) + i * 0.4F;
+                     double d9 = f7 * (1.0F + 0.05F * Mth.sin(f8 * 5.0F + class2.floatValue + i));
+                     float f9 = Mth.cos(f8);
+                     float f10 = Mth.sin(f8);
+                     double doubleValue2 = class2.doubleValue + (d * f9 + d4 * f10) * d9;
+                     double d10 = class2.doubleValue2 + (d2 * f9 + d5 * f10) * d9;
+                     double d11 = class2.doubleValue3 + (d3 * f9 + d6 * f10) * d9;
+                     if (j > 0) {
+                        glowboost.method3236(doubleValue, d7, d8, doubleValue2, d10, d11, color2);
                      }
 
-                     if (var20 == 0 && var32 % 5 == 0) {
-                        var0.method3250(var38, var40, var42, 0.1F * var4, var3, var23 * 0.5F);
+                     if (i == 0 && j % 5 == 0) {
+                        glowboost.method3250(doubleValue2, d10, d11, 0.1F * f2, color, alpha * 0.5F);
                      }
 
-                     var26 = var38;
-                     var28 = var40;
-                     var30 = var42;
+                     doubleValue = doubleValue2;
+                     d7 = d10;
+                     d8 = d11;
                   }
                }
             }
          }
       }
 
-      float var44 = 1.0F - Math.min(1.0F, var2 * 3.2F);
-      if (var44 > 0.01F) {
-         var0.method3250(var1.doubleValue, var1.doubleValue2, var1.doubleValue3, 0.5F * var4 * (0.4F + var44), var3, var44 * 0.85F);
-         var0.method3250(var1.doubleValue, var1.doubleValue2, var1.doubleValue3, 1.2F * var4 * (0.5F + var44), var3, var44 * 0.3F);
+      float f5 = 1.0F - Math.min(1.0F, f * 3.2F);
+      if (f5 > 0.01F) {
+         glowboost.method3250(class2.doubleValue, class2.doubleValue2, class2.doubleValue3, 0.5F * f2 * (0.4F + f5), color, f5 * 0.85F);
+         glowboost.method3250(class2.doubleValue, class2.doubleValue2, class2.doubleValue3, 1.2F * f2 * (0.5F + f5), color, f5 * 0.3F);
       }
 
-      float var45 = Math.min(1.0F, var2 * 1.5F);
-      float var46 = (1.0F - var45) * (1.0F - var45);
-      if (var46 > 0.02F) {
-         int var47 = ColorUtils.method6439(var3, var46);
-         float var48 = var6 * (0.5F + Glowboost.easeOut(var45) * 1.6F);
+      float f6 = Math.min(1.0F, f * 1.5F);
+      float alpha = (1.0F - f6) * (1.0F - f6);
+      if (alpha > 0.02F) {
+         int color2 = ColorUtils.method6439(color, alpha);
+         float f7 = f4 * (0.5F + Glowboost.easeOut(f6) * 1.6F);
 
-         for (int var49 = 0; var49 < 4; var49++) {
-            float var50 = var49 / 4.0F * (float) (Math.PI * 2) + 0.39F + var1.floatValue;
-            float var27 = Mth.cos(var50);
-            float var51 = Mth.sin(var50);
-            double var29 = var8 * var27 + var14 * var51;
-            double var31 = var10 * var27 + var16 * var51;
-            double var52 = var12 * var27 + var18 * var51;
-            var0.method3236(
-               var1.doubleValue + var29 * var48 * 0.3,
-               var1.doubleValue2 + var31 * var48 * 0.3,
-               var1.doubleValue3 + var52 * var48 * 0.3,
-               var1.doubleValue + var29 * var48,
-               var1.doubleValue2 + var31 * var48,
-               var1.doubleValue3 + var52 * var48,
-               var47
+         for (int i = 0; i < 4; i++) {
+            float f8 = i / 4.0F * (float) (Math.PI * 2) + 0.39F + class2.floatValue;
+            float f9 = Mth.cos(f8);
+            float f10 = Mth.sin(f8);
+            double d7 = d * f9 + d4 * f10;
+            double d8 = d2 * f9 + d5 * f10;
+            double d9 = d3 * f9 + d6 * f10;
+            glowboost.method3236(
+               class2.doubleValue + d7 * f7 * 0.3,
+               class2.doubleValue2 + d8 * f7 * 0.3,
+               class2.doubleValue3 + d9 * f7 * 0.3,
+               class2.doubleValue + d7 * f7,
+               class2.doubleValue2 + d8 * f7,
+               class2.doubleValue3 + d9 * f7,
+               color2
             );
          }
       }
    }
 
-   public static void method7553(Glowboost var0, Class28 var1, float var2, int var3, float var4, float var5, float var6) {
-      int var7 = Math.max(5, (int)(var6 * 0.55F));
-      float var8 = Glowboost.method3266(var2);
-      if (!(var8 < 0.01F)) {
-         float var9 = var2 * var1.intValue2 / 1000.0F;
-         Class42 var10 = var1.method4654(1, var7, var4);
-         var10.method7382(var9);
+   public static void method7553(Glowboost glowboost, Class28 class2, float f, int color, float floatValue, float f2, float f3) {
+      int n = Math.max(5, (int)(f3 * 0.55F));
+      float f4 = Glowboost.method3266(f);
+      if (!(f4 < 0.01F)) {
+         float time = f * class2.intValue2 / 1000.0F;
+         Class42 class3 = class2.method4654(1, n, floatValue);
+         class3.method7382(time);
 
-         for (int var11 = 0; var11 < var7; var11++) {
-            double var12 = var10.method7392(var11);
-            double var14 = var10.method7393(var11);
-            double var16 = var10.method7394(var11);
-            double var18 = var10.method7385(var11);
-            double var20 = var10.method7386(var11);
-            double var22 = var10.method7387(var11);
-            float var24 = (0.16F + Glowboost.method3268(var1.longValue2, var11, 3) * 0.24F) * var5;
-            float var25 = var24 * 0.3F;
-            double var26 = -var16;
-            double var30 = Math.sqrt(var26 * var26 + var12 * var12);
-            double var28;
-            if (var30 < 1.0E-6) {
-               var26 = 1.0;
-               var28 = 0.0;
+         for (int i = 0; i < n; i++) {
+            double d = class3.method7392(i);
+            double d2 = class3.method7393(i);
+            double d3 = class3.method7394(i);
+            double doubleValue = class3.method7385(i);
+            double d4 = class3.method7386(i);
+            double d5 = class3.method7387(i);
+            float f5 = (0.16F + Glowboost.method3268(class2.longValue2, i, 3) * 0.24F) * f2;
+            float f6 = f5 * 0.3F;
+            double d6 = -d3;
+            double d7 = Math.sqrt(d6 * d6 + d * d);
+            double d8;
+            if (d7 < 1.0E-6) {
+               d6 = 1.0;
+               d8 = 0.0;
             } else {
-               var26 /= var30;
-               var28 = var12 / var30;
+               d6 /= d7;
+               d8 = d / d7;
             }
 
-            double var32 = var14 * var28;
-            double var34 = var16 * var26 - var12 * var28;
-            double var36 = -var14 * var26;
-            float var38 = Glowboost.method3268(var1.longValue2, var11, 5) * (float) (Math.PI * 2)
-               + var9 * (3.0F + Glowboost.method3268(var1.longValue2, var11, 8) * 7.0F);
-            var38 = method7554(var0, var18, var20, var22, var12, var14, var16, var26, var32, var34, var36, var28, var38);
-            float var39 = Mth.cos(var38) * var25;
-            float var40 = Mth.sin(var38) * var25;
-            double var41 = var26 * var39 + var32 * var40;
-            double var43 = var34 * var40;
-            double var45 = var28 * var39 + var36 * var40;
-            double var47 = var32 * var39 - var26 * var40;
-            double var49 = var34 * var39;
-            double var51 = var36 * var39 - var28 * var40;
-            float var53 = var8 * (0.55F + 0.45F * Glowboost.method3268(var1.longValue2, var11, 6));
-            int var54 = ColorUtils.method6439(var3, var53);
-            int var55 = ColorUtils.method6439(var3, var53 * 0.7F);
-            double var56 = var18 + var12 * var24 * 0.62;
-            double var58 = var20 + var14 * var24 * 0.62;
-            double var60 = var22 + var16 * var24 * 0.62;
-            double var62 = var18 - var12 * var24 * 0.38;
-            double var64 = var20 - var14 * var24 * 0.38;
-            double var66 = var22 - var16 * var24 * 0.38;
-            method7555(var0, var56, var58, var60, var62, var64, var66, var18, var20, var22, var41, var43, var45, var54);
-            method7555(var0, var56, var58, var60, var62, var64, var66, var18, var20, var22, var47, var49, var51, var55);
-            var0.method3250(var18, var20, var22, var24 * 2.1F, var3, var53 * (0.5F + 0.35F * var10.method7398(var11)));
+            double d9 = d2 * d8;
+            double d10 = d3 * d6 - d * d8;
+            double d11 = -d2 * d6;
+            float f7 = Glowboost.method3268(class2.longValue2, i, 5) * (float) (Math.PI * 2)
+               + time * (3.0F + Glowboost.method3268(class2.longValue2, i, 8) * 7.0F);
+            f7 = method7554(glowboost, doubleValue, d4, d5, d, d2, d3, d6, d9, d10, d11, d8, f7);
+            float f8 = Mth.cos(f7) * f6;
+            float f9 = Mth.sin(f7) * f6;
+            double d12 = d6 * f8 + d9 * f9;
+            double d13 = d10 * f9;
+            double d14 = d8 * f8 + d11 * f9;
+            double d15 = d9 * f8 - d6 * f9;
+            double d16 = d10 * f8;
+            double d17 = d11 * f8 - d8 * f9;
+            float alpha = f4 * (0.55F + 0.45F * Glowboost.method3268(class2.longValue2, i, 6));
+            int color2 = ColorUtils.method6439(color, alpha);
+            int color3 = ColorUtils.method6439(color, alpha * 0.7F);
+            double doubleValue2 = doubleValue + d * f5 * 0.62;
+            double d18 = d4 + d2 * f5 * 0.62;
+            double d19 = d5 + d3 * f5 * 0.62;
+            double d20 = doubleValue - d * f5 * 0.38;
+            double d21 = d4 - d2 * f5 * 0.38;
+            double d22 = d5 - d3 * f5 * 0.38;
+            method7555(glowboost, doubleValue2, d18, d19, d20, d21, d22, doubleValue, d4, d5, d12, d13, d14, color2);
+            method7555(glowboost, doubleValue2, d18, d19, d20, d21, d22, doubleValue, d4, d5, d15, d16, d17, color3);
+            glowboost.method3250(doubleValue, d4, d5, f5 * 2.1F, color, alpha * (0.5F + 0.35F * class3.method7398(i)));
          }
       }
    }
 
    private static float method7554(
-      Glowboost var0,
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      double var15,
-      double var17,
-      double var19,
-      double var21,
-      float var23
+      Glowboost glowboost,
+      double doubleValue,
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      float f
    ) {
-      double var24 = var0.getDoubleValue() - var1;
-      double var26 = var0.getDoubleValue2() - var3;
-      double var28 = var0.getDoubleValue3() - var5;
-      double var30 = var9 * var28 - var11 * var26;
-      double var32 = var11 * var24 - var7 * var28;
-      double var34 = var7 * var26 - var9 * var24;
-      double var36 = Math.sqrt(var30 * var30 + var32 * var32 + var34 * var34);
-      if (var36 < 1.0E-6) {
-         return var23;
+      double d11 = glowboost.getDoubleValue() - doubleValue;
+      double d12 = glowboost.getDoubleValue2() - d;
+      double d13 = glowboost.getDoubleValue3() - d2;
+      double d14 = d4 * d13 - d5 * d12;
+      double d15 = d5 * d11 - d3 * d13;
+      double d16 = d3 * d12 - d4 * d11;
+      double d17 = Math.sqrt(d14 * d14 + d15 * d15 + d16 * d16);
+      if (d17 < 1.0E-6) {
+         return f;
       } else {
-         var30 /= var36;
-         var32 /= var36;
-         var34 /= var36;
-         float var38 = (float)Math.atan2(var30 * var15 + var32 * var17 + var34 * var19, var30 * var13 + var34 * var21);
-         float var39 = var23 - var38;
-         var39 -= (float)(Math.PI * Math.floor(var39 / Math.PI + 0.5));
-         return var38 + var39 * 0.45F;
+         d14 /= d17;
+         d15 /= d17;
+         d16 /= d17;
+         float f2 = (float)Math.atan2(d14 * d7 + d15 * d8 + d16 * d9, d14 * d6 + d16 * d10);
+         float f3 = f - f2;
+         f3 -= (float)(Math.PI * Math.floor(f3 / Math.PI + 0.5));
+         return f2 + f3 * 0.45F;
       }
    }
 
    private static void method7555(
-      Glowboost var0,
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      double var15,
-      double var17,
-      double var19,
-      double var21,
-      double var23,
-      int var25
+      Glowboost glowboost,
+      double doubleValue,
+      double d,
+      double d2,
+      double doubleValue2,
+      double d3,
+      double d4,
+      double doubleValue3,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      int color
    ) {
-      var0.method3236(var1, var3, var5, var13 + var19, var15 + var21, var17 + var23, var25);
-      var0.method3236(var13 + var19, var15 + var21, var17 + var23, var7, var9, var11, var25);
-      var0.method3236(var7, var9, var11, var13 - var19, var15 - var21, var17 - var23, var25);
-      var0.method3236(var13 - var19, var15 - var21, var17 - var23, var1, var3, var5, var25);
+      glowboost.method3236(doubleValue, d, d2, doubleValue3 + d7, d5 + d8, d6 + d9, color);
+      glowboost.method3236(doubleValue3 + d7, d5 + d8, d6 + d9, doubleValue2, d3, d4, color);
+      glowboost.method3236(doubleValue2, d3, d4, doubleValue3 - d7, d5 - d8, d6 - d9, color);
+      glowboost.method3236(doubleValue3 - d7, d5 - d8, d6 - d9, doubleValue, d, d2, color);
    }
 
-   public static void method7556(Glowboost var0, Class28 var1, float var2, int var3, float var4, float var5, float var6) {
-      int var7 = Math.max(6, (int)var6);
-      float var8 = var2 * var1.intValue2 / 1000.0F;
-      float var9 = Glowboost.method3266(var2);
-      if (!(var9 < 0.01F)) {
-         Class42 var10 = var1.method4654(2, var7, var4);
-         var10.method7382(var8);
+   public static void method7556(Glowboost glowboost, Class28 class2, float f, int color, float floatValue, float f2, float f3) {
+      int n = Math.max(6, (int)f3);
+      float time = f * class2.intValue2 / 1000.0F;
+      float f4 = Glowboost.method3266(f);
+      if (!(f4 < 0.01F)) {
+         Class42 class3 = class2.method4654(2, n, floatValue);
+         class3.method7382(time);
 
-         for (int var11 = 0; var11 < var7; var11++) {
-            double var12 = var10.method7385(var11);
-            double var14 = var10.method7386(var11);
-            double var16 = var10.method7387(var11);
-            double var18 = var10.method7391(var11);
-            double var20 = var10.method7395(var11);
-            double var22 = var10.method7396(var11);
-            double var24 = var10.method7397(var11);
-            float var26 = 0.65F + 0.35F * Mth.sin(var11 * 12.9F + var8 * 55.0F);
-            float var27 = var9 * var26 * (0.6F + 0.4F * Glowboost.method3268(var1.longValue2, var11, 3));
-            var27 = Math.min(1.0F, var27 * (1.0F + var10.method7398(var11) * 0.8F));
-            if (!(var27 < 0.02F)) {
-               double var28 = Math.min(0.55, var18 * 0.05) * var5 * 1.6;
-               double var30 = Math.abs(var20 * var0.getDoubleValue10() + var22 * var0.getDoubleValue11() + var24 * var0.getDoubleValue12());
-               double var32 = Math.sqrt(Math.max(0.0, 1.0 - var30 * var30));
-               double var34 = var28 * (0.35 + 0.65 * var32);
-               int var36 = ColorUtils.method6439(var3, var27);
-               if (var34 > 1.0E-4) {
-                  var0.method3236(var12, var14, var16, var12 - var20 * var34, var14 - var22 * var34, var16 - var24 * var34, var36);
+         for (int i = 0; i < n; i++) {
+            double doubleValue = class3.method7385(i);
+            double d = class3.method7386(i);
+            double d2 = class3.method7387(i);
+            double d3 = class3.method7391(i);
+            double d4 = class3.method7395(i);
+            double d5 = class3.method7396(i);
+            double d6 = class3.method7397(i);
+            float f5 = 0.65F + 0.35F * Mth.sin(i * 12.9F + time * 55.0F);
+            float alpha = f4 * f5 * (0.6F + 0.4F * Glowboost.method3268(class2.longValue2, i, 3));
+            alpha = Math.min(1.0F, alpha * (1.0F + class3.method7398(i) * 0.8F));
+            if (!(alpha < 0.02F)) {
+               double d7 = Math.min(0.55, d3 * 0.05) * f2 * 1.6;
+               double d8 = Math.abs(d4 * glowboost.getDoubleValue10() + d5 * glowboost.getDoubleValue11() + d6 * glowboost.getDoubleValue12());
+               double d9 = Math.sqrt(Math.max(0.0, 1.0 - d8 * d8));
+               double d10 = d7 * (0.35 + 0.65 * d9);
+               int color2 = ColorUtils.method6439(color, alpha);
+               if (d10 > 1.0E-4) {
+                  glowboost.method3236(doubleValue, d, d2, doubleValue - d4 * d10, d - d5 * d10, d2 - d6 * d10, color2);
                }
 
-               var0.method3250(var12, var14, var16, 0.09F * var5 * (0.7F + 0.5F * Glowboost.method3268(var1.longValue2, var11, 4)), var3, var27 * 0.65F);
+               glowboost.method3250(doubleValue, d, d2, 0.09F * f2 * (0.7F + 0.5F * Glowboost.method3268(class2.longValue2, i, 4)), color, alpha * 0.65F);
             }
          }
       }

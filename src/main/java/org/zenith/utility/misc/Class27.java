@@ -11,7 +11,7 @@ public class Class27 {
    }
 
    @Generated
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 }

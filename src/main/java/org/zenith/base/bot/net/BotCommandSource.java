@@ -32,19 +32,19 @@ public final class BotCommandSource implements SharedSuggestionProvider {
    private CompletableFuture<Suggestions> pendingCommandCompletion;
    private final Set<String> chatSuggestions = new HashSet<>();
 
-   public BotCommandSource(BotPlayHandler var1) {
-      this.handler = var1;
+   public BotCommandSource(BotPlayHandler handler) {
+      this.handler = handler;
    }
 
    @Override
    public Collection<String> getOnlinePlayerNames() {
-      ArrayList<String> var1 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (PlayerInfo var3 : this.handler.getPlayerList()) {
-         var1.add(var3.getProfile().name());
+      for (PlayerInfo player : this.handler.getPlayerList()) {
+         strings.add(player.getProfile().name());
       }
 
-      return var1;
+      return strings;
    }
 
    @Override
@@ -52,17 +52,17 @@ public final class BotCommandSource implements SharedSuggestionProvider {
       if (this.chatSuggestions.isEmpty()) {
          return this.getOnlinePlayerNames();
       } else {
-         var var1 = new HashSet<>(this.getOnlinePlayerNames());
-         var1.addAll(this.chatSuggestions);
-         return var1;
+         var strings = new HashSet<>(this.getOnlinePlayerNames());
+         strings.addAll(this.chatSuggestions);
+         return strings;
       }
    }
 
    @Override
    public Collection<String> getAllTeams() {
-      Scoreboard var1 = this.handler.getScoreboard();
-      synchronized (var1) {
-         return List.copyOf(var1.getTeamNames());
+      Scoreboard scoreboard = this.handler.getScoreboard();
+      synchronized (scoreboard) {
+         return List.copyOf(scoreboard.getTeamNames());
       }
    }
 
@@ -85,8 +85,8 @@ public final class BotCommandSource implements SharedSuggestionProvider {
    public <E> CompletableFuture<Suggestions> suggestRegistryElements(
       ResourceKey<? extends Registry<E>> registryRef, ElementSuggestionType suggestedIdType, SuggestionsBuilder builder, CommandContext<?> context, java.util.function.Predicate<E> filter
    ) {
-      return this.registryAccess().lookup(registryRef).map(var3 -> {
-         this.suggestRegistryElements(var3, suggestedIdType, builder, filter);
+      return this.registryAccess().lookup(registryRef).map(registry -> {
+         this.suggestRegistryElements(registry, suggestedIdType, builder, filter);
          return builder.buildFuture();
       }).orElseGet(() -> this.customSuggestion(context));
    }
@@ -97,11 +97,11 @@ public final class BotCommandSource implements SharedSuggestionProvider {
          this.pendingCommandCompletion.cancel(false);
       }
 
-      CompletableFuture var2 = new CompletableFuture();
-      this.pendingCommandCompletion = var2;
-      int var3 = ++this.completionId;
-      this.handler.sendPacket(new ServerboundCommandSuggestionPacket(var3, context.getInput()));
-      return var2;
+      CompletableFuture future = new CompletableFuture();
+      this.pendingCommandCompletion = future;
+      int id = ++this.completionId;
+      this.handler.sendPacket(new ServerboundCommandSuggestionPacket(id, context.getInput()));
+      return future;
    }
 
    @Override
@@ -119,25 +119,25 @@ public final class BotCommandSource implements SharedSuggestionProvider {
       return this.handler.getEnabledFeatures();
    }
 
-   public synchronized void onCommandSuggestions(int var1, Suggestions var2) {
-      if (var1 == this.completionId && this.pendingCommandCompletion != null) {
-         this.pendingCommandCompletion.complete(var2);
+   public synchronized void onCommandSuggestions(int id, Suggestions suggestions) {
+      if (id == this.completionId && this.pendingCommandCompletion != null) {
+         this.pendingCommandCompletion.complete(suggestions);
          this.pendingCommandCompletion = null;
          this.completionId = -1;
       }
    }
 
-   public synchronized void onChatSuggestions(Action var1, List<String> var2) {
-      switch (var1) {
+   public synchronized void onChatSuggestions(Action action, List<String> entries) {
+      switch (action) {
          case ADD:
-            this.chatSuggestions.addAll(var2);
+            this.chatSuggestions.addAll(entries);
             break;
          case REMOVE:
-            var2.forEach(this.chatSuggestions::remove);
+            entries.forEach(this.chatSuggestions::remove);
             break;
          case SET:
             this.chatSuggestions.clear();
-            this.chatSuggestions.addAll(var2);
+            this.chatSuggestions.addAll(entries);
       }
    }
 }

@@ -133,7 +133,7 @@ public class AnimationJson implements JsonDeserializer<List<KeyframeAnimation>>,
             if (obj.has("easingArg")) {
                easingArg = obj.get("easingArg").getAsFloat();
             }
-         } catch (NullPointerException var14) {
+         } catch (NullPointerException e) {
          }
 
          int turn = obj.has("turn") ? obj.get("turn").getAsInt() : 0;

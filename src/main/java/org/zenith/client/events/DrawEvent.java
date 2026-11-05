@@ -19,8 +19,8 @@ public class DrawEvent implements Event {
    }
 
    @Generated
-   public DrawEvent(CustomDrawContext var1, float var2) {
-      this.customDrawContext = var1;
-      this.floatValue = var2;
+   public DrawEvent(CustomDrawContext customDrawContext, float floatValue) {
+      this.customDrawContext = customDrawContext;
+      this.floatValue = floatValue;
    }
 }

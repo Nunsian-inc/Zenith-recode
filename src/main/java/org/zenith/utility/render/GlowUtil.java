@@ -42,113 +42,113 @@ public final class GlowUtil implements MinecraftAccess {
    private static int[] intValues2 = new int[8];
    private static int intValue = 0;
 
-   private static void method2223(GlowUtil.Entry2 var0) {
+   private static void method2223(GlowUtil.Entry2 entry2) {
       intValue = 0;
-      float[] var1 = var0.floatValues2;
-      int var2 = 0;
+      float[] floatValues2 = entry2.floatValues2;
+      int n = 0;
 
-      for (int var3 = var0.size; var2 < var3; var2++) {
-         float var4 = var1[var2];
-         int var5 = -1;
+      for (int i = entry2.size; n < i; n++) {
+         float f = floatValues2[n];
+         int n2 = -1;
 
-         for (int var6 = 0; var6 < intValue; var6++) {
-            if (floatValues[var6] == var4) {
-               var5 = var6;
+         for (int j = 0; j < intValue; j++) {
+            if (floatValues[j] == f) {
+               n2 = j;
                break;
             }
          }
 
-         if (var5 < 0) {
+         if (n2 < 0) {
             if (intValue == floatValues.length) {
                floatValues = Arrays.copyOf(floatValues, intValue * 2);
                intValues = Arrays.copyOf(intValues, intValue * 2);
                intValues2 = Arrays.copyOf(intValues2, intValue * 2);
             }
 
-            var5 = intValue;
-            floatValues[var5] = var4;
-            intValues2[var5] = 0;
-            if (intValues[var5] == null) {
-               intValues[var5] = new int[64];
+            n2 = intValue;
+            floatValues[n2] = f;
+            intValues2[n2] = 0;
+            if (intValues[n2] == null) {
+               intValues[n2] = new int[64];
             }
 
             intValue++;
          }
 
-         int[] var8 = intValues[var5];
-         int var7 = intValues2[var5];
-         if (var7 == var8.length) {
-            var8 = Arrays.copyOf(var8, var7 * 2);
-            intValues[var5] = var8;
+         int[] original = intValues[n2];
+         int n3 = intValues2[n2];
+         if (n3 == original.length) {
+            original = Arrays.copyOf(original, n3 * 2);
+            intValues[n2] = original;
          }
 
-         var8[var7] = var2;
-         intValues2[var5] = var7 + 1;
+         original[n3] = n;
+         intValues2[n2] = n3 + 1;
       }
    }
 
-   private static void method2224(PoseStack var0, GlowUtil.Entry2 var1) {
-      PoseStack.Pose var2 = var0.last();
-      float[] var3 = var1.floatValues;
-      int[] var4 = var1.intValues;
+   private static void method2224(PoseStack matrixStack, GlowUtil.Entry2 entry2) {
+      PoseStack.Pose pose = matrixStack.last();
+      float[] floats = entry2.floatValues;
+      int[] ints = entry2.intValues;
 
-      for (int var5 = 0; var5 < intValue; var5++) {
-         RenderState.method1902(floatValues[var5]);
-         int[] var6 = intValues[var5];
-         BufferBuilder var7 = tessellator.begin(PrimitiveTopology.LINES, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
-         int var8 = 0;
+      for (int i = 0; i < intValue; i++) {
+         RenderState.method1902(floatValues[i]);
+         int[] intValue2 = intValues[i];
+         BufferBuilder begin = tessellator.begin(PrimitiveTopology.LINES, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
+         int n = 0;
 
-         for (int var9 = intValues2[var5]; var8 < var9; var8++) {
-            int var10 = var6[var8];
-            int var11 = var10 * 6;
+         for (int j = intValues2[i]; n < j; n++) {
+            int n2 = intValue2[n];
+            int n3 = n2 * 6;
             method2237(
-               var2,
-               var7,
-               var3[var11],
-               var3[var11 + 1],
-               var3[var11 + 2],
-               var3[var11 + 3],
-               var3[var11 + 4],
-               var3[var11 + 5],
-               var4[var10 * 2],
-               var4[var10 * 2 + 1]
+               pose,
+               begin,
+               floats[n3],
+               floats[n3 + 1],
+               floats[n3 + 2],
+               floats[n3 + 3],
+               floats[n3 + 4],
+               floats[n3 + 5],
+               ints[n2 * 2],
+               ints[n2 * 2 + 1]
             );
          }
 
-         ImmediateRenderer.method8015(var7.buildOrThrow());
+         ImmediateRenderer.method8015(begin.buildOrThrow());
       }
 
-      var1.size = 0;
+      entry2.size = 0;
    }
 
-   private static void method2225(PoseStack.Pose var0, GlowUtil.Entry var1) {
-      BufferBuilder var2 = tessellator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
-      float[] var3 = var1.floatValues;
-      int[] var4 = var1.intValues;
-      int var5 = 0;
+   private static void method2225(PoseStack.Pose pose, GlowUtil.Entry entry) {
+      BufferBuilder begin = tessellator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+      float[] floatValues = entry.floatValues;
+      int[] intValues = entry.intValues;
+      int n = 0;
 
-      for (int var6 = var1.size; var5 < var6; var5++) {
-         int var7 = var5 * 12;
-         int var8 = var5 * 4;
-         var2.addVertex(var0, var3[var7], var3[var7 + 1], var3[var7 + 2]).setColor(var4[var8]);
-         var2.addVertex(var0, var3[var7 + 3], var3[var7 + 4], var3[var7 + 5]).setColor(var4[var8 + 1]);
-         var2.addVertex(var0, var3[var7 + 6], var3[var7 + 7], var3[var7 + 8]).setColor(var4[var8 + 2]);
-         var2.addVertex(var0, var3[var7 + 9], var3[var7 + 10], var3[var7 + 11]).setColor(var4[var8 + 3]);
+      for (int i = entry.size; n < i; n++) {
+         int n2 = n * 12;
+         int n3 = n * 4;
+         begin.addVertex(pose, floatValues[n2], floatValues[n2 + 1], floatValues[n2 + 2]).setColor(intValues[n3]);
+         begin.addVertex(pose, floatValues[n2 + 3], floatValues[n2 + 4], floatValues[n2 + 5]).setColor(intValues[n3 + 1]);
+         begin.addVertex(pose, floatValues[n2 + 6], floatValues[n2 + 7], floatValues[n2 + 8]).setColor(intValues[n3 + 2]);
+         begin.addVertex(pose, floatValues[n2 + 9], floatValues[n2 + 10], floatValues[n2 + 11]).setColor(intValues[n3 + 3]);
       }
 
-      ImmediateRenderer.method8015(var2.buildOrThrow());
-      var1.size = 0;
+      ImmediateRenderer.method8015(begin.buildOrThrow());
+      entry.size = 0;
    }
 
-   public static void method2226(PoseStack var0) {
-      PoseStack.Pose var1 = var0.last();
+   public static void method2226(PoseStack matrixStack) {
+      PoseStack.Pose pose = matrixStack.last();
       if (!entry3.isEmpty()) {
          RenderState.method1871();
          RenderState.method1877();
          RenderState.method1879();
          RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
          RenderState.method1898("core/position_color");
-         method2225(var1, entry3);
+         method2225(pose, entry3);
          RenderState.method1878();
          RenderState.method1876();
          RenderState.method1872();
@@ -163,7 +163,7 @@ public final class GlowUtil implements MinecraftAccess {
          RenderState.method1879();
          RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
          RenderState.method1898("core/rendertype_lines");
-         method2224(var0, entry22);
+         method2224(matrixStack, entry22);
          RenderState.method1878();
          RenderState.method1876();
          RenderState.method1872();
@@ -179,7 +179,7 @@ public final class GlowUtil implements MinecraftAccess {
          RenderState.method1882(false);
          RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
          RenderState.method1898("core/rendertype_lines");
-         method2224(var0, entry2);
+         method2224(matrixStack, entry2);
          RenderState.method1882(true);
          RenderState.method1876();
          RenderState.method1872();
@@ -193,7 +193,7 @@ public final class GlowUtil implements MinecraftAccess {
          RenderState.method1878();
          RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
          RenderState.method1898("core/position_color");
-         method2225(var1, entry);
+         method2225(pose, entry);
          RenderState.method1876();
          RenderState.method1872();
          RenderState.method1873();
@@ -201,243 +201,243 @@ public final class GlowUtil implements MinecraftAccess {
       }
    }
 
-   public static void method2227(BlockPos var0, VoxelShape var1, int var2, float var3) {
-      method2228(var0, var1, var2, var3, true, false);
+   public static void method2227(BlockPos pos, VoxelShape voxelShape, int color, float width) {
+      method2228(pos, voxelShape, color, width, true, false);
    }
 
-   public static void method2228(BlockPos var0, VoxelShape var1, int var2, float var3, boolean var4, boolean var5) {
-      if (ProjectionUtils.method303(var1.bounds().move(var0))) {
+   public static void method2228(BlockPos pos, VoxelShape voxelShape, int color, float width, boolean flag, boolean flag2) {
+      if (ProjectionUtils.method303(voxelShape.bounds().move(pos))) {
          items2.stream()
-            .filter(var1x -> var1x.voxelShape.equals(var1))
+            .filter(var1x -> var1x.voxelShape.equals(voxelShape))
             .findFirst()
             .ifPresentOrElse(
-               var5x -> var5x.items.forEach(var5xx -> method2232(var5xx.move(var0), var2, var3, true, var4, var5)),
-               () -> items2.add(new GlowUtil.Data2(var1, var1.toAabbs()))
+               var5x -> var5x.items.forEach(var5xx -> method2232(var5xx.move(pos), color, width, true, flag, flag2)),
+               () -> items2.add(new GlowUtil.Data2(voxelShape, voxelShape.toAabbs()))
             );
       }
    }
 
-   public static void method2229(BlockPos var0, VoxelShape var1, int var2, float var3, boolean var4, boolean var5) {
-      Vec3 var6 = Vec3.atLowerCornerOf(var0);
-      if (ProjectionUtils.method303(var1.bounds().move(var6))) {
-         var var7 = var1.toAabbs();
+   public static void method2229(BlockPos pos, VoxelShape voxelShape, int color, float width, boolean flag, boolean flag2) {
+      Vec3 atLowerCornerOf = Vec3.atLowerCornerOf(pos);
+      if (ProjectionUtils.method303(voxelShape.bounds().move(atLowerCornerOf))) {
+         var aabbs = voxelShape.toAabbs();
          items.stream()
-            .filter(var1x -> var1x.items2.equals(var7))
+            .filter(var1x -> var1x.items2.equals(aabbs))
             .findFirst()
             .ifPresentOrElse(
                var5x -> {
-                  var5x.items2.forEach(var5xx -> method2232(var5xx.move(var6), var2, var3, false, var4, var5));
-                  var5x.items.forEach(var4xx -> method2245(var4xx.vec3d.add(var6), var4xx.vec3d2.add(var6), var2, var3, var5));
+                  var5x.items2.forEach(var5xx -> method2232(var5xx.move(atLowerCornerOf), color, width, false, flag, flag2));
+                  var5x.items.forEach(var4xx -> method2245(var4xx.vec3d.add(atLowerCornerOf), var4xx.vec3d2.add(atLowerCornerOf), color, width, flag2));
                },
                () -> {
                   ArrayList var1x = new ArrayList();
-                  var1.forAllEdges(
-                     (var1xx, var3x, var5x, var7x, var9, var11) -> var1x.add(
-                        new GlowUtil.Data(new Vec3(var1xx, var3x, var5x), new Vec3(var7x, var9, var11), 0, 0, 0.0F)
+                  voxelShape.forAllEdges(
+                     (var1xx, var3x, var5x, var7x, y, z) -> var1x.add(
+                        new GlowUtil.Data(new Vec3(var1xx, var3x, var5x), new Vec3(var7x, y, z), 0, 0, 0.0F)
                      )
                   );
-                  items.add(new GlowUtil.Data3(var1, var1x, var1.toAabbs()));
+                  items.add(new GlowUtil.Data3(voxelShape, var1x, voxelShape.toAabbs()));
                }
             );
       }
    }
 
-   public static void method2230(AABB var0, int var1, float var2) {
-      method2231(var0, var1, var1, var2);
+   public static void method2230(AABB aabb, int rgb, float width) {
+      method2231(aabb, rgb, rgb, width);
    }
 
-   public static void method2231(AABB var0, int var1, int var2, float var3) {
-      method2233(var0, var1, var2, var3, true, true, false);
+   public static void method2231(AABB box, int rgb, int color, float width) {
+      method2233(box, rgb, color, width, true, true, false);
    }
 
-   public static void method2232(AABB var0, int var1, float var2, boolean var3, boolean var4, boolean var5) {
-      method2233(var0, var1, var1, var2, var3, var4, var5);
+   public static void method2232(AABB aabb, int color, float width, boolean flag, boolean flag2, boolean flag3) {
+      method2233(aabb, color, color, width, flag, flag2, flag3);
    }
 
-   public static void method2233(AABB var0, int var1, int var2, float var3, boolean var4, boolean var5, boolean var6) {
-      var0 = var0.inflate(0.001);
-      if (ProjectionUtils.method303(var0)) {
-         double var7 = var0.minX;
-         double var9 = var0.minY;
-         double var11 = var0.minZ;
-         double var13 = var0.maxX;
-         double var15 = var0.maxY;
-         double var17 = var0.maxZ;
-         boolean var19 = EntityESPModule.INSTANCE.method567();
-         int var20 = var19 ? ColorUtils.method6439(var1, 0.9F) : ColorUtils.method6439(var1, 0.1F);
-         int var21 = var19 ? ColorUtils.method6439(var2, 0.1F) : var20;
-         int var22 = var19 ? ColorUtils.method6439(var1, 0.5F) : var1;
-         int var23 = var19 ? ColorUtils.method6439(var2, 1.0F) : var1;
-         Vec3 var24 = mc.getEntityRenderDispatcher().camera.position();
-         float var25 = (float)(var7 - var24.x);
-         float var26 = (float)(var9 - var24.y);
-         float var27 = (float)(var11 - var24.z);
-         float var28 = (float)(var13 - var24.x);
-         float var29 = (float)(var15 - var24.y);
-         float var30 = (float)(var17 - var24.z);
-         if (var5) {
-            GlowUtil.Entry var31 = var6 ? entry : entry3;
-            var31.method2253(var25, var26, var27, var28, var26, var27, var28, var26, var30, var25, var26, var30, var20, var20, var20, var20);
-            var31.method2253(var25, var26, var27, var25, var29, var27, var28, var29, var27, var28, var26, var27, var20, var21, var21, var20);
-            var31.method2253(var28, var26, var27, var28, var29, var27, var28, var29, var30, var28, var26, var30, var20, var21, var21, var20);
-            var31.method2253(var25, var26, var30, var28, var26, var30, var28, var29, var30, var25, var29, var30, var20, var20, var21, var21);
-            var31.method2253(var25, var26, var27, var25, var26, var30, var25, var29, var30, var25, var29, var27, var20, var20, var21, var21);
-            var31.method2253(var25, var29, var27, var25, var29, var30, var28, var29, var30, var28, var29, var27, var21, var21, var21, var21);
+   public static void method2233(AABB box, int rgb, int color, float width, boolean flag, boolean flag2, boolean flag3) {
+      box = box.inflate(0.001);
+      if (ProjectionUtils.method303(box)) {
+         double minX = box.minX;
+         double minY = box.minY;
+         double minZ = box.minZ;
+         double maxX = box.maxX;
+         double maxY = box.maxY;
+         double maxZ = box.maxZ;
+         boolean flag4 = EntityESPModule.INSTANCE.method567();
+         int n = flag4 ? ColorUtils.method6439(rgb, 0.9F) : ColorUtils.method6439(rgb, 0.1F);
+         int n2 = flag4 ? ColorUtils.method6439(color, 0.1F) : n;
+         int color2 = flag4 ? ColorUtils.method6439(rgb, 0.5F) : rgb;
+         int color3 = flag4 ? ColorUtils.method6439(color, 1.0F) : rgb;
+         Vec3 position = mc.getEntityRenderDispatcher().camera.position();
+         float f = (float)(minX - position.x);
+         float f2 = (float)(minY - position.y);
+         float f3 = (float)(minZ - position.z);
+         float f4 = (float)(maxX - position.x);
+         float f5 = (float)(maxY - position.y);
+         float f6 = (float)(maxZ - position.z);
+         if (flag2) {
+            GlowUtil.Entry entry4 = flag3 ? entry : entry3;
+            entry4.method2253(f, f2, f3, f4, f2, f3, f4, f2, f6, f, f2, f6, n, n, n, n);
+            entry4.method2253(f, f2, f3, f, f5, f3, f4, f5, f3, f4, f2, f3, n, n2, n2, n);
+            entry4.method2253(f4, f2, f3, f4, f5, f3, f4, f5, f6, f4, f2, f6, n, n2, n2, n);
+            entry4.method2253(f, f2, f6, f4, f2, f6, f4, f5, f6, f, f5, f6, n, n, n2, n2);
+            entry4.method2253(f, f2, f3, f, f2, f6, f, f5, f6, f, f5, f3, n, n, n2, n2);
+            entry4.method2253(f, f5, f3, f, f5, f6, f4, f5, f6, f4, f5, f3, n2, n2, n2, n2);
          }
 
-         if (var4) {
-            GlowUtil.Entry2 var33 = var6 ? entry2 : entry22;
-            var33.method2254(var25, var26, var27, var28, var26, var27, var22, var22, var3);
-            var33.method2254(var28, var26, var27, var28, var26, var30, var22, var22, var3);
-            var33.method2254(var28, var26, var30, var25, var26, var30, var22, var22, var3);
-            var33.method2254(var25, var26, var30, var25, var26, var27, var22, var22, var3);
-            var33.method2254(var25, var26, var30, var25, var29, var30, var22, var23, var3);
-            var33.method2254(var25, var26, var27, var25, var29, var27, var22, var23, var3);
-            var33.method2254(var28, var26, var30, var28, var29, var30, var22, var23, var3);
-            var33.method2254(var28, var26, var27, var28, var29, var27, var22, var23, var3);
-            var33.method2254(var25, var29, var27, var28, var29, var27, var23, var23, var3);
-            var33.method2254(var28, var29, var27, var28, var29, var30, var23, var23, var3);
-            var33.method2254(var28, var29, var30, var25, var29, var30, var23, var23, var3);
-            var33.method2254(var25, var29, var30, var25, var29, var27, var23, var23, var3);
+         if (flag) {
+            GlowUtil.Entry2 entry23 = flag3 ? entry2 : entry22;
+            entry23.method2254(f, f2, f3, f4, f2, f3, color2, color2, width);
+            entry23.method2254(f4, f2, f3, f4, f2, f6, color2, color2, width);
+            entry23.method2254(f4, f2, f6, f, f2, f6, color2, color2, width);
+            entry23.method2254(f, f2, f6, f, f2, f3, color2, color2, width);
+            entry23.method2254(f, f2, f6, f, f5, f6, color2, color3, width);
+            entry23.method2254(f, f2, f3, f, f5, f3, color2, color3, width);
+            entry23.method2254(f4, f2, f6, f4, f5, f6, color2, color3, width);
+            entry23.method2254(f4, f2, f3, f4, f5, f3, color2, color3, width);
+            entry23.method2254(f, f5, f3, f4, f5, f3, color3, color3, width);
+            entry23.method2254(f4, f5, f3, f4, f5, f6, color3, color3, width);
+            entry23.method2254(f4, f5, f6, f, f5, f6, color3, color3, width);
+            entry23.method2254(f, f5, f6, f, f5, f3, color3, color3, width);
          }
       }
    }
 
-   public static void method2234(@NotNull PoseStack var0, @NotNull VertexConsumer var1, Vec3 var2, Vec3 var3, int var4) {
-      method2236(var0, var1, var2.toVector3f(), var3.toVector3f(), var4, var4);
+   public static void method2234(@NotNull PoseStack matrixStack, @NotNull VertexConsumer begin, Vec3 vec, Vec3 vec2, int color) {
+      method2236(matrixStack, begin, vec.toVector3f(), vec2.toVector3f(), color, color);
    }
 
-   public static void method2235(@NotNull PoseStack var0, @NotNull VertexConsumer var1, Vec3 var2, Vec3 var3, int var4, int var5) {
-      method2236(var0, var1, var2.toVector3f(), var3.toVector3f(), var4, var5);
+   public static void method2235(@NotNull PoseStack matrixStack, @NotNull VertexConsumer begin, Vec3 vec, Vec3 vec2, int color, int n) {
+      method2236(matrixStack, begin, vec.toVector3f(), vec2.toVector3f(), color, n);
    }
 
-   public static void method2236(@NotNull PoseStack var0, @NotNull VertexConsumer var1, Vector3f var2, Vector3f var3, int var4, int var5) {
-      method2237(var0.last(), var1, var2.x, var2.y, var2.z, var3.x, var3.y, var3.z, var4, var5);
+   public static void method2236(@NotNull PoseStack matrixStack, @NotNull VertexConsumer begin, Vector3f vector3f, Vector3f vec, int color, int n) {
+      method2237(matrixStack.last(), begin, vector3f.x, vector3f.y, vector3f.z, vec.x, vec.y, vec.z, color, n);
    }
 
    private static void method2237(
-      PoseStack.Pose var0, VertexConsumer var1, float var2, float var3, float var4, float var5, float var6, float var7, int var8, int var9
+      PoseStack.Pose pose, VertexConsumer begin, float x, float y, float z, float f, float y2, float z2, int color, int n
    ) {
-      float var10 = var5 - var2;
-      float var11 = var6 - var3;
-      float var12 = var7 - var4;
-      float var13 = Mth.sqrt(var10 * var10 + var11 * var11 + var12 * var12);
-      float var14 = var10 / var13;
-      float var15 = var11 / var13;
-      float var16 = var12 / var13;
-      float var17 = RenderState.getFloatValue4();
-      var1.addVertex(var0, var2, var3, var4).setColor(var8).setNormal(var0, var14, var15, var16).setLineWidth(var17);
-      var1.addVertex(var0, var5, var6, var7).setColor(var9).setNormal(var0, var14, var15, var16).setLineWidth(var17);
+      float f2 = f - x;
+      float f3 = y2 - y;
+      float f4 = z2 - z;
+      float f5 = Mth.sqrt(f2 * f2 + f3 * f3 + f4 * f4);
+      float x2 = f2 / f5;
+      float y3 = f3 / f5;
+      float z3 = f4 / f5;
+      float width = RenderState.getFloatValue4();
+      begin.addVertex(pose, x, y, z).setColor(color).setNormal(pose, x2, y3, z3).setLineWidth(width);
+      begin.addVertex(pose, f, y2, z2).setColor(n).setNormal(pose, x2, y3, z3).setLineWidth(width);
    }
 
-   public static void method2238(@NotNull PoseStack.Pose var0, @NotNull VertexConsumer var1, Vec3 var2, Vec3 var3, Vec3 var4, Vec3 var5, int var6) {
-      method2241(var0, var1, var2.toVector3f(), var3.toVector3f(), var4.toVector3f(), var5.toVector3f(), var6, var6, var6, var6);
+   public static void method2238(@NotNull PoseStack.Pose pose, @NotNull VertexConsumer consumer, Vec3 vec, Vec3 vec2, Vec3 vec3, Vec3 vec4, int color) {
+      method2241(pose, consumer, vec.toVector3f(), vec2.toVector3f(), vec3.toVector3f(), vec4.toVector3f(), color, color, color, color);
    }
 
    public static void method2239(
-      @NotNull PoseStack.Pose var0, @NotNull VertexConsumer var1, Vector3f var2, Vector3f var3, Vector3f var4, Vector3f var5, int var6
+      @NotNull PoseStack.Pose pose, @NotNull VertexConsumer consumer, Vector3f vector3f, Vector3f position, Vector3f vec, Vector3f vec2, int color
    ) {
-      method2241(var0, var1, var2, var3, var4, var5, var6, var6, var6, var6);
+      method2241(pose, consumer, vector3f, position, vec, vec2, color, color, color, color);
    }
 
    public static void method2240(
-      @NotNull PoseStack.Pose var0, @NotNull VertexConsumer var1, Vec3 var2, Vec3 var3, Vec3 var4, Vec3 var5, int var6, int var7, int var8, int var9
+      @NotNull PoseStack.Pose pose, @NotNull VertexConsumer consumer, Vec3 vec, Vec3 vec2, Vec3 vec3, Vec3 vec4, int color, int n, int n2, int n3
    ) {
-      method2241(var0, var1, var2.toVector3f(), var3.toVector3f(), var4.toVector3f(), var5.toVector3f(), var6, var7, var8, var9);
+      method2241(pose, consumer, vec.toVector3f(), vec2.toVector3f(), vec3.toVector3f(), vec4.toVector3f(), color, n, n2, n3);
    }
 
    public static void method2241(
-      @NotNull PoseStack.Pose var0,
-      @NotNull VertexConsumer var1,
-      Vector3f var2,
-      Vector3f var3,
-      Vector3f var4,
-      Vector3f var5,
-      int var6,
-      int var7,
-      int var8,
-      int var9
+      @NotNull PoseStack.Pose pose,
+      @NotNull VertexConsumer consumer,
+      Vector3f vector3f,
+      Vector3f position,
+      Vector3f vec,
+      Vector3f vector3f2,
+      int color,
+      int n,
+      int color2,
+      int color3
    ) {
-      var1.addVertex(var0, var2).setColor(var6);
-      var1.addVertex(var0, var3).setColor(var7);
-      var1.addVertex(var0, var4).setColor(var8);
-      var1.addVertex(var0, var5).setColor(var9);
+      consumer.addVertex(pose, vector3f).setColor(color);
+      consumer.addVertex(pose, position).setColor(n);
+      consumer.addVertex(pose, vec).setColor(color2);
+      consumer.addVertex(pose, vector3f2).setColor(color3);
    }
 
    @NotNull
-   public static Vector3f method2242(float var0, float var1, float var2, float var3, float var4, float var5) {
-      float var6 = var3 - var0;
-      float var7 = var4 - var1;
-      float var8 = var5 - var2;
-      float var9 = Mth.sqrt(var6 * var6 + var7 * var7 + var8 * var8);
-      return new Vector3f(var6 / var9, var7 / var9, var8 / var9);
+   public static Vector3f method2242(float f, float f2, float f3, float f4, float f5, float f6) {
+      float f7 = f4 - f;
+      float f8 = f5 - f2;
+      float f9 = f6 - f3;
+      float f10 = Mth.sqrt(f7 * f7 + f8 * f8 + f9 * f9);
+      return new Vector3f(f7 / f10, f8 / f10, f9 / f10);
    }
 
-   public static void method2243(double var0, double var2, double var4, double var6, double var8, double var10, int var12, float var13, boolean var14) {
-      method2244(var0, var2, var4, var6, var8, var10, var12, var12, var13, var14);
+   public static void method2243(double x, double y, double z, double d, double d2, double d3, int color, float width, boolean flag) {
+      method2244(x, y, z, d, d2, d3, color, color, width, flag);
    }
 
    public static void method2244(
-      double var0, double var2, double var4, double var6, double var8, double var10, int var12, int var13, float var14, boolean var15
+      double x, double y, double z, double d, double y2, double z2, int color, int n, float width, boolean flag
    ) {
-      Vec3 var16 = mc.getEntityRenderDispatcher().camera.position();
-      (var15 ? entry2 : entry22)
+      Vec3 position = mc.getEntityRenderDispatcher().camera.position();
+      (flag ? entry2 : entry22)
          .method2254(
-            (float)(var0 - var16.x),
-            (float)(var2 - var16.y),
-            (float)(var4 - var16.z),
-            (float)(var6 - var16.x),
-            (float)(var8 - var16.y),
-            (float)(var10 - var16.z),
-            var12,
-            var13,
-            var14
+            (float)(x - position.x),
+            (float)(y - position.y),
+            (float)(z - position.z),
+            (float)(d - position.x),
+            (float)(y2 - position.y),
+            (float)(z2 - position.z),
+            color,
+            n,
+            width
          );
    }
 
-   public static void method2245(Vec3 var0, Vec3 var1, int var2, float var3, boolean var4) {
-      method2244(var0.x, var0.y, var0.z, var1.x, var1.y, var1.z, var2, var2, var3, var4);
+   public static void method2245(Vec3 vec, Vec3 vec2, int color, float width, boolean flag) {
+      method2244(vec.x, vec.y, vec.z, vec2.x, vec2.y, vec2.z, color, color, width, flag);
    }
 
-   public static void method2246(Vec3 var0, Vec3 var1, int var2, int var3, float var4, boolean var5) {
-      method2244(var0.x, var0.y, var0.z, var1.x, var1.y, var1.z, var2, var3, var4, var5);
+   public static void method2246(Vec3 vec, Vec3 vec2, int color, int n, float width, boolean flag) {
+      method2244(vec.x, vec.y, vec.z, vec2.x, vec2.y, vec2.z, color, n, width, flag);
    }
 
-   public static void method2247(Vec3 var0, Vec3 var1, Vec3 var2, Vec3 var3, int var4, boolean var5) {
-      method2248(var0, var1, var2, var3, var4, var4, var4, var4, var5);
+   public static void method2247(Vec3 vec, Vec3 vec2, Vec3 vec3, Vec3 vec4, int n, boolean flag) {
+      method2248(vec, vec2, vec3, vec4, n, n, n, n, flag);
    }
 
-   public static void method2248(Vec3 var0, Vec3 var1, Vec3 var2, Vec3 var3, int var4, int var5, int var6, int var7, boolean var8) {
-      Vec3 var9 = mc.getEntityRenderDispatcher().camera.position();
-      double var10 = var9.x;
-      double var12 = var9.y;
-      double var14 = var9.z;
-      (var8 ? entry : entry3)
+   public static void method2248(Vec3 vec, Vec3 vec2, Vec3 vec3, Vec3 vec4, int n, int n2, int n3, int n4, boolean flag) {
+      Vec3 position = mc.getEntityRenderDispatcher().camera.position();
+      double x = position.x;
+      double y = position.y;
+      double z = position.z;
+      (flag ? entry : entry3)
          .method2253(
-            (float)(var0.x - var10),
-            (float)(var0.y - var12),
-            (float)(var0.z - var14),
-            (float)(var1.x - var10),
-            (float)(var1.y - var12),
-            (float)(var1.z - var14),
-            (float)(var2.x - var10),
-            (float)(var2.y - var12),
-            (float)(var2.z - var14),
-            (float)(var3.x - var10),
-            (float)(var3.y - var12),
-            (float)(var3.z - var14),
-            var4,
-            var5,
-            var6,
-            var7
+            (float)(vec.x - x),
+            (float)(vec.y - y),
+            (float)(vec.z - z),
+            (float)(vec2.x - x),
+            (float)(vec2.y - y),
+            (float)(vec2.z - z),
+            (float)(vec3.x - x),
+            (float)(vec3.y - y),
+            (float)(vec3.z - z),
+            (float)(vec4.x - x),
+            (float)(vec4.y - y),
+            (float)(vec4.z - z),
+            n,
+            n2,
+            n3,
+            n4
          );
    }
 
-   public static void method2249(float var0, float var1, float var2, float var3, Runnable var4) {
+   public static void method2249(float f, float f2, float f3, float f4, Runnable runnable) {
       RenderState.method1883(
-         Mth.clamp(var0, 0.0F, 1.0F), Mth.clamp(var1, 0.0F, 1.0F), Mth.clamp(var2, 0.0F, 1.0F), Mth.clamp(var3, 0.0F, 1.0F)
+         Mth.clamp(f, 0.0F, 1.0F), Mth.clamp(f2, 0.0F, 1.0F), Mth.clamp(f3, 0.0F, 1.0F), Mth.clamp(f4, 0.0F, 1.0F)
       );
-      var4.run();
+      runnable.run();
       RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
    }
 
@@ -451,18 +451,18 @@ public final class GlowUtil implements MinecraftAccess {
    }
 
    @Generated
-   public static void method2250(Matrix4f var0) {
-      matrix4f = var0;
+   public static void method2250(Matrix4f matrix) {
+      matrix4f = matrix;
    }
 
    @Generated
-   public static void method2251(Matrix4f var0) {
-      matrix4f2 = var0;
+   public static void method2251(Matrix4f modelViewMatrixCopy) {
+      matrix4f2 = modelViewMatrixCopy;
    }
 
    @Generated
-   public static void method2252(Matrix4f var0) {
-      matrix4f3 = var0;
+   public static void method2252(Matrix4f matrix) {
+      matrix4f3 = matrix;
    }
 
    @Generated
@@ -524,12 +524,12 @@ public final class GlowUtil implements MinecraftAccess {
          return "Data[" + "vec3d=" + this.vec3d + ", " + "vec3d2=" + this.vec3d2 + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + "]";
       }
 
-      public Data(Vec3 var1, Vec3 var2, int var3, int var4, float var5) {
-         this.vec3d = var1;
-         this.vec3d2 = var2;
-         this.intValue = var3;
-         this.intValue2 = var4;
-         this.floatValue = var5;
+      public Data(Vec3 vec3d, Vec3 vec3d2, int intValue, int n, float floatValue) {
+         this.vec3d = vec3d;
+         this.vec3d2 = vec3d2;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.floatValue = floatValue;
       }
 
       public Vec3 getVec3d() {
@@ -582,9 +582,9 @@ public final class GlowUtil implements MinecraftAccess {
          return "Data2[" + "voxelShape=" + this.voxelShape + ", " + "items=" + this.items + "]";
       }
 
-      public Data2(VoxelShape var1, List<AABB> var2) {
-         this.voxelShape = var1;
-         this.items = var2;
+      public Data2(VoxelShape voxelShape, List<AABB> items) {
+         this.voxelShape = voxelShape;
+         this.items = items;
       }
 
       public VoxelShape getVoxelShape() {
@@ -630,10 +630,10 @@ public final class GlowUtil implements MinecraftAccess {
          return "Data3[" + "voxelShape=" + this.voxelShape + ", " + "items=" + this.items + ", " + "items2=" + this.items2 + "]";
       }
 
-      public Data3(VoxelShape var1, List<GlowUtil.Data> var2, List<AABB> var3) {
-         this.voxelShape = var1;
-         this.items = var2;
-         this.items2 = var3;
+      public Data3(VoxelShape voxelShape, List<GlowUtil.Data> items, List<AABB> aabbs) {
+         this.voxelShape = voxelShape;
+         this.items = items;
+         this.items2 = aabbs;
       }
 
       public VoxelShape getVoxelShape() {
@@ -655,47 +655,47 @@ public final class GlowUtil implements MinecraftAccess {
       private int size;
 
       private void method2253(
-         float var1,
-         float var2,
-         float var3,
-         float var4,
-         float var5,
-         float var6,
-         float var7,
-         float var8,
-         float var9,
-         float var10,
-         float var11,
-         float var12,
-         int var13,
-         int var14,
-         int var15,
-         int var16
+         float f,
+         float f2,
+         float f3,
+         float f4,
+         float f5,
+         float f6,
+         float f7,
+         float f8,
+         float f9,
+         float f10,
+         float f11,
+         float f12,
+         int n,
+         int n2,
+         int n3,
+         int n4
       ) {
          if (this.size * 4 == this.intValues.length) {
-            int var17 = this.size * 2;
-            this.floatValues = Arrays.copyOf(this.floatValues, var17 * 12);
-            this.intValues = Arrays.copyOf(this.intValues, var17 * 4);
+            int n5 = this.size * 2;
+            this.floatValues = Arrays.copyOf(this.floatValues, n5 * 12);
+            this.intValues = Arrays.copyOf(this.intValues, n5 * 4);
          }
 
-         int var19 = this.size * 12;
-         this.floatValues[var19] = var1;
-         this.floatValues[var19 + 1] = var2;
-         this.floatValues[var19 + 2] = var3;
-         this.floatValues[var19 + 3] = var4;
-         this.floatValues[var19 + 4] = var5;
-         this.floatValues[var19 + 5] = var6;
-         this.floatValues[var19 + 6] = var7;
-         this.floatValues[var19 + 7] = var8;
-         this.floatValues[var19 + 8] = var9;
-         this.floatValues[var19 + 9] = var10;
-         this.floatValues[var19 + 10] = var11;
-         this.floatValues[var19 + 11] = var12;
-         int var18 = this.size * 4;
-         this.intValues[var18] = var13;
-         this.intValues[var18 + 1] = var14;
-         this.intValues[var18 + 2] = var15;
-         this.intValues[var18 + 3] = var16;
+         int n5 = this.size * 12;
+         this.floatValues[n5] = f;
+         this.floatValues[n5 + 1] = f2;
+         this.floatValues[n5 + 2] = f3;
+         this.floatValues[n5 + 3] = f4;
+         this.floatValues[n5 + 4] = f5;
+         this.floatValues[n5 + 5] = f6;
+         this.floatValues[n5 + 6] = f7;
+         this.floatValues[n5 + 7] = f8;
+         this.floatValues[n5 + 8] = f9;
+         this.floatValues[n5 + 9] = f10;
+         this.floatValues[n5 + 10] = f11;
+         this.floatValues[n5 + 11] = f12;
+         int n6 = this.size * 4;
+         this.intValues[n6] = n;
+         this.intValues[n6 + 1] = n2;
+         this.intValues[n6 + 2] = n3;
+         this.intValues[n6 + 3] = n4;
          this.size++;
       }
 
@@ -714,24 +714,24 @@ public final class GlowUtil implements MinecraftAccess {
       private float[] floatValues2 = new float[256];
       private int size;
 
-      private void method2254(float var1, float var2, float var3, float var4, float var5, float var6, int var7, int var8, float var9) {
+      private void method2254(float f, float f2, float f3, float f4, float f5, float f6, int color, int n, float width) {
          if (this.size == this.floatValues2.length) {
-            int var10 = this.size * 2;
-            this.floatValues = Arrays.copyOf(this.floatValues, var10 * 6);
-            this.intValues = Arrays.copyOf(this.intValues, var10 * 2);
-            this.floatValues2 = Arrays.copyOf(this.floatValues2, var10);
+            int newLength = this.size * 2;
+            this.floatValues = Arrays.copyOf(this.floatValues, newLength * 6);
+            this.intValues = Arrays.copyOf(this.intValues, newLength * 2);
+            this.floatValues2 = Arrays.copyOf(this.floatValues2, newLength);
          }
 
-         int var11 = this.size * 6;
-         this.floatValues[var11] = var1;
-         this.floatValues[var11 + 1] = var2;
-         this.floatValues[var11 + 2] = var3;
-         this.floatValues[var11 + 3] = var4;
-         this.floatValues[var11 + 4] = var5;
-         this.floatValues[var11 + 5] = var6;
-         this.intValues[this.size * 2] = var7;
-         this.intValues[this.size * 2 + 1] = var8;
-         this.floatValues2[this.size] = var9;
+         int n2 = this.size * 6;
+         this.floatValues[n2] = f;
+         this.floatValues[n2 + 1] = f2;
+         this.floatValues[n2 + 2] = f3;
+         this.floatValues[n2 + 3] = f4;
+         this.floatValues[n2 + 4] = f5;
+         this.floatValues[n2 + 5] = f6;
+         this.intValues[this.size * 2] = color;
+         this.intValues[this.size * 2 + 1] = n;
+         this.floatValues2[this.size] = width;
          this.size++;
       }
 

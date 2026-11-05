@@ -58,15 +58,15 @@ public final class Jebriksheet {
    private float floatValue = Float.NaN;
    private ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.INSTANCE;
 
-   public static void method2346(Jebriksheet var0) {
-      var0.clear();
-      INSTANCE = var0;
+   public static void method2346(Jebriksheet jebriksheet) {
+      jebriksheet.clear();
+      INSTANCE = jebriksheet;
    }
 
-   public static void method2347(Jebriksheet var0) {
-      if (INSTANCE == var0) {
+   public static void method2347(Jebriksheet jebriksheet) {
+      if (INSTANCE == jebriksheet) {
          INSTANCE = null;
-         var0.clear();
+         jebriksheet.clear();
       }
    }
 
@@ -74,79 +74,79 @@ public final class Jebriksheet {
       return INSTANCE != null && !INSTANCE.flag2;
    }
 
-   public static void method2349(Runnable var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items3, var1.items11);
-      var1.items3.add(new Jebriksheet.Data(var0));
+   public static void method2349(Runnable runnable) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items3, jebriksheet.items11);
+      jebriksheet.items3.add(new Jebriksheet.Data(runnable));
    }
 
-   public static void method2350(Matrix4f var0, Consumer<Matrix4f> var1) {
-      Matrix4f var2 = new Matrix4f(var0);
-      Jebriksheet var3 = method2366();
-      var3.method2368(var3.items3, var3.items11);
-      var3.items3.add(() -> var1.accept(new Matrix4f(var2)));
+   public static void method2350(Matrix4f mat, Consumer<Matrix4f> consumer) {
+      Matrix4f matrix = new Matrix4f(mat);
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items3, jebriksheet.items11);
+      jebriksheet.items3.add(() -> consumer.accept(new Matrix4f(matrix)));
    }
 
-   public static void method2351(Runnable var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items4, var1.items12);
-      var1.items4.add(new Jebriksheet.Data(var0));
+   public static void method2351(Runnable runnable) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items4, jebriksheet.items12);
+      jebriksheet.items4.add(new Jebriksheet.Data(runnable));
    }
 
-   public static void method2352(Runnable var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items5, var1.items13);
-      var1.items5.add(new Jebriksheet.Data(var0));
+   public static void method2352(Runnable runnable) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items5, jebriksheet.items13);
+      jebriksheet.items5.add(new Jebriksheet.Data(runnable));
    }
 
-   public static void method2353(Runnable var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items2, var1.items10);
-      var1.items2.add(new Jebriksheet.Data(var0));
+   public static void method2353(Runnable runnable) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items2, jebriksheet.items10);
+      jebriksheet.items2.add(new Jebriksheet.Data(runnable));
    }
 
-   public static void method2354(Matrix4f var0, Consumer<Matrix4f> var1) {
-      Matrix4f var2 = new Matrix4f(var0);
-      Jebriksheet var3 = method2366();
-      var3.method2368(var3.items2, var3.items10);
-      var3.items2.add(new Jebriksheet.Data(() -> var1.accept(new Matrix4f(var2))));
+   public static void method2354(Matrix4f mat, Consumer<Matrix4f> consumer) {
+      Matrix4f matrix = new Matrix4f(mat);
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items2, jebriksheet.items10);
+      jebriksheet.items2.add(new Jebriksheet.Data(() -> consumer.accept(new Matrix4f(matrix))));
    }
 
-   public static HudQueuedDraw method2355(HudQueuedContext var0) {
-      HudQueuedDraw var1 = method2366().entry.method2385();
-      var1.hudQueuedContext = var0;
-      return var1;
+   public static HudQueuedDraw method2355(HudQueuedContext hudQueuedContext) {
+      HudQueuedDraw hudQueuedDraw = method2366().entry.method2385();
+      hudQueuedDraw.hudQueuedContext = hudQueuedContext;
+      return hudQueuedDraw;
    }
 
-   public static void method2356(HudQueuedDraw var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items2, var1.items10);
-      var1.items2.add(var0);
+   public static void method2356(HudQueuedDraw queueCommand) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items2, jebriksheet.items10);
+      jebriksheet.items2.add(queueCommand);
    }
 
-   public static void method2357(HudQueuedDraw var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items3, var1.items11);
-      var1.items3.add(var0);
+   public static void method2357(HudQueuedDraw queueCommand) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items3, jebriksheet.items11);
+      jebriksheet.items3.add(queueCommand);
    }
 
-   public static void method2358(HudQueuedDraw var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items4, var1.items12);
-      var1.items4.add(var0);
+   public static void method2358(HudQueuedDraw queueCommand) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items4, jebriksheet.items12);
+      jebriksheet.items4.add(queueCommand);
    }
 
-   public static void method2359(HudQueuedDraw var0) {
-      Jebriksheet var1 = method2366();
-      var1.method2368(var1.items5, var1.items13);
-      var0.intValue10 = method2360(var0);
-      var1.items5.add(var0);
+   public static void method2359(HudQueuedDraw queueCommand) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items5, jebriksheet.items13);
+      queueCommand.intValue10 = method2360(queueCommand);
+      jebriksheet.items5.add(queueCommand);
    }
 
-   private static int method2360(HudQueuedDraw var0) {
-      if (var0.obj instanceof Font var1) {
-         return switch (var0.type) {
-            case TEXT_FONT_STRING_RGBA, TEXT_FONT_STRING_RGBA_FADEOUT, TEXT_FONT_STRING_INT_FADEOUT, TEXT_FONT_STRING_GRADIENT, TEXT_FONT_TEXT_INT, TEXT_FONT_TEXT -> var1.getFont()
+   private static int method2360(HudQueuedDraw queueCommand) {
+      if (queueCommand.obj instanceof Font font) {
+         return switch (queueCommand.type) {
+            case TEXT_FONT_STRING_RGBA, TEXT_FONT_STRING_RGBA_FADEOUT, TEXT_FONT_STRING_INT_FADEOUT, TEXT_FONT_STRING_GRADIENT, TEXT_FONT_TEXT_INT, TEXT_FONT_TEXT -> font.getFont()
                .getTextureId();
             default -> -1;
          };
@@ -155,75 +155,75 @@ public final class Jebriksheet {
       }
    }
 
-   public static void method2361(HudQueuedContext var0, Matrix4f var1, int var2, int var3, int var4, int var5) {
-      Jebriksheet var6 = method2366();
-      Jebriksheet.Entry2 var7 = var6.entry5.method2385();
-      var7.hudQueuedContext = var0;
-      var7.matrix4f.set(var1);
-      var7.intValue = var2;
-      var7.intValue2 = var3;
-      var7.intValue3 = var4;
-      var7.intValue4 = var5;
-      var6.items9.add(var7);
+   public static void method2361(HudQueuedContext hudQueuedContext, Matrix4f queueMatrix, int intValue, int y1, int x2, int y2) {
+      Jebriksheet jebriksheet = method2366();
+      Jebriksheet.Entry2 entry2 = jebriksheet.entry5.method2385();
+      entry2.hudQueuedContext = hudQueuedContext;
+      entry2.matrix4f.set(queueMatrix);
+      entry2.intValue = intValue;
+      entry2.intValue2 = y1;
+      entry2.intValue3 = x2;
+      entry2.intValue4 = y2;
+      jebriksheet.items9.add(entry2);
    }
 
    public static void method2362() {
-      Jebriksheet var0 = method2366();
-      if (!var0.items9.isEmpty()) {
-         var0.items9.removeLast();
+      Jebriksheet jebriksheet = method2366();
+      if (!jebriksheet.items9.isEmpty()) {
+         jebriksheet.items9.removeLast();
       }
    }
 
    public static void method2363(
-      Matrix4f var0, float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7, boolean var8, boolean var9
+      Matrix4f queueMatrix, float floatValue, float y, float width, float height, float blurRadius, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor, boolean flag, boolean flag2
    ) {
-      Jebriksheet var10 = method2366();
-      Jebriksheet.Entry3 var11 = var10.entry4.method2385();
-      var11.matrix4f.set(var0);
-      var11.floatValue = var1;
-      var11.floatValue2 = var2;
-      var11.width = var3;
-      var11.height = var4;
-      var11.blurRadius = var5;
-      var11.proxyDotRadiusData = var6;
-      var11.zenithColor = var7;
-      var11.flag = var8;
-      var11.flag2 = var9;
-      var11.flag3 = InterfaceModule.INSTANCE.method6820();
-      var11.flag4 = InterfaceModule.INSTANCE.method6818();
-      var11.flag5 = InterfaceModule.INSTANCE.method6821();
-      var11.intValue = InterfaceModule.INSTANCE.method6823();
-      var11.proxyDotRadiusData2 = var10.method2367();
-      var11.floatValues = RenderShaders.floatValues;
-      var10.items.add(var11);
+      Jebriksheet jebriksheet = method2366();
+      Jebriksheet.Entry3 entry3 = jebriksheet.entry4.method2385();
+      entry3.matrix4f.set(queueMatrix);
+      entry3.floatValue = floatValue;
+      entry3.floatValue2 = y;
+      entry3.width = width;
+      entry3.height = height;
+      entry3.blurRadius = blurRadius;
+      entry3.proxyDotRadiusData = proxyDotRadiusData;
+      entry3.zenithColor = zenithColor;
+      entry3.flag = flag;
+      entry3.flag2 = flag2;
+      entry3.flag3 = InterfaceModule.INSTANCE.method6820();
+      entry3.flag4 = InterfaceModule.INSTANCE.method6818();
+      entry3.flag5 = InterfaceModule.INSTANCE.method6821();
+      entry3.intValue = InterfaceModule.INSTANCE.method6823();
+      entry3.proxyDotRadiusData2 = jebriksheet.method2367();
+      entry3.floatValues = RenderShaders.floatValues;
+      jebriksheet.items.add(entry3);
    }
 
-   public static void method2364(Matrix4f var0, float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
-      Jebriksheet var7 = method2366();
-      var7.method2368(var7.items2, var7.items10);
-      Jebriksheet.Entry4 var8 = var7.entry2.method2385();
-      var8.matrix4f.set(var0);
-      var8.floatValue = var1;
-      var8.floatValue2 = var2;
-      var8.width = var3;
-      var8.height = var4;
-      var8.proxyDotRadiusData = var5;
-      var8.zenithColor = var6;
-      var8.floatValues = RenderShaders.floatValues;
-      var7.items2.add(var8);
+   public static void method2364(Matrix4f queueMatrix, float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items2, jebriksheet.items10);
+      Jebriksheet.Entry4 entry4 = jebriksheet.entry2.method2385();
+      entry4.matrix4f.set(queueMatrix);
+      entry4.floatValue = floatValue;
+      entry4.floatValue2 = y;
+      entry4.width = width;
+      entry4.height = height;
+      entry4.proxyDotRadiusData = proxyDotRadiusData;
+      entry4.zenithColor = zenithColor;
+      entry4.floatValues = RenderShaders.floatValues;
+      jebriksheet.items2.add(entry4);
    }
 
-   public static void method2365(Matrix4f var0, float var1, float var2, float var3, float var4, ZenithColor var5) {
-      Jebriksheet var6 = method2366();
-      var6.method2368(var6.items2, var6.items10);
-      Jebriksheet.Entry5 var7 = var6.entry3.method2385();
-      var7.matrix4f.set(var0);
-      var7.floatValue = var1;
-      var7.floatValue2 = var2;
-      var7.width = var3;
-      var7.height = var4;
-      var7.zenithColor = var5;
-      var6.items2.add(var7);
+   public static void method2365(Matrix4f queueMatrix, float floatValue, float y, float width, float height, ZenithColor zenithColor) {
+      Jebriksheet jebriksheet = method2366();
+      jebriksheet.method2368(jebriksheet.items2, jebriksheet.items10);
+      Jebriksheet.Entry5 entry5 = jebriksheet.entry3.method2385();
+      entry5.matrix4f.set(queueMatrix);
+      entry5.floatValue = floatValue;
+      entry5.floatValue2 = y;
+      entry5.width = width;
+      entry5.height = height;
+      entry5.zenithColor = zenithColor;
+      jebriksheet.items2.add(entry5);
    }
 
    private static Jebriksheet method2366() {
@@ -235,56 +235,56 @@ public final class Jebriksheet {
    }
 
    private ProxyDotRadiusData method2367() {
-      float var1 = InterfaceModule.method6801();
-      if (var1 != this.floatValue) {
-         this.floatValue = var1;
-         this.proxyDotRadiusData = ProxyDotRadiusData.method8069(var1);
+      float floatValue = InterfaceModule.method6801();
+      if (floatValue != this.floatValue) {
+         this.floatValue = floatValue;
+         this.proxyDotRadiusData = ProxyDotRadiusData.method8069(floatValue);
       }
 
       return this.proxyDotRadiusData;
    }
 
-   private void method2368(List<? super HudQueuedDraw> var1, List<Jebriksheet.Entry2> var2) {
-      int var3 = var2.size();
-      int var4 = this.items9.size();
-      if (var3 != 0 || var4 != 0) {
-         int var5 = 0;
+   private void method2368(List<? super HudQueuedDraw> list, List<Jebriksheet.Entry2> entry2s) {
+      int size = entry2s.size();
+      int n = this.items9.size();
+      if (size != 0 || n != 0) {
+         int n2 = 0;
 
-         while (var5 < var3 && var5 < var4 && var2.get(var5) == this.items9.get(var5)) {
-            var5++;
+         while (n2 < size && n2 < n && entry2s.get(n2) == this.items9.get(n2)) {
+            n2++;
          }
 
-         for (int var6 = var3 - 1; var6 >= var5; var6--) {
-            var1.add(this.method2370(((Jebriksheet.Entry2)var2.get(var6)).hudQueuedContext));
-            var2.remove(var6);
+         for (int i = size - 1; i >= n2; i--) {
+            list.add(this.method2370(((Jebriksheet.Entry2)entry2s.get(i)).hudQueuedContext));
+            entry2s.remove(i);
          }
 
-         for (int var8 = var5; var8 < var4; var8++) {
-            Jebriksheet.Entry2 var7 = this.items9.get(var8);
-            var1.add(this.method2369(var7));
-            var2.add(var7);
+         for (int i = n2; i < n; i++) {
+            Jebriksheet.Entry2 entry2 = this.items9.get(i);
+            list.add(this.method2369(entry2));
+            entry2s.add(entry2);
          }
       }
    }
 
-   private HudQueuedDraw method2369(Jebriksheet.Entry2 var1) {
-      HudQueuedDraw var2 = this.entry.method2385();
-      var2.hudQueuedContext = var1.hudQueuedContext;
-      var2.type = HudQueuedDraw.Type.SCISSOR_ENABLE;
-      var2.matrix4f.set(var1.matrix4f);
-      var2.intValue = var1.intValue;
-      var2.intValue2 = var1.intValue2;
-      var2.intValue3 = var1.intValue3;
-      var2.intValue4 = var1.intValue4;
-      return var2;
+   private HudQueuedDraw method2369(Jebriksheet.Entry2 entry2) {
+      HudQueuedDraw hudQueuedDraw = this.entry.method2385();
+      hudQueuedDraw.hudQueuedContext = entry2.hudQueuedContext;
+      hudQueuedDraw.type = HudQueuedDraw.Type.SCISSOR_ENABLE;
+      hudQueuedDraw.matrix4f.set(entry2.matrix4f);
+      hudQueuedDraw.intValue = entry2.intValue;
+      hudQueuedDraw.intValue2 = entry2.intValue2;
+      hudQueuedDraw.intValue3 = entry2.intValue3;
+      hudQueuedDraw.intValue4 = entry2.intValue4;
+      return hudQueuedDraw;
    }
 
-   private HudQueuedDraw method2370(HudQueuedContext var1) {
-      HudQueuedDraw var2 = this.entry.method2385();
-      var2.hudQueuedContext = var1;
-      var2.type = HudQueuedDraw.Type.SCISSOR_DISABLE;
-      var2.matrix4f.identity();
-      return var2;
+   private HudQueuedDraw method2370(HudQueuedContext hudQueuedContext) {
+      HudQueuedDraw hudQueuedDraw = this.entry.method2385();
+      hudQueuedDraw.hudQueuedContext = hudQueuedContext;
+      hudQueuedDraw.type = HudQueuedDraw.Type.SCISSOR_DISABLE;
+      hudQueuedDraw.matrix4f.identity();
+      return hudQueuedDraw;
    }
 
    private void method2371() {
@@ -294,12 +294,12 @@ public final class Jebriksheet {
       this.method2372(this.items5, this.items13);
    }
 
-   private void method2372(List<? super HudQueuedDraw> var1, List<Jebriksheet.Entry2> var2) {
-      for (int var3 = var2.size() - 1; var3 >= 0; var3--) {
-         var1.add(this.method2370(((Jebriksheet.Entry2)var2.get(var3)).hudQueuedContext));
+   private void method2372(List<? super HudQueuedDraw> list, List<Jebriksheet.Entry2> entry2s) {
+      for (int i = entry2s.size() - 1; i >= 0; i--) {
+         list.add(this.method2370(((Jebriksheet.Entry2)entry2s.get(i)).hudQueuedContext));
       }
 
-      var2.clear();
+      entry2s.clear();
    }
 
    public void flush() {
@@ -327,33 +327,33 @@ public final class Jebriksheet {
    }
 
    private void method2373() {
-      boolean var1 = false;
-      BufferBuilder var2 = null;
+      boolean flag = false;
+      BufferBuilder begin = null;
 
-      for (int var3 = 0; var3 < this.items.size(); var3++) {
-         Jebriksheet.Entry3 var4 = this.items.get(var3);
-         if (var4.flag3) {
-            if (!var1) {
+      for (int i = 0; i < this.items.size(); i++) {
+         Jebriksheet.Entry3 entry3 = this.items.get(i);
+         if (entry3.flag3) {
+            if (!flag) {
                MsdfRenderer.flushBatch();
-               KawaseShaderKey var5 = RenderShaders.kawaseShaderKey4;
-               var5.method5165();
-               var5.method5166("Smoothness").method7413(0.8F, 1.0F);
-               var5.method5166("TextureSize").method7412(1024.0F);
+               KawaseShaderKey kawaseShaderKey4 = RenderShaders.kawaseShaderKey4;
+               kawaseShaderKey4.method5165();
+               kawaseShaderKey4.method5166("Smoothness").method7413(0.8F, 1.0F);
+               kawaseShaderKey4.method5166("TextureSize").method7412(1024.0F);
                RenderState.method1890(0, identifier);
                RenderState.method1871();
                RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE, BlendFactor.ZERO, BlendFactor.ONE);
-               var2 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, VertexFormats.vertexFormat);
-               var1 = true;
+               begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, VertexFormats.vertexFormat);
+               flag = true;
             }
 
             RoundedRectRenderer.method4785(
-               var2, var4.matrix4f, var4.floatValue, var4.floatValue2, var4.width, var4.height, var4.proxyDotRadiusData, zenithColor, 0.0F, 0.0F
+               begin, entry3.matrix4f, entry3.floatValue, entry3.floatValue2, entry3.width, entry3.height, entry3.proxyDotRadiusData, zenithColor, 0.0F, 0.0F
             );
          }
       }
 
-      if (var1) {
-         ImmediateRenderer.method8015(var2.buildOrThrow());
+      if (flag) {
+         ImmediateRenderer.method8015(begin.buildOrThrow());
          RenderState.method1873();
          RenderState.method1872();
          RenderState.method1892(0, 0);
@@ -380,11 +380,11 @@ public final class Jebriksheet {
       this.entry5.reset();
    }
 
-   private void method2374(boolean var1) {
-      for (int var2 = 0; var2 < this.items.size(); var2++) {
-         Jebriksheet.Entry3 var3 = this.items.get(var2);
-         if (var3.flag2 && var3.flag5 == var1) {
-            RenderShaders.method5290(var3.matrix4f, var3.floatValue, var3.floatValue2, var3.width, var3.height, var3.intValue, var3.proxyDotRadiusData2);
+   private void method2374(boolean flag) {
+      for (int i = 0; i < this.items.size(); i++) {
+         Jebriksheet.Entry3 entry3 = this.items.get(i);
+         if (entry3.flag2 && entry3.flag5 == flag) {
+            RenderShaders.method5290(entry3.matrix4f, entry3.floatValue, entry3.floatValue2, entry3.width, entry3.height, entry3.intValue, entry3.proxyDotRadiusData2);
          }
       }
    }
@@ -393,39 +393,39 @@ public final class Jebriksheet {
       this.items7.clear();
       this.items8.clear();
 
-      for (int var1 = 0; var1 < this.items.size(); var1++) {
-         Jebriksheet.Entry3 var2 = this.items.get(var1);
-         if (var2.flag) {
-            if (var2.flag4) {
+      for (int i = 0; i < this.items.size(); i++) {
+         Jebriksheet.Entry3 entry3 = this.items.get(i);
+         if (entry3.flag) {
+            if (entry3.flag4) {
                this.items8
                   .add(
                      new KawaseBlur.Data2(
-                        var2.matrix4f,
-                        var2.floatValue,
-                        var2.floatValue2,
-                        var2.width,
-                        var2.height,
-                        var2.proxyDotRadiusData,
-                        var2.zenithColor,
+                        entry3.matrix4f,
+                        entry3.floatValue,
+                        entry3.floatValue2,
+                        entry3.width,
+                        entry3.height,
+                        entry3.proxyDotRadiusData,
+                        entry3.zenithColor,
                         10.0F,
                         0.08F,
-                        var2.floatValues
+                        entry3.floatValues
                      )
                   );
-            } else if (var2.floatValues != null) {
-               float[] var3 = var2.floatValues;
+            } else if (entry3.floatValues != null) {
+               float[] floatValues = entry3.floatValues;
                this.items7
                   .add(
                      new KawaseBlur.Data(
-                        var2.matrix4f, var2.floatValue, var2.floatValue2, var2.width, var3[5] - var2.floatValue2, var2.proxyDotRadiusData, var2.zenithColor
+                        entry3.matrix4f, entry3.floatValue, entry3.floatValue2, entry3.width, floatValues[5] - entry3.floatValue2, entry3.proxyDotRadiusData, entry3.zenithColor
                      )
                   );
                this.items7
-                  .add(new KawaseBlur.Data(var2.matrix4f, var3[0], var3[1], var3[2], var3[3], ProxyDotRadiusData.method8069(var3[4]), var2.zenithColor));
+                  .add(new KawaseBlur.Data(entry3.matrix4f, floatValues[0], floatValues[1], floatValues[2], floatValues[3], ProxyDotRadiusData.method8069(floatValues[4]), entry3.zenithColor));
             } else {
                this.items7
                   .add(
-                     new KawaseBlur.Data(var2.matrix4f, var2.floatValue, var2.floatValue2, var2.width, var2.height, var2.proxyDotRadiusData, var2.zenithColor)
+                     new KawaseBlur.Data(entry3.matrix4f, entry3.floatValue, entry3.floatValue2, entry3.width, entry3.height, entry3.proxyDotRadiusData, entry3.zenithColor)
                   );
             }
          }
@@ -441,30 +441,30 @@ public final class Jebriksheet {
    }
 
    private void method2376() {
-      for (int var1 = 0; var1 < this.items2.size(); var1++) {
-         Jebriksheet.Handler var2 = this.items2.get(var1);
-         if (var2 instanceof Jebriksheet.Entry4 var3 && var3.floatValues != null) {
+      for (int i = 0; i < this.items2.size(); i++) {
+         Jebriksheet.Handler handler = this.items2.get(i);
+         if (handler instanceof Jebriksheet.Entry4 entry4 && entry4.floatValues != null) {
             this.roundedRectRenderer.flush();
-            RenderShaders.floatValues = var3.floatValues;
+            RenderShaders.floatValues = entry4.floatValues;
 
             try {
                RenderShaders.method5268(
-                  new Matrix4f(var3.matrix4f), var3.floatValue, var3.floatValue2, var3.width, var3.height, var3.proxyDotRadiusData, var3.zenithColor
+                  new Matrix4f(entry4.matrix4f), entry4.floatValue, entry4.floatValue2, entry4.width, entry4.height, entry4.proxyDotRadiusData, entry4.zenithColor
                );
             } finally {
                RenderShaders.floatValues = null;
             }
-         } else if (var2 instanceof Jebriksheet.Entry4 var7) {
+         } else if (handler instanceof Jebriksheet.Entry4 entry42) {
             this.roundedRectRenderer.begin();
             this.roundedRectRenderer
-               .method4779(var7.matrix4f, var7.floatValue, var7.floatValue2, var7.width, var7.height, var7.proxyDotRadiusData, var7.zenithColor);
-         } else if (var2 instanceof Jebriksheet.Entry5 var8) {
+               .method4779(entry42.matrix4f, entry42.floatValue, entry42.floatValue2, entry42.width, entry42.height, entry42.proxyDotRadiusData, entry42.zenithColor);
+         } else if (handler instanceof Jebriksheet.Entry5 entry5) {
             this.roundedRectRenderer.begin();
-            this.roundedRectRenderer.method4780(var8.matrix4f, var8.floatValue, var8.floatValue2, var8.width, var8.height, var8.zenithColor);
+            this.roundedRectRenderer.method4780(entry5.matrix4f, entry5.floatValue, entry5.floatValue2, entry5.width, entry5.height, entry5.zenithColor);
          } else {
             this.roundedRectRenderer.flush();
-            if (var2 instanceof Jebriksheet.Handler2 var9) {
-               var9.render();
+            if (handler instanceof Jebriksheet.Handler2 handler2) {
+               handler2.render();
             }
          }
       }
@@ -480,48 +480,48 @@ public final class Jebriksheet {
       this.method2379(this.items4);
    }
 
-   private void method2379(List<Jebriksheet.Handler2> var1) {
-      for (int var2 = 0; var2 < var1.size(); var2++) {
-         Jebriksheet.Handler2 var3 = (Jebriksheet.Handler2)var1.get(var2);
-         if (!(var3 instanceof HudQueuedDraw var4 && this.method2380(var4))) {
+   private void method2379(List<Jebriksheet.Handler2> handler2s) {
+      for (int i = 0; i < handler2s.size(); i++) {
+         Jebriksheet.Handler2 handler2 = (Jebriksheet.Handler2)handler2s.get(i);
+         if (!(handler2 instanceof HudQueuedDraw hudQueuedDraw && this.method2380(hudQueuedDraw))) {
             this.roundedRectRenderer.flush();
-            var3.render();
+            handler2.render();
          }
       }
 
       this.roundedRectRenderer.flush();
    }
 
-   private boolean method2380(HudQueuedDraw var1) {
-      if (var1.type != HudQueuedDraw.Type.ROUNDED_BORDER_RGBA
-         && var1.type != HudQueuedDraw.Type.ROUNDED_CORNER_ONLY
-         && var1.type != HudQueuedDraw.Type.ARC_BORDER) {
+   private boolean method2380(HudQueuedDraw hudQueuedDraw) {
+      if (hudQueuedDraw.type != HudQueuedDraw.Type.ROUNDED_BORDER_RGBA
+         && hudQueuedDraw.type != HudQueuedDraw.Type.ROUNDED_CORNER_ONLY
+         && hudQueuedDraw.type != HudQueuedDraw.Type.ARC_BORDER) {
          return false;
-      } else if (var1.type == HudQueuedDraw.Type.ARC_BORDER) {
+      } else if (hudQueuedDraw.type == HudQueuedDraw.Type.ARC_BORDER) {
          this.roundedRectRenderer.begin();
          this.roundedRectRenderer
             .method4783(
-               var1.matrix4f,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.floatValue3,
-               var1.floatValue4,
-               var1.floatValue5,
-               var1.floatValue6,
-               var1.floatValue7,
-               (ZenithColor)var1.obj
+               hudQueuedDraw.matrix4f,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               hudQueuedDraw.floatValue5,
+               hudQueuedDraw.floatValue6,
+               hudQueuedDraw.floatValue7,
+               (ZenithColor)hudQueuedDraw.obj
             );
          return true;
       } else {
-         Matrix4f var2 = var1.matrix4f;
-         ProxyDotRadiusData var3 = (ProxyDotRadiusData)var1.obj;
-         ZenithColor var4 = (ZenithColor)var1.obj2;
+         Matrix4f matrix4f = hudQueuedDraw.matrix4f;
+         ProxyDotRadiusData proxyDotRadiusData = (ProxyDotRadiusData)hudQueuedDraw.obj;
+         ZenithColor zenithColor = (ZenithColor)hudQueuedDraw.obj2;
          this.roundedRectRenderer.begin();
-         if (var1.type == HudQueuedDraw.Type.ROUNDED_BORDER_RGBA) {
-            this.roundedRectRenderer.method4781(var2, var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, var1.floatValue5, var3, var4);
+         if (hudQueuedDraw.type == HudQueuedDraw.Type.ROUNDED_BORDER_RGBA) {
+            this.roundedRectRenderer.method4781(matrix4f, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, hudQueuedDraw.floatValue5, proxyDotRadiusData, zenithColor);
          } else {
             this.roundedRectRenderer
-               .method4782(var2, var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, var1.floatValue5, var3, var4, var1.floatValue6);
+               .method4782(matrix4f, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, hudQueuedDraw.floatValue5, proxyDotRadiusData, zenithColor, hudQueuedDraw.floatValue6);
          }
 
          return true;
@@ -529,13 +529,13 @@ public final class Jebriksheet {
    }
 
    private void method2381() {
-      for (int var1 = 0; var1 < this.items5.size(); var1++) {
-         Jebriksheet.Handler2 var2 = this.items5.get(var1);
-         if (flag && method2383(var2)) {
-            this.items6.add(var2);
+      for (int i = 0; i < this.items5.size(); i++) {
+         Jebriksheet.Handler2 handler2 = this.items5.get(i);
+         if (flag && method2383(handler2)) {
+            this.items6.add(handler2);
          } else {
             this.method2382();
-            var2.render();
+            handler2.render();
          }
       }
 
@@ -543,26 +543,26 @@ public final class Jebriksheet {
    }
 
    private void method2382() {
-      int var1 = this.items6.size();
-      if (var1 != 0) {
-         if (var1 > 1) {
+      int size = this.items6.size();
+      if (size != 0) {
+         if (size > 1) {
             this.items6.sort(comparator);
          }
 
-         for (int var2 = 0; var2 < var1; var2++) {
-            this.items6.get(var2).render();
+         for (int i = 0; i < size; i++) {
+            this.items6.get(i).render();
          }
 
          this.items6.clear();
       }
    }
 
-   private static boolean method2383(Jebriksheet.Handler2 var0) {
-      return var0 instanceof HudQueuedDraw var1 && var1.intValue10 >= 0;
+   private static boolean method2383(Jebriksheet.Handler2 handler2) {
+      return handler2 instanceof HudQueuedDraw hudQueuedDraw && hudQueuedDraw.intValue10 >= 0;
    }
 
-   private static int method2384(Jebriksheet.Handler2 var0) {
-      return ((HudQueuedDraw)var0).intValue10;
+   private static int method2384(Jebriksheet.Handler2 handler2) {
+      return ((HudQueuedDraw)handler2).intValue10;
    }
 
    private static final class Data implements Jebriksheet.Handler2 {
@@ -589,8 +589,8 @@ public final class Jebriksheet {
          return "Data[" + "runnable=" + this.runnable + "]";
       }
 
-      private Data(Runnable var1) {
-         this.runnable = var1;
+      private Data(Runnable runnable) {
+         this.runnable = runnable;
       }
 
       @Override
@@ -609,25 +609,25 @@ public final class Jebriksheet {
       private final Consumer<T> consumer;
       private int intValue;
 
-      public Entry(Supplier<T> var1, Consumer<T> var2) {
-         this.supplier = var1;
-         this.consumer = var2;
+      public Entry(Supplier<T> supplier, Consumer<T> consumer) {
+         this.supplier = supplier;
+         this.consumer = consumer;
       }
 
       public T method2385() {
          if (this.intValue < this.arrayList.size()) {
             return this.arrayList.get(this.intValue++);
          } else {
-            Object var1 = this.supplier.get();
-            this.arrayList.add((T)var1);
+            Object obj = this.supplier.get();
+            this.arrayList.add((T)obj);
             this.intValue++;
-            return (T)var1;
+            return (T)obj;
          }
       }
 
       public void reset() {
-         for (int var1 = 0; var1 < this.intValue; var1++) {
-            this.consumer.accept(this.arrayList.get(var1));
+         for (int i = 0; i < this.intValue; i++) {
+            this.consumer.accept(this.arrayList.get(i));
          }
 
          this.intValue = 0;

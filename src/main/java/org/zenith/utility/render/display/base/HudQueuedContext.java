@@ -25,28 +25,28 @@ public final class HudQueuedContext extends MenuDrawContext {
    private static float alpha = 1.0F;
    private static final Matrix4f QUEUE_MATRIX = new Matrix4f();
 
-   public static void setAlpha(float var0) {
-      alpha = Math.max(0.0F, Math.min(1.0F, var0));
+   public static void setAlpha(float f) {
+      alpha = Math.max(0.0F, Math.min(1.0F, f));
    }
 
    public static float getAlpha() {
       return alpha;
    }
 
-   private static ZenithColor tint(ZenithColor var0) {
-      return !(alpha >= 0.999F) && var0 != null ? var0.method7294(alpha) : var0;
+   private static ZenithColor tint(ZenithColor zenithColor) {
+      return !(alpha >= 0.999F) && zenithColor != null ? zenithColor.method7294(alpha) : zenithColor;
    }
 
-   private static GlowColor tint(GlowColor var0) {
-      return !(alpha >= 0.999F) && var0 != null ? var0.method8100(alpha) : var0;
+   private static GlowColor tint(GlowColor glowColor) {
+      return !(alpha >= 0.999F) && glowColor != null ? glowColor.method8100(alpha) : glowColor;
    }
 
-   private static int tint(int var0) {
+   private static int tint(int color) {
       if (alpha >= 0.999F) {
-         return var0;
+         return color;
       } else {
-         int var1 = Math.round((var0 >>> 24 & 0xFF) * alpha);
-         return var1 << 24 | var0 & 16777215;
+         int n = Math.round((color >>> 24 & 0xFF) * alpha);
+         return n << 24 | color & 16777215;
       }
    }
 
@@ -54,315 +54,315 @@ public final class HudQueuedContext extends MenuDrawContext {
       return alpha < 0.5F;
    }
 
-   private HudQueuedContext(MenuDrawContext var1) {
-      super(var1, var1.getMouseX(), var1.getMouseY(), var1.getDelta());
+   private HudQueuedContext(MenuDrawContext menuDrawContext) {
+      super(menuDrawContext, menuDrawContext.getMouseX(), menuDrawContext.getMouseY(), menuDrawContext.getDelta());
    }
 
-   public static HudQueuedContext of(MenuDrawContext var0) {
-      return var0 instanceof HudQueuedContext var1 ? var1 : new HudQueuedContext(var0);
+   public static HudQueuedContext of(MenuDrawContext menuDrawContext) {
+      return menuDrawContext instanceof HudQueuedContext hudQueuedContext ? hudQueuedContext : new HudQueuedContext(menuDrawContext);
    }
 
-   private HudQueuedDraw queueCommand(HudQueuedDraw.Type var1) {
-      HudQueuedDraw var2 = Jebriksheet.method2355(this);
-      var2.type = var1;
-      MatrixUtils.method665(this.pose(), var2.matrix4f);
-      return var2;
+   private HudQueuedDraw queueCommand(HudQueuedDraw.Type type) {
+      HudQueuedDraw hudQueuedDraw = Jebriksheet.method2355(this);
+      hudQueuedDraw.type = type;
+      MatrixUtils.method665(this.pose(), hudQueuedDraw.matrix4f);
+      return hudQueuedDraw;
    }
 
    private Matrix4f queueMatrix() {
       return MatrixUtils.method665(this.pose(), QUEUE_MATRIX);
    }
 
-   public void replayCommand(HudQueuedDraw var1) {
-      Matrix3x2fStack var2 = this.pose();
-      boolean var3 = this.replaying;
-      var2.pushMatrix();
-      MatrixUtils.method669(var2, var1.matrix4f);
+   public void replayCommand(HudQueuedDraw hudQueuedDraw) {
+      Matrix3x2fStack pose = this.pose();
+      boolean replaying = this.replaying;
+      pose.pushMatrix();
+      MatrixUtils.method669(pose, hudQueuedDraw.matrix4f);
       this.replaying = true;
 
       try {
-         this.dispatch(var1);
+         this.dispatch(hudQueuedDraw);
       } finally {
-         this.replaying = var3;
-         var2.popMatrix();
+         this.replaying = replaying;
+         pose.popMatrix();
       }
    }
 
-   private void dispatch(HudQueuedDraw var1) {
-      switch (var1.type) {
+   private void dispatch(HudQueuedDraw hudQueuedDraw) {
+      switch (hudQueuedDraw.type) {
          case TEXT_FONT_STRING_RGBA:
-            super.drawText((Font)var1.obj, (String)var1.obj2, var1.floatValue, var1.floatValue2, (ZenithColor)var1.obj3);
+            super.drawText((Font)hudQueuedDraw.obj, (String)hudQueuedDraw.obj2, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, (ZenithColor)hudQueuedDraw.obj3);
             break;
          case TEXT_FONT_STRING_RGBA_FADEOUT:
             super.drawText(
-               (Font)var1.obj,
-               (String)var1.obj2,
-               var1.floatValue,
-               var1.floatValue2,
-               (ZenithColor)var1.obj3,
-               var1.flag,
-               var1.floatValue3,
-               var1.floatValue4,
-               var1.floatValue5
+               (Font)hudQueuedDraw.obj,
+               (String)hudQueuedDraw.obj2,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               (ZenithColor)hudQueuedDraw.obj3,
+               hudQueuedDraw.flag,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               hudQueuedDraw.floatValue5
             );
             break;
          case TEXT_FONT_STRING_INT_FADEOUT:
             super.drawText(
-               (Font)var1.obj,
-               (String)var1.obj2,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.intValue,
-               var1.flag,
-               var1.floatValue3,
-               var1.floatValue4,
-               var1.floatValue5
+               (Font)hudQueuedDraw.obj,
+               (String)hudQueuedDraw.obj2,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.intValue,
+               hudQueuedDraw.flag,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               hudQueuedDraw.floatValue5
             );
             break;
          case TEXT_FONT_STRING_GRADIENT:
-            super.drawText((Font)var1.obj, (String)var1.obj2, var1.floatValue, var1.floatValue2, (GlowColor)var1.obj3);
+            super.drawText((Font)hudQueuedDraw.obj, (String)hudQueuedDraw.obj2, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, (GlowColor)hudQueuedDraw.obj3);
             break;
          case TEXT_FONT_TEXT_INT:
-            super.drawText((Font)var1.obj, (Component)var1.obj2, var1.floatValue, var1.floatValue2, var1.intValue);
+            super.drawText((Font)hudQueuedDraw.obj, (Component)hudQueuedDraw.obj2, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.intValue);
             break;
          case TEXT_FONT_TEXT:
-            super.drawText((Font)var1.obj, (Component)var1.obj2, var1.floatValue, var1.floatValue2);
+            super.drawText((Font)hudQueuedDraw.obj, (Component)hudQueuedDraw.obj2, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2);
             break;
          case TEXT_SHADOW_STRING:
-            super.text((net.minecraft.client.gui.Font)var1.obj, (String)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3);
+            super.text((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (String)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case TEXT_STRING:
-            super.text((net.minecraft.client.gui.Font)var1.obj, (String)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.flag);
+            super.text((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (String)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.flag);
             break;
          case TEXT_SHADOW_ORDERED:
-            super.text((net.minecraft.client.gui.Font)var1.obj, (FormattedCharSequence)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3);
+            super.text((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (FormattedCharSequence)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case TEXT_ORDERED:
-            super.text((net.minecraft.client.gui.Font)var1.obj, (FormattedCharSequence)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.flag);
+            super.text((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (FormattedCharSequence)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.flag);
             break;
          case TEXT_SHADOW_TEXT:
-            super.text((net.minecraft.client.gui.Font)var1.obj, (Component)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3);
+            super.text((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (Component)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case TEXT_TEXT:
-            super.text((net.minecraft.client.gui.Font)var1.obj, (Component)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.flag);
+            super.text((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (Component)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.flag);
             break;
          case WRAPPED_TEXT:
-            super.textWithWordWrap((net.minecraft.client.gui.Font)var1.obj, (FormattedText)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.flag);
+            super.textWithWordWrap((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (FormattedText)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.flag);
             break;
          case STACK_OVERLAY:
-            super.itemDecorations((net.minecraft.client.gui.Font)var1.obj, (ItemStack)var1.obj2, var1.intValue, var1.intValue2);
+            super.itemDecorations((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (ItemStack)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2);
             break;
          case STACK_OVERLAY_TEXT:
-            super.itemDecorations((net.minecraft.client.gui.Font)var1.obj, (ItemStack)var1.obj2, var1.intValue, var1.intValue2, (String)var1.obj3);
+            super.itemDecorations((net.minecraft.client.gui.Font)hudQueuedDraw.obj, (ItemStack)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, (String)hudQueuedDraw.obj3);
             break;
          case SPRITE:
-            super.drawSprite((CategoryIcon)var1.obj, var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, (ZenithColor)var1.obj2);
+            super.drawSprite((CategoryIcon)hudQueuedDraw.obj, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, (ZenithColor)hudQueuedDraw.obj2);
             break;
          case ROUNDED_RECT_GRADIENT:
-            super.drawRoundedRect(var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, (ProxyDotRadiusData)var1.obj, (GlowColor)var1.obj2);
+            super.drawRoundedRect(hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, (ProxyDotRadiusData)hudQueuedDraw.obj, (GlowColor)hudQueuedDraw.obj2);
             break;
          case SQUIRCLE:
             super.drawSquircle(
-               var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, var1.floatValue5, (ProxyDotRadiusData)var1.obj, (ZenithColor)var1.obj2
+               hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, hudQueuedDraw.floatValue5, (ProxyDotRadiusData)hudQueuedDraw.obj, (ZenithColor)hudQueuedDraw.obj2
             );
             break;
          case ROUNDED_BORDER_GRADIENT:
             super.drawRoundedBorder(
-               var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, var1.floatValue5, (ProxyDotRadiusData)var1.obj, (GlowColor)var1.obj2
+               hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, hudQueuedDraw.floatValue5, (ProxyDotRadiusData)hudQueuedDraw.obj, (GlowColor)hudQueuedDraw.obj2
             );
             break;
          case ROUNDED_BORDER_RGBA:
             super.drawRoundedBorder(
-               var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, var1.floatValue5, (ProxyDotRadiusData)var1.obj, (ZenithColor)var1.obj2
+               hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, hudQueuedDraw.floatValue5, (ProxyDotRadiusData)hudQueuedDraw.obj, (ZenithColor)hudQueuedDraw.obj2
             );
             break;
          case ROUNDED_CORNER_ONLY:
             super.drawRoundedCornerOnly(
-               var1.floatValue,
-               var1.floatValue2,
-               var1.floatValue3,
-               var1.floatValue4,
-               var1.floatValue5,
-               (ProxyDotRadiusData)var1.obj,
-               (ZenithColor)var1.obj2,
-               var1.floatValue6
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               hudQueuedDraw.floatValue5,
+               (ProxyDotRadiusData)hudQueuedDraw.obj,
+               (ZenithColor)hudQueuedDraw.obj2,
+               hudQueuedDraw.floatValue6
             );
             break;
          case TEXTURE_RGBA:
-            super.drawTexture((Identifier)var1.obj, var1.floatValue, var1.floatValue2, var1.floatValue3, var1.floatValue4, (ZenithColor)var1.obj2);
+            super.drawTexture((Identifier)hudQueuedDraw.obj, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, hudQueuedDraw.floatValue4, (ZenithColor)hudQueuedDraw.obj2);
             break;
          case ARC_BORDER:
             super.drawArcBorder(
-               var1.floatValue,
-               var1.floatValue2,
-               var1.floatValue3,
-               var1.floatValue4,
-               var1.floatValue5,
-               var1.floatValue6,
-               var1.floatValue7,
-               (ZenithColor)var1.obj
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               hudQueuedDraw.floatValue5,
+               hudQueuedDraw.floatValue6,
+               hudQueuedDraw.floatValue7,
+               (ZenithColor)hudQueuedDraw.obj
             );
             break;
          case ROUNDED_TEXTURE:
             super.drawRoundedTexture(
-               (Identifier)var1.obj,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.floatValue3,
-               var1.floatValue4,
-               (ProxyDotRadiusData)var1.obj2,
-               (ZenithColor)var1.obj3
+               (Identifier)hudQueuedDraw.obj,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               (ProxyDotRadiusData)hudQueuedDraw.obj2,
+               (ZenithColor)hudQueuedDraw.obj3
             );
             break;
          case ROUNDED_TEXTURE_RGBA:
             super.drawRoundedTexture(
-               (Identifier)var1.obj,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.floatValue3,
-               var1.floatValue4,
-               (ProxyDotRadiusData)var1.obj2,
-               (ZenithColor)var1.obj3
+               (Identifier)hudQueuedDraw.obj,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.floatValue3,
+               hudQueuedDraw.floatValue4,
+               (ProxyDotRadiusData)hudQueuedDraw.obj2,
+               (ZenithColor)hudQueuedDraw.obj3
             );
             break;
          case PLAYER_HEAD:
             super.drawPlayerHeadWithRoundedShader(
-               (Identifier)var1.obj, var1.floatValue, var1.floatValue2, var1.floatValue3, (ProxyDotRadiusData)var1.obj2, (ZenithColor)var1.obj3
+               (Identifier)hudQueuedDraw.obj, hudQueuedDraw.floatValue, hudQueuedDraw.floatValue2, hudQueuedDraw.floatValue3, (ProxyDotRadiusData)hudQueuedDraw.obj2, (ZenithColor)hudQueuedDraw.obj3
             );
             break;
          case DRAW:
             ScissorFlusher.flush();
             break;
          case FILL_GRADIENT:
-            super.fillGradient(var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue5, var1.intValue6);
+            super.fillGradient(hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue5, hudQueuedDraw.intValue6);
             break;
          case FILL_GRADIENT_Z:
-            super.fillGradient(var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue6, var1.intValue7);
+            super.fillGradient(hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue6, hudQueuedDraw.intValue7);
             break;
          case FILL_GRADIENT_LAYER:
-            super.fillGradient(var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue5, var1.intValue6);
+            super.fillGradient(hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue5, hudQueuedDraw.intValue6);
             break;
          case SPRITE_STRETCHED:
             super.blitSprite(
-               (RenderPipeline)var1.obj, (TextureAtlasSprite)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue5
+               (RenderPipeline)hudQueuedDraw.obj, (TextureAtlasSprite)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue5
             );
             break;
          case SPRITE_STRETCHED_COLOR:
             super.blitSprite(
-               (RenderPipeline)var1.obj, (TextureAtlasSprite)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue5
+               (RenderPipeline)hudQueuedDraw.obj, (TextureAtlasSprite)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue5
             );
             break;
          case GUI_TEXTURE:
-            super.blitSprite((RenderPipeline)var1.obj, (Identifier)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue5);
+            super.blitSprite((RenderPipeline)hudQueuedDraw.obj, (Identifier)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue5);
             break;
          case GUI_TEXTURE_COLOR:
-            super.blitSprite((RenderPipeline)var1.obj, (Identifier)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4, var1.intValue5);
+            super.blitSprite((RenderPipeline)hudQueuedDraw.obj, (Identifier)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4, hudQueuedDraw.intValue5);
             break;
          case GUI_TEXTURE_REGION:
             super.blitSprite(
-               (RenderPipeline)var1.obj,
-               (Identifier)var1.obj2,
-               var1.intValue,
-               var1.intValue2,
-               var1.intValue3,
-               var1.intValue4,
-               var1.intValue5,
-               var1.intValue6,
-               var1.intValue7,
-               var1.intValue8,
-               var1.intValue9
+               (RenderPipeline)hudQueuedDraw.obj,
+               (Identifier)hudQueuedDraw.obj2,
+               hudQueuedDraw.intValue,
+               hudQueuedDraw.intValue2,
+               hudQueuedDraw.intValue3,
+               hudQueuedDraw.intValue4,
+               hudQueuedDraw.intValue5,
+               hudQueuedDraw.intValue6,
+               hudQueuedDraw.intValue7,
+               hudQueuedDraw.intValue8,
+               hudQueuedDraw.intValue9
             );
             break;
          case TEXTURE_UV:
             super.blit(
-               (RenderPipeline)var1.obj,
-               (Identifier)var1.obj2,
-               var1.intValue,
-               var1.intValue2,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.intValue3,
-               var1.intValue4,
-               var1.intValue5,
-               var1.intValue6,
-               var1.intValue7
+               (RenderPipeline)hudQueuedDraw.obj,
+               (Identifier)hudQueuedDraw.obj2,
+               hudQueuedDraw.intValue,
+               hudQueuedDraw.intValue2,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.intValue3,
+               hudQueuedDraw.intValue4,
+               hudQueuedDraw.intValue5,
+               hudQueuedDraw.intValue6,
+               hudQueuedDraw.intValue7
             );
             break;
          case TEXTURE_UV_COLOR:
             super.blit(
-               (RenderPipeline)var1.obj,
-               (Identifier)var1.obj2,
-               var1.intValue,
-               var1.intValue2,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.intValue3,
-               var1.intValue4,
-               var1.intValue5,
-               var1.intValue6,
-               var1.intValue7
+               (RenderPipeline)hudQueuedDraw.obj,
+               (Identifier)hudQueuedDraw.obj2,
+               hudQueuedDraw.intValue,
+               hudQueuedDraw.intValue2,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.intValue3,
+               hudQueuedDraw.intValue4,
+               hudQueuedDraw.intValue5,
+               hudQueuedDraw.intValue6,
+               hudQueuedDraw.intValue7
             );
             break;
          case TEXTURE_REGION:
             super.blit(
-               (RenderPipeline)var1.obj,
-               (Identifier)var1.obj2,
-               var1.intValue,
-               var1.intValue2,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.intValue3,
-               var1.intValue4,
-               var1.intValue5,
-               var1.intValue6,
-               var1.intValue7,
-               var1.intValue8,
-               var1.intValue9
+               (RenderPipeline)hudQueuedDraw.obj,
+               (Identifier)hudQueuedDraw.obj2,
+               hudQueuedDraw.intValue,
+               hudQueuedDraw.intValue2,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.intValue3,
+               hudQueuedDraw.intValue4,
+               hudQueuedDraw.intValue5,
+               hudQueuedDraw.intValue6,
+               hudQueuedDraw.intValue7,
+               hudQueuedDraw.intValue8,
+               hudQueuedDraw.intValue9
             );
             break;
          case TEXTURE_REGION_COLOR:
             super.blit(
-               (RenderPipeline)var1.obj,
-               (Identifier)var1.obj2,
-               var1.intValue,
-               var1.intValue2,
-               var1.floatValue,
-               var1.floatValue2,
-               var1.intValue3,
-               var1.intValue4,
-               var1.intValue5,
-               var1.intValue6,
-               var1.intValue7,
-               var1.intValue8,
-               var1.intValue9
+               (RenderPipeline)hudQueuedDraw.obj,
+               (Identifier)hudQueuedDraw.obj2,
+               hudQueuedDraw.intValue,
+               hudQueuedDraw.intValue2,
+               hudQueuedDraw.floatValue,
+               hudQueuedDraw.floatValue2,
+               hudQueuedDraw.intValue3,
+               hudQueuedDraw.intValue4,
+               hudQueuedDraw.intValue5,
+               hudQueuedDraw.intValue6,
+               hudQueuedDraw.intValue7,
+               hudQueuedDraw.intValue8,
+               hudQueuedDraw.intValue9
             );
             break;
          case ITEM:
-            super.item((ItemStack)var1.obj, var1.intValue, var1.intValue2);
+            super.item((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2);
             break;
          case ITEM_BAR:
-            super.renderItemBar((ItemStack)var1.obj, var1.intValue, var1.intValue2);
+            super.renderItemBar((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2);
             break;
          case COOLDOWN_PROGRESS:
-            super.renderItemCooldown((ItemStack)var1.obj, var1.intValue, var1.intValue2);
+            super.renderItemCooldown((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2);
             break;
          case ITEM_SEED:
-            super.item((ItemStack)var1.obj, var1.intValue, var1.intValue2, var1.intValue3);
+            super.item((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case ITEM_SEED_Z:
-            super.item((ItemStack)var1.obj, var1.intValue, var1.intValue2, var1.intValue3);
+            super.item((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case ITEM_WITHOUT_ENTITY:
-            super.fakeItem((ItemStack)var1.obj, var1.intValue, var1.intValue2);
+            super.fakeItem((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2);
             break;
          case ITEM_WITHOUT_ENTITY_SEED:
-            super.fakeItem((ItemStack)var1.obj, var1.intValue, var1.intValue2, var1.intValue3);
+            super.fakeItem((ItemStack)hudQueuedDraw.obj, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case ITEM_ENTITY:
-            super.item((LivingEntity)var1.obj, (ItemStack)var1.obj2, var1.intValue, var1.intValue2, var1.intValue3);
+            super.item((LivingEntity)hudQueuedDraw.obj, (ItemStack)hudQueuedDraw.obj2, hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3);
             break;
          case SCISSOR_ENABLE:
-            super.enableScissor(var1.intValue, var1.intValue2, var1.intValue3, var1.intValue4);
+            super.enableScissor(hudQueuedDraw.intValue, hudQueuedDraw.intValue2, hudQueuedDraw.intValue3, hudQueuedDraw.intValue4);
             break;
          case SCISSOR_DISABLE:
             super.disableScissor();
@@ -370,99 +370,99 @@ public final class HudQueuedContext extends MenuDrawContext {
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, ZenithColor var5) {
+   public void drawText(Font font, String text, float floatValue, float centeredTextY, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, centeredTextY, zenithColor);
       } else {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_RGBA);
-         var6.obj = var1;
-         var6.obj2 = var2;
-         var6.obj3 = tint(var5);
-         var6.floatValue = var3;
-         var6.floatValue2 = var4;
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_RGBA);
+         queueCommand.obj = font;
+         queueCommand.obj2 = text;
+         queueCommand.obj3 = tint(zenithColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = centeredTextY;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, ZenithColor var5, boolean var6, float var7, float var8, float var9) {
+   public void drawText(Font font, String name, float floatValue, float centeredTextY, ZenithColor zenithColor, boolean flag, float f, float f2, float maxWidth) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawText(font, name, floatValue, centeredTextY, zenithColor, flag, f, f2, maxWidth);
       } else {
-         HudQueuedDraw var10 = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_RGBA_FADEOUT);
-         var10.obj = var1;
-         var10.obj2 = var2;
-         var10.obj3 = tint(var5);
-         var10.floatValue = var3;
-         var10.floatValue2 = var4;
-         var10.flag = var6;
-         var10.floatValue3 = var7;
-         var10.floatValue4 = var8;
-         var10.floatValue5 = var9;
-         Jebriksheet.method2359(var10);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_RGBA_FADEOUT);
+         queueCommand.obj = font;
+         queueCommand.obj2 = name;
+         queueCommand.obj3 = tint(zenithColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = centeredTextY;
+         queueCommand.flag = flag;
+         queueCommand.floatValue3 = f;
+         queueCommand.floatValue4 = f2;
+         queueCommand.floatValue5 = maxWidth;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, int var5, boolean var6, float var7, float var8, float var9) {
+   public void drawText(Font font, String name, float floatValue, float y, int intValue, boolean flag, float f, float f2, float maxWidth) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawText(font, name, floatValue, y, intValue, flag, f, f2, maxWidth);
       } else {
-         HudQueuedDraw var10 = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_INT_FADEOUT);
-         var10.obj = var1;
-         var10.obj2 = var2;
-         var10.floatValue = var3;
-         var10.floatValue2 = var4;
-         var10.intValue = tint(var5);
-         var10.flag = var6;
-         var10.floatValue3 = var7;
-         var10.floatValue4 = var8;
-         var10.floatValue5 = var9;
-         Jebriksheet.method2359(var10);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_INT_FADEOUT);
+         queueCommand.obj = font;
+         queueCommand.obj2 = name;
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.intValue = tint(intValue);
+         queueCommand.flag = flag;
+         queueCommand.floatValue3 = f;
+         queueCommand.floatValue4 = f2;
+         queueCommand.floatValue5 = maxWidth;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, GlowColor var5) {
+   public void drawText(Font font, String text, float floatValue, float centeredTextY, GlowColor glowColor) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, centeredTextY, glowColor);
       } else {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_GRADIENT);
-         var6.obj = var1;
-         var6.obj2 = var2;
-         var6.obj3 = tint(var5);
-         var6.floatValue = var3;
-         var6.floatValue2 = var4;
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_STRING_GRADIENT);
+         queueCommand.obj = font;
+         queueCommand.obj2 = text;
+         queueCommand.obj3 = tint(glowColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = centeredTextY;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
    @Override
-   public void drawText(Font var1, Component var2, float var3, float var4, int var5) {
+   public void drawText(Font font, Component text, float floatValue, float y, int color) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, y, color);
       } else {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_TEXT_INT);
-         var6.obj = var1;
-         var6.obj2 = var2;
-         var6.floatValue = var3;
-         var6.floatValue2 = var4;
-         var6.intValue = tint(var5);
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_TEXT_INT);
+         queueCommand.obj = font;
+         queueCommand.obj2 = text;
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.intValue = tint(color);
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
    @Override
-   public void drawText(Font var1, Component var2, float var3, float var4) {
+   public void drawText(Font font, Component text, float floatValue, float y) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4);
+         super.drawText(font, text, floatValue, y);
       } else {
-         HudQueuedDraw var5 = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_TEXT);
-         var5.obj = var1;
-         var5.obj2 = var2;
-         var5.floatValue = var3;
-         var5.floatValue2 = var4;
-         Jebriksheet.method2359(var5);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_FONT_TEXT);
+         queueCommand.obj = font;
+         queueCommand.obj2 = text;
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -485,150 +485,150 @@ public final class HudQueuedContext extends MenuDrawContext {
    }
 
    @Override
-   public void drawRoundedRect(float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
+   public void drawRoundedRect(float floatValue, float y, float width, float height, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawRoundedRect(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedRect(floatValue, y, width, height, headerRadius, zenithColor);
       } else {
-         Jebriksheet.method2364(this.queueMatrix(), var1, var2, var3, var4, var5, tint(var6));
+         Jebriksheet.method2364(this.queueMatrix(), floatValue, y, width, height, headerRadius, tint(zenithColor));
       }
    }
 
    @Override
-   public void drawRoundedRect(float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, GlowColor var6) {
+   public void drawRoundedRect(float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, GlowColor glowColor) {
       if (this.replaying) {
-         super.drawRoundedRect(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedRect(floatValue, y, width, height, proxyDotRadiusData, glowColor);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.ROUNDED_RECT_GRADIENT);
-         var7.floatValue = var1;
-         var7.floatValue2 = var2;
-         var7.floatValue3 = var3;
-         var7.floatValue4 = var4;
-         var7.obj = var5;
-         var7.obj2 = tint(var6);
-         Jebriksheet.method2356(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ROUNDED_RECT_GRADIENT);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         queueCommand.obj = proxyDotRadiusData;
+         queueCommand.obj2 = tint(glowColor);
+         Jebriksheet.method2356(queueCommand);
       }
    }
 
    @Override
-   public void drawRect(float var1, float var2, float var3, float var4, ZenithColor var5) {
+   public void drawRect(float floatValue, float y, float width, float height, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawRect(var1, var2, var3, var4, var5);
+         super.drawRect(floatValue, y, width, height, zenithColor);
       } else {
-         Jebriksheet.method2365(this.queueMatrix(), var1, var2, var3, var4, tint(var5));
+         Jebriksheet.method2365(this.queueMatrix(), floatValue, y, width, height, tint(zenithColor));
       }
    }
 
    @Override
-   public void drawSquircle(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
+   public void drawSquircle(float floatValue, float y, float width, float height, float batchRange, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawSquircle(var1, var2, var3, var4, var5, var6, var7);
+         super.drawSquircle(floatValue, y, width, height, batchRange, proxyDotRadiusData, zenithColor);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.SQUIRCLE);
-         var8.floatValue = var1;
-         var8.floatValue2 = var2;
-         var8.floatValue3 = var3;
-         var8.floatValue4 = var4;
-         var8.floatValue5 = var5;
-         var8.obj = var6;
-         var8.obj2 = tint(var7);
-         Jebriksheet.method2356(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.SQUIRCLE);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         queueCommand.floatValue5 = batchRange;
+         queueCommand.obj = proxyDotRadiusData;
+         queueCommand.obj2 = tint(zenithColor);
+         Jebriksheet.method2356(queueCommand);
       }
    }
 
    @Override
-   public void drawSprite(CategoryIcon var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
+   public void drawSprite(CategoryIcon categoryIcon, float floatValue, float y, float f, float f2, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawSprite(var1, var2, var3, var4, var5, var6);
+         super.drawSprite(categoryIcon, floatValue, y, f, f2, zenithColor);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.SPRITE);
-         var7.obj = var1;
-         var7.obj2 = tint(var6);
-         var7.floatValue = var2;
-         var7.floatValue2 = var3;
-         var7.floatValue3 = var4;
-         var7.floatValue4 = var5;
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.SPRITE);
+         queueCommand.obj = categoryIcon;
+         queueCommand.obj2 = tint(zenithColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = f;
+         queueCommand.floatValue4 = f2;
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawRoundedBorder(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, GlowColor var7) {
+   public void drawRoundedBorder(float floatValue, float lastY, float width, float height, float batchRange, ProxyDotRadiusData proxyDotRadiusData, GlowColor glowColor) {
       if (this.replaying) {
-         super.drawRoundedBorder(var1, var2, var3, var4, var5, var6, var7);
+         super.drawRoundedBorder(floatValue, lastY, width, height, batchRange, proxyDotRadiusData, glowColor);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.ROUNDED_BORDER_GRADIENT);
-         var8.floatValue = var1;
-         var8.floatValue2 = var2;
-         var8.floatValue3 = var3;
-         var8.floatValue4 = var4;
-         var8.floatValue5 = var5;
-         var8.obj = var6;
-         var8.obj2 = tint(var7);
-         Jebriksheet.method2357(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ROUNDED_BORDER_GRADIENT);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = lastY;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         queueCommand.floatValue5 = batchRange;
+         queueCommand.obj = proxyDotRadiusData;
+         queueCommand.obj2 = tint(glowColor);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawRoundedBorder(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
+   public void drawRoundedBorder(float floatValue, float y, float width, float height, float batchRange, ProxyDotRadiusData moduleMenuRadius, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawRoundedBorder(var1, var2, var3, var4, var5, var6, var7);
+         super.drawRoundedBorder(floatValue, y, width, height, batchRange, moduleMenuRadius, zenithColor);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.ROUNDED_BORDER_RGBA);
-         var8.floatValue = var1;
-         var8.floatValue2 = var2;
-         var8.floatValue3 = var3;
-         var8.floatValue4 = var4;
-         var8.floatValue5 = var5;
-         var8.obj = var6;
-         var8.obj2 = tint(var7);
-         Jebriksheet.method2357(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ROUNDED_BORDER_RGBA);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         queueCommand.floatValue5 = batchRange;
+         queueCommand.obj = moduleMenuRadius;
+         queueCommand.obj2 = tint(zenithColor);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawRoundedCornerOnly(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7, float var8) {
+   public void drawRoundedCornerOnly(float floatValue, float y, float width, float height, float batchRange, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor, float f) {
       if (this.replaying) {
-         super.drawRoundedCornerOnly(var1, var2, var3, var4, var5, var6, var7, var8);
+         super.drawRoundedCornerOnly(floatValue, y, width, height, batchRange, proxyDotRadiusData, zenithColor, f);
       } else {
-         HudQueuedDraw var9 = this.queueCommand(HudQueuedDraw.Type.ROUNDED_CORNER_ONLY);
-         var9.floatValue = var1;
-         var9.floatValue2 = var2;
-         var9.floatValue3 = var3;
-         var9.floatValue4 = var4;
-         var9.floatValue5 = var5;
-         var9.floatValue6 = var8;
-         var9.obj = var6;
-         var9.obj2 = tint(var7);
-         Jebriksheet.method2357(var9);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ROUNDED_CORNER_ONLY);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         queueCommand.floatValue5 = batchRange;
+         queueCommand.floatValue6 = f;
+         queueCommand.obj = proxyDotRadiusData;
+         queueCommand.obj2 = tint(zenithColor);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawTexture(Identifier var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
+   public void drawTexture(Identifier identifier, float floatValue, float y, float guiScaledWidth, float guiScaledHeight, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawTexture(var1, var2, var3, var4, var5, var6);
+         super.drawTexture(identifier, floatValue, y, guiScaledWidth, guiScaledHeight, zenithColor);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.TEXTURE_RGBA);
-         var7.obj = var1;
-         var7.obj2 = tint(var6);
-         var7.floatValue = var2;
-         var7.floatValue2 = var3;
-         var7.floatValue3 = var4;
-         var7.floatValue4 = var5;
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXTURE_RGBA);
+         queueCommand.obj = identifier;
+         queueCommand.obj2 = tint(zenithColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = guiScaledWidth;
+         queueCommand.floatValue4 = guiScaledHeight;
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawBlurHud(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
+   public void drawBlurHud(float floatValue, float y, float width, float height, float blurPower, ProxyDotRadiusData moduleMenuRadius, ZenithColor zenithColor) {
       this.drawBlurHudBooleanCheck(
-         var1,
-         var2,
-         var3,
-         var4,
-         var5,
-         var6,
-         var7,
+         floatValue,
+         y,
+         width,
+         height,
+         blurPower,
+         moduleMenuRadius,
+         zenithColor,
          (InterfaceModule.INSTANCE.method6817() || InterfaceModule.INSTANCE.method6818()) && RenderShaders.flag,
          InterfaceModule.INSTANCE.method6819()
       );
@@ -636,84 +636,84 @@ public final class HudQueuedContext extends MenuDrawContext {
 
    @Override
    public void drawBlurHudBooleanCheck(
-      float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7, boolean var8, boolean var9
+      float floatValue, float y, float width, float height, float blurPower, ProxyDotRadiusData moduleMenuRadius, ZenithColor zenithColor, boolean flag, boolean flag2
    ) {
       if (this.replaying) {
-         super.drawBlurHudBooleanCheck(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawBlurHudBooleanCheck(floatValue, y, width, height, blurPower, moduleMenuRadius, zenithColor, flag, flag2);
       } else {
-         float var10 = InterfaceModule.INSTANCE.method6779(var5);
-         Jebriksheet.method2363(this.queueMatrix(), var1, var2, var3, var4, var10 > 0.0F ? var10 : var5, var6, tint(var7), var8 && var10 > 0.0F, var9);
+         float f = InterfaceModule.INSTANCE.method6779(blurPower);
+         Jebriksheet.method2363(this.queueMatrix(), floatValue, y, width, height, f > 0.0F ? f : blurPower, moduleMenuRadius, tint(zenithColor), flag && f > 0.0F, flag2);
          if (InterfaceModule.INSTANCE.method6780()) {
-            this.drawRoundedBorder(var1, var2, var3, var4, InterfaceModule.INSTANCE.method6781(), var6, InterfaceModule.INSTANCE.method6782());
+            this.drawRoundedBorder(floatValue, y, width, height, InterfaceModule.INSTANCE.method6781(), moduleMenuRadius, InterfaceModule.INSTANCE.method6782());
          }
       }
    }
 
    @Override
-   public void drawArcBorder(float var1, float var2, float var3, float var4, float var5, float var6, float var7, ZenithColor var8) {
+   public void drawArcBorder(float floatValue, float y, float width, float height, float batchRange, float f, float f2, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawArcBorder(var1, var2, var3, var4, var5, var6, var7, var8);
+         super.drawArcBorder(floatValue, y, width, height, batchRange, f, f2, zenithColor);
       } else {
-         HudQueuedDraw var9 = this.queueCommand(HudQueuedDraw.Type.ARC_BORDER);
-         var9.floatValue = var1;
-         var9.floatValue2 = var2;
-         var9.floatValue3 = var3;
-         var9.floatValue4 = var4;
-         var9.floatValue5 = var5;
-         var9.floatValue6 = var6;
-         var9.floatValue7 = var7;
-         var9.obj = tint(var8);
-         Jebriksheet.method2357(var9);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ARC_BORDER);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         queueCommand.floatValue5 = batchRange;
+         queueCommand.floatValue6 = f;
+         queueCommand.floatValue7 = f2;
+         queueCommand.obj = tint(zenithColor);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawRoundedTexture(Identifier var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6) {
+   public void drawRoundedTexture(Identifier prewarm, float floatValue, float y, float width, float height, ProxyDotRadiusData avatarRadius) {
       if (this.replaying) {
-         super.drawRoundedTexture(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedTexture(prewarm, floatValue, y, width, height, avatarRadius);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.ROUNDED_TEXTURE);
-         var7.obj = var1;
-         var7.obj2 = var6;
-         var7.obj3 = tint(ZenithColor.INSTANCE);
-         var7.floatValue = var2;
-         var7.floatValue2 = var3;
-         var7.floatValue3 = var4;
-         var7.floatValue4 = var5;
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ROUNDED_TEXTURE);
+         queueCommand.obj = prewarm;
+         queueCommand.obj2 = avatarRadius;
+         queueCommand.obj3 = tint(ZenithColor.INSTANCE);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         queueCommand.floatValue4 = height;
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawRoundedTexture(Identifier var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
+   public void drawRoundedTexture(Identifier texture, float floatValue, float cardAvatarY, float size, float height, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawRoundedTexture(var1, var2, var3, var4, var5, var6, var7);
+         super.drawRoundedTexture(texture, floatValue, cardAvatarY, size, height, headerRadius, zenithColor);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.ROUNDED_TEXTURE_RGBA);
-         var8.obj = var1;
-         var8.obj2 = var6;
-         var8.obj3 = tint(var7);
-         var8.floatValue = var2;
-         var8.floatValue2 = var3;
-         var8.floatValue3 = var4;
-         var8.floatValue4 = var5;
-         Jebriksheet.method2357(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ROUNDED_TEXTURE_RGBA);
+         queueCommand.obj = texture;
+         queueCommand.obj2 = headerRadius;
+         queueCommand.obj3 = tint(zenithColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = cardAvatarY;
+         queueCommand.floatValue3 = size;
+         queueCommand.floatValue4 = height;
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
    @Override
-   public void drawPlayerHeadWithRoundedShader(Identifier var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
+   public void drawPlayerHeadWithRoundedShader(Identifier texturePath, float floatValue, float y, float width, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawPlayerHeadWithRoundedShader(var1, var2, var3, var4, var5, var6);
+         super.drawPlayerHeadWithRoundedShader(texturePath, floatValue, y, width, headerRadius, zenithColor);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.PLAYER_HEAD);
-         var7.obj = var1;
-         var7.obj2 = var5;
-         var7.obj3 = tint(var6);
-         var7.floatValue = var2;
-         var7.floatValue2 = var3;
-         var7.floatValue3 = var4;
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.PLAYER_HEAD);
+         queueCommand.obj = texturePath;
+         queueCommand.obj2 = headerRadius;
+         queueCommand.obj3 = tint(zenithColor);
+         queueCommand.floatValue = floatValue;
+         queueCommand.floatValue2 = y;
+         queueCommand.floatValue3 = width;
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -722,37 +722,37 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.item(item, x, y);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var4 = this.queueCommand(HudQueuedDraw.Type.ITEM);
-         var4.obj = item;
-         var4.intValue = x;
-         var4.intValue2 = y;
-         Jebriksheet.method2358(var4);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM);
+         queueCommand.obj = item;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
    @Override
-   public void renderItemBar(ItemStack var1, int var2, int var3) {
+   public void renderItemBar(ItemStack itemStack, int intValue, int n) {
       if (this.replaying) {
-         super.renderItemBar(var1, var2, var3);
+         super.renderItemBar(itemStack, intValue, n);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var4 = this.queueCommand(HudQueuedDraw.Type.ITEM_BAR);
-         var4.obj = var1;
-         var4.intValue = var2;
-         var4.intValue2 = var3;
-         Jebriksheet.method2358(var4);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM_BAR);
+         queueCommand.obj = itemStack;
+         queueCommand.intValue = intValue;
+         queueCommand.intValue2 = n;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
    @Override
-   public void renderItemCooldown(ItemStack var1, int var2, int var3) {
+   public void renderItemCooldown(ItemStack itemStack, int intValue, int n) {
       if (this.replaying) {
-         super.renderItemCooldown(var1, var2, var3);
+         super.renderItemCooldown(itemStack, intValue, n);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var4 = this.queueCommand(HudQueuedDraw.Type.COOLDOWN_PROGRESS);
-         var4.obj = var1;
-         var4.intValue = var2;
-         var4.intValue2 = var3;
-         Jebriksheet.method2358(var4);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.COOLDOWN_PROGRESS);
+         queueCommand.obj = itemStack;
+         queueCommand.intValue = intValue;
+         queueCommand.intValue2 = n;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
@@ -761,26 +761,26 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.item(stack, x, y, seed);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var5 = this.queueCommand(HudQueuedDraw.Type.ITEM_SEED);
-         var5.obj = stack;
-         var5.intValue = x;
-         var5.intValue2 = y;
-         var5.intValue3 = seed;
-         Jebriksheet.method2358(var5);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM_SEED);
+         queueCommand.obj = stack;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = seed;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
-   public void drawItem(ItemStack var1, int var2, int var3, int var4, int var5) {
+   public void drawItem(ItemStack itemStack, int intValue, int y, int seed, int n) {
       if (this.replaying) {
-         super.item(var1, var2, var3, var4);
+         super.item(itemStack, intValue, y, seed);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.ITEM_SEED_Z);
-         var6.obj = var1;
-         var6.intValue = var2;
-         var6.intValue2 = var3;
-         var6.intValue3 = var4;
-         var6.intValue4 = var5;
-         Jebriksheet.method2358(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM_SEED_Z);
+         queueCommand.obj = itemStack;
+         queueCommand.intValue = intValue;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = seed;
+         queueCommand.intValue4 = n;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
@@ -789,11 +789,11 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.fakeItem(stack, x, y);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var4 = this.queueCommand(HudQueuedDraw.Type.ITEM_WITHOUT_ENTITY);
-         var4.obj = stack;
-         var4.intValue = x;
-         var4.intValue2 = y;
-         Jebriksheet.method2358(var4);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM_WITHOUT_ENTITY);
+         queueCommand.obj = stack;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
@@ -802,12 +802,12 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.fakeItem(stack, x, y, seed);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var5 = this.queueCommand(HudQueuedDraw.Type.ITEM_WITHOUT_ENTITY_SEED);
-         var5.obj = stack;
-         var5.intValue = x;
-         var5.intValue2 = y;
-         var5.intValue3 = seed;
-         Jebriksheet.method2358(var5);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM_WITHOUT_ENTITY_SEED);
+         queueCommand.obj = stack;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = seed;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
@@ -816,13 +816,13 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.item(entity, stack, x, y, seed);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.ITEM_ENTITY);
-         var6.obj = entity;
-         var6.obj2 = stack;
-         var6.intValue = x;
-         var6.intValue2 = y;
-         var6.intValue3 = seed;
-         Jebriksheet.method2358(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.ITEM_ENTITY);
+         queueCommand.obj = entity;
+         queueCommand.obj2 = stack;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = seed;
+         Jebriksheet.method2358(queueCommand);
       }
    }
 
@@ -831,12 +831,12 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.itemDecorations(textRenderer, stack, x, y);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var5 = this.queueCommand(HudQueuedDraw.Type.STACK_OVERLAY);
-         var5.obj = textRenderer;
-         var5.obj2 = stack;
-         var5.intValue = x;
-         var5.intValue2 = y;
-         Jebriksheet.method2359(var5);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.STACK_OVERLAY);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = stack;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -845,13 +845,13 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.itemDecorations(textRenderer, stack, x, y, stackCountText);
       } else if (!itemsHidden()) {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.STACK_OVERLAY_TEXT);
-         var6.obj = textRenderer;
-         var6.obj2 = stack;
-         var6.obj3 = stackCountText;
-         var6.intValue = x;
-         var6.intValue2 = y;
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.STACK_OVERLAY_TEXT);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = stack;
+         queueCommand.obj3 = stackCountText;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -873,11 +873,11 @@ public final class HudQueuedContext extends MenuDrawContext {
       }
    }
 
-   public void fill(int var1, int var2, int var3, int var4, int var5, int var6) {
+   public void fill(int x0, int y0, int x1, int y1, int n, int col) {
       if (this.replaying) {
-         super.fill(var1, var2, var3, var4, var6);
+         super.fill(x0, y0, x1, y1, col);
       } else {
-         this.queueRect(var1, var2, var3, var4, var6);
+         this.queueRect(x0, y0, x1, y1, col);
       }
    }
 
@@ -890,20 +890,20 @@ public final class HudQueuedContext extends MenuDrawContext {
       }
    }
 
-   public void fill(RenderType var1, int var2, int var3, int var4, int var5, int var6, int var7) {
+   public void fill(RenderType renderType, int x0, int y0, int x1, int y1, int n, int col) {
       if (this.replaying) {
-         super.fill(var2, var3, var4, var5, var7);
+         super.fill(x0, y0, x1, y1, col);
       } else {
-         this.queueRect(var2, var3, var4, var5, var7);
+         this.queueRect(x0, y0, x1, y1, col);
       }
    }
 
-   private void queueRect(int var1, int var2, int var3, int var4, int var5) {
-      int var6 = Math.min(var1, var3);
-      int var7 = Math.min(var2, var4);
-      int var8 = Math.max(var1, var3);
-      int var9 = Math.max(var2, var4);
-      Jebriksheet.method2365(this.queueMatrix(), var6, var7, var8 - var6, var9 - var7, tint(ZenithColor.method7291(var5)));
+   private void queueRect(int x1, int y1, int x2, int y2, int color) {
+      int floatValue = Math.min(x1, x2);
+      int y = Math.min(y1, y2);
+      int n = Math.max(x1, x2);
+      int n2 = Math.max(y1, y2);
+      Jebriksheet.method2365(this.queueMatrix(), floatValue, y, n - floatValue, n2 - y, tint(ZenithColor.method7291(color)));
    }
 
    @Override
@@ -911,47 +911,47 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.fillGradient(startX, startY, endX, endY, colorStart, colorEnd);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.FILL_GRADIENT);
-         var7.intValue = startX;
-         var7.intValue2 = startY;
-         var7.intValue3 = endX;
-         var7.intValue4 = endY;
-         var7.intValue5 = tint(colorStart);
-         var7.intValue6 = tint(colorEnd);
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.FILL_GRADIENT);
+         queueCommand.intValue = startX;
+         queueCommand.intValue2 = startY;
+         queueCommand.intValue3 = endX;
+         queueCommand.intValue4 = endY;
+         queueCommand.intValue5 = tint(colorStart);
+         queueCommand.intValue6 = tint(colorEnd);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
-   public void fillGradient(int var1, int var2, int var3, int var4, int var5, int var6, int var7) {
+   public void fillGradient(int intValue, int y0, int x1, int y1, int n, int col1, int col2) {
       if (this.replaying) {
-         super.fillGradient(var1, var2, var3, var4, var6, var7);
+         super.fillGradient(intValue, y0, x1, y1, col1, col2);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.FILL_GRADIENT_Z);
-         var8.intValue = var1;
-         var8.intValue2 = var2;
-         var8.intValue3 = var3;
-         var8.intValue4 = var4;
-         var8.intValue5 = var5;
-         var8.intValue6 = tint(var6);
-         var8.intValue7 = tint(var7);
-         Jebriksheet.method2357(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.FILL_GRADIENT_Z);
+         queueCommand.intValue = intValue;
+         queueCommand.intValue2 = y0;
+         queueCommand.intValue3 = x1;
+         queueCommand.intValue4 = y1;
+         queueCommand.intValue5 = n;
+         queueCommand.intValue6 = tint(col1);
+         queueCommand.intValue7 = tint(col2);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
-   public void fillGradient(RenderType var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8) {
+   public void fillGradient(RenderType renderType, int intValue, int y0, int x1, int y1, int col1, int col2, int n) {
       if (this.replaying) {
-         super.fillGradient(var2, var3, var4, var5, var6, var7);
+         super.fillGradient(intValue, y0, x1, y1, col1, col2);
       } else {
-         HudQueuedDraw var9 = this.queueCommand(HudQueuedDraw.Type.FILL_GRADIENT_LAYER);
-         var9.obj = var1;
-         var9.intValue = var2;
-         var9.intValue2 = var3;
-         var9.intValue3 = var4;
-         var9.intValue4 = var5;
-         var9.intValue5 = tint(var6);
-         var9.intValue6 = tint(var7);
-         var9.intValue7 = var8;
-         Jebriksheet.method2357(var9);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.FILL_GRADIENT_LAYER);
+         queueCommand.obj = renderType;
+         queueCommand.intValue = intValue;
+         queueCommand.intValue2 = y0;
+         queueCommand.intValue3 = x1;
+         queueCommand.intValue4 = y1;
+         queueCommand.intValue5 = tint(col1);
+         queueCommand.intValue6 = tint(col2);
+         queueCommand.intValue7 = n;
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -960,13 +960,13 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.text(textRenderer, text, x, y, color);
       } else {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.TEXT_SHADOW_STRING);
-         var6.obj = textRenderer;
-         var6.obj2 = text;
-         var6.intValue = x;
-         var6.intValue2 = y;
-         var6.intValue3 = tint(color);
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_SHADOW_STRING);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = tint(color);
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -975,14 +975,14 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.text(textRenderer, text, x, y, color, shadow);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.TEXT_STRING);
-         var7.obj = textRenderer;
-         var7.obj2 = text;
-         var7.intValue = x;
-         var7.intValue2 = y;
-         var7.intValue3 = tint(color);
-         var7.flag = shadow;
-         Jebriksheet.method2359(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_STRING);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = tint(color);
+         queueCommand.flag = shadow;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -991,13 +991,13 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.text(textRenderer, text, x, y, color);
       } else {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.TEXT_SHADOW_ORDERED);
-         var6.obj = textRenderer;
-         var6.obj2 = text;
-         var6.intValue = x;
-         var6.intValue2 = y;
-         var6.intValue3 = tint(color);
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_SHADOW_ORDERED);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = tint(color);
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -1006,14 +1006,14 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.text(textRenderer, text, x, y, color, shadow);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.TEXT_ORDERED);
-         var7.obj = textRenderer;
-         var7.obj2 = text;
-         var7.intValue = x;
-         var7.intValue2 = y;
-         var7.intValue3 = tint(color);
-         var7.flag = shadow;
-         Jebriksheet.method2359(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_ORDERED);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = tint(color);
+         queueCommand.flag = shadow;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -1022,13 +1022,13 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.text(textRenderer, text, x, y, color);
       } else {
-         HudQueuedDraw var6 = this.queueCommand(HudQueuedDraw.Type.TEXT_SHADOW_TEXT);
-         var6.obj = textRenderer;
-         var6.obj2 = text;
-         var6.intValue = x;
-         var6.intValue2 = y;
-         var6.intValue3 = tint(color);
-         Jebriksheet.method2359(var6);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_SHADOW_TEXT);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = tint(color);
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -1037,14 +1037,14 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.text(textRenderer, text, x, y, color, shadow);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.TEXT_TEXT);
-         var7.obj = textRenderer;
-         var7.obj2 = text;
-         var7.intValue = x;
-         var7.intValue2 = y;
-         var7.intValue3 = tint(color);
-         var7.flag = shadow;
-         Jebriksheet.method2359(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXT_TEXT);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = tint(color);
+         queueCommand.flag = shadow;
+         Jebriksheet.method2359(queueCommand);
       }
    }
 
@@ -1053,15 +1053,15 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          return super.textWithWordWrap(textRenderer, text, x, y, width, color, shadow);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.WRAPPED_TEXT);
-         var8.obj = textRenderer;
-         var8.obj2 = text;
-         var8.intValue = x;
-         var8.intValue2 = y;
-         var8.intValue3 = width;
-         var8.intValue4 = tint(color);
-         var8.flag = shadow;
-         Jebriksheet.method2359(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.WRAPPED_TEXT);
+         queueCommand.obj = textRenderer;
+         queueCommand.obj2 = text;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = tint(color);
+         queueCommand.flag = shadow;
+         Jebriksheet.method2359(queueCommand);
          // 26.1: returns the y below the last line, like vanilla
          return y + textRenderer.split(text, width).size() * textRenderer.lineHeight;
       }
@@ -1072,15 +1072,15 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blitSprite(pipeline, sprite, x, y, width, height);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.SPRITE_STRETCHED);
-         var7.obj = pipeline;
-         var7.obj2 = sprite;
-         var7.intValue = x;
-         var7.intValue2 = y;
-         var7.intValue3 = width;
-         var7.intValue4 = height;
-         var7.intValue5 = tint(-1);
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.SPRITE_STRETCHED);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = tint(-1);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1089,15 +1089,15 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blitSprite(pipeline, sprite, x, y, width, height, color);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.SPRITE_STRETCHED_COLOR);
-         var8.obj = pipeline;
-         var8.obj2 = sprite;
-         var8.intValue = x;
-         var8.intValue2 = y;
-         var8.intValue3 = width;
-         var8.intValue4 = height;
-         var8.intValue5 = tint(color);
-         Jebriksheet.method2357(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.SPRITE_STRETCHED_COLOR);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = tint(color);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1106,15 +1106,15 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blitSprite(pipeline, sprite, x, y, width, height);
       } else {
-         HudQueuedDraw var7 = this.queueCommand(HudQueuedDraw.Type.GUI_TEXTURE);
-         var7.obj = pipeline;
-         var7.obj2 = sprite;
-         var7.intValue = x;
-         var7.intValue2 = y;
-         var7.intValue3 = width;
-         var7.intValue4 = height;
-         var7.intValue5 = tint(-1);
-         Jebriksheet.method2357(var7);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.GUI_TEXTURE);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = tint(-1);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1123,15 +1123,15 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blitSprite(pipeline, sprite, x, y, width, height, color);
       } else {
-         HudQueuedDraw var8 = this.queueCommand(HudQueuedDraw.Type.GUI_TEXTURE_COLOR);
-         var8.obj = pipeline;
-         var8.obj2 = sprite;
-         var8.intValue = x;
-         var8.intValue2 = y;
-         var8.intValue3 = width;
-         var8.intValue4 = height;
-         var8.intValue5 = tint(color);
-         Jebriksheet.method2357(var8);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.GUI_TEXTURE_COLOR);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = tint(color);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1142,19 +1142,19 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blitSprite(pipeline, sprite, textureWidth, textureHeight, u, v, x, y, width, height);
       } else {
-         HudQueuedDraw var11 = this.queueCommand(HudQueuedDraw.Type.GUI_TEXTURE_REGION);
-         var11.obj = pipeline;
-         var11.obj2 = sprite;
-         var11.intValue = textureWidth;
-         var11.intValue2 = textureHeight;
-         var11.intValue3 = u;
-         var11.intValue4 = v;
-         var11.intValue5 = x;
-         var11.intValue6 = y;
-         var11.intValue7 = width;
-         var11.intValue8 = height;
-         var11.intValue9 = tint(-1);
-         Jebriksheet.method2357(var11);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.GUI_TEXTURE_REGION);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = textureWidth;
+         queueCommand.intValue2 = textureHeight;
+         queueCommand.intValue3 = u;
+         queueCommand.intValue4 = v;
+         queueCommand.intValue5 = x;
+         queueCommand.intValue6 = y;
+         queueCommand.intValue7 = width;
+         queueCommand.intValue8 = height;
+         queueCommand.intValue9 = tint(-1);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1165,19 +1165,19 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blit(pipeline, sprite, x, y, u, v, width, height, textureWidth, textureHeight, color);
       } else {
-         HudQueuedDraw var12 = this.queueCommand(HudQueuedDraw.Type.TEXTURE_UV_COLOR);
-         var12.obj = pipeline;
-         var12.obj2 = sprite;
-         var12.intValue = x;
-         var12.intValue2 = y;
-         var12.floatValue = u;
-         var12.floatValue2 = v;
-         var12.intValue3 = width;
-         var12.intValue4 = height;
-         var12.intValue5 = textureWidth;
-         var12.intValue6 = textureHeight;
-         var12.intValue7 = tint(color);
-         Jebriksheet.method2357(var12);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXTURE_UV_COLOR);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.floatValue = u;
+         queueCommand.floatValue2 = v;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = textureWidth;
+         queueCommand.intValue6 = textureHeight;
+         queueCommand.intValue7 = tint(color);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1188,19 +1188,19 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blit(pipeline, sprite, x, y, u, v, width, height, textureWidth, textureHeight);
       } else {
-         HudQueuedDraw var11 = this.queueCommand(HudQueuedDraw.Type.TEXTURE_UV);
-         var11.obj = pipeline;
-         var11.obj2 = sprite;
-         var11.intValue = x;
-         var11.intValue2 = y;
-         var11.floatValue = u;
-         var11.floatValue2 = v;
-         var11.intValue3 = width;
-         var11.intValue4 = height;
-         var11.intValue5 = textureWidth;
-         var11.intValue6 = textureHeight;
-         var11.intValue7 = tint(-1);
-         Jebriksheet.method2357(var11);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXTURE_UV);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.floatValue = u;
+         queueCommand.floatValue2 = v;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = textureWidth;
+         queueCommand.intValue6 = textureHeight;
+         queueCommand.intValue7 = tint(-1);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1222,21 +1222,21 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blit(pipeline, sprite, x, y, u, v, width, height, regionWidth, regionHeight, textureWidth, textureHeight);
       } else {
-         HudQueuedDraw var13 = this.queueCommand(HudQueuedDraw.Type.TEXTURE_REGION);
-         var13.obj = pipeline;
-         var13.obj2 = sprite;
-         var13.intValue = x;
-         var13.intValue2 = y;
-         var13.floatValue = u;
-         var13.floatValue2 = v;
-         var13.intValue3 = width;
-         var13.intValue4 = height;
-         var13.intValue5 = regionWidth;
-         var13.intValue6 = regionHeight;
-         var13.intValue7 = textureWidth;
-         var13.intValue8 = textureHeight;
-         var13.intValue9 = tint(-1);
-         Jebriksheet.method2357(var13);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXTURE_REGION);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.floatValue = u;
+         queueCommand.floatValue2 = v;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = regionWidth;
+         queueCommand.intValue6 = regionHeight;
+         queueCommand.intValue7 = textureWidth;
+         queueCommand.intValue8 = textureHeight;
+         queueCommand.intValue9 = tint(-1);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 
@@ -1259,21 +1259,21 @@ public final class HudQueuedContext extends MenuDrawContext {
       if (this.replaying) {
          super.blit(pipeline, sprite, x, y, u, v, width, height, regionWidth, regionHeight, textureWidth, textureHeight, color);
       } else {
-         HudQueuedDraw var14 = this.queueCommand(HudQueuedDraw.Type.TEXTURE_REGION_COLOR);
-         var14.obj = pipeline;
-         var14.obj2 = sprite;
-         var14.intValue = x;
-         var14.intValue2 = y;
-         var14.floatValue = u;
-         var14.floatValue2 = v;
-         var14.intValue3 = width;
-         var14.intValue4 = height;
-         var14.intValue5 = regionWidth;
-         var14.intValue6 = regionHeight;
-         var14.intValue7 = textureWidth;
-         var14.intValue8 = textureHeight;
-         var14.intValue9 = tint(color);
-         Jebriksheet.method2357(var14);
+         HudQueuedDraw queueCommand = this.queueCommand(HudQueuedDraw.Type.TEXTURE_REGION_COLOR);
+         queueCommand.obj = pipeline;
+         queueCommand.obj2 = sprite;
+         queueCommand.intValue = x;
+         queueCommand.intValue2 = y;
+         queueCommand.floatValue = u;
+         queueCommand.floatValue2 = v;
+         queueCommand.intValue3 = width;
+         queueCommand.intValue4 = height;
+         queueCommand.intValue5 = regionWidth;
+         queueCommand.intValue6 = regionHeight;
+         queueCommand.intValue7 = textureWidth;
+         queueCommand.intValue8 = textureHeight;
+         queueCommand.intValue9 = tint(color);
+         Jebriksheet.method2357(queueCommand);
       }
    }
 }

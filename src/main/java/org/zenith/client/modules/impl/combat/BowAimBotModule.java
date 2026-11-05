@@ -54,7 +54,7 @@ public final class BowAimBotModule extends Module {
    );
 
    @EventTarget
-   public void method5721(Event5 var1) {
+   public void method5721(Event5 event) {
       if (this.flag) {
          this.flag = false;
          this.method5722();
@@ -62,14 +62,14 @@ public final class BowAimBotModule extends Module {
 
       if (mc.player.isUsingItem() && mc.player.getUseItem().getItem() == Items.BOW) {
          this.method5722();
-         Rotation var2 = this.method5723();
-         if (var2 == null) {
+         Rotation rotation = this.method5723();
+         if (rotation == null) {
             this.intValue = 0;
             return;
          }
 
-         Rotation var3 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var2);
-         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(var3, () -> var3, bcCameraTestnerv.getRotationConfig3()), 20, this);
+         Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
+         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig3()), 20, this);
       } else {
          this.intValue = 0;
       }
@@ -80,114 +80,114 @@ public final class BowAimBotModule extends Module {
    }
 
    private Rotation method5723() {
-      Rotation var1 = new Rotation(mc.player.getYRot(), mc.player.getXRot());
+      Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
 
       try {
-         ItemStack var2 = mc.player.getUseItem();
-         PlayerSimulation var3 = PlayerSimulation.method6031(1);
-         Vec3 var4 = this.method5729(var3);
-         LivingEntity var5 = this.method5726(var3);
-         if (var5 == null) {
+         ItemStack useItem = mc.player.getUseItem();
+         PlayerSimulation playerSimulation = PlayerSimulation.method6031(1);
+         Vec3 eyePosition = this.method5729(playerSimulation);
+         LivingEntity livingEntity = this.method5726(playerSimulation);
+         if (livingEntity == null) {
             return null;
          } else {
-            AABB var6 = this.method5731(var5);
-            Rotation var7 = Rotation.method3128(this.method5727(var6), var4);
-            return this.autoShoot.isEnabled() && this.method5733(var2, var3, var6) ? null : this.method5732(var2, var3, var7, var6);
+            AABB aabb = this.method5731(livingEntity);
+            Rotation rotation2 = Rotation.method3128(this.method5727(aabb), eyePosition);
+            return this.autoShoot.isEnabled() && this.method5733(useItem, playerSimulation, aabb) ? null : this.method5732(useItem, playerSimulation, rotation2, aabb);
          }
-      } catch (Exception var8) {
-         var8.printStackTrace();
-         return var1;
+      } catch (Exception e) {
+         e.printStackTrace();
+         return rotation;
       }
    }
 
-   public Vec3 method5724(LivingEntity var1) {
-      return this.method5727(this.method5731(var1));
+   public Vec3 method5724(LivingEntity livingEntity) {
+      return this.method5727(this.method5731(livingEntity));
    }
 
    public LivingEntity method5725() {
       return this.method5726(PlayerSimulation.method6031(1));
    }
 
-   private LivingEntity method5726(PlayerSimulation var1) {
-      var var2 = this.method5728(mc.player.getUseItem(), RotationUtils.method6911(), var1);
-      if (var2 != null && (!var2.isEmpty())) {
-         HitResult var3 = (HitResult)var2.getFirst();
-         if (var3 == null) {
+   private LivingEntity method5726(PlayerSimulation playerSimulation) {
+      var hitResults = this.method5728(mc.player.getUseItem(), RotationUtils.method6911(), playerSimulation);
+      if (hitResults != null && (!hitResults.isEmpty())) {
+         HitResult hitResult = (HitResult)hitResults.getFirst();
+         if (hitResult == null) {
             return null;
-         } else if (var3 instanceof EntityHitResult var4
-            && var4.getEntity() instanceof LivingEntity var5
-            && !Zenith.getInstance().getFriends().method7626(var5)) {
-            return var5;
+         } else if (hitResult instanceof EntityHitResult entityHitResult
+            && entityHitResult.getEntity() instanceof LivingEntity player
+            && !Zenith.getInstance().getFriends().method7626(player)) {
+            return player;
          } else {
-            Player var11 = null;
-            double var12 = Double.MAX_VALUE;
+            Player player2 = null;
+            double d = Double.MAX_VALUE;
 
-            for (Player var8 : mc.level.players()) {
-               double var9;
-               if (mc.player != var8
-                  && !Zenith.getInstance().getFriends().method7626(var8)
-                  && (var9 = this.method5724(var8).distanceToSqr(var3.getLocation())) < var12) {
-                  var12 = var9;
-                  var11 = var8;
+            for (Player player3 : mc.level.players()) {
+               double d2;
+               if (mc.player != player3
+                  && !Zenith.getInstance().getFriends().method7626(player3)
+                  && (d2 = this.method5724(player3).distanceToSqr(hitResult.getLocation())) < d) {
+                  d = d2;
+                  player2 = player3;
                }
             }
 
-            return var11;
+            return player2;
          }
       } else {
          return null;
       }
    }
 
-   public Vec3 method5727(AABB var1) {
-      return new Vec3(Mth.lerp(0.5, var1.minX, var1.maxX), Mth.lerp(0.8, var1.minY, var1.maxY), Mth.lerp(0.5, var1.minZ, var1.maxZ));
+   public Vec3 method5727(AABB aabb) {
+      return new Vec3(Mth.lerp(0.5, aabb.minX, aabb.maxX), Mth.lerp(0.8, aabb.minY, aabb.maxY), Mth.lerp(0.5, aabb.minZ, aabb.maxZ));
    }
 
-   private List<HitResult> method5728(ItemStack var1, Rotation var2, PlayerSimulation var3) {
-      return PredictionsModule.INSTANCE.method2916(var1, var2, this.method5729(var3), var3.vec3d2, 1);
+   private List<HitResult> method5728(ItemStack useItem, Rotation rotation, PlayerSimulation playerSimulation) {
+      return PredictionsModule.INSTANCE.method2916(useItem, rotation, this.method5729(playerSimulation), playerSimulation.vec3d2, 1);
    }
 
-   private Vec3 method5729(PlayerSimulation var1) {
-      return var1.vec3d.add(0.0, mc.player.getEyeHeight(mc.player.getPose()), 0.0);
+   private Vec3 method5729(PlayerSimulation playerSimulation) {
+      return playerSimulation.vec3d.add(0.0, mc.player.getEyeHeight(mc.player.getPose()), 0.0);
    }
 
    private int method5730() {
       return 1 + (int)this.predictSetting.getValue3();
    }
 
-   private AABB method5731(LivingEntity var1) {
-      if (var1 instanceof Player var3) {
-         return PlayerSimulation.method6032(var3, this.method5730()).box;
+   private AABB method5731(LivingEntity livingEntity) {
+      if (livingEntity instanceof Player player) {
+         return PlayerSimulation.method6032(player, this.method5730()).box;
       } else {
-         Vec3 var2 = var1.position().subtract(var1.xo, var1.yo, var1.zo);
-         return var1.getBoundingBox().move(var2.scale(1.0));
+         Vec3 vec = livingEntity.position().subtract(livingEntity.xo, livingEntity.yo, livingEntity.zo);
+         return livingEntity.getBoundingBox().move(vec.scale(1.0));
       }
    }
 
-   private Rotation method5732(ItemStack var1, PlayerSimulation var2, Rotation var3, AABB var4) {
-      Arrow var5 = new Arrow(mc.level, mc.player, var1, var1);
-      Vec3 var6 = this.method5729(var2);
-      Vec3 var7 = var2.vec3d2;
-      double var8 = this.method5739();
-      if (this.method5738(var3, var6, var7, var4, var5, var8)) {
-         return var3;
+   private Rotation method5732(ItemStack useItem, PlayerSimulation playerSimulation, Rotation rotation, AABB aabb) {
+      Arrow arrow = new Arrow(mc.level, mc.player, useItem, useItem);
+      Vec3 vec = this.method5729(playerSimulation);
+      Vec3 vec3d2 = playerSimulation.vec3d2;
+      double d = this.method5739();
+      if (this.method5738(rotation, vec, vec3d2, aabb, arrow, d)) {
+         return rotation;
       } else {
-         int var10 = Math.round(var3.getFloatValue());
-         int var11 = Math.round(var3.getFloatValue2());
-         Integer var12 = this.method5735(var10, var11, var6, var7, var4, var5, var8);
-         if (var12 == null) {
+         int yRot = Math.round(rotation.getFloatValue());
+         int n = Math.round(rotation.getFloatValue2());
+         Integer xRot = this.method5735(yRot, n, vec, vec3d2, aabb, arrow, d);
+         if (xRot == null) {
             return null;
          } else {
-            Rotation var13 = new Rotation(var10, var12.intValue());
-            return this.method5738(var13, var6, var7, var4, var5, var8) ? var13 : this.method5736(var10, var12, var6, var7, var4, var5, var8);
+            Rotation rotation2 = new Rotation(yRot, xRot.intValue());
+            return this.method5738(rotation2, vec, vec3d2, aabb, arrow, d) ? rotation2 : this.method5736(yRot, xRot, vec, vec3d2, aabb, arrow, d);
          }
       }
    }
 
-   private boolean method5733(ItemStack var1, PlayerSimulation var2, AABB var3) {
+   private boolean method5733(ItemStack useItem, PlayerSimulation playerSimulation, AABB aabb) {
       if (mc.gameMode == null) {
          return false;
-      } else if (!this.method5734(var3)) {
+      } else if (!this.method5734(aabb)) {
          return false;
       } else {
          mc.options.keyUse.setDown(false);
@@ -196,10 +196,10 @@ public final class BowAimBotModule extends Module {
       }
    }
 
-   private boolean method5734(AABB var1) {
-      double var2;
-      int var5 = ((var2 = mc.player.distanceToSqr(var1.getCenter())) < 100.0 ? (var2 < 16.0 ? 2 : 5) : 7) + (int)this.autoShootDelay.getValue3();
-      if (this.intValue++ <= var5) {
+   private boolean method5734(AABB aabb) {
+      double d;
+      int n = ((d = mc.player.distanceToSqr(aabb.getCenter())) < 100.0 ? (d < 16.0 ? 2 : 5) : 7) + (int)this.autoShootDelay.getValue3();
+      if (this.intValue++ <= n) {
          return false;
       } else {
          this.intValue = 0;
@@ -207,17 +207,17 @@ public final class BowAimBotModule extends Module {
       }
    }
 
-   private Integer method5735(int var1, int var2, Vec3 var3, Vec3 var4, AABB var5, Arrow var6, double var7) {
-      for (int var9 = 0; var9 <= 90; var9++) {
-         int var10 = var2 + var9;
-         if (this.method5737(var1, var10, var3, var4, var5, var6, var7)) {
-            return var10;
+   private Integer method5735(int yRot, int n, Vec3 vec, Vec3 vec3d2, AABB aabb, Arrow arrow, double d) {
+      for (int i = 0; i <= 90; i++) {
+         int xRot = n + i;
+         if (this.method5737(yRot, xRot, vec, vec3d2, aabb, arrow, d)) {
+            return xRot;
          }
 
-         if (var9 != 0) {
-            int var11 = var2 - var9;
-            if (this.method5737(var1, var11, var3, var4, var5, var6, var7)) {
-               return var11;
+         if (i != 0) {
+            int xRot2 = n - i;
+            if (this.method5737(yRot, xRot2, vec, vec3d2, aabb, arrow, d)) {
+               return xRot2;
             }
          }
       }
@@ -225,71 +225,71 @@ public final class BowAimBotModule extends Module {
       return null;
    }
 
-   private Rotation method5736(int var1, int var2, Vec3 var3, Vec3 var4, AABB var5, Arrow var6, double var7) {
-      for (int var9 = 1; var9 <= 50; var9++) {
-         Rotation var10 = new Rotation(var1 + var9, var2);
-         if (this.method5738(var10, var3, var4, var5, var6, var7)) {
-            return var10.method3140(3.0F, 0.0F);
+   private Rotation method5736(int yRot, int xRot, Vec3 vec, Vec3 vec3d2, AABB aabb, Arrow arrow, double d) {
+      for (int i = 1; i <= 50; i++) {
+         Rotation rotation = new Rotation(yRot + i, xRot);
+         if (this.method5738(rotation, vec, vec3d2, aabb, arrow, d)) {
+            return rotation.method3140(3.0F, 0.0F);
          }
 
-         Rotation var11 = new Rotation(var1 - var9, var2);
-         if (this.method5738(var11, var3, var4, var5, var6, var7)) {
-            return var11.method3140(-3.0F, 0.0F);
+         Rotation rotation2 = new Rotation(yRot - i, xRot);
+         if (this.method5738(rotation2, vec, vec3d2, aabb, arrow, d)) {
+            return rotation2.method3140(-3.0F, 0.0F);
          }
       }
 
       return null;
    }
 
-   private boolean method5737(int var1, int var2, Vec3 var3, Vec3 var4, AABB var5, Arrow var6, double var7) {
-      Rotation var9 = new Rotation(var1, var2);
-      Vec3 var10 = var9.method3135();
-      double var11;
-      if ((var11 = var10.length()) <= 1.0E-6) {
+   private boolean method5737(int yRot, int xRot, Vec3 vec, Vec3 vec3d2, AABB aabb, Arrow arrow, double d) {
+      Rotation rotation = new Rotation(yRot, xRot);
+      Vec3 vec2 = rotation.method3135();
+      double length;
+      if ((length = vec2.length()) <= 1.0E-6) {
          return false;
       } else {
-         Vec3 var13 = this.method5727(var5);
-         Vec3 var14 = new Vec3(var13.x - var3.x, 0.0, var13.z - var3.z);
-         double var15;
-         if ((var15 = var14.horizontalDistance()) <= 1.0E-6) {
+         Vec3 vec3 = this.method5727(aabb);
+         Vec3 vec4 = new Vec3(vec3.x - vec.x, 0.0, vec3.z - vec.z);
+         double horizontalDistance;
+         if ((horizontalDistance = vec4.horizontalDistance()) <= 1.0E-6) {
             return true;
          } else {
-            var14 = var14.normalize();
-            Vec3 var17 = var3;
-            Vec3 var18 = var10.scale(var7 / var11).add(var4);
+            vec4 = vec4.normalize();
+            Vec3 to = vec;
+            Vec3 vec5 = vec2.scale(d / length).add(vec3d2);
 
-            for (int var19 = 0; var19 < 300; var19++) {
-               Vec3 var20 = var17;
-               var17 = var17.add(var18);
-               Vec3 var21 = PredictionsModule.INSTANCE.method2921(var6, var20, var18);
-               BlockHitResult var22 = TargetUtils.method3208(var20, var17, Block.COLLIDER, var6);
-               double var23 = this.method5741(var20, var17, var22);
-               double var25 = this.method5740(var20, var3, var14);
-               double var27;
-               if ((var27 = this.method5740(var17, var3, var14)) >= var15) {
-                  double var29;
-                  double var31;
-                  if (!((var31 = (var29 = var27 - var25) <= 1.0E-6 ? 0.0 : Mth.clamp((var15 - var25) / var29, 0.0, 1.0)) <= var23)) {
+            for (int i = 0; i < 300; i++) {
+               Vec3 from = to;
+               to = to.add(vec5);
+               Vec3 vec6 = PredictionsModule.INSTANCE.method2921(arrow, from, vec5);
+               BlockHitResult blockHitResult = TargetUtils.method3208(from, to, Block.COLLIDER, arrow);
+               double d2 = this.method5741(from, to, blockHitResult);
+               double d3 = this.method5740(from, vec, vec4);
+               double d4;
+               if ((d4 = this.method5740(to, vec, vec4)) >= horizontalDistance) {
+                  double d5;
+                  double alpha1;
+                  if (!((alpha1 = (d5 = d4 - d3) <= 1.0E-6 ? 0.0 : Mth.clamp((horizontalDistance - d3) / d5, 0.0, 1.0)) <= d2)) {
                      return false;
                   }
 
-                  double var33;
-                  return (var33 = Mth.lerp(var31, var20.y, var17.y)) >= var5.minY && var33 <= var5.maxY;
+                  double d6;
+                  return (d6 = Mth.lerp(alpha1, from.y, to.y)) >= aabb.minY && d6 <= aabb.maxY;
                }
 
-               if (var23 < 1.0) {
+               if (d2 < 1.0) {
                   return false;
                }
 
-               if (var17.y < -128.0) {
+               if (to.y < -128.0) {
                   return false;
                }
 
-               if (var17.y < var5.minY && var21.y <= 0.0) {
+               if (to.y < aabb.minY && vec6.y <= 0.0) {
                   return false;
                }
 
-               var18 = var21;
+               vec5 = vec6;
             }
 
             return false;
@@ -297,35 +297,35 @@ public final class BowAimBotModule extends Module {
       }
    }
 
-   private boolean method5738(Rotation var1, Vec3 var2, Vec3 var3, AABB var4, Arrow var5, double var6) {
-      Vec3 var8 = var1.method3135();
-      double var9;
-      if ((var9 = var8.length()) <= 1.0E-6) {
+   private boolean method5738(Rotation rotation, Vec3 vec, Vec3 vec3d2, AABB aabb, Arrow arrow, double d) {
+      Vec3 vec2 = rotation.method3135();
+      double length;
+      if ((length = vec2.length()) <= 1.0E-6) {
          return false;
       } else {
-         Vec3 var11 = var2;
-         Vec3 var12 = var8.scale(var6 / var9).add(var3);
+         Vec3 to = vec;
+         Vec3 vec3 = vec2.scale(d / length).add(vec3d2);
 
-         for (int var13 = 0; var13 < 300; var13++) {
-            Vec3 var14 = var11;
-            var11 = var11.add(var12);
-            Vec3 var15 = PredictionsModule.INSTANCE.method2921(var5, var14, var12);
-            BlockHitResult var16 = TargetUtils.method3208(var14, var11, Block.COLLIDER, var5);
-            double var17 = var16.getType() == Type.MISS ? Double.POSITIVE_INFINITY : var14.distanceToSqr(var16.getLocation());
-            var var19 = var4.clip(var14, var11);
-            if (var19.isPresent() && var14.distanceToSqr((Vec3)var19.get()) <= var17) {
+         for (int i = 0; i < 300; i++) {
+            Vec3 from = to;
+            to = to.add(vec3);
+            Vec3 vec4 = PredictionsModule.INSTANCE.method2921(arrow, from, vec3);
+            BlockHitResult blockHitResult = TargetUtils.method3208(from, to, Block.COLLIDER, arrow);
+            double d2 = blockHitResult.getType() == Type.MISS ? Double.POSITIVE_INFINITY : from.distanceToSqr(blockHitResult.getLocation());
+            var clip = aabb.clip(from, to);
+            if (clip.isPresent() && from.distanceToSqr((Vec3)clip.get()) <= d2) {
                return true;
             }
 
-            if (var16.getType() != Type.MISS || var11.y < -128.0) {
+            if (blockHitResult.getType() != Type.MISS || to.y < -128.0) {
                return false;
             }
 
-            if (var11.y < var4.minY - 1.0E-6 && var15.y <= 0.0) {
+            if (to.y < aabb.minY - 1.0E-6 && vec4.y <= 0.0) {
                return false;
             }
 
-            var12 = var15;
+            vec3 = vec4;
          }
 
          return false;
@@ -333,21 +333,21 @@ public final class BowAimBotModule extends Module {
    }
 
    private double method5739() {
-      float var1 = mc.player.getTicksUsingItem() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) + 1.0F;
-      return 3.0F * Mth.clamp(var1 / 20.0F, 0.0F, 1.0F);
+      float f = mc.player.getTicksUsingItem() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) + 1.0F;
+      return 3.0F * Mth.clamp(f / 20.0F, 0.0F, 1.0F);
    }
 
-   private double method5740(Vec3 var1, Vec3 var2, Vec3 var3) {
-      Vec3 var4 = var1.subtract(var2);
-      return var4.x * var3.x + var4.z * var3.z;
+   private double method5740(Vec3 from, Vec3 vec, Vec3 vec2) {
+      Vec3 vec3 = from.subtract(vec);
+      return vec3.x * vec2.x + vec3.z * vec2.z;
    }
 
-   private double method5741(Vec3 var1, Vec3 var2, BlockHitResult var3) {
-      if (var3.getType() == Type.MISS) {
+   private double method5741(Vec3 from, Vec3 to, BlockHitResult blockHitResult) {
+      if (blockHitResult.getType() == Type.MISS) {
          return Double.POSITIVE_INFINITY;
       } else {
-         double var4;
-         return (var4 = var1.distanceTo(var2)) <= 1.0E-6 ? 0.0 : var1.distanceTo(var3.getLocation()) / var4;
+         double d;
+         return (d = from.distanceTo(to)) <= 1.0E-6 ? 0.0 : from.distanceTo(blockHitResult.getLocation()) / d;
       }
    }
 }

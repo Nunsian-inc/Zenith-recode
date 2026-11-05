@@ -70,37 +70,37 @@ public class ActionMapModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (!var1.method7100()) {
-         Packet var2 = var1.getPacket3();
-         if (var2 != null) {
-            long var3 = System.currentTimeMillis();
-            long var5 = var3 - this.longValue;
-            if (var2 instanceof ServerboundClientTickEndPacket && mc.player != null) {
+   public void onPacket(PacketEvent event) {
+      if (!event.method7100()) {
+         Packet packet3 = event.getPacket3();
+         if (packet3 != null) {
+            long now = System.currentTimeMillis();
+            long l = now - this.longValue;
+            if (packet3 instanceof ServerboundClientTickEndPacket && mc.player != null) {
                this.floatValue = mc.player.getYRot();
                this.floatValue2 = mc.player.getXRot();
                this.flag = true;
             }
 
             if (!this.hideNoise.isEnabled()
-               || !(var2 instanceof ServerboundClientTickEndPacket) && !(var2 instanceof ServerboundPongPacket) && !(var2 instanceof ServerboundKeepAlivePacket)) {
-               if (var2 instanceof ServerboundMovePlayerPacket var7) {
-                  String var8 = this.method1362(var7);
-                  if (var8.equals(this.text)) {
+               || !(packet3 instanceof ServerboundClientTickEndPacket) && !(packet3 instanceof ServerboundPongPacket) && !(packet3 instanceof ServerboundKeepAlivePacket)) {
+               if (packet3 instanceof ServerboundMovePlayerPacket movePlayerPacket) {
+                  String text = this.method1362(movePlayerPacket);
+                  if (text.equals(this.text)) {
                      this.intValue++;
                   } else {
                      this.method1361();
-                     this.text = var8;
+                     this.text = text;
                      this.intValue = 1;
                   }
                } else {
                   this.method1361();
-                  if (this.gapMark.isEnabled() && var3 - this.longValue2 > 900L) {
-                     this.method1367(var5, "· · · пауза " + (var3 - this.longValue2) + "мс · · ·");
+                  if (this.gapMark.isEnabled() && now - this.longValue2 > 900L) {
+                     this.method1367(l, "· · · пауза " + (now - this.longValue2) + "мс · · ·");
                   }
 
-                  this.longValue2 = var3;
-                  this.method1367(var5, this.method1363(var2));
+                  this.longValue2 = now;
+                  this.method1367(l, this.method1363(packet3));
                }
             }
          }
@@ -115,41 +115,41 @@ public class ActionMapModule extends Module {
       }
    }
 
-   private String method1362(ServerboundMovePlayerPacket var1) {
-      boolean var2 = var1.hasPosition();
-      boolean var3 = var1.hasRotation();
-      if (var2 && var3) {
+   private String method1362(ServerboundMovePlayerPacket movePlayerPacket) {
+      boolean hasPosition = movePlayerPacket.hasPosition();
+      boolean hasRotation = movePlayerPacket.hasRotation();
+      if (hasPosition && hasRotation) {
          return "Full";
-      } else if (var2) {
+      } else if (hasPosition) {
          return "PositionAndOnGround";
       } else {
-         return var3 ? "LookAndOnGround" : "OnGroundOnly";
+         return hasRotation ? "LookAndOnGround" : "OnGroundOnly";
       }
    }
 
-   private String method1363(Packet<?> var1) {
-      if (var1 instanceof ServerboundInteractPacket || var1 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
+   private String method1363(Packet<?> packet3) {
+      if (packet3 instanceof ServerboundInteractPacket || packet3 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
          return this.method1364();
-      } else if (var1 instanceof ServerboundPunchPacket) {
+      } else if (packet3 instanceof ServerboundPunchPacket) {
          return "HandSwing  (взмах рукой)";
-      } else if (var1 instanceof ServerboundUseItemOnPacket var11) {
-         return "PlayerInteractBlock  hand=" + var11.hand() + " seq=" + var11.sequence() + "  (ПКМ по блоку / постановка)";
-      } else if (var1 instanceof ServerboundUseItemPacket var10) {
-         return "PlayerInteractItem  hand=" + var10.hand() + " seq=" + var10.sequence() + "  (ПКМ предметом / еда, зелье)";
-      } else if (var1 instanceof ServerboundContainerClickPacket var9) {
-         return "ClickSlot  syncId=" + var9.containerId() + " slot=" + var9.slotNum() + " btn=" + var9.buttonNum() + " type=" + var9.containerInput() + "  (клик в окне)";
-      } else if (var1 instanceof ServerboundContainerClosePacket var8) {
-         return "CloseHandledScreen  syncId=" + var8.getContainerId() + "  (закрытие окна)";
-      } else if (var1 instanceof ServerboundSetCarriedItemPacket var7) {
-         return "UpdateSelectedSlot  slot=" + var7.getSlot() + "  (смена слота хотбара)";
-      } else if (var1 instanceof ServerboundPlayerCommandPacket var6) {
-         return "ClientCommand  " + var6.getAction() + "  (спринт/шифт/респавн)";
-      } else if (var1 instanceof ServerboundChatCommandPacket var5) {
-         return "CommandExecution  /" + var5.command() + "  (ввод команды)";
-      } else if (var1 instanceof ServerboundChatPacket var4) {
-         return "ChatMessage  \"" + var4.message() + "\"  (сообщение в чат)";
-      } else if (var1 instanceof ServerboundPlayerActionPacket var2) {
-         String var3 = switch (var2.getAction()) {
+      } else if (packet3 instanceof ServerboundUseItemOnPacket useItemOnPacket) {
+         return "PlayerInteractBlock  hand=" + useItemOnPacket.hand() + " seq=" + useItemOnPacket.sequence() + "  (ПКМ по блоку / постановка)";
+      } else if (packet3 instanceof ServerboundUseItemPacket useItemPacket) {
+         return "PlayerInteractItem  hand=" + useItemPacket.hand() + " seq=" + useItemPacket.sequence() + "  (ПКМ предметом / еда, зелье)";
+      } else if (packet3 instanceof ServerboundContainerClickPacket containerClickPacket) {
+         return "ClickSlot  syncId=" + containerClickPacket.containerId() + " slot=" + containerClickPacket.slotNum() + " btn=" + containerClickPacket.buttonNum() + " type=" + containerClickPacket.containerInput() + "  (клик в окне)";
+      } else if (packet3 instanceof ServerboundContainerClosePacket containerClosePacket) {
+         return "CloseHandledScreen  syncId=" + containerClosePacket.getContainerId() + "  (закрытие окна)";
+      } else if (packet3 instanceof ServerboundSetCarriedItemPacket setCarriedItemPacket) {
+         return "UpdateSelectedSlot  slot=" + setCarriedItemPacket.getSlot() + "  (смена слота хотбара)";
+      } else if (packet3 instanceof ServerboundPlayerCommandPacket playerCommandPacket) {
+         return "ClientCommand  " + playerCommandPacket.getAction() + "  (спринт/шифт/респавн)";
+      } else if (packet3 instanceof ServerboundChatCommandPacket chatCommandPacket) {
+         return "CommandExecution  /" + chatCommandPacket.command() + "  (ввод команды)";
+      } else if (packet3 instanceof ServerboundChatPacket serverboundChatPacket) {
+         return "ChatMessage  \"" + serverboundChatPacket.message() + "\"  (сообщение в чат)";
+      } else if (packet3 instanceof ServerboundPlayerActionPacket playerActionPacket) {
+         String str = switch (playerActionPacket.getAction()) {
             case START_DESTROY_BLOCK -> "начало ломки блока";
             case STOP_DESTROY_BLOCK -> "конец ломки блока";
             case ABORT_DESTROY_BLOCK -> "отмена ломки";
@@ -157,63 +157,63 @@ public class ActionMapModule extends Module {
             case DROP_ALL_ITEMS -> "выброс стака (Ctrl+Q)";
             case RELEASE_USE_ITEM -> "отпуск использования (лук, еда)";
             case SWAP_ITEM_WITH_OFFHAND -> "перекладка в оффхенд (F)";
-            default -> var2.getAction().name();
+            default -> playerActionPacket.getAction().name();
          };
-         return "PlayerAction  " + var2.getAction() + "  (" + var3 + ")";
+         return "PlayerAction  " + playerActionPacket.getAction() + "  (" + str + ")";
       } else {
-         return var1.getClass().getSimpleName();
+         return packet3.getClass().getSimpleName();
       }
    }
 
    private String method1364() {
-      long var1 = System.currentTimeMillis();
-      long var3 = this.longValue3 == 0L ? -1L : var1 - this.longValue3;
-      this.longValue3 = var1;
-      StringBuilder var5 = new StringBuilder("ATTACK  ");
+      long now = System.currentTimeMillis();
+      long lng = this.longValue3 == 0L ? -1L : now - this.longValue3;
+      this.longValue3 = now;
+      StringBuilder builder = new StringBuilder("ATTACK  ");
       if (mc.player != null) {
-         float var6 = mc.player.getYRot();
-         float var7 = mc.player.getXRot();
-         float var8 = this.flag ? this.method1365(var6 - this.floatValue) : 0.0F;
-         float var9 = var7 - this.floatValue2;
-         var5.append(String.format("yaw=%.1f pitch=%.1f  Δyaw=%.1f Δpitch=%.1f  ", var6, var7, var8, var9));
+         float yRot = mc.player.getYRot();
+         float xRot = mc.player.getXRot();
+         float f = this.flag ? this.method1365(yRot - this.floatValue) : 0.0F;
+         float f2 = xRot - this.floatValue2;
+         builder.append(String.format("yaw=%.1f pitch=%.1f  Δyaw=%.1f Δpitch=%.1f  ", yRot, xRot, f, f2));
       }
 
-      var5.append("interval=").append(var3).append("ms  ");
-      boolean var10 = mc.crosshairPickEntity != null;
-      var5.append(var10 ? "цель=ПОД ПРИЦЕЛОМ" : "цель=НЕ под прицелом");
-      return var5.toString();
+      builder.append("interval=").append(lng).append("ms  ");
+      boolean flag = mc.crosshairPickEntity != null;
+      builder.append(flag ? "цель=ПОД ПРИЦЕЛОМ" : "цель=НЕ под прицелом");
+      return builder.toString();
    }
 
-   private float method1365(float var1) {
-      while (var1 > 180.0F) {
-         var1 -= 360.0F;
+   private float method1365(float f) {
+      while (f > 180.0F) {
+         f -= 360.0F;
       }
 
-      while (var1 < -180.0F) {
-         var1 += 360.0F;
+      while (f < -180.0F) {
+         f += 360.0F;
       }
 
-      return var1;
+      return f;
    }
 
    private void method1366() {
       try {
-         File var1 = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
-         if (!var1.exists() && !var1.mkdirs()) {
+         File file = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
+         if (!file.exists() && !file.mkdirs()) {
             return;
          }
 
-         File var2 = new File(var1, "actionmap-" + System.currentTimeMillis() + ".log");
-         this.printWriter = new PrintWriter(new FileWriter(var2, true), true);
-         ChatLogger.method2019("ActionMap: " + var2.getName());
-      } catch (Exception var3) {
+         File file2 = new File(file, "actionmap-" + System.currentTimeMillis() + ".log");
+         this.printWriter = new PrintWriter(new FileWriter(file2, true), true);
+         ChatLogger.method2019("ActionMap: " + file2.getName());
+      } catch (Exception e) {
          this.printWriter = null;
       }
    }
 
-   private void method1367(long var1, String var3) {
+   private void method1367(long l, String str) {
       if (this.printWriter != null) {
-         this.printWriter.printf("%6d  %s%n", var1, var3);
+         this.printWriter.printf("%6d  %s%n", l, str);
       }
    }
 
@@ -221,7 +221,7 @@ public class ActionMapModule extends Module {
       if (this.printWriter != null) {
          try {
             this.printWriter.close();
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
 
          this.printWriter = null;

@@ -38,141 +38,141 @@ public final class MineTargetFinder {
       Blocks.CLAY
    );
 
-   public static MineTargetFinder.Data method1933(boolean var0) {
-      return var0 ? data2 : data;
+   public static MineTargetFinder.Data method1933(boolean flag) {
+      return flag ? data2 : data;
    }
 
    private MineTargetFinder() {
    }
 
-   public static boolean method1934(Block var0) {
-      return items.contains(var0);
+   public static boolean method1934(Block block) {
+      return items.contains(block);
    }
 
-   public static boolean method1935(MineTargetFinder.Data var0, BlockPos var1) {
-      return var1.getX() >= var0.getIntValue()
-         && var1.getX() <= var0.getIntValue2()
-         && var1.getY() >= var0.getIntValue3()
-         && var1.getY() <= var0.getIntValue4()
-         && var1.getZ() >= var0.getIntValue5()
-         && var1.getZ() <= var0.getIntValue6();
+   public static boolean method1935(MineTargetFinder.Data data, BlockPos blockPos) {
+      return blockPos.getX() >= data.getIntValue()
+         && blockPos.getX() <= data.getIntValue2()
+         && blockPos.getY() >= data.getIntValue3()
+         && blockPos.getY() <= data.getIntValue4()
+         && blockPos.getZ() >= data.getIntValue5()
+         && blockPos.getZ() <= data.getIntValue6();
    }
 
-   public static boolean method1936(MineTargetFinder.Data var0, Vec3 var1) {
-      return var1.x >= var0.getIntValue() && var1.x <= var0.getIntValue2() + 1.0 && var1.z >= var0.getIntValue5() && var1.z <= var0.getIntValue6() + 1.0;
+   public static boolean method1936(MineTargetFinder.Data data, Vec3 vec) {
+      return vec.x >= data.getIntValue() && vec.x <= data.getIntValue2() + 1.0 && vec.z >= data.getIntValue5() && vec.z <= data.getIntValue6() + 1.0;
    }
 
-   public static boolean method1937(MineTargetFinder.Data var0, BlockPos var1) {
-      return var1.getX() >= var0.getIntValue()
-         && var1.getX() <= var0.getIntValue2()
-         && var1.getY() >= var0.getIntValue3() - 3
-         && var1.getY() <= var0.getIntValue4() + 3
-         && var1.getZ() >= var0.getIntValue5()
-         && var1.getZ() <= var0.getIntValue6();
+   public static boolean method1937(MineTargetFinder.Data data, BlockPos pos) {
+      return pos.getX() >= data.getIntValue()
+         && pos.getX() <= data.getIntValue2()
+         && pos.getY() >= data.getIntValue3() - 3
+         && pos.getY() <= data.getIntValue4() + 3
+         && pos.getZ() >= data.getIntValue5()
+         && pos.getZ() <= data.getIntValue6();
    }
 
-   public static boolean method1938(MineTargetFinder.Data var0, Level var1) {
-      int var2 = var0.getIntValue() - 4;
-      int var3 = var0.getIntValue2() + 4;
-      int var4 = var0.getIntValue5() - 4;
-      int var5 = var0.getIntValue6() + 4;
-      int var6 = (var0.getIntValue() + var0.getIntValue2()) / 2;
-      int var7 = (var0.getIntValue5() + var0.getIntValue6()) / 2;
-      return var1.hasChunkAt(new BlockPos(var2, var0.getIntValue3(), var4))
-         && var1.hasChunkAt(new BlockPos(var2, var0.getIntValue3(), var5))
-         && var1.hasChunkAt(new BlockPos(var3, var0.getIntValue3(), var4))
-         && var1.hasChunkAt(new BlockPos(var3, var0.getIntValue3(), var5))
-         && var1.hasChunkAt(new BlockPos(var6, var0.getIntValue3(), var7));
+   public static boolean method1938(MineTargetFinder.Data selectedMine, Level world) {
+      int x = selectedMine.getIntValue() - 4;
+      int n = selectedMine.getIntValue2() + 4;
+      int z = selectedMine.getIntValue5() - 4;
+      int z2 = selectedMine.getIntValue6() + 4;
+      int x2 = (selectedMine.getIntValue() + selectedMine.getIntValue2()) / 2;
+      int z3 = (selectedMine.getIntValue5() + selectedMine.getIntValue6()) / 2;
+      return world.hasChunkAt(new BlockPos(x, selectedMine.getIntValue3(), z))
+         && world.hasChunkAt(new BlockPos(x, selectedMine.getIntValue3(), z2))
+         && world.hasChunkAt(new BlockPos(n, selectedMine.getIntValue3(), z))
+         && world.hasChunkAt(new BlockPos(n, selectedMine.getIntValue3(), z2))
+         && world.hasChunkAt(new BlockPos(x2, selectedMine.getIntValue3(), z3));
    }
 
-   public static double method1939(Vec3 var0, BlockPos var1) {
-      double var2 = Math.max((double)var1.getX(), Math.min(var1.getX() + 1.0, var0.x));
-      double var4 = Math.max((double)var1.getY(), Math.min(var1.getY() + 1.0, var0.y));
-      double var6 = Math.max((double)var1.getZ(), Math.min(var1.getZ() + 1.0, var0.z));
-      return var0.distanceToSqr(var2, var4, var6);
+   public static double method1939(Vec3 eyePosition, BlockPos pos) {
+      double x = Math.max((double)pos.getX(), Math.min(pos.getX() + 1.0, eyePosition.x));
+      double y = Math.max((double)pos.getY(), Math.min(pos.getY() + 1.0, eyePosition.y));
+      double z = Math.max((double)pos.getZ(), Math.min(pos.getZ() + 1.0, eyePosition.z));
+      return eyePosition.distanceToSqr(x, y, z);
    }
 
-   public static BlockHitResult method1940(BlockPos var0, double var1, Vec3 var3) {
-      Vec3 var4 = net.minecraft.world.phys.Vec3.atCenterOf(var0);
-      double var5 = 0.49;
-      Vec3[] var7 = new Vec3[]{
-         var4,
-         var4.add(var5, 0.0, 0.0),
-         var4.add(-var5, 0.0, 0.0),
-         var4.add(0.0, var5, 0.0),
-         var4.add(0.0, -var5, 0.0),
-         var4.add(0.0, 0.0, var5),
-         var4.add(0.0, 0.0, -var5)
+   public static BlockHitResult method1940(BlockPos pos, double blockInteractionRange, Vec3 eyePosition) {
+      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      double x = 0.49;
+      Vec3[] vecs = new Vec3[]{
+         atCenterOf,
+         atCenterOf.add(x, 0.0, 0.0),
+         atCenterOf.add(-x, 0.0, 0.0),
+         atCenterOf.add(0.0, x, 0.0),
+         atCenterOf.add(0.0, -x, 0.0),
+         atCenterOf.add(0.0, 0.0, x),
+         atCenterOf.add(0.0, 0.0, -x)
       };
 
-      for (Vec3 var11 : var7) {
-         BlockHitResult var12 = TargetUtils.method3205(var3, var1, Rotation.method3128(var11, var3), false);
-         if (var12 != null && var12.getType() != Type.MISS && var12.getBlockPos().equals(var0)) {
-            return var12;
+      for (Vec3 vec : vecs) {
+         BlockHitResult blockHitResult = TargetUtils.method3205(eyePosition, blockInteractionRange, Rotation.method3128(vec, eyePosition), false);
+         if (blockHitResult != null && blockHitResult.getType() != Type.MISS && blockHitResult.getBlockPos().equals(pos)) {
+            return blockHitResult;
          }
       }
 
       return null;
    }
 
-   public static boolean method1941(BlockPos var0, Vec3 var1, Vec3 var2, double var3) {
-      Vec3 var5 = net.minecraft.world.phys.Vec3.atCenterOf(var0).subtract(var1);
-      double var6 = var5.x * var2.x + var5.z * var2.z;
-      return var6 > 0.0 && var6 <= var3 + 0.75 && method1945(var0, var1, var2) <= 1.2;
+   public static boolean method1941(BlockPos pos, Vec3 vec, Vec3 vec2, double d) {
+      Vec3 vec3 = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(vec);
+      double d2 = vec3.x * vec2.x + vec3.z * vec2.z;
+      return d2 > 0.0 && d2 <= d + 0.75 && method1945(pos, vec, vec2) <= 1.2;
    }
 
-   public static boolean method1942(BlockPos var0, Vec3 var1, Vec3 var2, double var3) {
-      Vec3 var5 = net.minecraft.world.phys.Vec3.atCenterOf(var0).subtract(var1);
-      double var6 = var5.x * var2.x + var5.z * var2.z;
-      return var6 > -0.35 && var6 <= Math.min(var3 + 0.75, 4.25) && method1945(var0, var1, var2) <= 2.25;
+   public static boolean method1942(BlockPos pos, Vec3 vec, Vec3 vec2, double d) {
+      Vec3 vec3 = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(vec);
+      double d2 = vec3.x * vec2.x + vec3.z * vec2.z;
+      return d2 > -0.35 && d2 <= Math.min(d + 0.75, 4.25) && method1945(pos, vec, vec2) <= 2.25;
    }
 
-   public static BlockPos method1943(BlockPos var0, List<BlockPos> var1, Vec3 var2, Vec3 var3) {
-      Vec3 var4 = net.minecraft.world.phys.Vec3.atCenterOf(var0);
-      Vec3 var5 = new Vec3(var4.x - var3.x, 0.0, var4.z - var3.z);
-      double var6 = var5.lengthSqr();
-      if (var6 < 0.01) {
+   public static BlockPos method1943(BlockPos pos, List<BlockPos> poses, Vec3 eyePosition, Vec3 vec) {
+      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      Vec3 vec2 = new Vec3(atCenterOf.x - vec.x, 0.0, atCenterOf.z - vec.z);
+      double lengthSqr = vec2.lengthSqr();
+      if (lengthSqr < 0.01) {
          return null;
       } else {
-         double var8 = Math.sqrt(var6);
-         Vec3 var10 = var5.scale(1.0 / var8);
-         return var1.stream()
-            .filter(var1x -> !var1x.equals(var0))
-            .filter(var4x -> method1942(var4x, var3, var10, var8))
-            .min(Comparator.<BlockPos>comparingDouble(var1x -> method1939(var2, var1x)).thenComparingDouble(var2x -> method1945(var2x, var3, var10)))
+         double d = Math.sqrt(lengthSqr);
+         Vec3 vec3 = vec2.scale(1.0 / d);
+         return poses.stream()
+            .filter(var1x -> !var1x.equals(pos))
+            .filter(var4x -> method1942(var4x, vec, vec3, d))
+            .min(Comparator.<BlockPos>comparingDouble(var1x -> method1939(eyePosition, var1x)).thenComparingDouble(var2x -> method1945(var2x, vec, vec3)))
             .orElse(null);
       }
    }
 
-   public static BlockPos method1944(BlockPos var0, List<BlockPos> var1, Vec3 var2, Vec3 var3, int var4) {
-      if (var0.getY() != var4) {
+   public static BlockPos method1944(BlockPos pos, List<BlockPos> poses, Vec3 eyePosition, Vec3 vec, int n) {
+      if (pos.getY() != n) {
          return null;
       } else {
-         Vec3 var5 = net.minecraft.world.phys.Vec3.atCenterOf(var0);
-         Vec3 var6 = new Vec3(var5.x - var3.x, 0.0, var5.z - var3.z);
-         double var7 = var6.lengthSqr();
-         if (var7 < 0.01) {
+         Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+         Vec3 vec2 = new Vec3(atCenterOf.x - vec.x, 0.0, atCenterOf.z - vec.z);
+         double lengthSqr = vec2.lengthSqr();
+         if (lengthSqr < 0.01) {
             return null;
          } else {
-            double var9 = Math.sqrt(var7);
-            Vec3 var11 = var6.scale(1.0 / var9);
-            return var1.stream()
-               .filter(var1x -> var1x.getY() == var0.getY())
-               .filter(var4x -> method1941(var4x, var3, var11, var9))
-               .min(Comparator.<BlockPos>comparingDouble(var2x -> method1945(var2x, var3, var11)).thenComparingDouble(var1x -> method1939(var2, var1x)))
+            double d = Math.sqrt(lengthSqr);
+            Vec3 vec3 = vec2.scale(1.0 / d);
+            return poses.stream()
+               .filter(var1x -> var1x.getY() == pos.getY())
+               .filter(var4x -> method1941(var4x, vec, vec3, d))
+               .min(Comparator.<BlockPos>comparingDouble(var2x -> method1945(var2x, vec, vec3)).thenComparingDouble(var1x -> method1939(eyePosition, var1x)))
                .orElse(null);
          }
       }
    }
 
-   public static double method1945(BlockPos var0, Vec3 var1, Vec3 var2) {
-      Vec3 var3 = net.minecraft.world.phys.Vec3.atCenterOf(var0).subtract(var1);
-      double var4 = var3.x * var2.x + var3.z * var2.z;
-      double var6 = var1.x + var2.x * var4;
-      double var8 = var1.z + var2.z * var4;
-      double var10 = var0.getX() + 0.5 - var6;
-      double var12 = var0.getZ() + 0.5 - var8;
-      return var10 * var10 + var12 * var12;
+   public static double method1945(BlockPos pos, Vec3 vec, Vec3 vec2) {
+      Vec3 vec3 = net.minecraft.world.phys.Vec3.atCenterOf(pos).subtract(vec);
+      double d = vec3.x * vec2.x + vec3.z * vec2.z;
+      double d2 = vec.x + vec2.x * d;
+      double d3 = vec.z + vec2.z * d;
+      double d4 = pos.getX() + 0.5 - d2;
+      double d5 = pos.getZ() + 0.5 - d3;
+      return d4 * d4 + d5 * d5;
    }
 
    public static final class Data {
@@ -224,13 +224,13 @@ public final class MineTargetFinder {
          return "Data[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "intValue4=" + this.intValue4 + ", " + "intValue5=" + this.intValue5 + ", " + "intValue6=" + this.intValue6 + "]";
       }
 
-      public Data(int var1, int var2, int var3, int var4, int var5, int var6) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.intValue3 = var3;
-         this.intValue4 = var4;
-         this.intValue5 = var5;
-         this.intValue6 = var6;
+      public Data(int intValue, int n, int n2, int n3, int n4, int n5) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.intValue4 = n3;
+         this.intValue5 = n4;
+         this.intValue6 = n5;
       }
 
       public int getIntValue() {

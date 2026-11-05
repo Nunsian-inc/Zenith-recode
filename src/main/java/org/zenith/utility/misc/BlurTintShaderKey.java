@@ -10,12 +10,12 @@ public class BlurTintShaderKey extends KawaseShaderKey implements Handler2 {
    private ShaderUniform shaderUniform4;
    private ShaderUniform shaderUniform5;
 
-   public BlurTintShaderKey(Identifier var1) {
-      super(var1, DefaultVertexFormat.POSITION_TEX_COLOR);
+   public BlurTintShaderKey(Identifier shaderIdentifier) {
+      super(shaderIdentifier, DefaultVertexFormat.POSITION_TEX_COLOR);
    }
 
-   public void method4658(float var1) {
-      this.shaderUniform2.method7412(var1);
+   public void method4658(float batchRange) {
+      this.shaderUniform2.method7412(batchRange);
       this.shaderUniform.method7413(1.0F / window.getScreenWidth(), 1.0F / window.getScreenHeight());
       this.shaderUniform3.method7412(1.0F);
       this.shaderUniform4.method7412(0.0F);

@@ -24,9 +24,9 @@ public class MixinSpriteContents {
       method = {"<init>(Lnet/minecraft/resources/Identifier;Lnet/minecraft/client/resources/metadata/animation/FrameSize;Lcom/mojang/blaze3d/platform/NativeImage;Ljava/util/Optional;Ljava/util/List;Ljava/util/Optional;)V"},
       at = {@At("RETURN")}
    )
-   private void zenith$snowCap(Identifier var1, FrameSize var2, NativeImage var3, Optional<?> var4, List<?> var5, Optional<?> var6, CallbackInfo var7) {
-      if (FoliageSprites.method1431(var1)) {
-         FoliageSprites.method1432(var1, this.originalImage);
+   private void zenith$snowCap(Identifier id, FrameSize frameSize, NativeImage nativeImage, Optional<?> optional, List<?> list, Optional<?> optional2, CallbackInfo callbackInfo) {
+      if (FoliageSprites.method1431(id)) {
+         FoliageSprites.method1432(id, this.originalImage);
       }
    }
 }

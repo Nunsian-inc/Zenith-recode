@@ -29,20 +29,20 @@ public final class OptimizationFlags {
    private OptimizationFlags() {
    }
 
-   public static void method5636(double var0) {
-      doubleValue = var0 * var0;
+   public static void method5636(double d) {
+      doubleValue = d * d;
    }
 
-   public static void method5637(double var0) {
-      doubleValue2 = var0 * var0;
+   public static void method5637(double d) {
+      doubleValue2 = d * d;
    }
 
-   public static void method5638(double var0) {
-      doubleValue3 = var0 * var0;
+   public static void method5638(double d) {
+      doubleValue3 = d * d;
    }
 
-   public static void method5639(double var0) {
-      doubleValue4 = var0 * var0;
+   public static void method5639(double d) {
+      doubleValue4 = d * d;
    }
 
    public static void clear() {

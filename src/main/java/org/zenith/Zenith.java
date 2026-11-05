@@ -165,8 +165,8 @@ public final class Zenith {
 
       try {
          this.storage = new Storage();
-      } catch (Throwable var2) {
-         var2.printStackTrace();
+      } catch (Throwable e) {
+         e.printStackTrace();
       }
 
       HeadlessBots.loadPersistentState();
@@ -197,112 +197,112 @@ public final class Zenith {
       if (this.storage != null) {
          try {
             this.storage.shutdown();
-         } catch (Throwable var16) {
+         } catch (Throwable e) {
          }
       }
 
       if (this.cosmetics != null) {
          try {
             this.cosmetics.shutdown();
-         } catch (Throwable var15) {
-            method1500("cosmeticManager", var15);
+         } catch (Throwable e) {
+            method1500("cosmeticManager", e);
          }
       }
 
       if (this.voice != null) {
          try {
             this.voice.shutdown();
-         } catch (Throwable var14) {
-            method1500("voiceManager", var14);
+         } catch (Throwable e) {
+            method1500("voiceManager", e);
          }
       }
 
       if (this.cloud != null) {
          try {
             this.cloud.shutdown();
-         } catch (Throwable var13) {
-            method1500("cloudManager", var13);
+         } catch (Throwable e) {
+            method1500("cloudManager", e);
          }
       }
 
       if (this.friends2 != null) {
          try {
             this.friends2.save();
-         } catch (Throwable var12) {
-            method1500("cloudFriends", var12);
+         } catch (Throwable e) {
+            method1500("cloudFriends", e);
          }
       }
 
       if (this.emoteManager != null) {
          try {
             this.emoteManager.close();
-         } catch (Throwable var11) {
-            method1500("emoteManager", var11);
+         } catch (Throwable e) {
+            method1500("emoteManager", e);
          }
       }
 
       try {
          this.friends.save();
-      } catch (Throwable var10) {
-         method1500("friendManager", var10);
+      } catch (Throwable e) {
+         method1500("friendManager", e);
       }
 
       try {
          this.wayManager.save();
-      } catch (Throwable var9) {
-         method1500("wayManager", var9);
+      } catch (Throwable e) {
+         method1500("wayManager", e);
       }
 
       try {
          this.staffName.save();
-      } catch (Throwable var8) {
-         method1500("staffManager", var8);
+      } catch (Throwable e) {
+         method1500("staffManager", e);
       }
 
       try {
          this.styleManager.save();
-      } catch (Throwable var7) {
-         method1500("styleManager", var7);
+      } catch (Throwable e) {
+         method1500("styleManager", e);
       }
 
       try {
          this.playTimeTracker.save();
-      } catch (Throwable var6) {
-         method1500("playTimeManager", var6);
+      } catch (Throwable e) {
+         method1500("playTimeManager", e);
       }
 
       try {
          this.macroManager.save();
-      } catch (Throwable var5) {
-         method1500("macroManager", var5);
+      } catch (Throwable e) {
+         method1500("macroManager", e);
       }
 
       try {
          this.manager.save();
-      } catch (Throwable var4) {
-         method1500("configManager", var4);
+      } catch (Throwable e) {
+         method1500("configManager", e);
       }
 
       try {
          HeadlessBots.savePersistentState();
-      } catch (Throwable var3) {
-         method1500("bots state", var3);
+      } catch (Throwable e) {
+         method1500("bots state", e);
       }
 
       try {
          HeadlessBots.disconnectAll();
-      } catch (Throwable var2) {
-         method1500("bots disconnect", var2);
+      } catch (Throwable e) {
+         method1500("bots disconnect", e);
       }
    }
 
-   private static void method1500(String var0, Throwable var1) {
-      System.err.println("[Zenith] shutdown: " + var0 + " failed");
-      var1.printStackTrace();
+   private static void method1500(String str, Throwable throwable) {
+      System.err.println("[Zenith] shutdown: " + str + " failed");
+      throwable.printStackTrace();
    }
 
-   public static Identifier method1501(String var0) {
-      return Identifier.fromNamespaceAndPath(text3, var0);
+   public static Identifier method1501(String languageFlagPath) {
+      return Identifier.fromNamespaceAndPath(text3, languageFlagPath);
    }
 
    public static boolean method1502() {
@@ -575,14 +575,14 @@ public final class Zenith {
          if (System.getProperty("DevMode") == null) {
             Session.loadWEye();
 
-            Zenith.Entry.Type var1;
+            Zenith.Entry.Type type;
             try {
-               var1 = Zenith.Entry.Type.method1514(Session.getRole());
-            } catch (Exception var3) {
-               var1 = Zenith.Entry.Type.method1514(null);
+               type = Zenith.Entry.Type.method1514(Session.getRole());
+            } catch (Exception e) {
+               type = Zenith.Entry.Type.method1514(null);
             }
 
-            this.type = var1;
+            this.type = type;
             this.text = Session.getUsername();
             this.text2 = Session.getUid();
             this.text3 = Session.getExpirationDate();
@@ -595,16 +595,16 @@ public final class Zenith {
       }
 
       public Zenith.Entry.Type method1504() {
-         Zenith.Entry.Data var1 = this.data;
-         if (this.type != Zenith.Entry.Type.ADMIN && (var1 == null || !var1.isFlag())) {
-            return var1 != null && var1.getType() != null ? var1.getType() : this.type;
+         Zenith.Entry.Data data = this.data;
+         if (this.type != Zenith.Entry.Type.ADMIN && (data == null || !data.isFlag())) {
+            return data != null && data.getType() != null ? data.getType() : this.type;
          } else {
             return Zenith.Entry.Type.ADMIN;
          }
       }
 
-      public void method1505(Zenith.Entry.Type var1, long var2, boolean var4) {
-         this.data = new Zenith.Entry.Data(var1, var2, LocalDate.now(), var4);
+      public void method1505(Zenith.Entry.Type type, long longValue, boolean flag) {
+         this.data = new Zenith.Entry.Data(type, longValue, LocalDate.now(), flag);
          this.intValue++;
       }
 
@@ -621,8 +621,8 @@ public final class Zenith {
       }
 
       public String method1509() {
-         LocalDate var1 = this.method1511().getLocalDate();
-         return var1 == null ? "-" : dateTimeFormatter.format(var1);
+         LocalDate localDate = this.method1511().getLocalDate();
+         return localDate == null ? "-" : dateTimeFormatter.format(localDate);
       }
 
       public long method1510() {
@@ -630,64 +630,64 @@ public final class Zenith {
       }
 
       private Zenith.Entry.Data2 method1511() {
-         Zenith.Entry.Data var1 = this.data;
-         LocalDate var2 = LocalDate.now();
-         long var3 = var2.toEpochDay();
-         Zenith.Entry.Data2 var5 = this.data2;
-         if (var5 != null && var5.getLongValue() == var3 && var5.getData() == var1) {
-            return var5;
+         Zenith.Entry.Data data = this.data;
+         LocalDate now = LocalDate.now();
+         long epochDay = now.toEpochDay();
+         Zenith.Entry.Data2 data2 = this.data2;
+         if (data2 != null && data2.getLongValue() == epochDay && data2.getData() == data) {
+            return data2;
          } else {
-            LocalDate var6;
-            long var7;
-            if (var1 == null || var1.getType() == null || var1.getLongValue() < 0L) {
-               var6 = method1513(this.text3);
-               var7 = var6 == null ? -1L : (var6.isAfter(var2.plusYears(10L)) ? Long.MAX_VALUE : method1512(var2, var6));
-            } else if (var1.getLongValue() > 1825L) {
-               var6 = null;
-               var7 = Long.MAX_VALUE;
+            LocalDate plusDays;
+            long l;
+            if (data == null || data.getType() == null || data.getLongValue() < 0L) {
+               plusDays = method1513(this.text3);
+               l = plusDays == null ? -1L : (plusDays.isAfter(now.plusYears(10L)) ? Long.MAX_VALUE : method1512(now, plusDays));
+            } else if (data.getLongValue() > 1825L) {
+               plusDays = null;
+               l = Long.MAX_VALUE;
             } else {
-               var6 = var1.getLocalDate().plusDays(var1.getLongValue());
-               var7 = method1512(var2, var6);
+               plusDays = data.getLocalDate().plusDays(data.getLongValue());
+               l = method1512(now, plusDays);
             }
 
-            Zenith.Entry.Data2 var9 = new Zenith.Entry.Data2(var1, var3, var7, var7 == Long.MAX_VALUE ? null : var6);
-            this.data2 = var9;
-            return var9;
+            Zenith.Entry.Data2 data22 = new Zenith.Entry.Data2(data, epochDay, l, l == Long.MAX_VALUE ? null : plusDays);
+            this.data2 = data22;
+            return data22;
          }
       }
 
-      private static long method1512(LocalDate var0, LocalDate var1) {
-         return var0.isAfter(var1) ? 0L : ChronoUnit.DAYS.between(var0, var1) + 1L;
+      private static long method1512(LocalDate now, LocalDate plusDays) {
+         return now.isAfter(plusDays) ? 0L : ChronoUnit.DAYS.between(now, plusDays) + 1L;
       }
 
-      public static LocalDate method1513(String var0) {
-         if (var0 == null) {
+      public static LocalDate method1513(String str) {
+         if (str == null) {
             return null;
          } else {
-            String var1 = var0.trim();
-            if (var1.isEmpty()) {
+            String text = str.trim();
+            if (text.isEmpty()) {
                return null;
-            } else if (var1.chars().allMatch(Character::isDigit)) {
+            } else if (text.chars().allMatch(Character::isDigit)) {
                try {
-                  long var10 = Long.parseLong(var1);
-                  return Instant.ofEpochMilli(var1.length() > 11 ? var10 : var10 * 1000L).atZone(ZoneId.systemDefault()).toLocalDate();
-               } catch (RuntimeException var8) {
+                  long l = Long.parseLong(text);
+                  return Instant.ofEpochMilli(text.length() > 11 ? l : l * 1000L).atZone(ZoneId.systemDefault()).toLocalDate();
+               } catch (RuntimeException e) {
                   return null;
                }
             } else {
-               int var2;
-               if ((var2 = var1.indexOf(84)) < 0 && var1.length() > 10 && var1.charAt(4) == '-' && var1.charAt(10) == ' ') {
-                  var2 = 10;
+               int indexOf;
+               if ((indexOf = text.indexOf(84)) < 0 && text.length() > 10 && text.charAt(4) == '-' && text.charAt(10) == ' ') {
+                  indexOf = 10;
                }
 
-               if (var2 > 0) {
-                  var1 = var1.substring(0, var2);
+               if (indexOf > 0) {
+                  text = text.substring(0, indexOf);
                }
 
-               for (DateTimeFormatter var6 : dateTimeFormatters) {
+               for (DateTimeFormatter dateTimeFormatter : dateTimeFormatters) {
                   try {
-                     return LocalDate.parse(var1, var6);
-                  } catch (DateTimeParseException var9) {
+                     return LocalDate.parse(text, dateTimeFormatter);
+                  } catch (DateTimeParseException e) {
                   }
                }
 
@@ -750,11 +750,11 @@ public final class Zenith {
             return "Data[" + "type=" + this.type + ", " + "longValue=" + this.longValue + ", " + "localDate=" + this.localDate + ", " + "flag=" + this.flag + "]";
          }
 
-         private Data(Zenith.Entry.Type var1, long var2, LocalDate var4, boolean var5) {
-            this.type = var1;
-            this.longValue = var2;
-            this.localDate = var4;
-            this.flag = var5;
+         private Data(Zenith.Entry.Type type, long longValue, LocalDate localDate, boolean flag) {
+            this.type = type;
+            this.longValue = longValue;
+            this.localDate = localDate;
+            this.flag = flag;
          }
 
          public Zenith.Entry.Type getType() {
@@ -813,11 +813,11 @@ public final class Zenith {
             return "Data2[" + "data=" + this.data + ", " + "longValue=" + this.longValue + ", " + "longValue2=" + this.longValue2 + ", " + "localDate=" + this.localDate + "]";
          }
 
-         private Data2(Zenith.Entry.Data var1, long var2, long var4, LocalDate var6) {
-            this.data = var1;
-            this.longValue = var2;
-            this.longValue2 = var4;
-            this.localDate = var6;
+         private Data2(Zenith.Entry.Data data, long longValue, long l, LocalDate localDate) {
+            this.data = data;
+            this.longValue = longValue;
+            this.longValue2 = l;
+            this.localDate = localDate;
          }
 
          public Zenith.Entry.Data getData() {
@@ -846,15 +846,15 @@ public final class Zenith {
 
          public final String text;
 
-         public static Zenith.Entry.Type method1514(String var0) {
-            if (var0 == null) {
+         public static Zenith.Entry.Type method1514(String role) {
+            if (role == null) {
                return BUILD;
             } else {
-               String var1 = var0.trim().toLowerCase(Locale.ROOT);
-               if (var1.isEmpty()) {
+               String lowerCase = role.trim().toLowerCase(Locale.ROOT);
+               if (lowerCase.isEmpty()) {
                   return BUILD;
                } else {
-                  switch (var1) {
+                  switch (lowerCase) {
                      case "admin":
                      case "administrator":
                         return ADMIN;
@@ -870,7 +870,7 @@ public final class Zenith {
                      case "zenith recode 1.21.11":
                         return PRIVATE;
                      default:
-                        return !var1.startsWith("3.0") && !var1.contains("beta") ? BUILD : PRIVATE;
+                        return !lowerCase.startsWith("3.0") && !lowerCase.contains("beta") ? BUILD : PRIVATE;
                   }
                }
             }
@@ -882,8 +882,8 @@ public final class Zenith {
          }
 
          @Generated
-         private Type(String var3) {
-            this.text = var3;
+         private Type(String text) {
+            this.text = text;
          }
       }
    }

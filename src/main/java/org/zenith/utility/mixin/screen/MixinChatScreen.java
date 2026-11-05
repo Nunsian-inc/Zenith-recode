@@ -13,8 +13,8 @@ import org.zenith.client.hud.MusicHud;
 
 @Mixin({ChatScreen.class})
 public class MixinChatScreen extends Screen implements MinecraftAccess {
-   public MixinChatScreen(Component var1) {
-      super(var1);
+   public MixinChatScreen(Component title) {
+      super(title);
    }
 
    @Inject(
@@ -22,7 +22,7 @@ public class MixinChatScreen extends Screen implements MinecraftAccess {
       at = {@At("HEAD")},
       cancellable = false
    )
-   private void onSendMessage(String var1, boolean var2, CallbackInfo var3) {
+   private void onSendMessage(String str, boolean flag, CallbackInfo callbackInfo) {
    }
 
    @Inject(
@@ -30,9 +30,9 @@ public class MixinChatScreen extends Screen implements MinecraftAccess {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$musicVolume(double var1, double var3, double var5, double var7, CallbackInfoReturnable<Boolean> var9) {
-      if (var7 != 0.0 && MusicHud.method6122(var7)) {
-         var9.setReturnValue(true);
+   private void zenith$musicVolume(double d, double d2, double d3, double d4, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      if (d4 != 0.0 && MusicHud.method6122(d4)) {
+         callbackInfoReturnable.setReturnValue(true);
       }
    }
 }

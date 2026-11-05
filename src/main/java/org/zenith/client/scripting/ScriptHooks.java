@@ -17,73 +17,73 @@ public final class ScriptHooks {
    }
 
    public static List<String> method5049() {
-      ArrayList<String> var0 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (Entry var2 : ModuleHookDefinitions.method6117().entrySet()) {
-         var0.add("`" + (String)var2.getKey() + "` — " + ((Class12)var2.getValue()).getText2());
+      for (Entry entry : ModuleHookDefinitions.method6117().entrySet()) {
+         strings.add("`" + (String)entry.getKey() + "` — " + ((Class12)entry.getValue()).getText2());
       }
 
-      return var0;
+      return strings;
    }
 
-   public static Scriptable method5050(Storage var0, Script var1, Scriptable var2) {
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var2);
-      var3.method6274("on", var3x -> {
-         String var4 = ScriptValueUtils.method6254(var3x, 0, "");
-         Class12 var5 = ModuleHookDefinitions.method6117().get(var4);
-         if (var5 == null) {
-            throw ScriptValueUtils.method6251("неизвестный хук: " + var4 + " (список — hooks.names())");
+   public static Scriptable method5050(Storage storage, Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("on", var3x -> {
+         String str = ScriptValueUtils.method6254(var3x, 0, "");
+         Class12 class2 = ModuleHookDefinitions.method6117().get(str);
+         if (class2 == null) {
+            throw ScriptValueUtils.method6251("неизвестный хук: " + str + " (список — hooks.names())");
          } else {
-            var var6 = ScriptValueUtils.method6260(var3x, 1);
-            String var7 = ScriptValueUtils.method6254(var3x, 2, "late").toLowerCase(Locale.ROOT);
+            var function = ScriptValueUtils.method6260(var3x, 1);
+            String lowerCase = ScriptValueUtils.method6254(var3x, 2, "late").toLowerCase(Locale.ROOT);
 
-            byte var8 = switch (var7) {
+            byte intValue = switch (lowerCase) {
                case "early", "before" -> -100;
                case "late", "after" -> 100;
                default -> throw ScriptValueUtils.method6251("порядок хука: early или late");
             };
-            Runnable var9 = method5051(var5, var8, var0, var1, var2, var6);
-            var1.method1413(var9::run);
+            Runnable runnable = method5051(class2, intValue, storage, workspace, scope, function);
+            workspace.method1413(runnable::run);
             return null;
          }
       });
-      var3.method6274("names", var1x -> ScriptValueUtils.method6267(var2, new ArrayList<>(ModuleHookDefinitions.method6117().keySet())));
-      return var3.getScriptableObject();
+      entry2.method6274("names", var1x -> ScriptValueUtils.method6267(scope, new ArrayList<>(ModuleHookDefinitions.method6117().keySet())));
+      return entry2.getScriptableObject();
    }
 
-   private static Runnable method5051(Class12<?> var0, int var1, Storage var2, Script var3, Scriptable var4, Function var5) {
-      Class var6 = var0.getClassValue();
-      if (var6 == ModuleHookDefinitions.Entry6.class) {
-         return ((Class12<ModuleHookDefinitions.Entry6>)(Class12)var0).method1646(
-            var1,
+   private static Runnable method5051(Class12<?> class2, int intValue, Storage storage, Script workspace, Scriptable scope, Function function) {
+      Class classValue = class2.getClassValue();
+      if (classValue == ModuleHookDefinitions.Entry6.class) {
+         return ((Class12<ModuleHookDefinitions.Entry6>)(Class12)class2).method1646(
+            intValue,
             var4x -> method5052(
-               var2,
-               var3,
-               var5,
-               () -> ScriptValueUtils.method6247(var4).method6277("value", var4x.value).method6277("vanilla", var4x.doubleValue).method6274("set", var1xxx -> {
+               storage,
+               workspace,
+               function,
+               () -> ScriptValueUtils.method6247(scope).method6277("value", var4x.value).method6277("vanilla", var4x.doubleValue).method6274("set", var1xxx -> {
                   var4x.value = ScriptValueUtils.method6256(var1xxx, 0, var4x.value);
                   return null;
                }).getScriptableObject(),
                null
             )
          );
-      } else if (var6 == ModuleHookDefinitions.Entry.class) {
-         return ((Class12<ModuleHookDefinitions.Entry>)(Class12)var0).method1646(var1, var4x -> method5052(var2, var3, var5, () -> ScriptValueUtils.method6247(var4).method6274("cancel", var1xxx -> {
+      } else if (classValue == ModuleHookDefinitions.Entry.class) {
+         return ((Class12<ModuleHookDefinitions.Entry>)(Class12)class2).method1646(intValue, var4x -> method5052(storage, workspace, function, () -> ScriptValueUtils.method6247(scope).method6274("cancel", var1xxx -> {
             var4x.cancelled = !ScriptValueUtils.method6252(var1xxx, 0) || ScriptValueUtils.method6259(var1xxx, 0, true);
             return null;
          }).method6274("cancelled", var1xxx -> var4x.cancelled).getScriptableObject(), () -> var4x.cancelled = true));
-      } else if (var6 == ModuleHookDefinitions.Entry3.class) {
-         return ((Class12<ModuleHookDefinitions.Entry3>)(Class12)var0).method1646(
-            var1,
-            var4x -> method5052(var2, var3, var5, () -> ScriptValueUtils.method6247(var4).method6277("kind", var4x.text).method6274("cancel", var1xxx -> {
+      } else if (classValue == ModuleHookDefinitions.Entry3.class) {
+         return ((Class12<ModuleHookDefinitions.Entry3>)(Class12)class2).method1646(
+            intValue,
+            var4x -> method5052(storage, workspace, function, () -> ScriptValueUtils.method6247(scope).method6277("kind", var4x.text).method6274("cancel", var1xxx -> {
                var4x.cancelled = !ScriptValueUtils.method6252(var1xxx, 0) || ScriptValueUtils.method6259(var1xxx, 0, true);
                return null;
             }).method6274("cancelled", var1xxx -> var4x.cancelled).getScriptableObject(), () -> var4x.cancelled = true)
          );
-      } else if (var6 == ModuleHookDefinitions.Entry5.class) {
-         return ((Class12<ModuleHookDefinitions.Entry5>)(Class12)var0).method1646(
-            var1,
-            var4x -> method5052(var2, var3, var5, () -> ScriptValueUtils.method6247(var4).method6277("text", var4x.text).method6274("setText", var1xxx -> {
+      } else if (classValue == ModuleHookDefinitions.Entry5.class) {
+         return ((Class12<ModuleHookDefinitions.Entry5>)(Class12)class2).method1646(
+            intValue,
+            var4x -> method5052(storage, workspace, function, () -> ScriptValueUtils.method6247(scope).method6277("text", var4x.text).method6274("setText", var1xxx -> {
                var4x.text = ScriptValueUtils.method6254(var1xxx, 0, "");
                return null;
             }).method6274("replace", var1xxx -> {
@@ -95,17 +95,17 @@ public final class ScriptHooks {
                return null;
             }).getScriptableObject(), null)
          );
-      } else if (var6 == ModuleHookDefinitions.Entry4.class) {
-         return ((Class12<ModuleHookDefinitions.Entry4>)(Class12)var0).method1646(
-            var1,
+      } else if (classValue == ModuleHookDefinitions.Entry4.class) {
+         return ((Class12<ModuleHookDefinitions.Entry4>)(Class12)class2).method1646(
+            intValue,
             var4x -> method5052(
-               var2,
-               var3,
-               var5,
-               () -> ScriptValueUtils.method6247(var4)
-                  .method6277("velocity", ScriptValueUtils.method6270(var4, var4x.vec3d.x, var4x.vec3d.y, var4x.vec3d.z))
-                  .method6277("player", ScriptValueUtils.method6270(var4, var4x.vec3d3.x, var4x.vec3d3.y, var4x.vec3d3.z))
-                  .method6277("look", ScriptValueUtils.method6270(var4, var4x.vec3d4.x, var4x.vec3d4.y, var4x.vec3d4.z))
+               storage,
+               workspace,
+               function,
+               () -> ScriptValueUtils.method6247(scope)
+                  .method6277("velocity", ScriptValueUtils.method6270(scope, var4x.vec3d.x, var4x.vec3d.y, var4x.vec3d.z))
+                  .method6277("player", ScriptValueUtils.method6270(scope, var4x.vec3d3.x, var4x.vec3d3.y, var4x.vec3d3.z))
+                  .method6277("look", ScriptValueUtils.method6270(scope, var4x.vec3d4.x, var4x.vec3d4.y, var4x.vec3d4.z))
                   .method6277("life", (double)var4x.intValue)
                   .method6274(
                      "set",
@@ -122,14 +122,14 @@ public final class ScriptHooks {
                null
             )
          );
-      } else if (var6 == ModuleHookDefinitions.Entry2.class) {
-         return ((Class12<ModuleHookDefinitions.Entry2>)(Class12)var0).method1646(
-            var1,
+      } else if (classValue == ModuleHookDefinitions.Entry2.class) {
+         return ((Class12<ModuleHookDefinitions.Entry2>)(Class12)class2).method1646(
+            intValue,
             var4x -> method5052(
-               var2,
-               var3,
-               var5,
-               () -> ScriptValueUtils.method6247(var4)
+               storage,
+               workspace,
+               function,
+               () -> ScriptValueUtils.method6247(scope)
                   .method6277("id", var4x.text)
                   .method6277("category", var4x.text2)
                   .method6277("x", var4x.doubleValue)
@@ -147,24 +147,24 @@ public final class ScriptHooks {
             )
          );
       } else {
-         throw ScriptValueUtils.method6251("хук " + var0.name() + " не поддерживается");
+         throw ScriptValueUtils.method6251("хук " + class2.name() + " не поддерживается");
       }
    }
 
-   private static void method5052(Storage var0, Script var1, Function var2, Supplier<Scriptable> var3, Runnable var4) {
-      if (var1.isRunning() && ScriptEntityApi.method6575().isSameThread()) {
+   private static void method5052(Storage storage, Script workspace, Function function, Supplier<Scriptable> supplier, Runnable runnable) {
+      if (workspace.isRunning() && ScriptEntityApi.method6575().isSameThread()) {
          ScriptContextFactory.method7409();
 
-         Scriptable var5;
+         Scriptable scriptableObject;
          try {
-            var5 = (Scriptable)var3.get();
+            scriptableObject = (Scriptable)supplier.get();
          } finally {
             Context.exit();
          }
 
-         Object var6 = var0.method1321(var1, var2, var5);
-         if (var4 != null && var6 != null && !ScriptValueUtils.method6253(var6) && Context.toBoolean(var6)) {
-            var4.run();
+         Object id = storage.method1321(workspace, function, scriptableObject);
+         if (runnable != null && id != null && !ScriptValueUtils.method6253(id) && Context.toBoolean(id)) {
+            runnable.run();
          }
       }
    }

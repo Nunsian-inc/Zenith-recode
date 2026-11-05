@@ -41,11 +41,11 @@ public final class WardrobeSetInfo {
       return "WardrobeSetInfo[" + "text=" + this.text + ", " + "items=" + this.items + ", " + "intValue=" + this.intValue + ", " + "text2=" + this.text2 + "]";
    }
 
-   public WardrobeSetInfo(String var1, List<String> var2, int var3, String var4) {
-      this.text = var1;
-      this.items = var2;
-      this.intValue = var3;
-      this.text2 = var4;
+   public WardrobeSetInfo(String text, List<String> items, int intValue, String str) {
+      this.text = text;
+      this.items = items;
+      this.intValue = intValue;
+      this.text2 = str;
    }
 
    public String method7305() {

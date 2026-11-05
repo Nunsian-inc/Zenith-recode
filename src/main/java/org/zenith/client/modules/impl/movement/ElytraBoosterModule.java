@@ -141,12 +141,12 @@ public final class ElytraBoosterModule extends Module {
 
    private ElytraBoosterModule() {
       this.render.setVisible(this.entry5::isSelected);
-      ModuleHookDefinitions.class123.method1646(0, var1 -> {
+      ModuleHookDefinitions.class123.method1646(0, entry4 -> {
          if (this.method1767()) {
-            if (this.method1768(var1.intValue, var1.intValue2, var1.vec3d3)) {
-               var1.vec3d = var1.vec3d3;
+            if (this.method1768(entry4.intValue, entry4.intValue2, entry4.vec3d3)) {
+               entry4.vec3d = entry4.vec3d3;
             } else {
-               var1.vec3d = this.method1771(var1.vec3d3, var1.vec3d4);
+               entry4.vec3d = this.method1771(entry4.vec3d3, entry4.vec3d4);
             }
          }
       });
@@ -156,257 +156,257 @@ public final class ElytraBoosterModule extends Module {
       return this.isEnabled() && this.acceleration.isEnabled() && mc.player != null && mc.player.isFallFlying();
    }
 
-   public boolean method1768(int var1, int var2, Vec3 var3) {
-      this.intValue = var1;
+   public boolean method1768(int intValue, int n, Vec3 vec3d3) {
+      this.intValue = intValue;
       return false;
    }
 
-   public Vec3 method1769(Vec3 var1) {
-      return var1;
+   public Vec3 method1769(Vec3 deltaMovement) {
+      return deltaMovement;
    }
 
-   public Vec3 method1770(Vec3 var1, Vec3 var2, Vec3 var3, Vec3 var4) {
-      return var2;
+   public Vec3 method1770(Vec3 vec, Vec3 returnValue, Vec3 lookAngle, Vec3 vec2) {
+      return returnValue;
    }
 
-   public Vec3 method1771(Vec3 var1, Vec3 var2) {
-      LocalPlayer var3 = mc.player;
-      if (var3 != null && var2 != null) {
-         float var4 = Mth.wrapDegrees(var3.getYRot());
-         float var5 = var3.getXRot();
-         Vec3 var6 = var2.normalize();
-         if (var6.lengthSqr() > 0.0) {
-            var4 = (float)Math.toDegrees(Math.atan2(-var6.x, var6.z));
-            var5 = (float)(-Math.toDegrees(Math.asin(Mth.clamp(var6.y, -1.0, 1.0))));
+   public Vec3 method1771(Vec3 vec3d3, Vec3 vec3d4) {
+      LocalPlayer player = mc.player;
+      if (player != null && vec3d4 != null) {
+         float xRot = Mth.wrapDegrees(player.getYRot());
+         float f = player.getXRot();
+         Vec3 vec = vec3d4.normalize();
+         if (vec.lengthSqr() > 0.0) {
+            xRot = (float)Math.toDegrees(Math.atan2(-vec.x, vec.z));
+            f = (float)(-Math.toDegrees(Math.asin(Mth.clamp(vec.y, -1.0, 1.0))));
          }
 
-         float var7;
-         float var8;
+         float f2;
+         float f3;
          if (this.entry4.isSelected()) {
-            var8 = var7 = this.lightningGrimMaxVelocity.getValue3();
+            f3 = f2 = this.lightningGrimMaxVelocity.getValue3();
          } else if (this.entry5.isSelected()) {
-            boolean var9 = this.customAcceleration.isEnabled() && this.intValue < 30;
-            var7 = this.method1777(var4, this.sliderSettings);
-            var8 = this.individualY.isEnabled() ? this.method1773(var5, var9) : this.method1777(var5, this.sliderSettings2);
-            var7 = Math.max(var7, var8);
+            boolean flag = this.customAcceleration.isEnabled() && this.intValue < 30;
+            f2 = this.method1777(xRot, this.sliderSettings);
+            f3 = this.individualY.isEnabled() ? this.method1773(f, flag) : this.method1777(f, this.sliderSettings2);
+            f2 = Math.max(f2, f3);
          } else if (this.entry2.isSelected()) {
-            var7 = this.method1776(var5, var4);
-            var8 = this.method1775(var5);
+            f2 = this.method1776(f, xRot);
+            f3 = this.method1775(f);
          } else if (this.entry3.isSelected()) {
-            var7 = method1774(CONST_floatValues, var4);
-            var8 = method1774(CONST_floatValues2, var5);
+            f2 = method1774(CONST_floatValues, xRot);
+            f3 = method1774(CONST_floatValues2, f);
          } else {
             if (!this.entry.isSelected()) {
-               return var1;
+               return vec3d3;
             }
 
-            var7 = method1774(CONST_floatValues3, var4);
-            var8 = method1774(CONST_floatValues4, var5);
-            var7 = Math.max(var7, var8);
+            f2 = method1774(CONST_floatValues3, xRot);
+            f3 = method1774(CONST_floatValues4, f);
+            f2 = Math.max(f2, f3);
          }
 
-         return var1.add(
-            var2.x * 0.1 + (var2.x * var7 - var1.x) * 0.5, var2.y * 0.1 + (var2.y * var8 - var1.y) * 0.5, var2.z * 0.1 + (var2.z * var7 - var1.z) * 0.5
+         return vec3d3.add(
+            vec3d4.x * 0.1 + (vec3d4.x * f2 - vec3d3.x) * 0.5, vec3d4.y * 0.1 + (vec3d4.y * f3 - vec3d3.y) * 0.5, vec3d4.z * 0.1 + (vec3d4.z * f2 - vec3d3.z) * 0.5
          );
       } else {
-         return var1;
+         return vec3d3;
       }
    }
 
    @EventTarget
-   public void method1772(DrawEvent var1) {
+   public void method1772(DrawEvent event) {
       if (mc.player != null && mc.level != null && !mc.getDebugOverlay().showDebugScreen() && this.entry5.isSelected() && this.entry6.isEnabled()) {
-         String var2 = "Pitch: " + (int)mc.player.getXRot();
-         int var3 = (mc.getWindow().getGuiScaledWidth() - mc.font.width(var2)) / 2;
-         int var4 = mc.getWindow().getGuiScaledHeight() / 2 + 25;
-         var1.getCustomDrawContext().text(mc.font, var2, var3, var4, -1, true);
+         String str = "Pitch: " + (int)mc.player.getXRot();
+         int x = (mc.getWindow().getGuiScaledWidth() - mc.font.width(str)) / 2;
+         int y = mc.getWindow().getGuiScaledHeight() / 2 + 25;
+         event.getCustomDrawContext().text(mc.font, str, x, y, -1, true);
       }
    }
 
-   private float method1773(float var1, boolean var2) {
-      int var3 = Mth.clamp(Math.round(method1778(var1)), 0, 55);
+   private float method1773(float xRot, boolean flag) {
+      int n = Mth.clamp(Math.round(method1778(xRot)), 0, 55);
       return !this.customAcceleration.isEnabled()
-         ? this.sliderSettings3[var3].getValue3()
-         : (var2 ? this.sliderSettings4[var3] : this.sliderSettings5[var3]).getValue3();
+         ? this.sliderSettings3[n].getValue3()
+         : (flag ? this.sliderSettings4[n] : this.sliderSettings5[n]).getValue3();
    }
 
-   private static float method1774(float[] var0, float var1) {
-      int var2 = Mth.clamp((int)(method1779(var1) / 5.0F), 0, var0.length - 1);
-      return var0[var2];
+   private static float method1774(float[] floats, float xRot) {
+      int n = Mth.clamp((int)(method1779(xRot) / 5.0F), 0, floats.length - 1);
+      return floats[n];
    }
 
-   private float method1775(float var1) {
-      float var2;
-      if ((var2 = Math.abs(var1)) >= 37.0F && var2 <= 38.0F) {
+   private float method1775(float f) {
+      float f2;
+      if ((f2 = Math.abs(f)) >= 37.0F && f2 <= 38.0F) {
          return 2.03F;
-      } else if (var2 >= 25.0F && var2 <= 30.0F) {
+      } else if (f2 >= 25.0F && f2 <= 30.0F) {
          return 2.0F;
-      } else if (var2 >= 35.0F && var2 <= 45.0F) {
+      } else if (f2 >= 35.0F && f2 <= 45.0F) {
          return 1.99F;
-      } else if (var2 >= 40.0F && var2 <= 50.0F) {
+      } else if (f2 >= 40.0F && f2 <= 50.0F) {
          return 1.97F;
-      } else if (var2 >= 50.0F && var2 <= 60.0F) {
+      } else if (f2 >= 50.0F && f2 <= 60.0F) {
          return 1.96F;
-      } else if (var2 >= 51.0F && var2 <= 61.0F) {
+      } else if (f2 >= 51.0F && f2 <= 61.0F) {
          return 1.85F;
       } else {
-         return var2 >= 52.0F && var2 <= 65.0F ? 1.8F : 1.59F;
+         return f2 >= 52.0F && f2 <= 65.0F ? 1.8F : 1.59F;
       }
    }
 
-   private float method1776(float var1, float var2) {
-      float var3 = Math.abs(var1);
-      float var4 = Math.abs(Mth.wrapDegrees(var2) % 90.0F);
-      float var5;
-      if (var3 >= 38.0F && var3 <= 52.0F) {
-         var5 = 2.0F;
-      } else if (var3 >= 32.0F && var3 <= 58.0F) {
-         var5 = 1.96F;
-      } else if (var3 >= 28.0F && var3 <= 62.0F) {
-         var5 = 1.95F;
+   private float method1776(float f, float xRot) {
+      float f2 = Math.abs(f);
+      float f3 = Math.abs(Mth.wrapDegrees(xRot) % 90.0F);
+      float f4;
+      if (f2 >= 38.0F && f2 <= 52.0F) {
+         f4 = 2.0F;
+      } else if (f2 >= 32.0F && f2 <= 58.0F) {
+         f4 = 1.96F;
+      } else if (f2 >= 28.0F && f2 <= 62.0F) {
+         f4 = 1.95F;
       } else {
-         float var8 = 61.0F;
-         float var7 = 29.0F;
-         if (!(var4 >= var7) || !(var4 <= var8)) {
-            var8 = 61.0F;
-            var7 = 29.0F;
-            if (!(var3 >= var7) || !(var3 <= var8)) {
-               var8 = 60.0F;
-               var7 = 28.0F;
-               if (!(var4 >= var7) || !(var4 <= var8)) {
-                  var8 = 60.0F;
-                  var7 = 28.0F;
-                  if (!(var3 >= var7) || !(var3 <= var8)) {
-                     var8 = 64.0F;
-                     var7 = 26.0F;
-                     if (!(var4 >= var7) || !(var4 <= var8)) {
-                        var8 = 64.0F;
-                        var7 = 26.0F;
-                        if (!(var3 >= var7) || !(var3 <= var8)) {
-                           var8 = 66.0F;
-                           var7 = 24.0F;
-                           if (!(var4 >= var7) || !(var4 <= var8)) {
-                              var8 = 66.0F;
-                              var7 = 24.0F;
-                              if (!(var3 >= var7) || !(var3 <= var8)) {
-                                 var8 = 75.0F;
-                                 var7 = 15.0F;
-                                 if (!(var4 >= var7) || !(var4 <= var8)) {
-                                    var8 = 75.0F;
-                                    var7 = 15.0F;
-                                    if (!(var3 >= var7) || !(var3 <= var8)) {
-                                       var8 = 77.0F;
-                                       var7 = 13.0F;
-                                       if (!(var4 >= var7) || !(var4 <= var8)) {
-                                          var8 = 77.0F;
-                                          var7 = 13.0F;
-                                          if (!(var3 >= var7) || !(var3 <= var8)) {
-                                             var8 = 78.0F;
-                                             var7 = 12.0F;
-                                             if (!(var4 >= var7) || !(var4 <= var8)) {
-                                                var8 = 78.0F;
-                                                var7 = 12.0F;
-                                                if (!(var3 >= var7) || !(var3 <= var8)) {
-                                                   var8 = 82.0F;
-                                                   var7 = 8.0F;
-                                                   if (!(var4 >= var7) || !(var4 <= var8)) {
-                                                      var8 = 79.0F;
-                                                      var7 = 11.0F;
-                                                      if (!(var3 >= var7) || !(var3 <= var8)) {
-                                                         var8 = 85.0F;
-                                                         var7 = 5.0F;
-                                                         if (!(var4 >= var7) || !(var4 <= var8)) {
-                                                            var8 = 82.0F;
-                                                            var7 = 8.0F;
-                                                            if (!(var3 >= var7) || !(var3 <= var8)) {
-                                                               var5 = !(var4 <= 90.0F) && !(var3 <= 90.0F) ? 1.66F : 1.67F;
-                                                               return var1 > 15.0F ? var5 - 0.068F : var5;
+         float f5 = 61.0F;
+         float f6 = 29.0F;
+         if (!(f3 >= f6) || !(f3 <= f5)) {
+            f5 = 61.0F;
+            f6 = 29.0F;
+            if (!(f2 >= f6) || !(f2 <= f5)) {
+               f5 = 60.0F;
+               f6 = 28.0F;
+               if (!(f3 >= f6) || !(f3 <= f5)) {
+                  f5 = 60.0F;
+                  f6 = 28.0F;
+                  if (!(f2 >= f6) || !(f2 <= f5)) {
+                     f5 = 64.0F;
+                     f6 = 26.0F;
+                     if (!(f3 >= f6) || !(f3 <= f5)) {
+                        f5 = 64.0F;
+                        f6 = 26.0F;
+                        if (!(f2 >= f6) || !(f2 <= f5)) {
+                           f5 = 66.0F;
+                           f6 = 24.0F;
+                           if (!(f3 >= f6) || !(f3 <= f5)) {
+                              f5 = 66.0F;
+                              f6 = 24.0F;
+                              if (!(f2 >= f6) || !(f2 <= f5)) {
+                                 f5 = 75.0F;
+                                 f6 = 15.0F;
+                                 if (!(f3 >= f6) || !(f3 <= f5)) {
+                                    f5 = 75.0F;
+                                    f6 = 15.0F;
+                                    if (!(f2 >= f6) || !(f2 <= f5)) {
+                                       f5 = 77.0F;
+                                       f6 = 13.0F;
+                                       if (!(f3 >= f6) || !(f3 <= f5)) {
+                                          f5 = 77.0F;
+                                          f6 = 13.0F;
+                                          if (!(f2 >= f6) || !(f2 <= f5)) {
+                                             f5 = 78.0F;
+                                             f6 = 12.0F;
+                                             if (!(f3 >= f6) || !(f3 <= f5)) {
+                                                f5 = 78.0F;
+                                                f6 = 12.0F;
+                                                if (!(f2 >= f6) || !(f2 <= f5)) {
+                                                   f5 = 82.0F;
+                                                   f6 = 8.0F;
+                                                   if (!(f3 >= f6) || !(f3 <= f5)) {
+                                                      f5 = 79.0F;
+                                                      f6 = 11.0F;
+                                                      if (!(f2 >= f6) || !(f2 <= f5)) {
+                                                         f5 = 85.0F;
+                                                         f6 = 5.0F;
+                                                         if (!(f3 >= f6) || !(f3 <= f5)) {
+                                                            f5 = 82.0F;
+                                                            f6 = 8.0F;
+                                                            if (!(f2 >= f6) || !(f2 <= f5)) {
+                                                               f4 = !(f3 <= 90.0F) && !(f2 <= 90.0F) ? 1.66F : 1.67F;
+                                                               return f > 15.0F ? f4 - 0.068F : f4;
                                                             }
                                                          }
 
-                                                         var5 = 1.67F;
-                                                         return var1 > 15.0F ? var5 - 0.068F : var5;
+                                                         f4 = 1.67F;
+                                                         return f > 15.0F ? f4 - 0.068F : f4;
                                                       }
                                                    }
 
-                                                   var5 = 1.75F;
-                                                   return var1 > 15.0F ? var5 - 0.068F : var5;
+                                                   f4 = 1.75F;
+                                                   return f > 15.0F ? f4 - 0.068F : f4;
                                                 }
                                              }
 
-                                             var5 = 1.75F;
-                                             return var1 > 15.0F ? var5 - 0.068F : var5;
+                                             f4 = 1.75F;
+                                             return f > 15.0F ? f4 - 0.068F : f4;
                                           }
                                        }
 
-                                       var5 = 1.75F;
-                                       return var1 > 15.0F ? var5 - 0.068F : var5;
+                                       f4 = 1.75F;
+                                       return f > 15.0F ? f4 - 0.068F : f4;
                                     }
                                  }
 
-                                 var5 = 1.75F;
-                                 return var1 > 15.0F ? var5 - 0.068F : var5;
+                                 f4 = 1.75F;
+                                 return f > 15.0F ? f4 - 0.068F : f4;
                               }
                            }
 
-                           var5 = 1.75F;
-                           return var1 > 15.0F ? var5 - 0.068F : var5;
+                           f4 = 1.75F;
+                           return f > 15.0F ? f4 - 0.068F : f4;
                         }
                      }
 
-                     var5 = 1.874F;
-                     return var1 > 15.0F ? var5 - 0.068F : var5;
+                     f4 = 1.874F;
+                     return f > 15.0F ? f4 - 0.068F : f4;
                   }
                }
 
-               var5 = 1.954F;
-               return var1 > 15.0F ? var5 - 0.068F : var5;
+               f4 = 1.954F;
+               return f > 15.0F ? f4 - 0.068F : f4;
             }
          }
 
-         var5 = 1.963F;
+         f4 = 1.963F;
       }
 
-      return var1 > 15.0F ? var5 - 0.068F : var5;
+      return f > 15.0F ? f4 - 0.068F : f4;
    }
 
-   private float method1777(float var1, SliderSetting[] var2) {
-      int var3 = Mth.clamp((int)(method1779(var1) / 5.0F), 0, var2.length - 1);
-      return var2[var3].getValue3();
+   private float method1777(float xRot, SliderSetting[] sliderSettings) {
+      int n = Mth.clamp((int)(method1779(xRot) / 5.0F), 0, sliderSettings.length - 1);
+      return sliderSettings[n].getValue3();
    }
 
-   private static float method1778(float var0) {
-      float var1;
-      return (var1 = Math.abs(var0)) > 90.0F ? 180.0F - var1 : var1;
+   private static float method1778(float xRot) {
+      float f;
+      return (f = Math.abs(xRot)) > 90.0F ? 180.0F - f : f;
    }
 
-   private static float method1779(float var0) {
-      float var1;
-      return (var1 = method1778(var0)) > 45.0F ? 90.0F - var1 : var1;
+   private static float method1779(float xRot) {
+      float f;
+      return (f = method1778(xRot)) > 45.0F ? 90.0F - f : f;
    }
 
-   private static boolean method1780(float var0, float var1, float var2) {
-      return var0 >= var1 && var0 <= var2;
+   private static boolean method1780(float f, float f2, float f3) {
+      return f >= f2 && f <= f3;
    }
 
-   private static SliderSetting[] method1781(String var0, int var1, float var2, Supplier<Boolean> var3) {
-      SliderSetting[] var4 = new SliderSetting[var1];
+   private static SliderSetting[] method1781(String str, int n, float f, Supplier<Boolean> visible) {
+      SliderSetting[] sliderSettings = new SliderSetting[n];
 
-      for (int var5 = 0; var5 < var1; var5++) {
-         var4[var5] = new SliderSetting(var0 + "." + var5 * 5 + "-" + (var5 + 1) * 5, var2 + var5 * 0.01F, 1.5F, 3.0F, 0.01F, var3);
+      for (int i = 0; i < n; i++) {
+         sliderSettings[i] = new SliderSetting(str + "." + i * 5 + "-" + (i + 1) * 5, f + i * 0.01F, 1.5F, 3.0F, 0.01F, visible);
       }
 
-      return var4;
+      return sliderSettings;
    }
 
-   private static SliderSetting[] method1782(String var0, Supplier<Boolean> var1) {
-      SliderSetting[] var2 = new SliderSetting[56];
+   private static SliderSetting[] method1782(String str, Supplier<Boolean> visible) {
+      SliderSetting[] sliderSettings = new SliderSetting[56];
 
-      for (int var3 = 0; var3 < 56; var3++) {
-         float var4 = 1.5F + var3 / 55.0F * 0.11F;
-         var2[var3] = new SliderSetting(var0 + "." + var3, var4, 1.5F, 3.0F, 0.01F, var1);
+      for (int i = 0; i < 56; i++) {
+         float floatValue = 1.5F + i / 55.0F * 0.11F;
+         sliderSettings[i] = new SliderSetting(str + "." + i, floatValue, 1.5F, 3.0F, 0.01F, visible);
       }
 
-      return var2;
+      return sliderSettings;
    }
 }

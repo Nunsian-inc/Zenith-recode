@@ -68,12 +68,12 @@ public final class PetBehavior {
    private Vec3 vec3d4;
    public long longValue;
 
-   public PetBehavior(HoveredData var1, Class15 var2) {
-      this.hoveredData = var1;
-      this.class15 = var2;
-      this.data3 = var2.data3;
-      double var3 = Math.max(0.2, (double)this.data3.getFloatValue());
-      this.class3 = new Class3(this.data3.getType4(), 0.18 * var3, 0.6 * var3);
+   public PetBehavior(HoveredData hoveredData, Class15 class2) {
+      this.hoveredData = hoveredData;
+      this.class15 = class2;
+      this.data3 = class2.data3;
+      double d = Math.max(0.2, (double)this.data3.getFloatValue());
+      this.class3 = new Class3(this.data3.getType4(), 0.18 * d, 0.6 * d);
       this.intValue2 = this.random.nextBoolean() ? 1 : -1;
       this.intValue5 = 200 + this.random.nextInt(200);
       this.intValue6 = 160 + this.random.nextInt(160);
@@ -91,20 +91,20 @@ public final class PetBehavior {
       return this.flag3;
    }
 
-   public void method7926(Player var1, LivingEntity var2, double var3, float var5) {
-      Vec3 var6 = var1.position();
+   public void method7926(Player player, LivingEntity livingEntity, double d, float floatValue) {
+      Vec3 position = player.position();
       if (!this.class3.flag2) {
-         this.class3.method425(this.method7939(var1, var6));
-         this.class3.floatValue = this.class3.floatValue2 = var1.yBodyRot;
+         this.class3.method425(this.method7939(player, position));
+         this.class3.floatValue = this.class3.floatValue2 = player.yBodyRot;
          this.class3.flag2 = true;
-         this.vec3d = var6;
-         this.floatValue5 = var1.yBodyRot;
+         this.vec3d = position;
+         this.floatValue5 = player.yBodyRot;
       }
 
-      int var7 = this.class3.method424(var3);
+      int n = this.class3.method424(d);
 
-      for (int var8 = 0; var8 < var7; var8++) {
-         this.method7928(var1, var6, var2, var5);
+      for (int i = 0; i < n; i++) {
+         this.method7928(player, position, livingEntity, floatValue);
       }
    }
 
@@ -112,39 +112,39 @@ public final class PetBehavior {
       return this.flag4;
    }
 
-   public float method7927(float var1) {
-      return Mth.clamp(Mth.lerp(var1, this.floatValue7, this.floatValue6), 0.0F, 1.0F);
+   public float method7927(float alpha1) {
+      return Mth.clamp(Mth.lerp(alpha1, this.floatValue7, this.floatValue6), 0.0F, 1.0F);
    }
 
    public Vec3 getVec3d4() {
       return this.vec3d4;
    }
 
-   private void method7928(Player var1, Vec3 var2, LivingEntity var3, float var4) {
+   private void method7928(Player player, Vec3 vec3d, LivingEntity livingEntity, float floatValue) {
       this.ticks++;
       this.class3.begin();
       this.method7936();
       this.floatValue7 = this.floatValue6;
-      double var5 = var2.x - var1.xo;
-      double var7 = var2.y - var1.yo;
-      double var9 = var2.z - var1.zo;
-      double var11 = this.vec3d == null ? 0.0 : Math.sqrt(var5 * var5 + var9 * var9);
-      if (var11 > 0.02 && this.vec3d != null) {
-         float var13 = (float)Math.toDegrees(Math.atan2(var9, var5)) - 90.0F;
-         this.floatValue5 = this.floatValue5 + Mth.wrapDegrees(var13 - this.floatValue5) * 0.35F;
+      double x = vec3d.x - player.xo;
+      double d = vec3d.y - player.yo;
+      double y = vec3d.z - player.zo;
+      double d2 = this.vec3d == null ? 0.0 : Math.sqrt(x * x + y * y);
+      if (d2 > 0.02 && this.vec3d != null) {
+         float f = (float)Math.toDegrees(Math.atan2(y, x)) - 90.0F;
+         this.floatValue5 = this.floatValue5 + Mth.wrapDegrees(f - this.floatValue5) * 0.35F;
       }
 
-      boolean var28 = this.vec3d != null
-         && var5 * var5 + var7 * var7 + var9 * var9 < 4.0E-4
-         && Math.abs(Mth.wrapDegrees(var1.getYRot() - this.floatValue)) < 1.0F
-         && Math.abs(var1.getXRot() - this.floatValue2) < 1.0F;
-      this.vec3d = var2;
-      this.floatValue = var1.getYRot();
-      this.floatValue2 = var1.getXRot();
-      this.intValue = var28 ? this.intValue + 1 : 0;
-      boolean var14 = var1.isSprinting() || var11 > 0.2;
-      boolean var15 = var11 > 0.03;
-      if (var1.hurtTime <= 0 && (var3 == null || !var3.isAlive())) {
+      boolean flag = this.vec3d != null
+         && x * x + d * d + y * y < 4.0E-4
+         && Math.abs(Mth.wrapDegrees(player.getYRot() - this.floatValue)) < 1.0F
+         && Math.abs(player.getXRot() - this.floatValue2) < 1.0F;
+      this.vec3d = vec3d;
+      this.floatValue = player.getYRot();
+      this.floatValue2 = player.getXRot();
+      this.intValue = flag ? this.intValue + 1 : 0;
+      boolean flag2 = player.isSprinting() || d2 > 0.2;
+      boolean flag3 = d2 > 0.03;
+      if (player.hurtTime <= 0 && (livingEntity == null || !livingEntity.isAlive())) {
          if (this.intValue8 > 0) {
             this.intValue8--;
          }
@@ -152,58 +152,58 @@ public final class PetBehavior {
          this.intValue8 = 60;
       }
 
-      boolean var16 = this.intValue8 > 0 || "hide_in_shell".equals(this.data3.getText()) && this.method7946(var2, 8.0);
+      boolean flag4 = this.intValue8 > 0 || "hide_in_shell".equals(this.data3.getText()) && this.method7946(vec3d, 8.0);
       if (this.flag4) {
-         this.method7933(var1, var2, var14, var16, var4);
+         this.method7933(player, vec3d, flag2, flag4, floatValue);
       } else {
-         double var17 = method7951(this.class3.doubleValue3, this.class3.doubleValue5, var2.x, var2.z);
-         if (!(var17 > 12.0) && !(Math.abs(this.class3.doubleValue4 - var2.y) > 12.0)) {
-            boolean var19 = this.flag3;
-            this.flag3 = this.intValue > 600 && !var16;
-            if (var19 && !this.flag3) {
-               this.animationState.method6540(this.class15, "react", var4);
+         double d3 = method7951(this.class3.doubleValue3, this.class3.doubleValue5, vec3d.x, vec3d.z);
+         if (!(d3 > 12.0) && !(Math.abs(this.class3.doubleValue4 - vec3d.y) > 12.0)) {
+            boolean flag5 = this.flag3;
+            this.flag3 = this.intValue > 600 && !flag4;
+            if (flag5 && !this.flag3) {
+               this.animationState.method6540(this.class15, "react", floatValue);
                this.intValue3 = 80;
             }
 
-            boolean var20 = this.text.equals("shoulder") || this.text.equals("head");
-            if (this.flag3 || var16) {
+            boolean flag6 = this.text.equals("shoulder") || this.text.equals("head");
+            if (this.flag3 || flag4) {
                this.method7930();
-            } else if (!this.text.isEmpty() && var15 && !this.text.equals("orbit") && !var20) {
+            } else if (!this.text.isEmpty() && flag3 && !this.text.equals("orbit") && !flag6) {
                this.method7930();
             } else if (!this.text.isEmpty() && --this.intValue12 <= 0) {
                this.method7930();
             }
 
-            if (this.text.isEmpty() && !this.flag3 && !var16 && !var15 && this.intValue13 == 0 && var17 < 4.0 && this.vec3d2 == null) {
-               this.method7929(var1, var2, var4);
+            if (this.text.isEmpty() && !this.flag3 && !flag4 && !flag3 && this.intValue13 == 0 && d3 < 4.0 && this.vec3d2 == null) {
+               this.method7929(player, vec3d, floatValue);
             }
 
-            var20 = this.text.equals("shoulder") || this.text.equals("head");
-            Vec3 var21 = this.method7937(var1, var2, var3, var16, var15, var14, var17);
-            double var22 = this.data3.getFloatValue2();
-            double var24 = method7951(this.class3.doubleValue3, this.class3.doubleValue5, var21.x, var21.z);
-            if (var24 > 5.0) {
-               var22 *= 1.9;
-            } else if (var24 > 2.5 || var14) {
-               var22 *= 1.35;
+            flag6 = this.text.equals("shoulder") || this.text.equals("head");
+            Vec3 vec = this.method7937(player, vec3d, livingEntity, flag4, flag3, flag2, d3);
+            double d4 = this.data3.getFloatValue2();
+            double d5 = method7951(this.class3.doubleValue3, this.class3.doubleValue5, vec.x, vec.z);
+            if (d5 > 5.0) {
+               d4 *= 1.9;
+            } else if (d5 > 2.5 || flag2) {
+               d4 *= 1.35;
             }
 
-            double var26 = this.data3.hover();
+            double hover = this.data3.hover();
             if (this.class3.method423() && (this.text.equals("sit") || this.text.equals("lie"))) {
-               var26 = 0.0;
+               hover = 0.0;
             }
 
-            if (!this.flag3 && (!(var24 < 0.3) || this.vec3d2 != null)) {
-               this.class3.method426(var21.x, var21.y, var21.z, var22, var26);
+            if (!this.flag3 && (!(d5 < 0.3) || this.vec3d2 != null)) {
+               this.class3.method426(vec.x, vec.y, vec.z, d4, hover);
             } else {
-               this.class3.method426(this.class3.doubleValue3, var21.y, this.class3.doubleValue5, 0.0, var26);
+               this.class3.method426(this.class3.doubleValue3, vec.y, this.class3.doubleValue5, 0.0, hover);
             }
 
-            if (var20 && method7951(this.class3.doubleValue3, this.class3.doubleValue5, var2.x, var2.z) < 1.1) {
+            if (flag6 && method7951(this.class3.doubleValue3, this.class3.doubleValue5, vec3d.x, vec3d.z) < 1.1) {
                this.method7932();
             }
 
-            if (this.data3.getType4() == Class15.Type4.HOPPER && this.class3.flag && var24 > 0.6 && this.intValue10 == 0) {
+            if (this.data3.getType4() == Class15.Type4.HOPPER && this.class3.flag && d5 > 0.6 && this.intValue10 == 0) {
                this.class3.method427(0.42);
                this.intValue10 = 7;
                this.floatValue3 = 1.0F;
@@ -218,53 +218,53 @@ public final class PetBehavior {
 
             this.floatValue3 = Math.max(0.0F, this.floatValue3 - 0.12F);
             if (this.flag && !this.flag3) {
-               this.class3.method428(var21.x, var21.z, 14.0F);
+               this.class3.method428(vec.x, vec.z, 14.0F);
             } else if (!this.text.equals("lie") && !this.text.equals("sit")) {
-               this.class3.method428(var2.x, var2.z, 6.0F);
+               this.class3.method428(vec3d.x, vec3d.z, 6.0F);
             } else {
-               this.class3.method428(var2.x, var2.z, 3.0F);
+               this.class3.method428(vec3d.x, vec3d.z, 3.0F);
             }
 
-            this.class3.method429(var2.x, var2.z);
-            this.method7943(var1, var2, var16, var4);
-            this.method7940(var1, var2, var4);
-            this.method7941(var4);
+            this.class3.method429(vec3d.x, vec3d.z);
+            this.method7943(player, vec3d, flag4, floatValue);
+            this.method7940(player, vec3d, floatValue);
+            this.method7941(floatValue);
             this.method7942();
          } else {
             this.method7949(this.class3.doubleValue3, this.class3.doubleValue4, this.class3.doubleValue5);
-            this.class3.method425(this.method7939(var1, var2));
+            this.class3.method425(this.method7939(player, vec3d));
             this.method7949(this.class3.doubleValue3, this.class3.doubleValue4, this.class3.doubleValue5);
             this.method7930();
          }
       }
    }
 
-   private void method7929(Player var1, Vec3 var2, float var3) {
-      ArrayList var4 = new ArrayList();
+   private void method7929(Player player, Vec3 vec3d, float floatValue) {
+      ArrayList arrayList = new ArrayList();
 
-      for (String var6 : this.method7931()) {
-         switch (var6) {
+      for (String str : this.method7931()) {
+         switch (str) {
             case "sit":
             case "lie":
             case "wander":
             case "play":
             case "orbit":
-               var4.add(var6);
+               arrayList.add(str);
                break;
             case "shoulder":
             case "head":
-               if (var1.onGround() && !var1.isSprinting()) {
-                  var4.add(var6);
+               if (player.onGround() && !player.isSprinting()) {
+                  arrayList.add(str);
                }
          }
       }
 
-      if (var4.isEmpty()) {
+      if (arrayList.isEmpty()) {
          this.intValue13 = 200;
       } else {
-         this.text = (String)var4.get(this.random.nextInt(var4.size()));
-         String var11 = this.text;
-         switch (var11) {
+         this.text = (String)arrayList.get(this.random.nextInt(arrayList.size()));
+         String text = this.text;
+         switch (text) {
             case "sit":
                this.intValue12 = 100 + this.random.nextInt(140);
                break;
@@ -273,18 +273,18 @@ public final class PetBehavior {
                break;
             case "orbit":
                this.intValue12 = 120 + this.random.nextInt(100);
-               this.doubleValue2 = Math.atan2(this.class3.doubleValue5 - var2.z, this.class3.doubleValue3 - var2.x);
+               this.doubleValue2 = Math.atan2(this.class3.doubleValue5 - vec3d.z, this.class3.doubleValue3 - vec3d.x);
                break;
             case "wander":
                this.intValue12 = 140;
-               double var7 = this.random.nextDouble() * Math.PI * 2.0;
-               double var9 = 1.3 + this.random.nextDouble() * 1.6;
-               this.vec3d3 = new Vec3(var2.x + Math.cos(var7) * var9, var2.y, var2.z + Math.sin(var7) * var9);
+               double d = this.random.nextDouble() * Math.PI * 2.0;
+               double d2 = 1.3 + this.random.nextDouble() * 1.6;
+               this.vec3d3 = new Vec3(vec3d.x + Math.cos(d) * d2, vec3d.y, vec3d.z + Math.sin(d) * d2);
                break;
             case "play":
                this.intValue12 = 50;
-               if (!this.animationState.method6540(this.class15, "play", var3)) {
-                  this.animationState.method6540(this.class15, "happy", var3);
+               if (!this.animationState.method6540(this.class15, "play", floatValue)) {
+                  this.animationState.method6540(this.class15, "happy", floatValue);
                }
                break;
             default:
@@ -323,43 +323,43 @@ public final class PetBehavior {
       this.class3.doubleValue9 = this.class3.doubleValue10 = this.class3.doubleValue11 = 0.0;
    }
 
-   private void method7933(Player var1, Vec3 var2, boolean var3, boolean var4, float var5) {
+   private void method7933(Player player, Vec3 vec3d, boolean flag, boolean flag2, float floatValue) {
       this.floatValue6 = Math.min(1.0F, this.floatValue6 + 0.16F);
       this.intValue12--;
-      Vec3 var6 = this.method7934(var1, var2, var1.yBodyRot);
-      this.class3.doubleValue3 = this.class3.doubleValue6 = var6.x;
-      this.class3.doubleValue4 = this.class3.doubleValue7 = var6.y;
-      this.class3.doubleValue5 = this.class3.doubleValue8 = var6.z;
-      this.class3.floatValue = this.class3.floatValue2 = var1.yBodyRot;
+      Vec3 vec = this.method7934(player, vec3d, player.yBodyRot);
+      this.class3.doubleValue3 = this.class3.doubleValue6 = vec.x;
+      this.class3.doubleValue4 = this.class3.doubleValue7 = vec.y;
+      this.class3.doubleValue5 = this.class3.doubleValue8 = vec.z;
+      this.class3.floatValue = this.class3.floatValue2 = player.yBodyRot;
       this.class3.doubleValue13 = 0.0;
-      boolean var7 = !var1.onGround() && !var1.isPassenger() && !var1.isInWater();
-      if (this.intValue12 > 0 && !var3 && !var4 && !var7 && !var1.isDeadOrDying()) {
+      boolean flag3 = !player.onGround() && !player.isPassenger() && !player.isInWater();
+      if (this.intValue12 > 0 && !flag && !flag2 && !flag3 && !player.isDeadOrDying()) {
          this.class3.floatValue3 = this.class3.floatValue3 + (0.0F - this.class3.floatValue3) * 0.2F;
-         this.method7941(var5);
+         this.method7941(floatValue);
       } else {
          this.flag4 = false;
          this.floatValue6 = 0.0F;
          this.floatValue7 = 0.0F;
-         double var8 = Math.toRadians(var1.yBodyRot + (this.intValue2 > 0 ? -90.0 : 90.0));
-         this.class3.doubleValue9 = -Math.sin(var8) * 0.12;
-         this.class3.doubleValue11 = Math.cos(var8) * 0.12;
+         double d = Math.toRadians(player.yBodyRot + (this.intValue2 > 0 ? -90.0 : 90.0));
+         this.class3.doubleValue9 = -Math.sin(d) * 0.12;
+         this.class3.doubleValue11 = Math.cos(d) * 0.12;
          this.class3.doubleValue10 = 0.18;
          this.class3.flag = false;
          this.method7930();
-         this.animationState.method6540(this.class15, "react", var5);
+         this.animationState.method6540(this.class15, "react", floatValue);
       }
    }
 
-   public Vec3 method7934(Player var1, Vec3 var2, float var3) {
-      double var4 = Math.toRadians(var3);
-      boolean var6 = this.text.equals("head");
-      double var7 = var6 ? (var1.isShiftKeyDown() ? 1.72 : 2.0) : (var1.isShiftKeyDown() ? 1.24 : 1.5);
-      double var9 = var6 ? 0.0 : 0.31 * this.intValue2;
-      double var11 = -Math.cos(var4);
-      double var13 = -Math.sin(var4);
-      double var15 = Math.sin(var4) * 0.03;
-      double var17 = -Math.cos(var4) * 0.03;
-      return new Vec3(var2.x + var11 * var9 + var15, var2.y + var7, var2.z + var13 * var9 + var17);
+   public Vec3 method7934(Player player, Vec3 vec3d, float yBodyRot) {
+      double d = Math.toRadians(yBodyRot);
+      boolean flag = this.text.equals("head");
+      double d2 = flag ? (player.isShiftKeyDown() ? 1.72 : 2.0) : (player.isShiftKeyDown() ? 1.24 : 1.5);
+      double d3 = flag ? 0.0 : 0.31 * this.intValue2;
+      double d4 = -Math.cos(d);
+      double d5 = -Math.sin(d);
+      double d6 = Math.sin(d) * 0.03;
+      double d7 = -Math.cos(d) * 0.03;
+      return new Vec3(vec3d.x + d4 * d3 + d6, vec3d.y + d2, vec3d.z + d5 * d3 + d7);
    }
 
    public float method7935() {
@@ -403,12 +403,12 @@ public final class PetBehavior {
       }
    }
 
-   private Vec3 method7937(Player var1, Vec3 var2, LivingEntity var3, boolean var4, boolean var5, boolean var6, double var7) {
+   private Vec3 method7937(Player player, Vec3 vec3d, LivingEntity livingEntity, boolean flag, boolean flag2, boolean flag3, double d) {
       if (this.vec3d2 != null) {
          return this.vec3d2;
-      } else if (!var4) {
-         String var19 = this.text;
-         switch (var19) {
+      } else if (!flag) {
+         String text = this.text;
+         switch (text) {
             case "wander":
                if (this.vec3d3 != null) {
                   if (method7951(this.class3.doubleValue3, this.class3.doubleValue5, this.vec3d3.x, this.vec3d3.z) < 0.4) {
@@ -420,94 +420,94 @@ public final class PetBehavior {
                break;
             case "orbit":
                this.doubleValue2 += 0.055;
-               double var11 = 1.7 + 0.2 * Math.sin(this.ticks * 0.07);
-               return new Vec3(var2.x + Math.cos(this.doubleValue2) * var11, var2.y, var2.z + Math.sin(this.doubleValue2) * var11);
+               double d2 = 1.7 + 0.2 * Math.sin(this.ticks * 0.07);
+               return new Vec3(vec3d.x + Math.cos(this.doubleValue2) * d2, vec3d.y, vec3d.z + Math.sin(this.doubleValue2) * d2);
             case "shoulder":
             case "head":
-               return var2;
+               return vec3d;
             case "sit":
             case "lie":
             case "play":
-               if (!(var7 > 3.5)) {
-                  return new Vec3(this.class3.doubleValue3, var2.y, this.class3.doubleValue5);
+               if (!(d > 3.5)) {
+                  return new Vec3(this.class3.doubleValue3, vec3d.y, this.class3.doubleValue5);
                }
 
                this.method7930();
          }
 
-         if (var5) {
-            double var20 = Math.toRadians(this.floatValue5);
-            double var22 = -Math.sin(var20);
-            double var13 = Math.cos(var20);
-            double var15 = -Math.cos(var20);
-            double var17 = -Math.sin(var20);
-            return var6 && this.method7931().contains("pace")
-               ? new Vec3(var2.x + var15 * 1.15 * this.intValue2 + var22 * 0.35, var2.y, var2.z + var17 * 1.15 * this.intValue2 + var13 * 0.35)
-               : new Vec3(var2.x - var22 * 1.3 + var15 * 0.9 * this.intValue2, var2.y, var2.z - var13 * 1.3 + var17 * 0.9 * this.intValue2);
+         if (flag2) {
+            double d2 = Math.toRadians(this.floatValue5);
+            double d3 = -Math.sin(d2);
+            double d4 = Math.cos(d2);
+            double d5 = -Math.cos(d2);
+            double d6 = -Math.sin(d2);
+            return flag3 && this.method7931().contains("pace")
+               ? new Vec3(vec3d.x + d5 * 1.15 * this.intValue2 + d3 * 0.35, vec3d.y, vec3d.z + d6 * 1.15 * this.intValue2 + d4 * 0.35)
+               : new Vec3(vec3d.x - d3 * 1.3 + d5 * 0.9 * this.intValue2, vec3d.y, vec3d.z - d4 * 1.3 + d6 * 0.9 * this.intValue2);
          } else {
-            return this.method7938(var2, var7, 0.9, 3.0);
+            return this.method7938(vec3d, d, 0.9, 3.0);
          }
       } else {
-         Vec3 var9 = var3 != null && var3.isAlive() ? var3.position() : null;
-         double var10 = 2.2;
-         if (var9 != null) {
-            double var12 = var2.x - var9.x;
-            double var14 = var2.z - var9.z;
-            double var16 = Math.max(0.001, Math.sqrt(var12 * var12 + var14 * var14));
-            return new Vec3(var2.x + var12 / var16 * var10, var2.y, var2.z + var14 / var16 * var10);
+         Vec3 position = livingEntity != null && livingEntity.isAlive() ? livingEntity.position() : null;
+         double d2 = 2.2;
+         if (position != null) {
+            double d3 = vec3d.x - position.x;
+            double d4 = vec3d.z - position.z;
+            double d5 = Math.max(0.001, Math.sqrt(d3 * d3 + d4 * d4));
+            return new Vec3(vec3d.x + d3 / d5 * d2, vec3d.y, vec3d.z + d4 / d5 * d2);
          } else {
-            return this.method7938(var2, var7, 1.6, 2.4);
+            return this.method7938(vec3d, d, 1.6, 2.4);
          }
       }
    }
 
-   private Vec3 method7938(Vec3 var1, double var2, double var4, double var6) {
-      if (var2 >= var4 && var2 <= var6) {
-         return new Vec3(this.class3.doubleValue3, var1.y, this.class3.doubleValue5);
+   private Vec3 method7938(Vec3 vec3d, double d, double d2, double d3) {
+      if (d >= d2 && d <= d3) {
+         return new Vec3(this.class3.doubleValue3, vec3d.y, this.class3.doubleValue5);
       } else {
-         double var8 = this.class3.doubleValue3 - var1.x;
-         double var10 = this.class3.doubleValue5 - var1.z;
-         double var12 = Math.sqrt(var8 * var8 + var10 * var10);
-         if (var12 < 0.05) {
-            double var14 = Math.toRadians(this.floatValue5 + 90.0 * this.intValue2);
-            var8 = -Math.sin(var14);
-            var10 = Math.cos(var14);
-            var12 = 1.0;
+         double d4 = this.class3.doubleValue3 - vec3d.x;
+         double d5 = this.class3.doubleValue5 - vec3d.z;
+         double d6 = Math.sqrt(d4 * d4 + d5 * d5);
+         if (d6 < 0.05) {
+            double d7 = Math.toRadians(this.floatValue5 + 90.0 * this.intValue2);
+            d4 = -Math.sin(d7);
+            d5 = Math.cos(d7);
+            d6 = 1.0;
          }
 
-         double var16 = (var4 + var6) / 2.0 * 0.85;
-         return new Vec3(var1.x + var8 / var12 * var16, var1.y, var1.z + var10 / var12 * var16);
+         double d7 = (d2 + d3) / 2.0 * 0.85;
+         return new Vec3(vec3d.x + d4 / d6 * d7, vec3d.y, vec3d.z + d5 / d6 * d7);
       }
    }
 
-   private Vec3 method7939(Player var1, Vec3 var2) {
-      double var3 = Math.toRadians(var1.yBodyRot);
-      double var5 = var2.x + Math.sin(var3) * 1.25 - Math.cos(var3) * 0.9 * this.intValue2;
-      double var7 = var2.z - Math.cos(var3) * 1.25 - Math.sin(var3) * 0.9 * this.intValue2;
-      return new Vec3(var5, var2.y + (this.class3.method423() ? this.data3.hover() : 0.0), var7);
+   private Vec3 method7939(Player player, Vec3 vec3d) {
+      double d = Math.toRadians(player.yBodyRot);
+      double x = vec3d.x + Math.sin(d) * 1.25 - Math.cos(d) * 0.9 * this.intValue2;
+      double z = vec3d.z - Math.cos(d) * 1.25 - Math.sin(d) * 0.9 * this.intValue2;
+      return new Vec3(x, vec3d.y + (this.class3.method423() ? this.data3.hover() : 0.0), z);
    }
 
-   private void method7940(Player var1, Vec3 var2, float var3) {
+   private void method7940(Player player, Vec3 vec3d, float floatValue) {
       if (!this.flag3) {
-         double var4 = this.class3.doubleValue3 - var2.x;
-         double var6 = this.class3.doubleValue4 - var2.y;
-         double var8 = this.class3.doubleValue5 - var2.z;
-         double var10 = Math.sqrt(var4 * var4 + var6 * var6 + var8 * var8);
-         if (this.intValue4 == 0 && var1.isShiftKeyDown() && var10 < 2.6 && this.animationState.method6540(this.class15, "happy", var3)) {
+         double d = this.class3.doubleValue3 - vec3d.x;
+         double d2 = this.class3.doubleValue4 - vec3d.y;
+         double d3 = this.class3.doubleValue5 - vec3d.z;
+         double d4 = Math.sqrt(d * d + d2 * d2 + d3 * d3);
+         if (this.intValue4 == 0 && player.isShiftKeyDown() && d4 < 2.6 && this.animationState.method6540(this.class15, "happy", floatValue)) {
             this.method7948(ParticleTypes.HEART, 3, 0.35, 0.05);
             this.intValue4 = 120;
             this.intValue3 = Math.max(this.intValue3, 40);
          } else {
-            if (this.intValue3 == 0 && var10 < 5.5) {
-               Vec3 var12 = var1.getEyePosition();
-               Vec3 var13 = var1.getViewVector(1.0F);
-               Vec3 var14 = new Vec3(
-                     this.class3.doubleValue3 - var12.x,
-                     this.class3.doubleValue4 + this.class3.doubleValue2 * 0.5 - var12.y,
-                     this.class3.doubleValue5 - var12.z
+            if (this.intValue3 == 0 && d4 < 5.5) {
+               Vec3 eyePosition = player.getEyePosition();
+               Vec3 viewVector = player.getViewVector(1.0F);
+               Vec3 vec = new Vec3(
+                     this.class3.doubleValue3 - eyePosition.x,
+                     this.class3.doubleValue4 + this.class3.doubleValue2 * 0.5 - eyePosition.y,
+                     this.class3.doubleValue5 - eyePosition.z
                   )
                   .normalize();
-               if (var13.dot(var14) > 0.975 && this.animationState.method6540(this.class15, "react", var3)) {
+               if (viewVector.dot(vec) > 0.975 && this.animationState.method6540(this.class15, "react", floatValue)) {
                   this.intValue3 = 160;
                }
             }
@@ -515,7 +515,7 @@ public final class PetBehavior {
       }
    }
 
-   private void method7941(float var1) {
+   private void method7941(float floatValue) {
       this.doubleValue = this.doubleValue + (this.class3.doubleValue13 - this.doubleValue) * 0.3;
       if (this.flag ? this.doubleValue < 0.3 : this.doubleValue > 0.85) {
          this.flag = !this.flag;
@@ -526,40 +526,40 @@ public final class PetBehavior {
       }
 
       this.running = this.running & this.flag;
-      String var2;
+      String text;
       if (this.flag4) {
-         var2 = "perch";
+         text = "perch";
       } else if (this.flag3) {
-         var2 = "sleep";
+         text = "sleep";
       } else if (this.text.equals("sit") && !this.flag) {
-         var2 = "sit";
+         text = "sit";
       } else if (this.text.equals("lie") && !this.flag) {
-         var2 = "lie";
+         text = "lie";
       } else if (this.class3.method423()) {
-         var2 = !this.flag && !this.text.equals("orbit") ? "idle" : "fly";
+         text = !this.flag && !this.text.equals("orbit") ? "idle" : "fly";
       } else if (!this.class3.flag && Math.abs(this.class3.doubleValue10) > 0.12) {
-         var2 = "jump";
+         text = "jump";
       } else if (this.running) {
-         var2 = "run";
+         text = "run";
       } else if (this.flag) {
-         var2 = "walk";
+         text = "walk";
       } else {
-         var2 = "idle";
+         text = "idle";
       }
 
-      if (var2.equals("walk")) {
+      if (text.equals("walk")) {
          this.animationState.setFloatValue6((float)Mth.clamp(this.doubleValue / 2.4, 0.55, 1.7));
-      } else if (var2.equals("run")) {
+      } else if (text.equals("run")) {
          this.animationState.setFloatValue6((float)Mth.clamp(this.doubleValue / 5.2, 0.75, 1.6));
-      } else if (var2.equals("fly")) {
+      } else if (text.equals("fly")) {
          this.animationState.setFloatValue6((float)Mth.clamp(0.8 + this.doubleValue / 8.0, 0.8, 1.5));
       } else {
          this.animationState.setFloatValue6(1.0F);
       }
 
-      this.animationState.method6539(this.class15, var2, var1);
-      if (var2.equals("idle") && this.intValue6 == 0 && !this.animationState.isFlag()) {
-         this.animationState.method6540(this.class15, "idle2", var1);
+      this.animationState.method6539(this.class15, text, floatValue);
+      if (text.equals("idle") && this.intValue6 == 0 && !this.animationState.isFlag()) {
+         this.animationState.method6540(this.class15, "idle2", floatValue);
          this.intValue6 = 200 + this.random.nextInt(240);
       }
    }
@@ -575,34 +575,34 @@ public final class PetBehavior {
       }
    }
 
-   private void method7943(Player var1, Vec3 var2, boolean var3, float var4) {
-      String var5 = this.data3.getText() == null ? "" : this.data3.getText();
-      switch (var5) {
+   private void method7943(Player player, Vec3 vec3d, boolean flag, float floatValue) {
+      String text = this.data3.getText() == null ? "" : this.data3.getText();
+      switch (text) {
          case "hide_in_shell":
-            if (var3 && !this.animationState.getCurrent().equals("hide")) {
-               this.animationState.method6540(this.class15, "hide", var4);
-            } else if (!var3 && this.animationState.getCurrent().equals("hide")) {
-               this.animationState.method6541(var4);
+            if (flag && !this.animationState.getCurrent().equals("hide")) {
+               this.animationState.method6540(this.class15, "hide", floatValue);
+            } else if (!flag && this.animationState.getCurrent().equals("hide")) {
+               this.animationState.method6541(floatValue);
             }
             break;
          case "ghost_phase":
-            float var10 = this.intValue11 > 0 ? 0.35F + 0.25F * Mth.sin(this.ticks * 0.6F) : 0.85F;
-            this.alpha = this.alpha + (var10 - this.alpha) * 0.2F;
+            float f = this.intValue11 > 0 ? 0.35F + 0.25F * Mth.sin(this.ticks * 0.6F) : 0.85F;
+            this.alpha = this.alpha + (f - this.alpha) * 0.2F;
             break;
          case "shadow_step":
-            double var8 = method7951(this.class3.doubleValue3, this.class3.doubleValue5, var2.x, var2.z);
-            if (var8 > 6.0 && this.intValue5 == 0) {
+            double d = method7951(this.class3.doubleValue3, this.class3.doubleValue5, vec3d.x, vec3d.z);
+            if (d > 6.0 && this.intValue5 == 0) {
                this.method7948(ParticleTypes.LARGE_SMOKE, 8, 0.3, 0.02);
-               this.class3.method425(this.method7939(var1, var2));
+               this.class3.method425(this.method7939(player, vec3d));
                this.method7948(ParticleTypes.SMOKE, 10, 0.3, 0.02);
-               this.animationState.method6540(this.class15, "quirk", var4);
+               this.animationState.method6540(this.class15, "quirk", floatValue);
                this.intValue5 = 60;
             }
             break;
          case "ink_splash":
-            if (var1.hurtTime == 9 && this.intValue5 == 0) {
+            if (player.hurtTime == 9 && this.intValue5 == 0) {
                this.method7948(ParticleTypes.SQUID_INK, 12, 0.35, 0.08);
-               this.animationState.method6540(this.class15, "quirk", var4);
+               this.animationState.method6540(this.class15, "quirk", floatValue);
                this.intValue5 = 40;
             }
 
@@ -619,27 +619,27 @@ public final class PetBehavior {
             }
             break;
          default:
-            this.method7944(var5, var1, var2, var3, var4);
+            this.method7944(text, player, vec3d, flag, floatValue);
       }
    }
 
-   private void method7944(String var1, Player var2, Vec3 var3, boolean var4, float var5) {
-      if (this.intValue5 <= 0 && !this.flag3 && !var4 && !(this.class3.doubleValue13 > 3.0) && !var1.isEmpty()) {
+   private void method7944(String text, Player player, Vec3 vec3d, boolean flag, float floatValue) {
+      if (this.intValue5 <= 0 && !this.flag3 && !flag && !(this.class3.doubleValue13 > 3.0) && !text.isEmpty()) {
          this.intValue5 = 260 + this.random.nextInt(260);
-         boolean var6 = this.animationState.method6540(this.class15, "quirk", var5);
-         switch (var1) {
+         boolean flag2 = this.animationState.method6540(this.class15, "quirk", floatValue);
+         switch (text) {
             case "sneeze_sparks":
                this.method7947(ParticleTypes.FLAME, 6, 0.12);
                this.method7947(ParticleTypes.LAVA, 2, 0.05);
                break;
             case "smoke_rings":
-               for (int var15 = 0; var15 < 10; var15++) {
-                  double var17 = var15 / 10.0 * Math.PI * 2.0;
+               for (int i = 0; i < 10; i++) {
+                  double d = i / 10.0 * Math.PI * 2.0;
                   this.method7950(
                      ParticleTypes.SMOKE,
-                     this.class3.doubleValue3 + Math.cos(var17) * 0.2,
+                     this.class3.doubleValue3 + Math.cos(d) * 0.2,
                      this.class3.doubleValue4 + this.class3.doubleValue2 + 0.2,
-                     this.class3.doubleValue5 + Math.sin(var17) * 0.2,
+                     this.class3.doubleValue5 + Math.sin(d) * 0.2,
                      0.0,
                      0.03,
                      0.0
@@ -647,27 +647,27 @@ public final class PetBehavior {
                }
                break;
             case "firefly_dance":
-               for (int var14 = 0; var14 < 8; var14++) {
-                  double var16 = var14 / 8.0 * Math.PI * 2.0;
+               for (int i = 0; i < 8; i++) {
+                  double d = i / 8.0 * Math.PI * 2.0;
                   this.method7950(
                      ParticleTypes.END_ROD,
-                     this.class3.doubleValue3 + Math.cos(var16) * 0.6,
+                     this.class3.doubleValue3 + Math.cos(d) * 0.6,
                      this.class3.doubleValue4 + 0.4,
-                     this.class3.doubleValue5 + Math.sin(var16) * 0.6,
-                     -Math.sin(var16) * 0.03,
+                     this.class3.doubleValue5 + Math.sin(d) * 0.6,
+                     -Math.sin(d) * 0.03,
                      0.02,
-                     Math.cos(var16) * 0.03
+                     Math.cos(d) * 0.03
                   );
                }
                break;
             case "scan_beam":
-               for (int var13 = 0; var13 < 10; var13++) {
-                  double var10 = Math.toRadians(this.class3.floatValue + 90.0F) + (var13 - 5) * 0.12;
+               for (int i = 0; i < 10; i++) {
+                  double d = Math.toRadians(this.class3.floatValue + 90.0F) + (i - 5) * 0.12;
                   this.method7950(
                      ParticleTypes.ELECTRIC_SPARK,
-                     this.class3.doubleValue3 + Math.cos(var10) * 1.2,
+                     this.class3.doubleValue3 + Math.cos(d) * 1.2,
                      this.class3.doubleValue4 + 0.2,
-                     this.class3.doubleValue5 + Math.sin(var10) * 1.2,
+                     this.class3.doubleValue5 + Math.sin(d) * 1.2,
                      0.0,
                      0.0,
                      0.0
@@ -688,21 +688,21 @@ public final class PetBehavior {
                this.method7948(ParticleTypes.ITEM_SLIME, 8, 0.3, 0.05);
                break;
             case "catch_stars":
-               double var12 = this.random.nextDouble() * Math.PI * 2.0;
-               this.vec3d2 = new Vec3(var3.x + Math.cos(var12) * 2.2, var3.y, var3.z + Math.sin(var12) * 2.2);
+               double d = this.random.nextDouble() * Math.PI * 2.0;
+               this.vec3d2 = new Vec3(vec3d.x + Math.cos(d) * 2.2, vec3d.y, vec3d.z + Math.sin(d) * 2.2);
                this.intValue11 = 40;
 
-               for (int var11 = 0; var11 < 6; var11++) {
-                  this.method7950(ParticleTypes.END_ROD, this.vec3d2.x, this.vec3d2.y + 1.6 + var11 * 0.2, this.vec3d2.z, 0.0, -0.08, 0.0);
+               for (int i = 0; i < 6; i++) {
+                  this.method7950(ParticleTypes.END_ROD, this.vec3d2.x, this.vec3d2.y + 1.6 + i * 0.2, this.vec3d2.z, 0.0, -0.08, 0.0);
                }
                break;
             case "offer_flower":
-               this.vec3d2 = new Vec3(var3.x + (this.class3.doubleValue3 - var3.x) * 0.3, var3.y, var3.z + (this.class3.doubleValue5 - var3.z) * 0.3);
+               this.vec3d2 = new Vec3(vec3d.x + (this.class3.doubleValue3 - vec3d.x) * 0.3, vec3d.y, vec3d.z + (this.class3.doubleValue5 - vec3d.z) * 0.3);
                this.intValue11 = 50;
                this.method7948(ParticleTypes.HAPPY_VILLAGER, 4, 0.3, 0.02);
                break;
             case "bear_hug":
-               this.vec3d2 = new Vec3(var3.x + (this.class3.doubleValue3 - var3.x) * 0.2, var3.y, var3.z + (this.class3.doubleValue5 - var3.z) * 0.2);
+               this.vec3d2 = new Vec3(vec3d.x + (this.class3.doubleValue3 - vec3d.x) * 0.2, vec3d.y, vec3d.z + (this.class3.doubleValue5 - vec3d.z) * 0.2);
                this.intValue11 = 55;
                this.method7947(ParticleTypes.HEART, 3, 0.15);
                break;
@@ -710,7 +710,7 @@ public final class PetBehavior {
                this.method7947(ParticleTypes.SOUL_FIRE_FLAME, 6, 0.08);
                break;
             case "rain_cloud":
-               for (int var9 = 0; var9 < 12; var9++) {
+               for (int i = 0; i < 12; i++) {
                   this.method7950(
                      ParticleTypes.FALLING_WATER,
                      this.class3.doubleValue3 + (this.random.nextDouble() - 0.5) * 0.5,
@@ -723,19 +723,19 @@ public final class PetBehavior {
                }
                break;
             default:
-               if (!var6) {
+               if (!flag2) {
                   this.intValue5 = 400;
                }
          }
       }
    }
 
-   public void method7945(float var1, float[] var2) {
+   public void method7945(float f, float[] floats) {
       if (Util19.enabled()
          && mc.player != null
          && !(mc.player.distanceToSqr(this.class3.doubleValue3, this.class3.doubleValue4, this.class3.doubleValue5) > 1600.0)) {
          if (this.data3.getParticleEffect() != null && this.class3.doubleValue13 > 1.2) {
-            this.floatValue4 += var1 * 8.0F;
+            this.floatValue4 += f * 8.0F;
 
             while (this.floatValue4 >= 1.0F) {
                this.floatValue4--;
@@ -756,30 +756,30 @@ public final class PetBehavior {
                this.floatValues = new float[this.class15.items2.size()];
             }
 
-            for (int var3 = 0; var3 < this.class15.items2.size(); var3++) {
-               Class15.Data4 var4 = this.class15.items2.get(var3);
+            for (int i = 0; i < this.class15.items2.size(); i++) {
+               Class15.Data4 data4 = this.class15.items2.get(i);
 
-               boolean var5 = switch (var4.getType3()) {
+               boolean flag = switch (data4.getType3()) {
                   case MOVING -> this.class3.doubleValue13 > 0.6;
                   case IDLE -> this.class3.doubleValue13 <= 0.6;
                   case AIRBORNE -> !this.class3.flag;
                   default -> true;
                };
-               if (var5 && !this.flag3) {
-                  this.floatValues[var3] = this.floatValues[var3] + var4.getFloatValue4() * var1;
+               if (flag && !this.flag3) {
+                  this.floatValues[i] = this.floatValues[i] + data4.getFloatValue4() * f;
 
-                  while (this.floatValues[var3] >= 1.0F) {
-                     this.floatValues[var3]--;
-                     Vec3 var6 = WardrobePreview.method3148(this, var2, var4.getIntValue(), var4.getFloatValue(), var4.getFloatValue2(), var4.getFloatValue3());
-                     double var7 = var4.getFloatValue8();
+                  while (this.floatValues[i] >= 1.0F) {
+                     this.floatValues[i]--;
+                     Vec3 vec = WardrobePreview.method3148(this, floats, data4.getIntValue(), data4.getFloatValue(), data4.getFloatValue2(), data4.getFloatValue3());
+                     double d = data4.getFloatValue8();
                      this.method7950(
-                        var4.getParticleEffect(),
-                        var6.x + (this.random.nextDouble() - 0.5) * var7,
-                        var6.y + (this.random.nextDouble() - 0.5) * var7,
-                        var6.z + (this.random.nextDouble() - 0.5) * var7,
-                        var4.getFloatValue5(),
-                        var4.getFloatValue6(),
-                        var4.getFloatValue7()
+                        data4.getParticleEffect(),
+                        vec.x + (this.random.nextDouble() - 0.5) * d,
+                        vec.y + (this.random.nextDouble() - 0.5) * d,
+                        vec.z + (this.random.nextDouble() - 0.5) * d,
+                        data4.getFloatValue5(),
+                        data4.getFloatValue6(),
+                        data4.getFloatValue7()
                      );
                   }
                }
@@ -788,59 +788,59 @@ public final class PetBehavior {
       }
    }
 
-   private boolean method7946(Vec3 var1, double var2) {
+   private boolean method7946(Vec3 vec3d, double amountToAddInAllDirections) {
       if (mc.level == null) {
          this.flag2 = false;
          return false;
       } else {
          if (this.ticks >= this.intValue9) {
             this.intValue9 = this.ticks + 10;
-            this.flag2 = !mc.level.getEntitiesOfClass(Monster.class, new AABB(var1, var1).inflate(var2), LivingEntity::isAlive).isEmpty();
+            this.flag2 = !mc.level.getEntitiesOfClass(Monster.class, new AABB(vec3d, vec3d).inflate(amountToAddInAllDirections), LivingEntity::isAlive).isEmpty();
          }
 
          return this.flag2;
       }
    }
 
-   private void method7947(ParticleOptions var1, int var2, double var3) {
-      double var5 = Math.toRadians(this.class3.floatValue + 90.0);
-      double var7 = this.class3.doubleValue3 + Math.cos(var5) * 0.25;
-      double var9 = this.class3.doubleValue5 + Math.sin(var5) * 0.25;
+   private void method7947(ParticleOptions particleEffect, int n, double d) {
+      double d2 = Math.toRadians(this.class3.floatValue + 90.0);
+      double x = this.class3.doubleValue3 + Math.cos(d2) * 0.25;
+      double z = this.class3.doubleValue5 + Math.sin(d2) * 0.25;
 
-      for (int var11 = 0; var11 < var2; var11++) {
+      for (int i = 0; i < n; i++) {
          this.method7950(
-            var1,
-            var7,
+            particleEffect,
+            x,
             this.class3.doubleValue4 + this.class3.doubleValue2 * 0.6,
-            var9,
-            Math.cos(var5) * var3 + (this.random.nextDouble() - 0.5) * var3,
-            this.random.nextDouble() * var3 * 0.5,
-            Math.sin(var5) * var3 + (this.random.nextDouble() - 0.5) * var3
+            z,
+            Math.cos(d2) * d + (this.random.nextDouble() - 0.5) * d,
+            this.random.nextDouble() * d * 0.5,
+            Math.sin(d2) * d + (this.random.nextDouble() - 0.5) * d
          );
       }
    }
 
-   private void method7948(ParticleOptions var1, int var2, double var3, double var5) {
-      for (int var7 = 0; var7 < var2; var7++) {
+   private void method7948(ParticleOptions particleEffect, int n, double d, double d2) {
+      for (int i = 0; i < n; i++) {
          this.method7950(
-            var1,
-            this.class3.doubleValue3 + (this.random.nextDouble() - 0.5) * var3,
-            this.class3.doubleValue4 + this.class3.doubleValue2 * 0.5 + (this.random.nextDouble() - 0.5) * var3,
-            this.class3.doubleValue5 + (this.random.nextDouble() - 0.5) * var3,
-            (this.random.nextDouble() - 0.5) * var5,
-            this.random.nextDouble() * var5,
-            (this.random.nextDouble() - 0.5) * var5
+            particleEffect,
+            this.class3.doubleValue3 + (this.random.nextDouble() - 0.5) * d,
+            this.class3.doubleValue4 + this.class3.doubleValue2 * 0.5 + (this.random.nextDouble() - 0.5) * d,
+            this.class3.doubleValue5 + (this.random.nextDouble() - 0.5) * d,
+            (this.random.nextDouble() - 0.5) * d2,
+            this.random.nextDouble() * d2,
+            (this.random.nextDouble() - 0.5) * d2
          );
       }
    }
 
-   private void method7949(double var1, double var3, double var5) {
-      for (int var7 = 0; var7 < 8; var7++) {
+   private void method7949(double d, double d2, double d3) {
+      for (int i = 0; i < 8; i++) {
          this.method7950(
             ParticleTypes.POOF,
-            var1 + (this.random.nextDouble() - 0.5) * 0.4,
-            var3 + this.random.nextDouble() * 0.4,
-            var5 + (this.random.nextDouble() - 0.5) * 0.4,
+            d + (this.random.nextDouble() - 0.5) * 0.4,
+            d2 + this.random.nextDouble() * 0.4,
+            d3 + (this.random.nextDouble() - 0.5) * 0.4,
             0.0,
             0.02,
             0.0
@@ -848,15 +848,15 @@ public final class PetBehavior {
       }
    }
 
-   private void method7950(ParticleOptions var1, double var2, double var4, double var6, double var8, double var10, double var12) {
+   private void method7950(ParticleOptions particleEffect, double x, double y, double z, double xd, double yd, double zd) {
       if (Util19.enabled()) {
-         Util19.method5043(var1, var2, var4, var6, var8, var10, var12);
+         Util19.method5043(particleEffect, x, y, z, xd, yd, zd);
       }
    }
 
-   private static double method7951(double var0, double var2, double var4, double var6) {
-      double var8 = var0 - var4;
-      double var10 = var2 - var6;
-      return Math.sqrt(var8 * var8 + var10 * var10);
+   private static double method7951(double d, double d2, double x, double z) {
+      double d3 = d - x;
+      double d4 = d2 - z;
+      return Math.sqrt(d3 * d3 + d4 * d4);
    }
 }

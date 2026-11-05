@@ -110,15 +110,15 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget
-   public void method5574(EntityAddEvent var1) {
-      if (var1.getEntity() instanceof LocalPlayer) {
+   public void method5574(EntityAddEvent event) {
+      if (event.getEntity() instanceof LocalPlayer) {
          this.livingEntity = null;
          this.livingEntity2 = null;
       }
    }
 
    @EventTarget
-   public void method5575(Event2 var1) {
+   public void method5575(Event2 event) {
       if (this.livingEntity != null) {
          if (this.flag2 && this.method5580() && (!this.method5577() || this.neuroClicks.method451(this.method5591(), this.method5578()))) {
             this.flag = false;
@@ -129,7 +129,7 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget
-   public void method5576(UpdateEvent var1) {
+   public void method5576(UpdateEvent event) {
       if (this.stopWatch2 == null) {
          this.stopWatch2 = new StopWatch();
       }
@@ -144,12 +144,12 @@ public final class TriggerBotModule extends Module {
             mc.player.sendIsSprintingIfNeeded();
          }
 
-         boolean var2 = Zenith.getInstance().getServerDetector().isFlag();
+         boolean flag = Zenith.getInstance().getServerDetector().isFlag();
          AttackUtils.method816(this.livingEntity);
          this.intValue2 = mc.player.tickCount - this.intValue3;
          this.intValue3 = mc.player.tickCount;
          if (this.entry14.isSelected() && this.neuroClicks.method442()) {
-            this.neuroClicks.method452(var2, mc.options.keyUp.isDown(), this.neuroWtap.isEnabled());
+            this.neuroClicks.method452(flag, mc.options.keyUp.isDown(), this.neuroWtap.isEnabled());
          }
       }
    }
@@ -169,7 +169,7 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget
-   public void method5579(Event5 var1) {
+   public void method5579(Event5 event) {
       this.flag3 = false;
       if (mc.player.isDeadOrDying()) {
          this.livingEntity = null;
@@ -180,14 +180,14 @@ public final class TriggerBotModule extends Module {
          }
 
          this.livingEntity = this.method5597();
-         if (mc.crosshairPickEntity instanceof LivingEntity var2
-            && AuraUtil.method7447(((MultiSelectSetting)this.safeTarget.getSettings().get(0)).method5229(), var2)) {
-            this.livingEntity = var2;
+         if (mc.crosshairPickEntity instanceof LivingEntity livingEntity
+            && AuraUtil.method7447(((MultiSelectSetting)this.safeTarget.getSettings().get(0)).method5229(), livingEntity)) {
+            this.livingEntity = livingEntity;
          }
 
          if (this.livingEntity != null) {
-            if (mc.level.getEntity(this.livingEntity.getId()) instanceof LivingEntity var4) {
-               this.livingEntity = var4;
+            if (mc.level.getEntity(this.livingEntity.getId()) instanceof LivingEntity livingEntity2) {
+               this.livingEntity = livingEntity2;
             } else {
                this.livingEntity = null;
             }
@@ -202,11 +202,11 @@ public final class TriggerBotModule extends Module {
          } else {
             this.flag = this.method5589();
             this.flag2 = this.method5592();
-            int var5 = InventoryUtils.method922(var0 -> mc.player.getInventory().getItem(var0).is(net.minecraft.tags.ItemTags.AXES));
+            int selected = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).is(net.minecraft.tags.ItemTags.AXES));
             if (this.entry15.isEnabled()
                && this.stopWatch.method7546(300L)
                && Zenith.getInstance().getTaskScheduler().method5117(TriggerBotModule.class)
-               && var5 != -1
+               && selected != -1
                && UseItemUtils.method6530(this.livingEntity)) {
                if (mc.player.getMainHandItem().is(net.minecraft.tags.ItemTags.AXES)) {
                   if (this.method5580()) {
@@ -224,7 +224,7 @@ public final class TriggerBotModule extends Module {
                      this.intValue = mc.player.getInventory().getSelectedSlot();
                   }
 
-                  mc.player.getInventory().setSelectedSlot(var5);
+                  mc.player.getInventory().setSelectedSlot(selected);
                }
             } else {
                this.method5581();
@@ -248,21 +248,21 @@ public final class TriggerBotModule extends Module {
       }
    }
 
-   public boolean method5582(Rotation var1) {
-      return this.method5583(var1, this.method5584(), this.livingEntity.getBoundingBox());
+   public boolean method5582(Rotation rotation) {
+      return this.method5583(rotation, this.method5584(), this.livingEntity.getBoundingBox());
    }
 
-   public boolean method5583(Rotation var1, Vec3 var2, AABB var3) {
-      return TargetUtils.method3212(var1, var2, var3, this.distance.getValue3(), !this.entry18.isEnabled());
+   public boolean method5583(Rotation rotation, Vec3 eyePosition, AABB boundingBox) {
+      return TargetUtils.method3212(rotation, eyePosition, boundingBox, this.distance.getValue3(), !this.entry18.isEnabled());
    }
 
    public Vec3 method5584() {
       return mc.player.getEyePosition(1.0F);
    }
 
-   public Vec3 method5585(AABB var1, float var2) {
+   public Vec3 method5585(AABB aabb, float alpha1) {
       return new Vec3(
-         Mth.lerp(0.5, var1.minX, var1.maxX), Mth.lerp((double)var2, var1.minY, var1.maxY), Mth.lerp(0.5, var1.minZ, var1.maxZ)
+         Mth.lerp(0.5, aabb.minX, aabb.maxX), Mth.lerp((double)alpha1, aabb.minY, aabb.maxY), Mth.lerp(0.5, aabb.minZ, aabb.maxZ)
       );
    }
 
@@ -271,16 +271,16 @@ public final class TriggerBotModule extends Module {
    }
 
    @EventTarget
-   public void method5587(MoveInputEvent var1) {
+   public void method5587(MoveInputEvent event) {
       if (this.livingEntity != null) {
-         this.method5594(var1);
+         this.method5594(event);
       }
    }
 
    @EventTarget(0)
-   public void method5588(Event9 var1) {
+   public void method5588(Event9 event) {
       if (this.flag3) {
-         var1.cancel();
+         event.cancel();
       }
    }
 
@@ -288,7 +288,7 @@ public final class TriggerBotModule extends Module {
       return this.method5590(1);
    }
 
-   private boolean method5590(int var1) {
+   private boolean method5590(int n) {
       if (UseItemUtils.method6530(this.livingEntity)) {
          return false;
       } else if (mc.player.isUsingItem()
@@ -297,8 +297,8 @@ public final class TriggerBotModule extends Module {
          return false;
       } else {
          if (this.onlyCrit.isEnabled()) {
-            PlayerSimulation var2 = PlayerSimulation.method6031(var1);
-            if (!AttackUtils.method818(var2) && !AttackUtils.method822(var2) && (!this.smartCrit.isEnabled() || mc.options.keyJump.isDown())) {
+            PlayerSimulation playerSimulation = PlayerSimulation.method6031(n);
+            if (!AttackUtils.method818(playerSimulation) && !AttackUtils.method822(playerSimulation) && (!this.smartCrit.isEnabled() || mc.options.keyJump.isDown())) {
                return false;
             }
          }
@@ -322,10 +322,10 @@ public final class TriggerBotModule extends Module {
          return false;
       } else if (!this.method5591()
          || AttackUtils.method819() && (!Zenith.getInstance().getServerDetector().isFlag() || this.entry13.isSelected() || this.entry9.isSelected())) {
-         long var1;
+         long l;
          return this.randomDelay.isEnabled()
                && !this.method5577()
-               && MathUtils.method2650((float)(var1 = mc.player.tickCount - this.intValue3), this.intValue2) == 0.0F
+               && MathUtils.method2650((float)(l = mc.player.tickCount - this.intValue3), this.intValue2) == 0.0F
             ? false
             : this.method5593(0.0F, !this.method5591() || this.flag);
       } else {
@@ -333,23 +333,23 @@ public final class TriggerBotModule extends Module {
       }
    }
 
-   public boolean method5593(float var1, boolean var2) {
+   public boolean method5593(float f, boolean flag) {
       if (this.method5577()) {
-         return this.neuroClicks.method450(this.method5591(), this.method5578(), (int)var1);
+         return this.neuroClicks.method450(this.method5591(), this.method5578(), (int)f);
       } else if (this.cooldownMode.isSelected(1)) {
          return !AttackUtils.method817() && !mc.player.onGround()
             ? mc.player.getAttackStrengthScale(0.5F) > 0.9
             : mc.player.getAttackStrengthScale(0.5F) >= 1.0F;
       } else {
          if (!this.entry.isSelected()) {
-            var2 = false;
+            flag = false;
          }
 
-         float var3 = this.entry3.isSelected() ? this.timeCooldown.getValue3() : 1.0F;
-         float var4 = this.entry3.isSelected() ? this.attackCooldown.getValue3() : 1.0F;
-         return var2 && !mc.player.isUnderWater()
-            ? mc.player.getAttackStrengthScale(0.0F + var1) == 1.0F
-            : mc.player.getAttackStrengthScale(var3 + var1) >= var4;
+         float f2 = this.entry3.isSelected() ? this.timeCooldown.getValue3() : 1.0F;
+         float f3 = this.entry3.isSelected() ? this.attackCooldown.getValue3() : 1.0F;
+         return flag && !mc.player.isUnderWater()
+            ? mc.player.getAttackStrengthScale(0.0F + f) == 1.0F
+            : mc.player.getAttackStrengthScale(f2 + f) >= f3;
       }
    }
 
@@ -374,35 +374,35 @@ public final class TriggerBotModule extends Module {
       super.onDisable();
    }
 
-   public void method5594(MoveInputEvent var1) {
+   public void method5594(MoveInputEvent event) {
       if (this.method5596()) {
          if (this.entry14.isSelected()) {
             if (this.neuroClicks.method442()) {
-               boolean var6 = var1.getPlayerInput().forward();
-               boolean var7 = mc.player.isSprinting() || Zenith.getInstance().getServerDetector().isFlag();
-               boolean var4 = this.method5591() && !mc.player.onGround() && this.method5589();
-               boolean var5;
-               if (!(var5 = this.neuroClicks.method453(var6, var7, var4)) && var6) {
-                  var1.method3038(false);
+               boolean forward = event.getPlayerInput().forward();
+               boolean flag = mc.player.isSprinting() || Zenith.getInstance().getServerDetector().isFlag();
+               boolean flag2 = this.method5591() && !mc.player.onGround() && this.method5589();
+               boolean flag3;
+               if (!(flag3 = this.neuroClicks.method453(forward, flag, flag2)) && forward) {
+                  event.method3038(false);
                }
 
-               this.neuroClicks.method454(true, var6, var5, var7, this.intValue3 == mc.player.tickCount);
+               this.neuroClicks.method454(true, forward, flag3, flag, this.intValue3 == mc.player.tickCount);
             }
          } else {
-            boolean var2 = mc.options.keySprint.isDown();
-            boolean var3 = mc.options.keyUp.isDown();
+            boolean down = mc.options.keySprint.isDown();
+            boolean flag = mc.options.keyUp.isDown();
             if (this.entry12.isSelected()) {
                if (!mc.player.onGround()) {
-                  var2 = false;
+                  down = false;
                   if (mc.player.isSprinting()) {
-                     var3 = false;
+                     flag = false;
                   }
                }
             } else if (!this.flag3 && !mc.player.onGround() && this.method5589()) {
                if (this.entry11.isSelected()) {
-                  var2 = false;
+                  down = false;
                   if (mc.player.isSprinting()) {
-                     var3 = false;
+                     flag = false;
                   }
                }
 
@@ -411,26 +411,26 @@ public final class TriggerBotModule extends Module {
                      mc.player.setSprinting(false);
                   }
 
-                  var2 = false;
+                  down = false;
                }
             }
 
-            if (!var2) {
+            if (!down) {
                mc.options.keySprint.setDown(false);
-               var1.method3039(false);
+               event.method3039(false);
             }
 
-            if (!var3) {
-               var1.method3038(false);
+            if (!flag) {
+               event.method3038(false);
             }
          }
       }
    }
 
    @EventTarget
-   public void method5595(SprintUpdateEvent var1) {
+   public void method5595(SprintUpdateEvent event) {
       if (this.livingEntity != null && this.entry10.isSelected() && !this.flag3 && !mc.player.onGround() && this.method5589()) {
-         var1.setFlag2(false);
+         event.setFlag2(false);
       }
    }
 

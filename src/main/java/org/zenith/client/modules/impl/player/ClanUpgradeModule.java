@@ -32,18 +32,18 @@ public final class ClanUpgradeModule extends Module implements MinecraftAccess {
    private boolean flag2 = false;
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null) {
-         ItemStack var2 = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
-         if (var2.getItem() != Items.REDSTONE) {
+         ItemStack itemInHand = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
+         if (itemInHand.getItem() != Items.REDSTONE) {
             if (!this.flag2) {
                this.flag2 = true;
                ChatLogger.method2022("Возьмите редстоун в руку!");
             }
          } else {
             this.flag2 = false;
-            BlockPos var3 = mc.player.blockPosition();
-            BlockState var4 = mc.level.getBlockState(var3);
+            BlockPos blockPosition = mc.player.blockPosition();
+            BlockState blockState = mc.level.getBlockState(blockPosition);
             if (!this.flag) {
                this.floatValue = mc.player.getXRot();
                this.floatValue2 = mc.player.getYRot();
@@ -52,28 +52,28 @@ public final class ClanUpgradeModule extends Module implements MinecraftAccess {
 
             mc.player.setXRot(90.0F);
             mc.player.setYRot(0.0F);
-            if (var4.isAir()) {
-               this.method3947(var3);
-            } else if (var4.getBlock() == Blocks.REDSTONE_WIRE) {
-               this.method3948(var3);
+            if (blockState.isAir()) {
+               this.method3947(blockPosition);
+            } else if (blockState.getBlock() == Blocks.REDSTONE_WIRE) {
+               this.method3948(blockPosition);
             }
          }
       }
    }
 
-   private void method3947(BlockPos var1) {
-      BlockPos var2 = var1.below();
-      BlockState var3 = mc.level.getBlockState(var2);
-      if (var3.isSolid()) {
-         Vec3 var4 = new Vec3(var2.getX() + 0.5, var2.getY() + 1.0, var2.getZ() + 0.5);
-         BlockHitResult var5 = new BlockHitResult(var4, Direction.UP, var2, false);
-         mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, var5);
+   private void method3947(BlockPos blockPosition) {
+      BlockPos below = blockPosition.below();
+      BlockState blockState = mc.level.getBlockState(below);
+      if (blockState.isSolid()) {
+         Vec3 vec = new Vec3(below.getX() + 0.5, below.getY() + 1.0, below.getZ() + 0.5);
+         BlockHitResult blockHitResult = new BlockHitResult(vec, Direction.UP, below, false);
+         mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHitResult);
          org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
       }
    }
 
-   private void method3948(BlockPos var1) {
-      mc.gameMode.startDestroyBlock(var1, Direction.UP);
+   private void method3948(BlockPos blockPosition) {
+      mc.gameMode.startDestroyBlock(blockPosition, Direction.UP);
       org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
    }
 

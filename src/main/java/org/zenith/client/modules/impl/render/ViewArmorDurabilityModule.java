@@ -21,19 +21,19 @@ public class ViewArmorDurabilityModule extends Module {
    private ViewArmorDurabilityModule() {
    }
 
-   public boolean method7550(ItemStack var1, boolean var2) {
-      if (var1 == null || var1.isEmpty()) {
+   public boolean method7550(ItemStack renderStack, boolean renderSelf) {
+      if (renderStack == null || renderStack.isEmpty()) {
          return false;
-      } else if (!Util10.method2181(var1)) {
+      } else if (!Util10.method2181(renderStack)) {
          return false;
-      } else if (var2 && !this.naSebe.isEnabled()) {
+      } else if (renderSelf && !this.naSebe.isEnabled()) {
          return false;
       } else {
-         return !var2 && Util14.method2640() ? false : var2 || this.naEnemies.isEnabled();
+         return !renderSelf && Util14.method2640() ? false : renderSelf || this.naEnemies.isEnabled();
       }
    }
 
-   public int method7551(ItemStack var1) {
-      return var1.getBarColor();
+   public int method7551(ItemStack renderStack) {
+      return renderStack.getBarColor();
    }
 }

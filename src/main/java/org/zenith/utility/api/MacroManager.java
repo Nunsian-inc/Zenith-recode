@@ -38,24 +38,24 @@ public class MacroManager extends JsonListStorage<MacroManager.Entry> implements
       return this.items.isEmpty();
    }
 
-   public void method6983(MacroManager.Entry var1) {
-      this.items.add(var1);
+   public void method6983(MacroManager.Entry entry) {
+      this.items.add(entry);
    }
 
-   public void method6984(String var1, int var2, String var3) {
-      this.items.add(new MacroManager.Entry(var1, var2, var3));
+   public void method6984(String text, int intValue, String str) {
+      this.items.add(new MacroManager.Entry(text, intValue, str));
    }
 
-   public void method6985(String var1) {
-      this.items.removeIf(var1x -> var1x.name().equalsIgnoreCase(var1));
+   public void method6985(String anotherString) {
+      this.items.removeIf(var1x -> var1x.name().equalsIgnoreCase(anotherString));
    }
 
-   public MacroManager.Entry method6986(String var1) {
-      return this.items.stream().filter(var1x -> var1x.name().equalsIgnoreCase(var1)).findFirst().orElse(null);
+   public MacroManager.Entry method6986(String argument) {
+      return this.items.stream().filter(var1x -> var1x.name().equalsIgnoreCase(argument)).findFirst().orElse(null);
    }
 
-   public boolean method6987(String var1) {
-      return this.method6986(var1) != null;
+   public boolean method6987(String argument) {
+      return this.method6986(argument) != null;
    }
 
    public void clear() {
@@ -63,21 +63,21 @@ public class MacroManager extends JsonListStorage<MacroManager.Entry> implements
    }
 
    @EventTarget
-   public void method6988(KeyEvent var1) {
+   public void method6988(KeyEvent event) {
       if (mc.player != null) {
-         for (MacroManager.Entry var3 : this.items) {
-            if (var1.isPress(var3.getIntValue())) {
-               this.method6989(var3);
+         for (MacroManager.Entry entry : this.items) {
+            if (event.isPress(entry.getIntValue())) {
+               this.method6989(entry);
             }
          }
       }
    }
 
-   private void method6989(MacroManager.Entry var1) {
-      if (var1.getText2().startsWith("/")) {
-         mc.player.connection.sendCommand(var1.getText2().substring(1));
+   private void method6989(MacroManager.Entry entry) {
+      if (entry.getText2().startsWith("/")) {
+         mc.player.connection.sendCommand(entry.getText2().substring(1));
       } else {
-         mc.player.connection.sendChat(var1.getText2());
+         mc.player.connection.sendChat(entry.getText2());
       }
    }
 
@@ -89,10 +89,10 @@ public class MacroManager extends JsonListStorage<MacroManager.Entry> implements
       @SerializedName("command")
       private final String text2;
 
-      public Entry(String var1, int var2, String var3) {
-         this.text = var1;
-         this.intValue = var2;
-         this.text2 = var3;
+      public Entry(String text, int intValue, String str) {
+         this.text = text;
+         this.intValue = intValue;
+         this.text2 = str;
       }
 
       public String name() {
@@ -108,48 +108,48 @@ public class MacroManager extends JsonListStorage<MacroManager.Entry> implements
       }
 
       public Component toText() {
-         String var1 = this.text.replace("\"", "\\\"");
-         MutableComponent var2 = Component.literal(" " + this.text).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-         MutableComponent var3 = Component.literal(" [  " + Type.KEYBOARD.getOrCreate(org.zenith.utility.misc.KeyCompat.toSdl(this.intValue)).getDisplayName().getString() + "  ]").withStyle(ChatFormatting.AQUA);
-         MutableComponent var4 = Component.literal(" -> " + this.text2).withStyle(ChatFormatting.GRAY);
-         MutableComponent var5 = Component.literal("  [Удалить]")
+         String str = this.text.replace("\"", "\\\"");
+         MutableComponent style = Component.literal(" " + this.text).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+         MutableComponent component = Component.literal(" [  " + Type.KEYBOARD.getOrCreate(org.zenith.utility.misc.KeyCompat.toSdl(this.intValue)).getDisplayName().getString() + "  ]").withStyle(ChatFormatting.AQUA);
+         MutableComponent style2 = Component.literal(" -> " + this.text2).withStyle(ChatFormatting.GRAY);
+         MutableComponent style3 = Component.literal("  [Удалить]")
             .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
             .withStyle(
                var2x -> var2x.withHoverEvent(new ShowText(Component.literal("Подставить команду удаления макроса " + this.text)))
-                  .withClickEvent(new SuggestCommand(".macro remove " + var1))
+                  .withClickEvent(new SuggestCommand(".macro remove " + str))
             );
-         return Component.empty().append(var2).append(var3).append(var4).append(var5);
+         return Component.empty().append(style).append(component).append(style2).append(style3);
       }
    }
 
    public static class Entry2 implements JsonDeserializer<MacroManager.Entry>, JsonSerializer<MacroManager.Entry> {
-      public JsonElement serialize(MacroManager.Entry var1, java.lang.reflect.Type var2, JsonSerializationContext var3) {
-         JsonObject var4 = new JsonObject();
-         var4.addProperty("name", var1.name());
-         var4.addProperty("key", var1.getIntValue());
-         var4.addProperty("command", var1.getText2());
-         return var4;
+      public JsonElement serialize(MacroManager.Entry entry, java.lang.reflect.Type type, JsonSerializationContext serializationContext) {
+         JsonObject json = new JsonObject();
+         json.addProperty("name", entry.name());
+         json.addProperty("key", entry.getIntValue());
+         json.addProperty("command", entry.getText2());
+         return json;
       }
 
-      public MacroManager.Entry deserialize(JsonElement var1, java.lang.reflect.Type var2, JsonDeserializationContext var3) throws JsonParseException {
-         JsonObject var4 = var1.getAsJsonObject();
-         String var5 = getString(var4, "name", "");
-         int var6 = getInt(var4, "key");
-         String var7 = getString(var4, "command", "");
-         return new MacroManager.Entry(var5, var6, var7);
+      public MacroManager.Entry deserialize(JsonElement jsonElement, java.lang.reflect.Type type, JsonDeserializationContext deserializationContext) throws JsonParseException {
+         JsonObject jsonObject = jsonElement.getAsJsonObject();
+         String string = getString(jsonObject, "name", "");
+         int intValue = getInt(jsonObject, "key");
+         String str = getString(jsonObject, "command", "");
+         return new MacroManager.Entry(string, intValue, str);
       }
 
-      private static String getString(JsonObject var0, String var1, String var2) {
-         JsonElement var3 = var0.get(var1);
-         return var3 != null && !var3.isJsonNull() ? var3.getAsString() : var2;
+      private static String getString(JsonObject jsonObject, String memberName, String str) {
+         JsonElement jsonElement = jsonObject.get(memberName);
+         return jsonElement != null && !jsonElement.isJsonNull() ? jsonElement.getAsString() : str;
       }
 
-      private static int getInt(JsonObject var0, String var1) {
-         JsonElement var2 = var0.get(var1);
-         if (var2 != null && !var2.isJsonNull()) {
-            return var2.getAsInt();
+      private static int getInt(JsonObject jsonObject, String memberName) {
+         JsonElement jsonElement = jsonObject.get(memberName);
+         if (jsonElement != null && !jsonElement.isJsonNull()) {
+            return jsonElement.getAsInt();
          } else {
-            throw new JsonParseException("Missing key " + var1);
+            throw new JsonParseException("Missing key " + memberName);
          }
       }
    }

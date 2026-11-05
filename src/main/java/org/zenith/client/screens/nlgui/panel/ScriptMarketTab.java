@@ -114,18 +114,18 @@ public final class ScriptMarketTab {
       "gui.scripts.market.hero.local", "gui.scripts.market.hero.catalog", "gui.scripts.market.hero.library", "gui.scripts.market.hero.mine"
    };
 
-   private float rightWidth(Font var1) {
-      float var2 = Math.max(var1.width("+  " + t("gui.scripts.home.new")), var1.width(t("gui.scripts.home.cancel")));
+   private float rightWidth(Font font) {
+      float f = Math.max(font.width("+  " + t("gui.scripts.home.new")), font.width(t("gui.scripts.home.cancel")));
 
-      for (String var6 : SORT_KEYS) {
-         var2 = Math.max(var2, var1.width(t(var6)));
+      for (String key : SORT_KEYS) {
+         f = Math.max(f, font.width(t(key)));
       }
 
-      return var2 + 16.0F;
+      return f + 16.0F;
    }
 
-   public ScriptMarketTab(ScriptsSectionPanel var1) {
-      this.panel = var1;
+   public ScriptMarketTab(ScriptsSectionPanel panel) {
+      this.panel = panel;
    }
 
    public int revision() {
@@ -138,115 +138,115 @@ public final class ScriptMarketTab {
          + (this.selected == null ? 0 : this.selected.hashCode());
    }
 
-   private static String t(String var0) {
-      return SectionPanel.t(var0);
+   private static String t(String key) {
+      return SectionPanel.t(key);
    }
 
    private static StoreApi store() {
       return Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
    }
 
-   private void report(String var1, boolean var2) {
-      this.status = var1 == null ? "" : var1;
-      this.statusError = var2;
+   private void report(String reason, boolean statusError) {
+      this.status = reason == null ? "" : reason;
+      this.statusError = statusError;
       this.statusAt = System.currentTimeMillis();
       this.revision.incrementAndGet();
    }
 
-   private static String reason(Throwable var0) {
-      Throwable var1 = var0;
+   private static String reason(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      String var2 = var1.getMessage();
-      return var2 != null && !var2.isBlank() ? var2 : var1.getClass().getSimpleName();
+      String message = throwable2.getMessage();
+      return message != null && !message.isBlank() ? message : throwable2.getClass().getSimpleName();
    }
 
-   public void fetch(boolean var1) {
-      long var2 = System.currentTimeMillis();
-      if (var1 || var2 - this.fetchedAt >= 45000L) {
-         StoreApi var4 = store();
-         if (var4 != null) {
-            this.fetchedAt = var2;
+   public void fetch(boolean flag) {
+      long now = System.currentTimeMillis();
+      if (flag || now - this.fetchedAt >= 45000L) {
+         StoreApi storeApi = store();
+         if (storeApi != null) {
+            this.fetchedAt = now;
             this.loading.addAndGet(6);
 
-            for (String var6 : List.of("script", "config")) {
-               var4.method1969("PUBLIC", var6).whenComplete((var2x, var3) -> this.accept(this.catalog, var6, (List<StoreApi.Data2>)var2x, var3));
-               var4.method1969("LIBRARY", var6).whenComplete((var2x, var3) -> this.accept(this.library, var6, (List<StoreApi.Data2>)var2x, var3));
-               var4.method1968(var6).whenComplete((var2x, var3) -> this.accept(this.mine, var6, (List<StoreApi.Data2>)var2x, var3));
+            for (String kind : List.of("script", "config")) {
+               storeApi.method1969("PUBLIC", kind).whenComplete((var2x, throwable) -> this.accept(this.catalog, kind, (List<StoreApi.Data2>)var2x, throwable));
+               storeApi.method1969("LIBRARY", kind).whenComplete((var2x, throwable) -> this.accept(this.library, kind, (List<StoreApi.Data2>)var2x, throwable));
+               storeApi.method1968(kind).whenComplete((var2x, throwable) -> this.accept(this.mine, kind, (List<StoreApi.Data2>)var2x, throwable));
             }
          }
       }
    }
 
-   private void accept(List<StoreApi.Data2> var1, String var2, List<StoreApi.Data2> var3, Throwable var4) {
-      this.loading.updateAndGet(var0 -> Math.max(0, var0 - 1));
-      if (var4 != null) {
-         this.report(t("gui.scripts.market.status.offline") + " " + reason(var4), true);
+   private void accept(List<StoreApi.Data2> catalog, String kind, List<StoreApi.Data2> data2s, Throwable throwable) {
+      this.loading.updateAndGet(n -> Math.max(0, n - 1));
+      if (throwable != null) {
+         this.report(t("gui.scripts.market.status.offline") + " " + reason(throwable), true);
       } else {
-         ArrayList var5 = new ArrayList();
+         ArrayList arrayList = new ArrayList();
 
-         for (StoreApi.Data2 var7 : var3) {
-            if (isConfig(var7) || OriginUtil.method6918(var7)) {
-               var5.add(var7);
+         for (StoreApi.Data2 entry : data2s) {
+            if (isConfig(entry) || OriginUtil.method6918(entry)) {
+               arrayList.add(entry);
             }
          }
 
-         synchronized (var1) {
-            var1.removeIf(var1x -> var2.equalsIgnoreCase(var1x.kind()));
-            var1.addAll(var5);
+         synchronized (catalog) {
+            catalog.removeIf(var1x -> kind.equalsIgnoreCase(var1x.kind()));
+            catalog.addAll(arrayList);
          }
 
          this.revision.incrementAndGet();
       }
    }
 
-   public static boolean isConfig(StoreApi.Data2 var0) {
-      return "config".equalsIgnoreCase(var0.kind());
+   public static boolean isConfig(StoreApi.Data2 entry) {
+      return "config".equalsIgnoreCase(entry.kind());
    }
 
-   private boolean inCategory(StoreApi.Data2 var1) {
+   private boolean inCategory(StoreApi.Data2 entry) {
       return switch (this.category) {
-         case 1 -> !isConfig(var1);
-         case 2 -> isConfig(var1);
+         case 1 -> !isConfig(entry);
+         case 2 -> isConfig(entry);
          default -> true;
       };
    }
 
-   private static File configFile(StoreApi.Data2 var0) {
-      return CloudConfigsSectionPanel.targetFile(var0);
+   private static File configFile(StoreApi.Data2 entry) {
+      return CloudConfigsSectionPanel.targetFile(entry);
    }
 
-   private boolean configPresent(StoreApi.Data2 var1) {
-      return configFile(var1).isFile();
+   private boolean configPresent(StoreApi.Data2 entry) {
+      return configFile(entry).isFile();
    }
 
-   private boolean configPresentCached(StoreApi.Data2 var1) {
-      long var2 = System.currentTimeMillis();
-      ScriptMarketTab.Presence var4 = this.presence.get(var1.getUUID());
-      if (var4 != null && var2 - var4.checkedAt() < 1000L && Objects.equals(var4.name(), var1.name())) {
-         return var4.present();
+   private boolean configPresentCached(StoreApi.Data2 entry) {
+      long now = System.currentTimeMillis();
+      ScriptMarketTab.Presence presence = this.presence.get(entry.getUUID());
+      if (presence != null && now - presence.checkedAt() < 1000L && Objects.equals(presence.name(), entry.name())) {
+         return presence.present();
       } else {
-         boolean var5 = this.configPresent(var1);
-         this.presence.put(var1.getUUID(), new ScriptMarketTab.Presence(var1.name(), var5, var2));
-         return var5;
+         boolean configPresent = this.configPresent(entry);
+         this.presence.put(entry.getUUID(), new ScriptMarketTab.Presence(entry.name(), configPresent, now));
+         return configPresent;
       }
    }
 
-   public void syncMode(boolean var1) {
-      if (var1 && this.view == 0) {
+   public void syncMode(boolean flag) {
+      if (flag && this.view == 0) {
          this.view = 1;
          this.selected = null;
-      } else if (!var1 && this.view != 0) {
+      } else if (!flag && this.view != 0) {
          this.view = 0;
          this.selected = null;
       }
    }
 
-   public void openCategory(int var1) {
-      this.category = Math.max(0, Math.min(2, var1));
+   public void openCategory(int n) {
+      this.category = Math.max(0, Math.min(2, n));
       if (this.view == 0) {
          this.view = 1;
       }
@@ -255,11 +255,11 @@ public final class ScriptMarketTab {
       this.revision.incrementAndGet();
    }
 
-   private void replace(StoreApi.Data2 var1) {
-      for (List var3 : List.of(this.catalog, this.library, this.mine)) {
-         for (int var4 = 0; var4 < var3.size(); var4++) {
-            if (((StoreApi.Data2)var3.get(var4)).getUUID().equals(var1.getUUID())) {
-               var3.set(var4, var1);
+   private void replace(StoreApi.Data2 data2) {
+      for (List list : List.of(this.catalog, this.library, this.mine)) {
+         for (int i = 0; i < list.size(); i++) {
+            if (((StoreApi.Data2)list.get(i)).getUUID().equals(data2.getUUID())) {
+               list.set(i, data2);
             }
          }
       }
@@ -267,15 +267,15 @@ public final class ScriptMarketTab {
       this.revision.incrementAndGet();
    }
 
-   private StoreApi.Data2 entry(UUID var1) {
-      if (var1 == null) {
+   private StoreApi.Data2 entry(UUID uuid) {
+      if (uuid == null) {
          return null;
       } else {
-         for (List var3 : List.of(this.mine, this.library, this.catalog)) {
-            for (Object var5_o : (Iterable<?>)(Object)(var3)) {
-               StoreApi.Data2 var5 = (StoreApi.Data2)var5_o;
-               if (var5.getUUID().equals(var1)) {
-                  return var5;
+         for (List list : List.of(this.mine, this.library, this.catalog)) {
+            for (Object obj : (Iterable<?>)(Object)(list)) {
+               StoreApi.Data2 data2 = (StoreApi.Data2)obj;
+               if (data2.getUUID().equals(uuid)) {
+                  return data2;
                }
             }
          }
@@ -284,12 +284,12 @@ public final class ScriptMarketTab {
       }
    }
 
-   private boolean armed(String var1) {
-      if (this.armed.equals(var1) && System.currentTimeMillis() - this.armedAt < 3000L) {
+   private boolean armed(String armed) {
+      if (this.armed.equals(armed) && System.currentTimeMillis() - this.armedAt < 3000L) {
          this.armed = "";
          return true;
       } else {
-         this.armed = var1;
+         this.armed = armed;
          this.armedAt = System.currentTimeMillis();
          this.report(t("gui.scripts.market.status.confirm"), false);
          return false;
@@ -297,77 +297,77 @@ public final class ScriptMarketTab {
    }
 
    public float headerHeight() {
-      float var1 = 11.0F + GuiStyle.PADDING.intValue() * 2.0F;
-      return this.view == 0 ? var1 : var1 + 11.0F + GuiStyle.PADDING.intValue();
+      float f = 11.0F + GuiStyle.PADDING.intValue() * 2.0F;
+      return this.view == 0 ? f : f + 11.0F + GuiStyle.PADDING.intValue();
    }
 
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = var5 + GuiStyle.PADDING.intValue();
-      Font var10 = Fonts.NEW_MEDIUM.getFont(4.6F);
-      float var11 = this.rightWidth(var10);
-      ZenithColor var12 = var8.getPrimaryColor().getZenithColor();
-      ProxyDotRadiusData var13 = ProxyDotRadiusData.method8069(5.5F);
-      this.rightButton = new BoundsData(var4 + var6 - 8.0F - var11, var9, var11, 11.0F);
-      float var14 = this.panel.hot("hdr:right", this.rightButton.contains(var2, var3));
+   public void renderHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float y = f2 + GuiStyle.PADDING.intValue();
+      Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+      float rightWidth = this.rightWidth(font);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(5.5F);
+      this.rightButton = new BoundsData(f + f3 - 8.0F - rightWidth, y, rightWidth, 11.0F);
+      float hot = this.panel.hot("hdr:right", this.rightButton.contains(lastClickX, lastClickY));
       if (this.view == 0) {
-         boolean var15 = this.panel.creatorOpen();
-         String var16 = var15 ? t("gui.scripts.home.cancel") : "+  " + t("gui.scripts.home.new");
-         var1.drawRoundedRect(
+         boolean creatorOpen = this.panel.creatorOpen();
+         String text = creatorOpen ? t("gui.scripts.home.cancel") : "+  " + t("gui.scripts.home.new");
+         menuDrawContext.drawRoundedRect(
             this.rightButton.getFloatValue(),
-            var9,
-            var11,
+            y,
+            rightWidth,
             11.0F,
-            var13,
-            (var15 ? var8.getDisableActiveBg().getZenithColor().method7294(0.6F + 0.4F * var14) : var12.method7292(0.18F + 0.16F * var14)).method7294(var7)
+            headerRadius,
+            (creatorOpen ? zenithStyle.getDisableActiveBg().getZenithColor().method7294(0.6F + 0.4F * hot) : zenithColor.method7292(0.18F + 0.16F * hot)).method7294(previewAlpha)
          );
-         var1.drawText(
-            var10,
-            var16,
-            this.rightButton.getFloatValue() + (var11 - var10.width(var16)) / 2.0F,
-            var9 + (11.0F - var10.height()) / 2.0F,
-            (var15 ? var8.getTextSecondary().getZenithColor() : var12.method7295(ZenithColor.INSTANCE, 0.25F + 0.4F * var14)).method7294(var7)
+         menuDrawContext.drawText(
+            font,
+            text,
+            this.rightButton.getFloatValue() + (rightWidth - font.width(text)) / 2.0F,
+            y + (11.0F - font.height()) / 2.0F,
+            (creatorOpen ? zenithStyle.getTextSecondary().getZenithColor() : zenithColor.method7295(ZenithColor.INSTANCE, 0.25F + 0.4F * hot)).method7294(previewAlpha)
          );
-         if (this.rightButton.contains(var2, var3)) {
+         if (this.rightButton.contains(lastClickX, lastClickY)) {
             HoverInfo.request(t("gui.scripts.home.new"), t("gui.scripts.home.new.desc"));
          }
       } else {
-         String var17 = t(SORT_KEYS[this.sort]);
-         var1.drawRoundedRect(
-            this.rightButton.getFloatValue(), var9, var11, 11.0F, var13, var8.getDisableActiveBg().getZenithColor().method7294(var7 * (0.55F + 0.45F * var14))
+         String text = t(SORT_KEYS[this.sort]);
+         menuDrawContext.drawRoundedRect(
+            this.rightButton.getFloatValue(), y, rightWidth, 11.0F, headerRadius, zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * (0.55F + 0.45F * hot))
          );
-         var1.drawText(
-            var10,
-            var17,
-            this.rightButton.getFloatValue() + (var11 - var10.width(var17)) / 2.0F,
-            var9 + (11.0F - var10.height()) / 2.0F,
-            var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), 0.4F + 0.6F * var14).method7294(var7)
+         menuDrawContext.drawText(
+            font,
+            text,
+            this.rightButton.getFloatValue() + (rightWidth - font.width(text)) / 2.0F,
+            y + (11.0F - font.height()) / 2.0F,
+            zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), 0.4F + 0.6F * hot).method7294(previewAlpha)
          );
-         if (this.rightButton.contains(var2, var3)) {
+         if (this.rightButton.contains(lastClickX, lastClickY)) {
             HoverInfo.request(t("gui.scripts.market.sort"), t("gui.scripts.market.sort.desc"));
          }
       }
 
       if (this.view == 0) {
-         Font var18 = Fonts.NEW_MEDIUM.getFont(5.0F);
-         String var20 = t("gui.scripts.home.title").replace("{n}", String.valueOf(this.installed.size()));
-         var1.drawText(var18, var20, var4 + 8.0F, var9 + (11.0F - var18.height()) / 2.0F, var8.getTextSecondary().getZenithColor().method7294(var7));
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+         String text = t("gui.scripts.home.title").replace("{n}", String.valueOf(this.installed.size()));
+         menuDrawContext.drawText(font2, text, f + 8.0F, y + (11.0F - font2.height()) / 2.0F, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
       } else {
-         this.views.render(var1, var2, var3, var4 + 8.0F, var9, var6 - 16.0F - var11 - 8.0F, this.view - 1, var7, var8);
-         this.categories.render(var1, var2, var3, var4 + 8.0F, var9 + 11.0F + GuiStyle.PADDING.intValue(), var6 - 16.0F, this.category, var7, var8);
+         this.views.render(menuDrawContext, lastClickX, lastClickY, f + 8.0F, y, f3 - 16.0F - rightWidth - 8.0F, this.view - 1, previewAlpha, zenithStyle);
+         this.categories.render(menuDrawContext, lastClickX, lastClickY, f + 8.0F, y + 11.0F + GuiStyle.PADDING.intValue(), f3 - 16.0F, this.category, previewAlpha, zenithStyle);
          if (this.categories.hovered() >= 0) {
             HoverInfo.request(t("gui.market.category"), t("gui.market.category.desc"));
          }
       }
 
       if (this.loading.get() > 0 && this.view != 0) {
-         float var19 = (float)(System.currentTimeMillis() % 900L) / 900.0F;
-         var1.drawRoundedRect(
-            var4 + 8.0F + (var6 - 16.0F - 30.0F) * var19,
-            var5 + this.headerHeight() - 1.5F,
+         float f4 = (float)(System.currentTimeMillis() % 900L) / 900.0F;
+         menuDrawContext.drawRoundedRect(
+            f + 8.0F + (f3 - 16.0F - 30.0F) * f4,
+            f2 + this.headerHeight() - 1.5F,
             30.0F,
             1.0F,
             ProxyDotRadiusData.method8069(0.5F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * 0.8F)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.8F)
          );
       }
 
@@ -378,10 +378,10 @@ public final class ScriptMarketTab {
 
    public boolean clickHeader() {
       if (this.view != 0) {
-         int var1 = this.categories.hovered();
-         if (var1 >= 0) {
-            if (var1 != this.category) {
-               this.category = var1;
+         int hovered = this.categories.hovered();
+         if (hovered >= 0) {
+            if (hovered != this.category) {
+               this.category = hovered;
                this.selected = null;
                this.panel.resetScroll();
                this.panel.replayEntrance();
@@ -392,10 +392,10 @@ public final class ScriptMarketTab {
          }
       }
 
-      int var2 = this.view == 0 ? -1 : this.views.hovered() + 1;
-      if (var2 > 0) {
-         if (var2 != this.view) {
-            this.view = var2;
+      int view = this.view == 0 ? -1 : this.views.hovered() + 1;
+      if (view > 0) {
+         if (view != this.view) {
+            this.view = view;
             this.selected = null;
             this.panel.closeSettingsIfOpen();
             this.panel.resetScroll();
@@ -428,259 +428,259 @@ public final class ScriptMarketTab {
       }
    }
 
-   public void mouse(double var1, double var3) {
-      this.lastX = var1;
-      this.lastY = var3;
+   public void mouse(double lastX, double lastY) {
+      this.lastX = lastX;
+      this.lastY = lastY;
    }
 
-   public void build(Storage var1) {
+   public void build(Storage hostOrNull) {
       this.fetch(false);
-      this.installed = OriginUtil.method6925(var1);
-      this.hero(var1);
+      this.installed = OriginUtil.method6925(hostOrNull);
+      this.hero(hostOrNull);
       if (this.view == 0) {
          this.selected = null;
-         this.panel.buildLocal(var1);
+         this.panel.buildLocal(hostOrNull);
       } else {
          switch (this.view) {
             case 2:
-               this.entries(var1, this.arrange(this.library), "gui.scripts.market.empty.library", "gui.scripts.market.empty.library.desc");
+               this.entries(hostOrNull, this.arrange(this.library), "gui.scripts.market.empty.library", "gui.scripts.market.empty.library.desc");
                break;
             case 3:
-               this.entries(var1, this.arrange(this.mine), "gui.scripts.market.empty.mine", "gui.scripts.market.empty.mine.desc");
+               this.entries(hostOrNull, this.arrange(this.mine), "gui.scripts.market.empty.mine", "gui.scripts.market.empty.mine.desc");
                break;
             default:
-               this.entries(var1, this.arrange(this.catalog), "gui.scripts.market.empty.catalog", "gui.scripts.market.empty.catalog.desc");
+               this.entries(hostOrNull, this.arrange(this.catalog), "gui.scripts.market.empty.catalog", "gui.scripts.market.empty.catalog.desc");
          }
 
-         StoreApi.Data2 var2 = this.entry(this.selected);
-         if (var2 != null) {
-            this.entryAside(var1, var2);
+         StoreApi.Data2 entry = this.entry(this.selected);
+         if (entry != null) {
+            this.entryAside(hostOrNull, entry);
          } else {
             this.selected = null;
-            this.overviewAside(var1);
+            this.overviewAside(hostOrNull);
          }
       }
    }
 
-   private UUID idOf(Script var1) {
-      for (Entry var3 : this.installed.entrySet()) {
-         if (var3.getValue() == var1 || ((Script)var3.getValue()).getId().equals(var1.getId())) {
-            return (UUID)var3.getKey();
+   private UUID idOf(Script script) {
+      for (Entry entry : this.installed.entrySet()) {
+         if (entry.getValue() == script || ((Script)entry.getValue()).getId().equals(script.getId())) {
+            return (UUID)entry.getKey();
          }
       }
 
       return null;
    }
 
-   public StoreApi.Data2 updateFor(Storage var1, Script var2) {
-      UUID var3 = this.idOf(var2);
-      StoreApi.Data2 var4 = this.entry(var3);
-      return var4 != null && !this.busy.contains(var3) && OriginUtil.method6927(var1, var4) ? var4 : null;
+   public StoreApi.Data2 updateFor(Storage storage, Script script) {
+      UUID idOf = this.idOf(script);
+      StoreApi.Data2 entry = this.entry(idOf);
+      return entry != null && !this.busy.contains(idOf) && OriginUtil.method6927(storage, entry) ? entry : null;
    }
 
-   public boolean updating(Storage var1, Script var2) {
-      UUID var3 = this.idOf(var2);
-      return var3 != null && this.busy.contains(var3);
+   public boolean updating(Storage storage, Script script) {
+      UUID idOf = this.idOf(script);
+      return idOf != null && this.busy.contains(idOf);
    }
 
-   public int updatesCount(Storage var1) {
-      int var2 = 0;
+   public int updatesCount(Storage storage) {
+      int n = 0;
 
-      for (Script var4 : var1.method1293()) {
-         if (this.updateFor(var1, var4) != null) {
-            var2++;
+      for (Script script : storage.method1293()) {
+         if (this.updateFor(storage, script) != null) {
+            n++;
          }
       }
 
-      return var2;
+      return n;
    }
 
-   public void update(Storage var1, Script var2) {
-      StoreApi.Data2 var3 = this.updateFor(var1, var2);
-      if (var3 != null) {
-         this.install(var1, var3);
+   public void update(Storage storage, Script script) {
+      StoreApi.Data2 entry = this.updateFor(storage, script);
+      if (entry != null) {
+         this.install(storage, entry);
       }
    }
 
-   public void updateAll(Storage var1) {
-      for (Script var3 : new ArrayList<>(var1.method1293())) {
-         this.update(var1, var3);
+   public void updateAll(Storage storage) {
+      for (Script script : new ArrayList<>(storage.method1293())) {
+         this.update(storage, script);
       }
    }
 
-   private List<StoreApi.Data2> arrange(List<StoreApi.Data2> var1) {
-      String var2 = this.panel.searchQuery().toLowerCase(Locale.ROOT).strip();
-      ArrayList<StoreApi.Data2> var3 = new ArrayList<>();
+   private List<StoreApi.Data2> arrange(List<StoreApi.Data2> library) {
+      String str = this.panel.searchQuery().toLowerCase(Locale.ROOT).strip();
+      ArrayList<StoreApi.Data2> data2s = new ArrayList<>();
 
-      for (StoreApi.Data2 var5 : var1) {
-         if (this.inCategory(var5)
+      for (StoreApi.Data2 entry : library) {
+         if (this.inCategory(entry)
             && (
-               var2.isEmpty()
-                  || var5.name().toLowerCase(Locale.ROOT).contains(var2)
-                  || var5.description().toLowerCase(Locale.ROOT).contains(var2)
-                  || var5.getText8().toLowerCase(Locale.ROOT).contains(var2)
-                  || String.join(",", OriginUtil.method6916(var5).getItems()).toLowerCase(Locale.ROOT).contains(var2)
+               str.isEmpty()
+                  || entry.name().toLowerCase(Locale.ROOT).contains(str)
+                  || entry.description().toLowerCase(Locale.ROOT).contains(str)
+                  || entry.getText8().toLowerCase(Locale.ROOT).contains(str)
+                  || String.join(",", OriginUtil.method6916(entry).getItems()).toLowerCase(Locale.ROOT).contains(str)
             )) {
-            var3.add(var5);
+            data2s.add(entry);
          }
       }
-      Comparator<StoreApi.Data2> var6 = switch (this.sort) {
+      Comparator<StoreApi.Data2> comparator = switch (this.sort) {
          case 1 -> Comparator.comparingInt(StoreApi.Data2::getIntValue)
             .reversed()
             .thenComparing(Comparator.comparingLong(StoreApi.Data2::getLongValue4).reversed());
-         case 2 -> Comparator.comparing(var0 -> var0.name().toLowerCase(Locale.ROOT));
+         case 2 -> Comparator.comparing(data2 -> data2.name().toLowerCase(Locale.ROOT));
          default -> Comparator.comparingLong(StoreApi.Data2::getLongValue4).reversed();
       };
-      var3.sort(var6);
-      return var3;
+      data2s.sort(comparator);
+      return data2s;
    }
 
-   private String[][] heroStats(Storage var1) {
+   private String[][] heroStats(Storage storage) {
       if (this.view == 0) {
-         var var7 = var1.method1293();
-         long var8 = var7.stream().filter(Script::isRunning).count();
-         int var9 = var7.stream().mapToInt(var0 -> var0.getItems3().size()).sum();
+         var scripts = storage.method1293();
+         long count = scripts.stream().filter(Script::isRunning).count();
+         int n = scripts.stream().mapToInt(script -> script.getItems3().size()).sum();
          return new String[][]{
-            {var8 + "/" + var7.size(), t("gui.scripts.market.hero.running")},
-            {String.valueOf(var9), t("gui.scripts.market.hero.modules")},
-            {String.valueOf(this.updatesCount(var1)), t("gui.scripts.market.hero.updates")}
+            {count + "/" + scripts.size(), t("gui.scripts.market.hero.running")},
+            {String.valueOf(n), t("gui.scripts.market.hero.modules")},
+            {String.valueOf(this.updatesCount(storage)), t("gui.scripts.market.hero.updates")}
          };
       } else {
-         int var2 = 0;
-         int var3 = 0;
-         HashSet var4 = new HashSet();
+         int n = 0;
+         int n2 = 0;
+         HashSet hashSet = new HashSet();
 
-         for (StoreApi.Data2 var6 : this.catalog) {
-            if (this.inCategory(var6)) {
-               var3++;
-               var2 += var6.getIntValue();
-               var4.add(var6.getLongValue5());
+         for (StoreApi.Data2 entry : this.catalog) {
+            if (this.inCategory(entry)) {
+               n2++;
+               n += entry.getIntValue();
+               hashSet.add(entry.getLongValue5());
             }
          }
 
          return new String[][]{
             {
-                  String.valueOf(var3),
+                  String.valueOf(n2),
                   t(this.category == 2 ? "gui.market.hero.configs" : (this.category == 1 ? "gui.scripts.market.hero.scripts" : "gui.market.hero.items"))
             },
-            {String.valueOf(var4.size()), t("gui.scripts.market.hero.authors")},
-            {String.valueOf(var2), t("gui.scripts.market.hero.likes")}
+            {String.valueOf(hashSet.size()), t("gui.scripts.market.hero.authors")},
+            {String.valueOf(n), t("gui.scripts.market.hero.likes")}
          };
       }
    }
 
-   private String heroNote(Storage var1) {
+   private String heroNote(Storage storage) {
       if (this.view != 0) {
          return t(HERO_TITLES[this.view] + ".desc");
       } else {
-         var var2 = var1.method1293();
-         long var3 = var2.stream().filter(var0 -> var0.getType2() == Script.Type2.FAILED).count();
-         return var3 > 0L ? t("gui.scripts.home.failed").replace("{n}", String.valueOf(var3)) : t(HERO_TITLES[this.view] + ".desc");
+         var scripts = storage.method1293();
+         long count = scripts.stream().filter(script -> script.getType2() == Script.Type2.FAILED).count();
+         return count > 0L ? t("gui.scripts.home.failed").replace("{n}", String.valueOf(count)) : t(HERO_TITLES[this.view] + ".desc");
       }
    }
 
-   private void hero(Storage var1) {
+   private void hero(Storage hostOrNull) {
       this.panel
          .custom(
             50.0F,
-            (var2, var3, var4, var5, var6, var7, var8, var9) -> {
-               float var10 = var5 + 8.0F;
-               float var11 = var7 - 16.0F;
-               float var12 = var6 + 2.0F;
-               float var13 = 43.0F;
-               ZenithColor var14 = var9.getPrimaryColor().getZenithColor();
-               ProxyDotRadiusData var15 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.9F);
-               var2.drawRoundedRect(var10, var12, var11, var13, var15, ScriptsSectionPanel.cardFill(var9, 0.2F).method7294(var8));
-               ScriptsSectionPanel.flowGlow(var2, var10, var12, var11, var13, var15, var14, 0.45F, var8);
-               var2.drawRoundedBorder(var10, var12, var11, var13, 0.2F, var15, var14.method7292(0.28F).method7294(var8));
-               Font var16 = Fonts.NEW_SEMIBOLD.getFont(6.4F);
-               Font var17 = Fonts.NEW_REGULAR.getFont(4.3F);
-               Font var18 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-               Font var19 = Fonts.NEW_MEDIUM.getFont(3.8F);
-               var2.drawText(var16, t(HERO_TITLES[this.view]), var10 + 9.0F, var12 + 8.0F, var9.getTextEnable().getZenithColor().method7294(var8));
-               String var20 = this.heroNote(var1);
-               boolean var21 = this.view == 0 && var1.method1293().stream().anyMatch(var0 -> var0.getType2() == Script.Type2.FAILED);
-               String[][] var22 = this.heroStats(var1);
-               float var23 = 0.0F;
+            (menuDrawContext, n, n2, f, f2, f3, previewAlpha, currentStyle) -> {
+               float floatValue = f + 8.0F;
+               float width = f3 - 16.0F;
+               float y = f2 + 2.0F;
+               float height = 43.0F;
+               ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+               ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.9F);
+               menuDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, ScriptsSectionPanel.cardFill(currentStyle, 0.2F).method7294(previewAlpha));
+               ScriptsSectionPanel.flowGlow(menuDrawContext, floatValue, y, width, height, headerRadius, zenithColor, 0.45F, previewAlpha);
+               menuDrawContext.drawRoundedBorder(floatValue, y, width, height, 0.2F, headerRadius, zenithColor.method7292(0.28F).method7294(previewAlpha));
+               Font font = Fonts.NEW_SEMIBOLD.getFont(6.4F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+               Font font3 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+               Font font4 = Fonts.NEW_MEDIUM.getFont(3.8F);
+               menuDrawContext.drawText(font, t(HERO_TITLES[this.view]), floatValue + 9.0F, y + 8.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               String heroNote = this.heroNote(hostOrNull);
+               boolean flag = this.view == 0 && hostOrNull.method1293().stream().anyMatch(script -> script.getType2() == Script.Type2.FAILED);
+               String[][] heroStats = this.heroStats(hostOrNull);
+               float f4 = 0.0F;
 
-               for (String[] var27 : var22) {
-                  var23 += Math.max(var18.width(var27[0]), var19.width(var27[1])) + 12.0F;
+               for (String[] heroStat : heroStats) {
+                  f4 += Math.max(font3.width(heroStat[0]), font4.width(heroStat[1])) + 12.0F;
                }
 
-               List<String> var29 = SectionPanel.wrapText(var20, var17, var11 - 18.0F - var23, 2);
-               float var30 = var12 + 11.0F + var16.height();
+               List<String> wrapText = SectionPanel.wrapText(heroNote, font2, width - 18.0F - f4, 2);
+               float centeredTextY = y + 11.0F + font.height();
 
-               for (String var34 : var29) {
-                  var2.drawText(
-                     var17, var34, var10 + 9.0F, var30, (var21 ? new ZenithColor(247, 206, 59) : var9.getTextTertiary().getZenithColor()).method7294(var8)
+               for (String text : wrapText) {
+                  menuDrawContext.drawText(
+                     font2, text, floatValue + 9.0F, centeredTextY, (flag ? new ZenithColor(247, 206, 59) : currentStyle.getTextTertiary().getZenithColor()).method7294(previewAlpha)
                   );
-                  var30 += var17.height() + 1.5F;
+                  centeredTextY += font2.height() + 1.5F;
                }
 
-               float var32 = var10 + var11 - 9.0F;
+               float f5 = floatValue + width - 9.0F;
 
-               for (int var35 = var22.length - 1; var35 >= 0; var35--) {
-                  float var28 = Math.max(var18.width(var22[var35][0]), var19.width(var22[var35][1]));
-                  var32 -= var28;
-                  var2.drawText(
-                     var18,
-                     var22[var35][0],
-                     var32 + (var28 - var18.width(var22[var35][0])) / 2.0F,
-                     var12 + 10.0F,
-                     var9.getTextEnable().getZenithColor().method7294(var8)
+               for (int i = heroStats.length - 1; i >= 0; i--) {
+                  float f6 = Math.max(font3.width(heroStats[i][0]), font4.width(heroStats[i][1]));
+                  f5 -= f6;
+                  menuDrawContext.drawText(
+                     font3,
+                     heroStats[i][0],
+                     f5 + (f6 - font3.width(heroStats[i][0])) / 2.0F,
+                     y + 10.0F,
+                     currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                   );
-                  var2.drawText(
-                     var19,
-                     var22[var35][1],
-                     var32 + (var28 - var19.width(var22[var35][1])) / 2.0F,
-                     var12 + 13.0F + var18.height(),
-                     var9.getTextTertiary().getZenithColor().method7294(var8)
+                  menuDrawContext.drawText(
+                     font4,
+                     heroStats[i][1],
+                     f5 + (f6 - font4.width(heroStats[i][1])) / 2.0F,
+                     y + 13.0F + font3.height(),
+                     currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                   );
-                  var32 -= 12.0F;
+                  f5 -= 12.0F;
                }
             }
          );
    }
 
-   private void skeleton(int var1) {
-      for (int var2 = 0; var2 < var1; var2++) {
-         int var3 = var2;
+   private void skeleton(int n) {
+      for (int i = 0; i < n; i++) {
+         int n2 = i;
          this.panel
             .custom(
                40.0F,
                this.panel
                   .entering(
-                     var2 + 1,
-                     (var1x, var2x, var3x, var4, var5, var6, var7, var8) -> {
-                        BoundsData var9 = new BoundsData(var4 + 8.0F, var5, var6 - 16.0F, 36.0F);
-                        ScriptsSectionPanel.card(var1x, var8, var9.getFloatValue(), var9.getFloatValue2(), var9.width(), var9.height(), 0.0F, var7);
-                        float var10 = (float)((System.currentTimeMillis() + var3 * 140L) % 1400L) / 1400.0F;
-                        float var11 = 0.5F + 0.5F * (float)Math.sin(var10 * Math.PI * 2.0);
-                        ZenithColor var12 = var8.getDisableActiveBg().getZenithColor().method7294(0.5F + 0.5F * var11);
+                     i + 1,
+                     (var1x, var2x, var3x, f, y, f2, previewAlpha, currentStyle) -> {
+                        BoundsData boundsData = new BoundsData(f + 8.0F, y, f2 - 16.0F, 36.0F);
+                        ScriptsSectionPanel.card(var1x, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.0F, previewAlpha);
+                        float f3 = (float)((System.currentTimeMillis() + n2 * 140L) % 1400L) / 1400.0F;
+                        float f4 = 0.5F + 0.5F * (float)Math.sin(f3 * Math.PI * 2.0);
+                        ZenithColor zenithColor = currentStyle.getDisableActiveBg().getZenithColor().method7294(0.5F + 0.5F * f4);
                         var1x.drawRoundedRect(
-                           var9.getFloatValue() + 7.0F,
-                           var9.getFloatValue2() + 7.0F,
+                           boundsData.getFloatValue() + 7.0F,
+                           boundsData.getFloatValue2() + 7.0F,
                            22.0F,
                            22.0F,
                            ProxyDotRadiusData.method8069(6.6000004F),
-                           var12.method7294(var7)
+                           zenithColor.method7294(previewAlpha)
                         );
-                        float var13 = var9.getFloatValue() + 7.0F + 22.0F + 7.0F;
-                        float var14 = var9.getFloatValue2() + 18.0F;
-                        var1x.drawRoundedRect(var13, var14 - 9.0F, var9.width() * 0.3F, 5.0F, ProxyDotRadiusData.method8069(2.5F), var12.method7294(var7));
+                        float floatValue = boundsData.getFloatValue() + 7.0F + 22.0F + 7.0F;
+                        float f5 = boundsData.getFloatValue2() + 18.0F;
+                        var1x.drawRoundedRect(floatValue, f5 - 9.0F, boundsData.width() * 0.3F, 5.0F, ProxyDotRadiusData.method8069(2.5F), zenithColor.method7294(previewAlpha));
                         var1x.drawRoundedRect(
-                           var13, var14 - 1.5F, var9.width() * 0.48F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var12.method7294(var7 * 0.7F)
-                        );
-                        var1x.drawRoundedRect(
-                           var13, var14 + 5.5F, var9.width() * 0.24F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var12.method7294(var7 * 0.5F)
+                           floatValue, f5 - 1.5F, boundsData.width() * 0.48F, 4.0F, ProxyDotRadiusData.method8069(2.0F), zenithColor.method7294(previewAlpha * 0.7F)
                         );
                         var1x.drawRoundedRect(
-                           var9.getFloatValue() + var9.width() - 7.0F - 44.0F,
-                           var14 - 7.0F,
+                           floatValue, f5 + 5.5F, boundsData.width() * 0.24F, 4.0F, ProxyDotRadiusData.method8069(2.0F), zenithColor.method7294(previewAlpha * 0.5F)
+                        );
+                        var1x.drawRoundedRect(
+                           boundsData.getFloatValue() + boundsData.width() - 7.0F - 44.0F,
+                           f5 - 7.0F,
                            44.0F,
                            14.0F,
                            ProxyDotRadiusData.method8069(7.0F),
-                           var12.method7294(var7 * 0.6F)
+                           zenithColor.method7294(previewAlpha * 0.6F)
                         );
                      }
                   )
@@ -688,48 +688,48 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void empty(String var1, String var2) {
+   private void empty(String str, String key) {
       if (this.loading.get() > 0) {
          this.skeleton(4);
       } else {
-         this.panel.custom(76.0F, (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-            Font var11 = Fonts.NEW_SEMIBOLD.getFont(5.6F);
-            Font var12 = Fonts.NEW_REGULAR.getFont(4.4F);
-            float var13 = var7 + 16.0F;
-            String var14 = t(this.loading.get() > 0 ? "gui.scripts.market.loading" : var1);
-            var3.drawText(var11, var14, var6 + (var8 - var11.width(var14)) / 2.0F, var13, var10.getTextEnable().getZenithColor().method7294(var9));
-            List<String> var15 = SectionPanel.wrapText(t(var2), var12, var8 - 48.0F, 3);
-            float var16 = var13 + var11.height() + 6.0F;
+         this.panel.custom(76.0F, (menuDrawContext, n, n2, f, f2, f3, previewAlpha, zenithStyle) -> {
+            Font font = Fonts.NEW_SEMIBOLD.getFont(5.6F);
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+            float centeredTextY = f2 + 16.0F;
+            String text = t(this.loading.get() > 0 ? "gui.scripts.market.loading" : str);
+            menuDrawContext.drawText(font, text, f + (f3 - font.width(text)) / 2.0F, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            List<String> wrapText = SectionPanel.wrapText(t(key), font2, f3 - 48.0F, 3);
+            float centeredTextY2 = centeredTextY + font.height() + 6.0F;
 
-            for (String var18 : var15) {
-               var3.drawText(var12, var18, var6 + (var8 - var12.width(var18)) / 2.0F, var16, var10.getTextTertiary().getZenithColor().method7294(var9));
-               var16 += var12.height() + 2.0F;
+            for (String text2 : wrapText) {
+               menuDrawContext.drawText(font2, text2, f + (f3 - font2.width(text2)) / 2.0F, centeredTextY2, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               centeredTextY2 += font2.height() + 2.0F;
             }
          });
       }
    }
 
-   private void entries(Storage var1, List<StoreApi.Data2> var2, String var3, String var4) {
-      if (var2.isEmpty()) {
-         this.empty(var3, var4);
+   private void entries(Storage hostOrNull, List<StoreApi.Data2> arrange, String str, String key) {
+      if (arrange.isEmpty()) {
+         this.empty(str, key);
       } else {
-         int var5 = 1;
+         int n = 1;
 
-         for (StoreApi.Data2 var7 : var2) {
-            UUID var8 = var7.getUUID();
-            this.panel.custom(40.0F, this.panel.entering(var5++, (var3x, var4x, var5x, var6, var7x, var8x, var9, var10) -> {
-               StoreApi.Data2 var11 = this.entry(var8);
-               if (var11 != null) {
-                  this.renderEntry(var3x, var4x, var5x, var6, var7x, var8x, var9, var10, var1, var11);
+         for (StoreApi.Data2 data2 : arrange) {
+            UUID uuid = data2.getUUID();
+            this.panel.custom(40.0F, this.panel.entering(n++, (var3x, var4x, var5x, f, var7x, var8x, previewAlpha, zenithStyle) -> {
+               StoreApi.Data2 entry = this.entry(uuid);
+               if (entry != null) {
+                  this.renderEntry(var3x, var4x, var5x, f, var7x, var8x, previewAlpha, zenithStyle, hostOrNull, entry);
                }
             }), () -> {
-               StoreApi.Data2 var3x = this.entry(var8);
+               StoreApi.Data2 var3x = this.entry(uuid);
                if (var3x != null) {
-                  if (Boolean.TRUE.equals(this.pillHover.get(var8))) {
-                     this.pressedAt.put(var8, System.currentTimeMillis());
-                     this.primary(var1, var3x);
+                  if (Boolean.TRUE.equals(this.pillHover.get(uuid))) {
+                     this.pressedAt.put(uuid, System.currentTimeMillis());
+                     this.primary(hostOrNull, var3x);
                   } else {
-                     this.selected = var8.equals(this.selected) ? null : var8;
+                     this.selected = uuid.equals(this.selected) ? null : uuid;
                      if (this.selected != null && var3x.mine()) {
                         this.loadCodes(var3x);
                      }
@@ -737,18 +737,18 @@ public final class ScriptMarketTab {
                      this.panel.invalidate();
                   }
                }
-            }, () -> var8.equals(this.selected), () -> {
-               this.selected = var8;
+            }, () -> uuid.equals(this.selected), () -> {
+               this.selected = uuid;
                this.panel.invalidate();
             });
          }
       }
    }
 
-   private boolean needsPurchase(StoreApi.Data2 var1) {
-      if (!var1.mine() && StoreApi.method1960(var1.getUUID()).method2009()) {
-         for (StoreApi.Data2 var3 : this.library) {
-            if (var3.getUUID().equals(var1.getUUID())) {
+   private boolean needsPurchase(StoreApi.Data2 entry) {
+      if (!entry.mine() && StoreApi.method1960(entry.getUUID()).method2009()) {
+         for (StoreApi.Data2 data2 : this.library) {
+            if (data2.getUUID().equals(entry.getUUID())) {
                return false;
             }
          }
@@ -759,118 +759,118 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void buy(StoreApi.Data2 var1) {
-      com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(RegionUtil.method2038().get(0) + "/market/" + var1.getUUID()));
+   private void buy(StoreApi.Data2 entry) {
+      com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(RegionUtil.method2038().get(0) + "/market/" + entry.getUUID()));
       this.report(t("gui.market.buy.opened"), false);
    }
 
-   private String marketLabel(StoreApi.Data2 var1) {
-      StoreApi.Data5 var2 = StoreApi.method1960(var1.getUUID());
-      if (var2.pending()) {
+   private String marketLabel(StoreApi.Data2 entry) {
+      StoreApi.Data5 data5 = StoreApi.method1960(entry.getUUID());
+      if (data5.pending()) {
          return t("gui.market.status.pending");
-      } else if (var2.method2008()) {
+      } else if (data5.method2008()) {
          return t("gui.market.status.rejected");
       } else {
-         return var2.method2007()
-            ? t(var2.method2009() ? "gui.market.tag.paid" : "gui.market.tag.free").replace("{p}", String.valueOf(var2.getIntValue()))
-            : t(VISIBILITY_KEYS[visibilityIndex(var1.getText7())]);
+         return data5.method2007()
+            ? t(data5.method2009() ? "gui.market.tag.paid" : "gui.market.tag.free").replace("{p}", String.valueOf(data5.getIntValue()))
+            : t(VISIBILITY_KEYS[visibilityIndex(entry.getText7())]);
       }
    }
 
-   private String pillText(StoreApi.Data2 var1, boolean var2, boolean var3) {
-      if (this.busy.contains(var1.getUUID())) {
+   private String pillText(StoreApi.Data2 entry, boolean flag, boolean flag2) {
+      if (this.busy.contains(entry.getUUID())) {
          return t("gui.scripts.market.busy");
-      } else if (this.needsPurchase(var1)) {
-         return t("gui.market.buy").replace("{p}", String.valueOf(StoreApi.method1960(var1.getUUID()).getIntValue()));
-      } else if (isConfig(var1)) {
-         return t(var2 ? "gui.market.config.redownload" : "gui.market.config.download");
+      } else if (this.needsPurchase(entry)) {
+         return t("gui.market.buy").replace("{p}", String.valueOf(StoreApi.method1960(entry.getUUID()).getIntValue()));
+      } else if (isConfig(entry)) {
+         return t(flag ? "gui.market.config.redownload" : "gui.market.config.download");
       } else {
-         Script var4 = this.installed.get(var1.getUUID());
-         if (var4 == null) {
-            return t(var1.mine() ? "gui.scripts.market.download" : "gui.scripts.market.install");
+         Script script = this.installed.get(entry.getUUID());
+         if (script == null) {
+            return t(entry.mine() ? "gui.scripts.market.download" : "gui.scripts.market.install");
          } else {
-            return var3 ? t("gui.scripts.market.update") : t("gui.scripts.market.open");
+            return flag2 ? t("gui.scripts.market.update") : t("gui.scripts.market.open");
          }
       }
    }
 
-   private void primary(Storage var1, StoreApi.Data2 var2) {
-      if (!this.busy.contains(var2.getUUID())) {
-         if (this.needsPurchase(var2)) {
-            this.buy(var2);
-         } else if (isConfig(var2)) {
-            this.downloadConfig(var2);
+   private void primary(Storage hostOrNull, StoreApi.Data2 entry) {
+      if (!this.busy.contains(entry.getUUID())) {
+         if (this.needsPurchase(entry)) {
+            this.buy(entry);
+         } else if (isConfig(entry)) {
+            this.downloadConfig(entry);
          } else {
-            Script var3 = this.installed.get(var2.getUUID());
-            if (var3 != null && !OriginUtil.method6927(var1, var2)) {
-               this.panel.openWorkspace(var3);
+            Script workspace = this.installed.get(entry.getUUID());
+            if (workspace != null && !OriginUtil.method6927(hostOrNull, entry)) {
+               this.panel.openWorkspace(workspace);
             } else {
-               this.install(var1, var2);
+               this.install(hostOrNull, entry);
             }
          }
       }
    }
 
    private void renderEntry(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, Storage var9, StoreApi.Data2 var10
+      MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float y, float f2, float previewAlpha, ZenithStyle currentStyle, Storage hostOrNull, StoreApi.Data2 entry
    ) {
-      BoundsData var11 = cardRect(var4, var5, var6);
-      boolean var12 = var11.contains(var2, var3);
-      boolean var13 = var10.getUUID().equals(this.selected);
-      float var14 = this.panel.hot("m:" + var10.getUUID(), var12);
-      float var15 = this.panel.hot("msel:" + var10.getUUID(), var13);
-      float var16 = Smooth.press(this.pressedAt.getOrDefault(var10.getUUID(), 0L), 360L);
-      OriginUtil.Data3 var17 = OriginUtil.method6916(var10);
-      drawCard(var1, var8, var11, var14, var15, var16, tint(var10, var17), var7);
-      this.avatar(var1, var10, var17, var11.getFloatValue() + 7.0F, cardAvatarY(var11), 22.0F, var7);
-      boolean var18 = isConfig(var10);
-      boolean var19 = var18 && this.configPresentCached(var10);
-      boolean var20 = !var18 && this.installed.containsKey(var10.getUUID()) && OriginUtil.method6927(var9, var10);
-      String var21 = this.pillText(var10, var19, var20);
-      BoundsData var22 = pillRect(var11, var11.getFloatValue() + var11.width() - 7.0F, var21);
-      boolean var23 = var22.contains(var2, var3);
-      this.pillHover.put(var10.getUUID(), var23);
-      float var24 = cardTextX(var11);
-      float var25 = var22.getFloatValue() - 7.0F;
-      ScriptMarketTab.CardLines var26 = cardLines(var11);
+      BoundsData boundsData = cardRect(f, y, f2);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      boolean flag = entry.getUUID().equals(this.selected);
+      float hot = this.panel.hot("m:" + entry.getUUID(), contains);
+      float hot2 = this.panel.hot("msel:" + entry.getUUID(), flag);
+      float press = Smooth.press(this.pressedAt.getOrDefault(entry.getUUID(), 0L), 360L);
+      OriginUtil.Data3 data3 = OriginUtil.method6916(entry);
+      drawCard(menuDrawContext, currentStyle, boundsData, hot, hot2, press, tint(entry, data3), previewAlpha);
+      this.avatar(menuDrawContext, entry, data3, boundsData.getFloatValue() + 7.0F, cardAvatarY(boundsData), 22.0F, previewAlpha);
+      boolean config = isConfig(entry);
+      boolean flag2 = config && this.configPresentCached(entry);
+      boolean flag3 = !config && this.installed.containsKey(entry.getUUID()) && OriginUtil.method6927(hostOrNull, entry);
+      String pillText = this.pillText(entry, flag2, flag3);
+      BoundsData pillRect2 = pillRect(boundsData, boundsData.getFloatValue() + boundsData.width() - 7.0F, pillText);
+      boolean contains2 = pillRect2.contains(lastClickX, lastClickY);
+      this.pillHover.put(entry.getUUID(), contains2);
+      float cardTextX2 = cardTextX(boundsData);
+      float f3 = pillRect2.getFloatValue() - 7.0F;
+      ScriptMarketTab.CardLines cardLines2 = cardLines(boundsData);
       drawTitleLine(
-         var1,
-         var8,
-         var10.name(),
-         var17.version().isBlank() ? "" : "v" + var17.version(),
-         var10.getIntValue() <= 0 && !var10.isFlag3() ? "" : "♥ " + var10.getIntValue(),
-         var10.isFlag3() ? LIKE : null,
-         var24,
-         var25,
-         var26.title(),
-         var7
+         menuDrawContext,
+         currentStyle,
+         entry.name(),
+         data3.version().isBlank() ? "" : "v" + data3.version(),
+         entry.getIntValue() <= 0 && !entry.isFlag3() ? "" : "♥ " + entry.getIntValue(),
+         entry.isFlag3() ? LIKE : null,
+         cardTextX2,
+         f3,
+         cardLines2.title(),
+         previewAlpha
       );
-      drawDescription(var1, var8, var10.description(), null, var24, var25, var26.note(), var7);
-      float var27 = drawTags(var1, var8, var17.getItems(), var24, var24, var25, var26.meta(), var7);
-      ArrayList var28 = new ArrayList();
+      drawDescription(menuDrawContext, currentStyle, entry.description(), null, cardTextX2, f3, cardLines2.note(), previewAlpha);
+      float drawChip = drawTags(menuDrawContext, currentStyle, data3.getItems(), cardTextX2, cardTextX2, f3, cardLines2.meta(), previewAlpha);
+      ArrayList elements = new ArrayList();
       if (this.category == 0) {
-         var28.add(t(var18 ? "gui.market.kind.config" : "gui.market.kind.script"));
+         elements.add(t(config ? "gui.market.kind.config" : "gui.market.kind.script"));
       }
 
-      var28.add(var10.getText8().isBlank() ? "?" : var10.getText8());
-      var28.add(size(var10.getLongValue()));
-      String var29 = ScriptsSectionPanel.ago(var10.getLongValue4());
-      if (!var29.isEmpty()) {
-         var28.add(var29);
+      elements.add(entry.getText8().isBlank() ? "?" : entry.getText8());
+      elements.add(size(entry.getLongValue()));
+      String ago = ScriptsSectionPanel.ago(entry.getLongValue4());
+      if (!ago.isEmpty()) {
+         elements.add(ago);
       }
 
-      if (var10.mine()) {
-         var28.add(this.marketLabel(var10));
-      } else if (StoreApi.method1960(var10.getUUID()).method2009()) {
-         var28.add(StoreApi.method1960(var10.getUUID()).getIntValue() + " ₽");
+      if (entry.mine()) {
+         elements.add(this.marketLabel(entry));
+      } else if (StoreApi.method1960(entry.getUUID()).method2009()) {
+         elements.add(StoreApi.method1960(entry.getUUID()).getIntValue() + " ₽");
       }
 
-      drawMeta(var1, String.join("  ·  ", var28), var8.getTextTertiary().getZenithColor(), var27, var24, var25, var26.meta(), var7);
-      boolean var30 = var18 ? var19 : this.installed.containsKey(var10.getUUID());
-      boolean var31 = var30 && !var18 && var20;
-      drawPill(var1, var8, var22, var21, var30 && !var31, this.panel.hot("mp:" + var10.getUUID(), var23), this.busy.contains(var10.getUUID()), var7);
-      if (var12 && !var23) {
-         HoverInfo.request(var10.name(), t("gui.scripts.market.row.hint"));
+      drawMeta(menuDrawContext, String.join("  ·  ", elements), currentStyle.getTextTertiary().getZenithColor(), drawChip, cardTextX2, f3, cardLines2.meta(), previewAlpha);
+      boolean containsKey = config ? flag2 : this.installed.containsKey(entry.getUUID());
+      boolean flag4 = containsKey && !config && flag3;
+      drawPill(menuDrawContext, currentStyle, pillRect2, pillText, containsKey && !flag4, this.panel.hot("mp:" + entry.getUUID(), contains2), this.busy.contains(entry.getUUID()), previewAlpha);
+      if (contains && !contains2) {
+         HoverInfo.request(entry.name(), t("gui.scripts.market.row.hint"));
       }
    }
 
@@ -894,196 +894,196 @@ public final class ScriptMarketTab {
       return Fonts.NEW_MEDIUM.getFont(4.4F);
    }
 
-   public static BoundsData cardRect(float var0, float var1, float var2) {
-      return new BoundsData(var0 + 8.0F, var1, var2 - 16.0F, 36.0F);
+   public static BoundsData cardRect(float f, float y, float f2) {
+      return new BoundsData(f + 8.0F, y, f2 - 16.0F, 36.0F);
    }
 
-   public static float cardTextX(BoundsData var0) {
-      return var0.getFloatValue() + 7.0F + 22.0F + 7.0F;
+   public static float cardTextX(BoundsData boundsData) {
+      return boundsData.getFloatValue() + 7.0F + 22.0F + 7.0F;
    }
 
-   public static float cardAvatarY(BoundsData var0) {
-      return var0.getFloatValue2() + (var0.height() - 22.0F) / 2.0F;
+   public static float cardAvatarY(BoundsData boundsData) {
+      return boundsData.getFloatValue2() + (boundsData.height() - 22.0F) / 2.0F;
    }
 
-   public static ScriptMarketTab.CardLines cardLines(BoundsData var0) {
-      Font var1 = cardTitleFont();
-      Font var2 = cardNoteFont();
-      float var3 = var1.height() + 2.0F + var2.height() + 2.5F + cardMetaFont().height();
-      float var4 = var0.getFloatValue2() + (var0.height() - var3) / 2.0F;
-      float var5 = var4 + var1.height() + 2.0F;
-      return new ScriptMarketTab.CardLines(var4, var5, var5 + var2.height() + 2.5F);
+   public static ScriptMarketTab.CardLines cardLines(BoundsData boundsData) {
+      Font font = cardTitleFont();
+      Font cardNoteFont2 = cardNoteFont();
+      float f = font.height() + 2.0F + cardNoteFont2.height() + 2.5F + cardMetaFont().height();
+      float title = boundsData.getFloatValue2() + (boundsData.height() - f) / 2.0F;
+      float note = title + font.height() + 2.0F;
+      return new ScriptMarketTab.CardLines(title, note, note + cardNoteFont2.height() + 2.5F);
    }
 
-   public static void drawCard(MenuDrawContext var0, ZenithStyle var1, BoundsData var2, float var3, float var4, float var5, ZenithColor var6, float var7) {
-      ScriptsSectionPanel.card(var0, var1, var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), Math.max(var3, var4 * 0.6F), var7);
-      ProxyDotRadiusData var8 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F);
-      ZenithColor var9 = var1.getPrimaryColor().getZenithColor();
-      if (var3 > 0.01F) {
-         ZenithColor var10 = var6.method7292(0.09F * var3 * var7);
-         ZenithColor var11 = var6.method7292(0.0F);
-         var0.drawRoundedRect(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), var8, GlowColor.method8096(var10, var10, var11, var11));
+   public static void drawCard(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, BoundsData boundsData, float hot, float f, float press, ZenithColor letterColor, float previewAlpha) {
+      ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), Math.max(hot, f * 0.6F), previewAlpha);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      if (hot > 0.01F) {
+         ZenithColor clientColor = letterColor.method7292(0.09F * hot * previewAlpha);
+         ZenithColor zenithColor3 = letterColor.method7292(0.0F);
+         menuDrawContext.drawRoundedRect(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, GlowColor.method8096(clientColor, clientColor, zenithColor3, zenithColor3));
       }
 
-      if (var4 > 0.01F) {
-         var0.drawRoundedBorder(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), 0.25F, var8, var9.method7294(var7 * 0.7F * var4));
+      if (f > 0.01F) {
+         menuDrawContext.drawRoundedBorder(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.25F, headerRadius, zenithColor.method7294(previewAlpha * 0.7F * f));
       }
 
-      if (var5 > 0.01F) {
-         var0.drawRoundedRect(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), var8, var9.method7292(0.16F * var5).method7294(var7));
+      if (press > 0.01F) {
+         menuDrawContext.drawRoundedRect(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, zenithColor.method7292(0.16F * press).method7294(previewAlpha));
       }
    }
 
    public static float drawTitleLine(
-      MenuDrawContext var0, ZenithStyle var1, String var2, String var3, String var4, ZenithColor var5, float var6, float var7, float var8, float var9
+      MenuDrawContext menuDrawContext, ZenithStyle currentStyle, String name, String version, String likes, ZenithColor zenithColor, float cardTextX, float f, float title, float previewAlpha
    ) {
-      Font var10 = cardTitleFont();
-      Font var11 = cardNoteFont();
-      float var12 = var8 + var10.height() - var11.height();
-      float var13 = (var3.isEmpty() ? 0.0F : var11.width(var3) + 4.0F) + (var4.isEmpty() ? 0.0F : var11.width(var4) + 5.0F);
-      String var14 = var10.clip(var2, Math.max(20.0F, var7 - var6 - var13));
-      var0.drawText(var10, var14, var6, var8, var1.getTextEnable().getZenithColor().method7294(var9));
-      float var15 = var6 + var10.width(var14);
-      if (!var3.isEmpty() && var15 + 4.0F + var11.width(var3) <= var7) {
-         var0.drawText(var11, var3, var15 + 4.0F, var12, var1.getTextTertiary().getZenithColor().method7294(var9));
-         var15 += 4.0F + var11.width(var3);
+      Font font = cardTitleFont();
+      Font cardNoteFont2 = cardNoteFont();
+      float centeredTextY = title + font.height() - cardNoteFont2.height();
+      float f2 = (version.isEmpty() ? 0.0F : cardNoteFont2.width(version) + 4.0F) + (likes.isEmpty() ? 0.0F : cardNoteFont2.width(likes) + 5.0F);
+      String clip = font.clip(name, Math.max(20.0F, f - cardTextX - f2));
+      menuDrawContext.drawText(font, clip, cardTextX, title, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      float f3 = cardTextX + font.width(clip);
+      if (!version.isEmpty() && f3 + 4.0F + cardNoteFont2.width(version) <= f) {
+         menuDrawContext.drawText(cardNoteFont2, version, f3 + 4.0F, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         f3 += 4.0F + cardNoteFont2.width(version);
       }
 
-      if (!var4.isEmpty() && var15 + 5.0F + var11.width(var4) <= var7) {
-         var0.drawText(var11, var4, var15 + 5.0F, var12, (var5 == null ? var1.getTextTertiary().getZenithColor() : var5).method7294(var9));
-         var15 += 5.0F + var11.width(var4);
+      if (!likes.isEmpty() && f3 + 5.0F + cardNoteFont2.width(likes) <= f) {
+         menuDrawContext.drawText(cardNoteFont2, likes, f3 + 5.0F, centeredTextY, (zenithColor == null ? currentStyle.getTextTertiary().getZenithColor() : zenithColor).method7294(previewAlpha));
+         f3 += 5.0F + cardNoteFont2.width(likes);
       }
 
-      return var15;
+      return f3;
    }
 
-   public static void drawDescription(MenuDrawContext var0, ZenithStyle var1, String var2, ZenithColor var3, float var4, float var5, float var6, float var7) {
-      Font var8 = cardNoteFont();
-      String var9 = var2 == null ? "" : var2.replace('\r', ' ').replace('\n', ' ').strip();
-      boolean var10 = var9.isEmpty();
-      ZenithColor var11 = var10 ? var1.getTextTertiary().getZenithColor().method7294(0.7F) : (var3 == null ? var1.getTextSecondary().getZenithColor() : var3);
-      var0.drawText(var8, var8.clip(var10 ? t("gui.scripts.info.noDescription") : var9, var5 - var4), var4, var6, var11.method7294(var7));
+   public static void drawDescription(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, String description, ZenithColor zenithColor, float cardTextX, float f, float note, float previewAlpha) {
+      Font font = cardNoteFont();
+      String str = description == null ? "" : description.replace('\r', ' ').replace('\n', ' ').strip();
+      boolean empty = str.isEmpty();
+      ZenithColor zenithColor2 = empty ? currentStyle.getTextTertiary().getZenithColor().method7294(0.7F) : (zenithColor == null ? currentStyle.getTextSecondary().getZenithColor() : zenithColor);
+      menuDrawContext.drawText(font, font.clip(empty ? t("gui.scripts.info.noDescription") : str, f - cardTextX), cardTextX, note, zenithColor2.method7294(previewAlpha));
    }
 
-   public static float drawChip(MenuDrawContext var0, String var1, ZenithColor var2, ZenithColor var3, float var4, float var5, float var6) {
-      Font var7 = cardTagFont();
-      float var8 = var7.height() + 2.6F;
-      float var9 = var5 + (cardMetaFont().height() - var8) / 2.0F;
-      float var10 = var7.width(var1) + 6.0F;
-      var0.drawRoundedRect(var4, var9, var10, var8, ProxyDotRadiusData.method8069(var8 / 2.0F), var2.method7294(var6));
-      var0.drawText(var7, var1, var4 + 3.0F, var9 + (var8 - var7.height()) / 2.0F, var3.method7294(var6));
-      return var4 + var10 + 3.0F;
+   public static float drawChip(MenuDrawContext menuDrawContext, String text, ZenithColor zenithColor, ZenithColor zenithColor2, float cardTextX, float meta, float previewAlpha) {
+      Font font = cardTagFont();
+      float height = font.height() + 2.6F;
+      float y = meta + (cardMetaFont().height() - height) / 2.0F;
+      float width = font.width(text) + 6.0F;
+      menuDrawContext.drawRoundedRect(cardTextX, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7294(previewAlpha));
+      menuDrawContext.drawText(font, text, cardTextX + 3.0F, y + (height - font.height()) / 2.0F, zenithColor2.method7294(previewAlpha));
+      return cardTextX + width + 3.0F;
    }
 
-   public static float chipWidth(String var0) {
-      return cardTagFont().width(var0) + 6.0F;
+   public static float chipWidth(String text) {
+      return cardTagFont().width(text) + 6.0F;
    }
 
-   public static float drawTags(MenuDrawContext var0, ZenithStyle var1, List<String> var2, float var3, float var4, float var5, float var6, float var7) {
-      ZenithColor var8 = var1.getPrimaryColor().getZenithColor();
-      float var9 = var4 + (var5 - var4) * 0.5F;
-      float var10 = var3;
-      int var11 = 0;
+   public static float drawTags(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, List<String> items, float cardTextX, float f, float f2, float meta, float previewAlpha) {
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      float f3 = f + (f2 - f) * 0.5F;
+      float cardTextX2 = cardTextX;
+      int n = 0;
 
-      for (String var13 : var2) {
-         String var14 = var13.trim();
-         if (!var14.isEmpty()) {
-            String var15 = "#" + var14;
-            if (var11 >= 3 || var10 + chipWidth(var15) > var9) {
+      for (String str : items) {
+         String str2 = str.trim();
+         if (!str2.isEmpty()) {
+            String text = "#" + str2;
+            if (n >= 3 || cardTextX2 + chipWidth(text) > f3) {
                break;
             }
 
-            var10 = drawChip(var0, var15, var8.method7292(0.14F), var8, var10, var6, var7);
-            var11++;
+            cardTextX2 = drawChip(menuDrawContext, text, zenithColor.method7292(0.14F), zenithColor, cardTextX2, meta, previewAlpha);
+            n++;
          }
       }
 
-      int var16 = 0;
+      int n2 = 0;
 
-      for (String var19 : var2) {
-         if (!var19.isBlank()) {
-            var16++;
+      for (String str : items) {
+         if (!str.isBlank()) {
+            n2++;
          }
       }
 
-      if (var11 > 0 && var11 < var16) {
-         String var18 = "+" + (var16 - var11);
-         if (var10 + chipWidth(var18) <= var9 + 10.0F) {
-            var10 = drawChip(var0, var18, var1.getDisableActiveBg().getZenithColor(), var1.getTextTertiary().getZenithColor(), var10, var6, var7);
+      if (n > 0 && n < n2) {
+         String text = "+" + (n2 - n);
+         if (cardTextX2 + chipWidth(text) <= f3 + 10.0F) {
+            cardTextX2 = drawChip(menuDrawContext, text, currentStyle.getDisableActiveBg().getZenithColor(), currentStyle.getTextTertiary().getZenithColor(), cardTextX2, meta, previewAlpha);
          }
       }
 
-      return var10;
+      return cardTextX2;
    }
 
-   public static float drawMeta(MenuDrawContext var0, String var1, ZenithColor var2, float var3, float var4, float var5, float var6, float var7) {
-      Font var8 = cardMetaFont();
-      float var9 = var3 + (var3 > var4 ? 2.0F : 0.0F);
-      if (!var1.isEmpty() && !(var9 >= var5 - 16.0F)) {
-         String var10 = var8.clip(var1, var5 - var9);
-         var0.drawText(var8, var10, var9, var6, var2.method7294(var7));
-         return var9 + var8.width(var10) + 4.0F;
+   public static float drawMeta(MenuDrawContext menuDrawContext, String name, ZenithColor zenithColor, float drawChip, float cardTextX, float f, float meta, float previewAlpha) {
+      Font font = cardMetaFont();
+      float floatValue = drawChip + (drawChip > cardTextX ? 2.0F : 0.0F);
+      if (!name.isEmpty() && !(floatValue >= f - 16.0F)) {
+         String clip = font.clip(name, f - floatValue);
+         menuDrawContext.drawText(font, clip, floatValue, meta, zenithColor.method7294(previewAlpha));
+         return floatValue + font.width(clip) + 4.0F;
       } else {
-         return var3;
+         return drawChip;
       }
    }
 
-   public static float pillWidth(String var0) {
-      return Math.max(44.0F, cardButtonFont().width(var0) + 14.0F);
+   public static float pillWidth(String pillText) {
+      return Math.max(44.0F, cardButtonFont().width(pillText) + 14.0F);
    }
 
-   public static BoundsData pillRect(BoundsData var0, float var1, String var2) {
-      float var3 = pillWidth(var2);
-      return new BoundsData(var1 - var3, var0.getFloatValue2() + (var0.height() - 14.0F) / 2.0F, var3, 14.0F);
+   public static BoundsData pillRect(BoundsData boundsData, float f, String pillText) {
+      float width = pillWidth(pillText);
+      return new BoundsData(f - width, boundsData.getFloatValue2() + (boundsData.height() - 14.0F) / 2.0F, width, 14.0F);
    }
 
-   public static void drawPill(MenuDrawContext var0, ZenithStyle var1, BoundsData var2, String var3, boolean var4, float var5, boolean var6, float var7) {
-      Font var8 = cardButtonFont();
-      ZenithColor var9 = var1.getPrimaryColor().getZenithColor();
-      ProxyDotRadiusData var10 = ProxyDotRadiusData.method8069(var2.height() / 2.0F);
-      ZenithColor var11 = var4 ? var1.getFieldSurfaceBackground().getZenithColor() : var9.method7292(0.2F);
-      var0.drawRoundedRect(
-         var2.getFloatValue(),
-         var2.getFloatValue2(),
-         var2.width(),
-         var2.height(),
-         var10,
-         var11.method7295(var9.method7292(0.35F), var5 * 0.6F).method7294(var7)
+   public static void drawPill(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, BoundsData pillRect, String pillText, boolean have, float hot, boolean contains, float previewAlpha) {
+      Font font = cardButtonFont();
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(pillRect.height() / 2.0F);
+      ZenithColor zenithColor2 = have ? currentStyle.getFieldSurfaceBackground().getZenithColor() : zenithColor.method7292(0.2F);
+      menuDrawContext.drawRoundedRect(
+         pillRect.getFloatValue(),
+         pillRect.getFloatValue2(),
+         pillRect.width(),
+         pillRect.height(),
+         headerRadius,
+         zenithColor2.method7295(zenithColor.method7292(0.35F), hot * 0.6F).method7294(previewAlpha)
       );
-      var0.drawRoundedBorder(
-         var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), 0.15F, var10, var9.method7292(0.12F + 0.25F * var5).method7294(var7)
+      menuDrawContext.drawRoundedBorder(
+         pillRect.getFloatValue(), pillRect.getFloatValue2(), pillRect.width(), pillRect.height(), 0.15F, headerRadius, zenithColor.method7292(0.12F + 0.25F * hot).method7294(previewAlpha)
       );
-      ZenithColor var12 = var4 ? (var5 > 0.5F ? var1.getTextEnable().getZenithColor() : OK) : var9.method7295(ZenithColor.INSTANCE, var5 * 0.5F);
-      if (var6) {
-         float var13 = (float)(System.currentTimeMillis() % 1000L) / 1000.0F;
-         var12 = var12.method7294(0.55F + 0.45F * (float)Math.abs(Math.sin(var13 * Math.PI)));
+      ZenithColor zenithColor3 = have ? (hot > 0.5F ? currentStyle.getTextEnable().getZenithColor() : OK) : zenithColor.method7295(ZenithColor.INSTANCE, hot * 0.5F);
+      if (contains) {
+         float f = (float)(System.currentTimeMillis() % 1000L) / 1000.0F;
+         zenithColor3 = zenithColor3.method7294(0.55F + 0.45F * (float)Math.abs(Math.sin(f * Math.PI)));
       }
 
-      var0.drawText(
-         var8,
-         var3,
-         var2.getFloatValue() + (var2.width() - var8.width(var3)) / 2.0F,
-         var2.getFloatValue2() + (var2.height() - var8.height()) / 2.0F,
-         var12.method7294(var7)
+      menuDrawContext.drawText(
+         font,
+         pillText,
+         pillRect.getFloatValue() + (pillRect.width() - font.width(pillText)) / 2.0F,
+         pillRect.getFloatValue2() + (pillRect.height() - font.height()) / 2.0F,
+         zenithColor3.method7294(previewAlpha)
       );
    }
 
-   private static ZenithColor tint(StoreApi.Data2 var0, OriginUtil.Data3 var1) {
-      if (var1.color() != -1) {
-         return new ZenithColor(var1.color() | 0xFF000000);
+   private static ZenithColor tint(StoreApi.Data2 entry, OriginUtil.Data3 data3) {
+      if (data3.color() != -1) {
+         return new ZenithColor(data3.color() | 0xFF000000);
       } else {
-         String var2 = var0.name().isBlank() ? var0.getUUID().toString() : var0.name().toLowerCase(Locale.ROOT);
-         float var3 = (var2.hashCode() & 65535) / 65536.0F;
-         return ZenithColor.method7297(var3, isConfig(var0) ? 0.45F : 0.55F, 0.95F);
+         String string = entry.name().isBlank() ? entry.getUUID().toString() : entry.name().toLowerCase(Locale.ROOT);
+         float hue = (string.hashCode() & 65535) / 65536.0F;
+         return ZenithColor.method7297(hue, isConfig(entry) ? 0.45F : 0.55F, 0.95F);
       }
    }
 
-   private static String initial(String var0) {
-      if (var0 != null) {
-         for (int var1 = 0; var1 < var0.length(); var1++) {
-            char var2 = var0.charAt(var1);
-            if (Character.isLetterOrDigit(var2)) {
-               return String.valueOf(var2).toUpperCase(Locale.ROOT);
+   private static String initial(String display) {
+      if (display != null) {
+         for (int i = 0; i < display.length(); i++) {
+            char charAt = display.charAt(i);
+            if (Character.isLetterOrDigit(charAt)) {
+               return String.valueOf(charAt).toUpperCase(Locale.ROOT);
             }
          }
       }
@@ -1091,162 +1091,162 @@ public final class ScriptMarketTab {
       return "?";
    }
 
-   public static void letterAvatar(MenuDrawContext var0, ZenithColor var1, String var2, float var3, float var4, float var5, float var6) {
-      ProxyDotRadiusData var7 = ProxyDotRadiusData.method8069(var5 * 0.3F);
-      var0.drawRoundedRect(
-         var3,
-         var4,
-         var5,
-         var5,
-         var7,
-         GlowColor.method8096(var1.method7292(0.26F * var6), var1.method7292(0.13F * var6), var1.method7292(0.18F * var6), var1.method7292(0.08F * var6))
+   public static void letterAvatar(MenuDrawContext menuDrawContext, ZenithColor letterColor, String display, float floatValue, float cardAvatarY, float size, float previewAlpha) {
+      ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(size * 0.3F);
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         cardAvatarY,
+         size,
+         size,
+         proxyDotRadiusData,
+         GlowColor.method8096(letterColor.method7292(0.26F * previewAlpha), letterColor.method7292(0.13F * previewAlpha), letterColor.method7292(0.18F * previewAlpha), letterColor.method7292(0.08F * previewAlpha))
       );
-      var0.drawRoundedBorder(var3, var4, var5, var5, 0.15F, var7, var1.method7292(0.3F * var6));
-      Font var8 = Fonts.NEW_SEMIBOLD.getFont(var5 * 0.42F);
-      String var9 = initial(var2);
-      ZenithColor var10 = var1.method7295(ZenithColor.INSTANCE, 0.2F).method7294(var6);
-      float[] var11 = var8.inkBounds(var9);
-      if (var11 == null) {
-         var0.drawText(var8, var9, var3 + (var5 - var8.width(var9)) / 2.0F, var4 + (var5 - var8.height()) / 2.0F, var10);
+      menuDrawContext.drawRoundedBorder(floatValue, cardAvatarY, size, size, 0.15F, proxyDotRadiusData, letterColor.method7292(0.3F * previewAlpha));
+      Font font = Fonts.NEW_SEMIBOLD.getFont(size * 0.42F);
+      String text = initial(display);
+      ZenithColor zenithColor = letterColor.method7295(ZenithColor.INSTANCE, 0.2F).method7294(previewAlpha);
+      float[] inkBounds = font.inkBounds(text);
+      if (inkBounds == null) {
+         menuDrawContext.drawText(font, text, floatValue + (size - font.width(text)) / 2.0F, cardAvatarY + (size - font.height()) / 2.0F, zenithColor);
       } else {
-         var0.drawText(var8, var9, var3 + (var5 - var11[0]) / 2.0F, var4 + (var5 - var11[1]) / 2.0F - var8.baseline() + var11[2], var10);
+         menuDrawContext.drawText(font, text, floatValue + (size - inkBounds[0]) / 2.0F, cardAvatarY + (size - inkBounds[1]) / 2.0F - font.baseline() + inkBounds[2], zenithColor);
       }
    }
 
-   public static void cloudAvatar(MenuDrawContext var0, StoreApi.Data2 var1, String var2, ZenithColor var3, float var4, float var5, float var6, float var7) {
-      Identifier var8 = var1 != null && var1.hasPreview() ? CloudPreviewTextureCache.get(var1.getUUID(), var1.getText6()) : null;
-      if (var8 != null) {
-         var0.drawRoundedTexture(var8, var4, var5, var6, var6, ProxyDotRadiusData.method8069(var6 * 0.3F), ZenithColor.INSTANCE.method7294(var7));
+   public static void cloudAvatar(MenuDrawContext menuDrawContext, StoreApi.Data2 cloudTwin, String display, ZenithColor letterColor, float floatValue, float cardAvatarY, float size, float previewAlpha) {
+      Identifier texture = cloudTwin != null && cloudTwin.hasPreview() ? CloudPreviewTextureCache.get(cloudTwin.getUUID(), cloudTwin.getText6()) : null;
+      if (texture != null) {
+         menuDrawContext.drawRoundedTexture(texture, floatValue, cardAvatarY, size, size, ProxyDotRadiusData.method8069(size * 0.3F), ZenithColor.INSTANCE.method7294(previewAlpha));
       } else {
-         letterAvatar(var0, var3, var2, var4, var5, var6, var7);
+         letterAvatar(menuDrawContext, letterColor, display, floatValue, cardAvatarY, size, previewAlpha);
       }
    }
 
-   private void avatar(MenuDrawContext var1, StoreApi.Data2 var2, OriginUtil.Data3 var3, float var4, float var5, float var6, float var7) {
-      cloudAvatar(var1, var2, var2.name(), tint(var2, var3), var4, var5, var6, var7);
+   private void avatar(MenuDrawContext menuDrawContext, StoreApi.Data2 entry, OriginUtil.Data3 data3, float floatValue, float cardAvatarY, float size, float previewAlpha) {
+      cloudAvatar(menuDrawContext, entry, entry.name(), tint(entry, data3), floatValue, cardAvatarY, size, previewAlpha);
    }
 
-   private void header(StoreApi.Data2 var1) {
+   private void header(StoreApi.Data2 entry) {
       this.panel
          .asideCustom(
             46.0F,
-            (var2, var3, var4, var5, var6, var7, var8, var9) -> {
-               OriginUtil.Data3 var10 = OriginUtil.method6916(var1);
-               float var11 = 34.0F;
-               this.avatar(var2, var1, var10, var5 + 8.0F, var6 + 5.0F, var11, var8);
-               Font var12 = Fonts.NEW_SEMIBOLD.getFont(5.8F);
-               Font var13 = Fonts.NEW_REGULAR.getFont(4.3F);
-               float var14 = var5 + 8.0F + var11 + 7.0F;
-               var2.drawText(
-                  var12, var12.clip(var1.name(), var5 + var7 - 8.0F - var14), var14, var6 + 9.0F, var9.getTextEnable().getZenithColor().method7294(var8)
+            (menuDrawContext, n, n2, f, f2, f3, previewAlpha, zenithStyle) -> {
+               OriginUtil.Data3 data3 = OriginUtil.method6916(entry);
+               float size = 34.0F;
+               this.avatar(menuDrawContext, entry, data3, f + 8.0F, f2 + 5.0F, size, previewAlpha);
+               Font font = Fonts.NEW_SEMIBOLD.getFont(5.8F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+               float floatValue = f + 8.0F + size + 7.0F;
+               menuDrawContext.drawText(
+                  font, font.clip(entry.name(), f + f3 - 8.0F - floatValue), floatValue, f2 + 9.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                );
-               String var15 = (var10.version().isBlank() ? "" : "v" + var10.version() + "  ·  ") + (var1.getText8().isBlank() ? "?" : var1.getText8());
-               var2.drawText(
-                  var13,
-                  var13.clip(var15, var5 + var7 - 8.0F - var14),
-                  var14,
-                  var6 + 11.0F + var12.height(),
-                  var9.getTextTertiary().getZenithColor().method7294(var8)
+               String name = (data3.version().isBlank() ? "" : "v" + data3.version() + "  ·  ") + (entry.getText8().isBlank() ? "?" : entry.getText8());
+               menuDrawContext.drawText(
+                  font2,
+                  font2.clip(name, f + f3 - 8.0F - floatValue),
+                  floatValue,
+                  f2 + 11.0F + font.height(),
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               if (!var10.getItems().isEmpty()) {
-                  Font var16 = Fonts.NEW_MEDIUM.getFont(3.9F);
-                  float var17 = var14;
-                  float var18 = var6 + 14.0F + var12.height() + var13.height();
+               if (!data3.getItems().isEmpty()) {
+                  Font font3 = Fonts.NEW_MEDIUM.getFont(3.9F);
+                  float floatValue2 = floatValue;
+                  float centeredTextY = f2 + 14.0F + font.height() + font2.height();
 
-                  for (String var20 : var10.getItems()) {
-                     String var21 = "#" + var20;
-                     float var22 = var16.width(var21) + 6.0F;
-                     if (var17 + var22 > var5 + var7 - 8.0F) {
+                  for (String str : data3.getItems()) {
+                     String text = "#" + str;
+                     float width = font3.width(text) + 6.0F;
+                     if (floatValue2 + width > f + f3 - 8.0F) {
                         break;
                      }
 
-                     var2.drawRoundedRect(
-                        var17,
-                        var18 - 1.2F,
-                        var22,
-                        var16.height() + 2.4F,
-                        ProxyDotRadiusData.method8069((var16.height() + 2.4F) / 2.0F),
-                        var9.getPrimaryColor().getZenithColor().method7292(0.14F).method7294(var8)
+                     menuDrawContext.drawRoundedRect(
+                        floatValue2,
+                        centeredTextY - 1.2F,
+                        width,
+                        font3.height() + 2.4F,
+                        ProxyDotRadiusData.method8069((font3.height() + 2.4F) / 2.0F),
+                        zenithStyle.getPrimaryColor().getZenithColor().method7292(0.14F).method7294(previewAlpha)
                      );
-                     var2.drawText(var16, var21, var17 + 3.0F, var18, var9.getPrimaryColor().getZenithColor().method7294(var8));
-                     var17 += var22 + 3.0F;
+                     menuDrawContext.drawText(font3, text, floatValue2 + 3.0F, centeredTextY, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+                     floatValue2 += width + 3.0F;
                   }
                }
             }
          );
    }
 
-   private void configAside(StoreApi.Data2 var1) {
-      this.header(var1);
-      if (!var1.description().isBlank()) {
-         this.panel.paragraph(var1.description(), true);
+   private void configAside(StoreApi.Data2 entry) {
+      this.header(entry);
+      if (!entry.description().isBlank()) {
+         this.panel.paragraph(entry.description(), true);
       }
 
       this.panel.asideCaption("gui.scripts.caption.actions");
-      if (this.needsPurchase(var1)) {
+      if (this.needsPurchase(entry)) {
          this.panel
             .asideAction(
                "gui.market.buy.action",
                MenuGlyph.STORAGE,
-               () -> StoreApi.method1960(var1.getUUID()).getIntValue() + " ₽",
-               () -> this.buy(var1),
+               () -> StoreApi.method1960(entry.getUUID()).getIntValue() + " ₽",
+               () -> this.buy(entry),
                "gui.market.buy.desc"
             );
       }
 
-      boolean var2 = this.configPresent(var1);
+      boolean configPresent = this.configPresent(entry);
       this.panel
          .asideAction(
-            var2 ? "gui.market.config.redownload" : "gui.market.config.download",
+            configPresent ? "gui.market.config.redownload" : "gui.market.config.download",
             MenuGlyph.STORAGE,
-            () -> this.busy.contains(var1.getUUID()) ? t("gui.scripts.market.busy") : "",
-            () -> this.downloadConfig(var1),
+            () -> this.busy.contains(entry.getUUID()) ? t("gui.scripts.market.busy") : "",
+            () -> this.downloadConfig(entry),
             "gui.market.config.download.desc"
          );
-      if (var2) {
-         this.panel.asideAction("gui.market.config.apply", MenuGlyph.CHECK, () -> "", () -> this.applyConfig(var1), "gui.market.config.apply.desc");
+      if (configPresent) {
+         this.panel.asideAction("gui.market.config.apply", MenuGlyph.CHECK, () -> "", () -> this.applyConfig(entry), "gui.market.config.apply.desc");
       }
 
-      if (!var1.mine()) {
+      if (!entry.mine()) {
          this.panel
             .asideAction(
                "gui.scripts.market.like",
                MenuGlyph.HEART,
-               () -> (this.entry(var1.getUUID()) != null && this.entry(var1.getUUID()).isFlag3() ? "♥ " : "") + this.likesOf(var1),
-               () -> this.like(var1),
+               () -> (this.entry(entry.getUUID()) != null && this.entry(entry.getUUID()).isFlag3() ? "♥ " : "") + this.likesOf(entry),
+               () -> this.like(entry),
                "gui.scripts.market.like.desc"
             );
       }
 
       this.panel.asideCaption("gui.scripts.market.caption.about");
-      this.panel.asideInfo("gui.scripts.market.info.author", () -> var1.getText8().isBlank() ? "?" : var1.getText8(), "gui.scripts.market.info.author.desc");
-      this.panel.asideInfo("gui.configs.server", () -> var1.server().isBlank() ? "—" : var1.server(), "gui.configs.server.desc");
-      this.panel.asideInfo("gui.scripts.market.info.revision", () -> "#" + var1.getLongValue2(), "gui.scripts.market.info.revision.desc");
-      this.panel.asideInfo("gui.scripts.market.info.size", () -> size(var1.getLongValue()), "gui.scripts.market.info.size.desc");
-      this.panel.asideInfo("gui.scripts.market.info.updated", () -> ScriptsSectionPanel.ago(var1.getLongValue4()), "gui.scripts.market.info.updated.desc");
-      if (var1.mine()) {
+      this.panel.asideInfo("gui.scripts.market.info.author", () -> entry.getText8().isBlank() ? "?" : entry.getText8(), "gui.scripts.market.info.author.desc");
+      this.panel.asideInfo("gui.configs.server", () -> entry.server().isBlank() ? "—" : entry.server(), "gui.configs.server.desc");
+      this.panel.asideInfo("gui.scripts.market.info.revision", () -> "#" + entry.getLongValue2(), "gui.scripts.market.info.revision.desc");
+      this.panel.asideInfo("gui.scripts.market.info.size", () -> size(entry.getLongValue()), "gui.scripts.market.info.size.desc");
+      this.panel.asideInfo("gui.scripts.market.info.updated", () -> ScriptsSectionPanel.ago(entry.getLongValue4()), "gui.scripts.market.info.updated.desc");
+      if (entry.mine()) {
          this.panel.asideCaption("gui.scripts.market.caption.publication");
          this.chips(
             this.entryVisibility,
-            () -> visibilityIndex(this.entry(var1.getUUID()) == null ? var1.getText7() : this.entry(var1.getUUID()).getText7()),
-            var2x -> this.changeVisibility(var1, var2x)
+            () -> visibilityIndex(this.entry(entry.getUUID()) == null ? entry.getText7() : this.entry(entry.getUUID()).getText7()),
+            var2x -> this.changeVisibility(entry, var2x)
          );
          this.panel
             .asideAction(
                "gui.scripts.market.codes.create",
                MenuGlyph.KEY,
-               () -> String.valueOf(this.codes.getOrDefault(var1.getUUID(), List.of()).size()),
-               () -> this.createCode(var1),
+               () -> String.valueOf(this.codes.getOrDefault(entry.getUUID(), List.of()).size()),
+               () -> this.createCode(entry),
                "gui.scripts.market.codes.create.desc"
             );
          this.panel
             .asideAction(
                "gui.scripts.market.unpublish",
                MenuGlyph.CLOSE,
-               () -> this.armed.equals("delete:" + var1.getUUID()) ? t("gui.scripts.market.again") : "",
+               () -> this.armed.equals("delete:" + entry.getUUID()) ? t("gui.scripts.market.again") : "",
                () -> {
-                  if (this.armed("delete:" + var1.getUUID())) {
-                     this.unpublish(null, var1);
+                  if (this.armed("delete:" + entry.getUUID())) {
+                     this.unpublish(null, entry);
                   }
                },
                "gui.scripts.market.unpublish.desc"
@@ -1260,104 +1260,104 @@ public final class ScriptMarketTab {
       }, "gui.scripts.market.back.desc");
    }
 
-   private void downloadConfig(StoreApi.Data2 var1) {
-      StoreApi var2 = store();
-      if (var2 != null && this.busy.add(var1.getUUID())) {
+   private void downloadConfig(StoreApi.Data2 entry) {
+      StoreApi storeApi = store();
+      if (storeApi != null && this.busy.add(entry.getUUID())) {
          this.revision.incrementAndGet();
-         var2.method1970(var1.getUUID()).whenComplete((var2x, var3) -> {
+         storeApi.method1970(entry.getUUID()).whenComplete((var2x, throwable) -> {
             try {
-               if (var3 == null) {
-                  File var4 = CloudConfigsSectionPanel.saveDownloaded(var1, var2x);
-                  if (!var1.mine()) {
-                     this.taken.remember(var1);
+               if (throwable == null) {
+                  File saveDownloaded = CloudConfigsSectionPanel.saveDownloaded(entry, var2x);
+                  if (!entry.mine()) {
+                     this.taken.remember(entry);
                   }
 
-                  String var5 = var4.getName();
-                  int var6 = var5.lastIndexOf(46);
-                  this.report(t("gui.configs.report.downloaded").replace("{n}", var6 > 0 ? var5.substring(0, var6) : var5), false);
+                  String name = saveDownloaded.getName();
+                  int lastIndexOf = name.lastIndexOf(46);
+                  this.report(t("gui.configs.report.downloaded").replace("{n}", lastIndexOf > 0 ? name.substring(0, lastIndexOf) : name), false);
                   return;
                }
 
-               this.report(reason(var3), true);
-            } catch (Exception var10) {
+               this.report(reason(throwable), true);
+            } catch (Exception e) {
                this.report(t("gui.configs.report.writeFailed"), true);
                return;
             } finally {
-               this.presence.remove(var1.getUUID());
-               this.busy.remove(var1.getUUID());
+               this.presence.remove(entry.getUUID());
+               this.busy.remove(entry.getUUID());
                Minecraft.getInstance().execute(this.panel::invalidate);
             }
          });
       }
    }
 
-   private void applyConfig(StoreApi.Data2 var1) {
-      Zenith.getInstance().getManager().method7768(configFile(var1).getName(), Manager.Type.ALL).whenComplete((var2, var3) -> {
-         boolean var4 = var3 == null && Boolean.TRUE.equals(var2);
-         this.report(var4 ? t("gui.market.config.applied").replace("{n}", var1.name()) : t("gui.configs.report.unreadable"), !var4);
+   private void applyConfig(StoreApi.Data2 entry) {
+      Zenith.getInstance().getManager().method7768(configFile(entry).getName(), Manager.Type.ALL).whenComplete((flag, throwable) -> {
+         boolean flag2 = throwable == null && Boolean.TRUE.equals(flag);
+         this.report(flag2 ? t("gui.market.config.applied").replace("{n}", entry.name()) : t("gui.configs.report.unreadable"), !flag2);
          this.panel.invalidate();
       });
    }
 
-   private void entryAside(Storage var1, StoreApi.Data2 var2) {
-      if (isConfig(var2)) {
-         this.configAside(var2);
+   private void entryAside(Storage hostOrNull, StoreApi.Data2 entry) {
+      if (isConfig(entry)) {
+         this.configAside(entry);
       } else {
-         this.header(var2);
-         if (!var2.description().isBlank()) {
-            this.panel.paragraph(var2.description(), true);
+         this.header(entry);
+         if (!entry.description().isBlank()) {
+            this.panel.paragraph(entry.description(), true);
          }
 
-         Script var3 = this.installed.get(var2.getUUID());
-         boolean var4 = var3 != null && OriginUtil.method6927(var1, var2);
+         Script script = this.installed.get(entry.getUUID());
+         boolean flag = script != null && OriginUtil.method6927(hostOrNull, entry);
          this.panel.asideCaption("gui.scripts.caption.actions");
-         if (this.needsPurchase(var2)) {
+         if (this.needsPurchase(entry)) {
             this.panel
                .asideAction(
                   "gui.market.buy.action",
                   MenuGlyph.STORAGE,
-                  () -> StoreApi.method1960(var2.getUUID()).getIntValue() + " ₽",
-                  () -> this.buy(var2),
+                  () -> StoreApi.method1960(entry.getUUID()).getIntValue() + " ₽",
+                  () -> this.buy(entry),
                   "gui.market.buy.desc"
                );
          }
 
-         String var5 = var3 == null
-            ? (var2.mine() ? "gui.scripts.market.download" : "gui.scripts.market.install")
-            : (var4 ? "gui.scripts.market.update" : "gui.scripts.market.open");
+         String label = script == null
+            ? (entry.mine() ? "gui.scripts.market.download" : "gui.scripts.market.install")
+            : (flag ? "gui.scripts.market.update" : "gui.scripts.market.open");
          this.panel
             .asideAction(
-               var5,
+               label,
                MenuGlyph.CLOUD,
-               () -> this.busy.contains(var2.getUUID()) ? t("gui.scripts.market.busy") : "",
-               () -> this.primary(var1, var2),
+               () -> this.busy.contains(entry.getUUID()) ? t("gui.scripts.market.busy") : "",
+               () -> this.primary(hostOrNull, entry),
                "gui.scripts.market.primary.desc"
             );
-         if (var3 != null && !var4) {
+         if (script != null && !flag) {
             this.panel
-               .asideAction("gui.scripts.market.reinstall", MenuGlyph.RESET, () -> "", () -> this.install(var1, var2), "gui.scripts.market.reinstall.desc");
+               .asideAction("gui.scripts.market.reinstall", MenuGlyph.RESET, () -> "", () -> this.install(hostOrNull, entry), "gui.scripts.market.reinstall.desc");
          }
 
-         if (!var2.mine()) {
+         if (!entry.mine()) {
             this.panel
                .asideAction(
                   "gui.scripts.market.like",
                   MenuGlyph.HEART,
-                  () -> (this.entry(var2.getUUID()) != null && this.entry(var2.getUUID()).isFlag3() ? "♥ " : "") + this.likesOf(var2),
-                  () -> this.like(var2),
+                  () -> (this.entry(entry.getUUID()) != null && this.entry(entry.getUUID()).isFlag3() ? "♥ " : "") + this.likesOf(entry),
+                  () -> this.like(entry),
                   "gui.scripts.market.like.desc"
                );
          }
 
-         if (var3 != null) {
+         if (script != null) {
             this.panel
                .asideAction(
                   "gui.scripts.market.uninstall",
                   MenuGlyph.CLOSE,
-                  () -> this.armed.equals("uninstall:" + var2.getUUID()) ? t("gui.scripts.market.again") : "",
+                  () -> this.armed.equals("uninstall:" + entry.getUUID()) ? t("gui.scripts.market.again") : "",
                   () -> {
-                     if (this.armed("uninstall:" + var2.getUUID())) {
-                        this.uninstall(var1, var3);
+                     if (this.armed("uninstall:" + entry.getUUID())) {
+                        this.uninstall(hostOrNull, script);
                      }
                   },
                   "gui.scripts.market.uninstall.desc"
@@ -1365,36 +1365,36 @@ public final class ScriptMarketTab {
          }
 
          this.panel.asideCaption("gui.scripts.market.caption.about");
-         this.panel.asideInfo("gui.scripts.market.info.author", () -> var2.getText8().isBlank() ? "?" : var2.getText8(), "gui.scripts.market.info.author.desc");
-         this.panel.asideInfo("gui.scripts.market.info.revision", () -> "#" + var2.getLongValue2(), "gui.scripts.market.info.revision.desc");
-         this.panel.asideInfo("gui.scripts.market.info.size", () -> size(var2.getLongValue()), "gui.scripts.market.info.size.desc");
-         this.panel.asideInfo("gui.scripts.market.info.updated", () -> ScriptsSectionPanel.ago(var2.getLongValue4()), "gui.scripts.market.info.updated.desc");
-         String var6 = OriginUtil.method6916(var2).getText3();
-         if (!var6.isBlank() && (var6.startsWith("https://") || var6.startsWith("http://"))) {
+         this.panel.asideInfo("gui.scripts.market.info.author", () -> entry.getText8().isBlank() ? "?" : entry.getText8(), "gui.scripts.market.info.author.desc");
+         this.panel.asideInfo("gui.scripts.market.info.revision", () -> "#" + entry.getLongValue2(), "gui.scripts.market.info.revision.desc");
+         this.panel.asideInfo("gui.scripts.market.info.size", () -> size(entry.getLongValue()), "gui.scripts.market.info.size.desc");
+         this.panel.asideInfo("gui.scripts.market.info.updated", () -> ScriptsSectionPanel.ago(entry.getLongValue4()), "gui.scripts.market.info.updated.desc");
+         String str = OriginUtil.method6916(entry).getText3();
+         if (!str.isBlank() && (str.startsWith("https://") || str.startsWith("http://"))) {
             this.panel
-               .asideAction("gui.scripts.market.link", MenuGlyph.NETWORK, () -> "", () -> com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(var6)), "gui.scripts.market.link.desc");
+               .asideAction("gui.scripts.market.link", MenuGlyph.NETWORK, () -> "", () -> com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(str)), "gui.scripts.market.link.desc");
          }
 
-         if (var2.mine()) {
+         if (entry.mine()) {
             this.panel.asideCaption("gui.scripts.market.caption.publication");
             this.panel
                .asideInfo(
                   "gui.market.caption.publish",
-                  () -> this.marketLabel(this.entry(var2.getUUID()) == null ? var2 : this.entry(var2.getUUID())),
+                  () -> this.marketLabel(this.entry(entry.getUUID()) == null ? entry : this.entry(entry.getUUID())),
                   "gui.market.status.desc"
                );
             this.chips(
                this.entryVisibility,
-               () -> visibilityIndex(this.entry(var2.getUUID()) == null ? var2.getText7() : this.entry(var2.getUUID()).getText7()),
-               var2x -> this.changeVisibility(var2, var2x)
+               () -> visibilityIndex(this.entry(entry.getUUID()) == null ? entry.getText7() : this.entry(entry.getUUID()).getText7()),
+               var2x -> this.changeVisibility(entry, var2x)
             );
-            if (var3 != null) {
+            if (script != null) {
                this.panel
                   .asideAction(
                      "gui.scripts.market.push",
                      MenuGlyph.CLOUD,
-                     () -> this.publishing.contains(var3.getId()) ? t("gui.scripts.market.busy") : "",
-                     () -> this.publish(var1, var3, visibilityIndex(var2.getText7())),
+                     () -> this.publishing.contains(script.getId()) ? t("gui.scripts.market.busy") : "",
+                     () -> this.publish(hostOrNull, script, visibilityIndex(entry.getText7())),
                      "gui.scripts.market.push.desc"
                   );
             }
@@ -1403,44 +1403,44 @@ public final class ScriptMarketTab {
                .asideAction(
                   "gui.scripts.market.codes.create",
                   MenuGlyph.KEY,
-                  () -> String.valueOf(this.codes.getOrDefault(var2.getUUID(), List.of()).size()),
-                  () -> this.createCode(var2),
+                  () -> String.valueOf(this.codes.getOrDefault(entry.getUUID(), List.of()).size()),
+                  () -> this.createCode(entry),
                   "gui.scripts.market.codes.create.desc"
                );
 
-            for (StoreApi.Data var8 : this.codes.getOrDefault(var2.getUUID(), List.of())) {
+            for (StoreApi.Data data : this.codes.getOrDefault(entry.getUUID(), List.of())) {
                this.panel
                   .asideCustom(
                      12.0F,
-                     (var1x, var2x, var3x, var4x, var5x, var6x, var7, var8x) -> {
-                        Font var9 = Fonts.NEW_MEDIUM.getFont(4.4F);
-                        boolean var10 = new BoundsData(var4x, var5x, var6x, 12.0F).contains(var2x, var3x);
-                        ZenithColor var11 = "ACTIVE".equalsIgnoreCase(var8.getText2())
+                     (var1x, var2x, var3x, var4x, var5x, var6x, previewAlpha, var8x) -> {
+                        Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+                        boolean contains = new BoundsData(var4x, var5x, var6x, 12.0F).contains(var2x, var3x);
+                        ZenithColor zenithColor = "ACTIVE".equalsIgnoreCase(data.getText2())
                            ? var8x.getTextSecondary().getZenithColor()
                            : var8x.getTextTertiary().getZenithColor();
                         var1x.drawText(
-                           var9,
-                           var8.getText().isBlank() ? "••••••" : var8.getText(),
+                           font,
+                           data.getText().isBlank() ? "••••••" : data.getText(),
                            var4x + 8.0F,
                            var5x + 3.0F,
-                           (var10 ? var8x.getTextEnable().getZenithColor() : var11).method7294(var7)
+                           (contains ? var8x.getTextEnable().getZenithColor() : zenithColor).method7294(previewAlpha)
                         );
-                        String var12 = var8.getText2().toLowerCase(Locale.ROOT);
+                        String lowerCase = data.getText2().toLowerCase(Locale.ROOT);
                         var1x.drawText(
-                           var9, var12, var4x + var6x - 8.0F - var9.width(var12), var5x + 3.0F, var8x.getTextTertiary().getZenithColor().method7294(var7)
+                           font, lowerCase, var4x + var6x - 8.0F - font.width(lowerCase), var5x + 3.0F, var8x.getTextTertiary().getZenithColor().method7294(previewAlpha)
                         );
-                        if (var10) {
+                        if (contains) {
                            HoverInfo.request(t("gui.scripts.market.codes"), t("gui.scripts.market.codes.row"));
                         }
                      },
                      () -> {
-                        if (!var8.getText().isBlank()) {
-                           Minecraft.getInstance().keyboardHandler.setClipboard(var8.getText());
+                        if (!data.getText().isBlank()) {
+                           Minecraft.getInstance().keyboardHandler.setClipboard(data.getText());
                            this.report(t("gui.scripts.market.status.copied"), false);
                         }
                      },
                      null,
-                     () -> this.revokeCode(var2, var8)
+                     () -> this.revokeCode(entry, data)
                   );
             }
 
@@ -1448,10 +1448,10 @@ public final class ScriptMarketTab {
                .asideAction(
                   "gui.scripts.market.unpublish",
                   MenuGlyph.CLOSE,
-                  () -> this.armed.equals("delete:" + var2.getUUID()) ? t("gui.scripts.market.again") : "",
+                  () -> this.armed.equals("delete:" + entry.getUUID()) ? t("gui.scripts.market.again") : "",
                   () -> {
-                     if (this.armed("delete:" + var2.getUUID())) {
-                        this.unpublish(var1, var2);
+                     if (this.armed("delete:" + entry.getUUID())) {
+                        this.unpublish(hostOrNull, entry);
                      }
                   },
                   "gui.scripts.market.unpublish.desc"
@@ -1466,24 +1466,24 @@ public final class ScriptMarketTab {
       }
    }
 
-   private int count(List<StoreApi.Data2> var1, boolean var2) {
-      int var3 = 0;
+   private int count(List<StoreApi.Data2> catalog, boolean flag) {
+      int n = 0;
 
-      for (StoreApi.Data2 var5 : var1) {
-         if (isConfig(var5) == var2) {
-            var3++;
+      for (StoreApi.Data2 entry : catalog) {
+         if (isConfig(entry) == flag) {
+            n++;
          }
       }
 
-      return var3;
+      return n;
    }
 
-   private int likesOf(StoreApi.Data2 var1) {
-      StoreApi.Data2 var2 = this.entry(var1.getUUID());
-      return var2 == null ? var1.getIntValue() : var2.getIntValue();
+   private int likesOf(StoreApi.Data2 entry) {
+      StoreApi.Data2 data2 = this.entry(entry.getUUID());
+      return data2 == null ? entry.getIntValue() : data2.getIntValue();
    }
 
-   private void overviewAside(Storage var1) {
+   private void overviewAside(Storage hostOrNull) {
       this.panel.asideCaption("gui.scripts.market.caption.overview");
       this.panel.asideInfo("gui.market.info.scripts", () -> String.valueOf(this.count(this.catalog, false)), "gui.market.info.scripts.desc");
       this.panel.asideInfo("gui.market.info.configs", () -> String.valueOf(this.count(this.catalog, true)), "gui.market.info.configs.desc");
@@ -1493,55 +1493,55 @@ public final class ScriptMarketTab {
       this.panel
          .asideCustom(
             22.0F,
-            (var1x, var2, var3, var4, var5, var6, var7, var8) -> {
-               Font var9 = Fonts.NEW_MEDIUM.getFont(4.6F);
-               String var10 = t("gui.scripts.market.redeem.go");
-               float var11 = var9.width(var10) + 14.0F;
-               float var12 = var4 + 8.0F;
-               float var13 = var6 - 16.0F - var11 - 4.0F;
+            (var1x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+               Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+               String text = t("gui.scripts.market.redeem.go");
+               float width = font.width(text) + 14.0F;
+               float floatValue = f + 8.0F;
+               float shownWidth = f3 - 16.0F - width - 4.0F;
                this.redeem
                   .render(
                      var1x,
-                     var9,
-                     var12,
-                     var5 + 3.0F,
-                     var13,
-                     var7,
+                     font,
+                     floatValue,
+                     f2 + 3.0F,
+                     shownWidth,
+                     previewAlpha,
                      t("gui.scripts.market.redeem.hint"),
-                     var8.getFieldSurfaceBackground().getZenithColor(),
-                     var8.getFieldBorder().getZenithColor().method7294(2.0F),
-                     var8.getPrimaryColor().getZenithColor(),
-                     var8.getTextEnable().getZenithColor(),
-                     var8.getTextTertiary().getZenithColor()
+                     zenithStyle.getFieldSurfaceBackground().getZenithColor(),
+                     zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F),
+                     zenithStyle.getPrimaryColor().getZenithColor(),
+                     zenithStyle.getTextEnable().getZenithColor(),
+                     zenithStyle.getTextTertiary().getZenithColor()
                   );
-               this.redeemButton = new BoundsData(var12 + var13 + 4.0F, var5 + 3.0F, var11, 16.0F);
-               boolean var14 = this.panel.pressFx.begin(var1x, "redeem", this.redeemButton);
-               boolean var15 = this.redeemButton.contains(var2, var3);
-               float var16 = this.panel.hot("redeem", var15);
-               ZenithColor var17 = var8.getPrimaryColor().getZenithColor();
+               this.redeemButton = new BoundsData(floatValue + shownWidth + 4.0F, f2 + 3.0F, width, 16.0F);
+               boolean begin = this.panel.pressFx.begin(var1x, "redeem", this.redeemButton);
+               boolean contains = this.redeemButton.contains(lastClickX, lastClickY);
+               float hot = this.panel.hot("redeem", contains);
+               ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
                var1x.drawRoundedRect(
                   this.redeemButton.getFloatValue(),
                   this.redeemButton.getFloatValue2(),
-                  var11,
+                  width,
                   16.0F,
                   ProxyDotRadiusData.method8069(4.0F),
-                  var17.method7292(0.18F + 0.2F * var16).method7294(var7)
+                  zenithColor.method7292(0.18F + 0.2F * hot).method7294(previewAlpha)
                );
-               this.panel.pressFx.ink(var1x, "redeem", this.redeemButton, 4.0F, ZenithColor.INSTANCE.method7292(0.2F), var7);
+               this.panel.pressFx.ink(var1x, "redeem", this.redeemButton, 4.0F, ZenithColor.INSTANCE.method7292(0.2F), previewAlpha);
                var1x.drawText(
-                  var9,
-                  var10,
+                  font,
+                  text,
                   this.redeemButton.getFloatValue() + 7.0F,
-                  this.redeemButton.getFloatValue2() + (16.0F - var9.height()) / 2.0F,
-                  var17.method7295(ZenithColor.INSTANCE, var16 * 0.5F).method7294(var7)
+                  this.redeemButton.getFloatValue2() + (16.0F - font.height()) / 2.0F,
+                  zenithColor.method7295(ZenithColor.INSTANCE, hot * 0.5F).method7294(previewAlpha)
                );
-               this.panel.pressFx.end(var1x, var14);
+               this.panel.pressFx.end(var1x, begin);
             },
             () -> {},
             null
          );
       if (this.category != 2) {
-         this.publishSection(var1);
+         this.publishSection(hostOrNull);
       }
 
       if (this.category != 1) {
@@ -1561,28 +1561,28 @@ public final class ScriptMarketTab {
       this.statusRow();
    }
 
-   public void publishSection(Storage var1) {
+   public void publishSection(Storage hostOrNull) {
       this.panel.asideCaption("gui.scripts.market.caption.publish");
       this.chips(this.publishVisibility, () -> this.publishVis, var1x -> this.publishVis = var1x);
-      ArrayList<Script> var2 = new ArrayList();
+      ArrayList<Script> scripts = new ArrayList();
 
-      for (Script var4 : var1.method1293()) {
-         OriginUtil.Data2 var5 = OriginUtil.method6921(var4);
-         if (var5 == null || var5.mine()) {
-            var2.add(var4);
+      for (Script script : hostOrNull.method1293()) {
+         OriginUtil.Data2 data2 = OriginUtil.method6921(script);
+         if (data2 == null || data2.mine()) {
+            scripts.add(script);
          }
       }
 
-      if (var2.isEmpty()) {
+      if (scripts.isEmpty()) {
          this.panel.paragraph(t("gui.scripts.market.publish.none"), true);
       }
 
-      for (Script var7 : var2) {
+      for (Script script : scripts) {
          this.panel
             .asideCustom(
                24.0F,
-               (var2x, var3, var4x, var5x, var6, var7x, var8, var9) -> this.renderCandidate(var2x, var3, var4x, var5x, var6, var7x, var8, var9, var7),
-               () -> this.publish(var1, var7, this.publishVis),
+               (var2x, lastClickX, var4x, var5x, f, var7x, previewAlpha, currentStyle) -> this.renderCandidate(var2x, lastClickX, var4x, var5x, f, var7x, previewAlpha, currentStyle, script),
+               () -> this.publish(hostOrNull, script, this.publishVis),
                null
             );
       }
@@ -1592,84 +1592,84 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void renderCandidate(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, Script var9) {
-      BoundsData var10 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 21.0F);
-      boolean var11 = var10.contains(var2, var3);
-      float var12 = this.panel.hot("pub:" + var9.getId(), var11);
-      ScriptsSectionPanel.card(var1, var8, var10.getFloatValue(), var10.getFloatValue2(), var10.width(), var10.height(), var12, var7);
-      ScriptInfoPage.drawAvatar(var1, var8, var9, var10.getFloatValue() + 4.0F, var10.getFloatValue2() + 3.0F, var10.height() - 6.0F, var7, -2);
-      Font var13 = Fonts.NEW_MEDIUM.getFont(4.7F);
-      Font var14 = Fonts.NEW_REGULAR.getFont(3.9F);
-      OriginUtil.Data2 var15 = OriginUtil.method6921(var9);
-      boolean var16 = this.publishing.contains(var9.getId());
-      String var17 = t(var16 ? "gui.scripts.market.busy" : (var15 != null ? "gui.scripts.market.publish.update" : "gui.scripts.market.publish.go"));
-      float var18 = var14.width(var17) + 10.0F;
-      float var19 = var10.getFloatValue() + var10.height() + 2.0F;
-      float var20 = var10.getFloatValue() + var10.width() - var18 - 8.0F;
-      var1.drawText(
-         var13, var13.clip(var9.method1403(), var20 - var19), var19, var10.getFloatValue2() + 3.5F, var8.getTextEnable().getZenithColor().method7294(var7)
+   private void renderCandidate(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle currentStyle, Script script) {
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 21.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.panel.hot("pub:" + script.getId(), contains);
+      ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
+      ScriptInfoPage.drawAvatar(menuDrawContext, currentStyle, script, boundsData.getFloatValue() + 4.0F, boundsData.getFloatValue2() + 3.0F, boundsData.height() - 6.0F, previewAlpha, -2);
+      Font font = Fonts.NEW_MEDIUM.getFont(4.7F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(3.9F);
+      OriginUtil.Data2 data2 = OriginUtil.method6921(script);
+      boolean flag = this.publishing.contains(script.getId());
+      String text = t(flag ? "gui.scripts.market.busy" : (data2 != null ? "gui.scripts.market.publish.update" : "gui.scripts.market.publish.go"));
+      float width = font2.width(text) + 10.0F;
+      float floatValue = boundsData.getFloatValue() + boundsData.height() + 2.0F;
+      float f4 = boundsData.getFloatValue() + boundsData.width() - width - 8.0F;
+      menuDrawContext.drawText(
+         font, font.clip(script.method1403(), f4 - floatValue), floatValue, boundsData.getFloatValue2() + 3.5F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
-      String var21 = var9.getPath() == null
+      String name = script.getPath() == null
          ? t("gui.scripts.market.publish.single")
-         : (var15 != null ? t("gui.scripts.market.publish.live").replace("{n}", String.valueOf(var15.getLongValue())) : t("gui.scripts.market.publish.draft"));
-      var1.drawText(
-         var14,
-         var14.clip(var21, var20 - var19),
-         var19,
-         var10.getFloatValue2() + 5.0F + var13.height(),
-         var8.getTextTertiary().getZenithColor().method7294(var7)
+         : (data2 != null ? t("gui.scripts.market.publish.live").replace("{n}", String.valueOf(data2.getLongValue())) : t("gui.scripts.market.publish.draft"));
+      menuDrawContext.drawText(
+         font2,
+         font2.clip(name, f4 - floatValue),
+         floatValue,
+         boundsData.getFloatValue2() + 5.0F + font.height(),
+         currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      ZenithColor var22 = var8.getPrimaryColor().getZenithColor();
-      float var23 = var10.getFloatValue() + var10.width() - var18 - 4.0F;
-      float var24 = var10.getFloatValue2() + (var10.height() - 10.0F) / 2.0F;
-      var1.drawRoundedRect(var23, var24, var18, 10.0F, ProxyDotRadiusData.method8069(5.0F), var22.method7292(0.16F + 0.2F * var12).method7294(var7));
-      var1.drawText(var14, var17, var23 + 5.0F, var24 + (10.0F - var14.height()) / 2.0F, var22.method7295(ZenithColor.INSTANCE, var12 * 0.5F).method7294(var7));
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      float floatValue2 = boundsData.getFloatValue() + boundsData.width() - width - 4.0F;
+      float y = boundsData.getFloatValue2() + (boundsData.height() - 10.0F) / 2.0F;
+      menuDrawContext.drawRoundedRect(floatValue2, y, width, 10.0F, ProxyDotRadiusData.method8069(5.0F), zenithColor.method7292(0.16F + 0.2F * hot).method7294(previewAlpha));
+      menuDrawContext.drawText(font2, text, floatValue2 + 5.0F, y + (10.0F - font2.height()) / 2.0F, zenithColor.method7295(ZenithColor.INSTANCE, hot * 0.5F).method7294(previewAlpha));
    }
 
-   private void chips(ChipStrip var1, IntSupplier var2, IntConsumer var3) {
-      this.panel.asideCustom(var1.height(128.0F) + 6.0F, (var2x, var3x, var4, var5, var6, var7, var8, var9) -> {
-         var1.render(var2x, var3x, var4, var5 + 8.0F, var6 + 3.0F, var7 - 16.0F, var2.getAsInt(), var8, var9);
-         if (var1.hovered() >= 0) {
+   private void chips(ChipStrip entryVisibility, IntSupplier intSupplier, IntConsumer intConsumer) {
+      this.panel.asideCustom(entryVisibility.height(128.0F) + 6.0F, (var2x, var3x, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+         entryVisibility.render(var2x, var3x, lastClickY, f + 8.0F, f2 + 3.0F, f3 - 16.0F, intSupplier.getAsInt(), previewAlpha, zenithStyle);
+         if (entryVisibility.hovered() >= 0) {
             HoverInfo.request(t("gui.scripts.market.visibility"), t("gui.scripts.market.visibility.desc"));
          }
       }, () -> {
-         int var3x = var1.hovered();
+         int var3x = entryVisibility.hovered();
          if (var3x >= 0) {
-            var3.accept(var3x);
+            intConsumer.accept(var3x);
             this.panel.invalidate();
          }
       }, null);
    }
 
    private void statusRow() {
-      this.panel.asideCustom(14.0F, (var1, var2, var3, var4, var5, var6, var7, var8) -> {
-         long var9 = System.currentTimeMillis() - this.statusAt;
-         if (!this.status.isEmpty() && var9 <= 8000L) {
-            float var11 = var9 > 7000L ? 1.0F - (float)(var9 - 7000L) / 1000.0F : Math.min(1.0F, (float)var9 / 180.0F);
-            Font var12 = Fonts.NEW_REGULAR.getFont(4.3F);
-            var1.drawText(var12, var12.clip(this.status, var6 - 16.0F), var4 + 8.0F, var5 + 4.0F, (this.statusError ? ERROR : OK).method7294(var7 * var11));
+      this.panel.asideCustom(14.0F, (menuDrawContext, n, n2, f, f2, f3, f4, zenithStyle) -> {
+         long l = System.currentTimeMillis() - this.statusAt;
+         if (!this.status.isEmpty() && l <= 8000L) {
+            float f5 = l > 7000L ? 1.0F - (float)(l - 7000L) / 1000.0F : Math.min(1.0F, (float)l / 180.0F);
+            Font font = Fonts.NEW_REGULAR.getFont(4.3F);
+            menuDrawContext.drawText(font, font.clip(this.status, f3 - 16.0F), f + 8.0F, f2 + 4.0F, (this.statusError ? ERROR : OK).method7294(f4 * f5));
          }
       });
    }
 
-   public boolean clickRedeem(double var1, double var3) {
-      BoundsData var5 = this.redeem.bounds();
-      boolean var6 = var5 != null && var5.contains(var1, var3);
-      this.redeem.setFocused(var6);
-      if (this.redeemButton != null && this.redeemButton.contains(var1, var3)) {
-         this.panel.pressFx.press("redeem", var1, var3);
+   public boolean clickRedeem(double lastClickX, double lastClickY) {
+      BoundsData bounds = this.redeem.bounds();
+      boolean focused = bounds != null && bounds.contains(lastClickX, lastClickY);
+      this.redeem.setFocused(focused);
+      if (this.redeemButton != null && this.redeemButton.contains(lastClickX, lastClickY)) {
+         this.panel.pressFx.press("redeem", lastClickX, lastClickY);
          this.doRedeem();
          return true;
       } else {
-         return var6;
+         return focused;
       }
    }
 
    public void doRedeem() {
-      String var1 = this.redeem.get();
-      StoreApi var2 = store();
-      if (!var1.isEmpty() && var2 != null) {
-         var2.method1986(var1).whenComplete((var1x, var2x) -> {
+      String kind = this.redeem.get();
+      StoreApi storeApi = store();
+      if (!kind.isEmpty() && storeApi != null) {
+         storeApi.method1986(kind).whenComplete((var1x, var2x) -> {
             if (var2x != null) {
                this.report(reason(var2x), true);
             } else {
@@ -1687,33 +1687,33 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void install(Storage var1, StoreApi.Data2 var2) {
-      StoreApi var3 = store();
-      if (var3 != null && this.busy.add(var2.getUUID())) {
+   private void install(Storage hostOrNull, StoreApi.Data2 entry) {
+      StoreApi storeApi = store();
+      if (storeApi != null && this.busy.add(entry.getUUID())) {
          this.revision.incrementAndGet();
-         var3.method1970(var2.getUUID())
+         storeApi.method1970(entry.getUUID())
             .whenComplete(
-               (var3x, var4) -> {
-                  if (var4 != null) {
-                     this.busy.remove(var2.getUUID());
-                     this.report(reason(var4), true);
+               (var3x, throwable) -> {
+                  if (throwable != null) {
+                     this.busy.remove(entry.getUUID());
+                     this.report(reason(throwable), true);
                   } else {
                      Minecraft.getInstance()
                         .execute(
                            () -> {
                               try {
-                                 Script var4x = OriginUtil.method6928(var1, var2, var3x);
-                                 this.installed = OriginUtil.method6925(var1);
-                                 String var5 = var4x == null ? "" : ScriptPermissions.method5(var4x);
+                                 Script var4x = OriginUtil.method6928(hostOrNull, entry, var3x);
+                                 this.installed = OriginUtil.method6925(hostOrNull);
+                                 String replacement = var4x == null ? "" : ScriptPermissions.method5(var4x);
                                  this.report(
-                                    t("gui.scripts.market.status.installed").replace("{n}", var4x == null ? var2.name() : var4x.method1403())
-                                       + (var5.isEmpty() ? "" : " · " + t("gui.scripts.market.rights").replace("{r}", var5)),
+                                    t("gui.scripts.market.status.installed").replace("{n}", var4x == null ? entry.name() : var4x.method1403())
+                                       + (replacement.isEmpty() ? "" : " · " + t("gui.scripts.market.rights").replace("{r}", replacement)),
                                     false
                                  );
-                              } catch (Exception var9) {
-                                 this.report(reason(var9), true);
+                              } catch (Exception e) {
+                                 this.report(reason(e), true);
                               } finally {
-                                 this.busy.remove(var2.getUUID());
+                                 this.busy.remove(entry.getUUID());
                                  this.panel.invalidate();
                               }
                            }
@@ -1724,33 +1724,33 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void uninstall(Storage var1, Script var2) {
+   private void uninstall(Storage hostOrNull, Script script) {
       try {
-         OriginUtil.uninstall(var1, var2);
-         this.installed = OriginUtil.method6925(var1);
-         this.report(t("gui.scripts.market.status.removed").replace("{n}", var2.method1403()), false);
-      } catch (Exception var4) {
-         this.report(reason(var4), true);
+         OriginUtil.uninstall(hostOrNull, script);
+         this.installed = OriginUtil.method6925(hostOrNull);
+         this.report(t("gui.scripts.market.status.removed").replace("{n}", script.method1403()), false);
+      } catch (Exception e) {
+         this.report(reason(e), true);
       }
 
       this.panel.invalidate();
    }
 
-   private void publish(Storage var1, Script var2, int var3) {
-      StoreApi var4 = store();
-      if (var4 != null && this.publishing.add(var2.getId())) {
+   private void publish(Storage hostOrNull, Script script, int visibilityIndex) {
+      StoreApi storeApi = store();
+      if (storeApi != null && this.publishing.add(script.getId())) {
          this.revision.incrementAndGet();
-         String var5 = VISIBILITY[Math.max(0, Math.min(VISIBILITY.length - 1, var3))];
-         OriginUtil.Data2 var6 = OriginUtil.method6921(var2);
-         boolean var7 = "PUBLIC".equals(var5) && (var6 == null || !StoreApi.method1960(var6.getUUID()).method2007());
-         OriginUtil.method6933(var4, var1, var2, var7 ? "PRIVATE" : var5)
-            .thenCompose(var2x -> var7 ? var4.method1961(var2x.getUUID(), 0) : CompletableFuture.completedFuture(var2x))
+         String anObject = VISIBILITY[Math.max(0, Math.min(VISIBILITY.length - 1, visibilityIndex))];
+         OriginUtil.Data2 data2 = OriginUtil.method6921(script);
+         boolean flag = "PUBLIC".equals(anObject) && (data2 == null || !StoreApi.method1960(data2.getUUID()).method2007());
+         OriginUtil.method6933(storeApi, hostOrNull, script, flag ? "PRIVATE" : anObject)
+            .thenCompose(var2x -> flag ? storeApi.method1961(var2x.getUUID(), 0) : CompletableFuture.completedFuture(var2x))
             .whenComplete((var3x, var4x) -> {
-               this.publishing.remove(var2.getId());
+               this.publishing.remove(script.getId());
                if (var4x != null) {
                   this.report(reason(var4x), true);
                } else {
-                  this.report(var7 ? t("gui.market.report.review") : t("gui.scripts.market.status.published").replace("{n}", var3x.name()), false);
+                  this.report(flag ? t("gui.market.report.review") : t("gui.scripts.market.status.published").replace("{n}", var3x.name()), false);
                   Minecraft.getInstance().execute(() -> {
                      this.fetch(true);
                      this.selected = var3x.getUUID();
@@ -1762,24 +1762,24 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void unpublish(Storage var1, StoreApi.Data2 var2) {
-      StoreApi var3 = store();
-      if (var3 != null) {
-         var3.method1975(var2.getUUID()).whenComplete((var3x, var4) -> {
-            if (var4 != null) {
-               this.report(reason(var4), true);
+   private void unpublish(Storage hostOrNull, StoreApi.Data2 entry) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1975(entry.getUUID()).whenComplete((var3x, throwable) -> {
+            if (throwable != null) {
+               this.report(reason(throwable), true);
             } else {
                Minecraft.getInstance().execute(() -> {
-                  Script var3xx = this.installed.get(var2.getUUID());
+                  Script var3xx = this.installed.get(entry.getUUID());
                   if (var3xx != null) {
                      OriginUtil.method6924(var3xx);
                   }
 
-                  this.mine.removeIf(var1xxx -> var1xxx.getUUID().equals(var2.getUUID()));
-                  this.catalog.removeIf(var1xxx -> var1xxx.getUUID().equals(var2.getUUID()));
+                  this.mine.removeIf(var1xxx -> var1xxx.getUUID().equals(entry.getUUID()));
+                  this.catalog.removeIf(var1xxx -> var1xxx.getUUID().equals(entry.getUUID()));
                   this.selected = null;
-                  if (var1 != null) {
-                     this.installed = OriginUtil.method6925(var1);
+                  if (hostOrNull != null) {
+                     this.installed = OriginUtil.method6925(hostOrNull);
                   }
 
                   this.report(t("gui.scripts.market.status.unpublished"), false);
@@ -1790,41 +1790,41 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void like(StoreApi.Data2 var1) {
-      StoreApi var2 = store();
-      if (var2 != null) {
-         var2.method1978(var1.getUUID())
+   private void like(StoreApi.Data2 entry) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1978(entry.getUUID())
             .whenComplete(
-               (var2x, var3) -> {
-                  if (var3 != null) {
-                     this.report(reason(var3), true);
+               (var2x, throwable) -> {
+                  if (throwable != null) {
+                     this.report(reason(throwable), true);
                   } else {
-                     StoreApi.Data2 var4 = this.entry(var1.getUUID());
-                     if (var4 == null) {
-                        var4 = var1;
+                     StoreApi.Data2 data2 = this.entry(entry.getUUID());
+                     if (data2 == null) {
+                        data2 = entry;
                      }
 
                      this.replace(
                         new StoreApi.Data2(
-                           var4.getUUID(),
-                           var4.kind(),
-                           var4.name(),
-                           var4.fileName(),
-                           var4.description(),
-                           var4.server(),
-                           var4.getLongValue(),
-                           var4.getText6(),
-                           var4.getText7(),
-                           var4.getLongValue2(),
-                           var4.getLongValue3(),
-                           var4.getLongValue4(),
-                           var4.getLongValue5(),
-                           var4.getText8(),
-                           var4.mine(),
-                           var4.hasPreview(),
+                           data2.getUUID(),
+                           data2.kind(),
+                           data2.name(),
+                           data2.fileName(),
+                           data2.description(),
+                           data2.server(),
+                           data2.getLongValue(),
+                           data2.getText6(),
+                           data2.getText7(),
+                           data2.getLongValue2(),
+                           data2.getLongValue3(),
+                           data2.getLongValue4(),
+                           data2.getLongValue5(),
+                           data2.getText8(),
+                           data2.mine(),
+                           data2.hasPreview(),
                            var2x[0],
                            var2x[1] == 1,
-                           var4.getIntValue2()
+                           data2.getIntValue2()
                         )
                      );
                      Minecraft.getInstance().execute(this.panel::invalidate);
@@ -1834,85 +1834,85 @@ public final class ScriptMarketTab {
       }
    }
 
-   private void changeVisibility(StoreApi.Data2 var1, int var2) {
-      StoreApi var3 = store();
-      if (var3 != null) {
-         boolean var4 = "PUBLIC".equals(VISIBILITY[var2]) && !isConfig(var1) && !StoreApi.method1960(var1.getUUID()).method2007();
-         (var4 ? var3.method1961(var1.getUUID(), 0) : var3.method1974(var1.getUUID(), null, null, VISIBILITY[var2])).whenComplete((var2x, var3x) -> {
+   private void changeVisibility(StoreApi.Data2 entry, int n) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         boolean flag = "PUBLIC".equals(VISIBILITY[n]) && !isConfig(entry) && !StoreApi.method1960(entry.getUUID()).method2007();
+         (flag ? storeApi.method1961(entry.getUUID(), 0) : storeApi.method1974(entry.getUUID(), null, null, VISIBILITY[n])).whenComplete((var2x, var3x) -> {
             if (var3x != null) {
                this.report(reason(var3x), true);
             } else {
                this.replace(var2x);
-               this.report(t(var4 ? "gui.market.report.review" : "gui.scripts.market.status.visibility"), false);
+               this.report(t(flag ? "gui.market.report.review" : "gui.scripts.market.status.visibility"), false);
                Minecraft.getInstance().execute(this.panel::invalidate);
             }
          });
       }
    }
 
-   private void loadCodes(StoreApi.Data2 var1) {
-      StoreApi var2 = store();
-      if (var2 != null) {
-         var2.method1980(var1.getUUID()).whenComplete((var2x, var3) -> {
-            if (var3 == null) {
-               this.codes.put(var1.getUUID(), (List<StoreApi.Data>)var2x);
+   private void loadCodes(StoreApi.Data2 entry) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1980(entry.getUUID()).whenComplete((var2x, throwable) -> {
+            if (throwable == null) {
+               this.codes.put(entry.getUUID(), (List<StoreApi.Data>)var2x);
                this.revision.incrementAndGet();
             }
          });
       }
    }
 
-   private void createCode(StoreApi.Data2 var1) {
-      StoreApi var2 = store();
-      if (var2 != null) {
-         var2.method1979(var1.getUUID(), 1).whenComplete((var2x, var3) -> {
-            if (var3 != null) {
-               this.report(reason(var3), true);
+   private void createCode(StoreApi.Data2 entry) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1979(entry.getUUID(), 1).whenComplete((var2x, throwable) -> {
+            if (throwable != null) {
+               this.report(reason(throwable), true);
             } else {
                if (!var2x.isEmpty()) {
-                  String var4 = var2x.get(0).getText();
-                  Minecraft.getInstance().execute(() -> Minecraft.getInstance().keyboardHandler.setClipboard(var4));
-                  this.report(t("gui.scripts.market.status.codeCreated").replace("{n}", var4), false);
+                  String text = var2x.get(0).getText();
+                  Minecraft.getInstance().execute(() -> Minecraft.getInstance().keyboardHandler.setClipboard(text));
+                  this.report(t("gui.scripts.market.status.codeCreated").replace("{n}", text), false);
                }
 
-               this.loadCodes(var1);
+               this.loadCodes(entry);
             }
          });
       }
    }
 
-   private void revokeCode(StoreApi.Data2 var1, StoreApi.Data var2) {
-      StoreApi var3 = store();
-      if (var3 != null) {
-         var3.method1981(var1.getUUID(), var2.getUUID()).whenComplete((var2x, var3x) -> {
+   private void revokeCode(StoreApi.Data2 entry, StoreApi.Data data) {
+      StoreApi storeApi = store();
+      if (storeApi != null) {
+         storeApi.method1981(entry.getUUID(), data.getUUID()).whenComplete((var2x, var3x) -> {
             if (var3x != null) {
                this.report(reason(var3x), true);
             } else {
                this.report(t("gui.scripts.market.status.revoked"), false);
             }
 
-            this.loadCodes(var1);
+            this.loadCodes(entry);
          });
       }
    }
 
-   private static int visibilityIndex(String var0) {
-      for (int var1 = 0; var1 < VISIBILITY.length; var1++) {
-         if (VISIBILITY[var1].equalsIgnoreCase(var0)) {
-            return var1;
+   private static int visibilityIndex(String anotherString) {
+      for (int i = 0; i < VISIBILITY.length; i++) {
+         if (VISIBILITY[i].equalsIgnoreCase(anotherString)) {
+            return i;
          }
       }
 
       return 3;
    }
 
-   private static String size(long var0) {
-      if (var0 < 1024L) {
-         return var0 + " B";
+   private static String size(long longValue) {
+      if (longValue < 1024L) {
+         return longValue + " B";
       } else {
-         return var0 < 1048576L
-            ? String.format(Locale.ROOT, "%.1f KB", (float)var0 / 1024.0F)
-            : String.format(Locale.ROOT, "%.1f MB", (float)var0 / 1024.0F / 1024.0F);
+         return longValue < 1048576L
+            ? String.format(Locale.ROOT, "%.1f KB", (float)longValue / 1024.0F)
+            : String.format(Locale.ROOT, "%.1f MB", (float)longValue / 1024.0F / 1024.0F);
       }
    }
 
@@ -1950,10 +1950,10 @@ public final class ScriptMarketTab {
          return "CardLines[" + "title=" + this.title + ", " + "note=" + this.note + ", " + "meta=" + this.meta + "]";
       }
 
-      public CardLines(float var1, float var2, float var3) {
-         this.title = var1;
-         this.note = var2;
-         this.meta = var3;
+      public CardLines(float title, float note, float meta) {
+         this.title = title;
+         this.note = note;
+         this.meta = meta;
       }
    }
 
@@ -1991,10 +1991,10 @@ public final class ScriptMarketTab {
          return "Presence[" + "name=" + this.name + ", " + "present=" + this.present + ", " + "checkedAt=" + this.checkedAt + "]";
       }
 
-      private Presence(String var1, boolean var2, long var3) {
-         this.name = var1;
-         this.present = var2;
-         this.checkedAt = var3;
+      private Presence(String name, boolean present, long checkedAt) {
+         this.name = name;
+         this.present = present;
+         this.checkedAt = checkedAt;
       }
    }
 }

@@ -47,10 +47,10 @@ public final class HeadlessBots {
    private static final Map<String, BotClient> BOTS = new ConcurrentHashMap<>();
    private static final Map<String, HeadlessBots.SavedBot> SAVED = new LinkedHashMap<>();
    private static final Map<String, JsonObject> PROFILES = new ConcurrentHashMap<>();
-   private static final ScheduledExecutorService CONNECT_DELAY_EXECUTOR = Executors.newSingleThreadScheduledExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "hbot-connect-delay");
-      var1.setDaemon(true);
-      return var1;
+   private static final ScheduledExecutorService CONNECT_DELAY_EXECUTOR = Executors.newSingleThreadScheduledExecutor(task -> {
+      Thread thread = new Thread(task, "hbot-connect-delay");
+      thread.setDaemon(true);
+      return thread;
    });
    private static final AtomicLong CONNECT_BATCH_GENERATION = new AtomicLong();
    private static volatile String lastAddress = "";
@@ -66,10 +66,10 @@ public final class HeadlessBots {
          private int index;
 
          @Override
-         public synchronized Thread newThread(Runnable var1) {
-            Thread var2 = new Thread(var1, "hbot-proxy-ping-" + this.index++);
-            var2.setDaemon(true);
-            return var2;
+         public synchronized Thread newThread(Runnable task) {
+            Thread thread = new Thread(task, "hbot-proxy-ping-" + this.index++);
+            thread.setDaemon(true);
+            return thread;
          }
       }
    );
@@ -77,76 +77,76 @@ public final class HeadlessBots {
    private HeadlessBots() {
    }
 
-   public static BotClient connect(String var0, String var1, int var2) {
-      add(var0);
-      setLastAddress(var1 + (var2 == 25565 ? "" : ":" + var2));
-      return connect(BotClientConfig.offline(var0, var1, var2, getProxy(var0), getProtocolVersion(var0)));
+   public static BotClient connect(String selected, String host, int port) {
+      add(selected);
+      setLastAddress(host + (port == 25565 ? "" : ":" + port));
+      return connect(BotClientConfig.offline(selected, host, port, getProxy(selected), getProtocolVersion(selected)));
    }
 
-   public static BotClient connect(BotClientConfig var0) {
-      String var1 = key(var0.name());
-      BotClient var2 = BOTS.get(var1);
-      if (var2 != null && var2.getPhase() != BotPhase.DISCONNECTED) {
-         return var2;
+   public static BotClient connect(BotClientConfig offline) {
+      String str = key(offline.name());
+      BotClient botClient = BOTS.get(str);
+      if (botClient != null && botClient.getPhase() != BotPhase.DISCONNECTED) {
+         return botClient;
       } else {
-         BotClient var3 = BotClient.start(var0, new HeadlessBots.ChatReportingEvents());
-         BOTS.put(var1, var3);
-         applyProfile(var3);
-         return var3;
+         BotClient start = BotClient.start(offline, new HeadlessBots.ChatReportingEvents());
+         BOTS.put(str, start);
+         applyProfile(start);
+         return start;
       }
    }
 
-   public static void connectAll(Collection<String> var0, String var1, int var2) {
-      if (var0 != null && !var0.isEmpty()) {
-         long var3 = CONNECT_BATCH_GENERATION.incrementAndGet();
-         ArrayList var5 = new ArrayList();
+   public static void connectAll(Collection<String> offlineSelectedNames, String host, int port) {
+      if (offlineSelectedNames != null && !offlineSelectedNames.isEmpty()) {
+         long incrementAndGet = CONNECT_BATCH_GENERATION.incrementAndGet();
+         ArrayList arrayList = new ArrayList();
 
-         for (String var7 : var0) {
-            if (var5.size() >= 256) {
+         for (String offlineSelectedName : offlineSelectedNames) {
+            if (arrayList.size() >= 256) {
                break;
             }
 
-            if (var7 != null && !var7.isBlank()) {
-               var5.add(var7.trim());
+            if (offlineSelectedName != null && !offlineSelectedName.isBlank()) {
+               arrayList.add(offlineSelectedName.trim());
             }
          }
 
-         if (!var5.isEmpty()) {
-            connectMassBatch(var5, 0, var1, var2, var3);
+         if (!arrayList.isEmpty()) {
+            connectMassBatch(arrayList, 0, host, port, incrementAndGet);
          }
       }
    }
 
-   private static void connectMassBatch(List<String> var0, int var1, String var2, int var3, long var4) {
-      if (CONNECT_BATCH_GENERATION.get() == var4 && var1 < var0.size()) {
-         connect((String)var0.get(var1), var2, var3);
-         int var6 = var1 + 1;
-         if (var6 < var0.size()) {
-            CONNECT_DELAY_EXECUTOR.schedule(() -> connectMassBatch(var0, var6, var2, var3, var4), 500L, TimeUnit.MILLISECONDS);
+   private static void connectMassBatch(List<String> strings, int n, String host, int port, long incrementAndGet) {
+      if (CONNECT_BATCH_GENERATION.get() == incrementAndGet && n < strings.size()) {
+         connect((String)strings.get(n), host, port);
+         int n2 = n + 1;
+         if (n2 < strings.size()) {
+            CONNECT_DELAY_EXECUTOR.schedule(() -> connectMassBatch(strings, n2, host, port, incrementAndGet), 500L, TimeUnit.MILLISECONDS);
          }
       }
    }
 
    @Nullable
-   public static BotClient get(String var0) {
-      return BOTS.get(key(var0));
+   public static BotClient get(String selected) {
+      return BOTS.get(key(selected));
    }
 
    public static Collection<BotClient> all() {
       return BOTS.values();
    }
 
-   public static boolean isOnline(String var0) {
-      BotClient var1 = get(var0);
-      return var1 != null && var1.getPhase() != BotPhase.DISCONNECTED;
+   public static boolean isOnline(String selectedName) {
+      BotClient botClient = get(selectedName);
+      return botClient != null && botClient.getPhase() != BotPhase.DISCONNECTED;
    }
 
-   public static boolean disconnect(String var0) {
-      BotClient var1 = BOTS.remove(key(var0));
-      if (var1 == null) {
+   public static boolean disconnect(String selectedName) {
+      BotClient botClient = BOTS.remove(key(selectedName));
+      if (botClient == null) {
          return false;
       } else {
-         var1.disconnect("disconnected by user");
+         botClient.disconnect("disconnected by user");
          return true;
       }
    }
@@ -154,32 +154,32 @@ public final class HeadlessBots {
    public static void disconnectAll() {
       CONNECT_BATCH_GENERATION.incrementAndGet();
 
-      for (BotClient var1 : BOTS.values()) {
-         var1.disconnect("disconnected by user");
+      for (BotClient botClient : BOTS.values()) {
+         botClient.disconnect("disconnected by user");
       }
 
       BOTS.clear();
    }
 
-   public static boolean add(String var0) {
-      if (var0 != null && !var0.isBlank()) {
-         String var1 = var0.trim();
+   public static boolean add(String selected) {
+      if (selected != null && !selected.isBlank()) {
+         String name = selected.trim();
          synchronized (SAVED) {
-            HeadlessBots.SavedBot var3 = SAVED.putIfAbsent(key(var1), new HeadlessBots.SavedBot(var1, null, -1));
-            return var3 == null;
+            HeadlessBots.SavedBot putIfAbsent = SAVED.putIfAbsent(key(name), new HeadlessBots.SavedBot(name, null, -1));
+            return putIfAbsent == null;
          }
       } else {
          return false;
       }
    }
 
-   public static void remove(String var0) {
-      disconnect(var0);
+   public static void remove(String selectedName) {
+      disconnect(selectedName);
       synchronized (SAVED) {
-         SAVED.remove(key(var0));
+         SAVED.remove(key(selectedName));
       }
 
-      PROFILES.remove(key(var0));
+      PROFILES.remove(key(selectedName));
    }
 
    public static List<HeadlessBots.SavedBot> savedBots() {
@@ -189,262 +189,262 @@ public final class HeadlessBots {
    }
 
    public static List<String> allNames() {
-      ArrayList<String> var0 = new ArrayList<>();
-      HashSet var1 = new HashSet();
+      ArrayList<String> strings = new ArrayList<>();
+      HashSet hashSet = new HashSet();
       synchronized (SAVED) {
-         for (HeadlessBots.SavedBot var4 : SAVED.values()) {
-            var0.add(var4.name());
-            var1.add(key(var4.name()));
+         for (HeadlessBots.SavedBot savedBot : SAVED.values()) {
+            strings.add(savedBot.name());
+            hashSet.add(key(savedBot.name()));
          }
       }
 
-      for (BotClient var8 : BOTS.values()) {
-         if (var1.add(key(var8.name()))) {
-            var0.add(var8.name());
+      for (BotClient botClient : BOTS.values()) {
+         if (hashSet.add(key(botClient.name()))) {
+            strings.add(botClient.name());
          }
       }
 
-      return var0;
+      return strings;
    }
 
-   public static void setProxy(String var0, @Nullable String var1) {
-      String var2 = var1 != null && !var1.isBlank() ? var1.trim() : null;
-      if (var2 != null) {
-         addProxy(var2);
+   public static void setProxy(String selectionName, @Nullable String string) {
+      String str = string != null && !string.isBlank() ? string.trim() : null;
+      if (str != null) {
+         addProxy(str);
       }
 
       synchronized (SAVED) {
-         HeadlessBots.SavedBot var4 = SAVED.get(key(var0));
-         if (var4 != null) {
-            SAVED.put(key(var0), new HeadlessBots.SavedBot(var4.name(), var2, var4.protocolVersion()));
+         HeadlessBots.SavedBot savedBot = SAVED.get(key(selectionName));
+         if (savedBot != null) {
+            SAVED.put(key(selectionName), new HeadlessBots.SavedBot(savedBot.name(), str, savedBot.protocolVersion()));
          }
       }
    }
 
    @Nullable
-   public static String getProxy(String var0) {
+   public static String getProxy(String selected) {
       synchronized (SAVED) {
-         HeadlessBots.SavedBot var2 = SAVED.get(key(var0));
-         return var2 == null ? null : var2.proxy();
+         HeadlessBots.SavedBot savedBot = SAVED.get(key(selected));
+         return savedBot == null ? null : savedBot.proxy();
       }
    }
 
-   public static boolean hasProxy(String var0) {
-      String var1 = getProxy(var0);
-      return var1 != null && !var1.isBlank();
+   public static boolean hasProxy(String allName) {
+      String proxy = getProxy(allName);
+      return proxy != null && !proxy.isBlank();
    }
 
-   public static void setProtocolVersion(String var0, int var1) {
-      int var2 = var1 <= 0 ? -1 : var1;
+   public static void setProtocolVersion(String name, int protocol) {
+      int protocolVersion = protocol <= 0 ? -1 : protocol;
       synchronized (SAVED) {
-         HeadlessBots.SavedBot var4 = SAVED.get(key(var0));
-         if (var4 != null) {
-            SAVED.put(key(var0), new HeadlessBots.SavedBot(var4.name(), var4.proxy(), var2));
+         HeadlessBots.SavedBot savedBot = SAVED.get(key(name));
+         if (savedBot != null) {
+            SAVED.put(key(name), new HeadlessBots.SavedBot(savedBot.name(), savedBot.proxy(), protocolVersion));
          }
       }
    }
 
-   public static int getProtocolVersion(String var0) {
+   public static int getProtocolVersion(String selected) {
       synchronized (SAVED) {
-         HeadlessBots.SavedBot var2 = SAVED.get(key(var0));
-         return var2 == null ? -1 : var2.protocolVersion();
+         HeadlessBots.SavedBot savedBot = SAVED.get(key(selected));
+         return savedBot == null ? -1 : savedBot.protocolVersion();
       }
    }
 
    public static List<String> getProxyPool() {
-      ArrayList var0 = new ArrayList();
+      ArrayList coll = new ArrayList();
 
-      for (String var2 : SAVED_PROXIES) {
-         addUniqueProxy(var0, var2);
+      for (String proxy : SAVED_PROXIES) {
+         addUniqueProxy(coll, proxy);
       }
 
       synchronized (SAVED) {
-         for (HeadlessBots.SavedBot var3 : SAVED.values()) {
-            if (var3.proxy() != null) {
-               addUniqueProxy(var0, var3.proxy());
+         for (HeadlessBots.SavedBot savedBot : SAVED.values()) {
+            if (savedBot.proxy() != null) {
+               addUniqueProxy(coll, savedBot.proxy());
             }
          }
       }
 
-      return List.copyOf(var0);
+      return List.copyOf(coll);
    }
 
-   public static boolean addProxy(String var0) {
-      String var1 = var0 == null ? "" : var0.trim();
-      if (!var1.isBlank() && !containsProxy(SAVED_PROXIES, var1)) {
-         SAVED_PROXIES.add(var1);
-         requestProxyPing(var1, true);
+   public static boolean addProxy(String string) {
+      String anotherString = string == null ? "" : string.trim();
+      if (!anotherString.isBlank() && !containsProxy(SAVED_PROXIES, anotherString)) {
+         SAVED_PROXIES.add(anotherString);
+         requestProxyPing(anotherString, true);
          return true;
       } else {
          return false;
       }
    }
 
-   public static boolean removeProxy(String var0) {
-      String var1 = var0 == null ? "" : var0.trim();
-      if (var1.isBlank()) {
+   public static boolean removeProxy(String str) {
+      String anotherString = str == null ? "" : str.trim();
+      if (anotherString.isBlank()) {
          return false;
       } else {
-         boolean var2 = SAVED_PROXIES.removeIf(var1x -> var1x.equalsIgnoreCase(var1));
+         boolean removeIf = SAVED_PROXIES.removeIf(var1x -> var1x.equalsIgnoreCase(anotherString));
          synchronized (SAVED) {
-            for (Entry var5 : SAVED.entrySet()) {
-               HeadlessBots.SavedBot var6 = (HeadlessBots.SavedBot)var5.getValue();
-               if (var6.proxy() != null && var6.proxy().equalsIgnoreCase(var1)) {
-                  var5.setValue(new HeadlessBots.SavedBot(var6.name(), null, var6.protocolVersion()));
-                  var2 = true;
+            for (Entry entry : SAVED.entrySet()) {
+               HeadlessBots.SavedBot savedBot = (HeadlessBots.SavedBot)entry.getValue();
+               if (savedBot.proxy() != null && savedBot.proxy().equalsIgnoreCase(anotherString)) {
+                  entry.setValue(new HeadlessBots.SavedBot(savedBot.name(), null, savedBot.protocolVersion()));
+                  removeIf = true;
                }
             }
          }
 
-         PROXY_PINGS.remove(proxyPingKey(var1));
-         return var2;
+         PROXY_PINGS.remove(proxyPingKey(anotherString));
+         return removeIf;
       }
    }
 
-   public static int getProxyUseCount(String var0) {
-      String var1 = var0 == null ? "" : var0.trim();
-      if (var1.isBlank()) {
+   public static int getProxyUseCount(String str) {
+      String anotherString = str == null ? "" : str.trim();
+      if (anotherString.isBlank()) {
          return 0;
       } else {
-         int var2 = 0;
+         int n = 0;
          synchronized (SAVED) {
-            for (HeadlessBots.SavedBot var5 : SAVED.values()) {
-               if (var5.proxy() != null && var5.proxy().equalsIgnoreCase(var1)) {
-                  var2++;
+            for (HeadlessBots.SavedBot savedBot : SAVED.values()) {
+               if (savedBot.proxy() != null && savedBot.proxy().equalsIgnoreCase(anotherString)) {
+                  n++;
                }
             }
 
-            return var2;
+            return n;
          }
       }
    }
 
-   public static HeadlessBots.ProxyPingSnapshot getProxyPing(String var0) {
-      String var1 = var0 == null ? "" : var0.trim();
-      if (var1.isBlank()) {
+   public static HeadlessBots.ProxyPingSnapshot getProxyPing(String proxyNoneKey) {
+      String anotherString = proxyNoneKey == null ? "" : proxyNoneKey.trim();
+      if (anotherString.isBlank()) {
          return new HeadlessBots.ProxyPingSnapshot(HeadlessBots.ProxyPingStatus.UNKNOWN, -1);
       } else {
-         HeadlessBots.ProxyPingState var2 = requestProxyPing(var1, false);
-         return new HeadlessBots.ProxyPingSnapshot(var2.status, var2.latencyMs);
+         HeadlessBots.ProxyPingState proxyPingState = requestProxyPing(anotherString, false);
+         return new HeadlessBots.ProxyPingSnapshot(proxyPingState.status, proxyPingState.latencyMs);
       }
    }
 
-   private static HeadlessBots.ProxyPingState requestProxyPing(String var0, boolean var1) {
-      String var2 = var0 == null ? "" : var0.trim();
-      if (var2.isBlank()) {
+   private static HeadlessBots.ProxyPingState requestProxyPing(String anotherString, boolean flag) {
+      String str = anotherString == null ? "" : anotherString.trim();
+      if (str.isBlank()) {
          return new HeadlessBots.ProxyPingState();
       } else {
-         HeadlessBots.ProxyPingState var3 = PROXY_PINGS.computeIfAbsent(proxyPingKey(var2), var0x -> new HeadlessBots.ProxyPingState());
-         long var4 = System.currentTimeMillis();
-         synchronized (var3) {
-            if (var3.inFlight) {
-               return var3;
+         HeadlessBots.ProxyPingState proxyPingState = PROXY_PINGS.computeIfAbsent(proxyPingKey(str), var0x -> new HeadlessBots.ProxyPingState());
+         long now = System.currentTimeMillis();
+         synchronized (proxyPingState) {
+            if (proxyPingState.inFlight) {
+               return proxyPingState;
             }
 
-            if (!var1 && var3.status != HeadlessBots.ProxyPingStatus.UNKNOWN && var4 - var3.lastStartedAt < 10000L) {
-               return var3;
+            if (!flag && proxyPingState.status != HeadlessBots.ProxyPingStatus.UNKNOWN && now - proxyPingState.lastStartedAt < 10000L) {
+               return proxyPingState;
             }
 
-            var3.inFlight = true;
-            if (var3.status == HeadlessBots.ProxyPingStatus.UNKNOWN) {
-               var3.status = HeadlessBots.ProxyPingStatus.CHECKING;
+            proxyPingState.inFlight = true;
+            if (proxyPingState.status == HeadlessBots.ProxyPingStatus.UNKNOWN) {
+               proxyPingState.status = HeadlessBots.ProxyPingStatus.CHECKING;
             }
 
-            var3.lastStartedAt = var4;
+            proxyPingState.lastStartedAt = now;
          }
 
          try {
-            PROXY_PING_EXECUTOR.execute(() -> pingProxy(var2, var3));
-         } catch (RejectedExecutionException var10) {
-            synchronized (var3) {
-               var3.latencyMs = -1;
-               var3.status = HeadlessBots.ProxyPingStatus.FAILED;
-               var3.inFlight = false;
+            PROXY_PING_EXECUTOR.execute(() -> pingProxy(str, proxyPingState));
+         } catch (RejectedExecutionException e) {
+            synchronized (proxyPingState) {
+               proxyPingState.latencyMs = -1;
+               proxyPingState.status = HeadlessBots.ProxyPingStatus.FAILED;
+               proxyPingState.inFlight = false;
             }
          }
 
-         return var3;
+         return proxyPingState;
       }
    }
 
-   private static void pingProxy(String var0, HeadlessBots.ProxyPingState var1) {
-      long var2 = System.nanoTime();
+   private static void pingProxy(String proxy, HeadlessBots.ProxyPingState proxyPingState) {
+      long nanoTime = System.nanoTime();
 
       try {
-         BotProxy var4 = BotProxy.parse(var0);
-         if (var4 == null) {
+         BotProxy botProxy = BotProxy.parse(proxy);
+         if (botProxy == null) {
             throw new IllegalArgumentException("Invalid proxy");
          }
 
-         final ProxyHandler var5 = var4.createHandler();
-         InetSocketAddress var6 = InetSocketAddress.createUnresolved("mc.holyworld.ru", 25565);
-         EventLoopGroup var7 = EventLoopGroupHolder.remote(false).eventLoopGroup();
-         Bootstrap var8 = (Bootstrap)((Bootstrap)((Bootstrap)((Bootstrap)new Bootstrap().group(var7)).channel(NioSocketChannel.class))
+         final ProxyHandler handler = botProxy.createHandler();
+         InetSocketAddress unresolved = InetSocketAddress.createUnresolved("mc.holyworld.ru", 25565);
+         EventLoopGroup eventLoopGroup = EventLoopGroupHolder.remote(false).eventLoopGroup();
+         Bootstrap bootstrap = (Bootstrap)((Bootstrap)((Bootstrap)((Bootstrap)new Bootstrap().group(eventLoopGroup)).channel(NioSocketChannel.class))
                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000))
             .handler(new ChannelInitializer<Channel>() {
-               public void initChannel(Channel var1) {
-                  var1.pipeline().addLast("timeout", new ReadTimeoutHandler((int)Math.ceil(5.0)));
-                  var1.pipeline().addLast("proxy", var5);
+               public void initChannel(Channel channel) {
+                  channel.pipeline().addLast("timeout", new ReadTimeoutHandler((int)Math.ceil(5.0)));
+                  channel.pipeline().addLast("proxy", handler);
                }
             });
-         ChannelFuture var9 = var8.connect(var6);
-         Channel var10 = var9.channel();
+         ChannelFuture connect = bootstrap.connect(unresolved);
+         Channel channel = connect.channel();
 
          try {
-            if (!var9.await(5000L)) {
-               var9.cancel(true);
+            if (!connect.await(5000L)) {
+               connect.cancel(true);
                throw new SocketTimeoutException("Proxy connect timeout");
             }
 
-            if (!var9.isSuccess()) {
-               throw asException(var9.cause());
+            if (!connect.isSuccess()) {
+               throw asException(connect.cause());
             }
 
-            Future var11 = var5.connectFuture();
-            if (!var11.await(5000L)) {
+            Future connectFuture = handler.connectFuture();
+            if (!connectFuture.await(5000L)) {
                throw new SocketTimeoutException("Proxy handshake timeout");
             }
 
-            if (!var11.isSuccess()) {
-               throw asException(var11.cause());
+            if (!connectFuture.isSuccess()) {
+               throw asException(connectFuture.cause());
             }
          } finally {
-            var10.close();
+            channel.close();
          }
 
-         int var23 = Math.max(1, Math.round((float)(System.nanoTime() - var2) / 1000000.0F));
-         synchronized (var1) {
-            var1.latencyMs = var23;
-            var1.status = HeadlessBots.ProxyPingStatus.OK;
-            var1.inFlight = false;
+         int latencyMs = Math.max(1, Math.round((float)(System.nanoTime() - nanoTime) / 1000000.0F));
+         synchronized (proxyPingState) {
+            proxyPingState.latencyMs = latencyMs;
+            proxyPingState.status = HeadlessBots.ProxyPingStatus.OK;
+            proxyPingState.inFlight = false;
          }
-      } catch (Exception var22) {
-         synchronized (var1) {
-            var1.latencyMs = -1;
-            var1.status = HeadlessBots.ProxyPingStatus.FAILED;
-            var1.inFlight = false;
+      } catch (Exception e) {
+         synchronized (proxyPingState) {
+            proxyPingState.latencyMs = -1;
+            proxyPingState.status = HeadlessBots.ProxyPingStatus.FAILED;
+            proxyPingState.inFlight = false;
          }
       }
    }
 
-   private static Exception asException(Throwable var0) {
-      return var0 instanceof Exception var1 ? var1 : new Exception(var0);
+   private static Exception asException(Throwable cause) {
+      return cause instanceof Exception e ? e : new Exception(cause);
    }
 
-   private static String proxyPingKey(String var0) {
-      return var0 == null ? "" : var0.trim().toLowerCase(Locale.ROOT);
+   private static String proxyPingKey(String anotherString) {
+      return anotherString == null ? "" : anotherString.trim().toLowerCase(Locale.ROOT);
    }
 
-   private static void addUniqueProxy(List<String> var0, String var1) {
-      String var2 = var1 == null ? "" : var1.trim();
-      if (!var2.isBlank() && !containsProxy(var0, var2)) {
-         var0.add(var2);
+   private static void addUniqueProxy(List<String> coll, String proxy) {
+      String anotherString = proxy == null ? "" : proxy.trim();
+      if (!anotherString.isBlank() && !containsProxy(coll, anotherString)) {
+         coll.add(anotherString);
       }
    }
 
-   private static boolean containsProxy(Collection<String> var0, String var1) {
-      for (String var3 : var0) {
-         if (var3.equalsIgnoreCase(var1)) {
+   private static boolean containsProxy(Collection<String> coll, String anotherString) {
+      for (String str : coll) {
+         if (str.equalsIgnoreCase(anotherString)) {
             return true;
          }
       }
@@ -456,153 +456,153 @@ public final class HeadlessBots {
       return lastAddress;
    }
 
-   public static void setLastAddress(String var0) {
-      lastAddress = var0 == null ? "" : var0.trim();
+   public static void setLastAddress(String string) {
+      lastAddress = string == null ? "" : string.trim();
    }
 
-   private static void applyProfile(BotClient var0) {
-      JsonObject var1 = PROFILES.get(key(var0.name()));
-      if (var1 != null) {
-         var0.execute(() -> {
-            for (BotModule var3 : var0.getModules().getModules()) {
-               if (var1.has(var3.getName()) && var1.get(var3.getName()).isJsonObject()) {
-                  var3.load(var1.getAsJsonObject(var3.getName()));
+   private static void applyProfile(BotClient start) {
+      JsonObject json = PROFILES.get(key(start.name()));
+      if (json != null) {
+         start.execute(() -> {
+            for (BotModule botModule : start.getModules().getModules()) {
+               if (json.has(botModule.getName()) && json.get(botModule.getName()).isJsonObject()) {
+                  botModule.load(json.getAsJsonObject(botModule.getName()));
                }
             }
          });
       }
    }
 
-   public static void persistProfile(BotClient var0) {
-      JsonObject var1 = new JsonObject();
+   public static void persistProfile(BotClient botClient) {
+      JsonObject json = new JsonObject();
 
-      for (BotModule var3 : var0.getModules().getModules()) {
-         var1.add(var3.getName(), var3.save());
+      for (BotModule botModule : botClient.getModules().getModules()) {
+         json.add(botModule.getName(), botModule.save());
       }
 
-      PROFILES.put(key(var0.name()), var1);
+      PROFILES.put(key(botClient.name()), json);
    }
 
-   public static void setModuleEnabled(String var0, String var1, boolean var2) {
-      BotClient var3 = get(var0);
-      if (var3 != null && var3.getPhase() != BotPhase.DISCONNECTED) {
-         var3.execute(() -> {
-            var3.getModules().setEnabled(var1, var2);
-            persistProfile(var3);
+   public static void setModuleEnabled(String botName, String supportedModuleName, boolean equalsIgnoreCase) {
+      BotClient botClient = get(botName);
+      if (botClient != null && botClient.getPhase() != BotPhase.DISCONNECTED) {
+         botClient.execute(() -> {
+            botClient.getModules().setEnabled(supportedModuleName, equalsIgnoreCase);
+            persistProfile(botClient);
          });
       } else {
-         JsonObject var4 = PROFILES.computeIfAbsent(key(var0), var0x -> new JsonObject());
-         JsonObject var5 = var4.has(var1) && var4.get(var1).isJsonObject() ? var4.getAsJsonObject(var1) : new JsonObject();
-         var5.addProperty("enabled", var2);
-         var4.add(var1, var5);
+         JsonObject json = PROFILES.computeIfAbsent(key(botName), var0x -> new JsonObject());
+         JsonObject jsonObject = json.has(supportedModuleName) && json.get(supportedModuleName).isJsonObject() ? json.getAsJsonObject(supportedModuleName) : new JsonObject();
+         jsonObject.addProperty("enabled", equalsIgnoreCase);
+         json.add(supportedModuleName, jsonObject);
       }
    }
 
-   public static boolean isModuleEnabledInProfile(String var0, String var1) {
-      JsonObject var2 = PROFILES.get(key(var0));
-      if (var2 != null && var2.has(var1) && var2.get(var1).isJsonObject()) {
-         JsonObject var3 = var2.getAsJsonObject(var1);
-         return var3.has("enabled") && var3.get("enabled").getAsBoolean();
+   public static boolean isModuleEnabledInProfile(String moduleMenuBotName, String supportedModuleName) {
+      JsonObject json = PROFILES.get(key(moduleMenuBotName));
+      if (json != null && json.has(supportedModuleName) && json.get(supportedModuleName).isJsonObject()) {
+         JsonObject jsonObject = json.getAsJsonObject(supportedModuleName);
+         return jsonObject.has("enabled") && jsonObject.get("enabled").getAsBoolean();
       } else {
          return false;
       }
    }
 
    public static JsonObject saveState() {
-      JsonObject var0 = new JsonObject();
-      JsonArray var1 = new JsonArray();
+      JsonObject json = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
       synchronized (SAVED) {
-         for (HeadlessBots.SavedBot var4 : SAVED.values()) {
-            JsonObject var5 = new JsonObject();
-            var5.addProperty("name", var4.name());
-            if (var4.proxy() != null) {
-               var5.addProperty("proxy", var4.proxy());
+         for (HeadlessBots.SavedBot savedBot : SAVED.values()) {
+            JsonObject json2 = new JsonObject();
+            json2.addProperty("name", savedBot.name());
+            if (savedBot.proxy() != null) {
+               json2.addProperty("proxy", savedBot.proxy());
             }
 
-            if (var4.protocolVersion() > 0) {
-               var5.addProperty("version", var4.protocolVersion());
+            if (savedBot.protocolVersion() > 0) {
+               json2.addProperty("version", savedBot.protocolVersion());
             }
 
-            var1.add(var5);
+            jsonArray.add(json2);
          }
       }
 
-      var0.add("savedBots", var1);
-      JsonObject var8 = new JsonObject();
+      json.add("savedBots", jsonArray);
+      JsonObject json2 = new JsonObject();
 
-      for (Entry var11 : PROFILES.entrySet()) {
-         var8.add((String)var11.getKey(), (JsonElement)var11.getValue());
+      for (Entry entry : PROFILES.entrySet()) {
+         json2.add((String)entry.getKey(), (JsonElement)entry.getValue());
       }
 
-      var0.add("botProfiles", var8);
-      JsonArray var10 = new JsonArray();
+      json.add("botProfiles", json2);
+      JsonArray jsonArray2 = new JsonArray();
 
-      for (String var13 : getProxyPool()) {
-         var10.add(var13);
+      for (String string : getProxyPool()) {
+         jsonArray2.add(string);
       }
 
-      var0.add("proxyPool", var10);
-      var0.addProperty("lastAddress", lastAddress);
-      return var0;
+      json.add("proxyPool", jsonArray2);
+      json.addProperty("lastAddress", lastAddress);
+      return json;
    }
 
-   public static void loadState(JsonObject var0) {
-      if (var0 != null) {
-         if (var0.has("BotData") && var0.get("BotData").isJsonObject()) {
-            var0 = var0.getAsJsonObject("BotData");
+   public static void loadState(JsonObject jsonObject) {
+      if (jsonObject != null) {
+         if (jsonObject.has("BotData") && jsonObject.get("BotData").isJsonObject()) {
+            jsonObject = jsonObject.getAsJsonObject("BotData");
          }
 
-         if (var0.has("savedBots") && var0.get("savedBots").isJsonArray()) {
-            JsonArray var1 = var0.getAsJsonArray("savedBots");
+         if (jsonObject.has("savedBots") && jsonObject.get("savedBots").isJsonArray()) {
+            JsonArray jsonArray = jsonObject.getAsJsonArray("savedBots");
             synchronized (SAVED) {
-               for (int var3 = 0; var3 < var1.size(); var3++) {
+               for (int i = 0; i < jsonArray.size(); i++) {
                   try {
-                     if (var1.get(var3).isJsonObject()) {
-                        JsonObject var4 = var1.get(var3).getAsJsonObject();
-                        String var5 = var4.get("name").getAsString();
-                        String var6 = var4.has("proxy") ? var4.get("proxy").getAsString() : null;
-                        int var7 = var4.has("version") ? var4.get("version").getAsInt() : -1;
-                        if (var5 != null && !var5.isBlank()) {
-                           SAVED.putIfAbsent(key(var5), new HeadlessBots.SavedBot(var5.trim(), var6, var7));
-                           if (var6 != null && !var6.isBlank()) {
-                              addProxy(var6);
+                     if (jsonArray.get(i).isJsonObject()) {
+                        JsonObject json = jsonArray.get(i).getAsJsonObject();
+                        String string = json.get("name").getAsString();
+                        String proxy = json.has("proxy") ? json.get("proxy").getAsString() : null;
+                        int protocolVersion = json.has("version") ? json.get("version").getAsInt() : -1;
+                        if (string != null && !string.isBlank()) {
+                           SAVED.putIfAbsent(key(string), new HeadlessBots.SavedBot(string.trim(), proxy, protocolVersion));
+                           if (proxy != null && !proxy.isBlank()) {
+                              addProxy(proxy);
                            }
                         }
                      } else {
-                        String var17 = var1.get(var3).getAsString();
-                        if (var17 != null && !var17.isBlank()) {
-                           SAVED.putIfAbsent(key(var17), new HeadlessBots.SavedBot(var17.trim(), null, -1));
+                        String string = jsonArray.get(i).getAsString();
+                        if (string != null && !string.isBlank()) {
+                           SAVED.putIfAbsent(key(string), new HeadlessBots.SavedBot(string.trim(), null, -1));
                         }
                      }
-                  } catch (Exception var10) {
+                  } catch (Exception e) {
                   }
                }
             }
          }
 
-         if (var0.has("botProfiles") && var0.get("botProfiles").isJsonObject()) {
-            JsonObject var12 = var0.getAsJsonObject("botProfiles");
+         if (jsonObject.has("botProfiles") && jsonObject.get("botProfiles").isJsonObject()) {
+            JsonObject json = jsonObject.getAsJsonObject("botProfiles");
 
-            for (String var16 : var12.keySet()) {
-               if (var12.get(var16).isJsonObject()) {
-                  PROFILES.put(var16.toLowerCase(Locale.ROOT), var12.getAsJsonObject(var16));
+            for (String memberName : json.keySet()) {
+               if (json.get(memberName).isJsonObject()) {
+                  PROFILES.put(memberName.toLowerCase(Locale.ROOT), json.getAsJsonObject(memberName));
                }
             }
          }
 
-         if (var0.has("proxyPool") && var0.get("proxyPool").isJsonArray()) {
-            JsonArray var13 = var0.getAsJsonArray("proxyPool");
+         if (jsonObject.has("proxyPool") && jsonObject.get("proxyPool").isJsonArray()) {
+            JsonArray jsonArray = jsonObject.getAsJsonArray("proxyPool");
 
-            for (int var15 = 0; var15 < var13.size(); var15++) {
+            for (int i = 0; i < jsonArray.size(); i++) {
                try {
-                  addProxy(var13.get(var15).getAsString());
-               } catch (Exception var9) {
+                  addProxy(jsonArray.get(i).getAsString());
+               } catch (Exception e) {
                }
             }
          }
 
-         if (var0.has("lastAddress")) {
-            setLastAddress(var0.get("lastAddress").getAsString());
+         if (jsonObject.has("lastAddress")) {
+            setLastAddress(jsonObject.get("lastAddress").getAsString());
          }
       }
    }
@@ -614,35 +614,35 @@ public final class HeadlessBots {
    public static void savePersistentState() {
       try {
          BotPersistence.save(saveState());
-      } catch (Exception var1) {
+      } catch (Exception e) {
       }
    }
 
-   private static String key(String var0) {
-      return var0.toLowerCase(Locale.ROOT);
+   private static String key(String name) {
+      return name.toLowerCase(Locale.ROOT);
    }
 
    private static final class ChatReportingEvents implements BotClientEvents {
       @Override
-      public void onPhaseChanged(BotClient var1, BotPhase var2, BotPhase var3) {
-         info("[бот " + var1.name() + "] фаза: " + var3);
+      public void onPhaseChanged(BotClient botClient, BotPhase botPhase, BotPhase botPhase2) {
+         info("[бот " + botClient.name() + "] фаза: " + botPhase2);
       }
 
       @Override
-      public void onJoined(BotClient var1) {
-         info("[бот " + var1.name() + "] зашёл в мир");
+      public void onJoined(BotClient botClient) {
+         info("[бот " + botClient.name() + "] зашёл в мир");
       }
 
       @Override
-      public void onDisconnected(BotClient var1, Component var2) {
-         HeadlessBots.BOTS.remove(var1.name().toLowerCase(Locale.ROOT), var1);
-         info("[бот " + var1.name() + "] отключён: " + var2.getString());
+      public void onDisconnected(BotClient botClient, Component component) {
+         HeadlessBots.BOTS.remove(botClient.name().toLowerCase(Locale.ROOT), botClient);
+         info("[бот " + botClient.name() + "] отключён: " + component.getString());
       }
 
-      private static void info(String var0) {
-         Minecraft var1 = Minecraft.getInstance();
-         if (var1 != null) {
-            var1.execute(() -> ChatLogger.method2020(ChatLogger.Type.INFO, var0));
+      private static void info(String string) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft != null) {
+            minecraft.execute(() -> ChatLogger.method2020(ChatLogger.Type.INFO, string));
          }
       }
    }
@@ -676,9 +676,9 @@ public final class HeadlessBots {
          return "ProxyPingSnapshot[" + "status=" + this.status + ", " + "latencyMs=" + this.latencyMs + "]";
       }
 
-      public ProxyPingSnapshot(HeadlessBots.ProxyPingStatus var1, int var2) {
-         this.status = var1;
-         this.latencyMs = var2;
+      public ProxyPingSnapshot(HeadlessBots.ProxyPingStatus status, int latencyMs) {
+         this.status = status;
+         this.latencyMs = latencyMs;
       }
 
       public String label() {
@@ -740,10 +740,10 @@ public final class HeadlessBots {
          return "SavedBot[" + "name=" + this.name + ", " + "proxy=" + this.proxy + ", " + "protocolVersion=" + this.protocolVersion + "]";
       }
 
-      public SavedBot(String var1, @Nullable String var2, int var3) {
-         this.name = var1;
-         this.proxy = var2;
-         this.protocolVersion = var3;
+      public SavedBot(String name, @Nullable String proxy, int protocolVersion) {
+         this.name = name;
+         this.proxy = proxy;
+         this.protocolVersion = protocolVersion;
       }
    }
 }

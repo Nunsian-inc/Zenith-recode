@@ -29,10 +29,10 @@ public abstract class CameraMixin {
    private Avatar figura$avatar;
 
    @Shadow
-   protected abstract void setRotation(float var1, float var2);
+   protected abstract void setRotation(float y, float x);
 
    @Shadow
-   protected abstract void move(float var1, float var2, float var3);
+   protected abstract void move(float f, float y, float f2);
 
    @Inject(method = "alignWithEntity(F)V", at = @At("HEAD"))
    private void figura$captureAvatar(float tickDelta, CallbackInfo ci) {

@@ -27,41 +27,41 @@ public final class SodiumOptionsReader {
       if (items != null) {
          return items;
       } else {
-         Minecraft var0 = Minecraft.getInstance();
-         if (var0 != null && var0.getWindow() != null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft != null && minecraft.getWindow() != null) {
             try {
-               Class var1 = Class.forName("net.caffeinemc.mods.sodium.client.gui.SodiumOptionsGUI");
-               Constructor var2 = null;
+               Class clazz = Class.forName("net.caffeinemc.mods.sodium.client.gui.SodiumOptionsGUI");
+               Constructor declaredConstructor = null;
 
-               for (Constructor var6 : var1.getDeclaredConstructors()) {
-                  if (var6.getParameterCount() == 1) {
-                     var2 = var6;
+               for (Constructor constructor : clazz.getDeclaredConstructors()) {
+                  if (constructor.getParameterCount() == 1) {
+                     declaredConstructor = constructor;
                   }
                }
 
-               if (var2 == null) {
+               if (declaredConstructor == null) {
                   return List.of();
                }
 
-               var2.setAccessible(true);
-               Object var12 = var2.newInstance((Screen)null);
-               Field var13 = var1.getDeclaredField("pages");
-               var13.setAccessible(true);
-               ArrayList var14 = new ArrayList();
+               declaredConstructor.setAccessible(true);
+               Object obj = declaredConstructor.newInstance((Screen)null);
+               Field declaredField = clazz.getDeclaredField("pages");
+               declaredField.setAccessible(true);
+               ArrayList coll = new ArrayList();
 
-               for (Object var7 : (List)var13.get(var12)) {
-                  String var8 = ((Component)method1607(var7, "getName")).getString();
-                  var var9 = new ArrayList<>((Collection)method1607(var7, "getOptions"));
-                  if (!var9.isEmpty()) {
-                     var14.add(new SodiumOptionsReader.Data(var8, var9));
+               for (Object obj2 : (List)declaredField.get(obj)) {
+                  String string = ((Component)method1607(obj2, "getName")).getString();
+                  var arrayList = new ArrayList<>((Collection)method1607(obj2, "getOptions"));
+                  if (!arrayList.isEmpty()) {
+                     coll.add(new SodiumOptionsReader.Data(string, arrayList));
                   }
                }
 
-               items = List.copyOf(var14);
-            } catch (ClassNotFoundException var10) {
+               items = List.copyOf(coll);
+            } catch (ClassNotFoundException e) {
                items = List.of();
-            } catch (Throwable var11) {
-               System.err.println("[Sodium] could not read option pages: " + var11);
+            } catch (Throwable e) {
+               System.err.println("[Sodium] could not read option pages: " + e);
                items = List.of();
             }
 
@@ -72,92 +72,92 @@ public final class SodiumOptionsReader {
       }
    }
 
-   public static AbstractWidget method1599(Object var0) {
+   public static AbstractWidget method1599(Object obj) {
       try {
-         Object var1 = method1607(var0, "getControl");
-         if (var1 == null) {
+         Object obj2 = method1607(obj, "getControl");
+         if (obj2 == null) {
             return null;
          } else {
-            String var2 = var1.getClass().getName();
-            AbstractWidget var3;
-            if (var2.endsWith("TickBoxControl")) {
-               var3 = method1600(var0);
-            } else if (var2.endsWith("CyclingControl")) {
-               var3 = method1601(var0, var1);
+            String name = obj2.getClass().getName();
+            AbstractWidget abstractWidget;
+            if (name.endsWith("TickBoxControl")) {
+               abstractWidget = method1600(obj);
+            } else if (name.endsWith("CyclingControl")) {
+               abstractWidget = method1601(obj, obj2);
             } else {
-               if (!var2.endsWith("SliderControl") && !var2.endsWith("SliderControlExtended")) {
+               if (!name.endsWith("SliderControl") && !name.endsWith("SliderControlExtended")) {
                   return null;
                }
 
-               var3 = method1603(var0, var1);
+               abstractWidget = method1603(obj, obj2);
             }
 
-            var3.active = (Boolean)method1607(var0, "isAvailable");
-            return var3;
+            abstractWidget.active = (Boolean)method1607(obj, "isAvailable");
+            return abstractWidget;
          }
-      } catch (Throwable var4) {
+      } catch (Throwable e) {
          return null;
       }
    }
 
-   private static AbstractWidget method1600(Object var0) {
-      String var1 = method1605(var0);
-      boolean var2 = (Boolean)method1607(var0, "getValue");
-      Button[] var3 = new Button[]{Button.builder(method1604(var1, CommonComponents.optionStatus(var2)), var2x -> {
-         boolean var3x = !(Boolean)method1607(var0, "getValue");
-         method1606(var0, var3x);
-         var2x.setMessage(method1604(var1, CommonComponents.optionStatus(var3x)));
+   private static AbstractWidget method1600(Object obj) {
+      String str = method1605(obj);
+      boolean flag = (Boolean)method1607(obj, "getValue");
+      Button[] buttons = new Button[]{Button.builder(method1604(str, CommonComponents.optionStatus(flag)), var2x -> {
+         boolean var3x = !(Boolean)method1607(obj, "getValue");
+         method1606(obj, var3x);
+         var2x.setMessage(method1604(str, CommonComponents.optionStatus(var3x)));
       }).build()};
-      return var3[0];
+      return buttons[0];
    }
 
-   private static AbstractWidget method1601(Object var0, Object var1) throws Exception {
-      String var2 = method1605(var0);
-      Object[] var3 = (Object[])method1609(var1, "allowedValues");
-      Component[] var4 = (Component[])method1609(var1, "names");
-      return Button.builder(method1604(var2, method1602(var0, var3, var4)), var4x -> {
-         Object var5 = method1607(var0, "getValue");
-         int var6 = 0;
+   private static AbstractWidget method1601(Object obj, Object obj2) throws Exception {
+      String str = method1605(obj);
+      Object[] objects = (Object[])method1609(obj2, "allowedValues");
+      Component[] components = (Component[])method1609(obj2, "names");
+      return Button.builder(method1604(str, method1602(obj, objects, components)), var4x -> {
+         Object obj3 = method1607(obj, "getValue");
+         int n = 0;
 
-         for (int var7 = 0; var7 < var3.length; var7++) {
-            if (var3[var7] == var5) {
-               var6 = var7;
+         for (int i = 0; i < objects.length; i++) {
+            if (objects[i] == obj3) {
+               n = i;
             }
          }
 
-         Object var8 = var3[(var6 + 1) % var3.length];
-         method1606(var0, var8);
-         var4x.setMessage(method1604(var2, method1602(var0, var3, var4)));
+         Object intValue = objects[(n + 1) % objects.length];
+         method1606(obj, intValue);
+         var4x.setMessage(method1604(str, method1602(obj, objects, components)));
       }).build();
    }
 
-   private static Component method1602(Object var0, Object[] var1, Component[] var2) {
-      Object var3 = method1607(var0, "getValue");
+   private static Component method1602(Object obj, Object[] objects, Component[] components) {
+      Object obj2 = method1607(obj, "getValue");
 
-      for (int var4 = 0; var4 < var1.length; var4++) {
-         if (var1[var4] == var3) {
-            if (var2 != null && var4 < var2.length && var2[var4] != null) {
-               return var2[var4];
+      for (int i = 0; i < objects.length; i++) {
+         if (objects[i] == obj2) {
+            if (components != null && i < components.length && components[i] != null) {
+               return components[i];
             }
             break;
          }
       }
 
-      return Component.literal(String.valueOf(var3));
+      return Component.literal(String.valueOf(obj2));
    }
 
-   private static AbstractWidget method1603(final Object var0, Object var1) throws Exception {
-      final int var2 = (Integer)method1609(var1, "min");
-      int var3 = (Integer)method1609(var1, "max");
-      final int var4 = (Integer)method1609(var1, "interval");
-      final Object var5 = method1609(var1, "mode");
-      final Method var6 = var5.getClass().getMethod("format", int.class);
-      var6.setAccessible(true);
-      final String var7 = method1605(var0);
-      final int var8 = (Integer)method1607(var0, "getValue");
-      final int var9 = Math.max(1, (var3 - var2) / var4);
-      return new AbstractSliderButton(0, 0, 150, 20, Component.empty(), (double)(var8 - var2) / (var3 - var2)) {
-         private int intValue = var8;
+   private static AbstractWidget method1603(final Object obj, Object obj2) throws Exception {
+      final int n = (Integer)method1609(obj2, "min");
+      int n2 = (Integer)method1609(obj2, "max");
+      final int n3 = (Integer)method1609(obj2, "interval");
+      final Object obj3 = method1609(obj2, "mode");
+      final Method method = obj3.getClass().getMethod("format", int.class);
+      method.setAccessible(true);
+      final String str = method1605(obj);
+      final int n4 = (Integer)method1607(obj, "getValue");
+      final int n5 = Math.max(1, (n2 - n) / n3);
+      return new AbstractSliderButton(0, 0, 150, 20, Component.empty(), (double)(n4 - n) / (n2 - n)) {
+         private int intValue = n4;
 
          {
             this.updateMessage();
@@ -167,92 +167,92 @@ public final class SodiumOptionsReader {
          public void updateMessage() {
             Object var1x;
             try {
-               var1x = (Component)var6.invoke(var5, this.intValue);
+               var1x = (Component)method.invoke(obj3, this.intValue);
             } catch (Throwable var3x) {
                var1x = Component.literal(String.valueOf(this.intValue));
             }
 
-            this.setMessage(SodiumOptionsReader.method1604(var7, (Component)var1x));
+            this.setMessage(SodiumOptionsReader.method1604(str, (Component)var1x));
          }
 
          @Override
          public void applyValue() {
-            this.intValue = var2 + (int)Math.round(this.value * var9) * var4;
+            this.intValue = n + (int)Math.round(this.value * n5) * n3;
          }
 
          @Override
          public void onRelease(MouseButtonEvent click) {
-            SodiumOptionsReader.method1606(var0, this.intValue);
+            SodiumOptionsReader.method1606(obj, this.intValue);
          }
       };
    }
 
-   private static Component method1604(String var0, Component var1) {
-      return Component.literal(var0 + ": ").append(var1);
+   private static Component method1604(String str, Component optionStatus) {
+      return Component.literal(str + ": ").append(optionStatus);
    }
 
-   private static String method1605(Object var0) {
-      return ((Component)method1607(var0, "getName")).getString();
+   private static String method1605(Object obj) {
+      return ((Component)method1607(obj, "getName")).getString();
    }
 
-   private static void method1606(Object var0, Object var1) {
+   private static void method1606(Object obj, Object intValue) {
       try {
-         Class var2 = Class.forName("net.caffeinemc.mods.sodium.client.gui.options.Option");
-         Method var3 = var2.getMethod("setValue", Object.class);
-         var3.invoke(var0, var1);
-         var2.getMethod("applyChanges").invoke(var0);
-         Object var4 = method1607(var0, "getStorage");
-         if (var4 != null) {
-            var4.getClass().getMethod("save").invoke(var4);
+         Class clazz = Class.forName("net.caffeinemc.mods.sodium.client.gui.options.Option");
+         Method method = clazz.getMethod("setValue", Object.class);
+         method.invoke(obj, intValue);
+         clazz.getMethod("applyChanges").invoke(obj);
+         Object obj2 = method1607(obj, "getStorage");
+         if (obj2 != null) {
+            obj2.getClass().getMethod("save").invoke(obj2);
          }
 
-         Minecraft var5 = Minecraft.getInstance();
+         Minecraft minecraft = Minecraft.getInstance();
 
-         for (Object var7 : (Collection)method1607(var0, "getFlags")) {
-            String var8 = String.valueOf(var7);
-            switch (var8) {
+         for (Object obj3 : (Collection)method1607(obj, "getFlags")) {
+            String str = String.valueOf(obj3);
+            switch (str) {
                case "REQUIRES_RENDERER_RELOAD":
-                  var5.levelExtractor.allChanged();
+                  minecraft.levelExtractor.allChanged();
                   break;
                case "REQUIRES_RENDERER_UPDATE":
-                  var5.levelExtractor.allChanged();
+                  minecraft.levelExtractor.allChanged();
                   break;
                case "REQUIRES_ASSET_RELOAD":
-                  var5.delayTextureReload();
+                  minecraft.delayTextureReload();
                   break;
                case "REQUIRES_VIDEOMODE_RELOAD":
-                  var5.getWindow().changeFullscreenVideoMode();
+                  minecraft.getWindow().changeFullscreenVideoMode();
             }
          }
-      } catch (Throwable var10) {
+      } catch (Throwable e) {
       }
    }
 
-   private static Object method1607(Object var0, String var1) {
+   private static Object method1607(Object obj, String name) {
       try {
-         Method var2 = method1608(var0.getClass(), var1);
-         var2.setAccessible(true);
-         return var2.invoke(var0);
-      } catch (Throwable var3) {
+         Method method = method1608(obj.getClass(), name);
+         method.setAccessible(true);
+         return method.invoke(obj);
+      } catch (Throwable e) {
          return null;
       }
    }
 
-   private static Method method1608(Class<?> var0, String var1) throws NoSuchMethodException {
-      for (Class var2 = var0; var2 != null; var2 = var2.getSuperclass()) {
+   private static Method method1608(Class<?> clazz, String name) throws NoSuchMethodException {
+      for (Class clazz2 = clazz; clazz2 != null; clazz2 = clazz2.getSuperclass()) {
          try {
-            return var2.getDeclaredMethod(var1);
-         } catch (NoSuchMethodException var4) {
+            return clazz2.getDeclaredMethod(name);
+         } catch (NoSuchMethodException e) {
          }
       }
 
-      return var0.getMethod(var1);
+      return clazz.getMethod(name);
    }
 
-   private static Object method1609(Object var0, String var1) throws Exception {
-      Field var2 = var0.getClass().getDeclaredField(var1);
-      var2.setAccessible(true);
-      return var2.get(var0);
+   private static Object method1609(Object obj, String name) throws Exception {
+      Field declaredField = obj.getClass().getDeclaredField(name);
+      declaredField.setAccessible(true);
+      return declaredField.get(obj);
    }
 
    public static final class Data {
@@ -284,9 +284,9 @@ public final class SodiumOptionsReader {
          return "Data[" + "text=" + this.text + ", " + "items=" + this.items + "]";
       }
 
-      public Data(String var1, List<Object> var2) {
-         this.text = var1;
-         this.items = var2;
+      public Data(String text, List<Object> items) {
+         this.text = text;
+         this.items = items;
       }
 
       public String name() {

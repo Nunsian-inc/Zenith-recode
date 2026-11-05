@@ -20,51 +20,51 @@ public final class VoiceSpeakerStream {
    public int[] intValues = new int[0];
    public boolean flag;
 
-   public VoiceSpeakerStream(long var1) {
-      this.longValue = var1;
+   public VoiceSpeakerStream(long longValue) {
+      this.longValue = longValue;
    }
 
-   public void method1549(int var1, byte[] var2, boolean var3, int var4, int var5, long var6) {
-      this.intValue = var4;
-      this.intValue2 = var5;
-      this.longValue2 = var6;
-      this.voiceFrameBuffer.method8027(var1, var2, var3, var6);
+   public void method1549(int intValue, byte[] byteValues, boolean flag, int n, int n2, long now) {
+      this.intValue = n;
+      this.intValue2 = n2;
+      this.longValue2 = now;
+      this.voiceFrameBuffer.method8027(intValue, byteValues, flag, now);
    }
 
-   public void method1550(int var1, float var2) {
-      if (var2 <= 0.01F) {
-         if (var1 > 0) {
-            this.floatValue = this.shortValues[var1 - 1];
+   public void method1550(int length, float f) {
+      if (f <= 0.01F) {
+         if (length > 0) {
+            this.floatValue = this.shortValues[length - 1];
          }
       } else {
-         float var3 = 1.0F - var2 * 0.9F;
-         float var4 = 1.0F - var2 * 0.35F;
-         float var5 = this.floatValue;
+         float f2 = 1.0F - f * 0.9F;
+         float f3 = 1.0F - f * 0.35F;
+         float floatValue = this.floatValue;
 
-         for (int var6 = 0; var6 < var1; var6++) {
-            var5 += var3 * (this.shortValues[var6] - var5);
-            this.shortValues[var6] = (short)Math.max(32768, Math.min(32767, Math.round(var5 * var4)));
+         for (int i = 0; i < length; i++) {
+            floatValue += f2 * (this.shortValues[i] - floatValue);
+            this.shortValues[i] = (short)Math.max(32768, Math.min(32767, Math.round(floatValue * f3)));
          }
 
-         this.floatValue = var5;
+         this.floatValue = floatValue;
       }
    }
 
-   public boolean method1551(long var1) {
-      return var1 - this.longValue3 < 250L;
+   public boolean method1551(long now) {
+      return now - this.longValue3 < 250L;
    }
 
-   public int method1552(VoiceFrameBuffer.Data var1) {
+   public int method1552(VoiceFrameBuffer.Data data) {
       try {
-         OpusDecoder var2 = this.method1554();
+         OpusDecoder opusDecoder = this.method1554();
 
-         return switch (var1.getType2()) {
-            case NORMAL -> var2.decode(var1.getByteValues(), 0, var1.getByteValues().length, this.shortValues, 0, 960, false);
-            case FEC -> var2.decode(var1.getByteValues(), 0, var1.getByteValues().length, this.shortValues, 0, 960, true);
-            case PLC -> var2.decode(null, 0, 0, this.shortValues, 0, 960, false);
+         return switch (data.getType2()) {
+            case NORMAL -> opusDecoder.decode(data.getByteValues(), 0, data.getByteValues().length, this.shortValues, 0, 960, false);
+            case FEC -> opusDecoder.decode(data.getByteValues(), 0, data.getByteValues().length, this.shortValues, 0, 960, true);
+            case PLC -> opusDecoder.decode(null, 0, 0, this.shortValues, 0, 960, false);
             default -> 0;
          };
-      } catch (RuntimeException | OpusException var3) {
+      } catch (RuntimeException | OpusException e) {
          this.method1553();
          return 0;
       }

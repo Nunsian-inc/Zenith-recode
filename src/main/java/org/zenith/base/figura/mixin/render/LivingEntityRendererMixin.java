@@ -43,10 +43,10 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
    private final Deque<FiguraRenderFrames.Living> figura$frames = new ArrayDeque<>();
 
    @Shadow
-   protected abstract boolean isBodyVisible(S var1);
+   protected abstract boolean isBodyVisible(S state);
 
    @Shadow
-   protected abstract float getWhiteOverlayProgress(S var1);
+   protected abstract float getWhiteOverlayProgress(S state);
 
    @Shadow
    public abstract M getModel();

@@ -21,29 +21,29 @@ public class EntityTrailParticle extends Particle {
    private static final float CONST_floatValue = 0.3F;
    private static final float CONST_floatValue2 = 0.2F;
 
-   public EntityTrailParticle(Vec3 var1, Vec3 var2, int var3, float var4, ZenithColor var5, String var6, float var7, float var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public EntityTrailParticle(Vec3 vec3d, Vec3 vec3d3, int intValue, float floatValue, ZenithColor zenithColor, String text, float nextFloat, float f) {
+      super(vec3d, vec3d3, intValue, floatValue, zenithColor, text, nextFloat, f);
    }
 
-   public void method5662(Entity var1, float var2, float var3) {
-      this.weakReference = new WeakReference<>(var1);
-      this.floatValue = var2;
-      this.floatValue2 = var3;
-      Vec3 var4 = var1.position();
-      this.doubleValue = Math.atan2(this.vec3d.z - var4.z, this.vec3d.x - var4.x);
-      this.doubleValue2 = Math.sqrt(Math.pow(this.vec3d.x - var4.x, 2.0) + Math.pow(this.vec3d.z - var4.z, 2.0));
-      this.doubleValue3 = this.vec3d.y - var4.y;
+   public void method5662(Entity referent, float floatValue, float f) {
+      this.weakReference = new WeakReference<>(referent);
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      Vec3 position = referent.position();
+      this.doubleValue = Math.atan2(this.vec3d.z - position.z, this.vec3d.x - position.x);
+      this.doubleValue2 = Math.sqrt(Math.pow(this.vec3d.x - position.x, 2.0) + Math.pow(this.vec3d.z - position.z, 2.0));
+      this.doubleValue3 = this.vec3d.y - position.y;
    }
 
-   public void method5663(Vec3 var1, int var2) {
+   public void method5663(Vec3 vec, int n) {
       this.intValue2 = this.intValue;
-      this.method6572(var1);
+      this.method6572(vec);
       if (this.intValue > 0) {
          this.vec3d2 = this.vec3d;
-         float var3 = 1.0F - (float)this.intValue / this.intValue3;
-         switch (var2) {
+         float f = 1.0F - (float)this.intValue / this.intValue3;
+         switch (n) {
             case 1:
-               this.method5665(var3);
+               this.method5665(f);
                break;
             case 2:
                this.method5666();
@@ -60,8 +60,8 @@ public class EntityTrailParticle extends Particle {
       this.vec3d = this.vec3d.add(this.vec3d3);
       this.vec3d3 = new Vec3(this.vec3d3.x * 0.98, this.vec3d3.y * 0.98 - 3.0E-4, this.vec3d3.z * 0.98);
       if (mc.level != null) {
-         BlockPos var1 = BlockPos.containing(this.vec3d.x, this.vec3d.y - 0.1, this.vec3d.z);
-         if (!mc.level.getBlockState(var1).isAir()) {
+         BlockPos containing = BlockPos.containing(this.vec3d.x, this.vec3d.y - 0.1, this.vec3d.z);
+         if (!mc.level.getBlockState(containing).isAir()) {
             this.vec3d3 = new Vec3(this.vec3d3.x / 1.1, -this.vec3d3.y / 1.1, this.vec3d3.z / 1.1);
          }
       }
@@ -71,39 +71,39 @@ public class EntityTrailParticle extends Particle {
       }
    }
 
-   private void method5665(float var1) {
-      float var2 = (float)Math.sin(var1 * Math.PI);
-      var2 = 0.3F + var2 * 1.2F;
-      this.vec3d = this.vec3d.add(this.vec3d3.scale(var2));
+   private void method5665(float f) {
+      float scale = (float)Math.sin(f * Math.PI);
+      scale = 0.3F + scale * 1.2F;
+      this.vec3d = this.vec3d.add(this.vec3d3.scale(scale));
       this.vec3d3 = this.vec3d3.scale(0.96);
    }
 
    private void method5666() {
-      float var1 = 1.0F - (float)this.intValue / this.intValue3;
-      Entity var2 = this.weakReference != null ? this.weakReference.get() : null;
-      if (var2 != null && !var2.isRemoved()) {
-         if (!(var1 > 0.5F) && !this.flag) {
+      float f = 1.0F - (float)this.intValue / this.intValue3;
+      Entity entity = this.weakReference != null ? this.weakReference.get() : null;
+      if (entity != null && !entity.isRemoved()) {
+         if (!(f > 0.5F) && !this.flag) {
             this.doubleValue = this.doubleValue + this.floatValue / 10.0;
             this.doubleValue2 = this.doubleValue2 + this.floatValue2 / 100.0;
-            double var3 = var2.getX();
-            double var5 = var2.getZ();
-            double var7 = var2.getY();
-            double var9 = var3 + Math.cos(this.doubleValue) * this.doubleValue2;
-            double var11 = var5 + Math.sin(this.doubleValue) * this.doubleValue2;
-            double var13 = var7 + this.doubleValue3 + this.floatValue * 0.1;
-            if (var1 < 0.3F) {
-               this.vec3d = new Vec3(var9, var13, var11);
+            double x = entity.getX();
+            double z = entity.getZ();
+            double y = entity.getY();
+            double d = x + Math.cos(this.doubleValue) * this.doubleValue2;
+            double z2 = z + Math.sin(this.doubleValue) * this.doubleValue2;
+            double y2 = y + this.doubleValue3 + this.floatValue * 0.1;
+            if (f < 0.3F) {
+               this.vec3d = new Vec3(d, y2, z2);
             } else {
-               float var15 = (var1 - 0.3F) / 0.2F;
-               var15 = var15 * var15 * (3.0F - 2.0F * var15);
+               float alpha1 = (f - 0.3F) / 0.2F;
+               alpha1 = alpha1 * alpha1 * (3.0F - 2.0F * alpha1);
                if (this.vec3d3.equals(Vec3.ZERO)) {
                   this.method5667();
                }
 
-               Vec3 var16 = this.vec3d.add(this.vec3d3);
+               Vec3 vec = this.vec3d.add(this.vec3d3);
                this.vec3d3 = new Vec3(this.vec3d3.x * 0.98, this.vec3d3.y * 0.98 - 3.0E-4, this.vec3d3.z * 0.98);
                this.vec3d = new Vec3(
-                  Mth.lerp((double)var15, var9, var16.x), Mth.lerp((double)var15, var13, var16.y), Mth.lerp((double)var15, var11, var16.z)
+                  Mth.lerp((double)alpha1, d, vec.x), Mth.lerp((double)alpha1, y2, vec.y), Mth.lerp((double)alpha1, z2, vec.z)
                );
             }
          } else {
@@ -125,11 +125,11 @@ public class EntityTrailParticle extends Particle {
    }
 
    private void method5667() {
-      double var1 = -Math.sin(this.doubleValue) * this.floatValue * 0.02;
-      double var3 = Math.cos(this.doubleValue) * this.floatValue * 0.02;
-      double var5 = Math.cos(this.doubleValue) * this.floatValue2 * 0.005;
-      double var7 = Math.sin(this.doubleValue) * this.floatValue2 * 0.005;
-      this.vec3d3 = new Vec3(var1 + var5 + (Math.random() - 0.5) * 0.02, 0.015 + Math.random() * 0.025, var3 + var7 + (Math.random() - 0.5) * 0.02);
+      double d = -Math.sin(this.doubleValue) * this.floatValue * 0.02;
+      double d2 = Math.cos(this.doubleValue) * this.floatValue * 0.02;
+      double d3 = Math.cos(this.doubleValue) * this.floatValue2 * 0.005;
+      double d4 = Math.sin(this.doubleValue) * this.floatValue2 * 0.005;
+      this.vec3d3 = new Vec3(d + d3 + (Math.random() - 0.5) * 0.02, 0.015 + Math.random() * 0.025, d2 + d4 + (Math.random() - 0.5) * 0.02);
    }
 
    @Override
@@ -138,17 +138,17 @@ public class EntityTrailParticle extends Particle {
    }
 
    @Override
-   public float method1449(float var1) {
-      float var2 = this.method6571(var1);
-      if (var2 < 0.1F) {
-         return var2 / 0.1F;
+   public float method1449(float f) {
+      float f2 = this.method6571(f);
+      if (f2 < 0.1F) {
+         return f2 / 0.1F;
       } else {
-         float var3 = 0.5F;
-         if (!this.flag && !(var2 > var3)) {
+         float f3 = 0.5F;
+         if (!this.flag && !(f2 > f3)) {
             return 1.0F;
          } else {
-            float var4 = (var2 - var3) / (1.0F - var3);
-            return 1.0F - var4 * var4;
+            float f4 = (f2 - f3) / (1.0F - f3);
+            return 1.0F - f4 * f4;
          }
       }
    }

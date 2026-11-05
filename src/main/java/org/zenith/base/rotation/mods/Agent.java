@@ -47,24 +47,24 @@ public final class Agent extends Util22 {
       } else {
          flag = true;
 
-         try (InputStreamReader var0 = new InputStreamReader(method3453(), StandardCharsets.UTF_8)) {
-            JsonReader var1 = new JsonReader(var0);
+         try (InputStreamReader inputStreamReader = new InputStreamReader(method3453(), StandardCharsets.UTF_8)) {
+            JsonReader jsonReader = new JsonReader(inputStreamReader);
 
             try {
-               entry = method3454(var1);
-            } catch (Throwable var6) {
+               entry = method3454(jsonReader);
+            } catch (Throwable e) {
                try {
-                  var1.close();
-               } catch (Throwable var5) {
-                  var6.addSuppressed(var5);
+                  jsonReader.close();
+               } catch (Throwable ex) {
+                  e.addSuppressed(ex);
                }
 
-               throw var6;
+               throw e;
             }
 
-            var1.close();
-         } catch (Exception var8) {
-            System.out.println("агент не загрузился: " + var8);
+            jsonReader.close();
+         } catch (Exception e) {
+            System.out.println("агент не загрузился: " + e);
             entry = null;
          }
 
@@ -73,206 +73,206 @@ public final class Agent extends Util22 {
    }
 
    private static InputStream method3453() throws IOException {
-      for (Path var1 : items) {
-         if (Files.isRegularFile(var1)) {
-            return Files.newInputStream(var1);
+      for (Path path : items) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var2 = Agent.class.getClassLoader().getResourceAsStream("models/agent.json");
-      if (var2 == null) {
+      InputStream resourceAsStream = Agent.class.getClassLoader().getResourceAsStream("models/agent.json");
+      if (resourceAsStream == null) {
          throw new IOException("agent.json не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var2;
+         return resourceAsStream;
       }
    }
 
-   private static Agent.Entry method3454(JsonReader var0) throws IOException {
-      Agent.Entry var1 = new Agent.Entry();
-      HashMap var2 = new HashMap();
-      HashMap var3 = new HashMap();
-      ArrayList var4 = new ArrayList();
-      ArrayList var5 = new ArrayList();
-      String var6 = null;
-      var0.beginObject();
+   private static Agent.Entry method3454(JsonReader jsonReader) throws IOException {
+      Agent.Entry entry = new Agent.Entry();
+      HashMap map = new HashMap();
+      HashMap map2 = new HashMap();
+      ArrayList arrayList = new ArrayList();
+      ArrayList arrayList2 = new ArrayList();
+      String nextString = null;
+      jsonReader.beginObject();
 
-      while (var0.hasNext()) {
-         String var7 = var0.nextName();
-         switch (var7) {
+      while (jsonReader.hasNext()) {
+         String nextName = jsonReader.nextName();
+         switch (nextName) {
             case "format":
-               var6 = var0.nextString();
+               nextString = jsonReader.nextString();
                break;
             case "n_obs":
-               var1.intValue = var0.nextInt();
+               entry.intValue = jsonReader.nextInt();
                break;
             case "hidden":
-               var1.intValue2 = var0.nextInt();
+               entry.intValue2 = jsonReader.nextInt();
                break;
             case "logsig_min":
-               var1.doubleValue = var0.nextDouble();
+               entry.doubleValue = jsonReader.nextDouble();
                break;
             case "logsig_max":
-               var1.doubleValue2 = var0.nextDouble();
+               entry.doubleValue2 = jsonReader.nextDouble();
                break;
             case "weights":
-               var0.beginObject();
+               jsonReader.beginObject();
 
-               while (var0.hasNext()) {
-                  String var10 = var0.nextName();
-                  ArrayList var11 = new ArrayList();
-                  int[] var12 = getInstance(var0, var11);
-                  double[] var13 = new double[var11.size()];
+               while (jsonReader.hasNext()) {
+                  String key = jsonReader.nextName();
+                  ArrayList arrayList3 = new ArrayList();
+                  int[] ints = getInstance(jsonReader, arrayList3);
+                  double[] doubles = new double[arrayList3.size()];
 
-                  for (int var14 = 0; var14 < var13.length; var14++) {
-                     var13[var14] = (Double)var11.get(var14);
+                  for (int i = 0; i < doubles.length; i++) {
+                     doubles[i] = (Double)arrayList3.get(i);
                   }
 
-                  var2.put(var10, var13);
-                  var3.put(var10, var12);
+                  map.put(key, doubles);
+                  map2.put(key, ints);
                }
 
-               var0.endObject();
+               jsonReader.endObject();
                break;
             case "ref_inputs":
-               method3455(var0, var4);
+               method3455(jsonReader, arrayList);
                break;
             case "ref_outputs":
-               method3455(var0, var5);
+               method3455(jsonReader, arrayList2);
                break;
             default:
-               var0.skipValue();
+               jsonReader.skipValue();
          }
       }
 
-      var0.endObject();
-      if (!"neurotest-agent-v1".equals(var6)) {
-         throw new IOException("формат " + var6 + ", ожидался neurotest-agent-v1");
+      jsonReader.endObject();
+      if (!"neurotest-agent-v1".equals(nextString)) {
+         throw new IOException("формат " + nextString + ", ожидался neurotest-agent-v1");
       } else {
-         var1.doubleValues = method3457((double[])var2.get("gru.weight_ih"), 3 * var1.intValue2, var1.intValue);
-         var1.doubleValues2 = method3457((double[])var2.get("gru.weight_hh"), 3 * var1.intValue2, var1.intValue2);
-         var1.doubleValues3 = (double[])var2.get("gru.bias_ih");
-         var1.doubleValues4 = (double[])var2.get("gru.bias_hh");
-         var1.doubleValues5 = method3457((double[])var2.get("head.weight"), 4, var1.intValue2);
-         var1.doubleValues6 = (double[])var2.get("head.bias");
-         var1.doubleValues7 = method3457((double[])var2.get("gate.weight"), 1, var1.intValue2)[0];
-         var1.doubleValue3 = ((double[])var2.get("gate.bias"))[0];
-         double[] var15 = new double[var1.intValue2];
-         double var8 = 0.0;
+         entry.doubleValues = method3457((double[])map.get("gru.weight_ih"), 3 * entry.intValue2, entry.intValue);
+         entry.doubleValues2 = method3457((double[])map.get("gru.weight_hh"), 3 * entry.intValue2, entry.intValue2);
+         entry.doubleValues3 = (double[])map.get("gru.bias_ih");
+         entry.doubleValues4 = (double[])map.get("gru.bias_hh");
+         entry.doubleValues5 = method3457((double[])map.get("head.weight"), 4, entry.intValue2);
+         entry.doubleValues6 = (double[])map.get("head.bias");
+         entry.doubleValues7 = method3457((double[])map.get("gate.weight"), 1, entry.intValue2)[0];
+         entry.doubleValue3 = ((double[])map.get("gate.bias"))[0];
+         double[] doubleValues = new double[entry.intValue2];
+         double d = 0.0;
 
-         for (int var16 = 0; var16 < var4.size(); var16++) {
-            var15 = var1.method3465((double[])var4.get(var16), var15);
-            double[] var17 = var1.method3466(var15);
-            double[] var18 = (double[])var5.get(var16);
+         for (int i = 0; i < arrayList.size(); i++) {
+            doubleValues = entry.method3465((double[])arrayList.get(i), doubleValues);
+            double[] doubles = entry.method3466(doubleValues);
+            double[] doubles2 = (double[])arrayList2.get(i);
 
-            for (int var19 = 0; var19 < var18.length; var19++) {
-               var8 = Math.max(var8, Math.abs(var17[var19] - var18[var19]));
+            for (int j = 0; j < doubles2.length; j++) {
+               d = Math.max(d, Math.abs(doubles[j] - doubles2[j]));
             }
          }
 
-         if (var8 > 1.0E-4) {
-            throw new IOException("эталонные тики разошлись на " + var8 + " — раскладка весов не та");
+         if (d > 1.0E-4) {
+            throw new IOException("эталонные тики разошлись на " + d + " — раскладка весов не та");
          } else {
-            System.out.println("агент загружен: скрытых " + var1.intValue2 + ", эталон сошёлся (" + var8 + ")");
-            return var1;
+            System.out.println("агент загружен: скрытых " + entry.intValue2 + ", эталон сошёлся (" + d + ")");
+            return entry;
          }
       }
    }
 
-   private static void method3455(JsonReader var0, List<double[]> var1) throws IOException {
-      var0.beginArray();
+   private static void method3455(JsonReader jsonReader, List<double[]> doubleses) throws IOException {
+      jsonReader.beginArray();
 
-      while (var0.hasNext()) {
-         ArrayList var2 = new ArrayList();
-         var0.beginArray();
+      while (jsonReader.hasNext()) {
+         ArrayList arrayList = new ArrayList();
+         jsonReader.beginArray();
 
-         while (var0.hasNext()) {
-            var2.add(var0.nextDouble());
+         while (jsonReader.hasNext()) {
+            arrayList.add(jsonReader.nextDouble());
          }
 
-         var0.endArray();
-         double[] var3 = new double[var2.size()];
+         jsonReader.endArray();
+         double[] doubles = new double[arrayList.size()];
 
-         for (int var4 = 0; var4 < var3.length; var4++) {
-            var3[var4] = (Double)var2.get(var4);
+         for (int i = 0; i < doubles.length; i++) {
+            doubles[i] = (Double)arrayList.get(i);
          }
 
-         var1.add(var3);
+         doubleses.add(doubles);
       }
 
-      var0.endArray();
+      jsonReader.endArray();
    }
 
-   private static int[] getInstance(JsonReader var0, List<Double> var1) throws IOException {
-      ArrayList var2 = new ArrayList();
-      method3456(var0, var1, var2, 0);
-      int[] var3 = new int[var2.size()];
+   private static int[] getInstance(JsonReader jsonReader, List<Double> doubles) throws IOException {
+      ArrayList arrayList = new ArrayList();
+      method3456(jsonReader, doubles, arrayList, 0);
+      int[] ints = new int[arrayList.size()];
 
-      for (int var4 = 0; var4 < var3.length; var4++) {
-         var3[var4] = (Integer)var2.get(var4);
+      for (int i = 0; i < ints.length; i++) {
+         ints[i] = (Integer)arrayList.get(i);
       }
 
-      return var3;
+      return ints;
    }
 
-   private static void method3456(JsonReader var0, List<Double> var1, List<Integer> var2, int var3) throws IOException {
-      var0.beginArray();
+   private static void method3456(JsonReader jsonReader, List<Double> doubles, List<Integer> integers, int n) throws IOException {
+      jsonReader.beginArray();
 
-      int var4;
-      for (var4 = 0; var0.hasNext(); var4++) {
-         if (var0.peek() == JsonToken.BEGIN_ARRAY) {
-            method3456(var0, var1, var2, var3 + 1);
+      int n2;
+      for (n2 = 0; jsonReader.hasNext(); n2++) {
+         if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
+            method3456(jsonReader, doubles, integers, n + 1);
          } else {
-            var1.add(var0.nextDouble());
+            doubles.add(jsonReader.nextDouble());
          }
       }
 
-      var0.endArray();
+      jsonReader.endArray();
 
-      while (var2.size() <= var3) {
-         var2.add(0);
+      while (integers.size() <= n) {
+         integers.add(0);
       }
 
-      var2.set(var3, var4);
+      integers.set(n, n2);
    }
 
-   private static double[][] method3457(double[] var0, int var1, int var2) throws IOException {
-      if (var0 != null && var0.length == var1 * var2) {
-         double[][] var3 = new double[var1][var2];
+   private static double[][] method3457(double[] doubles, int n, int intValue) throws IOException {
+      if (doubles != null && doubles.length == n * intValue) {
+         double[][] doubleses = new double[n][intValue];
 
-         for (int var4 = 0; var4 < var1; var4++) {
-            System.arraycopy(var0, var4 * var2, var3[var4], 0, var2);
+         for (int i = 0; i < n; i++) {
+            System.arraycopy(doubles, i * intValue, doubleses[i], 0, intValue);
          }
 
-         return var3;
+         return doubleses;
       } else {
-         throw new IOException("не тот размер весов: ждали " + var1 + "x" + var2 + ", пришло " + (var0 == null ? 0 : var0.length));
+         throw new IOException("не тот размер весов: ждали " + n + "x" + intValue + ", пришло " + (doubles == null ? 0 : doubles.length));
       }
    }
 
-   private static double method3458(double var0) {
-      double var2 = (var0 + 180.0) % 360.0;
-      if (var2 < 0.0) {
-         var2 += 360.0;
+   private static double method3458(double d) {
+      double d2 = (d + 180.0) % 360.0;
+      if (d2 < 0.0) {
+         d2 += 360.0;
       }
 
-      return var2 - 180.0;
+      return d2 - 180.0;
    }
 
-   private void method3459(int var1) {
+   private void method3459(int intValue) {
       this.doubleValues = null;
       this.doubleValue = 0.0;
       this.doubleValue2 = 0.0;
       this.doubleValue3 = 0.0;
       this.doubleValue4 = 0.0;
-      this.intValue = var1;
+      this.intValue = intValue;
       this.intValue2 = Integer.MIN_VALUE;
       this.intValue3 = Integer.MIN_VALUE;
       this.rotation = null;
    }
 
-   private void method3460(int var1, Rotation var2) {
-      this.intValue3 = var1;
-      this.rotation = var2;
+   private void method3460(int tickCount, Rotation rotation) {
+      this.intValue3 = tickCount;
+      this.rotation = rotation;
    }
 
    public void reset() {
@@ -284,115 +284,115 @@ public final class Agent extends Util22 {
    }
 
    public Rotation method3462() {
-      Rotation var1 = rotationManager.method7844();
-      Agent.Entry var2 = method3452();
-      if (var2 == null) {
+      Rotation rotation = rotationManager.method7844();
+      Agent.Entry entry = method3452();
+      if (entry == null) {
          this.reset();
-         return mc.player == null ? var1 : new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
+         return mc.player == null ? rotation : new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
       } else {
-         LivingEntity var3 = AuraModule.INSTANCE.method6358();
-         if (mc.player != null && var3 != null && var3.isAlive()) {
-            int var4 = mc.player.tickCount;
-            if (var4 == this.intValue3 && this.rotation != null) {
+         LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+         if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
+            int tickCount = mc.player.tickCount;
+            if (tickCount == this.intValue3 && this.rotation != null) {
                return this.rotation;
             } else {
-               if (this.intValue2 != Integer.MIN_VALUE && var4 != this.intValue2 + 1) {
-                  this.method3459(var3.getId());
-               } else if (var3.getId() != this.intValue) {
-                  this.method3459(var3.getId());
+               if (this.intValue2 != Integer.MIN_VALUE && tickCount != this.intValue2 + 1) {
+                  this.method3459(livingEntity.getId());
+               } else if (livingEntity.getId() != this.intValue) {
+                  this.method3459(livingEntity.getId());
                }
 
-               this.intValue2 = var4;
-               this.intValue = var3.getId();
-               if (this.doubleValues == null || this.doubleValues.length != var2.intValue2) {
-                  this.doubleValues = new double[var2.intValue2];
+               this.intValue2 = tickCount;
+               this.intValue = livingEntity.getId();
+               if (this.doubleValues == null || this.doubleValues.length != entry.intValue2) {
+                  this.doubleValues = new double[entry.intValue2];
                }
 
-               AABB var5 = var3.getBoundingBox();
-               Vec3 var6 = mc.player.getEyePosition();
-               Vec3 var7 = var5.getCenter();
-               double var8 = var7.x - var6.x;
-               double var10 = var7.y - var6.y;
-               double var12 = var7.z - var6.z;
-               double var14 = Math.sqrt(var8 * var8 + var12 * var12);
-               double var16 = Math.toDegrees(Math.atan2(-var8, var12));
-               double var18 = Math.toDegrees(Math.atan2(-var10, var14));
-               double var20 = 0.001;
-               double var22 = 0.001;
+               AABB boundingBox = livingEntity.getBoundingBox();
+               Vec3 eyePosition = mc.player.getEyePosition();
+               Vec3 center = boundingBox.getCenter();
+               double d = center.x - eyePosition.x;
+               double d2 = center.y - eyePosition.y;
+               double x = center.z - eyePosition.z;
+               double x2 = Math.sqrt(d * d + x * x);
+               double d3 = Math.toDegrees(Math.atan2(-d, x));
+               double d4 = Math.toDegrees(Math.atan2(-d2, x2));
+               double x3 = 0.001;
+               double x4 = 0.001;
 
-               for (int var24 = 0; var24 < 8; var24++) {
-                  double var25 = ((var24 & 1) == 0 ? var5.minX : var5.maxX) - var6.x;
-                  double var27 = ((var24 & 2) == 0 ? var5.minY : var5.maxY) - var6.y;
-                  double var29 = ((var24 & 4) == 0 ? var5.minZ : var5.maxZ) - var6.z;
-                  double var31 = Math.sqrt(var25 * var25 + var29 * var29);
-                  var20 = Math.max(var20, Math.abs(method3458(Math.toDegrees(Math.atan2(-var25, var29)) - var16)));
-                  var22 = Math.max(var22, Math.abs(Math.toDegrees(Math.atan2(-var27, var31)) - var18));
+               for (int i = 0; i < 8; i++) {
+                  double d5 = ((i & 1) == 0 ? boundingBox.minX : boundingBox.maxX) - eyePosition.x;
+                  double d6 = ((i & 2) == 0 ? boundingBox.minY : boundingBox.maxY) - eyePosition.y;
+                  double x5 = ((i & 4) == 0 ? boundingBox.minZ : boundingBox.maxZ) - eyePosition.z;
+                  double x6 = Math.sqrt(d5 * d5 + x5 * x5);
+                  x3 = Math.max(x3, Math.abs(method3458(Math.toDegrees(Math.atan2(-d5, x5)) - d3)));
+                  x4 = Math.max(x4, Math.abs(Math.toDegrees(Math.atan2(-d6, x6)) - d4));
                }
 
-               double var48 = method3458(var16 - var1.getFloatValue());
-               double var26 = var18 - var1.getFloatValue2();
-               double var28 = Math.max(Math.hypot(var48, var26), 1.0E-6);
-               Input var30 = mc.player.input.keyPresses;
-               double[] var49 = new double[var2.intValue];
-               var49[0] = method3463(var48 / var20, -6.0, 6.0);
-               var49[1] = method3463(var26 / var22, -6.0, 6.0);
-               var49[2] = Math.log1p(var28) / 5.0;
-               var49[3] = var48 / var28;
-               var49[4] = var26 / var28;
-               var49[5] = Math.log1p(var20) / 3.0;
-               var49[6] = Math.log1p(var22) / 3.0;
-               var49[7] = var30.forward() ? 1.0 : 0.0;
-               var49[8] = var30.backward() ? 1.0 : 0.0;
-               var49[9] = var30.left() ? 1.0 : 0.0;
-               var49[10] = var30.right() ? 1.0 : 0.0;
-               var49[11] = var30.jump() ? 1.0 : 0.0;
-               var49[12] = mc.player.onGround() ? 1.0 : 0.0;
-               var49[13] = mc.player.isSprinting() ? 1.0 : 0.0;
-               var49[14] = mc.player.getAttackStrengthScale(0.0F);
-               var49[15] = method3463(this.doubleValue3 / 10.0, -6.0, 6.0);
-               var49[16] = method3463(this.doubleValue4 / 10.0, -6.0, 6.0);
-               var49[17] = Math.min(Math.hypot(this.doubleValue3, this.doubleValue4), 60.0) / 10.0;
-               this.doubleValues = var2.method3465(var49, this.doubleValues);
-               double[] var32 = var2.method3466(this.doubleValues);
-               double var33 = 1.0 / (1.0 + Math.exp(-var32[4]));
-               double var35 = 0.0;
-               double var37 = 0.0;
-               if (this.random.nextDouble() >= var33) {
-                  var35 = var32[0] + Math.exp(var32[2]) * this.random.nextGaussian();
-                  var37 = var32[1] + Math.exp(var32[3]) * this.random.nextGaussian();
+               double x5 = method3458(d3 - rotation.getFloatValue());
+               double y = d4 - rotation.getFloatValue2();
+               double x6 = Math.max(Math.hypot(x5, y), 1.0E-6);
+               Input keyPresses = mc.player.input.keyPresses;
+               double[] doubles = new double[entry.intValue];
+               doubles[0] = method3463(x5 / x3, -6.0, 6.0);
+               doubles[1] = method3463(y / x4, -6.0, 6.0);
+               doubles[2] = Math.log1p(x6) / 5.0;
+               doubles[3] = x5 / x6;
+               doubles[4] = y / x6;
+               doubles[5] = Math.log1p(x3) / 3.0;
+               doubles[6] = Math.log1p(x4) / 3.0;
+               doubles[7] = keyPresses.forward() ? 1.0 : 0.0;
+               doubles[8] = keyPresses.backward() ? 1.0 : 0.0;
+               doubles[9] = keyPresses.left() ? 1.0 : 0.0;
+               doubles[10] = keyPresses.right() ? 1.0 : 0.0;
+               doubles[11] = keyPresses.jump() ? 1.0 : 0.0;
+               doubles[12] = mc.player.onGround() ? 1.0 : 0.0;
+               doubles[13] = mc.player.isSprinting() ? 1.0 : 0.0;
+               doubles[14] = mc.player.getAttackStrengthScale(0.0F);
+               doubles[15] = method3463(this.doubleValue3 / 10.0, -6.0, 6.0);
+               doubles[16] = method3463(this.doubleValue4 / 10.0, -6.0, 6.0);
+               doubles[17] = Math.min(Math.hypot(this.doubleValue3, this.doubleValue4), 60.0) / 10.0;
+               this.doubleValues = entry.method3465(doubles, this.doubleValues);
+               double[] doubles2 = entry.method3466(this.doubleValues);
+               double d5 = 1.0 / (1.0 + Math.exp(-doubles2[4]));
+               double d6 = 0.0;
+               double d7 = 0.0;
+               if (this.random.nextDouble() >= d5) {
+                  d6 = doubles2[0] + Math.exp(doubles2[2]) * this.random.nextGaussian();
+                  d7 = doubles2[1] + Math.exp(doubles2[3]) * this.random.nextGaussian();
                }
 
-               double var39 = var35 / 0.15190947 + this.doubleValue;
-               double var41 = var37 / 0.15190947 + this.doubleValue2;
-               long var43 = (long)var39;
-               long var45 = (long)var41;
-               this.doubleValue = var39 - var43;
-               this.doubleValue2 = var41 - var45;
-               this.doubleValue3 = var43 * 0.15190947;
-               this.doubleValue4 = var45 * 0.15190947;
-               Rotation var47 = var1.method3140((float)this.doubleValue3, (float)this.doubleValue4);
-               this.method3460(var4, var47);
-               return var47;
+               double d8 = d6 / 0.15190947 + this.doubleValue;
+               double d9 = d7 / 0.15190947 + this.doubleValue2;
+               long l = (long)d8;
+               long l2 = (long)d9;
+               this.doubleValue = d8 - l;
+               this.doubleValue2 = d9 - l2;
+               this.doubleValue3 = l * 0.15190947;
+               this.doubleValue4 = l2 * 0.15190947;
+               Rotation rotation2 = rotation.method3140((float)this.doubleValue3, (float)this.doubleValue4);
+               this.method3460(tickCount, rotation2);
+               return rotation2;
             }
          } else {
             this.reset();
             if (mc.player != null) {
-               mc.player.setYRot(var1.getFloatValue());
-               mc.player.setXRot(var1.getFloatValue2());
+               mc.player.setYRot(rotation.getFloatValue());
+               mc.player.setXRot(rotation.getFloatValue2());
             }
 
-            return var1;
+            return rotation;
          }
       }
    }
 
-   private static double method3463(double var0, double var2, double var4) {
-      return Math.max(var2, Math.min(var4, var0));
+   private static double method3463(double d, double d2, double d3) {
+      return Math.max(d2, Math.min(d3, d));
    }
 
    public static String method3464() {
-      Agent.Entry var0 = method3452();
-      return var0 == null ? "МОДЕЛЬ НЕ ЗАГРУЖЕНА" : "загружено: признаков " + var0.intValue + ", скрытых " + var0.intValue2 + ", эталонные тики сошлись";
+      Agent.Entry entry = method3452();
+      return entry == null ? "МОДЕЛЬ НЕ ЗАГРУЖЕНА" : "загружено: признаков " + entry.intValue + ", скрытых " + entry.intValue2 + ", эталонные тики сошлись";
    }
 
    private static final class Entry {
@@ -409,60 +409,60 @@ public final class Agent extends Util22 {
       public double[] doubleValues7;
       public double doubleValue3;
 
-      public double[] method3465(double[] var1, double[] var2) {
-         double[] var3 = new double[3 * this.intValue2];
-         double[] var4 = new double[3 * this.intValue2];
+      public double[] method3465(double[] doubles, double[] doubleValues) {
+         double[] doubles2 = new double[3 * this.intValue2];
+         double[] doubles3 = new double[3 * this.intValue2];
 
-         for (int var5 = 0; var5 < 3 * this.intValue2; var5++) {
-            double var6 = this.doubleValues3[var5];
+         for (int i = 0; i < 3 * this.intValue2; i++) {
+            double d = this.doubleValues3[i];
 
-            for (int var8 = 0; var8 < this.intValue; var8++) {
-               var6 += this.doubleValues[var5][var8] * var1[var8];
+            for (int j = 0; j < this.intValue; j++) {
+               d += this.doubleValues[i][j] * doubles[j];
             }
 
-            var3[var5] = var6;
-            double var15 = this.doubleValues4[var5];
+            doubles2[i] = d;
+            double d2 = this.doubleValues4[i];
 
-            for (int var10 = 0; var10 < this.intValue2; var10++) {
-               var15 += this.doubleValues2[var5][var10] * var2[var10];
+            for (int j = 0; j < this.intValue2; j++) {
+               d2 += this.doubleValues2[i][j] * doubleValues[j];
             }
 
-            var4[var5] = var15;
+            doubles3[i] = d2;
          }
 
-         double[] var13 = new double[this.intValue2];
+         double[] doubles4 = new double[this.intValue2];
 
-         for (int var14 = 0; var14 < this.intValue2; var14++) {
-            double var7 = 1.0 / (1.0 + Math.exp(-(var3[var14] + var4[var14])));
-            double var9 = 1.0 / (1.0 + Math.exp(-(var3[this.intValue2 + var14] + var4[this.intValue2 + var14])));
-            double var11 = Math.tanh(var3[2 * this.intValue2 + var14] + var7 * var4[2 * this.intValue2 + var14]);
-            var13[var14] = (1.0 - var9) * var11 + var9 * var2[var14];
+         for (int i = 0; i < this.intValue2; i++) {
+            double d = 1.0 / (1.0 + Math.exp(-(doubles2[i] + doubles3[i])));
+            double d2 = 1.0 / (1.0 + Math.exp(-(doubles2[this.intValue2 + i] + doubles3[this.intValue2 + i])));
+            double tanh = Math.tanh(doubles2[2 * this.intValue2 + i] + d * doubles3[2 * this.intValue2 + i]);
+            doubles4[i] = (1.0 - d2) * tanh + d2 * doubleValues[i];
          }
 
-         return var13;
+         return doubles4;
       }
 
-      public double[] method3466(double[] var1) {
-         double[] var2 = new double[5];
+      public double[] method3466(double[] doubleValues) {
+         double[] doubles = new double[5];
 
-         for (int var3 = 0; var3 < 4; var3++) {
-            double var4 = this.doubleValues6[var3];
+         for (int i = 0; i < 4; i++) {
+            double d = this.doubleValues6[i];
 
-            for (int var6 = 0; var6 < this.intValue2; var6++) {
-               var4 += this.doubleValues5[var3][var6] * var1[var6];
+            for (int j = 0; j < this.intValue2; j++) {
+               d += this.doubleValues5[i][j] * doubleValues[j];
             }
 
-            var2[var3] = var3 < 2 ? var4 : Math.max(this.doubleValue, Math.min(this.doubleValue2, var4));
+            doubles[i] = i < 2 ? d : Math.max(this.doubleValue, Math.min(this.doubleValue2, d));
          }
 
-         double var7 = this.doubleValue3;
+         double d = this.doubleValue3;
 
-         for (int var5 = 0; var5 < this.intValue2; var5++) {
-            var7 += this.doubleValues7[var5] * var1[var5];
+         for (int i = 0; i < this.intValue2; i++) {
+            d += this.doubleValues7[i] * doubleValues[i];
          }
 
-         var2[4] = var7;
-         return var2;
+         doubles[4] = d;
+         return doubles;
       }
    }
 }

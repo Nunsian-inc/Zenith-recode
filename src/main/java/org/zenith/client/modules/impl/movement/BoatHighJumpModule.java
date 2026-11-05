@@ -22,7 +22,7 @@ public final class BoatHighJumpModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (mc.player.getVehicle() == null) {
             if (mc.player.onGround()) {
@@ -38,11 +38,11 @@ public final class BoatHighJumpModule extends Module {
    }
 
    private Entity method2736() {
-      AABB var1 = mc.player.getBoundingBox().inflate(1.0);
+      AABB inflate = mc.player.getBoundingBox().inflate(1.0);
 
-      for (Entity var3 : mc.level.entitiesForRendering()) {
-         if (var3 instanceof Boat var4 && !var4.hasPassenger(mc.player) && var4.getBoundingBox().intersects(var1)) {
-            return var4;
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof Boat boat && !boat.hasPassenger(mc.player) && boat.getBoundingBox().intersects(inflate)) {
+            return boat;
          }
       }
 

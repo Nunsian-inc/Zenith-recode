@@ -21,18 +21,18 @@ public final class BotViaCompatibilityProtocol extends AbstractSimpleProtocol {
    public void registerPackets() {
    }
 
-   public void transform(Direction var1, State var2, PacketWrapper var3) throws InformativeException, CancelException {
-      if (var1 == Direction.CLIENTBOUND
-         && var2 == State.CONFIGURATION
-         && var3.getId() == ClientboundPackets1_19_4.RESPAWN.getId()
-         && ProtocolVersion.v1_19_4.equals(var3.user().getProtocolInfo().serverProtocolVersion())) {
-         ConfigurationState var4 = (ConfigurationState)var3.user().get(ConfigurationState.class);
-         if (var4 != null && var4.bridgePhase() != BridgePhase.NONE) {
-            var3.passthrough(Types.REMAINING_BYTES);
-            var3.write(Types.VAR_INT, 0);
+   public void transform(Direction direction, State state, PacketWrapper packetWrapper) throws InformativeException, CancelException {
+      if (direction == Direction.CLIENTBOUND
+         && state == State.CONFIGURATION
+         && packetWrapper.getId() == ClientboundPackets1_19_4.RESPAWN.getId()
+         && ProtocolVersion.v1_19_4.equals(packetWrapper.user().getProtocolInfo().serverProtocolVersion())) {
+         ConfigurationState configurationState = (ConfigurationState)packetWrapper.user().get(ConfigurationState.class);
+         if (configurationState != null && configurationState.bridgePhase() != BridgePhase.NONE) {
+            packetWrapper.passthrough(Types.REMAINING_BYTES);
+            packetWrapper.write(Types.VAR_INT, 0);
          }
       }
 
-      super.transform(var1, var2, var3);
+      super.transform(direction, state, packetWrapper);
    }
 }

@@ -59,18 +59,18 @@ public abstract class MixinWorldRenderer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$guardRenderingReadyWithoutChunks(BlockPos var1, long var2, CallbackInfoReturnable<Boolean> var3) {
+   private void zenith$guardRenderingReadyWithoutChunks(BlockPos pos, long l, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
       if (Minecraft.getInstance().level == null || this.viewArea == null) {
-         var3.setReturnValue(false);
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 
    @Inject(method = {RENDER}, at = {@At("HEAD")}, cancellable = true)
    private void zenith$skipMainRenderWithoutWorld(
-      GraphicsResourceAllocator var1, boolean var2, CameraRenderState var3, GpuBufferSlice var4, Vector4f var5, boolean var6, boolean var7, CallbackInfo var8
+      GraphicsResourceAllocator resourceAllocator, boolean flag, CameraRenderState cameraRenderState, GpuBufferSlice gpuBufferSlice, Vector4f vec, boolean flag2, boolean flag3, CallbackInfo callbackInfo
    ) {
       if (Minecraft.getInstance().level == null || this.viewArea == null) {
-         var8.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -82,11 +82,11 @@ public abstract class MixinWorldRenderer {
          ordinal = 0
       )
    )
-   private void zenith$renderShaderEspOutline(PostChain var1, FrameGraphBuilder var2, int var3, int var4, TargetBundle var5) {
-      boolean var6 = EspGlowPass.method2636(var2, var3, var4, var5);
-      boolean var7 = var6 | FirePostPass.method5079(var2, var3, var4, var5, var6);
-      if (!var7) {
-         var1.addToFrame(var2, var3, var4, var5);
+   private void zenith$renderShaderEspOutline(PostChain postChain, FrameGraphBuilder frame, int screenWidth, int screenHeight, TargetBundle providedTargets) {
+      boolean flag = EspGlowPass.method2636(frame, screenWidth, screenHeight, providedTargets);
+      boolean flag2 = flag | FirePostPass.method5079(frame, screenWidth, screenHeight, providedTargets, flag);
+      if (!flag2) {
+         postChain.addToFrame(frame, screenWidth, screenHeight, providedTargets);
       }
    }
 
@@ -94,11 +94,11 @@ public abstract class MixinWorldRenderer {
       method = {"submitEntities(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/SubmitNodeCollector;)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$captureTerrainDepth(PoseStack var1, LevelRenderState var2, SubmitNodeCollector var3, CallbackInfo var4) {
+   private void zenith$captureTerrainDepth(PoseStack poseStack, LevelRenderState levelRenderState, SubmitNodeCollector submitNodeCollector, CallbackInfo callbackInfo) {
       if (WetnessPass.method3122(Minecraft.getInstance().gameRenderer.mainCamera())) {
-         int var5 = WorldProfiler.method785(0);
+         int n = WorldProfiler.method785(0);
          WeatherDepthBuffer.method5130();
-         WorldProfiler.method786(var5);
+         WorldProfiler.method786(n);
       }
    }
 
@@ -106,15 +106,15 @@ public abstract class MixinWorldRenderer {
       method = {"addSkyPass(Lcom/mojang/blaze3d/framegraph/FrameGraphBuilder;Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/renderpearl/api/buffers/GpuBufferSlice;)V"},
       at = {@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/framegraph/FramePass;executes(Ljava/lang/Runnable;)V", shift = Shift.AFTER)}
    )
-   private void zenith$renderSkyEffects(FrameGraphBuilder var1, CameraRenderState var2, GpuBufferSlice var3, CallbackInfo var4) {
-      Minecraft var9 = Minecraft.getInstance();
-      int var5 = var9.gameRenderer.mainRenderTarget().width;
-      int var6 = var9.gameRenderer.mainRenderTarget().height;
-      long var7 = WorldProfiler.method782();
+   private void zenith$renderSkyEffects(FrameGraphBuilder frame, CameraRenderState cameraRenderState, GpuBufferSlice gpuBufferSlice, CallbackInfo callbackInfo) {
+      Minecraft minecraft = Minecraft.getInstance();
+      int width = minecraft.gameRenderer.mainRenderTarget().width;
+      int height = minecraft.gameRenderer.mainRenderTarget().height;
+      long l = WorldProfiler.method782();
       WorldProfiler.method787(0);
-      SkyPass.method7267(var1, var5, var6, this.targets, var9.gameRenderer.mainCamera());
+      SkyPass.method7267(frame, width, height, this.targets, minecraft.gameRenderer.mainCamera());
       WorldProfiler.method788();
-      WorldProfiler.method783(25, var7);
+      WorldProfiler.method783(25, l);
    }
 
    @Inject(
@@ -125,55 +125,55 @@ public abstract class MixinWorldRenderer {
       )}
    )
    private void zenith$appendWeatherGloss(
-      GraphicsResourceAllocator var1,
-      boolean var2,
-      CameraRenderState var3,
-      GpuBufferSlice var8,
-      Vector4f var9,
-      boolean var10,
-      boolean var11,
-      CallbackInfo var19,
-      @Local FrameGraphBuilder var12
+      GraphicsResourceAllocator resourceAllocator,
+      boolean flag,
+      CameraRenderState cameraRenderState,
+      GpuBufferSlice gpuBufferSlice,
+      Vector4f vec,
+      boolean flag2,
+      boolean flag3,
+      CallbackInfo callbackInfo,
+      @Local FrameGraphBuilder frame
    ) {
-      Minecraft var20 = Minecraft.getInstance();
-      Camera var4 = var20.gameRenderer.mainCamera();
-      int var13 = var20.gameRenderer.mainRenderTarget().width;
-      int var14 = var20.gameRenderer.mainRenderTarget().height;
+      Minecraft minecraft = Minecraft.getInstance();
+      Camera mainCamera = minecraft.gameRenderer.mainCamera();
+      int width = minecraft.gameRenderer.mainRenderTarget().width;
+      int height = minecraft.gameRenderer.mainRenderTarget().height;
       WeatherDepthBuffer.method5131();
-      long var15 = WorldProfiler.method782();
+      long l = WorldProfiler.method782();
       WorldProfiler.method787(2);
-      boolean var17 = WetnessPass.method3123(var12, var13, var14, this.targets, var4);
+      boolean flag4 = WetnessPass.method3123(frame, width, height, this.targets, mainCamera);
       WorldProfiler.method788();
-      WorldProfiler.method783(27, var15);
-      if (!var17) {
-         var15 = WorldProfiler.method782();
+      WorldProfiler.method783(27, l);
+      if (!flag4) {
+         l = WorldProfiler.method782();
          WorldProfiler.method787(1);
-         WorldGradePass.method6105(var12, var13, var14, this.targets, var4);
+         WorldGradePass.method6105(frame, width, height, this.targets, mainCamera);
          WorldProfiler.method788();
-         WorldProfiler.method783(26, var15);
+         WorldProfiler.method783(26, l);
       }
 
       if (WeatherModule.INSTANCE.method3116()) {
-         FramePass var18 = var12.addPass("zenith_weather");
-         this.targets.main = var18.readsAndWrites(this.targets.main);
-         var18.executes(() -> {
-            int var0 = WorldProfiler.method785(13);
+         FramePass addPass = frame.addPass("zenith_weather");
+         this.targets.main = addPass.readsAndWrites(this.targets.main);
+         addPass.executes(() -> {
+            int n = WorldProfiler.method785(13);
             WeatherModule.INSTANCE.method3117(zenith$worldMatrix);
-            WorldProfiler.method786(var0);
+            WorldProfiler.method786(n);
          });
       }
    }
 
    @Inject(method = {RENDER}, at = {@At("HEAD")})
    private void zenith$captureWorldMatrix(
-      GraphicsResourceAllocator var1, boolean var2, CameraRenderState var3, GpuBufferSlice var4, Vector4f var5, boolean var6, boolean var7, CallbackInfo var8
+      GraphicsResourceAllocator resourceAllocator, boolean flag, CameraRenderState cameraRenderState, GpuBufferSlice gpuBufferSlice, Vector4f vec, boolean flag2, boolean flag3, CallbackInfo callbackInfo
    ) {
       if (WorldProfiler.enabled) {
          WorldProfiler.method790();
       }
 
       // 1.21.11 passed the view-rotation matrix as the first renderLevel matrix
-      zenith$worldMatrix.set(var3.viewRotationMatrix);
+      zenith$worldMatrix.set(cameraRenderState.viewRotationMatrix);
       UniformBinder.method5481();
    }
 }

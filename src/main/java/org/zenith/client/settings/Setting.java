@@ -12,13 +12,13 @@ public abstract class Setting {
    public Supplier<String> titleKey;
    public Supplier<String> tipKey;
 
-   public Setting(String var1) {
-      this(var1, "");
+   public Setting(String key) {
+      this(key, "");
    }
 
-   public Setting(String var1, String var2) {
-      this.key = var1;
-      this.description = var2 != null ? var2 : "";
+   public Setting(String key, String description) {
+      this.key = key;
+      this.description = description != null ? description : "";
       this.setVisible(() -> true);
    }
 
@@ -30,9 +30,9 @@ public abstract class Setting {
       return Zenith.getInstance().getLocalization().translate(this.tipKey == null ? this.description : this.tipKey.get());
    }
 
-   public abstract void safe(JsonObject var1);
+   public abstract void safe(JsonObject jsonObject);
 
-   public abstract void load(JsonObject var1);
+   public abstract void load(JsonObject jsonObject);
 
    public boolean isVisible() {
       return this.visible.get();
@@ -59,17 +59,17 @@ public abstract class Setting {
    }
 
    @Generated
-   public void setVisible(Supplier<Boolean> var1) {
-      this.visible = var1;
+   public void setVisible(Supplier<Boolean> visible) {
+      this.visible = visible;
    }
 
    @Generated
-   public void setTitleKey(Supplier<String> var1) {
-      this.titleKey = var1;
+   public void setTitleKey(Supplier<String> titleKey) {
+      this.titleKey = titleKey;
    }
 
    @Generated
-   public void setTipKey(Supplier<String> var1) {
-      this.tipKey = var1;
+   public void setTipKey(Supplier<String> tipKey) {
+      this.tipKey = tipKey;
    }
 }

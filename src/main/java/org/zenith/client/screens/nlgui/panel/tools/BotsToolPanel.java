@@ -111,8 +111,8 @@ public class BotsToolPanel extends ToolTab {
    }
 
    public boolean isLive() {
-      for (BotClient var2 : HeadlessBots.all()) {
-         if (var2.getPhase() != BotPhase.DISCONNECTED) {
+      for (BotClient botClient : HeadlessBots.all()) {
+         if (botClient.getPhase() != BotPhase.DISCONNECTED) {
             return true;
          }
       }
@@ -122,42 +122,42 @@ public class BotsToolPanel extends ToolTab {
 
    @Override
    public void build() {
-      List<String> var1 = HeadlessBots.allNames();
-      if (this.selected != null && var1.stream().noneMatch(var1x -> var1x.equalsIgnoreCase(this.selected))) {
+      List<String> allNames = HeadlessBots.allNames();
+      if (this.selected != null && allNames.stream().noneMatch(var1x -> var1x.equalsIgnoreCase(this.selected))) {
          this.selected = null;
       }
 
-      if (this.selected == null && !var1.isEmpty()) {
-         this.selected = (String)var1.getFirst();
+      if (this.selected == null && !allNames.isEmpty()) {
+         this.selected = (String)allNames.getFirst();
       }
 
-      this.pruneCardAnimations(var1);
+      this.pruneCardAnimations(allNames);
       this.buildServerBar();
-      String var2 = this.searchQuery();
-      ArrayList<String> var3 = new ArrayList();
+      String searchQuery = this.searchQuery();
+      ArrayList<String> strings = new ArrayList();
 
-      for (String var5 : var1) {
-         if (var2.isEmpty() || var5.toLowerCase(Locale.ROOT).contains(var2)) {
-            var3.add(var5);
+      for (String allName : allNames) {
+         if (searchQuery.isEmpty() || allName.toLowerCase(Locale.ROOT).contains(searchQuery)) {
+            strings.add(allName);
          }
       }
 
-      this.buildListCaption(var1.size());
-      if (var3.isEmpty()) {
-         boolean var6 = !var1.isEmpty();
-         if (var6) {
+      this.buildListCaption(allNames.size());
+      if (strings.isEmpty()) {
+         boolean flag = !allNames.isEmpty();
+         if (flag) {
             this.custom(
                44.0F,
-               (var1x, var2x, var3x, var4, var5x, var6x, var7, var8x) -> this.drawHint(
-                  var1x, var4, var5x + 8.0F, var6x, t("gui.tools.bots.notFound"), var7, var8x
+               (var1x, var2x, var3x, f, var5x, var6x, previewAlpha, var8x) -> this.drawHint(
+                  var1x, f, var5x + 8.0F, var6x, t("gui.tools.bots.notFound"), previewAlpha, var8x
                )
             );
          } else {
             this.custom(202.0F, this::renderEmptyList);
          }
       } else {
-         for (String var8 : var3) {
-            this.buildBotCard(var8);
+         for (String selected : strings) {
+            this.buildBotCard(selected);
          }
       }
 
@@ -165,73 +165,73 @@ public class BotsToolPanel extends ToolTab {
       this.buildAside();
    }
 
-   private void pruneCardAnimations(List<String> var1) {
-      HashSet var2 = new HashSet();
+   private void pruneCardAnimations(List<String> allNames) {
+      HashSet hashSet = new HashSet();
 
-      for (String var4 : var1) {
-         var2.add(var4.toLowerCase(Locale.ROOT));
+      for (String allName : allNames) {
+         hashSet.add(allName.toLowerCase(Locale.ROOT));
       }
 
-      this.cardAnimations.keySet().retainAll(var2);
+      this.cardAnimations.keySet().retainAll(hashSet);
    }
 
-   private BotsToolPanel.CardAnimations animations(String var1) {
-      return this.cardAnimations.computeIfAbsent(var1.toLowerCase(Locale.ROOT), var0 -> new BotsToolPanel.CardAnimations());
+   private BotsToolPanel.CardAnimations animations(String selected) {
+      return this.cardAnimations.computeIfAbsent(selected.toLowerCase(Locale.ROOT), cardAnimation -> new BotsToolPanel.CardAnimations());
    }
 
    private void buildServerBar() {
       this.custom(
          48.0F,
-         (var1, var2, var3, var4, var5, var6, var7, var8) -> {
+         (menuDrawContext, lastClickX, lastClickY, floatValue, f, width, previewAlpha, zenithStyle) -> {
             if (this.addressInput == null) {
                this.addressInput = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.0F), t("gui.tools.bots.address.hint"), 64.0F);
                this.addressInput.setText(HeadlessBots.getLastAddress());
                this.addressInput.setCursor(this.addressInput.getText().length());
             }
 
-            float var9 = var5 + 3.0F;
-            this.drawInput(var1, this.addressInput, MenuGlyph.NETWORK, var4, var9, var6, var7, var8);
-            float var10 = var9 + 18.0F + 5.0F;
-            float var11 = var6 - 16.0F;
-            float var12 = (var11 - GuiStyle.PADDING.intValue()) / 2.0F;
-            float var13 = var4 + 8.0F;
-            float var14 = var13 + var12 + GuiStyle.PADDING.intValue();
-            int var15 = HeadlessBots.allNames().size();
-            int var16 = this.onlineCount();
-            this.connectAllBounds = new BoundsData(var13, var10, var12, 16.0F);
-            this.disconnectAllBounds = new BoundsData(var14, var10, var12, 16.0F);
+            float y = f + 3.0F;
+            this.drawInput(menuDrawContext, this.addressInput, MenuGlyph.NETWORK, floatValue, y, width, previewAlpha, zenithStyle);
+            float y2 = y + 18.0F + 5.0F;
+            float f2 = width - 16.0F;
+            float width2 = (f2 - GuiStyle.PADDING.intValue()) / 2.0F;
+            float floatValue2 = floatValue + 8.0F;
+            float floatValue3 = floatValue2 + width2 + GuiStyle.PADDING.intValue();
+            int size = HeadlessBots.allNames().size();
+            int onlineCount = this.onlineCount();
+            this.connectAllBounds = new BoundsData(floatValue2, y2, width2, 16.0F);
+            this.disconnectAllBounds = new BoundsData(floatValue3, y2, width2, 16.0F);
             this.drawChip(
-               var1,
-               var2,
-               var3,
+               menuDrawContext,
+               lastClickX,
+               lastClickY,
                this.connectAllBounds,
                t("gui.tools.bots.connectAll"),
-               String.valueOf(var15),
-               var8.getPrimaryColor().getZenithColor(),
-               var15 > 0,
-               var7,
-               var8,
+               String.valueOf(size),
+               zenithStyle.getPrimaryColor().getZenithColor(),
+               size > 0,
+               previewAlpha,
+               zenithStyle,
                true
             );
             this.drawChip(
-               var1,
-               var2,
-               var3,
+               menuDrawContext,
+               lastClickX,
+               lastClickY,
                this.disconnectAllBounds,
                t("gui.tools.bots.disconnectAll"),
-               String.valueOf(var16),
-               var8.getHeartIcon().getZenithColor(),
-               var16 > 0,
-               var7,
-               var8,
+               String.valueOf(onlineCount),
+               zenithStyle.getHeartIcon().getZenithColor(),
+               onlineCount > 0,
+               previewAlpha,
+               zenithStyle,
                false
             );
-            if (this.insideMain(var2, var3)) {
-               if (this.connectAllBounds.contains(var2, var3)) {
+            if (this.insideMain(lastClickX, lastClickY)) {
+               if (this.connectAllBounds.contains(lastClickX, lastClickY)) {
                   HoverInfo.request(t("gui.tools.bots.connectAll"), t("gui.tools.bots.connectAll.desc"));
-               } else if (this.disconnectAllBounds.contains(var2, var3)) {
+               } else if (this.disconnectAllBounds.contains(lastClickX, lastClickY)) {
                   HoverInfo.request(t("gui.tools.bots.disconnectAll"), t("gui.tools.bots.disconnectAll.desc"));
-               } else if (new BoundsData(var4, var9, var6, 18.0F).contains(var2, var3)) {
+               } else if (new BoundsData(floatValue, y, width, 18.0F).contains(lastClickX, lastClickY)) {
                   HoverInfo.request(t("gui.tools.bots.caption.server"), t("gui.tools.bots.address.desc"));
                }
             }
@@ -240,324 +240,324 @@ public class BotsToolPanel extends ToolTab {
    }
 
    private void drawChip(
-      MenuDrawContext var1,
-      int var2,
-      int var3,
-      BoundsData var4,
-      String var5,
-      String var6,
-      ZenithColor var7,
-      boolean var8,
-      float var9,
-      ZenithStyle var10,
-      boolean var11
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      BoundsData connectAllBounds,
+      String name,
+      String text,
+      ZenithColor zenithColor,
+      boolean flag,
+      float previewAlpha,
+      ZenithStyle zenithStyle,
+      boolean flag2
    ) {
-      boolean var12 = var8 && var4.contains(var2, var3) && this.insideMain(var2, var3);
-      ZenithColor var13 = var8 ? var7 : var10.getTextTertiary().getZenithColor();
-      var1.drawRoundedRect(
-         var4.getFloatValue(),
-         var4.getFloatValue2(),
-         var4.width(),
-         var4.height(),
-         ProxyDotRadiusData.method8069(var4.height() / 2.0F),
-         var13.method7293(var12 ? 46 : 24).method7294(var9)
+      boolean flag3 = flag && connectAllBounds.contains(lastClickX, lastClickY) && this.insideMain(lastClickX, lastClickY);
+      ZenithColor zenithColor2 = flag ? zenithColor : zenithStyle.getTextTertiary().getZenithColor();
+      menuDrawContext.drawRoundedRect(
+         connectAllBounds.getFloatValue(),
+         connectAllBounds.getFloatValue2(),
+         connectAllBounds.width(),
+         connectAllBounds.height(),
+         ProxyDotRadiusData.method8069(connectAllBounds.height() / 2.0F),
+         zenithColor2.method7293(flag3 ? 46 : 24).method7294(previewAlpha)
       );
-      Font var14 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      float var15 = var4.getFloatValue() + 7.0F;
-      float var16 = var4.getFloatValue2() + var4.height() / 2.0F;
-      ZenithColor var17 = var13.method7293(var8 ? (var12 ? 255 : 220) : 130).method7294(var9);
-      if (var11) {
-         drawPlay(var1, var15, var16 - 3.0F, var17);
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      float f = connectAllBounds.getFloatValue() + 7.0F;
+      float f2 = connectAllBounds.getFloatValue2() + connectAllBounds.height() / 2.0F;
+      ZenithColor zenithColor3 = zenithColor2.method7293(flag ? (flag3 ? 255 : 220) : 130).method7294(previewAlpha);
+      if (flag2) {
+         drawPlay(menuDrawContext, f, f2 - 3.0F, zenithColor3);
       } else {
-         drawStop(var1, var15, var16 - 2.5F, var17);
+         drawStop(menuDrawContext, f, f2 - 2.5F, zenithColor3);
       }
 
-      float var18 = var15 + 8.0F;
-      float var19 = var14.width(var6);
-      float var20 = var4.getFloatValue() + var4.width() - 7.0F - var19 - 4.0F - var18;
-      var1.drawText(var14, fit(var14, var5, var20), var18, var16 - var14.height() / 2.0F, var17);
-      var1.drawText(var14, var6, var4.getFloatValue() + var4.width() - 7.0F - var19, var16 - var14.height() / 2.0F, var17.method7294(0.7F));
+      float floatValue = f + 8.0F;
+      float width = font.width(text);
+      float f3 = connectAllBounds.getFloatValue() + connectAllBounds.width() - 7.0F - width - 4.0F - floatValue;
+      menuDrawContext.drawText(font, fit(font, name, f3), floatValue, f2 - font.height() / 2.0F, zenithColor3);
+      menuDrawContext.drawText(font, text, connectAllBounds.getFloatValue() + connectAllBounds.width() - 7.0F - width, f2 - font.height() / 2.0F, zenithColor3.method7294(0.7F));
    }
 
-   private void buildListCaption(int var1) {
+   private void buildListCaption(int size) {
       this.custom(
          16.0F,
-         (var2, var3, var4, var5, var6, var7, var8, var9) -> {
-            Font var10 = Fonts.NEW_MEDIUM.getFont(4.0F);
-            float var11 = var6 + (16.0F - var10.height()) / 2.0F + 2.0F;
-            var2.drawText(
-               var10,
+         (menuDrawContext, n, n2, f, f2, f3, previewAlpha, zenithStyle) -> {
+            Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+            float centeredTextY = f2 + (16.0F - font.height()) / 2.0F + 2.0F;
+            menuDrawContext.drawText(
+               font,
                HoverInfo.spaced(t("gui.tools.bots.caption.list").toUpperCase(Locale.ROOT)),
-               var5 + 8.0F,
-               var11,
-               var9.getTextTertiary().getZenithColor().method7294(var8)
+               f + 8.0F,
+               centeredTextY,
+               zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
-            int var12 = this.onlineCount();
-            String var13 = var12 + " / " + var1 + " " + t("gui.tools.bots.online");
-            var2.drawText(
-               var10,
-               var13,
-               var5 + var7 - 8.0F - var10.width(var13),
-               var11,
-               (var12 > 0 ? var9.getFriendColor() : var9.getTextTertiary()).getZenithColor().method7294(var8)
+            int onlineCount = this.onlineCount();
+            String text = onlineCount + " / " + size + " " + t("gui.tools.bots.online");
+            menuDrawContext.drawText(
+               font,
+               text,
+               f + f3 - 8.0F - font.width(text),
+               centeredTextY,
+               (onlineCount > 0 ? zenithStyle.getFriendColor() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
             );
          }
       );
    }
 
-   private void buildBotCard(String var1) {
-      this.custom(21.0F, (var2, var3, var4, var5, var6, var7, var8, var9) -> this.renderBotCard(var2, var1, var3, var4, var5, var6, var7, var8, var9), () -> {
-         this.selected = var1;
+   private void buildBotCard(String selected) {
+      this.custom(21.0F, (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> this.renderBotCard(menuDrawContext, selected, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle), () -> {
+         this.selected = selected;
          this.resetAsideScroll();
          this.invalidate();
       }, null, () -> {
-         this.toggleConnection(var1);
+         this.toggleConnection(selected);
          this.invalidate();
       });
    }
 
-   private void renderBotCard(MenuDrawContext var1, String var2, int var3, int var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      BotsToolPanel.CardAnimations var10 = this.animations(var2);
-      boolean var11 = this.insideMain(var3, var4);
-      BoundsData var12 = new BoundsData(var5 + 2.0F, var6 + 1.0F, var7 - 4.0F, 19.0F);
-      BoundsData var13 = new BoundsData(var5 + var7 - 8.0F - 14.0F, var6 + 3.5F, 14.0F, 14.0F);
-      this.powerBounds.put(var2, var13);
-      boolean var14 = var11 && var13.contains(var3, var4);
-      boolean var15 = var11 && var12.contains(var3, var4) && !var14;
-      boolean var16 = var2.equalsIgnoreCase(this.selected);
-      boolean var17 = this.isOnline(var2);
-      float var18 = var10.hover.method2808(var15 ? 1.0F : 0.0F);
-      float var19 = var10.select.method2808(var16 ? 1.0F : 0.0F);
-      float var20 = var10.power.method2808(var14 ? 1.0F : 0.0F);
-      float var21 = Math.max(var19, var18 * 0.5F);
-      if (var21 > 0.002F) {
-         var1.drawRoundedRect(
-            var12.getFloatValue(),
-            var12.getFloatValue2(),
-            var12.width(),
-            var12.height(),
+   private void renderBotCard(MenuDrawContext menuDrawContext, String selected, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      BotsToolPanel.CardAnimations animations = this.animations(selected);
+      boolean insideMain = this.insideMain(lastClickX, lastClickY);
+      BoundsData boundsData = new BoundsData(f + 2.0F, f2 + 1.0F, f3 - 4.0F, 19.0F);
+      BoundsData boundsData2 = new BoundsData(f + f3 - 8.0F - 14.0F, f2 + 3.5F, 14.0F, 14.0F);
+      this.powerBounds.put(selected, boundsData2);
+      boolean flag = insideMain && boundsData2.contains(lastClickX, lastClickY);
+      boolean flag2 = insideMain && boundsData.contains(lastClickX, lastClickY) && !flag;
+      boolean equalsIgnoreCase = selected.equalsIgnoreCase(this.selected);
+      boolean online = this.isOnline(selected);
+      float f4 = animations.hover.method2808(flag2 ? 1.0F : 0.0F);
+      float f5 = animations.select.method2808(equalsIgnoreCase ? 1.0F : 0.0F);
+      float f6 = animations.power.method2808(flag ? 1.0F : 0.0F);
+      float f7 = Math.max(f5, f4 * 0.5F);
+      if (f7 > 0.002F) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
             ProxyDotRadiusData.method8069(5.0F),
-            var9.getDisableActiveBg().getZenithColor().method7294(var8 * var21)
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f7)
          );
       }
 
-      if (var19 > 0.002F) {
-         float var22 = var12.height() * 0.62F * var19;
-         var1.drawRoundedRect(
-            var12.getFloatValue(),
-            var12.getFloatValue2() + (var12.height() - var22) / 2.0F,
+      if (f5 > 0.002F) {
+         float height = boundsData.height() * 0.62F * f5;
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2() + (boundsData.height() - height) / 2.0F,
             1.5F,
-            var22,
+            height,
             ProxyDotRadiusData.method8069(0.75F),
-            var9.getPrimaryColor().getZenithColor().method7294(var8)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
          );
       }
 
-      if (var15) {
-         HoverInfo.request(var2, t("gui.tools.bots.row.desc"));
+      if (flag2) {
+         HoverInfo.request(selected, t("gui.tools.bots.row.desc"));
       }
 
-      float var35 = var5 + 8.0F;
-      float var23 = var6 + 4.0F;
-      Identifier var24 = BotAvatarCache.prewarm(var2);
-      if (var24 != null) {
+      float x = f + 8.0F;
+      float y = f2 + 4.0F;
+      Identifier prewarm = BotAvatarCache.prewarm(selected);
+      if (prewarm != null) {
          RenderShaders.method5294(
-            MatrixUtils.method664(var1.pose()),
-            var24,
-            var35,
-            var23,
+            MatrixUtils.method664(menuDrawContext.pose()),
+            prewarm,
+            x,
+            y,
             13.0F,
             13.0F,
             ProxyDotRadiusData.method8069(3.5F),
-            ZenithColor.INSTANCE.method7294(var8)
+            ZenithColor.INSTANCE.method7294(previewAlpha)
          );
       } else {
-         var1.drawRoundedRect(
-            var35, var23, 13.0F, 13.0F, ProxyDotRadiusData.method8069(3.5F), var9.getFieldSurfaceBackground().getZenithColor().method7294(var8 * 4.0F)
+         menuDrawContext.drawRoundedRect(
+            x, y, 13.0F, 13.0F, ProxyDotRadiusData.method8069(3.5F), zenithStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 4.0F)
          );
       }
 
-      ZenithColor var25 = this.phaseColor(var2, var9);
-      float var26 = var35 + 13.0F - 4.0F + 1.0F;
-      float var27 = var23 + 13.0F - 4.0F + 1.0F;
-      var1.drawRoundedRect(
-         var26 - 1.0F,
-         var27 - 1.0F,
+      ZenithColor phaseColor = this.phaseColor(selected, zenithStyle);
+      float floatValue = x + 13.0F - 4.0F + 1.0F;
+      float y2 = y + 13.0F - 4.0F + 1.0F;
+      menuDrawContext.drawRoundedRect(
+         floatValue - 1.0F,
+         y2 - 1.0F,
          6.0F,
          6.0F,
          ProxyDotRadiusData.method8069(3.0F),
-         var9.getRightBackground().getZenithColor().method7293(255).method7294(var8)
+         zenithStyle.getRightBackground().getZenithColor().method7293(255).method7294(previewAlpha)
       );
-      var1.drawRoundedRect(var26, var27, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var25.method7294(var8));
-      String var28 = this.phaseLabel(var2);
-      Font var29 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      float var30 = var29.width(var28) + 9.0F;
-      float var31 = var13.getFloatValue() - 5.0F - var30;
-      this.drawPill(var1, var31, var6 + 6.0F, var30, var28, var25, var8);
-      Font var32 = Fonts.NEW_MEDIUM.getFont(5.2F);
-      ZenithColor var33 = var9.getTextSecondary()
+      menuDrawContext.drawRoundedRect(floatValue, y2, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), phaseColor.method7294(previewAlpha));
+      String phaseLabel = this.phaseLabel(selected);
+      Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+      float width = font.width(phaseLabel) + 9.0F;
+      float floatValue2 = boundsData2.getFloatValue() - 5.0F - width;
+      this.drawPill(menuDrawContext, floatValue2, f2 + 6.0F, width, phaseLabel, phaseColor, previewAlpha);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+      ZenithColor zenithColor = zenithStyle.getTextSecondary()
          .getZenithColor()
-         .method7295(var9.getTextEnable().getZenithColor(), Math.max(var19, var18 * 0.6F))
-         .method7294(var8);
-      float var34 = var35 + 13.0F + 6.0F;
-      var1.drawText(var32, fit(var32, var2, var31 - 5.0F - var34), var34, var6 + (21.0F - var32.height()) / 2.0F, var33);
-      this.drawPowerButton(var1, var13, var17, var20, var8, var9);
-      if (var14) {
-         HoverInfo.request(var2, t(var17 ? "gui.tools.bots.disconnect.desc" : "gui.tools.bots.connect.desc"));
+         .method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(f5, f4 * 0.6F))
+         .method7294(previewAlpha);
+      float floatValue3 = x + 13.0F + 6.0F;
+      menuDrawContext.drawText(font2, fit(font2, selected, floatValue2 - 5.0F - floatValue3), floatValue3, f2 + (21.0F - font2.height()) / 2.0F, zenithColor);
+      this.drawPowerButton(menuDrawContext, boundsData2, online, f6, previewAlpha, zenithStyle);
+      if (flag) {
+         HoverInfo.request(selected, t(online ? "gui.tools.bots.disconnect.desc" : "gui.tools.bots.connect.desc"));
       }
    }
 
-   private void drawPowerButton(MenuDrawContext var1, BoundsData var2, boolean var3, float var4, float var5, ZenithStyle var6) {
-      ZenithColor var7 = var3 ? var6.getHeartIcon().getZenithColor() : var6.getPrimaryColor().getZenithColor();
-      var1.drawRoundedRect(
-         var2.getFloatValue(),
-         var2.getFloatValue2(),
-         var2.width(),
-         var2.height(),
+   private void drawPowerButton(MenuDrawContext menuDrawContext, BoundsData boundsData, boolean online, float f, float previewAlpha, ZenithStyle zenithStyle) {
+      ZenithColor zenithColor = online ? zenithStyle.getHeartIcon().getZenithColor() : zenithStyle.getPrimaryColor().getZenithColor();
+      menuDrawContext.drawRoundedRect(
+         boundsData.getFloatValue(),
+         boundsData.getFloatValue2(),
+         boundsData.width(),
+         boundsData.height(),
          ProxyDotRadiusData.method8069(4.0F),
-         var7.method7293((int)(18.0F + 34.0F * var4)).method7294(var5)
+         zenithColor.method7293((int)(18.0F + 34.0F * f)).method7294(previewAlpha)
       );
-      ZenithColor var8 = var7.method7293((int)(170.0F + 85.0F * var4)).method7294(var5);
-      if (var3) {
-         drawStop(var1, var2.getFloatValue() + (var2.width() - 5.0F) / 2.0F, var2.getFloatValue2() + (var2.height() - 5.0F) / 2.0F, var8);
+      ZenithColor zenithColor2 = zenithColor.method7293((int)(170.0F + 85.0F * f)).method7294(previewAlpha);
+      if (online) {
+         drawStop(menuDrawContext, boundsData.getFloatValue() + (boundsData.width() - 5.0F) / 2.0F, boundsData.getFloatValue2() + (boundsData.height() - 5.0F) / 2.0F, zenithColor2);
       } else {
-         drawPlay(var1, var2.getFloatValue() + (var2.width() - 3.0F) / 2.0F + 0.5F, var2.getFloatValue2() + (var2.height() - 6.0F) / 2.0F, var8);
+         drawPlay(menuDrawContext, boundsData.getFloatValue() + (boundsData.width() - 3.0F) / 2.0F + 0.5F, boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F, zenithColor2);
       }
    }
 
    private void buildAside() {
-      String var1 = this.selected;
-      this.previewOwner = var1;
-      if (var1 == null) {
+      String selected = this.selected;
+      this.previewOwner = selected;
+      if (selected == null) {
          this.asideCustom(
-            98.0F, (var1x, var2, var3x, var4x, var5x, var6, var7, var8) -> this.renderPreviewFrame(var1x, null, var2, var3x, var4x, var5x, var6, var7, var8)
+            98.0F, (var1x, lastClickX, var3x, var4x, var5x, f, previewAlpha, zenithStyle) -> this.renderPreviewFrame(var1x, null, lastClickX, var3x, var4x, var5x, f, previewAlpha, zenithStyle)
          );
-         this.asideCustom(32.0F, (var0, var1x, var2, var3x, var4x, var5x, var6, var7) -> {
-            float var8 = var5x - 16.0F;
-            float var9 = var8 - 30.0F - GuiStyle.PADDING.intValue();
-            ToolTab.skeleton(var0, var7, var3x + 8.0F, var4x + 3.0F, var9, 26.0F, 0, var6);
-            ToolTab.skeleton(var0, var7, var3x + 8.0F + var9 + GuiStyle.PADDING.intValue(), var4x + 3.0F, 30.0F, 26.0F, 1, var6);
+         this.asideCustom(32.0F, (menuDrawContext, var1x, n, var3x, var4x, var5x, f, zenithStyle) -> {
+            float f2 = var5x - 16.0F;
+            float width = f2 - 30.0F - GuiStyle.PADDING.intValue();
+            ToolTab.skeleton(menuDrawContext, zenithStyle, var3x + 8.0F, var4x + 3.0F, width, 26.0F, 0, f);
+            ToolTab.skeleton(menuDrawContext, zenithStyle, var3x + 8.0F + width + GuiStyle.PADDING.intValue(), var4x + 3.0F, 30.0F, 26.0F, 1, f);
          });
          this.asideCaption("gui.tools.bots.caption.state");
-         this.asideCustom(22.0F, (var0, var1x, var2, var3x, var4x, var5x, var6, var7) -> {
-            float var8 = var5x - 16.0F;
-            float var9 = (var8 - 6.0F) / 2.0F;
-            ToolTab.skeleton(var0, var7, var3x + 8.0F, var4x + 6.0F, var9, 4.0F, 2, var6);
-            ToolTab.skeleton(var0, var7, var3x + 8.0F + var9 + 6.0F, var4x + 6.0F, var9, 4.0F, 3, var6);
-            ToolTab.skeleton(var0, var7, var3x + 8.0F, var4x + 14.0F, var8 * 0.4F, 3.0F, 4, var6 * 0.7F);
+         this.asideCustom(22.0F, (menuDrawContext, var1x, n, var3x, var4x, var5x, f, zenithStyle) -> {
+            float f2 = var5x - 16.0F;
+            float width = (f2 - 6.0F) / 2.0F;
+            ToolTab.skeleton(menuDrawContext, zenithStyle, var3x + 8.0F, var4x + 6.0F, width, 4.0F, 2, f);
+            ToolTab.skeleton(menuDrawContext, zenithStyle, var3x + 8.0F + width + 6.0F, var4x + 6.0F, width, 4.0F, 3, f);
+            ToolTab.skeleton(menuDrawContext, zenithStyle, var3x + 8.0F, var4x + 14.0F, f2 * 0.4F, 3.0F, 4, f * 0.7F);
          });
          this.asideCaption("gui.tools.bots.caption.modules");
 
-         for (int var4 = 0; var4 < 4; var4++) {
-            int var5 = var4;
-            this.asideCustom(16.0F, (var1x, var2, var3x, var4x, var5x, var6, var7, var8) -> {
-               float var9 = var6 - 16.0F;
-               ToolTab.skeleton(var1x, var8, var4x + 8.0F, var5x + 6.0F, var9 * (0.35F + 0.12F * (var5 % 3)), 4.0F, 5 + var5, var7 * 0.8F);
-               ToolTab.skeleton(var1x, var8, var4x + var6 - 8.0F - 12.0F, var5x + 5.0F, 12.0F, 6.0F, 6 + var5, var7 * 0.8F);
+         for (int i = 0; i < 4; i++) {
+            int n = i;
+            this.asideCustom(16.0F, (var1x, n2, var3x, var4x, var5x, f, f2, zenithStyle) -> {
+               float f3 = f - 16.0F;
+               ToolTab.skeleton(var1x, zenithStyle, var4x + 8.0F, var5x + 6.0F, f3 * (0.35F + 0.12F * (n % 3)), 4.0F, 5 + n, f2 * 0.8F);
+               ToolTab.skeleton(var1x, zenithStyle, var4x + f - 8.0F - 12.0F, var5x + 5.0F, 12.0F, 6.0F, 6 + n, f2 * 0.8F);
             });
          }
       } else {
          this.asideCustom(
             98.0F,
-            (var2, var3x, var4x, var5x, var6, var7, var8, var9) -> this.renderPreviewFrame(var2, var1, var3x, var4x, var5x, var6, var7, var8, var9),
-            () -> this.openPreview(var1),
+            (menuDrawContext, var3x, var4x, var5x, f, f2, previewAlpha, zenithStyle) -> this.renderPreviewFrame(menuDrawContext, selected, var3x, var4x, var5x, f, f2, previewAlpha, zenithStyle),
+            () -> this.openPreview(selected),
             null
          );
-         this.buildActionRow(var1);
+         this.buildActionRow(selected);
          this.asideCaption("gui.tools.bots.caption.state");
          this.asideCustom(
-            22.0F, (var2, var3x, var4x, var5x, var6, var7, var8, var9) -> this.renderVitals(var2, var1, var3x, var4x, var5x, var6, var7, var8, var9)
+            22.0F, (menuDrawContext, var3x, var4x, var5x, y, width, previewAlpha, zenithStyle) -> this.renderVitals(menuDrawContext, selected, var3x, var4x, var5x, y, width, previewAlpha, zenithStyle)
          );
          this.asideInfo("gui.tools.bots.pos", () -> {
-            BotClient var1x = HeadlessBots.get(var1);
-            BotPlayer var2 = var1x == null ? null : var1x.getPlayer();
-            return var2 == null ? "—" : (int)var2.getX() + " " + (int)var2.getY() + " " + (int)var2.getZ();
+            BotClient var1x = HeadlessBots.get(selected);
+            BotPlayer player = var1x == null ? null : var1x.getPlayer();
+            return player == null ? "—" : (int)player.getX() + " " + (int)player.getY() + " " + (int)player.getZ();
          }, "gui.tools.bots.pos.desc");
          this.asideCaption("gui.tools.bots.caption.modules");
 
-         for (String var3 : BotModuleManager.supportedModuleNames()) {
-            this.buildModuleRow(var1, var3);
+         for (String supportedModuleName : BotModuleManager.supportedModuleNames()) {
+            this.buildModuleRow(selected, supportedModuleName);
          }
 
          this.asideCaption("gui.tools.bots.caption.network");
          this.asideInfo("gui.tools.bots.proxy", () -> {
-            String var1x = HeadlessBots.getProxy(var1);
+            String var1x = HeadlessBots.getProxy(selected);
             return var1x != null && !var1x.isBlank() ? var1x : t("gui.tools.bots.proxy.none");
          }, "gui.tools.bots.proxy.desc");
          this.asideInfo("gui.tools.bots.protocol", () -> {
-            int var1x = HeadlessBots.getProtocolVersion(var1);
+            int var1x = HeadlessBots.getProtocolVersion(selected);
             return var1x <= 0 ? t("gui.tools.bots.protocol.native") : String.valueOf(var1x);
          }, "gui.tools.bots.protocol.desc");
          this.asideAction("gui.tools.bots.remove", MenuGlyph.CLOSE, () -> "", () -> {
-            HeadlessBots.disconnect(var1);
-            HeadlessBots.remove(var1);
+            HeadlessBots.disconnect(selected);
+            HeadlessBots.remove(selected);
             this.selected = null;
             this.invalidate();
          }, "gui.tools.bots.remove.desc");
       }
    }
 
-   private void buildActionRow(String var1) {
+   private void buildActionRow(String selected) {
       this.asideCustom(
          32.0F,
-         (var2, var3, var4, var5, var6, var7, var8, var9) -> {
-            float var10 = var6 + 3.0F;
-            float var11 = var7 - 16.0F;
-            float var12 = var11 - 30.0F - GuiStyle.PADDING.intValue();
-            BoundsData var13 = new BoundsData(var5 + 8.0F, var10, var12, 26.0F);
-            BoundsData var14 = new BoundsData(var5 + 8.0F + var12 + GuiStyle.PADDING.intValue(), var10, 30.0F, 26.0F);
-            this.asideViewBounds = var14;
-            boolean var15 = this.insideAside(var3, var4);
-            boolean var16 = this.isOnline(var1);
-            boolean var17 = var15 && var13.contains(var3, var4);
-            boolean var18 = var15 && var14.contains(var3, var4);
-            ZenithColor var19 = var16 ? var9.getHeartIcon().getZenithColor() : var9.getPrimaryColor().getZenithColor();
-            var2.drawRoundedRect(
-               var13.getFloatValue(),
-               var13.getFloatValue2(),
-               var13.width(),
-               var13.height(),
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float y = f2 + 3.0F;
+            float f4 = f3 - 16.0F;
+            float width = f4 - 30.0F - GuiStyle.PADDING.intValue();
+            BoundsData boundsData = new BoundsData(f + 8.0F, y, width, 26.0F);
+            BoundsData asideViewBounds = new BoundsData(f + 8.0F + width + GuiStyle.PADDING.intValue(), y, 30.0F, 26.0F);
+            this.asideViewBounds = asideViewBounds;
+            boolean insideAside = this.insideAside(lastClickX, lastClickY);
+            boolean online = this.isOnline(selected);
+            boolean flag = insideAside && boundsData.contains(lastClickX, lastClickY);
+            boolean flag2 = insideAside && asideViewBounds.contains(lastClickX, lastClickY);
+            ZenithColor zenithColor = online ? zenithStyle.getHeartIcon().getZenithColor() : zenithStyle.getPrimaryColor().getZenithColor();
+            menuDrawContext.drawRoundedRect(
+               boundsData.getFloatValue(),
+               boundsData.getFloatValue2(),
+               boundsData.width(),
+               boundsData.height(),
                ProxyDotRadiusData.method8069(6.0F),
-               var19.method7293(var17 ? 62 : 34).method7294(var8)
+               zenithColor.method7293(flag ? 62 : 34).method7294(previewAlpha)
             );
-            Font var20 = Fonts.NEW_MEDIUM.getFont(5.4F);
-            String var21 = t(var16 ? "gui.tools.bots.disconnect" : "gui.tools.bots.connect");
-            float var22 = var20.width(var21);
-            float var23 = var13.getFloatValue() + (var13.width() - var22 - 9.0F) / 2.0F;
-            ZenithColor var24 = var19.method7293(var17 ? 255 : 225).method7294(var8);
-            if (var16) {
-               drawStop(var2, var23, var13.getFloatValue2() + (var13.height() - 5.0F) / 2.0F, var24);
+            Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+            String text = t(online ? "gui.tools.bots.disconnect" : "gui.tools.bots.connect");
+            float width2 = font.width(text);
+            float f5 = boundsData.getFloatValue() + (boundsData.width() - width2 - 9.0F) / 2.0F;
+            ZenithColor zenithColor2 = zenithColor.method7293(flag ? 255 : 225).method7294(previewAlpha);
+            if (online) {
+               drawStop(menuDrawContext, f5, boundsData.getFloatValue2() + (boundsData.height() - 5.0F) / 2.0F, zenithColor2);
             } else {
-               drawPlay(var2, var23 + 1.0F, var13.getFloatValue2() + (var13.height() - 6.0F) / 2.0F, var24);
+               drawPlay(menuDrawContext, f5 + 1.0F, boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F, zenithColor2);
             }
 
-            var2.drawText(var20, var21, var23 + 9.0F, var13.getFloatValue2() + (var13.height() - var20.height()) / 2.0F, var24);
-            var2.drawRoundedRect(
-               var14.getFloatValue(),
-               var14.getFloatValue2(),
-               var14.width(),
-               var14.height(),
+            menuDrawContext.drawText(font, text, f5 + 9.0F, boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F, zenithColor2);
+            menuDrawContext.drawRoundedRect(
+               asideViewBounds.getFloatValue(),
+               asideViewBounds.getFloatValue2(),
+               asideViewBounds.width(),
+               asideViewBounds.height(),
                ProxyDotRadiusData.method8069(6.0F),
-               var9.getDisableActiveBg().getZenithColor().method7294(var8 * (var18 ? 1.7F : 1.0F))
+               zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * (flag2 ? 1.7F : 1.0F))
             );
             MenuGlyph.WORLD
                .draw(
-                  var2,
-                  var14.getFloatValue() + (var14.width() - 6.0F) / 2.0F,
-                  var14.getFloatValue2() + (var14.height() - 6.0F) / 2.0F,
-                  (var18 ? var9.getTextEnable() : var9.getTextSecondary()).getZenithColor().method7294(var8)
+                  menuDrawContext,
+                  asideViewBounds.getFloatValue() + (asideViewBounds.width() - 6.0F) / 2.0F,
+                  asideViewBounds.getFloatValue2() + (asideViewBounds.height() - 6.0F) / 2.0F,
+                  (flag2 ? zenithStyle.getTextEnable() : zenithStyle.getTextSecondary()).getZenithColor().method7294(previewAlpha)
                );
-            if (var17) {
-               HoverInfo.request(var21, t(var16 ? "gui.tools.bots.disconnect.desc" : "gui.tools.bots.connect.desc"));
-            } else if (var18) {
+            if (flag) {
+               HoverInfo.request(text, t(online ? "gui.tools.bots.disconnect.desc" : "gui.tools.bots.connect.desc"));
+            } else if (flag2) {
                HoverInfo.request(t("gui.tools.bots.view"), t("gui.tools.bots.view.desc"));
             }
          },
          () -> {
             if (this.asideViewBounds != null && this.asideViewBounds.contains(this.lastClickX, this.lastClickY)) {
-               mc.gui.setScreen(new BotControlScreen(var1));
+               mc.gui.setScreen(new BotControlScreen(selected));
             } else {
-               this.toggleConnection(var1);
+               this.toggleConnection(selected);
                this.invalidate();
             }
          },
@@ -565,167 +565,167 @@ public class BotsToolPanel extends ToolTab {
       );
    }
 
-   private void buildModuleRow(String var1, String var2) {
-      String var3 = displayModuleName(var2);
-      this.asideCustom(16.0F, (var4, var5, var6, var7, var8, var9, var10, var11) -> {
-         boolean var12 = this.isModuleEnabled(var1, var2);
-         boolean var13 = this.insideAside(var5, var6) && new BoundsData(var7, var8, var9, 16.0F).contains(var5, var6);
-         if (var13) {
-            var4.drawRect(var7, var8, var9, 16.0F, var11.getDisableActiveBg().getZenithColor().method7294(var10 * 0.45F));
-            HoverInfo.request(var3, this.moduleDescription(var2));
+   private void buildModuleRow(String selected, String supportedModuleName) {
+      String name = displayModuleName(supportedModuleName);
+      this.asideCustom(16.0F, (menuDrawContext, lastClickX, lastClickY, floatValue, y, width, previewAlpha, zenithStyle) -> {
+         boolean moduleEnabled = this.isModuleEnabled(selected, supportedModuleName);
+         boolean flag = this.insideAside(lastClickX, lastClickY) && new BoundsData(floatValue, y, width, 16.0F).contains(lastClickX, lastClickY);
+         if (flag) {
+            menuDrawContext.drawRect(floatValue, y, width, 16.0F, zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * 0.45F));
+            HoverInfo.request(name, this.moduleDescription(supportedModuleName));
          }
 
-         Font var14 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         ZenithColor var15 = (var12 ? var11.getTextEnable() : var11.getTextSecondary()).getZenithColor().method7294(var10);
-         var4.drawText(var14, var3, var7 + 8.0F, var8 + (16.0F - var14.height()) / 2.0F, var15);
-         float var16 = 9.0F;
-         float var17 = 5.0F;
-         this.drawSwitch(var4, var7 + var9 - 8.0F - var16, var8 + (16.0F - var17) / 2.0F, var16, var17, var12, var10, var11);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+         ZenithColor zenithColor = (moduleEnabled ? zenithStyle.getTextEnable() : zenithStyle.getTextSecondary()).getZenithColor().method7294(previewAlpha);
+         menuDrawContext.drawText(font, name, floatValue + 8.0F, y + (16.0F - font.height()) / 2.0F, zenithColor);
+         float f = 9.0F;
+         float height = 5.0F;
+         this.drawSwitch(menuDrawContext, floatValue + width - 8.0F - f, y + (16.0F - height) / 2.0F, f, height, moduleEnabled, previewAlpha, zenithStyle);
       }, () -> {
-         HeadlessBots.setModuleEnabled(var1, var2, !this.isModuleEnabled(var1, var2));
+         HeadlessBots.setModuleEnabled(selected, supportedModuleName, !this.isModuleEnabled(selected, supportedModuleName));
          Zenith.getInstance().getClientSounds().method1570(false);
       }, null);
    }
 
-   private void renderVitals(MenuDrawContext var1, String var2, int var3, int var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      BotClient var10 = HeadlessBots.get(var2);
-      BotPlayer var11 = var10 == null ? null : var10.getPlayer();
-      float var12 = var11 == null ? 0.0F : var11.getHealth();
-      float var13 = var11 == null ? 20.0F : Math.max(1.0F, var11.getMaxHealth());
-      float var14 = Mth.clamp(var12 / var13, 0.0F, 1.0F);
-      Font var15 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      String var16 = t("gui.tools.bots.health");
-      var1.drawText(var15, var16, var5 + 8.0F, var6 + 3.0F, var9.getTextSecondary().getZenithColor().method7294(var8));
-      String var17 = var11 == null ? "—" : String.format(Locale.ROOT, "%.1f", var12);
-      var1.drawText(
-         var15,
-         var17,
-         var5 + var7 - 8.0F - var15.width(var17),
-         var6 + 3.0F,
-         (var11 == null ? var9.getTextTertiary() : var9.getTextEnable()).getZenithColor().method7294(var8)
+   private void renderVitals(MenuDrawContext menuDrawContext, String selected, int lastClickX, int lastClickY, float floatValue, float y, float width, float previewAlpha, ZenithStyle zenithStyle) {
+      BotClient botClient = HeadlessBots.get(selected);
+      BotPlayer player = botClient == null ? null : botClient.getPlayer();
+      float health = player == null ? 0.0F : player.getHealth();
+      float f = player == null ? 20.0F : Math.max(1.0F, player.getMaxHealth());
+      float f2 = Mth.clamp(health / f, 0.0F, 1.0F);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      String text = t("gui.tools.bots.health");
+      menuDrawContext.drawText(font, text, floatValue + 8.0F, y + 3.0F, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      String str = player == null ? "—" : String.format(Locale.ROOT, "%.1f", health);
+      menuDrawContext.drawText(
+         font,
+         str,
+         floatValue + width - 8.0F - font.width(str),
+         y + 3.0F,
+         (player == null ? zenithStyle.getTextTertiary() : zenithStyle.getTextEnable()).getZenithColor().method7294(previewAlpha)
       );
-      float var18 = var6 + 3.0F + var15.height() + 4.0F;
-      float var19 = var7 - 16.0F;
-      var1.drawRoundedRect(
-         var5 + 8.0F, var18, var19, 3.0F, ProxyDotRadiusData.method8069(1.5F), var9.getFieldSurfaceBackground().getZenithColor().method7294(var8 * 4.0F)
+      float y2 = y + 3.0F + font.height() + 4.0F;
+      float width2 = width - 16.0F;
+      menuDrawContext.drawRoundedRect(
+         floatValue + 8.0F, y2, width2, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 4.0F)
       );
-      if (var14 > 0.0F) {
-         ZenithColor var20 = var14 > 0.35F ? var9.getFriendColor().getZenithColor() : var9.getHeartIcon().getZenithColor();
-         var1.drawRoundedRect(var5 + 8.0F, var18, Math.max(3.0F, var19 * var14), 3.0F, ProxyDotRadiusData.method8069(1.5F), var20.method7294(var8));
+      if (f2 > 0.0F) {
+         ZenithColor zenithColor = f2 > 0.35F ? zenithStyle.getFriendColor().getZenithColor() : zenithStyle.getHeartIcon().getZenithColor();
+         menuDrawContext.drawRoundedRect(floatValue + 8.0F, y2, Math.max(3.0F, width2 * f2), 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor.method7294(previewAlpha));
       }
 
-      if (this.insideAside(var3, var4) && new BoundsData(var5, var6, var7, 22.0F).contains(var3, var4)) {
-         HoverInfo.request(var16, t("gui.tools.bots.health.desc"));
+      if (this.insideAside(lastClickX, lastClickY) && new BoundsData(floatValue, y, width, 22.0F).contains(lastClickX, lastClickY)) {
+         HoverInfo.request(text, t("gui.tools.bots.health.desc"));
       }
    }
 
-   private void renderPreviewFrame(MenuDrawContext var1, String var2, int var3, int var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      float var10 = var5 + 8.0F;
-      float var11 = var6 + 2.0F;
-      float var12 = var7 - 16.0F;
-      float var13 = 90.0F;
-      ProxyDotRadiusData var14 = ProxyDotRadiusData.method8069(6.0F);
-      BoundsData var15 = new BoundsData(var10, var11, var12, var13);
-      boolean var16 = var2 != null && this.insideAside(var3, var4) && var15.contains(var3, var4);
-      var1.drawRoundedRect(var10, var11, var12, var13, var14, var9.getPanelLeftBackground().getZenithColor().method7293(190).method7294(var8));
-      var1.drawRoundedBorder(var10, var11, var12, var13, 0.1F, var14, var9.getFieldBorder().getZenithColor().method7294(var8 * (var16 ? 6.0F : 3.0F)));
-      if (var2 == null) {
+   private void renderPreviewFrame(MenuDrawContext menuDrawContext, String selected, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float floatValue = f + 8.0F;
+      float y = f2 + 2.0F;
+      float width = f3 - 16.0F;
+      float height = 90.0F;
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(6.0F);
+      BoundsData boundsData = new BoundsData(floatValue, y, width, height);
+      boolean previewHovered = selected != null && this.insideAside(lastClickX, lastClickY) && boundsData.contains(lastClickX, lastClickY);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, zenithStyle.getPanelLeftBackground().getZenithColor().method7293(190).method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(floatValue, y, width, height, 0.1F, headerRadius, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * (previewHovered ? 6.0F : 3.0F)));
+      if (selected == null) {
          this.previewRect = null;
-         this.renderEmptyPreview(var1, var10, var11, var12, var13, var8, var9);
+         this.renderEmptyPreview(menuDrawContext, floatValue, y, width, height, previewAlpha, zenithStyle);
       } else {
-         boolean var17 = this.isJoined(var2);
-         if (!var17) {
-            Identifier var18 = BotAvatarCache.prewarm(var2);
-            float var19 = 22.0F;
-            float var20 = var11 + var13 / 2.0F - var19 / 2.0F - 7.0F;
-            if (var18 != null) {
+         boolean joined = this.isJoined(selected);
+         if (!joined) {
+            Identifier prewarm = BotAvatarCache.prewarm(selected);
+            float width2 = 22.0F;
+            float y2 = y + height / 2.0F - width2 / 2.0F - 7.0F;
+            if (prewarm != null) {
                RenderShaders.method5294(
-                  MatrixUtils.method664(var1.pose()),
-                  var18,
-                  var10 + (var12 - var19) / 2.0F,
-                  var20,
-                  var19,
-                  var19,
+                  MatrixUtils.method664(menuDrawContext.pose()),
+                  prewarm,
+                  floatValue + (width - width2) / 2.0F,
+                  y2,
+                  width2,
+                  width2,
                   ProxyDotRadiusData.method8069(5.0F),
-                  ZenithColor.INSTANCE.method7294(var8 * 0.75F)
+                  ZenithColor.INSTANCE.method7294(previewAlpha * 0.75F)
                );
             }
 
-            Font var21 = Fonts.NEW_MEDIUM.getFont(5.0F);
-            String var22 = this.phaseLabel(var2);
-            var1.drawText(var21, var22, var10 + (var12 - var21.width(var22)) / 2.0F, var20 + var19 + 6.0F, this.phaseColor(var2, var9).method7294(var8));
-            Font var23 = Fonts.NEW_REGULAR.getFont(4.6F);
-            String var24 = t(this.isOnline(var2) ? "gui.tools.bots.hint.wait" : "gui.tools.bots.hint.connect");
-            var1.drawText(
-               var23,
-               var24,
-               var10 + (var12 - var23.width(var24)) / 2.0F,
-               var20 + var19 + 6.0F + var21.height() + 4.0F,
-               var9.getTextTertiary().getZenithColor().method7294(var8 * 0.8F)
+            Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+            String phaseLabel = this.phaseLabel(selected);
+            menuDrawContext.drawText(font, phaseLabel, floatValue + (width - font.width(phaseLabel)) / 2.0F, y2 + width2 + 6.0F, this.phaseColor(selected, zenithStyle).method7294(previewAlpha));
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.6F);
+            String text = t(this.isOnline(selected) ? "gui.tools.bots.hint.wait" : "gui.tools.bots.hint.connect");
+            menuDrawContext.drawText(
+               font2,
+               text,
+               floatValue + (width - font2.width(text)) / 2.0F,
+               y2 + width2 + 6.0F + font.height() + 4.0F,
+               zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F)
             );
          } else if (!this.previewHasFrame) {
-            Font var25 = Fonts.NEW_REGULAR.getFont(4.8F);
-            String var27 = t("gui.bot.loadingWorld");
-            var1.drawText(
-               var25,
-               var27,
-               var10 + (var12 - var25.width(var27)) / 2.0F,
-               var11 + var13 / 2.0F - var25.height() / 2.0F,
-               var9.getTextTertiary().getZenithColor().method7294(var8)
+            Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+            String text = t("gui.bot.loadingWorld");
+            menuDrawContext.drawText(
+               font,
+               text,
+               floatValue + (width - font.width(text)) / 2.0F,
+               y + height / 2.0F - font.height() / 2.0F,
+               zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
          }
 
-         if (var16) {
-            String var26 = var17 ? "gui.tools.bots.view.desc" : (this.isOnline(var2) ? "gui.tools.bots.disconnect.desc" : "gui.tools.bots.connect.desc");
-            HoverInfo.request(var2, t(var26));
+         if (previewHovered) {
+            String key = joined ? "gui.tools.bots.view.desc" : (this.isOnline(selected) ? "gui.tools.bots.disconnect.desc" : "gui.tools.bots.connect.desc");
+            HoverInfo.request(selected, t(key));
          }
 
-         this.previewRect = var17 ? var15 : null;
-         this.previewAlpha = var8;
-         this.previewHovered = var16;
+         this.previewRect = joined ? boundsData : null;
+         this.previewAlpha = previewAlpha;
+         this.previewHovered = previewHovered;
       }
    }
 
    @Override
-   public void renderPriority(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      BoundsData var7 = this.previewRect;
+   public void renderPriority(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3) {
+      BoundsData previewRect = this.previewRect;
       this.previewRect = null;
-      String var8 = this.previewOwner;
-      BotClient var9 = var8 == null ? null : HeadlessBots.get(var8);
-      if (var9 == null || !var9.isJoined()) {
+      String previewOwner = this.previewOwner;
+      BotClient previewClient = previewOwner == null ? null : HeadlessBots.get(previewOwner);
+      if (previewClient == null || !previewClient.isJoined()) {
          this.releasePreview();
          this.previewHasFrame = false;
-      } else if (var7 != null && !(this.previewAlpha < 0.9F) && !(var4 < 0.9F)) {
-         ZenithStyle var10 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var10 != null) {
-            if (this.previewClient != var9) {
+      } else if (previewRect != null && !(this.previewAlpha < 0.9F) && !(f < 0.9F)) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            if (this.previewClient != previewClient) {
                this.releasePreview();
-               this.previewClient = var9;
-               this.previewView = new BotWorldView(var9);
+               this.previewClient = previewClient;
+               this.previewView = new BotWorldView(previewClient);
             }
 
             MsdfRenderer.flushBatch();
-            var1.draw();
-            double var11 = mc.getWindow().getGuiScale() * Math.max(0.5F, Zenith.getInstance().getNLMenuScreen().getGuiScale());
-            int var13 = Mth.clamp((int)(var7.width() * var11), 64, 960);
-            int var14 = Mth.clamp((int)(var7.height() * var11), 64, 960);
-            this.previewHasFrame = this.previewView.renderToFbo(var13, var14);
+            menuDrawContext.draw();
+            double d = mc.getWindow().getGuiScale() * Math.max(0.5F, Zenith.getInstance().getNLMenuScreen().getGuiScale());
+            int width = Mth.clamp((int)(previewRect.width() * d), 64, 960);
+            int height = Mth.clamp((int)(previewRect.height() * d), 64, 960);
+            this.previewHasFrame = this.previewView.renderToFbo(width, height);
             if (this.previewHasFrame) {
-               BoundsData var15 = this.asideViewport();
-               boolean var16 = var15 != null;
-               if (var16) {
-                  var1.enableScissor(
-                     var15.getFloatValue(), var15.getFloatValue2(), var15.getFloatValue() + var15.width(), var15.getFloatValue2() + var15.height()
+               BoundsData asideViewport = this.asideViewport();
+               boolean flag = asideViewport != null;
+               if (flag) {
+                  menuDrawContext.enableScissor(
+                     asideViewport.getFloatValue(), asideViewport.getFloatValue2(), asideViewport.getFloatValue() + asideViewport.width(), asideViewport.getFloatValue2() + asideViewport.height()
                   );
                }
 
                RenderShaders.method5298(
-                  MatrixUtils.method664(var1.pose()),
+                  MatrixUtils.method664(menuDrawContext.pose()),
                   this.previewView.getColorAttachment(),
-                  var7.getFloatValue(),
-                  var7.getFloatValue2(),
-                  var7.width(),
-                  var7.height(),
+                  previewRect.getFloatValue(),
+                  previewRect.getFloatValue2(),
+                  previewRect.width(),
+                  previewRect.height(),
                   ProxyDotRadiusData.method8069(6.0F),
                   ZenithColor.INSTANCE.method7294(this.previewAlpha),
                   0.0F,
@@ -733,64 +733,64 @@ public class BotsToolPanel extends ToolTab {
                   1.0F,
                   0.0F
                );
-               this.renderPreviewOverlay(var1, var8, var9, var7, var10);
-               if (var16) {
+               this.renderPreviewOverlay(menuDrawContext, previewOwner, previewClient, previewRect, currentStyle);
+               if (flag) {
                   MsdfRenderer.flushBatch();
-                  var1.disableScissor();
+                  menuDrawContext.disableScissor();
                }
             }
          }
       }
    }
 
-   private void renderPreviewOverlay(MenuDrawContext var1, String var2, BotClient var3, BoundsData var4, ZenithStyle var5) {
-      float var6 = 15.0F;
-      var1.drawRoundedRect(
-         var4.getFloatValue(),
-         var4.getFloatValue2() + var4.height() - var6,
-         var4.width(),
-         var6,
+   private void renderPreviewOverlay(MenuDrawContext menuDrawContext, String previewOwner, BotClient previewClient, BoundsData previewRect, ZenithStyle currentStyle) {
+      float height = 15.0F;
+      menuDrawContext.drawRoundedRect(
+         previewRect.getFloatValue(),
+         previewRect.getFloatValue2() + previewRect.height() - height,
+         previewRect.width(),
+         height,
          ProxyDotRadiusData.method8077(6.0F),
          new ZenithColor(10, 10, 14, 195).method7294(this.previewAlpha)
       );
-      Font var7 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      float var8 = var4.getFloatValue2() + var4.height() - var6 / 2.0F - var7.height() / 2.0F;
-      BotPlayer var9 = var3.getPlayer();
-      String var10 = var9 == null ? "" : String.format(Locale.ROOT, "%.0f HP", var9.getHealth());
-      float var11 = var7.width(var10);
-      var1.drawText(var7, fit(var7, var2, var4.width() - 16.0F - var11), var4.getFloatValue() + 6.0F, var8, ZenithColor.INSTANCE.method7294(this.previewAlpha));
-      if (!var10.isEmpty()) {
-         var1.drawText(
-            var7, var10, var4.getFloatValue() + var4.width() - 6.0F - var11, var8, var5.getHeartIcon().getZenithColor().method7294(this.previewAlpha)
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      float centeredTextY = previewRect.getFloatValue2() + previewRect.height() - height / 2.0F - font.height() / 2.0F;
+      BotPlayer player = previewClient.getPlayer();
+      String text = player == null ? "" : String.format(Locale.ROOT, "%.0f HP", player.getHealth());
+      float width = font.width(text);
+      menuDrawContext.drawText(font, fit(font, previewOwner, previewRect.width() - 16.0F - width), previewRect.getFloatValue() + 6.0F, centeredTextY, ZenithColor.INSTANCE.method7294(this.previewAlpha));
+      if (!text.isEmpty()) {
+         menuDrawContext.drawText(
+            font, text, previewRect.getFloatValue() + previewRect.width() - 6.0F - width, centeredTextY, currentStyle.getHeartIcon().getZenithColor().method7294(this.previewAlpha)
          );
       }
 
       if (this.previewHovered) {
-         var1.drawRoundedRect(
-            var4.getFloatValue(),
-            var4.getFloatValue2(),
-            var4.width(),
-            var4.height(),
+         menuDrawContext.drawRoundedRect(
+            previewRect.getFloatValue(),
+            previewRect.getFloatValue2(),
+            previewRect.width(),
+            previewRect.height(),
             ProxyDotRadiusData.method8069(6.0F),
             new ZenithColor(10, 10, 14, 120).method7294(this.previewAlpha)
          );
-         Font var12 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         String var13 = t("gui.tools.bots.hint.control");
-         var1.drawText(
-            var12,
-            var13,
-            var4.getFloatValue() + (var4.width() - var12.width(var13)) / 2.0F,
-            var4.getFloatValue2() + var4.height() / 2.0F - var12.height() / 2.0F,
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+         String str = t("gui.tools.bots.hint.control");
+         menuDrawContext.drawText(
+            font2,
+            str,
+            previewRect.getFloatValue() + (previewRect.width() - font2.width(str)) / 2.0F,
+            previewRect.getFloatValue2() + previewRect.height() / 2.0F - font2.height() / 2.0F,
             ZenithColor.INSTANCE.method7294(this.previewAlpha)
          );
       }
    }
 
-   private void openPreview(String var1) {
-      if (this.isJoined(var1)) {
-         mc.gui.setScreen(new BotControlScreen(var1));
+   private void openPreview(String selected) {
+      if (this.isJoined(selected)) {
+         mc.gui.setScreen(new BotControlScreen(selected));
       } else {
-         this.toggleConnection(var1);
+         this.toggleConnection(selected);
          this.invalidate();
       }
    }
@@ -804,226 +804,226 @@ public class BotsToolPanel extends ToolTab {
       this.previewClient = null;
    }
 
-   private void drawPill(MenuDrawContext var1, float var2, float var3, float var4, String var5, ZenithColor var6, float var7) {
-      float var8 = 9.0F;
-      var1.drawRoundedRect(var2, var3, var4, var8, ProxyDotRadiusData.method8069(var8 / 2.0F), var6.method7293(34).method7294(var7));
-      Font var9 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      var1.drawText(var9, var5, var2 + (var4 - var9.width(var5)) / 2.0F, var3 + (var8 - var9.height()) / 2.0F, var6.method7294(var7));
+   private void drawPill(MenuDrawContext menuDrawContext, float floatValue, float y, float width, String phaseLabel, ZenithColor phaseColor, float previewAlpha) {
+      float height = 9.0F;
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), phaseColor.method7293(34).method7294(previewAlpha));
+      Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+      menuDrawContext.drawText(font, phaseLabel, floatValue + (width - font.width(phaseLabel)) / 2.0F, y + (height - font.height()) / 2.0F, phaseColor.method7294(previewAlpha));
    }
 
-   private void drawSwitch(MenuDrawContext var1, float var2, float var3, float var4, float var5, boolean var6, float var7, ZenithStyle var8) {
-      var1.drawRect(var2, var3, var4, var5, var8.getFieldSurfaceBackground().getZenithColor().method7294(var7 * 3.0F));
-      var1.drawRoundedBorder(var2, var3, var4, var5, 0.1F, ProxyDotRadiusData.INSTANCE, var8.getFieldBorder().getZenithColor().method7294(var7 * 4.0F));
-      float var9 = 3.0F;
-      float var10 = var6 ? var2 + var4 - var9 - 1.0F : var2 + 1.0F;
-      var1.drawRect(var10, var3 + 1.0F, var9, var5 - 2.0F, (var6 ? var8.getPrimaryColor() : var8.getTextTertiary()).getZenithColor().method7294(var7));
+   private void drawSwitch(MenuDrawContext menuDrawContext, float floatValue, float y, float width, float height, boolean moduleEnabled, float previewAlpha, ZenithStyle zenithStyle) {
+      menuDrawContext.drawRect(floatValue, y, width, height, zenithStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 3.0F));
+      menuDrawContext.drawRoundedBorder(floatValue, y, width, height, 0.1F, ProxyDotRadiusData.INSTANCE, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 4.0F));
+      float f = 3.0F;
+      float floatValue2 = moduleEnabled ? floatValue + width - f - 1.0F : floatValue + 1.0F;
+      menuDrawContext.drawRect(floatValue2, y + 1.0F, f, height - 2.0F, (moduleEnabled ? zenithStyle.getPrimaryColor() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha));
    }
 
-   private void renderEmptyPreview(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, ZenithStyle var7) {
-      ZenithColor var8 = var7.getPrimaryColor().getZenithColor();
-      float var9 = (float)(System.currentTimeMillis() % 2600L) / 2600.0F;
-      float var10 = var3 + 4.0F + (var5 - 8.0F) * var9;
-      float var11 = (float)Math.sin(var9 * Math.PI);
-      var1.drawRect(var2 + 6.0F, var10, var4 - 12.0F, 0.6F, var8.method7292(0.35F * var11).method7294(var6));
-      var1.drawRect(var2 + 6.0F, var10 - 6.0F, var4 - 12.0F, 6.0F, var8.method7292(0.04F * var11).method7294(var6));
-      float var12 = 7.0F;
-      ZenithColor var13 = var7.getTextTertiary().getZenithColor().method7292(0.5F).method7294(var6);
-      float[][] var14 = new float[][]{
-         {var2 + 6.0F, var3 + 6.0F, 1.0F, 1.0F},
-         {var2 + var4 - 6.0F, var3 + 6.0F, -1.0F, 1.0F},
-         {var2 + 6.0F, var3 + var5 - 6.0F, 1.0F, -1.0F},
-         {var2 + var4 - 6.0F, var3 + var5 - 6.0F, -1.0F, -1.0F}
+   private void renderEmptyPreview(MenuDrawContext menuDrawContext, float floatValue, float y, float width, float height, float previewAlpha, ZenithStyle zenithStyle) {
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      float f = (float)(System.currentTimeMillis() % 2600L) / 2600.0F;
+      float y2 = y + 4.0F + (height - 8.0F) * f;
+      float f2 = (float)Math.sin(f * Math.PI);
+      menuDrawContext.drawRect(floatValue + 6.0F, y2, width - 12.0F, 0.6F, zenithColor.method7292(0.35F * f2).method7294(previewAlpha));
+      menuDrawContext.drawRect(floatValue + 6.0F, y2 - 6.0F, width - 12.0F, 6.0F, zenithColor.method7292(0.04F * f2).method7294(previewAlpha));
+      float width2 = 7.0F;
+      ZenithColor zenithColor2 = zenithStyle.getTextTertiary().getZenithColor().method7292(0.5F).method7294(previewAlpha);
+      float[][] floatses = new float[][]{
+         {floatValue + 6.0F, y + 6.0F, 1.0F, 1.0F},
+         {floatValue + width - 6.0F, y + 6.0F, -1.0F, 1.0F},
+         {floatValue + 6.0F, y + height - 6.0F, 1.0F, -1.0F},
+         {floatValue + width - 6.0F, y + height - 6.0F, -1.0F, -1.0F}
       };
 
-      for (float[] var18 : var14) {
-         float var19 = var18[2] > 0.0F ? var18[0] : var18[0] - var12;
-         float var20 = var18[3] > 0.0F ? var18[1] : var18[1] - 0.6F;
-         var1.drawRect(var19, var20, var12, 0.6F, var13);
-         float var21 = var18[2] > 0.0F ? var18[0] : var18[0] - 0.6F;
-         float var22 = var18[3] > 0.0F ? var18[1] : var18[1] - var12;
-         var1.drawRect(var21, var22, 0.6F, var12, var13);
+      for (float[] floats : floatses) {
+         float floatValue2 = floats[2] > 0.0F ? floats[0] : floats[0] - width2;
+         float y3 = floats[3] > 0.0F ? floats[1] : floats[1] - 0.6F;
+         menuDrawContext.drawRect(floatValue2, y3, width2, 0.6F, zenithColor2);
+         float floatValue3 = floats[2] > 0.0F ? floats[0] : floats[0] - 0.6F;
+         float y4 = floats[3] > 0.0F ? floats[1] : floats[1] - width2;
+         menuDrawContext.drawRect(floatValue3, y4, 0.6F, width2, zenithColor2);
       }
 
-      float var25 = 26.0F;
-      float var26 = (float)Math.sin(System.currentTimeMillis() / 650.0) * 1.3F;
-      float var27 = var2 + (var4 - var25) / 2.0F;
-      float var28 = var3 + var5 / 2.0F - var25 / 2.0F - 10.0F + var26;
-      ToolTab.tile(var1, var7, var27, var28, var25, var8, 0.55F, var6);
-      ToolTab.bigGlyph(var1, MenuGlyph.BOTS, var27 + var25 / 2.0F, var28 + var25 / 2.0F, 2.0F, var8.method7294(var6));
-      Font var29 = Fonts.NEW_MEDIUM.getFont(5.2F);
-      Font var30 = Fonts.NEW_REGULAR.getFont(4.3F);
-      String var31 = t("gui.tools.bots.preview.title");
-      float var32 = var28 + var25 + 7.0F - var26;
-      var1.drawText(var29, var31, var2 + (var4 - var29.width(var31)) / 2.0F, var32, var7.getTextEnable().getZenithColor().method7294(var6));
-      var32 += var29.height() + 3.0F;
+      float width3 = 26.0F;
+      float f3 = (float)Math.sin(System.currentTimeMillis() / 650.0) * 1.3F;
+      float floatValue2 = floatValue + (width - width3) / 2.0F;
+      float y3 = y + height / 2.0F - width3 / 2.0F - 10.0F + f3;
+      ToolTab.tile(menuDrawContext, zenithStyle, floatValue2, y3, width3, zenithColor, 0.55F, previewAlpha);
+      ToolTab.bigGlyph(menuDrawContext, MenuGlyph.BOTS, floatValue2 + width3 / 2.0F, y3 + width3 / 2.0F, 2.0F, zenithColor.method7294(previewAlpha));
+      Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+      String text = t("gui.tools.bots.preview.title");
+      float centeredTextY = y3 + width3 + 7.0F - f3;
+      menuDrawContext.drawText(font, text, floatValue + (width - font.width(text)) / 2.0F, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      centeredTextY += font.height() + 3.0F;
 
-      for (String var24 : wrapText(t("gui.tools.bots.preview.hint"), var30, var4 - 24.0F, 2)) {
-         var1.drawText(var30, var24, var2 + (var4 - var30.width(var24)) / 2.0F, var32, var7.getTextTertiary().getZenithColor().method7294(var6));
-         var32 += var30.height() + 2.0F;
+      for (String str : wrapText(t("gui.tools.bots.preview.hint"), font2, width - 24.0F, 2)) {
+         menuDrawContext.drawText(font2, str, floatValue + (width - font2.width(str)) / 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font2.height() + 2.0F;
       }
    }
 
-   private void renderEmptyList(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      ZenithColor var9 = var8.getPrimaryColor().getZenithColor();
-      float var10 = var4 + 8.0F;
-      float var11 = var6 - 16.0F;
-      ToolTab.card(var1, var8, var10, var5 + 4.0F, var11, 62.0F, 0.0F, var7);
-      float var12 = 22.0F;
-      float var13 = (float)Math.sin(System.currentTimeMillis() / 650.0) * 1.2F;
-      float var14 = var10 + 10.0F;
-      float var15 = var5 + 4.0F + (62.0F - var12) / 2.0F + var13;
-      ToolTab.tile(var1, var8, var14, var15, var12, var9, 0.55F, var7);
-      ToolTab.bigGlyph(var1, MenuGlyph.BOTS, var14 + var12 / 2.0F, var15 + var12 / 2.0F, 1.6F, var9.method7294(var7));
-      Font var16 = Fonts.NEW_SEMIBOLD.getFont(5.8F);
-      Font var17 = Fonts.NEW_REGULAR.getFont(4.4F);
-      float var18 = var14 + var12 + 10.0F;
-      float var19 = var10 + var11 - 8.0F - var18;
-      List<String> var20 = wrapText(t("gui.tools.bots.empty"), var17, var19, 3);
-      float var21 = var16.height() + 4.0F + var20.size() * (var17.height() + 2.0F);
-      float var22 = var5 + 4.0F + (62.0F - var21) / 2.0F;
-      var1.drawText(var16, var16.clip(t("gui.tools.bots.emptyTitle"), var19), var18, var22, var8.getTextEnable().getZenithColor().method7294(var7));
-      var22 += var16.height() + 4.0F;
+   private void renderEmptyList(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      float floatValue = f + 8.0F;
+      float width = f3 - 16.0F;
+      ToolTab.card(menuDrawContext, zenithStyle, floatValue, f2 + 4.0F, width, 62.0F, 0.0F, previewAlpha);
+      float width2 = 22.0F;
+      float f4 = (float)Math.sin(System.currentTimeMillis() / 650.0) * 1.2F;
+      float floatValue2 = floatValue + 10.0F;
+      float y = f2 + 4.0F + (62.0F - width2) / 2.0F + f4;
+      ToolTab.tile(menuDrawContext, zenithStyle, floatValue2, y, width2, zenithColor, 0.55F, previewAlpha);
+      ToolTab.bigGlyph(menuDrawContext, MenuGlyph.BOTS, floatValue2 + width2 / 2.0F, y + width2 / 2.0F, 1.6F, zenithColor.method7294(previewAlpha));
+      Font font = Fonts.NEW_SEMIBOLD.getFont(5.8F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+      float floatValue3 = floatValue2 + width2 + 10.0F;
+      float shownWidth = floatValue + width - 8.0F - floatValue3;
+      List<String> strings = wrapText(t("gui.tools.bots.empty"), font2, shownWidth, 3);
+      float f5 = font.height() + 4.0F + strings.size() * (font2.height() + 2.0F);
+      float centeredTextY = f2 + 4.0F + (62.0F - f5) / 2.0F;
+      menuDrawContext.drawText(font, font.clip(t("gui.tools.bots.emptyTitle"), shownWidth), floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      centeredTextY += font.height() + 4.0F;
 
-      for (String var24 : var20) {
-         var1.drawText(var17, var24, var18, var22, var8.getTextTertiary().getZenithColor().method7294(var7));
-         var22 += var17.height() + 2.0F;
+      for (String text : strings) {
+         menuDrawContext.drawText(font2, text, floatValue3, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font2.height() + 2.0F;
       }
 
-      boolean var41 = this.addressInput != null && !this.addressInput.getText().isBlank();
-      boolean var42 = this.nameInput != null && !this.nameInput.getText().isBlank();
-      String[] var25 = new String[]{t("gui.tools.bots.step.address"), t("gui.tools.bots.step.name"), t("gui.tools.bots.step.add")};
-      boolean[] var26 = new boolean[]{var41, var42, false};
-      int var27 = !var41 ? 0 : (!var42 ? 1 : 2);
-      float var28 = var5 + 72.0F;
-      Font var29 = Fonts.NEW_MEDIUM.getFont(4.7F);
-      Font var30 = Fonts.NEW_MEDIUM.getFont(4.3F);
+      boolean flag = this.addressInput != null && !this.addressInput.getText().isBlank();
+      boolean flag2 = this.nameInput != null && !this.nameInput.getText().isBlank();
+      String[] strings2 = new String[]{t("gui.tools.bots.step.address"), t("gui.tools.bots.step.name"), t("gui.tools.bots.step.add")};
+      boolean[] flags = new boolean[]{flag, flag2, false};
+      int n3 = !flag ? 0 : (!flag2 ? 1 : 2);
+      float f6 = f2 + 72.0F;
+      Font font3 = Fonts.NEW_MEDIUM.getFont(4.7F);
+      Font font4 = Fonts.NEW_MEDIUM.getFont(4.3F);
 
-      for (int var31 = 0; var31 < var25.length; var31++) {
-         float var32 = var28 + var31 * 18.0F;
-         boolean var33 = var31 == var27;
-         float var34 = var33 ? ToolTab.pulse(0.8F) : 0.0F;
-         ZenithColor var35 = var26[var31] ? ToolTab.OK : (var33 ? var9 : var8.getTextTertiary().getZenithColor());
-         ToolTab.card(var1, var8, var10, var32, var11, 15.0F, var33 ? 0.4F : 0.0F, var7);
-         float var36 = 10.0F;
-         float var37 = var10 + 4.0F;
-         float var38 = var32 + 2.5F;
-         var1.drawRoundedRect(var37, var38, var36, var36, ProxyDotRadiusData.method8069(var36 / 2.0F), var35.method7292(0.18F + 0.12F * var34).method7294(var7));
-         String var39 = var26[var31] ? "✓" : String.valueOf(var31 + 1);
-         if (var26[var31]) {
-            MenuGlyph.CHECK.draw(var1, var37 + (var36 - 6.0F) / 2.0F, var38 + (var36 - 6.0F) / 2.0F, var35.method7294(var7));
+      for (int i = 0; i < strings2.length; i++) {
+         float y2 = f6 + i * 18.0F;
+         boolean flag3 = i == n3;
+         float pulse = flag3 ? ToolTab.pulse(0.8F) : 0.0F;
+         ZenithColor zenithColor2 = flags[i] ? ToolTab.OK : (flag3 ? zenithColor : zenithStyle.getTextTertiary().getZenithColor());
+         ToolTab.card(menuDrawContext, zenithStyle, floatValue, y2, width, 15.0F, flag3 ? 0.4F : 0.0F, previewAlpha);
+         float width3 = 10.0F;
+         float floatValue4 = floatValue + 4.0F;
+         float y3 = y2 + 2.5F;
+         menuDrawContext.drawRoundedRect(floatValue4, y3, width3, width3, ProxyDotRadiusData.method8069(width3 / 2.0F), zenithColor2.method7292(0.18F + 0.12F * pulse).method7294(previewAlpha));
+         String text = flags[i] ? "✓" : String.valueOf(i + 1);
+         if (flags[i]) {
+            MenuGlyph.CHECK.draw(menuDrawContext, floatValue4 + (width3 - 6.0F) / 2.0F, y3 + (width3 - 6.0F) / 2.0F, zenithColor2.method7294(previewAlpha));
          } else {
-            var1.drawText(var30, var39, var37 + (var36 - var30.width(var39)) / 2.0F, var38 + (var36 - var30.height()) / 2.0F, var35.method7294(var7));
+            menuDrawContext.drawText(font4, text, floatValue4 + (width3 - font4.width(text)) / 2.0F, y3 + (width3 - font4.height()) / 2.0F, zenithColor2.method7294(previewAlpha));
          }
 
-         var1.drawText(
-            var29,
-            var29.clip(var25[var31], var11 - 22.0F),
-            var37 + var36 + 6.0F,
-            var32 + (15.0F - var29.height()) / 2.0F,
-            (var26[var31] ? var8.getTextTertiary() : (var33 ? var8.getTextEnable() : var8.getTextSecondary())).getZenithColor().method7294(var7)
+         menuDrawContext.drawText(
+            font3,
+            font3.clip(strings2[i], width - 22.0F),
+            floatValue4 + width3 + 6.0F,
+            y2 + (15.0F - font3.height()) / 2.0F,
+            (flags[i] ? zenithStyle.getTextTertiary() : (flag3 ? zenithStyle.getTextEnable() : zenithStyle.getTextSecondary())).getZenithColor().method7294(previewAlpha)
          );
       }
 
-      float var43 = var28 + var25.length * 18.0F + 6.0F;
+      float f7 = f6 + strings2.length * 18.0F + 6.0F;
 
-      for (int var44 = 0; var44 < 3; var44++) {
-         float var45 = var43 + var44 * 22.0F;
-         float var46 = var7 * (0.55F - var44 * 0.15F);
-         ToolTab.skeleton(var1, var8, var10, var45 + 4.0F, 13.0F, 13.0F, var44, var46);
-         ToolTab.skeleton(var1, var8, var10 + 13.0F + 6.0F, var45 + 10.5F - 2.0F, var11 * (0.35F - var44 * 0.05F), 4.0F, var44 + 1, var46);
-         ToolTab.skeleton(var1, var8, var10 + var11 - 14.0F, var45 + 3.5F, 14.0F, 14.0F, var44 + 2, var46);
-         ToolTab.skeleton(var1, var8, var10 + var11 - 14.0F - 34.0F, var45 + 6.5F, 28.0F, 8.0F, var44 + 3, var46);
+      for (int i = 0; i < 3; i++) {
+         float f8 = f7 + i * 22.0F;
+         float f9 = previewAlpha * (0.55F - i * 0.15F);
+         ToolTab.skeleton(menuDrawContext, zenithStyle, floatValue, f8 + 4.0F, 13.0F, 13.0F, i, f9);
+         ToolTab.skeleton(menuDrawContext, zenithStyle, floatValue + 13.0F + 6.0F, f8 + 10.5F - 2.0F, width * (0.35F - i * 0.05F), 4.0F, i + 1, f9);
+         ToolTab.skeleton(menuDrawContext, zenithStyle, floatValue + width - 14.0F, f8 + 3.5F, 14.0F, 14.0F, i + 2, f9);
+         ToolTab.skeleton(menuDrawContext, zenithStyle, floatValue + width - 14.0F - 34.0F, f8 + 6.5F, 28.0F, 8.0F, i + 3, f9);
       }
    }
 
-   private void drawHint(MenuDrawContext var1, float var2, float var3, float var4, String var5, float var6, ZenithStyle var7) {
-      Font var8 = Fonts.NEW_REGULAR.getFont(4.8F);
-      float var9 = var3;
+   private void drawHint(MenuDrawContext menuDrawContext, float f, float f2, float f3, String description, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      float centeredTextY = f2;
 
-      for (String var11 : wrapText(var5, var8, var4 - 32.0F, 3)) {
-         var1.drawText(var8, var11, var2 + (var4 - var8.width(var11)) / 2.0F, var9, var7.getTextTertiary().getZenithColor().method7294(var6));
-         var9 += var8.height() + 2.0F;
+      for (String text : wrapText(description, font, f3 - 32.0F, 3)) {
+         menuDrawContext.drawText(font, text, f + (f3 - font.width(text)) / 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font.height() + 2.0F;
       }
    }
 
-   private static void drawPlay(MenuDrawContext var0, float var1, float var2, ZenithColor var3) {
-      SvgIcon.PLAY.draw(var0, var1 - 1.5F, var2, 6.0F, var3);
+   private static void drawPlay(MenuDrawContext menuDrawContext, float f, float centeredTextY, ZenithColor zenithColor) {
+      SvgIcon.PLAY.draw(menuDrawContext, f - 1.5F, centeredTextY, 6.0F, zenithColor);
    }
 
-   private static void drawStop(MenuDrawContext var0, float var1, float var2, ZenithColor var3) {
-      SvgIcon.STOP.draw(var0, var1 - 0.5F, var2 - 0.5F, 6.0F, var3);
+   private static void drawStop(MenuDrawContext menuDrawContext, float f, float f2, ZenithColor zenithColor) {
+      SvgIcon.STOP.draw(menuDrawContext, f - 0.5F, f2 - 0.5F, 6.0F, zenithColor);
    }
 
-   private boolean insideMain(double var1, double var3) {
-      BoundsData var5 = this.mainViewport();
-      return var5 == null || var5.contains(var1, var3);
+   private boolean insideMain(double lastClickX, double lastClickY) {
+      BoundsData mainViewport = this.mainViewport();
+      return mainViewport == null || mainViewport.contains(lastClickX, lastClickY);
    }
 
-   private boolean insideAside(double var1, double var3) {
-      BoundsData var5 = this.asideViewport();
-      return var5 == null || var5.contains(var1, var3);
+   private boolean insideAside(double lastClickX, double lastClickY) {
+      BoundsData asideViewport = this.asideViewport();
+      return asideViewport == null || asideViewport.contains(lastClickX, lastClickY);
    }
 
-   private static String displayModuleName(String var0) {
-      return var0.startsWith("Bot") && var0.length() > 3 ? var0.substring(3) : var0;
+   private static String displayModuleName(String supportedModuleName) {
+      return supportedModuleName.startsWith("Bot") && supportedModuleName.length() > 3 ? supportedModuleName.substring(3) : supportedModuleName;
    }
 
-   private String moduleDescription(String var1) {
-      String var2 = BotModuleManager.supportedModuleDescription(var1);
-      return var2 != null && !var2.isBlank() ? var2 : t("gui.tools.bots.module.desc");
+   private String moduleDescription(String supportedModuleName) {
+      String supportedModuleDescription = BotModuleManager.supportedModuleDescription(supportedModuleName);
+      return supportedModuleDescription != null && !supportedModuleDescription.isBlank() ? supportedModuleDescription : t("gui.tools.bots.module.desc");
    }
 
-   private boolean isModuleEnabled(String var1, String var2) {
-      BotClient var3 = HeadlessBots.get(var1);
-      if (var3 != null) {
-         BotModule var4 = var3.getModules().getModule(var2);
-         if (var4 != null) {
-            return var4.isEnabled();
+   private boolean isModuleEnabled(String selected, String supportedModuleName) {
+      BotClient botClient = HeadlessBots.get(selected);
+      if (botClient != null) {
+         BotModule botModule = botClient.getModules().getModule(supportedModuleName);
+         if (botModule != null) {
+            return botModule.isEnabled();
          }
       }
 
-      return HeadlessBots.isModuleEnabledInProfile(var1, var2);
+      return HeadlessBots.isModuleEnabledInProfile(selected, supportedModuleName);
    }
 
-   private boolean isOnline(String var1) {
-      BotClient var2 = HeadlessBots.get(var1);
-      return var2 != null && var2.getPhase() != BotPhase.DISCONNECTED;
+   private boolean isOnline(String selected) {
+      BotClient botClient = HeadlessBots.get(selected);
+      return botClient != null && botClient.getPhase() != BotPhase.DISCONNECTED;
    }
 
-   private boolean isJoined(String var1) {
-      BotClient var2 = HeadlessBots.get(var1);
-      return var2 != null && var2.isJoined();
+   private boolean isJoined(String selected) {
+      BotClient botClient = HeadlessBots.get(selected);
+      return botClient != null && botClient.isJoined();
    }
 
    private int onlineCount() {
-      int var1 = 0;
+      int n = 0;
 
-      for (BotClient var3 : HeadlessBots.all()) {
-         if (var3.getPhase() != BotPhase.DISCONNECTED) {
-            var1++;
+      for (BotClient botClient : HeadlessBots.all()) {
+         if (botClient.getPhase() != BotPhase.DISCONNECTED) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private ZenithColor phaseColor(String var1, ZenithStyle var2) {
-      BotClient var3 = HeadlessBots.get(var1);
-      BotPhase var4 = var3 == null ? BotPhase.DISCONNECTED : var3.getPhase();
+   private ZenithColor phaseColor(String selected, ZenithStyle zenithStyle) {
+      BotClient botClient = HeadlessBots.get(selected);
+      BotPhase phase = botClient == null ? BotPhase.DISCONNECTED : botClient.getPhase();
 
-      return switch (var4) {
-         case PLAY -> var2.getFriendColor().getZenithColor();
-         case DISCONNECTED -> var2.getTextTertiary().getZenithColor();
-         default -> var2.getPrimaryColor().getZenithColor();
+      return switch (phase) {
+         case PLAY -> zenithStyle.getFriendColor().getZenithColor();
+         case DISCONNECTED -> zenithStyle.getTextTertiary().getZenithColor();
+         default -> zenithStyle.getPrimaryColor().getZenithColor();
       };
    }
 
-   private String phaseLabel(String var1) {
-      BotClient var2 = HeadlessBots.get(var1);
-      if (var2 == null) {
+   private String phaseLabel(String selected) {
+      BotClient botClient = HeadlessBots.get(selected);
+      if (botClient == null) {
          return t("gui.tools.bots.phase.offline");
       } else {
-         return switch (var2.getPhase()) {
+         return switch (botClient.getPhase()) {
             case PLAY -> t("gui.tools.bots.phase.play");
             case DISCONNECTED -> t("gui.tools.bots.phase.offline");
             case CONNECTING -> t("gui.tools.bots.phase.connecting");
@@ -1033,45 +1033,45 @@ public class BotsToolPanel extends ToolTab {
       }
    }
 
-   private void toggleConnection(String var1) {
-      BotClient var2 = HeadlessBots.get(var1);
-      if (var2 != null && var2.getPhase() != BotPhase.DISCONNECTED) {
-         HeadlessBots.disconnect(var1);
+   private void toggleConnection(String selected) {
+      BotClient botClient = HeadlessBots.get(selected);
+      if (botClient != null && botClient.getPhase() != BotPhase.DISCONNECTED) {
+         HeadlessBots.disconnect(selected);
       } else {
-         String[] var3 = this.resolveAddress();
-         if (var3 != null) {
-            HeadlessBots.connect(var1, var3[0], Integer.parseInt(var3[1]));
+         String[] address = this.resolveAddress();
+         if (address != null) {
+            HeadlessBots.connect(selected, address[0], Integer.parseInt(address[1]));
          }
       }
    }
 
    private void connectAll() {
-      String[] var1 = this.resolveAddress();
-      if (var1 != null) {
-         HeadlessBots.connectAll(HeadlessBots.allNames(), var1[0], Integer.parseInt(var1[1]));
+      String[] address = this.resolveAddress();
+      if (address != null) {
+         HeadlessBots.connectAll(HeadlessBots.allNames(), address[0], Integer.parseInt(address[1]));
          this.invalidate();
       }
    }
 
    private String[] resolveAddress() {
-      String var1 = this.addressInput == null ? HeadlessBots.getLastAddress() : this.addressInput.getText();
-      if (var1 != null && !var1.isBlank()) {
-         var1 = var1.trim();
-         int var2 = var1.lastIndexOf(58);
-         if (var2 < 0) {
-            return new String[]{var1, String.valueOf(25565)};
+      String lastAddress = this.addressInput == null ? HeadlessBots.getLastAddress() : this.addressInput.getText();
+      if (lastAddress != null && !lastAddress.isBlank()) {
+         lastAddress = lastAddress.trim();
+         int lastIndexOf = lastAddress.lastIndexOf(58);
+         if (lastIndexOf < 0) {
+            return new String[]{lastAddress, String.valueOf(25565)};
          } else {
-            String var3 = var1.substring(0, var2);
-            String var4 = var1.substring(var2 + 1);
+            String str = lastAddress.substring(0, lastIndexOf);
+            String str2 = lastAddress.substring(lastIndexOf + 1);
 
             try {
-               int var5 = Integer.parseInt(var4);
-               if (var5 > 0 && var5 <= 65535) {
-                  return new String[]{var3, String.valueOf(var5)};
+               int n = Integer.parseInt(str2);
+               if (n > 0 && n <= 65535) {
+                  return new String[]{str, String.valueOf(n)};
                } else {
-                  throw new NumberFormatException(var4);
+                  throw new NumberFormatException(str2);
                }
-            } catch (NumberFormatException var6) {
+            } catch (NumberFormatException e) {
                ChatLogger.method2021(t("gui.tools.bots.address.badPort"));
                return null;
             }
@@ -1084,12 +1084,12 @@ public class BotsToolPanel extends ToolTab {
 
    private void addBot() {
       if (this.nameInput != null) {
-         String var1 = this.nameInput.getText();
-         if (var1 != null && !var1.isBlank()) {
-            if (!HeadlessBots.add(var1.trim())) {
+         String text = this.nameInput.getText();
+         if (text != null && !text.isBlank()) {
+            if (!HeadlessBots.add(text.trim())) {
                ChatLogger.method2021(t("gui.tools.bots.add.exists"));
             } else {
-               this.selected = var1.trim();
+               this.selected = text.trim();
                this.nameInput.setText("");
                this.nameInput.setCursor(0);
                this.invalidate();
@@ -1105,69 +1105,69 @@ public class BotsToolPanel extends ToolTab {
    }
 
    @Override
-   public void renderFooter(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+   public void renderFooter(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float f, float width, float previewAlpha, ZenithStyle zenithStyle) {
       if (this.nameInput == null) {
          this.nameInput = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.0F), t("gui.tools.bots.add.hint"), 16.0F);
          this.nameInput.setType(SearchBox.Type.ENGLISH_NAME);
          this.nameInput.setType2(SearchBox.Type2.ONLY_ONE_WORLD);
       }
 
-      var1.drawRect(var4 + 8.0F, var5 - GuiStyle.PADDING.intValue(), var6 - 16.0F, 1.0F, var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F));
-      float var9 = var5 + 8.0F;
-      float var10 = 26.0F;
-      float var11 = var6 - 16.0F - var10 - GuiStyle.PADDING.intValue();
-      var1.drawRoundedRect(
-         var4 + 8.0F,
-         var9,
-         var11,
+      menuDrawContext.drawRect(floatValue + 8.0F, f - GuiStyle.PADDING.intValue(), width - 16.0F, 1.0F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
+      float y = f + 8.0F;
+      float width2 = 26.0F;
+      float width3 = width - 16.0F - width2 - GuiStyle.PADDING.intValue();
+      menuDrawContext.drawRoundedRect(
+         floatValue + 8.0F,
+         y,
+         width3,
          18.0F,
          ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() / 2.0F),
-         var8.getPanelLeftBackground().getZenithColor().method7294(var7)
+         zenithStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha)
       );
-      boolean var12 = this.addButtonBounds(var4, var9, var6, var10).contains(var2, var3);
-      var1.drawRoundedRect(
-         var4 + var6 - 8.0F - var10,
-         var9,
-         var10,
+      boolean contains = this.addButtonBounds(floatValue, y, width, width2).contains(lastClickX, lastClickY);
+      menuDrawContext.drawRoundedRect(
+         floatValue + width - 8.0F - width2,
+         y,
+         width2,
          18.0F,
          ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() / 2.0F),
-         var8.getPrimaryColor().getZenithColor().method7293(var12 ? 62 : 30).method7294(var7)
+         zenithStyle.getPrimaryColor().getZenithColor().method7293(contains ? 62 : 30).method7294(previewAlpha)
       );
-      Font var13 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      boolean var14 = this.nameInput.isSelected();
-      MenuGlyph.PROFILE.draw(var1, var4 + 8.0F + 5.0F, var9 + 6.0F, (var14 ? var8.getTextEnable() : var8.getTextTertiary()).getZenithColor().method7294(var7));
-      this.nameInput.setFont(var13);
-      this.nameInput.setWidth(var11 - 20.0F);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      boolean selected = this.nameInput.isSelected();
+      MenuGlyph.PROFILE.draw(menuDrawContext, floatValue + 8.0F + 5.0F, y + 6.0F, (selected ? zenithStyle.getTextEnable() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha));
+      this.nameInput.setFont(font);
+      this.nameInput.setWidth(width3 - 20.0F);
       this.nameInput
          .method987(
-            var1,
-            var4 + 8.0F + 15.0F,
-            var9 + (18.0F - var13.height()) / 2.0F,
-            var8.getTextEnable().getZenithColor().method7294(var7),
-            var8.getTextTertiary().getZenithColor().method7294(var7)
+            menuDrawContext,
+            floatValue + 8.0F + 15.0F,
+            y + (18.0F - font.height()) / 2.0F,
+            zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
-      float var15 = var4 + var6 - 8.0F - var10 / 2.0F;
-      float var16 = var9 + 9.0F;
-      ZenithColor var17 = var8.getPrimaryColor().getZenithColor().method7293(var12 ? 255 : 215).method7294(var7);
-      var1.drawRect(var15 - 3.0F, var16 - 0.5F, 6.0F, 1.0F, var17);
-      var1.drawRect(var15 - 0.5F, var16 - 3.0F, 1.0F, 6.0F, var17);
-      if (var12) {
+      float f2 = floatValue + width - 8.0F - width2 / 2.0F;
+      float f3 = y + 9.0F;
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor().method7293(contains ? 255 : 215).method7294(previewAlpha);
+      menuDrawContext.drawRect(f2 - 3.0F, f3 - 0.5F, 6.0F, 1.0F, zenithColor);
+      menuDrawContext.drawRect(f2 - 0.5F, f3 - 3.0F, 1.0F, 6.0F, zenithColor);
+      if (contains) {
          HoverInfo.request(t("gui.tools.bots.caption.list"), t("gui.tools.bots.add.hint"));
       }
    }
 
-   private BoundsData addButtonBounds(float var1, float var2, float var3, float var4) {
-      return new BoundsData(var1 + var3 - 8.0F - var4, var2, var4, 18.0F);
+   private BoundsData addButtonBounds(float floatValue, float y, float width, float f) {
+      return new BoundsData(floatValue + width - 8.0F - f, y, f, 18.0F);
    }
 
    @Override
-   public boolean onFooterClicked(double var1, double var3, Enum3 var5) {
-      BoundsData var6 = this.footerBounds();
-      if (var6 == null) {
+   public boolean onFooterClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      BoundsData footerBounds = this.footerBounds();
+      if (footerBounds == null) {
          return false;
       } else {
-         float var7 = var6.getFloatValue2() + 8.0F;
-         if (this.addButtonBounds(var6.getFloatValue(), var7, var6.width(), 26.0F).contains(var1, var3)) {
+         float y = footerBounds.getFloatValue2() + 8.0F;
+         if (this.addButtonBounds(footerBounds.getFloatValue(), y, footerBounds.width(), 26.0F).contains(lastClickX, lastClickY)) {
             this.addBot();
             Zenith.getInstance().getClientSounds().method1570(false);
             return true;
@@ -1185,57 +1185,57 @@ public class BotsToolPanel extends ToolTab {
       }
    }
 
-   private void drawInput(MenuDrawContext var1, SearchBox var2, MenuGlyph var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      var1.drawRoundedRect(
-         var4 + 8.0F,
-         var5,
-         var6 - 16.0F,
+   private void drawInput(MenuDrawContext menuDrawContext, SearchBox addressInput, MenuGlyph menuGlyph, float floatValue, float y, float width, float previewAlpha, ZenithStyle zenithStyle) {
+      menuDrawContext.drawRoundedRect(
+         floatValue + 8.0F,
+         y,
+         width - 16.0F,
          18.0F,
          ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() / 2.0F),
-         var8.getPanelLeftBackground().getZenithColor().method7295(var8.getPrimaryColor().getZenithColor(), var2.isSelected() ? 0.18F : 0.0F).method7294(var7)
+         zenithStyle.getPanelLeftBackground().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), addressInput.isSelected() ? 0.18F : 0.0F).method7294(previewAlpha)
       );
-      Font var9 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      var3.draw(var1, var4 + 8.0F + 5.0F, var5 + 6.0F, (var2.isSelected() ? var8.getTextEnable() : var8.getTextTertiary()).getZenithColor().method7294(var7));
-      var2.setFont(var9);
-      var2.setWidth(var6 - 16.0F - 20.0F);
-      var2.method987(
-         var1,
-         var4 + 8.0F + 15.0F,
-         var5 + (18.0F - var9.height()) / 2.0F,
-         var8.getTextEnable().getZenithColor().method7294(var7),
-         var8.getTextTertiary().getZenithColor().method7294(var7)
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      menuGlyph.draw(menuDrawContext, floatValue + 8.0F + 5.0F, y + 6.0F, (addressInput.isSelected() ? zenithStyle.getTextEnable() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha));
+      addressInput.setFont(font);
+      addressInput.setWidth(width - 16.0F - 20.0F);
+      addressInput.method987(
+         menuDrawContext,
+         floatValue + 8.0F + 15.0F,
+         y + (18.0F - font.height()) / 2.0F,
+         zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+         zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float panelAlpha, float f, float y) {
       this.powerBounds.clear();
       this.connectAllBounds = null;
       this.disconnectAllBounds = null;
-      super.render(var1, var2, var3, var4, var5, var6);
+      super.render(menuDrawContext, lastClickX, lastClickY, panelAlpha, f, y);
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      this.lastClickX = var1;
-      this.lastClickY = var3;
-      if (var5 == Enum3.LEFT && this.insideMain(var1, var3)) {
-         if (this.connectAllBounds != null && this.connectAllBounds.contains(var1, var3)) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      this.lastClickX = lastClickX;
+      this.lastClickY = lastClickY;
+      if (enum2 == Enum3.LEFT && this.insideMain(lastClickX, lastClickY)) {
+         if (this.connectAllBounds != null && this.connectAllBounds.contains(lastClickX, lastClickY)) {
             this.connectAll();
             Zenith.getInstance().getClientSounds().method1570(false);
             return true;
          }
 
-         if (this.disconnectAllBounds != null && this.disconnectAllBounds.contains(var1, var3)) {
+         if (this.disconnectAllBounds != null && this.disconnectAllBounds.contains(lastClickX, lastClickY)) {
             HeadlessBots.disconnectAll();
             Zenith.getInstance().getClientSounds().method1570(false);
             this.invalidate();
             return true;
          }
 
-         for (Map.Entry var7 : this.powerBounds.entrySet()) {
-            if (((BoundsData)var7.getValue()).contains(var1, var3)) {
-               this.toggleConnection((String)var7.getKey());
+         for (Map.Entry entry : this.powerBounds.entrySet()) {
+            if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
+               this.toggleConnection((String)entry.getKey());
                Zenith.getInstance().getClientSounds().method1570(false);
                this.invalidate();
                return true;
@@ -1243,49 +1243,49 @@ public class BotsToolPanel extends ToolTab {
          }
       }
 
-      if (this.addressInput != null && this.insideMain(var1, var3) && this.addressInput.onMouseClicked(var1, var3, var5)) {
+      if (this.addressInput != null && this.insideMain(lastClickX, lastClickY) && this.addressInput.onMouseClicked(lastClickX, lastClickY, enum2)) {
          if (this.nameInput != null) {
             this.nameInput.setSelected(false);
          }
 
          return true;
       } else {
-         return super.onMouseClicked(var1, var3, var5);
+         return super.onMouseClicked(lastClickX, lastClickY, enum2);
       }
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      SearchBox var4 = this.focusedInput();
-      if (var4 != null) {
-         if (var1 == 256) {
-            var4.setSelected(false);
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      SearchBox focusedInput = this.focusedInput();
+      if (focusedInput != null) {
+         if (keyCode == 256) {
+            focusedInput.setSelected(false);
             return true;
          }
 
-         if (var1 == 257 || var1 == 335) {
-            if (var4 == this.nameInput) {
+         if (keyCode == 257 || keyCode == 335) {
+            if (focusedInput == this.nameInput) {
                this.addBot();
             } else {
-               HeadlessBots.setLastAddress(var4.getText());
-               var4.setSelected(false);
+               HeadlessBots.setLastAddress(focusedInput.getText());
+               focusedInput.setSelected(false);
             }
 
             return true;
          }
 
-         if (var4.keyPressed(var1, var2, var3)) {
+         if (focusedInput.keyPressed(keyCode, keycode, modifiers)) {
             return true;
          }
       }
 
-      return super.keyPressed(var1, var2, var3);
+      return super.keyPressed(keyCode, keycode, modifiers);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      SearchBox var3 = this.focusedInput();
-      return var3 != null && var3.charTyped(var1, var2) ? true : super.charTyped(var1, var2);
+   public boolean charTyped(char codepoint, int n) {
+      SearchBox focusedInput = this.focusedInput();
+      return focusedInput != null && focusedInput.charTyped(codepoint, n) ? true : super.charTyped(codepoint, n);
    }
 
    private SearchBox focusedInput() {
@@ -1298,15 +1298,15 @@ public class BotsToolPanel extends ToolTab {
 
    @Override
    public void tick() {
-      String var1 = String.join(",", HeadlessBots.allNames())
+      String contentSignature = String.join(",", HeadlessBots.allNames())
          + "|"
          + this.onlineCount()
          + "|"
          + this.selected
          + "|"
          + (this.selected == null ? "" : this.phaseLabel(this.selected));
-      if (!var1.equals(this.contentSignature)) {
-         this.contentSignature = var1;
+      if (!contentSignature.equals(this.contentSignature)) {
+         this.contentSignature = contentSignature;
          this.invalidate();
       }
    }

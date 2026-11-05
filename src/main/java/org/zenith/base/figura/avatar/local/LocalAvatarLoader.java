@@ -40,8 +40,8 @@ public final class LocalAvatarLoader {
          Path root;
          try {
             root = path.toRealPath();
-         } catch (IOException var14) {
-            FiguraMod.LOGGER.error("Avatar path does not exist: {}", path, var14);
+         } catch (IOException e) {
+            FiguraMod.LOGGER.error("Avatar path does not exist: {}", path, e);
             return;
          }
 
@@ -80,8 +80,8 @@ public final class LocalAvatarLoader {
             }
 
             target.loadAvatar(nbt, layer);
-         } catch (Exception var13) {
-            FiguraMod.LOGGER.error("Failed to parse local avatar from {}", root, var13);
+         } catch (Exception e) {
+            FiguraMod.LOGGER.error("Failed to parse local avatar from {}", root, e);
          }
       }
    }
@@ -115,12 +115,12 @@ public final class LocalAvatarLoader {
                   String relative = root.relativize(path).toString().replace('\\', '.').replace('/', '.');
                   String name = relative.substring(0, relative.length() - 4);
                   scripts.put(name, LuaScriptParser.parseScript(name, IOUtils.readFile(path)));
-               } catch (IOException var5) {
-                  throw new LocalAvatarLoader.AvatarReadException(var5);
+               } catch (IOException e) {
+                  throw new LocalAvatarLoader.AvatarReadException(e);
                }
             });
-      } catch (LocalAvatarLoader.AvatarReadException var8) {
-         throw var8.ioException;
+      } catch (LocalAvatarLoader.AvatarReadException e) {
+         throw e.ioException;
       }
 
       if (!scripts.isEmpty()) {
@@ -207,7 +207,7 @@ public final class LocalAvatarLoader {
    private static boolean isHidden(Path path) {
       try {
          return Files.isHidden(path) || path.getFileName().toString().startsWith(".");
-      } catch (IOException var2) {
+      } catch (IOException e) {
          return false;
       }
    }

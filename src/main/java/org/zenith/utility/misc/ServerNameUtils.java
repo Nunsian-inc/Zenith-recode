@@ -11,96 +11,96 @@ public final class ServerNameUtils {
    private ServerNameUtils() {
    }
 
-   public static String display(String var0) {
-      String var1 = normalize(var0);
-      if (var1.isEmpty()) {
+   public static String display(String server) {
+      String str = normalize(server);
+      if (str.isEmpty()) {
          return "";
-      } else if (var1.startsWith("singleplayer")) {
+      } else if (str.startsWith("singleplayer")) {
          return "одиночная игра";
-      } else if (var1.equals("realms")) {
+      } else if (str.equals("realms")) {
          return "Realms";
       } else {
-         String var2 = items.get(var1);
-         return var2 == null ? var1 : var2;
+         String str2 = items.get(str);
+         return str2 == null ? str : str2;
       }
    }
 
-   public static String normalize(String var0) {
-      if (var0 == null) {
+   public static String normalize(String ip) {
+      if (ip == null) {
          return "";
       } else {
-         String var1 = var0.trim().toLowerCase(Locale.ROOT);
-         if (!var1.isEmpty() && !var1.startsWith("singleplayer") && !var1.equals("realms")) {
-            if (var1.endsWith(":25565")) {
-               var1 = var1.substring(0, var1.length() - 6);
+         String lowerCase = ip.trim().toLowerCase(Locale.ROOT);
+         if (!lowerCase.isEmpty() && !lowerCase.startsWith("singleplayer") && !lowerCase.equals("realms")) {
+            if (lowerCase.endsWith(":25565")) {
+               lowerCase = lowerCase.substring(0, lowerCase.length() - 6);
             }
 
-            return Cloud.method7912(var1);
+            return Cloud.method7912(lowerCase);
          } else {
-            return var1;
+            return lowerCase;
          }
       }
    }
 
-   public static boolean method5640(String var0) {
-      if (var0 != null && !var0.isBlank()) {
-         String var1 = var0.toLowerCase(Locale.ROOT);
-         return var1.contains("анарх") || var1.contains("anarch");
+   public static boolean method5640(String string) {
+      if (string != null && !string.isBlank()) {
+         String lowerCase = string.toLowerCase(Locale.ROOT);
+         return lowerCase.contains("анарх") || lowerCase.contains("anarch");
       } else {
          return false;
       }
    }
 
-   public static String method5641(String var0) {
-      if (var0 == null) {
+   public static String method5641(String string) {
+      if (string == null) {
          return "";
       } else {
-         StringBuilder var1 = new StringBuilder(var0.length());
-         boolean var2 = false;
+         StringBuilder builder = new StringBuilder(string.length());
+         boolean flag = false;
 
-         for (int var3 = 0; var3 < var0.length() && var1.length() < 24; var3++) {
-            char var4 = var0.charAt(var3);
-            boolean var5 = Character.isLetterOrDigit(var4) || var4 == '-' || var4 == '_' || var4 == '.' || var4 == '#';
-            if (var5) {
-               var1.append(var4);
-               var2 = false;
-            } else if (!var2 && var1.length() > 0) {
-               var1.append(' ');
-               var2 = true;
+         for (int i = 0; i < string.length() && builder.length() < 24; i++) {
+            char charAt = string.charAt(i);
+            boolean flag2 = Character.isLetterOrDigit(charAt) || charAt == '-' || charAt == '_' || charAt == '.' || charAt == '#';
+            if (flag2) {
+               builder.append(charAt);
+               flag = false;
+            } else if (!flag && builder.length() > 0) {
+               builder.append(' ');
+               flag = true;
             }
          }
 
-         return var1.toString().strip();
+         return builder.toString().strip();
       }
    }
 
-   public static String method5642(String var0, String var1) {
-      String var2 = normalize(var0);
-      if (var2.startsWith("funtime.") && method5640(var1)) {
-         StringBuilder var3 = new StringBuilder();
+   public static String method5642(String ip, String string) {
+      String str = normalize(ip);
+      if (str.startsWith("funtime.") && method5640(string)) {
+         StringBuilder builder = new StringBuilder();
 
-         for (int var4 = 0; var4 < var1.length(); var4++) {
-            char var5 = var1.charAt(var4);
-            if (var5 >= '0' && var5 <= '9') {
-               var3.append(var5);
-            } else if (var3.length() > 0) {
+         for (int i = 0; i < string.length(); i++) {
+            char charAt = string.charAt(i);
+            if (charAt >= '0' && charAt <= '9') {
+               builder.append(charAt);
+            } else if (builder.length() > 0) {
                break;
             }
          }
 
-         return var3.length() != 0 && var3.length() <= 4 ? "/an" + var3 : "";
+         return builder.length() != 0 && builder.length() <= 4 ? "/an" + builder : "";
       } else {
          return "";
       }
    }
 
-   public static String method5643(String var0, String var1) {
-      String var2 = display(var0);
-      String var3 = method5641(var1);
-      if (var2.isEmpty()) {
-         return var3;
+   public static String method5643(String server, String mode) {
+      String anotherString = display(server);
+      String str = method5641(mode);
+      if (anotherString.isEmpty()) {
+         return str;
       } else {
-         return !var3.isEmpty() && !var3.equalsIgnoreCase(var2) ? var2 + " · " + var3 : var2;
+         return !str.isEmpty() && !str.equalsIgnoreCase(anotherString) ? anotherString + " · " + str : anotherString;
       }
    }
 

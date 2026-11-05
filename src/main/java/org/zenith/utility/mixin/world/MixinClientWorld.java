@@ -18,15 +18,15 @@ public class MixinClientWorld {
       method = {"addEntity(Lnet/minecraft/world/entity/Entity;)V"},
       at = {@At("RETURN")}
    )
-   public void injectAddEntity(Entity var1, CallbackInfo var2) {
-      EventManager.call(new EntityAddEvent(var1));
+   public void injectAddEntity(Entity entity, CallbackInfo callbackInfo) {
+      EventManager.call(new EntityAddEvent(entity));
    }
 
    @Inject(
       method = {"sendBlockUpdated(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;I)V"},
       at = {@At("RETURN")}
    )
-   public void zenith$snowBlockChanged(BlockPos var1, BlockState var2, BlockState var3, int var4, CallbackInfo var5) {
-      Util11.method2330((ClientLevel)(Object)this, var1, var2, var3);
+   public void zenith$snowBlockChanged(BlockPos pos, BlockState blockState, BlockState blockState2, int n, CallbackInfo callbackInfo) {
+      Util11.method2330((ClientLevel)(Object)this, pos, blockState, blockState2);
    }
 }

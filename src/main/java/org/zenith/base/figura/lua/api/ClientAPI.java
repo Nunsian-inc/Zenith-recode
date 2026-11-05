@@ -305,7 +305,7 @@ public final class ClientAPI {
          Class<?> apiClass = Class.forName("net.irisshaders.iris.api.v0.IrisApi");
          Object instance = apiClass.getMethod("getInstance").invoke(null);
          return (Boolean)apiClass.getMethod("isShaderPackInUse").invoke(instance);
-      } catch (ReflectiveOperationException var2) {
+      } catch (ReflectiveOperationException e) {
          return false;
       }
    }
@@ -317,7 +317,7 @@ public final class ClientAPI {
 
       try {
          return Minecraft.getInstance().getResourceManager().getResource(resource).isPresent();
-      } catch (Exception var3) {
+      } catch (Exception e) {
          return false;
       }
    }
@@ -399,7 +399,7 @@ public final class ClientAPI {
             if (field.get(null) instanceof Identifier id) {
                atlases.add(id.withPath(path -> "textures/atlas/" + path + ".png").toString());
             }
-         } catch (IllegalAccessException var7) {
+         } catch (IllegalAccessException e) {
          }
       }
 
@@ -411,7 +411,7 @@ public final class ClientAPI {
    public static TextureAtlasAPI getAtlas(@LuaNotNil String atlas) {
       try {
          return new TextureAtlasAPI((TextureAtlas)Minecraft.getInstance().getTextureManager().getTexture(LuaUtils.parsePath(atlas)));
-      } catch (RuntimeException var2) {
+      } catch (RuntimeException e) {
          return null;
       }
    }

@@ -15,13 +15,13 @@ import org.zenith.client.modules.impl.render.WeatherModule;
 public class MixinBlockColors {
    // 26.3: tints are BlockTintSource objects (some cached at model bake), so wrap them and frost at colour time
    @ModifyReturnValue(method = {"getTintSources(Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/List;"}, at = {@At("RETURN")})
-   private java.util.List<net.minecraft.client.color.block.BlockTintSource> zenith$frostSources(java.util.List<net.minecraft.client.color.block.BlockTintSource> var1) {
-      return var1.isEmpty() || org.zenith.client.modules.impl.render.WeatherModule.INSTANCE.method3101() <= 0.001F ? var1 : var1.stream().<net.minecraft.client.color.block.BlockTintSource>map(org.zenith.utility.render.FrostTintSource::new).toList();
+   private java.util.List<net.minecraft.client.color.block.BlockTintSource> zenith$frostSources(java.util.List<net.minecraft.client.color.block.BlockTintSource> blockTintSources) {
+      return blockTintSources.isEmpty() || org.zenith.client.modules.impl.render.WeatherModule.INSTANCE.method3101() <= 0.001F ? blockTintSources : blockTintSources.stream().<net.minecraft.client.color.block.BlockTintSource>map(org.zenith.utility.render.FrostTintSource::new).toList();
    }
 
    @ModifyReturnValue(method = {"getTintSource(Lnet/minecraft/world/level/block/state/BlockState;I)Lnet/minecraft/client/color/block/BlockTintSource;"}, at = {@At("RETURN")})
-   private net.minecraft.client.color.block.BlockTintSource zenith$frostSource(net.minecraft.client.color.block.BlockTintSource var1) {
-      return var1 == null || org.zenith.client.modules.impl.render.WeatherModule.INSTANCE.method3101() <= 0.001F ? var1 : new org.zenith.utility.render.FrostTintSource(var1);
+   private net.minecraft.client.color.block.BlockTintSource zenith$frostSource(net.minecraft.client.color.block.BlockTintSource src) {
+      return src == null || org.zenith.client.modules.impl.render.WeatherModule.INSTANCE.method3101() <= 0.001F ? src : new org.zenith.utility.render.FrostTintSource(src);
    }
 
 }

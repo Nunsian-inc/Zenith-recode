@@ -18,17 +18,17 @@ public class MixinOptPlayerEntityRenderer {
       method = {"extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$farSkinLayers(Avatar var1, AvatarRenderState var2, float var3, CallbackInfo var4) {
-      if (OptimizationFlags.flag12 && Util29.flag && !(var2.distanceToCameraSq <= OptimizationFlags.doubleValue3)) {
-         if (var1 != Minecraft.getInstance().player) {
-            var2.showHat = false;
-            var2.showJacket = false;
-            var2.showLeftSleeve = false;
-            var2.showRightSleeve = false;
-            var2.showLeftPants = false;
-            var2.showRightPants = false;
-            if (!var2.chestEquipment.has(DataComponents.GLIDER)) {
-               var2.showCape = false;
+   private void zenith$farSkinLayers(Avatar avatar, AvatarRenderState avatarRenderState, float f, CallbackInfo callbackInfo) {
+      if (OptimizationFlags.flag12 && Util29.flag && !(avatarRenderState.distanceToCameraSq <= OptimizationFlags.doubleValue3)) {
+         if (avatar != Minecraft.getInstance().player) {
+            avatarRenderState.showHat = false;
+            avatarRenderState.showJacket = false;
+            avatarRenderState.showLeftSleeve = false;
+            avatarRenderState.showRightSleeve = false;
+            avatarRenderState.showLeftPants = false;
+            avatarRenderState.showRightPants = false;
+            if (!avatarRenderState.chestEquipment.has(DataComponents.GLIDER)) {
+               avatarRenderState.showCape = false;
             }
          }
       }

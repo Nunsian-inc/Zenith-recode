@@ -139,7 +139,7 @@ public final class BaseFinderModule extends Module {
    }
 
    @EventTarget
-   public void method4060(UpdateEvent var1) {
+   public void method4060(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (this.stopWatch.method7546(1000L)) {
             this.method4064();
@@ -162,9 +162,9 @@ public final class BaseFinderModule extends Module {
          }
 
          if (this.mods.method5227(2)) {
-            for (int var2 = 0; var2 < 5 && !this.items3.isEmpty(); var2++) {
-               BlockPos var3 = this.items3.getFirst();
-               UseItemUtils.method6514(new BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(var3), Direction.UP, var3, false), InteractionHand.OFF_HAND);
+            for (int i = 0; i < 5 && !this.items3.isEmpty(); i++) {
+               BlockPos pos = this.items3.getFirst();
+               UseItemUtils.method6514(new BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false), InteractionHand.OFF_HAND);
                this.items3.removeFirst();
             }
          }
@@ -172,24 +172,24 @@ public final class BaseFinderModule extends Module {
    }
 
    @EventTarget
-   public void method4061(DrawEvent var1) {
+   public void method4061(DrawEvent event) {
       if (this.flag && this.mods.method5227(0)) {
-         double var2 = this.intValue2 * 100.0 / Math.max(this.intValue, 1);
-         long var6;
-         long var12;
-         long var14 = (
-               var12 = Math.max((long)((var6 = System.currentTimeMillis() - this.longValue) * ((double)this.intValue / Math.max(this.intValue2, 1))) - var6, 0L)
+         double d = this.intValue2 * 100.0 / Math.max(this.intValue, 1);
+         long l;
+         long l2;
+         long l3 = (
+               l2 = Math.max((long)((l = System.currentTimeMillis() - this.longValue) * ((double)this.intValue / Math.max(this.intValue2, 1))) - l, 0L)
                   / 1000L
             )
             / 60L;
-         var12 %= 60L;
-         String var16 = String.format("Поиск: %.1f%% (%d/%d) | Осталось: %02d:%02d", var2, this.intValue2, this.intValue, var14, var12);
-         var1.getCustomDrawContext().drawText(Fonts.MEDIUM.getFont(20.0F), var16, 0.0F, 0.0F, ZenithColor.INSTANCE);
+         l2 %= 60L;
+         String text = String.format("Поиск: %.1f%% (%d/%d) | Осталось: %02d:%02d", d, this.intValue2, this.intValue, l3, l2);
+         event.getCustomDrawContext().drawText(Fonts.MEDIUM.getFont(20.0F), text, 0.0F, 0.0F, ZenithColor.INSTANCE);
       }
    }
 
    @EventTarget
-   public void method4062(WorldRenderEvent var1) {
+   public void method4062(WorldRenderEvent event) {
       if (this.mods.method5227(1)) {
          this.items.forEach(var1x -> this.method4075(var1x, -1));
       }
@@ -199,78 +199,78 @@ public final class BaseFinderModule extends Module {
       }
 
       this.copyOnWriteArrayList.forEach(var1x -> {
-         Block var2 = var1x.block;
-         if (var2 == Blocks.DIAMOND_ORE || var2 == Blocks.DEEPSLATE_DIAMOND_ORE) {
+         Block block = var1x.block;
+         if (block == Blocks.DIAMOND_ORE || block == Blocks.DEEPSLATE_DIAMOND_ORE) {
             this.method4075(var1x.blockPos, Color.cyan.getRGB());
-         } else if (var2 == Blocks.GOLD_ORE || var2 == Blocks.DEEPSLATE_GOLD_ORE || var2 == Blocks.NETHER_GOLD_ORE) {
+         } else if (block == Blocks.GOLD_ORE || block == Blocks.DEEPSLATE_GOLD_ORE || block == Blocks.NETHER_GOLD_ORE) {
             this.method4075(var1x.blockPos, -10496);
-         } else if (var2 == Blocks.EMERALD_ORE || var2 == Blocks.DEEPSLATE_EMERALD_ORE) {
+         } else if (block == Blocks.EMERALD_ORE || block == Blocks.DEEPSLATE_EMERALD_ORE) {
             this.method4075(var1x.blockPos, -256 << 16 | (char)-179);
-         } else if (var2 == Blocks.IRON_ORE || var2 == Blocks.DEEPSLATE_IRON_ORE) {
+         } else if (block == Blocks.IRON_ORE || block == Blocks.DEEPSLATE_IRON_ORE) {
             this.method4075(var1x.blockPos, -43 << 16 | (char)-10795);
-         } else if (var2 == Blocks.REDSTONE_ORE || var2 == Blocks.DEEPSLATE_REDSTONE_ORE) {
+         } else if (block == Blocks.REDSTONE_ORE || block == Blocks.DEEPSLATE_REDSTONE_ORE) {
             this.method4075(var1x.blockPos, -1 << 16 | 0);
-         } else if (var2 == Blocks.ANCIENT_DEBRIS) {
+         } else if (block == Blocks.ANCIENT_DEBRIS) {
             this.method4075(var1x.blockPos, -1);
-         } else if (var2 == Blocks.CHEST) {
+         } else if (block == Blocks.CHEST) {
             this.method4075(var1x.blockPos, Color.ORANGE.getRGB());
          } else {
-            MapColor var3 = var2.defaultMapColor();
-            if (var3 != null) {
-               this.method4075(var1x.blockPos, new Color(var3.col).getRGB());
+            MapColor defaultMapColor = block.defaultMapColor();
+            if (defaultMapColor != null) {
+               this.method4075(var1x.blockPos, new Color(defaultMapColor.col).getRGB());
             }
          }
       });
    }
 
    @EventTarget
-   public void method4063(PacketEvent var1) {
+   public void method4063(PacketEvent event) {
       if (this.mods.method5227(3)) {
       }
    }
 
    private void method4064() {
       if (mc.player != null && mc.level != null) {
-         BaseFinderModule.Entry5 var1 = this.method4068();
+         BaseFinderModule.Entry5 entry5 = this.method4068();
          if (this.mods.method5225(1).isEnabled() && this.entry == null) {
-            this.entry = new BaseFinderModule.Entry(var1);
+            this.entry = new BaseFinderModule.Entry(entry5);
          }
 
          if (this.mods.method5227(0) && this.entry2 == null) {
-            this.entry2 = new BaseFinderModule.Entry2(var1);
+            this.entry2 = new BaseFinderModule.Entry2(entry5);
             this.flag = true;
             this.longValue = System.currentTimeMillis();
             this.intValue2 = 0;
-            this.intValue = Math.max(1, var1.method4081());
+            this.intValue = Math.max(1, entry5.method4081());
          }
       }
    }
 
    private void method4065() {
       if (this.entry != null && mc.level != null) {
-         int var1 = 0;
-         int var2 = this.mods.method5227(0) ? 4096 : 8192;
-         MutableBlockPos var3 = new MutableBlockPos();
-         BaseFinderModule.Entry var4 = this.entry;
+         int n = 0;
+         int n2 = this.mods.method5227(0) ? 4096 : 8192;
+         MutableBlockPos mutablePos = new MutableBlockPos();
+         BaseFinderModule.Entry entry = this.entry;
 
-         for (boolean var5 = Zenith.getInstance().getServerDetector().method1642(); var1 < var2 && !var4.finished; var1++) {
-            var3.set(var4.intValue, var4.intValue2, var4.intValue3);
-            if (mc.level.hasChunk(var4.intValue >> 4, var4.intValue3 >> 4)) {
-               BlockState var6 = mc.level.getBlockState(var3);
-               if (this.method4070(var6, var3, var5)) {
-                  var4.items.add(var3.immutable());
+         for (boolean flag = Zenith.getInstance().getServerDetector().method1642(); n < n2 && !entry.finished; n++) {
+            mutablePos.set(entry.intValue, entry.intValue2, entry.intValue3);
+            if (mc.level.hasChunk(entry.intValue >> 4, entry.intValue3 >> 4)) {
+               BlockState blockState = mc.level.getBlockState(mutablePos);
+               if (this.method4070(blockState, mutablePos, flag)) {
+                  entry.items.add(mutablePos.immutable());
                }
             }
 
-            var4.advance();
+            entry.advance();
          }
 
-         if (var4.finished) {
-            var var7 = this.method4069(var4.items);
+         if (entry.finished) {
+            var poses = this.method4069(entry.items);
             this.items.clear();
-            this.items.addAll(var7);
+            this.items.addAll(poses);
             this.items3.clear();
-            this.items3.addAll(var7);
+            this.items3.addAll(poses);
             this.entry = null;
          }
       }
@@ -278,31 +278,31 @@ public final class BaseFinderModule extends Module {
 
    private void method4066() {
       if (this.entry2 != null && mc.level != null) {
-         int var1 = 0;
-         int var2 = this.mods.method5225(1).isEnabled() ? 1536 : 3072;
-         BaseFinderModule.Entry2 var3 = this.entry2;
+         int n = 0;
+         int n2 = this.mods.method5225(1).isEnabled() ? 1536 : 3072;
+         BaseFinderModule.Entry2 entry2 = this.entry2;
 
-         for (MutableBlockPos var4 = new MutableBlockPos(); var1 < var2 && !var3.finished; var1++) {
-            var4.set(var3.intValue, var3.intValue2, var3.intValue3);
+         for (MutableBlockPos mutablePos = new MutableBlockPos(); n < n2 && !entry2.finished; n++) {
+            mutablePos.set(entry2.intValue, entry2.intValue2, entry2.intValue3);
             this.intValue2++;
-            if (mc.level.hasChunkAt(var4) && !var3.bitSet.get(var3.entry5.method4082(var3.intValue, var3.intValue2, var3.intValue3)) && mc.level.isEmptyBlock(var4)
+            if (mc.level.hasChunkAt(mutablePos) && !entry2.bitSet.get(entry2.entry5.method4082(entry2.intValue, entry2.intValue2, entry2.intValue3)) && mc.level.isEmptyBlock(mutablePos)
                )
              {
-               BaseFinderModule.Entry3 var5 = this.method4072(var4.immutable(), var3.bitSet, mc.level, var3.entry5);
-               if (this.method4071(var5)) {
-                  var3.items.addAll(var5.items);
-                  if (var5.flag) {
-                     var3.items.addAll(var5.items2);
+               BaseFinderModule.Entry3 entry3 = this.method4072(mutablePos.immutable(), entry2.bitSet, mc.level, entry2.entry5);
+               if (this.method4071(entry3)) {
+                  entry2.items.addAll(entry3.items);
+                  if (entry3.flag) {
+                     entry2.items.addAll(entry3.items2);
                   }
                }
             }
 
-            var3.advance();
+            entry2.advance();
          }
 
-         if (var3.finished) {
+         if (entry2.finished) {
             this.items2.clear();
-            this.items2.addAll(var3.items);
+            this.items2.addAll(entry2.items);
             this.method4067();
          }
       }
@@ -314,103 +314,103 @@ public final class BaseFinderModule extends Module {
    }
 
    private BaseFinderModule.Entry5 method4068() {
-      int var1 = (int)this.range.getValue3();
+      int n = (int)this.range.getValue3();
       return new BaseFinderModule.Entry5(
-         (int)Math.floor(mc.player.getX() - var1),
-         (int)Math.ceil(mc.player.getX() + var1),
+         (int)Math.floor(mc.player.getX() - n),
+         (int)Math.ceil(mc.player.getX() + n),
          mc.level.getMinY() + 1,
          mc.level.getMaxY(),
-         (int)Math.floor(mc.player.getZ() - var1),
-         (int)Math.ceil(mc.player.getZ() + var1)
+         (int)Math.floor(mc.player.getZ() - n),
+         (int)Math.ceil(mc.player.getZ() + n)
       );
    }
 
-   private Set<BlockPos> method4069(Set<BlockPos> var1) {
+   private Set<BlockPos> method4069(Set<BlockPos> items) {
       return !Zenith.getInstance().getServerDetector().method1642()
-         ? var1
-         : method4077(var1, 20).stream().flatMap(Collection::stream).collect(Collectors.toSet());
+         ? items
+         : method4077(items, 20).stream().flatMap(Collection::stream).collect(Collectors.toSet());
    }
 
-   private boolean method4070(BlockState var1, BlockPos var2, boolean var3) {
-      if (!var3) {
-         Block var4 = var1.getBlock();
-         return var4 != Blocks.NETHERRACK && var4 != Blocks.STONE ? false : mc.level.getBrightness(LightLayer.BLOCK, var2) != 0;
+   private boolean method4070(BlockState blockState, BlockPos mutablePos, boolean flag) {
+      if (!flag) {
+         Block block = blockState.getBlock();
+         return block != Blocks.NETHERRACK && block != Blocks.STONE ? false : mc.level.getBrightness(LightLayer.BLOCK, mutablePos) != 0;
       } else {
-         return var1.getBlock() != Blocks.LAVA && mc.level.getBrightness(LightLayer.BLOCK, var2) > 5;
+         return blockState.getBlock() != Blocks.LAVA && mc.level.getBrightness(LightLayer.BLOCK, mutablePos) > 5;
       }
    }
 
-   private boolean method4071(BaseFinderModule.Entry3 var1) {
-      if (var1.size < this.min.getValue3() || var1.size > this.max.getValue3()) {
+   private boolean method4071(BaseFinderModule.Entry3 entry3) {
+      if (entry3.size < this.min.getValue3() || entry3.size > this.max.getValue3()) {
          return false;
-      } else if (var1.height() < this.minLength.getValue3()) {
+      } else if (entry3.height() < this.minLength.getValue3()) {
          return false;
       } else {
-         return var1.width() < this.minWidth.getValue3() ? false : var1.flag || var1.flag2;
+         return entry3.width() < this.minWidth.getValue3() ? false : entry3.flag || entry3.flag2;
       }
    }
 
-   private BaseFinderModule.Entry3 method4072(BlockPos var1, BitSet var2, Level var3, BaseFinderModule.Entry5 var4) {
-      ArrayDeque var5 = new ArrayDeque();
-      BaseFinderModule.Entry3 var6 = new BaseFinderModule.Entry3();
-      var5.add(var1);
-      var2.set(var4.method4083(var1));
+   private BaseFinderModule.Entry3 method4072(BlockPos immutable, BitSet bitSet, Level level, BaseFinderModule.Entry5 entry5) {
+      ArrayDeque arrayDeque = new ArrayDeque();
+      BaseFinderModule.Entry3 entry3 = new BaseFinderModule.Entry3();
+      arrayDeque.add(immutable);
+      bitSet.set(entry5.method4083(immutable));
 
-      while (!var5.isEmpty()) {
-         BlockPos var7 = (BlockPos)var5.poll();
-         var6.items.add(var7);
-         var6.size++;
-         int var8 = var7.getX();
-         int var9 = var7.getY();
-         int var10 = var7.getZ();
-         var6.intValue = Math.min(var6.intValue, var8);
-         var6.intValue4 = Math.max(var6.intValue4, var8);
-         var6.intValue2 = Math.min(var6.intValue2, var9);
-         var6.intValue5 = Math.max(var6.intValue5, var9);
-         var6.intValue3 = Math.min(var6.intValue3, var10);
-         var6.intValue6 = Math.max(var6.intValue6, var10);
-         if (var6.size > this.max.getValue3()) {
+      while (!arrayDeque.isEmpty()) {
+         BlockPos pos = (BlockPos)arrayDeque.poll();
+         entry3.items.add(pos);
+         entry3.size++;
+         int x = pos.getX();
+         int y = pos.getY();
+         int z = pos.getZ();
+         entry3.intValue = Math.min(entry3.intValue, x);
+         entry3.intValue4 = Math.max(entry3.intValue4, x);
+         entry3.intValue2 = Math.min(entry3.intValue2, y);
+         entry3.intValue5 = Math.max(entry3.intValue5, y);
+         entry3.intValue3 = Math.min(entry3.intValue3, z);
+         entry3.intValue6 = Math.max(entry3.intValue6, z);
+         if (entry3.size > this.max.getValue3()) {
             break;
          }
 
-         for (Direction var14 : Direction.values()) {
-            BlockPos var15 = var7.relative(var14);
-            if (!var4.method4080(var15)) {
-               var6.flag = true;
-               var6.items2.add(var7);
-            } else if (!var3.hasChunkAt(var15)) {
-               var6.flag = true;
-               var6.items2.add(var7);
+         for (Direction direction : Direction.values()) {
+            BlockPos relative = pos.relative(direction);
+            if (!entry5.method4080(relative)) {
+               entry3.flag = true;
+               entry3.items2.add(pos);
+            } else if (!level.hasChunkAt(relative)) {
+               entry3.flag = true;
+               entry3.items2.add(pos);
             } else {
-               int var16 = var4.method4083(var15);
-               if (!var2.get(var16)) {
-                  if (var3.isEmptyBlock(var15)) {
-                     var2.set(var16);
-                     var5.add(var15);
-                  } else if (this.method4074(var3, var15)) {
-                     var6.flag = true;
-                     var6.items2.add(var15);
+               int bitIndex = entry5.method4083(relative);
+               if (!bitSet.get(bitIndex)) {
+                  if (level.isEmptyBlock(relative)) {
+                     bitSet.set(bitIndex);
+                     arrayDeque.add(relative);
+                  } else if (this.method4074(level, relative)) {
+                     entry3.flag = true;
+                     entry3.items2.add(relative);
                   }
                }
             }
          }
       }
 
-      var6.flag2 = this.method4073(var6.items, var3);
-      return var6;
+      entry3.flag2 = this.method4073(entry3.items, level);
+      return entry3;
    }
 
-   private boolean method4073(List<BlockPos> var1, Level var2) {
-      var var3 = new HashSet<>(var1);
+   private boolean method4073(List<BlockPos> items, Level level) {
+      var poses = new HashSet<>(items);
 
-      for (BlockPos var5 : var1) {
-         for (Direction var9 : Direction.values()) {
-            BlockPos var10 = var5.relative(var9);
-            if (!var2.hasChunkAt(var10)) {
+      for (BlockPos pos : items) {
+         for (Direction direction : Direction.values()) {
+            BlockPos relative = pos.relative(direction);
+            if (!level.hasChunkAt(relative)) {
                return false;
             }
 
-            if (!var3.contains(var10) && var2.isEmptyBlock(var10)) {
+            if (!poses.contains(relative) && level.isEmptyBlock(relative)) {
                return false;
             }
          }
@@ -419,111 +419,111 @@ public final class BaseFinderModule extends Module {
       return true;
    }
 
-   private boolean method4074(Level var1, BlockPos var2) {
-      return var1.hasChunkAt(var2) && var1.getBlockState(var2).canBeReplaced();
+   private boolean method4074(Level level, BlockPos relative) {
+      return level.hasChunkAt(relative) && level.getBlockState(relative).canBeReplaced();
    }
 
-   private void method4075(BlockPos var1, int var2) {
-      GlowUtil.method2230(new AABB(var1), var2, 1.0F);
+   private void method4075(BlockPos blockPos, int rgb) {
+      GlowUtil.method2230(new AABB(blockPos), rgb, 1.0F);
    }
 
    private void method4076() {
-      try (InputStream var1 = Localization.class.getResourceAsStream("/assets/zenith/fonts/msdf/hold.json")) {
-         if (var1 == null) {
+      try (InputStream resourceAsStream = Localization.class.getResourceAsStream("/assets/zenith/fonts/msdf/hold.json")) {
+         if (resourceAsStream == null) {
             this.jsonObject = null;
             return;
          }
 
-         byte[] var2 = Base64.getDecoder().decode(var1.readAllBytes());
-         byte[] var3 = AesGcmCrypto.method5342(var2, "1.21.4");
+         byte[] array = Base64.getDecoder().decode(resourceAsStream.readAllBytes());
+         byte[] buf = AesGcmCrypto.method5342(array, "1.21.4");
 
-         try (InputStreamReader var4 = new InputStreamReader(new ByteArrayInputStream(var3), StandardCharsets.UTF_8)) {
-            this.jsonObject = (JsonObject)new Gson().fromJson(var4, JsonObject.class);
+         try (InputStreamReader inputStreamReader = new InputStreamReader(new ByteArrayInputStream(buf), StandardCharsets.UTF_8)) {
+            this.jsonObject = (JsonObject)new Gson().fromJson(inputStreamReader, JsonObject.class);
          }
-      } catch (Exception var11) {
+      } catch (Exception e) {
          this.jsonObject = null;
-         var11.printStackTrace();
+         e.printStackTrace();
       }
    }
 
-   public static List<List<BlockPos>> method4077(Collection<BlockPos> var0, int var1) {
-      ArrayList<List<BlockPos>> var2 = new ArrayList<>();
-      var var3 = new HashSet<>(var0);
+   public static List<List<BlockPos>> method4077(Collection<BlockPos> items, int n) {
+      ArrayList<List<BlockPos>> poseses = new ArrayList<>();
+      var poses = new HashSet<>(items);
 
-      while (!var3.isEmpty()) {
-         BlockPos var4 = (BlockPos)var3.iterator().next();
-         ArrayList var5 = new ArrayList();
-         ArrayDeque var6 = new ArrayDeque();
-         var6.add(var4);
-         var3.remove(var4);
+      while (!poses.isEmpty()) {
+         BlockPos pos = (BlockPos)poses.iterator().next();
+         ArrayList arrayList = new ArrayList();
+         ArrayDeque arrayDeque = new ArrayDeque();
+         arrayDeque.add(pos);
+         poses.remove(pos);
 
-         while (!var6.isEmpty()) {
-            BlockPos var7 = (BlockPos)var6.poll();
-            var5.add(var7);
+         while (!arrayDeque.isEmpty()) {
+            BlockPos pos2 = (BlockPos)arrayDeque.poll();
+            arrayList.add(pos2);
 
-            for (BlockPos var9 : method4078(var7)) {
-               if (var3.contains(var9)) {
-                  var3.remove(var9);
-                  var6.add(var9);
+            for (BlockPos pos3 : method4078(pos2)) {
+               if (poses.contains(pos3)) {
+                  poses.remove(pos3);
+                  arrayDeque.add(pos3);
                }
             }
          }
 
-         if (var5.size() <= var1) {
-            var2.add(var5);
+         if (arrayList.size() <= n) {
+            poseses.add(arrayList);
          }
       }
 
-      return var2;
+      return poseses;
    }
 
-   private static List<BlockPos> method4078(BlockPos var0) {
-      ArrayList var1 = new ArrayList(6);
+   private static List<BlockPos> method4078(BlockPos pos) {
+      ArrayList arrayList = new ArrayList(6);
 
-      for (Direction var5 : Direction.values()) {
-         var1.add(var0.relative(var5));
+      for (Direction direction : Direction.values()) {
+         arrayList.add(pos.relative(direction));
       }
 
-      return var1;
+      return arrayList;
    }
 
-   public static CopyOnWriteArrayList<BaseFinderModule.Entry4> method4079(InputStream var0, BlockPos var1, double var2) {
-      CopyOnWriteArrayList var4 = new CopyOnWriteArrayList();
-      double var5 = var2 * var2;
+   public static CopyOnWriteArrayList<BaseFinderModule.Entry4> method4079(InputStream inputStream, BlockPos pos, double d) {
+      CopyOnWriteArrayList copyOnWriteArrayList = new CopyOnWriteArrayList();
+      double d2 = d * d;
 
-      String var8;
-      try (BufferedReader var7 = new BufferedReader(new InputStreamReader(var0))) {
-         while ((var8 = var7.readLine()) != null) {
-            String[] var9 = var8.split(" ");
-            if (var9.length == 4) {
+      String line;
+      try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+         while ((line = bufferedReader.readLine()) != null) {
+            String[] strings = line.split(" ");
+            if (strings.length == 4) {
                try {
-                  int var10 = Integer.parseInt(var9[0]);
-                  int var11 = Integer.parseInt(var9[1]);
-                  int var12 = Integer.parseInt(var9[2]);
-                  double var13 = var10 - var1.getX();
-                  double var15 = var12 - var1.getZ();
-                  if (!(var13 * var13 + var15 * var15 > var5)) {
-                     String var17 = new String(Base64.getDecoder().decode(var9[3]), StandardCharsets.UTF_8);
-                     if (var17.startsWith("block.minecraft.")) {
-                        var17 = var17.substring("block.minecraft.".length());
+                  int x = Integer.parseInt(strings[0]);
+                  int y = Integer.parseInt(strings[1]);
+                  int z = Integer.parseInt(strings[2]);
+                  double d3 = x - pos.getX();
+                  double d4 = z - pos.getZ();
+                  if (!(d3 * d3 + d4 * d4 > d2)) {
+                     String str = new String(Base64.getDecoder().decode(strings[3]), StandardCharsets.UTF_8);
+                     if (str.startsWith("block.minecraft.")) {
+                        str = str.substring("block.minecraft.".length());
                      }
 
-                     Identifier var18 = Identifier.fromNamespaceAndPath("minecraft", var17);
-                     Block var19 = BuiltInRegistries.BLOCK.getValue(var18);
-                     if (var19 != Blocks.AIR) {
-                        var4.add(new BaseFinderModule.Entry4(new BlockPos(var10, var11, var12), var19));
+                     Identifier key = Identifier.fromNamespaceAndPath("minecraft", str);
+                     Block block = BuiltInRegistries.BLOCK.getValue(key);
+                     if (block != Blocks.AIR) {
+                        copyOnWriteArrayList.add(new BaseFinderModule.Entry4(new BlockPos(x, y, z), block));
                      }
                   }
-               } catch (Exception var21) {
-                  var21.printStackTrace();
+               } catch (Exception e) {
+                  e.printStackTrace();
                }
             }
          }
-      } catch (Exception var23) {
-         var23.printStackTrace();
+      } catch (Exception e) {
+         e.printStackTrace();
       }
 
-      return var4;
+      return copyOnWriteArrayList;
    }
 
    private static class Entry {
@@ -534,11 +534,11 @@ public final class BaseFinderModule extends Module {
       public int intValue3;
       public boolean finished;
 
-      private Entry(BaseFinderModule.Entry5 var1) {
-         this.entry5 = var1;
-         this.intValue = var1.intValue;
-         this.intValue2 = var1.intValue3;
-         this.intValue3 = var1.intValue5;
+      private Entry(BaseFinderModule.Entry5 entry5) {
+         this.entry5 = entry5;
+         this.intValue = entry5.intValue;
+         this.intValue2 = entry5.intValue3;
+         this.intValue3 = entry5.intValue5;
       }
 
       public void advance() {
@@ -559,9 +559,9 @@ public final class BaseFinderModule extends Module {
    private static final class Entry2 extends BaseFinderModule.Entry {
       private final BitSet bitSet;
 
-      private Entry2(BaseFinderModule.Entry5 var1) {
-         super(var1);
-         this.bitSet = new BitSet(Math.max(1, var1.method4081()));
+      private Entry2(BaseFinderModule.Entry5 entry5) {
+         super(entry5);
+         this.bitSet = new BitSet(Math.max(1, entry5.method4081()));
       }
    }
 
@@ -591,17 +591,17 @@ public final class BaseFinderModule extends Module {
       public final BlockPos blockPos;
       public final Block block;
 
-      public Entry4(BlockPos var1, Block var2) {
-         this.blockPos = var1;
-         this.block = var2;
+      public Entry4(BlockPos blockPos, Block block) {
+         this.blockPos = blockPos;
+         this.block = block;
       }
 
       @Override
-      public boolean equals(Object var1) {
-         if (this == var1) {
+      public boolean equals(Object obj) {
+         if (this == obj) {
             return true;
          } else {
-            return !(var1 instanceof BaseFinderModule.Entry4 var2) ? false : this.blockPos.equals(var2.blockPos) && this.block.equals(var2.block);
+            return !(obj instanceof BaseFinderModule.Entry4 entry4) ? false : this.blockPos.equals(entry4.blockPos) && this.block.equals(entry4.block);
          }
       }
 
@@ -619,35 +619,35 @@ public final class BaseFinderModule extends Module {
       private final int intValue5;
       private final int intValue6;
 
-      private Entry5(int var1, int var2, int var3, int var4, int var5, int var6) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.intValue3 = var3;
-         this.intValue4 = var4;
-         this.intValue5 = var5;
-         this.intValue6 = var6;
+      private Entry5(int intValue, int n, int n2, int maxY, int n3, int n4) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.intValue4 = maxY;
+         this.intValue5 = n3;
+         this.intValue6 = n4;
       }
 
-      private boolean method4080(BlockPos var1) {
-         return var1.getX() >= this.intValue
-            && var1.getX() <= this.intValue2
-            && var1.getY() >= this.intValue3
-            && var1.getY() <= this.intValue4
-            && var1.getZ() >= this.intValue5
-            && var1.getZ() <= this.intValue6;
+      private boolean method4080(BlockPos relative) {
+         return relative.getX() >= this.intValue
+            && relative.getX() <= this.intValue2
+            && relative.getY() >= this.intValue3
+            && relative.getY() <= this.intValue4
+            && relative.getZ() >= this.intValue5
+            && relative.getZ() <= this.intValue6;
       }
 
       private int method4081() {
          return (this.intValue2 - this.intValue + 1) * (this.intValue4 - this.intValue3 + 1) * (this.intValue6 - this.intValue5 + 1);
       }
 
-      private int method4082(int var1, int var2, int var3) {
-         return ((var1 - this.intValue) * (this.intValue4 - this.intValue3 + 1) + (var2 - this.intValue3)) * (this.intValue6 - this.intValue5 + 1)
-            + (var3 - this.intValue5);
+      private int method4082(int intValue, int y, int z) {
+         return ((intValue - this.intValue) * (this.intValue4 - this.intValue3 + 1) + (y - this.intValue3)) * (this.intValue6 - this.intValue5 + 1)
+            + (z - this.intValue5);
       }
 
-      private int method4083(BlockPos var1) {
-         return this.method4082(var1.getX(), var1.getY(), var1.getZ());
+      private int method4083(BlockPos immutable) {
+         return this.method4082(immutable.getX(), immutable.getY(), immutable.getZ());
       }
    }
 }

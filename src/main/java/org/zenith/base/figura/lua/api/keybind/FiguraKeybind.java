@@ -71,7 +71,7 @@ public class FiguraKeybind {
    public static Key parseStringKey(String key) {
       try {
          return InputConstants.getKey(key);
-      } catch (Exception var2) {
+      } catch (Exception e) {
          throw new LuaError("Invalid key: " + key);
       }
    }

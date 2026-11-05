@@ -51,19 +51,19 @@ public final class AutoMaceModule extends Module {
    }
 
    @EventTarget(0)
-   public void method308(Event5 var1) {
+   public void method308(Event5 event) {
       this.method316();
       if (mc.player != null && mc.level != null && !mc.player.isDeadOrDying()) {
-         int var2 = InventoryUtils.method922(var0 -> mc.player.getInventory().getItem(var0).is(Items.MACE));
-         if (AuraModule.INSTANCE.isEnabled() && var2 != -1 && this.method311() && this.method312()) {
+         int selected = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).is(Items.MACE));
+         if (AuraModule.INSTANCE.isEnabled() && selected != -1 && this.method311() && this.method312()) {
             this.flag = true;
-            int var3 = mc.player.getInventory().getSelectedSlot();
-            if (var3 != var2 && !mc.player.isUsingItem()) {
+            int selectedSlot = mc.player.getInventory().getSelectedSlot();
+            if (selectedSlot != selected && !mc.player.isUsingItem()) {
                if (this.intValue2 == -1) {
-                  this.intValue2 = var3;
+                  this.intValue2 = selectedSlot;
                }
 
-               mc.player.getInventory().setSelectedSlot(var2);
+               mc.player.getInventory().setSelectedSlot(selected);
                mc.gameMode.ensureHasSentCarriedItem();
             }
 
@@ -78,11 +78,11 @@ public final class AutoMaceModule extends Module {
       }
    }
 
-   public AutoMaceModule.Type method309(LivingEntity var1) {
-      if (this.isEnabled() && this.flag && var1 != null && mc.player != null && mc.player.getMainHandItem().is(Items.MACE)) {
-         if (this.intValue3 != var1.getId()) {
-            this.intValue3 = var1.getId();
-            this.type = this.method310(var1);
+   public AutoMaceModule.Type method309(LivingEntity livingEntity) {
+      if (this.isEnabled() && this.flag && livingEntity != null && mc.player != null && mc.player.getMainHandItem().is(Items.MACE)) {
+         if (this.intValue3 != livingEntity.getId()) {
+            this.intValue3 = livingEntity.getId();
+            this.type = this.method310(livingEntity);
          }
 
          return this.type;
@@ -91,18 +91,18 @@ public final class AutoMaceModule extends Module {
       }
    }
 
-   private AutoMaceModule.Type method310(LivingEntity var1) {
+   private AutoMaceModule.Type method310(LivingEntity livingEntity) {
       if (this.intValue == 1) {
          return AutoMaceModule.Type.HIT;
       } else if (!this.holdAura.isEnabled()) {
          return AutoMaceModule.Type.NONE;
       } else {
-         AABB var2 = this.items.get(var1.getId());
-         if (var2 == null) {
-            var2 = this.method313(var1, this.intValue - 1);
+         AABB boundingBox = this.items.get(livingEntity.getId());
+         if (boundingBox == null) {
+            boundingBox = this.method313(livingEntity, this.intValue - 1);
          }
 
-         return AuraModule.INSTANCE.method6332(var2, this.vec3d) ? AutoMaceModule.Type.HOLD : AutoMaceModule.Type.NONE;
+         return AuraModule.INSTANCE.method6332(boundingBox, this.vec3d) ? AutoMaceModule.Type.HOLD : AutoMaceModule.Type.NONE;
       }
    }
 
@@ -110,31 +110,31 @@ public final class AutoMaceModule extends Module {
       if (!this.method314()) {
          return false;
       } else {
-         float var1 = mc.player.getEyeHeight(mc.player.getPose());
-         PlayerSimulation var2 = PlayerSimulation.method6031(0);
-         Vec3 var3 = var2.vec3d.add(0.0, var1, 0.0);
-         float var4 = var2.floatValue3;
-         int var5 = (int)this.predictTicks.getValue3();
+         float eyeHeight = mc.player.getEyeHeight(mc.player.getPose());
+         PlayerSimulation playerSimulation = PlayerSimulation.method6031(0);
+         Vec3 vec3d = playerSimulation.vec3d.add(0.0, eyeHeight, 0.0);
+         float floatValue = playerSimulation.floatValue3;
+         int n = (int)this.predictTicks.getValue3();
 
-         for (int var6 = 1; var6 <= var5; var6++) {
-            var2.tick();
-            if (var2.flag4) {
-               if (!(var4 <= 1.5F) && !(var4 < this.minFall.getValue3())) {
-                  this.intValue = var6;
-                  this.floatValue = var4;
-                  this.vec3d = var3;
+         for (int i = 1; i <= n; i++) {
+            playerSimulation.tick();
+            if (playerSimulation.flag4) {
+               if (!(floatValue <= 1.5F) && !(floatValue < this.minFall.getValue3())) {
+                  this.intValue = i;
+                  this.floatValue = floatValue;
+                  this.vec3d = vec3d;
                   return true;
                }
 
                return false;
             }
 
-            if (var2.flag3 || var2.flag7 || var2.method6046() || var2.method6064()) {
+            if (playerSimulation.flag3 || playerSimulation.flag7 || playerSimulation.method6046() || playerSimulation.method6064()) {
                return false;
             }
 
-            var3 = var2.vec3d.add(0.0, var1, 0.0);
-            var4 = var2.floatValue3;
+            vec3d = playerSimulation.vec3d.add(0.0, eyeHeight, 0.0);
+            floatValue = playerSimulation.floatValue3;
          }
 
          return false;
@@ -142,31 +142,31 @@ public final class AutoMaceModule extends Module {
    }
 
    private boolean method312() {
-      int var1 = this.intValue - 1;
-      double var2 = this.swapRadius.getValue3();
-      double var4 = var2 + 0.5 * var1;
-      double var6 = var4 * var4;
-      double var8 = var2 * var2;
-      boolean var10 = false;
+      int scale = this.intValue - 1;
+      double d = this.swapRadius.getValue3();
+      double d2 = d + 0.5 * scale;
+      double d3 = d2 * d2;
+      double d4 = d * d;
+      boolean flag = false;
 
-      for (Entity var12 : mc.level.entitiesForRendering()) {
-         if (var12 instanceof LivingEntity var13
-            && !(var12.getBoundingBox().distanceToSqr(this.vec3d) > var6)
-            && AuraModule.INSTANCE.method6331(var13)
-            && !UseItemUtils.method6530(var13)) {
-            AABB var14 = this.method313(var13, var1);
-            this.items.put(var12.getId(), var14);
-            if (var14.distanceToSqr(this.vec3d) <= var8) {
-               var10 = true;
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof LivingEntity livingEntity
+            && !(entity.getBoundingBox().distanceToSqr(this.vec3d) > d3)
+            && AuraModule.INSTANCE.method6331(livingEntity)
+            && !UseItemUtils.method6530(livingEntity)) {
+            AABB aabb = this.method313(livingEntity, scale);
+            this.items.put(entity.getId(), aabb);
+            if (aabb.distanceToSqr(this.vec3d) <= d4) {
+               flag = true;
             }
          }
       }
 
-      return var10;
+      return flag;
    }
 
-   private AABB method313(LivingEntity var1, int var2) {
-      return var1 instanceof Player var3 ? PlayerSimulation.method6032(var3, var2).box : var1.getBoundingBox();
+   private AABB method313(LivingEntity livingEntity, int scale) {
+      return livingEntity instanceof Player player ? PlayerSimulation.method6032(player, scale).box : livingEntity.getBoundingBox();
    }
 
    private boolean method314() {

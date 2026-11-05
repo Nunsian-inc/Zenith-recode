@@ -15,391 +15,391 @@ public final class TextUtils implements MinecraftAccess {
    private static final String text = "ёйцукенгшщзхъфывапролджэячсмитьбю";
    private static final String text2 = "`qwertyuiop[]asdfghjkl;'zxcvbnm,.";
 
-   public static String method2104(double var0) {
-      return String.format(Locale.US, "%.1f", var0);
+   public static String method2104(double d) {
+      return String.format(Locale.US, "%.1f", d);
    }
 
-   public static Component method2105(Component var0) {
-      FormattedCharSequence var1 = var0.getVisualOrderText();
-      MutableComponent var2 = Component.empty();
-      StringBuilder var3 = new StringBuilder();
-      Style[] var4 = new Style[]{Style.EMPTY};
-      boolean[] var5 = new boolean[]{true};
-      var1.accept((var4x, var5x, var6) -> {
-         if (var5[0] && Character.isWhitespace(var6)) {
+   public static Component method2105(Component motd) {
+      FormattedCharSequence visualOrderText = motd.getVisualOrderText();
+      MutableComponent empty = Component.empty();
+      StringBuilder builder = new StringBuilder();
+      Style[] styles = new Style[]{Style.EMPTY};
+      boolean[] flags = new boolean[]{true};
+      visualOrderText.accept((var4x, var5x, codePoint) -> {
+         if (flags[0] && Character.isWhitespace(codePoint)) {
             return true;
          } else {
-            var5[0] = false;
-            if (!var5x.equals(var4[0])) {
-               if (var3.length() > 0) {
-                  var2.append(Component.literal(var3.toString()).setStyle(var4[0]));
-                  var3.setLength(0);
+            flags[0] = false;
+            if (!var5x.equals(styles[0])) {
+               if (builder.length() > 0) {
+                  empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
+                  builder.setLength(0);
                }
 
-               var4[0] = var5x;
+               styles[0] = var5x;
             }
 
-            var3.appendCodePoint(var6);
+            builder.appendCodePoint(codePoint);
             return true;
          }
       });
-      if (var3.length() > 0) {
-         var2.append(Component.literal(var3.toString()).setStyle(var4[0]));
+      if (builder.length() > 0) {
+         empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
       }
 
-      return var2;
+      return empty;
    }
 
-   public static MutableComponent method2106(Component var0, Component var1, Component var2) {
-      String var3 = var0.getString();
-      String var4 = var1.getString();
-      if (var4 != null && !var4.isEmpty()) {
-         int var5 = var3.indexOf(var4);
-         if (var5 == -1) {
-            return var0.copy();
+   public static MutableComponent method2106(Component component, Component component2, Component component3) {
+      String string = component.getString();
+      String str = component2.getString();
+      if (str != null && !str.isEmpty()) {
+         int indexOf = string.indexOf(str);
+         if (indexOf == -1) {
+            return component.copy();
          } else {
-            int var6 = var5 + var4.length();
-            int var7 = var3.codePointCount(0, var5);
-            int var8 = var3.codePointCount(0, var6);
-            FormattedCharSequence var9 = var0.getVisualOrderText();
-            ArrayList var10 = new ArrayList();
-            var9.accept((var1x, var2x, var3x) -> {
-               var10.add(new TextUtils.Data(new String(Character.toChars(var3x)), var2x));
+            int endIndex = indexOf + str.length();
+            int codePointCount = string.codePointCount(0, indexOf);
+            int n = string.codePointCount(0, endIndex);
+            FormattedCharSequence visualOrderText = component.getVisualOrderText();
+            ArrayList arrayList = new ArrayList();
+            visualOrderText.accept((var1x, var2x, var3x) -> {
+               arrayList.add(new TextUtils.Data(new String(Character.toChars(var3x)), var2x));
                return true;
             });
-            MutableComponent var11 = Component.empty();
+            MutableComponent empty = Component.empty();
 
-            for (int var12 = 0; var12 < var10.size(); var12++) {
-               if (var12 == var7) {
-                  var11.append(var2.copy());
+            for (int i = 0; i < arrayList.size(); i++) {
+               if (i == codePointCount) {
+                  empty.append(component3.copy());
                }
 
-               if (var12 < var7 || var12 >= var8) {
-                  TextUtils.Data var13 = (TextUtils.Data)var10.get(var12);
-                  var11.append(Component.literal(var13.text()).setStyle(var13.style()));
+               if (i < codePointCount || i >= n) {
+                  TextUtils.Data data = (TextUtils.Data)arrayList.get(i);
+                  empty.append(Component.literal(data.text()).setStyle(data.style()));
                }
             }
 
-            return var11;
+            return empty;
          }
       } else {
-         return var0.copy();
+         return component.copy();
       }
    }
 
-   public static MutableComponent method2107(Component var0, String var1, Component var2) {
-      if (var0 != null && var1 != null && !var1.isEmpty()) {
-         FormattedCharSequence var3 = var0.getVisualOrderText();
-         ArrayList var4 = new ArrayList();
-         StringBuilder var5 = new StringBuilder();
-         var3.accept((var2x, var3x, var4x) -> {
+   public static MutableComponent method2107(Component decorateName, String scoreboardName, Component component) {
+      if (decorateName != null && scoreboardName != null && !scoreboardName.isEmpty()) {
+         FormattedCharSequence visualOrderText = decorateName.getVisualOrderText();
+         ArrayList arrayList = new ArrayList();
+         StringBuilder builder = new StringBuilder();
+         visualOrderText.accept((var2x, var3x, var4x) -> {
             String var5x = new String(Character.toChars(var4x));
-            var4.add(new TextUtils.Data(var5x, var3x));
-            var5.append(var5x);
+            arrayList.add(new TextUtils.Data(var5x, var3x));
+            builder.append(var5x);
             return true;
          });
-         String var6 = var5.toString();
-         int var7 = var6.indexOf(var1);
-         if (var7 == -1) {
-            return var0.copy();
+         String string = builder.toString();
+         int indexOf = string.indexOf(scoreboardName);
+         if (indexOf == -1) {
+            return decorateName.copy();
          } else {
-            int var8 = var7 + var1.length();
-            int var9 = var6.codePointCount(0, var8);
-            MutableComponent var10 = Component.empty();
-            var10.append(var2.copy());
+            int endIndex = indexOf + scoreboardName.length();
+            int codePointCount = string.codePointCount(0, endIndex);
+            MutableComponent empty = Component.empty();
+            empty.append(component.copy());
 
-            for (int var11 = var9; var11 < var4.size(); var11++) {
-               TextUtils.Data var12 = (TextUtils.Data)var4.get(var11);
-               var10.append(Component.literal(var12.text()).setStyle(var12.style()));
+            for (int i = codePointCount; i < arrayList.size(); i++) {
+               TextUtils.Data data = (TextUtils.Data)arrayList.get(i);
+               empty.append(Component.literal(data.text()).setStyle(data.style()));
             }
 
-            return var10;
+            return empty;
          }
       } else {
-         return var0 == null ? Component.empty() : var0.copy();
+         return decorateName == null ? Component.empty() : decorateName.copy();
       }
    }
 
-   public static Component method2108(Component var0, boolean var1) {
-      FormattedCharSequence var2 = var0.getVisualOrderText();
-      MutableComponent var3 = Component.empty();
-      StringBuilder var4 = new StringBuilder();
-      Style[] var5 = new Style[]{Style.EMPTY};
-      int[] var6 = new int[]{0};
-      boolean[] var7 = new boolean[]{false};
-      var2.accept((var5x, var6x, var7x) -> {
-         if (var6[0] > 2) {
-            var7[0] = true;
+   public static Component method2108(Component tabListDisplayName, boolean flag) {
+      FormattedCharSequence visualOrderText = tabListDisplayName.getVisualOrderText();
+      MutableComponent empty = Component.empty();
+      StringBuilder builder = new StringBuilder();
+      Style[] styles = new Style[]{Style.EMPTY};
+      int[] ints = new int[]{0};
+      boolean[] flags = new boolean[]{false};
+      visualOrderText.accept((var5x, var6x, var7x) -> {
+         if (ints[0] > 2) {
+            flags[0] = true;
             return false;
          } else {
-            if (!var6x.equals(var5[0])) {
-               if (!var4.isEmpty()) {
-                  var3.append(Component.literal(var4.toString()).setStyle(var5[0]));
-                  var4.setLength(0);
+            if (!var6x.equals(styles[0])) {
+               if (!builder.isEmpty()) {
+                  empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
+                  builder.setLength(0);
                }
 
-               var5[0] = var6x;
+               styles[0] = var6x;
             }
 
-            var4.appendCodePoint(var7x);
+            builder.appendCodePoint(var7x);
             if (Character.isWhitespace(var7x)) {
-               var6[0]++;
+               ints[0]++;
             }
 
             return true;
          }
       });
-      if (var4.length() > 0) {
-         var3.append(Component.literal(var4.toString()).setStyle(var5[0]));
+      if (builder.length() > 0) {
+         empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
       }
 
-      if (var1 && var7[0]) {
-         Style var8 = var5[0] != null ? var5[0] : var0.getStyle();
-         var3.append(Component.literal("…").setStyle(var8));
+      if (flag && flags[0]) {
+         Style style = styles[0] != null ? styles[0] : tabListDisplayName.getStyle();
+         empty.append(Component.literal("…").setStyle(style));
       }
 
-      return var3;
+      return empty;
    }
 
-   public static Component method2109(Component var0, int var1, boolean var2) {
-      if (var1 <= 0) {
+   public static Component method2109(Component component, int n, boolean flag) {
+      if (n <= 0) {
          return Component.empty();
       } else {
-         FormattedCharSequence var3 = var0.getVisualOrderText();
-         MutableComponent var4 = Component.empty();
-         StringBuilder var5 = new StringBuilder();
-         Style[] var6 = new Style[]{Style.EMPTY};
-         int[] var7 = new int[]{0};
-         boolean[] var8 = new boolean[]{false};
-         var3.accept((var6x, var7x, var8x) -> {
-            if (var7[0] >= var1) {
-               var8[0] = true;
+         FormattedCharSequence visualOrderText = component.getVisualOrderText();
+         MutableComponent empty = Component.empty();
+         StringBuilder builder = new StringBuilder();
+         Style[] styles = new Style[]{Style.EMPTY};
+         int[] ints = new int[]{0};
+         boolean[] flags = new boolean[]{false};
+         visualOrderText.accept((var6x, var7x, var8x) -> {
+            if (ints[0] >= n) {
+               flags[0] = true;
                return false;
             } else {
-               if (!var7x.equals(var6[0])) {
-                  if (var5.length() > 0) {
-                     var4.append(Component.literal(var5.toString()).setStyle(var6[0]));
-                     var5.setLength(0);
+               if (!var7x.equals(styles[0])) {
+                  if (builder.length() > 0) {
+                     empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
+                     builder.setLength(0);
                   }
 
-                  var6[0] = var7x;
+                  styles[0] = var7x;
                }
 
-               var5.appendCodePoint(var8x);
-               var7[0]++;
+               builder.appendCodePoint(var8x);
+               ints[0]++;
                return true;
             }
          });
-         if (var5.length() > 0) {
-            var4.append(Component.literal(var5.toString()).setStyle(var6[0]));
+         if (builder.length() > 0) {
+            empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
          }
 
-         if (var2 && var8[0]) {
-            Style var9 = var6[0] != null ? var6[0] : var0.getStyle();
-            return var4.append(Component.literal("…").setStyle(var9));
+         if (flag && flags[0]) {
+            Style style = styles[0] != null ? styles[0] : component.getStyle();
+            return empty.append(Component.literal("…").setStyle(style));
          } else {
-            return var4;
+            return empty;
          }
       }
    }
 
-   public static MutableComponent method2110(Component var0, String var1, String var2) {
-      return method2112(var0, var1, var1x -> {
+   public static MutableComponent method2110(Component name, String scoreboardName, String zenith$protectedRowsName) {
+      return method2112(name, scoreboardName, var1x -> {
          Style var2x = var1x.get(0).style() != null ? var1x.get(0).style() : Style.EMPTY;
-         return Component.literal(var2).setStyle(var2x);
+         return Component.literal(zenith$protectedRowsName).setStyle(var2x);
       });
    }
 
-   public static MutableComponent method2111(Component var0, String var1, Component var2) {
-      return method2112(var0, var1, var1x -> var2.copy());
+   public static MutableComponent method2111(Component decorateName, String scoreboardName, Component component) {
+      return method2112(decorateName, scoreboardName, var1x -> component.copy());
    }
 
-   private static MutableComponent method2112(Component var0, String var1, Function<List<TextUtils.Data>, Component> var2) {
-      FormattedCharSequence var3 = var0.getVisualOrderText();
-      MutableComponent var4 = Component.empty();
-      ArrayList<TextUtils.Data> var5 = new ArrayList();
-      Runnable var6 = () -> {
-         if (!var5.isEmpty()) {
+   private static MutableComponent method2112(Component name, String scoreboardName, Function<List<TextUtils.Data>, Component> function) {
+      FormattedCharSequence visualOrderText = name.getVisualOrderText();
+      MutableComponent empty = Component.empty();
+      ArrayList<TextUtils.Data> datas = new ArrayList();
+      Runnable runnable = () -> {
+         if (!datas.isEmpty()) {
             StringBuilder var4x = new StringBuilder();
 
-            for (TextUtils.Data var6x : var5) {
+            for (TextUtils.Data var6x : datas) {
                var4x.append(var6x.text());
             }
 
-            String var8 = var4x.toString();
-            if (var8.equals(var1)) {
-               var4.append((Component)var2.apply(var5));
+            String string = var4x.toString();
+            if (string.equals(scoreboardName)) {
+               empty.append((Component)function.apply(datas));
             } else {
-               for (TextUtils.Data var7 : var5) {
-                  var4.append(Component.literal(var7.text()).setStyle(var7.style()));
+               for (TextUtils.Data data : datas) {
+                  empty.append(Component.literal(data.text()).setStyle(data.style()));
                }
             }
 
-            var5.clear();
+            datas.clear();
          }
       };
-      var3.accept((var3x, var4x, var5x) -> {
+      visualOrderText.accept((var3x, var4x, var5x) -> {
          String var6x = new String(Character.toChars(var5x));
-         boolean var7 = Character.isLetterOrDigit(var5x) || var5x == 95;
-         if (var7) {
-            var5.add(new TextUtils.Data(var6x, var4x));
+         boolean flag = Character.isLetterOrDigit(var5x) || var5x == 95;
+         if (flag) {
+            datas.add(new TextUtils.Data(var6x, var4x));
          } else {
-            var6.run();
-            var4.append(Component.literal(var6x).setStyle(var4x));
+            runnable.run();
+            empty.append(Component.literal(var6x).setStyle(var4x));
          }
 
          return true;
       });
-      var6.run();
-      return var4;
+      runnable.run();
+      return empty;
    }
 
-   public static MutableComponent method2113(Component var0, String var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         FormattedCharSequence var2 = var0.getVisualOrderText();
-         ArrayList var3 = new ArrayList();
-         StringBuilder var4 = new StringBuilder();
-         var2.accept((var2x, var3x, var4x) -> {
+   public static MutableComponent method2113(Component nameForDisplay, String str) {
+      if (str != null && !str.isEmpty()) {
+         FormattedCharSequence visualOrderText = nameForDisplay.getVisualOrderText();
+         ArrayList arrayList = new ArrayList();
+         StringBuilder builder = new StringBuilder();
+         visualOrderText.accept((var2x, var3x, var4x) -> {
             String var5x = new String(Character.toChars(var4x));
-            var3.add(new TextUtils.Data(var5x, var3x));
-            var4.append(var5x);
+            arrayList.add(new TextUtils.Data(var5x, var3x));
+            builder.append(var5x);
             return true;
          });
-         String var5 = var4.toString();
-         int var6 = var5.indexOf(var1);
-         if (var6 == -1) {
+         String string = builder.toString();
+         int indexOf = string.indexOf(str);
+         if (indexOf == -1) {
             return Component.empty();
          } else {
-            MutableComponent var7 = Component.empty();
+            MutableComponent empty = Component.empty();
 
-            for (int var8 = 0; var8 < var6; var8++) {
-               TextUtils.Data var9 = (TextUtils.Data)var3.get(var8);
-               var7.append(Component.literal(var9.text()).setStyle(var9.style()));
+            for (int i = 0; i < indexOf; i++) {
+               TextUtils.Data data = (TextUtils.Data)arrayList.get(i);
+               empty.append(Component.literal(data.text()).setStyle(data.style()));
             }
 
-            return var7;
+            return empty;
          }
       } else {
          return Component.empty();
       }
    }
 
-   public static MutableComponent method2114(Component var0, String var1, Component var2) {
-      String var3 = var0.getString();
-      int var4 = var3.indexOf(var1);
-      if (var4 == -1) {
-         return var0.copy();
+   public static MutableComponent method2114(Component name, String str, Component text) {
+      String string = name.getString();
+      int indexOf = string.indexOf(str);
+      if (indexOf == -1) {
+         return name.copy();
       } else {
-         FormattedCharSequence var5 = var0.getVisualOrderText();
-         ArrayList var6 = new ArrayList();
-         StringBuilder var7 = new StringBuilder();
-         var5.accept((var2x, var3x, var4x) -> {
+         FormattedCharSequence visualOrderText = name.getVisualOrderText();
+         ArrayList arrayList = new ArrayList();
+         StringBuilder builder = new StringBuilder();
+         visualOrderText.accept((var2x, var3x, var4x) -> {
             String var5x = new String(Character.toChars(var4x));
-            var6.add(new TextUtils.Data(var5x, var3x));
-            var7.append(var5x);
+            arrayList.add(new TextUtils.Data(var5x, var3x));
+            builder.append(var5x);
             return true;
          });
-         var3 = var7.toString();
-         int var8 = var4 + var1.length();
+         string = builder.toString();
+         int index = indexOf + str.length();
 
-         while (var8 < var3.length()) {
-            int var9 = var3.codePointAt(var8);
-            if (!Character.isWhitespace(var9)) {
+         while (index < string.length()) {
+            int codePointAt = string.codePointAt(index);
+            if (!Character.isWhitespace(codePointAt)) {
                break;
             }
 
-            var8 += Character.charCount(var9);
+            index += Character.charCount(codePointAt);
          }
 
-         if (var8 >= var3.length()) {
-            return var0.copy();
+         if (index >= string.length()) {
+            return name.copy();
          } else {
-            int var17 = var8;
+            int n = index;
 
-            while (var17 < var3.length()) {
-               int var10 = var3.codePointAt(var17);
-               if (Character.isWhitespace(var10)) {
+            while (n < string.length()) {
+               int codePointAt = string.codePointAt(n);
+               if (Character.isWhitespace(codePointAt)) {
                   break;
                }
 
-               var17 += Character.charCount(var10);
+               n += Character.charCount(codePointAt);
             }
 
-            MutableComponent var18 = method2115(var2, 1);
-            if (var18.getString().isEmpty()) {
-               var18 = method2115(var2, 0);
+            MutableComponent component = method2115(text, 1);
+            if (component.getString().isEmpty()) {
+               component = method2115(text, 0);
             }
 
-            int var11 = var3.codePointCount(0, var8);
-            int var12 = var3.codePointCount(0, var17);
-            MutableComponent var13 = Component.empty();
+            int codePointCount = string.codePointCount(0, index);
+            int codePointCount2 = string.codePointCount(0, n);
+            MutableComponent empty = Component.empty();
 
-            for (int var14 = 0; var14 < var11; var14++) {
-               TextUtils.Data var15 = (TextUtils.Data)var6.get(var14);
-               var13.append(Component.literal(var15.text()).setStyle(var15.style()));
+            for (int i = 0; i < codePointCount; i++) {
+               TextUtils.Data data = (TextUtils.Data)arrayList.get(i);
+               empty.append(Component.literal(data.text()).setStyle(data.style()));
             }
 
-            var13.append(var18.copy());
+            empty.append(component.copy());
 
-            for (int var19 = var12; var19 < var6.size(); var19++) {
-               TextUtils.Data var20 = (TextUtils.Data)var6.get(var19);
-               var13.append(Component.literal(var20.text()).setStyle(var20.style()));
+            for (int i = codePointCount2; i < arrayList.size(); i++) {
+               TextUtils.Data data = (TextUtils.Data)arrayList.get(i);
+               empty.append(Component.literal(data.text()).setStyle(data.style()));
             }
 
-            return var13;
+            return empty;
          }
       }
    }
 
-   private static MutableComponent method2115(Component var0, int var1) {
-      FormattedCharSequence var2 = var0.getVisualOrderText();
-      ArrayList var3 = new ArrayList();
-      StringBuilder var4 = new StringBuilder();
-      var2.accept((var2x, var3x, var4x) -> {
+   private static MutableComponent method2115(Component text, int n) {
+      FormattedCharSequence visualOrderText = text.getVisualOrderText();
+      ArrayList arrayList = new ArrayList();
+      StringBuilder builder = new StringBuilder();
+      visualOrderText.accept((var2x, var3x, var4x) -> {
          String var5x = new String(Character.toChars(var4x));
-         var3.add(new TextUtils.Data(var5x, var3x));
-         var4.append(var5x);
+         arrayList.add(new TextUtils.Data(var5x, var3x));
+         builder.append(var5x);
          return true;
       });
-      String var5 = var4.toString();
-      int var6 = 0;
+      String string = builder.toString();
+      int n2 = 0;
 
-      for (int var7 = 0; var7 < var5.length(); var6++) {
-         while (var7 < var5.length()) {
-            int var8 = var5.codePointAt(var7);
-            if (!Character.isWhitespace(var8)) {
+      for (int i = 0; i < string.length(); n2++) {
+         while (i < string.length()) {
+            int codePointAt = string.codePointAt(i);
+            if (!Character.isWhitespace(codePointAt)) {
                break;
             }
 
-            var7 += Character.charCount(var8);
+            i += Character.charCount(codePointAt);
          }
 
-         if (var7 >= var5.length()) {
+         if (i >= string.length()) {
             break;
          }
 
-         int var15 = var7;
+         int endIndex = i;
 
          while (true) {
-            if (var7 < var5.length()) {
-               int var9 = var5.codePointAt(var7);
-               if (!Character.isWhitespace(var9)) {
-                  var7 += Character.charCount(var9);
+            if (i < string.length()) {
+               int codePointAt = string.codePointAt(i);
+               if (!Character.isWhitespace(codePointAt)) {
+                  i += Character.charCount(codePointAt);
                   continue;
                }
             }
 
-            if (var6 == var1) {
-               int var10 = var5.codePointCount(0, var15);
-               int var11 = var5.codePointCount(0, var7);
-               MutableComponent var12 = Component.empty();
+            if (n2 == n) {
+               int codePointCount = string.codePointCount(0, endIndex);
+               int codePointCount2 = string.codePointCount(0, i);
+               MutableComponent empty = Component.empty();
 
-               for (int var13 = var10; var13 < var11; var13++) {
-                  TextUtils.Data var14 = (TextUtils.Data)var3.get(var13);
-                  var12.append(Component.literal(var14.text()).setStyle(var14.style()));
+               for (int j = codePointCount; j < codePointCount2; j++) {
+                  TextUtils.Data data = (TextUtils.Data)arrayList.get(j);
+                  empty.append(Component.literal(data.text()).setStyle(data.style()));
                }
 
-               return var12;
+               return empty;
             }
             break;
          }
@@ -408,115 +408,115 @@ public final class TextUtils implements MinecraftAccess {
       return Component.empty();
    }
 
-   public static MutableComponent method2116(Component var0, String var1) {
-      FormattedCharSequence var2 = var0.getVisualOrderText();
-      int[] var3 = new int[]{0};
-      var2.accept((var1x, var2x, var3x) -> {
-         var3[0]++;
+   public static MutableComponent method2116(Component text, String str) {
+      FormattedCharSequence visualOrderText = text.getVisualOrderText();
+      int[] ints = new int[]{0};
+      visualOrderText.accept((var1x, var2x, var3x) -> {
+         ints[0]++;
          return true;
       });
-      if (var3[0] == 0) {
-         return var0.copy();
+      if (ints[0] == 0) {
+         return text.copy();
       } else {
-         int var4 = var3[0] - 1;
-         MutableComponent var5 = Component.empty();
-         StringBuilder var6 = new StringBuilder();
-         Style[] var7 = new Style[]{null};
-         int[] var8 = new int[]{0};
-         var2.accept((var6x, var7x, var8x) -> {
-            boolean var9 = var8[0] == var4;
-            if (var7[0] == null || !var7[0].equals(var7x)) {
-               method2117(var5, var6, var7[0]);
-               var7[0] = var7x;
+         int n = ints[0] - 1;
+         MutableComponent empty = Component.empty();
+         StringBuilder builder = new StringBuilder();
+         Style[] styles = new Style[]{null};
+         int[] ints2 = new int[]{0};
+         visualOrderText.accept((var6x, var7x, var8x) -> {
+            boolean flag = ints2[0] == n;
+            if (styles[0] == null || !styles[0].equals(var7x)) {
+               method2117(empty, builder, styles[0]);
+               styles[0] = var7x;
             }
 
-            if (var9) {
+            if (flag) {
             }
 
-            var6.appendCodePoint(var8x);
-            var8[0]++;
+            builder.appendCodePoint(var8x);
+            ints2[0]++;
             return true;
          });
-         method2117(var5, var6, var7[0]);
-         return var5;
+         method2117(empty, builder, styles[0]);
+         return empty;
       }
    }
 
-   private static void method2117(MutableComponent var0, StringBuilder var1, Style var2) {
-      if (var1.length() != 0) {
-         MutableComponent var3 = Component.literal(var1.toString());
-         if (var2 != null) {
-            var3.setStyle(var2);
+   private static void method2117(MutableComponent empty, StringBuilder builder, Style style) {
+      if (builder.length() != 0) {
+         MutableComponent literal = Component.literal(builder.toString());
+         if (style != null) {
+            literal.setStyle(style);
          }
 
-         var0.append(var3);
-         var1.setLength(0);
+         empty.append(literal);
+         builder.setLength(0);
       }
    }
 
-   public static Component method2118(Component var0, String var1, boolean var2) {
-      if (var1 != null && !var1.isEmpty()) {
-         FormattedCharSequence var3 = var0.getVisualOrderText();
-         MutableComponent var4 = Component.empty();
-         StringBuilder var5 = new StringBuilder();
-         Style[] var6 = new Style[]{Style.EMPTY};
-         StringBuilder var7 = new StringBuilder();
-         boolean[] var8 = new boolean[]{false};
-         var3.accept((var6x, var7x, var8x) -> {
+   public static Component method2118(Component tabListDisplayName, String name, boolean flag) {
+      if (name != null && !name.isEmpty()) {
+         FormattedCharSequence visualOrderText = tabListDisplayName.getVisualOrderText();
+         MutableComponent empty = Component.empty();
+         StringBuilder builder = new StringBuilder();
+         Style[] styles = new Style[]{Style.EMPTY};
+         StringBuilder builder2 = new StringBuilder();
+         boolean[] flags = new boolean[]{false};
+         visualOrderText.accept((var6x, var7x, var8x) -> {
             String var9x = new String(Character.toChars(var8x));
-            if (var7.toString().contains(var1)) {
-               var8[0] = true;
+            if (builder2.toString().contains(name)) {
+               flags[0] = true;
                return false;
             } else {
-               var7.append(var9x);
-               if (!var7x.equals(var6[0])) {
-                  if (var5.length() > 0) {
-                     var4.append(Component.literal(var5.toString()).setStyle(var6[0]));
-                     var5.setLength(0);
+               builder2.append(var9x);
+               if (!var7x.equals(styles[0])) {
+                  if (builder.length() > 0) {
+                     empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
+                     builder.setLength(0);
                   }
 
-                  var6[0] = var7x;
+                  styles[0] = var7x;
                }
 
-               var5.append(var9x);
+               builder.append(var9x);
                return true;
             }
          });
-         if (var5.length() > 0) {
-            var4.append(Component.literal(var5.toString()).setStyle(var6[0]));
+         if (builder.length() > 0) {
+            empty.append(Component.literal(builder.toString()).setStyle(styles[0]));
          }
 
-         if (var2 && var8[0]) {
-            Style var9 = var6[0] != null ? var6[0] : var0.getStyle();
-            var4.append(Component.literal("…").setStyle(var9));
+         if (flag && flags[0]) {
+            Style style = styles[0] != null ? styles[0] : tabListDisplayName.getStyle();
+            empty.append(Component.literal("…").setStyle(style));
          }
 
-         return var4;
+         return empty;
       } else {
-         return var0;
+         return tabListDisplayName;
       }
    }
 
-   public static String method2119(String var0) {
-      if (var0.isEmpty()) {
-         return var0;
+   public static String method2119(String str) {
+      if (str.isEmpty()) {
+         return str;
       } else {
-         char[] var1 = new char[var0.length()];
+         char[] chars = new char[str.length()];
 
-         for (int var2 = 0; var2 < var0.length(); var2++) {
-            char var3 = var0.charAt(var2);
-            boolean var4 = var3 >= 1040 && var3 <= 1071 || var3 == 1025;
-            char var5 = Character.toLowerCase(var3);
-            int var6 = "ёйцукенгшщзхъфывапролджэячсмитьбю".indexOf(var5);
-            if (var6 != -1) {
-               char var7 = "`qwertyuiop[]asdfghjkl;'zxcvbnm,.".charAt(var6);
-               var1[var2] = var4 ? Character.toUpperCase(var7) : var7;
+         for (int i = 0; i < str.length(); i++) {
+            char charAt = str.charAt(i);
+            boolean flag = charAt >= 1040 && charAt <= 1071 || charAt == 1025;
+            char lowerCase = Character.toLowerCase(charAt);
+            int indexOf = "ёйцукенгшщзхъфывапролджэячсмитьбю".indexOf(lowerCase);
+            if (indexOf != -1) {
+               char ch = "`qwertyuiop[]asdfghjkl;'zxcvbnm,.".charAt(indexOf);
+               chars[i] = flag ? Character.toUpperCase(ch) : ch;
             } else {
-               var1[var2] = var3;
+               chars[i] = charAt;
             }
          }
 
-         return new String(var1);
+         return new String(chars);
       }
    }
 
@@ -554,9 +554,9 @@ public final class TextUtils implements MinecraftAccess {
          return "Data[" + "text=" + this.text + ", " + "style=" + this.style + "]";
       }
 
-      public Data(String var1, Style var2) {
-         this.text = var1;
-         this.style = var2;
+      public Data(String text, Style style) {
+         this.text = text;
+         this.style = style;
       }
    }
 }

@@ -60,8 +60,8 @@ public class FiguraTexture extends SimpleTexture {
          wrapper.put(data);
          wrapper.rewind();
          image = NativeImage.read(wrapper);
-      } catch (IOException var6) {
-         FiguraMod.LOGGER.error("", var6);
+      } catch (IOException e) {
+         FiguraMod.LOGGER.error("", e);
          image = new NativeImage(1, 1, true);
       }
 
@@ -208,8 +208,8 @@ public class FiguraTexture extends SimpleTexture {
       try {
          int argb = this.texture.getPixel(x, y);
          return FiguraVec4.of((argb >> 16 & 0xFF) / 255.0, (argb >> 8 & 0xFF) / 255.0, (argb & 0xFF) / 255.0, (argb >>> 24) / 255.0);
-      } catch (Exception var4) {
-         throw new LuaError(var4.getMessage());
+      } catch (Exception e) {
+         throw new LuaError(e.getMessage());
       }
    }
 
@@ -231,8 +231,8 @@ public class FiguraTexture extends SimpleTexture {
          this.backupImage();
          this.texture.setPixel(x, y, ColorUtils.rgbaToIntARGB(this.parseColor("setPixel", r, g, b, a)));
          return this;
-      } catch (Exception var8) {
-         throw new LuaError(var8.getMessage());
+      } catch (Exception e) {
+         throw new LuaError(e.getMessage());
       }
    }
 
@@ -264,8 +264,8 @@ public class FiguraTexture extends SimpleTexture {
          this.backupImage();
          this.texture.fillRect(x, y, width, height, ColorUtils.rgbaToIntABGR(this.parseColor("fill", r, g, b, a)));
          return this;
-      } catch (Exception var10) {
-         throw new LuaError(var10.getMessage());
+      } catch (Exception e) {
+         throw new LuaError(e.getMessage());
       }
    }
 
@@ -297,13 +297,13 @@ public class FiguraTexture extends SimpleTexture {
          temporary = Files.createTempFile("zenith-figura-texture-", ".png");
          this.texture.writeToFile(temporary);
          e = Base64.getEncoder().encodeToString(Files.readAllBytes(temporary));
-      } catch (Exception var11) {
-         throw new LuaError(var11.getMessage());
+      } catch (Exception ex) {
+         throw new LuaError(ex.getMessage());
       } finally {
          if (temporary != null) {
             try {
                Files.deleteIfExists(temporary);
-            } catch (IOException var10) {
+            } catch (IOException ex) {
             }
          }
       }
@@ -366,7 +366,7 @@ public class FiguraTexture extends SimpleTexture {
    }
 
    public String toString() {
-      String var10000 = this.name;
-      return (var10000 + " (" + this.getWidth() + "x" + this.getHeight() + ") (Texture)");
+      String name = this.name;
+      return (name + " (" + this.getWidth() + "x" + this.getHeight() + ") (Texture)");
    }
 }

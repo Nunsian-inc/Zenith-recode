@@ -38,40 +38,40 @@ public class ToolsSectionPanel extends ElementPanel {
    private long lastFrame;
 
    public ToolsSectionPanel() {
-      BotsToolPanel var1 = new BotsToolPanel();
-      AutoSborToolPanel var2 = new AutoSborToolPanel();
-      AutoCraftToolPanel var3 = new AutoCraftToolPanel();
-      this.add("gui.tools.tab.bots", MenuGlyph.BOTS, var1, var1::isLive);
-      this.add("gui.tools.tab.inventory", MenuGlyph.STORAGE, var2, var2::isLive);
-      this.add("gui.tools.tab.craft", MenuGlyph.CRAFT, var3, var3::isLive);
+      BotsToolPanel botsToolPanel = new BotsToolPanel();
+      AutoSborToolPanel autoSborToolPanel = new AutoSborToolPanel();
+      AutoCraftToolPanel autoCraftToolPanel = new AutoCraftToolPanel();
+      this.add("gui.tools.tab.bots", MenuGlyph.BOTS, botsToolPanel, botsToolPanel::isLive);
+      this.add("gui.tools.tab.inventory", MenuGlyph.STORAGE, autoSborToolPanel, autoSborToolPanel::isLive);
+      this.add("gui.tools.tab.craft", MenuGlyph.CRAFT, autoCraftToolPanel, autoCraftToolPanel::isLive);
    }
 
-   private void add(String var1, MenuGlyph var2, SectionPanel var3, BooleanSupplier var4) {
-      var3.setEmbedded(false);
-      this.names.add(var1);
-      this.icons.add(var2);
-      this.children.add(var3);
-      this.liveStates.add(var4);
+   private void add(String str, MenuGlyph menuGlyph, SectionPanel botsToolPanel, BooleanSupplier booleanSupplier) {
+      botsToolPanel.setEmbedded(false);
+      this.names.add(str);
+      this.icons.add(menuGlyph);
+      this.children.add(botsToolPanel);
+      this.liveStates.add(booleanSupplier);
    }
 
-   private static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String t(String name) {
+      return Zenith.getInstance().getLocalization().translate(name);
    }
 
    private SectionPanel current() {
       return this.children.get(this.active);
    }
 
-   public void open(int var1) {
-      this.switchTo(var1);
+   public void open(int active) {
+      this.switchTo(active);
    }
 
-   private void switchTo(int var1) {
-      if (var1 != this.active && var1 >= 0 && var1 < this.children.size()) {
-         this.switchDirection = var1 > this.active ? 1.0F : -1.0F;
-         this.active = var1;
-         if (this.current() instanceof ToolTab var2) {
-            var2.shown();
+   private void switchTo(int active) {
+      if (active != this.active && active >= 0 && active < this.children.size()) {
+         this.switchDirection = active > this.active ? 1.0F : -1.0F;
+         this.active = active;
+         if (this.current() instanceof ToolTab toolTab) {
+            toolTab.shown();
          }
 
          this.switchAnimation.reset(0.0F);
@@ -95,42 +95,42 @@ public class ToolsSectionPanel extends ElementPanel {
    }
 
    @Override
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null) {
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         float var10 = var5 + 8.0F;
-         MenuGlyph.TOOLS.draw(var1, var10, var6 + 8.5F, var8.getTextEnable().getZenithColor().method7294(var4));
-         var1.drawText(var9, "Tools", var10 + 11.0F, var6 + (23.0F - var9.height()) / 2.0F, var8.getTextEnable().getZenithColor().method7294(var4));
+   public void renderHeader(MenuDrawContext menuDrawContext, int n, int n2, float previewAlpha, float f, float f2, float f3) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         float floatValue = f + 8.0F;
+         MenuGlyph.TOOLS.draw(menuDrawContext, floatValue, f2 + 8.5F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawText(font, "Tools", floatValue + 11.0F, f2 + (23.0F - font.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
       }
    }
 
    @Override
    public float getButtonWidth() {
-      Font var1 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      float var2 = 0.0F;
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      float f = 0.0F;
 
-      for (int var3 = 0; var3 < this.names.size(); var3++) {
-         var2 += this.tabWidth(var1, var3);
+      for (int i = 0; i < this.names.size(); i++) {
+         f += this.tabWidth(font, i);
       }
 
-      return var2 + 10.0F + this.liveWidth();
+      return f + 10.0F + this.liveWidth();
    }
 
-   private float tabWidth(Font var1, int var2) {
-      return var1.width(t(this.names.get(var2))) + 16.0F + 9.0F;
+   private float tabWidth(Font font, int n) {
+      return font.width(t(this.names.get(n))) + 16.0F + 9.0F;
    }
 
    private float liveWidth() {
       return 9.0F + Fonts.NEW_REGULAR.getFont(4.6F).width(this.liveText());
    }
 
-   private boolean isLive(int var1) {
-      BooleanSupplier var2 = this.liveStates.get(var1);
+   private boolean isLive(int active) {
+      BooleanSupplier liveState = this.liveStates.get(active);
 
       try {
-         return var2 != null && var2.getAsBoolean();
-      } catch (Exception var4) {
+         return liveState != null && liveState.getAsBoolean();
+      } catch (Exception e) {
          return false;
       }
    }
@@ -140,97 +140,97 @@ public class ToolsSectionPanel extends ElementPanel {
    }
 
    @Override
-   public void renderHeaderButtons(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
-      ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var9 != null) {
-         Font var10 = Fonts.NEW_MEDIUM.getFont(5.0F);
+   public void renderHeaderButtons(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float f, float y, float f2, float f3) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
          this.tabBounds.clear();
-         float var11 = var5;
-         float var12 = var5;
-         float var13 = 0.0F;
+         float floatValue = f;
+         float floatValue2 = f;
+         float tabWidth = 0.0F;
 
-         for (int var14 = 0; var14 < this.names.size(); var14++) {
-            float var15 = this.tabWidth(var10, var14);
-            this.tabBounds.add(new BoundsData(var11, var6, var15, 23.0F));
-            if (var14 == this.active) {
-               var12 = var11;
-               var13 = var15;
+         for (int i = 0; i < this.names.size(); i++) {
+            float width = this.tabWidth(font, i);
+            this.tabBounds.add(new BoundsData(floatValue, y, width, 23.0F));
+            if (i == this.active) {
+               floatValue2 = floatValue;
+               tabWidth = width;
             }
 
-            var11 += var15;
+            floatValue += width;
          }
 
          if (!this.plateReady) {
-            this.plateX.method2809(var12);
-            this.plateWidth.method2809(var13);
+            this.plateX.method2809(floatValue2);
+            this.plateWidth.method2809(tabWidth);
             this.plateReady = true;
          }
 
-         float var24 = this.plateX.method2808(var12);
-         float var25 = this.plateWidth.method2808(var13);
-         float var16 = 15.0F;
-         var1.drawRoundedRect(
-            var24 + 2.0F,
-            var6 + 4.0F,
-            Math.max(0.0F, var25 - 4.0F),
-            var16,
-            ProxyDotRadiusData.method8069(var16 / 2.0F),
-            var9.getDisableActiveBg().getZenithColor().method7294(var4)
+         float f4 = this.plateX.method2808(floatValue2);
+         float f5 = this.plateWidth.method2808(tabWidth);
+         float height = 15.0F;
+         menuDrawContext.drawRoundedRect(
+            f4 + 2.0F,
+            y + 4.0F,
+            Math.max(0.0F, f5 - 4.0F),
+            height,
+            ProxyDotRadiusData.method8069(height / 2.0F),
+            currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha)
          );
 
-         for (int var17 = 0; var17 < this.names.size(); var17++) {
-            BoundsData var18 = this.tabBounds.get(var17);
-            boolean var19 = var17 == this.active;
-            boolean var20 = var18.contains(var2, var3);
-            ZenithColor var21 = (var19 ? var9.getTextEnable() : var9.getTextTertiary())
+         for (int i = 0; i < this.names.size(); i++) {
+            BoundsData tabBound = this.tabBounds.get(i);
+            boolean flag = i == this.active;
+            boolean contains = tabBound.contains(lastClickX, lastClickY);
+            ZenithColor zenithColor = (flag ? currentStyle.getTextEnable() : currentStyle.getTextTertiary())
                .getZenithColor()
-               .method7295(var9.getTextEnable().getZenithColor(), var20 && !var19 ? 0.5F : 0.0F)
-               .method7294(var4);
-            float var22 = var18.getFloatValue() + 8.0F;
-            this.icons.get(var17).draw(var1, var22, var6 + 8.5F, var21);
-            var1.drawText(var10, t(this.names.get(var17)), var22 + 9.0F, var6 + (23.0F - var10.height()) / 2.0F, var21);
-            if (!var19 && this.isLive(var17)) {
-               float var23 = 2.5F;
-               var1.drawRoundedRect(
-                  var18.getFloatValue() + var18.width() - 6.0F,
-                  var6 + 6.0F,
-                  var23,
-                  var23,
-                  ProxyDotRadiusData.method8069(var23 / 2.0F),
-                  var9.getFriendColor().getZenithColor().method7294(var4)
+               .method7295(currentStyle.getTextEnable().getZenithColor(), contains && !flag ? 0.5F : 0.0F)
+               .method7294(previewAlpha);
+            float floatValue3 = tabBound.getFloatValue() + 8.0F;
+            this.icons.get(i).draw(menuDrawContext, floatValue3, y + 8.5F, zenithColor);
+            menuDrawContext.drawText(font, t(this.names.get(i)), floatValue3 + 9.0F, y + (23.0F - font.height()) / 2.0F, zenithColor);
+            if (!flag && this.isLive(i)) {
+               float width = 2.5F;
+               menuDrawContext.drawRoundedRect(
+                  tabBound.getFloatValue() + tabBound.width() - 6.0F,
+                  y + 6.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  currentStyle.getFriendColor().getZenithColor().method7294(previewAlpha)
                );
             }
          }
 
-         this.drawLive(var1, var11 + 10.0F, var6, var4, var9);
+         this.drawLive(menuDrawContext, floatValue + 10.0F, y, previewAlpha, currentStyle);
       }
    }
 
-   private void drawLive(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5) {
-      boolean var6 = this.isLive(this.active);
+   private void drawLive(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, ZenithStyle currentStyle) {
+      boolean live = this.isLive(this.active);
       if (!this.liveReady) {
-         this.liveAnimation.method2809(var6 ? 1.0F : 0.0F);
+         this.liveAnimation.method2809(live ? 1.0F : 0.0F);
          this.liveReady = true;
       }
 
-      float var7 = this.liveAnimation.method2808(var6 ? 1.0F : 0.0F);
-      Font var8 = Fonts.NEW_REGULAR.getFont(4.6F);
-      String var9 = this.liveText();
-      float var10 = 3.0F;
-      float var11 = var3 + 11.5F;
-      ZenithColor var12 = var5.getTextTertiary().getZenithColor();
-      ZenithColor var13 = var5.getFriendColor().getZenithColor();
-      var1.drawRoundedRect(
-         var2, var11 - var10 / 2.0F, var10, var10, ProxyDotRadiusData.method8069(var10 / 2.0F), var12.method7295(var13, var7).method7294(var4)
+      float hover = this.liveAnimation.method2808(live ? 1.0F : 0.0F);
+      Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+      String liveText = this.liveText();
+      float width = 3.0F;
+      float f = y + 11.5F;
+      ZenithColor zenithColor = currentStyle.getTextTertiary().getZenithColor();
+      ZenithColor zenithColor2 = currentStyle.getFriendColor().getZenithColor();
+      menuDrawContext.drawRoundedRect(
+         floatValue, f - width / 2.0F, width, width, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor.method7295(zenithColor2, hover).method7294(previewAlpha)
       );
-      var1.drawText(var8, var9, var2 + var10 + 4.0F, var11 - var8.height() / 2.0F, var12.method7295(var13, var7 * 0.65F).method7294(var4));
+      menuDrawContext.drawText(font, liveText, floatValue + width + 4.0F, f - font.height() / 2.0F, zenithColor.method7295(zenithColor2, hover * 0.65F).method7294(previewAlpha));
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double var1, double var3, Enum3 var5) {
-      for (int var6 = 0; var6 < this.tabBounds.size(); var6++) {
-         if (this.tabBounds.get(var6).contains(var1, var3)) {
-            this.switchTo(var6);
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      for (int i = 0; i < this.tabBounds.size(); i++) {
+         if (this.tabBounds.get(i).contains(lastClickX, lastClickY)) {
+            this.switchTo(i);
             return true;
          }
       }
@@ -239,24 +239,24 @@ public class ToolsSectionPanel extends ElementPanel {
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      long var7 = System.currentTimeMillis();
-      if (var7 - this.lastFrame > 400L && this.current() instanceof ToolTab var9) {
-         var9.shown();
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float y) {
+      long now = System.currentTimeMillis();
+      if (now - this.lastFrame > 400L && this.current() instanceof ToolTab toolTab) {
+         toolTab.shown();
       }
 
-      this.lastFrame = var7;
-      float var11 = this.switchAnimation.method2808(1.0F);
-      float var12 = 14.0F * this.switchDirection * (1.0F - var11);
-      var1.pose().pushMatrix();
-      var1.pose().translate(var12, 0.0F);
-      this.current().render(var1, var2, var3, var4 * var11, var5, var6);
-      var1.pose().popMatrix();
+      this.lastFrame = now;
+      float f3 = this.switchAnimation.method2808(1.0F);
+      float x = 14.0F * this.switchDirection * (1.0F - f3);
+      menuDrawContext.pose().pushMatrix();
+      menuDrawContext.pose().translate(x, 0.0F);
+      this.current().render(menuDrawContext, lastClickX, lastClickY, f * f3, f2, y);
+      menuDrawContext.pose().popMatrix();
    }
 
    @Override
-   public void renderPriority(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      this.current().renderPriority(var1, var2, var3, var4, var5, var6);
+   public void renderPriority(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float floatValue, float f2) {
+      this.current().renderPriority(customDrawContext, mouseX, mouseY, f, floatValue, f2);
    }
 
    @Override
@@ -265,33 +265,33 @@ public class ToolsSectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      return this.current().onMouseClicked(var1, var3, var5);
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      return this.current().onMouseClicked(lastClickX, lastClickY, enum2);
    }
 
    @Override
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
-      return this.current().onMouseReleased(var1, var3, var5);
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+      return this.current().onMouseReleased(x, y, enum2);
    }
 
    @Override
-   public boolean onMouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      return this.current().onMouseDragged(var1, var3, var5, var6, var8);
+   public boolean onMouseDragged(double mouseX, double mouseY, int mouseToGlfw, double offsetX, double offsetY) {
+      return this.current().onMouseDragged(mouseX, mouseY, mouseToGlfw, offsetX, offsetY);
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
-      return this.current().mouseScrolled(var1, var3, var5, var7);
+   public boolean mouseScrolled(double lastClickX, double lastClickY, double d, double verticalAmount) {
+      return this.current().mouseScrolled(lastClickX, lastClickY, d, verticalAmount);
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return this.current().keyPressed(var1, var2, var3);
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      return this.current().keyPressed(keyCode, keycode, modifiers);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      return this.current().charTyped(var1, var2);
+   public boolean charTyped(char codepoint, int n) {
+      return this.current().charTyped(codepoint, n);
    }
 
    @Override
@@ -301,8 +301,8 @@ public class ToolsSectionPanel extends ElementPanel {
 
    @Override
    public void close() {
-      for (SectionPanel var2 : this.children) {
-         var2.close();
+      for (SectionPanel sectionPanel : this.children) {
+         sectionPanel.close();
       }
    }
 }

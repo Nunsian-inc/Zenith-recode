@@ -21,17 +21,17 @@ public final class CaptchaLogger {
    private CaptchaLogger() {
    }
 
-   public static void log(String var0) {
-      concurrentLinkedQueue.add(LocalTime.now().format(dateTimeFormatter) + " " + var0);
+   public static void log(String str) {
+      concurrentLinkedQueue.add(LocalTime.now().format(dateTimeFormatter) + " " + str);
       method4689();
    }
 
-   public static String trim(String var0) {
-      if (var0 == null) {
+   public static String trim(String content) {
+      if (content == null) {
          return "null";
       } else {
-         String var1 = var0.trim().replace('\n', ' ');
-         return var1.length() > 140 ? var1.substring(0, 140) + "..." : var1;
+         String str = content.trim().replace('\n', ' ');
+         return str.length() > 140 ? str.substring(0, 140) + "..." : str;
       }
    }
 
@@ -40,12 +40,12 @@ public final class CaptchaLogger {
          synchronized (CaptchaLogger.class) {
             if (!flag) {
                flag = true;
-               ScheduledExecutorService var1 = Executors.newSingleThreadScheduledExecutor(var0 -> {
-                  Thread var1x = new Thread(var0, "captcha-log");
+               ScheduledExecutorService singleThreadScheduledExecutor = Executors.newSingleThreadScheduledExecutor(task -> {
+                  Thread var1x = new Thread(task, "captcha-log");
                   var1x.setDaemon(true);
                   return var1x;
                });
-               var1.scheduleWithFixedDelay(CaptchaLogger::flush, 0L, 400L, TimeUnit.MILLISECONDS);
+               singleThreadScheduledExecutor.scheduleWithFixedDelay(CaptchaLogger::flush, 0L, 400L, TimeUnit.MILLISECONDS);
             }
          }
       }
@@ -53,18 +53,18 @@ public final class CaptchaLogger {
 
    private static void flush() {
       if (!concurrentLinkedQueue.isEmpty()) {
-         ArrayList var0 = new ArrayList();
+         ArrayList lines = new ArrayList();
 
-         String var1;
-         while ((var1 = concurrentLinkedQueue.poll()) != null) {
-            var0.add(var1);
+         String str;
+         while ((str = concurrentLinkedQueue.poll()) != null) {
+            lines.add(str);
          }
 
          try {
-            Minecraft var2 = Minecraft.getInstance();
-            Path var3 = var2.gameDirectory.toPath().resolve("captcha.log");
-            Files.write(var3, var0, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-         } catch (Throwable var4) {
+            Minecraft minecraft = Minecraft.getInstance();
+            Path path = minecraft.gameDirectory.toPath().resolve("captcha.log");
+            Files.write(path, lines, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+         } catch (Throwable e) {
          }
       }
    }

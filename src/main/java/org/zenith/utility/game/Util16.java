@@ -18,147 +18,147 @@ public final class Util16 {
    private Util16() {
    }
 
-   public static Util16.Data method3048(WorldStylePlanModel var0, Rotation var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2.player != null && var2.level != null && var1 != null && !var1.method3137()) {
-         float[][][][] var3 = method3050(var2, var0, var1.getFloatValue());
-         float[] var4 = method3049(var2, var0, var1);
-         return var3 != null && var4 != null ? new Util16.Data(var3, var4) : null;
+   public static Util16.Data method3048(WorldStylePlanModel worldStylePlanModel, Rotation rotation) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.player != null && minecraft.level != null && rotation != null && !rotation.method3137()) {
+         float[][][][] floatValues = method3050(minecraft, worldStylePlanModel, rotation.getFloatValue());
+         float[] floatValues2 = method3049(minecraft, worldStylePlanModel, rotation);
+         return floatValues != null && floatValues2 != null ? new Util16.Data(floatValues, floatValues2) : null;
       } else {
          return null;
       }
    }
 
-   private static float[] method3049(Minecraft var0, WorldStylePlanModel var1, Rotation var2) {
-      Vec3 var3 = var0.player.getDeltaMovement();
-      AABB var4 = var0.player.getBoundingBox();
-      double var5 = Math.toRadians(var2.getFloatValue());
-      float[] var7 = new float[]{
-         (float)var3.x,
-         (float)var3.y,
-         (float)var3.z,
-         method3055(var0.player.onGround()),
-         method3055(var0.player.horizontalCollision),
-         method3055(var0.player.verticalCollision),
-         method3055(var0.player.isSprinting()),
-         method3055(var0.player.jumping),
-         method3055(var0.options.keyUp.isDown()),
-         method3055(var0.options.keyDown.isDown()),
-         method3055(var0.options.keyLeft.isDown()),
-         method3055(var0.options.keyRight.isDown()),
-         method3055(var0.options.keyJump.isDown()),
-         method3055(var0.options.keySprint.isDown()),
-         (float)Math.sin(var5),
-         (float)Math.cos(var5),
-         var2.getFloatValue2() / 90.0F,
-         (float)var4.getXsize(),
-         (float)var4.getYsize(),
-         (float)var4.getZsize(),
-         (float)var0.player.getAttributeValue(Attributes.MOVEMENT_SPEED),
-         (float)var0.player.getAttributeValue(Attributes.GRAVITY),
-         (float)var0.player.getAttributeValue(Attributes.JUMP_STRENGTH),
-         var0.player.maxUpStep()
+   private static float[] method3049(Minecraft minecraft, WorldStylePlanModel worldStylePlanModel, Rotation rotation) {
+      Vec3 deltaMovement = minecraft.player.getDeltaMovement();
+      AABB boundingBox = minecraft.player.getBoundingBox();
+      double d = Math.toRadians(rotation.getFloatValue());
+      float[] floats = new float[]{
+         (float)deltaMovement.x,
+         (float)deltaMovement.y,
+         (float)deltaMovement.z,
+         method3055(minecraft.player.onGround()),
+         method3055(minecraft.player.horizontalCollision),
+         method3055(minecraft.player.verticalCollision),
+         method3055(minecraft.player.isSprinting()),
+         method3055(minecraft.player.jumping),
+         method3055(minecraft.options.keyUp.isDown()),
+         method3055(minecraft.options.keyDown.isDown()),
+         method3055(minecraft.options.keyLeft.isDown()),
+         method3055(minecraft.options.keyRight.isDown()),
+         method3055(minecraft.options.keyJump.isDown()),
+         method3055(minecraft.options.keySprint.isDown()),
+         (float)Math.sin(d),
+         (float)Math.cos(d),
+         rotation.getFloatValue2() / 90.0F,
+         (float)boundingBox.getXsize(),
+         (float)boundingBox.getYsize(),
+         (float)boundingBox.getZsize(),
+         (float)minecraft.player.getAttributeValue(Attributes.MOVEMENT_SPEED),
+         (float)minecraft.player.getAttributeValue(Attributes.GRAVITY),
+         (float)minecraft.player.getAttributeValue(Attributes.JUMP_STRENGTH),
+         minecraft.player.maxUpStep()
       };
-      if (var7.length != var1.getIntValue6()) {
+      if (floats.length != worldStylePlanModel.getIntValue6()) {
          return null;
       } else {
-         for (float var11 : var7) {
-            if (!Float.isFinite(var11)) {
+         for (float f : floats) {
+            if (!Float.isFinite(f)) {
                return null;
             }
          }
 
-         return var7;
+         return floats;
       }
    }
 
-   private static float[][][][] method3050(Minecraft var0, WorldStylePlanModel var1, float var2) {
-      int var3 = var1.getIntValue8();
-      float[][][][] var4 = new float[3][var3][var3][var3];
-      Vec3 var5 = var0.player.position();
-      AABB var6 = var0.player.getBoundingBox();
-      List<AABB> var7 = method3051(var0, var6);
-      double var8 = Math.toRadians(var2);
-      double var10 = Math.sin(var8);
-      double var12 = Math.cos(var8);
-      double var14 = 2.0 * var1.getFloatValue6() / var3;
-      double var16 = (var1.getFloatValue8() - var1.getFloatValue7()) / var3;
-      int var18 = var1.getIntValue13();
+   private static float[][][][] method3050(Minecraft minecraft, WorldStylePlanModel worldStylePlanModel, float floatValue) {
+      int n = worldStylePlanModel.getIntValue8();
+      float[][][][] floatseseses = new float[3][n][n][n];
+      Vec3 position = minecraft.player.position();
+      AABB boundingBox = minecraft.player.getBoundingBox();
+      List<AABB> aabbs = method3051(minecraft, boundingBox);
+      double d = Math.toRadians(floatValue);
+      double d2 = Math.sin(d);
+      double d3 = Math.cos(d);
+      double d4 = 2.0 * worldStylePlanModel.getFloatValue6() / n;
+      double d5 = (worldStylePlanModel.getFloatValue8() - worldStylePlanModel.getFloatValue7()) / n;
+      int n2 = worldStylePlanModel.getIntValue13();
 
-      for (int var19 = 0; var19 < var3; var19++) {
-         for (int var20 = 0; var20 < var3; var20++) {
-            for (int var21 = 0; var21 < var3; var21++) {
-               double var22 = -var1.getFloatValue6() + (var21 + 0.5) * var14;
-               double var24 = var1.getFloatValue7() + (var19 + 0.5) * var16;
-               double var26 = -var1.getFloatValue6() + (var20 + 0.5) * var14;
-               Vec3 var28 = method3052(var5, var12, var10, var22, var24, var26);
-               int var29 = 0;
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+               double d6 = -worldStylePlanModel.getFloatValue6() + (k + 0.5) * d4;
+               double d7 = worldStylePlanModel.getFloatValue7() + (i + 0.5) * d5;
+               double d8 = -worldStylePlanModel.getFloatValue6() + (j + 0.5) * d4;
+               Vec3 pos = method3052(position, d3, d2, d6, d7, d8);
+               int n3 = 0;
 
-               for (int var30 = 0; var30 < var18; var30++) {
-                  for (int var31 = 0; var31 < var18; var31++) {
-                     for (int var32 = 0; var32 < var18; var32++) {
-                        double var33 = ((var32 + 0.5) / var18 - 0.5) * var14;
-                        double var35 = ((var30 + 0.5) / var18 - 0.5) * var16;
-                        double var37 = ((var31 + 0.5) / var18 - 0.5) * var14;
-                        Vec3 var39 = method3052(var5, var12, var10, var22 + var33, var24 + var35, var26 + var37);
-                        if (method3053(var39, var7)) {
-                           var29++;
+               for (int m = 0; m < n2; m++) {
+                  for (int i2 = 0; i2 < n2; i2++) {
+                     for (int i3 = 0; i3 < n2; i3++) {
+                        double d9 = ((i3 + 0.5) / n2 - 0.5) * d4;
+                        double d10 = ((m + 0.5) / n2 - 0.5) * d5;
+                        double d11 = ((i2 + 0.5) / n2 - 0.5) * d4;
+                        Vec3 vec = method3052(position, d3, d2, d6 + d9, d7 + d10, d8 + d11);
+                        if (method3053(vec, aabbs)) {
+                           n3++;
                         }
                      }
                   }
                }
 
-               var4[0][var19][var20][var21] = (float)var29 / (var18 * var18 * var18);
-               double var40 = var1.getFloatValue9();
+               floatseseses[0][i][j][k] = (float)n3 / (n2 * n2 * n2);
+               double d9 = worldStylePlanModel.getFloatValue9();
 
-               for (AABB var43 : var7) {
-                  var40 = Math.min(var40, method3054(var28, var43));
+               for (AABB aabb : aabbs) {
+                  d9 = Math.min(d9, method3054(pos, aabb));
                }
 
-               var4[1][var19][var20][var21] = (float)(var40 / var1.getFloatValue9());
-               BlockState var42 = var0.level.getBlockState(BlockPos.containing(var28));
-               var4[2][var19][var20][var21] = Mth.clamp(var42.getBlock().getFriction(), 0.0F, 1.0F);
+               floatseseses[1][i][j][k] = (float)(d9 / worldStylePlanModel.getFloatValue9());
+               BlockState blockState = minecraft.level.getBlockState(BlockPos.containing(pos));
+               floatseseses[2][i][j][k] = Mth.clamp(blockState.getBlock().getFriction(), 0.0F, 1.0F);
             }
          }
       }
 
-      return var4;
+      return floatseseses;
    }
 
-   private static List<AABB> method3051(Minecraft var0, AABB var1) {
-      int var2 = Mth.floor(var1.minX) - 6;
-      int var3 = Mth.floor(var1.maxX) + 6;
-      int var4 = Mth.floor(var1.minY) - 3;
-      int var5 = Mth.floor(var1.maxY) + 5;
-      int var6 = Mth.floor(var1.minZ) - 6;
-      int var7 = Mth.floor(var1.maxZ) + 6;
-      ArrayList<AABB> var8 = new ArrayList<>();
-      MutableBlockPos var9 = new MutableBlockPos();
+   private static List<AABB> method3051(Minecraft minecraft, AABB boundingBox) {
+      int n = Mth.floor(boundingBox.minX) - 6;
+      int n2 = Mth.floor(boundingBox.maxX) + 6;
+      int n3 = Mth.floor(boundingBox.minY) - 3;
+      int n4 = Mth.floor(boundingBox.maxY) + 5;
+      int n5 = Mth.floor(boundingBox.minZ) - 6;
+      int n6 = Mth.floor(boundingBox.maxZ) + 6;
+      ArrayList<AABB> aabbs = new ArrayList<>();
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var10 = var4; var10 <= var5; var10++) {
-         for (int var11 = var6; var11 <= var7; var11++) {
-            for (int var12 = var2; var12 <= var3; var12++) {
-               var9.set(var12, var10, var11);
-               BlockState var13 = var0.level.getBlockState(var9);
-               VoxelShape var14 = var13.getCollisionShape(var0.level, var9);
+      for (int i = n3; i <= n4; i++) {
+         for (int j = n5; j <= n6; j++) {
+            for (int k = n; k <= n2; k++) {
+               mutablePos.set(k, i, j);
+               BlockState blockState = minecraft.level.getBlockState(mutablePos);
+               VoxelShape collisionShape = blockState.getCollisionShape(minecraft.level, mutablePos);
 
-               for (AABB var16 : var14.toAabbs()) {
-                  var8.add(var16.move(var12, var10, var11));
+               for (AABB aabb : collisionShape.toAabbs()) {
+                  aabbs.add(aabb.move(k, i, j));
                }
             }
          }
       }
 
-      return var8;
+      return aabbs;
    }
 
-   private static Vec3 method3052(Vec3 var0, double var1, double var3, double var5, double var7, double var9) {
-      return new Vec3(var0.x + var5 * var1 - var9 * var3, var0.y + var7, var0.z + var5 * var3 + var9 * var1);
+   private static Vec3 method3052(Vec3 position, double d, double d2, double d3, double d4, double d5) {
+      return new Vec3(position.x + d3 * d - d5 * d2, position.y + d4, position.z + d3 * d2 + d5 * d);
    }
 
-   private static boolean method3053(Vec3 var0, List<AABB> var1) {
-      for (AABB var3 : var1) {
-         if (var0.x >= var3.minX && var0.x < var3.maxX && var0.y >= var3.minY && var0.y < var3.maxY && var0.z >= var3.minZ && var0.z < var3.maxZ) {
+   private static boolean method3053(Vec3 vec, List<AABB> aabbs) {
+      for (AABB aabb : aabbs) {
+         if (vec.x >= aabb.minX && vec.x < aabb.maxX && vec.y >= aabb.minY && vec.y < aabb.maxY && vec.z >= aabb.minZ && vec.z < aabb.maxZ) {
             return true;
          }
       }
@@ -166,15 +166,15 @@ public final class Util16 {
       return false;
    }
 
-   private static double method3054(Vec3 var0, AABB var1) {
-      double var2 = Math.max(Math.max(var1.minX - var0.x, 0.0), var0.x - var1.maxX);
-      double var4 = Math.max(Math.max(var1.minY - var0.y, 0.0), var0.y - var1.maxY);
-      double var6 = Math.max(Math.max(var1.minZ - var0.z, 0.0), var0.z - var1.maxZ);
-      return Math.sqrt(var2 * var2 + var4 * var4 + var6 * var6);
+   private static double method3054(Vec3 pos, AABB aabb) {
+      double d = Math.max(Math.max(aabb.minX - pos.x, 0.0), pos.x - aabb.maxX);
+      double d2 = Math.max(Math.max(aabb.minY - pos.y, 0.0), pos.y - aabb.maxY);
+      double d3 = Math.max(Math.max(aabb.minZ - pos.z, 0.0), pos.z - aabb.maxZ);
+      return Math.sqrt(d * d + d2 * d2 + d3 * d3);
    }
 
-   private static float method3055(boolean var0) {
-      return var0 ? 1.0F : 0.0F;
+   private static float method3055(boolean down) {
+      return down ? 1.0F : 0.0F;
    }
 
    public static final class Data {
@@ -206,9 +206,9 @@ public final class Util16 {
          return "Data[" + "floatValues=" + this.floatValues + ", " + "floatValues2=" + this.floatValues2 + "]";
       }
 
-      public Data(float[][][][] var1, float[] var2) {
-         this.floatValues = var1;
-         this.floatValues2 = var2;
+      public Data(float[][][][] floatValues, float[] floatValues2) {
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
       }
 
       public float[][][][] getFloatValues() {

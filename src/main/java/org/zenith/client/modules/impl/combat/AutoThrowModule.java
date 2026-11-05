@@ -154,8 +154,8 @@ public final class AutoThrowModule extends Module {
    }
 
    @EventTarget
-   public void method7109(KeyEvent var1) {
-      if (this.trigger.isSelected(1) && this.key.getKeyCode() != -1 && var1.isPress(this.key.getKeyCode())) {
+   public void method7109(KeyEvent event) {
+      if (this.trigger.isSelected(1) && this.key.getKeyCode() != -1 && event.isPress(this.key.getKeyCode())) {
          if (mc.player != null && mc.gui.screen() == null) {
             this.method7114(this.method7108() ? this.method7117() : null, true);
          }
@@ -163,22 +163,22 @@ public final class AutoThrowModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() instanceof ClientboundSoundPacket var2 && this.method7131(var2)) {
-         this.vec3d = new Vec3(var2.getX(), var2.getY(), var2.getZ());
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() instanceof ClientboundSoundPacket clientboundSoundPacket && this.method7131(clientboundSoundPacket)) {
+         this.vec3d = new Vec3(clientboundSoundPacket.getX(), clientboundSoundPacket.getY(), clientboundSoundPacket.getZ());
       }
    }
 
    @EventTarget
-   public void method7110(Event5 var1) {
+   public void method7110(Event5 event) {
       if (this.step == 2 && this.method7108() && this.playerEntity != null && mc.player != null) {
-         Rotation var2 = Rotation.method3128(this.playerEntity.getBoundingBox().getCenter(), mc.player.getEyePosition());
-         rotationManager.method7849(new RotationRequest(var2, () -> var2, bcCameraTestnerv.getRotationConfig()), 8, this);
+         Rotation rotation = Rotation.method3128(this.playerEntity.getBoundingBox().getCenter(), mc.player.getEyePosition());
+         rotationManager.method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 8, this);
       }
    }
 
    @EventTarget
-   public void method7111(HandleInputEvent var1) {
+   public void method7111(HandleInputEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null && mc.getConnection() != null) {
          if (mc.level != this.world) {
             this.world = mc.level;
@@ -197,11 +197,11 @@ public final class AutoThrowModule extends Module {
             if (!this.method7108()) {
                this.method7112();
                if (this.stopWatch.method7546(5000L)) {
-                  if (this.livingEntity instanceof Player var4) {
-                     if (method7134(var4)) {
-                        if (!(UseItemUtils.method6527(var4) >= this.targetHealth.getValue3())) {
-                           if (!(mc.player.distanceTo(var4) > this.distance.getValue3())) {
-                              if (this.method7137(var4, this.distance.getValue3(), this.method7136())) {
+                  if (this.livingEntity instanceof Player entity) {
+                     if (method7134(entity)) {
+                        if (!(UseItemUtils.method6527(entity) >= this.targetHealth.getValue3())) {
+                           if (!(mc.player.distanceTo(entity) > this.distance.getValue3())) {
+                              if (this.method7137(entity, this.distance.getValue3(), this.method7136())) {
                                  this.method7114(null, false);
                               }
                            }
@@ -212,9 +212,9 @@ public final class AutoThrowModule extends Module {
             } else if (this.stopWatch.method7546(500L)) {
                if (!(this.method7133() >= this.selfHealth.getValue3())) {
                   if (!this.totemCooldown.isEnabled() || this.method7132()) {
-                     Player var2 = this.method7117();
-                     if (var2 != null && !this.method7129(var2)) {
-                        this.method7114(var2, false);
+                     Player player = this.method7117();
+                     if (player != null && !this.method7129(player)) {
+                        this.method7114(player, false);
                      }
                   }
                }
@@ -224,32 +224,32 @@ public final class AutoThrowModule extends Module {
    }
 
    private void method7112() {
-      LivingEntity[] var1 = new LivingEntity[]{AuraModule.INSTANCE.method6358(), AimAssistModule.INSTANCE.method5156(), TriggerBotModule.INSTANCE.method5598()};
-      boolean var2 = false;
+      LivingEntity[] livingEntities = new LivingEntity[]{AuraModule.INSTANCE.method6358(), AimAssistModule.INSTANCE.method5156(), TriggerBotModule.INSTANCE.method5598()};
+      boolean flag = false;
 
-      for (int var3 = 0; var3 < var1.length; var3++) {
-         LivingEntity var4 = var1[var3];
-         if (var4 != null && var4 != this.livingEntitys[var3] && this.method7113(var4)) {
-            this.livingEntity = var4;
+      for (int i = 0; i < livingEntities.length; i++) {
+         LivingEntity livingEntity = livingEntities[i];
+         if (livingEntity != null && livingEntity != this.livingEntitys[i] && this.method7113(livingEntity)) {
+            this.livingEntity = livingEntity;
          }
 
-         if (var4 != null && var4 == this.livingEntity) {
-            var2 = true;
+         if (livingEntity != null && livingEntity == this.livingEntity) {
+            flag = true;
          }
 
-         this.livingEntitys[var3] = var4;
+         this.livingEntitys[i] = livingEntity;
       }
 
-      if (var2) {
+      if (flag) {
          this.stopWatch2.reset();
       }
 
       if (!this.method7113(this.livingEntity) || this.stopWatch2.method7546(5000L)) {
          this.livingEntity = null;
 
-         for (LivingEntity var6 : var1) {
-            if (this.method7113(var6)) {
-               this.livingEntity = var6;
+         for (LivingEntity livingEntity : livingEntities) {
+            if (this.method7113(livingEntity)) {
+               this.livingEntity = livingEntity;
                this.stopWatch2.reset();
                break;
             }
@@ -257,30 +257,30 @@ public final class AutoThrowModule extends Module {
       }
    }
 
-   private boolean method7113(LivingEntity var1) {
-      return var1 instanceof Player var2
-         && var2 != mc.player
-         && var2.isAlive()
-         && !var2.isRemoved()
-         && var2.level() == mc.level
-         && !Zenith.getInstance().getFriends().method7626(var2);
+   private boolean method7113(LivingEntity livingEntity) {
+      return livingEntity instanceof Player player
+         && player != mc.player
+         && player.isAlive()
+         && !player.isRemoved()
+         && player.level() == mc.level
+         && !Zenith.getInstance().getFriends().method7626(player);
    }
 
-   private void method7114(Player var1, boolean var2) {
+   private void method7114(Player player, boolean flag) {
       if (this.step < 0 && mc.gui.screen() == null && mc.player.containerMenu instanceof InventoryMenu) {
-         if (!this.method7108() || var1 != null) {
-            int var3 = this.method7108() ? this.method7124() : PotionUtils.method2325(AutoThrowModule::method7135);
-            if (var3 == -1) {
-               if (var2) {
+         if (!this.method7108() || player != null) {
+            int n = this.method7108() ? this.method7124() : PotionUtils.method2325(AutoThrowModule::method7135);
+            if (n == -1) {
+               if (flag) {
                   Zenith.getInstance().getHudHolder().method6972(this.getCategory().getIcon(), Component.nullToEmpty("Нет подходящего взрывного зелья"));
                }
             } else {
-               this.intValue2 = var3;
-               this.playerEntity = this.method7108() ? var1 : null;
+               this.intValue2 = n;
+               this.playerEntity = this.method7108() ? player : null;
                this.intValue3 = mc.player.getInventory().getSelectedSlot();
                this.flag = false;
                this.intValue = 0;
-               this.step = var3 < 9 ? 2 : 0;
+               this.step = n < 9 ? 2 : 0;
             }
          }
       }
@@ -298,10 +298,10 @@ public final class AutoThrowModule extends Module {
                this.step = 2;
                break;
             case 2:
-               int var1 = this.intValue2 < 9 ? this.intValue2 : 8;
-               ItemStack var2 = mc.player.getInventory().getItem(var1);
+               int slot = this.intValue2 < 9 ? this.intValue2 : 8;
+               ItemStack useItem = mc.player.getInventory().getItem(slot);
                if (this.method7108()) {
-                  if (this.method7125(var2) <= 0L || !this.method7120(this.playerEntity)) {
+                  if (this.method7125(useItem) <= 0L || !this.method7120(this.playerEntity)) {
                      this.method7116();
                      return;
                   }
@@ -312,13 +312,13 @@ public final class AutoThrowModule extends Module {
                      return;
                   }
 
-                  this.method7128(this.playerEntity, var2);
-               } else if (!method7135(var2)) {
+                  this.method7128(this.playerEntity, useItem);
+               } else if (!method7135(useItem)) {
                   this.method7116();
                   return;
                }
 
-               PotionUtils.method2329(var1);
+               PotionUtils.method2329(slot);
                UseItemUtils.useItem(InteractionHand.MAIN_HAND);
                this.stopWatch.reset();
                this.step = 3;
@@ -348,95 +348,95 @@ public final class AutoThrowModule extends Module {
 
    private Player method7117() {
       if (mc.player != null && mc.level != null) {
-         Player var1 = null;
-         double var2 = 0.0;
-         double var4 = 0.0;
+         Player player = null;
+         double d = 0.0;
+         double d2 = 0.0;
 
-         for (Player var7 : mc.level.players()) {
-            if (var7 != mc.player
-               && var7.isAlive()
-               && !var7.isSpectator()
-               && !AntiBotModule.INSTANCE.method2785(var7)
-               && !Zenith.getInstance().getFriends().method7626(var7)) {
-               double var8 = mc.player.distanceTo(var7);
-               if (!(var8 > 5.0) && this.method7118(var7)) {
-                  double var10 = this.method7121(var7);
-                  if (var1 == null || var10 > var2 || var10 == var2 && var8 < var4) {
-                     var1 = var7;
-                     var2 = var10;
-                     var4 = var8;
+         for (Player player2 : mc.level.players()) {
+            if (player2 != mc.player
+               && player2.isAlive()
+               && !player2.isSpectator()
+               && !AntiBotModule.INSTANCE.method2785(player2)
+               && !Zenith.getInstance().getFriends().method7626(player2)) {
+               double d3 = mc.player.distanceTo(player2);
+               if (!(d3 > 5.0) && this.method7118(player2)) {
+                  double d4 = this.method7121(player2);
+                  if (player == null || d4 > d || d4 == d && d3 < d2) {
+                     player = player2;
+                     d = d4;
+                     d2 = d3;
                   }
                }
             }
          }
 
-         return var1;
+         return player;
       } else {
          return null;
       }
    }
 
-   private boolean method7118(Player var1) {
-      Vec3 var2 = mc.player.getEyePosition();
-      AABB var3 = var1.getBoundingBox();
-      Vec3 var4 = new Vec3(
-         Mth.clamp(var2.x, var3.minX, var3.maxX), Mth.clamp(var2.y, var3.minY, var3.maxY), Mth.clamp(var2.z, var3.minZ, var3.maxZ)
+   private boolean method7118(Player player) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      AABB boundingBox = player.getBoundingBox();
+      Vec3 vec = new Vec3(
+         Mth.clamp(eyePosition.x, boundingBox.minX, boundingBox.maxX), Mth.clamp(eyePosition.y, boundingBox.minY, boundingBox.maxY), Mth.clamp(eyePosition.z, boundingBox.minZ, boundingBox.maxZ)
       );
-      return this.method7119(var2, var4) || this.method7119(var2, var1.getEyePosition()) || this.method7119(var2, var3.getCenter());
+      return this.method7119(eyePosition, vec) || this.method7119(eyePosition, player.getEyePosition()) || this.method7119(eyePosition, boundingBox.getCenter());
    }
 
-   private boolean method7119(Vec3 var1, Vec3 var2) {
-      return mc.level.clip(new ClipContext(var1, var2, Block.COLLIDER, Fluid.NONE, mc.player)).getType() == Type.MISS;
+   private boolean method7119(Vec3 eyePosition, Vec3 vec) {
+      return mc.level.clip(new ClipContext(eyePosition, vec, Block.COLLIDER, Fluid.NONE, mc.player)).getType() == Type.MISS;
    }
 
-   private boolean method7120(Player var1) {
-      return var1 != null && var1.isAlive() && !var1.isRemoved() && mc.player.distanceTo(var1) <= 5.0F;
+   private boolean method7120(Player playerEntity) {
+      return playerEntity != null && playerEntity.isAlive() && !playerEntity.isRemoved() && mc.player.distanceTo(playerEntity) <= 5.0F;
    }
 
-   private double method7121(Player var1) {
-      double var2 = 0.0;
+   private double method7121(Player player) {
+      double d = 0.0;
 
-      for (EquipmentSlot var5 : EquipmentSlot.VALUES) {
-         if (var5.getType() == net.minecraft.world.entity.EquipmentSlot.Type.HUMANOID_ARMOR) {
-            ItemStack var6 = var1.getItemBySlot(var5);
-            var2 += method7122(var6) + method7123(var6, Enchantments.PROTECTION) * 2.0;
+      for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+         if (slot.getType() == net.minecraft.world.entity.EquipmentSlot.Type.HUMANOID_ARMOR) {
+            ItemStack itemBySlot = player.getItemBySlot(slot);
+            d += method7122(itemBySlot) + method7123(itemBySlot, Enchantments.PROTECTION) * 2.0;
          }
       }
 
-      ItemStack var7 = var1.getMainHandItem();
-      return var2 + method7122(var7) + method7123(var7, Enchantments.SHARPNESS);
+      ItemStack mainHandItem = player.getMainHandItem();
+      return d + method7122(mainHandItem) + method7123(mainHandItem, Enchantments.SHARPNESS);
    }
 
-   private static double method7122(ItemStack var0) {
-      if (var0.isEmpty()) {
+   private static double method7122(ItemStack itemBySlot) {
+      if (itemBySlot.isEmpty()) {
          return 0.0;
       } else {
-         ItemAttributeModifiers var1 = var0.get(DataComponents.ATTRIBUTE_MODIFIERS);
-         if (var1 == null) {
+         ItemAttributeModifiers itemAttributeModifiers = itemBySlot.get(DataComponents.ATTRIBUTE_MODIFIERS);
+         if (itemAttributeModifiers == null) {
             return 0.0;
          } else {
-            double var2 = 0.0;
+            double d = 0.0;
 
-            for (Entry var5 : var1.modifiers()) {
-               if (var5.attribute().equals(Attributes.ARMOR)
-                  || var5.attribute().equals(Attributes.ARMOR_TOUGHNESS)
-                  || var5.attribute().equals(Attributes.ATTACK_DAMAGE)) {
-                  var2 += var5.modifier().amount();
+            for (Entry modifier : itemAttributeModifiers.modifiers()) {
+               if (modifier.attribute().equals(Attributes.ARMOR)
+                  || modifier.attribute().equals(Attributes.ARMOR_TOUGHNESS)
+                  || modifier.attribute().equals(Attributes.ATTACK_DAMAGE)) {
+                  d += modifier.modifier().amount();
                }
             }
 
-            return var2;
+            return d;
          }
       }
    }
 
-   private static int method7123(ItemStack var0, ResourceKey<Enchantment> var1) {
-      if (var0.isEmpty()) {
+   private static int method7123(ItemStack itemBySlot, ResourceKey<Enchantment> key) {
+      if (itemBySlot.isEmpty()) {
          return 0;
       } else {
-         for (it.unimi.dsi.fastutil.objects.Object2IntMap.Entry var3 : var0.getEnchantments().entrySet()) {
-            if (((Holder)var3.getKey()).is(var1)) {
-               return var3.getIntValue();
+         for (it.unimi.dsi.fastutil.objects.Object2IntMap.Entry entry : itemBySlot.getEnchantments().entrySet()) {
+            if (((Holder)entry.getKey()).is(key)) {
+               return entry.getIntValue();
             }
          }
 
@@ -445,106 +445,106 @@ public final class AutoThrowModule extends Module {
    }
 
    private int method7124() {
-      int var1 = -1;
-      long var2 = 0L;
+      int n = -1;
+      long l = 0L;
 
-      for (int var4 = 0; var4 < 36; var4++) {
-         long var5 = this.method7125(mc.player.getInventory().getItem(var4));
-         if (var5 > var2) {
-            var1 = var4;
-            var2 = var5;
+      for (int i = 0; i < 36; i++) {
+         long l2 = this.method7125(mc.player.getInventory().getItem(i));
+         if (l2 > l) {
+            n = i;
+            l = l2;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private long method7125(ItemStack var1) {
-      if (!PotionUtils.method2323(var1)) {
+   private long method7125(ItemStack useItem) {
+      if (!PotionUtils.method2323(useItem)) {
          return 0L;
       } else {
-         List<MobEffectInstance> var2 = PotionUtils.method2321(var1);
-         if (var2.isEmpty()) {
+         List<MobEffectInstance> mobEffectInstances = PotionUtils.method2321(useItem);
+         if (mobEffectInstances.isEmpty()) {
             return 0L;
          } else {
-            MobEffectInstance var3 = null;
-            MobEffectInstance var4 = null;
-            MobEffectInstance var5 = null;
+            MobEffectInstance mobEffectInstance = null;
+            MobEffectInstance mobEffectInstance2 = null;
+            MobEffectInstance mobEffectInstance3 = null;
 
-            for (MobEffectInstance var7 : var2) {
-               if (var7.getEffect().value().getCategory() == MobEffectCategory.BENEFICIAL
-                  && !var7.getEffect().equals(MobEffects.SPEED)
-                  && !var7.getEffect().equals(MobEffects.JUMP_BOOST)) {
+            for (MobEffectInstance mobEffectInstance4 : mobEffectInstances) {
+               if (mobEffectInstance4.getEffect().value().getCategory() == MobEffectCategory.BENEFICIAL
+                  && !mobEffectInstance4.getEffect().equals(MobEffects.SPEED)
+                  && !mobEffectInstance4.getEffect().equals(MobEffects.JUMP_BOOST)) {
                   return 0L;
                }
 
-               if (var7.getEffect().equals(MobEffects.WEAKNESS) && var7.getAmplifier() >= 1 && (var3 == null || method7127(var7) > method7127(var3))) {
-                  var3 = var7;
+               if (mobEffectInstance4.getEffect().equals(MobEffects.WEAKNESS) && mobEffectInstance4.getAmplifier() >= 1 && (mobEffectInstance == null || method7127(mobEffectInstance4) > method7127(mobEffectInstance))) {
+                  mobEffectInstance = mobEffectInstance4;
                }
 
-               if (var7.getEffect().equals(MobEffects.BLINDNESS) && (var4 == null || method7127(var7) > method7127(var4))) {
-                  var4 = var7;
+               if (mobEffectInstance4.getEffect().equals(MobEffects.BLINDNESS) && (mobEffectInstance2 == null || method7127(mobEffectInstance4) > method7127(mobEffectInstance2))) {
+                  mobEffectInstance2 = mobEffectInstance4;
                }
 
-               if (var5 == null || method7127(var7) > method7127(var5)) {
-                  var5 = var7;
+               if (mobEffectInstance3 == null || method7127(mobEffectInstance4) > method7127(mobEffectInstance3)) {
+                  mobEffectInstance3 = mobEffectInstance4;
                }
             }
 
-            if (var3 != null) {
-               return method7126(3, var3);
+            if (mobEffectInstance != null) {
+               return method7126(3, mobEffectInstance);
             } else {
-               return var4 != null ? method7126(2, var4) : method7126(1, var5);
+               return mobEffectInstance2 != null ? method7126(2, mobEffectInstance2) : method7126(1, mobEffectInstance3);
             }
          }
       }
    }
 
-   private static long method7126(int var0, MobEffectInstance var1) {
-      return var0 * 1000000000L + method7127(var1) * 100L + Math.min(var1.getAmplifier(), 99);
+   private static long method7126(int n, MobEffectInstance mobEffectInstance) {
+      return n * 1000000000L + method7127(mobEffectInstance) * 100L + Math.min(mobEffectInstance.getAmplifier(), 99);
    }
 
-   private static int method7127(MobEffectInstance var0) {
-      return var0.isInfiniteDuration() ? 1000000 : Math.min(var0.getDuration(), 1000000);
+   private static int method7127(MobEffectInstance mobEffectInstance) {
+      return mobEffectInstance.isInfiniteDuration() ? 1000000 : Math.min(mobEffectInstance.getDuration(), 1000000);
    }
 
-   private void method7128(Player var1, ItemStack var2) {
-      int var3 = 0;
+   private void method7128(Player playerEntity, ItemStack useItem) {
+      int n = 0;
 
-      for (MobEffectInstance var5 : PotionUtils.method2321(var2)) {
-         var3 = Math.max(var3, method7127(var5));
+      for (MobEffectInstance mobEffectInstance : PotionUtils.method2321(useItem)) {
+         n = Math.max(n, method7127(mobEffectInstance));
       }
 
-      this.items.put(var1.getUUID(), System.currentTimeMillis() + (long)((float)(var3 * 50L) * 0.75F));
+      this.items.put(playerEntity.getUUID(), System.currentTimeMillis() + (long)((float)(n * 50L) * 0.75F));
    }
 
-   private boolean method7129(Player var1) {
-      Long var2 = this.items.get(var1.getUUID());
-      return var2 != null && var2 > System.currentTimeMillis();
+   private boolean method7129(Player player) {
+      Long l = this.items.get(player.getUUID());
+      return l != null && l > System.currentTimeMillis();
    }
 
    private void method7130() {
-      long var1 = System.currentTimeMillis();
-      Vec3 var3 = this.vec3d;
+      long now = System.currentTimeMillis();
+      Vec3 vec3d = this.vec3d;
       this.vec3d = null;
       if (!this.items.isEmpty()) {
          this.items.entrySet().removeIf(var3x -> {
-            if (var3x.getValue() <= var1) {
+            if (var3x.getValue() <= now) {
                return true;
             } else {
-               Player var4 = mc.level.getPlayerByUUID(var3x.getKey());
-               return var4 == null || var3 != null && var4.position().distanceToSqr(var3) <= 256.0;
+               Player playerByUUID = mc.level.getPlayerByUUID(var3x.getKey());
+               return playerByUUID == null || vec3d != null && playerByUUID.position().distanceToSqr(vec3d) <= 256.0;
             }
          });
       }
    }
 
-   private boolean method7131(ClientboundSoundPacket var1) {
+   private boolean method7131(ClientboundSoundPacket clientboundSoundPacket) {
       if (!Zenith.getInstance().getServerDetector().method1640()) {
          return false;
       } else {
-         String var2 = var1.getSound().getRegisteredName();
-         return var2.contains("minecraft:entity.illusioner.cast_spell") && (var1.getVolume() == 1.0F || var1.getPitch() == 1.0F);
+         String registeredName = clientboundSoundPacket.getSound().getRegisteredName();
+         return registeredName.contains("minecraft:entity.illusioner.cast_spell") && (clientboundSoundPacket.getVolume() == 1.0F || clientboundSoundPacket.getPitch() == 1.0F);
       }
    }
 
@@ -556,31 +556,31 @@ public final class AutoThrowModule extends Module {
       return mc.player.getHealth() + mc.player.getAbsorptionAmount();
    }
 
-   private static boolean method7134(LivingEntity var0) {
-      if (var0.isUsingItem() && var0.getTicksUsingItem() >= 10) {
-         ItemStack var1 = var0.getUseItem();
-         return !PotionUtils.method2323(var1) && PotionUtils.method2322(var1, MobEffects.INSTANT_HEALTH);
+   private static boolean method7134(LivingEntity entity) {
+      if (entity.isUsingItem() && entity.getTicksUsingItem() >= 10) {
+         ItemStack useItem = entity.getUseItem();
+         return !PotionUtils.method2323(useItem) && PotionUtils.method2322(useItem, MobEffects.INSTANT_HEALTH);
       } else {
          return false;
       }
    }
 
-   private static boolean method7135(ItemStack var0) {
-      return PotionUtils.method2323(var0) && PotionUtils.method2322(var0, MobEffects.INSTANT_HEALTH);
+   private static boolean method7135(ItemStack useItem) {
+      return PotionUtils.method2323(useItem) && PotionUtils.method2322(useItem, MobEffects.INSTANT_HEALTH);
    }
 
    private Rotation method7136() {
       return rotationManager.method7844();
    }
 
-   private boolean method7137(LivingEntity var1, float var2, Rotation var3) {
-      if (var3 == null) {
+   private boolean method7137(LivingEntity playerEntity, float f, Rotation rotation2) {
+      if (rotation2 == null) {
          return false;
       } else {
-         Vec3 var4 = mc.player.getEyePosition();
-         Vec3 var5 = var4.add(var3.method3135().scale(var2 + 1.0F));
-         AABB var6 = var1.getBoundingBox().inflate(0.15);
-         return var6.contains(var4) || var6.clip(var4, var5).isPresent();
+         Vec3 eyePosition = mc.player.getEyePosition();
+         Vec3 to = eyePosition.add(rotation2.method3135().scale(f + 1.0F));
+         AABB inflate = playerEntity.getBoundingBox().inflate(0.15);
+         return inflate.contains(eyePosition) || inflate.clip(eyePosition, to).isPresent();
       }
    }
 }

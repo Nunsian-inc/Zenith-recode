@@ -17,7 +17,7 @@ public abstract class MixinRhinoRegExp {
       at = {@At("HEAD")},
       remap = false
    )
-   private static void zenith$backtrack(CallbackInfo var0) {
+   private static void zenith$backtrack(CallbackInfo callbackInfo) {
       ScriptContextFactory.method7407();
    }
 
@@ -26,7 +26,7 @@ public abstract class MixinRhinoRegExp {
       at = {@At("HEAD")},
       remap = false
    )
-   private static void zenith$simpleMatch(CallbackInfoReturnable<Integer> var0) {
+   private static void zenith$simpleMatch(CallbackInfoReturnable<Integer> callbackInfoReturnable) {
       ScriptContextFactory.method7407();
    }
 }

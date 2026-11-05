@@ -31,11 +31,11 @@ public final class BotChunkManager extends ChunkSource {
    private volatile BotChunkManager.BotChunkMap chunks;
    private final BotWorld world;
 
-   public BotChunkManager(BotWorld var1, int var2) {
-      this.world = var1;
-      this.emptyChunk = new EmptyLevelChunk(var1, new ChunkPos(0, 0), var1.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS));
-      this.lightingProvider = new LevelLightEngine(this, true, var1.dimensionType().hasSkyLight());
-      this.chunks = new BotChunkManager.BotChunkMap(getChunkMapRadius(var2));
+   public BotChunkManager(BotWorld world, int chunkLoadDistance) {
+      this.world = world;
+      this.emptyChunk = new EmptyLevelChunk(world, new ChunkPos(0, 0), world.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS));
+      this.lightingProvider = new LevelLightEngine(this, true, world.dimensionType().hasSkyLight());
+      this.chunks = new BotChunkManager.BotChunkMap(getChunkMapRadius(chunkLoadDistance));
    }
 
    @Override
@@ -43,39 +43,39 @@ public final class BotChunkManager extends ChunkSource {
       return this.lightingProvider;
    }
 
-   private static boolean positionEquals(@Nullable LevelChunk var0, int var1, int var2) {
-      if (var0 == null) {
+   private static boolean positionEquals(@Nullable LevelChunk chunk, int x, int z) {
+      if (chunk == null) {
          return false;
       } else {
-         ChunkPos var3 = var0.getPos();
-         return var3.x() == var1 && var3.z() == var2;
+         ChunkPos pos = chunk.getPos();
+         return pos.x() == x && pos.z() == z;
       }
    }
 
-   public void unload(ChunkPos var1) {
-      if (this.chunks.isInRadius(var1.x(), var1.z())) {
-         int var2 = this.chunks.getIndex(var1.x(), var1.z());
-         LevelChunk var3 = this.chunks.getChunk(var2);
-         if (positionEquals(var3, var1.x(), var1.z())) {
-            this.chunks.unloadChunk(var2, var3);
+   public void unload(ChunkPos pos) {
+      if (this.chunks.isInRadius(pos.x(), pos.z())) {
+         int index = this.chunks.getIndex(pos.x(), pos.z());
+         LevelChunk chunk = this.chunks.getChunk(index);
+         if (positionEquals(chunk, pos.x(), pos.z())) {
+            this.chunks.unloadChunk(index, chunk);
 
-            for (BotWorld.RenderListener var7 : this.world.getRenderListeners()) {
-               var7.onChunkChanged(var1.x(), var1.z());
+            for (BotWorld.RenderListener renderListener : this.world.getRenderListeners()) {
+               renderListener.onChunkChanged(pos.x(), pos.z());
             }
          }
       }
    }
 
    @Nullable
-   public LevelChunk getChunk(int var1, int var2, ChunkStatus var3, boolean var4) {
-      if (this.chunks.isInRadius(var1, var2)) {
-         LevelChunk var5 = this.chunks.getChunk(this.chunks.getIndex(var1, var2));
-         if (positionEquals(var5, var1, var2)) {
-            return var5;
+   public LevelChunk getChunk(int x, int z, ChunkStatus targetStatus, boolean loadOrGenerate) {
+      if (this.chunks.isInRadius(x, z)) {
+         LevelChunk chunk = this.chunks.getChunk(this.chunks.getIndex(x, z));
+         if (positionEquals(chunk, x, z)) {
+            return chunk;
          }
       }
 
-      return var4 ? this.emptyChunk : null;
+      return loadOrGenerate ? this.emptyChunk : null;
    }
 
    @Override
@@ -83,40 +83,40 @@ public final class BotChunkManager extends ChunkSource {
       return this.world;
    }
 
-   public void onChunkBiomeData(int var1, int var2, FriendlyByteBuf var3) {
-      if (!this.chunks.isInRadius(var1, var2)) {
-         LOGGER.warn("Ignoring chunk since it's not in the view range: {}, {}", var1, var2);
+   public void onChunkBiomeData(int x, int z, FriendlyByteBuf readBuffer) {
+      if (!this.chunks.isInRadius(x, z)) {
+         LOGGER.warn("Ignoring chunk since it's not in the view range: {}, {}", x, z);
       } else {
-         int var4 = this.chunks.getIndex(var1, var2);
-         LevelChunk var5 = this.chunks.getChunk(var4);
-         if (!positionEquals(var5, var1, var2)) {
-            LOGGER.warn("Ignoring chunk since it's not present: {}, {}", var1, var2);
+         int index = this.chunks.getIndex(x, z);
+         LevelChunk chunk = this.chunks.getChunk(index);
+         if (!positionEquals(chunk, x, z)) {
+            LOGGER.warn("Ignoring chunk since it's not present: {}, {}", x, z);
          } else {
-            var5.replaceBiomes(var3);
+            chunk.replaceBiomes(readBuffer);
          }
       }
    }
 
    @Nullable
-   public LevelChunk loadChunkFromPacket(int var1, int var2, net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData var3) {
-      if (!this.chunks.isInRadius(var1, var2)) {
-         LOGGER.warn("Ignoring chunk since it's not in the view range: {}, {}", var1, var2);
+   public LevelChunk loadChunkFromPacket(int x, int z, net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData chunkData) {
+      if (!this.chunks.isInRadius(x, z)) {
+         LOGGER.warn("Ignoring chunk since it's not in the view range: {}, {}", x, z);
          return null;
       } else {
-         int var6 = this.chunks.getIndex(var1, var2);
-         LevelChunk var7 = this.chunks.getChunk(var6);
-         ChunkPos var8 = new ChunkPos(var1, var2);
-         if (!positionEquals(var7, var1, var2)) {
-            var7 = new LevelChunk(this.world, var8);
-            var7.replaceWithPacketData(var1, var2, var3);
-            this.chunks.set(var6, var7);
+         int index = this.chunks.getIndex(x, z);
+         LevelChunk chunk = this.chunks.getChunk(index);
+         ChunkPos chunkPos = new ChunkPos(x, z);
+         if (!positionEquals(chunk, x, z)) {
+            chunk = new LevelChunk(this.world, chunkPos);
+            chunk.replaceWithPacketData(x, z, chunkData);
+            this.chunks.set(index, chunk);
          } else {
-            var7.replaceWithPacketData(var1, var2, var3);
-            this.chunks.refreshSections(var7);
+            chunk.replaceWithPacketData(x, z, chunkData);
+            this.chunks.refreshSections(chunk);
          }
 
-         this.world.resetChunkColor(var8);
-         return var7;
+         this.world.resetChunkColor(chunkPos);
+         return chunk;
       }
    }
 
@@ -124,35 +124,35 @@ public final class BotChunkManager extends ChunkSource {
    public void tick(BooleanSupplier shouldKeepTicking, boolean tickChunks) {
    }
 
-   public void setChunkMapCenter(int var1, int var2) {
-      this.chunks.centerChunkX = var1;
-      this.chunks.centerChunkZ = var2;
+   public void setChunkMapCenter(int centerChunkX, int centerChunkZ) {
+      this.chunks.centerChunkX = centerChunkX;
+      this.chunks.centerChunkZ = centerChunkZ;
    }
 
-   public void updateLoadDistance(int var1) {
-      int var2 = this.chunks.radius;
-      int var3 = getChunkMapRadius(var1);
-      if (var2 != var3) {
-         BotChunkManager.BotChunkMap var4 = new BotChunkManager.BotChunkMap(var3);
-         var4.centerChunkX = this.chunks.centerChunkX;
-         var4.centerChunkZ = this.chunks.centerChunkZ;
+   public void updateLoadDistance(int radius) {
+      int n = this.chunks.radius;
+      int chunkMapRadius = getChunkMapRadius(radius);
+      if (n != chunkMapRadius) {
+         BotChunkManager.BotChunkMap botChunkMap = new BotChunkManager.BotChunkMap(chunkMapRadius);
+         botChunkMap.centerChunkX = this.chunks.centerChunkX;
+         botChunkMap.centerChunkZ = this.chunks.centerChunkZ;
 
-         for (int var5 = 0; var5 < this.chunks.chunks.length(); var5++) {
-            LevelChunk var6 = this.chunks.chunks.get(var5);
-            if (var6 != null) {
-               ChunkPos var7 = var6.getPos();
-               if (var4.isInRadius(var7.x(), var7.z())) {
-                  var4.set(var4.getIndex(var7.x(), var7.z()), var6);
+         for (int i = 0; i < this.chunks.chunks.length(); i++) {
+            LevelChunk chunk = this.chunks.chunks.get(i);
+            if (chunk != null) {
+               ChunkPos pos = chunk.getPos();
+               if (botChunkMap.isInRadius(pos.x(), pos.z())) {
+                  botChunkMap.set(botChunkMap.getIndex(pos.x(), pos.z()), chunk);
                }
             }
          }
 
-         this.chunks = var4;
+         this.chunks = botChunkMap;
       }
    }
 
-   private static int getChunkMapRadius(int var0) {
-      return Math.max(2, var0) + 3;
+   private static int getChunkMapRadius(int chunkLoadDistance) {
+      return Math.max(2, chunkLoadDistance) + 3;
    }
 
    @Override
@@ -187,91 +187,91 @@ public final class BotChunkManager extends ChunkSource {
       public volatile int centerChunkZ;
       public int loadedChunkCount;
 
-      public BotChunkMap(int var2) {
-         this.radius = var2;
-         this.diameter = var2 * 2 + 1;
+      public BotChunkMap(int radius) {
+         this.radius = radius;
+         this.diameter = radius * 2 + 1;
          this.chunks = new AtomicReferenceArray<>(this.diameter * this.diameter);
       }
 
-      public int getIndex(int var1, int var2) {
-         return Math.floorMod(var2, this.diameter) * this.diameter + Math.floorMod(var1, this.diameter);
+      public int getIndex(int x, int z) {
+         return Math.floorMod(z, this.diameter) * this.diameter + Math.floorMod(x, this.diameter);
       }
 
-      public void set(int var1, @Nullable LevelChunk var2) {
-         LevelChunk var3 = this.chunks.getAndSet(var1, var2);
-         if (var3 != null) {
+      public void set(int index, @Nullable LevelChunk chunk) {
+         LevelChunk andSet = this.chunks.getAndSet(index, chunk);
+         if (andSet != null) {
             this.loadedChunkCount--;
-            this.unloadChunkSections(var3);
-            BotChunkManager.this.world.unloadBlockEntities(var3);
+            this.unloadChunkSections(andSet);
+            BotChunkManager.this.world.unloadBlockEntities(andSet);
          }
 
-         if (var2 != null) {
+         if (chunk != null) {
             this.loadedChunkCount++;
-            this.loadChunkSections(var2);
+            this.loadChunkSections(chunk);
          }
       }
 
-      public void unloadChunk(int var1, LevelChunk var2) {
-         if (this.chunks.compareAndSet(var1, var2, null)) {
+      public void unloadChunk(int index, LevelChunk chunk) {
+         if (this.chunks.compareAndSet(index, chunk, null)) {
             this.loadedChunkCount--;
-            this.unloadChunkSections(var2);
+            this.unloadChunkSections(chunk);
          }
 
-         BotChunkManager.this.world.unloadBlockEntities(var2);
+         BotChunkManager.this.world.unloadBlockEntities(chunk);
       }
 
-      public void onSectionStatusChanged(int var1, int var2, int var3, boolean var4) {
-         if (this.isInRadius(var1, var3)) {
-            long var5 = SectionPos.asLong(var1, var2, var3);
-            if (var4) {
-               this.activeSections.add(var5);
-            } else if (this.activeSections.remove(var5)) {
-               BotChunkManager.this.world.onChunkUnload(var5);
+      public void onSectionStatusChanged(int x, int sectionY, int z, boolean previouslyEmpty) {
+         if (this.isInRadius(x, z)) {
+            long sectionNode = SectionPos.asLong(x, sectionY, z);
+            if (previouslyEmpty) {
+               this.activeSections.add(sectionNode);
+            } else if (this.activeSections.remove(sectionNode)) {
+               BotChunkManager.this.world.onChunkUnload(sectionNode);
             }
          }
       }
 
-      private void unloadChunkSections(LevelChunk var1) {
-         LevelChunkSection[] var2 = var1.getSections();
+      private void unloadChunkSections(LevelChunk andSet) {
+         LevelChunkSection[] sections = andSet.getSections();
 
-         for (int var3 = 0; var3 < var2.length; var3++) {
-            ChunkPos var4 = var1.getPos();
-            this.activeSections.remove(SectionPos.asLong(var4.x(), var1.getSectionYFromSectionIndex(var3), var4.z()));
+         for (int i = 0; i < sections.length; i++) {
+            ChunkPos pos = andSet.getPos();
+            this.activeSections.remove(SectionPos.asLong(pos.x(), andSet.getSectionYFromSectionIndex(i), pos.z()));
          }
       }
 
-      private void loadChunkSections(LevelChunk var1) {
-         LevelChunkSection[] var2 = var1.getSections();
+      private void loadChunkSections(LevelChunk chunk) {
+         LevelChunkSection[] sections = chunk.getSections();
 
-         for (int var3 = 0; var3 < var2.length; var3++) {
-            if (var2[var3].hasOnlyAir()) {
-               ChunkPos var4 = var1.getPos();
-               this.activeSections.add(SectionPos.asLong(var4.x(), var1.getSectionYFromSectionIndex(var3), var4.z()));
+         for (int i = 0; i < sections.length; i++) {
+            if (sections[i].hasOnlyAir()) {
+               ChunkPos pos = chunk.getPos();
+               this.activeSections.add(SectionPos.asLong(pos.x(), chunk.getSectionYFromSectionIndex(i), pos.z()));
             }
          }
       }
 
-      public void refreshSections(LevelChunk var1) {
-         ChunkPos var2 = var1.getPos();
-         LevelChunkSection[] var3 = var1.getSections();
+      public void refreshSections(LevelChunk chunk) {
+         ChunkPos pos = chunk.getPos();
+         LevelChunkSection[] sections = chunk.getSections();
 
-         for (int var4 = 0; var4 < var3.length; var4++) {
-            long var5 = SectionPos.asLong(var2.x(), var1.getSectionYFromSectionIndex(var4), var2.z());
-            if (var3[var4].hasOnlyAir()) {
-               this.activeSections.add(var5);
-            } else if (this.activeSections.remove(var5)) {
-               BotChunkManager.this.world.onChunkUnload(var5);
+         for (int i = 0; i < sections.length; i++) {
+            long sectionNode = SectionPos.asLong(pos.x(), chunk.getSectionYFromSectionIndex(i), pos.z());
+            if (sections[i].hasOnlyAir()) {
+               this.activeSections.add(sectionNode);
+            } else if (this.activeSections.remove(sectionNode)) {
+               BotChunkManager.this.world.onChunkUnload(sectionNode);
             }
          }
       }
 
-      public boolean isInRadius(int var1, int var2) {
-         return Math.abs(var1 - this.centerChunkX) <= this.radius && Math.abs(var2 - this.centerChunkZ) <= this.radius;
+      public boolean isInRadius(int x, int z) {
+         return Math.abs(x - this.centerChunkX) <= this.radius && Math.abs(z - this.centerChunkZ) <= this.radius;
       }
 
       @Nullable
-      public LevelChunk getChunk(int var1) {
-         return this.chunks.get(var1);
+      public LevelChunk getChunk(int index) {
+         return this.chunks.get(index);
       }
    }
 }

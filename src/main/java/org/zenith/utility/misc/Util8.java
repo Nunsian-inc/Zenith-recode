@@ -44,90 +44,90 @@ public final class Util8 {
       new Util8.Data(22.0F, 0.17F, 1.0F, 0.82F, 0.87F, 1.12F, 0.64F, 0.7F, 0.92F, 0.44F, 0.84F, 0.44F, 0.88F, 0.7F, 1.12F)
    };
 
-   private Util8(float var1, Util8.Data var2, float[] var3, float[] var4, float var5, float var6, boolean var7) {
-      this.floatValue = var1;
-      this.floatValue2 = var2.getFloatValue2();
-      this.floatValue3 = var2.getFloatValue3();
-      this.floatValue4 = var2.getFloatValue4();
-      this.floatValue5 = var2.getFloatValue5();
-      this.floatValue6 = var2.getFloatValue6();
-      this.floatValues = var3;
-      this.floatValues2 = var4;
-      this.floatValue7 = var5;
-      this.floatValue8 = var2.getFloatValue7();
-      this.floatValue9 = var2.getFloatValue8();
-      this.floatValue10 = var2.getFloatValue9();
-      this.floatValue11 = var2.getFloatValue10();
-      this.floatValue12 = var6;
-      this.flag = var7;
-      this.floatValue13 = var2.getFloatValue11();
-      this.floatValue14 = var2.getFloatValue12();
-      this.floatValue15 = var2.getFloatValue13();
-      this.floatValue16 = var2.getFloatValue14();
-      this.floatValue17 = var2.getFloatValue15();
+   private Util8(float floatValue, Util8.Data data, float[] floatValues, float[] floatValues2, float f, float f2, boolean flag) {
+      this.floatValue = floatValue;
+      this.floatValue2 = data.getFloatValue2();
+      this.floatValue3 = data.getFloatValue3();
+      this.floatValue4 = data.getFloatValue4();
+      this.floatValue5 = data.getFloatValue5();
+      this.floatValue6 = data.getFloatValue6();
+      this.floatValues = floatValues;
+      this.floatValues2 = floatValues2;
+      this.floatValue7 = f;
+      this.floatValue8 = data.getFloatValue7();
+      this.floatValue9 = data.getFloatValue8();
+      this.floatValue10 = data.getFloatValue9();
+      this.floatValue11 = data.getFloatValue10();
+      this.floatValue12 = f2;
+      this.flag = flag;
+      this.floatValue13 = data.getFloatValue11();
+      this.floatValue14 = data.getFloatValue12();
+      this.floatValue15 = data.getFloatValue13();
+      this.floatValue16 = data.getFloatValue14();
+      this.floatValue17 = data.getFloatValue15();
    }
 
-   public static Util8 method1722(float var0) {
-      float var1 = method1723(var0);
-      Util8.Data var2 = method1724(var1);
-      float var3 = (var1 - 6.0F) / 24.0F * (float) (Math.PI * 2);
-      float var4 = (float)Math.sin(var3);
-      float var5 = (float)Math.cos(var3);
-      float var6 = (float)Math.cos(0.55F);
-      float var7 = (float)Math.sin(0.55F);
-      float[] var8 = new float[]{var5, var4 * var6, var4 * var7};
-      boolean var9 = var8[1] < 0.0F;
-      float[] var10 = var9 ? new float[]{-var8[0], -var8[1], -var8[2]} : (float[])var8.clone();
-      float var11 = Math.clamp(var10[1] / 0.06F, 0.0F, 1.0F);
-      var11 = var11 * var11 * (3.0F - 2.0F * var11);
-      float var12 = Math.clamp((var8[1] - -0.38F) / 0.32F, 0.0F, 1.0F);
-      var12 = var12 * var12 * (3.0F - 2.0F * var12);
-      return new Util8(var1, var2, var10, var8, var12, var11, var9);
+   public static Util8 method1722(float floatValue) {
+      float f = method1723(floatValue);
+      Util8.Data data = method1724(f);
+      float f2 = (f - 6.0F) / 24.0F * (float) (Math.PI * 2);
+      float f3 = (float)Math.sin(f2);
+      float f4 = (float)Math.cos(f2);
+      float f5 = (float)Math.cos(0.55F);
+      float f6 = (float)Math.sin(0.55F);
+      float[] floatValues2 = new float[]{f4, f3 * f5, f3 * f6};
+      boolean flag = floatValues2[1] < 0.0F;
+      float[] floatValues = flag ? new float[]{-floatValues2[0], -floatValues2[1], -floatValues2[2]} : (float[])floatValues2.clone();
+      float f7 = Math.clamp(floatValues[1] / 0.06F, 0.0F, 1.0F);
+      f7 = f7 * f7 * (3.0F - 2.0F * f7);
+      float f8 = Math.clamp((floatValues2[1] - -0.38F) / 0.32F, 0.0F, 1.0F);
+      f8 = f8 * f8 * (3.0F - 2.0F * f8);
+      return new Util8(f, data, floatValues, floatValues2, f8, f7, flag);
    }
 
-   private static float method1723(float var0) {
-      float var1 = var0 % 24.0F;
-      return var1 < 0.0F ? var1 + 24.0F : var1;
+   private static float method1723(float floatValue) {
+      float f = floatValue % 24.0F;
+      return f < 0.0F ? f + 24.0F : f;
    }
 
-   private static Util8.Data method1724(float var0) {
-      int var1 = 0;
+   private static Util8.Data method1724(float floatValue) {
+      int n = 0;
 
-      while (var1 < datas.length && datas[var1].getFloatValue() <= var0) {
-         var1++;
+      while (n < datas.length && datas[n].getFloatValue() <= floatValue) {
+         n++;
       }
 
-      Util8.Data var2 = datas[var1 % datas.length];
-      Util8.Data var3 = datas[(var1 - 1 + datas.length) % datas.length];
-      float var4 = method1725(var3.getFloatValue(), var2.getFloatValue());
-      float var5 = var4 <= 0.0F ? 0.0F : Math.clamp(method1725(var3.getFloatValue(), var0) / var4, 0.0F, 1.0F);
-      var5 = var5 * var5 * (3.0F - 2.0F * var5);
+      Util8.Data data = datas[n % datas.length];
+      Util8.Data data2 = datas[(n - 1 + datas.length) % datas.length];
+      float f = method1725(data2.getFloatValue(), data.getFloatValue());
+      float f2 = f <= 0.0F ? 0.0F : Math.clamp(method1725(data2.getFloatValue(), floatValue) / f, 0.0F, 1.0F);
+      f2 = f2 * f2 * (3.0F - 2.0F * f2);
       return new Util8.Data(
-         var0,
-         method1726(var3.getFloatValue2(), var2.getFloatValue2(), var5),
-         method1726(var3.getFloatValue3(), var2.getFloatValue3(), var5),
-         method1726(var3.getFloatValue4(), var2.getFloatValue4(), var5),
-         method1726(var3.getFloatValue5(), var2.getFloatValue5(), var5),
-         method1726(var3.getFloatValue6(), var2.getFloatValue6(), var5),
-         method1726(var3.getFloatValue7(), var2.getFloatValue7(), var5),
-         method1726(var3.getFloatValue8(), var2.getFloatValue8(), var5),
-         method1726(var3.getFloatValue9(), var2.getFloatValue9(), var5),
-         method1726(var3.getFloatValue10(), var2.getFloatValue10(), var5),
-         method1726(var3.getFloatValue11(), var2.getFloatValue11(), var5),
-         method1726(var3.getFloatValue12(), var2.getFloatValue12(), var5),
-         method1726(var3.getFloatValue13(), var2.getFloatValue13(), var5),
-         method1726(var3.getFloatValue14(), var2.getFloatValue14(), var5),
-         method1726(var3.getFloatValue15(), var2.getFloatValue15(), var5)
+         floatValue,
+         method1726(data2.getFloatValue2(), data.getFloatValue2(), f2),
+         method1726(data2.getFloatValue3(), data.getFloatValue3(), f2),
+         method1726(data2.getFloatValue4(), data.getFloatValue4(), f2),
+         method1726(data2.getFloatValue5(), data.getFloatValue5(), f2),
+         method1726(data2.getFloatValue6(), data.getFloatValue6(), f2),
+         method1726(data2.getFloatValue7(), data.getFloatValue7(), f2),
+         method1726(data2.getFloatValue8(), data.getFloatValue8(), f2),
+         method1726(data2.getFloatValue9(), data.getFloatValue9(), f2),
+         method1726(data2.getFloatValue10(), data.getFloatValue10(), f2),
+         method1726(data2.getFloatValue11(), data.getFloatValue11(), f2),
+         method1726(data2.getFloatValue12(), data.getFloatValue12(), f2),
+         method1726(data2.getFloatValue13(), data.getFloatValue13(), f2),
+         method1726(data2.getFloatValue14(), data.getFloatValue14(), f2),
+         method1726(data2.getFloatValue15(), data.getFloatValue15(), f2)
       );
    }
 
-   private static float method1725(float var0, float var1) {
-      float var2 = var1 - var0;
-      return var2 <= 0.0F ? var2 + 24.0F : var2;
+   private static float method1725(float floatValue, float f) {
+      float f2 = f - floatValue;
+      return f2 <= 0.0F ? f2 + 24.0F : f2;
    }
 
-   private static float method1726(float var0, float var1, float var2) {
-      return var0 + (var1 - var0) * var2;
+   private static float method1726(float f, float f2, float f3) {
+      return f + (f2 - f) * f3;
    }
 
    private static final class Data {
@@ -225,37 +225,37 @@ public final class Util8 {
       }
 
       private Data(
-         float var1,
-         float var2,
-         float var3,
-         float var4,
-         float var5,
-         float var6,
-         float var7,
-         float var8,
-         float var9,
-         float var10,
-         float var11,
-         float var12,
-         float var13,
-         float var14,
-         float var15
+         float floatValue,
+         float f,
+         float f2,
+         float f3,
+         float f4,
+         float f5,
+         float f6,
+         float f7,
+         float f8,
+         float f9,
+         float f10,
+         float f11,
+         float f12,
+         float f13,
+         float f14
       ) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
-         this.floatValue9 = var9;
-         this.floatValue10 = var10;
-         this.floatValue11 = var11;
-         this.floatValue12 = var12;
-         this.floatValue13 = var13;
-         this.floatValue14 = var14;
-         this.floatValue15 = var15;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
+         this.floatValue10 = f9;
+         this.floatValue11 = f10;
+         this.floatValue12 = f11;
+         this.floatValue13 = f12;
+         this.floatValue14 = f13;
+         this.floatValue15 = f14;
       }
 
       public float getFloatValue() {

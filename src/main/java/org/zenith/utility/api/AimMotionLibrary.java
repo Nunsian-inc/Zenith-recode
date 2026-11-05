@@ -23,8 +23,8 @@ public final class AimMotionLibrary {
    };
    private final List<AimMotionLibrary.Entry> items;
 
-   private AimMotionLibrary(List<AimMotionLibrary.Entry> var1) {
-      this.items = List.copyOf(var1);
+   private AimMotionLibrary(List<AimMotionLibrary.Entry> coll) {
+      this.items = List.copyOf(coll);
    }
 
    public List<AimMotionLibrary.Entry> getItems() {
@@ -32,14 +32,14 @@ public final class AimMotionLibrary {
    }
 
    public static AimMotionLibrary method1266() {
-      AimMotionLibrary var0 = method1267(path);
-      if (var0 != null) {
-         return var0;
+      AimMotionLibrary aimMotionLibrary = method1267(path);
+      if (aimMotionLibrary != null) {
+         return aimMotionLibrary;
       } else {
-         for (Path var4 : paths) {
-            var0 = method1267(var4);
-            if (var0 != null) {
-               return var0;
+         for (Path path2 : paths) {
+            aimMotionLibrary = method1267(path2);
+            if (aimMotionLibrary != null) {
+               return aimMotionLibrary;
             }
          }
 
@@ -47,103 +47,103 @@ public final class AimMotionLibrary {
       }
    }
 
-   private static AimMotionLibrary method1267(Path var0) {
+   private static AimMotionLibrary method1267(Path path) {
       try {
-         if (!Files.isRegularFile(var0)) {
+         if (!Files.isRegularFile(path)) {
             return null;
          } else {
-            String var1 = Files.readString(var0, StandardCharsets.UTF_8);
-            return method1269(var1, var0.toAbsolutePath().toString());
+            String string = Files.readString(path, StandardCharsets.UTF_8);
+            return method1269(string, path.toAbsolutePath().toString());
          }
-      } catch (Throwable var2) {
-         System.err.println("[AimMotionLibrary] failed to load " + var0 + ": " + var2);
+      } catch (Throwable e) {
+         System.err.println("[AimMotionLibrary] failed to load " + path + ": " + e);
          return null;
       }
    }
 
    private static AimMotionLibrary method1268() {
       try {
-         AimMotionLibrary var2;
-         try (InputStream var0 = AimMotionLibrary.class.getResourceAsStream("/assets/zenith/aimpipe/aim_motion_library.json")) {
-            if (var0 == null) {
+         AimMotionLibrary aimMotionLibrary;
+         try (InputStream resourceAsStream = AimMotionLibrary.class.getResourceAsStream("/assets/zenith/aimpipe/aim_motion_library.json")) {
+            if (resourceAsStream == null) {
                return null;
             }
 
-            String var1 = new String(var0.readAllBytes(), StandardCharsets.UTF_8);
-            var2 = method1269(var1, "/assets/zenith/aimpipe/aim_motion_library.json");
+            String str = new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8);
+            aimMotionLibrary = method1269(str, "/assets/zenith/aimpipe/aim_motion_library.json");
          }
 
-         return var2;
-      } catch (Throwable var5) {
-         System.err.println("[AimMotionLibrary] failed to load /assets/zenith/aimpipe/aim_motion_library.json: " + var5);
+         return aimMotionLibrary;
+      } catch (Throwable e) {
+         System.err.println("[AimMotionLibrary] failed to load /assets/zenith/aimpipe/aim_motion_library.json: " + e);
          return null;
       }
    }
 
-   private static AimMotionLibrary method1269(String var0, String var1) {
-      JsonObject var2 = JsonParser.parseString(var0).getAsJsonObject();
-      int var3 = var2.get("format_version").getAsInt();
-      if (var3 != 1) {
-         throw new IllegalStateException("unsupported motion-library format_version " + var3);
+   private static AimMotionLibrary method1269(String string, String str) {
+      JsonObject jsonObject = JsonParser.parseString(string).getAsJsonObject();
+      int n = jsonObject.get("format_version").getAsInt();
+      if (n != 1) {
+         throw new IllegalStateException("unsupported motion-library format_version " + n);
       } else {
-         JsonElement var4 = var2.get("source_gcd");
-         if (var4 != null && !var4.isJsonNull()) {
-            float var5 = var4.getAsFloat();
-            if (Float.isFinite(var5) && !(var5 <= 0.0F)) {
-               JsonArray var6 = var2.getAsJsonArray("primitives");
-               List<Entry> var7 = new ArrayList<>(var6.size());
+         JsonElement jsonElement = jsonObject.get("source_gcd");
+         if (jsonElement != null && !jsonElement.isJsonNull()) {
+            float f = jsonElement.getAsFloat();
+            if (Float.isFinite(f) && !(f <= 0.0F)) {
+               JsonArray jsonArray = jsonObject.getAsJsonArray("primitives");
+               List<Entry> coll = new ArrayList<>(jsonArray.size());
 
-               for (JsonElement var9 : var6) {
-                  JsonObject var10 = var9.getAsJsonObject();
-                  int var11 = var10.get("length").getAsInt();
-                  if (var11 >= 1 && var11 <= 6) {
-                     JsonArray var12 = var10.getAsJsonArray("commands");
-                     if (var12.size() != var11) {
+               for (JsonElement json : jsonArray) {
+                  JsonObject jsonObject2 = json.getAsJsonObject();
+                  int n2 = jsonObject2.get("length").getAsInt();
+                  if (n2 >= 1 && n2 <= 6) {
+                     JsonArray jsonArray2 = jsonObject2.getAsJsonArray("commands");
+                     if (jsonArray2.size() != n2) {
                         throw new IllegalStateException("primitive length does not match command count");
                      }
 
-                     int[] var13 = new int[var11];
-                     int[] var14 = new int[var11];
-                     int var15 = 0;
-                     int var16 = 0;
+                     int[] intValues = new int[n2];
+                     int[] intValues2 = new int[n2];
+                     int n3 = 0;
+                     int n4 = 0;
 
-                     for (int var17 = 0; var17 < var11; var17++) {
-                        JsonArray var18 = var12.get(var17).getAsJsonArray();
-                        if (var18.size() != 2) {
+                     for (int i = 0; i < n2; i++) {
+                        JsonArray jsonArray3 = jsonArray2.get(i).getAsJsonArray();
+                        if (jsonArray3.size() != 2) {
                            throw new IllegalStateException("primitive command must contain yaw and pitch");
                         }
 
-                        var13[var17] = var18.get(0).getAsInt();
-                        var14[var17] = var18.get(1).getAsInt();
-                        if (var13[var17] == 0 && var14[var17] == 0) {
+                        intValues[i] = jsonArray3.get(0).getAsInt();
+                        intValues2[i] = jsonArray3.get(1).getAsInt();
+                        if (intValues[i] == 0 && intValues2[i] == 0) {
                            throw new IllegalStateException("primitive contains an internal joint-zero command");
                         }
 
-                        var15 += var13[var17];
-                        var16 += var14[var17];
+                        n3 += intValues[i];
+                        n4 += intValues2[i];
                      }
 
-                     int var20 = var10.get("sum_yaw").getAsInt();
-                     int var21 = var10.get("sum_pitch").getAsInt();
-                     if (var15 == var20 && var16 == var21) {
-                        var7.add(new AimMotionLibrary.Entry(var13, var14, var20, var21));
+                     int intValue = jsonObject2.get("sum_yaw").getAsInt();
+                     int n5 = jsonObject2.get("sum_pitch").getAsInt();
+                     if (n3 == intValue && n4 == n5) {
+                        coll.add(new AimMotionLibrary.Entry(intValues, intValues2, intValue, n5));
                         continue;
                      }
 
                      throw new IllegalStateException("primitive sum does not match commands");
                   }
 
-                  throw new IllegalStateException("primitive length outside 1..6: " + var11);
+                  throw new IllegalStateException("primitive length outside 1..6: " + n2);
                }
 
-               if (var7.isEmpty()) {
+               if (coll.isEmpty()) {
                   throw new IllegalStateException("motion library contains no primitives");
-               } else if (var2.has("count") && var2.get("count").getAsInt() != var7.size()) {
+               } else if (jsonObject.has("count") && jsonObject.get("count").getAsInt() != coll.size()) {
                   throw new IllegalStateException("motion-library count does not match primitive array");
                } else {
-                  AimMotionLibrary var19 = new AimMotionLibrary(var7);
-                  System.out.println("[AimMotionLibrary] loaded " + var1 + " (primitives=" + var7.size() + ", maxTicks=6)");
-                  return var19;
+                  AimMotionLibrary aimMotionLibrary = new AimMotionLibrary(coll);
+                  System.out.println("[AimMotionLibrary] loaded " + str + " (primitives=" + coll.size() + ", maxTicks=6)");
+                  return aimMotionLibrary;
                }
             } else {
                throw new IllegalStateException("motion-library source_gcd must be finite and positive");
@@ -160,23 +160,23 @@ public final class AimMotionLibrary {
       private final int intValue;
       private final int intValue2;
 
-      private Entry(int[] var1, int[] var2, int var3, int var4) {
-         this.intValues = var1;
-         this.intValues2 = var2;
-         this.intValue = var3;
-         this.intValue2 = var4;
+      private Entry(int[] intValues, int[] intValues2, int intValue, int n) {
+         this.intValues = intValues;
+         this.intValues2 = intValues2;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
 
       public int length() {
          return this.intValues.length;
       }
 
-      public int method1270(int var1) {
-         return this.intValues[var1];
+      public int method1270(int n) {
+         return this.intValues[n];
       }
 
-      public int method1271(int var1) {
-         return this.intValues2[var1];
+      public int method1271(int n) {
+         return this.intValues2[n];
       }
 
       public int getIntValue() {

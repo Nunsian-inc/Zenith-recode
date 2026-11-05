@@ -11,12 +11,12 @@ public class GpsCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var0 -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2019("Используй .way");
          return 1;
       });
-      var1.then(literal("help").executes(var0 -> {
+      literalArgumentBuilder.then(literal("help").executes(commandContext -> {
          ChatLogger.method2019("Используй .way");
          return 1;
       }));

@@ -17,8 +17,8 @@ public abstract class InventoryScreenMixin {
       at = @At("HEAD")
    )
    private static void figura$markInventoryRender(
-      GuiGraphicsExtractor var0, int var1, int var2, int var3, int var4, int var5, float var6, float var7, float var8, LivingEntity var9, CallbackInfo var10
+      GuiGraphicsExtractor guiGraphicsExtractor, int n, int n2, int n3, int n4, int n5, float f, float f2, float f3, LivingEntity player, CallbackInfo callbackInfo
    ) {
-      FiguraGuiRenderContext.mark(var9, EntityRenderMode.MINECRAFT_GUI);
+      FiguraGuiRenderContext.mark(player, EntityRenderMode.MINECRAFT_GUI);
    }
 }

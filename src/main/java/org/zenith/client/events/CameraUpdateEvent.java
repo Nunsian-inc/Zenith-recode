@@ -25,24 +25,24 @@ public class CameraUpdateEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
    @Generated
-   public void setFloatValue(float var1) {
-      this.floatValue = var1;
+   public void setFloatValue(float floatValue) {
+      this.floatValue = floatValue;
    }
 
    @Generated
-   public void setRotation(Rotation var1) {
-      this.rotation = var1;
+   public void setRotation(Rotation rotation) {
+      this.rotation = rotation;
    }
 
    @Generated
-   public CameraUpdateEvent(boolean var1, float var2, Rotation var3) {
-      this.flag = var1;
-      this.floatValue = var2;
-      this.rotation = var3;
+   public CameraUpdateEvent(boolean flag, float floatValue, Rotation rotation) {
+      this.flag = flag;
+      this.floatValue = floatValue;
+      this.rotation = rotation;
    }
 }

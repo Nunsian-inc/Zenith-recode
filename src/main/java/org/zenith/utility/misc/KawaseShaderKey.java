@@ -13,13 +13,13 @@ import org.zenith.utility.render.ShaderDefinition;
 public class KawaseShaderKey extends ShaderDefinition implements MinecraftAccess {
    private static final List<KawaseShaderKey> items = new ArrayList<>();
 
-   public KawaseShaderKey(Identifier var1, VertexFormat var2) {
-      super(method5164(var1), var2, LightUtil.method6717(var2));
+   public KawaseShaderKey(Identifier shaderIdentifier, VertexFormat vertexFormat) {
+      super(method5164(shaderIdentifier), vertexFormat, LightUtil.method6717(vertexFormat));
       items.add(this);
    }
 
-   private static Identifier method5164(Identifier var0) {
-      return var0.getPath().startsWith("core/") ? var0 : var0.withPrefix("core/");
+   private static Identifier method5164(Identifier shaderIdentifier) {
+      return shaderIdentifier.getPath().startsWith("core/") ? shaderIdentifier : shaderIdentifier.withPrefix("core/");
    }
 
    public KawaseShaderKey method5165() {
@@ -31,15 +31,15 @@ public class KawaseShaderKey extends ShaderDefinition implements MinecraftAccess
    }
 
    @Override
-   public ShaderUniform method5166(String var1) {
-      return super.method5166(var1);
+   public ShaderUniform method5166(String key) {
+      return super.method5166(key);
    }
 
    @Internal
    public static void method5167() {
-      for (KawaseShaderKey var1 : items) {
-         var1.method5566();
-         var1.method4659();
+      for (KawaseShaderKey kawaseShaderKey : items) {
+         kawaseShaderKey.method5566();
+         kawaseShaderKey.method4659();
       }
    }
 }

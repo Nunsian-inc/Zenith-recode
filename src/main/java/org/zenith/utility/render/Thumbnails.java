@@ -23,9 +23,9 @@ public final class Thumbnails implements MinecraftAccess {
    private final List<Thumbnails.Data> items = new ArrayList<>();
    private final Quaternionf quaternionf = new Quaternionf();
 
-   public boolean method7855(HoveredData var1, Class15 var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10) {
-      if (var2 != null && var2.intValue3 != 0 && this.items.size() < 30) {
-         this.items.add(new Thumbnails.Data(var1, var2, var3, var4, var5, var6, var7, var8, var9, var10));
+   public boolean method7855(HoveredData hoveredData, Class15 class2, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
+      if (class2 != null && class2.intValue3 != 0 && this.items.size() < 30) {
+         this.items.add(new Thumbnails.Data(hoveredData, class2, floatValue, f, f2, f3, f4, f5, f6, f7));
          return true;
       } else {
          return false;
@@ -36,64 +36,64 @@ public final class Thumbnails implements MinecraftAccess {
       this.items.clear();
    }
 
-   public void method7857(GuiGraphicsExtractor var1) {
+   public void method7857(GuiGraphicsExtractor guiGraphicsExtractor) {
       if (!this.items.isEmpty()) {
-         float var2 = (float)(System.nanoTime() - CONST_longValue) / 1.0E9F;
-         PoseStack var3 = MatrixUtils.method666(var1.pose());
+         float f = (float)(System.nanoTime() - CONST_longValue) / 1.0E9F;
+         PoseStack poseStack = MatrixUtils.method666(guiGraphicsExtractor.pose());
          ScissorFlusher.flush();
          RenderState.method1878();
          RenderState.method1882(true);
          OutlineVertexProvider.method1538();
 
          try {
-            for (Thumbnails.Data var6 : this.items) {
-               var1.enableScissor(
-                  (int)Math.floor(var6.floatValue4), (int)Math.floor(var6.floatValue5), (int)Math.ceil(var6.floatValue6), (int)Math.ceil(var6.floatValue7)
+            for (Thumbnails.Data data : this.items) {
+               guiGraphicsExtractor.enableScissor(
+                  (int)Math.floor(data.floatValue4), (int)Math.floor(data.floatValue5), (int)Math.ceil(data.floatValue6), (int)Math.ceil(data.floatValue7)
                );
-               var3.pushPose();
+               poseStack.pushPose();
 
                try {
-                  Class15 var7 = var6.class15;
-                  float[] var8 = var7.floatValues7;
-                  float var9 = (var8[0] + var8[3]) / 2.0F;
-                  float var10 = (var8[1] + var8[4]) / 2.0F;
-                  float var11 = (var8[2] + var8[5]) / 2.0F;
-                  float var12 = 0.0F;
+                  Class15 key = data.class15;
+                  float[] floatValues7 = key.floatValues7;
+                  float f2 = (floatValues7[0] + floatValues7[3]) / 2.0F;
+                  float f3 = (floatValues7[1] + floatValues7[4]) / 2.0F;
+                  float f4 = (floatValues7[2] + floatValues7[5]) / 2.0F;
+                  float f5 = 0.0F;
 
-                  for (int var13 = 0; var13 < 4; var13++) {
-                     float var14 = (var13 & 1) == 0 ? var8[0] - var9 : var8[3] - var9;
-                     float var15 = (var13 & 2) == 0 ? var8[2] - var11 : var8[5] - var11;
-                     var12 = Math.max(var12, (float)Math.sqrt(var14 * var14 + var15 * var15));
+                  for (int i = 0; i < 4; i++) {
+                     float f6 = (i & 1) == 0 ? floatValues7[0] - f2 : floatValues7[3] - f2;
+                     float f7 = (i & 2) == 0 ? floatValues7[2] - f4 : floatValues7[5] - f4;
+                     f5 = Math.max(f5, (float)Math.sqrt(f6 * f6 + f7 * f7));
                   }
 
-                  float var24 = Math.max((var8[4] - var8[1]) / 2.0F, var12);
-                  float var25 = var6.floatValue3 / 2.0F / Math.max(0.02F, var24);
-                  var3.translate(var6.floatValue, var6.floatValue2, 50.0F);
-                  var3.scale(var25, var25, -var25);
-                  var3.rotate(new Quaternionf().rotationX((float)Math.toRadians(-12.0)));
-                  var3.rotate(this.quaternionf.rotationY((float)Math.toRadians(200.0 + var2 / 12.0F * 360.0 + var6.floatValue8 * 25.0)));
-                  var3.translate(-var9, -var10, -var11);
+                  float f6 = Math.max((floatValues7[4] - floatValues7[1]) / 2.0F, f5);
+                  float xScale = data.floatValue3 / 2.0F / Math.max(0.02F, f6);
+                  poseStack.translate(data.floatValue, data.floatValue2, 50.0F);
+                  poseStack.scale(xScale, xScale, -xScale);
+                  poseStack.rotate(new Quaternionf().rotationX((float)Math.toRadians(-12.0)));
+                  poseStack.rotate(this.quaternionf.rotationY((float)Math.toRadians(200.0 + f / 12.0F * 360.0 + data.floatValue8 * 25.0)));
+                  poseStack.translate(-f2, -f3, -f4);
                   OutlineVertexProvider.method1542(var3x -> {
                         for (int var4x = 0; var4x <= 6; var4x++) {
-                           if (var7.method2033(var4x)) {
-                              var3.pushPose();
+                           if (key.method2033(var4x)) {
+                              poseStack.pushPose();
                               if (var4x < 6) {
-                                 float[] var5 = CONST_floatValues[var4x];
-                                 var3.translate(var5[0] / 16.0F, var5[1] / 16.0F, var5[2] / 16.0F);
+                                 float[] floats = CONST_floatValues[var4x];
+                                 poseStack.translate(floats[0] / 16.0F, floats[1] / 16.0F, floats[2] / 16.0F);
                               }
 
                               BoneMatrices.method4787(
-                                 var7, null, var4x, var3, var3x, 15728880, OverlayTexture.NO_OVERLAY, true, var6.hoveredData.getRarity().isFlag(), -1
+                                 key, null, var4x, poseStack, var3x, 15728880, OverlayTexture.NO_OVERLAY, true, data.hoveredData.getRarity().isFlag(), -1
                               );
-                              var3.popPose();
+                              poseStack.popPose();
                            }
                         }
                      }
                   );
                } finally {
-                  var3.popPose();
+                  poseStack.popPose();
                }
-               var1.disableScissor();
+               guiGraphicsExtractor.disableScissor();
             }
          } finally {
             OutlineVertexProvider.method1539();
@@ -172,17 +172,17 @@ public final class Thumbnails implements MinecraftAccess {
          return "Data[" + "hoveredData=" + this.hoveredData + ", " + "class15=" + this.class15 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + ", " + "floatValue8=" + this.floatValue8 + "]";
       }
 
-      private Data(HoveredData var1, Class15 var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10) {
-         this.hoveredData = var1;
-         this.class15 = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
-         this.floatValue4 = var6;
-         this.floatValue5 = var7;
-         this.floatValue6 = var8;
-         this.floatValue7 = var9;
-         this.floatValue8 = var10;
+      private Data(HoveredData hoveredData, Class15 class2, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7) {
+         this.hoveredData = hoveredData;
+         this.class15 = class2;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
       }
 
       public HoveredData getHoveredData() {

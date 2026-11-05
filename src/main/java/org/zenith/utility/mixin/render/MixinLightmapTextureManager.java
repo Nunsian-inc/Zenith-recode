@@ -16,8 +16,8 @@ public class MixinLightmapTextureManager {
       method = {"calculateDarknessScale(Lnet/minecraft/world/entity/LivingEntity;FF)F"},
       at = {@At("RETURN")}
    )
-   private float zenith$darknessFactor(float var1) {
-      return (float)ModuleHookDefinitions.method6118(ModuleHookDefinitions.class127, var1);
+   private float zenith$darknessFactor(float returnValue) {
+      return (float)ModuleHookDefinitions.method6118(ModuleHookDefinitions.class127, returnValue);
    }
 
    @ModifyExpressionValue(
@@ -33,21 +33,21 @@ public class MixinLightmapTextureManager {
          )
       )}
    )
-   private Object injectXRayFullBright(Object var1) {
-      if (var1 instanceof Double var2) {
-         float var3 = WorldModule.INSTANCE.method5644();
-         Object var4 = var1;
-         if (var3 >= 0.0F) {
-            var4 = Math.max(var2, (double)(var3 * 10.0F));
+   private Object injectXRayFullBright(Object obj) {
+      if (obj instanceof Double d) {
+         float f = WorldModule.INSTANCE.method5644();
+         Object obj2 = obj;
+         if (f >= 0.0F) {
+            obj2 = Math.max(d, (double)(f * 10.0F));
          }
 
-         if (ModuleHookDefinitions.class1211.active() && var4 instanceof Double var5) {
-            var4 = Math.max(0.0, Math.min(15.0, ModuleHookDefinitions.method6118(ModuleHookDefinitions.class1211, var5)));
+         if (ModuleHookDefinitions.class1211.active() && obj2 instanceof Double returnValue) {
+            obj2 = Math.max(0.0, Math.min(15.0, ModuleHookDefinitions.method6118(ModuleHookDefinitions.class1211, returnValue)));
          }
 
-         return var4;
+         return obj2;
       } else {
-         return var1;
+         return obj;
       }
    }
 }

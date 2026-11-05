@@ -37,9 +37,9 @@ public final class HandsModule extends Module {
    public void onEnable() {
       super.onEnable();
 
-      for (Module var2 : this.items) {
-         if (!var2.isEnabled()) {
-            var2.toggle();
+      for (Module moduleValue : this.items) {
+         if (!moduleValue.isEnabled()) {
+            moduleValue.toggle();
          }
       }
 
@@ -51,10 +51,10 @@ public final class HandsModule extends Module {
       super.onDisable();
       this.items.clear();
 
-      for (Module var2 : method2255()) {
-         if (var2.isEnabled()) {
-            this.items.add(var2);
-            var2.toggle();
+      for (Module moduleValue : method2255()) {
+         if (moduleValue.isEnabled()) {
+            this.items.add(moduleValue);
+            moduleValue.toggle();
          }
       }
    }
@@ -70,13 +70,13 @@ public final class HandsModule extends Module {
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      var1.addProperty("enabled", true);
-      return var1;
+      JsonObject json = super.save();
+      json.addProperty("enabled", true);
+      return json;
    }
 
-   private static ButtonSetting method2256(String var0, Module var1) {
-      var var2 = SectionSettings.of(var1);
-      return new ModuleHeaderSetting(var0, var1, () -> Zenith.getInstance().getNLMenuScreen().getInspectorPanel().openSection(var1.getName(), var2, null, var1));
+   private static ButtonSetting method2256(String key, Module sectionPreviewOwner) {
+      var sectionSettings = SectionSettings.of(sectionPreviewOwner);
+      return new ModuleHeaderSetting(key, sectionPreviewOwner, () -> Zenith.getInstance().getNLMenuScreen().getInspectorPanel().openSection(sectionPreviewOwner.getName(), sectionSettings, null, sectionPreviewOwner));
    }
 }

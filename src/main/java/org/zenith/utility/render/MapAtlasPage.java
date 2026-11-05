@@ -19,11 +19,11 @@ public final class MapAtlasPage {
    private int intValue2;
    private boolean closed;
 
-   public MapAtlasPage(TextureManager var1) {
-      int var2 = intValue++;
-      this.identifier = Identifier.fromNamespaceAndPath("zenith", "map_atlas/" + var2);
-      this.nativeImageBackedTexture = new DynamicTexture(() -> "Zenith map atlas #" + var2, 2048, 2048, true);
-      var1.register(this.identifier, this.nativeImageBackedTexture);
+   public MapAtlasPage(TextureManager zenith$getTextureManager) {
+      int n = intValue++;
+      this.identifier = Identifier.fromNamespaceAndPath("zenith", "map_atlas/" + n);
+      this.nativeImageBackedTexture = new DynamicTexture(() -> "Zenith map atlas #" + n, 2048, 2048, true);
+      zenith$getTextureManager.register(this.identifier, this.nativeImageBackedTexture);
    }
 
    public Identifier getIdentifier() {
@@ -38,26 +38,26 @@ public final class MapAtlasPage {
       return this.intValue2 >= 256 ? -1 : this.intValue2++;
    }
 
-   public void method5417(int var1, int var2, byte[] var3) {
+   public void method5417(int intValue, int dstY, byte[] colors) {
       if (!this.closed) {
-         NativeImage var4 = this.nativeImageBackedTexture.getPixels();
-         GpuTexture var5 = this.nativeImageBackedTexture.getTexture();
-         if (var4 != null && var5 != null && !var5.isClosed()) {
-            for (int var6 = 0; var6 < 128; var6++) {
-               for (int var7 = 0; var7 < 128; var7++) {
-                  var4.setPixel(var1 + var7, var2 + var6, MapColor.getColorFromPackedId(var3[var7 + var6 * 128]));
+         NativeImage pixels = this.nativeImageBackedTexture.getPixels();
+         GpuTexture texture = this.nativeImageBackedTexture.getTexture();
+         if (pixels != null && texture != null && !texture.isClosed()) {
+            for (int i = 0; i < 128; i++) {
+               for (int j = 0; j < 128; j++) {
+                  pixels.setPixel(intValue + j, dstY + i, MapColor.getColorFromPackedId(colors[j + i * 128]));
                }
             }
 
-            org.zenith.utility.render.RenderCompat.writeRegion(var5, var4, 0, 0, var1, var2, 128, 128, var1, var2);
+            org.zenith.utility.render.RenderCompat.writeRegion(texture, pixels, 0, 0, intValue, dstY, 128, 128, intValue, dstY);
          }
       }
    }
 
-   public void method5418(TextureManager var1) {
+   public void method5418(TextureManager textureManager) {
       if (!this.closed) {
          this.closed = true;
-         var1.release(this.identifier);
+         textureManager.release(this.identifier);
       }
    }
 }

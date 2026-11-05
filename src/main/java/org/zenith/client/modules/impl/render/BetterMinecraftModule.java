@@ -27,16 +27,16 @@ public final class BetterMinecraftModule extends Module {
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
+   public void load(JsonObject json) {
+      super.load(json);
       this.setToggled(true);
    }
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      var1.addProperty("enabled", true);
-      return var1;
+      JsonObject json = super.save();
+      json.addProperty("enabled", true);
+      return json;
    }
 
    public boolean method2010() {
@@ -52,25 +52,25 @@ public final class BetterMinecraftModule extends Module {
       return this.isEnabled() && this.antiSpam.isEnabled();
    }
 
-   public float method2012(long var1) {
-      float var3 = this.method2015((float)(System.currentTimeMillis() - var1) / 130.0F);
-      return 0.86F + 0.13999999F * this.method2016(var3);
+   public float method2012(long zenith$openedAt) {
+      float f = this.method2015((float)(System.currentTimeMillis() - zenith$openedAt) / 130.0F);
+      return 0.86F + 0.13999999F * this.method2016(f);
    }
 
-   public float method2013(long var1, float var3) {
-      float var4 = this.method2015((float)(System.currentTimeMillis() - var1) / 110.0F);
-      return var3 * (1.0F - this.method2016(var4));
+   public float method2013(long zenith$closedAt, float zenith$closeStartScale) {
+      float f = this.method2015((float)(System.currentTimeMillis() - zenith$closedAt) / 110.0F);
+      return zenith$closeStartScale * (1.0F - this.method2016(f));
    }
 
-   public boolean method2014(long var1) {
-      return System.currentTimeMillis() - var1 >= 110L;
+   public boolean method2014(long zenith$closedAt) {
+      return System.currentTimeMillis() - zenith$closedAt >= 110L;
    }
 
-   private float method2015(float var1) {
-      return Math.clamp(var1, 0.0F, 1.0F);
+   private float method2015(float f) {
+      return Math.clamp(f, 0.0F, 1.0F);
    }
 
-   private float method2016(float var1) {
-      return var1 < 0.5F ? 2.0F * var1 * var1 : 1.0F - (float)Math.pow(-2.0F * var1 + 2.0F, 2.0) / 2.0F;
+   private float method2016(float f) {
+      return f < 0.5F ? 2.0F * f * f : 1.0F - (float)Math.pow(-2.0F * f + 2.0F, 2.0) / 2.0F;
    }
 }

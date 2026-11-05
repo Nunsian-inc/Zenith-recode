@@ -22,114 +22,114 @@ public class Hud4 extends Interface {
    private float lastWidth = 0.0F;
    private float lastHeight = 0.0F;
 
-   public Hud4(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public Hud4(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
+   public void method8(CustomDrawContext customDrawContext) {
       if (mc.player == null) {
          this.animation.method2808(0.0F);
          if (this.animation.getValue() > 0.01F) {
-            this.method6476(var1, this.animation.getValue());
+            this.method6476(customDrawContext, this.animation.getValue());
          }
       } else {
          this.animation.method2808(1.0F);
          if (!(this.animation.getValue() <= 0.01F)) {
-            boolean var2 = false;
+            boolean flag = false;
 
-            for (int var3 = 9; var3 < 36; var3++) {
-               ItemStack var4 = mc.player.getInventory().getItem(var3);
-               Item var5 = var4.getItem();
-               int var6 = var4.getCount();
-               int var7 = var3 - 9;
-               if (var5 != this.items[var7] || var6 != this.intValues[var7]) {
-                  this.items[var7] = var5;
-                  this.intValues[var7] = var6;
-                  var2 = true;
+            for (int i = 9; i < 36; i++) {
+               ItemStack stack = mc.player.getInventory().getItem(i);
+               Item item = stack.getItem();
+               int count = stack.getCount();
+               int n = i - 9;
+               if (item != this.items[n] || count != this.intValues[n]) {
+                  this.items[n] = item;
+                  this.intValues[n] = count;
+                  flag = true;
                }
             }
 
-            if (var2) {
+            if (flag) {
                this.animation2.method2808(0.0F);
             }
 
             this.animation2.method2808(1.0F);
-            this.method6476(var1, this.animation.getValue() * this.animation2.getValue());
+            this.method6476(customDrawContext, this.animation.getValue() * this.animation2.getValue());
          }
       }
    }
 
-   private void method6476(CustomDrawContext var1, float var2) {
+   private void method6476(CustomDrawContext customDrawContext, float x) {
       if (mc.player != null) {
-         Font var3 = Fonts.NEW_MEDIUM.getFont(5.0F);
-         Font var4 = Fonts.ICONS.getFont(4.5F);
-         float var5 = 14.0F;
-         float var6 = 1.0F;
-         float var7 = 4.0F;
-         ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         byte var9 = 9;
-         byte var10 = 3;
-         float var11 = var9 * var5 + (var9 - 1) * var6;
-         float var12 = var10 * var5 + (var10 - 1) * 0.5F;
-         this.width = var11;
-         this.height = var12;
-         float var13 = InterfaceModule.method6801();
+         Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+         Font font2 = Fonts.ICONS.getFont(4.5F);
+         float f = 14.0F;
+         float f2 = 1.0F;
+         float f3 = 4.0F;
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         byte b = 9;
+         byte b2 = 3;
+         float width = b * f + (b - 1) * f2;
+         float height = b2 * f + (b2 - 1) * 0.5F;
+         this.width = width;
+         this.height = height;
+         float intValue = InterfaceModule.method6801();
          this.lastWidth = this.width;
          this.lastHeight = this.height;
-         var1.pose().pushMatrix();
-         var1.pose().translate(this.floatValue + this.width / 2.0F, this.floatValue2 + this.height / 2.0F);
-         var1.pose().scale(var2, var2);
-         var1.pose().translate(-(this.floatValue + this.width / 2.0F), -(this.floatValue2 + this.height / 2.0F));
-         var1.drawBlurHud(this.floatValue, this.floatValue2, this.width, this.height, 21.0F, ProxyDotRadiusData.method8069(var13), ZenithColor.INSTANCE);
-         var1.drawRoundedRect(
+         customDrawContext.pose().pushMatrix();
+         customDrawContext.pose().translate(this.floatValue + this.width / 2.0F, this.floatValue2 + this.height / 2.0F);
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.pose().translate(-(this.floatValue + this.width / 2.0F), -(this.floatValue2 + this.height / 2.0F));
+         customDrawContext.drawBlurHud(this.floatValue, this.floatValue2, this.width, this.height, 21.0F, ProxyDotRadiusData.method8069(intValue), ZenithColor.INSTANCE);
+         customDrawContext.drawRoundedRect(
             this.floatValue,
             this.floatValue2,
             this.width,
             this.height,
-            ProxyDotRadiusData.method8069(var13),
-            var8.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778())
+            ProxyDotRadiusData.method8069(intValue),
+            currentStyle.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778())
          );
-         float var14 = (var5 - var4.width("X")) / 2.0F;
+         float f4 = (f - font2.width("X")) / 2.0F;
 
-         for (int var15 = 0; var15 < var10; var15++) {
-            for (int var16 = 0; var16 < var9; var16++) {
-               int var17 = 9 + var15 * 9 + var16;
-               ItemStack var18 = mc.player.getInventory().getItem(var17);
-               float var19 = this.floatValue + var16 * (var5 + var6);
-               float var20 = this.floatValue2 + var15 * (var5 + 0.5F);
-               float var21 = Math.min(var13, var5 / 2.0F);
-               ProxyDotRadiusData var22 = ProxyDotRadiusData.method8069(var21);
-               if (!var18.isEmpty()) {
-                  float var23 = 8.0F;
-                  float var24 = var23 / 16.0F;
-                  var1.pushMatrix();
-                  var1.pose().translate(var19 + (var5 - var23) / 2.0F, var20 + (var5 - var23) / 2.0F);
-                  var1.pose().scale(var24, var24);
-                  var1.item(var18, 0, 0);
-                  var1.renderItemBar(var18, 0, 0);
-                  var1.renderItemCooldown(var18, 0, 0);
-                  var1.popMatrix();
-                  if (var18.getCount() > 1) {
-                     String var25 = "x" + var18.getCount();
-                     float var26 = var3.width(var25);
-                     float var27 = var19 + var5 - var26 - 1.5F;
-                     float var28 = var20 + var5 - var3.height() - 1.0F;
-                     var1.drawText(var3, var25, var27, var28, var8.getTextEnable().getZenithColor());
+         for (int i = 0; i < b2; i++) {
+            for (int j = 0; j < b; j++) {
+               int slot = 9 + i * 9 + j;
+               ItemStack itemStack = mc.player.getInventory().getItem(slot);
+               float f5 = this.floatValue + j * (f + f2);
+               float f6 = this.floatValue2 + i * (f + 0.5F);
+               float intValue2 = Math.min(intValue, f / 2.0F);
+               ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(intValue2);
+               if (!itemStack.isEmpty()) {
+                  float f7 = 8.0F;
+                  float x2 = f7 / 16.0F;
+                  customDrawContext.pushMatrix();
+                  customDrawContext.pose().translate(f5 + (f - f7) / 2.0F, f6 + (f - f7) / 2.0F);
+                  customDrawContext.pose().scale(x2, x2);
+                  customDrawContext.item(itemStack, 0, 0);
+                  customDrawContext.renderItemBar(itemStack, 0, 0);
+                  customDrawContext.renderItemCooldown(itemStack, 0, 0);
+                  customDrawContext.popMatrix();
+                  if (itemStack.getCount() > 1) {
+                     String text = "x" + itemStack.getCount();
+                     float width2 = font.width(text);
+                     float floatValue = f5 + f - width2 - 1.5F;
+                     float centeredTextY = f6 + f - font.height() - 1.0F;
+                     customDrawContext.drawText(font, text, floatValue, centeredTextY, currentStyle.getTextEnable().getZenithColor());
                   }
                } else {
-                  var1.drawText(
-                     var4,
+                  customDrawContext.drawText(
+                     font2,
                      "M",
-                     var19 + var14,
-                     var20 + (var5 - var4.height()) / 2.0F,
+                     f5 + f4,
+                     f6 + (f - font2.height()) / 2.0F,
                      Zenith.getInstance().getStyleManager().getCurrentStyle().getTextTertiary().getZenithColor()
                   );
                }
             }
          }
 
-         var1.pose().popMatrix();
+         customDrawContext.pose().popMatrix();
       }
    }
 }

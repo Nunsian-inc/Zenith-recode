@@ -30,7 +30,7 @@ public final class TextUtils {
             .parse(RegistryAccess.EMPTY.createSerializationContext(JsonOps.INSTANCE), JsonParser.parseString(value))
             .getOrThrow();
          return (Component)(parsed == null ? Component.literal(value) : parsed);
-      } catch (Exception var2) {
+      } catch (Exception e) {
          return Component.literal(value);
       }
    }

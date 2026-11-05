@@ -36,8 +36,8 @@ public final class BotRctService {
    private int clickedSyncId = -1;
    private int clickedInventorySize = -1;
 
-   public BotRctService(BotClient var1) {
-      this.client = var1;
+   public BotRctService(BotClient client) {
+      this.client = client;
    }
 
    public boolean isActive() {
@@ -49,28 +49,28 @@ public final class BotRctService {
    }
 
    public boolean isHolyWorldHere() {
-      BotPlayHandler var1 = this.client.getPlayHandler();
-      return var1 != null && ServerDetector.method1634(var1.getBrand());
+      BotPlayHandler playHandler = this.client.getPlayHandler();
+      return playHandler != null && ServerDetector.method1634(playHandler.getBrand());
    }
 
    public int currentAnarchyHere() {
       return ServerDetector.method1633(this.client.getWorld());
    }
 
-   public void reconnect(int var1) {
+   public void reconnect(int nextInt) {
       if (this.client.isSameThread()) {
-         this.reconnectNow(var1);
+         this.reconnectNow(nextInt);
       } else {
-         this.client.execute(() -> this.reconnectNow(var1));
+         this.client.execute(() -> this.reconnectNow(nextInt));
       }
    }
 
-   private void reconnectNow(int var1) {
-      if (var1 >= 1 && var1 <= 74) {
-         this.anarchy = var1;
+   private void reconnectNow(int anarchy) {
+      if (anarchy >= 1 && anarchy <= 74) {
+         this.anarchy = anarchy;
          this.beginLobbyPhase();
       } else {
-         this.client.systemMessage("RCT: неверный лайт " + var1);
+         this.client.systemMessage("RCT: неверный лайт " + anarchy);
       }
    }
 
@@ -83,33 +83,33 @@ public final class BotRctService {
       this.resetMenuUpdate();
    }
 
-   public void onGameMessage(Component var1) {
+   public void onGameMessage(Component decorate) {
       if (this.anarchy != 0) {
-         String var2 = var1.getString().toLowerCase(Locale.ROOT);
-         if (!var2.contains("хаб") && var2.contains("не удалось")) {
+         String lowerCase = decorate.getString().toLowerCase(Locale.ROOT);
+         if (!lowerCase.contains("хаб") && lowerCase.contains("не удалось")) {
             this.client.systemMessage("RCT: на анархию " + this.anarchy + " нельзя зайти");
             this.stop();
          }
       }
    }
 
-   public void tick(BotWorld var1, BotPlayer var2) {
+   public void tick(BotWorld world, BotPlayer player) {
       if (this.anarchy != 0) {
-         BotPlayHandler var3 = this.client.getPlayHandler();
-         if (var3 != null && var1 != null && var2 != null) {
+         BotPlayHandler playHandler = this.client.getPlayHandler();
+         if (playHandler != null && world != null && player != null) {
             if (!this.isHolyWorldHere()) {
                this.stop();
             } else {
-               int var4 = this.currentAnarchyHere();
+               int currentAnarchyHere = this.currentAnarchyHere();
                if (this.lobby) {
                   this.resetMenuUpdate();
                   if (!this.hubCommandSent) {
                      if (this.stopWatch.method318(1500.0)) {
-                        var3.sendCommand("hub");
+                        playHandler.sendCommand("hub");
                         this.hubCommandSent = true;
                         this.lobbyDetectedAt = 0L;
                      }
-                  } else if (var4 == -1) {
+                  } else if (currentAnarchyHere == -1) {
                      if (this.lobbyDetectedAt == 0L) {
                         this.lobbyDetectedAt = System.currentTimeMillis();
                      }
@@ -123,14 +123,14 @@ public final class BotRctService {
                   } else {
                      this.lobbyDetectedAt = 0L;
                      if (this.stopWatch.method318(1500.0)) {
-                        var3.sendCommand("hub");
+                        playHandler.sendCommand("hub");
                      }
                   }
-               } else if (var4 == this.anarchy) {
-                  this.closeLiteMenu(var2, var3);
+               } else if (currentAnarchyHere == this.anarchy) {
+                  this.closeLiteMenu(player, playHandler);
                   this.stop();
-               } else if (var4 != -1) {
-                  this.closeLiteMenu(var2, var3);
+               } else if (currentAnarchyHere != -1) {
+                  this.closeLiteMenu(player, playHandler);
                   this.beginLobbyPhase();
                } else if (this.joining) {
                   this.resetMenuUpdate();
@@ -138,27 +138,27 @@ public final class BotRctService {
                      this.beginLobbyPhase();
                   }
                } else {
-                  ChestMenu var5 = this.getLiteMenu(var2, var3);
-                  if (var5 != null) {
-                     if (this.waitingForMenuUpdate && this.hasMenuUpdated(var5)) {
+                  ChestMenu liteMenu = this.getLiteMenu(player, playHandler);
+                  if (liteMenu != null) {
+                     if (this.waitingForMenuUpdate && this.hasMenuUpdated(liteMenu)) {
                         this.resetMenuUpdate();
                      }
 
                      if (this.stopWatch.method318(500.0)) {
-                        boolean var6 = var5.getContainer().getContainerSize() < 10;
-                        int[] var7 = this.getAnarchyMenuSlots(this.anarchy);
-                        if (var6) {
+                        boolean flag = liteMenu.getContainer().getContainerSize() < 10;
+                        int[] anarchyMenuSlots = this.getAnarchyMenuSlots(this.anarchy);
+                        if (flag) {
                            if (this.menuClickAttempts >= 20) {
-                              this.restartLiteMenu(var2, var3);
+                              this.restartLiteMenu(player, playHandler);
                               return;
                            }
 
-                           var3.getInteractionManager().clickSlot(var5.containerId, var7[0], 0, ContainerInput.PICKUP, var2);
-                           this.rememberMenuClick(var5);
+                           playHandler.getInteractionManager().clickSlot(liteMenu.containerId, anarchyMenuSlots[0], 0, ContainerInput.PICKUP, player);
+                           this.rememberMenuClick(liteMenu);
                         } else {
                            this.resetMenuUpdate();
-                           var3.getInteractionManager().clickSlot(var5.containerId, 18 + this.anarchy - var7[1], 0, ContainerInput.PICKUP, var2);
-                           var2.closeContainer();
+                           playHandler.getInteractionManager().clickSlot(liteMenu.containerId, 18 + this.anarchy - anarchyMenuSlots[1], 0, ContainerInput.PICKUP, player);
+                           player.closeContainer();
                            this.joining = true;
                            this.stopWatch.reset();
                         }
@@ -166,7 +166,7 @@ public final class BotRctService {
                   } else {
                      this.resetMenuUpdate();
                      if (this.stopWatch.method318(1500.0)) {
-                        var3.sendCommand("lite");
+                        playHandler.sendCommand("lite");
                      }
                   }
                }
@@ -175,21 +175,21 @@ public final class BotRctService {
       }
    }
 
-   private void rememberMenuClick(ChestMenu var1) {
+   private void rememberMenuClick(ChestMenu liteMenu) {
       this.waitingForMenuUpdate = true;
       this.menuClickAttempts++;
-      this.clickedSyncId = var1.containerId;
-      this.clickedInventorySize = var1.getContainer().getContainerSize();
+      this.clickedSyncId = liteMenu.containerId;
+      this.clickedInventorySize = liteMenu.getContainer().getContainerSize();
    }
 
-   private boolean hasMenuUpdated(ChestMenu var1) {
-      return var1.containerId != this.clickedSyncId || var1.getContainer().getContainerSize() != this.clickedInventorySize;
+   private boolean hasMenuUpdated(ChestMenu liteMenu) {
+      return liteMenu.containerId != this.clickedSyncId || liteMenu.getContainer().getContainerSize() != this.clickedInventorySize;
    }
 
-   private void restartLiteMenu(BotPlayer var1, BotPlayHandler var2) {
+   private void restartLiteMenu(BotPlayer player, BotPlayHandler playHandler) {
       this.resetMenuUpdate();
-      var1.closeContainer();
-      var2.sendCommand("lite");
+      player.closeContainer();
+      playHandler.sendCommand("lite");
       this.stopWatch.reset();
    }
 
@@ -209,28 +209,28 @@ public final class BotRctService {
       this.stopWatch.method320(1500L);
    }
 
-   private ChestMenu getLiteMenu(BotPlayer var1, BotPlayHandler var2) {
-      Component var3 = var2.getCurrentScreenTitle();
-      if (var3 != null && var3.getString().toLowerCase(Locale.ROOT).contains("лайт анархии")) {
-         return var1.containerMenu instanceof ChestMenu var4 ? var4 : null;
+   private ChestMenu getLiteMenu(BotPlayer player, BotPlayHandler playHandler) {
+      Component currentScreenTitle = playHandler.getCurrentScreenTitle();
+      if (currentScreenTitle != null && currentScreenTitle.getString().toLowerCase(Locale.ROOT).contains("лайт анархии")) {
+         return player.containerMenu instanceof ChestMenu chestMenu ? chestMenu : null;
       } else {
          return null;
       }
    }
 
-   private void closeLiteMenu(BotPlayer var1, BotPlayHandler var2) {
-      if (this.getLiteMenu(var1, var2) != null) {
-         var1.closeContainer();
+   private void closeLiteMenu(BotPlayer player, BotPlayHandler playHandler) {
+      if (this.getLiteMenu(player, playHandler) != null) {
+         player.closeContainer();
       }
    }
 
-   private int[] getAnarchyMenuSlots(int var1) {
-      if (var1 >= 18 && var1 <= 38) {
+   private int[] getAnarchyMenuSlots(int anarchy) {
+      if (anarchy >= 18 && anarchy <= 38) {
          return new int[]{1, 18};
-      } else if (var1 >= 39 && var1 <= 57) {
+      } else if (anarchy >= 39 && anarchy <= 57) {
          return new int[]{2, 39};
       } else {
-         return var1 >= 58 && var1 <= 74 ? new int[]{3, 58} : new int[]{0, 1};
+         return anarchy >= 58 && anarchy <= 74 ? new int[]{3, 58} : new int[]{0, 1};
       }
    }
 }

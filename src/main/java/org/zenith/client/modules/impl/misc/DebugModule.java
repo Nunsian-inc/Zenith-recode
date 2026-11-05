@@ -41,16 +41,16 @@ public class DebugModule extends Module {
    private Vec3 vec3d;
 
    private DebugModule() {
-      File var1 = new File(Minecraft.getInstance().gameDirectory, "zenith");
-      if (!var1.exists() && !var1.mkdirs()) {
+      File file = new File(Minecraft.getInstance().gameDirectory, "zenith");
+      if (!file.exists() && !file.mkdirs()) {
          ChatLogger.method2021("Debug: failed to create log directory");
       }
 
-      this.file = new File(var1, "debug_packets.log");
+      this.file = new File(file, "debug_packets.log");
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          this.vec3d = mc.player.position();
          this.playerSimulation = PlayerSimulation.method6031(1);
@@ -61,29 +61,29 @@ public class DebugModule extends Module {
    }
 
    @EventTarget
-   public void method4452(PlayerTickEvent var1) {
+   public void method4452(PlayerTickEvent event) {
       if (mc.player != null && mc.level != null && this.playerSimulation != null && this.vec3d != null) {
-         Vec3 var2 = mc.player.position();
-         Vec3 var3 = this.playerSimulation.vec3d;
-         Vec3 var4 = var2.subtract(var3);
-         double var5 = Math.sqrt(var4.x * var4.x + var4.z * var4.z);
-         double var7 = var4.length();
+         Vec3 position = mc.player.position();
+         Vec3 vec3d = this.playerSimulation.vec3d;
+         Vec3 vec = position.subtract(vec3d);
+         double d = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
+         double length = vec.length();
          if (this.stopWatch.method7546((long)this.messageDelay.getValue3())) {
             ChatLogger.method2019(
                String.format(
                   Locale.ROOT,
                   "Predict diff: total=%.5f h=%.5f x=%.5f y=%.5f z=%.5f | real=(%.3f %.3f %.3f) pred=(%.3f %.3f %.3f)",
-                  var7,
-                  var5,
-                  var4.x,
-                  var4.y,
-                  var4.z,
-                  var2.x,
-                  var2.y,
-                  var2.z,
-                  var3.x,
-                  var3.y,
-                  var3.z
+                  length,
+                  d,
+                  vec.x,
+                  vec.y,
+                  vec.z,
+                  position.x,
+                  position.y,
+                  position.z,
+                  vec3d.x,
+                  vec3d.y,
+                  vec3d.z
                )
             );
             this.stopWatch.reset();
@@ -92,25 +92,25 @@ public class DebugModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      Packet var2 = var1.getPacket3();
+   public void onPacket(PacketEvent event) {
+      Packet packet3 = event.getPacket3();
       if (mc.player != null) {
-         if (var2 instanceof ServerboundContainerClickPacket var3) {
-            short var4 = var3.slotNum();
-            Object var5 = mc.player.containerMenu.isValidSlotIndex(var4) ? mc.player.containerMenu.getSlot(var4).getItem() : "";
-            this.method4453(var3.containerInput().name() + ": " + var4 + " " + MovementInputUtils.method7418() + " " + var5);
+         if (packet3 instanceof ServerboundContainerClickPacket containerClickPacket) {
+            short slotNum = containerClickPacket.slotNum();
+            Object obj = mc.player.containerMenu.isValidSlotIndex(slotNum) ? mc.player.containerMenu.getSlot(slotNum).getItem() : "";
+            this.method4453(containerClickPacket.containerInput().name() + ": " + slotNum + " " + MovementInputUtils.method7418() + " " + obj);
          }
       }
    }
 
-   private void method4453(String var1) {
-      String var2 = LocalTime.now().format(dateTimeFormatter);
+   private void method4453(String str) {
+      String str2 = LocalTime.now().format(dateTimeFormatter);
 
-      try (BufferedWriter var3 = new BufferedWriter(new FileWriter(this.file, true))) {
-         var3.write(var2 + " | " + var1);
-         var3.newLine();
-      } catch (IOException var8) {
-         var8.printStackTrace();
+      try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.file, true))) {
+         bufferedWriter.write(str2 + " | " + str);
+         bufferedWriter.newLine();
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }
 }

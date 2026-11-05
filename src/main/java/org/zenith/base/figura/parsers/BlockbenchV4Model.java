@@ -134,13 +134,13 @@ public class BlockbenchV4Model extends BlockbenchCommonTypes.ModelFormat {
       final String uuid;
 
       @Nullable
-      public abstract CompoundTag toNBT(BlockbenchParser2.Intermediary var1);
+      public abstract CompoundTag toNBT(BlockbenchParser2.Intermediary target);
 
       public OutlinerItem(String uuid) {
          this.uuid = uuid;
       }
 
-      public abstract void fillContainedRefs(Map<String, BlockbenchCommonTypes.UUIDReferable> var1);
+      public abstract void fillContainedRefs(Map<String, BlockbenchCommonTypes.UUIDReferable> refs);
 
       public static final class Element extends BlockbenchV4Model.OutlinerItem {
          public static final JsonDeserializer<BlockbenchV4Model.OutlinerItem.Element> DESERIALIZER = (json, typeOfT, context) -> new BlockbenchV4Model.OutlinerItem.Element(

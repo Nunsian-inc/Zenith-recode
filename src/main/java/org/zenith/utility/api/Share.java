@@ -81,14 +81,14 @@ public final class Share {
    }
 
    public String method947() {
-      int var1 = this.status.getIndex();
-      return var1 >= 0 && var1 < texts.length ? texts[var1] : "auto";
+      int index = this.status.getIndex();
+      return index >= 0 && index < texts.length ? texts[index] : "auto";
    }
 
-   public void method948(String var1) {
-      for (int var2 = 0; var2 < texts.length; var2++) {
-         if (texts[var2].equals(var1)) {
-            this.status.getValues().get(var2).method2103();
+   public void method948(String anObject) {
+      for (int i = 0; i < texts.length; i++) {
+         if (texts[i].equals(anObject)) {
+            this.status.getValues().get(i).method2103();
             return;
          }
       }
@@ -103,17 +103,17 @@ public final class Share {
          this.loaded = true;
          if (file.exists()) {
             try {
-               JsonObject var1 = JsonParser.parseString(Files.readString(file.toPath(), StandardCharsets.UTF_8)).getAsJsonObject();
+               JsonObject jsonObject = JsonParser.parseString(Files.readString(file.toPath(), StandardCharsets.UTF_8)).getAsJsonObject();
 
-               for (Setting var3 : this.method946()) {
-                  if (var1.has(var3.getKey())) {
+               for (Setting setting : this.method946()) {
+                  if (jsonObject.has(setting.getKey())) {
                      try {
-                        var3.load(var1);
-                     } catch (Exception var5) {
+                        setting.load(jsonObject);
+                     } catch (Exception e) {
                      }
                   }
                }
-            } catch (Exception var6) {
+            } catch (Exception e) {
             }
          }
       }
@@ -121,24 +121,24 @@ public final class Share {
 
    public synchronized void save() {
       try {
-         JsonObject var1 = new JsonObject();
+         JsonObject json = new JsonObject();
 
-         for (Setting var3 : this.method946()) {
-            var3.safe(var1);
+         for (Setting setting : this.method946()) {
+            setting.safe(json);
          }
 
          file.getParentFile().mkdirs();
-         Path var7 = file.toPath();
-         Path var8 = var7.resolveSibling(var7.getFileName() + ".tmp");
-         Files.writeString(var8, gson.toJson(var1), StandardCharsets.UTF_8);
+         Path path = file.toPath();
+         Path sibling = path.resolveSibling(path.getFileName() + ".tmp");
+         Files.writeString(sibling, gson.toJson(json), StandardCharsets.UTF_8);
 
          try {
-            Files.move(var8, var7, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-         } catch (AtomicMoveNotSupportedException var5) {
-            Files.move(var8, var7, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+         } catch (AtomicMoveNotSupportedException e) {
+            Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING);
          }
-      } catch (Exception var6) {
-         var6.printStackTrace();
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    }
 }

@@ -62,7 +62,7 @@ public final class NoFallModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          this.falling = mc.player.fallDistance > 3.0;
          if (this.method1734()) {
@@ -93,21 +93,21 @@ public final class NoFallModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (mc.player != null) {
-         if (var1.method7099()) {
+         if (event.method7099()) {
             if (this.method1735()
-               && var1.getPacket3() instanceof ServerboundMovePlayerPacket var2
-               && !PacketUtils.getItems().contains(var2)
+               && event.getPacket3() instanceof ServerboundMovePlayerPacket movePlayerPacket
+               && !PacketUtils.getItems().contains(movePlayerPacket)
                && this.falling
-               && var2.isOnGround()
+               && movePlayerPacket.isOnGround()
                && this.intValue == 0) {
                PacketUtils.method3150(new StatusOnly(true, false));
                this.stopWatch.reset();
                this.flag = true;
             }
-         } else if (!(var1.getPacket3() instanceof ClientboundLoginPacket) && !(var1.getPacket3() instanceof ClientboundRespawnPacket)) {
-            if (var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         } else if (!(event.getPacket3() instanceof ClientboundLoginPacket) && !(event.getPacket3() instanceof ClientboundRespawnPacket)) {
+            if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
                mc.execute(() -> {
                   if (this.flag) {
                      this.intValue = 2;
@@ -122,11 +122,11 @@ public final class NoFallModule extends Module {
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.flag || this.intValue == 2) {
-         var1.method3041(false);
+         event.method3041(false);
       } else if (this.intValue == 1) {
-         var1.method3041(true);
+         event.method3041(true);
       }
    }
 

@@ -22,18 +22,18 @@ public class Class11 implements Handler7 {
    private boolean flag;
    private static final Minecraft mc = Minecraft.getInstance();
 
-   public Class11(Vec3 var1, Vec3 var2, int var3, float var4, ZenithColor var5, String var6, float var7, float var8) {
-      this.vec3d = var1;
-      this.vec3d2 = var1;
-      this.vec3d3 = var2;
+   public Class11(Vec3 vec3d, Vec3 vec3d3, int n, float floatValue, ZenithColor zenithColor, String text, float f, float f2) {
+      this.vec3d = vec3d;
+      this.vec3d2 = vec3d;
+      this.vec3d3 = vec3d3;
       this.intValue = 0;
       this.intValue2 = 0;
-      this.intValue4 = var3;
-      this.floatValue = var4;
-      this.zenithColor = var5;
-      this.text = var6;
-      this.floatValue2 = var7;
-      this.floatValue3 = var8;
+      this.intValue4 = n;
+      this.floatValue = floatValue;
+      this.zenithColor = zenithColor;
+      this.text = text;
+      this.floatValue2 = f;
+      this.floatValue3 = f2;
       this.flag = false;
    }
 
@@ -44,38 +44,38 @@ public class Class11 implements Handler7 {
       if (this.flag) {
          this.intValue2++;
       } else if (mc.level != null) {
-         float var1 = this.floatValue / 2.0F;
-         double var2 = this.vec3d.x;
-         double var4 = this.vec3d.y;
-         double var6 = this.vec3d.z;
-         Vec3 var8 = this.vec3d3;
-         AABB var9 = new AABB(var2 - var1, var4 - var1 * 2.0F + var8.y, var6 - var1, var2 + var1, var4 + var1 + var8.y, var6 + var1);
-         if (!mc.level.noCollision(null, var9)) {
-            if (var8.y < 0.0) {
+         float f = this.floatValue / 2.0F;
+         double x = this.vec3d.x;
+         double y = this.vec3d.y;
+         double z = this.vec3d.z;
+         Vec3 vec3d3 = this.vec3d3;
+         AABB aabb = new AABB(x - f, y - f * 2.0F + vec3d3.y, z - f, x + f, y + f + vec3d3.y, z + f);
+         if (!mc.level.noCollision(null, aabb)) {
+            if (vec3d3.y < 0.0) {
                this.flag = true;
             }
 
-            var8 = new Vec3(var8.x, 0.0, var8.z);
+            vec3d3 = new Vec3(vec3d3.x, 0.0, vec3d3.z);
          } else {
-            var4 += var8.y;
+            y += vec3d3.y;
          }
 
-         AABB var10 = new AABB(var2 - var1 + var8.x, var4 - var1, var6 - var1, var2 + var1 + var8.x, var4 + var1, var6 + var1);
-         if (!mc.level.noCollision(null, var10)) {
-            var8 = new Vec3(0.0, var8.y, var8.z);
+         AABB aabb2 = new AABB(x - f + vec3d3.x, y - f, z - f, x + f + vec3d3.x, y + f, z + f);
+         if (!mc.level.noCollision(null, aabb2)) {
+            vec3d3 = new Vec3(0.0, vec3d3.y, vec3d3.z);
          } else {
-            var2 += var8.x;
+            x += vec3d3.x;
          }
 
-         AABB var11 = new AABB(var2 - var1, var4 - var1, var6 - var1 + var8.z, var2 + var1, var4 + var1, var6 + var1 + var8.z);
-         if (!mc.level.noCollision(null, var11)) {
-            var8 = new Vec3(var8.x, var8.y, 0.0);
+         AABB aabb3 = new AABB(x - f, y - f, z - f + vec3d3.z, x + f, y + f, z + f + vec3d3.z);
+         if (!mc.level.noCollision(null, aabb3)) {
+            vec3d3 = new Vec3(vec3d3.x, vec3d3.y, 0.0);
          } else {
-            var6 += var8.z;
+            z += vec3d3.z;
          }
 
-         this.vec3d3 = var8;
-         this.vec3d = new Vec3(var2, var4, var6);
+         this.vec3d3 = vec3d3;
+         this.vec3d = new Vec3(x, y, z);
          if (this.flag) {
             this.vec3d3 = Vec3.ZERO;
          }
@@ -93,12 +93,12 @@ public class Class11 implements Handler7 {
    }
 
    @Override
-   public float method1449(float var1) {
+   public float method1449(float f) {
       if (!this.flag) {
          return 1.0F;
       } else {
-         float var2 = this.intValue3 + (this.intValue2 - this.intValue3) * var1;
-         return 1.0F - var2 / this.intValue4;
+         float f2 = this.intValue3 + (this.intValue2 - this.intValue3) * f;
+         return 1.0F - f2 / this.intValue4;
       }
    }
 
@@ -174,42 +174,42 @@ public class Class11 implements Handler7 {
    }
 
    @Generated
-   public void setVec3d(Vec3 var1) {
-      this.vec3d = var1;
+   public void setVec3d(Vec3 vec3d) {
+      this.vec3d = vec3d;
    }
 
    @Generated
-   public void setVec3d2(Vec3 var1) {
-      this.vec3d2 = var1;
+   public void setVec3d2(Vec3 vec3d2) {
+      this.vec3d2 = vec3d2;
    }
 
    @Generated
-   public void setVec3d3(Vec3 var1) {
-      this.vec3d3 = var1;
+   public void setVec3d3(Vec3 vec3d3) {
+      this.vec3d3 = vec3d3;
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated
-   public void setIntValue2(int var1) {
-      this.intValue2 = var1;
+   public void setIntValue2(int n) {
+      this.intValue2 = n;
    }
 
    @Generated
-   public void setIntValue3(int var1) {
-      this.intValue3 = var1;
+   public void setIntValue3(int n) {
+      this.intValue3 = n;
    }
 
    @Generated
-   public void setFloatValue2(float var1) {
-      this.floatValue2 = var1;
+   public void setFloatValue2(float f) {
+      this.floatValue2 = f;
    }
 
    @Generated
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 }

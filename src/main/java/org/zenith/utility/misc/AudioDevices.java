@@ -15,50 +15,50 @@ public final class AudioDevices {
          if (!ALC10.alcIsExtensionPresent(0L, "ALC_EXT_CAPTURE")) {
             return List.of();
          } else {
-            var var0 = ALUtil.getStringList(0L, 784);
-            return var0 == null ? List.of() : List.copyOf(var0);
+            var stringList = ALUtil.getStringList(0L, 784);
+            return stringList == null ? List.of() : List.copyOf(stringList);
          }
-      } catch (RuntimeException var1) {
+      } catch (RuntimeException e) {
          return List.of();
       }
    }
 
    public static List<String> method3220() {
       try {
-         List var0;
+         List stringList;
          if (ALC10.alcIsExtensionPresent(0L, "ALC_ENUMERATE_ALL_EXT")) {
-            var0 = ALUtil.getStringList(0L, 4115);
+            stringList = ALUtil.getStringList(0L, 4115);
          } else if (ALC10.alcIsExtensionPresent(0L, "ALC_ENUMERATION_EXT")) {
-            var0 = ALUtil.getStringList(0L, 4101);
+            stringList = ALUtil.getStringList(0L, 4101);
          } else {
-            var0 = null;
+            stringList = null;
          }
 
-         return var0 == null ? List.of() : List.copyOf(var0);
-      } catch (RuntimeException var1) {
+         return stringList == null ? List.of() : List.copyOf(stringList);
+      } catch (RuntimeException e) {
          return List.of();
       }
    }
 
    public static String method3221() {
       try {
-         String var0 = ALC10.alcGetString(0L, 785);
-         return var0 == null ? "" : var0;
-      } catch (RuntimeException var1) {
+         String alcGetString = ALC10.alcGetString(0L, 785);
+         return alcGetString == null ? "" : alcGetString;
+      } catch (RuntimeException e) {
          return "";
       }
    }
 
    public static String method3222() {
       try {
-         String var0 = ALC10.alcIsExtensionPresent(0L, "ALC_ENUMERATE_ALL_EXT") ? ALC10.alcGetString(0L, 4114) : ALC10.alcGetString(0L, 4100);
-         return var0 == null ? "" : var0;
-      } catch (RuntimeException var1) {
+         String alcGetString = ALC10.alcIsExtensionPresent(0L, "ALC_ENUMERATE_ALL_EXT") ? ALC10.alcGetString(0L, 4114) : ALC10.alcGetString(0L, 4100);
+         return alcGetString == null ? "" : alcGetString;
+      } catch (RuntimeException e) {
          return "";
       }
    }
 
-   public static String display(String var0) {
-      return var0.startsWith("OpenAL Soft on ") ? var0.substring("OpenAL Soft on ".length()) : var0;
+   public static String display(String key) {
+      return key.startsWith("OpenAL Soft on ") ? key.substring("OpenAL Soft on ".length()) : key;
    }
 }

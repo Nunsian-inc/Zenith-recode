@@ -152,7 +152,7 @@ public class TextTask extends RenderTask {
       try {
          this.alignment = TextUtils.Alignment.valueOf(alignment.toUpperCase(Locale.US));
          return this;
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Invalid alignment type \"" + alignment + "\"");
       }
    }

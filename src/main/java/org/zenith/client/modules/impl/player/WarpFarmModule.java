@@ -117,7 +117,7 @@ public final class WarpFarmModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (mc.options != null) {
             mc.options.pauseOnLostFocus = false;
@@ -138,19 +138,19 @@ public final class WarpFarmModule extends Module {
                ChatLogger.method2019("WarpFarm: " + this.intValue3 + " смертей на анке, ищу другую");
                this.method4118();
             } else {
-               double var2;
-               if ((var2 = this.horizontalDistanceSq(Vec3.atCenterOf(blockPos))) > 40000.0) {
+               double horizontalDistanceSq;
+               if ((horizontalDistanceSq = this.horizontalDistanceSq(Vec3.atCenterOf(blockPos))) > 40000.0) {
                   this.stopWalking();
                   this.method4120();
                } else if (this.method4124()) {
                   ChatLogger.method2019("WarpFarm: посторонний игрок у центра, всем отправлен /hub");
                   this.method4119();
                } else {
-                  Entity var4 = this.findHologram();
-                  if (var4 != null) {
-                     this.setWalkTarget(var4.blockPosition());
+                  Entity hologram = this.findHologram();
+                  if (hologram != null) {
+                     this.setWalkTarget(hologram.blockPosition());
                   } else {
-                     if (!(var2 > 4.0)) {
+                     if (!(horizontalDistanceSq > 4.0)) {
                         this.stopWalking();
                         return;
                      }
@@ -166,25 +166,25 @@ public final class WarpFarmModule extends Module {
    }
 
    private void method4116() {
-      boolean var1;
-      if ((var1 = mc.player.isDeadOrDying() || mc.player.getHealth() <= 0.0F) && !this.flag2) {
+      boolean flag;
+      if ((flag = mc.player.isDeadOrDying() || mc.player.getHealth() <= 0.0F) && !this.flag2) {
          this.intValue3++;
          ChatLogger.method2019("WarpFarm: смерть " + this.intValue3 + "/" + (int)this.deathLimit.getValue3());
       }
 
-      this.flag2 = var1;
+      this.flag2 = flag;
    }
 
    private boolean method4117() {
-      int var1;
-      if ((var1 = this.scopedRCTRepository().currentAnarchyHere()) != this.lastAnarchy) {
-         this.lastAnarchy = var1;
+      int currentAnarchyHere;
+      if ((currentAnarchyHere = this.scopedRCTRepository().currentAnarchyHere()) != this.lastAnarchy) {
+         this.lastAnarchy = currentAnarchyHere;
          intValue = -1;
          this.intValue3 = 0;
          this.flag2 = false;
          this.stopWalking();
          this.flag = false;
-         if (var1 != -1) {
+         if (currentAnarchyHere != -1) {
             mc.player.connection.sendCommand("warp pvp");
             this.stopWatch.reset();
             this.stopWatch2.reset();
@@ -192,7 +192,7 @@ public final class WarpFarmModule extends Module {
          }
       }
 
-      if (var1 == -1) {
+      if (currentAnarchyHere == -1) {
          this.method4118();
          return false;
       } else {
@@ -205,16 +205,16 @@ public final class WarpFarmModule extends Module {
       this.flag = false;
       intValue = -1;
       this.intValue3 = 0;
-      int var1 = this.scopedRCTRepository().currentAnarchyHere();
+      int currentAnarchyHere = this.scopedRCTRepository().currentAnarchyHere();
 
-      int var2;
+      int nextInt;
       do {
-         while ((var2 = ThreadLocalRandom.current().nextInt(1, 75)) == var1) {
+         while ((nextInt = ThreadLocalRandom.current().nextInt(1, 75)) == currentAnarchyHere) {
          }
-      } while (var2 == this.intValue2);
+      } while (nextInt == this.intValue2);
 
-      this.intValue2 = var2;
-      this.scopedRCTRepository().reconnect(var2);
+      this.intValue2 = nextInt;
+      this.scopedRCTRepository().reconnect(nextInt);
    }
 
    private void method4119() {
@@ -240,8 +240,8 @@ public final class WarpFarmModule extends Module {
             ChatLogger.method2019("WarpFarm: посторонний игрок у центра, всем отправлен /hub");
             this.method4119();
          } else {
-            Entity var1 = this.findHologram();
-            if (var1 == null) {
+            Entity hologram = this.findHologram();
+            if (hologram == null) {
                ChatLogger.method2019("WarpFarm: голограмма не подходит под режим «" + this.farmMode.get() + "», ищу другую анку");
                this.method4118();
             } else {
@@ -254,36 +254,36 @@ public final class WarpFarmModule extends Module {
    }
 
    @EventTarget
-   public void method4122(Event5 var1) {
+   public void method4122(Event5 event) {
       if (this.nextRouteBlock != null && mc.player != null) {
-         Vec3 var2 = Pathfinder.method761(this.nextRouteBlock);
-         Vec3 var3 = mc.player.getEyePosition(1.0F);
-         Rotation var4 = Rotation.method3128(new Vec3(var2.x, var3.y, var2.z), var3);
-         this.scopedRotationManager().method7849(new RotationRequest(var4, () -> {
+         Vec3 vec = Pathfinder.method761(this.nextRouteBlock);
+         Vec3 eyePosition = mc.player.getEyePosition(1.0F);
+         Rotation rotation = Rotation.method3128(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
+         this.scopedRotationManager().method7849(new RotationRequest(rotation, () -> {
             BcCameraTestnerv var2x = this.scopedRotationManager().getBcCameraTestnerv();
-            return var2x.method1851(var2x.getRotationConfig(), var4);
+            return var2x.method1851(var2x.getRotationConfig(), rotation);
          }, this.scopedRotationManager().getBcCameraTestnerv().getRotationConfig()), 20, this);
       }
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.nextRouteBlock != null && mc.player != null) {
-         var1.method3044();
-         var1.method3042(1.0F, 0.0F);
-         var1.method3039(true);
-         boolean var2 = mc.level != null
+         event.method3044();
+         event.method3042(1.0F, 0.0F);
+         event.method3039(true);
+         boolean flag = mc.level != null
             && (
                mc.level.getBlockState(this.nextRouteBlock).getBlock() instanceof SlabBlock
                   || mc.level.getBlockState(this.nextRouteBlock.below()).getBlock() instanceof SlabBlock
             );
-         var1.method3041(!var2 && this.nextRouteBlock.getY() > Mth.floor(mc.player.getY() + 0.01));
+         event.method3041(!flag && this.nextRouteBlock.getY() > Mth.floor(mc.player.getY() + 0.01));
       }
    }
 
-   private void setWalkTarget(BlockPos var1) {
-      if (!var1.equals(this.walkTarget)) {
-         this.walkTarget = var1;
+   private void setWalkTarget(BlockPos walkTarget) {
+      if (!walkTarget.equals(this.walkTarget)) {
+         this.walkTarget = walkTarget;
          this.nextRouteBlock = null;
       }
    }
@@ -292,9 +292,9 @@ public final class WarpFarmModule extends Module {
       this.nextRouteBlock = null;
       if (this.walkTarget != null) {
          data = data2;
-         BlockPos var1 = method4126(mc.level, mc.player.position(), mc.player.blockPosition());
-         Pathfinder.Entry2 var2 = Pathfinder.method758(var1, this.walkTarget, data).orElse(null);
-         if (var2 == null) {
+         BlockPos blockPosition = method4126(mc.level, mc.player.position(), mc.player.blockPosition());
+         Pathfinder.Entry2 entry2 = Pathfinder.method758(blockPosition, this.walkTarget, data).orElse(null);
+         if (entry2 == null) {
             if (!mc.player.onGround()) {
                this.nextRouteBlock = this.walkTarget;
                this.pathFailStreak = 0;
@@ -307,7 +307,7 @@ public final class WarpFarmModule extends Module {
             }
          } else {
             this.pathFailStreak = 0;
-            this.nextRouteBlock = method4127(var2, mc.player.position());
+            this.nextRouteBlock = method4127(entry2, mc.player.position());
          }
       }
    }
@@ -318,13 +318,13 @@ public final class WarpFarmModule extends Module {
    }
 
    private boolean method4124() {
-      Vec3 var1 = Vec3.atCenterOf(blockPos);
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos);
 
-      for (Player var3 : mc.level.players()) {
-         if (var3 != mc.player && !this.method4125(var3)) {
-            double var4 = var3.getX() - var1.x;
-            double var6 = var3.getZ() - var1.z;
-            if (var4 * var4 + var6 * var6 <= 900.0) {
+      for (Player player : mc.level.players()) {
+         if (player != mc.player && !this.method4125(player)) {
+            double d = player.getX() - atCenterOf.x;
+            double d2 = player.getZ() - atCenterOf.z;
+            if (d * d + d2 * d2 <= 900.0) {
                return true;
             }
          }
@@ -333,85 +333,85 @@ public final class WarpFarmModule extends Module {
       return false;
    }
 
-   private boolean method4125(Player var1) {
-      return HeadlessBots.get(var1.getGameProfile().name()) != null;
+   private boolean method4125(Player player) {
+      return HeadlessBots.get(player.getGameProfile().name()) != null;
    }
 
-   public static BlockPos method4126(Level var0, Vec3 var1, BlockPos var2) {
-      if (Pathfinder.method762(var0, var2, false)) {
-         return var2;
+   public static BlockPos method4126(Level world, Vec3 position, BlockPos blockPosition) {
+      if (Pathfinder.method762(world, blockPosition, false)) {
+         return blockPosition;
       } else {
-         BlockPos var3 = null;
-         double var4 = Double.MAX_VALUE;
+         BlockPos offset = null;
+         double d = Double.MAX_VALUE;
 
-         for (int var6 = -1; var6 <= 1; var6++) {
-            for (int var7 = -1; var7 <= 1; var7++) {
-               if (var6 != 0 || var7 != 0) {
-                  BlockPos var8 = var2.offset(var6, 0, var7);
-                  if (Pathfinder.method762(var0, var8, false)) {
-                     double var9 = var1.x - (var8.getX() + 0.5);
-                     double var11 = var1.z - (var8.getZ() + 0.5);
-                     double var13;
-                     if ((var13 = var9 * var9 + var11 * var11) < var4) {
-                        var3 = var8;
-                        var4 = var13;
+         for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+               if (i != 0 || j != 0) {
+                  BlockPos pos = blockPosition.offset(i, 0, j);
+                  if (Pathfinder.method762(world, pos, false)) {
+                     double d2 = position.x - (pos.getX() + 0.5);
+                     double d3 = position.z - (pos.getZ() + 0.5);
+                     double d4;
+                     if ((d4 = d2 * d2 + d3 * d3) < d) {
+                        offset = pos;
+                        d = d4;
                      }
                   }
                }
             }
          }
 
-         return var3 != null ? var3 : var2;
+         return offset != null ? offset : blockPosition;
       }
    }
 
-   public static BlockPos method4127(Pathfinder.Entry2 var0, Vec3 var1) {
-      var var2 = var0.getItems();
-      if (var2.size() < 2) {
+   public static BlockPos method4127(Pathfinder.Entry2 entry2, Vec3 position) {
+      var items = entry2.getItems();
+      if (items.size() < 2) {
          return null;
       } else {
-         int var3 = 0;
-         double var4 = Double.MAX_VALUE;
+         int n = 0;
+         double d = Double.MAX_VALUE;
 
-         for (int var6 = 0; var6 < var2.size(); var6++) {
-            BlockPos var7 = (BlockPos)var2.get(var6);
-            double var8 = var1.x - (var7.getX() + 0.5);
-            double var10 = var1.y - var7.getY();
-            double var12 = var1.z - (var7.getZ() + 0.5);
-            double var14;
-            if ((var14 = var8 * var8 + var10 * var10 + var12 * var12) <= var4) {
-               var3 = var6;
-               var4 = var14;
+         for (int i = 0; i < items.size(); i++) {
+            BlockPos pos = (BlockPos)items.get(i);
+            double d2 = position.x - (pos.getX() + 0.5);
+            double d3 = position.y - pos.getY();
+            double d4 = position.z - (pos.getZ() + 0.5);
+            double d5;
+            if ((d5 = d2 * d2 + d3 * d3 + d4 * d4) <= d) {
+               n = i;
+               d = d5;
             }
          }
 
-         int var16;
-         return (var16 = var3 + 1) < var2.size() ? (BlockPos)var2.get(var16) : null;
+         int n2;
+         return (n2 = n + 1) < items.size() ? (BlockPos)items.get(n2) : null;
       }
    }
 
    private Entity findHologram() {
-      String var1 = this.farmMode.get().toLowerCase(Locale.ROOT);
-      Entity var2 = null;
-      double var3 = 16384.0;
+      String lowerCase = this.farmMode.get().toLowerCase(Locale.ROOT);
+      Entity entity = null;
+      double d = 16384.0;
 
-      for (Entity var6 : mc.level.entitiesForRendering()) {
-         double var7;
-         if (var6 != mc.player && !((var7 = mc.player.distanceToSqr(var6)) > var3)) {
-            Component var9 = var6 instanceof TextDisplay var10 ? var10.getText() : var6.getCustomName();
-            if (var9 != null && var9.getString().toLowerCase(Locale.ROOT).contains(var1)) {
-               var2 = var6;
-               var3 = var7;
+      for (Entity entity2 : mc.level.entitiesForRendering()) {
+         double d2;
+         if (entity2 != mc.player && !((d2 = mc.player.distanceToSqr(entity2)) > d)) {
+            Component text = entity2 instanceof TextDisplay textDisplay ? textDisplay.getText() : entity2.getCustomName();
+            if (text != null && text.getString().toLowerCase(Locale.ROOT).contains(lowerCase)) {
+               entity = entity2;
+               d = d2;
             }
          }
       }
 
-      return var2;
+      return entity;
    }
 
-   private double horizontalDistanceSq(Vec3 var1) {
-      double var2 = mc.player.getX() - var1.x;
-      double var4 = mc.player.getZ() - var1.z;
-      return var2 * var2 + var4 * var4;
+   private double horizontalDistanceSq(Vec3 atCenterOf) {
+      double d = mc.player.getX() - atCenterOf.x;
+      double d2 = mc.player.getZ() - atCenterOf.z;
+      return d * d + d2 * d2;
    }
 }

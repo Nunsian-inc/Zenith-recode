@@ -37,63 +37,63 @@ public final class EspScreen {
    private EspScreen() {
    }
 
-   public static void method6551(MenuDrawContext var0, Runnable var1) {
+   public static void method6551(MenuDrawContext customDrawContext, Runnable runnable) {
       flag3 = false;
       if (method6560()) {
          RoundedRectBatch.method2935();
-         var0.draw();
-         EspScreen.Data var2 = EspScreen.Data.method6568();
-         if (var2.intValue3 > 0 && var2.intValue4 > 0) {
-            EspScreen.Entry var3 = EspScreen.Entry.method6569();
+         customDrawContext.draw();
+         EspScreen.Data data = EspScreen.Data.method6568();
+         if (data.intValue3 > 0 && data.intValue4 > 0) {
+            EspScreen.Entry entry = EspScreen.Entry.method6569();
 
             try {
-               method6561(var2.intValue3, var2.intValue4);
+               method6561(data.intValue3, data.intValue4);
                BlitUtils.method6456(simpleFramebuffer, 0);
                ImmediateRenderer.method8013(simpleFramebuffer);
                RenderState.method1903(true, true, true, true);
                RenderState.method1882(true);
                RenderState.method1878();
-               Minecraft var4 = Minecraft.getInstance();
-               RenderTarget var5 = var4.gameRenderer.mainRenderTarget;
-               var4.gameRenderer.mainRenderTarget = simpleFramebuffer;
+               Minecraft minecraft = Minecraft.getInstance();
+               RenderTarget mainRenderTarget = minecraft.gameRenderer.mainRenderTarget;
+               minecraft.gameRenderer.mainRenderTarget = simpleFramebuffer;
 
                try {
-                  var1.run();
+                  runnable.run();
                } finally {
-                  var4.gameRenderer.mainRenderTarget = var5;
+                  minecraft.gameRenderer.mainRenderTarget = mainRenderTarget;
                   ImmediateRenderer.method8013(null);
                }
 
                flag3 = true;
-            } catch (Exception var15) {
-               method6567(var15);
+            } catch (Exception e) {
+               method6567(e);
             } finally {
-               method6564(var2);
-               var3.restore();
+               method6564(data);
+               entry.restore();
             }
          } else {
-            method6566("no render target (" + var2.intValue3 + "x" + var2.intValue4 + ")");
+            method6566("no render target (" + data.intValue3 + "x" + data.intValue4 + ")");
          }
       }
    }
 
-   public static void method6552(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5) {
+   public static void method6552(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height, float previewAlpha) {
       if (!flag3) {
          method6566("mask was not captured this frame");
       } else if (method6560()) {
-         EspScreen.Data var6 = EspScreen.Data.method6568();
-         EspScreen.Entry var7 = EspScreen.Entry.method6569();
+         EspScreen.Data data = EspScreen.Data.method6568();
+         EspScreen.Entry entry = EspScreen.Entry.method6569();
 
          try {
-            method6555(var5, method6553(var0, var1, var2, var3, var4));
-            var7.restore();
-            method6556(var0, var6, var1, var2, var3, var4, var5);
-         } catch (Exception var12) {
-            method6567(var12);
+            method6555(previewAlpha, method6553(customDrawContext, floatValue, y, width, height));
+            entry.restore();
+            method6556(customDrawContext, data, floatValue, y, width, height, previewAlpha);
+         } catch (Exception e) {
+            method6567(e);
          } finally {
             flag3 = false;
-            method6564(var6);
-            var7.restore();
+            method6564(data);
+            entry.restore();
          }
       }
    }
@@ -110,62 +110,62 @@ public final class EspScreen {
       }
    }
 
-   private static int[] method6553(MenuDrawContext var0, float var1, float var2, float var3, float var4) {
-      Minecraft var5 = Minecraft.getInstance();
-      float var6 = Math.max(1, var5.getWindow().getGuiScaledWidth());
-      float var7 = Math.max(1, var5.getWindow().getGuiScaledHeight());
-      Matrix4f var8 = MatrixUtils.method663(var0);
-      Vector3f var9 = var8.transformPosition(new Vector3f(var1, var2, 0.0F));
-      Vector3f var10 = var8.transformPosition(new Vector3f(var1 + var3, var2 + var4, 0.0F));
-      int var11 = simpleFramebuffer.width;
-      int var12 = simpleFramebuffer.height;
-      float var13 = Math.min(var9.x, var10.x) / var6 * var11;
-      float var14 = Math.max(var9.x, var10.x) / var6 * var11;
-      float var15 = var12 - Math.max(var9.y, var10.y) / var7 * var12;
-      float var16 = var12 - Math.min(var9.y, var10.y) / var7 * var12;
-      return new int[]{(int)Math.floor(var13), (int)Math.floor(var15), (int)Math.ceil(var14), (int)Math.ceil(var16)};
+   private static int[] method6553(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height) {
+      Minecraft minecraft = Minecraft.getInstance();
+      float f = Math.max(1, minecraft.getWindow().getGuiScaledWidth());
+      float f2 = Math.max(1, minecraft.getWindow().getGuiScaledHeight());
+      Matrix4f matrix = MatrixUtils.method663(customDrawContext);
+      Vector3f transformPosition = matrix.transformPosition(new Vector3f(floatValue, y, 0.0F));
+      Vector3f vec = matrix.transformPosition(new Vector3f(floatValue + width, y + height, 0.0F));
+      int n = simpleFramebuffer.width;
+      int height2 = simpleFramebuffer.height;
+      float f3 = Math.min(transformPosition.x, vec.x) / f * n;
+      float f4 = Math.max(transformPosition.x, vec.x) / f * n;
+      float f5 = height2 - Math.max(transformPosition.y, vec.y) / f2 * height2;
+      float f6 = height2 - Math.min(transformPosition.y, vec.y) / f2 * height2;
+      return new int[]{(int)Math.floor(f3), (int)Math.floor(f5), (int)Math.ceil(f4), (int)Math.ceil(f6)};
    }
 
-   private static void method6554(int[] var0, int var1, int var2) {
-      int var3 = simpleFramebuffer.width;
-      int var4 = simpleFramebuffer.height;
-      int var5 = Math.max(0, var0[0] - var1);
-      int var6 = Math.max(0, var0[1] - var2);
-      int var7 = Math.min(var3, var0[2] + var1);
-      int var8 = Math.min(var4, var0[3] + var2);
-      RenderState.method1900(var5, var6, Math.max(0, var7 - var5), Math.max(0, var8 - var6));
+   private static void method6554(int[] ints, int n, int n2) {
+      int width = simpleFramebuffer.width;
+      int height = simpleFramebuffer.height;
+      int x = Math.max(0, ints[0] - n);
+      int y = Math.max(0, ints[1] - n2);
+      int n3 = Math.min(width, ints[2] + n);
+      int n4 = Math.min(height, ints[3] + n2);
+      RenderState.method1900(x, y, Math.max(0, n3 - x), Math.max(0, n4 - y));
    }
 
-   private static void method6555(float var0, int[] var1) {
-      ShaderESPModule var2 = ShaderESPModule.INSTANCE;
-      float var3 = var2.method4593();
-      int var4 = (int)Math.ceil(Math.max(0.0F, var3)) + 3;
-      int var5 = (int)Math.ceil(Math.max(0.0F, var2.method4590())) + 3;
-      int var6 = Math.max(var4 + 3, var5);
+   private static void method6555(float previewAlpha, int[] ints) {
+      ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;
+      float f = shaderESPModule.method4593();
+      int n = (int)Math.ceil(Math.max(0.0F, f)) + 3;
+      int n2 = (int)Math.ceil(Math.max(0.0F, shaderESPModule.method4590())) + 3;
+      int n3 = Math.max(n + 3, n2);
 
       try {
          ImmediateRenderer.method8013(simpleFramebuffer3);
          method6559();
-         method6554(var1, var6, var6);
+         method6554(ints, n3, n3);
          shaderProgram.method5517();
          shaderProgram.method5518("InSampler", 0);
          shaderProgram.method5521("InSize", simpleFramebuffer.width, simpleFramebuffer.height);
-         method6562(shaderProgram, "Tint", var2.method4588(), var0);
+         method6562(shaderProgram, "Tint", shaderESPModule.method4588(), previewAlpha);
          RenderState.method1889(0, simpleFramebuffer.getColorTextureView());
          method6558();
          ImmediateRenderer.method8013(simpleFramebuffer2);
          method6559();
-         method6554(var1, 3, var4);
+         method6554(ints, 3, n);
          shaderProgram2.method5517();
          shaderProgram2.method5518("InSampler", 0);
          shaderProgram2.method5521("InSize", simpleFramebuffer3.width, simpleFramebuffer3.height);
          shaderProgram2.method5521("BlurDir", 1.0F, 0.0F);
-         shaderProgram2.method5519("Radius", var3);
+         shaderProgram2.method5519("Radius", f);
          RenderState.method1889(0, simpleFramebuffer3.getColorTextureView());
          method6558();
          ImmediateRenderer.method8013(simpleFramebuffer);
          method6559();
-         method6554(var1, 3, 3);
+         method6554(ints, 3, 3);
          shaderProgram2.method5521("InSize", simpleFramebuffer2.width, simpleFramebuffer2.height);
          shaderProgram2.method5521("BlurDir", 0.0F, 1.0F);
          RenderState.method1889(0, simpleFramebuffer2.getColorTextureView());
@@ -178,40 +178,40 @@ public final class EspScreen {
       ImmediateRenderer.method8013(null);
    }
 
-   private static void method6556(MenuDrawContext var0, EspScreen.Data var1, float var2, float var3, float var4, float var5, float var6) {
-      method6563(var1);
+   private static void method6556(MenuDrawContext customDrawContext, EspScreen.Data data, float floatValue, float y, float width, float height, float previewAlpha) {
+      method6563(data);
       RenderState.method1879();
       RenderState.method1882(false);
       RenderState.method1871();
       RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA, BlendFactor.ONE, BlendFactor.ONE_MINUS_SRC_ALPHA);
-      ShaderESPModule var7 = ShaderESPModule.INSTANCE;
+      ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;
       shaderProgram3.method5517();
       shaderProgram3.method5518("InSampler", 0);
       shaderProgram3.method5518("GlowSampler", 1);
       shaderProgram3.method5521("InSize", simpleFramebuffer3.width, simpleFramebuffer3.height);
-      shaderProgram3.method5519("OutlineWidth", var7.method4590());
-      shaderProgram3.method5519("GlowStrength", var7.method4591());
-      shaderProgram3.method5519("FillOpacity", var7.method4592());
-      shaderProgram3.method5519("Pulse", var7.method4594());
+      shaderProgram3.method5519("OutlineWidth", shaderESPModule.method4590());
+      shaderProgram3.method5519("GlowStrength", shaderESPModule.method4591());
+      shaderProgram3.method5519("FillOpacity", shaderESPModule.method4592());
+      shaderProgram3.method5519("Pulse", shaderESPModule.method4594());
       RenderState.method1889(0, simpleFramebuffer3.getColorTextureView());
       RenderState.method1889(1, simpleFramebuffer.getColorTextureView());
-      method6557(var0, var2, var3, var4, var5);
+      method6557(customDrawContext, floatValue, y, width, height);
       shaderProgram3.unbind();
       RenderState.method1897();
    }
 
-   private static void method6557(MenuDrawContext var0, float var1, float var2, float var3, float var4) {
-      Minecraft var5 = Minecraft.getInstance();
-      float var6 = Math.max(1, var5.getWindow().getGuiScaledWidth());
-      float var7 = Math.max(1, var5.getWindow().getGuiScaledHeight());
-      Matrix4f var8 = MatrixUtils.method663(var0);
-      Vector3f var9 = var8.transformPosition(new Vector3f(var1, var2, 0.0F));
-      Vector3f var10 = var8.transformPosition(new Vector3f(var1 + var3, var2 + var4, 0.0F));
-      float var11 = var9.x / var6 * 2.0F - 1.0F;
-      float var12 = var10.x / var6 * 2.0F - 1.0F;
-      float var13 = 1.0F - var9.y / var7 * 2.0F;
-      float var14 = 1.0F - var10.y / var7 * 2.0F;
-      FramebufferUtils.method5655(ShaderProgram.getCurrent(), ImmediateRenderer.method8014(), var11, var14, var12, var13);
+   private static void method6557(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height) {
+      Minecraft minecraft = Minecraft.getInstance();
+      float f = Math.max(1, minecraft.getWindow().getGuiScaledWidth());
+      float f2 = Math.max(1, minecraft.getWindow().getGuiScaledHeight());
+      Matrix4f matrix = MatrixUtils.method663(customDrawContext);
+      Vector3f transformPosition = matrix.transformPosition(new Vector3f(floatValue, y, 0.0F));
+      Vector3f vec = matrix.transformPosition(new Vector3f(floatValue + width, y + height, 0.0F));
+      float f3 = transformPosition.x / f * 2.0F - 1.0F;
+      float f4 = vec.x / f * 2.0F - 1.0F;
+      float f5 = 1.0F - transformPosition.y / f2 * 2.0F;
+      float f6 = 1.0F - vec.y / f2 * 2.0F;
+      FramebufferUtils.method5655(ShaderProgram.getCurrent(), ImmediateRenderer.method8014(), f3, f6, f4, f5);
    }
 
    private static void method6558() {
@@ -236,9 +236,9 @@ public final class EspScreen {
             shaderProgram2 = ShaderProgram.method5512("/assets/gl/shaders/esp/esp_screen_blur.vsh", "/assets/gl/shaders/esp/esp_blur.fsh");
             shaderProgram3 = ShaderProgram.method5512("/assets/gl/shaders/esp/esp_screen.vsh", "/assets/gl/shaders/esp/esp_glow.fsh");
             initialized = true;
-         } catch (Exception var1) {
+         } catch (Exception e) {
             System.err.println("Failed to initialize ShaderESP preview shaders");
-            var1.printStackTrace();
+            e.printStackTrace();
             flag = true;
          }
 
@@ -246,28 +246,28 @@ public final class EspScreen {
       }
    }
 
-   private static void method6561(int var0, int var1) {
+   private static void method6561(int width, int height) {
       if (simpleFramebuffer == null
          || simpleFramebuffer2 == null
          || simpleFramebuffer3 == null
-         || simpleFramebuffer.width != var0
-         || simpleFramebuffer.height != var1) {
+         || simpleFramebuffer.width != width
+         || simpleFramebuffer.height != height) {
          release();
-         simpleFramebuffer = BlitUtils.method6448("zenith esp preview", var0, var1, true);
-         simpleFramebuffer2 = BlitUtils.method6448("zenith esp preview", var0, var1, false);
-         simpleFramebuffer3 = BlitUtils.method6448("zenith esp preview", var0, var1, false);
+         simpleFramebuffer = BlitUtils.method6448("zenith esp preview", width, height, true);
+         simpleFramebuffer2 = BlitUtils.method6448("zenith esp preview", width, height, false);
+         simpleFramebuffer3 = BlitUtils.method6448("zenith esp preview", width, height, false);
       }
    }
 
-   private static void method6562(ShaderProgram var0, String var1, int var2, float var3) {
-      var0.method5523(var1, ColorUtils.method6424(var2), ColorUtils.method6425(var2), ColorUtils.method6426(var2), ColorUtils.method6427(var2) * var3);
+   private static void method6562(ShaderProgram shaderProgram, String key, int intValue, float previewAlpha) {
+      shaderProgram.method5523(key, ColorUtils.method6424(intValue), ColorUtils.method6425(intValue), ColorUtils.method6426(intValue), ColorUtils.method6427(intValue) * previewAlpha);
    }
 
-   private static void method6563(EspScreen.Data var0) {
+   private static void method6563(EspScreen.Data data) {
       ImmediateRenderer.method8013(null);
    }
 
-   private static void method6564(EspScreen.Data var0) {
+   private static void method6564(EspScreen.Data data) {
       ImmediateRenderer.method8013(null);
       RenderState.method1903(true, true, true, true);
       RenderState.method1882(true);
@@ -278,25 +278,25 @@ public final class EspScreen {
       RenderState.method1897();
    }
 
-   private static void method6565(TextureTarget var0) {
-      if (var0 != null) {
-         var0.destroyBuffers();
+   private static void method6565(TextureTarget simpleFramebuffer) {
+      if (simpleFramebuffer != null) {
+         simpleFramebuffer.destroyBuffers();
       }
    }
 
-   private static void method6566(String var0) {
-      long var1 = System.currentTimeMillis();
-      if (!var0.equals(text6) || var1 - longValue >= 2000L) {
-         text6 = var0;
-         longValue = var1;
-         System.err.println("ShaderESP preview skipped: " + var0);
+   private static void method6566(String str) {
+      long now = System.currentTimeMillis();
+      if (!str.equals(text6) || now - longValue >= 2000L) {
+         text6 = str;
+         longValue = now;
+         System.err.println("ShaderESP preview skipped: " + str);
       }
    }
 
-   private static void method6567(Exception var0) {
+   private static void method6567(Exception e) {
       if (!flag2) {
          System.err.println("ShaderESP preview render failed");
-         var0.printStackTrace();
+         e.printStackTrace();
          flag2 = true;
       }
    }
@@ -340,16 +340,16 @@ public final class EspScreen {
          return "Data[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "intValue4=" + this.intValue4 + "]";
       }
 
-      private Data(int var1, int var2, int var3, int var4) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.intValue3 = var3;
-         this.intValue4 = var4;
+      private Data(int intValue, int n, int n2, int n3) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.intValue4 = n3;
       }
 
       private static EspScreen.Data method6568() {
-         RenderTarget var0 = BlitUtils.method6452();
-         return new EspScreen.Data(0, 0, Math.max(1, var0.width), Math.max(1, var0.height));
+         RenderTarget renderTarget = BlitUtils.method6452();
+         return new EspScreen.Data(0, 0, Math.max(1, renderTarget.width), Math.max(1, renderTarget.height));
       }
 
       public int getIntValue() {
@@ -377,19 +377,19 @@ public final class EspScreen {
       private final int intValue4;
       private boolean flag2;
 
-      private Entry(boolean var1, int var2, int var3, int var4, int var5) {
-         this.flag = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
-         this.intValue3 = var4;
-         this.intValue4 = var5;
+      private Entry(boolean flag, int intValue, int y, int width, int height) {
+         this.flag = flag;
+         this.intValue = intValue;
+         this.intValue2 = y;
+         this.intValue3 = width;
+         this.intValue4 = height;
       }
 
       private static EspScreen.Entry method6569() {
-         ScissorState var0 = RenderSystem.getScissorStateForRenderTypeDraws();
-         EspScreen.Entry var1 = new EspScreen.Entry(var0.enabled(), var0.x(), var0.y(), var0.width(), var0.height());
+         ScissorState scissorStateForRenderTypeDraws = RenderSystem.getScissorStateForRenderTypeDraws();
+         EspScreen.Entry entry = new EspScreen.Entry(scissorStateForRenderTypeDraws.enabled(), scissorStateForRenderTypeDraws.x(), scissorStateForRenderTypeDraws.y(), scissorStateForRenderTypeDraws.width(), scissorStateForRenderTypeDraws.height());
          RenderState.method1901();
-         return var1;
+         return entry;
       }
 
       private void restore() {

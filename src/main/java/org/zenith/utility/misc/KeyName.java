@@ -133,12 +133,12 @@ public enum KeyName {
       return this.text;
    }
 
-   public static int method6698(int var0) {
-      return var0 & 15;
+   public static int method6698(int keyModifiers) {
+      return keyModifiers & 15;
    }
 
-   public static int method6699(int var0) {
-      return switch (var0) {
+   public static int method6699(int keyCode) {
+      return switch (keyCode) {
          case 340, 344 -> 1;
          case 341, 345 -> 2;
          case 342, 346 -> 4;
@@ -147,80 +147,80 @@ public enum KeyName {
       };
    }
 
-   public static int method6700(int var0, int var1) {
-      return method6698(var1) & ~method6699(var0);
+   public static int method6700(int keyCode, int modifiers) {
+      return method6698(modifiers) & ~method6699(keyCode);
    }
 
-   public static String method6701(int var0) {
-      KeyName var1 = items.get(var0);
-      if (var1 != null && !var1.text.isEmpty()) {
-         return var1.text;
-      } else if (var0 == -1) {
+   public static String method6701(int keyCode) {
+      KeyName keyName = items.get(keyCode);
+      if (keyName != null && !keyName.text.isEmpty()) {
+         return keyName.text;
+      } else if (keyCode == -1) {
          return "";
       } else {
-         Minecraft var2 = Minecraft.getInstance();
-         if (var2 != null && var2.getWindow() != null) {
-            String var3 = org.zenith.utility.misc.KeyCompat.keyName(var0);
-            return var3 != null && !var3.isBlank() ? var3.toUpperCase(Locale.ROOT) : "KEY " + var0;
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft != null && minecraft.getWindow() != null) {
+            String str = org.zenith.utility.misc.KeyCompat.keyName(keyCode);
+            return str != null && !str.isBlank() ? str.toUpperCase(Locale.ROOT) : "KEY " + keyCode;
          } else {
-            return "KEY " + var0;
+            return "KEY " + keyCode;
          }
       }
    }
 
-   public static String method6702(int var0, int var1) {
-      String var2 = method6701(var0);
-      if (var2.isEmpty()) {
+   public static String method6702(int keyCode, int keyModifiers) {
+      String str = method6701(keyCode);
+      if (str.isEmpty()) {
          return "";
       } else {
-         int var3 = method6698(var1);
-         if (var3 == 0) {
-            return var2;
+         int n = method6698(keyModifiers);
+         if (n == 0) {
+            return str;
          } else {
-            StringBuilder var4 = new StringBuilder();
-            if ((var3 & 2) != 0) {
-               var4.append("CTRL + ");
+            StringBuilder builder = new StringBuilder();
+            if ((n & 2) != 0) {
+               builder.append("CTRL + ");
             }
 
-            if ((var3 & 1) != 0) {
-               var4.append("SHIFT + ");
+            if ((n & 1) != 0) {
+               builder.append("SHIFT + ");
             }
 
-            if ((var3 & 4) != 0) {
-               var4.append("ALT + ");
+            if ((n & 4) != 0) {
+               builder.append("ALT + ");
             }
 
-            if ((var3 & 8) != 0) {
-               var4.append("SUPER + ");
+            if ((n & 8) != 0) {
+               builder.append("SUPER + ");
             }
 
-            return var4.append(var2).toString();
+            return builder.append(str).toString();
          }
       }
    }
 
-   public static boolean method6703(int var0, int var1, int var2, int var3) {
-      return var0 != -1 && var0 == var2 ? method6700(var2, var3) == method6698(var1) : false;
+   public static boolean method6703(int keyCode, int keyModifiers, int n, int modifiers) {
+      return keyCode != -1 && keyCode == n ? method6700(n, modifiers) == method6698(keyModifiers) : false;
    }
 
-   public static int method6704(String var0) {
-      return items2.getOrDefault(var0.toLowerCase(), KEY_NONE).intValue;
+   public static int method6704(String string) {
+      return items2.getOrDefault(string.toLowerCase(), KEY_NONE).intValue;
    }
 
-   public static boolean method6705(int var0) {
-      return org.zenith.utility.misc.KeyCompat.isKeyDown(var0);
+   public static boolean method6705(int glfwKey) {
+      return org.zenith.utility.misc.KeyCompat.isKeyDown(glfwKey);
    }
 
    @Generated
-   private KeyName(String var3, int var4) {
-      this.text = var3;
-      this.intValue = var4;
+   private KeyName(String text, int intValue) {
+      this.text = text;
+      this.intValue = intValue;
    }
 
    static {
-      for (KeyName var3 : values()) {
-         items.put(var3.intValue, var3);
-         items2.put(var3.text.toLowerCase(), var3);
+      for (KeyName keyName : values()) {
+         items.put(keyName.intValue, keyName);
+         items2.put(keyName.text.toLowerCase(), keyName);
       }
    }
 }

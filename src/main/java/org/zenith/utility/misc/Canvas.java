@@ -12,19 +12,19 @@ public final class Canvas {
    private final Deque<int[]> deque = new ArrayDeque<>();
    private final Deque<int[]> deque2 = new ArrayDeque<>();
 
-   public int method136(int var1, int var2) {
-      return var1 >= 0 && var2 >= 0 && var1 < 31 && var2 < 31 ? this.intValues[var2 * 31 + var1] : 0;
+   public int method136(int n, int n2) {
+      return n >= 0 && n2 >= 0 && n < 31 && n2 < 31 ? this.intValues[n2 * 31 + n] : 0;
    }
 
-   public void method137(int var1, int var2, int var3) {
-      if (var1 >= 0 && var2 >= 0 && var1 < 31 && var2 < 31) {
-         this.intValues[var2 * 31 + var1] = var3;
+   public void method137(int n, int n2, int brushColor) {
+      if (n >= 0 && n2 >= 0 && n < 31 && n2 < 31) {
+         this.intValues[n2 * 31 + n] = brushColor;
       }
    }
 
    public boolean isEmpty() {
-      for (int var4 : this.intValues) {
-         if (var4 >>> 24 != 0) {
+      for (int intValue : this.intValues) {
+         if (intValue >>> 24 != 0) {
             return false;
          }
       }
@@ -36,9 +36,9 @@ public final class Canvas {
       return (int[])this.intValues.clone();
    }
 
-   public void method139(int[] var1) {
-      if (var1 != null && var1.length == this.intValues.length) {
-         System.arraycopy(var1, 0, this.intValues, 0, this.intValues.length);
+   public void method139(int[] backup) {
+      if (backup != null && backup.length == this.intValues.length) {
+         System.arraycopy(backup, 0, this.intValues, 0, this.intValues.length);
       }
    }
 
@@ -83,80 +83,80 @@ public final class Canvas {
       }
    }
 
-   public void method144(int var1, int var2, int var3) {
-      int var4 = this.method136(var1, var2);
-      if (var4 != var3) {
+   public void method144(int n, int n2, int brushColor) {
+      int n3 = this.method136(n, n2);
+      if (n3 != brushColor) {
          this.method140();
-         ArrayDeque var5 = new ArrayDeque();
-         var5.push(new int[]{var1, var2});
+         ArrayDeque arrayDeque = new ArrayDeque();
+         arrayDeque.push(new int[]{n, n2});
 
-         while (!var5.isEmpty()) {
-            int[] var6 = (int[])var5.pop();
-            int var7 = var6[0];
-            int var8 = var6[1];
-            if (var7 >= 0 && var8 >= 0 && var7 < 31 && var8 < 31 && this.intValues[var8 * 31 + var7] == var4) {
-               this.intValues[var8 * 31 + var7] = var3;
-               var5.push(new int[]{var7 + 1, var8});
-               var5.push(new int[]{var7 - 1, var8});
-               var5.push(new int[]{var7, var8 + 1});
-               var5.push(new int[]{var7, var8 - 1});
+         while (!arrayDeque.isEmpty()) {
+            int[] ints = (int[])arrayDeque.pop();
+            int n4 = ints[0];
+            int n5 = ints[1];
+            if (n4 >= 0 && n5 >= 0 && n4 < 31 && n5 < 31 && this.intValues[n5 * 31 + n4] == n3) {
+               this.intValues[n5 * 31 + n4] = brushColor;
+               arrayDeque.push(new int[]{n4 + 1, n5});
+               arrayDeque.push(new int[]{n4 - 1, n5});
+               arrayDeque.push(new int[]{n4, n5 + 1});
+               arrayDeque.push(new int[]{n4, n5 - 1});
             }
          }
       }
    }
 
    public String method145() {
-      StringBuilder var1 = new StringBuilder();
-      int var2 = this.intValues[0];
-      int var3 = 1;
+      StringBuilder builder = new StringBuilder();
+      int intValue = this.intValues[0];
+      int n = 1;
 
-      for (int var4 = 1; var4 < this.intValues.length; var4++) {
-         if (this.intValues[var4] == var2) {
-            var3++;
+      for (int i = 1; i < this.intValues.length; i++) {
+         if (this.intValues[i] == intValue) {
+            n++;
          } else {
-            method146(var1, var3, var2);
-            var2 = this.intValues[var4];
-            var3 = 1;
+            method146(builder, n, intValue);
+            intValue = this.intValues[i];
+            n = 1;
          }
       }
 
-      method146(var1, var3, var2);
-      return var1.toString();
+      method146(builder, n, intValue);
+      return builder.toString();
    }
 
-   private static void method146(StringBuilder var0, int var1, int var2) {
-      if (var0.length() > 0) {
-         var0.append(';');
+   private static void method146(StringBuilder builder, int n, int intValue) {
+      if (builder.length() > 0) {
+         builder.append(';');
       }
 
-      var0.append(var1).append(':').append(Integer.toHexString(var2));
+      builder.append(n).append(':').append(Integer.toHexString(intValue));
    }
 
-   public void method147(String var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         int[] var2 = new int[this.intValues.length];
-         int var3 = 0;
+   public void method147(String string) {
+      if (string != null && !string.isEmpty()) {
+         int[] intValues = new int[this.intValues.length];
+         int n = 0;
 
          try {
-            for (String var7 : var1.split(";")) {
-               int var8 = var7.indexOf(58);
-               if (var8 <= 0) {
+            for (String str : string.split(";")) {
+               int indexOf = str.indexOf(58);
+               if (indexOf <= 0) {
                   return;
                }
 
-               int var9 = Integer.parseInt(var7.substring(0, var8));
-               int var10 = (int)Long.parseLong(var7.substring(var8 + 1), 16);
+               int n2 = Integer.parseInt(str.substring(0, indexOf));
+               int n3 = (int)Long.parseLong(str.substring(indexOf + 1), 16);
 
-               for (int var11 = 0; var11 < var9 && var3 < var2.length; var11++) {
-                  var2[var3++] = var10;
+               for (int i = 0; i < n2 && n < intValues.length; i++) {
+                  intValues[n++] = n3;
                }
             }
-         } catch (RuntimeException var12) {
+         } catch (RuntimeException e) {
             return;
          }
 
-         if (var3 == var2.length) {
-            this.intValues = var2;
+         if (n == intValues.length) {
+            this.intValues = intValues;
             this.deque.clear();
             this.deque2.clear();
          }

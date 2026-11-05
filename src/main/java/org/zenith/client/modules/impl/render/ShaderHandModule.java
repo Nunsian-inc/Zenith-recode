@@ -80,28 +80,28 @@ public final class ShaderHandModule extends Module {
       this.colorMode.set("module.shaderHand.color.client");
    }
 
-   public void method1238(Runnable var1) {
-      this.method1239(var1, 0.0F);
+   public void method1238(Runnable runnable) {
+      this.method1239(runnable, 0.0F);
    }
 
    public boolean isFlag23() {
       return this.flag2;
    }
 
-   public void method1239(Runnable var1, float var2) {
+   public void method1239(Runnable runnable, float cameraEntityPartialTicks) {
       if (!HandShaders.isInitialized()) {
-         var1.run();
+         runnable.run();
       } else {
          WardrobeRenderer.method6693();
          if (this.method1253()) {
-            var1.run();
+            runnable.run();
          } else {
             try {
-               this.method1240(var1);
-            } catch (Exception var7) {
+               this.method1240(runnable);
+            } catch (Exception e) {
                if (!this.flag) {
                   this.flag = true;
-                  var7.printStackTrace();
+                  e.printStackTrace();
                }
             } finally {
                WardrobeRenderer.method6693();
@@ -111,38 +111,38 @@ public final class ShaderHandModule extends Module {
       }
    }
 
-   private void method1240(Runnable var1) {
-      RenderTarget var2 = mc.gameRenderer.mainRenderTarget();
-      TextureTarget var3 = HandShaders.getSimpleFramebuffer();
-      ShaderHandModule.Type var4 = this.method1252();
-      ShaderProgram var5 = HandShaders.method6279(var4.text2);
-      if (var2 != null && var5 != null && var3 != null) {
-         mc.gameRenderer.mainRenderTarget = var3;
+   private void method1240(Runnable runnable) {
+      RenderTarget mainRenderTarget = mc.gameRenderer.mainRenderTarget();
+      TextureTarget simpleFramebuffer = HandShaders.getSimpleFramebuffer();
+      ShaderHandModule.Type type = this.method1252();
+      ShaderProgram shaderProgram = HandShaders.method6279(type.text2);
+      if (mainRenderTarget != null && shaderProgram != null && simpleFramebuffer != null) {
+         mc.gameRenderer.mainRenderTarget = simpleFramebuffer;
          this.flag2 = true;
 
          try {
-            BlitUtils.method6456(var3, 0);
+            BlitUtils.method6456(simpleFramebuffer, 0);
             // 26.3 renderItemInHand prepares and draws its own feature frame into mainRenderTarget
-            var1.run();
+            runnable.run();
          } finally {
             this.flag2 = false;
-            mc.gameRenderer.mainRenderTarget = var2;
+            mc.gameRenderer.mainRenderTarget = mainRenderTarget;
          }
 
-         TextureTarget var7 = this.method1242(var3, var2);
+         TextureTarget textureTarget = this.method1242(simpleFramebuffer, mainRenderTarget);
          RenderState.method1871();
          RenderState.method1873();
          RenderState.method1879();
-         RenderState.method1889(0, var3.getColorTextureView());
-         RenderState.method1889(1, var3.getDepthTextureView());
+         RenderState.method1889(0, simpleFramebuffer.getColorTextureView());
+         RenderState.method1889(1, simpleFramebuffer.getDepthTextureView());
 
          try {
-            var5.method5517();
-            this.method1245(var5, var3, var4);
+            shaderProgram.method5517();
+            this.method1245(shaderProgram, simpleFramebuffer, type);
             HandShaders.method6282();
-            var5.unbind();
+            shaderProgram.unbind();
          } finally {
-            var5.unbind();
+            shaderProgram.unbind();
             RenderState.method1893(0);
             RenderState.method1893(1);
             RenderState.method1873();
@@ -151,11 +151,11 @@ public final class ShaderHandModule extends Module {
             ImmediateRenderer.method8013(null);
          }
 
-         if (var7 != null) {
-            this.method1243(var7);
+         if (textureTarget != null) {
+            this.method1243(textureTarget);
          }
       } else {
-         var1.run();
+         runnable.run();
       }
    }
 
@@ -168,18 +168,18 @@ public final class ShaderHandModule extends Module {
       }
    }
 
-   private TextureTarget method1242(TextureTarget var1, RenderTarget var2) {
+   private TextureTarget method1242(TextureTarget simpleFramebuffer, RenderTarget mainRenderTarget) {
       if (!WardrobeRenderer.method6692()) {
          return null;
       } else {
          if (this.simpleFramebuffer == null
-            || this.simpleFramebuffer.width != var1.width
-            || this.simpleFramebuffer.height != var1.height) {
+            || this.simpleFramebuffer.width != simpleFramebuffer.width
+            || this.simpleFramebuffer.height != simpleFramebuffer.height) {
             if (this.simpleFramebuffer != null) {
                this.simpleFramebuffer.destroyBuffers();
             }
 
-            this.simpleFramebuffer = BlitUtils.method6448("zenith hand accessories", var1.width, var1.height, true);
+            this.simpleFramebuffer = BlitUtils.method6448("zenith hand accessories", simpleFramebuffer.width, simpleFramebuffer.height, true);
          }
 
          mc.gameRenderer.mainRenderTarget = this.simpleFramebuffer;
@@ -191,29 +191,29 @@ public final class ShaderHandModule extends Module {
             }
             WardrobeRenderer.method6694();
          } finally {
-            mc.gameRenderer.mainRenderTarget = var2;
+            mc.gameRenderer.mainRenderTarget = mainRenderTarget;
          }
 
          return this.simpleFramebuffer;
       }
    }
 
-   private void method1243(TextureTarget var1) {
-      ShaderProgram var2 = HandShaders.method6279("zenith_passthrough");
-      if (var2 != null) {
+   private void method1243(TextureTarget textureTarget) {
+      ShaderProgram shaderProgram = HandShaders.method6279("zenith_passthrough");
+      if (shaderProgram != null) {
          RenderState.method1871();
          RenderState.method1873();
          RenderState.method1879();
-         RenderState.method1889(0, var1.getColorTextureView());
-         RenderState.method1889(1, var1.getDepthTextureView());
+         RenderState.method1889(0, textureTarget.getColorTextureView());
+         RenderState.method1889(1, textureTarget.getDepthTextureView());
 
          try {
-            var2.method5517();
-            var2.method5518("ColorTexture", 0);
-            var2.method5518("DepthTexture", 1);
+            shaderProgram.method5517();
+            shaderProgram.method5518("ColorTexture", 0);
+            shaderProgram.method5518("DepthTexture", 1);
             HandShaders.method6282();
          } finally {
-            var2.unbind();
+            shaderProgram.unbind();
             RenderState.method1893(0);
             RenderState.method1893(1);
             RenderState.method1873();
@@ -228,71 +228,71 @@ public final class ShaderHandModule extends Module {
       if (this.flag3) {
          this.flag3 = false;
          if (mc.player != null && mc.level != null) {
-            RenderTarget var1 = mc.gameRenderer.mainRenderTarget();
-            if (var1 != null) {
-               float var3 = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-               net.minecraft.client.renderer.state.level.LevelRenderState var4 = mc.gameRenderer.gameRenderState().levelRenderState;
+            RenderTarget mainRenderTarget = mc.gameRenderer.mainRenderTarget();
+            if (mainRenderTarget != null) {
+               float gameTimeDeltaPartialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+               net.minecraft.client.renderer.state.level.LevelRenderState levelRenderState = mc.gameRenderer.gameRenderState().levelRenderState;
                OutlineVertexProvider.method1542(
                   var1x -> ((GameRendererAccessor)(Object)mc.gameRenderer)
                      .zenith$overlayRenderer()
-                     .submit(var3, var1x, var4.playerRenderState, var4.cameraRenderState, mc.gameRenderer.gameRenderState().guiRenderState.isHudHidden)
+                     .submit(gameTimeDeltaPartialTick, var1x, levelRenderState.playerRenderState, levelRenderState.cameraRenderState, mc.gameRenderer.gameRenderState().guiRenderState.isHudHidden)
                );
             }
          }
       }
    }
 
-   private void method1245(ShaderProgram var1, TextureTarget var2, ShaderHandModule.Type var3) {
-      int var4 = Math.max(1, var2.width);
-      int var5 = Math.max(1, var2.height);
-      var1.method5518("ColorTexture", 0);
-      var1.method5518("DepthTexture", 1);
-      var1.method5521("resolution", var4, var5);
-      var1.method5519("time", this.method1249() * var3.floatValue);
+   private void method1245(ShaderProgram shaderProgram, TextureTarget simpleFramebuffer, ShaderHandModule.Type type) {
+      int width = Math.max(1, simpleFramebuffer.width);
+      int height = Math.max(1, simpleFramebuffer.height);
+      shaderProgram.method5518("ColorTexture", 0);
+      shaderProgram.method5518("DepthTexture", 1);
+      shaderProgram.method5521("resolution", width, height);
+      shaderProgram.method5519("time", this.method1249() * type.floatValue);
       this.method1250();
-      var1.method5521("handMotion", this.floatValue2, this.floatValue3);
-      var1.method5521("handSway", 0.0F, 0.0F);
-      var1.method5519("effectAlpha", 1.0F);
-      int[] var6 = this.method1247();
-      method1246(var1, "PrimaryColor", var6[0]);
-      method1246(var1, "SecondaryColor", var6[1]);
-      var1.method5519("Brightness", 2.15F);
-      var1.method5519("ScanDensity", 200.0F);
-      var1.method5519("Glitch", 1.0F);
+      shaderProgram.method5521("handMotion", this.floatValue2, this.floatValue3);
+      shaderProgram.method5521("handSway", 0.0F, 0.0F);
+      shaderProgram.method5519("effectAlpha", 1.0F);
+      int[] ints = this.method1247();
+      method1246(shaderProgram, "PrimaryColor", ints[0]);
+      method1246(shaderProgram, "SecondaryColor", ints[1]);
+      shaderProgram.method5519("Brightness", 2.15F);
+      shaderProgram.method5519("ScanDensity", 200.0F);
+      shaderProgram.method5519("Glitch", 1.0F);
    }
 
-   private static void method1246(ShaderProgram var0, String var1, int var2) {
-      var0.method5524(var1, ColorUtils.method6424(var2), ColorUtils.method6425(var2), ColorUtils.method6426(var2));
+   private static void method1246(ShaderProgram shaderProgram, String key, int intValue) {
+      shaderProgram.method5524(key, ColorUtils.method6424(intValue), ColorUtils.method6425(intValue), ColorUtils.method6426(intValue));
    }
 
    private int[] method1247() {
       if (this.colorMode.isSelected(0)) {
-         float var2 = (float)(System.currentTimeMillis() % 9000L) / 9000.0F;
-         return new int[]{method1248(var2), method1248(var2 + 0.1F)};
+         float f = (float)(System.currentTimeMillis() % 9000L) / 9000.0F;
+         return new int[]{method1248(f), method1248(f + 0.1F)};
       } else if (this.colorMode.isSelected(1)) {
          return new int[]{
             Zenith.getInstance().getStyleManager().getClientColor(0).method7287(), Zenith.getInstance().getStyleManager().getClientColor(180).method7287()
          };
       } else {
-         int var1 = this.customColor.method1445();
-         return new int[]{var1, this.secondColor.isEnabled() ? this.colorSetting.method1445() : var1};
+         int n = this.customColor.method1445();
+         return new int[]{n, this.secondColor.isEnabled() ? this.colorSetting.method1445() : n};
       }
    }
 
-   private static int method1248(float var0) {
-      float var1 = var0 - (float)Math.floor(var0);
-      return ZenithColor.method7297(var1, 0.72F, 1.0F).method7287();
+   private static int method1248(float f) {
+      float hue = f - (float)Math.floor(f);
+      return ZenithColor.method7297(hue, 0.72F, 1.0F).method7287();
    }
 
    private float method1249() {
-      long var1 = System.nanoTime();
+      long nanoTime = System.nanoTime();
       if (this.lastFrameNanos < 0L) {
-         this.lastFrameNanos = var1;
+         this.lastFrameNanos = nanoTime;
          return this.floatValue;
       } else {
-         float var3 = Math.min((float)(var1 - this.lastFrameNanos) / 1.0E9F, 0.1F);
-         this.lastFrameNanos = var1;
-         this.floatValue = (this.floatValue + var3 * 5.0F) % 100000.0F;
+         float f = Math.min((float)(nanoTime - this.lastFrameNanos) / 1.0E9F, 0.1F);
+         this.lastFrameNanos = nanoTime;
+         this.floatValue = (this.floatValue + f * 5.0F) % 100000.0F;
          return this.floatValue;
       }
    }
@@ -302,9 +302,9 @@ public final class ShaderHandModule extends Module {
       this.floatValue3 = 0.22F;
    }
 
-   private int method1251(TextureTarget var1) {
-      int var2 = Math.max(1, var1.height);
-      return Math.min(var2, Math.max(1, (int)(var2 * 0.72F)));
+   private int method1251(TextureTarget textureTarget) {
+      int n = Math.max(1, textureTarget.height);
+      return Math.min(n, Math.max(1, (int)(n * 0.72F)));
    }
 
    private ShaderHandModule.Type method1252() {
@@ -348,8 +348,8 @@ public final class ShaderHandModule extends Module {
    }
 
    private boolean method1262() {
-      ShaderHandModule.Type var1 = this.method1252();
-      return var1 == ShaderHandModule.Type.HOLOGRAM || var1 == ShaderHandModule.Type.MATRIX || var1 == ShaderHandModule.Type.FIRE;
+      ShaderHandModule.Type type = this.method1252();
+      return type == ShaderHandModule.Type.HOLOGRAM || type == ShaderHandModule.Type.MATRIX || type == ShaderHandModule.Type.FIRE;
    }
 
    private boolean method1263() {
@@ -367,26 +367,26 @@ public final class ShaderHandModule extends Module {
       private final String text2;
       private final float floatValue;
 
-      private Type(String var3, String var4, float var5) {
-         this.text = var3;
-         this.text2 = var4;
-         this.floatValue = var5;
+      private Type(String text, String str, float floatValue) {
+         this.text = text;
+         this.text2 = str;
+         this.floatValue = floatValue;
       }
 
-      private static ShaderHandModule.Type method1264(int var0) {
-         ShaderHandModule.Type[] var1 = values();
-         return var0 >= 0 && var0 < var1.length ? var1[var0] : ICE;
+      private static ShaderHandModule.Type method1264(int index) {
+         ShaderHandModule.Type[] types = values();
+         return index >= 0 && index < types.length ? types[index] : ICE;
       }
 
       private static String[] method1265() {
-         ShaderHandModule.Type[] var0 = values();
-         String[] var1 = new String[var0.length];
+         ShaderHandModule.Type[] types = values();
+         String[] strings = new String[types.length];
 
-         for (int var2 = 0; var2 < var0.length; var2++) {
-            var1[var2] = var0[var2].text;
+         for (int i = 0; i < types.length; i++) {
+            strings[i] = types[i].text;
          }
 
-         return var1;
+         return strings;
       }
    }
 }

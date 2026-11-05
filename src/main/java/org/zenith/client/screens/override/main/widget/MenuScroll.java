@@ -14,10 +14,10 @@ public class MenuScroll {
    private float viewport;
    private float content;
 
-   public void update(float var1, float var2) {
-      this.viewport = var1;
-      this.content = var2;
-      this.target = Math.min(this.target, Math.max(0.0F, var2 - var1));
+   public void update(float viewport, float content) {
+      this.viewport = viewport;
+      this.content = content;
+      this.target = Math.min(this.target, Math.max(0.0F, content - viewport));
       this.target = Math.max(0.0F, this.target);
       this.smooth.method2808(this.target);
    }
@@ -30,11 +30,11 @@ public class MenuScroll {
       return this.content > this.viewport + 0.5F;
    }
 
-   public boolean scroll(double var1, float var3) {
+   public boolean scroll(double d, float f) {
       if (!this.scrollable()) {
          return false;
       } else {
-         this.target = Math.min(Math.max(0.0F, this.content - this.viewport), Math.max(0.0F, this.target - (float)var1 * var3));
+         this.target = Math.min(Math.max(0.0F, this.content - this.viewport), Math.max(0.0F, this.target - (float)d * f));
          return true;
       }
    }
@@ -44,27 +44,27 @@ public class MenuScroll {
       this.smooth.method2809(0.0F);
    }
 
-   public void renderRail(MenuDrawContext var1, float var2, float var3, float var4) {
+   public void renderRail(MenuDrawContext graphics, float floatValue, float y, float height) {
       if (this.scrollable()) {
-         ProxyDotRadiusData var5 = ProxyDotRadiusData.method8069(RAIL_THICKNESS / 2.0F);
-         var1.drawRoundedRect(var2, var3, RAIL_THICKNESS, var4, var5, MenuTheme.surface());
-         float var6 = Math.min(1.0F, this.viewport / this.content);
-         float var7 = Math.max(MenuTheme.px(16.0F), var4 * var6);
-         float var8 = var4 - var7;
-         float var9 = this.content - this.viewport <= 0.0F ? 0.0F : this.offset() / (this.content - this.viewport);
-         var1.drawRoundedRect(var2, var3 + var8 * var9, RAIL_THICKNESS, var7, var5, MenuTheme.border());
+         ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(RAIL_THICKNESS / 2.0F);
+         graphics.drawRoundedRect(floatValue, y, RAIL_THICKNESS, height, headerRadius, MenuTheme.surface());
+         float f = Math.min(1.0F, this.viewport / this.content);
+         float height2 = Math.max(MenuTheme.px(16.0F), height * f);
+         float f2 = height - height2;
+         float f3 = this.content - this.viewport <= 0.0F ? 0.0F : this.offset() / (this.content - this.viewport);
+         graphics.drawRoundedRect(floatValue, y + f2 * f3, RAIL_THICKNESS, height2, headerRadius, MenuTheme.border());
       }
    }
 
-   public void renderRailHorizontal(MenuDrawContext var1, float var2, float var3, float var4) {
+   public void renderRailHorizontal(MenuDrawContext graphics, float floatValue, float y, float width) {
       if (this.scrollable()) {
-         ProxyDotRadiusData var5 = ProxyDotRadiusData.method8069(RAIL_THICKNESS / 2.0F);
-         var1.drawRoundedRect(var2, var3, var4, RAIL_THICKNESS, var5, MenuTheme.surface());
-         float var6 = Math.min(1.0F, this.viewport / this.content);
-         float var7 = Math.max(MenuTheme.px(16.0F), var4 * var6);
-         float var8 = var4 - var7;
-         float var9 = this.content - this.viewport <= 0.0F ? 0.0F : this.offset() / (this.content - this.viewport);
-         var1.drawRoundedRect(var2 + var8 * var9, var3, var7, RAIL_THICKNESS, var5, MenuTheme.border());
+         ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(RAIL_THICKNESS / 2.0F);
+         graphics.drawRoundedRect(floatValue, y, width, RAIL_THICKNESS, headerRadius, MenuTheme.surface());
+         float f = Math.min(1.0F, this.viewport / this.content);
+         float width2 = Math.max(MenuTheme.px(16.0F), width * f);
+         float f2 = width - width2;
+         float f3 = this.content - this.viewport <= 0.0F ? 0.0F : this.offset() / (this.content - this.viewport);
+         graphics.drawRoundedRect(floatValue + f2 * f3, y, width2, RAIL_THICKNESS, headerRadius, MenuTheme.border());
       }
    }
 

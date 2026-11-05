@@ -18,7 +18,7 @@ public abstract class MixinOptGlyphAtlasTexture {
          intValue = 256
       )}
    )
-   private int zenith$atlasSize(int var1) {
+   private int zenith$atlasSize(int n) {
       if (this.zenith$atlasSize == 0) {
          this.zenith$atlasSize = GlyphShaderNames.method1418();
       }
@@ -32,7 +32,7 @@ public abstract class MixinOptGlyphAtlasTexture {
          floatValue = 256.0F
       )}
    )
-   private float zenith$atlasUvScale(float var1) {
-      return this.zenith$atlasSize == 0 ? var1 : this.zenith$atlasSize;
+   private float zenith$atlasUvScale(float f) {
+      return this.zenith$atlasSize == 0 ? f : this.zenith$atlasSize;
    }
 }

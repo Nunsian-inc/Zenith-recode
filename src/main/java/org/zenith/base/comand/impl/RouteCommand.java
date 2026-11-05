@@ -32,41 +32,41 @@ public final class RouteCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var0 -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2019("Использование: .route <x> <y> <z> или .route stop");
          return 1;
       });
-      var1.then(literal("stop").executes(var1x -> {
+      literalArgumentBuilder.then(literal("stop").executes(var1x -> {
          this.stop();
          ChatLogger.method2019("Маршрут остановлен");
          return 1;
       }));
-      var1.then(
+      literalArgumentBuilder.then(
          arg("x", IntegerArgumentType.integer()).then(arg("y", IntegerArgumentType.integer()).then(arg("z", IntegerArgumentType.integer()).executes(var1x -> {
-            int var2 = IntegerArgumentType.getInteger(var1x, "x");
-            int var3 = IntegerArgumentType.getInteger(var1x, "y");
-            int var4 = IntegerArgumentType.getInteger(var1x, "z");
-            this.start(new BlockPos(var2, var3, var4));
+            int integer = IntegerArgumentType.getInteger(var1x, "x");
+            int y = IntegerArgumentType.getInteger(var1x, "y");
+            int z = IntegerArgumentType.getInteger(var1x, "z");
+            this.start(new BlockPos(integer, y, z));
             return 1;
          })))
       );
    }
 
-   private void start(BlockPos var1) {
+   private void start(BlockPos pos) {
       if (mc.player != null && mc.level != null) {
-         LocalPlayer var2 = mc.player;
-         Pathfinder.Entry2 var3 = this.findRoute(var2, var1);
-         if (var3 == null) {
+         LocalPlayer player = mc.player;
+         Pathfinder.Entry2 route = this.findRoute(player, pos);
+         if (route == null) {
             this.stop();
-            ChatLogger.method2022("Не удалось построить путь до " + var1.getX() + " " + var1.getY() + " " + var1.getZ());
+            ChatLogger.method2022("Не удалось построить путь до " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
          } else {
-            this.route = var3;
-            this.destination = var1.immutable();
+            this.route = route;
+            this.destination = pos.immutable();
             this.nextBlock = null;
-            this.lastPosition = var2.position();
+            this.lastPosition = player.position();
             this.stuckTicks = 0;
-            ChatLogger.method2019("Иду к " + var1.getX() + " " + var1.getY() + " " + var1.getZ() + " (" + this.route.getItems().size() + " блоков)");
+            ChatLogger.method2019("Иду к " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (" + this.route.getItems().size() + " блоков)");
          }
       } else {
          ChatLogger.method2022("Сначала зайди в мир");
@@ -74,17 +74,17 @@ public final class RouteCommand extends CommandAbstract {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.route != null) {
-         LocalPlayer var2 = mc.player;
-         if (var2 != null && mc.level != null && this.destination != null) {
-            this.nextBlock = this.route.method779(var2.position());
+         LocalPlayer player = mc.player;
+         if (player != null && mc.level != null && this.destination != null) {
+            this.nextBlock = this.route.method779(player.position());
             if (this.nextBlock == null) {
                this.stop();
                ChatLogger.method2019("Маршрут завершён");
             } else {
-               this.rotateTo(var2, this.nextBlock);
-               this.updateStuckState(var2);
+               this.rotateTo(player, this.nextBlock);
+               this.updateStuckState(player);
             }
          } else {
             this.stop();
@@ -93,50 +93,50 @@ public final class RouteCommand extends CommandAbstract {
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
-      LocalPlayer var2 = mc.player;
-      if (this.route != null && this.nextBlock != null && var2 != null) {
-         var1.method3044();
-         float var3 = this.yawTo(var2, this.nextBlock);
-         float var4 = Math.abs(Mth.wrapDegrees(var3 - var2.getYRot()));
-         if (var4 <= 55.0F) {
-            var1.method3038(true);
+   public void onMoveInput(MoveInputEvent event) {
+      LocalPlayer player = mc.player;
+      if (this.route != null && this.nextBlock != null && player != null) {
+         event.method3044();
+         float yawTo = this.yawTo(player, this.nextBlock);
+         float f = Math.abs(Mth.wrapDegrees(yawTo - player.getYRot()));
+         if (f <= 55.0F) {
+            event.method3038(true);
          }
 
-         int var5 = Mth.floor(var2.getY() + 0.01);
-         boolean var6 = this.nextBlock.getY() > var5 || var2.horizontalCollision;
-         var1.method3041(var6);
+         int n = Mth.floor(player.getY() + 0.01);
+         boolean jump = this.nextBlock.getY() > n || player.horizontalCollision;
+         event.method3041(jump);
       }
    }
 
-   private void rotateTo(LocalPlayer var1, BlockPos var2) {
-      float var3 = this.yawTo(var1, var2);
-      float var4 = Mth.wrapDegrees(var3 - var1.getYRot());
-      var1.setYRot(var1.getYRot() + Mth.clamp(var4, -35.0F, 35.0F));
+   private void rotateTo(LocalPlayer player, BlockPos nextBlock) {
+      float yawTo = this.yawTo(player, nextBlock);
+      float f = Mth.wrapDegrees(yawTo - player.getYRot());
+      player.setYRot(player.getYRot() + Mth.clamp(f, -35.0F, 35.0F));
    }
 
-   private float yawTo(LocalPlayer var1, BlockPos var2) {
-      Vec3 var3 = Pathfinder.method761(var2);
-      Vec3 var4 = new Vec3(var3.x, var1.getEyeY(), var3.z);
-      return Rotation.method3128(var4, var1.getEyePosition()).getFloatValue();
+   private float yawTo(LocalPlayer player, BlockPos nextBlock) {
+      Vec3 vec = Pathfinder.method761(nextBlock);
+      Vec3 vec2 = new Vec3(vec.x, player.getEyeY(), vec.z);
+      return Rotation.method3128(vec2, player.getEyePosition()).getFloatValue();
    }
 
-   private void updateStuckState(LocalPlayer var1) {
-      Vec3 var2 = var1.position();
-      if (this.lastPosition != null && var2.distanceToSqr(this.lastPosition) < 4.0E-4) {
+   private void updateStuckState(LocalPlayer player) {
+      Vec3 position = player.position();
+      if (this.lastPosition != null && position.distanceToSqr(this.lastPosition) < 4.0E-4) {
          this.stuckTicks++;
       } else {
          this.stuckTicks = 0;
       }
 
-      this.lastPosition = var2;
-      if (this.stuckTicks >= 40 && var1.onGround()) {
-         Pathfinder.Entry2 var3 = this.findRoute(var1, this.destination);
-         if (var3 == null) {
+      this.lastPosition = position;
+      if (this.stuckTicks >= 40 && player.onGround()) {
+         Pathfinder.Entry2 route = this.findRoute(player, this.destination);
+         if (route == null) {
             this.stop();
             ChatLogger.method2022("Не удалось перестроить маршрут");
          } else {
-            this.route = var3;
+            this.route = route;
             this.nextBlock = null;
             this.stuckTicks = 0;
             ChatLogger.method2021("Маршрут перестроен");
@@ -144,8 +144,8 @@ public final class RouteCommand extends CommandAbstract {
       }
    }
 
-   private Pathfinder.Entry2 findRoute(LocalPlayer var1, BlockPos var2) {
-      return Pathfinder.method757(var1.blockPosition(), var2).orElse(null);
+   private Pathfinder.Entry2 findRoute(LocalPlayer player, BlockPos pos) {
+      return Pathfinder.method757(player.blockPosition(), pos).orElse(null);
    }
 
    private void stop() {

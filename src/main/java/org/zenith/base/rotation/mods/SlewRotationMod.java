@@ -109,122 +109,122 @@ public final class SlewRotationMod extends Util22 {
    private static final double CONST_doubleValue16 = 1184.9162530815229;
 
    public Rotation method3636() {
-      Rotation var1 = rotationManager.method7844();
-      LivingEntity var2 = AuraModule.INSTANCE.method6358();
-      if (mc.player != null && var2 != null && var2.isAlive()) {
-         int var3 = mc.player.tickCount;
-         if (var3 == this.intValue3 && this.rotation != null) {
+      Rotation rotation = rotationManager.method7844();
+      LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+      if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
+         int tickCount = mc.player.tickCount;
+         if (tickCount == this.intValue3 && this.rotation != null) {
             return this.rotation;
          } else {
-            if (var2.getId() != this.intValue || this.intValue2 != Integer.MIN_VALUE && var3 != this.intValue2 + 1) {
-               this.method3640(var2.getId(), var3);
+            if (livingEntity.getId() != this.intValue || this.intValue2 != Integer.MIN_VALUE && tickCount != this.intValue2 + 1) {
+               this.method3640(livingEntity.getId(), tickCount);
             }
 
-            this.intValue2 = var3;
-            float var4 = Rotation.method3138();
-            if (Float.isFinite(var4) && !(var4 <= 0.0F)) {
-               Vec3 var5 = mc.player.getEyePosition();
-               Vec3 var6 = var2.getBoundingBox().getCenter();
-               Vec3 var7 = var6;
+            this.intValue2 = tickCount;
+            float f = Rotation.method3138();
+            if (Float.isFinite(f) && !(f <= 0.0F)) {
+               Vec3 eyePosition = mc.player.getEyePosition();
+               Vec3 center = livingEntity.getBoundingBox().getCenter();
+               Vec3 vec = center;
                if (this.vec3d2 != null && doubleValue > 0.0) {
-                  Vec3 var8 = var6.subtract(this.vec3d2);
-                  double var9 = var8.length();
-                  if (var9 > 0.8) {
-                     var8 = var8.scale(0.8 / var9);
+                  Vec3 vec2 = center.subtract(this.vec3d2);
+                  double length = vec2.length();
+                  if (length > 0.8) {
+                     vec2 = vec2.scale(0.8 / length);
                   }
 
-                  var7 = var6.add(var8.scale(doubleValue));
+                  vec = center.add(vec2.scale(doubleValue));
                }
 
-               Rotation var31 = RotationUtils.method6912(var7.subtract(var5));
-               Vec2f var32 = var1.method3131(var31);
-               double var10 = var32.getFloatValue() / 0.15190947;
-               double var12 = var32.getFloatValue2() / 0.15190947;
-               double var14 = 0.0;
-               double var16 = 0.0;
+               Rotation rotation2 = RotationUtils.method6912(vec.subtract(eyePosition));
+               Vec2f vec2f = rotation.method3131(rotation2);
+               double sign = vec2f.getFloatValue() / 0.15190947;
+               double d = vec2f.getFloatValue2() / 0.15190947;
+               double d2 = 0.0;
+               double d3 = 0.0;
                if (this.vec3d != null) {
-                  Rotation var18 = RotationUtils.method6912(var7.subtract(this.vec3d));
-                  Vec2f var19 = var18.method3131(var31);
-                  var14 = var19.getFloatValue() / 0.15190947;
-                  var16 = var19.getFloatValue2() / 0.15190947;
+                  Rotation rotation3 = RotationUtils.method6912(vec.subtract(this.vec3d));
+                  Vec2f vec2f2 = rotation3.method3131(rotation2);
+                  d2 = vec2f2.getFloatValue() / 0.15190947;
+                  d3 = vec2f2.getFloatValue2() / 0.15190947;
                }
 
                if (Double.isFinite(this.doubleValue2)) {
-                  this.doubleValue6 = method3639(this.doubleValue6, var10 - this.doubleValue2 + this.doubleValue4);
-                  this.doubleValue7 = method3639(this.doubleValue7, var12 - this.doubleValue3 + this.doubleValue5);
+                  this.doubleValue6 = method3639(this.doubleValue6, sign - this.doubleValue2 + this.doubleValue4);
+                  this.doubleValue7 = method3639(this.doubleValue7, d - this.doubleValue3 + this.doubleValue5);
                }
 
-               this.doubleValue2 = var10;
-               this.doubleValue3 = var12;
-               this.vec3d = var5;
-               this.vec3d2 = var6;
-               double var33 = Math.max(0.5, var6.distanceTo(var5));
-               double var20 = Math.toDegrees(Math.atan(0.3 / var33)) / 0.15190947;
-               double var22 = Math.toDegrees(Math.atan(0.9 / var33)) / 0.15190947;
-               if (Double.isFinite(var10) && Double.isFinite(var12) && Double.isFinite(var14) && Double.isFinite(var16)) {
+               this.doubleValue2 = sign;
+               this.doubleValue3 = d;
+               this.vec3d = eyePosition;
+               this.vec3d2 = center;
+               double d4 = Math.max(0.5, center.distanceTo(eyePosition));
+               double d5 = Math.toDegrees(Math.atan(0.3 / d4)) / 0.15190947;
+               double d6 = Math.toDegrees(Math.atan(0.9 / d4)) / 0.15190947;
+               if (Double.isFinite(sign) && Double.isFinite(d) && Double.isFinite(d2) && Double.isFinite(d3)) {
                   if (this.flag) {
                      this.entry.method3642(this.longValue++);
                      this.flag = false;
                   }
 
-                  double var24 = this.entry.method3649(var10, this.doubleValue6, var20, var14, false);
+                  double d7 = this.entry.method3649(sign, this.doubleValue6, d5, d2, false);
                   if (this.flag2) {
                      this.entry2.method3642(this.longValue++);
                      this.flag2 = false;
                   }
 
-                  double var26 = this.entry2.method3649(var12, this.doubleValue7, var22, var16, var24 == 0.0);
-                  this.doubleValue4 = var24;
-                  this.doubleValue5 = var26;
-                  int var28 = (int)Math.floor(var24 * 0.15190947 / var4 + 0.5);
-                  int var29 = (int)Math.floor(var26 * 0.15190947 / var4 + 0.5);
-                  if (var28 == 0 && var29 == 0) {
-                     this.method3641(var3, var1);
-                     return var1;
+                  double d8 = this.entry2.method3649(d, this.doubleValue7, d6, d3, d7 == 0.0);
+                  this.doubleValue4 = d7;
+                  this.doubleValue5 = d8;
+                  int n = (int)Math.floor(d7 * 0.15190947 / f + 0.5);
+                  int n2 = (int)Math.floor(d8 * 0.15190947 / f + 0.5);
+                  if (n == 0 && n2 == 0) {
+                     this.method3641(tickCount, rotation);
+                     return rotation;
                   } else {
                      doubleValue = 3.0;
-                     Rotation var30 = var1.method3140(var28 * var4, var29 * var4);
-                     System.out.println("yawCounts=" + var24 + " yawErr=" + var10 + " yawDrift=" + this.doubleValue6 + " lead=" + doubleValue);
-                     this.method3641(var3, var30);
-                     return var30;
+                     Rotation rotation3 = rotation.method3140(n * f, n2 * f);
+                     System.out.println("yawCounts=" + d7 + " yawErr=" + sign + " yawDrift=" + this.doubleValue6 + " lead=" + doubleValue);
+                     this.method3641(tickCount, rotation3);
+                     return rotation3;
                   }
                } else {
-                  this.method3640(var2.getId(), var3);
-                  this.method3641(var3, var1);
-                  return var1;
+                  this.method3640(livingEntity.getId(), tickCount);
+                  this.method3641(tickCount, rotation);
+                  return rotation;
                }
             } else {
-               this.method3641(var3, var1);
-               return var1;
+               this.method3641(tickCount, rotation);
+               return rotation;
             }
          }
       } else {
          this.reset();
-         return var1;
+         return rotation;
       }
    }
 
-   private static double method3637(double var0, double var2) {
-      double var4 = var0 * 0.7;
-      return Math.copySign(Math.min(Math.abs(var4), var2), var0);
+   private static double method3637(double sign, double d) {
+      double d2 = sign * 0.7;
+      return Math.copySign(Math.min(Math.abs(d2), d), sign);
    }
 
    public boolean method3638() {
       return true;
    }
 
-   private static double method3639(double var0, double var2) {
-      double var4 = 2369.8325061630458;
-      double var6 = var2 - var4 * Math.floor((var2 + 1184.9162530815229) / var4);
-      double var8 = Math.max(-900.0, Math.min(900.0, var6));
-      return 0.6 * var0 + 0.4 * var8;
+   private static double method3639(double d, double d2) {
+      double d3 = 2369.8325061630458;
+      double d4 = d2 - d3 * Math.floor((d2 + 1184.9162530815229) / d3);
+      double d5 = Math.max(-900.0, Math.min(900.0, d4));
+      return 0.6 * d + 0.4 * d5;
    }
 
-   private void method3640(int var1, int var2) {
-      long var3 = Integer.toUnsignedLong(var1) * -7046029254386353131L ^ Integer.toUnsignedLong(var2);
-      this.entry.method3642(var3 * 2L + 1L);
-      this.entry2.method3642(var3 * 2L + 2L);
-      this.intValue = var1;
+   private void method3640(int intValue, int tickCount) {
+      long l = Integer.toUnsignedLong(intValue) * -7046029254386353131L ^ Integer.toUnsignedLong(tickCount);
+      this.entry.method3642(l * 2L + 1L);
+      this.entry2.method3642(l * 2L + 2L);
+      this.intValue = intValue;
       this.intValue2 = Integer.MIN_VALUE;
       this.intValue3 = Integer.MIN_VALUE;
       this.rotation = null;
@@ -240,9 +240,9 @@ public final class SlewRotationMod extends Util22 {
       this.flag2 = false;
    }
 
-   private void method3641(int var1, Rotation var2) {
-      this.intValue3 = var1;
-      this.rotation = var2;
+   private void method3641(int tickCount, Rotation rotation) {
+      this.intValue3 = tickCount;
+      this.rotation = rotation;
    }
 
    public void reset() {
@@ -409,70 +409,70 @@ public final class SlewRotationMod extends Util22 {
       }
 
       private Data(
-         double var1,
-         double var3,
-         double var5,
-         double var7,
-         double var9,
-         double var11,
-         double var13,
-         double var15,
-         double var17,
-         double var19,
-         double var21,
-         double var23,
-         double var25,
-         double var27,
-         double var29,
-         double var31,
-         double var33,
-         double var35,
-         double var37,
-         double var39,
-         double var41,
-         double var43,
-         double var45,
-         double var47,
-         double var49,
-         double var51,
-         double var53,
-         int var55
+         double doubleValue,
+         double d,
+         double d2,
+         double d3,
+         double d4,
+         double d5,
+         double d6,
+         double d7,
+         double d8,
+         double d9,
+         double d10,
+         double d11,
+         double d12,
+         double d13,
+         double d14,
+         double d15,
+         double d16,
+         double d17,
+         double d18,
+         double d19,
+         double d20,
+         double d21,
+         double d22,
+         double d23,
+         double d24,
+         double d25,
+         double d26,
+         int intValue
       ) {
-         if (!(var27 > 0.0) || !(var27 <= 1.0)) {
+         if (!(d13 > 0.0) || !(d13 <= 1.0)) {
             throw new IllegalArgumentException("slew must lie in (0, 1]");
-         } else if (!(var25 > 0.0) || !(var25 <= 1.0)) {
+         } else if (!(d12 > 0.0) || !(d12 <= 1.0)) {
             throw new IllegalArgumentException("reviseProbability must lie in (0, 1]");
-         } else if (var47 > var45) {
+         } else if (d23 > d22) {
             throw new IllegalArgumentException("resting must be likelier when settled than when there is work");
-         } else if (!(var51 <= 0.0) && !(var49 < 1.0)) {
-            this.doubleValue = var1;
-            this.doubleValue2 = var3;
-            this.doubleValue3 = var5;
-            this.doubleValue4 = var7;
-            this.doubleValue5 = var9;
-            this.doubleValue6 = var11;
-            this.doubleValue7 = var13;
-            this.doubleValue8 = var15;
-            this.doubleValue9 = var17;
-            this.doubleValue10 = var19;
-            this.doubleValue11 = var21;
-            this.doubleValue12 = var23;
-            this.doubleValue13 = var25;
-            this.doubleValue14 = var27;
-            this.doubleValue15 = var29;
-            this.doubleValue16 = var31;
-            this.doubleValue17 = var33;
-            this.doubleValue18 = var35;
-            this.doubleValue19 = var37;
-            this.doubleValue20 = var39;
-            this.doubleValue21 = var41;
-            this.doubleValue22 = var43;
-            this.doubleValue23 = var45;
-            this.doubleValue24 = var47;
-            this.doubleValue25 = var49;
-            this.doubleValue26 = var51;
-            this.doubleValue27 = var53;
-            this.intValue = var55;
+         } else if (!(d25 <= 0.0) && !(d24 < 1.0)) {
+            this.doubleValue = doubleValue;
+            this.doubleValue2 = d;
+            this.doubleValue3 = d2;
+            this.doubleValue4 = d3;
+            this.doubleValue5 = d4;
+            this.doubleValue6 = d5;
+            this.doubleValue7 = d6;
+            this.doubleValue8 = d7;
+            this.doubleValue9 = d8;
+            this.doubleValue10 = d9;
+            this.doubleValue11 = d10;
+            this.doubleValue12 = d11;
+            this.doubleValue13 = d12;
+            this.doubleValue14 = d13;
+            this.doubleValue15 = d14;
+            this.doubleValue16 = d15;
+            this.doubleValue17 = d16;
+            this.doubleValue18 = d17;
+            this.doubleValue19 = d18;
+            this.doubleValue20 = d19;
+            this.doubleValue21 = d20;
+            this.doubleValue22 = d21;
+            this.doubleValue23 = d22;
+            this.doubleValue24 = d23;
+            this.doubleValue25 = d24;
+            this.doubleValue26 = d25;
+            this.doubleValue27 = d26;
+            this.intValue = intValue;
          } else {
             throw new IllegalArgumentException("bad rate or hold duration");
          }
@@ -603,13 +603,13 @@ public final class SlewRotationMod extends Util22 {
       private int intValue4;
       private Boolean booleanValue;
 
-      private Entry(SlewRotationMod.Data var1, long var2) {
-         this.data = var1;
-         this.method3642(var2);
+      private Entry(SlewRotationMod.Data data, long seed) {
+         this.data = data;
+         this.method3642(seed);
       }
 
-      private void method3642(long var1) {
-         this.random = new Random(var1);
+      private void method3642(long seed) {
+         this.random = new Random(seed);
          this.doubleValues = new double[0];
          this.intValue = 0;
          this.doubleValue = 0.0;
@@ -621,216 +621,216 @@ public final class SlewRotationMod extends Util22 {
       }
 
       private double method3643() {
-         double var1 = Math.max(1.0E-9, this.data.getDoubleValue14());
-         double var3 = this.data.getDoubleValue27() * this.data.getDoubleValue13() / var1;
-         return Math.min(this.data.getDoubleValue3(), var3);
+         double d = Math.max(1.0E-9, this.data.getDoubleValue14());
+         double d2 = this.data.getDoubleValue27() * this.data.getDoubleValue13() / d;
+         return Math.min(this.data.getDoubleValue3(), d2);
       }
 
-      private double method3644(double var1) {
-         return Double.isFinite(var1) && !(var1 <= 0.0)
-            ? Math.min(this.data.getDoubleValue20(), Math.max(this.data.getDoubleValue19(), this.data.getDoubleValue18() * var1))
+      private double method3644(double d) {
+         return Double.isFinite(d) && !(d <= 0.0)
+            ? Math.min(this.data.getDoubleValue20(), Math.max(this.data.getDoubleValue19(), this.data.getDoubleValue18() * d))
             : this.data.getDoubleValue19();
       }
 
-      private int method3645(double var1, double var3) {
-         double var5 = Math.max(2.0 * Math.abs(var3), 1.0);
-         double var7 = Math.log(Math.abs(var1) / var5 + 1.0) / Math.log(2.0);
-         long var9 = Math.round(1.6 + 4.2 * var7);
-         return (int)Math.max(2L, Math.min(10L, var9));
+      private int method3645(double d, double d2) {
+         double d3 = Math.max(2.0 * Math.abs(d2), 1.0);
+         double d4 = Math.log(Math.abs(d) / d3 + 1.0) / Math.log(2.0);
+         long l = Math.round(1.6 + 4.2 * d4);
+         return (int)Math.max(2L, Math.min(10L, l));
       }
 
-      private double method3646(double var1) {
-         double var3 = 2.125 - 0.446 * Math.log1p(Math.abs(var1));
+      private double method3646(double d) {
+         double d2 = 2.125 - 0.446 * Math.log1p(Math.abs(d));
          if (this.booleanValue != null) {
-            var3 += this.booleanValue ? 0.0625 : -0.0625;
+            d2 += this.booleanValue ? 0.0625 : -0.0625;
          }
 
-         return 1.0 / (1.0 + Math.exp(-Math.max(-30.0, Math.min(30.0, var3))));
+         return 1.0 / (1.0 + Math.exp(-Math.max(-30.0, Math.min(30.0, d2))));
       }
 
-      private double method3647(double var1) {
-         double var3 = this.data.getDoubleValue4();
-         double var5 = Math.abs(var1);
-         return !(var3 <= 0.0) && !(var5 <= var3) ? Math.pow(var3 / var5, this.data.getDoubleValue5()) : 1.0;
+      private double method3647(double d) {
+         double d2 = this.data.getDoubleValue4();
+         double d3 = Math.abs(d);
+         return !(d2 <= 0.0) && !(d3 <= d2) ? Math.pow(d2 / d3, this.data.getDoubleValue5()) : 1.0;
       }
 
-      private void method3648(double var1, double var3, double var5) {
-         double var7 = var1 * this.data.getDoubleValue8();
-         int var9 = this.method3645(var7, var3);
-         double var10 = var7 + this.data.getDoubleValue9() * var5 * var9;
-         double var12 = this.data.getDoubleValue10();
-         double var14 = this.method3647(var5);
-         if (var14 < 1.0) {
-            var12 = Math.min(var12, this.data.getDoubleValue6() * var14 * 2.0);
+      private void method3648(double sign, double d, double d2) {
+         double d3 = sign * this.data.getDoubleValue8();
+         int n = this.method3645(d3, d);
+         double copySign = d3 + this.data.getDoubleValue9() * d2 * n;
+         double d4 = this.data.getDoubleValue10();
+         double d5 = this.method3647(d2);
+         if (d5 < 1.0) {
+            d4 = Math.min(d4, this.data.getDoubleValue6() * d5 * 2.0);
          }
 
-         var10 = Math.copySign(Math.min(Math.abs(var10), var12), var10);
-         double[] var16 = method3651(var10 * 1.0, var9 + 1);
-         this.doubleValues = new double[var9];
-         System.arraycopy(var16, 0, this.doubleValues, 0, var9);
+         copySign = Math.copySign(Math.min(Math.abs(copySign), d4), copySign);
+         double[] doubles = method3651(copySign * 1.0, n + 1);
+         this.doubleValues = new double[n];
+         System.arraycopy(doubles, 0, this.doubleValues, 0, n);
          this.intValue = 0;
       }
 
-      private double method3649(double var1, double var3, double var5, double var7, boolean var9) {
+      private double method3649(double sign, double d, double d2, double d3, boolean flag) {
          if (this.intValue2 > 0) {
             this.intValue2--;
             this.doubleValue = 0.0;
             this.doubleValue2 = 0.0;
             return 0.0;
          } else if (this.intValue < this.doubleValues.length) {
-            double var25 = this.doubleValues[this.intValue++];
-            double var27 = 0.233125 * this.random.nextGaussian();
-            var27 = Math.max(-0.424375, Math.min(0.424375, var27));
-            var25 *= 1.0 + var27;
+            double doubleValue = this.doubleValues[this.intValue++];
+            double d4 = 0.233125 * this.random.nextGaussian();
+            d4 = Math.max(-0.424375, Math.min(0.424375, d4));
+            doubleValue *= 1.0 + d4;
             if (this.intValue >= this.doubleValues.length) {
                this.booleanValue = Boolean.TRUE;
-               if (Math.abs(var3) >= 38.0) {
+               if (Math.abs(d) >= 38.0) {
                   this.doubleValue = 0.0;
                   this.doubleValue2 = 0.0;
                }
             }
 
-            return this.method3650(var25, var7, var3);
+            return this.method3650(doubleValue, d3, d);
          } else {
-            double var10 = this.method3644(var5);
-            boolean var12 = Math.abs(var1) < var10 && Math.abs(var3) < this.data.getDoubleValue21();
-            if (!var12 && this.random.nextDouble() < this.method3646(var3)) {
-               double var13 = var1 - Math.copySign(Math.min(Math.abs(var1), var10), var1);
-               if (Math.abs(var13) >= 1.0) {
-                  this.method3648(var1, var5, var3);
-                  return this.method3649(var1, var3, var5, var7, var9);
+            double d4 = this.method3644(d2);
+            boolean flag2 = Math.abs(sign) < d4 && Math.abs(d) < this.data.getDoubleValue21();
+            if (!flag2 && this.random.nextDouble() < this.method3646(d)) {
+               double d5 = sign - Math.copySign(Math.min(Math.abs(sign), d4), sign);
+               if (Math.abs(d5) >= 1.0) {
+                  this.method3648(sign, d2, d);
+                  return this.method3649(sign, d, d2, d3, flag);
                }
             }
 
             this.booleanValue = Boolean.FALSE;
-            if (var12) {
+            if (flag2) {
                this.doubleValue = this.doubleValue * (1.0 - this.data.getDoubleValue14());
             } else if (this.random.nextDouble() < Math.min(1.0, this.data.getDoubleValue13())) {
-               double var29 = Math.min(this.method3643(), this.data.getDoubleValue() + this.data.getDoubleValue2() * Math.abs(var3));
-               double var15 = var1 - Math.copySign(Math.min(Math.abs(var1), var10), var1);
-               double var17 = var29 * var15 * (1.0 + this.data.getDoubleValue17());
-               var17 += this.data.getDoubleValue12() * var3;
-               double var19 = this.data.getDoubleValue10();
-               double var21 = this.method3647(var3);
-               if (var21 < 1.0) {
-                  var19 = Math.min(var19, this.data.getDoubleValue6() * var21);
+               double d5 = Math.min(this.method3643(), this.data.getDoubleValue() + this.data.getDoubleValue2() * Math.abs(d));
+               double d6 = sign - Math.copySign(Math.min(Math.abs(sign), d4), sign);
+               double copySign = d5 * d6 * (1.0 + this.data.getDoubleValue17());
+               copySign += this.data.getDoubleValue12() * d;
+               double d7 = this.data.getDoubleValue10();
+               double d8 = this.method3647(d);
+               if (d8 < 1.0) {
+                  d7 = Math.min(d7, this.data.getDoubleValue6() * d8);
                }
 
-               var17 = Math.copySign(Math.min(Math.abs(var17), var19), var17);
+               copySign = Math.copySign(Math.min(Math.abs(copySign), d7), copySign);
                if (this.data.getDoubleValue15() > 0.0) {
-                  double var23 = this.data.getDoubleValue15() * this.random.nextGaussian();
-                  var23 = Math.max(-this.data.getDoubleValue16(), Math.min(this.data.getDoubleValue16(), var23));
-                  var17 *= 1.0 + var23;
+                  double d9 = this.data.getDoubleValue15() * this.random.nextGaussian();
+                  d9 = Math.max(-this.data.getDoubleValue16(), Math.min(this.data.getDoubleValue16(), d9));
+                  copySign *= 1.0 + d9;
                }
 
-               var17 = Math.max(-this.data.getDoubleValue26(), Math.min(this.data.getDoubleValue26(), var17));
-               this.doubleValue = this.doubleValue + this.data.getDoubleValue14() * (var17 - this.doubleValue);
+               copySign = Math.max(-this.data.getDoubleValue26(), Math.min(this.data.getDoubleValue26(), copySign));
+               this.doubleValue = this.doubleValue + this.data.getDoubleValue14() * (copySign - this.doubleValue);
             }
 
-            double var30 = var12 ? this.data.getDoubleValue23() : this.data.getDoubleValue24();
-            if (var9) {
-               var30 = Math.max(var30, this.data.getDoubleValue22());
+            double d5 = flag2 ? this.data.getDoubleValue23() : this.data.getDoubleValue24();
+            if (flag) {
+               d5 = Math.max(d5, this.data.getDoubleValue22());
             }
 
-            double var31 = this.method3647(var3);
-            if (this.data.getDoubleValue7() > var30) {
-               var30 += (1.0 - var31) * (this.data.getDoubleValue7() - var30);
+            double d6 = this.method3647(d);
+            if (this.data.getDoubleValue7() > d5) {
+               d5 += (1.0 - d6) * (this.data.getDoubleValue7() - d5);
             }
 
-            if (var30 > 0.0 && this.random.nextDouble() < var30) {
-               double var35 = Math.max(1.0, this.data.getDoubleValue25());
-               double var36 = -Math.log1p(-this.random.nextDouble()) * var35;
-               this.intValue2 = Math.max(1, (int)Math.round(var36));
+            if (d5 > 0.0 && this.random.nextDouble() < d5) {
+               double d7 = Math.max(1.0, this.data.getDoubleValue25());
+               double d8 = -Math.log1p(-this.random.nextDouble()) * d7;
+               this.intValue2 = Math.max(1, (int)Math.round(d8));
                this.doubleValue = 0.0;
                this.doubleValue2 = 0.0;
                return 0.0;
             } else {
-               return this.method3650(this.doubleValue, var7, var3);
+               return this.method3650(this.doubleValue, d3, d);
             }
          }
       }
 
-      private double method3650(double var1, double var3, double var5) {
-         this.doubleValue2 = this.doubleValue2 + (var1 + this.data.getDoubleValue11() * var3);
-         double var7 = this.data.getDoubleValue26();
-         double var9 = this.method3647(var5);
-         if (var9 < 1.0) {
-            var7 = Math.min(var7, this.data.getDoubleValue6() * var9);
+      private double method3650(double doubleValue, double d, double d2) {
+         this.doubleValue2 = this.doubleValue2 + (doubleValue + this.data.getDoubleValue11() * d);
+         double d3 = this.data.getDoubleValue26();
+         double d4 = this.method3647(d2);
+         if (d4 < 1.0) {
+            d3 = Math.min(d3, this.data.getDoubleValue6() * d4);
          }
 
-         double var11 = Math.max(-var7, Math.min(var7, this.doubleValue2));
-         double var13 = Math.floor(var11 + 0.5);
-         if (var13 != 0.0 && this.intValue3 >= this.data.getIntValue()) {
+         double d5 = Math.max(-d3, Math.min(d3, this.doubleValue2));
+         double d6 = Math.floor(d5 + 0.5);
+         if (d6 != 0.0 && this.intValue3 >= this.data.getIntValue()) {
             this.doubleValue = 0.0;
             this.doubleValue2 = 0.0;
             this.intValue3 = 0;
             this.intValue4 = 0;
             return 0.0;
          } else {
-            if (var13 == 0.0) {
+            if (d6 == 0.0) {
                this.intValue3 = 0;
-            } else if (this.intValue4 != 0 && var13 > 0.0 != this.intValue4 > 0) {
+            } else if (this.intValue4 != 0 && d6 > 0.0 != this.intValue4 > 0) {
                this.intValue3 = 1;
             } else {
                this.intValue3++;
             }
 
-            this.intValue4 = var13 > 0.0 ? 1 : (var13 < 0.0 ? -1 : 0);
-            this.doubleValue2 -= var13;
-            return var13;
+            this.intValue4 = d6 > 0.0 ? 1 : (d6 < 0.0 ? -1 : 0);
+            this.doubleValue2 -= d6;
+            return d6;
          }
       }
 
-      private static double[] method3651(double var0, int var2) {
-         double[][] var3 = new double[var2 + 1][];
-         var3[0] = new double[]{1.0, 0.0, 0.0, 1.0};
+      private static double[] method3651(double d, int n) {
+         double[][] doubleses = new double[n + 1][];
+         doubleses[0] = new double[]{1.0, 0.0, 0.0, 1.0};
 
-         for (int var4 = 1; var4 <= var2; var4++) {
-            var3[var4] = new double[]{1.0, var4, 0.0, 1.0};
+         for (int i = 1; i <= n; i++) {
+            doubleses[i] = new double[]{1.0, i, 0.0, 1.0};
          }
 
-         double[] var13 = new double[]{0.25, 0.5, 0.5, 1.0};
-         double[][] var5 = new double[var2 + 1][];
+         double[] doubles = new double[]{0.25, 0.5, 0.5, 1.0};
+         double[][] doubleses2 = new double[n + 1][];
 
-         for (int var6 = 0; var6 <= var2; var6++) {
-            double[] var7 = new double[]{0.0, 0.0, 0.0, 0.0};
+         for (int i = 0; i <= n; i++) {
+            double[] doubles2 = new double[]{0.0, 0.0, 0.0, 0.0};
 
-            for (int var8 = 0; var8 < var6; var8++) {
-               double[] var9 = var3[var2 - var6 + var8];
-               double[] var10 = new double[]{var9[0], var9[2], var9[1], var9[3]};
-               double[] var11 = method3652(method3652(var3[var8], var13), var10);
+            for (int j = 0; j < i; j++) {
+               double[] doubles3 = doubleses[n - i + j];
+               double[] doubles4 = new double[]{doubles3[0], doubles3[2], doubles3[1], doubles3[3]};
+               double[] doubles5 = method3652(method3652(doubleses[j], doubles), doubles4);
 
-               for (int var12 = 0; var12 < 4; var12++) {
-                  var7[var12] += var11[var12];
+               for (int k = 0; k < 4; k++) {
+                  doubles2[k] += doubles5[k];
                }
             }
 
-            var5[var6] = var7;
+            doubleses2[i] = doubles2;
          }
 
-         double[] var14 = var5[var2];
-         double var15 = var14[0] * var14[3] - var14[1] * var14[2];
-         if (Math.abs(var15) < 1.0E-12) {
-            return new double[]{var0};
+         double[] doubles2 = doubleses2[n];
+         double d2 = doubles2[0] * doubles2[3] - doubles2[1] * doubles2[2];
+         if (Math.abs(d2) < 1.0E-12) {
+            return new double[]{d};
          } else {
-            double[] var16 = new double[]{var14[3] / var15, -var14[1] / var15, -var14[2] / var15, var14[0] / var15};
-            double[] var17 = new double[var2];
+            double[] doubles3 = new double[]{doubles2[3] / d2, -doubles2[1] / d2, -doubles2[2] / d2, doubles2[0] / d2};
+            double[] doubles4 = new double[n];
 
-            for (int var18 = 1; var18 <= var2; var18++) {
-               double[] var19 = method3652(var5[var18], var16);
-               var17[var18 - 1] = var19[2] * var0;
+            for (int i = 1; i <= n; i++) {
+               double[] doubles5 = method3652(doubleses2[i], doubles3);
+               doubles4[i - 1] = doubles5[2] * d;
             }
 
-            return var17;
+            return doubles4;
          }
       }
 
-      private static double[] method3652(double[] var0, double[] var1) {
+      private static double[] method3652(double[] doubles, double[] doubles2) {
          return new double[]{
-            var0[0] * var1[0] + var0[1] * var1[2],
-            var0[0] * var1[1] + var0[1] * var1[3],
-            var0[2] * var1[0] + var0[3] * var1[2],
-            var0[2] * var1[1] + var0[3] * var1[3]
+            doubles[0] * doubles2[0] + doubles[1] * doubles2[2],
+            doubles[0] * doubles2[1] + doubles[1] * doubles2[3],
+            doubles[2] * doubles2[0] + doubles[3] * doubles2[2],
+            doubles[2] * doubles2[1] + doubles[3] * doubles2[3]
          };
       }
    }

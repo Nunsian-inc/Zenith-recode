@@ -29,13 +29,13 @@ public class StyleManager {
    }
 
    @EventTarget
-   public void eventRender(ScreenRenderEvent var1) {
+   public void eventRender(ScreenRenderEvent event) {
       this.colorCycleIcon.update();
    }
 
    public GlowColor getColorCycleIconGradient() {
-      ZenithStyle var1 = this.getCurrentStyle();
-      return var1 == null ? GlowColor.method8097(ZenithColor.INSTANCE) : this.colorCycleIcon.method807(var1.getPrimaryColor().getZenithColor());
+      ZenithStyle currentStyle = this.getCurrentStyle();
+      return currentStyle == null ? GlowColor.method8097(ZenithColor.INSTANCE) : this.colorCycleIcon.method807(currentStyle.getPrimaryColor().getZenithColor());
    }
 
    public ZenithStyle getCurrentStyle() {
@@ -47,91 +47,91 @@ public class StyleManager {
    }
 
    private List<ZenithStyle> createDefaultStyles() {
-      ArrayList<ZenithStyle> var1 = new ArrayList<>();
-      var1.add(this.createDefaultStyle("Zenith", "#9AA8FF", "#D1BBFD", "#0B0B147A"));
-      var1.add(this.createDefaultStyle("Amethyst", "#CF96FB", "#F5ADFA", "#0E08117A"));
-      var1.add(this.createDefaultStyle("Synthwave", "#FF83D1", "#BFC1FC", "#1609127A"));
-      var1.add(this.createDefaultStyle("Rosewood", "#F98EA3", "#F8B6A5", "#140A0C7A"));
-      var1.add(this.createDefaultStyle("Ember", "#FF9151", "#FABB3C", "#130A067A"));
-      var1.add(this.createDefaultStyle("Goldleaf", "#D1A917", "#CACC24", "#120F087A"));
-      var1.add(this.createDefaultStyle("Toxic", "#7BC005", "#37E30C", "#0D12087A"));
-      var1.add(this.createDefaultStyle("Verdant", "#19C770", "#31DEB5", "#08110D7A"));
-      var1.add(this.createDefaultStyle("Lagoon", "#1FC0C0", "#50DBBB", "#0811117A"));
-      var1.add(this.createDefaultStyle("Glacier", "#58B5F8", "#B0C5F9", "#0A10157A"));
-      var1.add(this.createDefaultStyle("Graphite", "#A9ADBB", "#C5C4CF", "#0E0E117A"));
-      var1.add(this.createPorcelainStyle());
-      return var1;
+      ArrayList<ZenithStyle> zenithStyles = new ArrayList<>();
+      zenithStyles.add(this.createDefaultStyle("Zenith", "#9AA8FF", "#D1BBFD", "#0B0B147A"));
+      zenithStyles.add(this.createDefaultStyle("Amethyst", "#CF96FB", "#F5ADFA", "#0E08117A"));
+      zenithStyles.add(this.createDefaultStyle("Synthwave", "#FF83D1", "#BFC1FC", "#1609127A"));
+      zenithStyles.add(this.createDefaultStyle("Rosewood", "#F98EA3", "#F8B6A5", "#140A0C7A"));
+      zenithStyles.add(this.createDefaultStyle("Ember", "#FF9151", "#FABB3C", "#130A067A"));
+      zenithStyles.add(this.createDefaultStyle("Goldleaf", "#D1A917", "#CACC24", "#120F087A"));
+      zenithStyles.add(this.createDefaultStyle("Toxic", "#7BC005", "#37E30C", "#0D12087A"));
+      zenithStyles.add(this.createDefaultStyle("Verdant", "#19C770", "#31DEB5", "#08110D7A"));
+      zenithStyles.add(this.createDefaultStyle("Lagoon", "#1FC0C0", "#50DBBB", "#0811117A"));
+      zenithStyles.add(this.createDefaultStyle("Glacier", "#58B5F8", "#B0C5F9", "#0A10157A"));
+      zenithStyles.add(this.createDefaultStyle("Graphite", "#A9ADBB", "#C5C4CF", "#0E0E117A"));
+      zenithStyles.add(this.createPorcelainStyle());
+      return zenithStyles;
    }
 
-   private ZenithStyle createDefaultStyle(String var1, String var2, String var3, String var4) {
-      ZenithStyle var5 = new ZenithStyle(var1);
-      var5.getPrimaryColor().setZenithColor(new ZenithColor(var2));
-      var5.getSecondaryPrimaryColor().setZenithColor(new ZenithColor(var3));
-      var5.setDefaultsFromGuiStyle(new ZenithColor(var4));
-      return var5;
+   private ZenithStyle createDefaultStyle(String name, String str, String str2, String str3) {
+      ZenithStyle zenithStyle = new ZenithStyle(name);
+      zenithStyle.getPrimaryColor().setZenithColor(new ZenithColor(str));
+      zenithStyle.getSecondaryPrimaryColor().setZenithColor(new ZenithColor(str2));
+      zenithStyle.setDefaultsFromGuiStyle(new ZenithColor(str3));
+      return zenithStyle;
    }
 
    private ZenithStyle createPorcelainStyle() {
-      ZenithStyle var1 = new ZenithStyle("Porcelain");
-      var1.getPrimaryColor().setZenithColor(new ZenithColor("#45618A"));
-      var1.getSecondaryPrimaryColor().setZenithColor(new ZenithColor("#6E86A8"));
-      var1.setDefaultsFromGuiStyle();
-      var1.getGlowColor1().setZenithColor(new ZenithColor("#45618A3D"));
-      var1.getGlowColor2().setZenithColor(new ZenithColor("#6E86A814"));
-      var1.getLeftBackground().setZenithColor(new ZenithColor("#F4F6FAC4"));
-      var1.getRightBackground().setZenithColor(new ZenithColor("#FAFBFDE0"));
-      var1.getPanelLeftBackground().setZenithColor(new ZenithColor("#F4F6FAC4"));
-      var1.getSurfaceEnableBackground().setZenithColor(new ZenithColor("#FFFFFF8F"));
-      var1.getHeaderDisableBackground().setZenithColor(new ZenithColor("#E9EDF47A"));
-      var1.getSurfaceDisableBackground().setZenithColor(new ZenithColor("#EDF1F76B"));
-      var1.getFieldSurfaceBackground().setZenithColor(new ZenithColor("#1E293B0F"));
-      var1.getFieldBorder().setZenithColor(new ZenithColor("#1E293B24"));
-      var1.getDisableActiveBg().setZenithColor(new ZenithColor("#64748B2E"));
-      var1.getHudBackground().setZenithColor(new ZenithColor("#E7ECF5D6"));
-      var1.getHeaderHudBackground().setZenithColor(new ZenithColor("#D3DCE9D6"));
-      var1.getTextEnable().setZenithColor(new ZenithColor("#1E293B"));
-      var1.getTextSecondary().setZenithColor(new ZenithColor("#0F172AC4"));
-      var1.getTextTertiary().setZenithColor(new ZenithColor("#33415594"));
-      var1.getFriendColor().setZenithColor(new ZenithColor("#0E7A50"));
-      var1.getGlareColor().setZenithColor(new ZenithColor("#1E293B1F"));
-      var1.getHeartIcon().setZenithColor(new ZenithColor("#C93F58"));
-      var1.getHeartActiveBg().setZenithColor(new ZenithColor("#C93F5829"));
-      return var1;
+      ZenithStyle zenithStyle = new ZenithStyle("Porcelain");
+      zenithStyle.getPrimaryColor().setZenithColor(new ZenithColor("#45618A"));
+      zenithStyle.getSecondaryPrimaryColor().setZenithColor(new ZenithColor("#6E86A8"));
+      zenithStyle.setDefaultsFromGuiStyle();
+      zenithStyle.getGlowColor1().setZenithColor(new ZenithColor("#45618A3D"));
+      zenithStyle.getGlowColor2().setZenithColor(new ZenithColor("#6E86A814"));
+      zenithStyle.getLeftBackground().setZenithColor(new ZenithColor("#F4F6FAC4"));
+      zenithStyle.getRightBackground().setZenithColor(new ZenithColor("#FAFBFDE0"));
+      zenithStyle.getPanelLeftBackground().setZenithColor(new ZenithColor("#F4F6FAC4"));
+      zenithStyle.getSurfaceEnableBackground().setZenithColor(new ZenithColor("#FFFFFF8F"));
+      zenithStyle.getHeaderDisableBackground().setZenithColor(new ZenithColor("#E9EDF47A"));
+      zenithStyle.getSurfaceDisableBackground().setZenithColor(new ZenithColor("#EDF1F76B"));
+      zenithStyle.getFieldSurfaceBackground().setZenithColor(new ZenithColor("#1E293B0F"));
+      zenithStyle.getFieldBorder().setZenithColor(new ZenithColor("#1E293B24"));
+      zenithStyle.getDisableActiveBg().setZenithColor(new ZenithColor("#64748B2E"));
+      zenithStyle.getHudBackground().setZenithColor(new ZenithColor("#E7ECF5D6"));
+      zenithStyle.getHeaderHudBackground().setZenithColor(new ZenithColor("#D3DCE9D6"));
+      zenithStyle.getTextEnable().setZenithColor(new ZenithColor("#1E293B"));
+      zenithStyle.getTextSecondary().setZenithColor(new ZenithColor("#0F172AC4"));
+      zenithStyle.getTextTertiary().setZenithColor(new ZenithColor("#33415594"));
+      zenithStyle.getFriendColor().setZenithColor(new ZenithColor("#0E7A50"));
+      zenithStyle.getGlareColor().setZenithColor(new ZenithColor("#1E293B1F"));
+      zenithStyle.getHeartIcon().setZenithColor(new ZenithColor("#C93F58"));
+      zenithStyle.getHeartActiveBg().setZenithColor(new ZenithColor("#C93F5829"));
+      return zenithStyle;
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
 
-      for (ZenithStyle var4 : this.styles) {
-         JsonObject var5 = new JsonObject();
-         var4.safe(var5);
-         var2.add(var5);
+      for (ZenithStyle style : this.styles) {
+         JsonObject json2 = new JsonObject();
+         style.safe(json2);
+         jsonArray.add(json2);
       }
 
-      var1.add("array", var2);
-      ZenithStyle var6 = this.getCurrentStyle();
-      if (var6 != null) {
-         var1.addProperty("select", var6.getName());
+      json.add("array", jsonArray);
+      ZenithStyle currentStyle = this.getCurrentStyle();
+      if (currentStyle != null) {
+         json.addProperty("select", currentStyle.getName());
       }
 
-      return var1;
+      return json;
    }
 
-   public void load(JsonObject var1) {
+   public void load(JsonObject jsonObject) {
       try {
-         if (var1.has("select")) {
-            this.currentStyle = this.getStyleByName(var1.get("select").getAsString());
+         if (jsonObject.has("select")) {
+            this.currentStyle = this.getStyleByName(jsonObject.get("select").getAsString());
          }
 
-         if (var1.has("array")) {
-            for (JsonElement var4 : var1.getAsJsonArray("array")) {
-               if (var4.isJsonObject()) {
-                  JsonObject var5 = var4.getAsJsonObject();
-                  if (var5.has("name")) {
-                     ZenithStyle var6 = this.getStyleByName(var5.get("name").getAsString());
-                     if (var6 != null) {
-                        var6.load(var5);
+         if (jsonObject.has("array")) {
+            for (JsonElement json : jsonObject.getAsJsonArray("array")) {
+               if (json.isJsonObject()) {
+                  JsonObject jsonObject2 = json.getAsJsonObject();
+                  if (jsonObject2.has("name")) {
+                     ZenithStyle styleByName = this.getStyleByName(jsonObject2.get("name").getAsString());
+                     if (styleByName != null) {
+                        styleByName.load(jsonObject2);
                      }
                   }
                }
@@ -141,17 +141,17 @@ public class StyleManager {
          if (this.currentStyle == null && !this.styles.isEmpty()) {
             this.currentStyle = this.styles.getFirst();
          }
-      } catch (Exception var7) {
+      } catch (Exception e) {
       }
    }
 
-   public ZenithStyle getStyleByName(String var1) {
-      if (var1 == null) {
+   public ZenithStyle getStyleByName(String string) {
+      if (string == null) {
          return null;
       } else {
-         for (ZenithStyle var3 : this.styles) {
-            if (var1.equals(var3.getName())) {
-               return var3;
+         for (ZenithStyle style : this.styles) {
+            if (string.equals(style.getName())) {
+               return style;
             }
          }
 
@@ -163,14 +163,14 @@ public class StyleManager {
       return GlowColor.method8096(this.getClientColor(0), this.getClientColor(90), this.getClientColor(180), this.getClientColor(270));
    }
 
-   public ZenithColor getClientColor(int var1) {
+   public ZenithColor getClientColor(int intValue) {
       return ColorUtils.method6435(
-         4, var1, this.getCurrentStyle().getPrimaryColor().getZenithColor(), this.getCurrentStyle().getSecondaryPrimaryColor().getZenithColor()
+         4, intValue, this.getCurrentStyle().getPrimaryColor().getZenithColor(), this.getCurrentStyle().getSecondaryPrimaryColor().getZenithColor()
       );
    }
 
-   public ZenithColor getGlowColor(int var1) {
-      return ColorUtils.method6435(4, var1, this.getCurrentStyle().getGlowColor1().getZenithColor(), this.getCurrentStyle().getGlowColor2().getZenithColor());
+   public ZenithColor getGlowColor(int intValue) {
+      return ColorUtils.method6435(4, intValue, this.getCurrentStyle().getGlowColor1().getZenithColor(), this.getCurrentStyle().getGlowColor2().getZenithColor());
    }
 
    public GlowColor getGlowColor() {
@@ -188,7 +188,7 @@ public class StyleManager {
    }
 
    @Generated
-   public void setCurrentStyle(ZenithStyle var1) {
-      this.currentStyle = var1;
+   public void setCurrentStyle(ZenithStyle currentStyle) {
+      this.currentStyle = currentStyle;
    }
 }

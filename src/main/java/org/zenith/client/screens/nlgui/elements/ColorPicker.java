@@ -62,18 +62,18 @@ public final class ColorPicker {
    private BoundsData pasteBounds;
    private BoundsData resetBounds;
 
-   public ColorPicker(ColorSetting var1) {
-      this.setting = var1;
+   public ColorPicker(ColorSetting setting) {
+      this.setting = setting;
       this.syncFromSetting();
    }
 
-   public float height(float var1) {
-      float var2 = this.paletteRows(var1);
-      return 4.0F + this.fieldHeight(var1) + 5.0F + 4.0F + 6.0F + 4.0F + 6.0F + 11.0F + 6.0F + 8.0F + var2 * 7.0F + (var2 - 1.0F) * 2.0F + 6.0F;
+   public float height(float pickerWidth) {
+      float paletteRows = this.paletteRows(pickerWidth);
+      return 4.0F + this.fieldHeight(pickerWidth) + 5.0F + 4.0F + 6.0F + 4.0F + 6.0F + 11.0F + 6.0F + 8.0F + paletteRows * 7.0F + (paletteRows - 1.0F) * 2.0F + 6.0F;
    }
 
-   public boolean contains(double var1, double var3) {
-      return (this.bounds != null && this.bounds.contains(var1, var3));
+   public boolean contains(double lastClickX, double lastClickY) {
+      return (this.bounds != null && this.bounds.contains(lastClickX, lastClickY));
    }
 
    public void remember() {
@@ -85,236 +85,236 @@ public final class ColorPicker {
       this.drag = ColorPicker.Drag.NONE;
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7) {
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null && !(var7 <= 0.001F) && !(var6 <= 0.0F)) {
+   public void render(MenuDrawContext menuDrawContext, float mouseX, float mouseY, float floatValue, float y, float pickerWidth, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null && !(previewAlpha <= 0.001F) && !(pickerWidth <= 0.0F)) {
          this.ensureField();
          this.syncFromSetting();
-         this.applyDrag(var2, var3);
-         this.bounds = new BoundsData(var4, var5, var6, this.height(var6));
-         ZenithColor var9 = this.setting.getZenithColor();
-         ZenithColor var10 = var8.getFieldBorder().getZenithColor().method7294(var7 * 4.0F);
-         ZenithColor var11 = var8.getTextEnable().getZenithColor().method7294(var7);
-         ZenithColor var12 = var8.getTextTertiary().getZenithColor().method7294(var7);
-         float var13 = this.fieldHeight(var6);
-         float var14 = var5 + 4.0F;
-         this.renderField(var1, var4, var14, var6, var13, var10, var7);
-         float var15 = var14 + var13 + 5.0F;
-         this.renderHueBar(var1, var4, var15, var6, var7);
-         float var16 = var15 + 4.0F + 6.0F;
-         this.renderAlphaBar(var1, var4, var16, var6, var9, var7);
-         float var17 = var16 + 4.0F + 6.0F;
-         this.renderHexRow(var1, var2, var3, var4, var17, var6, var8, var11, var12, var10, var7);
-         float var18 = var17 + 11.0F + 6.0F;
-         this.renderCaption(var1, var4, var18, var6, var8, var7);
-         this.renderPalette(var1, var4, var18 + 8.0F, var6, var9, var8, var10, var7);
-         this.syncFromField(var9);
+         this.applyDrag(mouseX, mouseY);
+         this.bounds = new BoundsData(floatValue, y, pickerWidth, this.height(pickerWidth));
+         ZenithColor zenithColor = this.setting.getZenithColor();
+         ZenithColor zenithColor2 = currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 4.0F);
+         ZenithColor zenithColor3 = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor4 = currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha);
+         float fieldHeight = this.fieldHeight(pickerWidth);
+         float f = y + 4.0F;
+         this.renderField(menuDrawContext, floatValue, f, pickerWidth, fieldHeight, zenithColor2, previewAlpha);
+         float y2 = f + fieldHeight + 5.0F;
+         this.renderHueBar(menuDrawContext, floatValue, y2, pickerWidth, previewAlpha);
+         float y3 = y2 + 4.0F + 6.0F;
+         this.renderAlphaBar(menuDrawContext, floatValue, y3, pickerWidth, zenithColor, previewAlpha);
+         float y4 = y3 + 4.0F + 6.0F;
+         this.renderHexRow(menuDrawContext, mouseX, mouseY, floatValue, y4, pickerWidth, currentStyle, zenithColor3, zenithColor4, zenithColor2, previewAlpha);
+         float centeredTextY = y4 + 11.0F + 6.0F;
+         this.renderCaption(menuDrawContext, floatValue, centeredTextY, pickerWidth, currentStyle, previewAlpha);
+         this.renderPalette(menuDrawContext, floatValue, centeredTextY + 8.0F, pickerWidth, zenithColor, currentStyle, zenithColor2, previewAlpha);
+         this.syncFromField(zenithColor);
       }
    }
 
-   private void renderField(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithColor var6, float var7) {
-      this.fieldBounds = new BoundsData(var2, var3, var4, var5);
-      ZenithColor var8 = ZenithColor.method7297(this.hue, 1.0F, 1.0F).method7294(var7);
-      ZenithColor var9 = ZenithColor.INSTANCE.method7294(var7);
-      ZenithColor var10 = ZenithColor.INSTANCE2.method7293(0);
-      ZenithColor var11 = ZenithColor.INSTANCE2.method7294(var7);
-      var1.drawRoundedRect(var2, var3, var4, var5, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(var9, var9, var8, var8));
-      var1.drawRoundedRect(var2, var3, var4, var5, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(var10, var11, var10, var11));
-      var1.drawRoundedBorder(var2, var3, var4, var5, 0.1F, ProxyDotRadiusData.INSTANCE, var6);
-      this.drawHandle(var1, var2 + var4 * this.saturation, var3 + var5 * (1.0F - this.brightness), var7);
+   private void renderField(MenuDrawContext menuDrawContext, float floatValue, float y, float pickerWidth, float fieldHeight, ZenithColor zenithColor, float previewAlpha) {
+      this.fieldBounds = new BoundsData(floatValue, y, pickerWidth, fieldHeight);
+      ZenithColor zenithColor3 = ZenithColor.method7297(this.hue, 1.0F, 1.0F).method7294(previewAlpha);
+      ZenithColor clientColor = ZenithColor.INSTANCE.method7294(previewAlpha);
+      ZenithColor clientColor2 = ZenithColor.INSTANCE2.method7293(0);
+      ZenithColor zenithColor2 = ZenithColor.INSTANCE2.method7294(previewAlpha);
+      menuDrawContext.drawRoundedRect(floatValue, y, pickerWidth, fieldHeight, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(clientColor, clientColor, zenithColor3, zenithColor3));
+      menuDrawContext.drawRoundedRect(floatValue, y, pickerWidth, fieldHeight, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(clientColor2, zenithColor2, clientColor2, zenithColor2));
+      menuDrawContext.drawRoundedBorder(floatValue, y, pickerWidth, fieldHeight, 0.1F, ProxyDotRadiusData.INSTANCE, zenithColor);
+      this.drawHandle(menuDrawContext, floatValue + pickerWidth * this.saturation, y + fieldHeight * (1.0F - this.brightness), previewAlpha);
    }
 
-   private void renderHueBar(MenuDrawContext var1, float var2, float var3, float var4, float var5) {
-      this.hueBounds = new BoundsData(var2, var3, var4, 4.0F);
-      float var6 = var4 / 6.0F;
+   private void renderHueBar(MenuDrawContext menuDrawContext, float floatValue, float y, float pickerWidth, float previewAlpha) {
+      this.hueBounds = new BoundsData(floatValue, y, pickerWidth, 4.0F);
+      float width = pickerWidth / 6.0F;
 
-      for (int var7 = 0; var7 < 6; var7++) {
-         ZenithColor var8 = ZenithColor.method7297(var7 / 6.0F, 1.0F, 1.0F).method7294(var5);
-         ZenithColor var9 = ZenithColor.method7297((var7 + 1) / 6.0F, 1.0F, 1.0F).method7294(var5);
-         var1.drawRoundedRect(var2 + var7 * var6, var3, var6, 4.0F, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(var8, var8, var9, var9));
+      for (int i = 0; i < 6; i++) {
+         ZenithColor clientColor = ZenithColor.method7297(i / 6.0F, 1.0F, 1.0F).method7294(previewAlpha);
+         ZenithColor zenithColor3 = ZenithColor.method7297((i + 1) / 6.0F, 1.0F, 1.0F).method7294(previewAlpha);
+         menuDrawContext.drawRoundedRect(floatValue + i * width, y, width, 4.0F, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(clientColor, clientColor, zenithColor3, zenithColor3));
       }
 
-      this.drawTick(var1, var2 + var4 * this.hue, var3, var5);
+      this.drawTick(menuDrawContext, floatValue + pickerWidth * this.hue, y, previewAlpha);
    }
 
-   private void renderAlphaBar(MenuDrawContext var1, float var2, float var3, float var4, ZenithColor var5, float var6) {
-      this.alphaBounds = new BoundsData(var2, var3, var4, 4.0F);
-      this.drawChecker(var1, var2, var3, var4, 4.0F, var6);
-      ZenithColor var7 = var5.method7293(255).method7294(var6);
-      ZenithColor var8 = var5.method7293(0);
-      var1.drawRoundedRect(var2, var3, var4, 4.0F, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(var8, var8, var7, var7));
-      this.drawTick(var1, var2 + var4 * (this.alphaValue / 255.0F), var3, var6);
+   private void renderAlphaBar(MenuDrawContext menuDrawContext, float floatValue, float y, float pickerWidth, ZenithColor zenithColor, float previewAlpha) {
+      this.alphaBounds = new BoundsData(floatValue, y, pickerWidth, 4.0F);
+      this.drawChecker(menuDrawContext, floatValue, y, pickerWidth, 4.0F, previewAlpha);
+      ZenithColor zenithColor3 = zenithColor.method7293(255).method7294(previewAlpha);
+      ZenithColor clientColor = zenithColor.method7293(0);
+      menuDrawContext.drawRoundedRect(floatValue, y, pickerWidth, 4.0F, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(clientColor, clientColor, zenithColor3, zenithColor3));
+      this.drawTick(menuDrawContext, floatValue + pickerWidth * (this.alphaValue / 255.0F), y, previewAlpha);
    }
 
    private void renderHexRow(
-      MenuDrawContext var1,
-      float var2,
-      float var3,
-      float var4,
-      float var5,
-      float var6,
-      ZenithStyle var7,
-      ZenithColor var8,
-      ZenithColor var9,
-      ZenithColor var10,
-      float var11
+      MenuDrawContext menuDrawContext,
+      float mouseX,
+      float mouseY,
+      float floatValue,
+      float y,
+      float pickerWidth,
+      ZenithStyle currentStyle,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      ZenithColor zenithColor3,
+      float previewAlpha
    ) {
-      float var12 = 39.0F;
-      float var13 = Math.max(20.0F, var6 - var12 - 3.0F);
-      this.hexBounds = new BoundsData(var4, var5, var13, 11.0F);
-      var1.drawRect(var4, var5, var13, 11.0F, var7.getFieldSurfaceBackground().getZenithColor().method7294(var11 * 2.0F));
-      var1.drawRoundedBorder(
-         var4,
-         var5,
-         var13,
+      float f = 39.0F;
+      float width = Math.max(20.0F, pickerWidth - f - 3.0F);
+      this.hexBounds = new BoundsData(floatValue, y, width, 11.0F);
+      menuDrawContext.drawRect(floatValue, y, width, 11.0F, currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 2.0F));
+      menuDrawContext.drawRoundedBorder(
+         floatValue,
+         y,
+         width,
          11.0F,
          0.1F,
          ProxyDotRadiusData.method8069(1.5F),
-         this.hexField.isSelected() ? var7.getPrimaryColor().getZenithColor().method7294(var11) : var10
+         this.hexField.isSelected() ? currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha) : zenithColor3
       );
-      Font var14 = Fonts.NEW_MEDIUM.getFont(5.01F);
-      float var15 = var5 + (11.0F - var14.height()) / 2.0F;
-      float var16 = var14.width("#");
-      var1.drawText(var14, "#", var4 + 4.0F, var15, var9);
-      this.hexField.setWidth(var13 - 8.0F - var16);
-      this.hexField.method987(var1, var4 + 4.0F + var16 + 1.0F, var15, var8, var9);
-      float var17 = var4 + var6 - var12;
-      this.copyBounds = new BoundsData(var17, var5, 11.0F, 11.0F);
-      this.pasteBounds = new BoundsData(var17 + 11.0F + 3.0F, var5, 11.0F, 11.0F);
-      this.resetBounds = new BoundsData(var17 + 28.0F, var5, 11.0F, 11.0F);
-      this.drawButton(var1, this.copyBounds, MenuGlyph.COPY, var2, var3, var7, var11);
-      this.drawButton(var1, this.pasteBounds, MenuGlyph.PASTE, var2, var3, var7, var11);
-      this.drawButton(var1, this.resetBounds, MenuGlyph.RESET, var2, var3, var7, var11);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
+      float centeredTextY = y + (11.0F - font.height()) / 2.0F;
+      float width2 = font.width("#");
+      menuDrawContext.drawText(font, "#", floatValue + 4.0F, centeredTextY, zenithColor2);
+      this.hexField.setWidth(width - 8.0F - width2);
+      this.hexField.method987(menuDrawContext, floatValue + 4.0F + width2 + 1.0F, centeredTextY, zenithColor, zenithColor2);
+      float floatValue2 = floatValue + pickerWidth - f;
+      this.copyBounds = new BoundsData(floatValue2, y, 11.0F, 11.0F);
+      this.pasteBounds = new BoundsData(floatValue2 + 11.0F + 3.0F, y, 11.0F, 11.0F);
+      this.resetBounds = new BoundsData(floatValue2 + 28.0F, y, 11.0F, 11.0F);
+      this.drawButton(menuDrawContext, this.copyBounds, MenuGlyph.COPY, mouseX, mouseY, currentStyle, previewAlpha);
+      this.drawButton(menuDrawContext, this.pasteBounds, MenuGlyph.PASTE, mouseX, mouseY, currentStyle, previewAlpha);
+      this.drawButton(menuDrawContext, this.resetBounds, MenuGlyph.RESET, mouseX, mouseY, currentStyle, previewAlpha);
    }
 
-   private void renderCaption(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5, float var6) {
-      Font var7 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      ZenithColor var8 = var5.getTextTertiary().getZenithColor().method7294(var6 * 0.9F);
-      String var9 = Zenith.getInstance().getLocalization().translate("gui.picker.palette").toUpperCase(Locale.ROOT);
-      var1.drawText(var7, HoverInfo.spaced(var9), var2, var3, var8);
-      String var10 = "A " + Math.round(this.alphaValue / 255.0F * 100.0F) + "%";
-      var1.drawText(var7, var10, var2 + var4 - var7.width(var10), var3, var8);
+   private void renderCaption(MenuDrawContext menuDrawContext, float floatValue, float centeredTextY, float pickerWidth, ZenithStyle currentStyle, float previewAlpha) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+      ZenithColor zenithColor = currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.9F);
+      String upperCase = Zenith.getInstance().getLocalization().translate("gui.picker.palette").toUpperCase(Locale.ROOT);
+      menuDrawContext.drawText(font, HoverInfo.spaced(upperCase), floatValue, centeredTextY, zenithColor);
+      String text = "A " + Math.round(this.alphaValue / 255.0F * 100.0F) + "%";
+      menuDrawContext.drawText(font, text, floatValue + pickerWidth - font.width(text), centeredTextY, zenithColor);
    }
 
-   private void renderPalette(MenuDrawContext var1, float var2, float var3, float var4, ZenithColor var5, ZenithStyle var6, ZenithColor var7, float var8) {
-      this.buildPalette(var6);
+   private void renderPalette(MenuDrawContext menuDrawContext, float floatValue, float f, float pickerWidth, ZenithColor zenithColor, ZenithStyle currentStyle, ZenithColor zenithColor2, float previewAlpha) {
+      this.buildPalette(currentStyle);
       this.paletteBounds.clear();
-      int var9 = this.paletteColumns(var4);
+      int paletteColumns = this.paletteColumns(pickerWidth);
 
-      for (int var10 = 0; var10 < this.palette.size(); var10++) {
-         float var11 = var2 + var10 % var9 * 9.0F;
-         float var12 = var3 + var10 / var9 * 9.0F;
-         this.paletteBounds.add(new BoundsData(var11, var12, 7.0F, 7.0F));
-         ZenithColor var13 = this.palette.get(var10);
-         var1.drawRect(var11 + 0.5F, var12 + 0.5F, 6.0F, 6.0F, var13.method7294(var8));
-         var1.drawRoundedBorder(var11, var12, 7.0F, 7.0F, 0.1F, ProxyDotRadiusData.INSTANCE, var7);
-         if (sameRgb(var13, var5)) {
-            var1.drawRoundedBorder(
-               var11 - 1.5F, var12 - 1.5F, 10.0F, 10.0F, 0.1F, ProxyDotRadiusData.INSTANCE, var6.getPrimaryColor().getZenithColor().method7294(var8)
+      for (int i = 0; i < this.palette.size(); i++) {
+         float floatValue2 = floatValue + i % paletteColumns * 9.0F;
+         float y = f + i / paletteColumns * 9.0F;
+         this.paletteBounds.add(new BoundsData(floatValue2, y, 7.0F, 7.0F));
+         ZenithColor zenithColor3 = this.palette.get(i);
+         menuDrawContext.drawRect(floatValue2 + 0.5F, y + 0.5F, 6.0F, 6.0F, zenithColor3.method7294(previewAlpha));
+         menuDrawContext.drawRoundedBorder(floatValue2, y, 7.0F, 7.0F, 0.1F, ProxyDotRadiusData.INSTANCE, zenithColor2);
+         if (sameRgb(zenithColor3, zenithColor)) {
+            menuDrawContext.drawRoundedBorder(
+               floatValue2 - 1.5F, y - 1.5F, 10.0F, 10.0F, 0.1F, ProxyDotRadiusData.INSTANCE, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
          }
       }
    }
 
-   private void drawButton(MenuDrawContext var1, BoundsData var2, MenuGlyph var3, float var4, float var5, ZenithStyle var6, float var7) {
-      boolean var8;
-      if (var8 = var2.contains(var4, var5)) {
-         var1.drawRect(
-            var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), var6.getFieldSurfaceBackground().getZenithColor().method7294(var7 * 3.0F)
+   private void drawButton(MenuDrawContext menuDrawContext, BoundsData copyBounds, MenuGlyph menuGlyph, float mouseX, float mouseY, ZenithStyle currentStyle, float previewAlpha) {
+      boolean contains;
+      if (contains = copyBounds.contains(mouseX, mouseY)) {
+         menuDrawContext.drawRect(
+            copyBounds.getFloatValue(), copyBounds.getFloatValue2(), copyBounds.width(), copyBounds.height(), currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 3.0F)
          );
       }
 
-      var1.drawRoundedBorder(
-         var2.getFloatValue(),
-         var2.getFloatValue2(),
-         var2.width(),
-         var2.height(),
+      menuDrawContext.drawRoundedBorder(
+         copyBounds.getFloatValue(),
+         copyBounds.getFloatValue2(),
+         copyBounds.width(),
+         copyBounds.height(),
          0.1F,
          ProxyDotRadiusData.method8069(1.5F),
-         var6.getFieldBorder().getZenithColor().method7294(var7 * 4.0F)
+         currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 4.0F)
       );
-      var3.draw(
-         var1,
-         var2.getFloatValue() + (var2.width() - 6.0F) / 2.0F,
-         var2.getFloatValue2() + (var2.height() - 6.0F) / 2.0F,
-         (var8 ? var6.getTextEnable() : var6.getTextTertiary()).getZenithColor().method7294(var7)
+      menuGlyph.draw(
+         menuDrawContext,
+         copyBounds.getFloatValue() + (copyBounds.width() - 6.0F) / 2.0F,
+         copyBounds.getFloatValue2() + (copyBounds.height() - 6.0F) / 2.0F,
+         (contains ? currentStyle.getTextEnable() : currentStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
    }
 
-   private void drawHandle(MenuDrawContext var1, float var2, float var3, float var4) {
-      drawFrame(var1, var2 - 3.5F, var3 - 3.5F, 7.0F, 7.0F, ZenithColor.INSTANCE2.method7294(0.45F * var4));
-      drawFrame(var1, var2 - 2.5F, var3 - 2.5F, 5.0F, 5.0F, ZenithColor.INSTANCE.method7294(var4));
+   private void drawHandle(MenuDrawContext menuDrawContext, float f, float f2, float previewAlpha) {
+      drawFrame(menuDrawContext, f - 3.5F, f2 - 3.5F, 7.0F, 7.0F, ZenithColor.INSTANCE2.method7294(0.45F * previewAlpha));
+      drawFrame(menuDrawContext, f - 2.5F, f2 - 2.5F, 5.0F, 5.0F, ZenithColor.INSTANCE.method7294(previewAlpha));
    }
 
-   private void drawTick(MenuDrawContext var1, float var2, float var3, float var4) {
-      var1.drawRect(var2 - 1.25F, var3 - 2.0F, 2.5F, 8.0F, ZenithColor.INSTANCE2.method7294(0.5F * var4));
-      var1.drawRect(var2 - 0.75F, var3 - 1.5F, 1.5F, 7.0F, ZenithColor.INSTANCE.method7294(var4));
+   private void drawTick(MenuDrawContext menuDrawContext, float f, float y, float previewAlpha) {
+      menuDrawContext.drawRect(f - 1.25F, y - 2.0F, 2.5F, 8.0F, ZenithColor.INSTANCE2.method7294(0.5F * previewAlpha));
+      menuDrawContext.drawRect(f - 0.75F, y - 1.5F, 1.5F, 7.0F, ZenithColor.INSTANCE.method7294(previewAlpha));
    }
 
-   private void drawChecker(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      float var7 = 2.0F;
-      var1.drawRect(var2, var3, var4, var5, ZenithColor.INSTANCE2.method7294(0.45F * var6));
-      ZenithColor var8 = ZenithColor.INSTANCE.method7294(0.2F * var6);
+   private void drawChecker(MenuDrawContext menuDrawContext, float floatValue, float y, float pickerWidth, float height, float previewAlpha) {
+      float f = 2.0F;
+      menuDrawContext.drawRect(floatValue, y, pickerWidth, height, ZenithColor.INSTANCE2.method7294(0.45F * previewAlpha));
+      ZenithColor zenithColor = ZenithColor.INSTANCE.method7294(0.2F * previewAlpha);
 
-      for (int var9 = 0; var9 * var7 < var5; var9++) {
-         for (int var10 = 0; var10 * var7 < var4; var10++) {
-            if ((var9 + var10) % 2 == 0) {
-               float var11 = var2 + var10 * var7;
-               float var12 = var3 + var9 * var7;
-               var1.drawRect(var11, var12, Math.min(var7, var2 + var4 - var11), Math.min(var7, var3 + var5 - var12), var8);
+      for (int i = 0; i * f < height; i++) {
+         for (int j = 0; j * f < pickerWidth; j++) {
+            if ((i + j) % 2 == 0) {
+               float floatValue2 = floatValue + j * f;
+               float y2 = y + i * f;
+               menuDrawContext.drawRect(floatValue2, y2, Math.min(f, floatValue + pickerWidth - floatValue2), Math.min(f, y + height - y2), zenithColor);
             }
          }
       }
    }
 
-   private static void drawFrame(MenuDrawContext var0, float var1, float var2, float var3, float var4, ZenithColor var5) {
-      var0.drawRect(var1, var2, var3, 1.0F, var5);
-      var0.drawRect(var1, var2 + var4 - 1.0F, var3, 1.0F, var5);
-      var0.drawRect(var1, var2, 1.0F, var4, var5);
-      var0.drawRect(var1 + var3 - 1.0F, var2, 1.0F, var4, var5);
+   private static void drawFrame(MenuDrawContext menuDrawContext, float floatValue, float y, float width, float height, ZenithColor zenithColor) {
+      menuDrawContext.drawRect(floatValue, y, width, 1.0F, zenithColor);
+      menuDrawContext.drawRect(floatValue, y + height - 1.0F, width, 1.0F, zenithColor);
+      menuDrawContext.drawRect(floatValue, y, 1.0F, height, zenithColor);
+      menuDrawContext.drawRect(floatValue + width - 1.0F, y, 1.0F, height, zenithColor);
    }
 
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bounds != null && this.bounds.contains(var1, var3)) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+      if (this.bounds != null && this.bounds.contains(x, y)) {
          this.ensureField();
          this.hexField.setSelected(false);
-         if (this.hexBounds != null && this.hexBounds.contains(var1, var3)) {
-            this.hexField.onMouseClicked(var1, var3, var5);
+         if (this.hexBounds != null && this.hexBounds.contains(x, y)) {
+            this.hexField.onMouseClicked(x, y, enum2);
             this.hexField.setSelected(true);
             return true;
          } else {
-            for (int var6 = 0; var6 < this.paletteBounds.size() && var6 < this.palette.size(); var6++) {
-               if (this.paletteBounds.get(var6).contains(var1, var3)) {
-                  this.adopt(this.palette.get(var6).method7293(this.alphaValue));
+            for (int i = 0; i < this.paletteBounds.size() && i < this.palette.size(); i++) {
+               if (this.paletteBounds.get(i).contains(x, y)) {
+                  this.adopt(this.palette.get(i).method7293(this.alphaValue));
                   this.commit();
                   Zenith.getInstance().getClientSounds().method1570(false);
                   return true;
                }
             }
 
-            if (this.copyBounds != null && this.copyBounds.contains(var1, var3)) {
+            if (this.copyBounds != null && this.copyBounds.contains(x, y)) {
                Minecraft.getInstance().keyboardHandler.setClipboard("#" + ColorUtils.method6434(this.setting.getZenithColor()));
                Zenith.getInstance().getClientSounds().method1570(false);
                return true;
-            } else if (this.pasteBounds != null && this.pasteBounds.contains(var1, var3)) {
+            } else if (this.pasteBounds != null && this.pasteBounds.contains(x, y)) {
                this.paste();
                return true;
-            } else if (this.resetBounds != null && this.resetBounds.contains(var1, var3)) {
+            } else if (this.resetBounds != null && this.resetBounds.contains(x, y)) {
                this.setting.reset();
                this.applied = null;
                Zenith.getInstance().getClientSounds().method1570(true);
                return true;
             } else {
-               if (this.fieldBounds != null && this.fieldBounds.contains(var1, var3)) {
+               if (this.fieldBounds != null && this.fieldBounds.contains(x, y)) {
                   this.drag = ColorPicker.Drag.FIELD;
-               } else if (this.hueBounds != null && this.hueBounds.method8092(var1, var3, 3.0F)) {
+               } else if (this.hueBounds != null && this.hueBounds.method8092(x, y, 3.0F)) {
                   this.drag = ColorPicker.Drag.HUE;
-               } else if (this.alphaBounds != null && this.alphaBounds.method8092(var1, var3, 3.0F)) {
+               } else if (this.alphaBounds != null && this.alphaBounds.method8092(x, y, 3.0F)) {
                   this.drag = ColorPicker.Drag.ALPHA;
                }
 
                if (this.drag != ColorPicker.Drag.NONE) {
-                  this.applyDrag((float)var1, (float)var3);
+                  this.applyDrag((float)x, (float)y);
                }
 
                return true;
@@ -329,28 +329,28 @@ public final class ColorPicker {
       this.drag = ColorPicker.Drag.NONE;
    }
 
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return (this.hexField != null && this.hexField.keyPressed(var1, var2, var3));
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      return (this.hexField != null && this.hexField.keyPressed(keyCode, keycode, modifiers));
    }
 
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
-      return (this.hexField != null && this.hexField.charTyped(var1, var2));
+   public boolean charTyped(char codepoint, int n) {
+      return (this.hexField != null && this.hexField.charTyped(codepoint, n));
    }
 
    private void paste() {
-      String var1 = Minecraft.getInstance().keyboardHandler.getClipboard();
-      if (var1 != null) {
-         ZenithColor var2 = ColorUtils.method6433(var1.replace("#", "").trim(), null);
-         if (var2 != null) {
-            this.adopt(var2.method7293(this.alphaValue));
+      String clipboard = Minecraft.getInstance().keyboardHandler.getClipboard();
+      if (clipboard != null) {
+         ZenithColor zenithColor = ColorUtils.method6433(clipboard.replace("#", "").trim(), null);
+         if (zenithColor != null) {
+            this.adopt(zenithColor.method7293(this.alphaValue));
             this.commit();
             Zenith.getInstance().getClientSounds().method1570(false);
          }
@@ -365,26 +365,26 @@ public final class ColorPicker {
       }
    }
 
-   private float fieldHeight(float var1) {
-      return Mth.clamp(var1 * 0.44F, 30.0F, 56.0F);
+   private float fieldHeight(float pickerWidth) {
+      return Mth.clamp(pickerWidth * 0.44F, 30.0F, 56.0F);
    }
 
-   private int paletteColumns(float var1) {
-      return Math.max(1, (int)((var1 + 2.0F) / 9.0F));
+   private int paletteColumns(float pickerWidth) {
+      return Math.max(1, (int)((pickerWidth + 2.0F) / 9.0F));
    }
 
-   private int paletteRows(float var1) {
-      ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var2 == null) {
+   private int paletteRows(float pickerWidth) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle == null) {
          return 1;
       } else {
-         this.buildPalette(var2);
-         int var3 = this.paletteColumns(var1);
-         return Math.max(1, (this.palette.size() + var3 - 1) / var3);
+         this.buildPalette(currentStyle);
+         int paletteColumns = this.paletteColumns(pickerWidth);
+         return Math.max(1, (this.palette.size() + paletteColumns - 1) / paletteColumns);
       }
    }
 
-   private void applyDrag(float var1, float var2) {
+   private void applyDrag(float mouseX, float mouseY) {
       if (this.drag != ColorPicker.Drag.NONE) {
          switch (this.drag) {
             case FIELD:
@@ -392,22 +392,22 @@ public final class ColorPicker {
                   return;
                }
 
-               this.saturation = Mth.clamp((var1 - this.fieldBounds.getFloatValue()) / this.fieldBounds.width(), 0.0F, 1.0F);
-               this.brightness = 1.0F - Mth.clamp((var2 - this.fieldBounds.getFloatValue2()) / this.fieldBounds.height(), 0.0F, 1.0F);
+               this.saturation = Mth.clamp((mouseX - this.fieldBounds.getFloatValue()) / this.fieldBounds.width(), 0.0F, 1.0F);
+               this.brightness = 1.0F - Mth.clamp((mouseY - this.fieldBounds.getFloatValue2()) / this.fieldBounds.height(), 0.0F, 1.0F);
                break;
             case HUE:
                if (this.hueBounds == null) {
                   return;
                }
 
-               this.hue = Mth.clamp((var1 - this.hueBounds.getFloatValue()) / this.hueBounds.width(), 0.0F, 1.0F);
+               this.hue = Mth.clamp((mouseX - this.hueBounds.getFloatValue()) / this.hueBounds.width(), 0.0F, 1.0F);
                break;
             case ALPHA:
                if (this.alphaBounds == null) {
                   return;
                }
 
-               this.alphaValue = Math.round(Mth.clamp((var1 - this.alphaBounds.getFloatValue()) / this.alphaBounds.width(), 0.0F, 1.0F) * 255.0F);
+               this.alphaValue = Math.round(Mth.clamp((mouseX - this.alphaBounds.getFloatValue()) / this.alphaBounds.width(), 0.0F, 1.0F) * 255.0F);
                break;
             default:
                return;
@@ -417,79 +417,79 @@ public final class ColorPicker {
       }
    }
 
-   private void syncFromField(ZenithColor var1) {
+   private void syncFromField(ZenithColor zenithColor) {
       if (this.hexField.isSelected()) {
-         ZenithColor var2 = ColorUtils.method6433(this.hexField.getText(), null);
-         if (var2 != null && !sameRgb(var2, var1)) {
-            this.adopt(var2.method7293(this.alphaValue));
+         ZenithColor zenithColor2 = ColorUtils.method6433(this.hexField.getText(), null);
+         if (zenithColor2 != null && !sameRgb(zenithColor2, zenithColor)) {
+            this.adopt(zenithColor2.method7293(this.alphaValue));
             this.commit();
          }
       } else {
-         this.hexField.setText(ColorUtils.method6434(var1));
+         this.hexField.setText(ColorUtils.method6434(zenithColor));
          this.hexField.setCursor(6);
       }
    }
 
    private void syncFromSetting() {
-      ZenithColor var1 = this.setting.getZenithColor();
-      if (this.applied == null || !var1.equals(this.applied)) {
-         this.adopt(var1);
-         this.applied = var1;
+      ZenithColor zenithColor = this.setting.getZenithColor();
+      if (this.applied == null || !zenithColor.equals(this.applied)) {
+         this.adopt(zenithColor);
+         this.applied = zenithColor;
       }
    }
 
-   private void adopt(ZenithColor var1) {
-      float[] var2 = Color.RGBtoHSB(var1.getIntValue(), var1.getIntValue2(), var1.getIntValue3(), null);
-      if (var2[1] > 0.0F) {
-         this.hue = var2[0];
+   private void adopt(ZenithColor zenithColor) {
+      float[] floats = Color.RGBtoHSB(zenithColor.getIntValue(), zenithColor.getIntValue2(), zenithColor.getIntValue3(), null);
+      if (floats[1] > 0.0F) {
+         this.hue = floats[0];
       }
 
-      if (var2[2] > 0.0F) {
-         this.saturation = var2[1];
+      if (floats[2] > 0.0F) {
+         this.saturation = floats[1];
       }
 
-      this.brightness = var2[2];
-      this.alphaValue = var1.getIntValue4();
+      this.brightness = floats[2];
+      this.alphaValue = zenithColor.getIntValue4();
    }
 
    private void commit() {
-      ZenithColor var1 = ZenithColor.method7297(this.hue, this.saturation, this.brightness).method7293(this.alphaValue);
-      this.setting.setZenithColor(var1);
-      this.applied = var1;
+      ZenithColor applied = ZenithColor.method7297(this.hue, this.saturation, this.brightness).method7293(this.alphaValue);
+      this.setting.setZenithColor(applied);
+      this.applied = applied;
    }
 
-   private void buildPalette(ZenithStyle var1) {
+   private void buildPalette(ZenithStyle currentStyle) {
       this.palette.clear();
-      this.addPaletteColor(var1.getPrimaryColor().getZenithColor());
-      this.addPaletteColor(var1.getSecondaryPrimaryColor().getZenithColor());
-      this.addPaletteColor(var1.getFriendColor().getZenithColor());
+      this.addPaletteColor(currentStyle.getPrimaryColor().getZenithColor());
+      this.addPaletteColor(currentStyle.getSecondaryPrimaryColor().getZenithColor());
+      this.addPaletteColor(currentStyle.getFriendColor().getZenithColor());
       this.addPaletteColor(ZenithColor.INSTANCE);
       this.addPaletteColor(ZenithColor.INSTANCE2);
 
-      for (ZenithColor var3 : RECENT) {
-         this.addPaletteColor(var3);
+      for (ZenithColor zenithColor : RECENT) {
+         this.addPaletteColor(zenithColor);
       }
    }
 
-   private void addPaletteColor(ZenithColor var1) {
-      if (var1 != null && this.palette.size() < 12) {
-         ZenithColor var2 = var1.method7293(255);
+   private void addPaletteColor(ZenithColor zenithColor) {
+      if (zenithColor != null && this.palette.size() < 12) {
+         ZenithColor zenithColor2 = zenithColor.method7293(255);
 
-         for (ZenithColor var4 : this.palette) {
-            if (sameRgb(var4, var2)) {
+         for (ZenithColor zenithColor3 : this.palette) {
+            if (sameRgb(zenithColor3, zenithColor2)) {
                return;
             }
          }
 
-         this.palette.add(var2);
+         this.palette.add(zenithColor2);
       }
    }
 
-   private static void remember(ZenithColor var0) {
-      if (var0 != null) {
-         ZenithColor var1 = var0.method7293(255);
-         RECENT.removeIf(var1x -> sameRgb(var1x, var1));
-         RECENT.add(0, var1);
+   private static void remember(ZenithColor zenithColor) {
+      if (zenithColor != null) {
+         ZenithColor zenithColor2 = zenithColor.method7293(255);
+         RECENT.removeIf(var1x -> sameRgb(var1x, zenithColor2));
+         RECENT.add(0, zenithColor2);
 
          while (RECENT.size() > 6) {
             RECENT.remove(RECENT.size() - 1);
@@ -497,12 +497,12 @@ public final class ColorPicker {
       }
    }
 
-   private static boolean sameRgb(ZenithColor var0, ZenithColor var1) {
-      return (var0 != null
-            && var1 != null
-            && var0.getIntValue() == var1.getIntValue()
-            && var0.getIntValue2() == var1.getIntValue2()
-            && var0.getIntValue3() == var1.getIntValue3());
+   private static boolean sameRgb(ZenithColor zenithColor, ZenithColor zenithColor2) {
+      return (zenithColor != null
+            && zenithColor2 != null
+            && zenithColor.getIntValue() == zenithColor2.getIntValue()
+            && zenithColor.getIntValue2() == zenithColor2.getIntValue2()
+            && zenithColor.getIntValue3() == zenithColor2.getIntValue3());
    }
 
    private static enum Drag {

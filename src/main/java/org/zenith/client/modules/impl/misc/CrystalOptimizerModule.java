@@ -71,7 +71,7 @@ public final class CrystalOptimizerModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null) {
          this.endCrystalEntity = this.method5234();
          if (this.endCrystalEntity != null && mc.options.keyUse.isDown()) {
@@ -85,9 +85,9 @@ public final class CrystalOptimizerModule extends Module {
    }
 
    @EventTarget
-   public void method5233(AttackEvent var1) {
-      if (var1.getType4() == AttackEvent.Type.POST && var1.getEntity() instanceof EndCrystal var2) {
-         var2.remove(RemovalReason.DISCARDED);
+   public void method5233(AttackEvent event) {
+      if (event.getType4() == AttackEvent.Type.POST && event.getEntity() instanceof EndCrystal endCrystal) {
+         endCrystal.remove(RemovalReason.DISCARDED);
       }
    }
 
@@ -96,38 +96,38 @@ public final class CrystalOptimizerModule extends Module {
    }
 
    private EndCrystal method5234() {
-      for (Entity var2 : mc.level.entitiesForRendering()) {
-         if (var2 instanceof EndCrystal var3
-            && !(mc.player.distanceTo(var3) > 3.0)
-            && this.method5235(var3)
-            && (!this.protectValuableDrops.isEnabled() || !this.method5236(var3.blockPosition()))) {
-            return var3;
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof EndCrystal endCrystal
+            && !(mc.player.distanceTo(endCrystal) > 3.0)
+            && this.method5235(endCrystal)
+            && (!this.protectValuableDrops.isEnabled() || !this.method5236(endCrystal.blockPosition()))) {
+            return endCrystal;
          }
       }
 
       return null;
    }
 
-   private boolean method5235(EndCrystal var1) {
-      Vec3 var2 = mc.player.getEyePosition();
-      Vec3 var3 = var2.add(mc.player.getViewVector(1.0F).scale(3.0));
-      EntityHitResult var4 = ProjectileUtil.getEntityHitResult(mc.level, mc.player, var2, var3, new AABB(var2, var3).inflate(1.0), var1x -> var1x == var1, 0.3F);
-      if (var4 != null) {
+   private boolean method5235(EndCrystal endCrystal) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      Vec3 to = eyePosition.add(mc.player.getViewVector(1.0F).scale(3.0));
+      EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(mc.level, mc.player, eyePosition, to, new AABB(eyePosition, to).inflate(1.0), var1x -> var1x == endCrystal, 0.3F);
+      if (entityHitResult != null) {
          return true;
       } else {
-         BlockHitResult var5 = mc.level.clip(new ClipContext(var2, var3, Block.OUTLINE, Fluid.NONE, mc.player));
-         return var5.getType() == Type.BLOCK && var5.getBlockPos().equals(var1.blockPosition().below());
+         BlockHitResult clip = mc.level.clip(new ClipContext(eyePosition, to, Block.OUTLINE, Fluid.NONE, mc.player));
+         return clip.getType() == Type.BLOCK && clip.getBlockPos().equals(endCrystal.blockPosition().below());
       }
    }
 
-   private boolean method5236(BlockPos var1) {
-      AABB var2 = new AABB(var1.getX() - 3.0, var1.getY() - 3.0, var1.getZ() - 3.0, var1.getX() + 3.0 + 1.0, var1.getY() + 3.0 + 2.0, var1.getZ() + 3.0 + 1.0);
+   private boolean method5236(BlockPos blockPosition) {
+      AABB aabb = new AABB(blockPosition.getX() - 3.0, blockPosition.getY() - 3.0, blockPosition.getZ() - 3.0, blockPosition.getX() + 3.0 + 1.0, blockPosition.getY() + 3.0 + 2.0, blockPosition.getZ() + 3.0 + 1.0);
       return mc.level
-         .getEntities(null, var2)
+         .getEntities(null, aabb)
          .stream()
          .filter(ItemEntity.class::isInstance)
          .map(ItemEntity.class::cast)
-         .map(var0 -> var0.getItem().getItem())
+         .map(itemEntity -> itemEntity.getItem().getItem())
          .anyMatch(items::contains);
    }
 }

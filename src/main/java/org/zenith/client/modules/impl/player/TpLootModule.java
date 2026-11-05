@@ -120,13 +120,13 @@ public final class TpLootModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.clientWorld != mc.level || this.player != mc.player) {
-         boolean var2 = this.itemEntity != null;
+         boolean flag = this.itemEntity != null;
          this.clear();
          this.clientWorld = mc.level;
          this.player = mc.player;
-         if (var2) {
+         if (flag) {
             this.method4056();
             return;
          }
@@ -152,17 +152,17 @@ public final class TpLootModule extends Module {
             }
 
             if (this.itemEntity == null) {
-               ItemEntity var4 = this.method4057();
-               if (var4 == null) {
+               ItemEntity itemEntity = this.method4057();
+               if (itemEntity == null) {
                   ChatLogger.method2019("TpLoot: рядом нет ценного лута");
                   this.method4056();
                } else {
-                  this.itemStack = var4.getItem().copyWithCount(1);
+                  this.itemStack = itemEntity.getItem().copyWithCount(1);
                   this.intValue = this.method4059();
-                  Vec3 var3 = var4.position();
-                  if (SpawnTracker.method6211(this, var3)) {
-                     this.itemEntity = var4;
-                     this.vec3d = var3;
+                  Vec3 position = itemEntity.position();
+                  if (SpawnTracker.method6211(this, position)) {
+                     this.itemEntity = itemEntity;
+                     this.vec3d = position;
                      this.flag = true;
                   } else {
                      this.itemStack = ItemStack.EMPTY;
@@ -189,63 +189,63 @@ public final class TpLootModule extends Module {
    }
 
    private ItemEntity method4057() {
-      ItemEntity var1 = null;
-      double var2 = Double.MAX_VALUE;
+      ItemEntity itemEntity = null;
+      double d = Double.MAX_VALUE;
 
-      for (Entity var5 : mc.level.entitiesForRendering()) {
-         if (var5 instanceof ItemEntity var6 && method4058(var6)) {
-            ItemStack var7 = var6.getItem();
-            if (!items.contains(var7.getItem()) && canFit(var7) && SpawnTracker.method6210(var6.position())) {
-               double var8 = mc.player.distanceToSqr(var6);
-               if (var8 < var2) {
-                  var2 = var8;
-                  var1 = var6;
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof ItemEntity itemEntity2 && method4058(itemEntity2)) {
+            ItemStack stack = itemEntity2.getItem();
+            if (!items.contains(stack.getItem()) && canFit(stack) && SpawnTracker.method6210(itemEntity2.position())) {
+               double d2 = mc.player.distanceToSqr(itemEntity2);
+               if (d2 < d) {
+                  d = d2;
+                  itemEntity = itemEntity2;
                }
             }
          }
       }
 
-      return var1;
+      return itemEntity;
    }
 
-   private static boolean method4058(ItemEntity var0) {
-      return var0 != null && var0.isAlive() && !var0.isRemoved() && !var0.getItem().isEmpty();
+   private static boolean method4058(ItemEntity itemEntity) {
+      return itemEntity != null && itemEntity.isAlive() && !itemEntity.isRemoved() && !itemEntity.getItem().isEmpty();
    }
 
-   private static boolean canFit(ItemStack var0) {
-      Inventory var1 = mc.player.getInventory();
+   private static boolean canFit(ItemStack stack) {
+      Inventory inventory = mc.player.getInventory();
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         ItemStack var3 = var1.getItem(var2);
-         if (var3.isEmpty() || ItemStack.isSameItemSameComponents(var3, var0) && var3.getCount() < var3.getMaxStackSize()) {
+      for (int i = 0; i < 36; i++) {
+         ItemStack stack2 = inventory.getItem(i);
+         if (stack2.isEmpty() || ItemStack.isSameItemSameComponents(stack2, stack) && stack2.getCount() < stack2.getMaxStackSize()) {
             return true;
          }
       }
 
-      ItemStack var4 = var1.getItem(40);
-      return ItemStack.isSameItemSameComponents(var4, var0) && var4.getCount() < var4.getMaxStackSize();
+      ItemStack stack2 = inventory.getItem(40);
+      return ItemStack.isSameItemSameComponents(stack2, stack) && stack2.getCount() < stack2.getMaxStackSize();
    }
 
    private int method4059() {
       if (this.itemStack.isEmpty()) {
          return 0;
       } else {
-         Inventory var1 = mc.player.getInventory();
-         int var2 = 0;
+         Inventory inventory = mc.player.getInventory();
+         int n = 0;
 
-         for (int var3 = 0; var3 < 36; var3++) {
-            ItemStack var4 = var1.getItem(var3);
-            if (ItemStack.isSameItemSameComponents(this.itemStack, var4)) {
-               var2 += var4.getCount();
+         for (int i = 0; i < 36; i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (ItemStack.isSameItemSameComponents(this.itemStack, stack)) {
+               n += stack.getCount();
             }
          }
 
-         ItemStack var5 = var1.getItem(40);
-         if (ItemStack.isSameItemSameComponents(this.itemStack, var5)) {
-            var2 += var5.getCount();
+         ItemStack stack = inventory.getItem(40);
+         if (ItemStack.isSameItemSameComponents(this.itemStack, stack)) {
+            n += stack.getCount();
          }
 
-         return var2;
+         return n;
       }
    }
 }

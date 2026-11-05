@@ -5,27 +5,27 @@ import java.util.Set;
 public interface ModuleConfig {
    Set<String> keys();
 
-   boolean contains(String var1);
+   boolean contains(String str);
 
-   void remove(String var1);
+   void remove(String str);
 
-   void setBoolean(String var1, boolean var2);
+   void setBoolean(String id, boolean flag);
 
-   void setInt(String var1, int var2);
+   void setInt(String id, int n);
 
-   void setLong(String var1, long var2);
+   void setLong(String str, long l);
 
-   void setDouble(String var1, double var2);
+   void setDouble(String id, double d);
 
-   void setString(String var1, String var2);
+   void setString(String id, String str);
 
-   boolean getBoolean(String var1, boolean var2);
+   boolean getBoolean(String id, boolean defaultValue);
 
-   int getInt(String var1, int var2);
+   int getInt(String id, int defaultValue);
 
-   long getLong(String var1, long var2);
+   long getLong(String str, long l);
 
-   double getDouble(String var1, double var2);
+   double getDouble(String id, double defaultValue);
 
-   String getString(String var1, String var2);
+   String getString(String id, String defaultValue);
 }

@@ -76,22 +76,22 @@ public class AuctionScanModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && this.type != AuctionScanModule.Type.IDLE && this.type != AuctionScanModule.Type.DONE) {
-         Packet var2 = var1.getPacket3();
-         if (var2 instanceof ClientboundContainerSetContentPacket || var2 instanceof ClientboundContainerSetSlotPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && this.type != AuctionScanModule.Type.IDLE && this.type != AuctionScanModule.Type.DONE) {
+         Packet packet3 = event.getPacket3();
+         if (packet3 instanceof ClientboundContainerSetContentPacket || packet3 instanceof ClientboundContainerSetSlotPacket) {
             this.flag = true;
          }
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       this.method1649();
    }
 
    @EventTarget
-   public void method1648(DrawEvent var1) {
+   public void method1648(DrawEvent event) {
       this.method1649();
    }
 
@@ -119,42 +119,42 @@ public class AuctionScanModule extends Module {
    }
 
    private void method1650() {
-      String var1 = this.command.getValue().trim();
-      if (var1.isEmpty()) {
-         var1 = "ah";
+      String command = this.command.getValue().trim();
+      if (command.isEmpty()) {
+         command = "ah";
       }
 
-      mc.getConnection().sendCommand(var1);
+      mc.getConnection().sendCommand(command);
       this.type = AuctionScanModule.Type.PAGES;
       this.stopWatch.reset();
       this.stopWatch2.reset();
    }
 
    private void method1651() {
-      AbstractContainerMenu var1 = mc.player.containerMenu;
-      if (!this.method1657(var1)) {
+      AbstractContainerMenu containerMenu = mc.player.containerMenu;
+      if (!this.method1657(containerMenu)) {
          if (this.stopWatch2.method7546(6000L)) {
             ChatLogger.method2022("AuctionScan: окно аукциона не открылось");
             this.method1655();
          }
       } else {
          this.stopWatch2.reset();
-         String var2 = this.method1658(var1);
-         boolean var3 = !this.items.add(var2);
-         if (!var3) {
+         String str = this.method1658(containerMenu);
+         boolean flag = !this.items.add(str);
+         if (!flag) {
             this.intValue++;
          }
 
          if (this.categories.isEnabled() && this.intValue3 < 0 && this.items2.isEmpty()) {
-            this.method1653(var1);
+            this.method1653(containerMenu);
          }
 
          if (this.intValue >= (int)this.pageLimit.getValue3()) {
             this.method1652();
          } else {
-            int var4 = this.method1659(var1, texts);
-            if (var4 >= 0 && !var3) {
-               this.method1656(var1, var4);
+            int slotNum = this.method1659(containerMenu, texts);
+            if (slotNum >= 0 && !flag) {
+               this.method1656(containerMenu, slotNum);
             } else {
                this.method1652();
             }
@@ -171,76 +171,76 @@ public class AuctionScanModule extends Module {
       }
    }
 
-   private void method1653(AbstractContainerMenu var1) {
-      int var2 = this.method1659(var1, texts2);
-      if (var2 >= 0) {
-         this.items2.add(var2);
+   private void method1653(AbstractContainerMenu containerMenu) {
+      int n = this.method1659(containerMenu, texts2);
+      if (n >= 0) {
+         this.items2.add(n);
       }
    }
 
    private void method1654() {
-      AbstractContainerMenu var1 = mc.player.containerMenu;
-      if (!this.method1657(var1)) {
+      AbstractContainerMenu containerMenu = mc.player.containerMenu;
+      if (!this.method1657(containerMenu)) {
          this.method1655();
       } else {
-         Integer var2 = this.items2.stream().filter(var1x -> !this.items3.contains(var1x)).findFirst().orElse(null);
-         if (var2 == null) {
+         Integer slotNum = this.items2.stream().filter(var1x -> !this.items3.contains(var1x)).findFirst().orElse(null);
+         if (slotNum == null) {
             this.method1655();
          } else {
-            this.items3.add(var2);
-            this.items2.remove(var2);
-            this.intValue3 = var2;
+            this.items3.add(slotNum);
+            this.items2.remove(slotNum);
+            this.intValue3 = slotNum;
             this.items.clear();
-            this.method1656(var1, var2);
+            this.method1656(containerMenu, slotNum);
             this.type = AuctionScanModule.Type.PAGES;
          }
       }
    }
 
    private void method1655() {
-      int var1 = Names.size() - this.intValue2;
-      ChatLogger.method2019("AuctionScan: страниц " + this.intValue + ", новых записей " + var1);
+      int n = Names.size() - this.intValue2;
+      ChatLogger.method2019("AuctionScan: страниц " + this.intValue + ", новых записей " + n);
       Names.save();
       this.type = AuctionScanModule.Type.DONE;
       this.setToggled(false);
    }
 
-   private void method1656(AbstractContainerMenu var1, int var2) {
-      mc.gameMode.handleContainerInput(var1.containerId, var2, 0, ContainerInput.PICKUP, mc.player);
+   private void method1656(AbstractContainerMenu containerMenu, int slotNum) {
+      mc.gameMode.handleContainerInput(containerMenu.containerId, slotNum, 0, ContainerInput.PICKUP, mc.player);
       this.stopWatch.reset();
       this.stopWatch2.reset();
    }
 
-   private boolean method1657(AbstractContainerMenu var1) {
-      return var1 != null && var1.containerId != 0 && var1.slots.size() > 36;
+   private boolean method1657(AbstractContainerMenu containerMenu) {
+      return containerMenu != null && containerMenu.containerId != 0 && containerMenu.slots.size() > 36;
    }
 
-   private String method1658(AbstractContainerMenu var1) {
-      StringBuilder var2 = new StringBuilder();
-      int var3 = var1.slots.size() - 36;
+   private String method1658(AbstractContainerMenu containerMenu) {
+      StringBuilder builder = new StringBuilder();
+      int n = containerMenu.slots.size() - 36;
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         ItemStack var5 = var1.getSlot(var4).getItem();
-         if (!var5.isEmpty()) {
-            var2.append(var4).append(var5.getItem()).append(var5.getHoverName().getString()).append(';');
+      for (int i = 0; i < n; i++) {
+         ItemStack stack = containerMenu.getSlot(i).getItem();
+         if (!stack.isEmpty()) {
+            builder.append(i).append(stack.getItem()).append(stack.getHoverName().getString()).append(';');
          }
       }
 
-      return this.intValue3 + "#" + var2;
+      return this.intValue3 + "#" + builder;
    }
 
-   private int method1659(AbstractContainerMenu var1, String[] var2) {
-      int var3 = var1.slots.size() - 36;
+   private int method1659(AbstractContainerMenu containerMenu, String[] texts) {
+      int n = containerMenu.slots.size() - 36;
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         Slot var5 = var1.getSlot(var4);
-         ItemStack var6 = var5.getItem();
-         if (!var6.isEmpty()) {
-            String var7 = var6.getHoverName().getString().toLowerCase(Locale.ROOT);
+      for (int i = 0; i < n; i++) {
+         Slot slot = containerMenu.getSlot(i);
+         ItemStack stack = slot.getItem();
+         if (!stack.isEmpty()) {
+            String lowerCase = stack.getHoverName().getString().toLowerCase(Locale.ROOT);
 
-            for (String var11 : var2) {
-               if (var7.contains(var11)) {
-                  return var4;
+            for (String text : texts) {
+               if (lowerCase.contains(text)) {
+                  return i;
                }
             }
          }

@@ -29,10 +29,10 @@ public abstract class GuiSetting<T extends Setting> extends Element {
    private long pauseUntilTime = -1L;
    private boolean continueScroll = false;
 
-   public GuiSetting(float var1, T var2) {
-      this.width = var1;
-      this.setting = (T)var2;
-      this.animationVisible = new Animation(200L, var2.isVisible() ? 1.0F : 0.0F, Easing.INSTANCE10);
+   public GuiSetting(float width, T setting) {
+      this.width = width;
+      this.setting = (T)setting;
+      this.animationVisible = new Animation(200L, setting.isVisible() ? 1.0F : 0.0F, Easing.INSTANCE10);
    }
 
    @Override
@@ -61,78 +61,78 @@ public abstract class GuiSetting<T extends Setting> extends Element {
       return this.setting.getDescription().isEmpty() || Zenith.getInstance().getNLMenuScreen().isShortMode();
    }
 
-   public boolean onMousePriorityScroll(double var1, double var3, double var5, double var7) {
+   public boolean onMousePriorityScroll(double d, double d2, double d3, double d4) {
       return false;
    }
 
-   public boolean onMousePriorityClicked(double var1, double var3, Enum3 var5) {
+   public boolean onMousePriorityClicked(double lastClickX, double lastClickY, Enum3 enum2) {
       return false;
    }
 
-   public void renderPriority(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7) {
+   public void renderPriority(MenuDrawContext menuDrawContext, float x, float y, float f, float f2, float previewAlpha, float f3) {
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, float lastClickX, float lastClickY, float f, float f2, float previewAlpha) {
    }
 
    public void drawDefault(
-      MenuDrawContext var1,
-      float var2,
-      float var3,
-      String var4,
-      String var5,
-      String var6,
-      Font var7,
-      Font var8,
-      float var9,
-      float var10,
-      float var11,
-      ZenithColor var12,
-      ZenithColor var13,
-      ZenithColor var14
+      MenuDrawContext menuDrawContext,
+      float x,
+      float y,
+      String icon,
+      String name,
+      String description,
+      Font font,
+      Font font2,
+      float floatValue,
+      float centeredTextY,
+      float maxWidth,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      ZenithColor zenithColor3
    ) {
-      float var15 = var7.getSize() - 0.5F;
-      if (var15 == 5.0F) {
-         var15 = 5.01F;
+      float px = font.getSize() - 0.5F;
+      if (px == 5.0F) {
+         px = 5.01F;
       }
 
-      Font var16 = Fonts.NEW_ICONS.getFont(var15);
-      boolean var17 = Zenith.getInstance().getNLMenuScreen().isRenderIcon();
-      float var18 = this.rowHeight();
-      float var19 = var17 ? var16.width(var4) + GuiStyle.PADDING.intValue() / 2.0F : 0.0F;
-      String var20 = var7.clip(var5, var11 - var19);
+      Font font3 = Fonts.NEW_ICONS.getFont(px);
+      boolean renderIcon = Zenith.getInstance().getNLMenuScreen().isRenderIcon();
+      float rowHeight = this.rowHeight();
+      float f = renderIcon ? font3.width(icon) + GuiStyle.PADDING.intValue() / 2.0F : 0.0F;
+      String clip = font.clip(name, maxWidth - f);
       if (this.isShort()) {
-         if (var17) {
-            var1.drawText(var16, var4, var9, var10 + (var18 - var16.height()) / 2.0F, var14);
+         if (renderIcon) {
+            menuDrawContext.drawText(font3, icon, floatValue, centeredTextY + (rowHeight - font3.height()) / 2.0F, zenithColor3);
          }
 
-         var1.drawText(var7, var20, var9 + var19, var10 + (var18 - var7.height()) / 2.0F, var12);
+         menuDrawContext.drawText(font, clip, floatValue + f, centeredTextY + (rowHeight - font.height()) / 2.0F, zenithColor);
       } else {
-         if (var17) {
-            var1.drawText(var16, var4, var9, var10 + (var16.height() / 2.0F - (var4.equals("u") ? 0.0F : 0.2F)), var14);
+         if (renderIcon) {
+            menuDrawContext.drawText(font3, icon, floatValue, centeredTextY + (font3.height() / 2.0F - (icon.equals("u") ? 0.0F : 0.2F)), zenithColor3);
          }
 
-         var1.drawText(var7, var20, var9 + var19, var10 + 1.1F, var12);
-         float var21 = var10 + var18 - var8.height() - 1.0F;
-         float var22 = var8.width(var6);
-         float var23 = var22 - var11;
-         boolean var24 = MathUtils.method2647(var2, var3, var9, var21 - 3.0F, var11 + 1.0F, var8.height() + 10.0F);
-         if (var23 <= 1.0F) {
-            var1.drawText(var8, var6, var9, var21, var13);
+         menuDrawContext.drawText(font, clip, floatValue + f, centeredTextY + 1.1F, zenithColor);
+         float y2 = centeredTextY + rowHeight - font2.height() - 1.0F;
+         float width = font2.width(description);
+         float f2 = width - maxWidth;
+         boolean flag = MathUtils.method2647(x, y, floatValue, y2 - 3.0F, maxWidth + 1.0F, font2.height() + 10.0F);
+         if (f2 <= 1.0F) {
+            menuDrawContext.drawText(font2, description, floatValue, y2, zenithColor2);
             this.resetDescScroll();
          } else {
-            var1.enableScissor(var9 - 0.5F, var21, var9 + var11 + 2.0F, var21 + var8.height() + 4.0F);
-            long var25 = System.currentTimeMillis();
+            menuDrawContext.enableScissor(floatValue - 0.5F, y2, floatValue + maxWidth + 2.0F, y2 + font2.height() + 4.0F);
+            long now = System.currentTimeMillis();
             if (this.lastUpdateTime == -1L) {
-               this.lastUpdateTime = var25;
+               this.lastUpdateTime = now;
             }
 
-            float var27 = (float)(var25 - this.lastUpdateTime);
-            this.lastUpdateTime = var25;
-            if (var24) {
+            float f3 = (float)(now - this.lastUpdateTime);
+            this.lastUpdateTime = now;
+            if (flag) {
                if (this.hoverStartTime == -1L) {
-                  this.hoverStartTime = var25;
-                  this.pauseUntilTime = var25 + 300L;
+                  this.hoverStartTime = now;
+                  this.pauseUntilTime = now + 300L;
                }
 
                this.continueScroll = true;
@@ -140,51 +140,51 @@ public abstract class GuiSetting<T extends Setting> extends Element {
                this.continueScroll = false;
             }
 
-            if (!var24 && !this.continueScroll) {
+            if (!flag && !this.continueScroll) {
                this.hoverStartTime = -1L;
                this.pauseUntilTime = -1L;
-            } else if (this.pauseUntilTime == -1L || var25 >= this.pauseUntilTime) {
+            } else if (this.pauseUntilTime == -1L || now >= this.pauseUntilTime) {
                this.pauseUntilTime = -1L;
-               float var28 = var23 + 10.0F;
-               float var29 = this.getDescScrollSpeed(var22, var6);
-               this.scrollOffset = this.scrollOffset + this.scrollDirection * var29 * var27;
-               if (this.scrollOffset >= var28) {
-                  this.scrollOffset = var28;
+               float scrollOffset = f2 + 10.0F;
+               float descScrollSpeed = this.getDescScrollSpeed(width, description);
+               this.scrollOffset = this.scrollOffset + this.scrollDirection * descScrollSpeed * f3;
+               if (this.scrollOffset >= scrollOffset) {
+                  this.scrollOffset = scrollOffset;
                   this.scrollDirection = -1;
-                  this.pauseUntilTime = var25 + 900L;
+                  this.pauseUntilTime = now + 900L;
                } else if (this.scrollOffset <= 0.0F) {
                   this.scrollOffset = 0.0F;
                   this.scrollDirection = 1;
-                  this.pauseUntilTime = var25 + 300L;
+                  this.pauseUntilTime = now + 300L;
                }
             }
 
-            float var31 = 10.0F;
-            float var32 = var11 + this.scrollOffset;
-            float var30 = var32 > 0.0F ? (var11 - var31 + this.scrollOffset) / var32 : 1.0F;
+            float f4 = 10.0F;
+            float maxWidth2 = maxWidth + this.scrollOffset;
+            float f5 = maxWidth2 > 0.0F ? (maxWidth - f4 + this.scrollOffset) / maxWidth2 : 1.0F;
             MsdfRenderer.renderText(
-               var8.getFont(),
-               var6,
-               var8.getSize(),
-               var13.method7287(),
-               MatrixUtils.method664(var1.pose()),
-               var9 - this.scrollOffset,
-               var21,
+               font2.getFont(),
+               description,
+               font2.getSize(),
+               zenithColor2.method7287(),
+               MatrixUtils.method664(menuDrawContext.pose()),
+               floatValue - this.scrollOffset,
+               y2,
                0.0F,
                true,
-               var30,
+               f5,
                1.0F,
-               var32
+               maxWidth2
             );
-            var1.disableScissor();
+            menuDrawContext.disableScissor();
          }
       }
    }
 
-   private float getDescScrollSpeed(float var1, String var2) {
-      float var3 = var1 / Math.max(var2.length(), 1);
-      float var4 = var3 * 12.0F / 1000.0F;
-      return Math.max(0.028F, Math.min(var4, 0.065F));
+   private float getDescScrollSpeed(float width, String description) {
+      float f = width / Math.max(description.length(), 1);
+      float f2 = f * 12.0F / 1000.0F;
+      return Math.max(0.028F, Math.min(f2, 0.065F));
    }
 
    private void resetDescScroll() {

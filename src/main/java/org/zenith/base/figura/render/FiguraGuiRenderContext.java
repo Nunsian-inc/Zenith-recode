@@ -9,14 +9,14 @@ public final class FiguraGuiRenderContext {
    private FiguraGuiRenderContext() {
    }
 
-   public static void mark(Entity var0, EntityRenderMode var1) {
-      if (var0 != null && var1 != null) {
-         for (Avatar var3 : AvatarManager.getAvatars(var0.getUUID())) {
-            var3.renderMode = var1;
+   public static void mark(Entity player, EntityRenderMode renderMode) {
+      if (player != null && renderMode != null) {
+         for (Avatar avatar : AvatarManager.getAvatars(player.getUUID())) {
+            avatar.renderMode = renderMode;
          }
 
-         for (Avatar var5 : AvatarManager.getWeaponAvatars(var0.getUUID())) {
-            var5.renderMode = var1;
+         for (Avatar weaponAvatar : AvatarManager.getWeaponAvatars(player.getUUID())) {
+            weaponAvatar.renderMode = renderMode;
          }
       }
    }

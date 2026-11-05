@@ -25,168 +25,168 @@ public final class FlakeState {
    private int intValue5;
    private int intValue6;
 
-   private FlakeState(int var1, int var2, int var3) {
+   private FlakeState(int intValue, int n, int n2) {
       this.longValue2 = ++longValue;
-      this.intValue = var1;
-      this.intValue2 = var2;
-      this.intValue3 = var3;
-      this.intValue4 = var3 * 2 + 1;
+      this.intValue = intValue;
+      this.intValue2 = n;
+      this.intValue3 = n2;
+      this.intValue4 = n2 * 2 + 1;
       this.doubleValues = new double[this.intValue4 * this.intValue4];
       this.doubleValues2 = new double[this.intValue4 * this.intValue4];
       this.flags = new boolean[this.intValue4 * this.intValue4];
       this.flags2 = new boolean[this.intValue4 * this.intValue4];
    }
 
-   public static FlakeState method4535(Level var0, int var1, int var2, int var3) {
-      FlakeState var4 = new FlakeState(var1, var2, var3);
-      var4.method4536(var0, var1, var2);
-      return var4;
+   public static FlakeState method4535(Level level, int intValue, int n, int n2) {
+      FlakeState flakeState = new FlakeState(intValue, n, n2);
+      flakeState.method4536(level, intValue, n);
+      return flakeState;
    }
 
-   public void method4536(Level var1, int var2, int var3) {
-      boolean var4 = this.intValue != var2 || this.intValue2 != var3;
-      this.intValue = var2;
-      this.intValue2 = var3;
+   public void method4536(Level level, int intValue, int n) {
+      boolean flag = this.intValue != intValue || this.intValue2 != n;
+      this.intValue = intValue;
+      this.intValue2 = n;
       this.worldChunk = null;
-      MutableBlockPos var5 = new MutableBlockPos();
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var6 = -this.intValue3; var6 <= this.intValue3; var6++) {
-         for (int var7 = -this.intValue3; var7 <= this.intValue3; var7++) {
-            var4 |= this.method4540(var1, var5, var2 + var6, var3 + var7, this.method4550(var6, var7));
+      for (int i = -this.intValue3; i <= this.intValue3; i++) {
+         for (int j = -this.intValue3; j <= this.intValue3; j++) {
+            flag |= this.method4540(level, mutablePos, intValue + i, n + j, this.method4550(i, j));
          }
       }
 
       this.worldChunk = null;
-      if (var4) {
+      if (flag) {
          this.longValue2 = ++longValue;
       }
    }
 
-   public void method4537(Level var1, int var2, int var3) {
-      int var4 = var2 - this.intValue;
-      int var5 = var3 - this.intValue2;
-      if (var4 != 0 || var5 != 0) {
-         if (Math.abs(var4) < this.intValue4 && Math.abs(var5) < this.intValue4) {
-            this.intValue = var2;
-            this.intValue2 = var3;
-            int var6 = Math.max(0, -var4);
-            int var7 = Math.min(this.intValue4 - 1, this.intValue4 - 1 - var4);
-            int var8 = Math.max(0, -var5);
-            int var9 = Math.min(this.intValue4 - 1, this.intValue4 - 1 - var5);
-            int var10 = var9 - var8 + 1;
-            int var11 = var8 + var5;
-            if (var4 >= 0) {
-               for (int var12 = var6; var12 <= var7; var12++) {
-                  this.method4539(var12 + var4, var11, var12, var8, var10);
+   public void method4537(Level level, int intValue, int n) {
+      int n2 = intValue - this.intValue;
+      int n3 = n - this.intValue2;
+      if (n2 != 0 || n3 != 0) {
+         if (Math.abs(n2) < this.intValue4 && Math.abs(n3) < this.intValue4) {
+            this.intValue = intValue;
+            this.intValue2 = n;
+            int n4 = Math.max(0, -n2);
+            int n5 = Math.min(this.intValue4 - 1, this.intValue4 - 1 - n2);
+            int n6 = Math.max(0, -n3);
+            int n7 = Math.min(this.intValue4 - 1, this.intValue4 - 1 - n3);
+            int n8 = n7 - n6 + 1;
+            int n9 = n6 + n3;
+            if (n2 >= 0) {
+               for (int i = n4; i <= n5; i++) {
+                  this.method4539(i + n2, n9, i, n6, n8);
                }
             } else {
-               for (int var16 = var7; var16 >= var6; var16--) {
-                  this.method4539(var16 + var4, var11, var16, var8, var10);
+               for (int i = n5; i >= n4; i--) {
+                  this.method4539(i + n2, n9, i, n6, n8);
                }
             }
 
             this.worldChunk = null;
-            MutableBlockPos var17 = new MutableBlockPos();
+            MutableBlockPos mutablePos = new MutableBlockPos();
 
-            for (int var13 = 0; var13 < this.intValue4; var13++) {
-               boolean var14 = var13 >= var6 && var13 <= var7;
+            for (int i = 0; i < this.intValue4; i++) {
+               boolean flag = i >= n4 && i <= n5;
 
-               for (int var15 = 0; var15 < this.intValue4; var15++) {
-                  if (!var14 || var15 < var8 || var15 > var9) {
-                     this.method4540(var1, var17, var2 + var13 - this.intValue3, var3 + var15 - this.intValue3, var13 * this.intValue4 + var15);
+               for (int j = 0; j < this.intValue4; j++) {
+                  if (!flag || j < n6 || j > n7) {
+                     this.method4540(level, mutablePos, intValue + i - this.intValue3, n + j - this.intValue3, i * this.intValue4 + j);
                   }
                }
             }
 
             this.worldChunk = null;
          } else {
-            this.method4536(var1, var2, var3);
+            this.method4536(level, intValue, n);
          }
       }
    }
 
-   public void method4538(Level var1, int var2, int var3) {
-      int var4 = var2 - this.intValue;
-      int var5 = var3 - this.intValue2;
-      if (var4 >= -this.intValue3 && var4 <= this.intValue3 && var5 >= -this.intValue3 && var5 <= this.intValue3) {
+   public void method4538(Level level, int x, int z) {
+      int n = x - this.intValue;
+      int n2 = z - this.intValue2;
+      if (n >= -this.intValue3 && n <= this.intValue3 && n2 >= -this.intValue3 && n2 <= this.intValue3) {
          this.worldChunk = null;
-         boolean var6 = this.method4540(var1, new MutableBlockPos(), var2, var3, this.method4550(var4, var5));
+         boolean flag = this.method4540(level, new MutableBlockPos(), x, z, this.method4550(n, n2));
          this.worldChunk = null;
-         if (var6) {
+         if (flag) {
             this.longValue2 = ++longValue;
          }
       }
    }
 
-   private void method4539(int var1, int var2, int var3, int var4, int var5) {
-      int var6 = var1 * this.intValue4 + var2;
-      int var7 = var3 * this.intValue4 + var4;
-      System.arraycopy(this.doubleValues, var6, this.doubleValues, var7, var5);
-      System.arraycopy(this.doubleValues2, var6, this.doubleValues2, var7, var5);
-      System.arraycopy(this.flags, var6, this.flags, var7, var5);
-      System.arraycopy(this.flags2, var6, this.flags2, var7, var5);
+   private void method4539(int n, int n2, int n3, int n4, int n5) {
+      int n6 = n * this.intValue4 + n2;
+      int n7 = n3 * this.intValue4 + n4;
+      System.arraycopy(this.doubleValues, n6, this.doubleValues, n7, n5);
+      System.arraycopy(this.doubleValues2, n6, this.doubleValues2, n7, n5);
+      System.arraycopy(this.flags, n6, this.flags, n7, n5);
+      System.arraycopy(this.flags2, n6, this.flags2, n7, n5);
    }
 
-   private boolean method4540(Level var1, MutableBlockPos var2, int var3, int var4, int var5) {
-      double var6 = this.doubleValues[var5];
-      double var8 = this.doubleValues2[var5];
-      boolean var10 = this.flags[var5];
-      boolean var11 = this.flags2[var5];
-      this.method4541(var1, var2, var3, var4, var5);
-      return this.doubleValues[var5] != var6 || this.doubleValues2[var5] != var8 || this.flags[var5] != var10 || this.flags2[var5] != var11;
+   private boolean method4540(Level level, MutableBlockPos mutablePos, int x, int z, int n) {
+      double doubleValue = this.doubleValues[n];
+      double d = this.doubleValues2[n];
+      boolean flag = this.flags[n];
+      boolean flag2 = this.flags2[n];
+      this.method4541(level, mutablePos, x, z, n);
+      return this.doubleValues[n] != doubleValue || this.doubleValues2[n] != d || this.flags[n] != flag || this.flags2[n] != flag2;
    }
 
-   private void method4541(Level var1, MutableBlockPos var2, int var3, int var4, int var5) {
-      this.flags[var5] = false;
-      this.flags2[var5] = false;
-      int var6 = var3 >> 4;
-      int var7 = var4 >> 4;
-      if (!var1.hasChunk(var6, var7)) {
-         this.doubleValues[var5] = Double.NEGATIVE_INFINITY;
-         this.doubleValues2[var5] = Double.NEGATIVE_INFINITY;
+   private void method4541(Level level, MutableBlockPos mutablePos, int x, int z, int n) {
+      this.flags[n] = false;
+      this.flags2[n] = false;
+      int chunkX = x >> 4;
+      int chunkZ = z >> 4;
+      if (!level.hasChunk(chunkX, chunkZ)) {
+         this.doubleValues[n] = Double.NEGATIVE_INFINITY;
+         this.doubleValues2[n] = Double.NEGATIVE_INFINITY;
       } else {
-         LevelChunk var8 = null;
-         int var9;
-         if (var3 >= -30000000 && var4 >= -30000000 && var3 < 30000000 && var4 < 30000000) {
-            if (this.worldChunk == null || this.intValue5 != var6 || this.intValue6 != var7) {
-               this.worldChunk = var1.getChunk(var6, var7);
-               this.intValue5 = var6;
-               this.intValue6 = var7;
+         LevelChunk worldChunk = null;
+         int height;
+         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
+            if (this.worldChunk == null || this.intValue5 != chunkX || this.intValue6 != chunkZ) {
+               this.worldChunk = level.getChunk(chunkX, chunkZ);
+               this.intValue5 = chunkX;
+               this.intValue6 = chunkZ;
             }
 
-            var8 = this.worldChunk;
-            var9 = var8.getHeight(Types.MOTION_BLOCKING, var3 & 15, var4 & 15) + 1;
+            worldChunk = this.worldChunk;
+            height = worldChunk.getHeight(Types.MOTION_BLOCKING, x & 15, z & 15) + 1;
          } else {
-            var9 = var1.getHeight(Types.MOTION_BLOCKING, var3, var4);
+            height = level.getHeight(Types.MOTION_BLOCKING, x, z);
          }
 
-         int var10 = var1.getMinY();
-         if (var9 <= var10) {
-            this.doubleValues[var5] = Double.NEGATIVE_INFINITY;
-            this.doubleValues2[var5] = Double.NEGATIVE_INFINITY;
+         int minY = level.getMinY();
+         if (height <= minY) {
+            this.doubleValues[n] = Double.NEGATIVE_INFINITY;
+            this.doubleValues2[n] = Double.NEGATIVE_INFINITY;
          } else {
-            this.doubleValues2[var5] = var9;
-            this.doubleValues[var5] = Double.NEGATIVE_INFINITY;
-            int var11 = Math.max(var10, var9 - 12);
+            this.doubleValues2[n] = height;
+            this.doubleValues[n] = Double.NEGATIVE_INFINITY;
+            int n2 = Math.max(minY, height - 12);
 
-            for (int var12 = var9 - 1; var12 >= var11; var12--) {
-               var2.set(var3, var12, var4);
-               BlockState var13 = var8 != null ? var8.getBlockState(var2) : var1.getBlockState(var2);
-               if (!var13.getFluidState().isEmpty() || var13.is(BlockTags.ICE)) {
-                  this.doubleValues[var5] = var12 + 1;
+            for (int i = height - 1; i >= n2; i--) {
+               mutablePos.set(x, i, z);
+               BlockState blockState = worldChunk != null ? worldChunk.getBlockState(mutablePos) : level.getBlockState(mutablePos);
+               if (!blockState.getFluidState().isEmpty() || blockState.is(BlockTags.ICE)) {
+                  this.doubleValues[n] = i + 1;
                   return;
                }
 
-               if (var13.is(BlockTags.LEAVES)) {
-                  this.doubleValues[var5] = var12 + 1;
-                  this.flags[var5] = true;
-                  this.flags2[var5] = true;
+               if (blockState.is(BlockTags.LEAVES)) {
+                  this.doubleValues[n] = i + 1;
+                  this.flags[n] = true;
+                  this.flags2[n] = true;
                   return;
                }
 
-               if (var13.isRedstoneConductor(var1, var2)) {
-                  this.doubleValues[var5] = var12 + 1;
-                  this.flags[var5] = true;
+               if (blockState.isRedstoneConductor(level, mutablePos)) {
+                  this.doubleValues[n] = i + 1;
+                  this.flags[n] = true;
                   return;
                }
             }
@@ -194,36 +194,36 @@ public final class FlakeState {
       }
    }
 
-   public static FlakeState method4542(int var0) {
-      FlakeState var1 = new FlakeState(0, 0, var0);
+   public static FlakeState method4542(int n) {
+      FlakeState flakeState = new FlakeState(0, 0, n);
 
-      for (int var2 = -var0; var2 <= var0; var2++) {
-         for (int var3 = -var0; var3 <= var0; var3++) {
-            int var4 = var1.method4550(var2, var3);
-            var1.doubleValues[var4] = method4543(var2, var3);
-            var1.doubleValues2[var4] = var1.doubleValues[var4];
-            var1.flags[var4] = true;
+      for (int i = -n; i <= n; i++) {
+         for (int j = -n; j <= n; j++) {
+            int n2 = flakeState.method4550(i, j);
+            flakeState.doubleValues[n2] = method4543(i, j);
+            flakeState.doubleValues2[n2] = flakeState.doubleValues[n2];
+            flakeState.flags[n2] = true;
          }
       }
 
-      return var1;
+      return flakeState;
    }
 
-   private static double method4543(int var0, int var1) {
-      double var2 = 0.0;
-      if (var1 <= -2) {
-         var2++;
+   private static double method4543(int n, int n2) {
+      double d = 0.0;
+      if (n2 <= -2) {
+         d++;
       }
 
-      if (var1 <= -4 && Math.abs(var0) <= 3) {
-         var2++;
+      if (n2 <= -4 && Math.abs(n) <= 3) {
+         d++;
       }
 
-      if (var0 >= 3 && var1 >= 1) {
-         var2++;
+      if (n >= 3 && n2 >= 1) {
+         d++;
       }
 
-      return var2;
+      return d;
    }
 
    public int getIntValue() {
@@ -242,41 +242,41 @@ public final class FlakeState {
       return this.longValue2;
    }
 
-   public double method4544(int var1, int var2) {
-      return var1 >= -this.intValue3 && var1 <= this.intValue3 && var2 >= -this.intValue3 && var2 <= this.intValue3
-         ? this.doubleValues[this.method4550(var1, var2)]
+   public double method4544(int n, int n2) {
+      return n >= -this.intValue3 && n <= this.intValue3 && n2 >= -this.intValue3 && n2 <= this.intValue3
+         ? this.doubleValues[this.method4550(n, n2)]
          : Double.NEGATIVE_INFINITY;
    }
 
-   public boolean method4545(int var1, int var2) {
-      return var1 >= -this.intValue3 && var1 <= this.intValue3 && var2 >= -this.intValue3 && var2 <= this.intValue3
-         ? this.flags2[this.method4550(var1, var2)]
+   public boolean method4545(int n, int n2) {
+      return n >= -this.intValue3 && n <= this.intValue3 && n2 >= -this.intValue3 && n2 <= this.intValue3
+         ? this.flags2[this.method4550(n, n2)]
          : false;
    }
 
-   public boolean method4546(int var1, int var2) {
-      return var1 >= -this.intValue3 && var1 <= this.intValue3 && var2 >= -this.intValue3 && var2 <= this.intValue3
-         ? this.flags[this.method4550(var1, var2)]
+   public boolean method4546(int n, int n2) {
+      return n >= -this.intValue3 && n <= this.intValue3 && n2 >= -this.intValue3 && n2 <= this.intValue3
+         ? this.flags[this.method4550(n, n2)]
          : false;
    }
 
-   public double method4547(double var1, double var3) {
-      return this.method4544((int)Math.floor(var1) - this.intValue, (int)Math.floor(var3) - this.intValue2);
+   public double method4547(double d, double d2) {
+      return this.method4544((int)Math.floor(d) - this.intValue, (int)Math.floor(d2) - this.intValue2);
    }
 
-   public double method4548(double var1, double var3) {
-      return this.method4549((int)Math.floor(var1), (int)Math.floor(var3));
+   public double method4548(double d, double d2) {
+      return this.method4549((int)Math.floor(d), (int)Math.floor(d2));
    }
 
-   public double method4549(int var1, int var2) {
-      int var3 = var1 - this.intValue;
-      int var4 = var2 - this.intValue2;
-      return var3 >= -this.intValue3 && var3 <= this.intValue3 && var4 >= -this.intValue3 && var4 <= this.intValue3
-         ? this.doubleValues2[this.method4550(var3, var4)]
+   public double method4549(int n, int n2) {
+      int n3 = n - this.intValue;
+      int n4 = n2 - this.intValue2;
+      return n3 >= -this.intValue3 && n3 <= this.intValue3 && n4 >= -this.intValue3 && n4 <= this.intValue3
+         ? this.doubleValues2[this.method4550(n3, n4)]
          : Double.NEGATIVE_INFINITY;
    }
 
-   private int method4550(int var1, int var2) {
-      return (var1 + this.intValue3) * this.intValue4 + var2 + this.intValue3;
+   private int method4550(int n, int n2) {
+      return (n + this.intValue3) * this.intValue4 + n2 + this.intValue3;
    }
 }

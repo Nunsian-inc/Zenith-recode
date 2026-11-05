@@ -20,53 +20,53 @@ public final class CosmeticTextureCache implements MinecraftAccess {
    private static final Logger logger = LoggerFactory.getLogger("Zenith/Cosmetics");
    private static final byte[] CONST_byteValues = new byte[]{-119, 80, 78, 71, 13, 10, 26, 10};
    private final Map<String, Identifier> items = new HashMap<>();
-   private final ExecutorService executorService = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "Nexus-Cosmetics-PNG");
-      var1.setDaemon(true);
-      var1.setPriority(1);
-      return var1;
+   private final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "Nexus-Cosmetics-PNG");
+      thread.setDaemon(true);
+      thread.setPriority(1);
+      return thread;
    });
 
-   public Identifier method2616(String var1, byte[] var2) {
-      Identifier var3 = this.items.get(var1);
-      if (var3 != null) {
-         return var3;
-      } else if (var2 == null || var2.length == 0) {
+   public Identifier method2616(String str, byte[] byteValue) {
+      Identifier id = this.items.get(str);
+      if (id != null) {
+         return id;
+      } else if (byteValue == null || byteValue.length == 0) {
          return null;
-      } else if (!method2620(var2)) {
-         logger.warn("Косметика: текстура {} не PNG ({} байт)", var1, var2.length);
+      } else if (!method2620(byteValue)) {
+         logger.warn("Косметика: текстура {} не PNG ({} байт)", str, byteValue.length);
          return null;
       } else {
-         Identifier var4 = Identifier.fromNamespaceAndPath("zenith", "cosmetic/" + var1);
-         mc.getTextureManager().register(var4, method2619(new NativeImage(1, 1, true)));
-         this.items.put(var1, var4);
-         this.executorService.execute(() -> this.method2617(var1, var4, var2));
-         return var4;
+         Identifier location = Identifier.fromNamespaceAndPath("zenith", "cosmetic/" + str);
+         mc.getTextureManager().register(location, method2619(new NativeImage(1, 1, true)));
+         this.items.put(str, location);
+         this.executorService.execute(() -> this.method2617(str, location, byteValue));
+         return location;
       }
    }
 
-   private void method2617(String var1, Identifier var2, byte[] var3) {
-      NativeImage var4;
+   private void method2617(String str, Identifier location, byte[] byteValue) {
+      NativeImage nativeImage;
       try {
-         var4 = NativeImage.read(var3);
-      } catch (RuntimeException | IOException var6) {
-         logger.warn("Косметика: текстура {} не читается: {}", var1, var6.toString());
+         nativeImage = NativeImage.read(byteValue);
+      } catch (RuntimeException | IOException e) {
+         logger.warn("Косметика: текстура {} не читается: {}", str, e.toString());
          return;
       }
 
-      mc.execute(() -> this.method2618(var1, var2, var4));
+      mc.execute(() -> this.method2618(str, location, nativeImage));
    }
 
-   private void method2618(String var1, Identifier var2, NativeImage var3) {
-      if (!var2.equals(this.items.get(var1))) {
-         var3.close();
+   private void method2618(String str, Identifier location, NativeImage nativeImage) {
+      if (!location.equals(this.items.get(str))) {
+         nativeImage.close();
       } else {
-         mc.getTextureManager().register(var2, method2619(var3));
+         mc.getTextureManager().register(location, method2619(nativeImage));
       }
    }
 
-   private static DynamicTexture method2619(NativeImage var0) {
-      return new DynamicTexture(() -> "zenith", var0) {
+   private static DynamicTexture method2619(NativeImage nativeImage) {
+      return new DynamicTexture(() -> "zenith", nativeImage) {
          {
             this.sampler = RenderSystem.getSamplerCache()
                .getSampler(AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE, FilterMode.NEAREST, FilterMode.NEAREST, false);
@@ -74,12 +74,12 @@ public final class CosmeticTextureCache implements MinecraftAccess {
       };
    }
 
-   private static boolean method2620(byte[] var0) {
-      if (var0.length < CONST_byteValues.length) {
+   private static boolean method2620(byte[] byteValue) {
+      if (byteValue.length < CONST_byteValues.length) {
          return false;
       } else {
-         for (int var1 = 0; var1 < CONST_byteValues.length; var1++) {
-            if (var0[var1] != CONST_byteValues[var1]) {
+         for (int i = 0; i < CONST_byteValues.length; i++) {
+            if (byteValue[i] != CONST_byteValues[i]) {
                return false;
             }
          }
@@ -88,46 +88,46 @@ public final class CosmeticTextureCache implements MinecraftAccess {
       }
    }
 
-   public Identifier method2621(String var1) {
-      return this.items.get(var1);
+   public Identifier method2621(String str) {
+      return this.items.get(str);
    }
 
-   public void method2622(String var1) {
-      String var2 = var1 + "/";
-      ArrayList<String> var3 = new ArrayList(2);
+   public void method2622(String anObject) {
+      String prefix = anObject + "/";
+      ArrayList<String> strings = new ArrayList(2);
 
-      for (String var5 : this.items.keySet()) {
-         if (var5.equals(var1) || var5.startsWith(var2)) {
-            var3.add(var5);
+      for (String str : this.items.keySet()) {
+         if (str.equals(anObject) || str.startsWith(prefix)) {
+            strings.add(str);
          }
       }
 
-      for (String var8 : var3) {
-         Identifier var6 = this.items.remove(var8);
-         if (var6 != null) {
-            mc.getTextureManager().release(var6);
+      for (String str : strings) {
+         Identifier location = this.items.remove(str);
+         if (location != null) {
+            mc.getTextureManager().release(location);
          }
       }
    }
 
-   public static String method2623(String var0, String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         StringBuilder var2 = new StringBuilder(var1.length());
+   public static String method2623(String str, String str2) {
+      if (str2 != null && !str2.isBlank()) {
+         StringBuilder builder = new StringBuilder(str2.length());
 
-         for (int var3 = 0; var3 < var1.length(); var3++) {
-            char var4 = Character.toLowerCase(var1.charAt(var3));
-            var2.append((var4 < 'a' || var4 > 'z') && (var4 < '0' || var4 > '9') && var4 != '_' && var4 != '.' && var4 != '-' ? '_' : var4);
+         for (int i = 0; i < str2.length(); i++) {
+            char lowerCase = Character.toLowerCase(str2.charAt(i));
+            builder.append((lowerCase < 'a' || lowerCase > 'z') && (lowerCase < '0' || lowerCase > '9') && lowerCase != '_' && lowerCase != '.' && lowerCase != '-' ? '_' : lowerCase);
          }
 
-         return var0 + "/" + var2;
+         return str + "/" + builder;
       } else {
-         return var0;
+         return str;
       }
    }
 
    public void releaseAll() {
-      for (String var3 : new ArrayList<>(this.items.keySet())) {
-         this.method2622(var3);
+      for (String anObject : new ArrayList<>(this.items.keySet())) {
+         this.method2622(anObject);
       }
    }
 

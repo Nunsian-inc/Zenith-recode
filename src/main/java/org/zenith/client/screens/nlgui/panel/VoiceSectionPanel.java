@@ -93,34 +93,34 @@ public class VoiceSectionPanel extends SectionPanel {
    public void build() {
       this.order = 0;
       this.asideOrder = 0;
-      Voice var1 = voice();
-      if (var1 == null) {
+      Voice voice2 = voice();
+      if (voice2 == null) {
          this.hint(t("gui.voice.missing"));
       } else {
-         if (!var1.isFlag()) {
-            var1.method335();
+         if (!voice2.isFlag()) {
+            voice2.method335();
          }
 
-         this.hero(var1);
-         if (!var1.isEnabled()) {
+         this.hero(voice2);
+         if (!voice2.isEnabled()) {
             this.hint(t("gui.voice.off.hint"));
          }
 
          this.caption("gui.voice.caption.devices");
-         this.pickers(var1);
+         this.pickers(voice2);
          if (this.openPicker != -1) {
-            boolean var2 = this.openPicker == 0;
-            this.deviceList(var2 ? var1.input : var1.output, var2 ? var1.method338() : var1.method339());
+            boolean flag = this.openPicker == 0;
+            this.deviceList(flag ? voice2.input : voice2.output, flag ? voice2.method338() : voice2.method339());
          }
 
-         this.setting(var1.micGain);
-         this.setting(var1.volume);
-         this.setting(var1.denoise);
-         if (var1.denoise.isEnabled()) {
-            this.setting(var1.rnnoise);
+         this.setting(voice2.micGain);
+         this.setting(voice2.volume);
+         this.setting(voice2.denoise);
+         if (voice2.denoise.isEnabled()) {
+            this.setting(voice2.rnnoise);
          }
 
-         this.micTest(var1);
+         this.micTest(voice2);
          this.caption("gui.voice.caption.talk");
          this.choice(
             "activation",
@@ -128,16 +128,16 @@ public class VoiceSectionPanel extends SectionPanel {
                new VoiceSectionPanel.Tile("gui.voice.activation.ptt", "gui.voice.activation.ptt.note"),
                new VoiceSectionPanel.Tile("gui.voice.activation.voice", "gui.voice.activation.voice.note")
             ),
-            var1.activation::getIndex,
-            var1x -> select(var1.activation, var1x)
+            voice2.activation::getIndex,
+            var1x -> select(voice2.activation, var1x)
          );
-         if (var1.activation.isSelected(0)) {
-            this.setting(var1.talkKey);
+         if (voice2.activation.isSelected(0)) {
+            this.setting(voice2.talkKey);
          } else {
-            this.setting(var1.sensitivity);
+            this.setting(voice2.sensitivity);
          }
 
-         this.setting(var1.radioKey);
+         this.setting(voice2.radioKey);
          this.caption("gui.voice.caption.hear");
          this.choice(
             "range",
@@ -146,44 +146,44 @@ public class VoiceSectionPanel extends SectionPanel {
                new VoiceSectionPanel.Tile("gui.voice.range.normal", "gui.voice.range.normal.note"),
                new VoiceSectionPanel.Tile("gui.voice.range.loud", "gui.voice.range.loud.note")
             ),
-            var1.range::getIndex,
-            var1x -> select(var1.range, var1x)
+            voice2.range::getIndex,
+            var1x -> select(voice2.range, var1x)
          );
-         this.setting(var1.radioVolume);
-         this.setting(var1.acceptRadio);
-         this.setting(var1.muffle);
-         this.channels(var1);
+         this.setting(voice2.radioVolume);
+         this.setting(voice2.acceptRadio);
+         this.setting(voice2.muffle);
+         this.channels(voice2);
          this.row("gui.voice.caption.more").icon(MenuGlyph.MODE).value(() -> t(this.advanced ? "gui.voice.more.hide" : "gui.voice.more.show")).onClick(() -> {
             this.advanced = !this.advanced;
             this.invalidate();
          }).description("gui.voice.more.desc").add();
          if (this.advanced) {
-            this.setting(var1.quality);
-            this.setting(var1.spatial);
-            if (var1.spatial.isEnabled()) {
-               this.setting(var1.hrtf);
+            this.setting(voice2.quality);
+            this.setting(voice2.spatial);
+            if (voice2.spatial.isEnabled()) {
+               this.setting(voice2.hrtf);
             }
 
-            this.setting(var1.overlay);
-            this.setting(var1.heads);
-            this.setting(var1.muteKey);
-            this.setting(var1.deafenKey);
+            this.setting(voice2.overlay);
+            this.setting(voice2.heads);
+            this.setting(voice2.muteKey);
+            this.setting(voice2.deafenKey);
             this.action("gui.voice.refresh", MenuGlyph.RESET, () -> t("gui.voice.refresh.value"), () -> {
-               var1.method335();
+               voice2.method335();
                this.invalidate();
             }, "gui.voice.refresh.desc");
          }
 
-         this.buildAside(var1);
+         this.buildAside(voice2);
       }
    }
 
-   private void channels(Voice var1) {
-      Cloud var2 = Zenith.getInstance().getCloud();
-      if (var2 != null) {
-         PartyMember var3 = var2.getPartyMember();
+   private void channels(Voice voice) {
+      Cloud cloud = Zenith.getInstance().getCloud();
+      if (cloud != null) {
+         PartyMember partyMember = cloud.getPartyMember();
          this.caption("gui.voice.caption.channels");
-         if (!var2.method7860()) {
+         if (!cloud.method7860()) {
             this.hint(t("gui.voice.channels.unsupported"));
          } else {
             this.choice(
@@ -193,95 +193,95 @@ public class VoiceSectionPanel extends SectionPanel {
                   new VoiceSectionPanel.Tile("gui.voice.channel.party", "gui.voice.channel.party.note"),
                   new VoiceSectionPanel.Tile("gui.voice.channel.room", "gui.voice.channel.room.note")
                ),
-               var1.defaultChannel::getIndex,
-               var1x -> select(var1.defaultChannel, var1x)
+               voice.defaultChannel::getIndex,
+               var1x -> select(voice.defaultChannel, var1x)
             );
-            this.setting(var1.partyKey);
-            this.setting(var1.roomKey);
-            this.setting(var1.whisperKey);
-            this.setting(var1.channelVolume);
-            PartyMember.Data var4 = var3.getData();
-            if (var4 == null) {
+            this.setting(voice.partyKey);
+            this.setting(voice.roomKey);
+            this.setting(voice.whisperKey);
+            this.setting(voice.channelVolume);
+            PartyMember.Data data = partyMember.getData();
+            if (data == null) {
                this.setting(this.roomName);
                this.action("gui.voice.room.create", MenuGlyph.ACTION, () -> t("gui.voice.room.create.value"), () -> {
-                  var3.method1171(this.roomName.getValue() == null ? "" : this.roomName.getValue());
+                  partyMember.method1171(this.roomName.getValue() == null ? "" : this.roomName.getValue());
                   this.invalidate();
                }, "gui.voice.room.create.desc");
                this.setting(this.roomCode);
                this.action("gui.voice.room.join", MenuGlyph.ACTION, () -> t("gui.voice.room.join.value"), () -> {
                   String var2x = this.roomCode.getValue() == null ? "" : this.roomCode.getValue().strip();
                   if (var2x.length() == 5) {
-                     var3.method1172(var2x);
+                     partyMember.method1172(var2x);
                   }
 
                   this.invalidate();
                }, "gui.voice.room.join.desc");
 
-               for (PartyMember.Data16 var6 : var3.method1145()) {
-                  this.row(t("gui.voice.room.invite").replace("{n}", var6.getText3()).replace("{r}", var6.name()))
+               for (PartyMember.Data16 data16 : partyMember.method1145()) {
+                  this.row(t("gui.voice.room.invite").replace("{n}", data16.getText3()).replace("{r}", data16.name()))
                      .icon(MenuGlyph.SOUND)
                      .value(() -> t("gui.voice.room.join.value"))
                      .onClick(() -> {
-                        var3.method1172(var6.getText());
+                        partyMember.method1172(data16.getText());
                         this.invalidate();
                      })
                      .onRightClick(() -> {
-                        var3.method1173(var6);
+                        partyMember.method1173(data16);
                         this.invalidate();
                      })
                      .description("gui.voice.room.invite.desc")
                      .add();
                }
             } else {
-               this.info("gui.voice.room.current", () -> var4.name() + " · " + var4.getText(), "gui.voice.room.current.desc");
-               this.action("gui.voice.room.copy", MenuGlyph.COPY, () -> var4.getText(), () -> {
+               this.info("gui.voice.room.current", () -> data.name() + " · " + data.getText(), "gui.voice.room.current.desc");
+               this.action("gui.voice.room.copy", MenuGlyph.COPY, () -> data.getText(), () -> {
                   if (mc.keyboardHandler != null) {
-                     mc.keyboardHandler.setClipboard(var4.getText());
+                     mc.keyboardHandler.setClipboard(data.getText());
                   }
                }, "gui.voice.room.copy.desc");
 
-               for (PartyMember.Data3 var13 : var4.getItems()) {
-                  boolean var7 = var1.getVoiceState().method5365(var13.uid());
+               for (PartyMember.Data3 data3 : data.getItems()) {
+                  boolean flag = voice.getVoiceState().method5365(data3.uid());
                   this.info(
-                     var13.uid() == var4.getLongValue() ? "★ " + var13.username() : var13.username(),
-                     () -> var1.getVoiceState().method5365(var13.uid())
+                     data3.uid() == data.getLongValue() ? "★ " + data3.username() : data3.username(),
+                     () -> voice.getVoiceState().method5365(data3.uid())
                         ? t("gui.voice.room.speaking")
-                        : (var13.uid() == var2.getLongValue() ? t("gui.party.you") : ""),
-                     var7 ? "gui.voice.room.speaking" : "gui.voice.room.member.desc"
+                        : (data3.uid() == cloud.getLongValue() ? t("gui.party.you") : ""),
+                     flag ? "gui.voice.room.speaking" : "gui.voice.room.member.desc"
                   );
                }
 
-               for (PartyPlayerInfo var14 : var2.state().method8038()) {
-                  boolean var15 = false;
+               for (PartyPlayerInfo partyPlayerInfo : cloud.state().method8038()) {
+                  boolean flag = false;
 
-                  for (PartyMember.Data3 var9 : var4.getItems()) {
-                     if (var9.uid() == var14.uid()) {
-                        var15 = true;
+                  for (PartyMember.Data3 data3 : data.getItems()) {
+                     if (data3.uid() == partyPlayerInfo.uid()) {
+                        flag = true;
                         break;
                      }
                   }
 
-                  if (!var15 && var14.method3289()) {
+                  if (!flag && partyPlayerInfo.method3289()) {
                      this.action(
-                        t("gui.voice.room.inviteFriend").replace("{n}", Voice.method367(var14)),
+                        t("gui.voice.room.inviteFriend").replace("{n}", Voice.method367(partyPlayerInfo)),
                         MenuGlyph.FRIENDS,
                         () -> t("gui.voice.room.inviteFriend.value"),
-                        () -> var3.method1175(var14.uid()),
+                        () -> partyMember.method1175(partyPlayerInfo.uid()),
                         "gui.voice.room.inviteFriend.desc"
                      );
                   }
                }
 
                this.action("gui.voice.room.leave", MenuGlyph.CLOSE, () -> t("gui.voice.room.leave.value"), () -> {
-                  var3.method1174();
+                  partyMember.method1174();
                   this.invalidate();
                }, "gui.voice.room.leave.desc");
             }
 
-            long var12 = var3.getLongValue();
-            if (var12 != 0L) {
-               this.action(t("gui.voice.whisper.target").replace("{n}", var1.method348(var12)), MenuGlyph.SOUND, () -> t("gui.voice.whisper.clear"), () -> {
-                  var3.method1176(0L);
+            long longValue = partyMember.getLongValue();
+            if (longValue != 0L) {
+               this.action(t("gui.voice.whisper.target").replace("{n}", voice.method348(longValue)), MenuGlyph.SOUND, () -> t("gui.voice.whisper.clear"), () -> {
+                  partyMember.method1176(0L);
                   this.invalidate();
                }, "gui.voice.whisper.target.desc");
             } else {
@@ -291,97 +291,97 @@ public class VoiceSectionPanel extends SectionPanel {
       }
    }
 
-   private static void select(ModeSetting var0, int var1) {
-      var0.getValues().get(var1).method2103();
+   private static void select(ModeSetting activation, int n) {
+      activation.getValues().get(n).method2103();
    }
 
-   private static float wave(Animation var0, int var1) {
-      float var2 = var0.method2808(1.0F);
-      return Mth.clamp((var2 - var1 * 0.07F) / 0.5F, 0.0F, 1.0F);
+   private static float wave(Animation enterWave, int n) {
+      float f = enterWave.method2808(1.0F);
+      return Mth.clamp((f - n * 0.07F) / 0.5F, 0.0F, 1.0F);
    }
 
-   private static void restart(Animation var0) {
-      var0.reset(0.0F);
-      var0.method2810(1.0F);
+   private static void restart(Animation listWave) {
+      listWave.reset(0.0F);
+      listWave.method2810(1.0F);
    }
 
-   private void hero(Voice var1) {
-      int var2 = this.order++;
+   private void hero(Voice voice) {
+      int n = this.order++;
       this.custom(
          40.0F,
-         (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = wave(this.enterWave, var2);
-            if (!(var11 <= 0.002F)) {
-               var9 *= var11;
-               var6 += (1.0F - var11) * 8.0F;
-               float var12 = var6 + 8.0F;
-               float var13 = var6 + var8 - 8.0F;
-               float var14 = var7 + 3.0F;
-               float var15 = 34.0F;
-               boolean var16 = new BoundsData(var12, var14, var13 - var12, var15).contains(var4, var5);
-               boolean var17 = var1.isEnabled();
-               float var18 = this.heroOn.method2808(var17 ? 1.0F : 0.0F);
-               plate(var3, var12, var14, var13 - var12, var15, this.hover("hero", var16), 0.0F, var9, var10);
-               var3.drawRoundedRect(
-                  var12,
-                  var14,
-                  var13 - var12,
-                  var15,
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.enterWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float floatValue = f + 8.0F;
+               float f4 = f + f3 - 8.0F;
+               float y = f2 + 3.0F;
+               float height = 34.0F;
+               boolean contains = new BoundsData(floatValue, y, f4 - floatValue, height).contains(lastClickX, lastClickY);
+               boolean enabled = voice.isEnabled();
+               float hover = this.heroOn.method2808(enabled ? 1.0F : 0.0F);
+               plate(menuDrawContext, floatValue, y, f4 - floatValue, height, this.hover("hero", contains), 0.0F, previewAlpha, zenithStyle);
+               menuDrawContext.drawRoundedRect(
+                  floatValue,
+                  y,
+                  f4 - floatValue,
+                  height,
                   ProxyDotRadiusData.method8069(4.0F),
-                  var10.getPrimaryColor().getZenithColor().method7294(var9 * 0.07F * var18)
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.07F * hover)
                );
-               if (var16) {
+               if (contains) {
                   HoverInfo.request(t("gui.voice.enabled"), t("gui.voice.enabled.desc"));
                }
 
-               Voice.Type var19 = var1.method357();
-               boolean var20 = var19 == Voice.Type.TALKING || var19 == Voice.Type.RADIO || var19 == Voice.Type.TESTING;
-               float var21 = var20 ? var1.getVoiceState().getFloatValue2() : -100.0F;
-               this.breath = this.breath + (Mth.clamp((var21 + 60.0F) / 45.0F, 0.0F, 1.0F) - this.breath) * 0.25F;
-               ZenithColor var22 = var10.getTextTertiary().getZenithColor().method7295(var10.getPrimaryColor().getZenithColor(), var18);
-               float var23 = var12 + 8.0F;
-               float var24 = var14 + (var15 - 12.0F) / 2.0F;
+               Voice.Type type = voice.method357();
+               boolean flag = type == Voice.Type.TALKING || type == Voice.Type.RADIO || type == Voice.Type.TESTING;
+               float f5 = flag ? voice.getVoiceState().getFloatValue2() : -100.0F;
+               this.breath = this.breath + (Mth.clamp((f5 + 60.0F) / 45.0F, 0.0F, 1.0F) - this.breath) * 0.25F;
+               ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover);
+               float f6 = floatValue + 8.0F;
+               float f7 = y + (height - 12.0F) / 2.0F;
                if (this.breath > 0.01F) {
-                  float var25 = 18.0F + this.breath * 5.0F;
-                  float var26 = var23 + 6.0F;
-                  float var27 = var24 + 6.0F;
-                  var3.drawRoundedRect(
-                     var26 - var25 / 2.0F,
-                     var27 - var25 / 2.0F,
-                     var25,
-                     var25,
-                     ProxyDotRadiusData.method8069(var25 / 2.0F),
-                     var10.getPrimaryColor().getZenithColor().method7294(var9 * 0.18F * this.breath)
+                  float width = 18.0F + this.breath * 5.0F;
+                  float f8 = f6 + 6.0F;
+                  float f9 = f7 + 6.0F;
+                  menuDrawContext.drawRoundedRect(
+                     f8 - width / 2.0F,
+                     f9 - width / 2.0F,
+                     width,
+                     width,
+                     ProxyDotRadiusData.method8069(width / 2.0F),
+                     zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.18F * this.breath)
                   );
                }
 
-               bigGlyph(var3, var23, var24, 1.0F + this.breath * 0.12F, var22.method7294(var9));
-               Font var38 = Fonts.NEW_MEDIUM.getFont(6.0F);
-               Font var39 = Fonts.NEW_REGULAR.getFont(4.6F);
-               float var40 = var12 + 8.0F + 12.0F + 8.0F;
-               float var28 = var14 + (var15 - var38.height() - 3.0F - var39.height()) / 2.0F;
-               var3.drawText(var38, t("gui.voice.enabled"), var40, var28, var10.getTextEnable().getZenithColor().method7294(var9));
-               float var29 = 3.0F;
-               float var30 = var28 + var38.height() + 3.0F;
-               float var31 = var20 ? 0.55F + 0.45F * (float)Math.sin(System.currentTimeMillis() / 160.0) : 1.0F;
-               var3.drawRoundedRect(
-                  var40,
-                  var30 + var39.height() / 2.0F - var29 / 2.0F,
-                  var29,
-                  var29,
-                  ProxyDotRadiusData.method8069(var29 / 2.0F),
-                  var1.method360().method7294(var9 * var31)
+               bigGlyph(menuDrawContext, f6, f7, 1.0F + this.breath * 0.12F, zenithColor.method7294(previewAlpha));
+               Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.6F);
+               float floatValue2 = floatValue + 8.0F + 12.0F + 8.0F;
+               float centeredTextY = y + (height - font.height() - 3.0F - font2.height()) / 2.0F;
+               menuDrawContext.drawText(font, t("gui.voice.enabled"), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               float width = 3.0F;
+               float centeredTextY2 = centeredTextY + font.height() + 3.0F;
+               float f8 = flag ? 0.55F + 0.45F * (float)Math.sin(System.currentTimeMillis() / 160.0) : 1.0F;
+               menuDrawContext.drawRoundedRect(
+                  floatValue2,
+                  centeredTextY2 + font2.height() / 2.0F - width / 2.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  voice.method360().method7294(previewAlpha * f8)
                );
-               String var32 = var17 ? hintLine(var1) : "";
-               String var33 = var32.isEmpty() ? var1.method359() : var1.method359() + " · " + var32;
-               float var34 = 20.0F;
-               float var35 = var13 - 8.0F - var34 - 8.0F - (var40 + var29 + 4.0F);
-               var3.drawText(var39, fitText(var39, var33, var35), var40 + var29 + 4.0F, var30, var10.getTextTertiary().getZenithColor().method7294(var9));
-               this.drawToggle(var3, var13 - 8.0F - var34, var14 + (var15 - 10.0F) / 2.0F, var34, var17, var9, var10);
+               String str = enabled ? hintLine(voice) : "";
+               String inputName = str.isEmpty() ? voice.method359() : voice.method359() + " · " + str;
+               float width2 = 20.0F;
+               float f9 = f4 - 8.0F - width2 - 8.0F - (floatValue2 + width + 4.0F);
+               menuDrawContext.drawText(font2, fitText(font2, inputName, f9), floatValue2 + width + 4.0F, centeredTextY2, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               this.drawToggle(menuDrawContext, f4 - 8.0F - width2, y + (height - 10.0F) / 2.0F, width2, enabled, previewAlpha, zenithStyle);
             }
          },
          () -> {
-            var1.setEnabled(!var1.isEnabled());
+            voice.setEnabled(!voice.isEnabled());
             Zenith.getInstance().getClientSounds().method1562();
             this.invalidate();
          },
@@ -389,83 +389,83 @@ public class VoiceSectionPanel extends SectionPanel {
       );
    }
 
-   private static String hintLine(Voice var0) {
-      if (var0.method357() != Voice.Type.READY) {
+   private static String hintLine(Voice voice) {
+      if (voice.method357() != Voice.Type.READY) {
          return "";
       } else {
-         return var0.activation.isSelected(0) ? t("gui.voice.hint.hold") + " " + Voice.method364(var0.talkKey) : t("gui.voice.hint.speak");
+         return voice.activation.isSelected(0) ? t("gui.voice.hint.hold") + " " + Voice.method364(voice.talkKey) : t("gui.voice.hint.speak");
       }
    }
 
-   private void drawToggle(MenuDrawContext var1, float var2, float var3, float var4, boolean var5, float var6, ZenithStyle var7) {
-      float var8 = 10.0F;
-      float var9 = this.toggleKnob.method2808(var5 ? 1.0F : 0.0F);
-      ZenithColor var10 = var7.getTextTertiary().getZenithColor().method7294(0.35F).method7295(var7.getPrimaryColor().getZenithColor(), var9);
-      var1.drawRoundedRect(var2, var3, var4, var8, ProxyDotRadiusData.method8069(var8 / 2.0F), var10.method7294(var6));
-      float var11 = var8 - 3.0F;
-      float var12 = var2 + 1.5F + (var4 - var11 - 3.0F) * var9;
-      var1.drawRoundedRect(var12, var3 + 1.5F, var11, var11, ProxyDotRadiusData.method8069(var11 / 2.0F), new ZenithColor(255, 255, 255).method7294(var6));
+   private void drawToggle(MenuDrawContext menuDrawContext, float floatValue, float y, float width, boolean enabled, float previewAlpha, ZenithStyle zenithStyle) {
+      float height = 10.0F;
+      float hover = this.toggleKnob.method2808(enabled ? 1.0F : 0.0F);
+      ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7294(0.35F).method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7294(previewAlpha));
+      float f = height - 3.0F;
+      float floatValue2 = floatValue + 1.5F + (width - f - 3.0F) * hover;
+      menuDrawContext.drawRoundedRect(floatValue2, y + 1.5F, f, f, ProxyDotRadiusData.method8069(f / 2.0F), new ZenithColor(255, 255, 255).method7294(previewAlpha));
    }
 
-   private void pickers(Voice var1) {
-      int var2 = this.order++;
+   private void pickers(Voice voice) {
+      int n = this.order++;
       this.custom(
          34.0F,
-         (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = wave(this.enterWave, var2);
-            if (!(var11 <= 0.002F)) {
-               var9 *= var11;
-               var6 += (1.0F - var11) * 8.0F;
-               float var12 = 4.0F;
-               float var13 = var6 + 8.0F;
-               float var14 = (var8 - 16.0F - var12) / 2.0F;
-               int var15 = -1;
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.enterWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float f4 = 4.0F;
+               float f5 = f + 8.0F;
+               float width = (f3 - 16.0F - f4) / 2.0F;
+               int n2 = -1;
 
-               for (int var16 = 0; var16 < 2; var16++) {
-                  boolean var17 = var16 == 0;
-                  float var18 = var13 + var16 * (var14 + var12);
-                  float var19 = var7 + 2.0F;
-                  float var20 = 30.0F;
-                  boolean var21 = new BoundsData(var18, var19, var14, var20).contains(var4, var5);
-                  if (var21) {
-                     var15 = var16;
-                     HoverInfo.request(t(var17 ? "gui.voice.input" : "gui.voice.output"), t(var17 ? "gui.voice.input.desc" : "gui.voice.output.desc"));
+               for (int i = 0; i < 2; i++) {
+                  boolean flag = i == 0;
+                  float floatValue = f5 + i * (width + f4);
+                  float y = f2 + 2.0F;
+                  float height = 30.0F;
+                  boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+                  if (contains) {
+                     n2 = i;
+                     HoverInfo.request(t(flag ? "gui.voice.input" : "gui.voice.output"), t(flag ? "gui.voice.input.desc" : "gui.voice.output.desc"));
                   }
 
-                  float var22 = this.hover("picker:" + var16, var21);
-                  float var23 = this.pick("picker:" + var16, this.openPicker == var16);
-                  plate(var3, var18, var19, var14, var20, var22, var23, var9, var10);
-                  Font var24 = Fonts.NEW_MEDIUM.getFont(4.0F);
-                  Font var25 = Fonts.NEW_MEDIUM.getFont(5.2F);
-                  Font var26 = Fonts.NEW_REGULAR.getFont(4.2F);
-                  float var27 = var18 + 6.0F;
-                  ZenithColor var28 = var10.getTextTertiary().getZenithColor().method7294(var9);
-                  (var17 ? MenuGlyph.MIC : MenuGlyph.SOUND).draw(var3, var27, var19 + 4.5F, var28);
-                  var3.drawText(
-                     var24, HoverInfo.spaced(t(var17 ? "gui.voice.input" : "gui.voice.output").toUpperCase(Locale.ROOT)), var27 + 9.0F, var19 + 5.5F, var28
+                  float hover = this.hover("picker:" + i, contains);
+                  float pick = this.pick("picker:" + i, this.openPicker == i);
+                  plate(menuDrawContext, floatValue, y, width, height, hover, pick, previewAlpha, zenithStyle);
+                  Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+                  Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+                  Font font3 = Fonts.NEW_REGULAR.getFont(4.2F);
+                  float floatValue2 = floatValue + 6.0F;
+                  ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha);
+                  (flag ? MenuGlyph.MIC : MenuGlyph.SOUND).draw(menuDrawContext, floatValue2, y + 4.5F, zenithColor);
+                  menuDrawContext.drawText(
+                     font, HoverInfo.spaced(t(flag ? "gui.voice.input" : "gui.voice.output").toUpperCase(Locale.ROOT)), floatValue2 + 9.0F, y + 5.5F, zenithColor
                   );
-                  VoiceDeviceSetting var29 = var17 ? var1.input : var1.output;
-                  String var30 = var17 ? var1.inputName() : var1.method336();
-                  if (var30.isEmpty()) {
-                     var30 = t("gui.voice.device.none");
+                  VoiceDeviceSetting input = flag ? voice.input : voice.output;
+                  String inputName = flag ? voice.inputName() : voice.method336();
+                  if (inputName.isEmpty()) {
+                     inputName = t("gui.voice.device.none");
                   }
 
-                  float var31 = var14 - 12.0F - 10.0F;
-                  var3.drawText(
-                     var25, fitText(var25, var30, var31), var27 + var22 * 1.5F, var19 + 13.0F, var10.getTextEnable().getZenithColor().method7294(var9)
+                  float f6 = width - 12.0F - 10.0F;
+                  menuDrawContext.drawText(
+                     font2, fitText(font2, inputName, f6), floatValue2 + hover * 1.5F, y + 13.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                   );
-                  String var32 = t(var29.method11().isEmpty() ? "gui.voice.device.auto" : "gui.voice.device.manual");
-                  var3.drawText(var26, fitText(var26, var32, var31), var27 + var22 * 1.5F, var19 + 13.0F + var25.height() + 2.0F, var28);
+                  String str = t(input.method11().isEmpty() ? "gui.voice.device.auto" : "gui.voice.device.manual");
+                  menuDrawContext.drawText(font3, fitText(font3, str, f6), floatValue2 + hover * 1.5F, y + 13.0F + font2.height() + 2.0F, zenithColor);
                   chevron(
-                     var3,
-                     var18 + var14 - 10.0F,
-                     var19 + var20 / 2.0F,
-                     var23,
-                     var10.getTextTertiary().getZenithColor().method7295(var10.getTextEnable().getZenithColor(), Math.max(var22, var23)).method7294(var9)
+                     menuDrawContext,
+                     floatValue + width - 10.0F,
+                     y + height / 2.0F,
+                     pick,
+                     zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(hover, pick)).method7294(previewAlpha)
                   );
                }
 
-               this.hoveredTile.put("pickers", var15);
+               this.hoveredTile.put("pickers", n2);
             }
          },
          () -> {
@@ -474,7 +474,7 @@ public class VoiceSectionPanel extends SectionPanel {
                if (this.openPicker == var2x) {
                   this.openPicker = -1;
                } else {
-                  var1.method335();
+                  voice.method335();
                   this.openPicker = var2x;
                   restart(this.listWave);
                }
@@ -486,82 +486,82 @@ public class VoiceSectionPanel extends SectionPanel {
       );
    }
 
-   private void deviceList(VoiceDeviceSetting var1, String var2) {
-      String var3 = t("gui.voice.device.default") + (var2.isEmpty() ? "" : " · " + var2);
-      this.deviceRow(0, var3, "", var1, t("gui.voice.device.auto.desc"));
-      var var4 = var1.getValues();
+   private void deviceList(VoiceDeviceSetting input, String str) {
+      String display = t("gui.voice.device.default") + (str.isEmpty() ? "" : " · " + str);
+      this.deviceRow(0, display, "", input, t("gui.voice.device.auto.desc"));
+      var values = input.getValues();
 
-      for (int var5 = 1; var5 < var4.size(); var5++) {
-         String var6 = ((ModeSetting.Entry)var4.get(var5)).getKey();
-         this.deviceRow(var5, AudioDevices.display(var6), var6, var1, "");
+      for (int i = 1; i < values.size(); i++) {
+         String key = ((ModeSetting.Entry)values.get(i)).getKey();
+         this.deviceRow(i, AudioDevices.display(key), key, input, "");
       }
 
       this.gap(GuiStyle.PADDING.intValue());
    }
 
-   private void deviceRow(int var1, String var2, String var3, VoiceDeviceSetting var4, String var5) {
-      String var6 = "device:" + var3;
+   private void deviceRow(int n, String display, String key, VoiceDeviceSetting input, String description) {
+      String str = "device:" + key;
       this.custom(
          15.0F,
-         (var7, var8, var9, var10, var11, var12, var13, var14) -> {
-            float var15 = wave(this.listWave, var1);
-            if (!(var15 <= 0.002F)) {
-               var13 *= var15;
-               float var16 = (1.0F - var15) * -4.0F;
-               float var17 = var10 + 8.0F + 4.0F;
-               float var18 = var12 - 16.0F - 4.0F;
-               float var19 = var11 + 1.0F + var16;
-               float var20 = 13.0F;
-               boolean var21 = new BoundsData(var17, var19, var18, var20).contains(var8, var9);
-               boolean var22 = var3.equals(var4.method11());
-               float var23 = this.hover(var6, var21);
-               float var24 = this.pick(var6, var22);
-               var7.drawRoundedRect(
-                  var17,
-                  var19,
-                  var18,
-                  var20,
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               float f4 = (1.0F - wave2) * -4.0F;
+               float floatValue = f + 8.0F + 4.0F;
+               float width = f3 - 16.0F - 4.0F;
+               float y = f2 + 1.0F + f4;
+               float height = 13.0F;
+               boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+               boolean flag = key.equals(input.method11());
+               float hover = this.hover(str, contains);
+               float pick = this.pick(str, flag);
+               menuDrawContext.drawRoundedRect(
+                  floatValue,
+                  y,
+                  width,
+                  height,
                   ProxyDotRadiusData.method8069(3.0F),
-                  var14.getDisableActiveBg().getZenithColor().method7294(var13 * Math.max(var24 * 0.8F, var23 * 0.45F))
+                  zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * Math.max(pick * 0.8F, hover * 0.45F))
                );
-               if (var21 && !var5.isEmpty()) {
-                  HoverInfo.request(var2, var5);
+               if (contains && !description.isEmpty()) {
+                  HoverInfo.request(display, description);
                }
 
-               Font var25 = Fonts.NEW_MEDIUM.getFont(5.01F);
-               float var26 = 4.0F;
-               float var27 = var19 + var20 / 2.0F;
-               var7.drawRoundedRect(
-                  var17 + 5.0F,
-                  var27 - var26 / 2.0F,
-                  var26,
-                  var26,
-                  ProxyDotRadiusData.method8069(var26 / 2.0F),
-                  var14.getTextTertiary().getZenithColor().method7294(var13 * 0.5F)
+               Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
+               float width2 = 4.0F;
+               float f5 = y + height / 2.0F;
+               menuDrawContext.drawRoundedRect(
+                  floatValue + 5.0F,
+                  f5 - width2 / 2.0F,
+                  width2,
+                  width2,
+                  ProxyDotRadiusData.method8069(width2 / 2.0F),
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.5F)
                );
-               if (var24 > 0.01F) {
-                  float var28 = var26 * var24;
-                  var7.drawRoundedRect(
-                     var17 + 5.0F + (var26 - var28) / 2.0F,
-                     var27 - var28 / 2.0F,
-                     var28,
-                     var28,
-                     ProxyDotRadiusData.method8069(var28 / 2.0F),
-                     var14.getPrimaryColor().getZenithColor().method7294(var13)
+               if (pick > 0.01F) {
+                  float width3 = width2 * pick;
+                  menuDrawContext.drawRoundedRect(
+                     floatValue + 5.0F + (width2 - width3) / 2.0F,
+                     f5 - width3 / 2.0F,
+                     width3,
+                     width3,
+                     ProxyDotRadiusData.method8069(width3 / 2.0F),
+                     zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
                   );
                }
 
-               var7.drawText(
-                  var25,
-                  fitText(var25, var2, var18 - 18.0F),
-                  var17 + 13.0F + var23 * 1.5F,
-                  var27 - var25.height() / 2.0F,
-                  var14.getTextSecondary().getZenithColor().method7295(var14.getTextEnable().getZenithColor(), Math.max(var24, var23)).method7294(var13)
+               menuDrawContext.drawText(
+                  font,
+                  fitText(font, display, width - 18.0F),
+                  floatValue + 13.0F + hover * 1.5F,
+                  f5 - font.height() / 2.0F,
+                  zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(pick, hover)).method7294(previewAlpha)
                );
             }
          },
          () -> {
-            var4.method10(var3);
+            input.method10(key);
             this.openPicker = -1;
             this.invalidate();
          },
@@ -569,183 +569,183 @@ public class VoiceSectionPanel extends SectionPanel {
       );
    }
 
-   private void micTest(Voice var1) {
-      int var2 = this.order++;
+   private void micTest(Voice voice) {
+      int n = this.order++;
       this.custom(
          50.0F,
-         (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = wave(this.enterWave, var2);
-            if (!(var11 <= 0.002F)) {
-               var9 *= var11;
-               var6 += (1.0F - var11) * 8.0F;
-               float var12 = var6 + 8.0F;
-               float var13 = var6 + var8 - 8.0F;
-               float var14 = var7 + 3.0F;
-               float var15 = 44.0F;
-               boolean var16 = var1.isFlag3();
-               float var17 = this.testOn.method2808(var16 ? 1.0F : 0.0F);
-               boolean var18 = new BoundsData(var12, var14, var13 - var12, var15).contains(var4, var5);
-               if (var18) {
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.enterWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float floatValue = f + 8.0F;
+               float f4 = f + f3 - 8.0F;
+               float y = f2 + 3.0F;
+               float height = 44.0F;
+               boolean flag = voice.isFlag3();
+               float hover = this.testOn.method2808(flag ? 1.0F : 0.0F);
+               boolean contains = new BoundsData(floatValue, y, f4 - floatValue, height).contains(lastClickX, lastClickY);
+               if (contains) {
                   HoverInfo.request(t("gui.voice.micTest"), t("gui.voice.micTest.desc"));
                }
 
-               plate(var3, var12, var14, var13 - var12, var15, this.hover("test", var18), 0.0F, var9, var10);
-               Font var19 = Fonts.NEW_MEDIUM.getFont(5.4F);
-               Font var20 = Fonts.NEW_REGULAR.getFont(4.4F);
-               Font var21 = Fonts.NEW_MEDIUM.getFont(5.01F);
-               String var22 = t(var16 ? "gui.voice.micTest.stop" : "gui.voice.micTest.start");
-               float var23 = var21.width(var22) + 16.0F;
-               float var24 = 13.0F;
-               float var25 = var13 - 8.0F - var23;
-               float var26 = var14 + 7.0F;
-               float var27 = this.hover("test:button", var18);
-               ZenithColor var28 = var10.getPrimaryColor().getZenithColor().method7295(var10.getDisableActiveBg().getZenithColor(), var17);
-               float var29 = var27 * 1.0F;
-               var3.drawRoundedRect(
-                  var25 - var29, var26 - var29 * 0.5F, var23 + var29 * 2.0F, var24 + var29, ProxyDotRadiusData.method8069(var24 / 2.0F), var28.method7294(var9)
+               plate(menuDrawContext, floatValue, y, f4 - floatValue, height, this.hover("test", contains), 0.0F, previewAlpha, zenithStyle);
+               Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+               Font font3 = Fonts.NEW_MEDIUM.getFont(5.01F);
+               String text = t(flag ? "gui.voice.micTest.stop" : "gui.voice.micTest.start");
+               float f5 = font3.width(text) + 16.0F;
+               float f6 = 13.0F;
+               float f7 = f4 - 8.0F - f5;
+               float f8 = y + 7.0F;
+               float hover2 = this.hover("test:button", contains);
+               ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), hover);
+               float f9 = hover2 * 1.0F;
+               menuDrawContext.drawRoundedRect(
+                  f7 - f9, f8 - f9 * 0.5F, f5 + f9 * 2.0F, f6 + f9, ProxyDotRadiusData.method8069(f6 / 2.0F), zenithColor.method7294(previewAlpha)
                );
-               var3.drawText(
-                  var21,
-                  var22,
-                  var25 + (var23 - var21.width(var22)) / 2.0F,
-                  var26 + (var24 - var21.height()) / 2.0F,
-                  new ZenithColor(255, 255, 255).method7295(var10.getTextEnable().getZenithColor(), var17).method7294(var9)
+               menuDrawContext.drawText(
+                  font3,
+                  text,
+                  f7 + (f5 - font3.width(text)) / 2.0F,
+                  f8 + (f6 - font3.height()) / 2.0F,
+                  new ZenithColor(255, 255, 255).method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha)
                );
-               float var30 = var12 + 8.0F;
-               if (var17 > 0.01F) {
-                  float var31 = 3.0F * var17;
-                  float var32 = 0.6F + 0.4F * (float)Math.sin(System.currentTimeMillis() / 180.0);
-                  var3.drawRoundedRect(
-                     var30,
-                     var14 + 7.0F + var19.height() / 2.0F - var31 / 2.0F,
-                     var31,
-                     var31,
-                     ProxyDotRadiusData.method8069(var31 / 2.0F),
-                     LIVE.method7294(var9 * var32)
+               float floatValue2 = floatValue + 8.0F;
+               if (hover > 0.01F) {
+                  float width = 3.0F * hover;
+                  float f10 = 0.6F + 0.4F * (float)Math.sin(System.currentTimeMillis() / 180.0);
+                  menuDrawContext.drawRoundedRect(
+                     floatValue2,
+                     y + 7.0F + font.height() / 2.0F - width / 2.0F,
+                     width,
+                     width,
+                     ProxyDotRadiusData.method8069(width / 2.0F),
+                     LIVE.method7294(previewAlpha * f10)
                   );
-                  var30 += 6.0F * var17;
+                  floatValue2 += 6.0F * hover;
                }
 
-               float var35 = var25 - 6.0F - var30;
-               var3.drawText(var19, fitText(var19, t("gui.voice.micTest"), var35), var30, var14 + 7.0F, var10.getTextEnable().getZenithColor().method7294(var9));
-               String var36 = t(var16 ? "gui.voice.micTest.live" : "gui.voice.micTest.note");
-               var3.drawText(
-                  var20, fitText(var20, var36, var35), var30, var14 + 7.0F + var19.height() + 3.0F, var10.getTextTertiary().getZenithColor().method7294(var9)
+               float f10 = f7 - 6.0F - floatValue2;
+               menuDrawContext.drawText(font, fitText(font, t("gui.voice.micTest"), f10), floatValue2, y + 7.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               String inputName = t(flag ? "gui.voice.micTest.live" : "gui.voice.micTest.note");
+               menuDrawContext.drawText(
+                  font2, fitText(font2, inputName, f10), floatValue2, y + 7.0F + font.height() + 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               this.drawMeter(var3, var1, var12 + 8.0F, var14 + var15 - 11.0F, var13 - 8.0F - (var12 + 8.0F), var9, var10);
+               this.drawMeter(menuDrawContext, voice, floatValue + 8.0F, y + height - 11.0F, f4 - 8.0F - (floatValue + 8.0F), previewAlpha, zenithStyle);
             }
          },
          () -> {
-            var1.method333(!var1.isFlag3());
+            voice.method333(!voice.isFlag3());
             this.invalidate();
          },
          null
       );
    }
 
-   private void drawMeter(MenuDrawContext var1, Voice var2, float var3, float var4, float var5, float var6, ZenithStyle var7) {
-      float var8 = var2.getVoiceState().getFloatValue2();
-      float var9 = this.meterFill.method2808(Mth.clamp((var8 + 70.0F) / 60.0F, 0.0F, 1.0F));
-      long var10 = System.currentTimeMillis();
-      if (var9 >= this.meterPeak) {
-         this.meterPeak = var9;
-         this.meterPeakAt = var10;
-      } else if (var10 - this.meterPeakAt > 500L) {
-         this.meterPeak = Math.max(var9, this.meterPeak - 0.012F);
+   private void drawMeter(MenuDrawContext menuDrawContext, Voice voice, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float f4 = voice.getVoiceState().getFloatValue2();
+      float meterPeak = this.meterFill.method2808(Mth.clamp((f4 + 70.0F) / 60.0F, 0.0F, 1.0F));
+      long now = System.currentTimeMillis();
+      if (meterPeak >= this.meterPeak) {
+         this.meterPeak = meterPeak;
+         this.meterPeakAt = now;
+      } else if (now - this.meterPeakAt > 500L) {
+         this.meterPeak = Math.max(meterPeak, this.meterPeak - 0.012F);
       }
 
-      boolean var12 = var2.activation.isSelected(1);
-      float var13 = Mth.clamp((var2.method341() + 70.0F) / 60.0F, 0.0F, 1.0F);
-      float var14 = 1.5F;
-      float var15 = (var5 - var14 * 31.0F) / 32.0F;
-      float var16 = 5.0F;
-      int var17 = this.meterPeak > 0.02F ? Math.min(31, (int)(this.meterPeak * 32.0F)) : -1;
+      boolean selected = voice.activation.isSelected(1);
+      float f5 = Mth.clamp((voice.method341() + 70.0F) / 60.0F, 0.0F, 1.0F);
+      float f6 = 1.5F;
+      float width = (f3 - f6 * 31.0F) / 32.0F;
+      float f7 = 5.0F;
+      int n = this.meterPeak > 0.02F ? Math.min(31, (int)(this.meterPeak * 32.0F)) : -1;
 
-      for (int var18 = 0; var18 < 32; var18++) {
-         float var19 = (var18 + 0.5F) / 32.0F;
-         boolean var20 = var19 <= var9;
-         ZenithColor var21;
-         if (var18 == var17 && !var20) {
-            var21 = var7.getPrimaryColor().getZenithColor().method7294(0.55F);
-         } else if (!var20) {
-            var21 = var7.getTextTertiary().getZenithColor().method7294(0.22F);
-         } else if (var12 && var19 < var13) {
-            var21 = var7.getTextTertiary().getZenithColor().method7294(0.8F);
+      for (int i = 0; i < 32; i++) {
+         float f8 = (i + 0.5F) / 32.0F;
+         boolean flag = f8 <= meterPeak;
+         ZenithColor zenithColor;
+         if (i == n && !flag) {
+            zenithColor = zenithStyle.getPrimaryColor().getZenithColor().method7294(0.55F);
+         } else if (!flag) {
+            zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7294(0.22F);
+         } else if (selected && f8 < f5) {
+            zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7294(0.8F);
          } else {
-            var21 = var7.getPrimaryColor().getZenithColor();
+            zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
          }
 
-         float var22 = var20 ? var16 : var16 - 1.0F;
-         var1.drawRoundedRect(
-            var3 + var18 * (var15 + var14), var4 + (var16 - var22) / 2.0F, var15, var22, ProxyDotRadiusData.method8069(1.0F), var21.method7294(var6)
+         float height = flag ? f7 : f7 - 1.0F;
+         menuDrawContext.drawRoundedRect(
+            f + i * (width + f6), f2 + (f7 - height) / 2.0F, width, height, ProxyDotRadiusData.method8069(1.0F), zenithColor.method7294(previewAlpha)
          );
       }
 
-      if (var12) {
-         float var23 = var3 + var5 * var13;
-         var1.drawRect(var23 - 0.5F, var4 - 2.0F, 1.0F, var16 + 4.0F, var7.getTextEnable().getZenithColor().method7294(var6));
+      if (selected) {
+         float f8 = f + f3 * f5;
+         menuDrawContext.drawRect(f8 - 0.5F, f2 - 2.0F, 1.0F, f7 + 4.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
       }
    }
 
-   private void choice(String var1, List<VoiceSectionPanel.Tile> var2, IntSupplier var3, IntConsumer var4) {
-      int var5 = this.order++;
+   private void choice(String key, List<VoiceSectionPanel.Tile> tiles, IntSupplier intSupplier, IntConsumer intConsumer) {
+      int n = this.order++;
       this.custom(
          28.0F,
-         (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = wave(this.enterWave, var5);
-            if (!(var13 <= 0.002F)) {
-               var11 *= var13;
-               var8 += (1.0F - var13) * 8.0F;
-               float var14 = 4.0F;
-               float var15 = var8 + 8.0F;
-               float var16 = (var10 - 16.0F - var14 * (var2.size() - 1)) / var2.size();
-               int var17 = -1;
+         (var5x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.enterWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float f4 = 4.0F;
+               float f5 = f + 8.0F;
+               float width = (f3 - 16.0F - f4 * (tiles.size() - 1)) / tiles.size();
+               int n2 = -1;
 
-               for (int var18 = 0; var18 < var2.size(); var18++) {
-                  VoiceSectionPanel.Tile var19 = (VoiceSectionPanel.Tile)var2.get(var18);
-                  float var20 = var15 + var18 * (var16 + var14);
-                  float var21 = var9 + 2.0F;
-                  float var22 = 24.0F;
-                  boolean var23 = new BoundsData(var20, var21, var16, var22).contains(var6, var7);
-                  if (var23) {
-                     var17 = var18;
-                     HoverInfo.request(t(var19.title()), t(var19.note()));
+               for (int i = 0; i < tiles.size(); i++) {
+                  VoiceSectionPanel.Tile tile = (VoiceSectionPanel.Tile)tiles.get(i);
+                  float floatValue = f5 + i * (width + f4);
+                  float y = f2 + 2.0F;
+                  float height = 24.0F;
+                  boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+                  if (contains) {
+                     n2 = i;
+                     HoverInfo.request(t(tile.title()), t(tile.note()));
                   }
 
-                  String var24 = var1 + ":" + var18;
-                  float var25 = this.pick(var24, var3.getAsInt() == var18);
-                  float var26 = this.hover(var24, var23);
-                  plate(var5x, var20, var21, var16, var22, var26, var25, var11, var12);
-                  Font var27 = Fonts.NEW_MEDIUM.getFont(5.2F);
-                  Font var28 = Fonts.NEW_REGULAR.getFont(4.2F);
-                  float var29 = var16 - 10.0F;
-                  float var30 = var26 * 1.5F;
+                  String str = key + ":" + i;
+                  float pick = this.pick(str, intSupplier.getAsInt() == i);
+                  float hover = this.hover(str, contains);
+                  plate(var5x, floatValue, y, width, height, hover, pick, previewAlpha, zenithStyle);
+                  Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+                  Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+                  float f6 = width - 10.0F;
+                  float f7 = hover * 1.5F;
                   var5x.drawText(
-                     var27,
-                     fitText(var27, t(var19.title()), var29),
-                     var20 + 5.0F + var30,
-                     var21 + 4.0F,
-                     var12.getTextSecondary()
+                     font,
+                     fitText(font, t(tile.title()), f6),
+                     floatValue + 5.0F + f7,
+                     y + 4.0F,
+                     zenithStyle.getTextSecondary()
                         .getZenithColor()
-                        .method7295(var12.getTextEnable().getZenithColor(), Math.max(var25, var26 * 0.6F))
-                        .method7294(var11)
+                        .method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(pick, hover * 0.6F))
+                        .method7294(previewAlpha)
                   );
                   var5x.drawText(
-                     var28,
-                     fitText(var28, t(var19.note()), var29),
-                     var20 + 5.0F + var30,
-                     var21 + 4.0F + var27.height() + 2.0F,
-                     var12.getTextTertiary().getZenithColor().method7294(var11)
+                     font2,
+                     fitText(font2, t(tile.note()), f6),
+                     floatValue + 5.0F + f7,
+                     y + 4.0F + font.height() + 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                   );
                }
 
-               this.hoveredTile.put(var1, var17);
+               this.hoveredTile.put(key, n2);
             }
          },
          () -> {
-            int var4x = this.hoveredTile.getOrDefault(var1, -1);
-            if (var4x >= 0 && var4x != var3.getAsInt()) {
-               var4.accept(var4x);
+            int var4x = this.hoveredTile.getOrDefault(key, -1);
+            if (var4x >= 0 && var4x != intSupplier.getAsInt()) {
+               intConsumer.accept(var4x);
                this.invalidate();
             }
          },
@@ -753,47 +753,47 @@ public class VoiceSectionPanel extends SectionPanel {
       );
    }
 
-   private void buildAside(Voice var1) {
+   private void buildAside(Voice voice) {
       this.asideCaption("gui.voice.caption.now");
-      this.asideInfo("gui.voice.aside.status", var1::method359, "gui.voice.aside.status.desc");
+      this.asideInfo("gui.voice.aside.status", voice::method359, "gui.voice.aside.status.desc");
       this.asideInfo("gui.voice.aside.ping", () -> {
-         int var1x = var1.method361();
+         int var1x = voice.method361();
          return var1x < 0 ? "—" : var1x + " " + t("gui.voice.ms");
       }, "gui.voice.aside.ping.desc");
       this.asideInfo("gui.voice.aside.latency", () -> {
-         int var1x = var1.latencyMs();
+         int var1x = voice.latencyMs();
          return var1x < 0 ? "—" : "≈ " + var1x + " " + t("gui.voice.ms");
       }, "gui.voice.aside.latency.desc");
-      this.asideInfo("gui.voice.aside.range", () -> var1.method340() + " " + t("gui.voice.blocks"), "gui.voice.aside.range.desc");
+      this.asideInfo("gui.voice.aside.range", () -> voice.method340() + " " + t("gui.voice.blocks"), "gui.voice.aside.range.desc");
       this.asideCaption("gui.voice.caption.devices");
-      this.asideInfo("gui.voice.input", var1::inputName, "gui.voice.input.desc");
-      this.asideInfo("gui.voice.output", var1::method336, "gui.voice.output.desc");
+      this.asideInfo("gui.voice.input", voice::inputName, "gui.voice.input.desc");
+      this.asideInfo("gui.voice.output", voice::method336, "gui.voice.output.desc");
       this.asideCaption("gui.voice.caption.keys");
       this.asideInfo(
          "gui.voice.aside.key.talk",
-         () -> var1.activation.isSelected(0) ? Voice.method364(var1.talkKey) : t("gui.voice.aside.key.byVoice"),
+         () -> voice.activation.isSelected(0) ? Voice.method364(voice.talkKey) : t("gui.voice.aside.key.byVoice"),
          "gui.voice.talkKey.desc"
       );
-      this.asideInfo("gui.voice.aside.key.radio", () -> Voice.method364(var1.radioKey), "gui.voice.radioKey.desc");
-      this.asideInfo("gui.voice.aside.key.mute", () -> Voice.method364(var1.muteKey), "gui.voice.muteKey.desc");
-      this.asideInfo("gui.voice.aside.key.deafen", () -> Voice.method364(var1.deafenKey), "gui.voice.deafenKey.desc");
+      this.asideInfo("gui.voice.aside.key.radio", () -> Voice.method364(voice.radioKey), "gui.voice.radioKey.desc");
+      this.asideInfo("gui.voice.aside.key.mute", () -> Voice.method364(voice.muteKey), "gui.voice.muteKey.desc");
+      this.asideInfo("gui.voice.aside.key.deafen", () -> Voice.method364(voice.deafenKey), "gui.voice.deafenKey.desc");
       this.asideCaption("gui.voice.caption.sound");
-      this.asideInfo("gui.voice.quality", () -> t(var1.quality.get()) + " · " + var1.method363() + " " + t("gui.voice.kbps"), "gui.voice.quality.desc");
+      this.asideInfo("gui.voice.quality", () -> t(voice.quality.get()) + " · " + voice.method363() + " " + t("gui.voice.kbps"), "gui.voice.quality.desc");
       this.asideInfo(
          "gui.voice.denoise",
-         () -> !var1.denoise.isEnabled() ? onOff(false) : (var1.rnnoise.isEnabled() ? "RNNoise" : t("gui.voice.denoise.gate")),
+         () -> !voice.denoise.isEnabled() ? onOff(false) : (voice.rnnoise.isEnabled() ? "RNNoise" : t("gui.voice.denoise.gate")),
          "gui.voice.denoise.desc"
       );
-      this.asideInfo("gui.voice.muffle", () -> onOff(var1.muffle.isEnabled()), "gui.voice.muffle.desc");
-      this.asideInfo("gui.voice.spatial", () -> onOff(var1.spatial.isEnabled()), "gui.voice.spatial.desc");
-      List<PartyPlayerInfo> var2 = var1.method365();
-      this.asideCaption(t("gui.voice.caption.friends") + " · " + var2.size());
+      this.asideInfo("gui.voice.muffle", () -> onOff(voice.muffle.isEnabled()), "gui.voice.muffle.desc");
+      this.asideInfo("gui.voice.spatial", () -> onOff(voice.spatial.isEnabled()), "gui.voice.spatial.desc");
+      List<PartyPlayerInfo> partyPlayerInfos = voice.method365();
+      this.asideCaption(t("gui.voice.caption.friends") + " · " + partyPlayerInfos.size());
 
-      for (PartyPlayerInfo var4 : var2) {
-         this.friendRow(var1, var4);
+      for (PartyPlayerInfo partyPlayerInfo : partyPlayerInfos) {
+         this.friendRow(voice, partyPlayerInfo);
       }
 
-      if (var2.isEmpty()) {
+      if (partyPlayerInfos.isEmpty()) {
          this.asideHint(t("gui.voice.friends.empty"));
          this.asideCaption("gui.voice.caption.howto");
          this.step(1, t("gui.voice.howto.1"));
@@ -804,249 +804,249 @@ public class VoiceSectionPanel extends SectionPanel {
       }
    }
 
-   private static String onOff(boolean var0) {
-      return t(var0 ? "gui.value.enabled" : "gui.value.disabled");
+   private static String onOff(boolean enabled) {
+      return t(enabled ? "gui.value.enabled" : "gui.value.disabled");
    }
 
-   private void friendRow(Voice var1, PartyPlayerInfo var2) {
-      int var3 = this.asideOrder++;
-      String var4 = Voice.method367(var2);
+   private void friendRow(Voice voice, PartyPlayerInfo partyPlayerInfo) {
+      int n = this.asideOrder++;
+      String inputName = Voice.method367(partyPlayerInfo);
       this.asideCustom(
          18.0F,
-         (var5, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = wave(this.asideWave, var3);
-            if (!(var13 <= 0.002F)) {
-               var11 *= var13;
-               var8 += (1.0F - var13) * 6.0F;
-               boolean var14 = var1.getVoiceState().method5365(var2.uid());
-               boolean var15 = var1.getVoiceState().method5367(var2.uid());
-               ZenithColor var16 = var15 ? RADIO : var12.getPrimaryColor().getZenithColor();
-               float var17 = this.pick("talk:" + var2.uid(), var14);
-               float var18 = var9 + 9.0F;
-               float var19 = 3.0F + var17;
-               var5.drawRoundedRect(
-                  var8 + 8.0F + (4.0F - var19) / 2.0F,
-                  var18 - var19 / 2.0F,
-                  var19,
-                  var19,
-                  ProxyDotRadiusData.method8069(var19 / 2.0F),
-                  var12.getTextTertiary().getZenithColor().method7295(var16, var17).method7294(var11)
+         (customDrawContext, n2, n3, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.asideWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 6.0F;
+               boolean flag = voice.getVoiceState().method5365(partyPlayerInfo.uid());
+               boolean flag2 = voice.getVoiceState().method5367(partyPlayerInfo.uid());
+               ZenithColor zenithColor = flag2 ? RADIO : zenithStyle.getPrimaryColor().getZenithColor();
+               float pick = this.pick("talk:" + partyPlayerInfo.uid(), flag);
+               float f4 = f2 + 9.0F;
+               float width = 3.0F + pick;
+               customDrawContext.drawRoundedRect(
+                  f + 8.0F + (4.0F - width) / 2.0F,
+                  f4 - width / 2.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  zenithStyle.getTextTertiary().getZenithColor().method7295(zenithColor, pick).method7294(previewAlpha)
                );
-               Font var20 = Fonts.NEW_MEDIUM.getFont(5.0F);
-               Font var21 = Fonts.NEW_REGULAR.getFont(4.2F);
-               String var22 = var1.method366(var2);
-               float var23 = var8 + 8.0F + 8.0F;
-               float var24 = var10 - 16.0F - 8.0F - var21.width(var22) - 18.0F;
-               var5.drawText(
-                  var20,
-                  fitText(var20, var4, var24),
-                  var23,
-                  var18 - var20.height() / 2.0F,
-                  var12.getTextSecondary().getZenithColor().method7295(var12.getTextEnable().getZenithColor(), 0.5F + 0.5F * var17).method7294(var11)
+               Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+               String text = voice.method366(partyPlayerInfo);
+               float floatValue = f + 8.0F + 8.0F;
+               float f5 = f3 - 16.0F - 8.0F - font2.width(text) - 18.0F;
+               customDrawContext.drawText(
+                  font,
+                  fitText(font, inputName, f5),
+                  floatValue,
+                  f4 - font.height() / 2.0F,
+                  zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), 0.5F + 0.5F * pick).method7294(previewAlpha)
                );
-               float var25 = var8 + var10 - 8.0F - var21.width(var22);
-               if (var17 > 0.01F) {
-                  Voice.method371(var5, var25 - 14.0F, var18, var1.getVoiceState().method5366(var2.uid()), var16.method7294(var11 * var17));
+               float floatValue2 = f + f3 - 8.0F - font2.width(text);
+               if (pick > 0.01F) {
+                  Voice.method371(customDrawContext, floatValue2 - 14.0F, f4, voice.getVoiceState().method5366(partyPlayerInfo.uid()), zenithColor.method7294(previewAlpha * pick));
                }
 
-               var5.drawText(var21, var22, var25, var18 - var21.height() / 2.0F, var12.getTextTertiary().getZenithColor().method7294(var11));
+               customDrawContext.drawText(font2, text, floatValue2, f4 - font2.height() / 2.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             }
          }
       );
    }
 
-   private void step(int var1, String var2) {
-      int var3 = this.asideOrder++;
-      Font var4 = Fonts.NEW_REGULAR.getFont(4.4F);
-      List<String> var5 = wrapText(var2, var4, this.asideWidth() - 16.0F - 11.0F, 3);
-      float var6 = var4.height() + 2.0F;
-      float var7 = Math.max(11.0F, var5.size() * var6) + 4.0F;
+   private void step(int n, String description) {
+      int n2 = this.asideOrder++;
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      List<String> strings = wrapText(description, font, this.asideWidth() - 16.0F - 11.0F, 3);
+      float f = font.height() + 2.0F;
+      float hintsHeight = Math.max(11.0F, strings.size() * f) + 4.0F;
       this.asideCustom(
-         var7,
-         (var6x, var7x, var8, var9, var10, var11, var12, var13) -> {
-            float var14 = wave(this.asideWave, var3);
-            if (!(var14 <= 0.002F)) {
-               var12 *= var14;
-               var9 += (1.0F - var14) * 6.0F;
-               float var15 = 8.0F;
+         hintsHeight,
+         (var6x, var7x, n3, f2, f3, f4, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.asideWave, n2);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f2 += (1.0F - wave2) * 6.0F;
+               float width = 8.0F;
                var6x.drawRoundedRect(
-                  var9 + 8.0F,
-                  var10 + 1.0F,
-                  var15,
-                  var15,
-                  ProxyDotRadiusData.method8069(var15 / 2.0F),
-                  var13.getPrimaryColor().getZenithColor().method7294(var12 * 0.85F)
+                  f2 + 8.0F,
+                  f3 + 1.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.85F)
                );
-               Font var16 = Fonts.NEW_MEDIUM.getFont(4.4F);
-               String var17 = String.valueOf(var1);
+               Font font2 = Fonts.NEW_MEDIUM.getFont(4.4F);
+               String text = String.valueOf(n);
                var6x.drawText(
-                  var16,
-                  var17,
-                  var9 + 8.0F + (var15 - var16.width(var17)) / 2.0F,
-                  var10 + 1.0F + (var15 - var16.height()) / 2.0F,
-                  new ZenithColor(255, 255, 255).method7294(var12)
+                  font2,
+                  text,
+                  f2 + 8.0F + (width - font2.width(text)) / 2.0F,
+                  f3 + 1.0F + (width - font2.height()) / 2.0F,
+                  new ZenithColor(255, 255, 255).method7294(previewAlpha)
                );
-               float var18 = var10 + 1.0F + (var15 - var4.height()) / 2.0F;
+               float centeredTextY = f3 + 1.0F + (width - font.height()) / 2.0F;
 
-               for (String var20 : var5) {
-                  var6x.drawText(var4, var20, var9 + 8.0F + var15 + 4.0F, var18, var13.getTextSecondary().getZenithColor().method7294(var12));
-                  var18 += var6;
+               for (String str : strings) {
+                  var6x.drawText(font, str, f2 + 8.0F + width + 4.0F, centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+                  centeredTextY += f;
                }
             }
          }
       );
    }
 
-   private static void plate(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      var0.drawRoundedRect(
-         var1,
-         var2,
-         var3,
-         var4,
+   private static void plate(MenuDrawContext menuDrawContext, float floatValue, float y, float width, float height, float hover, float pick, float previewAlpha, ZenithStyle zenithStyle) {
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         y,
+         width,
+         height,
          ProxyDotRadiusData.method8069(4.0F),
-         var8.getDisableActiveBg().getZenithColor().method7294(var7 * (0.45F + 0.25F * var5 + 0.3F * var6))
+         zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * (0.45F + 0.25F * hover + 0.3F * pick))
       );
-      if (var6 > 0.002F) {
-         float var9 = (var3 - 8.0F) * var6;
-         var0.drawRoundedRect(
-            var1 + (var3 - var9) / 2.0F,
-            var2 + var4 - 2.0F,
-            var9,
+      if (pick > 0.002F) {
+         float f = (width - 8.0F) * pick;
+         menuDrawContext.drawRoundedRect(
+            floatValue + (width - f) / 2.0F,
+            y + height - 2.0F,
+            f,
             1.5F,
             ProxyDotRadiusData.method8069(0.75F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * var6)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * pick)
          );
       }
    }
 
-   private static void bigGlyph(MenuDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      float var5 = 12.0F;
-      var0.pushMatrix();
-      var0.pose().translate(var1 + var5 / 2.0F, var2 + var5 / 2.0F);
-      var0.pose().scale(2.0F * var3, 2.0F * var3);
-      MenuGlyph.MIC.draw(var0, -3.0F, -3.0F, var4);
-      var0.popMatrix();
+   private static void bigGlyph(MenuDrawContext menuDrawContext, float f, float f2, float f3, ZenithColor zenithColor) {
+      float f4 = 12.0F;
+      menuDrawContext.pushMatrix();
+      menuDrawContext.pose().translate(f + f4 / 2.0F, f2 + f4 / 2.0F);
+      menuDrawContext.pose().scale(2.0F * f3, 2.0F * f3);
+      MenuGlyph.MIC.draw(menuDrawContext, -3.0F, -3.0F, zenithColor);
+      menuDrawContext.popMatrix();
    }
 
-   private static void chevron(MenuDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      float var5 = 3.2F;
-      var0.pushMatrix();
-      var0.pose().translate(var1 + 2.5F, var2);
-      var0.pose().rotate((float)(Math.PI * var3));
+   private static void chevron(MenuDrawContext menuDrawContext, float f, float y, float pick, ZenithColor zenithColor) {
+      float height = 3.2F;
+      menuDrawContext.pushMatrix();
+      menuDrawContext.pose().translate(f + 2.5F, y);
+      menuDrawContext.pose().rotate((float)(Math.PI * pick));
 
-      for (byte var6 = -1; var6 <= 1; var6 += 2) {
-         var0.pushMatrix();
-         var0.pose().rotate((float)Math.toRadians(45 * var6));
-         var0.drawRect(-0.5F, -var5 + 0.6F, 1.0F, var5, var4);
-         var0.popMatrix();
+      for (byte i = -1; i <= 1; i += 2) {
+         menuDrawContext.pushMatrix();
+         menuDrawContext.pose().rotate((float)Math.toRadians(45 * i));
+         menuDrawContext.drawRect(-0.5F, -height + 0.6F, 1.0F, height, zenithColor);
+         menuDrawContext.popMatrix();
       }
 
-      var0.popMatrix();
+      menuDrawContext.popMatrix();
    }
 
-   private float hover(String var1, boolean var2) {
-      return this.hover.computeIfAbsent(var1, var0 -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   private float hover(String key, boolean contains) {
+      return this.hover.computeIfAbsent(key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
    }
 
-   private float pick(String var1, boolean var2) {
-      return this.pick.computeIfAbsent(var1, var0 -> new Animation(180L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   private float pick(String key, boolean flag) {
+      return this.pick.computeIfAbsent(key, str -> new Animation(180L, 0.0F, Easing.INSTANCE12)).method2808(flag ? 1.0F : 0.0F);
    }
 
-   private void hint(String var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.8F);
-      List<String> var3 = wrapText(var1, var2, this.mainWidth() - 16.0F, 4);
-      float var4 = var2.height() + 2.0F;
-      int var5 = this.order++;
-      this.custom(var3.size() * var4 + GuiStyle.PADDING.intValue(), (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-         float var13 = wave(this.enterWave, var5);
-         float var14 = var9 + 2.0F;
+   private void hint(String description) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      List<String> strings = wrapText(description, font, this.mainWidth() - 16.0F, 4);
+      float f = font.height() + 2.0F;
+      int n = this.order++;
+      this.custom(strings.size() * f + GuiStyle.PADDING.intValue(), (var5x, n2, n3, f2, f3, f4, f5, zenithStyle) -> {
+         float wave2 = wave(this.enterWave, n);
+         float centeredTextY = f3 + 2.0F;
 
-         for (String var16 : var3) {
-            var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 8.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
-            var14 += var4;
+         for (String text : strings) {
+            var5x.drawText(font, text, f2 + 8.0F + (1.0F - wave2) * 8.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(f5 * wave2));
+            centeredTextY += f;
          }
       });
    }
 
-   private void asideHint(String var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.4F);
-      List<String> var3 = wrapText(var1, var2, this.asideWidth() - 16.0F, 5);
-      float var4 = var2.height() + 2.0F;
-      int var5 = this.asideOrder++;
-      this.asideCustom(var3.size() * var4 + GuiStyle.PADDING.intValue(), (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-         float var13 = wave(this.asideWave, var5);
-         float var14 = var9 + 2.0F;
+   private void asideHint(String description) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      List<String> strings = wrapText(description, font, this.asideWidth() - 16.0F, 5);
+      float f = font.height() + 2.0F;
+      int n = this.asideOrder++;
+      this.asideCustom(strings.size() * f + GuiStyle.PADDING.intValue(), (var5x, n2, n3, f2, f3, f4, f5, zenithStyle) -> {
+         float wave2 = wave(this.asideWave, n);
+         float centeredTextY = f3 + 2.0F;
 
-         for (String var16 : var3) {
-            var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 6.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
-            var14 += var4;
+         for (String text : strings) {
+            var5x.drawText(font, text, f2 + 8.0F + (1.0F - wave2) * 6.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(f5 * wave2));
+            centeredTextY += f;
          }
       });
    }
 
-   private static String fitText(Font var0, String var1, float var2) {
-      if (var2 <= 0.0F) {
+   private static String fitText(Font font, String inputName, float f) {
+      if (f <= 0.0F) {
          return "";
-      } else if (var0.width(var1) <= var2) {
-         return var1;
+      } else if (font.width(inputName) <= f) {
+         return inputName;
       } else {
-         String var3 = "…";
-         int var4 = var1.length();
+         String str = "…";
+         int length = inputName.length();
 
-         while (var4 > 0 && var0.width(var1.substring(0, var4) + var3) > var2) {
-            var4--;
+         while (length > 0 && font.width(inputName.substring(0, length) + str) > f) {
+            length--;
          }
 
-         return var4 == 0 ? "" : var1.substring(0, var4) + var3;
+         return length == 0 ? "" : inputName.substring(0, length) + str;
       }
    }
 
    @Override
    public void tick() {
-      Voice var1 = voice();
-      if (var1 != null) {
-         long var2 = System.currentTimeMillis();
-         if (var2 - this.lastTickAt > 400L) {
+      Voice voice2 = voice();
+      if (voice2 != null) {
+         long now = System.currentTimeMillis();
+         if (now - this.lastTickAt > 400L) {
             restart(this.enterWave);
             restart(this.asideWave);
          }
 
-         this.lastTickAt = var2;
-         if (var2 - this.lastPingAt > 2000L) {
-            this.lastPingAt = var2;
-            var1.method362();
+         this.lastTickAt = now;
+         if (now - this.lastPingAt > 2000L) {
+            this.lastPingAt = now;
+            voice2.method362();
          }
 
-         if (var1.isFlag3()) {
-            var1.method334();
+         if (voice2.isFlag3()) {
+            voice2.method334();
          }
 
-         StringBuilder var4 = new StringBuilder()
-            .append(var1.isEnabled())
-            .append(var1.activation.getIndex())
-            .append(var1.spatial.isEnabled())
-            .append(var1.isFlag3())
-            .append(var1.input.getValues().size())
-            .append(var1.output.getValues().size());
+         StringBuilder builder = new StringBuilder()
+            .append(voice2.isEnabled())
+            .append(voice2.activation.getIndex())
+            .append(voice2.spatial.isEnabled())
+            .append(voice2.isFlag3())
+            .append(voice2.input.getValues().size())
+            .append(voice2.output.getValues().size());
 
-         for (PartyPlayerInfo var6 : var1.method365()) {
-            var4.append(';').append(var6.uid());
+         for (PartyPlayerInfo partyPlayerInfo : voice2.method365()) {
+            builder.append(';').append(partyPlayerInfo.uid());
          }
 
-         Cloud var7 = Zenith.getInstance().getCloud();
-         if (var7 != null) {
-            PartyMember.Data var8 = var7.getPartyMember().getData();
-            var4.append('|')
-               .append(var7.method7860())
-               .append(var1.denoise.isEnabled())
-               .append(var8 == null ? "-" : var8.getText() + var8.getItems().size())
-               .append(var7.getPartyMember().getLongValue())
-               .append(var7.getPartyMember().method1145().size());
+         Cloud cloud = Zenith.getInstance().getCloud();
+         if (cloud != null) {
+            PartyMember.Data data = cloud.getPartyMember().getData();
+            builder.append('|')
+               .append(cloud.method7860())
+               .append(voice2.denoise.isEnabled())
+               .append(data == null ? "-" : data.getText() + data.getItems().size())
+               .append(cloud.getPartyMember().getLongValue())
+               .append(cloud.getPartyMember().method1145().size());
          }
 
-         String var9 = var4.toString();
-         if (!var9.equals(this.lastSignature)) {
-            this.lastSignature = var9;
+         String string = builder.toString();
+         if (!string.equals(this.lastSignature)) {
+            this.lastSignature = string;
             this.invalidate();
          }
       }
@@ -1054,9 +1054,9 @@ public class VoiceSectionPanel extends SectionPanel {
 
    @Override
    public void close() {
-      Voice var1 = voice();
-      if (var1 != null) {
-         var1.method333(false);
+      Voice voice2 = voice();
+      if (voice2 != null) {
+         voice2.method333(false);
       }
 
       this.openPicker = -1;
@@ -1092,9 +1092,9 @@ public class VoiceSectionPanel extends SectionPanel {
          return "Tile[" + "title=" + this.title + ", " + "note=" + this.note + "]";
       }
 
-      private Tile(String var1, String var2) {
-         this.title = var1;
-         this.note = var2;
+      private Tile(String title, String note) {
+         this.title = title;
+         this.note = note;
       }
    }
 }

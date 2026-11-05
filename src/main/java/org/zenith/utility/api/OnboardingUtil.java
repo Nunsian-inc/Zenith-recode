@@ -20,15 +20,15 @@ public final class OnboardingUtil {
       if (booleanValue != null) {
          return booleanValue;
       } else {
-         File var0 = new File(Zenith.file, "onboarding.json");
-         if (!var0.isFile()) {
+         File file = new File(Zenith.file, "onboarding.json");
+         if (!file.isFile()) {
             booleanValue = false;
             return false;
          } else {
-            try (FileReader var1 = new FileReader(var0)) {
-               JsonObject var2 = JsonParser.parseReader(var1).getAsJsonObject();
-               booleanValue = var2.has("version") && var2.get("version").getAsInt() >= 1;
-            } catch (Exception var6) {
+            try (FileReader fileReader = new FileReader(file)) {
+               JsonObject jsonObject = JsonParser.parseReader(fileReader).getAsJsonObject();
+               booleanValue = jsonObject.has("version") && jsonObject.get("version").getAsInt() >= 1;
+            } catch (Exception e) {
                booleanValue = false;
             }
 
@@ -39,22 +39,22 @@ public final class OnboardingUtil {
 
    public static void complete() {
       booleanValue = true;
-      JsonObject var0 = new JsonObject();
-      var0.addProperty("version", 1);
-      var0.addProperty("completedAt", System.currentTimeMillis());
-      File var1 = Zenith.file;
-      if (var1.isDirectory() || var1.mkdirs()) {
-         try (FileWriter var2 = new FileWriter(new File(var1, "onboarding.json"))) {
-            new Gson().toJson(var0, var2);
-         } catch (Exception var7) {
+      JsonObject json = new JsonObject();
+      json.addProperty("version", 1);
+      json.addProperty("completedAt", System.currentTimeMillis());
+      File file = Zenith.file;
+      if (file.isDirectory() || file.mkdirs()) {
+         try (FileWriter fileWriter = new FileWriter(new File(file, "onboarding.json"))) {
+            new Gson().toJson(json, fileWriter);
+         } catch (Exception e) {
          }
       }
    }
 
    public static void reset() {
       booleanValue = false;
-      File var0 = new File(Zenith.file, "onboarding.json");
-      if (var0.isFile() && !var0.delete()) {
+      File file = new File(Zenith.file, "onboarding.json");
+      if (file.isFile() && !file.delete()) {
          booleanValue = null;
       }
    }

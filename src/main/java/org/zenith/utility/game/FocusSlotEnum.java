@@ -37,10 +37,10 @@ public enum FocusSlotEnum {
    private final TagKey<Item> tagKey;
    private final Item item;
 
-   private FocusSlotEnum(WardrobeCategory var3, TagKey<Item> var4, Item var5) {
-      this.wardrobeCategory = var3;
-      this.tagKey = var4;
-      this.item = var5;
+   private FocusSlotEnum(WardrobeCategory wardrobeCategory, TagKey<Item> tagKey, Item item) {
+      this.wardrobeCategory = wardrobeCategory;
+      this.tagKey = tagKey;
+      this.item = item;
    }
 
    public WardrobeCategory getWardrobeCategory() {
@@ -55,8 +55,8 @@ public enum FocusSlotEnum {
       return this.wardrobeCategory == WardrobeCategory.WEAPON || this.wardrobeCategory == WardrobeCategory.ITEM;
    }
 
-   public boolean matches(ItemStack var1) {
-      return var1 != null && !var1.isEmpty() ? this.tagKey != null && var1.is(this.tagKey) || this.item != null && var1.is(this.item) : false;
+   public boolean matches(ItemStack mainHandItem) {
+      return mainHandItem != null && !mainHandItem.isEmpty() ? this.tagKey != null && mainHandItem.is(this.tagKey) || this.item != null && mainHandItem.is(this.item) : false;
    }
 
    public ItemStack method544() {
@@ -76,11 +76,11 @@ public enum FocusSlotEnum {
       };
    }
 
-   public static FocusSlotEnum method545(ItemStack var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         for (FocusSlotEnum var4 : focusSlotEnums) {
-            if (var4.matches(var0)) {
-               return var4;
+   public static FocusSlotEnum method545(ItemStack mainHandItem) {
+      if (mainHandItem != null && !mainHandItem.isEmpty()) {
+         for (FocusSlotEnum focusSlotEnum : focusSlotEnums) {
+            if (focusSlotEnum.matches(mainHandItem)) {
+               return focusSlotEnum;
             }
          }
 
@@ -94,13 +94,13 @@ public enum FocusSlotEnum {
       return "wardrobe.slot." + this.name().toLowerCase(Locale.ROOT);
    }
 
-   public static FocusSlotEnum method546(String var0) {
-      if (var0 == null) {
+   public static FocusSlotEnum method546(String key) {
+      if (key == null) {
          return null;
       } else {
          try {
-            return valueOf(var0.strip().toUpperCase(Locale.ROOT));
-         } catch (IllegalArgumentException var2) {
+            return valueOf(key.strip().toUpperCase(Locale.ROOT));
+         } catch (IllegalArgumentException e) {
             return null;
          }
       }

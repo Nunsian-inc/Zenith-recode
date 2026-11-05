@@ -19,8 +19,8 @@ public final class AtlasProfiler {
    private AtlasProfiler() {
    }
 
-   public static void method7952(AbstractTexture var0) {
-      if (flag && var0 != null) {
+   public static void method7952(AbstractTexture abstractTexture) {
+      if (flag && abstractTexture != null) {
          if (!flag2) {
             flag2 = true;
             logger.info("Сглаживание дальних текстур: в 1.21.11 задаётся сэмплером, перенос ещё не сделан");

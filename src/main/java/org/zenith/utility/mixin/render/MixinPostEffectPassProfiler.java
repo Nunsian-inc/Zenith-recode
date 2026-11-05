@@ -15,7 +15,7 @@ public abstract class MixinPostEffectPassProfiler {
          target = "Lcom/mojang/blaze3d/framegraph/FramePass;executes(Ljava/lang/Runnable;)V"
       )
    )
-   private Runnable zenith$profileWeatherPass(Runnable var1) {
-      return WorldProfiler.method789(var1);
+   private Runnable zenith$profileWeatherPass(Runnable runnable) {
+      return WorldProfiler.method789(runnable);
    }
 }

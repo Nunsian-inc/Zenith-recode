@@ -28,11 +28,11 @@ public final class CombatLogger {
    private static final String text2 = "\u0000CLOSE";
    private static final String text3 = "\u0001";
    private final Queue<String> queue = new ConcurrentLinkedQueue<>();
-   private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "Zenith-CombatLog");
-      var1.setDaemon(true);
-      var1.setPriority(1);
-      return var1;
+   private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(task -> {
+      Thread thread = new Thread(task, "Zenith-CombatLog");
+      thread.setDaemon(true);
+      thread.setPriority(1);
+      return thread;
    });
    private BufferedWriter bufferedWriter;
    private BufferedWriter bufferedWriter2;
@@ -61,55 +61,55 @@ public final class CombatLogger {
       return this.active;
    }
 
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
-   public void method4611(boolean var1, String var2) {
-      long var3 = System.currentTimeMillis();
-      if (var1) {
-         this.longValue2 = var3;
+   public void method4611(boolean flag, String string) {
+      long now = System.currentTimeMillis();
+      if (flag) {
+         this.longValue2 = now;
          if (!this.active) {
-            this.method4617(var2);
+            this.method4617(string);
          }
-      } else if (this.active && var3 - this.longValue2 > 10000L) {
+      } else if (this.active && now - this.longValue2 > 10000L) {
          this.method4616("целей нет 10 с");
       }
    }
 
-   public void method4612(String var1, String var2, Object... var3) {
+   public void method4612(String str, String format, Object... string) {
       if (this.active) {
-         String var4 = var3.length == 0 ? var2 : String.format(Locale.ROOT, var2, var3);
-         this.queue.add(LocalDateTime.now().format(dateTimeFormatter2) + " t" + this.intValue + " " + var1 + " " + var4);
+         String str2 = string.length == 0 ? format : String.format(Locale.ROOT, format, string);
+         this.queue.add(LocalDateTime.now().format(dateTimeFormatter2) + " t" + this.intValue + " " + str + " " + str2);
          if (Minecraft.getInstance().isSameThread()) {
-            this.items.add(var1 + " " + var4);
+            this.items.add(str + " " + str2);
          }
       }
    }
 
-   public void method4613(String var1) {
+   public void method4613(String string) {
       if (this.active) {
-         this.queue.add("\u0001" + var1);
+         this.queue.add("\u0001" + string);
       }
    }
 
    public List<String> method4614() {
-      var var1 = new ArrayList<>(this.items);
+      var strings = new ArrayList<>(this.items);
       this.items.clear();
-      return var1;
+      return strings;
    }
 
-   public void method4615(String var1) {
-      if (this.active && !var1.equals(this.text4)) {
-         this.text4 = var1;
-         this.method4612("STATE", "%s", var1);
+   public void method4615(String string) {
+      if (this.active && !string.equals(this.text4)) {
+         this.text4 = string;
+         this.method4612("STATE", "%s", string);
       }
    }
 
-   public void method4616(String var1) {
+   public void method4616(String str) {
       if (this.active) {
-         long var2 = (System.currentTimeMillis() - this.longValue) / 1000L;
-         this.method4612("END", "%s, бой %d с", var1, var2);
+         long l = (System.currentTimeMillis() - this.longValue) / 1000L;
+         this.method4612("END", "%s, бой %d с", str, l);
          this.method4612(
             "TOTAL",
             "кристаллов поставлено %d, сломано %d; блоков защиты %d; выкопано %d; ударов мечом %d",
@@ -138,36 +138,36 @@ public final class CombatLogger {
       this.scheduledExecutorService.execute(this::method4618);
    }
 
-   private void method4617(String var1) {
+   private void method4617(String string) {
       this.intValue2 = this.intValue3 = this.intValue4 = this.intValue5 = this.intValue6 = this.intValue7 = this.intValue8 = this.intValue9 = 0;
       this.floatValue = this.floatValue2 = 0.0F;
       this.text4 = null;
       this.longValue = System.currentTimeMillis();
       this.queue.add("\u0000OPEN " + LocalDateTime.now().format(dateTimeFormatter));
       this.active = true;
-      this.method4612("BEGIN", "%s", var1);
+      this.method4612("BEGIN", "%s", string);
    }
 
    private void method4618() {
       try {
          while (true) {
-            String var1;
-            if ((var1 = this.queue.poll()) != null) {
-               if (var1.startsWith("\u0000OPEN ")) {
+            String str;
+            if ((str = this.queue.poll()) != null) {
+               if (str.startsWith("\u0000OPEN ")) {
                   this.method4619();
                   file.mkdirs();
-                  String var2 = var1.substring("\u0000OPEN ".length());
-                  this.bufferedWriter = Files.newBufferedWriter(new File(file, var2 + ".log").toPath(), StandardCharsets.UTF_8);
-                  this.bufferedWriter2 = Files.newBufferedWriter(new File(file, var2 + ".jsonl").toPath(), StandardCharsets.UTF_8);
-               } else if (var1.equals("\u0000CLOSE")) {
+                  String str2 = str.substring("\u0000OPEN ".length());
+                  this.bufferedWriter = Files.newBufferedWriter(new File(file, str2 + ".log").toPath(), StandardCharsets.UTF_8);
+                  this.bufferedWriter2 = Files.newBufferedWriter(new File(file, str2 + ".jsonl").toPath(), StandardCharsets.UTF_8);
+               } else if (str.equals("\u0000CLOSE")) {
                   this.method4619();
-               } else if (var1.startsWith("\u0001")) {
+               } else if (str.startsWith("\u0001")) {
                   if (this.bufferedWriter2 != null) {
-                     this.bufferedWriter2.write(var1, 1, var1.length() - 1);
+                     this.bufferedWriter2.write(str, 1, str.length() - 1);
                      this.bufferedWriter2.write(10);
                   }
                } else if (this.bufferedWriter != null) {
-                  this.bufferedWriter.write(var1);
+                  this.bufferedWriter.write(str);
                   this.bufferedWriter.newLine();
                }
             } else {
@@ -181,7 +181,7 @@ public final class CombatLogger {
                break;
             }
          }
-      } catch (IOException var3) {
+      } catch (IOException e) {
          this.method4619();
       }
    }
@@ -195,7 +195,7 @@ public final class CombatLogger {
          if (this.bufferedWriter2 != null) {
             this.bufferedWriter2.close();
          }
-      } catch (IOException var2) {
+      } catch (IOException e) {
       }
 
       this.bufferedWriter = null;

@@ -33,12 +33,12 @@ public final class ElytraFlyModule extends Module {
    }
 
    @EventTarget
-   public void method2257(MoveInputEvent var1) {
+   public void method2257(MoveInputEvent event) {
       if (mc.player != null) {
-         ItemStack var2 = mc.player.getItemBySlot(EquipmentSlot.CHEST);
-         if (var2.is(Items.ELYTRA)) {
+         ItemStack itemBySlot = mc.player.getItemBySlot(EquipmentSlot.CHEST);
+         if (itemBySlot.is(Items.ELYTRA)) {
             if (mc.player.onGround()) {
-               var1.method3041(true);
+               event.method3041(true);
                this.flag = true;
             } else if (!mc.player.isFallFlying()) {
                if (!this.flag) {
@@ -54,7 +54,7 @@ public final class ElytraFlyModule extends Module {
    }
 
    @EventTarget
-   public void method2258(Event5 var1) {
+   public void method2258(Event5 event) {
       zenith.getRotationManager()
          .method7849(
             new RotationRequest(new Rotation(mc.player.getYRot(), 0.0F), () -> new Rotation(mc.player.getYRot(), 0.0F), bcCameraTestnerv.getRotationConfig()),
@@ -64,10 +64,10 @@ public final class ElytraFlyModule extends Module {
    }
 
    @EventTarget
-   public void method2259(UpdateEvent var1) {
+   public void method2259(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         ItemStack var2 = mc.player.getItemBySlot(EquipmentSlot.CHEST);
-         if (var2.is(Items.ELYTRA)) {
+         ItemStack itemBySlot = mc.player.getItemBySlot(EquipmentSlot.CHEST);
+         if (itemBySlot.is(Items.ELYTRA)) {
             if (mc.player.isFallFlying()) {
                mc.player.setDeltaMovement(mc.player.getDeltaMovement().x, mc.player.getDeltaMovement().y + 0.0305, mc.player.getDeltaMovement().z);
             }

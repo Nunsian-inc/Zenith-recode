@@ -35,8 +35,8 @@ public class MotorClaude extends Util22 {
       this("motor_claude.json");
    }
 
-   public MotorClaude(String var1) {
-      this.text3 = var1;
+   public MotorClaude(String str) {
+      this.text3 = str;
    }
 
    private MotorClaudeNet method3420() {
@@ -44,41 +44,41 @@ public class MotorClaude extends Util22 {
          if (items2.containsKey(this.text3)) {
             return items.get(this.text3);
          } else {
-            MotorClaudeNet var2 = null;
+            MotorClaudeNet motorClaudeNet = null;
 
-            String var3;
-            try (InputStream var4 = method3421(this.text3)) {
-               var2 = MotorClaudeNet.method3580(var4);
-               var3 = this.text3 + " загружен. " + var2.text2;
-            } catch (Exception var10) {
-               var3 = this.text3 + " НЕ загружен: " + var10.getMessage();
+            String x;
+            try (InputStream inputStream = method3421(this.text3)) {
+               motorClaudeNet = MotorClaudeNet.method3580(inputStream);
+               x = this.text3 + " загружен. " + motorClaudeNet.text2;
+            } catch (Exception e) {
+               x = this.text3 + " НЕ загружен: " + e.getMessage();
             }
 
-            items.put(this.text3, var2);
-            items2.put(this.text3, var3);
-            System.out.println(var3);
+            items.put(this.text3, motorClaudeNet);
+            items2.put(this.text3, x);
+            System.out.println(x);
             if (mc != null && mc.player != null) {
-               String var12 = var3;
-               mc.execute(() -> ChatLogger.method2019(var12));
+               String status = x;
+               mc.execute(() -> ChatLogger.method2019(status));
             }
 
-            return var2;
+            return motorClaudeNet;
          }
       }
    }
 
-   private static InputStream method3421(String var0) throws IOException {
-      for (Path var2 : List.of(Path.of(var0), Path.of("models", var0), Path.of("..", "models", var0))) {
-         if (Files.isRegularFile(var2)) {
-            return Files.newInputStream(var2);
+   private static InputStream method3421(String first) throws IOException {
+      for (Path path : List.of(Path.of(first), Path.of("models", first), Path.of("..", "models", first))) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var3 = MotorClaude.class.getClassLoader().getResourceAsStream("models/" + var0);
-      if (var3 == null) {
-         throw new IOException(var0 + " не найден ни рядом с клиентом, ни в jar");
+      InputStream resourceAsStream = MotorClaude.class.getClassLoader().getResourceAsStream("models/" + first);
+      if (resourceAsStream == null) {
+         throw new IOException(first + " не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var3;
+         return resourceAsStream;
       }
    }
 
@@ -92,12 +92,12 @@ public class MotorClaude extends Util22 {
       return this.method3420() != null;
    }
 
-   public void setDoubleValue4(double var1) {
-      this.doubleValue4 = var1;
+   public void setDoubleValue4(double d) {
+      this.doubleValue4 = d;
    }
 
-   public void setDoubleValue3(double var1) {
-      this.doubleValue3 = var1;
+   public void setDoubleValue3(double d) {
+      this.doubleValue3 = d;
    }
 
    public void reset() {
@@ -108,67 +108,67 @@ public class MotorClaude extends Util22 {
    }
 
    private static double method3424() {
-      double var0 = mc.options.sensitivity().get() * 0.6F + 0.2F;
-      return var0 * var0 * var0 * 8.0 * 0.15;
+      double d = mc.options.sensitivity().get() * 0.6F + 0.2F;
+      return d * d * d * 8.0 * 0.15;
    }
 
-   public Rotation method3425(Rotation var1) {
-      Rotation var2 = zenith.getRotationManager().method7844();
-      MotorClaudeNet var3 = this.method3420();
-      if (var3 != null && mc.player != null && var1 != null) {
-         int var4 = mc.player.tickCount;
-         if (var4 == this.intValue2 && this.rotation != null) {
+   public Rotation method3425(Rotation rotation) {
+      Rotation rotation2 = zenith.getRotationManager().method7844();
+      MotorClaudeNet motorClaudeNet = this.method3420();
+      if (motorClaudeNet != null && mc.player != null && rotation != null) {
+         int tickCount = mc.player.tickCount;
+         if (tickCount == this.intValue2 && this.rotation != null) {
             return this.rotation;
          } else {
-            if (this.intValue != Integer.MIN_VALUE && var4 != this.intValue + 1) {
+            if (this.intValue != Integer.MIN_VALUE && tickCount != this.intValue + 1) {
                this.reset();
             }
 
-            this.intValue = var4;
-            double var5 = method3424();
-            double var7 = Math.log(Double.isNaN(this.doubleValue4) ? var3.getDoubleValue16() : this.doubleValue4);
+            this.intValue = tickCount;
+            double d = method3424();
+            double log = Math.log(Double.isNaN(this.doubleValue4) ? motorClaudeNet.getDoubleValue16() : this.doubleValue4);
             if (this.entry == null) {
-               this.entry = var3.method3563();
-               this.doubleValue = var2.getFloatValue();
-               this.doubleValue2 = var2.getFloatValue2();
-               double[] var9 = new double[]{0.0, 0.0};
+               this.entry = motorClaudeNet.method3563();
+               this.doubleValue = rotation2.getFloatValue();
+               this.doubleValue2 = rotation2.getFloatValue2();
+               double[] doubles = new double[]{0.0, 0.0};
 
-               for (int var10 = 0; var10 < var3.getIntValue8(); var10++) {
-                  var3.method3579(this.entry, var9, var9, var2.getFloatValue2(), var5, var7, new double[var3.getIntValue9()], var9);
+               for (int i = 0; i < motorClaudeNet.getIntValue8(); i++) {
+                  motorClaudeNet.method3579(this.entry, doubles, doubles, rotation2.getFloatValue2(), d, log, new double[motorClaudeNet.getIntValue9()], doubles);
                }
             }
 
-            double var21 = this.doubleValue;
-            double var11 = this.doubleValue2;
+            double doubleValue = this.doubleValue;
+            double d2 = this.doubleValue2;
             if (this.doubleValue3 > 0.0) {
-               double var13 = Mth.wrapDegrees(var1.getFloatValue() - this.doubleValue);
-               double var15 = var1.getFloatValue2() - this.doubleValue2;
-               double var17 = Math.sqrt(var13 * var13 + var15 * var15);
-               double var19 = var17 < 1.0E-9 ? 0.0 : Math.min(1.0, Math.max(0.4, var17 / this.doubleValue3) / var17);
-               this.doubleValue += var13 * var19;
-               this.doubleValue2 += var15 * var19;
+               double d3 = Mth.wrapDegrees(rotation.getFloatValue() - this.doubleValue);
+               double d4 = rotation.getFloatValue2() - this.doubleValue2;
+               double d5 = Math.sqrt(d3 * d3 + d4 * d4);
+               double d6 = d5 < 1.0E-9 ? 0.0 : Math.min(1.0, Math.max(0.4, d5 / this.doubleValue3) / d5);
+               this.doubleValue += d3 * d6;
+               this.doubleValue2 += d4 * d6;
             } else {
-               this.doubleValue = var1.getFloatValue();
-               this.doubleValue2 = var1.getFloatValue2();
+               this.doubleValue = rotation.getFloatValue();
+               this.doubleValue2 = rotation.getFloatValue2();
             }
 
-            double[] var22 = new double[]{Mth.wrapDegrees(this.doubleValue - var2.getFloatValue()), this.doubleValue2 - var2.getFloatValue2()};
-            double[] var14 = new double[]{Mth.wrapDegrees(this.doubleValue - var21), this.doubleValue2 - var11};
-            double[] var23 = new double[var3.getIntValue9()];
+            double[] doubles = new double[]{Mth.wrapDegrees(this.doubleValue - rotation2.getFloatValue()), this.doubleValue2 - rotation2.getFloatValue2()};
+            double[] doubles2 = new double[]{Mth.wrapDegrees(this.doubleValue - doubleValue), this.doubleValue2 - d2};
+            double[] doubles3 = new double[motorClaudeNet.getIntValue9()];
 
-            for (int var16 = 0; var16 < var23.length; var16++) {
-               var23[var16] = this.random.nextDouble();
+            for (int i = 0; i < doubles3.length; i++) {
+               doubles3[i] = this.random.nextDouble();
             }
 
-            MotorClaudeNet.Entry2 var24 = var3.method3579(this.entry, var22, var14, var2.getFloatValue2(), var5, var7, var23, null);
-            Rotation var25 = var2.method3140((float)(var24.doubleValue * var5), (float)(var24.doubleValue2 * var5));
-            this.intValue2 = var4;
-            this.rotation = var25;
-            return var25;
+            MotorClaudeNet.Entry2 entry2 = motorClaudeNet.method3579(this.entry, doubles, doubles2, rotation2.getFloatValue2(), d, log, doubles3, null);
+            Rotation rotation3 = rotation2.method3140((float)(entry2.doubleValue * d), (float)(entry2.doubleValue2 * d));
+            this.intValue2 = tickCount;
+            this.rotation = rotation3;
+            return rotation3;
          }
       } else {
          this.reset();
-         return var2;
+         return rotation2;
       }
    }
 }

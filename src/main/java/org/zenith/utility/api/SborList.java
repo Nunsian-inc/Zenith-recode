@@ -14,10 +14,10 @@ public final class SborList {
    private final String text2;
    private final List<SborList.Data> items;
 
-   public SborList(String var1, String var2, List<SborList.Data> var3) {
-      this.text = var1;
-      this.text2 = var2;
-      this.items = List.copyOf(var3);
+   public SborList(String text, String str, List<SborList.Data> coll) {
+      this.text = text;
+      this.text2 = str;
+      this.items = List.copyOf(coll);
    }
 
    public String getName() {
@@ -36,96 +36,96 @@ public final class SborList {
       return this.items.size();
    }
 
-   public boolean method1751(String var1) {
-      return this.text2 != null && this.text2.equals(var1);
+   public boolean method1751(String anObject) {
+      return this.text2 != null && this.text2.equals(anObject);
    }
 
-   public static SborList method1752(String var0, InventoryPreset var1) {
-      ArrayList var2 = new ArrayList();
+   public static SborList method1752(String inputName, InventoryPreset set) {
+      ArrayList coll = new ArrayList();
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         ItemMatcher var4 = var1.method870(var3);
-         if (var4 != null && !var4.getItemStack().isEmpty()) {
-            var2.add(
+      for (int i = 0; i < 36; i++) {
+         ItemMatcher itemMatcher = set.method870(i);
+         if (itemMatcher != null && !itemMatcher.getItemStack().isEmpty()) {
+            coll.add(
                new SborList.Data(
-                  var3,
-                  var4.getText22(),
-                  BuiltInRegistries.ITEM.getKey(var4.getItemStack().getItem()).toString(),
-                  var1.method877(var3),
-                  var1.method879(var3),
-                  var1.method881(var3)
+                  i,
+                  itemMatcher.getText22(),
+                  BuiltInRegistries.ITEM.getKey(itemMatcher.getItemStack().getItem()).toString(),
+                  set.method877(i),
+                  set.method879(i),
+                  set.method881(i)
                )
             );
          }
       }
 
-      return new SborList(var0, var1.getText4(), var2);
+      return new SborList(inputName, set.getText4(), coll);
    }
 
-   public int method1753(InventoryPreset var1) {
-      var1.method876();
-      int var2 = 0;
+   public int method1753(InventoryPreset set) {
+      set.method876();
+      int n = 0;
 
-      for (SborList.Data var4 : this.items) {
-         ItemMatcher var5 = var1.method889(var4.getText(), var4.getText2());
-         if (var5 != null && !var5.getItemStack().isEmpty()) {
-            var1.method874(var4.getIntValue(), var5);
-            if (var4.count() > 0) {
-               var1.method878(var4.getIntValue(), var4.count());
+      for (SborList.Data data : this.items) {
+         ItemMatcher key = set.method889(data.getText(), data.getText2());
+         if (key != null && !key.getItemStack().isEmpty()) {
+            set.method874(data.getIntValue(), key);
+            if (data.count() > 0) {
+               set.method878(data.getIntValue(), data.count());
             }
 
-            var1.method880(var4.getIntValue(), var4.getLongValue());
-            if (var4.getFloatValue() >= 0.0F) {
-               var1.method882(var4.getIntValue(), var4.getFloatValue());
+            set.method880(data.getIntValue(), data.getLongValue());
+            if (data.getFloatValue() >= 0.0F) {
+               set.method882(data.getIntValue(), data.getFloatValue());
             }
          } else {
-            var2++;
+            n++;
          }
       }
 
-      return var2;
+      return n;
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("name", this.text);
-      var1.addProperty("server", this.text2);
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      json.addProperty("name", this.text);
+      json.addProperty("server", this.text2);
+      JsonArray jsonArray = new JsonArray();
 
-      for (SborList.Data var4 : this.items) {
-         JsonObject var5 = new JsonObject();
-         var5.addProperty("slot", var4.getIntValue());
-         var5.addProperty("search", var4.getText());
-         var5.addProperty("item", var4.getText2());
-         var5.addProperty("count", var4.count());
-         var5.addProperty("price", var4.getLongValue());
-         var5.addProperty("durability", var4.getFloatValue());
-         var2.add(var5);
+      for (SborList.Data data : this.items) {
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("slot", data.getIntValue());
+         json2.addProperty("search", data.getText());
+         json2.addProperty("item", data.getText2());
+         json2.addProperty("count", data.count());
+         json2.addProperty("price", data.getLongValue());
+         json2.addProperty("durability", data.getFloatValue());
+         jsonArray.add(json2);
       }
 
-      var1.add("slots", var2);
-      return var1;
+      json.add("slots", jsonArray);
+      return json;
    }
 
-   public static SborList method1754(JsonObject var0) {
-      if (var0 != null && var0.has("name")) {
-         String var1 = var0.get("name").getAsString();
-         if (var1 != null && !var1.isBlank()) {
-            String var2 = var0.has("server") ? var0.get("server").getAsString() : null;
-            ArrayList var3 = new ArrayList();
-            if (var0.has("slots") && var0.get("slots").isJsonArray()) {
-               for (JsonElement var5 : var0.getAsJsonArray("slots")) {
-                  if (var5.isJsonObject()) {
-                     JsonObject var6 = var5.getAsJsonObject();
-                     if (var6.has("slot") && var6.has("search")) {
-                        var3.add(
+   public static SborList method1754(JsonObject jsonObject) {
+      if (jsonObject != null && jsonObject.has("name")) {
+         String string = jsonObject.get("name").getAsString();
+         if (string != null && !string.isBlank()) {
+            String str = jsonObject.has("server") ? jsonObject.get("server").getAsString() : null;
+            ArrayList coll = new ArrayList();
+            if (jsonObject.has("slots") && jsonObject.get("slots").isJsonArray()) {
+               for (JsonElement json : jsonObject.getAsJsonArray("slots")) {
+                  if (json.isJsonObject()) {
+                     JsonObject jsonObject2 = json.getAsJsonObject();
+                     if (jsonObject2.has("slot") && jsonObject2.has("search")) {
+                        coll.add(
                            new SborList.Data(
-                              var6.get("slot").getAsInt(),
-                              var6.get("search").getAsString(),
-                              var6.has("item") ? var6.get("item").getAsString() : null,
-                              var6.has("count") ? var6.get("count").getAsInt() : 1,
-                              var6.has("price") ? var6.get("price").getAsLong() : 0L,
-                              var6.has("durability") ? var6.get("durability").getAsFloat() : -1.0F
+                              jsonObject2.get("slot").getAsInt(),
+                              jsonObject2.get("search").getAsString(),
+                              jsonObject2.has("item") ? jsonObject2.get("item").getAsString() : null,
+                              jsonObject2.has("count") ? jsonObject2.get("count").getAsInt() : 1,
+                              jsonObject2.has("price") ? jsonObject2.get("price").getAsLong() : 0L,
+                              jsonObject2.has("durability") ? jsonObject2.get("durability").getAsFloat() : -1.0F
                            )
                         );
                      }
@@ -133,7 +133,7 @@ public final class SborList {
                }
             }
 
-            return new SborList(var1, var2, var3);
+            return new SborList(string, str, coll);
          } else {
             return null;
          }
@@ -191,13 +191,13 @@ public final class SborList {
          return "Data[" + "intValue=" + this.intValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "intValue2=" + this.intValue2 + ", " + "longValue=" + this.longValue + ", " + "floatValue=" + this.floatValue + "]";
       }
 
-      public Data(int var1, String var2, String var3, int var4, long var5, float var7) {
-         this.intValue = var1;
-         this.text = var2;
-         this.text2 = var3;
-         this.intValue2 = var4;
-         this.longValue = var5;
-         this.floatValue = var7;
+      public Data(int intValue, String text, String string, int n, long longValue, float floatValue) {
+         this.intValue = intValue;
+         this.text = text;
+         this.text2 = string;
+         this.intValue2 = n;
+         this.longValue = longValue;
+         this.floatValue = floatValue;
       }
 
       public int getIntValue() {

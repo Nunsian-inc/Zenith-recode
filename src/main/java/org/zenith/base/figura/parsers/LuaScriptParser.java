@@ -32,7 +32,7 @@ public class LuaScriptParser {
    public static ByteArrayTag parseScript(String name, String script) {
       error = true;
 
-      String var10000 = switch (RuntimeDefaults.FORMAT_SCRIPT.value) {
+      String str = switch (RuntimeDefaults.FORMAT_SCRIPT.value) {
          case 0 -> noMinifier(script);
          case 1 -> regexMinify(name, script);
          case 2 -> aggressiveMinify(name, script);
@@ -47,7 +47,7 @@ public class LuaScriptParser {
          FiguraMod.LOGGER.warn("Failed to minify the script, likely to be syntax error");
          out = new ByteArrayTag(script.getBytes(StandardCharsets.UTF_8));
       } else {
-         out = new ByteArrayTag(var10000.getBytes(StandardCharsets.UTF_8));
+         out = new ByteArrayTag(str.getBytes(StandardCharsets.UTF_8));
       }
 
       return out;
@@ -194,13 +194,13 @@ public class LuaScriptParser {
          error = false;
          FiguraMod.debug("Script \"{}\" minified from {} chars to {} chars using AST mode", name, script.length(), visitor.length());
          return visitor.getString();
-      } catch (ParseException var41) {
+      } catch (ParseException e) {
          return script;
       }
    }
 
    static {
-      String var10000 = string.pattern();
-      allStrings = Pattern.compile(var10000 + "|" + multilineString.pattern().replace('1', '2'), 8);
+      String pattern = string.pattern();
+      allStrings = Pattern.compile(pattern + "|" + multilineString.pattern().replace('1', '2'), 8);
    }
 }

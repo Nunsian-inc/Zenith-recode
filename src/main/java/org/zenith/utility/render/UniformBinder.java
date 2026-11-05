@@ -20,50 +20,50 @@ public final class UniformBinder {
    private UniformBinder() {
    }
 
-   public static void method5478(RenderPipeline var0, ShaderDefinition var1, Runnable var2) {
-      method5479(var0, var1, var2, null);
+   public static void method5478(RenderPipeline pipeline, ShaderDefinition kawaseShaderKey2, Runnable runnable) {
+      method5479(pipeline, kawaseShaderKey2, runnable, null);
    }
 
-   public static void method5479(@Nullable RenderPipeline var0, ShaderDefinition var1, Runnable var2, @Nullable Supplier<GpuTextureView> var3) {
-      method5480(var0, var1, var2, var3, null);
+   public static void method5479(@Nullable RenderPipeline pipeline, ShaderDefinition kawaseShaderKey2, Runnable runnable, @Nullable Supplier<GpuTextureView> supplier) {
+      method5480(pipeline, kawaseShaderKey2, runnable, supplier, null);
    }
 
    public static void method5480(
-      @Nullable RenderPipeline var0, ShaderDefinition var1, Runnable var2, @Nullable Supplier<GpuTextureView> var3, @Nullable BooleanSupplier var4
+      @Nullable RenderPipeline pipeline, ShaderDefinition kawaseShaderKey2, Runnable runnable, @Nullable Supplier<GpuTextureView> supplier, @Nullable BooleanSupplier booleanSupplier
    ) {
-      if (var0 != null) {
-         items.put(var0, new UniformBinder.Data(var1, var2, var3, var4));
+      if (pipeline != null) {
+         items.put(pipeline, new UniformBinder.Data(kawaseShaderKey2, runnable, supplier, booleanSupplier));
       }
    }
 
    public static void method5481() {
       if (!items.isEmpty()) {
-         for (Entry var1 : items.entrySet()) {
-            UniformBinder.Data var2 = (UniformBinder.Data)var1.getValue();
-            if (var2.getBooleanSupplier() != null && !var2.getBooleanSupplier().getAsBoolean()) {
-               items2.remove(var1.getKey());
+         for (Entry entry : items.entrySet()) {
+            UniformBinder.Data data = (UniformBinder.Data)entry.getValue();
+            if (data.getBooleanSupplier() != null && !data.getBooleanSupplier().getAsBoolean()) {
+               items2.remove(entry.getKey());
             } else {
-               var2.getRunnable().run();
-               GpuBufferSlice var3 = var2.getShaderDefinition().method5562();
-               if (var3 != null) {
-                  items2.put((RenderPipeline)var1.getKey(), var3);
+               data.getRunnable().run();
+               GpuBufferSlice gpuBufferSlice = data.getShaderDefinition().method5562();
+               if (gpuBufferSlice != null) {
+                  items2.put((RenderPipeline)entry.getKey(), gpuBufferSlice);
                }
             }
          }
       }
    }
 
-   public static void method5482(RenderPass var0, RenderPipeline var1) {
-      GpuBufferSlice var2 = items2.get(var1);
-      if (var2 != null) {
-         var0.setUniform("ZenithData", var2);
+   public static void method5482(RenderPass renderPass, RenderPipeline pipeline) {
+      GpuBufferSlice gpuBufferSlice = items2.get(pipeline);
+      if (gpuBufferSlice != null) {
+         renderPass.setUniform("ZenithData", gpuBufferSlice);
       }
 
-      UniformBinder.Data var3 = items.get(var1);
-      if (var3 != null && var3.getSupplier() != null && org.zenith.utility.render.ImmediateRenderer.hasSampler(var1, "Sampler0")) {
-         GpuTextureView var4 = var3.getSupplier().get();
-         if (var4 != null) {
-            var0.setUniform("Sampler0", var4, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+      UniformBinder.Data data = items.get(pipeline);
+      if (data != null && data.getSupplier() != null && org.zenith.utility.render.ImmediateRenderer.hasSampler(pipeline, "Sampler0")) {
+         GpuTextureView textureView = data.getSupplier().get();
+         if (textureView != null) {
+            renderPass.setUniform("Sampler0", textureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
          }
       }
    }
@@ -109,11 +109,11 @@ public final class UniformBinder {
          return "Data[" + "shaderDefinition=" + this.shaderDefinition + ", " + "runnable=" + this.runnable + ", " + "supplier=" + this.supplier + ", " + "booleanSupplier=" + this.booleanSupplier + "]";
       }
 
-      private Data(ShaderDefinition var1, Runnable var2, @Nullable Supplier<GpuTextureView> var3, @Nullable BooleanSupplier var4) {
-         this.shaderDefinition = var1;
-         this.runnable = var2;
-         this.supplier = var3;
-         this.booleanSupplier = var4;
+      private Data(ShaderDefinition shaderDefinition, Runnable runnable, @Nullable Supplier<GpuTextureView> supplier, @Nullable BooleanSupplier booleanSupplier) {
+         this.shaderDefinition = shaderDefinition;
+         this.runnable = runnable;
+         this.supplier = supplier;
+         this.booleanSupplier = booleanSupplier;
       }
 
       public ShaderDefinition getShaderDefinition() {

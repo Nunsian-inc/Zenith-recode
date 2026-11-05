@@ -35,18 +35,18 @@ public class ItemTask extends RenderTask {
    @Override
    public void render(PoseStack poseStack, SubmitNodeCollector queue, FiguraBufferSource buffer, int light, int overlay) {
       poseStack.scale(-16.0F, 16.0F, -16.0F);
-      LivingEntity var10000;
+      LivingEntity owner;
       if (this.owner.renderer.entity instanceof LivingEntity living) {
-         var10000 = living;
+         owner = living;
       } else {
-         var10000 = null;
+         owner = null;
       }
 
       int newLight = this.customization.light != null ? this.customization.light : light;
       int newOverlay = this.customization.overlay != null ? this.customization.overlay : overlay;
-      int seed = var10000 != null ? var10000.getId() + this.displayMode.ordinal() : 0;
+      int seed = owner != null ? owner.getId() + this.displayMode.ordinal() : 0;
       Minecraft client = Minecraft.getInstance();
-      client.getItemModelResolver().updateForTopItem(this.renderState, this.item, this.displayMode, client.level, var10000, seed);
+      client.getItemModelResolver().updateForTopItem(this.renderState, this.item, this.displayMode, client.level, owner, seed);
       this.renderState.submit(poseStack, queue, newLight, newOverlay, 0);
    }
 
@@ -97,7 +97,7 @@ public class ItemTask extends RenderTask {
          this.displayMode = ItemDisplayContext.valueOf(mode.toUpperCase(Locale.US));
          this.left = this.displayMode == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || this.displayMode == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
          return this;
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Illegal display mode: \"" + mode + "\".");
       }
    }

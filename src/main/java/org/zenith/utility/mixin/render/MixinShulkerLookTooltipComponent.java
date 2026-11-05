@@ -15,10 +15,10 @@ public interface MixinShulkerLookTooltipComponent {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private static void replaceTooltipFactory(TooltipComponent var0, CallbackInfoReturnable<ClientTooltipComponent> var1) {
-      ClientTooltipComponent var2 = ShulkerPreviewModule.method1388(var0);
-      if (var2 != null) {
-         var1.setReturnValue(var2);
+   private static void replaceTooltipFactory(TooltipComponent tooltipComponent, CallbackInfoReturnable<ClientTooltipComponent> callbackInfoReturnable) {
+      ClientTooltipComponent returnValue = ShulkerPreviewModule.method1388(tooltipComponent);
+      if (returnValue != null) {
+         callbackInfoReturnable.setReturnValue(returnValue);
       }
    }
 }

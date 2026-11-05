@@ -10,7 +10,7 @@ public class StaffName extends JsonListStorage<String> {
       super("staffName.json", "", (new TypeToken<Set<String>>() {}).getType(), HashSet::new);
    }
 
-   public boolean method1668(String var1) {
-      return this.getItems().contains(var1);
+   public boolean method1668(String string) {
+      return this.getItems().contains(string);
    }
 }

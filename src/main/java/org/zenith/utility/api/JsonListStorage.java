@@ -27,18 +27,18 @@ public class JsonListStorage<T> {
    private final Type type;
    private final Supplier<Collection<T>> collectionSupplier;
 
-   public JsonListStorage(String var1, String var2, Type var3, Supplier<Collection<T>> var4) {
-      this.fileName = var1;
-      this.shifr = var2;
-      this.type = var3;
-      this.collectionSupplier = var4;
-      File var5 = new File(Zenith.file, var1);
-      if (!var5.exists()) {
+   public JsonListStorage(String fileName, String shifr, Type type, Supplier<Collection<T>> collectionSupplier) {
+      this.fileName = fileName;
+      this.shifr = shifr;
+      this.type = type;
+      this.collectionSupplier = collectionSupplier;
+      File file = new File(Zenith.file, fileName);
+      if (!file.exists()) {
          try {
-            var5.createNewFile();
-            this.items = (Collection<T>)var4.get();
-         } catch (Exception var7) {
-            this.items = (Collection<T>)var4.get();
+            file.createNewFile();
+            this.items = (Collection<T>)collectionSupplier.get();
+         } catch (Exception e) {
+            this.items = (Collection<T>)collectionSupplier.get();
          }
       } else {
          this.load();
@@ -50,72 +50,72 @@ public class JsonListStorage<T> {
    }
 
    public void save() {
-      Gson var1 = this.createGson();
-      String var2 = var1.toJson(this.items);
+      Gson gson = this.createGson();
+      String json = gson.toJson(this.items);
 
       try {
          writeAtomic(
             new File(Zenith.file, this.fileName),
-            this.shifr.isEmpty() ? var2 : Base64.getEncoder().encodeToString(AesGcmCrypto.method5339(var2.getBytes(), this.shifr))
+            this.shifr.isEmpty() ? json : Base64.getEncoder().encodeToString(AesGcmCrypto.method5339(json.getBytes(), this.shifr))
          );
-      } catch (Exception var4) {
+      } catch (Exception e) {
       }
    }
 
-   public static void writeAtomic(File var0, String var1) throws IOException {
-      Path var2 = var0.toPath();
-      Path var3 = var2.resolveSibling(var2.getFileName() + ".tmp");
-      Files.writeString(var3, var1, Charset.defaultCharset());
+   public static void writeAtomic(File file, String encodeToString) throws IOException {
+      Path path = file.toPath();
+      Path sibling = path.resolveSibling(path.getFileName() + ".tmp");
+      Files.writeString(sibling, encodeToString, Charset.defaultCharset());
 
       try {
-         Files.move(var3, var2, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-      } catch (AtomicMoveNotSupportedException var5) {
-         Files.move(var3, var2, StandardCopyOption.REPLACE_EXISTING);
+         Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+      } catch (AtomicMoveNotSupportedException e) {
+         Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING);
       }
    }
 
    private void keepUnreadable() {
       try {
-         Path var1 = new File(Zenith.file, this.fileName).toPath();
-         if (Files.isRegularFile(var1) && Files.size(var1) > 0L) {
-            Files.copy(var1, var1.resolveSibling(this.fileName + ".broken-" + System.currentTimeMillis()), StandardCopyOption.REPLACE_EXISTING);
+         Path path = new File(Zenith.file, this.fileName).toPath();
+         if (Files.isRegularFile(path) && Files.size(path) > 0L) {
+            Files.copy(path, path.resolveSibling(this.fileName + ".broken-" + System.currentTimeMillis()), StandardCopyOption.REPLACE_EXISTING);
          }
-      } catch (Exception var2) {
+      } catch (Exception e) {
       }
    }
 
    public void load() {
-      try (BufferedReader var1 = new BufferedReader(new FileReader(new File(Zenith.file, this.fileName)))) {
-         Gson var2 = this.createGson();
+      try (BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(Zenith.file, this.fileName)))) {
+         Gson gson = this.createGson();
          if (!this.shifr.isEmpty()) {
-            String var3 = var1.readLine();
-            if (var3 != null && !var3.isEmpty()) {
-               byte[] var4 = Base64.getDecoder().decode(var3);
-               byte[] var5 = AesGcmCrypto.method5340(var4, this.shifr);
-               String var6 = new String(var5, StandardCharsets.UTF_8);
-               this.items = (Collection<T>)var2.fromJson(var6, this.type);
+            String line = bufferedReader.readLine();
+            if (line != null && !line.isEmpty()) {
+               byte[] allBytes = Base64.getDecoder().decode(line);
+               byte[] bytes = AesGcmCrypto.method5340(allBytes, this.shifr);
+               String str = new String(bytes, StandardCharsets.UTF_8);
+               this.items = (Collection<T>)gson.fromJson(str, this.type);
             } else {
                this.items = this.collectionSupplier.get();
             }
          } else {
-            this.items = (Collection<T>)var2.fromJson(var1, this.type);
+            this.items = (Collection<T>)gson.fromJson(bufferedReader, this.type);
          }
 
          if (this.items == null) {
             this.items = this.collectionSupplier.get();
          }
-      } catch (Exception var9) {
+      } catch (Exception e) {
          this.keepUnreadable();
          this.items = this.collectionSupplier.get();
       }
    }
 
-   public void add(T var1) {
-      this.items.add((T)var1);
+   public void add(T name) {
+      this.items.add((T)name);
    }
 
-   public void remove(T var1) {
-      this.items.remove(var1);
+   public void remove(T value) {
+      this.items.remove(value);
    }
 
    @Generated

@@ -28,7 +28,7 @@ public final class AntiBotModule extends Module {
    }
 
    @EventTarget
-   public void method2784(AttackEvent var1) {
+   public void method2784(AttackEvent event) {
    }
 
    @Override
@@ -47,22 +47,22 @@ public final class AntiBotModule extends Module {
       }
    }
 
-   public boolean method2785(Player var1) {
+   public boolean method2785(Player player) {
       if (!this.isEnabled()) {
          return false;
       } else if (mc.player == null) {
          return false;
       } else {
-         double var2 = mc.player.distanceTo(var1);
-         if (var2 < 8.0) {
+         double d = mc.player.distanceTo(player);
+         if (d < 8.0) {
             if (mc.getConnection() == null) {
                return false;
             } else {
-               PlayerInfo var4 = mc.getConnection().getPlayerInfo(var1.getUUID());
-               if (var4 == null) {
+               PlayerInfo playerInfo = mc.getConnection().getPlayerInfo(player.getUUID());
+               if (playerInfo == null) {
                   return true;
                } else {
-                  return var4.getTabListDisplayName() == null ? true : var4.getTabListDisplayName().getString().equals(var1.getGameProfile().name());
+                  return playerInfo.getTabListDisplayName() == null ? true : playerInfo.getTabListDisplayName().getString().equals(player.getGameProfile().name());
                }
             }
          } else {

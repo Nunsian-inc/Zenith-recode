@@ -33,16 +33,16 @@ import org.zenith.utility.render.HeldItemAnimator;
 @Mixin({FirstPersonHandsAndItemsRenderer.class})
 public abstract class MixinHeldItemRenderer {
    @Shadow
-   public abstract void swingArm(float var1, PoseStack var2, int var3, HumanoidArm var4);
+   public abstract void swingArm(float f, PoseStack poseStack, int n, HumanoidArm humanoidArm);
 
    @Inject(
       method = {"submitHandsWithItems(FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;Lnet/minecraft/client/renderer/state/level/FirstPersonHandsAndItemsRenderState;)V"},
       at = {@At("HEAD")}
    )
-   private void handFireBeginFrame(CallbackInfo var6) {
-      HandFireModule var7 = HandFireModule.INSTANCE;
-      if (var7.method6612()) {
-         var7.method6617();
+   private void handFireBeginFrame(CallbackInfo callbackInfo) {
+      HandFireModule handFireModule = HandFireModule.INSTANCE;
+      if (handFireModule.method6612()) {
+         handFireModule.method6617();
       }
    }
 
@@ -50,10 +50,10 @@ public abstract class MixinHeldItemRenderer {
       method = {"submitHandsWithItems(FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;Lnet/minecraft/client/renderer/state/level/FirstPersonHandsAndItemsRenderState;)V"},
       at = {@At("TAIL")}
    )
-   private void handFireEndFrame(CallbackInfo var6) {
-      HandFireModule var7 = HandFireModule.INSTANCE;
-      if (var7.method6612()) {
-         var7.method6618();
+   private void handFireEndFrame(CallbackInfo callbackInfo) {
+      HandFireModule handFireModule = HandFireModule.INSTANCE;
+      if (handFireModule.method6612()) {
+         handFireModule.method6618();
       }
    }
 
@@ -66,24 +66,24 @@ public abstract class MixinHeldItemRenderer {
       )}
    )
    public void injectBeforeRenderCrossBowItem(
-      PlayerRenderState var0,
-      FirstPersonHandsAndItemsRenderState var00,
-      float var2,
-      float var3,
-      InteractionHand var4,
-      float var5,
-      ItemStack var6,
-      float var7,
-      PoseStack var8,
-      SubmitNodeCollector var9,
-      int var10,
-      CallbackInfo var11
+      PlayerRenderState playerRenderState,
+      FirstPersonHandsAndItemsRenderState andItemsRenderState,
+      float f,
+      float f2,
+      InteractionHand interactionHand,
+      float f3,
+      ItemStack stack,
+      float f4,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      CallbackInfo callbackInfo
    ) {
-      ViewModelModule var12 = ViewModelModule.INSTANCE;
-      if (var12.isEnabled()) {
-         boolean var13 = var4 == InteractionHand.MAIN_HAND;
-         HumanoidArm var14 = var13 ? Minecraft.getInstance().player.getMainArm() : Minecraft.getInstance().player.getMainArm().getOpposite();
-         var12.method235(var8, var14);
+      ViewModelModule viewModelModule = ViewModelModule.INSTANCE;
+      if (viewModelModule.isEnabled()) {
+         boolean flag = interactionHand == InteractionHand.MAIN_HAND;
+         HumanoidArm mainArm = flag ? Minecraft.getInstance().player.getMainArm() : Minecraft.getInstance().player.getMainArm().getOpposite();
+         viewModelModule.method235(poseStack, mainArm);
       }
    }
 
@@ -96,24 +96,24 @@ public abstract class MixinHeldItemRenderer {
       )}
    )
    public void injectBeforeRenderItem(
-      PlayerRenderState var0,
-      FirstPersonHandsAndItemsRenderState var00,
-      float var2,
-      float var3,
-      InteractionHand var4,
-      float var5,
-      ItemStack var6,
-      float var7,
-      PoseStack var8,
-      SubmitNodeCollector var9,
-      int var10,
-      CallbackInfo var11
+      PlayerRenderState playerRenderState,
+      FirstPersonHandsAndItemsRenderState andItemsRenderState,
+      float f,
+      float f2,
+      InteractionHand interactionHand,
+      float f3,
+      ItemStack stack,
+      float f4,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      CallbackInfo callbackInfo
    ) {
-      ViewModelModule var12 = ViewModelModule.INSTANCE;
-      if (var12.isEnabled()) {
-         boolean var13 = var4 == InteractionHand.MAIN_HAND;
-         HumanoidArm var14 = var13 ? Minecraft.getInstance().player.getMainArm() : Minecraft.getInstance().player.getMainArm().getOpposite();
-         var12.method235(var8, var14);
+      ViewModelModule viewModelModule = ViewModelModule.INSTANCE;
+      if (viewModelModule.isEnabled()) {
+         boolean flag = interactionHand == InteractionHand.MAIN_HAND;
+         HumanoidArm mainArm = flag ? Minecraft.getInstance().player.getMainArm() : Minecraft.getInstance().player.getMainArm().getOpposite();
+         viewModelModule.method235(poseStack, mainArm);
       }
    }
 
@@ -127,24 +127,24 @@ public abstract class MixinHeldItemRenderer {
       )}
    )
    public void injectAfterMatrixPushHandPosition(
-      PlayerRenderState var0,
-      FirstPersonHandsAndItemsRenderState var00,
-      float var2,
-      float var3,
-      InteractionHand var4,
-      float var5,
-      ItemStack var6,
-      float var7,
-      PoseStack var8,
-      SubmitNodeCollector var9,
-      int var10,
-      CallbackInfo var11
+      PlayerRenderState playerRenderState,
+      FirstPersonHandsAndItemsRenderState andItemsRenderState,
+      float f,
+      float f2,
+      InteractionHand interactionHand,
+      float f3,
+      ItemStack stack,
+      float f4,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      CallbackInfo callbackInfo
    ) {
-      ViewModelModule var12 = ViewModelModule.INSTANCE;
-      if (var12.isEnabled() && !var6.isEmpty() && !var6.has(DataComponents.MAP_ID)) {
-         boolean var13 = var4 == InteractionHand.MAIN_HAND;
-         HumanoidArm var14 = var13 ? Minecraft.getInstance().player.getMainArm() : Minecraft.getInstance().player.getMainArm().getOpposite();
-         var12.method236(var8, var14);
+      ViewModelModule viewModelModule = ViewModelModule.INSTANCE;
+      if (viewModelModule.isEnabled() && !stack.isEmpty() && !stack.has(DataComponents.MAP_ID)) {
+         boolean flag = interactionHand == InteractionHand.MAIN_HAND;
+         HumanoidArm mainArm = flag ? Minecraft.getInstance().player.getMainArm() : Minecraft.getInstance().player.getMainArm().getOpposite();
+         viewModelModule.method236(poseStack, mainArm);
       }
    }
 
@@ -157,14 +157,14 @@ public abstract class MixinHeldItemRenderer {
       )
    )
    public void redirectSwingArmForCustomAnim(
-      FirstPersonHandsAndItemsRenderer var1, float var2, PoseStack var3, int var4, HumanoidArm var5, @Local(argsOnly = true,ordinal = 3) float var6
+      FirstPersonHandsAndItemsRenderer handsAndItemsRenderer, float f, PoseStack poseStack, int n, HumanoidArm humanoidArm, @Local(argsOnly = true,ordinal = 3) float f2
    ) {
-      SwingAnimationModule var7 = SwingAnimationModule.INSTANCE;
-      LocalPlayer var8 = Minecraft.getInstance().player;
-      if (var7.active() && var8 != null && var5 == var8.getMainArm()) {
-         var7.method3270(var3, var2, var6, var5);
+      SwingAnimationModule swingAnimationModule = SwingAnimationModule.INSTANCE;
+      LocalPlayer player = Minecraft.getInstance().player;
+      if (swingAnimationModule.active() && player != null && humanoidArm == player.getMainArm()) {
+         swingAnimationModule.method3270(poseStack, f, f2, humanoidArm);
       } else {
-         this.swingArm(var2, var3, var4, var5);
+         this.swingArm(f, poseStack, n, humanoidArm);
       }
    }
 
@@ -176,48 +176,48 @@ public abstract class MixinHeldItemRenderer {
       )}
    )
    private void itemRenderHook(
-      FirstPersonHandsAndItemsRenderer var1,
-      PlayerRenderState var0,
-      FirstPersonHandsAndItemsRenderState var00,
-      float var3,
-      float var4,
-      InteractionHand var5,
-      float var6,
-      ItemStack var7,
-      float var8,
-      PoseStack var9,
-      SubmitNodeCollector var10,
-      int var11,
-      Operation<Void> var12
+      FirstPersonHandsAndItemsRenderer handsAndItemsRenderer,
+      PlayerRenderState playerRenderState,
+      FirstPersonHandsAndItemsRenderState andItemsRenderState,
+      float f,
+      float f2,
+      InteractionHand hand,
+      float f3,
+      ItemStack itemStack,
+      float f4,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      Operation<Void> operation
    ) {
       // 26.3 renders hands from render state; first person is always the local player
-      AbstractClientPlayer var2 = Minecraft.getInstance().player;
-      HeldItemRenderEvent var13 = new HeldItemRenderEvent(var2, var7, var5);
-      EventManager.call(var13);
-      HandFireModule var14 = HandFireModule.INSTANCE;
-      if (var14.method6612()) {
-         var14.method6619(
-            var13.getAbstractClientPlayerEntity(),
-            var3,
-            var4,
-            var13.getHand(),
-            var6,
-            var13.getItemStack(),
-            var8,
-            var9,
-            var10,
-            var11,
+      AbstractClientPlayer player = Minecraft.getInstance().player;
+      HeldItemRenderEvent event = new HeldItemRenderEvent(player, itemStack, hand);
+      EventManager.call(event);
+      HandFireModule handFireModule = HandFireModule.INSTANCE;
+      if (handFireModule.method6612()) {
+         handFireModule.method6619(
+            event.getAbstractClientPlayerEntity(),
+            f,
+            f2,
+            event.getHand(),
+            f3,
+            event.getItemStack(),
+            f4,
+            poseStack,
+            submitNodeCollector,
+            n,
             var9x -> {
-               if (!HeldItemAnimator.method4775(var1, var13.getAbstractClientPlayerEntity(), var13.getHand(), var9, var9x, var11)) {
-                  var12.call(
-                     new Object[]{var1, var0, var00, var3, var4, var13.getHand(), var6, var13.getItemStack(), var8, var9, var9x, var11}
+               if (!HeldItemAnimator.method4775(handsAndItemsRenderer, event.getAbstractClientPlayerEntity(), event.getHand(), poseStack, var9x, n)) {
+                  operation.call(
+                     new Object[]{handsAndItemsRenderer, playerRenderState, andItemsRenderState, f, f2, event.getHand(), f3, event.getItemStack(), f4, poseStack, var9x, n}
                   );
                }
             }
          );
-      } else if (!HeldItemAnimator.method4775(var1, var13.getAbstractClientPlayerEntity(), var13.getHand(), var9, var10, var11)) {
-         var12.call(
-            new Object[]{var1, var0, var00, var3, var4, var13.getHand(), var6, var13.getItemStack(), var8, var9, var10, var11}
+      } else if (!HeldItemAnimator.method4775(handsAndItemsRenderer, event.getAbstractClientPlayerEntity(), event.getHand(), poseStack, submitNodeCollector, n)) {
+         operation.call(
+            new Object[]{handsAndItemsRenderer, playerRenderState, andItemsRenderState, f, f2, event.getHand(), f3, event.getItemStack(), f4, poseStack, submitNodeCollector, n}
          );
       }
    }

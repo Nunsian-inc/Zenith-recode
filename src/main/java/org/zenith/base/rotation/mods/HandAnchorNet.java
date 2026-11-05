@@ -73,538 +73,538 @@ public final class HandAnchorNet {
       return new HandAnchorNet.Entry();
    }
 
-   public static double method3399(double var0) {
-      return BcCameraNet.asinh(var0 / 0.5) / 4.0;
+   public static double method3399(double d) {
+      return BcCameraNet.asinh(d / 0.5) / 4.0;
    }
 
-   public double[] method3400(double[] var1, int var2, double[] var3, double[] var4, double[] var5, double var6, double var8) {
-      double[] var10 = new double[this.intValue4];
-      var10[0] = method3399(var1[0]);
-      var10[1] = method3399(var1[1]);
-      var10[2] = BcCameraNet.method3358(var1[0] / 30.0, -6.0, 6.0);
-      var10[3] = BcCameraNet.method3358(var1[1] / 30.0, -6.0, 6.0);
-      var10[4 + Math.max(0, Math.min(this.intValue - 1, var2))] = 1.0;
-      int var11 = 4 + this.intValue;
-      var10[var11] = method3399(var3[0]);
-      var10[var11 + 1] = method3399(var3[1]);
+   public double[] method3400(double[] doubles, int n, double[] doubleValues2, double[] doubleValues4, double[] doubles2, double d, double doubleValue) {
+      double[] doubles3 = new double[this.intValue4];
+      doubles3[0] = method3399(doubles[0]);
+      doubles3[1] = method3399(doubles[1]);
+      doubles3[2] = BcCameraNet.method3358(doubles[0] / 30.0, -6.0, 6.0);
+      doubles3[3] = BcCameraNet.method3358(doubles[1] / 30.0, -6.0, 6.0);
+      doubles3[4 + Math.max(0, Math.min(this.intValue - 1, n))] = 1.0;
+      int n2 = 4 + this.intValue;
+      doubles3[n2] = method3399(doubleValues2[0]);
+      doubles3[n2 + 1] = method3399(doubleValues2[1]);
 
-      for (int var12 = 0; var12 < this.intValue3; var12++) {
-         var10[var11 + 2 + var12] = var4[var12] * var8;
+      for (int i = 0; i < this.intValue3; i++) {
+         doubles3[n2 + 2 + i] = doubleValues4[i] * doubleValue;
       }
 
-      var11 += 2 + this.intValue3;
-      var10[var11] = method3399(var5[0]);
-      var10[var11 + 1] = method3399(var5[1]);
-      var10[var11 + 2] = Math.log(var6 / 0.15);
-      var10[var11 + 3] = var8;
-      if (!(var8 > 0.0)) {
-         for (int var14 = 0; var14 < 4 + this.intValue + 2; var14++) {
-            var10[var14] = 0.0;
+      n2 += 2 + this.intValue3;
+      doubles3[n2] = method3399(doubles2[0]);
+      doubles3[n2 + 1] = method3399(doubles2[1]);
+      doubles3[n2 + 2] = Math.log(d / 0.15);
+      doubles3[n2 + 3] = doubleValue;
+      if (!(doubleValue > 0.0)) {
+         for (int i = 0; i < 4 + this.intValue + 2; i++) {
+            doubles3[i] = 0.0;
          }
       }
 
-      return var10;
+      return doubles3;
    }
 
-   public double[] method3401(HandAnchorNet.Entry var1, double[] var2) {
-      double[] var3 = BcCameraNet.method3372(this.doubleValues2, this.doubleValues16, var2);
+   public double[] method3401(HandAnchorNet.Entry entry, double[] doubleValue) {
+      double[] doubles = BcCameraNet.method3372(this.doubleValues2, this.doubleValues16, doubleValue);
 
-      for (int var4 = 0; var4 < var3.length; var4++) {
-         var3[var4] = BcCameraNet.method3369(var3[var4]);
+      for (int i = 0; i < doubles.length; i++) {
+         doubles[i] = BcCameraNet.method3369(doubles[i]);
       }
 
-      double[] var15 = var1.doubleValues;
-      double[] var5 = BcCameraNet.method3372(this.doubleValues3, this.doubleValues17, var3);
-      double[] var6 = BcCameraNet.method3372(this.doubleValues4, this.doubleValues18, var15);
-      double[] var7 = new double[this.intValue5];
+      double[] doubleValues = entry.doubleValues;
+      double[] doubles2 = BcCameraNet.method3372(this.doubleValues3, this.doubleValues17, doubles);
+      double[] doubles3 = BcCameraNet.method3372(this.doubleValues4, this.doubleValues18, doubleValues);
+      double[] doubleValues2 = new double[this.intValue5];
 
-      for (int var8 = 0; var8 < this.intValue5; var8++) {
-         double var9 = BcCameraNet.method3371(var5[var8] + var6[var8]);
-         double var11 = BcCameraNet.method3371(var5[this.intValue5 + var8] + var6[this.intValue5 + var8]);
-         double var13 = Math.tanh(var5[2 * this.intValue5 + var8] + var9 * var6[2 * this.intValue5 + var8]);
-         var7[var8] = (1.0 - var11) * var13 + var11 * var15[var8];
+      for (int i = 0; i < this.intValue5; i++) {
+         double d = BcCameraNet.method3371(doubles2[i] + doubles3[i]);
+         double d2 = BcCameraNet.method3371(doubles2[this.intValue5 + i] + doubles3[this.intValue5 + i]);
+         double tanh = Math.tanh(doubles2[2 * this.intValue5 + i] + d * doubles3[2 * this.intValue5 + i]);
+         doubleValues2[i] = (1.0 - d2) * tanh + d2 * doubleValues[i];
       }
 
-      var1.doubleValues = var7;
-      return var7;
+      entry.doubleValues = doubleValues2;
+      return doubleValues2;
    }
 
-   public static double[] method3402(double[][] var0, double[] var1, double[][] var2, double[] var3, double[] var4) {
-      double[] var5 = BcCameraNet.method3372(var0, var1, var4);
+   public static double[] method3402(double[][] doubleValues5, double[] doubleValues19, double[][] doubleValues6, double[] doubleValues20, double[] doubleValue) {
+      double[] doubles = BcCameraNet.method3372(doubleValues5, doubleValues19, doubleValue);
 
-      for (int var6 = 0; var6 < var5.length; var6++) {
-         var5[var6] = BcCameraNet.method3369(var5[var6]);
+      for (int i = 0; i < doubles.length; i++) {
+         doubles[i] = BcCameraNet.method3369(doubles[i]);
       }
 
-      return BcCameraNet.method3372(var2, var3, var5);
+      return BcCameraNet.method3372(doubleValues6, doubleValues20, doubles);
    }
 
-   public static double[] method3403(double[]... var0) {
-      int var1 = 0;
+   public static double[] method3403(double[]... doubleses) {
+      int n = 0;
 
-      for (double[] var5 : var0) {
-         var1 += var5.length;
+      for (double[] doubles : doubleses) {
+         n += doubles.length;
       }
 
-      double[] var8 = new double[var1];
-      int var9 = 0;
+      double[] doubles = new double[n];
+      int n2 = 0;
 
-      for (double[] var7 : var0) {
-         System.arraycopy(var7, 0, var8, var9, var7.length);
-         var9 += var7.length;
+      for (double[] doubles2 : doubleses) {
+         System.arraycopy(doubles2, 0, doubles, n2, doubles2.length);
+         n2 += doubles2.length;
       }
 
-      return var8;
+      return doubles;
    }
 
-   public double[] method3404(double[] var1) {
-      return method3402(this.doubleValues5, this.doubleValues19, this.doubleValues6, this.doubleValues20, var1);
+   public double[] method3404(double[] doubleValue) {
+      return method3402(this.doubleValues5, this.doubleValues19, this.doubleValues6, this.doubleValues20, doubleValue);
    }
 
-   public double[] method3405(double[] var1, int var2) {
-      return method3402(this.doubleValues8, this.doubleValues21, this.doubleValues9, this.doubleValues22, method3403(var1, this.doubleValues7[var2]));
+   public double[] method3405(double[] doubleValue, int n) {
+      return method3402(this.doubleValues8, this.doubleValues21, this.doubleValues9, this.doubleValues22, method3403(doubleValue, this.doubleValues7[n]));
    }
 
-   public double[] method3406(double[] var1, int var2, int var3) {
+   public double[] method3406(double[] doubleValue, int n, int n2) {
       return method3402(
          this.doubleValues11,
          this.doubleValues23,
          this.doubleValues12,
          this.doubleValues24,
-         method3403(var1, this.doubleValues7[var2], this.doubleValues10[var3])
+         method3403(doubleValue, this.doubleValues7[n], this.doubleValues10[n2])
       );
    }
 
-   public double[] method3407(double[] var1, int var2, int var3, int var4) {
+   public double[] method3407(double[] doubleValue, int n, int n2, int n3) {
       return method3402(
          this.doubleValues14,
          this.doubleValues25,
          this.doubleValues15,
          this.doubleValues26,
-         method3403(var1, this.doubleValues7[var2], this.doubleValues10[var3], this.doubleValues13[var4])
+         method3403(doubleValue, this.doubleValues7[n], this.doubleValues10[n2], this.doubleValues13[n3])
       );
    }
 
-   public static int method3408(double[] var0, Random var1) {
-      double var2 = Double.NEGATIVE_INFINITY;
+   public static int method3408(double[] doubles, Random random) {
+      double d = Double.NEGATIVE_INFINITY;
 
-      for (double var7 : var0) {
-         var2 = Math.max(var2, var7);
+      for (double d2 : doubles) {
+         d = Math.max(d, d2);
       }
 
-      double var12 = 0.0;
-      double[] var13 = new double[var0.length];
+      double d2 = 0.0;
+      double[] doubles2 = new double[doubles.length];
 
-      for (int var14 = 0; var14 < var0.length; var14++) {
-         var13[var14] = Math.exp(var0[var14] - var2);
-         var12 += var13[var14];
+      for (int i = 0; i < doubles.length; i++) {
+         doubles2[i] = Math.exp(doubles[i] - d);
+         d2 += doubles2[i];
       }
 
-      double var15 = var1.nextDouble() * var12;
-      double var9 = 0.0;
+      double d3 = random.nextDouble() * d2;
+      double d4 = 0.0;
 
-      for (int var11 = 0; var11 < var13.length; var11++) {
-         var9 += var13[var11];
-         if (var15 < var9) {
-            return var11;
+      for (int i = 0; i < doubles2.length; i++) {
+         d4 += doubles2[i];
+         if (d3 < d4) {
+            return i;
          }
       }
 
-      return var13.length - 1;
+      return doubles2.length - 1;
    }
 
-   public double method3409(int var1, int var2, double var3, Random var5) {
-      if (var1 == 0) {
+   public double method3409(int n, int n2, double d, Random random) {
+      if (n == 0) {
          return 0.0;
       } else {
-         boolean var6 = var1 <= this.intValue6;
-         int var7 = Math.max(0, Math.min(this.intValue6 - 1, var6 ? var1 - 1 : var1 - 1 - this.intValue6));
-         double var8 = Math.log(this.doubleValues[var7]);
-         double var10 = Math.log(this.doubleValues[var7 + 1]);
-         double var12 = var8 + (var10 - var8) * var2 / this.intValue7;
-         double var14 = var8 + (var10 - var8) * (var2 + 1) / this.intValue7;
-         double var16 = Math.exp(var12 + (var14 - var12) * var5.nextDouble());
-         double var18 = Math.ceil(Math.exp(var12) / var3);
-         double var20 = Math.ceil(Math.exp(var14) / var3) - 1.0;
-         double var22 = var5.nextDouble();
-         double var24 = var20 >= var18 ? (var18 + Math.floor(var22 * (var20 - var18 + 1.0))) * var3 : var16;
-         return var6 ? var24 : -var24;
+         boolean flag = n <= this.intValue6;
+         int n3 = Math.max(0, Math.min(this.intValue6 - 1, flag ? n - 1 : n - 1 - this.intValue6));
+         double log = Math.log(this.doubleValues[n3]);
+         double log2 = Math.log(this.doubleValues[n3 + 1]);
+         double d2 = log + (log2 - log) * n2 / this.intValue7;
+         double d3 = log + (log2 - log) * (n2 + 1) / this.intValue7;
+         double exp = Math.exp(d2 + (d3 - d2) * random.nextDouble());
+         double d4 = Math.ceil(Math.exp(d2) / d);
+         double d5 = Math.ceil(Math.exp(d3) / d) - 1.0;
+         double nextDouble = random.nextDouble();
+         double d6 = d5 >= d4 ? (d4 + Math.floor(nextDouble * (d5 - d4 + 1.0))) * d : exp;
+         return flag ? d6 : -d6;
       }
    }
 
-   public double[] method3410(double[] var1, double[] var2, double[] var3, double[] var4, boolean var5, boolean var6, boolean var7, double var8, double var10) {
-      double[] var12 = new double[3];
-      double[] var13 = new double[3];
+   public double[] method3410(double[] doubles, double[] doubles2, double[] doubles3, double[] doubles4, boolean flag, boolean flag2, boolean flag3, double floatValue, double d) {
+      double[] doubles5 = new double[3];
+      double[] doubles6 = new double[3];
 
-      for (int var14 = 0; var14 < 3; var14++) {
-         double var15 = var2 == null ? 0.0 : var1[var14] - var2[var14];
-         double var17 = var5 && var4 != null ? var3[var14] - var4[var14] : 0.0;
-         var12[var14] = Double.isFinite(var15) ? var15 : 0.0;
-         var13[var14] = Double.isFinite(var17) ? var17 : 0.0;
+      for (int i = 0; i < 3; i++) {
+         double d2 = doubles2 == null ? 0.0 : doubles[i] - doubles2[i];
+         double d3 = flag && doubles4 != null ? doubles3[i] - doubles4[i] : 0.0;
+         doubles5[i] = Double.isFinite(d2) ? d2 : 0.0;
+         doubles6[i] = Double.isFinite(d3) ? d3 : 0.0;
       }
 
       if (!this.flag) {
-         var12[1] = 0.0;
-         var13[1] = 0.0;
+         doubles5[1] = 0.0;
+         doubles6[1] = 0.0;
       }
 
-      double var29 = var1[0] + var12[0] * this.doubleValue;
-      double var16 = var1[1] + var12[1] * this.doubleValue + (var7 ? this.doubleValue3 : this.doubleValue2);
-      double var18 = var1[2] + var12[2] * this.doubleValue;
-      double var20 = var6 ? this.doubleValue5 : this.doubleValue4;
-      double var22 = var3[0] + var13[0] * this.doubleValue;
-      double var24 = var3[1] + var13[1] * this.doubleValue + var20 / 2.0;
-      double var26 = var3[2] + var13[2] * this.doubleValue;
-      double[] var28 = BcCameraNet.method3362(var22 - var29, var24 - var16, var26 - var18);
-      return new double[]{BcCameraNet.method3357(var28[0] - var8), BcCameraNet.method3358(var28[1], -90.0, 90.0) - var10};
+      double d2 = doubles[0] + doubles5[0] * this.doubleValue;
+      double d3 = doubles[1] + doubles5[1] * this.doubleValue + (flag3 ? this.doubleValue3 : this.doubleValue2);
+      double d4 = doubles[2] + doubles5[2] * this.doubleValue;
+      double d5 = flag2 ? this.doubleValue5 : this.doubleValue4;
+      double d6 = doubles3[0] + doubles6[0] * this.doubleValue;
+      double d7 = doubles3[1] + doubles6[1] * this.doubleValue + d5 / 2.0;
+      double d8 = doubles3[2] + doubles6[2] * this.doubleValue;
+      double[] doubles7 = BcCameraNet.method3362(d6 - d2, d7 - d3, d8 - d4);
+      return new double[]{BcCameraNet.method3357(doubles7[0] - floatValue), BcCameraNet.method3358(doubles7[1], -90.0, 90.0) - d};
    }
 
-   public void method3411(HandAnchorNet.Entry var1, double[] var2) {
-      var1.doubleValues5[0] = var2[0];
-      var1.doubleValues5[1] = var2[1];
-      var1.doubleValue4 = var1.doubleValue4 + (Math.abs(var2[0]) - var1.doubleValue4) / this.doubleValue13;
+   public void method3411(HandAnchorNet.Entry entry, double[] doubles) {
+      entry.doubleValues5[0] = doubles[0];
+      entry.doubleValues5[1] = doubles[1];
+      entry.doubleValue4 = entry.doubleValue4 + (Math.abs(doubles[0]) - entry.doubleValue4) / this.doubleValue13;
    }
 
-   public double[] method3412(HandAnchorNet.Entry var1, double var2, double var4) {
-      var2 = BcCameraNet.method3358(var2, var1.doubleValues5[0] - this.doubleValue6, var1.doubleValues5[0] + this.doubleValue6);
-      var4 = BcCameraNet.method3358(var4, var1.doubleValues5[1] - this.doubleValue7, var1.doubleValues5[1] + this.doubleValue7);
-      double var6 = BcCameraNet.method3358((var1.doubleValue4 - this.doubleValue10) / (this.doubleValue11 - this.doubleValue10), 0.0, 1.0);
-      double var8 = this.doubleValue8 + (this.doubleValue12 - this.doubleValue8) * var6;
-      return new double[]{BcCameraNet.method3358(var2, -var8, var8), BcCameraNet.method3358(var4, -this.doubleValue9, this.doubleValue9)};
+   public double[] method3412(HandAnchorNet.Entry entry, double d, double d2) {
+      d = BcCameraNet.method3358(d, entry.doubleValues5[0] - this.doubleValue6, entry.doubleValues5[0] + this.doubleValue6);
+      d2 = BcCameraNet.method3358(d2, entry.doubleValues5[1] - this.doubleValue7, entry.doubleValues5[1] + this.doubleValue7);
+      double d3 = BcCameraNet.method3358((entry.doubleValue4 - this.doubleValue10) / (this.doubleValue11 - this.doubleValue10), 0.0, 1.0);
+      double d4 = this.doubleValue8 + (this.doubleValue12 - this.doubleValue8) * d3;
+      return new double[]{BcCameraNet.method3358(d, -d4, d4), BcCameraNet.method3358(d2, -this.doubleValue9, this.doubleValue9)};
    }
 
-   public double[] method3413(HandAnchorNet.Entry var1, double var2, double var4, boolean var6) {
-      double var7 = var1.doubleValues6[0] + var1.doubleValues7[0] * this.intValue;
-      double var9 = var1.doubleValues6[1] + var1.doubleValues7[1] * this.intValue;
-      double var11 = BcCameraNet.method3357(var2 - var7);
-      double var13 = var4 - var9;
-      boolean var15 = !var1.flag;
-      double var16 = var15 ? var2 : var7 + this.doubleValue14 * var11;
-      double var18 = var15 ? var4 : var9 + this.doubleValue14 * var13;
-      double var20 = var15 ? 0.0 : var1.doubleValues7[0] + this.doubleValue15 * var11 / this.intValue;
-      double var22 = var15 ? 0.0 : var1.doubleValues7[1] + this.doubleValue15 * var13 / this.intValue;
-      var1.doubleValues6 = new double[]{var16, var18};
-      var1.doubleValues7 = new double[]{var20, var22};
-      var1.flag = var6;
-      return new double[]{var16, var18};
+   public double[] method3413(HandAnchorNet.Entry entry, double d, double d2, boolean flag) {
+      double d3 = entry.doubleValues6[0] + entry.doubleValues7[0] * this.intValue;
+      double d4 = entry.doubleValues6[1] + entry.doubleValues7[1] * this.intValue;
+      double d5 = BcCameraNet.method3357(d - d3);
+      double d6 = d2 - d4;
+      boolean flag2 = !entry.flag;
+      double d7 = flag2 ? d : d3 + this.doubleValue14 * d5;
+      double d8 = flag2 ? d2 : d4 + this.doubleValue14 * d6;
+      double d9 = flag2 ? 0.0 : entry.doubleValues7[0] + this.doubleValue15 * d5 / this.intValue;
+      double d10 = flag2 ? 0.0 : entry.doubleValues7[1] + this.doubleValue15 * d6 / this.intValue;
+      entry.doubleValues6 = new double[]{d7, d8};
+      entry.doubleValues7 = new double[]{d9, d10};
+      entry.flag = flag;
+      return new double[]{d7, d8};
    }
 
-   public double[] method3414(HandAnchorNet.Entry var1, double[] var2, double[] var3, double var4, double var6, double var8, Random var10) {
-      if (var1.ticks > 0) {
-         var1.doubleValues3[0] = var1.doubleValues3[0] + var2[0];
-         var1.doubleValues3[1] = var1.doubleValues3[1] + var2[1];
+   public double[] method3414(HandAnchorNet.Entry entry, double[] doubles, double[] doubles2, double d, double d2, double d3, Random random) {
+      if (entry.ticks > 0) {
+         entry.doubleValues3[0] = entry.doubleValues3[0] + doubles[0];
+         entry.doubleValues3[1] = entry.doubleValues3[1] + doubles[1];
       }
 
       if (this.flag2) {
-         this.method3411(var1, var2);
+         this.method3411(entry, doubles);
       }
 
-      if (var1.ticks % this.intValue == 0) {
+      if (entry.ticks % this.intValue == 0) {
          if (this.flag3) {
-            if (var3 != null) {
-               double[] var11 = this.method3413(var1, var4 + var3[0], var6 + var3[1], true);
-               var3 = new double[]{BcCameraNet.method3357(var11[0] - var4), var11[1] - var6};
+            if (doubles2 != null) {
+               double[] doubles3 = this.method3413(entry, d + doubles2[0], d2 + doubles2[1], true);
+               doubles2 = new double[]{BcCameraNet.method3357(doubles3[0] - d), doubles3[1] - d2};
             } else {
-               var1.flag = false;
+               entry.flag = false;
             }
          }
 
-         var1.doubleValue = var3 != null ? 1.0 : 0.0;
-         var1.doubleValues2 = var3 != null ? new double[]{var3[0], var3[1]} : new double[2];
+         entry.doubleValue = doubles2 != null ? 1.0 : 0.0;
+         entry.doubleValues2 = doubles2 != null ? new double[]{doubles2[0], doubles2[1]} : new double[2];
 
-         for (int var18 = 0; var18 < this.intValue3; var18++) {
-            var1.doubleValues4[var18] = var3 != null ? var10.nextGaussian() : 0.0;
+         for (int i = 0; i < this.intValue3; i++) {
+            entry.doubleValues4[i] = doubles2 != null ? random.nextGaussian() : 0.0;
          }
 
-         var1.doubleValues3[0] = 0.0;
-         var1.doubleValues3[1] = 0.0;
-         var1.j = 0;
+         entry.doubleValues3[0] = 0.0;
+         entry.doubleValues3[1] = 0.0;
+         entry.j = 0;
       }
 
-      double[] var19 = new double[]{var1.doubleValues2[0] - var1.doubleValues3[0], var1.doubleValues2[1] - var1.doubleValues3[1]};
-      double[] var12 = this.method3401(var1, this.method3400(var19, var1.j, var1.doubleValues2, var1.doubleValues4, var2, var8, var1.doubleValue));
-      int var13 = method3408(this.method3404(var12), var10);
-      int var14 = method3408(this.method3405(var12, var13), var10);
-      int var15 = method3408(this.method3406(var12, var13, var14), var10);
-      int var16 = method3408(this.method3407(var12, var13, var14, var15), var10);
-      var1.j++;
-      var1.ticks++;
-      double[] var17 = new double[]{this.method3409(var13, var14, var8, var10), this.method3409(var15, var16, var8, var10)};
-      return this.flag2 ? this.method3412(var1, var17[0], var17[1]) : var17;
+      double[] doubles3 = new double[]{entry.doubleValues2[0] - entry.doubleValues3[0], entry.doubleValues2[1] - entry.doubleValues3[1]};
+      double[] doubleValue = this.method3401(entry, this.method3400(doubles3, entry.j, entry.doubleValues2, entry.doubleValues4, doubles, d3, entry.doubleValue));
+      int n = method3408(this.method3404(doubleValue), random);
+      int n2 = method3408(this.method3405(doubleValue, n), random);
+      int n3 = method3408(this.method3406(doubleValue, n, n2), random);
+      int n4 = method3408(this.method3407(doubleValue, n, n2, n3), random);
+      entry.j++;
+      entry.ticks++;
+      double[] doubles4 = new double[]{this.method3409(n, n2, d3, random), this.method3409(n3, n4, d3, random)};
+      return this.flag2 ? this.method3412(entry, doubles4[0], doubles4[1]) : doubles4;
    }
 
-   public static double[] method3415(HandAnchorNet.Entry var0, double var1, double var3, double var5, double var7) {
-      var0.doubleValue2 += var1;
-      var0.doubleValue3 += var3;
-      double var9 = Math.rint(var0.doubleValue2 / var5) * var5;
-      double var11 = Math.rint(var0.doubleValue3 / var5) * var5;
-      var0.doubleValue2 -= var9;
-      var0.doubleValue3 -= var11;
-      double var13 = Math.max(-90.0, Math.min(90.0, var7 + var11));
-      return new double[]{var9, var13 - var7};
+   public static double[] method3415(HandAnchorNet.Entry entry, double d, double d2, double d3, double d4) {
+      entry.doubleValue2 += d;
+      entry.doubleValue3 += d2;
+      double d5 = Math.rint(entry.doubleValue2 / d3) * d3;
+      double d6 = Math.rint(entry.doubleValue3 / d3) * d3;
+      entry.doubleValue2 -= d5;
+      entry.doubleValue3 -= d6;
+      double d7 = Math.max(-90.0, Math.min(90.0, d4 + d6));
+      return new double[]{d5, d7 - d4};
    }
 
-   public static double[][] method3416(JsonArray var0) {
-      double[][] var1 = new double[var0.size()][];
+   public static double[][] method3416(JsonArray jsonArray) {
+      double[][] doubleses = new double[jsonArray.size()][];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = BcCameraNet.method3388(var0.get(var2).getAsJsonArray());
+      for (int i = 0; i < doubleses.length; i++) {
+         doubleses[i] = BcCameraNet.method3388(jsonArray.get(i).getAsJsonArray());
       }
 
-      return var1;
+      return doubleses;
    }
 
-   public static HandAnchorNet method3417(InputStream var0) throws IOException {
-      InputStreamReader var2 = new InputStreamReader(var0, StandardCharsets.UTF_8);
+   public static HandAnchorNet method3417(InputStream inputStream) throws IOException {
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 
-      JsonObject var1;
+      JsonObject jsonObject;
       try {
-         var1 = JsonParser.parseReader(var2).getAsJsonObject();
-      } catch (Throwable var17) {
+         jsonObject = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+      } catch (Throwable e) {
          try {
-            var2.close();
-         } catch (Throwable var16) {
-            var17.addSuppressed(var16);
+            inputStreamReader.close();
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var17;
+         throw e;
       }
 
-      var2.close();
-      if (!"neurotest-hand-anchor-v1".equals(var1.get("format").getAsString())) {
-         throw new IOException("формат " + var1.get("format").getAsString() + ", ожидался neurotest-hand-anchor-v1");
+      inputStreamReader.close();
+      if (!"neurotest-hand-anchor-v1".equals(jsonObject.get("format").getAsString())) {
+         throw new IOException("формат " + jsonObject.get("format").getAsString() + ", ожидался neurotest-hand-anchor-v1");
       } else {
-         HandAnchorNet var18 = new HandAnchorNet();
-         var18.intValue = var1.get("K").getAsInt();
-         var18.intValue2 = var1.get("H").getAsInt();
-         var18.intValue3 = var1.get("DZ").getAsInt();
-         var18.intValue4 = var1.get("nin").getAsInt();
-         var18.intValue5 = var1.get("h").getAsInt();
-         var18.intValue6 = var1.get("nb").getAsInt();
-         var18.intValue7 = var1.get("nsub").getAsInt();
-         var18.intValue8 = var1.get("ncls").getAsInt();
-         var18.doubleValues = BcCameraNet.method3388(var1.getAsJsonArray("edges"));
-         var18.doubleValue = var1.get("ex").getAsDouble();
-         var18.flag = var1.get("vert").getAsBoolean();
-         var18.doubleValue2 = var1.get("eye").getAsDouble();
-         var18.doubleValue3 = var1.get("eye_sneak").getAsDouble();
-         var18.doubleValue4 = var1.get("tgt_h").getAsDouble();
-         var18.doubleValue5 = var1.get("tgt_h_sneak").getAsDouble();
-         if (4 + var18.intValue + 2 + var18.intValue3 + 4 != var18.intValue4) {
-            throw new IOException("вход руки " + var18.intValue4 + " не сходится с K " + var18.intValue + ", DZ " + var18.intValue3);
+         HandAnchorNet handAnchorNet = new HandAnchorNet();
+         handAnchorNet.intValue = jsonObject.get("K").getAsInt();
+         handAnchorNet.intValue2 = jsonObject.get("H").getAsInt();
+         handAnchorNet.intValue3 = jsonObject.get("DZ").getAsInt();
+         handAnchorNet.intValue4 = jsonObject.get("nin").getAsInt();
+         handAnchorNet.intValue5 = jsonObject.get("h").getAsInt();
+         handAnchorNet.intValue6 = jsonObject.get("nb").getAsInt();
+         handAnchorNet.intValue7 = jsonObject.get("nsub").getAsInt();
+         handAnchorNet.intValue8 = jsonObject.get("ncls").getAsInt();
+         handAnchorNet.doubleValues = BcCameraNet.method3388(jsonObject.getAsJsonArray("edges"));
+         handAnchorNet.doubleValue = jsonObject.get("ex").getAsDouble();
+         handAnchorNet.flag = jsonObject.get("vert").getAsBoolean();
+         handAnchorNet.doubleValue2 = jsonObject.get("eye").getAsDouble();
+         handAnchorNet.doubleValue3 = jsonObject.get("eye_sneak").getAsDouble();
+         handAnchorNet.doubleValue4 = jsonObject.get("tgt_h").getAsDouble();
+         handAnchorNet.doubleValue5 = jsonObject.get("tgt_h_sneak").getAsDouble();
+         if (4 + handAnchorNet.intValue + 2 + handAnchorNet.intValue3 + 4 != handAnchorNet.intValue4) {
+            throw new IOException("вход руки " + handAnchorNet.intValue4 + " не сходится с K " + handAnchorNet.intValue + ", DZ " + handAnchorNet.intValue3);
          } else {
-            JsonObject var3 = var1.getAsJsonObject("weights");
-            var18.doubleValues2 = BcCameraNet.method3386(var3, "inp.0.weight");
-            var18.doubleValues16 = BcCameraNet.method3385(var3, "inp.0.bias");
-            var18.doubleValues3 = BcCameraNet.method3386(var3, "gru.weight_ih_l0");
-            var18.doubleValues4 = BcCameraNet.method3386(var3, "gru.weight_hh_l0");
-            var18.doubleValues17 = BcCameraNet.method3385(var3, "gru.bias_ih_l0");
-            var18.doubleValues18 = BcCameraNet.method3385(var3, "gru.bias_hh_l0");
-            var18.doubleValues5 = BcCameraNet.method3386(var3, "yaw.0.weight");
-            var18.doubleValues19 = BcCameraNet.method3385(var3, "yaw.0.bias");
-            var18.doubleValues6 = BcCameraNet.method3386(var3, "yaw.2.weight");
-            var18.doubleValues20 = BcCameraNet.method3385(var3, "yaw.2.bias");
-            var18.doubleValues7 = BcCameraNet.method3386(var3, "yemb.weight");
-            var18.doubleValues8 = BcCameraNet.method3386(var3, "ysub.0.weight");
-            var18.doubleValues21 = BcCameraNet.method3385(var3, "ysub.0.bias");
-            var18.doubleValues9 = BcCameraNet.method3386(var3, "ysub.2.weight");
-            var18.doubleValues22 = BcCameraNet.method3385(var3, "ysub.2.bias");
-            var18.doubleValues10 = BcCameraNet.method3386(var3, "ysemb.weight");
-            var18.doubleValues11 = BcCameraNet.method3386(var3, "pitch.0.weight");
-            var18.doubleValues23 = BcCameraNet.method3385(var3, "pitch.0.bias");
-            var18.doubleValues12 = BcCameraNet.method3386(var3, "pitch.2.weight");
-            var18.doubleValues24 = BcCameraNet.method3385(var3, "pitch.2.bias");
-            var18.doubleValues13 = BcCameraNet.method3386(var3, "pcemb.weight");
-            var18.doubleValues14 = BcCameraNet.method3386(var3, "psub.0.weight");
-            var18.doubleValues25 = BcCameraNet.method3385(var3, "psub.0.bias");
-            var18.doubleValues15 = BcCameraNet.method3386(var3, "psub.2.weight");
-            var18.doubleValues26 = BcCameraNet.method3385(var3, "psub.2.bias");
-            String var4 = "";
-            if (var1.has("governor") && var1.get("governor").isJsonObject()) {
-               JsonObject var5 = var1.getAsJsonObject("governor");
-               var18.flag2 = true;
-               var18.doubleValue6 = var5.get("ay").getAsDouble();
-               var18.doubleValue7 = var5.get("ap").getAsDouble();
-               var18.doubleValue8 = var5.get("vy").getAsDouble();
-               var18.doubleValue9 = var5.get("vp").getAsDouble();
-               var18.doubleValue10 = var5.get("e0").getAsDouble();
-               var18.doubleValue11 = var5.get("e1").getAsDouble();
-               var18.doubleValue12 = var5.get("vmin").getAsDouble();
-               var18.doubleValue13 = var5.get("tau").getAsDouble();
-               JsonObject var6 = var5.getAsJsonObject("ref");
-               double[][] var7 = method3416(var6.getAsJsonArray("real"));
-               double[][] var8 = method3416(var6.getAsJsonArray("want"));
-               double[][] var9 = method3416(var6.getAsJsonArray("out"));
-               HandAnchorNet.Entry var10 = var18.method3398();
-               double var11 = 0.0;
+            JsonObject json = jsonObject.getAsJsonObject("weights");
+            handAnchorNet.doubleValues2 = BcCameraNet.method3386(json, "inp.0.weight");
+            handAnchorNet.doubleValues16 = BcCameraNet.method3385(json, "inp.0.bias");
+            handAnchorNet.doubleValues3 = BcCameraNet.method3386(json, "gru.weight_ih_l0");
+            handAnchorNet.doubleValues4 = BcCameraNet.method3386(json, "gru.weight_hh_l0");
+            handAnchorNet.doubleValues17 = BcCameraNet.method3385(json, "gru.bias_ih_l0");
+            handAnchorNet.doubleValues18 = BcCameraNet.method3385(json, "gru.bias_hh_l0");
+            handAnchorNet.doubleValues5 = BcCameraNet.method3386(json, "yaw.0.weight");
+            handAnchorNet.doubleValues19 = BcCameraNet.method3385(json, "yaw.0.bias");
+            handAnchorNet.doubleValues6 = BcCameraNet.method3386(json, "yaw.2.weight");
+            handAnchorNet.doubleValues20 = BcCameraNet.method3385(json, "yaw.2.bias");
+            handAnchorNet.doubleValues7 = BcCameraNet.method3386(json, "yemb.weight");
+            handAnchorNet.doubleValues8 = BcCameraNet.method3386(json, "ysub.0.weight");
+            handAnchorNet.doubleValues21 = BcCameraNet.method3385(json, "ysub.0.bias");
+            handAnchorNet.doubleValues9 = BcCameraNet.method3386(json, "ysub.2.weight");
+            handAnchorNet.doubleValues22 = BcCameraNet.method3385(json, "ysub.2.bias");
+            handAnchorNet.doubleValues10 = BcCameraNet.method3386(json, "ysemb.weight");
+            handAnchorNet.doubleValues11 = BcCameraNet.method3386(json, "pitch.0.weight");
+            handAnchorNet.doubleValues23 = BcCameraNet.method3385(json, "pitch.0.bias");
+            handAnchorNet.doubleValues12 = BcCameraNet.method3386(json, "pitch.2.weight");
+            handAnchorNet.doubleValues24 = BcCameraNet.method3385(json, "pitch.2.bias");
+            handAnchorNet.doubleValues13 = BcCameraNet.method3386(json, "pcemb.weight");
+            handAnchorNet.doubleValues14 = BcCameraNet.method3386(json, "psub.0.weight");
+            handAnchorNet.doubleValues25 = BcCameraNet.method3385(json, "psub.0.bias");
+            handAnchorNet.doubleValues15 = BcCameraNet.method3386(json, "psub.2.weight");
+            handAnchorNet.doubleValues26 = BcCameraNet.method3385(json, "psub.2.bias");
+            String str = "";
+            if (jsonObject.has("governor") && jsonObject.get("governor").isJsonObject()) {
+               JsonObject jsonObject2 = jsonObject.getAsJsonObject("governor");
+               handAnchorNet.flag2 = true;
+               handAnchorNet.doubleValue6 = jsonObject2.get("ay").getAsDouble();
+               handAnchorNet.doubleValue7 = jsonObject2.get("ap").getAsDouble();
+               handAnchorNet.doubleValue8 = jsonObject2.get("vy").getAsDouble();
+               handAnchorNet.doubleValue9 = jsonObject2.get("vp").getAsDouble();
+               handAnchorNet.doubleValue10 = jsonObject2.get("e0").getAsDouble();
+               handAnchorNet.doubleValue11 = jsonObject2.get("e1").getAsDouble();
+               handAnchorNet.doubleValue12 = jsonObject2.get("vmin").getAsDouble();
+               handAnchorNet.doubleValue13 = jsonObject2.get("tau").getAsDouble();
+               JsonObject jsonObject3 = jsonObject2.getAsJsonObject("ref");
+               double[][] doubleses = method3416(jsonObject3.getAsJsonArray("real"));
+               double[][] doubleses2 = method3416(jsonObject3.getAsJsonArray("want"));
+               double[][] doubleses3 = method3416(jsonObject3.getAsJsonArray("out"));
+               HandAnchorNet.Entry entry = handAnchorNet.method3398();
+               double d = 0.0;
 
-               for (int var13 = 0; var13 < var7.length; var13++) {
-                  var18.method3411(var10, var7[var13]);
-                  double[] var14 = var18.method3412(var10, var8[var13][0], var8[var13][1]);
-                  var11 = Math.max(var11, Math.max(Math.abs(var14[0] - var9[var13][0]), Math.abs(var14[1] - var9[var13][1])));
+               for (int i = 0; i < doubleses.length; i++) {
+                  handAnchorNet.method3411(entry, doubleses[i]);
+                  double[] doubles = handAnchorNet.method3412(entry, doubleses2[i][0], doubleses2[i][1]);
+                  d = Math.max(d, Math.max(Math.abs(doubles[0] - doubleses3[i][0]), Math.abs(doubles[1] - doubleses3[i][1])));
                }
 
-               if (!(var11 < 1.0E-9)) {
-                  throw new IOException("эталон мышц не сошёлся: " + var11);
+               if (!(d < 1.0E-9)) {
+                  throw new IOException("эталон мышц не сошёлся: " + d);
                }
 
-               var4 = var4
+               str = str
                   + String.format(
                      "; мышцы: ускорение %.0f/%.0f°, скорость %.0f/%.0f°, усталость %.0f->%.0f °/тик до %.0f° (эталон %.1e)",
-                     var18.doubleValue6,
-                     var18.doubleValue7,
-                     var18.doubleValue8,
-                     var18.doubleValue9,
-                     var18.doubleValue10,
-                     var18.doubleValue11,
-                     var18.doubleValue12,
-                     var11
+                     handAnchorNet.doubleValue6,
+                     handAnchorNet.doubleValue7,
+                     handAnchorNet.doubleValue8,
+                     handAnchorNet.doubleValue9,
+                     handAnchorNet.doubleValue10,
+                     handAnchorNet.doubleValue11,
+                     handAnchorNet.doubleValue12,
+                     d
                   );
             }
 
-            if (var1.has("tracker") && var1.get("tracker").isJsonObject()) {
-               JsonObject var19 = var1.getAsJsonObject("tracker");
-               var18.flag3 = true;
-               var18.doubleValue14 = var19.get("alpha").getAsDouble();
-               var18.doubleValue15 = var18.doubleValue14 * var18.doubleValue14 / (2.0 - var18.doubleValue14);
-               JsonObject var20 = var19.getAsJsonObject("ref");
-               double[] var21 = BcCameraNet.method3388(var20.getAsJsonArray("wy"));
-               double[] var22 = BcCameraNet.method3388(var20.getAsJsonArray("wp"));
-               double[] var23 = BcCameraNet.method3388(var20.getAsJsonArray("has"));
-               double[][] var24 = method3416(var20.getAsJsonArray("out"));
-               HandAnchorNet.Entry var25 = var18.method3398();
-               double var12 = 0.0;
+            if (jsonObject.has("tracker") && jsonObject.get("tracker").isJsonObject()) {
+               JsonObject jsonObject2 = jsonObject.getAsJsonObject("tracker");
+               handAnchorNet.flag3 = true;
+               handAnchorNet.doubleValue14 = jsonObject2.get("alpha").getAsDouble();
+               handAnchorNet.doubleValue15 = handAnchorNet.doubleValue14 * handAnchorNet.doubleValue14 / (2.0 - handAnchorNet.doubleValue14);
+               JsonObject jsonObject3 = jsonObject2.getAsJsonObject("ref");
+               double[] doubles = BcCameraNet.method3388(jsonObject3.getAsJsonArray("wy"));
+               double[] doubles2 = BcCameraNet.method3388(jsonObject3.getAsJsonArray("wp"));
+               double[] doubles3 = BcCameraNet.method3388(jsonObject3.getAsJsonArray("has"));
+               double[][] doubleses = method3416(jsonObject3.getAsJsonArray("out"));
+               HandAnchorNet.Entry entry = handAnchorNet.method3398();
+               double d = 0.0;
 
-               for (int var26 = 0; var26 < var21.length; var26++) {
-                  double[] var15 = var18.method3413(var25, var21[var26], var22[var26], var23[var26] > 0.0);
-                  var12 = Math.max(var12, Math.max(Math.abs(var15[0] - var24[var26][0]), Math.abs(var15[1] - var24[var26][1])));
+               for (int i = 0; i < doubles.length; i++) {
+                  double[] doubles4 = handAnchorNet.method3413(entry, doubles[i], doubles2[i], doubles3[i] > 0.0);
+                  d = Math.max(d, Math.max(Math.abs(doubles4[0] - doubleses[i][0]), Math.abs(doubles4[1] - doubleses[i][1])));
                }
 
-               if (!(var12 < 1.0E-6)) {
-                  throw new IOException("эталон трекера не сошёлся: " + var12);
+               if (!(d < 1.0E-6)) {
+                  throw new IOException("эталон трекера не сошёлся: " + d);
                }
 
-               var4 = var4 + String.format("; трекер намерения alpha %.2f (эталон %.1e)", var18.doubleValue14, var12);
+               str = str + String.format("; трекер намерения alpha %.2f (эталон %.1e)", handAnchorNet.doubleValue14, d);
             }
 
-            var18.source = var1.get("source").getAsString().replace(',', ';');
-            var18.text2 = var18.method3418(var1.getAsJsonObject("ref_anchor"), var1.getAsJsonObject("ref_net")) + var4;
-            return var18;
+            handAnchorNet.source = jsonObject.get("source").getAsString().replace(',', ';');
+            handAnchorNet.text2 = handAnchorNet.method3418(jsonObject.getAsJsonObject("ref_anchor"), jsonObject.getAsJsonObject("ref_net")) + str;
+            return handAnchorNet;
          }
       }
    }
 
-   public String method3418(JsonObject var1, JsonObject var2) throws IOException {
-      double[][] var3 = method3416(var1.getAsJsonArray("p1"));
-      double[][] var4 = method3416(var1.getAsJsonArray("p2"));
-      double[][] var5 = method3416(var1.getAsJsonArray("g1"));
-      double[][] var6 = method3416(var1.getAsJsonArray("g2"));
-      double[][] var7 = method3416(var1.getAsJsonArray("out"));
-      double[] var8 = BcCameraNet.method3388(var1.getAsJsonArray("same"));
-      double[] var9 = BcCameraNet.method3388(var1.getAsJsonArray("tsneak"));
-      double[] var10 = BcCameraNet.method3388(var1.getAsJsonArray("sneak"));
-      double[] var11 = BcCameraNet.method3388(var1.getAsJsonArray("cy"));
-      double[] var12 = BcCameraNet.method3388(var1.getAsJsonArray("cp"));
-      double var13 = 0.0;
+   public String method3418(JsonObject jsonObject, JsonObject json) throws IOException {
+      double[][] doubleses = method3416(jsonObject.getAsJsonArray("p1"));
+      double[][] doubleses2 = method3416(jsonObject.getAsJsonArray("p2"));
+      double[][] doubleses3 = method3416(jsonObject.getAsJsonArray("g1"));
+      double[][] doubleses4 = method3416(jsonObject.getAsJsonArray("g2"));
+      double[][] doubleses5 = method3416(jsonObject.getAsJsonArray("out"));
+      double[] doubles = BcCameraNet.method3388(jsonObject.getAsJsonArray("same"));
+      double[] doubles2 = BcCameraNet.method3388(jsonObject.getAsJsonArray("tsneak"));
+      double[] doubles3 = BcCameraNet.method3388(jsonObject.getAsJsonArray("sneak"));
+      double[] doubles4 = BcCameraNet.method3388(jsonObject.getAsJsonArray("cy"));
+      double[] doubles5 = BcCameraNet.method3388(jsonObject.getAsJsonArray("cp"));
+      double d = 0.0;
 
-      for (int var15 = 0; var15 < var3.length; var15++) {
-         double[] var16 = this.method3410(
-            var3[var15], var4[var15], var5[var15], var6[var15], var8[var15] > 0.0, var9[var15] > 0.0, var10[var15] > 0.0, var11[var15], var12[var15]
+      for (int i = 0; i < doubleses.length; i++) {
+         double[] doubles6 = this.method3410(
+            doubleses[i], doubleses2[i], doubleses3[i], doubleses4[i], doubles[i] > 0.0, doubles2[i] > 0.0, doubles3[i] > 0.0, doubles4[i], doubles5[i]
          );
-         var13 = Math.max(var13, Math.max(Math.abs(var16[0] - var7[var15][0]), Math.abs(var16[1] - var7[var15][1])));
+         d = Math.max(d, Math.max(Math.abs(doubles6[0] - doubleses5[i][0]), Math.abs(doubles6[1] - doubleses5[i][1])));
       }
 
-      double[][] var45 = method3416(var2.getAsJsonArray("r"));
-      double[][] var46 = method3416(var2.getAsJsonArray("D"));
-      double[][] var17 = method3416(var2.getAsJsonArray("z"));
-      double[][] var18 = method3416(var2.getAsJsonArray("prev"));
-      double[][] var19 = method3416(var2.getAsJsonArray("f"));
-      double[][] var20 = method3416(var2.getAsJsonArray("ly"));
-      double[][] var21 = method3416(var2.getAsJsonArray("lys"));
-      double[][] var22 = method3416(var2.getAsJsonArray("lp"));
-      double[][] var23 = method3416(var2.getAsJsonArray("lps"));
-      double[] var24 = BcCameraNet.method3388(var2.getAsJsonArray("j"));
-      double[] var25 = BcCameraNet.method3388(var2.getAsJsonArray("grid"));
-      double[] var26 = BcCameraNet.method3388(var2.getAsJsonArray("has"));
-      double[] var27 = BcCameraNet.method3388(var2.getAsJsonArray("yc"));
-      double[] var28 = BcCameraNet.method3388(var2.getAsJsonArray("ys"));
-      double[] var29 = BcCameraNet.method3388(var2.getAsJsonArray("pc"));
-      HandAnchorNet.Entry var30 = this.method3398();
-      double var31 = 0.0;
-      double var33 = 0.0;
+      double[][] doubleses6 = method3416(json.getAsJsonArray("r"));
+      double[][] doubleses7 = method3416(json.getAsJsonArray("D"));
+      double[][] doubleses8 = method3416(json.getAsJsonArray("z"));
+      double[][] doubleses9 = method3416(json.getAsJsonArray("prev"));
+      double[][] doubleses10 = method3416(json.getAsJsonArray("f"));
+      double[][] doubleses11 = method3416(json.getAsJsonArray("ly"));
+      double[][] doubleses12 = method3416(json.getAsJsonArray("lys"));
+      double[][] doubleses13 = method3416(json.getAsJsonArray("lp"));
+      double[][] doubleses14 = method3416(json.getAsJsonArray("lps"));
+      double[] doubles6 = BcCameraNet.method3388(json.getAsJsonArray("j"));
+      double[] doubles7 = BcCameraNet.method3388(json.getAsJsonArray("grid"));
+      double[] doubles8 = BcCameraNet.method3388(json.getAsJsonArray("has"));
+      double[] doubles9 = BcCameraNet.method3388(json.getAsJsonArray("yc"));
+      double[] doubles10 = BcCameraNet.method3388(json.getAsJsonArray("ys"));
+      double[] doubles11 = BcCameraNet.method3388(json.getAsJsonArray("pc"));
+      HandAnchorNet.Entry entry = this.method3398();
+      double d2 = 0.0;
+      double d3 = 0.0;
 
-      for (int var35 = 0; var35 < var45.length; var35++) {
-         double[] var36 = this.method3400(var45[var35], (int)var24[var35], var46[var35], var17[var35], var18[var35], var25[var35], var26[var35]);
+      for (int i = 0; i < doubleses6.length; i++) {
+         double[] doubleValue = this.method3400(doubleses6[i], (int)doubles6[i], doubleses7[i], doubleses8[i], doubleses9[i], doubles7[i], doubles8[i]);
 
-         for (int var37 = 0; var37 < this.intValue4; var37++) {
-            var31 = Math.max(var31, Math.abs(var36[var37] - var19[var35][var37]));
+         for (int j = 0; j < this.intValue4; j++) {
+            d2 = Math.max(d2, Math.abs(doubleValue[j] - doubleses10[i][j]));
          }
 
-         double[] var48 = this.method3401(var30, var36);
-         int var38 = (int)var27[var35];
-         int var39 = (int)var28[var35];
-         int var40 = (int)var29[var35];
-         double[][] var41 = new double[][]{
-            this.method3404(var48), this.method3405(var48, var38), this.method3406(var48, var38, var39), this.method3407(var48, var38, var39, var40)
+         double[] doubleValue2 = this.method3401(entry, doubleValue);
+         int n = (int)doubles9[i];
+         int n2 = (int)doubles10[i];
+         int n3 = (int)doubles11[i];
+         double[][] doubleses15 = new double[][]{
+            this.method3404(doubleValue2), this.method3405(doubleValue2, n), this.method3406(doubleValue2, n, n2), this.method3407(doubleValue2, n, n2, n3)
          };
-         double[][] var42 = new double[][]{var20[var35], var21[var35], var22[var35], var23[var35]};
+         double[][] doubleses16 = new double[][]{doubleses11[i], doubleses12[i], doubleses13[i], doubleses14[i]};
 
-         for (int var43 = 0; var43 < 4; var43++) {
-            for (int var44 = 0; var44 < var41[var43].length; var44++) {
-               var33 = Math.max(var33, Math.abs(var41[var43][var44] - var42[var43][var44]));
+         for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < doubleses15[j].length; k++) {
+               d3 = Math.max(d3, Math.abs(doubleses15[j][k] - doubleses16[j][k]));
             }
          }
       }
 
-      String var47 = String.format(
+      String str = String.format(
          "эталон: якорь %d (%.1e), признаки %.1e, логиты %d тиков %.1e; K %d H %d, продление %.0f тиков%s",
-         var3.length,
-         var13,
-         var31,
-         var45.length,
-         var33,
+         doubleses.length,
+         d,
+         d2,
+         doubleses6.length,
+         d3,
          this.intValue,
          this.intValue2,
          this.doubleValue,
          this.flag ? " с вертикалью" : ""
       );
-      if (var13 < 1.0E-6 && var31 < 1.0E-5 && var33 <= 0.002) {
-         return var47;
+      if (d < 1.0E-6 && d2 < 1.0E-5 && d3 <= 0.002) {
+         return str;
       } else {
-         throw new IOException("ЭТАЛОН РУКИ НЕ СОШЁЛСЯ — " + var47);
+         throw new IOException("ЭТАЛОН РУКИ НЕ СОШЁЛСЯ — " + str);
       }
    }
 
-   public static void main(String[] var0) throws Exception {
-      try (InputStream var1 = Files.newInputStream(Path.of(var0[0]))) {
-         HandAnchorNet var2 = method3417(var1);
-         System.out.println("OK: " + var2.text2 + "; модель " + var2.source);
-         HandAnchorNet.Entry var3 = var2.method3398();
-         Random var4 = new Random(0L);
-         long var5 = System.nanoTime();
+   public static void main(String[] strings) throws Exception {
+      try (InputStream inputStream = Files.newInputStream(Path.of(strings[0]))) {
+         HandAnchorNet handAnchorNet = method3417(inputStream);
+         System.out.println("OK: " + handAnchorNet.text2 + "; модель " + handAnchorNet.source);
+         HandAnchorNet.Entry entry = handAnchorNet.method3398();
+         Random random = new Random(0L);
+         long nanoTime = System.nanoTime();
 
-         for (int var7 = 0; var7 < 2000; var7++) {
-            var2.method3414(var3, new double[]{0.3, -0.1}, new double[]{12.0, 3.0}, 0.0, 0.0, 0.15, var4);
+         for (int i = 0; i < 2000; i++) {
+            handAnchorNet.method3414(entry, new double[]{0.3, -0.1}, new double[]{12.0, 3.0}, 0.0, 0.0, 0.15, random);
          }
 
-         System.out.printf("шаг руки: %.3f мс%n", (System.nanoTime() - var5) / 2000L / 1000000.0);
+         System.out.printf("шаг руки: %.3f мс%n", (System.nanoTime() - nanoTime) / 2000L / 1000000.0);
 
-         for (int var19 = 0; var19 < 3; var19++) {
-            var3 = var2.method3398();
-            double var8 = 0.0;
-            double var10 = 0.0;
-            double[] var12 = new double[]{0.0, 0.0};
-            StringBuilder var13 = new StringBuilder("контур:");
+         for (int i = 0; i < 3; i++) {
+            entry = handAnchorNet.method3398();
+            double d = 0.0;
+            double d2 = 0.0;
+            double[] doubles = new double[]{0.0, 0.0};
+            StringBuilder x = new StringBuilder("контур:");
 
-            for (int var14 = 0; var14 < 24; var14++) {
-               double[] var15 = var2.method3414(var3, var12, new double[]{30.0 - var8, 10.0 - var10}, var8, var10, 0.15, var4);
-               var12 = method3415(var3, var15[0], var15[1], 0.15, var10);
-               var8 += var12[0];
-               var10 += var12[1];
-               var13.append(String.format(" %.1f/%.1f", var8, var10));
+            for (int j = 0; j < 24; j++) {
+               double[] doubles2 = handAnchorNet.method3414(entry, doubles, new double[]{30.0 - d, 10.0 - d2}, d, d2, 0.15, random);
+               doubles = method3415(entry, doubles2[0], doubles2[1], 0.15, d2);
+               d += doubles[0];
+               d2 += doubles[1];
+               x.append(String.format(" %.1f/%.1f", d, d2));
             }
 
-            System.out.println(var13);
+            System.out.println(x);
          }
       }
    }

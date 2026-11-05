@@ -65,9 +65,9 @@ public class WatermarkIslandHud extends Interface {
 
    public static boolean method5669() {
       if (InterfaceModule.INSTANCE.isEnabled() && mc.player != null && mc.level != null && !mc.gui.hud.isHidden()) {
-         for (Interface var1 : InterfaceModule.INSTANCE.method6794()) {
-            if (var1 instanceof WatermarkIslandHud var2) {
-               return var2.isEnabled() && var2.island.isEnabled() && var2.method2061();
+         for (Interface interfaceValue : InterfaceModule.INSTANCE.method6794()) {
+            if (interfaceValue instanceof WatermarkIslandHud watermarkIslandHud) {
+               return watermarkIslandHud.isEnabled() && watermarkIslandHud.island.isEnabled() && watermarkIslandHud.method2061();
             }
          }
 
@@ -77,8 +77,8 @@ public class WatermarkIslandHud extends Interface {
       }
    }
 
-   private static ZenithColor method5670(BossBarColor var0) {
-      return switch (var0) {
+   private static ZenithColor method5670(BossBarColor color) {
+      return switch (color) {
          case PINK -> new ZenithColor(255, 95, 168, 255);
          case BLUE -> new ZenithColor(90, 169, 255, 255);
          case RED -> new ZenithColor(255, 90, 90, 255);
@@ -89,25 +89,25 @@ public class WatermarkIslandHud extends Interface {
       };
    }
 
-   public WatermarkIslandHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public WatermarkIslandHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      Font var3 = Fonts.NEW_ICONS.getFont(8.06F);
-      Font var4 = Fonts.NEW_ICONS.getFont(5.0F);
-      Font var5 = Fonts.NEW_MEDIUM.getFont(6.0F);
-      Font var6 = Fonts.NEW_REGULAR.getFont(5.4F);
-      String var7 = "Zenith";
-      String var8 = Zenith.getInstance().getEntry().getUsername();
-      String var9 = String.valueOf(mc.getFps());
-      String var10 = this.method5679();
-      long var11 = System.currentTimeMillis();
-      longValue = this.island.isEnabled() ? var11 : 0L;
+   public void method8(CustomDrawContext customDrawContext) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      Font font = Fonts.NEW_ICONS.getFont(8.06F);
+      Font font2 = Fonts.NEW_ICONS.getFont(5.0F);
+      Font font3 = Fonts.NEW_MEDIUM.getFont(6.0F);
+      Font font4 = Fonts.NEW_REGULAR.getFont(5.4F);
+      String text = "Zenith";
+      String username = Zenith.getInstance().getEntry().getUsername();
+      String str = String.valueOf(mc.getFps());
+      String str2 = this.method5679();
+      long now = System.currentTimeMillis();
+      longValue = this.island.isEnabled() ? now : 0L;
       this.method5671();
-      Island.Entry var13 = this.island.isEnabled() ? Island.method2875(var11) : null;
+      Island.Entry entry = this.island.isEnabled() ? Island.method2875(now) : null;
       if (!this.island.isEnabled()) {
          this.animation2.method2809(0.0F);
          this.animation.method2809(0.0F);
@@ -116,8 +116,8 @@ public class WatermarkIslandHud extends Interface {
          this.entry = null;
       }
 
-      float var14 = var13 == null ? 0.0F : 1.0F;
-      if (var14 == 1.0F) {
+      float floatValue = entry == null ? 0.0F : 1.0F;
+      if (floatValue == 1.0F) {
          this.animation2.setEasing(Easing.INSTANCE4);
          this.animation2.setDuration(320L);
       } else {
@@ -125,70 +125,70 @@ public class WatermarkIslandHud extends Interface {
          this.animation2.setDuration(240L);
       }
 
-      float var15 = this.animation2.method2808(var14);
-      if (var13 != null) {
-         if (!var13.text.equals(this.text3)) {
+      float f = this.animation2.method2808(floatValue);
+      if (entry != null) {
+         if (!entry.text.equals(this.text3)) {
             if (this.text3 != null) {
                this.animation3.method2809(0.0F);
             }
 
-            float var16 = var13.method2884(var11);
-            this.animation.method2809(var16 < 0.0F ? 0.0F : var16);
-            this.text3 = var13.text;
+            float f2 = entry.method2884(now);
+            this.animation.method2809(f2 < 0.0F ? 0.0F : f2);
+            this.text3 = entry.text;
          }
 
-         this.entry = var13;
-      } else if (var15 < 0.01F) {
+         this.entry = entry;
+      } else if (f < 0.01F) {
          this.text3 = null;
          this.entry = null;
       }
 
-      Island.Entry var27 = var13 != null ? var13 : this.entry;
-      float var17 = var13 != null ? this.animation3.method2808(1.0F) : 1.0F;
+      Island.Entry entry2 = entry != null ? entry : this.entry;
+      float f2 = entry != null ? this.animation3.method2808(1.0F) : 1.0F;
       this.width = 16.5F
          + this.dividerWidth()
-         + var5.width(var7)
+         + font3.width(text)
          + this.dividerWidth()
          + 11.0F
          + GuiStyle.PADDING.intValue()
-         + var5.width(var8)
+         + font3.width(username)
          + this.dividerWidth()
-         + this.method5677(var4, var5, var6, "F", var9, " fps")
+         + this.method5677(font2, font3, font4, "F", str, " fps")
          + this.dividerWidth()
-         + this.method5677(var4, var5, var6, "H", var10, " ms")
+         + this.method5677(font2, font3, font4, "H", str2, " ms")
          + CONST_floatValue5;
       this.height = 20.0F;
-      float var18 = 15.0F * var15;
-      ProxyDotRadiusData var19 = ProxyDotRadiusData.method8069(Math.min(InterfaceModule.method6801(), 10.0F));
-      boolean var20 = var18 > 0.5F && var27 != null;
-      float var21 = 20.0F + (var20 ? var18 : 0.0F);
-      if (var20) {
-         float var22 = Math.min(InterfaceModule.method6801(), 7.5F);
+      float f3 = 15.0F * f;
+      ProxyDotRadiusData moduleMenuRadius = ProxyDotRadiusData.method8069(Math.min(InterfaceModule.method6801(), 10.0F));
+      boolean flag = f3 > 0.5F && entry2 != null;
+      float panelHeight = 20.0F + (flag ? f3 : 0.0F);
+      if (flag) {
+         float f4 = Math.min(InterfaceModule.method6801(), 7.5F);
          RenderShaders.floatValues = new float[]{
-            this.method5672(), this.floatValue2 + 20.0F - 9.0F, this.method5673(), var18 + 9.0F, Math.min(var22, var18), this.floatValue2 + 20.0F, 5.0F
+            this.method5672(), this.floatValue2 + 20.0F - 9.0F, this.method5673(), f3 + 9.0F, Math.min(f4, f3), this.floatValue2 + 20.0F, 5.0F
          };
       }
 
-      boolean var28 = (InterfaceModule.INSTANCE.method6817() || InterfaceModule.INSTANCE.method6818()) && RenderShaders.flag;
-      boolean var23 = InterfaceModule.INSTANCE.method6819();
-      var1.drawBlurHudBooleanCheck(this.floatValue, this.floatValue2, this.width, var21, 12.0F, var19, ZenithColor.INSTANCE, var28, false);
-      var1.drawRoundedRect(
+      boolean flag2 = (InterfaceModule.INSTANCE.method6817() || InterfaceModule.INSTANCE.method6818()) && RenderShaders.flag;
+      boolean flag3 = InterfaceModule.INSTANCE.method6819();
+      customDrawContext.drawBlurHudBooleanCheck(this.floatValue, this.floatValue2, this.width, panelHeight, 12.0F, moduleMenuRadius, ZenithColor.INSTANCE, flag2, false);
+      customDrawContext.drawRoundedRect(
          this.floatValue,
          this.floatValue2,
          this.width,
-         var21,
-         var19,
-         var2.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778())
+         panelHeight,
+         moduleMenuRadius,
+         currentStyle.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778())
       );
       RenderShaders.floatValues = null;
-      if (var23) {
-         var1.drawBlurHudBooleanCheck(this.floatValue, this.floatValue2, this.width, 20.0F, 12.0F, var19, ZenithColor.INSTANCE, false, true);
-         if (var20 && var18 > 2.0F) {
-            var1.drawBlurHudBooleanCheck(
+      if (flag3) {
+         customDrawContext.drawBlurHudBooleanCheck(this.floatValue, this.floatValue2, this.width, 20.0F, 12.0F, moduleMenuRadius, ZenithColor.INSTANCE, false, true);
+         if (flag && f3 > 2.0F) {
+            customDrawContext.drawBlurHudBooleanCheck(
                this.method5672(),
                this.floatValue2 + 20.0F - 2.0F,
                this.method5673(),
-               var18 + 2.0F,
+               f3 + 2.0F,
                12.0F,
                ProxyDotRadiusData.method8069(Math.min(InterfaceModule.method6801(), 7.5F)),
                ZenithColor.INSTANCE,
@@ -198,66 +198,66 @@ public class WatermarkIslandHud extends Interface {
          }
       }
 
-      if (var20) {
-         this.method5674(var1, var2, var27, var18, var15, var17, var11);
+      if (flag) {
+         this.method5674(customDrawContext, currentStyle, entry2, f3, f, f2, now);
       }
 
-      float var24 = this.floatValue + 3.5F;
-      float var25 = this.floatValue2 + 3.5F;
-      var1.drawRoundedRect(var24, var25, 13.0F, 13.0F, ProxyDotRadiusData.method8069(3.9F), var2.getPrimaryColor().getZenithColor());
-      HudListLayout.method7637(var1, var3, "1", var24, var25, 13.0F, ZenithColor.INSTANCE);
-      var24 += 13.0F;
-      var24 = this.method5676(var1, var24, var2);
-      var1.drawText(var5, var7, var24, this.floatValue2 + (20.0F - var5.height()) / 2.0F, var2.getTextEnable().getZenithColor());
-      var24 += var5.width(var7);
-      var24 = this.method5676(var1, var24, var2);
-      float var26 = this.floatValue2 + 4.5F;
-      var1.drawPlayerHeadWithRoundedShader(this.method5680(), var24, var26, 11.0F, ProxyDotRadiusData.method8069(5.5F), ZenithColor.INSTANCE);
-      var1.drawRoundedBorder(
-         var24 - 1.0F, var26 - 1.0F, 13.0F, 13.0F, 1.0F, ProxyDotRadiusData.method8069(6.5F), var2.getPrimaryColor().getZenithColor().method7294(0.55F)
+      float floatValue2 = this.floatValue + 3.5F;
+      float y = this.floatValue2 + 3.5F;
+      customDrawContext.drawRoundedRect(floatValue2, y, 13.0F, 13.0F, ProxyDotRadiusData.method8069(3.9F), currentStyle.getPrimaryColor().getZenithColor());
+      HudListLayout.method7637(customDrawContext, font, "1", floatValue2, y, 13.0F, ZenithColor.INSTANCE);
+      floatValue2 += 13.0F;
+      floatValue2 = this.method5676(customDrawContext, floatValue2, currentStyle);
+      customDrawContext.drawText(font3, text, floatValue2, this.floatValue2 + (20.0F - font3.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor());
+      floatValue2 += font3.width(text);
+      floatValue2 = this.method5676(customDrawContext, floatValue2, currentStyle);
+      float y2 = this.floatValue2 + 4.5F;
+      customDrawContext.drawPlayerHeadWithRoundedShader(this.method5680(), floatValue2, y2, 11.0F, ProxyDotRadiusData.method8069(5.5F), ZenithColor.INSTANCE);
+      customDrawContext.drawRoundedBorder(
+         floatValue2 - 1.0F, y2 - 1.0F, 13.0F, 13.0F, 1.0F, ProxyDotRadiusData.method8069(6.5F), currentStyle.getPrimaryColor().getZenithColor().method7294(0.55F)
       );
-      var24 += 11.0F + GuiStyle.PADDING.intValue();
-      var1.drawText(var5, var8, var24, this.floatValue2 + (20.0F - var5.height()) / 2.0F, var2.getTextEnable().getZenithColor());
-      var24 += var5.width(var8);
-      var24 = this.method5678(var1, var24, var4, var5, var6, "F", var9, " fps", var2);
-      this.method5678(var1, var24, var4, var5, var6, "H", var10, " ms", var2);
+      floatValue2 += 11.0F + GuiStyle.PADDING.intValue();
+      customDrawContext.drawText(font3, username, floatValue2, this.floatValue2 + (20.0F - font3.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor());
+      floatValue2 += font3.width(username);
+      floatValue2 = this.method5678(customDrawContext, floatValue2, font2, font3, font4, "F", str, " fps", currentStyle);
+      this.method5678(customDrawContext, floatValue2, font2, font3, font4, "H", str2, " ms", currentStyle);
    }
 
    private void method5671() {
       if (this.island.isEnabled() && mc.gui != null && mc.player != null && mc.level != null) {
-         var var1 = mc.gui.hud.getBossOverlay().events;
-         this.items.keySet().retainAll(var1.keySet());
-         LerpingBossEvent var2 = null;
-         Data2 var3 = null;
+         var events = mc.gui.hud.getBossOverlay().events;
+         this.items.keySet().retainAll(events.keySet());
+         LerpingBossEvent event = null;
+         Data2 data2 = null;
 
-         for (Map.Entry var5 : var1.entrySet()) {
-            LerpingBossEvent var6 = (LerpingBossEvent)var5.getValue();
-            String var7 = var6.getName().getString();
-            WatermarkIslandHud.Data var8 = this.items.get(var5.getKey());
-            if (var8 == null || !var8.text().equals(var7)) {
-               var8 = new WatermarkIslandHud.Data(var7, Data2.method1515(var7));
-               this.items.put((UUID)var5.getKey(), var8);
+         for (Map.Entry entry : events.entrySet()) {
+            LerpingBossEvent event2 = (LerpingBossEvent)entry.getValue();
+            String string = event2.getName().getString();
+            WatermarkIslandHud.Data data = this.items.get(entry.getKey());
+            if (data == null || !data.text().equals(string)) {
+               data = new WatermarkIslandHud.Data(string, Data2.method1515(string));
+               this.items.put((UUID)entry.getKey(), data);
             }
 
-            Data2 var9 = var8.getData2();
-            if (var2 == null
-               || var9.isFlag() && !var3.isFlag()
-               || var9.isFlag() && var3.isFlag() && var9.getIntValue() > var3.getIntValue()
-               || !var9.isFlag() && !var3.isFlag() && var9.getIntValue() >= 0 && var3.getIntValue() < 0) {
-               var2 = var6;
-               var3 = var9;
+            Data2 data22 = data.getData2();
+            if (event == null
+               || data22.isFlag() && !data2.isFlag()
+               || data22.isFlag() && data2.isFlag() && data22.getIntValue() > data2.getIntValue()
+               || !data22.isFlag() && !data2.isFlag() && data22.getIntValue() >= 0 && data2.getIntValue() < 0) {
+               event = event2;
+               data2 = data22;
             }
          }
 
-         if (var2 == null) {
+         if (event == null) {
             Island.drop("boss");
          } else {
-            String var10 = var3.isFlag() ? Zenith.getInstance().getLocalization().translate("hud.island.combat") : var3.title();
-            if (var1.size() > 1) {
-               var10 = var10 + "  +" + (var1.size() - 1);
+            String title = data2.isFlag() ? Zenith.getInstance().getLocalization().translate("hud.island.combat") : data2.title();
+            if (events.size() > 1) {
+               title = title + "  +" + (events.size() - 1);
             }
 
-            Island.method2872(var10, method5670(var2.getColor()), var2.getProgress(), var3.value());
+            Island.method2872(title, method5670(event.getColor()), event.getProgress(), data2.value());
          }
       } else {
          this.items.clear();
@@ -273,56 +273,56 @@ public class WatermarkIslandHud extends Interface {
       return this.width - this.width * 0.22F;
    }
 
-   private void method5674(CustomDrawContext var1, ZenithStyle var2, Island.Entry var3, float var4, float var5, float var6, long var7) {
-      float var9 = this.method5672();
-      float var10 = this.method5673();
-      float var11 = this.floatValue2 + 20.0F;
-      float var12 = Math.clamp((var5 - 0.45F) / 0.55F, 0.0F, 1.0F) * Math.clamp(var6, 0.0F, 1.0F);
-      if (!(var12 <= 0.01F)) {
-         float var13 = (1.0F - Math.clamp(var6, 0.0F, 1.0F)) * 3.0F;
-         Font var14 = Fonts.NEW_MEDIUM.getFont(5.4F);
-         if (var3.flag2) {
-            this.method5675(var1, var2, var3, var14, var9, var10, var11, var12, var13);
+   private void method5674(CustomDrawContext customDrawContext, ZenithStyle currentStyle, Island.Entry entry, float f, float f2, float f3, long now) {
+      float f4 = this.method5672();
+      float f5 = this.method5673();
+      float f6 = this.floatValue2 + 20.0F;
+      float previewAlpha = Math.clamp((f2 - 0.45F) / 0.55F, 0.0F, 1.0F) * Math.clamp(f3, 0.0F, 1.0F);
+      if (!(previewAlpha <= 0.01F)) {
+         float f7 = (1.0F - Math.clamp(f3, 0.0F, 1.0F)) * 3.0F;
+         Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+         if (entry.flag2) {
+            this.method5675(customDrawContext, currentStyle, entry, font, f4, f5, f6, previewAlpha, f7);
          } else {
-            Font var15 = Fonts.NEW_SEMIBOLD.getFont(5.0F);
-            String var16 = var3.method2885(var7);
-            float var17 = var15.width(var16);
-            String var18 = fit(var14, var3.title, var10 - 14.0F - var17 - CONST_floatValue5 * 2.0F);
-            float var19 = var11 + 2.0F + var13;
-            var1.drawText(var14, var18, var9 + 7.0F, var19, var2.getTextEnable().getZenithColor().method7294(var12));
-            if (!var16.isEmpty()) {
-               var1.drawText(var15, var16, var9 + var10 - 7.0F - var17, var19, var2.getTextTertiary().getZenithColor().method7294(var12));
+            Font font2 = Fonts.NEW_SEMIBOLD.getFont(5.0F);
+            String text = entry.method2885(now);
+            float width = font2.width(text);
+            String str = fit(font, entry.title, f5 - 14.0F - width - CONST_floatValue5 * 2.0F);
+            float centeredTextY = f6 + 2.0F + f7;
+            customDrawContext.drawText(font, str, f4 + 7.0F, centeredTextY, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            if (!text.isEmpty()) {
+               customDrawContext.drawText(font2, text, f4 + f5 - 7.0F - width, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             }
 
-            float var20 = var3.method2884(var7);
-            if (!(var20 < 0.0F)) {
-               float var21 = var11 + 15.0F - 2.5F - 3.0F;
-               float var22 = var9 + 7.0F;
-               float var23 = var10 - 14.0F;
-               ProxyDotRadiusData var24 = ProxyDotRadiusData.method8069(1.25F);
-               var1.drawRoundedRect(var22, var21, var23, 2.5F, var24, var2.getHeaderHudBackground().getZenithColor().method7294(var12));
-               float var25 = Math.clamp(this.animation.method2808(var20), 0.0F, 1.0F);
-               if (var25 > 0.001F) {
-                  ZenithColor var26 = var2.getPrimaryColor()
+            float floatValue = entry.method2884(now);
+            if (!(floatValue < 0.0F)) {
+               float y = f6 + 15.0F - 2.5F - 3.0F;
+               float floatValue2 = f4 + 7.0F;
+               float width2 = f5 - 14.0F;
+               ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(1.25F);
+               customDrawContext.drawRoundedRect(floatValue2, y, width2, 2.5F, headerRadius, currentStyle.getHeaderHudBackground().getZenithColor().method7294(previewAlpha));
+               float f8 = Math.clamp(this.animation.method2808(floatValue), 0.0F, 1.0F);
+               if (f8 > 0.001F) {
+                  ZenithColor zenithColor = currentStyle.getPrimaryColor()
                      .getZenithColor()
-                     .method7295(var2.getSecondaryPrimaryColor().getZenithColor(), Math.clamp(var25, 0.0F, 1.0F));
-                  ZenithColor var27 = var3.flag && var25 < 0.2F ? var26.method7295(new ZenithColor(255, 90, 74, 255), 1.0F - var25 / 0.2F) : var26;
-                  var1.drawRoundedRect(var22, var21, Math.max(2.5F, var23 * var25), 2.5F, var24, var27.method7294(var12));
+                     .method7295(currentStyle.getSecondaryPrimaryColor().getZenithColor(), Math.clamp(f8, 0.0F, 1.0F));
+                  ZenithColor zenithColor2 = entry.flag && f8 < 0.2F ? zenithColor.method7295(new ZenithColor(255, 90, 74, 255), 1.0F - f8 / 0.2F) : zenithColor;
+                  customDrawContext.drawRoundedRect(floatValue2, y, Math.max(2.5F, width2 * f8), 2.5F, headerRadius, zenithColor2.method7294(previewAlpha));
                }
 
-               float var30 = Math.clamp(var6, 0.0F, 1.0F);
-               if (var30 < 0.999F) {
-                  float var31 = var10 * 0.28F;
-                  float var28 = var9 - var31 + (var10 + var31) * var30;
-                  float var29 = Math.min(var28 + var31, var9 + var10) - Math.max(var28, var9);
-                  if (var29 > 0.5F) {
-                     var1.drawRoundedRect(
-                        Math.max(var28, var9),
-                        var11 + 1.5F,
-                        var29,
+               float f9 = Math.clamp(f3, 0.0F, 1.0F);
+               if (f9 < 0.999F) {
+                  float f10 = f5 * 0.28F;
+                  float f11 = f4 - f10 + (f5 + f10) * f9;
+                  float width3 = Math.min(f11 + f10, f4 + f5) - Math.max(f11, f4);
+                  if (width3 > 0.5F) {
+                     customDrawContext.drawRoundedRect(
+                        Math.max(f11, f4),
+                        f6 + 1.5F,
+                        width3,
                         12.0F,
                         ProxyDotRadiusData.method8069(6.0F),
-                        ZenithColor.INSTANCE.method7294(var12 * 0.1F * (1.0F - var30))
+                        ZenithColor.INSTANCE.method7294(previewAlpha * 0.1F * (1.0F - f9))
                      );
                   }
                }
@@ -331,39 +331,39 @@ public class WatermarkIslandHud extends Interface {
       }
    }
 
-   private void method5675(CustomDrawContext var1, ZenithStyle var2, Island.Entry var3, Font var4, float var5, float var6, float var7, float var8, float var9) {
-      float var10 = var7 + 7.5F - 0.5F + var9;
-      float var11 = 4.0F;
-      ZenithColor var12 = var3.zenithColor == null ? var2.getPrimaryColor().getZenithColor() : var3.zenithColor;
-      var1.drawRoundedRect(var5 + 7.0F, var10 - var11 / 2.0F, var11, var11, ProxyDotRadiusData.method8069(var11 / 2.0F), var12.method7294(var8));
-      boolean var13 = !Float.isNaN(var3.floatValue2);
-      float var14 = var13 ? 11.0F : 0.0F;
-      float var15 = var5 + 7.0F + var11 + 4.0F;
-      float var16 = var5 + var6 - 7.0F - var14 - (var13 ? CONST_floatValue5 : 0.0F) - var15;
-      String var17 = fit(var4, var3.title, var16);
-      var1.drawText(var4, var17, var15, var10 - var4.height() / 2.0F, var2.getTextEnable().getZenithColor().method7294(var8));
-      if (var13) {
-         Voice.method371(var1, var5 + var6 - 7.0F - var14, var10, var3.floatValue2, var12.method7294(var8));
+   private void method5675(CustomDrawContext customDrawContext, ZenithStyle currentStyle, Island.Entry entry, Font font, float f, float f2, float f3, float previewAlpha, float f4) {
+      float f5 = f3 + 7.5F - 0.5F + f4;
+      float width = 4.0F;
+      ZenithColor zenithColor = entry.zenithColor == null ? currentStyle.getPrimaryColor().getZenithColor() : entry.zenithColor;
+      customDrawContext.drawRoundedRect(f + 7.0F, f5 - width / 2.0F, width, width, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor.method7294(previewAlpha));
+      boolean flag = !Float.isNaN(entry.floatValue2);
+      float f6 = flag ? 11.0F : 0.0F;
+      float floatValue = f + 7.0F + width + 4.0F;
+      float f7 = f + f2 - 7.0F - f6 - (flag ? CONST_floatValue5 : 0.0F) - floatValue;
+      String text = fit(font, entry.title, f7);
+      customDrawContext.drawText(font, text, floatValue, f5 - font.height() / 2.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      if (flag) {
+         Voice.method371(customDrawContext, f + f2 - 7.0F - f6, f5, entry.floatValue2, zenithColor.method7294(previewAlpha));
       }
    }
 
-   private static String fit(Font var0, String var1, float var2) {
-      if (var2 <= 0.0F || var0.width(var1) <= var2) {
-         return var1;
-      } else if (text5 != null && var0.getFont() == fitFont && var0.getSize() == fitSize && var2 == fitWidth && var1.equals(text4)) {
+   private static String fit(Font font, String title, float f) {
+      if (f <= 0.0F || font.width(title) <= f) {
+         return title;
+      } else if (text5 != null && font.getFont() == fitFont && font.getSize() == fitSize && f == fitWidth && title.equals(text4)) {
          return text5;
       } else {
-         String var3 = var1;
+         String str = title;
 
-         while (var3.length() > 1 && var0.width(var3 + "...") > var2) {
-            var3 = var3.substring(0, var3.length() - 1);
+         while (str.length() > 1 && font.width(str + "...") > f) {
+            str = str.substring(0, str.length() - 1);
          }
 
-         fitFont = var0.getFont();
-         fitSize = var0.getSize();
-         fitWidth = var2;
-         text4 = var1;
-         text5 = var3 + "...";
+         fitFont = font.getFont();
+         fitSize = font.getSize();
+         fitWidth = f;
+         text4 = title;
+         text5 = str + "...";
          return text5;
       }
    }
@@ -372,39 +372,39 @@ public class WatermarkIslandHud extends Interface {
       return CONST_floatValue5 * 2.0F + 1.0F;
    }
 
-   private float method5676(CustomDrawContext var1, float var2, ZenithStyle var3) {
-      float var4 = 9.0F;
-      var1.drawRect(var2 + CONST_floatValue5, this.floatValue2 + (20.0F - var4) / 2.0F, 1.0F, var4, var3.getTextTertiary().getZenithColor().method7294(0.45F));
-      return var2 + this.dividerWidth();
+   private float method5676(CustomDrawContext customDrawContext, float floatValue, ZenithStyle currentStyle) {
+      float height = 9.0F;
+      customDrawContext.drawRect(floatValue + CONST_floatValue5, this.floatValue2 + (20.0F - height) / 2.0F, 1.0F, height, currentStyle.getTextTertiary().getZenithColor().method7294(0.45F));
+      return floatValue + this.dividerWidth();
    }
 
-   private float method5677(Font var1, Font var2, Font var3, String var4, String var5, String var6) {
-      return var1.width(var4) + 2.0F + var2.width(var5) + var3.width(var6);
+   private float method5677(Font font, Font font2, Font font3, String text, String str, String text2) {
+      return font.width(text) + 2.0F + font2.width(str) + font3.width(text2);
    }
 
-   private float method5678(CustomDrawContext var1, float var2, Font var3, Font var4, Font var5, String var6, String var7, String var8, ZenithStyle var9) {
-      var2 = this.method5676(var1, var2, var9);
-      var1.drawText(var3, var6, var2, this.floatValue2 + (20.0F - var3.height()) / 2.0F, var9.getTextTertiary().getZenithColor());
-      var2 += var3.width(var6) + 2.0F;
-      var1.drawText(var4, var7, var2, this.floatValue2 + (20.0F - var4.height()) / 2.0F, var9.getTextEnable().getZenithColor());
-      var2 += var4.width(var7);
-      var1.drawText(var5, var8, var2, this.floatValue2 + (20.0F - var5.height()) / 2.0F, var9.getTextTertiary().getZenithColor());
-      return var2 + var5.width(var8);
+   private float method5678(CustomDrawContext customDrawContext, float floatValue, Font font, Font font2, Font font3, String text, String str, String text2, ZenithStyle currentStyle) {
+      floatValue = this.method5676(customDrawContext, floatValue, currentStyle);
+      customDrawContext.drawText(font, text, floatValue, this.floatValue2 + (20.0F - font.height()) / 2.0F, currentStyle.getTextTertiary().getZenithColor());
+      floatValue += font.width(text) + 2.0F;
+      customDrawContext.drawText(font2, str, floatValue, this.floatValue2 + (20.0F - font2.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor());
+      floatValue += font2.width(str);
+      customDrawContext.drawText(font3, text2, floatValue, this.floatValue2 + (20.0F - font3.height()) / 2.0F, currentStyle.getTextTertiary().getZenithColor());
+      return floatValue + font3.width(text2);
    }
 
    private String method5679() {
       if (mc.player != null && mc.getConnection() != null) {
-         PlayerInfo var1 = mc.getConnection().getPlayerInfo(mc.player.getUUID());
-         return var1 == null ? "-" : String.valueOf(Math.max(0, var1.getLatency()));
+         PlayerInfo playerInfo = mc.getConnection().getPlayerInfo(mc.player.getUUID());
+         return playerInfo == null ? "-" : String.valueOf(Math.max(0, playerInfo.getLatency()));
       } else {
          return "-";
       }
    }
 
    private Identifier method5680() {
-      LocalPlayer var2 = mc.player;
-      return var2 instanceof AbstractClientPlayer && var2.getSkin() != null
-         ? var2.getSkin().body().texturePath()
+      LocalPlayer player = mc.player;
+      return player instanceof AbstractClientPlayer && player.getSkin() != null
+         ? player.getSkin().body().texturePath()
          : DefaultPlayerSkin.getDefaultSkin().body().texturePath();
    }
 
@@ -437,9 +437,9 @@ public class WatermarkIslandHud extends Interface {
          return "Data[" + "text=" + this.text + ", " + "data2=" + this.data2 + "]";
       }
 
-      private Data(String var1, Data2 var2) {
-         this.text = var1;
-         this.data2 = var2;
+      private Data(String text, Data2 data2) {
+         this.text = text;
+         this.data2 = data2;
       }
 
       public Data2 getData2() {

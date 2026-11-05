@@ -78,15 +78,15 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       return this.open || this.visible.getValue() > 0.001F;
    }
 
-   public void open(Canvas var1, List<Setting> var2) {
-      this.canvas = var1;
-      this.backup = var1.method138();
+   public void open(Canvas canvas, List<Setting> settings) {
+      this.canvas = canvas;
+      this.backup = canvas.method138();
       this.open = true;
       this.painting = false;
       this.rows.clear();
 
-      for (Setting var4 : var2) {
-         this.rows.add(new InspectorRow(var4, 0));
+      for (Setting newNameSetting : settings) {
+         this.rows.add(new InspectorRow(newNameSetting, 0));
       }
    }
 
@@ -105,37 +105,37 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       this.close();
    }
 
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, float var9) {
-      ZenithStyle var10 = Zenith.getInstance().getStyleManager().getCurrentStyle();
+   public void render(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float width, float heightPanel, float previewAlpha, float f) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       this.visible.method2807(this.open);
-      float var11 = this.visible.getValue();
-      if (var10 != null && !(var11 <= 0.001F) && this.canvas != null) {
-         this.mouseX = var2;
-         this.mouseY = var3;
-         var8 *= var11 * var9 * var9;
-         if (!(var8 <= 0.01F)) {
-            this.panelBounds = this.open ? new BoundsData(var4, var5, var6, var7) : null;
-            float var12 = var4 + GuiStyle.PADDING * 2;
-            float var13 = var6 - GuiStyle.PADDING * 4;
-            this.drawHeader(var1, var4, var5, var6, var8, var10);
-            InspectorRow.alignTracks(this.rows, var6);
-            float var14 = 72.0F + this.settingsHeight() + 14.0F + GuiStyle.PADDING.intValue() * 3.0F;
-            float var15 = Math.min(var13, var7 - 20.0F - var14 - GuiStyle.PADDING.intValue() * 2.0F);
-            this.cell = Math.max(3.0F, var15 / 31.0F);
-            var15 = this.cell * 31.0F;
-            float var16 = var5 + 20.0F;
-            this.drawCanvas(var1, var4 + (var6 - var15) / 2.0F, var16, var15, var8, var10);
-            var16 += var15 + 6.0F;
-            this.drawTools(var1, var4 + (var6 - this.toolsWidth()) / 2.0F, var16, var8, var10);
-            var16 += 21.0F;
-            var16 = this.drawBrushSize(var1, var12, var16, var13, var8, var10);
-            var16 = this.drawPalette(var1, var12, var16, var8, var10);
-            this.drawPresets(var1, var12, var16, var8, var10);
-            var16 += 22.0F;
-            this.drawSettings(var1, var2, var3, var4, var16, var6, var8);
-            this.drawButtons(var1, var4, var5 + var7 - 14.0F - GuiStyle.PADDING * 2, var6, var8, var10);
+      float f2 = this.visible.getValue();
+      if (currentStyle != null && !(f2 <= 0.001F) && this.canvas != null) {
+         this.mouseX = mouseX;
+         this.mouseY = mouseY;
+         previewAlpha *= f2 * f * f;
+         if (!(previewAlpha <= 0.01F)) {
+            this.panelBounds = this.open ? new BoundsData(floatValue, y, width, heightPanel) : null;
+            float floatValue2 = floatValue + GuiStyle.PADDING * 2;
+            float f3 = width - GuiStyle.PADDING * 4;
+            this.drawHeader(customDrawContext, floatValue, y, width, previewAlpha, currentStyle);
+            InspectorRow.alignTracks(this.rows, width);
+            float f4 = 72.0F + this.settingsHeight() + 14.0F + GuiStyle.PADDING.intValue() * 3.0F;
+            float width2 = Math.min(f3, heightPanel - 20.0F - f4 - GuiStyle.PADDING.intValue() * 2.0F);
+            this.cell = Math.max(3.0F, width2 / 31.0F);
+            width2 = this.cell * 31.0F;
+            float drawBrushSize = y + 20.0F;
+            this.drawCanvas(customDrawContext, floatValue + (width - width2) / 2.0F, drawBrushSize, width2, previewAlpha, currentStyle);
+            drawBrushSize += width2 + 6.0F;
+            this.drawTools(customDrawContext, floatValue + (width - this.toolsWidth()) / 2.0F, drawBrushSize, previewAlpha, currentStyle);
+            drawBrushSize += 21.0F;
+            drawBrushSize = this.drawBrushSize(customDrawContext, floatValue2, drawBrushSize, f3, previewAlpha, currentStyle);
+            drawBrushSize = this.drawPalette(customDrawContext, floatValue2, drawBrushSize, previewAlpha, currentStyle);
+            this.drawPresets(customDrawContext, floatValue2, drawBrushSize, previewAlpha, currentStyle);
+            drawBrushSize += 22.0F;
+            this.drawSettings(customDrawContext, mouseX, mouseY, floatValue, drawBrushSize, width, previewAlpha);
+            this.drawButtons(customDrawContext, floatValue, y + heightPanel - 14.0F - GuiStyle.PADDING * 2, width, previewAlpha, currentStyle);
             if (this.painting) {
-               this.paintAt(var2, var3, this.erasingStroke);
+               this.paintAt(mouseX, mouseY, this.erasingStroke);
             }
          }
       }
@@ -146,299 +146,299 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
    }
 
    private float settingsHeight() {
-      float var1 = 0.0F;
+      float f = 0.0F;
 
-      for (InspectorRow var3 : this.rows) {
-         if (var3.isVisible()) {
-            var1 += var3.height();
+      for (InspectorRow row : this.rows) {
+         if (row.isVisible()) {
+            f += row.height();
          }
       }
 
-      return var1;
+      return f;
    }
 
-   private void drawHeader(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6) {
-      Font var7 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var8 = Fonts.NEW_REGULAR.getFont(4.4F);
-      float var9 = var2 + GuiStyle.PADDING * 2;
-      float var10 = var3 + GuiStyle.PADDING.intValue();
-      var1.drawText(
-         var7,
+   private void drawHeader(MenuDrawContext customDrawContext, float floatValue, float y, float width, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+      float f = floatValue + GuiStyle.PADDING * 2;
+      float f2 = y + GuiStyle.PADDING.intValue();
+      customDrawContext.drawText(
+         font,
          Zenith.getInstance().getLocalization().translate("crosshair.editor.title"),
-         var9,
-         var10 + 1.0F,
-         var6.getTextEnable().getZenithColor().method7294(var5)
+         f,
+         f2 + 1.0F,
+         currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawText(
-         var8,
+      customDrawContext.drawText(
+         font2,
          Zenith.getInstance().getLocalization().translate("crosshair.editor.hint"),
-         var9,
-         var10 + var7.height() + 3.0F,
-         var6.getTextTertiary().getZenithColor().method7294(var5)
+         f,
+         f2 + font.height() + 3.0F,
+         currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      Font var11 = Fonts.NEW_ICONS.getFont(4.0F);
-      float var12 = var2 + var4 - var11.width("2") - GuiStyle.PADDING * 2;
-      float var13 = var10 + 2.0F;
-      this.closeBounds = this.open ? new BoundsData(var12, var13, 5.0F, 5.0F) : null;
-      var1.drawText(var11, "2", var12, var13, var6.getTextTertiary().getZenithColor().method7294(var5));
+      Font font3 = Fonts.NEW_ICONS.getFont(4.0F);
+      float floatValue2 = floatValue + width - font3.width("2") - GuiStyle.PADDING * 2;
+      float y2 = f2 + 2.0F;
+      this.closeBounds = this.open ? new BoundsData(floatValue2, y2, 5.0F, 5.0F) : null;
+      customDrawContext.drawText(font3, "2", floatValue2, y2, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
    }
 
-   private void drawSettings(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
-      float var8 = var5;
+   private void drawSettings(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float drawBrushSize, float width, float previewAlpha) {
+      float y = drawBrushSize;
 
-      for (InspectorRow var10 : this.rows) {
-         if (var10.isVisible()) {
-            var10.render(var1, var2, var3, var4, var8, var6, var7);
-            var8 += var10.height();
+      for (InspectorRow row : this.rows) {
+         if (row.isVisible()) {
+            row.render(customDrawContext, mouseX, mouseY, floatValue, y, width, previewAlpha);
+            y += row.height();
          }
       }
    }
 
-   private void drawTools(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5) {
-      float var6 = 15.0F;
+   private void drawTools(MenuDrawContext customDrawContext, float f, float drawBrushSize, float previewAlpha, ZenithStyle currentStyle) {
+      float width = 15.0F;
 
-      for (int var7 = 0; var7 < TOOL_ICONS.length; var7++) {
-         float var8 = var2 + var7 * (var6 + 3.0F);
-         this.toolBounds[var7] = this.open ? new BoundsData(var8, var3, var6, var6) : null;
-         boolean var10 = var7 == this.tool && var7 < 4;
-         boolean var11 = var7 != 4 ? var7 != 5 || this.canvas.method143() : this.canvas.method142();
-         ZenithColor var12 = var10
-            ? var5.getPrimaryColor().getZenithColor().method7294(var4 * 0.9F)
-            : var5.getRightBackground().getZenithColor().method7294(var4 * 0.75F);
-         var1.drawRoundedRect(var8, var3, var6, var6, ProxyDotRadiusData.method8069(4.0F), var12);
-         ZenithColor var13 = var10 ? ZenithColor.INSTANCE.method7294(var4) : var5.getTextEnable().getZenithColor().method7294(var4 * (var11 ? 0.85F : 0.3F));
-         this.drawIcon(var1, TOOL_ICONS[var7], var8 + 4.0F, var3 + 4.0F, 1.0F, var13);
+      for (int i = 0; i < TOOL_ICONS.length; i++) {
+         float floatValue = f + i * (width + 3.0F);
+         this.toolBounds[i] = this.open ? new BoundsData(floatValue, drawBrushSize, width, width) : null;
+         boolean flag = i == this.tool && i < 4;
+         boolean flag2 = i != 4 ? i != 5 || this.canvas.method143() : this.canvas.method142();
+         ZenithColor zenithColor = flag
+            ? currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.9F)
+            : currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha * 0.75F);
+         customDrawContext.drawRoundedRect(floatValue, drawBrushSize, width, width, ProxyDotRadiusData.method8069(4.0F), zenithColor);
+         ZenithColor zenithColor2 = flag ? ZenithColor.INSTANCE.method7294(previewAlpha) : currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha * (flag2 ? 0.85F : 0.3F));
+         this.drawIcon(customDrawContext, TOOL_ICONS[i], floatValue + 4.0F, drawBrushSize + 4.0F, 1.0F, zenithColor2);
       }
    }
 
-   private void drawIcon(MenuDrawContext var1, String[] var2, float var3, float var4, float var5, ZenithColor var6) {
-      var1.beginRectBatch();
+   private void drawIcon(MenuDrawContext customDrawContext, String[] strings, float f, float f2, float cell, ZenithColor zenithColor) {
+      customDrawContext.beginRectBatch();
 
-      for (int var7 = 0; var7 < var2.length; var7++) {
-         String var8 = var2[var7];
+      for (int i = 0; i < strings.length; i++) {
+         String str = strings[i];
 
-         for (int var9 = 0; var9 < var8.length(); var9++) {
-            if (var8.charAt(var9) == '#') {
-               var1.drawRectBatched(var3 + var9 * var5, var4 + var7 * var5, var5, var5, var6);
+         for (int j = 0; j < str.length(); j++) {
+            if (str.charAt(j) == '#') {
+               customDrawContext.drawRectBatched(f + j * cell, f2 + i * cell, cell, cell, zenithColor);
             }
          }
       }
 
-      var1.flushRects();
+      customDrawContext.flushRects();
    }
 
-   private void drawCanvas(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6) {
-      this.canvasBounds = this.open ? new BoundsData(var2, var3, var4, var4) : null;
-      var1.drawRoundedRect(
-         var2 - 2.0F,
-         var3 - 2.0F,
-         var4 + 4.0F,
-         var4 + 4.0F,
+   private void drawCanvas(MenuDrawContext customDrawContext, float floatValue, float drawBrushSize, float width, float previewAlpha, ZenithStyle currentStyle) {
+      this.canvasBounds = this.open ? new BoundsData(floatValue, drawBrushSize, width, width) : null;
+      customDrawContext.drawRoundedRect(
+         floatValue - 2.0F,
+         drawBrushSize - 2.0F,
+         width + 4.0F,
+         width + 4.0F,
          ProxyDotRadiusData.method8069(4.0F),
-         var6.getRightBackground().getZenithColor().method7294(var5 * 0.8F)
+         currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha * 0.8F)
       );
-      ZenithColor var7 = new ZenithColor(58, 58, 64, 255).method7294(var5);
-      ZenithColor var8 = new ZenithColor(44, 44, 50, 255).method7294(var5);
-      var1.beginRectBatch();
+      ZenithColor zenithColor = new ZenithColor(58, 58, 64, 255).method7294(previewAlpha);
+      ZenithColor zenithColor2 = new ZenithColor(44, 44, 50, 255).method7294(previewAlpha);
+      customDrawContext.beginRectBatch();
 
-      for (int var9 = 0; var9 < 31; var9++) {
-         for (int var10 = 0; var10 < 31; var10++) {
-            var1.drawRectBatched(var2 + var10 * this.cell, var3 + var9 * this.cell, this.cell, this.cell, (var10 + var9 & 1) == 0 ? var7 : var8);
+      for (int i = 0; i < 31; i++) {
+         for (int j = 0; j < 31; j++) {
+            customDrawContext.drawRectBatched(floatValue + j * this.cell, drawBrushSize + i * this.cell, this.cell, this.cell, (j + i & 1) == 0 ? zenithColor : zenithColor2);
          }
       }
 
-      for (int var12 = 0; var12 < 31; var12++) {
-         for (int var13 = 0; var13 < 31; var13++) {
-            int var11 = this.canvas.method136(var13, var12);
-            if (var11 >>> 24 != 0) {
-               var1.drawRectBatched(var2 + var13 * this.cell, var3 + var12 * this.cell, this.cell, this.cell, ZenithColor.method7291(var11).method7294(var5));
+      for (int i = 0; i < 31; i++) {
+         for (int j = 0; j < 31; j++) {
+            int shade = this.canvas.method136(j, i);
+            if (shade >>> 24 != 0) {
+               customDrawContext.drawRectBatched(floatValue + j * this.cell, drawBrushSize + i * this.cell, this.cell, this.cell, ZenithColor.method7291(shade).method7294(previewAlpha));
             }
          }
       }
 
-      var1.flushRects();
-      var1.drawRoundedBorder(
-         var2 + 15.0F * this.cell,
-         var3 + 15.0F * this.cell,
+      customDrawContext.flushRects();
+      customDrawContext.drawRoundedBorder(
+         floatValue + 15.0F * this.cell,
+         drawBrushSize + 15.0F * this.cell,
          this.cell,
          this.cell,
          0.6F,
          ProxyDotRadiusData.method8069(1.0F),
-         var6.getPrimaryColor().getZenithColor().method7294(var5 * 0.9F)
+         currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.9F)
       );
    }
 
-   private float drawBrushSize(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6) {
-      Font var7 = Fonts.NEW_REGULAR.getFont(4.4F);
-      var1.drawText(
-         var7,
+   private float drawBrushSize(MenuDrawContext customDrawContext, float floatValue, float drawBrushSize, float f, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      customDrawContext.drawText(
+         font,
          Zenith.getInstance().getLocalization().translate("crosshair.editor.brushSize"),
-         var2,
-         var3,
-         var6.getTextTertiary().getZenithColor().method7294(var5)
+         floatValue,
+         drawBrushSize,
+         currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      float var8 = var2 + 52.0F;
-      float var9 = Math.max(24.0F, var4 - 52.0F - 10.0F);
-      float var10 = var3 + 2.0F;
-      this.brushSliderBounds = this.open ? new BoundsData(var8, var10 - 3.0F, var9, 8.0F) : null;
-      var1.drawRoundedRect(var8, var10, var9, 2.0F, ProxyDotRadiusData.method8069(1.0F), var6.getRightBackground().getZenithColor().method7294(var5));
-      float var11 = var9 * ((this.brushSize - 1) / 3.0F);
-      var1.drawRoundedRect(var8, var10, var11, 2.0F, ProxyDotRadiusData.method8069(1.0F), var6.getPrimaryColor().getZenithColor().method7294(var5));
-      var1.drawRoundedRect(var8 + var11 - 1.5F, var10 - 1.5F, 3.0F, 5.0F, ProxyDotRadiusData.method8069(1.5F), ZenithColor.INSTANCE.method7294(var5));
-      var1.drawText(var7, String.valueOf(this.brushSize), var8 + var9 + 5.0F, var3, var6.getTextEnable().getZenithColor().method7294(var5));
-      return var3 + 13.0F;
+      float floatValue2 = floatValue + 52.0F;
+      float width = Math.max(24.0F, f - 52.0F - 10.0F);
+      float y = drawBrushSize + 2.0F;
+      this.brushSliderBounds = this.open ? new BoundsData(floatValue2, y - 3.0F, width, 8.0F) : null;
+      customDrawContext.drawRoundedRect(floatValue2, y, width, 2.0F, ProxyDotRadiusData.method8069(1.0F), currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha));
+      float width2 = width * ((this.brushSize - 1) / 3.0F);
+      customDrawContext.drawRoundedRect(floatValue2, y, width2, 2.0F, ProxyDotRadiusData.method8069(1.0F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+      customDrawContext.drawRoundedRect(floatValue2 + width2 - 1.5F, y - 1.5F, 3.0F, 5.0F, ProxyDotRadiusData.method8069(1.5F), ZenithColor.INSTANCE.method7294(previewAlpha));
+      customDrawContext.drawText(font, String.valueOf(this.brushSize), floatValue2 + width + 5.0F, drawBrushSize, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      return drawBrushSize + 13.0F;
    }
 
-   private float drawPalette(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5) {
-      Font var6 = Fonts.NEW_REGULAR.getFont(4.4F);
-      var1.drawText(
-         var6,
+   private float drawPalette(MenuDrawContext customDrawContext, float floatValue, float drawBrushSize, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      customDrawContext.drawText(
+         font,
          Zenith.getInstance().getLocalization().translate("crosshair.editor.brushColor"),
-         var2,
-         var3,
-         var5.getTextTertiary().getZenithColor().method7294(var4)
+         floatValue,
+         drawBrushSize,
+         currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      float var7 = 10.0F;
-      float var8 = var2;
-      float var9 = var3 + 7.0F;
+      float width = 10.0F;
+      float f = floatValue;
+      float y = drawBrushSize + 7.0F;
 
-      for (int var10 = 0; var10 < PALETTE.length; var10++) {
-         float var11 = var8 + var10 * (var7 + 2.5F);
-         this.paletteBounds[var10] = this.open ? new BoundsData(var11, var9, var7, var7) : null;
-         int var12 = this.paletteColor(var10);
-         var1.drawRoundedRect(var11, var9, var7, var7, ProxyDotRadiusData.method8069(2.5F), ZenithColor.method7291(var12).method7294(var4));
-         if (var12 == this.brushColor) {
-            var1.drawRoundedBorder(
-               var11 - 1.0F, var9 - 1.0F, var7 + 2.0F, var7 + 2.0F, 0.8F, ProxyDotRadiusData.method8069(3.5F), ZenithColor.INSTANCE.method7294(var4)
+      for (int i = 0; i < PALETTE.length; i++) {
+         float floatValue2 = f + i * (width + 2.5F);
+         this.paletteBounds[i] = this.open ? new BoundsData(floatValue2, y, width, width) : null;
+         int paletteColor = this.paletteColor(i);
+         customDrawContext.drawRoundedRect(floatValue2, y, width, width, ProxyDotRadiusData.method8069(2.5F), ZenithColor.method7291(paletteColor).method7294(previewAlpha));
+         if (paletteColor == this.brushColor) {
+            customDrawContext.drawRoundedBorder(
+               floatValue2 - 1.0F, y - 1.0F, width + 2.0F, width + 2.0F, 0.8F, ProxyDotRadiusData.method8069(3.5F), ZenithColor.INSTANCE.method7294(previewAlpha)
             );
          }
       }
 
-      return var3 + 21.0F;
+      return drawBrushSize + 21.0F;
    }
 
-   private int paletteColor(int var1) {
-      return PALETTE[var1] != 0 ? PALETTE[var1] : Zenith.getInstance().getStyleManager().getClientColor(0).method7287();
+   private int paletteColor(int n) {
+      return PALETTE[n] != 0 ? PALETTE[n] : Zenith.getInstance().getStyleManager().getClientColor(0).method7287();
    }
 
-   private static int[] presetPreview(int var0) {
+   private static int[] presetPreview(int n) {
       if (presetPreviews == null) {
-         int[][] var1 = new int[CrosshairPresets.texts.length][];
+         int[][] intses = new int[CrosshairPresets.texts.length][];
 
-         for (int var2 = 0; var2 < var1.length; var2++) {
-            var1[var2] = CrosshairPresets.method5712(var2);
+         for (int i = 0; i < intses.length; i++) {
+            intses[i] = CrosshairPresets.method5712(i);
          }
 
-         presetPreviews = var1;
+         presetPreviews = intses;
       }
 
-      return presetPreviews[var0];
+      return presetPreviews[n];
    }
 
-   private void drawPresets(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5) {
-      Font var6 = Fonts.NEW_REGULAR.getFont(4.4F);
-      var1.drawText(
-         var6,
+   private void drawPresets(MenuDrawContext customDrawContext, float floatValue, float drawBrushSize, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      customDrawContext.drawText(
+         font,
          Zenith.getInstance().getLocalization().translate("crosshair.editor.presets"),
-         var2,
-         var3,
-         var5.getTextTertiary().getZenithColor().method7294(var4)
+         floatValue,
+         drawBrushSize,
+         currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      float var7 = 17.0F;
-      float var8 = var2;
-      float var9 = var3 + 7.0F;
+      float width = 17.0F;
+      float f = floatValue;
+      float y = drawBrushSize + 7.0F;
 
-      for (int var10 = 0; var10 < CrosshairPresets.texts.length; var10++) {
-         float var11 = var8 + var10 * (var7 + 2.0F);
-         this.presetBounds[var10] = this.open ? new BoundsData(var11, var9, var7, var7) : null;
-         var1.drawRoundedRect(var11, var9, var7, var7, ProxyDotRadiusData.method8069(3.0F), var5.getRightBackground().getZenithColor().method7294(var4 * 0.8F));
-         int[] var12 = presetPreview(var10);
-         float var13 = (var7 - 3.0F) / 31.0F;
-         ZenithColor var14 = var5.getTextEnable().getZenithColor().method7294(var4 * 0.9F);
-         var1.beginRectBatch();
+      for (int i = 0; i < CrosshairPresets.texts.length; i++) {
+         float floatValue2 = f + i * (width + 2.0F);
+         this.presetBounds[i] = this.open ? new BoundsData(floatValue2, y, width, width) : null;
+         customDrawContext.drawRoundedRect(floatValue2, y, width, width, ProxyDotRadiusData.method8069(3.0F), currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha * 0.8F));
+         int[] ints = presetPreview(i);
+         float f2 = (width - 3.0F) / 31.0F;
+         ZenithColor zenithColor = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha * 0.9F);
+         customDrawContext.beginRectBatch();
 
-         for (int var15 = 0; var15 < 31; var15++) {
-            for (int var16 = 0; var16 < 31; var16++) {
-               if (var12[var15 * 31 + var16] >>> 24 != 0) {
-                  var1.drawRectBatched(var11 + 1.5F + var16 * var13, var9 + 1.5F + var15 * var13, Math.max(var13, 0.6F), Math.max(var13, 0.6F), var14);
+         for (int j = 0; j < 31; j++) {
+            for (int k = 0; k < 31; k++) {
+               if (ints[j * 31 + k] >>> 24 != 0) {
+                  customDrawContext.drawRectBatched(floatValue2 + 1.5F + k * f2, y + 1.5F + j * f2, Math.max(f2, 0.6F), Math.max(f2, 0.6F), zenithColor);
                }
             }
          }
 
-         var1.flushRects();
+         customDrawContext.flushRects();
       }
    }
 
-   private void drawButtons(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6) {
-      float var7 = 4.0F;
-      float var8 = var4 - GuiStyle.PADDING * 4;
-      float var9 = (var8 - var7 * 2.0F) / 3.0F;
-      float var10 = var2 + GuiStyle.PADDING * 2;
-      this.clearBounds = this.open ? new BoundsData(var10, var3, var9, 14.0F) : null;
-      this.saveBounds = this.open ? new BoundsData(var10 + var9 + var7, var3, var9, 14.0F) : null;
-      this.cancelBounds = this.open ? new BoundsData(var10 + (var9 + var7) * 2.0F, var3, var9, 14.0F) : null;
-      this.drawButton(var1, this.clearBounds, "crosshair.editor.clear", false, var5, var6);
-      this.drawButton(var1, this.saveBounds, "crosshair.editor.save", true, var5, var6);
-      this.drawButton(var1, this.cancelBounds, "crosshair.editor.cancel", false, var5, var6);
+   private void drawButtons(MenuDrawContext customDrawContext, float floatValue, float y, float width, float previewAlpha, ZenithStyle currentStyle) {
+      float f = 4.0F;
+      float f2 = width - GuiStyle.PADDING * 4;
+      float width2 = (f2 - f * 2.0F) / 3.0F;
+      float floatValue2 = floatValue + GuiStyle.PADDING * 2;
+      this.clearBounds = this.open ? new BoundsData(floatValue2, y, width2, 14.0F) : null;
+      this.saveBounds = this.open ? new BoundsData(floatValue2 + width2 + f, y, width2, 14.0F) : null;
+      this.cancelBounds = this.open ? new BoundsData(floatValue2 + (width2 + f) * 2.0F, y, width2, 14.0F) : null;
+      this.drawButton(customDrawContext, this.clearBounds, "crosshair.editor.clear", false, previewAlpha, currentStyle);
+      this.drawButton(customDrawContext, this.saveBounds, "crosshair.editor.save", true, previewAlpha, currentStyle);
+      this.drawButton(customDrawContext, this.cancelBounds, "crosshair.editor.cancel", false, previewAlpha, currentStyle);
    }
 
-   private void drawButton(MenuDrawContext var1, BoundsData var2, String var3, boolean var4, float var5, ZenithStyle var6) {
-      if (var2 != null) {
-         ZenithColor var7 = var4
-            ? var6.getPrimaryColor().getZenithColor().method7294(var5 * 0.95F)
-            : var6.getRightBackground().getZenithColor().method7294(var5 * 0.85F);
-         var1.drawRoundedRect(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), ProxyDotRadiusData.method8069(4.0F), var7);
-         Font var8 = Fonts.NEW_MEDIUM.getFont(4.4F);
-         String var9 = Zenith.getInstance().getLocalization().translate(var3);
-         var1.drawText(
-            var8,
-            var9,
-            var2.getFloatValue() + (var2.width() - var8.width(var9)) / 2.0F,
-            var2.getFloatValue2() + (var2.height() - var8.height()) / 2.0F,
-            (var4 ? ZenithColor.INSTANCE : var6.getTextEnable().getZenithColor()).method7294(var5)
+   private void drawButton(MenuDrawContext customDrawContext, BoundsData clearBounds, String text, boolean flag, float previewAlpha, ZenithStyle currentStyle) {
+      if (clearBounds != null) {
+         ZenithColor zenithColor = flag
+            ? currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.95F)
+            : currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha * 0.85F);
+         customDrawContext.drawRoundedRect(clearBounds.getFloatValue(), clearBounds.getFloatValue2(), clearBounds.width(), clearBounds.height(), ProxyDotRadiusData.method8069(4.0F), zenithColor);
+         Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+         String str = Zenith.getInstance().getLocalization().translate(text);
+         customDrawContext.drawText(
+            font,
+            str,
+            clearBounds.getFloatValue() + (clearBounds.width() - font.width(str)) / 2.0F,
+            clearBounds.getFloatValue2() + (clearBounds.height() - font.height()) / 2.0F,
+            (flag ? ZenithColor.INSTANCE : currentStyle.getTextEnable().getZenithColor()).method7294(previewAlpha)
          );
       }
    }
 
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
       if (this.open && this.canvas != null) {
-         for (InspectorRow var7 : this.rows) {
-            if (var7.isVisible() && var7.onMouseClicked(var1, var3, var5)) {
+         for (InspectorRow row : this.rows) {
+            if (row.isVisible() && row.onMouseClicked(x, y, enum2)) {
                return true;
             }
          }
 
-         if (hit(this.closeBounds, var1, var3) || hit(this.cancelBounds, var1, var3)) {
+         if (hit(this.closeBounds, x, y) || hit(this.cancelBounds, x, y)) {
             this.cancel();
             return true;
-         } else if (hit(this.saveBounds, var1, var3)) {
+         } else if (hit(this.saveBounds, x, y)) {
             this.close();
             return true;
-         } else if (hit(this.clearBounds, var1, var3)) {
+         } else if (hit(this.clearBounds, x, y)) {
             this.canvas.clear();
             return true;
-         } else if (hit(this.brushSliderBounds, var1, var3)) {
+         } else if (hit(this.brushSliderBounds, x, y)) {
             this.draggingBrushSize = true;
-            this.updateBrushSize(var1);
+            this.updateBrushSize(x);
             return true;
          } else {
-            for (int var8 = 0; var8 < this.toolBounds.length; var8++) {
-               if (hit(this.toolBounds[var8], var1, var3)) {
-                  if (var8 == 4) {
+            for (int i = 0; i < this.toolBounds.length; i++) {
+               if (hit(this.toolBounds[i], x, y)) {
+                  if (i == 4) {
                      this.canvas.undo();
-                  } else if (var8 == 5) {
+                  } else if (i == 5) {
                      this.canvas.redo();
                   } else {
-                     this.tool = var8;
+                     this.tool = i;
                   }
 
                   return true;
                }
             }
 
-            for (int var9 = 0; var9 < this.paletteBounds.length; var9++) {
-               if (hit(this.paletteBounds[var9], var1, var3)) {
-                  this.brushColor = this.paletteColor(var9);
+            for (int i = 0; i < this.paletteBounds.length; i++) {
+               if (hit(this.paletteBounds[i], x, y)) {
+                  this.brushColor = this.paletteColor(i);
                   if (this.tool == 1) {
                      this.tool = 0;
                   }
@@ -447,23 +447,23 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
                }
             }
 
-            for (int var10 = 0; var10 < this.presetBounds.length; var10++) {
-               if (hit(this.presetBounds[var10], var1, var3)) {
+            for (int i = 0; i < this.presetBounds.length; i++) {
+               if (hit(this.presetBounds[i], x, y)) {
                   this.canvas.method140();
-                  this.canvas.method139(CrosshairPresets.method5712(var10));
+                  this.canvas.method139(CrosshairPresets.method5712(i));
                   return true;
                }
             }
 
-            if (hit(this.canvasBounds, var1, var3)) {
-               boolean var11 = var5 == Enum3.RIGHT;
+            if (hit(this.canvasBounds, x, y)) {
+               boolean erasingStroke = enum2 == Enum3.RIGHT;
                this.canvas.method140();
                this.painting = true;
-               this.erasingStroke = var11;
-               this.paintAt(var1, var3, var11);
+               this.erasingStroke = erasingStroke;
+               this.paintAt(x, y, erasingStroke);
                return true;
             } else {
-               return hit(this.panelBounds, var1, var3);
+               return hit(this.panelBounds, x, y);
             }
          }
       } else {
@@ -471,25 +471,25 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       }
    }
 
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double x, double y, Enum3 enum2) {
       this.painting = false;
       this.draggingBrushSize = false;
       if (this.open) {
-         for (InspectorRow var7 : this.rows) {
-            var7.onMouseReleased(var1, var3, var5);
+         for (InspectorRow row : this.rows) {
+            row.onMouseReleased(x, y, enum2);
          }
       }
    }
 
-   public boolean onMouseDragged(double var1, double var3) {
+   public boolean onMouseDragged(double offsetX, double offsetY) {
       if (!this.open) {
          return false;
       } else if (this.draggingBrushSize) {
          this.updateBrushSize(this.mouseX);
          return true;
       } else {
-         for (InspectorRow var6 : this.rows) {
-            if (var6.isVisible() && var6.onMouseDragged(this.mouseX, this.mouseY)) {
+         for (InspectorRow row : this.rows) {
+            if (row.isVisible() && row.onMouseDragged(this.mouseX, this.mouseY)) {
                return true;
             }
          }
@@ -498,16 +498,16 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       }
    }
 
-   public boolean onMouseScrolled(double var1, double var3, double var5, double var7) {
-      return !this.open ? false : hit(this.panelBounds, var1, var3);
+   public boolean onMouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+      return !this.open ? false : hit(this.panelBounds, mouseX, mouseY);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (!this.open) {
          return false;
       } else {
-         for (InspectorRow var4 : this.rows) {
-            if (var4.isVisible() && var4.charTyped(var1, var2)) {
+         for (InspectorRow row : this.rows) {
+            if (row.isVisible() && row.charTyped(codepoint, n)) {
                return true;
             }
          }
@@ -516,25 +516,25 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       }
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.open && this.canvas != null) {
-         for (InspectorRow var5 : this.rows) {
-            if (var5.isVisible() && var5.keyPressed(var1, var2, var3)) {
+         for (InspectorRow row : this.rows) {
+            if (row.isVisible() && row.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
-         boolean var6 = (var3 & 2) != 0;
-         if (var6 && var1 == 90 && (var3 & 1) != 0) {
+         boolean flag = (modifiers & 2) != 0;
+         if (flag && keyCode == 90 && (modifiers & 1) != 0) {
             this.canvas.redo();
             return true;
-         } else if (var6 && var1 == 90) {
+         } else if (flag && keyCode == 90) {
             this.canvas.undo();
             return true;
-         } else if (var6 && var1 == 89) {
+         } else if (flag && keyCode == 89) {
             this.canvas.redo();
             return true;
-         } else if (var1 == 256) {
+         } else if (keyCode == 256) {
             this.cancel();
             return true;
          } else {
@@ -545,42 +545,42 @@ public final class CrosshairEditorPanel implements MinecraftAccess {
       }
    }
 
-   private void updateBrushSize(double var1) {
+   private void updateBrushSize(double x) {
       if (this.brushSliderBounds != null) {
-         float var3 = (float)(var1 - this.brushSliderBounds.getFloatValue()) / this.brushSliderBounds.width();
-         this.brushSize = Mth.clamp(Math.round(1.0F + var3 * 3.0F), 1, 4);
+         float f = (float)(x - this.brushSliderBounds.getFloatValue()) / this.brushSliderBounds.width();
+         this.brushSize = Mth.clamp(Math.round(1.0F + f * 3.0F), 1, 4);
       }
    }
 
-   private void paintAt(double var1, double var3, boolean var5) {
-      if (this.canvasBounds != null && this.canvasBounds.contains(var1, var3)) {
-         int var6 = (int)((var1 - this.canvasBounds.getFloatValue()) / this.cell);
-         int var7 = (int)((var3 - this.canvasBounds.getFloatValue2()) / this.cell);
+   private void paintAt(double mouseX, double mouseY, boolean erasingStroke) {
+      if (this.canvasBounds != null && this.canvasBounds.contains(mouseX, mouseY)) {
+         int n = (int)((mouseX - this.canvasBounds.getFloatValue()) / this.cell);
+         int n2 = (int)((mouseY - this.canvasBounds.getFloatValue2()) / this.cell);
          if (this.tool == 3) {
-            int var12 = this.canvas.method136(var6, var7);
-            if (var12 >>> 24 != 0) {
-               this.brushColor = var12;
+            int brushColor = this.canvas.method136(n, n2);
+            if (brushColor >>> 24 != 0) {
+               this.brushColor = brushColor;
                this.tool = 0;
             }
 
             this.painting = false;
          } else if (this.tool == 2) {
-            this.canvas.method144(var6, var7, var5 ? 0 : this.brushColor);
+            this.canvas.method144(n, n2, erasingStroke ? 0 : this.brushColor);
             this.painting = false;
          } else {
-            int var8 = !var5 && this.tool != 1 ? this.brushColor : 0;
-            int var9 = this.brushSize - 1;
+            int brushColor = !erasingStroke && this.tool != 1 ? this.brushColor : 0;
+            int n3 = this.brushSize - 1;
 
-            for (int var10 = -var9; var10 <= var9; var10++) {
-               for (int var11 = -var9; var11 <= var9; var11++) {
-                  this.canvas.method137(var6 + var11, var7 + var10, var8);
+            for (int i = -n3; i <= n3; i++) {
+               for (int j = -n3; j <= n3; j++) {
+                  this.canvas.method137(n + j, n2 + i, brushColor);
                }
             }
          }
       }
    }
 
-   private static boolean hit(BoundsData var0, double var1, double var3) {
-      return var0 != null && var0.contains(var1, var3);
+   private static boolean hit(BoundsData panelBounds, double x, double y) {
+      return panelBounds != null && panelBounds.contains(x, y);
    }
 }

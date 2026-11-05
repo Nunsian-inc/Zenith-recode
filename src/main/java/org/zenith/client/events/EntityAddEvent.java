@@ -13,7 +13,7 @@ public class EntityAddEvent implements Event {
    }
 
    @Generated
-   public EntityAddEvent(Entity var1) {
-      this.entity = var1;
+   public EntityAddEvent(Entity entity) {
+      this.entity = entity;
    }
 }

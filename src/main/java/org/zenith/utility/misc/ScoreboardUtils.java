@@ -14,35 +14,35 @@ public final class ScoreboardUtils {
    private ScoreboardUtils() {
    }
 
-   public static long method5530(Scoreboard var0, String var1) {
-      if (var0 == null) {
+   public static long method5530(Scoreboard scoreboard, String scoreboardName) {
+      if (scoreboard == null) {
          return -1L;
       } else {
-         Objective var2 = null;
-         if (var1 != null) {
-            PlayerTeam var3 = var0.getPlayersTeam(var1);
-            if (var3 != null) {
-               DisplaySlot var4 = var3.getColor().map(net.minecraft.world.scores.TeamColor::displaySlot).orElse(null);
-               if (var4 != null) {
-                  var2 = var0.getDisplayObjective(var4);
+         Objective displayObjective = null;
+         if (scoreboardName != null) {
+            PlayerTeam playersTeam = scoreboard.getPlayersTeam(scoreboardName);
+            if (playersTeam != null) {
+               DisplaySlot slot = playersTeam.getColor().map(net.minecraft.world.scores.TeamColor::displaySlot).orElse(null);
+               if (slot != null) {
+                  displayObjective = scoreboard.getDisplayObjective(slot);
                }
             }
          }
 
-         if (var2 == null) {
-            var2 = var0.getDisplayObjective(DisplaySlot.SIDEBAR);
+         if (displayObjective == null) {
+            displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
          }
 
-         if (var2 == null) {
+         if (displayObjective == null) {
             return -1L;
          } else {
-            for (PlayerScoreEntry var10 : var0.listPlayerScores(var2)) {
-               if (!var10.isHidden()) {
-                  PlayerTeam var5 = var0.getPlayersTeam(var10.owner());
-                  String var6 = method5532(PlayerTeam.formatNameForTeam(var5, var10.ownerName()).getString());
-                  long var7 = method5531(var6);
-                  if (var7 >= 0L) {
-                     return var7;
+            for (PlayerScoreEntry listPlayerScore : scoreboard.listPlayerScores(displayObjective)) {
+               if (!listPlayerScore.isHidden()) {
+                  PlayerTeam playersTeam = scoreboard.getPlayersTeam(listPlayerScore.owner());
+                  String input = method5532(PlayerTeam.formatNameForTeam(playersTeam, listPlayerScore.ownerName()).getString());
+                  long l = method5531(input);
+                  if (l >= 0L) {
+                     return l;
                   }
                }
             }
@@ -52,44 +52,44 @@ public final class ScoreboardUtils {
       }
    }
 
-   public static long method5531(String var0) {
-      Matcher var1 = pattern.matcher(var0);
-      if (!var1.find()) {
+   public static long method5531(String input) {
+      Matcher matcher = pattern.matcher(input);
+      if (!matcher.find()) {
          return -1L;
       } else {
          try {
-            String var2 = var1.group(1).replaceAll("[\\s\\u00A0]", "").replace(',', '.');
-            String var3 = var1.group(2);
-            long var4 = var2.chars().filter(var0x -> var0x == 46).count();
-            if (var4 > 1L || var4 == 1L && var3.isEmpty() && var2.length() - var2.indexOf(46) - 1 == 3) {
-               var2 = var2.replace(".", "");
+            String str = matcher.group(1).replaceAll("[\\s\\u00A0]", "").replace(',', '.');
+            String group = matcher.group(2);
+            long count = str.chars().filter(var0x -> var0x == 46).count();
+            if (count > 1L || count == 1L && group.isEmpty() && str.length() - str.indexOf(46) - 1 == 3) {
+               str = str.replace(".", "");
             }
 
-            double var6 = Double.parseDouble(var2);
+            double d = Double.parseDouble(str);
 
-            for (int var8 = 0; var8 < var3.length(); var8++) {
-               var6 *= 1000.0;
+            for (int i = 0; i < group.length(); i++) {
+               d *= 1000.0;
             }
 
-            return Math.round(var6);
-         } catch (Exception var9) {
+            return Math.round(d);
+         } catch (Exception e) {
             return -1L;
          }
       }
    }
 
-   public static String method5532(String var0) {
-      StringBuilder var1 = new StringBuilder(var0.length());
+   public static String method5532(String string) {
+      StringBuilder builder = new StringBuilder(string.length());
 
-      for (int var2 = 0; var2 < var0.length(); var2++) {
-         char var3 = var0.charAt(var2);
-         if (var3 == 167) {
-            var2++;
+      for (int i = 0; i < string.length(); i++) {
+         char charAt = string.charAt(i);
+         if (charAt == 167) {
+            i++;
          } else {
-            var1.append(var3);
+            builder.append(charAt);
          }
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 }

@@ -16,78 +16,78 @@ public final class ImageLoader {
    private ImageLoader() {
    }
 
-   public static int[] method231(byte[] var0) throws IOException {
-      int[] var4;
-      try (ImageInputStream var1 = ImageIO.createImageInputStream(new ByteArrayInputStream(var0))) {
-         if (var1 == null) {
+   public static int[] method231(byte[] allBytes) throws IOException {
+      int[] ints;
+      try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(new ByteArrayInputStream(allBytes))) {
+         if (imageInputStream == null) {
             throw new IOException("не удалось прочитать картинку");
          }
 
-         var var2 = ImageIO.getImageReaders(var1);
-         if (!var2.hasNext()) {
+         var imageReaders = ImageIO.getImageReaders(imageInputStream);
+         if (!imageReaders.hasNext()) {
             throw new IOException("неизвестный формат картинки (png, jpg, gif, bmp)");
          }
 
-         ImageReader var3 = (ImageReader)var2.next();
+         ImageReader imageReader = (ImageReader)imageReaders.next();
 
          try {
-            var3.setInput(var1, true, true);
-            var4 = new int[]{var3.getWidth(0), var3.getHeight(0)};
+            imageReader.setInput(imageInputStream, true, true);
+            ints = new int[]{imageReader.getWidth(0), imageReader.getHeight(0)};
          } finally {
-            var3.dispose();
+            imageReader.dispose();
          }
       }
 
-      return var4;
+      return ints;
    }
 
-   public static void method232(byte[] var0) throws IOException {
-      int[] var1 = method231(var0);
-      method233(var1[0], var1[1]);
+   public static void method232(byte[] allBytes) throws IOException {
+      int[] ints = method231(allBytes);
+      method233(ints[0], ints[1]);
    }
 
-   public static void method233(int var0, int var1) throws IOException {
-      if (var0 <= 0 || var1 <= 0 || var0 > 16384 || var1 > 16384 || (long)var0 * var1 > 41943040L) {
-         throw new IOException("картинка слишком большая: " + var0 + "×" + var1 + " (до 16384 по стороне и 40 Мпикс)");
+   public static void method233(int width, int height) throws IOException {
+      if (width <= 0 || height <= 0 || width > 16384 || height > 16384 || (long)width * height > 41943040L) {
+         throw new IOException("картинка слишком большая: " + width + "×" + height + " (до 16384 по стороне и 40 Мпикс)");
       }
    }
 
-   public static BufferedImage method234(byte[] var0, int var1) throws IOException {
-      BufferedImage var10;
-      try (ImageInputStream var2 = ImageIO.createImageInputStream(new ByteArrayInputStream(var0))) {
-         if (var2 == null) {
+   public static BufferedImage method234(byte[] allBytes, int n) throws IOException {
+      BufferedImage bufferedImage;
+      try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(new ByteArrayInputStream(allBytes))) {
+         if (imageInputStream == null) {
             throw new IOException("не удалось прочитать картинку");
          }
 
-         var var3 = ImageIO.getImageReaders(var2);
-         if (!var3.hasNext()) {
+         var imageReaders = ImageIO.getImageReaders(imageInputStream);
+         if (!imageReaders.hasNext()) {
             throw new IOException("неизвестный формат картинки (png, jpg, gif, bmp)");
          }
 
-         ImageReader var4 = (ImageReader)var3.next();
+         ImageReader imageReader = (ImageReader)imageReaders.next();
 
          try {
-            var4.setInput(var2, true, true);
-            int var5 = var4.getWidth(0);
-            int var6 = var4.getHeight(0);
-            method233(var5, var6);
-            ImageReadParam var7 = var4.getDefaultReadParam();
-            int var8 = Math.max(1, (int)Math.ceil((double)Math.max(var5, var6) / var1));
-            if (var8 > 1) {
-               var7.setSourceSubsampling(var8, var8, 0, 0);
+            imageReader.setInput(imageInputStream, true, true);
+            int width = imageReader.getWidth(0);
+            int height = imageReader.getHeight(0);
+            method233(width, height);
+            ImageReadParam defaultReadParam = imageReader.getDefaultReadParam();
+            int sourceXSubsampling = Math.max(1, (int)Math.ceil((double)Math.max(width, height) / n));
+            if (sourceXSubsampling > 1) {
+               defaultReadParam.setSourceSubsampling(sourceXSubsampling, sourceXSubsampling, 0, 0);
             }
 
-            BufferedImage var9 = var4.read(0, var7);
-            if (var9 == null) {
+            BufferedImage bufferedImage2 = imageReader.read(0, defaultReadParam);
+            if (bufferedImage2 == null) {
                throw new IOException("не удалось прочитать картинку");
             }
 
-            var10 = var9;
+            bufferedImage = bufferedImage2;
          } finally {
-            var4.dispose();
+            imageReader.dispose();
          }
       }
 
-      return var10;
+      return bufferedImage;
    }
 }

@@ -20,12 +20,12 @@ public class GuiBooleanSetting extends GuiSetting<BooleanSetting> {
    private final Animation animationEnable = new Animation(200L, Easing.INSTANCE10);
    private BoundsData bounds;
 
-   public GuiBooleanSetting(BooleanSetting var1) {
-      super(166.0F, var1);
+   public GuiBooleanSetting(BooleanSetting setting) {
+      super(166.0F, setting);
    }
 
-   public GuiBooleanSetting(BooleanSetting var1, float var2) {
-      super(var2, var1);
+   public GuiBooleanSetting(BooleanSetting booleanSetting, float width) {
+      super(width, booleanSetting);
    }
 
    @Override
@@ -34,8 +34,8 @@ public class GuiBooleanSetting extends GuiSetting<BooleanSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bounds != null && this.bounds.contains(var1, var3)) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
+      if (this.bounds != null && this.bounds.contains(anchorMouseX, lastClickY)) {
          this.setting.toggle();
          Zenith.getInstance()
             .getClientSounds()
@@ -47,76 +47,76 @@ public class GuiBooleanSetting extends GuiSetting<BooleanSetting> {
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
+   public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float centeredTextY, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
          this.animationVisible.method2807(this.setting.isVisible());
-         var6 *= this.animationVisible.getValue();
-         Font var8 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         Font var9 = Fonts.NEW_REGULAR.getFont(5.4F);
-         float var10 = this.width / 1.4F - GuiStyle.PADDING.intValue();
-         ZenithColor var11 = var7.getTextEnable().getZenithColor().method7294(var6);
-         ZenithColor var12 = var7.getTextSecondary().getZenithColor().method7294(var6);
-         ZenithColor var13 = var7.getPrimaryColor().getZenithColor().method7294(var6);
-         this.drawDefault(var1, var2, var3, "t", this.setting.getName(), this.setting.getDescription(), var8, var9, var4, var5, var10, var11, var12, var13);
+         previewAlpha *= this.animationVisible.getValue();
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
+         float maxWidth = this.width / 1.4F - GuiStyle.PADDING.intValue();
+         ZenithColor zenithColor = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor2 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
+         this.drawDefault(menuDrawContext, x, y, "t", this.setting.getName(), this.setting.getDescription(), font, font2, floatValue, centeredTextY, maxWidth, zenithColor, zenithColor2, zenithColor3);
          this.animationEnable.method2807(this.setting.isEnabled());
          if (!this.isShort()) {
-            float var14 = 6.0F;
-            float var15 = 6.0F;
-            this.bounds = new BoundsData(var4 + this.width - var14, var5 + (this.getHeight() - var15) / 2.0F, var14, var15);
-            var1.drawRoundedRectBatched(
+            float width = 6.0F;
+            float height = 6.0F;
+            this.bounds = new BoundsData(floatValue + this.width - width, centeredTextY + (this.getHeight() - height) / 2.0F, width, height);
+            menuDrawContext.drawRoundedRectBatched(
                this.bounds.getFloatValue(),
                this.bounds.getFloatValue2(),
-               var14,
-               var15,
+               width,
+               height,
                ProxyDotRadiusData.method8069(1.0F),
-               var7.getFieldSurfaceBackground()
+               currentStyle.getFieldSurfaceBackground()
                   .getZenithColor()
                   .method7294(2.0F)
-                  .method7295(var7.getPrimaryColor().getZenithColor(), this.animationEnable.getValue())
-                  .method7294(var6)
+                  .method7295(currentStyle.getPrimaryColor().getZenithColor(), this.animationEnable.getValue())
+                  .method7294(previewAlpha)
             );
-            var1.flushRoundedRects();
-            var1.drawRoundedBorder(
+            menuDrawContext.flushRoundedRects();
+            menuDrawContext.drawRoundedBorder(
                this.bounds.getFloatValue(),
                this.bounds.getFloatValue2(),
-               var14,
-               var15,
+               width,
+               height,
                -0.5F,
                ProxyDotRadiusData.method8069(1.0F),
-               var7.getFieldBorder().getZenithColor().method7295(ZenithColor.INSTANCE8, this.animationEnable.getValue()).method7294(var6)
+               currentStyle.getFieldBorder().getZenithColor().method7295(ZenithColor.INSTANCE8, this.animationEnable.getValue()).method7294(previewAlpha)
             );
-            Font var16 = Fonts.NEW_ICONS.getFont(4.0F);
-            var1.drawText(
-               var16,
+            Font font3 = Fonts.NEW_ICONS.getFont(4.0F);
+            menuDrawContext.drawText(
+               font3,
                "<",
                this.bounds.getFloatValue() + 1.5F - 0.8F,
-               this.bounds.getFloatValue2() + (var15 - var16.height()) / 2.0F,
-               ZenithColor.INSTANCE8.method7295(var7.getTextEnable().getZenithColor(), this.animationEnable.getValue()).method7294(var6)
+               this.bounds.getFloatValue2() + (height - font3.height()) / 2.0F,
+               ZenithColor.INSTANCE8.method7295(currentStyle.getTextEnable().getZenithColor(), this.animationEnable.getValue()).method7294(previewAlpha)
             );
          } else {
-            float var19 = 12.0F;
-            float var20 = 7.0F;
-            float var21 = var4 + this.width - var19;
-            this.bounds = new BoundsData(var21, var5 + (this.getHeight() - var20) / 2.0F, var19, var20);
-            var1.drawRoundedRectBatched(
-               var21,
+            float width = 12.0F;
+            float height = 7.0F;
+            float f = floatValue + this.width - width;
+            this.bounds = new BoundsData(f, centeredTextY + (this.getHeight() - height) / 2.0F, width, height);
+            menuDrawContext.drawRoundedRectBatched(
+               f,
                this.bounds.getFloatValue2(),
-               var19,
-               var20,
+               width,
+               height,
                ProxyDotRadiusData.method8069(2.5F),
-               var7.getDisableActiveBg().getZenithColor().method7295(var7.getPrimaryColor().getZenithColor(), this.animationEnable.getValue()).method7294(var6)
+               currentStyle.getDisableActiveBg().getZenithColor().method7295(currentStyle.getPrimaryColor().getZenithColor(), this.animationEnable.getValue()).method7294(previewAlpha)
             );
-            float var17 = Mth.lerp(this.animationEnable.getValue(), 1.0F, var19 - 1.0F - 5.0F);
-            var1.drawRoundedRectBatched(
-               var21 + var17,
+            float f2 = Mth.lerp(this.animationEnable.getValue(), 1.0F, width - 1.0F - 5.0F);
+            menuDrawContext.drawRoundedRectBatched(
+               f + f2,
                this.bounds.getFloatValue2() + 1.0F,
                5.0F,
                5.0F,
                ProxyDotRadiusData.method8069(1.5F),
-               var7.getTextTertiary().getZenithColor().method7295(var7.getTextEnable().getZenithColor(), this.animationEnable.getValue()).method7294(var6)
+               currentStyle.getTextTertiary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), this.animationEnable.getValue()).method7294(previewAlpha)
             );
-            var1.flushRoundedRects();
+            menuDrawContext.flushRoundedRects();
          }
       }
    }

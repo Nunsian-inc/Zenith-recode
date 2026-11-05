@@ -19,9 +19,9 @@ public class MixinOptGlCommandEncoder {
       )},
       cancellable = true
    )
-   private void zenith$sharedFrameFence(CallbackInfoReturnable<GpuFence> var1) {
+   private void zenith$sharedFrameFence(CallbackInfoReturnable<GpuFence> callbackInfoReturnable) {
       if (OptimizationFlags.flag20) {
-         var1.setReturnValue(CompletionFence.method5163());
+         callbackInfoReturnable.setReturnValue(CompletionFence.method5163());
       }
    }
 }

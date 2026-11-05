@@ -43,42 +43,42 @@ public final class WebSocketClient {
    private volatile long longValue6;
    private static final long CONST_longValue5 = 30000L;
 
-   public WebSocketClient(String var1, Consumer<JsonObject> var2) {
-      this.text = var1;
-      this.consumer = var2;
+   public WebSocketClient(String text, Consumer<JsonObject> consumer) {
+      this.text = text;
+      this.consumer = consumer;
    }
 
    public boolean isLive() {
-      WebSocket var1 = this.webSocket;
-      return var1 != null && !var1.isOutputClosed() && System.currentTimeMillis() - this.longValue4 < 70000L;
+      WebSocket webSocket = this.webSocket;
+      return webSocket != null && !webSocket.isOutputClosed() && System.currentTimeMillis() - this.longValue4 < 70000L;
    }
 
    public void method491() {
       this.flag2 = true;
-      String var1 = SiteSession.method2289();
-      if (var1.isEmpty()) {
+      String text = SiteSession.method2289();
+      if (text.isEmpty()) {
          this.close();
       } else {
-         if (!var1.equals(this.text2) && this.webSocket != null) {
+         if (!text.equals(this.text2) && this.webSocket != null) {
             this.close();
          }
 
-         WebSocket var2 = this.webSocket;
-         long var3 = System.currentTimeMillis();
-         if (var2 != null && !var2.isOutputClosed()) {
-            if (var3 - this.longValue4 >= 70000L) {
+         WebSocket webSocket = this.webSocket;
+         long now = System.currentTimeMillis();
+         if (webSocket != null && !webSocket.isOutputClosed()) {
+            if (now - this.longValue4 >= 70000L) {
                this.close();
                this.method495(this.longValue);
                return;
             }
 
-            if (var3 - this.longValue5 >= 25000L) {
-               this.method496(var2, "{\"type\":\"ping\"}");
+            if (now - this.longValue5 >= 25000L) {
+               this.method496(webSocket, "{\"type\":\"ping\"}");
             }
          }
 
-         if (!this.flag3 && !this.isLive() && var3 >= this.longValue2) {
-            this.method492(var1);
+         if (!this.flag3 && !this.isLive() && now >= this.longValue2) {
+            this.method492(text);
          }
       }
    }
@@ -88,35 +88,35 @@ public final class WebSocketClient {
       this.close();
    }
 
-   private void method492(String var1) {
+   private void method492(String text) {
       this.flag3 = true;
-      this.text2 = var1;
-      long var2 = ++this.longValue;
-      HttpClient var4 = HttpClients.method2670(duration);
-      this.httpClient = var4;
-      String var6 = this.method493();
+      this.text2 = text;
+      long longValue = ++this.longValue;
+      HttpClient httpClient = HttpClients.method2670(duration);
+      this.httpClient = httpClient;
+      String host = this.method493();
 
-      CompletableFuture<java.net.http.WebSocket> var5;
+      CompletableFuture<java.net.http.WebSocket> async;
       try {
-         URI var7 = URI.create(var6.replaceFirst("^http", "ws") + this.text);
-         var5 = var4.newWebSocketBuilder().connectTimeout(duration).buildAsync(var7, new WebSocketClient.Entry(var2, var1));
-      } catch (RuntimeException var8) {
+         URI uri = URI.create(host.replaceFirst("^http", "ws") + this.text);
+         async = httpClient.newWebSocketBuilder().connectTimeout(duration).buildAsync(uri, new WebSocketClient.Entry(longValue, text));
+      } catch (RuntimeException e) {
          this.flag3 = false;
-         this.method494(var6);
-         this.method495(var2);
+         this.method494(host);
+         this.method495(longValue);
          return;
       }
 
-      var5.whenComplete((var4x, var5x) -> {
+      async.whenComplete((var4x, var5x) -> {
          this.flag3 = false;
          if (var5x != null) {
-            this.method494(var6);
-            this.method495(var2);
+            this.method494(host);
+            this.method495(longValue);
          } else {
-            this.host = var6;
+            this.host = host;
             this.intValue = 0;
             this.intValue2 = 0;
-            if (var2 != this.longValue) {
+            if (longValue != this.longValue) {
                var4x.abort();
             } else {
                this.longValue4 = System.currentTimeMillis();
@@ -128,40 +128,40 @@ public final class WebSocketClient {
    }
 
    private String method493() {
-      String var1 = this.host;
-      return var1 != null && RegionUtil.method2037().contains(var1) ? var1 : SiteHttpClient.method2409();
+      String host = this.host;
+      return host != null && RegionUtil.method2037().contains(host) ? host : SiteHttpClient.method2409();
    }
 
-   private void method494(String var1) {
+   private void method494(String host) {
       if (++this.intValue >= 2) {
          this.intValue = 0;
-         var var2 = RegionUtil.method2037();
-         int var3 = var2.indexOf(var1);
-         this.host = (String)var2.get(var3 < 0 ? 0 : (var3 + 1) % var2.size());
-         if (++this.intValue2 < var2.size()) {
+         var strings = RegionUtil.method2037();
+         int indexOf = strings.indexOf(host);
+         this.host = (String)strings.get(indexOf < 0 ? 0 : (indexOf + 1) % strings.size());
+         if (++this.intValue2 < strings.size()) {
             this.longValue3 = 2000L;
          }
       }
    }
 
-   private void method495(long var1) {
-      if (var1 == this.longValue) {
+   private void method495(long longValue) {
+      if (longValue == this.longValue) {
          this.webSocket = null;
-         long var3 = this.longValue6;
+         long l = this.longValue6;
          this.longValue6 = 0L;
-         if (var3 != 0L && System.currentTimeMillis() - var3 >= 30000L) {
+         if (l != 0L && System.currentTimeMillis() - l >= 30000L) {
             this.longValue3 = 2000L;
          }
 
-         long var5 = this.longValue3;
-         this.longValue2 = System.currentTimeMillis() + Math.round(var5 * (0.8 + ThreadLocalRandom.current().nextDouble() * 0.4));
-         this.longValue3 = Math.min(30000L, var5 * 2L);
+         long l2 = this.longValue3;
+         this.longValue2 = System.currentTimeMillis() + Math.round(l2 * (0.8 + ThreadLocalRandom.current().nextDouble() * 0.4));
+         this.longValue3 = Math.min(30000L, l2 * 2L);
       }
    }
 
    private void close() {
       this.longValue++;
-      WebSocket var1 = this.webSocket;
+      WebSocket webSocket = this.webSocket;
       this.webSocket = null;
       this.text2 = "";
       synchronized (this.stringBuilder) {
@@ -169,40 +169,40 @@ public final class WebSocketClient {
          this.flag = false;
       }
 
-      if (var1 != null) {
+      if (webSocket != null) {
          try {
-            var1.abort();
-         } catch (RuntimeException var4) {
+            webSocket.abort();
+         } catch (RuntimeException e) {
          }
       }
 
       this.httpClient = null;
    }
 
-   private void method496(WebSocket var1, String var2) {
+   private void method496(WebSocket webSocket, String string) {
       try {
          this.longValue5 = System.currentTimeMillis();
-         var1.sendText(var2, true);
-      } catch (RuntimeException var4) {
+         webSocket.sendText(string, true);
+      } catch (RuntimeException e) {
          this.method495(this.longValue);
       }
    }
 
-   private void method497(WebSocket var1, String var2) {
-      JsonObject var3;
+   private void method497(WebSocket webSocket, String string) {
+      JsonObject jsonObject;
       try {
-         var3 = JsonParser.parseString(var2).getAsJsonObject();
-      } catch (RuntimeException var7) {
+         jsonObject = JsonParser.parseString(string).getAsJsonObject();
+      } catch (RuntimeException e) {
          return;
       }
 
-      String var4 = SiteHttpClient.method2417(var3, "type", "");
-      if (var4.equals("ping")) {
-         this.method496(var1, "{\"type\":\"pong\"}");
-      } else if (!var4.equals("pong")) {
+      String str = SiteHttpClient.method2417(jsonObject, "type", "");
+      if (str.equals("ping")) {
+         this.method496(webSocket, "{\"type\":\"pong\"}");
+      } else if (!str.equals("pong")) {
          try {
-            this.consumer.accept(var3);
-         } catch (RuntimeException var6) {
+            this.consumer.accept(jsonObject);
+         } catch (RuntimeException e) {
          }
       }
    }
@@ -211,41 +211,41 @@ public final class WebSocketClient {
       private final long longValue;
       private final String text;
 
-      public Entry(long var2, String var4) {
-         this.longValue = var2;
-         this.text = var4;
+      public Entry(long longValue, String text) {
+         this.longValue = longValue;
+         this.text = text;
       }
 
       @Override
-      public void onOpen(WebSocket var1) {
+      public void onOpen(WebSocket webSocket) {
          WebSocketClient.this.longValue4 = System.currentTimeMillis();
-         JsonObject var2 = new JsonObject();
-         var2.addProperty("type", "auth");
-         var2.addProperty("token", this.text);
-         WebSocketClient.this.method496(var1, var2.toString());
-         var1.request(1L);
+         JsonObject json = new JsonObject();
+         json.addProperty("type", "auth");
+         json.addProperty("token", this.text);
+         WebSocketClient.this.method496(webSocket, json.toString());
+         webSocket.request(1L);
       }
 
       @Override
-      public CompletionStage<?> onText(WebSocket var1, CharSequence var2, boolean var3) {
+      public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
          if (this.longValue != WebSocketClient.this.longValue) {
             return null;
          } else {
             WebSocketClient.this.longValue4 = System.currentTimeMillis();
-            String var4 = null;
+            String string = null;
             synchronized (WebSocketClient.this.stringBuilder) {
-               if (!WebSocketClient.this.flag && WebSocketClient.this.stringBuilder.length() + var2.length() > 1048576) {
+               if (!WebSocketClient.this.flag && WebSocketClient.this.stringBuilder.length() + data.length() > 1048576) {
                   WebSocketClient.this.stringBuilder.setLength(0);
                   WebSocketClient.this.flag = true;
                }
 
                if (!WebSocketClient.this.flag) {
-                  WebSocketClient.this.stringBuilder.append(var2);
+                  WebSocketClient.this.stringBuilder.append(data);
                }
 
-               if (var3) {
+               if (last) {
                   if (!WebSocketClient.this.flag) {
-                     var4 = WebSocketClient.this.stringBuilder.toString();
+                     string = WebSocketClient.this.stringBuilder.toString();
                   }
 
                   WebSocketClient.this.stringBuilder.setLength(0);
@@ -253,9 +253,9 @@ public final class WebSocketClient {
                }
             }
 
-            var1.request(1L);
-            if (var4 != null) {
-               WebSocketClient.this.method497(var1, var4);
+            webSocket.request(1L);
+            if (string != null) {
+               WebSocketClient.this.method497(webSocket, string);
             }
 
             return null;
@@ -263,33 +263,33 @@ public final class WebSocketClient {
       }
 
       @Override
-      public CompletionStage<?> onPing(WebSocket var1, ByteBuffer var2) {
+      public CompletionStage<?> onPing(WebSocket webSocket, ByteBuffer message) {
          if (this.longValue == WebSocketClient.this.longValue) {
             WebSocketClient.this.longValue4 = System.currentTimeMillis();
          }
 
-         var1.request(1L);
+         webSocket.request(1L);
          return null;
       }
 
       @Override
-      public CompletionStage<?> onPong(WebSocket var1, ByteBuffer var2) {
+      public CompletionStage<?> onPong(WebSocket webSocket, ByteBuffer message) {
          if (this.longValue == WebSocketClient.this.longValue) {
             WebSocketClient.this.longValue4 = System.currentTimeMillis();
          }
 
-         var1.request(1L);
+         webSocket.request(1L);
          return null;
       }
 
       @Override
-      public CompletionStage<?> onClose(WebSocket var1, int var2, String var3) {
+      public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
          this.done();
          return null;
       }
 
       @Override
-      public void onError(WebSocket var1, Throwable var2) {
+      public void onError(WebSocket webSocket, Throwable error) {
          this.done();
       }
 

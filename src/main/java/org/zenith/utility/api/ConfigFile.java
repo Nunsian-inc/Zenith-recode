@@ -13,14 +13,14 @@ public class ConfigFile {
    private final File file;
    private boolean priority;
 
-   public ConfigFile(String var1) {
-      this.text = var1;
-      this.file = new File(Manager.file, var1 + "." + "Zenith".toLowerCase());
+   public ConfigFile(String text) {
+      this.text = text;
+      this.file = new File(Manager.file, text + "." + "Zenith".toLowerCase());
       if (!this.file.exists()) {
          try {
             this.file.createNewFile();
-         } catch (IOException var3) {
-            var3.printStackTrace();
+         } catch (IOException e) {
+            e.printStackTrace();
          }
       }
    }
@@ -31,110 +31,110 @@ public class ConfigFile {
 
    public JsonObject save() {
       try {
-         JsonObject var1 = new JsonObject();
-         JsonObject var2 = new JsonObject();
-         var2.addProperty("name", this.text);
-         var2.addProperty("priority", this.priority);
-         var1.add("ConfigData", var2);
-         var1.add("Styles", Zenith.getInstance().getStyleManager().save());
-         JsonObject var3 = new JsonObject();
-         var3.addProperty("name", org.zenith.utility.config.AvatarUtil.method7257(Zenith.getInstance().getFiguraManager().getPath()));
-         var3.addProperty("weapon", org.zenith.utility.config.AvatarUtil.method7257(Zenith.getInstance().getFiguraManager().getPath3()));
-         var1.add("FiguraData", var3);
-         var1.add("PetData", Zenith.getInstance().getPetManager().save());
-         Wardrobe var4 = Wardrobe.method2488();
-         if (var4 != null) {
-            var1.add("Wardrobe", var4.method2511());
+         JsonObject json = new JsonObject();
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("name", this.text);
+         json2.addProperty("priority", this.priority);
+         json.add("ConfigData", json2);
+         json.add("Styles", Zenith.getInstance().getStyleManager().save());
+         JsonObject json3 = new JsonObject();
+         json3.addProperty("name", org.zenith.utility.config.AvatarUtil.method7257(Zenith.getInstance().getFiguraManager().getPath()));
+         json3.addProperty("weapon", org.zenith.utility.config.AvatarUtil.method7257(Zenith.getInstance().getFiguraManager().getPath3()));
+         json.add("FiguraData", json3);
+         json.add("PetData", Zenith.getInstance().getPetManager().save());
+         Wardrobe wardrobe = Wardrobe.method2488();
+         if (wardrobe != null) {
+            json.add("Wardrobe", wardrobe.method2511());
          }
 
-         JsonObject var5 = new JsonObject();
+         JsonObject json4 = new JsonObject();
 
-         for (Module var7 : Zenith.getInstance().getModuleManager().getItems()) {
-            var5.add(var7.getId(), var7.save());
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+            json4.add(moduleValue.getId(), moduleValue.save());
          }
 
-         var1.add("Modules", var5);
-         JsonObject var9 = new JsonObject();
-         var9.addProperty("language", Zenith.getInstance().getLocalization().getLanguageName());
-         var1.add("Language", var9);
-         var1.add("BotData", HeadlessBots.saveState());
-         JsonObject var10 = new JsonObject();
-         var1.add("Interface", var10);
-         return var1;
-      } catch (Exception var8) {
-         var8.printStackTrace();
+         json.add("Modules", json4);
+         JsonObject json5 = new JsonObject();
+         json5.addProperty("language", Zenith.getInstance().getLocalization().getLanguageName());
+         json.add("Language", json5);
+         json.add("BotData", HeadlessBots.saveState());
+         JsonObject json6 = new JsonObject();
+         json.add("Interface", json6);
+         return json;
+      } catch (Exception e) {
+         e.printStackTrace();
          return null;
       }
    }
 
-   public void load(JsonObject var1) {
-      if (var1.has("ConfigData")) {
-         JsonObject var2 = var1.getAsJsonObject("ConfigData");
-         if (var2.has("priority")) {
-            this.priority = var2.get("priority").getAsBoolean();
+   public void load(JsonObject json) {
+      if (json.has("ConfigData")) {
+         JsonObject jsonObject = json.getAsJsonObject("ConfigData");
+         if (jsonObject.has("priority")) {
+            this.priority = jsonObject.get("priority").getAsBoolean();
          }
       }
 
-      loadState(var1);
+      loadState(json);
    }
 
-   public static void loadState(JsonObject var0) {
-      method7594(var0);
-      if (var0.has("Styles")) {
-         Zenith.getInstance().getStyleManager().load(var0.getAsJsonObject("Styles"));
+   public static void loadState(JsonObject json) {
+      method7594(json);
+      if (json.has("Styles")) {
+         Zenith.getInstance().getStyleManager().load(json.getAsJsonObject("Styles"));
       }
 
-      if (var0.has("FiguraData")) {
-         JsonObject var1 = var0.getAsJsonObject("FiguraData");
-         if (var1.has("name")) {
-            Zenith.getInstance().getFiguraManager().method7672(org.zenith.utility.config.AvatarUtil.method7258(var1.get("name").getAsString()));
+      if (json.has("FiguraData")) {
+         JsonObject jsonObject = json.getAsJsonObject("FiguraData");
+         if (jsonObject.has("name")) {
+            Zenith.getInstance().getFiguraManager().method7672(org.zenith.utility.config.AvatarUtil.method7258(jsonObject.get("name").getAsString()));
          }
 
-         if (var1.has("weapon")) {
-            Zenith.getInstance().getFiguraManager().method7673(org.zenith.utility.config.AvatarUtil.method7258(var1.get("weapon").getAsString()));
-         }
-      }
-
-      if (var0.has("Wardrobe") && var0.get("Wardrobe").isJsonObject() && Wardrobe.method2488() != null) {
-         Wardrobe.method2488().method2512(var0.getAsJsonObject("Wardrobe"));
-      }
-
-      if (var0.has("PetData")) {
-         JsonObject var6 = var0.getAsJsonObject("PetData");
-         Zenith.getInstance().getPetManager().load(var6);
-      }
-
-      if (var0.has("Language")) {
-         JsonObject var7 = var0.getAsJsonObject("Language");
-         if (var7.has("language")) {
-            Zenith.getInstance().getLocalization().method1728(var7.get("language").getAsString());
+         if (jsonObject.has("weapon")) {
+            Zenith.getInstance().getFiguraManager().method7673(org.zenith.utility.config.AvatarUtil.method7258(jsonObject.get("weapon").getAsString()));
          }
       }
 
-      if (var0.has("Modules")) {
-         JsonObject var8 = var0.getAsJsonObject("Modules");
+      if (json.has("Wardrobe") && json.get("Wardrobe").isJsonObject() && Wardrobe.method2488() != null) {
+         Wardrobe.method2488().method2512(json.getAsJsonObject("Wardrobe"));
+      }
 
-         for (Module var3 : Zenith.getInstance().getModuleManager().getItems()) {
+      if (json.has("PetData")) {
+         JsonObject jsonObject = json.getAsJsonObject("PetData");
+         Zenith.getInstance().getPetManager().load(jsonObject);
+      }
+
+      if (json.has("Language")) {
+         JsonObject jsonObject = json.getAsJsonObject("Language");
+         if (jsonObject.has("language")) {
+            Zenith.getInstance().getLocalization().method1728(jsonObject.get("language").getAsString());
+         }
+      }
+
+      if (json.has("Modules")) {
+         JsonObject jsonObject = json.getAsJsonObject("Modules");
+
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
             try {
-               JsonObject var4 = var8.getAsJsonObject(var3.getId());
-               if (var4 == null && var3.getId().startsWith("zenith:")) {
-                  var4 = var8.getAsJsonObject(var3.getName());
+               JsonObject jsonObject2 = jsonObject.getAsJsonObject(moduleValue.getId());
+               if (jsonObject2 == null && moduleValue.getId().startsWith("zenith:")) {
+                  jsonObject2 = jsonObject.getAsJsonObject(moduleValue.getName());
                }
 
-               var3.load(var4);
-            } catch (Exception var5) {
-               var5.printStackTrace();
+               moduleValue.load(jsonObject2);
+            } catch (Exception e) {
+               e.printStackTrace();
             }
          }
       }
    }
 
-   private static void method7594(JsonObject var0) {
+   private static void method7594(JsonObject json) {
       try {
-         if (var0.has("BotData") && var0.get("BotData").isJsonObject()) {
-            HeadlessBots.loadState(var0.getAsJsonObject("BotData"));
+         if (json.has("BotData") && json.get("BotData").isJsonObject()) {
+            HeadlessBots.loadState(json.getAsJsonObject("BotData"));
          }
-      } catch (Exception var2) {
+      } catch (Exception e) {
       }
    }
 

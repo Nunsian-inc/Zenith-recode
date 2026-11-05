@@ -19,12 +19,12 @@ public class NeuroArgumentType implements ArgumentType<String> {
       return new NeuroArgumentType();
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      return var1.readString();
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      return stringReader.readString();
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(NeuroCommand.neuroNames(), var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(NeuroCommand.neuroNames(), builder);
    }
 
    public Collection<String> getExamples() {

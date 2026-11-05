@@ -41,56 +41,56 @@ public final class ViewModelModule extends Module {
       new SliderSetting("module.viewModel.leftArmSize", 1.0F, 0.5F, 1.5F, 0.05F, "module.viewModel.leftArmSize.desc", "x")
    );
    public final ButtonSetting reset = new ButtonSetting("module.viewModel.reset", "W", () -> {
-      SliderSetting var1 = this.leftArmSize.method2786(0);
-      SliderSetting var2 = this.leftArmSize.method2786(1);
-      SliderSetting var3 = this.rightArmZ.method2786(0);
-      SliderSetting var4 = this.rightArmZ.method2786(1);
-      SliderSetting var5 = this.rightArmZ.method2786(2);
-      SliderSetting var6 = this.leftArmZ.method2786(0);
-      SliderSetting var7 = this.leftArmZ.method2786(1);
-      SliderSetting var8 = this.leftArmZ.method2786(2);
-      var1.method2400(1.0F);
-      var2.method2400(1.0F);
-      var3.method2400(0.0F);
-      var4.method2400(0.0F);
-      var5.method2400(0.0F);
-      var6.method2400(0.0F);
-      var7.method2400(0.0F);
-      var8.method2400(0.0F);
+      SliderSetting sliderSetting = this.leftArmSize.method2786(0);
+      SliderSetting sliderSetting2 = this.leftArmSize.method2786(1);
+      SliderSetting sliderSetting3 = this.rightArmZ.method2786(0);
+      SliderSetting sliderSetting4 = this.rightArmZ.method2786(1);
+      SliderSetting sliderSetting5 = this.rightArmZ.method2786(2);
+      SliderSetting sliderSetting6 = this.leftArmZ.method2786(0);
+      SliderSetting sliderSetting7 = this.leftArmZ.method2786(1);
+      SliderSetting sliderSetting8 = this.leftArmZ.method2786(2);
+      sliderSetting.method2400(1.0F);
+      sliderSetting2.method2400(1.0F);
+      sliderSetting3.method2400(0.0F);
+      sliderSetting4.method2400(0.0F);
+      sliderSetting5.method2400(0.0F);
+      sliderSetting6.method2400(0.0F);
+      sliderSetting7.method2400(0.0F);
+      sliderSetting8.method2400(0.0F);
    });
 
    private ViewModelModule() {
    }
 
-   public void method235(PoseStack var1, HumanoidArm var2) {
+   public void method235(PoseStack poseStack, HumanoidArm mainArm) {
       if (this.isEnabled()) {
-         if (var2 == HumanoidArm.RIGHT) {
-            SliderSetting var3 = this.leftArmSize.method2786(0);
-            var1.scale(var3.getValue3(), var3.getValue3(), var3.getValue3());
+         if (mainArm == HumanoidArm.RIGHT) {
+            SliderSetting sliderSetting = this.leftArmSize.method2786(0);
+            poseStack.scale(sliderSetting.getValue3(), sliderSetting.getValue3(), sliderSetting.getValue3());
          } else {
-            SliderSetting var4 = this.leftArmSize.method2786(1);
-            var1.scale(var4.getValue3(), var4.getValue3(), var4.getValue3());
+            SliderSetting sliderSetting = this.leftArmSize.method2786(1);
+            poseStack.scale(sliderSetting.getValue3(), sliderSetting.getValue3(), sliderSetting.getValue3());
          }
       } else {
-         var1.scale(1.0F, 1.0F, 1.0F);
+         poseStack.scale(1.0F, 1.0F, 1.0F);
       }
    }
 
-   public void method236(PoseStack var1, HumanoidArm var2) {
+   public void method236(PoseStack poseStack, HumanoidArm mainArm) {
       if (this.isEnabled()) {
-         if (var2 == HumanoidArm.RIGHT) {
-            SliderSetting var3 = this.rightArmZ.method2786(0);
-            SliderSetting var4 = this.rightArmZ.method2786(1);
-            SliderSetting var5 = this.rightArmZ.method2786(2);
-            var1.translate(var3.getValue3(), var4.getValue3(), var5.getValue3());
+         if (mainArm == HumanoidArm.RIGHT) {
+            SliderSetting sliderSetting = this.rightArmZ.method2786(0);
+            SliderSetting sliderSetting2 = this.rightArmZ.method2786(1);
+            SliderSetting sliderSetting3 = this.rightArmZ.method2786(2);
+            poseStack.translate(sliderSetting.getValue3(), sliderSetting2.getValue3(), sliderSetting3.getValue3());
          } else {
-            SliderSetting var6 = this.leftArmZ.method2786(0);
-            SliderSetting var7 = this.leftArmZ.method2786(1);
-            SliderSetting var8 = this.leftArmZ.method2786(2);
-            var1.translate(-var6.getValue3(), var7.getValue3(), var8.getValue3());
+            SliderSetting sliderSetting = this.leftArmZ.method2786(0);
+            SliderSetting sliderSetting2 = this.leftArmZ.method2786(1);
+            SliderSetting sliderSetting3 = this.leftArmZ.method2786(2);
+            poseStack.translate(-sliderSetting.getValue3(), sliderSetting2.getValue3(), sliderSetting3.getValue3());
          }
       } else {
-         var1.translate(0.0F, 0.0F, 0.0F);
+         poseStack.translate(0.0F, 0.0F, 0.0F);
       }
    }
 }

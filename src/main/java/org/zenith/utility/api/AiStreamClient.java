@@ -40,404 +40,404 @@ public final class AiStreamClient {
    }
 
    public static String method4739(
-      ShownProvider var0, String var1, String var2, String var3, String var4, List<AiStreamClient.Data> var5, Consumer<String> var6, BooleanSupplier var7
+      ShownProvider shownProvider, String str, String string, String str2, String str3, List<AiStreamClient.Data> datas, Consumer<String> consumer, BooleanSupplier booleanSupplier
    ) throws IOException, InterruptedException {
-      HttpRequest var8 = switch (var0.getType()) {
-         case ANTHROPIC -> method4744(var1, var2, var3, var4, var5);
-         case GEMINI -> method4746(var1, var2, var3, var4, var5);
-         case OPENAI -> method4745(var0, var1, var2, var3, var4, var5);
+      HttpRequest httpRequest = switch (shownProvider.getType()) {
+         case ANTHROPIC -> method4744(str, string, str2, str3, datas);
+         case GEMINI -> method4746(str, string, str2, str3, datas);
+         case OPENAI -> method4745(shownProvider, str, string, str2, str3, datas);
       };
-      HttpResponse var9 = method4740(httpClient.sendAsync(var8, BodyHandlers.ofInputStream()), var7);
-      StringBuilder var10 = new StringBuilder();
-      if (var9 == null) {
-         return var10.toString();
+      HttpResponse httpResponse = method4740(httpClient.sendAsync(httpRequest, BodyHandlers.ofInputStream()), booleanSupplier);
+      StringBuilder builder = new StringBuilder();
+      if (httpResponse == null) {
+         return builder.toString();
       } else {
-         AtomicBoolean var11 = new AtomicBoolean();
+         AtomicBoolean flag = new AtomicBoolean();
 
          try (
-            InputStream var12 = (InputStream)var9.body();
-            BufferedReader var13 = new BufferedReader(new InputStreamReader(var12, StandardCharsets.UTF_8));
+            InputStream body = (InputStream)httpResponse.body();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(body, StandardCharsets.UTF_8));
          ) {
-            method4742(var12, var7, var11);
-            if (var9.statusCode() / 100 != 2) {
-               StringBuilder var41 = new StringBuilder();
+            method4742(body, booleanSupplier, flag);
+            if (httpResponse.statusCode() / 100 != 2) {
+               StringBuilder builder2 = new StringBuilder();
 
-               String var42;
-               while ((var42 = method4743(var13, var7)) != null && var41.length() < 8000) {
-                  var41.append(var42).append('\n');
+               String str4;
+               while ((str4 = method4743(bufferedReader, booleanSupplier)) != null && builder2.length() < 8000) {
+                  builder2.append(str4).append('\n');
                }
 
-               throw new AiStreamClient.Entry(method4747(var9.statusCode(), var41.toString()));
+               throw new AiStreamClient.Entry(method4747(httpResponse.statusCode(), builder2.toString()));
             }
 
-            String var15 = "";
+            String str4 = "";
 
-            String var14;
-            while ((var14 = method4743(var13, var7)) != null && !var7.getAsBoolean()) {
-               if (var14.startsWith("data:")) {
-                  String var16 = var14.substring(5).trim();
-                  if (!var16.isEmpty() && !var16.equals("[DONE]")) {
-                     JsonObject var17;
+            String str5;
+            while ((str5 = method4743(bufferedReader, booleanSupplier)) != null && !booleanSupplier.getAsBoolean()) {
+               if (str5.startsWith("data:")) {
+                  String json = str5.substring(5).trim();
+                  if (!json.isEmpty() && !json.equals("[DONE]")) {
+                     JsonObject jsonObject;
                      try {
-                        var17 = JsonParser.parseString(var16).getAsJsonObject();
-                     } catch (RuntimeException var37) {
+                        jsonObject = JsonParser.parseString(json).getAsJsonObject();
+                     } catch (RuntimeException e) {
                         continue;
                      }
 
-                     String var47_1 = switch (var0.getType()) {
+                     String var47_1 = switch (shownProvider.getType()) {
                         case ANTHROPIC -> {
-                           String var44 = method4749(var17, "type");
-                           if (var44.equals("error")) {
-                              throw new AiStreamClient.Entry(method4748(var17));
+                           String str6 = method4749(jsonObject, "type");
+                           if (str6.equals("error")) {
+                              throw new AiStreamClient.Entry(method4748(jsonObject));
                            }
 
-                           if (var44.equals("message_delta") && var17.has("delta")) {
-                              var15 = method4749(var17.getAsJsonObject("delta"), "stop_reason");
+                           if (str6.equals("message_delta") && jsonObject.has("delta")) {
+                              str4 = method4749(jsonObject.getAsJsonObject("delta"), "stop_reason");
                            }
 
-                           if (var44.equals("content_block_delta") && var17.has("delta")) {
-                              JsonObject var46 = var17.getAsJsonObject("delta");
-                              yield method4749(var46, "type").equals("text_delta") ? method4749(var46, "text") : "";
+                           if (str6.equals("content_block_delta") && jsonObject.has("delta")) {
+                              JsonObject jsonObject2 = jsonObject.getAsJsonObject("delta");
+                              yield method4749(jsonObject2, "type").equals("text_delta") ? method4749(jsonObject2, "text") : "";
                            } else {
                               yield "";
                            }
                         }
                         case GEMINI -> {
-                           if (var17.has("error")) {
-                              throw new AiStreamClient.Entry(method4748(var17));
+                           if (jsonObject.has("error")) {
+                              throw new AiStreamClient.Entry(method4748(jsonObject));
                            }
 
-                           StringBuilder var43 = new StringBuilder();
+                           StringBuilder builder2 = new StringBuilder();
 
-                           for (JsonElement var22 : var17.has("candidates") ? var17.getAsJsonArray("candidates") : new JsonArray()) {
-                              JsonObject var23 = var22.getAsJsonObject();
-                              if (var23.has("content")) {
-                                 JsonObject var24 = var23.getAsJsonObject("content");
-                                 if (var24.has("parts")) {
-                                    for (JsonElement var26 : var24.getAsJsonArray("parts")) {
-                                       JsonObject var27 = var26.getAsJsonObject();
-                                       if (!var27.has("thought") || !var27.get("thought").getAsBoolean()) {
-                                          var43.append(method4749(var27, "text"));
+                           for (JsonElement jsonElement : jsonObject.has("candidates") ? jsonObject.getAsJsonArray("candidates") : new JsonArray()) {
+                              JsonObject jsonObject2 = jsonElement.getAsJsonObject();
+                              if (jsonObject2.has("content")) {
+                                 JsonObject jsonObject3 = jsonObject2.getAsJsonObject("content");
+                                 if (jsonObject3.has("parts")) {
+                                    for (JsonElement json2 : jsonObject3.getAsJsonArray("parts")) {
+                                       JsonObject jsonObject4 = json2.getAsJsonObject();
+                                       if (!jsonObject4.has("thought") || !jsonObject4.get("thought").getAsBoolean()) {
+                                          builder2.append(method4749(jsonObject4, "text"));
                                        }
                                     }
                                  }
                               }
                            }
 
-                           yield var43.toString();
+                           yield builder2.toString();
                         }
                         case OPENAI -> {
-                           if (var17.has("error")) {
-                              throw new AiStreamClient.Entry(method4748(var17));
+                           if (jsonObject.has("error")) {
+                              throw new AiStreamClient.Entry(method4748(jsonObject));
                            }
 
-                           JsonArray var19 = var17.has("choices") ? var17.getAsJsonArray("choices") : new JsonArray();
-                           if (var19.isEmpty()) {
+                           JsonArray jsonArray = jsonObject.has("choices") ? jsonObject.getAsJsonArray("choices") : new JsonArray();
+                           if (jsonArray.isEmpty()) {
                               yield "";
                            } else {
-                              JsonObject var20 = var19.get(0).getAsJsonObject();
-                              yield var20.has("delta") && var20.get("delta").isJsonObject() ? method4749(var20.getAsJsonObject("delta"), "content") : "";
+                              JsonObject jsonObject2 = jsonArray.get(0).getAsJsonObject();
+                              yield jsonObject2.has("delta") && jsonObject2.get("delta").isJsonObject() ? method4749(jsonObject2.getAsJsonObject("delta"), "content") : "";
                            }
                         }
                      };
 
-                     String var18 = var47_1;
-                     if (!var18.isEmpty()) {
-                        var10.append((String)var18);
-                        var6.accept(var18);
+                     String str6 = var47_1;
+                     if (!str6.isEmpty()) {
+                        builder.append((String)str6);
+                        consumer.accept(str6);
                      }
                   }
                }
             }
 
-            if (var15.equals("refusal")) {
+            if (str4.equals("refusal")) {
                throw new AiStreamClient.Entry("модель отказалась отвечать на этот запрос");
             }
          } finally {
-            var11.set(true);
+            flag.set(true);
          }
 
-         return var10.toString();
+         return builder.toString();
       }
    }
 
-   private static HttpResponse<InputStream> method4740(CompletableFuture<HttpResponse<InputStream>> var0, BooleanSupplier var1) throws IOException, InterruptedException {
-      while (!var1.getAsBoolean()) {
+   private static HttpResponse<InputStream> method4740(CompletableFuture<HttpResponse<InputStream>> sendAsync, BooleanSupplier booleanSupplier) throws IOException, InterruptedException {
+      while (!booleanSupplier.getAsBoolean()) {
          try {
-            return (HttpResponse<InputStream>)var0.get(100L, TimeUnit.MILLISECONDS);
-         } catch (TimeoutException var5) {
-         } catch (ExecutionException var6) {
-            Throwable var3 = var6.getCause();
+            return (HttpResponse<InputStream>)sendAsync.get(100L, TimeUnit.MILLISECONDS);
+         } catch (TimeoutException e) {
+         } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
 
-            while (var3 instanceof CompletionException && var3.getCause() != null) {
-               var3 = var3.getCause();
+            while (cause instanceof CompletionException && cause.getCause() != null) {
+               cause = cause.getCause();
             }
 
-            if (var3 instanceof IOException var8) {
-               throw var8;
+            if (cause instanceof IOException ioException) {
+               throw ioException;
             }
 
-            if (var3 instanceof RuntimeException var7) {
-               throw var7;
+            if (cause instanceof RuntimeException runtimeException) {
+               throw runtimeException;
             }
 
-            if (var3 instanceof Error var4) {
-               throw var4;
+            if (cause instanceof Error error) {
+               throw error;
             }
 
-            throw new IOException(var3 == null ? var6.getMessage() : var3.getMessage(), var3);
+            throw new IOException(cause == null ? e.getMessage() : cause.getMessage(), cause);
          }
       }
 
-      var0.cancel(true);
-      var0.thenAccept(AiStreamClient::method4741);
+      sendAsync.cancel(true);
+      sendAsync.thenAccept(AiStreamClient::method4741);
       return null;
    }
 
-   private static void method4741(HttpResponse<InputStream> var0) {
+   private static void method4741(HttpResponse<InputStream> httpResponse) {
       try {
-         var0.body().close();
-      } catch (IOException var2) {
+         httpResponse.body().close();
+      } catch (IOException e) {
       }
    }
 
-   private static void method4742(InputStream var0, BooleanSupplier var1, AtomicBoolean var2) {
+   private static void method4742(InputStream body, BooleanSupplier booleanSupplier, AtomicBoolean flag) {
       Thread.ofVirtual().name("zenith-ai-cancel").start(() -> {
          try {
-            while (!var2.get()) {
-               if (var1.getAsBoolean()) {
-                  var0.close();
+            while (!flag.get()) {
+               if (booleanSupplier.getAsBoolean()) {
+                  body.close();
                   return;
                }
 
                Thread.sleep(100L);
             }
-         } catch (InterruptedException | IOException var4) {
+         } catch (InterruptedException | IOException e) {
          }
       });
    }
 
-   private static String method4743(BufferedReader var0, BooleanSupplier var1) throws IOException {
+   private static String method4743(BufferedReader bufferedReader, BooleanSupplier booleanSupplier) throws IOException {
       try {
-         return var0.readLine();
-      } catch (IOException var3) {
-         if (var1.getAsBoolean()) {
+         return bufferedReader.readLine();
+      } catch (IOException e) {
+         if (booleanSupplier.getAsBoolean()) {
             return null;
          } else {
-            throw var3;
+            throw e;
          }
       }
    }
 
-   private static HttpRequest method4744(String var0, String var1, String var2, String var3, List<AiStreamClient.Data> var4) {
-      JsonObject var5 = new JsonObject();
-      var5.addProperty("model", var1);
-      var5.addProperty("max_tokens", 32000);
-      var5.addProperty("stream", true);
-      var5.addProperty("system", var3);
-      JsonArray var6 = new JsonArray();
+   private static HttpRequest method4744(String str, String string, String str2, String str3, List<AiStreamClient.Data> datas) {
+      JsonObject json = new JsonObject();
+      json.addProperty("model", string);
+      json.addProperty("max_tokens", 32000);
+      json.addProperty("stream", true);
+      json.addProperty("system", str3);
+      JsonArray jsonArray = new JsonArray();
 
-      for (AiStreamClient.Data var8 : var4) {
-         JsonObject var9 = new JsonObject();
-         var9.addProperty("role", var8.isFlag() ? "user" : "assistant");
-         if (var8.getItems().isEmpty()) {
-            var9.addProperty("content", var8.text());
+      for (AiStreamClient.Data data : datas) {
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("role", data.isFlag() ? "user" : "assistant");
+         if (data.getItems().isEmpty()) {
+            json2.addProperty("content", data.text());
          } else {
-            JsonArray var10 = new JsonArray();
+            JsonArray jsonArray2 = new JsonArray();
 
-            for (AiStreamClient.Data2 var12 : var8.getItems()) {
-               JsonObject var13 = new JsonObject();
-               var13.addProperty("type", "base64");
-               var13.addProperty("media_type", var12.getText());
-               var13.addProperty("data", var12.getText2());
-               JsonObject var14 = new JsonObject();
-               var14.addProperty("type", "image");
-               var14.add("source", var13);
-               var10.add(var14);
+            for (AiStreamClient.Data2 data2 : data.getItems()) {
+               JsonObject json3 = new JsonObject();
+               json3.addProperty("type", "base64");
+               json3.addProperty("media_type", data2.getText());
+               json3.addProperty("data", data2.getText2());
+               JsonObject json4 = new JsonObject();
+               json4.addProperty("type", "image");
+               json4.add("source", json3);
+               jsonArray2.add(json4);
             }
 
-            JsonObject var16 = new JsonObject();
-            var16.addProperty("type", "text");
-            var16.addProperty("text", var8.text().isBlank() ? "(картинка)" : var8.text());
-            var10.add(var16);
-            var9.add("content", var10);
+            JsonObject json3 = new JsonObject();
+            json3.addProperty("type", "text");
+            json3.addProperty("text", data.text().isBlank() ? "(картинка)" : data.text());
+            jsonArray2.add(json3);
+            json2.add("content", jsonArray2);
          }
 
-         var6.add(var9);
+         jsonArray.add(json2);
       }
 
-      var5.add("messages", var6);
-      Builder var15 = HttpRequest.newBuilder(URI.create(var2))
+      json.add("messages", jsonArray);
+      Builder header = HttpRequest.newBuilder(URI.create(str2))
          .timeout(Duration.ofMinutes(10L))
          .header("content-type", "application/json")
          .header("anthropic-version", "2023-06-01")
-         .header("x-api-key", var0);
-      if (items.contains(var1)) {
-         var5.addProperty("fallbacks", "default");
-         var15.header("anthropic-beta", "server-side-fallback-2026-07-01");
+         .header("x-api-key", str);
+      if (items.contains(string)) {
+         json.addProperty("fallbacks", "default");
+         header.header("anthropic-beta", "server-side-fallback-2026-07-01");
       }
 
-      return var15.POST(BodyPublishers.ofString(var5.toString(), StandardCharsets.UTF_8)).build();
+      return header.POST(BodyPublishers.ofString(json.toString(), StandardCharsets.UTF_8)).build();
    }
 
-   private static HttpRequest method4745(ShownProvider var0, String var1, String var2, String var3, String var4, List<AiStreamClient.Data> var5) {
-      JsonObject var6 = new JsonObject();
-      var6.addProperty("model", AiSettingsStore.clean(var2));
-      var6.addProperty("stream", true);
-      JsonArray var7 = new JsonArray();
-      JsonObject var8 = new JsonObject();
-      var8.addProperty("role", "system");
-      var8.addProperty("content", var4);
-      var7.add(var8);
+   private static HttpRequest method4745(ShownProvider shownProvider, String str, String string, String string2, String str2, List<AiStreamClient.Data> datas) {
+      JsonObject json = new JsonObject();
+      json.addProperty("model", AiSettingsStore.clean(string));
+      json.addProperty("stream", true);
+      JsonArray jsonArray = new JsonArray();
+      JsonObject json2 = new JsonObject();
+      json2.addProperty("role", "system");
+      json2.addProperty("content", str2);
+      jsonArray.add(json2);
 
-      for (AiStreamClient.Data var10 : var5) {
-         JsonObject var11 = new JsonObject();
-         var11.addProperty("role", var10.isFlag() ? "user" : "assistant");
-         if (var10.getItems().isEmpty()) {
-            var11.addProperty("content", var10.text());
+      for (AiStreamClient.Data data : datas) {
+         JsonObject json3 = new JsonObject();
+         json3.addProperty("role", data.isFlag() ? "user" : "assistant");
+         if (data.getItems().isEmpty()) {
+            json3.addProperty("content", data.text());
          } else {
-            JsonArray var12 = new JsonArray();
-            JsonObject var13 = new JsonObject();
-            var13.addProperty("type", "text");
-            var13.addProperty("text", var10.text().isBlank() ? "(картинка)" : var10.text());
-            var12.add(var13);
+            JsonArray jsonArray2 = new JsonArray();
+            JsonObject json4 = new JsonObject();
+            json4.addProperty("type", "text");
+            json4.addProperty("text", data.text().isBlank() ? "(картинка)" : data.text());
+            jsonArray2.add(json4);
 
-            for (AiStreamClient.Data2 var15 : var10.getItems()) {
-               JsonObject var16 = new JsonObject();
-               var16.addProperty("url", "data:" + var15.getText() + ";base64," + var15.getText2());
-               JsonObject var17 = new JsonObject();
-               var17.addProperty("type", "image_url");
-               var17.add("image_url", var16);
-               var12.add(var17);
+            for (AiStreamClient.Data2 data2 : data.getItems()) {
+               JsonObject json5 = new JsonObject();
+               json5.addProperty("url", "data:" + data2.getText() + ";base64," + data2.getText2());
+               JsonObject json6 = new JsonObject();
+               json6.addProperty("type", "image_url");
+               json6.add("image_url", json5);
+               jsonArray2.add(json6);
             }
 
-            var11.add("content", var12);
+            json3.add("content", jsonArray2);
          }
 
-         var7.add(var11);
+         jsonArray.add(json3);
       }
 
-      var6.add("messages", var7);
-      String var18 = AiSettingsStore.clean(var3);
+      json.add("messages", jsonArray);
+      String clean = AiSettingsStore.clean(string2);
 
-      while (var18.endsWith("/")) {
-         var18 = var18.substring(0, var18.length() - 1);
+      while (clean.endsWith("/")) {
+         clean = clean.substring(0, clean.length() - 1);
       }
 
-      if (!var18.endsWith("/chat/completions")) {
-         var18 = var18 + "/chat/completions";
+      if (!clean.endsWith("/chat/completions")) {
+         clean = clean + "/chat/completions";
       }
 
-      Builder var19 = HttpRequest.newBuilder(URI.create(var18)).timeout(Duration.ofMinutes(10L)).header("Content-Type", "application/json");
-      if (var1 != null && !var1.isBlank()) {
-         var19.header("Authorization", "Bearer " + var1);
+      Builder header = HttpRequest.newBuilder(URI.create(clean)).timeout(Duration.ofMinutes(10L)).header("Content-Type", "application/json");
+      if (str != null && !str.isBlank()) {
+         header.header("Authorization", "Bearer " + str);
       }
 
-      if (var0 == ShownProvider.INSTANCE6) {
-         var19.header("HTTP-Referer", "https://zenithdlc.com").header("X-Title", "Zenith Client");
+      if (shownProvider == ShownProvider.INSTANCE6) {
+         header.header("HTTP-Referer", "https://zenithdlc.com").header("X-Title", "Zenith Client");
       }
 
-      return var19.POST(BodyPublishers.ofString(var6.toString(), StandardCharsets.UTF_8)).build();
+      return header.POST(BodyPublishers.ofString(json.toString(), StandardCharsets.UTF_8)).build();
    }
 
-   private static HttpRequest method4746(String var0, String var1, String var2, String var3, List<AiStreamClient.Data> var4) {
-      JsonObject var5 = new JsonObject();
-      JsonObject var6 = new JsonObject();
-      JsonArray var7 = new JsonArray();
-      JsonObject var8 = new JsonObject();
-      var8.addProperty("text", var3);
-      var7.add(var8);
-      var6.add("parts", var7);
-      var5.add("systemInstruction", var6);
-      JsonArray var9 = new JsonArray();
+   private static HttpRequest method4746(String str, String string, String str2, String str3, List<AiStreamClient.Data> datas) {
+      JsonObject json = new JsonObject();
+      JsonObject json2 = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
+      JsonObject json3 = new JsonObject();
+      json3.addProperty("text", str3);
+      jsonArray.add(json3);
+      json2.add("parts", jsonArray);
+      json.add("systemInstruction", json2);
+      JsonArray jsonArray2 = new JsonArray();
 
-      for (AiStreamClient.Data var11 : var4) {
-         JsonObject var12 = new JsonObject();
-         var12.addProperty("role", var11.isFlag() ? "user" : "model");
-         JsonArray var13 = new JsonArray();
+      for (AiStreamClient.Data data : datas) {
+         JsonObject json4 = new JsonObject();
+         json4.addProperty("role", data.isFlag() ? "user" : "model");
+         JsonArray jsonArray3 = new JsonArray();
 
-         for (AiStreamClient.Data2 var15 : var11.getItems()) {
-            JsonObject var16 = new JsonObject();
-            var16.addProperty("mime_type", var15.getText());
-            var16.addProperty("data", var15.getText2());
-            JsonObject var17 = new JsonObject();
-            var17.add("inline_data", var16);
-            var13.add(var17);
+         for (AiStreamClient.Data2 data2 : data.getItems()) {
+            JsonObject json5 = new JsonObject();
+            json5.addProperty("mime_type", data2.getText());
+            json5.addProperty("data", data2.getText2());
+            JsonObject json6 = new JsonObject();
+            json6.add("inline_data", json5);
+            jsonArray3.add(json6);
          }
 
-         JsonObject var20 = new JsonObject();
-         var20.addProperty("text", var11.text().isBlank() ? "(картинка)" : var11.text());
-         var13.add(var20);
-         var12.add("parts", var13);
-         var9.add(var12);
+         JsonObject json5 = new JsonObject();
+         json5.addProperty("text", data.text().isBlank() ? "(картинка)" : data.text());
+         jsonArray3.add(json5);
+         json4.add("parts", jsonArray3);
+         jsonArray2.add(json4);
       }
 
-      var5.add("contents", var9);
-      String var18 = var2.endsWith("/") ? var2 : var2 + "/";
-      String var19 = var18 + URLEncoder.encode(var1, StandardCharsets.UTF_8) + ":streamGenerateContent?alt=sse";
-      return HttpRequest.newBuilder(URI.create(var19))
+      json.add("contents", jsonArray2);
+      String str4 = str2.endsWith("/") ? str2 : str2 + "/";
+      String str5 = str4 + URLEncoder.encode(string, StandardCharsets.UTF_8) + ":streamGenerateContent?alt=sse";
+      return HttpRequest.newBuilder(URI.create(str5))
          .timeout(Duration.ofMinutes(10L))
          .header("Content-Type", "application/json")
-         .header("x-goog-api-key", var0)
-         .POST(BodyPublishers.ofString(var5.toString(), StandardCharsets.UTF_8))
+         .header("x-goog-api-key", str)
+         .POST(BodyPublishers.ofString(json.toString(), StandardCharsets.UTF_8))
          .build();
    }
 
-   private static String method4747(int var0, String var1) {
-      String var2 = "";
-      String var3 = var1.stripLeading().toLowerCase(Locale.ROOT);
-      if (!var3.startsWith("<!doctype") && !var3.startsWith("<html")) {
+   private static String method4747(int statusCode, String string) {
+      String str = "";
+      String lowerCase = string.stripLeading().toLowerCase(Locale.ROOT);
+      if (!lowerCase.startsWith("<!doctype") && !lowerCase.startsWith("<html")) {
          try {
-            JsonElement var4 = JsonParser.parseString(var1.trim());
-            if (var4.isJsonArray() && !var4.getAsJsonArray().isEmpty()) {
-               var4 = var4.getAsJsonArray().get(0);
+            JsonElement jsonElement = JsonParser.parseString(string.trim());
+            if (jsonElement.isJsonArray() && !jsonElement.getAsJsonArray().isEmpty()) {
+               jsonElement = jsonElement.getAsJsonArray().get(0);
             }
 
-            if (var4.isJsonObject()) {
-               var2 = method4748(var4.getAsJsonObject());
+            if (jsonElement.isJsonObject()) {
+               str = method4748(jsonElement.getAsJsonObject());
             }
-         } catch (RuntimeException var5) {
+         } catch (RuntimeException e) {
          }
 
-         if (var2.isEmpty()) {
-            var2 = var1.strip();
+         if (str.isEmpty()) {
+            str = string.strip();
          }
 
-         if (var2.length() > 300) {
-            var2 = var2.substring(0, 300) + "…";
+         if (str.length() > 300) {
+            str = str.substring(0, 300) + "…";
          }
-         String var6 = switch (var0) {
+         String str2 = switch (statusCode) {
             case 400 -> "запрос отклонён";
             case 401, 403 -> "ключ не подошёл";
             case 404 -> "модель или адрес не найдены";
             case 429 -> "лимит запросов или кончились деньги на счёте";
-            default -> var0 >= 500 ? "сервис нейросети недоступен" : "ошибка " + var0;
+            default -> statusCode >= 500 ? "сервис нейросети недоступен" : "ошибка " + statusCode;
          };
-         return var6 + (var2.isEmpty() ? "" : ": " + var2);
+         return str2 + (str.isEmpty() ? "" : ": " + str);
       } else {
-         return (var0 == 404 ? "адрес не найден" : "ошибка " + var0)
+         return (statusCode == 404 ? "адрес не найден" : "ошибка " + statusCode)
             + ": сервер вернул веб-страницу вместо ответа API — проверь адрес (должен вести на /v1, без лишних символов в конце)";
       }
    }
 
-   private static String method4748(JsonObject var0) {
-      if (var0.has("error")) {
-         JsonElement var1 = var0.get("error");
-         if (var1.isJsonObject()) {
-            String var2 = method4749(var1.getAsJsonObject(), "message");
-            if (!var2.isEmpty()) {
-               return var2;
+   private static String method4748(JsonObject jsonObject) {
+      if (jsonObject.has("error")) {
+         JsonElement jsonElement = jsonObject.get("error");
+         if (jsonElement.isJsonObject()) {
+            String str = method4749(jsonElement.getAsJsonObject(), "message");
+            if (!str.isEmpty()) {
+               return str;
             }
-         } else if (var1.isJsonPrimitive()) {
-            return var1.getAsString();
+         } else if (jsonElement.isJsonPrimitive()) {
+            return jsonElement.getAsString();
          }
       }
 
-      return method4749(var0, "message");
+      return method4749(jsonObject, "message");
    }
 
-   private static String method4749(JsonObject var0, String var1) {
-      return var0 != null && var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsString() : "";
+   private static String method4749(JsonObject jsonObject, String memberName) {
+      return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() ? jsonObject.get(memberName).getAsString() : "";
    }
 
    public static final class Data {
@@ -474,14 +474,14 @@ public final class AiStreamClient {
          return "Data[" + "flag=" + this.flag + ", " + "text=" + this.text + ", " + "items=" + this.items + "]";
       }
 
-      public Data(boolean var1, String var2) {
-         this(var1, var2, List.of());
+      public Data(boolean flag, String text) {
+         this(flag, text, List.of());
       }
 
-      public Data(boolean var1, String var2, List<AiStreamClient.Data2> var3) {
-         this.flag = var1;
-         this.text = var2;
-         this.items = var3;
+      public Data(boolean flag, String text, List<AiStreamClient.Data2> items) {
+         this.flag = flag;
+         this.text = text;
+         this.items = items;
       }
 
       public boolean isFlag() {
@@ -522,9 +522,9 @@ public final class AiStreamClient {
          return "Data2[" + "text=" + this.text + ", " + "text2=" + this.text2 + "]";
       }
 
-      public Data2(String var1, String var2) {
-         this.text = var1;
-         this.text2 = var2;
+      public Data2(String text, String encodeToString) {
+         this.text = text;
+         this.text2 = encodeToString;
       }
 
       public String getText() {
@@ -537,8 +537,8 @@ public final class AiStreamClient {
    }
 
    public static final class Entry extends IOException {
-      public Entry(String var1) {
-         super(var1);
+      public Entry(String message) {
+         super(message);
       }
    }
 }

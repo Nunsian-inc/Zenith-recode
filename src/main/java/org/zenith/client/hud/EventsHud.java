@@ -27,65 +27,65 @@ public class EventsHud extends Interface {
    private final Map<String, EventsHud.Entry> items = new LinkedHashMap<>();
    private final Set<String> items2 = new HashSet<>();
 
-   public EventsHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public EventsHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      List<HolyWorldEvent> var2 = Zenith.getInstance().getHolyWorldEventsFetcher().getItems();
+   public void method8(CustomDrawContext customDrawContext) {
+      List<HolyWorldEvent> items = Zenith.getInstance().getHolyWorldEventsFetcher().getItems();
       this.items2.clear();
 
-      for (HolyWorldEvent var4 : var2) {
-         String var5 = this.method7013(var4);
-         this.items2.add(var5);
-         this.items.computeIfAbsent(var5, var2x -> new EventsHud.Entry(var4)).setHolyWorldEvent(var4);
+      for (HolyWorldEvent holyWorldEvent : items) {
+         String key = this.method7013(holyWorldEvent);
+         this.items2.add(key);
+         this.items.computeIfAbsent(key, var2x -> new EventsHud.Entry(holyWorldEvent)).setHolyWorldEvent(holyWorldEvent);
       }
 
       this.items.values().removeIf(EventsHud.Entry::method7017);
       if (this.items.isEmpty()) {
          this.animation2.method2808(0.0F);
       } else {
-         EventsHud.Entry var12 = this.items.values().iterator().next();
-         this.animation2.method2808(this.items.size() == 1 && var12.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+         EventsHud.Entry entry = this.items.values().iterator().next();
+         this.animation2.method2808(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
       }
 
-      float var13 = this.floatValue;
-      float var14 = this.floatValue2;
-      float var15 = (float)(
+      float floatValue = this.floatValue;
+      float y1 = this.floatValue2;
+      float height = (float)(
          20.0F + GuiStyle.PADDING.intValue() / 2.0F
-            + this.items.values().stream().mapToDouble(var0 -> (var0.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var0.animation.getValue()).sum()
+            + this.items.values().stream().mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue()).sum()
       );
-      float var6 = (float)this.items.values().stream().mapToDouble(EventsHud.Entry::method7014).max().orElse(0.0);
-      var6 = this.animation.method2808(Math.max(HudListLayout.method7638("L", "Events"), var6));
-      this.width = var6;
-      this.height = var15;
+      float width = (float)this.items.values().stream().mapToDouble(EventsHud.Entry::method7014).max().orElse(0.0);
+      width = this.animation.method2808(Math.max(HudListLayout.method7638("L", "Events"), width));
+      this.width = width;
+      this.height = height;
       this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
-      float var7 = InterfaceModule.method6801();
-      var1.pushMatrix();
-      var1.pose().translate(var13 + var6 / 2.0F, var14 + var15 / 2.0F);
-      var1.pose().scale(this.animation3.getValue(), this.animation3.getValue());
-      var1.pose().translate(-(var13 + var6 / 2.0F), -(var14 + var15 / 2.0F));
-      HudListLayout.method7635(var1, var13, var14, var6, var15);
-      HudListLayout.method7636(var1, var13, var14, var6, "L", "Events");
+      float f = InterfaceModule.method6801();
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
+      customDrawContext.pose().scale(this.animation3.getValue(), this.animation3.getValue());
+      customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + height / 2.0F));
+      HudListLayout.method7635(customDrawContext, floatValue, y1, width, height);
+      HudListLayout.method7636(customDrawContext, floatValue, y1, width, "L", "Events");
       if (this.animation3.getValue() == 1.0F) {
-         float var8 = var14 + 20.0F;
-         var1.enableScissor((int)var13, (int)var14, (int)(var13 + var6), (int)(var14 + var15));
+         float f2 = y1 + 20.0F;
+         customDrawContext.enableScissor((int)floatValue, (int)y1, (int)(floatValue + width), (int)(y1 + height));
 
-         for (Map.Entry var10 : this.items.entrySet()) {
-            EventsHud.Entry var11 = (EventsHud.Entry)var10.getValue();
-            var11.method7016(var1, var13, var8, var6, this.items2.contains(var10.getKey()));
-            var8 += (var11.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var11.animation.getValue();
+         for (Map.Entry entry : this.items.entrySet()) {
+            EventsHud.Entry entry2 = (EventsHud.Entry)entry.getValue();
+            entry2.method7016(customDrawContext, floatValue, f2, width, this.items2.contains(entry.getKey()));
+            f2 += (entry2.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry2.animation.getValue();
          }
 
-         var1.disableScissor();
+         customDrawContext.disableScissor();
       }
 
-      var1.popMatrix();
+      customDrawContext.popMatrix();
    }
 
-   private String method7013(HolyWorldEvent var1) {
-      return var1.getType().name() + "|" + var1.getLongValue() + "|" + var1.getMessage();
+   private String method7013(HolyWorldEvent holyWorldEvent) {
+      return holyWorldEvent.getType().name() + "|" + holyWorldEvent.getLongValue() + "|" + holyWorldEvent.getMessage();
    }
 
    @Override
@@ -97,12 +97,12 @@ public class EventsHud extends Interface {
       private final Animation animation = new Animation(150L, 0.01F, Easing.INSTANCE13);
       private HolyWorldEvent holyWorldEvent;
 
-      public Entry(HolyWorldEvent var2) {
-         this.holyWorldEvent = var2;
+      public Entry(HolyWorldEvent holyWorldEvent) {
+         this.holyWorldEvent = holyWorldEvent;
       }
 
-      public void setHolyWorldEvent(HolyWorldEvent var1) {
-         this.holyWorldEvent = var1;
+      public void setHolyWorldEvent(HolyWorldEvent holyWorldEvent) {
+         this.holyWorldEvent = holyWorldEvent;
       }
 
       public float method7014() {
@@ -110,24 +110,24 @@ public class EventsHud extends Interface {
       }
 
       private String method7015() {
-         String var1 = this.holyWorldEvent.getText2();
-         return var1 != null && !var1.isEmpty() ? var1 : "-";
+         String str = this.holyWorldEvent.getText2();
+         return str != null && !str.isEmpty() ? str : "-";
       }
 
       public float getHeight() {
          return 14.0F;
       }
 
-      public void method7016(CustomDrawContext var1, float var2, float var3, float var4, boolean var5) {
-         this.animation.method2808(var5 ? 1.0F : 0.0F);
-         var1.pushMatrix();
-         var1.pose().translate(var2 + var4 / 2.0F, var3 + this.getHeight() / 2.0F);
-         var1.pose().scale(this.animation.getValue(), this.animation.getValue());
-         var1.pose().translate(-(var2 + var4 / 2.0F), -(var3 + this.getHeight() / 2.0F));
-         float var6 = HudListLayout.method7639(var1, var2, var3, this.holyWorldEvent.getIcon());
-         HudListLayout.method7644(var1, var6, var3, this.holyWorldEvent.method7742());
-         HudListLayout.method7646(var1, var2, var3, var4, this.method7015());
-         var1.popMatrix();
+      public void method7016(CustomDrawContext customDrawContext, float floatValue, float y1, float width, boolean contains) {
+         this.animation.method2808(contains ? 1.0F : 0.0F);
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
+         customDrawContext.pose().scale(this.animation.getValue(), this.animation.getValue());
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + this.getHeight() / 2.0F));
+         float f = HudListLayout.method7639(customDrawContext, floatValue, y1, this.holyWorldEvent.getIcon());
+         HudListLayout.method7644(customDrawContext, f, y1, this.holyWorldEvent.method7742());
+         HudListLayout.method7646(customDrawContext, floatValue, y1, width, this.method7015());
+         customDrawContext.popMatrix();
       }
 
       public boolean method7017() {

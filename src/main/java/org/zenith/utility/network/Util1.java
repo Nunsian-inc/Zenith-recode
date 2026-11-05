@@ -10,98 +10,98 @@ import org.zenith.utility.misc.PacketUtils;
 
 @Deprecated
 public class Util1 implements MinecraftAccess {
-   public static int method688(Item var0) {
-      return method691(var0, 0, 35);
+   public static int method688(Item item) {
+      return method691(item, 0, 35);
    }
 
-   public static int method689(Item var0) {
-      return method691(var0, 0, 8);
+   public static int method689(Item item) {
+      return method691(item, 0, 8);
    }
 
-   public static int method690(Item var0) {
-      return method691(var0, 9, 35);
+   public static int method690(Item item) {
+      return method691(item, 9, 35);
    }
 
-   public static int method691(Item var0, int var1, int var2) {
-      for (int var3 = var2; var3 >= var1; var3--) {
-         if (mc.player.getInventory().getItem(var3).getItem() == var0) {
-            return var3;
+   public static int method691(Item item, int n, int n2) {
+      for (int i = n2; i >= n; i--) {
+         if (mc.player.getInventory().getItem(i).getItem() == item) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   public static int method692(int var0, int var1) {
-      for (int var2 = var1; var2 >= var0; var2--) {
-         if (mc.player.getInventory().getItem(var2).isEmpty()) {
-            return var2;
+   public static int method692(int n, int n2) {
+      for (int i = n2; i >= n; i--) {
+         if (mc.player.getInventory().getItem(i).isEmpty()) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   public static void method693(Util1.Type2 var0, int var1, int var2) {
-      if (var1 != -1 && var2 != -1) {
-         switch (var0) {
+   public static void method693(Util1.Type2 type2, int selected, int slotNum) {
+      if (selected != -1 && slotNum != -1) {
+         switch (type2) {
             case NORMAL:
-               mc.player.getInventory().setSelectedSlot(var1);
+               mc.player.getInventory().setSelectedSlot(selected);
                break;
             case SILENT:
-               mc.player.getInventory().setSelectedSlot(var1);
-               PacketUtils.sendPacket(new ServerboundSetCarriedItemPacket(var1));
+               mc.player.getInventory().setSelectedSlot(selected);
+               PacketUtils.sendPacket(new ServerboundSetCarriedItemPacket(selected));
                break;
             case ALTERNATIVE:
-               method695(var1, var2);
+               method695(selected, slotNum);
          }
       }
    }
 
-   public static void method694(Util1.Type2 var0, int var1, int var2) {
-      if (var1 != -1 && var2 != -1) {
-         switch (var0) {
+   public static void method694(Util1.Type2 type2, int selected, int n) {
+      if (selected != -1 && n != -1) {
+         switch (type2) {
             case NORMAL:
-               mc.player.getInventory().setSelectedSlot(var2);
+               mc.player.getInventory().setSelectedSlot(n);
                break;
             case SILENT:
-               mc.player.getInventory().setSelectedSlot(var2);
-               PacketUtils.sendPacket(new ServerboundSetCarriedItemPacket(var2));
+               mc.player.getInventory().setSelectedSlot(n);
+               PacketUtils.sendPacket(new ServerboundSetCarriedItemPacket(n));
                break;
             case ALTERNATIVE:
-               method695(var1, var2);
+               method695(selected, n);
          }
       }
    }
 
-   public static void method695(int var0, int var1) {
-      if (var0 != -1 && var1 != -1) {
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, var0, 0, ContainerInput.PICKUP, mc.player);
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, var1, 0, ContainerInput.PICKUP, mc.player);
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, var0, 0, ContainerInput.PICKUP, mc.player);
+   public static void method695(int selected, int slotNum) {
+      if (selected != -1 && slotNum != -1) {
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, selected, 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, slotNum, 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, selected, 0, ContainerInput.PICKUP, mc.player);
       }
    }
 
-   public static void method696(int var0, int var1) {
-      if (var0 != -1 && var1 != -1) {
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(var0), 0, ContainerInput.PICKUP, mc.player);
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(var1), 0, ContainerInput.PICKUP, mc.player);
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(var0), 0, ContainerInput.PICKUP, mc.player);
+   public static void method696(int n, int n2) {
+      if (n != -1 && n2 != -1) {
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(n), 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(n2), 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method698(n), 0, ContainerInput.PICKUP, mc.player);
       }
    }
 
-   public static void method697(int var0, int var1) {
-      if (var0 != -1 && var1 != -1) {
-         method696(var0, var1);
+   public static void method697(int n, int n2) {
+      if (n != -1 && n2 != -1) {
+         method696(n, n2);
       }
    }
 
-   public static int method698(int var0) {
-      return var0 >= 0 && var0 <= 8 ? 36 + var0 : var0;
+   public static int method698(int n) {
+      return n >= 0 && n <= 8 ? 36 + n : n;
    }
 
-   public static void method699(Util1.Type var0) {
-      switch (var0) {
+   public static void method699(Util1.Type type) {
+      switch (type) {
          case MAINHAND:
             org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             break;

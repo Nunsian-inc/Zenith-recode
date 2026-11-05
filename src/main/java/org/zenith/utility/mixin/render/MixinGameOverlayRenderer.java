@@ -18,9 +18,9 @@ public class MixinGameOverlayRenderer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void deferOverlaysForHandShader(CallbackInfo var4) {
+   private void deferOverlaysForHandShader(CallbackInfo callbackInfo) {
       if (ShaderHandModule.INSTANCE.method1241()) {
-         var4.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -29,9 +29,9 @@ public class MixinGameOverlayRenderer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private static void removeFireOverlay(CallbackInfo var3) {
+   private static void removeFireOverlay(CallbackInfo callbackInfo) {
       if (ModuleHookDefinitions.method6119(ModuleHookDefinitions.class125)) {
-         var3.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -40,9 +40,9 @@ public class MixinGameOverlayRenderer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private static void renderInWallOverlayHook(CallbackInfo var3) {
+   private static void renderInWallOverlayHook(CallbackInfo callbackInfo) {
       if (ModuleHookDefinitions.method6119(ModuleHookDefinitions.class126)) {
-         var3.cancel();
+         callbackInfo.cancel();
       }
    }
 }

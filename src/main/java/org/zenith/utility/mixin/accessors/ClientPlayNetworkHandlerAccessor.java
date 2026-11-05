@@ -16,22 +16,22 @@ public interface ClientPlayNetworkHandlerAccessor {
    ClientLevel zenith$getWorld();
 
    @Accessor("level")
-   void zenith$setWorld(ClientLevel var1);
+   void zenith$setWorld(ClientLevel level);
 
    @Accessor("levelData")
-   void zenith$setWorldProperties(ClientLevelData var1);
+   void zenith$setWorldProperties(ClientLevelData clientLevelData);
 
    @Accessor("levels")
-   void zenith$setWorldKeys(Set<ResourceKey<Level>> var1);
+   void zenith$setWorldKeys(Set<ResourceKey<Level>> resourceKeys);
 
    @Accessor("serverChunkRadius")
-   void zenith$setChunkLoadDistance(int var1);
+   void zenith$setChunkLoadDistance(int n);
 
    @Accessor("serverChunkRadius")
    int zenith$getChunkLoadDistance();
 
    @Accessor("serverSimulationDistance")
-   void zenith$setSimulationDistance(int var1);
+   void zenith$setSimulationDistance(int n);
 
    @Invoker("sendChatAcknowledgement")
    void zenith$sendAcknowledgment();

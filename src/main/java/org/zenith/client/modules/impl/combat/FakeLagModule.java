@@ -101,7 +101,7 @@ public final class FakeLagModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          this.flag = this.method6943(mc.player.position()) != null;
       } else {
@@ -111,7 +111,7 @@ public final class FakeLagModule extends Module {
    }
 
    @EventTarget
-   public void method6934(PacketProcessEndEvent var1) {
+   public void method6934(PacketProcessEndEvent event) {
       if (mc.player != null && mc.level != null) {
          this.method6956();
          if (!this.queue.isEmpty()) {
@@ -132,45 +132,45 @@ public final class FakeLagModule extends Module {
    }
 
    @EventTarget
-   public void method6935(WorldRenderEvent var1) {
+   public void method6935(WorldRenderEvent event) {
       if (this.renderBox.isEnabled() && mc.player != null) {
-         Vec3 var2 = this.method6948();
-         if (var2 != null) {
-            GlowUtil.method2230(mc.player.getDimensions(mc.player.getPose()).makeBoundingBox(var2), -1, 1.0F);
+         Vec3 pos = this.method6948();
+         if (pos != null) {
+            GlowUtil.method2230(mc.player.getDimensions(mc.player.getPose()).makeBoundingBox(pos), -1, 1.0F);
          }
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.getPacket3() != null) {
-         if (var1.method7100()) {
-            this.method6938(var1.getPacket3());
+   public void onPacket(PacketEvent event) {
+      if (event.getPacket3() != null) {
+         if (event.method7100()) {
+            this.method6938(event.getPacket3());
          }
       }
    }
 
    @EventTarget(3)
-   public void method6936(OutgoingPacketEvent var1) {
-      if (!var1.isCancelled() && !this.flag2 && !BlinkModule.INSTANCE.method6732() && !TrapTpModule.INSTANCE.isFlag6() && var1.getPacket4() != null) {
+   public void method6936(OutgoingPacketEvent event) {
+      if (!event.isCancelled() && !this.flag2 && !BlinkModule.INSTANCE.method6732() && !TrapTpModule.INSTANCE.isFlag6() && event.getPacket4() != null) {
          if (mc.player != null && mc.level != null) {
-            boolean var2;
-            if (var2 = mc.isSameThread()) {
+            boolean sameThread;
+            if (sameThread = mc.isSameThread()) {
                this.method6956();
             }
 
-            Packet var3 = var1.getPacket4();
-            int var4;
-            if ((var4 = this.method6937(var3)) >= 0) {
-               if (!var2 && !this.queue.isEmpty()) {
-                  var1.cancel();
-                  this.queue.add(new FakeLagModule.Data(var3, this.method6947(var3)));
+            Packet packet4 = event.getPacket4();
+            int x;
+            if ((x = this.method6937(packet4)) >= 0) {
+               if (!sameThread && !this.queue.isEmpty()) {
+                  event.cancel();
+                  this.queue.add(new FakeLagModule.Data(packet4, this.method6947(packet4)));
                }
 
-               this.method6955(var4);
-            } else if (!this.method6939(var3)) {
-               var1.cancel();
-               this.queue.add(new FakeLagModule.Data(var3, this.method6947(var3)));
+               this.method6955(x);
+            } else if (!this.method6939(packet4)) {
+               event.cancel();
+               this.queue.add(new FakeLagModule.Data(packet4, this.method6947(packet4)));
             }
          } else {
             this.method6959();
@@ -178,35 +178,35 @@ public final class FakeLagModule extends Module {
       }
    }
 
-   private int method6937(Packet<?> var1) {
+   private int method6937(Packet<?> packet4) {
       if (this.method6941() || !this.stopWatch.method7546((long)this.recoilTime.getValue3())) {
          return 0;
       } else if (this.method6949()) {
          return 4;
-      } else if (this.method6940(var1)) {
+      } else if (this.method6940(packet4)) {
          return 2;
       } else {
          return !this.method6951() && !this.method6942() ? -1 : 0;
       }
    }
 
-   private void method6938(Packet<?> var1) {
-      if (var1 instanceof ClientboundDisconnectPacket) {
+   private void method6938(Packet<?> packet3) {
+      if (packet3 instanceof ClientboundDisconnectPacket) {
          this.method6959();
          this.stopWatch.reset();
-      } else if (var1 instanceof ClientboundPlayerPositionPacket) {
-         this.queue.removeIf(var0 -> BlinkUtils.method1444(var0.getPacket()));
+      } else if (packet3 instanceof ClientboundPlayerPositionPacket) {
+         this.queue.removeIf(data -> BlinkUtils.method1444(data.getPacket()));
          this.method6952();
-      } else if (var1 instanceof ClientboundSetHealthPacket) {
+      } else if (packet3 instanceof ClientboundSetHealthPacket) {
          this.method6952();
       } else if (!(
-         var1 instanceof ClientboundSetEntityMotionPacket var2
+         packet3 instanceof ClientboundSetEntityMotionPacket setEntityMotionPacket
             && mc.player != null
-            && var2.id() == mc.player.getId()
-            && (var2.movement().x != 0.0 || var2.movement().y != 0.0 || var2.movement().z != 0.0)
+            && setEntityMotionPacket.id() == mc.player.getId()
+            && (setEntityMotionPacket.movement().x != 0.0 || setEntityMotionPacket.movement().y != 0.0 || setEntityMotionPacket.movement().z != 0.0)
       )) {
-         if (var1 instanceof ClientboundExplodePacket var3) {
-            var3.playerKnockback().ifPresent(var1x -> {
+         if (packet3 instanceof ClientboundExplodePacket explodePacket) {
+            explodePacket.playerKnockback().ifPresent(var1x -> {
                if (var1x.x != 0.0 || var1x.y != 0.0 || var1x.z != 0.0) {
                   this.method6952();
                }
@@ -217,16 +217,16 @@ public final class FakeLagModule extends Module {
       }
    }
 
-   private boolean method6939(Packet<?> var1) {
-      return var1 instanceof ServerboundChatPacket || var1 instanceof ServerboundChatCommandPacket;
+   private boolean method6939(Packet<?> packet4) {
+      return packet4 instanceof ServerboundChatPacket || packet4 instanceof ServerboundChatCommandPacket;
    }
 
-   private boolean method6940(Packet<?> var1) {
-      if (var1 instanceof ServerboundResourcePackPacket) {
+   private boolean method6940(Packet<?> packet4) {
+      if (packet4 instanceof ServerboundResourcePackPacket) {
          return true;
-      } else if (!this.entry3.isEnabled() || !(var1 instanceof ServerboundInteractPacket) && !(var1 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) && !(var1 instanceof ServerboundPunchPacket)) {
-         return !this.entry4.isEnabled() || !(var1 instanceof ServerboundUseItemOnPacket) && !(var1 instanceof ServerboundSignUpdatePacket)
-            ? this.entry5.isEnabled() && var1 instanceof ServerboundPlayerActionPacket
+      } else if (!this.entry3.isEnabled() || !(packet4 instanceof ServerboundInteractPacket) && !(packet4 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) && !(packet4 instanceof ServerboundPunchPacket)) {
+         return !this.entry4.isEnabled() || !(packet4 instanceof ServerboundUseItemOnPacket) && !(packet4 instanceof ServerboundSignUpdatePacket)
+            ? this.entry5.isEnabled() && packet4 instanceof ServerboundPlayerActionPacket
             : true;
       } else {
          return true;
@@ -241,21 +241,21 @@ public final class FakeLagModule extends Module {
       if (this.entry.isSelected()) {
          return false;
       } else if (this.entry2.isSelected() && this.flag) {
-         Vec3 var1 = this.method6948();
-         if (var1 == null) {
+         Vec3 pos = this.method6948();
+         if (pos == null) {
             return false;
          } else if (mc.player == null) {
             return true;
          } else {
-            LivingEntity var2 = this.method6944(var1);
-            if (var2 == null) {
+            LivingEntity livingEntity = this.method6944(pos);
+            if (livingEntity == null) {
                return true;
             } else {
-               AABB var3 = mc.player.getDimensions(mc.player.getPose()).makeBoundingBox(var1);
-               boolean var4 = var2.getBoundingBox().intersects(var3);
-               double var5 = var2.position().distanceTo(var1);
-               double var7 = var2.position().distanceTo(mc.player.position());
-               return var5 < var7 || var4;
+               AABB boundingBox = mc.player.getDimensions(mc.player.getPose()).makeBoundingBox(pos);
+               boolean intersects = livingEntity.getBoundingBox().intersects(boundingBox);
+               double d = livingEntity.position().distanceTo(pos);
+               double d2 = livingEntity.position().distanceTo(mc.player.position());
+               return d < d2 || intersects;
             }
          }
       } else {
@@ -263,71 +263,71 @@ public final class FakeLagModule extends Module {
       }
    }
 
-   private LivingEntity method6943(Vec3 var1) {
-      double var2 = Math.min(this.minRange.getValue3(), this.maxRange.getValue3());
-      double var4 = Math.max(this.minRange.getValue3(), this.maxRange.getValue3());
-      double var6 = var2 * var2;
-      double var8 = var4 * var4;
-      LivingEntity var10 = null;
-      double var11 = Double.MAX_VALUE;
+   private LivingEntity method6943(Vec3 position) {
+      double d = Math.min(this.minRange.getValue3(), this.maxRange.getValue3());
+      double d2 = Math.max(this.minRange.getValue3(), this.maxRange.getValue3());
+      double d3 = d * d;
+      double d4 = d2 * d2;
+      LivingEntity living = null;
+      double d5 = Double.MAX_VALUE;
 
-      for (LivingEntity var14 : this.method6945(var1)) {
-         double var15;
-         if (!this.method6946(var14) && (var15 = var14.distanceToSqr(var1)) >= var6 && var15 <= var8 && var15 < var11) {
-            var10 = var14;
-            var11 = var15;
+      for (LivingEntity livingEntity : this.method6945(position)) {
+         double d6;
+         if (!this.method6946(livingEntity) && (d6 = livingEntity.distanceToSqr(position)) >= d3 && d6 <= d4 && d6 < d5) {
+            living = livingEntity;
+            d5 = d6;
          }
       }
 
-      return var10;
+      return living;
    }
 
-   private LivingEntity method6944(Vec3 var1) {
-      double var2;
-      double var4 = (var2 = Math.max(this.minRange.getValue3(), this.maxRange.getValue3())) * var2;
-      LivingEntity var6 = null;
-      double var7 = Double.MAX_VALUE;
+   private LivingEntity method6944(Vec3 pos) {
+      double d;
+      double d2 = (d = Math.max(this.minRange.getValue3(), this.maxRange.getValue3())) * d;
+      LivingEntity living = null;
+      double d3 = Double.MAX_VALUE;
 
-      for (LivingEntity var10 : this.method6945(var1)) {
-         double var11;
-         if (!this.method6946(var10) && (var11 = var10.position().distanceToSqr(var1)) <= var4 && var11 < var7) {
-            var6 = var10;
-            var7 = var11;
+      for (LivingEntity livingEntity : this.method6945(pos)) {
+         double d4;
+         if (!this.method6946(livingEntity) && (d4 = livingEntity.position().distanceToSqr(pos)) <= d2 && d4 < d3) {
+            living = livingEntity;
+            d3 = d4;
          }
       }
 
-      return var6;
+      return living;
    }
 
-   private Iterable<LivingEntity> method6945(Vec3 var1) {
+   private Iterable<LivingEntity> method6945(Vec3 position) {
       if (mc.level == null) {
          return List.of();
       } else {
-         double var2 = Math.max(this.minRange.getValue3(), this.maxRange.getValue3()) + 2.0;
-         AABB var4 = new AABB(var1.x - var2, var1.y - var2, var1.z - var2, var1.x + var2, var1.y + var2, var1.z + var2);
-         return mc.level.getEntitiesOfClass(LivingEntity.class, var4, var0 -> true);
+         double d = Math.max(this.minRange.getValue3(), this.maxRange.getValue3()) + 2.0;
+         AABB aabb = new AABB(position.x - d, position.y - d, position.z - d, position.x + d, position.y + d, position.z + d);
+         return mc.level.getEntitiesOfClass(LivingEntity.class, aabb, livingEntity -> true);
       }
    }
 
-   private boolean method6946(LivingEntity var1) {
-      return var1 instanceof ArmorStand || !AuraUtil.method7447(items, var1);
+   private boolean method6946(LivingEntity livingEntity) {
+      return livingEntity instanceof ArmorStand || !AuraUtil.method7447(items, livingEntity);
    }
 
-   private Vec3 method6947(Packet<?> var1) {
-      if (var1 instanceof ServerboundMovePlayerPacket var2 && mc.player != null) {
-         double var3 = var2.getX(Double.NaN);
-         double var5 = var2.getY(Double.NaN);
-         double var7 = var2.getZ(Double.NaN);
-         return !Double.isNaN(var3) && !Double.isNaN(var5) && !Double.isNaN(var7) ? new Vec3(var3, var5, var7) : null;
+   private Vec3 method6947(Packet<?> packet4) {
+      if (packet4 instanceof ServerboundMovePlayerPacket movePlayerPacket && mc.player != null) {
+         double x = movePlayerPacket.getX(Double.NaN);
+         double y = movePlayerPacket.getY(Double.NaN);
+         double z = movePlayerPacket.getZ(Double.NaN);
+         return !Double.isNaN(x) && !Double.isNaN(y) && !Double.isNaN(z) ? new Vec3(x, y, z) : null;
       } else {
          return null;
       }
    }
 
    private Vec3 method6948() {
-      for (FakeLagModule.Data var2 : this.queue) {
-         if (var2.getVec3d() != null) {
-            return var2.getVec3d();
+      for (FakeLagModule.Data data : this.queue) {
+         if (data.getVec3d() != null) {
+            return data.getVec3d();
          }
       }
 
@@ -335,26 +335,26 @@ public final class FakeLagModule extends Module {
    }
 
    private boolean method6949() {
-      FakeLagModule.Data var1 = this.queue.peek();
-      return var1 != null && System.currentTimeMillis() - var1.time() >= this.longValue;
+      FakeLagModule.Data data = this.queue.peek();
+      return data != null && System.currentTimeMillis() - data.time() >= this.longValue;
    }
 
    private long method6950() {
-      int var1 = Math.round(Math.min(this.minDelay.getValue3(), this.maxDelay.getValue3()));
-      int var2;
-      return (var2 = Math.round(Math.max(this.minDelay.getValue3(), this.maxDelay.getValue3()))) <= var1
-         ? var1
-         : ThreadLocalRandom.current().nextInt(var1, var2 + 1);
+      int origin = Math.round(Math.min(this.minDelay.getValue3(), this.maxDelay.getValue3()));
+      int n;
+      return (n = Math.round(Math.max(this.minDelay.getValue3(), this.maxDelay.getValue3()))) <= origin
+         ? origin
+         : ThreadLocalRandom.current().nextInt(origin, n + 1);
    }
 
    private boolean method6951() {
       if (mc.player != null && mc.player.isUsingItem()) {
-         ItemStack var1 = mc.player.getUseItem();
-         return var1.has(DataComponents.FOOD)
-            || var1.is(Items.MILK_BUCKET)
-            || var1.is(Items.POTION)
-            || var1.is(Items.SPLASH_POTION)
-            || var1.is(Items.LINGERING_POTION);
+         ItemStack useItem = mc.player.getUseItem();
+         return useItem.has(DataComponents.FOOD)
+            || useItem.is(Items.MILK_BUCKET)
+            || useItem.is(Items.POTION)
+            || useItem.is(Items.SPLASH_POTION)
+            || useItem.is(Items.LINGERING_POTION);
       } else {
          return false;
       }
@@ -372,29 +372,29 @@ public final class FakeLagModule extends Module {
       this.method6955(4);
    }
 
-   private void method6955(int var1) {
-      var1 |= 1;
+   private void method6955(int x) {
+      x |= 1;
       if (mc.isSameThread()) {
-         this.method6957(var1);
+         this.method6957(x);
       } else {
-         this.atomicInteger.accumulateAndGet(var1, (var0, var1x) -> var0 | var1x);
+         this.atomicInteger.accumulateAndGet(x, (n, var1x) -> n | var1x);
       }
    }
 
    private void method6956() {
-      int var1;
-      if ((var1 = this.atomicInteger.getAndSet(0)) != 0) {
-         this.method6957(var1);
+      int andSet;
+      if ((andSet = this.atomicInteger.getAndSet(0)) != 0) {
+         this.method6957(andSet);
       }
    }
 
-   private void method6957(int var1) {
+   private void method6957(int x) {
       this.method6958();
-      if ((var1 & 4) != 0) {
+      if ((x & 4) != 0) {
          this.longValue = this.method6950();
       }
 
-      if ((var1 & 2) != 0) {
+      if ((x & 2) != 0) {
          this.stopWatch.reset();
       }
    }
@@ -405,14 +405,14 @@ public final class FakeLagModule extends Module {
       if (!this.queue.isEmpty() && mc.getConnection() != null) {
          this.flag2 = true;
 
-         FakeLagModule.Data var1;
+         FakeLagModule.Data data;
          try {
-            while ((var1 = this.queue.poll()) != null) {
-               mc.getConnection().send(var1.getPacket());
+            while ((data = this.queue.poll()) != null) {
+               mc.getConnection().send(data.getPacket());
             }
-         } catch (Throwable var4) {
+         } catch (Throwable e) {
             this.flag2 = false;
-            throw var4;
+            throw e;
          }
 
          this.flag2 = false;
@@ -459,14 +459,14 @@ public final class FakeLagModule extends Module {
          return "Data[" + "packet=" + this.packet + ", " + "vec3d=" + this.vec3d + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data(Packet<?> var1, Vec3 var2) {
-         this(var1, var2, System.currentTimeMillis());
+      private Data(Packet<?> packet4, Vec3 vec3d) {
+         this(packet4, vec3d, System.currentTimeMillis());
       }
 
-      private Data(Packet<?> var1, Vec3 var2, long var3) {
-         this.packet = var1;
-         this.vec3d = var2;
-         this.longValue = var3;
+      private Data(Packet<?> packet, Vec3 vec3d, long longValue) {
+         this.packet = packet;
+         this.vec3d = vec3d;
+         this.longValue = longValue;
       }
 
       public Packet<?> getPacket() {

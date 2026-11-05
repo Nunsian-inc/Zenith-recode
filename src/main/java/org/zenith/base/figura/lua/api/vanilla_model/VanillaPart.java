@@ -30,13 +30,13 @@ public abstract class VanillaPart {
       return this.visible == null || this.visible;
    }
 
-   public abstract void save(EntityModel<?> var1);
+   public abstract void save(EntityModel<?> model);
 
-   public abstract void preTransform(EntityModel<?> var1);
+   public abstract void preTransform(EntityModel<?> model);
 
-   public abstract void posTransform(EntityModel<?> var1);
+   public abstract void posTransform(EntityModel<?> model);
 
-   public abstract void restore(EntityModel<?> var1);
+   public abstract void restore(EntityModel<?> model);
 
    @LuaWhitelist
    @LuaMethodDoc("vanilla_part.get_visible")

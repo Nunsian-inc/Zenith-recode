@@ -11,10 +11,10 @@ public final class CloudInventoryData {
    private final List<ItemStack> armor;
    private final ItemStack offhand;
 
-   public CloudInventoryData(List<ItemStack> var1, List<ItemStack> var2, ItemStack var3) {
-      this.main = List.copyOf(padCopy(var1, 36));
-      this.armor = List.copyOf(padCopy(var2, 4));
-      this.offhand = var3 == null ? ItemStack.EMPTY : var3.copy();
+   public CloudInventoryData(List<ItemStack> stacks, List<ItemStack> stacks2, ItemStack stack) {
+      this.main = List.copyOf(padCopy(stacks, 36));
+      this.armor = List.copyOf(padCopy(stacks2, 4));
+      this.offhand = stack == null ? ItemStack.EMPTY : stack.copy();
    }
 
    public List<ItemStack> main() {
@@ -29,51 +29,51 @@ public final class CloudInventoryData {
       return this.offhand;
    }
 
-   public ItemStack hotbar(int var1) {
-      return var1 >= 0 && var1 < 9 ? this.main.get(var1) : ItemStack.EMPTY;
+   public ItemStack hotbar(int n) {
+      return n >= 0 && n < 9 ? this.main.get(n) : ItemStack.EMPTY;
    }
 
-   public ItemStack inventory(int var1) {
-      int var2 = 9 + var1;
-      return var1 >= 0 && var2 < 36 ? this.main.get(var2) : ItemStack.EMPTY;
+   public ItemStack inventory(int n) {
+      int n2 = 9 + n;
+      return n >= 0 && n2 < 36 ? this.main.get(n2) : ItemStack.EMPTY;
    }
 
    public int nonEmptyInventoryCount() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 9; var2 < 36; var2++) {
-         if (!this.main.get(var2).isEmpty()) {
-            var1++;
+      for (int i = 9; i < 36; i++) {
+         if (!this.main.get(i).isEmpty()) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
    public int nonEmptyHotbarCount() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 9; var2++) {
-         if (!this.main.get(var2).isEmpty()) {
-            var1++;
+      for (int i = 0; i < 9; i++) {
+         if (!this.main.get(i).isEmpty()) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private static List<ItemStack> padCopy(List<ItemStack> var0, int var1) {
-      List<ItemStack> var2 = new ArrayList<>(var1);
-      if (var0 != null) {
-         for (ItemStack var4 : var0) {
-            var2.add(var4 == null ? ItemStack.EMPTY : var4.copy());
+   private static List<ItemStack> padCopy(List<ItemStack> stacks, int initialCapacity) {
+      List<ItemStack> stacks2 = new ArrayList<>(initialCapacity);
+      if (stacks != null) {
+         for (ItemStack stack : stacks) {
+            stacks2.add(stack == null ? ItemStack.EMPTY : stack.copy());
          }
       }
 
-      while (var2.size() < var1) {
-         var2.add(ItemStack.EMPTY);
+      while (stacks2.size() < initialCapacity) {
+         stacks2.add(ItemStack.EMPTY);
       }
 
-      return (List<ItemStack>)(var2.size() > var1 ? var2.subList(0, var1) : var2);
+      return (List<ItemStack>)(stacks2.size() > initialCapacity ? stacks2.subList(0, initialCapacity) : stacks2);
    }
 }

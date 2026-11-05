@@ -13,69 +13,69 @@ public final class SnowStats {
    private SnowStats() {
    }
 
-   public static SnowStats.Entry method803(Level var0, Class32 var1, int var2, int var3, int var4, int var5, float var6) {
-      SnowStats.Entry var7 = new SnowStats.Entry();
-      if (var0 != null && var1 != null) {
-         int var8 = Math.max(1, Math.round(var6 * 4.0F));
-         MutableBlockPos var9 = new MutableBlockPos();
+   public static SnowStats.Entry method803(Level level, Class32 class2, int blockX, int blockY, int blockZ, int integer, float f) {
+      SnowStats.Entry entry = new SnowStats.Entry();
+      if (level != null && class2 != null) {
+         int n = Math.max(1, Math.round(f * 4.0F));
+         MutableBlockPos mutablePos = new MutableBlockPos();
 
-         for (int var10 = -var5; var10 <= var5; var10++) {
-            for (int var11 = -var5; var11 <= var5; var11++) {
-               if (var10 * var10 + var11 * var11 <= var5 * var5) {
-                  int var12 = var2 + var10;
-                  int var13 = var4 + var11;
-                  var7.intValue++;
-                  int var14 = method804(var0, var9, var12, var3, var13);
-                  if (var14 == Integer.MIN_VALUE) {
-                     var7.intValue3++;
+         for (int i = -integer; i <= integer; i++) {
+            for (int j = -integer; j <= integer; j++) {
+               if (i * i + j * j <= integer * integer) {
+                  int x = blockX + i;
+                  int z = blockZ + j;
+                  entry.intValue++;
+                  int n2 = method804(level, mutablePos, x, blockY, z);
+                  if (n2 == Integer.MIN_VALUE) {
+                     entry.intValue3++;
                   } else {
-                     method805(var1, var12, var14, var13, var8);
-                     var7.intValue2++;
+                     method805(class2, x, n2, z, n);
+                     entry.intValue2++;
                   }
                }
             }
          }
 
-         var7.intValue4 = var1.method4910();
-         return var7;
+         entry.intValue4 = class2.method4910();
+         return entry;
       } else {
-         return var7;
+         return entry;
       }
    }
 
-   private static int method804(Level var0, MutableBlockPos var1, int var2, int var3, int var4) {
-      int var5 = var3 + 24;
-      int var6 = Math.max(var0.getMinY(), var3 - 48);
-      boolean var7 = false;
+   private static int method804(Level level, MutableBlockPos mutablePos, int x, int blockY, int z) {
+      int n = blockY + 24;
+      int n2 = Math.max(level.getMinY(), blockY - 48);
+      boolean air = false;
 
-      for (int var8 = var5; var8 >= var6; var8--) {
-         var1.set(var2, var8, var4);
-         if (!var0.hasChunk(var2 >> 4, var4 >> 4)) {
+      for (int i = n; i >= n2; i--) {
+         mutablePos.set(x, i, z);
+         if (!level.hasChunk(x >> 4, z >> 4)) {
             return Integer.MIN_VALUE;
          }
 
-         BlockState var9 = var0.getBlockState(var1);
-         boolean var10 = !var9.isAir() && var9.getFluidState().isEmpty() && var9.isFaceSturdy(var0, var1, Direction.UP);
-         if (var10 && var7) {
-            return var8;
+         BlockState blockState = level.getBlockState(mutablePos);
+         boolean flag = !blockState.isAir() && blockState.getFluidState().isEmpty() && blockState.isFaceSturdy(level, mutablePos, Direction.UP);
+         if (flag && air) {
+            return i;
          }
 
-         var7 = var9.isAir();
+         air = blockState.isAir();
       }
 
       return Integer.MIN_VALUE;
    }
 
-   private static void method805(Class32 var0, int var1, int var2, int var3, int var4) {
-      int var5 = Class32.method4911(var1);
-      int var6 = Class32.method4911(var3);
-      int var7 = Class32.method4911(var2 + 1);
+   private static void method805(Class32 class2, int x, int n, int z, int n2) {
+      int n3 = Class32.method4911(x);
+      int n4 = Class32.method4911(z);
+      int n5 = Class32.method4911(n + 1);
 
-      for (int var8 = 0; var8 < 4; var8++) {
-         for (int var9 = 0; var9 < 4; var9++) {
-            for (int var10 = 0; var10 < var4; var10++) {
-               int var11 = var10 == var4 - 1 ? 0 : 127;
-               var0.method4904(var5 + var8, var7 + var10, var6 + var9, (byte)var11);
+      for (int i = 0; i < 4; i++) {
+         for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < n2; k++) {
+               int n6 = k == n2 - 1 ? 0 : 127;
+               class2.method4904(n3 + i, n5 + k, n4 + j, (byte)n6);
             }
          }
       }

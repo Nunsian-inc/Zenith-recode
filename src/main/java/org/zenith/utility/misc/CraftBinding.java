@@ -41,11 +41,11 @@ public final class CraftBinding {
       return "CraftBinding[" + "type=" + this.type + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + "]";
    }
 
-   public CraftBinding(CraftBinding.Type var1, String var2, String var3, String var4) {
-      this.type = var1;
-      this.text = var2;
-      this.text2 = var3;
-      this.text3 = var4;
+   public CraftBinding(CraftBinding.Type type, String text, String id, String str) {
+      this.type = type;
+      this.text = text;
+      this.text2 = id;
+      this.text3 = str;
    }
 
    public static CraftBinding method1685() {
@@ -56,9 +56,9 @@ public final class CraftBinding {
       return this.type == null;
    }
 
-   public String method1687(AutoCraftModule var1) {
+   public String method1687(AutoCraftModule autoCraftModule) {
       if (this.type == CraftBinding.Type.SOURCE) {
-         return "Нажмите ПКМ по хранилищу с " + var1.method1108(this.text3) + " для автокрафта";
+         return "Нажмите ПКМ по хранилищу с " + autoCraftModule.method1108(this.text3) + " для автокрафта";
       } else if (this.type == CraftBinding.Type.OUTPUT) {
          return "Нажмите ПКМ по сундуку склада для автокрафта";
       } else {

@@ -17,50 +17,50 @@ public final class Util27 {
    }
 
    public static void method7106(
-      BlockEntity var0,
-      Vec3 var1,
-      SpawnerRenderState var2,
-      float var3,
-      Entity var4,
-      EntityRenderDispatcher var5,
-      double var6,
-      double var8,
-      Operation<Void> var10
+      BlockEntity blockEntity,
+      Vec3 vec,
+      SpawnerRenderState spawnerRenderState,
+      float alpha1,
+      Entity entity,
+      EntityRenderDispatcher entityRenderDispatcher,
+      double d,
+      double d2,
+      Operation<Void> operation
    ) {
-      if (var4 != null && OptimizationFlags.flag8 && var1 != null) {
-         BlockPos var11 = var0.getBlockPos();
-         double var12 = var11.getX() + 0.5 - var1.x;
-         double var14 = var11.getY() + 0.5 - var1.y;
-         double var16 = var11.getZ() + 0.5 - var1.z;
-         if (var12 * var12 + var14 * var14 + var16 * var16 > OptimizationFlags.doubleValue2) {
-            var2.displayEntity = null;
+      if (entity != null && OptimizationFlags.flag8 && vec != null) {
+         BlockPos blockPos = blockEntity.getBlockPos();
+         double d3 = blockPos.getX() + 0.5 - vec.x;
+         double d4 = blockPos.getY() + 0.5 - vec.y;
+         double d5 = blockPos.getZ() + 0.5 - vec.z;
+         if (d3 * d3 + d4 * d4 + d5 * d5 > OptimizationFlags.doubleValue2) {
+            spawnerRenderState.displayEntity = null;
             return;
          }
       }
 
-      if (var4 != null && OptimizationFlags.flag9) {
-         Util20.Entry var18 = Util20.method5139(var0);
-         long var19 = Util20.longValue;
-         EntityRenderState var20 = var18.entityRenderState;
-         if (var20 != null && var18.longValue4 == var19 && var18.entity == var4) {
-            var2.displayEntity = var20;
-            var20.lightCoords = var2.lightCoords;
-            var2.spin = (float)Mth.lerp((double)var3, var6, var8) * 10.0F;
-            float var15 = 0.53125F;
-            float var21 = Math.max(var4.getBbWidth(), var4.getBbHeight());
-            if (var21 > 1.0) {
-               var15 /= var21;
+      if (entity != null && OptimizationFlags.flag9) {
+         Util20.Entry entry = Util20.method5139(blockEntity);
+         long longValue = Util20.longValue;
+         EntityRenderState entityRenderState = entry.entityRenderState;
+         if (entityRenderState != null && entry.longValue4 == longValue && entry.entity == entity) {
+            spawnerRenderState.displayEntity = entityRenderState;
+            entityRenderState.lightCoords = spawnerRenderState.lightCoords;
+            spawnerRenderState.spin = (float)Mth.lerp((double)alpha1, d, d2) * 10.0F;
+            float scale = 0.53125F;
+            float f = Math.max(entity.getBbWidth(), entity.getBbHeight());
+            if (f > 1.0) {
+               scale /= f;
             }
 
-            var2.scale = var15;
+            spawnerRenderState.scale = scale;
          } else {
-            var10.call(new Object[]{var2, var3, var4, var5, var6, var8});
-            var18.entityRenderState = var2.displayEntity;
-            var18.entity = var4;
-            var18.longValue4 = var19;
+            operation.call(new Object[]{spawnerRenderState, alpha1, entity, entityRenderDispatcher, d, d2});
+            entry.entityRenderState = spawnerRenderState.displayEntity;
+            entry.entity = entity;
+            entry.longValue4 = longValue;
          }
       } else {
-         var10.call(new Object[]{var2, var3, var4, var5, var6, var8});
+         operation.call(new Object[]{spawnerRenderState, alpha1, entity, entityRenderDispatcher, d, d2});
       }
    }
 }

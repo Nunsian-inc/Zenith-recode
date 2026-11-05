@@ -25,176 +25,176 @@ public class ZenithColor {
    private final int intValue4;
    private static final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4);
 
-   public ZenithColor(String var1) {
-      if (var1.startsWith("#")) {
-         var1 = var1.substring(1);
+   public ZenithColor(String str) {
+      if (str.startsWith("#")) {
+         str = str.substring(1);
       }
 
-      long var2 = Long.parseLong(var1, 16);
-      int var4;
-      int var5;
-      int var6;
-      int var7;
-      if (var1.length() == 8) {
-         var4 = (int)(var2 >> 24 & 255L);
-         var5 = (int)(var2 >> 16 & 255L);
-         var6 = (int)(var2 >> 8 & 255L);
-         var7 = (int)(var2 & 255L);
+      long l = Long.parseLong(str, 16);
+      int intValue;
+      int n;
+      int n2;
+      int n3;
+      if (str.length() == 8) {
+         intValue = (int)(l >> 24 & 255L);
+         n = (int)(l >> 16 & 255L);
+         n2 = (int)(l >> 8 & 255L);
+         n3 = (int)(l & 255L);
       } else {
-         if (var1.length() != 6) {
-            throw new IllegalArgumentException("Invalid hex color: " + var1);
+         if (str.length() != 6) {
+            throw new IllegalArgumentException("Invalid hex color: " + str);
          }
 
-         var4 = (int)(var2 >> 16 & 255L);
-         var5 = (int)(var2 >> 8 & 255L);
-         var6 = (int)(var2 & 255L);
-         var7 = 255;
+         intValue = (int)(l >> 16 & 255L);
+         n = (int)(l >> 8 & 255L);
+         n2 = (int)(l & 255L);
+         n3 = 255;
       }
 
-      this.intValue = var4;
-      this.intValue2 = var5;
-      this.intValue3 = var6;
-      this.intValue4 = var7;
+      this.intValue = intValue;
+      this.intValue2 = n;
+      this.intValue3 = n2;
+      this.intValue4 = n3;
    }
 
-   public ZenithColor(int var1) {
-      this(ColorUtils.method6420(var1), ColorUtils.method6421(var1), ColorUtils.method6422(var1), ColorUtils.method6423(var1));
+   public ZenithColor(int intValue) {
+      this(ColorUtils.method6420(intValue), ColorUtils.method6421(intValue), ColorUtils.method6422(intValue), ColorUtils.method6423(intValue));
    }
 
-   public ZenithColor(Color var1) {
-      this(var1.getRed(), var1.getGreen(), var1.getBlue(), var1.getAlpha());
+   public ZenithColor(Color color) {
+      this(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
    }
 
-   public ZenithColor(int var1, int var2, int var3) {
-      this(var1, var2, var3, 255);
+   public ZenithColor(int intValue, int green, int blue) {
+      this(intValue, green, blue, 255);
    }
 
-   public ZenithColor(int var1, int var2, int var3, int var4) {
-      var1 = Mth.clamp(var1, 0, 255);
-      var2 = Mth.clamp(var2, 0, 255);
-      var3 = Mth.clamp(var3, 0, 255);
-      var4 = Mth.clamp(var4, 0, 255);
-      this.intValue = var1;
-      this.intValue2 = var2;
-      this.intValue3 = var3;
-      this.intValue4 = var4;
+   public ZenithColor(int intValue, int green, int blue, int alpha) {
+      intValue = Mth.clamp(intValue, 0, 255);
+      green = Mth.clamp(green, 0, 255);
+      blue = Mth.clamp(blue, 0, 255);
+      alpha = Mth.clamp(alpha, 0, 255);
+      this.intValue = intValue;
+      this.intValue2 = green;
+      this.intValue3 = blue;
+      this.intValue4 = alpha;
    }
 
    public int method7287() {
-      int var1 = Math.round((float)this.method7288(this.intValue4));
-      int var2 = Math.round((float)this.method7288(this.intValue));
-      int var3 = Math.round((float)this.method7288(this.intValue2));
-      int var4 = Math.round((float)this.method7288(this.intValue3));
-      return (var1 & 0xFF) << 24 | (var2 & 0xFF) << 16 | (var3 & 0xFF) << 8 | var4 & 0xFF;
+      int n = Math.round((float)this.method7288(this.intValue4));
+      int n2 = Math.round((float)this.method7288(this.intValue));
+      int n3 = Math.round((float)this.method7288(this.intValue2));
+      int n4 = Math.round((float)this.method7288(this.intValue3));
+      return (n & 0xFF) << 24 | (n2 & 0xFF) << 16 | (n3 & 0xFF) << 8 | n4 & 0xFF;
    }
 
-   private int method7288(float var1) {
-      return (int)Math.max(0.0F, Math.min(255.0F, var1));
+   private int method7288(float intValue) {
+      return (int)Math.max(0.0F, Math.min(255.0F, intValue));
    }
 
-   public static ZenithColor method7289(String var0) {
-      String var1 = var0.startsWith("#") ? var0.substring(1) : var0;
-      if (var1.length() != 6 && var1.length() != 8) {
+   public static ZenithColor method7289(String str) {
+      String str2 = str.startsWith("#") ? str.substring(1) : str;
+      if (str2.length() != 6 && str2.length() != 8) {
          throw new IllegalArgumentException("Hex color must be in the format #RRGGBB or #RRGGBBAA");
       } else {
-         int var2 = Integer.parseInt(var1.substring(0, 2), 16);
-         int var3 = Integer.parseInt(var1.substring(2, 4), 16);
-         int var4 = Integer.parseInt(var1.substring(4, 6), 16);
-         int var5 = var1.length() == 8 ? Integer.parseInt(var1.substring(6, 8), 16) : 255;
-         return new ZenithColor(var2, var3, var4, var5);
+         int intValue = Integer.parseInt(str2.substring(0, 2), 16);
+         int green = Integer.parseInt(str2.substring(2, 4), 16);
+         int blue = Integer.parseInt(str2.substring(4, 6), 16);
+         int alpha = str2.length() == 8 ? Integer.parseInt(str2.substring(6, 8), 16) : 255;
+         return new ZenithColor(intValue, green, blue, alpha);
       }
    }
 
-   public static ZenithColor method7290(ZenithColor var0, ZenithColor var1, float var2) {
-      float var3 = Math.max(0.0F, Math.min(1.0F, var2));
-      int var4 = (int)(var0.getIntValue() + (var1.getIntValue() - var0.getIntValue()) * var3);
-      int var5 = (int)(var0.getIntValue2() + (var1.getIntValue2() - var0.getIntValue2()) * var3);
-      int var6 = (int)(var0.getIntValue3() + (var1.getIntValue3() - var0.getIntValue3()) * var3);
-      int var7 = (int)(var0.getIntValue4() + (var1.getIntValue4() - var0.getIntValue4()) * var3);
-      return new ZenithColor(var4, var5, var6, var7);
+   public static ZenithColor method7290(ZenithColor zenithColor, ZenithColor zenithColor2, float f) {
+      float f2 = Math.max(0.0F, Math.min(1.0F, f));
+      int intValue = (int)(zenithColor.getIntValue() + (zenithColor2.getIntValue() - zenithColor.getIntValue()) * f2);
+      int green = (int)(zenithColor.getIntValue2() + (zenithColor2.getIntValue2() - zenithColor.getIntValue2()) * f2);
+      int blue = (int)(zenithColor.getIntValue3() + (zenithColor2.getIntValue3() - zenithColor.getIntValue3()) * f2);
+      int alpha = (int)(zenithColor.getIntValue4() + (zenithColor2.getIntValue4() - zenithColor.getIntValue4()) * f2);
+      return new ZenithColor(intValue, green, blue, alpha);
    }
 
-   public static ZenithColor method7291(int var0) {
-      int var1 = var0 >> 24 & 0xFF;
-      int var2 = var0 >> 16 & 0xFF;
-      int var3 = var0 >> 8 & 0xFF;
-      int var4 = var0 & 0xFF;
-      return new ZenithColor(var2, var3, var4, var1);
+   public static ZenithColor method7291(int shade) {
+      int alpha = shade >> 24 & 0xFF;
+      int intValue = shade >> 16 & 0xFF;
+      int green = shade >> 8 & 0xFF;
+      int blue = shade & 0xFF;
+      return new ZenithColor(intValue, green, blue, alpha);
    }
 
-   public ZenithColor method7292(float var1) {
-      return new ZenithColor(this.intValue, this.intValue2, this.intValue3, this.method7288((int)(255.0F * var1)));
+   public ZenithColor method7292(float visibility) {
+      return new ZenithColor(this.intValue, this.intValue2, this.intValue3, this.method7288((int)(255.0F * visibility)));
    }
 
-   public ZenithColor method7293(int var1) {
-      return new ZenithColor(this.intValue, this.intValue2, this.intValue3, var1);
+   public ZenithColor method7293(int alphaValue) {
+      return new ZenithColor(this.intValue, this.intValue2, this.intValue3, alphaValue);
    }
 
-   public ZenithColor method7294(float var1) {
-      return this.method7293(Math.max(0, Math.min(255, (int)(this.intValue4 * var1))));
+   public ZenithColor method7294(float previewAlpha) {
+      return this.method7293(Math.max(0, Math.min(255, (int)(this.intValue4 * previewAlpha))));
    }
 
-   public ZenithColor method7295(ZenithColor var1, float var2) {
-      var2 = Math.min(1.0F, Math.max(0.0F, var2));
+   public ZenithColor method7295(ZenithColor zenithColor, float hover) {
+      hover = Math.min(1.0F, Math.max(0.0F, hover));
       return new ZenithColor(
-         (int)MathUtils.method2649(this.getIntValue(), var1.getIntValue(), var2),
-         (int)MathUtils.method2649(this.getIntValue2(), var1.getIntValue2(), var2),
-         (int)MathUtils.method2649(this.getIntValue3(), var1.getIntValue3(), var2),
-         (int)MathUtils.method2649(this.getIntValue4(), var1.getIntValue4(), var2)
+         (int)MathUtils.method2649(this.getIntValue(), zenithColor.getIntValue(), hover),
+         (int)MathUtils.method2649(this.getIntValue2(), zenithColor.getIntValue2(), hover),
+         (int)MathUtils.method2649(this.getIntValue3(), zenithColor.getIntValue3(), hover),
+         (int)MathUtils.method2649(this.getIntValue4(), zenithColor.getIntValue4(), hover)
       );
    }
 
-   public ZenithColor method7296(float var1) {
-      var1 = Mth.clamp(var1, 0.0F, 1.0F);
-      return new ZenithColor((int)(this.intValue * (1.0F - var1)), (int)(this.intValue2 * (1.0F - var1)), (int)(this.intValue3 * (1.0F - var1)), this.intValue4);
+   public ZenithColor method7296(float f) {
+      f = Mth.clamp(f, 0.0F, 1.0F);
+      return new ZenithColor((int)(this.intValue * (1.0F - f)), (int)(this.intValue2 * (1.0F - f)), (int)(this.intValue3 * (1.0F - f)), this.intValue4);
    }
 
-   public static ZenithColor method7297(float var0, float var1, float var2) {
-      if (var1 == 0.0F) {
-         int var11 = (int)(var2 * 255.0F + 0.5F);
-         return new ZenithColor(var11, var11, var11);
+   public static ZenithColor method7297(float hue, float saturation, float brightness) {
+      if (saturation == 0.0F) {
+         int intValue = (int)(brightness * 255.0F + 0.5F);
+         return new ZenithColor(intValue, intValue, intValue);
       } else {
-         float var3 = (var0 - (float)Math.floor(var0)) * 6.0F;
-         float var4 = var3 - (float)Math.floor(var3);
-         float var5 = var2 * (1.0F - var1);
-         float var6 = var2 * (1.0F - var1 * var4);
-         float var7 = var2 * (1.0F - var1 * (1.0F - var4));
-         float var8 = 0.0F;
-         float var9 = 0.0F;
-         float var10 = 0.0F;
-         switch ((int)var3) {
+         float f = (hue - (float)Math.floor(hue)) * 6.0F;
+         float f2 = f - (float)Math.floor(f);
+         float f3 = brightness * (1.0F - saturation);
+         float f4 = brightness * (1.0F - saturation * f2);
+         float f5 = brightness * (1.0F - saturation * (1.0F - f2));
+         float brightness2 = 0.0F;
+         float f6 = 0.0F;
+         float f7 = 0.0F;
+         switch ((int)f) {
             case 0:
-               var8 = var2;
-               var9 = var7;
-               var10 = var5;
+               brightness2 = brightness;
+               f6 = f5;
+               f7 = f3;
                break;
             case 1:
-               var8 = var6;
-               var9 = var2;
-               var10 = var5;
+               brightness2 = f4;
+               f6 = brightness;
+               f7 = f3;
                break;
             case 2:
-               var8 = var5;
-               var9 = var2;
-               var10 = var7;
+               brightness2 = f3;
+               f6 = brightness;
+               f7 = f5;
                break;
             case 3:
-               var8 = var5;
-               var9 = var6;
-               var10 = var2;
+               brightness2 = f3;
+               f6 = f4;
+               f7 = brightness;
                break;
             case 4:
-               var8 = var7;
-               var9 = var5;
-               var10 = var2;
+               brightness2 = f5;
+               f6 = f3;
+               f7 = brightness;
                break;
             case 5:
-               var8 = var2;
-               var9 = var5;
-               var10 = var6;
+               brightness2 = brightness;
+               f6 = f3;
+               f7 = f4;
          }
 
-         return new ZenithColor((int)(var8 * 255.0F), (int)(var9 * 255.0F), (int)(var10 * 255.0F));
+         return new ZenithColor((int)(brightness2 * 255.0F), (int)(f6 * 255.0F), (int)(f7 * 255.0F));
       }
    }
 
@@ -219,61 +219,61 @@ public class ZenithColor {
    }
 
    private float[] method7302() {
-      float var1 = this.intValue / 255.0F;
-      float var2 = this.intValue2 / 255.0F;
-      float var3 = this.intValue3 / 255.0F;
-      float var4 = Math.max(var1, Math.max(var2, var3));
-      float var5 = Math.min(var1, Math.min(var2, var3));
-      float var6 = var4 - var5;
-      float var7 = 0.0F;
-      if (var6 != 0.0F) {
-         if (var4 == var1) {
-            var7 = (var2 - var3) / var6;
-         } else if (var4 == var2) {
-            var7 = (var3 - var1) / var6 + 2.0F;
+      float f = this.intValue / 255.0F;
+      float f2 = this.intValue2 / 255.0F;
+      float f3 = this.intValue3 / 255.0F;
+      float f4 = Math.max(f, Math.max(f2, f3));
+      float f5 = Math.min(f, Math.min(f2, f3));
+      float f6 = f4 - f5;
+      float f7 = 0.0F;
+      if (f6 != 0.0F) {
+         if (f4 == f) {
+            f7 = (f2 - f3) / f6;
+         } else if (f4 == f2) {
+            f7 = (f3 - f) / f6 + 2.0F;
          } else {
-            var7 = (var1 - var2) / var6 + 4.0F;
+            f7 = (f - f2) / f6 + 4.0F;
          }
 
-         var7 /= 6.0F;
-         if (var7 < 0.0F) {
-            var7++;
+         f7 /= 6.0F;
+         if (f7 < 0.0F) {
+            f7++;
          }
       }
 
-      float var8 = var4 == 0.0F ? 0.0F : var6 / var4;
-      return new float[]{var7, var8, var4};
+      float f8 = f4 == 0.0F ? 0.0F : f6 / f4;
+      return new float[]{f7, f8, f4};
    }
 
-   public ZenithColor method7303(float var1) {
-      var1 = Mth.clamp(var1, 0.0F, 1.0F);
+   public ZenithColor method7303(float f) {
+      f = Mth.clamp(f, 0.0F, 1.0F);
       return new ZenithColor(
-         (int)(this.intValue + (255.0F - this.intValue) * var1),
-         (int)(this.intValue2 + (255.0F - this.intValue2) * var1),
-         (int)(this.intValue3 + (255.0F - this.intValue3) * var1),
+         (int)(this.intValue + (255.0F - this.intValue) * f),
+         (int)(this.intValue2 + (255.0F - this.intValue2) * f),
+         (int)(this.intValue3 + (255.0F - this.intValue3) * f),
          this.intValue4
       );
    }
 
    @Override
-   public boolean equals(Object var1) {
-      if (this == var1) {
+   public boolean equals(Object applied) {
+      if (this == applied) {
          return true;
-      } else if (var1 != null && this.getClass() == var1.getClass()) {
-         ZenithColor var2 = (ZenithColor)var1;
-         return Float.compare(this.intValue, var2.intValue) == 0
-            && Float.compare(this.intValue2, var2.intValue2) == 0
-            && Float.compare(this.intValue3, var2.intValue3) == 0
-            && Float.compare(this.intValue4, var2.intValue4) == 0;
+      } else if (applied != null && this.getClass() == applied.getClass()) {
+         ZenithColor zenithColor = (ZenithColor)applied;
+         return Float.compare(this.intValue, zenithColor.intValue) == 0
+            && Float.compare(this.intValue2, zenithColor.intValue2) == 0
+            && Float.compare(this.intValue3, zenithColor.intValue3) == 0
+            && Float.compare(this.intValue4, zenithColor.intValue4) == 0;
       } else {
          return false;
       }
    }
 
-   public float method7304(ZenithColor var1) {
-      return Math.abs(this.method7298() - var1.method7298())
-         + Math.abs(this.method7300() - var1.method7300())
-         + Math.abs(this.method7299() - var1.method7299());
+   public float method7304(ZenithColor zenithColor) {
+      return Math.abs(this.method7298() - zenithColor.method7298())
+         + Math.abs(this.method7300() - zenithColor.method7300())
+         + Math.abs(this.method7299() - zenithColor.method7299());
    }
 
    @Override

@@ -37,61 +37,61 @@ public final class Task {
    private int intValue2;
    private boolean flag2;
 
-   private Task(Path var1) {
-      this.path = var1.resolve("wardrobe").resolve("autoshot.task.json");
-      this.path2 = var1.resolve("wardrobe").resolve("shots");
+   private Task(Path path) {
+      this.path = path.resolve("wardrobe").resolve("autoshot.task.json");
+      this.path2 = path.resolve("wardrobe").resolve("shots");
    }
 
-   public static void method5982(Path var0) {
+   public static void method5982(Path path) {
       if (System.getProperty("DevMode") != null && Boolean.getBoolean("zenith.wardrobe.autoshot")) {
-         Task var1 = new Task(var0);
-         if (Files.isRegularFile(var1.path)) {
-            var1.load();
-            ClientTickEvents.END_CLIENT_TICK.register(var1::method5983);
+         Task task = new Task(path);
+         if (Files.isRegularFile(task.path)) {
+            task.load();
+            ClientTickEvents.END_CLIENT_TICK.register(task::method5983);
          }
       }
    }
 
    private void load() {
-      JsonObject var1 = JsonIo.method1009(this.path);
-      if (var1 != null) {
-         this.flag = var1.has("quit") && var1.get("quit").getAsBoolean();
-         if (var1.has("setup")) {
-            for (JsonElement var3 : var1.getAsJsonArray("setup")) {
-               this.items2.add(var3.getAsString());
+      JsonObject json = JsonIo.method1009(this.path);
+      if (json != null) {
+         this.flag = json.has("quit") && json.get("quit").getAsBoolean();
+         if (json.has("setup")) {
+            for (JsonElement jsonElement : json.getAsJsonArray("setup")) {
+               this.items2.add(jsonElement.getAsString());
             }
          }
 
-         if (var1.has("modules")) {
-            for (JsonElement var11 : var1.getAsJsonArray("modules")) {
-               this.items3.add(var11.getAsString());
+         if (json.has("modules")) {
+            for (JsonElement jsonElement : json.getAsJsonArray("modules")) {
+               this.items3.add(jsonElement.getAsString());
             }
          }
 
-         for (JsonElement var4 : var1.has("shots") ? var1.getAsJsonArray("shots") : new JsonArray()) {
-            JsonObject var5 = var4.getAsJsonObject();
-            ArrayList var6 = new ArrayList();
-            if (var5.has("equip")) {
-               for (JsonElement var8 : var5.getAsJsonArray("equip")) {
-                  var6.add(var8.getAsString());
+         for (JsonElement jsonElement : json.has("shots") ? json.getAsJsonArray("shots") : new JsonArray()) {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            ArrayList items = new ArrayList();
+            if (jsonObject.has("equip")) {
+               for (JsonElement json2 : jsonObject.getAsJsonArray("equip")) {
+                  items.add(json2.getAsString());
                }
             }
 
             this.items
                .add(
                   new Task.Data(
-                     var5.get("name").getAsString(),
-                     var6,
-                     CameraType.valueOf(var5.has("perspective") ? var5.get("perspective").getAsString().toUpperCase(Locale.ROOT) : "THIRD_PERSON_FRONT"),
-                     var5.has("yaw") ? var5.get("yaw").getAsFloat() : 0.0F,
-                     var5.has("pitch") ? var5.get("pitch").getAsFloat() : 0.0F,
-                     var5.has("hold") ? var5.get("hold").getAsString() : "",
-                     var5.has("wait") ? var5.get("wait").getAsInt() : 30,
-                     var5.has("sneak") && var5.get("sneak").getAsBoolean(),
-                     var5.has("cloud") ? var5.get("cloud").getAsInt() : -1,
-                     var5.has("friendsAdd") ? var5.get("friendsAdd").getAsString() : null,
-                     var5.has("wardrobeTab") ? var5.get("wardrobeTab").getAsInt() : -1,
-                     var5.has("screen") ? var5.get("screen").getAsString() : null
+                     jsonObject.get("name").getAsString(),
+                     items,
+                     CameraType.valueOf(jsonObject.has("perspective") ? jsonObject.get("perspective").getAsString().toUpperCase(Locale.ROOT) : "THIRD_PERSON_FRONT"),
+                     jsonObject.has("yaw") ? jsonObject.get("yaw").getAsFloat() : 0.0F,
+                     jsonObject.has("pitch") ? jsonObject.get("pitch").getAsFloat() : 0.0F,
+                     jsonObject.has("hold") ? jsonObject.get("hold").getAsString() : "",
+                     jsonObject.has("wait") ? jsonObject.get("wait").getAsInt() : 30,
+                     jsonObject.has("sneak") && jsonObject.get("sneak").getAsBoolean(),
+                     jsonObject.has("cloud") ? jsonObject.get("cloud").getAsInt() : -1,
+                     jsonObject.has("friendsAdd") ? jsonObject.get("friendsAdd").getAsString() : null,
+                     jsonObject.has("wardrobeTab") ? jsonObject.get("wardrobeTab").getAsInt() : -1,
+                     jsonObject.has("screen") ? jsonObject.get("screen").getAsString() : null
                   )
                );
          }
@@ -100,14 +100,14 @@ public final class Task {
       }
    }
 
-   private void method5983(Minecraft var1) {
-      if (var1.player != null && var1.level != null) {
-         var1.options.pauseOnLostFocus = false;
-         boolean var2 = this.index >= 0
+   private void method5983(Minecraft minecraft) {
+      if (minecraft.player != null && minecraft.level != null) {
+         minecraft.options.pauseOnLostFocus = false;
+         boolean flag = this.index >= 0
             && this.index < this.items.size()
             && (this.items.get(this.index).getIntValue2() >= 0 || this.items.get(this.index).getText4() != null);
-         if (var1.gui.screen() != null && !var2) {
-            var1.gui.setScreen(null);
+         if (minecraft.gui.screen() != null && !flag) {
+            minecraft.gui.setScreen(null);
          }
 
          if (this.intValue >= 80) {
@@ -116,28 +116,28 @@ public final class Task {
                   this.index = 0;
                   this.intValue2 = 0;
                   this.flag2 = false;
-                  this.method5984(var1, this.items.get(0));
+                  this.method5984(minecraft, this.items.get(0));
                }
 
-               Task.Data var8 = this.items.get(this.index);
-               this.method5985(var1, var8);
+               Task.Data data = this.items.get(this.index);
+               this.method5985(minecraft, data);
                this.intValue2++;
                if (this.intValue2 % 20 == 0) {
-                  logger.info("Автоснимки гардероба: {} fps {}", var8.name(), var1.getFps());
+                  logger.info("Автоснимки гардероба: {} fps {}", data.name(), minecraft.getFps());
                }
 
-               if (this.intValue2 == var8.getIntValue() && !this.flag2) {
+               if (this.intValue2 == data.getIntValue() && !this.flag2) {
                   this.flag2 = true;
-                  this.method5986(var1, var8.name());
+                  this.method5986(minecraft, data.name());
                }
 
-               if (this.intValue2 >= var8.getIntValue() + 5) {
+               if (this.intValue2 >= data.getIntValue() + 5) {
                   this.index++;
                   if (this.index >= this.items.size()) {
-                     var1.gui.hud.isHidden = false;
+                     minecraft.gui.hud.isHidden = false;
                      logger.info("Автоснимки гардероба готовы: {}", this.path2);
                      if (this.flag) {
-                        var1.stop();
+                        minecraft.stop();
                      }
 
                      return;
@@ -145,24 +145,24 @@ public final class Task {
 
                   this.intValue2 = 0;
                   this.flag2 = false;
-                  this.method5984(var1, this.items.get(this.index));
+                  this.method5984(minecraft, this.items.get(this.index));
                }
             }
          } else {
             this.intValue++;
             if (this.intValue == 30) {
-               for (String var4 : this.items3) {
-                  boolean var5 = var4.startsWith("-");
-                  Module var6 = Zenith.getInstance().getModuleManager().method2484(var5 ? var4.substring(1) : var4);
-                  if (var6 != null && var6.isEnabled() == var5) {
-                     var6.toggle();
+               for (String str : this.items3) {
+                  boolean startsWith = str.startsWith("-");
+                  Module moduleValue = Zenith.getInstance().getModuleManager().method2484(startsWith ? str.substring(1) : str);
+                  if (moduleValue != null && moduleValue.isEnabled() == startsWith) {
+                     moduleValue.toggle();
                   }
                }
             }
 
             if (this.intValue == 20 || this.intValue == 40) {
-               for (String var9 : this.items2) {
-                  var1.player.connection.sendCommand(var9);
+               for (String command : this.items2) {
+                  minecraft.player.connection.sendCommand(command);
                }
             }
          }
@@ -171,77 +171,77 @@ public final class Task {
       }
    }
 
-   private void method5984(Minecraft var1, Task.Data var2) {
-      Wardrobe var3 = Wardrobe.method2488();
-      if (var3 != null) {
-         var3.method2496();
+   private void method5984(Minecraft minecraft, Task.Data data) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      if (wardrobe != null) {
+         wardrobe.method2496();
 
-         for (String var5 : var2.getItems()) {
-            var3.method2492(var3.getRegistry().method1421(var5));
+         for (String string : data.getItems()) {
+            wardrobe.method2492(wardrobe.getRegistry().method1421(string));
          }
       }
 
-      var1.gui.hud.isHidden = var2.getPerspective() != CameraType.FIRST_PERSON;
-      var1.options.setCameraType(var2.getPerspective());
-      ItemStack var7 = ItemStack.EMPTY;
-      FocusSlotEnum var8 = FocusSlotEnum.method546(var2.getText2());
-      if (var8 != null && var8.method543()) {
-         var7 = var8.method544();
+      minecraft.gui.hud.isHidden = data.getPerspective() != CameraType.FIRST_PERSON;
+      minecraft.options.setCameraType(data.getPerspective());
+      ItemStack itemStack = ItemStack.EMPTY;
+      FocusSlotEnum focusSlotEnum = FocusSlotEnum.method546(data.getText2());
+      if (focusSlotEnum != null && focusSlotEnum.method543()) {
+         itemStack = focusSlotEnum.method544();
       }
 
-      var1.player.setItemInHand(InteractionHand.MAIN_HAND, var7);
-      if (var2.getText4() != null && var2.getText4().startsWith("module:")) {
-         Module var6 = Zenith.getInstance().getModuleManager().method2484(var2.getText4().substring(7));
+      minecraft.player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
+      if (data.getText4() != null && data.getText4().startsWith("module:")) {
+         Module moduleValue = Zenith.getInstance().getModuleManager().method2484(data.getText4().substring(7));
          if (!MenuModule.INSTANCE.isEnabled()) {
             MenuModule.INSTANCE.toggle();
          }
 
-         if (var6 != null) {
-            Zenith.getInstance().getNLMenuScreen().devShowModule(var6);
+         if (moduleValue != null) {
+            Zenith.getInstance().getNLMenuScreen().devShowModule(moduleValue);
          }
       }
 
-      if ("music".equals(var2.getText4())) {
-         var1.gui.setScreen(new NowPlayingScreen());
+      if ("music".equals(data.getText4())) {
+         minecraft.gui.setScreen(new NowPlayingScreen());
       }
 
-      if (var2.getIntValue2() >= 0) {
-         NLMenuScreen var9 = Zenith.getInstance().getNLMenuScreen();
+      if (data.getIntValue2() >= 0) {
+         NLMenuScreen nlMenuScreen = Zenith.getInstance().getNLMenuScreen();
          if (!MenuModule.INSTANCE.isEnabled()) {
             MenuModule.INSTANCE.toggle();
          }
 
-         if (var2.getIntValue3() >= 0) {
-            var9.openCosmetics(var2.getIntValue3());
-         } else if (var2.getText3() != null) {
-            var9.setType(NLMenuScreen.ElementsType.CLOUD);
-            var9.getCloudSectionPanel().openFriendsAdd(var2.getText3());
+         if (data.getIntValue3() >= 0) {
+            nlMenuScreen.openCosmetics(data.getIntValue3());
+         } else if (data.getText3() != null) {
+            nlMenuScreen.setType(NLMenuScreen.ElementsType.CLOUD);
+            nlMenuScreen.getCloudSectionPanel().openFriendsAdd(data.getText3());
          } else {
-            var9.setType(NLMenuScreen.ElementsType.CLOUD);
-            var9.getCloudSectionPanel().open(var2.getIntValue2());
+            nlMenuScreen.setType(NLMenuScreen.ElementsType.CLOUD);
+            nlMenuScreen.getCloudSectionPanel().open(data.getIntValue2());
          }
       }
    }
 
-   private void method5985(Minecraft var1, Task.Data var2) {
-      var1.player.setYRot(var2.getFloatValue());
-      var1.player.setXRot(var2.getFloatValue2());
-      var1.player.setYHeadRot(var2.getFloatValue());
-      var1.player.setYBodyRot(var2.getFloatValue());
-      var1.player.yRotO = var2.getFloatValue();
-      var1.player.xRotO = var2.getFloatValue2();
-      var1.player.yBodyRotO = var2.getFloatValue();
-      var1.player.yHeadRotO = var2.getFloatValue();
-      var1.player.setShiftKeyDown(var2.isFlag());
+   private void method5985(Minecraft minecraft, Task.Data data) {
+      minecraft.player.setYRot(data.getFloatValue());
+      minecraft.player.setXRot(data.getFloatValue2());
+      minecraft.player.setYHeadRot(data.getFloatValue());
+      minecraft.player.setYBodyRot(data.getFloatValue());
+      minecraft.player.yRotO = data.getFloatValue();
+      minecraft.player.xRotO = data.getFloatValue2();
+      minecraft.player.yBodyRotO = data.getFloatValue();
+      minecraft.player.yHeadRotO = data.getFloatValue();
+      minecraft.player.setShiftKeyDown(data.isFlag());
    }
 
-   private void method5986(Minecraft var1, String var2) {
-      Screenshot.takeScreenshot(var1.gameRenderer.mainRenderTarget(), var2x -> {
+   private void method5986(Minecraft minecraft, String name) {
+      Screenshot.takeScreenshot(minecraft.gameRenderer.mainRenderTarget(), var2x -> {
          try {
             Files.createDirectories(this.path2);
-            var2x.writeToFile(this.path2.resolve(var2 + ".png"));
-         } catch (IOException var7) {
-            logger.error("Снимок {} не сохранён", var2, var7);
+            var2x.writeToFile(this.path2.resolve(name + ".png"));
+         } catch (IOException e) {
+            logger.error("Снимок {} не сохранён", name, e);
          } finally {
             var2x.close();
          }
@@ -328,31 +328,31 @@ public final class Task {
       }
 
       private Data(
-         String var1,
-         List<String> var2,
-         CameraType var3,
-         float var4,
-         float var5,
-         String var6,
-         int var7,
-         boolean var8,
-         int var9,
-         String var10,
-         int var11,
-         String var12
+         String text,
+         List<String> items,
+         CameraType perspective,
+         float floatValue,
+         float f,
+         String string,
+         int intValue,
+         boolean flag,
+         int n,
+         String str,
+         int n2,
+         String string2
       ) {
-         this.text = var1;
-         this.items = var2;
-         this.perspective = var3;
-         this.floatValue = var4;
-         this.floatValue2 = var5;
-         this.text2 = var6;
-         this.intValue = var7;
-         this.flag = var8;
-         this.intValue2 = var9;
-         this.text3 = var10;
-         this.intValue3 = var11;
-         this.text4 = var12;
+         this.text = text;
+         this.items = items;
+         this.perspective = perspective;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.text2 = string;
+         this.intValue = intValue;
+         this.flag = flag;
+         this.intValue2 = n;
+         this.text3 = str;
+         this.intValue3 = n2;
+         this.text4 = string2;
       }
 
       public String name() {

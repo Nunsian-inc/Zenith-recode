@@ -45,124 +45,124 @@ public final class IntentSelector {
       Path.of("..", "scripts", "motor_intents", "out", "intent_selector.json"), Path.of("scripts", "motor_intents", "out", "intent_selector.json")
    };
 
-   public IntentSelector.Entry method7315(float[] var1) {
-      float[] var2 = new float[this.intValue];
+   public IntentSelector.Entry method7315(float[] floats) {
+      float[] floats2 = new float[this.intValue];
 
-      for (int var3 = 0; var3 < this.intValue; var3++) {
-         float var4 = var1[var3];
+      for (int i = 0; i < this.intValue; i++) {
+         float sign = floats[i];
 
-         var4 = switch (this.intValues[var3]) {
-            case 1 -> method7316(var4);
-            case 2 -> (float)Math.log1p(Math.max(var4, 0.0F));
-            default -> var4;
+         sign = switch (this.intValues[i]) {
+            case 1 -> method7316(sign);
+            case 2 -> (float)Math.log1p(Math.max(sign, 0.0F));
+            default -> sign;
          };
-         var2[var3] = (var4 - this.floatValues[var3]) / this.std[var3];
+         floats2[i] = (sign - this.floatValues[i]) / this.std[i];
       }
 
-      float[] var13 = method7317(this.floatValues2, this.floatValues3, var2);
-      method7318(var13, this.floatValues4, this.floatValues5);
-      method7319(var13);
-      float[] var15 = method7317(this.floatValues6, this.floatValues7, var13);
-      method7319(var15);
-      IntentSelector.Entry var5 = new IntentSelector.Entry();
-      var5.floatValue = method7317(this.floatValues8, this.floatValues9, var15)[0];
-      float[] var6 = method7317(this.floatValues10, this.floatValues11, var15);
-      System.arraycopy(var6, 0, var5.floatValues, 0, var6.length);
-      float[] var7 = method7317(this.floatValues12, this.floatValues13, var15);
-      byte var8 = 9;
-      var5.floatValues2 = new float[4][this.intValue3][var8];
-      int var9 = 0;
+      float[] floats3 = method7317(this.floatValues2, this.floatValues3, floats2);
+      method7318(floats3, this.floatValues4, this.floatValues5);
+      method7319(floats3);
+      float[] floats4 = method7317(this.floatValues6, this.floatValues7, floats3);
+      method7319(floats4);
+      IntentSelector.Entry entry = new IntentSelector.Entry();
+      entry.floatValue = method7317(this.floatValues8, this.floatValues9, floats4)[0];
+      float[] floats5 = method7317(this.floatValues10, this.floatValues11, floats4);
+      System.arraycopy(floats5, 0, entry.floatValues, 0, floats5.length);
+      float[] floats6 = method7317(this.floatValues12, this.floatValues13, floats4);
+      byte b = 9;
+      entry.floatValues2 = new float[4][this.intValue3][b];
+      int n = 0;
 
-      for (int var10 = 0; var10 < 4; var10++) {
-         for (int var11 = 0; var11 < this.intValue3; var11++) {
-            for (int var12 = 0; var12 < var8; var12++) {
-               var5.floatValues2[var10][var11][var12] = var7[var9++];
+      for (int i = 0; i < 4; i++) {
+         for (int j = 0; j < this.intValue3; j++) {
+            for (int k = 0; k < b; k++) {
+               entry.floatValues2[i][j][k] = floats6[n++];
             }
          }
       }
 
-      float[] var17 = method7317(this.floatValues14, this.floatValues15, var15);
-      var5.floatValues3 = new float[this.intValue4][3];
-      var9 = 0;
+      float[] floats7 = method7317(this.floatValues14, this.floatValues15, floats4);
+      entry.floatValues3 = new float[this.intValue4][3];
+      n = 0;
 
-      for (int var18 = 0; var18 < this.intValue4; var18++) {
-         for (int var19 = 0; var19 < 3; var19++) {
-            var5.floatValues3[var18][var19] = var17[var9++];
+      for (int i = 0; i < this.intValue4; i++) {
+         for (int j = 0; j < 3; j++) {
+            entry.floatValues3[i][j] = floats7[n++];
          }
       }
 
-      return var5;
+      return entry;
    }
 
-   public static float method7316(float var0) {
-      return (float)Math.copySign(Math.log1p(Math.abs(var0)), (double)var0);
+   public static float method7316(float sign) {
+      return (float)Math.copySign(Math.log1p(Math.abs(sign)), (double)sign);
    }
 
-   private static float[] method7317(float[][] var0, float[] var1, float[] var2) {
-      float[] var3 = new float[var0.length];
+   private static float[] method7317(float[][] floatValues2, float[] floatValues3, float[] floats) {
+      float[] floats2 = new float[floatValues2.length];
 
-      for (int var4 = 0; var4 < var0.length; var4++) {
-         float var5 = var1[var4];
-         float[] var6 = var0[var4];
+      for (int i = 0; i < floatValues2.length; i++) {
+         float f = floatValues3[i];
+         float[] floats3 = floatValues2[i];
 
-         for (int var7 = 0; var7 < var2.length; var7++) {
-            var5 += var6[var7] * var2[var7];
+         for (int j = 0; j < floats.length; j++) {
+            f += floats3[j] * floats[j];
          }
 
-         var3[var4] = var5;
+         floats2[i] = f;
       }
 
-      return var3;
+      return floats2;
    }
 
-   private static void method7318(float[] var0, float[] var1, float[] var2) {
-      double var3 = 0.0;
+   private static void method7318(float[] floats, float[] floatValues4, float[] floatValues5) {
+      double d = 0.0;
 
-      for (float var8 : var0) {
-         var3 += var8;
+      for (float f : floats) {
+         d += f;
       }
 
-      var3 /= var0.length;
-      double var14 = 0.0;
+      d /= floats.length;
+      double d2 = 0.0;
 
-      for (float var10 : var0) {
-         double var11 = var10 - var3;
-         var14 += var11 * var11;
+      for (float f : floats) {
+         double d3 = f - d;
+         d2 += d3 * d3;
       }
 
-      var14 /= var0.length;
-      double var17 = 1.0 / Math.sqrt(var14 + 1.0E-5);
+      d2 /= floats.length;
+      double d3 = 1.0 / Math.sqrt(d2 + 1.0E-5);
 
-      for (int var19 = 0; var19 < var0.length; var19++) {
-         var0[var19] = (float)((var0[var19] - var3) * var17 * var1[var19] + var2[var19]);
-      }
-   }
-
-   private static void method7319(float[] var0) {
-      for (int var1 = 0; var1 < var0.length; var1++) {
-         double var2 = var0[var1];
-         var0[var1] = (float)(0.5 * var2 * (1.0 + method7320(var2 / Math.sqrt(2.0))));
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = (float)((floats[i] - d) * d3 * floatValues4[i] + floatValues5[i]);
       }
    }
 
-   private static double method7320(double var0) {
-      double var2 = Math.signum(var0);
-      double var4 = Math.abs(var0);
-      double var6 = 1.0 / (1.0 + 0.3275911 * var4);
-      double var8 = 1.0
-         - ((((1.061405429 * var6 - 1.453152027) * var6 + 1.421413741) * var6 - 0.284496736) * var6 + 0.254829592) * var6 * Math.exp(-var4 * var4);
-      return var2 * var8;
+   private static void method7319(float[] floats) {
+      for (int i = 0; i < floats.length; i++) {
+         double d = floats[i];
+         floats[i] = (float)(0.5 * d * (1.0 + method7320(d / Math.sqrt(2.0))));
+      }
+   }
+
+   private static double method7320(double d) {
+      double d2 = Math.signum(d);
+      double d3 = Math.abs(d);
+      double d4 = 1.0 / (1.0 + 0.3275911 * d3);
+      double d5 = 1.0
+         - ((((1.061405429 * d4 - 1.453152027) * d4 + 1.421413741) * d4 - 0.284496736) * d4 + 0.254829592) * d4 * Math.exp(-d3 * d3);
+      return d2 * d5;
    }
 
    public static IntentSelector method7321() {
-      IntentSelector var0 = method7322(path);
-      if (var0 != null) {
-         return var0;
+      IntentSelector intentSelector = method7322(path);
+      if (intentSelector != null) {
+         return intentSelector;
       } else {
-         for (Path var4 : paths) {
-            var0 = method7322(var4);
-            if (var0 != null) {
-               return var0;
+         for (Path path2 : paths) {
+            intentSelector = method7322(path2);
+            if (intentSelector != null) {
+               return intentSelector;
             }
          }
 
@@ -170,121 +170,121 @@ public final class IntentSelector {
       }
    }
 
-   private static IntentSelector method7322(Path var0) {
+   private static IntentSelector method7322(Path path) {
       try {
-         return !Files.isRegularFile(var0) ? null : method7324(Files.readString(var0, StandardCharsets.UTF_8), var0.toAbsolutePath().toString());
-      } catch (Throwable var2) {
-         System.err.println("[MotorIntent] failed to load " + var0 + ": " + var2);
+         return !Files.isRegularFile(path) ? null : method7324(Files.readString(path, StandardCharsets.UTF_8), path.toAbsolutePath().toString());
+      } catch (Throwable e) {
+         System.err.println("[MotorIntent] failed to load " + path + ": " + e);
          return null;
       }
    }
 
    private static IntentSelector method7323() {
       try {
-         IntentSelector var1;
-         try (InputStream var0 = IntentSelector.class.getResourceAsStream("/assets/zenith/aimpipe/intent_selector.json")) {
-            if (var0 == null) {
+         IntentSelector intentSelector;
+         try (InputStream resourceAsStream = IntentSelector.class.getResourceAsStream("/assets/zenith/aimpipe/intent_selector.json")) {
+            if (resourceAsStream == null) {
                return null;
             }
 
-            var1 = method7324(new String(var0.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/aimpipe/intent_selector.json");
+            intentSelector = method7324(new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/aimpipe/intent_selector.json");
          }
 
-         return var1;
-      } catch (Throwable var5) {
-         System.err.println("[MotorIntent] failed to load /assets/zenith/aimpipe/intent_selector.json: " + var5);
+         return intentSelector;
+      } catch (Throwable e) {
+         System.err.println("[MotorIntent] failed to load /assets/zenith/aimpipe/intent_selector.json: " + e);
          return null;
       }
    }
 
-   private static IntentSelector method7324(String var0, String var1) {
-      JsonObject var2 = JsonParser.parseString(var0).getAsJsonObject();
-      if (!"motor_intent_selector_mlp".equals(var2.get("model").getAsString())) {
+   private static IntentSelector method7324(String string, String str) {
+      JsonObject jsonObject = JsonParser.parseString(string).getAsJsonObject();
+      if (!"motor_intent_selector_mlp".equals(jsonObject.get("model").getAsString())) {
          throw new IllegalStateException("unexpected selector model");
-      } else if (var2.get("format_version").getAsInt() != 3) {
-         throw new IllegalStateException("unsupported selector format_version " + var2.get("format_version").getAsInt() + " (need 3)");
+      } else if (jsonObject.get("format_version").getAsInt() != 3) {
+         throw new IllegalStateException("unsupported selector format_version " + jsonObject.get("format_version").getAsInt() + " (need 3)");
       } else {
-         JsonObject var3 = var2.getAsJsonObject("architecture");
-         IntentSelector var4 = new IntentSelector();
-         var4.intValue = var3.get("input_dim").getAsInt();
-         var4.intValue2 = var3.get("hidden").getAsInt();
-         var4.intValue3 = var3.get("mixture_components").getAsInt();
-         var4.intValue4 = var3.get("rest_mixture_components").getAsInt();
-         JsonArray var5 = var3.getAsJsonArray("intents");
-         if (var5.size() != 4) {
+         JsonObject json = jsonObject.getAsJsonObject("architecture");
+         IntentSelector intentSelector = new IntentSelector();
+         intentSelector.intValue = json.get("input_dim").getAsInt();
+         intentSelector.intValue2 = json.get("hidden").getAsInt();
+         intentSelector.intValue3 = json.get("mixture_components").getAsInt();
+         intentSelector.intValue4 = json.get("rest_mixture_components").getAsInt();
+         JsonArray jsonArray = json.getAsJsonArray("intents");
+         if (jsonArray.size() != 4) {
             throw new IllegalStateException("selector intent taxonomy mismatch");
          } else {
-            for (int var6 = 0; var6 < var5.size(); var6++) {
-               if (!IntentLibraryRt.texts[var6].equals(var5.get(var6).getAsString())) {
+            for (int i = 0; i < jsonArray.size(); i++) {
+               if (!IntentLibraryRt.texts[i].equals(jsonArray.get(i).getAsString())) {
                   throw new IllegalStateException("selector intent order mismatch");
                }
             }
 
-            if (var3.getAsJsonArray("param_names").size() != 4) {
+            if (json.getAsJsonArray("param_names").size() != 4) {
                throw new IllegalStateException("selector param count mismatch");
             } else {
-               var4.floatValue = var2.get("move_threshold").getAsFloat();
-               JsonArray var12 = var2.getAsJsonArray("feature_spec");
-               if (var12.size() != var4.intValue) {
+               intentSelector.floatValue = jsonObject.get("move_threshold").getAsFloat();
+               JsonArray jsonArray2 = jsonObject.getAsJsonArray("feature_spec");
+               if (jsonArray2.size() != intentSelector.intValue) {
                   throw new IllegalStateException("feature spec size mismatch");
                } else {
-                  var4.texts = new String[var12.size()];
-                  var4.intValues = new int[var12.size()];
-                  var4.floatValues = new float[var12.size()];
-                  var4.std = new float[var12.size()];
+                  intentSelector.texts = new String[jsonArray2.size()];
+                  intentSelector.intValues = new int[jsonArray2.size()];
+                  intentSelector.floatValues = new float[jsonArray2.size()];
+                  intentSelector.std = new float[jsonArray2.size()];
 
-                  for (int var7 = 0; var7 < var12.size(); var7++) {
-                     JsonObject var8 = var12.get(var7).getAsJsonObject();
-                     var4.texts[var7] = var8.get("name").getAsString();
-                     String var9 = var8.get("transform").getAsString();
-                     int[] var10000 = var4.intValues;
+                  for (int i = 0; i < jsonArray2.size(); i++) {
+                     JsonObject jsonObject2 = jsonArray2.get(i).getAsJsonObject();
+                     intentSelector.texts[i] = jsonObject2.get("name").getAsString();
+                     String string2 = jsonObject2.get("transform").getAsString();
+                     int[] intValues = intentSelector.intValues;
 
-                     var10000[var7] = switch (var9) {
+                     intValues[i] = switch (string2) {
                         case "signed_log" -> 1;
                         case "log1p" -> 2;
                         case "linear" -> 0;
-                        default -> throw new IllegalStateException("unknown transform " + var9);
+                        default -> throw new IllegalStateException("unknown transform " + string2);
                      };
-                     var4.floatValues[var7] = var8.get("mean").getAsFloat();
-                     var4.std[var7] = var8.get("std").getAsFloat();
+                     intentSelector.floatValues[i] = jsonObject2.get("mean").getAsFloat();
+                     intentSelector.std[i] = jsonObject2.get("std").getAsFloat();
                   }
 
-                  JsonObject var13 = var2.getAsJsonObject("weights");
-                  var4.floatValues2 = method7325(var13, "backbone.0.weight");
-                  var4.floatValues3 = method7326(var13, "backbone.0.bias");
-                  var4.floatValues4 = method7326(var13, "backbone.1.weight");
-                  var4.floatValues5 = method7326(var13, "backbone.1.bias");
-                  var4.floatValues6 = method7325(var13, "backbone.4.weight");
-                  var4.floatValues7 = method7326(var13, "backbone.4.bias");
-                  var4.floatValues8 = method7325(var13, "move_head.weight");
-                  var4.floatValues9 = method7326(var13, "move_head.bias");
-                  var4.floatValues10 = method7325(var13, "intent_head.weight");
-                  var4.floatValues11 = method7326(var13, "intent_head.bias");
-                  var4.floatValues12 = method7325(var13, "params_head.weight");
-                  var4.floatValues13 = method7326(var13, "params_head.bias");
-                  var4.floatValues14 = method7325(var13, "rest_head.weight");
-                  var4.floatValues15 = method7326(var13, "rest_head.bias");
-                  int var14 = 4 * var4.intValue3 * 9;
-                  if (var4.floatValues12.length != var14) {
-                     throw new IllegalStateException("params head size mismatch: " + var4.floatValues12.length + " vs " + var14);
-                  } else if (var4.floatValues14.length != var4.intValue4 * 3) {
+                  JsonObject jsonObject2 = jsonObject.getAsJsonObject("weights");
+                  intentSelector.floatValues2 = method7325(jsonObject2, "backbone.0.weight");
+                  intentSelector.floatValues3 = method7326(jsonObject2, "backbone.0.bias");
+                  intentSelector.floatValues4 = method7326(jsonObject2, "backbone.1.weight");
+                  intentSelector.floatValues5 = method7326(jsonObject2, "backbone.1.bias");
+                  intentSelector.floatValues6 = method7325(jsonObject2, "backbone.4.weight");
+                  intentSelector.floatValues7 = method7326(jsonObject2, "backbone.4.bias");
+                  intentSelector.floatValues8 = method7325(jsonObject2, "move_head.weight");
+                  intentSelector.floatValues9 = method7326(jsonObject2, "move_head.bias");
+                  intentSelector.floatValues10 = method7325(jsonObject2, "intent_head.weight");
+                  intentSelector.floatValues11 = method7326(jsonObject2, "intent_head.bias");
+                  intentSelector.floatValues12 = method7325(jsonObject2, "params_head.weight");
+                  intentSelector.floatValues13 = method7326(jsonObject2, "params_head.bias");
+                  intentSelector.floatValues14 = method7325(jsonObject2, "rest_head.weight");
+                  intentSelector.floatValues15 = method7326(jsonObject2, "rest_head.bias");
+                  int n = 4 * intentSelector.intValue3 * 9;
+                  if (intentSelector.floatValues12.length != n) {
+                     throw new IllegalStateException("params head size mismatch: " + intentSelector.floatValues12.length + " vs " + n);
+                  } else if (intentSelector.floatValues14.length != intentSelector.intValue4 * 3) {
                      throw new IllegalStateException("rest head size mismatch");
-                  } else if (var4.floatValues2[0].length == var4.intValue && var4.floatValues2.length == var4.intValue2) {
+                  } else if (intentSelector.floatValues2[0].length == intentSelector.intValue && intentSelector.floatValues2.length == intentSelector.intValue2) {
                      System.out
                         .println(
                            "[MotorIntent] loaded selector "
-                              + var1
+                              + str
                               + " (in="
-                              + var4.intValue
+                              + intentSelector.intValue
                               + ", hidden="
-                              + var4.intValue2
+                              + intentSelector.intValue2
                               + ", mixture="
-                              + var4.intValue3
+                              + intentSelector.intValue3
                               + ", threshold="
-                              + var4.floatValue
+                              + intentSelector.floatValue
                               + ")"
                         );
-                     return var4;
+                     return intentSelector;
                   } else {
                      throw new IllegalStateException("backbone.0 shape mismatch");
                   }
@@ -294,31 +294,31 @@ public final class IntentSelector {
       }
    }
 
-   private static float[][] method7325(JsonObject var0, String var1) {
-      JsonArray var2 = var0.getAsJsonArray(var1);
-      float[][] var3 = new float[var2.size()][];
+   private static float[][] method7325(JsonObject json, String memberName) {
+      JsonArray jsonArray = json.getAsJsonArray(memberName);
+      float[][] floatses = new float[jsonArray.size()][];
 
-      for (int var4 = 0; var4 < var2.size(); var4++) {
-         JsonArray var5 = var2.get(var4).getAsJsonArray();
-         var3[var4] = new float[var5.size()];
+      for (int i = 0; i < jsonArray.size(); i++) {
+         JsonArray jsonArray2 = jsonArray.get(i).getAsJsonArray();
+         floatses[i] = new float[jsonArray2.size()];
 
-         for (int var6 = 0; var6 < var5.size(); var6++) {
-            var3[var4][var6] = var5.get(var6).getAsFloat();
+         for (int j = 0; j < jsonArray2.size(); j++) {
+            floatses[i][j] = jsonArray2.get(j).getAsFloat();
          }
       }
 
-      return var3;
+      return floatses;
    }
 
-   private static float[] method7326(JsonObject var0, String var1) {
-      JsonArray var2 = var0.getAsJsonArray(var1);
-      float[] var3 = new float[var2.size()];
+   private static float[] method7326(JsonObject json, String memberName) {
+      JsonArray jsonArray = json.getAsJsonArray(memberName);
+      float[] floats = new float[jsonArray.size()];
 
-      for (int var4 = 0; var4 < var2.size(); var4++) {
-         var3[var4] = var2.get(var4).getAsFloat();
+      for (int i = 0; i < jsonArray.size(); i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
       }
 
-      return var3;
+      return floats;
    }
 
    public static final class Entry {

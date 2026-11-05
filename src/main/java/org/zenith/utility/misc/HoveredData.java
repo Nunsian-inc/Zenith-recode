@@ -51,13 +51,13 @@ public final class HoveredData {
       return "HoveredData[" + "text=" + this.text + ", " + "focusSlotEnum=" + this.focusSlotEnum + ", " + "rarity=" + this.rarity + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "text4=" + this.text4 + "]";
    }
 
-   public HoveredData(String var1, FocusSlotEnum var2, Rarity var3, String var4, String var5, String var6) {
-      this.text = var1;
-      this.focusSlotEnum = var2;
-      this.rarity = var3;
-      this.text2 = var4;
-      this.text3 = var5;
-      this.text4 = var6;
+   public HoveredData(String text, FocusSlotEnum focusSlotEnum, Rarity rarity, String str, String str2, String str3) {
+      this.text = text;
+      this.focusSlotEnum = focusSlotEnum;
+      this.rarity = rarity;
+      this.text2 = str;
+      this.text3 = str2;
+      this.text4 = str3;
    }
 
    public WardrobeCategory method1546() {

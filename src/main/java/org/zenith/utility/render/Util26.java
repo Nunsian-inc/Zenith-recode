@@ -13,12 +13,12 @@ public final class Util26 {
    private Util26() {
    }
 
-   public static void method6982(Vector4f var0, FogData var1) {
-      vector4f.set(var0);
-      floatValue = var1.environmentalStart;
-      floatValue2 = var1.environmentalEnd;
-      floatValue3 = var1.renderDistanceStart;
-      floatValue4 = var1.renderDistanceEnd;
+   public static void method6982(Vector4f vec, FogData fogData) {
+      vector4f.set(vec);
+      floatValue = fogData.environmentalStart;
+      floatValue2 = fogData.environmentalEnd;
+      floatValue3 = fogData.renderDistanceStart;
+      floatValue4 = fogData.renderDistanceEnd;
    }
 
    public static Vector4f getVector4f() {

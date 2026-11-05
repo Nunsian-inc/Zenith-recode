@@ -42,49 +42,49 @@ public class MixinBackGroundRenderer {
          target = "Lnet/minecraft/client/renderer/fog/environment/FogEnvironment;isApplicable(Lnet/minecraft/world/level/material/FogType;Lnet/minecraft/world/entity/Entity;)Z"
       )
    )
-   private boolean zenith$skipEffectFog(FogEnvironment var1, FogType var2, Entity var3) {
-      boolean var4 = var1 instanceof BlindnessFogEnvironment || var1 instanceof DarknessFogEnvironment;
-      if (var4 && ModuleHookDefinitions.class128.active()) {
-         String var5 = var1 instanceof DarknessFogEnvironment ? "darkness" : "blindness";
-         if (ModuleHookDefinitions.class128.method1645(new ModuleHookDefinitions.Entry3(var5)).cancelled) {
+   private boolean zenith$skipEffectFog(FogEnvironment fogEnvironment, FogType fogType, Entity entity) {
+      boolean flag = fogEnvironment instanceof BlindnessFogEnvironment || fogEnvironment instanceof DarknessFogEnvironment;
+      if (flag && ModuleHookDefinitions.class128.active()) {
+         String text = fogEnvironment instanceof DarknessFogEnvironment ? "darkness" : "blindness";
+         if (ModuleHookDefinitions.class128.method1645(new ModuleHookDefinitions.Entry3(text)).cancelled) {
             return false;
          }
       }
 
-      return var1.isApplicable(var2, var3);
+      return fogEnvironment.isApplicable(fogType, entity);
    }
 
    @Inject(method = {"computeFogColor"}, at = {@At("RETURN")})
-   private void zenith$fogColor(Camera var2, float var3, ClientLevel var4, int var5, float var6, Vector4f var1, org.spongepowered.asm.mixin.injection.callback.CallbackInfo var9) {
-      BackgroundRenderEvent var7 = new BackgroundRenderEvent();
-      var7.setIntValue(pack(var1));
-      EventManager.call(var7);
-      if (var7.isCancelled()) {
-         int var8 = var7.getColor();
-         var1.set(ColorUtils.method6424(var8), ColorUtils.method6425(var8), ColorUtils.method6426(var8), ColorUtils.method6427(var8));
+   private void zenith$fogColor(Camera camera, float f, ClientLevel level, int n, float f2, Vector4f color, org.spongepowered.asm.mixin.injection.callback.CallbackInfo callbackInfo) {
+      BackgroundRenderEvent event = new BackgroundRenderEvent();
+      event.setIntValue(pack(color));
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         int intValue = event.getColor();
+         color.set(ColorUtils.method6424(intValue), ColorUtils.method6425(intValue), ColorUtils.method6426(intValue), ColorUtils.method6427(intValue));
       }
    }
 
    @ModifyReturnValue(method = {SETUP}, at = {@At("RETURN")})
-   private FogData zenith$fog(FogData var8) {
+   private FogData zenith$fog(FogData fogData) {
       zenith$fogColorOverride = null;
-      BackgroundRenderEvent var9 = new BackgroundRenderEvent();
-      var9.setIntValue(pack(var8.color));
-      var9.setFloatValue2(var8.renderDistanceEnd);
-      EventManager.call(var9);
-      if (var9.isCancelled()) {
-         float var10 = var9.getFloatValue();
-         var8.environmentalStart = Float.MAX_VALUE;
-         var8.environmentalEnd = Float.MAX_VALUE;
-         var8.renderDistanceStart = 2.0F;
-         var8.renderDistanceEnd = var10;
-         var8.skyEnd = var10;
-         var8.cloudEnd = var10;
-         int var11 = var9.getColor();
-         zenith$fogColorOverride = new Vector4f(ColorUtils.method6424(var11), ColorUtils.method6425(var11), ColorUtils.method6426(var11), ColorUtils.method6427(var11));
+      BackgroundRenderEvent event = new BackgroundRenderEvent();
+      event.setIntValue(pack(fogData.color));
+      event.setFloatValue2(fogData.renderDistanceEnd);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         float floatValue = event.getFloatValue();
+         fogData.environmentalStart = Float.MAX_VALUE;
+         fogData.environmentalEnd = Float.MAX_VALUE;
+         fogData.renderDistanceStart = 2.0F;
+         fogData.renderDistanceEnd = floatValue;
+         fogData.skyEnd = floatValue;
+         fogData.cloudEnd = floatValue;
+         int color = event.getColor();
+         zenith$fogColorOverride = new Vector4f(ColorUtils.method6424(color), ColorUtils.method6425(color), ColorUtils.method6426(color), ColorUtils.method6427(color));
       }
 
-      return var8;
+      return fogData;
    }
 
    @org.spongepowered.asm.mixin.injection.ModifyArg(
@@ -92,17 +92,17 @@ public class MixinBackGroundRenderer {
       at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/fog/FogRenderer;updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V"),
       index = 2
    )
-   private Vector4f zenith$captureFog(Vector4f var1, @Local(argsOnly = true) FogData var2) {
-      Vector4f var3 = zenith$fogColorOverride != null ? zenith$fogColorOverride : var1;
-      Util26.method6982(var3, var2);
-      return var3;
+   private Vector4f zenith$captureFog(Vector4f vec, @Local(argsOnly = true) FogData fogData) {
+      Vector4f zenith$fogColorOverride2 = zenith$fogColorOverride != null ? zenith$fogColorOverride : vec;
+      Util26.method6982(zenith$fogColorOverride2, fogData);
+      return zenith$fogColorOverride2;
    }
 
-   private static int pack(Vector4f var0) {
-      return channel(var0.w) << 24 | channel(var0.x) << 16 | channel(var0.y) << 8 | channel(var0.z);
+   private static int pack(Vector4f color) {
+      return channel(color.w) << 24 | channel(color.x) << 16 | channel(color.y) << 8 | channel(color.z);
    }
 
-   private static int channel(float var0) {
-      return Math.clamp((long)((int)(var0 * 255.0F + 0.5F)), 0, 255);
+   private static int channel(float x) {
+      return Math.clamp((long)((int)(x * 255.0F + 0.5F)), 0, 255);
    }
 }

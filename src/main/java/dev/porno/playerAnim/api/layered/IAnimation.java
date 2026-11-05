@@ -24,7 +24,7 @@ public interface IAnimation {
       return this.get3DTransform(modelKey.getKey(), type, tickDelta, value0);
    }
 
-   void setupAnim(float var1);
+   void setupAnim(float tickDelta);
 
    @NotNull
    default FirstPersonMode getFirstPersonMode(float tickDelta) {

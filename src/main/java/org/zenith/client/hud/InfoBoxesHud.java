@@ -17,49 +17,49 @@ public class InfoBoxesHud extends Interface {
    private final MultiSelectSetting.Entry entry2 = new MultiSelectSetting.Entry(this.infoBoxes, "Ping", true);
    private final MultiSelectSetting.Entry entry3 = new MultiSelectSetting.Entry(this.infoBoxes, "FPS", true);
 
-   public InfoBoxesHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public InfoBoxesHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
+   public void method8(CustomDrawContext customDrawContext) {
       if (mc.player == null) {
          this.width = 0.0F;
          this.height = 0.0F;
       } else {
-         ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var2 == null) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle == null) {
             this.width = 0.0F;
             this.height = 0.0F;
          } else {
-            String var3 = String.format(Locale.US, "%.2f", Zenith.getInstance().getServerDetector().method1624());
-            String var4 = this.method2260();
-            String var5 = String.valueOf(Minecraft.getInstance().getFps());
-            boolean var6 = !this.entry.isEnabled() && !this.entry2.isEnabled() && !this.entry3.isEnabled();
-            ArrayList var7 = new ArrayList(3);
-            if (var6 || this.entry.isEnabled()) {
-               var7.add(HudListLayout.Data.method7662("h", var3, " tps"));
+            String str = String.format(Locale.US, "%.2f", Zenith.getInstance().getServerDetector().method1624());
+            String str2 = this.method2260();
+            String str3 = String.valueOf(Minecraft.getInstance().getFps());
+            boolean flag = !this.entry.isEnabled() && !this.entry2.isEnabled() && !this.entry3.isEnabled();
+            ArrayList arrayList = new ArrayList(3);
+            if (flag || this.entry.isEnabled()) {
+               arrayList.add(HudListLayout.Data.method7662("h", str, " tps"));
             }
 
-            if (var6 || this.entry2.isEnabled()) {
-               var7.add(HudListLayout.Data.method7662("H", var4, " ms"));
+            if (flag || this.entry2.isEnabled()) {
+               arrayList.add(HudListLayout.Data.method7662("H", str2, " ms"));
             }
 
-            if (var6 || this.entry3.isEnabled()) {
-               var7.add(HudListLayout.Data.method7662("F", var5, " fps"));
+            if (flag || this.entry3.isEnabled()) {
+               arrayList.add(HudListLayout.Data.method7662("F", str3, " fps"));
             }
 
-            this.width = HudListLayout.method7658(var7);
-            this.height = var7.isEmpty() ? 0.0F : 17.0F;
-            HudListLayout.method7659(var1, this.floatValue, this.floatValue2, var7);
+            this.width = HudListLayout.method7658(arrayList);
+            this.height = arrayList.isEmpty() ? 0.0F : 17.0F;
+            HudListLayout.method7659(customDrawContext, this.floatValue, this.floatValue2, arrayList);
          }
       }
    }
 
    private String method2260() {
       if (mc.player != null && mc.getConnection() != null) {
-         PlayerInfo var1 = mc.getConnection().getPlayerInfo(mc.player.getUUID());
-         return var1 == null ? "-" : String.valueOf(Math.max(0, var1.getLatency()));
+         PlayerInfo playerInfo = mc.getConnection().getPlayerInfo(mc.player.getUUID());
+         return playerInfo == null ? "-" : String.valueOf(Math.max(0, playerInfo.getLatency()));
       } else {
          return "-";
       }

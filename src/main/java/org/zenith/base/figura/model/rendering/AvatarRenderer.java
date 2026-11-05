@@ -176,28 +176,28 @@ public abstract class AvatarRenderer {
    }
 
    public static FiguraMat4 entityToWorldMatrix(Entity e, float delta) {
-      double var10000;
+      double viewYRot;
       if (e instanceof LivingEntity le) {
-         var10000 = Mth.lerp(delta, le.yBodyRotO, le.yBodyRot);
+         viewYRot = Mth.lerp(delta, le.yBodyRotO, le.yBodyRot);
       } else {
-         var10000 = e.getViewYRot(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+         viewYRot = e.getViewYRot(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
       }
 
       FiguraMat4 result = FiguraMat4.of();
-      result.rotateX(180.0 - var10000);
+      result.rotateX(180.0 - viewYRot);
       result.translate(e.getPosition(delta));
       return result;
    }
 
    public static double getYawOffsetRot(Entity e, float delta) {
-      double var10000;
+      double viewYRot;
       if (e instanceof LivingEntity le) {
-         var10000 = Mth.lerp(delta, le.yBodyRotO, le.yBodyRot);
+         viewYRot = Mth.lerp(delta, le.yBodyRotO, le.yBodyRot);
       } else {
-         var10000 = e.getViewYRot(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+         viewYRot = e.getViewYRot(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
       }
 
-      return 180.0 - var10000;
+      return 180.0 - viewYRot;
    }
 
    public static FiguraMat4 worldToViewMatrix() {

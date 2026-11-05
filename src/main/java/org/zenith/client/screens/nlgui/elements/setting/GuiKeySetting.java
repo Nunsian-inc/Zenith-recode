@@ -22,12 +22,12 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    private boolean binding;
    private final BindLabel bindLabel = new BindLabel();
 
-   public GuiKeySetting(BindSetting var1) {
-      super(166.0F, var1);
+   public GuiKeySetting(BindSetting setting) {
+      super(166.0F, setting);
    }
 
-   public GuiKeySetting(BindSetting var1, float var2) {
-      super(var2, var1);
+   public GuiKeySetting(BindSetting setting, float width) {
+      super(width, setting);
    }
 
    @Override
@@ -36,14 +36,14 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    }
 
    @Override
-   public boolean onMousePriorityClicked(double var1, double var3, Enum3 var5) {
-      return this.bindMouse(var5);
+   public boolean onMousePriorityClicked(double d, double d2, Enum3 enum2) {
+      return this.bindMouse(enum2);
    }
 
    @Override
-   public boolean bindMouse(Enum3 var1) {
-      if (this.binding && MouseBindTarget.bindable(var1)) {
-         this.setting.setKeyCode(var1.getIntValue());
+   public boolean bindMouse(Enum3 enum2) {
+      if (this.binding && MouseBindTarget.bindable(enum2)) {
+         this.setting.setKeyCode(enum2.getIntValue());
          this.stopBinding();
          this.bindLabel.set();
          Zenith.getInstance().getClientSounds().method1566();
@@ -54,11 +54,11 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bindMouse(var5)) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      if (this.bindMouse(enum2)) {
          return true;
-      } else if (this.bounds != null && this.bounds.contains(var1, var3)) {
-         if (var5 == Enum3.RIGHT) {
+      } else if (this.bounds != null && this.bounds.contains(lastClickX, lastClickY)) {
+         if (enum2 == Enum3.RIGHT) {
             this.setting.setKeyCode(-1);
             this.stopBinding();
             this.bindLabel.cleared();
@@ -81,19 +81,19 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    }
 
    @Override
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.binding) {
-         if (var1 == 256) {
+         if (keyCode == 256) {
             this.setting.setBind(-1, 0);
             this.bindLabel.cleared();
             Zenith.getInstance().getClientSounds().method1567();
          } else {
-            this.setting.setBind(var1, KeyName.method6700(var1, var3));
+            this.setting.setBind(keyCode, KeyName.method6700(keyCode, modifiers));
             this.bindLabel.set();
             Zenith.getInstance().getClientSounds().method1566();
          }
@@ -101,7 +101,7 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
          this.stopBinding();
          return true;
       } else {
-         return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+         return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
       }
    }
 
@@ -111,45 +111,45 @@ public class GuiKeySetting extends GuiSetting<BindSetting> implements MouseBindT
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float f, float previewAlpha) {
       try {
-         ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var7 == null) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle == null) {
             return;
          }
 
          this.animationVisible.method2807(this.setting.isVisible());
-         var6 *= this.animationVisible.getValue();
-         Font var8 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         Font var9 = Fonts.NEW_REGULAR.getFont(5.4F);
-         float var10 = this.width / 1.4F - GuiStyle.PADDING.intValue();
-         ZenithColor var11 = var7.getTextEnable().getZenithColor().method7294(var6);
-         ZenithColor var12 = var7.getTextSecondary().getZenithColor().method7294(var6);
-         ZenithColor var13 = var7.getPrimaryColor().getZenithColor().method7294(var6);
-         this.drawDefault(var1, var2, var3, "N", this.setting.getName(), this.setting.getDescription(), var8, var9, var4, var5, var10, var11, var12, var13);
-         Font var14 = Fonts.NEW_MEDIUM.getFont(5.01F);
-         float var15 = var4 + this.width;
-         int var16 = var2 >= var4 && var2 <= var15 && var3 >= var5 && var3 <= var5 + this.getHeight() ? 1 : 0;
+         previewAlpha *= this.animationVisible.getValue();
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
+         float maxWidth = this.width / 1.4F - GuiStyle.PADDING.intValue();
+         ZenithColor zenithColor = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor2 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
+         this.drawDefault(menuDrawContext, x, y, "N", this.setting.getName(), this.setting.getDescription(), font, font2, floatValue, f, maxWidth, zenithColor, zenithColor2, zenithColor3);
+         Font font3 = Fonts.NEW_MEDIUM.getFont(5.01F);
+         float f2 = floatValue + this.width;
+         int n = x >= floatValue && x <= f2 && y >= f && y <= f + this.getHeight() ? 1 : 0;
          this.bindLabel
             .render(
-               var1,
-               var2,
-               var3,
-               var5,
+               menuDrawContext,
+               x,
+               y,
+               f,
                this.getHeight(),
-               var15,
+               f2,
                BindLabel.text(this.binding, this.setting.getKeyCode(), this.setting.getModifiers()),
                this.binding,
-               var14,
-               var4 + var10,
-               (var16 != 0),
-               var6,
+               font3,
+               floatValue + maxWidth,
+               (n != 0),
+               previewAlpha,
                null,
-               var7
+               currentStyle
             );
-         this.bounds = new BoundsData(var4, var5, this.width, this.getHeight());
-      } catch (Exception var17) {
-         var17.printStackTrace();
+         this.bounds = new BoundsData(floatValue, f, this.width, this.getHeight());
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    }
 }

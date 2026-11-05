@@ -103,203 +103,203 @@ public final class WeatherFlakeChannel {
       .method7480();
    public static final float CONST_floatValue2 = -1.0F;
 
-   private WeatherFlakeChannel(WeatherFlakeChannel.Entry var1) {
-      this.floatValues = var1.floatValues;
-      this.floatValues2 = var1.floatValues2;
-      this.floatValues3 = var1.floatValues3;
-      this.floatValues4 = var1.floatValues4;
-      this.floatValues5 = var1.floatValues5;
-      this.floatValues6 = var1.floatValues6;
-      this.floatValue = var1.floatValue;
-      this.floatValue2 = var1.floatValue2;
-      this.floatValue3 = var1.floatValue3;
-      this.floatValue4 = var1.floatValue4;
-      this.floatValue5 = var1.floatValue5;
-      this.floatValue6 = var1.floatValue6;
-      this.floatValue7 = var1.floatValue7;
-      this.floatValues7 = var1.floatValues7;
-      this.floatValues8 = var1.floatValues8;
-      this.floatValue8 = var1.floatValue8;
-      this.floatValue9 = var1.floatValue9;
-      this.floatValue10 = var1.floatValue10;
-      this.floatValue11 = var1.floatValue11;
-      this.floatValue12 = var1.floatValue12;
-      this.floatValues9 = var1.floatValues9;
-      this.floatValues10 = var1.floatValues10;
-      this.floatValue13 = var1.floatValue13;
-      this.intValue = var1.intValue;
-      this.floatValue14 = var1.floatValue14;
-      this.floatValues11 = var1.floatValues11;
-      this.floatValue15 = var1.floatValue15;
-      this.floatValue16 = var1.saturation;
-      this.floatValue17 = var1.floatValue16;
-      this.intValue2 = var1.intValue2;
-      this.floatValue18 = var1.floatValue17;
-      this.floatValue19 = var1.floatValue18;
-      this.floatValue20 = var1.floatValue19;
-      this.floatValue21 = var1.floatValue20;
-      this.intValue3 = var1.intValue3;
-      this.floatValue22 = var1.floatValue21;
-      this.floatValue23 = var1.floatValue22;
-      this.intValue4 = var1.intValue4;
-      this.intValue5 = var1.intValue5;
-      this.floatValue24 = var1.floatValue23;
-      this.floatValue25 = var1.floatValue24;
-      this.floatValue26 = var1.floatValue25;
-      this.flag = var1.flag;
-      this.intValue6 = var1.intValue6;
-      this.intValue7 = var1.intValue7;
-      this.floatValue27 = var1.floatValue26;
-      this.intValue8 = var1.intValue8;
+   private WeatherFlakeChannel(WeatherFlakeChannel.Entry entry) {
+      this.floatValues = entry.floatValues;
+      this.floatValues2 = entry.floatValues2;
+      this.floatValues3 = entry.floatValues3;
+      this.floatValues4 = entry.floatValues4;
+      this.floatValues5 = entry.floatValues5;
+      this.floatValues6 = entry.floatValues6;
+      this.floatValue = entry.floatValue;
+      this.floatValue2 = entry.floatValue2;
+      this.floatValue3 = entry.floatValue3;
+      this.floatValue4 = entry.floatValue4;
+      this.floatValue5 = entry.floatValue5;
+      this.floatValue6 = entry.floatValue6;
+      this.floatValue7 = entry.floatValue7;
+      this.floatValues7 = entry.floatValues7;
+      this.floatValues8 = entry.floatValues8;
+      this.floatValue8 = entry.floatValue8;
+      this.floatValue9 = entry.floatValue9;
+      this.floatValue10 = entry.floatValue10;
+      this.floatValue11 = entry.floatValue11;
+      this.floatValue12 = entry.floatValue12;
+      this.floatValues9 = entry.floatValues9;
+      this.floatValues10 = entry.floatValues10;
+      this.floatValue13 = entry.floatValue13;
+      this.intValue = entry.intValue;
+      this.floatValue14 = entry.floatValue14;
+      this.floatValues11 = entry.floatValues11;
+      this.floatValue15 = entry.floatValue15;
+      this.floatValue16 = entry.saturation;
+      this.floatValue17 = entry.floatValue16;
+      this.intValue2 = entry.intValue2;
+      this.floatValue18 = entry.floatValue17;
+      this.floatValue19 = entry.floatValue18;
+      this.floatValue20 = entry.floatValue19;
+      this.floatValue21 = entry.floatValue20;
+      this.intValue3 = entry.intValue3;
+      this.floatValue22 = entry.floatValue21;
+      this.floatValue23 = entry.floatValue22;
+      this.intValue4 = entry.intValue4;
+      this.intValue5 = entry.intValue5;
+      this.floatValue24 = entry.floatValue23;
+      this.floatValue25 = entry.floatValue24;
+      this.floatValue26 = entry.floatValue25;
+      this.flag = entry.flag;
+      this.intValue6 = entry.intValue6;
+      this.intValue7 = entry.intValue7;
+      this.floatValue27 = entry.floatValue26;
+      this.intValue8 = entry.intValue8;
    }
 
-   public WeatherFlakeChannel method7457(Util8 var1, WeatherFlakeChannel.Data var2) {
-      return this.method7458(var1, var2, null);
+   public WeatherFlakeChannel method7457(Util8 util8, WeatherFlakeChannel.Data data) {
+      return this.method7458(util8, data, null);
    }
 
-   public WeatherFlakeChannel method7458(Util8 var1, WeatherFlakeChannel.Data var2, WeatherPresets var3) {
-      WeatherFlakeChannel.Entry var4 = new WeatherFlakeChannel.Entry();
-      var4.floatValues = method7463(this.floatValues, var1, var1.floatValue3, 0.45F);
-      float var5 = 1.0F - Math.clamp(var1.floatValue2, 0.0F, 1.0F);
-      var4.floatValues2 = method7460(method7463(this.floatValues2, var1, 1.0F, 1.0F), method7463(this.floatValues, var1, var1.floatValue3, 0.45F), var5 * 0.72F);
-      var4.floatValues3 = method7463(this.floatValues3, var1, var1.floatValue3, 0.7F);
-      var4.floatValues4 = (float[])var1.floatValues.clone();
-      var4.floatValues5 = new float[]{var1.floatValue8, var1.floatValue9, var1.floatValue10};
-      var4.floatValues6 = (float[])var1.floatValues2.clone();
-      var4.floatValue = var1.floatValue7;
-      float var6 = var1.flag ? Math.max(this.floatValue2, 0.018F) : this.floatValue2;
-      var4.floatValue2 = var6 * var1.floatValue12;
-      var4.floatValue3 = this.floatValue3 * var1.floatValue11 * var1.floatValue12;
-      var4.floatValue4 = this.floatValue4;
-      var4.floatValue5 = this.floatValue5;
-      var4.floatValue6 = this.floatValue6;
-      var4.floatValue7 = this.floatValue7;
-      var4.floatValues7 = method7463(this.floatValues7, var1, 1.0F, 1.0F);
-      var4.floatValues8 = method7463(this.floatValues8, var1, 1.0F, 1.0F);
-      var4.floatValue8 = Math.min(1.2F, this.floatValue8 + var1.floatValue13);
-      var4.floatValue9 = Math.min(1.2F, this.floatValue9 + var1.floatValue14);
-      float var7 = 1.0F - Math.clamp(var1.floatValue2, 0.0F, 1.0F);
-      var4.floatValue10 = this.floatValue10 * (0.2F + 0.8F * var7);
-      var4.floatValue11 = this.floatValue11 * (0.12F + 0.88F * var7);
-      var4.floatValue12 = Math.min(1.2F, this.floatValue12 * var1.floatValue15 * var2.getFloatValue5() * (1.0F - var5 * 0.55F));
-      var4.floatValues9 = method7463(this.floatValues9, var1, 1.0F, 1.0F);
-      var4.floatValues10 = this.floatValues10;
-      var4.floatValue13 = var2.isFlag() ? this.floatValue13 : 0.0F;
-      var4.intValue = method7465(this.intValue, var1);
-      var4.floatValue14 = var2.getFloatValue6() > 0.0F ? var2.getFloatValue6() : this.floatValue14;
-      var4.floatValues11 = new float[]{
-         this.floatValues11[0] * var1.floatValue4, this.floatValues11[1] * var1.floatValue5, this.floatValues11[2] * var1.floatValue6
+   public WeatherFlakeChannel method7458(Util8 util8, WeatherFlakeChannel.Data data, WeatherPresets weatherPresets) {
+      WeatherFlakeChannel.Entry entry = new WeatherFlakeChannel.Entry();
+      entry.floatValues = method7463(this.floatValues, util8, util8.floatValue3, 0.45F);
+      float f = 1.0F - Math.clamp(util8.floatValue2, 0.0F, 1.0F);
+      entry.floatValues2 = method7460(method7463(this.floatValues2, util8, 1.0F, 1.0F), method7463(this.floatValues, util8, util8.floatValue3, 0.45F), f * 0.72F);
+      entry.floatValues3 = method7463(this.floatValues3, util8, util8.floatValue3, 0.7F);
+      entry.floatValues4 = (float[])util8.floatValues.clone();
+      entry.floatValues5 = new float[]{util8.floatValue8, util8.floatValue9, util8.floatValue10};
+      entry.floatValues6 = (float[])util8.floatValues2.clone();
+      entry.floatValue = util8.floatValue7;
+      float f2 = util8.flag ? Math.max(this.floatValue2, 0.018F) : this.floatValue2;
+      entry.floatValue2 = f2 * util8.floatValue12;
+      entry.floatValue3 = this.floatValue3 * util8.floatValue11 * util8.floatValue12;
+      entry.floatValue4 = this.floatValue4;
+      entry.floatValue5 = this.floatValue5;
+      entry.floatValue6 = this.floatValue6;
+      entry.floatValue7 = this.floatValue7;
+      entry.floatValues7 = method7463(this.floatValues7, util8, 1.0F, 1.0F);
+      entry.floatValues8 = method7463(this.floatValues8, util8, 1.0F, 1.0F);
+      entry.floatValue8 = Math.min(1.2F, this.floatValue8 + util8.floatValue13);
+      entry.floatValue9 = Math.min(1.2F, this.floatValue9 + util8.floatValue14);
+      float f3 = 1.0F - Math.clamp(util8.floatValue2, 0.0F, 1.0F);
+      entry.floatValue10 = this.floatValue10 * (0.2F + 0.8F * f3);
+      entry.floatValue11 = this.floatValue11 * (0.12F + 0.88F * f3);
+      entry.floatValue12 = Math.min(1.2F, this.floatValue12 * util8.floatValue15 * data.getFloatValue5() * (1.0F - f * 0.55F));
+      entry.floatValues9 = method7463(this.floatValues9, util8, 1.0F, 1.0F);
+      entry.floatValues10 = this.floatValues10;
+      entry.floatValue13 = data.isFlag() ? this.floatValue13 : 0.0F;
+      entry.intValue = method7465(this.intValue, util8);
+      entry.floatValue14 = data.getFloatValue6() > 0.0F ? data.getFloatValue6() : this.floatValue14;
+      entry.floatValues11 = new float[]{
+         this.floatValues11[0] * util8.floatValue4, this.floatValues11[1] * util8.floatValue5, this.floatValues11[2] * util8.floatValue6
       };
-      var4.floatValue15 = this.floatValue15 * var1.floatValue16;
-      var4.saturation = this.floatValue16;
-      var4.floatValue16 = var1.floatValue;
-      var4.intValue2 = this.intValue2;
-      var4.floatValue17 = this.floatValue18 * var2.getFloatValue();
-      var4.floatValue18 = this.floatValue19;
-      var4.floatValue19 = this.floatValue20 * var2.getFloatValue2();
-      var4.floatValue20 = this.floatValue21 * var2.getFloatValue2();
-      var4.intValue3 = method7466(this.intValue3, var1);
-      var4.floatValue21 = this.floatValue22;
-      var4.floatValue22 = this.floatValue23;
-      var4.intValue4 = this.intValue4;
-      var4.intValue5 = method7465(this.intValue5, var1);
-      var4.floatValue23 = Math.min(1.4F, this.floatValue24 * var1.floatValue17 * var2.getFloatValue3());
-      var4.floatValue24 = this.floatValue25 * var1.floatValue17 * var2.getFloatValue3();
-      var4.floatValue25 = this.floatValue26;
-      var4.flag = this.flag;
-      var4.intValue6 = this.intValue6;
-      var4.intValue7 = this.intValue7;
-      var4.floatValue26 = this.floatValue27 * var2.getFloatValue4();
-      var4.intValue8 = method7465(this.intValue8, var1);
-      if (var3 != null) {
-         method7459(var4, var3.method5994(var1.floatValue), var1, var2);
+      entry.floatValue15 = this.floatValue15 * util8.floatValue16;
+      entry.saturation = this.floatValue16;
+      entry.floatValue16 = util8.floatValue;
+      entry.intValue2 = this.intValue2;
+      entry.floatValue17 = this.floatValue18 * data.getFloatValue();
+      entry.floatValue18 = this.floatValue19;
+      entry.floatValue19 = this.floatValue20 * data.getFloatValue2();
+      entry.floatValue20 = this.floatValue21 * data.getFloatValue2();
+      entry.intValue3 = method7466(this.intValue3, util8);
+      entry.floatValue21 = this.floatValue22;
+      entry.floatValue22 = this.floatValue23;
+      entry.intValue4 = this.intValue4;
+      entry.intValue5 = method7465(this.intValue5, util8);
+      entry.floatValue23 = Math.min(1.4F, this.floatValue24 * util8.floatValue17 * data.getFloatValue3());
+      entry.floatValue24 = this.floatValue25 * util8.floatValue17 * data.getFloatValue3();
+      entry.floatValue25 = this.floatValue26;
+      entry.flag = this.flag;
+      entry.intValue6 = this.intValue6;
+      entry.intValue7 = this.intValue7;
+      entry.floatValue26 = this.floatValue27 * data.getFloatValue4();
+      entry.intValue8 = method7465(this.intValue8, util8);
+      if (weatherPresets != null) {
+         method7459(entry, weatherPresets.method5994(util8.floatValue), util8, data);
       }
 
-      var4.intValue = method7461(var4.floatValues2);
-      return new WeatherFlakeChannel(var4);
+      entry.intValue = method7461(entry.floatValues2);
+      return new WeatherFlakeChannel(entry);
    }
 
-   private static void method7459(WeatherFlakeChannel.Entry var0, WeatherPresets.Data var1, Util8 var2, WeatherFlakeChannel.Data var3) {
-      var0.floatValues = var1.getFloatValues();
-      var0.floatValues2 = var1.getFloatValues2();
-      var0.floatValues3 = var1.getFloatValues3();
-      var0.floatValues7 = var1.getFloatValues4();
-      var0.floatValues8 = var1.getFloatValues5();
-      var0.floatValue4 = var1.getFloatValue2();
-      var0.floatValue5 = var1.getFloatValue3();
-      var0.floatValue7 = var1.getFloatValue4();
-      var0.floatValue6 = var1.getFloatValue5();
-      var0.floatValue12 = Math.min(1.4F, var1.getFloatValue6() * var3.getFloatValue5());
-      var0.floatValues9 = var1.getFloatValues6();
-      var0.floatValue8 = var1.getFloatValue7();
-      var0.floatValue9 = var1.getFloatValue8();
-      var0.floatValue10 = var1.getFloatValue9();
-      var0.floatValue11 = var1.getFloatValue10();
-      var0.floatValue2 = var1.getFloatValue11() * var2.floatValue12;
-      var0.floatValue3 = var1.getFloatValue12() * var2.floatValue12;
-      var0.intValue = var1.getIntValue();
-      var0.floatValue15 = var1.getFloatValue13();
-      var0.floatValue13 = var1.getFloatValue14();
+   private static void method7459(WeatherFlakeChannel.Entry entry, WeatherPresets.Data data, Util8 util8, WeatherFlakeChannel.Data data2) {
+      entry.floatValues = data.getFloatValues();
+      entry.floatValues2 = data.getFloatValues2();
+      entry.floatValues3 = data.getFloatValues3();
+      entry.floatValues7 = data.getFloatValues4();
+      entry.floatValues8 = data.getFloatValues5();
+      entry.floatValue4 = data.getFloatValue2();
+      entry.floatValue5 = data.getFloatValue3();
+      entry.floatValue7 = data.getFloatValue4();
+      entry.floatValue6 = data.getFloatValue5();
+      entry.floatValue12 = Math.min(1.4F, data.getFloatValue6() * data2.getFloatValue5());
+      entry.floatValues9 = data.getFloatValues6();
+      entry.floatValue8 = data.getFloatValue7();
+      entry.floatValue9 = data.getFloatValue8();
+      entry.floatValue10 = data.getFloatValue9();
+      entry.floatValue11 = data.getFloatValue10();
+      entry.floatValue2 = data.getFloatValue11() * util8.floatValue12;
+      entry.floatValue3 = data.getFloatValue12() * util8.floatValue12;
+      entry.intValue = data.getIntValue();
+      entry.floatValue15 = data.getFloatValue13();
+      entry.floatValue13 = data.getFloatValue14();
    }
 
-   private static float[] method7460(float[] var0, float[] var1, float var2) {
-      return new float[]{var0[0] + (var1[0] - var0[0]) * var2, var0[1] + (var1[1] - var0[1]) * var2, var0[2] + (var1[2] - var0[2]) * var2};
+   private static float[] method7460(float[] floats, float[] floats2, float f) {
+      return new float[]{floats[0] + (floats2[0] - floats[0]) * f, floats[1] + (floats2[1] - floats[1]) * f, floats[2] + (floats2[2] - floats[2]) * f};
    }
 
-   private static int method7461(float[] var0) {
-      return 0xFF000000 | method7462(var0[0]) << 16 | method7462(var0[1]) << 8 | method7462(var0[2]);
+   private static int method7461(float[] floatValues2) {
+      return 0xFF000000 | method7462(floatValues2[0]) << 16 | method7462(floatValues2[1]) << 8 | method7462(floatValues2[2]);
    }
 
-   private static int method7462(float var0) {
-      float var1 = 1.0F - (float)Math.exp(-Math.max(var0, 0.0F) * 1.9F);
-      return Math.clamp((long)((int)(var1 * 255.0F + 0.5F)), 0, 255);
+   private static int method7462(float f) {
+      float f2 = 1.0F - (float)Math.exp(-Math.max(f, 0.0F) * 1.9F);
+      return Math.clamp((long)((int)(f2 * 255.0F + 0.5F)), 0, 255);
    }
 
-   private static float[] method7463(float[] var0, Util8 var1, float var2, float var3) {
-      float var4 = var1.floatValue2 * var2;
+   private static float[] method7463(float[] floatValues, Util8 util8, float f, float f2) {
+      float f3 = util8.floatValue2 * f;
       return new float[]{
-         var0[0] * var4 * method7464(var1.floatValue4, var3),
-         var0[1] * var4 * method7464(var1.floatValue5, var3),
-         var0[2] * var4 * method7464(var1.floatValue6, var3)
+         floatValues[0] * f3 * method7464(util8.floatValue4, f2),
+         floatValues[1] * f3 * method7464(util8.floatValue5, f2),
+         floatValues[2] * f3 * method7464(util8.floatValue6, f2)
       };
    }
 
-   private static float method7464(float var0, float var1) {
-      return 1.0F + (var0 - 1.0F) * var1;
+   private static float method7464(float f, float f2) {
+      return 1.0F + (f - 1.0F) * f2;
    }
 
-   private static int method7465(int var0, Util8 var1) {
-      if (var0 == 0) {
+   private static int method7465(int intValue, Util8 util8) {
+      if (intValue == 0) {
          return 0;
       } else {
-         float var2 = (float)Math.sqrt(var1.floatValue2);
-         int var3 = var0 >>> 24 & 0xFF;
-         int var4 = channel((var0 >> 16 & 0xFF) * var2 * var1.floatValue4);
-         int var5 = channel((var0 >> 8 & 0xFF) * var2 * var1.floatValue5);
-         int var6 = channel((var0 & 0xFF) * var2 * var1.floatValue6);
-         return var3 << 24 | var4 << 16 | var5 << 8 | var6;
+         float f = (float)Math.sqrt(util8.floatValue2);
+         int n = intValue >>> 24 & 0xFF;
+         int channel2 = channel((intValue >> 16 & 0xFF) * f * util8.floatValue4);
+         int channel3 = channel((intValue >> 8 & 0xFF) * f * util8.floatValue5);
+         int channel4 = channel((intValue & 0xFF) * f * util8.floatValue6);
+         return n << 24 | channel2 << 16 | channel3 << 8 | channel4;
       }
    }
 
-   private static int method7466(int var0, Util8 var1) {
-      if (var0 == 0) {
+   private static int method7466(int n, Util8 util8) {
+      if (n == 0) {
          return 0;
       } else {
-         float var2 = Math.max(0.88F, (float)Math.sqrt(var1.floatValue2));
-         int var3 = var0 >>> 24 & 0xFF;
-         int var4 = channel((var0 >> 16 & 0xFF) * var2 * method7467(var1.floatValue4));
-         int var5 = channel((var0 >> 8 & 0xFF) * var2 * method7467(var1.floatValue5));
-         int var6 = channel((var0 & 0xFF) * var2 * method7467(var1.floatValue6));
-         return var3 << 24 | var4 << 16 | var5 << 8 | var6;
+         float f = Math.max(0.88F, (float)Math.sqrt(util8.floatValue2));
+         int n2 = n >>> 24 & 0xFF;
+         int channel2 = channel((n >> 16 & 0xFF) * f * method7467(util8.floatValue4));
+         int channel3 = channel((n >> 8 & 0xFF) * f * method7467(util8.floatValue5));
+         int channel4 = channel((n & 0xFF) * f * method7467(util8.floatValue6));
+         return n2 << 24 | channel2 << 16 | channel3 << 8 | channel4;
       }
    }
 
-   private static float method7467(float var0) {
-      return 1.0F + (var0 - 1.0F) * 0.5F;
+   private static float method7467(float f) {
+      return 1.0F + (f - 1.0F) * 0.5F;
    }
 
-   private static int channel(float var0) {
-      return Math.clamp((long)((int)(var0 + 0.5F)), 0, 255);
+   private static int channel(float f) {
+      return Math.clamp((long)((int)(f + 0.5F)), 0, 255);
    }
 
    public static final class Data {
@@ -356,14 +356,14 @@ public final class WeatherFlakeChannel {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data(float var1, float var2, float var3, float var4, float var5, float var6, boolean var7) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.flag = var7;
+      public Data(float floatValue, float f, float f2, float f3, float f4, float f5, boolean flag) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.flag = flag;
       }
 
       public float getFloatValue() {
@@ -444,96 +444,96 @@ public final class WeatherFlakeChannel {
       private float floatValue26;
       private int intValue8 = -8355712;
 
-      private WeatherFlakeChannel.Entry method7468(float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9) {
-         this.floatValues = new float[]{var1, var2, var3};
-         this.floatValues2 = new float[]{var4, var5, var6};
-         this.floatValues3 = new float[]{var7, var8, var9};
+      private WeatherFlakeChannel.Entry method7468(float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8, float f9) {
+         this.floatValues = new float[]{f, f2, f3};
+         this.floatValues2 = new float[]{f4, f5, f6};
+         this.floatValues3 = new float[]{f7, f8, f9};
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7469(float var1, float var2) {
-         this.floatValue2 = var1;
-         this.floatValue3 = var2;
+      private WeatherFlakeChannel.Entry method7469(float f, float f2) {
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
          return this;
       }
 
       private WeatherFlakeChannel.Entry method7470(
-         float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10
+         float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8, float f9, float f10
       ) {
-         this.floatValue4 = var1;
-         this.floatValue5 = var2;
-         this.floatValue6 = var3;
-         this.floatValue7 = var4;
-         this.floatValues7 = new float[]{var5, var6, var7};
-         this.floatValues8 = new float[]{var8, var9, var10};
+         this.floatValue4 = f;
+         this.floatValue5 = f2;
+         this.floatValue6 = f3;
+         this.floatValue7 = f4;
+         this.floatValues7 = new float[]{f5, f6, f7};
+         this.floatValues8 = new float[]{f8, f9, f10};
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7471(float var1, float var2, float var3, float var4) {
-         this.floatValue8 = var1;
-         this.floatValue9 = var2;
-         this.floatValue10 = var3;
-         this.floatValue11 = var4;
+      private WeatherFlakeChannel.Entry method7471(float f, float f2, float f3, float f4) {
+         this.floatValue8 = f;
+         this.floatValue9 = f2;
+         this.floatValue10 = f3;
+         this.floatValue11 = f4;
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7472(float var1, float var2, float var3, float var4) {
-         this.floatValue12 = var1;
-         this.floatValues9 = new float[]{var2, var3, var4};
+      private WeatherFlakeChannel.Entry method7472(float f, float f2, float f3, float f4) {
+         this.floatValue12 = f;
+         this.floatValues9 = new float[]{f2, f3, f4};
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7473(float var1, float var2, float var3, float var4) {
-         this.floatValue13 = var1;
-         this.floatValues10 = new float[]{var2, var3, var4};
+      private WeatherFlakeChannel.Entry method7473(float f, float f2, float f3, float f4) {
+         this.floatValue13 = f;
+         this.floatValues10 = new float[]{f2, f3, f4};
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7474(int var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8) {
-         this.intValue = var1;
-         this.floatValue14 = var2;
-         this.floatValues11 = new float[]{var3, var4, var5};
-         this.floatValue15 = var6;
-         this.saturation = var7;
-         this.floatValue16 = var8;
+      private WeatherFlakeChannel.Entry method7474(int intValue, float f, float f2, float f3, float f4, float f5, float saturation, float f6) {
+         this.intValue = intValue;
+         this.floatValue14 = f;
+         this.floatValues11 = new float[]{f2, f3, f4};
+         this.floatValue15 = f5;
+         this.saturation = saturation;
+         this.floatValue16 = f6;
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7475(int var1, float var2, float var3, float var4, float var5, int var6, float var7) {
-         this.intValue2 = var1;
-         this.floatValue17 = var2;
-         this.floatValue18 = var3;
-         this.floatValue19 = var4;
-         this.floatValue20 = var5;
-         this.intValue3 = var6;
-         this.floatValue21 = var7;
+      private WeatherFlakeChannel.Entry method7475(int n, float f, float f2, float f3, float f4, int n2, float f5) {
+         this.intValue2 = n;
+         this.floatValue17 = f;
+         this.floatValue18 = f2;
+         this.floatValue19 = f3;
+         this.floatValue20 = f4;
+         this.intValue3 = n2;
+         this.floatValue21 = f5;
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7476(float var1, int var2, int var3, float var4, float var5, boolean var6) {
-         this.floatValue22 = var1;
-         this.intValue4 = var2;
-         this.intValue5 = var3;
-         this.floatValue23 = var4;
-         this.floatValue24 = var5;
-         this.flag = var6;
+      private WeatherFlakeChannel.Entry method7476(float f, int n, int n2, float f2, float f3, boolean flag) {
+         this.floatValue22 = f;
+         this.intValue4 = n;
+         this.intValue5 = n2;
+         this.floatValue23 = f2;
+         this.floatValue24 = f3;
+         this.flag = flag;
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7477(float var1) {
-         this.floatValue25 = var1;
+      private WeatherFlakeChannel.Entry method7477(float f) {
+         this.floatValue25 = f;
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7478(int var1, int var2) {
-         this.intValue6 = var1;
-         this.intValue7 = var2;
+      private WeatherFlakeChannel.Entry method7478(int n, int n2) {
+         this.intValue6 = n;
+         this.intValue7 = n2;
          return this;
       }
 
-      private WeatherFlakeChannel.Entry method7479(float var1, int var2) {
-         this.floatValue26 = var1;
-         this.intValue8 = var2;
+      private WeatherFlakeChannel.Entry method7479(float f, int n) {
+         this.floatValue26 = f;
+         this.intValue8 = n;
          return this;
       }
 

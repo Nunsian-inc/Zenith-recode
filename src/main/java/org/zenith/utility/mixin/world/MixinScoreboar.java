@@ -13,16 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinScoreboar {
    @Shadow
    @Nullable
-   public abstract PlayerTeam getPlayersTeam(String var1);
+   public abstract PlayerTeam getPlayersTeam(String str);
 
    @Inject(
       method = {"removePlayerFromTeam(Ljava/lang/String;Lnet/minecraft/world/scores/PlayerTeam;)V"},
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void remove(String var1, PlayerTeam var2, CallbackInfo var3) {
-      if (this.getPlayersTeam(var1) != var2) {
-         var3.cancel();
+   public void remove(String str, PlayerTeam playerTeam, CallbackInfo callbackInfo) {
+      if (this.getPlayersTeam(str) != playerTeam) {
+         callbackInfo.cancel();
       }
    }
 }

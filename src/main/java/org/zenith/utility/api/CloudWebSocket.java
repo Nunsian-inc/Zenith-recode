@@ -35,24 +35,24 @@ public final class CloudWebSocket {
    private volatile int intValue = -1;
    private ByteBuffer byteBuffer;
 
-   public CloudWebSocket(URI var1, BiConsumer<CloudWebSocket, ByteBuffer> var2, Runnable var3, BiConsumer<CloudWebSocket, String> var4) {
-      this.uRI = var1;
-      this.biConsumer = var2;
-      this.runnable = var3;
-      this.biConsumer2 = var4;
+   public CloudWebSocket(URI uRI, BiConsumer<CloudWebSocket, ByteBuffer> biConsumer, Runnable runnable, BiConsumer<CloudWebSocket, String> biConsumer2) {
+      this.uRI = uRI;
+      this.biConsumer = biConsumer;
+      this.runnable = runnable;
+      this.biConsumer2 = biConsumer2;
    }
 
    public void connect() {
-      httpClient.newWebSocketBuilder().connectTimeout(Duration.ofSeconds(8L)).buildAsync(this.uRI, new CloudWebSocket.Entry()).whenComplete((var1, var2) -> {
-         if (var2 != null) {
-            this.method1955("не удалось подключиться: " + method1956(var2));
+      httpClient.newWebSocketBuilder().connectTimeout(Duration.ofSeconds(8L)).buildAsync(this.uRI, new CloudWebSocket.Entry()).whenComplete((webSocket, error) -> {
+         if (error != null) {
+            this.method1955("не удалось подключиться: " + method1956(error));
          } else if (this.closed) {
-            var1.abort();
+            webSocket.abort();
          } else {
-            this.webSocket = var1;
+            this.webSocket = webSocket;
             if (this.closed) {
                this.webSocket = null;
-               var1.abort();
+               webSocket.abort();
             } else {
                this.method1946();
                this.runnable.run();
@@ -62,22 +62,22 @@ public final class CloudWebSocket {
    }
 
    private void method1946() {
-      boolean var1;
+      boolean flag;
       synchronized (this.arrayDeque) {
-         var1 = !this.flag && !this.arrayDeque.isEmpty() && this.webSocket != null;
-         if (var1) {
+         flag = !this.flag && !this.arrayDeque.isEmpty() && this.webSocket != null;
+         if (flag) {
             this.flag = true;
          }
       }
 
-      if (var1) {
+      if (flag) {
          this.method1952();
       }
    }
 
    public boolean isOpen() {
-      WebSocket var1 = this.webSocket;
-      return var1 != null && !this.closed && !var1.isOutputClosed();
+      WebSocket webSocket = this.webSocket;
+      return webSocket != null && !this.closed && !webSocket.isOutputClosed();
    }
 
    public long method1947() {
@@ -93,15 +93,15 @@ public final class CloudWebSocket {
    }
 
    public void ping() {
-      WebSocket var1 = this.webSocket;
-      if (var1 != null && !this.closed && this.atomicBoolean.compareAndSet(false, true)) {
+      WebSocket webSocket = this.webSocket;
+      if (webSocket != null && !this.closed && this.atomicBoolean.compareAndSet(false, true)) {
          this.longValue2 = System.currentTimeMillis();
          this.longValue3 = this.longValue2;
          this.longValue4 = System.nanoTime();
-         var1.sendPing(ByteBuffer.allocate(0)).whenComplete((var1x, var2) -> {
+         webSocket.sendPing(ByteBuffer.allocate(0)).whenComplete((var1x, error) -> {
             this.atomicBoolean.set(false);
-            if (var2 != null) {
-               this.method1955("ping не прошёл: " + method1956(var2));
+            if (error != null) {
+               this.method1955("ping не прошёл: " + method1956(error));
             }
          });
       }
@@ -111,21 +111,21 @@ public final class CloudWebSocket {
       return this.intValue;
    }
 
-   public void method1950(String var1) {
-      this.method1955(var1);
+   public void method1950(String text) {
+      this.method1955(text);
    }
 
-   public void method1951(ByteBuffer var1, int var2) {
+   public void method1951(ByteBuffer byteBuffer, int intValue) {
       if (!this.closed) {
-         boolean var3;
+         boolean flag;
          synchronized (this.arrayDeque) {
-            if (var2 != -1) {
-               if (var2 != 0) {
-                  var var11 = this.arrayDeque.iterator();
+            if (intValue != -1) {
+               if (intValue != 0) {
+                  var iterator = this.arrayDeque.iterator();
 
-                  while (var11.hasNext()) {
-                     if (((CloudWebSocket.Data)var11.next()).intValue == var2) {
-                        var11.remove();
+                  while (iterator.hasNext()) {
+                     if (((CloudWebSocket.Data)iterator.next()).intValue == intValue) {
+                        iterator.remove();
                         break;
                      }
                   }
@@ -133,50 +133,50 @@ public final class CloudWebSocket {
                   this.arrayDeque.pollFirst();
                }
             } else {
-               int var5 = 0;
-               CloudWebSocket.Data var6 = null;
+               int n = 0;
+               CloudWebSocket.Data data = null;
 
-               for (CloudWebSocket.Data var8 : this.arrayDeque) {
-                  if (var8.intValue == -1) {
-                     if (var6 == null) {
-                        var6 = var8;
+               for (CloudWebSocket.Data data2 : this.arrayDeque) {
+                  if (data2.intValue == -1) {
+                     if (data == null) {
+                        data = data2;
                      }
 
-                     var5++;
+                     n++;
                   }
                }
 
-               if (var5 >= 8) {
-                  this.arrayDeque.remove(var6);
+               if (n >= 8) {
+                  this.arrayDeque.remove(data);
                }
             }
 
-            this.arrayDeque.addLast(new CloudWebSocket.Data(var1, var2));
-            var3 = !this.flag && this.webSocket != null;
-            if (var3) {
+            this.arrayDeque.addLast(new CloudWebSocket.Data(byteBuffer, intValue));
+            flag = !this.flag && this.webSocket != null;
+            if (flag) {
                this.flag = true;
             }
          }
 
-         if (var3) {
+         if (flag) {
             this.method1952();
          }
       }
    }
 
    private void method1952() {
-      WebSocket var1 = this.webSocket;
-      CloudWebSocket.Data var2;
+      WebSocket webSocket = this.webSocket;
+      CloudWebSocket.Data pollFirst;
       synchronized (this.arrayDeque) {
-         var2 = this.arrayDeque.pollFirst();
-         if (var2 == null || var1 == null || this.closed) {
+         pollFirst = this.arrayDeque.pollFirst();
+         if (pollFirst == null || webSocket == null || this.closed) {
             this.flag = false;
             return;
          }
       }
 
       this.longValue2 = System.currentTimeMillis();
-      var1.sendBinary(var2.byteBuffer, true).whenComplete((var1x, var2x) -> {
+      webSocket.sendBinary(pollFirst.byteBuffer, true).whenComplete((var1x, var2x) -> {
          if (var2x != null) {
             this.method1955("отправка не прошла: " + method1956(var2x));
          } else {
@@ -194,12 +194,12 @@ public final class CloudWebSocket {
       }
    }
 
-   public void method1954(String var1) {
+   public void method1954(String str) {
       if (this.method1953()) {
-         WebSocket var2 = this.webSocket;
+         WebSocket webSocket = this.webSocket;
          this.webSocket = null;
-         if (var2 != null) {
-            var2.sendClose(1000, var1).orTimeout(3L, TimeUnit.SECONDS).whenComplete((var1x, var2x) -> var2.abort());
+         if (webSocket != null) {
+            webSocket.sendClose(1000, str).orTimeout(3L, TimeUnit.SECONDS).whenComplete((var1x, var2x) -> webSocket.abort());
          }
 
          synchronized (this.arrayDeque) {
@@ -209,12 +209,12 @@ public final class CloudWebSocket {
       }
    }
 
-   private void method1955(String var1) {
+   private void method1955(String text) {
       if (this.method1953()) {
-         WebSocket var2 = this.webSocket;
+         WebSocket webSocket = this.webSocket;
          this.webSocket = null;
-         if (var2 != null) {
-            var2.abort();
+         if (webSocket != null) {
+            webSocket.abort();
          }
 
          synchronized (this.arrayDeque) {
@@ -222,19 +222,19 @@ public final class CloudWebSocket {
             this.flag = false;
          }
 
-         this.biConsumer2.accept(this, var1);
+         this.biConsumer2.accept(this, text);
       }
    }
 
-   public static String method1956(Throwable var0) {
-      Throwable var1 = var0;
+   public static String method1956(Throwable error) {
+      Throwable throwable = error;
 
-      while (var1.getCause() != null) {
-         var1 = var1.getCause();
+      while (throwable.getCause() != null) {
+         throwable = throwable.getCause();
       }
 
-      String var2 = var1.getMessage();
-      return var2 != null && !var2.isBlank() ? var2 : var1.getClass().getSimpleName();
+      String message = throwable.getMessage();
+      return message != null && !message.isBlank() ? message : throwable.getClass().getSimpleName();
    }
 
    private static final class Data {
@@ -266,9 +266,9 @@ public final class CloudWebSocket {
          return "Data[" + "byteBuffer=" + this.byteBuffer + ", " + "intValue=" + this.intValue + "]";
       }
 
-      private Data(ByteBuffer var1, int var2) {
-         this.byteBuffer = var1;
-         this.intValue = var2;
+      private Data(ByteBuffer byteBuffer, int intValue) {
+         this.byteBuffer = byteBuffer;
+         this.intValue = intValue;
       }
 
       public ByteBuffer getByteBuffer() {
@@ -282,88 +282,88 @@ public final class CloudWebSocket {
 
    private final class Entry implements Listener {
       @Override
-      public void onOpen(WebSocket var1) {
+      public void onOpen(WebSocket webSocket) {
          CloudWebSocket.this.longValue = System.currentTimeMillis();
-         var1.request(1L);
+         webSocket.request(1L);
       }
 
       @Override
-      public CompletionStage<?> onBinary(WebSocket var1, ByteBuffer var2, boolean var3) {
+      public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
          CloudWebSocket.this.longValue = System.currentTimeMillis();
-         ByteBuffer var4 = this.method1957(var2, var3);
-         if (var4 != null) {
+         ByteBuffer byteBuffer = this.method1957(data, last);
+         if (byteBuffer != null) {
             try {
-               CloudWebSocket.this.biConsumer.accept(CloudWebSocket.this, var4);
-            } catch (Throwable var6) {
-               CloudWebSocket.this.method1955("разбор кадра: " + CloudWebSocket.method1956(var6));
+               CloudWebSocket.this.biConsumer.accept(CloudWebSocket.this, byteBuffer);
+            } catch (Throwable e) {
+               CloudWebSocket.this.method1955("разбор кадра: " + CloudWebSocket.method1956(e));
                return null;
             }
          }
 
-         var1.request(1L);
+         webSocket.request(1L);
          return null;
       }
 
       @Override
-      public CompletionStage<?> onText(WebSocket var1, CharSequence var2, boolean var3) {
-         var1.request(1L);
+      public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
+         webSocket.request(1L);
          return null;
       }
 
       @Override
-      public CompletionStage<?> onPing(WebSocket var1, ByteBuffer var2) {
+      public CompletionStage<?> onPing(WebSocket webSocket, ByteBuffer message) {
          CloudWebSocket.this.longValue = System.currentTimeMillis();
-         var1.request(1L);
+         webSocket.request(1L);
          return null;
       }
 
       @Override
-      public CompletionStage<?> onPong(WebSocket var1, ByteBuffer var2) {
+      public CompletionStage<?> onPong(WebSocket webSocket, ByteBuffer message) {
          CloudWebSocket.this.longValue = System.currentTimeMillis();
-         long var3 = CloudWebSocket.this.longValue4;
-         if (var3 != 0L) {
+         long l = CloudWebSocket.this.longValue4;
+         if (l != 0L) {
             CloudWebSocket.this.longValue4 = 0L;
-            CloudWebSocket.this.intValue = (int)Math.min(9999L, (System.nanoTime() - var3) / 1000000L);
+            CloudWebSocket.this.intValue = (int)Math.min(9999L, (System.nanoTime() - l) / 1000000L);
          }
 
-         var1.request(1L);
+         webSocket.request(1L);
          return null;
       }
 
       @Override
-      public CompletionStage<?> onClose(WebSocket var1, int var2, String var3) {
-         CloudWebSocket.this.method1955("соединение закрыто (" + var2 + (var3 != null && !var3.isBlank() ? ", " + var3 : "") + ")");
+      public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
+         CloudWebSocket.this.method1955("соединение закрыто (" + statusCode + (reason != null && !reason.isBlank() ? ", " + reason : "") + ")");
          return null;
       }
 
       @Override
-      public void onError(WebSocket var1, Throwable var2) {
-         CloudWebSocket.this.method1955("обрыв: " + CloudWebSocket.method1956(var2));
+      public void onError(WebSocket webSocket, Throwable error) {
+         CloudWebSocket.this.method1955("обрыв: " + CloudWebSocket.method1956(error));
       }
 
-      private ByteBuffer method1957(ByteBuffer var1, boolean var2) {
-         if (var2 && CloudWebSocket.this.byteBuffer == null) {
-            return var1;
-         } else if ((CloudWebSocket.this.byteBuffer == null ? 0 : CloudWebSocket.this.byteBuffer.position()) + var1.remaining() > 1048576) {
+      private ByteBuffer method1957(ByteBuffer data, boolean last) {
+         if (last && CloudWebSocket.this.byteBuffer == null) {
+            return data;
+         } else if ((CloudWebSocket.this.byteBuffer == null ? 0 : CloudWebSocket.this.byteBuffer.position()) + data.remaining() > 1048576) {
             CloudWebSocket.this.byteBuffer = null;
             CloudWebSocket.this.method1955("кадр больше допустимого");
             return null;
          } else {
             if (CloudWebSocket.this.byteBuffer == null) {
-               CloudWebSocket.this.byteBuffer = ByteBuffer.allocate(var1.remaining()).put(var1);
+               CloudWebSocket.this.byteBuffer = ByteBuffer.allocate(data.remaining()).put(data);
             } else {
-               ByteBuffer var3 = ByteBuffer.allocate(CloudWebSocket.this.byteBuffer.position() + var1.remaining());
+               ByteBuffer allocate = ByteBuffer.allocate(CloudWebSocket.this.byteBuffer.position() + data.remaining());
                CloudWebSocket.this.byteBuffer.flip();
-               var3.put(CloudWebSocket.this.byteBuffer).put(var1);
-               CloudWebSocket.this.byteBuffer = var3;
+               allocate.put(CloudWebSocket.this.byteBuffer).put(data);
+               CloudWebSocket.this.byteBuffer = allocate;
             }
 
-            if (!var2) {
+            if (!last) {
                return null;
             } else {
-               ByteBuffer var4 = CloudWebSocket.this.byteBuffer.flip();
+               ByteBuffer flip = CloudWebSocket.this.byteBuffer.flip();
                CloudWebSocket.this.byteBuffer = null;
-               return var4;
+               return flip;
             }
          }
       }

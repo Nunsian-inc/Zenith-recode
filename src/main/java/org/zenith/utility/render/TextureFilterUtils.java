@@ -20,44 +20,44 @@ public final class TextureFilterUtils {
    private TextureFilterUtils() {
    }
 
-   public static void smooth(@Nullable Identifier var0) {
-      if (var0 != null) {
-         items.add(var0);
+   public static void smooth(@Nullable Identifier location) {
+      if (location != null) {
+         items.add(location);
       }
    }
 
-   public static FilterMode method7268(@Nullable Identifier var0) {
-      return var0 != null && items.contains(var0) ? FilterMode.LINEAR : FilterMode.NEAREST;
+   public static FilterMode method7268(@Nullable Identifier identifier) {
+      return identifier != null && items.contains(identifier) ? FilterMode.LINEAR : FilterMode.NEAREST;
    }
 
    @Nullable
-   public static GpuTextureView method7269(@Nullable Identifier var0) {
-      return var0 == null ? null : method7270(Minecraft.getInstance().getTextureManager().getTexture(var0));
+   public static GpuTextureView method7269(@Nullable Identifier identifier) {
+      return identifier == null ? null : method7270(Minecraft.getInstance().getTextureManager().getTexture(identifier));
    }
 
    @Nullable
-   public static GpuTextureView method7270(@Nullable AbstractTexture var0) {
-      if (var0 == null) {
+   public static GpuTextureView method7270(@Nullable AbstractTexture texture) {
+      if (texture == null) {
          return null;
       } else {
-         GpuTextureView var1 = var0.getTextureView();
-         items2.put(var1, var0.getSampler().getAddressModeU());
-         return var1;
+         GpuTextureView textureView = texture.getTextureView();
+         items2.put(textureView, texture.getSampler().getAddressModeU());
+         return textureView;
       }
    }
 
-   public static AddressMode method7271(@Nullable GpuTextureView var0) {
-      AddressMode var1 = var0 == null ? null : items2.get(var0);
-      return var1 != null ? var1 : AddressMode.CLAMP_TO_EDGE;
+   public static AddressMode method7271(@Nullable GpuTextureView gpuTextureView) {
+      AddressMode addressMode = gpuTextureView == null ? null : items2.get(gpuTextureView);
+      return addressMode != null ? addressMode : AddressMode.CLAMP_TO_EDGE;
    }
 
    @Nullable
-   public static GpuTextureView method7272(int var0) {
+   public static GpuTextureView method7272(int n) {
       return null;
    }
 
    @Nullable
-   public static GpuTextureView method7273(@Nullable GpuTextureView var0) {
-      return var0;
+   public static GpuTextureView method7273(@Nullable GpuTextureView gpuTextureView) {
+      return gpuTextureView;
    }
 }

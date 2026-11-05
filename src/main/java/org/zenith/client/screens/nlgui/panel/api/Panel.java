@@ -5,23 +5,23 @@ import org.zenith.utility.misc.Enum3;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
 public abstract class Panel implements MinecraftAccess {
-   public abstract void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6);
+   public abstract void render(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float floatValue, float f2);
 
-   public abstract boolean onMouseClicked(double var1, double var3, Enum3 var5);
+   public abstract boolean onMouseClicked(double x, double y, Enum3 enum2);
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       return false;
    }
 
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
       return false;
    }
 
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
+   public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
       return false;
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       return false;
    }
 }

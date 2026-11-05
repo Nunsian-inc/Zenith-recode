@@ -26,35 +26,35 @@ public final class BoneTransforms {
    }
 
    public static void method547(
-      CosmeticSkeleton var0,
-      Identifier[] var1,
-      PoseStack var2,
-      SubmitNodeCollector var3,
-      int var4,
-      int var5,
-      int var6,
-      float var7,
-      CosmeticAnimation var8,
-      boolean var9
+      CosmeticSkeleton cosmeticSkeleton,
+      Identifier[] ids,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int lightCoords,
+      int overlayCoords,
+      int color,
+      float f,
+      CosmeticAnimation cosmeticAnimation,
+      boolean flag
    ) {
-      if (var0 != null && var1 != null && var1.length != 0 && var1[0] != null && var3 != null && var0.method7138() != 0) {
-         CosmeticSkeleton.Data[] var10 = var0.getDatas();
-         if (var10.length != 0) {
-            boolean var11 = var6 >>> 24 < 255;
-            int var12 = var0.method7138();
-            int var13 = Integer.MIN_VALUE;
+      if (cosmeticSkeleton != null && ids != null && ids.length != 0 && ids[0] != null && submitNodeCollector != null && cosmeticSkeleton.method7138() != 0) {
+         CosmeticSkeleton.Data[] datas = cosmeticSkeleton.getDatas();
+         if (datas.length != 0) {
+            boolean flag2 = color >>> 24 < 255;
+            int n = cosmeticSkeleton.method7138();
+            int n2 = Integer.MIN_VALUE;
 
-            for (int var14 = 0; var14 < var12; var14++) {
-               int var15 = var0.method7140(var14);
-               if (var15 != var13) {
-                  var13 = var15;
-                  Identifier var16 = var1[var15 >= 0 && var15 < var1.length ? var15 : 0];
-                  if (var16 == null) {
-                     var16 = var1[0];
+            for (int i = 0; i < n; i++) {
+               int n3 = cosmeticSkeleton.method7140(i);
+               if (n3 != n2) {
+                  n2 = n3;
+                  Identifier texture = ids[n3 >= 0 && n3 < ids.length ? n3 : 0];
+                  if (texture == null) {
+                     texture = ids[0];
                   }
 
-                  RenderType var17 = var11 ? RenderTypes.entityTranslucent(var16) : RenderTypes.entityCutout(var16);
-                  var3.submitCustomGeometry(var2, var17, (var9x, var10x) -> method548(var0, var10, var9x, var10x, var15, var4, var5, var6, var7, var8, var9));
+                  RenderType entityTranslucent = flag2 ? RenderTypes.entityTranslucent(texture) : RenderTypes.entityCutout(texture);
+                  submitNodeCollector.submitCustomGeometry(poseStack, entityTranslucent, (var9x, var10x) -> method548(cosmeticSkeleton, datas, var9x, var10x, n3, lightCoords, overlayCoords, color, f, cosmeticAnimation, flag));
                }
             }
          }
@@ -62,55 +62,55 @@ public final class BoneTransforms {
    }
 
    private static void method548(
-      CosmeticSkeleton var0,
-      CosmeticSkeleton.Data[] var1,
-      Pose var2,
-      VertexConsumer var3,
-      int var4,
-      int var5,
-      int var6,
-      int var7,
-      float var8,
-      CosmeticAnimation var9,
-      boolean var10
+      CosmeticSkeleton cosmeticSkeleton,
+      CosmeticSkeleton.Data[] datas,
+      Pose pose,
+      VertexConsumer consumer,
+      int n,
+      int lightCoords,
+      int overlayCoords,
+      int color,
+      float f,
+      CosmeticAnimation cosmeticAnimation,
+      boolean flag
    ) {
-      method550(var1.length);
-      method549(var0, var1, var2, var8, var9, var10);
-      int var11 = -1;
-      Matrix4f var12 = matrix4fs[0];
-      Matrix3f var13 = matrix3fs[0];
-      int var14 = var0.method7138();
+      method550(datas.length);
+      method549(cosmeticSkeleton, datas, pose, f, cosmeticAnimation, flag);
+      int n2 = -1;
+      Matrix4f matrix4f = matrix4fs[0];
+      Matrix3f matrix3f = matrix3fs[0];
+      int n3 = cosmeticSkeleton.method7138();
 
-      for (int var15 = 0; var15 < var14; var15++) {
-         if (var0.method7140(var15) == var4) {
-            int var16 = var0.method7139(var15);
-            if (var16 != var11) {
-               var11 = var16;
-               int var17 = var16 >= 0 && var16 < var1.length ? var16 : 0;
-               var12 = matrix4fs[var17];
-               var13 = matrix3fs[var17];
+      for (int i = 0; i < n3; i++) {
+         if (cosmeticSkeleton.method7140(i) == n) {
+            int n4 = cosmeticSkeleton.method7139(i);
+            if (n4 != n2) {
+               n2 = n4;
+               int n5 = n4 >= 0 && n4 < datas.length ? n4 : 0;
+               matrix4f = matrix4fs[n5];
+               matrix3f = matrix3fs[n5];
             }
 
-            vector3f2.set(var0.method7144(var15, 0), var0.method7144(var15, 1), var0.method7144(var15, 2));
-            var13.transform(vector3f2);
+            vector3f2.set(cosmeticSkeleton.method7144(i, 0), cosmeticSkeleton.method7144(i, 1), cosmeticSkeleton.method7144(i, 2));
+            matrix3f.transform(vector3f2);
             if (vector3f2.lengthSquared() > 1.0E-8F) {
                vector3f2.normalize();
             } else {
                vector3f2.set(0.0F, 1.0F, 0.0F);
             }
 
-            for (int var18 = 0; var18 < 4; var18++) {
-               vector3f.set(var0.method7141(var15, var18, 0), var0.method7141(var15, var18, 1), var0.method7141(var15, var18, 2));
-               var12.transformPosition(vector3f);
-               var3.addVertex(
+            for (int j = 0; j < 4; j++) {
+               vector3f.set(cosmeticSkeleton.method7141(i, j, 0), cosmeticSkeleton.method7141(i, j, 1), cosmeticSkeleton.method7141(i, j, 2));
+               matrix4f.transformPosition(vector3f);
+               consumer.addVertex(
                   vector3f.x,
                   vector3f.y,
                   vector3f.z,
-                  var7,
-                  var0.method7142(var15, var18),
-                  var0.method7143(var15, var18),
-                  var6,
-                  var5,
+                  color,
+                  cosmeticSkeleton.method7142(i, j),
+                  cosmeticSkeleton.method7143(i, j),
+                  overlayCoords,
+                  lightCoords,
                   vector3f2.x,
                   vector3f2.y,
                   vector3f2.z
@@ -120,70 +120,70 @@ public final class BoneTransforms {
       }
    }
 
-   private static void method549(CosmeticSkeleton var0, CosmeticSkeleton.Data[] var1, Pose var2, float var3, CosmeticAnimation var4, boolean var5) {
-      for (int var6 = 0; var6 < var1.length; var6++) {
-         CosmeticSkeleton.Data var7 = var1[var6];
-         Matrix4f var8 = matrix4fs[var6];
-         Matrix3f var9 = matrix3fs[var6];
-         int var10 = var7.getIntValue();
-         if (var10 >= 0 && var10 < var6) {
-            var8.set(matrix4fs[var10]);
-            var9.set(matrix3fs[var10]);
+   private static void method549(CosmeticSkeleton cosmeticSkeleton, CosmeticSkeleton.Data[] datas, Pose pose, float f, CosmeticAnimation cosmeticAnimation, boolean flag) {
+      for (int i = 0; i < datas.length; i++) {
+         CosmeticSkeleton.Data data = datas[i];
+         Matrix4f matrix4f = matrix4fs[i];
+         Matrix3f matrix3f = matrix3fs[i];
+         int intValue = data.getIntValue();
+         if (intValue >= 0 && intValue < i) {
+            matrix4f.set(matrix4fs[intValue]);
+            matrix3f.set(matrix3fs[intValue]);
          } else {
-            var8.set(var2.pose());
-            var9.set(var2.normal());
+            matrix4f.set(pose.pose());
+            matrix3f.set(pose.normal());
          }
 
-         float var11 = var7.getRotationX();
-         float var12 = var7.getRotationY();
-         float var13 = var7.getFloatValue4();
-         float var14 = 0.0F;
-         float var15 = 0.0F;
-         float var16 = 0.0F;
-         float var17 = 1.0F;
-         float var18 = 1.0F;
-         float var19 = 1.0F;
-         if (var4 != null && var4.method7810(var7.name(), var3, var5, CONST_floatValues)) {
-            var11 += CONST_floatValues[0];
-            var12 += CONST_floatValues[1];
-            var13 += CONST_floatValues[2];
-            var14 = CONST_floatValues[3];
-            var15 = CONST_floatValues[4];
-            var16 = CONST_floatValues[5];
-            var17 = CONST_floatValues[6];
-            var18 = CONST_floatValues[7];
-            var19 = CONST_floatValues[8];
+         float rotationX = data.getRotationX();
+         float rotationY = data.getRotationY();
+         float f2 = data.getFloatValue4();
+         float f3 = 0.0F;
+         float f4 = 0.0F;
+         float f5 = 0.0F;
+         float x = 1.0F;
+         float y = 1.0F;
+         float z = 1.0F;
+         if (cosmeticAnimation != null && cosmeticAnimation.method7810(data.name(), f, flag, CONST_floatValues)) {
+            rotationX += CONST_floatValues[0];
+            rotationY += CONST_floatValues[1];
+            f2 += CONST_floatValues[2];
+            f3 = CONST_floatValues[3];
+            f4 = CONST_floatValues[4];
+            f5 = CONST_floatValues[5];
+            x = CONST_floatValues[6];
+            y = CONST_floatValues[7];
+            z = CONST_floatValues[8];
          }
 
-         var8.translate(var7.getFloatValue() + var14, var7.getFloatValue2() + var15, var7.getFloatValue3() + var16);
-         if (var11 != 0.0F || var12 != 0.0F || var13 != 0.0F) {
-            quaternionf.rotationXYZ((float)Math.toRadians(-var11), (float)Math.toRadians(var12), (float)Math.toRadians(-var13));
-            var8.rotate(quaternionf);
-            var9.rotate(quaternionf);
+         matrix4f.translate(data.getFloatValue() + f3, data.getFloatValue2() + f4, data.getFloatValue3() + f5);
+         if (rotationX != 0.0F || rotationY != 0.0F || f2 != 0.0F) {
+            quaternionf.rotationXYZ((float)Math.toRadians(-rotationX), (float)Math.toRadians(rotationY), (float)Math.toRadians(-f2));
+            matrix4f.rotate(quaternionf);
+            matrix3f.rotate(quaternionf);
          }
 
-         if (var17 != 1.0F || var18 != 1.0F || var19 != 1.0F) {
-            var8.scale(var17, var18, var19);
+         if (x != 1.0F || y != 1.0F || z != 1.0F) {
+            matrix4f.scale(x, y, z);
          }
 
-         var8.translate(-var7.getFloatValue(), -var7.getFloatValue2(), -var7.getFloatValue3());
+         matrix4f.translate(-data.getFloatValue(), -data.getFloatValue2(), -data.getFloatValue3());
       }
    }
 
-   private static void method550(int var0) {
-      if (matrix4fs.length < var0) {
-         Matrix4f[] var1 = new Matrix4f[var0];
-         Matrix3f[] var2 = new Matrix3f[var0];
-         System.arraycopy(matrix4fs, 0, var1, 0, matrix4fs.length);
-         System.arraycopy(matrix3fs, 0, var2, 0, matrix3fs.length);
+   private static void method550(int length) {
+      if (matrix4fs.length < length) {
+         Matrix4f[] matrixes = new Matrix4f[length];
+         Matrix3f[] matrix3fs2 = new Matrix3f[length];
+         System.arraycopy(matrix4fs, 0, matrixes, 0, matrix4fs.length);
+         System.arraycopy(matrix3fs, 0, matrix3fs2, 0, matrix3fs.length);
 
-         for (int var3 = matrix4fs.length; var3 < var0; var3++) {
-            var1[var3] = new Matrix4f();
-            var2[var3] = new Matrix3f();
+         for (int i = matrix4fs.length; i < length; i++) {
+            matrixes[i] = new Matrix4f();
+            matrix3fs2[i] = new Matrix3f();
          }
 
-         matrix4fs = var1;
-         matrix3fs = var2;
+         matrix4fs = matrixes;
+         matrix3fs = matrix3fs2;
       }
    }
 }

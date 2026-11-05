@@ -81,44 +81,44 @@ public final class PotionThrowerModule extends Module {
    private int intValue = -1;
 
    private PotionThrowerModule() {
-      for (PotionThrowerModule.Type var4 : types) {
-         this.items.add(new PotionThrowerModule.Entry(var4, new BindSetting(var4.text, var4.text + ".desc", -1, () -> this.mode.isSelected(1))));
+      for (PotionThrowerModule.Type type : types) {
+         this.items.add(new PotionThrowerModule.Entry(type, new BindSetting(type.text, type.text + ".desc", -1, () -> this.mode.isSelected(1))));
       }
 
-      for (int var5 = 0; var5 < this.animations.length; var5++) {
-         this.animations[var5] = new Animation(160L, Easing.INSTANCE18);
+      for (int i = 0; i < this.animations.length; i++) {
+         this.animations[i] = new Animation(160L, Easing.INSTANCE18);
       }
    }
 
    @Override
    public List<Setting> getSettings() {
-      var var1 = new ArrayList<>(List.of(this.mode, this.wheelBind, this.drawRadius));
-      this.items.forEach(var1x -> var1.add(var1x.bindSetting));
-      return var1;
+      var settings = new ArrayList<>(List.of(this.mode, this.wheelBind, this.drawRadius));
+      this.items.forEach(var1x -> settings.add(var1x.bindSetting));
+      return settings;
    }
 
    @Override
    public void onDisable() {
       this.method2695();
-      this.items.forEach(var0 -> var0.flag = false);
+      this.items.forEach(entry -> entry.flag = false);
       super.onDisable();
    }
 
    @EventTarget
-   public void method2677(KeyEvent var1) {
+   public void method2677(KeyEvent event) {
       if (mc.player != null && mc.player.containerMenu instanceof InventoryMenu) {
          if (this.mode.isSelected(0)) {
-            this.method2678(var1);
+            this.method2678(event);
          } else if (mc.gui.screen() == null) {
-            for (PotionThrowerModule.Entry var3 : this.items) {
-               if (var3.bindSetting.getKeyCode() != -1) {
-                  if (var1.isPress(var3.bindSetting.getKeyCode())) {
-                     var3.flag = true;
+            for (PotionThrowerModule.Entry entry : this.items) {
+               if (entry.bindSetting.getKeyCode() != -1) {
+                  if (event.isPress(entry.bindSetting.getKeyCode())) {
+                     entry.flag = true;
                   }
 
-                  if (var1.isRelease(var3.bindSetting.getKeyCode())) {
-                     var3.flag = false;
-                     this.method2680(var3.type);
+                  if (event.isRelease(entry.bindSetting.getKeyCode())) {
+                     entry.flag = false;
+                     this.method2680(entry.type);
                   }
                }
             }
@@ -126,19 +126,19 @@ public final class PotionThrowerModule extends Module {
       }
    }
 
-   private void method2678(KeyEvent var1) {
-      if (this.wheelBind.getKeyCode() != -1 && var1.isKey(this.wheelBind.getKeyCode())) {
-         if (var1.getIntValue() == 1) {
+   private void method2678(KeyEvent event) {
+      if (this.wheelBind.getKeyCode() != -1 && event.isKey(this.wheelBind.getKeyCode())) {
+         if (event.getIntValue() == 1) {
             if (mc.gui.screen() == null) {
                this.flag = true;
                this.method2694(true);
             }
          } else {
-            if (var1.getIntValue() == 0) {
-               int var2 = this.intValue;
+            if (event.getIntValue() == 0) {
+               int intValue = this.intValue;
                this.method2695();
-               if (var2 != -1) {
-                  this.method2680(types[var2]);
+               if (intValue != -1) {
+                  this.method2680(types[intValue]);
                }
             }
          }
@@ -146,31 +146,31 @@ public final class PotionThrowerModule extends Module {
    }
 
    @EventTarget
-   public void method2679(MouseButtonEvent var1) {
+   public void method2679(MouseButtonEvent event) {
       if (this.mode.isSelected(0) && this.flag && mc.player != null && mc.gui.screen() == null) {
-         if (var1.getIntValue2() == 1 && var1.getIntValue() == 0) {
-            int var2;
+         if (event.getIntValue2() == 1 && event.getIntValue() == 0) {
+            int n;
             if ((
-                  var2 = this.method2691(
+                  n = this.method2691(
                      this.method2692(), this.method2693(), mc.getWindow().getGuiScaledWidth() / 2.0F, mc.getWindow().getGuiScaledHeight() / 2.0F, 62.0F
                   )
                )
                != -1) {
                this.method2695();
-               this.method2680(types[var2]);
+               this.method2680(types[n]);
             }
          }
       }
    }
 
-   private void method2680(PotionThrowerModule.Type var1) {
-      if (mc.player != null && this.method2681(var1.floatValue)) {
-         InventoryUtils.method928(Items.SPLASH_POTION, var1.method2700());
+   private void method2680(PotionThrowerModule.Type type) {
+      if (mc.player != null && this.method2681(type.floatValue)) {
+         InventoryUtils.method928(Items.SPLASH_POTION, type.method2700());
       }
    }
 
-   private boolean method2681(float var1) {
-      return var1 == 0.0F
+   private boolean method2681(float floatValue) {
+      return floatValue == 0.0F
          ? true
          : mc.level != null
             && mc.level
@@ -179,16 +179,16 @@ public final class PotionThrowerModule extends Module {
                .anyMatch(
                   var1x -> var1x != mc.player
                      && !Zenith.getInstance().getFriends().method7627(var1x.getGameProfile().name())
-                     && mc.player.distanceTo(var1x) <= var1
+                     && mc.player.distanceTo(var1x) <= floatValue
                );
    }
 
    @EventTarget(4)
-   public void method2682(ScreenRenderEvent var1) {
+   public void method2682(ScreenRenderEvent event) {
       if (mc.player != null && mc.level != null) {
          if (this.mode.isSelected(0)) {
             if (mc.gui.screen() == null) {
-               this.method2683(var1.getMenuDrawContext());
+               this.method2683(event.getMenuDrawContext());
             }
          } else {
             if (this.flag || this.flag2) {
@@ -198,11 +198,11 @@ public final class PotionThrowerModule extends Module {
       }
    }
 
-   private void method2683(MenuDrawContext var1) {
-      float var2;
-      if ((var2 = this.animation.method2808(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
-         for (Animation var14 : this.animations) {
-            var14.method2809(0.0F);
+   private void method2683(MenuDrawContext menuDrawContext) {
+      float previewAlpha;
+      if ((previewAlpha = this.animation.method2808(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
+         for (Animation animation : this.animations) {
+            animation.method2809(0.0F);
          }
 
          this.intValue = -1;
@@ -211,22 +211,22 @@ public final class PotionThrowerModule extends Module {
             this.method2694(true);
          }
 
-         ZenithStyle var3 = zenith.getStyleManager().getCurrentStyle();
-         if (var3 != null) {
-            float var4 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-            float var5 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-            float var6 = 0.85F + 0.15F * var2;
-            float var7 = 62.0F * var6;
-            float var8 = 98.0F * var6;
-            int var9 = this.flag ? this.method2691(var1.getMouseX(), var1.getMouseY(), var4, var5, var7) : -1;
-            this.intValue = this.flag ? var9 : -1;
+         ZenithStyle currentStyle = zenith.getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            float xo = mc.getWindow().getGuiScaledWidth() / 2.0F;
+            float yo = mc.getWindow().getGuiScaledHeight() / 2.0F;
+            float f = 0.85F + 0.15F * previewAlpha;
+            float f2 = 62.0F * f;
+            float f3 = 98.0F * f;
+            int n = this.flag ? this.method2691(menuDrawContext.getMouseX(), menuDrawContext.getMouseY(), xo, yo, f2) : -1;
+            this.intValue = this.flag ? n : -1;
             this.method2684();
-            PoseStack var10 = MatrixUtils.method666(var1.pose());
-            this.method2685(var10, var4, var5, var8, var2);
-            this.method2686(var10, var3, var4, var5, var7, var8, var2, var9);
-            this.method2687(var1, var3, var4, var5, var7, var8, var2);
-            this.method2688(var1, var3, var4, var5, var2, var6);
-            this.method2690(var1, var10, var3, var4, var5, var8, var2, var9);
+            PoseStack poseStack = MatrixUtils.method666(menuDrawContext.pose());
+            this.method2685(poseStack, xo, yo, f3, previewAlpha);
+            this.method2686(poseStack, currentStyle, xo, yo, f2, f3, previewAlpha, n);
+            this.method2687(menuDrawContext, currentStyle, xo, yo, f2, f3, previewAlpha);
+            this.method2688(menuDrawContext, currentStyle, xo, yo, previewAlpha, f);
+            this.method2690(menuDrawContext, poseStack, currentStyle, xo, yo, f3, previewAlpha, n);
          }
       }
    }
@@ -235,22 +235,22 @@ public final class PotionThrowerModule extends Module {
       Arrays.fill(this.slots, null);
       Arrays.fill(this.intValues, 0);
 
-      for (Slot var2 : mc.player.containerMenu.slots) {
-         ItemStack var3 = var2.getItem();
-         if (!var3.isEmpty()) {
-            CustomData var4 = var3.get(DataComponents.CUSTOM_DATA);
-            if (var4 != null) {
-               String var5 = var4.copyTag().toString();
-               boolean var6 = var3.getItem().equals(Items.SPLASH_POTION);
+      for (Slot slot : mc.player.containerMenu.slots) {
+         ItemStack stack = slot.getItem();
+         if (!stack.isEmpty()) {
+            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+            if (customData != null) {
+               String string = customData.copyTag().toString();
+               boolean flag = stack.getItem().equals(Items.SPLASH_POTION);
 
-               for (int var7 = 0; var7 < types.length; var7++) {
-                  if (var5.contains(types[var7].text2)) {
-                     if (var2.index != 46) {
-                        this.intValues[var7] = this.intValues[var7] + var3.getCount();
+               for (int i = 0; i < types.length; i++) {
+                  if (string.contains(types[i].text2)) {
+                     if (slot.index != 46) {
+                        this.intValues[i] = this.intValues[i] + stack.getCount();
                      }
 
-                     if (var6 && (this.slots[var7] == null || var2.index > this.slots[var7].index)) {
-                        this.slots[var7] = var2;
+                     if (flag && (this.slots[i] == null || slot.index > this.slots[i].index)) {
+                        this.slots[i] = slot;
                      }
                   }
                }
@@ -259,209 +259,209 @@ public final class PotionThrowerModule extends Module {
       }
    }
 
-   private void method2685(PoseStack var1, float var2, float var3, float var4, float var5) {
-      float var6;
-      if (!((var6 = zenith.getNLMenuScreen().getBlurPower()) <= 0.0F)) {
-         float var7 = var4 + 7.0F;
+   private void method2685(PoseStack poseStack, float xo, float yo, float f, float previewAlpha) {
+      float blurPower;
+      if (!((blurPower = zenith.getNLMenuScreen().getBlurPower()) <= 0.0F)) {
+         float intValue = f + 7.0F;
          RenderShaders.method5287(
-            var1.last().pose(),
-            var2 - var7,
-            var3 - var7,
-            var7 * 2.0F,
-            var7 * 2.0F,
-            var6,
-            ProxyDotRadiusData.method8069(var7),
-            ZenithColor.INSTANCE.method7294(var5 * 0.92F),
+            poseStack.last().pose(),
+            xo - intValue,
+            yo - intValue,
+            intValue * 2.0F,
+            intValue * 2.0F,
+            blurPower,
+            ProxyDotRadiusData.method8069(intValue),
+            ZenithColor.INSTANCE.method7294(previewAlpha * 0.92F),
             true,
             false
          );
       }
    }
 
-   private void method2686(PoseStack var1, ZenithStyle var2, float var3, float var4, float var5, float var6, float var7, int var8) {
-      float var9;
-      float var10 = (var9 = 360.0F / types.length) - 2.4F;
+   private void method2686(PoseStack poseStack, ZenithStyle currentStyle, float xo, float yo, float f, float f2, float previewAlpha, int n) {
+      float f3;
+      float f4 = (f3 = 360.0F / types.length) - 2.4F;
 
-      for (int var11 = 0; var11 < types.length; var11++) {
-         float var12 = this.animations[var11].method2808(var11 == var8 ? 1.0F : 0.0F);
-         boolean var13 = this.slots[var11] == null;
-         float var14 = var6 + var12 * 6.0F;
-         ZenithColor var15;
-         ZenithColor var16;
-         if (var13) {
-            var15 = var2.getDisableActiveBg()
+      for (int i = 0; i < types.length; i++) {
+         float hover = this.animations[i].method2808(i == n ? 1.0F : 0.0F);
+         boolean flag = this.slots[i] == null;
+         float f5 = f2 + hover * 6.0F;
+         ZenithColor zenithColor;
+         ZenithColor zenithColor2;
+         if (flag) {
+            zenithColor = currentStyle.getDisableActiveBg()
                .getZenithColor()
-               .method7294(var7)
-               .method7295(var2.getPrimaryColor().getZenithColor().method7294(var7), var12 * 0.45F);
-            var16 = var2.getRightBackground()
+               .method7294(previewAlpha)
+               .method7295(currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha), hover * 0.45F);
+            zenithColor2 = currentStyle.getRightBackground()
                .getZenithColor()
-               .method7294(var7 * 0.9F)
-               .method7295(var2.getPrimaryColor().getZenithColor().method7296(0.55F).method7294(var7), var12 * 0.4F);
+               .method7294(previewAlpha * 0.9F)
+               .method7295(currentStyle.getPrimaryColor().getZenithColor().method7296(0.55F).method7294(previewAlpha), hover * 0.4F);
          } else {
-            var15 = var2.getSurfaceDisableBackground().getZenithColor().method7294(var7);
-            var16 = var2.getRightBackground().getZenithColor().method7294(var7 * 0.92F);
-            if (var12 > 0.001F) {
-               ZenithColor var17 = var2.getSurfaceEnableBackground()
+            zenithColor = currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha);
+            zenithColor2 = currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha * 0.92F);
+            if (hover > 0.001F) {
+               ZenithColor zenithColor3 = currentStyle.getSurfaceEnableBackground()
                   .getZenithColor()
-                  .method7294(var7)
-                  .method7295(var2.getPrimaryColor().getZenithColor().method7294(var7), var12 * 0.65F);
-               ZenithColor var18 = var2.getPrimaryColor().getZenithColor().method7296(0.48F).method7294(var7);
-               var15 = var15.method7295(var17, var12);
-               var16 = var16.method7295(var18, var12);
+                  .method7294(previewAlpha)
+                  .method7295(currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha), hover * 0.65F);
+               ZenithColor zenithColor4 = currentStyle.getPrimaryColor().getZenithColor().method7296(0.48F).method7294(previewAlpha);
+               zenithColor = zenithColor.method7295(zenithColor3, hover);
+               zenithColor2 = zenithColor2.method7295(zenithColor4, hover);
             }
          }
 
-         var1.pushPose();
-         var1.translate(var3, var4, 0.0F);
-         var1.rotate(Axis.ZP.rotationDegrees(var11 * var9 + 1.2F));
-         var1.translate(-var3, -var4, 0.0F);
+         poseStack.pushPose();
+         poseStack.translate(xo, yo, 0.0F);
+         poseStack.rotate(Axis.ZP.rotationDegrees(i * f3 + 1.2F));
+         poseStack.translate(-xo, -yo, 0.0F);
          RenderShaders.method5276(
-            var1.last().pose(), var3 - var14, var4 - var14, var14 * 2.0F, var14 * 2.0F, var14 - var5, var10, 0.0F, var15, var16, var16, var15
+            poseStack.last().pose(), xo - f5, yo - f5, f5 * 2.0F, f5 * 2.0F, f5 - f, f4, 0.0F, zenithColor, zenithColor2, zenithColor2, zenithColor
          );
-         if (var12 > 0.01F) {
+         if (hover > 0.01F) {
             RenderShaders.method5275(
-               var1.last().pose(),
-               var3 - var14,
-               var4 - var14,
-               var14 * 2.0F,
-               var14 * 2.0F,
-               1.35F + var12,
-               var10,
+               poseStack.last().pose(),
+               xo - f5,
+               yo - f5,
+               f5 * 2.0F,
+               f5 * 2.0F,
+               1.35F + hover,
+               f4,
                0.0F,
-               var2.getPrimaryColor().getZenithColor().method7294(var7 * var12 * 0.8F)
+               currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * hover * 0.8F)
             );
          }
 
-         var1.popPose();
+         poseStack.popPose();
       }
    }
 
-   private void method2687(MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5, float var6, float var7) {
-      for (int var8 = 0; var8 < 2; var8++) {
-         if (var8 == 1) {
+   private void method2687(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float xo, float yo, float f, float f2, float previewAlpha) {
+      for (int i = 0; i < 2; i++) {
+         if (i == 1) {
             ScissorFlusher.flush();
          }
 
-         for (int var9 = 0; var9 < types.length; var9++) {
-            PotionThrowerModule.Type var10 = types[var9];
-            float var11 = this.animations[var9].getValue();
-            float var12 = (float)((-Math.PI / 2) + (Math.PI * 2) * ((var9 + 0.5) / types.length));
-            float var13 = (var5 + var6) / 2.0F + var11 * 4.0F;
-            float var14 = var3 + (float)Math.cos(var12) * var13;
-            float var15 = var4 + (float)Math.sin(var12) * var13;
-            if (var8 == 0) {
-               Slot var16 = this.slots[var9];
-               ItemStack var17 = var16 == null ? var10.method2699() : var16.getItem();
-               this.method2689(var1, var17, var14 - 8.0F, var15 - 8.0F, var16 == null ? var7 * 0.45F : var7);
+         for (int j = 0; j < types.length; j++) {
+            PotionThrowerModule.Type type = types[j];
+            float f3 = this.animations[j].getValue();
+            float f4 = (float)((-Math.PI / 2) + (Math.PI * 2) * ((j + 0.5) / types.length));
+            float f5 = (f + f2) / 2.0F + f3 * 4.0F;
+            float f6 = xo + (float)Math.cos(f4) * f5;
+            float f7 = yo + (float)Math.sin(f4) * f5;
+            if (i == 0) {
+               Slot slot = this.slots[j];
+               ItemStack mainHandItem = slot == null ? type.method2699() : slot.getItem();
+               this.method2689(menuDrawContext, mainHandItem, f6 - 8.0F, f7 - 8.0F, slot == null ? previewAlpha * 0.45F : previewAlpha);
             } else {
-               int var21;
-               if ((var21 = this.intValues[var9]) > 1) {
-                  Font var22 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-                  String var18 = String.valueOf(var21);
-                  float var19 = var14 + 8.0F - var22.width(var18);
-                  float var20 = var15 + 5.5F;
-                  var1.drawText(var22, var18, var19 + 0.5F, var20 + 0.5F, var2.getRightBackground().getZenithColor().method7294(var7));
-                  var1.drawText(var22, var18, var19, var20, var2.getTextEnable().getZenithColor().method7294(var7));
+               int intValue;
+               if ((intValue = this.intValues[j]) > 1) {
+                  Font font = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+                  String text = String.valueOf(intValue);
+                  float floatValue = f6 + 8.0F - font.width(text);
+                  float centeredTextY = f7 + 5.5F;
+                  menuDrawContext.drawText(font, text, floatValue + 0.5F, centeredTextY + 0.5F, currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha));
+                  menuDrawContext.drawText(font, text, floatValue, centeredTextY, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
                }
             }
          }
       }
    }
 
-   private void method2688(MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5, float var6) {
-      float var7 = 32.0F * var6;
-      var1.drawRoundedRect(
-         var3 - var7,
-         var4 - var7,
-         var7 * 2.0F,
-         var7 * 2.0F,
-         ProxyDotRadiusData.method8069(var7),
-         var2.getLeftBackground().getZenithColor().method7294(var5 * 0.97F)
+   private void method2688(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float xo, float yo, float previewAlpha, float f) {
+      float intValue = 32.0F * f;
+      menuDrawContext.drawRoundedRect(
+         xo - intValue,
+         yo - intValue,
+         intValue * 2.0F,
+         intValue * 2.0F,
+         ProxyDotRadiusData.method8069(intValue),
+         currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha * 0.97F)
       );
-      ItemStack var8 = mc.player.getMainHandItem();
-      if (!var8.isEmpty() && var8.getItem() != Items.AIR) {
-         this.method2689(var1, var8, var3 - 8.0F, var4 - 8.0F, var5);
+      ItemStack mainHandItem = mc.player.getMainHandItem();
+      if (!mainHandItem.isEmpty() && mainHandItem.getItem() != Items.AIR) {
+         this.method2689(menuDrawContext, mainHandItem, xo - 8.0F, yo - 8.0F, previewAlpha);
       }
    }
 
    // $VF: Could not inline inconsistent finally blocks
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   private void method2689(MenuDrawContext var1, ItemStack var2, float var3, float var4, float var5) {
+   private void method2689(MenuDrawContext menuDrawContext, ItemStack mainHandItem, float x, float y, float previewAlpha) {
       RenderState.method1871();
       RenderState.method1873();
-      RenderState.method1883(1.0F, 1.0F, 1.0F, Math.clamp(var5, 0.0F, 1.0F));
+      RenderState.method1883(1.0F, 1.0F, 1.0F, Math.clamp(previewAlpha, 0.0F, 1.0F));
 
       try {
-         var1.item(var2, (int)var3, (int)var4);
-      } catch (Throwable var8) {
+         menuDrawContext.item(mainHandItem, (int)x, (int)y);
+      } catch (Throwable e) {
          RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
-         throw var8;
+         throw e;
       }
 
       RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
    }
 
-   private void method2690(MenuDrawContext var1, PoseStack var2, ZenithStyle var3, float var4, float var5, float var6, float var7, int var8) {
-      if (!(var7 <= 0.5F)) {
-         String var9;
-         String var10;
-         if (var8 != -1) {
-            PotionThrowerModule.Type var11 = types[var8];
-            var9 = var11.method2702();
-            if (this.slots[var8] == null) {
-               var10 = translate("module.potionThrower.missing");
-            } else if (!this.method2681(var11.floatValue)) {
-               var10 = translate("module.potionThrower.noTarget");
+   private void method2690(MenuDrawContext menuDrawContext, PoseStack poseStack, ZenithStyle currentStyle, float xo, float yo, float f, float previewAlpha, int n) {
+      if (!(previewAlpha <= 0.5F)) {
+         String text;
+         String str;
+         if (n != -1) {
+            PotionThrowerModule.Type type = types[n];
+            text = type.method2702();
+            if (this.slots[n] == null) {
+               str = translate("module.potionThrower.missing");
+            } else if (!this.method2681(type.floatValue)) {
+               str = translate("module.potionThrower.noTarget");
             } else {
-               var10 = translate("module.potionThrower.release");
+               str = translate("module.potionThrower.release");
             }
          } else {
-            var9 = translate("module.potionThrower.title");
-            var10 = translate("module.potionThrower.hint");
+            text = translate("module.potionThrower.title");
+            str = translate("module.potionThrower.hint");
          }
 
-         Font var17 = Fonts.NEW_SEMIBOLD.getFont(7.5F);
-         Font var12 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         float var13 = Math.max(var17.width(var9), var12.width(var10)) + 20.0F;
-         float var14 = var4 - var13 / 2.0F;
-         float var15 = var5 - var6 - 38.0F;
-         float var16;
-         if ((var16 = zenith.getNLMenuScreen().getBlurPower()) > 0.0F) {
+         Font font = Fonts.NEW_SEMIBOLD.getFont(7.5F);
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
+         float panelWidth = Math.max(font.width(text), font2.width(str)) + 20.0F;
+         float floatValue = xo - panelWidth / 2.0F;
+         float y = yo - f - 38.0F;
+         float blurPower;
+         if ((blurPower = zenith.getNLMenuScreen().getBlurPower()) > 0.0F) {
             RenderShaders.method5287(
-               var2.last().pose(),
-               var14,
-               var15,
-               var13,
+               poseStack.last().pose(),
+               floatValue,
+               y,
+               panelWidth,
                27.0F,
-               var16,
+               blurPower,
                ProxyDotRadiusData.method8069(7.0F),
-               ZenithColor.INSTANCE.method7294(var7),
+               ZenithColor.INSTANCE.method7294(previewAlpha),
                true,
                false
             );
          }
 
-         var1.drawRoundedRect(
-            var14, var15, var13, 27.0F, ProxyDotRadiusData.method8069(7.0F), var3.getLeftBackground().getZenithColor().method7294(var7 * 0.92F)
+         menuDrawContext.drawRoundedRect(
+            floatValue, y, panelWidth, 27.0F, ProxyDotRadiusData.method8069(7.0F), currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha * 0.92F)
          );
-         var1.drawText(var17, var9, var4 - var17.width(var9) / 2.0F, var15 + 5.0F, var3.getTextEnable().getZenithColor().method7294(var7));
-         var1.drawText(var12, var10, var4 - var12.width(var10) / 2.0F, var15 + 16.0F, var3.getTextSecondary().getZenithColor().method7294(var7));
+         menuDrawContext.drawText(font, text, xo - font.width(text) / 2.0F, y + 5.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawText(font2, str, xo - font2.width(str) / 2.0F, y + 16.0F, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
       }
    }
 
-   private int method2691(float var1, float var2, float var3, float var4, float var5) {
-      float var6 = var1 - var3;
-      float var7 = var2 - var4;
-      if (Math.sqrt(var6 * var6 + var7 * var7) < var5 * 0.35F) {
+   private int method2691(float mouseX, float mouseY, float xo, float yo, float f) {
+      float x = mouseX - xo;
+      float y = mouseY - yo;
+      if (Math.sqrt(x * x + y * y) < f * 0.35F) {
          return -1;
       } else {
-         double var8;
-         if ((var8 = Math.atan2(var7, var6) + (Math.PI / 2)) < 0.0) {
-            var8 += Math.PI * 2;
+         double d;
+         if ((d = Math.atan2(y, x) + (Math.PI / 2)) < 0.0) {
+            d += Math.PI * 2;
          }
 
-         int var10;
-         return (var10 = (int)Math.floor(var8 / (Math.PI * 2) * types.length)) >= 0 && var10 < types.length ? var10 : -1;
+         int n;
+         return (n = (int)Math.floor(d / (Math.PI * 2) * types.length)) >= 0 && n < types.length ? n : -1;
       }
    }
 
@@ -473,9 +473,9 @@ public final class PotionThrowerModule extends Module {
       return (float)(mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / mc.getWindow().getScreenHeight());
    }
 
-   private void method2694(boolean var1) {
+   private void method2694(boolean flag) {
       if (mc != null && mc.mouseHandler != null) {
-         if (var1) {
+         if (flag) {
             if (!this.flag2) {
                mc.mouseHandler.releaseMouse();
                this.flag2 = true;
@@ -498,38 +498,38 @@ public final class PotionThrowerModule extends Module {
       this.method2694(false);
    }
 
-   private static String translate(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String translate(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    @EventTarget
-   public void method2696(WorldRenderEvent var1) {
+   public void method2696(WorldRenderEvent event) {
       if (this.drawRadius.isEnabled() && mc.player != null && mc.level != null) {
          if (this.mode.isSelected(0)) {
             if (this.flag && this.intValue != -1) {
-               this.method2697(var1.getMatrixStack(), types[this.intValue]);
+               this.method2697(event.getMatrixStack(), types[this.intValue]);
             }
          } else {
-            for (PotionThrowerModule.Entry var3 : this.items) {
-               if (var3.flag) {
-                  this.method2697(var1.getMatrixStack(), var3.type);
+            for (PotionThrowerModule.Entry entry : this.items) {
+               if (entry.flag) {
+                  this.method2697(event.getMatrixStack(), entry.type);
                }
             }
          }
       }
    }
 
-   private void method2697(PoseStack var1, PotionThrowerModule.Type var2) {
-      if (!(var2.floatValue <= 0.0F)) {
-         this.method2698(var1, var2.floatValue, ColorUtils.CONST_intValue);
+   private void method2697(PoseStack matrixStack, PotionThrowerModule.Type type) {
+      if (!(type.floatValue <= 0.0F)) {
+         this.method2698(matrixStack, type.floatValue, ColorUtils.CONST_intValue);
       }
    }
 
-   private void method2698(PoseStack var1, float var2, int var3) {
-      float var4 = mc.player.getBbWidth() / 2.0F;
-      int var5 = this.method2681(var2) ? Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287() : var3;
-      Vec3 var6 = MathUtils.method2656(mc.player).add(var4, 0.02, var4);
-      Vec3 var7 = var6.subtract(mc.getEntityRenderDispatcher().camera.position());
+   private void method2698(PoseStack matrixStack, float floatValue, int n) {
+      float x = mc.player.getBbWidth() / 2.0F;
+      int color = this.method2681(floatValue) ? Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287() : n;
+      Vec3 vec = MathUtils.method2656(mc.player).add(x, 0.02, x);
+      Vec3 vec2 = vec.subtract(mc.getEntityRenderDispatcher().camera.position());
       GL11.glEnable(2881);
       RenderState.method1871();
       RenderState.method1878();
@@ -537,28 +537,28 @@ public final class PotionThrowerModule extends Module {
       RenderState.method1877();
       RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
       RenderState.method1898("core/position_color");
-      BufferBuilder var8 = Tesselator.getInstance().begin(PrimitiveTopology.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-      int var9 = 0;
+      BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+      int n2 = 0;
 
-      for (byte var10 = 90; var9 <= var10; var9++) {
-         Vec3 var11 = MathUtils.method2653(var9, var10, var2);
-         Vec3 var12 = MathUtils.method2653(var9 + 1, var10, var2);
+      for (byte i = 90; n2 <= i; n2++) {
+         Vec3 vec3 = MathUtils.method2653(n2, i, floatValue);
+         Vec3 vec4 = MathUtils.method2653(n2 + 1, i, floatValue);
          GlowUtil.method2235(
-            var1, var8, var7.add(var11), var7.add(var11.x, var11.y + 2.0, var11.z), ColorUtils.method6439(var5, 0.2F), ColorUtils.method6439(var5, 0.0F)
+            matrixStack, begin, vec2.add(vec3), vec2.add(vec3.x, vec3.y + 2.0, vec3.z), ColorUtils.method6439(color, 0.2F), ColorUtils.method6439(color, 0.0F)
          );
-         GlowUtil.method2245(var6.add(var11), var6.add(var12), var5, 2.0F, true);
+         GlowUtil.method2245(vec.add(vec3), vec.add(vec4), color, 2.0F, true);
       }
 
-      var9 = 0;
+      n2 = 0;
 
-      for (byte var14 = 90; var9 <= var14; var9++) {
-         Vec3 var15 = MathUtils.method2653(var9, var14, var2);
+      for (byte i = 90; n2 <= i; n2++) {
+         Vec3 vec3 = MathUtils.method2653(n2, i, floatValue);
          GlowUtil.method2235(
-            var1, var8, var7.add(var15), var7.add(var15.x, var15.y - 2.0, var15.z), ColorUtils.method6439(var5, 0.2F), ColorUtils.method6439(var5, 0.0F)
+            matrixStack, begin, vec2.add(vec3), vec2.add(vec3.x, vec3.y - 2.0, vec3.z), ColorUtils.method6439(color, 0.2F), ColorUtils.method6439(color, 0.0F)
          );
       }
 
-      ImmediateRenderer.method8015(var8.buildOrThrow());
+      ImmediateRenderer.method8015(begin.buildOrThrow());
       RenderState.method1879();
       RenderState.method1882(true);
       RenderState.method1872();
@@ -570,9 +570,9 @@ public final class PotionThrowerModule extends Module {
       private final BindSetting bindSetting;
       private boolean flag;
 
-      private Entry(PotionThrowerModule.Type var1, BindSetting var2) {
-         this.type = var1;
-         this.bindSetting = var2;
+      private Entry(PotionThrowerModule.Type type, BindSetting bindSetting) {
+         this.type = type;
+         this.bindSetting = bindSetting;
       }
    }
 
@@ -591,25 +591,25 @@ public final class PotionThrowerModule extends Module {
       private final int intValue;
       private ItemStack itemStack;
 
-      private Type(String var3, String var4, float var5, int var6) {
-         this.text = var3;
-         this.text2 = var4;
-         this.floatValue = var5;
-         this.intValue = var6;
+      private Type(String text, String str, float floatValue, int intValue) {
+         this.text = text;
+         this.text2 = str;
+         this.floatValue = floatValue;
+         this.intValue = intValue;
       }
 
       private ItemStack method2699() {
          if (this.itemStack == null) {
-            ItemStack var1 = new ItemStack(Items.SPLASH_POTION);
-            var1.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.of(this.intValue), List.of(), Optional.empty()));
-            this.itemStack = var1;
+            ItemStack stack = new ItemStack(Items.SPLASH_POTION);
+            stack.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.of(this.intValue), List.of(), Optional.empty()));
+            this.itemStack = stack;
          }
 
          return this.itemStack;
       }
 
       private Predicate<Slot> method2700() {
-         return var1 -> InventoryUtils.method918(var1.getItem(), this.text2);
+         return slot -> InventoryUtils.method918(slot.getItem(), this.text2);
       }
 
       private Slot method2701() {
@@ -617,7 +617,7 @@ public final class PotionThrowerModule extends Module {
       }
 
       private int count() {
-         return InventoryUtils.method923(var1 -> var1.index != 46 && InventoryUtils.method918(var1.getItem(), this.text2));
+         return InventoryUtils.method923(slot -> slot.index != 46 && InventoryUtils.method918(slot.getItem(), this.text2));
       }
 
       private String method2702() {

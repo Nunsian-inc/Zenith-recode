@@ -46,18 +46,18 @@ public class IOUtils {
    public static String readFile(Path file) throws IOException {
       try (InputStream stream = Files.newInputStream(file)) {
          return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-      } catch (IOException var7) {
+      } catch (IOException e) {
          FiguraMod.LOGGER.error("Failed to read File: " + file);
-         throw var7;
+         throw e;
       }
    }
 
    public static byte[] readFileBytes(Path file) throws IOException {
       try (InputStream stream = Files.newInputStream(file)) {
          return stream.readAllBytes();
-      } catch (IOException var7) {
+      } catch (IOException e) {
          FiguraMod.LOGGER.error("Failed to read File: " + file);
-         throw var7;
+         throw e;
       }
    }
 
@@ -72,8 +72,8 @@ public class IOUtils {
          CompoundTag nbt = NbtIo.readCompressed(fis, NbtAccounter.unlimitedHeap());
          consumer.accept(nbt);
          fis.close();
-      } catch (Exception var5) {
-         FiguraMod.LOGGER.error("", var5);
+      } catch (Exception e) {
+         FiguraMod.LOGGER.error("", e);
       }
    }
 
@@ -89,8 +89,8 @@ public class IOUtils {
          OutputStream fs = Files.newOutputStream(path);
          NbtIo.writeCompressed(nbt, fs);
          fs.close();
-      } catch (Exception var5) {
-         FiguraMod.LOGGER.error("", var5);
+      } catch (Exception e) {
+         FiguraMod.LOGGER.error("", e);
       }
    }
 
@@ -106,9 +106,9 @@ public class IOUtils {
    public static Path createDirIfNeeded(Path path) {
       try {
          Files.createDirectories(path);
-      } catch (FileAlreadyExistsException var2) {
-      } catch (Exception var3) {
-         FiguraMod.LOGGER.error("Failed to create directory", var3);
+      } catch (FileAlreadyExistsException e) {
+      } catch (Exception e) {
+         FiguraMod.LOGGER.error("Failed to create directory", e);
       }
 
       return path;
@@ -128,8 +128,8 @@ public class IOUtils {
          }
 
          Files.delete(file);
-      } catch (Exception var4) {
-         FiguraMod.LOGGER.error("Failed to delete " + file, var4);
+      } catch (Exception e) {
+         FiguraMod.LOGGER.error("Failed to delete " + file, e);
       }
    }
 
@@ -144,7 +144,7 @@ public class IOUtils {
    public static List<Path> listPaths(Path dir) {
       try (Stream<Path> stream = Files.list(dir)) {
          return stream.sorted(Comparator.comparing(IOUtils::getFileNameOrEmpty)).collect(Collectors.toList());
-      } catch (IOException var7) {
+      } catch (IOException e) {
          return null;
       }
    }
@@ -158,8 +158,8 @@ public class IOUtils {
       boolean hidden;
       try {
          hidden = Files.isHidden(path);
-      } catch (IOException var3) {
-         FiguraMod.LOGGER.error("Failed to get if \"" + path + "\" is hidden", var3);
+      } catch (IOException e) {
+         FiguraMod.LOGGER.error("Failed to get if \"" + path + "\" is hidden", e);
          hidden = false;
       }
 
@@ -180,8 +180,8 @@ public class IOUtils {
          }
 
          return false;
-      } catch (IOException var3) {
-         FiguraMod.LOGGER.error("Failed to get if \"" + path + "\" is hidden", var3);
+      } catch (IOException e) {
+         FiguraMod.LOGGER.error("Failed to get if \"" + path + "\" is hidden", e);
          return false;
       }
    }

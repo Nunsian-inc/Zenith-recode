@@ -14,30 +14,30 @@ public final class Util14 implements MinecraftAccess {
    private Util14() {
    }
 
-   public static void method2637(Player var0, ItemStack var1) {
-      if (var0 != null && var1 != null && !var1.isEmpty()) {
-         if (mc.player != null && var0 != mc.player) {
+   public static void method2637(Player player, ItemStack stack) {
+      if (player != null && stack != null && !stack.isEmpty()) {
+         if (mc.player != null && player != mc.player) {
             method2641();
-            if (var1.getCount() > var1.getItem().getDefaultMaxStackSize()) {
+            if (stack.getCount() > stack.getItem().getDefaultMaxStackSize()) {
                flag = true;
                flag2 = true;
             }
 
-            if (var1.has(DataComponents.DAMAGE) && !var1.isDamageableItem()) {
+            if (stack.has(DataComponents.DAMAGE) && !stack.isDamageableItem()) {
                flag2 = true;
             }
          }
       }
    }
 
-   public static boolean method2638(Player var0) {
+   public static boolean method2638(Player player) {
       method2641();
-      return var0 == mc.player || !flag;
+      return player == mc.player || !flag;
    }
 
-   public static boolean method2639(Player var0) {
+   public static boolean method2639(Player livingEntity) {
       method2641();
-      return var0 == mc.player || !flag2;
+      return livingEntity == mc.player || !flag2;
    }
 
    public static boolean method2640() {

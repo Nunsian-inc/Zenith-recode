@@ -7,13 +7,13 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Particle.class)
 public interface FiguraParticleAccessor {
    @Accessor("xo")
-   void figura$setPrevPosX(double var1);
+   void figura$setPrevPosX(double x);
 
    @Accessor("yo")
-   void figura$setPrevPosY(double var1);
+   void figura$setPrevPosY(double y);
 
    @Accessor("zo")
-   void figura$setPrevPosZ(double var1);
+   void figura$setPrevPosZ(double z);
 
    @Accessor("x")
    double figura$getX();
@@ -40,11 +40,11 @@ public interface FiguraParticleAccessor {
    float figura$getGravity();
 
    @Accessor("gravity")
-   void figura$setGravity(float var1);
+   void figura$setGravity(float gravity);
 
    @Accessor("hasPhysics")
    boolean figura$hasPhysics();
 
    @Accessor("hasPhysics")
-   void figura$setPhysics(boolean var1);
+   void figura$setPhysics(boolean physics);
 }

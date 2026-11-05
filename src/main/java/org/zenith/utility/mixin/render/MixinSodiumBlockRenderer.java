@@ -23,9 +23,9 @@ public class MixinSodiumBlockRenderer {
       cancellable = true,
       remap = false
    )
-   private void zenith$thinGrass(BlockStateModel var1, BlockState var2, BlockPos var3, BlockPos var4, CallbackInfo var5) {
-      if (NoRenderBlocks.method5237(var2, var3) || CrystalAnimation.method4460(var2)) {
-         var5.cancel();
+   private void zenith$thinGrass(BlockStateModel blockStateModel, BlockState blockState, BlockPos pos, BlockPos pos2, CallbackInfo callbackInfo) {
+      if (NoRenderBlocks.method5237(blockState, pos) || CrystalAnimation.method4460(blockState)) {
+         callbackInfo.cancel();
       }
    }
 }

@@ -11,12 +11,12 @@ public final class MatrixStackUtils {
    private MatrixStackUtils() {
    }
 
-   public static PoseStack method5467(MenuDrawContext var0, float var1, float var2, float var3) {
-      PoseStack var4 = MatrixUtils.method666(var0.pose());
-      var4.translate(var1, var2, 50.0F);
-      var4.scale(var3, -var3, var3 * 0.4F);
-      var4.rotate(Axis.XP.rotationDegrees(18.0F));
-      return var4;
+   public static PoseStack method5467(MenuDrawContext customDrawContext, float xo, float yo, float xScale) {
+      PoseStack poseStack = MatrixUtils.method666(customDrawContext.pose());
+      poseStack.translate(xo, yo, 50.0F);
+      poseStack.scale(xScale, -xScale, xScale * 0.4F);
+      poseStack.rotate(Axis.XP.rotationDegrees(18.0F));
+      return poseStack;
    }
 
    public static float method5468() {

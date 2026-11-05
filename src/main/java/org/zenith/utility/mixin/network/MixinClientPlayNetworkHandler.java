@@ -34,14 +34,14 @@ public class MixinClientPlayNetworkHandler {
          target = "Lnet/minecraft/network/protocol/Packet;handle(Lnet/minecraft/network/PacketListener;)V"
       )
    )
-   private void zenith$applyBundled(Packet<?> var1, PacketListener var2) {
-      if (!EventManager.hasListeners(PacketReceiveEvent.class) || !((PacketReceiveEvent)EventManager.call(new PacketReceiveEvent(var1))).isCancelled()) {
-         zenith$apply(var1, var2);
+   private void zenith$applyBundled(Packet<?> packet, PacketListener listener) {
+      if (!EventManager.hasListeners(PacketReceiveEvent.class) || !((PacketReceiveEvent)EventManager.call(new PacketReceiveEvent(packet))).isCancelled()) {
+         zenith$apply(packet, listener);
       }
    }
 
-   private static <T extends PacketListener> void zenith$apply(Packet<?> var0, PacketListener var1) {
-      ((Packet)var0).handle(var1);
+   private static <T extends PacketListener> void zenith$apply(Packet<?> packet, PacketListener listener) {
+      ((Packet)packet).handle(listener);
    }
 
    @Inject(
@@ -49,28 +49,28 @@ public class MixinClientPlayNetworkHandler {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void sendChatMessageHook(@NotNull String var1, CallbackInfo var2) {
-      CommandManager var3 = Zenith.getInstance().getCommandManager();
-      String var4 = var3.getPrefix();
-      if (var1.startsWith(var4)) {
-         String var10 = var1.substring(var4.length());
-         int var6 = var10.indexOf(32);
-         String var7 = var6 < 0 ? var10 : var10.substring(0, var6);
-         if (var3.getDispatcher().getRoot().getChild(var7) != null) {
+   private void sendChatMessageHook(@NotNull String message, CallbackInfo callbackInfo) {
+      CommandManager commandManager = Zenith.getInstance().getCommandManager();
+      String prefix = commandManager.getPrefix();
+      if (message.startsWith(prefix)) {
+         String input = message.substring(prefix.length());
+         int indexOf = input.indexOf(32);
+         String name = indexOf < 0 ? input : input.substring(0, indexOf);
+         if (commandManager.getDispatcher().getRoot().getChild(name) != null) {
             try {
-               var3.getDispatcher().execute(var10, var3.getSource());
-            } catch (CommandSyntaxException var9) {
+               commandManager.getDispatcher().execute(input, commandManager.getSource());
+            } catch (CommandSyntaxException e) {
             }
          } else {
-            EventManager.call(new ChatSendEvent(var1, ChatSendEvent.Type.PRE, ChatSendEvent.Type2.MESSAGE));
+            EventManager.call(new ChatSendEvent(message, ChatSendEvent.Type.PRE, ChatSendEvent.Type2.MESSAGE));
          }
 
-         var2.cancel();
+         callbackInfo.cancel();
       } else {
-         ChatSendEvent var5 = new ChatSendEvent(var1, ChatSendEvent.Type.PRE, ChatSendEvent.Type2.MESSAGE);
-         EventManager.call(var5);
-         if (var5.isCancelled()) {
-            var2.cancel();
+         ChatSendEvent event = new ChatSendEvent(message, ChatSendEvent.Type.PRE, ChatSendEvent.Type2.MESSAGE);
+         EventManager.call(event);
+         if (event.isCancelled()) {
+            callbackInfo.cancel();
          }
       }
    }
@@ -79,9 +79,9 @@ public class MixinClientPlayNetworkHandler {
       method = {"sendChat(Ljava/lang/String;)V"},
       at = {@At("RETURN")}
    )
-   private void sendChatMessageHookPost(@NotNull String var1, CallbackInfo var2) {
-      ChatSendEvent var3 = new ChatSendEvent(var1, ChatSendEvent.Type.POST, ChatSendEvent.Type2.MESSAGE);
-      EventManager.call(var3);
+   private void sendChatMessageHookPost(@NotNull String message, CallbackInfo callbackInfo) {
+      ChatSendEvent event = new ChatSendEvent(message, ChatSendEvent.Type.POST, ChatSendEvent.Type2.MESSAGE);
+      EventManager.call(event);
    }
 
    @Inject(
@@ -89,11 +89,11 @@ public class MixinClientPlayNetworkHandler {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void sendChatCommandMessageHook(@NotNull String var1, CallbackInfo var2) {
-      ChatSendEvent var3 = new ChatSendEvent(var1, ChatSendEvent.Type.PRE, ChatSendEvent.Type2.COMMAND);
-      EventManager.call(var3);
-      if (var3.isCancelled()) {
-         var2.cancel();
+   private void sendChatCommandMessageHook(@NotNull String message, CallbackInfo callbackInfo) {
+      ChatSendEvent event = new ChatSendEvent(message, ChatSendEvent.Type.PRE, ChatSendEvent.Type2.COMMAND);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -101,9 +101,9 @@ public class MixinClientPlayNetworkHandler {
       method = {"sendCommand(Ljava/lang/String;)V"},
       at = {@At("RETURN")}
    )
-   private void sendChatCommandHookPost(@NotNull String var1, CallbackInfo var2) {
-      ChatSendEvent var3 = new ChatSendEvent(var1, ChatSendEvent.Type.POST, ChatSendEvent.Type2.COMMAND);
-      EventManager.call(var3);
+   private void sendChatCommandHookPost(@NotNull String message, CallbackInfo callbackInfo) {
+      ChatSendEvent event = new ChatSendEvent(message, ChatSendEvent.Type.POST, ChatSendEvent.Type2.COMMAND);
+      EventManager.call(event);
    }
 
    @Inject(
@@ -114,13 +114,13 @@ public class MixinClientPlayNetworkHandler {
       )},
       cancellable = true
    )
-   private void onGameMessage(ClientboundSystemChatPacket var1, CallbackInfo var2) {
-      ChatReceiveEvent var3 = new ChatReceiveEvent(var1.content());
-      EventManager.call(var3);
-      if (var3.isCancelled()) {
-         var2.cancel();
-         if (var3.method7859()) {
-            Minecraft.getInstance().gui.chatListener().handleSystemMessage(var3.getText(), var1.overlay());
+   private void onGameMessage(ClientboundSystemChatPacket systemChatPacket, CallbackInfo callbackInfo) {
+      ChatReceiveEvent event = new ChatReceiveEvent(systemChatPacket.content());
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
+         if (event.method7859()) {
+            Minecraft.getInstance().gui.chatListener().handleSystemMessage(event.getText(), systemChatPacket.overlay());
          }
       }
    }
@@ -129,15 +129,15 @@ public class MixinClientPlayNetworkHandler {
       method = {"handleEntityEvent(Lnet/minecraft/network/protocol/game/ClientboundEntityEventPacket;)V"},
       at = {@At("RETURN")}
    )
-   private void updateHealth(ClientboundEntityEventPacket var1, CallbackInfo var2) {
-      EventManager.call(new EntityStatusEvent(var1));
+   private void updateHealth(ClientboundEntityEventPacket entityStatusS2CPacket, CallbackInfo callbackInfo) {
+      EventManager.call(new EntityStatusEvent(entityStatusS2CPacket));
    }
 
    @Inject(
       method = {"handleSetHealth(Lnet/minecraft/network/protocol/game/ClientboundSetHealthPacket;)V"},
       at = {@At("RETURN")}
    )
-   private void updateHealth(ClientboundSetHealthPacket var1, CallbackInfo var2) {
+   private void updateHealth(ClientboundSetHealthPacket setHealthPacket, CallbackInfo callbackInfo) {
       EventManager.call(new HealthUpdateEvent());
    }
 
@@ -148,9 +148,9 @@ public class MixinClientPlayNetworkHandler {
          target = "Lnet/minecraft/world/entity/player/Player;getYRot()F"
       )}
    )
-   private float hookSilentRotationYaw(float var1) {
-      Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      return var2 == null ? var1 : var2.getFloatValue();
+   private float hookSilentRotationYaw(float f) {
+      Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+      return currentRotation == null ? f : currentRotation.getFloatValue();
    }
 
    @ModifyExpressionValue(
@@ -160,8 +160,8 @@ public class MixinClientPlayNetworkHandler {
          target = "Lnet/minecraft/world/entity/player/Player;getXRot()F"
       )}
    )
-   private float hookSilentRotationPitch(float var1) {
-      Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      return var2 == null ? var1 : var2.getFloatValue2();
+   private float hookSilentRotationPitch(float f) {
+      Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+      return currentRotation == null ? f : currentRotation.getFloatValue2();
    }
 }

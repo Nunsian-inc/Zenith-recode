@@ -18,10 +18,10 @@ public final class Class12<C> {
       return new Class12.Data[0];
    }
 
-   public Class12(String var1, Class<C> var2, String var3) {
-      this.text = var1;
-      this.classValue = var2;
-      this.text2 = var3;
+   public Class12(String text, Class<C> classValue, String str) {
+      this.text = text;
+      this.classValue = classValue;
+      this.text2 = str;
    }
 
    public String name() {
@@ -40,27 +40,27 @@ public final class Class12<C> {
       return this.datas.length != 0;
    }
 
-   public C method1645(C var1) {
-      for (Class12.Data var5 : this.datas) {
-         var5.handler.handle((C)var1);
+   public C method1645(C entry) {
+      for (Class12.Data data : this.datas) {
+         data.handler.handle((C)entry);
       }
 
-      return (C)var1;
+      return (C)entry;
    }
 
-   public synchronized Runnable method1646(int var1, Class12.Handler<C> var2) {
-      Class12.Data var3 = new Class12.Data(var1, this.longValue++, var2);
-      var var4 = new ArrayList<>(Arrays.asList(this.datas));
-      var4.add(var3);
-      var4.sort(Comparator.<Class12.Data<?>>comparingInt(d -> d.getIntValue()).thenComparingLong(d -> d.getLongValue()));
-      this.datas = (Class12.Data[])var4.toArray(new Class12.Data[0]);
-      return () -> this.method1647(var3);
+   public synchronized Runnable method1646(int intValue, Class12.Handler<C> handler) {
+      Class12.Data data = new Class12.Data(intValue, this.longValue++, handler);
+      var datas = new ArrayList<>(Arrays.asList(this.datas));
+      datas.add(data);
+      datas.sort(Comparator.<Class12.Data<?>>comparingInt(d -> d.getIntValue()).thenComparingLong(d -> d.getLongValue()));
+      this.datas = (Class12.Data[])datas.toArray(new Class12.Data[0]);
+      return () -> this.method1647(data);
    }
 
-   private synchronized void method1647(Class12.Data<C> var1) {
-      var var2 = new ArrayList<>(Arrays.asList(this.datas));
-      if (var2.remove(var1)) {
-         this.datas = (Class12.Data[])var2.toArray(new Class12.Data[0]);
+   private synchronized void method1647(Class12.Data<C> data) {
+      var datas = new ArrayList<>(Arrays.asList(this.datas));
+      if (datas.remove(data)) {
+         this.datas = (Class12.Data[])datas.toArray(new Class12.Data[0]);
       }
    }
 
@@ -98,10 +98,10 @@ public final class Class12<C> {
          return "Data[" + "intValue=" + this.intValue + ", " + "longValue=" + this.longValue + ", " + "handler=" + this.handler + "]";
       }
 
-      private Data(int var1, long var2, Class12.Handler<C> var4) {
-         this.intValue = var1;
-         this.longValue = var2;
-         this.handler = var4;
+      private Data(int intValue, long longValue, Class12.Handler<C> handler) {
+         this.intValue = intValue;
+         this.longValue = longValue;
+         this.handler = handler;
       }
 
       public int getIntValue() {
@@ -119,6 +119,6 @@ public final class Class12<C> {
 
    @FunctionalInterface
    public interface Handler<C> {
-      void handle(C var1);
+      void handle(C entry);
    }
 }

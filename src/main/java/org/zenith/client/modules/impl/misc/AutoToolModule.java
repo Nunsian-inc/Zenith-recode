@@ -33,20 +33,20 @@ public final class AutoToolModule extends Module {
    }
 
    @EventTarget
-   public void method261(MouseScrollEvent var1) {
+   public void method261(MouseScrollEvent event) {
       if (this.slot != null) {
-         var1.setCancelled(true);
+         event.setCancelled(true);
       }
    }
 
    @EventTarget
-   public void method262(BlockBreakingEvent var1) {
+   public void method262(BlockBreakingEvent event) {
       this.stopWatch.reset();
       if (!Objects.requireNonNull(mc.player).isCreative()) {
-         Slot var2 = this.method264(var1.getBlockPos());
-         if (var2 != null && var2 != InventoryUtils.method924()) {
+         Slot slot = this.method264(event.getBlockPos());
+         if (slot != null && slot != InventoryUtils.method924()) {
             if (this.slot == null) {
-               this.slot = var2;
+               this.slot = slot;
             }
 
             if (KeyBindUtils.method2630(AutoToolModule.class)) {
@@ -55,7 +55,7 @@ public final class AutoToolModule extends Module {
                      InventoryUtils.closeScreen();
                   }
 
-                  InventoryUtils.method900(var2, InteractionHand.MAIN_HAND, true);
+                  InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true);
                });
             }
          }
@@ -63,15 +63,15 @@ public final class AutoToolModule extends Module {
    }
 
    @EventTarget
-   public void method263(UpdateEvent var1) {
+   public void method263(UpdateEvent event) {
       if (KeyBindUtils.method2630(AutoToolModule.class) && this.slot != null && this.stopWatch.method317(400.0) && !mc.options.keyAttack.isDown()) {
-         Slot var2 = this.slot;
+         Slot slot = this.slot;
          KeyBindUtils.method2627(AutoToolModule.class, () -> {
             if (!(mc.player.containerMenu instanceof InventoryMenu)) {
                InventoryUtils.closeScreen();
             }
 
-            InventoryUtils.method900(var2, InteractionHand.MAIN_HAND, true);
+            InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true);
          });
          this.slot = null;
       }
@@ -80,13 +80,13 @@ public final class AutoToolModule extends Module {
    @Override
    public void onDisable() {
       if (this.slot != null && mc.player != null) {
-         Slot var1 = this.slot;
+         Slot slot = this.slot;
          KeyBindUtils.method2627(AutoToolModule.class, () -> {
             if (!(mc.player.containerMenu instanceof InventoryMenu)) {
                InventoryUtils.closeScreen();
             }
 
-            InventoryUtils.method900(var1, InteractionHand.MAIN_HAND, true);
+            InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true);
          });
       }
 
@@ -94,17 +94,17 @@ public final class AutoToolModule extends Module {
       super.onDisable();
    }
 
-   private Slot method264(BlockPos var1) {
-      BlockState var2 = mc.level.getBlockState(var1);
-      return UseItemUtils.method6524(var2)
+   private Slot method264(BlockPos blockPos) {
+      BlockState blockState = mc.level.getBlockState(blockPos);
+      return UseItemUtils.method6524(blockState)
          ? InventoryUtils.method924()
          : mc.player
             .inventoryMenu
             .slots
             .stream()
-            .sorted(Comparator.comparing(var0 -> var0.equals(InventoryUtils.method924())))
-            .filter(var1x -> var1x.getItem().getDestroySpeed(var2) != 1.0F)
-            .max(Comparator.comparingDouble(var1x -> var1x.getItem().getDestroySpeed(var2)))
+            .sorted(Comparator.comparing(slot -> slot.equals(InventoryUtils.method924())))
+            .filter(var1x -> var1x.getItem().getDestroySpeed(blockState) != 1.0F)
+            .max(Comparator.comparingDouble(var1x -> var1x.getItem().getDestroySpeed(blockState)))
             .orElse(null);
    }
 }

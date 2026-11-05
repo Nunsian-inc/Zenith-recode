@@ -11,7 +11,7 @@ public class IrcCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(literal("message").then(arg("msg", StringArgumentType.word()).executes(var0 -> 1)));
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(literal("message").then(arg("msg", StringArgumentType.word()).executes(commandContext -> 1)));
    }
 }

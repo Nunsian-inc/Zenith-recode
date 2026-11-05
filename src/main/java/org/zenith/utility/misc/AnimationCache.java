@@ -12,27 +12,27 @@ public final class AnimationCache {
    private AnimationCache() {
    }
 
-   public static AnimationCache.Entry method7621(int var0, HoveredData var1, boolean var2) {
-      return method7622(var0, var1.getText(), var2);
+   public static AnimationCache.Entry method7621(int id, HoveredData hoveredData, boolean flag) {
+      return method7622(id, hoveredData.getText(), flag);
    }
 
-   public static AnimationCache.Entry method7622(int var0, String var1, boolean var2) {
-      long var3 = System.nanoTime();
-      method7623(var3);
-      long var5 = (long)var0 << 32 ^ var1.hashCode() & 4294967295L ^ (var2 ? 6510615553911029760L : 0L);
-      AnimationCache.Entry var7 = items.computeIfAbsent(var5, var0x -> new AnimationCache.Entry());
-      var7.longValue = var3;
-      return var7;
+   public static AnimationCache.Entry method7622(int id, String text, boolean flag) {
+      long nanoTime = System.nanoTime();
+      method7623(nanoTime);
+      long key = (long)id << 32 ^ text.hashCode() & 4294967295L ^ (flag ? 6510615553911029760L : 0L);
+      AnimationCache.Entry entry = items.computeIfAbsent(key, var0x -> new AnimationCache.Entry());
+      entry.longValue = nanoTime;
+      return entry;
    }
 
    public static void clear() {
       items.clear();
    }
 
-   private static void method7623(long var0) {
-      if (var0 - lastPrune >= 5000000000L) {
-         lastPrune = var0;
-         items.entrySet().removeIf(var2 -> var0 - var2.getValue().longValue > 10000000000L);
+   private static void method7623(long nanoTime) {
+      if (nanoTime - lastPrune >= 5000000000L) {
+         lastPrune = nanoTime;
+         items.entrySet().removeIf(entry -> nanoTime - entry.getValue().longValue > 10000000000L);
       }
    }
 
@@ -47,15 +47,15 @@ public final class AnimationCache {
       public float floatValue2 = Float.NaN;
       public float floatValue3;
 
-      public float method7624(long var1) {
-         float var3 = this.longValue2 == 0L ? 0.0F : (float)(var1 - this.longValue2) / 1.0E9F;
-         this.longValue2 = var1;
-         return Math.max(0.0F, Math.min(var3, 0.25F));
+      public float method7624(long nanoTime) {
+         float f = this.longValue2 == 0L ? 0.0F : (float)(nanoTime - this.longValue2) / 1.0E9F;
+         this.longValue2 = nanoTime;
+         return Math.max(0.0F, Math.min(f, 0.25F));
       }
 
-      public float[] method7625(int var1) {
-         if (this.floatValues.length != var1) {
-            this.floatValues = new float[var1];
+      public float[] method7625(int size) {
+         if (this.floatValues.length != size) {
+            this.floatValues = new float[size];
          }
 
          return this.floatValues;

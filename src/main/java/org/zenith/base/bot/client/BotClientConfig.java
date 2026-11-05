@@ -59,25 +59,25 @@ public final class BotClientConfig {
    public static final String DEFAULT_BRAND = "vanilla";
    public static final int NATIVE_PROTOCOL_VERSION = -1;
 
-   public BotClientConfig(String var1, UUID var2, String var3, int var4, String var5, String var6, int var7) {
-      this.name = var1;
-      this.uuid = var2;
-      this.host = var3;
-      this.port = var4;
-      this.proxy = var5;
-      this.brand = var6;
-      this.protocolVersion = var7;
+   public BotClientConfig(String name, UUID uuid, String host, int port, String proxy, String brand, int protocolVersion) {
+      this.name = name;
+      this.uuid = uuid;
+      this.host = host;
+      this.port = port;
+      this.proxy = proxy;
+      this.brand = brand;
+      this.protocolVersion = protocolVersion;
    }
 
-   public static BotClientConfig offline(String var0, String var1, int var2, String var3) {
-      return offline(var0, var1, var2, var3, -1);
+   public static BotClientConfig offline(String name, String host, int port, String proxy) {
+      return offline(name, host, port, proxy, -1);
    }
 
-   public static BotClientConfig offline(String var0, String var1, int var2, String var3, int var4) {
-      return new BotClientConfig(var0, offlineUuid(var0), var1, var2, var3, "vanilla", var4);
+   public static BotClientConfig offline(String name, String host, int port, String proxy, int protocolVersion) {
+      return new BotClientConfig(name, offlineUuid(name), host, port, proxy, "vanilla", protocolVersion);
    }
 
-   public static UUID offlineUuid(String var0) {
-      return UUID.nameUUIDFromBytes(("OfflinePlayer:" + var0).getBytes(StandardCharsets.UTF_8));
+   public static UUID offlineUuid(String name) {
+      return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
    }
 }

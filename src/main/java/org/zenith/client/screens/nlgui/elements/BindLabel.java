@@ -31,8 +31,8 @@ public final class BindLabel {
    private long hoverStartAt = -1L;
    private boolean binding;
 
-   private static String glyph(char var0) {
-      return var0 < ASCII.length ? ASCII[var0] : String.valueOf(var0);
+   private static String glyph(char charAt) {
+      return charAt < ASCII.length ? ASCII[charAt] : String.valueOf(charAt);
    }
 
    public void waiting() {
@@ -47,9 +47,9 @@ public final class BindLabel {
       this.start(BindLabel.Kind.CLEAR);
    }
 
-   private void start(BindLabel.Kind var1) {
+   private void start(BindLabel.Kind kind) {
       this.from = this.shown;
-      this.kind = var1;
+      this.kind = kind;
       this.startedAt = System.currentTimeMillis();
    }
 
@@ -57,24 +57,24 @@ public final class BindLabel {
       return Zenith.getInstance().getLocalization().translate("gui.modules.bind.wait");
    }
 
-   public static String text(boolean var0, int var1, int var2) {
-      if (var0) {
+   public static String text(boolean binding, int keyCode, int modifiers) {
+      if (binding) {
          return waitText();
-      } else if (var1 != -1 && var1 != 0) {
+      } else if (keyCode != -1 && keyCode != 0) {
          try {
-            String var3 = KeyName.method6702(var1, var2);
-            if (var3 != null && !var3.isBlank()) {
-               String var4 = SHORT_NAMES.get(var3);
-               if (var4 == null) {
-                  var4 = shortKeyName(var3.toUpperCase());
+            String str = KeyName.method6702(keyCode, modifiers);
+            if (str != null && !str.isBlank()) {
+               String shortKeyName2 = SHORT_NAMES.get(str);
+               if (shortKeyName2 == null) {
+                  shortKeyName2 = shortKeyName(str.toUpperCase());
                   if (SHORT_NAMES.size() < 512) {
-                     SHORT_NAMES.put(var3, var4);
+                     SHORT_NAMES.put(str, shortKeyName2);
                   }
                }
 
-               return var4;
+               return shortKeyName2;
             }
-         } catch (Exception var5) {
+         } catch (Exception e) {
          }
 
          return "?";
@@ -83,8 +83,8 @@ public final class BindLabel {
       }
    }
 
-   public static String shortKeyName(String var0) {
-      String var1 = var0.replace(" + ", "+")
+   public static String shortKeyName(String upperCase) {
+      String str = upperCase.replace(" + ", "+")
          .replace("SHIFT", "SHFT")
          .replace("SUPER", "WIN")
          .replace("RIGHT_", "R")
@@ -92,227 +92,227 @@ public final class BindLabel {
          .replace("CONTROL", "CTRL")
          .replace("KEY_PAD_", "NUM")
          .replace("PAGE_", "PG");
-      int var2 = var1.indexOf(43) >= 0 ? 14 : 8;
-      return var1.length() <= var2 ? var1 : var1.substring(0, var2);
+      int endIndex = str.indexOf(43) >= 0 ? 14 : 8;
+      return str.length() <= endIndex ? str : str.substring(0, endIndex);
    }
 
    public BoundsData render(
-      MenuDrawContext var1,
-      float var2,
-      float var3,
-      float var4,
-      float var5,
-      float var6,
-      String var7,
-      boolean var8,
-      Font var9,
-      float var10,
-      boolean var11,
-      float var12,
-      BoundsData var13,
-      ZenithStyle var14
+      MenuDrawContext menuDrawContext,
+      float mouseX,
+      float mouseY,
+      float y,
+      float height,
+      float f,
+      String text,
+      boolean binding,
+      Font font,
+      float f2,
+      boolean flag,
+      float previewAlpha,
+      BoundsData boundsData,
+      ZenithStyle currentStyle
    ) {
-      this.binding = var8;
-      long var15 = System.currentTimeMillis();
-      if (var11) {
+      this.binding = binding;
+      long now = System.currentTimeMillis();
+      if (flag) {
          if (this.hoverStartAt < 0L) {
-            this.hoverStartAt = var15;
+            this.hoverStartAt = now;
          }
       } else {
          this.hoverStartAt = -1L;
       }
 
-      ZenithColor var17 = var14.getPrimaryColor().getZenithColor();
-      ZenithColor var18 = var14.getTextTertiary().getZenithColor();
-      ZenithColor var19 = var14.getTextEnable().getZenithColor();
-      float var20 = var4 + (var5 - var9.height()) / 2.0F;
-      float var21 = var20 + var9.height() + 0.6F;
-      long var22 = this.kind == BindLabel.Kind.NONE ? Long.MAX_VALUE : var15 - this.startedAt;
-      if (var22 >= 800L) {
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      ZenithColor zenithColor2 = currentStyle.getTextTertiary().getZenithColor();
+      ZenithColor zenithColor3 = currentStyle.getTextEnable().getZenithColor();
+      float f3 = y + (height - font.height()) / 2.0F;
+      float y2 = f3 + font.height() + 0.6F;
+      long l = this.kind == BindLabel.Kind.NONE ? Long.MAX_VALUE : now - this.startedAt;
+      if (l >= 800L) {
          this.kind = BindLabel.Kind.NONE;
          this.from = null;
       }
 
-      boolean var24 = this.kind != BindLabel.Kind.NONE;
-      boolean var25 = var7 == null && !var24 && this.hoverStartAt >= 0L && var15 - this.hoverStartAt >= 350L && var10 <= var6 - var9.width("+");
-      float var26 = this.hintFade.method2808(var25 ? 1.0F : 0.0F);
-      if (var24 || var7 != null) {
+      boolean flag2 = this.kind != BindLabel.Kind.NONE;
+      boolean flag3 = text == null && !flag2 && this.hoverStartAt >= 0L && now - this.hoverStartAt >= 350L && f2 <= f - font.width("+");
+      float f4 = this.hintFade.method2808(flag3 ? 1.0F : 0.0F);
+      if (flag2 || text != null) {
          this.hintFade.method2809(0.0F);
-         var26 = 0.0F;
+         f4 = 0.0F;
       }
 
-      String var27 = var7 != null ? var7 : (var25 && var26 > 0.3F ? "+" : null);
-      BoundsData var28 = null;
-      if (var27 != null) {
-         float var29 = var9.width(var27);
-         var28 = new BoundsData(var6 - var29 - 3.0F, var4, var29 + 6.0F, var5);
+      String str = text != null ? text : (flag3 && f4 > 0.3F ? "+" : null);
+      BoundsData boundsData2 = null;
+      if (str != null) {
+         float width = font.width(str);
+         boundsData2 = new BoundsData(f - width - 3.0F, y, width + 6.0F, height);
       }
 
-      boolean var39 = var28 != null && var28.contains(var2, var3) && (var13 == null || var13.contains(var2, var3));
-      if (var24 && this.from != null) {
-         boolean var30 = this.from.equals(waitText());
-         ZenithColor var31 = var30 ? var17.method7294(0.8F) : var18.method7295(var19, 0.1F);
-         this.drawExit(var1, var9, this.from, var6, var20, var22, var31, var12);
+      boolean flag4 = boundsData2 != null && boundsData2.contains(mouseX, mouseY) && (boundsData == null || boundsData.contains(mouseX, mouseY));
+      if (flag2 && this.from != null) {
+         boolean flag5 = this.from.equals(waitText());
+         ZenithColor zenithColor4 = flag5 ? zenithColor.method7294(0.8F) : zenithColor2.method7295(zenithColor3, 0.1F);
+         this.drawExit(menuDrawContext, font, this.from, f, f3, l, zenithColor4, previewAlpha);
          if (this.kind == BindLabel.Kind.CLEAR) {
-            float var32 = Mth.clamp((float)var22 / 260.0F, 0.0F, 1.0F);
-            float var33 = var9.width(this.from) * (1.0F - easeOut(var32));
-            float var34 = var6 - var9.width(this.from) / 2.0F;
-            if (var33 > 0.3F) {
-               var1.drawRect(var34 - var33 / 2.0F, var21, var33, 0.5F, (var30 ? var17 : var18).method7294((1.0F - var32) * 0.8F * var12));
+            float f5 = Mth.clamp((float)l / 260.0F, 0.0F, 1.0F);
+            float width = font.width(this.from) * (1.0F - easeOut(f5));
+            float f6 = f - font.width(this.from) / 2.0F;
+            if (width > 0.3F) {
+               menuDrawContext.drawRect(f6 - width / 2.0F, y2, width, 0.5F, (flag5 ? zenithColor : zenithColor2).method7294((1.0F - f5) * 0.8F * previewAlpha));
             }
          }
       }
 
-      if (var7 != null) {
-         float var40 = var9.width(var7);
-         float var42 = var6 - var40;
-         ZenithColor var44 = var8 ? var17 : var18.method7295(var19, var39 ? 0.55F : 0.1F);
-         long var45 = var24 ? var22 - 90L : Long.MAX_VALUE;
-         float var35 = "+".equals(var7) ? hintY(var9, var4, var5, var20) : var20;
-         this.drawEnter(var1, var9, var7, var42, var35, var45, var44, var17, var15, var12);
-         if (var8) {
-            float var36 = var24 ? Mth.clamp((float)var45 / 220.0F, 0.0F, 1.0F) : 1.0F;
-            var1.drawRect(var42, var21, var40 * var36, 0.5F, var17.method7294(0.22F * var12));
-            float var37 = var40 * 0.32F;
-            float var38 = (0.5F + 0.5F * Mth.sin((float)var15 / 260.0F)) * (var40 - var37);
-            var1.drawRect(var42 + var38, var21, var37 * var36, 0.5F, var17.method7294(0.9F * var36 * var12));
-         } else if (var24 && this.kind == BindLabel.Kind.SET) {
-            float var46 = easeOut(Mth.clamp((float)var45 / 260.0F, 0.0F, 1.0F));
-            float var47 = 1.0F - Mth.clamp(((float)var45 - 300.0F) / 320.0F, 0.0F, 1.0F);
-            if (var45 > 0L && var47 > 0.0F) {
-               float var48 = var40 * var46;
-               var1.drawRect(var42 + (var40 - var48) / 2.0F, var21, var48, 0.5F, var17.method7295(ZenithColor.INSTANCE, 0.3F).method7294(var47 * var12));
+      if (text != null) {
+         float width = font.width(text);
+         float floatValue = f - width;
+         ZenithColor zenithColor4 = binding ? zenithColor : zenithColor2.method7295(zenithColor3, flag4 ? 0.55F : 0.1F);
+         long l2 = flag2 ? l - 90L : Long.MAX_VALUE;
+         float hintY2 = "+".equals(text) ? hintY(font, y, height, f3) : f3;
+         this.drawEnter(menuDrawContext, font, text, floatValue, hintY2, l2, zenithColor4, zenithColor, now, previewAlpha);
+         if (binding) {
+            float f5 = flag2 ? Mth.clamp((float)l2 / 220.0F, 0.0F, 1.0F) : 1.0F;
+            menuDrawContext.drawRect(floatValue, y2, width * f5, 0.5F, zenithColor.method7294(0.22F * previewAlpha));
+            float f6 = width * 0.32F;
+            float f7 = (0.5F + 0.5F * Mth.sin((float)now / 260.0F)) * (width - f6);
+            menuDrawContext.drawRect(floatValue + f7, y2, f6 * f5, 0.5F, zenithColor.method7294(0.9F * f5 * previewAlpha));
+         } else if (flag2 && this.kind == BindLabel.Kind.SET) {
+            float easeOut2 = easeOut(Mth.clamp((float)l2 / 260.0F, 0.0F, 1.0F));
+            float f5 = 1.0F - Mth.clamp(((float)l2 - 300.0F) / 320.0F, 0.0F, 1.0F);
+            if (l2 > 0L && f5 > 0.0F) {
+               float width2 = width * easeOut2;
+               menuDrawContext.drawRect(floatValue + (width - width2) / 2.0F, y2, width2, 0.5F, zenithColor.method7295(ZenithColor.INSTANCE, 0.3F).method7294(f5 * previewAlpha));
             }
 
-            drawSparks(var1, var42 + var40 / 2.0F, var20 + var9.height() / 2.0F, var45, var17, var12);
-         } else if (var39 && !var24) {
-            var1.drawRect(var42, var21, var40, 0.5F, var18.method7294(0.5F * var12));
+            drawSparks(menuDrawContext, floatValue + width / 2.0F, f3 + font.height() / 2.0F, l2, zenithColor, previewAlpha);
+         } else if (flag4 && !flag2) {
+            menuDrawContext.drawRect(floatValue, y2, width, 0.5F, zenithColor2.method7294(0.5F * previewAlpha));
          }
-      } else if (var26 > 0.0F) {
-         float var41 = var9.width("+");
-         ZenithColor var43 = var18.method7295(var19, var39 ? 0.6F : 0.0F).method7294((var39 ? 0.9F : 0.45F) * var26 * var12);
-         var1.drawText(var9, "+", var6 - var41, hintY(var9, var4, var5, var20) + (1.0F - easeOut(var26)) * 1.5F, var43);
+      } else if (f4 > 0.0F) {
+         float width = font.width("+");
+         ZenithColor zenithColor4 = zenithColor2.method7295(zenithColor3, flag4 ? 0.6F : 0.0F).method7294((flag4 ? 0.9F : 0.45F) * f4 * previewAlpha);
+         menuDrawContext.drawText(font, "+", f - width, hintY(font, y, height, f3) + (1.0F - easeOut(f4)) * 1.5F, zenithColor4);
       }
 
-      this.shown = var7 != null ? var7 : (var26 > 0.5F ? "+" : null);
-      return var28;
+      this.shown = text != null ? text : (f4 > 0.5F ? "+" : null);
+      return boundsData2;
    }
 
-   private static float hintY(Font var0, float var1, float var2, float var3) {
-      float[] var4 = var0.inkBounds("+");
-      return var4 == null ? var3 : var1 + (var2 - var4[1]) / 2.0F - var0.baseline() + var4[2];
+   private static float hintY(Font font, float y, float height, float f) {
+      float[] inkBounds = font.inkBounds("+");
+      return inkBounds == null ? f : y + (height - inkBounds[1]) / 2.0F - font.baseline() + inkBounds[2];
    }
 
-   private void drawExit(MenuDrawContext var1, Font var2, String var3, float var4, float var5, long var6, ZenithColor var8, float var9) {
-      boolean var10 = this.kind == BindLabel.Kind.CLEAR;
-      long var11 = var10 ? 28L : 16L;
-      float var13 = var10 ? 360.0F : 190.0F;
-      int var14 = var3.length();
-      float var15 = var4 - var2.width(var3);
+   private void drawExit(MenuDrawContext menuDrawContext, Font font, String from, float f, float f2, long l, ZenithColor zenithColor, float previewAlpha) {
+      boolean flag = this.kind == BindLabel.Kind.CLEAR;
+      long l2 = flag ? 28L : 16L;
+      float f3 = flag ? 360.0F : 190.0F;
+      int length = from.length();
+      float f4 = f - font.width(from);
 
-      for (int var16 = 0; var16 < var14; var16++) {
-         String var17 = glyph(var3.charAt(var16));
-         float var18 = var2.width(var17);
-         long var19 = (var10 ? var14 - 1 - var16 : var16) * var11;
-         float var21 = Mth.clamp((float)(var6 - var19) / var13, 0.0F, 1.0F);
-         if (var21 >= 1.0F) {
-            var15 += var18;
+      for (int i = 0; i < length; i++) {
+         String text = glyph(from.charAt(i));
+         float width = font.width(text);
+         long l3 = (flag ? length - 1 - i : i) * l2;
+         float f5 = Mth.clamp((float)(l - l3) / f3, 0.0F, 1.0F);
+         if (f5 >= 1.0F) {
+            f4 += width;
          } else {
-            float var22 = 0.0F;
-            float var23;
-            if (var10) {
-               var23 = 5.0F * var21 * var21;
-               var22 = (hash01(var16 * 31 + var14) - 0.5F) * 3.5F * var21;
+            float f6 = 0.0F;
+            float f7;
+            if (flag) {
+               f7 = 5.0F * f5 * f5;
+               f6 = (hash01(i * 31 + length) - 0.5F) * 3.5F * f5;
             } else {
-               var23 = -3.0F * var21 * var21;
+               f7 = -3.0F * f5 * f5;
             }
 
-            var1.drawText(var2, var17, var15 + var22, var5 + var23, var8.method7294((1.0F - var21) * var9));
-            var15 += var18;
+            menuDrawContext.drawText(font, text, f4 + f6, f2 + f7, zenithColor.method7294((1.0F - f5) * previewAlpha));
+            f4 += width;
          }
       }
    }
 
    private void drawEnter(
-      MenuDrawContext var1, Font var2, String var3, float var4, float var5, long var6, ZenithColor var8, ZenithColor var9, long var10, float var12
+      MenuDrawContext menuDrawContext, Font font, String text, float floatValue, float f, long l, ZenithColor zenithColor, ZenithColor zenithColor2, long now, float previewAlpha
    ) {
-      int var13 = var3.length();
-      boolean var14 = var6 == Long.MAX_VALUE;
+      int length = text.length();
+      boolean flag = l == Long.MAX_VALUE;
 
-      for (int var15 = 0; var15 < var13; var15++) {
-         String var16 = glyph(var3.charAt(var15));
-         float var17 = var2.width(var16);
-         float var18 = 0.0F;
-         float var19 = 1.0F;
-         ZenithColor var20 = var8;
-         if (!var14) {
+      for (int i = 0; i < length; i++) {
+         String str = glyph(text.charAt(i));
+         float width = font.width(str);
+         float f2 = 0.0F;
+         float f3 = 1.0F;
+         ZenithColor zenithColor3 = zenithColor;
+         if (!flag) {
             if (this.kind == BindLabel.Kind.SET) {
-               float var21 = Mth.clamp((float)(var6 - var15 * 35L) / 420.0F, 0.0F, 1.0F);
-               var18 = -4.0F * (float)(Math.exp(-7.0F * var21) * Math.cos(11.0F * var21));
-               var19 = Math.min(1.0F, var21 * 4.0F);
-               var20 = var8.method7295(var9.method7295(ZenithColor.INSTANCE, 0.5F), (1.0F - var21) * (1.0F - var21));
+               float f4 = Mth.clamp((float)(l - i * 35L) / 420.0F, 0.0F, 1.0F);
+               f2 = -4.0F * (float)(Math.exp(-7.0F * f4) * Math.cos(11.0F * f4));
+               f3 = Math.min(1.0F, f4 * 4.0F);
+               zenithColor3 = zenithColor.method7295(zenithColor2.method7295(ZenithColor.INSTANCE, 0.5F), (1.0F - f4) * (1.0F - f4));
             } else {
-               float var23 = Mth.clamp((float)(var6 - var15 * 18L) / 200.0F, 0.0F, 1.0F);
-               var18 = (1.0F - easeOut(var23)) * 3.0F;
-               var19 = var23;
+               float f4 = Mth.clamp((float)(l - i * 18L) / 200.0F, 0.0F, 1.0F);
+               f2 = (1.0F - easeOut(f4)) * 3.0F;
+               f3 = f4;
             }
          }
 
          if (this.binding) {
-            float var24 = (float)(var10 % 900L) / 900.0F * (var13 + 4.0F) - 2.0F;
-            float var22 = Math.max(0.0F, 1.0F - Math.abs(var15 - var24) / 1.6F);
-            var20 = var20.method7295(ZenithColor.INSTANCE, 0.55F * var22);
+            float f4 = (float)(now % 900L) / 900.0F * (length + 4.0F) - 2.0F;
+            float f5 = Math.max(0.0F, 1.0F - Math.abs(i - f4) / 1.6F);
+            zenithColor3 = zenithColor3.method7295(ZenithColor.INSTANCE, 0.55F * f5);
          }
 
-         if (var19 > 0.01F) {
-            var1.drawText(var2, var16, var4, var5 + var18, var20.method7294(var19 * var12));
+         if (f3 > 0.01F) {
+            menuDrawContext.drawText(font, str, floatValue, f + f2, zenithColor3.method7294(f3 * previewAlpha));
          }
 
-         var4 += var17;
+         floatValue += width;
       }
    }
 
-   private static void drawSparks(MenuDrawContext var0, float var1, float var2, long var3, ZenithColor var5, float var6) {
-      float var7 = Mth.clamp((float)var3 / 450.0F, 0.0F, 1.0F);
-      if (var3 >= 0L && !(var7 >= 1.0F)) {
-         float var8 = easeOut(var7);
+   private static void drawSparks(MenuDrawContext menuDrawContext, float f, float f2, long l, ZenithColor zenithColor, float previewAlpha) {
+      float f3 = Mth.clamp((float)l / 450.0F, 0.0F, 1.0F);
+      if (l >= 0L && !(f3 >= 1.0F)) {
+         float easeOut2 = easeOut(f3);
 
-         for (int var9 = 0; var9 < 6; var9++) {
-            float var10 = (var9 * 60.0F + 30.0F) * (float) (Math.PI / 180.0);
-            float var11 = var8 * (6.0F + var9 % 2 * 3.0F);
-            float var12 = 1.2F * (1.0F - var7);
-            if (!(var12 < 0.05F)) {
-               float var13 = var1 + Mth.cos(var10) * var11 * 1.4F;
-               float var14 = var2 + Mth.sin(var10) * var11 * 0.8F;
-               var0.drawRoundedRect(
-                  var13 - var12 / 2.0F,
-                  var14 - var12 / 2.0F,
-                  var12,
-                  var12,
-                  ProxyDotRadiusData.method8069(var12 / 2.0F),
-                  (var9 % 2 == 0 ? var5 : var5.method7295(ZenithColor.INSTANCE, 0.5F)).method7294((1.0F - var7) * var6)
+         for (int i = 0; i < 6; i++) {
+            float f4 = (i * 60.0F + 30.0F) * (float) (Math.PI / 180.0);
+            float f5 = easeOut2 * (6.0F + i % 2 * 3.0F);
+            float width = 1.2F * (1.0F - f3);
+            if (!(width < 0.05F)) {
+               float f6 = f + Mth.cos(f4) * f5 * 1.4F;
+               float f7 = f2 + Mth.sin(f4) * f5 * 0.8F;
+               menuDrawContext.drawRoundedRect(
+                  f6 - width / 2.0F,
+                  f7 - width / 2.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  (i % 2 == 0 ? zenithColor : zenithColor.method7295(ZenithColor.INSTANCE, 0.5F)).method7294((1.0F - f3) * previewAlpha)
                );
             }
          }
       }
    }
 
-   private static float easeOut(float var0) {
-      float var1 = 1.0F - var0;
-      return 1.0F - var1 * var1 * var1;
+   private static float easeOut(float f) {
+      float f2 = 1.0F - f;
+      return 1.0F - f2 * f2 * f2;
    }
 
-   private static float hash01(int var0) {
-      int var1 = var0 * 668265261;
-      var1 ^= var1 >>> 15;
-      var1 *= -2048144789;
-      var1 ^= var1 >>> 13;
-      return (var1 >>> 8) / 1.6777216E7F;
+   private static float hash01(int n) {
+      int n2 = n * 668265261;
+      n2 ^= n2 >>> 15;
+      n2 *= -2048144789;
+      n2 ^= n2 >>> 13;
+      return (n2 >>> 8) / 1.6777216E7F;
    }
 
    static {
-      for (int var0 = 0; var0 < ASCII.length; var0++) {
-         ASCII[var0] = String.valueOf((char)var0);
+      for (int i = 0; i < ASCII.length; i++) {
+         ASCII[i] = String.valueOf((char)i);
       }
    }
 

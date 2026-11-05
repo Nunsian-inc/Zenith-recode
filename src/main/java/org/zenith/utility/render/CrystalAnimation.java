@@ -46,45 +46,45 @@ public final class CrystalAnimation implements MinecraftAccess {
 
    public CrystalAnimation() {
       EventManager.register(this);
-      ClientTickEvents.END_CLIENT_TICK.register((EndTick)var1 -> this.tick());
+      ClientTickEvents.END_CLIENT_TICK.register((EndTick)minecraft -> this.tick());
    }
 
-   public static boolean method4460(BlockState var0) {
-      return flag && var0.is(Blocks.RESPAWN_ANCHOR);
+   public static boolean method4460(BlockState blockState) {
+      return flag && blockState.is(Blocks.RESPAWN_ANCHOR);
    }
 
-   private static HoveredData method4461(FocusSlotEnum var0) {
-      Wardrobe var1 = Wardrobe.method2488();
-      return var1 != null && var1.showSelf.isEnabled() ? var1.method2491(var0) : null;
+   private static HoveredData method4461(FocusSlotEnum key) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      return wardrobe != null && wardrobe.showSelf.isEnabled() ? wardrobe.method2491(key) : null;
    }
 
-   private static Class15 method4462(HoveredData var0) {
-      Wardrobe var1 = Wardrobe.method2488();
-      return var0 != null && var1 != null ? var1.getRegistry().method1427(var0) : null;
+   private static Class15 method4462(HoveredData hoveredData) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      return hoveredData != null && wardrobe != null ? wardrobe.getRegistry().method1427(hoveredData) : null;
    }
 
-   public static boolean method4463(EndCrystalRenderState var0, PoseStack var1, SubmitNodeCollector var2) {
-      HoveredData var3 = method4461(FocusSlotEnum.CRYSTAL);
-      Class15 var4 = method4462(var3);
-      if (var4 == null) {
+   public static boolean method4463(EndCrystalRenderState endCrystalRenderState, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue) {
+      HoveredData hoveredData = method4461(FocusSlotEnum.CRYSTAL);
+      Class15 key = method4462(hoveredData);
+      if (key == null) {
          return false;
       } else {
-         float var5 = var0.ageInTicks / 20.0F;
-         int var6 = (int)(Double.doubleToLongBits(var0.x * 31.0 + var0.z) ^ Double.doubleToLongBits(var0.y));
-         AnimationCache.Entry var7 = AnimationCache.method7621(var6, var3, false);
-         var7.animationState.method6539(var4, "idle", var5);
-         float[] var8 = var7.class16.method2139(var4, var7.animationState, var5, null);
-         var1.pushPose();
+         float floatValue = endCrystalRenderState.ageInTicks / 20.0F;
+         int id = (int)(Double.doubleToLongBits(endCrystalRenderState.x * 31.0 + endCrystalRenderState.z) ^ Double.doubleToLongBits(endCrystalRenderState.y));
+         AnimationCache.Entry entry = AnimationCache.method7621(id, hoveredData, false);
+         entry.animationState.method6539(key, "idle", floatValue);
+         float[] floatValues = entry.class16.method2139(key, entry.animationState, floatValue, null);
+         poseStack.pushPose();
 
          try {
-            var1.translate(0.0F, 0.5F, 0.0F);
-            var1.scale(0.5F, 0.5F, 0.5F);
-            var1.translate(0.0F, 0.775F, 0.0F);
-            var1.rotate(Axis.XP.rotationDegrees(180.0F));
-            var1.scale(2.0F, 2.0F, 2.0F);
-            BoneMatrices.method4787(var4, var8, 6, var1, var2, var0.lightCoords, OverlayTexture.NO_OVERLAY, true, var3.getRarity().isFlag(), -1);
+            poseStack.translate(0.0F, 0.5F, 0.0F);
+            poseStack.scale(0.5F, 0.5F, 0.5F);
+            poseStack.translate(0.0F, 0.775F, 0.0F);
+            poseStack.rotate(Axis.XP.rotationDegrees(180.0F));
+            poseStack.scale(2.0F, 2.0F, 2.0F);
+            BoneMatrices.method4787(key, floatValues, 6, poseStack, orderedRenderCommandQueue, endCrystalRenderState.lightCoords, OverlayTexture.NO_OVERLAY, true, hoveredData.getRarity().isFlag(), -1);
          } finally {
-            var1.popPose();
+            poseStack.popPose();
          }
 
          return true;
@@ -92,8 +92,8 @@ public final class CrystalAnimation implements MinecraftAccess {
    }
 
    private void tick() {
-      boolean var1 = mc.level != null && mc.player != null && method4462(method4461(FocusSlotEnum.ANCHOR)) != null;
-      if (!var1) {
+      boolean flag2 = mc.level != null && mc.player != null && method4462(method4461(FocusSlotEnum.ANCHOR)) != null;
+      if (!flag2) {
          if (flag) {
             flag = false;
             if (mc.level != null && mc.player != null) {
@@ -119,33 +119,33 @@ public final class CrystalAnimation implements MinecraftAccess {
 
    private static void rebuild() {
       if (mc.levelExtractor != null && mc.level != null) {
-         for (BlockPos var1 : items) {
-            mc.levelExtractor.setBlocksDirty(var1.getX(), var1.getY(), var1.getZ(), var1.getX(), var1.getY(), var1.getZ());
+         for (BlockPos pos : items) {
+            mc.levelExtractor.setBlocksDirty(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
          }
       }
    }
 
-   private static void method4464(int var0) {
+   private static void method4464(int n) {
       items.clear();
       if (mc.level != null && mc.player != null) {
-         ChunkPos var1 = mc.player.chunkPosition();
+         ChunkPos chunkPosition = mc.player.chunkPosition();
 
-         for (int var2 = var1.x() - var0; var2 <= var1.x() + var0; var2++) {
-            for (int var3 = var1.z() - var0; var3 <= var1.z() + var0; var3++) {
-               LevelChunk var4 = mc.level.getChunkSource().getChunk(var2, var3, ChunkStatus.FULL, false);
-               if (var4 != null) {
-                  LevelChunkSection[] var5 = var4.getSections();
+         for (int i = chunkPosition.x() - n; i <= chunkPosition.x() + n; i++) {
+            for (int j = chunkPosition.z() - n; j <= chunkPosition.z() + n; j++) {
+               LevelChunk chunk = mc.level.getChunkSource().getChunk(i, j, ChunkStatus.FULL, false);
+               if (chunk != null) {
+                  LevelChunkSection[] sections = chunk.getSections();
 
-                  for (int var6 = 0; var6 < var5.length; var6++) {
-                     LevelChunkSection var7 = var5[var6];
-                     if (var7 != null && !var7.hasOnlyAir() && var7.maybeHas(var0x -> var0x.is(Blocks.RESPAWN_ANCHOR))) {
-                        int var8 = var4.getSectionYFromSectionIndex(var6) << 4;
+                  for (int k = 0; k < sections.length; k++) {
+                     LevelChunkSection levelChunkSection = sections[k];
+                     if (levelChunkSection != null && !levelChunkSection.hasOnlyAir() && levelChunkSection.maybeHas(var0x -> var0x.is(Blocks.RESPAWN_ANCHOR))) {
+                        int n2 = chunk.getSectionYFromSectionIndex(k) << 4;
 
-                        for (int var9 = 0; var9 < 16; var9++) {
-                           for (int var10 = 0; var10 < 16; var10++) {
-                              for (int var11 = 0; var11 < 16; var11++) {
-                                 if (var7.getBlockState(var11, var9, var10).is(Blocks.RESPAWN_ANCHOR)) {
-                                    items.add(new BlockPos((var2 << 4) + var11, var8 + var9, (var3 << 4) + var10));
+                        for (int m = 0; m < 16; m++) {
+                           for (int sectionZ = 0; sectionZ < 16; sectionZ++) {
+                              for (int sectionX = 0; sectionX < 16; sectionX++) {
+                                 if (levelChunkSection.getBlockState(sectionX, m, sectionZ).is(Blocks.RESPAWN_ANCHOR)) {
+                                    items.add(new BlockPos((i << 4) + sectionX, n2 + m, (j << 4) + sectionZ));
                                  }
                               }
                            }
@@ -158,59 +158,59 @@ public final class CrystalAnimation implements MinecraftAccess {
       }
    }
 
-   private static int[] method4465(Class15 var0) {
-      return items2.computeIfAbsent(var0, var1 -> {
-         ArrayList var2 = new ArrayList();
+   private static int[] method4465(Class15 key) {
+      return items2.computeIfAbsent(key, class2 -> {
+         ArrayList arrayList = new ArrayList();
 
-         for (int var3 = 0; var3 < var0.texts.length; var3++) {
-            if (var0.texts[var3].startsWith("charge")) {
-               var2.add(var3);
+         for (int i = 0; i < key.texts.length; i++) {
+            if (key.texts[i].startsWith("charge")) {
+               arrayList.add(i);
             }
          }
 
-         return var2.stream().mapToInt(x -> (Integer)x).toArray();
+         return arrayList.stream().mapToInt(x -> (Integer)x).toArray();
       });
    }
 
    @EventTarget
-   public void method4466(WorldRenderEvent var1) {
+   public void method4466(WorldRenderEvent event) {
       if (flag && !items.isEmpty() && mc.level != null) {
-         HoveredData var2 = method4461(FocusSlotEnum.ANCHOR);
-         Class15 var3 = method4462(var2);
-         if (var3 != null) {
-            Vec3 var4 = mc.gameRenderer.mainCamera().position();
-            float var5 = ((float)mc.level.getGameTime() + var1.getFloatValue()) / 20.0F;
-            int[] var6 = method4465(var3);
-            Pose var8 = var1.getMatrixStack().last();
-            Matrix3f var9 = new Matrix3f(var8.pose());
+         HoveredData hoveredData = method4461(FocusSlotEnum.ANCHOR);
+         Class15 key = method4462(hoveredData);
+         if (key != null) {
+            Vec3 position = mc.gameRenderer.mainCamera().position();
+            float floatValue = ((float)mc.level.getGameTime() + event.getFloatValue()) / 20.0F;
+            int[] ints = method4465(key);
+            Pose pose = event.getMatrixStack().last();
+            Matrix3f matrix = new Matrix3f(pose.pose());
             // 26.3: no immediate buffer source, submit all anchors into one collector and draw it right away
-            OutlineVertexProvider.method1542(var7 -> {
-            for (BlockPos var12 : items) {
-               double var13 = var12.getX() + 0.5 - var4.x;
-               double var15 = var12.getY() + 0.5 - var4.y;
-               double var17 = var12.getZ() + 0.5 - var4.z;
-               if (!(var13 * var13 + var15 * var15 + var17 * var17 > 9216.0)) {
-                  BlockState var19 = mc.level.getBlockState(var12);
-                  if (var19.is(Blocks.RESPAWN_ANCHOR)) {
-                     AnimationCache.Entry var20 = AnimationCache.method7621(var12.hashCode(), var2, false);
-                     var20.animationState.method6539(var3, "idle", var5);
-                     float[] var21 = var20.class16.method2139(var3, var20.animationState, var5, null);
-                     int var22 = var19.getValue(RespawnAnchorBlock.CHARGE);
+            OutlineVertexProvider.method1542(orderedRenderCommandQueue -> {
+            for (BlockPos pos : items) {
+               double xo = pos.getX() + 0.5 - position.x;
+               double yo = pos.getY() + 0.5 - position.y;
+               double zo = pos.getZ() + 0.5 - position.z;
+               if (!(xo * xo + yo * yo + zo * zo > 9216.0)) {
+                  BlockState blockState = mc.level.getBlockState(pos);
+                  if (blockState.is(Blocks.RESPAWN_ANCHOR)) {
+                     AnimationCache.Entry entry = AnimationCache.method7621(pos.hashCode(), hoveredData, false);
+                     entry.animationState.method6539(key, "idle", floatValue);
+                     float[] floatValues = entry.class16.method2139(key, entry.animationState, floatValue, null);
+                     int n = blockState.getValue(RespawnAnchorBlock.CHARGE);
 
-                     for (int var23 = var22; var23 < var6.length; var23++) {
-                        int var24 = var6[var23] * 9;
-                        var21[var24 + 6] = 0.0F;
-                        var21[var24 + 7] = 0.0F;
-                        var21[var24 + 8] = 0.0F;
+                     for (int i = n; i < ints.length; i++) {
+                        int n2 = ints[i] * 9;
+                        floatValues[n2 + 6] = 0.0F;
+                        floatValues[n2 + 7] = 0.0F;
+                        floatValues[n2 + 8] = 0.0F;
                      }
 
-                     int var25 = net.minecraft.util.LightCoordsUtil.getLightCoords(mc.level, var12.above());
-                     PoseStack var26 = new PoseStack();
-                     var26.last().pose().set(var8.pose());
-                     var26.last().normal().set(var9);
-                     var26.translate(var13, var15, var17);
-                     var26.rotate(Axis.XP.rotationDegrees(180.0F));
-                     BoneMatrices.method4787(var3, var21, 6, var26, var7, var25, OverlayTexture.NO_OVERLAY, true, var2.getRarity().isFlag(), -1);
+                     int lightCoords = net.minecraft.util.LightCoordsUtil.getLightCoords(mc.level, pos.above());
+                     PoseStack poseStack = new PoseStack();
+                     poseStack.last().pose().set(pose.pose());
+                     poseStack.last().normal().set(matrix);
+                     poseStack.translate(xo, yo, zo);
+                     poseStack.rotate(Axis.XP.rotationDegrees(180.0F));
+                     BoneMatrices.method4787(key, floatValues, 6, poseStack, orderedRenderCommandQueue, lightCoords, OverlayTexture.NO_OVERLAY, true, hoveredData.getRarity().isFlag(), -1);
                   }
                }
             }

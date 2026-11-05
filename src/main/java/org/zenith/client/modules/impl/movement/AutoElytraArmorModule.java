@@ -55,60 +55,60 @@ public final class AutoElytraArmorModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
-      LocalPlayer var2 = mc.player;
-      if (var2 == null || mc.level == null) {
+   public void onUpdate(UpdateEvent event) {
+      LocalPlayer player = mc.player;
+      if (player == null || mc.level == null) {
          this.resetState();
       } else if (this.mode.isSelected(1)) {
-         this.method412(var2);
+         this.method412(player);
       } else {
          this.type = AutoElytraArmorModule.Type.NONE;
-         this.method417(var2);
-         this.method416(this.method411(var2));
+         this.method417(player);
+         this.method416(this.method411(player));
       }
    }
 
-   private Player method411(Player var1) {
-      if (this.method414(var1, this.playerEntity)) {
+   private Player method411(Player player) {
+      if (this.method414(player, this.playerEntity)) {
          return this.playerEntity;
-      } else if (AuraModule.INSTANCE.method6358() instanceof Player var3 && this.method415(var1, var3)) {
-         return var3;
+      } else if (AuraModule.INSTANCE.method6358() instanceof Player playerEntity && this.method415(player, playerEntity)) {
+         return playerEntity;
       } else {
-         ClientLevel var4 = mc.level;
-         return var4 == null
+         ClientLevel level = mc.level;
+         return level == null
             ? null
-            : var4.players()
+            : level.players()
                .stream()
-               .filter(var1x -> var1x != var1)
-               .filter(var2 -> this.method415(var1, var2))
-               .filter(var0 -> !Zenith.getInstance().getFriends().method7626(var0))
-               .min(Comparator.comparingDouble(var2 -> this.method420(var1, var2)))
+               .filter(var1x -> var1x != player)
+               .filter(player2 -> this.method415(player, player2))
+               .filter(player2 -> !Zenith.getInstance().getFriends().method7626(player2))
+               .min(Comparator.comparingDouble(playerEntity2 -> this.method420(player, playerEntity2)))
                .orElse(null);
       }
    }
 
-   private void method412(Player var1) {
-      Player var2 = this.method413(var1);
-      if (var2 == null) {
+   private void method412(Player player) {
+      Player player2 = this.method413(player);
+      if (player2 == null) {
          this.type = AutoElytraArmorModule.Type.NONE;
          this.method419(false);
       } else {
-         ItemStack var3 = var1.getItemBySlot(EquipmentSlot.CHEST);
-         boolean var4 = var3.is(Items.ELYTRA);
-         boolean var5 = Util10.method2182(var3);
-         if (this.type == AutoElytraArmorModule.Type.ELYTRA && var4 || this.type == AutoElytraArmorModule.Type.CHESTPLATE && var5) {
+         ItemStack itemBySlot = player.getItemBySlot(EquipmentSlot.CHEST);
+         boolean is = itemBySlot.is(Items.ELYTRA);
+         boolean flag = Util10.method2182(itemBySlot);
+         if (this.type == AutoElytraArmorModule.Type.ELYTRA && is || this.type == AutoElytraArmorModule.Type.CHESTPLATE && flag) {
             this.type = AutoElytraArmorModule.Type.NONE;
          }
 
-         boolean var6 = var2.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
-         this.method419(!var6);
+         boolean is2 = player2.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
+         this.method419(!is2);
          if (this.type == AutoElytraArmorModule.Type.NONE) {
-            if (var6) {
-               if (var5) {
+            if (is2) {
+               if (flag) {
                   this.type = AutoElytraArmorModule.Type.ELYTRA;
                   ElytraHelperModule.INSTANCE.method7454();
                }
-            } else if (var4) {
+            } else if (is) {
                this.type = AutoElytraArmorModule.Type.CHESTPLATE;
                this.method418();
             }
@@ -116,82 +116,82 @@ public final class AutoElytraArmorModule extends Module {
       }
    }
 
-   private Player method413(Player var1) {
-      if (AuraModule.INSTANCE.method6358() instanceof Player var3 && this.method414(var1, var3)) {
-         return var3;
+   private Player method413(Player player) {
+      if (AuraModule.INSTANCE.method6358() instanceof Player playerEntity && this.method414(player, playerEntity)) {
+         return playerEntity;
       } else {
-         ClientLevel var4 = mc.level;
-         return var4 == null
+         ClientLevel level = mc.level;
+         return level == null
             ? null
-            : var4.players()
+            : level.players()
                .stream()
-               .filter(var1x -> var1x != var1)
-               .filter(var2 -> this.method414(var1, var2))
-               .filter(var0 -> !Zenith.getInstance().getFriends().method7626(var0))
-               .min(Comparator.comparingDouble(var2 -> this.method420(var1, var2)))
+               .filter(var1x -> var1x != player)
+               .filter(player2 -> this.method414(player, player2))
+               .filter(player2 -> !Zenith.getInstance().getFriends().method7626(player2))
+               .min(Comparator.comparingDouble(playerEntity2 -> this.method420(player, playerEntity2)))
                .orElse(null);
       }
    }
 
-   private boolean method414(Player var1, Player var2) {
-      if (var2 != null && var2.isAlive() && !var2.isRemoved() && !(this.method420(var1, var2) > this.method421())) {
-         ItemStack var3 = var2.getItemBySlot(EquipmentSlot.CHEST);
-         return var3.is(Items.ELYTRA) || Util10.method2182(var3);
+   private boolean method414(Player player, Player playerEntity) {
+      if (playerEntity != null && playerEntity.isAlive() && !playerEntity.isRemoved() && !(this.method420(player, playerEntity) > this.method421())) {
+         ItemStack itemBySlot = playerEntity.getItemBySlot(EquipmentSlot.CHEST);
+         return itemBySlot.is(Items.ELYTRA) || Util10.method2182(itemBySlot);
       } else {
          return false;
       }
    }
 
-   private boolean method415(Player var1, Player var2) {
-      return var2 != null
-         && var2.isAlive()
-         && !var2.isRemoved()
-         && var2.isFallFlying()
-         && var2.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)
-         && this.method420(var1, var2) <= this.method421();
+   private boolean method415(Player player, Player playerEntity) {
+      return playerEntity != null
+         && playerEntity.isAlive()
+         && !playerEntity.isRemoved()
+         && playerEntity.isFallFlying()
+         && playerEntity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)
+         && this.method420(player, playerEntity) <= this.method421();
    }
 
-   private void method416(Player var1) {
-      if (var1 == null) {
+   private void method416(Player playerEntity) {
+      if (playerEntity == null) {
          this.method422();
       } else {
-         if (this.playerEntity != var1) {
-            this.playerEntity = var1;
-            this.flag = var1.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
-            this.flag2 = Util10.method2182(var1.getItemBySlot(EquipmentSlot.CHEST));
-         } else if (var1.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
+         if (this.playerEntity != playerEntity) {
+            this.playerEntity = playerEntity;
+            this.flag = playerEntity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
+            this.flag2 = Util10.method2182(playerEntity.getItemBySlot(EquipmentSlot.CHEST));
+         } else if (playerEntity.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
             this.flag = true;
             this.flag2 = false;
-         } else if (Util10.method2182(var1.getItemBySlot(EquipmentSlot.CHEST))) {
+         } else if (Util10.method2182(playerEntity.getItemBySlot(EquipmentSlot.CHEST))) {
             this.flag = false;
             this.flag2 = true;
          }
       }
    }
 
-   private void method417(Player var1) {
-      Player var2 = this.playerEntity;
-      if (var2 != null) {
-         if (!this.method414(var1, var2)) {
+   private void method417(Player player) {
+      Player playerEntity = this.playerEntity;
+      if (playerEntity != null) {
+         if (!this.method414(player, playerEntity)) {
             this.method422();
          } else {
-            ItemStack var3 = var2.getItemBySlot(EquipmentSlot.CHEST);
-            if (var3.is(Items.ELYTRA)) {
-               boolean var5 = this.flag2;
+            ItemStack itemBySlot = playerEntity.getItemBySlot(EquipmentSlot.CHEST);
+            if (itemBySlot.is(Items.ELYTRA)) {
+               boolean flag = this.flag2;
                this.flag = true;
                this.flag2 = false;
-               if (this.reverseSwap.isEnabled() && var5 && Util10.method2182(var1.getItemBySlot(EquipmentSlot.CHEST))) {
+               if (this.reverseSwap.isEnabled() && flag && Util10.method2182(player.getItemBySlot(EquipmentSlot.CHEST))) {
                   ElytraHelperModule.INSTANCE.method7454();
                   this.method419(false);
                }
-            } else if (!Util10.method2182(var3)) {
+            } else if (!Util10.method2182(itemBySlot)) {
                this.flag = false;
                this.flag2 = false;
             } else {
-               boolean var4 = this.flag;
+               boolean flag = this.flag;
                this.flag = false;
                this.flag2 = true;
-               if (var4 && var1.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
+               if (flag && player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
                   this.method418();
                }
             }
@@ -204,22 +204,22 @@ public final class AutoElytraArmorModule extends Module {
       this.method419(true);
    }
 
-   private void method419(boolean var1) {
-      if (this.autoAirStuck.isEnabled() && AirStuckModule.INSTANCE.isEnabled() != var1) {
-         AirStuckModule.INSTANCE.setToggled(var1);
+   private void method419(boolean toggled) {
+      if (this.autoAirStuck.isEnabled() && AirStuckModule.INSTANCE.isEnabled() != toggled) {
+         AirStuckModule.INSTANCE.setToggled(toggled);
       }
    }
 
-   private double method420(Player var1, Player var2) {
-      Vec3 var3 = var2.getPositionCodec().getBase();
-      double var4 = var1.getX() - var3.x;
-      double var6 = var1.getZ() - var3.z;
-      return var4 * var4 + var6 * var6;
+   private double method420(Player player, Player playerEntity) {
+      Vec3 base = playerEntity.getPositionCodec().getBase();
+      double d = player.getX() - base.x;
+      double d2 = player.getZ() - base.z;
+      return d * d + d2 * d2;
    }
 
    private double method421() {
-      double var1;
-      return (var1 = this.range.getValue3()) * var1;
+      double d;
+      return (d = this.range.getValue3()) * d;
    }
 
    private void resetState() {

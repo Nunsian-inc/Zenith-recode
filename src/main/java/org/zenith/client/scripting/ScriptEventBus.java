@@ -49,105 +49,105 @@ public final class ScriptEventBus {
    public static final Map<String, Script.Type> items2 = new LinkedHashMap<>();
    public static final Map<String, String> items3 = new LinkedHashMap<>();
 
-   private static void method1864(String var0, Class<? extends Event> var1, boolean var2, String var3, BiFunction<Scriptable, Event, Scriptable> var4) {
-      items.put(var0, new ScriptEventBus.Data(var0, var1, var2, true, var4, var3, List.of()));
+   private static void method1864(String text, Class<? extends Event> classValue, boolean flag, String str, BiFunction<Scriptable, Event, Scriptable> biFunction) {
+      items.put(text, new ScriptEventBus.Data(text, classValue, flag, true, biFunction, str, List.of()));
    }
 
-   private static void method1865(String var0, Script.Type var1, String var2) {
-      items2.put(var0, var1);
-      items3.put(var0, var2);
+   private static void method1865(String str, Script.Type type, String str2) {
+      items2.put(str, type);
+      items3.put(str, str2);
    }
 
-   private static ScriptValueUtils.Entry2 method1866(Scriptable var0, Event var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var0);
-      if (var1 instanceof Cancellable var3) {
-         var2.method6274("cancel", var1x -> {
-            var3.setCancelled(!ScriptValueUtils.method6252(var1x, 0) || ScriptValueUtils.method6259(var1x, 0, true));
+   private static ScriptValueUtils.Entry2 method1866(Scriptable scope, Event event) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      if (event instanceof Cancellable cancellable) {
+         entry2.method6274("cancel", var1x -> {
+            cancellable.setCancelled(!ScriptValueUtils.method6252(var1x, 0) || ScriptValueUtils.method6259(var1x, 0, true));
             return null;
          });
-         var2.method6274("cancelled", var1x -> var3.isCancelled());
+         entry2.method6274("cancelled", var1x -> cancellable.isCancelled());
       }
 
-      return var2;
+      return entry2;
    }
 
    private ScriptEventBus() {
    }
 
    public static List<String> method1867() {
-      ArrayList<String> var0 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (ScriptEventBus.Data var2 : items.values()) {
-         var0.add("`" + var2.name() + "`" + (var2.isFlag() ? " *(отменяемое)*" : "") + " — " + var2.getText2());
+      for (ScriptEventBus.Data data : items.values()) {
+         strings.add("`" + data.name() + "`" + (data.isFlag() ? " *(отменяемое)*" : "") + " — " + data.getText2());
       }
 
-      for (Entry var4 : items3.entrySet()) {
-         var0.add("`" + (String)var4.getKey() + "` — " + (String)var4.getValue());
+      for (Entry entry : items3.entrySet()) {
+         strings.add("`" + (String)entry.getKey() + "` — " + (String)entry.getValue());
       }
 
-      return var0;
+      return strings;
    }
 
-   public static byte method1868(Object var0) {
-      if (ScriptValueUtils.method6253(var0)) {
+   public static byte method1868(Object id) {
+      if (ScriptValueUtils.method6253(id)) {
          return 2;
       } else {
-         String var1 = ScriptValueUtils.method6255(var0).toLowerCase(Locale.ROOT);
+         String lowerCase = ScriptValueUtils.method6255(id).toLowerCase(Locale.ROOT);
 
-         return switch (var1) {
+         return switch (lowerCase) {
             case "highest" -> 0;
             case "high" -> 1;
             case "normal", "medium" -> 2;
             case "low" -> 3;
             case "lowest" -> 4;
-            default -> throw ScriptValueUtils.method6251("неизвестный приоритет: " + ScriptValueUtils.method6255(var0));
+            default -> throw ScriptValueUtils.method6251("неизвестный приоритет: " + ScriptValueUtils.method6255(id));
          };
       }
    }
 
-   public static Scriptable method1869(Storage var0, Script var1, Scriptable var2) {
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var2);
-      int[] var4 = new int[]{0};
-      LinkedHashMap var5 = new LinkedHashMap();
-      BiFunction<String, Object[], Object> var6 = (var4x, var5x) -> {
+   public static Scriptable method1869(Storage storage, Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      int[] ints = new int[]{0};
+      LinkedHashMap map = new LinkedHashMap();
+      BiFunction<String, Object[], Object> biFunction = (var4x, var5x) -> {
          var var6x = ScriptValueUtils.method6260(var5x, 1);
-         Script.Type var7 = items2.get(var4x);
-         if (var7 != null) {
-            ScriptScreenApi.method7046(var1, var7, var6x);
+         Script.Type key = items2.get(var4x);
+         if (key != null) {
+            ScriptScreenApi.method7046(workspace, key, var6x);
             return -1.0;
          } else {
             ScriptEventBus.Data var8x = items.get(var4x);
             if (var8x == null) {
                throw ScriptValueUtils.method6251("неизвестное событие: " + var4x + " (список — events.names())");
             } else {
-               byte var9 = method1868(ScriptValueUtils.arg(var5x, 2));
+               byte b = method1868(ScriptValueUtils.arg(var5x, 2));
                ArrayList var10x = new ArrayList();
-               var10x.add(EventManager.main().subscribe(var8x.getClassValue(), var9, (var4xx, var5xx) -> method1870(var0, var1, var8x, var6x, (Event)var5xx)));
+               var10x.add(EventManager.main().subscribe(var8x.getClassValue(), b, (var4xx, var5xx) -> method1870(storage, workspace, var8x, var6x, (Event)var5xx)));
 
-               for (Class var12 : var8x.getItems()) {
-                  var10x.add(EventManager.main().subscribe(var12, var9, (var4xx, var5xx) -> method1870(var0, var1, var8x, var6x, (Event)var5xx)));
+               for (Class clazz : var8x.getItems()) {
+                  var10x.add(EventManager.main().subscribe(clazz, b, (var4xx, var5xx) -> method1870(storage, workspace, var8x, var6x, (Event)var5xx)));
                }
 
-               int var13 = ++var4[0];
-               AutoCloseable var14 = () -> var10x.forEach(r -> ((Runnable)r).run());
-               var5.put(var13, var14);
-               var1.method1413(var14);
-               return (double)var13;
+               int n = ++ints[0];
+               AutoCloseable autoCloseable = () -> var10x.forEach(r -> ((Runnable)r).run());
+               map.put(n, autoCloseable);
+               workspace.method1413(autoCloseable);
+               return (double)n;
             }
          }
       };
-      var3.method6274("on", var1x -> var6.apply(ScriptValueUtils.method6254(var1x, 0, ""), var1x));
-      var3.method6274("once", var3x -> {
+      entry2.method6274("on", var1x -> biFunction.apply(ScriptValueUtils.method6254(var1x, 0, ""), var1x));
+      entry2.method6274("once", var3x -> {
          String var4x = ScriptValueUtils.method6254(var3x, 0, "");
          var var5x = ScriptValueUtils.method6260(var3x, 1);
          int[] var6x = new int[]{0};
-         boolean[] var7 = new boolean[]{false};
-         BaseFunction var8x = ScriptValueUtils.method6249(var2, "once", var5xx -> {
-            if (var7[0]) {
+         boolean[] flags = new boolean[]{false};
+         BaseFunction var8x = ScriptValueUtils.method6249(scope, "once", var5xx -> {
+            if (flags[0]) {
                return null;
             } else {
-               var7[0] = true;
-               AutoCloseable var6xx = (AutoCloseable)var5.remove(var6x[0]);
+               flags[0] = true;
+               AutoCloseable var6xx = (AutoCloseable)map.remove(var6x[0]);
                if (var6xx != null) {
                   try {
                      var6xx.close();
@@ -155,15 +155,15 @@ public final class ScriptEventBus {
                   }
                }
 
-               return var5x.call(Context.getCurrentContext(), var2, var2, var5xx);
+               return var5x.call(Context.getCurrentContext(), scope, scope, var5xx);
             }
          });
-         Object var9 = var6.apply(var4x, new Object[]{var4x, var8x, ScriptValueUtils.arg(var3x, 2)});
-         var6x[0] = (int)Context.toNumber(var9);
-         return var9;
+         Object obj = biFunction.apply(var4x, new Object[]{var4x, var8x, ScriptValueUtils.arg(var3x, 2)});
+         var6x[0] = (int)Context.toNumber(obj);
+         return obj;
       });
-      var3.method6274("off", var1x -> {
-         AutoCloseable var2x = (AutoCloseable)var5.remove(ScriptValueUtils.method6257(var1x, 0, -1));
+      entry2.method6274("off", var1x -> {
+         AutoCloseable var2x = (AutoCloseable)map.remove(ScriptValueUtils.method6257(var1x, 0, -1));
          if (var2x == null) {
             return false;
          } else {
@@ -175,61 +175,61 @@ public final class ScriptEventBus {
             return true;
          }
       });
-      var3.method6274("names", var1x -> {
+      entry2.method6274("names", var1x -> {
          var var2x = new ArrayList<>(items.keySet());
          var2x.addAll(items2.keySet());
-         return ScriptValueUtils.method6267(var2, var2x);
+         return ScriptValueUtils.method6267(scope, var2x);
       });
 
-      for (String var8 : items.keySet()) {
-         var3.method6274(var8, var2x -> var6.apply(var8, new Object[]{var8, ScriptValueUtils.arg(var2x, 0), ScriptValueUtils.arg(var2x, 1)}));
+      for (String str : items.keySet()) {
+         entry2.method6274(str, var2x -> biFunction.apply(str, new Object[]{str, ScriptValueUtils.arg(var2x, 0), ScriptValueUtils.arg(var2x, 1)}));
       }
 
-      for (String var10 : items2.keySet()) {
-         var3.method6274(var10, var2x -> var6.apply(var10, new Object[]{var10, ScriptValueUtils.arg(var2x, 0)}));
+      for (String str : items2.keySet()) {
+         entry2.method6274(str, var2x -> biFunction.apply(str, new Object[]{str, ScriptValueUtils.arg(var2x, 0)}));
       }
 
-      return var3.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   private static void method1870(Storage var0, Script var1, ScriptEventBus.Data var2, Function var3, Event var4) {
-      if (var1.isRunning() && ScriptEntityApi.method6575().isSameThread()) {
-         if (!(var4 instanceof PacketEvent var5 && !var5.method7099())) {
-            if (!(var4 instanceof Cancellable var21 && var21.isCancelled() && var2.isFlag())) {
-               Scriptable var22 = ScriptScreenApi.method7044(var1);
-               if (var22 != null) {
-                  if (var4 instanceof DrawEvent var6) {
-                     ScriptDrawApi.method2597(var6.getCustomDrawContext());
-                     ScriptEntityApi.method6573(var6.getTickDelta());
+   private static void method1870(Storage storage, Script workspace, ScriptEventBus.Data data, Function function, Event event) {
+      if (workspace.isRunning() && ScriptEntityApi.method6575().isSameThread()) {
+         if (!(event instanceof PacketEvent event2 && !event2.method7099())) {
+            if (!(event instanceof Cancellable cancellable && cancellable.isCancelled() && data.isFlag())) {
+               Scriptable scriptable = ScriptScreenApi.method7044(workspace);
+               if (scriptable != null) {
+                  if (event instanceof DrawEvent event3) {
+                     ScriptDrawApi.method2597(event3.getCustomDrawContext());
+                     ScriptEntityApi.method6573(event3.getTickDelta());
                   }
 
-                  if (var4 instanceof WorldRenderEvent var23) {
-                     ScriptDrawApi.method2598(var23.getMatrixStack());
-                     ScriptEntityApi.method6573(var23.getFloatValue());
+                  if (event instanceof WorldRenderEvent event4) {
+                     ScriptDrawApi.method2598(event4.getMatrixStack());
+                     ScriptEntityApi.method6573(event4.getFloatValue());
                   }
 
                   try {
-                     Context var7 = ScriptContextFactory.method7409();
+                     Context context = ScriptContextFactory.method7409();
 
-                     Scriptable var8;
+                     Scriptable scriptableObject;
                      try {
-                        var8 = var2.getBiFunction().apply(var22, var4);
-                     } catch (RuntimeException var18) {
+                        scriptableObject = data.getBiFunction().apply(scriptable, event);
+                     } catch (RuntimeException e) {
                         return;
                      } finally {
                         Context.exit();
                      }
 
-                     Object var24 = var0.method1321(var1, var3, var8);
-                     if (var2.isFlag() && var4 instanceof Cancellable var9 && var24 != null && !ScriptValueUtils.method6253(var24) && Context.toBoolean(var24)) {
-                        var9.setCancelled(true);
+                     Object id = storage.method1321(workspace, function, scriptableObject);
+                     if (data.isFlag() && event instanceof Cancellable cancellable2 && id != null && !ScriptValueUtils.method6253(id) && Context.toBoolean(id)) {
+                        cancellable2.setCancelled(true);
                      }
                   } finally {
-                     if (var4 instanceof DrawEvent) {
+                     if (event instanceof DrawEvent) {
                         ScriptDrawApi.end();
                      }
 
-                     if (var4 instanceof WorldRenderEvent) {
+                     if (event instanceof WorldRenderEvent) {
                         ScriptDrawApi.method2599();
                      }
                   }
@@ -240,36 +240,36 @@ public final class ScriptEventBus {
    }
 
    static {
-      method1864("tick", TickEvent.class, false, "каждый тик клиента (20/с), и в меню", (var0, var1) -> method1866(var0, var1).getScriptableObject());
-      method1864("update", UpdateEvent.class, false, "тик своего игрока, до физики", (var0, var1) -> method1866(var0, var1).getScriptableObject());
+      method1864("tick", TickEvent.class, false, "каждый тик клиента (20/с), и в меню", (scope, event) -> method1866(scope, event).getScriptableObject());
+      method1864("update", UpdateEvent.class, false, "тик своего игрока, до физики", (scope, event) -> method1866(scope, event).getScriptableObject());
       method1864(
          "render2d",
          DrawEvent.class,
          false,
          "каждый кадр поверх HUD: рисуй render.* ; e.partial",
-         (var0, var1) -> method1866(var0, var1).method6277("partial", (double)((DrawEvent)var1).getTickDelta()).getScriptableObject()
+         (scope, event) -> method1866(scope, event).method6277("partial", (double)((DrawEvent)event).getTickDelta()).getScriptableObject()
       );
       method1864(
          "render3d",
          WorldRenderEvent.class,
          false,
          "каждый кадр мира: рисуй render3d.* ; e.partial",
-         (var0, var1) -> method1866(var0, var1).method6277("partial", (double)((WorldRenderEvent)var1).getFloatValue()).getScriptableObject()
+         (scope, event) -> method1866(scope, event).method6277("partial", (double)((WorldRenderEvent)event).getFloatValue()).getScriptableObject()
       );
       method1864(
          "key",
          KeyEvent.class,
          false,
          "клавиша: key, action, mods, press, release, repeat, screenOpen",
-         (var0, var1) -> {
-            KeyEvent var2 = (KeyEvent)var1;
-            return method1866(var0, var1)
-               .method6277("key", (double)var2.getKeyCode())
-               .method6277("action", (double)var2.getIntValue())
-               .method6277("mods", (double)var2.getModifiers())
-               .method6277("press", var2.getIntValue() == 1)
-               .method6277("release", var2.getIntValue() == 0)
-               .method6277("repeat", var2.getIntValue() == 2)
+         (scope, event) -> {
+            KeyEvent event2 = (KeyEvent)event;
+            return method1866(scope, event)
+               .method6277("key", (double)event2.getKeyCode())
+               .method6277("action", (double)event2.getIntValue())
+               .method6277("mods", (double)event2.getModifiers())
+               .method6277("press", event2.getIntValue() == 1)
+               .method6277("release", event2.getIntValue() == 0)
+               .method6277("repeat", event2.getIntValue() == 2)
                .method6277("screenOpen", ScriptEntityApi.method6575().gui.screen() != null)
                .getScriptableObject();
          }
@@ -279,27 +279,27 @@ public final class ScriptEventBus {
          MouseButtonEvent.class,
          true,
          "кнопка мыши: button, press, release, screenOpen",
-         (var0, var1) -> {
-            MouseButtonEvent var2 = (MouseButtonEvent)var1;
-            return method1866(var0, var1)
-               .method6277("button", (double)var2.getIntValue())
-               .method6277("press", var2.getIntValue2() == 1)
-               .method6277("release", var2.getIntValue2() == 0)
+         (scope, event) -> {
+            MouseButtonEvent event2 = (MouseButtonEvent)event;
+            return method1866(scope, event)
+               .method6277("button", (double)event2.getIntValue())
+               .method6277("press", event2.getIntValue2() == 1)
+               .method6277("release", event2.getIntValue2() == 0)
                .method6277("screenOpen", ScriptEntityApi.method6575().gui.screen() != null)
                .getScriptableObject();
          }
       );
-      method1864("scroll", MouseScrollEvent.class, true, "прокрутка колеса в игре: vertical, horizontal", (var0, var1) -> {
-         MouseScrollEvent var2 = (MouseScrollEvent)var1;
-         return method1866(var0, var1).method6277("vertical", var2.getDoubleValue2()).method6277("horizontal", var2.getDoubleValue()).getScriptableObject();
+      method1864("scroll", MouseScrollEvent.class, true, "прокрутка колеса в игре: vertical, horizontal", (scope, event) -> {
+         MouseScrollEvent event2 = (MouseScrollEvent)event;
+         return method1866(scope, event).method6277("vertical", event2.getDoubleValue2()).method6277("horizontal", event2.getDoubleValue()).getScriptableObject();
       });
-      method1864("look", MouseRotationEvent.class, true, "поворот мышью за кадр: dx, dy; setDx(v), setDy(v)", (var0, var1) -> {
-         MouseRotationEvent var2 = (MouseRotationEvent)var1;
-         return method1866(var0, var1).method6277("dx", var2.getDoubleValue()).method6277("dy", var2.getDoubleValue2()).method6274("setDx", var1x -> {
-            var2.setDoubleValue(ScriptValueUtils.method6256(var1x, 0, var2.getDoubleValue()));
+      method1864("look", MouseRotationEvent.class, true, "поворот мышью за кадр: dx, dy; setDx(v), setDy(v)", (scope, event) -> {
+         MouseRotationEvent event2 = (MouseRotationEvent)event;
+         return method1866(scope, event).method6277("dx", event2.getDoubleValue()).method6277("dy", event2.getDoubleValue2()).method6274("setDx", var1x -> {
+            event2.setDoubleValue(ScriptValueUtils.method6256(var1x, 0, event2.getDoubleValue()));
             return null;
          }).method6274("setDy", var1x -> {
-            var2.setDoubleValue2(ScriptValueUtils.method6256(var1x, 0, var2.getDoubleValue2()));
+            event2.setDoubleValue2(ScriptValueUtils.method6256(var1x, 0, event2.getDoubleValue2()));
             return null;
          }).getScriptableObject();
       });
@@ -308,11 +308,11 @@ public final class ScriptEventBus {
          AttackEvent.class,
          true,
          "удар по сущности: target, stage ('pre'/'post')",
-         (var0, var1) -> {
-            AttackEvent var2 = (AttackEvent)var1;
-            return method1866(var0, var1)
-               .method6277("target", ScriptEntityApi.method6576(var0, var2.getEntity()))
-               .method6277("stage", var2.getType4().name().toLowerCase(Locale.ROOT))
+         (scope, event) -> {
+            AttackEvent event2 = (AttackEvent)event;
+            return method1866(scope, event)
+               .method6277("target", ScriptEntityApi.method6576(scope, event2.getEntity()))
+               .method6277("stage", event2.getType4().name().toLowerCase(Locale.ROOT))
                .getScriptableObject();
          }
       );
@@ -321,18 +321,18 @@ public final class ScriptEventBus {
          PlayerMoveEvent.class,
          true,
          "вектор движения тика: x, y, z; set(x, y, z)",
-         (var0, var1) -> {
-            PlayerMoveEvent var2 = (PlayerMoveEvent)var1;
-            Vec3 var3 = var2.getVec3d();
-            return method1866(var0, var1)
-               .method6277("x", var3.x)
-               .method6277("y", var3.y)
-               .method6277("z", var3.z)
+         (scope, event) -> {
+            PlayerMoveEvent event2 = (PlayerMoveEvent)event;
+            Vec3 vec3d = event2.getVec3d();
+            return method1866(scope, event)
+               .method6277("x", vec3d.x)
+               .method6277("y", vec3d.y)
+               .method6277("z", vec3d.z)
                .method6274(
                   "set",
                   var1x -> {
-                     Vec3 var2x = var2.getVec3d();
-                     var2.setVec3d(
+                     Vec3 var2x = event2.getVec3d();
+                     event2.setVec3d(
                         new Vec3(
                            ScriptValueUtils.method6256(var1x, 0, var2x.x),
                            ScriptValueUtils.method6256(var1x, 1, var2x.y),
@@ -343,18 +343,18 @@ public final class ScriptEventBus {
                   }
                )
                .method6274("setX", var1x -> {
-                  Vec3 var2x = var2.getVec3d();
-                  var2.setVec3d(new Vec3(ScriptValueUtils.method6256(var1x, 0, var2x.x), var2x.y, var2x.z));
+                  Vec3 var2x = event2.getVec3d();
+                  event2.setVec3d(new Vec3(ScriptValueUtils.method6256(var1x, 0, var2x.x), var2x.y, var2x.z));
                   return null;
                })
                .method6274("setY", var1x -> {
-                  Vec3 var2x = var2.getVec3d();
-                  var2.setVec3d(new Vec3(var2x.x, ScriptValueUtils.method6256(var1x, 0, var2x.y), var2x.z));
+                  Vec3 var2x = event2.getVec3d();
+                  event2.setVec3d(new Vec3(var2x.x, ScriptValueUtils.method6256(var1x, 0, var2x.y), var2x.z));
                   return null;
                })
                .method6274("setZ", var1x -> {
-                  Vec3 var2x = var2.getVec3d();
-                  var2.setVec3d(new Vec3(var2x.x, var2x.y, ScriptValueUtils.method6256(var1x, 0, var2x.z)));
+                  Vec3 var2x = event2.getVec3d();
+                  event2.setVec3d(new Vec3(var2x.x, var2x.y, ScriptValueUtils.method6256(var1x, 0, var2x.z)));
                   return null;
                })
                .getScriptableObject();
@@ -365,68 +365,68 @@ public final class ScriptEventBus {
          MoveInputEvent.class,
          true,
          "ввод движения: forward, back, left, right, jump, sneak, sprint; setForward(b)... set(forward, strafe), none()",
-         (var0, var1) -> {
-            MoveInputEvent var2 = (MoveInputEvent)var1;
-            Input var3 = var2.getPlayerInput();
-            return method1866(var0, var1)
-               .method6277("forward", var3.forward())
-               .method6277("back", var3.backward())
-               .method6277("left", var3.left())
-               .method6277("right", var3.right())
-               .method6277("jump", var3.jump())
-               .method6277("sneak", var3.shift())
-               .method6277("sprint", var3.sprint())
+         (scope, event) -> {
+            MoveInputEvent event2 = (MoveInputEvent)event;
+            Input playerInput = event2.getPlayerInput();
+            return method1866(scope, event)
+               .method6277("forward", playerInput.forward())
+               .method6277("back", playerInput.backward())
+               .method6277("left", playerInput.left())
+               .method6277("right", playerInput.right())
+               .method6277("jump", playerInput.jump())
+               .method6277("sneak", playerInput.shift())
+               .method6277("sprint", playerInput.sprint())
                .method6274("setForward", var1x -> {
-                  var2.method3038(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3038(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setBack", var1x -> {
-                  var2.method3047(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3047(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setLeft", var1x -> {
-                  var2.method3045(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3045(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setRight", var1x -> {
-                  var2.method3046(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3046(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setJump", var1x -> {
-                  var2.method3041(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3041(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setSneak", var1x -> {
-                  var2.method3040(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3040(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("setSprint", var1x -> {
-                  var2.method3039(ScriptValueUtils.method6259(var1x, 0, true));
+                  event2.method3039(ScriptValueUtils.method6259(var1x, 0, true));
                   return null;
                })
                .method6274("set", var1x -> {
-                  var2.method3042((float)ScriptValueUtils.method6256(var1x, 0, 0.0), (float)ScriptValueUtils.method6256(var1x, 1, 0.0));
+                  event2.method3042((float)ScriptValueUtils.method6256(var1x, 0, 0.0), (float)ScriptValueUtils.method6256(var1x, 1, 0.0));
                   return null;
                })
                .method6274("none", var1x -> {
-                  var2.method3044();
+                  event2.method3044();
                   return null;
                })
                .getScriptableObject();
          }
       );
-      method1864("jump", JumpEvent.class, false, "игрок прыгает", (var0, var1) -> method1866(var0, var1).getScriptableObject());
-      method1864("sprint", SprintUpdateEvent.class, true, "можно ли бежать: canSprint; setCanSprint(b)", (var0, var1) -> {
-         SprintUpdateEvent var2 = (SprintUpdateEvent)var1;
-         return method1866(var0, var1).method6277("canSprint", var2.isFlag2()).method6274("setCanSprint", var1x -> {
-            var2.setFlag2(ScriptValueUtils.method6259(var1x, 0, true));
+      method1864("jump", JumpEvent.class, false, "игрок прыгает", (scope, event) -> method1866(scope, event).getScriptableObject());
+      method1864("sprint", SprintUpdateEvent.class, true, "можно ли бежать: canSprint; setCanSprint(b)", (scope, event) -> {
+         SprintUpdateEvent event2 = (SprintUpdateEvent)event;
+         return method1866(scope, event).method6277("canSprint", event2.isFlag2()).method6274("setCanSprint", var1x -> {
+            event2.setFlag2(ScriptValueUtils.method6259(var1x, 0, true));
             return null;
          }).getScriptableObject();
       });
-      method1864("fov", FovEvent.class, true, "поле зрения: fov; setFov(n)", (var0, var1) -> {
-         FovEvent var2 = (FovEvent)var1;
-         return method1866(var0, var1).method6277("fov", (double)var2.getIntValue()).method6274("setFov", var1x -> {
-            var2.setIntValue(Math.max(1, Math.min(179, ScriptValueUtils.method6257(var1x, 0, var2.getIntValue()))));
+      method1864("fov", FovEvent.class, true, "поле зрения: fov; setFov(n)", (scope, event) -> {
+         FovEvent event2 = (FovEvent)event;
+         return method1866(scope, event).method6277("fov", (double)event2.getIntValue()).method6274("setFov", var1x -> {
+            event2.setIntValue(Math.max(1, Math.min(179, ScriptValueUtils.method6257(var1x, 0, event2.getIntValue()))));
             return null;
          }).getScriptableObject();
       });
@@ -435,13 +435,13 @@ public final class ScriptEventBus {
          ClickSlotEvent.class,
          true,
          "клик по слоту: windowId, slot, button, action",
-         (var0, var1) -> {
-            ClickSlotEvent var2 = (ClickSlotEvent)var1;
-            return method1866(var0, var1)
-               .method6277("windowId", (double)var2.getIntValue())
-               .method6277("slot", (double)var2.getIntValue2())
-               .method6277("button", (double)var2.getIntValue3())
-               .method6277("action", var2.getSlotActionType() == null ? "" : var2.getSlotActionType().name().toLowerCase(Locale.ROOT))
+         (scope, event) -> {
+            ClickSlotEvent event2 = (ClickSlotEvent)event;
+            return method1866(scope, event)
+               .method6277("windowId", (double)event2.getIntValue())
+               .method6277("slot", (double)event2.getIntValue2())
+               .method6277("button", (double)event2.getIntValue3())
+               .method6277("action", event2.getSlotActionType() == null ? "" : event2.getSlotActionType().name().toLowerCase(Locale.ROOT))
                .getScriptableObject();
          }
       );
@@ -450,20 +450,20 @@ public final class ScriptEventBus {
          BlockBreakingEvent.class,
          true,
          "ломание блока: x, y, z, side",
-         (var0, var1) -> {
-            BlockBreakingEvent var2 = (BlockBreakingEvent)var1;
-            return method1866(var0, var1)
-               .method6277("x", (double)var2.getBlockPos().getX())
-               .method6277("y", (double)var2.getBlockPos().getY())
-               .method6277("z", (double)var2.getBlockPos().getZ())
-               .method6277("side", var2.getDirection() == null ? "" : var2.getDirection().getSerializedName())
+         (scope, event) -> {
+            BlockBreakingEvent event2 = (BlockBreakingEvent)event;
+            return method1866(scope, event)
+               .method6277("x", (double)event2.getBlockPos().getX())
+               .method6277("y", (double)event2.getBlockPos().getY())
+               .method6277("z", (double)event2.getBlockPos().getZ())
+               .method6277("side", event2.getDirection() == null ? "" : event2.getDirection().getSerializedName())
                .getScriptableObject();
          }
       );
-      method1864("chat", ChatReceiveEvent.class, true, "входящее сообщение чата: text; setText(s) — подменить", (var0, var1) -> {
-         ChatReceiveEvent var2 = (ChatReceiveEvent)var1;
-         return method1866(var0, var1).method6277("text", var2.getText() == null ? "" : var2.getText().getString()).method6274("setText", var1x -> {
-            var2.method7858(Component.literal(ScriptValueUtils.method6254(var1x, 0, "")));
+      method1864("chat", ChatReceiveEvent.class, true, "входящее сообщение чата: text; setText(s) — подменить", (scope, event) -> {
+         ChatReceiveEvent event2 = (ChatReceiveEvent)event;
+         return method1866(scope, event).method6277("text", event2.getText() == null ? "" : event2.getText().getString()).method6274("setText", var1x -> {
+            event2.method7858(Component.literal(ScriptValueUtils.method6254(var1x, 0, "")));
             return null;
          }).getScriptableObject();
       });
@@ -472,12 +472,12 @@ public final class ScriptEventBus {
          ChatSendEvent.class,
          true,
          "своё сообщение перед отправкой: text, command",
-         (var0, var1) -> {
-            ChatSendEvent var2 = (ChatSendEvent)var1;
-            return method1866(var0, var1)
-               .method6277("text", var2.getMessage() == null ? "" : var2.getMessage())
-               .method6277("command", var2.method4602())
-               .method6277("pre", var2.method4603())
+         (scope, event) -> {
+            ChatSendEvent event2 = (ChatSendEvent)event;
+            return method1866(scope, event)
+               .method6277("text", event2.getMessage() == null ? "" : event2.getMessage())
+               .method6277("command", event2.method4602())
+               .method6277("pre", event2.method4603())
                .getScriptableObject();
          }
       );
@@ -488,28 +488,28 @@ public final class ScriptEventBus {
             PacketEvent.class,
             true,
             true,
-            (var0, var1) -> {
-               Packet var2 = var1 instanceof PacketEvent var3 ? var3.getPacket3() : ((PacketReceiveEvent)var1).getPacket();
-               boolean var5 = var1 instanceof PacketEvent var4 && var4.method7099();
-               return method1866(var0, var1)
-                  .method6277("name", ScriptEntityEvents.method7557(var2))
-                  .method6277("send", var5)
-                  .method6277("receive", !var5)
-                  .method6274("data", var2x -> ScriptEntityEvents.method7558(var0, var2))
+            (scope, event) -> {
+               Packet packet3 = event instanceof PacketEvent event2 ? event2.getPacket3() : ((PacketReceiveEvent)event).getPacket();
+               boolean string = event instanceof PacketEvent event3 && event3.method7099();
+               return method1866(scope, event)
+                  .method6277("name", ScriptEntityEvents.method7557(packet3))
+                  .method6277("send", string)
+                  .method6277("receive", !string)
+                  .method6274("data", var2x -> ScriptEntityEvents.method7558(scope, packet3))
                   .getScriptableObject();
             },
             "пакет: name, send, receive, data(); отмена работает в обе стороны",
             List.of(PacketReceiveEvent.class)
          )
       );
-      method1864("respawn", Event6.class, false, "возрождение или смена измерения", (var0, var1) -> method1866(var0, var1).getScriptableObject());
+      method1864("respawn", Event6.class, false, "возрождение или смена измерения", (scope, event) -> method1866(scope, event).getScriptableObject());
       method1864(
          "entity_spawn",
          EntityAddEvent.class,
          false,
          "сущность появилась: entity",
-         (var0, var1) -> method1866(var0, var1)
-            .method6277("entity", ScriptEntityApi.method6576(var0, ((EntityAddEvent)var1).getEntity()))
+         (scope, event) -> method1866(scope, event)
+            .method6277("entity", ScriptEntityApi.method6576(scope, ((EntityAddEvent)event).getEntity()))
             .getScriptableObject()
       );
       method1864(
@@ -517,17 +517,17 @@ public final class ScriptEventBus {
          EntityDeathEvent.class,
          false,
          "сущность умерла: entity",
-         (var0, var1) -> method1866(var0, var1)
-            .method6277("entity", ScriptEntityApi.method6576(var0, ((EntityDeathEvent)var1).getLivingEntity()))
+         (scope, event) -> method1866(scope, event)
+            .method6277("entity", ScriptEntityApi.method6576(scope, ((EntityDeathEvent)event).getLivingEntity()))
             .getScriptableObject()
       );
-      method1864("module_toggle", ModuleToggleEvent.class, false, "модуль переключён: name, enabled", (var0, var1) -> {
-         ModuleToggleEvent var2 = (ModuleToggleEvent)var1;
-         return method1866(var0, var1).method6277("name", var2.getModule().getName()).method6277("enabled", var2.isEnabled()).getScriptableObject();
+      method1864("module_toggle", ModuleToggleEvent.class, false, "модуль переключён: name, enabled", (scope, event) -> {
+         ModuleToggleEvent event2 = (ModuleToggleEvent)event;
+         return method1866(scope, event).method6277("name", event2.getModule().getName()).method6277("enabled", event2.isEnabled()).getScriptableObject();
       });
-      method1864("set_screen", SetScreenEvent.class, false, "открывается экран: screen (имя класса или '')", (var0, var1) -> {
-         SetScreenEvent var2 = (SetScreenEvent)var1;
-         return method1866(var0, var1).method6277("screen", ScriptScreenApi.method7047(var2.getScreen())).getScriptableObject();
+      method1864("set_screen", SetScreenEvent.class, false, "открывается экран: screen (имя класса или '')", (scope, event) -> {
+         SetScreenEvent event2 = (SetScreenEvent)event;
+         return method1866(scope, event).method6277("screen", ScriptScreenApi.method7047(event2.getScreen())).getScriptableObject();
       });
       method1865("enable", Script.Type.ENABLE, "скрипт запущен");
       method1865("disable", Script.Type.DISABLE, "скрипт остановлен или перезагружается");
@@ -601,21 +601,21 @@ public final class ScriptEventBus {
       }
 
       public Data(
-         String var1,
-         Class<? extends Event> var2,
-         boolean var3,
-         boolean var4,
-         BiFunction<Scriptable, Event, Scriptable> var5,
-         String var6,
-         List<Class<? extends Event>> var7
+         String text,
+         Class<? extends Event> classValue,
+         boolean flag,
+         boolean flag2,
+         BiFunction<Scriptable, Event, Scriptable> biFunction,
+         String str,
+         List<Class<? extends Event>> items
       ) {
-         this.text = var1;
-         this.classValue = var2;
-         this.flag = var3;
-         this.flag2 = var4;
-         this.biFunction = var5;
-         this.text2 = var6;
-         this.items = var7;
+         this.text = text;
+         this.classValue = classValue;
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.biFunction = biFunction;
+         this.text2 = str;
+         this.items = items;
       }
 
       public String name() {

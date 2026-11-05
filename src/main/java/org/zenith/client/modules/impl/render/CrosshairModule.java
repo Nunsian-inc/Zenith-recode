@@ -70,25 +70,25 @@ public final class CrosshairModule extends Module {
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      JsonObject var2 = var1.getAsJsonObject("Settings");
+      JsonObject json = super.save();
+      JsonObject jsonObject = json.getAsJsonObject("Settings");
 
-      for (Setting var4 : this.method515()) {
-         var4.safe(var2);
+      for (Setting setting : this.method515()) {
+         setting.safe(jsonObject);
       }
 
-      return var1;
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 != null) {
-         JsonObject var2 = var1.getAsJsonObject("Settings");
-         if (var2 != null) {
-            for (Setting var4 : this.method515()) {
-               if (var2.has(var4.getKey())) {
-                  var4.load(var2);
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json != null) {
+         JsonObject jsonObject = json.getAsJsonObject("Settings");
+         if (jsonObject != null) {
+            for (Setting setting : this.method515()) {
+               if (jsonObject.has(setting.getKey())) {
+                  setting.load(jsonObject);
                }
             }
          }
@@ -104,104 +104,104 @@ public final class CrosshairModule extends Module {
    }
 
    @EventTarget
-   public void method517(AttackEvent var1) {
-      if (var1.getType4() == AttackEvent.Type.POST) {
+   public void method517(AttackEvent event) {
+      if (event.getType4() == AttackEvent.Type.POST) {
          this.longValue = System.currentTimeMillis();
       }
    }
 
    @EventTarget(0)
-   public void method518(ScreenRenderEvent var1) {
+   public void method518(ScreenRenderEvent event) {
       if (mc.player != null && mc.level != null) {
          if (mc.options.getCameraType() == CameraType.FIRST_PERSON) {
-            Canvas var2 = this.canvas.getCanvas();
-            if (!var2.isEmpty()) {
-               MenuDrawContext var3 = var1.getMenuDrawContext();
-               float var4 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-               float var5 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-               float var6 = this.scale.getValue3();
-               float var7 = this.animationSpeed.getValue3();
-               float var8 = (float)(System.currentTimeMillis() - CONST_longValue) / 1000.0F;
-               float var9 = 0.0F;
-               float var10 = 1.0F;
-               float var11 = 1.0F;
+            Canvas canvas = this.canvas.getCanvas();
+            if (!canvas.isEmpty()) {
+               MenuDrawContext menuDrawContext = event.getMenuDrawContext();
+               float x = mc.getWindow().getGuiScaledWidth() / 2.0F;
+               float y = mc.getWindow().getGuiScaledHeight() / 2.0F;
+               float cell = this.scale.getValue3();
+               float f = this.animationSpeed.getValue3();
+               float f2 = (float)(System.currentTimeMillis() - CONST_longValue) / 1000.0F;
+               float angdeg = 0.0F;
+               float x2 = 1.0F;
+               float f3 = 1.0F;
                switch (this.method520()) {
                   case 1:
-                     var9 = var8 * 60.0F * var7;
+                     angdeg = f2 * 60.0F * f;
                      break;
                   case 2:
-                     var10 = 1.0F + 0.14F * Mth.sin(var8 * 3.0F * var7);
+                     x2 = 1.0F + 0.14F * Mth.sin(f2 * 3.0F * f);
                      break;
                   case 3:
-                     float var16 = Mth.clamp(mc.player.getAttackStrengthScale(0.0F), 0.0F, 1.0F);
-                     var10 = 1.0F + 0.45F * (1.0F - var16) * var7;
+                     float f4 = Mth.clamp(mc.player.getAttackStrengthScale(0.0F), 0.0F, 1.0F);
+                     x2 = 1.0F + 0.45F * (1.0F - f4) * f;
                      break;
                   case 4:
-                     float var12 = (float)(System.currentTimeMillis() - this.longValue) / (220.0F / var7);
-                     float var13 = var12 >= 1.0F ? 0.0F : (1.0F - var12) * (1.0F - var12);
-                     var10 = 1.0F + 0.5F * var13;
-                     var11 = 1.0F + 0.8F * var13;
+                     float f5 = (float)(System.currentTimeMillis() - this.longValue) / (220.0F / f);
+                     float f6 = f5 >= 1.0F ? 0.0F : (1.0F - f5) * (1.0F - f5);
+                     x2 = 1.0F + 0.5F * f6;
+                     f3 = 1.0F + 0.8F * f6;
                }
 
-               var3.pushMatrix();
-               var3.pose().translate(var4, var5);
-               if (var9 != 0.0F) {
-                  var3.pose().rotate((float)Math.toRadians(var9));
+               menuDrawContext.pushMatrix();
+               menuDrawContext.pose().translate(x, y);
+               if (angdeg != 0.0F) {
+                  menuDrawContext.pose().rotate((float)Math.toRadians(angdeg));
                }
 
-               if (var10 != 1.0F) {
-                  var3.pose().scale(var10, var10);
+               if (x2 != 1.0F) {
+                  menuDrawContext.pose().scale(x2, x2);
                }
 
-               var3.beginRectBatch();
-               float var17 = -15.0F * var6;
+               menuDrawContext.beginRectBatch();
+               float f4 = -15.0F * cell;
 
-               for (int var18 = 0; var18 < 31; var18++) {
-                  for (int var14 = 0; var14 < 31; var14++) {
-                     int var15 = var2.method136(var14, var18);
-                     if (var15 >>> 24 != 0) {
-                        var3.drawRectBatched(var17 + var14 * var6, var17 + var18 * var6, var6, var6, this.method519(var15, var11));
+               for (int i = 0; i < 31; i++) {
+                  for (int j = 0; j < 31; j++) {
+                     int n = canvas.method136(j, i);
+                     if (n >>> 24 != 0) {
+                        menuDrawContext.drawRectBatched(f4 + j * cell, f4 + i * cell, cell, cell, this.method519(n, f3));
                      }
                   }
                }
 
-               var3.flushRects();
-               var3.popMatrix();
+               menuDrawContext.flushRects();
+               menuDrawContext.popMatrix();
             }
          }
       }
    }
 
-   private ZenithColor method519(int var1, float var2) {
-      int var3 = var1 >>> 24;
-      int var4 = var1 >> 16 & 0xFF;
-      int var5 = var1 >> 8 & 0xFF;
-      int var6 = var1 & 0xFF;
+   private ZenithColor method519(int n, float f) {
+      int alpha = n >>> 24;
+      int intValue = n >> 16 & 0xFF;
+      int green = n >> 8 & 0xFF;
+      int blue = n & 0xFF;
       if (this.color.isSelected(1)) {
-         ZenithColor var7 = Zenith.getInstance().getStyleManager().getClientColor(0);
-         var4 = var7.getIntValue();
-         var5 = var7.getIntValue2();
-         var6 = var7.getIntValue3();
+         ZenithColor clientColor = Zenith.getInstance().getStyleManager().getClientColor(0);
+         intValue = clientColor.getIntValue();
+         green = clientColor.getIntValue2();
+         blue = clientColor.getIntValue3();
       } else if (this.color.isSelected(2)) {
-         ZenithColor var8 = this.customColor.getZenithColor();
-         var4 = var8.getIntValue();
-         var5 = var8.getIntValue2();
-         var6 = var8.getIntValue3();
+         ZenithColor zenithColor = this.customColor.getZenithColor();
+         intValue = zenithColor.getIntValue();
+         green = zenithColor.getIntValue2();
+         blue = zenithColor.getIntValue3();
       }
 
-      if (var2 != 1.0F) {
-         var4 = Math.min(255, Math.round(var4 * var2));
-         var5 = Math.min(255, Math.round(var5 * var2));
-         var6 = Math.min(255, Math.round(var6 * var2));
+      if (f != 1.0F) {
+         intValue = Math.min(255, Math.round(intValue * f));
+         green = Math.min(255, Math.round(green * f));
+         blue = Math.min(255, Math.round(blue * f));
       }
 
-      return new ZenithColor(var4, var5, var6, var3);
+      return new ZenithColor(intValue, green, blue, alpha);
    }
 
    private int method520() {
-      for (int var1 = 0; var1 < 5; var1++) {
-         if (this.animation.isSelected(var1)) {
-            return var1;
+      for (int i = 0; i < 5; i++) {
+         if (this.animation.isSelected(i)) {
+            return i;
          }
       }
 

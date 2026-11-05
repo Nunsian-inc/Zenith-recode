@@ -48,177 +48,177 @@ public class PartyHud extends Interface {
    private long longValue;
    private final Map<String, Integer> items4 = new HashMap<>();
 
-   public PartyHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public PartyHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
-   private List<PartyHud.Data> method6106(Cloud var1) {
-      ArrayList<PartyHud.Data> var2 = new ArrayList<>();
-      PartyMember.Data6 var3 = var1 == null ? null : var1.getPartyMember().getData6();
-      if (var3 == null) {
-         return var2;
+   private List<PartyHud.Data> method6106(Cloud cloud) {
+      ArrayList<PartyHud.Data> datas = new ArrayList<>();
+      PartyMember.Data6 data6 = cloud == null ? null : cloud.getPartyMember().getData6();
+      if (data6 == null) {
+         return datas;
       } else {
-         for (PartyMember.Data3 var5 : var3.getItems()) {
-            if (var5.uid() != var1.getLongValue()) {
-               var2.add(
+         for (PartyMember.Data3 data3 : data6.getItems()) {
+            if (data3.uid() != cloud.getLongValue()) {
+               datas.add(
                   new PartyHud.Data(
-                     var5.uid(),
-                     var5.username(),
-                     var5.getText2(),
-                     var5.isFlag(),
-                     var5.isFlag() ? var1.state().method8040(var5.uid()) : null,
-                     var3.method1215(var5.uid())
+                     data3.uid(),
+                     data3.username(),
+                     data3.getText2(),
+                     data3.isFlag(),
+                     data3.isFlag() ? cloud.state().method8040(data3.uid()) : null,
+                     data6.method1215(data3.uid())
                   )
                );
             }
          }
 
-         var2.sort((var0, var1x) -> Boolean.compare(var1x.isFlag(), var0.isFlag()));
-         return var2;
+         datas.sort((data, var1x) -> Boolean.compare(var1x.isFlag(), data.isFlag()));
+         return datas;
       }
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      Cloud var2 = Zenith.getInstance().getCloud();
-      List<PartyHud.Data> var3 = this.method6106(var2);
-      long var4 = System.currentTimeMillis();
-      if (var4 - this.longValue > 30000L) {
+   public void method8(CustomDrawContext customDrawContext) {
+      Cloud cloud = Zenith.getInstance().getCloud();
+      List<PartyHud.Data> datas = this.method6106(cloud);
+      long now = System.currentTimeMillis();
+      if (now - this.longValue > 30000L) {
          this.items2.clear();
          this.items3.clear();
-         this.longValue = var4;
-         if (this.items.size() > var3.size()) {
-            HashSet var6 = new HashSet();
+         this.longValue = now;
+         if (this.items.size() > datas.size()) {
+            HashSet hashSet = new HashSet();
 
-            for (PartyHud.Data var8 : var3) {
-               var6.add(var8.uid());
+            for (PartyHud.Data data : datas) {
+               hashSet.add(data.uid());
             }
 
-            this.items.keySet().retainAll(var6);
+            this.items.keySet().retainAll(hashSet);
          }
       }
 
-      PartyMember.Data6 var19 = var2 == null ? null : var2.getPartyMember().getData6();
-      String var20 = var19 == null ? "Party" : var19.name() + " · " + var19.method1217() + "/" + var19.getItems().size();
-      Font var21 = HudListLayout.nameFont();
-      Font var9 = Fonts.NEW_REGULAR.getFont(4.6F);
-      float var10 = HudListLayout.method7638("P", var20);
+      PartyMember.Data6 data6 = cloud == null ? null : cloud.getPartyMember().getData6();
+      String text = data6 == null ? "Party" : data6.name() + " · " + data6.method1217() + "/" + data6.getItems().size();
+      Font nameFont = HudListLayout.nameFont();
+      Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+      float f = HudListLayout.method7638("P", text);
 
-      for (PartyHud.Data var12 : var3) {
-         var10 = Math.max(var10, 26.0F + var21.width(var12.name()) + 34.0F + 6.0F);
+      for (PartyHud.Data data : datas) {
+         f = Math.max(f, 26.0F + nameFont.width(data.name()) + 34.0F + 6.0F);
       }
 
-      float var22 = this.animation2.method2808(Math.max(118.0F, var10));
-      float var23 = 20.0F + GuiStyle.PADDING.intValue() / 2.0F + var3.size() * 24.0F + (var3.isEmpty() ? 0.0F : 2.0F);
-      float var13 = this.animation.method2808(var3.isEmpty() && (!(mc.gui.screen() instanceof ChatScreen) || var19 == null) ? 0.0F : 1.0F);
-      if (!(var13 <= 0.01F)) {
-         this.width = var22;
-         this.height = var23;
-         float var14 = this.floatValue;
-         float var15 = this.floatValue2;
-         var1.pushMatrix();
-         var1.pose().translate(var14 + var22 / 2.0F, var15 + var23 / 2.0F);
-         var1.pose().scale(var13, var13);
-         var1.pose().translate(-(var14 + var22 / 2.0F), -(var15 + var23 / 2.0F));
-         HudListLayout.method7635(var1, var14, var15, var22, var23);
-         HudListLayout.method7636(var1, var14, var15, var22, "P", var20);
-         float var16 = var15 + 20.0F + GuiStyle.PADDING.intValue() / 4.0F;
+      float width = this.animation2.method2808(Math.max(118.0F, f));
+      float height = 20.0F + GuiStyle.PADDING.intValue() / 2.0F + datas.size() * 24.0F + (datas.isEmpty() ? 0.0F : 2.0F);
+      float x = this.animation.method2808(datas.isEmpty() && (!(mc.gui.screen() instanceof ChatScreen) || data6 == null) ? 0.0F : 1.0F);
+      if (!(x <= 0.01F)) {
+         this.width = width;
+         this.height = height;
+         float floatValue = this.floatValue;
+         float y1 = this.floatValue2;
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + height / 2.0F));
+         HudListLayout.method7635(customDrawContext, floatValue, y1, width, height);
+         HudListLayout.method7636(customDrawContext, floatValue, y1, width, "P", text);
+         float f2 = y1 + 20.0F + GuiStyle.PADDING.intValue() / 4.0F;
 
-         for (PartyHud.Data var18 : var3) {
-            this.method6107(var1, var2, var18, var14, var16, var22, var21, var9);
-            var16 += 24.0F;
+         for (PartyHud.Data data : datas) {
+            this.method6107(customDrawContext, cloud, data, floatValue, f2, width, nameFont, font);
+            f2 += 24.0F;
          }
 
-         var1.popMatrix();
+         customDrawContext.popMatrix();
       }
    }
 
-   private void method6107(CustomDrawContext var1, Cloud var2, PartyHud.Data var3, float var4, float var5, float var6, Font var7, Font var8) {
-      ZenithStyle var9 = HudListLayout.style();
-      float var10 = var3.isFlag() ? 1.0F : 0.45F;
-      float var11 = var4 + 6.0F;
-      float var12 = var5 + 5.0F;
-      var1.drawPlayerHeadWithRoundedShader(
-         this.method6114(var3.getText2()), var11, var12, 14.0F, ProxyDotRadiusData.method8069(4.2000003F), ZenithColor.INSTANCE.method7294(var10)
+   private void method6107(CustomDrawContext customDrawContext, Cloud cloud, PartyHud.Data data, float floatValue, float f, float width, Font nameFont, Font font) {
+      ZenithStyle style = HudListLayout.style();
+      float previewAlpha = data.isFlag() ? 1.0F : 0.45F;
+      float floatValue2 = floatValue + 6.0F;
+      float y = f + 5.0F;
+      customDrawContext.drawPlayerHeadWithRoundedShader(
+         this.method6114(data.getText2()), floatValue2, y, 14.0F, ProxyDotRadiusData.method8069(4.2000003F), ZenithColor.INSTANCE.method7294(previewAlpha)
       );
-      String var13 = "online";
-      if (var2 != null && var3.uid() > 0L && var2.getPartyMember().method1142(var3.uid())) {
-         var13 = var2.getPartyMember().method1141(var3.uid()).getText();
+      String text = "online";
+      if (cloud != null && data.uid() > 0L && cloud.getPartyMember().method1142(data.uid())) {
+         text = cloud.getPartyMember().method1141(data.uid()).getText();
       }
 
-      float var14 = 4.0F;
-      var1.drawRoundedRect(
-         var11 + 14.0F - var14 + 1.0F,
-         var12 + 14.0F - var14 + 1.0F,
-         var14,
-         var14,
-         ProxyDotRadiusData.method8069(var14 / 2.0F),
-         var3.isFlag() ? PartyManager.method51(var13) : var9.getTextTertiary().getZenithColor()
+      float width2 = 4.0F;
+      customDrawContext.drawRoundedRect(
+         floatValue2 + 14.0F - width2 + 1.0F,
+         y + 14.0F - width2 + 1.0F,
+         width2,
+         width2,
+         ProxyDotRadiusData.method8069(width2 / 2.0F),
+         data.isFlag() ? PartyManager.method51(text) : style.getTextTertiary().getZenithColor()
       );
-      float var15 = var11 + 14.0F + 5.0F;
-      float var16 = var5 + 3.5F;
-      String var17 = var3.isFlag2() ? "★ " + var3.name() : var3.name();
-      var1.drawText(var7, var17, var15, var16, var9.getTextEnable().getZenithColor().method7294(var10));
-      String var18 = this.method6109(var2, var3);
-      float var19 = var4 + var6 - 6.0F;
-      if (!var18.isEmpty()) {
-         var1.drawText(var8, var18, var19 - var8.width(var18), var16 + 0.5F, var9.getTextTertiary().getZenithColor().method7294(var10));
-         float var20 = this.method6111(var2, var3);
-         if (!Float.isNaN(var20)) {
+      float floatValue3 = floatValue2 + 14.0F + 5.0F;
+      float centeredTextY = f + 3.5F;
+      String name = data.isFlag2() ? "★ " + data.name() : data.name();
+      customDrawContext.drawText(nameFont, name, floatValue3, centeredTextY, style.getTextEnable().getZenithColor().method7294(previewAlpha));
+      String str = this.method6109(cloud, data);
+      float f2 = floatValue + width - 6.0F;
+      if (!str.isEmpty()) {
+         customDrawContext.drawText(font, str, f2 - font.width(str), centeredTextY + 0.5F, style.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         float angdeg = this.method6111(cloud, data);
+         if (!Float.isNaN(angdeg)) {
             method6112(
-               var1, var19 - var8.width(var18) - 6.0F, var16 + var8.height() / 2.0F + 0.5F, var20, var9.getPrimaryColor().getZenithColor().method7294(var10)
+               customDrawContext, f2 - font.width(str) - 6.0F, centeredTextY + font.height() / 2.0F + 0.5F, angdeg, style.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
          }
       }
 
-      Voice var29 = Zenith.getInstance().getVoice();
-      if (var29 != null && var3.uid() > 0L && var29.getVoiceState().method5365(var3.uid())) {
+      Voice voice = Zenith.getInstance().getVoice();
+      if (voice != null && data.uid() > 0L && voice.getVoiceState().method5365(data.uid())) {
          Voice.method371(
-            var1,
-            var15 + var7.width(var17) + 4.0F,
-            var16 + var7.height() / 2.0F,
-            var29.getVoiceState().method5366(var3.uid()),
-            var9.getPrimaryColor().getZenithColor()
+            customDrawContext,
+            floatValue3 + nameFont.width(name) + 4.0F,
+            centeredTextY + nameFont.height() / 2.0F,
+            voice.getVoiceState().method5366(data.uid()),
+            style.getPrimaryColor().getZenithColor()
          );
       }
 
-      float var21 = var5 + 24.0F - 8.5F;
-      float var22 = var4 + var6 - 6.0F - var15 - 26.0F;
-      PartyPlayerInfo var23 = var3.getPartyPlayerInfo();
-      float var24 = var23 == null ? 0.0F : method6110(var23.getFloatValue3(), 0.0F);
-      float var25 = var23 == null ? 20.0F : Math.max(1.0F, method6110(var23.getFloatValue4(), 20.0F));
-      float var26 = var23 == null ? 0.0F : method6110(var23.getFloatValue5(), 0.0F);
-      float var27 = this.items
-         .computeIfAbsent(var3.uid(), var0 -> new Animation(260L, 0.0F, Easing.INSTANCE12))
-         .method2808(Mth.clamp(var24 / var25, 0.0F, 1.0F));
-      var1.drawRoundedRect(var15, var21, var22, 3.0F, ProxyDotRadiusData.method8069(1.5F), var9.getHeaderHudBackground().getZenithColor().method7294(var10));
-      var1.drawRoundedRect(var15, var21, var22 * var27, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor.method7294(var10));
-      if (var26 > 0.0F) {
-         float var28 = Mth.clamp(var26 / var25, 0.0F, 1.0F);
-         var1.drawRoundedRect(var15, var21 - 1.5F, var22 * var28, 1.0F, ProxyDotRadiusData.method8069(0.5F), zenithColor2.method7294(var10));
+      float y2 = f + 24.0F - 8.5F;
+      float width3 = floatValue + width - 6.0F - floatValue3 - 26.0F;
+      PartyPlayerInfo partyPlayerInfo = data.getPartyPlayerInfo();
+      float f3 = partyPlayerInfo == null ? 0.0F : method6110(partyPlayerInfo.getFloatValue3(), 0.0F);
+      float f4 = partyPlayerInfo == null ? 20.0F : Math.max(1.0F, method6110(partyPlayerInfo.getFloatValue4(), 20.0F));
+      float f5 = partyPlayerInfo == null ? 0.0F : method6110(partyPlayerInfo.getFloatValue5(), 0.0F);
+      float f6 = this.items
+         .computeIfAbsent(data.uid(), l -> new Animation(260L, 0.0F, Easing.INSTANCE12))
+         .method2808(Mth.clamp(f3 / f4, 0.0F, 1.0F));
+      customDrawContext.drawRoundedRect(floatValue3, y2, width3, 3.0F, ProxyDotRadiusData.method8069(1.5F), style.getHeaderHudBackground().getZenithColor().method7294(previewAlpha));
+      customDrawContext.drawRoundedRect(floatValue3, y2, width3 * f6, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor.method7294(previewAlpha));
+      if (f5 > 0.0F) {
+         float f7 = Mth.clamp(f5 / f4, 0.0F, 1.0F);
+         customDrawContext.drawRoundedRect(floatValue3, y2 - 1.5F, width3 * f7, 1.0F, ProxyDotRadiusData.method8069(0.5F), zenithColor2.method7294(previewAlpha));
       }
 
-      String var30 = var23 == null ? (var3.isFlag() ? "?" : "—") : String.valueOf(Math.round(var24 + var26));
-      var1.drawText(var8, var30, var15 + var22 + 3.0F, var21 - var8.height() / 2.0F + 1.5F, var9.getTextSecondary().getZenithColor().method7294(var10));
-      this.method6108(var1, var23, var4 + var6 - 6.0F - 16.0F, var21 - 2.5F, var10);
+      String text2 = partyPlayerInfo == null ? (data.isFlag() ? "?" : "—") : String.valueOf(Math.round(f3 + f5));
+      customDrawContext.drawText(font, text2, floatValue3 + width3 + 3.0F, y2 - font.height() / 2.0F + 1.5F, style.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      this.method6108(customDrawContext, partyPlayerInfo, floatValue + width - 6.0F - 16.0F, y2 - 2.5F, previewAlpha);
    }
 
-   private void method6108(CustomDrawContext var1, PartyPlayerInfo var2, float var3, float var4, float var5) {
-      if (var2 != null) {
-         CloudPackets.Data7[] var6 = var2.getData7s();
-         int var7 = 0;
-         int var8 = 0;
+   private void method6108(CustomDrawContext customDrawContext, PartyPlayerInfo partyPlayerInfo, float f, float y, float previewAlpha) {
+      if (partyPlayerInfo != null) {
+         CloudPackets.Data7[] data7s = partyPlayerInfo.getData7s();
+         int n = 0;
+         int n2 = 0;
 
-         for (int var9 = 36; var9 <= 39 && var9 < var6.length; var9++) {
-            CloudPackets.Data7 var10 = var6[var9];
-            if (var10 != null && !var10.isEmpty()) {
-               var7++;
-               if (this.items4.size() > 256 && !this.items4.containsKey(var10.getText())) {
+         for (int i = 36; i <= 39 && i < data7s.length; i++) {
+            CloudPackets.Data7 data7 = data7s[i];
+            if (data7 != null && !data7.isEmpty()) {
+               n++;
+               if (this.items4.size() > 256 && !this.items4.containsKey(data7.getText())) {
                   this.items4.clear();
                }
 
-               int var11 = this.items4.computeIfAbsent(var10.getText(), var0 -> {
-                  Identifier var1x = Identifier.tryParse(var0);
+               int n3 = this.items4.computeIfAbsent(data7.getText(), identifier -> {
+                  Identifier var1x = Identifier.tryParse(identifier);
                   if (var1x != null && BuiltInRegistries.ITEM.containsKey(var1x)) {
                      ItemStack var2x = new ItemStack(BuiltInRegistries.ITEM.getValue(var1x));
                      return var2x.isDamageableItem() && var2x.getMaxDamage() > 0 ? var2x.getMaxDamage() : 0;
@@ -226,112 +226,112 @@ public class PartyHud extends Interface {
                      return 0;
                   }
                });
-               if (var11 > 0 && var10.getIntValue2() > var11 * 0.75F) {
-                  var8++;
+               if (n3 > 0 && data7.getIntValue2() > n3 * 0.75F) {
+                  n2++;
                }
             }
          }
 
-         ZenithStyle var12 = HudListLayout.style();
+         ZenithStyle style = HudListLayout.style();
 
-         for (int var13 = 0; var13 < 4; var13++) {
-            ZenithColor var14 = var13 < var7
-               ? (var13 < var8 ? zenithColor : var12.getPrimaryColor().getZenithColor())
-               : var12.getHeaderHudBackground().getZenithColor();
-            var1.drawRoundedRect(var3 + var13 * 4.0F, var4, 3.0F, 3.0F, ProxyDotRadiusData.method8069(0.8F), var14.method7294(var5));
+         for (int i = 0; i < 4; i++) {
+            ZenithColor zenithColor2 = i < n
+               ? (i < n2 ? zenithColor : style.getPrimaryColor().getZenithColor())
+               : style.getHeaderHudBackground().getZenithColor();
+            customDrawContext.drawRoundedRect(f + i * 4.0F, y, 3.0F, 3.0F, ProxyDotRadiusData.method8069(0.8F), zenithColor2.method7294(previewAlpha));
          }
       }
    }
 
-   private String method6109(Cloud var1, PartyHud.Data var2) {
-      PartyPlayerInfo var3 = var2.getPartyPlayerInfo();
-      if (var1 != null && var3 != null && mc.player != null) {
-         if (!var3.method3291(var1.method7911(), var1.method7913())) {
-            String var12 = var3.server();
-            return var12.isEmpty() ? "" : (var12.startsWith("singleplayer") ? "SP" : method6113(var12));
+   private String method6109(Cloud cloud, PartyHud.Data data) {
+      PartyPlayerInfo partyPlayerInfo = data.getPartyPlayerInfo();
+      if (cloud != null && partyPlayerInfo != null && mc.player != null) {
+         if (!partyPlayerInfo.method3291(cloud.method7911(), cloud.method7913())) {
+            String server = partyPlayerInfo.server();
+            return server.isEmpty() ? "" : (server.startsWith("singleplayer") ? "SP" : method6113(server));
          } else {
-            double var4 = var3.getDoubleValue() - mc.player.getX();
-            double var6 = var3.getDoubleValue3() - mc.player.getZ();
-            double var8 = var3.getDoubleValue2() - mc.player.getY();
-            double var10 = Math.sqrt(var4 * var4 + var8 * var8 + var6 * var6);
-            return Double.isFinite(var10) && var10 < 1.0E8 ? Math.round(var10) + "m" : "";
+            double d = partyPlayerInfo.getDoubleValue() - mc.player.getX();
+            double d2 = partyPlayerInfo.getDoubleValue3() - mc.player.getZ();
+            double d3 = partyPlayerInfo.getDoubleValue2() - mc.player.getY();
+            double d4 = Math.sqrt(d * d + d3 * d3 + d2 * d2);
+            return Double.isFinite(d4) && d4 < 1.0E8 ? Math.round(d4) + "m" : "";
          }
       } else {
-         return var2.isFlag() ? "" : method6115("hud.party.offline");
+         return data.isFlag() ? "" : method6115("hud.party.offline");
       }
    }
 
-   private static float method6110(float var0, float var1) {
-      return Float.isFinite(var0) ? var0 : var1;
+   private static float method6110(float f, float f2) {
+      return Float.isFinite(f) ? f : f2;
    }
 
-   private float method6111(Cloud var1, PartyHud.Data var2) {
-      PartyPlayerInfo var3 = var2.getPartyPlayerInfo();
-      if (var1 != null && var3 != null && mc.player != null && var3.method3291(var1.method7911(), var1.method7913())) {
-         double var4 = var3.getDoubleValue() - mc.player.getX();
-         double var6 = var3.getDoubleValue3() - mc.player.getZ();
-         if (var4 * var4 + var6 * var6 < 4.0) {
+   private float method6111(Cloud cloud, PartyHud.Data data) {
+      PartyPlayerInfo partyPlayerInfo = data.getPartyPlayerInfo();
+      if (cloud != null && partyPlayerInfo != null && mc.player != null && partyPlayerInfo.method3291(cloud.method7911(), cloud.method7913())) {
+         double x = partyPlayerInfo.getDoubleValue() - mc.player.getX();
+         double y = partyPlayerInfo.getDoubleValue3() - mc.player.getZ();
+         if (x * x + y * y < 4.0) {
             return Float.NaN;
          } else {
-            float var8 = (float)Math.toDegrees(Math.atan2(var6, var4)) - 90.0F;
-            return Mth.wrapDegrees(var8 - mc.player.getYRot());
+            float f = (float)Math.toDegrees(Math.atan2(y, x)) - 90.0F;
+            return Mth.wrapDegrees(f - mc.player.getYRot());
          }
       } else {
          return Float.NaN;
       }
    }
 
-   private static void method6112(CustomDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      var0.pushMatrix();
-      var0.pose().translate(var1, var2);
-      var0.pose().rotate((float)Math.toRadians(var3));
+   private static void method6112(CustomDrawContext customDrawContext, float x, float y, float angdeg, ZenithColor zenithColor) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().rotate((float)Math.toRadians(angdeg));
 
-      for (byte var5 = -1; var5 <= 1; var5 += 2) {
-         var0.pushMatrix();
-         var0.pose().rotate((float)Math.toRadians(35 * var5));
-         var0.drawRect(-0.5F, -2.8F, 1.0F, 3.2F, var4);
-         var0.popMatrix();
+      for (byte i = -1; i <= 1; i += 2) {
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().rotate((float)Math.toRadians(35 * i));
+         customDrawContext.drawRect(-0.5F, -2.8F, 1.0F, 3.2F, zenithColor);
+         customDrawContext.popMatrix();
       }
 
-      var0.drawRect(-0.5F, -2.6F, 1.0F, 5.0F, var4);
-      var0.popMatrix();
+      customDrawContext.drawRect(-0.5F, -2.6F, 1.0F, 5.0F, zenithColor);
+      customDrawContext.popMatrix();
    }
 
-   private static String method6113(String var0) {
-      int var1 = var0.indexOf(46);
-      String var2 = var1 > 0 ? var0.substring(0, var1) : var0;
-      return var2.length() > 10 ? var2.substring(0, 10) : var2;
+   private static String method6113(String server) {
+      int indexOf = server.indexOf(46);
+      String str = indexOf > 0 ? server.substring(0, indexOf) : server;
+      return str.length() > 10 ? str.substring(0, 10) : str;
    }
 
-   private Identifier method6114(String var1) {
-      String var2 = var1 == null ? "" : var1.toLowerCase(Locale.ROOT);
-      PlayerInfo var3 = this.items2.get(var2);
-      if (var3 != null && var3.getSkin() != null) {
-         return var3.getSkin().body().texturePath();
+   private Identifier method6114(String str) {
+      String lowerCase = str == null ? "" : str.toLowerCase(Locale.ROOT);
+      PlayerInfo playerInfo = this.items2.get(lowerCase);
+      if (playerInfo != null && playerInfo.getSkin() != null) {
+         return playerInfo.getSkin().body().texturePath();
       } else {
-         long var4 = System.currentTimeMillis();
-         Long var6 = this.items3.get(var2);
-         if (var6 != null && var4 - var6 < 2000L) {
+         long now = System.currentTimeMillis();
+         Long l = this.items3.get(lowerCase);
+         if (l != null && now - l < 2000L) {
             return DefaultPlayerSkin.getDefaultSkin().body().texturePath();
          } else {
             if (mc.getConnection() != null) {
-               for (PlayerInfo var8 : mc.getConnection().getOnlinePlayers()) {
-                  if (var8.getProfile() != null && var8.getProfile().name().equalsIgnoreCase(var2) && var8.getSkin() != null) {
-                     this.items2.put(var2, var8);
-                     this.items3.remove(var2);
-                     return var8.getSkin().body().texturePath();
+               for (PlayerInfo onlinePlayer : mc.getConnection().getOnlinePlayers()) {
+                  if (onlinePlayer.getProfile() != null && onlinePlayer.getProfile().name().equalsIgnoreCase(lowerCase) && onlinePlayer.getSkin() != null) {
+                     this.items2.put(lowerCase, onlinePlayer);
+                     this.items3.remove(lowerCase);
+                     return onlinePlayer.getSkin().body().texturePath();
                   }
                }
             }
 
-            this.items3.put(var2, var4);
+            this.items3.put(lowerCase, now);
             return DefaultPlayerSkin.getDefaultSkin().body().texturePath();
          }
       }
    }
 
-   private static String method6115(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String method6115(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    private static final class Data {
@@ -383,13 +383,13 @@ public class PartyHud extends Interface {
          return "Data[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "flag=" + this.flag + ", " + "partyPlayerInfo=" + this.partyPlayerInfo + ", " + "flag2=" + this.flag2 + "]";
       }
 
-      private Data(long var1, String var3, String var4, boolean var5, PartyPlayerInfo var6, boolean var7) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.flag = var5;
-         this.partyPlayerInfo = var6;
-         this.flag2 = var7;
+      private Data(long longValue, String text, String str, boolean flag, PartyPlayerInfo partyPlayerInfo, boolean flag2) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = str;
+         this.flag = flag;
+         this.partyPlayerInfo = partyPlayerInfo;
+         this.flag2 = flag2;
       }
 
       public long uid() {

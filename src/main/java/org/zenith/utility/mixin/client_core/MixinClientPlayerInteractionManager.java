@@ -35,11 +35,11 @@ public class MixinClientPlayerInteractionManager {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void clickSlotHook(int var1, int var2, int var3, ContainerInput var4, Player var5, CallbackInfo var6) {
-      ClickSlotEvent var7 = new ClickSlotEvent(var1, var2, var3, var4);
-      EventManager.call(var7);
-      if (var7.isCancelled()) {
-         var6.cancel();
+   public void clickSlotHook(int intValue, int n, int n2, ContainerInput slotActionType, Player player, CallbackInfo callbackInfo) {
+      ClickSlotEvent event = new ClickSlotEvent(intValue, n, n2, slotActionType);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -48,11 +48,11 @@ public class MixinClientPlayerInteractionManager {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void injectBlockBreaking(BlockPos var1, Direction var2, CallbackInfoReturnable<Boolean> var3) {
-      BlockBreakingEvent var4 = new BlockBreakingEvent(var1, var2);
-      EventManager.call(var4);
-      if (var4.isCancelled()) {
-         var3.setReturnValue(false);
+   private void injectBlockBreaking(BlockPos blockPos, Direction direction, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      BlockBreakingEvent event = new BlockBreakingEvent(blockPos, direction);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 
@@ -60,7 +60,7 @@ public class MixinClientPlayerInteractionManager {
       method = {"useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"},
       at = {@At("HEAD")}
    )
-   private void interact(Player var1, InteractionHand var2, CallbackInfoReturnable<InteractionResult> var3) {
+   private void interact(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> callbackInfoReturnable) {
       if (Zenith.getInstance().getRotationManager().getCurrentRotation() != null && Minecraft.getInstance().player != null) {
          this.safeYaw = Minecraft.getInstance().player.getYRot();
          this.safePitch = Minecraft.getInstance().player.getXRot();
@@ -75,7 +75,7 @@ public class MixinClientPlayerInteractionManager {
       method = {"useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"},
       at = {@At("RETURN")}
    )
-   private void interact2(Player var1, InteractionHand var2, CallbackInfoReturnable<InteractionResult> var3) {
+   private void interact2(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> callbackInfoReturnable) {
       if (Zenith.getInstance().getRotationManager().getCurrentRotation() != null && Minecraft.getInstance().player != null) {
          Minecraft.getInstance().player.setYRot(this.safeYaw);
          Minecraft.getInstance().player.setXRot(this.safePitch);
@@ -87,11 +87,11 @@ public class MixinClientPlayerInteractionManager {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void interactBlock(LocalPlayer var1, InteractionHand var2, BlockHitResult var3, CallbackInfoReturnable<InteractionResult> var4) {
-      InteractBlockEvent var5 = new InteractBlockEvent();
-      EventManager.call(var5);
-      if (var5.isCancelled()) {
-         var4.setReturnValue(InteractionResult.FAIL);
+   private void interactBlock(LocalPlayer player, InteractionHand interactionHand, BlockHitResult blockHitResult, CallbackInfoReturnable<InteractionResult> callbackInfoReturnable) {
+      InteractBlockEvent event = new InteractBlockEvent();
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfoReturnable.setReturnValue(InteractionResult.FAIL);
       }
    }
 }

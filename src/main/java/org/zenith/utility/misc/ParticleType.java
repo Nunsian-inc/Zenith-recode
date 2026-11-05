@@ -11,31 +11,31 @@ public class ParticleType {
    private static final Map<String, ParticleType.Type> items = new HashMap<>();
 
    public static String[] method1704() {
-      ParticleType.Type[] var0 = ParticleType.Type.values();
-      String[] var1 = new String[var0.length];
+      ParticleType.Type[] values = ParticleType.Type.values();
+      String[] strings = new String[values.length];
 
-      for (int var2 = 0; var2 < var0.length; var2++) {
-         var1[var2] = var0[var2].getText();
+      for (int i = 0; i < values.length; i++) {
+         strings[i] = values[i].getText();
       }
 
-      return var1;
+      return strings;
    }
 
-   public static Identifier method1705(String var0) {
-      ParticleType.Type var1 = items.get(var0);
-      if (var1 == null) {
+   public static Identifier method1705(String key) {
+      ParticleType.Type type = items.get(key);
+      if (type == null) {
          try {
-            var1 = ParticleType.Type.valueOf(var0.toUpperCase());
-         } catch (IllegalArgumentException var3) {
+            type = ParticleType.Type.valueOf(key.toUpperCase());
+         } catch (IllegalArgumentException e) {
          }
       }
 
-      return var1 != null ? var1.getSupplier().get() : null;
+      return type != null ? type.getSupplier().get() : null;
    }
 
    static {
-      for (ParticleType.Type var3 : ParticleType.Type.values()) {
-         items.put(var3.getText(), var3);
+      for (ParticleType.Type type : ParticleType.Type.values()) {
+         items.put(type.getText(), type);
       }
    }
 
@@ -50,9 +50,9 @@ public class ParticleType {
       private final String text;
       private final Supplier<Identifier> supplier;
 
-      private Type(String var3, String var4) {
-         this.text = var3;
-         this.supplier = () -> Zenith.method1501(var4);
+      private Type(String text, String languageFlagPath) {
+         this.text = text;
+         this.supplier = () -> Zenith.method1501(languageFlagPath);
       }
 
       @Generated

@@ -20,17 +20,17 @@ public abstract class MixinOptBubbleColumnUpParticle {
          target = "Lnet/minecraft/client/multiplayer/ClientLevel;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;"
       )}
    )
-   private FluidState zenith$cachedFluid(ClientLevel var1, BlockPos var2, Operation<FluidState> var3) {
+   private FluidState zenith$cachedFluid(ClientLevel referent, BlockPos pos, Operation<FluidState> operation) {
       if (!OptimizationFlags.flag4) {
-         return (FluidState)var3.call(new Object[]{var1, var2});
+         return (FluidState)operation.call(new Object[]{referent, pos});
       } else {
-         FluidState var4 = FluidColorCache.method7103(var1, var2);
-         if (var4 == null) {
-            var4 = (FluidState)var3.call(new Object[]{var1, var2});
-            FluidColorCache.method7104(var2, var4);
+         FluidState fluidState = FluidColorCache.method7103(referent, pos);
+         if (fluidState == null) {
+            fluidState = (FluidState)operation.call(new Object[]{referent, pos});
+            FluidColorCache.method7104(pos, fluidState);
          }
 
-         return var4;
+         return fluidState;
       }
    }
 }

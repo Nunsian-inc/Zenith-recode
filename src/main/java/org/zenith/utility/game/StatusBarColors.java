@@ -21,21 +21,21 @@ public final class StatusBarColors {
    private StatusBarColors() {
    }
 
-   public static void method1755(GuiGraphicsExtractor var0, Player var1, int var2, int var3) {
-      if (var1 != null && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6796()) {
-         float var4 = Math.max(0.0F, var1.getFoodData().getSaturationLevel());
-         float var5 = Math.min(1.0F, var4 / 20.0F);
-         ZenithStyle var6 = HudListLayout.style();
-         CustomDrawContext var7 = new CustomDrawContext(var0);
-         float var8 = var3;
-         float var9 = var2 - 3.0F;
-         float var10 = 79.0F;
-         float var11 = var8 - 80.0F - 1.0F;
-         ProxyDotRadiusData var12 = ProxyDotRadiusData.method8069(1.0F);
-         var7.drawRoundedRect(var11, var9, var10, 2.0F, var12, var6.getHeaderHudBackground().getZenithColor().method7294(0.85F));
-         if (!(var5 <= 0.0F)) {
-            ZenithColor var13 = var5 < 0.15F ? zenithColor2 : zenithColor;
-            var7.drawRoundedRect(var11, var9, Math.max(2.0F, var10 * var5), 2.0F, var12, var13);
+   public static void method1755(GuiGraphicsExtractor context, Player player, int n, int n2) {
+      if (player != null && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6796()) {
+         float f = Math.max(0.0F, player.getFoodData().getSaturationLevel());
+         float f2 = Math.min(1.0F, f / 20.0F);
+         ZenithStyle style = HudListLayout.style();
+         CustomDrawContext customDrawContext = new CustomDrawContext(context);
+         float f3 = n2;
+         float y = n - 3.0F;
+         float width = 79.0F;
+         float floatValue = f3 - 80.0F - 1.0F;
+         ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(1.0F);
+         customDrawContext.drawRoundedRect(floatValue, y, width, 2.0F, headerRadius, style.getHeaderHudBackground().getZenithColor().method7294(0.85F));
+         if (!(f2 <= 0.0F)) {
+            ZenithColor zenithColor22 = f2 < 0.15F ? zenithColor2 : zenithColor;
+            customDrawContext.drawRoundedRect(floatValue, y, Math.max(2.0F, width * f2), 2.0F, headerRadius, zenithColor22);
          }
       }
    }

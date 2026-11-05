@@ -15,8 +15,8 @@ public abstract class MixinItemCooldownManager {
       at = @At("HEAD"),
       argsOnly = true
    )
-   private int zenith$reduceCooldown(int var1, Identifier var2) {
-      Minecraft var3 = Minecraft.getInstance();
-      return var3.player != null && (Object)this == var3.player.getCooldowns() ? PvpHelperModule.INSTANCE.method4641(var2, var1) : var1;
+   private int zenith$reduceCooldown(int n, Identifier key) {
+      Minecraft minecraft = Minecraft.getInstance();
+      return minecraft.player != null && (Object)this == minecraft.player.getCooldowns() ? PvpHelperModule.INSTANCE.method4641(key, n) : n;
    }
 }

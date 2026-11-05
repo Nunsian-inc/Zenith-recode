@@ -23,37 +23,37 @@ public abstract class MixinDrawContextEntity {
       cancellable = true
    )
    private void zenith$followPose(
-      EntityRenderState var1, float var2, org.joml.Vector3fc var3, org.joml.Quaternionfc var4, org.joml.Quaternionfc var5, int var6, int var7, int var8, int var9, CallbackInfo var10
+      EntityRenderState renderState, float f, org.joml.Vector3fc translation, org.joml.Quaternionfc rotation, org.joml.Quaternionfc overrideCameraAngle, int x, int y, int n, int y2, CallbackInfo callbackInfo
    ) {
       if (!this.zenith$entityTransformed) {
-         GuiGraphicsExtractor var11 = (GuiGraphicsExtractor)(Object)this;
-         Matrix3x2f var12 = new Matrix3x2f(var11.pose());
-         float var13 = (float)Math.sqrt(var12.m00 * var12.m00 + var12.m01 * var12.m01);
-         float var14 = (float)Math.sqrt(var12.m10 * var12.m10 + var12.m11 * var12.m11);
-         boolean var15 = Math.abs(var13 - 1.0F) < 0.001F && Math.abs(var14 - 1.0F) < 0.001F && Math.abs(var12.m20) < 0.01F && Math.abs(var12.m21) < 0.01F;
-         if (!var15) {
-            Vector2f var16 = var12.transformPosition(new Vector2f(var6, var7));
-            Vector2f var17 = var12.transformPosition(new Vector2f(var8, var9));
-            int var18 = Math.round(Math.min(var16.x, var17.x));
-            int var19 = Math.round(Math.min(var16.y, var17.y));
-            int var20 = Math.round(Math.max(var16.x, var17.x));
-            int var21 = Math.round(Math.max(var16.y, var17.y));
-            if (var20 - var18 >= 1 && var21 - var19 >= 1) {
-               float var22 = (var13 + var14) / 2.0F;
+         GuiGraphicsExtractor guiGraphicsExtractor = (GuiGraphicsExtractor)(Object)this;
+         Matrix3x2f matrix3x2f = new Matrix3x2f(guiGraphicsExtractor.pose());
+         float f2 = (float)Math.sqrt(matrix3x2f.m00 * matrix3x2f.m00 + matrix3x2f.m01 * matrix3x2f.m01);
+         float f3 = (float)Math.sqrt(matrix3x2f.m10 * matrix3x2f.m10 + matrix3x2f.m11 * matrix3x2f.m11);
+         boolean flag = Math.abs(f2 - 1.0F) < 0.001F && Math.abs(f3 - 1.0F) < 0.001F && Math.abs(matrix3x2f.m20) < 0.01F && Math.abs(matrix3x2f.m21) < 0.01F;
+         if (!flag) {
+            Vector2f transformPosition = matrix3x2f.transformPosition(new Vector2f(x, y));
+            Vector2f vec = matrix3x2f.transformPosition(new Vector2f(n, y2));
+            int x0 = Math.round(Math.min(transformPosition.x, vec.x));
+            int y0 = Math.round(Math.min(transformPosition.y, vec.y));
+            int x1 = Math.round(Math.max(transformPosition.x, vec.x));
+            int y1 = Math.round(Math.max(transformPosition.y, vec.y));
+            if (x1 - x0 >= 1 && y1 - y0 >= 1) {
+               float f4 = (f2 + f3) / 2.0F;
                this.zenith$entityTransformed = true;
-               var11.pose().pushMatrix();
+               guiGraphicsExtractor.pose().pushMatrix();
 
                try {
-                  var11.pose().identity();
-                  var11.entity(var1, var2 * var22, var3, var4, var5, var18, var19, var20, var21);
+                  guiGraphicsExtractor.pose().identity();
+                  guiGraphicsExtractor.entity(renderState, f * f4, translation, rotation, overrideCameraAngle, x0, y0, x1, y1);
                } finally {
-                  var11.pose().popMatrix();
+                  guiGraphicsExtractor.pose().popMatrix();
                   this.zenith$entityTransformed = false;
                }
 
-               var10.cancel();
+               callbackInfo.cancel();
             } else {
-               var10.cancel();
+               callbackInfo.cancel();
             }
          }
       }

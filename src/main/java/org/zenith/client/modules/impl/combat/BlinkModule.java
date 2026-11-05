@@ -74,12 +74,12 @@ public final class BlinkModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() != null) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() != null) {
          if (mc.player != null && !mc.player.isDeadOrDying()) {
-            if (var1.getPacket3() instanceof ClientboundDisconnectPacket) {
+            if (event.getPacket3() instanceof ClientboundDisconnectPacket) {
                this.method6746();
-            } else if (var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+            } else if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
                this.method6747();
             }
          } else {
@@ -95,9 +95,9 @@ public final class BlinkModule extends Module {
       if (mc.player != null && mc.getConnection() != null) {
          this.method6747();
 
-         BlinkModule.Data var1;
-         while ((var1 = this.queue.poll()) != null) {
-            this.method6740(var1);
+         BlinkModule.Data data;
+         while ((data = this.queue.poll()) != null) {
+            this.method6740(data);
          }
       } else {
          this.method6746();
@@ -111,24 +111,24 @@ public final class BlinkModule extends Module {
    }
 
    @EventTarget
-   public void method6730(PacketProcessEndEvent var1) {
+   public void method6730(PacketProcessEndEvent event) {
       if (this.flag) {
          this.method6736();
       }
    }
 
    @EventTarget(0)
-   public void method6731(OutgoingPacketEvent var1) {
-      if (!var1.isCancelled() && !this.flag2 && var1.getPacket4() != null) {
-         Packet var2 = var1.getPacket4();
+   public void method6731(OutgoingPacketEvent event) {
+      if (!event.isCancelled() && !this.flag2 && event.getPacket4() != null) {
+         Packet packet4 = event.getPacket4();
          if (this.flag) {
-            var1.cancel();
-            this.method6734(var2);
+            event.cancel();
+            this.method6734(packet4);
          } else if (mc.player == null || mc.level == null) {
             this.method6746();
-         } else if (!this.method6733(var2)) {
-            var1.cancel();
-            this.method6734(var2);
+         } else if (!this.method6733(packet4)) {
+            event.cancel();
+            this.method6734(packet4);
          }
       }
    }
@@ -137,12 +137,12 @@ public final class BlinkModule extends Module {
       return this.flag || this.flag2;
    }
 
-   private boolean method6733(Packet<?> var1) {
-      return var1 instanceof ServerboundChatPacket || var1 instanceof ServerboundChatCommandPacket || var1 instanceof ServerboundResourcePackPacket;
+   private boolean method6733(Packet<?> packet4) {
+      return packet4 instanceof ServerboundChatPacket || packet4 instanceof ServerboundChatCommandPacket || packet4 instanceof ServerboundResourcePackPacket;
    }
 
-   private void method6734(Packet<?> var1) {
-      this.queue.add(new BlinkModule.Data(var1, this.method6744(var1)));
+   private void method6734(Packet<?> packet4) {
+      this.queue.add(new BlinkModule.Data(packet4, this.method6744(packet4)));
    }
 
    private void method6735() {
@@ -162,23 +162,23 @@ public final class BlinkModule extends Module {
          } else if (this.queue.isEmpty()) {
             this.method6745();
          } else {
-            long var1 = System.currentTimeMillis();
-            if (this.longValue > var1) {
-               this.longValue2 = var1;
+            long now = System.currentTimeMillis();
+            if (this.longValue > now) {
+               this.longValue2 = now;
             } else {
                if (this.longValue != 0L) {
                   this.longValue = 0L;
-                  this.longValue2 = var1;
+                  this.longValue2 = now;
                   this.doubleValue = Math.max(this.doubleValue, 1.0);
                } else {
-                  this.method6737(var1);
+                  this.method6737(now);
                }
 
                while (this.doubleValue >= 1.0 && !this.queue.isEmpty()) {
-                  BlinkModule.Data var3 = this.queue.poll();
-                  this.method6740(var3);
+                  BlinkModule.Data data = this.queue.poll();
+                  this.method6740(data);
                   this.doubleValue--;
-                  if (var3.getVec3d() != null && this.method6741(var3.getVec3d())) {
+                  if (data.getVec3d() != null && this.method6741(data.getVec3d())) {
                      this.longValue = System.currentTimeMillis() + 200L;
                      this.longValue2 = System.currentTimeMillis();
                      this.doubleValue = 0.0;
@@ -194,10 +194,10 @@ public final class BlinkModule extends Module {
       }
    }
 
-   private void method6737(long var1) {
-      long var3 = Math.max(0L, var1 - this.longValue2);
-      this.longValue2 = var1;
-      this.doubleValue = this.doubleValue + this.method6738() * (var3 / 1000.0);
+   private void method6737(long now) {
+      long l = Math.max(0L, now - this.longValue2);
+      this.longValue2 = now;
+      this.doubleValue = this.doubleValue + this.method6738() * (l / 1000.0);
       this.doubleValue = Math.min(this.doubleValue, this.method6738());
    }
 
@@ -209,77 +209,77 @@ public final class BlinkModule extends Module {
       return this.method6738() / 20.0;
    }
 
-   private void method6740(BlinkModule.Data var1) {
+   private void method6740(BlinkModule.Data data) {
       if (mc.getConnection() != null) {
          this.flag2 = true;
 
          try {
-            mc.getConnection().send(var1.getPacket());
+            mc.getConnection().send(data.getPacket());
          } finally {
             this.flag2 = false;
          }
       }
    }
 
-   private boolean method6741(Vec3 var1) {
-      Vec3 var2 = this.vec3d == null ? var1 : this.vec3d;
-      this.vec3d = var1;
-      return this.method6742(var2, var1);
+   private boolean method6741(Vec3 vec3d) {
+      Vec3 vec = this.vec3d == null ? vec3d : this.vec3d;
+      this.vec3d = vec3d;
+      return this.method6742(vec, vec3d);
    }
 
-   private boolean method6742(Vec3 var1, Vec3 var2) {
+   private boolean method6742(Vec3 vec, Vec3 vec3d) {
       if (mc.level == null) {
          return false;
       } else {
-         AABB var3 = new AABB(
-               Math.min(var1.x, var2.x),
-               Math.min(var1.y, var2.y),
-               Math.min(var1.z, var2.z),
-               Math.max(var1.x, var2.x),
-               Math.max(var1.y, var2.y),
-               Math.max(var1.z, var2.z)
+         AABB inflate = new AABB(
+               Math.min(vec.x, vec3d.x),
+               Math.min(vec.y, vec3d.y),
+               Math.min(vec.z, vec3d.z),
+               Math.max(vec.x, vec3d.x),
+               Math.max(vec.y, vec3d.y),
+               Math.max(vec.z, vec3d.z)
             )
             .inflate(1.5);
-         boolean var4 = false;
-         double var5 = 2.25;
+         boolean flag = false;
+         double d = 2.25;
 
-         for (ItemEntity var8 : mc.level.getEntitiesOfClass(ItemEntity.class, var3, var0 -> !var0.isRemoved())) {
-            if (!this.items.contains(var8.getId()) && this.method6743(var8.position(), var1, var2) <= var5) {
-               this.items.add(var8.getId());
-               var4 = true;
+         for (ItemEntity itemEntity : mc.level.getEntitiesOfClass(ItemEntity.class, inflate, itemEntity2 -> !itemEntity2.isRemoved())) {
+            if (!this.items.contains(itemEntity.getId()) && this.method6743(itemEntity.position(), vec, vec3d) <= d) {
+               this.items.add(itemEntity.getId());
+               flag = true;
             }
          }
 
-         return var4;
+         return flag;
       }
    }
 
-   private double method6743(Vec3 var1, Vec3 var2, Vec3 var3) {
-      double var4 = var3.x - var2.x;
-      double var6 = var3.y - var2.y;
-      double var8 = var3.z - var2.z;
-      double var10 = var4 * var4 + var6 * var6 + var8 * var8;
-      if (var10 <= 1.0E-6) {
-         return var1.distanceToSqr(var3);
+   private double method6743(Vec3 position, Vec3 vec, Vec3 vec3d) {
+      double d = vec3d.x - vec.x;
+      double d2 = vec3d.y - vec.y;
+      double d3 = vec3d.z - vec.z;
+      double d4 = d * d + d2 * d2 + d3 * d3;
+      if (d4 <= 1.0E-6) {
+         return position.distanceToSqr(vec3d);
       } else {
-         double var12 = ((var1.x - var2.x) * var4 + (var1.y - var2.y) * var6 + (var1.z - var2.z) * var8) / var10;
-         var12 = Math.max(0.0, Math.min(1.0, var12));
-         double var14 = var2.x + var4 * var12;
-         double var16 = var2.y + var6 * var12;
-         double var18 = var2.z + var8 * var12;
-         double var20 = var1.x - var14;
-         double var22 = var1.y - var16;
-         double var24 = var1.z - var18;
-         return var20 * var20 + var22 * var22 + var24 * var24;
+         double d5 = ((position.x - vec.x) * d + (position.y - vec.y) * d2 + (position.z - vec.z) * d3) / d4;
+         d5 = Math.max(0.0, Math.min(1.0, d5));
+         double d6 = vec.x + d * d5;
+         double d7 = vec.y + d2 * d5;
+         double d8 = vec.z + d3 * d5;
+         double d9 = position.x - d6;
+         double d10 = position.y - d7;
+         double d11 = position.z - d8;
+         return d9 * d9 + d10 * d10 + d11 * d11;
       }
    }
 
-   private Vec3 method6744(Packet<?> var1) {
-      if (var1 instanceof ServerboundMovePlayerPacket var2 && mc.player != null) {
-         double var3 = var2.getX(Double.NaN);
-         double var5 = var2.getY(Double.NaN);
-         double var7 = var2.getZ(Double.NaN);
-         return !Double.isNaN(var3) && !Double.isNaN(var5) && !Double.isNaN(var7) ? new Vec3(var3, var5, var7) : null;
+   private Vec3 method6744(Packet<?> packet4) {
+      if (packet4 instanceof ServerboundMovePlayerPacket movePlayerPacket && mc.player != null) {
+         double x = movePlayerPacket.getX(Double.NaN);
+         double y = movePlayerPacket.getY(Double.NaN);
+         double z = movePlayerPacket.getZ(Double.NaN);
+         return !Double.isNaN(x) && !Double.isNaN(y) && !Double.isNaN(z) ? new Vec3(x, y, z) : null;
       } else {
          return null;
       }
@@ -299,7 +299,7 @@ public final class BlinkModule extends Module {
    }
 
    private void method6747() {
-      this.queue.removeIf(var0 -> BlinkUtils.method1444(var0.getPacket()));
+      this.queue.removeIf(data -> BlinkUtils.method1444(data.getPacket()));
    }
 
    private void method6748() {
@@ -341,9 +341,9 @@ public final class BlinkModule extends Module {
          return "Data[" + "packet=" + this.packet + ", " + "vec3d=" + this.vec3d + "]";
       }
 
-      private Data(Packet<?> var1, Vec3 var2) {
-         this.packet = var1;
-         this.vec3d = var2;
+      private Data(Packet<?> packet, Vec3 vec3d) {
+         this.packet = packet;
+         this.vec3d = vec3d;
       }
 
       public Packet<?> getPacket() {

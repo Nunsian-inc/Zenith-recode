@@ -48,24 +48,24 @@ public class WayManager extends JsonListStorage<Way> implements MinecraftAccess 
       return this.items.isEmpty();
    }
 
-   public void addWay(Way var1) {
-      this.items.add(var1);
+   public void addWay(Way way) {
+      this.items.add(way);
    }
 
-   public void addWay(String var1, BlockPos var2, String var3) {
-      this.items.add(new Way(var1, var2, var3));
+   public void addWay(String name, BlockPos pos, String server) {
+      this.items.add(new Way(name, pos, server));
    }
 
-   public Way getWay(String var1) {
-      return this.items.stream().filter(var1x -> var1x.name().equalsIgnoreCase(var1)).findAny().orElse(null);
+   public Way getWay(String argument) {
+      return this.items.stream().filter(var1x -> var1x.name().equalsIgnoreCase(argument)).findAny().orElse(null);
    }
 
-   public boolean hasWay(String var1) {
-      return this.items.stream().anyMatch(var1x -> var1x.name().equalsIgnoreCase(var1));
+   public boolean hasWay(String string) {
+      return this.items.stream().anyMatch(var1x -> var1x.name().equalsIgnoreCase(string));
    }
 
-   public void deleteWay(String var1) {
-      this.items.removeIf(var1x -> var1x.name().equalsIgnoreCase(var1));
+   public void deleteWay(String anotherString) {
+      this.items.removeIf(var1x -> var1x.name().equalsIgnoreCase(anotherString));
    }
 
    public void clearList() {
@@ -79,22 +79,22 @@ public class WayManager extends JsonListStorage<Way> implements MinecraftAccess 
    }
 
    @EventTarget
-   public void onChatReceive(ChatReceiveEvent var1) {
+   public void onChatReceive(ChatReceiveEvent event) {
       if (this.pendingEventMessages > 0) {
          this.pendingEventMessages--;
-         this.onCheckMessage(var1.getText().getString());
+         this.onCheckMessage(event.getText().getString());
       }
    }
 
-   public void onCheckMessage(String var1) {
-      Matcher var2 = CHAT_COORDS_PATTERN.matcher(var1);
-      if (var2.find()) {
-         int var3 = Integer.parseInt(var2.group(1));
-         int var4 = Integer.parseInt(var2.group(2));
-         int var5 = Integer.parseInt(var2.group(3));
+   public void onCheckMessage(String string) {
+      Matcher matcher = CHAT_COORDS_PATTERN.matcher(string);
+      if (matcher.find()) {
+         int x = Integer.parseInt(matcher.group(1));
+         int y = Integer.parseInt(matcher.group(2));
+         int z = Integer.parseInt(matcher.group(3));
          this.deleteWay("event");
-         this.addWay(new Way("event", new BlockPos(var3, var4, var5), this.getCurrentServer()));
-         ChatLogger.method2019("Точка event добавлена: " + var3 + " " + var4 + " " + var5);
+         this.addWay(new Way("event", new BlockPos(x, y, z), this.getCurrentServer()));
+         ChatLogger.method2019("Точка event добавлена: " + x + " " + y + " " + z);
          this.pendingEventMessages = 0;
       }
    }
@@ -104,64 +104,64 @@ public class WayManager extends JsonListStorage<Way> implements MinecraftAccess 
    }
 
    @EventTarget
-   public void onDraw(DrawEvent var1) {
+   public void onDraw(DrawEvent event) {
       if (!this.isEmpty() && mc.level != null) {
          this.items
             .forEach(
-               var2 -> {
-                  Vec3 var3 = net.minecraft.world.phys.Vec3.atCenterOf(var2.pos());
-                  Vec3 var4 = ProjectionUtils.method301(var3);
-                  if (ProjectionUtils.method302(var3)
-                     && var2.server()
+               way -> {
+                  Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(way.pos());
+                  Vec3 vec = ProjectionUtils.method301(atCenterOf);
+                  if (ProjectionUtils.method302(atCenterOf)
+                     && way.server()
                         .equalsIgnoreCase(
                            mc.getConnection() != null && mc.getConnection().getServerData() != null
                               ? mc.getConnection().getServerData().ip
                               : "VANILLA"
                         )) {
-                     String var5 = (int)MathUtils.method2652(mc.getEntityRenderDispatcher().camera.position().distanceTo(var3), 1.0) + "m";
-                     ZenithStyle var6 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-                     Font var7 = Fonts.NEW_MEDIUM.getFont(8.0F);
-                     float var8 = GuiStyle.PADDING.intValue();
-                     float var9 = var7.height() + GuiStyle.PADDING.intValue() + 1.0F;
-                     float var10 = var8 + var7.width(var2.name()) + var8 + var7.width(var5) + var8 + var8 / 2.0F;
-                     float var11 = (float)(var4.x() - var10 / 2.0F);
-                     float var12 = (float)(var4.y() - var9 / 2.0F);
-                     this.pushCenteredScale(var1.getCustomDrawContext(), (float)var4.x, (float)var4.y, 1.0F, 1.0F);
-                     ProxyDotRadiusData var13 = ProxyDotRadiusData.method8069(InterfaceModule.method6801() * 0.6F);
+                     String text = (int)MathUtils.method2652(mc.getEntityRenderDispatcher().camera.position().distanceTo(atCenterOf), 1.0) + "m";
+                     ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+                     Font font = Fonts.NEW_MEDIUM.getFont(8.0F);
+                     float intValue = GuiStyle.PADDING.intValue();
+                     float height = font.height() + GuiStyle.PADDING.intValue() + 1.0F;
+                     float panelWidth = intValue + font.width(way.name()) + intValue + font.width(text) + intValue + intValue / 2.0F;
+                     float floatValue = (float)(vec.x() - panelWidth / 2.0F);
+                     float y = (float)(vec.y() - height / 2.0F);
+                     this.pushCenteredScale(event.getCustomDrawContext(), (float)vec.x, (float)vec.y, 1.0F, 1.0F);
+                     ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(InterfaceModule.method6801() * 0.6F);
                      RenderShaders.method5287(
-                        MatrixUtils.method664(var1.getCustomDrawContext().pose()),
-                        var11,
-                        var12,
-                        var10,
-                        var9,
+                        MatrixUtils.method664(event.getCustomDrawContext().pose()),
+                        floatValue,
+                        y,
+                        panelWidth,
+                        height,
                         22.0F,
-                        var13,
+                        headerRadius,
                         ZenithColor.INSTANCE,
                         EntityESPModule.INSTANCE.getBlur().isEnabled() && EntityESPModule.INSTANCE.getBlur().isVisible(),
                         EntityESPModule.INSTANCE.getGlow().isEnabled() && EntityESPModule.INSTANCE.getGlow().isVisible()
                      );
-                     var1.getCustomDrawContext().drawRoundedRect(var11, var12, var10, var9, var13, var6.getHudBackground().getZenithColor());
-                     float var14 = var12 + (var9 - 1.0F - var7.height()) / 2.0F;
-                     var1.getCustomDrawContext()
-                        .drawRoundedRect(var11, var12, var8 + var7.width(var2.name()) + var8, var9, var13, var6.getHudBackground().getZenithColor());
-                     var1.getCustomDrawContext().drawText(var7, var2.name(), var11 + var8, var14, var6.getTextEnable().getZenithColor());
-                     var1.getCustomDrawContext()
-                        .drawText(var7, var5, var11 + var8 + var7.width(var2.name()) + var8 + var8 / 2.0F, var14, var6.getTextEnable().getZenithColor());
-                     this.pop(var1.getCustomDrawContext());
+                     event.getCustomDrawContext().drawRoundedRect(floatValue, y, panelWidth, height, headerRadius, currentStyle.getHudBackground().getZenithColor());
+                     float centeredTextY = y + (height - 1.0F - font.height()) / 2.0F;
+                     event.getCustomDrawContext()
+                        .drawRoundedRect(floatValue, y, intValue + font.width(way.name()) + intValue, height, headerRadius, currentStyle.getHudBackground().getZenithColor());
+                     event.getCustomDrawContext().drawText(font, way.name(), floatValue + intValue, centeredTextY, currentStyle.getTextEnable().getZenithColor());
+                     event.getCustomDrawContext()
+                        .drawText(font, text, floatValue + intValue + font.width(way.name()) + intValue + intValue / 2.0F, centeredTextY, currentStyle.getTextEnable().getZenithColor());
+                     this.pop(event.getCustomDrawContext());
                   }
                }
             );
       }
    }
 
-   private void pushCenteredScale(CustomDrawContext var1, float var2, float var3, float var4, float var5) {
-      var1.pushMatrix();
-      var1.pose().translate(var2, var3);
-      var1.pose().scale(var4 * EntityESPModule.INSTANCE.getSize(), var5 * EntityESPModule.INSTANCE.getSize());
-      var1.pose().translate(-var2, -var3);
+   private void pushCenteredScale(CustomDrawContext customDrawContext, float x, float y, float f, float f2) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().scale(f * EntityESPModule.INSTANCE.getSize(), f2 * EntityESPModule.INSTANCE.getSize());
+      customDrawContext.pose().translate(-x, -y);
    }
 
-   private void pop(CustomDrawContext var1) {
-      var1.popMatrix();
+   private void pop(CustomDrawContext customDrawContext) {
+      customDrawContext.popMatrix();
    }
 }

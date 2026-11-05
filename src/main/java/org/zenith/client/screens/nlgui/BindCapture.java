@@ -7,12 +7,12 @@ public final class BindCapture {
    private BindCapture() {
    }
 
-   public static void begin(Object var0) {
-      owner = var0;
+   public static void begin(Object obj) {
+      owner = obj;
    }
 
-   public static void end(Object var0) {
-      if (owner == var0) {
+   public static void end(Object obj) {
+      if (owner == obj) {
          owner = null;
       }
    }

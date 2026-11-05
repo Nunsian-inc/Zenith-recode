@@ -27,24 +27,24 @@ public class HeldItemRenderEvent implements Event {
    }
 
    @Generated
-   public void setAbstractClientPlayerEntity(AbstractClientPlayer var1) {
-      this.abstractClientPlayerEntity = var1;
+   public void setAbstractClientPlayerEntity(AbstractClientPlayer abstractClientPlayerEntity) {
+      this.abstractClientPlayerEntity = abstractClientPlayerEntity;
    }
 
    @Generated
-   public void setItemStack(ItemStack var1) {
-      this.itemStack = var1;
+   public void setItemStack(ItemStack itemStack) {
+      this.itemStack = itemStack;
    }
 
    @Generated
-   public void setHand(InteractionHand var1) {
-      this.hand = var1;
+   public void setHand(InteractionHand hand) {
+      this.hand = hand;
    }
 
    @Generated
-   public HeldItemRenderEvent(AbstractClientPlayer var1, ItemStack var2, InteractionHand var3) {
-      this.abstractClientPlayerEntity = var1;
-      this.itemStack = var2;
-      this.hand = var3;
+   public HeldItemRenderEvent(AbstractClientPlayer abstractClientPlayerEntity, ItemStack itemStack, InteractionHand hand) {
+      this.abstractClientPlayerEntity = abstractClientPlayerEntity;
+      this.itemStack = itemStack;
+      this.hand = hand;
    }
 }

@@ -121,6 +121,6 @@ public abstract class AbstractFadeModifier extends AbstractModifier {
 
    @FunctionalInterface
    public interface EasingFunction {
-      float ease(String var1, TransformType var2, float var3);
+      float ease(String modelName, TransformType type, float progress);
    }
 }

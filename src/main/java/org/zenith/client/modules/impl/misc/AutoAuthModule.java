@@ -29,20 +29,20 @@ public final class AutoAuthModule extends Module {
          "autoauth.passSetting.command", "autoauth.passSetting.command.desc", "BogdanSuperCoder", "Default password"
       ) {
          @Override
-         public void safe(JsonObject var1) {
+         public void safe(JsonObject json) {
          }
 
          @Override
-         public void load(JsonObject var1) {
+         public void load(JsonObject json) {
          }
 
          @Override
-         public boolean method2122(String var1) {
-            boolean var2 = !var1.equals(this.getValue());
-            if (!super.method2122(var1)) {
+         public boolean method2122(String text) {
+            boolean flag = !text.equals(this.getValue());
+            if (!super.method2122(text)) {
                return false;
             } else {
-               if (var2) {
+               if (flag) {
                   AutoAuthModule.this.method2711();
                }
 
@@ -56,10 +56,10 @@ public final class AutoAuthModule extends Module {
    private final BooleanSetting login = new BooleanSetting("autoauth.loginSetting.login", "autoauth.loginSetting.description", true);
    private final ButtonSetting openFile = new ButtonSetting("autoauth.openFile", "K", () -> {
       try {
-         String var1 = this.file.getAbsolutePath();
-         new ProcessBuilder("cmd", "/c", "start", "", "\"" + var1 + "\"").start();
-      } catch (Exception var2) {
-         var2.printStackTrace();
+         String absolutePath = this.file.getAbsolutePath();
+         new ProcessBuilder("cmd", "/c", "start", "", "\"" + absolutePath + "\"").start();
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    });
    private final Map<String, String> items = new HashMap<>();
@@ -76,108 +76,108 @@ public final class AutoAuthModule extends Module {
             return;
          }
 
-         for (String var3 : Files.readAllLines(this.file.toPath())) {
-            if (var3.contains(":")) {
-               String[] var4 = var3.split(":", 2);
-               if (var4[0].trim().equalsIgnoreCase("default")) {
-                  this.command.setValue(var4[1].trim());
+         for (String allLine : Files.readAllLines(this.file.toPath())) {
+            if (allLine.contains(":")) {
+               String[] strings = allLine.split(":", 2);
+               if (strings[0].trim().equalsIgnoreCase("default")) {
+                  this.command.setValue(strings[1].trim());
                } else {
-                  String[] var5 = var3.split(":", 3);
-                  if (var5.length >= 3) {
-                     String var6 = var5[0].trim().toLowerCase();
-                     String var7 = var5[1].trim();
-                     String var8 = var5[2].trim();
-                     String var9 = var6 + ":" + var7.toLowerCase();
-                     this.items.put(var9, var8);
+                  String[] strings2 = allLine.split(":", 3);
+                  if (strings2.length >= 3) {
+                     String lowerCase = strings2[0].trim().toLowerCase();
+                     String str = strings2[1].trim();
+                     String str2 = strings2[2].trim();
+                     String str3 = lowerCase + ":" + str.toLowerCase();
+                     this.items.put(str3, str2);
                   }
                }
             }
          }
-      } catch (Exception var10) {
-         var10.printStackTrace();
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    }
 
    private void method2711() {
       try {
-         StringBuilder var1 = new StringBuilder();
-         var1.append("default : ").append(this.command.getValue()).append("\n");
+         StringBuilder builder = new StringBuilder();
+         builder.append("default : ").append(this.command.getValue()).append("\n");
 
-         for (Entry var3 : this.items.entrySet()) {
-            String var4 = (String)var3.getKey();
-            String var5 = (String)var3.getValue();
-            String[] var6 = var4.split(":", 2);
-            String var7 = var6[0];
-            String var8 = var6[1];
-            var1.append(var7).append(" : ").append(var8).append(" : ").append(var5).append("\n");
+         for (Entry entry : this.items.entrySet()) {
+            String key = (String)entry.getKey();
+            String str = (String)entry.getValue();
+            String[] strings = key.split(":", 2);
+            String str2 = strings[0];
+            String str3 = strings[1];
+            builder.append(str2).append(" : ").append(str3).append(" : ").append(str).append("\n");
          }
 
-         Files.writeString(this.file.toPath(), var1.toString(), StandardOpenOption.TRUNCATE_EXISTING);
-      } catch (Exception var9) {
-         var9.printStackTrace();
+         Files.writeString(this.file.toPath(), builder.toString(), StandardOpenOption.TRUNCATE_EXISTING);
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    }
 
    private String method2712() {
-      String var1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
-      Random var2 = new Random();
-      StringBuilder var3 = new StringBuilder();
+      String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
+      Random random = new Random();
+      StringBuilder builder = new StringBuilder();
 
-      for (int var4 = 0; var4 < 12; var4++) {
-         var3.append(var1.charAt(var2.nextInt(var1.length())));
+      for (int i = 0; i < 12; i++) {
+         builder.append(str.charAt(random.nextInt(str.length())));
       }
 
-      return var3.toString();
+      return builder.toString();
    }
 
-   private String method2713(String var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         String[] var2 = var1.split("\\.");
-         return var2.length >= 2 ? var2[var2.length - 2] : var1;
+   private String method2713(String ip) {
+      if (ip != null && !ip.isEmpty()) {
+         String[] strings = ip.split("\\.");
+         return strings.length >= 2 ? strings[strings.length - 2] : ip;
       } else {
          return "unknown";
       }
    }
 
    @EventTarget
-   public void method2714(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundSystemChatPacket var2) {
+   public void method2714(PacketEvent event) {
+      if (event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
             if (mc.getConnection() != null) {
-               String var6 = var2.content().getString().toLowerCase();
-               boolean var4 = var6.contains("/register") || var6.contains("зарегистрируйтесь");
-               boolean var5 = this.login.isEnabled() && (var6.contains("/login") || var6.contains("/ʟ [пᴀᴘᴏль]"));
-               if (var4 || var5) {
-                  mc.execute(() -> this.method2715(var4));
+               String lowerCase = systemChatPacket.content().getString().toLowerCase();
+               boolean flag = lowerCase.contains("/register") || lowerCase.contains("зарегистрируйтесь");
+               boolean flag2 = this.login.isEnabled() && (lowerCase.contains("/login") || lowerCase.contains("/ʟ [пᴀᴘᴏль]"));
+               if (flag || flag2) {
+                  mc.execute(() -> this.method2715(flag));
                }
             }
          }
       }
    }
 
-   private void method2715(boolean var1) {
+   private void method2715(boolean flag) {
       if (mc.getConnection() != null) {
-         String var2 = mc.getCurrentServer() != null ? mc.getCurrentServer().ip : "";
-         String var3 = this.method2713(var2).toLowerCase();
-         String var4 = mc.getUser().getName().toLowerCase();
-         String var5 = var3 + ":" + var4;
-         String var6 = this.items.getOrDefault(var5, null);
-         if (var1) {
-            if (var6 == null) {
-               var6 = this.randomPass.isEnabled() ? this.method2712() : this.command.getValue();
+         String ip = mc.getCurrentServer() != null ? mc.getCurrentServer().ip : "";
+         String lowerCase = this.method2713(ip).toLowerCase();
+         String str = mc.getUser().getName().toLowerCase();
+         String key = lowerCase + ":" + str;
+         String str2 = this.items.getOrDefault(key, null);
+         if (flag) {
+            if (str2 == null) {
+               str2 = this.randomPass.isEnabled() ? this.method2712() : this.command.getValue();
             }
 
-            this.items.put(var5, var6);
+            this.items.put(key, str2);
             this.method2711();
-            mc.getConnection().sendCommand("register %s %s".formatted(var6, var6));
+            mc.getConnection().sendCommand("register %s %s".formatted(str2, str2));
          } else {
-            if (var6 == null) {
-               var6 = this.command.getValue();
-               this.items.put(var5, var6);
+            if (str2 == null) {
+               str2 = this.command.getValue();
+               this.items.put(key, str2);
                this.method2711();
             }
 
-            mc.getConnection().sendCommand("login " + var6);
+            mc.getConnection().sendCommand("login " + str2);
          }
       }
    }

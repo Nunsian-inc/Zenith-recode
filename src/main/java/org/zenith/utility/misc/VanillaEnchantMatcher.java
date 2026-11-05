@@ -12,22 +12,22 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 public class VanillaEnchantMatcher extends EnchantMatcher {
    private static final Map<ResourceKey<?>, String> items = new ConcurrentHashMap<>();
 
-   public VanillaEnchantMatcher(String var1, String var2, int var3) {
-      super(var1, var2, var3);
+   public VanillaEnchantMatcher(String string, String str, int intValue) {
+      super(string, str, intValue);
    }
 
    @Override
-   public boolean method1746(ItemStack var1) {
+   public boolean method1746(ItemStack stack) {
       if (this.intValue <= 0) {
          return true;
       } else {
-         ItemEnchantments var2 = var1.getEnchantments();
+         ItemEnchantments enchantments = stack.getEnchantments();
 
-         for (Entry var4 : var2.entrySet()) {
-            Optional var5 = ((Holder)var4.getKey()).unwrapKey();
-            String var6 = var5.isPresent() ? items.computeIfAbsent((ResourceKey<?>)var5.get(), var0 -> Optional.of(var0).toString()) : "Optional.empty";
-            if (var6.contains(this.text2)) {
-               return var4.getIntValue() >= this.intValue;
+         for (Entry entry : enchantments.entrySet()) {
+            Optional unwrapKey = ((Holder)entry.getKey()).unwrapKey();
+            String str = unwrapKey.isPresent() ? items.computeIfAbsent((ResourceKey<?>)unwrapKey.get(), resourceKey -> Optional.of(resourceKey).toString()) : "Optional.empty";
+            if (str.contains(this.text2)) {
+               return entry.getIntValue() >= this.intValue;
             }
          }
 

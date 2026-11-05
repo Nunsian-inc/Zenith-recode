@@ -22,27 +22,27 @@ public class Localization {
       this.method1727("tr");
    }
 
-   public void method1727(String var1) {
-      if (!this.items2.contains(var1)) {
-         this.items2.add(var1);
+   public void method1727(String text) {
+      if (!this.items2.contains(text)) {
+         this.items2.add(text);
       }
 
       if (this.text == null) {
-         this.method1728(var1);
+         this.method1728(text);
       }
    }
 
-   public void method1728(String var1) {
-      if (this.items2.contains(var1)) {
-         if (this.langEntry == null || !var1.equals(this.text)) {
-            LangEntry var2 = this.method1733(var1);
-            if (var2 != null) {
+   public void method1728(String text) {
+      if (this.items2.contains(text)) {
+         if (this.langEntry == null || !text.equals(this.text)) {
+            LangEntry langEntry = this.method1733(text);
+            if (langEntry != null) {
                this.items.clear();
-               this.items.put(var1, var2);
-               this.langEntry = var2;
-               this.text = var1;
+               this.items.put(text, langEntry);
+               this.langEntry = langEntry;
+               this.text = text;
             } else if (this.text == null) {
-               this.text = var1;
+               this.text = text;
             }
          }
       }
@@ -52,21 +52,21 @@ public class Localization {
       this.method1730(true);
    }
 
-   public void method1730(boolean var1) {
+   public void method1730(boolean flag) {
       if (!this.items2.isEmpty()) {
-         int var2;
-         if ((var2 = this.items2.indexOf(this.text)) < 0) {
-            var2 = 0;
+         int indexOf;
+         if ((indexOf = this.items2.indexOf(this.text)) < 0) {
+            indexOf = 0;
          }
 
-         int var3;
-         if (var1) {
-            var3 = (var2 + 1) % this.items2.size();
+         int n;
+         if (flag) {
+            n = (indexOf + 1) % this.items2.size();
          } else {
-            var3 = (var2 - 1 + this.items2.size()) % this.items2.size();
+            n = (indexOf - 1 + this.items2.size()) % this.items2.size();
          }
 
-         this.method1728(this.items2.get(var3));
+         this.method1728(this.items2.get(n));
       }
    }
 
@@ -82,34 +82,34 @@ public class Localization {
       return this.text == null ? "ru" : this.text;
    }
 
-   public String translate(String var1) {
+   public String translate(String text) {
       if (this.langEntry == null && this.text != null) {
          this.langEntry = this.method1733(this.text);
       }
 
-      return this.langEntry == null ? var1 : this.langEntry.method3304(var1);
+      return this.langEntry == null ? text : this.langEntry.method3304(text);
    }
 
-   private LangEntry method1733(String var1) {
-      LangEntry var2 = this.items.get(var1);
-      if (var2 != null) {
-         return var2;
+   private LangEntry method1733(String text) {
+      LangEntry langEntry = this.items.get(text);
+      if (langEntry != null) {
+         return langEntry;
       } else {
          try {
-            LangEntry var5;
-            try (InputStream var3 = Localization.class.getResourceAsStream("/assets/zenith/languages/" + var1 + ".language")) {
-               if (var3 == null) {
+            LangEntry langEntry2;
+            try (InputStream resourceAsStream = Localization.class.getResourceAsStream("/assets/zenith/languages/" + text + ".language")) {
+               if (resourceAsStream == null) {
                   return null;
                }
 
-               LangEntry var4 = new LangEntry(var1, var3);
-               this.items.put(var1, var4);
-               var5 = var4;
+               LangEntry langEntry3 = new LangEntry(text, resourceAsStream);
+               this.items.put(text, langEntry3);
+               langEntry2 = langEntry3;
             }
 
-            return var5;
-         } catch (IOException var8) {
-            var8.printStackTrace();
+            return langEntry2;
+         } catch (IOException e) {
+            e.printStackTrace();
             return null;
          }
       }

@@ -11,45 +11,45 @@ import java.lang.reflect.Type;
 import net.minecraft.core.BlockPos;
 
 public final class WayAdapter implements JsonDeserializer<Way>, JsonSerializer<Way> {
-   public JsonElement serialize(Way var1, Type var2, JsonSerializationContext var3) {
-      JsonObject var4 = new JsonObject();
-      var4.addProperty("name", var1.name());
-      var4.addProperty("server", var1.server());
-      JsonObject var5 = new JsonObject();
-      BlockPos var6 = var1.pos();
-      var5.addProperty("x", var6.getX());
-      var5.addProperty("y", var6.getY());
-      var5.addProperty("z", var6.getZ());
-      var4.add("pos", var5);
-      return var4;
+   public JsonElement serialize(Way way, Type type, JsonSerializationContext serializationContext) {
+      JsonObject json = new JsonObject();
+      json.addProperty("name", way.name());
+      json.addProperty("server", way.server());
+      JsonObject json2 = new JsonObject();
+      BlockPos pos = way.pos();
+      json2.addProperty("x", pos.getX());
+      json2.addProperty("y", pos.getY());
+      json2.addProperty("z", pos.getZ());
+      json.add("pos", json2);
+      return json;
    }
 
-   public Way deserialize(JsonElement var1, Type var2, JsonDeserializationContext var3) throws JsonParseException {
-      JsonObject var4 = var1.getAsJsonObject();
-      String var5 = getString(var4, "name", "");
-      String var6 = getString(var4, "server", "");
-      JsonObject var7 = var4.getAsJsonObject("pos");
-      if (var7 == null) {
+   public Way deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext deserializationContext) throws JsonParseException {
+      JsonObject jsonObject = jsonElement.getAsJsonObject();
+      String string = getString(jsonObject, "name", "");
+      String server = getString(jsonObject, "server", "");
+      JsonObject json = jsonObject.getAsJsonObject("pos");
+      if (json == null) {
          throw new JsonParseException("Missing 'pos' for Way");
       } else {
-         int var8 = getInt(var7, "x");
-         int var9 = getInt(var7, "y");
-         int var10 = getInt(var7, "z");
-         return new Way(var5, new BlockPos(var8, var9, var10), var6);
+         int x = getInt(json, "x");
+         int y = getInt(json, "y");
+         int z = getInt(json, "z");
+         return new Way(string, new BlockPos(x, y, z), server);
       }
    }
 
-   private static String getString(JsonObject var0, String var1, String var2) {
-      JsonElement var3 = var0.get(var1);
-      return var3 != null && !var3.isJsonNull() ? var3.getAsString() : var2;
+   private static String getString(JsonObject jsonObject, String memberName, String str) {
+      JsonElement jsonElement = jsonObject.get(memberName);
+      return jsonElement != null && !jsonElement.isJsonNull() ? jsonElement.getAsString() : str;
    }
 
-   private static int getInt(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      if (var2 != null && !var2.isJsonNull()) {
-         return var2.getAsInt();
+   private static int getInt(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      if (jsonElement != null && !jsonElement.isJsonNull()) {
+         return jsonElement.getAsInt();
       } else {
-         throw new JsonParseException("Missing int: " + var1);
+         throw new JsonParseException("Missing int: " + memberName);
       }
    }
 }

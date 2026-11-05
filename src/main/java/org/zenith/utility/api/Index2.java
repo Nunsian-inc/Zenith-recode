@@ -44,41 +44,41 @@ public final class Index2 {
    private volatile long longValue2;
 
    public Index2() {
-      String var1 = System.getProperty("zenith.wardrobe.src");
-      Path var2 = var1 != null && !var1.isBlank() && !Boolean.getBoolean("zenith.wardrobe.remote") ? Path.of(var1) : null;
-      this.path = var2 != null && Files.isDirectory(var2.resolve("models")) ? var2 : null;
+      String property = System.getProperty("zenith.wardrobe.src");
+      Path path = property != null && !property.isBlank() && !Boolean.getBoolean("zenith.wardrobe.remote") ? Path.of(property) : null;
+      this.path = path != null && Files.isDirectory(path.resolve("models")) ? path : null;
       this.path2 = Zenith.file.toPath().resolve("wardrobe").resolve("cache");
    }
 
-   public Index2.Data method6140(String var1) throws Exception {
+   public Index2.Data method6140(String text) throws Exception {
       if (this.path != null) {
          return new Index2.Data(
-            Files.readAllBytes(this.path.resolve("models").resolve(var1 + ".json")), Files.readAllBytes(this.path.resolve("textures").resolve(var1 + ".png"))
+            Files.readAllBytes(this.path.resolve("models").resolve(text + ".json")), Files.readAllBytes(this.path.resolve("textures").resolve(text + ".png"))
          );
       } else {
-         var var2 = this.method6141();
-         String var3 = (String)var2.get(var1);
-         if (var3 != null) {
-            byte[] var4 = this.method6142(var1, var2);
-            return method6144(var1, var4, this.method6143(var3));
+         var map = this.method6141();
+         String str = (String)map.get(text);
+         if (str != null) {
+            byte[] key = this.method6142(text, map);
+            return method6144(text, key, this.method6143(str));
          } else if (this.flag) {
             synchronized (this) {
-               if (this.items2 == var2 && System.nanoTime() >= this.longValue) {
+               if (this.items2 == map && System.nanoTime() >= this.longValue) {
                   this.items2 = null;
                }
             }
 
-            throw new Index2.Entry("модели нет в кэшированном индексе: " + var1);
+            throw new Index2.Entry("модели нет в кэшированном индексе: " + text);
          } else {
-            throw new IOException("модели нет в индексе: " + var1);
+            throw new IOException("модели нет в индексе: " + text);
          }
       }
    }
 
    private Map<String, String> method6141() throws Exception {
-      var var1 = this.items2;
-      if (var1 != null) {
-         return var1;
+      var map = this.items2;
+      if (map != null) {
+         return map;
       } else {
          synchronized (this) {
             if (this.items2 != null) {
@@ -86,175 +86,175 @@ public final class Index2 {
             } else if (System.nanoTime() < this.longValue) {
                throw new Index2.Entry("индекс гардероба недоступен");
             } else {
-               Path var3 = this.path2.resolve("index.json");
-               boolean var5 = false;
+               Path path = this.path2.resolve("index.json");
+               boolean flag = false;
 
-               byte[] var4;
+               byte[] allBytes;
                try {
-                  var4 = this.method6146(method6147() + "/wardrobe/index.json");
+                  allBytes = this.method6146(method6147() + "/wardrobe/index.json");
                   Files.createDirectories(this.path2);
-                  Files.write(var3, var4);
-               } catch (Exception var11) {
-                  if (!Files.isRegularFile(var3)) {
+                  Files.write(path, allBytes);
+               } catch (Exception e) {
+                  if (!Files.isRegularFile(path)) {
                      this.longValue = System.nanoTime() + CONST_longValue;
-                     throw new Index2.Entry("индекс гардероба не скачан: " + var11.getMessage());
+                     throw new Index2.Entry("индекс гардероба не скачан: " + e.getMessage());
                   }
 
-                  var4 = Files.readAllBytes(var3);
-                  var5 = true;
+                  allBytes = Files.readAllBytes(path);
+                  flag = true;
                }
 
-               JsonObject var6 = JsonParser.parseString(new String(var4, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("models");
-               HashMap var7 = new HashMap();
+               JsonObject jsonObject = JsonParser.parseString(new String(allBytes, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("models");
+               HashMap map2 = new HashMap();
 
-               for (Map.Entry var9 : var6.entrySet()) {
-                  var7.put((String)var9.getKey(), ((JsonElement)var9.getValue()).getAsJsonObject().get("hash").getAsString());
+               for (Map.Entry entry : jsonObject.entrySet()) {
+                  map2.put((String)entry.getKey(), ((JsonElement)entry.getValue()).getAsJsonObject().get("hash").getAsString());
                }
 
-               this.flag = var5;
-               if (var5) {
+               this.flag = flag;
+               if (flag) {
                   this.longValue = System.nanoTime() + CONST_longValue;
                }
 
-               this.items2 = var7;
-               return var7;
+               this.items2 = map2;
+               return map2;
             }
          }
       }
    }
 
-   private byte[] method6142(String var1, Map<String, String> var2) throws Exception {
-      byte[] var3 = this.items.get(var1);
-      if (var3 != null) {
-         return var3;
+   private byte[] method6142(String text, Map<String, String> map) throws Exception {
+      byte[] bytes = this.items.get(text);
+      if (bytes != null) {
+         return bytes;
       } else {
          synchronized (this.items) {
-            var3 = this.items.get(var1);
-            if (var3 != null) {
-               return var3;
+            bytes = this.items.get(text);
+            if (bytes != null) {
+               return bytes;
             } else if (System.nanoTime() < this.longValue2) {
                throw new Index2.Entry("ключи гардероба ещё не получены");
             } else {
-               StoreApi var5 = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
+               StoreApi storeApi = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
 
                try {
-                  if (var5 == null) {
+                  if (storeApi == null) {
                      throw new IOException("облако не готово");
                   }
 
-                  this.items.putAll(var5.method1982(new ArrayList<>(var2.keySet())).get(duration.toSeconds(), TimeUnit.SECONDS));
-               } catch (Exception var8) {
+                  this.items.putAll(storeApi.method1982(new ArrayList<>(map.keySet())).get(duration.toSeconds(), TimeUnit.SECONDS));
+               } catch (Exception e) {
                   this.longValue2 = System.nanoTime() + CONST_longValue;
-                  throw new Index2.Entry("ключи гардероба не получены: " + var8.getMessage());
+                  throw new Index2.Entry("ключи гардероба не получены: " + e.getMessage());
                }
 
-               var3 = this.items.get(var1);
-               if (var3 == null) {
-                  throw new IOException("узел не выдал ключ модели " + var1);
+               bytes = this.items.get(text);
+               if (bytes == null) {
+                  throw new IOException("узел не выдал ключ модели " + text);
                } else {
-                  return var3;
+                  return bytes;
                }
             }
          }
       }
    }
 
-   private byte[] method6143(String var1) throws Exception {
-      Path var2 = this.path2.resolve(var1 + ".zwm");
-      if (Files.isRegularFile(var2)) {
-         byte[] var3 = Files.readAllBytes(var2);
-         if (var1.equals(method6148(var3))) {
-            return var3;
+   private byte[] method6143(String str) throws Exception {
+      Path path = this.path2.resolve(str + ".zwm");
+      if (Files.isRegularFile(path)) {
+         byte[] allBytes = Files.readAllBytes(path);
+         if (str.equals(method6148(allBytes))) {
+            return allBytes;
          }
 
-         Files.deleteIfExists(var2);
+         Files.deleteIfExists(path);
       }
 
-      byte[] var6;
+      byte[] allBytes;
       try {
-         var6 = this.method6146(method6147() + "/wardrobe/blobs/" + var1 + ".zwm");
-      } catch (Exception var5) {
-         throw new Index2.Entry("модель гардероба не скачана: " + var5.getMessage());
+         allBytes = this.method6146(method6147() + "/wardrobe/blobs/" + str + ".zwm");
+      } catch (Exception e) {
+         throw new Index2.Entry("модель гардероба не скачана: " + e.getMessage());
       }
 
-      if (!var1.equals(method6148(var6))) {
-         throw new IOException("хеш модели гардероба не совпал: " + var1);
+      if (!str.equals(method6148(allBytes))) {
+         throw new IOException("хеш модели гардероба не совпал: " + str);
       } else {
          Files.createDirectories(this.path2);
-         Path var4 = this.path2.resolve(var1 + ".part");
-         Files.write(var4, var6);
-         Files.move(var4, var2, StandardCopyOption.REPLACE_EXISTING);
-         return var6;
+         Path path2 = this.path2.resolve(str + ".part");
+         Files.write(path2, allBytes);
+         Files.move(path2, path, StandardCopyOption.REPLACE_EXISTING);
+         return allBytes;
       }
    }
 
-   private static Index2.Data method6144(String var0, byte[] var1, byte[] var2) throws Exception {
-      if (var2.length >= 32
-         && var2[0] == CONST_byteValues[0]
-         && var2[1] == CONST_byteValues[1]
-         && var2[2] == CONST_byteValues[2]
-         && var2[3] == CONST_byteValues[3]) {
-         Cipher var3 = Cipher.getInstance("AES/GCM/NoPadding");
-         var3.init(2, new SecretKeySpec(var1, "AES"), new GCMParameterSpec(128, var2, 4, 12));
-         var3.updateAAD(var0.getBytes(StandardCharsets.UTF_8));
-         byte[] var4 = var3.doFinal(var2, 16, var2.length - 16);
-         ByteBuffer var5 = ByteBuffer.wrap(method6145(var4));
-         byte[] var6 = new byte[var5.getInt()];
-         var5.get(var6);
-         byte[] var7 = new byte[var5.getInt()];
-         var5.get(var7);
-         return new Index2.Data(var6, var7);
+   private static Index2.Data method6144(String text, byte[] key, byte[] src) throws Exception {
+      if (src.length >= 32
+         && src[0] == CONST_byteValues[0]
+         && src[1] == CONST_byteValues[1]
+         && src[2] == CONST_byteValues[2]
+         && src[3] == CONST_byteValues[3]) {
+         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+         cipher.init(2, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, src, 4, 12));
+         cipher.updateAAD(text.getBytes(StandardCharsets.UTF_8));
+         byte[] doFinal = cipher.doFinal(src, 16, src.length - 16);
+         ByteBuffer byteBuffer = ByteBuffer.wrap(method6145(doFinal));
+         byte[] dst = new byte[byteBuffer.getInt()];
+         byteBuffer.get(dst);
+         byte[] bytes = new byte[byteBuffer.getInt()];
+         byteBuffer.get(bytes);
+         return new Index2.Data(dst, bytes);
       } else {
          throw new IOException("неизвестный формат модели гардероба");
       }
    }
 
-   private static byte[] method6145(byte[] var0) throws Exception {
-      Inflater var1 = new Inflater();
+   private static byte[] method6145(byte[] doFinal) throws Exception {
+      Inflater inflater = new Inflater();
 
-      byte[] var8;
+      byte[] byteArray;
       try {
-         var1.setInput(var0);
-         ByteArrayOutputStream var2 = new ByteArrayOutputStream(var0.length * 3);
-         byte[] var3 = new byte[16384];
+         inflater.setInput(doFinal);
+         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(doFinal.length * 3);
+         byte[] output = new byte[16384];
 
-         while (!var1.finished()) {
-            int var4 = var1.inflate(var3);
-            if (var4 == 0 && (var1.needsInput() || var1.needsDictionary())) {
+         while (!inflater.finished()) {
+            int inflate = inflater.inflate(output);
+            if (inflate == 0 && (inflater.needsInput() || inflater.needsDictionary())) {
                throw new IOException("модель гардероба повреждена");
             }
 
-            var2.write(var3, 0, var4);
+            byteArrayOutputStream.write(output, 0, inflate);
          }
 
-         var8 = var2.toByteArray();
+         byteArray = byteArrayOutputStream.toByteArray();
       } finally {
-         var1.end();
+         inflater.end();
       }
 
-      return var8;
+      return byteArray;
    }
 
-   private byte[] method6146(String var1) throws Exception {
-      HttpResponse var2 = this.httpClient.send(HttpRequest.newBuilder(URI.create(var1)).timeout(duration).GET().build(), BodyHandlers.ofByteArray());
-      if (var2.statusCode() != 200) {
-         throw new IOException("узел ответил " + var2.statusCode());
+   private byte[] method6146(String str) throws Exception {
+      HttpResponse send = this.httpClient.send(HttpRequest.newBuilder(URI.create(str)).timeout(duration).GET().build(), BodyHandlers.ofByteArray());
+      if (send.statusCode() != 200) {
+         throw new IOException("узел ответил " + send.statusCode());
       } else {
-         return (byte[])var2.body();
+         return (byte[])send.body();
       }
    }
 
    private static String method6147() throws IOException {
-      StoreApi var0 = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
-      if (var0 == null) {
+      StoreApi storeApi = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
+      if (storeApi == null) {
          throw new IOException("облако не готово");
       } else {
-         return var0.method1983();
+         return storeApi.method1983();
       }
    }
 
-   private static String method6148(byte[] var0) throws Exception {
-      return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(var0));
+   private static String method6148(byte[] allBytes) throws Exception {
+      return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(allBytes));
    }
 
    public static final class Data {
@@ -286,9 +286,9 @@ public final class Index2 {
          return "Data[" + "byteValues=" + this.byteValues + ", " + "byteValues2=" + this.byteValues2 + "]";
       }
 
-      public Data(byte[] var1, byte[] var2) {
-         this.byteValues = var1;
-         this.byteValues2 = var2;
+      public Data(byte[] byteValues, byte[] byteValues2) {
+         this.byteValues = byteValues;
+         this.byteValues2 = byteValues2;
       }
 
       public byte[] getByteValues() {
@@ -301,8 +301,8 @@ public final class Index2 {
    }
 
    public static final class Entry extends Exception {
-      public Entry(String var1) {
-         super(var1, null, false, false);
+      public Entry(String message) {
+         super(message, null, false, false);
       }
    }
 }

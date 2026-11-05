@@ -7,10 +7,10 @@ public final class ModuleHeaderSetting extends ButtonSetting {
    private final Module module;
    private final HeaderBindSetting headerBindSetting;
 
-   public ModuleHeaderSetting(String var1, Module var2, Runnable var3) {
-      super(var1, "w", var3);
-      this.module = var2;
-      this.headerBindSetting = new HeaderBindSetting(var2);
+   public ModuleHeaderSetting(String key, Module sectionPreviewOwner, Runnable runnable) {
+      super(key, "w", runnable);
+      this.module = sectionPreviewOwner;
+      this.headerBindSetting = new HeaderBindSetting(sectionPreviewOwner);
    }
 
    @Override

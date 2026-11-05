@@ -20,32 +20,32 @@ public class NeuroCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(literal("load").then(arg("name", NeuroArgumentType.create()).executes(var0 -> {
-         String var1x = (String)var0.getArgument("name", String.class);
-         File var2 = findNeuroFile(var1x);
-         if (var2 == null) {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(literal("load").then(arg("name", NeuroArgumentType.create()).executes(commandContext -> {
+         String var1x = (String)commandContext.getArgument("name", String.class);
+         File neuroFile = findNeuroFile(var1x);
+         if (neuroFile == null) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "Файл нейромодели не найден");
             return 1;
          } else {
             try {
-               Zenith.getInstance().getJointCodebook().method2533(var2);
-               ChatLogger.method2020(ChatLogger.Type.INFO, "Нейромодель загружена: " + var2.getName());
-            } catch (IOException var4) {
+               Zenith.getInstance().getJointCodebook().method2533(neuroFile);
+               ChatLogger.method2020(ChatLogger.Type.INFO, "Нейромодель загружена: " + neuroFile.getName());
+            } catch (IOException e) {
                ChatLogger.method2020(ChatLogger.Type.WARN, "Ошибка при загрузке нейромодели");
             }
 
             return 1;
          }
       })));
-      var1.then(literal("dir").executes(var0 -> {
+      literalArgumentBuilder.then(literal("dir").executes(commandContext -> {
          if (!ensureNeuroDirectory()) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "Ошибка при создании папки нейромоделей");
             return 1;
          } else {
             try {
                Runtime.getRuntime().exec(new String[]{"explorer", neuroDirectory.getAbsolutePath()});
-            } catch (IOException var2) {
+            } catch (IOException e) {
                ChatLogger.method2020(ChatLogger.Type.WARN, "Ошибка при открытии папки нейромоделей");
             }
 
@@ -58,18 +58,18 @@ public class NeuroCommand extends CommandAbstract {
       if (!ensureNeuroDirectory()) {
          return new ArrayList<>();
       } else {
-         File[] var0 = neuroDirectory.listFiles();
-         ArrayList<String> var1 = new ArrayList<>();
-         if (var0 != null) {
-            for (File var5 : var0) {
-               if (var5.isFile()) {
-                  var1.add(var5.getName());
+         File[] listFiles = neuroDirectory.listFiles();
+         ArrayList<String> strings = new ArrayList<>();
+         if (listFiles != null) {
+            for (File listFile : listFiles) {
+               if (listFile.isFile()) {
+                  strings.add(listFile.getName());
                }
             }
          }
 
-         var1.sort(String.CASE_INSENSITIVE_ORDER);
-         return var1;
+         strings.sort(String.CASE_INSENSITIVE_ORDER);
+         return strings;
       }
    }
 
@@ -77,13 +77,13 @@ public class NeuroCommand extends CommandAbstract {
       return neuroDirectory.isDirectory() || !neuroDirectory.exists() && neuroDirectory.mkdirs();
    }
 
-   private static File findNeuroFile(String var0) {
-      if (var0 != null && !var0.isBlank()) {
+   private static File findNeuroFile(String child) {
+      if (child != null && !child.isBlank()) {
          try {
-            File var1 = neuroDirectory.getCanonicalFile();
-            File var2 = new File(var1, var0).getCanonicalFile();
-            return var2.toPath().startsWith(var1.toPath()) && var2.isFile() ? var2 : null;
-         } catch (IOException var3) {
+            File canonicalFile = neuroDirectory.getCanonicalFile();
+            File file = new File(canonicalFile, child).getCanonicalFile();
+            return file.toPath().startsWith(canonicalFile.toPath()) && file.isFile() ? file : null;
+         } catch (IOException e) {
             return null;
          }
       } else {

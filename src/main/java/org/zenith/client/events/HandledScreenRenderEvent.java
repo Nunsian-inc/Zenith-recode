@@ -32,10 +32,10 @@ public class HandledScreenRenderEvent implements Event {
    }
 
    @Generated
-   public HandledScreenRenderEvent(GuiGraphicsExtractor var1, Slot var2, int var3, int var4) {
-      this.drawContext = var1;
-      this.slot = var2;
-      this.intValue = var3;
-      this.intValue2 = var4;
+   public HandledScreenRenderEvent(GuiGraphicsExtractor drawContext, Slot slot, int intValue, int imageHeight) {
+      this.drawContext = drawContext;
+      this.slot = slot;
+      this.intValue = intValue;
+      this.intValue2 = imageHeight;
    }
 }

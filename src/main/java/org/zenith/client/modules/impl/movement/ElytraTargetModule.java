@@ -106,26 +106,26 @@ public final class ElytraTargetModule extends Module {
    }
 
    @EventTarget
-   public void method5240(WorldRenderEvent var1) {
+   public void method5240(WorldRenderEvent event) {
       if (this.predictCube.isEnabled() && this.box != null) {
-         int var2 = Zenith.getInstance().getStyleManager().getClientColor(0).method7287();
-         int var4 = Math.round(this.predictFillAlpha.getValue3()) << 24 | var2 & (255 << 16 | (char)-1);
-         GlowUtil.method2232(this.box, var4, 1.5F, true, true, false);
+         int n = Zenith.getInstance().getStyleManager().getClientColor(0).method7287();
+         int color = Math.round(this.predictFillAlpha.getValue3()) << 24 | n & (255 << 16 | (char)-1);
+         GlowUtil.method2232(this.box, color, 1.5F, true, true, false);
       }
    }
 
    @EventTarget
-   public void method5241(Event5 var1) {
-      LocalPlayer var2 = mc.player;
+   public void method5241(Event5 event) {
+      LocalPlayer player = mc.player;
       this.livingEntity = AuraModule.INSTANCE.isEnabled() ? this.method5251() : null;
-      if (var2 != null && this.method5242(this.livingEntity)) {
-         Vec3 var3 = this.method5247(this.livingEntity);
-         this.box = this.method5253(var3);
-         Vec3 var4 = var2.getEyePosition();
-         Rotation var5 = RotationUtils.method6912(var3.subtract(var4));
+      if (player != null && this.method5242(this.livingEntity)) {
+         Vec3 vec = this.method5247(this.livingEntity);
+         this.box = this.method5253(vec);
+         Vec3 eyePosition = player.getEyePosition();
+         Rotation rotation = RotationUtils.method6912(vec.subtract(eyePosition));
          int priority = AuraModule.INSTANCE.method6358() != null ? UNDER_AURA_ROTATION_PRIORITY : CHASE_ROTATION_PRIORITY;
          rotationManager.method7849(
-            new RotationRequest(var5, () -> bcCameraTestnerv.method1851(AuraModule.INSTANCE.method6320(), var5), AuraModule.INSTANCE.method6320()),
+            new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(AuraModule.INSTANCE.method6320(), rotation), AuraModule.INSTANCE.method6320()),
             priority,
             this
          );
@@ -141,8 +141,8 @@ public final class ElytraTargetModule extends Module {
       }
    }
 
-   public boolean method5242(LivingEntity var1) {
-      return this.isEnabled() && this.method5252(var1);
+   public boolean method5242(LivingEntity livingEntity) {
+      return this.isEnabled() && this.method5252(livingEntity);
    }
 
    private int method5243() {
@@ -161,69 +161,69 @@ public final class ElytraTargetModule extends Module {
       return this.predictMode.method2101("module.elytraTarget.predictMode.velocity");
    }
 
-   private Vec3 method5247(LivingEntity var1) {
+   private Vec3 method5247(LivingEntity livingEntity) {
       if (this.method5244()) {
-         int var5 = this.method5243();
-         return var1 instanceof Player var3
-            ? PlayerSimulation.method6032(var3, var5).box.getCenter()
-            : var1.getBoundingBox().getCenter().add(var1.getDeltaMovement().scale(var5));
+         int scale = this.method5243();
+         return livingEntity instanceof Player player
+            ? PlayerSimulation.method6032(player, scale).box.getCenter()
+            : livingEntity.getBoundingBox().getCenter().add(livingEntity.getDeltaMovement().scale(scale));
       } else if (this.method5246()) {
-         Vec3 var4 = var1.getPositionCodec().getBase();
-         return var1.dimensions.makeBoundingBox(var4).getCenter().add(((Handler6)var1).zenithDLC$getServerDelta().scale(this.predictDistance.getValue3()));
+         Vec3 base = livingEntity.getPositionCodec().getBase();
+         return livingEntity.dimensions.makeBoundingBox(base).getCenter().add(((Handler6)livingEntity).zenithDLC$getServerDelta().scale(this.predictDistance.getValue3()));
       } else if (this.method5245()) {
-         Vec3 var2 = var1.getBoundingBox().getCenter();
-         return method5248(var1) <= this.overtakeBps.getValue3() ? var2 : var2.add(var1.getLookAngle().scale(this.predictStrength.getValue3()));
+         Vec3 center = livingEntity.getBoundingBox().getCenter();
+         return method5248(livingEntity) <= this.overtakeBps.getValue3() ? center : center.add(livingEntity.getLookAngle().scale(this.predictStrength.getValue3()));
       } else {
-         return var1.getPositionCodec().getBase();
+         return livingEntity.getPositionCodec().getBase();
       }
    }
 
-   private static double method5248(LivingEntity var0) {
-      double var1 = var0.getX() - var0.xo;
-      double var3 = var0.getY() - var0.yo;
-      double var5 = var0.getZ() - var0.zo;
-      return Math.sqrt(var1 * var1 + var3 * var3 + var5 * var5) * 20.0;
+   private static double method5248(LivingEntity livingEntity) {
+      double d = livingEntity.getX() - livingEntity.xo;
+      double d2 = livingEntity.getY() - livingEntity.yo;
+      double d3 = livingEntity.getZ() - livingEntity.zo;
+      return Math.sqrt(d * d + d2 * d2 + d3 * d3) * 20.0;
    }
 
-   public Vec3 method5249(Vec3 var1, Vec3 var2, Vec3 var3) {
-      LocalPlayer var4 = mc.player;
-      if (this.isEnabled() && this.instantResponse.isEnabled() && var4 != null && mc.level != null && var4.isFallFlying() && UseItemUtils.method6517() != null) {
-         LivingEntity var5 = this.livingEntity;
-         if (var5 != null && !var5.isFallFlying() && var4.getEyePosition().distanceTo(method5250(var4.getEyePosition(), var5.getBoundingBox())) < 2.6) {
-            return var2;
+   public Vec3 method5249(Vec3 vec, Vec3 returnValue, Vec3 lookAngle) {
+      LocalPlayer player = mc.player;
+      if (this.isEnabled() && this.instantResponse.isEnabled() && player != null && mc.level != null && player.isFallFlying() && UseItemUtils.method6517() != null) {
+         LivingEntity livingEntity = this.livingEntity;
+         if (livingEntity != null && !livingEntity.isFallFlying() && player.getEyePosition().distanceTo(method5250(player.getEyePosition(), livingEntity.getBoundingBox())) < 2.6) {
+            return returnValue;
          } else {
-            double var6 = this.responseSpeed.getValue3();
-            if (var5 != null && var4.getEyePosition().distanceTo(var5.getEyePosition().add(var5.getDeltaMovement())) < 2.0) {
-               var6 = var5.getDeltaMovement().length();
+            double scale = this.responseSpeed.getValue3();
+            if (livingEntity != null && player.getEyePosition().distanceTo(livingEntity.getEyePosition().add(livingEntity.getDeltaMovement())) < 2.0) {
+               scale = livingEntity.getDeltaMovement().length();
             }
 
-            return ElytraMath.method5973(var4, var3.scale(var6), var3, 1.0);
+            return ElytraMath.method5973(player, lookAngle.scale(scale), lookAngle, 1.0);
          }
       } else {
-         return var2;
+         return returnValue;
       }
    }
 
-   private static Vec3 method5250(Vec3 var0, AABB var1) {
+   private static Vec3 method5250(Vec3 eyePosition, AABB boundingBox) {
       return new Vec3(
-         Mth.clamp(var0.x, var1.minX, var1.maxX), Mth.clamp(var0.y, var1.minY, var1.maxY), Mth.clamp(var0.z, var1.minZ, var1.maxZ)
+         Mth.clamp(eyePosition.x, boundingBox.minX, boundingBox.maxX), Mth.clamp(eyePosition.y, boundingBox.minY, boundingBox.maxY), Mth.clamp(eyePosition.z, boundingBox.minZ, boundingBox.maxZ)
       );
    }
 
    /** Цель Aura, если она подходит; иначе ближайшая сущность, которую Aura согласна бить (её фильтр «Цели», друзья, боты). */
    private LivingEntity method5251() {
-      LivingEntity var1 = AuraModule.INSTANCE.method6358();
-      if (this.method5252(var1)) {
-         return var1;
+      LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+      if (this.method5252(livingEntity)) {
+         return livingEntity;
       } else {
-         LocalPlayer var2 = mc.player;
-         if (var2 != null && mc.level != null) {
+         LocalPlayer player = mc.player;
+         if (player != null && mc.level != null) {
             LivingEntity nearest = null;
             double nearestDistance = Double.MAX_VALUE;
 
             for (Entity entity : mc.level.entitiesForRendering()) {
                if (entity instanceof LivingEntity living && this.method5252(living) && AuraModule.INSTANCE.method6331(living)) {
-                  double distance = var2.distanceToSqr(living);
+                  double distance = player.distanceToSqr(living);
                   if (distance < nearestDistance) {
                      nearestDistance = distance;
                      nearest = living;
@@ -238,19 +238,19 @@ public final class ElytraTargetModule extends Module {
       }
    }
 
-   private boolean method5252(LivingEntity var1) {
-      LocalPlayer var2 = mc.player;
-      return var2 != null
-         && var1 != null
-         && var1 != var2
-         && var1.isAlive()
-         && var2.isFallFlying()
-         && (var1.isFallFlying() || this.targetMode.method2101("module.elytraTarget.targetMode.all"))
-         && var2.distanceTo(var1) <= this.pursuitDistance.getValue3();
+   private boolean method5252(LivingEntity livingEntity) {
+      LocalPlayer player = mc.player;
+      return player != null
+         && livingEntity != null
+         && livingEntity != player
+         && livingEntity.isAlive()
+         && player.isFallFlying()
+         && (livingEntity.isFallFlying() || this.targetMode.method2101("module.elytraTarget.targetMode.all"))
+         && player.distanceTo(livingEntity) <= this.pursuitDistance.getValue3();
    }
 
-   private AABB method5253(Vec3 var1) {
-      return new AABB(var1.x - 0.35, var1.y - 0.35, var1.z - 0.35, var1.x + 0.35, var1.y + 0.35, var1.z + 0.35);
+   private AABB method5253(Vec3 vec) {
+      return new AABB(vec.x - 0.35, vec.y - 0.35, vec.z - 0.35, vec.x + 0.35, vec.y + 0.35, vec.z + 0.35);
    }
 
    private void method5254() {

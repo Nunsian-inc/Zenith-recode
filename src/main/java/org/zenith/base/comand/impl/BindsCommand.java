@@ -21,99 +21,99 @@ public class BindsCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var1x -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(var1x -> {
          this.sendHelp();
          return 1;
       });
-      var1.then(
+      literalArgumentBuilder.then(
          literal("list")
             .executes(
                var1x -> {
-                  boolean var2 = false;
-                  int var3 = 0;
+                  boolean flag = false;
+                  int n = 0;
 
-                  for (Module var5 : Zenith.getInstance().getModuleManager().getItems()) {
-                     List<BindSetting> var6 = var5.getSettings()
+                  for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+                     List<BindSetting> bindSettings = moduleValue.getSettings()
                         .stream()
-                        .filter(var0 -> var0 instanceof BindSetting)
-                        .map(var0 -> (BindSetting)var0)
+                        .filter(setting -> setting instanceof BindSetting)
+                        .map(setting -> (BindSetting)setting)
                         .filter(var1xx -> this.isBound(var1xx.getKeyCode()))
                         .toList();
-                     boolean var7 = this.isBound(var5.getKeyCode());
-                     if (var7 || !var6.isEmpty()) {
-                        if (!var2) {
+                     boolean bound = this.isBound(moduleValue.getKeyCode());
+                     if (bound || !bindSettings.isEmpty()) {
+                        if (!flag) {
                            this.sendTitle("Назначенные бинды");
-                           var2 = true;
+                           flag = true;
                         }
 
-                        if (var7) {
-                           this.sendBindLine(var5.getName(), KeyName.method6702(var5.getKeyCode(), var5.getKeyModifiers()), false);
-                           var3++;
+                        if (bound) {
+                           this.sendBindLine(moduleValue.getName(), KeyName.method6702(moduleValue.getKeyCode(), moduleValue.getKeyModifiers()), false);
+                           n++;
                         } else {
-                           this.sendModuleLine(var5.getName());
+                           this.sendModuleLine(moduleValue.getName());
                         }
 
-                        for (BindSetting var9 : var6) {
-                           this.sendBindLine(var9.getName(), KeyName.method6701(var9.getKeyCode()), true);
-                           var3++;
+                        for (BindSetting bindSetting : bindSettings) {
+                           this.sendBindLine(bindSetting.getName(), KeyName.method6701(bindSetting.getKeyCode()), true);
+                           n++;
                         }
                      }
                   }
 
-                  if (!var2) {
+                  if (!flag) {
                      ChatLogger.method2019("Список биндов пуст!");
                   } else {
-                     this.sendFooter("Всего биндов: " + var3);
+                     this.sendFooter("Всего биндов: " + n);
                   }
 
                   return 1;
                }
             )
       );
-      var1.then(literal("clear").executes(var1x -> {
-         int var2 = this.clearBinds();
-         if (var2 == 0) {
+      literalArgumentBuilder.then(literal("clear").executes(var1x -> {
+         int clearBinds = this.clearBinds();
+         if (clearBinds == 0) {
             ChatLogger.method2019("Бинды уже пусты!");
          } else {
             this.sendTitle("Бинды очищены");
-            this.sendFooter("Сброшено биндов: " + var2);
+            this.sendFooter("Сброшено биндов: " + clearBinds);
          }
 
          return 1;
       }));
-      var1.then(literal("help").executes(var1x -> {
+      literalArgumentBuilder.then(literal("help").executes(var1x -> {
          this.sendHelp();
          return 1;
       }));
    }
 
-   private boolean isBound(int var1) {
-      return var1 != KeyName.KEY_NONE.intValue && !KeyName.method6701(var1).isEmpty();
+   private boolean isBound(int keyCode) {
+      return keyCode != KeyName.KEY_NONE.intValue && !KeyName.method6701(keyCode).isEmpty();
    }
 
    private int clearBinds() {
-      int var1 = 0;
+      int n = 0;
 
-      for (Module var3 : Zenith.getInstance().getModuleManager().getItems()) {
-         if (this.isBound(var3.getKeyCode())) {
-            var3.setKeyCode(KeyName.KEY_NONE.intValue);
-            var1++;
+      for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+         if (this.isBound(moduleValue.getKeyCode())) {
+            moduleValue.setKeyCode(KeyName.KEY_NONE.intValue);
+            n++;
          }
 
-         for (BindSetting var5 : this.getKeySettings(var3)) {
-            if (this.isBound(var5.getKeyCode())) {
-               var5.setKeyCode(KeyName.KEY_NONE.intValue);
-               var1++;
+         for (BindSetting keySetting : this.getKeySettings(moduleValue)) {
+            if (this.isBound(keySetting.getKeyCode())) {
+               keySetting.setKeyCode(KeyName.KEY_NONE.intValue);
+               n++;
             }
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private List<BindSetting> getKeySettings(Module var1) {
-      return var1.getSettings().stream().filter(var0 -> var0 instanceof BindSetting).map(var0 -> (BindSetting)var0).toList();
+   private List<BindSetting> getKeySettings(Module moduleValue) {
+      return moduleValue.getSettings().stream().filter(setting -> setting instanceof BindSetting).map(setting -> (BindSetting)setting).toList();
    }
 
    private void sendHelp() {
@@ -123,65 +123,65 @@ public class BindsCommand extends CommandAbstract {
       this.sendUsage(".binds clear", "очистить все бинды");
    }
 
-   private void sendTitle(String var1) {
-      ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      this.sendStyled(this.part(var1, var2.getPrimaryColor().getZenithColor(), true));
+   private void sendTitle(String name) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      this.sendStyled(this.part(name, currentStyle.getPrimaryColor().getZenithColor(), true));
    }
 
    private void sendDescription() {
-      ZenithStyle var1 = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       this.sendStyled(
-         this.part("Показывает назначенные клавиши модулей и KeySetting, а также может очистить их.", var1.getTextEnable().getZenithColor(), false)
+         this.part("Показывает назначенные клавиши модулей и KeySetting, а также может очистить их.", currentStyle.getTextEnable().getZenithColor(), false)
       );
    }
 
-   private void sendUsage(String var1, String var2) {
-      ZenithStyle var3 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      MutableComponent var4 = Component.empty()
-         .append(this.part(var1, var3.getPrimaryColor().getZenithColor(), true))
-         .append(this.part(" - ", var3.getTextSecondary().getZenithColor(), false))
-         .append(this.part(var2, var3.getTextEnable().getZenithColor(), false));
-      this.sendStyled(var4);
+   private void sendUsage(String name, String str) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      MutableComponent part = Component.empty()
+         .append(this.part(name, currentStyle.getPrimaryColor().getZenithColor(), true))
+         .append(this.part(" - ", currentStyle.getTextSecondary().getZenithColor(), false))
+         .append(this.part(str, currentStyle.getTextEnable().getZenithColor(), false));
+      this.sendStyled(part);
    }
 
-   private void sendModuleLine(String var1) {
-      ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      this.sendStyled(this.part(var1, var2.getTextEnable().getZenithColor(), true));
+   private void sendModuleLine(String name) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      this.sendStyled(this.part(name, currentStyle.getTextEnable().getZenithColor(), true));
    }
 
-   private void sendBindLine(String var1, String var2, boolean var3) {
-      ZenithStyle var4 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      MutableComponent var5 = Component.empty();
-      if (var3) {
-         var5.append(this.part("  - ", var4.getTextSecondary().getZenithColor(), false));
+   private void sendBindLine(String name, String str, boolean flag) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      MutableComponent empty = Component.empty();
+      if (flag) {
+         empty.append(this.part("  - ", currentStyle.getTextSecondary().getZenithColor(), false));
       }
 
-      var5.append(this.part(var1, var3 ? var4.getTextSecondary().getZenithColor() : var4.getTextEnable().getZenithColor(), !var3))
-         .append(this.part(" -> ", var4.getTextSecondary().getZenithColor(), false))
-         .append(this.part(var2, var4.getPrimaryColor().getZenithColor(), true));
-      this.sendStyled(var5);
+      empty.append(this.part(name, flag ? currentStyle.getTextSecondary().getZenithColor() : currentStyle.getTextEnable().getZenithColor(), !flag))
+         .append(this.part(" -> ", currentStyle.getTextSecondary().getZenithColor(), false))
+         .append(this.part(str, currentStyle.getPrimaryColor().getZenithColor(), true));
+      this.sendStyled(empty);
    }
 
-   private void sendFooter(String var1) {
-      ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      this.sendStyled(this.part(var1, var2.getTextSecondary().getZenithColor(), false));
+   private void sendFooter(String name) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      this.sendStyled(this.part(name, currentStyle.getTextSecondary().getZenithColor(), false));
    }
 
-   private void sendStyled(MutableComponent var1) {
+   private void sendStyled(MutableComponent part) {
       if (mc.player != null) {
-         mc.player.sendSystemMessage(this.buildPrefix().append(Component.literal(" ")).append(var1));
+         mc.player.sendSystemMessage(this.buildPrefix().append(Component.literal(" ")).append(part));
       }
    }
 
    private MutableComponent buildPrefix() {
-      ZenithStyle var1 = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
       return Component.empty()
-         .append(this.part("[ ", var1.getTextSecondary().getZenithColor(), false))
-         .append(this.part("Zenith", var1.getPrimaryColor().getZenithColor(), true))
-         .append(this.part(" ]", var1.getTextSecondary().getZenithColor(), false));
+         .append(this.part("[ ", currentStyle.getTextSecondary().getZenithColor(), false))
+         .append(this.part("Zenith", currentStyle.getPrimaryColor().getZenithColor(), true))
+         .append(this.part(" ]", currentStyle.getTextSecondary().getZenithColor(), false));
    }
 
-   private MutableComponent part(String var1, ZenithColor var2, boolean var3) {
-      return Component.literal(var1).setStyle(Style.EMPTY.withColor(var2.method7287()).withBold(var3));
+   private MutableComponent part(String name, ZenithColor zenithColor, boolean bold) {
+      return Component.literal(name).setStyle(Style.EMPTY.withColor(zenithColor.method7287()).withBold(bold));
    }
 }

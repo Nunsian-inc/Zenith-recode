@@ -81,58 +81,58 @@ public class BcCameraTestnerv implements ZenithAccess {
       return this.class22;
    }
 
-   public Rotation method1851(RotationConfig var1, Rotation var2) {
-      Rotation var3;
-      switch (var1.method853()) {
+   public Rotation method1851(RotationConfig rotationConfig, Rotation rotation) {
+      Rotation rotation2;
+      switch (rotationConfig.method853()) {
          case INSTANT:
-            var3 = this.class23.method3534(var2);
+            rotation2 = this.class23.method3534(rotation);
             break;
          case FUNTIME:
-            var3 = this.motor.method3659();
+            rotation2 = this.motor.method3659();
             break;
          case GOWNO:
-            var3 = this.motor.method3659();
+            rotation2 = this.motor.method3659();
             break;
          case GOWNO_V2:
-            var3 = this.motor.method3659();
+            rotation2 = this.motor.method3659();
             break;
          case GOWNO_V3:
-            var3 = this.motor.method3659();
+            rotation2 = this.motor.method3659();
             break;
          case GOWNO_V4:
-            var3 = this.motor.method3659();
+            rotation2 = this.motor.method3659();
             break;
          case HOLYWORLD:
-            var3 = this.class21.method3431(var2);
+            rotation2 = this.class21.method3431(rotation);
             break;
          case HUMAN:
-            var3 = this.class25.method3653(var2);
+            rotation2 = this.class25.method3653(rotation);
             break;
          case HAND:
             return this.handRotationLogger.method3727();
          case AGENT:
             return this.agent.method3462();
          case MOTOR:
-            return this.motorClaude.method3425(var2);
+            return this.motorClaude.method3425(rotation);
          case MOTOR_CLAUDE:
-            return this.motorHand2.method3430(var2);
+            return this.motorHand2.method3430(rotation);
          case BC_CAMERA:
-            return this.bcCamera.method3554(var2);
+            return this.bcCamera.method3554(rotation);
          case BC_CAMERA_2:
-            return this.bcCamera2.method3554(var2);
+            return this.bcCamera2.method3554(rotation);
          case BC_TEST_NERV:
-            return this.bcCamera3.method3554(var2);
+            return this.bcCamera3.method3554(rotation);
          case BC_HAND:
-            return this.bcHand.method3874(var2);
+            return this.bcHand.method3874(rotation);
          case TOKEN:
             return this.tokenMotor.method3467();
          default:
-            var3 = zenith.getRotationManager().method7844();
+            rotation2 = zenith.getRotationManager().method7844();
       }
 
-      return rotationManager.method7844().equals(var3)
-         ? var3
-         : rotationManager.method7844().method3141(rotationManager.method7844().method3131(var3)).method3139(rotationManager.method7844());
+      return rotationManager.method7844().equals(rotation2)
+         ? rotation2
+         : rotationManager.method7844().method3141(rotationManager.method7844().method3131(rotation2)).method3139(rotationManager.method7844());
    }
 
    @Generated

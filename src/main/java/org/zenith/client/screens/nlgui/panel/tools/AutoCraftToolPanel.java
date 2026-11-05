@@ -78,11 +78,11 @@ public class AutoCraftToolPanel extends ToolTab {
 
    @Override
    public void build() {
-      AutoCraftModule var1 = module();
-      CraftRecipe var2 = var1.method1097();
-      String var3 = var2 == null ? "" : var2.getId();
-      if (!var3.equals(this.shownPreset)) {
-         this.shownPreset = var3;
+      AutoCraftModule autoCraftModule = module();
+      CraftRecipe craftRecipe = autoCraftModule.method1097();
+      String id = craftRecipe == null ? "" : craftRecipe.getId();
+      if (!id.equals(this.shownPreset)) {
+         this.shownPreset = id;
          this.mark("preset");
       }
 
@@ -90,105 +90,105 @@ public class AutoCraftToolPanel extends ToolTab {
       this.custom(32.0F, this.entering(1, this::renderButton));
       this.custom(20.0F, this.entering(2, this::renderListHead));
       this.recipesFrom = this.mainEntryCount();
-      this.buildRecipes(var1);
-      this.buildAside(var1, var2);
+      this.buildRecipes(autoCraftModule);
+      this.buildAside(autoCraftModule, craftRecipe);
    }
 
-   private void buildRecipes(AutoCraftModule var1) {
-      String var2 = this.searchQuery();
-      List<CraftRecipe> var3 = var1.method1092(var1.method1098());
-      ArrayList<CraftRecipe> var4 = new ArrayList();
+   private void buildRecipes(AutoCraftModule autoCraftModule) {
+      String searchQuery = this.searchQuery();
+      List<CraftRecipe> craftRecipes = autoCraftModule.method1092(autoCraftModule.method1098());
+      ArrayList<CraftRecipe> craftRecipes2 = new ArrayList();
 
-      for (CraftRecipe var6 : var3) {
-         String var7 = var6.getText3();
-         if (var7 != null
-            && !var7.isBlank()
-            && (var2.isEmpty() || var7.toLowerCase(Locale.ROOT).contains(var2))
-            && (this.filter != 1 || this.craftableNow(var6))) {
-            var4.add(var6);
+      for (CraftRecipe craftRecipe : craftRecipes) {
+         String str = craftRecipe.getText3();
+         if (str != null
+            && !str.isBlank()
+            && (searchQuery.isEmpty() || str.toLowerCase(Locale.ROOT).contains(searchQuery))
+            && (this.filter != 1 || this.craftableNow(craftRecipe))) {
+            craftRecipes2.add(craftRecipe);
          }
       }
 
-      this.recipeCount = var4.size();
-      if (var4.isEmpty()) {
-         String var9;
-         String var11;
-         if (var3.isEmpty()) {
-            var9 = "gui.tools.craft.none";
-            var11 = "gui.tools.craft.none.desc";
-         } else if (this.filter == 1 && var2.isEmpty()) {
-            var9 = "gui.tools.craft.noneCraftable";
-            var11 = "gui.tools.craft.noneCraftable.desc";
+      this.recipeCount = craftRecipes2.size();
+      if (craftRecipes2.isEmpty()) {
+         String key;
+         String str;
+         if (craftRecipes.isEmpty()) {
+            key = "gui.tools.craft.none";
+            str = "gui.tools.craft.none.desc";
+         } else if (this.filter == 1 && searchQuery.isEmpty()) {
+            key = "gui.tools.craft.noneCraftable";
+            str = "gui.tools.craft.noneCraftable.desc";
          } else {
-            var9 = "gui.tools.craft.noneFound";
-            var11 = "gui.tools.craft.noneFound.desc";
+            key = "gui.tools.craft.noneFound";
+            str = "gui.tools.craft.noneFound.desc";
          }
 
          this.custom(
             76.0F,
             this.entering(
                3,
-               (var3x, var4x, var5, var6x, var7x, var8x, var9x, var10) -> this.emptyCard(
-                  var3x, var10, var6x + 8.0F, var7x + 2.0F, var8x - 16.0F, 70.0F, MenuGlyph.CRAFT, capitalize(t(var9)), t(var11), var9x
+               (var3x, var4x, n, var6x, var7x, var8x, var9x, zenithStyle) -> this.emptyCard(
+                  var3x, zenithStyle, var6x + 8.0F, var7x + 2.0F, var8x - 16.0F, 70.0F, MenuGlyph.CRAFT, capitalize(t(key)), t(str), var9x
                )
             )
          );
       } else {
-         int var8 = 3;
+         int n = 3;
 
-         for (CraftRecipe var12 : var4) {
+         for (CraftRecipe craftRecipe : craftRecipes2) {
             this.custom(
                25.0F,
                this.entering(
-                  var8++,
-                  (var2x, var3x, var4x, var5, var6x, var7x, var8x, var9x) -> this.renderRecipe(var2x, var3x, var4x, var5, var6x, var7x, var8x, var9x, var12)
+                  n++,
+                  (var2x, var3x, var4x, f, var6x, var7x, var8x, var9x) -> this.renderRecipe(var2x, var3x, var4x, f, var6x, var7x, var8x, var9x, craftRecipe)
                ),
-               () -> this.selectPreset(var1, var12),
-               () -> var12.getId().equals(var1.getText2())
+               () -> this.selectPreset(autoCraftModule, craftRecipe),
+               () -> craftRecipe.getId().equals(autoCraftModule.getText2())
             );
          }
       }
    }
 
-   private void buildAside(AutoCraftModule var1, CraftRecipe var2) {
+   private void buildAside(AutoCraftModule autoCraftModule, CraftRecipe craftRecipe) {
       this.asideCaption("gui.tools.craft.caption.around");
       this.asideCustom(36.0F, this.entering(1, this::renderAround));
       this.asideCaption("gui.tools.craft.caption.sources");
       this.sourcesFrom = this.asideEntryCount();
-      if (var2 == null) {
+      if (craftRecipe == null) {
          this.asideCustom(
             62.0F,
             this.entering(
                2,
-               (var1x, var2x, var3x, var4x, var5, var6x, var7x, var8x) -> this.miniEmpty(
-                  var1x, var8x, var4x + 8.0F, var5 + 2.0F, var6x - 16.0F, 56.0F, t("gui.tools.craft.noPreset.desc"), var7x
+               (var1x, var2x, var3x, var4x, f, var6x, var7x, var8x) -> this.miniEmpty(
+                  var1x, var8x, var4x + 8.0F, f + 2.0F, var6x - 16.0F, 56.0F, t("gui.tools.craft.noPreset.desc"), var7x
                )
             )
          );
       } else {
-         var var3 = var2.method5388();
-         if (var3.isEmpty()) {
+         var map = craftRecipe.method5388();
+         if (map.isEmpty()) {
             this.asideCustom(
                62.0F,
                this.entering(
                   2,
-                  (var1x, var2x, var3x, var4x, var5, var6x, var7x, var8x) -> this.miniEmpty(
-                     var1x, var8x, var4x + 8.0F, var5 + 2.0F, var6x - 16.0F, 56.0F, t("gui.tools.craft.noIngredients.desc"), var7x
+                  (var1x, var2x, var3x, var4x, f, var6x, var7x, var8x) -> this.miniEmpty(
+                     var1x, var8x, var4x + 8.0F, f + 2.0F, var6x - 16.0F, 56.0F, t("gui.tools.craft.noIngredients.desc"), var7x
                   )
                )
             );
          } else {
-            int var4 = 2;
+            int n = 2;
 
-            for (Map.Entry var6 : var3.entrySet()) {
-               String var7 = (String)var6.getKey();
-               int var8 = Math.max(1, (Integer)var6.getValue());
+            for (Map.Entry entry : map.entrySet()) {
+               String key = (String)entry.getKey();
+               int n2 = Math.max(1, (Integer)entry.getValue());
                this.asideCustom(
                   28.0F,
                   this.entering(
-                     var4++,
-                     (var4x, var5, var6x, var7x, var8x, var9, var10, var11) -> this.renderSource(
-                        var4x, var5, var6x, var7x, var8x, var9, var10, var11, var2, var7, var8
+                     n++,
+                     (var4x, lastClickX, var6x, var7x, var8x, f, previewAlpha, zenithStyle) -> this.renderSource(
+                        var4x, lastClickX, var6x, var7x, var8x, f, previewAlpha, zenithStyle, craftRecipe, key, n2
                      )
                   )
                );
@@ -197,52 +197,52 @@ public class AutoCraftToolPanel extends ToolTab {
       }
 
       this.asideCaption("gui.tools.craft.caption.options");
-      this.toggle("gui.tools.craft.option.take", "gui.tools.craft.option.take.desc", var1.getAutoTake(), 6);
-      this.toggle("gui.tools.craft.option.store", "gui.tools.craft.option.store.desc", var1.getAutoStore(), 7);
-      this.toggle("gui.tools.craft.option.batch", "gui.tools.craft.option.batch.desc", var1.getBatch(), 8);
+      this.toggle("gui.tools.craft.option.take", "gui.tools.craft.option.take.desc", autoCraftModule.getAutoTake(), 6);
+      this.toggle("gui.tools.craft.option.store", "gui.tools.craft.option.store.desc", autoCraftModule.getAutoStore(), 7);
+      this.toggle("gui.tools.craft.option.batch", "gui.tools.craft.option.batch.desc", autoCraftModule.getBatch(), 8);
    }
 
-   private void toggle(String var1, String var2, BooleanSetting var3, int var4) {
+   private void toggle(String key, String str, BooleanSetting autoTake, int n) {
       this.asideCustom(
          22.0F,
          this.entering(
-            var4,
-            (var4x, var5, var6, var7, var8, var9, var10, var11) -> {
-               BoundsData var12 = new BoundsData(var7 + 8.0F, var8 + 1.0F, var9 - 16.0F, 19.0F);
-               boolean var13 = var12.contains(var5, var6);
-               float var14 = this.hot("tg:" + var1, var13);
-               card(var4x, var11, var12.getFloatValue(), var12.getFloatValue2(), var12.width(), var12.height(), var14, var10);
-               float var15 = 14.0F;
-               float var16 = 7.5F;
-               float var17 = var12.getFloatValue() + var12.width() - 6.0F - var15;
-               this.drawSwitch(var4x, var1, var17, var12.getFloatValue2() + (var12.height() - var16) / 2.0F, var15, var16, var3.isEnabled(), var10, var11);
-               Font var18 = Fonts.NEW_MEDIUM.getFont(5.01F);
+            n,
+            (var4x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+               BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 19.0F);
+               boolean contains = boundsData.contains(lastClickX, lastClickY);
+               float hot = this.hot("tg:" + key, contains);
+               card(var4x, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
+               float width = 14.0F;
+               float height = 7.5F;
+               float floatValue = boundsData.getFloatValue() + boundsData.width() - 6.0F - width;
+               this.drawSwitch(var4x, key, floatValue, boundsData.getFloatValue2() + (boundsData.height() - height) / 2.0F, width, height, autoTake.isEnabled(), previewAlpha, zenithStyle);
+               Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
                var4x.drawText(
-                  var18,
-                  var18.clip(t(var1), var17 - var12.getFloatValue() - 12.0F),
-                  var12.getFloatValue() + 7.0F,
-                  var12.getFloatValue2() + (var12.height() - var18.height()) / 2.0F,
-                  var11.getTextSecondary()
+                  font,
+                  font.clip(t(key), floatValue - boundsData.getFloatValue() - 12.0F),
+                  boundsData.getFloatValue() + 7.0F,
+                  boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+                  zenithStyle.getTextSecondary()
                      .getZenithColor()
-                     .method7295(var11.getTextEnable().getZenithColor(), var14 * 0.7F + (var3.isEnabled() ? 0.3F : 0.0F))
-                     .method7294(var10)
+                     .method7295(zenithStyle.getTextEnable().getZenithColor(), hot * 0.7F + (autoTake.isEnabled() ? 0.3F : 0.0F))
+                     .method7294(previewAlpha)
                );
-               if (var13) {
-                  HoverInfo.request(t(var1), t(var2));
+               if (contains) {
+                  HoverInfo.request(t(key), t(str));
                }
             }
          ),
          () -> {
-            var3.toggle();
+            autoTake.toggle();
             Zenith.getInstance().getManager().method7788();
          },
          null
       );
    }
 
-   private void selectPreset(AutoCraftModule var1, CraftRecipe var2) {
-      if (!var2.getId().equals(var1.getText2())) {
-         var1.method1100(var2.getId());
+   private void selectPreset(AutoCraftModule autoCraftModule, CraftRecipe craftRecipe) {
+      if (!craftRecipe.getId().equals(autoCraftModule.getText2())) {
+         autoCraftModule.method1100(craftRecipe.getId());
          Zenith.getInstance().getManager().method7788();
          this.resetAsideScroll();
          this.replayAsideFrom(this.sourcesFrom);
@@ -250,412 +250,412 @@ public class AutoCraftToolPanel extends ToolTab {
       }
    }
 
-   private void renderHero(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      AutoCraftModule var9 = module();
-      CraftRecipe var10 = var9.method1097();
-      boolean var11 = var9.isEnabled();
-      BoundsData var12 = new BoundsData(var4 + 8.0F, var5 + 2.0F, var6 - 16.0F, 88.0F);
-      ZenithColor var13 = var8.getPrimaryColor().getZenithColor();
+   private void renderHero(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      AutoCraftModule autoCraftModule = module();
+      CraftRecipe craftRecipe = autoCraftModule.method1097();
+      boolean enabled = autoCraftModule.isEnabled();
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 2.0F, f3 - 16.0F, 88.0F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
       accentCard(
-         var1,
-         var8,
-         var12.getFloatValue(),
-         var12.getFloatValue2(),
-         var12.width(),
-         var12.height(),
+         menuDrawContext,
+         zenithStyle,
+         boundsData.getFloatValue(),
+         boundsData.getFloatValue2(),
+         boundsData.width(),
+         boundsData.height(),
          0.0F,
-         var7,
-         var13,
-         var11 ? 0.45F + 0.2F * pulse(0.7F) : 0.18F
+         previewAlpha,
+         zenithColor,
+         enabled ? 0.45F + 0.2F * pulse(0.7F) : 0.18F
       );
-      if (var10 == null) {
-         float var36 = 30.0F;
-         float var37 = var12.getFloatValue() + 14.0F;
-         float var38 = var12.getFloatValue2() + (var12.height() - var36) / 2.0F + (float)Math.sin(System.currentTimeMillis() / 600.0) * 1.2F;
-         tile(var1, var8, var37, var38, var36, var13, 0.55F, var7);
-         bigGlyph(var1, MenuGlyph.CRAFT, var37 + var36 / 2.0F, var38 + var36 / 2.0F, 2.0F, var13.method7294(var7));
-         Font var39 = Fonts.NEW_SEMIBOLD.getFont(6.2F);
-         Font var42 = Fonts.NEW_REGULAR.getFont(4.5F);
-         float var45 = var37 + var36 + 12.0F;
-         float var48 = var12.getFloatValue() + var12.width() - 10.0F - var45;
-         List<String> var50 = wrapText(t("gui.tools.craft.pick.hint"), var42, var48, 3);
-         float var52 = var39.height() + 4.0F + var50.size() * (var42.height() + 2.0F);
-         float var54 = var12.getFloatValue2() + (var12.height() - var52) / 2.0F;
-         var1.drawText(var39, t("gui.tools.craft.pick"), var45, var54, var8.getTextEnable().getZenithColor().method7294(var7));
-         var54 += var39.height() + 4.0F;
+      if (craftRecipe == null) {
+         float width = 30.0F;
+         float floatValue = boundsData.getFloatValue() + 14.0F;
+         float y = boundsData.getFloatValue2() + (boundsData.height() - width) / 2.0F + (float)Math.sin(System.currentTimeMillis() / 600.0) * 1.2F;
+         tile(menuDrawContext, zenithStyle, floatValue, y, width, zenithColor, 0.55F, previewAlpha);
+         bigGlyph(menuDrawContext, MenuGlyph.CRAFT, floatValue + width / 2.0F, y + width / 2.0F, 2.0F, zenithColor.method7294(previewAlpha));
+         Font font = Fonts.NEW_SEMIBOLD.getFont(6.2F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(4.5F);
+         float floatValue2 = floatValue + width + 12.0F;
+         float shownWidth = boundsData.getFloatValue() + boundsData.width() - 10.0F - floatValue2;
+         List<String> strings = wrapText(t("gui.tools.craft.pick.hint"), font2, shownWidth, 3);
+         float f4 = font.height() + 4.0F + strings.size() * (font2.height() + 2.0F);
+         float centeredTextY = boundsData.getFloatValue2() + (boundsData.height() - f4) / 2.0F;
+         menuDrawContext.drawText(font, t("gui.tools.craft.pick"), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font.height() + 4.0F;
 
-         for (String var59 : var50) {
-            var1.drawText(var42, var59, var45, var54, var8.getTextTertiary().getZenithColor().method7294(var7));
-            var54 += var42.height() + 2.0F;
+         for (String text : strings) {
+            menuDrawContext.drawText(font2, text, floatValue2, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY += font2.height() + 2.0F;
          }
       } else {
-         if (var12.contains(var2, var3)) {
-            HoverInfo.request(var10.method5400(var9), t("gui.tools.craft.recipe.desc"));
+         if (boundsData.contains(lastClickX, lastClickY)) {
+            HoverInfo.request(craftRecipe.method5400(autoCraftModule), t("gui.tools.craft.recipe.desc"));
          }
 
-         float var14 = this.since("preset", 520L);
-         float var15 = var12.getFloatValue() + 10.0F;
-         float var16 = var12.getFloatValue2() + 9.0F;
-         float var17 = 49.0F;
+         float since = this.since("preset", 520L);
+         float f4 = boundsData.getFloatValue() + 10.0F;
+         float f5 = boundsData.getFloatValue2() + 9.0F;
+         float f6 = 49.0F;
 
-         for (int var18 = 0; var18 < 9; var18++) {
-            float var19 = var15 + var18 % 3 * 17.0F;
-            float var20 = var16 + var18 / 3 * 17.0F;
-            var1.drawRoundedRect(
-               var19, var20, 15.0F, 15.0F, ProxyDotRadiusData.method8069(3.5F), var8.getPanelLeftBackground().getZenithColor().method7294(var7)
+         for (int i = 0; i < 9; i++) {
+            float floatValue = f4 + i % 3 * 17.0F;
+            float y = f5 + i / 3 * 17.0F;
+            menuDrawContext.drawRoundedRect(
+               floatValue, y, 15.0F, 15.0F, ProxyDotRadiusData.method8069(3.5F), zenithStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha)
             );
          }
 
-         for (int var40 = 0; var40 < 9; var40++) {
-            String var43 = var10.method5391(var40);
-            if (var43 != null && !var43.isBlank()) {
-               float var46 = Math.max(0.0F, Math.min(1.0F, var14 * 1.8F - var40 * 0.07F));
-               float var21 = var46 <= 0.0F ? 0.0F : 1.0F - (1.0F - var46) * (1.0F - var46) * (1.0F - var46);
-               float var22 = 1.0F + (float)Math.sin(var46 * Math.PI) * 0.12F;
-               float var23 = 11.0F * var21 * var22;
-               if (!(var23 < 1.0F)) {
-                  float var24 = var15 + var40 % 3 * 17.0F + (15.0F - var23) / 2.0F;
-                  float var25 = var16 + var40 / 3 * 17.0F + (15.0F - var23) / 2.0F;
-                  this.drawItem(var1, var9.method1117(var43).getDefaultInstance(), var24, var25, var23, var7);
+         for (int i = 0; i < 9; i++) {
+            String identifier = craftRecipe.method5391(i);
+            if (identifier != null && !identifier.isBlank()) {
+               float f7 = Math.max(0.0F, Math.min(1.0F, since * 1.8F - i * 0.07F));
+               float f8 = f7 <= 0.0F ? 0.0F : 1.0F - (1.0F - f7) * (1.0F - f7) * (1.0F - f7);
+               float f9 = 1.0F + (float)Math.sin(f7 * Math.PI) * 0.12F;
+               float f10 = 11.0F * f8 * f9;
+               if (!(f10 < 1.0F)) {
+                  float x = f4 + i % 3 * 17.0F + (15.0F - f10) / 2.0F;
+                  float y = f5 + i / 3 * 17.0F + (15.0F - f10) / 2.0F;
+                  this.drawItem(menuDrawContext, autoCraftModule.method1117(identifier).getDefaultInstance(), x, y, f10, previewAlpha);
                }
             }
          }
 
-         float var41 = var15 + var17 + 5.0F;
-         float var44 = var41 + 18.0F;
-         float var47 = var16 + (var17 - 28.0F) / 2.0F;
-         this.drawFlow(var1, var41, var47 + 14.0F, 13.0F, var11, var8, var7);
-         tile(var1, var8, var44, var47, 28.0F, var13, 0.35F, var7);
-         float var49 = Math.max(0.0F, Math.min(1.0F, var14 * 1.6F - 0.35F));
-         float var51 = 18.0F * (1.0F - (1.0F - var49) * (1.0F - var49)) * (1.0F + (float)Math.sin(var49 * Math.PI) * 0.1F);
-         if (var51 > 1.0F) {
-            this.drawItem(var1, var10.method5401(var9), var44 + (28.0F - var51) / 2.0F, var47 + (28.0F - var51) / 2.0F, var51, var7);
+         float floatValue = f4 + f6 + 5.0F;
+         float floatValue2 = floatValue + 18.0F;
+         float y = f5 + (f6 - 28.0F) / 2.0F;
+         this.drawFlow(menuDrawContext, floatValue, y + 14.0F, 13.0F, enabled, zenithStyle, previewAlpha);
+         tile(menuDrawContext, zenithStyle, floatValue2, y, 28.0F, zenithColor, 0.35F, previewAlpha);
+         float f7 = Math.max(0.0F, Math.min(1.0F, since * 1.6F - 0.35F));
+         float f8 = 18.0F * (1.0F - (1.0F - f7) * (1.0F - f7)) * (1.0F + (float)Math.sin(f7 * Math.PI) * 0.1F);
+         if (f8 > 1.0F) {
+            this.drawItem(menuDrawContext, craftRecipe.method5401(autoCraftModule), floatValue2 + (28.0F - f8) / 2.0F, y + (28.0F - f8) / 2.0F, f8, previewAlpha);
          }
 
-         int var53 = this.possibleCrafts(var10);
-         Font var56 = Fonts.NEW_SEMIBOLD.getFont(6.2F);
-         Font var58 = Fonts.NEW_REGULAR.getFont(4.4F);
-         Font var26 = Fonts.NEW_MEDIUM.getFont(4.3F);
-         float var27 = var44 + 28.0F + 10.0F;
-         float var28 = var12.getFloatValue() + var12.width() - 9.0F - var27;
-         float var29 = var16 + 4.0F;
-         var1.drawText(var56, var56.clip(var10.method5400(var9), var28), var27, var29, var8.getTextEnable().getZenithColor().method7294(var7));
-         var29 += var56.height() + 3.0F;
-         var1.drawText(var58, var58.clip(this.summary(var9, var10), var28), var27, var29, var8.getTextTertiary().getZenithColor().method7294(var7));
-         var29 += var58.height() + 5.0F;
-         String var30 = var53 > 0 ? t("gui.tools.craft.stock.enough").replace("{n}", String.valueOf(var53)) : t("gui.tools.craft.stock.none");
-         pill(var1, var26, var27, var29, var30, var53 > 0 ? OK : var8.getTextTertiary().getZenithColor(), var7);
-         AutoCraftToolPanel.Readiness var31 = this.readiness(var10, var53);
-         ZenithColor var32 = this.stateColor(var31, var8);
-         float var33 = var12.getFloatValue2() + var12.height() - 17.0F;
-         var1.drawRect(var12.getFloatValue() + 8.0F, var33, var12.width() - 16.0F, 0.5F, var8.getFieldBorder().getZenithColor().method7294(var7 * 2.5F));
-         float var34 = var33 + 8.5F;
-         boolean var35 = var11 || var9.isBinding();
-         dot(var1, var12.getFloatValue() + 12.0F, var34, 3.2F, var32, var35 ? pulse(1.2F) : 0.0F, var7);
-         var1.drawText(
-            var58,
-            var58.clip(this.stateText(var31), var12.width() - 30.0F),
-            var12.getFloatValue() + 18.0F,
-            var34 - var58.height() / 2.0F,
-            var32.method7294(var7)
+         int possibleCrafts = this.possibleCrafts(craftRecipe);
+         Font font = Fonts.NEW_SEMIBOLD.getFont(6.2F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+         Font font3 = Fonts.NEW_MEDIUM.getFont(4.3F);
+         float floatValue3 = floatValue2 + 28.0F + 10.0F;
+         float width = boundsData.getFloatValue() + boundsData.width() - 9.0F - floatValue3;
+         float centeredTextY = f5 + 4.0F;
+         menuDrawContext.drawText(font, font.clip(craftRecipe.method5400(autoCraftModule), width), floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font.height() + 3.0F;
+         menuDrawContext.drawText(font2, font2.clip(this.summary(autoCraftModule, craftRecipe), width), floatValue3, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font2.height() + 5.0F;
+         String text = possibleCrafts > 0 ? t("gui.tools.craft.stock.enough").replace("{n}", String.valueOf(possibleCrafts)) : t("gui.tools.craft.stock.none");
+         pill(menuDrawContext, font3, floatValue3, centeredTextY, text, possibleCrafts > 0 ? OK : zenithStyle.getTextTertiary().getZenithColor(), previewAlpha);
+         AutoCraftToolPanel.Readiness readiness = this.readiness(craftRecipe, possibleCrafts);
+         ZenithColor stateColor = this.stateColor(readiness, zenithStyle);
+         float y2 = boundsData.getFloatValue2() + boundsData.height() - 17.0F;
+         menuDrawContext.drawRect(boundsData.getFloatValue() + 8.0F, y2, boundsData.width() - 16.0F, 0.5F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.5F));
+         float f9 = y2 + 8.5F;
+         boolean flag = enabled || autoCraftModule.isBinding();
+         dot(menuDrawContext, boundsData.getFloatValue() + 12.0F, f9, 3.2F, stateColor, flag ? pulse(1.2F) : 0.0F, previewAlpha);
+         menuDrawContext.drawText(
+            font2,
+            font2.clip(this.stateText(readiness), boundsData.width() - 30.0F),
+            boundsData.getFloatValue() + 18.0F,
+            f9 - font2.height() / 2.0F,
+            stateColor.method7294(previewAlpha)
          );
       }
    }
 
-   private void drawFlow(MenuDrawContext var1, float var2, float var3, float var4, boolean var5, ZenithStyle var6, float var7) {
-      ZenithColor var8 = var6.getTextTertiary().getZenithColor();
-      ZenithColor var9 = var6.getPrimaryColor().getZenithColor();
-      if (!var5) {
-         var1.drawRect(var2, var3 - 0.5F, var4 - 3.0F, 1.0F, var8.method7294(var7));
-         var1.drawRect(var2 + var4 - 5.0F, var3 - 2.5F, 1.0F, 2.0F, var8.method7294(var7));
-         var1.drawRect(var2 + var4 - 5.0F, var3 + 0.5F, 1.0F, 2.0F, var8.method7294(var7));
-         var1.drawRect(var2 + var4 - 4.0F, var3 - 1.5F, 1.0F, 3.0F, var8.method7294(var7));
+   private void drawFlow(MenuDrawContext menuDrawContext, float floatValue, float f, float f2, boolean enabled, ZenithStyle zenithStyle, float previewAlpha) {
+      ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor();
+      ZenithColor zenithColor2 = zenithStyle.getPrimaryColor().getZenithColor();
+      if (!enabled) {
+         menuDrawContext.drawRect(floatValue, f - 0.5F, f2 - 3.0F, 1.0F, zenithColor.method7294(previewAlpha));
+         menuDrawContext.drawRect(floatValue + f2 - 5.0F, f - 2.5F, 1.0F, 2.0F, zenithColor.method7294(previewAlpha));
+         menuDrawContext.drawRect(floatValue + f2 - 5.0F, f + 0.5F, 1.0F, 2.0F, zenithColor.method7294(previewAlpha));
+         menuDrawContext.drawRect(floatValue + f2 - 4.0F, f - 1.5F, 1.0F, 3.0F, zenithColor.method7294(previewAlpha));
       } else {
-         float var10 = (float)(System.currentTimeMillis() % 900L) / 900.0F;
+         float f3 = (float)(System.currentTimeMillis() % 900L) / 900.0F;
 
-         for (int var11 = 0; var11 < 3; var11++) {
-            float var12 = (var10 + var11 / 3.0F) % 1.0F;
-            float var13 = var2 + var12 * var4;
-            float var14 = (float)Math.sin(var12 * Math.PI);
-            var1.drawRoundedRect(var13 - 1.2F, var3 - 1.2F, 2.4F, 2.4F, ProxyDotRadiusData.method8069(1.2F), var9.method7294(var7 * var14));
+         for (int i = 0; i < 3; i++) {
+            float f4 = (f3 + i / 3.0F) % 1.0F;
+            float f5 = floatValue + f4 * f2;
+            float f6 = (float)Math.sin(f4 * Math.PI);
+            menuDrawContext.drawRoundedRect(f5 - 1.2F, f - 1.2F, 2.4F, 2.4F, ProxyDotRadiusData.method8069(1.2F), zenithColor2.method7294(previewAlpha * f6));
          }
       }
    }
 
-   private void renderButton(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      AutoCraftModule var9 = module();
-      boolean var10 = var9.isEnabled();
-      boolean var11 = var9.method1097() != null || var10;
-      BoundsData var12 = new BoundsData(var4 + 8.0F, var5 + 4.0F, var6 - 16.0F, 22.0F);
-      this.buttonBounds = var11 ? var12 : null;
-      String var13 = t(var11 ? (var10 ? "gui.tools.craft.stop" : "gui.tools.craft.start") : "gui.tools.craft.start.disabled");
-      boolean var14 = this.button(var1, var8, "start", var12, var10 ? MenuGlyph.CLOSE : MenuGlyph.CRAFT, var13, var10 ? 2 : 1, var11, var2, var3, var7);
-      if (var10) {
-         this.shimmer(var1, var12, DANGER, var7);
+   private void renderButton(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      AutoCraftModule autoCraftModule = module();
+      boolean enabled = autoCraftModule.isEnabled();
+      boolean flag = autoCraftModule.method1097() != null || enabled;
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 4.0F, f3 - 16.0F, 22.0F);
+      this.buttonBounds = flag ? boundsData : null;
+      String name = t(flag ? (enabled ? "gui.tools.craft.stop" : "gui.tools.craft.start") : "gui.tools.craft.start.disabled");
+      boolean button = this.button(menuDrawContext, zenithStyle, "start", boundsData, enabled ? MenuGlyph.CLOSE : MenuGlyph.CRAFT, name, enabled ? 2 : 1, flag, lastClickX, lastClickY, previewAlpha);
+      if (enabled) {
+         this.shimmer(menuDrawContext, boundsData, DANGER, previewAlpha);
       }
 
-      if (var14) {
-         HoverInfo.request(var13, t(var10 ? "gui.tools.craft.stop.desc" : "gui.tools.craft.start.desc"));
+      if (button) {
+         HoverInfo.request(name, t(enabled ? "gui.tools.craft.stop.desc" : "gui.tools.craft.start.desc"));
       }
    }
 
-   private void renderListHead(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      float var10 = var5 + (20.0F - var9.height()) / 2.0F;
-      String var11 = t("gui.tools.craft.caption.presets");
-      caption(var1, var8, var11, var4 + 8.0F, var10, var7);
-      String var12 = String.valueOf(this.recipeCount);
-      float var13 = var4 + 8.0F + var9.width(HoverInfo.spaced(var11.toUpperCase(Locale.ROOT))) + 5.0F;
-      Font var14 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      var1.drawText(var14, var12, var13, var10, var8.getTextSecondary().getZenithColor().method7294(var7));
-      float var15 = this.filterStrip.width();
-      float var16 = var4 + var6 - 8.0F - var15;
-      float var17 = var5 + 4.5F;
-      this.filterBounds = new BoundsData(var16, var17, var15, 11.0F);
-      this.filterStrip.render(var1, var2, var3, var16, var17, var15 + 1.0F, this.filter, var7, var8);
+   private void renderListHead(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+      float centeredTextY = f2 + (20.0F - font.height()) / 2.0F;
+      String str = t("gui.tools.craft.caption.presets");
+      caption(menuDrawContext, zenithStyle, str, f + 8.0F, centeredTextY, previewAlpha);
+      String text = String.valueOf(this.recipeCount);
+      float floatValue = f + 8.0F + font.width(HoverInfo.spaced(str.toUpperCase(Locale.ROOT))) + 5.0F;
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.0F);
+      menuDrawContext.drawText(font2, text, floatValue, centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      float width = this.filterStrip.width();
+      float floatValue2 = f + f3 - 8.0F - width;
+      float y = f2 + 4.5F;
+      this.filterBounds = new BoundsData(floatValue2, y, width, 11.0F);
+      this.filterStrip.render(menuDrawContext, lastClickX, lastClickY, floatValue2, y, width + 1.0F, this.filter, previewAlpha, zenithStyle);
       if (this.filterStrip.hovered() >= 0) {
          HoverInfo.request(this.filterStrip.label(this.filterStrip.hovered()), t("gui.tools.craft.filter.desc"));
       }
    }
 
-   private void renderRecipe(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, CraftRecipe var9) {
-      AutoCraftModule var10 = module();
-      BoundsData var11 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 22.0F);
-      boolean var12 = var11.contains(var2, var3);
-      boolean var13 = var9.getId().equals(var10.getText2());
-      float var14 = this.hot("r:" + var9.getId(), var12);
-      float var15 = this.hot("rs:" + var9.getId(), var13);
-      ZenithColor var16 = var8.getPrimaryColor().getZenithColor();
-      if (var15 > 0.01F) {
-         accentCard(var1, var8, var11.getFloatValue(), var11.getFloatValue2(), var11.width(), var11.height(), var14, var7, var16, var15 * 0.75F);
+   private void renderRecipe(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, CraftRecipe craftRecipe) {
+      AutoCraftModule autoCraftModule = module();
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 22.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      boolean flag = craftRecipe.getId().equals(autoCraftModule.getText2());
+      float hot = this.hot("r:" + craftRecipe.getId(), contains);
+      float hot2 = this.hot("rs:" + craftRecipe.getId(), flag);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      if (hot2 > 0.01F) {
+         accentCard(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha, zenithColor, hot2 * 0.75F);
       } else {
-         card(var1, var8, var11.getFloatValue(), var11.getFloatValue2(), var11.width(), var11.height(), var14, var7);
+         card(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
       }
 
-      float var17 = var11.height() - 6.0F;
-      float var18 = var11.getFloatValue() + 3.0F;
-      float var19 = var11.getFloatValue2() + 3.0F;
-      tile(var1, var8, var18, var19, var17, var16, var15 * 0.6F + var14 * 0.2F, var7);
-      float var20 = var14 * 0.8F;
-      this.drawItem(var1, var9.method5401(var10), var18 + (var17 - 12.0F) / 2.0F, var19 + (var17 - 12.0F) / 2.0F - var20, 12.0F, var7);
-      boolean var21 = this.craftableNow(var9);
-      Font var22 = Fonts.NEW_MEDIUM.getFont(5.01F);
-      Font var23 = Fonts.NEW_REGULAR.getFont(4.0F);
-      Font var24 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      String var25 = t("gui.tools.craft.list.can");
-      float var26 = var11.getFloatValue() + var11.width() - 6.0F;
-      if (var21) {
-         float var27 = pillWidth(var24, var25);
-         pill(var1, var24, var26 - var27, var11.getFloatValue2() + (var11.height() - var24.height() - 3.6F) / 2.0F, var25, OK, var7);
-         var26 -= var27 + 5.0F;
+      float width = boundsData.height() - 6.0F;
+      float floatValue = boundsData.getFloatValue() + 3.0F;
+      float y = boundsData.getFloatValue2() + 3.0F;
+      tile(menuDrawContext, zenithStyle, floatValue, y, width, zenithColor, hot2 * 0.6F + hot * 0.2F, previewAlpha);
+      float f4 = hot * 0.8F;
+      this.drawItem(menuDrawContext, craftRecipe.method5401(autoCraftModule), floatValue + (width - 12.0F) / 2.0F, y + (width - 12.0F) / 2.0F - f4, 12.0F, previewAlpha);
+      boolean craftableNow = this.craftableNow(craftRecipe);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.0F);
+      Font font3 = Fonts.NEW_MEDIUM.getFont(4.0F);
+      String text = t("gui.tools.craft.list.can");
+      float f5 = boundsData.getFloatValue() + boundsData.width() - 6.0F;
+      if (craftableNow) {
+         float pillWidth2 = pillWidth(font3, text);
+         pill(menuDrawContext, font3, f5 - pillWidth2, boundsData.getFloatValue2() + (boundsData.height() - font3.height() - 3.6F) / 2.0F, text, OK, previewAlpha);
+         f5 -= pillWidth2 + 5.0F;
       }
 
-      float var29 = var18 + var17 + 6.0F;
-      float var28 = var26 - var29;
-      var1.drawText(
-         var22,
-         var22.clip(var9.getText3(), var28),
-         var29,
-         var11.getFloatValue2() + 4.0F,
-         var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), Math.max(var15, var14 * 0.7F)).method7294(var7)
+      float floatValue2 = floatValue + width + 6.0F;
+      float width2 = f5 - floatValue2;
+      menuDrawContext.drawText(
+         font,
+         font.clip(craftRecipe.getText3(), width2),
+         floatValue2,
+         boundsData.getFloatValue2() + 4.0F,
+         zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(hot2, hot * 0.7F)).method7294(previewAlpha)
       );
-      var1.drawText(
-         var23,
-         var23.clip(this.summary(var10, var9), var28),
-         var29,
-         var11.getFloatValue2() + 6.0F + var22.height(),
-         var8.getTextTertiary().getZenithColor().method7294(var7)
+      menuDrawContext.drawText(
+         font2,
+         font2.clip(this.summary(autoCraftModule, craftRecipe), width2),
+         floatValue2,
+         boundsData.getFloatValue2() + 6.0F + font.height(),
+         zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      if (var12) {
-         HoverInfo.request(var9.getText3(), t("gui.tools.craft.preset.desc"));
+      if (contains) {
+         HoverInfo.request(craftRecipe.getText3(), t("gui.tools.craft.preset.desc"));
       }
    }
 
-   private String summary(AutoCraftModule var1, CraftRecipe var2) {
-      return this.summaries.computeIfAbsent(var2.getId(), var2x -> {
-         ArrayList var3 = new ArrayList();
+   private String summary(AutoCraftModule autoCraftModule, CraftRecipe craftRecipe) {
+      return this.summaries.computeIfAbsent(craftRecipe.getId(), var2x -> {
+         ArrayList elements = new ArrayList();
 
-         for (Map.Entry var5 : var2.method5388().entrySet()) {
-            var3.add(Math.max(1, (Integer)var5.getValue()) + "× " + var2.method5397((String)var5.getKey(), var1));
+         for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+            elements.add(Math.max(1, (Integer)entry.getValue()) + "× " + craftRecipe.method5397((String)entry.getKey(), autoCraftModule));
          }
 
-         return String.join("  ·  ", var3);
+         return String.join("  ·  ", elements);
       });
    }
 
-   private void renderAround(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = var6 - 16.0F;
-      float var10 = (var9 - 4.0F) / 2.0F;
-      boolean var11 = this.nearby.method1131();
+   private void renderAround(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float f4 = f3 - 16.0F;
+      float width = (f4 - 4.0F) / 2.0F;
+      boolean flag = this.nearby.method1131();
       this.statTile(
-         var1,
-         var8,
-         var2,
-         var3,
-         var4 + 8.0F,
-         var5 + 1.0F,
-         var10,
+         menuDrawContext,
+         zenithStyle,
+         lastClickX,
+         lastClickY,
+         f + 8.0F,
+         f2 + 1.0F,
+         width,
          32.0F,
          Items.CRAFTING_TABLE.getDefaultInstance(),
          t("gui.tools.craft.around.workbench"),
-         t(var11 ? "gui.tools.craft.near.yes" : "gui.tools.craft.near.no"),
-         var11 ? OK : DANGER,
+         t(flag ? "gui.tools.craft.near.yes" : "gui.tools.craft.near.no"),
+         flag ? OK : DANGER,
          "gui.tools.craft.around.workbench.desc",
-         var7
+         previewAlpha
       );
-      int var12 = this.nearby.getIntValue();
+      int intValue = this.nearby.getIntValue();
       this.statTile(
-         var1,
-         var8,
-         var2,
-         var3,
-         var4 + 8.0F + var10 + 4.0F,
-         var5 + 1.0F,
-         var10,
+         menuDrawContext,
+         zenithStyle,
+         lastClickX,
+         lastClickY,
+         f + 8.0F + width + 4.0F,
+         f2 + 1.0F,
+         width,
          32.0F,
          Items.CHEST.getDefaultInstance(),
          t("gui.tools.craft.around.storages"),
-         String.valueOf(var12),
-         var12 > 0 ? var8.getTextEnable().getZenithColor() : var8.getTextTertiary().getZenithColor(),
+         String.valueOf(intValue),
+         intValue > 0 ? zenithStyle.getTextEnable().getZenithColor() : zenithStyle.getTextTertiary().getZenithColor(),
          "gui.tools.craft.around.storages.desc",
-         var7
+         previewAlpha
       );
    }
 
    private void statTile(
-      MenuDrawContext var1,
-      ZenithStyle var2,
-      int var3,
-      int var4,
-      float var5,
-      float var6,
-      float var7,
-      float var8,
-      ItemStack var9,
-      String var10,
-      String var11,
-      ZenithColor var12,
-      String var13,
-      float var14
+      MenuDrawContext menuDrawContext,
+      ZenithStyle zenithStyle,
+      int lastClickX,
+      int lastClickY,
+      float floatValue,
+      float y,
+      float width,
+      float height,
+      ItemStack defaultInstance,
+      String name,
+      String str,
+      ZenithColor zenithColor,
+      String key,
+      float previewAlpha
    ) {
-      boolean var15 = new BoundsData(var5, var6, var7, var8).contains(var3, var4);
-      float var16 = this.hot("stat:" + var10, var15);
-      card(var1, var2, var5, var6, var7, var8, var16, var14);
-      float var17 = 16.0F;
-      tile(var1, var2, var5 + 5.0F, var6 + (var8 - var17) / 2.0F, var17, var12, 0.35F, var14);
-      this.drawItem(var1, var9, var5 + 7.0F, var6 + (var8 - 12.0F) / 2.0F, 12.0F, var14);
-      Font var18 = Fonts.NEW_REGULAR.getFont(4.1F);
-      Font var19 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      float var20 = var5 + 5.0F + var17 + 5.0F;
-      float var21 = var5 + var7 - 4.0F - var20;
-      float var22 = var18.height() + 2.0F + var19.height();
-      float var23 = var6 + (var8 - var22) / 2.0F;
-      var1.drawText(var18, var18.clip(var10, var21), var20, var23, var2.getTextTertiary().getZenithColor().method7294(var14));
-      var1.drawText(var19, var19.clip(var11, var21), var20, var23 + var18.height() + 2.0F, var12.method7294(var14));
-      if (var15) {
-         HoverInfo.request(var10, t(var13));
+      boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+      float hot = this.hot("stat:" + name, contains);
+      card(menuDrawContext, zenithStyle, floatValue, y, width, height, hot, previewAlpha);
+      float f = 16.0F;
+      tile(menuDrawContext, zenithStyle, floatValue + 5.0F, y + (height - f) / 2.0F, f, zenithColor, 0.35F, previewAlpha);
+      this.drawItem(menuDrawContext, defaultInstance, floatValue + 7.0F, y + (height - 12.0F) / 2.0F, 12.0F, previewAlpha);
+      Font font = Fonts.NEW_REGULAR.getFont(4.1F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+      float floatValue2 = floatValue + 5.0F + f + 5.0F;
+      float width2 = floatValue + width - 4.0F - floatValue2;
+      float f2 = font.height() + 2.0F + font2.height();
+      float centeredTextY = y + (height - f2) / 2.0F;
+      menuDrawContext.drawText(font, font.clip(name, width2), floatValue2, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawText(font2, font2.clip(str, width2), floatValue2, centeredTextY + font.height() + 2.0F, zenithColor.method7294(previewAlpha));
+      if (contains) {
+         HoverInfo.request(name, t(key));
       }
    }
 
    private void renderSource(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, CraftRecipe var9, String var10, int var11
+      MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, CraftRecipe craftRecipe, String key, int n
    ) {
-      AutoCraftModule var12 = module();
-      String var13 = var9.method5395(var10);
-      String var14 = var9.method5397(var10, var12);
-      int var15 = var12.method1121(var13, var9.method5396(var10));
-      boolean var16 = var15 >= var11;
-      BoundsData var17 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 25.0F);
-      boolean var18 = var17.contains(var2, var3);
-      card(var1, var8, var17.getFloatValue(), var17.getFloatValue2(), var17.width(), var17.height(), this.hot("src:" + var10, var18), var7);
-      float var19 = 16.0F;
+      AutoCraftModule autoCraftModule = module();
+      String identifier = craftRecipe.method5395(key);
+      String name = craftRecipe.method5397(key, autoCraftModule);
+      int n2 = autoCraftModule.method1121(identifier, craftRecipe.method5396(key));
+      boolean flag = n2 >= n;
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 25.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      card(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), this.hot("src:" + key, contains), previewAlpha);
+      float width = 16.0F;
       tile(
-         var1,
-         var8,
-         var17.getFloatValue() + 4.0F,
-         var17.getFloatValue2() + (var17.height() - var19) / 2.0F,
-         var19,
-         var16 ? OK : var8.getPrimaryColor().getZenithColor(),
+         menuDrawContext,
+         zenithStyle,
+         boundsData.getFloatValue() + 4.0F,
+         boundsData.getFloatValue2() + (boundsData.height() - width) / 2.0F,
+         width,
+         flag ? OK : zenithStyle.getPrimaryColor().getZenithColor(),
          0.3F,
-         var7
+         previewAlpha
       );
       this.drawItem(
-         var1, var12.method1117(var13).getDefaultInstance(), var17.getFloatValue() + 6.0F, var17.getFloatValue2() + (var17.height() - 12.0F) / 2.0F, 12.0F, var7
+         menuDrawContext, autoCraftModule.method1117(identifier).getDefaultInstance(), boundsData.getFloatValue() + 6.0F, boundsData.getFloatValue2() + (boundsData.height() - 12.0F) / 2.0F, 12.0F, previewAlpha
       );
-      Font var20 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      Font var21 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      String var22 = Math.min(var15, 9999) + " / " + var11;
-      float var23 = var17.getFloatValue() + 4.0F + var19 + 5.0F;
-      float var24 = var17.getFloatValue() + var17.width() - 6.0F;
-      var1.drawText(
-         var21, var22, var24 - var21.width(var22), var17.getFloatValue2() + 5.0F, (var16 ? OK : var8.getTextSecondary().getZenithColor()).method7294(var7)
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.4F);
+      String text = Math.min(n2, 9999) + " / " + n;
+      float floatValue = boundsData.getFloatValue() + 4.0F + width + 5.0F;
+      float f4 = boundsData.getFloatValue() + boundsData.width() - 6.0F;
+      menuDrawContext.drawText(
+         font2, text, f4 - font2.width(text), boundsData.getFloatValue2() + 5.0F, (flag ? OK : zenithStyle.getTextSecondary().getZenithColor()).method7294(previewAlpha)
       );
-      var1.drawText(
-         var20,
-         var20.clip(var14, var24 - var21.width(var22) - 5.0F - var23),
-         var23,
-         var17.getFloatValue2() + 4.5F,
-         var8.getTextEnable().getZenithColor().method7294(var7)
+      menuDrawContext.drawText(
+         font,
+         font.clip(name, f4 - font2.width(text) - 5.0F - floatValue),
+         floatValue,
+         boundsData.getFloatValue2() + 4.5F,
+         zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
       progress(
-         var1,
-         var8,
-         var23,
-         var17.getFloatValue2() + var17.height() - 7.0F,
-         var24 - var23,
+         menuDrawContext,
+         zenithStyle,
+         floatValue,
+         boundsData.getFloatValue2() + boundsData.height() - 7.0F,
+         f4 - floatValue,
          2.5F,
-         (float)var15 / var11,
-         var16 ? OK : var8.getPrimaryColor().getZenithColor(),
+         (float)n2 / n,
+         flag ? OK : zenithStyle.getPrimaryColor().getZenithColor(),
          false,
-         var7
+         previewAlpha
       );
-      if (var18) {
-         HoverInfo.request(var14, t("gui.tools.craft.source.desc"));
+      if (contains) {
+         HoverInfo.request(name, t("gui.tools.craft.source.desc"));
       }
    }
 
-   private void miniEmpty(MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5, float var6, String var7, float var8) {
-      card(var1, var2, var3, var4, var5, var6, 0.0F, var8);
+   private void miniEmpty(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, float floatValue, float y, float width, float height, String name, float previewAlpha) {
+      card(menuDrawContext, zenithStyle, floatValue, y, width, height, 0.0F, previewAlpha);
 
-      for (int var9 = 0; var9 < 2; var9++) {
-         float var10 = var4 + 7.0F + var9 * 13.0F;
-         skeleton(var1, var2, var3 + 6.0F, var10, 10.0F, 10.0F, var9, var8 * 0.8F);
-         skeleton(var1, var2, var3 + 21.0F, var10 + 1.5F, (var5 - 30.0F) * (var9 == 0 ? 0.7F : 0.5F), 3.0F, var9, var8 * 0.8F);
-         skeleton(var1, var2, var3 + 21.0F, var10 + 6.5F, (var5 - 30.0F) * 0.9F, 2.0F, var9 + 1, var8 * 0.6F);
+      for (int i = 0; i < 2; i++) {
+         float f = y + 7.0F + i * 13.0F;
+         skeleton(menuDrawContext, zenithStyle, floatValue + 6.0F, f, 10.0F, 10.0F, i, previewAlpha * 0.8F);
+         skeleton(menuDrawContext, zenithStyle, floatValue + 21.0F, f + 1.5F, (width - 30.0F) * (i == 0 ? 0.7F : 0.5F), 3.0F, i, previewAlpha * 0.8F);
+         skeleton(menuDrawContext, zenithStyle, floatValue + 21.0F, f + 6.5F, (width - 30.0F) * 0.9F, 2.0F, i + 1, previewAlpha * 0.6F);
       }
 
-      Font var11 = Fonts.NEW_REGULAR.getFont(4.3F);
-      String var12 = var11.clip(var7, var5 - 12.0F);
-      var1.drawText(
-         var11, var12, var3 + (var5 - var11.width(var12)) / 2.0F, var4 + var6 - var11.height() - 6.0F, var2.getTextTertiary().getZenithColor().method7294(var8)
+      Font font = Fonts.NEW_REGULAR.getFont(4.3F);
+      String clip = font.clip(name, width - 12.0F);
+      menuDrawContext.drawText(
+         font, clip, floatValue + (width - font.width(clip)) / 2.0F, y + height - font.height() - 6.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
    }
 
-   private static String capitalize(String var0) {
-      return var0 != null && !var0.isEmpty() ? var0.substring(0, 1).toUpperCase(Locale.ROOT) + var0.substring(1) : "";
+   private static String capitalize(String str) {
+      return str != null && !str.isEmpty() ? str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1) : "";
    }
 
-   private AutoCraftToolPanel.Readiness readiness(CraftRecipe var1, int var2) {
-      if (var1 == null) {
+   private AutoCraftToolPanel.Readiness readiness(CraftRecipe craftRecipe, int possibleCrafts) {
+      if (craftRecipe == null) {
          return AutoCraftToolPanel.Readiness.NO_PRESET;
       } else if (!this.nearby.method1131()) {
          return AutoCraftToolPanel.Readiness.NO_WORKBENCH;
-      } else if (var2 > 0) {
+      } else if (possibleCrafts > 0) {
          return AutoCraftToolPanel.Readiness.READY;
       } else {
          return this.nearby.getIntValue() > 0 ? AutoCraftToolPanel.Readiness.FROM_CHESTS : AutoCraftToolPanel.Readiness.NO_RESOURCES;
       }
    }
 
-   private String stateText(AutoCraftToolPanel.Readiness var1) {
-      AutoCraftModule var2 = module();
-      if (var2.isBinding()) {
+   private String stateText(AutoCraftToolPanel.Readiness readiness) {
+      AutoCraftModule autoCraftModule = module();
+      if (autoCraftModule.isBinding()) {
          return t("gui.tools.craft.state.binding");
-      } else if (var2.isEnabled()) {
-         String var3 = var2.method1119();
-         return var3.isBlank() ? t("gui.tools.craft.state.running") : var3;
+      } else if (autoCraftModule.isEnabled()) {
+         String str = autoCraftModule.method1119();
+         return str.isBlank() ? t("gui.tools.craft.state.running") : str;
       } else {
-         return switch (var1) {
+         return switch (readiness) {
             case NO_PRESET -> t("gui.tools.craft.state.noPreset");
             case NO_WORKBENCH -> t("gui.tools.craft.state.noWorkbench");
             case NO_RESOURCES -> t("gui.tools.craft.state.noResources");
@@ -665,48 +665,48 @@ public class AutoCraftToolPanel extends ToolTab {
       }
    }
 
-   private ZenithColor stateColor(AutoCraftToolPanel.Readiness var1, ZenithStyle var2) {
-      AutoCraftModule var3 = module();
-      if (!var3.isEnabled() && !var3.isBinding()) {
-         return switch (var1) {
-            case NO_PRESET -> var2.getTextTertiary().getZenithColor();
+   private ZenithColor stateColor(AutoCraftToolPanel.Readiness readiness, ZenithStyle zenithStyle) {
+      AutoCraftModule autoCraftModule = module();
+      if (!autoCraftModule.isEnabled() && !autoCraftModule.isBinding()) {
+         return switch (readiness) {
+            case NO_PRESET -> zenithStyle.getTextTertiary().getZenithColor();
             default -> DANGER;
-            case FROM_CHESTS -> var2.getPrimaryColor().getZenithColor();
+            case FROM_CHESTS -> zenithStyle.getPrimaryColor().getZenithColor();
             case READY -> OK;
          };
       } else {
-         return var2.getPrimaryColor().getZenithColor();
+         return zenithStyle.getPrimaryColor().getZenithColor();
       }
    }
 
-   private int possibleCrafts(CraftRecipe var1) {
-      AutoCraftModule var2 = module();
-      var var3 = var1.method5388();
-      if (var3.isEmpty()) {
+   private int possibleCrafts(CraftRecipe craftRecipe) {
+      AutoCraftModule autoCraftModule = module();
+      var map = craftRecipe.method5388();
+      if (map.isEmpty()) {
          return 0;
       } else {
-         int var4 = Integer.MAX_VALUE;
+         int n = Integer.MAX_VALUE;
 
-         for (Map.Entry var6 : var3.entrySet()) {
-            String var7 = (String)var6.getKey();
-            int var8 = Math.max(1, (Integer)var6.getValue());
-            int var9 = var2.method1121(var1.method5395(var7), var1.method5396(var7));
-            var4 = Math.min(var4, var9 / var8);
-            if (var4 == 0) {
+         for (Map.Entry entry : map.entrySet()) {
+            String key = (String)entry.getKey();
+            int n2 = Math.max(1, (Integer)entry.getValue());
+            int n3 = autoCraftModule.method1121(craftRecipe.method5395(key), craftRecipe.method5396(key));
+            n = Math.min(n, n3 / n2);
+            if (n == 0) {
                return 0;
             }
          }
 
-         return var4 == Integer.MAX_VALUE ? 0 : var4;
+         return n == Integer.MAX_VALUE ? 0 : n;
       }
    }
 
-   private boolean craftableNow(CraftRecipe var1) {
-      var var2 = var1.method5388();
-      if (!var2.isEmpty() && !this.inventory.isEmpty()) {
-         for (Map.Entry var4 : var2.entrySet()) {
-            String var5 = var1.method5395((String)var4.getKey());
-            if (this.inventory.getOrDefault(var5, 0) < Math.max(1, (Integer)var4.getValue())) {
+   private boolean craftableNow(CraftRecipe craftRecipe) {
+      var map = craftRecipe.method5388();
+      if (!map.isEmpty() && !this.inventory.isEmpty()) {
+         for (Map.Entry entry : map.entrySet()) {
+            String key = craftRecipe.method5395((String)entry.getKey());
+            if (this.inventory.getOrDefault(key, 0) < Math.max(1, (Integer)entry.getValue())) {
                return false;
             }
          }
@@ -718,29 +718,29 @@ public class AutoCraftToolPanel extends ToolTab {
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float panelAlpha, float f, float y) {
       this.buttonBounds = null;
       this.filterBounds = null;
-      super.render(var1, var2, var3, var4, var5, var6);
+      super.render(menuDrawContext, lastClickX, lastClickY, panelAlpha, f, y);
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      BoundsData var6 = this.mainViewport();
-      if (var6 != null && var6.contains(var1, var3) && var5 == Enum3.LEFT) {
-         if (this.buttonBounds != null && this.buttonBounds.contains(var1, var3)) {
-            this.pressButton("start", var1, var3);
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      BoundsData mainViewport = this.mainViewport();
+      if (mainViewport != null && mainViewport.contains(lastClickX, lastClickY) && enum2 == Enum3.LEFT) {
+         if (this.buttonBounds != null && this.buttonBounds.contains(lastClickX, lastClickY)) {
+            this.pressButton("start", lastClickX, lastClickY);
             module().toggle();
             Zenith.getInstance().getClientSounds().method1570(false);
             this.invalidate();
             return true;
          }
 
-         if (this.filterBounds != null && this.filterBounds.contains(var1, var3)) {
-            int var7 = this.filterStrip.hovered();
-            if (var7 >= 0) {
-               if (var7 != this.filter) {
-                  this.filter = var7;
+         if (this.filterBounds != null && this.filterBounds.contains(lastClickX, lastClickY)) {
+            int hovered = this.filterStrip.hovered();
+            if (hovered >= 0) {
+               if (hovered != this.filter) {
+                  this.filter = hovered;
                   this.resetScroll();
                   this.replayMainFrom(this.recipesFrom);
                   this.invalidate();
@@ -752,27 +752,27 @@ public class AutoCraftToolPanel extends ToolTab {
          }
       }
 
-      return super.onMouseClicked(var1, var3, var5);
+      return super.onMouseClicked(lastClickX, lastClickY, enum2);
    }
 
    @Override
    public void tick() {
-      AutoCraftModule var1 = module();
-      long var2 = System.currentTimeMillis();
-      if (var2 - this.probedAt >= 400L) {
-         this.probedAt = var2;
-         this.nearby = var1.method1120();
-         this.inventory = var1.method1122();
+      AutoCraftModule autoCraftModule = module();
+      long now = System.currentTimeMillis();
+      if (now - this.probedAt >= 400L) {
+         this.probedAt = now;
+         this.nearby = autoCraftModule.method1120();
+         this.inventory = autoCraftModule.method1122();
       }
 
-      int var4 = var1.method1092(var1.method1098()).size();
-      String var5 = var1.getText2() + "|" + var4 + "|" + this.filter + "|" + this.searchQuery() + (this.filter == 1 ? "|" + this.inventory.hashCode() : "");
-      if (!var5.equals(this.contentSignature)) {
+      int size = autoCraftModule.method1092(autoCraftModule.method1098()).size();
+      String contentSignature = autoCraftModule.getText2() + "|" + size + "|" + this.filter + "|" + this.searchQuery() + (this.filter == 1 ? "|" + this.inventory.hashCode() : "");
+      if (!contentSignature.equals(this.contentSignature)) {
          if (this.summaries.size() > 2048) {
             this.summaries.clear();
          }
 
-         this.contentSignature = var5;
+         this.contentSignature = contentSignature;
          this.invalidate();
       }
    }

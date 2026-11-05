@@ -16,29 +16,29 @@ public abstract class FiguraMatrix<T extends FiguraMatrix<T, V>, V extends Figur
 
    public abstract T copy();
 
-   public abstract boolean equals(T var1);
+   public abstract boolean equals(T value);
 
-   public abstract V getColumn(int var1);
+   public abstract V getColumn(int n);
 
-   public abstract V getRow(int var1);
+   public abstract V getRow(int n);
 
    public abstract int rows();
 
    public abstract int cols();
 
-   public abstract T set(T var1);
+   public abstract T set(T value);
 
-   public abstract T multiply(T var1);
+   public abstract T multiply(T value);
 
-   public abstract T rightMultiply(T var1);
+   public abstract T rightMultiply(T value);
 
    public abstract T transpose();
 
    public abstract T invert();
 
-   public abstract T add(T var1);
+   public abstract T add(T value);
 
-   public abstract T sub(T var1);
+   public abstract T sub(T value);
 
    public T transposed() {
       return this.copy().transpose();

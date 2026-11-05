@@ -15,123 +15,123 @@ public final class QueuedCustomDrawContext extends CustomDrawContext {
    private boolean replaying;
    private static final Matrix4f QUEUE_MATRIX = new Matrix4f();
 
-   private QueuedCustomDrawContext(CustomDrawContext var1) {
-      super(var1);
+   private QueuedCustomDrawContext(CustomDrawContext customDrawContext) {
+      super(customDrawContext);
    }
 
-   public static QueuedCustomDrawContext of(CustomDrawContext var0) {
-      return var0 instanceof QueuedCustomDrawContext var1 ? var1 : new QueuedCustomDrawContext(var0);
+   public static QueuedCustomDrawContext of(CustomDrawContext customDrawContext) {
+      return customDrawContext instanceof QueuedCustomDrawContext customDrawContext2 ? customDrawContext2 : new QueuedCustomDrawContext(customDrawContext);
    }
 
    private Matrix4f queueMatrix() {
       return MatrixUtils.method665(this.pose(), QUEUE_MATRIX);
    }
 
-   private void queueContent(Runnable var1) {
-      Matrix4f var2 = MatrixUtils.method664(this.pose());
-      Jebriksheet.method2349(() -> this.runWithMatrix(var2, var1));
+   private void queueContent(Runnable runnable) {
+      Matrix4f matrix4f = MatrixUtils.method664(this.pose());
+      Jebriksheet.method2349(() -> this.runWithMatrix(matrix4f, runnable));
    }
 
-   private void queueBackground(Runnable var1) {
-      Matrix4f var2 = MatrixUtils.method664(this.pose());
-      Jebriksheet.method2353(() -> this.runWithMatrix(var2, var1));
+   private void queueBackground(Runnable runnable) {
+      Matrix4f matrix4f = MatrixUtils.method664(this.pose());
+      Jebriksheet.method2353(() -> this.runWithMatrix(matrix4f, runnable));
    }
 
-   private void runWithMatrix(Matrix4f var1, Runnable var2) {
-      Matrix3x2fStack var3 = this.pose();
-      boolean var4 = this.replaying;
-      var3.pushMatrix();
-      MatrixUtils.method669(var3, var1);
+   private void runWithMatrix(Matrix4f matrix4f, Runnable runnable) {
+      Matrix3x2fStack pose = this.pose();
+      boolean replaying = this.replaying;
+      pose.pushMatrix();
+      MatrixUtils.method669(pose, matrix4f);
       this.replaying = true;
 
       try {
-         var2.run();
+         runnable.run();
       } finally {
-         this.replaying = var4;
-         var3.popMatrix();
+         this.replaying = replaying;
+         pose.popMatrix();
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, ZenithColor var5) {
+   public void drawText(Font font, String text, float floatValue, float centeredTextY, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, centeredTextY, zenithColor);
       } else {
-         this.queueContent(() -> super.drawText(var1, var2, var3, var4, var5));
+         this.queueContent(() -> super.drawText(font, text, floatValue, centeredTextY, zenithColor));
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, ZenithColor var5, boolean var6, float var7, float var8, float var9) {
+   public void drawText(Font font, String name, float floatValue, float centeredTextY, ZenithColor zenithColor, boolean flag, float f, float f2, float maxWidth) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawText(font, name, floatValue, centeredTextY, zenithColor, flag, f, f2, maxWidth);
       } else {
-         this.queueContent(() -> super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9));
+         this.queueContent(() -> super.drawText(font, name, floatValue, centeredTextY, zenithColor, flag, f, f2, maxWidth));
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, int var5, boolean var6, float var7, float var8, float var9) {
+   public void drawText(Font font, String name, float floatValue, float y, int intValue, boolean flag, float f, float f2, float maxWidth) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawText(font, name, floatValue, y, intValue, flag, f, f2, maxWidth);
       } else {
-         this.queueContent(() -> super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9));
+         this.queueContent(() -> super.drawText(font, name, floatValue, y, intValue, flag, f, f2, maxWidth));
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, GlowColor var5) {
+   public void drawText(Font font, String text, float floatValue, float centeredTextY, GlowColor glowColor) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, centeredTextY, glowColor);
       } else {
-         this.queueContent(() -> super.drawText(var1, var2, var3, var4, var5));
+         this.queueContent(() -> super.drawText(font, text, floatValue, centeredTextY, glowColor));
       }
    }
 
    @Override
-   public void drawText(Font var1, Component var2, float var3, float var4, int var5) {
+   public void drawText(Font font, Component text, float x1, float y, int color) {
       if (this.replaying) {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, x1, y, color);
       } else {
-         this.queueContent(() -> super.drawText(var1, var2, var3, var4, var5));
+         this.queueContent(() -> super.drawText(font, text, x1, y, color));
       }
    }
 
    @Override
-   public void drawRoundedRect(float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
+   public void drawRoundedRect(float floatValue, float y, float width, float height, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawRoundedRect(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedRect(floatValue, y, width, height, headerRadius, zenithColor);
       } else {
-         Jebriksheet.method2364(this.queueMatrix(), var1, var2, var3, var4, var5, var6);
+         Jebriksheet.method2364(this.queueMatrix(), floatValue, y, width, height, headerRadius, zenithColor);
       }
    }
 
    @Override
-   public void drawRect(float var1, float var2, float var3, float var4, ZenithColor var5) {
+   public void drawRect(float floatValue, float y, float width, float height, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawRect(var1, var2, var3, var4, var5);
+         super.drawRect(floatValue, y, width, height, zenithColor);
       } else {
-         Jebriksheet.method2365(this.queueMatrix(), var1, var2, var3, var4, var5);
+         Jebriksheet.method2365(this.queueMatrix(), floatValue, y, width, height, zenithColor);
       }
    }
 
    @Override
    public void drawBlurHudBooleanCheck(
-      float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7, boolean var8, boolean var9
+      float floatValue, float y, float width, float panelHeight, float blurPower, ProxyDotRadiusData moduleMenuRadius, ZenithColor zenithColor, boolean flag, boolean flag2
    ) {
       if (this.replaying) {
-         super.drawBlurHudBooleanCheck(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawBlurHudBooleanCheck(floatValue, y, width, panelHeight, blurPower, moduleMenuRadius, zenithColor, flag, flag2);
       } else {
-         Jebriksheet.method2363(this.queueMatrix(), var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         Jebriksheet.method2363(this.queueMatrix(), floatValue, y, width, panelHeight, blurPower, moduleMenuRadius, zenithColor, flag, flag2);
       }
    }
 
    @Override
-   public void drawPlayerHeadWithRoundedShader(Identifier var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
+   public void drawPlayerHeadWithRoundedShader(Identifier texturePath, float floatValue, float y, float width, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
       if (this.replaying) {
-         super.drawPlayerHeadWithRoundedShader(var1, var2, var3, var4, var5, var6);
+         super.drawPlayerHeadWithRoundedShader(texturePath, floatValue, y, width, headerRadius, zenithColor);
       } else {
-         this.queueContent(() -> super.drawPlayerHeadWithRoundedShader(var1, var2, var3, var4, var5, var6));
+         this.queueContent(() -> super.drawPlayerHeadWithRoundedShader(texturePath, floatValue, y, width, headerRadius, zenithColor));
       }
    }
 
@@ -171,12 +171,12 @@ public final class QueuedCustomDrawContext extends CustomDrawContext {
       }
    }
 
-   private void queueRect(int var1, int var2, int var3, int var4, int var5) {
-      int var6 = Math.min(var1, var3);
-      int var7 = Math.min(var2, var4);
-      int var8 = Math.max(var1, var3);
-      int var9 = Math.max(var2, var4);
-      Jebriksheet.method2365(this.queueMatrix(), var6, var7, var8 - var6, var9 - var7, ZenithColor.method7291(var5));
+   private void queueRect(int x1, int y1, int x2, int y2, int color) {
+      int floatValue = Math.min(x1, x2);
+      int y = Math.min(y1, y2);
+      int n = Math.max(x1, x2);
+      int n2 = Math.max(y1, y2);
+      Jebriksheet.method2365(this.queueMatrix(), floatValue, y, n - floatValue, n2 - y, ZenithColor.method7291(color));
    }
 
    @Override

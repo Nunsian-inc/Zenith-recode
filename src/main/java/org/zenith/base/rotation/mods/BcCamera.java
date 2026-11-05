@@ -57,14 +57,14 @@ public class BcCamera extends Util22 {
       this("bc_camera.json", 1);
    }
 
-   public BcCamera(String var1, int var2) {
-      this(var1, var2, 1.0);
+   public BcCamera(String text, int intValue) {
+      this(text, intValue, 1.0);
    }
 
-   public BcCamera(String var1, int var2, double var3) {
-      this.text = var1;
-      this.intValue = var2;
-      this.doubleValue = var3;
+   public BcCamera(String text, int intValue, double doubleValue) {
+      this.text = text;
+      this.intValue = intValue;
+      this.doubleValue = doubleValue;
       EventManager.register(this);
    }
 
@@ -86,33 +86,33 @@ public class BcCamera extends Util22 {
       } else {
          if (this.completableFuture == null) {
             this.completableFuture = CompletableFuture.runAsync(() -> {
-               try (InputStream var1 = this.method3549()) {
-                  BcCameraNet var2 = BcCameraNet.method3387(var1);
-                  var2.doubleValue5 = this.doubleValue;
-                  this.status = this.name() + " загружен (" + this.text + ", температура ненулевых ходов " + this.doubleValue + "). " + var2.text2;
-                  String var3 = this.method3548();
+               try (InputStream inputStream = this.method3549()) {
+                  BcCameraNet bcCameraNet = BcCameraNet.method3387(inputStream);
+                  bcCameraNet.doubleValue5 = this.doubleValue;
+                  this.status = this.name() + " загружен (" + this.text + ", температура ненулевых ходов " + this.doubleValue + "). " + bcCameraNet.text2;
+                  String text = this.method3548();
 
-                  try (InputStream var4 = this.method3550(var3)) {
-                     KeyFixNet var5 = KeyFixNet.method3562(var4);
-                     this.keyFixNet = var5;
-                     this.status = this.status + " | " + var5.text2;
-                  } catch (NoSuchFileException | FileNotFoundException var10) {
-                     this.status = this.status + " | поправщика клавиш нет (" + var3 + ")";
-                  } catch (Exception var11) {
-                     this.status = this.status + " | поправщик клавиш НЕ загружен (" + var3 + "): " + var11.getMessage();
+                  try (InputStream inputStream2 = this.method3550(text)) {
+                     KeyFixNet keyFixNet = KeyFixNet.method3562(inputStream2);
+                     this.keyFixNet = keyFixNet;
+                     this.status = this.status + " | " + keyFixNet.text2;
+                  } catch (NoSuchFileException | FileNotFoundException e) {
+                     this.status = this.status + " | поправщика клавиш нет (" + text + ")";
+                  } catch (Exception e) {
+                     this.status = this.status + " | поправщик клавиш НЕ загружен (" + text + "): " + e.getMessage();
                   }
 
-                  this.bcCameraNet = var2;
-               } catch (Exception var13) {
-                  this.status = this.name() + " НЕ загружен (" + this.text + "): " + var13.getMessage();
+                  this.bcCameraNet = bcCameraNet;
+               } catch (Exception e) {
+                  this.status = this.name() + " НЕ загружен (" + this.text + "): " + e.getMessage();
                }
 
                System.out.println(this.status);
                if (mc != null) {
-                  String var14 = this.status;
+                  String status = this.status;
                   mc.execute(() -> {
                      if (mc.player != null) {
-                        ChatLogger.method2019(var14);
+                        ChatLogger.method2019(status);
                      }
                   });
                }
@@ -131,18 +131,18 @@ public class BcCamera extends Util22 {
       return this.method3550(this.text);
    }
 
-   private InputStream method3550(String var1) throws IOException {
-      for (Path var3 : List.of(Path.of(var1), Path.of("models", var1), Path.of("..", "models", var1))) {
-         if (Files.isRegularFile(var3)) {
-            return Files.newInputStream(var3);
+   private InputStream method3550(String text) throws IOException {
+      for (Path path : List.of(Path.of(text), Path.of("models", text), Path.of("..", "models", text))) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var4 = BcCamera.class.getClassLoader().getResourceAsStream("models/" + var1);
-      if (var4 == null) {
-         throw new FileNotFoundException(var1 + " не найден ни рядом с клиентом, ни в jar");
+      InputStream resourceAsStream = BcCamera.class.getClassLoader().getResourceAsStream("models/" + text);
+      if (resourceAsStream == null) {
+         throw new FileNotFoundException(text + " не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var4;
+         return resourceAsStream;
       }
    }
 
@@ -159,106 +159,106 @@ public class BcCamera extends Util22 {
    }
 
    private static double method3552() {
-      double var0 = mc.options.sensitivity().get() * 0.6F + 0.2F;
-      return var0 * var0 * var0 * 8.0 * 0.15;
+      double d = mc.options.sensitivity().get() * 0.6F + 0.2F;
+      return d * d * d * 8.0 * 0.15;
    }
 
    @EventTarget
-   public void onTick(TickEvent var1) {
+   public void onTick(TickEvent event) {
       this.longValue++;
       if (mc.player != null && mc.level != null && AuraModule.INSTANCE.isEnabled() && AuraModule.INSTANCE.method6359(this.intValue)) {
-         BcCameraNet var2 = this.method3547();
-         if (var2 == null) {
+         BcCameraNet bcCameraNet = this.method3547();
+         if (bcCameraNet == null) {
             this.reset();
          } else {
-            if (this.intValue == 4 && var2.doubleValue2 >= 0.0) {
-               var2.doubleValue2 = AuraModule.INSTANCE.method6361();
+            if (this.intValue == 4 && bcCameraNet.doubleValue2 >= 0.0) {
+               bcCameraNet.doubleValue2 = AuraModule.INSTANCE.method6361();
             }
 
             if (this.entry2 == null || mc.level != this.obj) {
-               this.entry2 = var2.method3355();
+               this.entry2 = bcCameraNet.method3355();
                this.flag = false;
             }
 
             this.obj = mc.level;
-            Rotation var3 = zenith.getRotationManager().method7844();
-            double var4 = var3.getFloatValue();
-            double var6 = var3.getFloatValue2();
-            BcCameraNet.Entry4 var8 = new BcCameraNet.Entry4();
-            var8.doubleValue = mc.player.getX();
-            var8.doubleValue2 = mc.player.getY();
-            var8.doubleValue3 = mc.player.getZ();
-            Input var9 = mc.player.input.keyPresses;
-            var8.intValue = (var9.forward() ? 1 : 0)
-               | (var9.backward() ? 2 : 0)
-               | (var9.left() ? 4 : 0)
-               | (var9.right() ? 8 : 0)
-               | (var9.jump() ? 16 : 0)
-               | (var9.shift() ? 32 : 0)
-               | (var9.sprint() ? 64 : 0);
-            var8.flag = mc.player.onGround();
-            var8.flag2 = mc.player.horizontalCollision;
-            int var10 = intValue2;
-            float var11 = mc.player.getAttackStrengthScale(0.0F);
-            var8.flag3 = var10 != this.intValue3 || var11 < this.floatValue - 1.0E-4F;
-            this.intValue3 = var10;
-            this.floatValue = var11;
-            LivingEntity var12 = AuraModule.INSTANCE.method6358();
-            if (var12 != null && var12.isAlive()) {
-               var8.doubleValue4 = var12.getX();
-               var8.doubleValue5 = var12.getY();
-               var8.doubleValue6 = var12.getZ();
-               var8.intValue2 = var12.getId();
-               var8.intValue3 = 1;
-               var8.flag4 = var12.isShiftKeyDown();
+            Rotation rotation = zenith.getRotationManager().method7844();
+            double floatValue = rotation.getFloatValue();
+            double d = rotation.getFloatValue2();
+            BcCameraNet.Entry4 entry4 = new BcCameraNet.Entry4();
+            entry4.doubleValue = mc.player.getX();
+            entry4.doubleValue2 = mc.player.getY();
+            entry4.doubleValue3 = mc.player.getZ();
+            Input keyPresses = mc.player.input.keyPresses;
+            entry4.intValue = (keyPresses.forward() ? 1 : 0)
+               | (keyPresses.backward() ? 2 : 0)
+               | (keyPresses.left() ? 4 : 0)
+               | (keyPresses.right() ? 8 : 0)
+               | (keyPresses.jump() ? 16 : 0)
+               | (keyPresses.shift() ? 32 : 0)
+               | (keyPresses.sprint() ? 64 : 0);
+            entry4.flag = mc.player.onGround();
+            entry4.flag2 = mc.player.horizontalCollision;
+            int n = intValue2;
+            float attackStrengthScale = mc.player.getAttackStrengthScale(0.0F);
+            entry4.flag3 = n != this.intValue3 || attackStrengthScale < this.floatValue - 1.0E-4F;
+            this.intValue3 = n;
+            this.floatValue = attackStrengthScale;
+            LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+            if (livingEntity != null && livingEntity.isAlive()) {
+               entry4.doubleValue4 = livingEntity.getX();
+               entry4.doubleValue5 = livingEntity.getY();
+               entry4.doubleValue6 = livingEntity.getZ();
+               entry4.intValue2 = livingEntity.getId();
+               entry4.intValue3 = 1;
+               entry4.flag4 = livingEntity.isShiftKeyDown();
             }
 
-            var8.doubleValue7 = var4;
-            var8.doubleValue8 = var6;
+            entry4.doubleValue7 = floatValue;
+            entry4.doubleValue8 = d;
             if (this.flag) {
-               var8.doubleValue9 = var4 - this.doubleValue2;
-               var8.doubleValue10 = var6 - this.doubleValue3;
-               var8.flag5 = Math.abs(var8.doubleValue9) <= 180.0;
+               entry4.doubleValue9 = floatValue - this.doubleValue2;
+               entry4.doubleValue10 = d - this.doubleValue3;
+               entry4.flag5 = Math.abs(entry4.doubleValue9) <= 180.0;
             } else {
-               var8.flag5 = false;
+               entry4.flag5 = false;
             }
 
-            this.doubleValue2 = var4;
-            this.doubleValue3 = var6;
+            this.doubleValue2 = floatValue;
+            this.doubleValue3 = d;
             this.flag = true;
-            this.entry2.method3394(var8);
-            double var13 = method3552();
+            this.entry2.method3394(entry4);
+            double d2 = method3552();
             if (this.longValue3 != this.longValue - 1L) {
                this.entry2.method3396();
             }
 
-            Options var15 = mc.options;
-            int var16 = (var15.keyUp.isDown() ? 1 : 0)
-               | (var15.keyDown.isDown() ? 2 : 0)
-               | (var15.keyLeft.isDown() ? 4 : 0)
-               | (var15.keyRight.isDown() ? 8 : 0)
-               | (var15.keyJump.isDown() ? 16 : 0)
-               | (var15.keyShift.isDown() ? 32 : 0)
-               | (var15.keySprint.isDown() ? 64 : 0);
-            double[] var17 = var2.method3365(this.entry2, var13);
-            this.doubleValues = var17;
+            Options options = mc.options;
+            int n2 = (options.keyUp.isDown() ? 1 : 0)
+               | (options.keyDown.isDown() ? 2 : 0)
+               | (options.keyLeft.isDown() ? 4 : 0)
+               | (options.keyRight.isDown() ? 8 : 0)
+               | (options.keyJump.isDown() ? 16 : 0)
+               | (options.keyShift.isDown() ? 32 : 0)
+               | (options.keySprint.isDown() ? 64 : 0);
+            double[] doubleValues = bcCameraNet.method3365(this.entry2, d2);
+            this.doubleValues = doubleValues;
             this.longValue4 = this.longValue;
-            double[] var18 = var2.method3379(var17, var16);
-            double[] var19;
-            if (var2.method3381()) {
-               var19 = var2.method3383(this.entry2, var17, var18, var13, this.random);
-            } else if (var2.entry3 != null) {
-               var19 = var2.method3350(this.entry2, var17, var18, var13, this.random);
-            } else if (var2.flag3) {
-               var19 = var2.method3348(this.entry2, var17, var18, var13, this.random);
+            double[] doubles = bcCameraNet.method3379(doubleValues, n2);
+            double[] doubles2;
+            if (bcCameraNet.method3381()) {
+               doubles2 = bcCameraNet.method3383(this.entry2, doubleValues, doubles, d2, this.random);
+            } else if (bcCameraNet.entry3 != null) {
+               doubles2 = bcCameraNet.method3350(this.entry2, doubleValues, doubles, d2, this.random);
+            } else if (bcCameraNet.flag3) {
+               doubles2 = bcCameraNet.method3348(this.entry2, doubleValues, doubles, d2, this.random);
             } else {
-               var19 = var2.method3380(this.entry2, var18, var13, this.random);
+               doubles2 = bcCameraNet.method3380(this.entry2, doubles, d2, this.random);
             }
 
-            var19 = var2.method3352(var17, var19[0], var19[1]);
-            double[] var20 = BcCameraNet.method3384(this.entry2, var19[0], var19[1], var13, var6);
-            this.rotation = var3.method3140((float)var20[0], (float)var20[1]);
-            this.method3553(var8, var18, var19, var20, var13, var11);
+            doubles2 = bcCameraNet.method3352(doubleValues, doubles2[0], doubles2[1]);
+            double[] doubles3 = BcCameraNet.method3384(this.entry2, doubles2[0], doubles2[1], d2, d);
+            this.rotation = rotation.method3140((float)doubles3[0], (float)doubles3[1]);
+            this.method3553(entry4, doubles, doubles2, doubles3, d2, attackStrengthScale);
             this.longValue2 = this.longValue;
             this.intValue5 = 0;
          }
@@ -268,28 +268,28 @@ public class BcCamera extends Util22 {
    }
 
    @EventTarget(4)
-   public void onMoveInput(MoveInputEvent var1) {
-      KeyFixNet var2 = this.keyFixNet;
-      double[] var3 = this.doubleValues;
+   public void onMoveInput(MoveInputEvent event) {
+      KeyFixNet keyFixNet = this.keyFixNet;
+      double[] doubleValues = this.doubleValues;
       this.intValue6 = -1;
-      if (var2 != null && var3 != null && this.longValue4 == this.longValue && var1.getPlayerInput() != null && var2.method3559(var3)) {
-         Input var4 = var1.getPlayerInput();
-         int var5 = (var4.forward() ? 1 : 0)
-            | (var4.backward() ? 2 : 0)
-            | (var4.left() ? 4 : 0)
-            | (var4.right() ? 8 : 0)
-            | (var4.jump() ? 16 : 0)
-            | (var4.shift() ? 32 : 0)
-            | (var4.sprint() ? 64 : 0);
-         int var6 = var2.method3560(var3, var5, this.random);
-         var1.setPlayerInput(
-            new Input((var6 & 1) != 0, (var6 & 2) != 0, (var6 & 4) != 0, (var6 & 8) != 0, (var6 & 16) != 0, var4.shift(), (var6 & 64) != 0)
+      if (keyFixNet != null && doubleValues != null && this.longValue4 == this.longValue && event.getPlayerInput() != null && keyFixNet.method3559(doubleValues)) {
+         Input playerInput = event.getPlayerInput();
+         int n = (playerInput.forward() ? 1 : 0)
+            | (playerInput.backward() ? 2 : 0)
+            | (playerInput.left() ? 4 : 0)
+            | (playerInput.right() ? 8 : 0)
+            | (playerInput.jump() ? 16 : 0)
+            | (playerInput.shift() ? 32 : 0)
+            | (playerInput.sprint() ? 64 : 0);
+         int n2 = keyFixNet.method3560(doubleValues, n, this.random);
+         event.setPlayerInput(
+            new Input((n2 & 1) != 0, (n2 & 2) != 0, (n2 & 4) != 0, (n2 & 8) != 0, (n2 & 16) != 0, playerInput.shift(), (n2 & 64) != 0)
          );
-         this.intValue6 = var5;
+         this.intValue6 = n;
       }
    }
 
-   private void method3553(BcCameraNet.Entry4 var1, double[] var2, double[] var3, double[] var4, double var5, float var7) {
+   private void method3553(BcCameraNet.Entry4 entry4, double[] doubles, double[] doubles2, double[] doubles3, double d, float attackStrengthScale) {
       if (this.intValue4 < 72000) {
          try {
             if (this.bufferedWriter == null) {
@@ -299,19 +299,19 @@ public class BcCamera extends Util22 {
                   StandardOpenOption.CREATE,
                   StandardOpenOption.APPEND
                );
-               StringBuilder var8 = new StringBuilder(
+               StringBuilder builder = new StringBuilder(
                   "tick,age,applied_prev,process_calls_prev,grid,cooldown,x,y,z,keys,on_ground,hcoll,attack,tgt_id,tx,ty,tz,tgt_sneak,yaw,pitch,my,mp,mv_ok,act_yaw,act_pitch,q_yaw,q_pitch,cam_yaw,cam_pitch,model,ukeys_prev"
                );
 
-               for (int var9 = 0; var9 < var2.length; var9++) {
-                  var8.append(",f").append(var9);
+               for (int i = 0; i < doubles.length; i++) {
+                  builder.append(",f").append(i);
                }
 
-               this.bufferedWriter.write(var8.append('\n').toString());
+               this.bufferedWriter.write(builder.append('\n').toString());
             }
 
-            StringBuilder var15 = new StringBuilder(512);
-            var15.append(this.longValue)
+            StringBuilder builder = new StringBuilder(512);
+            builder.append(this.longValue)
                .append(',')
                .append(mc.player.tickCount)
                .append(',')
@@ -319,51 +319,51 @@ public class BcCamera extends Util22 {
                .append(',')
                .append(this.intValue5)
                .append(',')
-               .append(var5)
+               .append(d)
                .append(',')
-               .append(var7)
+               .append(attackStrengthScale)
                .append(',')
-               .append(var1.doubleValue)
+               .append(entry4.doubleValue)
                .append(',')
-               .append(var1.doubleValue2)
+               .append(entry4.doubleValue2)
                .append(',')
-               .append(var1.doubleValue3)
+               .append(entry4.doubleValue3)
                .append(',')
-               .append(var1.intValue)
+               .append(entry4.intValue)
                .append(',')
-               .append(var1.flag ? 1 : 0)
+               .append(entry4.flag ? 1 : 0)
                .append(',')
-               .append(var1.flag2 ? 1 : 0)
+               .append(entry4.flag2 ? 1 : 0)
                .append(',')
-               .append(var1.flag3 ? 1 : 0)
+               .append(entry4.flag3 ? 1 : 0)
                .append(',')
-               .append(var1.intValue2)
+               .append(entry4.intValue2)
                .append(',')
-               .append(var1.doubleValue4)
+               .append(entry4.doubleValue4)
                .append(',')
-               .append(var1.doubleValue5)
+               .append(entry4.doubleValue5)
                .append(',')
-               .append(var1.doubleValue6)
+               .append(entry4.doubleValue6)
                .append(',')
-               .append(var1.flag4 ? 1 : 0)
+               .append(entry4.flag4 ? 1 : 0)
                .append(',')
-               .append(var1.doubleValue7)
+               .append(entry4.doubleValue7)
                .append(',')
-               .append(var1.doubleValue8)
+               .append(entry4.doubleValue8)
                .append(',')
-               .append(var1.doubleValue9)
+               .append(entry4.doubleValue9)
                .append(',')
-               .append(var1.doubleValue10)
+               .append(entry4.doubleValue10)
                .append(',')
-               .append(var1.flag5 ? 1 : 0)
+               .append(entry4.flag5 ? 1 : 0)
                .append(',')
-               .append(var3[0])
+               .append(doubles2[0])
                .append(',')
-               .append(var3[1])
+               .append(doubles2[1])
                .append(',')
-               .append(var4[0])
+               .append(doubles3[0])
                .append(',')
-               .append(var4[1])
+               .append(doubles3[1])
                .append(',')
                .append(mc.player.getYRot())
                .append(',')
@@ -373,31 +373,31 @@ public class BcCamera extends Util22 {
                .append(',')
                .append(this.intValue6);
 
-            for (double var12 : var2) {
-               var15.append(',').append((float)var12);
+            for (double d2 : doubles) {
+               builder.append(',').append((float)d2);
             }
 
-            this.bufferedWriter.write(var15.append('\n').toString());
+            this.bufferedWriter.write(builder.append('\n').toString());
             if (++this.intValue4 % 20 == 0) {
                this.bufferedWriter.flush();
             }
-         } catch (IOException var14) {
+         } catch (IOException e) {
             this.intValue4 = 72000;
          }
       }
    }
 
-   public Rotation method3554(Rotation var1) {
-      Rotation var2 = zenith.getRotationManager().method7844();
+   public Rotation method3554(Rotation rotation) {
+      Rotation rotation2 = zenith.getRotationManager().method7844();
       this.intValue5++;
-      Rotation var3 = zenith.getRotationManager().method7844();
+      Rotation rotation3 = zenith.getRotationManager().method7844();
       if (this.rotation != null && this.longValue2 == this.longValue) {
          this.longValue3 = this.longValue;
          return this.rotation;
       } else {
-         mc.player.setYRot(var2.getFloatValue());
-         mc.player.setXRot(var2.getFloatValue2());
-         return var2;
+         mc.player.setYRot(rotation2.getFloatValue());
+         mc.player.setXRot(rotation2.getFloatValue2());
+         return rotation2;
       }
    }
 }

@@ -29,11 +29,11 @@ public class PlayTimeTracker {
    }
 
    private String method1398() {
-      LocalDate var1 = LocalDate.now();
-      WeekFields var2 = WeekFields.of(Locale.getDefault());
-      int var3 = var1.get(var2.weekOfWeekBasedYear());
-      int var4 = var1.get(var2.weekBasedYear());
-      return var4 + "-W" + var3;
+      LocalDate now = LocalDate.now();
+      WeekFields weekFields = WeekFields.of(Locale.getDefault());
+      int n = now.get(weekFields.weekOfWeekBasedYear());
+      int n2 = now.get(weekFields.weekBasedYear());
+      return n2 + "-W" + n;
    }
 
    private void load() {
@@ -42,22 +42,22 @@ public class PlayTimeTracker {
          this.longValue3 = 0L;
       } else {
          try {
-            try (BufferedReader var1 = new BufferedReader(new FileReader(this.file))) {
-               String var2 = var1.readLine();
-               if (var2 == null || var2.isEmpty()) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(this.file))) {
+               String line = bufferedReader.readLine();
+               if (line == null || line.isEmpty()) {
                   this.longValue2 = 0L;
                   this.longValue3 = 0L;
                   return;
                }
 
-               String var3 = AesGcmCrypto.method5332(var2, "playTimeZnth");
-               Gson var4 = new Gson();
-               JsonObject var5 = (JsonObject)var4.fromJson(var3, JsonObject.class);
-               if (var5 != null) {
-                  this.longValue2 = var5.has("totalSeconds") ? var5.get("totalSeconds").getAsLong() : 0L;
-                  if (var5.has("weeklyData")) {
-                     JsonObject var6 = var5.getAsJsonObject("weeklyData");
-                     this.longValue3 = var6.has(this.text3) ? var6.get(this.text3).getAsLong() : 0L;
+               String json = AesGcmCrypto.method5332(line, "playTimeZnth");
+               Gson gson = new Gson();
+               JsonObject json2 = (JsonObject)gson.fromJson(json, JsonObject.class);
+               if (json2 != null) {
+                  this.longValue2 = json2.has("totalSeconds") ? json2.get("totalSeconds").getAsLong() : 0L;
+                  if (json2.has("weeklyData")) {
+                     JsonObject jsonObject = json2.getAsJsonObject("weeklyData");
+                     this.longValue3 = jsonObject.has(this.text3) ? jsonObject.get(this.text3).getAsLong() : 0L;
                   }
 
                   return;
@@ -66,7 +66,7 @@ public class PlayTimeTracker {
                this.longValue2 = 0L;
                this.longValue3 = 0L;
             }
-         } catch (Exception var9) {
+         } catch (Exception e) {
             this.longValue2 = 0L;
             this.longValue3 = 0L;
          }
@@ -74,30 +74,30 @@ public class PlayTimeTracker {
    }
 
    public void save() {
-      long var1 = this.method1399();
-      long var3 = this.longValue2 + var1;
-      String var5 = this.method1398();
-      long var6;
-      if (var5.equals(this.text3)) {
-         var6 = this.longValue3 + var1;
+      long l = this.method1399();
+      long l2 = this.longValue2 + l;
+      String property = this.method1398();
+      long l3;
+      if (property.equals(this.text3)) {
+         l3 = this.longValue3 + l;
       } else {
-         var6 = var1;
+         l3 = l;
       }
 
-      JsonObject var8 = new JsonObject();
-      var8.addProperty("totalSeconds", var3);
-      JsonObject var9 = new JsonObject();
-      var9.addProperty(var5, var6);
-      var8.add("weeklyData", var9);
+      JsonObject json = new JsonObject();
+      json.addProperty("totalSeconds", l2);
+      JsonObject json2 = new JsonObject();
+      json2.addProperty(property, l3);
+      json.add("weeklyData", json2);
 
       try {
-         String var10 = new Gson().toJson(var8);
-         String var11 = AesGcmCrypto.method5331(var10, "playTimeZnth");
+         String str = new Gson().toJson(json);
+         String str2 = AesGcmCrypto.method5331(str, "playTimeZnth");
 
-         try (FileWriter var12 = new FileWriter(this.file)) {
-            var12.write(var11);
+         try (FileWriter fileWriter = new FileWriter(this.file)) {
+            fileWriter.write(str2);
          }
-      } catch (Exception var17) {
+      } catch (Exception e) {
       }
    }
 
@@ -106,17 +106,17 @@ public class PlayTimeTracker {
    }
 
    public long method1400() {
-      String var1 = this.method1398();
-      return var1.equals(this.text3) ? this.longValue3 + this.method1399() : this.method1399();
+      String str = this.method1398();
+      return str.equals(this.text3) ? this.longValue3 + this.method1399() : this.method1399();
    }
 
    public long method1401() {
       return this.longValue2 + this.method1399();
    }
 
-   public static String method1402(long var0) {
-      long var2 = var0 / 3600L;
-      long var4 = var0 % 3600L / 60L;
-      return var2 > 0L ? var2 + "h " + var4 + "m" : var4 + "m";
+   public static String method1402(long l) {
+      long l2 = l / 3600L;
+      long l3 = l % 3600L / 60L;
+      return l2 > 0L ? l2 + "h " + l3 + "m" : l3 + "m";
    }
 }

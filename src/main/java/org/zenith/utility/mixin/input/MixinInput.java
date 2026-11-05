@@ -12,7 +12,7 @@ public abstract class MixinInput implements ViaCompat.Handler {
    public Vec2 moveVector;
 
    @Override
-   public void zenith$setMovementVector(Vec2 var1) {
-      this.moveVector = var1;
+   public void zenith$setMovementVector(Vec2 moveVector) {
+      this.moveVector = moveVector;
    }
 }

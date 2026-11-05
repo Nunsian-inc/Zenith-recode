@@ -20,8 +20,8 @@ public class MixinPlayerEntityRenderState implements Handler4 {
    }
 
    @Override
-   public void zenith$setProfileName(String var1) {
-      this.zenith$profileName = var1;
+   public void zenith$setProfileName(String zenith$profileName) {
+      this.zenith$profileName = zenith$profileName;
    }
 
    @Override
@@ -30,7 +30,7 @@ public class MixinPlayerEntityRenderState implements Handler4 {
    }
 
    @Override
-   public void zenith$setWardrobeLoadout(List<HoveredData> var1) {
-      this.zenith$wardrobeLoadout = var1;
+   public void zenith$setWardrobeLoadout(List<HoveredData> zenith$wardrobeLoadout) {
+      this.zenith$wardrobeLoadout = zenith$wardrobeLoadout;
    }
 }

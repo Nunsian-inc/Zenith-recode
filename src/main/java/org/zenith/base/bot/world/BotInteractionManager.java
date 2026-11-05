@@ -57,8 +57,8 @@ public final class BotInteractionManager {
    private GameType previousGameMode;
    private int lastSelectedSlot;
 
-   public BotInteractionManager(BotPlayHandler var1) {
-      this.networkHandler = var1;
+   public BotInteractionManager(BotPlayHandler networkHandler) {
+      this.networkHandler = networkHandler;
    }
 
    @Nullable
@@ -71,100 +71,100 @@ public final class BotInteractionManager {
       return this.networkHandler.getWorld();
    }
 
-   public void copyAbilities(Player var1) {
-      this.gameMode.updatePlayerAbilities(var1.getAbilities());
+   public void copyAbilities(Player botPlayer) {
+      this.gameMode.updatePlayerAbilities(botPlayer.getAbilities());
    }
 
-   public void setGameModes(GameType var1, @Nullable GameType var2) {
-      this.gameMode = var1;
-      this.previousGameMode = var2;
-      BotPlayer var3 = this.player();
-      if (var3 != null) {
-         this.gameMode.updatePlayerAbilities(var3.getAbilities());
+   public void setGameModes(GameType gameMode, @Nullable GameType previousGameMode) {
+      this.gameMode = gameMode;
+      this.previousGameMode = previousGameMode;
+      BotPlayer player = this.player();
+      if (player != null) {
+         this.gameMode.updatePlayerAbilities(player.getAbilities());
       }
    }
 
-   public void setGameMode(GameType var1) {
-      if (var1 != this.gameMode) {
+   public void setGameMode(GameType gameMode) {
+      if (gameMode != this.gameMode) {
          this.previousGameMode = this.gameMode;
       }
 
-      this.gameMode = var1;
-      BotPlayer var2 = this.player();
-      if (var2 != null) {
-         this.gameMode.updatePlayerAbilities(var2.getAbilities());
+      this.gameMode = gameMode;
+      BotPlayer player = this.player();
+      if (player != null) {
+         this.gameMode.updatePlayerAbilities(player.getAbilities());
       }
    }
 
-   public boolean breakBlock(BlockPos var1) {
-      BotPlayer var2 = this.player();
-      BotWorld var3 = this.world();
-      if (var2 == null || var3 == null) {
+   public boolean breakBlock(BlockPos currentBreakingPos) {
+      BotPlayer player = this.player();
+      BotWorld world = this.world();
+      if (player == null || world == null) {
          return false;
-      } else if (var2.blockActionRestricted(var3, var1, this.gameMode)) {
+      } else if (player.blockActionRestricted(world, currentBreakingPos, this.gameMode)) {
          return false;
       } else {
-         BlockState var4 = var3.getBlockState(var1);
-         if (!var2.getMainHandItem().getItem().canDestroyBlock(var2.getMainHandItem(), var4, var3, var1, var2)) {
+         BlockState blockState = world.getBlockState(currentBreakingPos);
+         if (!player.getMainHandItem().getItem().canDestroyBlock(player.getMainHandItem(), blockState, world, currentBreakingPos, player)) {
             return false;
          } else {
-            Block var5 = var4.getBlock();
-            if (var5 instanceof GameMasterBlock && !var2.canUseGameMasterBlocks()) {
+            Block block = blockState.getBlock();
+            if (block instanceof GameMasterBlock && !player.canUseGameMasterBlocks()) {
                return false;
-            } else if (var4.isAir()) {
+            } else if (blockState.isAir()) {
                return false;
             } else {
-               var5.playerWillDestroy(var3, var1, var4, var2);
-               FluidState var6 = var3.getFluidState(var1);
-               boolean var7 = var3.setBlock(var1, var6.createLegacyBlock(), 11);
-               if (var7) {
-                  var5.destroy(var3, var1, var4);
+               block.playerWillDestroy(world, currentBreakingPos, blockState, player);
+               FluidState fluidState = world.getFluidState(currentBreakingPos);
+               boolean setBlock = world.setBlock(currentBreakingPos, fluidState.createLegacyBlock(), 11);
+               if (setBlock) {
+                  block.destroy(world, currentBreakingPos, blockState);
                }
 
-               return var7;
+               return setBlock;
             }
          }
       }
    }
 
-   public boolean attackBlock(BlockPos var1, Direction var2) {
-      BotPlayer var3 = this.player();
-      BotWorld var4 = this.world();
-      if (var3 == null || var4 == null) {
+   public boolean attackBlock(BlockPos currentBreakingPos, Direction direction) {
+      BotPlayer player = this.player();
+      BotWorld world = this.world();
+      if (player == null || world == null) {
          return false;
-      } else if (var3.blockActionRestricted(var4, var1, this.gameMode)) {
+      } else if (player.blockActionRestricted(world, currentBreakingPos, this.gameMode)) {
          return false;
-      } else if (!var4.getWorldBorder().isWithinBounds(var1)) {
+      } else if (!world.getWorldBorder().isWithinBounds(currentBreakingPos)) {
          return false;
       } else {
          if (this.gameMode.isCreative()) {
-            this.sendSequencedPacket(var4, var3x -> {
-               this.breakBlock(var1);
-               return new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, var1, var2, var3x);
+            this.sendSequencedPacket(world, var3x -> {
+               this.breakBlock(currentBreakingPos);
+               return new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, currentBreakingPos, direction, var3x);
             });
             this.blockBreakingCooldown = 5;
-         } else if (!this.breakingBlock || !this.isCurrentlyBreaking(var1)) {
+         } else if (!this.breakingBlock || !this.isCurrentlyBreaking(currentBreakingPos)) {
             if (this.breakingBlock) {
-               this.networkHandler.sendPacket(new ServerboundPlayerActionPacket(Action.ABORT_DESTROY_BLOCK, this.currentBreakingPos, var2));
+               this.networkHandler.sendPacket(new ServerboundPlayerActionPacket(Action.ABORT_DESTROY_BLOCK, this.currentBreakingPos, direction));
             }
 
-            BlockState var5 = var4.getBlockState(var1);
-            this.sendSequencedPacket(var4, var6 -> {
-               boolean var7 = !var5.isAir();
-               if (var7 && this.currentBreakingProgress == 0.0F) {
-                  var5.attack(var4, var1, var3);
+            BlockState blockState = world.getBlockState(currentBreakingPos);
+            this.sendSequencedPacket(world, sequence -> {
+               boolean flag = !blockState.isAir();
+               if (flag && this.currentBreakingProgress == 0.0F) {
+                  blockState.attack(world, currentBreakingPos, player);
                }
 
-               if (var7 && var5.getDestroyProgress(var3, var3.level(), var1) >= 1.0F) {
-                  this.breakBlock(var1);
+               if (flag && blockState.getDestroyProgress(player, player.level(), currentBreakingPos) >= 1.0F) {
+                  this.breakBlock(currentBreakingPos);
                } else {
                   this.breakingBlock = true;
-                  this.currentBreakingPos = var1;
-                  this.selectedStack = var3.getMainHandItem();
+                  this.currentBreakingPos = currentBreakingPos;
+                  this.selectedStack = player.getMainHandItem();
                   this.currentBreakingProgress = 0.0F;
                }
 
-               return new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, var1, var2, var6);
+               return new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, currentBreakingPos, direction, sequence);
             });
          }
 
@@ -177,40 +177,40 @@ public final class BotInteractionManager {
          this.networkHandler.sendPacket(new ServerboundPlayerActionPacket(Action.ABORT_DESTROY_BLOCK, this.currentBreakingPos, Direction.DOWN));
          this.breakingBlock = false;
          this.currentBreakingProgress = 0.0F;
-         BotPlayer var1 = this.player();
-         if (var1 != null) {
-            var1.resetOnlyAttackStrengthTicker();
+         BotPlayer player = this.player();
+         if (player != null) {
+            player.resetOnlyAttackStrengthTicker();
          }
       }
    }
 
-   public boolean updateBlockBreakingProgress(BlockPos var1, Direction var2) {
-      BotPlayer var3 = this.player();
-      BotWorld var4 = this.world();
-      if (var3 != null && var4 != null) {
+   public boolean updateBlockBreakingProgress(BlockPos blockPos, Direction direction) {
+      BotPlayer player = this.player();
+      BotWorld world = this.world();
+      if (player != null && world != null) {
          this.syncSelectedSlot();
          if (this.blockBreakingCooldown > 0) {
             this.blockBreakingCooldown--;
             return true;
-         } else if (this.gameMode.isCreative() && var4.getWorldBorder().isWithinBounds(var1)) {
+         } else if (this.gameMode.isCreative() && world.getWorldBorder().isWithinBounds(blockPos)) {
             this.blockBreakingCooldown = 5;
-            this.sendSequencedPacket(var4, var3x -> {
-               this.breakBlock(var1);
-               return new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, var1, var2, var3x);
+            this.sendSequencedPacket(world, var3x -> {
+               this.breakBlock(blockPos);
+               return new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, blockPos, direction, var3x);
             });
             return true;
-         } else if (this.isCurrentlyBreaking(var1)) {
-            BlockState var5 = var4.getBlockState(var1);
-            if (var5.isAir()) {
+         } else if (this.isCurrentlyBreaking(blockPos)) {
+            BlockState blockState = world.getBlockState(blockPos);
+            if (blockState.isAir()) {
                this.breakingBlock = false;
                return false;
             } else {
-               this.currentBreakingProgress = this.currentBreakingProgress + var5.getDestroyProgress(var3, var3.level(), var1);
+               this.currentBreakingProgress = this.currentBreakingProgress + blockState.getDestroyProgress(player, player.level(), blockPos);
                if (this.currentBreakingProgress >= 1.0F) {
                   this.breakingBlock = false;
-                  this.sendSequencedPacket(var4, var3x -> {
-                     this.breakBlock(var1);
-                     return new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, var1, var2, var3x);
+                  this.sendSequencedPacket(world, var3x -> {
+                     this.breakBlock(blockPos);
+                     return new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, blockPos, direction, var3x);
                   });
                   this.currentBreakingProgress = 0.0F;
                   this.blockBreakingCooldown = 5;
@@ -219,18 +219,18 @@ public final class BotInteractionManager {
                return true;
             }
          } else {
-            return this.attackBlock(var1, var2);
+            return this.attackBlock(blockPos, direction);
          }
       } else {
          return false;
       }
    }
 
-   public void sendSequencedPacket(BotWorld var1, BotInteractionManager.SequencedPacketCreator var2) {
-      try (BotPendingUpdateManager var3 = var1.getPendingUpdateManager().incrementSequence()) {
-         int var4 = var3.getSequence();
-         Packet var5 = var2.predict(var4);
-         this.networkHandler.sendPacket(var5);
+   public void sendSequencedPacket(BotWorld world, BotInteractionManager.SequencedPacketCreator sequencedPacketCreator) {
+      try (BotPendingUpdateManager incrementSequence = world.getPendingUpdateManager().incrementSequence()) {
+         int sequence = incrementSequence.getSequence();
+         Packet predict = sequencedPacketCreator.predict(sequence);
+         this.networkHandler.sendPacket(predict);
       }
    }
 
@@ -238,204 +238,204 @@ public final class BotInteractionManager {
       this.syncSelectedSlot();
    }
 
-   private boolean isCurrentlyBreaking(BlockPos var1) {
-      BotPlayer var2 = this.player();
-      if (var2 == null) {
+   private boolean isCurrentlyBreaking(BlockPos currentBreakingPos) {
+      BotPlayer player = this.player();
+      if (player == null) {
          return false;
       } else {
-         ItemStack var3 = var2.getMainHandItem();
-         return var1.equals(this.currentBreakingPos) && ItemStack.isSameItemSameComponents(var3, this.selectedStack);
+         ItemStack mainHandItem = player.getMainHandItem();
+         return currentBreakingPos.equals(this.currentBreakingPos) && ItemStack.isSameItemSameComponents(mainHandItem, this.selectedStack);
       }
    }
 
    public void syncSelectedSlot() {
-      BotPlayer var1 = this.player();
-      if (var1 != null) {
-         int var2 = var1.getInventory().getSelectedSlot();
-         if (var2 != this.lastSelectedSlot) {
-            this.lastSelectedSlot = var2;
+      BotPlayer player = this.player();
+      if (player != null) {
+         int selectedSlot = player.getInventory().getSelectedSlot();
+         if (selectedSlot != this.lastSelectedSlot) {
+            this.lastSelectedSlot = selectedSlot;
             this.networkHandler.sendPacket(new ServerboundSetCarriedItemPacket(this.lastSelectedSlot));
          }
       }
    }
 
-   public InteractionResult interactBlock(BotPlayer var1, InteractionHand var2, BlockHitResult var3) {
+   public InteractionResult interactBlock(BotPlayer player, InteractionHand hand, BlockHitResult hitResult) {
       this.syncSelectedSlot();
-      BotWorld var4 = this.world();
-      if (var4 != null && var4.getWorldBorder().isWithinBounds(var3.getBlockPos())) {
-         MutableObject var5 = new MutableObject();
-         this.sendSequencedPacket(var4, var5x -> {
-            var5.setValue(this.interactBlockInternal(var1, var2, var3));
-            return new ServerboundUseItemOnPacket(var2, var3, var5x);
+      BotWorld world = this.world();
+      if (world != null && world.getWorldBorder().isWithinBounds(hitResult.getBlockPos())) {
+         MutableObject mutableObject = new MutableObject();
+         this.sendSequencedPacket(world, var5x -> {
+            mutableObject.setValue(this.interactBlockInternal(player, hand, hitResult));
+            return new ServerboundUseItemOnPacket(hand, hitResult, var5x);
          });
-         return (InteractionResult)var5.getValue();
+         return (InteractionResult)mutableObject.getValue();
       } else {
          return InteractionResult.FAIL;
       }
    }
 
-   private InteractionResult interactBlockInternal(BotPlayer var1, InteractionHand var2, BlockHitResult var3) {
-      BotWorld var4 = Objects.requireNonNull(this.world());
-      BlockPos var5 = var3.getBlockPos();
-      ItemStack var6 = var1.getItemInHand(var2);
+   private InteractionResult interactBlockInternal(BotPlayer player, InteractionHand hand, BlockHitResult hitResult) {
+      BotWorld nonNull = Objects.requireNonNull(this.world());
+      BlockPos blockPos = hitResult.getBlockPos();
+      ItemStack itemInHand = player.getItemInHand(hand);
       if (this.gameMode == GameType.SPECTATOR) {
          return InteractionResult.CONSUME;
       } else {
-         boolean var7 = !var1.getMainHandItem().isEmpty() || !var1.getOffhandItem().isEmpty();
-         boolean var8 = var1.isSecondaryUseActive() && var7;
-         if (!var8) {
-            BlockState var9 = var4.getBlockState(var5);
-            if (!var9.getBlock().requiredFeatures().isSubsetOf(this.networkHandler.getEnabledFeatures())) {
+         boolean flag = !player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty();
+         boolean flag2 = player.isSecondaryUseActive() && flag;
+         if (!flag2) {
+            BlockState blockState = nonNull.getBlockState(blockPos);
+            if (!blockState.getBlock().requiredFeatures().isSubsetOf(this.networkHandler.getEnabledFeatures())) {
                return InteractionResult.FAIL;
             }
 
-            InteractionResult var10 = var9.useItemOn(var1.getItemInHand(var2), var4, var1, var2, var3);
-            if (var10.consumesAction()) {
-               return var10;
+            InteractionResult useItemOn = blockState.useItemOn(player.getItemInHand(hand), nonNull, player, hand, hitResult);
+            if (useItemOn.consumesAction()) {
+               return useItemOn;
             }
 
-            if (var10 instanceof TryEmptyHandInteraction && var2 == InteractionHand.MAIN_HAND) {
-               InteractionResult var11 = var9.useWithoutItem(var4, var1, var3);
-               if (var11.consumesAction()) {
-                  return var11;
+            if (useItemOn instanceof TryEmptyHandInteraction && hand == InteractionHand.MAIN_HAND) {
+               InteractionResult useWithoutItem = blockState.useWithoutItem(nonNull, player, hitResult);
+               if (useWithoutItem.consumesAction()) {
+                  return useWithoutItem;
                }
             }
          }
 
-         if (!var6.isEmpty() && !var1.getCooldowns().isOnCooldown(var6)) {
-            UseOnContext var12 = new UseOnContext(var1, var2, var3);
-            InteractionResult var13;
+         if (!itemInHand.isEmpty() && !player.getCooldowns().isOnCooldown(itemInHand)) {
+            UseOnContext useOnContext = new UseOnContext(player, hand, hitResult);
+            InteractionResult useOn;
             if (this.gameMode.isCreative()) {
-               int var14 = var6.getCount();
-               var13 = var6.useOn(var12);
-               var6.setCount(var14);
+               int count = itemInHand.getCount();
+               useOn = itemInHand.useOn(useOnContext);
+               itemInHand.setCount(count);
             } else {
-               var13 = var6.useOn(var12);
+               useOn = itemInHand.useOn(useOnContext);
             }
 
-            return var13;
+            return useOn;
          } else {
             return InteractionResult.PASS;
          }
       }
    }
 
-   public InteractionResult interactItem(BotPlayer var1, InteractionHand var2) {
+   public InteractionResult interactItem(BotPlayer player, InteractionHand hand) {
       if (this.gameMode == GameType.SPECTATOR) {
          return InteractionResult.PASS;
       } else {
-         BotWorld var3 = this.world();
-         if (var3 == null) {
+         BotWorld world = this.world();
+         if (world == null) {
             return InteractionResult.PASS;
          } else {
             this.syncSelectedSlot();
-            MutableObject var4 = new MutableObject();
-            this.sendSequencedPacket(var3, var4x -> {
-               ServerboundUseItemPacket var5 = new ServerboundUseItemPacket(var2, var4x, var1.getYRot(), var1.getXRot());
-               ItemStack var6 = var1.getItemInHand(var2);
-               if (var1.getCooldowns().isOnCooldown(var6)) {
-                  var4.setValue(InteractionResult.PASS);
-                  return var5;
+            MutableObject mutableObject = new MutableObject();
+            this.sendSequencedPacket(world, var4x -> {
+               ServerboundUseItemPacket useItemPacket = new ServerboundUseItemPacket(hand, var4x, player.getYRot(), player.getXRot());
+               ItemStack itemInHand = player.getItemInHand(hand);
+               if (player.getCooldowns().isOnCooldown(itemInHand)) {
+                  mutableObject.setValue(InteractionResult.PASS);
+                  return useItemPacket;
                } else {
-                  InteractionResult var7 = var6.use(var3, var1, var2);
-                  ItemStack var8;
-                  if (var7 instanceof Success var9) {
-                     var8 = Objects.requireNonNullElseGet(var9.heldItemTransformedTo(), () -> var1.getItemInHand(var2));
+                  InteractionResult use = itemInHand.use(world, player, hand);
+                  ItemStack nonNullElseGet;
+                  if (use instanceof Success success) {
+                     nonNullElseGet = Objects.requireNonNullElseGet(success.heldItemTransformedTo(), () -> player.getItemInHand(hand));
                   } else {
-                     var8 = var1.getItemInHand(var2);
+                     nonNullElseGet = player.getItemInHand(hand);
                   }
 
-                  if (var8 != var6) {
-                     var1.setItemInHand(var2, var8);
+                  if (nonNullElseGet != itemInHand) {
+                     player.setItemInHand(hand, nonNullElseGet);
                   }
 
-                  var4.setValue(var7);
-                  return var5;
+                  mutableObject.setValue(use);
+                  return useItemPacket;
                }
             });
-            return (InteractionResult)var4.getValue();
+            return (InteractionResult)mutableObject.getValue();
          }
       }
    }
 
-   public void attackEntity(BotPlayer var1, Entity var2) {
+   public void attackEntity(BotPlayer player, Entity entity) {
       this.syncSelectedSlot();
-      this.networkHandler.sendPacket(new net.minecraft.network.protocol.game.ServerboundAttackPacket(var2.getId()));
+      this.networkHandler.sendPacket(new net.minecraft.network.protocol.game.ServerboundAttackPacket(entity.getId()));
       if (this.gameMode != GameType.SPECTATOR) {
-         var1.attack(var2);
-         var1.resetOnlyAttackStrengthTicker();
+         player.attack(entity);
+         player.resetOnlyAttackStrengthTicker();
       }
    }
 
    // 26.1 merged interact and interactAt: the packet always carries a location; vanilla sends the hit point,
    // without a hit result the entity origin (zero offset) is used
-   public InteractionResult interactEntity(BotPlayer var1, Entity var2, InteractionHand var3) {
+   public InteractionResult interactEntity(BotPlayer player, Entity entity, InteractionHand hand) {
       this.syncSelectedSlot();
-      this.networkHandler.sendPacket(new ServerboundInteractPacket(var2.getId(), var3, Vec3.ZERO, var1.isShiftKeyDown()));
-      return (InteractionResult)(this.gameMode == GameType.SPECTATOR ? InteractionResult.PASS : var1.interactOn(var2, var3, Vec3.ZERO));
+      this.networkHandler.sendPacket(new ServerboundInteractPacket(entity.getId(), hand, Vec3.ZERO, player.isShiftKeyDown()));
+      return (InteractionResult)(this.gameMode == GameType.SPECTATOR ? InteractionResult.PASS : player.interactOn(entity, hand, Vec3.ZERO));
    }
 
-   public InteractionResult interactEntityAtLocation(BotPlayer var1, Entity var2, EntityHitResult var3, InteractionHand var4) {
+   public InteractionResult interactEntityAtLocation(BotPlayer player, Entity entity, EntityHitResult entityHitResult, InteractionHand hand) {
       this.syncSelectedSlot();
-      Vec3 var5 = var3.getLocation().subtract(var2.getX(), var2.getY(), var2.getZ());
-      this.networkHandler.sendPacket(new ServerboundInteractPacket(var2.getId(), var4, var5, var1.isShiftKeyDown()));
-      return (InteractionResult)(this.gameMode == GameType.SPECTATOR ? InteractionResult.PASS : var1.interactOn(var2, var4, var5));
+      Vec3 location = entityHitResult.getLocation().subtract(entity.getX(), entity.getY(), entity.getZ());
+      this.networkHandler.sendPacket(new ServerboundInteractPacket(entity.getId(), hand, location, player.isShiftKeyDown()));
+      return (InteractionResult)(this.gameMode == GameType.SPECTATOR ? InteractionResult.PASS : player.interactOn(entity, hand, location));
    }
 
-   public void clickSlot(int var1, int var2, int var3, ContainerInput var4, Player var5) {
-      AbstractContainerMenu var6 = var5.containerMenu;
-      if (var1 != var6.containerId) {
-         LOGGER.warn("Ignoring click in mismatching container. Click in {}, player has {}.", var1, var6.containerId);
+   public void clickSlot(int containerId, int index, int buttonNum, ContainerInput containerInput, Player player) {
+      AbstractContainerMenu containerMenu = player.containerMenu;
+      if (containerId != containerMenu.containerId) {
+         LOGGER.warn("Ignoring click in mismatching container. Click in {}, player has {}.", containerId, containerMenu.containerId);
       } else {
-         NonNullList var7 = var6.slots;
-         int var8 = var7.size();
-         var var9 = Lists.newArrayListWithCapacity(var8);
+         NonNullList slots = containerMenu.slots;
+         int size = slots.size();
+         var arrayListWithCapacity = Lists.newArrayListWithCapacity(size);
 
-         for (Object var11_o : (Iterable<?>)(Object)(var7)) {
-            Slot var11 = (Slot)var11_o;
-            var9.add(var11.getItem().copy());
+         for (Object slot : (Iterable<?>)(Object)(slots)) {
+            Slot slot2 = (Slot)slot;
+            arrayListWithCapacity.add(slot2.getItem().copy());
          }
 
-         var6.clicked(var2, var3, var4, var5);
-         Int2ObjectOpenHashMap var14 = new Int2ObjectOpenHashMap();
+         containerMenu.clicked(index, buttonNum, containerInput, player);
+         Int2ObjectOpenHashMap int2ObjectOpenHashMap = new Int2ObjectOpenHashMap();
 
-         for (int var15 = 0; var15 < var8; var15++) {
-            ItemStack var12 = (ItemStack)var9.get(var15);
-            ItemStack var13 = ((Slot)var7.get(var15)).getItem();
-            if (!ItemStack.matches(var12, var13)) {
-               var14.put(var15, HashedStack.create(var13, this.networkHandler.getComponentHasher()));
+         for (int i = 0; i < size; i++) {
+            ItemStack stack = (ItemStack)arrayListWithCapacity.get(i);
+            ItemStack itemStack = ((Slot)slots.get(i)).getItem();
+            if (!ItemStack.matches(stack, itemStack)) {
+               int2ObjectOpenHashMap.put(i, HashedStack.create(itemStack, this.networkHandler.getComponentHasher()));
             }
          }
 
          this.networkHandler
             .sendPacket(
                new ServerboundContainerClickPacket(
-                  var1,
-                  var6.getStateId(),
-                  (short)var2,
-                  (byte)var3,
-                  var4,
-                  var14,
-                  HashedStack.create(var6.getCarried(), this.networkHandler.getComponentHasher())
+                  containerId,
+                  containerMenu.getStateId(),
+                  (short)index,
+                  (byte)buttonNum,
+                  containerInput,
+                  int2ObjectOpenHashMap,
+                  HashedStack.create(containerMenu.getCarried(), this.networkHandler.getComponentHasher())
                )
             );
       }
    }
 
-   public void clickButton(int var1, int var2) {
-      this.networkHandler.sendPacket(new ServerboundContainerButtonClickPacket(var1, var2));
+   public void clickButton(int containerId, int buttonId) {
+      this.networkHandler.sendPacket(new ServerboundContainerButtonClickPacket(containerId, buttonId));
    }
 
-   public void clickCreativeStack(ItemStack var1, int var2) {
-      if (this.gameMode.isCreative() && var1.getItem().requiredFeatures().isSubsetOf(this.networkHandler.getEnabledFeatures())) {
-         this.networkHandler.sendPacket(new ServerboundSetCreativeModeSlotPacket(var2, var1));
+   public void clickCreativeStack(ItemStack itemStack, int slotNum) {
+      if (this.gameMode.isCreative() && itemStack.getItem().requiredFeatures().isSubsetOf(this.networkHandler.getEnabledFeatures())) {
+         this.networkHandler.sendPacket(new ServerboundSetCreativeModeSlotPacket(slotNum, itemStack));
       }
    }
 
-   public void stopUsingItem(Player var1) {
+   public void stopUsingItem(Player player) {
       this.syncSelectedSlot();
       this.networkHandler.sendPacket(new ServerboundPlayerActionPacket(Action.RELEASE_USE_ITEM, BlockPos.ZERO, Direction.DOWN));
-      var1.releaseUsingItem();
+      player.releaseUsingItem();
    }
 
    public boolean isFlyingLocked() {
@@ -461,6 +461,6 @@ public final class BotInteractionManager {
 
    @FunctionalInterface
    public interface SequencedPacketCreator {
-      Packet<ServerGamePacketListener> predict(int var1);
+      Packet<ServerGamePacketListener> predict(int sequence);
    }
 }

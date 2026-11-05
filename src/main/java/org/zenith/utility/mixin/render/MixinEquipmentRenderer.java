@@ -31,21 +31,21 @@ public class MixinEquipmentRenderer implements MinecraftAccess {
       at = {@At("HEAD")}
    )
    private void onRenderHead(
-      LayerType var1,
-      ResourceKey<EquipmentAsset> var2,
-      Model var3,
-      Object var4,
-      ItemStack var5,
-      PoseStack var6,
-      SubmitNodeCollector var7,
-      int var8,
-      Identifier var9,
-      int var10,
-      int var11,
-      CallbackInfo var12
+      LayerType layerType,
+      ResourceKey<EquipmentAsset> resourceKey,
+      Model model,
+      Object obj,
+      ItemStack renderStack,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      Identifier id,
+      int n2,
+      int n3,
+      CallbackInfo callbackInfo
    ) {
-      this.renderStack = var5;
-      this.renderSelf = var4 instanceof AvatarRenderState var13 && mc.player != null && var13.id == mc.player.getId();
+      this.renderStack = renderStack;
+      this.renderSelf = obj instanceof AvatarRenderState avatarRenderState && mc.player != null && avatarRenderState.id == mc.player.getId();
    }
 
    @Inject(
@@ -53,18 +53,18 @@ public class MixinEquipmentRenderer implements MinecraftAccess {
       at = {@At("TAIL")}
    )
    private void onRenderTail(
-      LayerType var1,
-      ResourceKey<EquipmentAsset> var2,
-      Model var3,
-      Object var4,
-      ItemStack var5,
-      PoseStack var6,
-      SubmitNodeCollector var7,
-      int var8,
-      Identifier var9,
-      int var10,
-      int var11,
-      CallbackInfo var12
+      LayerType layerType,
+      ResourceKey<EquipmentAsset> resourceKey,
+      Model model,
+      Object obj,
+      ItemStack stack,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      Identifier id,
+      int n2,
+      int n3,
+      CallbackInfo callbackInfo
    ) {
       this.renderStack = ItemStack.EMPTY;
       this.renderSelf = false;
@@ -78,18 +78,18 @@ public class MixinEquipmentRenderer implements MinecraftAccess {
       ),
       index = 6
    )
-   private int onModifyColor(int var1) {
+   private int onModifyColor(int n) {
       if (mc.player == null || mc.level == null) {
-         return var1;
+         return n;
       } else if (this.renderStack != null && !this.renderStack.isEmpty()) {
-         ViewArmorDurabilityModule var2 = ViewArmorDurabilityModule.INSTANCE;
-         if (!var2.isEnabled()) {
-            return var1;
+         ViewArmorDurabilityModule armorDurabilityModule = ViewArmorDurabilityModule.INSTANCE;
+         if (!armorDurabilityModule.isEnabled()) {
+            return n;
          } else {
-            return !var2.method7550(this.renderStack, this.renderSelf) ? var1 : var2.method7551(this.renderStack);
+            return !armorDurabilityModule.method7550(this.renderStack, this.renderSelf) ? n : armorDurabilityModule.method7551(this.renderStack);
          }
       } else {
-         return var1;
+         return n;
       }
    }
 }

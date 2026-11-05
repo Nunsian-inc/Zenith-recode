@@ -11,15 +11,15 @@ public final class ScissorStack {
    private ScissorStack() {
    }
 
-   public static void method1750(@Nullable ScreenRectangle var0) {
+   public static void method1750(@Nullable ScreenRectangle screenRectangle) {
       MsdfRenderer.flushBatch();
-      if (var0 == null) {
+      if (screenRectangle == null) {
          RenderSystem.disableScissorForRenderTypeDraws();
       } else {
-         Window var1 = Minecraft.getInstance().getWindow();
-         int var2 = var1.getGuiScale();
+         Window window = Minecraft.getInstance().getWindow();
+         int guiScale = window.getGuiScale();
          RenderSystem.enableScissorForRenderTypeDraws(
-            var0.left() * var2, var1.getHeight() - var0.bottom() * var2, Math.max(0, var0.width() * var2), Math.max(0, var0.height() * var2)
+            screenRectangle.left() * guiScale, window.getHeight() - screenRectangle.bottom() * guiScale, Math.max(0, screenRectangle.width() * guiScale), Math.max(0, screenRectangle.height() * guiScale)
          );
       }
    }

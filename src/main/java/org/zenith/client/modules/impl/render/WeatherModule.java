@@ -145,37 +145,37 @@ public final class WeatherModule extends Module {
    }
 
    public WeatherFlakeChannel method3085() {
-      WeatherFlakeChannel var1 = this.method3092();
-      float var2 = this.time.getValue3();
-      WeatherPresets var3 = this.method3087();
+      WeatherFlakeChannel weatherFlakeChannel2 = this.method3092();
+      float floatValue = this.time.getValue3();
+      WeatherPresets weatherPresets = this.method3087();
       if (this.weatherFlakeChannel == null
-         || var1 != this.weatherFlakeChannel2
-         || var2 != this.floatValue
+         || weatherFlakeChannel2 != this.weatherFlakeChannel2
+         || floatValue != this.floatValue
          || !this.method3086(this.data)
-         || var3 != this.weatherPresets) {
-         WeatherFlakeChannel.Data var4 = this.method3093();
-         this.weatherFlakeChannel = var1.method7458(Util8.method1722(var2), var4, var3);
-         this.weatherFlakeChannel2 = var1;
-         this.floatValue = var2;
-         this.data = var4;
-         this.weatherPresets = var3;
+         || weatherPresets != this.weatherPresets) {
+         WeatherFlakeChannel.Data data = this.method3093();
+         this.weatherFlakeChannel = weatherFlakeChannel2.method7458(Util8.method1722(floatValue), data, weatherPresets);
+         this.weatherFlakeChannel2 = weatherFlakeChannel2;
+         this.floatValue = floatValue;
+         this.data = data;
+         this.weatherPresets = weatherPresets;
       }
 
       return this.weatherFlakeChannel;
    }
 
-   private boolean method3086(WeatherFlakeChannel.Data var1) {
-      if (var1 == null) {
+   private boolean method3086(WeatherFlakeChannel.Data data) {
+      if (data == null) {
          return false;
       } else {
-         boolean var2 = this.method3089();
-         return Float.compare(var1.getFloatValue(), method3094(this.drops)) == 0
-            && Float.compare(var1.getFloatValue2(), method3094(this.wind)) == 0
-            && Float.compare(var1.getFloatValue3(), method3094(this.reflect)) == 0
-            && Float.compare(var1.getFloatValue4(), var2 ? method3094(this.mist) : 1.0F) == 0
-            && Float.compare(var1.getFloatValue5(), var2 ? method3094(this.haze) : 1.0F) == 0
-            && Float.compare(var1.getFloatValue6(), var2 ? this.fogRange.getValue3() : -1.0F) == 0
-            && var1.isFlag() == (this.storm.isEnabled() && this.method3088());
+         boolean flag = this.method3089();
+         return Float.compare(data.getFloatValue(), method3094(this.drops)) == 0
+            && Float.compare(data.getFloatValue2(), method3094(this.wind)) == 0
+            && Float.compare(data.getFloatValue3(), method3094(this.reflect)) == 0
+            && Float.compare(data.getFloatValue4(), flag ? method3094(this.mist) : 1.0F) == 0
+            && Float.compare(data.getFloatValue5(), flag ? method3094(this.haze) : 1.0F) == 0
+            && Float.compare(data.getFloatValue6(), flag ? this.fogRange.getValue3() : -1.0F) == 0
+            && data.isFlag() == (this.storm.isEnabled() && this.method3088());
       }
    }
 
@@ -215,29 +215,29 @@ public final class WeatherModule extends Module {
    }
 
    private WeatherFlakeChannel.Data method3093() {
-      boolean var1 = this.method3089();
+      boolean flag = this.method3089();
       return new WeatherFlakeChannel.Data(
          method3094(this.drops),
          method3094(this.wind),
          method3094(this.reflect),
-         var1 ? method3094(this.mist) : 1.0F,
-         var1 ? method3094(this.haze) : 1.0F,
-         var1 ? this.fogRange.getValue3() : -1.0F,
+         flag ? method3094(this.mist) : 1.0F,
+         flag ? method3094(this.haze) : 1.0F,
+         flag ? this.fogRange.getValue3() : -1.0F,
          this.storm.isEnabled() && this.method3088()
       );
    }
 
-   private static float method3094(SliderSetting var0) {
-      return var0.getValue3() / 100.0F;
+   private static float method3094(SliderSetting reflect) {
+      return reflect.getValue3() / 100.0F;
    }
 
-   private static String method3095(float var0) {
-      int var1 = Math.round(var0 * 60.0F) % 1440;
-      if (var1 < 0) {
-         var1 += 1440;
+   private static String method3095(float f) {
+      int n = Math.round(f * 60.0F) % 1440;
+      if (n < 0) {
+         n += 1440;
       }
 
-      return String.format(Locale.US, "%02d:%02d", var1 / 60, var1 % 60);
+      return String.format(Locale.US, "%02d:%02d", n / 60, n % 60);
    }
 
    public float method3096() {
@@ -245,10 +245,10 @@ public final class WeatherModule extends Module {
    }
 
    private float method3097() {
-      float var1 = this.isEnabled() ? 1.0F : 0.0F;
-      float var2 = Math.clamp((float)(System.currentTimeMillis() - this.longValue3) / 900.0F, 0.0F, 1.0F);
-      var2 = var2 * var2 * (3.0F - 2.0F * var2);
-      return this.floatValue3 + (var1 - this.floatValue3) * var2;
+      float f = this.isEnabled() ? 1.0F : 0.0F;
+      float f2 = Math.clamp((float)(System.currentTimeMillis() - this.longValue3) / 900.0F, 0.0F, 1.0F);
+      f2 = f2 * f2 * (3.0F - 2.0F * f2);
+      return this.floatValue3 + (f - this.floatValue3) * f2;
    }
 
    public float method3098() {
@@ -260,10 +260,10 @@ public final class WeatherModule extends Module {
    }
 
    public float method3100() {
-      float var1 = this.isEnabled() ? 1.0F : 0.0F;
-      float var2 = var1 > this.floatValue2 ? 4500.0F : 14000.0F;
-      float var3 = Math.clamp((float)(System.currentTimeMillis() - this.longValue2) / var2, 0.0F, 1.0F);
-      return this.floatValue2 + (var1 - this.floatValue2) * var3;
+      float f = this.isEnabled() ? 1.0F : 0.0F;
+      float f2 = f > this.floatValue2 ? 4500.0F : 14000.0F;
+      float f3 = Math.clamp((float)(System.currentTimeMillis() - this.longValue2) / f2, 0.0F, 1.0F);
+      return this.floatValue2 + (f - this.floatValue2) * f3;
    }
 
    public float method3101() {
@@ -271,10 +271,10 @@ public final class WeatherModule extends Module {
    }
 
    private void method3102() {
-      boolean var1 = this.isEnabled() && this.method3092().flag;
-      if (var1 != this.flag) {
-         this.flag = var1;
-         FoliageSprites.enabled = var1;
+      boolean flag = this.isEnabled() && this.method3092().flag;
+      if (flag != this.flag) {
+         this.flag = flag;
+         FoliageSprites.enabled = flag;
          mc.execute(() -> {
             if (mc.level != null) {
                mc.reloadResourcePacks();
@@ -291,42 +291,42 @@ public final class WeatherModule extends Module {
       return method3105(this.method3096(), this.method3085().floatValue13) * this.method3097();
    }
 
-   private static float method3105(float var0, float var1) {
-      if (var1 <= 0.0F) {
+   private static float method3105(float f, float f2) {
+      if (f2 <= 0.0F) {
          return 0.0F;
       } else {
-         int var2 = (int)Math.floor(var0 * var1);
-         float var3 = 0.0F;
+         int n = (int)Math.floor(f * f2);
+         float f3 = 0.0F;
 
-         for (int var4 = var2 - 1; var4 <= var2; var4++) {
-            float var5 = (var4 + Glowboost.method3268(118049640925L, var4, 0)) / var1;
-            float var6 = var0 - var5;
-            if (!(var6 < 0.0F)) {
-               float var7 = 0.35F + 0.65F * Glowboost.method3268(118049640925L, var4, 1);
-               float var8 = method3106(var6, 0.09F) + method3106(var6 - 0.13F, 0.17F) * 0.65F;
-               var3 = Math.max(var3, Math.min(1.0F, var8) * var7);
+         for (int i = n - 1; i <= n; i++) {
+            float f4 = (i + Glowboost.method3268(118049640925L, i, 0)) / f2;
+            float f5 = f - f4;
+            if (!(f5 < 0.0F)) {
+               float f6 = 0.35F + 0.65F * Glowboost.method3268(118049640925L, i, 1);
+               float f7 = method3106(f5, 0.09F) + method3106(f5 - 0.13F, 0.17F) * 0.65F;
+               f3 = Math.max(f3, Math.min(1.0F, f7) * f6);
             }
          }
 
-         return var3;
+         return f3;
       }
    }
 
-   private static float method3106(float var0, float var1) {
-      return var0 < 0.0F ? 0.0F : (float)(Math.exp(-var0 / var1) * (1.0 - Math.exp(-var0 / 0.012)));
+   private static float method3106(float f, float f2) {
+      return f < 0.0F ? 0.0F : (float)(Math.exp(-f / f2) * (1.0 - Math.exp(-f / 0.012)));
    }
 
    public float method3107() {
       return lerp(1.0F, this.method3085().floatValue16, this.method3097());
    }
 
-   public void method3108(float[] var1) {
-      float var2 = this.method3097();
-      WeatherFlakeChannel var3 = this.method3085();
-      var1[0] = lerp(1.0F, var3.floatValues11[0], var2);
-      var1[1] = lerp(1.0F, var3.floatValues11[1], var2);
-      var1[2] = lerp(1.0F, var3.floatValues11[2], var2);
-      var1[3] = lerp(1.0F, var3.floatValue15, var2) * (1.0F + this.method3104() * 0.85F);
+   public void method3108(float[] floats) {
+      float f = this.method3097();
+      WeatherFlakeChannel weatherFlakeChannel = this.method3085();
+      floats[0] = lerp(1.0F, weatherFlakeChannel.floatValues11[0], f);
+      floats[1] = lerp(1.0F, weatherFlakeChannel.floatValues11[1], f);
+      floats[2] = lerp(1.0F, weatherFlakeChannel.floatValues11[2], f);
+      floats[3] = lerp(1.0F, weatherFlakeChannel.floatValue15, f) * (1.0F + this.method3104() * 0.85F);
    }
 
    public float method3109() {
@@ -334,21 +334,21 @@ public final class WeatherModule extends Module {
    }
 
    public float method3110() {
-      float var1 = this.method3097();
-      if (var1 <= 0.01F) {
+      float f = this.method3097();
+      if (f <= 0.01F) {
          return -1.0F;
       } else {
-         WeatherFlakeChannel var2 = this.method3085();
-         return var2.intValue2 == 0 ? 0.0F : Math.min(1.0F, var2.floatValue18 * var1);
+         WeatherFlakeChannel weatherFlakeChannel = this.method3085();
+         return weatherFlakeChannel.intValue2 == 0 ? 0.0F : Math.min(1.0F, weatherFlakeChannel.floatValue18 * f);
       }
    }
 
    public float method3111() {
-      float var1 = this.method3110();
-      if (var1 < 0.0F) {
+      float f = this.method3110();
+      if (f < 0.0F) {
          return -1.0F;
       } else {
-         return this.method3085().floatValue13 > 0.0F ? var1 : 0.0F;
+         return this.method3085().floatValue13 > 0.0F ? f : 0.0F;
       }
    }
 
@@ -360,19 +360,19 @@ public final class WeatherModule extends Module {
       return this.method3110() > 0.0F;
    }
 
-   public boolean method3114(Entity var1, BlockState var2) {
-      if (this.isEnabled() && var1.level().isClientSide()) {
-         SoundType var3 = var2.getSoundType();
-         float var4 = 0.94F + var1.getRandom().nextFloat() * 0.12F;
-         WeatherFlakeChannel var5 = this.method3085();
-         if (var5.intValue2 == 1) {
-            var1.playSound(SoundEvents.WET_GRASS_STEP, var3.getVolume() * 0.22F, var3.getPitch() * var4);
+   public boolean method3114(Entity entity, BlockState blockState) {
+      if (this.isEnabled() && entity.level().isClientSide()) {
+         SoundType soundType = blockState.getSoundType();
+         float f = 0.94F + entity.getRandom().nextFloat() * 0.12F;
+         WeatherFlakeChannel weatherFlakeChannel = this.method3085();
+         if (weatherFlakeChannel.intValue2 == 1) {
+            entity.playSound(SoundEvents.WET_GRASS_STEP, soundType.getVolume() * 0.22F, soundType.getPitch() * f);
             return true;
-         } else if (var5.flag) {
-            var1.playSound(SoundEvents.SNOW_STEP, var3.getVolume() * 0.2F, var3.getPitch() * var4);
+         } else if (weatherFlakeChannel.flag) {
+            entity.playSound(SoundEvents.SNOW_STEP, soundType.getVolume() * 0.2F, soundType.getPitch() * f);
             return true;
-         } else if (var5.floatValue27 >= 0.9F) {
-            var1.playSound(var3.getStepSound(), var3.getVolume() * 0.08F, var3.getPitch() * 0.78F * var4);
+         } else if (weatherFlakeChannel.floatValue27 >= 0.9F) {
+            entity.playSound(soundType.getStepSound(), soundType.getVolume() * 0.08F, soundType.getPitch() * 0.78F * f);
             return true;
          } else {
             return false;
@@ -383,17 +383,17 @@ public final class WeatherModule extends Module {
    }
 
    @EventTarget
-   public void method3115(BackgroundRenderEvent var1) {
+   public void method3115(BackgroundRenderEvent event) {
       if (!WorldModule.INSTANCE.method5648()) {
-         float var2 = this.method3097();
-         if (!(var2 <= 0.01F)) {
-            WeatherFlakeChannel var3 = this.method3085();
-            float var4 = var1.getFloatValue2() > 0.0F ? lerp(var1.getFloatValue2(), var3.floatValue14, var2) : var3.floatValue14;
-            var1.setFloatValue(var4);
-            int var5 = method3120(var1.getIntValue(), var3.intValue, var2);
-            float var6 = ColorUtils.method6427(var5) * lerp(1.0F, 0.9F, var2);
-            var1.setColor(Math.clamp((long)((int)(var6 * 255.0F + 0.5F)), 0, 255) << 24 | var5 & 16777215);
-            var1.setCancelled(true);
+         float f = this.method3097();
+         if (!(f <= 0.01F)) {
+            WeatherFlakeChannel weatherFlakeChannel = this.method3085();
+            float floatValue = event.getFloatValue2() > 0.0F ? lerp(event.getFloatValue2(), weatherFlakeChannel.floatValue14, f) : weatherFlakeChannel.floatValue14;
+            event.setFloatValue(floatValue);
+            int intValue = method3120(event.getIntValue(), weatherFlakeChannel.intValue, f);
+            float f2 = ColorUtils.method6427(intValue) * lerp(1.0F, 0.9F, f);
+            event.setColor(Math.clamp((long)((int)(f2 * 255.0F + 0.5F)), 0, 255) << 24 | intValue & 16777215);
+            event.setCancelled(true);
          }
       }
    }
@@ -402,72 +402,72 @@ public final class WeatherModule extends Module {
       return this.method3097() > 0.01F && mc.level != null && mc.player != null;
    }
 
-   public void method3117(Matrix4f var1) {
+   public void method3117(Matrix4f zenith$worldMatrix) {
       this.method3102();
       if (this.method3116()) {
-         float var2 = this.method3097();
-         PoseStack var3 = this.matrixStack;
-         var3.setIdentity();
-         var3.mulPose(var1);
-         WeatherFlakeChannel var4 = this.method3085();
-         Camera var5 = mc.getEntityRenderDispatcher().camera;
-         Vec3 var6 = var5.position();
-         boolean var7 = var4.flag || var4.intValue2 != 0 || !this.method3103();
-         FlakeState var8 = var7 ? this.method3118(var6) : null;
-         if (!var7 || var8 != null) {
-            float var9 = this.method3096();
-            long var10 = System.currentTimeMillis();
-            this.glowboost.method3232(var5, 0.0F);
-            this.print.method5440(mc.level, mc.level.players(), var4, var10);
+         float f = this.method3097();
+         PoseStack matrixStack = this.matrixStack;
+         matrixStack.setIdentity();
+         matrixStack.mulPose(zenith$worldMatrix);
+         WeatherFlakeChannel weatherFlakeChannel = this.method3085();
+         Camera camera = mc.getEntityRenderDispatcher().camera;
+         Vec3 position = camera.position();
+         boolean flag = weatherFlakeChannel.flag || weatherFlakeChannel.intValue2 != 0 || !this.method3103();
+         FlakeState flakeState2 = flag ? this.method3118(position) : null;
+         if (!flag || flakeState2 != null) {
+            float f2 = this.method3096();
+            long now = System.currentTimeMillis();
+            this.glowboost.method3232(camera, 0.0F);
+            this.print.method5440(mc.level, mc.level.players(), weatherFlakeChannel, now);
             SnowShader.method403(method3094(this.reflect));
-            SnowShader.method392(var6, var4, var4.floatValue23);
+            SnowShader.method392(position, weatherFlakeChannel, weatherFlakeChannel.floatValue23);
             if (SnowVisibility.isVisible()) {
                SnowVisibility.method2402(this.glowboost);
             } else {
-               FlakeUtil.method7507(this.glowboost, var8, var4, var2, this.print, var10, var6.x, var6.y, var6.z, method3094(this.snowDepth));
+               FlakeUtil.method7507(this.glowboost, flakeState2, weatherFlakeChannel, f, this.print, now, position.x, position.y, position.z, method3094(this.snowDepth));
             }
 
-            this.print.method5444(this.glowboost, var4, var2, var10, var6.x, var6.y, var6.z);
-            if (var8 != null && !this.method3103()) {
-               Util21.method5356(this.glowboost, var8, var4, var2, var9, var6.x, var6.y, var6.z);
+            this.print.method5444(this.glowboost, weatherFlakeChannel, f, now, position.x, position.y, position.z);
+            if (flakeState2 != null && !this.method3103()) {
+               Util21.method5356(this.glowboost, flakeState2, weatherFlakeChannel, f, f2, position.x, position.y, position.z);
             }
 
-            if (var8 != null) {
-               RippleUtil.method7826(this.glowboost, var8, var4, var2, var9, var6.x, var6.y, var6.z);
+            if (flakeState2 != null) {
+               RippleUtil.method7826(this.glowboost, flakeState2, weatherFlakeChannel, f, f2, position.x, position.y, position.z);
             }
 
             ImmediateRenderer.method8013(null);
-            Matrix4fStack var12 = RenderSystem.getModelViewStack();
-            var12.pushMatrix();
-            var12.identity();
+            Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
+            modelViewStack.pushMatrix();
+            modelViewStack.identity();
 
             try {
-               SnowShader.method397(var3);
-               this.glowboost.method3253(var3);
+               SnowShader.method397(matrixStack);
+               this.glowboost.method3253(matrixStack);
             } finally {
-               var12.popMatrix();
+               modelViewStack.popMatrix();
             }
          }
       }
    }
 
-   private FlakeState method3118(Vec3 var1) {
-      int var2 = (int)Math.floor(var1.x);
-      int var3 = (int)Math.floor(var1.z);
-      long var4 = System.currentTimeMillis();
+   private FlakeState method3118(Vec3 position) {
+      int intValue = (int)Math.floor(position.x);
+      int n = (int)Math.floor(position.z);
+      long now = System.currentTimeMillis();
       if (this.flakeState == null) {
-         this.flakeState = FlakeState.method4535(mc.level, var2, var3, 52);
-         this.longValue = var4;
-      } else if (var4 - this.longValue > 400L) {
-         this.flakeState.method4536(mc.level, var2, var3);
-         this.longValue = var4;
-      } else if (var2 != this.intValue || var3 != this.intValue2) {
-         this.flakeState.method4537(mc.level, var2, var3);
+         this.flakeState = FlakeState.method4535(mc.level, intValue, n, 52);
+         this.longValue = now;
+      } else if (now - this.longValue > 400L) {
+         this.flakeState.method4536(mc.level, intValue, n);
+         this.longValue = now;
+      } else if (intValue != this.intValue || n != this.intValue2) {
+         this.flakeState.method4537(mc.level, intValue, n);
       }
 
       Util11.method2332(mc.level, this.flakeState);
-      this.intValue = var2;
-      this.intValue2 = var3;
+      this.intValue = intValue;
+      this.intValue2 = n;
       return this.flakeState;
    }
 
@@ -498,46 +498,46 @@ public final class WeatherModule extends Module {
       this.print.clear();
    }
 
-   public void method3119(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      WeatherFlakeChannel var7 = this.method3085();
-      float var8 = 1.0F;
-      float var9 = this.method3096();
-      float var10 = method3105(var9, var7.floatValue13);
-      WeatherPreviewUtil.method255(var1, var2, var3, var4, var5, var7, var8, var10, var9, var6);
+   public void method3119(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height, float previewAlpha) {
+      WeatherFlakeChannel weatherFlakeChannel = this.method3085();
+      float f = 1.0F;
+      float f2 = this.method3096();
+      float f3 = method3105(f2, weatherFlakeChannel.floatValue13);
+      WeatherPreviewUtil.method255(customDrawContext, floatValue, y, width, height, weatherFlakeChannel, f, f3, f2, previewAlpha);
       if (this.flakeState2 == null) {
          this.flakeState2 = FlakeState.method4542(5);
       }
 
-      float var11 = var4 / 11.0F * 1.15F;
-      float var12 = var3 + var5 * 0.82F;
-      PoseStack var13 = Util25.method6477(var1, var2 + var4 / 2.0F, var12, var11);
+      float xScale = width / 11.0F * 1.15F;
+      float yo = y + height * 0.82F;
+      PoseStack matrixStack = Util25.method6477(customDrawContext, floatValue + width / 2.0F, yo, xScale);
       this.glowboost.method3233(Util25.method6478(), Util25.method6479(), 0.0F);
-      Util25.method6480(this.glowboost, this.flakeState2, Util25.Data.method6483(var7, var8), var6);
-      Util32.method7994(this.glowboost, this.flakeState2, var7, var8 * var6, var9, 0.0, 2.0, 0.0);
-      FlakeUtil.method7508(this.glowboost, this.flakeState2, var7, var8 * var6, 0.0, 2.0, 0.0);
-      Print.method5446(this.glowboost, var7, var6);
-      Util21.method5356(this.glowboost, this.flakeState2, var7, var8 * var6, var9, 0.0, 2.0, 0.0);
-      RippleUtil.method7827(this.glowboost, this.flakeState2, var7, var8 * var6, var9, 0.0, 2.0, 0.0);
-      this.glowboost.method3253(var13);
+      Util25.method6480(this.glowboost, this.flakeState2, Util25.Data.method6483(weatherFlakeChannel, f), previewAlpha);
+      Util32.method7994(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
+      FlakeUtil.method7508(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, 0.0, 2.0, 0.0);
+      Print.method5446(this.glowboost, weatherFlakeChannel, previewAlpha);
+      Util21.method5356(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
+      RippleUtil.method7827(this.glowboost, this.flakeState2, weatherFlakeChannel, f * previewAlpha, f2, 0.0, 2.0, 0.0);
+      this.glowboost.method3253(matrixStack);
    }
 
-   private static float lerp(float var0, float var1, float var2) {
-      return var0 + (var1 - var0) * Math.clamp(var2, 0.0F, 1.0F);
+   private static float lerp(float f, float f2, float f3) {
+      return f + (f2 - f) * Math.clamp(f3, 0.0F, 1.0F);
    }
 
-   private static int method3120(int var0, int var1, float var2) {
-      if (var0 >>> 24 == 0) {
-         return var1;
+   private static int method3120(int intValue, int n, float f) {
+      if (intValue >>> 24 == 0) {
+         return n;
       } else {
-         int var3 = method3121(ColorUtils.method6423(var0), ColorUtils.method6423(var1), var2);
-         int var4 = method3121(ColorUtils.method6420(var0), ColorUtils.method6420(var1), var2);
-         int var5 = method3121(ColorUtils.method6421(var0), ColorUtils.method6421(var1), var2);
-         int var6 = method3121(ColorUtils.method6422(var0), ColorUtils.method6422(var1), var2);
-         return var3 << 24 | var4 << 16 | var5 << 8 | var6;
+         int n2 = method3121(ColorUtils.method6423(intValue), ColorUtils.method6423(n), f);
+         int n3 = method3121(ColorUtils.method6420(intValue), ColorUtils.method6420(n), f);
+         int n4 = method3121(ColorUtils.method6421(intValue), ColorUtils.method6421(n), f);
+         int n5 = method3121(ColorUtils.method6422(intValue), ColorUtils.method6422(n), f);
+         return n2 << 24 | n3 << 16 | n4 << 8 | n5;
       }
    }
 
-   private static int method3121(int var0, int var1, float var2) {
-      return Math.clamp((long)((int)(var0 + (var1 - var0) * var2 + 0.5F)), 0, 255);
+   private static int method3121(int n, int n2, float f) {
+      return Math.clamp((long)((int)(n + (n2 - n) * f + 0.5F)), 0, 255);
    }
 }

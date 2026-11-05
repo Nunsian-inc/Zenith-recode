@@ -22,17 +22,17 @@ public class WayArgumentType implements ArgumentType<String> {
       return new WayArgumentType();
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      String var2 = var1.readString();
-      if (!Zenith.getInstance().getWayManager().hasWay(var2)) {
-         throw new DynamicCommandExceptionType(var1x -> Component.literal("У тебя нет метки " + var2)).create(var2);
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      String string = stringReader.readString();
+      if (!Zenith.getInstance().getWayManager().hasWay(string)) {
+         throw new DynamicCommandExceptionType(var1x -> Component.literal("У тебя нет метки " + string)).create(string);
       } else {
-         return var2;
+         return string;
       }
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(Zenith.getInstance().getWayManager().getItems().stream().map(Way::name), var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(Zenith.getInstance().getWayManager().getItems().stream().map(Way::name), builder);
    }
 
    public Collection<String> getExamples() {

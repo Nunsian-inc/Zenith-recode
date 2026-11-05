@@ -13,9 +13,9 @@ public enum ModuleCategory {
    private final String text;
    private final String text2;
 
-   private ModuleCategory(String var3, String var4) {
-      this.text = var3;
-      this.text2 = var4;
+   private ModuleCategory(String text, String str) {
+      this.text = text;
+      this.text2 = str;
    }
 
    @Generated

@@ -48,9 +48,9 @@ public final class AssistSilent implements ZenithAccess {
    private int intValue;
    private long longValue;
 
-   private AssistSilent(String var1, String var2) {
-      this.text = var1;
-      this.text2 = var2;
+   private AssistSilent(String text, String str) {
+      this.text = text;
+      this.text2 = str;
       EventManager.register(this);
    }
 
@@ -68,20 +68,20 @@ public final class AssistSilent implements ZenithAccess {
       } else {
          if (this.completableFuture == null) {
             this.completableFuture = CompletableFuture.runAsync(() -> {
-               try (InputStream var1 = this.method6307()) {
-                  SilentAssistNet var2 = SilentAssistNet.method3634(var1);
-                  this.status = this.text2 + " загружен (" + this.text + "). " + var2.text2;
-                  this.silentAssistNet = var2;
-               } catch (Exception var6) {
-                  this.status = this.text2 + " НЕ загружен (" + this.text + "): " + var6.getMessage();
+               try (InputStream inputStream = this.method6307()) {
+                  SilentAssistNet silentAssistNet = SilentAssistNet.method3634(inputStream);
+                  this.status = this.text2 + " загружен (" + this.text + "). " + silentAssistNet.text2;
+                  this.silentAssistNet = silentAssistNet;
+               } catch (Exception e) {
+                  this.status = this.text2 + " НЕ загружен (" + this.text + "): " + e.getMessage();
                }
 
                System.out.println(this.status);
                if (mc != null) {
-                  String var7 = this.status;
+                  String status = this.status;
                   mc.execute(() -> {
                      if (mc.player != null) {
-                        ChatLogger.method2019(var7);
+                        ChatLogger.method2019(status);
                      }
                   });
                }
@@ -93,17 +93,17 @@ public final class AssistSilent implements ZenithAccess {
    }
 
    private InputStream method6307() throws IOException {
-      for (Path var2 : List.of(Path.of(this.text), Path.of("models", this.text), Path.of("..", "models", this.text))) {
-         if (Files.isRegularFile(var2)) {
-            return Files.newInputStream(var2);
+      for (Path path : List.of(Path.of(this.text), Path.of("models", this.text), Path.of("..", "models", this.text))) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var3 = AssistSilent.class.getClassLoader().getResourceAsStream("models/" + this.text);
-      if (var3 == null) {
+      InputStream resourceAsStream = AssistSilent.class.getClassLoader().getResourceAsStream("models/" + this.text);
+      if (resourceAsStream == null) {
          throw new IOException(this.text + " не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var3;
+         return resourceAsStream;
       }
    }
 
@@ -115,102 +115,102 @@ public final class AssistSilent implements ZenithAccess {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
          this.flag = true;
       }
    }
 
    private static double method6308() {
-      double var0 = mc.options.sensitivity().get() * 0.6F + 0.2F;
-      return var0 * var0 * var0 * 8.0 * 0.15;
+      double d = mc.options.sensitivity().get() * 0.6F + 0.2F;
+      return d * d * d * 8.0 * 0.15;
    }
 
-   public void method6309(LivingEntity var1, Module var2) {
+   public void method6309(LivingEntity livingEntity, Module moduleValue) {
       this.longValue++;
       if (mc.player != null && mc.level != null && !mc.player.isDeadOrDying()) {
-         SilentAssistNet var3 = this.method6306();
-         if (var3 == null) {
+         SilentAssistNet silentAssistNet = this.method6306();
+         if (silentAssistNet == null) {
             this.reset();
          } else {
             if (this.entry == null || mc.level != this.obj) {
-               this.entry = var3.method3623();
+               this.entry = silentAssistNet.method3623();
                this.flag2 = false;
                this.rotation = null;
             }
 
             this.obj = mc.level;
-            Rotation var4 = rotationManager.getCurrentRotation();
+            Rotation currentRotation = rotationManager.getCurrentRotation();
             if (this.rotation != null
                && (
-                  var4 == null
-                     || Math.abs(method6310(var4.getFloatValue() - this.rotation.getFloatValue())) > 0.001
-                     || Math.abs(var4.getFloatValue2() - this.rotation.getFloatValue2()) > 0.001
+                  currentRotation == null
+                     || Math.abs(method6310(currentRotation.getFloatValue() - this.rotation.getFloatValue())) > 0.001
+                     || Math.abs(currentRotation.getFloatValue2() - this.rotation.getFloatValue2()) > 0.001
                )) {
-               this.entry = var3.method3623();
+               this.entry = silentAssistNet.method3623();
             }
 
             this.rotation = null;
-            double var5 = mc.player.getYRot();
-            double var7 = mc.player.getXRot();
-            float var9 = mc.player.getAttackStrengthScale(0.0F);
-            boolean var10 = var9 < this.floatValue - 1.0E-4F;
-            this.floatValue = var9;
-            boolean var11 = this.flag;
+            double yRot = mc.player.getYRot();
+            double xRot = mc.player.getXRot();
+            float attackStrengthScale = mc.player.getAttackStrengthScale(0.0F);
+            boolean flag = attackStrengthScale < this.floatValue - 1.0E-4F;
+            this.floatValue = attackStrengthScale;
+            boolean flag2 = this.flag;
             this.flag = false;
             if (!this.flag2) {
-               this.doubleValue = var5;
-               this.doubleValue2 = var7;
+               this.doubleValue = yRot;
+               this.doubleValue2 = xRot;
                this.doubleValue3 = 0.0;
                this.doubleValue4 = 0.0;
                this.flag3 = false;
                this.flag2 = true;
             } else {
-               BcCameraNet.Entry4 var12 = new BcCameraNet.Entry4();
-               var12.doubleValue = mc.player.getX();
-               var12.doubleValue2 = mc.player.getY();
-               var12.doubleValue3 = mc.player.getZ();
-               Input var13 = mc.player.input.keyPresses;
-               var12.intValue = (var13.forward() ? 1 : 0)
-                  | (var13.backward() ? 2 : 0)
-                  | (var13.left() ? 4 : 0)
-                  | (var13.right() ? 8 : 0)
-                  | (var13.jump() ? 16 : 0)
-                  | (var13.shift() ? 32 : 0)
-                  | (var13.sprint() ? 64 : 0);
-               var12.flag = mc.player.onGround();
-               var12.flag2 = mc.player.horizontalCollision;
-               var12.flag3 = var10;
-               if (var1 != null && var1.isAlive()) {
-                  var12.doubleValue4 = var1.getX();
-                  var12.doubleValue5 = var1.getY();
-                  var12.doubleValue6 = var1.getZ();
-                  var12.intValue2 = var1.getId();
-                  var12.intValue3 = 1;
-                  var12.flag4 = var1.isShiftKeyDown();
+               BcCameraNet.Entry4 entry4 = new BcCameraNet.Entry4();
+               entry4.doubleValue = mc.player.getX();
+               entry4.doubleValue2 = mc.player.getY();
+               entry4.doubleValue3 = mc.player.getZ();
+               Input keyPresses = mc.player.input.keyPresses;
+               entry4.intValue = (keyPresses.forward() ? 1 : 0)
+                  | (keyPresses.backward() ? 2 : 0)
+                  | (keyPresses.left() ? 4 : 0)
+                  | (keyPresses.right() ? 8 : 0)
+                  | (keyPresses.jump() ? 16 : 0)
+                  | (keyPresses.shift() ? 32 : 0)
+                  | (keyPresses.sprint() ? 64 : 0);
+               entry4.flag = mc.player.onGround();
+               entry4.flag2 = mc.player.horizontalCollision;
+               entry4.flag3 = flag;
+               if (livingEntity != null && livingEntity.isAlive()) {
+                  entry4.doubleValue4 = livingEntity.getX();
+                  entry4.doubleValue5 = livingEntity.getY();
+                  entry4.doubleValue6 = livingEntity.getZ();
+                  entry4.intValue2 = livingEntity.getId();
+                  entry4.intValue3 = 1;
+                  entry4.flag4 = livingEntity.isShiftKeyDown();
                }
 
-               var12.doubleValue7 = this.doubleValue;
-               var12.doubleValue8 = this.doubleValue2;
-               var12.doubleValue9 = this.doubleValue3;
-               var12.doubleValue10 = this.doubleValue4;
-               var12.flag5 = this.flag3;
-               double var14 = var5 - this.doubleValue;
-               double var16 = var7 - this.doubleValue2;
-               boolean var18 = !var11 && Math.abs(var14) <= 180.0 && Math.abs(var16) <= 180.0;
-               double var19 = method6308();
-               var3.method3629(this.entry, var12);
-               double[] var21 = var3.method3630(this.entry, var12, var14, var16, var18, var19, var5, var7, null);
-               this.doubleValue = var5;
-               this.doubleValue2 = var7;
-               this.doubleValue3 = var14;
-               this.doubleValue4 = var16;
-               this.flag3 = var18;
-               this.method6311(var12, var14, var16, var18, var19, var21);
+               entry4.doubleValue7 = this.doubleValue;
+               entry4.doubleValue8 = this.doubleValue2;
+               entry4.doubleValue9 = this.doubleValue3;
+               entry4.doubleValue10 = this.doubleValue4;
+               entry4.flag5 = this.flag3;
+               double d = yRot - this.doubleValue;
+               double d2 = xRot - this.doubleValue2;
+               boolean flag3 = !flag2 && Math.abs(d) <= 180.0 && Math.abs(d2) <= 180.0;
+               double d3 = method6308();
+               silentAssistNet.method3629(this.entry, entry4);
+               double[] doubles = silentAssistNet.method3630(this.entry, entry4, d, d2, flag3, d3, yRot, xRot, null);
+               this.doubleValue = yRot;
+               this.doubleValue2 = xRot;
+               this.doubleValue3 = d;
+               this.doubleValue4 = d2;
+               this.flag3 = flag3;
+               this.method6311(entry4, d, d2, flag3, d3, doubles);
                if (this.entry.isFlag()) {
-                  Rotation var22 = new Rotation((float)var21[0], (float)var21[1]);
-                  rotationManager.method7848(new RotationRequest(var22, () -> var22, bcCameraTestnerv.getRotationConfig()), 1, var2, 1);
-                  this.rotation = var22;
+                  Rotation rotation = new Rotation((float)doubles[0], (float)doubles[1]);
+                  rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 1, moduleValue, 1);
+                  this.rotation = rotation;
                }
             }
          }
@@ -219,16 +219,16 @@ public final class AssistSilent implements ZenithAccess {
       }
    }
 
-   private static double method6310(double var0) {
-      double var2 = (var0 + 180.0) % 360.0;
-      if (var2 < 0.0) {
-         var2 += 360.0;
+   private static double method6310(double d) {
+      double d2 = (d + 180.0) % 360.0;
+      if (d2 < 0.0) {
+         d2 += 360.0;
       }
 
-      return var2 - 180.0;
+      return d2 - 180.0;
    }
 
-   private void method6311(BcCameraNet.Entry4 var1, double var2, double var4, boolean var6, double var7, double[] var9) {
+   private void method6311(BcCameraNet.Entry4 entry4, double d, double d2, boolean flag, double d3, double[] doubles) {
       if (this.intValue < 72000) {
          try {
             if (this.bufferedWriter == null) {
@@ -241,60 +241,60 @@ public final class AssistSilent implements ZenithAccess {
                   );
             }
 
-            StringBuilder var10 = new StringBuilder(320);
-            var10.append(this.longValue)
+            StringBuilder builder = new StringBuilder(320);
+            builder.append(this.longValue)
                .append(',')
                .append(mc.player.tickCount)
                .append(',')
                .append(this.text2)
                .append(',')
-               .append(var7)
+               .append(d3)
                .append(',')
-               .append(var1.doubleValue)
+               .append(entry4.doubleValue)
                .append(',')
-               .append(var1.doubleValue2)
+               .append(entry4.doubleValue2)
                .append(',')
-               .append(var1.doubleValue3)
+               .append(entry4.doubleValue3)
                .append(',')
-               .append(var1.intValue)
+               .append(entry4.intValue)
                .append(',')
-               .append(var1.flag ? 1 : 0)
+               .append(entry4.flag ? 1 : 0)
                .append(',')
-               .append(var1.flag2 ? 1 : 0)
+               .append(entry4.flag2 ? 1 : 0)
                .append(',')
-               .append(var1.flag3 ? 1 : 0)
+               .append(entry4.flag3 ? 1 : 0)
                .append(',')
-               .append(var1.intValue2)
+               .append(entry4.intValue2)
                .append(',')
-               .append(var1.doubleValue4)
+               .append(entry4.doubleValue4)
                .append(',')
-               .append(var1.doubleValue5)
+               .append(entry4.doubleValue5)
                .append(',')
-               .append(var1.doubleValue6)
+               .append(entry4.doubleValue6)
                .append(',')
-               .append(var1.flag4 ? 1 : 0)
+               .append(entry4.flag4 ? 1 : 0)
                .append(',')
-               .append(var1.doubleValue7)
+               .append(entry4.doubleValue7)
                .append(',')
-               .append(var1.doubleValue8)
+               .append(entry4.doubleValue8)
                .append(',')
-               .append(var1.doubleValue9)
+               .append(entry4.doubleValue9)
                .append(',')
-               .append(var1.doubleValue10)
+               .append(entry4.doubleValue10)
                .append(',')
-               .append(var1.flag5 ? 1 : 0)
+               .append(entry4.flag5 ? 1 : 0)
                .append(',')
-               .append(var2)
+               .append(d)
                .append(',')
-               .append(var4)
+               .append(d2)
                .append(',')
-               .append(var6 ? 1 : 0)
+               .append(flag ? 1 : 0)
                .append(',')
                .append(this.entry.isFlag() ? 1 : 0)
                .append(',')
-               .append(var9[0])
+               .append(doubles[0])
                .append(',')
-               .append(var9[1])
+               .append(doubles[1])
                .append(',')
                .append(this.entry.getDoubleValue3())
                .append(',')
@@ -308,11 +308,11 @@ public final class AssistSilent implements ZenithAccess {
                .append(',')
                .append(this.entry.doubleValue12)
                .append('\n');
-            this.bufferedWriter.write(var10.toString());
+            this.bufferedWriter.write(builder.toString());
             if (++this.intValue % 20 == 0) {
                this.bufferedWriter.flush();
             }
-         } catch (IOException var11) {
+         } catch (IOException e) {
             this.intValue = 72000;
          }
       }

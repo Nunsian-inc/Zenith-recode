@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin({GlCommandEncoder.class})
 public interface GlCommandEncoderAccessor {
    @Accessor("lastProgram")
-   void zenith$setCurrentProgram(GlProgram var1);
+   void zenith$setCurrentProgram(GlProgram glProgram);
 
    @Accessor("lastPipeline")
-   void zenith$setCurrentPipeline(com.mojang.renderpearl.backend.opengl.GlRenderPipeline var1);
+   void zenith$setCurrentPipeline(com.mojang.renderpearl.backend.opengl.GlRenderPipeline glRenderPipeline);
 }

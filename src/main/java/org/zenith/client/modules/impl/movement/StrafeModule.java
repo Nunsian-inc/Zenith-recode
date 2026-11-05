@@ -23,17 +23,17 @@ public final class StrafeModule extends Module {
    }
 
    @EventTarget
-   public void method1527(Event5 var1) {
-      float var2 = KeyboardInput.calculateImpulse(mc.options.keyUp.isDown(), mc.options.keyDown.isDown());
-      float var3 = KeyboardInput.calculateImpulse(mc.options.keyLeft.isDown(), mc.options.keyRight.isDown());
-      if (var2 != 0.0F || var3 != 0.0F) {
-         float var4 = mc.player.getYRot();
-         float var5 = (float)Math.toDegrees(Math.atan2(-var3, var2));
-         float var6 = var4 + var5;
-         Rotation var7 = rotationManager.method7844().method3141(rotationManager.method7844().method3131(new Rotation(var6, mc.player.getXRot())));
+   public void method1527(Event5 event) {
+      float impulse = KeyboardInput.calculateImpulse(mc.options.keyUp.isDown(), mc.options.keyDown.isDown());
+      float f = KeyboardInput.calculateImpulse(mc.options.keyLeft.isDown(), mc.options.keyRight.isDown());
+      if (impulse != 0.0F || f != 0.0F) {
+         float yRot = mc.player.getYRot();
+         float f2 = (float)Math.toDegrees(Math.atan2(-f, impulse));
+         float yRot2 = yRot + f2;
+         Rotation rotation = rotationManager.method7844().method3141(rotationManager.method7844().method3131(new Rotation(yRot2, mc.player.getXRot())));
          rotationManager.method7849(
             new RotationRequest(
-               var7, () -> rotationManager.getBcCameraTestnerv().method1851(bcCameraTestnerv.getRotationConfig(), var7), bcCameraTestnerv.getRotationConfig()
+               rotation, () -> rotationManager.getBcCameraTestnerv().method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()
             ),
             -1,
             this
@@ -42,12 +42,12 @@ public final class StrafeModule extends Module {
    }
 
    @EventTarget
-   public void method1528(MoveInputEvent var1) {
+   public void method1528(MoveInputEvent event) {
       if (MovementInputUtils.method7418() && rotationManager.getModule() == this) {
-         var1.method3047(false);
-         var1.method3045(false);
-         var1.method3046(false);
-         var1.method3038(
+         event.method3047(false);
+         event.method3045(false);
+         event.method3046(false);
+         event.method3038(
             mc.options.keyUp.isDown() || mc.options.keyDown.isDown() || mc.options.keyRight.isDown() || mc.options.keyLeft.isDown()
          );
       }

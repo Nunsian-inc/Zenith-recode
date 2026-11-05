@@ -12,33 +12,33 @@ public class ProxyConfig {
    public ProxyConfig() {
    }
 
-   public ProxyConfig(String var1, int var2, ProxyConfig.Type var3, String var4, String var5) {
-      this.host = var1;
-      this.port = var2;
-      this.type = var3;
-      this.username = var4 == null ? "" : var4;
-      this.password = var5 == null ? "" : var5;
+   public ProxyConfig(String host, int port, ProxyConfig.Type type, String str, String str2) {
+      this.host = host;
+      this.port = port;
+      this.type = type;
+      this.username = str == null ? "" : str;
+      this.password = str2 == null ? "" : str2;
    }
 
-   public static ProxyConfig method439(String var0, ProxyConfig.Type var1) {
-      if (var0 == null) {
+   public static ProxyConfig method439(String str, ProxyConfig.Type pendingType) {
+      if (str == null) {
          return null;
       } else {
-         String[] var2 = var0.trim().split(":", 4);
-         if (var2.length < 2) {
+         String[] strings = str.trim().split(":", 4);
+         if (strings.length < 2) {
             return null;
          } else {
-            int var3;
+            int port;
             try {
-               var3 = Integer.parseInt(var2[1].trim());
-            } catch (NumberFormatException var6) {
+               port = Integer.parseInt(strings[1].trim());
+            } catch (NumberFormatException e) {
                return null;
             }
 
-            if (var3 > 0 && var3 <= 65535) {
-               String var4 = var2.length > 2 ? var2[2] : "";
-               String var5 = var2.length > 3 ? var2[3] : "";
-               return new ProxyConfig(var2[0].trim(), var3, var1, var4, var5);
+            if (port > 0 && port <= 65535) {
+               String str2 = strings.length > 2 ? strings[2] : "";
+               String str3 = strings.length > 3 ? strings[3] : "";
+               return new ProxyConfig(strings[0].trim(), port, pendingType, str2, str3);
             } else {
                return null;
             }
@@ -89,28 +89,28 @@ public class ProxyConfig {
    }
 
    @Generated
-   public void setHost(String var1) {
-      this.host = var1;
+   public void setHost(String host) {
+      this.host = host;
    }
 
    @Generated
-   public void setPort(int var1) {
-      this.port = var1;
+   public void setPort(int port) {
+      this.port = port;
    }
 
    @Generated
-   public void setType(ProxyConfig.Type var1) {
-      this.type = var1;
+   public void setType(ProxyConfig.Type type) {
+      this.type = type;
    }
 
    @Generated
-   public void setUsername(String var1) {
-      this.username = var1;
+   public void setUsername(String username) {
+      this.username = username;
    }
 
    @Generated
-   public void setPassword(String var1) {
-      this.password = var1;
+   public void setPassword(String password) {
+      this.password = password;
    }
 
    public static enum Type {

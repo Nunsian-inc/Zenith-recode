@@ -19,46 +19,46 @@ public class EntityHitBoxEvent implements Event {
    }
 
    @Generated
-   public void setEntity(Entity var1) {
-      this.entity = var1;
+   public void setEntity(Entity entity) {
+      this.entity = entity;
    }
 
    @Generated
-   public void setSize(float var1) {
-      this.size = var1;
+   public void setSize(float size) {
+      this.size = size;
    }
 
    @Generated
    @Override
-   public boolean equals(Object var1) {
-      if (var1 == this) {
+   public boolean equals(Object obj) {
+      if (obj == this) {
          return true;
-      } else if (!(var1 instanceof EntityHitBoxEvent var2)) {
+      } else if (!(obj instanceof EntityHitBoxEvent event)) {
          return false;
-      } else if (!var2.method265(this)) {
+      } else if (!event.method265(this)) {
          return false;
-      } else if (Float.compare(this.getSize(), var2.getSize()) != 0) {
+      } else if (Float.compare(this.getSize(), event.getSize()) != 0) {
          return false;
       } else {
-         Entity var3 = this.getEntity();
-         Entity var4 = var2.getEntity();
-         return var3 == null ? var4 == null : var3.equals(var4);
+         Entity entity = this.getEntity();
+         Entity entity2 = event.getEntity();
+         return entity == null ? entity2 == null : entity.equals(entity2);
       }
    }
 
    @Generated
-   public boolean method265(Object var1) {
-      return var1 instanceof EntityHitBoxEvent;
+   public boolean method265(Object obj) {
+      return obj instanceof EntityHitBoxEvent;
    }
 
    @Generated
    @Override
    public int hashCode() {
-      byte var1 = 59;
-      int var2 = 1;
-      var2 = var2 * 59 + Float.floatToIntBits(this.getSize());
-      Entity var3 = this.getEntity();
-      return var2 * 59 + (var3 == null ? 43 : var3.hashCode());
+      byte b = 59;
+      int n = 1;
+      n = n * 59 + Float.floatToIntBits(this.getSize());
+      Entity entity = this.getEntity();
+      return n * 59 + (entity == null ? 43 : entity.hashCode());
    }
 
    @Generated
@@ -68,8 +68,8 @@ public class EntityHitBoxEvent implements Event {
    }
 
    @Generated
-   public EntityHitBoxEvent(Entity var1, float var2) {
-      this.entity = var1;
-      this.size = var2;
+   public EntityHitBoxEvent(Entity entity, float size) {
+      this.entity = entity;
+      this.size = size;
    }
 }

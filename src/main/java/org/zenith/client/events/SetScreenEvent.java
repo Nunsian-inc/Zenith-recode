@@ -8,8 +8,8 @@ public class SetScreenEvent implements Event {
    private Screen screen;
 
    @Generated
-   public SetScreenEvent(Screen var1) {
-      this.screen = var1;
+   public SetScreenEvent(Screen screen) {
+      this.screen = screen;
    }
 
    @Generated
@@ -18,38 +18,38 @@ public class SetScreenEvent implements Event {
    }
 
    @Generated
-   public void setScreen(Screen var1) {
-      this.screen = var1;
+   public void setScreen(Screen screen) {
+      this.screen = screen;
    }
 
    @Generated
    @Override
-   public boolean equals(Object var1) {
-      if (var1 == this) {
+   public boolean equals(Object obj) {
+      if (obj == this) {
          return true;
-      } else if (!(var1 instanceof SetScreenEvent var2)) {
+      } else if (!(obj instanceof SetScreenEvent event)) {
          return false;
-      } else if (!var2.method6720(this)) {
+      } else if (!event.method6720(this)) {
          return false;
       } else {
-         Screen var3 = this.getScreen();
-         Screen var4 = var2.getScreen();
-         return var3 == null ? var4 == null : var3.equals(var4);
+         Screen screen = this.getScreen();
+         Screen screen2 = event.getScreen();
+         return screen == null ? screen2 == null : screen.equals(screen2);
       }
    }
 
    @Generated
-   public boolean method6720(Object var1) {
-      return var1 instanceof SetScreenEvent;
+   public boolean method6720(Object obj) {
+      return obj instanceof SetScreenEvent;
    }
 
    @Generated
    @Override
    public int hashCode() {
-      byte var1 = 59;
-      byte var2 = 1;
-      Screen var3 = this.getScreen();
-      return var2 * 59 + (var3 == null ? 43 : var3.hashCode());
+      byte b = 59;
+      byte b2 = 1;
+      Screen screen = this.getScreen();
+      return b2 * 59 + (screen == null ? 43 : screen.hashCode());
    }
 
    @Generated

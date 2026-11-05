@@ -45,15 +45,15 @@ public class RotationManager implements MinecraftAccess {
       this(EventManager::call, true);
    }
 
-   public RotationManager(RotationManager.Handler var1, boolean var2) {
-      this.handler = var1;
-      if (var2) {
+   public RotationManager(RotationManager.Handler handler, boolean flag) {
+      this.handler = handler;
+      if (flag) {
          EventManager.register(this);
       }
    }
 
    @EventTarget(3)
-   public void method7846(HandleInputPostEvent var1) {
+   public void method7846(HandleInputPostEvent event) {
       if (mc.player != null) {
          if (mc.player.isDeadOrDying()) {
             if (this.currentRotation != null) {
@@ -65,32 +65,32 @@ public class RotationManager implements MinecraftAccess {
             }
          } else {
             this.handler.call(new Event5());
-            Rotation var2 = new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
-            TickingList.Entry var3 = this.tickingList.method16();
-            if (var3 != null) {
-               RotationRequest var4 = (RotationRequest)var3.obj;
-               Rotation var5 = var4.getSupplier().get();
-               if (var5 == null || var5.method3137()) {
-                  var5 = this.currentRotation == null ? var2 : this.currentRotation;
+            Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
+            TickingList.Entry entry = this.tickingList.method16();
+            if (entry != null) {
+               RotationRequest rotationRequest = (RotationRequest)entry.obj;
+               Rotation currentRotation = rotationRequest.getSupplier().get();
+               if (currentRotation == null || currentRotation.method3137()) {
+                  currentRotation = this.currentRotation == null ? rotation : this.currentRotation;
                }
 
-               this.rotation = this.currentRotation == null ? var2 : this.currentRotation;
-               this.currentRotation = var5;
-               this.rotationRequest = var4;
-               this.module = var3.module;
+               this.rotation = this.currentRotation == null ? rotation : this.currentRotation;
+               this.currentRotation = currentRotation;
+               this.rotationRequest = rotationRequest;
+               this.module = entry.module;
                this.currentRotation = new Rotation(this.currentRotation.getFloatValue(), Mth.clamp(this.currentRotation.getFloatValue2(), -90.0F, 90.0F));
                this.intValue--;
             } else if (this.currentRotation != null) {
                this.module = null;
-               Rotation var6 = this.bcCameraTestnerv.method1851(this.rotationRequest.getRotationConfig(), var2);
-               if (var6 == null || var6.method3137()) {
-                  var6 = var2;
+               Rotation currentRotation = this.bcCameraTestnerv.method1851(this.rotationRequest.getRotationConfig(), rotation);
+               if (currentRotation == null || currentRotation.method3137()) {
+                  currentRotation = rotation;
                }
 
                this.rotation = this.currentRotation;
-               this.currentRotation = var6;
-               if (var2.method3131(var6).method5329(9.0F)) {
-                  mc.player.setYRot(var6.getFloatValue() + Mth.wrapDegrees(mc.player.getYRot() - var6.getFloatValue()));
+               this.currentRotation = currentRotation;
+               if (rotation.method3131(currentRotation).method5329(9.0F)) {
+                  mc.player.setYRot(currentRotation.getFloatValue() + Mth.wrapDegrees(mc.player.getYRot() - currentRotation.getFloatValue()));
                   mc.player.yBob = mc.player.getYRot();
                   mc.player.yBobO = mc.player.getXRot();
                   this.intValue = 2;
@@ -114,67 +114,67 @@ public class RotationManager implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method7847(PacketEvent var1) {
-      switch (var1.getPacket3()) {
-         case ServerboundMovePlayerPacket var4:
-            if (var4.getYRot(2.1474836E9F) != 2.1474836E9F) {
-               RotationEvent var11 = new RotationEvent(
+   public void method7847(PacketEvent event) {
+      switch (event.getPacket3()) {
+         case ServerboundMovePlayerPacket movePlayerPacket:
+            if (movePlayerPacket.getYRot(2.1474836E9F) != 2.1474836E9F) {
+               RotationEvent event2 = new RotationEvent(
                   this.currentRotation != null
                      ? new Rotation(this.rotation2.getFloatValue(), this.rotation2.getFloatValue2(), true)
                      : new Rotation(mc.player.getYRot(), mc.player.getXRot(), true)
                );
-               this.rotation2 = new Rotation(var4.getYRot(0.0F), var4.getXRot(0.0F), true);
-               this.handler.call(var11);
+               this.rotation2 = new Rotation(movePlayerPacket.getYRot(0.0F), movePlayerPacket.getXRot(0.0F), true);
+               this.handler.call(event2);
                this.intValue--;
             }
             break;
-         case ClientboundPlayerPositionPacket var5:
+         case ClientboundPlayerPositionPacket playerPositionPacket:
             if (mc.player != null) {
-               RotationEvent var12 = new RotationEvent(
+               RotationEvent event2 = new RotationEvent(
                   this.currentRotation != null
                      ? new Rotation(this.rotation2.getFloatValue(), this.rotation2.getFloatValue2(), true)
                      : new Rotation(mc.player.getYRot(), mc.player.getXRot(), true)
                );
-               float var13 = var5.change().yRot();
-               float var14 = var5.change().xRot();
-               if (var5.relatives().contains(Relative.Y_ROT)) {
-                  var13 += this.rotation2.getFloatValue();
+               float yRot = playerPositionPacket.change().yRot();
+               float xRot = playerPositionPacket.change().xRot();
+               if (playerPositionPacket.relatives().contains(Relative.Y_ROT)) {
+                  yRot += this.rotation2.getFloatValue();
                }
 
-               if (var5.relatives().contains(Relative.X_ROT)) {
-                  var14 += this.rotation2.getFloatValue2();
+               if (playerPositionPacket.relatives().contains(Relative.X_ROT)) {
+                  xRot += this.rotation2.getFloatValue2();
                }
 
-               this.rotation2 = new Rotation(var13, var14, true);
-               this.handler.call(var12);
+               this.rotation2 = new Rotation(yRot, xRot, true);
+               this.handler.call(event2);
                this.intValue--;
             }
             break;
-         case ServerboundPongPacket var6:
-            var6.id = var6.id;
+         case ServerboundPongPacket serverboundPongPacket:
+            serverboundPongPacket.id = serverboundPongPacket.id;
             break;
-         case ServerboundUseItemPacket var7:
-            RotationEvent var8 = new RotationEvent(new Rotation(this.rotation2.getFloatValue(), this.rotation2.getFloatValue2(), true));
-            this.rotation2 = new Rotation(var7.yRot(), var7.xRot(), true);
-            this.handler.call(var8);
+         case ServerboundUseItemPacket useItemPacket:
+            RotationEvent event2 = new RotationEvent(new Rotation(this.rotation2.getFloatValue(), this.rotation2.getFloatValue2(), true));
+            this.rotation2 = new Rotation(useItemPacket.yRot(), useItemPacket.xRot(), true);
+            this.handler.call(event2);
             break;
-         case ClientboundContainerSetSlotPacket var15:
+         case ClientboundContainerSetSlotPacket containerSetSlotPacket:
             break;
-         case ClientboundContainerSetContentPacket var16:
+         case ClientboundContainerSetContentPacket setContentPacket:
             break;
-         case ServerboundContainerClickPacket var10:
-            var10.stateId = mc.player.containerMenu.getStateId();
+         case ServerboundContainerClickPacket containerClickPacket:
+            containerClickPacket.stateId = mc.player.containerMenu.getStateId();
             break;
          default:
       }
    }
 
-   public void method7848(RotationRequest var1, int var2, Module var3, int var4) {
-      this.tickingList.method14(new TickingList.Entry<>(var4, var2, var3, var1));
+   public void method7848(RotationRequest rotationRequest, int priority, Module moduleValue, int intValue) {
+      this.tickingList.method14(new TickingList.Entry<>(intValue, priority, moduleValue, rotationRequest));
    }
 
-   public void method7849(RotationRequest var1, int var2, Module var3) {
-      this.tickingList.method14(new TickingList.Entry<>(1, var2, var3, var1));
+   public void method7849(RotationRequest rotationRequest, int priority, Module moduleValue) {
+      this.tickingList.method14(new TickingList.Entry<>(1, priority, moduleValue, rotationRequest));
    }
 
    @Generated
@@ -223,12 +223,12 @@ public class RotationManager implements MinecraftAccess {
    }
 
    @Generated
-   public void setCurrentRotation(Rotation var1) {
-      this.currentRotation = var1;
+   public void setCurrentRotation(Rotation currentRotation) {
+      this.currentRotation = currentRotation;
    }
 
    @FunctionalInterface
    public interface Handler {
-      void call(Event var1);
+      void call(Event event);
    }
 }

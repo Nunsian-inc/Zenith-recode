@@ -25,9 +25,9 @@ public class MixinSodiumWorldRenderer {
       cancellable = true,
       remap = false
    )
-   private void zenith$skipUninitializedRebuild(int var1, int var2, int var3, boolean var4, CallbackInfo var5) {
+   private void zenith$skipUninitializedRebuild(int n, int n2, int n3, boolean flag, CallbackInfo callbackInfo) {
       if (this.zenith$isRenderSectionManagerMissing()) {
-         var5.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -36,21 +36,21 @@ public class MixinSodiumWorldRenderer {
       if (zenith$renderSectionManagerLookupFailed) {
          return false;
       } else {
-         Field var1 = zenith$renderSectionManagerField;
-         if (var1 == null) {
+         Field field = zenith$renderSectionManagerField;
+         if (field == null) {
             try {
-               var1 = this.getClass().getDeclaredField("renderSectionManager");
-               var1.setAccessible(true);
-               zenith$renderSectionManagerField = var1;
-            } catch (Exception var4) {
+               field = this.getClass().getDeclaredField("renderSectionManager");
+               field.setAccessible(true);
+               zenith$renderSectionManagerField = field;
+            } catch (Exception e) {
                zenith$renderSectionManagerLookupFailed = true;
                return false;
             }
          }
 
          try {
-            return var1.get(this) == null;
-         } catch (Exception var3) {
+            return field.get(this) == null;
+         } catch (Exception e) {
             return false;
          }
       }

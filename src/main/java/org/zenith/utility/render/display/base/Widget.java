@@ -11,72 +11,72 @@ public abstract class Widget implements MinecraftAccess {
    public float width;
    public float height;
 
-   public Widget(float var1, float var2, float var3, float var4) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      this.width = var3;
-      this.height = var4;
+   public Widget(float floatValue, float f, float width, float height) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      this.width = width;
+      this.height = height;
    }
 
    public Widget() {
       this(0.0F, 0.0F, 0.0F, 0.0F);
    }
 
-   public void method8081(MenuDrawContext var1) {
-      this.method8084(var1);
-      this.method8082(var1);
+   public void method8081(MenuDrawContext menuDrawContext) {
+      this.method8084(menuDrawContext);
+      this.method8082(menuDrawContext);
    }
 
-   public abstract void method8082(MenuDrawContext var1);
+   public abstract void method8082(MenuDrawContext menuDrawContext);
 
    public void method8083() {
    }
 
-   public void method8084(MenuDrawContext var1) {
+   public void method8084(MenuDrawContext menuDrawContext) {
    }
 
-   public void onMouseClicked(double var1, double var3, Enum3 var5) {
+   public void onMouseClicked(double d, double d2, Enum3 enum2) {
    }
 
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double d, double d2, Enum3 enum2) {
    }
 
-   public void method8085(int var1, int var2, int var3) {
+   public void method8085(int n, int n2, int n3) {
    }
 
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       return false;
    }
 
-   public void method8086(double var1, double var3, double var5, double var7) {
+   public void method8086(double d, double d2, double d3, double d4) {
    }
 
-   public void method8087(float var1, float var2) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
+   public void method8087(float floatValue, float f) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
    }
 
-   public void method8088(float var1, float var2, float var3, float var4) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      this.width = var3;
-      this.height = var4;
+   public void method8088(float floatValue, float f, float width, float height) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      this.width = width;
+      this.height = height;
    }
 
-   public boolean method8089(float var1, float var2) {
-      return Vec2Utils.method8067(this.floatValue, this.floatValue2, this.width, this.height, var1, var2);
+   public boolean method8089(float mouseX, float mouseY) {
+      return Vec2Utils.method8067(this.floatValue, this.floatValue2, this.width, this.height, mouseX, mouseY);
    }
 
-   public boolean method8090(double var1, double var3) {
-      return Vec2Utils.method8067(this.floatValue, this.floatValue2, this.width, this.height, var1, var3);
+   public boolean method8090(double mouseX, double mouseY) {
+      return Vec2Utils.method8067(this.floatValue, this.floatValue2, this.width, this.height, mouseX, mouseY);
    }
 
-   public boolean method8091(MenuDrawContext var1) {
-      return this.method8089(var1.getMouseX(), var1.getMouseY());
+   public boolean method8091(MenuDrawContext menuDrawContext) {
+      return this.method8089(menuDrawContext.getMouseX(), menuDrawContext.getMouseY());
    }
 
    @Generated
@@ -100,22 +100,22 @@ public abstract class Widget implements MinecraftAccess {
    }
 
    @Generated
-   public void setX(float var1) {
-      this.floatValue = var1;
+   public void setX(float floatValue) {
+      this.floatValue = floatValue;
    }
 
    @Generated
-   public void setY(float var1) {
-      this.floatValue2 = var1;
+   public void setY(float y) {
+      this.floatValue2 = y;
    }
 
    @Generated
-   public void setWidth(float var1) {
-      this.width = var1;
+   public void setWidth(float width) {
+      this.width = width;
    }
 
    @Generated
-   public void setHeight(float var1) {
-      this.height = var1;
+   public void setHeight(float height) {
+      this.height = height;
    }
 }

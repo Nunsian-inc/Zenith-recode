@@ -17,31 +17,31 @@ public class RCTCommand extends CommandAbstract implements ZenithAccess {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var1x -> {
-         HolyWorldServerTracker var2 = this.repository();
-         if (!var2.isHolyWorldHere()) {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(var1x -> {
+         HolyWorldServerTracker repository = this.repository();
+         if (!repository.isHolyWorldHere()) {
             HudHolder.method6969().method6972("0", Component.literal(" Не работает на этом " + ChatFormatting.RED + "сервере"));
             return 1;
-         } else if (var2.method6149()) {
+         } else if (repository.method6149()) {
             HudHolder.method6969().method6972("️0", Component.literal(" Вы находитесь в режиме " + ChatFormatting.RED + "пвп"));
             return 1;
          } else {
-            var2.reconnect(var2.currentAnarchyHere());
+            repository.reconnect(repository.currentAnarchyHere());
             return 1;
          }
       });
-      var1.then(CommandAbstract.arg("anarchy", IntegerArgumentType.integer(1, 69)).executes(var1x -> {
-         HolyWorldServerTracker var2 = this.repository();
-         if (!var2.isHolyWorldHere()) {
+      literalArgumentBuilder.then(CommandAbstract.arg("anarchy", IntegerArgumentType.integer(1, 69)).executes(var1x -> {
+         HolyWorldServerTracker repository = this.repository();
+         if (!repository.isHolyWorldHere()) {
             HudHolder.method6969().method6972("0", Component.literal(" Не работает на этом " + ChatFormatting.RED + "сервере"));
             return 1;
-         } else if (var2.method6149()) {
+         } else if (repository.method6149()) {
             HudHolder.method6969().method6972("0", Component.literal(" Вы находитесь в режиме " + ChatFormatting.RED + "пвп"));
             return 1;
          } else {
-            int var3 = (Integer)var1x.getArgument("anarchy", Integer.class);
-            var2.reconnect(var3);
+            int argument = (Integer)var1x.getArgument("anarchy", Integer.class);
+            repository.reconnect(argument);
             return 1;
          }
       }));

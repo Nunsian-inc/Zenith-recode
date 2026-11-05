@@ -14,333 +14,333 @@ public final class QrCode {
    private final boolean[][] flags;
    private final boolean[][] flags2;
 
-   private QrCode(int var1) {
-      this.intValue = var1;
-      this.intValue2 = var1 * 4 + 17;
+   private QrCode(int intValue) {
+      this.intValue = intValue;
+      this.intValue2 = intValue * 4 + 17;
       this.flags = new boolean[this.intValue2][this.intValue2];
       this.flags2 = new boolean[this.intValue2][this.intValue2];
    }
 
-   public static boolean[][] method3020(byte[] var0) {
-      int var1;
-      for (var1 = 1; var1 <= 10; var1++) {
-         int var2 = (CONST_intValues[var1] - CONST_intValues2[var1] * CONST_intValues3[var1]) * 8;
-         int var3 = 4 + (var1 < 10 ? 8 : 16) + var0.length * 8;
-         if (var3 <= var2) {
+   public static boolean[][] method3020(byte[] bytes) {
+      int intValue;
+      for (intValue = 1; intValue <= 10; intValue++) {
+         int n = (CONST_intValues[intValue] - CONST_intValues2[intValue] * CONST_intValues3[intValue]) * 8;
+         int n2 = 4 + (intValue < 10 ? 8 : 16) + bytes.length * 8;
+         if (n2 <= n) {
             break;
          }
       }
 
-      if (var1 > 10) {
+      if (intValue > 10) {
          throw new IllegalArgumentException("текст слишком длинный для QR (до 213 байт)");
       } else {
-         int var13 = CONST_intValues[var1] - CONST_intValues2[var1] * CONST_intValues3[var1];
-         QrCode.Entry var14 = new QrCode.Entry();
-         var14.method3033(4, 4);
-         var14.method3033(var0.length, var1 < 10 ? 8 : 16);
+         int n = CONST_intValues[intValue] - CONST_intValues2[intValue] * CONST_intValues3[intValue];
+         QrCode.Entry entry = new QrCode.Entry();
+         entry.method3033(4, 4);
+         entry.method3033(bytes.length, intValue < 10 ? 8 : 16);
 
-         for (int var7 : var0) {
-            var14.method3033(var7 & 255, 8);
+         for (int n2 : bytes) {
+            entry.method3033(n2 & 255, 8);
          }
 
-         int var15 = var13 * 8;
-         var14.method3033(0, Math.min(4, var15 - var14.length));
-         var14.method3033(0, (8 - var14.length % 8) % 8);
+         int n2 = n * 8;
+         entry.method3033(0, Math.min(4, n2 - entry.length));
+         entry.method3033(0, (8 - entry.length % 8) % 8);
 
-         for (short var16 = 236; var14.length < var15; var16 ^= 253) {
-            var14.method3033(var16, 8);
+         for (short i = 236; entry.length < n2; i ^= 253) {
+            entry.method3033(i, 8);
          }
 
-         byte[] var17 = var14.method3034();
-         QrCode var18 = new QrCode(var1);
-         var18.method3022();
-         var18.method3030(var18.method3026(var17));
-         int var19 = 0;
-         long var8 = Long.MAX_VALUE;
+         byte[] bytes2 = entry.method3034();
+         QrCode qrCode = new QrCode(intValue);
+         qrCode.method3022();
+         qrCode.method3030(qrCode.method3026(bytes2));
+         int n3 = 0;
+         long l = Long.MAX_VALUE;
 
-         for (int var10 = 0; var10 < 8; var10++) {
-            var18.method3031(var10);
-            var18.method3025(var10);
-            long var11 = var18.method3032();
-            if (var11 < var8) {
-               var8 = var11;
-               var19 = var10;
+         for (int i = 0; i < 8; i++) {
+            qrCode.method3031(i);
+            qrCode.method3025(i);
+            long l2 = qrCode.method3032();
+            if (l2 < l) {
+               l = l2;
+               n3 = i;
             }
 
-            var18.method3031(var10);
+            qrCode.method3031(i);
          }
 
-         var18.method3031(var19);
-         var18.method3025(var19);
-         return var18.flags;
+         qrCode.method3031(n3);
+         qrCode.method3025(n3);
+         return qrCode.flags;
       }
    }
 
-   private void method3021(int var1, int var2, boolean var3) {
-      this.flags[var2][var1] = var3;
-      this.flags2[var2][var1] = true;
+   private void method3021(int n, int n2, boolean flag) {
+      this.flags[n2][n] = flag;
+      this.flags2[n2][n] = true;
    }
 
    private void method3022() {
-      for (int var1 = 0; var1 < this.intValue2; var1++) {
-         this.method3021(6, var1, var1 % 2 == 0);
-         this.method3021(var1, 6, var1 % 2 == 0);
+      for (int i = 0; i < this.intValue2; i++) {
+         this.method3021(6, i, i % 2 == 0);
+         this.method3021(i, 6, i % 2 == 0);
       }
 
       this.method3023(3, 3);
       this.method3023(this.intValue2 - 4, 3);
       this.method3023(3, this.intValue2 - 4);
-      int[] var8 = CONST_intValues4[this.intValue];
+      int[] ints = CONST_intValues4[this.intValue];
 
-      for (int var2 = 0; var2 < var8.length; var2++) {
-         for (int var3 = 0; var3 < var8.length; var3++) {
-            boolean var4 = var2 == 0 && var3 == 0 || var2 == 0 && var3 == var8.length - 1 || var2 == var8.length - 1 && var3 == 0;
-            if (!var4) {
-               this.method3024(var8[var2], var8[var3]);
+      for (int i = 0; i < ints.length; i++) {
+         for (int j = 0; j < ints.length; j++) {
+            boolean flag = i == 0 && j == 0 || i == 0 && j == ints.length - 1 || i == ints.length - 1 && j == 0;
+            if (!flag) {
+               this.method3024(ints[i], ints[j]);
             }
          }
       }
 
       this.method3025(0);
       if (this.intValue >= 7) {
-         int var9 = this.intValue;
+         int intValue = this.intValue;
 
-         for (int var10 = 0; var10 < 12; var10++) {
-            var9 = var9 << 1 ^ (var9 >>> 11) * 7973;
+         for (int i = 0; i < 12; i++) {
+            intValue = intValue << 1 ^ (intValue >>> 11) * 7973;
          }
 
-         int var11 = this.intValue << 12 | var9;
+         int n = this.intValue << 12 | intValue;
 
-         for (int var12 = 0; var12 < 18; var12++) {
-            boolean var5 = (var11 >>> var12 & 1) != 0;
-            int var6 = this.intValue2 - 11 + var12 % 3;
-            int var7 = var12 / 3;
-            this.method3021(var6, var7, var5);
-            this.method3021(var7, var6, var5);
+         for (int i = 0; i < 18; i++) {
+            boolean flag = (n >>> i & 1) != 0;
+            int n2 = this.intValue2 - 11 + i % 3;
+            int n3 = i / 3;
+            this.method3021(n2, n3, flag);
+            this.method3021(n3, n2, flag);
          }
       }
    }
 
-   private void method3023(int var1, int var2) {
-      for (int var3 = -4; var3 <= 4; var3++) {
-         for (int var4 = -4; var4 <= 4; var4++) {
-            int var5 = Math.max(Math.abs(var4), Math.abs(var3));
-            int var6 = var1 + var4;
-            int var7 = var2 + var3;
-            if (var6 >= 0 && var6 < this.intValue2 && var7 >= 0 && var7 < this.intValue2) {
-               this.method3021(var6, var7, var5 != 2 && var5 != 4);
+   private void method3023(int n, int n2) {
+      for (int i = -4; i <= 4; i++) {
+         for (int j = -4; j <= 4; j++) {
+            int n3 = Math.max(Math.abs(j), Math.abs(i));
+            int n4 = n + j;
+            int n5 = n2 + i;
+            if (n4 >= 0 && n4 < this.intValue2 && n5 >= 0 && n5 < this.intValue2) {
+               this.method3021(n4, n5, n3 != 2 && n3 != 4);
             }
          }
       }
    }
 
-   private void method3024(int var1, int var2) {
-      for (int var3 = -2; var3 <= 2; var3++) {
-         for (int var4 = -2; var4 <= 2; var4++) {
-            this.method3021(var1 + var4, var2 + var3, Math.max(Math.abs(var4), Math.abs(var3)) != 1);
+   private void method3024(int n, int n2) {
+      for (int i = -2; i <= 2; i++) {
+         for (int j = -2; j <= 2; j++) {
+            this.method3021(n + j, n2 + i, Math.max(Math.abs(j), Math.abs(i)) != 1);
          }
       }
    }
 
-   private void method3025(int var1) {
-      int var3 = var1;
+   private void method3025(int n) {
+      int n2 = n;
 
-      for (int var4 = 0; var4 < 10; var4++) {
-         var3 = var3 << 1 ^ (var3 >>> 9) * 1335;
+      for (int i = 0; i < 10; i++) {
+         n2 = n2 << 1 ^ (n2 >>> 9) * 1335;
       }
 
-      int var6 = (var1 << 10 | var3) ^ 21522;
+      int n3 = (n << 10 | n2) ^ 21522;
 
-      for (int var5 = 0; var5 <= 5; var5++) {
-         this.method3021(8, var5, (var6 >>> var5 & 1) != 0);
+      for (int i = 0; i <= 5; i++) {
+         this.method3021(8, i, (n3 >>> i & 1) != 0);
       }
 
-      this.method3021(8, 7, (var6 >>> 6 & 1) != 0);
-      this.method3021(8, 8, (var6 >>> 7 & 1) != 0);
-      this.method3021(7, 8, (var6 >>> 8 & 1) != 0);
+      this.method3021(8, 7, (n3 >>> 6 & 1) != 0);
+      this.method3021(8, 8, (n3 >>> 7 & 1) != 0);
+      this.method3021(7, 8, (n3 >>> 8 & 1) != 0);
 
-      for (int var7 = 9; var7 < 15; var7++) {
-         this.method3021(14 - var7, 8, (var6 >>> var7 & 1) != 0);
+      for (int i = 9; i < 15; i++) {
+         this.method3021(14 - i, 8, (n3 >>> i & 1) != 0);
       }
 
-      for (int var8 = 0; var8 < 8; var8++) {
-         this.method3021(this.intValue2 - 1 - var8, 8, (var6 >>> var8 & 1) != 0);
+      for (int i = 0; i < 8; i++) {
+         this.method3021(this.intValue2 - 1 - i, 8, (n3 >>> i & 1) != 0);
       }
 
-      for (int var9 = 8; var9 < 15; var9++) {
-         this.method3021(8, this.intValue2 - 15 + var9, (var6 >>> var9 & 1) != 0);
+      for (int i = 8; i < 15; i++) {
+         this.method3021(8, this.intValue2 - 15 + i, (n3 >>> i & 1) != 0);
       }
 
       this.method3021(8, this.intValue2 - 8, true);
    }
 
-   private byte[] method3026(byte[] var1) {
-      int var2 = CONST_intValues3[this.intValue];
-      int var3 = CONST_intValues2[this.intValue];
-      int var4 = CONST_intValues[this.intValue];
-      int var5 = var2 - var4 % var2;
-      int var6 = var4 / var2;
-      byte[] var7 = method3027(var3);
-      byte[][] var8 = new byte[var2][];
-      int var9 = 0;
+   private byte[] method3026(byte[] bytes) {
+      int n = CONST_intValues3[this.intValue];
+      int n2 = CONST_intValues2[this.intValue];
+      int n3 = CONST_intValues[this.intValue];
+      int n4 = n - n3 % n;
+      int n5 = n3 / n;
+      byte[] bytes2 = method3027(n2);
+      byte[][] byteses = new byte[n][];
+      int n6 = 0;
 
-      for (int var10 = 0; var9 < var2; var9++) {
-         int var11 = var6 - var3 + (var9 < var5 ? 0 : 1);
-         byte[] var12 = new byte[var11];
-         System.arraycopy(var1, var10, var12, 0, var11);
-         var10 += var11;
-         byte[] var13 = method3028(var12, var7);
-         byte[] var14 = new byte[var6 + 1];
-         System.arraycopy(var12, 0, var14, 0, var11);
-         System.arraycopy(var13, 0, var14, var14.length - var3, var3);
-         var8[var9] = var14;
+      for (int i = 0; n6 < n; n6++) {
+         int n7 = n5 - n2 + (n6 < n4 ? 0 : 1);
+         byte[] bytes3 = new byte[n7];
+         System.arraycopy(bytes, i, bytes3, 0, n7);
+         i += n7;
+         byte[] bytes4 = method3028(bytes3, bytes2);
+         byte[] bytes5 = new byte[n5 + 1];
+         System.arraycopy(bytes3, 0, bytes5, 0, n7);
+         System.arraycopy(bytes4, 0, bytes5, bytes5.length - n2, n2);
+         byteses[n6] = bytes5;
       }
 
-      byte[] var15 = new byte[var4];
-      int var16 = 0;
+      byte[] bytes3 = new byte[n3];
+      int n7 = 0;
 
-      for (int var17 = 0; var17 < var8[0].length; var17++) {
-         for (int var18 = 0; var18 < var8.length; var18++) {
-            if (var17 != var6 - var3 || var18 >= var5) {
-               var15[var16++] = var8[var18][var17];
+      for (int i = 0; i < byteses[0].length; i++) {
+         for (int j = 0; j < byteses.length; j++) {
+            if (i != n5 - n2 || j >= n4) {
+               bytes3[n7++] = byteses[j][i];
             }
          }
       }
 
-      return var15;
+      return bytes3;
    }
 
-   private static byte[] method3027(int var0) {
-      byte[] var1 = new byte[var0];
-      var1[var0 - 1] = 1;
-      int var2 = 1;
+   private static byte[] method3027(int n) {
+      byte[] bytes = new byte[n];
+      bytes[n - 1] = 1;
+      int n2 = 1;
 
-      for (int var3 = 0; var3 < var0; var3++) {
-         for (int var4 = 0; var4 < var1.length; var4++) {
-            var1[var4] = (byte)method3029(var1[var4] & 255, var2);
-            if (var4 + 1 < var1.length) {
-               var1[var4] ^= var1[var4 + 1];
+      for (int i = 0; i < n; i++) {
+         for (int j = 0; j < bytes.length; j++) {
+            bytes[j] = (byte)method3029(bytes[j] & 255, n2);
+            if (j + 1 < bytes.length) {
+               bytes[j] ^= bytes[j + 1];
             }
          }
 
-         var2 = method3029(var2, 2);
+         n2 = method3029(n2, 2);
       }
 
-      return var1;
+      return bytes;
    }
 
-   private static byte[] method3028(byte[] var0, byte[] var1) {
-      byte[] var2 = new byte[var1.length];
+   private static byte[] method3028(byte[] bytes, byte[] bytes2) {
+      byte[] bytes3 = new byte[bytes2.length];
 
-      for (int var6 : var0) {
-         int var7 = (var6 ^ var2[0]) & 0xFF;
-         System.arraycopy(var2, 1, var2, 0, var2.length - 1);
-         var2[var2.length - 1] = 0;
+      for (int n : bytes) {
+         int n2 = (n ^ bytes3[0]) & 0xFF;
+         System.arraycopy(bytes3, 1, bytes3, 0, bytes3.length - 1);
+         bytes3[bytes3.length - 1] = 0;
 
-         for (int var8 = 0; var8 < var2.length; var8++) {
-            var2[var8] ^= (byte)method3029(var1[var8] & 255, var7);
+         for (int i = 0; i < bytes3.length; i++) {
+            bytes3[i] ^= (byte)method3029(bytes2[i] & 255, n2);
          }
       }
 
-      return var2;
+      return bytes3;
    }
 
-   private static int method3029(int var0, int var1) {
-      int var2 = 0;
+   private static int method3029(int n, int n2) {
+      int n3 = 0;
 
-      for (int var3 = 7; var3 >= 0; var3--) {
-         var2 = var2 << 1 ^ (var2 >>> 7) * 285;
-         var2 ^= (var1 >>> var3 & 1) * var0;
+      for (int i = 7; i >= 0; i--) {
+         n3 = n3 << 1 ^ (n3 >>> 7) * 285;
+         n3 ^= (n2 >>> i & 1) * n;
       }
 
-      return var2 & 0xFF;
+      return n3 & 0xFF;
    }
 
-   private void method3030(byte[] var1) {
-      int var2 = 0;
+   private void method3030(byte[] bytes) {
+      int n = 0;
 
-      for (int var3 = this.intValue2 - 1; var3 >= 1; var3 -= 2) {
-         if (var3 == 6) {
-            var3 = 5;
+      for (int i = this.intValue2 - 1; i >= 1; i -= 2) {
+         if (i == 6) {
+            i = 5;
          }
 
-         for (int var4 = 0; var4 < this.intValue2; var4++) {
-            for (int var5 = 0; var5 < 2; var5++) {
-               int var6 = var3 - var5;
-               boolean var7 = (var3 + 1 & 2) == 0;
-               int var8 = var7 ? this.intValue2 - 1 - var4 : var4;
-               if (!this.flags2[var8][var6] && var2 < var1.length * 8) {
-                  this.flags[var8][var6] = (var1[var2 >>> 3] >>> 7 - (var2 & 7) & 1) != 0;
-                  var2++;
+         for (int j = 0; j < this.intValue2; j++) {
+            for (int k = 0; k < 2; k++) {
+               int n2 = i - k;
+               boolean flag = (i + 1 & 2) == 0;
+               int n3 = flag ? this.intValue2 - 1 - j : j;
+               if (!this.flags2[n3][n2] && n < bytes.length * 8) {
+                  this.flags[n3][n2] = (bytes[n >>> 3] >>> 7 - (n & 7) & 1) != 0;
+                  n++;
                }
             }
          }
       }
    }
 
-   private void method3031(int var1) {
-      for (int var2 = 0; var2 < this.intValue2; var2++) {
-         for (int var3 = 0; var3 < this.intValue2; var3++) {
-            if (!this.flags2[var2][var3]) {
-               boolean var4 = switch (var1) {
-                  case 0 -> (var3 + var2) % 2 == 0;
-                  case 1 -> var2 % 2 == 0;
-                  case 2 -> var3 % 3 == 0;
-                  case 3 -> (var3 + var2) % 3 == 0;
-                  case 4 -> (var3 / 3 + var2 / 2) % 2 == 0;
-                  case 5 -> var3 * var2 % 2 + var3 * var2 % 3 == 0;
-                  case 6 -> (var3 * var2 % 2 + var3 * var2 % 3) % 2 == 0;
-                  default -> ((var3 + var2) % 2 + var3 * var2 % 3) % 2 == 0;
+   private void method3031(int n) {
+      for (int i = 0; i < this.intValue2; i++) {
+         for (int j = 0; j < this.intValue2; j++) {
+            if (!this.flags2[i][j]) {
+               boolean flag = switch (n) {
+                  case 0 -> (j + i) % 2 == 0;
+                  case 1 -> i % 2 == 0;
+                  case 2 -> j % 3 == 0;
+                  case 3 -> (j + i) % 3 == 0;
+                  case 4 -> (j / 3 + i / 2) % 2 == 0;
+                  case 5 -> j * i % 2 + j * i % 3 == 0;
+                  case 6 -> (j * i % 2 + j * i % 3) % 2 == 0;
+                  default -> ((j + i) % 2 + j * i % 3) % 2 == 0;
                };
-               this.flags[var2][var3] = this.flags[var2][var3] ^ var4;
+               this.flags[i][j] = this.flags[i][j] ^ flag;
             }
          }
       }
    }
 
    private long method3032() {
-      long var1 = 0L;
+      long l = 0L;
 
-      for (int var3 = 0; var3 < 2; var3++) {
-         for (int var4 = 0; var4 < this.intValue2; var4++) {
-            int var5 = 1;
+      for (int i = 0; i < 2; i++) {
+         for (int j = 0; j < this.intValue2; j++) {
+            int n = 1;
 
-            for (int var6 = 1; var6 < this.intValue2; var6++) {
-               boolean var7 = var3 == 0 ? this.flags[var4][var6] : this.flags[var6][var4];
-               boolean var8 = var3 == 0 ? this.flags[var4][var6 - 1] : this.flags[var6 - 1][var4];
-               if (var7 == var8) {
-                  if (++var5 == 5) {
-                     var1 += 3L;
-                  } else if (var5 > 5) {
-                     var1++;
+            for (int k = 1; k < this.intValue2; k++) {
+               boolean flag = i == 0 ? this.flags[j][k] : this.flags[k][j];
+               boolean flag2 = i == 0 ? this.flags[j][k - 1] : this.flags[k - 1][j];
+               if (flag == flag2) {
+                  if (++n == 5) {
+                     l += 3L;
+                  } else if (n > 5) {
+                     l++;
                   }
                } else {
-                  var5 = 1;
+                  n = 1;
                }
             }
          }
       }
 
-      int var9 = 0;
+      int n = 0;
 
-      for (int var10 = 0; var10 < this.intValue2; var10++) {
-         for (int var12 = 0; var12 < this.intValue2; var12++) {
-            if (this.flags[var10][var12]) {
-               var9++;
+      for (int i = 0; i < this.intValue2; i++) {
+         for (int j = 0; j < this.intValue2; j++) {
+            if (this.flags[i][j]) {
+               n++;
             }
 
-            if (var12 + 1 < this.intValue2 && var10 + 1 < this.intValue2) {
-               boolean var14 = this.flags[var10][var12];
-               if (var14 == this.flags[var10][var12 + 1] && var14 == this.flags[var10 + 1][var12] && var14 == this.flags[var10 + 1][var12 + 1]) {
-                  var1 += 3L;
+            if (j + 1 < this.intValue2 && i + 1 < this.intValue2) {
+               boolean flag = this.flags[i][j];
+               if (flag == this.flags[i][j + 1] && flag == this.flags[i + 1][j] && flag == this.flags[i + 1][j + 1]) {
+                  l += 3L;
                }
             }
          }
       }
 
-      int var11 = this.intValue2 * this.intValue2;
-      int var13 = (Math.abs(var9 * 20 - var11 * 10) + var11 - 1) / var11 - 1;
-      return var1 + Math.max(0, var13) * 10L;
+      int n2 = this.intValue2 * this.intValue2;
+      int n3 = (Math.abs(n * 20 - n2 * 10) + n2 - 1) / n2 - 1;
+      return l + Math.max(0, n3) * 10L;
    }
 
    private static final class Entry {
@@ -348,9 +348,9 @@ public final class QrCode {
       public int current;
       public int length;
 
-      public void method3033(int var1, int var2) {
-         for (int var3 = var2 - 1; var3 >= 0; var3--) {
-            this.current = this.current << 1 | var1 >>> var3 & 1;
+      public void method3033(int length, int n) {
+         for (int i = n - 1; i >= 0; i--) {
+            this.current = this.current << 1 | length >>> i & 1;
             this.length++;
             if (this.length % 8 == 0) {
                this.byteArrayOutputStream.write(this.current);

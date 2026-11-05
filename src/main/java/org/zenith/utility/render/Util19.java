@@ -26,26 +26,26 @@ public final class Util19 {
    }
 
    public static boolean enabled() {
-      Wardrobe var0 = Wardrobe.method2488();
-      return var0 != null
-         && var0.particles.isEnabled()
-         && !var0.isFlag()
+      Wardrobe wardrobe = Wardrobe.method2488();
+      return wardrobe != null
+         && wardrobe.particles.isEnabled()
+         && !wardrobe.isFlag()
          && mc.level != null
          && mc.options != null
          && mc.options.particles().get().ordinal() < 2;
    }
 
    public static boolean method5042() {
-      Wardrobe var0 = Wardrobe.method2488();
-      long var1 = System.nanoTime();
-      float var3 = var0 == null ? 60.0F : var0.particleBudget.getValue3();
+      Wardrobe wardrobe = Wardrobe.method2488();
+      long nanoTime = System.nanoTime();
+      float f = wardrobe == null ? 60.0F : wardrobe.particleBudget.getValue3();
       if (longValue == 0L) {
-         longValue = var1;
-         floatValue = var3 * 0.25F;
+         longValue = nanoTime;
+         floatValue = f * 0.25F;
       }
 
-      floatValue = Math.min(var3 * 0.5F, floatValue + (float)(var1 - longValue) / 1.0E9F * var3);
-      longValue = var1;
+      floatValue = Math.min(f * 0.5F, floatValue + (float)(nanoTime - longValue) / 1.0E9F * f);
+      longValue = nanoTime;
       if (floatValue < 1.0F) {
          return false;
       } else {
@@ -54,68 +54,68 @@ public final class Util19 {
       }
    }
 
-   public static void method5043(ParticleOptions var0, double var1, double var3, double var5, double var7, double var9, double var11) {
-      if (mc.level != null && var0 != null && method5042()) {
-         mc.level.addParticle(var0, var1, var3, var5, var7, var9, var11);
+   public static void method5043(ParticleOptions particleEffect, double x, double y, double z, double xd, double yd, double zd) {
+      if (mc.level != null && particleEffect != null && method5042()) {
+         mc.level.addParticle(particleEffect, x, y, z, xd, yd, zd);
       }
    }
 
    public static void method5044(
-      Class15 var0,
-      AnimationCache.Entry var1,
-      AvatarRenderState var2,
-      PlayerModel var3,
-      float[] var4,
-      float var5,
-      boolean var6,
-      boolean var7,
-      WardrobeSetInfo var8,
-      List<Class15.Data4> var9
+      Class15 key,
+      AnimationCache.Entry entry,
+      AvatarRenderState state,
+      PlayerModel parentModel,
+      float[] floats,
+      float f,
+      boolean flag,
+      boolean flag2,
+      WardrobeSetInfo wardrobeSetInfo,
+      List<Class15.Data4> data4s
    ) {
-      if (!var9.isEmpty() && enabled() && !(var2.distanceToCameraSq > 2304.0)) {
-         float[] var10 = var1.method7625(var9.size());
+      if (!data4s.isEmpty() && enabled() && !(state.distanceToCameraSq > 2304.0)) {
+         float[] floats2 = entry.method7625(data4s.size());
 
-         for (int var11 = 0; var11 < var9.size(); var11++) {
-            Class15.Data4 var12 = (Class15.Data4)var9.get(var11);
-            if (!method5046(var12.getType3(), var6, var7, var2.isCrouching, var8 != null)) {
-               var10[var11] = 0.0F;
+         for (int i = 0; i < data4s.size(); i++) {
+            Class15.Data4 data4 = (Class15.Data4)data4s.get(i);
+            if (!method5046(data4.getType3(), flag, flag2, state.isCrouching, wardrobeSetInfo != null)) {
+               floats2[i] = 0.0F;
             } else {
-               var10[var11] += var12.getFloatValue4() * var5;
+               floats2[i] += data4.getFloatValue4() * f;
 
-               while (var10[var11] >= 1.0F) {
-                  var10[var11]--;
+               while (floats2[i] >= 1.0F) {
+                  floats2[i]--;
                   matrix4f.identity();
-                  matrix4f.translate((float)var2.x, (float)var2.y, (float)var2.z);
-                  matrix4f.rotateY((float)Math.toRadians(180.0 - var2.bodyRot));
-                  matrix4f.scale(var2.scale);
+                  matrix4f.translate((float)state.x, (float)state.y, (float)state.z);
+                  matrix4f.rotateY((float)Math.toRadians(180.0 - state.bodyRot));
+                  matrix4f.scale(state.scale);
                   matrix4f.scale(-1.0F, -1.0F, 1.0F);
                   matrix4f.translate(0.0F, -1.501F, 0.0F);
-                  if (var12.getIntValue() >= 0) {
-                     int var13 = var12.getIntValue();
+                  if (data4.getIntValue() >= 0) {
+                     int intValue = data4.getIntValue();
 
-                     while (var0.intValues[var13] >= 0) {
-                        var13 = var0.intValues[var13];
+                     while (key.intValues[intValue] >= 0) {
+                        intValue = key.intValues[intValue];
                      }
 
-                     ModelPart var14 = method5047(var3, var0.intValues2[var13]);
-                     if (var14 != null) {
-                        method5048(var3.root(), matrix4f);
-                        method5048(var14, matrix4f);
+                     ModelPart root = method5047(parentModel, key.intValues2[intValue]);
+                     if (root != null) {
+                        method5048(parentModel.root(), matrix4f);
+                        method5048(root, matrix4f);
                      }
 
-                     BoneMatrices.method4808(var0, var4, var12.getIntValue(), matrix4f);
+                     BoneMatrices.method4808(key, floats, data4.getIntValue(), matrix4f);
                   }
 
-                  matrix4f.transformPosition(var12.getFloatValue() / 16.0F, var12.getFloatValue2() / 16.0F, var12.getFloatValue3() / 16.0F, vector3f);
-                  double var15 = var12.getFloatValue8();
+                  matrix4f.transformPosition(data4.getFloatValue() / 16.0F, data4.getFloatValue2() / 16.0F, data4.getFloatValue3() / 16.0F, vector3f);
+                  double d = data4.getFloatValue8();
                   method5043(
-                     var12.getParticleEffect(),
-                     vector3f.x + (random.nextDouble() - 0.5) * var15,
-                     vector3f.y + (random.nextDouble() - 0.5) * var15,
-                     vector3f.z + (random.nextDouble() - 0.5) * var15,
-                     var12.getFloatValue5() + (random.nextDouble() - 0.5) * var15 * 0.2,
-                     var12.getFloatValue6(),
-                     var12.getFloatValue7() + (random.nextDouble() - 0.5) * var15 * 0.2
+                     data4.getParticleEffect(),
+                     vector3f.x + (random.nextDouble() - 0.5) * d,
+                     vector3f.y + (random.nextDouble() - 0.5) * d,
+                     vector3f.z + (random.nextDouble() - 0.5) * d,
+                     data4.getFloatValue5() + (random.nextDouble() - 0.5) * d * 0.2,
+                     data4.getFloatValue6(),
+                     data4.getFloatValue7() + (random.nextDouble() - 0.5) * d * 0.2
                   );
                }
             }
@@ -123,50 +123,50 @@ public final class Util19 {
       }
    }
 
-   public static void method5045(WardrobeSetInfo var0, AvatarRenderState var1, AnimationCache.Entry var2, float var3, ParticleOptions var4) {
-      if (var0 != null && var4 != null && enabled() && !(var1.distanceToCameraSq > 2304.0)) {
-         var2.floatValue += 5.0F * var3;
+   public static void method5045(WardrobeSetInfo wardrobeSetInfo, AvatarRenderState state, AnimationCache.Entry entry, float f, ParticleOptions particleEffect) {
+      if (wardrobeSetInfo != null && particleEffect != null && enabled() && !(state.distanceToCameraSq > 2304.0)) {
+         entry.floatValue += 5.0F * f;
 
-         while (var2.floatValue >= 1.0F) {
-            var2.floatValue--;
-            double var5 = random.nextDouble() * Math.PI * 2.0;
-            double var7 = 0.55 + random.nextDouble() * 0.15;
-            method5043(var4, var1.x + Math.cos(var5) * var7, var1.y + 0.1 + random.nextDouble() * 1.7, var1.z + Math.sin(var5) * var7, 0.0, 0.015, 0.0);
+         while (entry.floatValue >= 1.0F) {
+            entry.floatValue--;
+            double d = random.nextDouble() * Math.PI * 2.0;
+            double d2 = 0.55 + random.nextDouble() * 0.15;
+            method5043(particleEffect, state.x + Math.cos(d) * d2, state.y + 0.1 + random.nextDouble() * 1.7, state.z + Math.sin(d) * d2, 0.0, 0.015, 0.0);
          }
       }
    }
 
-   private static boolean method5046(Class15.Type3 var0, boolean var1, boolean var2, boolean var3, boolean var4) {
-      return switch (var0) {
+   private static boolean method5046(Class15.Type3 type3, boolean flag, boolean flag2, boolean isCrouching, boolean flag3) {
+      return switch (type3) {
          case ALWAYS -> true;
-         case MOVING -> var1;
-         case IDLE -> !var1;
-         case AIRBORNE -> var2;
-         case SNEAKING -> var3;
-         case SET_BONUS -> var4;
+         case MOVING -> flag;
+         case IDLE -> !flag;
+         case AIRBORNE -> flag2;
+         case SNEAKING -> isCrouching;
+         case SET_BONUS -> flag3;
       };
    }
 
-   public static ModelPart method5047(PlayerModel var0, int var1) {
-      return switch (var1) {
-         case 0 -> var0.head;
-         case 1 -> var0.body;
-         case 2 -> var0.rightArm;
-         case 3 -> var0.leftArm;
-         case 4 -> var0.rightLeg;
-         case 5 -> var0.leftLeg;
+   public static ModelPart method5047(PlayerModel parentModel, int n) {
+      return switch (n) {
+         case 0 -> parentModel.head;
+         case 1 -> parentModel.body;
+         case 2 -> parentModel.rightArm;
+         case 3 -> parentModel.leftArm;
+         case 4 -> parentModel.rightLeg;
+         case 5 -> parentModel.leftLeg;
          default -> null;
       };
    }
 
-   private static void method5048(ModelPart var0, Matrix4f var1) {
-      var1.translate(var0.x / 16.0F, var0.y / 16.0F, var0.z / 16.0F);
-      if (var0.xRot != 0.0F || var0.yRot != 0.0F || var0.zRot != 0.0F) {
-         var1.rotateZYX(var0.zRot, var0.yRot, var0.xRot);
+   private static void method5048(ModelPart root, Matrix4f matrix4f) {
+      matrix4f.translate(root.x / 16.0F, root.y / 16.0F, root.z / 16.0F);
+      if (root.xRot != 0.0F || root.yRot != 0.0F || root.zRot != 0.0F) {
+         matrix4f.rotateZYX(root.zRot, root.yRot, root.xRot);
       }
 
-      if (var0.xScale != 1.0F || var0.yScale != 1.0F || var0.zScale != 1.0F) {
-         var1.scale(var0.xScale, var0.yScale, var0.zScale);
+      if (root.xScale != 1.0F || root.yScale != 1.0F || root.zScale != 1.0F) {
+         matrix4f.scale(root.xScale, root.yScale, root.zScale);
       }
    }
 }

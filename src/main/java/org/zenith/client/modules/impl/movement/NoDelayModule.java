@@ -26,7 +26,7 @@ public final class NoDelayModule extends Module {
    }
 
    @EventTarget
-   public void method4845(UpdateEvent var1) {
+   public void method4845(UpdateEvent event) {
       if (this.ignoreSetting.method5227(2)) {
          mc.gameMode.destroyDelay = 0;
       }

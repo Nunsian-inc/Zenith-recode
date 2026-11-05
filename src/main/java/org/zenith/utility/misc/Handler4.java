@@ -8,15 +8,15 @@ public interface Handler4 {
    @Nullable
    String zenith$profileName();
 
-   void zenith$setProfileName(@Nullable String var1);
+   void zenith$setProfileName(@Nullable String name);
 
    @Nullable
    List<HoveredData> zenith$wardrobeLoadout();
 
-   void zenith$setWardrobeLoadout(@Nullable List<HoveredData> var1);
+   void zenith$setWardrobeLoadout(@Nullable List<HoveredData> hoveredDatas);
 
    @Nullable
-   static String method3142(AvatarRenderState var0) {
-      return ((Handler4)var0).zenith$profileName();
+   static String method3142(AvatarRenderState state) {
+      return ((Handler4)state).zenith$profileName();
    }
 }

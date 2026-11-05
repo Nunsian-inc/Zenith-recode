@@ -19,9 +19,9 @@ public final class AttackEvent extends CancellableEvent {
    }
 
    @Generated
-   public AttackEvent(Entity var1, AttackEvent.Type var2) {
-      this.entity = var1;
-      this.type = var2;
+   public AttackEvent(Entity entity, AttackEvent.Type type) {
+      this.entity = entity;
+      this.type = type;
    }
 
    public static enum Type {

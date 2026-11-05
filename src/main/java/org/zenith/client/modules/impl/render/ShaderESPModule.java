@@ -98,38 +98,38 @@ public final class ShaderESPModule extends Module {
    private ShaderESPModule() {
    }
 
-   public boolean method4584(Entity var1) {
-      if (!this.isEnabled() || mc.player == null || mc.level == null || var1 == null) {
+   public boolean method4584(Entity entity) {
+      if (!this.isEnabled() || mc.player == null || mc.level == null || entity == null) {
          return false;
-      } else if (this.method4597(var1) || this.method4598(var1)) {
+      } else if (this.method4597(entity) || this.method4598(entity)) {
          return false;
       } else {
-         return !this.method4599(var1) ? false : this.throughWalls.isEnabled() || this.method4585(var1);
+         return !this.method4599(entity) ? false : this.throughWalls.isEnabled() || this.method4585(entity);
       }
    }
 
-   private boolean method4585(Entity var1) {
+   private boolean method4585(Entity entity) {
       if (mc.level != null && mc.gameRenderer != null && mc.gameRenderer.mainCamera() != null && mc.isSameThread()) {
-         Vec3 var2 = mc.gameRenderer.mainCamera().position();
-         long var3 = mc.level.getGameTime() << 32 ^ Float.floatToIntBits(mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) & 4294967295L;
-         if (var3 != this.longValue || var2.x != this.doubleValue || var2.y != this.doubleValue2 || var2.z != this.doubleValue3) {
+         Vec3 position = mc.gameRenderer.mainCamera().position();
+         long longValue = mc.level.getGameTime() << 32 ^ Float.floatToIntBits(mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) & 4294967295L;
+         if (longValue != this.longValue || position.x != this.doubleValue || position.y != this.doubleValue2 || position.z != this.doubleValue3) {
             this.int2BooleanOpenHashMap.clear();
-            this.longValue = var3;
-            this.doubleValue = var2.x;
-            this.doubleValue2 = var2.y;
-            this.doubleValue3 = var2.z;
+            this.longValue = longValue;
+            this.doubleValue = position.x;
+            this.doubleValue2 = position.y;
+            this.doubleValue3 = position.z;
          }
 
-         int var5 = var1.getId();
-         if (this.int2BooleanOpenHashMap.containsKey(var5)) {
-            return this.int2BooleanOpenHashMap.get(var5);
+         int id = entity.getId();
+         if (this.int2BooleanOpenHashMap.containsKey(id)) {
+            return this.int2BooleanOpenHashMap.get(id);
          } else {
-            boolean var6 = this.method4600(var1);
-            this.int2BooleanOpenHashMap.put(var5, var6);
-            return var6;
+            boolean flag = this.method4600(entity);
+            this.int2BooleanOpenHashMap.put(id, flag);
+            return flag;
          }
       } else {
-         return this.method4600(var1);
+         return this.method4600(entity);
       }
    }
 
@@ -137,20 +137,20 @@ public final class ShaderESPModule extends Module {
       return this.throughWalls.isEnabled();
    }
 
-   public int method4587(Entity var1) {
-      return method4589(this.method4595(var1)) & 16777215;
+   public int method4587(Entity entity) {
+      return method4589(this.method4595(entity)) & 16777215;
    }
 
    public int method4588() {
-      int var1 = this.method4595(mc.player);
-      return var1 & 0xFF000000 | method4589(var1) & 16777215;
+      int n = this.method4595(mc.player);
+      return n & 0xFF000000 | method4589(n) & 16777215;
    }
 
-   private static int method4589(int var0) {
-      int var1 = var0 >> 16 & 0xFF;
-      int var2 = var0 >> 8 & 0xFF;
-      int var3 = var0 & 0xFF;
-      return Math.max(var1, Math.max(var2, var3)) >= 8 ? var0 : var0 & 0xFF000000 | 524288 | 2048 | 8;
+   private static int method4589(int n) {
+      int n2 = n >> 16 & 0xFF;
+      int n3 = n >> 8 & 0xFF;
+      int n4 = n & 0xFF;
+      return Math.max(n2, Math.max(n3, n4)) >= 8 ? n : n & 0xFF000000 | 524288 | 2048 | 8;
    }
 
    public float method4590() {
@@ -173,71 +173,71 @@ public final class ShaderESPModule extends Module {
       if (!this.pulse.isEnabled()) {
          return 1.0F;
       } else {
-         double var1 = System.currentTimeMillis() * 0.0013 % (Math.PI * 2);
-         return 0.86F + 0.14F * (float)Math.sin(var1);
+         double d = System.currentTimeMillis() * 0.0013 % (Math.PI * 2);
+         return 0.86F + 0.14F * (float)Math.sin(d);
       }
    }
 
-   private int method4595(Entity var1) {
+   private int method4595(Entity entity) {
       return switch (this.colorMode.getIndex()) {
          case 1 -> this.colorSetting.method1445();
-         case 2 -> this.method4596(var1);
-         case 3 -> Util2.method814(var1 == null ? 0 : var1.getId() * 150, 0.7F, 1.0F);
+         case 2 -> this.method4596(entity);
+         case 3 -> Util2.method814(entity == null ? 0 : entity.getId() * 150, 0.7F, 1.0F);
          default -> Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287();
       };
    }
 
-   private int method4596(Entity var1) {
-      if (var1 instanceof LivingEntity var2) {
-         float var3 = Math.max(var2.getMaxHealth(), 1.0F);
-         return Util2.method813(-50384, -13316008, Math.clamp(var2.getHealth() / var3, 0.0F, 1.0F));
+   private int method4596(Entity entity) {
+      if (entity instanceof LivingEntity livingEntity) {
+         float f = Math.max(livingEntity.getMaxHealth(), 1.0F);
+         return Util2.method813(-50384, -13316008, Math.clamp(livingEntity.getHealth() / f, 0.0F, 1.0F));
       } else {
          return this.colorSetting.method1445();
       }
    }
 
-   private boolean method4597(Entity var1) {
-      if (var1.isRemoved()) {
+   private boolean method4597(Entity entity) {
+      if (entity.isRemoved()) {
          return true;
       } else {
-         return this.ignoreSelf.isEnabled() && var1 == mc.player ? true : var1 == mc.getCameraEntity() && mc.options.getCameraType().isFirstPerson();
+         return this.ignoreSelf.isEnabled() && entity == mc.player ? true : entity == mc.getCameraEntity() && mc.options.getCameraType().isFirstPerson();
       }
    }
 
-   private boolean method4598(Entity var1) {
-      float var2 = this.maxDistance.getValue3();
-      return mc.player.distanceToSqr(var1) > var2 * var2;
+   private boolean method4598(Entity entity) {
+      float f = this.maxDistance.getValue3();
+      return mc.player.distanceToSqr(entity) > f * f;
    }
 
-   private boolean method4599(Entity var1) {
-      if (var1 instanceof Player var2) {
-         return UseItemUtils.method6529(var2) == 0.0F ? this.targets.method5227(1) : this.targets.method5227(0);
-      } else if (var1 instanceof EndCrystal) {
+   private boolean method4599(Entity entity) {
+      if (entity instanceof Player player) {
+         return UseItemUtils.method6529(player) == 0.0F ? this.targets.method5227(1) : this.targets.method5227(0);
+      } else if (entity instanceof EndCrystal) {
          return this.targets.method5227(5);
-      } else if (var1 instanceof ItemEntity) {
+      } else if (entity instanceof ItemEntity) {
          return this.targets.method5227(4);
-      } else if (var1 instanceof Monster) {
+      } else if (entity instanceof Monster) {
          return this.targets.method5227(2);
       } else {
-         return var1 instanceof Animal ? this.targets.method5227(3) : var1 instanceof LivingEntity && this.targets.method5227(2);
+         return entity instanceof Animal ? this.targets.method5227(3) : entity instanceof LivingEntity && this.targets.method5227(2);
       }
    }
 
-   private boolean method4600(Entity var1) {
+   private boolean method4600(Entity entity) {
       if (mc.level != null && mc.gameRenderer != null && mc.gameRenderer.mainCamera() != null) {
-         Vec3 var2 = mc.gameRenderer.mainCamera().position();
-         AABB var3 = var1.getBoundingBox();
-         Vec3 var4 = var3.getCenter();
-         Vec3 var5 = new Vec3(var4.x, Math.min(var3.maxY - 0.05, var1.getEyeY()), var4.z);
-         Vec3 var6 = new Vec3(var4.x, var3.minY + 0.1, var4.z);
-         return this.method4601(var2, var4) || this.method4601(var2, var5) || this.method4601(var2, var6);
+         Vec3 position = mc.gameRenderer.mainCamera().position();
+         AABB boundingBox = entity.getBoundingBox();
+         Vec3 center = boundingBox.getCenter();
+         Vec3 vec = new Vec3(center.x, Math.min(boundingBox.maxY - 0.05, entity.getEyeY()), center.z);
+         Vec3 vec2 = new Vec3(center.x, boundingBox.minY + 0.1, center.z);
+         return this.method4601(position, center) || this.method4601(position, vec) || this.method4601(position, vec2);
       } else {
          return true;
       }
    }
 
-   private boolean method4601(Vec3 var1, Vec3 var2) {
-      BlockHitResult var3 = mc.level.clip(new ClipContext(var1, var2, Block.COLLIDER, Fluid.NONE, mc.player));
-      return var3.getType() == Type.MISS || var3.getLocation().distanceToSqr(var1) + 1.0E-4 >= var2.distanceToSqr(var1);
+   private boolean method4601(Vec3 position, Vec3 center) {
+      BlockHitResult clip = mc.level.clip(new ClipContext(position, center, Block.COLLIDER, Fluid.NONE, mc.player));
+      return clip.getType() == Type.MISS || clip.getLocation().distanceToSqr(position) + 1.0E-4 >= center.distanceToSqr(position);
    }
 }

@@ -42,11 +42,11 @@ public final class Data4 {
       return "Data4[" + "text=" + this.text + ", " + "uUID=" + this.uUID + ", " + "path=" + this.path + ", " + "text2=" + this.text2 + "]";
    }
 
-   public Data4(String var1, UUID var2, Path var3, String var4) {
-      this.text = var1;
-      this.uUID = var2;
-      this.path = var3;
-      this.text2 = var4;
+   public Data4(String text, UUID uUID, Path path, String str) {
+      this.text = text;
+      this.uUID = uUID;
+      this.path = path;
+      this.text2 = str;
    }
 
    public String getText() {

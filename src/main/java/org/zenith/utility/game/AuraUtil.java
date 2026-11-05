@@ -24,100 +24,100 @@ public final class AuraUtil implements ZenithAccess {
    private static LivingEntity livingEntity;
 
    public static LivingEntity method7442(
-      Iterable<Entity> var0, float var1, boolean var2, List<String> var3, List<String> var4, Predicate<LivingEntity> var5, boolean var6
+      Iterable<Entity> entitiesForRendering, float f, boolean enabled, List<String> items, List<String> strings, Predicate<LivingEntity> predicate, boolean flag
    ) {
-      if (var6 && livingEntity != null && method7445(var3, livingEntity, var1, var2, var5)) {
+      if (flag && livingEntity != null && method7445(items, livingEntity, f, enabled, predicate)) {
          return livingEntity;
       } else {
-         ArrayList var7 = new ArrayList();
+         ArrayList arrayList = new ArrayList();
 
-         for (Entity var9 : var0) {
-            if (var9 instanceof LivingEntity var10 && method7445(var3, var9, var1, var2, var5)) {
-               var7.add(var10);
+         for (Entity entity : entitiesForRendering) {
+            if (entity instanceof LivingEntity livingEntity2 && method7445(items, entity, f, enabled, predicate)) {
+               arrayList.add(livingEntity2);
             }
          }
 
-         var7.sort(method7443(Comparator.comparing(var0x -> true), var4));
-         livingEntity = var7.isEmpty() ? null : (LivingEntity)var7.getFirst();
+         arrayList.sort(method7443(Comparator.comparing(var0x -> true), strings));
+         livingEntity = arrayList.isEmpty() ? null : (LivingEntity)arrayList.getFirst();
          return livingEntity;
       }
    }
 
-   public static Comparator<LivingEntity> method7443(Comparator<LivingEntity> var0, List<String> var1) {
-      var0 = var0.thenComparing((var0x, var1x) -> Boolean.compare(!(var0x instanceof Player), !(var1x instanceof Player)));
-      if (var1.contains("module.aura.targetFov")) {
-         var0 = var0.thenComparingDouble(AuraUtil::method7444);
+   public static Comparator<LivingEntity> method7443(Comparator<LivingEntity> comparing, List<String> strings) {
+      comparing = comparing.thenComparing((var0x, var1x) -> Boolean.compare(!(var0x instanceof Player), !(var1x instanceof Player)));
+      if (strings.contains("module.aura.targetFov")) {
+         comparing = comparing.thenComparingDouble(AuraUtil::method7444);
       }
 
-      if (var1.contains("module.aura.targetArmor")) {
-         var0 = var0.thenComparing(Comparator.comparingDouble(UseItemUtils::method6529).reversed());
+      if (strings.contains("module.aura.targetArmor")) {
+         comparing = comparing.thenComparing(Comparator.comparingDouble(UseItemUtils::method6529).reversed());
       }
 
-      if (var1.contains("module.aura.targetHp")) {
-         var0 = var0.thenComparingDouble(UseItemUtils::method6527);
+      if (strings.contains("module.aura.targetHp")) {
+         comparing = comparing.thenComparingDouble(UseItemUtils::method6527);
       }
 
-      if (var1.contains("module.aura.targetDistance")) {
-         var0 = var0.thenComparingDouble(mc.player::distanceToSqr);
+      if (strings.contains("module.aura.targetDistance")) {
+         comparing = comparing.thenComparingDouble(mc.player::distanceToSqr);
       }
 
-      return var0;
+      return comparing;
    }
 
-   private static double method7444(LivingEntity var0) {
+   private static double method7444(LivingEntity livingEntity) {
       if (mc.player == null) {
          return Double.MAX_VALUE;
       } else {
-         Rotation var1 = new Rotation(mc.player.getYRot(), mc.player.getXRot());
-         Vec3 var2 = mc.player.getEyePosition();
-         Rotation var3 = Rotation.method3128(var0.getBoundingBox().getCenter(), var2);
-         return var1.method3130(var3);
+         Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
+         Vec3 eyePosition = mc.player.getEyePosition();
+         Rotation rotation2 = Rotation.method3128(livingEntity.getBoundingBox().getCenter(), eyePosition);
+         return rotation.method3130(rotation2);
       }
    }
 
-   public static boolean method7445(List<String> var0, Entity var1, float var2, boolean var3, Predicate<LivingEntity> var4) {
-      return var1 instanceof LivingEntity var5 && method7447(var0, var5) && var4.test((LivingEntity)var1) ? auraRandomizer.method4676(var5, var2, var3) : false;
+   public static boolean method7445(List<String> items, Entity livingEntity, float f, boolean enabled, Predicate<LivingEntity> predicate) {
+      return livingEntity instanceof LivingEntity livingEntity2 && method7447(items, livingEntity2) && predicate.test((LivingEntity)livingEntity) ? auraRandomizer.method4676(livingEntity2, f, enabled) : false;
    }
 
-   public static LivingEntity method7446(Iterable<Entity> var0, float var1, boolean var2, List<String> var3, List<String> var4, boolean var5) {
-      return method7442(var0, var1, var2, var3, var4, var0x -> true, var5);
+   public static LivingEntity method7446(Iterable<Entity> entitiesForRendering, float f, boolean enabled, List<String> items, List<String> strings, boolean flag) {
+      return method7442(entitiesForRendering, f, enabled, items, strings, var0x -> true, flag);
    }
 
-   public static boolean method7447(List<String> var0, LivingEntity var1) {
-      if (method7448(var1)) {
+   public static boolean method7447(List<String> items, LivingEntity livingEntity) {
+      if (method7448(livingEntity)) {
          return false;
-      } else if (method7449(var1)) {
+      } else if (method7449(livingEntity)) {
          return false;
       } else {
-         return method7450(var1) ? false : method7451(var0, var1);
+         return method7450(livingEntity) ? false : method7451(items, livingEntity);
       }
    }
 
-   private static boolean method7448(LivingEntity var0) {
-      return var0 == mc.player;
+   private static boolean method7448(LivingEntity livingEntity) {
+      return livingEntity == mc.player;
    }
 
-   private static boolean method7449(LivingEntity var0) {
-      return !var0.isAlive() || var0.getHealth() <= 0.0F;
+   private static boolean method7449(LivingEntity livingEntity) {
+      return !livingEntity.isAlive() || livingEntity.getHealth() <= 0.0F;
    }
 
-   private static boolean method7450(LivingEntity var0) {
-      return var0 instanceof Player var1 && AntiBotModule.INSTANCE.method2785(var1);
+   private static boolean method7450(LivingEntity livingEntity) {
+      return livingEntity instanceof Player player && AntiBotModule.INSTANCE.method2785(player);
    }
 
-   private static boolean method7451(List<String> var0, LivingEntity var1) {
-      if (var1 instanceof Player var2) {
-         if (PetManager.method4557(var2.getId())) {
+   private static boolean method7451(List<String> items, LivingEntity livingEntity) {
+      if (livingEntity instanceof Player player) {
+         if (PetManager.method4557(player.getId())) {
             return false;
-         } else if (Zenith.getInstance().getFriends().method7627(var2.getGameProfile().name())) {
+         } else if (Zenith.getInstance().getFriends().method7627(player.getGameProfile().name())) {
             return false;
          } else {
-            return UseItemUtils.method6529(var2) == 0.0F ? var0.contains("module.aura.noarmor") : var0.contains("module.aura.targetPlayers");
+            return UseItemUtils.method6529(player) == 0.0F ? items.contains("module.aura.noarmor") : items.contains("module.aura.targetPlayers");
          }
-      } else if (var1 instanceof Mob) {
-         return var0.contains("module.aura.targetHostile");
+      } else if (livingEntity instanceof Mob) {
+         return items.contains("module.aura.targetHostile");
       } else {
-         return var1 instanceof Animal ? var0.contains("module.aura.targetPeaceful") : !(var1 instanceof ArmorStand);
+         return livingEntity instanceof Animal ? items.contains("module.aura.targetPeaceful") : !(livingEntity instanceof ArmorStand);
       }
    }
 

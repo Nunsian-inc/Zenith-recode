@@ -66,19 +66,19 @@ public final class ModulePreviewStage implements MinecraftAccess {
       return this.owner != null && this.owner.isEnabled();
    }
 
-   public void show(ModulePreviewStage.Kind var1, Module var2) {
-      if (!this.open || this.kind != var1) {
+   public void show(ModulePreviewStage.Kind kind, Module owner) {
+      if (!this.open || this.kind != kind) {
          this.arrival = 0.0F;
       }
 
-      this.owner = var2;
-      this.kind = var1;
+      this.owner = owner;
+      this.kind = kind;
       this.open = true;
-      if (var1 != ModulePreviewStage.Kind.SHADER) {
+      if (kind != ModulePreviewStage.Kind.SHADER) {
          EspScreen.release();
       }
 
-      if (var1 != ModulePreviewStage.Kind.FIREWORK) {
+      if (kind != ModulePreviewStage.Kind.FIREWORK) {
          FireWorkESPModule.INSTANCE.method244();
       }
    }
@@ -96,149 +96,149 @@ public final class ModulePreviewStage implements MinecraftAccess {
       this.dummyWorld = null;
    }
 
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, float var9) {
-      if (var8 <= 0.001F) {
+   public void render(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float width, float height, float previewAlpha, float f) {
+      if (previewAlpha <= 0.001F) {
          this.bounds = null;
       } else {
-         this.bounds = this.open ? new BoundsData(var4, var5, var6, var7) : null;
+         this.bounds = this.open ? new BoundsData(floatValue, y, width, height) : null;
          this.arrival = Mth.lerp(0.12F, this.arrival, 1.0F);
          if (this.arrival > 0.999F) {
             this.arrival = 1.0F;
          }
 
-         boolean var10 = this.isLive();
+         boolean live = this.isLive();
          if (this.kind == ModulePreviewStage.Kind.WORLD_WEATHER) {
-            if (var10) {
-               var1.enableScissor(var4, var5, var4 + var6, var5 + var7);
+            if (live) {
+               customDrawContext.enableScissor(floatValue, y, floatValue + width, y + height);
 
                try {
-                  WeatherModule.INSTANCE.method3119(var1, var4, var5, var6, var7, var8);
+                  WeatherModule.INSTANCE.method3119(customDrawContext, floatValue, y, width, height, previewAlpha);
                } finally {
-                  var1.disableScissor();
+                  customDrawContext.disableScissor();
                }
             }
          } else if (this.kind != ModulePreviewStage.Kind.FIREWORK && this.kind != ModulePreviewStage.Kind.BLOCK) {
-            LivingEntity var11 = this.previewEntity();
-            if (var11 != null) {
-               float var12 = var4 + var6 / 2.0F;
-               float var13;
-               float var14 = (var13 = var5 + var7 / 2.0F + 8.0F) + 86.399994F;
-               float var15 = var7 / 2.0F;
-               float var16 = viewAngle(-this.modelYaw) + 28.0F * (1.0F - this.arrival);
-               float var17 = viewAngle(-this.modelPitch);
-               boolean var18;
-               if (var18 = this.open && var10 && this.kind == ModulePreviewStage.Kind.SHADER && var9 >= 0.995F) {
-                  EspScreen.method6551(var1, () -> this.drawModel(var1, var4, var6, var13, var15, var16, var17, var11));
+            LivingEntity previewEntity = this.previewEntity();
+            if (previewEntity != null) {
+               float xo = floatValue + width / 2.0F;
+               float yo;
+               float yo2 = (yo = y + height / 2.0F + 8.0F) + 86.399994F;
+               float f2 = height / 2.0F;
+               float angle = viewAngle(-this.modelYaw) + 28.0F * (1.0F - this.arrival);
+               float viewAngle2 = viewAngle(-this.modelPitch);
+               boolean flag;
+               if (flag = this.open && live && this.kind == ModulePreviewStage.Kind.SHADER && f >= 0.995F) {
+                  EspScreen.method6551(customDrawContext, () -> this.drawModel(customDrawContext, floatValue, width, yo, f2, angle, viewAngle2, previewEntity));
                }
 
-               var1.enableScissor(var4, var5, var4 + var6, var5 + var7);
+               customDrawContext.enableScissor(floatValue, y, floatValue + width, y + height);
 
                try {
-                  RenderState.method1883(1.0F, 1.0F, 1.0F, var8);
+                  RenderState.method1883(1.0F, 1.0F, 1.0F, previewAlpha);
 
                   try {
-                     this.drawModel(var1, var4, var6, var13, var15, var16, var17, var11);
+                     this.drawModel(customDrawContext, floatValue, width, yo, f2, angle, viewAngle2, previewEntity);
                   } finally {
                      RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
                   }
 
-                  if (!var10) {
+                  if (!live) {
                      return;
                   }
 
                   if (this.kind == ModulePreviewStage.Kind.ENTITY) {
-                     EntityESPModule.INSTANCE.method619(var1, var12, var14, 96.0F, var5 + var7 - 4.0F, "Player", var8, var2, var3);
+                     EntityESPModule.INSTANCE.method619(customDrawContext, xo, yo2, 96.0F, y + height - 4.0F, "Player", previewAlpha, mouseX, mouseY);
                   } else if (this.kind == ModulePreviewStage.Kind.PARTICLES_AMBIENT) {
-                     AmbientParticlesModule.INSTANCE.method2392(var1, var12, var14, 96.0F, var8);
+                     AmbientParticlesModule.INSTANCE.method2392(customDrawContext, xo, yo2, 96.0F, previewAlpha);
                   } else if (this.kind == ModulePreviewStage.Kind.PARTICLES_TOTEM) {
-                     TotemParticlesModule.INSTANCE.method4699(var1, var12, var14, 96.0F, var8);
+                     TotemParticlesModule.INSTANCE.method4699(customDrawContext, xo, yo2, 96.0F, previewAlpha);
                   } else if (this.kind == ModulePreviewStage.Kind.PARTICLES_HIT) {
-                     HitParticlesModule.INSTANCE.method7795(var1, var12, var14, 96.0F, var8);
+                     HitParticlesModule.INSTANCE.method7795(customDrawContext, xo, yo2, 96.0F, previewAlpha);
                   } else if (this.kind == ModulePreviewStage.Kind.WORLD_VISUALS) {
-                     WorldModule.INSTANCE.method5650(var1, var4, var5, var6, var7, var8);
+                     WorldModule.INSTANCE.method5650(customDrawContext, floatValue, y, width, height, previewAlpha);
                   } else if (this.kind == ModulePreviewStage.Kind.TARGET) {
-                     TargetESPModule.INSTANCE.method2160(var1, var12, var14, 96.0F, var8, var16, var17);
+                     TargetESPModule.INSTANCE.method2160(customDrawContext, xo, yo2, 96.0F, previewAlpha, angle, viewAngle2);
                   }
                } finally {
-                  var1.disableScissor();
+                  customDrawContext.disableScissor();
                }
 
-               if (var18) {
-                  EspScreen.method6552(var1, var4, var5, var6, var7, var8);
+               if (flag) {
+                  EspScreen.method6552(customDrawContext, floatValue, y, width, height, previewAlpha);
                }
 
                RenderState.method1881();
             }
-         } else if (var10) {
-            var1.enableScissor(var4, var5, var4 + var6, var5 + var7);
+         } else if (live) {
+            customDrawContext.enableScissor(floatValue, y, floatValue + width, y + height);
 
             try {
                if (this.kind == ModulePreviewStage.Kind.FIREWORK) {
-                  FireWorkESPModule.INSTANCE.method243(var1, var4, var5, var6, var7);
+                  FireWorkESPModule.INSTANCE.method243(customDrawContext, floatValue, y, width, height);
                } else {
-                  BlockESPModule.INSTANCE.method7573(var1, var4 + var6 / 2.0F, var5 + var7 / 2.0F, 96.0F, var5 + var7 - 4.0F);
+                  BlockESPModule.INSTANCE.method7573(customDrawContext, floatValue + width / 2.0F, y + height / 2.0F, 96.0F, y + height - 4.0F);
                }
             } finally {
-               var1.disableScissor();
+               customDrawContext.disableScissor();
             }
          }
       }
    }
 
-   private static float viewAngle(float var0) {
-      return (float)Math.atan(var0 / 40.0F) * 20.0F;
+   private static float viewAngle(float f) {
+      return (float)Math.atan(f / 40.0F) * 20.0F;
    }
 
-   private void drawModel(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7, LivingEntity var8) {
+   private void drawModel(MenuDrawContext customDrawContext, float floatValue, float width, float yo, float f, float angle, float f2, LivingEntity previewEntity) {
       ChamsModule.flag3 = this.kind == ModulePreviewStage.Kind.CHAMS && this.isLive();
-      boolean var9;
-      if (var9 = this.kind == ModulePreviewStage.Kind.WORLD_VISUALS && this.isLive()) {
-         WorldModule var10 = WorldModule.INSTANCE;
-         FrameTimer.method753(var10.method5651(), 1.0F, 1.0F, 1.0F, var10.method5652());
+      boolean flag;
+      if (flag = this.kind == ModulePreviewStage.Kind.WORLD_VISUALS && this.isLive()) {
+         WorldModule worldModule = WorldModule.INSTANCE;
+         FrameTimer.method753(worldModule.method5651(), 1.0F, 1.0F, 1.0F, worldModule.method5652());
       }
 
-      float var28 = var8.yBodyRot;
-      float var11 = var8.getYRot();
-      float var12 = var8.getXRot();
-      float var13 = var8.yHeadRot;
-      float var14 = var8.yHeadRotO;
+      float yBodyRot = previewEntity.yBodyRot;
+      float yRot = previewEntity.getYRot();
+      float xRot = previewEntity.getXRot();
+      float yHeadRot = previewEntity.yHeadRot;
+      float yHeadRotO = previewEntity.yHeadRotO;
 
       try {
-         float var15 = 180.0F + var6;
-         var8.yBodyRot = var15;
-         var8.setYRot(var15);
-         var8.setXRot(0.0F);
-         var8.yHeadRot = var15;
-         var8.yHeadRotO = var15;
-         Quaternionf var16 = new Quaternionf().rotateX(var7 * (float) (Math.PI / 180.0));
-         Quaternionf var17 = new Quaternionf().rotateZ((float) Math.PI).mul(var16);
-         float var18 = var8.getScale();
-         Vector3f var19 = new Vector3f(0.0F, var8.getBbHeight() / 2.0F, 0.0F);
-         float var20 = 96.0F / var18;
-         PoseStack var21 = MatrixUtils.method666(var1.pose());
-         var21.translate(var2 + var3 / 2.0F, var4, 50.0F);
-         var21.scale(var20, var20, -var20);
-         var21.translate(var19.x, var19.y, var19.z);
-         var21.rotate(var17);
+         float yBodyRot2 = 180.0F + angle;
+         previewEntity.yBodyRot = yBodyRot2;
+         previewEntity.setYRot(yBodyRot2);
+         previewEntity.setXRot(0.0F);
+         previewEntity.yHeadRot = yBodyRot2;
+         previewEntity.yHeadRotO = yBodyRot2;
+         Quaternionf rotateX = new Quaternionf().rotateX(f2 * (float) (Math.PI / 180.0));
+         Quaternionf by = new Quaternionf().rotateZ((float) Math.PI).mul(rotateX);
+         float scale = previewEntity.getScale();
+         Vector3f vec = new Vector3f(0.0F, previewEntity.getBbHeight() / 2.0F, 0.0F);
+         float xScale = 96.0F / scale;
+         PoseStack poseStack = MatrixUtils.method666(customDrawContext.pose());
+         poseStack.translate(floatValue + width / 2.0F, yo, 50.0F);
+         poseStack.scale(xScale, xScale, -xScale);
+         poseStack.translate(vec.x, vec.y, vec.z);
+         poseStack.rotate(by);
          ScissorFlusher.flush();
-         EntityRenderDispatcher var22 = mc.getEntityRenderDispatcher();
-         EntityRenderState var23 = var22.extractEntity(var8, 1.0F);
-         var23.lightCoords = 240 << 16 | 240;
-         var23.shadowPieces.clear();
-         var23.outlineColor = 0;
-         OutlineVertexProvider.method1540(var23);
-         CameraRenderState var24 = OutlineVertexProvider.method1541(var8.position());
-         var24.orientation = var16.conjugate(new Quaternionf()).rotateY((float) Math.PI);
-         OutlineVertexProvider.method1542(var4x -> var22.submit(var23, var24, 0.0, 0.0, 0.0, var21, var4x));
+         EntityRenderDispatcher entityRenderDispatcher = mc.getEntityRenderDispatcher();
+         EntityRenderState extractEntity = entityRenderDispatcher.extractEntity(previewEntity, 1.0F);
+         extractEntity.lightCoords = 240 << 16 | 240;
+         extractEntity.shadowPieces.clear();
+         extractEntity.outlineColor = 0;
+         OutlineVertexProvider.method1540(extractEntity);
+         CameraRenderState camera = OutlineVertexProvider.method1541(previewEntity.position());
+         camera.orientation = rotateX.conjugate(new Quaternionf()).rotateY((float) Math.PI);
+         OutlineVertexProvider.method1542(var4x -> entityRenderDispatcher.submit(extractEntity, camera, 0.0, 0.0, 0.0, poseStack, var4x));
          ScissorFlusher.flush();
       } finally {
-         var8.yBodyRot = var28;
-         var8.setYRot(var11);
-         var8.setXRot(var12);
-         var8.yHeadRot = var13;
-         var8.yHeadRotO = var14;
+         previewEntity.yBodyRot = yBodyRot;
+         previewEntity.setYRot(yRot);
+         previewEntity.setXRot(xRot);
+         previewEntity.yHeadRot = yHeadRot;
+         previewEntity.yHeadRotO = yHeadRotO;
          ChamsModule.flag3 = false;
-         if (var9) {
+         if (flag) {
             FrameTimer.method754();
          }
       }
@@ -258,10 +258,10 @@ public final class ModulePreviewStage implements MinecraftAccess {
       }
    }
 
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (!this.open || this.bounds == null || !this.bounds.contains(var1, var3)) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+      if (!this.open || this.bounds == null || !this.bounds.contains(x, y)) {
          return false;
-      } else if (this.kind == ModulePreviewStage.Kind.ENTITY && this.isLive() && EntityESPModule.INSTANCE.method561(var1, var3, var5)) {
+      } else if (this.kind == ModulePreviewStage.Kind.ENTITY && this.isLive() && EntityESPModule.INSTANCE.method561(x, y, enum2)) {
          return true;
       } else {
          this.draggingModel = true;
@@ -269,16 +269,16 @@ public final class ModulePreviewStage implements MinecraftAccess {
       }
    }
 
-   public boolean onMouseDragged(double var1, double var3, double var5, double var7) {
+   public boolean onMouseDragged(double doubleValue, double mouseY, double offsetX, double offsetY) {
       if (!this.open) {
          return false;
-      } else if (this.kind == ModulePreviewStage.Kind.ENTITY && EntityESPModule.INSTANCE.method562(var1, var3)) {
+      } else if (this.kind == ModulePreviewStage.Kind.ENTITY && EntityESPModule.INSTANCE.method562(doubleValue, mouseY)) {
          return true;
       } else if (!this.draggingModel) {
          return false;
       } else {
-         this.modelYaw += (float)var5 * 1.4F;
-         this.modelPitch = Mth.clamp(this.modelPitch + (float)var7 * 1.4F, -55.0F, 55.0F);
+         this.modelYaw += (float)offsetX * 1.4F;
+         this.modelPitch = Mth.clamp(this.modelPitch + (float)offsetY * 1.4F, -55.0F, 55.0F);
          return true;
       }
    }

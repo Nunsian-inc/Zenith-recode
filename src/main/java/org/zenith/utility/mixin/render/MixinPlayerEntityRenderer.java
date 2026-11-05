@@ -26,22 +26,22 @@ public class MixinPlayerEntityRenderer {
       method = {"extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V"},
       at = {@At("RETURN")}
    )
-   private void zenith$hideGrimElytraGlidingPose(Avatar var1, AvatarRenderState var2, float var3, CallbackInfo var4) {
-      if (var1 == Minecraft.getInstance().player
+   private void zenith$hideGrimElytraGlidingPose(Avatar avatar, AvatarRenderState avatarRenderState, float f, CallbackInfo callbackInfo) {
+      if (avatar == Minecraft.getInstance().player
          && SpeedModule.INSTANCE.isEnabled()
          && SpeedModule.INSTANCE.method6606()
-         && (var1.isFallFlying() || var1.getPose() == Pose.FALL_FLYING)) {
-         var2.isFallFlying = false;
-         var2.fallFlyingTimeInTicks = 0.0F;
-         var2.swimAmount = 0.0F;
-         var2.pose = Pose.STANDING;
-         var2.boundingBoxHeight = var1.getDimensions(Pose.STANDING).height();
-         var2.boundingBoxWidth = var1.getDimensions(Pose.STANDING).width();
-         var2.eyeHeight = var1.getEyeHeight(Pose.STANDING);
-         var2.isCrouching = false;
-         var2.isVisuallySwimming = false;
-         var2.shouldApplyFlyingYRot = false;
-         var2.flyingYRot = 0.0F;
+         && (avatar.isFallFlying() || avatar.getPose() == Pose.FALL_FLYING)) {
+         avatarRenderState.isFallFlying = false;
+         avatarRenderState.fallFlyingTimeInTicks = 0.0F;
+         avatarRenderState.swimAmount = 0.0F;
+         avatarRenderState.pose = Pose.STANDING;
+         avatarRenderState.boundingBoxHeight = avatar.getDimensions(Pose.STANDING).height();
+         avatarRenderState.boundingBoxWidth = avatar.getDimensions(Pose.STANDING).width();
+         avatarRenderState.eyeHeight = avatar.getEyeHeight(Pose.STANDING);
+         avatarRenderState.isCrouching = false;
+         avatarRenderState.isVisuallySwimming = false;
+         avatarRenderState.shouldApplyFlyingYRot = false;
+         avatarRenderState.flyingYRot = 0.0F;
       }
    }
 
@@ -49,10 +49,10 @@ public class MixinPlayerEntityRenderer {
       method = {"extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$hideCosmeticParts(Avatar var1, AvatarRenderState var2, float var3, CallbackInfo var4) {
-      ((Handler4)var2).zenith$setProfileName(var1 instanceof Player var5 ? var5.getGameProfile().name() : null);
-      WardrobeFeatureRenderer.method4446(var2);
-      var2.nameTag = StreamerModeModule.INSTANCE.method6293(var2.nameTag);
-      var2.scoreText = StreamerModeModule.INSTANCE.method6293(var2.scoreText);
+   private void zenith$hideCosmeticParts(Avatar avatar, AvatarRenderState state, float f, CallbackInfo callbackInfo) {
+      ((Handler4)state).zenith$setProfileName(avatar instanceof Player player ? player.getGameProfile().name() : null);
+      WardrobeFeatureRenderer.method4446(state);
+      state.nameTag = StreamerModeModule.INSTANCE.method6293(state.nameTag);
+      state.scoreText = StreamerModeModule.INSTANCE.method6293(state.scoreText);
    }
 }

@@ -66,10 +66,10 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       );
    }
 
-   public void select(int var1) {
-      if (var1 != this.activeIndex && var1 >= 0 && var1 < this.pages.size()) {
+   public void select(int activeIndex) {
+      if (activeIndex != this.activeIndex && activeIndex >= 0 && activeIndex < this.pages.size()) {
          this.pages.get(this.activeIndex).onHide();
-         this.activeIndex = var1;
+         this.activeIndex = activeIndex;
          this.pages.get(this.activeIndex).onShow();
          this.pageTransition.method2809(0.0F);
       }
@@ -103,93 +103,93 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
 
    @Override
    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-      MenuDrawContext var5 = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
-      Window var6 = mc.getWindow();
-      float var7 = var6.getGuiScaledWidth();
-      float var8 = var6.getGuiScaledHeight();
-      MenuParticleRenderer.renderBackgroundAndParticles(var5);
-      this.backdrop.capture(var5, MenuTheme.px(36.0F));
+      MenuDrawContext graphics = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
+      Window window = mc.getWindow();
+      float guiScaledWidth = window.getGuiScaledWidth();
+      float guiScaledHeight = window.getGuiScaledHeight();
+      MenuParticleRenderer.renderBackgroundAndParticles(graphics);
+      this.backdrop.capture(graphics, MenuTheme.px(36.0F));
       MenuSurface.setMenuSource(this.backdrop.texture());
       this.openTransition.method2808(1.0F);
       this.pageTransition.method2808(1.0F);
-      MainMenuPage var9 = this.page();
-      var9.update();
-      float var10 = var9.footerHeight();
-      float var11 = MenuSkin.HEADER_HEIGHT
+      MainMenuPage page = this.page();
+      page.update();
+      float footerHeight = page.footerHeight();
+      float f = MenuSkin.HEADER_HEIGHT
          + SECTION_GUTTER
          + MenuNavigationBar.HEIGHT
          + NAVIGATION_GAP
-         + var9.contentHeight()
-         + (var10 > 0.0F ? SECTION_GUTTER + var10 : 0.0F);
-      float var12 = this.navigationBar.measureWidth(this.activeIndex);
-      float var13 = Math.max(var12, Math.max(var9.contentWidth(), var9.footerWidth()));
-      float var14 = Math.min(1.0F, (var8 - SCREEN_MARGIN * 2.0F) / Math.max(1.0F, var11));
-      float var15 = Math.min(1.0F, (var7 - SCREEN_MARGIN * 2.0F) / Math.max(1.0F, var13));
-      this.fit = Math.max(0.35F, Math.min(var14, var15));
-      float var16 = var7 / this.fit;
-      float var17 = var8 / this.fit;
-      float var18 = MenuTheme.snap(Math.max(SCREEN_MARGIN, (var17 - var11) / 2.0F));
-      float var19 = MenuTheme.snap(var16 / 2.0F);
-      var5.pose().pushMatrix();
-      var5.pose().scale(this.fit, this.fit);
-      float var20 = (1.0F - this.openTransition.getValue()) * MenuTheme.px(40.0F);
-      var5.pose().pushMatrix();
-      var5.pose().translate(0.0F, var20);
-      float var21 = mouseX / this.fit;
-      float var22 = mouseY / this.fit;
-      this.renderIdentity(var5, var19, var18);
-      float var23 = var18 + MenuSkin.HEADER_HEIGHT + SECTION_GUTTER;
-      float var24 = var23 + MenuNavigationBar.HEIGHT + NAVIGATION_GAP;
-      BoundsData var25 = new BoundsData(MenuTheme.snap(var19 - var9.contentWidth() / 2.0F), MenuTheme.snap(var24), var9.contentWidth(), var9.contentHeight());
-      var9.layout(var25);
-      float var26 = (1.0F - this.pageTransition.getValue()) * MenuTheme.px(24.0F);
-      var5.pose().pushMatrix();
-      var5.pose().translate(0.0F, var26);
-      var9.render(var5, var21, var22, var25);
-      if (var10 > 0.0F) {
-         BoundsData var27 = new BoundsData(
-            MenuTheme.snap(var19 - var9.footerWidth() / 2.0F), var24 + var9.contentHeight() + SECTION_GUTTER, var9.footerWidth(), var10
+         + page.contentHeight()
+         + (footerHeight > 0.0F ? SECTION_GUTTER + footerHeight : 0.0F);
+      float measureWidth = this.navigationBar.measureWidth(this.activeIndex);
+      float f2 = Math.max(measureWidth, Math.max(page.contentWidth(), page.footerWidth()));
+      float f3 = Math.min(1.0F, (guiScaledHeight - SCREEN_MARGIN * 2.0F) / Math.max(1.0F, f));
+      float f4 = Math.min(1.0F, (guiScaledWidth - SCREEN_MARGIN * 2.0F) / Math.max(1.0F, f2));
+      this.fit = Math.max(0.35F, Math.min(f3, f4));
+      float f5 = guiScaledWidth / this.fit;
+      float f6 = guiScaledHeight / this.fit;
+      float snap = MenuTheme.snap(Math.max(SCREEN_MARGIN, (f6 - f) / 2.0F));
+      float snap2 = MenuTheme.snap(f5 / 2.0F);
+      graphics.pose().pushMatrix();
+      graphics.pose().scale(this.fit, this.fit);
+      float y = (1.0F - this.openTransition.getValue()) * MenuTheme.px(40.0F);
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(0.0F, y);
+      float mouseX2 = mouseX / this.fit;
+      float mouseY2 = mouseY / this.fit;
+      this.renderIdentity(graphics, snap2, snap);
+      float y2 = snap + MenuSkin.HEADER_HEIGHT + SECTION_GUTTER;
+      float floatValue = y2 + MenuNavigationBar.HEIGHT + NAVIGATION_GAP;
+      BoundsData boundsData = new BoundsData(MenuTheme.snap(snap2 - page.contentWidth() / 2.0F), MenuTheme.snap(floatValue), page.contentWidth(), page.contentHeight());
+      page.layout(boundsData);
+      float y3 = (1.0F - this.pageTransition.getValue()) * MenuTheme.px(24.0F);
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(0.0F, y3);
+      page.render(graphics, mouseX2, mouseY2, boundsData);
+      if (footerHeight > 0.0F) {
+         BoundsData boundsData2 = new BoundsData(
+            MenuTheme.snap(snap2 - page.footerWidth() / 2.0F), floatValue + page.contentHeight() + SECTION_GUTTER, page.footerWidth(), footerHeight
          );
-         var9.renderFooter(var5, var21, var22, var27);
+         page.renderFooter(graphics, mouseX2, mouseY2, boundsData2);
       }
 
-      var5.pose().popMatrix();
-      this.navigationBar.render(var5, var21, var22, var19, var23, this.activeIndex);
-      var5.pose().popMatrix();
-      var5.pose().popMatrix();
+      graphics.pose().popMatrix();
+      this.navigationBar.render(graphics, mouseX2, mouseY2, snap2, y2, this.activeIndex);
+      graphics.pose().popMatrix();
+      graphics.pose().popMatrix();
    }
 
-   private void renderIdentity(MenuDrawContext var1, float var2, float var3) {
-      Font var4 = MenuTheme.medium(12.0F);
-      Font var5 = MenuTheme.regular(12.0F);
-      String var6 = "Zenith";
-      String var7 = MenuTheme.t("menu.welcome");
-      String var8 = Zenith.getInstance().getEntry().getUsername();
-      if (var8 == null || var8.isEmpty()) {
-         var8 = MenuTheme.t("menu.guest");
+   private void renderIdentity(MenuDrawContext graphics, float f, float snap) {
+      Font medium = MenuTheme.medium(12.0F);
+      Font regular = MenuTheme.regular(12.0F);
+      String text = "Zenith";
+      String str = MenuTheme.t("menu.welcome");
+      String username = Zenith.getInstance().getEntry().getUsername();
+      if (username == null || username.isEmpty()) {
+         username = MenuTheme.t("menu.guest");
       }
 
-      float var9 = MenuSkin.HEADER_HEIGHT;
-      float var10 = MenuSkin.TILE_INSET
+      float height = MenuSkin.HEADER_HEIGHT;
+      float width = MenuSkin.TILE_INSET
          + MenuSkin.HEADER_TILE
          + MenuSkin.dividerWidth()
-         + var4.width(var6)
+         + medium.width(text)
          + MenuSkin.dividerWidth()
-         + var5.width(var7)
+         + regular.width(str)
          + MenuSkin.GAP
-         + var4.width(var8)
+         + medium.width(username)
          + MenuSkin.EDGE;
-      float var11 = MenuTheme.snap(var2 - var10 / 2.0F);
-      MenuSkin.panel(var1, var11, var3, var10, var9);
-      float var12 = var3 + MenuSkin.TILE_INSET;
-      MenuSkin.accentTile(var1, var11 + MenuSkin.TILE_INSET, var12, MenuSkin.HEADER_TILE, MenuIcons.ZENITH);
-      float var13 = MenuSkin.divider(var1, var11 + MenuSkin.TILE_INSET + MenuSkin.HEADER_TILE, var3, var9);
-      var1.drawText(var4, var6, var13, var3 + (var9 - var4.height()) / 2.0F, MenuTheme.text());
-      var13 += var4.width(var6);
-      var13 = MenuSkin.divider(var1, var13, var3, var9);
-      var1.drawText(var5, var7, var13, var3 + (var9 - var5.height()) / 2.0F, MenuTheme.textSecondary());
-      var13 += var5.width(var7) + MenuSkin.GAP;
-      var1.drawText(var4, var8, var13, var3 + (var9 - var4.height()) / 2.0F, MenuTheme.accent());
+      float floatValue = MenuTheme.snap(f - width / 2.0F);
+      MenuSkin.panel(graphics, floatValue, snap, width, height);
+      float y = snap + MenuSkin.TILE_INSET;
+      MenuSkin.accentTile(graphics, floatValue + MenuSkin.TILE_INSET, y, MenuSkin.HEADER_TILE, MenuIcons.ZENITH);
+      float divider = MenuSkin.divider(graphics, floatValue + MenuSkin.TILE_INSET + MenuSkin.HEADER_TILE, snap, height);
+      graphics.drawText(medium, text, divider, snap + (height - medium.height()) / 2.0F, MenuTheme.text());
+      divider += medium.width(text);
+      divider = MenuSkin.divider(graphics, divider, snap, height);
+      graphics.drawText(regular, str, divider, snap + (height - regular.height()) / 2.0F, MenuTheme.textSecondary());
+      divider += regular.width(str) + MenuSkin.GAP;
+      graphics.drawText(medium, username, divider, snap + (height - medium.height()) / 2.0F, MenuTheme.accent());
    }
 
    @Override
@@ -197,13 +197,13 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       return this.mouseClicked(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      double var6 = var1 / this.fit;
-      double var8 = var3 / this.fit;
-      if (this.navigationBar.mouseClicked(var6, var8)) {
+   public boolean mouseClicked(double x, double y, int mouseToGlfw) {
+      double d = x / this.fit;
+      double y2 = y / this.fit;
+      if (this.navigationBar.mouseClicked(d, y2)) {
          return true;
       } else {
-         return this.page().mouseClicked(var6, var8, var5) ? true : super.mouseClicked(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);
+         return this.page().mouseClicked(d, y2, mouseToGlfw) ? true : super.mouseClicked(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);
       }
    }
 
@@ -212,8 +212,8 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       return this.mouseReleased(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseReleased(double var1, double var3, int var5) {
-      return this.page().mouseReleased(var1 / this.fit, var3 / this.fit, var5) ? true : super.mouseReleased(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
+   public boolean mouseReleased(double x, double y, int mouseToGlfw) {
+      return this.page().mouseReleased(x / this.fit, y / this.fit, mouseToGlfw) ? true : super.mouseReleased(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
    }
 
    @Override
@@ -221,10 +221,10 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       return this.mouseDragged(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()), offsetX, offsetY);
    }
 
-   public boolean mouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      return this.page().mouseDragged(var1 / this.fit, var3 / this.fit, var5)
+   public boolean mouseDragged(double x, double y, int mouseToGlfw, double offsetX, double offsetY) {
+      return this.page().mouseDragged(x / this.fit, y / this.fit, mouseToGlfw)
          ? true
-         : super.mouseDragged(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), var6, var8);
+         : super.mouseDragged(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), offsetX, offsetY);
    }
 
    @Override
@@ -239,8 +239,8 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return this.page().keyPressed(var1, var2, var3) ? true : super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      return this.page().keyPressed(keyCode, keycode, modifiers) ? true : super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
    }
 
    @Override
@@ -248,8 +248,8 @@ public class MainMenuScreen extends Screen implements MinecraftAccess {
       return this.charTyped((char)input.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
-      return this.page().charTyped(var1, var2) ? true : super.charTyped(new CharacterEvent(var1));
+   public boolean charTyped(char codepoint, int n) {
+      return this.page().charTyped(codepoint, n) ? true : super.charTyped(new CharacterEvent(codepoint));
    }
 
    @Override

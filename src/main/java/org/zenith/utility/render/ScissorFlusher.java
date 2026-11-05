@@ -19,27 +19,27 @@ public final class ScissorFlusher {
    }
 
    public static void flush() {
-      Minecraft var0 = Minecraft.getInstance();
-      if (var0 != null && var0.gameRenderer != null) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.gameRenderer != null) {
          MsdfRenderer.flushBatch();
-         GameRendererAccessor var1 = (GameRendererAccessor)(Object)var0.gameRenderer;
-         if (((ScissorFlusher.Handler)var0.gameRenderer.gameRenderState().guiRenderState).zenith$pending()) {
-            ScissorState var2 = RenderSystem.getScissorStateForRenderTypeDraws();
-            boolean var3 = var2.enabled();
-            int var4 = var2.x();
-            int var5 = var2.y();
-            int var6 = var2.width();
-            int var7 = var2.height();
+         GameRendererAccessor gameRenderer = (GameRendererAccessor)(Object)minecraft.gameRenderer;
+         if (((ScissorFlusher.Handler)minecraft.gameRenderer.gameRenderState().guiRenderState).zenith$pending()) {
+            ScissorState scissorStateForRenderTypeDraws = RenderSystem.getScissorStateForRenderTypeDraws();
+            boolean enabled = scissorStateForRenderTypeDraws.enabled();
+            int x = scissorStateForRenderTypeDraws.x();
+            int y = scissorStateForRenderTypeDraws.y();
+            int width = scissorStateForRenderTypeDraws.width();
+            int height = scissorStateForRenderTypeDraws.height();
             RenderState.method1901();
             RenderState.method1881();
             intValue++;
 
             try {
-               var1.zenith$guiRenderer().render();
+               gameRenderer.zenith$guiRenderer().render();
             } finally {
                intValue--;
-               if (var3) {
-                  RenderState.method1900(var4, var5, var6, var7);
+               if (enabled) {
+                  RenderState.method1900(x, y, width, height);
                }
             }
          }

@@ -62,26 +62,26 @@ public final class WallBypassModule extends Module {
    }
 
    @EventTarget
-   public void method7499(PlayerMoveEvent var1) {
+   public void method7499(PlayerMoveEvent event) {
       if (this.intValue <= 0) {
-         var1.setVec3d(Vec3.ZERO);
+         event.setVec3d(Vec3.ZERO);
       }
    }
 
    @EventTarget
-   public void method7500(Event5 var1) {
+   public void method7500(Event5 event) {
       if (!this.flag || this.rotation == null || mc.player == null || mc.level == null) {
          this.setToggled(false);
       } else if (!this.flag2) {
-         Rotation var2 = this.rotation;
-         rotationManager.method7848(new RotationRequest(var2, () -> var2, bcCameraTestnerv.getRotationConfig()), 70, this, 1);
+         Rotation rotation = this.rotation;
+         rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 70, this, 1);
          this.flag2 = true;
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.getPacket3() instanceof ServerboundMovePlayerPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.getPacket3() instanceof ServerboundMovePlayerPacket) {
          if (this.intValue > 0) {
             if (this.flag2) {
                this.intValue--;
@@ -90,7 +90,7 @@ public final class WallBypassModule extends Module {
             return;
          }
 
-         var1.setCancelled(true);
+         event.setCancelled(true);
       }
    }
 
@@ -104,27 +104,27 @@ public final class WallBypassModule extends Module {
 
    private Rotation method7503() {
       if (mc.player != null && mc.level != null) {
-         Rotation var1 = rotationManager.method7844();
-         float var2 = var1.getFloatValue();
-         Rotation[] var3 = new Rotation[]{
-            new Rotation(var2, -90.0F),
-            new Rotation(var2, 90.0F),
-            new Rotation(var2, 0.0F),
+         Rotation rotation = rotationManager.method7844();
+         float floatValue = rotation.getFloatValue();
+         Rotation[] rotations = new Rotation[]{
+            new Rotation(floatValue, -90.0F),
+            new Rotation(floatValue, 90.0F),
+            new Rotation(floatValue, 0.0F),
             new Rotation(mc.player.getYRot(), -90.0F),
             new Rotation(mc.player.getYRot(), 90.0F),
             new Rotation(mc.player.getYRot(), 0.0F)
          };
 
-         for (Rotation var7 : var3) {
-            if (this.method7505(var7)) {
-               return var7;
+         for (Rotation rotation2 : rotations) {
+            if (this.method7505(rotation2)) {
+               return rotation2;
             }
          }
 
-         for (int var12 : CONST_intValues) {
-            Rotation var8 = this.method7504(var2, var12);
-            if (var8 != null) {
-               return var8;
+         for (int n : CONST_intValues) {
+            Rotation rotation2 = this.method7504(floatValue, n);
+            if (rotation2 != null) {
+               return rotation2;
             }
          }
 
@@ -134,34 +134,34 @@ public final class WallBypassModule extends Module {
       }
    }
 
-   private Rotation method7504(float var1, int var2) {
-      int var3 = -90;
+   private Rotation method7504(float floatValue, int n) {
+      int xRot = -90;
 
-      while (var3 <= 90) {
-         for (int var4 = 0; var4 < 360; var4 += var2) {
-            Rotation var5 = new Rotation(var1 + var4, var3);
-            if (this.method7505(var5)) {
-               return var5;
+      while (xRot <= 90) {
+         for (int i = 0; i < 360; i += n) {
+            Rotation rotation = new Rotation(floatValue + i, xRot);
+            if (this.method7505(rotation)) {
+               return rotation;
             }
 
-            if (var4 != 0) {
-               Rotation var6 = new Rotation(var1 - var4, var3);
-               if (this.method7505(var6)) {
-                  return var6;
+            if (i != 0) {
+               Rotation rotation2 = new Rotation(floatValue - i, xRot);
+               if (this.method7505(rotation2)) {
+                  return rotation2;
                }
             }
          }
 
-         var3 += var2;
+         xRot += n;
       }
 
       return null;
    }
 
-   private boolean method7505(Rotation var1) {
+   private boolean method7505(Rotation rotation) {
       if (mc.player != null && mc.level != null) {
-         BlockHitResult var2 = TargetUtils.method3216(mc.player.getEyePosition(1.0F), var1, 3.0, var0 -> true);
-         return var2 != null && var2.getType() == Type.MISS && UseItemUtils.method6523(BlockPos.containing(var2.getLocation()));
+         BlockHitResult blockHitResult = TargetUtils.method3216(mc.player.getEyePosition(1.0F), rotation, 3.0, blockHitResult2 -> true);
+         return blockHitResult != null && blockHitResult.getType() == Type.MISS && UseItemUtils.method6523(BlockPos.containing(blockHitResult.getLocation()));
       } else {
          return false;
       }

@@ -114,7 +114,7 @@ public class PlayerAPI extends LivingEntityAPI<Player> {
          }
 
          return this.entity.isModelPartShown(PlayerModelPart.valueOf(part.toUpperCase(Locale.US)));
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Invalid player model part: " + part);
       }
    }

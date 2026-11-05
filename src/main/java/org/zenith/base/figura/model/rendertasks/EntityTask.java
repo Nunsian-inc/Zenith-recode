@@ -118,8 +118,8 @@ public class EntityTask extends RenderTask {
 
          this.ticksSinceEntity = Minecraft.getInstance().level.getGameTime() - this.entity.tickCount;
          return this;
-      } catch (CommandSyntaxException var4) {
-         throw new LuaError(var4.getMessage());
+      } catch (CommandSyntaxException e) {
+         throw new LuaError(e.getMessage());
       }
    }
 

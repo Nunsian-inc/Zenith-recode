@@ -86,41 +86,41 @@ public class ServerProbeModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         Packet var2 = var1.getPacket3();
-         if (var2 instanceof ClientboundCommandsPacket && this.commands.isEnabled()) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         Packet packet3 = event.getPacket3();
+         if (packet3 instanceof ClientboundCommandsPacket && this.commands.isEnabled()) {
             this.flag = true;
-         } else if (var2 instanceof ClientboundCustomPayloadPacket var12) {
-            if (var12.payload() instanceof BrandPayload var15) {
-               this.line("brand: " + var15.brand());
+         } else if (packet3 instanceof ClientboundCustomPayloadPacket customPayloadPacket) {
+            if (customPayloadPacket.payload() instanceof BrandPayload brandPayload) {
+               this.line("brand: " + brandPayload.brand());
             } else {
-               this.line("payload: " + var12.payload().type().id());
+               this.line("payload: " + customPayloadPacket.payload().type().id());
             }
-         } else if (var2 instanceof ClientboundTeleportEntityPacket var3 && this.teleports.isEnabled()) {
-            this.method6961(var3);
-         } else if (var2 instanceof ClientboundRemoveEntitiesPacket var9 && this.tracking.isEnabled()) {
-            IntListIterator var14 = var9.entityIds().iterator();
+         } else if (packet3 instanceof ClientboundTeleportEntityPacket teleportEntityPacket && this.teleports.isEnabled()) {
+            this.method6961(teleportEntityPacket);
+         } else if (packet3 instanceof ClientboundRemoveEntitiesPacket removeEntitiesPacket && this.tracking.isEnabled()) {
+            IntListIterator intListIterator = removeEntitiesPacket.entityIds().iterator();
 
-            while (var14.hasNext()) {
-               int var16 = (Integer)var14.next();
-               this.method6960(var16);
+            while (intListIterator.hasNext()) {
+               int id = (Integer)intListIterator.next();
+               this.method6960(id);
             }
-         } else if (var2 instanceof ClientboundSoundPacket var10 && this.sounds.isEnabled()) {
-            Vec3 var13 = new Vec3(var10.getX(), var10.getY(), var10.getZ());
-            double var5 = this.method6964(var13);
-            if (!(var5 < 0.0)) {
-               this.doubleValue3 = Math.max(this.doubleValue3, var5);
-               String var7 = var10.getSound().unwrapKey().map(var0 -> var0.identifier().toString()).orElse("unknown");
-               int[] var8 = this.items2.computeIfAbsent(var7, var0 -> new int[]{0, 0});
-               var8[0]++;
-               var8[1] = Math.max(var8[1], (int)var5);
+         } else if (packet3 instanceof ClientboundSoundPacket clientboundSoundPacket && this.sounds.isEnabled()) {
+            Vec3 vec = new Vec3(clientboundSoundPacket.getX(), clientboundSoundPacket.getY(), clientboundSoundPacket.getZ());
+            double d = this.method6964(vec);
+            if (!(d < 0.0)) {
+               this.doubleValue3 = Math.max(this.doubleValue3, d);
+               String key = clientboundSoundPacket.getSound().unwrapKey().map(resourceKey -> resourceKey.identifier().toString()).orElse("unknown");
+               int[] ints = this.items2.computeIfAbsent(key, str -> new int[]{0, 0});
+               ints[0]++;
+               ints[1] = Math.max(ints[1], (int)d);
             }
          } else {
-            if (var2 instanceof ClientboundLevelParticlesPacket var11 && this.sounds.isEnabled()) {
-               double var4 = this.method6964(new Vec3(var11.x(), var11.y(), var11.z()));
-               if (var4 > 0.0) {
-                  this.doubleValue4 = Math.max(this.doubleValue4, var4);
+            if (packet3 instanceof ClientboundLevelParticlesPacket levelParticlesPacket && this.sounds.isEnabled()) {
+               double d = this.method6964(new Vec3(levelParticlesPacket.x(), levelParticlesPacket.y(), levelParticlesPacket.z()));
+               if (d > 0.0) {
+                  this.doubleValue4 = Math.max(this.doubleValue4, d);
                }
             }
          }
@@ -128,69 +128,69 @@ public class ServerProbeModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.flag) {
          this.flag = false;
          this.method6962();
       }
 
       if (this.tracking.isEnabled() && mc.level != null && mc.player != null) {
-         for (Player var3 : mc.level.players()) {
-            if (var3 != mc.player) {
-               String var4 = var3.getGameProfile().name();
-               ServerProbeModule.Entry var5 = this.items.computeIfAbsent(var4, var2 -> {
+         for (Player player : mc.level.players()) {
+            if (player != mc.player) {
+               String name = player.getGameProfile().name();
+               ServerProbeModule.Entry entry = this.items.computeIfAbsent(name, str -> {
                   ServerProbeModule.Entry var3x = new ServerProbeModule.Entry();
-                  double var4x = mc.player.distanceTo(var3);
+                  double var4x = mc.player.distanceTo(player);
                   this.doubleValue = Math.max(this.doubleValue, var4x);
-                  this.line(String.format(Locale.ROOT, "spawn %s at %.1f блоков", var2, var4x));
+                  this.line(String.format(Locale.ROOT, "spawn %s at %.1f блоков", str, var4x));
                   return var3x;
                });
-               var5.vec3d = var3.position();
-               var5.longValue = System.currentTimeMillis();
+               entry.vec3d = player.position();
+               entry.longValue = System.currentTimeMillis();
             }
          }
       }
    }
 
-   private void method6960(int var1) {
+   private void method6960(int id) {
       if (mc.level != null && mc.player != null) {
-         if (mc.level.getEntity(var1) instanceof Player var3 && var3 != mc.player) {
-            double var4 = mc.player.distanceTo(var3);
-            this.doubleValue2 = Math.min(this.doubleValue2, var4);
+         if (mc.level.getEntity(id) instanceof Player entity && entity != mc.player) {
+            double d = mc.player.distanceTo(entity);
+            this.doubleValue2 = Math.min(this.doubleValue2, d);
             this.line(
                String.format(
                   Locale.ROOT,
                   "despawn %s at %.1f блоков, последняя точка %.0f %.0f %.0f",
-                  var3.getGameProfile().name(),
-                  var4,
-                  var3.getX(),
-                  var3.getY(),
-                  var3.getZ()
+                  entity.getGameProfile().name(),
+                  d,
+                  entity.getX(),
+                  entity.getY(),
+                  entity.getZ()
                )
             );
          }
       }
    }
 
-   private void method6961(ClientboundTeleportEntityPacket var1) {
+   private void method6961(ClientboundTeleportEntityPacket teleportEntityPacket) {
       if (mc.level != null && mc.player != null) {
-         Entity var2 = mc.level.getEntity(var1.id());
-         if (var2 instanceof Player var3) {
-            Vec3 var4 = var1.change().position();
-            double var5 = var2.position().distanceTo(var4);
-            if (!(var5 < 8.0)) {
+         Entity entity = mc.level.getEntity(teleportEntityPacket.id());
+         if (entity instanceof Player player) {
+            Vec3 position = teleportEntityPacket.change().position();
+            double d = entity.position().distanceTo(position);
+            if (!(d < 8.0)) {
                this.line(
                   String.format(
                      Locale.ROOT,
                      "teleport %s %.0f %.0f %.0f -> %.0f %.0f %.0f (%.0f блоков)",
-                     var3.getGameProfile().name(),
-                     var2.getX(),
-                     var2.getY(),
-                     var2.getZ(),
-                     var4.x,
-                     var4.y,
-                     var4.z,
-                     var5
+                     player.getGameProfile().name(),
+                     entity.getX(),
+                     entity.getY(),
+                     entity.getZ(),
+                     position.x,
+                     position.y,
+                     position.z,
+                     d
                   )
                );
             }
@@ -200,21 +200,21 @@ public class ServerProbeModule extends Module {
 
    private void method6962() {
       if (mc.getConnection() != null) {
-         RootCommandNode var1 = mc.getConnection().getCommands().getRoot();
-         ArrayList var2 = new ArrayList();
+         RootCommandNode root = mc.getConnection().getCommands().getRoot();
+         ArrayList list = new ArrayList();
 
-         for (Object var4_o : (Iterable<?>)(Object)(var1.getChildren())) {
-            CommandNode var4 = (CommandNode)var4_o;
-            String var5 = var4.getName();
-            var2.add(var5);
-            int var6 = var5.indexOf(58);
-            if (var6 > 0) {
-               this.items3.add(var5.substring(0, var6));
+         for (Object obj : (Iterable<?>)(Object)(root.getChildren())) {
+            CommandNode commandNode = (CommandNode)obj;
+            String name = commandNode.getName();
+            list.add(name);
+            int indexOf = name.indexOf(58);
+            if (indexOf > 0) {
+               this.items3.add(name.substring(0, indexOf));
             }
          }
 
-         Collections.sort(var2);
-         this.line("commands (" + var2.size() + "): " + String.join(", ", var2));
+         Collections.sort(list);
+         this.line("commands (" + list.size() + "): " + String.join(", ", list));
          this.line("namespaces (" + this.items3.size() + "): " + String.join(", ", this.items3));
       }
    }
@@ -226,19 +226,19 @@ public class ServerProbeModule extends Module {
       this.line(String.format(Locale.ROOT, "звук слышен до %.1f блоков, частицы до %.1f", this.doubleValue3, this.doubleValue4));
       this.line("плагинные namespace: " + (this.items3.isEmpty() ? "нет" : String.join(", ", this.items3)));
       this.line("звуки по дальности:");
-      var var1 = new ArrayList<>(this.items2.entrySet());
-      var1.sort((var0, var1x) -> Integer.compare(((int[])var1x.getValue())[1], ((int[])var0.getValue())[1]));
+      var entries = new ArrayList<>(this.items2.entrySet());
+      entries.sort((entry, var1x) -> Integer.compare(((int[])var1x.getValue())[1], ((int[])entry.getValue())[1]));
 
-      for (int var2 = 0; var2 < Math.min(25, var1.size()); var2++) {
-         Map.Entry var3 = (Map.Entry)var1.get(var2);
-         this.line("  " + (String)var3.getKey() + " x" + ((int[])var3.getValue())[0] + " до " + ((int[])var3.getValue())[1] + " блоков");
+      for (int i = 0; i < Math.min(25, entries.size()); i++) {
+         Map.Entry entry = (Map.Entry)entries.get(i);
+         this.line("  " + (String)entry.getKey() + " x" + ((int[])entry.getValue())[0] + " до " + ((int[])entry.getValue())[1] + " блоков");
       }
 
       ChatLogger.method2019("ServerProbe: отчёт записан, namespace " + this.items3.size());
    }
 
-   private double method6964(Vec3 var1) {
-      return mc.player == null ? -1.0 : mc.player.position().distanceTo(var1);
+   private double method6964(Vec3 vec) {
+      return mc.player == null ? -1.0 : mc.player.position().distanceTo(vec);
    }
 
    private String method6965() {
@@ -247,23 +247,23 @@ public class ServerProbeModule extends Module {
 
    private void method6966() {
       try {
-         File var1 = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
-         if (!var1.exists() && !var1.mkdirs()) {
+         File file = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
+         if (!file.exists() && !file.mkdirs()) {
             return;
          }
 
-         File var2 = new File(var1, "serverprobe-" + System.currentTimeMillis() + ".log");
-         this.printWriter = new PrintWriter(new FileWriter(var2, true), true);
-         ChatLogger.method2019("ServerProbe: лог " + var2.getAbsolutePath());
-      } catch (Exception var3) {
+         File file2 = new File(file, "serverprobe-" + System.currentTimeMillis() + ".log");
+         this.printWriter = new PrintWriter(new FileWriter(file2, true), true);
+         ChatLogger.method2019("ServerProbe: лог " + file2.getAbsolutePath());
+      } catch (Exception e) {
          this.printWriter = null;
       }
    }
 
-   private void line(String var1) {
-      System.out.println("[ServerProbe] " + var1);
+   private void line(String x) {
+      System.out.println("[ServerProbe] " + x);
       if (this.printWriter != null) {
-         this.printWriter.println(var1);
+         this.printWriter.println(x);
       }
    }
 
@@ -271,7 +271,7 @@ public class ServerProbeModule extends Module {
       if (this.printWriter != null) {
          try {
             this.printWriter.close();
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
 
          this.printWriter = null;

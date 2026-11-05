@@ -40,199 +40,199 @@ public final class Class35 implements MinecraftAccess {
       this.items.clear();
    }
 
-   public float method5452(Vec3 var1, float var2, LivingEntity var3, AABB var4, BlockPos var5, BlockPos var6) {
-      return this.method5456(var3, this.method5454(var1, var2, var3, var4, var5, var6));
+   public float method5452(Vec3 position, float floatValue, LivingEntity player, AABB box2, BlockPos blockPos2, BlockPos blockPos3) {
+      return this.method5456(player, this.method5454(position, floatValue, player, box2, blockPos2, blockPos3));
    }
 
-   public float method5453(Vec3 var1, float var2, LivingEntity var3, AABB var4) {
-      return this.method5456(var3, this.method5455(var1, var2, var3, var4));
+   public float method5453(Vec3 position, float floatValue, LivingEntity playerEntity, AABB box3) {
+      return this.method5456(playerEntity, this.method5455(position, floatValue, playerEntity, box3));
    }
 
-   public float method5454(Vec3 var1, float var2, LivingEntity var3, AABB var4, BlockPos var5, BlockPos var6) {
-      return this.method5459(var1, var2, var3, var4, var5, var6, true);
+   public float method5454(Vec3 position, float floatValue, LivingEntity playerEntity, AABB box, BlockPos blockPos2, BlockPos blockPos3) {
+      return this.method5459(position, floatValue, playerEntity, box, blockPos2, blockPos3, true);
    }
 
-   public float method5455(Vec3 var1, float var2, LivingEntity var3, AABB var4) {
-      return this.method5459(var1, var2, var3, var4, null, null, false);
+   public float method5455(Vec3 position, float floatValue, LivingEntity playerEntity, AABB box3) {
+      return this.method5459(position, floatValue, playerEntity, box3, null, null, false);
    }
 
-   public float method5456(LivingEntity var1, float var2) {
-      if (var1 != null && !(var2 <= 0.0F)) {
-         float var3 = method5463(var1, var2);
-         var3 = method5464(var1, var3);
-         var3 = this.method5465(var1, var3);
-         return Math.max(0.0F, var3);
+   public float method5456(LivingEntity playerEntity, float f) {
+      if (playerEntity != null && !(f <= 0.0F)) {
+         float f2 = method5463(playerEntity, f);
+         f2 = method5464(playerEntity, f2);
+         f2 = this.method5465(playerEntity, f2);
+         return Math.max(0.0F, f2);
       } else {
          return 0.0F;
       }
    }
 
-   public float method5457(LivingEntity var1, float var2) {
-      if (var1 != null && !(var2 <= 0.0F)) {
-         float var3 = method5464(var1, method5463(var1, var2));
+   public float method5457(LivingEntity playerEntity, float f) {
+      if (playerEntity != null && !(f <= 0.0F)) {
+         float f2 = method5464(playerEntity, method5463(playerEntity, f));
          this.method5466();
-         int var4 = 0;
+         int n = 0;
 
-         for (EquipmentSlot var8 : equipmentSlots) {
-            ItemStack var9 = var1.getItemBySlot(var8);
-            if (!var9.isEmpty() && this.registryEntry != null) {
-               var4 += EnchantmentHelper.getItemEnchantmentLevel(this.registryEntry, var9);
+         for (EquipmentSlot equipmentSlot : equipmentSlots) {
+            ItemStack itemBySlot = playerEntity.getItemBySlot(equipmentSlot);
+            if (!itemBySlot.isEmpty() && this.registryEntry != null) {
+               n += EnchantmentHelper.getItemEnchantmentLevel(this.registryEntry, itemBySlot);
             }
          }
 
-         return Math.max(0.0F, var3 * (1.0F - Mth.clamp(var4, 0, 20) / 25.0F));
+         return Math.max(0.0F, f2 * (1.0F - Mth.clamp(n, 0, 20) / 25.0F));
       } else {
          return 0.0F;
       }
    }
 
-   public float method5458(LivingEntity var1, float var2) {
-      if (var1 != null && !(var2 <= 0.0F)) {
-         float var3 = var2;
-         float var4 = var2 * 25.0F + 2.0F;
+   public float method5458(LivingEntity playerEntity, float f) {
+      if (playerEntity != null && !(f <= 0.0F)) {
+         float f2 = f;
+         float f3 = f * 25.0F + 2.0F;
 
-         for (int var5 = 0; var5 < 24; var5++) {
-            float var6 = (var3 + var4) * 0.5F;
-            if (this.method5456(var1, var6) < var2) {
-               var3 = var6;
+         for (int i = 0; i < 24; i++) {
+            float f4 = (f2 + f3) * 0.5F;
+            if (this.method5456(playerEntity, f4) < f) {
+               f2 = f4;
             } else {
-               var4 = var6;
+               f3 = f4;
             }
          }
 
-         return var4;
+         return f3;
       } else {
          return 0.0F;
       }
    }
 
-   private float method5459(Vec3 var1, float var2, LivingEntity var3, AABB var4, BlockPos var5, BlockPos var6, boolean var7) {
-      if (var3 != null && var4 != null && mc.level != null && !var3.isRemoved()) {
-         double var8 = var2 * 2.0;
-         Vec3 var10 = new Vec3((var4.minX + var4.maxX) * 0.5, var4.minY, (var4.minZ + var4.maxZ) * 0.5);
-         double var11 = var10.distanceTo(var1) / var8;
-         if (var11 > 1.0) {
+   private float method5459(Vec3 position, float floatValue, LivingEntity playerEntity, AABB box, BlockPos blockPos2, BlockPos blockPos3, boolean flag) {
+      if (playerEntity != null && box != null && mc.level != null && !playerEntity.isRemoved()) {
+         double d = floatValue * 2.0;
+         Vec3 vec = new Vec3((box.minX + box.maxX) * 0.5, box.minY, (box.minZ + box.maxZ) * 0.5);
+         double d2 = vec.distanceTo(position) / d;
+         if (d2 > 1.0) {
             return 0.0F;
          } else {
-            double var13 = var7 ? this.method5460(var1, var3, var4, var5, var6) : 1.0;
-            double var15 = (1.0 - var11) * Math.max(0.0, var13);
-            float var17 = (float)((var15 * var15 + var15) / 2.0 * 7.0 * var8 + 1.0);
-            if (var3 instanceof Player) {
-               var17 = this.method5462(var17);
+            double d3 = flag ? this.method5460(position, playerEntity, box, blockPos2, blockPos3) : 1.0;
+            double d4 = (1.0 - d2) * Math.max(0.0, d3);
+            float f = (float)((d4 * d4 + d4) / 2.0 * 7.0 * d + 1.0);
+            if (playerEntity instanceof Player) {
+               f = this.method5462(f);
             }
 
-            return Math.max(0.0F, var17);
+            return Math.max(0.0F, f);
          }
       } else {
          return 0.0F;
       }
    }
 
-   private float method5460(Vec3 var1, LivingEntity var2, AABB var3, BlockPos var4, BlockPos var5) {
-      Class35.Data var6 = new Class35.Data(var2.getId(), var1, var3, var4, var5);
-      Float var7 = this.items.get(var6);
-      if (var7 != null) {
-         return var7;
+   private float method5460(Vec3 position, LivingEntity playerEntity, AABB box, BlockPos blockPos2, BlockPos blockPos3) {
+      Class35.Data data = new Class35.Data(playerEntity.getId(), position, box, blockPos2, blockPos3);
+      Float f = this.items.get(data);
+      if (f != null) {
+         return f;
       } else {
-         double var8 = 1.0 / ((var3.maxX - var3.minX) * 2.0 + 1.0);
-         double var10 = 1.0 / ((var3.maxY - var3.minY) * 2.0 + 1.0);
-         double var12 = 1.0 / ((var3.maxZ - var3.minZ) * 2.0 + 1.0);
-         double var14 = (1.0 - Math.floor(1.0 / var8) * var8) / 2.0;
-         double var16 = (1.0 - Math.floor(1.0 / var12) * var12) / 2.0;
-         int var18 = 0;
-         int var19 = 0;
+         double d = 1.0 / ((box.maxX - box.minX) * 2.0 + 1.0);
+         double d2 = 1.0 / ((box.maxY - box.minY) * 2.0 + 1.0);
+         double d3 = 1.0 / ((box.maxZ - box.minZ) * 2.0 + 1.0);
+         double d4 = (1.0 - Math.floor(1.0 / d) * d) / 2.0;
+         double d5 = (1.0 - Math.floor(1.0 / d3) * d3) / 2.0;
+         int n = 0;
+         int n2 = 0;
 
-         for (double var20 = 0.0; var20 <= 1.0; var20 += var8) {
-            for (double var22 = 0.0; var22 <= 1.0; var22 += var10) {
-               for (double var24 = 0.0; var24 <= 1.0; var24 += var12) {
-                  Vec3 var26 = new Vec3(
-                     Mth.lerp(var20, var3.minX, var3.maxX) + var14,
-                     Mth.lerp(var22, var3.minY, var3.maxY),
-                     Mth.lerp(var24, var3.minZ, var3.maxZ) + var16
+         for (double alpha1 = 0.0; alpha1 <= 1.0; alpha1 += d) {
+            for (double alpha12 = 0.0; alpha12 <= 1.0; alpha12 += d2) {
+               for (double alpha13 = 0.0; alpha13 <= 1.0; alpha13 += d3) {
+                  Vec3 vec = new Vec3(
+                     Mth.lerp(alpha1, box.minX, box.maxX) + d4,
+                     Mth.lerp(alpha12, box.minY, box.maxY),
+                     Mth.lerp(alpha13, box.minZ, box.maxZ) + d5
                   );
-                  var19++;
-                  if (this.method5461(var26, var1, var4, var5)) {
-                     var18++;
+                  n2++;
+                  if (this.method5461(vec, position, blockPos2, blockPos3)) {
+                     n++;
                   }
                }
             }
          }
 
-         float var27 = var19 == 0 ? 0.0F : (float)var18 / var19;
-         this.items.put(var6, var27);
-         return var27;
+         float f2 = n2 == 0 ? 0.0F : (float)n / n2;
+         this.items.put(data, f2);
+         return f2;
       }
    }
 
-   private boolean method5461(Vec3 var1, Vec3 var2, BlockPos var3, BlockPos var4) {
-      return BlockGetter.traverseBlocks(var1, var2, Boolean.TRUE, (var4x, var5) -> {
-         if (var3 != null && var3.equals(var5)) {
+   private boolean method5461(Vec3 vec, Vec3 position, BlockPos blockPos2, BlockPos blockPos3) {
+      return BlockGetter.traverseBlocks(vec, position, Boolean.TRUE, (var4x, pos) -> {
+         if (blockPos2 != null && blockPos2.equals(pos)) {
             return null;
          } else {
-            BlockState var6 = var4 != null && var4.equals(var5) ? blockState : mc.level.getBlockState(var5);
-            if (var6.isAir()) {
+            BlockState blockState2 = blockPos3 != null && blockPos3.equals(pos) ? blockState : mc.level.getBlockState(pos);
+            if (blockState2.isAir()) {
                return null;
             } else {
-               VoxelShape var7 = var6.getCollisionShape(mc.level, var5);
-               return !var7.isEmpty() && var7.clip(var1, var2, var5) != null ? Boolean.FALSE : null;
+               VoxelShape collisionShape = blockState2.getCollisionShape(mc.level, pos);
+               return !collisionShape.isEmpty() && collisionShape.clip(vec, position, pos) != null ? Boolean.FALSE : null;
             }
          }
-      }, var0 -> var0);
+      }, flag -> flag);
    }
 
-   private float method5462(float var1) {
+   private float method5462(float f) {
       return switch (mc.level.getDifficulty()) {
          case PEACEFUL -> 0.0F;
-         case EASY -> Math.min(var1 / 2.0F + 1.0F, var1);
-         case NORMAL -> var1;
-         case HARD -> var1 * 1.5F;
+         case EASY -> Math.min(f / 2.0F + 1.0F, f);
+         case NORMAL -> f;
+         case HARD -> f * 1.5F;
       };
    }
 
-   private static float method5463(LivingEntity var0, float var1) {
-      float var2 = var0.getArmorValue();
-      if (var2 <= 0.0F) {
-         return var1;
+   private static float method5463(LivingEntity playerEntity, float f) {
+      float armorValue = playerEntity.getArmorValue();
+      if (armorValue <= 0.0F) {
+         return f;
       } else {
-         float var3 = (float)var0.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
-         float var4 = 2.0F + var3 / 4.0F;
-         float var5 = Mth.clamp(var2 - var1 / var4, var2 * 0.2F, 20.0F);
-         return var1 * (1.0F - var5 / 25.0F);
+         float attributeValue = (float)playerEntity.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
+         float f2 = 2.0F + attributeValue / 4.0F;
+         float f3 = Mth.clamp(armorValue - f / f2, armorValue * 0.2F, 20.0F);
+         return f * (1.0F - f3 / 25.0F);
       }
    }
 
-   private static float method5464(LivingEntity var0, float var1) {
-      MobEffectInstance var2 = var0.getEffect(MobEffects.RESISTANCE);
-      return var2 == null ? var1 : var1 * (1.0F - Mth.clamp((var2.getAmplifier() + 1) * 0.2F, 0.0F, 1.0F));
+   private static float method5464(LivingEntity playerEntity, float f) {
+      MobEffectInstance effect = playerEntity.getEffect(MobEffects.RESISTANCE);
+      return effect == null ? f : f * (1.0F - Mth.clamp((effect.getAmplifier() + 1) * 0.2F, 0.0F, 1.0F));
    }
 
-   private float method5465(LivingEntity var1, float var2) {
+   private float method5465(LivingEntity playerEntity, float f) {
       this.method5466();
-      int var3 = 0;
+      int n = 0;
 
-      for (EquipmentSlot var7 : equipmentSlots) {
-         ItemStack var8 = var1.getItemBySlot(var7);
-         if (!var8.isEmpty()) {
+      for (EquipmentSlot equipmentSlot : equipmentSlots) {
+         ItemStack itemBySlot = playerEntity.getItemBySlot(equipmentSlot);
+         if (!itemBySlot.isEmpty()) {
             if (this.registryEntry != null) {
-               var3 += EnchantmentHelper.getItemEnchantmentLevel(this.registryEntry, var8);
+               n += EnchantmentHelper.getItemEnchantmentLevel(this.registryEntry, itemBySlot);
             }
 
             if (this.registryEntry2 != null) {
-               var3 += EnchantmentHelper.getItemEnchantmentLevel(this.registryEntry2, var8) * 2;
+               n += EnchantmentHelper.getItemEnchantmentLevel(this.registryEntry2, itemBySlot) * 2;
             }
          }
       }
 
-      return var2 * (1.0F - Mth.clamp(var3, 0, 20) / 25.0F);
+      return f * (1.0F - Mth.clamp(n, 0, 20) / 25.0F);
    }
 
    private void method5466() {
-      RegistryAccess var1 = mc.level.registryAccess();
-      if (this.dynamicRegistryManager != var1) {
-         Registry<net.minecraft.world.item.enchantment.Enchantment> var2 = var1.lookupOrThrow(Registries.ENCHANTMENT);
-         this.registryEntry = var2.get(Enchantments.PROTECTION).orElse(null);
-         this.registryEntry2 = var2.get(Enchantments.BLAST_PROTECTION).orElse(null);
-         this.dynamicRegistryManager = var1;
+      RegistryAccess registryAccess = mc.level.registryAccess();
+      if (this.dynamicRegistryManager != registryAccess) {
+         Registry<net.minecraft.world.item.enchantment.Enchantment> orThrow = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
+         this.registryEntry = orThrow.get(Enchantments.PROTECTION).orElse(null);
+         this.registryEntry2 = orThrow.get(Enchantments.BLAST_PROTECTION).orElse(null);
+         this.dynamicRegistryManager = registryAccess;
       }
    }
 
@@ -280,12 +280,12 @@ public final class Class35 implements MinecraftAccess {
          return "Data[" + "intValue=" + this.intValue + ", " + "vec3d=" + this.vec3d + ", " + "box=" + this.box + ", " + "blockPos=" + this.blockPos + ", " + "blockPos2=" + this.blockPos2 + "]";
       }
 
-      private Data(int var1, Vec3 var2, AABB var3, BlockPos var4, BlockPos var5) {
-         this.intValue = var1;
-         this.vec3d = var2;
-         this.box = var3;
-         this.blockPos = var4;
-         this.blockPos2 = var5;
+      private Data(int intValue, Vec3 vec3d, AABB box, BlockPos blockPos, BlockPos blockPos2) {
+         this.intValue = intValue;
+         this.vec3d = vec3d;
+         this.box = box;
+         this.blockPos = blockPos;
+         this.blockPos2 = blockPos2;
       }
 
       public int getIntValue() {

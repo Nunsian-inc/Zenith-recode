@@ -10,22 +10,22 @@ public class ItemMatcher implements ZenithAccess {
    public final String text2;
    public final ItemMatcher.Type type;
 
-   public ItemMatcher(ItemStack var1, String var2, ItemMatcher.Type var3) {
-      this.itemStack = var1;
-      this.text = var2;
-      this.text2 = var2;
-      this.type = var3;
+   public ItemMatcher(ItemStack itemStack, String text, ItemMatcher.Type type) {
+      this.itemStack = itemStack;
+      this.text = text;
+      this.text2 = text;
+      this.type = type;
    }
 
-   public ItemMatcher(ItemStack var1, String var2, String var3, ItemMatcher.Type var4) {
-      this.itemStack = var1;
-      this.text = var2;
-      this.text2 = var3;
-      this.type = var4;
+   public ItemMatcher(ItemStack itemStack, String text, String str, ItemMatcher.Type type) {
+      this.itemStack = itemStack;
+      this.text = text;
+      this.text2 = str;
+      this.type = type;
    }
 
-   public boolean method2672(ItemStack var1) {
-      return var1 != null && var1.getItem() == this.itemStack.getItem();
+   public boolean method2672(ItemStack stack) {
+      return stack != null && stack.getItem() == this.itemStack.getItem();
    }
 
    @Generated

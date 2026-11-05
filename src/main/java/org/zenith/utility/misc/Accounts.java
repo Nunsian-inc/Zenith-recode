@@ -39,18 +39,18 @@ public final class Accounts extends JsonListStorage<Account> {
    }
 
    public Account method4752() {
-      var var1 = this.method4751();
-      return this.intValue >= 0 && this.intValue < var1.size() ? (Account)var1.get(this.intValue) : null;
+      var accounts = this.method4751();
+      return this.intValue >= 0 && this.intValue < accounts.size() ? (Account)accounts.get(this.intValue) : null;
    }
 
-   public void method4753(Account var1) {
-      if (var1 != null && var1.getName() != null && !var1.getName().isBlank()) {
-         for (Account var3 : this.items) {
-            if (var3.getName().equalsIgnoreCase(var1.getName()) && var3.getType() == var1.getType()) {
-               if (var1.method5473()) {
-                  var3.setText(var1.getText());
-                  var3.setText2(var1.getText2());
-                  var3.setText3(var1.getText3());
+   public void method4753(Account name) {
+      if (name != null && name.getName() != null && !name.getName().isBlank()) {
+         for (Account account : this.items) {
+            if (account.getName().equalsIgnoreCase(name.getName()) && account.getType() == name.getType()) {
+               if (name.method5473()) {
+                  account.setText(name.getText());
+                  account.setText2(name.getText2());
+                  account.setText3(name.getText3());
                   this.save();
                }
 
@@ -58,18 +58,18 @@ public final class Accounts extends JsonListStorage<Account> {
             }
          }
 
-         this.add(var1);
+         this.add(name);
          this.save();
       }
    }
 
-   public void method4754(int var1) {
-      var var2 = this.method4751();
-      if (var1 >= 0 && var1 < var2.size()) {
-         this.remove((Account)var2.get(var1));
-         if (this.intValue == var1) {
+   public void method4754(int n) {
+      var accounts = this.method4751();
+      if (n >= 0 && n < accounts.size()) {
+         this.remove((Account)accounts.get(n));
+         if (this.intValue == n) {
             this.intValue = -1;
-         } else if (this.intValue > var1) {
+         } else if (this.intValue > n) {
             this.intValue--;
          }
 
@@ -77,66 +77,66 @@ public final class Accounts extends JsonListStorage<Account> {
       }
    }
 
-   public void select(int var1) {
-      var var2 = this.method4751();
-      if (var1 >= 0 && var1 < var2.size()) {
-         Account var3 = (Account)var2.get(var1);
-         if (!var3.method5473()) {
-            this.method4756(new User(var3.getName(), var3.method5472(), "", Optional.empty(), Optional.empty()));
-            this.intValue = var1;
-            this.status = "Switched to " + var3.getName();
-         } else if (var3.getText3() != null && !var3.getText3().isEmpty()) {
-            this.status = "Refreshing " + var3.getName() + "...";
-            MicrosoftAuth.method3059(var3.getText3(), var1x -> this.status = var1x)
+   public void select(int intValue) {
+      var accounts = this.method4751();
+      if (intValue >= 0 && intValue < accounts.size()) {
+         Account account = (Account)accounts.get(intValue);
+         if (!account.method5473()) {
+            this.method4756(new User(account.getName(), account.method5472(), "", Optional.empty(), Optional.empty()));
+            this.intValue = intValue;
+            this.status = "Switched to " + account.getName();
+         } else if (account.getText3() != null && !account.getText3().isEmpty()) {
+            this.status = "Refreshing " + account.getName() + "...";
+            MicrosoftAuth.method3059(account.getText3(), var1x -> this.status = var1x)
                .whenComplete((var2x, var3x) -> Minecraft.getInstance().execute(() -> {
                   if (var3x == null && var2x != null) {
-                     var3.setName(var2x.name());
-                     var3.setText(var2x.uuid().toString());
-                     var3.setText2(var2x.getText2());
-                     var3.setText3(var2x.getText3());
+                     account.setName(var2x.name());
+                     account.setText(var2x.uuid().toString());
+                     account.setText2(var2x.getText2());
+                     account.setText3(var2x.getText3());
                      this.save();
                      this.method4756(new User(var2x.name(), var2x.uuid(), var2x.getText2(), Optional.empty(), Optional.empty()));
-                     this.intValue = this.method4751().indexOf(var3);
+                     this.intValue = this.method4751().indexOf(account);
                      this.status = "Switched to " + var2x.name();
                   } else {
                      this.status = "Failed to refresh: " + rootMessage(var3x);
                   }
                }));
          } else {
-            this.method4756(new User(var3.getName(), var3.method5472(), var3.getText2(), Optional.empty(), Optional.empty()));
-            this.intValue = var1;
-            this.status = "Switched to " + var3.getName();
+            this.method4756(new User(account.getName(), account.method5472(), account.getText2(), Optional.empty(), Optional.empty()));
+            this.intValue = intValue;
+            this.status = "Switched to " + account.getName();
          }
       }
    }
 
    public void method4755() {
-      User var1 = this.method4750();
-      this.method4756(var1);
+      User user = this.method4750();
+      this.method4756(user);
       this.intValue = -1;
-      this.status = "Restored " + var1.getName();
+      this.status = "Restored " + user.getName();
    }
 
-   private void method4756(User var1) {
-      Minecraft.getInstance().user = var1;
+   private void method4756(User user) {
+      Minecraft.getInstance().user = user;
    }
 
-   public void method4757(String var1) {
-      this.status = var1 == null ? "" : var1;
+   public void method4757(String str) {
+      this.status = str == null ? "" : str;
    }
 
-   public static String rootMessage(Throwable var0) {
-      Throwable var1 = var0;
+   public static String rootMessage(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1 != null && var1.getCause() != null) {
-         var1 = var1.getCause();
+      while (throwable2 != null && throwable2.getCause() != null) {
+         throwable2 = throwable2.getCause();
       }
 
-      if (var1 == null) {
+      if (throwable2 == null) {
          return "unknown error";
       } else {
-         String var2 = var1.getMessage();
-         return var2 != null && !var2.isBlank() ? var2 : var1.getClass().getSimpleName();
+         String message = throwable2.getMessage();
+         return message != null && !message.isBlank() ? message : throwable2.getClass().getSimpleName();
       }
    }
 

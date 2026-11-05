@@ -14,167 +14,167 @@ public final class MovementInputUtils implements MinecraftAccess {
       return ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F || mc.player.input.keyPresses.jump();
    }
 
-   public static double[] method7419(double var0, float var2) {
-      float var3 = ViaCompat.method4846(mc.player.input);
-      float var4 = ViaCompat.method4847(mc.player.input);
-      if (var3 != 0.0F) {
-         if (var4 > 0.0F) {
-            var2 += var3 > 0.0F ? -25.0F : 45.0F;
-         } else if (var4 < 0.0F) {
-            var2 += var3 > 0.0F ? 25.0F : -25.0F;
+   public static double[] method7419(double d, float yRot) {
+      float f = ViaCompat.method4846(mc.player.input);
+      float f2 = ViaCompat.method4847(mc.player.input);
+      if (f != 0.0F) {
+         if (f2 > 0.0F) {
+            yRot += f > 0.0F ? -25.0F : 45.0F;
+         } else if (f2 < 0.0F) {
+            yRot += f > 0.0F ? 25.0F : -25.0F;
          }
 
-         var4 = 0.0F;
-         var3 = var3 > 0.0F ? 1.0F : -1.0F;
+         f2 = 0.0F;
+         f = f > 0.0F ? 1.0F : -1.0F;
       }
 
-      double var5 = Math.sin(Math.toRadians(var2 + 90.0F));
-      double var7 = Math.cos(Math.toRadians(var2 + 90.0F));
-      double var9 = var3 * var0 * var7 + var4 * var0 * var5;
-      double var11 = var3 * var0 * var5 - var4 * var0 * var7;
-      return new double[]{var9, var11};
+      double d2 = Math.sin(Math.toRadians(yRot + 90.0F));
+      double d3 = Math.cos(Math.toRadians(yRot + 90.0F));
+      double d4 = f * d * d3 + f2 * d * d2;
+      double d5 = f * d * d2 - f2 * d * d3;
+      return new double[]{d4, d5};
    }
 
-   public static double[] method7420(double var0, float var2, Vec3 var3, double var4) {
-      float var6 = ViaCompat.method4846(mc.player.input);
-      float var7 = ViaCompat.method4847(mc.player.input);
-      double var8 = var3.x;
-      double var10 = var3.z;
-      if (var4 < 1.0E-8) {
+   public static double[] method7420(double d, float f, Vec3 vec, double d2) {
+      float f2 = ViaCompat.method4846(mc.player.input);
+      float f3 = ViaCompat.method4847(mc.player.input);
+      double x = vec.x;
+      double z = vec.z;
+      if (d2 < 1.0E-8) {
          return new double[]{0.0, 0.0};
       } else {
-         if (var6 != 0.0F) {
-            if (var7 > 0.0F) {
-               var2 += var6 > 0.0F ? -45.0F : 45.0F;
-            } else if (var7 < 0.0F) {
-               var2 += var6 > 0.0F ? 45.0F : -45.0F;
+         if (f2 != 0.0F) {
+            if (f3 > 0.0F) {
+               f += f2 > 0.0F ? -45.0F : 45.0F;
+            } else if (f3 < 0.0F) {
+               f += f2 > 0.0F ? 45.0F : -45.0F;
             }
 
-            var7 = 0.0F;
-            var6 = var6 > 0.0F ? 1.0F : -1.0F;
+            f3 = 0.0F;
+            f2 = f2 > 0.0F ? 1.0F : -1.0F;
          }
 
-         double var12 = Math.sin(Math.toRadians(var2 + 90.0F));
-         double var14 = Math.cos(Math.toRadians(var2 + 90.0F));
-         double var16 = var6 * var0 * var14 + var7 * var0 * var12;
-         double var18 = var6 * var0 * var12 - var7 * var0 * var14;
-         double var20 = var8 - var16;
-         double var22 = var10 - var18;
-         if (Math.signum(var8) != Math.signum(var20)) {
-            double var24 = Math.abs(var8) / (Math.abs(var16) + 1.0E-8);
-            var16 *= var24 * 0.9;
+         double d3 = Math.sin(Math.toRadians(f + 90.0F));
+         double d4 = Math.cos(Math.toRadians(f + 90.0F));
+         double d5 = f2 * d * d4 + f3 * d * d3;
+         double d6 = f2 * d * d3 - f3 * d * d4;
+         double d7 = x - d5;
+         double d8 = z - d6;
+         if (Math.signum(x) != Math.signum(d7)) {
+            double d9 = Math.abs(x) / (Math.abs(d5) + 1.0E-8);
+            d5 *= d9 * 0.9;
          }
 
-         if (Math.signum(var10) != Math.signum(var22)) {
-            double var26 = Math.abs(var10) / (Math.abs(var18) + 1.0E-8);
-            var18 *= var26 * 0.9;
+         if (Math.signum(z) != Math.signum(d8)) {
+            double d9 = Math.abs(z) / (Math.abs(d6) + 1.0E-8);
+            d6 *= d9 * 0.9;
          }
 
-         return new double[]{var16, var18, 1.0};
+         return new double[]{d5, d6, 1.0};
       }
    }
 
-   public static double[] method7421(double var0) {
-      return method7419(var0, mc.player.getYRot());
+   public static double[] method7421(double d) {
+      return method7419(d, mc.player.getYRot());
    }
 
-   public static void method7422(double var0) {
-      double[] var2 = method7421(var0);
-      Objects.requireNonNull(mc.player).setDeltaMovement(var2[0], mc.player.getDeltaMovement().y(), var2[1]);
+   public static void method7422(double d) {
+      double[] doubles = method7421(d);
+      Objects.requireNonNull(mc.player).setDeltaMovement(doubles[0], mc.player.getDeltaMovement().y(), doubles[1]);
    }
 
-   public static void method7423(double var0, double var2) {
-      double[] var4 = method7421(var0);
-      Objects.requireNonNull(mc.player).setDeltaMovement(var4[0], var2, var4[1]);
+   public static void method7423(double d, double yd) {
+      double[] doubles = method7421(d);
+      Objects.requireNonNull(mc.player).setDeltaMovement(doubles[0], yd, doubles[1]);
    }
 
-   public static double method7424(Vec3 var0, float var1) {
-      float var2 = (float)Math.atan2(-var0.x, var0.z);
-      double var3 = Math.toRadians(Mth.wrapDegrees(var1));
-      return Math.toDegrees(Mth.wrapDegrees(var2 - var3));
+   public static double method7424(Vec3 vec, float yRot) {
+      float f = (float)Math.atan2(-vec.x, vec.z);
+      double d = Math.toRadians(Mth.wrapDegrees(yRot));
+      return Math.toDegrees(Mth.wrapDegrees(f - d));
    }
 
-   public static Input method7425(Input var0, double var1, float var3) {
-      boolean var4 = var0.forward();
-      boolean var5 = var0.backward();
-      boolean var6 = var0.left();
-      boolean var7 = var0.right();
-      if (var1 >= -90.0F + var3 && var1 <= 90.0F - var3) {
-         var4 = true;
-      } else if (var1 < -90.0F - var3 || var1 > 90.0F + var3) {
-         var5 = true;
+   public static Input method7425(Input input, double d, float f) {
+      boolean forward = input.forward();
+      boolean backward = input.backward();
+      boolean left = input.left();
+      boolean right = input.right();
+      if (d >= -90.0F + f && d <= 90.0F - f) {
+         forward = true;
+      } else if (d < -90.0F - f || d > 90.0F + f) {
+         backward = true;
       }
 
-      if (var1 >= 0.0F + var3 && var1 <= 180.0F - var3) {
-         var7 = true;
-      } else if (var1 >= -180.0F + var3 && var1 <= 0.0F - var3) {
-         var6 = true;
+      if (d >= 0.0F + f && d <= 180.0F - f) {
+         right = true;
+      } else if (d >= -180.0F + f && d <= 0.0F - f) {
+         left = true;
       }
 
-      return new Input(var4, var5, var6, var7, var0.jump(), var0.shift(), var0.sprint());
+      return new Input(forward, backward, left, right, input.jump(), input.shift(), input.sprint());
    }
 
-   public static void method7426(MoveInputEvent var0, float var1, float var2) {
-      float var3 = ViaCompat.method4846(mc.player.input);
-      float var4 = ViaCompat.method4847(mc.player.input);
-      double var5 = Mth.wrapDegrees(Math.toDegrees(method7427(mc.player.isFallFlying() ? var1 : var2, var3, var4)));
-      if (var3 != 0.0F || var4 != 0.0F) {
-         float var7 = 0.0F;
-         float var8 = 0.0F;
-         float var9 = Float.MAX_VALUE;
+   public static void method7426(MoveInputEvent event, float floatValue, float yRot) {
+      float f = ViaCompat.method4846(mc.player.input);
+      float f2 = ViaCompat.method4847(mc.player.input);
+      double d = Mth.wrapDegrees(Math.toDegrees(method7427(mc.player.isFallFlying() ? floatValue : yRot, f, f2)));
+      if (f != 0.0F || f2 != 0.0F) {
+         float f3 = 0.0F;
+         float f4 = 0.0F;
+         float f5 = Float.MAX_VALUE;
 
-         for (float var10 = -1.0F; var10 <= 1.0F; var10++) {
-            for (float var11 = -1.0F; var11 <= 1.0F; var11++) {
-               if (var11 != 0.0F || var10 != 0.0F) {
-                  double var12 = Mth.wrapDegrees(Math.toDegrees(method7427(var1, var10, var11)));
-                  double var14 = Math.abs(var5 - var12);
-                  if (var14 < var9) {
-                     var9 = (float)var14;
-                     var7 = var10;
-                     var8 = var11;
+         for (float f6 = -1.0F; f6 <= 1.0F; f6++) {
+            for (float f7 = -1.0F; f7 <= 1.0F; f7++) {
+               if (f7 != 0.0F || f6 != 0.0F) {
+                  double d2 = Mth.wrapDegrees(Math.toDegrees(method7427(floatValue, f6, f7)));
+                  double d3 = Math.abs(d - d2);
+                  if (d3 < f5) {
+                     f5 = (float)d3;
+                     f3 = f6;
+                     f4 = f7;
                   }
                }
             }
          }
 
-         var0.method3042(var7, var8);
+         event.method3042(f3, f4);
       }
    }
 
-   public static double method7427(float var0, float var1, float var2) {
-      if (var1 < 0.0F) {
-         var0 += 180.0F;
+   public static double method7427(float yRot, float f, float f2) {
+      if (f < 0.0F) {
+         yRot += 180.0F;
       }
 
-      float var3 = 1.0F;
-      if (var1 < 0.0F) {
-         var3 = -0.5F;
+      float f3 = 1.0F;
+      if (f < 0.0F) {
+         f3 = -0.5F;
       }
 
-      if (var1 > 0.0F) {
-         var3 = 0.5F;
+      if (f > 0.0F) {
+         f3 = 0.5F;
       }
 
-      if (var2 > 0.0F) {
-         var0 -= 90.0F * var3;
+      if (f2 > 0.0F) {
+         yRot -= 90.0F * f3;
       }
 
-      if (var2 < 0.0F) {
-         var0 += 90.0F * var3;
+      if (f2 < 0.0F) {
+         yRot += 90.0F * f3;
       }
 
-      return Math.toRadians(var0);
+      return Math.toRadians(yRot);
    }
 
-   public static Input method7428(Input var0, double var1) {
-      return method7425(var0, var1, 20.0F);
+   public static Input method7428(Input input, double d) {
+      return method7425(input, d, 20.0F);
    }
 
-   public static double method7429(Entity var0) {
-      double var1 = var0.getX() - var0.xo;
-      double var3 = var0.getY() - var0.yo;
-      double var5 = var0.getZ() - var0.zo;
-      return Math.sqrt(var1 * var1 + var5 * var5 + var3 * var3);
+   public static double method7429(Entity entity) {
+      double d = entity.getX() - entity.xo;
+      double d2 = entity.getY() - entity.yo;
+      double d3 = entity.getZ() - entity.zo;
+      return Math.sqrt(d * d + d3 * d3 + d2 * d2);
    }
 
    @Generated

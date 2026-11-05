@@ -60,113 +60,113 @@ public class DiscordRichPresence extends Structure {
    public static class Builder {
       private final DiscordRichPresence essencePresence = new DiscordRichPresence();
 
-      public DiscordRichPresence.Builder setSmallImage(String var1) {
-         return this.setSmallImage(var1, "");
+      public DiscordRichPresence.Builder setSmallImage(String smallImage) {
+         return this.setSmallImage(smallImage, "");
       }
 
-      public DiscordRichPresence.Builder setState(String var1) {
-         if (var1 != null && !var1.isEmpty()) {
-            this.essencePresence.state = var1.substring(0, Math.min(var1.length(), 128));
+      public DiscordRichPresence.Builder setState(String state) {
+         if (state != null && !state.isEmpty()) {
+            this.essencePresence.state = state.substring(0, Math.min(state.length(), 128));
          }
 
          return this;
       }
 
-      public DiscordRichPresence.Builder setDetails(String var1) {
-         if (var1 != null && !var1.isEmpty()) {
-            this.essencePresence.details = var1.substring(0, Math.min(var1.length(), 128));
+      public DiscordRichPresence.Builder setDetails(String details) {
+         if (details != null && !details.isEmpty()) {
+            this.essencePresence.details = details.substring(0, Math.min(details.length(), 128));
          }
 
          return this;
       }
 
-      public DiscordRichPresence.Builder setLargeImage(String var1, String var2) {
-         this.essencePresence.largeImageKey = var1;
-         this.essencePresence.largeImageText = var2;
+      public DiscordRichPresence.Builder setLargeImage(String largeImageKey, String largeImageText) {
+         this.essencePresence.largeImageKey = largeImageKey;
+         this.essencePresence.largeImageText = largeImageText;
          return this;
       }
 
-      public DiscordRichPresence.Builder setInstance(boolean var1) {
+      public DiscordRichPresence.Builder setInstance(boolean flag) {
          if ((this.essencePresence.button_label_1 == null || !this.essencePresence.button_label_1.isEmpty())
             && (this.essencePresence.button_label_2 == null || !this.essencePresence.button_label_2.isEmpty())) {
-            this.essencePresence.instance = var1 ? 1 : 0;
+            this.essencePresence.instance = flag ? 1 : 0;
          }
 
          return this;
       }
 
-      public DiscordRichPresence.Builder setButtons(RPCButton var1) {
-         return this.setButtons(Collections.singletonList(var1));
+      public DiscordRichPresence.Builder setButtons(RPCButton buttons) {
+         return this.setButtons(Collections.singletonList(buttons));
       }
 
-      public DiscordRichPresence.Builder setSmallImage(String var1, String var2) {
-         this.essencePresence.smallImageKey = var1;
-         this.essencePresence.smallImageText = var2;
+      public DiscordRichPresence.Builder setSmallImage(String smallImageKey, String smallImageText) {
+         this.essencePresence.smallImageKey = smallImageKey;
+         this.essencePresence.smallImageText = smallImageText;
          return this;
       }
 
-      public DiscordRichPresence.Builder setButtons(List<RPCButton> var1) {
-         if (var1 != null && !var1.isEmpty()) {
-            int var2 = Math.min(var1.size(), 2);
-            this.essencePresence.button_label_1 = ((RPCButton)var1.get(0)).getLabel();
-            this.essencePresence.button_url_1 = ((RPCButton)var1.get(0)).getUrl();
-            if (var2 == 2) {
-               this.essencePresence.button_label_2 = ((RPCButton)var1.get(1)).getLabel();
-               this.essencePresence.button_url_2 = ((RPCButton)var1.get(1)).getUrl();
+      public DiscordRichPresence.Builder setButtons(List<RPCButton> buttons) {
+         if (buttons != null && !buttons.isEmpty()) {
+            int n = Math.min(buttons.size(), 2);
+            this.essencePresence.button_label_1 = ((RPCButton)buttons.get(0)).getLabel();
+            this.essencePresence.button_url_1 = ((RPCButton)buttons.get(0)).getUrl();
+            if (n == 2) {
+               this.essencePresence.button_label_2 = ((RPCButton)buttons.get(1)).getLabel();
+               this.essencePresence.button_url_2 = ((RPCButton)buttons.get(1)).getUrl();
             }
          }
 
          return this;
       }
 
-      public DiscordRichPresence.Builder setStartTimestamp(OffsetDateTime var1) {
-         this.essencePresence.startTimestamp = var1.toEpochSecond();
+      public DiscordRichPresence.Builder setStartTimestamp(OffsetDateTime startTimestamp) {
+         this.essencePresence.startTimestamp = startTimestamp.toEpochSecond();
          return this;
       }
 
-      public DiscordRichPresence.Builder setSecrets(String var1, String var2, String var3) {
+      public DiscordRichPresence.Builder setSecrets(String matchSecret, String joinSecret, String spectateSecret) {
          if ((this.essencePresence.button_label_1 == null || !this.essencePresence.button_label_1.isEmpty())
             && (this.essencePresence.button_label_2 == null || !this.essencePresence.button_label_2.isEmpty())) {
-            this.essencePresence.matchSecret = var1;
-            this.essencePresence.joinSecret = var2;
-            this.essencePresence.spectateSecret = var3;
+            this.essencePresence.matchSecret = matchSecret;
+            this.essencePresence.joinSecret = joinSecret;
+            this.essencePresence.spectateSecret = spectateSecret;
          }
 
          return this;
       }
 
-      public DiscordRichPresence.Builder setButtons(RPCButton var1, RPCButton var2) {
-         this.setButtons(Arrays.asList(var1, var2));
+      public DiscordRichPresence.Builder setButtons(RPCButton rpcButton, RPCButton rpcButton2) {
+         this.setButtons(Arrays.asList(rpcButton, rpcButton2));
          return this;
       }
 
-      public DiscordRichPresence.Builder setStartTimestamp(long var1) {
-         this.essencePresence.startTimestamp = var1;
+      public DiscordRichPresence.Builder setStartTimestamp(long startTimestamp) {
+         this.essencePresence.startTimestamp = startTimestamp;
          return this;
       }
 
-      public DiscordRichPresence.Builder setSecrets(String var1, String var2) {
+      public DiscordRichPresence.Builder setSecrets(String joinSecret, String spectateSecret) {
          if ((this.essencePresence.button_label_1 == null || !this.essencePresence.button_label_1.isEmpty())
             && (this.essencePresence.button_label_2 == null || !this.essencePresence.button_label_2.isEmpty())) {
-            this.essencePresence.joinSecret = var1;
-            this.essencePresence.spectateSecret = var2;
+            this.essencePresence.joinSecret = joinSecret;
+            this.essencePresence.spectateSecret = spectateSecret;
          }
 
          return this;
       }
 
-      public DiscordRichPresence.Builder setEndTimestamp(long var1) {
-         this.essencePresence.endTimestamp = var1;
+      public DiscordRichPresence.Builder setEndTimestamp(long endTimestamp) {
+         this.essencePresence.endTimestamp = endTimestamp;
          return this;
       }
 
-      public DiscordRichPresence.Builder setEndTimestamp(OffsetDateTime var1) {
-         this.essencePresence.endTimestamp = var1.toEpochSecond();
+      public DiscordRichPresence.Builder setEndTimestamp(OffsetDateTime endTimestamp) {
+         this.essencePresence.endTimestamp = endTimestamp.toEpochSecond();
          return this;
       }
 
-      public DiscordRichPresence.Builder setLargeImage(String var1) {
-         return this.setLargeImage(var1, "");
+      public DiscordRichPresence.Builder setLargeImage(String largeImage) {
+         return this.setLargeImage(largeImage, "");
       }
 
       public DiscordRichPresence build() {

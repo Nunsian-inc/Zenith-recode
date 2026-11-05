@@ -13,19 +13,19 @@ public class StreamerModeCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      for (String var5 : new String[]{"parseAnarchy", "parseanarchy"}) {
-         var1.then(literal(var5).then(arg("anarchy", IntegerArgumentType.integer(1, 999)).executes(var0 -> {
-            StreamerModeModule.INSTANCE.method6283(IntegerArgumentType.getInteger(var0, "anarchy"));
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      for (String name : new String[]{"parseAnarchy", "parseanarchy"}) {
+         literalArgumentBuilder.then(literal(name).then(arg("anarchy", IntegerArgumentType.integer(1, 999)).executes(context -> {
+            StreamerModeModule.INSTANCE.method6283(IntegerArgumentType.getInteger(context, "anarchy"));
             return 1;
          })));
       }
 
-      var1.then(literal("clear").executes(var0 -> {
+      literalArgumentBuilder.then(literal("clear").executes(commandContext -> {
          StreamerModeModule.INSTANCE.method6284();
          return 1;
       }));
-      var1.executes(var0 -> {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2019("Использование: .streamermode parseAnarchy <номер анки> и .streamermode clear");
          return 1;
       });

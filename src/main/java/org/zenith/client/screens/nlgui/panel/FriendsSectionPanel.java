@@ -139,29 +139,29 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private static CloudConnectionState state() {
-      Cloud var0 = cloud();
-      return var0 == null ? null : var0.state();
+      Cloud cloud2 = cloud();
+      return cloud2 == null ? null : cloud2.state();
    }
 
    private static String shareSignature() {
-      Share var0 = Zenith.getInstance().getShare();
-      return var0 == null
+      Share share = Zenith.getInstance().getShare();
+      return share == null
          ? ""
-         : var0.cosmeticsVisibility.getIndex()
+         : share.cosmeticsVisibility.getIndex()
             + "|"
-            + var0.position.isEnabled()
+            + share.position.isEnabled()
             + "|"
-            + var0.health.isEnabled()
+            + share.health.isEnabled()
             + "|"
-            + var0.inventory.isEnabled()
+            + share.inventory.isEnabled()
             + "|"
-            + var0.server.isEnabled()
+            + share.server.isEnabled()
             + "|"
-            + var0.colorSetting.method1445();
+            + share.colorSetting.method1445();
    }
 
-   public void openChatWith(Predicate<String> var1) {
-      this.openChatWith = var1;
+   public void openChatWith(Predicate<String> openChatWith) {
+      this.openChatWith = openChatWith;
    }
 
    @Override
@@ -191,105 +191,105 @@ public class FriendsSectionPanel extends SectionPanel {
 
    @Override
    public void tick() {
-      long var1 = System.currentTimeMillis();
-      if (var1 - this.lastTickAt > 400L) {
+      long now = System.currentTimeMillis();
+      if (now - this.lastTickAt > 400L) {
          this.startListWave();
          restart(this.asideWave);
       }
 
-      this.lastTickAt = var1;
+      this.lastTickAt = now;
       this.pollTyping();
-      StringBuilder var3 = new StringBuilder();
-      Cloud var4 = cloud();
-      CloudConnectionState var5 = state();
-      if (var4 != null && var5 != null) {
-         var3.append(var5.getType()).append(';');
-         String var6 = var4.method7911();
-         String var7 = var4.method7913();
+      StringBuilder builder = new StringBuilder();
+      Cloud cloud2 = cloud();
+      CloudConnectionState cloudConnectionState = state();
+      if (cloud2 != null && cloudConnectionState != null) {
+         builder.append(cloudConnectionState.getType()).append(';');
+         String anObject = cloud2.method7911();
+         String str = cloud2.method7913();
 
-         for (String var9 : var4.getFriends().all()) {
-            PartyPlayerInfo var10 = var5.method8044(var9);
-            var3.append(var9)
+         for (String selected : cloud2.getFriends().all()) {
+            PartyPlayerInfo partyPlayerInfo = cloudConnectionState.method8044(selected);
+            builder.append(selected)
                .append(':')
-               .append(var10 == null ? 45L : var10.uid())
-               .append((char)(var5.method8061(var9) ? '?' : '.'))
-               .append((char)(var10 != null && var10.method3289() ? 'v' : '.'))
-               .append((char)(var4.prefs().method3319(var9) ? '*' : '.'))
-               .append((char)(var10 != null && var10.method3291(var6, var7) ? 'w' : '.'))
+               .append(partyPlayerInfo == null ? 45L : partyPlayerInfo.uid())
+               .append((char)(cloudConnectionState.method8061(selected) ? '?' : '.'))
+               .append((char)(partyPlayerInfo != null && partyPlayerInfo.method3289() ? 'v' : '.'))
+               .append((char)(cloud2.prefs().method3319(selected) ? '*' : '.'))
+               .append((char)(partyPlayerInfo != null && partyPlayerInfo.method3291(anObject, str) ? 'w' : '.'))
                .append(';');
          }
 
          if (this.voiceVolume != null && this.voiceVolumeFor != null) {
-            var4.prefs().method3324(this.voiceVolumeFor, Math.round(this.voiceVolume.getValue3()));
+            cloud2.prefs().method3324(this.voiceVolumeFor, Math.round(this.voiceVolume.getValue3()));
          }
 
-         for (CloudPackets.Data8 var18 : var5.method8055()) {
-            var3.append('R').append(var18.username()).append(';');
+         for (CloudPackets.Data8 data8 : cloudConnectionState.method8055()) {
+            builder.append('R').append(data8.username()).append(';');
          }
 
-         PartyMember var15 = var4.getPartyMember();
-         var3.append('S')
-            .append(var15.version())
-            .append(var15.method1147())
-            .append(var15.method1136())
-            .append(var15.getLongValue())
+         PartyMember partyMember = cloud2.getPartyMember();
+         builder.append('S')
+            .append(partyMember.version())
+            .append(partyMember.method1147())
+            .append(partyMember.method1136())
+            .append(partyMember.getLongValue())
             .append('P')
-            .append(this.party.signature(var4))
+            .append(this.party.signature(cloud2))
             .append('W')
-            .append(this.week.signature(var4));
-         this.week.tick(var4, this.getActiveTab() == 1);
+            .append(this.week.signature(cloud2));
+         this.week.tick(cloud2, this.getActiveTab() == 1);
       }
 
-      var var11 = Zenith.getInstance().getFriends().getItems();
-      if (var11 != null) {
-         for (String var16 : List.copyOf(var11)) {
-            var3.append('L').append(var16).append((char)(this.isNearby(var16) ? '+' : '-')).append(';');
+      var items = Zenith.getInstance().getFriends().getItems();
+      if (items != null) {
+         for (String str : List.copyOf(items)) {
+            builder.append('L').append(str).append((char)(this.isNearby(str) ? '+' : '-')).append(';');
          }
       }
 
-      var3.append('N').append(this.noticeText).append('|').append(this.searching).append(this.addOpen).append('|').append(this.flashing());
-      String var13 = shareSignature();
-      if (!var13.equals(this.lastShareSignature)) {
+      builder.append('N').append(this.noticeText).append('|').append(this.searching).append(this.addOpen).append('|').append(this.flashing());
+      String lastShareSignature = shareSignature();
+      if (!lastShareSignature.equals(this.lastShareSignature)) {
          if (!this.lastShareSignature.isEmpty()) {
             Zenith.getInstance().getShare().save();
          }
 
-         this.lastShareSignature = var13;
+         this.lastShareSignature = lastShareSignature;
       }
 
-      String var17 = this.searchQuery();
-      if (!var3.toString().equals(this.lastSignature) || !var17.equals(this.lastQuery)) {
-         this.lastSignature = var3.toString();
-         this.lastQuery = var17;
+      String searchQuery = this.searchQuery();
+      if (!builder.toString().equals(this.lastSignature) || !searchQuery.equals(this.lastQuery)) {
+         this.lastSignature = builder.toString();
+         this.lastQuery = searchQuery;
          this.invalidate();
       }
    }
 
    @Override
-   public void selectTab(int var1) {
-      if (var1 != this.getActiveTab()) {
+   public void selectTab(int activeTab) {
+      if (activeTab != this.getActiveTab()) {
          this.startListWave();
          restart(this.asideWave);
-         if (var1 == 1) {
+         if (activeTab == 1) {
             this.week.opened(cloud());
          }
       }
 
-      super.selectTab(var1);
+      super.selectTab(activeTab);
    }
 
    private void startListWave() {
       restart(this.listWave);
    }
 
-   private static void restart(Animation var0) {
-      var0.reset(0.0F);
-      var0.method2810(1.0F);
+   private static void restart(Animation asideWave) {
+      asideWave.reset(0.0F);
+      asideWave.method2810(1.0F);
    }
 
-   private static float wave(Animation var0, int var1) {
-      float var2 = var0.method2808(1.0F);
-      return Mth.clamp((var2 - Math.min(var1, 12) * 0.06F) / 0.5F, 0.0F, 1.0F);
+   private static float wave(Animation listWave, int n) {
+      float f = listWave.method2808(1.0F);
+      return Mth.clamp((f - Math.min(n, 12) * 0.06F) / 0.5F, 0.0F, 1.0F);
    }
 
    @Override
@@ -311,91 +311,91 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private void buildFriends() {
-      String var1 = this.searchQuery();
-      Cloud var2 = cloud();
-      CloudConnectionState var3 = state();
-      Prefs var4 = prefs();
-      ArrayList var5 = new ArrayList();
-      ArrayList var6 = new ArrayList();
-      ArrayList var7 = new ArrayList();
-      ArrayList var8 = new ArrayList();
-      if (var2 != null) {
-         for (String var10 : var2.getFriends().all()) {
-            if (matches(var10, var1)) {
-               PartyPlayerInfo var11 = peer(var10);
-               if (var11 != null) {
-                  var5.add(var10);
-                  if (var11.method3291(var2.method7911(), var2.method7913())) {
-                     var6.add(var10);
+      String searchQuery = this.searchQuery();
+      Cloud cloud2 = cloud();
+      CloudConnectionState cloudConnectionState = state();
+      Prefs prefs2 = prefs();
+      ArrayList arrayList = new ArrayList();
+      ArrayList arrayList2 = new ArrayList();
+      ArrayList arrayList3 = new ArrayList();
+      ArrayList arrayList4 = new ArrayList();
+      if (cloud2 != null) {
+         for (String selected : cloud2.getFriends().all()) {
+            if (matches(selected, searchQuery)) {
+               PartyPlayerInfo partyPlayerInfo = peer(selected);
+               if (partyPlayerInfo != null) {
+                  arrayList.add(selected);
+                  if (partyPlayerInfo.method3291(cloud2.method7911(), cloud2.method7913())) {
+                     arrayList2.add(selected);
                   }
-               } else if (var3 != null && var3.method8061(var10)) {
-                  var7.add(var10);
+               } else if (cloudConnectionState != null && cloudConnectionState.method8061(selected)) {
+                  arrayList3.add(selected);
                } else {
-                  var8.add(var10);
+                  arrayList4.add(selected);
                }
             }
          }
       }
 
-      ArrayList var17 = new ArrayList();
-      ArrayList var18 = new ArrayList();
-      var var19 = Zenith.getInstance().getFriends().getItems();
-      if (var19 != null) {
-         for (Object var13_o : (Iterable<?>)(Object)(new LinkedHashSet(List.copyOf(var19)))) {
-            String var13 = (String)var13_o;
-            if (matches(var13, var1)) {
-               (this.isNearby(var13) ? var17 : var18).add(var13);
+      ArrayList arrayList5 = new ArrayList();
+      ArrayList arrayList6 = new ArrayList();
+      var items = Zenith.getInstance().getFriends().getItems();
+      if (items != null) {
+         for (Object obj : (Iterable<?>)(Object)(new LinkedHashSet(List.copyOf(items)))) {
+            String selected = (String)obj;
+            if (matches(selected, searchQuery)) {
+               (this.isNearby(selected) ? arrayList5 : arrayList6).add(selected);
             }
          }
       }
 
-      if (var4 != null) {
-         Comparator<String> var20 = (var1x, var2x) -> Boolean.compare(var4.method3319(var2x), var4.method3319(var1x));
-         var5.sort(var20);
-         var6.sort(var20);
-         var7.sort(var20);
-         var8.sort(var20);
+      if (prefs2 != null) {
+         Comparator<String> comparator = (var1x, var2x) -> Boolean.compare(prefs2.method3319(var2x), prefs2.method3319(var1x));
+         arrayList.sort(comparator);
+         arrayList2.sort(comparator);
+         arrayList3.sort(comparator);
+         arrayList4.sort(comparator);
       }
 
-      int var21 = var5.size() + var7.size() + var8.size() + var17.size() + var18.size();
-      List var22 = var3 == null ? List.of() : new ArrayList<>(var3.method8055());
-      this.hero(var5.size() + var17.size(), var21);
-      this.party.build(var2);
+      int n = arrayList.size() + arrayList3.size() + arrayList4.size() + arrayList5.size() + arrayList6.size();
+      List list = cloudConnectionState == null ? List.of() : new ArrayList<>(cloudConnectionState.method8055());
+      this.hero(arrayList.size() + arrayList5.size(), n);
+      this.party.build(cloud2);
       this.buildAddBlock();
-      if (!var22.isEmpty()) {
-         this.caption(t("gui.friends.caption.requests") + " · " + var22.size());
+      if (!list.isEmpty()) {
+         this.caption(t("gui.friends.caption.requests") + " · " + list.size());
 
-         for (Object var15_o : (Iterable<?>)(Object)(var22)) {
-            CloudPackets.Data8 var15 = (CloudPackets.Data8)var15_o;
-            this.requestCard(var15, this.order++);
+         for (Object obj : (Iterable<?>)(Object)(list)) {
+            CloudPackets.Data8 data8 = (CloudPackets.Data8)obj;
+            this.requestCard(data8, this.order++);
          }
       }
 
-      int var23 = this.buildInvites(var2);
-      if (var21 == 0) {
-         if (var22.isEmpty() && var23 == 0) {
-            this.emptyState(var1);
+      int invites = this.buildInvites(cloud2);
+      if (n == 0) {
+         if (list.isEmpty() && invites == 0) {
+            this.emptyState(searchQuery);
          }
 
          this.buildFriendAside();
       } else {
-         int[] var24 = new int[]{var21, var5.size() + var17.size(), var6.size() + var17.size(), var7.size() + var8.size() + var18.size()};
-         this.filterChips(var24);
-         int var16 = 0;
+         int[] ints = new int[]{n, arrayList.size() + arrayList5.size(), arrayList2.size() + arrayList5.size(), arrayList3.size() + arrayList4.size() + arrayList6.size()};
+         this.filterChips(ints);
+         int n2 = 0;
          if (this.filter == 0 || this.filter == 1) {
-            var16 += this.section("gui.friends.caption.online", var5, var17);
+            n2 += this.section("gui.friends.caption.online", arrayList, arrayList5);
          }
 
          if (this.filter == 2) {
-            var16 += this.section("gui.friends.caption.near", var6, var17);
+            n2 += this.section("gui.friends.caption.near", arrayList2, arrayList5);
          }
 
          if (this.filter == 0 || this.filter == 3) {
-            var16 += this.section("gui.friends.caption.pending", var7, List.of());
-            var16 += this.section("gui.friends.caption.offline", var8, var18);
+            n2 += this.section("gui.friends.caption.pending", arrayList3, List.of());
+            n2 += this.section("gui.friends.caption.offline", arrayList4, arrayList6);
          }
 
-         if (var16 == 0) {
+         if (n2 == 0) {
             this.hint(t("gui.friends.filter.empty"));
          }
 
@@ -403,121 +403,121 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private int buildInvites(Cloud var1) {
-      if (var1 == null) {
+   private int buildInvites(Cloud cloud) {
+      if (cloud == null) {
          return 0;
       } else {
-         PartyMember var2 = var1.getPartyMember();
-         List<PartyMember.Data7> var3 = var2.method1144();
-         List<PartyMember.Data16> var4 = var2.method1145();
-         List<PartyMember.Data13> var5 = var2.method1146();
-         int var6 = var3.size() + var4.size() + var5.size();
-         if (var6 == 0) {
+         PartyMember partyMember = cloud.getPartyMember();
+         List<PartyMember.Data7> data7s = partyMember.method1144();
+         List<PartyMember.Data16> data16s = partyMember.method1145();
+         List<PartyMember.Data13> data13s = partyMember.method1146();
+         int n = data7s.size() + data16s.size() + data13s.size();
+         if (n == 0) {
             return 0;
          } else {
-            this.caption(t("gui.friends.caption.invites") + " · " + var6);
+            this.caption(t("gui.friends.caption.invites") + " · " + n);
 
-            for (PartyMember.Data13 var8 : var5) {
-               String var9 = ServerNameUtils.method5643(var8.server(), var8.mode());
+            for (PartyMember.Data13 data13 : data13s) {
+               String str = ServerNameUtils.method5643(data13.server(), data13.mode());
                this.inviteCard(
-                  "join:" + var8.getLongValue(),
-                  var8.getText(),
-                  var8.getLongValue(),
-                  t("gui.friends.invite.join").replace("{w}", var9.isEmpty() ? var8.getText3() : var9),
+                  "join:" + data13.getLongValue(),
+                  data13.getText(),
+                  data13.getLongValue(),
+                  t("gui.friends.invite.join").replace("{w}", str.isEmpty() ? data13.getText3() : str),
                   t("gui.friends.invite.go"),
                   () -> {
                      PartyManager var1x = PartyManager.method17();
                      if (var1x != null) {
-                        var1x.method44(var8);
+                        var1x.method44(data13);
                      }
                   },
-                  () -> var2.method1178(var8)
+                  () -> partyMember.method1178(data13)
                );
             }
 
-            for (PartyMember.Data7 var12 : var3) {
+            for (PartyMember.Data7 data7 : data7s) {
                this.inviteCard(
-                  "party:" + var12.getLongValue(),
-                  var12.getText2(),
-                  var12.getLongValue2(),
-                  t("gui.friends.invite.party").replace("{p}", var12.name()).replace("{n}", String.valueOf(var12.getItems().size())),
+                  "party:" + data7.getLongValue(),
+                  data7.getText2(),
+                  data7.getLongValue2(),
+                  t("gui.friends.invite.party").replace("{p}", data7.name()).replace("{n}", String.valueOf(data7.getItems().size())),
                   t("gui.friends.invite.accept"),
-                  () -> var2.method1154(var12),
-                  () -> var2.method1155(var12)
+                  () -> partyMember.method1154(data7),
+                  () -> partyMember.method1155(data7)
                );
             }
 
-            for (PartyMember.Data16 var13 : var4) {
+            for (PartyMember.Data16 data16 : data16s) {
                this.inviteCard(
-                  "room:" + var13.getText(),
-                  var13.getText3(),
-                  var13.getLongValue(),
-                  t("gui.friends.invite.room").replace("{r}", var13.name()),
+                  "room:" + data16.getText(),
+                  data16.getText3(),
+                  data16.getLongValue(),
+                  t("gui.friends.invite.room").replace("{r}", data16.name()),
                   t("gui.friends.invite.enter"),
-                  () -> var2.method1172(var13.getText()),
-                  () -> var2.method1173(var13)
+                  () -> partyMember.method1172(data16.getText()),
+                  () -> partyMember.method1173(data16)
                );
             }
 
-            return var6;
+            return n;
          }
       }
    }
 
-   private void inviteCard(String var1, String var2, long var3, String var5, String var6, Runnable var7, Runnable var8) {
-      int var9 = this.order++;
+   private void inviteCard(String key, String text, long longValue, String name, String str, Runnable runnable, Runnable runnable2) {
+      int n = this.order++;
       this.custom(
          26.0F,
-         (var8x, var9x, var10, var11, var12, var13, var14, var15) -> {
-            float var16 = this.appear(var1) * wave(this.listWave, var9);
-            if (!(var16 <= 0.002F)) {
-               var14 *= var16;
-               var11 += (1.0F - var16) * 8.0F;
-               float var17 = var11 + 8.0F;
-               float var18 = var13 - 16.0F;
-               float var19 = var12 + 1.5F;
-               float var20 = 23.0F;
-               boolean var21 = new BoundsData(var17, var19, var18, var20).contains(var9x, var10);
-               plate(var8x, var17, var19, var18, var20, this.hover(var1, var21), 0.0F, var14, var15);
-               float var22 = 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 420.0));
+         (var8x, var9x, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float f4 = this.appear(key) * wave(this.listWave, n);
+            if (!(f4 <= 0.002F)) {
+               previewAlpha *= f4;
+               f += (1.0F - f4) * 8.0F;
+               float floatValue = f + 8.0F;
+               float width = f3 - 16.0F;
+               float y = f2 + 1.5F;
+               float height = 23.0F;
+               boolean contains = new BoundsData(floatValue, y, width, height).contains(var9x, lastClickY);
+               plate(var8x, floatValue, y, width, height, this.hover(key, contains), 0.0F, previewAlpha, zenithStyle);
+               float f5 = 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 420.0));
                var8x.drawRoundedRect(
-                  var17, var19, var18, var20, ProxyDotRadiusData.method8069(4.0F), var15.getPrimaryColor().getZenithColor().method7294(var14 * 0.07F)
+                  floatValue, y, width, height, ProxyDotRadiusData.method8069(4.0F), zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.07F)
                );
                var8x.drawRoundedRect(
-                  var17 + 1.5F,
-                  var19 + 4.0F,
+                  floatValue + 1.5F,
+                  y + 4.0F,
                   2.0F,
-                  var20 - 8.0F,
+                  height - 8.0F,
                   ProxyDotRadiusData.method8069(1.0F),
-                  var15.getPrimaryColor().getZenithColor().method7294(var14 * var22)
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * f5)
                );
-               float var23 = var19 + var20 / 2.0F;
-               this.avatar(var8x, var2, var3, var17 + 7.0F, var23 - 8.0F, 16.0F, var14, var15);
-               Font var24 = Fonts.NEW_MEDIUM.getFont(4.8F);
-               String var25 = t("gui.friends.invite.hide");
-               float var26 = var24.width(var25) + 12.0F;
-               float var27 = var24.width(var6) + 12.0F;
-               float var28 = var23 - 6.0F;
-               BoundsData var29 = new BoundsData(var17 + var18 - 6.0F - var26, var28, var26, 12.0F);
-               BoundsData var30 = new BoundsData(var29.getFloatValue() - 4.0F - var27, var28, var27, 12.0F);
-               int var31 = var30.contains(var9x, var10) ? 0 : (var29.contains(var9x, var10) ? 1 : -1);
-               this.hoveredButton.put(var1, var31);
-               Font var32 = Fonts.NEW_MEDIUM.getFont(5.2F);
-               Font var33 = Fonts.NEW_REGULAR.getFont(4.4F);
-               float var34 = var17 + 7.0F + 16.0F + 6.0F;
-               float var35 = var23 - (var32.height() + 2.0F + var33.height()) / 2.0F;
-               float var36 = var30.getFloatValue() - 4.0F - var34;
-               var8x.drawText(var32, fit(var32, var2, var36), var34, var35, var15.getTextEnable().getZenithColor().method7294(var14));
-               var8x.drawText(var33, fit(var33, var5, var36), var34, var35 + var32.height() + 2.0F, var15.getTextTertiary().getZenithColor().method7294(var14));
-               this.pillButton(var8x, var1 + ":yes", var30, var6, true, var31 == 0, var14, var15);
-               this.pillButton(var8x, var1 + ":no", var29, var25, false, var31 == 1, var14, var15);
+               float f6 = y + height / 2.0F;
+               this.avatar(var8x, text, longValue, floatValue + 7.0F, f6 - 8.0F, 16.0F, previewAlpha, zenithStyle);
+               Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+               String text2 = t("gui.friends.invite.hide");
+               float width2 = font.width(text2) + 12.0F;
+               float width3 = font.width(str) + 12.0F;
+               float y2 = f6 - 6.0F;
+               BoundsData boundsData = new BoundsData(floatValue + width - 6.0F - width2, y2, width2, 12.0F);
+               BoundsData boundsData2 = new BoundsData(boundsData.getFloatValue() - 4.0F - width3, y2, width3, 12.0F);
+               int n2 = boundsData2.contains(var9x, lastClickY) ? 0 : (boundsData.contains(var9x, lastClickY) ? 1 : -1);
+               this.hoveredButton.put(key, n2);
+               Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+               Font font3 = Fonts.NEW_REGULAR.getFont(4.4F);
+               float floatValue2 = floatValue + 7.0F + 16.0F + 6.0F;
+               float centeredTextY = f6 - (font2.height() + 2.0F + font3.height()) / 2.0F;
+               float width4 = boundsData2.getFloatValue() - 4.0F - floatValue2;
+               var8x.drawText(font2, fit(font2, text, width4), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               var8x.drawText(font3, fit(font3, name, width4), floatValue2, centeredTextY + font2.height() + 2.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               this.pillButton(var8x, key + ":yes", boundsData2, str, true, n2 == 0, previewAlpha, zenithStyle);
+               this.pillButton(var8x, key + ":no", boundsData, text2, false, n2 == 1, previewAlpha, zenithStyle);
             }
          },
          () -> {
-            int var4 = this.hoveredButton.getOrDefault(var1, -1);
-            if (var4 >= 0) {
-               this.press(var1 + (var4 == 0 ? ":yes" : ":no"));
-               (var4 == 0 ? var7 : var8).run();
+            int n2 = this.hoveredButton.getOrDefault(key, -1);
+            if (n2 >= 0) {
+               this.press(key + (n2 == 0 ? ":yes" : ":no"));
+               (n2 == 0 ? runnable : runnable2).run();
                this.invalidate();
             }
          },
@@ -525,138 +525,138 @@ public class FriendsSectionPanel extends SectionPanel {
       );
    }
 
-   private int section(String var1, List<String> var2, List<String> var3) {
-      int var4 = var2.size() + var3.size();
-      if (var4 == 0) {
+   private int section(String key, List<String> strings, List<String> strings2) {
+      int n = strings.size() + strings2.size();
+      if (n == 0) {
          return 0;
       } else {
-         this.caption(t(var1) + " · " + var4);
+         this.caption(t(key) + " · " + n);
 
-         for (String var6 : var2) {
-            this.friendCard(var6, false, this.order++);
+         for (String selected : strings) {
+            this.friendCard(selected, false, this.order++);
          }
 
-         for (String var8 : var3) {
-            this.friendCard(var8, true, this.order++);
+         for (String selected : strings2) {
+            this.friendCard(selected, true, this.order++);
          }
 
-         return var4;
+         return n;
       }
    }
 
-   private void hero(int var1, int var2) {
-      int var3 = this.order++;
-      String var4 = "hero";
+   private void hero(int n, int n2) {
+      int n3 = this.order++;
+      String key = "hero";
       this.custom(
          40.0F,
-         (var5, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = wave(this.listWave, var3);
-            if (!(var13 <= 0.002F)) {
-               var11 *= var13;
-               var8 += (1.0F - var13) * 8.0F;
-               float var14 = var8 + 8.0F;
-               float var15 = var8 + var10 - 8.0F;
-               float var16 = var9 + 3.0F;
-               float var17 = 34.0F;
-               CloudConnectionState var18 = state();
-               boolean var19 = var18 != null && var18.method8035();
-               float var20 = this.heroPulse.method2808(var19 ? 1.0F : 0.0F);
-               plate(var5, var14, var16, var15 - var14, var17, 0.0F, 0.0F, var11, var12);
-               var5.drawRoundedRect(
-                  var14,
-                  var16,
-                  var15 - var14,
-                  var17,
+         (customDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n3);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float floatValue = f + 8.0F;
+               float f4 = f + f3 - 8.0F;
+               float y = f2 + 3.0F;
+               float height = 34.0F;
+               CloudConnectionState cloudConnectionState = state();
+               boolean flag = cloudConnectionState != null && cloudConnectionState.method8035();
+               float hover = this.heroPulse.method2808(flag ? 1.0F : 0.0F);
+               plate(customDrawContext, floatValue, y, f4 - floatValue, height, 0.0F, 0.0F, previewAlpha, zenithStyle);
+               customDrawContext.drawRoundedRect(
+                  floatValue,
+                  y,
+                  f4 - floatValue,
+                  height,
                   ProxyDotRadiusData.method8069(4.0F),
-                  var12.getPrimaryColor().getZenithColor().method7294(var11 * 0.06F * var20)
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.06F * hover)
                );
-               ZenithColor var21 = var12.getTextTertiary().getZenithColor().method7295(var12.getPrimaryColor().getZenithColor(), var20);
-               bigGlyph(var5, MenuGlyph.FRIENDS, var14 + 8.0F, var16 + (var17 - 12.0F) / 2.0F, var21.method7294(var11));
-               Font var22 = Fonts.NEW_MEDIUM.getFont(6.0F);
-               Font var23 = Fonts.NEW_REGULAR.getFont(4.6F);
-               float var24 = var14 + 8.0F + 12.0F + 8.0F;
-               float var25 = var16 + (var17 - var22.height() - 3.0F - var23.height()) / 2.0F;
-               var5.drawText(var22, t("gui.friends.title"), var24, var25, var12.getTextEnable().getZenithColor().method7294(var11));
-               float var28 = 1.0F;
-               String var26;
-               ZenithColor var27;
-               if (var18 == null) {
-                  var26 = t("gui.cloud.state.missing");
-                  var27 = DANGER;
-               } else if (var19) {
-                  var26 = var2 == 0
+               ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover);
+               bigGlyph(customDrawContext, MenuGlyph.FRIENDS, floatValue + 8.0F, y + (height - 12.0F) / 2.0F, zenithColor.method7294(previewAlpha));
+               Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.6F);
+               float floatValue2 = floatValue + 8.0F + 12.0F + 8.0F;
+               float centeredTextY = y + (height - font.height() - 3.0F - font2.height()) / 2.0F;
+               customDrawContext.drawText(font, t("gui.friends.title"), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               float f5 = 1.0F;
+               String name;
+               ZenithColor zenithColor2;
+               if (cloudConnectionState == null) {
+                  name = t("gui.cloud.state.missing");
+                  zenithColor2 = DANGER;
+               } else if (flag) {
+                  name = n2 == 0
                      ? t("gui.friends.hero.none")
-                     : t("gui.friends.hero.online").replace("{n}", String.valueOf(var1)).replace("{m}", String.valueOf(var2));
-                  var27 = var12.getFriendColor().getZenithColor();
-               } else if (var18.getType() == CloudConnectionState.Type.CONNECTING) {
-                  var26 = var18.getType().label();
-                  var27 = new ZenithColor(-680437);
-                  var28 = 0.45F + 0.55F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 220.0));
+                     : t("gui.friends.hero.online").replace("{n}", String.valueOf(n)).replace("{m}", String.valueOf(n2));
+                  zenithColor2 = zenithStyle.getFriendColor().getZenithColor();
+               } else if (cloudConnectionState.getType() == CloudConnectionState.Type.CONNECTING) {
+                  name = cloudConnectionState.getType().label();
+                  zenithColor2 = new ZenithColor(-680437);
+                  f5 = 0.45F + 0.55F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 220.0));
                } else {
-                  String var29 = var18.note();
-                  if (var29 == null || var29.isBlank()) {
-                     var29 = var18.getLastError();
+                  String note = cloudConnectionState.note();
+                  if (note == null || note.isBlank()) {
+                     note = cloudConnectionState.getLastError();
                   }
 
-                  var26 = var29 != null && !var29.isBlank() ? var29 : var18.getType().label();
-                  var27 = DANGER;
+                  name = note != null && !note.isBlank() ? note : cloudConnectionState.getType().label();
+                  zenithColor2 = DANGER;
                }
 
-               float var44 = 3.0F;
-               float var30 = var25 + var22.height() + 3.0F;
-               var5.drawRoundedRect(
-                  var24,
-                  var30 + var23.height() / 2.0F - var44 / 2.0F,
-                  var44,
-                  var44,
-                  ProxyDotRadiusData.method8069(var44 / 2.0F),
-                  var27.method7294(var11 * var28)
+               float width = 3.0F;
+               float centeredTextY2 = centeredTextY + font.height() + 3.0F;
+               customDrawContext.drawRoundedRect(
+                  floatValue2,
+                  centeredTextY2 + font2.height() / 2.0F - width / 2.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  zenithColor2.method7294(previewAlpha * f5)
                );
-               Font var31 = Fonts.NEW_MEDIUM.getFont(5.0F);
-               String var32 = t(this.addOpen ? "gui.friends.hero.hide" : "gui.friends.hero.add");
-               float var33 = var31.width(var32) + 18.0F;
-               float var34 = 13.0F;
-               BoundsData var35 = new BoundsData(var15 - 8.0F - var33, var16 + (var17 - var34) / 2.0F, var33, var34);
-               boolean var36 = var35.contains(var6, var7);
-               this.hoveredButton.put(var4, var36 ? 0 : -1);
-               if (var36) {
+               Font font3 = Fonts.NEW_MEDIUM.getFont(5.0F);
+               String text = t(this.addOpen ? "gui.friends.hero.hide" : "gui.friends.hero.add");
+               float width2 = font3.width(text) + 18.0F;
+               float height2 = 13.0F;
+               BoundsData boundsData = new BoundsData(f4 - 8.0F - width2, y + (height - height2) / 2.0F, width2, height2);
+               boolean contains = boundsData.contains(lastClickX, lastClickY);
+               this.hoveredButton.put(key, contains ? 0 : -1);
+               if (contains) {
                   HoverInfo.request(t("gui.friends.caption.add"), t("gui.friends.add.desc"));
-               } else if (new BoundsData(var14, var16, var15 - var14, var17).contains(var6, var7)) {
+               } else if (new BoundsData(floatValue, y, f4 - floatValue, height).contains(lastClickX, lastClickY)) {
                   HoverInfo.request(t("gui.friends.title"), t("gui.friends.hero.desc"));
                }
 
-               float var37 = this.hover(var4 + ":pill", var36);
-               float var38 = this.pick(var4 + ":open", this.addOpen);
-               ZenithColor var39 = var12.getPrimaryColor().getZenithColor().method7295(var12.getDisableActiveBg().getZenithColor(), var38);
-               var5.drawRoundedRect(
-                  var35.getFloatValue() - var37,
-                  var35.getFloatValue2() - var37 * 0.5F,
-                  var35.width() + var37 * 2.0F,
-                  var35.height() + var37,
-                  ProxyDotRadiusData.method8069(var34 / 2.0F),
-                  var39.method7294(var11)
+               float hover2 = this.hover(key + ":pill", contains);
+               float pick = this.pick(key + ":open", this.addOpen);
+               ZenithColor zenithColor3 = zenithStyle.getPrimaryColor().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), pick);
+               customDrawContext.drawRoundedRect(
+                  boundsData.getFloatValue() - hover2,
+                  boundsData.getFloatValue2() - hover2 * 0.5F,
+                  boundsData.width() + hover2 * 2.0F,
+                  boundsData.height() + hover2,
+                  ProxyDotRadiusData.method8069(height2 / 2.0F),
+                  zenithColor3.method7294(previewAlpha)
                );
                plusGlyph(
-                  var5,
-                  var35.getFloatValue() + 8.0F,
-                  var35.getFloatValue2() + var34 / 2.0F,
-                  var38,
-                  new ZenithColor(255, 255, 255).method7295(var12.getTextEnable().getZenithColor(), var38).method7294(var11)
+                  customDrawContext,
+                  boundsData.getFloatValue() + 8.0F,
+                  boundsData.getFloatValue2() + height2 / 2.0F,
+                  pick,
+                  new ZenithColor(255, 255, 255).method7295(zenithStyle.getTextEnable().getZenithColor(), pick).method7294(previewAlpha)
                );
-               var5.drawText(
-                  var31,
-                  var32,
-                  var35.getFloatValue() + 13.0F,
-                  var35.getFloatValue2() + (var34 - var31.height()) / 2.0F,
-                  new ZenithColor(255, 255, 255).method7295(var12.getTextEnable().getZenithColor(), var38).method7294(var11)
+               customDrawContext.drawText(
+                  font3,
+                  text,
+                  boundsData.getFloatValue() + 13.0F,
+                  boundsData.getFloatValue2() + (height2 - font3.height()) / 2.0F,
+                  new ZenithColor(255, 255, 255).method7295(zenithStyle.getTextEnable().getZenithColor(), pick).method7294(previewAlpha)
                );
-               float var41 = var35.getFloatValue() - 8.0F - (var24 + var44 + 4.0F);
-               var5.drawText(var23, fit(var23, var26, var41), var24 + var44 + 4.0F, var30, var12.getTextTertiary().getZenithColor().method7294(var11));
+               float width3 = boundsData.getFloatValue() - 8.0F - (floatValue2 + width + 4.0F);
+               customDrawContext.drawText(font2, fit(font2, name, width3), floatValue2 + width + 4.0F, centeredTextY2, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             }
          },
          () -> {
-            if (this.hoveredButton.getOrDefault(var4, -1) == 0) {
-               this.press(var4);
+            if (this.hoveredButton.getOrDefault(key, -1) == 0) {
+               this.press(key);
                if (this.addOpen) {
                   this.closeAdd();
                } else {
@@ -668,96 +668,96 @@ public class FriendsSectionPanel extends SectionPanel {
       );
    }
 
-   private void emptyState(String var1) {
-      int var2 = this.order++;
-      String var3 = var1.isEmpty() ? t("gui.friends.empty.text") : t("gui.friends.emptyQuery").replace("{q}", var1);
-      Font var4 = Fonts.NEW_REGULAR.getFont(4.8F);
-      List<String> var5 = wrapText(var3, var4, this.mainWidth() - 16.0F - 30.0F, 4);
-      float var6 = var4.height() + 2.0F;
-      float var7 = Math.max(48.0F, 30.0F + var5.size() * var6);
-      this.custom(var7, (var6x, var7x, var8, var9, var10, var11, var12, var13) -> {
-         float var14 = wave(this.listWave, var2);
-         if (!(var14 <= 0.002F)) {
-            var12 *= var14;
-            float var15 = var9 + var11 / 2.0F;
-            float var16 = (float)Math.sin(System.currentTimeMillis() / 700.0) * 1.2F;
-            bigGlyph(var6x, MenuGlyph.FRIENDS, var15 - 6.0F, var10 + 6.0F + var16, var13.getTextTertiary().getZenithColor().method7294(var12 * 0.8F));
-            Font var17 = Fonts.NEW_MEDIUM.getFont(5.4F);
-            String var18 = t(var1.isEmpty() ? "gui.friends.empty.title" : "gui.friends.filter.empty");
-            var6x.drawText(var17, var18, var15 - var17.width(var18) / 2.0F, var10 + 22.0F, var13.getTextEnable().getZenithColor().method7294(var12));
-            float var19 = var10 + 22.0F + var17.height() + 3.0F;
+   private void emptyState(String searchQuery) {
+      int n = this.order++;
+      String description = searchQuery.isEmpty() ? t("gui.friends.empty.text") : t("gui.friends.emptyQuery").replace("{q}", searchQuery);
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      List<String> strings = wrapText(description, font, this.mainWidth() - 16.0F - 30.0F, 4);
+      float f = font.height() + 2.0F;
+      float hintsHeight = Math.max(48.0F, 30.0F + strings.size() * f);
+      this.custom(hintsHeight, (var6x, var7x, n2, f2, f3, f4, previewAlpha, zenithStyle) -> {
+         float wave2 = wave(this.listWave, n);
+         if (!(wave2 <= 0.002F)) {
+            previewAlpha *= wave2;
+            float f5 = f2 + f4 / 2.0F;
+            float f6 = (float)Math.sin(System.currentTimeMillis() / 700.0) * 1.2F;
+            bigGlyph(var6x, MenuGlyph.FRIENDS, f5 - 6.0F, f3 + 6.0F + f6, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F));
+            Font font2 = Fonts.NEW_MEDIUM.getFont(5.4F);
+            String text = t(searchQuery.isEmpty() ? "gui.friends.empty.title" : "gui.friends.filter.empty");
+            var6x.drawText(font2, text, f5 - font2.width(text) / 2.0F, f3 + 22.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            float centeredTextY = f3 + 22.0F + font2.height() + 3.0F;
 
-            for (String var21 : var5) {
-               var6x.drawText(var4, var21, var15 - var4.width(var21) / 2.0F, var19, var13.getTextTertiary().getZenithColor().method7294(var12));
-               var19 += var6;
+            for (String str : strings) {
+               var6x.drawText(font, str, f5 - font.width(str) / 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               centeredTextY += f;
             }
          }
       });
    }
 
-   private void filterChips(int[] var1) {
-      int var2 = this.order++;
-      String var3 = "filter";
-      String[] var4 = new String[]{"gui.friends.filter.all", "gui.friends.filter.online", "gui.friends.filter.near", "gui.friends.filter.offline"};
+   private void filterChips(int[] ints) {
+      int n = this.order++;
+      String key = "filter";
+      String[] strings = new String[]{"gui.friends.filter.all", "gui.friends.filter.online", "gui.friends.filter.near", "gui.friends.filter.offline"};
       this.custom(
          22.0F,
-         (var5, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = wave(this.listWave, var2);
-            if (!(var13 <= 0.002F)) {
-               var11 *= var13;
-               var8 += (1.0F - var13) * 8.0F;
-               Font var14 = Fonts.NEW_MEDIUM.getFont(4.8F);
-               Font var15 = Fonts.NEW_MEDIUM.getFont(4.2F);
-               float var16 = var8 + 8.0F;
-               float var17 = var9 + 3.0F;
-               int var18 = -1;
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+               Font font2 = Fonts.NEW_MEDIUM.getFont(4.2F);
+               float floatValue = f + 8.0F;
+               float y = f2 + 3.0F;
+               int n2 = -1;
 
-               for (int var19 = 0; var19 < var4.length; var19++) {
-                  String var20 = t(var4[var19]);
-                  String var21 = String.valueOf(var1[var19]);
-                  float var22 = 8.0F + var14.width(var20) + 4.0F + var15.width(var21) + 8.0F;
-                  BoundsData var23 = new BoundsData(var16, var17, var22, 16.0F);
-                  boolean var24 = var23.contains(var6, var7);
-                  if (var24) {
-                     var18 = var19;
-                     HoverInfo.request(var20, t("gui.friends.filter.desc"));
+               for (int i = 0; i < strings.length; i++) {
+                  String text = t(strings[i]);
+                  String str = String.valueOf(ints[i]);
+                  float width = 8.0F + font.width(text) + 4.0F + font2.width(str) + 8.0F;
+                  BoundsData boundsData = new BoundsData(floatValue, y, width, 16.0F);
+                  boolean contains = boundsData.contains(lastClickX, lastClickY);
+                  if (contains) {
+                     n2 = i;
+                     HoverInfo.request(text, t("gui.friends.filter.desc"));
                   }
 
-                  float var25 = this.hover(var3 + var19, var24);
-                  float var26 = this.pick(var3 + var19, this.filter == var19);
-                  var5.drawRoundedRect(
-                     var23.getFloatValue(),
-                     var23.getFloatValue2(),
-                     var23.width(),
-                     var23.height(),
-                     ProxyDotRadiusData.method8069(var23.height() / 2.0F),
-                     var12.getDisableActiveBg()
+                  float hover = this.hover(key + i, contains);
+                  float pick = this.pick(key + i, this.filter == i);
+                  menuDrawContext.drawRoundedRect(
+                     boundsData.getFloatValue(),
+                     boundsData.getFloatValue2(),
+                     boundsData.width(),
+                     boundsData.height(),
+                     ProxyDotRadiusData.method8069(boundsData.height() / 2.0F),
+                     zenithStyle.getDisableActiveBg()
                         .getZenithColor()
-                        .method7294(var11 * (0.4F + 0.3F * var25))
-                        .method7295(var12.getPrimaryColor().getZenithColor().method7294(var11 * 0.9F), var26)
+                        .method7294(previewAlpha * (0.4F + 0.3F * hover))
+                        .method7295(zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.9F), pick)
                   );
-                  ZenithColor var27 = var12.getTextSecondary()
+                  ZenithColor zenithColor = zenithStyle.getTextSecondary()
                      .getZenithColor()
-                     .method7295(var12.getTextEnable().getZenithColor(), var25)
-                     .method7295(new ZenithColor(255, 255, 255), var26);
-                  var5.drawText(
-                     var14, var20, var23.getFloatValue() + 8.0F, var23.getFloatValue2() + (var23.height() - var14.height()) / 2.0F, var27.method7294(var11)
+                     .method7295(zenithStyle.getTextEnable().getZenithColor(), hover)
+                     .method7295(new ZenithColor(255, 255, 255), pick);
+                  menuDrawContext.drawText(
+                     font, text, boundsData.getFloatValue() + 8.0F, boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F, zenithColor.method7294(previewAlpha)
                   );
-                  var5.drawText(
-                     var15,
-                     var21,
-                     var23.getFloatValue() + 8.0F + var14.width(var20) + 4.0F,
-                     var23.getFloatValue2() + (var23.height() - var15.height()) / 2.0F,
-                     var12.getTextTertiary().getZenithColor().method7295(new ZenithColor(255, 255, 255, 200), var26).method7294(var11)
+                  menuDrawContext.drawText(
+                     font2,
+                     str,
+                     boundsData.getFloatValue() + 8.0F + font.width(text) + 4.0F,
+                     boundsData.getFloatValue2() + (boundsData.height() - font2.height()) / 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7295(new ZenithColor(255, 255, 255, 200), pick).method7294(previewAlpha)
                   );
-                  var16 += var22 + 4.0F;
+                  floatValue += width + 4.0F;
                }
 
-               this.hoveredButton.put(var3, var18);
+               this.hoveredButton.put(key, n2);
             }
          },
          () -> {
-            int var2x = this.hoveredButton.getOrDefault(var3, -1);
+            int var2x = this.hoveredButton.getOrDefault(key, -1);
             if (var2x >= 0 && var2x != this.filter) {
                this.filter = var2x;
                this.startListWave();
@@ -781,152 +781,152 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private void addInputField() {
-      int var1 = this.order++;
-      String var2 = "add.field";
+      int n = this.order++;
+      String key = "add.field";
       this.custom(
          26.0F,
-         (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = wave(this.listWave, var1);
-            if (!(var11 <= 0.002F)) {
-               var9 *= var11;
-               float var12 = var6 + 8.0F + (1.0F - var11) * 8.0F;
-               float var13 = var8 - 16.0F;
-               float var14 = var7 + 2.0F;
-               float var15 = 22.0F;
-               boolean var16 = this.addRow.isEditing();
-               float var17 = this.hover(var2 + ":focus", var16);
-               BoundsData var18 = new BoundsData(var12, var14, var13, var15);
-               boolean var19 = var18.contains(var4, var5);
-               var3.drawRoundedRect(
-                  var12,
-                  var14,
-                  var13,
-                  var15,
-                  ProxyDotRadiusData.method8069(var15 / 2.0F),
-                  var10.getFieldSurfaceBackground().getZenithColor().method7294(var9 * (2.0F + this.hover(var2 + ":hot", var19) * 0.8F))
+         (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               float floatValue = f + 8.0F + (1.0F - wave2) * 8.0F;
+               float width = f3 - 16.0F;
+               float y = f2 + 2.0F;
+               float height = 22.0F;
+               boolean editing = this.addRow.isEditing();
+               float hover = this.hover(key + ":focus", editing);
+               BoundsData boundsData = new BoundsData(floatValue, y, width, height);
+               boolean contains = boundsData.contains(lastClickX, lastClickY);
+               menuDrawContext.drawRoundedRect(
+                  floatValue,
+                  y,
+                  width,
+                  height,
+                  ProxyDotRadiusData.method8069(height / 2.0F),
+                  zenithStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * (2.0F + this.hover(key + ":hot", contains) * 0.8F))
                );
-               var3.drawRoundedBorder(
-                  var12,
-                  var14,
-                  var13,
-                  var15,
+               menuDrawContext.drawRoundedBorder(
+                  floatValue,
+                  y,
+                  width,
+                  height,
                   0.15F,
-                  ProxyDotRadiusData.method8069(var15 / 2.0F),
-                  var10.getFieldBorder().getZenithColor().method7295(var10.getPrimaryColor().getZenithColor(), var17).method7294(var9 * (1.4F + var17))
+                  ProxyDotRadiusData.method8069(height / 2.0F),
+                  zenithStyle.getFieldBorder().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha * (1.4F + hover))
                );
-               float var20 = var12 + 9.0F;
+               float floatValue2 = floatValue + 9.0F;
                MenuGlyph.SEARCH
                   .draw(
-                     var3,
-                     var20,
-                     var14 + (var15 - 6.0F) / 2.0F,
-                     var10.getTextTertiary().getZenithColor().method7295(var10.getPrimaryColor().getZenithColor(), var17).method7294(var9)
+                     menuDrawContext,
+                     floatValue2,
+                     y + (height - 6.0F) / 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha)
                   );
-               String var21 = this.typedName();
-               boolean var22 = !var21.isEmpty();
-               Font var23 = Fonts.NEW_MEDIUM.getFont(5.2F);
-               String var24 = t(this.searching ? "gui.friends.add.wait" : "gui.friends.add");
-               float var25 = Fonts.NEW_MEDIUM.getFont(4.8F).width(var24) + 20.0F;
-               float var26 = var15 - 5.0F;
-               BoundsData var27 = new BoundsData(var12 + var13 - 3.0F - var25, var14 + 2.5F, var25, var26);
-               float var28 = 11.0F;
-               BoundsData var29 = new BoundsData(var27.getFloatValue() - 4.0F - var28, var14 + (var15 - var28) / 2.0F, var28, var28);
-               float var30 = var20 + 6.0F + 6.0F;
-               float var31 = (var22 ? var29.getFloatValue() : var27.getFloatValue()) - 6.0F;
-               float var32 = var14 + (var15 - var23.height()) / 2.0F;
-               if (var22) {
-                  String var33 = fit(var23, var21, var31 - var30);
-                  float var34 = var30 + var23.width(var33);
-                  var3.drawText(var23, var33, var30, var32, var10.getTextEnable().getZenithColor().method7294(var9));
-                  if (var16 && System.currentTimeMillis() % 1000L < 550L) {
-                     var3.drawRoundedRect(
-                        var34 + 0.5F,
-                        var32 - 0.5F,
+               String typedName = this.typedName();
+               boolean flag = !typedName.isEmpty();
+               Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+               String text = t(this.searching ? "gui.friends.add.wait" : "gui.friends.add");
+               float width2 = Fonts.NEW_MEDIUM.getFont(4.8F).width(text) + 20.0F;
+               float height2 = height - 5.0F;
+               BoundsData boundsData2 = new BoundsData(floatValue + width - 3.0F - width2, y + 2.5F, width2, height2);
+               float width3 = 11.0F;
+               BoundsData boundsData3 = new BoundsData(boundsData2.getFloatValue() - 4.0F - width3, y + (height - width3) / 2.0F, width3, width3);
+               float floatValue3 = floatValue2 + 6.0F + 6.0F;
+               float f4 = (flag ? boundsData3.getFloatValue() : boundsData2.getFloatValue()) - 6.0F;
+               float centeredTextY = y + (height - font.height()) / 2.0F;
+               if (flag) {
+                  String str = fit(font, typedName, f4 - floatValue3);
+                  float f5 = floatValue3 + font.width(str);
+                  menuDrawContext.drawText(font, str, floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+                  if (editing && System.currentTimeMillis() % 1000L < 550L) {
+                     menuDrawContext.drawRoundedRect(
+                        f5 + 0.5F,
+                        centeredTextY - 0.5F,
                         1.0F,
-                        var23.height() + 1.0F,
+                        font.height() + 1.0F,
                         ProxyDotRadiusData.method8069(0.5F),
-                        var10.getPrimaryColor().getZenithColor().method7294(var9)
+                        zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
                      );
                   }
                } else {
-                  float var41 = var16 && System.currentTimeMillis() % 1000L < 550L ? 1.0F : 0.0F;
-                  if (var41 > 0.0F) {
-                     var3.drawRoundedRect(
-                        var30 + 0.5F,
-                        var32 - 0.5F,
+                  float f5 = editing && System.currentTimeMillis() % 1000L < 550L ? 1.0F : 0.0F;
+                  if (f5 > 0.0F) {
+                     menuDrawContext.drawRoundedRect(
+                        floatValue3 + 0.5F,
+                        centeredTextY - 0.5F,
                         1.0F,
-                        var23.height() + 1.0F,
+                        font.height() + 1.0F,
                         ProxyDotRadiusData.method8069(0.5F),
-                        var10.getPrimaryColor().getZenithColor().method7294(var9)
+                        zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
                      );
                   }
 
-                  var3.drawText(
-                     var23, t("gui.friends.nick.hint"), var30 + var41 + 2.0F, var32, var10.getTextTertiary().getZenithColor().method7294(var9 * 0.8F)
+                  menuDrawContext.drawText(
+                     font, t("gui.friends.nick.hint"), floatValue3 + f5 + 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F)
                   );
                }
 
-               byte var42 = -1;
-               if (var22) {
-                  boolean var43 = var29.contains(var4, var5);
-                  if (var43) {
-                     var42 = 1;
+               byte b = -1;
+               if (flag) {
+                  boolean contains2 = boundsData3.contains(lastClickX, lastClickY);
+                  if (contains2) {
+                     b = 1;
                   }
 
-                  float var35 = this.hover(var2 + ":clear", var43);
-                  var3.drawRoundedRect(
-                     var29.getFloatValue(),
-                     var29.getFloatValue2(),
-                     var29.width(),
-                     var29.height(),
-                     ProxyDotRadiusData.method8069(var28 / 2.0F),
-                     var10.getDisableActiveBg().getZenithColor().method7294(var9 * (0.4F + var35 * 0.5F))
+                  float hover2 = this.hover(key + ":clear", contains2);
+                  menuDrawContext.drawRoundedRect(
+                     boundsData3.getFloatValue(),
+                     boundsData3.getFloatValue2(),
+                     boundsData3.width(),
+                     boundsData3.height(),
+                     ProxyDotRadiusData.method8069(width3 / 2.0F),
+                     zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * (0.4F + hover2 * 0.5F))
                   );
                   plusGlyph(
-                     var3,
-                     var29.getFloatValue() + var28 / 2.0F,
-                     var29.getFloatValue2() + var28 / 2.0F,
+                     menuDrawContext,
+                     boundsData3.getFloatValue() + width3 / 2.0F,
+                     boundsData3.getFloatValue2() + width3 / 2.0F,
                      1.0F,
-                     var10.getTextSecondary().getZenithColor().method7295(var10.getTextEnable().getZenithColor(), var35).method7294(var9)
+                     zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover2).method7294(previewAlpha)
                   );
-                  boolean var36 = var27.contains(var4, var5);
-                  if (var36 && !this.searching) {
-                     var42 = 0;
+                  boolean contains3 = boundsData2.contains(lastClickX, lastClickY);
+                  if (contains3 && !this.searching) {
+                     b = 0;
                   }
 
-                  float var37 = this.hover(var2 + ":pill", var36 && !this.searching);
-                  float var38 = this.searching ? 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 300.0)) : 1.0F;
-                  var3.drawRoundedRect(
-                     var27.getFloatValue(),
-                     var27.getFloatValue2(),
-                     var27.width(),
-                     var27.height(),
-                     ProxyDotRadiusData.method8069(var26 / 2.0F),
-                     var10.getPrimaryColor().getZenithColor().method7295(new ZenithColor(255, 255, 255), var37 * 0.15F).method7294(var9 * var38)
+                  float hover3 = this.hover(key + ":pill", contains3 && !this.searching);
+                  float f5 = this.searching ? 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 300.0)) : 1.0F;
+                  menuDrawContext.drawRoundedRect(
+                     boundsData2.getFloatValue(),
+                     boundsData2.getFloatValue2(),
+                     boundsData2.width(),
+                     boundsData2.height(),
+                     ProxyDotRadiusData.method8069(height2 / 2.0F),
+                     zenithStyle.getPrimaryColor().getZenithColor().method7295(new ZenithColor(255, 255, 255), hover3 * 0.15F).method7294(previewAlpha * f5)
                   );
-                  Font var39 = Fonts.NEW_MEDIUM.getFont(4.8F);
-                  var3.drawText(
-                     var39,
-                     var24,
-                     var27.getFloatValue() + (var27.width() - var39.width(var24)) / 2.0F,
-                     var27.getFloatValue2() + (var27.height() - var39.height()) / 2.0F,
-                     new ZenithColor(255, 255, 255).method7294(var9 * var38)
+                  Font font2 = Fonts.NEW_MEDIUM.getFont(4.8F);
+                  menuDrawContext.drawText(
+                     font2,
+                     text,
+                     boundsData2.getFloatValue() + (boundsData2.width() - font2.width(text)) / 2.0F,
+                     boundsData2.getFloatValue2() + (boundsData2.height() - font2.height()) / 2.0F,
+                     new ZenithColor(255, 255, 255).method7294(previewAlpha * f5)
                   );
                }
 
-               this.hoveredButton.put(var2, Integer.valueOf(var42));
-               if (var19 && var42 < 0) {
+               this.hoveredButton.put(key, Integer.valueOf(b));
+               if (contains && b < 0) {
                   HoverInfo.request(t("gui.friends.caption.add"), t("gui.friends.add.desc"));
                }
             }
          },
          () -> {
-            int var2x = this.hoveredButton.getOrDefault(var2, -1);
+            int var2x = this.hoveredButton.getOrDefault(key, -1);
             if (var2x == 0) {
-               this.press(var2 + ":pill");
+               this.press(key + ":pill");
                this.submitAdd();
             } else if (var2x == 1) {
-               this.press(var2 + ":clear");
+               this.press(key + ":clear");
                this.clearInput();
                if (!this.addRow.isEditing()) {
                   this.addRow.beginEdit();
@@ -949,11 +949,11 @@ public class FriendsSectionPanel extends SectionPanel {
       this.invalidate();
    }
 
-   public void devOpenAdd(String var1) {
+   public void devOpenAdd(String string) {
       this.selectTab(0);
       this.openAdd();
-      if (var1 != null && !var1.isEmpty()) {
-         this.addTargetSetting.setValue(var1);
+      if (string != null && !string.isEmpty()) {
+         this.addTargetSetting.setValue(string);
          this.pollTyping();
       }
 
@@ -961,9 +961,9 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.getActiveTab() == 0 && this.addOpen && this.addRow.isEditing()) {
-         switch (var1) {
+         switch (keyCode) {
             case 256:
                this.closeAdd();
                return true;
@@ -978,34 +978,34 @@ public class FriendsSectionPanel extends SectionPanel {
                this.completeToSuggestion();
                return true;
             default:
-               this.addRow.keyPressed(var1, var2, var3);
+               this.addRow.keyPressed(keyCode, keycode, modifiers);
                this.pollTyping();
                this.invalidate();
                return true;
          }
       } else {
-         return super.keyPressed(var1, var2, var3);
+         return super.keyPressed(keyCode, keycode, modifiers);
       }
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.getActiveTab() == 0 && this.addOpen && this.addRow.isEditing()) {
-         this.addRow.charTyped(var1, var2);
+         this.addRow.charTyped(codepoint, n);
          this.pollTyping();
          this.invalidate();
          return true;
       } else {
-         return super.charTyped(var1, var2);
+         return super.charTyped(codepoint, n);
       }
    }
 
    private void completeToSuggestion() {
-      String var1 = this.typedName();
+      String typedName = this.typedName();
 
-      for (FriendsSectionPanel.Hint var3 : this.ordered(var1)) {
-         if (!var3.name().equalsIgnoreCase(var1)) {
-            this.addTargetSetting.setValue(var3.name());
+      for (FriendsSectionPanel.Hint hint : this.ordered(typedName)) {
+         if (!hint.name().equalsIgnoreCase(typedName)) {
+            this.addTargetSetting.setValue(hint.name());
             this.addRow.endEdit();
             this.addRow.beginEdit();
             this.invalidate();
@@ -1022,73 +1022,73 @@ public class FriendsSectionPanel extends SectionPanel {
       this.setNotice("", "", false);
    }
 
-   private void requestCard(CloudPackets.Data8 var1, int var2) {
-      String var3 = var1.username();
-      String var4 = "request:" + var3;
-      String var5 = blankToDash(var1.getText2());
+   private void requestCard(CloudPackets.Data8 data8, int n) {
+      String username = data8.username();
+      String key = "request:" + username;
+      String replacement = blankToDash(data8.getText2());
       this.custom(
          26.0F,
-         (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = this.appear(var4) * wave(this.listWave, var2);
-            if (!(var13 <= 0.002F)) {
-               var11 *= var13;
-               var8 += (1.0F - var13) * 8.0F;
-               float var14 = var8 + 8.0F;
-               float var15 = var10 - 16.0F;
-               float var16 = var9 + 1.5F;
-               float var17 = 23.0F;
-               boolean var18 = new BoundsData(var14, var16, var15, var17).contains(var6, var7);
-               float var19 = this.hover(var4, var18);
-               plate(var5x, var14, var16, var15, var17, var19, 0.0F, var11, var12);
-               float var20 = 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 420.0));
+         (var5x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float f4 = this.appear(key) * wave(this.listWave, n);
+            if (!(f4 <= 0.002F)) {
+               previewAlpha *= f4;
+               f += (1.0F - f4) * 8.0F;
+               float floatValue = f + 8.0F;
+               float width = f3 - 16.0F;
+               float y = f2 + 1.5F;
+               float height = 23.0F;
+               boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+               float hover = this.hover(key, contains);
+               plate(var5x, floatValue, y, width, height, hover, 0.0F, previewAlpha, zenithStyle);
+               float f5 = 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 420.0));
                var5x.drawRoundedRect(
-                  var14, var16, var15, var17, ProxyDotRadiusData.method8069(4.0F), var12.getPrimaryColor().getZenithColor().method7294(var11 * 0.07F)
+                  floatValue, y, width, height, ProxyDotRadiusData.method8069(4.0F), zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.07F)
                );
                var5x.drawRoundedRect(
-                  var14 + 1.5F,
-                  var16 + 4.0F,
+                  floatValue + 1.5F,
+                  y + 4.0F,
                   2.0F,
-                  var17 - 8.0F,
+                  height - 8.0F,
                   ProxyDotRadiusData.method8069(1.0F),
-                  var12.getPrimaryColor().getZenithColor().method7294(var11 * var20)
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * f5)
                );
-               if (var18) {
-                  HoverInfo.request(var3, t("gui.friends.request.desc").replace("{n}", var5));
+               if (contains) {
+                  HoverInfo.request(username, t("gui.friends.request.desc").replace("{n}", replacement));
                }
 
-               float var21 = var16 + var17 / 2.0F;
-               this.avatar(var5x, var3, var14 + 7.0F, var21 - 8.0F, 16.0F, var11, var12);
-               Font var22 = Fonts.NEW_MEDIUM.getFont(4.8F);
-               String var23 = t("gui.friends.accept.button");
-               String var24 = t("gui.friends.decline");
-               float var25 = var22.width(var24) + 12.0F;
-               float var26 = var22.width(var23) + 12.0F;
-               float var27 = var21 - 6.0F;
-               BoundsData var28 = new BoundsData(var14 + var15 - 6.0F - var25, var27, var25, 12.0F);
-               BoundsData var29 = new BoundsData(var28.getFloatValue() - 4.0F - var26, var27, var26, 12.0F);
-               int var30 = var29.contains(var6, var7) ? 0 : (var28.contains(var6, var7) ? 1 : -1);
-               this.hoveredButton.put(var4, var30);
-               Font var31 = Fonts.NEW_MEDIUM.getFont(5.2F);
-               Font var32 = Fonts.NEW_REGULAR.getFont(4.4F);
-               float var33 = var14 + 7.0F + 16.0F + 6.0F;
-               float var34 = var21 - (var31.height() + 2.0F + var32.height()) / 2.0F;
-               float var35 = var29.getFloatValue() - 4.0F - var33;
-               var5x.drawText(var31, fit(var31, var3, var35), var33, var34, var12.getTextEnable().getZenithColor().method7294(var11));
-               String var36 = t("gui.friends.request.want") + ("-".equals(var5) ? "" : " · " + var5);
-               var5x.drawText(var32, fit(var32, var36, var35), var33, var34 + var31.height() + 2.0F, var12.getTextTertiary().getZenithColor().method7294(var11));
-               this.pillButton(var5x, var4 + ":yes", var29, var23, true, var30 == 0, var11, var12);
-               this.pillButton(var5x, var4 + ":no", var28, var24, false, var30 == 1, var11, var12);
+               float f6 = y + height / 2.0F;
+               this.avatar(var5x, username, floatValue + 7.0F, f6 - 8.0F, 16.0F, previewAlpha, zenithStyle);
+               Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+               String text = t("gui.friends.accept.button");
+               String str = t("gui.friends.decline");
+               float width2 = font.width(str) + 12.0F;
+               float width3 = font.width(text) + 12.0F;
+               float y2 = f6 - 6.0F;
+               BoundsData boundsData = new BoundsData(floatValue + width - 6.0F - width2, y2, width2, 12.0F);
+               BoundsData boundsData2 = new BoundsData(boundsData.getFloatValue() - 4.0F - width3, y2, width3, 12.0F);
+               int n2 = boundsData2.contains(lastClickX, lastClickY) ? 0 : (boundsData.contains(lastClickX, lastClickY) ? 1 : -1);
+               this.hoveredButton.put(key, n2);
+               Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+               Font font3 = Fonts.NEW_REGULAR.getFont(4.4F);
+               float floatValue2 = floatValue + 7.0F + 16.0F + 6.0F;
+               float centeredTextY = f6 - (font2.height() + 2.0F + font3.height()) / 2.0F;
+               float width4 = boundsData2.getFloatValue() - 4.0F - floatValue2;
+               var5x.drawText(font2, fit(font2, username, width4), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               String name = t("gui.friends.request.want") + ("-".equals(replacement) ? "" : " · " + replacement);
+               var5x.drawText(font3, fit(font3, name, width4), floatValue2, centeredTextY + font2.height() + 2.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+               this.pillButton(var5x, key + ":yes", boundsData2, text, true, n2 == 0, previewAlpha, zenithStyle);
+               this.pillButton(var5x, key + ":no", boundsData, str, false, n2 == 1, previewAlpha, zenithStyle);
             }
          },
          () -> {
-            int var3x = this.hoveredButton.getOrDefault(var4, -1);
+            int var3x = this.hoveredButton.getOrDefault(key, -1);
             Cloud var4x = cloud();
             if (var4x != null && var3x >= 0) {
-               this.press(var4 + (var3x == 0 ? ":yes" : ":no"));
+               this.press(key + (var3x == 0 ? ":yes" : ":no"));
                if (var3x == 1) {
-                  var4x.method7906(var3);
+                  var4x.method7906(username);
                } else {
-                  var4x.method7905(var3);
+                  var4x.method7905(username);
                }
 
                this.invalidate();
@@ -1098,152 +1098,152 @@ public class FriendsSectionPanel extends SectionPanel {
       );
    }
 
-   private void friendCard(String var1, boolean var2, int var3) {
-      String var4 = (var2 ? "local:" : "cloud:") + var1;
-      String var5 = var2 ? var1 : displayName(var1);
-      String var6 = var2 ? "gui.friends.row.local.desc" : "gui.friends.row.desc";
+   private void friendCard(String selected, boolean selectedLocal, int n) {
+      String key = (selectedLocal ? "local:" : "cloud:") + selected;
+      String name = selectedLocal ? selected : displayName(selected);
+      String str = selectedLocal ? "gui.friends.row.local.desc" : "gui.friends.row.desc";
       this.custom(
          26.0F,
-         (var7, var8, var9, var10, var11, var12, var13, var14) -> {
-            float var15 = this.appear(var4) * wave(this.listWave, var3);
-            if (!(var15 <= 0.002F)) {
-               var13 *= var15;
-               var10 += (1.0F - var15) * 8.0F;
-               float var16 = var10 + 8.0F;
-               float var17 = var12 - 16.0F;
-               float var18 = var11 + 1.5F;
-               float var19 = 23.0F;
-               boolean var20 = this.selectedLocal == var2 && var1.equals(this.selected);
-               boolean var21 = new BoundsData(var16, var18, var17, var19).contains(var8, var9);
-               float var22 = this.hover(var4, var21);
-               float var23 = this.select(var4, var20);
-               plate(var7, var16, var18, var17, var19, var22, 0.0F, var13, var14);
-               if (var23 > 0.002F) {
-                  var7.drawRoundedRect(
-                     var16,
-                     var18,
-                     var17,
-                     var19,
+         (customDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float f4 = this.appear(key) * wave(this.listWave, n);
+            if (!(f4 <= 0.002F)) {
+               previewAlpha *= f4;
+               f += (1.0F - f4) * 8.0F;
+               float floatValue = f + 8.0F;
+               float width = f3 - 16.0F;
+               float y = f2 + 1.5F;
+               float height = 23.0F;
+               boolean flag = this.selectedLocal == selectedLocal && selected.equals(this.selected);
+               boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+               float hover = this.hover(key, contains);
+               float select = this.select(key, flag);
+               plate(customDrawContext, floatValue, y, width, height, hover, 0.0F, previewAlpha, zenithStyle);
+               if (select > 0.002F) {
+                  customDrawContext.drawRoundedRect(
+                     floatValue,
+                     y,
+                     width,
+                     height,
                      ProxyDotRadiusData.method8069(4.0F),
-                     var14.getPrimaryColor().getZenithColor().method7294(var13 * 0.08F * var23)
+                     zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.08F * select)
                   );
-                  float var24 = (var19 - 8.0F) * var23;
-                  var7.drawRoundedRect(
-                     var16 + 1.5F,
-                     var18 + (var19 - var24) / 2.0F,
+                  float height2 = (height - 8.0F) * select;
+                  customDrawContext.drawRoundedRect(
+                     floatValue + 1.5F,
+                     y + (height - height2) / 2.0F,
                      2.0F,
-                     var24,
+                     height2,
                      ProxyDotRadiusData.method8069(1.0F),
-                     var14.getPrimaryColor().getZenithColor().method7294(var13)
+                     zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
                   );
                }
 
-               PartyPlayerInfo var45 = var2 ? null : peer(var1);
-               boolean var25 = !var2 && !isPendingName(var1);
-               BoundsData var26 = new BoundsData(var16 + var17 - 6.0F - 12.0F - 4.0F, var18 + (var19 - 12.0F) / 2.0F, 16.0F, 12.0F);
-               boolean var27 = var25 && var21 && var26.contains(var8, var9);
-               this.hoveredButton.put(var4, var27 ? 1 : -1);
-               if (var21) {
-                  HoverInfo.request(var5, t(var27 ? "gui.friends.quick.chat.desc" : var6));
+               PartyPlayerInfo partyPlayerInfo = selectedLocal ? null : peer(selected);
+               boolean flag2 = !selectedLocal && !isPendingName(selected);
+               BoundsData boundsData = new BoundsData(floatValue + width - 6.0F - 12.0F - 4.0F, y + (height - 12.0F) / 2.0F, 16.0F, 12.0F);
+               boolean flag3 = flag2 && contains && boundsData.contains(lastClickX, lastClickY);
+               this.hoveredButton.put(key, flag3 ? 1 : -1);
+               if (contains) {
+                  HoverInfo.request(name, t(flag3 ? "gui.friends.quick.chat.desc" : str));
                }
 
-               float var28 = var22 * 1.5F;
-               float var29 = var18 + var19 / 2.0F;
-               float var30 = var16 + 7.0F + var28;
-               float var31 = var29 - 8.0F;
-               this.avatar(var7, var1, var30, var31, 16.0F, var13, var14);
-               this.drawStatusDot(var7, var4, var1, var2, var30 + 16.0F - 4.0F + 0.5F, var31 + 16.0F - 4.0F + 0.5F, var13, var14);
-               float var32 = var16 + var17 - 6.0F;
-               float var33 = this.hover(var4 + ":chat", var25 && var21);
-               if (var33 > 0.01F) {
-                  var7.drawRoundedRect(
-                     var26.getFloatValue(),
-                     var26.getFloatValue2(),
-                     var26.width(),
-                     var26.height(),
-                     ProxyDotRadiusData.method8069(var26.height() / 2.0F),
-                     var14.getPrimaryColor().getZenithColor().method7294(var13 * var33 * (var27 ? 0.95F : 0.25F))
+               float f5 = hover * 1.5F;
+               float f6 = y + height / 2.0F;
+               float floatValue2 = floatValue + 7.0F + f5;
+               float y2 = f6 - 8.0F;
+               this.avatar(customDrawContext, selected, floatValue2, y2, 16.0F, previewAlpha, zenithStyle);
+               this.drawStatusDot(customDrawContext, key, selected, selectedLocal, floatValue2 + 16.0F - 4.0F + 0.5F, y2 + 16.0F - 4.0F + 0.5F, previewAlpha, zenithStyle);
+               float f7 = floatValue + width - 6.0F;
+               float hover2 = this.hover(key + ":chat", flag2 && contains);
+               if (hover2 > 0.01F) {
+                  customDrawContext.drawRoundedRect(
+                     boundsData.getFloatValue(),
+                     boundsData.getFloatValue2(),
+                     boundsData.width(),
+                     boundsData.height(),
+                     ProxyDotRadiusData.method8069(boundsData.height() / 2.0F),
+                     zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * hover2 * (flag3 ? 0.95F : 0.25F))
                   );
                   MenuGlyph.CHAT
                      .draw(
-                        var7,
-                        var26.getFloatValue() + (var26.width() - 6.0F) / 2.0F,
-                        var26.getFloatValue2() + (var26.height() - 6.0F) / 2.0F,
-                        (var27 ? new ZenithColor(255, 255, 255) : var14.getPrimaryColor().getZenithColor()).method7294(var13 * var33)
+                        customDrawContext,
+                        boundsData.getFloatValue() + (boundsData.width() - 6.0F) / 2.0F,
+                        boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F,
+                        (flag3 ? new ZenithColor(255, 255, 255) : zenithStyle.getPrimaryColor().getZenithColor()).method7294(previewAlpha * hover2)
                      );
-                  var32 = var26.getFloatValue() - 4.0F;
+                  f7 = boundsData.getFloatValue() - 4.0F;
                }
 
-               Font var34 = Fonts.NEW_REGULAR.getFont(4.4F);
-               String var35 = var2 ? "" : sideNote(var1);
-               if (!var35.isEmpty() && var33 < 0.99F) {
-                  var7.drawText(
-                     var34,
-                     var35,
-                     var32 - var34.width(var35),
-                     var29 - var34.height() / 2.0F,
-                     var14.getTextTertiary().getZenithColor().method7294(var13 * (1.0F - var33))
+               Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+               String text = selectedLocal ? "" : sideNote(selected);
+               if (!text.isEmpty() && hover2 < 0.99F) {
+                  customDrawContext.drawText(
+                     font,
+                     text,
+                     f7 - font.width(text),
+                     f6 - font.height() / 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * (1.0F - hover2))
                   );
-                  var32 -= (var34.width(var35) + 5.0F) * (1.0F - var33);
+                  f7 -= (font.width(text) + 5.0F) * (1.0F - hover2);
                }
 
-               if (var45 != null && var45.method3289()) {
-                  Voice var36 = Zenith.getInstance().getVoice();
-                  boolean var37 = var36 != null && var36.getVoiceState().method5365(var45.uid());
-                  if (var37) {
+               if (partyPlayerInfo != null && partyPlayerInfo.method3289()) {
+                  Voice voice = Zenith.getInstance().getVoice();
+                  boolean flag4 = voice != null && voice.getVoiceState().method5365(partyPlayerInfo.uid());
+                  if (flag4) {
                      Voice.method371(
-                        var7, var32 - 11.0F, var29, var36.getVoiceState().method5366(var45.uid()), var14.getPrimaryColor().getZenithColor().method7294(var13)
+                        customDrawContext, f7 - 11.0F, f6, voice.getVoiceState().method5366(partyPlayerInfo.uid()), zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
                      );
-                     var32 -= 15.0F;
+                     f7 -= 15.0F;
                   } else {
-                     MenuGlyph.MIC.draw(var7, var32 - 6.0F, var29 - 3.0F, var14.getTextTertiary().getZenithColor().method7294(var13 * 0.8F));
-                     var32 -= 11.0F;
+                     MenuGlyph.MIC.draw(customDrawContext, f7 - 6.0F, f6 - 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F));
+                     f7 -= 11.0F;
                   }
                }
 
-               Font var46 = Fonts.NEW_MEDIUM.getFont(5.2F);
-               float var47 = var30 + 16.0F + 6.0F;
-               float var38 = var32 - 4.0F - var47;
-               float var39 = var29 - (var46.height() + 2.0F + var34.height()) / 2.0F;
-               Prefs var40 = prefs();
-               boolean var41 = !var2 && var40 != null && var40.method3319(var1);
-               float var42 = var47;
-               if (var41) {
-                  diamond(var7, var47 + 1.5F, var39 + var46.height() / 2.0F, 3.0F, FAVORITE.method7294(var13));
-                  var42 = var47 + 6.0F;
+               Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+               float floatValue3 = floatValue2 + 16.0F + 6.0F;
+               float width2 = f7 - 4.0F - floatValue3;
+               float centeredTextY = f6 - (font2.height() + 2.0F + font.height()) / 2.0F;
+               Prefs prefs2 = prefs();
+               boolean flag4 = !selectedLocal && prefs2 != null && prefs2.method3319(selected);
+               float floatValue4 = floatValue3;
+               if (flag4) {
+                  diamond(customDrawContext, floatValue3 + 1.5F, centeredTextY + font2.height() / 2.0F, 3.0F, FAVORITE.method7294(previewAlpha));
+                  floatValue4 = floatValue3 + 6.0F;
                }
 
-               var7.drawText(
-                  var46,
-                  fit(var46, var5, var38 - (var42 - var47)),
-                  var42,
-                  var39,
-                  var14.getTextSecondary()
+               customDrawContext.drawText(
+                  font2,
+                  fit(font2, name, width2 - (floatValue4 - floatValue3)),
+                  floatValue4,
+                  centeredTextY,
+                  zenithStyle.getTextSecondary()
                      .getZenithColor()
-                     .method7295(var14.getTextEnable().getZenithColor(), Math.max(0.55F, Math.max(var23, var22)))
-                     .method7294(var13)
+                     .method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(0.55F, Math.max(select, hover)))
+                     .method7294(previewAlpha)
                );
-               var7.drawText(
-                  var34,
-                  fit(var34, this.cardNote(var1, var2), var38),
-                  var47,
-                  var39 + var46.height() + 2.0F,
-                  var14.getTextTertiary().getZenithColor().method7294(var13)
+               customDrawContext.drawText(
+                  font,
+                  fit(font, this.cardNote(selected, selectedLocal), width2),
+                  floatValue3,
+                  centeredTextY + font2.height() + 2.0F,
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
             }
          },
          () -> {
-            if (this.hoveredButton.getOrDefault(var4, -1) == 1) {
-               this.openChat(var1);
+            if (this.hoveredButton.getOrDefault(key, -1) == 1) {
+               this.openChat(selected);
             } else {
-               if (!var1.equals(this.selected) || var2 != this.selectedLocal) {
+               if (!selected.equals(this.selected) || selectedLocal != this.selectedLocal) {
                   restart(this.cardReveal);
                   restart(this.asideWave);
                }
 
                this.party.clearSelection();
-               this.selected = var1;
-               this.selectedLocal = var2;
+               this.selected = selected;
+               this.selectedLocal = selectedLocal;
                this.resetAsideScroll();
                this.invalidate();
             }
@@ -1252,13 +1252,13 @@ public class FriendsSectionPanel extends SectionPanel {
       );
    }
 
-   public void selectFriendFromParty(String var1) {
-      if (!var1.equals(this.selected) || this.selectedLocal) {
+   public void selectFriendFromParty(String selected) {
+      if (!selected.equals(this.selected) || this.selectedLocal) {
          restart(this.cardReveal);
          restart(this.asideWave);
       }
 
-      this.selected = var1;
+      this.selected = selected;
       this.selectedLocal = false;
       this.resetAsideScroll();
       this.invalidate();
@@ -1270,163 +1270,163 @@ public class FriendsSectionPanel extends SectionPanel {
       this.resetAsideScroll();
    }
 
-   public void partyNotice(String var1) {
-      this.flashMessage(var1);
+   public void partyNotice(String flashText) {
+      this.flashMessage(flashText);
    }
 
    public String selectedFriendName() {
       return this.selectedLocal ? null : this.selected;
    }
 
-   private String cardNote(String var1, boolean var2) {
-      if (var2) {
-         return t(this.isNearby(var1) ? "gui.friends.nearbyWorld" : "gui.friends.localFriend");
+   private String cardNote(String selected, boolean selectedLocal) {
+      if (selectedLocal) {
+         return t(this.isNearby(selected) ? "gui.friends.nearbyWorld" : "gui.friends.localFriend");
       } else {
-         CloudConnectionState var3 = state();
-         PartyPlayerInfo var4 = peer(var1);
-         if (var4 != null) {
-            String var5 = presenceNote(var4.uid());
-            return var5.isEmpty() ? whereLine(var1) : var5 + " · " + whereLine(var1);
+         CloudConnectionState cloudConnectionState = state();
+         PartyPlayerInfo partyPlayerInfo = peer(selected);
+         if (partyPlayerInfo != null) {
+            String str = presenceNote(partyPlayerInfo.uid());
+            return str.isEmpty() ? whereLine(selected) : str + " · " + whereLine(selected);
          } else {
-            return var3 != null && var3.method8061(var1) ? t("gui.friends.status.pendingLong") : lastSeen(var1);
+            return cloudConnectionState != null && cloudConnectionState.method8061(selected) ? t("gui.friends.status.pendingLong") : lastSeen(selected);
          }
       }
    }
 
-   private static String presenceNote(long var0) {
-      Cloud var2 = cloud();
-      if (var2 != null && var2.getPartyMember().method1142(var0)) {
-         PartyMember.Data2 var3 = var2.getPartyMember().method1141(var0);
-         boolean var4 = "online".equals(var3.getText()) || "menu".equals(var3.getText());
-         if (var4 && var3.text().isEmpty()) {
+   private static String presenceNote(long uid) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && cloud2.getPartyMember().method1142(uid)) {
+         PartyMember.Data2 data2 = cloud2.getPartyMember().method1141(uid);
+         boolean flag = "online".equals(data2.getText()) || "menu".equals(data2.getText());
+         if (flag && data2.text().isEmpty()) {
             return "";
          } else {
-            return var4 ? var3.text() : PartyManager.method52(var3);
+            return flag ? data2.text() : PartyManager.method52(data2);
          }
       } else {
          return "";
       }
    }
 
-   private static String sideNote(String var0) {
-      PartyPlayerInfo var1 = peer(var0);
-      Cloud var2 = cloud();
-      if (var1 != null && var2 != null) {
-         return var1.method3291(var2.method7911(), var2.method7913()) ? distanceTo(var0) : "";
+   private static String sideNote(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      Cloud cloud2 = cloud();
+      if (partyPlayerInfo != null && cloud2 != null) {
+         return partyPlayerInfo.method3291(cloud2.method7911(), cloud2.method7913()) ? distanceTo(selected) : "";
       } else {
          return "";
       }
    }
 
-   private float appear(String var1) {
-      return this.buttonHover.computeIfAbsent("appear:" + var1, var0 -> new Animation(240L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+   private float appear(String key) {
+      return this.buttonHover.computeIfAbsent("appear:" + key, str -> new Animation(240L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
    }
 
-   private void drawStatusDot(MenuDrawContext var1, String var2, String var3, boolean var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = this.barFill
-         .computeIfAbsent("dot:" + var2, var0 -> new Animation(320L, 0.0F, Easing.INSTANCE13))
-         .method2808(var4 ? (this.isNearby(var3) ? 1.0F : 0.0F) : statusLit(var3));
-      ZenithColor var10 = var4 ? var8.getFriendColor().getZenithColor() : statusColor(var3, var8);
-      CloudConnectionState var11 = state();
-      if (!var4 && var11 != null && var11.method8061(var3) && peer(var3) == null) {
-         var9 *= 0.45F + 0.55F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 420.0));
+   private void drawStatusDot(MenuDrawContext customDrawContext, String key, String selected, boolean selectedLocal, float floatValue, float y, float previewAlpha, ZenithStyle zenithStyle) {
+      float hover = this.barFill
+         .computeIfAbsent("dot:" + key, str -> new Animation(320L, 0.0F, Easing.INSTANCE13))
+         .method2808(selectedLocal ? (this.isNearby(selected) ? 1.0F : 0.0F) : statusLit(selected));
+      ZenithColor zenithColor = selectedLocal ? zenithStyle.getFriendColor().getZenithColor() : statusColor(selected, zenithStyle);
+      CloudConnectionState cloudConnectionState = state();
+      if (!selectedLocal && cloudConnectionState != null && cloudConnectionState.method8061(selected) && peer(selected) == null) {
+         hover *= 0.45F + 0.55F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 420.0));
       }
 
-      float var12 = 6.0F;
-      var1.drawRoundedRect(
-         var5 - 1.0F,
-         var6 - 1.0F,
-         var12,
-         var12,
-         ProxyDotRadiusData.method8069(var12 / 2.0F),
-         var8.getRightBackground().getZenithColor().method7292(1.0F).method7294(var7)
+      float width = 6.0F;
+      customDrawContext.drawRoundedRect(
+         floatValue - 1.0F,
+         y - 1.0F,
+         width,
+         width,
+         ProxyDotRadiusData.method8069(width / 2.0F),
+         zenithStyle.getRightBackground().getZenithColor().method7292(1.0F).method7294(previewAlpha)
       );
-      var1.drawRoundedRect(
-         var5, var6, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var8.getTextTertiary().getZenithColor().method7295(var10, var9).method7294(var7)
+      customDrawContext.drawRoundedRect(
+         floatValue, y, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), zenithStyle.getTextTertiary().getZenithColor().method7295(zenithColor, hover).method7294(previewAlpha)
       );
    }
 
-   private void avatar(MenuDrawContext var1, String var2, float var3, float var4, float var5, float var6, ZenithStyle var7) {
-      this.avatar(var1, var2, 0L, var3, var4, var5, var6, var7);
+   private void avatar(MenuDrawContext customDrawContext, String selected, float floatValue, float y, float height, float previewAlpha, ZenithStyle zenithStyle) {
+      this.avatar(customDrawContext, selected, 0L, floatValue, y, height, previewAlpha, zenithStyle);
    }
 
-   private void avatar(MenuDrawContext var1, String var2, long var3, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      long var10 = var3 > 0L ? var3 : uidOf(var2);
-      Identifier var12 = var10 > 0L ? CloudAvatarCache.get(Long.toString(var10)) : null;
-      ProxyDotRadiusData var13 = ProxyDotRadiusData.method8069(var7 / 2.0F);
-      if (var12 != null) {
-         float var16 = this.avatarFade.computeIfAbsent(var10, var0 -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
-         if (var16 < 1.0F) {
-            var1.drawRoundedRect(var5, var6, var7, var7, var13, var9.getSurfaceEnableBackground().getZenithColor().method7294(var8 * 2.4F * (1.0F - var16)));
+   private void avatar(MenuDrawContext customDrawContext, String text, long longValue, float floatValue, float y, float height, float previewAlpha, ZenithStyle zenithStyle) {
+      long key = longValue > 0L ? longValue : uidOf(text);
+      Identifier texture = key > 0L ? CloudAvatarCache.get(Long.toString(key)) : null;
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(height / 2.0F);
+      if (texture != null) {
+         float f = this.avatarFade.computeIfAbsent(key, l -> new Animation(220L, 0.0F, Easing.INSTANCE12)).method2808(1.0F);
+         if (f < 1.0F) {
+            customDrawContext.drawRoundedRect(floatValue, y, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F * (1.0F - f)));
          }
 
-         var1.drawRoundedTexture(var12, var5, var6, var7, var7, var13, ZenithColor.INSTANCE.method7294(var8 * var16));
+         customDrawContext.drawRoundedTexture(texture, floatValue, y, height, height, headerRadius, ZenithColor.INSTANCE.method7294(previewAlpha * f));
       } else {
-         var1.drawRoundedRect(var5, var6, var7, var7, var13, var9.getSurfaceEnableBackground().getZenithColor().method7294(var8 * 2.4F));
-         String var14 = var2 != null && !var2.isEmpty() ? var2.substring(0, 1).toUpperCase(Locale.ROOT) : "?";
-         Font var15 = Fonts.NEW_MEDIUM.getFont(var7 * 0.5F);
-         var1.drawText(
-            var15,
-            var14,
-            var5 + (var7 - var15.width(var14)) / 2.0F,
-            var6 + (var7 - var15.height()) / 2.0F,
-            var9.getTextTertiary().getZenithColor().method7294(var8)
+         customDrawContext.drawRoundedRect(floatValue, y, height, height, headerRadius, zenithStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 2.4F));
+         String upperCase = text != null && !text.isEmpty() ? text.substring(0, 1).toUpperCase(Locale.ROOT) : "?";
+         Font font = Fonts.NEW_MEDIUM.getFont(height * 0.5F);
+         customDrawContext.drawText(
+            font,
+            upperCase,
+            floatValue + (height - font.width(upperCase)) / 2.0F,
+            y + (height - font.height()) / 2.0F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
       }
    }
 
    private void submitAdd() {
-      String var1 = this.typedName();
-      if (var1.isEmpty()) {
+      String typedName = this.typedName();
+      if (typedName.isEmpty()) {
          this.setNotice(t("gui.friends.notice.empty"), "", false);
-      } else if (this.isAlreadyFriend(var1)) {
-         this.setNotice(t("gui.friends.notice.already").replace("{n}", var1), "", false);
+      } else if (this.isAlreadyFriend(typedName)) {
+         this.setNotice(t("gui.friends.notice.already").replace("{n}", typedName), "", false);
       } else {
-         UserSearchClient.Data var2 = this.exactMatch(var1);
-         if (var2 != null) {
-            this.addCloud(var2);
-         } else if (UserSearchClient.method4759(var1)) {
+         UserSearchClient.Data exactMatch = this.exactMatch(typedName);
+         if (exactMatch != null) {
+            this.addCloud(exactMatch);
+         } else if (UserSearchClient.method4759(typedName)) {
             this.setNotice(t("gui.friends.notice.short"), "", false);
-         } else if (!this.searching && var1.equalsIgnoreCase(this.suggestFor)) {
-            this.setNotice(t("gui.friends.notice.notFound").replace("{n}", var1), var1, true);
+         } else if (!this.searching && typedName.equalsIgnoreCase(this.suggestFor)) {
+            this.setNotice(t("gui.friends.notice.notFound").replace("{n}", typedName), typedName, true);
          } else {
             this.submitWhenReady = true;
-            this.setNotice(t("gui.friends.notice.searching").replace("{n}", var1), "", false);
-            this.askDirectory(var1);
+            this.setNotice(t("gui.friends.notice.searching").replace("{n}", typedName), "", false);
+            this.askDirectory(typedName);
          }
       }
    }
 
-   private void addCloud(UserSearchClient.Data var1) {
-      Cloud var2 = cloud();
-      if (var2 != null) {
-         var2.method7904(0, var1.name());
-         if (var2.prefs() != null) {
-            var2.prefs().method3312(var1.name(), var1.uid());
+   private void addCloud(UserSearchClient.Data exactMatch) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null) {
+         cloud2.method7904(0, exactMatch.name());
+         if (cloud2.prefs() != null) {
+            cloud2.prefs().method3312(exactMatch.name(), exactMatch.uid());
          }
       }
 
-      this.setNotice((var2 != null && var2.method7862() ? t("gui.friends.notice.sent") : t("gui.friends.notice.queued")).replace("{n}", var1.name()), "", false);
+      this.setNotice((cloud2 != null && cloud2.method7862() ? t("gui.friends.notice.sent") : t("gui.friends.notice.queued")).replace("{n}", exactMatch.name()), "", false);
       this.clearInput();
       UserSearchClient.method4762();
       this.invalidate();
    }
 
-   private void addBlind(String var1) {
-      Cloud var2 = cloud();
-      if (var2 != null && var2.method7904(0, var1)) {
-         this.setNotice((var2.method7862() ? t("gui.friends.notice.sent") : t("gui.friends.notice.queued")).replace("{n}", var1), "", false);
+   private void addBlind(String name) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && cloud2.method7904(0, name)) {
+         this.setNotice((cloud2.method7862() ? t("gui.friends.notice.sent") : t("gui.friends.notice.queued")).replace("{n}", name), "", false);
          this.clearInput();
          this.invalidate();
       } else {
-         this.setNotice(t("gui.friends.notice.already").replace("{n}", var1), "", false);
+         this.setNotice(t("gui.friends.notice.already").replace("{n}", name), "", false);
       }
    }
 
-   private void addLocal(String var1) {
-      Zenith.getInstance().getFriends().add(var1);
+   private void addLocal(String name) {
+      Zenith.getInstance().getFriends().add(name);
       Zenith.getInstance().getFriends().save();
-      this.setNotice(t("gui.friends.notice.addedLocal").replace("{n}", var1), "", false);
+      this.setNotice(t("gui.friends.notice.addedLocal").replace("{n}", name), "", false);
       this.clearInput();
       this.invalidate();
    }
@@ -1440,14 +1440,14 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private String typedName() {
-      String var1 = this.addTargetSetting.getValue();
-      return var1 == null ? "" : var1.strip();
+      String str = this.addTargetSetting.getValue();
+      return str == null ? "" : str.strip();
    }
 
-   private UserSearchClient.Data exactMatch(String var1) {
-      for (UserSearchClient.Data var3 : this.suggestions) {
-         if (var3.name().equalsIgnoreCase(var1)) {
-            return var3;
+   private UserSearchClient.Data exactMatch(String typedName) {
+      for (UserSearchClient.Data suggestion : this.suggestions) {
+         if (suggestion.name().equalsIgnoreCase(typedName)) {
+            return suggestion;
          }
       }
 
@@ -1455,49 +1455,49 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private void pollTyping() {
-      String var1 = this.typedName();
-      if (!var1.equals(this.typed)) {
-         this.typed = var1;
+      String typedName = this.typedName();
+      if (!typedName.equals(this.typed)) {
+         this.typed = typedName;
          this.typedAt = System.currentTimeMillis();
-         if (var1.isEmpty()) {
+         if (typedName.isEmpty()) {
             this.suggestions = List.of();
             this.suggestFor = "";
             this.invalidate();
          }
-      } else if (!var1.isEmpty()
+      } else if (!typedName.isEmpty()
          && !this.searching
-         && !UserSearchClient.method4759(var1)
-         && !var1.equalsIgnoreCase(this.suggestFor)
+         && !UserSearchClient.method4759(typedName)
+         && !typedName.equalsIgnoreCase(this.suggestFor)
          && System.currentTimeMillis() - this.typedAt >= 260L) {
-         this.askDirectory(var1);
+         this.askDirectory(typedName);
       }
    }
 
-   private void askDirectory(String var1) {
-      var var2 = UserSearchClient.method4758(var1);
-      if (var2 != null) {
-         this.applyDirectory(var1, var2, null);
+   private void askDirectory(String typedName) {
+      var datas = UserSearchClient.method4758(typedName);
+      if (datas != null) {
+         this.applyDirectory(typedName, datas, null);
       } else {
          this.searching = true;
-         UserSearchClient.method4760(var1, 6)
-            .whenComplete((var2x, var3) -> mc.execute(() -> this.applyDirectory(var1, (List<UserSearchClient.Data>)var2x, var3)));
+         UserSearchClient.method4760(typedName, 6)
+            .whenComplete((var2x, throwable) -> mc.execute(() -> this.applyDirectory(typedName, (List<UserSearchClient.Data>)var2x, throwable)));
       }
    }
 
-   private void applyDirectory(String var1, List<UserSearchClient.Data> var2, Throwable var3) {
+   private void applyDirectory(String suggestFor, List<UserSearchClient.Data> datas, Throwable throwable) {
       this.searching = false;
-      this.suggestFor = var1;
-      this.directoryAnswered = var3 == null;
-      boolean var4 = !sameNames(this.suggestions, var2);
-      this.suggestions = var2 == null ? List.of() : var2;
-      if (var4) {
+      this.suggestFor = suggestFor;
+      this.directoryAnswered = throwable == null;
+      boolean flag = !sameNames(this.suggestions, datas);
+      this.suggestions = datas == null ? List.of() : datas;
+      if (flag) {
          restart(this.suggestWave);
       }
 
-      if (var3 != null) {
+      if (throwable != null) {
          this.suggestions = List.of();
          if (this.submitWhenReady) {
-            this.setNotice(t("gui.friends.notice.searchFailed"), var1, true);
+            this.setNotice(t("gui.friends.notice.searchFailed"), suggestFor, true);
          }
 
          this.submitWhenReady = false;
@@ -1505,13 +1505,13 @@ public class FriendsSectionPanel extends SectionPanel {
       } else {
          if (this.submitWhenReady) {
             this.submitWhenReady = false;
-            UserSearchClient.Data var5 = this.exactMatch(var1);
-            if (var5 != null) {
-               this.addCloud(var5);
+            UserSearchClient.Data exactMatch = this.exactMatch(suggestFor);
+            if (exactMatch != null) {
+               this.addCloud(exactMatch);
                return;
             }
 
-            this.setNotice(t("gui.friends.notice.notFound").replace("{n}", var1), var1, true);
+            this.setNotice(t("gui.friends.notice.notFound").replace("{n}", suggestFor), suggestFor, true);
          }
 
          this.invalidate();
@@ -1519,18 +1519,18 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private void buildSuggestions() {
-      String var1 = this.typedName();
-      if (!var1.isEmpty() && !UserSearchClient.method4759(var1)) {
-         List<FriendsSectionPanel.Hint> var2 = this.ordered(var1);
-         if (var2.isEmpty()) {
+      String typedName = this.typedName();
+      if (!typedName.isEmpty() && !UserSearchClient.method4759(typedName)) {
+         List<FriendsSectionPanel.Hint> ordered = this.ordered(typedName);
+         if (ordered.isEmpty()) {
             if (this.searching) {
                this.searchingRow();
             }
          } else {
-            int var3 = 0;
+            int n = 0;
 
-            for (FriendsSectionPanel.Hint var5 : var2) {
-               this.suggestionCard(var5, var1, var3++);
+            for (FriendsSectionPanel.Hint hint : ordered) {
+               this.suggestionCard(hint, typedName, n++);
             }
 
             if (this.searching) {
@@ -1540,193 +1540,193 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private List<FriendsSectionPanel.Hint> ordered(String var1) {
-      String var2 = var1.toLowerCase(Locale.ROOT);
-      ArrayList var3 = new ArrayList();
-      ArrayList var4 = new ArrayList();
-      LinkedHashSet var5 = new LinkedHashSet();
-      var var6 = this.onlineNames();
+   private List<FriendsSectionPanel.Hint> ordered(String typedName) {
+      String lowerCase = typedName.toLowerCase(Locale.ROOT);
+      ArrayList arrayList = new ArrayList();
+      ArrayList arrayList2 = new ArrayList();
+      LinkedHashSet linkedHashSet = new LinkedHashSet();
+      var onlineNames = this.onlineNames();
 
-      for (UserSearchClient.Data var8 : this.suggestions) {
-         boolean var9 = !var6.contains(var8.name().toLowerCase(Locale.ROOT));
-         this.offer(new FriendsSectionPanel.Hint(var8.name(), var9 ? "gui.friends.hint.offline" : "", var8.uid(), 0), var2, var5, var3, var4);
+      for (UserSearchClient.Data suggestion : this.suggestions) {
+         boolean flag = !onlineNames.contains(suggestion.name().toLowerCase(Locale.ROOT));
+         this.offer(new FriendsSectionPanel.Hint(suggestion.name(), flag ? "gui.friends.hint.offline" : "", suggestion.uid(), 0), lowerCase, linkedHashSet, arrayList, arrayList2);
       }
 
-      CloudConnectionState var11 = state();
-      if (var11 != null) {
-         for (PartyPlayerInfo var15 : var11.method8038()) {
-            this.offer(new FriendsSectionPanel.Hint(var15.username(), "", var15.uid(), 0), var2, var5, var3, var4);
+      CloudConnectionState cloudConnectionState = state();
+      if (cloudConnectionState != null) {
+         for (PartyPlayerInfo partyPlayerInfo : cloudConnectionState.method8038()) {
+            this.offer(new FriendsSectionPanel.Hint(partyPlayerInfo.username(), "", partyPlayerInfo.uid(), 0), lowerCase, linkedHashSet, arrayList, arrayList2);
          }
       }
 
-      for (String var16 : this.serverPlayers()) {
-         this.offer(new FriendsSectionPanel.Hint(var16, "", 0L, 1), var2, var5, var3, var4);
+      for (String serverPlayer : this.serverPlayers()) {
+         this.offer(new FriendsSectionPanel.Hint(serverPlayer, "", 0L, 1), lowerCase, linkedHashSet, arrayList, arrayList2);
       }
 
-      var3.addAll(var4);
-      Object var14 = var3.size() > 6 ? var3.subList(0, 6) : var3;
-      FriendsSectionPanel.Hint var17 = this.localHint(var1, var5);
-      if (var17 == null) {
-         return (List<FriendsSectionPanel.Hint>)var14;
+      arrayList.addAll(arrayList2);
+      Object subList = arrayList.size() > 6 ? arrayList.subList(0, 6) : arrayList;
+      FriendsSectionPanel.Hint localHint = this.localHint(typedName, linkedHashSet);
+      if (localHint == null) {
+         return (List<FriendsSectionPanel.Hint>)subList;
       } else {
-         var var10 = new ArrayList<>((Collection)var14);
-         var10.add(var17);
-         return var10;
+         var arrayList3 = new ArrayList<>((Collection)subList);
+         arrayList3.add(localHint);
+         return arrayList3;
       }
    }
 
-   private FriendsSectionPanel.Hint localHint(String var1, Set<String> var2) {
-      String var3 = var1.strip();
-      if (!var3.isEmpty() && !this.isSelf(var3) && !this.isAlreadyFriend(var3) && !var2.contains(var3.toLowerCase(Locale.ROOT))) {
-         boolean var4 = this.directoryAnswered && !this.searching && var3.equalsIgnoreCase(this.suggestFor);
-         return new FriendsSectionPanel.Hint(var3, var4 ? "gui.friends.hint.local" : "gui.friends.hint.unchecked", 0L, -1);
+   private FriendsSectionPanel.Hint localHint(String typedName, Set<String> strings) {
+      String name = typedName.strip();
+      if (!name.isEmpty() && !this.isSelf(name) && !this.isAlreadyFriend(name) && !strings.contains(name.toLowerCase(Locale.ROOT))) {
+         boolean flag = this.directoryAnswered && !this.searching && name.equalsIgnoreCase(this.suggestFor);
+         return new FriendsSectionPanel.Hint(name, flag ? "gui.friends.hint.local" : "gui.friends.hint.unchecked", 0L, -1);
       } else {
          return null;
       }
    }
 
    private Set<String> onlineNames() {
-      LinkedHashSet var1 = new LinkedHashSet();
-      CloudConnectionState var2 = state();
-      if (var2 != null) {
-         for (PartyPlayerInfo var4 : var2.method8038()) {
-            if (var4.username() != null) {
-               var1.add(var4.username().toLowerCase(Locale.ROOT));
+      LinkedHashSet linkedHashSet = new LinkedHashSet();
+      CloudConnectionState cloudConnectionState = state();
+      if (cloudConnectionState != null) {
+         for (PartyPlayerInfo partyPlayerInfo : cloudConnectionState.method8038()) {
+            if (partyPlayerInfo.username() != null) {
+               linkedHashSet.add(partyPlayerInfo.username().toLowerCase(Locale.ROOT));
             }
          }
       }
 
-      for (String var6 : this.serverPlayers()) {
-         var1.add(var6.toLowerCase(Locale.ROOT));
+      for (String serverPlayer : this.serverPlayers()) {
+         linkedHashSet.add(serverPlayer.toLowerCase(Locale.ROOT));
       }
 
-      return var1;
+      return linkedHashSet;
    }
 
-   private void offer(FriendsSectionPanel.Hint var1, String var2, Set<String> var3, List<FriendsSectionPanel.Hint> var4, List<FriendsSectionPanel.Hint> var5) {
-      String var6 = var1.name();
-      if (var6 != null && !var6.isBlank() && !this.isAlreadyFriend(var6)) {
-         String var7 = var6.toLowerCase(Locale.ROOT);
-         if (!this.isSelf(var6) && var3.add(var7)) {
-            if (var7.startsWith(var2)) {
-               var4.add(var1);
-            } else if (var7.contains(var2)) {
-               var5.add(var1);
+   private void offer(FriendsSectionPanel.Hint hint, String lowerCase, Set<String> strings, List<FriendsSectionPanel.Hint> hints, List<FriendsSectionPanel.Hint> hints2) {
+      String name = hint.name();
+      if (name != null && !name.isBlank() && !this.isAlreadyFriend(name)) {
+         String str = name.toLowerCase(Locale.ROOT);
+         if (!this.isSelf(name) && strings.add(str)) {
+            if (str.startsWith(lowerCase)) {
+               hints.add(hint);
+            } else if (str.contains(lowerCase)) {
+               hints2.add(hint);
             }
          }
       }
    }
 
-   private boolean isSelf(String var1) {
-      return mc.getUser() != null && var1.equalsIgnoreCase(mc.getUser().getName());
+   private boolean isSelf(String name) {
+      return mc.getUser() != null && name.equalsIgnoreCase(mc.getUser().getName());
    }
 
    private List<String> serverPlayers() {
       if (mc.getConnection() == null) {
          return List.of();
       } else {
-         ArrayList<String> var1 = new ArrayList<>();
+         ArrayList<String> strings = new ArrayList<>();
 
-         for (PlayerInfo var3 : mc.getConnection().getOnlinePlayers()) {
-            String var4 = var3.getProfile() == null ? null : var3.getProfile().name();
-            if (var4 != null && !var4.isBlank()) {
-               var1.add(var4);
+         for (PlayerInfo onlinePlayer : mc.getConnection().getOnlinePlayers()) {
+            String name = onlinePlayer.getProfile() == null ? null : onlinePlayer.getProfile().name();
+            if (name != null && !name.isBlank()) {
+               strings.add(name);
             }
          }
 
-         return var1;
+         return strings;
       }
    }
 
-   private void suggestionCard(FriendsSectionPanel.Hint var1, String var2, int var3) {
-      String var4 = "suggest:" + var1.name();
+   private void suggestionCard(FriendsSectionPanel.Hint hint, String typedName, int n) {
+      String key = "suggest:" + hint.name();
       this.custom(
          26.0F,
-         (var5, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = wave(this.suggestWave, var3);
-            if (!(var13 <= 0.002F)) {
-               float var14 = var11 * var13;
-               float var15 = var8 + 8.0F + (1.0F - var13) * 6.0F;
-               float var16 = var10 - 16.0F - (1.0F - var13) * 6.0F;
-               float var17 = var9 + 1.5F;
-               float var18 = 23.0F;
-               boolean var19 = new BoundsData(var15, var17, var16, var18).contains(var6, var7);
-               plate(var5, var15, var17, var16, var18, this.hover(var4, var19), 0.0F, var14, var12);
-               if (var19) {
+         (customDrawContext, lastClickX, lastClickY, f, f2, f3, f4, zenithStyle) -> {
+            float wave2 = wave(this.suggestWave, n);
+            if (!(wave2 <= 0.002F)) {
+               float previewAlpha = f4 * wave2;
+               float floatValue = f + 8.0F + (1.0F - wave2) * 6.0F;
+               float width = f3 - 16.0F - (1.0F - wave2) * 6.0F;
+               float y = f2 + 1.5F;
+               float height = 23.0F;
+               boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+               plate(customDrawContext, floatValue, y, width, height, this.hover(key, contains), 0.0F, previewAlpha, zenithStyle);
+               if (contains) {
                   HoverInfo.request(
-                     var1.name(), t(var1.addKind() == -1 ? "gui.friends.suggest.descLocal" : "gui.friends.suggest.desc").replace("{n}", var1.name())
+                     hint.name(), t(hint.addKind() == -1 ? "gui.friends.suggest.descLocal" : "gui.friends.suggest.desc").replace("{n}", hint.name())
                   );
                }
 
-               float var20 = var17 + var18 / 2.0F;
-               float var21 = var15 + 7.0F;
-               this.avatar(var5, var1.name(), var1.uid(), var21, var20 - 8.0F, 16.0F, var14, var12);
-               Font var22 = Fonts.NEW_MEDIUM.getFont(5.2F);
-               Font var23 = Fonts.NEW_MEDIUM.getFont(4.4F);
-               String var24 = t(var1.addKind() == -1 ? "gui.friends.suggest.addLocal" : "gui.friends.suggest.add");
-               float var25 = var23.width(var24) + 11.0F;
-               float var26 = 11.0F;
-               BoundsData var27 = new BoundsData(var15 + var16 - 6.0F - var25, var20 - var26 / 2.0F, var25, var26);
-               float var28 = this.hover(var4 + ":pill", var19);
-               ZenithColor var29 = var12.getPrimaryColor().getZenithColor();
-               var5.drawRoundedRect(
-                  var27.getFloatValue(),
-                  var27.getFloatValue2(),
-                  var27.width(),
-                  var27.height(),
-                  ProxyDotRadiusData.method8069(var26 / 2.0F),
-                  var29.method7292(0.12F + var28 * 0.7F).method7294(var14)
+               float f5 = y + height / 2.0F;
+               float floatValue2 = floatValue + 7.0F;
+               this.avatar(customDrawContext, hint.name(), hint.uid(), floatValue2, f5 - 8.0F, 16.0F, previewAlpha, zenithStyle);
+               Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+               Font font2 = Fonts.NEW_MEDIUM.getFont(4.4F);
+               String text = t(hint.addKind() == -1 ? "gui.friends.suggest.addLocal" : "gui.friends.suggest.add");
+               float width2 = font2.width(text) + 11.0F;
+               float height2 = 11.0F;
+               BoundsData boundsData = new BoundsData(floatValue + width - 6.0F - width2, f5 - height2 / 2.0F, width2, height2);
+               float hover = this.hover(key + ":pill", contains);
+               ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+               customDrawContext.drawRoundedRect(
+                  boundsData.getFloatValue(),
+                  boundsData.getFloatValue2(),
+                  boundsData.width(),
+                  boundsData.height(),
+                  ProxyDotRadiusData.method8069(height2 / 2.0F),
+                  zenithColor.method7292(0.12F + hover * 0.7F).method7294(previewAlpha)
                );
-               var5.drawText(
-                  var23,
-                  var24,
-                  var27.getFloatValue() + (var27.width() - var23.width(var24)) / 2.0F,
-                  var27.getFloatValue2() + (var26 - var23.height()) / 2.0F,
-                  var29.method7295(new ZenithColor(255, 255, 255), var28).method7294(var14)
+               customDrawContext.drawText(
+                  font2,
+                  text,
+                  boundsData.getFloatValue() + (boundsData.width() - font2.width(text)) / 2.0F,
+                  boundsData.getFloatValue2() + (height2 - font2.height()) / 2.0F,
+                  zenithColor.method7295(new ZenithColor(255, 255, 255), hover).method7294(previewAlpha)
                );
-               Font var30 = Fonts.NEW_REGULAR.getFont(4.2F);
-               String var31 = var1.source().isEmpty() ? "" : t(var1.source());
-               float var32 = var31.isEmpty() ? 0.0F : var30.width(var31);
-               if (!var31.isEmpty()) {
-                  var5.drawText(
-                     var30,
-                     var31,
-                     var27.getFloatValue() - 5.0F - var32,
-                     var20 - var30.height() / 2.0F,
-                     var12.getTextTertiary().getZenithColor().method7294(var14 * 0.8F)
+               Font font3 = Fonts.NEW_REGULAR.getFont(4.2F);
+               String str = hint.source().isEmpty() ? "" : t(hint.source());
+               float width3 = str.isEmpty() ? 0.0F : font3.width(str);
+               if (!str.isEmpty()) {
+                  customDrawContext.drawText(
+                     font3,
+                     str,
+                     boundsData.getFloatValue() - 5.0F - width3,
+                     f5 - font3.height() / 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F)
                   );
                }
 
-               float var33 = var21 + 16.0F + 6.0F;
-               float var34 = var27.getFloatValue() - 9.0F - var32 - var33;
-               this.drawMatchedName(var5, var22, var1.name(), var2, var33, var20 - var22.height() / 2.0F, var34, var14, var12);
+               float floatValue3 = floatValue2 + 16.0F + 6.0F;
+               float f6 = boundsData.getFloatValue() - 9.0F - width3 - floatValue3;
+               this.drawMatchedName(customDrawContext, font, hint.name(), typedName, floatValue3, f5 - font.height() / 2.0F, f6, previewAlpha, zenithStyle);
             }
          },
          () -> {
-            this.press(var4 + ":pill");
-            this.addHint(var1);
+            this.press(key + ":pill");
+            this.addHint(hint);
          },
          null
       );
    }
 
-   private void addHint(FriendsSectionPanel.Hint var1) {
-      if (var1.addKind() == -1) {
-         this.addLocal(var1.name());
+   private void addHint(FriendsSectionPanel.Hint hint) {
+      if (hint.addKind() == -1) {
+         this.addLocal(hint.name());
       } else {
-         Cloud var2 = cloud();
-         if (var2 != null) {
-            if (var1.addKind() == 0) {
-               if (var1.uid() > 0L && var2.prefs() != null) {
-                  var2.prefs().method3312(var1.name(), var1.uid());
+         Cloud cloud2 = cloud();
+         if (cloud2 != null) {
+            if (hint.addKind() == 0) {
+               if (hint.uid() > 0L && cloud2.prefs() != null) {
+                  cloud2.prefs().method3312(hint.name(), hint.uid());
                }
 
-               this.addBlind(var1.name());
+               this.addBlind(hint.name());
                UserSearchClient.method4762();
-            } else if (!var2.method7904(1, var1.name())) {
-               this.setNotice(t("gui.friends.notice.offlineCloud"), var1.name(), true);
+            } else if (!cloud2.method7904(1, hint.name())) {
+               this.setNotice(t("gui.friends.notice.offlineCloud"), hint.name(), true);
             } else {
-               this.setNotice(t("gui.friends.notice.sent").replace("{n}", var1.name()), "", false);
+               this.setNotice(t("gui.friends.notice.sent").replace("{n}", hint.name()), "", false);
                this.clearInput();
                this.invalidate();
             }
@@ -1734,39 +1734,39 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private void drawMatchedName(MenuDrawContext var1, Font var2, String var3, String var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      ZenithColor var10 = var9.getTextSecondary().getZenithColor().method7294(var8);
-      String var11 = fit(var2, var3, var7);
-      int var12 = !var4.isEmpty() && var11.toLowerCase(Locale.ROOT).startsWith(var4.toLowerCase(Locale.ROOT)) ? var4.length() : 0;
-      if (var12 != 0 && var12 <= var11.length()) {
-         String var13 = var11.substring(0, var12);
-         var1.drawText(var2, var13, var5, var6, var9.getPrimaryColor().getZenithColor().method7294(var8));
-         var1.drawText(var2, var11.substring(var12), var5 + var2.width(var13), var6, var10);
+   private void drawMatchedName(MenuDrawContext customDrawContext, Font font, String name, String typedName, float floatValue, float centeredTextY, float width, float previewAlpha, ZenithStyle zenithStyle) {
+      ZenithColor zenithColor = zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+      String text = fit(font, name, width);
+      int length = !typedName.isEmpty() && text.toLowerCase(Locale.ROOT).startsWith(typedName.toLowerCase(Locale.ROOT)) ? typedName.length() : 0;
+      if (length != 0 && length <= text.length()) {
+         String str = text.substring(0, length);
+         customDrawContext.drawText(font, str, floatValue, centeredTextY, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+         customDrawContext.drawText(font, text.substring(length), floatValue + font.width(str), centeredTextY, zenithColor);
       } else {
-         var1.drawText(var2, var11, var5, var6, var10);
+         customDrawContext.drawText(font, text, floatValue, centeredTextY, zenithColor);
       }
    }
 
    private void searchingRow() {
       this.custom(
          16.0F,
-         (var0, var1, var2, var3, var4, var5, var6, var7) -> {
-            Font var8 = Fonts.NEW_REGULAR.getFont(4.8F);
-            String var9 = t("gui.friends.suggest.searching");
-            float var10 = 0.55F + 0.45F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 260.0));
-            var0.drawText(var8, var9, var3 + 8.0F, var4 + (16.0F - var8.height()) / 2.0F, var7.getTextTertiary().getZenithColor().method7294(var6 * var10));
-            float var11 = 3.0F;
-            float var12 = var3 + 8.0F + var8.width(var9) + 4.0F;
+         (menuDrawContext, n, n2, f, f2, f3, f4, zenithStyle) -> {
+            Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+            String text = t("gui.friends.suggest.searching");
+            float f5 = 0.55F + 0.45F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 260.0));
+            menuDrawContext.drawText(font, text, f + 8.0F, f2 + (16.0F - font.height()) / 2.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(f4 * f5));
+            float width = 3.0F;
+            float f6 = f + 8.0F + font.width(text) + 4.0F;
 
-            for (int var13 = 0; var13 < 3; var13++) {
-               float var14 = (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 220.0 - var13 * 0.7));
-               var0.drawRoundedRect(
-                  var12 + var13 * (var11 + 2.0F),
-                  var4 + (16.0F - var11) / 2.0F,
-                  var11,
-                  var11,
-                  ProxyDotRadiusData.method8069(var11 / 2.0F),
-                  var7.getPrimaryColor().getZenithColor().method7294(var6 * (0.25F + 0.55F * var14))
+            for (int i = 0; i < 3; i++) {
+               float f7 = (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 220.0 - i * 0.7));
+               menuDrawContext.drawRoundedRect(
+                  f6 + i * (width + 2.0F),
+                  f2 + (16.0F - width) / 2.0F,
+                  width,
+                  width,
+                  ProxyDotRadiusData.method8069(width / 2.0F),
+                  zenithStyle.getPrimaryColor().getZenithColor().method7294(f4 * (0.25F + 0.55F * f7))
                );
             }
          }
@@ -1777,28 +1777,28 @@ public class FriendsSectionPanel extends SectionPanel {
       if (!this.noticeText.isEmpty()) {
          this.noticeBox(this.noticeText);
          if (this.offerOffline) {
-            String var1 = this.noticeTarget;
+            String noticeTarget = this.noticeTarget;
             this.buttonsRow(
-               "notice.actions", "gui.friends.notice.addLocal", () -> this.addLocal(var1), "gui.friends.notice.sendCloud", () -> this.addBlind(var1)
+               "notice.actions", "gui.friends.notice.addLocal", () -> this.addLocal(noticeTarget), "gui.friends.notice.sendCloud", () -> this.addBlind(noticeTarget)
             );
          }
       }
    }
 
-   private void setNotice(String var1, String var2, boolean var3) {
-      this.noticeText = var1;
-      this.noticeTarget = var2;
-      this.offerOffline = var3 && !var2.isEmpty();
+   private void setNotice(String noticeText, String noticeTarget, boolean flag) {
+      this.noticeText = noticeText;
+      this.noticeTarget = noticeTarget;
+      this.offerOffline = flag && !noticeTarget.isEmpty();
       this.invalidate();
    }
 
-   private static boolean sameNames(List<UserSearchClient.Data> var0, List<UserSearchClient.Data> var1) {
-      var var2 = var1 == null ? List.of() : var1;
-      if (var0.size() != var2.size()) {
+   private static boolean sameNames(List<UserSearchClient.Data> suggestions, List<UserSearchClient.Data> datas) {
+      var list = datas == null ? List.of() : datas;
+      if (suggestions.size() != list.size()) {
          return false;
       } else {
-         for (int var3 = 0; var3 < var2.size(); var3++) {
-            if (!((UserSearchClient.Data)var0.get(var3)).name().equals(((UserSearchClient.Data)var2.get(var3)).name())) {
+         for (int i = 0; i < list.size(); i++) {
+            if (!((UserSearchClient.Data)suggestions.get(i)).name().equals(((UserSearchClient.Data)list.get(i)).name())) {
                return false;
             }
          }
@@ -1807,17 +1807,17 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private boolean isAlreadyFriend(String var1) {
-      Cloud var2 = cloud();
-      if (var2 != null && var2.getFriends().method6442(var1)) {
+   private boolean isAlreadyFriend(String name) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && cloud2.getFriends().method6442(name)) {
          return true;
       } else {
-         var var3 = Zenith.getInstance().getFriends().getItems();
-         if (var3 == null) {
+         var items = Zenith.getInstance().getFriends().getItems();
+         if (items == null) {
             return false;
          } else {
-            for (String var5 : List.copyOf(var3)) {
-               if (var5.equalsIgnoreCase(var1)) {
+            for (String str : List.copyOf(items)) {
+               if (str.equalsIgnoreCase(name)) {
                   return true;
                }
             }
@@ -1828,145 +1828,145 @@ public class FriendsSectionPanel extends SectionPanel {
    }
 
    private void buildSharing() {
-      Share var1 = Zenith.getInstance().getShare();
-      this.shareHero(var1);
+      Share share = Zenith.getInstance().getShare();
+      this.shareHero(share);
       this.caption("gui.friends.caption.cosmetics");
-      this.shareTiles(var1);
+      this.shareTiles(share);
       this.caption("gui.friends.caption.shareWhat");
-      this.shareToggle(var1.position, MenuGlyph.GPS);
-      this.shareToggle(var1.server, MenuGlyph.WORLD);
-      this.shareToggle(var1.health, MenuGlyph.HEART);
-      this.shareToggle(var1.inventory, MenuGlyph.CHESTPLATE);
+      this.shareToggle(share.position, MenuGlyph.GPS);
+      this.shareToggle(share.server, MenuGlyph.WORLD);
+      this.shareToggle(share.health, MenuGlyph.HEART);
+      this.shareToggle(share.inventory, MenuGlyph.CHESTPLATE);
       this.caption("gui.friends.caption.social");
-      this.shareToggle(var1.allowJoin, MenuGlyph.WORLD);
-      this.shareToggle(var1.deaths, MenuGlyph.PIN);
-      this.shareToggle(var1.stats, MenuGlyph.TIMER);
+      this.shareToggle(share.allowJoin, MenuGlyph.WORLD);
+      this.shareToggle(share.deaths, MenuGlyph.PIN);
+      this.shareToggle(share.stats, MenuGlyph.TIMER);
       this.caption("gui.friends.caption.presence");
-      this.shareToggle(var1.autoPvp, MenuGlyph.COMBAT);
-      this.setting(var1.autoAfk);
+      this.shareToggle(share.autoPvp, MenuGlyph.COMBAT);
+      this.setting(share.autoAfk);
       this.caption("gui.friends.caption.notify");
-      this.shareToggle(var1.notifyMessages, MenuGlyph.CHAT);
-      this.shareToggle(var1.notifyInvites, MenuGlyph.FRIENDS);
+      this.shareToggle(share.notifyMessages, MenuGlyph.CHAT);
+      this.shareToggle(share.notifyInvites, MenuGlyph.FRIENDS);
       this.caption("gui.friends.caption.accent");
-      this.setting(var1.colorSetting);
+      this.setting(share.colorSetting);
       this.hint(t("gui.friends.share.hint"));
       this.buildCloudAside();
       this.asideHint(t("gui.friends.share.private"));
    }
 
-   private void shareHero(Share var1) {
-      int var2 = this.order++;
+   private void shareHero(Share share) {
+      int n = this.order++;
       this.custom(
          40.0F,
-         (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = wave(this.listWave, var2);
-            if (!(var11 <= 0.002F)) {
-               var9 *= var11;
-               var6 += (1.0F - var11) * 8.0F;
-               float var12 = var6 + 8.0F;
-               float var13 = var6 + var8 - 8.0F;
-               float var14 = var7 + 3.0F;
-               float var15 = 34.0F;
-               plate(var3, var12, var14, var13 - var12, var15, 0.0F, 0.0F, var9, var10);
-               bigGlyph(var3, MenuGlyph.SHIELD, var12 + 8.0F, var14 + (var15 - 12.0F) / 2.0F, var10.getPrimaryColor().getZenithColor().method7294(var9));
-               Font var16 = Fonts.NEW_MEDIUM.getFont(6.0F);
-               Font var17 = Fonts.NEW_REGULAR.getFont(4.6F);
-               float var18 = var12 + 8.0F + 12.0F + 8.0F;
-               float var19 = var14 + (var15 - var16.height() - 3.0F - var17.height()) / 2.0F;
-               var3.drawText(var16, t("gui.friends.share.title"), var18, var19, var10.getTextEnable().getZenithColor().method7294(var9));
-               var3.drawText(
-                  var17,
-                  fit(var17, shareSummary(var1), var13 - 8.0F - var18),
-                  var18,
-                  var19 + var16.height() + 3.0F,
-                  var10.getTextTertiary().getZenithColor().method7294(var9)
+         (customDrawContext, n2, n3, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float floatValue = f + 8.0F;
+               float f4 = f + f3 - 8.0F;
+               float y = f2 + 3.0F;
+               float height = 34.0F;
+               plate(customDrawContext, floatValue, y, f4 - floatValue, height, 0.0F, 0.0F, previewAlpha, zenithStyle);
+               bigGlyph(customDrawContext, MenuGlyph.SHIELD, floatValue + 8.0F, y + (height - 12.0F) / 2.0F, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+               Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.6F);
+               float floatValue2 = floatValue + 8.0F + 12.0F + 8.0F;
+               float centeredTextY = y + (height - font.height() - 3.0F - font2.height()) / 2.0F;
+               customDrawContext.drawText(font, t("gui.friends.share.title"), floatValue2, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               customDrawContext.drawText(
+                  font2,
+                  fit(font2, shareSummary(share), f4 - 8.0F - floatValue2),
+                  floatValue2,
+                  centeredTextY + font.height() + 3.0F,
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
             }
          }
       );
    }
 
-   private static String shareSummary(Share var0) {
-      ArrayList var1 = new ArrayList();
-      if (var0.position.isEnabled()) {
-         var1.add(t("cloud.share.position").toLowerCase(Locale.ROOT));
+   private static String shareSummary(Share share) {
+      ArrayList elements = new ArrayList();
+      if (share.position.isEnabled()) {
+         elements.add(t("cloud.share.position").toLowerCase(Locale.ROOT));
       }
 
-      if (var0.server.isEnabled()) {
-         var1.add(t("cloud.share.server").toLowerCase(Locale.ROOT));
+      if (share.server.isEnabled()) {
+         elements.add(t("cloud.share.server").toLowerCase(Locale.ROOT));
       }
 
-      if (var0.health.isEnabled()) {
-         var1.add(t("cloud.share.health").toLowerCase(Locale.ROOT));
+      if (share.health.isEnabled()) {
+         elements.add(t("cloud.share.health").toLowerCase(Locale.ROOT));
       }
 
-      if (var0.inventory.isEnabled()) {
-         var1.add(t("cloud.share.inventory").toLowerCase(Locale.ROOT));
+      if (share.inventory.isEnabled()) {
+         elements.add(t("cloud.share.inventory").toLowerCase(Locale.ROOT));
       }
 
-      return var1.isEmpty() ? t("gui.friends.share.summary.none") : t("gui.friends.share.summary").replace("{list}", String.join(", ", var1));
+      return elements.isEmpty() ? t("gui.friends.share.summary.none") : t("gui.friends.share.summary").replace("{list}", String.join(", ", elements));
    }
 
-   private void shareTiles(Share var1) {
-      int var2 = this.order++;
-      String var3 = "cosmetics";
-      String[][] var4 = new String[][]{
+   private void shareTiles(Share share) {
+      int n = this.order++;
+      String key = "cosmetics";
+      String[][] stringses = new String[][]{
          {"cloud.share.cosmeticsVisibility.everyone", "gui.friends.share.everyone.note"},
          {"cloud.share.cosmeticsVisibility.friends", "gui.friends.share.friends.note"},
          {"cloud.share.cosmeticsVisibility.nobody", "gui.friends.share.nobody.note"}
       };
-      float var5 = 28.0F;
+      float customHeight = 28.0F;
       this.custom(
-         var5,
-         (var6, var7, var8, var9, var10, var11, var12, var13) -> {
-            float var14 = wave(this.listWave, var2);
-            if (!(var14 <= 0.002F)) {
-               var12 *= var14;
-               var9 += (1.0F - var14) * 8.0F;
-               float var15 = 4.0F;
-               float var16 = var9 + 8.0F;
-               float var17 = (var11 - 16.0F - var15 * 2.0F) / 3.0F;
-               int var18 = -1;
+         customHeight,
+         (customDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float f4 = 4.0F;
+               float f5 = f + 8.0F;
+               float width = (f3 - 16.0F - f4 * 2.0F) / 3.0F;
+               int n2 = -1;
 
-               for (int var19 = 0; var19 < 3; var19++) {
-                  float var20 = var16 + var19 * (var17 + var15);
-                  float var21 = var10 + 2.0F;
-                  float var22 = var5 - 4.0F;
-                  boolean var23 = new BoundsData(var20, var21, var17, var22).contains(var7, var8);
-                  if (var23) {
-                     var18 = var19;
-                     HoverInfo.request(t("cloud.share.cosmeticsVisibility"), t(var4[var19][1]));
+               for (int i = 0; i < 3; i++) {
+                  float floatValue = f5 + i * (width + f4);
+                  float y = f2 + 2.0F;
+                  float height = customHeight - 4.0F;
+                  boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+                  if (contains) {
+                     n2 = i;
+                     HoverInfo.request(t("cloud.share.cosmeticsVisibility"), t(stringses[i][1]));
                   }
 
-                  float var24 = this.pick(var3 + var19, var1.cosmeticsVisibility.getIndex() == var19);
-                  plate(var6, var20, var21, var17, var22, this.hover(var3 + var19, var23), var24, var12, var13);
-                  Font var25 = Fonts.NEW_MEDIUM.getFont(5.2F);
-                  Font var26 = Fonts.NEW_REGULAR.getFont(4.2F);
-                  String var27 = t(var4[var19][0]);
-                  var27 = var27.isEmpty() ? var27 : var27.substring(0, 1).toUpperCase(Locale.ROOT) + var27.substring(1);
-                  var6.drawText(
-                     var25,
-                     fit(var25, var27, var17 - 10.0F),
-                     var20 + 5.0F,
-                     var21 + 4.0F,
-                     var13.getTextSecondary().getZenithColor().method7295(var13.getTextEnable().getZenithColor(), var24).method7294(var12)
+                  float pick = this.pick(key + i, share.cosmeticsVisibility.getIndex() == i);
+                  plate(customDrawContext, floatValue, y, width, height, this.hover(key + i, contains), pick, previewAlpha, zenithStyle);
+                  Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+                  Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+                  String name = t(stringses[i][0]);
+                  name = name.isEmpty() ? name : name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
+                  customDrawContext.drawText(
+                     font,
+                     fit(font, name, width - 10.0F),
+                     floatValue + 5.0F,
+                     y + 4.0F,
+                     zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), pick).method7294(previewAlpha)
                   );
-                  var6.drawText(
-                     var26,
-                     fit(var26, t(var4[var19][1]), var17 - 10.0F),
-                     var20 + 5.0F,
-                     var21 + 4.0F + var25.height() + 2.0F,
-                     var13.getTextTertiary().getZenithColor().method7294(var12)
+                  customDrawContext.drawText(
+                     font2,
+                     fit(font2, t(stringses[i][1]), width - 10.0F),
+                     floatValue + 5.0F,
+                     y + 4.0F + font.height() + 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                   );
                }
 
-               this.hoveredButton.put(var3, var18);
+               this.hoveredButton.put(key, n2);
             }
          },
          () -> {
-            int var3x = this.hoveredButton.getOrDefault(var3, -1);
+            int var3x = this.hoveredButton.getOrDefault(key, -1);
             if (var3x >= 0) {
-               var1.cosmeticsVisibility.getValues().get(var3x).method2103();
+               share.cosmeticsVisibility.getValues().get(var3x).method2103();
                this.invalidate();
             }
          },
@@ -1974,67 +1974,67 @@ public class FriendsSectionPanel extends SectionPanel {
       );
    }
 
-   private void shareToggle(BooleanSetting var1, MenuGlyph var2) {
-      int var3 = this.order++;
-      String var4 = "share:" + var1.getKey();
+   private void shareToggle(BooleanSetting position, MenuGlyph menuGlyph) {
+      int n = this.order++;
+      String key = "share:" + position.getKey();
       this.custom(
          28.0F,
-         (var5, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = wave(this.listWave, var3);
-            if (!(var13 <= 0.002F)) {
-               var11 *= var13;
-               var8 += (1.0F - var13) * 8.0F;
-               float var14 = var8 + 8.0F;
-               float var15 = var10 - 16.0F;
-               float var16 = var9 + 1.5F;
-               float var17 = 25.0F;
-               boolean var18 = new BoundsData(var14, var16, var15, var17).contains(var6, var7);
-               float var19 = this.pick(var4, var1.isEnabled());
-               plate(var5, var14, var16, var15, var17, this.hover(var4, var18), 0.0F, var11, var12);
-               if (var18) {
-                  HoverInfo.request(t(var1.getKey()), t(var1.getKey() + ".desc"));
+         (customDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.listWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 8.0F;
+               float floatValue = f + 8.0F;
+               float width = f3 - 16.0F;
+               float y = f2 + 1.5F;
+               float height = 25.0F;
+               boolean contains = new BoundsData(floatValue, y, width, height).contains(lastClickX, lastClickY);
+               float pick = this.pick(key, position.isEnabled());
+               plate(customDrawContext, floatValue, y, width, height, this.hover(key, contains), 0.0F, previewAlpha, zenithStyle);
+               if (contains) {
+                  HoverInfo.request(t(position.getKey()), t(position.getKey() + ".desc"));
                }
 
-               float var20 = 14.0F;
-               float var21 = var14 + 7.0F;
-               float var22 = var16 + (var17 - var20) / 2.0F;
-               var5.drawRoundedRect(
-                  var21,
-                  var22,
-                  var20,
-                  var20,
+               float width2 = 14.0F;
+               float floatValue2 = floatValue + 7.0F;
+               float y2 = y + (height - width2) / 2.0F;
+               customDrawContext.drawRoundedRect(
+                  floatValue2,
+                  y2,
+                  width2,
+                  width2,
                   ProxyDotRadiusData.method8069(4.0F),
-                  var12.getTextTertiary()
+                  zenithStyle.getTextTertiary()
                      .getZenithColor()
                      .method7294(0.18F)
-                     .method7295(var12.getPrimaryColor().getZenithColor().method7294(0.25F), var19)
-                     .method7294(var11)
+                     .method7295(zenithStyle.getPrimaryColor().getZenithColor().method7294(0.25F), pick)
+                     .method7294(previewAlpha)
                );
-               var2.draw(
-                  var5,
-                  var21 + (var20 - 6.0F) / 2.0F,
-                  var22 + (var20 - 6.0F) / 2.0F,
-                  var12.getTextTertiary().getZenithColor().method7295(var12.getPrimaryColor().getZenithColor(), var19).method7294(var11)
+               menuGlyph.draw(
+                  customDrawContext,
+                  floatValue2 + (width2 - 6.0F) / 2.0F,
+                  y2 + (width2 - 6.0F) / 2.0F,
+                  zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), pick).method7294(previewAlpha)
                );
-               Font var23 = Fonts.NEW_MEDIUM.getFont(5.2F);
-               Font var24 = Fonts.NEW_REGULAR.getFont(4.2F);
-               float var25 = var21 + var20 + 6.0F;
-               float var26 = 18.0F;
-               float var27 = var14 + var15 - 8.0F - var26 - 6.0F - var25;
-               float var28 = var16 + (var17 - var23.height() - 2.0F - var24.height()) / 2.0F;
-               var5.drawText(var23, fit(var23, t(var1.getKey()), var27), var25, var28, var12.getTextEnable().getZenithColor().method7294(var11));
-               var5.drawText(
-                  var24,
-                  fit(var24, t(var1.getKey() + ".desc"), var27),
-                  var25,
-                  var28 + var23.height() + 2.0F,
-                  var12.getTextTertiary().getZenithColor().method7294(var11)
+               Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+               float floatValue3 = floatValue2 + width2 + 6.0F;
+               float width3 = 18.0F;
+               float width4 = floatValue + width - 8.0F - width3 - 6.0F - floatValue3;
+               float centeredTextY = y + (height - font.height() - 2.0F - font2.height()) / 2.0F;
+               customDrawContext.drawText(font, fit(font, t(position.getKey()), width4), floatValue3, centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               customDrawContext.drawText(
+                  font2,
+                  fit(font2, t(position.getKey() + ".desc"), width4),
+                  floatValue3,
+                  centeredTextY + font.height() + 2.0F,
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               this.drawToggle(var5, var14 + var15 - 8.0F - var26, var16 + (var17 - 9.0F) / 2.0F, var26, 9.0F, var19, var11, var12);
+               this.drawToggle(customDrawContext, floatValue + width - 8.0F - width3, y + (height - 9.0F) / 2.0F, width3, 9.0F, pick, previewAlpha, zenithStyle);
             }
          },
          () -> {
-            var1.setEnabled(!var1.isEnabled());
+            position.setEnabled(!position.isEnabled());
             this.invalidate();
          },
          null
@@ -2061,52 +2061,52 @@ public class FriendsSectionPanel extends SectionPanel {
 
    private void buildMeAside() {
       this.asideCaption("gui.friends.me.caption");
-      int var1 = this.asideOrder++;
-      String var2 = "me";
+      int n = this.asideOrder++;
+      String key = "me";
       this.asideCustom(
          48.0F,
-         (var3x, var4, var5, var6, var7, var8, var9, var10) -> {
-            float var11 = wave(this.asideWave, var1);
-            if (!(var11 <= 0.002F)) {
-               var9 *= var11;
-               var6 += (1.0F - var11) * 6.0F;
-               String var12 = accountName();
-               String var13 = mc.getUser() == null ? "" : mc.getUser().getName();
-               long var14 = accountUid();
-               float var16 = var6 + 8.0F;
-               this.avatar(var3x, var12.isEmpty() ? var13 : var12, var14, var16, var7, 26.0F, var9, var10);
-               Font var17 = Fonts.NEW_MEDIUM.getFont(6.0F);
-               Font var18 = Fonts.NEW_REGULAR.getFont(4.6F);
-               float var19 = var16 + 26.0F + 6.0F;
-               float var20 = var6 + var8 - 8.0F - var19;
+         (var3x, lastClickX, lastClickY, f, y, f2, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.asideWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 6.0F;
+               String str = accountName();
+               String name = mc.getUser() == null ? "" : mc.getUser().getName();
+               long longValue = accountUid();
+               float floatValue = f + 8.0F;
+               this.avatar(var3x, str.isEmpty() ? name : str, longValue, floatValue, y, 26.0F, previewAlpha, zenithStyle);
+               Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.6F);
+               float floatValue2 = floatValue + 26.0F + 6.0F;
+               float width = f + f2 - 8.0F - floatValue2;
                var3x.drawText(
-                  var17, fit(var17, var12.isEmpty() ? var13 : var12, var20), var19, var7 + 4.0F, var10.getTextEnable().getZenithColor().method7294(var9)
+                  font, fit(font, str.isEmpty() ? name : str, width), floatValue2, y + 4.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                );
                var3x.drawText(
-                  var18,
-                  fit(var18, t("gui.friends.me.mc") + ": " + blankToDash(var13), var20),
-                  var19,
-                  var7 + 4.0F + var17.height() + 3.0F,
-                  var10.getTextTertiary().getZenithColor().method7294(var9)
+                  font2,
+                  fit(font2, t("gui.friends.me.mc") + ": " + blankToDash(name), width),
+                  floatValue2,
+                  y + 4.0F + font.height() + 3.0F,
+                  zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
-               Font var21 = Fonts.NEW_MEDIUM.getFont(4.8F);
-               boolean var22 = this.flashing() && this.flashText.equals(t("gui.friends.copied"));
-               String var23 = t(var22 ? "gui.friends.copied" : "gui.friends.me.copy");
-               BoundsData var24 = new BoundsData(var16, var7 + 26.0F + 5.0F, var8 - 16.0F, 14.0F);
-               boolean var25 = var24.contains(var4, var5);
-               this.hoveredButton.put(var2, var25 ? 0 : -1);
-               if (var25) {
+               Font font3 = Fonts.NEW_MEDIUM.getFont(4.8F);
+               boolean flag = this.flashing() && this.flashText.equals(t("gui.friends.copied"));
+               String text = t(flag ? "gui.friends.copied" : "gui.friends.me.copy");
+               BoundsData boundsData = new BoundsData(floatValue, y + 26.0F + 5.0F, f2 - 16.0F, 14.0F);
+               boolean contains = boundsData.contains(lastClickX, lastClickY);
+               this.hoveredButton.put(key, contains ? 0 : -1);
+               if (contains) {
                   HoverInfo.request(t("gui.friends.me.copy"), t("gui.friends.me.hint"));
                }
 
-               this.pillButton(var3x, var2, var24, var23, true, var25, var9, var10);
-               if (var22) {
+               this.pillButton(var3x, key, boundsData, text, true, contains, previewAlpha, zenithStyle);
+               if (flag) {
                   MenuGlyph.CHECK
                      .draw(
                         var3x,
-                        var24.getFloatValue() + (var24.width() - var21.width(var23)) / 2.0F - 9.0F,
-                        var24.getFloatValue2() + (var24.height() - 6.0F) / 2.0F,
-                        var10.getPrimaryColor().getZenithColor().method7295(new ZenithColor(255, 255, 255), this.hover(var2, var25)).method7294(var9)
+                        boundsData.getFloatValue() + (boundsData.width() - font3.width(text)) / 2.0F - 9.0F,
+                        boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F,
+                        zenithStyle.getPrimaryColor().getZenithColor().method7295(new ZenithColor(255, 255, 255), this.hover(key, contains)).method7294(previewAlpha)
                      );
                }
             }
@@ -2119,191 +2119,191 @@ public class FriendsSectionPanel extends SectionPanel {
          },
          null
       );
-      Share var3 = Zenith.getInstance().getShare();
+      Share share = Zenith.getInstance().getShare();
       this.asideCaption("gui.friends.caption.presence");
       this.asideInfo("gui.friends.presence.now", () -> {
-         PartyManager var0 = PartyManager.method17();
-         return var0 == null ? "-" : PartyManager.method50(var0.method31());
+         PartyManager partyManager = PartyManager.method17();
+         return partyManager == null ? "-" : PartyManager.method50(partyManager.method31());
       }, "gui.friends.presence.now.desc");
-      this.asideSetting(var3.status);
-      this.asideSetting(var3.text);
+      this.asideSetting(share.status);
+      this.asideSetting(share.text);
    }
 
    private void buildCloudAside() {
       this.asideCaption("gui.friends.caption.cloud");
       this.asideInfo("gui.friends.link", () -> {
-         CloudConnectionState var0 = state();
-         return var0 == null ? t("gui.cloud.state.missing") : var0.getType().label();
+         CloudConnectionState cloudConnectionState = state();
+         return cloudConnectionState == null ? t("gui.cloud.state.missing") : cloudConnectionState.getType().label();
       }, "gui.friends.link.desc");
       this.asideInfo("gui.friends.onlineCount", () -> {
-         CloudConnectionState var0 = state();
-         return var0 != null && var0.method8035() ? var0.method8045() + " / " + var0.getIntValue() : "-";
+         CloudConnectionState cloudConnectionState = state();
+         return cloudConnectionState != null && cloudConnectionState.method8035() ? cloudConnectionState.method8045() + " / " + cloudConnectionState.getIntValue() : "-";
       }, "gui.friends.onlineCount.desc");
-      CloudConnectionState var1 = state();
-      if (var1 == null || !var1.method8035()) {
+      CloudConnectionState cloudConnectionState = state();
+      if (cloudConnectionState == null || !cloudConnectionState.method8035()) {
          this.asideInfo("gui.friends.reason", () -> {
-            CloudConnectionState var0 = state();
-            if (var0 == null) {
+            CloudConnectionState state2 = state();
+            if (state2 == null) {
                return t("gui.friends.reason.down");
-            } else if (var0.method8035()) {
+            } else if (state2.method8035()) {
                return "-";
             } else {
-               String var1x = var0.note();
+               String var1x = state2.note();
                if (var1x == null || var1x.isBlank()) {
-                  var1x = var0.getLastError();
+                  var1x = state2.getLastError();
                }
 
-               return var1x != null && !var1x.isBlank() ? var1x : var0.getType().label();
+               return var1x != null && !var1x.isBlank() ? var1x : state2.getType().label();
             }
          }, "gui.friends.reason.desc");
          this.asideAction("gui.friends.reconnect", MenuGlyph.ACTION, () -> t("gui.friends.reconnect.value"), () -> {
-            Cloud var0 = cloud();
-            if (var0 != null) {
-               var0.connect();
+            Cloud cloud2 = cloud();
+            if (cloud2 != null) {
+               cloud2.connect();
             }
          }, "gui.friends.reconnect.desc");
       }
    }
 
-   private void buildCloudFriendAside(String var1) {
-      PartyPlayerInfo var2 = peer(var1);
-      Cloud var3 = cloud();
-      this.profileHead(var1, whereLine(var1), false);
-      this.actionTiles(var1, var2);
+   private void buildCloudFriendAside(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      Cloud cloud2 = cloud();
+      this.profileHead(selected, whereLine(selected), false);
+      this.actionTiles(selected, partyPlayerInfo);
       this.flashRow();
-      if (var2 != null && var3 != null) {
-         this.party.leaderActions(var3, var2.uid());
+      if (partyPlayerInfo != null && cloud2 != null) {
+         this.party.leaderActions(cloud2, partyPlayerInfo.uid());
       }
 
       this.asideCaption("gui.friends.caption.now");
-      this.asideInfo("gui.friends.status", () -> statusValue(var1, var2), "gui.friends.status.desc");
-      if (var2 != null) {
+      this.asideInfo("gui.friends.status", () -> statusValue(selected, partyPlayerInfo), "gui.friends.status.desc");
+      if (partyPlayerInfo != null) {
          this.asideInfo("gui.friends.playingOn", () -> {
             Cloud var1x = cloud();
-            String var2x = var1x == null ? "" : var1x.getPartyMember().method1141(var2.uid()).mode();
-            return blankToDash(ServerNameUtils.method5643(var2.server(), var2x));
+            String var2x = var1x == null ? "" : var1x.getPartyMember().method1141(partyPlayerInfo.uid()).mode();
+            return blankToDash(ServerNameUtils.method5643(partyPlayerInfo.server(), var2x));
          }, "gui.friends.playingOn.desc");
-         this.asideInfo("gui.friends.onlineFor", () -> onlineFor(var1), "gui.friends.onlineFor.desc");
-         if (var3 != null && var2.method3291(var3.method7911(), var3.method7913())) {
-            this.asideInfo("gui.friends.distance", () -> distanceTo(var1), "gui.friends.distance.desc");
+         this.asideInfo("gui.friends.onlineFor", () -> onlineFor(selected), "gui.friends.onlineFor.desc");
+         if (cloud2 != null && partyPlayerInfo.method3291(cloud2.method7911(), cloud2.method7913())) {
+            this.asideInfo("gui.friends.distance", () -> distanceTo(selected), "gui.friends.distance.desc");
          }
       } else {
-         this.asideInfo("gui.friends.lastSeen", () -> lastSeen(var1), "gui.friends.lastSeen.desc");
+         this.asideInfo("gui.friends.lastSeen", () -> lastSeen(selected), "gui.friends.lastSeen.desc");
       }
 
-      String var4 = rememberedMcName(var1);
-      if (!var4.isEmpty()) {
-         this.asideInfo("gui.friends.mcName", () -> var4, "gui.friends.mcName.desc");
+      String str = rememberedMcName(selected);
+      if (!str.isEmpty()) {
+         this.asideInfo("gui.friends.mcName", () -> str, "gui.friends.mcName.desc");
       }
 
-      if (var2 != null) {
+      if (partyPlayerInfo != null) {
          this.asideCaption("gui.friends.caption.state");
-         this.bar(var1, t("gui.friends.health"), () -> var2.getFloatValue3(), () -> Math.max(1.0F, var2.getFloatValue4()), var0 -> DANGER);
-         this.bar(var1, t("gui.friends.food"), () -> (float)var2.getIntValue(), () -> 20.0F, var0 -> new ZenithColor(-680437));
-         List<ItemStack> var5 = equipment(var2);
-         if (!var5.isEmpty()) {
+         this.bar(selected, t("gui.friends.health"), () -> partyPlayerInfo.getFloatValue3(), () -> Math.max(1.0F, partyPlayerInfo.getFloatValue4()), zenithStyle -> DANGER);
+         this.bar(selected, t("gui.friends.food"), () -> (float)partyPlayerInfo.getIntValue(), () -> 20.0F, zenithStyle -> new ZenithColor(-680437));
+         List<ItemStack> stacks = equipment(partyPlayerInfo);
+         if (!stacks.isEmpty()) {
             this.asideCaption("gui.friends.caption.gear");
             this.asideCustom(
                16.0F + GuiStyle.PADDING.intValue() + 2.0F,
-               (var1x, var2x, var3x, var4x, var5x, var6, var7, var8) -> {
-                  float var9 = var4x + 8.0F;
+               (var1x, var2x, var3x, var4x, var5x, f, f2, zenithStyle) -> {
+                  float x = var4x + 8.0F;
 
-                  for (ItemStack var11 : var5) {
+                  for (ItemStack itemStack : stacks) {
                      var1x.drawRoundedRect(
-                        var9 - 1.0F,
+                        x - 1.0F,
                         var5x - 1.0F,
                         18.0F,
                         18.0F,
                         ProxyDotRadiusData.method8069(3.0F),
-                        var8.getDisableActiveBg().getZenithColor().method7294(var7 * 0.6F)
+                        zenithStyle.getDisableActiveBg().getZenithColor().method7294(f2 * 0.6F)
                      );
                      var1x.pose().pushMatrix();
-                     var1x.pose().translate(var9, var5x);
-                     var1x.item(var11, 0, 0);
-                     var1x.renderItemBar(var11, 0, 0);
+                     var1x.pose().translate(x, var5x);
+                     var1x.item(itemStack, 0, 0);
+                     var1x.renderItemBar(itemStack, 0, 0);
                      var1x.pose().popMatrix();
-                     var9 += 20.0F;
+                     x += 20.0F;
                   }
                }
             );
          }
 
-         if (!var2.getItems().isEmpty()) {
-            this.asideInfo("gui.friends.cosmetics", () -> var2.getItems().size() + " " + t("gui.friends.cosmetics.items"), "gui.friends.cosmetics.desc");
+         if (!partyPlayerInfo.getItems().isEmpty()) {
+            this.asideInfo("gui.friends.cosmetics", () -> partyPlayerInfo.getItems().size() + " " + t("gui.friends.cosmetics.items"), "gui.friends.cosmetics.desc");
          }
       }
 
-      this.voiceRows(var1, var2);
-      this.friendActions(var1);
+      this.voiceRows(selected, partyPlayerInfo);
+      this.friendActions(selected);
    }
 
-   private void profileHead(String var1, String var2, boolean var3) {
-      int var4 = this.asideOrder++;
-      String var5 = (var3 ? "local:" : "cloud:") + var1;
+   private void profileHead(String selected, String whereLine, boolean selectedLocal) {
+      int n = this.asideOrder++;
+      String str = (selectedLocal ? "local:" : "cloud:") + selected;
       this.asideCustom(
          26.0F + GuiStyle.PADDING.intValue() + 2.0F,
-         (var6, var7, var8, var9, var10, var11, var12, var13) -> {
-            float var14 = wave(this.asideWave, var4);
-            if (!(var14 <= 0.002F)) {
-               var12 *= var14;
-               var9 += (1.0F - var14) * 6.0F;
-               float var15 = var9 + 8.0F;
-               this.avatar(var6, var1, var15, var10, 26.0F, var12, var13);
-               this.drawStatusDot(var6, "head:" + var5, var1, var3, var15 + 26.0F - 4.0F - 0.5F, var10 + 26.0F - 4.0F - 0.5F, var12, var13);
-               float var16 = var15 + 26.0F + 6.0F;
-               Font var17 = Fonts.NEW_MEDIUM.getFont(6.4F);
-               Font var18 = Fonts.NEW_REGULAR.getFont(4.6F);
-               float var19 = var9 + var11 - 8.0F - var16;
-               Prefs var20 = prefs();
-               boolean var21 = !var3 && var20 != null && var20.method3319(var1);
-               float var22 = var16;
-               float var23 = var10 + 4.0F;
-               if (var21) {
-                  diamond(var6, var16 + 2.0F, var23 + var17.height() / 2.0F, 3.5F, FAVORITE.method7294(var12));
-                  var22 = var16 + 7.0F;
+         (customDrawContext, n2, n3, f, y, f2, previewAlpha, zenithStyle) -> {
+            float wave2 = wave(this.asideWave, n);
+            if (!(wave2 <= 0.002F)) {
+               previewAlpha *= wave2;
+               f += (1.0F - wave2) * 6.0F;
+               float floatValue = f + 8.0F;
+               this.avatar(customDrawContext, selected, floatValue, y, 26.0F, previewAlpha, zenithStyle);
+               this.drawStatusDot(customDrawContext, "head:" + str, selected, selectedLocal, floatValue + 26.0F - 4.0F - 0.5F, y + 26.0F - 4.0F - 0.5F, previewAlpha, zenithStyle);
+               float floatValue2 = floatValue + 26.0F + 6.0F;
+               Font font = Fonts.NEW_MEDIUM.getFont(6.4F);
+               Font font2 = Fonts.NEW_REGULAR.getFont(4.6F);
+               float width = f + f2 - 8.0F - floatValue2;
+               Prefs prefs2 = prefs();
+               boolean flag = !selectedLocal && prefs2 != null && prefs2.method3319(selected);
+               float floatValue3 = floatValue2;
+               float centeredTextY = y + 4.0F;
+               if (flag) {
+                  diamond(customDrawContext, floatValue2 + 2.0F, centeredTextY + font.height() / 2.0F, 3.5F, FAVORITE.method7294(previewAlpha));
+                  floatValue3 = floatValue2 + 7.0F;
                }
 
-               var6.drawText(
-                  var17,
-                  fit(var17, var3 ? var1 : displayName(var1), var19 - (var22 - var16)),
-                  var22,
-                  var23,
-                  var13.getTextEnable().getZenithColor().method7294(var12)
+               customDrawContext.drawText(
+                  font,
+                  fit(font, selectedLocal ? selected : displayName(selected), width - (floatValue3 - floatValue2)),
+                  floatValue3,
+                  centeredTextY,
+                  zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                );
-               var6.drawText(var18, fit(var18, var2, var19), var16, var23 + var17.height() + 3.0F, var13.getTextTertiary().getZenithColor().method7294(var12));
+               customDrawContext.drawText(font2, fit(font2, whereLine, width), floatValue2, centeredTextY + font.height() + 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             }
          }
       );
    }
 
-   private void actionTiles(String var1, PartyPlayerInfo var2) {
-      Cloud var3 = cloud();
-      PartyManager var4 = PartyManager.method17();
-      ArrayList var5 = new ArrayList();
-      if (!isPendingName(var1)) {
-         var5.add(
-            new FriendsSectionPanel.Tile("chat", MenuGlyph.CHAT, "gui.friends.quick.chat", "gui.friends.quick.chat.desc", false, () -> this.openChat(var1))
+   private void actionTiles(String selected, PartyPlayerInfo partyPlayerInfo) {
+      Cloud cloud2 = cloud();
+      PartyManager partyManager = PartyManager.method17();
+      ArrayList arrayList = new ArrayList();
+      if (!isPendingName(selected)) {
+         arrayList.add(
+            new FriendsSectionPanel.Tile("chat", MenuGlyph.CHAT, "gui.friends.quick.chat", "gui.friends.quick.chat.desc", false, () -> this.openChat(selected))
          );
       }
 
-      if (var2 != null && var4 != null && var4.method42(var2.uid())) {
-         var5.add(new FriendsSectionPanel.Tile("join", MenuGlyph.WORLD, "gui.friends.quick.join", "gui.friends.quick.join.desc", false, () -> {
-            this.flashMessage(t("gui.friends.join.going").replace("{n}", displayName(var1)));
-            var4.method43(var2.uid());
+      if (partyPlayerInfo != null && partyManager != null && partyManager.method42(partyPlayerInfo.uid())) {
+         arrayList.add(new FriendsSectionPanel.Tile("join", MenuGlyph.WORLD, "gui.friends.quick.join", "gui.friends.quick.join.desc", false, () -> {
+            this.flashMessage(t("gui.friends.join.going").replace("{n}", displayName(selected)));
+            partyManager.method43(partyPlayerInfo.uid());
          }));
       }
 
-      if (var2 != null && var3 != null && var3.method7860()) {
-         PartyMember var6 = var3.getPartyMember();
-         boolean var7 = var6.method1137(var2.uid());
-         boolean var8 = var6.getData6() != null && var6.getData6().getItems().size() >= 6;
-         if (var7 || !var8) {
-            var5.add(
+      if (partyPlayerInfo != null && cloud2 != null && cloud2.method7860()) {
+         PartyMember partyMember = cloud2.getPartyMember();
+         boolean active = partyMember.method1137(partyPlayerInfo.uid());
+         boolean flag = partyMember.getData6() != null && partyMember.getData6().getItems().size() >= 6;
+         if (active || !flag) {
+            arrayList.add(
                new FriendsSectionPanel.Tile(
-                  "party", MenuGlyph.FRIENDS, var7 ? "gui.friends.quick.inParty" : "gui.friends.quick.party", "gui.friends.quick.party.desc", var7, () -> {
-                     if (!var6.method1137(var2.uid())) {
-                        var6.method1153(var2.uid());
-                        this.flashMessage(t("gui.friends.party.invited").replace("{n}", displayName(var1)));
+                  "party", MenuGlyph.FRIENDS, active ? "gui.friends.quick.inParty" : "gui.friends.quick.party", "gui.friends.quick.party.desc", active, () -> {
+                     if (!partyMember.method1137(partyPlayerInfo.uid())) {
+                        partyMember.method1153(partyPlayerInfo.uid());
+                        this.flashMessage(t("gui.friends.party.invited").replace("{n}", displayName(selected)));
                      }
                   }
                )
@@ -2311,82 +2311,82 @@ public class FriendsSectionPanel extends SectionPanel {
          }
       }
 
-      if (var2 != null && var2.method3292()) {
-         var5.add(
-            new FriendsSectionPanel.Tile("mark", MenuGlyph.GPS, "gui.friends.quick.mark", "gui.friends.quick.mark.desc", false, () -> this.markFriend(var1))
+      if (partyPlayerInfo != null && partyPlayerInfo.method3292()) {
+         arrayList.add(
+            new FriendsSectionPanel.Tile("mark", MenuGlyph.GPS, "gui.friends.quick.mark", "gui.friends.quick.mark.desc", false, () -> this.markFriend(selected))
          );
       }
 
-      if (!var5.isEmpty()) {
-         int var9 = this.asideOrder++;
-         String var10 = "tiles:" + var1;
+      if (!arrayList.isEmpty()) {
+         int n = this.asideOrder++;
+         String key = "tiles:" + selected;
          this.asideCustom(
             34.0F,
-            (var4x, var5x, var6x, var7x, var8x, var9x, var10x, var11) -> {
-               float var12 = wave(this.asideWave, var9);
-               if (!(var12 <= 0.002F)) {
-                  var10x *= var12;
-                  var7x += (1.0F - var12) * 6.0F;
-                  float var13 = 3.0F;
-                  float var14 = var7x + 8.0F;
-                  float var15 = (var9x - 16.0F - var13 * (var5.size() - 1)) / var5.size();
-                  int var16 = -1;
+            (var4x, var5x, var6x, var7x, var8x, var9x, var10x, zenithStyle) -> {
+               float f = wave(this.asideWave, n);
+               if (!(f <= 0.002F)) {
+                  var10x *= f;
+                  var7x += (1.0F - f) * 6.0F;
+                  float f2 = 3.0F;
+                  float f3 = var7x + 8.0F;
+                  float width = (var9x - 16.0F - f2 * (arrayList.size() - 1)) / arrayList.size();
+                  int n2 = -1;
 
-                  for (int var17 = 0; var17 < var5.size(); var17++) {
-                     FriendsSectionPanel.Tile var18 = (FriendsSectionPanel.Tile)var5.get(var17);
-                     BoundsData var19 = new BoundsData(var14 + var17 * (var15 + var13), var8x, var15, 30.0F);
-                     boolean var20 = var19.contains(var5x, var6x);
-                     if (var20) {
-                        var16 = var17;
-                        HoverInfo.request(t(var18.label()), t(var18.note()));
+                  for (int i = 0; i < arrayList.size(); i++) {
+                     FriendsSectionPanel.Tile tile = (FriendsSectionPanel.Tile)arrayList.get(i);
+                     BoundsData boundsData = new BoundsData(f3 + i * (width + f2), var8x, width, 30.0F);
+                     boolean contains = boundsData.contains(var5x, var6x);
+                     if (contains) {
+                        n2 = i;
+                        HoverInfo.request(t(tile.label()), t(tile.note()));
                      }
 
-                     float var21 = this.hover(var10 + var18.key(), var20);
-                     float var22 = this.flash(var10 + var18.key());
+                     float hover = this.hover(key + tile.key(), contains);
+                     float flash = this.flash(key + tile.key());
                      var4x.drawRoundedRect(
-                        var19.getFloatValue(),
-                        var19.getFloatValue2(),
-                        var19.width(),
-                        var19.height(),
+                        boundsData.getFloatValue(),
+                        boundsData.getFloatValue2(),
+                        boundsData.width(),
+                        boundsData.height(),
                         ProxyDotRadiusData.method8069(4.0F),
-                        var11.getDisableActiveBg().getZenithColor().method7294(var10x * (0.5F + 0.3F * var21 + 0.3F * var22))
+                        zenithStyle.getDisableActiveBg().getZenithColor().method7294(var10x * (0.5F + 0.3F * hover + 0.3F * flash))
                      );
-                     if (var18.active()) {
+                     if (tile.active()) {
                         var4x.drawRoundedRect(
-                           var19.getFloatValue(),
-                           var19.getFloatValue2(),
-                           var19.width(),
-                           var19.height(),
+                           boundsData.getFloatValue(),
+                           boundsData.getFloatValue2(),
+                           boundsData.width(),
+                           boundsData.height(),
                            ProxyDotRadiusData.method8069(4.0F),
-                           var11.getPrimaryColor().getZenithColor().method7294(var10x * 0.12F)
+                           zenithStyle.getPrimaryColor().getZenithColor().method7294(var10x * 0.12F)
                         );
                      }
 
-                     ZenithColor var23 = var11.getTextSecondary()
+                     ZenithColor zenithColor = zenithStyle.getTextSecondary()
                         .getZenithColor()
-                        .method7295(var11.getPrimaryColor().getZenithColor(), Math.max(var21, var18.active() ? 1.0F : 0.0F))
+                        .method7295(zenithStyle.getPrimaryColor().getZenithColor(), Math.max(hover, tile.active() ? 1.0F : 0.0F))
                         .method7294(var10x);
-                     float var24 = var21 * -1.0F;
-                     var18.icon().draw(var4x, var19.getFloatValue() + (var19.width() - 6.0F) / 2.0F, var19.getFloatValue2() + 6.0F + var24, var23);
-                     Font var25 = Fonts.NEW_MEDIUM.getFont(4.4F);
-                     String var26 = fit(var25, t(var18.label()), var19.width() - 4.0F);
+                     float f4 = hover * -1.0F;
+                     tile.icon().draw(var4x, boundsData.getFloatValue() + (boundsData.width() - 6.0F) / 2.0F, boundsData.getFloatValue2() + 6.0F + f4, zenithColor);
+                     Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+                     String text = fit(font, t(tile.label()), boundsData.width() - 4.0F);
                      var4x.drawText(
-                        var25,
-                        var26,
-                        var19.getFloatValue() + (var19.width() - var25.width(var26)) / 2.0F,
-                        var19.getFloatValue2() + var19.height() - var25.height() - 5.0F,
-                        var11.getTextSecondary().getZenithColor().method7295(var11.getTextEnable().getZenithColor(), var21).method7294(var10x)
+                        font,
+                        text,
+                        boundsData.getFloatValue() + (boundsData.width() - font.width(text)) / 2.0F,
+                        boundsData.getFloatValue2() + boundsData.height() - font.height() - 5.0F,
+                        zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(var10x)
                      );
                   }
 
-                  this.hoveredButton.put(var10, var16);
+                  this.hoveredButton.put(key, n2);
                }
             },
             () -> {
-               int var3x = this.hoveredButton.getOrDefault(var10, -1);
-               if (var3x >= 0 && var3x < var5.size()) {
-                  this.press(var10 + ((FriendsSectionPanel.Tile)var5.get(var3x)).key());
-                  ((FriendsSectionPanel.Tile)var5.get(var3x)).action().run();
+               int var3x = this.hoveredButton.getOrDefault(key, -1);
+               if (var3x >= 0 && var3x < arrayList.size()) {
+                  this.press(key + ((FriendsSectionPanel.Tile)arrayList.get(var3x)).key());
+                  ((FriendsSectionPanel.Tile)arrayList.get(var3x)).action().run();
                   this.invalidate();
                }
             },
@@ -2395,76 +2395,76 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private static String statusValue(String var0, PartyPlayerInfo var1) {
-      if (var1 == null) {
-         return t(isPendingName(var0) ? "gui.friends.status.pending" : "gui.friends.status.offline");
+   private static String statusValue(String selected, PartyPlayerInfo partyPlayerInfo) {
+      if (partyPlayerInfo == null) {
+         return t(isPendingName(selected) ? "gui.friends.status.pending" : "gui.friends.status.offline");
       } else {
-         String var2 = presenceNote(var1.uid());
-         return var2.isEmpty() ? t("gui.friends.status.online") : var2;
+         String str = presenceNote(partyPlayerInfo.uid());
+         return str.isEmpty() ? t("gui.friends.status.online") : str;
       }
    }
 
    private void flashRow() {
       if (this.flashing()) {
-         String var1 = this.flashText;
-         Font var2 = Fonts.NEW_REGULAR.getFont(4.6F);
+         String flashText = this.flashText;
+         Font font = Fonts.NEW_REGULAR.getFont(4.6F);
          this.asideCustom(
-            var2.height() + 6.0F,
-            (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-               long var11 = System.currentTimeMillis() - this.flashAt;
-               float var13 = var11 < 180L ? (float)var11 / 180.0F : (var11 > 2200L ? Math.max(0.0F, (float)(2600L - var11) / 400.0F) : 1.0F);
+            font.height() + 6.0F,
+            (menuDrawContext, n, n2, f, f2, f3, f4, zenithStyle) -> {
+               long l = System.currentTimeMillis() - this.flashAt;
+               float f5 = l < 180L ? (float)l / 180.0F : (l > 2200L ? Math.max(0.0F, (float)(2600L - l) / 400.0F) : 1.0F);
                MenuGlyph.CHECK
-                  .draw(var3, var6 + 8.0F, var7 + 2.0F + (var2.height() - 6.0F) / 2.0F, var10.getPrimaryColor().getZenithColor().method7294(var9 * var13));
-               var3.drawText(
-                  var2,
-                  fit(var2, var1, var8 - 16.0F - 9.0F),
-                  var6 + 8.0F + 9.0F,
-                  var7 + 2.0F,
-                  var10.getTextSecondary().getZenithColor().method7294(var9 * var13)
+                  .draw(menuDrawContext, f + 8.0F, f2 + 2.0F + (font.height() - 6.0F) / 2.0F, zenithStyle.getPrimaryColor().getZenithColor().method7294(f4 * f5));
+               menuDrawContext.drawText(
+                  font,
+                  fit(font, flashText, f3 - 16.0F - 9.0F),
+                  f + 8.0F + 9.0F,
+                  f2 + 2.0F,
+                  zenithStyle.getTextSecondary().getZenithColor().method7294(f4 * f5)
                );
             }
          );
       }
    }
 
-   private void markFriend(String var1) {
-      PartyPlayerInfo var2 = peer(var1);
-      if (var2 != null && var2.method3292()) {
-         String var3 = CloudWaypointsModule.INSTANCE
-            .method6402(var2.getDoubleValue(), var2.getDoubleValue2() + 1.0, var2.getDoubleValue3(), displayName(var1), "", var2.server(), var2.dimension());
-         this.flashMessage(var3.isEmpty() ? t("gui.friends.mark.done").replace("{n}", displayName(var1)) : t(var3));
+   private void markFriend(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      if (partyPlayerInfo != null && partyPlayerInfo.method3292()) {
+         String key = CloudWaypointsModule.INSTANCE
+            .method6402(partyPlayerInfo.getDoubleValue(), partyPlayerInfo.getDoubleValue2() + 1.0, partyPlayerInfo.getDoubleValue3(), displayName(selected), "", partyPlayerInfo.server(), partyPlayerInfo.dimension());
+         this.flashMessage(key.isEmpty() ? t("gui.friends.mark.done").replace("{n}", displayName(selected)) : t(key));
       } else {
-         this.flashMessage(t("gui.friends.mark.noPosition").replace("{n}", displayName(var1)));
+         this.flashMessage(t("gui.friends.mark.noPosition").replace("{n}", displayName(selected)));
       }
    }
 
-   private void voiceRows(String var1, PartyPlayerInfo var2) {
-      Prefs var3 = prefs();
-      if (var3 != null) {
+   private void voiceRows(String voiceVolumeFor, PartyPlayerInfo partyPlayerInfo) {
+      Prefs prefs2 = prefs();
+      if (prefs2 != null) {
          this.asideCaption("gui.friends.caption.voice");
-         if (var2 != null) {
+         if (partyPlayerInfo != null) {
             this.asideInfo(
                "gui.friends.voiceStatus",
-               () -> t(var2.method3289() ? "gui.friends.voiceStatus.on" : "gui.friends.voiceStatus.off"),
+               () -> t(partyPlayerInfo.method3289() ? "gui.friends.voiceStatus.on" : "gui.friends.voiceStatus.off"),
                "gui.friends.voiceStatus.desc"
             );
          }
 
          this.asideAction(
-            "gui.friends.voiceMute", MenuGlyph.MIC, () -> t(var3.method3321(var1) ? "gui.friends.voiceMute.on" : "gui.friends.voiceMute.off"), () -> {
-               var3.method3322(var1, !var3.method3321(var1));
+            "gui.friends.voiceMute", MenuGlyph.MIC, () -> t(prefs2.method3321(voiceVolumeFor) ? "gui.friends.voiceMute.on" : "gui.friends.voiceMute.off"), () -> {
+               prefs2.method3322(voiceVolumeFor, !prefs2.method3321(voiceVolumeFor));
                this.invalidate();
             }, "gui.friends.voiceMute.desc"
          );
-         Cloud var4 = cloud();
-         if (var2 != null && var2.method3289() && var4 != null && var4.method7860()) {
+         Cloud cloud2 = cloud();
+         if (partyPlayerInfo != null && partyPlayerInfo.method3289() && cloud2 != null && cloud2.method7860()) {
             this.asideAction(
                "gui.friends.quick.whisper",
                MenuGlyph.SOUND,
-               () -> t(var4.getPartyMember().getLongValue() == var2.uid() ? "gui.value.enabled" : "gui.value.disabled"),
+               () -> t(cloud2.getPartyMember().getLongValue() == partyPlayerInfo.uid() ? "gui.value.enabled" : "gui.value.disabled"),
                () -> {
-                  boolean var3x = var4.getPartyMember().getLongValue() == var2.uid();
-                  var4.getPartyMember().method1176(var3x ? 0L : var2.uid());
+                  boolean var3x = cloud2.getPartyMember().getLongValue() == partyPlayerInfo.uid();
+                  cloud2.getPartyMember().method1176(var3x ? 0L : partyPlayerInfo.uid());
                   this.invalidate();
                },
                "gui.friends.quick.whisper.desc"
@@ -2472,58 +2472,58 @@ public class FriendsSectionPanel extends SectionPanel {
          }
 
          this.voiceVolume = new SliderSetting(
-            "gui.friends.voiceVolume", (float)var3.method3323(var1), 0.0F, 200.0F, 5.0F, "gui.friends.voiceVolume.desc", " %", null
+            "gui.friends.voiceVolume", (float)prefs2.method3323(voiceVolumeFor), 0.0F, 200.0F, 5.0F, "gui.friends.voiceVolume.desc", " %", null
          );
-         this.voiceVolumeFor = var1;
+         this.voiceVolumeFor = voiceVolumeFor;
          this.asideSetting(this.voiceVolume);
       }
    }
 
-   private void friendActions(String var1) {
-      Prefs var2 = prefs();
-      if (var2 != null) {
-         CloudConnectionState var3 = state();
-         boolean var4 = var3 != null && var3.method8061(var1);
+   private void friendActions(String selected) {
+      Prefs prefs2 = prefs();
+      if (prefs2 != null) {
+         CloudConnectionState cloudConnectionState = state();
+         boolean flag = cloudConnectionState != null && cloudConnectionState.method8061(selected);
          this.asideCaption("gui.friends.caption.actions");
-         PartyManager var5 = PartyManager.method17();
-         PartyPlayerInfo var6 = peer(var1);
-         if (var5 != null && var6 != null && var5.method47()) {
+         PartyManager partyManager = PartyManager.method17();
+         PartyPlayerInfo partyPlayerInfo = peer(selected);
+         if (partyManager != null && partyPlayerInfo != null && partyManager.method47()) {
             this.asideAction(
                "gui.friends.quick.invite",
                MenuGlyph.ACTION,
                () -> t("gui.friends.inviteHere.value"),
-               () -> var5.method48(var6.uid()),
+               () -> partyManager.method48(partyPlayerInfo.uid()),
                "gui.friends.quick.invite.desc"
             );
          }
 
          this.asideAction(
-            "gui.friends.favorite", MenuGlyph.PIN, () -> t(var2.method3319(var1) ? "gui.friends.favorite.on" : "gui.friends.favorite.off"), () -> {
-               var2.method3320(var1, !var2.method3319(var1));
+            "gui.friends.favorite", MenuGlyph.PIN, () -> t(prefs2.method3319(selected) ? "gui.friends.favorite.on" : "gui.friends.favorite.off"), () -> {
+               prefs2.method3320(selected, !prefs2.method3319(selected));
                this.invalidate();
             }, "gui.friends.favorite.desc"
          );
-         this.asideAction("gui.friends.notify", MenuGlyph.MODE, () -> t(var2.method3315(var1) ? "gui.value.disabled" : "gui.value.enabled"), () -> {
-            var2.method3317(var1, !var2.method3315(var1));
+         this.asideAction("gui.friends.notify", MenuGlyph.MODE, () -> t(prefs2.method3315(selected) ? "gui.value.disabled" : "gui.value.enabled"), () -> {
+            prefs2.method3317(selected, !prefs2.method3315(selected));
             this.invalidate();
          }, "gui.friends.notify.desc");
-         String var7 = rememberedMcName(var1);
+         String str = rememberedMcName(selected);
          this.asideAction(
             "gui.friends.copyNick",
             MenuGlyph.COPY,
             () -> t("gui.friends.copyNick.value"),
-            () -> this.copy(var7.isEmpty() ? displayName(var1) : var7),
+            () -> this.copy(str.isEmpty() ? displayName(selected) : str),
             "gui.friends.copyNick.desc"
          );
-         this.asideAction("gui.friends.block", MenuGlyph.CLOSE, () -> t(var2.method3316(var1) ? "gui.friends.block.on" : "gui.value.no"), () -> {
-            var2.method3318(var1, !var2.method3316(var1));
+         this.asideAction("gui.friends.block", MenuGlyph.CLOSE, () -> t(prefs2.method3316(selected) ? "gui.friends.block.on" : "gui.value.no"), () -> {
+            prefs2.method3318(selected, !prefs2.method3316(selected));
             this.invalidate();
          }, "gui.friends.block.desc");
          this.dangerButton(
-            var4 ? "gui.friends.cancelRequest" : "gui.friends.remove", var4 ? "gui.friends.cancelRequest.desc" : "gui.friends.remove.desc", () -> {
+            flag ? "gui.friends.cancelRequest" : "gui.friends.remove", flag ? "gui.friends.cancelRequest.desc" : "gui.friends.remove.desc", () -> {
                Cloud var2x = cloud();
                if (var2x != null) {
-                  var2x.method7907(var1);
+                  var2x.method7907(selected);
                }
 
                this.selected = null;
@@ -2533,327 +2533,327 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private void dangerButton(String var1, String var2, Runnable var3) {
-      String var4 = "danger:" + var1;
+   private void dangerButton(String key, String str, Runnable runnable) {
+      String key2 = "danger:" + key;
       this.asideCustom(
          21.0F,
-         (var4x, var5, var6, var7, var8, var9, var10, var11) -> {
-            BoundsData var12 = new BoundsData(var7 + 8.0F, var8 + 3.0F, var9 - 16.0F, 15.0F);
-            boolean var13 = var12.contains(var5, var6);
-            this.hoveredButton.put(var4, var13 ? 0 : -1);
-            if (var13) {
-               HoverInfo.request(t(var1), t(var2));
+         (var4x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+            BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 3.0F, f3 - 16.0F, 15.0F);
+            boolean contains = boundsData.contains(lastClickX, lastClickY);
+            this.hoveredButton.put(key2, contains ? 0 : -1);
+            if (contains) {
+               HoverInfo.request(t(key), t(str));
             }
 
-            float var14 = this.hover(var4, var13);
+            float hover = this.hover(key2, contains);
             var4x.drawRoundedRect(
-               var12.getFloatValue(),
-               var12.getFloatValue2(),
-               var12.width(),
-               var12.height(),
-               ProxyDotRadiusData.method8069(var12.height() / 2.0F),
-               DANGER.method7292(0.1F + var14 * 0.18F).method7294(var10)
+               boundsData.getFloatValue(),
+               boundsData.getFloatValue2(),
+               boundsData.width(),
+               boundsData.height(),
+               ProxyDotRadiusData.method8069(boundsData.height() / 2.0F),
+               DANGER.method7292(0.1F + hover * 0.18F).method7294(previewAlpha)
             );
-            Font var15 = Fonts.NEW_MEDIUM.getFont(4.8F);
-            String var16 = t(var1);
+            Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+            String text = t(key);
             var4x.drawText(
-               var15,
-               var16,
-               var12.getFloatValue() + (var12.width() - var15.width(var16)) / 2.0F,
-               var12.getFloatValue2() + (var12.height() - var15.height()) / 2.0F,
-               DANGER.method7295(new ZenithColor(255, 255, 255), var14 * 0.4F).method7294(var10)
+               font,
+               text,
+               boundsData.getFloatValue() + (boundsData.width() - font.width(text)) / 2.0F,
+               boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+               DANGER.method7295(new ZenithColor(255, 255, 255), hover * 0.4F).method7294(previewAlpha)
             );
          },
          () -> {
-            if (this.hoveredButton.getOrDefault(var4, -1) == 0) {
-               var3.run();
+            if (this.hoveredButton.getOrDefault(key2, -1) == 0) {
+               runnable.run();
             }
          },
          null
       );
    }
 
-   private void openChat(String var1) {
+   private void openChat(String selected) {
       if (this.openChatWith != null) {
-         if (!this.openChatWith.test(var1)) {
-            this.flashMessage(t("gui.friends.notice.noChat").replace("{n}", displayName(var1)));
+         if (!this.openChatWith.test(selected)) {
+            this.flashMessage(t("gui.friends.notice.noChat").replace("{n}", displayName(selected)));
             if (this.selected == null) {
-               this.setNotice(t("gui.friends.notice.noChat").replace("{n}", displayName(var1)), "", false);
+               this.setNotice(t("gui.friends.notice.noChat").replace("{n}", displayName(selected)), "", false);
             }
          }
       }
    }
 
    private static Prefs prefs() {
-      Cloud var0 = cloud();
-      return var0 == null ? null : var0.prefs();
+      Cloud cloud2 = cloud();
+      return cloud2 == null ? null : cloud2.prefs();
    }
 
-   private static String rememberedMcName(String var0) {
-      PartyPlayerInfo var1 = peer(var0);
-      if (var1 != null && !var1.getText2().isBlank()) {
-         return var1.getText2();
+   private static String rememberedMcName(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      if (partyPlayerInfo != null && !partyPlayerInfo.getText2().isBlank()) {
+         return partyPlayerInfo.getText2();
       } else {
-         Prefs var2 = prefs();
-         return var2 == null ? "" : var2.method3313(var0);
+         Prefs prefs2 = prefs();
+         return prefs2 == null ? "" : prefs2.method3313(selected);
       }
    }
 
-   private static String onlineFor(String var0) {
-      Prefs var1 = prefs();
-      long var2 = var1 == null ? 0L : var1.method3309(var0);
-      return var2 <= 0L ? t("gui.friends.justJoined") : duration(var2);
+   private static String onlineFor(String selected) {
+      Prefs prefs2 = prefs();
+      long l = prefs2 == null ? 0L : prefs2.method3309(selected);
+      return l <= 0L ? t("gui.friends.justJoined") : duration(l);
    }
 
-   private static String lastSeen(String var0) {
-      Prefs var1 = prefs();
-      long var2 = var1 == null ? 0L : var1.method3310(var0);
-      return var2 <= 0L ? t("gui.friends.neverSeen") : t("gui.friends.ago").replace("{t}", duration(System.currentTimeMillis() - var2));
+   private static String lastSeen(String selected) {
+      Prefs prefs2 = prefs();
+      long l = prefs2 == null ? 0L : prefs2.method3310(selected);
+      return l <= 0L ? t("gui.friends.neverSeen") : t("gui.friends.ago").replace("{t}", duration(System.currentTimeMillis() - l));
    }
 
-   private static String duration(long var0) {
-      long var2 = var0 / 60000L;
-      if (var2 < 1L) {
+   private static String duration(long l) {
+      long l2 = l / 60000L;
+      if (l2 < 1L) {
          return t("gui.time.lessMinute");
-      } else if (var2 < 60L) {
-         return var2 + " " + t("gui.time.min");
+      } else if (l2 < 60L) {
+         return l2 + " " + t("gui.time.min");
       } else {
-         long var4 = var2 / 60L;
-         if (var4 < 24L) {
-            long var8 = var2 % 60L;
-            return var8 == 0L ? var4 + " " + t("gui.time.hour") : var4 + " " + t("gui.time.hour") + " " + var8 + " " + t("gui.time.min");
+         long l3 = l2 / 60L;
+         if (l3 < 24L) {
+            long l4 = l2 % 60L;
+            return l4 == 0L ? l3 + " " + t("gui.time.hour") : l3 + " " + t("gui.time.hour") + " " + l4 + " " + t("gui.time.min");
          } else {
-            long var6 = var4 / 24L;
-            return var6 + " " + t("gui.time.day");
+            long l4 = l3 / 24L;
+            return l4 + " " + t("gui.time.day");
          }
       }
    }
 
-   private void bar(String var1, String var2, Supplier<Float> var3, Supplier<Float> var4, Function<ZenithStyle, ZenithColor> var5) {
-      Font var6 = Fonts.NEW_REGULAR.getFont(4.6F);
+   private void bar(String selected, String text, Supplier<Float> supplier, Supplier<Float> supplier2, Function<ZenithStyle, ZenithColor> function) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.6F);
       this.asideCustom(
-         var6.height() + 3.0F + 7.0F,
-         (var7, var8, var9, var10, var11, var12, var13, var14) -> {
-            float var15 = (Float)var3.get();
-            if (!Float.isFinite(var15)) {
-               var15 = 0.0F;
+         font.height() + 3.0F + 7.0F,
+         (menuDrawContext, n, n2, f, centeredTextY, f2, previewAlpha, zenithStyle) -> {
+            float f3 = (Float)supplier.get();
+            if (!Float.isFinite(f3)) {
+               f3 = 0.0F;
             }
 
-            float var16 = (Float)var4.get();
-            var16 = Float.isFinite(var16) ? Math.max(0.001F, var16) : 20.0F;
-            float var17 = this.barFill
-               .computeIfAbsent("bar:" + var1 + ":" + var2, var0 -> new Animation(260L, 0.0F, Easing.INSTANCE12))
-               .method2808(Math.max(0.0F, Math.min(1.0F, var15 / var16)));
-            String var18 = String.valueOf(Math.round(var15));
-            var7.drawText(var6, var2, var10 + 8.0F, var11, var14.getTextTertiary().getZenithColor().method7294(var13));
-            var7.drawText(var6, var18, var10 + var12 - 8.0F - var6.width(var18), var11, var14.getTextEnable().getZenithColor().method7294(var13));
-            float var19 = var11 + var6.height() + 3.0F;
-            float var20 = var12 - 16.0F;
-            var7.drawRoundedRect(
-               var10 + 8.0F, var19, var20, 3.0F, ProxyDotRadiusData.method8069(1.5F), var14.getFieldBorder().getZenithColor().method7294(var13)
+            float f4 = (Float)supplier2.get();
+            f4 = Float.isFinite(f4) ? Math.max(0.001F, f4) : 20.0F;
+            float f5 = this.barFill
+               .computeIfAbsent("bar:" + selected + ":" + text, str -> new Animation(260L, 0.0F, Easing.INSTANCE12))
+               .method2808(Math.max(0.0F, Math.min(1.0F, f3 / f4)));
+            String str = String.valueOf(Math.round(f3));
+            menuDrawContext.drawText(font, text, f + 8.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            menuDrawContext.drawText(font, str, f + f2 - 8.0F - font.width(str), centeredTextY, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            float y = centeredTextY + font.height() + 3.0F;
+            float width = f2 - 16.0F;
+            menuDrawContext.drawRoundedRect(
+               f + 8.0F, y, width, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha)
             );
-            if (var17 > 0.0F) {
-               var7.drawRoundedRect(
-                  var10 + 8.0F, var19, var20 * var17, 3.0F, ProxyDotRadiusData.method8069(1.5F), ((ZenithColor)var5.apply(var14)).method7294(var13)
+            if (f5 > 0.0F) {
+               menuDrawContext.drawRoundedRect(
+                  f + 8.0F, y, width * f5, 3.0F, ProxyDotRadiusData.method8069(1.5F), ((ZenithColor)function.apply(zenithStyle)).method7294(previewAlpha)
                );
             }
          }
       );
    }
 
-   private void buildLocalAside(String var1) {
-      this.profileHead(var1, t(this.isNearby(var1) ? "gui.friends.nearbyWorld" : "gui.friends.localFriend"), true);
+   private void buildLocalAside(String selected) {
+      this.profileHead(selected, t(this.isNearby(selected) ? "gui.friends.nearbyWorld" : "gui.friends.localFriend"), true);
       this.flashRow();
       this.asideCaption("gui.friends.caption.now");
       this.asideInfo("gui.friends.storedIn", () -> t("gui.friends.storedIn.value"), "gui.friends.storedIn.desc");
-      this.asideInfo("gui.friends.near", () -> t(this.isNearby(var1) ? "gui.value.yes" : "gui.value.no"), "gui.friends.near.desc");
+      this.asideInfo("gui.friends.near", () -> t(this.isNearby(selected) ? "gui.value.yes" : "gui.value.no"), "gui.friends.near.desc");
       this.asideCaption("gui.friends.caption.actions");
       this.asideAction("gui.friends.invite", MenuGlyph.CHECK, () -> t("gui.friends.invite.value"), () -> {
-         Cloud var2 = cloud();
-         if (var2 != null) {
-            var2.method7904(0, var1);
+         Cloud cloud2 = cloud();
+         if (cloud2 != null) {
+            cloud2.method7904(0, selected);
          }
 
-         this.flashMessage(t("gui.friends.notice.queued").replace("{n}", var1));
+         this.flashMessage(t("gui.friends.notice.queued").replace("{n}", selected));
       }, "gui.friends.invite.desc");
-      this.asideAction("gui.friends.copyNick", MenuGlyph.COPY, () -> t("gui.friends.copyNick.value"), () -> this.copy(var1), "gui.friends.copyNick.desc");
+      this.asideAction("gui.friends.copyNick", MenuGlyph.COPY, () -> t("gui.friends.copyNick.value"), () -> this.copy(selected), "gui.friends.copyNick.desc");
       this.dangerButton("gui.friends.remove", "gui.friends.remove.local.desc", () -> {
-         Zenith.getInstance().getFriends().method7629(var1);
+         Zenith.getInstance().getFriends().method7629(selected);
          Zenith.getInstance().getFriends().save();
          this.selected = null;
          this.invalidate();
       });
    }
 
-   private static void plate(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      var0.drawRoundedRect(
-         var1,
-         var2,
-         var3,
-         var4,
+   private static void plate(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height, float hover, float pick, float previewAlpha, ZenithStyle zenithStyle) {
+      customDrawContext.drawRoundedRect(
+         floatValue,
+         y,
+         width,
+         height,
          ProxyDotRadiusData.method8069(4.0F),
-         var8.getDisableActiveBg().getZenithColor().method7294(var7 * (0.45F + 0.25F * var5 + 0.3F * var6))
+         zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * (0.45F + 0.25F * hover + 0.3F * pick))
       );
-      if (var6 > 0.002F) {
-         float var9 = (var3 - 10.0F) * var6;
-         var0.drawRoundedRect(
-            var1 + (var3 - var9) / 2.0F,
-            var2 + var4 - 2.0F,
-            var9,
+      if (pick > 0.002F) {
+         float f = (width - 10.0F) * pick;
+         customDrawContext.drawRoundedRect(
+            floatValue + (width - f) / 2.0F,
+            y + height - 2.0F,
+            f,
             1.5F,
             ProxyDotRadiusData.method8069(0.75F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * var6)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * pick)
          );
       }
    }
 
-   private static void bigGlyph(MenuDrawContext var0, MenuGlyph var1, float var2, float var3, ZenithColor var4) {
-      var0.pushMatrix();
-      var0.pose().translate(var2, var3);
-      var0.pose().scale(2.0F, 2.0F);
-      var1.draw(var0, 0.0F, 0.0F, var4);
-      var0.popMatrix();
+   private static void bigGlyph(MenuDrawContext customDrawContext, MenuGlyph menuGlyph, float x, float y, ZenithColor zenithColor) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().scale(2.0F, 2.0F);
+      menuGlyph.draw(customDrawContext, 0.0F, 0.0F, zenithColor);
+      customDrawContext.popMatrix();
    }
 
-   private static void plusGlyph(MenuDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      var0.pushMatrix();
-      var0.pose().translate(var1, var2);
-      var0.pose().rotate((float)((Math.PI / 4) * var3));
-      var0.drawRect(-2.5F, -0.5F, 5.0F, 1.0F, var4);
-      var0.drawRect(-0.5F, -2.5F, 1.0F, 5.0F, var4);
-      var0.popMatrix();
+   private static void plusGlyph(MenuDrawContext customDrawContext, float x, float y, float pick, ZenithColor zenithColor) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().rotate((float)((Math.PI / 4) * pick));
+      customDrawContext.drawRect(-2.5F, -0.5F, 5.0F, 1.0F, zenithColor);
+      customDrawContext.drawRect(-0.5F, -2.5F, 1.0F, 5.0F, zenithColor);
+      customDrawContext.popMatrix();
    }
 
-   private static void diamond(MenuDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      var0.pushMatrix();
-      var0.pose().translate(var1, var2);
-      var0.pose().rotate((float)Math.toRadians(45.0));
-      var0.drawRoundedRect(-var3 / 2.0F, -var3 / 2.0F, var3, var3, ProxyDotRadiusData.method8069(0.6F), var4);
-      var0.popMatrix();
+   private static void diamond(MenuDrawContext customDrawContext, float x, float y, float width, ZenithColor zenithColor) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().rotate((float)Math.toRadians(45.0));
+      customDrawContext.drawRoundedRect(-width / 2.0F, -width / 2.0F, width, width, ProxyDotRadiusData.method8069(0.6F), zenithColor);
+      customDrawContext.popMatrix();
    }
 
-   private void drawToggle(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      ZenithColor var9 = var8.getTextTertiary().getZenithColor().method7294(0.35F).method7295(var8.getPrimaryColor().getZenithColor(), var6);
-      var1.drawRoundedRect(var2, var3, var4, var5, ProxyDotRadiusData.method8069(var5 / 2.0F), var9.method7294(var7));
-      float var10 = var5 - 3.0F;
-      float var11 = var2 + 1.5F + (var4 - var10 - 3.0F) * var6;
-      var1.drawRoundedRect(var11, var3 + 1.5F, var10, var10, ProxyDotRadiusData.method8069(var10 / 2.0F), new ZenithColor(255, 255, 255).method7294(var7));
+   private void drawToggle(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height, float pick, float previewAlpha, ZenithStyle zenithStyle) {
+      ZenithColor zenithColor = zenithStyle.getTextTertiary().getZenithColor().method7294(0.35F).method7295(zenithStyle.getPrimaryColor().getZenithColor(), pick);
+      customDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7294(previewAlpha));
+      float f = height - 3.0F;
+      float floatValue2 = floatValue + 1.5F + (width - f - 3.0F) * pick;
+      customDrawContext.drawRoundedRect(floatValue2, y + 1.5F, f, f, ProxyDotRadiusData.method8069(f / 2.0F), new ZenithColor(255, 255, 255).method7294(previewAlpha));
    }
 
-   private void pillButton(MenuDrawContext var1, String var2, BoundsData var3, String var4, boolean var5, boolean var6, float var7, ZenithStyle var8) {
-      float var9 = Math.min(1.0F, this.hover(var2 + ":btn", var6) + this.flash(var2) * 0.8F);
-      ProxyDotRadiusData var10 = ProxyDotRadiusData.method8069(var3.height() / 2.0F);
-      ZenithColor var11 = var8.getPrimaryColor().getZenithColor();
-      if (var5) {
-         var1.drawRoundedRect(
-            var3.getFloatValue(), var3.getFloatValue2(), var3.width(), var3.height(), var10, var11.method7292(0.16F + var9 * 0.74F).method7294(var7)
+   private void pillButton(MenuDrawContext menuDrawContext, String key, BoundsData boundsData, String text, boolean flag, boolean contains, float previewAlpha, ZenithStyle zenithStyle) {
+      float hover = Math.min(1.0F, this.hover(key + ":btn", contains) + this.flash(key) * 0.8F);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(boundsData.height() / 2.0F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      if (flag) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, zenithColor.method7292(0.16F + hover * 0.74F).method7294(previewAlpha)
          );
       } else {
-         var1.drawRoundedRect(
-            var3.getFloatValue(),
-            var3.getFloatValue2(),
-            var3.width(),
-            var3.height(),
-            var10,
-            var8.getDisableActiveBg().getZenithColor().method7294(var7 * (0.8F + var9 * 0.6F))
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
+            headerRadius,
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * (0.8F + hover * 0.6F))
          );
       }
 
-      Font var12 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      ZenithColor var13 = var5
-         ? var11.method7295(new ZenithColor(255, 255, 255), var9).method7294(var7)
-         : var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), var9).method7294(var7);
-      var1.drawText(
-         var12, var4, var3.getFloatValue() + (var3.width() - var12.width(var4)) / 2.0F, var3.getFloatValue2() + (var3.height() - var12.height()) / 2.0F, var13
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      ZenithColor zenithColor2 = flag
+         ? zenithColor.method7295(new ZenithColor(255, 255, 255), hover).method7294(previewAlpha)
+         : zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha);
+      menuDrawContext.drawText(
+         font, text, boundsData.getFloatValue() + (boundsData.width() - font.width(text)) / 2.0F, boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F, zenithColor2
       );
    }
 
-   public void asideHint(String var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.6F);
-      List<String> var3 = wrapText(var1, var2, this.asideWidth() - 16.0F, 4);
-      float var4 = var2.height() + 2.0F;
-      int var5 = this.asideOrder++;
-      this.asideCustom(var3.size() * var4 + GuiStyle.PADDING.intValue() * 2.0F, (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-         float var13 = wave(this.asideWave, var5);
-         float var14 = var9 + GuiStyle.PADDING.intValue();
+   public void asideHint(String description) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+      List<String> strings = wrapText(description, font, this.asideWidth() - 16.0F, 4);
+      float f = font.height() + 2.0F;
+      int n = this.asideOrder++;
+      this.asideCustom(strings.size() * f + GuiStyle.PADDING.intValue() * 2.0F, (var5x, n2, n3, f2, f3, f4, f5, zenithStyle) -> {
+         float wave2 = wave(this.asideWave, n);
+         float centeredTextY = f3 + GuiStyle.PADDING.intValue();
 
-         for (String var16 : var3) {
-            var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 6.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
-            var14 += var4;
+         for (String text : strings) {
+            var5x.drawText(font, text, f2 + 8.0F + (1.0F - wave2) * 6.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(f5 * wave2));
+            centeredTextY += f;
          }
       });
    }
 
-   private void hint(String var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.8F);
-      List<String> var3 = wrapText(var1, var2, this.mainWidth() - 16.0F, 4);
-      float var4 = var2.height() + 2.0F;
-      int var5 = this.order++;
-      this.custom(var3.size() * var4 + GuiStyle.PADDING.intValue(), (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-         float var13 = wave(this.listWave, var5);
-         float var14 = var9 + 2.0F;
+   private void hint(String description) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      List<String> strings = wrapText(description, font, this.mainWidth() - 16.0F, 4);
+      float f = font.height() + 2.0F;
+      int n = this.order++;
+      this.custom(strings.size() * f + GuiStyle.PADDING.intValue(), (var5x, n2, n3, f2, f3, f4, f5, zenithStyle) -> {
+         float wave2 = wave(this.listWave, n);
+         float centeredTextY = f3 + 2.0F;
 
-         for (String var16 : var3) {
-            var5x.drawText(var2, var16, var8 + 8.0F + (1.0F - var13) * 8.0F, var14, var12.getTextTertiary().getZenithColor().method7294(var11 * var13));
-            var14 += var4;
+         for (String text : strings) {
+            var5x.drawText(font, text, f2 + 8.0F + (1.0F - wave2) * 8.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(f5 * wave2));
+            centeredTextY += f;
          }
       });
    }
 
-   private void noticeBox(String var1) {
-      Font var2 = Fonts.NEW_REGULAR.getFont(4.8F);
-      List<String> var3 = wrapText(var1, var2, this.mainWidth() - 16.0F - 14.0F, 4);
-      float var4 = var2.height() + 1.5F;
-      float var5 = var3.size() * var4 + 10.0F;
-      if (!var1.equals(this.noticeAnimatedFor)) {
-         this.noticeAnimatedFor = var1;
+   private void noticeBox(String noticeAnimatedFor) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      List<String> strings = wrapText(noticeAnimatedFor, font, this.mainWidth() - 16.0F - 14.0F, 4);
+      float f = font.height() + 1.5F;
+      float height = strings.size() * f + 10.0F;
+      if (!noticeAnimatedFor.equals(this.noticeAnimatedFor)) {
+         this.noticeAnimatedFor = noticeAnimatedFor;
          restart(this.noticeAppear);
       }
 
       this.custom(
-         var5 + GuiStyle.PADDING.intValue(),
-         (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-            float var13 = this.noticeAppear.method2808(1.0F);
-            float var14 = var8 + 8.0F;
-            float var15 = var10 - 16.0F;
+         height + GuiStyle.PADDING.intValue(),
+         (var5x, n, n2, f2, y, f3, previewAlpha, zenithStyle) -> {
+            float f4 = this.noticeAppear.method2808(1.0F);
+            float floatValue = f2 + 8.0F;
+            float width = f3 - 16.0F;
             var5x.drawRoundedRect(
-               var14, var9, var15, var5, ProxyDotRadiusData.method8069(4.0F), var12.getDisableActiveBg().getZenithColor().method7294(var11 * 0.7F * var13)
+               floatValue, y, width, height, ProxyDotRadiusData.method8069(4.0F), zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * 0.7F * f4)
             );
-            float var16 = (var5 - 6.0F) * var13;
+            float height2 = (height - 6.0F) * f4;
             var5x.drawRoundedRect(
-               var14 + 1.5F,
-               var9 + 3.0F + (var5 - 6.0F - var16) / 2.0F,
+               floatValue + 1.5F,
+               y + 3.0F + (height - 6.0F - height2) / 2.0F,
                2.0F,
-               var16,
+               height2,
                ProxyDotRadiusData.method8069(1.0F),
-               var12.getPrimaryColor().getZenithColor().method7294(var11)
+               zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
-            float var17 = var9 + 5.0F + (1.0F - var13) * 2.0F;
+            float centeredTextY = y + 5.0F + (1.0F - f4) * 2.0F;
 
-            for (String var19 : var3) {
-               var5x.drawText(var2, var19, var14 + 7.0F, var17, var12.getTextSecondary().getZenithColor().method7294(var11 * var13));
-               var17 += var4;
+            for (String text : strings) {
+               var5x.drawText(font, text, floatValue + 7.0F, centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha * f4));
+               centeredTextY += f;
             }
          }
       );
    }
 
-   private void press(String var1) {
-      this.pressedAt.put(var1, System.currentTimeMillis());
+   private void press(String key) {
+      this.pressedAt.put(key, System.currentTimeMillis());
    }
 
-   private float flash(String var1) {
-      long var2 = this.pressedAt.getOrDefault(var1, 0L);
-      if (var2 == 0L) {
+   private float flash(String key) {
+      long l = this.pressedAt.getOrDefault(key, 0L);
+      if (l == 0L) {
          return 0.0F;
       } else {
-         float var4 = (float)(System.currentTimeMillis() - var2) / 220.0F;
-         return var4 >= 1.0F ? 0.0F : 1.0F - var4;
+         float f = (float)(System.currentTimeMillis() - l) / 220.0F;
+         return f >= 1.0F ? 0.0F : 1.0F - f;
       }
    }
 
-   private void flashMessage(String var1) {
-      this.flashText = var1;
+   private void flashMessage(String flashText) {
+      this.flashText = flashText;
       this.flashAt = System.currentTimeMillis();
       this.invalidate();
    }
@@ -2862,66 +2862,66 @@ public class FriendsSectionPanel extends SectionPanel {
       return !this.flashText.isEmpty() && System.currentTimeMillis() - this.flashAt < 2600L;
    }
 
-   private void copy(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         mc.keyboardHandler.setClipboard(var1);
+   private void copy(String name) {
+      if (name != null && !name.isBlank()) {
+         mc.keyboardHandler.setClipboard(name);
          this.flashMessage(t("gui.friends.copied"));
       }
    }
 
-   private void buttonsRow(String var1, String var2, Runnable var3, String var4, Runnable var5) {
-      this.buttonsRow(var1, var2, var3, var4, var5, false);
+   private void buttonsRow(String key, String str, Runnable runnable, String str2, Runnable runnable2) {
+      this.buttonsRow(key, str, runnable, str2, runnable2, false);
    }
 
-   private void buttonsRow(String var1, String var2, Runnable var3, String var4, Runnable var5, boolean var6) {
-      this.custom(19.0F, (var5x, var6x, var7, var8, var9, var10, var11, var12) -> {
-         float var13 = (var10 - 16.0F - 4.0F) / 2.0F;
-         BoundsData var14 = new BoundsData(var8 + 8.0F, var9 + 2.0F, var13, 15.0F);
-         BoundsData var15 = new BoundsData(var8 + 8.0F + var13 + 4.0F, var9 + 2.0F, var13, 15.0F);
-         int var16 = var14.contains(var6x, var7) ? 0 : (var15.contains(var6x, var7) ? 1 : -1);
-         this.hoveredButton.put(var1, var16);
-         float var17 = var6 ? 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 300.0)) : 1.0F;
-         this.pillButton(var5x, var1 + ":0", var14, t(var2), false, var16 == 0, var11, var12);
-         this.pillButton(var5x, var1 + ":1", var15, t(var4), true, var16 == 1 && !var6, var11 * var17, var12);
+   private void buttonsRow(String key, String str, Runnable runnable, String key2, Runnable runnable2, boolean flag) {
+      this.custom(19.0F, (var5x, var6x, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+         float width = (f3 - 16.0F - 4.0F) / 2.0F;
+         BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 2.0F, width, 15.0F);
+         BoundsData boundsData2 = new BoundsData(f + 8.0F + width + 4.0F, f2 + 2.0F, width, 15.0F);
+         int n = boundsData.contains(var6x, lastClickY) ? 0 : (boundsData2.contains(var6x, lastClickY) ? 1 : -1);
+         this.hoveredButton.put(key, n);
+         float f4 = flag ? 0.6F + 0.4F * (float)(0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 300.0)) : 1.0F;
+         this.pillButton(var5x, key + ":0", boundsData, t(str), false, n == 0, previewAlpha, zenithStyle);
+         this.pillButton(var5x, key + ":1", boundsData2, t(key2), true, n == 1 && !flag, previewAlpha * f4, zenithStyle);
       }, () -> {
-         int var5x = this.hoveredButton.getOrDefault(var1, -1);
+         int var5x = this.hoveredButton.getOrDefault(key, -1);
          if (var5x == 0) {
-            this.press(var1 + ":0");
-            var3.run();
-         } else if (var5x == 1 && !var6) {
-            this.press(var1 + ":1");
-            var5.run();
+            this.press(key + ":0");
+            runnable.run();
+         } else if (var5x == 1 && !flag) {
+            this.press(key + ":1");
+            runnable2.run();
          }
       }, null);
    }
 
-   private float hover(String var1, boolean var2) {
-      return this.buttonHover.computeIfAbsent("hover:" + var1, var0 -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   private float hover(String key, boolean contains) {
+      return this.buttonHover.computeIfAbsent("hover:" + key, str -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
    }
 
-   private float pick(String var1, boolean var2) {
-      return this.cardSelect.computeIfAbsent("pick:" + var1, var0 -> new Animation(180L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   private float pick(String key, boolean addOpen) {
+      return this.cardSelect.computeIfAbsent("pick:" + key, str -> new Animation(180L, 0.0F, Easing.INSTANCE12)).method2808(addOpen ? 1.0F : 0.0F);
    }
 
-   private float select(String var1, boolean var2) {
-      return this.cardSelect.computeIfAbsent(var1, var0 -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   private float select(String key, boolean flag) {
+      return this.cardSelect.computeIfAbsent(key, str -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(flag ? 1.0F : 0.0F);
    }
 
-   private static String fit(Font var0, String var1, float var2) {
-      return var1 != null && !var1.isEmpty() && !(var2 <= 0.0F) ? var0.clip(var1, var2) : "";
+   private static String fit(Font font, String name, float width) {
+      return name != null && !name.isEmpty() && !(width <= 0.0F) ? font.clip(name, width) : "";
    }
 
    private static String accountName() {
-      Zenith var0 = Zenith.getInstance();
-      return var0 != null && var0.getEntry() != null && var0.getEntry().getUsername() != null ? var0.getEntry().getUsername() : "";
+      Zenith zenith = Zenith.getInstance();
+      return zenith != null && zenith.getEntry() != null && zenith.getEntry().getUsername() != null ? zenith.getEntry().getUsername() : "";
    }
 
    private static long accountUid() {
-      Zenith var0 = Zenith.getInstance();
-      if (var0 != null && var0.getEntry() != null && var0.getEntry().getText2() != null) {
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getEntry() != null && zenith.getEntry().getText2() != null) {
          try {
-            return Long.parseLong(var0.getEntry().getText2().trim());
-         } catch (NumberFormatException var2) {
+            return Long.parseLong(zenith.getEntry().getText2().trim());
+         } catch (NumberFormatException e) {
             return 0L;
          }
       } else {
@@ -2929,43 +2929,43 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private static List<ItemStack> equipment(PartyPlayerInfo var0) {
-      CloudPackets.Data7[] var1 = var0.getData7s();
-      if (var1.length <= 40) {
+   private static List<ItemStack> equipment(PartyPlayerInfo partyPlayerInfo) {
+      CloudPackets.Data7[] data7s = partyPlayerInfo.getData7s();
+      if (data7s.length <= 40) {
          return List.of();
       } else {
-         ArrayList var2 = new ArrayList(5);
+         ArrayList arrayList = new ArrayList(5);
 
-         for (int var3 = 39; var3 >= 36; var3--) {
-            ItemStack var4 = stackOf(var1[var3]);
-            if (!var4.isEmpty()) {
-               var2.add(var4);
+         for (int i = 39; i >= 36; i--) {
+            ItemStack stack = stackOf(data7s[i]);
+            if (!stack.isEmpty()) {
+               arrayList.add(stack);
             }
          }
 
-         ItemStack var5 = stackOf(var1[40]);
-         if (!var5.isEmpty()) {
-            var2.add(var5);
+         ItemStack stack = stackOf(data7s[40]);
+         if (!stack.isEmpty()) {
+            arrayList.add(stack);
          }
 
-         return var2;
+         return arrayList;
       }
    }
 
-   private static ItemStack stackOf(CloudPackets.Data7 var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         Identifier var1 = Identifier.tryParse(var0.getText());
-         if (var1 != null && BuiltInRegistries.ITEM.containsKey(var1)) {
-            Item var2 = BuiltInRegistries.ITEM.getValue(var1);
-            if (var2 == Items.AIR) {
+   private static ItemStack stackOf(CloudPackets.Data7 data7) {
+      if (data7 != null && !data7.isEmpty()) {
+         Identifier tryParse = Identifier.tryParse(data7.getText());
+         if (tryParse != null && BuiltInRegistries.ITEM.containsKey(tryParse)) {
+            Item item = BuiltInRegistries.ITEM.getValue(tryParse);
+            if (item == Items.AIR) {
                return ItemStack.EMPTY;
             } else {
-               ItemStack var3 = new ItemStack(var2, Math.max(1, Math.min(127, var0.count())));
-               if (var0.getIntValue2() > 0) {
-                  var3.setDamageValue(var0.getIntValue2());
+               ItemStack stack = new ItemStack(item, Math.max(1, Math.min(127, data7.count())));
+               if (data7.getIntValue2() > 0) {
+                  stack.setDamageValue(data7.getIntValue2());
                }
 
-               return var3;
+               return stack;
             }
          } else {
             return ItemStack.EMPTY;
@@ -2975,128 +2975,128 @@ public class FriendsSectionPanel extends SectionPanel {
       }
    }
 
-   private static long uidOf(String var0) {
-      CloudConnectionState var1 = state();
-      long var2 = var1 == null ? 0L : var1.uidOf(displayName(var0));
-      if (var2 > 0L) {
-         return var2;
+   private static long uidOf(String text) {
+      CloudConnectionState cloudConnectionState = state();
+      long uidOf = cloudConnectionState == null ? 0L : cloudConnectionState.uidOf(displayName(text));
+      if (uidOf > 0L) {
+         return uidOf;
       } else {
-         Prefs var4 = prefs();
-         return var4 == null ? 0L : var4.method3311(var0);
+         Prefs prefs2 = prefs();
+         return prefs2 == null ? 0L : prefs2.method3311(text);
       }
    }
 
-   private static PartyPlayerInfo peer(String var0) {
-      CloudConnectionState var1 = state();
-      return var1 == null ? null : var1.method8044(var0);
+   private static PartyPlayerInfo peer(String selected) {
+      CloudConnectionState cloudConnectionState = state();
+      return cloudConnectionState == null ? null : cloudConnectionState.method8044(selected);
    }
 
-   private static boolean isPendingName(String var0) {
-      CloudConnectionState var1 = state();
-      return var1 != null && var1.method8061(var0) && var1.method8044(var0) == null;
+   private static boolean isPendingName(String selected) {
+      CloudConnectionState cloudConnectionState = state();
+      return cloudConnectionState != null && cloudConnectionState.method8061(selected) && cloudConnectionState.method8044(selected) == null;
    }
 
-   private static String displayName(String var0) {
-      PartyPlayerInfo var1 = peer(var0);
-      return var1 == null ? var0 : var1.username();
+   private static String displayName(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      return partyPlayerInfo == null ? selected : partyPlayerInfo.username();
    }
 
-   private static String whereLine(String var0) {
-      PartyPlayerInfo var1 = peer(var0);
-      CloudConnectionState var2 = state();
-      if (var1 == null) {
-         return t(var2 != null && var2.method8061(var0) ? "gui.friends.status.pendingLong" : "gui.friends.status.offline");
+   private static String whereLine(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      CloudConnectionState cloudConnectionState = state();
+      if (partyPlayerInfo == null) {
+         return t(cloudConnectionState != null && cloudConnectionState.method8061(selected) ? "gui.friends.status.pendingLong" : "gui.friends.status.offline");
       } else {
-         String var3 = blankToDash(var1.method3290());
-         String var4 = shortWorld(var1.dimension());
-         if ("-".equals(var3)) {
+         String anObject = blankToDash(partyPlayerInfo.method3290());
+         String str = shortWorld(partyPlayerInfo.dimension());
+         if ("-".equals(anObject)) {
             return t("gui.friends.inMenu");
          } else {
-            return !var4.isEmpty() && !"-".equals(var4) ? var3 + " · " + var4 : var3;
+            return !str.isEmpty() && !"-".equals(str) ? anObject + " · " + str : anObject;
          }
       }
    }
 
-   private static float statusLit(String var0) {
-      CloudConnectionState var1 = state();
-      if (var1 == null) {
+   private static float statusLit(String selected) {
+      CloudConnectionState cloudConnectionState = state();
+      if (cloudConnectionState == null) {
          return 0.0F;
       } else {
-         return var1.method8044(var0) == null && !var1.method8061(var0) ? 0.0F : 1.0F;
+         return cloudConnectionState.method8044(selected) == null && !cloudConnectionState.method8061(selected) ? 0.0F : 1.0F;
       }
    }
 
-   private static ZenithColor statusColor(String var0, ZenithStyle var1) {
-      CloudConnectionState var2 = state();
-      PartyPlayerInfo var3 = var2 == null ? null : var2.method8044(var0);
-      if (var3 != null) {
-         Cloud var4 = cloud();
-         if (var4 != null && var4.getPartyMember().method1142(var3.uid())) {
-            String var5 = var4.getPartyMember().method1141(var3.uid()).getText();
-            if (!"online".equals(var5) && !var5.isEmpty()) {
-               return PartyManager.method51(var5);
+   private static ZenithColor statusColor(String selected, ZenithStyle zenithStyle) {
+      CloudConnectionState cloudConnectionState = state();
+      PartyPlayerInfo partyPlayerInfo = cloudConnectionState == null ? null : cloudConnectionState.method8044(selected);
+      if (partyPlayerInfo != null) {
+         Cloud cloud2 = cloud();
+         if (cloud2 != null && cloud2.getPartyMember().method1142(partyPlayerInfo.uid())) {
+            String text = cloud2.getPartyMember().method1141(partyPlayerInfo.uid()).getText();
+            if (!"online".equals(text) && !text.isEmpty()) {
+               return PartyManager.method51(text);
             }
          }
 
-         return var1.getFriendColor().getZenithColor();
+         return zenithStyle.getFriendColor().getZenithColor();
       } else {
-         return var2 != null && var2.method8061(var0) ? var1.getPrimaryColor().getZenithColor() : var1.getTextTertiary().getZenithColor();
+         return cloudConnectionState != null && cloudConnectionState.method8061(selected) ? zenithStyle.getPrimaryColor().getZenithColor() : zenithStyle.getTextTertiary().getZenithColor();
       }
    }
 
-   private static String distanceTo(String var0) {
-      PartyPlayerInfo var1 = peer(var0);
-      Cloud var2 = cloud();
-      if (var1 != null && var2 != null && mc.player != null) {
-         if (!var1.method3291(var2.method7911(), var2.method7913())) {
+   private static String distanceTo(String selected) {
+      PartyPlayerInfo partyPlayerInfo = peer(selected);
+      Cloud cloud2 = cloud();
+      if (partyPlayerInfo != null && cloud2 != null && mc.player != null) {
+         if (!partyPlayerInfo.method3291(cloud2.method7911(), cloud2.method7913())) {
             return "-";
          } else {
-            double var3 = var1.getDoubleValue() - mc.player.getX();
-            double var5 = var1.getDoubleValue2() - mc.player.getY();
-            double var7 = var1.getDoubleValue3() - mc.player.getZ();
-            double var9 = Math.sqrt(var3 * var3 + var5 * var5 + var7 * var7);
-            return Double.isFinite(var9) && !(var9 >= 1.0E8) ? Math.round(var9) + " " + t("gui.unit.meter") : "-";
+            double d = partyPlayerInfo.getDoubleValue() - mc.player.getX();
+            double d2 = partyPlayerInfo.getDoubleValue2() - mc.player.getY();
+            double d3 = partyPlayerInfo.getDoubleValue3() - mc.player.getZ();
+            double d4 = Math.sqrt(d * d + d2 * d2 + d3 * d3);
+            return Double.isFinite(d4) && !(d4 >= 1.0E8) ? Math.round(d4) + " " + t("gui.unit.meter") : "-";
          }
       } else {
          return "-";
       }
    }
 
-   private boolean isNearby(String var1) {
-      if (mc.level != null && var1 != null) {
-         List<AbstractClientPlayer> var2 = mc.level.players();
-         long var3 = System.nanoTime();
-         if (this.nearbyWorld != mc.level || this.nearbyCount != var2.size() || var3 - this.nearbyAt > 4000000L) {
+   private boolean isNearby(String selected) {
+      if (mc.level != null && selected != null) {
+         List<AbstractClientPlayer> players = mc.level.players();
+         long nanoTime = System.nanoTime();
+         if (this.nearbyWorld != mc.level || this.nearbyCount != players.size() || nanoTime - this.nearbyAt > 4000000L) {
             this.nearbyNames.clear();
 
-            for (AbstractClientPlayer var6 : var2) {
-               this.nearbyNames.add(var6.getName().getString());
+            for (AbstractClientPlayer player : players) {
+               this.nearbyNames.add(player.getName().getString());
             }
 
             this.nearbyWorld = mc.level;
-            this.nearbyCount = var2.size();
-            this.nearbyAt = var3;
+            this.nearbyCount = players.size();
+            this.nearbyAt = nanoTime;
          }
 
-         return this.nearbyNames.contains(var1);
+         return this.nearbyNames.contains(selected);
       } else {
          return false;
       }
    }
 
-   private static boolean matches(String var0, String var1) {
-      return var1.isEmpty() || var0 != null && var0.toLowerCase(Locale.ROOT).contains(var1);
+   private static boolean matches(String selected, String searchQuery) {
+      return searchQuery.isEmpty() || selected != null && selected.toLowerCase(Locale.ROOT).contains(searchQuery);
    }
 
-   private static String blankToDash(String var0) {
-      return var0 != null && !var0.isBlank() ? var0 : "-";
+   private static String blankToDash(String name) {
+      return name != null && !name.isBlank() ? name : "-";
    }
 
-   private static String shortWorld(String var0) {
-      if (var0 != null && !var0.isBlank()) {
-         String var1 = var0.trim();
-         int var2 = var1.indexOf(58);
-         return var2 > 0 && var2 + 1 < var1.length() ? var1.substring(var2 + 1) : var1;
+   private static String shortWorld(String dimension) {
+      if (dimension != null && !dimension.isBlank()) {
+         String str = dimension.trim();
+         int indexOf = str.indexOf(58);
+         return indexOf > 0 && indexOf + 1 < str.length() ? str.substring(indexOf + 1) : str;
       } else {
          return "";
       }
@@ -3141,11 +3141,11 @@ public class FriendsSectionPanel extends SectionPanel {
          return "Hint[" + "name=" + this.name + ", " + "source=" + this.source + ", " + "uid=" + this.uid + ", " + "addKind=" + this.addKind + "]";
       }
 
-      private Hint(String var1, String var2, long var3, int var5) {
-         this.name = var1;
-         this.source = var2;
-         this.uid = var3;
-         this.addKind = var5;
+      private Hint(String name, String source, long uid, int addKind) {
+         this.name = name;
+         this.source = source;
+         this.uid = uid;
+         this.addKind = addKind;
       }
    }
 
@@ -3198,13 +3198,13 @@ public class FriendsSectionPanel extends SectionPanel {
          return "Tile[" + "key=" + this.key + ", " + "icon=" + this.icon + ", " + "label=" + this.label + ", " + "note=" + this.note + ", " + "active=" + this.active + ", " + "action=" + this.action + "]";
       }
 
-      private Tile(String var1, MenuGlyph var2, String var3, String var4, boolean var5, Runnable var6) {
-         this.key = var1;
-         this.icon = var2;
-         this.label = var3;
-         this.note = var4;
-         this.active = var5;
-         this.action = var6;
+      private Tile(String key, MenuGlyph icon, String label, String note, boolean active, Runnable action) {
+         this.key = key;
+         this.icon = icon;
+         this.label = label;
+         this.note = note;
+         this.active = active;
+         this.action = action;
       }
    }
 }

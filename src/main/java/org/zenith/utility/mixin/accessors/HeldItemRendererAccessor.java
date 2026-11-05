@@ -13,5 +13,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface HeldItemRendererAccessor {
    // 26.3 moved the equip-progress state to FirstPersonHandsAndItems; only the arm invoker is still used
    @Invoker("renderPlayerArm")
-   void zenith$renderArmHoldingItem(PoseStack var1, SubmitNodeCollector var2, int var3, float var4, float var5, HumanoidArm var6, net.minecraft.client.renderer.state.level.PlayerRenderState var7);
+   void zenith$renderArmHoldingItem(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int n, float f, float f2, HumanoidArm humanoidArm, net.minecraft.client.renderer.state.level.PlayerRenderState playerRenderState);
 }

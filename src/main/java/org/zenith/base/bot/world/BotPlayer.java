@@ -68,11 +68,11 @@ public class BotPlayer extends Player {
    private boolean riding;
    private boolean falling;
 
-   public BotPlayer(BotWorld var1, BotPlayHandler var2, boolean var3, boolean var4) {
-      super(var1, var2.getProfile());
-      this.networkHandler = var2;
-      this.lastSneaking = var3;
-      this.lastSprinting = var4;
+   public BotPlayer(BotWorld botWorld, BotPlayHandler networkHandler, boolean lastSneaking, boolean lastSprinting) {
+      super(botWorld, networkHandler.getProfile());
+      this.networkHandler = networkHandler;
+      this.lastSneaking = lastSneaking;
+      this.lastSprinting = lastSprinting;
    }
 
    public BotWorld getBotWorld() {
@@ -111,9 +111,9 @@ public class BotPlayer extends Player {
 
          if (this.isPassenger()) {
             this.networkHandler.sendPacket(new Rot(this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
-            Entity var1 = this.getRootVehicle();
-            if (var1 != this && var1.isLocalInstanceAuthoritative()) {
-               this.networkHandler.sendPacket(ServerboundMoveVehiclePacket.fromEntity(var1));
+            Entity rootVehicle = this.getRootVehicle();
+            if (rootVehicle != this && rootVehicle.isLocalInstanceAuthoritative()) {
+               this.networkHandler.sendPacket(ServerboundMoveVehiclePacket.fromEntity(rootVehicle));
                this.sendSprintingPacket();
             }
          } else {
@@ -124,33 +124,33 @@ public class BotPlayer extends Player {
 
    private void sendMovementPackets() {
       this.sendSprintingPacket();
-      double var1 = this.getX() - this.lastXClient;
-      double var3 = this.getY() - this.lastBaseY;
-      double var5 = this.getZ() - this.lastZClient;
-      double var7 = this.getYRot() - this.lastYawClient;
-      double var9 = this.getXRot() - this.lastPitchClient;
+      double x = this.getX() - this.lastXClient;
+      double y = this.getY() - this.lastBaseY;
+      double z = this.getZ() - this.lastZClient;
+      double d = this.getYRot() - this.lastYawClient;
+      double d2 = this.getXRot() - this.lastPitchClient;
       this.ticksSinceLastPositionPacketSent++;
-      boolean var11 = Mth.lengthSquared(var1, var3, var5) > Mth.square(2.0E-4) || this.ticksSinceLastPositionPacketSent >= 20;
-      boolean var12 = var7 != 0.0 || var9 != 0.0;
-      if (var11 && var12) {
+      boolean flag = Mth.lengthSquared(x, y, z) > Mth.square(2.0E-4) || this.ticksSinceLastPositionPacketSent >= 20;
+      boolean flag2 = d != 0.0 || d2 != 0.0;
+      if (flag && flag2) {
          this.networkHandler
             .sendPacket(new PosRot(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
-      } else if (var11) {
+      } else if (flag) {
          this.networkHandler.sendPacket(new Pos(this.getX(), this.getY(), this.getZ(), this.onGround(), this.horizontalCollision));
-      } else if (var12) {
+      } else if (flag2) {
          this.networkHandler.sendPacket(new Rot(this.getYRot(), this.getXRot(), this.onGround(), this.horizontalCollision));
       } else if (this.lastOnGround != this.onGround() || this.lastHorizontalCollision != this.horizontalCollision) {
          this.networkHandler.sendPacket(new StatusOnly(this.onGround(), this.horizontalCollision));
       }
 
-      if (var11) {
+      if (flag) {
          this.lastXClient = this.getX();
          this.lastBaseY = this.getY();
          this.lastZClient = this.getZ();
          this.ticksSinceLastPositionPacketSent = 0;
       }
 
-      if (var12) {
+      if (flag2) {
          this.lastYawClient = this.getYRot();
          this.lastPitchClient = this.getXRot();
       }
@@ -160,26 +160,26 @@ public class BotPlayer extends Player {
    }
 
    public final void sendSneakingPacket() {
-      boolean var1 = this.isShiftKeyDown();
-      if (var1 != this.lastSneaking) {
-         this.lastSneaking = var1;
+      boolean shiftKeyDown = this.isShiftKeyDown();
+      if (shiftKeyDown != this.lastSneaking) {
+         this.lastSneaking = shiftKeyDown;
       }
    }
 
    public final void sendSprintingPacket() {
-      boolean var1 = this.isSprinting();
-      if (var1 != this.lastSprinting) {
-         Action var2 = var1 ? Action.START_SPRINTING : Action.STOP_SPRINTING;
-         this.networkHandler.sendPacket(new ServerboundPlayerCommandPacket(this, var2));
-         this.lastSprinting = var1;
+      boolean sprinting = this.isSprinting();
+      if (sprinting != this.lastSprinting) {
+         Action action = sprinting ? Action.START_SPRINTING : Action.STOP_SPRINTING;
+         this.networkHandler.sendPacket(new ServerboundPlayerCommandPacket(this, action));
+         this.lastSprinting = sprinting;
       }
    }
 
-   public boolean dropSelectedItem(boolean var1) {
-      net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action var2 = var1 ? net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS : net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ITEM;
-      ItemStack var3 = this.getInventory().removeFromSelected(var1);
-      this.networkHandler.sendPacket(new ServerboundPlayerActionPacket(var2, BlockPos.ZERO, Direction.DOWN));
-      return !var3.isEmpty();
+   public boolean dropSelectedItem(boolean all) {
+      net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action action = all ? net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS : net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ITEM;
+      ItemStack removeFromSelected = this.getInventory().removeFromSelected(all);
+      this.networkHandler.sendPacket(new ServerboundPlayerActionPacket(action, BlockPos.ZERO, Direction.DOWN));
+      return !removeFromSelected.isEmpty();
    }
 
    // 26.3: no longer an override (vanilla swing takes an animation); keeps the bot's old swing(hand) contract
@@ -204,23 +204,23 @@ public class BotPlayer extends Player {
       super.closeContainer();
    }
 
-   public void updateHealth(float var1) {
+   public void updateHealth(float health) {
       if (this.healthInitialized) {
-         float var2 = this.getHealth() - var1;
-         if (var2 <= 0.0F) {
-            this.setHealth(var1);
-            if (var2 < 0.0F) {
+         float lastHurt = this.getHealth() - health;
+         if (lastHurt <= 0.0F) {
+            this.setHealth(health);
+            if (lastHurt < 0.0F) {
                this.setInvulnerableTime(10);
             }
          } else {
-            this.lastHurt = var2;
+            this.lastHurt = lastHurt;
             this.setInvulnerableTime(20);
-            this.setHealth(var1);
+            this.setHealth(health);
             this.hurtDuration = 10;
             this.hurtTime = this.hurtDuration;
          }
       } else {
-         this.setHealth(var1);
+         this.setHealth(health);
          this.healthInitialized = true;
       }
    }
@@ -249,8 +249,8 @@ public class BotPlayer extends Player {
       return this.clientPermissionLevel;
    }
 
-   public void setClientPermissionLevel(int var1) {
-      this.clientPermissionLevel = var1;
+   public void setClientPermissionLevel(int clientPermissionLevel) {
+      this.clientPermissionLevel = clientPermissionLevel;
    }
 
    public void displayClientMessage(Component message, boolean overlay) {
@@ -268,45 +268,45 @@ public class BotPlayer extends Player {
       this.displayClientMessage(message, true);
    }
 
-   private void pushOutOfBlocks(double var1, double var3) {
-      BlockPos var5 = BlockPos.containing(var1, this.getY(), var3);
-      if (this.wouldCollideAt(var5)) {
-         double var6 = var1 - var5.getX();
-         double var8 = var3 - var5.getZ();
-         Direction var10 = null;
-         double var11 = Double.MAX_VALUE;
-         Direction[] var13 = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH};
+   private void pushOutOfBlocks(double x, double z) {
+      BlockPos containing = BlockPos.containing(x, this.getY(), z);
+      if (this.wouldCollideAt(containing)) {
+         double d = x - containing.getX();
+         double z2 = z - containing.getZ();
+         Direction direction = null;
+         double d2 = Double.MAX_VALUE;
+         Direction[] directions = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH};
 
-         for (Direction var17 : var13) {
-            double var18 = var17.getAxis().choose(var6, 0.0, var8);
-            double var20 = var17.getAxisDirection() == AxisDirection.POSITIVE ? 1.0 - var18 : var18;
-            if (var20 < var11 && !this.wouldCollideAt(var5.relative(var17))) {
-               var11 = var20;
-               var10 = var17;
+         for (Direction direction2 : directions) {
+            double choose = direction2.getAxis().choose(d, 0.0, z2);
+            double d3 = direction2.getAxisDirection() == AxisDirection.POSITIVE ? 1.0 - choose : choose;
+            if (d3 < d2 && !this.wouldCollideAt(containing.relative(direction2))) {
+               d2 = d3;
+               direction = direction2;
             }
          }
 
-         if (var10 != null) {
-            Vec3 var22 = this.getDeltaMovement();
-            if (var10.getAxis() == Axis.X) {
-               this.setDeltaMovement(0.1 * var10.getStepX(), var22.y, var22.z);
+         if (direction != null) {
+            Vec3 deltaMovement = this.getDeltaMovement();
+            if (direction.getAxis() == Axis.X) {
+               this.setDeltaMovement(0.1 * direction.getStepX(), deltaMovement.y, deltaMovement.z);
             } else {
-               this.setDeltaMovement(var22.x, var22.y, 0.1 * var10.getStepZ());
+               this.setDeltaMovement(deltaMovement.x, deltaMovement.y, 0.1 * direction.getStepZ());
             }
          }
       }
    }
 
-   private boolean wouldCollideAt(BlockPos var1) {
-      AABB var2 = this.getBoundingBox();
-      AABB var3 = new AABB(var1.getX(), var2.minY, var1.getZ(), var1.getX() + 1.0, var2.maxY, var1.getZ() + 1.0).deflate(1.0E-7);
-      return this.level().collidesWithSuffocatingBlock(this, var3);
+   private boolean wouldCollideAt(BlockPos containing) {
+      AABB boundingBox = this.getBoundingBox();
+      AABB deflate = new AABB(containing.getX(), boundingBox.minY, containing.getZ(), containing.getX() + 1.0, boundingBox.maxY, containing.getZ() + 1.0).deflate(1.0E-7);
+      return this.level().collidesWithSuffocatingBlock(this, deflate);
    }
 
-   public void setExperience(float var1, int var2, int var3) {
-      this.experienceProgress = var1;
-      this.totalExperience = var2;
-      this.experienceLevel = var3;
+   public void setExperience(float experienceProgress, int totalExperience, int experienceLevel) {
+      this.experienceProgress = experienceProgress;
+      this.totalExperience = totalExperience;
+      this.experienceLevel = experienceLevel;
    }
 
    @Override
@@ -322,13 +322,13 @@ public class BotPlayer extends Player {
    public void playSound(SoundEvent sound, float volume, float pitch) {
    }
 
-   public void playSoundToPlayer(SoundEvent var1, SoundSource var2, float var3, float var4) {
+   public void playSoundToPlayer(SoundEvent event, SoundSource soundSource, float f, float f2) {
    }
 
    @Override
    public void startUsingItem(InteractionHand hand) {
-      ItemStack var2 = this.getItemInHand(hand);
-      if (!var2.isEmpty() && !this.isUsingItem()) {
+      ItemStack itemInHand = this.getItemInHand(hand);
+      if (!itemInHand.isEmpty() && !this.isUsingItem()) {
          super.startUsingItem(hand);
          this.usingItem = true;
          this.activeHand = hand;
@@ -355,11 +355,11 @@ public class BotPlayer extends Player {
    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
       super.onSyncedDataUpdated(data);
       if (DATA_LIVING_ENTITY_FLAGS.equals(data)) {
-         boolean var2 = (this.entityData.get(DATA_LIVING_ENTITY_FLAGS) & 1) > 0;
-         InteractionHand var3 = (this.entityData.get(DATA_LIVING_ENTITY_FLAGS) & 2) > 0 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-         if (var2 && !this.usingItem) {
-            this.startUsingItem(var3);
-         } else if (!var2 && this.usingItem) {
+         boolean flag = (this.entityData.get(DATA_LIVING_ENTITY_FLAGS) & 1) > 0;
+         InteractionHand hand = (this.entityData.get(DATA_LIVING_ENTITY_FLAGS) & 2) > 0 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+         if (flag && !this.usingItem) {
+            this.startUsingItem(hand);
+         } else if (!flag && this.usingItem) {
             this.stopUsingItem();
          }
       }
@@ -367,7 +367,7 @@ public class BotPlayer extends Player {
 
    @Nullable
    public PlayerRideableJumping getJumpingMount() {
-      return this.getControlledVehicle() instanceof PlayerRideableJumping var1 && var1.canJump() ? var1 : null;
+      return this.getControlledVehicle() instanceof PlayerRideableJumping playerRideableJumping && playerRideableJumping.canJump() ? playerRideableJumping : null;
    }
 
    @Override
@@ -395,8 +395,8 @@ public class BotPlayer extends Player {
    public void init() {
       this.setPose(Pose.STANDING);
       if (this.level() != null) {
-         for (double var1 = this.getY(); var1 > this.level().getMinY() && var1 <= this.level().getMaxY(); var1++) {
-            this.setPos(this.getX(), var1, this.getZ());
+         for (double y = this.getY(); y > this.level().getMinY() && y <= this.level().getMaxY(); y++) {
+            this.setPos(this.getX(), y, this.getZ());
             if (this.level().noCollision(this)) {
                break;
             }
@@ -413,11 +413,11 @@ public class BotPlayer extends Player {
    @Override
    public void aiStep() {
       this.processPortalCooldown();
-      boolean var1 = this.input.keyPresses.jump();
-      boolean var2 = this.input.keyPresses.shift();
-      boolean var3 = this.isWalking();
-      Abilities var4 = this.getAbilities();
-      this.inSneakingPose = !var4.flying
+      boolean jump = this.input.keyPresses.jump();
+      boolean shift = this.input.keyPresses.shift();
+      boolean walking = this.isWalking();
+      Abilities abilities = this.getAbilities();
+      this.inSneakingPose = !abilities.flying
          && !this.isSwimming()
          && !this.isPassenger()
          && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)
@@ -432,8 +432,8 @@ public class BotPlayer extends Player {
       }
 
       if (this.shouldSlowDown()) {
-         float var5 = (float)this.getAttributeValue(Attributes.SNEAKING_SPEED);
-         ViaCompat.method4850(this.input, ViaCompat.method4846(this.input) * var5, ViaCompat.method4847(this.input) * var5);
+         float attributeValue = (float)this.getAttributeValue(Attributes.SNEAKING_SPEED);
+         ViaCompat.method4850(this.input, ViaCompat.method4846(this.input) * attributeValue, ViaCompat.method4847(this.input) * attributeValue);
       }
 
       if (!this.noPhysics) {
@@ -443,54 +443,54 @@ public class BotPlayer extends Player {
          this.pushOutOfBlocks(this.getX() + this.getBbWidth() * 0.35, this.getZ() + this.getBbWidth() * 0.35);
       }
 
-      boolean var10 = this.canStartSprinting();
-      boolean var6 = this.isPassenger() ? this.getVehicle().onGround() : this.onGround();
-      boolean var7 = !var2 && !var3;
-      if ((var6 || this.isUnderWater()) && var7 && var10 && this.input.keyPresses.sprint()) {
+      boolean canStartSprinting = this.canStartSprinting();
+      boolean flag = this.isPassenger() ? this.getVehicle().onGround() : this.onGround();
+      boolean flag2 = !shift && !walking;
+      if ((flag || this.isUnderWater()) && flag2 && canStartSprinting && this.input.keyPresses.sprint()) {
          this.setSprinting(true);
       }
 
-      if ((!this.isInWater() || this.isUnderWater()) && var10 && this.input.keyPresses.sprint()) {
+      if ((!this.isInWater() || this.isUnderWater()) && canStartSprinting && this.input.keyPresses.sprint()) {
          this.setSprinting(true);
       }
 
       if (this.isSprinting()) {
-         boolean var8 = !this.input.hasForwardImpulse() || !this.canSprint();
-         boolean var9 = var8 || this.horizontalCollision && !this.minorHorizontalCollision || this.isInWater() && !this.isUnderWater();
+         boolean flag3 = !this.input.hasForwardImpulse() || !this.canSprint();
+         boolean flag4 = flag3 || this.horizontalCollision && !this.minorHorizontalCollision || this.isInWater() && !this.isUnderWater();
          if (this.isSwimming()) {
-            if (!this.onGround() && !this.input.keyPresses.shift() && var8 || !this.isInWater()) {
+            if (!this.onGround() && !this.input.keyPresses.shift() && flag3 || !this.isInWater()) {
                this.setSprinting(false);
             }
-         } else if (var9) {
+         } else if (flag4) {
             this.setSprinting(false);
          }
       }
 
-      boolean var11 = false;
-      if (var4.mayfly) {
+      boolean flag3 = false;
+      if (abilities.mayfly) {
          if (this.networkHandler.getInteractionManager().isFlyingLocked()) {
-            if (!var4.flying) {
-               var4.flying = true;
-               var11 = true;
+            if (!abilities.flying) {
+               abilities.flying = true;
+               flag3 = true;
                this.onUpdateAbilities();
             }
-         } else if (!var1 && this.input.keyPresses.jump()) {
+         } else if (!jump && this.input.keyPresses.jump()) {
             if (this.jumpTriggerTime == 0) {
                this.jumpTriggerTime = 7;
             } else if (!this.isSwimming()) {
-               var4.flying = !var4.flying;
-               if (var4.flying && this.onGround()) {
+               abilities.flying = !abilities.flying;
+               if (abilities.flying && this.onGround()) {
                   this.jumpFromGround();
                }
 
-               var11 = true;
+               flag3 = true;
                this.onUpdateAbilities();
                this.jumpTriggerTime = 0;
             }
          }
       }
 
-      if (this.input.keyPresses.jump() && !var11 && !var1 && !this.onClimbable() && this.tryToStartFallFlying()) {
+      if (this.input.keyPresses.jump() && !flag3 && !jump && !this.onClimbable() && this.tryToStartFallFlying()) {
          this.networkHandler.sendPacket(new ServerboundPlayerCommandPacket(this, Action.START_FALL_FLYING));
       }
 
@@ -499,24 +499,24 @@ public class BotPlayer extends Player {
          this.goDownInWater();
       }
 
-      if (var4.flying) {
-         int var12 = 0;
+      if (abilities.flying) {
+         int n = 0;
          if (this.input.keyPresses.shift()) {
-            var12--;
+            n--;
          }
 
          if (this.input.keyPresses.jump()) {
-            var12++;
+            n++;
          }
 
-         if (var12 != 0) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0.0, var12 * var4.getFlyingSpeed() * 3.0F, 0.0));
+         if (n != 0) {
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0, n * abilities.getFlyingSpeed() * 3.0F, 0.0));
          }
       }
 
       super.aiStep();
-      if (this.onGround() && var4.flying && !this.networkHandler.getInteractionManager().isFlyingLocked()) {
-         var4.flying = false;
+      if (this.onGround() && abilities.flying && !this.networkHandler.getInteractionManager().isFlyingLocked()) {
+         abilities.flying = false;
          this.onUpdateAbilities();
       }
    }
@@ -549,8 +549,8 @@ public class BotPlayer extends Player {
    public void rideTick() {
       super.rideTick();
       this.riding = false;
-      if (this.getControlledVehicle() instanceof AbstractBoat var1) {
-         var1.setInput(this.input.keyPresses.left(), this.input.keyPresses.right(), this.input.keyPresses.forward(), this.input.keyPresses.backward());
+      if (this.getControlledVehicle() instanceof AbstractBoat abstractBoat) {
+         abstractBoat.setInput(this.input.keyPresses.left(), this.input.keyPresses.right(), this.input.keyPresses.forward(), this.input.keyPresses.backward());
          this.riding = this.riding
             | (this.input.keyPresses.left() || this.input.keyPresses.right() || this.input.keyPresses.forward() || this.input.keyPresses.backward());
       }
@@ -562,17 +562,17 @@ public class BotPlayer extends Player {
 
    @Override
    public boolean isHorizontalCollisionMinor(Vec3 adjustedMovement) {
-      float var2 = this.getYRot() * (float) (Math.PI / 180.0);
-      double var3 = Mth.sin(var2);
-      double var5 = Mth.cos(var2);
-      double var7 = this.xxa * var5 - this.zza * var3;
-      double var9 = this.zza * var5 + this.xxa * var3;
-      double var11 = Mth.square(var7) + Mth.square(var9);
-      double var13 = Mth.square(adjustedMovement.x) + Mth.square(adjustedMovement.z);
-      if (!(var11 < 1.0E-5F) && !(var13 < 1.0E-5F)) {
-         double var15 = var7 * adjustedMovement.x + var9 * adjustedMovement.z;
-         double var17 = Math.acos(var15 / Math.sqrt(var11 * var13));
-         return var17 < 0.13962634F;
+      float f = this.getYRot() * (float) (Math.PI / 180.0);
+      double d = Mth.sin(f);
+      double d2 = Mth.cos(f);
+      double x = this.xxa * d2 - this.zza * d;
+      double x2 = this.zza * d2 + this.xxa * d;
+      double d3 = Mth.square(x) + Mth.square(x2);
+      double d4 = Mth.square(adjustedMovement.x) + Mth.square(adjustedMovement.z);
+      if (!(d3 < 1.0E-5F) && !(d4 < 1.0E-5F)) {
+         double d5 = x * adjustedMovement.x + x2 * adjustedMovement.z;
+         double d6 = Math.acos(d5 / Math.sqrt(d3 * d4));
+         return d6 < 0.13962634F;
       } else {
          return false;
       }
@@ -589,8 +589,8 @@ public class BotPlayer extends Player {
          && (!this.shouldSlowDown() || this.isUnderWater());
    }
 
-   private boolean canVehicleSprint(Entity var1) {
-      return var1.canSprint() && var1.isLocalInstanceAuthoritative();
+   private boolean canVehicleSprint(Entity vehicle) {
+      return vehicle.canSprint() && vehicle.isLocalInstanceAuthoritative();
    }
 
    public final boolean isWalking() {
@@ -601,8 +601,8 @@ public class BotPlayer extends Player {
       return this.isPassenger() || this.getFoodData().getFoodLevel() > 6.0F || this.getAbilities().mayfly;
    }
 
-   public void onGameModeChanged(GameType var1) {
-      if (var1 == GameType.SPECTATOR) {
+   public void onGameModeChanged(GameType gameMode) {
+      if (gameMode == GameType.SPECTATOR) {
          this.setDeltaMovement(this.getDeltaMovement().with(Axis.Y, 0.0));
       }
    }
@@ -625,14 +625,14 @@ public class BotPlayer extends Player {
 
    @Override
    public boolean isSpectator() {
-      BotInteractionManager var1 = this.networkHandler.getInteractionManagerOrNull();
-      return var1 != null && var1.getCurrentGameMode() == GameType.SPECTATOR;
+      BotInteractionManager interactionManagerOrNull = this.networkHandler.getInteractionManagerOrNull();
+      return interactionManagerOrNull != null && interactionManagerOrNull.getCurrentGameMode() == GameType.SPECTATOR;
    }
 
    @Override
    public boolean isCreative() {
-      BotInteractionManager var1 = this.networkHandler.getInteractionManagerOrNull();
-      return var1 != null && var1.getCurrentGameMode() == GameType.CREATIVE;
+      BotInteractionManager interactionManagerOrNull = this.networkHandler.getInteractionManagerOrNull();
+      return interactionManagerOrNull != null && interactionManagerOrNull.getCurrentGameMode() == GameType.CREATIVE;
    }
 
    public boolean isSubmergedInWaterFlag() {
@@ -641,7 +641,7 @@ public class BotPlayer extends Player {
 
    @Override
    public GameType gameMode() {
-      PlayerInfo var1 = this.networkHandler.getPlayerListEntry(this.getUUID());
-      return var1 != null ? var1.getGameMode() : GameType.SURVIVAL;
+      PlayerInfo playerListEntry = this.networkHandler.getPlayerListEntry(this.getUUID());
+      return playerListEntry != null ? playerListEntry.getGameMode() : GameType.SURVIVAL;
    }
 }

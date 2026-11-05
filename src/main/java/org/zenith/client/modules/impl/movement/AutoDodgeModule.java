@@ -65,48 +65,48 @@ public final class AutoDodgeModule extends Module {
    private AutoDodgeModule() {
    }
 
-   private static boolean method4690(AbstractThrownPotion var0, AABB var1) {
-      Vec3 var2 = var0.getDeltaMovement();
-      Vec3 var3 = var0.position();
+   private static boolean method4690(AbstractThrownPotion entity, AABB inflate) {
+      Vec3 deltaMovement = entity.getDeltaMovement();
+      Vec3 position = entity.position();
 
-      for (int var4 = 0;
-         var4 < 70 && var2.lengthSqr() >= 9.99999773128142E-7 && var3.y >= mc.level.getMinY() && var3.y <= mc.level.getMinY() + mc.level.getHeight();
-         var4++
+      for (int i = 0;
+         i < 70 && deltaMovement.lengthSqr() >= 9.99999773128142E-7 && position.y >= mc.level.getMinY() && position.y <= mc.level.getMinY() + mc.level.getHeight();
+         i++
       ) {
-         double var5 = mc.level.getFluidState(BlockPos.containing(var3)).is(FluidTags.WATER) ? 0.8000000016738433 : 0.9900000205305426;
-         var2 = new Vec3(var2.x * var5, (var2.y - 0.0500000024232657) * var5, var2.z * var5);
-         Vec3 var7 = var3.add(var2);
-         BlockHitResult var8 = mc.level.clip(new ClipContext(var3, var7, Block.COLLIDER, Fluid.NONE, var0));
-         if (var8.getType() == Type.BLOCK) {
-            return method4691(var1, var3, var8.getLocation());
+         double d = mc.level.getFluidState(BlockPos.containing(position)).is(FluidTags.WATER) ? 0.8000000016738433 : 0.9900000205305426;
+         deltaMovement = new Vec3(deltaMovement.x * d, (deltaMovement.y - 0.0500000024232657) * d, deltaMovement.z * d);
+         Vec3 to = position.add(deltaMovement);
+         BlockHitResult clip = mc.level.clip(new ClipContext(position, to, Block.COLLIDER, Fluid.NONE, entity));
+         if (clip.getType() == Type.BLOCK) {
+            return method4691(inflate, position, clip.getLocation());
          }
 
-         if (method4691(var1, var3, var7)) {
+         if (method4691(inflate, position, to)) {
             return true;
          }
 
-         var3 = var7;
+         position = to;
       }
 
       return false;
    }
 
-   private static boolean method4691(AABB var0, Vec3 var1, Vec3 var2) {
+   private static boolean method4691(AABB inflate, Vec3 position, Vec3 location) {
       return new AABB(
-            Math.min(var1.x, var2.x),
-            Math.min(var1.y, var2.y),
-            Math.min(var1.z, var2.z),
-            Math.max(var1.x, var2.x),
-            Math.max(var1.y, var2.y),
-            Math.max(var1.z, var2.z)
+            Math.min(position.x, location.x),
+            Math.min(position.y, location.y),
+            Math.min(position.z, location.z),
+            Math.max(position.x, location.x),
+            Math.max(position.y, location.y),
+            Math.max(position.z, location.z)
          )
          .inflate(0.11999995180429479)
-         .intersects(var0);
+         .intersects(inflate);
    }
 
-   private static int method4692(ItemStack var0) {
-      PotionContents var1 = var0.get(DataComponents.POTION_CONTENTS);
-      return var1 != null ? var1.getColor() & 16777215 : 0;
+   private static int method4692(ItemStack mainHandItem) {
+      PotionContents potionContents = mainHandItem.get(DataComponents.POTION_CONTENTS);
+      return potionContents != null ? potionContents.getColor() & 16777215 : 0;
    }
 
    @Override
@@ -116,39 +116,39 @@ public final class AutoDodgeModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         var var2 = this.items.entrySet().iterator();
+         var iterator = this.items.entrySet().iterator();
 
-         while (var2.hasNext()) {
-            if (mc.level.getEntity((Integer)((Entry)var2.next()).getKey()) == null) {
-               var2.remove();
+         while (iterator.hasNext()) {
+            if (mc.level.getEntity((Integer)((Entry)iterator.next()).getKey()) == null) {
+               iterator.remove();
             }
          }
 
-         boolean var10000 = this.items.isEmpty();
+         boolean empty = this.items.isEmpty();
 
-         if (var10000) {
+         if (empty) {
             this.intValue++;
          } else {
-            AABB var3 = mc.player.getBoundingBox().inflate(2.0);
-            double var4 = mc.options.renderDistance().get() * 16;
+            AABB inflate = mc.player.getBoundingBox().inflate(2.0);
+            double amountToAddInAllDirections = mc.options.renderDistance().get() * 16;
 
-            for (AbstractThrownPotion var7 : mc.level.getEntitiesOfClass(AbstractThrownPotion.class, mc.player.getBoundingBox().inflate(var4), var0 -> true)) {
-               AutoDodgeModule.Data2 var8 = this.items.get(var7.getId());
-               if (var8 != null) {
-                  boolean var9 = method4690(var7, var3);
-                  int var10 = 0xFF000000 | var8.color() & 16777215;
-                  if (!var9 || Zenith.getInstance().getFriends().method7627(var8.getText())) {
+            for (AbstractThrownPotion entity : mc.level.getEntitiesOfClass(AbstractThrownPotion.class, mc.player.getBoundingBox().inflate(amountToAddInAllDirections), abstractThrownPotion -> true)) {
+               AutoDodgeModule.Data2 data2 = this.items.get(entity.getId());
+               if (data2 != null) {
+                  boolean flag = method4690(entity, inflate);
+                  int n = 0xFF000000 | data2.color() & 16777215;
+                  if (!flag || Zenith.getInstance().getFriends().method7627(data2.getText())) {
                      return;
                   }
 
-                  if (var10 != -13447886 && var10 != -16776961 || mc.player.distanceTo(var7) <= 2.300000381469741 || this.intValue < 0) {
+                  if (n != -13447886 && n != -16776961 || mc.player.distanceTo(entity) <= 2.300000381469741 || this.intValue < 0) {
                      return;
                   }
 
-                  ItemStack var11 = Items.DRIED_KELP.getDefaultInstance();
-                  if (!mc.player.getCooldowns().isOnCooldown(var11) && InventoryUtils.method906(Items.DRIED_KELP) != null) {
+                  ItemStack defaultInstance = Items.DRIED_KELP.getDefaultInstance();
+                  if (!mc.player.getCooldowns().isOnCooldown(defaultInstance) && InventoryUtils.method906(Items.DRIED_KELP) != null) {
                      if (Zenith.getInstance().getTaskScheduler().method5116()) {
                         if (Zenith.getInstance().getRotationManager().method7844().method3130(new Rotation(mc.player.getYRot(), mc.player.getXRot())) < 20.0) {
                            this.intValue++;
@@ -160,8 +160,8 @@ public final class AutoDodgeModule extends Module {
                         }
                      }
 
-                     Rotation var12 = Rotation.method3128(var7.getEyePosition(), mc.player.getEyePosition());
-                     this.method4694(var12.method3140((float)MathUtils.method2651(-3.0, 3.0), (float)MathUtils.method2651(-3.0, 3.0)));
+                     Rotation rotation = Rotation.method3128(entity.getEyePosition(), mc.player.getEyePosition());
+                     this.method4694(rotation.method3140((float)MathUtils.method2651(-3.0, 3.0), (float)MathUtils.method2651(-3.0, 3.0)));
                      break;
                   }
                }
@@ -174,75 +174,75 @@ public final class AutoDodgeModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (mc.player != null && mc.level != null && var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundSystemChatPacket var2 && var2.content().getString().equals("На этой анархии этот предмет не работает")) {
+   public void onPacket(PacketEvent event) {
+      if (mc.player != null && mc.level != null && event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket && systemChatPacket.content().getString().equals("На этой анархии этот предмет не работает")) {
             this.intValue = -50;
          }
       }
    }
 
    @EventTarget
-   public void method4693(EntityAddEvent var1) {
+   public void method4693(EntityAddEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (var1.getEntity() instanceof AbstractThrownPotion var2) {
-            Vec3 var16 = var2.position();
-            Vec3 var4 = var2.getDeltaMovement();
-            double var5 = Double.MAX_VALUE;
-            String var7 = null;
-            int var8 = 0;
+         if (event.getEntity() instanceof AbstractThrownPotion abstractThrownPotion) {
+            Vec3 position = abstractThrownPotion.position();
+            Vec3 deltaMovement = abstractThrownPotion.getDeltaMovement();
+            double d = Double.MAX_VALUE;
+            String key = null;
+            int color = 0;
 
-            for (Entry var10 : this.method4695().entrySet()) {
-               AutoDodgeModule.Data var11 = (AutoDodgeModule.Data)var10.getValue();
-               double var12;
-               if (!((var12 = var16.distanceTo(var11.getVec3d())) > 25.0) && !(var12 >= var5)) {
-                  int var14;
-                  if (var11.getVec3d().y - var16.y > 2.0) {
-                     Vec3 var15;
-                     var14 = new Vec3(var16.x - (var15 = var11.getVec3d()).x, 0.0, var16.z - var15.z).length() < 15.0 ? 1 : 0;
+            for (Entry entry : this.method4695().entrySet()) {
+               AutoDodgeModule.Data data = (AutoDodgeModule.Data)entry.getValue();
+               double d2;
+               if (!((d2 = position.distanceTo(data.getVec3d())) > 25.0) && !(d2 >= d)) {
+                  int n;
+                  if (data.getVec3d().y - position.y > 2.0) {
+                     Vec3 vec3d;
+                     n = new Vec3(position.x - (vec3d = data.getVec3d()).x, 0.0, position.z - vec3d.z).length() < 15.0 ? 1 : 0;
                   } else {
-                     var14 = !(var4.lengthSqr() <= 9.99999773128142E-7)
-                           && !(var4.normalize().dot(var11.getVec3d2().normalize()) > 0.10000000396251493)
+                     n = !(deltaMovement.lengthSqr() <= 9.99999773128142E-7)
+                           && !(deltaMovement.normalize().dot(data.getVec3d2().normalize()) > 0.10000000396251493)
                         ? 0
                         : 1;
                   }
 
-                  if (var14 != 0) {
-                     var5 = var12;
-                     var8 = var11.color();
-                     var7 = (String)var10.getKey();
+                  if (n != 0) {
+                     d = d2;
+                     color = data.color();
+                     key = (String)entry.getKey();
                   }
                }
             }
 
-            if (var7 != null) {
+            if (key != null) {
                this.intValue = 0;
-               this.items.put(var2.getId(), new AutoDodgeModule.Data2(var8, var7));
+               this.items.put(abstractThrownPotion.getId(), new AutoDodgeModule.Data2(color, key));
             }
          }
       }
    }
 
-   private void method4694(Rotation var1) {
-      Rotation var2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig2(), var1);
-      Zenith.getInstance().getRotationManager().method7849(new RotationRequest(var2, () -> var2, bcCameraTestnerv.getRotationConfig2()), 20, this);
+   private void method4694(Rotation rotation) {
+      Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig2(), rotation);
+      Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig2()), 20, this);
    }
 
    private Map<String, AutoDodgeModule.Data> method4695() {
-      HashMap var1 = new HashMap();
+      HashMap map = new HashMap();
 
-      for (AbstractClientPlayer var3 : mc.level.players()) {
-         ItemStack var4 = var3.getMainHandItem();
-         ItemStack var5 = var3.getOffhandItem();
-         int var6;
-         if ((var6 = var4.getItem() == Items.SPLASH_POTION ? method4692(var4) : (var5.getItem() == Items.SPLASH_POTION ? method4692(var5) : -1)) >= 0
-            && var3 != mc.player
-            && mc.player.distanceToSqr(var3) <= 400.0) {
-            var1.put(var3.getName().getString(), new AutoDodgeModule.Data(var6, var3.position(), var3.getViewVector(1.0F)));
+      for (AbstractClientPlayer player : mc.level.players()) {
+         ItemStack mainHandItem = player.getMainHandItem();
+         ItemStack offhandItem = player.getOffhandItem();
+         int intValue;
+         if ((intValue = mainHandItem.getItem() == Items.SPLASH_POTION ? method4692(mainHandItem) : (offhandItem.getItem() == Items.SPLASH_POTION ? method4692(offhandItem) : -1)) >= 0
+            && player != mc.player
+            && mc.player.distanceToSqr(player) <= 400.0) {
+            map.put(player.getName().getString(), new AutoDodgeModule.Data(intValue, player.position(), player.getViewVector(1.0F)));
          }
       }
 
-      return var1;
+      return map;
    }
 
    private static final class Data {
@@ -279,10 +279,10 @@ public final class AutoDodgeModule extends Module {
          return "Data[" + "intValue=" + this.intValue + ", " + "vec3d=" + this.vec3d + ", " + "vec3d2=" + this.vec3d2 + "]";
       }
 
-      private Data(int var1, Vec3 var2, Vec3 var3) {
-         this.intValue = var1;
-         this.vec3d = var2;
-         this.vec3d2 = var3;
+      private Data(int intValue, Vec3 vec3d, Vec3 vec3d2) {
+         this.intValue = intValue;
+         this.vec3d = vec3d;
+         this.vec3d2 = vec3d2;
       }
 
       public int color() {
@@ -327,9 +327,9 @@ public final class AutoDodgeModule extends Module {
          return "Data2[" + "intValue=" + this.intValue + ", " + "text=" + this.text + "]";
       }
 
-      private Data2(int var1, String var2) {
-         this.intValue = var1;
-         this.text = var2;
+      private Data2(int intValue, String text) {
+         this.intValue = intValue;
+         this.text = text;
       }
 
       public int color() {

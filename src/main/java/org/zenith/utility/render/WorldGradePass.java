@@ -18,30 +18,30 @@ public final class WorldGradePass {
    private WorldGradePass() {
    }
 
-   public static void method6105(FrameGraphBuilder var0, int var1, int var2, TargetBundle var3, Camera var4) {
-      float var5 = FrameTimer.method755();
-      float[] var6 = FrameTimer.method756();
-      if (var5 != 1.0F || var6[0] != 1.0F || var6[1] != 1.0F || var6[2] != 1.0F || var6[3] != 1.0F) {
-         PostChain var7 = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.MAIN_TARGETS);
-         if (var7 != null) {
-            Vector4f var8 = Util26.getVector4f();
+   public static void method6105(FrameGraphBuilder frame, int width, int height, TargetBundle targets, Camera mainCamera) {
+      float floatValue = FrameTimer.method755();
+      float[] floats = FrameTimer.method756();
+      if (floatValue != 1.0F || floats[0] != 1.0F || floats[1] != 1.0F || floats[2] != 1.0F || floats[3] != 1.0F) {
+         PostChain postChain = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.MAIN_TARGETS);
+         if (postChain != null) {
+            Vector4f vector4f = Util26.getVector4f();
             PostEffectManager.method2819(
-               var7,
+               postChain,
                identifier,
-               entry.method2828("ZenithSaturation", var5)
+               entry.method2828("ZenithSaturation", floatValue)
                   .method2828("NearPlane", 0.05F)
                   .method2828("FarPlane", Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState.depthFar)
                   .method2828("TanHalfFov", Util15.method2704())
-                  .method2828("Aspect", var1 / Math.max((float)var2, 1.0F))
-                  .method2828("Pitch", (float)Math.toRadians(var4.xRot()))
+                  .method2828("Aspect", width / Math.max((float)height, 1.0F))
+                  .method2828("Pitch", (float)Math.toRadians(mainCamera.xRot()))
                   .method2828("FogEnvironmentalStart", Util26.getFloatValue())
                   .method2828("FogEnvironmentalEnd", Util26.getFloatValue2())
                   .method2828("FogRenderDistanceStart", Util26.getFloatValue3())
                   .method2828("FogRenderDistanceEnd", Util26.getFloatValue4())
-                  .method2831("ZenithGrade", var6[0], var6[1], var6[2], var6[3])
-                  .method2831("FogColor", var8.x, var8.y, var8.z, var8.w)
+                  .method2831("ZenithGrade", floats[0], floats[1], floats[2], floats[3])
+                  .method2831("FogColor", vector4f.x, vector4f.y, vector4f.z, vector4f.w)
             );
-            var7.addToFrame(var0, var1, var2, var3);
+            postChain.addToFrame(frame, width, height, targets);
          }
       }
    }

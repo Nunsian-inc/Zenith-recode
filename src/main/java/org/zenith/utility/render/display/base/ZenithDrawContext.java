@@ -9,81 +9,81 @@ import org.zenith.base.font.MsdfRenderer;
 import org.zenith.utility.render.RoundedRectBatch;
 
 public class ZenithDrawContext extends MenuDrawContext {
-   public ZenithDrawContext(MenuDrawContext var1) {
-      super(var1, var1.getMouseX(), var1.getMouseY(), var1.getDelta());
+   public ZenithDrawContext(MenuDrawContext menuDrawContext) {
+      super(menuDrawContext, menuDrawContext.getMouseX(), menuDrawContext.getMouseY(), menuDrawContext.getDelta());
    }
 
-   public static MenuDrawContext method8095(MenuDrawContext var0) {
-      return (MenuDrawContext)(RoundedRectBatch.enabled && !(var0 instanceof ZenithDrawContext) ? new ZenithDrawContext(var0) : var0);
+   public static MenuDrawContext method8095(MenuDrawContext menuDrawContext) {
+      return (MenuDrawContext)(RoundedRectBatch.enabled && !(menuDrawContext instanceof ZenithDrawContext) ? new ZenithDrawContext(menuDrawContext) : menuDrawContext);
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, ZenithColor var5) {
+   public void drawText(Font font, String text, float floatValue, float centeredTextY, ZenithColor zenithColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2941(var1, var2, MatrixUtils.method664(this.pose()), var3, var4, var5.method7287());
+         RoundedRectBatch.method2941(font, text, MatrixUtils.method664(this.pose()), floatValue, centeredTextY, zenithColor.method7287());
       } else {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, centeredTextY, zenithColor);
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, int var5, boolean var6, float var7, float var8, float var9) {
+   public void drawText(Font font, String name, float floatValue, float y, int intValue, boolean flag, float f, float f2, float maxWidth) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2942(var1, var2, MatrixUtils.method664(this.pose()), var3, var4, var5, var6, var7, var8, var9);
+         RoundedRectBatch.method2942(font, name, MatrixUtils.method664(this.pose()), floatValue, y, intValue, flag, f, f2, maxWidth);
       } else {
-         super.drawText(var1, var2, var3, var4, var5, var6, var7, var8, var9);
+         super.drawText(font, name, floatValue, y, intValue, flag, f, f2, maxWidth);
       }
    }
 
    @Override
-   public void drawText(Font var1, String var2, float var3, float var4, GlowColor var5) {
+   public void drawText(Font font, String text, float floatValue, float centeredTextY, GlowColor glowColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2943(var1, var2, MatrixUtils.method664(this.pose()), var3, var4, var5);
+         RoundedRectBatch.method2943(font, text, MatrixUtils.method664(this.pose()), floatValue, centeredTextY, glowColor);
       } else {
-         super.drawText(var1, var2, var3, var4, var5);
+         super.drawText(font, text, floatValue, centeredTextY, glowColor);
       }
    }
 
    @Override
-   public void drawRoundedRect(float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
+   public void drawRoundedRect(float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2938(MatrixUtils.method664(this.pose()), var1, var2, var3, var4, var5, var6);
+         RoundedRectBatch.method2938(MatrixUtils.method664(this.pose()), floatValue, y, width, height, proxyDotRadiusData, zenithColor);
       } else {
-         super.drawRoundedRect(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedRect(floatValue, y, width, height, proxyDotRadiusData, zenithColor);
       }
    }
 
    @Override
-   public void drawRect(float var1, float var2, float var3, float var4, ZenithColor var5) {
+   public void drawRect(float floatValue, float y, float width, float height, ZenithColor zenithColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2936(MatrixUtils.method664(this.pose()), var1, var2, var3, var4, var5);
+         RoundedRectBatch.method2936(MatrixUtils.method664(this.pose()), floatValue, y, width, height, zenithColor);
       } else {
-         super.drawRect(var1, var2, var3, var4, var5);
+         super.drawRect(floatValue, y, width, height, zenithColor);
       }
    }
 
    @Override
-   public void drawRoundedRect(float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, GlowColor var6) {
+   public void drawRoundedRect(float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, GlowColor glowColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2939(MatrixUtils.method664(this.pose()), var1, var2, var3, var4, var5, var6);
+         RoundedRectBatch.method2939(MatrixUtils.method664(this.pose()), floatValue, y, width, height, proxyDotRadiusData, glowColor);
       } else {
-         super.drawRoundedRect(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedRect(floatValue, y, width, height, proxyDotRadiusData, glowColor);
       }
    }
 
    @Override
-   public void drawRoundedRectBatched(float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6) {
+   public void drawRoundedRectBatched(float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2937(MatrixUtils.method664(this.pose()), var1, var2, var3, var4, var5, var6);
+         RoundedRectBatch.method2937(MatrixUtils.method664(this.pose()), floatValue, y, width, height, proxyDotRadiusData, zenithColor);
       } else {
-         super.drawRoundedRectBatched(var1, var2, var3, var4, var5, var6);
+         super.drawRoundedRectBatched(floatValue, y, width, height, proxyDotRadiusData, zenithColor);
       }
    }
 
    @Override
-   public void beginRoundedRectBatch(ProxyDotRadiusData var1) {
+   public void beginRoundedRectBatch(ProxyDotRadiusData proxyDotRadiusData) {
       if (!RoundedRectBatch.method2934()) {
-         super.beginRoundedRectBatch(var1);
+         super.beginRoundedRectBatch(proxyDotRadiusData);
       }
    }
 
@@ -95,32 +95,32 @@ public class ZenithDrawContext extends MenuDrawContext {
    }
 
    @Override
-   public void drawRoundedBorder(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, GlowColor var7) {
+   public void drawRoundedBorder(float floatValue, float lastY, float width, float height, float batchRange, ProxyDotRadiusData proxyDotRadiusData, GlowColor glowColor) {
       if (RoundedRectBatch.method2934()) {
          RoundedRectBatch.method2940(
             MatrixUtils.method664(this.pose()),
-            var1,
-            var2,
-            var3,
-            var4,
-            var5,
-            var6,
-            var7.getZenithColor(),
-            var7.getZenithColor2(),
-            var7.getZenithColor4(),
-            var7.getZenithColor3()
+            floatValue,
+            lastY,
+            width,
+            height,
+            batchRange,
+            proxyDotRadiusData,
+            glowColor.getZenithColor(),
+            glowColor.getZenithColor2(),
+            glowColor.getZenithColor4(),
+            glowColor.getZenithColor3()
          );
       } else {
-         super.drawRoundedBorder(var1, var2, var3, var4, var5, var6, var7);
+         super.drawRoundedBorder(floatValue, lastY, width, height, batchRange, proxyDotRadiusData, glowColor);
       }
    }
 
    @Override
-   public void drawRoundedBorder(float var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
+   public void drawRoundedBorder(float floatValue, float lastY, float width, float height, float batchRange, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
       if (RoundedRectBatch.method2934()) {
-         RoundedRectBatch.method2940(MatrixUtils.method664(this.pose()), var1, var2, var3, var4, var5, var6, var7, var7, var7, var7);
+         RoundedRectBatch.method2940(MatrixUtils.method664(this.pose()), floatValue, lastY, width, height, batchRange, proxyDotRadiusData, zenithColor, zenithColor, zenithColor, zenithColor);
       } else {
-         super.drawRoundedBorder(var1, var2, var3, var4, var5, var6, var7);
+         super.drawRoundedBorder(floatValue, lastY, width, height, batchRange, proxyDotRadiusData, zenithColor);
       }
    }
 
@@ -148,9 +148,9 @@ public class ZenithDrawContext extends MenuDrawContext {
       super.item(stack, x, y, seed);
    }
 
-   public void drawItem(ItemStack var1, int var2, int var3, int var4, int var5) {
+   public void drawItem(ItemStack itemStack, int x, int y, int seed, int n) {
       MsdfRenderer.flushBatch();
-      super.item(var1, var2, var3, var4);
+      super.item(itemStack, x, y, seed);
    }
 
    @Override

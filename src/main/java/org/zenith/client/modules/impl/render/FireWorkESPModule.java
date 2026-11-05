@@ -64,11 +64,11 @@ public final class FireWorkESPModule extends Module {
    }
 
    @EventTarget
-   public void method238(EntityAddEvent var1) {
+   public void method238(EntityAddEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (var1.getEntity() instanceof FireworkRocketEntity var2) {
+         if (event.getEntity() instanceof FireworkRocketEntity fireworkRocketEntity) {
             this.method239();
-            this.items.put(var2.position(), new FireWorkESPModule.Entry(System.currentTimeMillis()));
+            this.items.put(fireworkRocketEntity.position(), new FireWorkESPModule.Entry(System.currentTimeMillis()));
          }
       }
    }
@@ -81,65 +81,65 @@ public final class FireWorkESPModule extends Module {
    }
 
    @EventTarget
-   public void method240(DrawEvent var1) {
+   public void method240(DrawEvent event) {
       if (mc.player != null && mc.level != null) {
          this.method239();
-         long var2 = System.currentTimeMillis();
-         long var4 = this.method237();
-         var var6 = this.items.entrySet().iterator();
+         long now = System.currentTimeMillis();
+         long l = this.method237();
+         var iterator = this.items.entrySet().iterator();
 
-         while (var6.hasNext()) {
-            Map.Entry var7 = (Map.Entry)var6.next();
-            long var8 = var2 - ((FireWorkESPModule.Entry)var7.getValue()).longValue;
-            if (var8 > var4) {
-               var6.remove();
+         while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry)iterator.next();
+            long l2 = now - ((FireWorkESPModule.Entry)entry.getValue()).longValue;
+            if (l2 > l) {
+               iterator.remove();
             } else {
-               this.method241(var1.getCustomDrawContext(), (Vec3)var7.getKey(), (FireWorkESPModule.Entry)var7.getValue(), var8);
+               this.method241(event.getCustomDrawContext(), (Vec3)entry.getKey(), (FireWorkESPModule.Entry)entry.getValue(), l2);
             }
          }
       }
    }
 
-   private void method241(CustomDrawContext var1, Vec3 var2, FireWorkESPModule.Entry var3, long var4) {
-      if (var1 != null) {
-         Vec3 var6 = ProjectionUtils.method301(var2);
-         if (var6 != null && !(var6.z <= 0.0) && !(var6.z >= 1.0)) {
-            if (this.throughWalls.isEnabled() || this.method242(var2, var3)) {
-               this.method245(var1, (float)var6.x, (float)var6.y, var4);
+   private void method241(CustomDrawContext customDrawContext, Vec3 key, FireWorkESPModule.Entry entry, long l) {
+      if (customDrawContext != null) {
+         Vec3 vec = ProjectionUtils.method301(key);
+         if (vec != null && !(vec.z <= 0.0) && !(vec.z >= 1.0)) {
+            if (this.throughWalls.isEnabled() || this.method242(key, entry)) {
+               this.method245(customDrawContext, (float)vec.x, (float)vec.y, l);
             }
          }
       }
    }
 
-   private boolean method242(Vec3 var1, FireWorkESPModule.Entry var2) {
+   private boolean method242(Vec3 key, FireWorkESPModule.Entry entry) {
       if (mc.level != null && mc.gameRenderer != null && mc.gameRenderer.mainCamera() != null) {
-         long var3 = mc.level.getGameTime();
-         if (var2.longValue2 != var3) {
-            var2.longValue2 = var3;
-            Vec3 var5 = mc.gameRenderer.mainCamera().position();
-            BlockHitResult var6 = mc.level.clip(new ClipContext(var5, var1, Block.COLLIDER, Fluid.NONE, mc.player));
-            var2.visible = var6.getType() == Type.MISS || var6.getLocation().distanceToSqr(var5) + 1.0E-4 >= var1.distanceToSqr(var5);
+         long gameTime = mc.level.getGameTime();
+         if (entry.longValue2 != gameTime) {
+            entry.longValue2 = gameTime;
+            Vec3 position = mc.gameRenderer.mainCamera().position();
+            BlockHitResult clip = mc.level.clip(new ClipContext(position, key, Block.COLLIDER, Fluid.NONE, mc.player));
+            entry.visible = clip.getType() == Type.MISS || clip.getLocation().distanceToSqr(position) + 1.0E-4 >= key.distanceToSqr(position);
          }
 
-         return var2.visible;
+         return entry.visible;
       } else {
          return true;
       }
    }
 
-   public void method243(CustomDrawContext var1, float var2, float var3, float var4, float var5) {
-      if (var1 != null) {
-         long var6 = System.currentTimeMillis();
-         long var8 = this.method237();
-         this.items2.removeIf(var4x -> var6 - var4x.getLongValue() > var8);
-         long var10 = Math.max(300L, var8 / 5L);
-         if (var6 - this.longValue >= var10) {
-            this.longValue = var6;
-            this.items2.add(new FireWorkESPModule.Data(0.18F + this.random.nextFloat() * 0.64F, 0.12F + this.random.nextFloat() * 0.76F, var6));
+   public void method243(CustomDrawContext customDrawContext, float floatValue, float y, float width, float height) {
+      if (customDrawContext != null) {
+         long now = System.currentTimeMillis();
+         long l = this.method237();
+         this.items2.removeIf(var4x -> now - var4x.getLongValue() > l);
+         long l2 = Math.max(300L, l / 5L);
+         if (now - this.longValue >= l2) {
+            this.longValue = now;
+            this.items2.add(new FireWorkESPModule.Data(0.18F + this.random.nextFloat() * 0.64F, 0.12F + this.random.nextFloat() * 0.76F, now));
          }
 
-         for (FireWorkESPModule.Data var13 : this.items2) {
-            this.method245(var1, var2 + var4 * var13.getFloatValue(), var3 + var5 * var13.getFloatValue2(), var6 - var13.getLongValue());
+         for (FireWorkESPModule.Data data : this.items2) {
+            this.method245(customDrawContext, floatValue + width * data.getFloatValue(), y + height * data.getFloatValue2(), now - data.getLongValue());
          }
       }
    }
@@ -149,50 +149,50 @@ public final class FireWorkESPModule extends Module {
       this.longValue = 0L;
    }
 
-   private void method245(CustomDrawContext var1, float var2, float var3, long var4) {
-      ZenithStyle var6 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      Font var7 = Fonts.NEW_MEDIUM.getFont(6.5F);
-      String var8 = String.format("%.1fс", var4 / 1000.0);
-      float var9 = GuiStyle.PADDING.intValue();
-      float var10 = 10.4F;
-      float var11 = var9 + var10 + var9 + var7.width(var8) + var9;
-      float var12 = Math.max(var7.height(), var10) + GuiStyle.PADDING.intValue();
-      float var13 = var2 - var11 / 2.0F;
-      float var14 = var3 - var12 / 2.0F;
-      float var15 = this.scale.getValue3();
-      this.pushCenteredScale(var1, var2, var3, var15, var15);
-      EntityESPModule var16 = EntityESPModule.INSTANCE;
-      ProxyDotRadiusData var17 = ProxyDotRadiusData.method8069(InterfaceModule.method6801() / 2.0F);
-      var1.drawBlurHudBooleanCheck(
-         var13,
-         var14,
-         var11,
-         var12,
+   private void method245(CustomDrawContext customDrawContext, float x, float y, long l) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      Font font = Fonts.NEW_MEDIUM.getFont(6.5F);
+      String text = String.format("%.1fс", l / 1000.0);
+      float intValue = GuiStyle.PADDING.intValue();
+      float f = 10.4F;
+      float width = intValue + f + intValue + font.width(text) + intValue;
+      float panelHeight = Math.max(font.height(), f) + GuiStyle.PADDING.intValue();
+      float floatValue = x - width / 2.0F;
+      float y2 = y - panelHeight / 2.0F;
+      float f2 = this.scale.getValue3();
+      this.pushCenteredScale(customDrawContext, x, y, f2, f2);
+      EntityESPModule entityESPModule = EntityESPModule.INSTANCE;
+      ProxyDotRadiusData moduleMenuRadius = ProxyDotRadiusData.method8069(InterfaceModule.method6801() / 2.0F);
+      customDrawContext.drawBlurHudBooleanCheck(
+         floatValue,
+         y2,
+         width,
+         panelHeight,
          22.0F,
-         var17,
+         moduleMenuRadius,
          ZenithColor.INSTANCE,
-         var16.getBlur().isEnabled() && var16.getBlur().isVisible(),
-         var16.getGlow().isEnabled() && var16.getGlow().isVisible()
+         entityESPModule.getBlur().isEnabled() && entityESPModule.getBlur().isVisible(),
+         entityESPModule.getGlow().isEnabled() && entityESPModule.getGlow().isVisible()
       );
-      var1.drawRoundedRect(var13, var14, var11, var12, var17, var6.getHudBackground().getZenithColor());
-      var1.drawText(var7, var8, var13 + var9 + var10 + var9, var14 + (var12 - var7.height()) / 2.0F, var6.getTextEnable().getZenithColor());
-      var1.pushMatrix();
-      var1.pose().translate(var13 + var9, var14 + (var12 - var10) / 2.0F);
-      var1.pose().scale(0.65F, 0.65F);
-      var1.item(Items.FIREWORK_ROCKET.getDefaultInstance(), 0, 0);
-      var1.popMatrix();
-      this.pop(var1);
+      customDrawContext.drawRoundedRect(floatValue, y2, width, panelHeight, moduleMenuRadius, currentStyle.getHudBackground().getZenithColor());
+      customDrawContext.drawText(font, text, floatValue + intValue + f + intValue, y2 + (panelHeight - font.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor());
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(floatValue + intValue, y2 + (panelHeight - f) / 2.0F);
+      customDrawContext.pose().scale(0.65F, 0.65F);
+      customDrawContext.item(Items.FIREWORK_ROCKET.getDefaultInstance(), 0, 0);
+      customDrawContext.popMatrix();
+      this.pop(customDrawContext);
    }
 
-   private void pushCenteredScale(CustomDrawContext var1, float var2, float var3, float var4, float var5) {
-      var1.pushMatrix();
-      var1.pose().translate(var2, var3);
-      var1.pose().scale(var4, var5);
-      var1.pose().translate(-var2, -var3);
+   private void pushCenteredScale(CustomDrawContext customDrawContext, float x, float y, float f, float y2) {
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().scale(f, y2);
+      customDrawContext.pose().translate(-x, -y);
    }
 
-   private void pop(CustomDrawContext var1) {
-      var1.popMatrix();
+   private void pop(CustomDrawContext customDrawContext) {
+      customDrawContext.popMatrix();
    }
 
    @Override
@@ -243,10 +243,10 @@ public final class FireWorkESPModule extends Module {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data(float var1, float var2, long var3) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.longValue = var3;
+      private Data(float floatValue, float f, long longValue) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.longValue = longValue;
       }
 
       public float getFloatValue() {
@@ -267,8 +267,8 @@ public final class FireWorkESPModule extends Module {
       private long longValue2 = Long.MIN_VALUE;
       private boolean visible;
 
-      private Entry(long var1) {
-         this.longValue = var1;
+      private Entry(long longValue) {
+         this.longValue = longValue;
       }
    }
 }

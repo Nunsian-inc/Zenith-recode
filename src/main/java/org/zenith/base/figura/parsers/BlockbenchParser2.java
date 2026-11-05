@@ -54,8 +54,8 @@ public class BlockbenchParser2 {
          container.locatedWithin = locatedWithin;
          CompoundTag nbt = model.convert(container);
          return new ModelParseResult(container.getTexturesNBT(), container.getAnimationsNBT(), nbt);
-      } catch (Exception var11) {
-         throw new Exception(String.format("model \"%s\": %s", modelName, var11.getMessage()), var11);
+      } catch (Exception e) {
+         throw new Exception(String.format("model \"%s\": %s", modelName, e.getMessage()), e);
       }
    }
 
@@ -348,14 +348,14 @@ public class BlockbenchParser2 {
                this.path = this.path.substring(0, this.path.length() - 4);
                this.name = Intermediary.this.locatedWithin + this.name;
                FiguraMod.debug("Loaded {} texture \"{}\" as path {} (from {})", this.textureType, this.name, this.path, p);
-            } catch (Exception var4) {
-               if (var4 instanceof IOException || var4 instanceof NullPointerException) {
+            } catch (Exception e) {
+               if (e instanceof IOException || e instanceof NullPointerException) {
                   String var4x = "";
                }
 
                if (texture.source == null || !texture.source.startsWith("data:image/png;base64,")) {
                   throw new IllegalStateException(
-                     String.format("Failed to find the %s texture: %s\n(and the bundled texture data was missing or bad)", texture.name, var4)
+                     String.format("Failed to find the %s texture: %s\n(and the bundled texture data was missing or bad)", texture.name, e)
                   );
                }
 

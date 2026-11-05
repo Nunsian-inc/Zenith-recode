@@ -18,10 +18,10 @@ import org.zenith.utility.misc.ShownProvider;
 
 public final class AiSettingsStore {
    private static AiSettingsStore INSTANCE;
-   private static final ExecutorService executorService = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "zenith-ai-settings");
-      var1.setDaemon(true);
-      return var1;
+   private static final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "zenith-ai-settings");
+      thread.setDaemon(true);
+      return thread;
    });
    private String text;
    private boolean flag;
@@ -59,111 +59,111 @@ public final class AiSettingsStore {
    private void load() {
       if (this.file.isFile()) {
          try {
-            byte[] var1 = AesGcmCrypto.method5340(Files.readAllBytes(this.file.toPath()), password());
-            JsonObject var2 = JsonParser.parseString(new String(var1, StandardCharsets.UTF_8)).getAsJsonObject();
-            if (var2.has("customProviders")) {
-               for (JsonElement var4 : var2.getAsJsonArray("customProviders")) {
-                  JsonObject var5 = var4.getAsJsonObject();
+            byte[] bytes = AesGcmCrypto.method5340(Files.readAllBytes(this.file.toPath()), password());
+            JsonObject jsonObject = JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();
+            if (jsonObject.has("customProviders")) {
+               for (JsonElement json : jsonObject.getAsJsonArray("customProviders")) {
+                  JsonObject jsonObject2 = json.getAsJsonObject();
                   ShownProvider.method7333(
                      ShownProvider.method7332(
-                        var5.get("id").getAsString(),
-                        var5.get("title").getAsString(),
-                        clean(var5.get("endpoint").getAsString()),
-                        var5.has("model") ? clean(var5.get("model").getAsString()) : ""
+                        jsonObject2.get("id").getAsString(),
+                        jsonObject2.get("title").getAsString(),
+                        clean(jsonObject2.get("endpoint").getAsString()),
+                        jsonObject2.has("model") ? clean(jsonObject2.get("model").getAsString()) : ""
                      )
                   );
                }
             }
 
-            if (var2.has("provider")) {
-               this.shownProvider = ShownProvider.method7337(var2.get("provider").getAsString());
+            if (jsonObject.has("provider")) {
+               this.shownProvider = ShownProvider.method7337(jsonObject.get("provider").getAsString());
             }
 
-            if (var2.has("autoApply")) {
-               this.flag2 = var2.get("autoApply").getAsBoolean();
+            if (jsonObject.has("autoApply")) {
+               this.flag2 = jsonObject.get("autoApply").getAsBoolean();
             }
 
-            if (var2.has("autoFix")) {
-               this.flag3 = var2.get("autoFix").getAsBoolean();
+            if (jsonObject.has("autoFix")) {
+               this.flag3 = jsonObject.get("autoFix").getAsBoolean();
             }
 
-            for (ShownProvider var6 : ShownProvider.method7336()) {
-               if (var2.has(var6.getText())) {
-                  JsonObject var7 = var2.getAsJsonObject(var6.getText());
-                  if (var7.has("key")) {
-                     this.items.put(var6, clean(var7.get("key").getAsString()));
+            for (ShownProvider shownProvider : ShownProvider.method7336()) {
+               if (jsonObject.has(shownProvider.getText())) {
+                  JsonObject json = jsonObject.getAsJsonObject(shownProvider.getText());
+                  if (json.has("key")) {
+                     this.items.put(shownProvider, clean(json.get("key").getAsString()));
                   }
 
-                  if (var7.has("model")) {
-                     this.items2.put(var6, clean(var7.get("model").getAsString()));
+                  if (json.has("model")) {
+                     this.items2.put(shownProvider, clean(json.get("model").getAsString()));
                   }
 
-                  if (var7.has("endpoint")) {
-                     this.items3.put(var6, clean(var7.get("endpoint").getAsString()));
+                  if (json.has("endpoint")) {
+                     this.items3.put(shownProvider, clean(json.get("endpoint").getAsString()));
                   }
                }
             }
 
-            if (var2.has("velorai") && ShownProvider.method7335().isEmpty()) {
-               JsonObject var10 = var2.getAsJsonObject("velorai");
-               if (var10.has("key")) {
-                  String var12 = var10.has("endpoint") ? var10.get("endpoint").getAsString() : "https://velorai.lol/v1";
-                  String var14 = var10.has("model") ? var10.get("model").getAsString() : "z-ai/glm-5.3-uncensored";
-                  String var15 = URI.create(var12).getHost();
-                  ShownProvider var16 = ShownProvider.method7332("c_legacy", var15 == null ? "API" : var15, var12, var14);
-                  ShownProvider.method7333(var16);
-                  this.items.put(var16, var10.get("key").getAsString());
-                  this.items2.put(var16, var14);
-                  if ("velorai".equals(var2.has("provider") ? var2.get("provider").getAsString() : "")) {
-                     this.shownProvider = var16;
+            if (jsonObject.has("velorai") && ShownProvider.method7335().isEmpty()) {
+               JsonObject json = jsonObject.getAsJsonObject("velorai");
+               if (json.has("key")) {
+                  String string = json.has("endpoint") ? json.get("endpoint").getAsString() : "https://velorai.lol/v1";
+                  String str = json.has("model") ? json.get("model").getAsString() : "z-ai/glm-5.3-uncensored";
+                  String host = URI.create(string).getHost();
+                  ShownProvider shownProvider = ShownProvider.method7332("c_legacy", host == null ? "API" : host, string, str);
+                  ShownProvider.method7333(shownProvider);
+                  this.items.put(shownProvider, json.get("key").getAsString());
+                  this.items2.put(shownProvider, str);
+                  if ("velorai".equals(jsonObject.has("provider") ? jsonObject.get("provider").getAsString() : "")) {
+                     this.shownProvider = shownProvider;
                   }
 
                   this.save();
                }
             }
-         } catch (Exception var8) {
+         } catch (Exception e) {
          }
       }
    }
 
    public synchronized void save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("provider", this.shownProvider.getText());
-      var1.addProperty("autoApply", this.flag2);
-      var1.addProperty("autoFix", this.flag3);
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      json.addProperty("provider", this.shownProvider.getText());
+      json.addProperty("autoApply", this.flag2);
+      json.addProperty("autoFix", this.flag3);
+      JsonArray jsonArray = new JsonArray();
 
-      for (ShownProvider var4 : ShownProvider.method7335()) {
-         JsonObject var5 = new JsonObject();
-         var5.addProperty("id", var4.getText());
-         var5.addProperty("title", var4.title());
-         var5.addProperty("endpoint", var4.getText4());
-         var5.addProperty("model", var4.getItems3().get(0));
-         var2.add(var5);
+      for (ShownProvider shownProvider : ShownProvider.method7335()) {
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("id", shownProvider.getText());
+         json2.addProperty("title", shownProvider.title());
+         json2.addProperty("endpoint", shownProvider.getText4());
+         json2.addProperty("model", shownProvider.getItems3().get(0));
+         jsonArray.add(json2);
       }
 
-      var1.add("customProviders", var2);
+      json.add("customProviders", jsonArray);
 
-      for (ShownProvider var6 : ShownProvider.method7336()) {
-         JsonObject var7 = new JsonObject();
-         if (!this.method4469(var6).isEmpty()) {
-            var7.addProperty("key", this.method4469(var6));
+      for (ShownProvider shownProvider : ShownProvider.method7336()) {
+         JsonObject json2 = new JsonObject();
+         if (!this.method4469(shownProvider).isEmpty()) {
+            json2.addProperty("key", this.method4469(shownProvider));
          }
 
-         if (this.items2.containsKey(var6)) {
-            var7.addProperty("model", this.items2.get(var6));
+         if (this.items2.containsKey(shownProvider)) {
+            json2.addProperty("model", this.items2.get(shownProvider));
          }
 
-         if (this.items3.containsKey(var6)) {
-            var7.addProperty("endpoint", this.items3.get(var6));
+         if (this.items3.containsKey(shownProvider)) {
+            json2.addProperty("endpoint", this.items3.get(shownProvider));
          }
 
-         if (var7.size() > 0) {
-            var1.add(var6.getText(), var7);
+         if (json2.size() > 0) {
+            json.add(shownProvider.getText(), json2);
          }
       }
 
-      this.text = var1.toString();
+      this.text = json.toString();
       if (!this.flag) {
          this.flag = true;
          executorService.execute(this::flush);
@@ -172,19 +172,19 @@ public final class AiSettingsStore {
 
    private void flush() {
       while (true) {
-         String var1;
+         String text;
          synchronized (this) {
-            var1 = this.text;
+            text = this.text;
             this.text = null;
-            if (var1 == null) {
+            if (text == null) {
                this.flag = false;
                return;
             }
          }
 
          try {
-            Files.write(this.file.toPath(), AesGcmCrypto.method5339(var1.getBytes(StandardCharsets.UTF_8), password()));
-         } catch (Exception var4) {
+            Files.write(this.file.toPath(), AesGcmCrypto.method5339(text.getBytes(StandardCharsets.UTF_8), password()));
+         } catch (Exception e) {
          }
       }
    }
@@ -193,85 +193,85 @@ public final class AiSettingsStore {
       return this.shownProvider;
    }
 
-   public synchronized void method4468(ShownProvider var1) {
-      if (!this.shownProvider.equals(var1)) {
-         this.shownProvider = var1;
+   public synchronized void method4468(ShownProvider shownProvider) {
+      if (!this.shownProvider.equals(shownProvider)) {
+         this.shownProvider = shownProvider;
          this.save();
       }
    }
 
-   public synchronized String method4469(ShownProvider var1) {
-      return this.items.getOrDefault(var1, "");
+   public synchronized String method4469(ShownProvider shownProvider) {
+      return this.items.getOrDefault(shownProvider, "");
    }
 
-   public synchronized void method4470(ShownProvider var1, String var2) {
-      if (var2 != null && !var2.isBlank()) {
-         this.items.put(var1, clean(var2));
+   public synchronized void method4470(ShownProvider shownProvider, String string) {
+      if (string != null && !string.isBlank()) {
+         this.items.put(shownProvider, clean(string));
       } else {
-         this.items.remove(var1);
+         this.items.remove(shownProvider);
       }
 
       this.save();
    }
 
-   public synchronized boolean method4471(ShownProvider var1) {
-      return !var1.isFlag() || !this.method4469(var1).isEmpty();
+   public synchronized boolean method4471(ShownProvider shownProvider) {
+      return !shownProvider.isFlag() || !this.method4469(shownProvider).isEmpty();
    }
 
-   public synchronized String method4472(ShownProvider var1) {
-      String var2 = this.items2.get(var1);
-      return var2 != null && !var2.isBlank() ? var2 : var1.getItems3().get(0);
+   public synchronized String method4472(ShownProvider shownProvider) {
+      String str = this.items2.get(shownProvider);
+      return str != null && !str.isBlank() ? str : shownProvider.getItems3().get(0);
    }
 
-   public synchronized void method4473(ShownProvider var1, String var2) {
-      if (var2 != null && !var2.isBlank()) {
-         this.items2.put(var1, clean(var2));
+   public synchronized void method4473(ShownProvider shownProvider, String string) {
+      if (string != null && !string.isBlank()) {
+         this.items2.put(shownProvider, clean(string));
       } else {
-         this.items2.remove(var1);
+         this.items2.remove(shownProvider);
       }
 
       this.save();
    }
 
-   public synchronized String method4474(ShownProvider var1) {
-      String var2 = this.items3.get(var1);
-      return var2 != null && !var2.isBlank() ? var2 : var1.getText4();
+   public synchronized String method4474(ShownProvider shownProvider) {
+      String str = this.items3.get(shownProvider);
+      return str != null && !str.isBlank() ? str : shownProvider.getText4();
    }
 
-   public synchronized void method4475(ShownProvider var1, String var2) {
-      if (var2 != null && !var2.isBlank() && !var2.strip().equals(var1.getText4())) {
-         this.items3.put(var1, clean(var2));
+   public synchronized void method4475(ShownProvider shownProvider, String string) {
+      if (string != null && !string.isBlank() && !string.strip().equals(shownProvider.getText4())) {
+         this.items3.put(shownProvider, clean(string));
       } else {
-         this.items3.remove(var1);
+         this.items3.remove(shownProvider);
       }
 
       this.save();
    }
 
-   public synchronized ShownProvider method4476(String var1, String var2, String var3, String var4) {
-      String var5 = "c_" + Long.toString(System.currentTimeMillis(), 36);
-      ShownProvider var6 = ShownProvider.method7332(var5, var1.strip(), clean(var2), clean(var4));
-      ShownProvider.method7333(var6);
-      if (var3 != null && !var3.isBlank()) {
-         this.items.put(var6, clean(var3));
+   public synchronized ShownProvider method4476(String str, String string, String string2, String string3) {
+      String string4 = "c_" + Long.toString(System.currentTimeMillis(), 36);
+      ShownProvider shownProvider = ShownProvider.method7332(string4, str.strip(), clean(string), clean(string3));
+      ShownProvider.method7333(shownProvider);
+      if (string2 != null && !string2.isBlank()) {
+         this.items.put(shownProvider, clean(string2));
       }
 
-      if (var4 != null && !var4.isBlank()) {
-         this.items2.put(var6, clean(var4));
+      if (string3 != null && !string3.isBlank()) {
+         this.items2.put(shownProvider, clean(string3));
       }
 
-      this.shownProvider = var6;
+      this.shownProvider = shownProvider;
       this.save();
-      return var6;
+      return shownProvider;
    }
 
-   public synchronized void method4477(ShownProvider var1) {
-      if (var1 != null && var1.isFlag2()) {
-         ShownProvider.method7334(var1);
-         this.items.remove(var1);
-         this.items2.remove(var1);
-         this.items3.remove(var1);
-         if (this.shownProvider.equals(var1)) {
+   public synchronized void method4477(ShownProvider shownProvider) {
+      if (shownProvider != null && shownProvider.isFlag2()) {
+         ShownProvider.method7334(shownProvider);
+         this.items.remove(shownProvider);
+         this.items2.remove(shownProvider);
+         this.items3.remove(shownProvider);
+         if (this.shownProvider.equals(shownProvider)) {
             this.shownProvider = ShownProvider.INSTANCE;
          }
 
@@ -283,8 +283,8 @@ public final class AiSettingsStore {
       return this.flag2;
    }
 
-   public synchronized void method4478(boolean var1) {
-      this.flag2 = var1;
+   public synchronized void method4478(boolean flag) {
+      this.flag2 = flag;
       this.save();
    }
 
@@ -292,32 +292,32 @@ public final class AiSettingsStore {
       return this.flag3;
    }
 
-   public synchronized void method4479(boolean var1) {
-      this.flag3 = var1;
+   public synchronized void method4479(boolean flag) {
+      this.flag3 = flag;
       this.save();
    }
 
-   public static String clean(String var0) {
-      if (var0 == null) {
+   public static String clean(String string) {
+      if (string == null) {
          return "";
       } else {
-         String var1 = var0.strip();
+         String str = string.strip();
 
-         while (!var1.isEmpty() && "`'\".,;:".indexOf(var1.charAt(0)) >= 0) {
-            var1 = var1.substring(1).strip();
+         while (!str.isEmpty() && "`'\".,;:".indexOf(str.charAt(0)) >= 0) {
+            str = str.substring(1).strip();
          }
 
-         while (!var1.isEmpty() && "`'\".,;:".indexOf(var1.charAt(var1.length() - 1)) >= 0) {
-            var1 = var1.substring(0, var1.length() - 1).strip();
+         while (!str.isEmpty() && "`'\".,;:".indexOf(str.charAt(str.length() - 1)) >= 0) {
+            str = str.substring(0, str.length() - 1).strip();
          }
 
-         return var1;
+         return str;
       }
    }
 
-   public static String method4480(String var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         return var0.length() <= 10 ? "••••" : var0.substring(0, 5) + "••••" + var0.substring(var0.length() - 4);
+   public static String method4480(String str) {
+      if (str != null && !str.isEmpty()) {
+         return str.length() <= 10 ? "••••" : str.substring(0, 5) + "••••" + str.substring(str.length() - 4);
       } else {
          return "";
       }

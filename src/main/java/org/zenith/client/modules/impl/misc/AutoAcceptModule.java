@@ -23,32 +23,32 @@ public final class AutoAcceptModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (var1.method7100()) {
-            if (var1.getPacket3() instanceof ClientboundSystemChatPacket var2) {
-               String var4 = var2.content().getString().toLowerCase(Locale.ROOT);
-               if (var4.contains("телепортироваться") || var4.contains("has requested teleport") || var4.contains("просит к вам телепортироваться")) {
-                  mc.execute(() -> this.method7736(var4));
+         if (event.method7100()) {
+            if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+               String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
+               if (lowerCase.contains("телепортироваться") || lowerCase.contains("has requested teleport") || lowerCase.contains("просит к вам телепортироваться")) {
+                  mc.execute(() -> this.method7736(lowerCase));
                }
             }
          }
       }
    }
 
-   private void method7736(String var1) {
+   private void method7736(String lowerCase) {
       if (mc.player != null) {
          if (this.onlyFriend.isEnabled()) {
-            boolean var2 = false;
+            boolean flag = false;
 
-            for (String var4 : Zenith.getInstance().getFriends().getItems()) {
-               if (var1.contains(var4.toLowerCase(Locale.ROOT))) {
-                  var2 = true;
+            for (String str : Zenith.getInstance().getFriends().getItems()) {
+               if (lowerCase.contains(str.toLowerCase(Locale.ROOT))) {
+                  flag = true;
                   break;
                }
             }
 
-            if (!var2) {
+            if (!flag) {
                return;
             }
          }

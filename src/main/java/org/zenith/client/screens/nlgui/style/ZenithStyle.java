@@ -70,21 +70,21 @@ public class ZenithStyle {
       this("");
    }
 
-   public ZenithStyle(String var1) {
-      this.name = var1;
+   public ZenithStyle(String name) {
+      this.name = name;
    }
 
-   public void setDefaultsFromGuiStyle(ZenithColor var1) {
+   public void setDefaultsFromGuiStyle(ZenithColor defaultsFromGuiStyle) {
       this.setDefaultsFromGuiStyle();
-      this.leftBackground.setZenithColor(var1.method7293(this.leftBackground.getZenithColor().getIntValue4()));
-      this.rightBackground.setZenithColor(var1.method7293(this.rightBackground.getZenithColor().getIntValue4()));
-      this.panelLeftBackground.setZenithColor(var1.method7293(this.panelLeftBackground.getZenithColor().getIntValue4()));
-      this.surfaceEnableBackground.setZenithColor(var1.method7293(this.surfaceEnableBackground.getZenithColor().getIntValue4()));
-      this.headerDisableBackground.setZenithColor(var1.method7293(this.headerDisableBackground.getZenithColor().getIntValue4()));
+      this.leftBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.leftBackground.getZenithColor().getIntValue4()));
+      this.rightBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.rightBackground.getZenithColor().getIntValue4()));
+      this.panelLeftBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.panelLeftBackground.getZenithColor().getIntValue4()));
+      this.surfaceEnableBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.surfaceEnableBackground.getZenithColor().getIntValue4()));
+      this.headerDisableBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.headerDisableBackground.getZenithColor().getIntValue4()));
       this.fieldSurfaceBackground.setZenithColor(GuiStyle.FIELD_SURFACE_BACKGROUND);
-      this.surfaceDisableBackground.setZenithColor(var1.method7293(this.surfaceDisableBackground.getZenithColor().getIntValue4()));
-      this.hudBackground.setZenithColor(var1.method7293(this.hudBackground.getZenithColor().getIntValue4()));
-      this.headerHudBackground.setZenithColor(var1.method7293(this.headerHudBackground.getZenithColor().getIntValue4()));
+      this.surfaceDisableBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.surfaceDisableBackground.getZenithColor().getIntValue4()));
+      this.hudBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.hudBackground.getZenithColor().getIntValue4()));
+      this.headerHudBackground.setZenithColor(defaultsFromGuiStyle.method7293(this.headerHudBackground.getZenithColor().getIntValue4()));
    }
 
    public void setDefaultsFromGuiStyle() {
@@ -108,71 +108,71 @@ public class ZenithStyle {
       this.heartIcon.setZenithColor(GuiStyle.HEART_ICON);
    }
 
-   public void safe(JsonObject var1) {
-      var1.addProperty("name", this.name);
-      this.leftBackground.safe(var1);
-      this.rightBackground.safe(var1);
-      this.panelLeftBackground.safe(var1);
-      this.surfaceEnableBackground.safe(var1);
-      this.headerDisableBackground.safe(var1);
-      this.fieldSurfaceBackground.safe(var1);
-      this.fieldBorder.safe(var1);
-      this.surfaceDisableBackground.safe(var1);
-      this.textEnable.safe(var1);
-      this.textTertiary.safe(var1);
-      this.textSecondary.safe(var1);
-      this.primaryColor.safe(var1);
-      this.secondaryPrimaryColor.safe(var1);
-      this.glowColor1.safe(var1);
-      this.glowColor2.safe(var1);
-      this.friendColor.safe(var1);
-      this.glareColor.safe(var1);
-      this.disableActiveBg.safe(var1);
-      this.heartActiveBg.safe(var1);
-      this.heartIcon.safe(var1);
-      this.hudBackground.safe(var1);
-      this.headerHudBackground.safe(var1);
-      var1.addProperty("hudColorsVersion", 2);
+   public void safe(JsonObject json) {
+      json.addProperty("name", this.name);
+      this.leftBackground.safe(json);
+      this.rightBackground.safe(json);
+      this.panelLeftBackground.safe(json);
+      this.surfaceEnableBackground.safe(json);
+      this.headerDisableBackground.safe(json);
+      this.fieldSurfaceBackground.safe(json);
+      this.fieldBorder.safe(json);
+      this.surfaceDisableBackground.safe(json);
+      this.textEnable.safe(json);
+      this.textTertiary.safe(json);
+      this.textSecondary.safe(json);
+      this.primaryColor.safe(json);
+      this.secondaryPrimaryColor.safe(json);
+      this.glowColor1.safe(json);
+      this.glowColor2.safe(json);
+      this.friendColor.safe(json);
+      this.glareColor.safe(json);
+      this.disableActiveBg.safe(json);
+      this.heartActiveBg.safe(json);
+      this.heartIcon.safe(json);
+      this.hudBackground.safe(json);
+      this.headerHudBackground.safe(json);
+      json.addProperty("hudColorsVersion", 2);
    }
 
-   public void load(JsonObject var1) {
-      if (var1.has("name")) {
-         this.name = var1.get("name").getAsString();
+   public void load(JsonObject json) {
+      if (json.has("name")) {
+         this.name = json.get("name").getAsString();
       }
 
-      this.loadColor(var1, this.leftBackground, "leftBackground");
-      this.loadColor(var1, this.rightBackground, "rightBackground");
-      this.loadColor(var1, this.panelLeftBackground, "panelLeftBackground");
-      this.loadColor(var1, this.surfaceEnableBackground, "surfaceEnableBackground");
-      this.loadColor(var1, this.headerDisableBackground, "headerDisableBackground");
-      this.loadColor(var1, this.fieldSurfaceBackground, "fieldSurfaceBackground");
-      this.loadColor(var1, this.fieldBorder, "fieldBorder");
-      this.loadColor(var1, this.surfaceDisableBackground, "surfaceDisableBackground");
-      this.loadColor(var1, this.textEnable, "textEnable");
-      this.loadColor(var1, this.textTertiary, "textTertiary");
-      this.loadColor(var1, this.textSecondary, "textSecondary");
-      this.loadColor(var1, this.primaryColor, "primaryColor");
-      this.loadColor(var1, this.secondaryPrimaryColor);
-      this.loadColor(var1, this.glowColor1);
-      this.loadColor(var1, this.glowColor2);
-      this.loadColor(var1, this.friendColor);
-      this.loadColor(var1, this.glareColor, "glareColor");
-      this.loadColor(var1, this.disableActiveBg, "disableActiveBg");
-      this.loadColor(var1, this.heartActiveBg, "heartActiveBg");
-      this.loadColor(var1, this.heartIcon, "heartIcon");
-      if (var1.has("hudColorsVersion") && var1.get("hudColorsVersion").getAsInt() >= 2) {
-         this.loadColor(var1, this.hudBackground, "hudBackground");
-         this.loadColor(var1, this.headerHudBackground, "headerHudBackground");
+      this.loadColor(json, this.leftBackground, "leftBackground");
+      this.loadColor(json, this.rightBackground, "rightBackground");
+      this.loadColor(json, this.panelLeftBackground, "panelLeftBackground");
+      this.loadColor(json, this.surfaceEnableBackground, "surfaceEnableBackground");
+      this.loadColor(json, this.headerDisableBackground, "headerDisableBackground");
+      this.loadColor(json, this.fieldSurfaceBackground, "fieldSurfaceBackground");
+      this.loadColor(json, this.fieldBorder, "fieldBorder");
+      this.loadColor(json, this.surfaceDisableBackground, "surfaceDisableBackground");
+      this.loadColor(json, this.textEnable, "textEnable");
+      this.loadColor(json, this.textTertiary, "textTertiary");
+      this.loadColor(json, this.textSecondary, "textSecondary");
+      this.loadColor(json, this.primaryColor, "primaryColor");
+      this.loadColor(json, this.secondaryPrimaryColor);
+      this.loadColor(json, this.glowColor1);
+      this.loadColor(json, this.glowColor2);
+      this.loadColor(json, this.friendColor);
+      this.loadColor(json, this.glareColor, "glareColor");
+      this.loadColor(json, this.disableActiveBg, "disableActiveBg");
+      this.loadColor(json, this.heartActiveBg, "heartActiveBg");
+      this.loadColor(json, this.heartIcon, "heartIcon");
+      if (json.has("hudColorsVersion") && json.get("hudColorsVersion").getAsInt() >= 2) {
+         this.loadColor(json, this.hudBackground, "hudBackground");
+         this.loadColor(json, this.headerHudBackground, "headerHudBackground");
       }
    }
 
-   private void loadColor(JsonObject var1, ColorSetting var2, String... var3) {
-      if (var1.has(var2.getKey())) {
-         var2.method1446(var1.get(var2.getKey()).getAsInt());
+   private void loadColor(JsonObject json, ColorSetting leftBackground, String... strings) {
+      if (json.has(leftBackground.getKey())) {
+         leftBackground.method1446(json.get(leftBackground.getKey()).getAsInt());
       } else {
-         for (String var7 : var3) {
-            if (var1.has(var7)) {
-               var2.method1446(var1.get(var7).getAsInt());
+         for (String memberName : strings) {
+            if (json.has(memberName)) {
+               leftBackground.method1446(json.get(memberName).getAsInt());
                return;
             }
          }
@@ -180,15 +180,15 @@ public class ZenithStyle {
    }
 
    public List<Setting> getSettings() {
-      return Arrays.stream(this.getClass().getDeclaredFields()).map(var1 -> {
+      return Arrays.stream(this.getClass().getDeclaredFields()).map(field -> {
          try {
-            var1.setAccessible(true);
-            return var1.get(this);
-         } catch (IllegalAccessException var3) {
-            var3.printStackTrace();
+            field.setAccessible(true);
+            return field.get(this);
+         } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return null;
          }
-      }).filter(var0 -> var0 instanceof Setting).map(var0 -> (Setting)var0).collect(Collectors.toList());
+      }).filter(obj -> obj instanceof Setting).map(obj -> (Setting)obj).collect(Collectors.toList());
    }
 
    @Generated
@@ -307,7 +307,7 @@ public class ZenithStyle {
    }
 
    @Generated
-   public void setName(String var1) {
-      this.name = var1;
+   public void setName(String name) {
+      this.name = name;
    }
 }

@@ -20,7 +20,7 @@ public interface ModuleAccess {
 
    boolean enabled();
 
-   void enabled(boolean var1);
+   void enabled(boolean flag);
 
    default void toggle() {
       this.enabled(!this.enabled());
@@ -28,7 +28,7 @@ public interface ModuleAccess {
 
    int keyCode();
 
-   void keyCode(int var1);
+   void keyCode(int n);
 
    List<? extends SettingAccess> settings();
 }

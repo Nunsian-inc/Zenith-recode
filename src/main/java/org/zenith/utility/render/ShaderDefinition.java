@@ -60,12 +60,12 @@ public abstract class ShaderDefinition {
    @Nullable
    public String text3;
 
-   public ShaderDefinition(Identifier var1, VertexFormat var2, String[] var3) {
-      this.identifier = var1;
-      this.vertexFormat = var2;
-      this.texts = var3;
-      this.text = var1.toString();
-      this.text2 = String.join(",", var3);
+   public ShaderDefinition(Identifier identifier, VertexFormat vertexFormat, String[] texts) {
+      this.identifier = identifier;
+      this.vertexFormat = vertexFormat;
+      this.texts = texts;
+      this.text = identifier.toString();
+      this.text2 = String.join(",", texts);
    }
 
    public Identifier getIdentifier() {
@@ -76,27 +76,27 @@ public abstract class ShaderDefinition {
       return this.vertexFormat;
    }
 
-   public ShaderUniform method5166(String var1) {
-      return this.items4.computeIfAbsent(var1, var1x -> new ShaderUniform(this, var1x));
+   public ShaderUniform method5166(String key) {
+      return this.items4.computeIfAbsent(key, var1x -> new ShaderUniform(this, var1x));
    }
 
-   public void method5559(String var1, float[] var2) {
-      this.items3.put(var1, var2);
-      Integer var3 = this.items7.get(var1);
-      if (var3 != null) {
-         this.floatValues[var3] = var2;
+   public void method5559(String text, float[] floatValues) {
+      this.items3.put(text, floatValues);
+      Integer n = this.items7.get(text);
+      if (n != null) {
+         this.floatValues[n] = floatValues;
       }
    }
 
-   public boolean method5560(String var1) {
+   public boolean method5560(String str) {
       this.method5567();
-      return this.items5.containsKey(var1);
+      return this.items5.containsKey(str);
    }
 
-   public RenderPipeline method5561(VertexFormat var1, PrimitiveTopology var2, RenderState.Data2 var3) {
+   public RenderPipeline method5561(VertexFormat vertexFormat, PrimitiveTopology primitiveTopology, RenderState.Data2 data2) {
       this.method5567();
       return LightUtil.method6710(
-         this.identifier, this.text, this.text2, var1, var2, var3, this.texts2 != null ? this.texts2 : this.texts, !this.items5.isEmpty()
+         this.identifier, this.text, this.text2, vertexFormat, primitiveTopology, data2, this.texts2 != null ? this.texts2 : this.texts, !this.items5.isEmpty()
       );
    }
 
@@ -111,57 +111,57 @@ public abstract class ShaderDefinition {
             this.intValue2 = this.items3.size();
          }
 
-         int[] var1 = this.intValues;
-         float[] var2 = this.floatValues2;
+         int[] intValues = this.intValues;
+         float[] floatValues2 = this.floatValues2;
 
-         for (int var3 = 0; var3 < var1.length; var3++) {
-            float[] var4 = this.floatValues[var3];
-            int var5 = var1[var3];
-            int var6 = this.intValues2[var3];
-            int var7 = var4 == null ? 0 : Math.min(var4.length, var5);
-            if (var7 > 0) {
-               System.arraycopy(var4, 0, var2, var6, var7);
+         for (int i = 0; i < intValues.length; i++) {
+            float[] floatValue = this.floatValues[i];
+            int n = intValues[i];
+            int n2 = this.intValues2[i];
+            int n3 = floatValue == null ? 0 : Math.min(floatValue.length, n);
+            if (n3 > 0) {
+               System.arraycopy(floatValue, 0, floatValues2, n2, n3);
             }
 
-            for (int var8 = var7; var8 < var5; var8++) {
-               var2[var6 + var8] = 0.0F;
+            for (int j = n3; j < n; j++) {
+               floatValues2[n2 + j] = 0.0F;
             }
          }
 
-         UniformStorage.Entry var9 = this.entry;
-         if (var9 == null || !var9.method1277(var1, var2)) {
-            var9 = new UniformStorage.Entry((float[])var2.clone(), var1);
-            this.entry = var9;
+         UniformStorage.Entry entry = this.entry;
+         if (entry == null || !entry.method1277(intValues, floatValues2)) {
+            entry = new UniformStorage.Entry((float[])floatValues2.clone(), intValues);
+            this.entry = entry;
          }
 
-         return this.method5565().writeData(var9);
+         return this.method5565().writeData(entry);
       }
    }
 
    private void method5563() {
-      for (String var2 : this.items3.keySet()) {
-         if (!this.items5.containsKey(var2) && this.items6.add(var2)) {
+      for (String str : this.items3.keySet()) {
+         if (!this.items5.containsKey(str) && this.items6.add(str)) {
             LogUtils.getLogger()
-               .warn("Zenith: в блоке {} шейдера {} нет поля {} — значение никуда не попадёт", new Object[]{"ZenithData", this.identifier, var2});
+               .warn("Zenith: в блоке {} шейдера {} нет поля {} — значение никуда не попадёт", new Object[]{"ZenithData", this.identifier, str});
          }
       }
    }
 
-   public void method5564(RenderPass var1, @Nullable GpuBufferSlice var2) {
-      if (var2 != null) {
-         var1.setUniform("ZenithData", var2);
+   public void method5564(RenderPass renderPass, @Nullable GpuBufferSlice gpuBufferSlice) {
+      if (gpuBufferSlice != null) {
+         renderPass.setUniform("ZenithData", gpuBufferSlice);
       }
    }
 
    private DynamicGpuDataStorageMapped<UniformStorage.Entry> method5565() {
-      int var1 = this.intValue;
-      if (this.dynamicUniformStorage == null || this.intValue3 != var1) {
+      int intValue = this.intValue;
+      if (this.dynamicUniformStorage == null || this.intValue3 != intValue) {
          if (this.dynamicUniformStorage != null) {
             UniformStorage.method1275(this.dynamicUniformStorage);
          }
 
-         this.intValue3 = var1;
-         this.dynamicUniformStorage = UniformStorage.method1274("zenith ZenithData " + this.identifier, var1);
+         this.intValue3 = intValue;
+         this.dynamicUniformStorage = UniformStorage.method1274("zenith ZenithData " + this.identifier, intValue);
       }
 
       return this.dynamicUniformStorage;
@@ -174,153 +174,153 @@ public abstract class ShaderDefinition {
 
    private void method5567() {
       if (!this.flag) {
-         Minecraft var1 = Minecraft.getInstance();
-         if (var1 != null && var1.getShaderManager() != null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft != null && minecraft.getShaderManager() != null) {
             this.items5 = new LinkedHashMap<>();
             this.texts2 = null;
-            this.method5573(var1);
+            this.method5573(minecraft);
             this.text2 = String.join(",", this.texts2 != null ? this.texts2 : this.texts);
-            this.flag = this.method5569(var1);
+            this.flag = this.method5569(minecraft);
             this.method5568();
          }
       }
    }
 
    private void method5568() {
-      int var1 = this.items5.size();
-      int[] var2 = new int[var1];
-      int[] var3 = new int[var1];
-      float[][] var4 = new float[var1][];
-      HashMap var5 = new HashMap();
-      int var6 = 0;
-      int var7 = 0;
+      int size = this.items5.size();
+      int[] intValues = new int[size];
+      int[] intValues2 = new int[size];
+      float[][] floatValues = new float[size][];
+      HashMap map = new HashMap();
+      int n = 0;
+      int n2 = 0;
 
-      for (Entry var9 : this.items5.entrySet()) {
-         var2[var7] = (Integer)var9.getValue();
-         var3[var7] = var6;
-         var4[var7] = this.items3.get(var9.getKey());
-         var5.put((String)var9.getKey(), var7);
-         var6 += var2[var7];
-         var7++;
+      for (Entry entry : this.items5.entrySet()) {
+         intValues[n2] = (Integer)entry.getValue();
+         intValues2[n2] = n;
+         floatValues[n2] = this.items3.get(entry.getKey());
+         map.put((String)entry.getKey(), n2);
+         n += intValues[n2];
+         n2++;
       }
 
-      this.intValues = var2;
-      this.intValues2 = var3;
-      this.floatValues = var4;
-      this.items7 = var5;
-      this.floatValues2 = new float[var6];
-      this.intValue = var1 == 0 ? 0 : UniformStorage.method1273(var2);
+      this.intValues = intValues;
+      this.intValues2 = intValues2;
+      this.floatValues = floatValues;
+      this.items7 = map;
+      this.floatValues2 = new float[n];
+      this.intValue = size == 0 ? 0 : UniformStorage.method1273(intValues);
       this.entry = null;
       this.intValue2 = -1;
    }
 
-   private boolean method5569(Minecraft var1) {
-      String var2 = this.method5570(var1, "fragment", ShaderType.FRAGMENT);
-      var var3 = method5571(var2);
-      String var4 = null;
-      if (var3.isEmpty()) {
-         var4 = this.method5570(var1, "vertex", ShaderType.VERTEX);
-         var3 = method5571(var4);
+   private boolean method5569(Minecraft minecraft) {
+      String str = this.method5570(minecraft, "fragment", ShaderType.FRAGMENT);
+      var map = method5571(str);
+      String str2 = null;
+      if (map.isEmpty()) {
+         str2 = this.method5570(minecraft, "vertex", ShaderType.VERTEX);
+         map = method5571(str2);
       }
 
-      this.items5.putAll(var3);
-      return var2 != null || var4 != null;
+      this.items5.putAll(map);
+      return str != null || str2 != null;
    }
 
    @Nullable
-   private String method5570(Minecraft var1, String var2, ShaderType var3) {
-      String var4 = this.identifier.getPath();
-      int var5 = var4.lastIndexOf(47);
-      String var6 = var5 < 0 ? var4 : var4.substring(0, var5);
-      return LightUtil.shaderSource(Identifier.fromNamespaceAndPath(this.identifier.getNamespace(), var6 + "/" + var2), var3);
+   private String method5570(Minecraft minecraft, String str, ShaderType type) {
+      String path = this.identifier.getPath();
+      int lastIndexOf = path.lastIndexOf(47);
+      String str2 = lastIndexOf < 0 ? path : path.substring(0, lastIndexOf);
+      return LightUtil.shaderSource(Identifier.fromNamespaceAndPath(this.identifier.getNamespace(), str2 + "/" + str), type);
    }
 
-   private static Map<String, Integer> method5571(@Nullable String var0) {
-      LinkedHashMap var1 = new LinkedHashMap();
-      if (var0 == null) {
-         return var1;
+   private static Map<String, Integer> method5571(@Nullable String str) {
+      LinkedHashMap map = new LinkedHashMap();
+      if (str == null) {
+         return map;
       } else {
-         int var2 = var0.indexOf("uniform ZenithData");
-         if (var2 < 0) {
-            return var1;
+         int indexOf = str.indexOf("uniform ZenithData");
+         if (indexOf < 0) {
+            return map;
          } else {
-            int var3 = var0.indexOf(123, var2);
-            int var4 = var0.indexOf(125, var3);
-            if (var3 >= 0 && var4 >= 0) {
-               for (String var8 : var0.substring(var3 + 1, var4).split(";")) {
-                  ArrayList var9 = new ArrayList();
-                  StringTokenizer var10 = new StringTokenizer(var8);
+            int fromIndex = str.indexOf(123, indexOf);
+            int endIndex = str.indexOf(125, fromIndex);
+            if (fromIndex >= 0 && endIndex >= 0) {
+               for (String str2 : str.substring(fromIndex + 1, endIndex).split(";")) {
+                  ArrayList arrayList = new ArrayList();
+                  StringTokenizer stringTokenizer = new StringTokenizer(str2);
 
-                  while (var10.hasMoreTokens()) {
-                     var9.add(var10.nextToken());
+                  while (stringTokenizer.hasMoreTokens()) {
+                     arrayList.add(stringTokenizer.nextToken());
                   }
 
-                  if (var9.size() >= 2) {
-                     Integer var11 = items.get(var9.get(var9.size() - 2));
-                     if (var11 != null) {
-                        var1.put((String)var9.get(var9.size() - 1), var11);
+                  if (arrayList.size() >= 2) {
+                     Integer n = items.get(arrayList.get(arrayList.size() - 2));
+                     if (n != null) {
+                        map.put((String)arrayList.get(arrayList.size() - 1), n);
                      }
                   }
                }
 
-               return method5572(var0, var1);
+               return method5572(str, map);
             } else {
-               return var1;
+               return map;
             }
          }
       }
    }
 
-   private static Map<String, Integer> method5572(String var0, Map<String, Integer> var1) {
-      LinkedHashMap var2 = new LinkedHashMap();
+   private static Map<String, Integer> method5572(String str, Map<String, Integer> map) {
+      LinkedHashMap map2 = new LinkedHashMap();
 
-      for (Entry var4 : var1.entrySet()) {
-         String var5 = (String)var4.getKey();
+      for (Entry entry : map.entrySet()) {
+         String key = (String)entry.getKey();
 
-         for (String var7 : var0.lines().toList()) {
-            String var8 = var7.trim();
-            if (var8.startsWith("#define ")) {
-               StringTokenizer var9 = new StringTokenizer(var8);
-               var9.nextToken();
-               if (var9.countTokens() >= 2) {
-                  String var10 = var9.nextToken();
-                  String var11 = var9.nextToken();
-                  if (var11.equals(var5 + ".xyz") || var11.equals(var5 + ".rgb")) {
-                     var5 = var10;
+         for (String line : str.lines().toList()) {
+            String str2 = line.trim();
+            if (str2.startsWith("#define ")) {
+               StringTokenizer stringTokenizer = new StringTokenizer(str2);
+               stringTokenizer.nextToken();
+               if (stringTokenizer.countTokens() >= 2) {
+                  String nextToken = stringTokenizer.nextToken();
+                  String nextToken2 = stringTokenizer.nextToken();
+                  if (nextToken2.equals(key + ".xyz") || nextToken2.equals(key + ".rgb")) {
+                     key = nextToken;
                      break;
                   }
                }
             }
          }
 
-         var2.put(var5, (Integer)var4.getValue());
+         map2.put(key, (Integer)entry.getValue());
       }
 
-      return var2;
+      return map2;
    }
 
-   private void method5573(Minecraft var1) {
-      if (var1.getResourceManager() != null) {
-         Identifier var2 = Identifier.fromNamespaceAndPath(this.identifier.getNamespace(), "shaders/" + this.identifier.getPath() + ".json");
-         var var3 = var1.getResourceManager().getResource(var2);
-         if (!var3.isEmpty()) {
+   private void method5573(Minecraft minecraft) {
+      if (minecraft.getResourceManager() != null) {
+         Identifier location = Identifier.fromNamespaceAndPath(this.identifier.getNamespace(), "shaders/" + this.identifier.getPath() + ".json");
+         var resource = minecraft.getResourceManager().getResource(location);
+         if (!resource.isEmpty()) {
             try {
-               try (BufferedReader var4 = ((Resource)var3.get()).openAsReader()) {
-                  JsonObject var5 = JsonParser.parseReader(var4).getAsJsonObject();
-                  JsonArray var6 = var5.getAsJsonArray("samplers");
-                  if (var6 != null) {
-                     String[] var7 = new String[var6.size()];
+               try (BufferedReader openAsReader = ((Resource)resource.get()).openAsReader()) {
+                  JsonObject jsonObject = JsonParser.parseReader(openAsReader).getAsJsonObject();
+                  JsonArray jsonArray = jsonObject.getAsJsonArray("samplers");
+                  if (jsonArray != null) {
+                     String[] texts2 = new String[jsonArray.size()];
 
-                     for (int var8 = 0; var8 < var7.length; var8++) {
-                        var7[var8] = var6.get(var8).getAsJsonObject().get("name").getAsString();
+                     for (int i = 0; i < texts2.length; i++) {
+                        texts2[i] = jsonArray.get(i).getAsJsonObject().get("name").getAsString();
                      }
 
-                     this.texts2 = var7;
+                     this.texts2 = texts2;
                      return;
                   }
                }
-            } catch (Exception var11) {
-               this.text3 = "не удалось прочитать сэмплеры " + var2 + ": " + var11.getMessage();
+            } catch (Exception e) {
+               this.text3 = "не удалось прочитать сэмплеры " + location + ": " + e.getMessage();
             }
          }
       }

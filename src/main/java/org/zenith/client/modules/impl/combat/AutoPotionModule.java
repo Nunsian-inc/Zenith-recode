@@ -56,50 +56,50 @@ public final class AutoPotionModule extends Module {
    }
 
    @EventTarget
-   public void method510(Event5 var1) {
+   public void method510(Event5 event) {
       if (this.method512() && this.intValue >= 20 && !this.method513().isEmpty()) {
-         Rotation var2 = new Rotation(mc.player.getYRot(), 90.0F);
-         rotationManager.method7849(new RotationRequest(var2, () -> var2, bcCameraTestnerv.getRotationConfig()), 8, this);
+         Rotation rotation = new Rotation(mc.player.getYRot(), 90.0F);
+         rotationManager.method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 8, this);
       }
    }
 
    @EventTarget
-   public void method511(HandleInputEvent var1) {
+   public void method511(HandleInputEvent event) {
       if (!this.method512()) {
          this.intValue2 = 0;
       } else {
          this.intValue++;
          if (this.intValue >= 20) {
-            List<Integer> var2 = this.method513();
-            if (var2.isEmpty()) {
+            List<Integer> integers = this.method513();
+            if (integers.isEmpty()) {
                this.intValue2 = 0;
             } else {
-               Rotation var3 = rotationManager.getCurrentRotation();
-               Rotation var4 = rotationManager.getRotation2();
-               if (var3 != null && !(var3.getFloatValue2() < 89.0F) && var4 != null && !(var4.getFloatValue2() < 89.0F)) {
+               Rotation currentRotation = rotationManager.getCurrentRotation();
+               Rotation rotation2 = rotationManager.getRotation2();
+               if (currentRotation != null && !(currentRotation.getFloatValue2() < 89.0F) && rotation2 != null && !(rotation2.getFloatValue2() < 89.0F)) {
                   if (this.intValue2++ >= 1) {
-                     int var5 = mc.player.getInventory().getSelectedSlot();
-                     boolean var6 = false;
+                     int selectedSlot = mc.player.getInventory().getSelectedSlot();
+                     boolean flag = false;
 
-                     for (int var8 : var2) {
-                        if (PotionUtils.method2323(mc.player.getInventory().getItem(var8))) {
-                           if (var8 < 9) {
-                              PotionUtils.method2329(var8);
+                     for (int slot : integers) {
+                        if (PotionUtils.method2323(mc.player.getInventory().getItem(slot))) {
+                           if (slot < 9) {
+                              PotionUtils.method2329(slot);
                               UseItemUtils.useItem(InteractionHand.MAIN_HAND);
                            } else {
-                              PotionUtils.method2329(var5);
-                              PotionUtils.method2328(var8, var5);
+                              PotionUtils.method2329(selectedSlot);
+                              PotionUtils.method2328(slot, selectedSlot);
                               UseItemUtils.useItem(InteractionHand.MAIN_HAND);
-                              PotionUtils.method2328(var8, var5);
+                              PotionUtils.method2328(slot, selectedSlot);
                            }
 
-                           var6 = true;
+                           flag = true;
                         }
                      }
 
-                     PotionUtils.method2329(var5);
+                     PotionUtils.method2329(selectedSlot);
                      this.intValue2 = 0;
-                     if (var6) {
+                     if (flag) {
                         this.intValue = 0;
                      }
                   }
@@ -122,25 +122,25 @@ public final class AutoPotionModule extends Module {
    }
 
    private List<Integer> method513() {
-      ArrayList<Integer> var1 = new ArrayList<>();
-      this.method514(var1, this.entry, MobEffects.STRENGTH);
-      this.method514(var1, this.entry2, MobEffects.SPEED);
-      this.method514(var1, this.entry3, MobEffects.FIRE_RESISTANCE);
+      ArrayList<Integer> integers = new ArrayList<>();
+      this.method514(integers, this.entry, MobEffects.STRENGTH);
+      this.method514(integers, this.entry2, MobEffects.SPEED);
+      this.method514(integers, this.entry3, MobEffects.FIRE_RESISTANCE);
       if (this.entry4.isEnabled() && mc.player.getHealth() + mc.player.getAbsorptionAmount() <= this.healHealth.getValue3()) {
-         int var2 = PotionUtils.method2325(var0 -> PotionUtils.method2323(var0) && PotionUtils.method2322(var0, MobEffects.INSTANT_HEALTH));
-         if (var2 != -1 && !var1.contains(var2)) {
-            var1.add(var2);
+         int n = PotionUtils.method2325(useItem -> PotionUtils.method2323(useItem) && PotionUtils.method2322(useItem, MobEffects.INSTANT_HEALTH));
+         if (n != -1 && !integers.contains(n)) {
+            integers.add(n);
          }
       }
 
-      return var1;
+      return integers;
    }
 
-   private void method514(List<Integer> var1, MultiSelectSetting.Entry var2, Holder<MobEffect> var3) {
-      if (var2.isEnabled() && !mc.player.hasEffect(var3)) {
-         int var4 = PotionUtils.method2325(var1x -> PotionUtils.method2323(var1x) && PotionUtils.method2322(var1x, var3));
-         if (var4 != -1 && !var1.contains(var4)) {
-            var1.add(var4);
+   private void method514(List<Integer> integers, MultiSelectSetting.Entry entry, Holder<MobEffect> effect) {
+      if (entry.isEnabled() && !mc.player.hasEffect(effect)) {
+         int n = PotionUtils.method2325(var1x -> PotionUtils.method2323(var1x) && PotionUtils.method2322(var1x, effect));
+         if (n != -1 && !integers.contains(n)) {
+            integers.add(n);
          }
       }
    }

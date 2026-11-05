@@ -24,31 +24,31 @@ public final class WeatherPreviewUtil {
    }
 
    public static void method255(
-      MenuDrawContext var0, float var1, float var2, float var3, float var4, WeatherFlakeChannel var5, float var6, float var7, float var8, float var9
+      MenuDrawContext customDrawContext, float floatValue, float y, float width, float height, WeatherFlakeChannel weatherFlakeChannel, float f, float f2, float f3, float previewAlpha
    ) {
-      if (!(var9 <= 0.004F) && !(var3 <= 1.0F) && !(var4 <= 1.0F) && method256()) {
+      if (!(previewAlpha <= 0.004F) && !(width <= 1.0F) && !(height <= 1.0F) && method256()) {
          RoundedRectBatch.method2935();
-         var0.draw();
+         customDrawContext.draw();
 
          try {
             shaderProgram.method5517();
             shaderProgram.method5518("InSampler", 0);
-            shaderProgram.method5521("InSize", var3, var4);
-            shaderProgram.method5519("Opacity", var9);
-            float var10 = var3 / var4;
-            float var11 = (float)Math.tan(Math.toRadians(82.0) * 0.5);
+            shaderProgram.method5521("InSize", width, height);
+            shaderProgram.method5519("Opacity", previewAlpha);
+            float f4 = width / height;
+            float f5 = (float)Math.tan(Math.toRadians(82.0) * 0.5);
             WeatherUniforms.method799(
-               new WeatherPreviewUtil.Data(shaderProgram), var5, var6, var7, var8, 0.0, 0.0, 0.0, (float)Math.toRadians(12.0), (float) Math.PI, var11, var10
+               new WeatherPreviewUtil.Data(shaderProgram), weatherFlakeChannel, f, f2, f3, 0.0, 0.0, 0.0, (float)Math.toRadians(12.0), (float) Math.PI, f5, f4
             );
             RenderState.method1879();
             RenderState.method1882(false);
             RenderState.method1871();
             RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA, BlendFactor.ONE, BlendFactor.ONE_MINUS_SRC_ALPHA);
-            method257(var0, var1, var2, var3, var4);
-         } catch (Exception var15) {
+            method257(customDrawContext, floatValue, y, width, height);
+         } catch (Exception e) {
             if (!flag2) {
                System.err.println("Weather sky preview render failed");
-               var15.printStackTrace();
+               e.printStackTrace();
                flag2 = true;
             }
          } finally {
@@ -66,9 +66,9 @@ public final class WeatherPreviewUtil {
       } else {
          try {
             shaderProgram = ShaderProgram.method5512("/assets/gl/shaders/weather/weather_preview.vsh", "/assets/gl/shaders/weather/weather_sky.fsh");
-         } catch (Exception var1) {
+         } catch (Exception e) {
             System.err.println("Failed to initialize weather sky preview shader");
-            var1.printStackTrace();
+            e.printStackTrace();
             flag = true;
          }
 
@@ -76,19 +76,19 @@ public final class WeatherPreviewUtil {
       }
    }
 
-   private static void method257(MenuDrawContext var0, float var1, float var2, float var3, float var4) {
-      Minecraft var5 = Minecraft.getInstance();
-      float var6 = Math.max(1, var5.getWindow().getGuiScaledWidth());
-      float var7 = Math.max(1, var5.getWindow().getGuiScaledHeight());
-      Matrix4f var8 = MatrixUtils.method664(var0.pose());
-      Vector3f var9 = var8.transformPosition(new Vector3f(var1, var2, 0.0F));
-      Vector3f var10 = var8.transformPosition(new Vector3f(var1 + var3, var2 + var4, 0.0F));
-      float var11 = var9.x / var6 * 2.0F - 1.0F;
-      float var12 = var10.x / var6 * 2.0F - 1.0F;
-      float var13 = 1.0F - var9.y / var7 * 2.0F;
-      float var14 = 1.0F - var10.y / var7 * 2.0F;
-      shaderProgram.method5523("QuadRect", var11, var14, var12 - var11, var13 - var14);
-      FramebufferUtils.method5655(ShaderProgram.getCurrent(), ImmediateRenderer.method8014(), var11, var14, var12, var13);
+   private static void method257(MenuDrawContext customDrawContext, float floatValue, float y, float width, float height) {
+      Minecraft minecraft = Minecraft.getInstance();
+      float f = Math.max(1, minecraft.getWindow().getGuiScaledWidth());
+      float f2 = Math.max(1, minecraft.getWindow().getGuiScaledHeight());
+      Matrix4f matrix = MatrixUtils.method664(customDrawContext.pose());
+      Vector3f transformPosition = matrix.transformPosition(new Vector3f(floatValue, y, 0.0F));
+      Vector3f vec = matrix.transformPosition(new Vector3f(floatValue + width, y + height, 0.0F));
+      float f3 = transformPosition.x / f * 2.0F - 1.0F;
+      float f4 = vec.x / f * 2.0F - 1.0F;
+      float f5 = 1.0F - transformPosition.y / f2 * 2.0F;
+      float f6 = 1.0F - vec.y / f2 * 2.0F;
+      shaderProgram.method5523("QuadRect", f3, f6, f4 - f3, f5 - f6);
+      FramebufferUtils.method5655(ShaderProgram.getCurrent(), ImmediateRenderer.method8014(), f3, f6, f4, f5);
    }
 
    private static void method258() {
@@ -124,18 +124,18 @@ public final class WeatherPreviewUtil {
          return "Data[" + "shaderProgram=" + this.shaderProgram + "]";
       }
 
-      private Data(ShaderProgram var1) {
-         this.shaderProgram = var1;
+      private Data(ShaderProgram shaderProgram) {
+         this.shaderProgram = shaderProgram;
       }
 
       @Override
-      public void method259(String var1, float var2) {
-         this.shaderProgram.method5519(var1, var2);
+      public void method259(String key, float previewAlpha) {
+         this.shaderProgram.method5519(key, previewAlpha);
       }
 
       @Override
-      public void method260(String var1, float var2, float var3, float var4) {
-         this.shaderProgram.method5524(var1, var2, var3, var4);
+      public void method260(String key, float x, float y, float z) {
+         this.shaderProgram.method5524(key, x, y, z);
       }
 
       public ShaderProgram getShaderProgram() {

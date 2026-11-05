@@ -41,9 +41,9 @@ public abstract class MixinOptMapTextureManager implements Util30.Handler {
 
    @Nullable
    @Override
-   public MapAtlas.Data zenith$getAtlasSlot(int var1) {
+   public MapAtlas.Data zenith$getAtlasSlot(int n) {
       if (this.zenith$atlasPool != null && !this.zenith$atlasPool.isEmpty()) {
-         return this.maps.get(var1) instanceof Util30.Handler2 var3 ? var3.zenith$getAtlasSlot() : null;
+         return this.maps.get(n) instanceof Util30.Handler2 handler2 ? handler2.zenith$getAtlasSlot() : null;
       } else {
          return null;
       }
@@ -53,7 +53,7 @@ public abstract class MixinOptMapTextureManager implements Util30.Handler {
       method = {"resetData()V"},
       at = {@At("RETURN")}
    )
-   private void zenith$clearMapAtlas(CallbackInfo var1) {
+   private void zenith$clearMapAtlas(CallbackInfo callbackInfo) {
       if (this.zenith$atlasPool != null) {
          this.zenith$atlasPool.method6152(this.textureManager);
       }

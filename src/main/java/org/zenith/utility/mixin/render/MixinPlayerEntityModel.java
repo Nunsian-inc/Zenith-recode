@@ -19,22 +19,22 @@ public class MixinPlayerEntityModel {
       method = {"setupAnim(Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$characterSkin(AvatarRenderState var1, CallbackInfo var2) {
-      PlayerModel var3 = (PlayerModel)(Object)this;
-      boolean var4 = WardrobeRenderer.method6687(var3, var1);
-      if (var4) {
-         zenith$visible(var3, false);
+   private void zenith$characterSkin(AvatarRenderState state, CallbackInfo callbackInfo) {
+      PlayerModel playerModel = (PlayerModel)(Object)this;
+      boolean flag = WardrobeRenderer.method6687(playerModel, state);
+      if (flag) {
+         zenith$visible(playerModel, false);
          this.zenith$hidden = true;
       } else if (this.zenith$hidden) {
-         var3.head.visible = true;
+         playerModel.head.visible = true;
          this.zenith$hidden = false;
       }
    }
 
    @Unique
-   private static void zenith$visible(PlayerModel var0, boolean var1) {
-      for (ModelPart var5 : new ModelPart[]{var0.head, var0.body, var0.rightArm, var0.leftArm, var0.rightLeg, var0.leftLeg}) {
-         var5.visible = var1;
+   private static void zenith$visible(PlayerModel playerModel, boolean visible) {
+      for (ModelPart modelPart : new ModelPart[]{playerModel.head, playerModel.body, playerModel.rightArm, playerModel.leftArm, playerModel.rightLeg, playerModel.leftLeg}) {
+         modelPart.visible = visible;
       }
    }
 }

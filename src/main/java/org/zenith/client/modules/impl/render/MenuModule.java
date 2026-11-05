@@ -52,18 +52,18 @@ public final class MenuModule extends Module {
       } else {
          this.screen = mc.gui.screen();
          if (mc.gui.screen() != Zenith.getInstance().getNLMenuScreen()) {
-            NLMenuScreen var1 = Zenith.getInstance().getNLMenuScreen();
-            var1.initialize();
-            boolean var2 = this.screen instanceof BotControlScreen;
-            var1.getGuiModulePanel().setBotOnly(var2);
-            if (var2) {
-               var1.resetSearch();
-               var1.setType(NLMenuScreen.ElementsType.CATEGORY);
-               var1.getGuiModulePanel().setBotContext(((BotControlScreen)this.screen).getBotName());
-               var1.getGuiModulePanel().forceCategory(ModuleCategory.PLAYER);
+            NLMenuScreen nlMenuScreen = Zenith.getInstance().getNLMenuScreen();
+            nlMenuScreen.initialize();
+            boolean botOnly = this.screen instanceof BotControlScreen;
+            nlMenuScreen.getGuiModulePanel().setBotOnly(botOnly);
+            if (botOnly) {
+               nlMenuScreen.resetSearch();
+               nlMenuScreen.setType(NLMenuScreen.ElementsType.CATEGORY);
+               nlMenuScreen.getGuiModulePanel().setBotContext(((BotControlScreen)this.screen).getBotName());
+               nlMenuScreen.getGuiModulePanel().forceCategory(ModuleCategory.PLAYER);
             }
 
-            mc.gui.setScreen(var1);
+            mc.gui.setScreen(nlMenuScreen);
             Zenith.getInstance().getClientSounds().method1561(Zenith.getInstance().getClientSounds().soundEvent);
             super.onEnable();
          }
@@ -80,28 +80,28 @@ public final class MenuModule extends Module {
    }
 
    @Override
-   public void setKeyCode(int var1) {
-      if (var1 != -1) {
-         super.setKeyCode(var1);
+   public void setKeyCode(int keyCode) {
+      if (keyCode != -1) {
+         super.setKeyCode(keyCode);
       }
    }
 
    @EventTarget(3)
-   public void method5343(ScreenRenderEvent var1) {
-      MenuDrawContext var2 = var1.getMenuDrawContext();
+   public void method5343(ScreenRenderEvent event) {
+      MenuDrawContext menuDrawContext = event.getMenuDrawContext();
       if (this.screen != null) {
-         this.screen.extractRenderState(var2, 0, 0, mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+         this.screen.extractRenderState(menuDrawContext, 0, 0, mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
          ScissorFlusher.flush();
-         Zenith.getInstance().getKawaseBlur().method7349(var2);
+         Zenith.getInstance().getKawaseBlur().method7349(menuDrawContext);
       }
 
-      Zenith.getInstance().getNLMenuScreen().renderTop(var2, var2.getMouseX(), var2.getMouseY());
+      Zenith.getInstance().getNLMenuScreen().renderTop(menuDrawContext, menuDrawContext.getMouseX(), menuDrawContext.getMouseY());
       if (Zenith.getInstance().getNLMenuScreen().isFinish()) {
          if (this.screen instanceof BotControlScreen) {
-            Screen var3 = this.screen;
+            Screen screen = this.screen;
             this.screen = null;
             if (mc.gui.screen() == Zenith.getInstance().getNLMenuScreen() || mc.gui.screen() == null) {
-               mc.gui.setScreen(var3);
+               mc.gui.setScreen(screen);
             }
          }
 
@@ -137,46 +137,46 @@ public final class MenuModule extends Module {
       return List.of(this.animation, this.closeAnimationSpeed, this.elementSwitchSpeed);
    }
 
-   public float method5351(float var1) {
-      return this.flag ? this.floatValue : var1;
+   public float method5351(float f) {
+      return this.flag ? this.floatValue : f;
    }
 
-   public float method5352(float var1) {
-      return this.flag ? this.floatValue2 : var1;
+   public float method5352(float f) {
+      return this.flag ? this.floatValue2 : f;
    }
 
-   public void method5353(float var1, float var2) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
+   public void method5353(float floatValue, float rawY) {
+      this.floatValue = floatValue;
+      this.floatValue2 = rawY;
       this.flag = true;
    }
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("saved", this.flag);
-      var2.addProperty("x", this.floatValue);
-      var2.addProperty("y", this.floatValue2);
-      var1.add("GuiPosition", var2);
-      return var1;
+      JsonObject json = super.save();
+      JsonObject json2 = new JsonObject();
+      json2.addProperty("saved", this.flag);
+      json2.addProperty("x", this.floatValue);
+      json2.addProperty("y", this.floatValue2);
+      json.add("GuiPosition", json2);
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 != null && var1.has("GuiPosition") && var1.get("GuiPosition").isJsonObject()) {
-         JsonObject var2 = var1.getAsJsonObject("GuiPosition");
-         if (var2.has("saved")) {
-            this.flag = var2.get("saved").getAsBoolean();
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json != null && json.has("GuiPosition") && json.get("GuiPosition").isJsonObject()) {
+         JsonObject jsonObject = json.getAsJsonObject("GuiPosition");
+         if (jsonObject.has("saved")) {
+            this.flag = jsonObject.get("saved").getAsBoolean();
          }
 
-         if (var2.has("x")) {
-            this.floatValue = var2.get("x").getAsFloat();
+         if (jsonObject.has("x")) {
+            this.floatValue = jsonObject.get("x").getAsFloat();
          }
 
-         if (var2.has("y")) {
-            this.floatValue2 = var2.get("y").getAsFloat();
+         if (jsonObject.has("y")) {
+            this.floatValue2 = jsonObject.get("y").getAsFloat();
          }
       }
    }

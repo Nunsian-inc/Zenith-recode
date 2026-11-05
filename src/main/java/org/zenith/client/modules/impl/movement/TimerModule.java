@@ -58,13 +58,13 @@ public final class TimerModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (this.mode.isSelected(0)) {
             this.method132(this.speed.getValue3());
          } else if (this.mode.isSelected(1)) {
-            long var2 = System.currentTimeMillis() - this.longValue2;
-            if (!(this.energy <= 0.0F) && this.method135(this.boostKey.getKeyCode()) && var2 >= 2000L) {
+            long l = System.currentTimeMillis() - this.longValue2;
+            if (!(this.energy <= 0.0F) && this.method135(this.boostKey.getKeyCode()) && l >= 2000L) {
                this.energy = Mth.clamp(this.energy - (0.0025F * this.speed.getValue3() - 0.0025F), 0.0F, 1.0F);
                this.method132(Math.max(this.speed.getValue3(), 1.0F));
             } else {
@@ -77,10 +77,10 @@ public final class TimerModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (mc.player != null && mc.level != null && var1.method7100()) {
-         Packet var2 = var1.getPacket3();
-         if (this.mode.isSelected(1) && var2 instanceof ClientboundPingPacket && System.currentTimeMillis() - this.longValue2 > 2000L) {
+   public void onPacket(PacketEvent event) {
+      if (mc.player != null && mc.level != null && event.method7100()) {
+         Packet packet3 = event.getPacket3();
+         if (this.mode.isSelected(1) && packet3 instanceof ClientboundPingPacket && System.currentTimeMillis() - this.longValue2 > 2000L) {
             if (System.currentTimeMillis() - this.longValue > 25000L) {
                this.longValue = System.currentTimeMillis();
                this.energy = 0.0F;
@@ -91,10 +91,10 @@ public final class TimerModule extends Module {
                this.energy = Mth.clamp(this.energy + 0.005F, 0.0F, 1.0F);
             }
 
-            var1.cancel();
+            event.cancel();
          }
 
-         if (var2 instanceof ClientboundPlayerPositionPacket) {
+         if (packet3 instanceof ClientboundPlayerPositionPacket) {
             this.longValue2 = System.currentTimeMillis();
             if (this.onFlag.isSelected(0)) {
                this.method132(1.0F);
@@ -109,7 +109,7 @@ public final class TimerModule extends Module {
             }
          }
 
-         if (var2 instanceof ClientboundSetEntityMotionPacket var3 && this.mode.isSelected(1) && var3.id() == mc.player.getId()) {
+         if (packet3 instanceof ClientboundSetEntityMotionPacket setEntityMotionPacket && this.mode.isSelected(1) && setEntityMotionPacket.id() == mc.player.getId()) {
             this.method132(1.0F);
             this.energy = 0.0F;
          }
@@ -128,13 +128,13 @@ public final class TimerModule extends Module {
       }
    }
 
-   private void method132(float var1) {
-      this.floatValue = var1;
-      Util13.method2404(var1);
+   private void method132(float floatValue) {
+      this.floatValue = floatValue;
+      Util13.method2404(floatValue);
    }
 
-   private void method133(String var1) {
-      Zenith.getInstance().getHudHolder().method6972(this.getCategory().getIcon(), Component.nullToEmpty(var1));
+   private void method133(String text) {
+      Zenith.getInstance().getHudHolder().method6972(this.getCategory().getIcon(), Component.nullToEmpty(text));
       this.setToggled(false);
    }
 
@@ -142,7 +142,7 @@ public final class TimerModule extends Module {
       return ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F;
    }
 
-   private boolean method135(int var1) {
-      return var1 != -1 && org.zenith.utility.misc.KeyCompat.isKeyDown(var1);
+   private boolean method135(int keyCode) {
+      return keyCode != -1 && org.zenith.utility.misc.KeyCompat.isKeyDown(keyCode);
    }
 }

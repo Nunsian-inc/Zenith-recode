@@ -37,220 +37,220 @@ public final class ScoreboardParser {
 
    private static void method7067() {
       if (!flag) {
-         Random var0 = new Random();
-         longValue = method7068(var0);
-         longValue2 = method7068(var0);
+         Random random = new Random();
+         longValue = method7068(random);
+         longValue2 = method7068(random);
          flag = true;
       }
    }
 
-   private static long method7068(Random var0) {
-      long var1 = (50000L + var0.nextInt(850000)) / 512L * 512L;
-      return var0.nextBoolean() ? var1 : -var1;
+   private static long method7068(Random random) {
+      long l = (50000L + random.nextInt(850000)) / 512L * 512L;
+      return random.nextBoolean() ? l : -l;
    }
 
-   public static int method7069(int var0) {
+   public static int method7069(int x) {
       method7067();
-      return (int)(var0 + longValue);
+      return (int)(x + longValue);
    }
 
-   public static int method7070(int var0) {
+   public static int method7070(int z) {
       method7067();
-      return (int)(var0 + longValue2);
+      return (int)(z + longValue2);
    }
 
-   public static List<String> method7071(List<String> var0) {
-      if (isActive() && var0 != null) {
-         List<String> var1 = new ArrayList<>(var0.size());
+   public static List<String> method7071(List<String> strings) {
+      if (isActive() && strings != null) {
+         List<String> strings2 = new ArrayList<>(strings.size());
 
-         for (String var3 : var0) {
-            var1.add(method7072(var3));
+         for (String input : strings) {
+            strings2.add(method7072(input));
          }
 
-         return var1;
+         return strings2;
       } else {
-         return var0;
+         return strings;
       }
    }
 
-   private static String method7072(String var0) {
-      if (var0 == null) {
+   private static String method7072(String input) {
+      if (input == null) {
          return null;
       } else {
-         Matcher var1 = pattern2.matcher(var0);
-         if (!var1.find()) {
-            return var0;
+         Matcher matcher = pattern2.matcher(input);
+         if (!matcher.find()) {
+            return input;
          } else {
             method7067();
-            boolean var2 = var1.group(1).equalsIgnoreCase("Chunk");
-            long var3 = var2 ? longValue >> 4 : longValue;
-            long var5 = var2 ? longValue2 >> 4 : longValue2;
-            Matcher var7 = pattern3.matcher(var0);
-            StringBuilder var8 = new StringBuilder(var0.length());
+            boolean equalsIgnoreCase = matcher.group(1).equalsIgnoreCase("Chunk");
+            long l = equalsIgnoreCase ? longValue >> 4 : longValue;
+            long l2 = equalsIgnoreCase ? longValue2 >> 4 : longValue2;
+            Matcher matcher2 = pattern3.matcher(input);
+            StringBuilder sb = new StringBuilder(input.length());
 
-            for (int var9 = 0; var7.find(); var9++) {
-               String var10 = var7.group();
+            for (int i = 0; matcher2.find(); i++) {
+               String group = matcher2.group();
 
-               long var11 = switch (var9) {
-                  case 0 -> var3;
+               long l3 = switch (i) {
+                  case 0 -> l;
                   default -> 0L;
-                  case 2 -> var5;
-                  case 5 -> var2 ? longValue >> 9 : 0L;
-                  case 6 -> var2 ? longValue2 >> 9 : 0L;
+                  case 2 -> l2;
+                  case 5 -> equalsIgnoreCase ? longValue >> 9 : 0L;
+                  case 6 -> equalsIgnoreCase ? longValue2 >> 9 : 0L;
                };
-               String var13 = var10;
-               if (var11 != 0L) {
+               String str = group;
+               if (l3 != 0L) {
                   try {
-                     var13 = var10.contains(".")
-                        ? String.format(Locale.US, "%." + method7073(var10) + "f", Double.parseDouble(var10) + var11)
-                        : String.valueOf(Long.parseLong(var10) + var11);
-                  } catch (NumberFormatException var15) {
+                     str = group.contains(".")
+                        ? String.format(Locale.US, "%." + method7073(group) + "f", Double.parseDouble(group) + l3)
+                        : String.valueOf(Long.parseLong(group) + l3);
+                  } catch (NumberFormatException e) {
                   }
                }
 
-               var7.appendReplacement(var8, Matcher.quoteReplacement(var13));
+               matcher2.appendReplacement(sb, Matcher.quoteReplacement(str));
             }
 
-            var7.appendTail(var8);
-            return var8.toString();
+            matcher2.appendTail(sb);
+            return sb.toString();
          }
       }
    }
 
-   private static int method7073(String var0) {
-      return var0.length() - var0.indexOf(46) - 1;
+   private static int method7073(String group) {
+      return group.length() - group.indexOf(46) - 1;
    }
 
    @Nullable
-   public static Component method7074(@Nullable Component var0) {
-      if (var0 != null && isActive()) {
-         Language var1 = Language.getInstance();
-         boolean var2 = method7066();
-         Component var3 = StreamerModeModule.INSTANCE.getText4();
-         int var4 = StreamerModeModule.INSTANCE.getIntValue32();
-         Component var5 = StreamerModeModule.INSTANCE.getText32();
-         String var6 = method7087();
+   public static Component method7074(@Nullable Component text) {
+      if (text != null && isActive()) {
+         Language language = Language.getInstance();
+         boolean flag = method7066();
+         Component component = StreamerModeModule.INSTANCE.getText4();
+         int n = StreamerModeModule.INSTANCE.getIntValue32();
+         Component component2 = StreamerModeModule.INSTANCE.getText32();
+         String str = method7087();
 
-         for (ScoreboardParser.Entry var10 : entrys) {
-            if (var10.text == var0
-               && var10.language == var1
-               && var10.flag == var2
-               && var10.text2 == var3
-               && var10.intValue == var4
-               && var10.text3 == var5
-               && var6.equals(var10.text4)) {
-               return var10.text5;
+         for (ScoreboardParser.Entry entry : entrys) {
+            if (entry.text == text
+               && entry.language == language
+               && entry.flag == flag
+               && entry.text2 == component
+               && entry.intValue == n
+               && entry.text3 == component2
+               && str.equals(entry.text4)) {
+               return entry.text5;
             }
          }
 
-         Component var11 = method7075(var0);
-         ScoreboardParser.Entry var12 = entrys[intValue];
+         Component component3 = method7075(text);
+         ScoreboardParser.Entry entry = entrys[intValue];
          intValue = (intValue + 1) % entrys.length;
-         var12.text = var0;
-         var12.language = var1;
-         var12.flag = var2;
-         var12.text2 = var3;
-         var12.intValue = var4;
-         var12.text3 = var5;
-         var12.text4 = var6;
-         var12.text5 = var11;
-         return var11;
+         entry.text = text;
+         entry.language = language;
+         entry.flag = flag;
+         entry.text2 = component;
+         entry.intValue = n;
+         entry.text3 = component2;
+         entry.text4 = str;
+         entry.text5 = component3;
+         return component3;
       } else {
-         return var0;
+         return text;
       }
    }
 
-   private static Component method7075(Component var0) {
-      var var1 = method7093(var0);
-      List<List<ScoreboardParser.Data>> var2 = method7094(var1);
-      List<List<Data>> var3 = new ArrayList<>(var2.size());
-      boolean var4 = false;
+   private static Component method7075(Component text) {
+      var datas = method7093(text);
+      List<List<ScoreboardParser.Data>> datases = method7094(datas);
+      List<List<Data>> datases2 = new ArrayList<>(datases.size());
+      boolean flag = false;
 
-      for (List var6 : var2) {
-         String var7 = method7098(var6);
-         String var8 = var7.trim();
-         if (method7090(var8)) {
+      for (List list : datases) {
+         String input = method7098(list);
+         String str = input.trim();
+         if (method7090(str)) {
             if (method7066()) {
-               Component var9 = method7088(var6, var8);
-               if (var9 != null) {
-                  var3.add(method7093(var9));
-                  var4 = true;
+               Component header = method7088(list, str);
+               if (header != null) {
+                  datases2.add(method7093(header));
+                  flag = true;
                   continue;
                }
             }
 
-            var4 = true;
+            flag = true;
          } else {
-            var var10 = method7092(var6, var7, method7087());
-            if (!var10.equals(var6)) {
-               var4 = true;
+            var list2 = method7092(list, input, method7087());
+            if (!list2.equals(list)) {
+               flag = true;
             }
 
-            var3.add(var10);
+            datases2.add(list2);
          }
       }
 
-      return var4 ? method7095(var3) : var0;
+      return flag ? method7095(datases2) : text;
    }
 
    @Nullable
-   public static Component method7076(@Nullable Component var0) {
-      if (isActive() && var0 != null) {
-         String var1 = var0.getString();
-         if (method7080(var1)) {
+   public static Component method7076(@Nullable Component header) {
+      if (isActive() && header != null) {
+         String string = header.getString();
+         if (method7080(string)) {
             if (method7066()) {
-               Component var4 = StreamerModeModule.INSTANCE.getText3();
-               if (var4 != null) {
-                  return var4.copy();
+               Component component = StreamerModeModule.INSTANCE.getText3();
+               if (component != null) {
+                  return component.copy();
                } else {
-                  var var3 = method7093(var0);
-                  return method7095(List.of(method7092(var3, method7098(var3), method7087())));
+                  var datas = method7093(header);
+                  return method7095(List.of(method7092(datas, method7098(datas), method7087())));
                }
             } else {
                return null;
             }
-         } else if (!method7081(var1)) {
-            return var0;
+         } else if (!method7081(string)) {
+            return header;
          } else if (method7066()) {
-            Component var2 = StreamerModeModule.INSTANCE.getText22();
-            return (Component)(var2 != null ? var2.copy() : method7089(var0, StreamerModeModule.INSTANCE.getIntValue32()));
+            Component component = StreamerModeModule.INSTANCE.getText22();
+            return (Component)(component != null ? component.copy() : method7089(header, StreamerModeModule.INSTANCE.getIntValue32()));
          } else {
             return null;
          }
       } else {
-         return var0;
+         return header;
       }
    }
 
-   public static boolean method7077(@Nullable Component var0) {
-      return var0 == null ? false : method7076(var0) == null;
+   public static boolean method7077(@Nullable Component header) {
+      return header == null ? false : method7076(header) == null;
    }
 
-   public static boolean method7078(@Nullable Component var0) {
-      return var0 == null ? false : method7080(var0.getString());
+   public static boolean method7078(@Nullable Component formatNameForTeam) {
+      return formatNameForTeam == null ? false : method7080(formatNameForTeam.getString());
    }
 
-   public static boolean method7079(@Nullable Component var0) {
-      return var0 == null ? false : method7081(var0.getString());
+   public static boolean method7079(@Nullable Component formatNameForTeam) {
+      return formatNameForTeam == null ? false : method7081(formatNameForTeam.getString());
    }
 
-   private static boolean method7080(String var0) {
-      return var0.contains("-◆-") && pattern.matcher(var0).find();
+   private static boolean method7080(String string) {
+      return string.contains("-◆-") && pattern.matcher(string).find();
    }
 
-   private static boolean method7081(String var0) {
-      return var0.toLowerCase(Locale.ROOT).startsWith("онлайн:");
+   private static boolean method7081(String string) {
+      return string.toLowerCase(Locale.ROOT).startsWith("онлайн:");
    }
 
    @Nullable
-   public static Component method7082(@Nullable Component var0) {
-      if (var0 == null) {
+   public static Component method7082(@Nullable Component header) {
+      if (header == null) {
          return null;
       } else {
-         for (List var2 : method7094(method7093(var0))) {
-            String var3 = method7098(var2).trim();
-            if (method7091(var3)) {
-               return method7095(List.of(var2));
+         for (List list : method7094(method7093(header))) {
+            String input = method7098(list).trim();
+            if (method7091(input)) {
+               return method7095(List.of(list));
             }
          }
 
@@ -259,29 +259,29 @@ public final class ScoreboardParser {
    }
 
    @Nullable
-   public static String method7083(@Nullable Component var0) {
-      if (var0 == null) {
+   public static String method7083(@Nullable Component text) {
+      if (text == null) {
          return null;
       } else {
-         Matcher var1 = pattern.matcher(var0.getString());
-         if (!var1.find()) {
+         Matcher matcher = pattern.matcher(text.getString());
+         if (!matcher.find()) {
             return null;
          } else {
-            String var2 = var1.group().trim();
-            return var2.isEmpty() ? null : var2;
+            String str = matcher.group().trim();
+            return str.isEmpty() ? null : str;
          }
       }
    }
 
    @Nullable
-   public static Component method7084(@Nullable Component var0) {
-      if (var0 == null) {
+   public static Component method7084(@Nullable Component header) {
+      if (header == null) {
          return null;
       } else {
-         for (List var2 : method7094(method7093(var0))) {
-            String var3 = method7098(var2).trim();
-            if (var3.toLowerCase(Locale.ROOT).startsWith("онлайн:")) {
-               return method7095(List.of(var2));
+         for (List list : method7094(method7093(header))) {
+            String str = method7098(list).trim();
+            if (str.toLowerCase(Locale.ROOT).startsWith("онлайн:")) {
+               return method7095(List.of(list));
             }
          }
 
@@ -289,25 +289,25 @@ public final class ScoreboardParser {
       }
    }
 
-   public static int method7085(@Nullable Component var0) {
-      if (var0 == null) {
+   public static int method7085(@Nullable Component formatNameForTeam) {
+      if (formatNameForTeam == null) {
          return -1;
       } else {
-         Matcher var1 = pattern4.matcher(var0.getString());
-         return var1.find() ? Integer.parseInt(var1.group(1)) : -1;
+         Matcher matcher = pattern4.matcher(formatNameForTeam.getString());
+         return matcher.find() ? Integer.parseInt(matcher.group(1)) : -1;
       }
    }
 
-   public static Component method7086(Component var0) {
-      var var1 = method7093(var0);
-      return method7095(List.of(method7092(var1, method7098(var1), "лайт")));
+   public static Component method7086(Component header) {
+      var datas = method7093(header);
+      return method7095(List.of(method7092(datas, method7098(datas), "лайт")));
    }
 
    private static String method7087() {
       if (method7066()) {
-         String var0 = StreamerModeModule.INSTANCE.getText5();
-         if (var0 != null && !var0.isEmpty()) {
-            return var0;
+         String str = StreamerModeModule.INSTANCE.getText5();
+         if (str != null && !str.isEmpty()) {
+            return str;
          }
       }
 
@@ -315,180 +315,180 @@ public final class ScoreboardParser {
    }
 
    @Nullable
-   private static Component method7088(List<ScoreboardParser.Data> var0, String var1) {
-      String var2 = var1.toLowerCase(Locale.ROOT);
-      if (var2.equals("анархия")) {
-         return method7095(List.of(var0));
-      } else if (var2.startsWith("онлайн:")) {
-         Component var4 = StreamerModeModule.INSTANCE.getText4();
-         return (Component)(var4 != null ? var4.copy() : method7089(method7095(List.of(var0)), StreamerModeModule.INSTANCE.getIntValue32()));
-      } else if (method7091(var1)) {
-         Component var3 = StreamerModeModule.INSTANCE.getText32();
-         return (Component)(var3 != null ? var3.copy() : method7095(List.of(method7092(var0, method7098(var0), method7087()))));
+   private static Component method7088(List<ScoreboardParser.Data> datas, String input) {
+      String lowerCase = input.toLowerCase(Locale.ROOT);
+      if (lowerCase.equals("анархия")) {
+         return method7095(List.of(datas));
+      } else if (lowerCase.startsWith("онлайн:")) {
+         Component component = StreamerModeModule.INSTANCE.getText4();
+         return (Component)(component != null ? component.copy() : method7089(method7095(List.of(datas)), StreamerModeModule.INSTANCE.getIntValue32()));
+      } else if (method7091(input)) {
+         Component component = StreamerModeModule.INSTANCE.getText32();
+         return (Component)(component != null ? component.copy() : method7095(List.of(method7092(datas, method7098(datas), method7087()))));
       } else {
          return null;
       }
    }
 
-   private static Component method7089(Component var0, int var1) {
-      if (var1 <= 0) {
-         return var0.copy();
+   private static Component method7089(Component header, int n) {
+      if (n <= 0) {
+         return header.copy();
       } else {
-         String var2 = var0.getString();
-         Matcher var3 = pattern4.matcher(var2);
-         if (!var3.find()) {
-            return var0.copy();
+         String string = header.getString();
+         Matcher matcher = pattern4.matcher(string);
+         if (!matcher.find()) {
+            return header.copy();
          } else {
-            var var4 = method7093(var0);
-            int var5 = var3.start(1);
-            int var6 = var3.end(1);
-            String var7 = String.valueOf(var1);
-            List<ScoreboardParser.Data> var8 = new ArrayList<>(var4.size() - (var6 - var5) + var7.length());
+            var datas = method7093(header);
+            int start = matcher.start(1);
+            int end = matcher.end(1);
+            String str = String.valueOf(n);
+            List<ScoreboardParser.Data> datas2 = new ArrayList<>(datas.size() - (end - start) + str.length());
 
-            for (int var9 = 0; var9 < var5 && var9 < var4.size(); var9++) {
-               var8.add((ScoreboardParser.Data)var4.get(var9));
+            for (int i = 0; i < start && i < datas.size(); i++) {
+               datas2.add((ScoreboardParser.Data)datas.get(i));
             }
 
-            Style var11 = var5 < var4.size() ? ((ScoreboardParser.Data)var4.get(var5)).style() : Style.EMPTY;
+            Style style = start < datas.size() ? ((ScoreboardParser.Data)datas.get(start)).style() : Style.EMPTY;
 
-            for (int var10 = 0; var10 < var7.length(); var10++) {
-               var8.add(new ScoreboardParser.Data(var7.charAt(var10), var11));
+            for (int i = 0; i < str.length(); i++) {
+               datas2.add(new ScoreboardParser.Data(str.charAt(i), style));
             }
 
-            for (int var12 = var6; var12 < var4.size(); var12++) {
-               var8.add((ScoreboardParser.Data)var4.get(var12));
+            for (int i = end; i < datas.size(); i++) {
+               datas2.add((ScoreboardParser.Data)datas.get(i));
             }
 
-            return method7095(List.of(var8));
+            return method7095(List.of(datas2));
          }
       }
    }
 
-   private static boolean method7090(String var0) {
-      if (var0.isEmpty()) {
+   private static boolean method7090(String input) {
+      if (input.isEmpty()) {
          return false;
       } else {
-         String var1 = var0.toLowerCase(Locale.ROOT);
-         return var1.equals("анархия") || var1.startsWith("онлайн:") || method7091(var0);
+         String lowerCase = input.toLowerCase(Locale.ROOT);
+         return lowerCase.equals("анархия") || lowerCase.startsWith("онлайн:") || method7091(input);
       }
    }
 
-   private static boolean method7091(String var0) {
-      if (var0.isEmpty()) {
+   private static boolean method7091(String input) {
+      if (input.isEmpty()) {
          return false;
       } else {
-         String var1 = pattern5.matcher(var0).replaceAll("");
-         return pattern.matcher(var0).matches() || pattern.matcher(var1).matches();
+         String str = pattern5.matcher(input).replaceAll("");
+         return pattern.matcher(input).matches() || pattern.matcher(str).matches();
       }
    }
 
-   private static List<ScoreboardParser.Data> method7092(List<ScoreboardParser.Data> var0, String var1, String var2) {
-      Matcher var3 = pattern.matcher(var1);
-      if (!var3.find()) {
-         return var0;
+   private static List<ScoreboardParser.Data> method7092(List<ScoreboardParser.Data> datas, String input, String str) {
+      Matcher matcher = pattern.matcher(input);
+      if (!matcher.find()) {
+         return datas;
       } else {
-         List<Data> var4 = new ArrayList<>(var0.size());
-         var3.reset();
+         List<Data> datas2 = new ArrayList<>(datas.size());
+         matcher.reset();
 
-         int var5;
-         for (var5 = 0; var3.find(); var5 = var3.end()) {
-            var4.addAll(var0.subList(var5, var3.start()));
-            Style var6 = ((ScoreboardParser.Data)var0.get(var3.start())).style();
+         int end;
+         for (end = 0; matcher.find(); end = matcher.end()) {
+            datas2.addAll(datas.subList(end, matcher.start()));
+            Style style = ((ScoreboardParser.Data)datas.get(matcher.start())).style();
 
-            for (int var7 = 0; var7 < var2.length(); var7++) {
-               var4.add(new ScoreboardParser.Data(var2.charAt(var7), var6));
+            for (int i = 0; i < str.length(); i++) {
+               datas2.add(new ScoreboardParser.Data(str.charAt(i), style));
             }
          }
 
-         var4.addAll(var0.subList(var5, var0.size()));
-         return var4;
+         datas2.addAll(datas.subList(end, datas.size()));
+         return datas2;
       }
    }
 
-   private static List<ScoreboardParser.Data> method7093(Component var0) {
-      ArrayList<ScoreboardParser.Data> var1 = new ArrayList<>();
-      FormattedCharSequence var2 = var0.getVisualOrderText();
-      var2.accept((var1x, var2x, var3) -> {
-         String var4 = new String(Character.toChars(var3));
+   private static List<ScoreboardParser.Data> method7093(Component header) {
+      ArrayList<ScoreboardParser.Data> datas = new ArrayList<>();
+      FormattedCharSequence visualOrderText = header.getVisualOrderText();
+      visualOrderText.accept((var1x, var2x, codePoint) -> {
+         String str = new String(Character.toChars(codePoint));
 
-         for (int var5 = 0; var5 < var4.length(); var5++) {
-            var1.add(new ScoreboardParser.Data(var4.charAt(var5), var2x));
+         for (int i = 0; i < str.length(); i++) {
+            datas.add(new ScoreboardParser.Data(str.charAt(i), var2x));
          }
 
          return true;
       });
-      return var1;
+      return datas;
    }
 
-   private static List<List<ScoreboardParser.Data>> method7094(List<ScoreboardParser.Data> var0) {
-      ArrayList<List<ScoreboardParser.Data>> var1 = new ArrayList<>();
-      ArrayList var2 = new ArrayList();
+   private static List<List<ScoreboardParser.Data>> method7094(List<ScoreboardParser.Data> datas) {
+      ArrayList<List<ScoreboardParser.Data>> datases = new ArrayList<>();
+      ArrayList arrayList = new ArrayList();
 
-      for (ScoreboardParser.Data var4 : var0) {
-         if (var4.getCharValue() == '\n') {
-            var1.add(var2);
-            var2 = new ArrayList();
+      for (ScoreboardParser.Data data : datas) {
+         if (data.getCharValue() == '\n') {
+            datases.add(arrayList);
+            arrayList = new ArrayList();
          } else {
-            var2.add(var4);
+            arrayList.add(data);
          }
       }
 
-      var1.add(var2);
-      return var1;
+      datases.add(arrayList);
+      return datases;
    }
 
-   private static Component method7095(List<List<ScoreboardParser.Data>> var0) {
-      MutableComponent var1 = Component.empty();
-      Style var2 = Style.EMPTY;
+   private static Component method7095(List<List<ScoreboardParser.Data>> datases) {
+      MutableComponent empty = Component.empty();
+      Style style = Style.EMPTY;
 
-      for (int var3 = 0; var3 < var0.size(); var3++) {
-         if (var3 > 0) {
-            var1.append(Component.literal("\n").setStyle(var2));
+      for (int i = 0; i < datases.size(); i++) {
+         if (i > 0) {
+            empty.append(Component.literal("\n").setStyle(style));
          }
 
-         List var4 = (List)var0.get(var3);
-         if (!var4.isEmpty()) {
-            var1.append(method7096(var4));
-            var2 = ((ScoreboardParser.Data)var4.getLast()).style();
+         List list = (List)datases.get(i);
+         if (!list.isEmpty()) {
+            empty.append(method7096(list));
+            style = ((ScoreboardParser.Data)list.getLast()).style();
          }
       }
 
-      return var1;
+      return empty;
    }
 
-   private static MutableComponent method7096(List<ScoreboardParser.Data> var0) {
-      MutableComponent var1 = Component.empty();
-      Style var2 = null;
-      StringBuilder var3 = new StringBuilder();
+   private static MutableComponent method7096(List<ScoreboardParser.Data> datas) {
+      MutableComponent empty = Component.empty();
+      Style style = null;
+      StringBuilder builder = new StringBuilder();
 
-      for (ScoreboardParser.Data var5 : var0) {
-         if (var2 == null || !var5.style().equals(var2)) {
-            method7097(var1, var3, var2);
-            var2 = var5.style();
+      for (ScoreboardParser.Data data : datas) {
+         if (style == null || !data.style().equals(style)) {
+            method7097(empty, builder, style);
+            style = data.style();
          }
 
-         var3.append(var5.getCharValue());
+         builder.append(data.getCharValue());
       }
 
-      method7097(var1, var3, var2);
-      return var1;
+      method7097(empty, builder, style);
+      return empty;
    }
 
-   private static void method7097(MutableComponent var0, StringBuilder var1, Style var2) {
-      if (!var1.isEmpty()) {
-         var0.append(Component.literal(var1.toString()).setStyle(var2 == null ? Style.EMPTY : var2));
-         var1.setLength(0);
+   private static void method7097(MutableComponent empty, StringBuilder builder, Style style) {
+      if (!builder.isEmpty()) {
+         empty.append(Component.literal(builder.toString()).setStyle(style == null ? Style.EMPTY : style));
+         builder.setLength(0);
       }
    }
 
-   private static String method7098(List<ScoreboardParser.Data> var0) {
-      StringBuilder var1 = new StringBuilder(var0.size());
+   private static String method7098(List<ScoreboardParser.Data> datas) {
+      StringBuilder builder = new StringBuilder(datas.size());
 
-      for (ScoreboardParser.Data var3 : var0) {
-         var1.append(var3.getCharValue());
+      for (ScoreboardParser.Data data : datas) {
+         builder.append(data.getCharValue());
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
    @Generated
@@ -525,9 +525,9 @@ public final class ScoreboardParser {
          return "Data[" + "charValue=" + this.charValue + ", " + "style=" + this.style + "]";
       }
 
-      private Data(char var1, Style var2) {
-         this.charValue = var1;
-         this.style = var2;
+      private Data(char charValue, Style style) {
+         this.charValue = charValue;
+         this.style = style;
       }
 
       public char getCharValue() {

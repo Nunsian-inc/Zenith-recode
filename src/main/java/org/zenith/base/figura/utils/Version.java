@@ -41,7 +41,7 @@ public class Version implements Comparable<Version> {
             build = matcher.group("build");
             invalid = false;
          }
-      } catch (Exception var11) {
+      } catch (Exception e) {
       }
 
       this.src = version;
@@ -84,7 +84,7 @@ public class Version implements Comparable<Version> {
                   int i1 = Integer.parseInt(s1);
                   int i2 = Integer.parseInt(s2);
                   ret = i1 - i2;
-               } catch (Exception var101) {
+               } catch (Exception e) {
                   ret = s1.compareTo(s2);
                }
 

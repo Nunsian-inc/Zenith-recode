@@ -74,46 +74,46 @@ public final class Glowboost {
    private final Vector3f vector3f = new Vector3f();
    private final Vector3f vector3f2 = new Vector3f();
 
-   public void method3232(Camera var1, float var2) {
-      Vec3 var3 = var1.position();
-      this.doubleValue = var3.x;
-      this.doubleValue2 = var3.y;
-      this.doubleValue3 = var3.z;
-      this.method3234(var1.xRot(), var1.yRot());
-      this.floatValue = Math.max(0.0F, var2);
+   public void method3232(Camera camera, float f) {
+      Vec3 position = camera.position();
+      this.doubleValue = position.x;
+      this.doubleValue2 = position.y;
+      this.doubleValue3 = position.z;
+      this.method3234(camera.xRot(), camera.yRot());
+      this.floatValue = Math.max(0.0F, f);
       this.flag = false;
       this.reset();
    }
 
-   public void method3233(float var1, float var2, float var3) {
+   public void method3233(float xRot, float yRot, float f) {
       this.doubleValue = 0.0;
       this.doubleValue2 = 0.0;
       this.doubleValue3 = 0.0;
-      this.method3234(var1, var2);
-      this.floatValue = Math.max(0.0F, var3);
+      this.method3234(xRot, yRot);
+      this.floatValue = Math.max(0.0F, f);
       this.flag = false;
       this.reset();
    }
 
-   private void method3234(float var1, float var2) {
-      float var3 = var1 * (float) (Math.PI / 180.0);
-      float var4 = -var2 * (float) (Math.PI / 180.0);
-      float var5 = Mth.cos(var3);
-      this.doubleValue10 = Mth.sin(var4) * var5;
-      this.doubleValue11 = -Mth.sin(var3);
-      this.doubleValue12 = Mth.cos(var4) * var5;
-      double var6 = -this.doubleValue12;
-      double var8 = this.doubleValue10;
-      double var10 = Math.sqrt(var6 * var6 + var8 * var8);
-      if (var10 < 1.0E-6) {
-         var6 = 1.0;
-         var8 = 0.0;
-         var10 = 1.0;
+   private void method3234(float xRot, float yRot) {
+      float f = xRot * (float) (Math.PI / 180.0);
+      float f2 = -yRot * (float) (Math.PI / 180.0);
+      float f3 = Mth.cos(f);
+      this.doubleValue10 = Mth.sin(f2) * f3;
+      this.doubleValue11 = -Mth.sin(f);
+      this.doubleValue12 = Mth.cos(f2) * f3;
+      double d = -this.doubleValue12;
+      double d2 = this.doubleValue10;
+      double d3 = Math.sqrt(d * d + d2 * d2);
+      if (d3 < 1.0E-6) {
+         d = 1.0;
+         d2 = 0.0;
+         d3 = 1.0;
       }
 
-      this.doubleValue4 = var6 / var10;
+      this.doubleValue4 = d / d3;
       this.doubleValue5 = 0.0;
-      this.doubleValue6 = var8 / var10;
+      this.doubleValue6 = d2 / d3;
       this.doubleValue7 = this.doubleValue5 * this.doubleValue12 - this.doubleValue6 * this.doubleValue11;
       this.doubleValue8 = this.doubleValue6 * this.doubleValue10 - this.doubleValue4 * this.doubleValue12;
       this.doubleValue9 = this.doubleValue4 * this.doubleValue11 - this.doubleValue5 * this.doubleValue10;
@@ -186,12 +186,12 @@ public final class Glowboost {
       return this.floatValue;
    }
 
-   public void method3235(float var1) {
-      this.floatValue = Math.max(0.0F, var1);
+   public void method3235(float f) {
+      this.floatValue = Math.max(0.0F, f);
    }
 
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
    public boolean isEmpty() {
@@ -205,14 +205,14 @@ public final class Glowboost {
          && this.intValue9 == 0;
    }
 
-   public void method3236(double var1, double var3, double var5, double var7, double var9, double var11, int var13) {
-      if (var13 >>> 24 != 0) {
-         float var14 = (float)(var1 - this.doubleValue);
-         float var15 = (float)(var3 - this.doubleValue2);
-         float var16 = (float)(var5 - this.doubleValue3);
-         float var17 = (float)(var7 - this.doubleValue);
-         float var18 = (float)(var9 - this.doubleValue2);
-         float var19 = (float)(var11 - this.doubleValue3);
+   public void method3236(double doubleValue, double d, double d2, double doubleValue2, double d3, double d4, int color) {
+      if (color >>> 24 != 0) {
+         float f = (float)(doubleValue - this.doubleValue);
+         float f2 = (float)(d - this.doubleValue2);
+         float f3 = (float)(d2 - this.doubleValue3);
+         float f4 = (float)(doubleValue2 - this.doubleValue);
+         float f5 = (float)(d3 - this.doubleValue2);
+         float f6 = (float)(d4 - this.doubleValue3);
          if (this.floatValue > 0.05F) {
             if ((this.intValue2 + 1) * 6 > this.floatValues2.length) {
                this.floatValues2 = Arrays.copyOf(this.floatValues2, this.floatValues2.length * 2);
@@ -222,14 +222,14 @@ public final class Glowboost {
                this.intValues2 = Arrays.copyOf(this.intValues2, this.intValues2.length * 2);
             }
 
-            int var20 = this.intValue2 * 6;
-            this.floatValues2[var20] = var14;
-            this.floatValues2[var20 + 1] = var15;
-            this.floatValues2[var20 + 2] = var16;
-            this.floatValues2[var20 + 3] = var17;
-            this.floatValues2[var20 + 4] = var18;
-            this.floatValues2[var20 + 5] = var19;
-            this.intValues2[this.intValue2++] = ColorUtils.method6439(var13, 0.2F + 0.1F * this.floatValue);
+            int n = this.intValue2 * 6;
+            this.floatValues2[n] = f;
+            this.floatValues2[n + 1] = f2;
+            this.floatValues2[n + 2] = f3;
+            this.floatValues2[n + 3] = f4;
+            this.floatValues2[n + 4] = f5;
+            this.floatValues2[n + 5] = f6;
+            this.intValues2[this.intValue2++] = ColorUtils.method6439(color, 0.2F + 0.1F * this.floatValue);
          }
 
          if ((this.intValue + 1) * 6 > this.floatValues.length) {
@@ -240,33 +240,33 @@ public final class Glowboost {
             this.intValues = Arrays.copyOf(this.intValues, this.intValues.length * 2);
          }
 
-         int var21 = this.intValue * 6;
-         this.floatValues[var21] = var14;
-         this.floatValues[var21 + 1] = var15;
-         this.floatValues[var21 + 2] = var16;
-         this.floatValues[var21 + 3] = var17;
-         this.floatValues[var21 + 4] = var18;
-         this.floatValues[var21 + 5] = var19;
-         this.intValues[this.intValue++] = var13;
+         int n = this.intValue * 6;
+         this.floatValues[n] = f;
+         this.floatValues[n + 1] = f2;
+         this.floatValues[n + 2] = f3;
+         this.floatValues[n + 3] = f4;
+         this.floatValues[n + 4] = f5;
+         this.floatValues[n + 5] = f6;
+         this.intValues[this.intValue++] = color;
       }
    }
 
    public void method3237(
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      double var15,
-      double var17,
-      double var19,
-      double var21,
-      double var23,
-      int var25
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      double d11,
+      double d12,
+      int n
    ) {
-      if (var25 >>> 24 != 0) {
+      if (n >>> 24 != 0) {
          if ((this.intValue5 + 1) * 12 > this.floatValues5.length) {
             this.floatValues5 = Arrays.copyOf(this.floatValues5, this.floatValues5.length * 2);
          }
@@ -276,27 +276,27 @@ public final class Glowboost {
          }
 
          this.intValue5 = this.method3240(
-            this.floatValues5, this.intValues5, this.intValue5, var1, var3, var5, var7, var9, var11, var13, var15, var17, var19, var21, var23, var25
+            this.floatValues5, this.intValues5, this.intValue5, d, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, n
          );
       }
    }
 
    public void method3238(
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      double var15,
-      double var17,
-      double var19,
-      double var21,
-      double var23,
-      int var25
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      double d11,
+      double d12,
+      int n
    ) {
-      if (var25 >>> 24 != 0) {
+      if (n >>> 24 != 0) {
          if ((this.intValue7 + 1) * 12 > this.floatValues7.length) {
             this.floatValues7 = Arrays.copyOf(this.floatValues7, this.floatValues7.length * 2);
          }
@@ -306,30 +306,30 @@ public final class Glowboost {
          }
 
          this.intValue7 = this.method3240(
-            this.floatValues7, this.intValues7, this.intValue7, var1, var3, var5, var7, var9, var11, var13, var15, var17, var19, var21, var23, var25
+            this.floatValues7, this.intValues7, this.intValue7, d, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, n
          );
       }
    }
 
    public void method3239(
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      double var15,
-      double var17,
-      double var19,
-      double var21,
-      double var23,
-      int var25,
-      int var26,
-      int var27,
-      int var28
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      double d11,
+      double d12,
+      int n,
+      int n2,
+      int n3,
+      int n4
    ) {
-      if ((var25 | var26 | var27 | var28) >>> 24 != 0) {
+      if ((n | n2 | n3 | n4) >>> 24 != 0) {
          if ((this.intValue6 + 1) * 12 > this.floatValues6.length) {
             this.floatValues6 = Arrays.copyOf(this.floatValues6, this.floatValues6.length * 2);
          }
@@ -338,143 +338,143 @@ public final class Glowboost {
             this.intValues6 = Arrays.copyOf(this.intValues6, this.intValues6.length * 2);
          }
 
-         int var29 = this.intValue6 * 12;
-         this.floatValues6[var29] = (float)(var1 - this.doubleValue);
-         this.floatValues6[var29 + 1] = (float)(var3 - this.doubleValue2);
-         this.floatValues6[var29 + 2] = (float)(var5 - this.doubleValue3);
-         this.floatValues6[var29 + 3] = (float)(var7 - this.doubleValue);
-         this.floatValues6[var29 + 4] = (float)(var9 - this.doubleValue2);
-         this.floatValues6[var29 + 5] = (float)(var11 - this.doubleValue3);
-         this.floatValues6[var29 + 6] = (float)(var13 - this.doubleValue);
-         this.floatValues6[var29 + 7] = (float)(var15 - this.doubleValue2);
-         this.floatValues6[var29 + 8] = (float)(var17 - this.doubleValue3);
-         this.floatValues6[var29 + 9] = (float)(var19 - this.doubleValue);
-         this.floatValues6[var29 + 10] = (float)(var21 - this.doubleValue2);
-         this.floatValues6[var29 + 11] = (float)(var23 - this.doubleValue3);
-         int var30 = this.intValue6 * 4;
-         this.intValues6[var30] = var25;
-         this.intValues6[var30 + 1] = var26;
-         this.intValues6[var30 + 2] = var27;
-         this.intValues6[var30 + 3] = var28;
+         int n5 = this.intValue6 * 12;
+         this.floatValues6[n5] = (float)(d - this.doubleValue);
+         this.floatValues6[n5 + 1] = (float)(d2 - this.doubleValue2);
+         this.floatValues6[n5 + 2] = (float)(d3 - this.doubleValue3);
+         this.floatValues6[n5 + 3] = (float)(d4 - this.doubleValue);
+         this.floatValues6[n5 + 4] = (float)(d5 - this.doubleValue2);
+         this.floatValues6[n5 + 5] = (float)(d6 - this.doubleValue3);
+         this.floatValues6[n5 + 6] = (float)(d7 - this.doubleValue);
+         this.floatValues6[n5 + 7] = (float)(d8 - this.doubleValue2);
+         this.floatValues6[n5 + 8] = (float)(d9 - this.doubleValue3);
+         this.floatValues6[n5 + 9] = (float)(d10 - this.doubleValue);
+         this.floatValues6[n5 + 10] = (float)(d11 - this.doubleValue2);
+         this.floatValues6[n5 + 11] = (float)(d12 - this.doubleValue3);
+         int n6 = this.intValue6 * 4;
+         this.intValues6[n6] = n;
+         this.intValues6[n6 + 1] = n2;
+         this.intValues6[n6 + 2] = n3;
+         this.intValues6[n6 + 3] = n4;
          this.intValue6++;
       }
    }
 
    private int method3240(
-      float[] var1,
-      int[] var2,
-      int var3,
-      double var4,
-      double var6,
-      double var8,
-      double var10,
-      double var12,
-      double var14,
-      double var16,
-      double var18,
-      double var20,
-      double var22,
-      double var24,
-      double var26,
-      int var28
+      float[] floatValues5,
+      int[] intValues5,
+      int n,
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      double d11,
+      double d12,
+      int n2
    ) {
-      int var29 = var3 * 12;
-      var1[var29] = (float)(var4 - this.doubleValue);
-      var1[var29 + 1] = (float)(var6 - this.doubleValue2);
-      var1[var29 + 2] = (float)(var8 - this.doubleValue3);
-      var1[var29 + 3] = (float)(var10 - this.doubleValue);
-      var1[var29 + 4] = (float)(var12 - this.doubleValue2);
-      var1[var29 + 5] = (float)(var14 - this.doubleValue3);
-      var1[var29 + 6] = (float)(var16 - this.doubleValue);
-      var1[var29 + 7] = (float)(var18 - this.doubleValue2);
-      var1[var29 + 8] = (float)(var20 - this.doubleValue3);
-      var1[var29 + 9] = (float)(var22 - this.doubleValue);
-      var1[var29 + 10] = (float)(var24 - this.doubleValue2);
-      var1[var29 + 11] = (float)(var26 - this.doubleValue3);
-      var2[var3] = var28;
-      return var3 + 1;
+      int n3 = n * 12;
+      floatValues5[n3] = (float)(d - this.doubleValue);
+      floatValues5[n3 + 1] = (float)(d2 - this.doubleValue2);
+      floatValues5[n3 + 2] = (float)(d3 - this.doubleValue3);
+      floatValues5[n3 + 3] = (float)(d4 - this.doubleValue);
+      floatValues5[n3 + 4] = (float)(d5 - this.doubleValue2);
+      floatValues5[n3 + 5] = (float)(d6 - this.doubleValue3);
+      floatValues5[n3 + 6] = (float)(d7 - this.doubleValue);
+      floatValues5[n3 + 7] = (float)(d8 - this.doubleValue2);
+      floatValues5[n3 + 8] = (float)(d9 - this.doubleValue3);
+      floatValues5[n3 + 9] = (float)(d10 - this.doubleValue);
+      floatValues5[n3 + 10] = (float)(d11 - this.doubleValue2);
+      floatValues5[n3 + 11] = (float)(d12 - this.doubleValue3);
+      intValues5[n] = n2;
+      return n + 1;
    }
 
-   public void method3241(double var1, double var3, double var5, double var7, int var9, long var10, float var12, int var13, boolean var14) {
-      if (var13 >>> 24 != 0 && !(var7 <= 5.0E-4)) {
-         int var15 = Math.max(5, var9);
-         double var16 = 0.0;
-         double var18 = 0.0;
+   public void method3241(double d, double d2, double d3, double d4, int n, long longValue, float f, int n2, boolean flag) {
+      if (n2 >>> 24 != 0 && !(d4 <= 5.0E-4)) {
+         int n3 = Math.max(5, n);
+         double d5 = 0.0;
+         double d6 = 0.0;
 
-         for (int var20 = 0; var20 <= var15; var20++) {
-            int var21 = var20 % var15;
-            double var22 = var21 * (Math.PI * 2) / var15;
-            double var24 = 1.0 - var12 * 0.5 + var12 * method3268(var10, var21, 11);
-            double var26 = var1 + Math.cos(var22) * var7 * var24;
-            double var28 = var5 + Math.sin(var22) * var7 * var24;
-            if (var20 > 0) {
-               if (var14) {
-                  this.method3238(var1, var3, var5, var16, var3, var18, var26, var3, var28, var1, var3, var5, var13);
+         for (int i = 0; i <= n3; i++) {
+            int n4 = i % n3;
+            double d7 = n4 * (Math.PI * 2) / n3;
+            double d8 = 1.0 - f * 0.5 + f * method3268(longValue, n4, 11);
+            double d9 = d + Math.cos(d7) * d4 * d8;
+            double d10 = d3 + Math.sin(d7) * d4 * d8;
+            if (i > 0) {
+               if (flag) {
+                  this.method3238(d, d2, d3, d5, d2, d6, d9, d2, d10, d, d2, d3, n2);
                } else {
-                  this.method3237(var1, var3, var5, var16, var3, var18, var26, var3, var28, var1, var3, var5, var13);
+                  this.method3237(d, d2, d3, d5, d2, d6, d9, d2, d10, d, d2, d3, n2);
                }
             }
 
-            var16 = var26;
-            var18 = var28;
+            d5 = d9;
+            d6 = d10;
          }
       }
    }
 
-   public void method3242(double var1, double var3, double var5, double var7, double var9, int var11, int var12, boolean var13) {
-      if (var12 >>> 24 != 0 && !(var7 <= 5.0E-4)) {
-         int var14 = Math.max(6, var11);
-         double var15 = Math.max(0.0, var7 - var9 * 0.5);
-         double var17 = var7 + var9 * 0.5;
-         double var19 = 1.0;
-         double var21 = 0.0;
+   public void method3242(double d, double d2, double d3, double d4, double d5, int n, int n2, boolean flag) {
+      if (n2 >>> 24 != 0 && !(d4 <= 5.0E-4)) {
+         int n3 = Math.max(6, n);
+         double d6 = Math.max(0.0, d4 - d5 * 0.5);
+         double d7 = d4 + d5 * 0.5;
+         double d8 = 1.0;
+         double d9 = 0.0;
 
-         for (int var23 = 1; var23 <= var14; var23++) {
-            double var24 = var23 * (Math.PI * 2) / var14;
-            double var26 = Math.cos(var24);
-            double var28 = Math.sin(var24);
-            if (var13) {
+         for (int i = 1; i <= n3; i++) {
+            double d10 = i * (Math.PI * 2) / n3;
+            double d11 = Math.cos(d10);
+            double d12 = Math.sin(d10);
+            if (flag) {
                this.method3238(
-                  var1 + var19 * var15,
-                  var3,
-                  var5 + var21 * var15,
-                  var1 + var26 * var15,
-                  var3,
-                  var5 + var28 * var15,
-                  var1 + var26 * var17,
-                  var3,
-                  var5 + var28 * var17,
-                  var1 + var19 * var17,
-                  var3,
-                  var5 + var21 * var17,
-                  var12
+                  d + d8 * d6,
+                  d2,
+                  d3 + d9 * d6,
+                  d + d11 * d6,
+                  d2,
+                  d3 + d12 * d6,
+                  d + d11 * d7,
+                  d2,
+                  d3 + d12 * d7,
+                  d + d8 * d7,
+                  d2,
+                  d3 + d9 * d7,
+                  n2
                );
             } else {
                this.method3237(
-                  var1 + var19 * var15,
-                  var3,
-                  var5 + var21 * var15,
-                  var1 + var26 * var15,
-                  var3,
-                  var5 + var28 * var15,
-                  var1 + var26 * var17,
-                  var3,
-                  var5 + var28 * var17,
-                  var1 + var19 * var17,
-                  var3,
-                  var5 + var21 * var17,
-                  var12
+                  d + d8 * d6,
+                  d2,
+                  d3 + d9 * d6,
+                  d + d11 * d6,
+                  d2,
+                  d3 + d12 * d6,
+                  d + d11 * d7,
+                  d2,
+                  d3 + d12 * d7,
+                  d + d8 * d7,
+                  d2,
+                  d3 + d9 * d7,
+                  n2
                );
             }
 
-            var19 = var26;
-            var21 = var28;
+            d8 = d11;
+            d9 = d12;
          }
       }
    }
 
-   public void method3243(double var1, double var3, double var5, float var7, float var8, int var9) {
-      if (var9 >>> 24 != 0 && !(var7 <= 0.0F)) {
+   public void method3243(double doubleValue, double d, double d2, float f, float f2, int n) {
+      if (n >>> 24 != 0 && !(f <= 0.0F)) {
          if ((this.intValue8 + 1) * 5 > this.floatValues8.length) {
             this.floatValues8 = Arrays.copyOf(this.floatValues8, this.floatValues8.length * 2);
          }
@@ -483,107 +483,107 @@ public final class Glowboost {
             this.intValues8 = Arrays.copyOf(this.intValues8, this.intValues8.length * 2);
          }
 
-         int var10 = this.intValue8 * 5;
-         this.floatValues8[var10] = (float)(var1 - this.doubleValue);
-         this.floatValues8[var10 + 1] = (float)(var3 - this.doubleValue2);
-         this.floatValues8[var10 + 2] = (float)(var5 - this.doubleValue3);
-         this.floatValues8[var10 + 3] = var7;
-         this.floatValues8[var10 + 4] = var8;
-         this.intValues8[this.intValue8++] = var9;
+         int n2 = this.intValue8 * 5;
+         this.floatValues8[n2] = (float)(doubleValue - this.doubleValue);
+         this.floatValues8[n2 + 1] = (float)(d - this.doubleValue2);
+         this.floatValues8[n2 + 2] = (float)(d2 - this.doubleValue3);
+         this.floatValues8[n2 + 3] = f;
+         this.floatValues8[n2 + 4] = f2;
+         this.intValues8[this.intValue8++] = n;
       }
    }
 
-   public void method3244(Identifier var1) {
-      for (int var2 = 0; var2 < this.intValue10; var2++) {
-         if (this.identifiers[var2] == var1) {
-            this.intValue11 = var2;
+   public void method3244(Identifier identifier) {
+      for (int i = 0; i < this.intValue10; i++) {
+         if (this.identifiers[i] == identifier) {
+            this.intValue11 = i;
             return;
          }
       }
 
       if (this.intValue10 == this.identifiers.length) {
          this.intValue11 = this.intValue10 - 1;
-         this.identifiers[this.intValue11] = var1;
+         this.identifiers[this.intValue11] = identifier;
       } else {
-         this.identifiers[this.intValue10] = var1;
+         this.identifiers[this.intValue10] = identifier;
          this.intValue11 = this.intValue10++;
       }
    }
 
    public void method3245(
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      double var15,
-      double var17,
-      double var19,
-      double var21,
-      double var23,
-      float var25,
-      float var26,
-      float var27,
-      float var28,
-      int var29
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      double d11,
+      double d12,
+      float f,
+      float f2,
+      float f3,
+      float f4,
+      int n
    ) {
-      if (var29 >>> 24 != 0) {
+      if (n >>> 24 != 0) {
          this.method3247();
-         int var30 = this.intValue9 * 12;
-         this.floatValues9[var30] = (float)(var1 - this.doubleValue);
-         this.floatValues9[var30 + 1] = (float)(var3 - this.doubleValue2);
-         this.floatValues9[var30 + 2] = (float)(var5 - this.doubleValue3);
-         this.floatValues9[var30 + 3] = (float)(var7 - this.doubleValue);
-         this.floatValues9[var30 + 4] = (float)(var9 - this.doubleValue2);
-         this.floatValues9[var30 + 5] = (float)(var11 - this.doubleValue3);
-         this.floatValues9[var30 + 6] = (float)(var13 - this.doubleValue);
-         this.floatValues9[var30 + 7] = (float)(var15 - this.doubleValue2);
-         this.floatValues9[var30 + 8] = (float)(var17 - this.doubleValue3);
-         this.floatValues9[var30 + 9] = (float)(var19 - this.doubleValue);
-         this.floatValues9[var30 + 10] = (float)(var21 - this.doubleValue2);
-         this.floatValues9[var30 + 11] = (float)(var23 - this.doubleValue3);
-         this.method3248(var25, var26, var27, var28, var29);
+         int n2 = this.intValue9 * 12;
+         this.floatValues9[n2] = (float)(d - this.doubleValue);
+         this.floatValues9[n2 + 1] = (float)(d2 - this.doubleValue2);
+         this.floatValues9[n2 + 2] = (float)(d3 - this.doubleValue3);
+         this.floatValues9[n2 + 3] = (float)(d4 - this.doubleValue);
+         this.floatValues9[n2 + 4] = (float)(d5 - this.doubleValue2);
+         this.floatValues9[n2 + 5] = (float)(d6 - this.doubleValue3);
+         this.floatValues9[n2 + 6] = (float)(d7 - this.doubleValue);
+         this.floatValues9[n2 + 7] = (float)(d8 - this.doubleValue2);
+         this.floatValues9[n2 + 8] = (float)(d9 - this.doubleValue3);
+         this.floatValues9[n2 + 9] = (float)(d10 - this.doubleValue);
+         this.floatValues9[n2 + 10] = (float)(d11 - this.doubleValue2);
+         this.floatValues9[n2 + 11] = (float)(d12 - this.doubleValue3);
+         this.method3248(f, f2, f3, f4, n);
       }
    }
 
    public void method3246(
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      double var13,
-      float var15,
-      float var16,
-      float var17,
-      float var18,
-      int var19
+      double doubleValue,
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      float f,
+      float f2,
+      float f3,
+      float f4,
+      int n
    ) {
-      double var20 = var7 * var13;
-      double var22 = var9 * var13;
-      double var24 = -var9 * var11;
-      double var26 = var7 * var11;
+      double d7 = d3 * d6;
+      double d8 = d4 * d6;
+      double d9 = -d4 * d5;
+      double d10 = d3 * d5;
       this.method3245(
-         var1 - var24 + var20,
-         var3,
-         var5 - var26 + var22,
-         var1 + var24 + var20,
-         var3,
-         var5 + var26 + var22,
-         var1 + var24 - var20,
-         var3,
-         var5 + var26 - var22,
-         var1 - var24 - var20,
-         var3,
-         var5 - var26 - var22,
-         var15,
-         var16,
-         var17,
-         var18,
-         var19
+         doubleValue - d9 + d7,
+         d,
+         d2 - d10 + d8,
+         doubleValue + d9 + d7,
+         d,
+         d2 + d10 + d8,
+         doubleValue + d9 - d7,
+         d,
+         d2 + d10 - d8,
+         doubleValue - d9 - d7,
+         d,
+         d2 - d10 - d8,
+         f,
+         f2,
+         f3,
+         f4,
+         n
       );
    }
 
@@ -596,82 +596,82 @@ public final class Glowboost {
       }
    }
 
-   private void method3248(float var1, float var2, float var3, float var4, int var5) {
-      int var6 = this.intValue9 * 4;
-      this.floatValues10[var6] = var1;
-      this.floatValues10[var6 + 1] = var2;
-      this.floatValues10[var6 + 2] = var3;
-      this.floatValues10[var6 + 3] = var4;
+   private void method3248(float f, float f2, float f3, float f4, int n) {
+      int n2 = this.intValue9 * 4;
+      this.floatValues10[n2] = f;
+      this.floatValues10[n2 + 1] = f2;
+      this.floatValues10[n2 + 2] = f3;
+      this.floatValues10[n2 + 3] = f4;
       this.intValues10[this.intValue9] = this.intValue11;
-      this.intValues9[this.intValue9++] = var5;
+      this.intValues9[this.intValue9++] = n;
    }
 
    public void method3249(
-      double var1,
-      double var3,
-      double var5,
-      double var7,
-      double var9,
-      double var11,
-      float var13,
-      float var14,
-      float var15,
-      float var16,
-      float var17,
-      float var18,
-      int var19
+      double doubleValue,
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      float f,
+      float f2,
+      float f3,
+      float f4,
+      float f5,
+      float f6,
+      int n
    ) {
-      if (var19 >>> 24 != 0 && !(var13 <= 0.0F) && !(var14 <= 0.0F)) {
-         double var20 = Math.sqrt(var7 * var7 + var9 * var9 + var11 * var11);
-         if (!(var20 < 1.0E-6)) {
-            double var22 = var7 / var20 * var13;
-            double var24 = var9 / var20 * var13;
-            double var26 = var11 / var20 * var13;
-            double var28 = var9 / var20 * this.doubleValue12 - var11 / var20 * this.doubleValue11;
-            double var30 = var11 / var20 * this.doubleValue10 - var7 / var20 * this.doubleValue12;
-            double var32 = var7 / var20 * this.doubleValue11 - var9 / var20 * this.doubleValue10;
-            double var34 = Math.sqrt(var28 * var28 + var30 * var30 + var32 * var32);
-            if (!(var34 < 1.0E-4)) {
-               double var36 = var28 / var34 * var14;
-               double var38 = var30 / var34 * var14;
-               double var40 = var32 / var34 * var14;
+      if (n >>> 24 != 0 && !(f <= 0.0F) && !(f2 <= 0.0F)) {
+         double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
+         if (!(d6 < 1.0E-6)) {
+            double d7 = d3 / d6 * f;
+            double d8 = d4 / d6 * f;
+            double d9 = d5 / d6 * f;
+            double d10 = d4 / d6 * this.doubleValue12 - d5 / d6 * this.doubleValue11;
+            double d11 = d5 / d6 * this.doubleValue10 - d3 / d6 * this.doubleValue12;
+            double d12 = d3 / d6 * this.doubleValue11 - d4 / d6 * this.doubleValue10;
+            double d13 = Math.sqrt(d10 * d10 + d11 * d11 + d12 * d12);
+            if (!(d13 < 1.0E-4)) {
+               double d14 = d10 / d13 * f2;
+               double d15 = d11 / d13 * f2;
+               double d16 = d12 / d13 * f2;
                this.method3247();
-               int var42 = this.intValue9 * 12;
-               float var43 = (float)(var1 - this.doubleValue);
-               float var44 = (float)(var3 - this.doubleValue2);
-               float var45 = (float)(var5 - this.doubleValue3);
-               this.floatValues9[var42] = (float)(var43 - var36 + var22);
-               this.floatValues9[var42 + 1] = (float)(var44 - var38 + var24);
-               this.floatValues9[var42 + 2] = (float)(var45 - var40 + var26);
-               this.floatValues9[var42 + 3] = (float)(var43 + var36 + var22);
-               this.floatValues9[var42 + 4] = (float)(var44 + var38 + var24);
-               this.floatValues9[var42 + 5] = (float)(var45 + var40 + var26);
-               this.floatValues9[var42 + 6] = (float)(var43 + var36 - var22);
-               this.floatValues9[var42 + 7] = (float)(var44 + var38 - var24);
-               this.floatValues9[var42 + 8] = (float)(var45 + var40 - var26);
-               this.floatValues9[var42 + 9] = (float)(var43 - var36 - var22);
-               this.floatValues9[var42 + 10] = (float)(var44 - var38 - var24);
-               this.floatValues9[var42 + 11] = (float)(var45 - var40 - var26);
-               this.method3248(var15, var16, var17, var18, var19);
+               int n2 = this.intValue9 * 12;
+               float f7 = (float)(doubleValue - this.doubleValue);
+               float f8 = (float)(d - this.doubleValue2);
+               float f9 = (float)(d2 - this.doubleValue3);
+               this.floatValues9[n2] = (float)(f7 - d14 + d7);
+               this.floatValues9[n2 + 1] = (float)(f8 - d15 + d8);
+               this.floatValues9[n2 + 2] = (float)(f9 - d16 + d9);
+               this.floatValues9[n2 + 3] = (float)(f7 + d14 + d7);
+               this.floatValues9[n2 + 4] = (float)(f8 + d15 + d8);
+               this.floatValues9[n2 + 5] = (float)(f9 + d16 + d9);
+               this.floatValues9[n2 + 6] = (float)(f7 + d14 - d7);
+               this.floatValues9[n2 + 7] = (float)(f8 + d15 - d8);
+               this.floatValues9[n2 + 8] = (float)(f9 + d16 - d9);
+               this.floatValues9[n2 + 9] = (float)(f7 - d14 - d7);
+               this.floatValues9[n2 + 10] = (float)(f8 - d15 - d8);
+               this.floatValues9[n2 + 11] = (float)(f9 - d16 - d9);
+               this.method3248(f3, f4, f5, f6, n);
             }
          }
       }
    }
 
-   public void method3250(double var1, double var3, double var5, float var7, int var8, float var9) {
-      if (!(this.floatValue <= 0.02F) && !(var7 < 0.001F)) {
-         float var10 = var9 * Math.min(1.5F, this.floatValue);
-         if (!(var10 < 0.01F)) {
-            this.method3252(var1, var3, var5, var7 * 2.1F, ColorUtils.method6439(var8, Math.min(1.0F, var10 * 0.22F)));
-            this.method3252(var1, var3, var5, var7, ColorUtils.method6439(var8, Math.min(1.0F, var10 * 0.55F)));
+   public void method3250(double doubleValue, double d, double d2, float f, int color, float f2) {
+      if (!(this.floatValue <= 0.02F) && !(f < 0.001F)) {
+         float f3 = f2 * Math.min(1.5F, this.floatValue);
+         if (!(f3 < 0.01F)) {
+            this.method3252(doubleValue, d, d2, f * 2.1F, ColorUtils.method6439(color, Math.min(1.0F, f3 * 0.22F)));
+            this.method3252(doubleValue, d, d2, f, ColorUtils.method6439(color, Math.min(1.0F, f3 * 0.55F)));
          }
       }
    }
 
-   public void method3251(double var1, double var3, double var5, float var7, int var8, float var9) {
-      if (!(var7 < 0.001F) && !(var9 < 0.002F)) {
-         int var10 = ColorUtils.method6439(var8, Math.min(1.0F, var9));
-         if (var10 >>> 24 != 0) {
+   public void method3251(double d, double d2, double d3, float f, int color, float f2) {
+      if (!(f < 0.001F) && !(f2 < 0.002F)) {
+         int n = ColorUtils.method6439(color, Math.min(1.0F, f2));
+         if (n >>> 24 != 0) {
             if ((this.intValue4 + 1) * 4 > this.floatValues4.length) {
                this.floatValues4 = Arrays.copyOf(this.floatValues4, this.floatValues4.length * 2);
             }
@@ -680,18 +680,18 @@ public final class Glowboost {
                this.intValues4 = Arrays.copyOf(this.intValues4, this.intValues4.length * 2);
             }
 
-            int var11 = this.intValue4 * 4;
-            this.floatValues4[var11] = (float)(var1 - this.doubleValue);
-            this.floatValues4[var11 + 1] = (float)(var3 - this.doubleValue2);
-            this.floatValues4[var11 + 2] = (float)(var5 - this.doubleValue3);
-            this.floatValues4[var11 + 3] = var7;
-            this.intValues4[this.intValue4++] = var10;
+            int n2 = this.intValue4 * 4;
+            this.floatValues4[n2] = (float)(d - this.doubleValue);
+            this.floatValues4[n2 + 1] = (float)(d2 - this.doubleValue2);
+            this.floatValues4[n2 + 2] = (float)(d3 - this.doubleValue3);
+            this.floatValues4[n2 + 3] = f;
+            this.intValues4[this.intValue4++] = n;
          }
       }
    }
 
-   private void method3252(double var1, double var3, double var5, float var7, int var8) {
-      if (var8 >>> 24 != 0) {
+   private void method3252(double doubleValue, double d, double d2, float f, int n) {
+      if (n >>> 24 != 0) {
          if ((this.intValue3 + 1) * 4 > this.floatValues3.length) {
             this.floatValues3 = Arrays.copyOf(this.floatValues3, this.floatValues3.length * 2);
          }
@@ -700,28 +700,28 @@ public final class Glowboost {
             this.intValues3 = Arrays.copyOf(this.intValues3, this.intValues3.length * 2);
          }
 
-         int var9 = this.intValue3 * 4;
-         this.floatValues3[var9] = (float)(var1 - this.doubleValue);
-         this.floatValues3[var9 + 1] = (float)(var3 - this.doubleValue2);
-         this.floatValues3[var9 + 2] = (float)(var5 - this.doubleValue3);
-         this.floatValues3[var9 + 3] = var7;
-         this.intValues3[this.intValue3++] = var8;
+         int n2 = this.intValue3 * 4;
+         this.floatValues3[n2] = (float)(doubleValue - this.doubleValue);
+         this.floatValues3[n2 + 1] = (float)(d - this.doubleValue2);
+         this.floatValues3[n2 + 2] = (float)(d2 - this.doubleValue3);
+         this.floatValues3[n2 + 3] = f;
+         this.intValues3[this.intValue3++] = n;
       }
    }
 
-   public void method3253(PoseStack var1) {
+   public void method3253(PoseStack matrixStack) {
       if (!this.isEmpty()) {
-         Pose var2 = var1.last();
+         Pose pose = matrixStack.last();
          GL11.glDepthRange(0.0, this.flag ? 0.01 : 1.0);
 
          try {
-            this.method3254(var2);
-            this.method3256(var2);
-            this.method3258(var2);
-            this.method3260(var2);
-            this.method3261(var2);
-            this.method3262(var2);
-            this.method3263(var2);
+            this.method3254(pose);
+            this.method3256(pose);
+            this.method3258(pose);
+            this.method3260(pose);
+            this.method3261(pose);
+            this.method3262(pose);
+            this.method3263(pose);
          } finally {
             GL11.glDepthRange(0.0, 1.0);
             this.reset();
@@ -730,7 +730,7 @@ public final class Glowboost {
       }
    }
 
-   private void method3254(Pose var1) {
+   private void method3254(Pose pose) {
       if (this.intValue5 != 0 || this.intValue6 != 0) {
          RenderState.method1871();
          RenderState.method1873();
@@ -739,12 +739,12 @@ public final class Glowboost {
          RenderState.method1882(false);
          RenderState.method1898("core/position_color");
          if (this.intValue5 > 0) {
-            this.method3257(var1, this.floatValues5, this.intValues5, this.intValue5);
+            this.method3257(pose, this.floatValues5, this.intValues5, this.intValue5);
          }
 
          if (this.intValue6 > 0) {
             RenderState.method1882(true);
-            this.method3255(var1);
+            this.method3255(pose);
             RenderState.method1882(false);
          }
 
@@ -754,26 +754,26 @@ public final class Glowboost {
       }
    }
 
-   private void method3255(Pose var1) {
-      BufferBuilder var2 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
-      Matrix4f var3 = var1.pose();
+   private void method3255(Pose pose) {
+      BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+      Matrix4f matrix = pose.pose();
 
-      for (int var4 = 0; var4 < this.intValue6; var4++) {
-         int var5 = var4 * 12;
-         int var6 = var4 * 4;
-         this.method3265(var2, var3, this.floatValues6[var5], this.floatValues6[var5 + 1], this.floatValues6[var5 + 2]).setColor(this.intValues6[var6]);
-         this.method3265(var2, var3, this.floatValues6[var5 + 3], this.floatValues6[var5 + 4], this.floatValues6[var5 + 5]).setColor(this.intValues6[var6 + 1]);
-         this.method3265(var2, var3, this.floatValues6[var5 + 6], this.floatValues6[var5 + 7], this.floatValues6[var5 + 8]).setColor(this.intValues6[var6 + 2]);
-         this.method3265(var2, var3, this.floatValues6[var5 + 9], this.floatValues6[var5 + 10], this.floatValues6[var5 + 11]).setColor(this.intValues6[var6 + 3]);
+      for (int i = 0; i < this.intValue6; i++) {
+         int n = i * 12;
+         int n2 = i * 4;
+         this.method3265(begin, matrix, this.floatValues6[n], this.floatValues6[n + 1], this.floatValues6[n + 2]).setColor(this.intValues6[n2]);
+         this.method3265(begin, matrix, this.floatValues6[n + 3], this.floatValues6[n + 4], this.floatValues6[n + 5]).setColor(this.intValues6[n2 + 1]);
+         this.method3265(begin, matrix, this.floatValues6[n + 6], this.floatValues6[n + 7], this.floatValues6[n + 8]).setColor(this.intValues6[n2 + 2]);
+         this.method3265(begin, matrix, this.floatValues6[n + 9], this.floatValues6[n + 10], this.floatValues6[n + 11]).setColor(this.intValues6[n2 + 3]);
       }
 
-      MeshData var7 = var2.build();
-      if (var7 != null) {
-         ImmediateRenderer.method8015(var7);
+      MeshData orThrow = begin.build();
+      if (orThrow != null) {
+         ImmediateRenderer.method8015(orThrow);
       }
    }
 
-   private void method3256(Pose var1) {
+   private void method3256(Pose pose) {
       if (this.intValue7 != 0) {
          RenderState.method1871();
          RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE, BlendFactor.ZERO, BlendFactor.ONE);
@@ -781,7 +781,7 @@ public final class Glowboost {
          RenderState.method1878();
          RenderState.method1882(false);
          RenderState.method1898("core/position_color");
-         this.method3257(var1, this.floatValues7, this.intValues7, this.intValue7);
+         this.method3257(pose, this.floatValues7, this.intValues7, this.intValue7);
          RenderState.method1882(true);
          RenderState.method1876();
          RenderState.method1872();
@@ -789,44 +789,44 @@ public final class Glowboost {
       }
    }
 
-   private void method3257(Pose var1, float[] var2, int[] var3, int var4) {
-      BufferBuilder var5 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
-      Matrix4f var6 = var1.pose();
+   private void method3257(Pose pose, float[] floatValues5, int[] intValues5, int n) {
+      BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+      Matrix4f matrix = pose.pose();
 
-      for (int var7 = 0; var7 < var4; var7++) {
-         int var8 = var7 * 12;
-         int var9 = var3[var7];
-         this.method3265(var5, var6, var2[var8], var2[var8 + 1], var2[var8 + 2]).setColor(var9);
-         this.method3265(var5, var6, var2[var8 + 3], var2[var8 + 4], var2[var8 + 5]).setColor(var9);
-         this.method3265(var5, var6, var2[var8 + 6], var2[var8 + 7], var2[var8 + 8]).setColor(var9);
-         this.method3265(var5, var6, var2[var8 + 9], var2[var8 + 10], var2[var8 + 11]).setColor(var9);
+      for (int i = 0; i < n; i++) {
+         int n2 = i * 12;
+         int color = intValues5[i];
+         this.method3265(begin, matrix, floatValues5[n2], floatValues5[n2 + 1], floatValues5[n2 + 2]).setColor(color);
+         this.method3265(begin, matrix, floatValues5[n2 + 3], floatValues5[n2 + 4], floatValues5[n2 + 5]).setColor(color);
+         this.method3265(begin, matrix, floatValues5[n2 + 6], floatValues5[n2 + 7], floatValues5[n2 + 8]).setColor(color);
+         this.method3265(begin, matrix, floatValues5[n2 + 9], floatValues5[n2 + 10], floatValues5[n2 + 11]).setColor(color);
       }
 
-      MeshData var10 = var5.build();
-      if (var10 != null) {
-         ImmediateRenderer.method8015(var10);
+      MeshData orThrow = begin.build();
+      if (orThrow != null) {
+         ImmediateRenderer.method8015(orThrow);
       }
    }
 
-   private void method3258(Pose var1) {
+   private void method3258(Pose pose) {
       if (this.intValue9 != 0) {
          RenderState.method1871();
          RenderState.method1873();
          RenderState.method1877();
          RenderState.method1878();
          RenderState.method1882(false);
-         int var2 = 0;
+         int n = 0;
 
-         while (var2 < this.intValue9) {
-            int var3 = this.intValues10[var2];
-            int var4 = var2 + 1;
+         while (n < this.intValue9) {
+            int n2 = this.intValues10[n];
+            int n3 = n + 1;
 
-            while (var4 < this.intValue9 && this.intValues10[var4] == var3) {
-               var4++;
+            while (n3 < this.intValue9 && this.intValues10[n3] == n2) {
+               n3++;
             }
 
-            this.method3259(var1, var2, var4, this.identifiers[var3]);
-            var2 = var4;
+            this.method3259(pose, n, n3, this.identifiers[n2]);
+            n = n3;
          }
 
          RenderState.method1882(true);
@@ -835,55 +835,55 @@ public final class Glowboost {
       }
    }
 
-   private void method3259(Pose var1, int var2, int var3, Identifier var4) {
-      boolean var5 = var4 != null;
-      if (var5) {
+   private void method3259(Pose pose, int n, int n2, Identifier identifier) {
+      boolean flag = identifier != null;
+      if (flag) {
          RenderState.method1898("core/position_tex_color");
-         RenderState.method1890(0, var4);
+         RenderState.method1890(0, identifier);
       } else {
          RenderState.method1898("core/position_color");
       }
 
-      BufferBuilder var6 = Tesselator.getInstance()
+      BufferBuilder begin = Tesselator.getInstance()
          .begin(
-            PrimitiveTopology.QUADS, var5 ? com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR : com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR
+            PrimitiveTopology.QUADS, flag ? com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR : com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR
          );
-      Matrix4f var7 = var1.pose();
+      Matrix4f matrix = pose.pose();
 
-      for (int var8 = var2; var8 < var3; var8++) {
-         int var9 = var8 * 12;
-         int var10 = this.intValues9[var8];
-         if (var5) {
-            int var11 = var8 * 4;
-            float var12 = this.floatValues10[var11];
-            float var13 = this.floatValues10[var11 + 1];
-            float var14 = this.floatValues10[var11 + 2];
-            float var15 = this.floatValues10[var11 + 3];
-            this.method3265(var6, var7, this.floatValues9[var9], this.floatValues9[var9 + 1], this.floatValues9[var9 + 2]).setUv(var12, var13).setColor(var10);
-            this.method3265(var6, var7, this.floatValues9[var9 + 3], this.floatValues9[var9 + 4], this.floatValues9[var9 + 5])
-               .setUv(var14, var13)
-               .setColor(var10);
-            this.method3265(var6, var7, this.floatValues9[var9 + 6], this.floatValues9[var9 + 7], this.floatValues9[var9 + 8])
-               .setUv(var14, var15)
-               .setColor(var10);
-            this.method3265(var6, var7, this.floatValues9[var9 + 9], this.floatValues9[var9 + 10], this.floatValues9[var9 + 11])
-               .setUv(var12, var15)
-               .setColor(var10);
+      for (int i = n; i < n2; i++) {
+         int n3 = i * 12;
+         int color = this.intValues9[i];
+         if (flag) {
+            int n4 = i * 4;
+            float f = this.floatValues10[n4];
+            float f2 = this.floatValues10[n4 + 1];
+            float f3 = this.floatValues10[n4 + 2];
+            float f4 = this.floatValues10[n4 + 3];
+            this.method3265(begin, matrix, this.floatValues9[n3], this.floatValues9[n3 + 1], this.floatValues9[n3 + 2]).setUv(f, f2).setColor(color);
+            this.method3265(begin, matrix, this.floatValues9[n3 + 3], this.floatValues9[n3 + 4], this.floatValues9[n3 + 5])
+               .setUv(f3, f2)
+               .setColor(color);
+            this.method3265(begin, matrix, this.floatValues9[n3 + 6], this.floatValues9[n3 + 7], this.floatValues9[n3 + 8])
+               .setUv(f3, f4)
+               .setColor(color);
+            this.method3265(begin, matrix, this.floatValues9[n3 + 9], this.floatValues9[n3 + 10], this.floatValues9[n3 + 11])
+               .setUv(f, f4)
+               .setColor(color);
          } else {
-            this.method3265(var6, var7, this.floatValues9[var9], this.floatValues9[var9 + 1], this.floatValues9[var9 + 2]).setColor(var10);
-            this.method3265(var6, var7, this.floatValues9[var9 + 3], this.floatValues9[var9 + 4], this.floatValues9[var9 + 5]).setColor(var10);
-            this.method3265(var6, var7, this.floatValues9[var9 + 6], this.floatValues9[var9 + 7], this.floatValues9[var9 + 8]).setColor(var10);
-            this.method3265(var6, var7, this.floatValues9[var9 + 9], this.floatValues9[var9 + 10], this.floatValues9[var9 + 11]).setColor(var10);
+            this.method3265(begin, matrix, this.floatValues9[n3], this.floatValues9[n3 + 1], this.floatValues9[n3 + 2]).setColor(color);
+            this.method3265(begin, matrix, this.floatValues9[n3 + 3], this.floatValues9[n3 + 4], this.floatValues9[n3 + 5]).setColor(color);
+            this.method3265(begin, matrix, this.floatValues9[n3 + 6], this.floatValues9[n3 + 7], this.floatValues9[n3 + 8]).setColor(color);
+            this.method3265(begin, matrix, this.floatValues9[n3 + 9], this.floatValues9[n3 + 10], this.floatValues9[n3 + 11]).setColor(color);
          }
       }
 
-      MeshData var16 = var6.build();
-      if (var16 != null) {
-         ImmediateRenderer.method8015(var16);
+      MeshData orThrow = begin.build();
+      if (orThrow != null) {
+         ImmediateRenderer.method8015(orThrow);
       }
    }
 
-   private void method3260(Pose var1) {
+   private void method3260(Pose pose) {
       if (this.intValue8 != 0) {
          RenderState.method1871();
          RenderState.method1873();
@@ -891,34 +891,34 @@ public final class Glowboost {
          RenderState.method1878();
          RenderState.method1882(false);
          RenderState.method1898("core/position_color");
-         BufferBuilder var2 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
-         Matrix4f var3 = var1.pose();
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+         Matrix4f matrix = pose.pose();
 
-         for (int var4 = 0; var4 < this.intValue8; var4++) {
-            int var5 = var4 * 5;
-            float var6 = this.floatValues8[var5];
-            float var7 = this.floatValues8[var5 + 1];
-            float var8 = this.floatValues8[var5 + 2];
-            float var9 = this.floatValues8[var5 + 3];
-            float var10 = this.floatValues8[var5 + 4];
-            int var11 = this.intValues8[var4];
-            float var12 = Mth.cos(var10) * var9;
-            float var13 = Mth.sin(var10) * var9;
-            float var14 = (float)(this.doubleValue4 * var12 + this.doubleValue7 * var13);
-            float var15 = (float)(this.doubleValue5 * var12 + this.doubleValue8 * var13);
-            float var16 = (float)(this.doubleValue6 * var12 + this.doubleValue9 * var13);
-            float var17 = (float)(this.doubleValue7 * var12 - this.doubleValue4 * var13);
-            float var18 = (float)(this.doubleValue8 * var12 - this.doubleValue5 * var13);
-            float var19 = (float)(this.doubleValue9 * var12 - this.doubleValue6 * var13);
-            this.method3265(var2, var3, var6 + var14, var7 + var15, var8 + var16).setColor(var11);
-            this.method3265(var2, var3, var6 + var17, var7 + var18, var8 + var19).setColor(var11);
-            this.method3265(var2, var3, var6 - var14, var7 - var15, var8 - var16).setColor(var11);
-            this.method3265(var2, var3, var6 - var17, var7 - var18, var8 - var19).setColor(var11);
+         for (int i = 0; i < this.intValue8; i++) {
+            int n = i * 5;
+            float f = this.floatValues8[n];
+            float f2 = this.floatValues8[n + 1];
+            float f3 = this.floatValues8[n + 2];
+            float f4 = this.floatValues8[n + 3];
+            float f5 = this.floatValues8[n + 4];
+            int color = this.intValues8[i];
+            float f6 = Mth.cos(f5) * f4;
+            float f7 = Mth.sin(f5) * f4;
+            float f8 = (float)(this.doubleValue4 * f6 + this.doubleValue7 * f7);
+            float f9 = (float)(this.doubleValue5 * f6 + this.doubleValue8 * f7);
+            float f10 = (float)(this.doubleValue6 * f6 + this.doubleValue9 * f7);
+            float f11 = (float)(this.doubleValue7 * f6 - this.doubleValue4 * f7);
+            float f12 = (float)(this.doubleValue8 * f6 - this.doubleValue5 * f7);
+            float f13 = (float)(this.doubleValue9 * f6 - this.doubleValue6 * f7);
+            this.method3265(begin, matrix, f + f8, f2 + f9, f3 + f10).setColor(color);
+            this.method3265(begin, matrix, f + f11, f2 + f12, f3 + f13).setColor(color);
+            this.method3265(begin, matrix, f - f8, f2 - f9, f3 - f10).setColor(color);
+            this.method3265(begin, matrix, f - f11, f2 - f12, f3 - f13).setColor(color);
          }
 
-         MeshData var20 = var2.build();
-         if (var20 != null) {
-            ImmediateRenderer.method8015(var20);
+         MeshData orThrow = begin.build();
+         if (orThrow != null) {
+            ImmediateRenderer.method8015(orThrow);
          }
 
          RenderState.method1882(true);
@@ -927,7 +927,7 @@ public final class Glowboost {
       }
    }
 
-   private void method3261(Pose var1) {
+   private void method3261(Pose pose) {
       if (this.intValue4 != 0) {
          RenderState.method1871();
          RenderState.method1873();
@@ -936,31 +936,31 @@ public final class Glowboost {
          RenderState.method1882(false);
          RenderState.method1898("core/position_tex_color");
          RenderState.method1890(0, identifier);
-         BufferBuilder var2 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
-         Matrix4f var3 = var1.pose();
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+         Matrix4f matrix = pose.pose();
 
-         for (int var4 = 0; var4 < this.intValue4; var4++) {
-            int var5 = var4 * 4;
-            float var6 = this.floatValues4[var5];
-            float var7 = this.floatValues4[var5 + 1];
-            float var8 = this.floatValues4[var5 + 2];
-            float var9 = this.floatValues4[var5 + 3];
-            int var10 = this.intValues4[var4];
-            float var11 = (float)(this.doubleValue4 * var9);
-            float var12 = (float)(this.doubleValue5 * var9);
-            float var13 = (float)(this.doubleValue6 * var9);
-            float var14 = (float)(this.doubleValue7 * var9);
-            float var15 = (float)(this.doubleValue8 * var9);
-            float var16 = (float)(this.doubleValue9 * var9);
-            this.method3265(var2, var3, var6 + var11 - var14, var7 + var12 - var15, var8 + var13 - var16).setUv(0.0F, 1.0F).setColor(var10);
-            this.method3265(var2, var3, var6 - var11 - var14, var7 - var12 - var15, var8 - var13 - var16).setUv(1.0F, 1.0F).setColor(var10);
-            this.method3265(var2, var3, var6 - var11 + var14, var7 - var12 + var15, var8 - var13 + var16).setUv(1.0F, 0.0F).setColor(var10);
-            this.method3265(var2, var3, var6 + var11 + var14, var7 + var12 + var15, var8 + var13 + var16).setUv(0.0F, 0.0F).setColor(var10);
+         for (int i = 0; i < this.intValue4; i++) {
+            int n = i * 4;
+            float f = this.floatValues4[n];
+            float f2 = this.floatValues4[n + 1];
+            float f3 = this.floatValues4[n + 2];
+            float f4 = this.floatValues4[n + 3];
+            int color = this.intValues4[i];
+            float f5 = (float)(this.doubleValue4 * f4);
+            float f6 = (float)(this.doubleValue5 * f4);
+            float f7 = (float)(this.doubleValue6 * f4);
+            float f8 = (float)(this.doubleValue7 * f4);
+            float f9 = (float)(this.doubleValue8 * f4);
+            float f10 = (float)(this.doubleValue9 * f4);
+            this.method3265(begin, matrix, f + f5 - f8, f2 + f6 - f9, f3 + f7 - f10).setUv(0.0F, 1.0F).setColor(color);
+            this.method3265(begin, matrix, f - f5 - f8, f2 - f6 - f9, f3 - f7 - f10).setUv(1.0F, 1.0F).setColor(color);
+            this.method3265(begin, matrix, f - f5 + f8, f2 - f6 + f9, f3 - f7 + f10).setUv(1.0F, 0.0F).setColor(color);
+            this.method3265(begin, matrix, f + f5 + f8, f2 + f6 + f9, f3 + f7 + f10).setUv(0.0F, 0.0F).setColor(color);
          }
 
-         MeshData var17 = var2.build();
-         if (var17 != null) {
-            ImmediateRenderer.method8015(var17);
+         MeshData orThrow = begin.build();
+         if (orThrow != null) {
+            ImmediateRenderer.method8015(orThrow);
          }
 
          RenderState.method1882(true);
@@ -969,7 +969,7 @@ public final class Glowboost {
       }
    }
 
-   private void method3262(Pose var1) {
+   private void method3262(Pose pose) {
       if (this.intValue3 != 0) {
          RenderState.method1871();
          RenderState.method1877();
@@ -978,31 +978,31 @@ public final class Glowboost {
          RenderState.method1882(false);
          RenderState.method1898("core/position_tex_color");
          RenderState.method1890(0, identifier);
-         BufferBuilder var2 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
-         Matrix4f var3 = var1.pose();
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+         Matrix4f matrix = pose.pose();
 
-         for (int var4 = 0; var4 < this.intValue3; var4++) {
-            int var5 = var4 * 4;
-            float var6 = this.floatValues3[var5];
-            float var7 = this.floatValues3[var5 + 1];
-            float var8 = this.floatValues3[var5 + 2];
-            float var9 = this.floatValues3[var5 + 3];
-            int var10 = this.intValues3[var4];
-            float var11 = (float)(this.doubleValue4 * var9);
-            float var12 = (float)(this.doubleValue5 * var9);
-            float var13 = (float)(this.doubleValue6 * var9);
-            float var14 = (float)(this.doubleValue7 * var9);
-            float var15 = (float)(this.doubleValue8 * var9);
-            float var16 = (float)(this.doubleValue9 * var9);
-            this.method3265(var2, var3, var6 + var11 - var14, var7 + var12 - var15, var8 + var13 - var16).setUv(0.0F, 1.0F).setColor(var10);
-            this.method3265(var2, var3, var6 - var11 - var14, var7 - var12 - var15, var8 - var13 - var16).setUv(1.0F, 1.0F).setColor(var10);
-            this.method3265(var2, var3, var6 - var11 + var14, var7 - var12 + var15, var8 - var13 + var16).setUv(1.0F, 0.0F).setColor(var10);
-            this.method3265(var2, var3, var6 + var11 + var14, var7 + var12 + var15, var8 + var13 + var16).setUv(0.0F, 0.0F).setColor(var10);
+         for (int i = 0; i < this.intValue3; i++) {
+            int n = i * 4;
+            float f = this.floatValues3[n];
+            float f2 = this.floatValues3[n + 1];
+            float f3 = this.floatValues3[n + 2];
+            float f4 = this.floatValues3[n + 3];
+            int color = this.intValues3[i];
+            float f5 = (float)(this.doubleValue4 * f4);
+            float f6 = (float)(this.doubleValue5 * f4);
+            float f7 = (float)(this.doubleValue6 * f4);
+            float f8 = (float)(this.doubleValue7 * f4);
+            float f9 = (float)(this.doubleValue8 * f4);
+            float f10 = (float)(this.doubleValue9 * f4);
+            this.method3265(begin, matrix, f + f5 - f8, f2 + f6 - f9, f3 + f7 - f10).setUv(0.0F, 1.0F).setColor(color);
+            this.method3265(begin, matrix, f - f5 - f8, f2 - f6 - f9, f3 - f7 - f10).setUv(1.0F, 1.0F).setColor(color);
+            this.method3265(begin, matrix, f - f5 + f8, f2 - f6 + f9, f3 - f7 + f10).setUv(1.0F, 0.0F).setColor(color);
+            this.method3265(begin, matrix, f + f5 + f8, f2 + f6 + f9, f3 + f7 + f10).setUv(0.0F, 0.0F).setColor(color);
          }
 
-         MeshData var17 = var2.build();
-         if (var17 != null) {
-            ImmediateRenderer.method8015(var17);
+         MeshData orThrow = begin.build();
+         if (orThrow != null) {
+            ImmediateRenderer.method8015(orThrow);
          }
 
          RenderState.method1882(true);
@@ -1012,7 +1012,7 @@ public final class Glowboost {
       }
    }
 
-   private void method3263(Pose var1) {
+   private void method3263(Pose pose) {
       if (this.intValue != 0 || this.intValue2 != 0) {
          GL11.glEnable(2848);
          GL11.glHint(3154, 4354);
@@ -1027,12 +1027,12 @@ public final class Glowboost {
             RenderState.method1898("core/rendertype_lines");
             if (this.intValue2 > 0) {
                RenderState.method1902(5.44F);
-               this.method3264(var1, this.floatValues2, this.intValues2, this.intValue2);
+               this.method3264(pose, this.floatValues2, this.intValues2, this.intValue2);
             }
 
             if (this.intValue > 0) {
                RenderState.method1902(1.7F);
-               this.method3264(var1, this.floatValues, this.intValues, this.intValue);
+               this.method3264(pose, this.floatValues, this.intValues, this.intValue);
             }
          } finally {
             RenderState.method1882(true);
@@ -1046,78 +1046,78 @@ public final class Glowboost {
       }
    }
 
-   private void method3264(Pose var1, float[] var2, int[] var3, int var4) {
-      BufferBuilder var5 = Tesselator.getInstance().begin(PrimitiveTopology.LINES, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
-      float var6 = RenderState.getFloatValue4();
-      Matrix4f var7 = var1.pose();
+   private void method3264(Pose pose, float[] floatValues2, int[] intValues2, int intValue) {
+      BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.LINES, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH);
+      float width = RenderState.getFloatValue4();
+      Matrix4f matrix = pose.pose();
 
-      for (int var8 = 0; var8 < var4; var8++) {
-         int var9 = var8 * 6;
-         float var10 = var2[var9];
-         float var11 = var2[var9 + 1];
-         float var12 = var2[var9 + 2];
-         float var13 = var2[var9 + 3];
-         float var14 = var2[var9 + 4];
-         float var15 = var2[var9 + 5];
-         int var16 = var3[var8];
-         float var17 = var13 - var10;
-         float var18 = var14 - var11;
-         float var19 = var15 - var12;
-         float var20 = var17 * var17 + var18 * var18 + var19 * var19;
-         float var21 = var20 > 1.0E-12F ? 1.0F / (float)Math.sqrt(var20) : 1.0F;
-         float var22 = var17 * var21;
-         float var23 = var18 * var21;
-         float var24 = var19 * var21;
+      for (int i = 0; i < intValue; i++) {
+         int n = i * 6;
+         float x = floatValues2[n];
+         float y = floatValues2[n + 1];
+         float z = floatValues2[n + 2];
+         float f = floatValues2[n + 3];
+         float y2 = floatValues2[n + 4];
+         float z2 = floatValues2[n + 5];
+         int color = intValues2[i];
+         float f2 = f - x;
+         float f3 = y2 - y;
+         float f4 = z2 - z;
+         float f5 = f2 * f2 + f3 * f3 + f4 * f4;
+         float f6 = f5 > 1.0E-12F ? 1.0F / (float)Math.sqrt(f5) : 1.0F;
+         float x2 = f2 * f6;
+         float y3 = f3 * f6;
+         float z3 = f4 * f6;
          if (CONST_flag) {
-            var1.transformNormal(var22, var23, var24, this.vector3f2);
-            float var25 = this.vector3f2.x;
-            float var26 = this.vector3f2.y;
-            float var27 = this.vector3f2.z;
-            this.method3265(var5, var7, var10, var11, var12).setColor(var16).setNormal(var25, var26, var27).setLineWidth(var6);
-            this.method3265(var5, var7, var13, var14, var15).setColor(var16).setNormal(var25, var26, var27).setLineWidth(var6);
+            pose.transformNormal(x2, y3, z3, this.vector3f2);
+            float x3 = this.vector3f2.x;
+            float y4 = this.vector3f2.y;
+            float z4 = this.vector3f2.z;
+            this.method3265(begin, matrix, x, y, z).setColor(color).setNormal(x3, y4, z4).setLineWidth(width);
+            this.method3265(begin, matrix, f, y2, z2).setColor(color).setNormal(x3, y4, z4).setLineWidth(width);
          } else {
-            var5.addVertex(var7, var10, var11, var12).setColor(var16).setNormal(var1, var22, var23, var24).setLineWidth(var6);
-            var5.addVertex(var7, var13, var14, var15).setColor(var16).setNormal(var1, var22, var23, var24).setLineWidth(var6);
+            begin.addVertex(matrix, x, y, z).setColor(color).setNormal(pose, x2, y3, z3).setLineWidth(width);
+            begin.addVertex(matrix, f, y2, z2).setColor(color).setNormal(pose, x2, y3, z3).setLineWidth(width);
          }
       }
 
-      MeshData var28 = var5.build();
-      if (var28 != null) {
-         ImmediateRenderer.method8015(var28);
+      MeshData orThrow = begin.build();
+      if (orThrow != null) {
+         ImmediateRenderer.method8015(orThrow);
       }
    }
 
-   private VertexConsumer method3265(BufferBuilder var1, Matrix4f var2, float var3, float var4, float var5) {
+   private VertexConsumer method3265(BufferBuilder begin, Matrix4f pose, float x, float y, float z) {
       if (CONST_flag) {
-         var2.transformPosition(var3, var4, var5, this.vector3f);
-         return var1.addVertex(this.vector3f.x, this.vector3f.y, this.vector3f.z);
+         pose.transformPosition(x, y, z, this.vector3f);
+         return begin.addVertex(this.vector3f.x, this.vector3f.y, this.vector3f.z);
       } else {
-         return var1.addVertex(var2, var3, var4, var5);
+         return begin.addVertex(pose, x, y, z);
       }
    }
 
-   public static float easeOut(float var0) {
-      float var1 = 1.0F - var0;
-      return 1.0F - var1 * var1 * var1;
+   public static float easeOut(float f) {
+      float f2 = 1.0F - f;
+      return 1.0F - f2 * f2 * f2;
    }
 
-   public static float method3266(float var0) {
-      return method3267(var0, 0.1F, 0.45F);
+   public static float method3266(float f) {
+      return method3267(f, 0.1F, 0.45F);
    }
 
-   public static float method3267(float var0, float var1, float var2) {
-      float var3 = var0 < var1 ? var0 / var1 : 1.0F;
-      float var4 = var0 > var2 ? (1.0F - var0) / (1.0F - var2) : 1.0F;
-      return var3 * var4 * var4;
+   public static float method3267(float f, float f2, float f3) {
+      float f4 = f < f2 ? f / f2 : 1.0F;
+      float f5 = f > f3 ? (1.0F - f) / (1.0F - f3) : 1.0F;
+      return f4 * f5 * f5;
    }
 
-   public static float method3268(long var0, int var2, int var3) {
-      long var4 = var0 * -7046029254386353131L + var2 * -4658895280553007687L + var3 * -7723592293110705685L;
-      var4 ^= var4 >>> 30;
-      var4 *= -4658895280553007687L;
-      var4 ^= var4 >>> 27;
-      var4 *= -7723592293110705685L;
-      var4 ^= var4 >>> 31;
-      return (float)(var4 >>> 40) / 1.6777216E7F;
+   public static float method3268(long longValue, int n, int n2) {
+      long l = longValue * -7046029254386353131L + n * -4658895280553007687L + n2 * -7723592293110705685L;
+      l ^= l >>> 30;
+      l *= -4658895280553007687L;
+      l ^= l >>> 27;
+      l *= -7723592293110705685L;
+      l ^= l >>> 31;
+      return (float)(l >>> 40) / 1.6777216E7F;
    }
 }

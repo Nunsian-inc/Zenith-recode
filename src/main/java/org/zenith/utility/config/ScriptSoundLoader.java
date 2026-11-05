@@ -35,227 +35,227 @@ public final class ScriptSoundLoader {
    private ScriptSoundLoader() {
    }
 
-   public static ScriptSoundLoader.Data method735(Path var0) throws IOException {
-      long var1 = Files.size(var0);
-      if (var1 > 8388608L) {
+   public static ScriptSoundLoader.Data method735(Path path) throws IOException {
+      long size = Files.size(path);
+      if (size > 8388608L) {
          throw new IOException("звук больше 8 МБ");
       } else {
-         String var3 = var0.getFileName().toString().toLowerCase(Locale.ROOT);
-         if (var3.endsWith(".ogg")) {
-            return method736(Files.readAllBytes(var0));
-         } else if (var3.endsWith(".wav")) {
-            return method737(var0);
+         String lowerCase = path.getFileName().toString().toLowerCase(Locale.ROOT);
+         if (lowerCase.endsWith(".ogg")) {
+            return method736(Files.readAllBytes(path));
+         } else if (lowerCase.endsWith(".wav")) {
+            return method737(path);
          } else {
             throw new IOException("поддерживаются .ogg и .wav");
          }
       }
    }
 
-   private static ScriptSoundLoader.Data method736(byte[] var0) throws IOException {
-      ByteBuffer var1 = MemoryUtil.memAlloc(var0.length);
+   private static ScriptSoundLoader.Data method736(byte[] allBytes) throws IOException {
+      ByteBuffer memAlloc = MemoryUtil.memAlloc(allBytes.length);
 
-      ScriptSoundLoader.Data var41;
+      ScriptSoundLoader.Data data;
       try {
-         MemoryStack var2 = MemoryStack.stackPush();
+         MemoryStack stackPush = MemoryStack.stackPush();
 
          try {
-            var1.put(var0).flip();
-            IntBuffer var3 = var2.mallocInt(1);
-            IntBuffer var4 = var2.mallocInt(1);
-            IntBuffer var5 = var2.mallocInt(1);
-            long var6 = STBVorbis.stb_vorbis_open_memory(var1, var5, null);
-            if (var6 == 0L) {
+            memAlloc.put(allBytes).flip();
+            IntBuffer mallocInt = stackPush.mallocInt(1);
+            IntBuffer intBuffer = stackPush.mallocInt(1);
+            IntBuffer error = stackPush.mallocInt(1);
+            long stb_vorbis_open_memory = STBVorbis.stb_vorbis_open_memory(memAlloc, error, null);
+            if (stb_vorbis_open_memory == 0L) {
                throw new IOException("не удалось разобрать ogg");
             }
 
             try {
-               STBVorbisInfo var8 = STBVorbisInfo.malloc(var2);
-               STBVorbis.stb_vorbis_get_info(var6, var8);
-               int var9 = Math.max(1, Math.min(2, var8.channels()));
-               int var10 = Math.max(8000, Math.min(192000, var8.sample_rate()));
-               int var11 = 10584000 - 10584000 % var9;
-               int var12 = STBVorbis.stb_vorbis_stream_length_in_samples(var6);
-               short[] var13 = new short[var12 > 0 ? (int)Math.min((long)var12 * var9, (long)var11) : var11];
-               ShortBuffer var14 = MemoryUtil.memAllocShort(4096 * var9);
+               STBVorbisInfo malloc = STBVorbisInfo.malloc(stackPush);
+               STBVorbis.stb_vorbis_get_info(stb_vorbis_open_memory, malloc);
+               int channels = Math.max(1, Math.min(2, malloc.channels()));
+               int sampleRate = Math.max(8000, Math.min(192000, malloc.sample_rate()));
+               int n = 10584000 - 10584000 % channels;
+               int stb_vorbis_stream_length_in_samples = STBVorbis.stb_vorbis_stream_length_in_samples(stb_vorbis_open_memory);
+               short[] original = new short[stb_vorbis_stream_length_in_samples > 0 ? (int)Math.min((long)stb_vorbis_stream_length_in_samples * channels, (long)n) : n];
+               ShortBuffer memAllocShort = MemoryUtil.memAllocShort(4096 * channels);
 
                try {
-                  int var15 = 0;
+                  int offset = 0;
 
-                  while (var15 < var11) {
-                     var14.clear();
-                     int var16 = STBVorbis.stb_vorbis_get_samples_short_interleaved(var6, var9, var14);
-                     if (var16 <= 0) {
+                  while (offset < n) {
+                     memAllocShort.clear();
+                     int stb_vorbis_get_samples_short_interleaved = STBVorbis.stb_vorbis_get_samples_short_interleaved(stb_vorbis_open_memory, channels, memAllocShort);
+                     if (stb_vorbis_get_samples_short_interleaved <= 0) {
                         break;
                      }
 
-                     int var17 = Math.min(var16 * var9, var11 - var15);
-                     if (var15 + var17 > var13.length) {
-                        var13 = Arrays.copyOf(var13, (int)Math.min((long)var11, Math.max(var13.length * 2L, (long)(var15 + var17))));
+                     int length = Math.min(stb_vorbis_get_samples_short_interleaved * channels, n - offset);
+                     if (offset + length > original.length) {
+                        original = Arrays.copyOf(original, (int)Math.min((long)n, Math.max(original.length * 2L, (long)(offset + length))));
                      }
 
-                     var14.get(var13, var15, var17);
-                     var15 += var17;
+                     memAllocShort.get(original, offset, length);
+                     offset += length;
                   }
 
-                  if (var15 == 0) {
+                  if (offset == 0) {
                      throw new IOException("пустой ogg");
                   }
 
-                  var41 = new ScriptSoundLoader.Data(var15 == var13.length ? var13 : Arrays.copyOf(var13, var15), var9, var10);
+                  data = new ScriptSoundLoader.Data(offset == original.length ? original : Arrays.copyOf(original, offset), channels, sampleRate);
                } finally {
-                  MemoryUtil.memFree(var14);
+                  MemoryUtil.memFree(memAllocShort);
                }
             } finally {
-               STBVorbis.stb_vorbis_close(var6);
+               STBVorbis.stb_vorbis_close(stb_vorbis_open_memory);
             }
-         } catch (Throwable var39) {
-            if (var2 != null) {
+         } catch (Throwable e) {
+            if (stackPush != null) {
                try {
-                  var2.close();
-               } catch (Throwable var36) {
-                  var39.addSuppressed(var36);
+                  stackPush.close();
+               } catch (Throwable ex) {
+                  e.addSuppressed(ex);
                }
             }
 
-            throw var39;
+            throw e;
          }
 
-         if (var2 != null) {
-            var2.close();
+         if (stackPush != null) {
+            stackPush.close();
          }
       } finally {
-         MemoryUtil.memFree(var1);
+         MemoryUtil.memFree(memAlloc);
       }
 
-      return var41;
+      return data;
    }
 
-   private static ScriptSoundLoader.Data method737(Path var0) throws IOException {
+   private static ScriptSoundLoader.Data method737(Path path) throws IOException {
       try {
-         ScriptSoundLoader.Data var17;
+         ScriptSoundLoader.Data data;
          try (
-            BufferedInputStream var1 = new BufferedInputStream(Files.newInputStream(var0));
-            AudioInputStream var2 = AudioSystem.getAudioInputStream(var1);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(path));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
          ) {
-            AudioFormat var3 = var2.getFormat();
-            int var4 = Math.max(1, Math.min(2, var3.getChannels()));
-            AudioFormat var5 = new AudioFormat(Encoding.PCM_SIGNED, var3.getSampleRate(), 16, var4, var4 * 2, var3.getSampleRate(), false);
+            AudioFormat format = audioInputStream.getFormat();
+            int channels = Math.max(1, Math.min(2, format.getChannels()));
+            AudioFormat audioFormat = new AudioFormat(Encoding.PCM_SIGNED, format.getSampleRate(), 16, channels, channels * 2, format.getSampleRate(), false);
 
-            try (AudioInputStream var6 = AudioSystem.getAudioInputStream(var5, var2)) {
-               byte[] var7 = var6.readNBytes(21168000);
-               short[] var8 = new short[var7.length / 2];
+            try (AudioInputStream audioInputStream2 = AudioSystem.getAudioInputStream(audioFormat, audioInputStream)) {
+               byte[] nBytes = audioInputStream2.readNBytes(21168000);
+               short[] shortValues = new short[nBytes.length / 2];
 
-               for (int var9 = 0; var9 < var8.length; var9++) {
-                  var8[var9] = (short)(var7[var9 * 2] & 255 | var7[var9 * 2 + 1] << 8);
+               for (int i = 0; i < shortValues.length; i++) {
+                  shortValues[i] = (short)(nBytes[i * 2] & 255 | nBytes[i * 2 + 1] << 8);
                }
 
-               var17 = new ScriptSoundLoader.Data(var8, var4, (int)var3.getSampleRate());
+               data = new ScriptSoundLoader.Data(shortValues, channels, (int)format.getSampleRate());
             }
          }
 
-         return var17;
-      } catch (UnsupportedAudioFileException var16) {
+         return data;
+      } catch (UnsupportedAudioFileException e) {
          throw new IOException("неподдерживаемый wav");
       }
    }
 
-   public static ScriptSoundLoader.Entry method738(ScriptSoundLoader.Data var0, float var1, float var2, boolean var3) {
+   public static ScriptSoundLoader.Entry method738(ScriptSoundLoader.Data data, float floatValue, float f, boolean flag) {
       if (items.size() >= 24) {
          throw new IllegalStateException("одновременно играет больше 24 звуков");
       } else {
-         ScriptSoundLoader.Entry var4 = new ScriptSoundLoader.Entry(atomicInteger.incrementAndGet(), var0, var1, var2);
-         var4.flag = var3;
-         items.put(var4.intValue, var4);
-         Thread.ofPlatform().daemon(true).name("zenith-script-sound").start(() -> method742(var4));
-         return var4;
+         ScriptSoundLoader.Entry entry = new ScriptSoundLoader.Entry(atomicInteger.incrementAndGet(), data, floatValue, f);
+         entry.flag = flag;
+         items.put(entry.intValue, entry);
+         Thread.ofPlatform().daemon(true).name("zenith-script-sound").start(() -> method742(entry));
+         return entry;
       }
    }
 
    public static void method739() {
-      for (ScriptSoundLoader.Entry var1 : items.values()) {
-         var1.stopped = true;
+      for (ScriptSoundLoader.Entry entry : items.values()) {
+         entry.stopped = true;
       }
    }
 
    private static float method740() {
       try {
          return Minecraft.getInstance().options.getFinalSoundSourceVolume(SoundSource.MASTER);
-      } catch (RuntimeException var1) {
+      } catch (RuntimeException e) {
          return 1.0F;
       }
    }
 
-   private static float[] method741(ScriptSoundLoader.Entry var0) {
-      float var1 = var0.floatValue * method740();
-      if (Double.isNaN(var0.doubleValue)) {
-         return new float[]{var1, var1};
+   private static float[] method741(ScriptSoundLoader.Entry entry) {
+      float f = entry.floatValue * method740();
+      if (Double.isNaN(entry.doubleValue)) {
+         return new float[]{f, f};
       } else {
-         Minecraft var2 = Minecraft.getInstance();
-         if (var2.player == null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft.player == null) {
             return new float[]{0.0F, 0.0F};
          } else {
-            double var3 = var0.doubleValue - var2.player.getX();
-            double var5 = var0.doubleValue2 - var2.player.getEyeY();
-            double var7 = var0.doubleValue3 - var2.player.getZ();
-            double var9 = Math.sqrt(var3 * var3 + var5 * var5 + var7 * var7);
-            float var11 = (float)Math.max(0.0, 1.0 - var9 / Math.max(1.0, var0.doubleValue4));
-            double var12 = Math.toDegrees(Math.atan2(var7, var3)) - 90.0 - var2.player.getYRot();
-            double var14 = var9 < 0.5 ? 0.0 : -Math.sin(Math.toRadians(var12));
-            float var16 = (float)Math.min(1.0, 1.0 - var14) * 0.5F + 0.5F * (float)(1.0 - Math.abs(var14));
-            float var17 = (float)Math.min(1.0, 1.0 + var14) * 0.5F + 0.5F * (float)(1.0 - Math.abs(var14));
-            return new float[]{var1 * var11 * var16, var1 * var11 * var17};
+            double x = entry.doubleValue - minecraft.player.getX();
+            double d = entry.doubleValue2 - minecraft.player.getEyeY();
+            double y = entry.doubleValue3 - minecraft.player.getZ();
+            double d2 = Math.sqrt(x * x + d * d + y * y);
+            float f2 = (float)Math.max(0.0, 1.0 - d2 / Math.max(1.0, entry.doubleValue4));
+            double angdeg = Math.toDegrees(Math.atan2(y, x)) - 90.0 - minecraft.player.getYRot();
+            double d3 = d2 < 0.5 ? 0.0 : -Math.sin(Math.toRadians(angdeg));
+            float f3 = (float)Math.min(1.0, 1.0 - d3) * 0.5F + 0.5F * (float)(1.0 - Math.abs(d3));
+            float f4 = (float)Math.min(1.0, 1.0 + d3) * 0.5F + 0.5F * (float)(1.0 - Math.abs(d3));
+            return new float[]{f * f2 * f3, f * f2 * f4};
          }
       }
    }
 
-   private static void method742(ScriptSoundLoader.Entry var0) {
-      ScriptSoundLoader.Data var1 = var0.data;
-      int var2 = Math.max(4000, Math.min(192000, Math.round(var1.getIntValue2() * Math.max(0.25F, Math.min(4.0F, var0.floatValue2)))));
-      AudioFormat var3 = new AudioFormat(var2, 16, 2, true, false);
+   private static void method742(ScriptSoundLoader.Entry entry) {
+      ScriptSoundLoader.Data data = entry.data;
+      int sampleRate = Math.max(4000, Math.min(192000, Math.round(data.getIntValue2() * Math.max(0.25F, Math.min(4.0F, entry.floatValue2)))));
+      AudioFormat audioFormat = new AudioFormat(sampleRate, 16, 2, true, false);
 
-      try (SourceDataLine var4 = AudioSystem.getSourceDataLine(var3)) {
-         var4.open(var3, 8192);
-         var4.start();
-         int var5 = var1.getShortValues().length / var1.getIntValue();
-         short var6 = 1024;
-         byte[] var7 = new byte[var6 * 4];
+      try (SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(audioFormat)) {
+         sourceDataLine.open(audioFormat, 8192);
+         sourceDataLine.start();
+         int n = data.getShortValues().length / data.getIntValue();
+         short s = 1024;
+         byte[] bytes = new byte[s * 4];
 
-         for (int var8 = 0; !var0.stopped; var0.doubleValue5 = (double)var8 / var5) {
-            if (var8 >= var5) {
-               if (!var0.flag) {
+         for (int i = 0; !entry.stopped; entry.doubleValue5 = (double)i / n) {
+            if (i >= n) {
+               if (!entry.flag) {
                   break;
                }
 
-               var8 = 0;
+               i = 0;
             }
 
-            float[] var9 = method741(var0);
-            int var10 = Math.min(var6, var5 - var8);
+            float[] floats = method741(entry);
+            int n2 = Math.min(s, n - i);
 
-            for (int var11 = 0; var11 < var10; var11++) {
-               int var12 = (var8 + var11) * var1.getIntValue();
-               short var13 = var1.getShortValues()[var12];
-               short var14 = var1.getIntValue() > 1 ? var1.getShortValues()[var12 + 1] : var13;
-               int var15 = Math.max(32768, Math.min(32767, Math.round(var13 * var9[0])));
-               int var16 = Math.max(32768, Math.min(32767, Math.round(var14 * var9[1])));
-               var7[var11 * 4] = (byte)var15;
-               var7[var11 * 4 + 1] = (byte)(var15 >> 8);
-               var7[var11 * 4 + 2] = (byte)var16;
-               var7[var11 * 4 + 3] = (byte)(var16 >> 8);
+            for (int j = 0; j < n2; j++) {
+               int n3 = (i + j) * data.getIntValue();
+               short shortValue = data.getShortValues()[n3];
+               short shortValue2 = data.getIntValue() > 1 ? data.getShortValues()[n3 + 1] : shortValue;
+               int n4 = Math.max(32768, Math.min(32767, Math.round(shortValue * floats[0])));
+               int n5 = Math.max(32768, Math.min(32767, Math.round(shortValue2 * floats[1])));
+               bytes[j * 4] = (byte)n4;
+               bytes[j * 4 + 1] = (byte)(n4 >> 8);
+               bytes[j * 4 + 2] = (byte)n5;
+               bytes[j * 4 + 3] = (byte)(n5 >> 8);
             }
 
-            var4.write(var7, 0, var10 * 4);
-            var8 += var10;
+            sourceDataLine.write(bytes, 0, n2 * 4);
+            i += n2;
          }
 
-         if (!var0.stopped) {
-            var4.drain();
+         if (!entry.stopped) {
+            sourceDataLine.drain();
          }
 
-         var4.stop();
-      } catch (Exception var24) {
+         sourceDataLine.stop();
+      } catch (Exception e) {
       } finally {
-         items.remove(var0.intValue);
+         items.remove(entry.intValue);
       }
    }
 
@@ -293,10 +293,10 @@ public final class ScriptSoundLoader {
          return "Data[" + "shortValues=" + this.shortValues + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data(short[] var1, int var2, int var3) {
-         this.shortValues = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
+      public Data(short[] shortValues, int intValue, int sampleRate) {
+         this.shortValues = shortValues;
+         this.intValue = intValue;
+         this.intValue2 = sampleRate;
       }
 
       public double method743() {
@@ -329,11 +329,11 @@ public final class ScriptSoundLoader {
       public volatile double doubleValue4 = 32.0;
       public volatile double doubleValue5;
 
-      public Entry(int var1, ScriptSoundLoader.Data var2, float var3, float var4) {
-         this.intValue = var1;
-         this.data = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
+      public Entry(int intValue, ScriptSoundLoader.Data data, float floatValue, float f) {
+         this.intValue = intValue;
+         this.data = data;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
    }
 }

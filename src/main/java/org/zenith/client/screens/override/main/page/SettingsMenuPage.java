@@ -75,16 +75,16 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
 
    private void addSodiumTabs() {
       if (!this.sodiumAdded) {
-         List<SodiumOptionsReader.Data> var1 = SodiumOptionsReader.method1598();
-         if (!var1.isEmpty()) {
-            for (SodiumOptionsReader.Data var3 : var1) {
-               this.categories.add(new SettingsMenuPage.Category(var3.name(), MenuIcons.SPARKLE, () -> {
+         List<SodiumOptionsReader.Data> datas = SodiumOptionsReader.method1598();
+         if (!datas.isEmpty()) {
+            for (SodiumOptionsReader.Data data : datas) {
+               this.categories.add(new SettingsMenuPage.Category(data.name(), MenuIcons.SPARKLE, () -> {
                   ArrayList var1x = new ArrayList();
 
-                  for (Object var3x : var3.getItems()) {
-                     AbstractWidget var4 = SodiumOptionsReader.method1599(var3x);
-                     if (var4 != null) {
-                        var1x.add(var4);
+                  for (Object var3x : data.getItems()) {
+                     AbstractWidget abstractWidget = SodiumOptionsReader.method1599(var3x);
+                     if (abstractWidget != null) {
+                        var1x.add(abstractWidget);
                      }
                   }
 
@@ -99,49 +99,49 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
    }
 
    private void rebuildTabs() {
-      ArrayList var1 = new ArrayList();
+      ArrayList arrayList = new ArrayList();
 
-      for (int var2 = 0; var2 < this.categories.size(); var2++) {
-         SettingsMenuPage.Category var3 = this.categories.get(var2);
-         int var4 = var2;
-         var1.add(new MenuNavigationBar.Item(var3.icon(), var3.label(), () -> this.select(var4)));
+      for (int i = 0; i < this.categories.size(); i++) {
+         SettingsMenuPage.Category category = this.categories.get(i);
+         int active = i;
+         arrayList.add(new MenuNavigationBar.Item(category.icon(), category.label(), () -> this.select(active)));
       }
 
-      this.tabs = new MenuNavigationBar(var1);
+      this.tabs = new MenuNavigationBar(arrayList);
    }
 
-   private void vanilla(String var1, MenuIcon var2, Supplier<OptionsSubScreen> var3) {
-      this.categories.add(new SettingsMenuPage.Category(var1, var2, () -> this.harvestVanilla(var1, var3)));
+   private void vanilla(String label, MenuIcon icon, Supplier<OptionsSubScreen> supplier) {
+      this.categories.add(new SettingsMenuPage.Category(label, icon, () -> this.harvestVanilla(label, supplier)));
    }
 
-   private List<AbstractWidget> harvestVanilla(String var1, Supplier<OptionsSubScreen> var2) {
-      ArrayList<AbstractWidget> var3 = new ArrayList<>();
+   private List<AbstractWidget> harvestVanilla(String label, Supplier<OptionsSubScreen> supplier) {
+      ArrayList<AbstractWidget> abstractWidgets = new ArrayList<>();
       if (mc.options == null) {
-         return var3;
+         return abstractWidgets;
       } else {
-         OptionsSubScreen var4 = (OptionsSubScreen)var2.get();
-         var4.init(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
-         this.sources.put(var1, var4);
-         OptionsList var5 = var4.list;
-         if (var5 != null) {
-            for (Object var7 : var5.children()) {
-               if (var7 instanceof ContainerEventHandler var8) {
-                  for (GuiEventListener var10 : var8.children()) {
-                     if (var10 instanceof AbstractWidget var11) {
-                        var3.add(var11);
+         OptionsSubScreen optionsSubScreen = (OptionsSubScreen)supplier.get();
+         optionsSubScreen.init(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+         this.sources.put(label, optionsSubScreen);
+         OptionsList list = optionsSubScreen.list;
+         if (list != null) {
+            for (Object obj : list.children()) {
+               if (obj instanceof ContainerEventHandler containerEventHandler) {
+                  for (GuiEventListener guiEventListener : containerEventHandler.children()) {
+                     if (guiEventListener instanceof AbstractWidget abstractWidget) {
+                        abstractWidgets.add(abstractWidget);
                      }
                   }
                }
             }
          }
 
-         return var3;
+         return abstractWidgets;
       }
    }
 
-   private void select(int var1) {
-      if (var1 != this.active && var1 >= 0 && var1 < this.categories.size()) {
-         this.active = var1;
+   private void select(int active) {
+      if (active != this.active && active >= 0 && active < this.categories.size()) {
+         this.active = active;
          this.scroll.reset();
          this.dragged = null;
       }
@@ -149,17 +149,17 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
 
    @Override
    public void update() {
-      int var1 = this.visible().size();
-      float var2 = mc.getWindow() == null ? MenuTheme.px(1920.0F) : mc.getWindow().getGuiScaledWidth();
-      float var3 = mc.getWindow() == null ? MenuTheme.px(1080.0F) : mc.getWindow().getGuiScaledHeight();
-      float var4 = var2 - MenuTheme.px(96.0F) - RAIL_GAP - RAIL_WIDTH;
-      int var5 = (int)Math.floor((var4 + ROW_GAP) / (COLUMN_WIDTH + ROW_GAP));
-      this.columns = Math.max(2, Math.min(4, Math.min(var5, Math.max(1, var1))));
-      float var6 = ROW_HEIGHT + ROW_GAP;
-      int var7 = Math.max(1, (var1 + this.columns - 1) / this.columns);
-      float var8 = var7 * var6 - ROW_GAP;
-      float var9 = var3 - SHELL_CHROME - MenuNavigationBar.HEIGHT - TABS_GAP - MenuTextField.HEIGHT - SEARCH_GAP;
-      this.gridHeight = Math.max(var6, Math.min(var8, var9));
+      int size = this.visible().size();
+      float px = mc.getWindow() == null ? MenuTheme.px(1920.0F) : mc.getWindow().getGuiScaledWidth();
+      float f = mc.getWindow() == null ? MenuTheme.px(1080.0F) : mc.getWindow().getGuiScaledHeight();
+      float f2 = px - MenuTheme.px(96.0F) - RAIL_GAP - RAIL_WIDTH;
+      int n = (int)Math.floor((f2 + ROW_GAP) / (COLUMN_WIDTH + ROW_GAP));
+      this.columns = Math.max(2, Math.min(4, Math.min(n, Math.max(1, size))));
+      float f3 = ROW_HEIGHT + ROW_GAP;
+      int n2 = Math.max(1, (size + this.columns - 1) / this.columns);
+      float f4 = n2 * f3 - ROW_GAP;
+      float f5 = f - SHELL_CHROME - MenuNavigationBar.HEIGHT - TABS_GAP - MenuTextField.HEIGHT - SEARCH_GAP;
+      this.gridHeight = Math.max(f3, Math.min(f4, f5));
    }
 
    private float listWidth() {
@@ -190,8 +190,8 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
    public void onHide() {
       VanillaOptionStyle.end();
 
-      for (OptionsSubScreen var2 : this.sources.values()) {
-         var2.removed();
+      for (OptionsSubScreen optionsSubScreen : this.sources.values()) {
+         optionsSubScreen.removed();
       }
 
       this.sources.clear();
@@ -206,81 +206,81 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
       return this.widgetsOf(this.categories.get(this.active));
    }
 
-   private List<AbstractWidget> widgetsOf(SettingsMenuPage.Category var1) {
-      var var2 = this.harvested.get(var1.label());
-      if (var2 != null) {
-         return var2;
+   private List<AbstractWidget> widgetsOf(SettingsMenuPage.Category category) {
+      var abstractWidgets = this.harvested.get(category.label());
+      if (abstractWidgets != null) {
+         return abstractWidgets;
       } else {
-         Object var3;
+         Object obj;
          try {
-            var3 = var1.harvest().get();
-         } catch (Exception var5) {
-            var3 = new ArrayList();
+            obj = category.harvest().get();
+         } catch (Exception e) {
+            obj = new ArrayList();
          }
 
-         this.harvested.put(var1.label(), (List<AbstractWidget>)var3);
-         return (List<AbstractWidget>)var3;
+         this.harvested.put(category.label(), (List<AbstractWidget>)obj);
+         return (List<AbstractWidget>)obj;
       }
    }
 
    private List<AbstractWidget> visible() {
-      String var1 = this.search.getValue().trim().toLowerCase(Locale.ROOT);
-      if (var1.isEmpty()) {
+      String lowerCase = this.search.getValue().trim().toLowerCase(Locale.ROOT);
+      if (lowerCase.isEmpty()) {
          return this.widgets();
       } else {
-         ArrayList<AbstractWidget> var2 = new ArrayList<>();
+         ArrayList<AbstractWidget> abstractWidgets = new ArrayList<>();
 
-         for (SettingsMenuPage.Category var4 : this.categories) {
-            for (AbstractWidget var6 : this.widgetsOf(var4)) {
-               if (var6.getMessage().getString().toLowerCase(Locale.ROOT).contains(var1)) {
-                  var2.add(var6);
+         for (SettingsMenuPage.Category category : this.categories) {
+            for (AbstractWidget abstractWidget : this.widgetsOf(category)) {
+               if (abstractWidget.getMessage().getString().toLowerCase(Locale.ROOT).contains(lowerCase)) {
+                  abstractWidgets.add(abstractWidget);
                }
             }
          }
 
-         return var2;
+         return abstractWidgets;
       }
    }
 
    @Override
-   public void layout(BoundsData var1) {
-      var var2 = this.visible();
-      float var3 = var1.getFloatValue2() + MenuNavigationBar.HEIGHT + TABS_GAP;
-      this.search.setBounds(var1.getFloatValue(), var3, this.listWidth(), MenuTextField.HEIGHT);
-      float var4 = var3 + MenuTextField.HEIGHT + SEARCH_GAP;
-      this.viewport = new BoundsData(var1.getFloatValue(), var4, this.listWidth(), this.gridHeight);
-      float var5 = ROW_HEIGHT + ROW_GAP;
-      int var6 = (var2.size() + this.columns - 1) / this.columns;
-      this.scroll.update(this.gridHeight, var6 == 0 ? 0.0F : var6 * var5 - ROW_GAP);
-      float var7 = var4 - this.scroll.offset();
+   public void layout(BoundsData boundsData) {
+      var visible = this.visible();
+      float f = boundsData.getFloatValue2() + MenuNavigationBar.HEIGHT + TABS_GAP;
+      this.search.setBounds(boundsData.getFloatValue(), f, this.listWidth(), MenuTextField.HEIGHT);
+      float y = f + MenuTextField.HEIGHT + SEARCH_GAP;
+      this.viewport = new BoundsData(boundsData.getFloatValue(), y, this.listWidth(), this.gridHeight);
+      float f2 = ROW_HEIGHT + ROW_GAP;
+      int n = (visible.size() + this.columns - 1) / this.columns;
+      this.scroll.update(this.gridHeight, n == 0 ? 0.0F : n * f2 - ROW_GAP);
+      float f3 = y - this.scroll.offset();
 
-      for (int var8 = 0; var8 < var2.size(); var8++) {
-         AbstractWidget var9 = (AbstractWidget)var2.get(var8);
-         float var10 = var1.getFloatValue() + var8 % this.columns * (COLUMN_WIDTH + ROW_GAP);
-         var9.setX(Math.round(MenuTheme.snap(var10)));
-         var9.setY(Math.round(MenuTheme.snap(var7 + var8 / this.columns * var5)));
-         var9.setWidth(Math.round(COLUMN_WIDTH));
+      for (int i = 0; i < visible.size(); i++) {
+         AbstractWidget abstractWidget = (AbstractWidget)visible.get(i);
+         float floatValue = boundsData.getFloatValue() + i % this.columns * (COLUMN_WIDTH + ROW_GAP);
+         abstractWidget.setX(Math.round(MenuTheme.snap(floatValue)));
+         abstractWidget.setY(Math.round(MenuTheme.snap(f3 + i / this.columns * f2)));
+         abstractWidget.setWidth(Math.round(COLUMN_WIDTH));
       }
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-      List<AbstractWidget> var5 = this.visible();
-      this.search.render(var1, var2, var3);
-      if (var5.isEmpty()) {
-         Font var6 = MenuTheme.medium(12.0F);
-         String var7 = this.searching()
+   public void render(MenuDrawContext graphics, float mouseX, float mouseY, BoundsData boundsData) {
+      List<AbstractWidget> visible = this.visible();
+      this.search.render(graphics, mouseX, mouseY);
+      if (visible.isEmpty()) {
+         Font medium = MenuTheme.medium(12.0F);
+         String text = this.searching()
             ? MenuTheme.t("menu.settings.noMatch") + " \"" + this.search.getValue().trim() + "\""
             : MenuTheme.t("menu.settings.noOptions");
-         var1.drawText(
-            var6,
-            var7,
-            var4.getFloatValue() + (this.listWidth() - var6.width(var7)) / 2.0F,
-            this.viewport.getFloatValue2() + (this.gridHeight - var6.height()) / 2.0F,
+         graphics.drawText(
+            medium,
+            text,
+            boundsData.getFloatValue() + (this.listWidth() - medium.width(text)) / 2.0F,
+            this.viewport.getFloatValue2() + (this.gridHeight - medium.height()) / 2.0F,
             MenuTheme.textTertiary()
          );
       } else {
-         var1.enableScissor(
+         graphics.enableScissor(
             this.viewport.getFloatValue(),
             this.viewport.getFloatValue2(),
             this.viewport.getFloatValue() + this.listWidth(),
@@ -289,38 +289,38 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
          VanillaOptionStyle.begin();
 
          try {
-            for (AbstractWidget var12 : var5) {
-               if (!(var12.getY() + var12.getHeight() < this.viewport.getFloatValue2()) && !(var12.getY() > this.viewport.getFloatValue2() + this.gridHeight)) {
-                  var12.extractRenderState(var1, (int)var2, (int)var3, 0.0F);
+            for (AbstractWidget abstractWidget : visible) {
+               if (!(abstractWidget.getY() + abstractWidget.getHeight() < this.viewport.getFloatValue2()) && !(abstractWidget.getY() > this.viewport.getFloatValue2() + this.gridHeight)) {
+                  abstractWidget.extractRenderState(graphics, (int)mouseX, (int)mouseY, 0.0F);
                }
             }
          } finally {
             VanillaOptionStyle.end();
          }
 
-         var1.disableScissor();
-         this.scroll.renderRail(var1, var4.getFloatValue() + this.listWidth() + RAIL_GAP, this.viewport.getFloatValue2(), this.gridHeight);
+         graphics.disableScissor();
+         this.scroll.renderRail(graphics, boundsData.getFloatValue() + this.listWidth() + RAIL_GAP, this.viewport.getFloatValue2(), this.gridHeight);
       }
 
-      this.tabs.render(var1, var2, var3, var4.getFloatValue() + var4.width() / 2.0F, var4.getFloatValue2(), this.active);
+      this.tabs.render(graphics, mouseX, mouseY, boundsData.getFloatValue() + boundsData.width() / 2.0F, boundsData.getFloatValue2(), this.active);
    }
 
-   private static MouseButtonEvent zenith$click(double var0, double var2, int var4) {
-      return new MouseButtonEvent(var0, var2, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var4), org.zenith.utility.misc.KeyCompat.modsToSdl(0)));
+   private static MouseButtonEvent zenith$click(double x, double y, int glfwButton) {
+      return new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(glfwButton), org.zenith.utility.misc.KeyCompat.modsToSdl(0)));
    }
 
    @Override
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      if (this.search.mouseClicked(var1, var3, var5)) {
+   public boolean mouseClicked(double lastClickX, double lastClickY, int glfwButton) {
+      if (this.search.mouseClicked(lastClickX, lastClickY, glfwButton)) {
          return true;
-      } else if (this.tabs.mouseClicked(var1, var3)) {
+      } else if (this.tabs.mouseClicked(lastClickX, lastClickY)) {
          return true;
-      } else if (!this.viewport.contains(var1, var3)) {
+      } else if (!this.viewport.contains(lastClickX, lastClickY)) {
          return false;
       } else {
-         for (AbstractWidget var7 : this.visible()) {
-            if (var7.mouseClicked(zenith$click(var1, var3, var5), false)) {
-               this.dragged = var7;
+         for (AbstractWidget dragged : this.visible()) {
+            if (dragged.mouseClicked(zenith$click(lastClickX, lastClickY, glfwButton), false)) {
+               this.dragged = dragged;
                return true;
             }
          }
@@ -330,13 +330,13 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
    }
 
    @Override
-   public boolean mouseReleased(double var1, double var3, int var5) {
-      AbstractWidget var6 = this.dragged;
+   public boolean mouseReleased(double x, double y, int glfwButton) {
+      AbstractWidget dragged = this.dragged;
       this.dragged = null;
-      if (var6 == null) {
+      if (dragged == null) {
          return false;
       } else {
-         var6.mouseReleased(zenith$click(var1, var3, var5));
+         dragged.mouseReleased(zenith$click(x, y, glfwButton));
          if (mc.options != null) {
             mc.options.save();
          }
@@ -346,23 +346,23 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
    }
 
    @Override
-   public boolean mouseDragged(double var1, double var3, int var5) {
-      return this.dragged == null ? false : this.dragged.mouseDragged(zenith$click(var1, var3, var5), 0.0, 0.0);
+   public boolean mouseDragged(double x, double y, int glfwButton) {
+      return this.dragged == null ? false : this.dragged.mouseDragged(zenith$click(x, y, glfwButton), 0.0, 0.0);
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5) {
-      return this.scroll.scroll(var5, ROW_HEIGHT + ROW_GAP);
+   public boolean mouseScrolled(double d, double d2, double d3) {
+      return this.scroll.scroll(d3, ROW_HEIGHT + ROW_GAP);
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return this.search.keyPressed(var1, var2, var3);
+   public boolean keyPressed(int n, int n2, int n3) {
+      return this.search.keyPressed(n, n2, n3);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      return this.search.charTyped(var1, var2);
+   public boolean charTyped(char c, int n) {
+      return this.search.charTyped(c, n);
    }
 
    private static final class Category {
@@ -399,10 +399,10 @@ public final class SettingsMenuPage implements MainMenuPage, MinecraftAccess {
          return "Category[" + "label=" + this.label + ", " + "icon=" + this.icon + ", " + "harvest=" + this.harvest + "]";
       }
 
-      private Category(String var1, MenuIcon var2, Supplier<List<AbstractWidget>> var3) {
-         this.label = var1;
-         this.icon = var2;
-         this.harvest = var3;
+      private Category(String label, MenuIcon icon, Supplier<List<AbstractWidget>> harvest) {
+         this.label = label;
+         this.icon = icon;
+         this.harvest = harvest;
       }
    }
 }

@@ -18,12 +18,12 @@ public final class Util25 {
    private Util25() {
    }
 
-   public static PoseStack method6477(MenuDrawContext var0, float var1, float var2, float var3) {
-      PoseStack var4 = MatrixUtils.method666(var0.pose());
-      var4.translate(var1, var2, 50.0F);
-      var4.scale(var3, -var3, var3 * 0.4F);
-      var4.rotate(Axis.XP.rotationDegrees(26.0F));
-      return var4;
+   public static PoseStack method6477(MenuDrawContext customDrawContext, float xo, float yo, float xScale) {
+      PoseStack poseStack = MatrixUtils.method666(customDrawContext.pose());
+      poseStack.translate(xo, yo, 50.0F);
+      poseStack.scale(xScale, -xScale, xScale * 0.4F);
+      poseStack.rotate(Axis.XP.rotationDegrees(26.0F));
+      return poseStack;
    }
 
    public static float method6478() {
@@ -34,37 +34,37 @@ public final class Util25 {
       return 0.0F;
    }
 
-   public static void method6480(Glowboost var0, FlakeState var1, Util25.Data var2, float var3) {
-      int var4 = var1.getIntValue3();
+   public static void method6480(Glowboost glowboost, FlakeState flakeState2, Util25.Data data, float previewAlpha) {
+      int n = flakeState2.getIntValue3();
 
-      for (int var5 = -var4; var5 <= var4; var5++) {
-         for (int var6 = -var4; var6 <= var4; var6++) {
-            double var7 = var1.method4544(var5, var6);
-            if (var7 != Double.NEGATIVE_INFINITY) {
-               double var9 = Math.sqrt(var5 * var5 + var6 * var6);
-               float var11 = (float)Math.min(1.0, var9 / (var4 + 1.0)) * 0.6F;
-               float var12 = 0.9F + 0.2F * Glowboost.method3268(method6482(var5, var6), 0, 0);
-               var0.method3237(
-                  var5, var7, var6, var5 + 1, var7, var6, var5 + 1, var7, var6 + 1, var5, var7, var6 + 1, method6481(-8749180, var2, var12, var11, var3)
+      for (int i = -n; i <= n; i++) {
+         for (int j = -n; j <= n; j++) {
+            double d = flakeState2.method4544(i, j);
+            if (d != Double.NEGATIVE_INFINITY) {
+               double d2 = Math.sqrt(i * i + j * j);
+               float f = (float)Math.min(1.0, d2 / (n + 1.0)) * 0.6F;
+               float f2 = 0.9F + 0.2F * Glowboost.method3268(method6482(i, j), 0, 0);
+               glowboost.method3237(
+                  i, d, j, i + 1, d, j, i + 1, d, j + 1, i, d, j + 1, method6481(-8749180, data, f2, f, previewAlpha)
                );
-               double var13 = var1.method4544(var5, var6 + 1);
-               boolean var15 = var13 == Double.NEGATIVE_INFINITY || var6 == var4;
-               double var16 = var15 ? var7 - 1.0 : var13;
-               if (var15 || var13 < var7) {
-                  var0.method3237(
-                     var5,
-                     var7,
-                     var6 + 1,
-                     var5 + 1,
-                     var7,
-                     var6 + 1,
-                     var5 + 1,
-                     var16,
-                     var6 + 1,
-                     var5,
-                     var16,
-                     var6 + 1,
-                     method6481(-11644329, var2, var12, var11, var3)
+               double d3 = flakeState2.method4544(i, j + 1);
+               boolean flag = d3 == Double.NEGATIVE_INFINITY || j == n;
+               double d4 = flag ? d - 1.0 : d3;
+               if (flag || d3 < d) {
+                  glowboost.method3237(
+                     i,
+                     d,
+                     j + 1,
+                     i + 1,
+                     d,
+                     j + 1,
+                     i + 1,
+                     d4,
+                     j + 1,
+                     i,
+                     d4,
+                     j + 1,
+                     method6481(-11644329, data, f2, f, previewAlpha)
                   );
                }
             }
@@ -72,32 +72,32 @@ public final class Util25 {
       }
    }
 
-   private static int method6481(int var0, Util25.Data var1, float var2, float var3, float var4) {
-      float var5 = ColorUtils.method6424(var0) * var2;
-      float var6 = ColorUtils.method6425(var0) * var2;
-      float var7 = ColorUtils.method6426(var0) * var2;
-      float var8 = var5 * 0.299F + var6 * 0.587F + var7 * 0.114F;
-      var5 = lerp(var8, var5, var1.getFloatValue()) * var1.getFloatValue3() * var1.getFloatValue2();
-      var6 = lerp(var8, var6, var1.getFloatValue()) * var1.getFloatValue4() * var1.getFloatValue2();
-      var7 = lerp(var8, var7, var1.getFloatValue()) * var1.getFloatValue5() * var1.getFloatValue2();
-      float var9 = var3 * var1.getFloatValue6();
-      var5 = lerp(var5, ColorUtils.method6424(var1.getIntValue()), var9);
-      var6 = lerp(var6, ColorUtils.method6425(var1.getIntValue()), var9);
-      var7 = lerp(var7, ColorUtils.method6426(var1.getIntValue()), var9);
-      int var10 = (int)(255.0F * Math.clamp(var4, 0.0F, 1.0F));
-      return var10 << 24 | channel(var5) << 16 | channel(var6) << 8 | channel(var7);
+   private static int method6481(int intValue, Util25.Data data, float f, float f2, float previewAlpha) {
+      float f3 = ColorUtils.method6424(intValue) * f;
+      float f4 = ColorUtils.method6425(intValue) * f;
+      float f5 = ColorUtils.method6426(intValue) * f;
+      float f6 = f3 * 0.299F + f4 * 0.587F + f5 * 0.114F;
+      f3 = lerp(f6, f3, data.getFloatValue()) * data.getFloatValue3() * data.getFloatValue2();
+      f4 = lerp(f6, f4, data.getFloatValue()) * data.getFloatValue4() * data.getFloatValue2();
+      f5 = lerp(f6, f5, data.getFloatValue()) * data.getFloatValue5() * data.getFloatValue2();
+      float floatValue = f2 * data.getFloatValue6();
+      f3 = lerp(f3, ColorUtils.method6424(data.getIntValue()), floatValue);
+      f4 = lerp(f4, ColorUtils.method6425(data.getIntValue()), floatValue);
+      f5 = lerp(f5, ColorUtils.method6426(data.getIntValue()), floatValue);
+      int n = (int)(255.0F * Math.clamp(previewAlpha, 0.0F, 1.0F));
+      return n << 24 | channel(f3) << 16 | channel(f4) << 8 | channel(f5);
    }
 
-   private static int channel(float var0) {
-      return Math.clamp((long)((int)(var0 * 255.0F + 0.5F)), 0, 255);
+   private static int channel(float f) {
+      return Math.clamp((long)((int)(f * 255.0F + 0.5F)), 0, 255);
    }
 
-   private static float lerp(float var0, float var1, float var2) {
-      return var0 + (var1 - var0) * var2;
+   private static float lerp(float f, float f2, float floatValue) {
+      return f + (f2 - f) * floatValue;
    }
 
-   private static long method6482(int var0, int var1) {
-      return var0 * -7046029254386353131L ^ var1 * -4417276706812531889L;
+   private static long method6482(int n, int n2) {
+      return n * -7046029254386353131L ^ n2 * -4417276706812531889L;
    }
 
    public static final class Data {
@@ -154,31 +154,31 @@ public final class Util25 {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "intValue=" + this.intValue + ", " + "floatValue6=" + this.floatValue6 + "]";
       }
 
-      public Data(float var1, float var2, float var3, float var4, float var5, int var6, float var7) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.intValue = var6;
-         this.floatValue6 = var7;
+      public Data(float floatValue, float f, float f2, float f3, float f4, int intValue, float floatValue2) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.intValue = intValue;
+         this.floatValue6 = floatValue2;
       }
 
-      public static Util25.Data method6483(WeatherFlakeChannel var0, float var1) {
-         float var2 = Math.clamp(var1, 0.0F, 1.0F);
+      public static Util25.Data method6483(WeatherFlakeChannel weatherFlakeChannel, float f) {
+         float floatValue = Math.clamp(f, 0.0F, 1.0F);
          return new Util25.Data(
-            Util25.lerp(1.0F, var0.floatValue16, var2),
-            Util25.lerp(1.0F, var0.floatValue15, var2),
-            Util25.lerp(1.0F, var0.floatValues11[0], var2),
-            Util25.lerp(1.0F, var0.floatValues11[1], var2),
-            Util25.lerp(1.0F, var0.floatValues11[2], var2),
-            var0.intValue,
-            var2
+            Util25.lerp(1.0F, weatherFlakeChannel.floatValue16, floatValue),
+            Util25.lerp(1.0F, weatherFlakeChannel.floatValue15, floatValue),
+            Util25.lerp(1.0F, weatherFlakeChannel.floatValues11[0], floatValue),
+            Util25.lerp(1.0F, weatherFlakeChannel.floatValues11[1], floatValue),
+            Util25.lerp(1.0F, weatherFlakeChannel.floatValues11[2], floatValue),
+            weatherFlakeChannel.intValue,
+            floatValue
          );
       }
 
-      public static Util25.Data method6484(float var0, float var1, int var2, float var3) {
-         return new Util25.Data(var0, var1, 1.0F, 1.0F, 1.0F, var2, var3);
+      public static Util25.Data method6484(float floatValue, float f, int intValue, float f2) {
+         return new Util25.Data(floatValue, f, 1.0F, 1.0F, 1.0F, intValue, f2);
       }
 
       public float getFloatValue() {

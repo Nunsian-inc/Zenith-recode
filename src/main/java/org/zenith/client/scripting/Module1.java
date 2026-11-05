@@ -20,39 +20,39 @@ public final class Module1 extends Module {
    public boolean flag2;
    public boolean flag3;
 
-   public Module1(Script var1, String var2, String var3, ModuleCategory var4) {
-      super(method7805(var1, var2), var2, var3, var4);
-      this.script = var1;
+   public Module1(Script script, String name, String str, ModuleCategory category) {
+      super(method7805(script, name), name, str, category);
+      this.script = script;
    }
 
-   public static Module1 method7802(Script var0, String var1, String var2, ModuleCategory var3) {
-      return new Module1(var0, var1, var2, var3);
+   public static Module1 method7802(Script workspace, String name, String str, ModuleCategory category) {
+      return new Module1(workspace, name, str, category);
    }
 
-   public static Module1 method7803(Script var0, String var1) {
-      Module1 var2 = new Module1(var0, "__" + var1, "", ModuleCategory.MISC);
-      var2.flag3 = true;
-      return var2;
+   public static Module1 method7803(Script workspace, String str) {
+      Module1 module1 = new Module1(workspace, "__" + str, "", ModuleCategory.MISC);
+      module1.flag3 = true;
+      return module1;
    }
 
-   public void setFlag2(boolean var1) {
-      this.flag2 = var1;
+   public void setFlag2(boolean flag) {
+      this.flag2 = flag;
    }
 
-   public void setFunction(Function var1) {
-      this.function = var1;
+   public void setFunction(Function function) {
+      this.function = function;
    }
 
-   public void setFunction2(Function var1) {
-      this.function2 = var1;
+   public void setFunction2(Function function2) {
+      this.function2 = function2;
    }
 
-   public void method7804(Setting var1) {
-      this.items.add(var1);
+   public void method7804(Setting setting) {
+      this.items.add(setting);
    }
 
-   public static String method7805(Script var0, String var1) {
-      return "script:" + var0.getId() + ":" + var1.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9а-яё_-]", "_");
+   public static String method7805(Script script, String name) {
+      return "script:" + script.getId() + ":" + name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9а-яё_-]", "_");
    }
 
    public Script getScript() {
@@ -65,8 +65,8 @@ public final class Module1 extends Module {
 
    @Override
    public String getDescription() {
-      String var1 = super.getDescription();
-      return var1.isBlank() ? "Скрипт " + this.script.method1403() : var1;
+      String description = super.getDescription();
+      return description.isBlank() ? "Скрипт " + this.script.method1403() : description;
    }
 
    @Override
@@ -107,8 +107,8 @@ public final class Module1 extends Module {
    }
 
    @Override
-   public boolean equals(Object var1) {
-      return this == var1;
+   public boolean equals(Object obj) {
+      return this == obj;
    }
 
    @Override

@@ -22,13 +22,13 @@ public final class ResourcePackSpoofModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() instanceof ClientboundResourcePackPushPacket var2) {
-         net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl var6 = var1.getPacketListener() instanceof ClientCommonPacketListenerImpl var4 ? var4 : mc.getConnection();
-         if (var6 != null) {
-            var1.setCancelled(true);
-            var6.send(new ServerboundResourcePackPacket(var2.id(), Action.ACCEPTED));
-            var6.send(new ServerboundResourcePackPacket(var2.id(), Action.SUCCESSFULLY_LOADED));
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() instanceof ClientboundResourcePackPushPacket resourcePackPushPacket) {
+         net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl connection = event.getPacketListener() instanceof ClientCommonPacketListenerImpl packetListenerImpl ? packetListenerImpl : mc.getConnection();
+         if (connection != null) {
+            event.setCancelled(true);
+            connection.send(new ServerboundResourcePackPacket(resourcePackPushPacket.id(), Action.ACCEPTED));
+            connection.send(new ServerboundResourcePackPacket(resourcePackPushPacket.id(), Action.SUCCESSFULLY_LOADED));
          }
       }
    }

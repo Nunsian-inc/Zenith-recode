@@ -34,103 +34,103 @@ public final class BotSectionMesher {
    private BotSectionMesher() {
    }
 
-   public static BotSectionMesher.MeshResult build(BotWorld var0, long var1) {
-      int var3 = SectionPos.x(var1);
-      int var4 = SectionPos.y(var1);
-      int var5 = SectionPos.z(var1);
-      LevelChunk var6 = var0.getChunkSource().getChunk(var3, var5, null, false);
-      if (var6 == null) {
-         return new BotSectionMesher.MeshResult(var1, List.of(), List.of(), true);
+   public static BotSectionMesher.MeshResult build(BotWorld world, long pos) {
+      int n = SectionPos.x(pos);
+      int sectionY = SectionPos.y(pos);
+      int z2 = SectionPos.z(pos);
+      LevelChunk chunk = world.getChunkSource().getChunk(n, z2, null, false);
+      if (chunk == null) {
+         return new BotSectionMesher.MeshResult(pos, List.of(), List.of(), true);
       } else {
-         int var7 = var0.getSectionIndexFromSectionY(var4);
-         if (var7 >= 0 && var7 < var6.getSections().length && !var6.getSections()[var7].hasOnlyAir()) {
+         int sectionIndexFromSectionY = world.getSectionIndexFromSectionY(sectionY);
+         if (sectionIndexFromSectionY >= 0 && sectionIndexFromSectionY < chunk.getSections().length && !chunk.getSections()[sectionIndexFromSectionY].hasOnlyAir()) {
             // 26.3 tesselation pieces, wired like vanilla SectionCompiler
-            Minecraft var8 = Minecraft.getInstance();
-            ModelBlockRenderer var17 = new ModelBlockRenderer(var8.options.ambientOcclusion().get(), true, var8.getBlockColors());
-            FluidRenderer var18 = new FluidRenderer(var8.getModelManager().getFluidStateModelSet());
-            BlockStateModelSet var24 = var8.getModelManager().getBlockStateModelSet();
-            boolean var23 = var8.options.cutoutLeaves().get();
-            BlockPos var9 = new BlockPos(var3 << 4, var4 << 4, var5 << 4);
-            BlockPos var10 = var9.offset(15, 15, 15);
-            HashMap var11 = new HashMap();
-            HashMap var12 = new HashMap();
-            ArrayList var13 = new ArrayList();
-            BlockQuadOutput var14 = (x, y, z, quad, instance) -> beginLayer(var11, var12, quad.materialInfo().layer()).putBlockBakedQuad(x, y, z, quad, instance);
-            BlockQuadOutput var15 = (x, y, z, quad, instance) -> beginLayer(var11, var12, ChunkSectionLayer.SOLID).putBlockBakedQuad(x, y, z, quad, instance);
+            Minecraft minecraft = Minecraft.getInstance();
+            ModelBlockRenderer modelBlockRenderer = new ModelBlockRenderer(minecraft.options.ambientOcclusion().get(), true, minecraft.getBlockColors());
+            FluidRenderer fluidRenderer = new FluidRenderer(minecraft.getModelManager().getFluidStateModelSet());
+            BlockStateModelSet blockStateModelSet = minecraft.getModelManager().getBlockStateModelSet();
+            boolean cutoutLeave = minecraft.options.cutoutLeaves().get();
+            BlockPos pos2 = new BlockPos(n << 4, sectionY << 4, z2 << 4);
+            BlockPos offset = pos2.offset(15, 15, 15);
+            HashMap map = new HashMap();
+            HashMap map2 = new HashMap();
+            ArrayList blockEntities = new ArrayList();
+            BlockQuadOutput blockQuadOutput = (x, y, z, quad, instance) -> beginLayer(map, map2, quad.materialInfo().layer()).putBlockBakedQuad(x, y, z, quad, instance);
+            BlockQuadOutput blockQuadOutput2 = (x, y, z, quad, instance) -> beginLayer(map, map2, ChunkSectionLayer.SOLID).putBlockBakedQuad(x, y, z, quad, instance);
             BlockModelLighter.enableCaching();
 
             try {
-               for (BlockPos var29 : BlockPos.betweenClosed(var9, var10)) {
-                  BlockState var31 = var0.getBlockState(var29);
-                  if (!var31.isAir()) {
-                     if (var31.hasBlockEntity()) {
-                        BlockEntity var20 = var0.getBlockEntity(var29);
-                        if (var20 != null) {
-                           var13.add(var20);
+               for (BlockPos pos3 : BlockPos.betweenClosed(pos2, offset)) {
+                  BlockState blockState = world.getBlockState(pos3);
+                  if (!blockState.isAir()) {
+                     if (blockState.hasBlockEntity()) {
+                        BlockEntity blockEntity = world.getBlockEntity(pos3);
+                        if (blockEntity != null) {
+                           blockEntities.add(blockEntity);
                         }
                      }
 
-                     FluidState var33 = var31.getFluidState();
-                     if (!var33.isEmpty()) {
-                        var18.tesselate(var0, var29, var21 -> beginLayer(var11, var12, var21), var31, var33);
+                     FluidState fluidState = blockState.getFluidState();
+                     if (!fluidState.isEmpty()) {
+                        fluidRenderer.tesselate(world, pos3, layer -> beginLayer(map, map2, layer), blockState, fluidState);
                      }
 
-                     if (var31.getRenderShape() == RenderShape.MODEL) {
-                        var17.tesselateBlock(
-                           ModelBlockRenderer.forceOpaque(var23, var31) ? var15 : var14,
-                           SectionPos.sectionRelative(var29.getX()),
-                           SectionPos.sectionRelative(var29.getY()),
-                           SectionPos.sectionRelative(var29.getZ()),
-                           var0,
-                           var29,
-                           var31,
-                           var24.get(var31),
-                           var31.getSeed(var29)
+                     if (blockState.getRenderShape() == RenderShape.MODEL) {
+                        modelBlockRenderer.tesselateBlock(
+                           ModelBlockRenderer.forceOpaque(cutoutLeave, blockState) ? blockQuadOutput2 : blockQuadOutput,
+                           SectionPos.sectionRelative(pos3.getX()),
+                           SectionPos.sectionRelative(pos3.getY()),
+                           SectionPos.sectionRelative(pos3.getZ()),
+                           world,
+                           pos3,
+                           blockState,
+                           blockStateModelSet.get(blockState),
+                           blockState.getSeed(pos3)
                         );
                      }
                   }
                }
-            } catch (Throwable var26) {
-               for (Object var19_o : (Iterable<?>)(Object)(var12.values())) {
-                  ByteBufferBuilder var19 = (ByteBufferBuilder)var19_o;
-                  var19.close();
+            } catch (Throwable e) {
+               for (Object obj : (Iterable<?>)(Object)(map2.values())) {
+                  ByteBufferBuilder byteBufferBuilder = (ByteBufferBuilder)obj;
+                  byteBufferBuilder.close();
                }
 
-               throw var26;
+               throw e;
             } finally {
                BlockModelLighter.clearCache();
             }
 
-            List<LayerMesh> var28 = new ArrayList<>(var11.size());
+            List<LayerMesh> layers = new ArrayList<>(map.size());
 
-            for (Object var32_o : (Iterable<?>)(Object)(var11.entrySet())) {
-               Entry var32 = (Entry)var32_o;
-               MeshData var34 = ((BufferBuilder)var32.getValue()).build();
-               ByteBufferBuilder var36 = (ByteBufferBuilder)var12.get(var32.getKey());
-               if (var34 != null) {
-                  var28.add(new BotSectionMesher.LayerMesh((ChunkSectionLayer)var32.getKey(), var34, var36));
+            for (Object obj : (Iterable<?>)(Object)(map.entrySet())) {
+               Entry entry = (Entry)obj;
+               MeshData buffer = ((BufferBuilder)entry.getValue()).build();
+               ByteBufferBuilder allocator = (ByteBufferBuilder)map2.get(entry.getKey());
+               if (buffer != null) {
+                  layers.add(new BotSectionMesher.LayerMesh((ChunkSectionLayer)entry.getKey(), buffer, allocator));
                } else {
-                  var36.close();
+                  allocator.close();
                }
             }
 
-            return new BotSectionMesher.MeshResult(var1, var28, var13, false);
+            return new BotSectionMesher.MeshResult(pos, layers, blockEntities, false);
          } else {
-            return new BotSectionMesher.MeshResult(var1, List.of(), List.of(), false);
+            return new BotSectionMesher.MeshResult(pos, List.of(), List.of(), false);
          }
       }
    }
 
-   private static BufferBuilder beginLayer(Map<ChunkSectionLayer, BufferBuilder> var0, Map<ChunkSectionLayer, ByteBufferBuilder> var1, ChunkSectionLayer var2) {
-      BufferBuilder var3 = (BufferBuilder)var0.get(var2);
-      if (var3 == null) {
-         ByteBufferBuilder var4 = new ByteBufferBuilder(Math.min(var2.bufferSize(), 65536));
-         var1.put(var2, var4);
-         var3 = new BufferBuilder(var4, PrimitiveTopology.QUADS, var2.vertexFormat());
-         var0.put(var2, var3);
+   private static BufferBuilder beginLayer(Map<ChunkSectionLayer, BufferBuilder> map, Map<ChunkSectionLayer, ByteBufferBuilder> map2, ChunkSectionLayer layer) {
+      BufferBuilder bufferBuilder = (BufferBuilder)map.get(layer);
+      if (bufferBuilder == null) {
+         ByteBufferBuilder buffer = new ByteBufferBuilder(Math.min(layer.bufferSize(), 65536));
+         map2.put(layer, buffer);
+         bufferBuilder = new BufferBuilder(buffer, PrimitiveTopology.QUADS, layer.vertexFormat());
+         map.put(layer, bufferBuilder);
       }
 
-      return var3;
+      return bufferBuilder;
    }
 
    public static final class LayerMesh {
@@ -167,10 +167,10 @@ public final class BotSectionMesher {
          return "LayerMesh[" + "layer=" + this.layer + ", " + "buffer=" + this.buffer + ", " + "allocator=" + this.allocator + "]";
       }
 
-      public LayerMesh(ChunkSectionLayer var1, MeshData var2, ByteBufferBuilder var3) {
-         this.layer = var1;
-         this.buffer = var2;
-         this.allocator = var3;
+      public LayerMesh(ChunkSectionLayer layer, MeshData buffer, ByteBufferBuilder allocator) {
+         this.layer = layer;
+         this.buffer = buffer;
+         this.allocator = allocator;
       }
    }
 
@@ -213,11 +213,11 @@ public final class BotSectionMesher {
          return "MeshResult[" + "sectionPos=" + this.sectionPos + ", " + "layers=" + this.layers + ", " + "blockEntities=" + this.blockEntities + ", " + "chunkMissing=" + this.chunkMissing + "]";
       }
 
-      public MeshResult(long var1, List<BotSectionMesher.LayerMesh> var3, List<BlockEntity> var4, boolean var5) {
-         this.sectionPos = var1;
-         this.layers = var3;
-         this.blockEntities = var4;
-         this.chunkMissing = var5;
+      public MeshResult(long sectionPos, List<BotSectionMesher.LayerMesh> layers, List<BlockEntity> blockEntities, boolean chunkMissing) {
+         this.sectionPos = sectionPos;
+         this.layers = layers;
+         this.blockEntities = blockEntities;
+         this.chunkMissing = chunkMissing;
       }
    }
 }

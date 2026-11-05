@@ -17,163 +17,163 @@ public final class VaultCipher {
    private VaultCipher() {
    }
 
-   public static byte[] method1852(byte[] var0, byte[] var1, String var2) {
-      if (var1.length < 64) {
+   public static byte[] method1852(byte[] bytes, byte[] original, String name) {
+      if (original.length < 64) {
          throw new IllegalArgumentException("key must be >= 64 bytes");
       } else {
          try {
-            byte[] var3 = new byte[16];
-            secureRandom.nextBytes(var3);
-            byte[] var4 = AesGcmCrypto.method5339((byte[])var0.clone(), method1854(var1, var2));
-            byte[] var5 = method1859(var1, 8, 40);
-            method1855(var4, var5, var3);
-            long var6 = method1857(method1859(var1, 0, 8), var3);
-            method1856(var4, var6, false);
-            int var8 = 1 + Math.floorMod(var6, 48);
-            byte[] var9 = new byte[var8];
-            secureRandom.nextBytes(var9);
-            ByteBuffer var10 = ByteBuffer.allocate(CONST_byteValues.length + 1 + 16 + 2 + 4 + var8 + var4.length).order(ByteOrder.BIG_ENDIAN);
-            var10.put(CONST_byteValues);
-            var10.put((byte)1);
-            var10.put(var3);
-            var10.putShort((short)var8);
-            var10.putInt(var4.length);
-            var10.put(var9);
-            var10.put(var4);
-            Arrays.fill(var5, (byte)0);
-            return var10.array();
-         } catch (RuntimeException var11) {
-            throw var11;
-         } catch (Exception var12) {
-            throw new RuntimeException("vault seal failed", var12);
+            byte[] bytes2 = new byte[16];
+            secureRandom.nextBytes(bytes2);
+            byte[] src = AesGcmCrypto.method5339((byte[])bytes.clone(), method1854(original, name));
+            byte[] input = method1859(original, 8, 40);
+            method1855(src, input, bytes2);
+            long x = method1857(method1859(original, 0, 8), bytes2);
+            method1856(src, x, false);
+            int n = 1 + Math.floorMod(x, 48);
+            byte[] bytes3 = new byte[n];
+            secureRandom.nextBytes(bytes3);
+            ByteBuffer order = ByteBuffer.allocate(CONST_byteValues.length + 1 + 16 + 2 + 4 + n + src.length).order(ByteOrder.BIG_ENDIAN);
+            order.put(CONST_byteValues);
+            order.put((byte)1);
+            order.put(bytes2);
+            order.putShort((short)n);
+            order.putInt(src.length);
+            order.put(bytes3);
+            order.put(src);
+            Arrays.fill(input, (byte)0);
+            return order.array();
+         } catch (RuntimeException e) {
+            throw e;
+         } catch (Exception e) {
+            throw new RuntimeException("vault seal failed", e);
          }
       }
    }
 
-   public static byte[] method1853(byte[] var0, byte[] var1, String var2) {
-      if (var1.length < 64) {
+   public static byte[] method1853(byte[] array, byte[] original, String name) {
+      if (original.length < 64) {
          throw new IllegalArgumentException("key must be >= 64 bytes");
       } else {
          try {
-            ByteBuffer var3 = ByteBuffer.wrap(var0).order(ByteOrder.BIG_ENDIAN);
-            byte[] var4 = new byte[CONST_byteValues.length];
-            var3.get(var4);
-            if (!Arrays.equals(var4, CONST_byteValues)) {
+            ByteBuffer order = ByteBuffer.wrap(array).order(ByteOrder.BIG_ENDIAN);
+            byte[] dst = new byte[CONST_byteValues.length];
+            order.get(dst);
+            if (!Arrays.equals(dst, CONST_byteValues)) {
                throw new IllegalArgumentException("bad magic");
-            } else if (var3.get() != 1) {
+            } else if (order.get() != 1) {
                throw new IllegalArgumentException("bad version");
             } else {
-               byte[] var5 = new byte[16];
-               var3.get(var5);
-               int var6 = Short.toUnsignedInt(var3.getShort());
-               int var7 = var3.getInt();
-               var3.position(var3.position() + var6);
-               byte[] var8 = new byte[var7];
-               var3.get(var8);
-               long var9 = method1857(method1859(var1, 0, 8), var5);
-               method1856(var8, var9, true);
-               byte[] var11 = method1859(var1, 8, 40);
-               method1855(var8, var11, var5);
-               Arrays.fill(var11, (byte)0);
-               return AesGcmCrypto.method5340(var8, method1854(var1, var2));
+               byte[] bytes = new byte[16];
+               order.get(bytes);
+               int unsignedInt = Short.toUnsignedInt(order.getShort());
+               int n = order.getInt();
+               order.position(order.position() + unsignedInt);
+               byte[] src = new byte[n];
+               order.get(src);
+               long x = method1857(method1859(original, 0, 8), bytes);
+               method1856(src, x, true);
+               byte[] input = method1859(original, 8, 40);
+               method1855(src, input, bytes);
+               Arrays.fill(input, (byte)0);
+               return AesGcmCrypto.method5340(src, method1854(original, name));
             }
-         } catch (RuntimeException var12) {
-            throw var12;
-         } catch (Exception var13) {
-            throw new RuntimeException("vault open failed (wrong key/HWID/session or tampered)", var13);
+         } catch (RuntimeException e) {
+            throw e;
+         } catch (Exception e) {
+            throw new RuntimeException("vault open failed (wrong key/HWID/session or tampered)", e);
          }
       }
    }
 
-   private static String method1854(byte[] var0, String var1) {
-      byte[] var2 = method1861(method1860(method1859(var0, 40, 24), var1.getBytes(StandardCharsets.UTF_8)));
-      return Base64.getEncoder().encodeToString(var2);
+   private static String method1854(byte[] original, String name) {
+      byte[] src = method1861(method1860(method1859(original, 40, 24), name.getBytes(StandardCharsets.UTF_8)));
+      return Base64.getEncoder().encodeToString(src);
    }
 
-   private static void method1855(byte[] var0, byte[] var1, byte[] var2) {
+   private static void method1855(byte[] src, byte[] input, byte[] bytes) {
       try {
-         MessageDigest var3 = MessageDigest.getInstance("SHA-256");
-         int var4 = 0;
+         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+         int n = 0;
 
-         for (int var5 = 0; var4 < var0.length; var5++) {
-            var3.reset();
-            var3.update(var1);
-            var3.update(var2);
-            var3.update((byte)var5);
-            var3.update((byte)(var5 >> 8));
-            var3.update((byte)(var5 >> 16));
-            byte[] var6 = var3.digest();
-            int var7 = Math.min(var6.length, var0.length - var4);
+         for (int i = 0; n < src.length; i++) {
+            messageDigest.reset();
+            messageDigest.update(input);
+            messageDigest.update(bytes);
+            messageDigest.update((byte)i);
+            messageDigest.update((byte)(i >> 8));
+            messageDigest.update((byte)(i >> 16));
+            byte[] digest = messageDigest.digest();
+            int n2 = Math.min(digest.length, src.length - n);
 
-            for (int var8 = 0; var8 < var7; var8++) {
-               var0[var4 + var8] = (byte)(var0[var4 + var8] ^ var6[var8]);
+            for (int j = 0; j < n2; j++) {
+               src[n + j] = (byte)(src[n + j] ^ digest[j]);
             }
 
-            var4 += var7;
+            n += n2;
          }
-      } catch (Exception var9) {
-         throw new RuntimeException(var9);
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 
-   private static void method1856(byte[] var0, long var1, boolean var3) {
-      int var4 = var0.length;
-      if (var4 >= 2) {
-         int[] var5 = new int[var4];
-         long var6 = var1 == 0L ? -7046029254386353131L : var1;
+   private static void method1856(byte[] src, long x, boolean flag) {
+      int length = src.length;
+      if (length >= 2) {
+         int[] ints = new int[length];
+         long l = x == 0L ? -7046029254386353131L : x;
 
-         for (int var8 = var4 - 1; var8 > 0; var8--) {
-            long var10 = var6 ^ var6 << 13;
-            long var11 = var10 ^ var10 >>> 7;
-            var6 = var11 ^ var11 << 17;
-            int var9 = Math.floorMod(var6, var8 + 1);
-            var5[var8] = var9;
+         for (int i = length - 1; i > 0; i--) {
+            long l2 = l ^ l << 13;
+            long l3 = l2 ^ l2 >>> 7;
+            l = l3 ^ l3 << 17;
+            int floorMod = Math.floorMod(l, i + 1);
+            ints[i] = floorMod;
          }
 
-         if (!var3) {
-            for (int var12 = var4 - 1; var12 > 0; var12--) {
-               method1858(var0, var12, var5[var12]);
+         if (!flag) {
+            for (int i = length - 1; i > 0; i--) {
+               method1858(src, i, ints[i]);
             }
          } else {
-            for (int var13 = 1; var13 < var4; var13++) {
-               method1858(var0, var13, var5[var13]);
+            for (int i = 1; i < length; i++) {
+               method1858(src, i, ints[i]);
             }
          }
       }
    }
 
-   private static long method1857(byte[] var0, byte[] var1) {
-      byte[] var2 = method1861(method1860(var0, var1));
-      long var3 = 0L;
+   private static long method1857(byte[] original, byte[] bytes) {
+      byte[] bytes2 = method1861(method1860(original, bytes));
+      long l = 0L;
 
-      for (int var5 = 0; var5 < 8; var5++) {
-         var3 = var3 << 8 | var2[var5] & 255L;
+      for (int i = 0; i < 8; i++) {
+         l = l << 8 | bytes2[i] & 255L;
       }
 
-      return var3;
+      return l;
    }
 
-   private static void method1858(byte[] var0, int var1, int var2) {
-      byte var3 = var0[var1];
-      var0[var1] = var0[var2];
-      var0[var2] = var3;
+   private static void method1858(byte[] src, int n, int n2) {
+      byte b = src[n];
+      src[n] = src[n2];
+      src[n2] = b;
    }
 
-   private static byte[] method1859(byte[] var0, int var1, int var2) {
-      return Arrays.copyOfRange(var0, var1, var1 + var2);
+   private static byte[] method1859(byte[] original, int from, int n) {
+      return Arrays.copyOfRange(original, from, from + n);
    }
 
-   private static byte[] method1860(byte[] var0, byte[] var1) {
-      byte[] var2 = Arrays.copyOf(var0, var0.length + var1.length);
-      System.arraycopy(var1, 0, var2, var0.length, var1.length);
-      return var2;
+   private static byte[] method1860(byte[] original, byte[] bytes) {
+      byte[] bytes2 = Arrays.copyOf(original, original.length + bytes.length);
+      System.arraycopy(bytes, 0, bytes2, original.length, bytes.length);
+      return bytes2;
    }
 
-   private static byte[] method1861(byte[] var0) {
+   private static byte[] method1861(byte[] input) {
       try {
-         return MessageDigest.getInstance("SHA-512").digest(var0);
-      } catch (Exception var2) {
-         throw new RuntimeException(var2);
+         return MessageDigest.getInstance("SHA-512").digest(input);
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
    }
 }

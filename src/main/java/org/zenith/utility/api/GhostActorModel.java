@@ -45,110 +45,110 @@ public final class GhostActorModel {
    private final double doubleValue7;
    private final double doubleValue8;
 
-   private GhostActorModel(JsonObject var1) {
-      method7491("neuraim_java_ghost_actor_v1".equals(method7494(var1, "format")), "unexpected ghost actor format");
-      JsonObject var2 = method7492(var1, "observation");
-      JsonArray var3 = method7493(var2, "channels");
-      this.texts = new String[var3.size()];
+   private GhostActorModel(JsonObject json) {
+      method7491("neuraim_java_ghost_actor_v1".equals(method7494(json, "format")), "unexpected ghost actor format");
+      JsonObject json2 = method7492(json, "observation");
+      JsonArray jsonArray = method7493(json2, "channels");
+      this.texts = new String[jsonArray.size()];
 
-      for (int var4 = 0; var4 < var3.size(); var4++) {
-         this.texts[var4] = var3.get(var4).getAsString();
+      for (int i = 0; i < jsonArray.size(); i++) {
+         this.texts[i] = jsonArray.get(i).getAsString();
       }
 
       this.intValue2 = this.texts.length;
-      this.floatValues = method7497(var2, "scale", this.intValue2);
-      this.intValue = method7496(var2, "frames");
-      this.intValue5 = method7496(var2, "target_delay_ticks");
-      method7491("concatenated_oldest_first".equals(method7494(var2, "layout")), "unsupported observation layout");
+      this.floatValues = method7497(json2, "scale", this.intValue2);
+      this.intValue = method7496(json2, "frames");
+      this.intValue5 = method7496(json2, "target_delay_ticks");
+      method7491("concatenated_oldest_first".equals(method7494(json2, "layout")), "unsupported observation layout");
       method7491(this.intValue >= 1 && this.intValue2 >= 1, "empty observation contract");
       this.intValue3 = this.intValue * this.intValue2;
-      JsonObject var9 = method7492(var1, "network");
-      this.intValue4 = method7496(var9, "hidden");
-      method7491("relu".equals(method7494(var9, "activation")), "unsupported activation");
-      JsonObject var5 = method7492(var9, "weights");
-      this.floatValues2 = method7498(var5, "body.0.weight", this.intValue4, this.intValue3);
-      this.floatValues5 = method7497(var5, "body.0.bias", this.intValue4);
-      this.floatValues3 = method7498(var5, "body.2.weight", this.intValue4, this.intValue4);
-      this.floatValues6 = method7497(var5, "body.2.bias", this.intValue4);
-      JsonObject var6 = method7492(var1, "action");
-      JsonArray var7 = method7493(var6, "order");
+      JsonObject json3 = method7492(json, "network");
+      this.intValue4 = method7496(json3, "hidden");
+      method7491("relu".equals(method7494(json3, "activation")), "unsupported activation");
+      JsonObject json4 = method7492(json3, "weights");
+      this.floatValues2 = method7498(json4, "body.0.weight", this.intValue4, this.intValue3);
+      this.floatValues5 = method7497(json4, "body.0.bias", this.intValue4);
+      this.floatValues3 = method7498(json4, "body.2.weight", this.intValue4, this.intValue4);
+      this.floatValues6 = method7497(json4, "body.2.bias", this.intValue4);
+      JsonObject json5 = method7492(json, "action");
+      JsonArray jsonArray2 = method7493(json5, "order");
       method7491(
-         var7.size() == 5
-            && "yaw_counts".equals(var7.get(0).getAsString())
-            && "pitch_counts".equals(var7.get(1).getAsString())
-            && "forward".equals(var7.get(2).getAsString())
-            && "sideways".equals(var7.get(3).getAsString())
-            && "hold".equals(var7.get(4).getAsString()),
+         jsonArray2.size() == 5
+            && "yaw_counts".equals(jsonArray2.get(0).getAsString())
+            && "pitch_counts".equals(jsonArray2.get(1).getAsString())
+            && "forward".equals(jsonArray2.get(2).getAsString())
+            && "sideways".equals(jsonArray2.get(3).getAsString())
+            && "hold".equals(jsonArray2.get(4).getAsString()),
          "unexpected action channel order"
       );
-      this.floatValues4 = method7498(var5, "mean.weight", var7.size(), this.intValue4);
-      this.floatValues7 = method7497(var5, "mean.bias", var7.size());
-      this.floatValues8 = method7497(var6, "scale", var7.size());
-      this.doubleValue = method7495(var6, "mouse_degrees_per_count");
-      this.doubleValue2 = method7495(var6, "yaw_cap_counts");
-      this.doubleValue3 = method7495(var6, "pitch_cap_counts");
-      this.doubleValue4 = method7495(var6, "key_threshold");
+      this.floatValues4 = method7498(json4, "mean.weight", jsonArray2.size(), this.intValue4);
+      this.floatValues7 = method7497(json4, "mean.bias", jsonArray2.size());
+      this.floatValues8 = method7497(json5, "scale", jsonArray2.size());
+      this.doubleValue = method7495(json5, "mouse_degrees_per_count");
+      this.doubleValue2 = method7495(json5, "yaw_cap_counts");
+      this.doubleValue3 = method7495(json5, "pitch_cap_counts");
+      this.doubleValue4 = method7495(json5, "key_threshold");
       method7491(this.doubleValue > 0.0 && this.doubleValue2 > 0.0 && this.doubleValue3 > 0.0, "non-positive action geometry");
-      JsonObject var8 = method7492(method7492(var1, "server_side_rules"), "attack");
-      this.doubleValue5 = method7495(var8, "recharge_per_tick");
-      this.doubleValue6 = method7495(var8, "threshold_low");
-      this.doubleValue7 = method7495(var8, "threshold_high");
-      this.doubleValue8 = method7495(var8, "full_charge_probability");
+      JsonObject json6 = method7492(method7492(json, "server_side_rules"), "attack");
+      this.doubleValue5 = method7495(json6, "recharge_per_tick");
+      this.doubleValue6 = method7495(json6, "threshold_low");
+      this.doubleValue7 = method7495(json6, "threshold_high");
+      this.doubleValue8 = method7495(json6, "full_charge_probability");
       method7491(this.doubleValue5 > 0.0, "non-positive attack recharge");
    }
 
-   public static GhostActorModel method7481(Path var0) throws IOException {
-      GhostActorModel var2;
-      try (BufferedReader var1 = Files.newBufferedReader(var0, StandardCharsets.UTF_8)) {
-         var2 = method7483(var1);
+   public static GhostActorModel method7481(Path path) throws IOException {
+      GhostActorModel ghostActorModel;
+      try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+         ghostActorModel = method7483(bufferedReader);
       }
 
-      return var2;
+      return ghostActorModel;
    }
 
-   public static GhostActorModel method7482(InputStream var0) throws IOException {
-      GhostActorModel var2;
-      try (InputStreamReader var1 = new InputStreamReader(var0, StandardCharsets.UTF_8)) {
-         var2 = method7483(var1);
+   public static GhostActorModel method7482(InputStream resourceAsStream) throws IOException {
+      GhostActorModel ghostActorModel;
+      try (InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8)) {
+         ghostActorModel = method7483(inputStreamReader);
       }
 
-      return var2;
+      return ghostActorModel;
    }
 
-   private static GhostActorModel method7483(Reader var0) throws IOException {
+   private static GhostActorModel method7483(Reader bufferedReader) throws IOException {
       try {
-         JsonObject var1 = (JsonObject)new Gson().fromJson(var0, JsonObject.class);
-         method7491(var1 != null, "empty model JSON");
-         return new GhostActorModel(var1);
-      } catch (RuntimeException var2) {
-         throw new IOException("invalid ghost actor: " + var2.getMessage(), var2);
+         JsonObject json = (JsonObject)new Gson().fromJson(bufferedReader, JsonObject.class);
+         method7491(json != null, "empty model JSON");
+         return new GhostActorModel(json);
+      } catch (RuntimeException e) {
+         throw new IOException("invalid ghost actor: " + e.getMessage(), e);
       }
    }
 
    public static GhostActorModel method7484() {
-      for (Path var1 : List.of(
+      for (Path path : List.of(
          Path.of("models", "neuraim_ghost_actor_v1.json"),
          Path.of("run", "models", "neuraim_ghost_actor_v1.json"),
          Path.of("neuraim_ghost_actor_v1.json"),
          Path.of("..", "models", "neuraim_ghost_actor_v1.json")
       )) {
-         if (Files.isRegularFile(var1)) {
+         if (Files.isRegularFile(path)) {
             try {
-               GhostActorModel var2 = method7481(var1);
-               System.out.println("[Neuraim] Loaded ghost actor " + var1.toAbsolutePath());
-               return var2;
-            } catch (IOException var4) {
-               System.err.println("[Neuraim] Failed to load " + var1 + ": " + var4.getMessage());
+               GhostActorModel ghostActorModel = method7481(path);
+               System.out.println("[Neuraim] Loaded ghost actor " + path.toAbsolutePath());
+               return ghostActorModel;
+            } catch (IOException e) {
+               System.err.println("[Neuraim] Failed to load " + path + ": " + e.getMessage());
             }
          }
       }
 
-      InputStream var5 = GhostActorModel.class.getClassLoader().getResourceAsStream("models/neuraim_ghost_actor_v1.json");
-      if (var5 != null) {
+      InputStream resourceAsStream = GhostActorModel.class.getClassLoader().getResourceAsStream("models/neuraim_ghost_actor_v1.json");
+      if (resourceAsStream != null) {
          try {
-            return method7482(var5);
-         } catch (IOException var3) {
-            System.err.println("[Neuraim] Bundled ghost actor is invalid: " + var3.getMessage());
+            return method7482(resourceAsStream);
+         } catch (IOException e) {
+            System.err.println("[Neuraim] Bundled ghost actor is invalid: " + e.getMessage());
          }
       }
 
@@ -192,134 +192,134 @@ public final class GhostActorModel {
       return this.doubleValue8;
    }
 
-   public GhostActorModel.Data method7486(float[][] var1) {
-      method7491(var1 != null && var1.length == this.intValue, "history tick count mismatch");
-      float[] var2 = new float[this.intValue3];
-      int var3 = 0;
+   public GhostActorModel.Data method7486(float[][] floatses) {
+      method7491(floatses != null && floatses.length == this.intValue, "history tick count mismatch");
+      float[] floats = new float[this.intValue3];
+      int n = 0;
 
-      for (float[] var7 : var1) {
-         method7491(var7 != null && var7.length == this.intValue2, "history channel width mismatch");
+      for (float[] floats2 : floatses) {
+         method7491(floats2 != null && floats2.length == this.intValue2, "history channel width mismatch");
 
-         for (int var8 = 0; var8 < this.intValue2; var8++) {
-            var2[var3++] = var7[var8] / this.floatValues[var8];
+         for (int i = 0; i < this.intValue2; i++) {
+            floats[n++] = floats2[i] / this.floatValues[i];
          }
       }
 
-      float[] var13 = method7489(method7488(this.floatValues2, this.floatValues5, var2, this.intValue4));
-      float[] var14 = method7489(method7488(this.floatValues3, this.floatValues6, var13, this.intValue4));
-      float[] var15 = method7488(this.floatValues4, this.floatValues7, var14, this.floatValues7.length);
-      double[] var16 = new double[var15.length];
+      float[] floats2 = method7489(method7488(this.floatValues2, this.floatValues5, floats, this.intValue4));
+      float[] floats3 = method7489(method7488(this.floatValues3, this.floatValues6, floats2, this.intValue4));
+      float[] floats4 = method7488(this.floatValues4, this.floatValues7, floats3, this.floatValues7.length);
+      double[] doubles = new double[floats4.length];
 
-      for (int var17 = 0; var17 < var15.length; var17++) {
-         var16[var17] = Math.tanh(var15[var17]) * this.floatValues8[var17];
+      for (int i = 0; i < floats4.length; i++) {
+         doubles[i] = Math.tanh(floats4[i]) * this.floatValues8[i];
       }
 
-      boolean var18 = var16[4] > 0.0;
-      long var9 = var18 ? 0L : Math.round(method7490(var16[0], -this.doubleValue2, this.doubleValue2));
-      long var11 = var18 ? 0L : Math.round(method7490(var16[1], -this.doubleValue3, this.doubleValue3));
-      return new GhostActorModel.Data((int)var9, (int)var11, this.method7487(var16[2]), this.method7487(var16[3]), var18);
+      boolean flag = doubles[4] > 0.0;
+      long intValue = flag ? 0L : Math.round(method7490(doubles[0], -this.doubleValue2, this.doubleValue2));
+      long l = flag ? 0L : Math.round(method7490(doubles[1], -this.doubleValue3, this.doubleValue3));
+      return new GhostActorModel.Data((int)intValue, (int)l, this.method7487(doubles[2]), this.method7487(doubles[3]), flag);
    }
 
-   private int method7487(double var1) {
-      if (var1 > this.doubleValue4) {
+   private int method7487(double d) {
+      if (d > this.doubleValue4) {
          return 1;
       } else {
-         return var1 < -this.doubleValue4 ? -1 : 0;
+         return d < -this.doubleValue4 ? -1 : 0;
       }
    }
 
-   private static float[] method7488(float[][] var0, float[] var1, float[] var2, int var3) {
-      float[] var4 = new float[var3];
+   private static float[] method7488(float[][] floatValues2, float[] floatValues5, float[] floats, int length) {
+      float[] floats2 = new float[length];
 
-      for (int var5 = 0; var5 < var3; var5++) {
-         float[] var6 = var0[var5];
-         float var7 = var1[var5];
+      for (int i = 0; i < length; i++) {
+         float[] floats3 = floatValues2[i];
+         float f = floatValues5[i];
 
-         for (int var8 = 0; var8 < var6.length; var8++) {
-            var7 += var6[var8] * var2[var8];
+         for (int j = 0; j < floats3.length; j++) {
+            f += floats3[j] * floats[j];
          }
 
-         var4[var5] = var7;
+         floats2[i] = f;
       }
 
-      return var4;
+      return floats2;
    }
 
-   private static float[] method7489(float[] var0) {
-      for (int var1 = 0; var1 < var0.length; var1++) {
-         if (var0[var1] < 0.0F) {
-            var0[var1] = 0.0F;
-         }
-      }
-
-      return var0;
-   }
-
-   private static double method7490(double var0, double var2, double var4) {
-      return Math.max(var2, Math.min(var4, var0));
-   }
-
-   private static void method7491(boolean var0, String var1) {
-      if (!var0) {
-         throw new IllegalStateException(var1);
-      }
-   }
-
-   private static JsonObject method7492(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method7491(var2 != null && var2.isJsonObject(), "missing object " + var1);
-      return var2.getAsJsonObject();
-   }
-
-   private static JsonArray method7493(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method7491(var2 != null && var2.isJsonArray(), "missing array " + var1);
-      return var2.getAsJsonArray();
-   }
-
-   private static String method7494(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method7491(var2 != null && var2.isJsonPrimitive(), "missing string " + var1);
-      return var2.getAsString();
-   }
-
-   private static double method7495(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method7491(var2 != null && var2.isJsonPrimitive(), "missing number " + var1);
-      return var2.getAsDouble();
-   }
-
-   private static int method7496(JsonObject var0, String var1) {
-      return (int)method7495(var0, var1);
-   }
-
-   private static float[] method7497(JsonObject var0, String var1, int var2) {
-      JsonArray var3 = method7493(var0, var1);
-      method7491(var3.size() == var2, var1 + " must have " + var2 + " entries, got " + var3.size());
-      float[] var4 = new float[var2];
-
-      for (int var5 = 0; var5 < var2; var5++) {
-         var4[var5] = var3.get(var5).getAsFloat();
-      }
-
-      return var4;
-   }
-
-   private static float[][] method7498(JsonObject var0, String var1, int var2, int var3) {
-      JsonArray var4 = method7493(var0, var1);
-      method7491(var4.size() == var2, var1 + " must have " + var2 + " rows, got " + var4.size());
-      float[][] var5 = new float[var2][var3];
-
-      for (int var6 = 0; var6 < var2; var6++) {
-         JsonArray var7 = var4.get(var6).getAsJsonArray();
-         method7491(var7.size() == var3, var1 + " row " + var6 + " must have " + var3 + " columns");
-
-         for (int var8 = 0; var8 < var3; var8++) {
-            var5[var6][var8] = var7.get(var8).getAsFloat();
+   private static float[] method7489(float[] floats) {
+      for (int i = 0; i < floats.length; i++) {
+         if (floats[i] < 0.0F) {
+            floats[i] = 0.0F;
          }
       }
 
-      return var5;
+      return floats;
+   }
+
+   private static double method7490(double d, double d2, double d3) {
+      return Math.max(d2, Math.min(d3, d));
+   }
+
+   private static void method7491(boolean flag, String str) {
+      if (!flag) {
+         throw new IllegalStateException(str);
+      }
+   }
+
+   private static JsonObject method7492(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method7491(jsonElement != null && jsonElement.isJsonObject(), "missing object " + memberName);
+      return jsonElement.getAsJsonObject();
+   }
+
+   private static JsonArray method7493(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method7491(jsonElement != null && jsonElement.isJsonArray(), "missing array " + memberName);
+      return jsonElement.getAsJsonArray();
+   }
+
+   private static String method7494(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method7491(jsonElement != null && jsonElement.isJsonPrimitive(), "missing string " + memberName);
+      return jsonElement.getAsString();
+   }
+
+   private static double method7495(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method7491(jsonElement != null && jsonElement.isJsonPrimitive(), "missing number " + memberName);
+      return jsonElement.getAsDouble();
+   }
+
+   private static int method7496(JsonObject json, String memberName) {
+      return (int)method7495(json, memberName);
+   }
+
+   private static float[] method7497(JsonObject json, String memberName, int size) {
+      JsonArray jsonArray = method7493(json, memberName);
+      method7491(jsonArray.size() == size, memberName + " must have " + size + " entries, got " + jsonArray.size());
+      float[] floats = new float[size];
+
+      for (int i = 0; i < size; i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
+      }
+
+      return floats;
+   }
+
+   private static float[][] method7498(JsonObject json, String memberName, int size, int n) {
+      JsonArray jsonArray = method7493(json, memberName);
+      method7491(jsonArray.size() == size, memberName + " must have " + size + " rows, got " + jsonArray.size());
+      float[][] floatses = new float[size][n];
+
+      for (int i = 0; i < size; i++) {
+         JsonArray jsonArray2 = jsonArray.get(i).getAsJsonArray();
+         method7491(jsonArray2.size() == n, memberName + " row " + i + " must have " + n + " columns");
+
+         for (int j = 0; j < n; j++) {
+            floatses[i][j] = jsonArray2.get(j).getAsFloat();
+         }
+      }
+
+      return floatses;
    }
 
    public static final class Data {
@@ -366,12 +366,12 @@ public final class GhostActorModel {
          return "Data[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "intValue4=" + this.intValue4 + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data(int var1, int var2, int var3, int var4, boolean var5) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.intValue3 = var3;
-         this.intValue4 = var4;
-         this.flag = var5;
+      public Data(int intValue, int n, int n2, int n3, boolean flag) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.intValue4 = n3;
+         this.flag = flag;
       }
 
       public int getIntValue() {

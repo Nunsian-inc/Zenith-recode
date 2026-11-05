@@ -15,9 +15,9 @@ public class MixinBossBarHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$islandTakesOver(GuiGraphicsExtractor var1, CallbackInfo var2) {
+   private void zenith$islandTakesOver(GuiGraphicsExtractor guiGraphicsExtractor, CallbackInfo callbackInfo) {
       if (WatermarkIslandHud.method5669()) {
-         var2.cancel();
+         callbackInfo.cancel();
       }
    }
 }

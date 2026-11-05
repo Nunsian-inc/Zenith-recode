@@ -18,7 +18,7 @@ public final class ShulkerJumpModule extends Module {
    public boolean flag = false;
 
    @EventTarget
-   public void method5129(UpdateEvent var1) {
+   public void method5129(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (mc.player.containerMenu instanceof ShulkerBoxMenu && !this.flag) {
             mc.options.keyJump.setDown(true);

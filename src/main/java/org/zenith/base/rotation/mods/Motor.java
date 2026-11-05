@@ -65,86 +65,86 @@ public final class Motor extends Util22 {
    public float offset = 0.0F;
 
    public Rotation method3659() {
-      Rotation var1 = rotationManager.method7844();
-      LivingEntity var2 = AuraModule.INSTANCE.method6358();
-      if (mc.player != null && var2 != null && var2.isAlive()) {
-         Motor.Entry4 var3 = this.method3673();
-         if (var3 == null) {
-            return var1;
+      Rotation rotation = rotationManager.method7844();
+      LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+      if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
+         Motor.Entry4 entry4 = this.method3673();
+         if (entry4 == null) {
+            return rotation;
          } else {
-            int var4 = mc.player.tickCount;
-            if (var4 == this.intValue4 && this.rotation != null) {
+            int tickCount = mc.player.tickCount;
+            if (tickCount == this.intValue4 && this.rotation != null) {
                return this.rotation;
             } else {
-               if (this.intValue3 != Integer.MIN_VALUE && var4 != this.intValue3 + 1) {
-                  this.method3670(var2.getId(), var4);
-               } else if (var2.getId() != this.intValue2) {
-                  this.method3671(var2.getId());
+               if (this.intValue3 != Integer.MIN_VALUE && tickCount != this.intValue3 + 1) {
+                  this.method3670(livingEntity.getId(), tickCount);
+               } else if (livingEntity.getId() != this.intValue2) {
+                  this.method3671(livingEntity.getId());
                }
 
-               this.intValue3 = var4;
-               float var5 = Rotation.method3138();
-               if (Float.isFinite(var5) && !(var5 <= 0.0F)) {
+               this.intValue3 = tickCount;
+               float f = Rotation.method3138();
+               if (Float.isFinite(f) && !(f <= 0.0F)) {
                   this.method3669();
-                  Motor.Entry var6 = this.method3661(var1, var2);
-                  if (var6 == null) {
-                     this.method3672(var4, var1);
-                     return var1;
+                  Motor.Entry entry = this.method3661(rotation, livingEntity);
+                  if (entry == null) {
+                     this.method3672(tickCount, rotation);
+                     return rotation;
                   } else {
-                     this.method3662(var6);
-                     double[] var7 = this.method3664(var3, var1);
-                     if (!method3679(var7)) {
-                        this.method3672(var4, var1);
-                        return var1;
+                     this.method3662(entry);
+                     double[] doubleValues = this.method3664(entry4, rotation);
+                     if (!method3679(doubleValues)) {
+                        this.method3672(tickCount, rotation);
+                        return rotation;
                      } else {
-                        Motor.Entry5 var8 = var3.method3683(var7, this.doubleValues);
-                        double[] var9 = this.method3665(var3, var8);
-                        double var10 = var6.doubleValue3 - var1.getFloatValue();
-                        var10 = Mth.wrapDegrees((float)var10);
-                        double var12 = var6.doubleValue4 - var1.getFloatValue2();
-                        boolean var14 = false;
-                        if (var14) {
-                           var9[0] = method3677(0.35 * var10, -20.0, 20.0);
-                           var9[1] = method3677(0.35 * var12, -20.0, 20.0);
+                        Motor.Entry5 entry5 = entry4.method3683(doubleValues, this.doubleValues);
+                        double[] doubles = this.method3665(entry4, entry5);
+                        double angle = entry.doubleValue3 - rotation.getFloatValue();
+                        angle = Mth.wrapDegrees((float)angle);
+                        double d = entry.doubleValue4 - rotation.getFloatValue2();
+                        boolean flag = false;
+                        if (flag) {
+                           doubles[0] = method3677(0.35 * angle, -20.0, 20.0);
+                           doubles[1] = method3677(0.35 * d, -20.0, 20.0);
                         }
 
-                        if (var3.method3681()) {
-                           for (int var15 = 0; var15 < 2; var15++) {
-                              double var16 = Math.max(Math.abs(this.doubleValues2[var15]), Math.abs(this.doubleValues3[var15])) / var5;
-                              double var18 = var3.method3682(var15, var16) * var5;
-                              var9[var15] = method3677(var9[var15], -var18, var18);
+                        if (entry4.method3681()) {
+                           for (int i = 0; i < 2; i++) {
+                              double d2 = Math.max(Math.abs(this.doubleValues2[i]), Math.abs(this.doubleValues3[i])) / f;
+                              double d3 = entry4.method3682(i, d2) * f;
+                              doubles[i] = method3677(doubles[i], -d3, d3);
                            }
                         }
 
-                        int var23 = this.method3667(var9[0], 0, var5, var3.flag);
-                        int var24 = this.method3667(var9[1], 1, var5, var3.flag);
-                        Rotation var17 = var1.method3140(var23 * var5, var24 * var5);
-                        double var25 = Mth.wrapDegrees(var17.getFloatValue() - var1.getFloatValue());
-                        double var20 = var17.getFloatValue2() - var1.getFloatValue2();
-                        this.method3668(var25, var20);
-                        if (var23 == 0 && var24 == 0) {
-                           this.method3672(var4, var1);
-                           return var1;
+                        int n = this.method3667(doubles[0], 0, f, entry4.flag);
+                        int n2 = this.method3667(doubles[1], 1, f, entry4.flag);
+                        Rotation rotation2 = rotation.method3140(n * f, n2 * f);
+                        double d2 = Mth.wrapDegrees(rotation2.getFloatValue() - rotation.getFloatValue());
+                        double d3 = rotation2.getFloatValue2() - rotation.getFloatValue2();
+                        this.method3668(d2, d3);
+                        if (n == 0 && n2 == 0) {
+                           this.method3672(tickCount, rotation);
+                           return rotation;
                         } else {
-                           this.method3672(var4, var17);
-                           return var17;
+                           this.method3672(tickCount, rotation2);
+                           return rotation2;
                         }
                      }
                   }
                } else {
-                  this.method3672(var4, var1);
-                  return var1;
+                  this.method3672(tickCount, rotation);
+                  return rotation;
                }
             }
          }
       } else {
          this.reset();
          if (mc.player != null) {
-            mc.player.setYRot(var1.getFloatValue());
-            mc.player.setXRot(var1.getFloatValue2());
+            mc.player.setYRot(rotation.getFloatValue());
+            mc.player.setXRot(rotation.getFloatValue2());
          }
 
-         return var1;
+         return rotation;
       }
    }
 
@@ -152,233 +152,233 @@ public final class Motor extends Util22 {
       return this.method3673() != null;
    }
 
-   private Motor.Entry method3661(Rotation var1, LivingEntity var2) {
-      Vec3 var3 = mc.player.getEyePosition();
-      AABB var4 = var2.getBoundingBox();
-      Vec3 var5 = var4.getCenter();
-      double var6 = var5.x - var3.x;
-      double var8 = var5.y - var3.y;
-      double var10 = var5.z - var3.z;
-      if (var6 * var6 + var8 * var8 + var10 * var10 < 1.0E-10) {
+   private Motor.Entry method3661(Rotation rotation, LivingEntity livingEntity) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      AABB boundingBox = livingEntity.getBoundingBox();
+      Vec3 center = boundingBox.getCenter();
+      double x = center.x - eyePosition.x;
+      double d = center.y - eyePosition.y;
+      double x2 = center.z - eyePosition.z;
+      if (x * x + d * d + x2 * x2 < 1.0E-10) {
          return null;
       } else {
-         Motor.Entry var12 = new Motor.Entry();
-         var12.doubleValue = var1.getFloatValue();
-         var12.doubleValue2 = var1.getFloatValue2();
-         var12.doubleValue3 = Math.toDegrees(Math.atan2(-var6, var10));
-         var12.doubleValue4 = Math.toDegrees(Math.atan2(-var8, Math.hypot(var6, var10)));
-         var12.doubleValue9 = Math.sqrt(var6 * var6 + var8 * var8 + var10 * var10);
-         double var13 = Double.MAX_VALUE;
-         double var15 = -Double.MAX_VALUE;
-         double var17 = Double.MAX_VALUE;
-         double var19 = -Double.MAX_VALUE;
+         Motor.Entry entry = new Motor.Entry();
+         entry.doubleValue = rotation.getFloatValue();
+         entry.doubleValue2 = rotation.getFloatValue2();
+         entry.doubleValue3 = Math.toDegrees(Math.atan2(-x, x2));
+         entry.doubleValue4 = Math.toDegrees(Math.atan2(-d, Math.hypot(x, x2)));
+         entry.doubleValue9 = Math.sqrt(x * x + d * d + x2 * x2);
+         double d2 = Double.MAX_VALUE;
+         double d3 = -Double.MAX_VALUE;
+         double d4 = Double.MAX_VALUE;
+         double d5 = -Double.MAX_VALUE;
 
-         for (int var21 = 0; var21 < 8; var21++) {
-            double var22 = ((var21 & 1) == 0 ? var4.minX : var4.maxX) - var3.x;
-            double var24 = ((var21 & 2) == 0 ? var4.minY : var4.maxY) - var3.y;
-            double var26 = ((var21 & 4) == 0 ? var4.minZ : var4.maxZ) - var3.z;
-            double var28 = Math.toDegrees(Math.atan2(-var22, var26));
-            double var30 = Math.toDegrees(Math.atan2(-var24, Math.hypot(var22, var26)));
-            if (Double.isFinite(var28) && Double.isFinite(var30)) {
-               double var32 = Mth.wrapDegrees(var28 - var12.doubleValue3);
-               double var34 = var30 - var12.doubleValue4;
-               var13 = Math.min(var13, var32);
-               var15 = Math.max(var15, var32);
-               var17 = Math.min(var17, var34);
-               var19 = Math.max(var19, var34);
+         for (int i = 0; i < 8; i++) {
+            double x3 = ((i & 1) == 0 ? boundingBox.minX : boundingBox.maxX) - eyePosition.x;
+            double d6 = ((i & 2) == 0 ? boundingBox.minY : boundingBox.maxY) - eyePosition.y;
+            double x4 = ((i & 4) == 0 ? boundingBox.minZ : boundingBox.maxZ) - eyePosition.z;
+            double d7 = Math.toDegrees(Math.atan2(-x3, x4));
+            double d8 = Math.toDegrees(Math.atan2(-d6, Math.hypot(x3, x4)));
+            if (Double.isFinite(d7) && Double.isFinite(d8)) {
+               double d9 = Mth.wrapDegrees(d7 - entry.doubleValue3);
+               double d10 = d8 - entry.doubleValue4;
+               d2 = Math.min(d2, d9);
+               d3 = Math.max(d3, d9);
+               d4 = Math.min(d4, d10);
+               d5 = Math.max(d5, d10);
             }
          }
 
-         if (var13 == Double.MAX_VALUE) {
+         if (d2 == Double.MAX_VALUE) {
             return null;
          } else {
-            var12.doubleValue5 = var13;
-            var12.doubleValue6 = var15;
-            var12.doubleValue7 = var17;
-            var12.doubleValue8 = var19;
-            return var12;
+            entry.doubleValue5 = d2;
+            entry.doubleValue6 = d3;
+            entry.doubleValue7 = d4;
+            entry.doubleValue8 = d5;
+            return entry;
          }
       }
    }
 
-   private void method3662(Motor.Entry var1) {
+   private void method3662(Motor.Entry entry) {
       System.arraycopy(this.entrys, 0, this.entrys, 1, 7);
-      this.entrys[0] = var1;
+      this.entrys[0] = entry;
       if (this.intValue < 8) {
          this.intValue++;
       }
    }
 
-   private Motor.Entry method3663(int var1) {
-      return this.entrys[Math.min(var1, this.intValue - 1)];
+   private Motor.Entry method3663(int n) {
+      return this.entrys[Math.min(n, this.intValue - 1)];
    }
 
-   private double[] method3664(Motor.Entry4 var1, Rotation var2) {
-      int var3 = var1.intValue5;
-      Motor.Entry var4 = this.method3663(var3);
-      Motor.Entry var5 = this.method3663(var3 + 1);
-      Motor.Entry var6 = this.method3663(var3 + 2);
-      double var7 = var1.doubleValue;
-      double var9 = var2.getFloatValue();
-      double var11 = var2.getFloatValue2();
-      double var13 = method3675(var4.doubleValue3 - var9);
-      double var15 = var4.doubleValue4 - var11;
-      double var17 = method3675(var4.doubleValue3 - var4.doubleValue);
-      double var19 = var4.doubleValue4 - var4.doubleValue2;
-      double var21 = method3675(var4.doubleValue3 - var5.doubleValue3);
-      double var23 = var4.doubleValue4 - var5.doubleValue4;
-      double var25 = var21 - method3675(var5.doubleValue3 - var6.doubleValue3);
-      double var27 = var23 - (var5.doubleValue4 - var6.doubleValue4);
-      double var29 = method3675(var4.doubleValue3 + (var3 + 1) * var21 - var9);
-      double var31 = var4.doubleValue4 + (var3 + 1) * var23 - var11;
-      double var33 = Math.max(Math.hypot(var13, var15), 1.0E-6);
-      double var35 = 0.5 * (var4.doubleValue5 + var4.doubleValue6);
-      double var37 = 0.5 * (var4.doubleValue7 + var4.doubleValue8);
-      double var39 = Math.max(0.5 * (var4.doubleValue6 - var4.doubleValue5), 0.001);
-      double var41 = Math.max(0.5 * (var4.doubleValue8 - var4.doubleValue7), 0.001);
-      double var43 = (-var13 - var35) / var39;
-      double var45 = (-var15 - var37) / var41;
-      double var47 = method3676(var1.doubleValue4 * (1.0 - Math.max(Math.abs(var43), Math.abs(var45))));
-      double[] var49 = new double[var1.intValue];
-      int var50 = 0;
-      var49[var50++] = asinh(var13 / var7);
-      var49[var50++] = asinh(var15 / var7);
-      var49[var50++] = asinh(var17 / var7);
-      var49[var50++] = asinh(var19 / var7);
-      var49[var50++] = asinh(var29 / var7);
-      var49[var50++] = asinh(var31 / var7);
-      var49[var50++] = asinh(var33 / var7);
-      var49[var50++] = var13 / var33;
-      var49[var50++] = var15 / var33;
-      var49[var50++] = asinh(var21 / var7);
-      var49[var50++] = asinh(var23 / var7);
-      var49[var50++] = asinh(var25 / var7);
-      var49[var50++] = asinh(var27 / var7);
-      var49[var50++] = method3677(var43, -4.0, 4.0);
-      var49[var50++] = method3677(var45, -4.0, 4.0);
-      var49[var50++] = var47;
-      var49[var50++] = asinh(var39 / var7);
-      var49[var50++] = asinh(var41 / var7);
-      var49[var50++] = Math.log1p(var4.doubleValue9);
-      var49[var50++] = method3677(var4.doubleValue9 - var5.doubleValue9, -2.0, 2.0);
-      var49[var50++] = var11 / 90.0;
-      var49[var50++] = (90.0 - Math.abs(var11)) / 90.0;
-      var49[var50++] = asinh(this.doubleValues2[0] / var7);
-      var49[var50++] = asinh(this.doubleValues2[1] / var7);
-      var49[var50++] = asinh(this.doubleValues3[0] / var7);
-      var49[var50++] = asinh(this.doubleValues3[1] / var7);
-      var49[var50++] = asinh((this.doubleValues2[0] - this.doubleValues3[0]) / var7);
-      var49[var50++] = asinh((this.doubleValues2[1] - this.doubleValues3[1]) / var7);
-      var49[var50++] = Math.tanh(this.doubleValues4[0] / 8.0);
-      var49[var50++] = Math.tanh(this.doubleValues4[1] / 8.0);
-      var49[var50++] = Math.tanh(this.doubleValues5[0] / 8.0);
-      var49[var50++] = Math.tanh(this.doubleValues5[1] / 8.0);
-      var49[var50++] = method3677(Math.abs(this.doubleValues2[0]) / Math.max(this.doubleValues6[0], 1.0E-6), 0.0, 4.0);
-      var49[var50++] = method3677(Math.abs(this.doubleValues2[1]) / Math.max(this.doubleValues6[1], 1.0E-6), 0.0, 4.0);
-      var49[var50++] = asinh(this.doubleValues6[0] / var7);
-      var49[var50++] = asinh(this.doubleValues6[1] / var7);
-      var49[var50++] = mc.options.keyUp.isDown() ? 1.0 : 0.0;
-      var49[var50++] = mc.options.keyDown.isDown() ? 1.0 : 0.0;
-      var49[var50++] = mc.options.keyLeft.isDown() ? 1.0 : 0.0;
-      var49[var50++] = mc.options.keyRight.isDown() ? 1.0 : 0.0;
-      var49[var50++] = mc.options.keyJump.isDown() ? 1.0 : 0.0;
-      var49[var50++] = mc.player.onGround() ? 1.0 : 0.0;
-      var49[var50++] = mc.player.isSprinting() ? 1.0 : 0.0;
-      var49[var50++] = mc.player.isCrouching() ? 1.0 : 0.0;
-      var49[var50++] = mc.player.getAttackStrengthScale(0.0F);
-      var49[var50++] = Mth.clamp((float)mc.player.attackStrengthTicker, 0.0F, 50.0F);
-      var49[var50] = this.flag2 ? 1.0 : 0.0;
-      return var49;
+   private double[] method3664(Motor.Entry4 entry4, Rotation rotation) {
+      int n = entry4.intValue5;
+      Motor.Entry entry = this.method3663(n);
+      Motor.Entry entry2 = this.method3663(n + 1);
+      Motor.Entry entry3 = this.method3663(n + 2);
+      double doubleValue = entry4.doubleValue;
+      double floatValue = rotation.getFloatValue();
+      double d = rotation.getFloatValue2();
+      double x = method3675(entry.doubleValue3 - floatValue);
+      double y = entry.doubleValue4 - d;
+      double d2 = method3675(entry.doubleValue3 - entry.doubleValue);
+      double d3 = entry.doubleValue4 - entry.doubleValue2;
+      double d4 = method3675(entry.doubleValue3 - entry2.doubleValue3);
+      double d5 = entry.doubleValue4 - entry2.doubleValue4;
+      double d6 = d4 - method3675(entry2.doubleValue3 - entry3.doubleValue3);
+      double d7 = d5 - (entry2.doubleValue4 - entry3.doubleValue4);
+      double d8 = method3675(entry.doubleValue3 + (n + 1) * d4 - floatValue);
+      double d9 = entry.doubleValue4 + (n + 1) * d5 - d;
+      double d10 = Math.max(Math.hypot(x, y), 1.0E-6);
+      double d11 = 0.5 * (entry.doubleValue5 + entry.doubleValue6);
+      double d12 = 0.5 * (entry.doubleValue7 + entry.doubleValue8);
+      double d13 = Math.max(0.5 * (entry.doubleValue6 - entry.doubleValue5), 0.001);
+      double d14 = Math.max(0.5 * (entry.doubleValue8 - entry.doubleValue7), 0.001);
+      double x2 = (-x - d11) / d13;
+      double x3 = (-y - d12) / d14;
+      double d15 = method3676(entry4.doubleValue4 * (1.0 - Math.max(Math.abs(x2), Math.abs(x3))));
+      double[] doubles = new double[entry4.intValue];
+      int n2 = 0;
+      doubles[n2++] = asinh(x / doubleValue);
+      doubles[n2++] = asinh(y / doubleValue);
+      doubles[n2++] = asinh(d2 / doubleValue);
+      doubles[n2++] = asinh(d3 / doubleValue);
+      doubles[n2++] = asinh(d8 / doubleValue);
+      doubles[n2++] = asinh(d9 / doubleValue);
+      doubles[n2++] = asinh(d10 / doubleValue);
+      doubles[n2++] = x / d10;
+      doubles[n2++] = y / d10;
+      doubles[n2++] = asinh(d4 / doubleValue);
+      doubles[n2++] = asinh(d5 / doubleValue);
+      doubles[n2++] = asinh(d6 / doubleValue);
+      doubles[n2++] = asinh(d7 / doubleValue);
+      doubles[n2++] = method3677(x2, -4.0, 4.0);
+      doubles[n2++] = method3677(x3, -4.0, 4.0);
+      doubles[n2++] = d15;
+      doubles[n2++] = asinh(d13 / doubleValue);
+      doubles[n2++] = asinh(d14 / doubleValue);
+      doubles[n2++] = Math.log1p(entry.doubleValue9);
+      doubles[n2++] = method3677(entry.doubleValue9 - entry2.doubleValue9, -2.0, 2.0);
+      doubles[n2++] = d / 90.0;
+      doubles[n2++] = (90.0 - Math.abs(d)) / 90.0;
+      doubles[n2++] = asinh(this.doubleValues2[0] / doubleValue);
+      doubles[n2++] = asinh(this.doubleValues2[1] / doubleValue);
+      doubles[n2++] = asinh(this.doubleValues3[0] / doubleValue);
+      doubles[n2++] = asinh(this.doubleValues3[1] / doubleValue);
+      doubles[n2++] = asinh((this.doubleValues2[0] - this.doubleValues3[0]) / doubleValue);
+      doubles[n2++] = asinh((this.doubleValues2[1] - this.doubleValues3[1]) / doubleValue);
+      doubles[n2++] = Math.tanh(this.doubleValues4[0] / 8.0);
+      doubles[n2++] = Math.tanh(this.doubleValues4[1] / 8.0);
+      doubles[n2++] = Math.tanh(this.doubleValues5[0] / 8.0);
+      doubles[n2++] = Math.tanh(this.doubleValues5[1] / 8.0);
+      doubles[n2++] = method3677(Math.abs(this.doubleValues2[0]) / Math.max(this.doubleValues6[0], 1.0E-6), 0.0, 4.0);
+      doubles[n2++] = method3677(Math.abs(this.doubleValues2[1]) / Math.max(this.doubleValues6[1], 1.0E-6), 0.0, 4.0);
+      doubles[n2++] = asinh(this.doubleValues6[0] / doubleValue);
+      doubles[n2++] = asinh(this.doubleValues6[1] / doubleValue);
+      doubles[n2++] = mc.options.keyUp.isDown() ? 1.0 : 0.0;
+      doubles[n2++] = mc.options.keyDown.isDown() ? 1.0 : 0.0;
+      doubles[n2++] = mc.options.keyLeft.isDown() ? 1.0 : 0.0;
+      doubles[n2++] = mc.options.keyRight.isDown() ? 1.0 : 0.0;
+      doubles[n2++] = mc.options.keyJump.isDown() ? 1.0 : 0.0;
+      doubles[n2++] = mc.player.onGround() ? 1.0 : 0.0;
+      doubles[n2++] = mc.player.isSprinting() ? 1.0 : 0.0;
+      doubles[n2++] = mc.player.isCrouching() ? 1.0 : 0.0;
+      doubles[n2++] = mc.player.getAttackStrengthScale(0.0F);
+      doubles[n2++] = Mth.clamp((float)mc.player.attackStrengthTicker, 0.0F, 50.0F);
+      doubles[n2] = this.flag2 ? 1.0 : 0.0;
+      return doubles;
    }
 
-   private double[] method3665(Motor.Entry4 var1, Motor.Entry5 var2) {
-      boolean var3 = this.random.nextDouble() < method3676(var2.doubleValue);
-      if (var3) {
+   private double[] method3665(Motor.Entry4 entry4, Motor.Entry5 entry5) {
+      boolean flag = this.random.nextDouble() < method3676(entry5.doubleValue);
+      if (flag) {
          return new double[]{0.0, 0.0};
       } else {
-         int var4 = this.method3666(var2.doubleValues);
-         double var9 = this.random.nextGaussian();
-         double var11 = this.random.nextGaussian();
-         double var13 = Math.exp(var2.doubleValues3[var4][0]) * 1.0;
-         double var15 = Math.exp(var2.doubleValues3[var4][1]) * 1.0;
-         double var17 = var2.doubleValues4[var4];
-         double var5 = var2.doubleValues2[var4][0] + var13 * var9;
-         double var7 = var2.doubleValues2[var4][1] + var15 * (var17 * var9 + Math.sqrt(Math.max(1.0 - var17 * var17, 1.0E-6)) * var11);
-         var5 = method3677(var5, -var1.doubleValue11, var1.doubleValue11);
-         var7 = method3677(var7, -var1.doubleValue12, var1.doubleValue12);
-         var9 = method3677(var1.doubleValue2 * Math.sinh(var5), -var1.doubleValue5, var1.doubleValue5);
-         var11 = method3677(var1.doubleValue3 * Math.sinh(var7), -var1.doubleValue6, var1.doubleValue6);
-         return new double[]{var9, var11};
+         int n = this.method3666(entry5.doubleValues);
+         double nextGaussian = this.random.nextGaussian();
+         double d = this.random.nextGaussian();
+         double d2 = Math.exp(entry5.doubleValues3[n][0]) * 1.0;
+         double d3 = Math.exp(entry5.doubleValues3[n][1]) * 1.0;
+         double d4 = entry5.doubleValues4[n];
+         double x = entry5.doubleValues2[n][0] + d2 * nextGaussian;
+         double x2 = entry5.doubleValues2[n][1] + d3 * (d4 * nextGaussian + Math.sqrt(Math.max(1.0 - d4 * d4, 1.0E-6)) * d);
+         x = method3677(x, -entry4.doubleValue11, entry4.doubleValue11);
+         x2 = method3677(x2, -entry4.doubleValue12, entry4.doubleValue12);
+         nextGaussian = method3677(entry4.doubleValue2 * Math.sinh(x), -entry4.doubleValue5, entry4.doubleValue5);
+         d = method3677(entry4.doubleValue3 * Math.sinh(x2), -entry4.doubleValue6, entry4.doubleValue6);
+         return new double[]{nextGaussian, d};
       }
    }
 
-   private int method3666(double[] var1) {
-      double var2 = Double.NEGATIVE_INFINITY;
+   private int method3666(double[] doubleValues) {
+      double d = Double.NEGATIVE_INFINITY;
 
-      for (double var7 : var1) {
-         var2 = Math.max(var2, var7);
+      for (double doubleValue : doubleValues) {
+         d = Math.max(d, doubleValue);
       }
 
-      double var12 = 0.0;
-      double[] var13 = new double[var1.length];
+      double d2 = 0.0;
+      double[] doubles = new double[doubleValues.length];
 
-      for (int var14 = 0; var14 < var1.length; var14++) {
-         var13[var14] = Math.exp(var1[var14] - var2);
-         var12 += var13[var14];
+      for (int i = 0; i < doubleValues.length; i++) {
+         doubles[i] = Math.exp(doubleValues[i] - d);
+         d2 += doubles[i];
       }
 
-      double var15 = this.random.nextDouble() * var12;
-      double var9 = 0.0;
+      double d3 = this.random.nextDouble() * d2;
+      double d4 = 0.0;
 
-      for (int var11 = 0; var11 < var13.length; var11++) {
-         var9 += var13[var11];
-         if (var15 <= var9) {
-            return var11;
+      for (int i = 0; i < doubles.length; i++) {
+         d4 += doubles[i];
+         if (d3 <= d4) {
+            return i;
          }
       }
 
-      return var13.length - 1;
+      return doubles.length - 1;
    }
 
-   private int method3667(double var1, int var3, double var4, boolean var6) {
-      double var7 = var1 + (this.entry4.flag2 ? this.doubleValues8[var3] : 0.0);
-      double var9 = var7 / var4;
-      var9 += Math.signum(var9) * 1.0E-4;
-      long var11 = var6 ? Math.round(var9) : (long)var9;
-      double var13 = var11 * var4;
-      this.doubleValues8[var3] = this.entry4.flag2 ? method3677(var7 - var13, -var4, var4) : 0.0;
-      return (int)var11;
+   private int method3667(double d, int n, double d2, boolean flag) {
+      double d3 = d + (this.entry4.flag2 ? this.doubleValues8[n] : 0.0);
+      double d4 = d3 / d2;
+      d4 += Math.signum(d4) * 1.0E-4;
+      long l = flag ? Math.round(d4) : (long)d4;
+      double d5 = l * d2;
+      this.doubleValues8[n] = this.entry4.flag2 ? method3677(d3 - d5, -d2, d2) : 0.0;
+      return (int)l;
    }
 
-   private void method3668(double var1, double var3) {
-      double[] var5 = new double[]{var1, var3};
+   private void method3668(double d, double d2) {
+      double[] doubles = new double[]{d, d2};
 
-      for (int var6 = 0; var6 < 2; var6++) {
-         double var7 = var5[var6];
-         boolean var9 = Math.abs(var7) > this.entry4.doubleValue8;
-         double var10 = Math.signum(var7);
-         boolean var12 = var9 && var10 * this.doubleValues7[var6] < 0.0;
-         this.doubleValues4[var6] = var9 ? 0.0 : this.doubleValues4[var6] + 1.0;
-         this.doubleValues5[var6] = var12 ? 0.0 : this.doubleValues5[var6] + 1.0;
-         this.doubleValues6[var6] = Math.max(this.doubleValues6[var6] * this.entry4.doubleValue7, Math.abs(var7));
-         if (var9) {
-            this.doubleValues7[var6] = var10;
+      for (int i = 0; i < 2; i++) {
+         double d3 = doubles[i];
+         boolean flag = Math.abs(d3) > this.entry4.doubleValue8;
+         double d4 = Math.signum(d3);
+         boolean flag2 = flag && d4 * this.doubleValues7[i] < 0.0;
+         this.doubleValues4[i] = flag ? 0.0 : this.doubleValues4[i] + 1.0;
+         this.doubleValues5[i] = flag2 ? 0.0 : this.doubleValues5[i] + 1.0;
+         this.doubleValues6[i] = Math.max(this.doubleValues6[i] * this.entry4.doubleValue7, Math.abs(d3));
+         if (flag) {
+            this.doubleValues7[i] = d4;
          }
 
-         this.doubleValues3[var6] = this.doubleValues2[var6];
-         this.doubleValues2[var6] = var7;
+         this.doubleValues3[i] = this.doubleValues2[i];
+         this.doubleValues2[i] = d3;
       }
    }
 
    private void method3669() {
-      float var1 = mc.player.getAttackStrengthScale(0.0F);
-      this.flag2 = var1 < this.floatValue - 1.0E-4F;
-      this.floatValue = var1;
+      float attackStrengthScale = mc.player.getAttackStrengthScale(0.0F);
+      this.flag2 = attackStrengthScale < this.floatValue - 1.0E-4F;
+      this.floatValue = attackStrengthScale;
    }
 
-   private void method3670(int var1, int var2) {
-      Motor.Entry4 var3 = this.entry4;
-      this.doubleValues = var3 == null ? null : new double[var3.layers][var3.intValue3];
+   private void method3670(int id, int tickCount) {
+      Motor.Entry4 entry4 = this.entry4;
+      this.doubleValues = entry4 == null ? null : new double[entry4.layers][entry4.intValue3];
       Arrays.fill(this.entrys, null);
       this.intValue = 0;
       Arrays.fill(this.doubleValues2, 0.0);
@@ -390,21 +390,21 @@ public final class Motor extends Util22 {
       Arrays.fill(this.doubleValues8, 0.0);
       this.floatValue = 1.0F;
       this.flag2 = false;
-      this.intValue2 = var1;
+      this.intValue2 = id;
       this.intValue3 = Integer.MIN_VALUE;
       this.intValue4 = Integer.MIN_VALUE;
       this.rotation = null;
    }
 
-   private void method3671(int var1) {
-      this.intValue2 = var1;
+   private void method3671(int id) {
+      this.intValue2 = id;
       this.intValue4 = Integer.MIN_VALUE;
       this.rotation = null;
    }
 
-   private void method3672(int var1, Rotation var2) {
-      this.intValue4 = var1;
-      this.rotation = var2;
+   private void method3672(int tickCount, Rotation rotation) {
+      this.intValue4 = tickCount;
+      this.rotation = rotation;
    }
 
    public void reset() {
@@ -418,11 +418,11 @@ public final class Motor extends Util22 {
          this.longValue = System.currentTimeMillis();
          this.completableFuture = CompletableFuture.supplyAsync(() -> {
             try {
-               Motor.Entry4 var0 = method3674();
-               var0.method3684();
-               return var0;
-            } catch (IOException var1) {
-               throw new CompletionException(var1);
+               Motor.Entry4 entry4 = method3674();
+               entry4.method3684();
+               return entry4;
+            } catch (IOException e) {
+               throw new CompletionException(e);
             }
          });
          return null;
@@ -454,11 +454,11 @@ public final class Motor extends Util22 {
                      + (System.currentTimeMillis() - this.longValue)
                      + " мс"
                );
-         } catch (Exception var3) {
-            Object var2 = var3 instanceof CompletionException && var3.getCause() != null ? var3.getCause() : var3;
+         } catch (Exception e) {
+            Object cause = e instanceof CompletionException && e.getCause() != null ? e.getCause() : e;
             this.entry4 = null;
             this.flag = true;
-            System.out.println("v4 не смог загрузить motor.json: " + var2);
+            System.out.println("v4 не смог загрузить motor.json: " + cause);
          }
 
          this.completableFuture = null;
@@ -467,58 +467,58 @@ public final class Motor extends Util22 {
    }
 
    private static Motor.Entry4 method3674() throws IOException {
-      for (Path var1 : items) {
-         if (Files.isRegularFile(var1)) {
-            Motor.Entry4 var2 = Motor.Entry4.method3687(var1);
-            System.out.println("v4 motor: " + var1.toAbsolutePath());
-            return var2;
+      for (Path path : items) {
+         if (Files.isRegularFile(path)) {
+            Motor.Entry4 entry4 = Motor.Entry4.method3687(path);
+            System.out.println("v4 motor: " + path.toAbsolutePath());
+            return entry4;
          }
       }
 
-      InputStream var6 = Motor.class.getClassLoader().getResourceAsStream("models/motor.json");
-      if (var6 == null) {
+      InputStream resourceAsStream = Motor.class.getClassLoader().getResourceAsStream("models/motor.json");
+      if (resourceAsStream == null) {
          throw new IOException("motor.json не найден ни рядом с клиентом, ни в jar");
       } else {
-         Motor.Entry4 var8;
-         try (InputStreamReader var7 = new InputStreamReader(var6, StandardCharsets.UTF_8)) {
-            var8 = Motor.Entry4.method3688(var7);
+         Motor.Entry4 entry4;
+         try (InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8)) {
+            entry4 = Motor.Entry4.method3688(inputStreamReader);
          }
 
-         return var8;
+         return entry4;
       }
    }
 
-   private static double method3675(double var0) {
-      return Mth.wrapDegrees((float)var0);
+   private static double method3675(double angle) {
+      return Mth.wrapDegrees((float)angle);
    }
 
-   private static double method3676(double var0) {
-      return 1.0 / (1.0 + Math.exp(-var0));
+   private static double method3676(double doubleValue) {
+      return 1.0 / (1.0 + Math.exp(-doubleValue));
    }
 
-   private static double asinh(double var0) {
-      return var0 >= 0.0 ? Math.log(var0 + Math.sqrt(var0 * var0 + 1.0)) : -Math.log(-var0 + Math.sqrt(var0 * var0 + 1.0));
+   private static double asinh(double d) {
+      return d >= 0.0 ? Math.log(d + Math.sqrt(d * d + 1.0)) : -Math.log(-d + Math.sqrt(d * d + 1.0));
    }
 
-   private static double method3677(double var0, double var2, double var4) {
-      return Math.max(var2, Math.min(var4, var0));
+   private static double method3677(double x, double d, double d2) {
+      return Math.max(d, Math.min(d2, x));
    }
 
-   private static int method3678(double[] var0) {
-      int var1 = 0;
+   private static int method3678(double[] doubles) {
+      int n = 0;
 
-      for (int var2 = 1; var2 < var0.length; var2++) {
-         if (var0[var2] > var0[var1]) {
-            var1 = var2;
+      for (int i = 1; i < doubles.length; i++) {
+         if (doubles[i] > doubles[n]) {
+            n = i;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private static boolean method3679(double[] var0) {
-      for (double var4 : var0) {
-         if (!Double.isFinite(var4)) {
+   private static boolean method3679(double[] doubleValues) {
+      for (double doubleValue : doubleValues) {
+         if (!Double.isFinite(doubleValue)) {
             return false;
          }
       }
@@ -526,8 +526,8 @@ public final class Motor extends Util22 {
       return true;
    }
 
-   private static String method3680(double var0) {
-      return String.format(Locale.ROOT, "%.3f", var0);
+   private static String method3680(double d) {
+      return String.format(Locale.ROOT, "%.3f", d);
    }
 
    private static final class Entry {
@@ -548,11 +548,11 @@ public final class Motor extends Util22 {
       public final double[] doubleValues3;
       public final double[] doubleValues4;
 
-      public Entry2(double[][] var1, double[][] var2, double[] var3, double[] var4) {
-         this.doubleValues = var1;
-         this.doubleValues2 = var2;
-         this.doubleValues3 = var3;
-         this.doubleValues4 = var4;
+      public Entry2(double[][] doubleValues, double[][] doubleValues2, double[] doubleValues3, double[] doubleValues4) {
+         this.doubleValues = doubleValues;
+         this.doubleValues2 = doubleValues2;
+         this.doubleValues3 = doubleValues3;
+         this.doubleValues4 = doubleValues4;
       }
    }
 
@@ -606,140 +606,140 @@ public final class Motor extends Util22 {
          return this.doubleValues != null && this.doubleValues2 != null && this.doubleValues3 != null;
       }
 
-      public double method3682(int var1, double var2) {
-         int var4 = 0;
+      public double method3682(int n, double d) {
+         int n2 = 0;
 
-         while (var4 < this.doubleValues.length && this.doubleValues[var4] < var2) {
-            var4++;
+         while (n2 < this.doubleValues.length && this.doubleValues[n2] < d) {
+            n2++;
          }
 
-         double[] var5 = var1 == 0 ? this.doubleValues2 : this.doubleValues3;
-         return var5[Math.min(var4, var5.length - 1)];
+         double[] doubleValues2 = n == 0 ? this.doubleValues2 : this.doubleValues3;
+         return doubleValues2[Math.min(n2, doubleValues2.length - 1)];
       }
 
-      public Motor.Entry5 method3683(double[] var1, double[][] var2) {
-         double[] var3 = new double[var1.length];
+      public Motor.Entry5 method3683(double[] doubleValues, double[][] doubleses) {
+         double[] doubles = new double[doubleValues.length];
 
-         for (int var4 = 0; var4 < var3.length; var4++) {
-            var3[var4] = (var1[var4] - this.doubleValues4[var4]) / Math.sqrt(this.doubleValues5[var4] + 1.0E-4);
+         for (int i = 0; i < doubles.length; i++) {
+            doubles[i] = (doubleValues[i] - this.doubleValues4[i]) / Math.sqrt(this.doubleValues5[i] + 1.0E-4);
          }
 
-         for (Motor.Entry6 var7 : this.entry6s) {
-            var3 = var7.method3698(var3);
+         for (Motor.Entry6 entry6 : this.entry6s) {
+            doubles = entry6.method3698(doubles);
 
-            for (int var8 = 0; var8 < var3.length; var8++) {
-               var3[var8] /= 1.0 + Math.exp(-var3[var8]);
+            for (int i = 0; i < doubles.length; i++) {
+               doubles[i] /= 1.0 + Math.exp(-doubles[i]);
             }
          }
 
-         for (int var18 = 0; var18 < this.entry2s.length; var18++) {
-            Motor.Entry2 var20 = this.entry2s[var18];
-            double[] var22 = var2[var18];
-            double[] var24 = method3686(var20.doubleValues, var3, var20.doubleValues3);
-            double[] var26 = method3686(var20.doubleValues2, var22, var20.doubleValues4);
-            double[] var9 = new double[this.intValue3];
+         for (int i = 0; i < this.entry2s.length; i++) {
+            Motor.Entry2 entry2 = this.entry2s[i];
+            double[] doubles2 = doubleses[i];
+            double[] doubles3 = method3686(entry2.doubleValues, doubles, entry2.doubleValues3);
+            double[] doubles4 = method3686(entry2.doubleValues2, doubles2, entry2.doubleValues4);
+            double[] doubles5 = new double[this.intValue3];
 
-            for (int var10 = 0; var10 < this.intValue3; var10++) {
-               double var11 = Motor.method3676(var24[var10] + var26[var10]);
-               double var13 = Motor.method3676(var24[this.intValue3 + var10] + var26[this.intValue3 + var10]);
-               double var15 = Math.tanh(var24[2 * this.intValue3 + var10] + var11 * var26[2 * this.intValue3 + var10]);
-               var9[var10] = (1.0 - var13) * var15 + var13 * var22[var10];
+            for (int j = 0; j < this.intValue3; j++) {
+               double d = Motor.method3676(doubles3[j] + doubles4[j]);
+               double d2 = Motor.method3676(doubles3[this.intValue3 + j] + doubles4[this.intValue3 + j]);
+               double tanh = Math.tanh(doubles3[2 * this.intValue3 + j] + d * doubles4[2 * this.intValue3 + j]);
+               doubles5[j] = (1.0 - d2) * tanh + d2 * doubles2[j];
             }
 
-            var2[var18] = var9;
-            var3 = var9;
+            doubleses[i] = doubles5;
+            doubles = doubles5;
          }
 
-         double[] var19 = this.entry62.method3698(var3);
-         double[] var21 = this.entry63.method3698(var3);
-         double[][] var23 = new double[this.intValue4][2];
-         double[][] var25 = new double[this.intValue4][2];
+         double[] doubles2 = this.entry62.method3698(doubles);
+         double[] doubles3 = this.entry63.method3698(doubles);
+         double[][] doubleValues2 = new double[this.intValue4][2];
+         double[][] doubleValues3 = new double[this.intValue4][2];
 
-         for (int var27 = 0; var27 < this.intValue4; var27++) {
-            var23[var27][0] = var19[2 * var27];
-            var23[var27][1] = var19[2 * var27 + 1];
-            var25[var27][0] = Motor.method3677(var21[2 * var27], this.doubleValue9, this.doubleValue10);
-            var25[var27][1] = Motor.method3677(var21[2 * var27 + 1], this.doubleValue9, this.doubleValue10);
+         for (int i = 0; i < this.intValue4; i++) {
+            doubleValues2[i][0] = doubles2[2 * i];
+            doubleValues2[i][1] = doubles2[2 * i + 1];
+            doubleValues3[i][0] = Motor.method3677(doubles3[2 * i], this.doubleValue9, this.doubleValue10);
+            doubleValues3[i][1] = Motor.method3677(doubles3[2 * i + 1], this.doubleValue9, this.doubleValue10);
          }
 
-         double[] var28 = this.entry64.method3698(var3);
-         double[] var29 = new double[this.intValue4];
+         double[] doubles4 = this.entry64.method3698(doubles);
+         double[] doubleValues4 = new double[this.intValue4];
 
-         for (int var30 = 0; var30 < this.intValue4; var30++) {
-            var29[var30] = Math.tanh(var28[var30]) * 0.95;
+         for (int i = 0; i < this.intValue4; i++) {
+            doubleValues4[i] = Math.tanh(doubles4[i]) * 0.95;
          }
 
-         return new Motor.Entry5(this.entry6.method3698(var3), var23, var25, var29, this.entry65.method3698(var3)[0]);
+         return new Motor.Entry5(this.entry6.method3698(doubles), doubleValues2, doubleValues3, doubleValues4, this.entry65.method3698(doubles)[0]);
       }
 
       public void method3684() {
          if (this.items.isEmpty()) {
             throw new IllegalStateException("в модели нет эталонных тиков");
          } else {
-            double[][] var1 = new double[this.layers][this.intValue3];
+            double[][] doubleses = new double[this.layers][this.intValue3];
 
-            for (int var2 = 0; var2 < this.items.size(); var2++) {
-               Motor.Entry3 var3 = this.items.get(var2);
-               if (var3.doubleValues.length != this.intValue) {
-                  throw new IllegalStateException("эталон " + var2 + ": " + var3.doubleValues.length + " признаков вместо " + this.intValue);
+            for (int i = 0; i < this.items.size(); i++) {
+               Motor.Entry3 entry3 = this.items.get(i);
+               if (entry3.doubleValues.length != this.intValue) {
+                  throw new IllegalStateException("эталон " + i + ": " + entry3.doubleValues.length + " признаков вместо " + this.intValue);
                }
 
-               Motor.Entry5 var4 = this.method3683(var3.doubleValues, var1);
-               double[] var5 = new double[this.layers * this.intValue3];
+               Motor.Entry5 entry5 = this.method3683(entry3.doubleValues, doubleses);
+               double[] doubleValues = new double[this.layers * this.intValue3];
 
-               for (int var6 = 0; var6 < this.layers; var6++) {
-                  System.arraycopy(var1[var6], 0, var5, var6 * this.intValue3, this.intValue3);
+               for (int j = 0; j < this.layers; j++) {
+                  System.arraycopy(doubleses[j], 0, doubleValues, j * this.intValue3, this.intValue3);
                }
 
-               double var17 = 0.0;
-               String var8 = "";
+               double d = 0.0;
+               String str = "";
 
-               for (int var9 = 0; var9 < this.intValue4; var9++) {
-                  double var10 = method3685(var4.doubleValues2[var9], var3.doubleValues3[var9]);
-                  if (var10 > var17) {
-                     var17 = var10;
-                     var8 = "mu[" + var9 + "]";
+               for (int j = 0; j < this.intValue4; j++) {
+                  double d2 = method3685(entry5.doubleValues2[j], entry3.doubleValues3[j]);
+                  if (d2 > d) {
+                     d = d2;
+                     str = "mu[" + j + "]";
                   }
 
-                  double var12 = method3685(var4.doubleValues3[var9], var3.doubleValues4[var9]);
-                  if (var12 > var17) {
-                     var17 = var12;
-                     var8 = "log_sigma[" + var9 + "]";
+                  double d3 = method3685(entry5.doubleValues3[j], entry3.doubleValues4[j]);
+                  if (d3 > d) {
+                     d = d3;
+                     str = "log_sigma[" + j + "]";
                   }
                }
 
-               double var18 = method3685(var4.doubleValues, var3.doubleValues2);
-               if (var18 > var17) {
-                  var17 = var18;
-                  var8 = "pi";
+               double d2 = method3685(entry5.doubleValues, entry3.doubleValues2);
+               if (d2 > d) {
+                  d = d2;
+                  str = "pi";
                }
 
-               double var11 = method3685(var4.doubleValues4, var3.doubleValues5);
-               if (var11 > var17) {
-                  var17 = var11;
-                  var8 = "rho";
+               double d3 = method3685(entry5.doubleValues4, entry3.doubleValues5);
+               if (d3 > d) {
+                  d = d3;
+                  str = "rho";
                }
 
-               double var13 = Math.abs(var4.doubleValue - var3.doubleValue);
-               if (var13 > var17) {
-                  var17 = var13;
-                  var8 = "pause";
+               double d4 = Math.abs(entry5.doubleValue - entry3.doubleValue);
+               if (d4 > d) {
+                  d = d4;
+                  str = "pause";
                }
 
-               double var15 = method3685(var5, var3.doubleValues6);
-               if (var15 > var17) {
-                  var17 = var15;
-                  var8 = "hidden";
+               double d5 = method3685(doubleValues, entry3.doubleValues6);
+               if (d5 > d) {
+                  d = d5;
+                  str = "hidden";
                }
 
-               if (!(var17 <= 1.0E-9)) {
+               if (!(d <= 1.0E-9)) {
                   throw new IllegalStateException(
                      "эталонный тик "
-                        + var2
+                        + i
                         + " не сошёлся: max|Δ| = "
-                        + var17
+                        + d
                         + " в '"
-                        + var8
+                        + str
                         + "', допуск 1.0E-9. Раскладка весов не та, что ожидает рантайм."
                   );
                }
@@ -747,297 +747,297 @@ public final class Motor extends Util22 {
          }
       }
 
-      private static double method3685(double[] var0, double[] var1) {
-         double var2 = 0.0;
+      private static double method3685(double[] doubleValues, double[] doubleValues2) {
+         double d = 0.0;
 
-         for (int var4 = 0; var4 < var0.length; var4++) {
-            var2 = Math.max(var2, Math.abs(var0[var4] - var1[var4]));
+         for (int i = 0; i < doubleValues.length; i++) {
+            d = Math.max(d, Math.abs(doubleValues[i] - doubleValues2[i]));
          }
 
-         return var2;
+         return d;
       }
 
-      private static double[] method3686(double[][] var0, double[] var1, double[] var2) {
-         double[] var3 = new double[var0.length];
+      private static double[] method3686(double[][] doubleValues, double[] doubles, double[] doubleValues3) {
+         double[] doubles2 = new double[doubleValues.length];
 
-         for (int var4 = 0; var4 < var0.length; var4++) {
-            double var5 = var2[var4];
-            double[] var7 = var0[var4];
+         for (int i = 0; i < doubleValues.length; i++) {
+            double d = doubleValues3[i];
+            double[] doubles3 = doubleValues[i];
 
-            for (int var8 = 0; var8 < var1.length; var8++) {
-               var5 += var7[var8] * var1[var8];
+            for (int j = 0; j < doubles.length; j++) {
+               d += doubles3[j] * doubles[j];
             }
 
-            var3[var4] = var5;
+            doubles2[i] = d;
          }
 
-         return var3;
+         return doubles2;
       }
 
-      public static Motor.Entry4 method3687(Path var0) throws IOException {
-         Motor.Entry4 var2;
-         try (BufferedReader var1 = Files.newBufferedReader(var0, StandardCharsets.UTF_8)) {
-            var2 = method3688(var1);
+      public static Motor.Entry4 method3687(Path path) throws IOException {
+         Motor.Entry4 entry4;
+         try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            entry4 = method3688(bufferedReader);
          }
 
-         return var2;
+         return entry4;
       }
 
-      public static Motor.Entry4 method3688(Reader var0) throws IOException {
-         Motor.Entry4 var1 = new Motor.Entry4();
-         ArrayList var2 = new ArrayList();
-         ArrayList var3 = new ArrayList();
-         JsonReader var4 = new JsonReader(var0);
+      public static Motor.Entry4 method3688(Reader inputStreamReader) throws IOException {
+         Motor.Entry4 entry4 = new Motor.Entry4();
+         ArrayList arrayList = new ArrayList();
+         ArrayList arrayList2 = new ArrayList();
+         JsonReader jsonReader = new JsonReader(inputStreamReader);
 
          try {
-            var4.beginObject();
+            jsonReader.beginObject();
 
-            while (var4.hasNext()) {
-               String var5 = var4.nextName();
-               switch (var5) {
+            while (jsonReader.hasNext()) {
+               String nextName = jsonReader.nextName();
+               switch (nextName) {
                   case "format":
-                     String var11 = var4.nextString();
-                     if (!"neurotest-motor-v1".equals(var11)) {
-                        throw new IllegalStateException("формат '" + var11 + "', ожидался 'neurotest-motor-v1'");
+                     String nextString = jsonReader.nextString();
+                     if (!"neurotest-motor-v1".equals(nextString)) {
+                        throw new IllegalStateException("формат '" + nextString + "', ожидался 'neurotest-motor-v1'");
                      }
                      break;
                   case "config":
-                     var1.method3689(var4);
+                     entry4.method3689(jsonReader);
                      break;
                   case "norm":
-                     var4.beginObject();
+                     jsonReader.beginObject();
 
-                     while (var4.hasNext()) {
-                        String var7 = var4.nextName();
-                        switch (var7) {
+                     while (jsonReader.hasNext()) {
+                        String str = jsonReader.nextName();
+                        switch (str) {
                            case "mean":
-                              var1.doubleValues4 = method3696(var4);
+                              entry4.doubleValues4 = method3696(jsonReader);
                               break;
                            case "var":
-                              var1.doubleValues5 = method3696(var4);
+                              entry4.doubleValues5 = method3696(jsonReader);
                               break;
                            default:
-                              var4.skipValue();
+                              jsonReader.skipValue();
                         }
                      }
 
-                     var4.endObject();
+                     jsonReader.endObject();
                      break;
                   case "inp":
-                     var4.beginArray();
+                     jsonReader.beginArray();
 
-                     while (var4.hasNext()) {
-                        var2.add(method3694(var4));
+                     while (jsonReader.hasNext()) {
+                        arrayList.add(method3694(jsonReader));
                      }
 
-                     var4.endArray();
+                     jsonReader.endArray();
                      break;
                   case "gru":
-                     var4.beginArray();
+                     jsonReader.beginArray();
 
-                     while (var4.hasNext()) {
-                        var3.add(method3695(var4));
+                     while (jsonReader.hasNext()) {
+                        arrayList2.add(method3695(jsonReader));
                      }
 
-                     var4.endArray();
+                     jsonReader.endArray();
                      break;
                   case "heads":
-                     var1.method3691(var4);
+                     entry4.method3691(jsonReader);
                      break;
                   case "golden":
-                     var1.method3692(var4);
+                     entry4.method3692(jsonReader);
                      break;
                   default:
-                     var4.skipValue();
+                     jsonReader.skipValue();
                }
             }
 
-            var4.endObject();
-         } catch (Throwable var10) {
+            jsonReader.endObject();
+         } catch (Throwable e) {
             try {
-               var4.close();
-            } catch (Throwable var9) {
-               var10.addSuppressed(var9);
+               jsonReader.close();
+            } catch (Throwable ex) {
+               e.addSuppressed(ex);
             }
 
-            throw var10;
+            throw e;
          }
 
-         var4.close();
-         var1.entry6s = (Motor.Entry6[])var2.toArray(new Motor.Entry6[0]);
-         var1.entry2s = (Motor.Entry2[])var3.toArray(new Motor.Entry2[0]);
-         var1.method3693();
-         return var1;
+         jsonReader.close();
+         entry4.entry6s = (Motor.Entry6[])arrayList.toArray(new Motor.Entry6[0]);
+         entry4.entry2s = (Motor.Entry2[])arrayList2.toArray(new Motor.Entry2[0]);
+         entry4.method3693();
+         return entry4;
       }
 
-      private void method3689(JsonReader var1) throws IOException {
-         var1.beginObject();
+      private void method3689(JsonReader jsonReader) throws IOException {
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var2 = var1.nextName();
-            switch (var2) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            switch (nextName) {
                case "n_features":
-                  this.intValue = var1.nextInt();
+                  this.intValue = jsonReader.nextInt();
                   break;
                case "mlp_hidden":
-                  this.intValue2 = var1.nextInt();
+                  this.intValue2 = jsonReader.nextInt();
                   break;
                case "gru_hidden":
-                  this.intValue3 = var1.nextInt();
+                  this.intValue3 = jsonReader.nextInt();
                   break;
                case "gru_layers":
-                  this.layers = var1.nextInt();
+                  this.layers = jsonReader.nextInt();
                   break;
                case "mix":
-                  this.intValue4 = var1.nextInt();
+                  this.intValue4 = jsonReader.nextInt();
                   break;
                case "latency":
-                  this.intValue5 = var1.nextInt();
+                  this.intValue5 = jsonReader.nextInt();
                   break;
                case "asinh_scale":
-                  this.doubleValue = var1.nextDouble();
+                  this.doubleValue = jsonReader.nextDouble();
                   break;
                case "act_scale":
-                  double[] var4 = method3696(var1);
-                  this.doubleValue2 = var4[0];
-                  this.doubleValue3 = var4.length > 1 ? var4[1] : var4[0];
+                  double[] doubles = method3696(jsonReader);
+                  this.doubleValue2 = doubles[0];
+                  this.doubleValue3 = doubles.length > 1 ? doubles[1] : doubles[0];
                   break;
                case "inside_sharp":
-                  this.doubleValue4 = var1.nextDouble();
+                  this.doubleValue4 = jsonReader.nextDouble();
                   break;
                case "max_cmd_yaw":
-                  this.doubleValue5 = var1.nextDouble();
+                  this.doubleValue5 = jsonReader.nextDouble();
                   break;
                case "max_cmd_pitch":
-                  this.doubleValue6 = var1.nextDouble();
+                  this.doubleValue6 = jsonReader.nextDouble();
                   break;
                case "peak_decay":
-                  this.doubleValue7 = var1.nextDouble();
+                  this.doubleValue7 = jsonReader.nextDouble();
                   break;
                case "zero_eps":
-                  this.doubleValue8 = var1.nextDouble();
+                  this.doubleValue8 = jsonReader.nextDouble();
                   break;
                case "act_quant":
-                  this.flag = "round".equals(var1.nextString());
+                  this.flag = "round".equals(jsonReader.nextString());
                   break;
                case "use_player":
-                  this.flag3 = var1.nextBoolean();
+                  this.flag3 = jsonReader.nextBoolean();
                   break;
                case "log_sigma_min":
-                  this.doubleValue9 = var1.nextDouble();
+                  this.doubleValue9 = jsonReader.nextDouble();
                   break;
                case "log_sigma_max":
-                  this.doubleValue10 = var1.nextDouble();
+                  this.doubleValue10 = jsonReader.nextDouble();
                   break;
                case "act_residual":
-                  this.flag2 = var1.nextBoolean();
+                  this.flag2 = jsonReader.nextBoolean();
                   break;
                case "envelope":
-                  this.method3690(var1);
+                  this.method3690(jsonReader);
                   break;
                default:
-                  var1.skipValue();
+                  jsonReader.skipValue();
             }
          }
 
-         var1.endObject();
+         jsonReader.endObject();
       }
 
-      private void method3690(JsonReader var1) throws IOException {
-         if (var1.peek() == JsonToken.NULL) {
-            var1.nextNull();
+      private void method3690(JsonReader jsonReader) throws IOException {
+         if (jsonReader.peek() == JsonToken.NULL) {
+            jsonReader.nextNull();
          } else {
-            var1.beginObject();
+            jsonReader.beginObject();
 
-            while (var1.hasNext()) {
-               String var2 = var1.nextName();
-               switch (var2) {
+            while (jsonReader.hasNext()) {
+               String nextName = jsonReader.nextName();
+               switch (nextName) {
                   case "edges_counts":
-                     this.doubleValues = method3696(var1);
+                     this.doubleValues = method3696(jsonReader);
                      break;
                   case "caps_yaw_counts":
-                     this.doubleValues2 = method3696(var1);
+                     this.doubleValues2 = method3696(jsonReader);
                      break;
                   case "caps_pitch_counts":
-                     this.doubleValues3 = method3696(var1);
+                     this.doubleValues3 = method3696(jsonReader);
                      break;
                   default:
-                     var1.skipValue();
+                     jsonReader.skipValue();
                }
             }
 
-            var1.endObject();
+            jsonReader.endObject();
          }
       }
 
-      private void method3691(JsonReader var1) throws IOException {
-         var1.beginObject();
+      private void method3691(JsonReader jsonReader) throws IOException {
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var2 = var1.nextName();
-            Motor.Entry6 var3 = method3694(var1);
-            switch (var2) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            Motor.Entry6 entry6 = method3694(jsonReader);
+            switch (nextName) {
                case "pi":
-                  this.entry6 = var3;
+                  this.entry6 = entry6;
                   break;
                case "mu":
-                  this.entry62 = var3;
+                  this.entry62 = entry6;
                   break;
                case "log_sigma":
-                  this.entry63 = var3;
+                  this.entry63 = entry6;
                   break;
                case "rho":
-                  this.entry64 = var3;
+                  this.entry64 = entry6;
                   break;
                case "pause":
-                  this.entry65 = var3;
+                  this.entry65 = entry6;
             }
          }
 
-         var1.endObject();
+         jsonReader.endObject();
       }
 
-      private void method3692(JsonReader var1) throws IOException {
-         var1.beginArray();
+      private void method3692(JsonReader jsonReader) throws IOException {
+         jsonReader.beginArray();
 
-         while (var1.hasNext()) {
-            Motor.Entry3 var2 = new Motor.Entry3();
-            var1.beginObject();
+         while (jsonReader.hasNext()) {
+            Motor.Entry3 entry3 = new Motor.Entry3();
+            jsonReader.beginObject();
 
-            while (var1.hasNext()) {
-               String var3 = var1.nextName();
-               switch (var3) {
+            while (jsonReader.hasNext()) {
+               String nextName = jsonReader.nextName();
+               switch (nextName) {
                   case "features":
-                     var2.doubleValues = method3696(var1);
+                     entry3.doubleValues = method3696(jsonReader);
                      break;
                   case "pi":
-                     var2.doubleValues2 = method3696(var1);
+                     entry3.doubleValues2 = method3696(jsonReader);
                      break;
                   case "mu":
-                     var2.doubleValues3 = method3697(var1);
+                     entry3.doubleValues3 = method3697(jsonReader);
                      break;
                   case "log_sigma":
-                     var2.doubleValues4 = method3697(var1);
+                     entry3.doubleValues4 = method3697(jsonReader);
                      break;
                   case "rho":
-                     var2.doubleValues5 = method3696(var1);
+                     entry3.doubleValues5 = method3696(jsonReader);
                      break;
                   case "pause":
-                     var2.doubleValue = var1.nextDouble();
+                     entry3.doubleValue = jsonReader.nextDouble();
                      break;
                   case "hidden_out":
-                     var2.doubleValues6 = method3696(var1);
+                     entry3.doubleValues6 = method3696(jsonReader);
                      break;
                   default:
-                     var1.skipValue();
+                     jsonReader.skipValue();
                }
             }
 
-            var1.endObject();
-            this.items.add(var2);
+            jsonReader.endObject();
+            this.items.add(entry3);
          }
 
-         var1.endArray();
+         jsonReader.endArray();
       }
 
       private void method3693() {
@@ -1057,8 +1057,8 @@ public final class Motor extends Util22 {
          } else if (this.entry6 == null || this.entry62 == null || this.entry63 == null || this.entry64 == null || this.entry65 == null) {
             throw new IllegalStateException("в файле не все головы");
          } else if (this.entry62.doubleValues.length == this.intValue4 * 2 && this.entry6.doubleValues.length == this.intValue4) {
-            for (Motor.Entry2 var4 : this.entry2s) {
-               if (var4.doubleValues.length != 3 * this.intValue3 || var4.doubleValues2.length != 3 * this.intValue3) {
+            for (Motor.Entry2 entry2 : this.entry2s) {
+               if (entry2.doubleValues.length != 3 * this.intValue3 || entry2.doubleValues2.length != 3 * this.intValue3) {
                   throw new IllegalStateException("матрицы GRU не на " + this.intValue3);
                }
             }
@@ -1082,93 +1082,93 @@ public final class Motor extends Util22 {
          }
       }
 
-      private static Motor.Entry6 method3694(JsonReader var0) throws IOException {
-         double[][] var1 = null;
-         double[] var2 = null;
-         var0.beginObject();
+      private static Motor.Entry6 method3694(JsonReader jsonReader) throws IOException {
+         double[][] doubleValues = null;
+         double[] doubleValues2 = null;
+         jsonReader.beginObject();
 
-         while (var0.hasNext()) {
-            String var3 = var0.nextName();
-            switch (var3) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            switch (nextName) {
                case "w":
-                  var1 = method3697(var0);
+                  doubleValues = method3697(jsonReader);
                   break;
                case "b":
-                  var2 = method3696(var0);
+                  doubleValues2 = method3696(jsonReader);
                   break;
                default:
-                  var0.skipValue();
+                  jsonReader.skipValue();
             }
          }
 
-         var0.endObject();
-         if (var1 != null && var2 != null && var1.length == var2.length) {
-            return new Motor.Entry6(var1, var2);
+         jsonReader.endObject();
+         if (doubleValues != null && doubleValues2 != null && doubleValues.length == doubleValues2.length) {
+            return new Motor.Entry6(doubleValues, doubleValues2);
          } else {
             throw new IllegalStateException("битый линейный слой");
          }
       }
 
-      private static Motor.Entry2 method3695(JsonReader var0) throws IOException {
-         double[][] var1 = null;
-         double[][] var2 = null;
-         double[] var3 = null;
-         double[] var4 = null;
-         var0.beginObject();
+      private static Motor.Entry2 method3695(JsonReader jsonReader) throws IOException {
+         double[][] doubleValues = null;
+         double[][] doubleValues2 = null;
+         double[] doubleValues3 = null;
+         double[] doubleValues4 = null;
+         jsonReader.beginObject();
 
-         while (var0.hasNext()) {
-            String var5 = var0.nextName();
-            switch (var5) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            switch (nextName) {
                case "w_ih":
-                  var1 = method3697(var0);
+                  doubleValues = method3697(jsonReader);
                   break;
                case "w_hh":
-                  var2 = method3697(var0);
+                  doubleValues2 = method3697(jsonReader);
                   break;
                case "b_ih":
-                  var3 = method3696(var0);
+                  doubleValues3 = method3696(jsonReader);
                   break;
                case "b_hh":
-                  var4 = method3696(var0);
+                  doubleValues4 = method3696(jsonReader);
                   break;
                default:
-                  var0.skipValue();
+                  jsonReader.skipValue();
             }
          }
 
-         var0.endObject();
-         if (var1 != null && var2 != null && var3 != null && var4 != null) {
-            return new Motor.Entry2(var1, var2, var3, var4);
+         jsonReader.endObject();
+         if (doubleValues != null && doubleValues2 != null && doubleValues3 != null && doubleValues4 != null) {
+            return new Motor.Entry2(doubleValues, doubleValues2, doubleValues3, doubleValues4);
          } else {
             throw new IllegalStateException("битый слой GRU");
          }
       }
 
-      private static double[] method3696(JsonReader var0) throws IOException {
-         double[] var1 = new double[32];
-         int var2 = 0;
-         var0.beginArray();
+      private static double[] method3696(JsonReader jsonReader) throws IOException {
+         double[] original = new double[32];
+         int newLength = 0;
+         jsonReader.beginArray();
 
-         for (; var0.hasNext(); var1[var2++] = var0.nextDouble()) {
-            if (var2 == var1.length) {
-               var1 = Arrays.copyOf(var1, var2 * 2);
+         for (; jsonReader.hasNext(); original[newLength++] = jsonReader.nextDouble()) {
+            if (newLength == original.length) {
+               original = Arrays.copyOf(original, newLength * 2);
             }
          }
 
-         var0.endArray();
-         return Arrays.copyOf(var1, var2);
+         jsonReader.endArray();
+         return Arrays.copyOf(original, newLength);
       }
 
-      private static double[][] method3697(JsonReader var0) throws IOException {
-         ArrayList var1 = new ArrayList();
-         var0.beginArray();
+      private static double[][] method3697(JsonReader jsonReader) throws IOException {
+         ArrayList arrayList = new ArrayList();
+         jsonReader.beginArray();
 
-         while (var0.hasNext()) {
-            var1.add(method3696(var0));
+         while (jsonReader.hasNext()) {
+            arrayList.add(method3696(jsonReader));
          }
 
-         var0.endArray();
-         return (double[][])var1.toArray(new double[0][]);
+         jsonReader.endArray();
+         return (double[][])arrayList.toArray(new double[0][]);
       }
    }
 
@@ -1179,12 +1179,12 @@ public final class Motor extends Util22 {
       public final double[] doubleValues4;
       public final double doubleValue;
 
-      public Entry5(double[] var1, double[][] var2, double[][] var3, double[] var4, double var5) {
-         this.doubleValues = var1;
-         this.doubleValues2 = var2;
-         this.doubleValues3 = var3;
-         this.doubleValues4 = var4;
-         this.doubleValue = var5;
+      public Entry5(double[] doubleValues, double[][] doubleValues2, double[][] doubleValues3, double[] doubleValues4, double doubleValue) {
+         this.doubleValues = doubleValues;
+         this.doubleValues2 = doubleValues2;
+         this.doubleValues3 = doubleValues3;
+         this.doubleValues4 = doubleValues4;
+         this.doubleValue = doubleValue;
       }
    }
 
@@ -1192,26 +1192,26 @@ public final class Motor extends Util22 {
       public final double[][] doubleValues;
       public final double[] doubleValues2;
 
-      public Entry6(double[][] var1, double[] var2) {
-         this.doubleValues = var1;
-         this.doubleValues2 = var2;
+      public Entry6(double[][] doubleValues, double[] doubleValues2) {
+         this.doubleValues = doubleValues;
+         this.doubleValues2 = doubleValues2;
       }
 
-      public double[] method3698(double[] var1) {
-         double[] var2 = new double[this.doubleValues.length];
+      public double[] method3698(double[] doubles) {
+         double[] doubles2 = new double[this.doubleValues.length];
 
-         for (int var3 = 0; var3 < this.doubleValues.length; var3++) {
-            double var4 = this.doubleValues2[var3];
-            double[] var6 = this.doubleValues[var3];
+         for (int i = 0; i < this.doubleValues.length; i++) {
+            double d = this.doubleValues2[i];
+            double[] doubleValue = this.doubleValues[i];
 
-            for (int var7 = 0; var7 < var1.length; var7++) {
-               var4 += var6[var7] * var1[var7];
+            for (int j = 0; j < doubles.length; j++) {
+               d += doubleValue[j] * doubles[j];
             }
 
-            var2[var3] = var4;
+            doubles2[i] = d;
          }
 
-         return var2;
+         return doubles2;
       }
    }
 }

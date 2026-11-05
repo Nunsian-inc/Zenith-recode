@@ -46,11 +46,11 @@ public final class Registry {
    private final Queue<Registry.Data> queue = new ConcurrentLinkedQueue<>();
    private final Index2 index2 = new Index2();
    private volatile String text2;
-   private final ExecutorService executorService = Executors.newFixedThreadPool(2, var0 -> {
-      Thread var1 = new Thread(var0, "zenith-wardrobe-loader");
-      var1.setDaemon(true);
-      var1.setPriority(1);
-      return var1;
+   private final ExecutorService executorService = Executors.newFixedThreadPool(2, task -> {
+      Thread thread = new Thread(task, "zenith-wardrobe-loader");
+      thread.setDaemon(true);
+      thread.setPriority(1);
+      return thread;
    });
 
    public void load() {
@@ -58,55 +58,55 @@ public final class Registry {
       this.items2.clear();
       this.items3.clear();
       this.items4.clear();
-      JsonObject var1 = method1429("/assets/zenith/wardrobe/registry.json");
-      if (var1 == null) {
+      JsonObject json = method1429("/assets/zenith/wardrobe/registry.json");
+      if (json == null) {
          logger.warn("Гардероб: registry.json не найден");
       } else {
-         for (JsonElement var4 : var1.has("items") && var1.get("items").isJsonArray() ? var1.getAsJsonArray("items") : new JsonArray()) {
-            if (var4.isJsonObject()) {
-               JsonObject var5 = var4.getAsJsonObject();
-               String var6 = method1430(var5, "id");
-               FocusSlotEnum var7 = FocusSlotEnum.method546(method1430(var5, "slot"));
-               if (var6 != null && var7 != null) {
-                  String var8 = method1430(var5, "model");
+         for (JsonElement jsonElement : json.has("items") && json.get("items").isJsonArray() ? json.getAsJsonArray("items") : new JsonArray()) {
+            if (jsonElement.isJsonObject()) {
+               JsonObject jsonObject = jsonElement.getAsJsonObject();
+               String text = method1430(jsonObject, "id");
+               FocusSlotEnum focusSlotEnum = FocusSlotEnum.method546(method1430(jsonObject, "slot"));
+               if (text != null && focusSlotEnum != null) {
+                  String str = method1430(jsonObject, "model");
                   this.items
                      .put(
-                        var6,
+                        text,
                         new HoveredData(
-                           var6,
-                           var7,
-                           Rarity.method4709(method1430(var5, "rarity")),
-                           method1430(var5, "set"),
-                           var8 == null ? var6 : var8,
-                           method1430(var5, "theme")
+                           text,
+                           focusSlotEnum,
+                           Rarity.method4709(method1430(jsonObject, "rarity")),
+                           method1430(jsonObject, "set"),
+                           str == null ? text : str,
+                           method1430(jsonObject, "theme")
                         )
                      );
                }
             }
          }
 
-         for (JsonElement var14 : var1.has("sets") && var1.get("sets").isJsonArray() ? var1.getAsJsonArray("sets") : new JsonArray()) {
-            if (var14.isJsonObject()) {
-               JsonObject var15 = var14.getAsJsonObject();
-               String var16 = method1430(var15, "id");
-               if (var16 != null) {
-                  ArrayList var17 = new ArrayList();
+         for (JsonElement jsonElement : json.has("sets") && json.get("sets").isJsonArray() ? json.getAsJsonArray("sets") : new JsonArray()) {
+            if (jsonElement.isJsonObject()) {
+               JsonObject jsonObject = jsonElement.getAsJsonObject();
+               String text = method1430(jsonObject, "id");
+               if (text != null) {
+                  ArrayList list = new ArrayList();
 
-                  for (HoveredData var10 : this.items.values()) {
-                     if (var16.equals(var10.getText2())) {
-                        var17.add(var10.getText());
+                  for (HoveredData hoveredData : this.items.values()) {
+                     if (text.equals(hoveredData.getText2())) {
+                        list.add(hoveredData.getText());
                      }
                   }
 
-                  int var18 = 16777215;
+                  int intValue = 16777215;
 
                   try {
-                     var18 = Integer.parseInt(method1430(var15, "color").replace("#", ""), 16);
-                  } catch (RuntimeException var11) {
-                     var18 = 16777215;
+                     intValue = Integer.parseInt(method1430(jsonObject, "color").replace("#", ""), 16);
+                  } catch (RuntimeException e) {
+                     intValue = 16777215;
                   }
 
-                  this.items2.put(var16, new WardrobeSetInfo(var16, Collections.unmodifiableList(var17), var18, method1430(var15, "particle")));
+                  this.items2.put(text, new WardrobeSetInfo(text, Collections.unmodifiableList(list), intValue, method1430(jsonObject, "particle")));
                }
             }
          }
@@ -115,53 +115,53 @@ public final class Registry {
       }
    }
 
-   public HoveredData method1421(String var1) {
-      return var1 == null ? null : this.items.get(var1);
+   public HoveredData method1421(String string) {
+      return string == null ? null : this.items.get(string);
    }
 
-   public void method1422(Minecraft var1, int var2) {
-      if (var1.getTextureManager() != null) {
-         Registry.Data var3;
-         for (int var4 = 0; var4 < var2 && (var3 = this.queue.poll()) != null; var4++) {
-            var1.getTextureManager()
-               .register(var3.getClass15().identifier, new DynamicTexture(() -> "zenith wardrobe", var3.getNativeImage()));
-            this.items3.put(var3.name(), var3.getClass15());
-            this.items5.remove(var3.name());
+   public void method1422(Minecraft minecraft, int n) {
+      if (minecraft.getTextureManager() != null) {
+         Registry.Data data;
+         for (int i = 0; i < n && (data = this.queue.poll()) != null; i++) {
+            minecraft.getTextureManager()
+               .register(data.getClass15().identifier, new DynamicTexture(() -> "zenith wardrobe", data.getNativeImage()));
+            this.items3.put(data.name(), data.getClass15());
+            this.items5.remove(data.name());
          }
       }
    }
 
-   private void method1423(String var1) {
-      Long var2 = this.items6.get(var1);
-      if (var2 == null || System.nanoTime() - var2 >= 15000000000L) {
-         if (this.items5.add(var1)) {
-            this.executorService.execute(() -> this.load(var1));
+   private void method1423(String text) {
+      Long l = this.items6.get(text);
+      if (l == null || System.nanoTime() - l >= 15000000000L) {
+         if (this.items5.add(text)) {
+            this.executorService.execute(() -> this.load(text));
          }
       }
    }
 
-   private void load(String var1) {
+   private void load(String text) {
       try {
-         Index2.Data var2 = this.index2.method6140(var1);
-         JsonObject var9 = JsonParser.parseString(new String(var2.getByteValues(), StandardCharsets.UTF_8)).getAsJsonObject();
-         Identifier var4 = Identifier.fromNamespaceAndPath("zenith", "wardrobe/dyn/" + var1);
-         Class15 var5 = ModelJsonParser.method107(var1, var9, var4);
-         NativeImage var6 = NativeImage.read(var2.getByteValues2());
-         this.items6.remove(var1);
-         this.queue.add(new Registry.Data(var1, var5, var6));
+         Index2.Data data = this.index2.method6140(text);
+         JsonObject jsonObject = JsonParser.parseString(new String(data.getByteValues(), StandardCharsets.UTF_8)).getAsJsonObject();
+         Identifier identifier = Identifier.fromNamespaceAndPath("zenith", "wardrobe/dyn/" + text);
+         Class15 class2 = ModelJsonParser.method107(text, jsonObject, identifier);
+         NativeImage nativeImage = NativeImage.read(data.getByteValues2());
+         this.items6.remove(text);
+         this.queue.add(new Registry.Data(text, class2, nativeImage));
          this.text2 = null;
-      } catch (Index2.Entry var7) {
-         this.items6.put(var1, System.nanoTime());
-         this.items5.remove(var1);
-         String var3 = var7.getMessage();
-         if (!Objects.equals(var3, this.text2)) {
-            this.text2 = var3;
-            logger.warn("Гардероб: модель {} отложена — {}", var1, var3);
+      } catch (Index2.Entry e) {
+         this.items6.put(text, System.nanoTime());
+         this.items5.remove(text);
+         String message = e.getMessage();
+         if (!Objects.equals(message, this.text2)) {
+            this.text2 = message;
+            logger.warn("Гардероб: модель {} отложена — {}", text, message);
          }
-      } catch (LinkageError | Exception var8) {
-         this.items4.add(var1);
-         this.items5.remove(var1);
-         logger.error("Гардероб: модель {} не загружена", var1, var8);
+      } catch (LinkageError | Exception e) {
+         this.items4.add(text);
+         this.items5.remove(text);
+         logger.error("Гардероб: модель {} не загружена", text, e);
       }
    }
 
@@ -169,36 +169,36 @@ public final class Registry {
       return new ArrayList<>(this.items.values());
    }
 
-   public List<HoveredData> method1424(WardrobeCategory var1) {
-      ArrayList<HoveredData> var2 = new ArrayList<>();
+   public List<HoveredData> method1424(WardrobeCategory wardrobeCategory) {
+      ArrayList<HoveredData> hoveredDatas = new ArrayList<>();
 
-      for (HoveredData var4 : this.items.values()) {
-         if (var4.method1546() == var1) {
-            var2.add(var4);
+      for (HoveredData hoveredData : this.items.values()) {
+         if (hoveredData.method1546() == wardrobeCategory) {
+            hoveredDatas.add(hoveredData);
          }
       }
 
-      return var2;
+      return hoveredDatas;
    }
 
-   public WardrobeSetInfo method1425(String var1) {
-      return var1 == null ? null : this.items2.get(var1);
+   public WardrobeSetInfo method1425(String str) {
+      return str == null ? null : this.items2.get(str);
    }
 
    public List<WardrobeSetInfo> method1426() {
       return new ArrayList<>(this.items2.values());
    }
 
-   public Class15 method1427(HoveredData var1) {
-      if (var1 == null) {
+   public Class15 method1427(HoveredData hoveredData) {
+      if (hoveredData == null) {
          return null;
       } else {
-         Class15 var2 = this.items3.get(var1.getText3());
-         if (var2 == null && !this.items4.contains(var1.getText3())) {
-            this.method1423(var1.getText3());
+         Class15 class2 = this.items3.get(hoveredData.getText3());
+         if (class2 == null && !this.items4.contains(hoveredData.getText3())) {
+            this.method1423(hoveredData.getText3());
          }
 
-         return var2;
+         return class2;
       }
    }
 
@@ -208,31 +208,31 @@ public final class Registry {
       this.items6.clear();
    }
 
-   private static JsonObject method1429(String var0) {
+   private static JsonObject method1429(String name) {
       try {
-         JsonObject var4;
-         try (InputStream var1 = Registry.class.getResourceAsStream(var0)) {
-            if (var1 == null) {
+         JsonObject jsonObject;
+         try (InputStream resourceAsStream = Registry.class.getResourceAsStream(name)) {
+            if (resourceAsStream == null) {
                return null;
             }
 
-            try (InputStreamReader var2 = new InputStreamReader(var1, StandardCharsets.UTF_8)) {
-               JsonElement var3 = JsonParser.parseReader(var2);
-               var4 = var3.isJsonObject() ? var3.getAsJsonObject() : null;
+            try (InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8)) {
+               JsonElement reader = JsonParser.parseReader(inputStreamReader);
+               jsonObject = reader.isJsonObject() ? reader.getAsJsonObject() : null;
             }
          }
 
-         return var4;
-      } catch (RuntimeException | IOException var9) {
-         logger.error("Гардероб: не прочитан {}", var0, var9);
+         return jsonObject;
+      } catch (RuntimeException | IOException e) {
+         logger.error("Гардероб: не прочитан {}", name, e);
          return null;
       }
    }
 
-   private static String method1430(JsonObject var0, String var1) {
+   private static String method1430(JsonObject jsonObject, String memberName) {
       try {
-         return var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsString() : null;
-      } catch (RuntimeException var3) {
+         return jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() ? jsonObject.get(memberName).getAsString() : null;
+      } catch (RuntimeException e) {
          return null;
       }
    }
@@ -271,10 +271,10 @@ public final class Registry {
          return "Data[" + "text=" + this.text + ", " + "class15=" + this.class15 + ", " + "nativeImage=" + this.nativeImage + "]";
       }
 
-      private Data(String var1, Class15 var2, NativeImage var3) {
-         this.text = var1;
-         this.class15 = var2;
-         this.nativeImage = var3;
+      private Data(String text, Class15 class2, NativeImage nativeImage) {
+         this.text = text;
+         this.class15 = class2;
+         this.nativeImage = nativeImage;
       }
 
       public String name() {

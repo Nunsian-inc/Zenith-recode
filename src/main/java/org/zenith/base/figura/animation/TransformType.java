@@ -20,6 +20,6 @@ public enum TransformType {
    }
 
    private interface ITransform {
-      void apply(FiguraModelPart var1, FiguraVec3 var2, boolean var3);
+      void apply(FiguraModelPart part, FiguraVec3 vec, boolean merge);
    }
 }

@@ -27,12 +27,12 @@ public class RectBatch {
       }
    }
 
-   public void method1756(Matrix4f var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
-      int var7 = var6.method7287();
-      this.builder.addVertex(var1, var2, var3 + var5, 0.0F).setColor(var7);
-      this.builder.addVertex(var1, var2 + var4, var3 + var5, 0.0F).setColor(var7);
-      this.builder.addVertex(var1, var2 + var4, var3, 0.0F).setColor(var7);
-      this.builder.addVertex(var1, var2, var3, 0.0F).setColor(var7);
+   public void method1756(Matrix4f pose, float x, float y, float cell, float f, ZenithColor zenithColor) {
+      int color = zenithColor.method7287();
+      this.builder.addVertex(pose, x, y + f, 0.0F).setColor(color);
+      this.builder.addVertex(pose, x + cell, y + f, 0.0F).setColor(color);
+      this.builder.addVertex(pose, x + cell, y, 0.0F).setColor(color);
+      this.builder.addVertex(pose, x, y, 0.0F).setColor(color);
    }
 
    public void flush() {

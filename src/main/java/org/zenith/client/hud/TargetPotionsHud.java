@@ -41,28 +41,28 @@ public class TargetPotionsHud extends Interface {
    private boolean flag = false;
    private LivingEntity livingEntity = null;
 
-   public TargetPotionsHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public TargetPotionsHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
+   public void method8(CustomDrawContext customDrawContext) {
       if (mc.player != null && mc.level != null) {
-         LivingEntity var2 = null;
+         LivingEntity livingEntity = null;
          if (AuraModule.INSTANCE.getLivingEntity22() != null
-            && mc.level.getEntity(AuraModule.INSTANCE.getLivingEntity22().getId()) instanceof LivingEntity var4) {
-            var2 = var4;
+            && mc.level.getEntity(AuraModule.INSTANCE.getLivingEntity22().getId()) instanceof LivingEntity livingEntity2) {
+            livingEntity = livingEntity2;
          }
 
-         this.flag = var2 == null;
-         this.livingEntity = var2;
+         this.flag = livingEntity == null;
+         this.livingEntity = livingEntity;
          this.items2.clear();
-         if (var2 != null) {
-            for (MobEffectInstance var5 : new ArrayList<>(var2.getActiveEffectsMap().values())) {
-               String var6 = this.method6994(var5);
-               this.items2.add(var6);
-               if (!this.items.containsKey(var6)) {
-                  this.items.put(var6, new TargetPotionsHud.Entry(var5, this.method6992(var5)));
+         if (livingEntity != null) {
+            for (MobEffectInstance statusEffectInstance : new ArrayList<>(livingEntity.getActiveEffectsMap().values())) {
+               String str = this.method6994(statusEffectInstance);
+               this.items2.add(str);
+               if (!this.items.containsKey(str)) {
+                  this.items.put(str, new TargetPotionsHud.Entry(statusEffectInstance, this.method6992(statusEffectInstance)));
                }
             }
          }
@@ -71,74 +71,74 @@ public class TargetPotionsHud extends Interface {
          if (this.items.isEmpty()) {
             this.animation2.method2808(0.0F);
          } else {
-            TargetPotionsHud.Entry var17 = this.items.values().iterator().next();
-            this.animation2.method2808(this.items.size() == 1 && var17.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+            TargetPotionsHud.Entry entry = this.items.values().iterator().next();
+            this.animation2.method2808(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
          }
 
-         ZenithStyle var18 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         Font var20 = Fonts.NEW_ICONS.getFont(5.5F);
-         Font var21 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         float var22 = this.floatValue;
-         float var7 = this.floatValue2;
-         float var8 = (float)this.items
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         Font font = Fonts.NEW_ICONS.getFont(5.5F);
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
+         float floatValue = this.floatValue;
+         float y1 = this.floatValue2;
+         float f = (float)this.items
             .values()
             .stream()
-            .mapToDouble(var0 -> (var0.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var0.animation.getValue())
+            .mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue())
             .sum();
-         float var9 = 20.0F + GuiStyle.PADDING.intValue() / 2.0F + var8;
-         float var10 = (float)this.items.values().stream().mapToDouble(TargetPotionsHud.Entry::method6999).max().orElse(0.0);
-         var10 = this.animation.method2808(Math.max(HudListLayout.method7638("0", "Target potions"), var10));
-         this.width = var10;
-         this.height = var9;
+         float height = 20.0F + GuiStyle.PADDING.intValue() / 2.0F + f;
+         float width = (float)this.items.values().stream().mapToDouble(TargetPotionsHud.Entry::method6999).max().orElse(0.0);
+         width = this.animation.method2808(Math.max(HudListLayout.method7638("0", "Target potions"), width));
+         this.width = width;
+         this.height = height;
          this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
-         float var11 = InterfaceModule.method6801();
-         ProxyDotRadiusData var12 = ProxyDotRadiusData.method8069(var11);
-         var1.pushMatrix();
-         var1.pose().translate(var22 + var10 / 2.0F, var7 + var9 / 2.0F);
-         var1.pose().scale(this.animation3.getValue(), this.animation3.getValue());
-         var1.pose().translate(-(var22 + var10 / 2.0F), -(var7 + var9 / 2.0F));
-         HudListLayout.method7635(var1, var22, var7, var10, var9);
-         HudListLayout.method7636(var1, var22, var7, var10, "0", "Target potions");
+         float intValue = InterfaceModule.method6801();
+         ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(intValue);
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
+         customDrawContext.pose().scale(this.animation3.getValue(), this.animation3.getValue());
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + height / 2.0F));
+         HudListLayout.method7635(customDrawContext, floatValue, y1, width, height);
+         HudListLayout.method7636(customDrawContext, floatValue, y1, width, "0", "Target potions");
          if (this.animation3.getValue() == 1.0F) {
-            float var13 = var7 + 20.0F;
-            var1.enableScissor((int)var22, (int)var7, (int)(var22 + var10), (int)(var7 + var9));
+            float y12 = y1 + 20.0F;
+            customDrawContext.enableScissor((int)floatValue, (int)y1, (int)(floatValue + width), (int)(y1 + height));
 
-            for (TargetPotionsHud.Entry var15 : this.items.values()) {
-               var15.method7000(var1, var22, var13, var10);
-               var13 += (var15.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var15.animation.getValue();
+            for (TargetPotionsHud.Entry entry : this.items.values()) {
+               entry.method7000(customDrawContext, floatValue, y12, width);
+               y12 += (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue();
             }
 
-            var1.disableScissor();
+            customDrawContext.disableScissor();
          }
 
-         var1.popMatrix();
+         customDrawContext.popMatrix();
          this.livingEntity = null;
       }
    }
 
-   private boolean method6992(MobEffectInstance var1) {
-      return var1.getEffect().value().getCategory().equals(MobEffectCategory.BENEFICIAL);
+   private boolean method6992(MobEffectInstance statusEffectInstance) {
+      return statusEffectInstance.getEffect().value().getCategory().equals(MobEffectCategory.BENEFICIAL);
    }
 
-   private String method6993(MobEffectInstance var1) {
-      String var2 = I18n.get(var1.getEffect().value().getDescriptionId());
-      String var3 = this.method6995(var1.getAmplifier());
-      return var2 + " " + var3;
+   private String method6993(MobEffectInstance statusEffectInstance) {
+      String str = I18n.get(statusEffectInstance.getEffect().value().getDescriptionId());
+      String str2 = this.method6995(statusEffectInstance.getAmplifier());
+      return str + " " + str2;
    }
 
-   private String method6994(MobEffectInstance var1) {
-      return var1.getEffect().value().getDescriptionId() + var1.getAmplifier();
+   private String method6994(MobEffectInstance statusEffectInstance) {
+      return statusEffectInstance.getEffect().value().getDescriptionId() + statusEffectInstance.getAmplifier();
    }
 
-   private String method6995(int var1) {
-      return String.valueOf(var1 + 1);
+   private String method6995(int amplifier) {
+      return String.valueOf(amplifier + 1);
    }
 
-   private String method6996(int var1) {
-      int var2 = var1 / 20;
-      int var3 = var2 / 60;
-      int var4 = var2 % 60;
-      return String.format("%02d:%02d", var3, var4);
+   private String method6996(int duration) {
+      int n = duration / 20;
+      int n2 = n / 60;
+      int n3 = n % 60;
+      return String.format("%02d:%02d", n2, n3);
    }
 
    @Override
@@ -158,17 +158,17 @@ public class TargetPotionsHud extends Interface {
       private int intValue2;
       private String text3;
 
-      public Entry(MobEffectInstance var2, boolean var3) {
-         this.statusEffectInstance = var2;
-         this.flag = var3;
-         this.intValue = Math.max(1, var2.getDuration());
-         this.text = TargetPotionsHud.this.method6994(var2);
+      public Entry(MobEffectInstance statusEffectInstance, boolean flag) {
+         this.statusEffectInstance = statusEffectInstance;
+         this.flag = flag;
+         this.intValue = Math.max(1, statusEffectInstance.getDuration());
+         this.text = TargetPotionsHud.this.method6994(statusEffectInstance);
       }
 
       private String method6997() {
-         Language var1 = Language.getInstance();
-         if (this.text2 == null || var1 != this.obj) {
-            this.obj = var1;
+         Language language = Language.getInstance();
+         if (this.text2 == null || language != this.obj) {
+            this.obj = language;
             this.text2 = TargetPotionsHud.this.method6993(this.statusEffectInstance);
          }
 
@@ -176,9 +176,9 @@ public class TargetPotionsHud extends Interface {
       }
 
       private String method6998() {
-         int var1 = this.statusEffectInstance.getDuration() / 20;
-         if (this.text3 == null || var1 != this.intValue2) {
-            this.intValue2 = var1;
+         int n = this.statusEffectInstance.getDuration() / 20;
+         if (this.text3 == null || n != this.intValue2) {
+            this.intValue2 = n;
             this.text3 = TargetPotionsHud.this.method6996(this.statusEffectInstance.getDuration());
          }
 
@@ -186,11 +186,11 @@ public class TargetPotionsHud extends Interface {
       }
 
       public float method6999() {
-         Font var1 = Fonts.NEW_MEDIUM.getFont(5.4F);
-         Font var2 = Fonts.NEW_SEMIBOLD.getFont(5.4F);
-         String var3 = this.method6997();
-         String var4 = this.method6998();
-         return HudListLayout.method7651(var3, var4);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+         Font font2 = Fonts.NEW_SEMIBOLD.getFont(5.4F);
+         String text = this.method6997();
+         String str = this.method6998();
+         return HudListLayout.method7651(text, str);
       }
 
       public float getHeight() {
@@ -201,41 +201,41 @@ public class TargetPotionsHud extends Interface {
          return this.flag;
       }
 
-      public void method7000(CustomDrawContext var1, float var2, float var3, float var4) {
+      public void method7000(CustomDrawContext customDrawContext, float floatValue, float y1, float width) {
          if (!TargetPotionsHud.this.flag && TargetPotionsHud.this.livingEntity != null) {
-            MobEffectInstance var5 = TargetPotionsHud.this.livingEntity.getEffect(this.statusEffectInstance.getEffect());
-            if (var5 != null && var5.getAmplifier() == this.statusEffectInstance.getAmplifier()) {
-               this.statusEffectInstance = var5;
+            MobEffectInstance effect = TargetPotionsHud.this.livingEntity.getEffect(this.statusEffectInstance.getEffect());
+            if (effect != null && effect.getAmplifier() == this.statusEffectInstance.getAmplifier()) {
+               this.statusEffectInstance = effect;
             }
          }
 
          this.animation.method2808(TargetPotionsHud.this.items2.contains(this.text) && !TargetPotionsHud.this.flag ? 1.0F : 0.0F);
-         ZenithStyle var16 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         Font var6 = Fonts.NEW_MEDIUM.getFont(5.4F);
-         Font var7 = Fonts.NEW_SEMIBOLD.getFont(5.4F);
-         String var8 = this.method6997();
-         String var9 = this.method6998();
-         int var10 = Math.max(0, this.statusEffectInstance.getDuration());
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         Font font = Fonts.NEW_MEDIUM.getFont(5.4F);
+         Font font2 = Fonts.NEW_SEMIBOLD.getFont(5.4F);
+         String text = this.method6997();
+         String str = this.method6998();
+         int n = Math.max(0, this.statusEffectInstance.getDuration());
          if (TargetPotionsHud.this.items2.contains(this.text) && !TargetPotionsHud.this.flag) {
-            this.intValue = Math.max(this.intValue, Math.max(1, var10));
+            this.intValue = Math.max(this.intValue, Math.max(1, n));
          }
 
-         float var11 = this.intValue <= 0 ? 0.0F : Mth.clamp((float)var10 / this.intValue, 0.0F, 1.0F);
-         float var12 = Mth.clamp(this.animation2.method2808(var11), 0.0F, 1.0F);
-         var1.pushMatrix();
-         var1.pose().translate(var2 + var4 / 2.0F, var3 + this.getHeight() / 2.0F);
-         float var13 = this.animation.getValue();
-         var1.pose().scale(var13, var13);
-         var1.pose().translate(-(var2 + var4 / 2.0F), -(var3 + this.getHeight() / 2.0F));
-         float var14 = HudListLayout.method7640(var1, var2, var3);
-         float var15 = 8.0F;
-         var1.pushMatrix();
-         var1.pose().translate(HudListLayout.method7641(var2) + (10.0F - var15) / 2.0F, HudListLayout.method7642(var3) + (10.0F - var15) / 2.0F);
-         var1.blitSprite(RenderPipelines.GUI_TEXTURED, net.minecraft.client.gui.Hud.getMobEffectSprite(this.statusEffectInstance.getEffect()), 0, 0, (int)var15, (int)var15);
-         var1.popMatrix();
-         HudListLayout.method7644(var1, var14, var3, var8);
-         HudListLayout.method7649(var1, var2, var3, var4, var9, var12);
-         var1.popMatrix();
+         float f = this.intValue <= 0 ? 0.0F : Mth.clamp((float)n / this.intValue, 0.0F, 1.0F);
+         float f2 = Mth.clamp(this.animation2.method2808(f), 0.0F, 1.0F);
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
+         float x = this.animation.getValue();
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + this.getHeight() / 2.0F));
+         float floatValue2 = HudListLayout.method7640(customDrawContext, floatValue, y1);
+         float width2 = 8.0F;
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(HudListLayout.method7641(floatValue) + (10.0F - width2) / 2.0F, HudListLayout.method7642(y1) + (10.0F - width2) / 2.0F);
+         customDrawContext.blitSprite(RenderPipelines.GUI_TEXTURED, net.minecraft.client.gui.Hud.getMobEffectSprite(this.statusEffectInstance.getEffect()), 0, 0, (int)width2, (int)width2);
+         customDrawContext.popMatrix();
+         HudListLayout.method7644(customDrawContext, floatValue2, y1, text);
+         HudListLayout.method7649(customDrawContext, floatValue, y1, width, str, f2);
+         customDrawContext.popMatrix();
       }
 
       public boolean method7001() {

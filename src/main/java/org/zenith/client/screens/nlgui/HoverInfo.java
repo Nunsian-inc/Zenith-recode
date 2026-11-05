@@ -28,19 +28,19 @@ public final class HoverInfo {
    }
 
    public static boolean enabled() {
-      Zenith var0 = Zenith.getInstance();
-      NLMenuScreen var1 = var0 == null ? null : var0.getNLMenuScreen();
-      return var1 == null || !var1.isShortMode();
+      Zenith zenith = Zenith.getInstance();
+      NLMenuScreen nlMenuScreen = zenith == null ? null : zenith.getNLMenuScreen();
+      return nlMenuScreen == null || !nlMenuScreen.isShortMode();
    }
 
    public static float boxHeight() {
       return 34.0F * SHOWN.method2808(enabled() ? 1.0F : 0.0F);
    }
 
-   public static void request(String var0, String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         requestedTitle = var0;
-         requested = var1;
+   public static void request(String name, String description) {
+      if (description != null && !description.isBlank()) {
+         requestedTitle = name;
+         requested = description;
       }
    }
 
@@ -53,79 +53,79 @@ public final class HoverInfo {
       return requested != null;
    }
 
-   public static void render(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5) {
-      float var6;
-      if (!((var6 = SHOWN.getValue()) <= 0.01F)) {
-         var5 *= var6;
-         ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var7 != null) {
-            Font var8 = Fonts.NEW_MEDIUM.getFont(4.0F);
-            Font var9 = Fonts.NEW_REGULAR.getFont(4.8F);
+   public static void render(MenuDrawContext customDrawContext, float floatValue, float centeredTextY, float f1, float f, float previewAlpha) {
+      float f2;
+      if (!((f2 = SHOWN.getValue()) <= 0.01F)) {
+         previewAlpha *= f2;
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.8F);
             if (requested != null) {
                shownText = requested;
                shownTitle = requestedTitle;
             }
 
-            String var10 = shownTitle != null && !shownTitle.isBlank() ? shownTitle : null;
-            if (captionText == null || !Objects.equals(var10, captionFor)) {
-               captionFor = var10;
-               captionText = spaced(var10 == null ? "HOVER" : var10.toUpperCase());
+            String str = shownTitle != null && !shownTitle.isBlank() ? shownTitle : null;
+            if (captionText == null || !Objects.equals(str, captionFor)) {
+               captionFor = str;
+               captionText = spaced(str == null ? "HOVER" : str.toUpperCase());
             }
 
-            var0.drawText(var8, captionText, var1, var2, var7.getTextTertiary().getZenithColor().method7294(var5 * 0.9F));
+            customDrawContext.drawText(font, captionText, floatValue, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.9F));
             if (shownText != null) {
-               float var11 = var2 + var8.height() + 3.0F;
-               float var12 = var9.height() + 1.5F;
-               int var13 = Math.max(1, (int)((var4 - (var11 - var2)) / var12));
-               if (wrapLines == null || var9 != wrapFont || Float.compare(var3, wrapWidth) != 0 || !shownText.equals(wrapText)) {
-                  wrapLines = wrap(shownText, var9, var3);
+               float f3 = centeredTextY + font.height() + 3.0F;
+               float f4 = font2.height() + 1.5F;
+               int n = Math.max(1, (int)((f - (f3 - centeredTextY)) / f4));
+               if (wrapLines == null || font2 != wrapFont || Float.compare(f1, wrapWidth) != 0 || !shownText.equals(wrapText)) {
+                  wrapLines = wrap(shownText, font2, f1);
                   wrapText = shownText;
-                  wrapFont = var9;
-                  wrapWidth = var3;
+                  wrapFont = font2;
+                  wrapWidth = f1;
                }
 
-               var var14 = wrapLines;
+               var strings = wrapLines;
 
-               for (int var15 = 0; var15 < Math.min(var14.size(), var13); var15++) {
-                  var0.drawText(var9, (String)var14.get(var15), var1, var11 + var15 * var12, var7.getTextSecondary().getZenithColor().method7294(var5));
+               for (int i = 0; i < Math.min(strings.size(), n); i++) {
+                  customDrawContext.drawText(font2, (String)strings.get(i), floatValue, f3 + i * f4, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
                }
             }
          }
       }
    }
 
-   public static String spaced(String var0) {
-      StringBuilder var1 = new StringBuilder(var0.length() * 2);
+   public static String spaced(String upperCase) {
+      StringBuilder builder = new StringBuilder(upperCase.length() * 2);
 
-      for (int var2 = 0; var2 < var0.length(); var2++) {
-         if (var2 > 0) {
-            var1.append(' ');
+      for (int i = 0; i < upperCase.length(); i++) {
+         if (i > 0) {
+            builder.append(' ');
          }
 
-         var1.append(var0.charAt(var2));
+         builder.append(upperCase.charAt(i));
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
-   private static List<String> wrap(String var0, Font var1, float var2) {
-      ArrayList<String> var3 = new ArrayList<>();
-      StringBuilder var4 = new StringBuilder();
+   private static List<String> wrap(String shownText, Font font, float f1) {
+      ArrayList<String> strings = new ArrayList<>();
+      StringBuilder builder = new StringBuilder();
 
-      for (String var8 : var0.split(" ")) {
-         String var9 = var4.isEmpty() ? var8 : var4 + " " + var8;
-         if (var1.width(var9) > var2 && !var4.isEmpty()) {
-            var3.add(var4.toString());
-            var4 = new StringBuilder(var8);
+      for (String str : shownText.split(" ")) {
+         String text = builder.isEmpty() ? str : builder + " " + str;
+         if (font.width(text) > f1 && !builder.isEmpty()) {
+            strings.add(builder.toString());
+            builder = new StringBuilder(str);
          } else {
-            var4 = new StringBuilder(var9);
+            builder = new StringBuilder(text);
          }
       }
 
-      if (!var4.isEmpty()) {
-         var3.add(var4.toString());
+      if (!builder.isEmpty()) {
+         strings.add(builder.toString());
       }
 
-      return var3;
+      return strings;
    }
 }

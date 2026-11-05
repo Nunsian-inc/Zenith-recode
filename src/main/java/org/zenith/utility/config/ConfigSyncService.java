@@ -28,10 +28,10 @@ public final class ConfigSyncService {
    private static final long CONST_longValue = 1200L;
    private static final long CONST_longValue2 = 30000L;
    private static final String text = "current_config";
-   private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "zenith-config-sync");
-      var1.setDaemon(true);
-      return var1;
+   private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(task -> {
+      Thread thread = new Thread(task, "zenith-config-sync");
+      thread.setDaemon(true);
+      return thread;
    });
    private final Map<String, ConfigSyncService.Type> items = new ConcurrentHashMap<>();
    private final Set<String> items2 = ConcurrentHashMap.newKeySet();
@@ -73,45 +73,45 @@ public final class ConfigSyncService {
       return this.lastError;
    }
 
-   public ConfigSyncService.Type method671(String var1) {
-      return this.items.getOrDefault(key(var1), this.flag ? ConfigSyncService.Type.SYNCED : ConfigSyncService.Type.LOCAL);
+   public ConfigSyncService.Type method671(String display) {
+      return this.items.getOrDefault(key(display), this.flag ? ConfigSyncService.Type.SYNCED : ConfigSyncService.Type.LOCAL);
    }
 
    public List<StoreApi.Data2> getItems3() {
       return this.items3;
    }
 
-   public StoreApi.Data2 method672(String var1) {
-      return this.items4.get(key(var1));
+   public StoreApi.Data2 method672(String display) {
+      return this.items4.get(key(display));
    }
 
-   private void method673(List<StoreApi.Data2> var1) {
-      HashMap var2 = new HashMap();
+   private void method673(List<StoreApi.Data2> coll) {
+      HashMap map = new HashMap();
 
-      for (StoreApi.Data2 var4 : var1) {
-         var2.putIfAbsent(key(var4.name()), var4);
+      for (StoreApi.Data2 data2 : coll) {
+         map.putIfAbsent(key(data2.name()), data2);
       }
 
-      this.items3 = List.copyOf(var1);
-      this.items4 = var2;
+      this.items3 = List.copyOf(coll);
+      this.items4 = map;
    }
 
-   private void method674(UUID var1, StoreApi.Data2 var2) {
+   private void method674(UUID uuid, StoreApi.Data2 data2) {
       synchronized (this.obj) {
-         var var4 = new ArrayList<>(this.items3);
-         var4.removeIf(var1x -> var1x.getUUID().equals(var1));
-         if (var2 != null) {
-            var4.add(var2);
+         var coll = new ArrayList<>(this.items3);
+         coll.removeIf(var1x -> var1x.getUUID().equals(uuid));
+         if (data2 != null) {
+            coll.add(data2);
          }
 
-         this.method673(var4);
+         this.method673(coll);
       }
    }
 
    public void method675() {
-      ScheduledFuture var1 = this.scheduledFuture;
-      if (var1 != null) {
-         var1.cancel(false);
+      ScheduledFuture scheduledFuture = this.scheduledFuture;
+      if (scheduledFuture != null) {
+         scheduledFuture.cancel(false);
       }
 
       this.scheduledFuture = this.scheduledExecutorService.schedule(this::run, 1200L, TimeUnit.MILLISECONDS);
@@ -123,22 +123,22 @@ public final class ConfigSyncService {
       }
    }
 
-   public void method677(UUID var1) {
-      this.method674(var1, null);
+   public void method677(UUID uuid) {
+      this.method674(uuid, null);
       this.bump();
    }
 
-   public void method678(String var1, String var2) {
-      StoreApi.Data2 var3 = this.method672(var1);
-      StoreApi var4 = store();
-      this.items.remove(key(var1));
-      if (var3 != null && var4 != null) {
-         this.items2.add(key(var2));
-         this.items5.put(var3.getUUID(), new ConfigSyncService.Data(key(var2)));
-         var4.method1974(var3.getUUID(), var2, null, null).whenComplete((var3x, var4x) -> {
-            this.items2.remove(key(var2));
+   public void method678(String argument, String anotherString) {
+      StoreApi.Data2 data2 = this.method672(argument);
+      StoreApi storeApi = store();
+      this.items.remove(key(argument));
+      if (data2 != null && storeApi != null) {
+         this.items2.add(key(anotherString));
+         this.items5.put(data2.getUUID(), new ConfigSyncService.Data(key(anotherString)));
+         storeApi.method1974(data2.getUUID(), anotherString, null, null).whenComplete((var3x, var4x) -> {
+            this.items2.remove(key(anotherString));
             if (var4x != null) {
-               this.items5.remove(var3.getUUID());
+               this.items5.remove(data2.getUUID());
                this.lastError = method687(var4x);
             } else {
                this.items5.put(var3x.getUUID(), new ConfigSyncService.Data(key(var3x.name())));
@@ -153,28 +153,28 @@ public final class ConfigSyncService {
       }
    }
 
-   public void method679(StoreApi.Data2 var1) {
-      this.method674(var1.getUUID(), var1.mine() ? var1 : null);
+   public void method679(StoreApi.Data2 data2) {
+      this.method674(data2.getUUID(), data2.mine() ? data2 : null);
       this.bump();
    }
 
-   public void method680(String var1) {
-      StoreApi.Data2 var2 = this.method672(var1);
-      this.items.remove(key(var1));
-      if (var2 != null) {
+   public void method680(String display) {
+      StoreApi.Data2 data2 = this.method672(display);
+      this.items.remove(key(display));
+      if (data2 != null) {
          synchronized (this.obj) {
-            var var4 = new ArrayList<>(this.items3);
-            var4.remove(var2);
-            this.method673(var4);
+            var coll = new ArrayList<>(this.items3);
+            coll.remove(data2);
+            this.method673(coll);
          }
 
-         StoreApi var7 = store();
-         if (var7 != null) {
-            this.items5.put(var2.getUUID(), new ConfigSyncService.Data(""));
-            var7.method1975(var2.getUUID()).whenComplete((var2x, var3) -> {
-               if (var3 != null) {
-                  this.items5.remove(var2.getUUID());
-                  this.lastError = method687(var3);
+         StoreApi storeApi = store();
+         if (storeApi != null) {
+            this.items5.put(data2.getUUID(), new ConfigSyncService.Data(""));
+            storeApi.method1975(data2.getUUID()).whenComplete((var2x, throwable) -> {
+               if (throwable != null) {
+                  this.items5.remove(data2.getUUID());
+                  this.lastError = method687(throwable);
                }
 
                this.bump();
@@ -185,77 +185,77 @@ public final class ConfigSyncService {
 
    private void run() {
       this.longValue = System.currentTimeMillis();
-      StoreApi var1 = store();
-      if (var1 == null) {
+      StoreApi storeApi = store();
+      if (storeApi == null) {
          this.flag = false;
          this.bump();
       } else {
-         List<StoreApi.Data2> var2;
+         List<StoreApi.Data2> data2s;
          try {
-            var2 = var1.method1968("config").get(15L, TimeUnit.SECONDS);
-         } catch (Exception var18) {
+            data2s = storeApi.method1968("config").get(15L, TimeUnit.SECONDS);
+         } catch (Exception e) {
             this.flag = false;
-            this.lastError = method687(var18);
+            this.lastError = method687(e);
             this.bump();
             return;
          }
 
          this.flag = true;
          this.lastError = "";
-         HashSet var3 = new HashSet();
+         HashSet hashSet = new HashSet();
 
-         for (StoreApi.Data2 var5 : var2) {
-            var3.add(var5.getUUID());
+         for (StoreApi.Data2 data2 : data2s) {
+            hashSet.add(data2.getUUID());
          }
 
-         long var19 = System.currentTimeMillis();
-         this.items5.entrySet().removeIf(var3x -> !var3.contains(var3x.getKey()) || var19 - var3x.getValue().getLongValue() > 120000L);
-         ArrayList var6 = new ArrayList();
+         long now = System.currentTimeMillis();
+         this.items5.entrySet().removeIf(var3x -> !hashSet.contains(var3x.getKey()) || now - var3x.getValue().getLongValue() > 120000L);
+         ArrayList coll = new ArrayList();
 
-         for (StoreApi.Data2 var8 : var2) {
-            if (var8.mine() && "config".equalsIgnoreCase(var8.kind())) {
-               ConfigSyncService.Data var9 = this.items5.get(var8.getUUID());
-               if (var9 != null) {
-                  if (var9.getText().isEmpty() || !var9.getText().equals(key(var8.name()))) {
+         for (StoreApi.Data2 data2 : data2s) {
+            if (data2.mine() && "config".equalsIgnoreCase(data2.kind())) {
+               ConfigSyncService.Data data = this.items5.get(data2.getUUID());
+               if (data != null) {
+                  if (data.getText().isEmpty() || !data.getText().equals(key(data2.name()))) {
                      continue;
                   }
 
-                  this.items5.remove(var8.getUUID());
+                  this.items5.remove(data2.getUUID());
                }
 
-               var6.add(var8);
+               coll.add(data2);
             }
          }
 
          synchronized (this.obj) {
-            this.method673(var6);
+            this.method673(coll);
          }
 
-         File var21 = Manager.file;
-         String var22 = "." + "Zenith".toLowerCase(Locale.ROOT);
-         File[] var23 = var21 == null ? null : var21.listFiles();
-         KeySetView var10 = ConcurrentHashMap.newKeySet();
-         if (var23 != null) {
-            for (File var14 : var23) {
-               String var15 = var14.getName();
-               if (var14.isFile() && var15.toLowerCase(Locale.ROOT).endsWith(var22)) {
-                  String var16 = var15.substring(0, var15.length() - var22.length());
-                  if (!var16.equalsIgnoreCase("current_config")) {
-                     var10.add(key(var16));
-                     if (!this.method684(key(var16))) {
-                        this.method681(var1, var14, var16);
+         File file = Manager.file;
+         String suffix = "." + "Zenith".toLowerCase(Locale.ROOT);
+         File[] listFiles = file == null ? null : file.listFiles();
+         KeySetView keySet = ConcurrentHashMap.newKeySet();
+         if (listFiles != null) {
+            for (File listFile : listFiles) {
+               String name = listFile.getName();
+               if (listFile.isFile() && name.toLowerCase(Locale.ROOT).endsWith(suffix)) {
+                  String str = name.substring(0, name.length() - suffix.length());
+                  if (!str.equalsIgnoreCase("current_config")) {
+                     keySet.add(key(str));
+                     if (!this.method684(key(str))) {
+                        this.method681(storeApi, listFile, str);
                      }
                   }
                }
             }
          }
 
-         for (StoreApi.Data2 var25 : this.items3) {
-            if (!this.items5.containsKey(var25.getUUID())
-               && !var10.contains(key(var25.name()))
-               && !var10.contains(key(method685(var25.name())))
-               && !key(var25.name()).equals("current_config")) {
-               this.method683(var1, var25, new File(var21, method685(var25.name()) + var22));
+         for (StoreApi.Data2 data2 : this.items3) {
+            if (!this.items5.containsKey(data2.getUUID())
+               && !keySet.contains(key(data2.name()))
+               && !keySet.contains(key(method685(data2.name())))
+               && !key(data2.name()).equals("current_config")) {
+               this.method683(storeApi, data2, new File(file, method685(data2.name()) + suffix));
             }
          }
 
@@ -263,75 +263,75 @@ public final class ConfigSyncService {
       }
    }
 
-   private void method681(StoreApi var1, File var2, String var3) {
-      String var4 = key(var3);
-      if (!this.items2.contains(var4)) {
-         byte[] var5;
+   private void method681(StoreApi storeApi, File listFile, String display) {
+      String str = key(display);
+      if (!this.items2.contains(str)) {
+         byte[] allBytes;
          try {
-            var5 = Files.readAllBytes(var2.toPath());
-         } catch (Exception var7) {
-            this.items.put(var4, ConfigSyncService.Type.ERROR);
+            allBytes = Files.readAllBytes(listFile.toPath());
+         } catch (Exception e) {
+            this.items.put(str, ConfigSyncService.Type.ERROR);
             return;
          }
 
-         StoreApi.Data2 var6 = this.method672(var3);
-         if (var6 == null) {
-            this.method682(var1, var4, var3, var2.getName(), var5, null, 0L, "PRIVATE", "");
-         } else if (method686(var5).equalsIgnoreCase(var6.getText6())) {
-            this.items.put(var4, ConfigSyncService.Type.SYNCED);
+         StoreApi.Data2 data2 = this.method672(display);
+         if (data2 == null) {
+            this.method682(storeApi, str, display, listFile.getName(), allBytes, null, 0L, "PRIVATE", "");
+         } else if (method686(allBytes).equalsIgnoreCase(data2.getText6())) {
+            this.items.put(str, ConfigSyncService.Type.SYNCED);
          } else {
-            if (var2.lastModified() >= var6.getLongValue4()) {
-               this.method682(var1, var4, var3, var6.fileName(), var5, var6.getUUID(), var6.getLongValue2(), var6.getText7(), var6.description());
+            if (listFile.lastModified() >= data2.getLongValue4()) {
+               this.method682(storeApi, str, display, data2.fileName(), allBytes, data2.getUUID(), data2.getLongValue2(), data2.getText7(), data2.description());
             } else {
-               this.method683(var1, var6, var2);
+               this.method683(storeApi, data2, listFile);
             }
          }
       }
    }
 
-   private void method682(StoreApi var1, String var2, String var3, String var4, byte[] var5, UUID var6, long var7, String var9, String var10) {
-      this.items2.add(var2);
-      this.items.put(var2, ConfigSyncService.Type.UPLOADING);
+   private void method682(StoreApi storeApi, String str, String display, String name, byte[] allBytes, UUID uuid, long longValue, String str2, String description) {
+      this.items2.add(str);
+      this.items.put(str, ConfigSyncService.Type.UPLOADING);
       this.bump();
 
       try {
-         StoreApi.Data2 var11 = var1.method1972("config", var3, var4, var10, var9, var5, var6, var7).get(30L, TimeUnit.SECONDS);
-         this.method674(var11.getUUID(), var11);
-         this.items.put(var2, ConfigSyncService.Type.SYNCED);
-      } catch (Exception var15) {
-         this.items.put(var2, ConfigSyncService.Type.ERROR);
-         this.lastError = method687(var15);
+         StoreApi.Data2 data2 = storeApi.method1972("config", display, name, description, str2, allBytes, uuid, longValue).get(30L, TimeUnit.SECONDS);
+         this.method674(data2.getUUID(), data2);
+         this.items.put(str, ConfigSyncService.Type.SYNCED);
+      } catch (Exception e) {
+         this.items.put(str, ConfigSyncService.Type.ERROR);
+         this.lastError = method687(e);
       } finally {
-         this.items2.remove(var2);
+         this.items2.remove(str);
          this.bump();
       }
    }
 
-   private void method683(StoreApi var1, StoreApi.Data2 var2, File var3) {
-      String var4 = key(var2.name());
-      if (this.items2.add(var4)) {
-         this.items.put(var4, ConfigSyncService.Type.DOWNLOADING);
+   private void method683(StoreApi storeApi, StoreApi.Data2 data2, File file) {
+      String str = key(data2.name());
+      if (this.items2.add(str)) {
+         this.items.put(str, ConfigSyncService.Type.DOWNLOADING);
          this.bump();
 
          try {
-            byte[] var5 = var1.method1970(var2.getUUID()).get(30L, TimeUnit.SECONDS);
-            var3.getParentFile().mkdirs();
-            Files.write(var3.toPath(), var5);
-            var3.setLastModified(Math.max(var2.getLongValue4(), 0L));
-            this.items.put(var4, ConfigSyncService.Type.SYNCED);
-         } catch (Exception var9) {
-            this.items.put(var4, ConfigSyncService.Type.ERROR);
-            this.lastError = method687(var9);
+            byte[] bytes = storeApi.method1970(data2.getUUID()).get(30L, TimeUnit.SECONDS);
+            file.getParentFile().mkdirs();
+            Files.write(file.toPath(), bytes);
+            file.setLastModified(Math.max(data2.getLongValue4(), 0L));
+            this.items.put(str, ConfigSyncService.Type.SYNCED);
+         } catch (Exception e) {
+            this.items.put(str, ConfigSyncService.Type.ERROR);
+            this.lastError = method687(e);
          } finally {
-            this.items2.remove(var4);
+            this.items2.remove(str);
             this.bump();
          }
       }
    }
 
-   private boolean method684(String var1) {
-      for (ConfigSyncService.Data var3 : this.items5.values()) {
-         if (!var3.getText().isEmpty() && var3.getText().equals(var1)) {
+   private boolean method684(String key) {
+      for (ConfigSyncService.Data data : this.items5.values()) {
+         if (!data.getText().isEmpty() && data.getText().equals(key)) {
             return true;
          }
       }
@@ -347,38 +347,38 @@ public final class ConfigSyncService {
       return Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
    }
 
-   private static String key(String var0) {
-      return var0 == null ? "" : var0.strip().toLowerCase(Locale.ROOT);
+   private static String key(String name) {
+      return name == null ? "" : name.strip().toLowerCase(Locale.ROOT);
    }
 
-   private static String method685(String var0) {
-      StringBuilder var1 = new StringBuilder();
+   private static String method685(String name) {
+      StringBuilder builder = new StringBuilder();
 
-      for (char var5 : (var0 == null ? "config" : var0.strip()).toCharArray()) {
-         var1.append(var5 >= ' ' && "\\/:*?\"<>|".indexOf(var5) < 0 ? var5 : '_');
+      for (char ch : (name == null ? "config" : name.strip()).toCharArray()) {
+         builder.append(ch >= ' ' && "\\/:*?\"<>|".indexOf(ch) < 0 ? ch : '_');
       }
 
-      String var6 = var1.toString().strip();
-      return var6.isEmpty() ? "config" : var6;
+      String str = builder.toString().strip();
+      return str.isEmpty() ? "config" : str;
    }
 
-   private static String method686(byte[] var0) {
+   private static String method686(byte[] allBytes) {
       try {
-         return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(var0));
-      } catch (Exception var2) {
+         return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(allBytes));
+      } catch (Exception e) {
          return "";
       }
    }
 
-   private static String method687(Throwable var0) {
-      Throwable var1 = var0;
+   private static String method687(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      String var2 = var1.getMessage();
-      return var2 != null && !var2.isBlank() ? var2 : var1.getClass().getSimpleName();
+      String message = throwable2.getMessage();
+      return message != null && !message.isBlank() ? message : throwable2.getClass().getSimpleName();
    }
 
    private static final class Data {
@@ -410,13 +410,13 @@ public final class ConfigSyncService {
          return "Data[" + "text=" + this.text + ", " + "longValue=" + this.longValue + "]";
       }
 
-      public Data(String var1) {
-         this(var1, System.currentTimeMillis());
+      public Data(String key) {
+         this(key, System.currentTimeMillis());
       }
 
-      private Data(String var1, long var2) {
-         this.text = var1;
-         this.longValue = var2;
+      private Data(String text, long longValue) {
+         this.text = text;
+         this.longValue = longValue;
       }
 
       public String getText() {

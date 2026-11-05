@@ -48,99 +48,99 @@ public final class WardrobePreview implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method3143(WorldRenderEvent var1) {
-      Wardrobe var2 = Wardrobe.method2488();
-      if (var2 != null && mc.level != null && mc.player != null) {
+   public void method3143(WorldRenderEvent event) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      if (wardrobe != null && mc.level != null && mc.player != null) {
          if (weakReference.get() != mc.level) {
             weakReference = new WeakReference<>(mc.level);
             items.clear();
          }
 
-         long var3 = System.nanoTime();
-         double var5 = this.longValue == 0L ? 0.0 : Math.min(0.25, (var3 - this.longValue) / 1.0E9);
-         this.longValue = var3;
-         float var7 = var1.getFloatValue();
-         doubleValue += var5;
-         float var8 = (float)(doubleValue % 100000.0);
-         Vec3 var9 = mc.gameRenderer.mainCamera().position();
-         ArrayList<WardrobePreview.Data> var10 = new ArrayList();
-         HashSet var11 = new HashSet();
+         long nanoTime = System.nanoTime();
+         double d = this.longValue == 0L ? 0.0 : Math.min(0.25, (nanoTime - this.longValue) / 1.0E9);
+         this.longValue = nanoTime;
+         float floatValue = event.getFloatValue();
+         doubleValue += d;
+         float f = (float)(doubleValue % 100000.0);
+         Vec3 position = mc.gameRenderer.mainCamera().position();
+         ArrayList<WardrobePreview.Data> datas = new ArrayList();
+         HashSet hashSet = new HashSet();
 
-         for (AbstractClientPlayer var13 : mc.level.players()) {
-            boolean var14 = var13 == mc.player;
-            if ((var14 ? var2.showSelf.isEnabled() : var2.showOthers.isEnabled())
-               && !var13.isSpectator()
-               && !var13.isInvisible()
-               && !(var13.distanceToSqr(var9) > 4096.0)) {
-               HoveredData var15 = var2.method2499(var2.method2498(var13.getGameProfile().name(), var14), FocusSlotEnum.PET);
-               if (var15 != null) {
-                  Class15 var16 = var2.getRegistry().method1427(var15);
-                  if (var16 != null && var16.data3 != null) {
-                     PetBehavior var17 = items.get(var13.getId());
-                     if (var17 == null || var17.hoveredData != var15) {
-                        var17 = new PetBehavior(var15, var16);
-                        items.put(var13.getId(), var17);
+         for (AbstractClientPlayer player : mc.level.players()) {
+            boolean flag = player == mc.player;
+            if ((flag ? wardrobe.showSelf.isEnabled() : wardrobe.showOthers.isEnabled())
+               && !player.isSpectator()
+               && !player.isInvisible()
+               && !(player.distanceToSqr(position) > 4096.0)) {
+               HoveredData hoveredData = wardrobe.method2499(wardrobe.method2498(player.getGameProfile().name(), flag), FocusSlotEnum.PET);
+               if (hoveredData != null) {
+                  Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+                  if (class2 != null && class2.data3 != null) {
+                     PetBehavior petBehavior = items.get(player.getId());
+                     if (petBehavior == null || petBehavior.hoveredData != hoveredData) {
+                        petBehavior = new PetBehavior(hoveredData, class2);
+                        items.put(player.getId(), petBehavior);
                      }
 
-                     var11.add(var13.getId());
-                     var17.method7926(var13, var14 ? method3149() : null, var5, var8);
-                     float var18 = var17.class3.method438();
-                     Vec3 var19 = var17.class3.method435(var18);
-                     float var20 = var17.class3.method436(var18);
-                     float var21 = var2.petScale.getValue3() * var17.data3.getFloatValue();
-                     float[] var22 = method3144(var17, var8, var18);
-                     if (var17.isFlag4()) {
-                        Vec3 var23 = var13.getPosition(var7);
-                        var20 = Mth.rotLerp(var7, var13.yBodyRotO, var13.yBodyRot);
-                        Vec3 var24 = var17.method7934(var13, var23, var20);
-                        float var25 = var17.method7927(var18);
-                        Vec3 var26 = var17.getVec3d4();
-                        if (var25 < 1.0F && var26 != null) {
-                           float var27 = var25 * var25 * (3.0F - 2.0F * var25);
-                           var19 = var26.lerp(var24, var27).add(0.0, Math.sin(Math.PI * var25) * 0.55, 0.0);
+                     hashSet.add(player.getId());
+                     petBehavior.method7926(player, flag ? method3149() : null, d, f);
+                     float alpha1 = petBehavior.class3.method438();
+                     Vec3 vec3d = petBehavior.class3.method435(alpha1);
+                     float rotLerp = petBehavior.class3.method436(alpha1);
+                     float f2 = wardrobe.petScale.getValue3() * petBehavior.data3.getFloatValue();
+                     float[] floats = method3144(petBehavior, f, alpha1);
+                     if (petBehavior.isFlag4()) {
+                        Vec3 vec = player.getPosition(floatValue);
+                        rotLerp = Mth.rotLerp(floatValue, player.yBodyRotO, player.yBodyRot);
+                        Vec3 vec2 = petBehavior.method7934(player, vec, rotLerp);
+                        float alpha12 = petBehavior.method7927(alpha1);
+                        Vec3 vec3d4 = petBehavior.getVec3d4();
+                        if (alpha12 < 1.0F && vec3d4 != null) {
+                           float f3 = alpha12 * alpha12 * (3.0F - 2.0F * alpha12);
+                           vec3d = vec3d4.lerp(vec2, f3).add(0.0, Math.sin(Math.PI * alpha12) * 0.55, 0.0);
                         } else {
-                           var19 = var24;
+                           vec3d = vec2;
                         }
 
-                        var21 *= Mth.lerp(var25, 1.0F, var17.method7935());
-                        var17.method7945((float)var5, var22);
-                        if (var14 && mc.options.getCameraType().isFirstPerson() && var25 > 0.5F) {
+                        f2 *= Mth.lerp(alpha12, 1.0F, petBehavior.method7935());
+                        petBehavior.method7945((float)d, floats);
+                        if (flag && mc.options.getCameraType().isFirstPerson() && alpha12 > 0.5F) {
                            continue;
                         }
                      } else {
-                        var17.method7945((float)var5, var22);
+                        petBehavior.method7945((float)d, floats);
                      }
 
-                     int var30 = net.minecraft.util.LightCoordsUtil.getLightCoords(mc.level, BlockPos.containing(var19.x, var19.y + 0.3, var19.z));
-                     var10.add(new WardrobePreview.Data(var17, var19, var20, var17.class3.method437(var18), (float[])var22.clone(), var30, var21));
+                     int lightCoords = net.minecraft.util.LightCoordsUtil.getLightCoords(mc.level, BlockPos.containing(vec3d.x, vec3d.y + 0.3, vec3d.z));
+                     datas.add(new WardrobePreview.Data(petBehavior, vec3d, rotLerp, petBehavior.class3.method437(alpha1), (float[])floats.clone(), lightCoords, f2));
                   }
                }
             }
          }
 
-         items.keySet().retainAll(var11);
-         if (!var10.isEmpty()) {
-            PoseStack var28 = var1.getMatrixStack();
+         items.keySet().retainAll(hashSet);
+         if (!datas.isEmpty()) {
+            PoseStack matrixStack = event.getMatrixStack();
             OutlineVertexProvider.method1542(var3x -> {
-                  for (WardrobePreview.Data var5x : var10) {
-                     var28.pushPose();
+                  for (WardrobePreview.Data var5x : datas) {
+                     matrixStack.pushPose();
 
                      try {
-                        var28.translate(var5x.vec3d.x - var9.x, var5x.vec3d.y - var9.y, var5x.vec3d.z - var9.z);
-                        method3145(var28, var5x.floatValue, var5x.floatValue3, var5x.petBehavior.getFloatValue3());
-                        int var6 = Math.round(Math.max(0.1F, Math.min(1.0F, var5x.petBehavior.getAlpha())) * 255.0F);
+                        matrixStack.translate(var5x.vec3d.x - position.x, var5x.vec3d.y - position.y, var5x.vec3d.z - position.z);
+                        method3145(matrixStack, var5x.floatValue, var5x.floatValue3, var5x.petBehavior.getFloatValue3());
+                        int n = Math.round(Math.max(0.1F, Math.min(1.0F, var5x.petBehavior.getAlpha())) * 255.0F);
                         method3146(
                            var5x.petBehavior.class15,
                            var5x.floatValues,
-                           var28,
+                           matrixStack,
                            var3x,
                            var5x.intValue,
                            var5x.petBehavior.hoveredData.getRarity().isFlag(),
-                           var6 << 24 | 16777215,
+                           n << 24 | 16777215,
                            true
                         );
                      } finally {
-                        var28.popPose();
+                        matrixStack.popPose();
                      }
                   }
                }
@@ -151,59 +151,59 @@ public final class WardrobePreview implements MinecraftAccess {
       }
    }
 
-   private static float[] method3144(PetBehavior var0, float var1, float var2) {
-      float[] var3 = var0.class16.method2139(var0.class15, var0.animationState, var1, null);
-      int var4 = var0.class15.method2031("head");
-      if (var4 >= 0 && !var0.isFlag3()) {
-         var3[var4 * 9 + 1] = var3[var4 * 9 + 1] + (float)Math.toRadians(-var0.class3.method437(var2));
+   private static float[] method3144(PetBehavior petBehavior, float floatValue, float alpha1) {
+      float[] floats = petBehavior.class16.method2139(petBehavior.class15, petBehavior.animationState, floatValue, null);
+      int n = petBehavior.class15.method2031("head");
+      if (n >= 0 && !petBehavior.isFlag3()) {
+         floats[n * 9 + 1] = floats[n * 9 + 1] + (float)Math.toRadians(-petBehavior.class3.method437(alpha1));
       }
 
-      return var3;
+      return floats;
    }
 
-   private static void method3145(PoseStack var0, float var1, float var2, float var3) {
-      var0.rotate(new Quaternionf().rotationY((float)Math.toRadians(180.0 - var1)));
-      float var4 = 1.0F + var3 * 0.18F;
-      var0.scale(var2 * var4, var2 / var4, var2 * var4);
-      var0.scale(-1.0F, -1.0F, 1.0F);
-      var0.translate(0.0F, -1.501F, 0.0F);
+   private static void method3145(PoseStack matrixStack, float floatValue, float f, float f2) {
+      matrixStack.rotate(new Quaternionf().rotationY((float)Math.toRadians(180.0 - floatValue)));
+      float f3 = 1.0F + f2 * 0.18F;
+      matrixStack.scale(f * f3, f / f3, f * f3);
+      matrixStack.scale(-1.0F, -1.0F, 1.0F);
+      matrixStack.translate(0.0F, -1.501F, 0.0F);
    }
 
-   private static void method3146(Class15 var0, float[] var1, PoseStack var2, SubmitNodeCollector var3, int var4, boolean var5, int var6, boolean var7) {
-      BoneMatrices.method4787(var0, var1, 6, var2, var3, var4, OverlayTexture.NO_OVERLAY, var7, var5, var6);
+   private static void method3146(Class15 key, float[] floatValues, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue, boolean flag, int n, boolean flag2) {
+      BoneMatrices.method4787(key, floatValues, 6, matrixStack, orderedRenderCommandQueue, intValue, OverlayTexture.NO_OVERLAY, flag2, flag, n);
    }
 
-   public static void method3147(HoveredData var0, Class15 var1, PoseStack var2, SubmitNodeCollector var3, int var4, float var5) {
-      if (var1 != null) {
-         animationState.method6539(var1, "idle", var5);
-         float[] var6 = class16.method2139(var1, animationState, var5, null);
-         method3146(var1, var6, var2, var3, var4, var0.getRarity().isFlag(), -1, true);
+   public static void method3147(HoveredData hoveredData, Class15 key, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, int intValue, float floatValue) {
+      if (key != null) {
+         animationState.method6539(key, "idle", floatValue);
+         float[] floatValues = class16.method2139(key, animationState, floatValue, null);
+         method3146(key, floatValues, matrixStack, orderedRenderCommandQueue, intValue, hoveredData.getRarity().isFlag(), -1, true);
       }
    }
 
-   public static Vec3 method3148(PetBehavior var0, float[] var1, int var2, float var3, float var4, float var5) {
-      float var6 = var0.class3.method438();
-      Vec3 var7 = var0.class3.method435(var6);
-      float var8 = Wardrobe.method2488() == null ? 1.0F : Wardrobe.method2488().petScale.getValue3() * var0.data3.getFloatValue();
+   public static Vec3 method3148(PetBehavior petBehavior, float[] floats, int intValue, float floatValue, float f, float f2) {
+      float alpha1 = petBehavior.class3.method438();
+      Vec3 vec = petBehavior.class3.method435(alpha1);
+      float xyz = Wardrobe.method2488() == null ? 1.0F : Wardrobe.method2488().petScale.getValue3() * petBehavior.data3.getFloatValue();
       matrix4f.identity();
-      matrix4f.translate((float)var7.x, (float)var7.y, (float)var7.z);
-      matrix4f.rotateY((float)Math.toRadians(180.0 - var0.class3.method436(var6)));
-      matrix4f.scale(var8);
+      matrix4f.translate((float)vec.x, (float)vec.y, (float)vec.z);
+      matrix4f.rotateY((float)Math.toRadians(180.0 - petBehavior.class3.method436(alpha1)));
+      matrix4f.scale(xyz);
       matrix4f.scale(-1.0F, -1.0F, 1.0F);
       matrix4f.translate(0.0F, -1.501F, 0.0F);
-      if (var2 >= 0) {
-         BoneMatrices.method4808(var0.class15, var1, var2, matrix4f);
+      if (intValue >= 0) {
+         BoneMatrices.method4808(petBehavior.class15, floats, intValue, matrix4f);
       }
 
-      matrix4f.transformPosition(var3 / 16.0F, var4 / 16.0F, var5 / 16.0F, vector3f);
+      matrix4f.transformPosition(floatValue / 16.0F, f / 16.0F, f2 / 16.0F, vector3f);
       return new Vec3(vector3f.x, vector3f.y, vector3f.z);
    }
 
    private static LivingEntity method3149() {
       try {
-         LivingEntity var0 = AuraModule.INSTANCE.method6358();
-         return var0 == null ? AimAssistModule.INSTANCE.method5156() : var0;
-      } catch (Throwable var1) {
+         LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+         return livingEntity == null ? AimAssistModule.INSTANCE.method5156() : livingEntity;
+      } catch (Throwable e) {
          return null;
       }
    }
@@ -266,14 +266,14 @@ public final class WardrobePreview implements MinecraftAccess {
          return "Data[" + "petBehavior=" + this.petBehavior + ", " + "vec3d=" + this.vec3d + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValues=" + this.floatValues + ", " + "intValue=" + this.intValue + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data(PetBehavior var1, Vec3 var2, float var3, float var4, float[] var5, int var6, float var7) {
-         this.petBehavior = var1;
-         this.vec3d = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValues = var5;
-         this.intValue = var6;
-         this.floatValue3 = var7;
+      private Data(PetBehavior petBehavior, Vec3 vec3d, float floatValue, float f, float[] floatValues, int intValue, float f2) {
+         this.petBehavior = petBehavior;
+         this.vec3d = vec3d;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValues = floatValues;
+         this.intValue = intValue;
+         this.floatValue3 = f2;
       }
 
       public PetBehavior getPetBehavior() {

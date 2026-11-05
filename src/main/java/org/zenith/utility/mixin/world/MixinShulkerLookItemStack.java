@@ -16,10 +16,10 @@ public abstract class MixinShulkerLookItemStack {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void injectShulkerTooltipData(CallbackInfoReturnable<Optional<TooltipComponent>> var1) {
-      var var2 = ShulkerPreviewModule.method1387((ItemStack)(Object)this);
-      if (var2.isPresent()) {
-         var1.setReturnValue(var2);
+   private void injectShulkerTooltipData(CallbackInfoReturnable<Optional<TooltipComponent>> callbackInfoReturnable) {
+      var returnValue = ShulkerPreviewModule.method1387((ItemStack)(Object)this);
+      if (returnValue.isPresent()) {
+         callbackInfoReturnable.setReturnValue(returnValue);
       }
    }
 }

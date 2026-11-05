@@ -9,9 +9,9 @@ public class ModuleToggleEvent implements Event {
    private final boolean flag;
 
    @Generated
-   public ModuleToggleEvent(Module var1, boolean var2) {
-      this.module = var1;
-      this.flag = var2;
+   public ModuleToggleEvent(Module moduleValue, boolean flag) {
+      this.module = moduleValue;
+      this.flag = flag;
    }
 
    @Generated

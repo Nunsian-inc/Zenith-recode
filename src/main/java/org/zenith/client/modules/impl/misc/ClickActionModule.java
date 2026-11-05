@@ -60,25 +60,25 @@ public final class ClickActionModule extends Module {
 
    @Override
    public List<Setting> getSettings() {
-      ArrayList<Setting> var1 = new ArrayList<>();
-      var1.add(this.expBind);
-      var1.add(this.friendBind);
-      var1.addAll(this.items.stream().map(ClickActionModule.Data::getBindSetting).toList());
-      return var1;
+      ArrayList<Setting> settings = new ArrayList<>();
+      settings.add(this.expBind);
+      settings.add(this.friendBind);
+      settings.addAll(this.items.stream().map(ClickActionModule.Data::getBindSetting).toList());
+      return settings;
    }
 
    @EventTarget
-   public void method5483(KeyEvent var1) {
-      if (var1.isPress(this.friendBind.getKeyCode()) && mc.player != null && mc.level != null) {
-         EntityHitResult var2 = TargetUtils.method3211(
-            new Rotation(mc.player.getYRot(), mc.player.getXRot()), var0 -> var0 instanceof Player && var0 != mc.player
+   public void method5483(KeyEvent event) {
+      if (event.isPress(this.friendBind.getKeyCode()) && mc.player != null && mc.level != null) {
+         EntityHitResult entityHitResult = TargetUtils.method3211(
+            new Rotation(mc.player.getYRot(), mc.player.getXRot()), entity -> entity instanceof Player && entity != mc.player
          );
-         if (var2 != null && var2.getEntity() instanceof Player var3) {
-            String var6 = var3.getGameProfile().name();
-            if (Zenith.getInstance().getFriends().getItems().contains(var6)) {
-               Zenith.getInstance().getFriends().method7629(var6);
+         if (entityHitResult != null && entityHitResult.getEntity() instanceof Player player) {
+            String name = player.getGameProfile().name();
+            if (Zenith.getInstance().getFriends().getItems().contains(name)) {
+               Zenith.getInstance().getFriends().method7629(name);
             } else {
-               Zenith.getInstance().getFriends().add(var6);
+               Zenith.getInstance().getFriends().add(name);
             }
 
             Zenith.getInstance().getFriends().save();
@@ -87,15 +87,15 @@ public final class ClickActionModule extends Module {
 
       this.items
          .stream()
-         .filter(var1x -> var1.isPress(var1x.bindSetting.getKeyCode()) && InventoryUtils.method906(var1x.item) != null)
-         .forEach(var0 -> var0.class27.setFlag(true));
-      this.items.stream().filter(var1x -> var1.isRelease(var1x.bindSetting.getKeyCode())).forEach(var0 -> {
-         InventoryUtils.method927(var0.item);
-         var0.class27.setFlag(false);
+         .filter(var1x -> event.isPress(var1x.bindSetting.getKeyCode()) && InventoryUtils.method906(var1x.item) != null)
+         .forEach(data -> data.class27.setFlag(true));
+      this.items.stream().filter(var1x -> event.isRelease(var1x.bindSetting.getKeyCode())).forEach(data -> {
+         InventoryUtils.method927(data.item);
+         data.class27.setFlag(false);
       });
-      if (var1.isPress(this.expBind.getKeyCode())) {
-         Slot var5 = InventoryUtils.method906(Items.EXPERIENCE_BOTTLE);
-         if (var5 == null) {
+      if (event.isPress(this.expBind.getKeyCode())) {
+         Slot slot = InventoryUtils.method906(Items.EXPERIENCE_BOTTLE);
+         if (slot == null) {
             Zenith.getInstance()
                .getHudHolder()
                .method6972(
@@ -118,41 +118,41 @@ public final class ClickActionModule extends Module {
    }
 
    @EventTarget
-   public void method5484(WorldRenderEvent var1) {
+   public void method5484(WorldRenderEvent event) {
       PredictionsModule.INSTANCE
-         .method2902(var1.getMatrixStack(), this.items.stream().filter(var0 -> var0.class27.isValue()).map(var0 -> var0.item.getDefaultInstance()).toList());
+         .method2902(event.getMatrixStack(), this.items.stream().filter(data -> data.class27.isValue()).map(data -> data.item.getDefaultInstance()).toList());
    }
 
    @EventTarget(4)
-   public void method5485(HandleInputEvent var1) {
-      if (!var1.isCancelled() && mc.player != null) {
+   public void method5485(HandleInputEvent event) {
+      if (!event.isCancelled() && mc.player != null) {
          if (this.flag) {
             this.flag = false;
          } else {
-            boolean var2 = mc.player.getMainHandItem().getItem().equals(Items.EXPERIENCE_BOTTLE);
-            Slot var3 = InventoryUtils.method906(Items.EXPERIENCE_BOTTLE);
-            if (UseItemUtils.method6521(this.expBind) && var3 != null) {
-               PlayerSimulation var4 = PlayerSimulation.method6031(3);
-               Rotation var5 = new Rotation(mc.player.getYRot(), RotationUtils.method6913(var4.box.getCenter()).getFloatValue2());
+            boolean flag = mc.player.getMainHandItem().getItem().equals(Items.EXPERIENCE_BOTTLE);
+            Slot slot = InventoryUtils.method906(Items.EXPERIENCE_BOTTLE);
+            if (UseItemUtils.method6521(this.expBind) && slot != null) {
+               PlayerSimulation playerSimulation = PlayerSimulation.method6031(3);
+               Rotation rotation = new Rotation(mc.player.getYRot(), RotationUtils.method6913(playerSimulation.box.getCenter()).getFloatValue2());
                rotationManager.method7849(
-                  new RotationRequest(var5, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var5), bcCameraTestnerv.getRotationConfig()),
+                  new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                   5,
                   this
                );
-               if (!var2) {
+               if (!flag) {
                   if (KeyBindUtils.method2630(ClickActionModule.class)) {
                      KeyBindUtils.method2627(ClickActionModule.class, () -> {
                         if (this.slot == null) {
-                           this.slot = var3;
+                           this.slot = slot;
                         }
 
-                        InventoryUtils.method900(var3, InteractionHand.MAIN_HAND, true);
+                        InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true);
                         this.flag = true;
                      });
                   }
-               } else if (this.stopWatch.method7546(70L) && rotationManager.method7844().method3131(var5).method5330(180.0F, 10.0F)) {
+               } else if (this.stopWatch.method7546(70L) && rotationManager.method7844().method3131(rotation).method5330(180.0F, 10.0F)) {
                   UseItemUtils.useItem(InteractionHand.MAIN_HAND);
-                  var1.cancel();
+                  event.cancel();
                   this.stopWatch.reset();
                }
             } else if (this.slot != null) {
@@ -209,10 +209,10 @@ public final class ClickActionModule extends Module {
          return "Data[" + "item=" + this.item + ", " + "bindSetting=" + this.bindSetting + ", " + "class27=" + this.class27 + "]";
       }
 
-      public Data(Item var1, BindSetting var2, Class27 var3) {
-         this.item = var1;
-         this.bindSetting = var2;
-         this.class27 = var3;
+      public Data(Item item, BindSetting bindSetting, Class27 class2) {
+         this.item = item;
+         this.bindSetting = bindSetting;
+         this.class27 = class2;
       }
 
       public Item getItem() {

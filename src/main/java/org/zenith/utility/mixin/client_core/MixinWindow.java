@@ -14,7 +14,7 @@ public class MixinWindow {
       method = {"onResize(II)V"},
       at = {@At("TAIL")}
    )
-   private void onWindowSizeChanged(int var3, int var4, CallbackInfo var5) {
+   private void onWindowSizeChanged(int n, int n2, CallbackInfo callbackInfo) {
       EventManager.call(new WindowResizeEvent());
    }
 }

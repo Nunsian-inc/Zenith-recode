@@ -26,9 +26,9 @@ public class NameplateAPI {
          return null;
       }
 
-      String var2 = key.toUpperCase();
+      String upperCase = key.toUpperCase();
 
-      return switch (var2) {
+      return switch (upperCase) {
          case "CHAT" -> this.CHAT;
          case "ENTITY" -> this.ENTITY;
          case "LIST" -> this.LIST;

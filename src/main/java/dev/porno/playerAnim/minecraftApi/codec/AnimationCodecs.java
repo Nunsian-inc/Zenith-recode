@@ -60,7 +60,7 @@ public class AnimationCodecs {
 
       try {
          inputStream.close();
-      } catch (Exception var4) {
+      } catch (Exception e) {
       }
 
       return deserialize(extension, () -> new ByteArrayInputStream(data));

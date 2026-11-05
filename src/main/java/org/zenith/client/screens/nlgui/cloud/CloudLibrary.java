@@ -30,14 +30,14 @@ public final class CloudLibrary {
       return new ArrayList<>(this.entries.values());
    }
 
-   public synchronized boolean contains(UUID var1) {
-      return var1 != null && this.entries.containsKey(var1);
+   public synchronized boolean contains(UUID uuid) {
+      return uuid != null && this.entries.containsKey(uuid);
    }
 
-   public synchronized void remember(StoreApi.Data2 var1) {
-      if (var1 != null) {
-         this.entries.remove(var1.getUUID());
-         this.entries.put(var1.getUUID(), var1);
+   public synchronized void remember(StoreApi.Data2 cloudTwin) {
+      if (cloudTwin != null) {
+         this.entries.remove(cloudTwin.getUUID());
+         this.entries.put(cloudTwin.getUUID(), cloudTwin);
 
          while (this.entries.size() > 512) {
             this.entries.remove(this.entries.keySet().iterator().next());
@@ -47,8 +47,8 @@ public final class CloudLibrary {
       }
    }
 
-   public synchronized void forget(UUID var1) {
-      if (var1 != null && this.entries.remove(var1) != null) {
+   public synchronized void forget(UUID uuid) {
+      if (uuid != null && this.entries.remove(uuid) != null) {
          this.save();
       }
    }
@@ -56,60 +56,60 @@ public final class CloudLibrary {
    private void load() {
       if (this.file.isFile()) {
          try {
-            JsonElement var1 = JsonParser.parseString(Files.readString(this.file.toPath(), StandardCharsets.UTF_8));
-            if (!var1.isJsonArray()) {
+            JsonElement string = JsonParser.parseString(Files.readString(this.file.toPath(), StandardCharsets.UTF_8));
+            if (!string.isJsonArray()) {
                return;
             }
 
-            for (JsonElement var3 : var1.getAsJsonArray()) {
-               if (var3.isJsonObject()) {
+            for (JsonElement json : string.getAsJsonArray()) {
+               if (json.isJsonObject()) {
                   try {
-                     StoreApi.Data2 var4 = StoreApi.Data2.method2003(var3.getAsJsonObject());
-                     this.entries.put(var4.getUUID(), var4);
-                  } catch (Exception var5) {
+                     StoreApi.Data2 data2 = StoreApi.Data2.method2003(json.getAsJsonObject());
+                     this.entries.put(data2.getUUID(), data2);
+                  } catch (Exception e) {
                   }
                }
             }
-         } catch (Exception var6) {
+         } catch (Exception e) {
          }
       }
    }
 
    private void save() {
       try {
-         JsonArray var1 = new JsonArray();
+         JsonArray jsonArray = new JsonArray();
 
-         for (StoreApi.Data2 var3 : this.entries.values()) {
-            var1.add(toJson(var3));
+         for (StoreApi.Data2 data2 : this.entries.values()) {
+            jsonArray.add(toJson(data2));
          }
 
          Files.createDirectories(this.file.toPath().getParent());
-         Files.writeString(this.file.toPath(), var1.toString(), StandardCharsets.UTF_8);
-      } catch (Exception var4) {
+         Files.writeString(this.file.toPath(), jsonArray.toString(), StandardCharsets.UTF_8);
+      } catch (Exception e) {
       }
    }
 
-   private static JsonObject toJson(StoreApi.Data2 var0) {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("id", var0.getUUID().toString());
-      var1.addProperty("kind", var0.kind());
-      var1.addProperty("name", var0.name());
-      var1.addProperty("fileName", var0.fileName());
-      var1.addProperty("description", var0.description());
-      var1.addProperty("server", var0.server());
-      var1.addProperty("sizeBytes", var0.getLongValue());
-      var1.addProperty("sha256", var0.getText6());
-      var1.addProperty("visibility", var0.getText7());
-      var1.addProperty("version", var0.getLongValue2());
-      var1.addProperty("createdAt", var0.getLongValue3());
-      var1.addProperty("updatedAt", var0.getLongValue4());
-      var1.addProperty("ownerUid", var0.getLongValue5());
-      var1.addProperty("ownerName", var0.getText8());
-      var1.addProperty("mine", var0.mine());
-      var1.addProperty("hasPreview", var0.hasPreview());
-      var1.addProperty("likes", var0.getIntValue());
-      var1.addProperty("liked", var0.isFlag3());
-      var1.addProperty("codes", var0.getIntValue2());
-      return var1;
+   private static JsonObject toJson(StoreApi.Data2 data2) {
+      JsonObject json = new JsonObject();
+      json.addProperty("id", data2.getUUID().toString());
+      json.addProperty("kind", data2.kind());
+      json.addProperty("name", data2.name());
+      json.addProperty("fileName", data2.fileName());
+      json.addProperty("description", data2.description());
+      json.addProperty("server", data2.server());
+      json.addProperty("sizeBytes", data2.getLongValue());
+      json.addProperty("sha256", data2.getText6());
+      json.addProperty("visibility", data2.getText7());
+      json.addProperty("version", data2.getLongValue2());
+      json.addProperty("createdAt", data2.getLongValue3());
+      json.addProperty("updatedAt", data2.getLongValue4());
+      json.addProperty("ownerUid", data2.getLongValue5());
+      json.addProperty("ownerName", data2.getText8());
+      json.addProperty("mine", data2.mine());
+      json.addProperty("hasPreview", data2.hasPreview());
+      json.addProperty("likes", data2.getIntValue());
+      json.addProperty("liked", data2.isFlag3());
+      json.addProperty("codes", data2.getIntValue2());
+      return json;
    }
 }

@@ -56,114 +56,114 @@ public final class ScriptGuiApi {
    public static synchronized void method5309() {
       if (!flag) {
          flag = true;
-         EventManager.main().subscribe(TickEvent.class, (byte)4, (var0, var1) -> tick());
-         EventManager.main().subscribe(DrawEvent.class, (byte)4, (var0, var1) -> method5312((DrawEvent)var1));
-         EventManager.main().subscribe(WorldRenderEvent.class, (byte)4, (var0, var1) -> method5314());
-         EventManager.main().subscribe(MouseButtonEvent.class, (byte)0, (var0, var1) -> method5318((MouseButtonEvent)var1));
+         EventManager.main().subscribe(TickEvent.class, (byte)4, (obj, obj2) -> tick());
+         EventManager.main().subscribe(DrawEvent.class, (byte)4, (obj, obj2) -> method5312((DrawEvent)obj2));
+         EventManager.main().subscribe(WorldRenderEvent.class, (byte)4, (obj, obj2) -> method5314());
+         EventManager.main().subscribe(MouseButtonEvent.class, (byte)0, (obj, obj2) -> method5318((MouseButtonEvent)obj2));
       }
    }
 
-   private static boolean method5310(ScriptGuiApi.Entry var0) {
-      return var0.intValue2 >= var0.intValue || !var0.script.isRunning();
+   private static boolean method5310(ScriptGuiApi.Entry entry) {
+      return entry.intValue2 >= entry.intValue || !entry.script.isRunning();
    }
 
    private static void tick() {
-      boolean var0 = false;
+      boolean flag = false;
 
-      for (ScriptGuiApi.Entry var2 : items) {
-         var2.intValue2++;
-         if (method5310(var2)) {
-            var0 = true;
+      for (ScriptGuiApi.Entry entry : items) {
+         entry.intValue2++;
+         if (method5310(entry)) {
+            flag = true;
          } else {
-            var2.doubleValue5 = var2.doubleValue5 - var2.doubleValue7;
-            var2.doubleValue4 = var2.doubleValue4 * var2.doubleValue8;
-            var2.doubleValue5 = var2.doubleValue5 * var2.doubleValue8;
-            var2.doubleValue6 = var2.doubleValue6 * var2.doubleValue8;
-            var2.doubleValue = var2.doubleValue + var2.doubleValue4;
-            var2.doubleValue2 = var2.doubleValue2 + var2.doubleValue5;
-            var2.doubleValue3 = var2.doubleValue3 + var2.doubleValue6;
-            var2.floatValue2 = var2.floatValue2 + var2.floatValue;
+            entry.doubleValue5 = entry.doubleValue5 - entry.doubleValue7;
+            entry.doubleValue4 = entry.doubleValue4 * entry.doubleValue8;
+            entry.doubleValue5 = entry.doubleValue5 * entry.doubleValue8;
+            entry.doubleValue6 = entry.doubleValue6 * entry.doubleValue8;
+            entry.doubleValue = entry.doubleValue + entry.doubleValue4;
+            entry.doubleValue2 = entry.doubleValue2 + entry.doubleValue5;
+            entry.doubleValue3 = entry.doubleValue3 + entry.doubleValue6;
+            entry.floatValue2 = entry.floatValue2 + entry.floatValue;
          }
       }
 
-      if (var0) {
+      if (flag) {
          items.removeIf(ScriptGuiApi::method5310);
       }
    }
 
-   private static float method5311(int var0, double var1, double var3) {
-      return (float)(var0 / (var1 * Math.max(0.3, var3)));
+   private static float method5311(int guiScaledHeight, double d, double d2) {
+      return (float)(guiScaledHeight / (d * Math.max(0.3, d2)));
    }
 
-   private static void method5312(DrawEvent var0) {
-      Minecraft var1 = Minecraft.getInstance();
-      CustomDrawContext var2 = var0.getCustomDrawContext();
-      if (var1.player != null && (!items.isEmpty() || !items2.isEmpty() || !items3.isEmpty())) {
-         Vec3 var3 = var1.gameRenderer.mainCamera().position();
-         float var4 = var0.getTickDelta();
-         int var5 = var1.getWindow().getGuiScaledHeight();
-         double var6 = 2.0 * Math.tan(Math.toRadians(var1.options.fov().get().intValue()) / 2.0);
+   private static void method5312(DrawEvent event) {
+      Minecraft minecraft = Minecraft.getInstance();
+      CustomDrawContext customDrawContext = event.getCustomDrawContext();
+      if (minecraft.player != null && (!items.isEmpty() || !items2.isEmpty() || !items3.isEmpty())) {
+         Vec3 position = minecraft.gameRenderer.mainCamera().position();
+         float tickDelta = event.getTickDelta();
+         int guiScaledHeight = minecraft.getWindow().getGuiScaledHeight();
+         double d = 2.0 * Math.tan(Math.toRadians(minecraft.options.fov().get().intValue()) / 2.0);
 
-         for (ScriptGuiApi.Entry var9 : items) {
-            double var10 = var9.doubleValue + var9.doubleValue4 * var4;
-            double var12 = var9.doubleValue2 + var9.doubleValue5 * var4;
-            double var14 = var9.doubleValue3 + var9.doubleValue6 * var4;
-            Vec3 var16 = new Vec3(var10, var12, var14);
-            Vec3 var17 = ProjectionUtils.method301(var16);
-            if (!(var17.z <= 0.0) && !(var17.z >= 1.0)) {
-               float var18 = var9.size * method5311(var5, var6, var3.distanceTo(var16));
-               if (!(var18 < 0.5F) && !(var18 > 600.0F)) {
-                  float var19 = var9.flag ? 1.0F - (var9.intValue2 + var4) / var9.intValue : 1.0F;
-                  ZenithColor var20 = new ZenithColor(var9.color).method7294(Math.max(0.0F, var19));
-                  if (var9.entry != null && !var9.entry.flag) {
-                     Identifier var31 = var9.entry.texture();
-                     if (var31 != null) {
-                        float var23 = var18 * var9.entry.height() / Math.max(1, var9.entry.width());
-                        var2.pose().pushMatrix();
-                        var2.pose().translate((float)var17.x, (float)var17.y);
-                        if (var9.floatValue2 != 0.0F) {
-                           var2.pose().rotate((float)Math.toRadians(var9.floatValue2));
+         for (ScriptGuiApi.Entry entry : items) {
+            double x = entry.doubleValue + entry.doubleValue4 * tickDelta;
+            double y = entry.doubleValue2 + entry.doubleValue5 * tickDelta;
+            double z = entry.doubleValue3 + entry.doubleValue6 * tickDelta;
+            Vec3 vec = new Vec3(x, y, z);
+            Vec3 vec2 = ProjectionUtils.method301(vec);
+            if (!(vec2.z <= 0.0) && !(vec2.z >= 1.0)) {
+               float size = entry.size * method5311(guiScaledHeight, d, position.distanceTo(vec));
+               if (!(size < 0.5F) && !(size > 600.0F)) {
+                  float f = entry.flag ? 1.0F - (entry.intValue2 + tickDelta) / entry.intValue : 1.0F;
+                  ZenithColor zenithColor = new ZenithColor(entry.color).method7294(Math.max(0.0F, f));
+                  if (entry.entry != null && !entry.entry.flag) {
+                     Identifier texture = entry.entry.texture();
+                     if (texture != null) {
+                        float height = size * entry.entry.height() / Math.max(1, entry.entry.width());
+                        customDrawContext.pose().pushMatrix();
+                        customDrawContext.pose().translate((float)vec2.x, (float)vec2.y);
+                        if (entry.floatValue2 != 0.0F) {
+                           customDrawContext.pose().rotate((float)Math.toRadians(entry.floatValue2));
                         }
 
-                        var2.drawRoundedTexture(var31, -var18 / 2.0F, -var23 / 2.0F, var18, var23, ProxyDotRadiusData.method8069(0.0F), var20);
-                        var2.pose().popMatrix();
+                        customDrawContext.drawRoundedTexture(texture, -size / 2.0F, -height / 2.0F, size, height, ProxyDotRadiusData.method8069(0.0F), zenithColor);
+                        customDrawContext.pose().popMatrix();
                      }
-                  } else if (var9.text != null) {
-                     Font var21 = Fonts.NEW_SEMIBOLD.getFont(Math.max(3.0F, Math.min(48.0F, var18)));
-                     var2.drawText(var21, var9.text, (float)var17.x - var21.width(var9.text) / 2.0F, (float)var17.y - var21.height() / 2.0F, var20);
+                  } else if (entry.text != null) {
+                     Font font = Fonts.NEW_SEMIBOLD.getFont(Math.max(3.0F, Math.min(48.0F, size)));
+                     customDrawContext.drawText(font, entry.text, (float)vec2.x - font.width(entry.text) / 2.0F, (float)vec2.y - font.height() / 2.0F, zenithColor);
                   }
                }
             }
          }
 
-         for (ScriptGuiApi.Data var26 : items2) {
+         for (ScriptGuiApi.Data data : items2) {
             method5313(
-               var2, var3, var5, var6, var26.text, var26.doubleValue, var26.doubleValue2, var26.doubleValue3, var26.floatValue, var26.intValue, var26.intValue2
+               customDrawContext, position, guiScaledHeight, d, data.text, data.doubleValue, data.doubleValue2, data.doubleValue3, data.floatValue, data.intValue, data.intValue2
             );
          }
 
          items2.clear();
 
-         for (ScriptGuiApi.Data2 var27 : items3) {
-            if (var27.script.isRunning()) {
-               double var28 = var1.player.position().distanceTo(new Vec3(var27.doubleValue, var27.doubleValue2, var27.doubleValue3));
-               String var29 = var27.text + "  " + (int)var28 + "m";
-               Vec3 var13 = ProjectionUtils.method301(new Vec3(var27.doubleValue, var27.doubleValue2 + 1.2, var27.doubleValue3));
-               if (!(var13.z <= 0.0) && !(var13.z >= 1.0)) {
-                  Font var30 = Fonts.NEW_MEDIUM.getFont(6.0F);
-                  float var15 = var30.width(var29) + 10.0F;
-                  var2.drawRoundedRect(
-                     (float)var13.x - var15 / 2.0F, (float)var13.y - 6.0F, var15, 12.0F, ProxyDotRadiusData.method8069(6.0F), new ZenithColor(-1341124588)
+         for (ScriptGuiApi.Data2 data2 : items3) {
+            if (data2.script.isRunning()) {
+               double d2 = minecraft.player.position().distanceTo(new Vec3(data2.doubleValue, data2.doubleValue2, data2.doubleValue3));
+               String text = data2.text + "  " + (int)d2 + "m";
+               Vec3 vec = ProjectionUtils.method301(new Vec3(data2.doubleValue, data2.doubleValue2 + 1.2, data2.doubleValue3));
+               if (!(vec.z <= 0.0) && !(vec.z >= 1.0)) {
+                  Font font = Fonts.NEW_MEDIUM.getFont(6.0F);
+                  float width = font.width(text) + 10.0F;
+                  customDrawContext.drawRoundedRect(
+                     (float)vec.x - width / 2.0F, (float)vec.y - 6.0F, width, 12.0F, ProxyDotRadiusData.method8069(6.0F), new ZenithColor(-1341124588)
                   );
-                  var2.drawRoundedRect(
-                     (float)var13.x - var15 / 2.0F + 3.0F,
-                     (float)var13.y - 1.5F,
+                  customDrawContext.drawRoundedRect(
+                     (float)vec.x - width / 2.0F + 3.0F,
+                     (float)vec.y - 1.5F,
                      3.0F,
                      3.0F,
                      ProxyDotRadiusData.method8069(1.5F),
-                     new ZenithColor(var27.intValue)
+                     new ZenithColor(data2.intValue)
                   );
-                  var2.drawText(var30, var29, (float)var13.x - var15 / 2.0F + 8.0F, (float)var13.y - var30.height() / 2.0F, new ZenithColor(-1));
+                  customDrawContext.drawText(font, text, (float)vec.x - width / 2.0F + 8.0F, (float)vec.y - font.height() / 2.0F, new ZenithColor(-1));
                }
             }
          }
@@ -171,42 +171,42 @@ public final class ScriptGuiApi {
          items2.clear();
       }
 
-      method5317(var2);
+      method5317(customDrawContext);
    }
 
    private static void method5313(
-      CustomDrawContext var0, Vec3 var1, int var2, double var3, String var5, double var6, double var8, double var10, float var12, int var13, int var14
+      CustomDrawContext customDrawContext, Vec3 position, int guiScaledHeight, double d, String text, double doubleValue, double y, double z, float floatValue, int intValue, int n
    ) {
-      Vec3 var15 = new Vec3(var6, var8, var10);
-      Vec3 var16 = ProjectionUtils.method301(var15);
-      if (!(var16.z <= 0.0) && !(var16.z >= 1.0)) {
-         float var17 = Math.max(3.0F, Math.min(40.0F, var12 * method5311(var2, var3, var1.distanceTo(var15)) * 0.25F));
-         Font var18 = Fonts.NEW_MEDIUM.getFont(var17);
-         float var19 = var18.width(var5);
-         if (var14 >>> 24 != 0) {
-            var0.drawRoundedRect(
-               (float)var16.x - var19 / 2.0F - var17 * 0.4F,
-               (float)var16.y - var18.height() / 2.0F - var17 * 0.25F,
-               var19 + var17 * 0.8F,
-               var18.height() + var17 * 0.5F,
-               ProxyDotRadiusData.method8069(var17 * 0.3F),
-               new ZenithColor(var14)
+      Vec3 vec = new Vec3(doubleValue, y, z);
+      Vec3 vec2 = ProjectionUtils.method301(vec);
+      if (!(vec2.z <= 0.0) && !(vec2.z >= 1.0)) {
+         float px = Math.max(3.0F, Math.min(40.0F, floatValue * method5311(guiScaledHeight, d, position.distanceTo(vec)) * 0.25F));
+         Font font = Fonts.NEW_MEDIUM.getFont(px);
+         float width = font.width(text);
+         if (n >>> 24 != 0) {
+            customDrawContext.drawRoundedRect(
+               (float)vec2.x - width / 2.0F - px * 0.4F,
+               (float)vec2.y - font.height() / 2.0F - px * 0.25F,
+               width + px * 0.8F,
+               font.height() + px * 0.5F,
+               ProxyDotRadiusData.method8069(px * 0.3F),
+               new ZenithColor(n)
             );
          }
 
-         var0.drawText(var18, var5, (float)var16.x - var19 / 2.0F, (float)var16.y - var18.height() / 2.0F, new ZenithColor(var13));
+         customDrawContext.drawText(font, text, (float)vec2.x - width / 2.0F, (float)vec2.y - font.height() / 2.0F, new ZenithColor(intValue));
       }
    }
 
    private static void method5314() {
-      Minecraft var0 = Minecraft.getInstance();
-      if (var0.player != null) {
-         for (ScriptGuiApi.Data2 var2 : items3) {
-            if (var2.flag && var2.script.isRunning()) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.player != null) {
+         for (ScriptGuiApi.Data2 data2 : items3) {
+            if (data2.flag && data2.script.isRunning()) {
                GlowUtil.method2245(
-                  new Vec3(var2.doubleValue, var2.doubleValue2, var2.doubleValue3),
-                  new Vec3(var2.doubleValue, var2.doubleValue2 + 64.0, var2.doubleValue3),
-                  var2.intValue,
+                  new Vec3(data2.doubleValue, data2.doubleValue2, data2.doubleValue3),
+                  new Vec3(data2.doubleValue, data2.doubleValue2 + 64.0, data2.doubleValue3),
+                  data2.intValue,
                   2.0F,
                   false
                );
@@ -216,61 +216,61 @@ public final class ScriptGuiApi {
    }
 
    private static float method5315() {
-      Minecraft var0 = Minecraft.getInstance();
-      return (float)(var0.mouseHandler.xpos() * var0.getWindow().getGuiScaledWidth() / Math.max(1, var0.getWindow().getScreenWidth()));
+      Minecraft minecraft = Minecraft.getInstance();
+      return (float)(minecraft.mouseHandler.xpos() * minecraft.getWindow().getGuiScaledWidth() / Math.max(1, minecraft.getWindow().getScreenWidth()));
    }
 
    private static float method5316() {
-      Minecraft var0 = Minecraft.getInstance();
-      return (float)(var0.mouseHandler.ypos() * var0.getWindow().getGuiScaledHeight() / Math.max(1, var0.getWindow().getScreenHeight()));
+      Minecraft minecraft = Minecraft.getInstance();
+      return (float)(minecraft.mouseHandler.ypos() * minecraft.getWindow().getGuiScaledHeight() / Math.max(1, minecraft.getWindow().getScreenHeight()));
    }
 
-   private static void method5317(CustomDrawContext var0) {
+   private static void method5317(CustomDrawContext customDrawContext) {
       if (!items4.isEmpty()) {
-         Minecraft var1 = Minecraft.getInstance();
-         boolean var2 = var1.gui.screen() instanceof ChatScreen;
-         float var3 = method5315();
-         float var4 = method5316();
+         Minecraft minecraft = Minecraft.getInstance();
+         boolean flag = minecraft.gui.screen() instanceof ChatScreen;
+         float f = method5315();
+         float f2 = method5316();
 
-         for (ScriptGuiApi.Entry3 var6 : items4.values()) {
-            if (var6.script.isRunning() && var6.visible) {
-               if (var6.dragging) {
-                  var6.floatValue = Math.max(0.0F, Math.min(var1.getWindow().getGuiScaledWidth() - var6.floatValue3, var3 - var6.floatValue5));
-                  var6.floatValue2 = Math.max(0.0F, Math.min((float)(var1.getWindow().getGuiScaledHeight() - 12), var4 - var6.floatValue6));
+         for (ScriptGuiApi.Entry3 entry3 : items4.values()) {
+            if (entry3.script.isRunning() && entry3.visible) {
+               if (entry3.dragging) {
+                  entry3.floatValue = Math.max(0.0F, Math.min(minecraft.getWindow().getGuiScaledWidth() - entry3.floatValue3, f - entry3.floatValue5));
+                  entry3.floatValue2 = Math.max(0.0F, Math.min((float)(minecraft.getWindow().getGuiScaledHeight() - 12), f2 - entry3.floatValue6));
                }
 
-               float var7 = var6.flag ? 12.0F : 0.0F;
-               if (var6.flag) {
-                  var0.drawBlurHud(
-                     var6.floatValue,
-                     var6.floatValue2,
-                     var6.floatValue3,
-                     var6.floatValue4 + var7,
+               float f3 = entry3.flag ? 12.0F : 0.0F;
+               if (entry3.flag) {
+                  customDrawContext.drawBlurHud(
+                     entry3.floatValue,
+                     entry3.floatValue2,
+                     entry3.floatValue3,
+                     entry3.floatValue4 + f3,
                      12.0F,
                      ProxyDotRadiusData.method8069(5.0F),
                      new ZenithColor(2047609874)
                   );
-                  var0.drawRoundedBorder(
-                     var6.floatValue,
-                     var6.floatValue2,
-                     var6.floatValue3,
-                     var6.floatValue4 + var7,
+                  customDrawContext.drawRoundedBorder(
+                     entry3.floatValue,
+                     entry3.floatValue2,
+                     entry3.floatValue3,
+                     entry3.floatValue4 + f3,
                      0.5F,
                      ProxyDotRadiusData.method8069(5.0F),
-                     new ZenithColor(var2 ? 1728053247 : 587202559)
+                     new ZenithColor(flag ? 1728053247 : 587202559)
                   );
-                  Font var8 = Fonts.NEW_MEDIUM.getFont(5.0F);
-                  var0.drawText(
-                     var8,
-                     var8.clip(var6.title, var6.floatValue3 - 10.0F),
-                     var6.floatValue + 5.0F,
-                     var6.floatValue2 + (var7 - var8.height()) / 2.0F,
+                  Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+                  customDrawContext.drawText(
+                     font,
+                     font.clip(entry3.title, entry3.floatValue3 - 10.0F),
+                     entry3.floatValue + 5.0F,
+                     entry3.floatValue2 + (f3 - font.height()) / 2.0F,
                      new ZenithColor(-419430401)
                   );
-                  if (var2) {
-                     var0.drawRoundedRect(
-                        var6.floatValue + var6.floatValue3 - 9.0F,
-                        var6.floatValue2 + 4.5F,
+                  if (flag) {
+                     customDrawContext.drawRoundedRect(
+                        entry3.floatValue + entry3.floatValue3 - 9.0F,
+                        entry3.floatValue2 + 4.5F,
                         4.0F,
                         4.0F,
                         ProxyDotRadiusData.method8069(2.0F),
@@ -279,28 +279,28 @@ public final class ScriptGuiApi {
                   }
                }
 
-               if (var6.function != null) {
-                  var0.pose().pushMatrix();
-                  var0.pose().translate(var6.floatValue, var6.floatValue2 + var7);
-                  ScriptDrawApi.method2597(var0);
-                  ScriptImGui.method635(var6.floatValue, var6.floatValue2 + var7);
+               if (entry3.function != null) {
+                  customDrawContext.pose().pushMatrix();
+                  customDrawContext.pose().translate(entry3.floatValue, entry3.floatValue2 + f3);
+                  ScriptDrawApi.method2597(customDrawContext);
+                  ScriptImGui.method635(entry3.floatValue, entry3.floatValue2 + f3);
 
                   try {
-                     var0.enableScissor(0.0F, 0.0F, var6.floatValue3, var6.floatValue4);
-                     var6.storage
+                     customDrawContext.enableScissor(0.0F, 0.0F, entry3.floatValue3, entry3.floatValue4);
+                     entry3.storage
                         .method1321(
-                           var6.script,
-                           var6.function,
-                           (double)var6.floatValue3,
-                           (double)var6.floatValue4,
-                           (double)(var3 - var6.floatValue),
-                           (double)(var4 - var6.floatValue2 - var7)
+                           entry3.script,
+                           entry3.function,
+                           (double)entry3.floatValue3,
+                           (double)entry3.floatValue4,
+                           (double)(f - entry3.floatValue),
+                           (double)(f2 - entry3.floatValue2 - f3)
                         );
                   } finally {
                      ScriptImGui.method635(0.0F, 0.0F);
-                     var0.disableScissor();
+                     customDrawContext.disableScissor();
                      ScriptDrawApi.end();
-                     var0.pose().popMatrix();
+                     customDrawContext.pose().popMatrix();
                   }
                }
             }
@@ -308,68 +308,68 @@ public final class ScriptGuiApi {
       }
    }
 
-   private static void method5318(MouseButtonEvent var0) {
-      Minecraft var1 = Minecraft.getInstance();
-      if (var1.gui.screen() instanceof ChatScreen && !items4.isEmpty()) {
-         float var10 = method5315();
-         float var11 = method5316();
-         boolean var4 = var0.getIntValue2() == 1;
+   private static void method5318(MouseButtonEvent event) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.gui.screen() instanceof ChatScreen && !items4.isEmpty()) {
+         float f = method5315();
+         float f2 = method5316();
+         boolean flag = event.getIntValue2() == 1;
 
-         for (ScriptGuiApi.Entry3 var6 : items4.values()) {
-            if (var4) {
-               if (var6.visible && var6.script.isRunning()) {
-                  float var7 = var6.flag ? 12.0F : 0.0F;
-                  boolean var8 = var10 >= var6.floatValue
-                     && var10 <= var6.floatValue + var6.floatValue3
-                     && var11 >= var6.floatValue2
-                     && var11 <= var6.floatValue2 + (var6.flag ? var7 : var6.floatValue4);
-                  boolean var9 = var10 >= var6.floatValue
-                     && var10 <= var6.floatValue + var6.floatValue3
-                     && var11 >= var6.floatValue2 + var7
-                     && var11 <= var6.floatValue2 + var7 + var6.floatValue4;
-                  if (var0.getIntValue() == 0 && var8 && (var6.flag || var6.function2 == null)) {
-                     var6.dragging = true;
-                     var6.floatValue5 = var10 - var6.floatValue;
-                     var6.floatValue6 = var11 - var6.floatValue2;
-                     var0.setCancelled(true);
+         for (ScriptGuiApi.Entry3 entry3 : items4.values()) {
+            if (flag) {
+               if (entry3.visible && entry3.script.isRunning()) {
+                  float f3 = entry3.flag ? 12.0F : 0.0F;
+                  boolean flag2 = f >= entry3.floatValue
+                     && f <= entry3.floatValue + entry3.floatValue3
+                     && f2 >= entry3.floatValue2
+                     && f2 <= entry3.floatValue2 + (entry3.flag ? f3 : entry3.floatValue4);
+                  boolean flag3 = f >= entry3.floatValue
+                     && f <= entry3.floatValue + entry3.floatValue3
+                     && f2 >= entry3.floatValue2 + f3
+                     && f2 <= entry3.floatValue2 + f3 + entry3.floatValue4;
+                  if (event.getIntValue() == 0 && flag2 && (entry3.flag || entry3.function2 == null)) {
+                     entry3.dragging = true;
+                     entry3.floatValue5 = f - entry3.floatValue;
+                     entry3.floatValue6 = f2 - entry3.floatValue2;
+                     event.setCancelled(true);
                      return;
                   }
 
-                  if (var9 && var6.function2 != null) {
-                     var6.storage
+                  if (flag3 && entry3.function2 != null) {
+                     entry3.storage
                         .method1321(
-                           var6.script,
-                           var6.function2,
-                           (double)(var10 - var6.floatValue),
-                           (double)(var11 - var6.floatValue2 - var7),
-                           (double)var0.getIntValue()
+                           entry3.script,
+                           entry3.function2,
+                           (double)(f - entry3.floatValue),
+                           (double)(f2 - entry3.floatValue2 - f3),
+                           (double)event.getIntValue()
                         );
-                     var0.setCancelled(true);
+                     event.setCancelled(true);
                      return;
                   }
                }
-            } else if (var6.dragging) {
-               var6.dragging = false;
-               method5319(var6);
+            } else if (entry3.dragging) {
+               entry3.dragging = false;
+               method5319(entry3);
             }
          }
       } else {
-         for (ScriptGuiApi.Entry3 var3 : items4.values()) {
-            var3.dragging = false;
+         for (ScriptGuiApi.Entry3 entry3 : items4.values()) {
+            entry3.dragging = false;
          }
       }
    }
 
-   private static void method5319(ScriptGuiApi.Entry3 var0) {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("x", var0.floatValue);
-      var1.addProperty("y", var0.floatValue2);
-      var0.script.method1415().method1008("__window." + var0.name, var1);
+   private static void method5319(ScriptGuiApi.Entry3 entry3) {
+      JsonObject json = new JsonObject();
+      json.addProperty("x", entry3.floatValue);
+      json.addProperty("y", entry3.floatValue2);
+      entry3.script.method1415().method1008("__window." + entry3.name, json);
    }
 
-   public static void method5320(Script var0, Storage var1, Scriptable var2, ScriptableObject var3) {
-      ScriptValueUtils.Entry2 var4 = ScriptValueUtils.method6246(var2, var3);
-      var4.method6274(
+   public static void method5320(Script workspace, Storage storage, Scriptable scope, ScriptableObject scriptableObject) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6246(scope, scriptableObject);
+      entry2.method6274(
          "image",
          var0x -> {
             CustomDrawContext var1x = ScriptDrawApi.method2601();
@@ -379,27 +379,27 @@ public final class ScriptGuiApi {
                return null;
             } else {
                float var4x = (float)ScriptValueUtils.method6256(var0x, 1, 0.0);
-               float var5 = (float)ScriptValueUtils.method6256(var0x, 2, 0.0);
-               float var6 = (float)ScriptValueUtils.method6256(var0x, 3, var2x.width());
-               float var7 = (float)ScriptValueUtils.method6256(var0x, 4, var2x.height());
-               Scriptable var8 = ScriptValueUtils.method6262(var0x, 5);
-               float var9 = var8 == null ? 0.0F : (float)ScriptValueUtils.method6264(var8, "radius", 0.0);
-               int var10 = var8 == null ? -1 : (int)((long)ScriptValueUtils.method6264(var8, "color", 4.294967295E9));
-               double var11 = var8 == null ? 0.0 : ScriptValueUtils.method6264(var8, "rotation", 0.0);
-               float var13 = var8 == null ? 0.0F : (float)ScriptValueUtils.method6264(var8, "u1", 0.0);
-               float var14 = var8 == null ? 0.0F : (float)ScriptValueUtils.method6264(var8, "v1", 0.0);
-               float var15 = var8 == null ? 1.0F : (float)ScriptValueUtils.method6264(var8, "u2", 1.0);
-               float var16 = var8 == null ? 1.0F : (float)ScriptValueUtils.method6264(var8, "v2", 1.0);
+               float f = (float)ScriptValueUtils.method6256(var0x, 2, 0.0);
+               float width = (float)ScriptValueUtils.method6256(var0x, 3, var2x.width());
+               float height = (float)ScriptValueUtils.method6256(var0x, 4, var2x.height());
+               Scriptable scriptable = ScriptValueUtils.method6262(var0x, 5);
+               float intValue = scriptable == null ? 0.0F : (float)ScriptValueUtils.method6264(scriptable, "radius", 0.0);
+               int n = scriptable == null ? -1 : (int)((long)ScriptValueUtils.method6264(scriptable, "color", 4.294967295E9));
+               double angdeg = scriptable == null ? 0.0 : ScriptValueUtils.method6264(scriptable, "rotation", 0.0);
+               float f2 = scriptable == null ? 0.0F : (float)ScriptValueUtils.method6264(scriptable, "u1", 0.0);
+               float f3 = scriptable == null ? 0.0F : (float)ScriptValueUtils.method6264(scriptable, "v1", 0.0);
+               float f4 = scriptable == null ? 1.0F : (float)ScriptValueUtils.method6264(scriptable, "u2", 1.0);
+               float f5 = scriptable == null ? 1.0F : (float)ScriptValueUtils.method6264(scriptable, "v2", 1.0);
                var1x.pose().pushMatrix();
 
                try {
-                  var1x.pose().translate(var4x + var6 / 2.0F, var5 + var7 / 2.0F);
-                  if (var11 != 0.0) {
-                     var1x.pose().rotate((float)Math.toRadians(var11));
+                  var1x.pose().translate(var4x + width / 2.0F, f + height / 2.0F);
+                  if (angdeg != 0.0) {
+                     var1x.pose().rotate((float)Math.toRadians(angdeg));
                   }
 
                   var1x.drawRoundedTexture(
-                     var3x, -var6 / 2.0F, -var7 / 2.0F, var6, var7, ProxyDotRadiusData.method8069(var9), new ZenithColor(var10), var13, var14, var15, var16
+                     var3x, -width / 2.0F, -height / 2.0F, width, height, ProxyDotRadiusData.method8069(intValue), new ZenithColor(n), f2, f3, f4, f5
                   );
                } finally {
                   var1x.pose().popMatrix();
@@ -409,7 +409,7 @@ public final class ScriptGuiApi {
             }
          }
       );
-      var4.method6274(
+      entry2.method6274(
          "head",
          var0x -> {
             CustomDrawContext var1x = ScriptDrawApi.method2601();
@@ -421,17 +421,17 @@ public final class ScriptGuiApi {
                String var4x = var3x instanceof Scriptable
                   ? String.valueOf(ScriptScreenApi.method7048(var3x) == null ? "" : ScriptScreenApi.method7048(var3x).getName().getString())
                   : ScriptValueUtils.method6255(var3x);
-               PlayerInfo var5 = var2x.getConnection().getPlayerInfo(var4x);
-               if (var5 == null) {
+               PlayerInfo playerInfo = var2x.getConnection().getPlayerInfo(var4x);
+               if (playerInfo == null) {
                   return false;
                } else {
-                  float var6 = (float)ScriptValueUtils.method6256(var0x, 3, 16.0);
+                  float width = (float)ScriptValueUtils.method6256(var0x, 3, 16.0);
                   var1x.drawPlayerHeadWithRoundedShader(
-                     var5.getSkin().body().texturePath(),
+                     playerInfo.getSkin().body().texturePath(),
                      (float)ScriptValueUtils.method6256(var0x, 1, 0.0),
                      (float)ScriptValueUtils.method6256(var0x, 2, 0.0),
-                     var6,
-                     ProxyDotRadiusData.method8069((float)ScriptValueUtils.method6256(var0x, 4, var6 * 0.2F)),
+                     width,
+                     ProxyDotRadiusData.method8069((float)ScriptValueUtils.method6256(var0x, 4, width * 0.2F)),
                      new ZenithColor(-1)
                   );
                   return true;
@@ -439,32 +439,32 @@ public final class ScriptGuiApi {
             }
          }
       );
-      var4.method6274("gradient", var0x -> {
+      entry2.method6274("gradient", var0x -> {
          CustomDrawContext var1x = ScriptDrawApi.method2601();
          int var2x = (int)ScriptValueUtils.method6256(var0x, 0, 0.0);
          int var3x = (int)ScriptValueUtils.method6256(var0x, 1, 0.0);
          int var4x = (int)ScriptValueUtils.method6256(var0x, 2, 0.0);
-         int var5 = (int)ScriptValueUtils.method6256(var0x, 3, 0.0);
-         int var6 = ScriptValueUtils.method6258(var0x, 4, -1);
-         int var7 = ScriptValueUtils.method6258(var0x, 5, -16777216);
+         int n = (int)ScriptValueUtils.method6256(var0x, 3, 0.0);
+         int col1 = ScriptValueUtils.method6258(var0x, 4, -1);
+         int col2 = ScriptValueUtils.method6258(var0x, 5, -16777216);
          if (ScriptValueUtils.method6259(var0x, 6, true)) {
-            var1x.fillGradient(var2x, var3x, var2x + var4x, var3x + var5, var6, var7);
+            var1x.fillGradient(var2x, var3x, var2x + var4x, var3x + n, col1, col2);
          } else {
-            int var8 = Math.max(1, Math.min(64, var4x));
+            int n2 = Math.max(1, Math.min(64, var4x));
 
-            for (int var9 = 0; var9 < var8; var9++) {
-               int var10 = method5321(var6, var7, (double)var9 / Math.max(1, var8 - 1));
-               int var11 = var2x + var4x * var9 / var8;
-               int var12 = var2x + var4x * (var9 + 1) / var8;
-               var1x.fill(var11, var3x, var12, var3x + var5, var10);
+            for (int i = 0; i < n2; i++) {
+               int col = method5321(col1, col2, (double)i / Math.max(1, n2 - 1));
+               int x0 = var2x + var4x * i / n2;
+               int x1 = var2x + var4x * (i + 1) / n2;
+               var1x.fill(x0, var3x, x1, var3x + n, col);
             }
          }
 
          return null;
       });
-      var4.method6274(
+      entry2.method6274(
          "mouse",
-         var1x -> ScriptValueUtils.method6247(var2)
+         var1x -> ScriptValueUtils.method6247(scope)
             .method6277("x", (double)method5315())
             .method6277("y", (double)method5316())
             .method6277("left", org.zenith.utility.misc.KeyCompat.isMouseDown(0))
@@ -473,17 +473,17 @@ public final class ScriptGuiApi {
       );
    }
 
-   private static int method5321(int var0, int var1, double var2) {
-      int var4 = (int)Math.round((var0 >>> 24) + ((var1 >>> 24) - (var0 >>> 24)) * var2);
-      int var5 = (int)Math.round((var0 >> 16 & 0xFF) + ((var1 >> 16 & 0xFF) - (var0 >> 16 & 0xFF)) * var2);
-      int var6 = (int)Math.round((var0 >> 8 & 0xFF) + ((var1 >> 8 & 0xFF) - (var0 >> 8 & 0xFF)) * var2);
-      int var7 = (int)Math.round((var0 & 0xFF) + ((var1 & 0xFF) - (var0 & 0xFF)) * var2);
-      return var4 << 24 | var5 << 16 | var6 << 8 | var7;
+   private static int method5321(int col1, int col2, double d) {
+      int n = (int)Math.round((col1 >>> 24) + ((col2 >>> 24) - (col1 >>> 24)) * d);
+      int n2 = (int)Math.round((col1 >> 16 & 0xFF) + ((col2 >> 16 & 0xFF) - (col1 >> 16 & 0xFF)) * d);
+      int n3 = (int)Math.round((col1 >> 8 & 0xFF) + ((col2 >> 8 & 0xFF) - (col1 >> 8 & 0xFF)) * d);
+      int n4 = (int)Math.round((col1 & 0xFF) + ((col2 & 0xFF) - (col1 & 0xFF)) * d);
+      return n << 24 | n2 << 16 | n3 << 8 | n4;
    }
 
-   public static void method5322(Scriptable var0, ScriptableObject var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6246(var0, var1);
-      var2.method6274(
+   public static void method5322(Scriptable scope, ScriptableObject scriptableObject) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6246(scope, scriptableObject);
+      entry2.method6274(
          "text",
          var0x -> {
             if (items2.size() >= 400) {
@@ -491,8 +491,8 @@ public final class ScriptGuiApi {
             } else {
                Scriptable var1x = ScriptValueUtils.method6262(var0x, 4);
                float var2x = var1x == null ? (float)ScriptValueUtils.method6256(var0x, 4, 1.0) : (float)ScriptValueUtils.method6264(var1x, "scale", 1.0);
-               int var3 = var1x == null ? -1 : (int)((long)ScriptValueUtils.method6264(var1x, "color", 4.294967295E9));
-               int var4 = var1x == null ? Integer.MIN_VALUE : (int)((long)ScriptValueUtils.method6264(var1x, "background", 2.1474836E9F));
+               int intValue = var1x == null ? -1 : (int)((long)ScriptValueUtils.method6264(var1x, "color", 4.294967295E9));
+               int n = var1x == null ? Integer.MIN_VALUE : (int)((long)ScriptValueUtils.method6264(var1x, "background", 2.1474836E9F));
                items2.add(
                   new ScriptGuiApi.Data(
                      ScriptValueUtils.method6254(var0x, 0, ""),
@@ -500,75 +500,75 @@ public final class ScriptGuiApi {
                      ScriptValueUtils.method6256(var0x, 2, 0.0),
                      ScriptValueUtils.method6256(var0x, 3, 0.0),
                      var2x,
-                     var3,
-                     var4
+                     intValue,
+                     n
                   )
                );
                return null;
             }
          }
       );
-      var2.method6274("circle", var0x -> {
+      entry2.method6274("circle", var0x -> {
          ScriptDrawApi.method2602();
          double var1x = ScriptValueUtils.method6256(var0x, 0, 0.0);
-         double var3 = ScriptValueUtils.method6256(var0x, 1, 0.0);
-         double var5 = ScriptValueUtils.method6256(var0x, 2, 0.0);
-         double var7 = ScriptValueUtils.method6256(var0x, 3, 1.0);
-         int var9 = ScriptValueUtils.method6258(var0x, 4, -1);
-         float var10 = (float)Math.max(0.5, Math.min(10.0, ScriptValueUtils.method6256(var0x, 5, 2.0)));
-         int var11 = Math.max(6, Math.min(128, ScriptValueUtils.method6257(var0x, 6, 48)));
-         Vec3 var12 = null;
+         double y = ScriptValueUtils.method6256(var0x, 1, 0.0);
+         double d = ScriptValueUtils.method6256(var0x, 2, 0.0);
+         double d2 = ScriptValueUtils.method6256(var0x, 3, 1.0);
+         int color = ScriptValueUtils.method6258(var0x, 4, -1);
+         float width = (float)Math.max(0.5, Math.min(10.0, ScriptValueUtils.method6256(var0x, 5, 2.0)));
+         int n = Math.max(6, Math.min(128, ScriptValueUtils.method6257(var0x, 6, 48)));
+         Vec3 vec = null;
 
-         for (int var13 = 0; var13 <= var11; var13++) {
-            double var14 = (Math.PI * 2) * var13 / var11;
-            Vec3 var16 = new Vec3(var1x + Math.cos(var14) * var7, var3, var5 + Math.sin(var14) * var7);
-            if (var12 != null) {
-               GlowUtil.method2245(var12, var16, var9, var10, false);
+         for (int i = 0; i <= n; i++) {
+            double d3 = (Math.PI * 2) * i / n;
+            Vec3 vec2 = new Vec3(var1x + Math.cos(d3) * d2, y, d + Math.sin(d3) * d2);
+            if (vec != null) {
+               GlowUtil.method2245(vec, vec2, color, width, false);
             }
 
-            var12 = var16;
+            vec = vec2;
          }
 
          return null;
       });
-      var2.method6274(
+      entry2.method6274(
          "path",
          var0x -> {
             ScriptDrawApi.method2602();
             var var1x = ScriptValueUtils.method6269(ScriptValueUtils.arg(var0x, 0));
             int var2x = ScriptValueUtils.method6258(var0x, 1, -1);
-            float var3 = (float)Math.max(0.5, Math.min(10.0, ScriptValueUtils.method6256(var0x, 2, 2.0)));
-            Vec3 var4 = null;
-            int var5 = 0;
+            float width = (float)Math.max(0.5, Math.min(10.0, ScriptValueUtils.method6256(var0x, 2, 2.0)));
+            Vec3 vec = null;
+            int n = 0;
 
-            for (Object var7 : var1x) {
-               if (++var5 > 2048) {
+            for (Object id : var1x) {
+               if (++n > 2048) {
                   break;
                }
 
-               var var8 = ScriptValueUtils.method6269(var7);
-               Vec3 var9;
-               if (var8.size() >= 3) {
-                  var9 = new Vec3(
-                     ScriptValueUtils.method6256(new Object[]{var8.get(0)}, 0, 0.0),
-                     ScriptValueUtils.method6256(new Object[]{var8.get(1)}, 0, 0.0),
-                     ScriptValueUtils.method6256(new Object[]{var8.get(2)}, 0, 0.0)
+               var list = ScriptValueUtils.method6269(id);
+               Vec3 vec2;
+               if (list.size() >= 3) {
+                  vec2 = new Vec3(
+                     ScriptValueUtils.method6256(new Object[]{list.get(0)}, 0, 0.0),
+                     ScriptValueUtils.method6256(new Object[]{list.get(1)}, 0, 0.0),
+                     ScriptValueUtils.method6256(new Object[]{list.get(2)}, 0, 0.0)
                   );
                } else {
-                  if (!(var7 instanceof Scriptable var10)) {
+                  if (!(id instanceof Scriptable scriptable)) {
                      continue;
                   }
 
-                  var9 = new Vec3(
-                     ScriptValueUtils.method6264(var10, "x", 0.0), ScriptValueUtils.method6264(var10, "y", 0.0), ScriptValueUtils.method6264(var10, "z", 0.0)
+                  vec2 = new Vec3(
+                     ScriptValueUtils.method6264(scriptable, "x", 0.0), ScriptValueUtils.method6264(scriptable, "y", 0.0), ScriptValueUtils.method6264(scriptable, "z", 0.0)
                   );
                }
 
-               if (var4 != null) {
-                  GlowUtil.method2245(var4, var9, var2x, var3, false);
+               if (vec != null) {
+                  GlowUtil.method2245(vec, vec2, var2x, width, false);
                }
 
-               var4 = var9;
+               vec = vec2;
             }
 
             return null;
@@ -576,11 +576,11 @@ public final class ScriptGuiApi {
       );
    }
 
-   public static Scriptable method5323(Script var0, Storage var1, Scriptable var2) {
+   public static Scriptable method5323(Script script, Storage storage, Scriptable scope) {
       method5309();
-      var0.method1413(() -> items.removeIf(var1x -> var1x.script == var0));
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var2);
-      var3.method6274(
+      script.method1413(() -> items.removeIf(var1x -> var1x.script == script));
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274(
          "spawn",
          var0x -> {
             Minecraft var1x = Minecraft.getInstance();
@@ -591,19 +591,19 @@ public final class ScriptGuiApi {
                Identifier var3x = Identifier.tryParse(var2x.contains(":") ? var2x : "minecraft:" + var2x);
                if (var3x != null && BuiltInRegistries.PARTICLE_TYPE.containsKey(var3x)) {
                   if (BuiltInRegistries.PARTICLE_TYPE.getValue(var3x) instanceof SimpleParticleType var4x) {
-                     int var15 = Math.max(1, Math.min(200, ScriptValueUtils.method6257(var0x, 7, 1)));
-                     double var6 = ScriptValueUtils.method6256(var0x, 8, 0.0);
+                     int n = Math.max(1, Math.min(200, ScriptValueUtils.method6257(var0x, 7, 1)));
+                     double d = ScriptValueUtils.method6256(var0x, 8, 0.0);
 
-                     for (int var8 = 0; var8 < var15; var8++) {
-                        double var9 = var6 == 0.0 ? 0.0 : (Math.random() - 0.5) * var6;
-                        double var11 = var6 == 0.0 ? 0.0 : (Math.random() - 0.5) * var6;
-                        double var13 = var6 == 0.0 ? 0.0 : (Math.random() - 0.5) * var6;
+                     for (int i = 0; i < n; i++) {
+                        double d2 = d == 0.0 ? 0.0 : (Math.random() - 0.5) * d;
+                        double d3 = d == 0.0 ? 0.0 : (Math.random() - 0.5) * d;
+                        double d4 = d == 0.0 ? 0.0 : (Math.random() - 0.5) * d;
                         var1x.level
                            .addParticle(
                               var4x,
-                              ScriptValueUtils.method6256(var0x, 1, 0.0) + var9,
-                              ScriptValueUtils.method6256(var0x, 2, 0.0) + var11,
-                              ScriptValueUtils.method6256(var0x, 3, 0.0) + var13,
+                              ScriptValueUtils.method6256(var0x, 1, 0.0) + d2,
+                              ScriptValueUtils.method6256(var0x, 2, 0.0) + d3,
+                              ScriptValueUtils.method6256(var0x, 3, 0.0) + d4,
                               ScriptValueUtils.method6256(var0x, 4, 0.0),
                               ScriptValueUtils.method6256(var0x, 5, 0.0),
                               ScriptValueUtils.method6256(var0x, 6, 0.0)
@@ -620,7 +620,7 @@ public final class ScriptGuiApi {
             }
          }
       );
-      var3.method6274("ids", var1x -> {
+      entry2.method6274("ids", var1x -> {
          ArrayList var2x = new ArrayList();
 
          for (Identifier var4x : BuiltInRegistries.PARTICLE_TYPE.keySet()) {
@@ -630,14 +630,14 @@ public final class ScriptGuiApi {
          }
 
          var2x.sort(null);
-         return ScriptValueUtils.method6267(var2, var2x);
+         return ScriptValueUtils.method6267(scope, var2x);
       });
-      BiFunction<Object[], Boolean, Object> var4 = (var1x, var2x) -> {
+      BiFunction<Object[], Boolean, Object> biFunction = (var1x, var2x) -> {
          if (items.size() >= 2500) {
             return false;
          } else {
             ScriptGuiApi.Entry var3x = new ScriptGuiApi.Entry();
-            var3x.script = var0;
+            var3x.script = script;
             if (var2x) {
                var3x.text = ScriptValueUtils.method6254(var1x, 0, "");
             } else {
@@ -662,66 +662,66 @@ public final class ScriptGuiApi {
             return true;
          }
       };
-      var3.method6274("image", var1x -> var4.apply(var1x, false));
-      var3.method6274("text", var1x -> var4.apply(var1x, true));
-      var3.method6274("burst", var1x -> {
+      entry2.method6274("image", var1x -> biFunction.apply(var1x, false));
+      entry2.method6274("text", var1x -> biFunction.apply(var1x, true));
+      entry2.method6274("burst", var1x -> {
          RemoteUtil.Entry var2x = ScriptValueUtils.arg(var1x, 0) instanceof String ? null : RemoteUtil.method1827(ScriptValueUtils.arg(var1x, 0));
          String var3x = var2x == null ? ScriptValueUtils.method6254(var1x, 0, "") : null;
          int var4x = Math.max(1, Math.min(200, ScriptValueUtils.method6257(var1x, 4, 12)));
-         double var5 = ScriptValueUtils.method6256(var1x, 5, 3.0);
-         Scriptable var7 = ScriptValueUtils.method6262(var1x, 6);
-         List<Entry> var8 = new ArrayList<>(var4x);
+         double d = ScriptValueUtils.method6256(var1x, 5, 3.0);
+         Scriptable scriptable = ScriptValueUtils.method6262(var1x, 6);
+         List<Entry> entries = new ArrayList<>(var4x);
 
-         for (int var9 = 0; var9 < var4x && items.size() + var8.size() < 2500; var9++) {
-            ScriptGuiApi.Entry var10 = new ScriptGuiApi.Entry();
-            var10.script = var0;
-            var10.entry = var2x;
-            var10.text = var3x;
-            var10.doubleValue = ScriptValueUtils.method6256(var1x, 1, 0.0);
-            var10.doubleValue2 = ScriptValueUtils.method6256(var1x, 2, 0.0);
-            var10.doubleValue3 = ScriptValueUtils.method6256(var1x, 3, 0.0);
-            double var11 = Math.random() * Math.PI * 2.0;
-            double var13 = Math.acos(2.0 * Math.random() - 1.0);
-            double var15 = var5 * (0.5 + Math.random() * 0.5) / 20.0;
-            var10.doubleValue4 = Math.sin(var13) * Math.cos(var11) * var15;
-            var10.doubleValue5 = Math.abs(Math.cos(var13)) * var15 + var15 * 0.5;
-            var10.doubleValue6 = Math.sin(var13) * Math.sin(var11) * var15;
-            var10.doubleValue7 = var7 == null ? 0.02 : ScriptValueUtils.method6264(var7, "gravity", 8.0) / 400.0;
-            var10.doubleValue8 = var7 == null ? 0.96 : ScriptValueUtils.method6264(var7, "drag", 0.96);
-            var10.size = var7 == null ? 0.35F : (float)ScriptValueUtils.method6264(var7, "size", 0.35);
-            var10.floatValue = (float)((Math.random() - 0.5) * (var7 == null ? 20.0 : ScriptValueUtils.method6264(var7, "spin", 20.0)));
-            var10.intValue = (int)(20.0 * (var7 == null ? 1.5 : ScriptValueUtils.method6264(var7, "life", 1.5)) * (0.7 + Math.random() * 0.6));
-            var10.flag = true;
-            var10.color = var7 == null ? -1 : (int)((long)ScriptValueUtils.method6264(var7, "color", 4.294967295E9));
-            var8.add(var10);
+         for (int i = 0; i < var4x && items.size() + entries.size() < 2500; i++) {
+            ScriptGuiApi.Entry entry = new ScriptGuiApi.Entry();
+            entry.script = script;
+            entry.entry = var2x;
+            entry.text = var3x;
+            entry.doubleValue = ScriptValueUtils.method6256(var1x, 1, 0.0);
+            entry.doubleValue2 = ScriptValueUtils.method6256(var1x, 2, 0.0);
+            entry.doubleValue3 = ScriptValueUtils.method6256(var1x, 3, 0.0);
+            double d2 = Math.random() * Math.PI * 2.0;
+            double d3 = Math.acos(2.0 * Math.random() - 1.0);
+            double d4 = d * (0.5 + Math.random() * 0.5) / 20.0;
+            entry.doubleValue4 = Math.sin(d3) * Math.cos(d2) * d4;
+            entry.doubleValue5 = Math.abs(Math.cos(d3)) * d4 + d4 * 0.5;
+            entry.doubleValue6 = Math.sin(d3) * Math.sin(d2) * d4;
+            entry.doubleValue7 = scriptable == null ? 0.02 : ScriptValueUtils.method6264(scriptable, "gravity", 8.0) / 400.0;
+            entry.doubleValue8 = scriptable == null ? 0.96 : ScriptValueUtils.method6264(scriptable, "drag", 0.96);
+            entry.size = scriptable == null ? 0.35F : (float)ScriptValueUtils.method6264(scriptable, "size", 0.35);
+            entry.floatValue = (float)((Math.random() - 0.5) * (scriptable == null ? 20.0 : ScriptValueUtils.method6264(scriptable, "spin", 20.0)));
+            entry.intValue = (int)(20.0 * (scriptable == null ? 1.5 : ScriptValueUtils.method6264(scriptable, "life", 1.5)) * (0.7 + Math.random() * 0.6));
+            entry.flag = true;
+            entry.color = scriptable == null ? -1 : (int)((long)ScriptValueUtils.method6264(scriptable, "color", 4.294967295E9));
+            entries.add(entry);
          }
 
-         items.addAll(var8);
+         items.addAll(entries);
          return null;
       });
-      var3.method6274("clear", var1x -> {
-         items.removeIf(var1xx -> var1xx.script == var0);
+      entry2.method6274("clear", var1x -> {
+         items.removeIf(var1xx -> var1xx.script == script);
          return null;
       });
-      var3.method6274("count", var1x -> (double)items.stream().filter(var1xx -> var1xx.script == var0).count());
-      return var3.getScriptableObject();
+      entry2.method6274("count", var1x -> (double)items.stream().filter(var1xx -> var1xx.script == script).count());
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method5324(Script var0, Scriptable var1) {
+   public static Scriptable method5324(Script workspace, Scriptable scope) {
       method5309();
-      var0.method1413(() -> items3.removeIf(var1x -> var1x.script == var0));
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      var2.method6274(
+      workspace.method1413(() -> items3.removeIf(var1x -> var1x.script == workspace));
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274(
          "add",
          var1x -> {
             String var2x = ScriptValueUtils.method6254(var1x, 0, "метка");
-            items3.removeIf(var2xx -> var2xx.script == var0 && var2xx.text.equals(var2x));
-            if (items3.stream().filter(var1xx -> var1xx.script == var0).count() >= 64L) {
+            items3.removeIf(var2xx -> var2xx.script == workspace && var2xx.text.equals(var2x));
+            if (items3.stream().filter(var1xx -> var1xx.script == workspace).count() >= 64L) {
                throw ScriptValueUtils.method6251("больше 64 меток");
             } else {
                items3.add(
                   new ScriptGuiApi.Data2(
-                     var0,
+                     workspace,
                      var2x,
                      ScriptValueUtils.method6256(var1x, 1, 0.0),
                      ScriptValueUtils.method6256(var1x, 2, 0.0),
@@ -734,114 +734,114 @@ public final class ScriptGuiApi {
             }
          }
       );
-      var2.method6274("remove", var1x -> {
+      entry2.method6274("remove", var1x -> {
          String var2x = ScriptValueUtils.method6254(var1x, 0, "");
-         items3.removeIf(var2xx -> var2xx.script == var0 && var2xx.text.equals(var2x));
+         items3.removeIf(var2xx -> var2xx.script == workspace && var2xx.text.equals(var2x));
          return null;
       });
-      var2.method6274("clear", var1x -> {
-         items3.removeIf(var1xx -> var1xx.script == var0);
+      entry2.method6274("clear", var1x -> {
+         items3.removeIf(var1xx -> var1xx.script == workspace);
          return null;
       });
-      var2.method6274(
+      entry2.method6274(
          "list",
          var2x -> {
-            ArrayList var3 = new ArrayList();
+            ArrayList arrayList = new ArrayList();
 
-            for (ScriptGuiApi.Data2 var5 : items3) {
-               if (var5.script == var0) {
-                  var3.add(
-                     ScriptValueUtils.method6247(var1)
-                        .method6277("name", var5.text)
-                        .method6277("x", var5.doubleValue)
-                        .method6277("y", var5.doubleValue2)
-                        .method6277("z", var5.doubleValue3)
+            for (ScriptGuiApi.Data2 data2 : items3) {
+               if (data2.script == workspace) {
+                  arrayList.add(
+                     ScriptValueUtils.method6247(scope)
+                        .method6277("name", data2.text)
+                        .method6277("x", data2.doubleValue)
+                        .method6277("y", data2.doubleValue2)
+                        .method6277("z", data2.doubleValue3)
                         .getScriptableObject()
                   );
                }
             }
 
-            return ScriptValueUtils.method6267(var1, var3);
+            return ScriptValueUtils.method6267(scope, arrayList);
          }
       );
-      return var2.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method5325(Script var0, Storage var1, Scriptable var2) {
+   public static Scriptable method5325(Script script, Storage storage, Scriptable scope) {
       method5309();
-      var0.method1413(() -> {
-         items4.values().removeIf(var1xx -> var1xx.script == var0);
+      script.method1413(() -> {
+         items4.values().removeIf(var1xx -> var1xx.script == script);
          Minecraft var1x = Minecraft.getInstance();
-         if (var1x.gui.screen() instanceof ScriptGuiApi.Entry2 var2x && var2x.script == var0) {
+         if (var1x.gui.screen() instanceof ScriptGuiApi.Entry2 var2x && var2x.script == script) {
             var1x.execute(() -> var1x.gui.setScreen(null));
          }
       });
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var2);
-      var3.method6274("toast", var1x -> {
-         String var2x = ScriptValueUtils.method6254(var1x, 0, var0.method1403());
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("toast", var1x -> {
+         String var2x = ScriptValueUtils.method6254(var1x, 0, script.method1403());
          String var3x = ScriptValueUtils.method6254(var1x, 1, "");
          long var4x = (long)Math.max(500.0, Math.min(15000.0, ScriptValueUtils.method6256(var1x, 2, 3000.0)));
-         MutableComponent var6 = Component.literal(var3x.isEmpty() ? var2x : var2x + " — " + var3x);
-         HudHolder.method6969().method6973("i", var6, var4x);
+         MutableComponent literal = Component.literal(var3x.isEmpty() ? var2x : var2x + " — " + var3x);
+         HudHolder.method6969().method6973("i", literal, var4x);
          return null;
       });
-      BiFunction<Object[], Boolean, Object> var4 = (var3x, var4x) -> {
-         String var5 = ScriptValueUtils.method6254(var3x, 0, "window");
-         Scriptable var6 = ScriptValueUtils.method6262(var3x, 1);
-         String var7 = var0.getId() + ":" + var5;
-         ScriptGuiApi.Entry3 var8 = items4.getOrDefault(var7, new ScriptGuiApi.Entry3());
-         var8.script = var0;
-         var8.storage = var1;
-         var8.scope = var2;
-         var8.name = var5;
-         var8.flag = var4x && (var6 == null || ScriptValueUtils.method6265(var6, "frame", true));
-         var8.title = var6 == null ? var5 : ScriptValueUtils.method6266(var6, "title", var5);
-         var8.floatValue3 = var6 == null ? 120.0F : (float)Math.max(20.0, Math.min(1000.0, ScriptValueUtils.method6264(var6, "width", 120.0)));
-         var8.floatValue4 = var6 == null ? 60.0F : (float)Math.max(10.0, Math.min(800.0, ScriptValueUtils.method6264(var6, "height", 60.0)));
-         JsonElement var9 = var0.method1415().method1006("__window." + var5);
-         if (var9 != null && var9.isJsonObject()) {
-            var8.floatValue = var9.getAsJsonObject().get("x").getAsFloat();
-            var8.floatValue2 = var9.getAsJsonObject().get("y").getAsFloat();
-         } else if (!items4.containsKey(var7)) {
-            var8.floatValue = var6 == null ? 10.0F : (float)ScriptValueUtils.method6264(var6, "x", 10.0);
-            var8.floatValue2 = var6 == null ? 40.0F : (float)ScriptValueUtils.method6264(var6, "y", 40.0);
+      BiFunction<Object[], Boolean, Object> biFunction = (var3x, var4x) -> {
+         String name = ScriptValueUtils.method6254(var3x, 0, "window");
+         Scriptable scriptable = ScriptValueUtils.method6262(var3x, 1);
+         String key = script.getId() + ":" + name;
+         ScriptGuiApi.Entry3 entry3 = items4.getOrDefault(key, new ScriptGuiApi.Entry3());
+         entry3.script = script;
+         entry3.storage = storage;
+         entry3.scope = scope;
+         entry3.name = name;
+         entry3.flag = var4x && (scriptable == null || ScriptValueUtils.method6265(scriptable, "frame", true));
+         entry3.title = scriptable == null ? name : ScriptValueUtils.method6266(scriptable, "title", name);
+         entry3.floatValue3 = scriptable == null ? 120.0F : (float)Math.max(20.0, Math.min(1000.0, ScriptValueUtils.method6264(scriptable, "width", 120.0)));
+         entry3.floatValue4 = scriptable == null ? 60.0F : (float)Math.max(10.0, Math.min(800.0, ScriptValueUtils.method6264(scriptable, "height", 60.0)));
+         JsonElement jsonElement = script.method1415().method1006("__window." + name);
+         if (jsonElement != null && jsonElement.isJsonObject()) {
+            entry3.floatValue = jsonElement.getAsJsonObject().get("x").getAsFloat();
+            entry3.floatValue2 = jsonElement.getAsJsonObject().get("y").getAsFloat();
+         } else if (!items4.containsKey(key)) {
+            entry3.floatValue = scriptable == null ? 10.0F : (float)ScriptValueUtils.method6264(scriptable, "x", 10.0);
+            entry3.floatValue2 = scriptable == null ? 40.0F : (float)ScriptValueUtils.method6264(scriptable, "y", 40.0);
          }
 
-         var8.function = ScriptValueUtils.method6261(var3x, 2);
-         var8.function2 = ScriptValueUtils.method6261(var3x, 3);
-         items4.put(var7, var8);
-         return ScriptValueUtils.method6247(var2).method6274("show", var1xx -> {
-            var8.visible = true;
+         entry3.function = ScriptValueUtils.method6261(var3x, 2);
+         entry3.function2 = ScriptValueUtils.method6261(var3x, 3);
+         items4.put(key, entry3);
+         return ScriptValueUtils.method6247(scope).method6274("show", var1xx -> {
+            entry3.visible = true;
             return null;
          }).method6274("hide", var1xx -> {
-            var8.visible = false;
+            entry3.visible = false;
             return null;
-         }).method6274("visible", var1xx -> var8.visible).method6274("toggle", var1xx -> {
-            var8.visible = !var8.visible;
-            return var8.visible;
+         }).method6274("visible", var1xx -> entry3.visible).method6274("toggle", var1xx -> {
+            entry3.visible = !entry3.visible;
+            return entry3.visible;
          }).method6274("resize", var1xx -> {
-            var8.floatValue3 = (float)Math.max(20.0, ScriptValueUtils.method6256(var1xx, 0, var8.floatValue3));
-            var8.floatValue4 = (float)Math.max(10.0, ScriptValueUtils.method6256(var1xx, 1, var8.floatValue4));
+            entry3.floatValue3 = (float)Math.max(20.0, ScriptValueUtils.method6256(var1xx, 0, entry3.floatValue3));
+            entry3.floatValue4 = (float)Math.max(10.0, ScriptValueUtils.method6256(var1xx, 1, entry3.floatValue4));
             return null;
          }).method6274("move", var1xx -> {
-            var8.floatValue = (float)ScriptValueUtils.method6256(var1xx, 0, var8.floatValue);
-            var8.floatValue2 = (float)ScriptValueUtils.method6256(var1xx, 1, var8.floatValue2);
-            method5319(var8);
+            entry3.floatValue = (float)ScriptValueUtils.method6256(var1xx, 0, entry3.floatValue);
+            entry3.floatValue2 = (float)ScriptValueUtils.method6256(var1xx, 1, entry3.floatValue2);
+            method5319(entry3);
             return null;
          }).method6274("setTitle", var1xx -> {
-            var8.title = ScriptValueUtils.method6254(var1xx, 0, var8.title);
+            entry3.title = ScriptValueUtils.method6254(var1xx, 0, entry3.title);
             return null;
-         }).method6274("x", var1xx -> (double)var8.floatValue).method6274("y", var1xx -> (double)var8.floatValue2).method6274("close", var1xx -> {
-            items4.remove(var7);
+         }).method6274("x", var1xx -> (double)entry3.floatValue).method6274("y", var1xx -> (double)entry3.floatValue2).method6274("close", var1xx -> {
+            items4.remove(key);
             return null;
          }).getScriptableObject();
       };
-      var3.method6274("window", var1x -> var4.apply(var1x, true));
-      var3.method6274("hud", var1x -> var4.apply(var1x, false));
-      var3.method6274(
+      entry2.method6274("window", var1x -> biFunction.apply(var1x, true));
+      entry2.method6274("hud", var1x -> biFunction.apply(var1x, false));
+      entry2.method6274(
          "screen",
          var2x -> {
-            Long var3x = items5.get(var0);
+            Long var3x = items5.get(script);
             if (var3x != null && System.currentTimeMillis() - var3x < 3000L) {
                throw ScriptValueUtils.method6251("игрок только что закрыл экран — открыть снова можно через 3 секунды");
             } else {
@@ -849,10 +849,10 @@ public final class ScriptGuiApi {
                if (var4x == null) {
                   throw ScriptValueUtils.method6251("ui.screen({ title, render(w, h, mx, my), click(x, y, button), key(code), char(c), close() })");
                } else {
-                  ScriptGuiApi.Entry2 var5 = new ScriptGuiApi.Entry2(
-                     var0,
-                     var1,
-                     ScriptValueUtils.method6266(var4x, "title", var0.method1403()),
+                  ScriptGuiApi.Entry2 screen = new ScriptGuiApi.Entry2(
+                     script,
+                     storage,
+                     ScriptValueUtils.method6266(var4x, "title", script.method1403()),
                      method5326(var4x, "render"),
                      method5326(var4x, "click"),
                      method5326(var4x, "release"),
@@ -863,52 +863,52 @@ public final class ScriptGuiApi {
                      ScriptValueUtils.method6265(var4x, "pause", false),
                      ScriptValueUtils.method6265(var4x, "blur", true)
                   );
-                  Minecraft.getInstance().execute(() -> Minecraft.getInstance().gui.setScreen(var5));
+                  Minecraft.getInstance().execute(() -> Minecraft.getInstance().gui.setScreen(screen));
                   return null;
                }
             }
          }
       );
-      var3.method6274("close", var1x -> {
+      entry2.method6274("close", var1x -> {
          Minecraft var2x = Minecraft.getInstance();
-         if (var2x.gui.screen() instanceof ScriptGuiApi.Entry2 var3x && var3x.script == var0) {
+         if (var2x.gui.screen() instanceof ScriptGuiApi.Entry2 var3x && var3x.script == script) {
             var2x.execute(() -> var2x.gui.setScreen(null));
          }
 
          return null;
       });
-      var3.method6274("isOpen", var1x -> Minecraft.getInstance().gui.screen() instanceof ScriptGuiApi.Entry2 var2x && var2x.script == var0);
-      var3.method6274(
+      entry2.method6274("isOpen", var1x -> Minecraft.getInstance().gui.screen() instanceof ScriptGuiApi.Entry2 var2x && var2x.script == script);
+      entry2.method6274(
          "button",
          var0x -> {
             CustomDrawContext var1x = ScriptDrawApi.method2601();
             float var2x = (float)ScriptValueUtils.method6256(var0x, 1, 0.0);
             float var3x = (float)ScriptValueUtils.method6256(var0x, 2, 0.0);
             float var4x = (float)ScriptValueUtils.method6256(var0x, 3, 60.0);
-            float var5 = (float)ScriptValueUtils.method6256(var0x, 4, 16.0);
-            float var6 = (float)ScriptValueUtils.method6256(var0x, 5, -1.0);
-            float var7 = (float)ScriptValueUtils.method6256(var0x, 6, -1.0);
-            boolean var8 = var6 >= var2x && var6 <= var2x + var4x && var7 >= var3x && var7 <= var3x + var5;
-            int var9 = ScriptDrawApi.method2603();
+            float height = (float)ScriptValueUtils.method6256(var0x, 4, 16.0);
+            float f = (float)ScriptValueUtils.method6256(var0x, 5, -1.0);
+            float f2 = (float)ScriptValueUtils.method6256(var0x, 6, -1.0);
+            boolean flag = f >= var2x && f <= var2x + var4x && f2 >= var3x && f2 <= var3x + height;
+            int n = ScriptDrawApi.method2603();
             var1x.drawRoundedRect(
                var2x,
                var3x,
                var4x,
-               var5,
-               ProxyDotRadiusData.method8069(Math.min(var5 / 2.0F, 5.0F)),
-               new ZenithColor(var8 ? var9 & 16777215 | 1711276032 : 1090519039)
+               height,
+               ProxyDotRadiusData.method8069(Math.min(height / 2.0F, 5.0F)),
+               new ZenithColor(flag ? n & 16777215 | 1711276032 : 1090519039)
             );
-            Font var10 = Fonts.NEW_MEDIUM.getFont(Math.max(4.0F, Math.min(9.0F, var5 * 0.42F)));
-            String var11 = ScriptValueUtils.method6254(var0x, 0, "");
-            var1x.drawText(var10, var11, var2x + (var4x - var10.width(var11)) / 2.0F, var3x + (var5 - var10.height()) / 2.0F, new ZenithColor(-1));
-            return var8;
+            Font font = Fonts.NEW_MEDIUM.getFont(Math.max(4.0F, Math.min(9.0F, height * 0.42F)));
+            String text = ScriptValueUtils.method6254(var0x, 0, "");
+            var1x.drawText(font, text, var2x + (var4x - font.width(text)) / 2.0F, var3x + (height - font.height()) / 2.0F, new ZenithColor(-1));
+            return flag;
          }
       );
-      return var3.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   private static Function method5326(Scriptable var0, String var1) {
-      return ScriptValueUtils.method6263(var0, var1) instanceof Function var3 ? var3 : null;
+   private static Function method5326(Scriptable scriptable, String str) {
+      return ScriptValueUtils.method6263(scriptable, str) instanceof Function function ? function : null;
    }
 
    public static final class Data {
@@ -965,14 +965,14 @@ public final class ScriptGuiApi {
          return "Data[" + "text=" + this.text + ", " + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "floatValue=" + this.floatValue + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data(String var1, double var2, double var4, double var6, float var8, int var9, int var10) {
-         this.text = var1;
-         this.doubleValue = var2;
-         this.doubleValue2 = var4;
-         this.doubleValue3 = var6;
-         this.floatValue = var8;
-         this.intValue = var9;
-         this.intValue2 = var10;
+      public Data(String text, double doubleValue, double d, double d2, float floatValue, int intValue, int n) {
+         this.text = text;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.floatValue = floatValue;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
 
       public double getDoubleValue() {
@@ -1054,14 +1054,14 @@ public final class ScriptGuiApi {
          return "Data2[" + "script=" + this.script + ", " + "text=" + this.text + ", " + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "intValue=" + this.intValue + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data2(Script var1, String var2, double var3, double var5, double var7, int var9, boolean var10) {
-         this.script = var1;
-         this.text = var2;
-         this.doubleValue = var3;
-         this.doubleValue2 = var5;
-         this.doubleValue3 = var7;
-         this.intValue = var9;
-         this.flag = var10;
+      public Data2(Script script, String text, double doubleValue, double d, double d2, int intValue, boolean flag) {
+         this.script = script;
+         this.text = text;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.intValue = intValue;
+         this.flag = flag;
       }
 
       public Script getScript() {
@@ -1128,31 +1128,31 @@ public final class ScriptGuiApi {
       private final boolean flag2;
 
       public Entry2(
-         Script var1,
-         Storage var2,
-         String var3,
-         Function var4,
-         Function var5,
-         Function var6,
-         Function var7,
-         Function var8,
-         Function var9,
-         Function var10,
-         boolean var11,
-         boolean var12
+         Script script,
+         Storage storage,
+         String text,
+         Function function,
+         Function function2,
+         Function function3,
+         Function function4,
+         Function function5,
+         Function function6,
+         Function function7,
+         boolean flag,
+         boolean flag2
       ) {
-         super(Component.literal(var3));
-         this.script = var1;
-         this.storage = var2;
-         this.function = var4;
-         this.function2 = var5;
-         this.function3 = var6;
-         this.function4 = var7;
-         this.function5 = var8;
-         this.function6 = var9;
-         this.function7 = var10;
-         this.flag = var11;
-         this.flag2 = var12;
+         super(Component.literal(text));
+         this.script = script;
+         this.storage = storage;
+         this.function = function;
+         this.function2 = function2;
+         this.function3 = function3;
+         this.function4 = function4;
+         this.function5 = function5;
+         this.function6 = function6;
+         this.function7 = function7;
+         this.flag = flag;
+         this.flag2 = flag2;
       }
 
       @Override
@@ -1165,8 +1165,8 @@ public final class ScriptGuiApi {
       @Override
       public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
          if (this.function != null && this.script.isRunning()) {
-            CustomDrawContext var5 = CustomDrawContext.of(context);
-            ScriptDrawApi.method2597(var5);
+            CustomDrawContext customDrawContext = CustomDrawContext.of(context);
+            ScriptDrawApi.method2597(customDrawContext);
             ScriptImGui.method635(0.0F, 0.0F);
 
             try {

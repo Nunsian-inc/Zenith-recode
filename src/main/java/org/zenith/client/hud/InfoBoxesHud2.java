@@ -16,56 +16,56 @@ public class InfoBoxesHud2 extends Interface {
    private final MultiSelectSetting.Entry entry = new MultiSelectSetting.Entry(this.infoBoxes, "hud.infoBoxes.coordinates", true);
    private final MultiSelectSetting.Entry entry2 = new MultiSelectSetting.Entry(this.infoBoxes, "BPS", true);
 
-   public InfoBoxesHud2(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public InfoBoxesHud2(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
+   public void method8(CustomDrawContext customDrawContext) {
       if (mc.player == null) {
          this.width = 0.0F;
          this.height = 0.0F;
       } else {
-         ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var2 == null) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle == null) {
             this.width = 0.0F;
             this.height = 0.0F;
          } else {
-            double var3 = Math.hypot(mc.player.getX() - mc.player.xo, mc.player.getZ() - mc.player.zo) * 20.0;
-            int var5 = (int)mc.player.getX();
-            int var6 = (int)mc.player.getY();
-            int var7 = (int)mc.player.getZ();
+            double d = Math.hypot(mc.player.getX() - mc.player.xo, mc.player.getZ() - mc.player.zo) * 20.0;
+            int x = (int)mc.player.getX();
+            int y = (int)mc.player.getY();
+            int z = (int)mc.player.getZ();
             if (ScoreboardParser.isActive()) {
-               var5 = ScoreboardParser.method7069(var5);
-               var7 = ScoreboardParser.method7070(var7);
+               x = ScoreboardParser.method7069(x);
+               z = ScoreboardParser.method7070(z);
             }
 
-            String var8 = String.format(Locale.US, "%.2f", var3);
-            boolean var9 = !this.entry.isEnabled() && !this.entry2.isEnabled();
-            ArrayList var10 = new ArrayList(2);
-            if (var9 || this.entry.isEnabled()) {
-               var10.add(
+            String str = String.format(Locale.US, "%.2f", d);
+            boolean flag = !this.entry.isEnabled() && !this.entry2.isEnabled();
+            ArrayList arrayList = new ArrayList(2);
+            if (flag || this.entry.isEnabled()) {
+               arrayList.add(
                   new HudListLayout.Data(
                      "Y",
                      List.of(
-                        HudListLayout.Data.method7660(String.valueOf(var5)),
+                        HudListLayout.Data.method7660(String.valueOf(x)),
                         HudListLayout.Data.method7661("x "),
-                        HudListLayout.Data.method7660(String.valueOf(var6)),
+                        HudListLayout.Data.method7660(String.valueOf(y)),
                         HudListLayout.Data.method7661("y "),
-                        HudListLayout.Data.method7660(String.valueOf(var7)),
+                        HudListLayout.Data.method7660(String.valueOf(z)),
                         HudListLayout.Data.method7661("z")
                      )
                   )
                );
             }
 
-            if (var9 || this.entry2.isEnabled()) {
-               var10.add(HudListLayout.Data.method7662("4", var8, " bps"));
+            if (flag || this.entry2.isEnabled()) {
+               arrayList.add(HudListLayout.Data.method7662("4", str, " bps"));
             }
 
-            this.width = HudListLayout.method7658(var10);
-            this.height = var10.isEmpty() ? 0.0F : 17.0F;
-            HudListLayout.method7659(var1, this.floatValue, this.floatValue2, var10);
+            this.width = HudListLayout.method7658(arrayList);
+            this.height = arrayList.isEmpty() ? 0.0F : 17.0F;
+            HudListLayout.method7659(customDrawContext, this.floatValue, this.floatValue2, arrayList);
          }
       }
    }

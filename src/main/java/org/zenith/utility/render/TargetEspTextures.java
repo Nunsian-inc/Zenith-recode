@@ -49,383 +49,383 @@ public final class TargetEspTextures {
    private float[] floatValues = new float[64];
    private float floatValue;
 
-   private static Identifier method5053(String var0) {
-      Identifier var1 = Zenith.method1501("visuals/targetesp/" + var0 + ".png");
-      TextureFilterUtils.smooth(var1);
-      return var1;
+   private static Identifier method5053(String str) {
+      Identifier location = Zenith.method1501("visuals/targetesp/" + str + ".png");
+      TextureFilterUtils.smooth(location);
+      return location;
    }
 
    public void method5054(
-      int var1,
-      Matrix4f var2,
-      double var3,
-      double var5,
-      double var7,
-      float var9,
-      float var10,
-      float var11,
-      int[] var12,
-      float var13,
-      float var14,
-      float var15,
-      float var16,
-      float var17,
-      boolean var18,
-      float var19
+      int n,
+      Matrix4f pose,
+      double d,
+      double d2,
+      double d3,
+      float f,
+      float f2,
+      float floatValue,
+      int[] ints,
+      float alpha,
+      float f3,
+      float f4,
+      float floatValue2,
+      float ang,
+      boolean flag,
+      float xScale
    ) {
-      if (!(var13 <= 0.01F)) {
+      if (!(alpha <= 0.01F)) {
          this.entry.count = 0;
          this.entry2.count = 0;
          this.entry3.count = 0;
          this.entry4.count = 0;
-         this.floatValue = var16;
-         float var20 = easeOut(var13);
-         float var21 = var15 * (0.7F + 0.3F * var20);
-         float var22 = (var9 + 0.1F) * var21;
-         switch (var1) {
+         this.floatValue = floatValue2;
+         float easeOut2 = easeOut(alpha);
+         float f5 = f4 * (0.7F + 0.3F * easeOut2);
+         float f6 = (f + 0.1F) * f5;
+         switch (n) {
             case 0:
-               this.method5055(var3, var5, var7, var22, var10, var11, var12, var13, var14, var21);
+               this.method5055(d, d2, d3, f6, f2, floatValue, ints, alpha, f3, f5);
                break;
             case 1:
-               this.method5058(var3, var5, var7, var22, var10, var11, var12, var13, var14, var21);
+               this.method5058(d, d2, d3, f6, f2, floatValue, ints, alpha, f3, f5);
                break;
             case 2:
-               this.method5059(var3, var5, var7, var22, var10, var11, var12, var13, var14, var21);
+               this.method5059(d, d2, d3, f6, f2, floatValue, ints, alpha, f3, f5);
                break;
             case 3:
-               this.method5060(var3, var5, var7, var22, var10, var11, var12, var13, var14, var21);
+               this.method5060(d, d2, d3, f6, f2, floatValue, ints, alpha, f3, f5);
                break;
             default:
-               this.method5061(var3, var5, var7, var22, var10, var11, var12, var13, var14, var21);
+               this.method5061(d, d2, d3, f6, f2, floatValue, ints, alpha, f3, f5);
          }
 
-         boolean var23 = var19 * 0.3F * var15 > 40.0F;
-         this.method5067(var2, var16, var17, var18, var23);
+         boolean flag2 = xScale * 0.3F * f4 > 40.0F;
+         this.method5067(pose, floatValue2, ang, flag, flag2);
       }
    }
 
-   private void method5055(double var1, double var3, double var5, float var7, float var8, float var9, int[] var10, float var11, float var12, float var13) {
-      float var14 = var7 * 1.05F;
-      float var15 = 1.0F + 0.3F * var12;
+   private void method5055(double d, double d2, double d3, float f, float f2, float floatValue, int[] ints, float alpha, float f3, float f4) {
+      float f5 = f * 1.05F;
+      float f6 = 1.0F + 0.3F * f3;
 
-      for (int var16 = 0; var16 < 3; var16++) {
-         int var17 = var10[var16 % var10.length];
-         float var18 = method5056(var9, var16);
+      for (int i = 0; i < 3; i++) {
+         int color = ints[i % ints.length];
+         float f7 = method5056(floatValue, i);
 
-         for (int var19 = 12; var19 >= 1; var19--) {
-            float var20 = var18 - var19 * 0.05F;
-            float var21 = 1.0F - var19 / 13.0F;
+         for (int j = 12; j >= 1; j--) {
+            float f8 = f7 - j * 0.05F;
+            float f9 = 1.0F - j / 13.0F;
             this.entry
                .method5077(
-                  var1 + Mth.cos(var20) * var14,
-                  method5057(var3, var8, var9 - var19 * 0.04F, var16),
-                  var5 + Mth.sin(var20) * var14,
-                  (0.05F + 0.12F * var21) * var13,
+                  d + Mth.cos(f8) * f5,
+                  method5057(d2, f2, floatValue - j * 0.04F, i),
+                  d3 + Mth.sin(f8) * f5,
+                  (0.05F + 0.12F * f9) * f4,
                   0.0F,
                   0.0F,
-                  method5075(var17, var11 * var21 * var21 * 0.3F)
+                  method5075(color, alpha * f9 * f9 * 0.3F)
                );
          }
 
-         for (int var35 = 0; var35 < 4; var35++) {
-            float var37 = method5072(var9 * 0.55F + var35 / 4.0F + var16 * 0.13F);
-            float var39 = var9 - var37 / 0.55F;
-            float var22 = method5056(var39, var16);
-            float var23 = 1.0F + var37 * 0.25F;
-            double var24 = var1 + Mth.cos(var22) * var14 * var23;
-            double var26 = method5057(var3, var8, var39, var16) + var37 * 0.5F * var13;
-            double var28 = var5 + Mth.sin(var22) * var14 * var23;
-            float var30 = var37 < 0.15F ? method5074(var37 / 0.15F) : 1.0F - 0.35F * (var37 - 0.15F) / 0.85F;
-            float var31 = 1.0F - var37;
+         for (int j = 0; j < 4; j++) {
+            float f8 = method5072(floatValue * 0.55F + j / 4.0F + i * 0.13F);
+            float floatValue2 = floatValue - f8 / 0.55F;
+            float f9 = method5056(floatValue2, i);
+            float f10 = 1.0F + f8 * 0.25F;
+            double d4 = d + Mth.cos(f9) * f5 * f10;
+            double d5 = method5057(d2, f2, floatValue2, i) + f8 * 0.5F * f4;
+            double d6 = d3 + Mth.sin(f9) * f5 * f10;
+            float f11 = f8 < 0.15F ? method5074(f8 / 0.15F) : 1.0F - 0.35F * (f8 - 0.15F) / 0.85F;
+            float f12 = 1.0F - f8;
             this.method5065(
-               var24,
-               var26,
-               var28,
-               0.11F * var13 * var30,
-               Mth.sin(var37 * 7.0F + var35 * 2.0F) * 0.3F,
-               this.method5066(var22),
-               var17,
-               var11 * var31 * var31 * 0.95F
+               d4,
+               d5,
+               d6,
+               0.11F * f4 * f11,
+               Mth.sin(f8 * 7.0F + j * 2.0F) * 0.3F,
+               this.method5066(f9),
+               color,
+               alpha * f12 * f12 * 0.95F
             );
          }
 
-         double var36 = var1 + Mth.cos(var18) * var14;
-         double var40 = method5057(var3, var8, var9, var16);
-         double var42 = var5 + Mth.sin(var18) * var14;
-         float var25 = 0.3F * var13 * method5070(var9 / 1.1F + var16 * 0.31F) * var15;
-         this.entry.method5077(var36, var40, var42, var25 * 1.6F, 0.0F, 0.0F, method5075(var17, var11 * (0.2F + 0.25F * var12)));
-         this.method5065(var36, var40, var42, var25, Mth.sin(var9 * 1.3F + var16 * 2.0F) * 0.12F, this.method5066(var18), var17, var11);
+         double d4 = d + Mth.cos(f7) * f5;
+         double d5 = method5057(d2, f2, floatValue, i);
+         double d6 = d3 + Mth.sin(f7) * f5;
+         float f8 = 0.3F * f4 * method5070(floatValue / 1.1F + i * 0.31F) * f6;
+         this.entry.method5077(d4, d5, d6, f8 * 1.6F, 0.0F, 0.0F, method5075(color, alpha * (0.2F + 0.25F * f3)));
+         this.method5065(d4, d5, d6, f8, Mth.sin(floatValue * 1.3F + i * 2.0F) * 0.12F, this.method5066(f7), color, alpha);
       }
 
-      if (var12 > 0.01F) {
-         float var32 = easeOut(1.0F - var12);
-         float var33 = var7 * (0.35F + var32 * 1.2F);
-         double var34 = var3 + var8 * 0.62F + var32 * 0.35F * var13;
+      if (f3 > 0.01F) {
+         float easeOut2 = easeOut(1.0F - f3);
+         float f7 = f * (0.35F + easeOut2 * 1.2F);
+         double d4 = d2 + f2 * 0.62F + easeOut2 * 0.35F * f4;
 
-         for (int var38 = 0; var38 < 6; var38++) {
-            float var41 = var38 / 6.0F * (float) (Math.PI * 2) + 0.4F;
+         for (int i = 0; i < 6; i++) {
+            float f8 = i / 6.0F * (float) (Math.PI * 2) + 0.4F;
             this.method5065(
-               var1 + Mth.cos(var41) * var33,
-               var34,
-               var5 + Mth.sin(var41) * var33,
-               0.14F * var13 * (1.0F - 0.35F * var32),
-               (var38 - 2.5F) * 0.1F,
-               this.method5066(var41),
-               var10[1],
-               var12 * var11
+               d + Mth.cos(f8) * f7,
+               d4,
+               d3 + Mth.sin(f8) * f7,
+               0.14F * f4 * (1.0F - 0.35F * easeOut2),
+               (i - 2.5F) * 0.1F,
+               this.method5066(f8),
+               ints[1],
+               f3 * alpha
             );
          }
       }
    }
 
-   private static float method5056(float var0, int var1) {
-      return var0 * 1.25F + var1 * (float) (Math.PI * 2) / 3.0F;
+   private static float method5056(float floatValue, int n) {
+      return floatValue * 1.25F + n * (float) (Math.PI * 2) / 3.0F;
    }
 
-   private static double method5057(double var0, float var2, float var3, int var4) {
-      return var0 + var2 * 0.56F + Mth.sin(var3 * 1.4F + var4 * 2.1F) * var2 * 0.1F;
+   private static double method5057(double d, float f, float floatValue, int n) {
+      return d + f * 0.56F + Mth.sin(floatValue * 1.4F + n * 2.1F) * f * 0.1F;
    }
 
-   private void method5058(double var1, double var3, double var5, float var7, float var8, float var9, int[] var10, float var11, float var12, float var13) {
-      double var14 = var3 + var8 * 0.55F;
-      float var16 = var7 * 1.05F * (1.0F + 0.12F * var12);
-      float var17 = 1.05F;
-      float var18 = Mth.cos(var17);
-      float var19 = Mth.sin(var17);
+   private void method5058(double d, double d2, double d3, float f, float f2, float floatValue, int[] ints, float alpha, float f3, float f4) {
+      double d4 = d2 + f2 * 0.55F;
+      float f5 = f * 1.05F * (1.0F + 0.12F * f3);
+      float f6 = 1.05F;
+      float f7 = Mth.cos(f6);
+      float f8 = Mth.sin(f6);
 
-      for (int var20 = 0; var20 < 3; var20++) {
-         float var21 = var20 * (float) (Math.PI * 2) / 3.0F + var9 * 0.25F;
-         float var22 = Mth.cos(var21);
-         float var23 = Mth.sin(var21);
-         double var24 = -var23 * var18;
-         double var26 = var19;
-         double var28 = var22 * var18;
-         int var30 = var10[var20 % var10.length];
+      for (int i = 0; i < 3; i++) {
+         float f9 = i * (float) (Math.PI * 2) / 3.0F + floatValue * 0.25F;
+         float f10 = Mth.cos(f9);
+         float f11 = Mth.sin(f9);
+         double d5 = -f11 * f7;
+         double d6 = f8;
+         double d7 = f10 * f7;
+         int color = ints[i % ints.length];
 
-         for (int var31 = 0; var31 < 72; var31++) {
-            float var32 = var31 / 72.0F * (float) (Math.PI * 2);
-            float var33 = Mth.cos(var32) * var16;
-            float var34 = Mth.sin(var32) * var16;
+         for (int j = 0; j < 72; j++) {
+            float f12 = j / 72.0F * (float) (Math.PI * 2);
+            float f13 = Mth.cos(f12) * f5;
+            float f14 = Mth.sin(f12) * f5;
             this.entry
                .method5077(
-                  var1 + var22 * var33 + var24 * var34,
-                  var14 + var26 * var34,
-                  var5 + var23 * var33 + var28 * var34,
-                  0.05F * var13,
+                  d + f10 * f13 + d5 * f14,
+                  d4 + d6 * f14,
+                  d3 + f11 * f13 + d7 * f14,
+                  0.05F * f4,
                   0.0F,
                   0.0F,
-                  method5075(var30, var11 * 0.07F)
+                  method5075(color, alpha * 0.07F)
                );
          }
 
-         float var43 = var9 * 2.2F + var20 * 2.1F;
+         float f12 = floatValue * 2.2F + i * 2.1F;
 
-         for (int var44 = 40; var44 >= 0; var44--) {
-            float var45 = var43 - var44 * 0.04F;
-            float var46 = Mth.cos(var45) * var16;
-            float var35 = Mth.sin(var45) * var16;
-            double var36 = var1 + var22 * var46 + var24 * var35;
-            double var38 = var14 + var26 * var35;
-            double var40 = var5 + var23 * var46 + var28 * var35;
-            if (var44 == 0) {
-               this.entry.method5077(var36, var38, var40, 0.4F * var13, 0.0F, 0.0F, method5075(var30, var11 * 0.3F * (1.0F + 0.8F * var12)));
-               this.entry3.method5077(var36, var38, var40, 0.1F * var13 * (1.0F + 0.4F * var12), 0.0F, 0.0F, method5075(method5076(var30, -1, 0.35F), var11));
+         for (int j = 40; j >= 0; j--) {
+            float f13 = f12 - j * 0.04F;
+            float f14 = Mth.cos(f13) * f5;
+            float f15 = Mth.sin(f13) * f5;
+            double d8 = d + f10 * f14 + d5 * f15;
+            double d9 = d4 + d6 * f15;
+            double d10 = d3 + f11 * f14 + d7 * f15;
+            if (j == 0) {
+               this.entry.method5077(d8, d9, d10, 0.4F * f4, 0.0F, 0.0F, method5075(color, alpha * 0.3F * (1.0F + 0.8F * f3)));
+               this.entry3.method5077(d8, d9, d10, 0.1F * f4 * (1.0F + 0.4F * f3), 0.0F, 0.0F, method5075(method5076(color, -1, 0.35F), alpha));
             } else {
-               float var42 = 1.0F - var44 / 41.0F;
+               float alpha1 = 1.0F - j / 41.0F;
                this.entry
-                  .method5077(var36, var38, var40, Mth.lerp(var42, 0.03F, 0.2F) * var13, 0.0F, 0.0F, method5075(var30, var11 * var42 * var42 * 0.6F));
+                  .method5077(d8, d9, d10, Mth.lerp(alpha1, 0.03F, 0.2F) * f4, 0.0F, 0.0F, method5075(color, alpha * alpha1 * alpha1 * 0.6F));
             }
          }
       }
    }
 
-   private void method5059(double var1, double var3, double var5, float var7, float var8, float var9, int[] var10, float var11, float var12, float var13) {
-      float var14 = var7 * 0.9F;
-      float var15 = var11 * 1.2F;
+   private void method5059(double d, double d2, double d3, float f, float f2, float floatValue, int[] ints, float alpha, float f3, float f4) {
+      float f5 = f * 0.9F;
+      float f6 = alpha * 1.2F;
 
-      for (int var16 = 0; var16 <= 48; var16++) {
-         float var17 = var16 / 48.0F;
-         float var18 = Mth.clamp((var15 - var17) * 8.0F, 0.0F, 1.0F);
-         if (var18 <= 0.0F) {
+      for (int i = 0; i <= 48; i++) {
+         float f7 = i / 48.0F;
+         float f8 = Mth.clamp((f6 - f7) * 8.0F, 0.0F, 1.0F);
+         if (f8 <= 0.0F) {
             break;
          }
 
-         float var19 = Math.min(1.0F, Math.min(var17, 1.0F - var17) * 6.0F + 0.2F) * var18;
-         float var20 = 0.5F + 0.5F * Mth.sin(var17 * (float) (Math.PI * 2) * 1.5F - var9 * 2.6F);
-         float var21 = method5073(Mth.clamp((var20 - 0.7F) / 0.3F, 0.0F, 1.0F));
-         float var22 = var17 * (float) (Math.PI * 2) * 1.5F + var9 * 1.4F;
-         float var23 = var14 * (1.0F + 0.12F * var12 * Mth.sin(var17 * (float) Math.PI));
-         double var24 = var3 + var17 * var8 * 1.05F - 0.02F;
-         double var26 = 0.0;
-         double var28 = 0.0;
-         double var30 = 0.0;
-         double var32 = 0.0;
+         float f9 = Math.min(1.0F, Math.min(f7, 1.0F - f7) * 6.0F + 0.2F) * f8;
+         float f10 = 0.5F + 0.5F * Mth.sin(f7 * (float) (Math.PI * 2) * 1.5F - floatValue * 2.6F);
+         float f11 = method5073(Mth.clamp((f10 - 0.7F) / 0.3F, 0.0F, 1.0F));
+         float f12 = f7 * (float) (Math.PI * 2) * 1.5F + floatValue * 1.4F;
+         float f13 = f5 * (1.0F + 0.12F * f3 * Mth.sin(f7 * (float) Math.PI));
+         double d4 = d2 + f7 * f2 * 1.05F - 0.02F;
+         double d5 = 0.0;
+         double d6 = 0.0;
+         double d7 = 0.0;
+         double d8 = 0.0;
 
-         for (int var34 = 0; var34 < 2; var34++) {
-            float var35 = var22 + var34 * (float) Math.PI;
-            double var36 = var1 + Mth.cos(var35) * var23;
-            double var38 = var5 + Mth.sin(var35) * var23;
-            int var40 = var10[var34 * 2 % var10.length];
-            this.entry.method5077(var36, var24, var38, (0.07F + 0.05F * var20) * var13, 0.0F, 0.0F, method5075(var40, var11 * var19 * (0.22F + 0.4F * var20)));
-            if (var21 > 0.01F) {
-               this.entry3.method5077(var36, var24, var38, 0.065F * var13 * var21, 0.0F, 0.0F, method5075(method5076(var40, -1, 0.3F), var11 * var19 * var21));
+         for (int j = 0; j < 2; j++) {
+            float f14 = f12 + j * (float) Math.PI;
+            double d9 = d + Mth.cos(f14) * f13;
+            double d10 = d3 + Mth.sin(f14) * f13;
+            int color = ints[j * 2 % ints.length];
+            this.entry.method5077(d9, d4, d10, (0.07F + 0.05F * f10) * f4, 0.0F, 0.0F, method5075(color, alpha * f9 * (0.22F + 0.4F * f10)));
+            if (f11 > 0.01F) {
+               this.entry3.method5077(d9, d4, d10, 0.065F * f4 * f11, 0.0F, 0.0F, method5075(method5076(color, -1, 0.3F), alpha * f9 * f11));
             }
 
-            if (var34 == 0) {
-               var26 = var36;
-               var28 = var38;
+            if (j == 0) {
+               d5 = d9;
+               d6 = d10;
             } else {
-               var30 = var36;
-               var32 = var38;
+               d7 = d9;
+               d8 = d10;
             }
          }
 
-         if (var16 % 8 == 4) {
-            for (int var41 = 1; var41 <= 5; var41++) {
-               float var42 = var41 / 6.0F;
+         if (i % 8 == 4) {
+            for (int j = 1; j <= 5; j++) {
+               float alpha1 = j / 6.0F;
                this.entry
                   .method5077(
-                     var26 + (var30 - var26) * var42,
-                     var24,
-                     var28 + (var32 - var28) * var42,
-                     0.04F * var13,
+                     d5 + (d7 - d5) * alpha1,
+                     d4,
+                     d6 + (d8 - d6) * alpha1,
+                     0.04F * f4,
                      0.0F,
                      0.0F,
-                     method5075(method5076(var10[0], var10[2 % var10.length], var42), var11 * var19 * 0.18F)
+                     method5075(method5076(ints[0], ints[2 % ints.length], alpha1), alpha * f9 * 0.18F)
                   );
             }
          }
       }
    }
 
-   private void method5060(double var1, double var3, double var5, float var7, float var8, float var9, int[] var10, float var11, float var12, float var13) {
-      double var14 = var3 + var8 * 0.58F + Mth.sin(var9 * 1.2F) * 0.04F * var13;
-      float var16 = var9 * 0.3F;
-      float var17 = Mth.cos(var16);
-      float var18 = Mth.sin(var16);
+   private void method5060(double d, double d2, double d3, float f, float f2, float floatValue, int[] ints, float alpha, float f3, float f4) {
+      double d4 = d2 + f2 * 0.58F + Mth.sin(floatValue * 1.2F) * 0.04F * f4;
+      float f5 = floatValue * 0.3F;
+      float f6 = Mth.cos(f5);
+      float f7 = Mth.sin(f5);
 
-      for (int var19 = 0; var19 < 2; var19++) {
-         float var20 = var7 * (1.15F + var19 * 0.18F) * (1.0F + 0.18F * var12);
-         float var21 = var19 == 0 ? 0.38F : -0.38F;
-         float var22 = Mth.cos(var21);
-         float var23 = Mth.sin(var21);
-         float var24 = var9 * (var19 == 0 ? 1.1F : -0.9F);
-         int var25 = var10[var19 * 2 % var10.length];
+      for (int i = 0; i < 2; i++) {
+         float f8 = f * (1.15F + i * 0.18F) * (1.0F + 0.18F * f3);
+         float f9 = i == 0 ? 0.38F : -0.38F;
+         float f10 = Mth.cos(f9);
+         float f11 = Mth.sin(f9);
+         float f12 = floatValue * (i == 0 ? 1.1F : -0.9F);
+         int color = ints[i * 2 % ints.length];
 
-         for (int var26 = 0; var26 <= 64; var26++) {
-            boolean var27 = var26 == 64;
-            float var28 = var27 ? var24 : var26 / 64.0F * (float) (Math.PI * 2);
-            float var29 = Mth.cos(var28) * var20;
-            float var30 = Mth.sin(var28) * var20;
-            float var31;
-            float var32;
-            float var33;
-            if (var19 == 0) {
-               var31 = var29;
-               var32 = -var30 * var23;
-               var33 = var30 * var22;
+         for (int j = 0; j <= 64; j++) {
+            boolean flag = j == 64;
+            float f13 = flag ? f12 : j / 64.0F * (float) (Math.PI * 2);
+            float f14 = Mth.cos(f13) * f8;
+            float f15 = Mth.sin(f13) * f8;
+            float f16;
+            float f17;
+            float f18;
+            if (i == 0) {
+               f16 = f14;
+               f17 = -f15 * f11;
+               f18 = f15 * f10;
             } else {
-               var31 = var29 * var22;
-               var32 = var29 * var23;
-               var33 = var30;
+               f16 = f14 * f10;
+               f17 = f14 * f11;
+               f18 = f15;
             }
 
-            double var34 = var1 + var31 * var17 - var33 * var18;
-            double var36 = var5 + var31 * var18 + var33 * var17;
-            if (var27) {
-               this.entry.method5077(var34, var14 + var32, var36, 0.34F * var13, 0.0F, 0.0F, method5075(var25, var11 * 0.3F * (1.0F + 0.6F * var12)));
-               this.entry3.method5077(var34, var14 + var32, var36, 0.08F * var13, 0.0F, 0.0F, method5075(method5076(var25, -1, 0.35F), var11));
+            double d5 = d + f16 * f6 - f18 * f7;
+            double d6 = d3 + f16 * f7 + f18 * f6;
+            if (flag) {
+               this.entry.method5077(d5, d4 + f17, d6, 0.34F * f4, 0.0F, 0.0F, method5075(color, alpha * 0.3F * (1.0F + 0.6F * f3)));
+               this.entry3.method5077(d5, d4 + f17, d6, 0.08F * f4, 0.0F, 0.0F, method5075(method5076(color, -1, 0.35F), alpha));
             } else {
-               float var38 = method5071(var28, var24);
+               float f19 = method5071(f13, f12);
                this.entry
                   .method5077(
-                     var34,
-                     var14 + var32,
-                     var36,
-                     (0.05F + 0.1F * var38) * var13,
+                     d5,
+                     d4 + f17,
+                     d6,
+                     (0.05F + 0.1F * f19) * f4,
                      0.0F,
                      0.0F,
-                     method5075(method5076(var25, -1, var38 * 0.25F), var11 * (0.16F + 0.6F * var38))
+                     method5075(method5076(color, -1, f19 * 0.25F), alpha * (0.16F + 0.6F * f19))
                   );
             }
          }
       }
    }
 
-   private void method5061(double var1, double var3, double var5, float var7, float var8, float var9, int[] var10, float var11, float var12, float var13) {
-      float var14 = var7 * 1.1F;
+   private void method5061(double d, double d2, double d3, float f, float f2, float floatValue, int[] ints, float alpha, float f3, float f4) {
+      float f5 = f * 1.1F;
 
-      for (int var15 = 0; var15 < 4; var15++) {
-         int var16 = var10[var15 % var10.length];
+      for (int i = 0; i < 4; i++) {
+         int color = ints[i % ints.length];
 
-         for (int var17 = 24; var17 >= 1; var17--) {
-            float var18 = var17 * 0.045F;
-            float var19 = 1.0F - var17 / 25.0F;
+         for (int j = 24; j >= 1; j--) {
+            float f6 = j * 0.045F;
+            float f7 = 1.0F - j / 25.0F;
             this.entry
                .method5077(
-                  method5062(var1, var14, var9 - var18, var15),
-                  method5063(var3, var8, var9 - var18, var15) - var18 * var18 * 0.9F,
-                  method5064(var5, var14, var9 - var18, var15),
-                  (0.03F + 0.1F * var19) * var13,
+                  method5062(d, f5, floatValue - f6, i),
+                  method5063(d2, f2, floatValue - f6, i) - f6 * f6 * 0.9F,
+                  method5064(d3, f5, floatValue - f6, i),
+                  (0.03F + 0.1F * f7) * f4,
                   0.0F,
                   0.0F,
-                  method5075(var16, var11 * var19 * var19 * 0.5F)
+                  method5075(color, alpha * f7 * f7 * 0.5F)
                );
          }
 
-         for (int var24 = 1; var24 <= 3; var24++) {
-            float var26 = var24 * 0.25F;
-            float var27 = 1.0F - var26;
-            float var20 = 0.75F + 0.25F * Mth.sin(var9 * 3.0F + var15 + var26 * 5.0F);
+         for (int j = 1; j <= 3; j++) {
+            float f6 = j * 0.25F;
+            float f7 = 1.0F - f6;
+            float f8 = 0.75F + 0.25F * Mth.sin(floatValue * 3.0F + i + f6 * 5.0F);
             this.entry2
                .method5077(
-                  method5062(var1, var14, var9 - var26, var15),
-                  method5063(var3, var8, var9 - var26, var15) - var26 * var26 * 0.9F,
-                  method5064(var5, var14, var9 - var26, var15),
-                  0.1F * var13 * var27,
-                  var26 * 3.0F + var15,
+                  method5062(d, f5, floatValue - f6, i),
+                  method5063(d2, f2, floatValue - f6, i) - f6 * f6 * 0.9F,
+                  method5064(d3, f5, floatValue - f6, i),
+                  0.1F * f4 * f7,
+                  f6 * 3.0F + i,
                   0.0F,
-                  method5075(var16, var11 * var27 * 0.7F * var20)
+                  method5075(color, alpha * f7 * 0.7F * f8)
                );
          }
 
-         double var25 = method5062(var1, var14, var9, var15);
-         double var28 = method5063(var3, var8, var9, var15);
-         double var21 = method5064(var5, var14, var9, var15);
-         float var23 = 0.34F * var13 * (0.9F + 0.1F * Mth.sin(var9 * 3.0F + var15 * 2.0F)) * (1.0F + 0.4F * var12);
-         this.entry.method5077(var25, var28, var21, var23 * 1.5F, 0.0F, 0.0F, method5075(var16, var11 * 0.3F));
-         this.entry2.method5077(var25, var28, var21, var23, var9 * 0.6F + var15, 0.0F, method5075(method5076(var16, -1, 0.2F + 0.4F * var12), var11));
-         this.entry3.method5077(var25, var28, var21, var23 * 0.2F, 0.0F, 0.0F, method5075(method5076(var16, -1, 0.5F), var11));
+         double d4 = method5062(d, f5, floatValue, i);
+         double d5 = method5063(d2, f2, floatValue, i);
+         double d6 = method5064(d3, f5, floatValue, i);
+         float f6 = 0.34F * f4 * (0.9F + 0.1F * Mth.sin(floatValue * 3.0F + i * 2.0F)) * (1.0F + 0.4F * f3);
+         this.entry.method5077(d4, d5, d6, f6 * 1.5F, 0.0F, 0.0F, method5075(color, alpha * 0.3F));
+         this.entry2.method5077(d4, d5, d6, f6, floatValue * 0.6F + i, 0.0F, method5075(method5076(color, -1, 0.2F + 0.4F * f3), alpha));
+         this.entry3.method5077(d4, d5, d6, f6 * 0.2F, 0.0F, 0.0F, method5075(method5076(color, -1, 0.5F), alpha));
       }
    }
 
-   private static double method5062(double var0, float var2, float var3, int var4) {
-      return var0 + Mth.cos(var3 * 1.1F + var4 * (float) (Math.PI * 2) / 4.0F) * var2;
+   private static double method5062(double d, float f, float floatValue, int n) {
+      return d + Mth.cos(floatValue * 1.1F + n * (float) (Math.PI * 2) / 4.0F) * f;
    }
 
-   private static double method5063(double var0, float var2, float var3, int var4) {
-      return var0 + var2 * 0.55F + Mth.sin(var3 * 1.5F + var4 * 1.7F) * var2 * 0.16F;
+   private static double method5063(double d, float f, float floatValue, int n) {
+      return d + f * 0.55F + Mth.sin(floatValue * 1.5F + n * 1.7F) * f * 0.16F;
    }
 
-   private static double method5064(double var0, float var2, float var3, int var4) {
-      return var0 + Mth.sin(var3 * 1.1F + var4 * (float) (Math.PI * 2) / 4.0F) * var2;
+   private static double method5064(double d, float f, float floatValue, int n) {
+      return d + Mth.sin(floatValue * 1.1F + n * (float) (Math.PI * 2) / 4.0F) * f;
    }
 
-   private void method5065(double var1, double var3, double var5, float var7, float var8, float var9, int var10, float var11) {
-      if (!(var11 < 0.01F) && !(var7 < 0.002F)) {
-         this.entry4.method5078(var1, var3, var5, var7, var8, var9, method5075(var10, var11), 0.0F, 0.5F);
-         this.entry4.method5078(var1, var3, var5, var7, var8, var9, method5075(-1, var11 * 0.9F), 0.5F, 1.0F);
+   private void method5065(double d, double d2, double d3, float f, float f2, float f3, int color, float alpha) {
+      if (!(alpha < 0.01F) && !(f < 0.002F)) {
+         this.entry4.method5078(d, d2, d3, f, f2, f3, method5075(color, alpha), 0.0F, 0.5F);
+         this.entry4.method5078(d, d2, d3, f, f2, f3, method5075(-1, alpha * 0.9F), 0.5F, 1.0F);
       }
    }
 
-   private float method5066(float var1) {
-      float var2 = (float)Math.atan2(Mth.cos(var1), Mth.sin(var1)) + this.floatValue;
-      return 0.35F * Mth.sin(2.0F * var2);
+   private float method5066(float f) {
+      float f2 = (float)Math.atan2(Mth.cos(f), Mth.sin(f)) + this.floatValue;
+      return 0.35F * Mth.sin(2.0F * f2);
    }
 
-   private void method5067(Matrix4f var1, float var2, float var3, boolean var4, boolean var5) {
+   private void method5067(Matrix4f pose, float f, float ang, boolean flag, boolean flag2) {
       RenderState.method1871();
-      if (var4) {
+      if (flag) {
          RenderState.method1878();
       } else {
          RenderState.method1879();
@@ -437,11 +437,11 @@ public final class TargetEspTextures {
 
       try {
          RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE, BlendFactor.ZERO, BlendFactor.ONE);
-         this.method5068(this.entry, identifier, var1, var2, var3, false);
-         this.method5068(this.entry2, var5 ? identifier4 : identifier5, var1, var2, var3, false);
+         this.method5068(this.entry, identifier, pose, f, ang, false);
+         this.method5068(this.entry2, flag2 ? identifier4 : identifier5, pose, f, ang, false);
          RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA, BlendFactor.ZERO, BlendFactor.ONE);
-         this.method5068(this.entry3, var5 ? identifier6 : identifier7, var1, var2, var3, false);
-         this.method5068(this.entry4, var5 ? identifier2 : identifier3, var1, var2, var3, true);
+         this.method5068(this.entry3, flag2 ? identifier6 : identifier7, pose, f, ang, false);
+         this.method5068(this.entry4, flag2 ? identifier2 : identifier3, pose, f, ang, true);
       } finally {
          RenderState.method1882(true);
          RenderState.method1878();
@@ -451,105 +451,105 @@ public final class TargetEspTextures {
       }
    }
 
-   private void method5068(TargetEspTextures.Entry var1, Identifier var2, Matrix4f var3, float var4, float var5, boolean var6) {
-      int var7 = var1.count;
-      if (var7 != 0) {
-         if (var6) {
-            this.method5069(var1, var3);
+   private void method5068(TargetEspTextures.Entry entry, Identifier identifier, Matrix4f pose, float f, float ang, boolean flag) {
+      int count = entry.count;
+      if (count != 0) {
+         if (flag) {
+            this.method5069(entry, pose);
          }
 
-         RenderState.method1890(0, var2);
-         BufferBuilder var8 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+         RenderState.method1890(0, identifier);
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
 
-         for (int var9 = 0; var9 < var7; var9++) {
-            int var10 = var6 ? this.integers[var9] : var9;
-            int var11 = var10 * 8;
-            float[] var12 = var1.floatValues;
-            float var13 = var12[var11 + 3] * 0.5F;
-            float var14 = var12[var11 + 6];
-            float var15 = var12[var11 + 7];
-            int var16 = var1.intValues[var10];
+         for (int i = 0; i < count; i++) {
+            int integer = flag ? this.integers[i] : i;
+            int n = integer * 8;
+            float[] floatValues = entry.floatValues;
+            float y = floatValues[n + 3] * 0.5F;
+            float f2 = floatValues[n + 6];
+            float f3 = floatValues[n + 7];
+            int intValue = entry.intValues[integer];
             this.matrix4f
-               .set(var3)
-               .translate(var12[var11], var12[var11 + 1], var12[var11 + 2])
-               .rotateY(-var4 + var12[var11 + 5])
-               .rotateX(var5)
-               .rotateZ(var12[var11 + 4]);
-            var8.addVertex(this.matrix4f, -var13, var13, 0.0F).setUv(var14, 0.0F).setColor(var16);
-            var8.addVertex(this.matrix4f, -var13, -var13, 0.0F).setUv(var14, 1.0F).setColor(var16);
-            var8.addVertex(this.matrix4f, var13, -var13, 0.0F).setUv(var15, 1.0F).setColor(var16);
-            var8.addVertex(this.matrix4f, var13, var13, 0.0F).setUv(var15, 0.0F).setColor(var16);
+               .set(pose)
+               .translate(floatValues[n], floatValues[n + 1], floatValues[n + 2])
+               .rotateY(-f + floatValues[n + 5])
+               .rotateX(ang)
+               .rotateZ(floatValues[n + 4]);
+            begin.addVertex(this.matrix4f, -y, y, 0.0F).setUv(f2, 0.0F).setColor(intValue);
+            begin.addVertex(this.matrix4f, -y, -y, 0.0F).setUv(f2, 1.0F).setColor(intValue);
+            begin.addVertex(this.matrix4f, y, -y, 0.0F).setUv(f3, 1.0F).setColor(intValue);
+            begin.addVertex(this.matrix4f, y, y, 0.0F).setUv(f3, 0.0F).setColor(intValue);
          }
 
-         MeshData var17 = var8.build();
-         if (var17 != null) {
-            ImmediateRenderer.method8015(var17);
+         MeshData orThrow = begin.build();
+         if (orThrow != null) {
+            ImmediateRenderer.method8015(orThrow);
          }
       }
    }
 
-   private void method5069(TargetEspTextures.Entry var1, Matrix4f var2) {
-      int var3 = var1.count;
-      if (this.integers.length < var3) {
-         this.integers = new Integer[var3 * 2];
-         this.floatValues = new float[var3 * 2];
+   private void method5069(TargetEspTextures.Entry entry, Matrix4f pose) {
+      int count = entry.count;
+      if (this.integers.length < count) {
+         this.integers = new Integer[count * 2];
+         this.floatValues = new float[count * 2];
       }
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         int var5 = var4 * 8;
-         var2.transformPosition(var1.floatValues[var5], var1.floatValues[var5 + 1], var1.floatValues[var5 + 2], this.vector3f);
-         this.floatValues[var4] = this.vector3f.z + (var4 & 1) * 1.0E-4F;
-         this.integers[var4] = var4;
+      for (int i = 0; i < count; i++) {
+         int n = i * 8;
+         pose.transformPosition(entry.floatValues[n], entry.floatValues[n + 1], entry.floatValues[n + 2], this.vector3f);
+         this.floatValues[i] = this.vector3f.z + (i & 1) * 1.0E-4F;
+         this.integers[i] = i;
       }
 
-      float[] var6 = this.floatValues;
-      Arrays.sort(this.integers, 0, var3, (var1x, var2x) -> Float.compare(var6[var1x], var6[var2x]));
+      float[] floatValues = this.floatValues;
+      Arrays.sort(this.integers, 0, count, (var1x, var2x) -> Float.compare(floatValues[var1x], floatValues[var2x]));
    }
 
-   private static float method5070(float var0) {
-      float var1 = var0 - (float)Math.floor(var0);
-      float var2 = (var1 - 0.1F) / 0.09F;
-      float var3 = (var1 - 0.33F) / 0.1F;
-      return 1.0F + 0.09F * (float)Math.exp(-var2 * var2) + 0.05F * (float)Math.exp(-var3 * var3);
+   private static float method5070(float f) {
+      float f2 = f - (float)Math.floor(f);
+      float f3 = (f2 - 0.1F) / 0.09F;
+      float f4 = (f2 - 0.33F) / 0.1F;
+      return 1.0F + 0.09F * (float)Math.exp(-f3 * f3) + 0.05F * (float)Math.exp(-f4 * f4);
    }
 
-   private static float method5071(float var0, float var1) {
-      float var2 = var0 - var1;
-      var2 -= (float) (Math.PI * 2) * (float)Math.floor(var2 / (float) (Math.PI * 2) + 0.5F);
-      return (float)Math.exp(-var2 * var2 * 2.0F);
+   private static float method5071(float f, float f2) {
+      float f3 = f - f2;
+      f3 -= (float) (Math.PI * 2) * (float)Math.floor(f3 / (float) (Math.PI * 2) + 0.5F);
+      return (float)Math.exp(-f3 * f3 * 2.0F);
    }
 
-   private static float method5072(float var0) {
-      return var0 - (float)Math.floor(var0);
+   private static float method5072(float f) {
+      return f - (float)Math.floor(f);
    }
 
-   private static float method5073(float var0) {
-      return var0 * var0 * (3.0F - 2.0F * var0);
+   private static float method5073(float f) {
+      return f * f * (3.0F - 2.0F * f);
    }
 
-   private static float easeOut(float var0) {
-      float var1 = 1.0F - var0;
-      return 1.0F - var1 * var1 * var1;
+   private static float easeOut(float alpha) {
+      float f = 1.0F - alpha;
+      return 1.0F - f * f * f;
    }
 
-   private static float method5074(float var0) {
-      if (var0 <= 0.0F) {
+   private static float method5074(float f) {
+      if (f <= 0.0F) {
          return 0.0F;
       } else {
-         float var1 = var0 - 1.0F;
-         return 1.0F + 2.70158F * var1 * var1 * var1 + 1.70158F * var1 * var1;
+         float f2 = f - 1.0F;
+         return 1.0F + 2.70158F * f2 * f2 * f2 + 1.70158F * f2 * f2;
       }
    }
 
-   private static int method5075(int var0, float var1) {
-      return ColorUtils.method6439(var0, Mth.clamp(var1, 0.0F, 1.0F));
+   private static int method5075(int color, float alpha) {
+      return ColorUtils.method6439(color, Mth.clamp(alpha, 0.0F, 1.0F));
    }
 
-   private static int method5076(int var0, int var1, float var2) {
-      int var3 = Mth.lerpInt(var2, var0 >> 16 & 0xFF, var1 >> 16 & 0xFF);
-      int var4 = Mth.lerpInt(var2, var0 >> 8 & 0xFF, var1 >> 8 & 0xFF);
-      int var5 = Mth.lerpInt(var2, var0 & 0xFF, var1 & 0xFF);
-      return var0 & 0xFF000000 | var3 << 16 | var4 << 8 | var5;
+   private static int method5076(int color, int n, float alpha1) {
+      int lerpInt = Mth.lerpInt(alpha1, color >> 16 & 0xFF, n >> 16 & 0xFF);
+      int lerpInt2 = Mth.lerpInt(alpha1, color >> 8 & 0xFF, n >> 8 & 0xFF);
+      int lerpInt3 = Mth.lerpInt(alpha1, color & 0xFF, n & 0xFF);
+      return color & 0xFF000000 | lerpInt << 16 | lerpInt2 << 8 | lerpInt3;
    }
 
    private static final class Entry {
@@ -558,27 +558,27 @@ public final class TargetEspTextures {
       public int[] intValues = new int[512];
       public int count;
 
-      public void method5077(double var1, double var3, double var5, float var7, float var8, float var9, int var10) {
-         this.method5078(var1, var3, var5, var7, var8, var9, var10, 0.0F, 1.0F);
+      public void method5077(double d, double d2, double d3, float f, float f2, float f3, int n) {
+         this.method5078(d, d2, d3, f, f2, f3, n, 0.0F, 1.0F);
       }
 
-      public void method5078(double var1, double var3, double var5, float var7, float var8, float var9, int var10, float var11, float var12) {
-         if (var10 >>> 24 != 0 && !(var7 <= 0.001F)) {
+      public void method5078(double d, double d2, double d3, float f, float f2, float f3, int n, float f4, float f5) {
+         if (n >>> 24 != 0 && !(f <= 0.001F)) {
             if (this.count == this.intValues.length) {
                this.floatValues = Arrays.copyOf(this.floatValues, this.floatValues.length * 2);
                this.intValues = Arrays.copyOf(this.intValues, this.intValues.length * 2);
             }
 
-            int var13 = this.count * 8;
-            this.floatValues[var13] = (float)var1;
-            this.floatValues[var13 + 1] = (float)var3;
-            this.floatValues[var13 + 2] = (float)var5;
-            this.floatValues[var13 + 3] = var7;
-            this.floatValues[var13 + 4] = var8;
-            this.floatValues[var13 + 5] = var9;
-            this.floatValues[var13 + 6] = var11;
-            this.floatValues[var13 + 7] = var12;
-            this.intValues[this.count++] = var10;
+            int n2 = this.count * 8;
+            this.floatValues[n2] = (float)d;
+            this.floatValues[n2 + 1] = (float)d2;
+            this.floatValues[n2 + 2] = (float)d3;
+            this.floatValues[n2 + 3] = f;
+            this.floatValues[n2 + 4] = f2;
+            this.floatValues[n2 + 5] = f3;
+            this.floatValues[n2 + 6] = f4;
+            this.floatValues[n2 + 7] = f5;
+            this.intValues[this.count++] = n;
          }
       }
    }

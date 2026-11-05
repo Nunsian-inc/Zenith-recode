@@ -17,9 +17,9 @@ public final class CosmeticAnimation {
    private static final String[] texts = new String[]{"idle", "stand", "loop"};
    private static final String[] texts2 = new String[]{"walk", "run", "move", "fly", "swim"};
 
-   private CosmeticAnimation(CosmeticAnimation.Entry3 var1, CosmeticAnimation.Entry3 var2) {
-      this.entry3 = var1;
-      this.entry32 = var2;
+   private CosmeticAnimation(CosmeticAnimation.Entry3 entry3, CosmeticAnimation.Entry3 entry32) {
+      this.entry3 = entry3;
+      this.entry32 = entry32;
    }
 
    public String name() {
@@ -38,110 +38,110 @@ public final class CosmeticAnimation {
       return this.entry3.floatValue;
    }
 
-   public boolean method7809(String var1, float var2, float[] var3) {
-      return this.method7810(var1, var2, false, var3);
+   public boolean method7809(String name, float f, float[] floats) {
+      return this.method7810(name, f, false, floats);
    }
 
-   public boolean method7810(String var1, float var2, boolean var3, float[] var4) {
-      CosmeticAnimation.Entry3 var5 = var3 && this.entry32 != null ? this.entry32 : this.entry3;
-      CosmeticAnimation.Entry2 var6 = var5.items.get(var1);
-      if (var6 != null && var4 != null && var4.length >= 9) {
-         float var7 = var5.method7825(var2);
-         method7811(var6.entry, var7, var4, 0, 0.0F);
-         method7811(var6.entry2, var7, var4, 3, 0.0F);
-         method7811(var6.entry3, var7, var4, 6, 1.0F);
-         var4[3] = -var4[3] / 16.0F;
-         var4[4] /= 16.0F;
-         var4[5] = -var4[5] / 16.0F;
+   public boolean method7810(String name, float f, boolean flag, float[] floats) {
+      CosmeticAnimation.Entry3 entry3 = flag && this.entry32 != null ? this.entry32 : this.entry3;
+      CosmeticAnimation.Entry2 entry2 = entry3.items.get(name);
+      if (entry2 != null && floats != null && floats.length >= 9) {
+         float f2 = entry3.method7825(f);
+         method7811(entry2.entry, f2, floats, 0, 0.0F);
+         method7811(entry2.entry2, f2, floats, 3, 0.0F);
+         method7811(entry2.entry3, f2, floats, 6, 1.0F);
+         floats[3] = -floats[3] / 16.0F;
+         floats[4] /= 16.0F;
+         floats[5] = -floats[5] / 16.0F;
          return true;
       } else {
          return false;
       }
    }
 
-   private static void method7811(CosmeticAnimation.Entry var0, float var1, float[] var2, int var3, float var4) {
-      if (var0 == null) {
-         var2[var3] = var4;
-         var2[var3 + 1] = var4;
-         var2[var3 + 2] = var4;
+   private static void method7811(CosmeticAnimation.Entry entry, float f, float[] floats, int n, float f2) {
+      if (entry == null) {
+         floats[n] = f2;
+         floats[n + 1] = f2;
+         floats[n + 2] = f2;
       } else {
-         float[] var5 = var0.floatValues;
-         int var6 = var5.length - 1;
-         if (var1 <= var5[0]) {
-            method7812(var0.floatValues3, 0, var2, var3);
-         } else if (var1 >= var5[var6]) {
-            method7812(var0.floatValues2, var6, var2, var3);
+         float[] floatValues = entry.floatValues;
+         int n2 = floatValues.length - 1;
+         if (f <= floatValues[0]) {
+            method7812(entry.floatValues3, 0, floats, n);
+         } else if (f >= floatValues[n2]) {
+            method7812(entry.floatValues2, n2, floats, n);
          } else {
-            int var7 = 0;
+            int n3 = 0;
 
-            while (var7 < var6 && var5[var7 + 1] < var1) {
-               var7++;
+            while (n3 < n2 && floatValues[n3 + 1] < f) {
+               n3++;
             }
 
-            float var8 = var5[var7];
-            float var9 = var5[var7 + 1];
-            float var10 = var9 - var8 <= 1.0E-6F ? 0.0F : (var1 - var8) / (var9 - var8);
-            if (var0.flags[var7]) {
-               int var14 = Math.max(var7 - 1, 0);
-               int var15 = Math.min(var7 + 2, var6);
+            float f3 = floatValues[n3];
+            float f4 = floatValues[n3 + 1];
+            float f5 = f4 - f3 <= 1.0E-6F ? 0.0F : (f - f3) / (f4 - f3);
+            if (entry.flags[n3]) {
+               int n4 = Math.max(n3 - 1, 0);
+               int n5 = Math.min(n3 + 2, n2);
 
-               for (int var16 = 0; var16 < 3; var16++) {
-                  var2[var3 + var16] = method7813(
-                     var0.floatValues3[var14 * 3 + var16],
-                     var0.floatValues3[var7 * 3 + var16],
-                     var0.floatValues2[(var7 + 1) * 3 + var16],
-                     var0.floatValues2[var15 * 3 + var16],
-                     var10
+               for (int i = 0; i < 3; i++) {
+                  floats[n + i] = method7813(
+                     entry.floatValues3[n4 * 3 + i],
+                     entry.floatValues3[n3 * 3 + i],
+                     entry.floatValues2[(n3 + 1) * 3 + i],
+                     entry.floatValues2[n5 * 3 + i],
+                     f5
                   );
                }
             } else {
-               for (int var11 = 0; var11 < 3; var11++) {
-                  float var12 = var0.floatValues3[var7 * 3 + var11];
-                  float var13 = var0.floatValues2[(var7 + 1) * 3 + var11];
-                  var2[var3 + var11] = var12 + (var13 - var12) * var10;
+               for (int i = 0; i < 3; i++) {
+                  float f6 = entry.floatValues3[n3 * 3 + i];
+                  float f7 = entry.floatValues2[(n3 + 1) * 3 + i];
+                  floats[n + i] = f6 + (f7 - f6) * f5;
                }
             }
          }
       }
    }
 
-   private static void method7812(float[] var0, int var1, float[] var2, int var3) {
-      var2[var3] = var0[var1 * 3];
-      var2[var3 + 1] = var0[var1 * 3 + 1];
-      var2[var3 + 2] = var0[var1 * 3 + 2];
+   private static void method7812(float[] floatValues3, int n, float[] floats, int n2) {
+      floats[n2] = floatValues3[n * 3];
+      floats[n2 + 1] = floatValues3[n * 3 + 1];
+      floats[n2 + 2] = floatValues3[n * 3 + 2];
    }
 
-   private static float method7813(float var0, float var1, float var2, float var3, float var4) {
-      float var5 = var4 * var4;
-      float var6 = var5 * var4;
+   private static float method7813(float f, float f2, float f3, float f4, float f5) {
+      float f6 = f5 * f5;
+      float f7 = f6 * f5;
       return 0.5F
-         * (2.0F * var1 + (var2 - var0) * var4 + (2.0F * var0 - 5.0F * var1 + 4.0F * var2 - var3) * var5 + (3.0F * var1 - var0 - 3.0F * var2 + var3) * var6);
+         * (2.0F * f2 + (f3 - f) * f5 + (2.0F * f - 5.0F * f2 + 4.0F * f3 - f4) * f6 + (3.0F * f2 - f - 3.0F * f3 + f4) * f7);
    }
 
-   public static CosmeticAnimation method7814(String var0) {
-      if (var0 != null && !var0.isBlank()) {
+   public static CosmeticAnimation method7814(String json) {
+      if (json != null && !json.isBlank()) {
          try {
-            JsonElement var1 = JsonParser.parseString(var0);
-            if (!var1.isJsonObject()) {
+            JsonElement string = JsonParser.parseString(json);
+            if (!string.isJsonObject()) {
                return null;
             } else {
-               JsonElement var2 = var1.getAsJsonObject().get("animations");
-               if (var2 != null && var2.isJsonObject()) {
-                  LinkedHashMap var3 = new LinkedHashMap();
+               JsonElement jsonElement = string.getAsJsonObject().get("animations");
+               if (jsonElement != null && jsonElement.isJsonObject()) {
+                  LinkedHashMap map = new LinkedHashMap();
 
-                  for (Map.Entry var5 : var2.getAsJsonObject().entrySet()) {
-                     if (((JsonElement)var5.getValue()).isJsonObject()) {
-                        var3.put((String)var5.getKey(), method7815((String)var5.getKey(), ((JsonElement)var5.getValue()).getAsJsonObject()));
+                  for (Map.Entry entry : jsonElement.getAsJsonObject().entrySet()) {
+                     if (((JsonElement)entry.getValue()).isJsonObject()) {
+                        map.put((String)entry.getKey(), method7815((String)entry.getKey(), ((JsonElement)entry.getValue()).getAsJsonObject()));
                      }
                   }
 
-                  CosmeticAnimation.Entry3 var7 = method7816(var3, texts, true);
-                  return var7 == null ? null : new CosmeticAnimation(var7, method7816(var3, texts2, false));
+                  CosmeticAnimation.Entry3 entry3 = method7816(map, texts, true);
+                  return entry3 == null ? null : new CosmeticAnimation(entry3, method7816(map, texts2, false));
                } else {
                   return null;
                }
             }
-         } catch (RuntimeException var6) {
+         } catch (RuntimeException e) {
             return null;
          }
       } else {
@@ -149,201 +149,201 @@ public final class CosmeticAnimation {
       }
    }
 
-   private static CosmeticAnimation.Entry3 method7815(String var0, JsonObject var1) {
-      HashMap var2 = new HashMap();
-      float var3 = method7817(var1, var2);
-      float var4 = method7823(var1, "animation_length", var3);
-      return new CosmeticAnimation.Entry3(var0, method7824(var1, "loop"), var4 <= 0.0F ? var3 : var4, var2);
+   private static CosmeticAnimation.Entry3 method7815(String key, JsonObject jsonObject) {
+      HashMap items = new HashMap();
+      float f = method7817(jsonObject, items);
+      float f2 = method7823(jsonObject, "animation_length", f);
+      return new CosmeticAnimation.Entry3(key, method7824(jsonObject, "loop"), f2 <= 0.0F ? f : f2, items);
    }
 
-   private static CosmeticAnimation.Entry3 method7816(Map<String, CosmeticAnimation.Entry3> var0, String[] var1, boolean var2) {
-      for (int var3 = 0; var3 < 2; var3++) {
-         boolean var4 = var3 == 0;
+   private static CosmeticAnimation.Entry3 method7816(Map<String, CosmeticAnimation.Entry3> map, String[] texts, boolean flag) {
+      for (int i = 0; i < 2; i++) {
+         boolean flag2 = i == 0;
 
-         for (String var8 : var1) {
-            for (CosmeticAnimation.Entry3 var10 : var0.values()) {
-               String var11 = var10.text.toLowerCase(Locale.ROOT);
-               if (var11.equals(var8) && !var11.contains("rare") && (var10.flag || !var4)) {
-                  return var10;
+         for (String text : texts) {
+            for (CosmeticAnimation.Entry3 entry3 : map.values()) {
+               String lowerCase = entry3.text.toLowerCase(Locale.ROOT);
+               if (lowerCase.equals(text) && !lowerCase.contains("rare") && (entry3.flag || !flag2)) {
+                  return entry3;
                }
             }
          }
 
-         for (String var18 : var1) {
-            for (CosmeticAnimation.Entry3 var20 : var0.values()) {
-               String var21 = var20.text.toLowerCase(Locale.ROOT);
-               if (var21.contains(var18) && !var21.contains("rare") && (var20.flag || !var4)) {
-                  return var20;
+         for (String text : texts) {
+            for (CosmeticAnimation.Entry3 entry3 : map.values()) {
+               String lowerCase = entry3.text.toLowerCase(Locale.ROOT);
+               if (lowerCase.contains(text) && !lowerCase.contains("rare") && (entry3.flag || !flag2)) {
+                  return entry3;
                }
             }
          }
       }
 
-      if (!var2) {
+      if (!flag) {
          return null;
       } else {
-         CosmeticAnimation.Entry3 var12 = null;
+         CosmeticAnimation.Entry3 entry3 = null;
 
-         for (CosmeticAnimation.Entry3 var15 : var0.values()) {
-            if (var12 == null) {
-               var12 = var15;
+         for (CosmeticAnimation.Entry3 entry32 : map.values()) {
+            if (entry3 == null) {
+               entry3 = entry32;
             }
 
-            if (var15.flag) {
-               return var15;
+            if (entry32.flag) {
+               return entry32;
             }
          }
 
-         return var12;
+         return entry3;
       }
    }
 
-   private static float method7817(JsonObject var0, Map<String, CosmeticAnimation.Entry2> var1) {
-      JsonElement var2 = var0.get("bones");
-      if (var2 != null && var2.isJsonObject()) {
-         float var3 = 0.0F;
+   private static float method7817(JsonObject jsonObject, Map<String, CosmeticAnimation.Entry2> items) {
+      JsonElement jsonElement = jsonObject.get("bones");
+      if (jsonElement != null && jsonElement.isJsonObject()) {
+         float f = 0.0F;
 
-         for (Map.Entry var5 : var2.getAsJsonObject().entrySet()) {
-            if (((JsonElement)var5.getValue()).isJsonObject()) {
-               JsonObject var6 = ((JsonElement)var5.getValue()).getAsJsonObject();
-               CosmeticAnimation.Entry2 var7 = new CosmeticAnimation.Entry2();
-               var7.entry = method7819(var6.get("rotation"));
-               var7.entry2 = method7819(var6.get("position"));
-               var7.entry3 = method7819(var6.get("scale"));
-               if (var7.entry != null || var7.entry2 != null || var7.entry3 != null) {
-                  var3 = Math.max(var3, Math.max(method7818(var7.entry), Math.max(method7818(var7.entry2), method7818(var7.entry3))));
-                  var1.put((String)var5.getKey(), var7);
+         for (Map.Entry entry : jsonElement.getAsJsonObject().entrySet()) {
+            if (((JsonElement)entry.getValue()).isJsonObject()) {
+               JsonObject json = ((JsonElement)entry.getValue()).getAsJsonObject();
+               CosmeticAnimation.Entry2 entry2 = new CosmeticAnimation.Entry2();
+               entry2.entry = method7819(json.get("rotation"));
+               entry2.entry2 = method7819(json.get("position"));
+               entry2.entry3 = method7819(json.get("scale"));
+               if (entry2.entry != null || entry2.entry2 != null || entry2.entry3 != null) {
+                  f = Math.max(f, Math.max(method7818(entry2.entry), Math.max(method7818(entry2.entry2), method7818(entry2.entry3))));
+                  items.put((String)entry.getKey(), entry2);
                }
             }
          }
 
-         return var3;
+         return f;
       } else {
          return 0.0F;
       }
    }
 
-   private static float method7818(CosmeticAnimation.Entry var0) {
-      return var0 == null ? 0.0F : var0.floatValues[var0.floatValues.length - 1];
+   private static float method7818(CosmeticAnimation.Entry entry) {
+      return entry == null ? 0.0F : entry.floatValues[entry.floatValues.length - 1];
    }
 
-   private static CosmeticAnimation.Entry method7819(JsonElement var0) {
-      if (var0 == null) {
+   private static CosmeticAnimation.Entry method7819(JsonElement jsonElement) {
+      if (jsonElement == null) {
          return null;
-      } else if (var0.isJsonArray()) {
-         float[] var14 = method7820(var0, 0.0F);
-         return new CosmeticAnimation.Entry(new float[]{0.0F}, var14, (float[])var14.clone(), new boolean[]{false});
-      } else if (!var0.isJsonObject()) {
+      } else if (jsonElement.isJsonArray()) {
+         float[] floatValues2 = method7820(jsonElement, 0.0F);
+         return new CosmeticAnimation.Entry(new float[]{0.0F}, floatValues2, (float[])floatValues2.clone(), new boolean[]{false});
+      } else if (!jsonElement.isJsonObject()) {
          return null;
       } else {
-         JsonObject var1 = var0.getAsJsonObject();
-         ArrayList<float[]> var2 = new ArrayList<>(var1.size());
+         JsonObject jsonObject = jsonElement.getAsJsonObject();
+         ArrayList<float[]> floatses = new ArrayList<>(jsonObject.size());
 
-         for (Map.Entry var4 : var1.entrySet()) {
-            float var5;
+         for (Map.Entry entry : jsonObject.entrySet()) {
+            float f;
             try {
-               var5 = Float.parseFloat((String)var4.getKey());
-            } catch (NumberFormatException var13) {
+               f = Float.parseFloat((String)entry.getKey());
+            } catch (NumberFormatException e) {
                continue;
             }
 
-            JsonElement var6 = (JsonElement)var4.getValue();
-            boolean var9 = false;
-            float[] var7;
-            float[] var8;
-            if (var6.isJsonObject()) {
-               JsonObject var10 = var6.getAsJsonObject();
-               JsonElement var11 = var10.get("post");
-               JsonElement var12 = var10.get("pre");
-               var8 = method7820(var11 != null ? var11 : var12, 0.0F);
-               var7 = var12 != null ? method7820(var12, 0.0F) : (float[])var8.clone();
-               var9 = "catmullrom".equalsIgnoreCase(method7822(var10, "lerp_mode"));
+            JsonElement jsonElement2 = (JsonElement)entry.getValue();
+            boolean equalsIgnoreCase = false;
+            float[] floats;
+            float[] floats2;
+            if (jsonElement2.isJsonObject()) {
+               JsonObject json = jsonElement2.getAsJsonObject();
+               JsonElement jsonElement3 = json.get("post");
+               JsonElement jsonElement4 = json.get("pre");
+               floats2 = method7820(jsonElement3 != null ? jsonElement3 : jsonElement4, 0.0F);
+               floats = jsonElement4 != null ? method7820(jsonElement4, 0.0F) : (float[])floats2.clone();
+               equalsIgnoreCase = "catmullrom".equalsIgnoreCase(method7822(json, "lerp_mode"));
             } else {
-               var8 = method7820(var6, 0.0F);
-               var7 = (float[])var8.clone();
+               floats2 = method7820(jsonElement2, 0.0F);
+               floats = (float[])floats2.clone();
             }
 
-            var2.add(new float[]{var5, var7[0], var7[1], var7[2], var8[0], var8[1], var8[2], var9 ? 1.0F : 0.0F});
+            floatses.add(new float[]{f, floats[0], floats[1], floats[2], floats2[0], floats2[1], floats2[2], equalsIgnoreCase ? 1.0F : 0.0F});
          }
 
-         if (var2.isEmpty()) {
+         if (floatses.isEmpty()) {
             return null;
          } else {
-            var2.sort((var0x, var1x) -> Float.compare(var0x[0], var1x[0]));
-            int var15 = var2.size();
-            float[] var16 = new float[var15];
-            float[] var17 = new float[var15 * 3];
-            float[] var18 = new float[var15 * 3];
-            boolean[] var19 = new boolean[var15];
+            floatses.sort((var0x, var1x) -> Float.compare(var0x[0], var1x[0]));
+            int size = floatses.size();
+            float[] floatValues = new float[size];
+            float[] floatValues2 = new float[size * 3];
+            float[] floatValues3 = new float[size * 3];
+            boolean[] flags = new boolean[size];
 
-            for (int var20 = 0; var20 < var15; var20++) {
-               float[] var21 = (float[])var2.get(var20);
-               var16[var20] = var21[0];
-               var17[var20 * 3] = var21[1];
-               var17[var20 * 3 + 1] = var21[2];
-               var17[var20 * 3 + 2] = var21[3];
-               var18[var20 * 3] = var21[4];
-               var18[var20 * 3 + 1] = var21[5];
-               var18[var20 * 3 + 2] = var21[6];
-               var19[var20] = var21[7] != 0.0F;
+            for (int i = 0; i < size; i++) {
+               float[] floats = (float[])floatses.get(i);
+               floatValues[i] = floats[0];
+               floatValues2[i * 3] = floats[1];
+               floatValues2[i * 3 + 1] = floats[2];
+               floatValues2[i * 3 + 2] = floats[3];
+               floatValues3[i * 3] = floats[4];
+               floatValues3[i * 3 + 1] = floats[5];
+               floatValues3[i * 3 + 2] = floats[6];
+               flags[i] = floats[7] != 0.0F;
             }
 
-            return new CosmeticAnimation.Entry(var16, var17, var18, var19);
+            return new CosmeticAnimation.Entry(floatValues, floatValues2, floatValues3, flags);
          }
       }
    }
 
-   private static float[] method7820(JsonElement var0, float var1) {
-      float[] var2 = new float[]{var1, var1, var1};
-      if (var0 == null) {
-         return var2;
-      } else if (var0.isJsonPrimitive()) {
-         float var5 = method7821(var0, var1);
-         var2[0] = var5;
-         var2[1] = var5;
-         var2[2] = var5;
-         return var2;
-      } else if (!var0.isJsonArray()) {
-         return var2;
+   private static float[] method7820(JsonElement jsonElement, float f) {
+      float[] floats = new float[]{f, f, f};
+      if (jsonElement == null) {
+         return floats;
+      } else if (jsonElement.isJsonPrimitive()) {
+         float f2 = method7821(jsonElement, f);
+         floats[0] = f2;
+         floats[1] = f2;
+         floats[2] = f2;
+         return floats;
+      } else if (!jsonElement.isJsonArray()) {
+         return floats;
       } else {
-         JsonArray var3 = var0.getAsJsonArray();
+         JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-         for (int var4 = 0; var4 < 3 && var4 < var3.size(); var4++) {
-            var2[var4] = method7821(var3.get(var4), var1);
+         for (int i = 0; i < 3 && i < jsonArray.size(); i++) {
+            floats[i] = method7821(jsonArray.get(i), f);
          }
 
-         return var2;
+         return floats;
       }
    }
 
-   private static float method7821(JsonElement var0, float var1) {
+   private static float method7821(JsonElement jsonElement, float f) {
       try {
-         return var0.getAsFloat();
-      } catch (RuntimeException var3) {
-         return var1;
+         return jsonElement.getAsFloat();
+      } catch (RuntimeException e) {
+         return f;
       }
    }
 
-   private static String method7822(JsonObject var0, String var1) {
+   private static String method7822(JsonObject json, String memberName) {
       try {
-         return var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsString() : null;
-      } catch (RuntimeException var3) {
+         return json.has(memberName) && json.get(memberName).isJsonPrimitive() ? json.get(memberName).getAsString() : null;
+      } catch (RuntimeException e) {
          return null;
       }
    }
 
-   private static float method7823(JsonObject var0, String var1, float var2) {
+   private static float method7823(JsonObject jsonObject, String memberName, float f) {
       try {
-         return var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsFloat() : var2;
-      } catch (RuntimeException var4) {
-         return var2;
+         return jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() ? jsonObject.get(memberName).getAsFloat() : f;
+      } catch (RuntimeException e) {
+         return f;
       }
    }
 
-   private static boolean method7824(JsonObject var0, String var1) {
+   private static boolean method7824(JsonObject jsonObject, String memberName) {
       try {
-         return var0.has(var1) && var0.get(var1).isJsonPrimitive() && var0.get(var1).getAsBoolean();
-      } catch (RuntimeException var3) {
+         return jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() && jsonObject.get(memberName).getAsBoolean();
+      } catch (RuntimeException e) {
          return false;
       }
    }
@@ -354,11 +354,11 @@ public final class CosmeticAnimation {
       private final float[] floatValues3;
       private final boolean[] flags;
 
-      private Entry(float[] var1, float[] var2, float[] var3, boolean[] var4) {
-         this.floatValues = var1;
-         this.floatValues2 = var2;
-         this.floatValues3 = var3;
-         this.flags = var4;
+      private Entry(float[] floatValues, float[] floatValues2, float[] floatValues3, boolean[] flags) {
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.floatValues3 = floatValues3;
+         this.flags = flags;
       }
    }
 
@@ -374,19 +374,19 @@ public final class CosmeticAnimation {
       private final float floatValue;
       private final Map<String, CosmeticAnimation.Entry2> items;
 
-      private Entry3(String var1, boolean var2, float var3, Map<String, CosmeticAnimation.Entry2> var4) {
-         this.text = var1;
-         this.flag = var2;
-         this.floatValue = var3;
-         this.items = var4;
+      private Entry3(String text, boolean flag, float floatValue, Map<String, CosmeticAnimation.Entry2> items) {
+         this.text = text;
+         this.flag = flag;
+         this.floatValue = floatValue;
+         this.items = items;
       }
 
-      private float method7825(float var1) {
+      private float method7825(float f) {
          if (this.floatValue <= 0.0F) {
             return 0.0F;
          } else {
-            float var2 = var1 % this.floatValue;
-            return var2 < 0.0F ? var2 + this.floatValue : var2;
+            float f2 = f % this.floatValue;
+            return f2 < 0.0F ? f2 + this.floatValue : f2;
          }
       }
    }

@@ -12,15 +12,15 @@ public class WprofCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var1x -> this.set(!WorldProfiler.enabled));
-      var1.then(literal("on").executes(var1x -> this.set(true)));
-      var1.then(literal("off").executes(var1x -> this.set(false)));
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(var1x -> this.set(!WorldProfiler.enabled));
+      literalArgumentBuilder.then(literal("on").executes(var1x -> this.set(true)));
+      literalArgumentBuilder.then(literal("off").executes(var1x -> this.set(false)));
    }
 
-   private int set(boolean var1) {
-      WorldProfiler.setEnabled(var1);
-      ChatLogger.method2020(ChatLogger.Type.INFO, "Замер погоды " + (var1 ? "включён: строки [WPROF] в логе раз в 3 с" : "выключен"));
+   private int set(boolean flag) {
+      WorldProfiler.setEnabled(flag);
+      ChatLogger.method2020(ChatLogger.Type.INFO, "Замер погоды " + (flag ? "включён: строки [WPROF] в логе раз в 3 с" : "выключен"));
       return 1;
    }
 }

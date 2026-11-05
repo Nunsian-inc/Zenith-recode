@@ -14,71 +14,71 @@ public class ClipCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(literal("vclip").then(arg("distance", CoordinateArgumentType.create()).executes(var0 -> {
-         double var1x = (Double)var0.getArgument("distance", Double.class);
-         LocalPlayer var3 = Minecraft.getInstance().player;
-         if (var3 != null) {
-            var3.setPos(var3.getX(), var3.getY() + var1x + 0.1, var3.getZ());
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(literal("vclip").then(arg("distance", CoordinateArgumentType.create()).executes(commandContext -> {
+         double var1x = (Double)commandContext.getArgument("distance", Double.class);
+         LocalPlayer player = Minecraft.getInstance().player;
+         if (player != null) {
+            player.setPos(player.getX(), player.getY() + var1x + 0.1, player.getZ());
             ChatLogger.method2020(ChatLogger.Type.INFO, "Вертикальный вклип на " + var1x + " блоков");
          }
 
          return 1;
       })));
-      var1.then(literal("hclip").then(arg("distance", CoordinateArgumentType.create()).executes(var0 -> {
-         double var1x = (Double)var0.getArgument("distance", Double.class);
-         LocalPlayer var3 = Minecraft.getInstance().player;
-         if (var3 != null) {
-            double var4 = Math.toRadians(var3.getYRot());
-            var3.setPos(var3.getX() - Math.sin(var4) * var1x, var3.getY() + 0.1, var3.getZ() + Math.cos(var4) * var1x);
+      literalArgumentBuilder.then(literal("hclip").then(arg("distance", CoordinateArgumentType.create()).executes(commandContext -> {
+         double var1x = (Double)commandContext.getArgument("distance", Double.class);
+         LocalPlayer player = Minecraft.getInstance().player;
+         if (player != null) {
+            double d = Math.toRadians(player.getYRot());
+            player.setPos(player.getX() - Math.sin(d) * var1x, player.getY() + 0.1, player.getZ() + Math.cos(d) * var1x);
             ChatLogger.method2020(ChatLogger.Type.INFO, "Горизонтальный вклип на " + var1x + " блоков");
          }
 
          return 1;
       })));
-      var1.then(literal("up").then(arg("distance", CoordinateArgumentType.create()).executes(var0 -> {
-         double var1x = (Double)var0.getArgument("distance", Double.class);
-         LocalPlayer var3 = Minecraft.getInstance().player;
-         if (var3 != null) {
-            var3.setPos(var3.getX(), var3.getY() + var1x + 0.1, var3.getZ());
+      literalArgumentBuilder.then(literal("up").then(arg("distance", CoordinateArgumentType.create()).executes(commandContext -> {
+         double var1x = (Double)commandContext.getArgument("distance", Double.class);
+         LocalPlayer player = Minecraft.getInstance().player;
+         if (player != null) {
+            player.setPos(player.getX(), player.getY() + var1x + 0.1, player.getZ());
             ChatLogger.method2020(ChatLogger.Type.INFO, "Вклип вверх на " + var1x + " блоков");
          }
 
          return 1;
       })));
-      var1.then(literal("down").then(arg("distance", CoordinateArgumentType.create()).executes(var0 -> {
-         double var1x = (Double)var0.getArgument("distance", Double.class);
-         LocalPlayer var3 = Minecraft.getInstance().player;
-         if (var3 != null) {
-            var3.setPos(var3.getX(), var3.getY() - var1x + 0.1, var3.getZ());
+      literalArgumentBuilder.then(literal("down").then(arg("distance", CoordinateArgumentType.create()).executes(commandContext -> {
+         double var1x = (Double)commandContext.getArgument("distance", Double.class);
+         LocalPlayer player = Minecraft.getInstance().player;
+         if (player != null) {
+            player.setPos(player.getX(), player.getY() - var1x + 0.1, player.getZ());
             ChatLogger.method2020(ChatLogger.Type.INFO, "Вклип вниз на " + var1x + " блоков");
          }
 
          return 1;
       })));
-      var1.then(literal("forward").then(arg("distance", CoordinateArgumentType.create()).executes(var0 -> {
-         double var1x = (Double)var0.getArgument("distance", Double.class);
-         LocalPlayer var3 = Minecraft.getInstance().player;
-         if (var3 != null) {
-            double var4 = Math.toRadians(var3.getYRot());
-            var3.setPos(var3.getX() - Math.sin(var4) * var1x, var3.getY() + 0.1, var3.getZ() + Math.cos(var4) * var1x);
+      literalArgumentBuilder.then(literal("forward").then(arg("distance", CoordinateArgumentType.create()).executes(commandContext -> {
+         double var1x = (Double)commandContext.getArgument("distance", Double.class);
+         LocalPlayer player = Minecraft.getInstance().player;
+         if (player != null) {
+            double d = Math.toRadians(player.getYRot());
+            player.setPos(player.getX() - Math.sin(d) * var1x, player.getY() + 0.1, player.getZ() + Math.cos(d) * var1x);
             ChatLogger.method2020(ChatLogger.Type.INFO, "Вклип вперед на " + var1x + " блоков");
          }
 
          return 1;
       })));
-      var1.then(literal("back").then(arg("distance", CoordinateArgumentType.create()).executes(var0 -> {
-         double var1x = (Double)var0.getArgument("distance", Double.class);
-         LocalPlayer var3 = Minecraft.getInstance().player;
-         if (var3 != null) {
-            double var4 = Math.toRadians(var3.getYRot());
-            var3.setPos(var3.getX() + Math.sin(var4) * var1x, var3.getY() + 0.1, var3.getZ() - Math.cos(var4) * var1x);
+      literalArgumentBuilder.then(literal("back").then(arg("distance", CoordinateArgumentType.create()).executes(commandContext -> {
+         double var1x = (Double)commandContext.getArgument("distance", Double.class);
+         LocalPlayer player = Minecraft.getInstance().player;
+         if (player != null) {
+            double d = Math.toRadians(player.getYRot());
+            player.setPos(player.getX() + Math.sin(d) * var1x, player.getY() + 0.1, player.getZ() - Math.cos(d) * var1x);
             ChatLogger.method2020(ChatLogger.Type.INFO, "Вклип назад на " + var1x + " блоков");
          }
 
          return 1;
       })));
-      var1.then(literal("help").executes(var0 -> {
+      literalArgumentBuilder.then(literal("help").executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Использование: .clip <vclip/hclip/up/down/forward/back/help> [расстояние]");
          ChatLogger.method2020(ChatLogger.Type.INFO, "Примеры:");
          ChatLogger.method2020(ChatLogger.Type.INFO, ".clip vclip 10 - вклип вверх на 10 блоков");

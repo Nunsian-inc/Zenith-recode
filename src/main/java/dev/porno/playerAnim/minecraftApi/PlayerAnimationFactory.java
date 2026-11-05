@@ -17,7 +17,7 @@ public interface PlayerAnimationFactory {
    PlayerAnimationFactory.FactoryHolder ANIMATION_DATA_FACTORY = new PlayerAnimationFactory.FactoryHolder();
 
    @Nullable
-   IAnimation invoke(@NotNull AbstractClientPlayer var1);
+   IAnimation invoke(@NotNull AbstractClientPlayer player);
 
    class FactoryHolder {
       private static final List<Function<AbstractClientPlayer, PlayerAnimationFactory.FactoryHolder.DataHolder>> factories = new ArrayList<>();

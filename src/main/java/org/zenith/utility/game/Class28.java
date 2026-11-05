@@ -30,43 +30,43 @@ public final class Class28 {
    private WeakReference<LivingEntity> weakReference;
    private Class42 class42;
 
-   public Class28(int var1, Vec3 var2, Vec3 var3, double var4, int var6, int var7, long var8) {
-      this(var1, var2, var3, var4, 0.0, var2.y, var6, var7, var8);
+   public Class28(int intValue, Vec3 vec, Vec3 vec2, double bbWidth, int n, int n2, long l) {
+      this(intValue, vec, vec2, bbWidth, 0.0, vec.y, n, n2, l);
    }
 
-   public Class28(int var1, Vec3 var2, Vec3 var3, double var4, double var6, double var8, int var10, int var11, long var12) {
-      this.intValue = var1;
-      this.intValue2 = Math.max(60, var10);
-      this.intValue3 = var11;
-      this.longValue2 = var12;
-      this.floatValue = (float)(var12 % 628L) / 100.0F;
-      this.doubleValue13 = var4;
-      this.doubleValue14 = var6;
-      this.doubleValue15 = var8;
-      this.doubleValue = var2.x;
-      this.doubleValue2 = var2.y;
-      this.doubleValue3 = var2.z;
-      Vec3 var14 = var3.lengthSqr() > 1.0E-6 ? var3.normalize() : new Vec3(0.0, 0.0, 1.0);
-      Vec3 var15 = var14.cross(new Vec3(0.0, 1.0, 0.0));
-      if (var15.lengthSqr() < 1.0E-6) {
-         var15 = new Vec3(1.0, 0.0, 0.0);
+   public Class28(int intValue, Vec3 vec, Vec3 vec2, double bbWidth, double bbHeight, double minY, int n, int n2, long l) {
+      this.intValue = intValue;
+      this.intValue2 = Math.max(60, n);
+      this.intValue3 = n2;
+      this.longValue2 = l;
+      this.floatValue = (float)(l % 628L) / 100.0F;
+      this.doubleValue13 = bbWidth;
+      this.doubleValue14 = bbHeight;
+      this.doubleValue15 = minY;
+      this.doubleValue = vec.x;
+      this.doubleValue2 = vec.y;
+      this.doubleValue3 = vec.z;
+      Vec3 vec3 = vec2.lengthSqr() > 1.0E-6 ? vec2.normalize() : new Vec3(0.0, 0.0, 1.0);
+      Vec3 vec4 = vec3.cross(new Vec3(0.0, 1.0, 0.0));
+      if (vec4.lengthSqr() < 1.0E-6) {
+         vec4 = new Vec3(1.0, 0.0, 0.0);
       }
 
-      var15 = var15.normalize();
-      Vec3 var16 = var15.cross(var14).normalize();
-      this.doubleValue4 = var14.x;
-      this.doubleValue5 = var14.y;
-      this.doubleValue6 = var14.z;
-      this.doubleValue7 = var15.x;
-      this.doubleValue8 = var15.y;
-      this.doubleValue9 = var15.z;
-      this.doubleValue10 = var16.x;
-      this.doubleValue11 = var16.y;
-      this.doubleValue12 = var16.z;
+      vec4 = vec4.normalize();
+      Vec3 vec5 = vec4.cross(vec3).normalize();
+      this.doubleValue4 = vec3.x;
+      this.doubleValue5 = vec3.y;
+      this.doubleValue6 = vec3.z;
+      this.doubleValue7 = vec4.x;
+      this.doubleValue8 = vec4.y;
+      this.doubleValue9 = vec4.z;
+      this.doubleValue10 = vec5.x;
+      this.doubleValue11 = vec5.y;
+      this.doubleValue12 = vec5.z;
    }
 
-   public Class28 method4652(LivingEntity var1) {
-      this.weakReference = var1 == null ? null : new WeakReference<>(var1);
+   public Class28 method4652(LivingEntity entity) {
+      this.weakReference = entity == null ? null : new WeakReference<>(entity);
       return this;
    }
 
@@ -74,19 +74,19 @@ public final class Class28 {
       return this.weakReference == null ? null : this.weakReference.get();
    }
 
-   public Class42 method4654(int var1, int var2, float var3) {
-      if (this.class42 == null || !this.class42.method7381(var1, var2, var3)) {
-         this.class42 = Class42.method7380(var1, this, var2, var3);
+   public Class42 method4654(int intValue, int n, float floatValue) {
+      if (this.class42 == null || !this.class42.method7381(intValue, n, floatValue)) {
+         this.class42 = Class42.method7380(intValue, this, n, floatValue);
       }
 
       return this.class42;
    }
 
-   public float method4655(long var1) {
-      return (float)(var1 - this.longValue) / this.intValue2;
+   public float method4655(long now) {
+      return (float)(now - this.longValue) / this.intValue2;
    }
 
-   public boolean method4656(long var1) {
-      return var1 - this.longValue >= this.intValue2;
+   public boolean method4656(long now) {
+      return now - this.longValue >= this.intValue2;
    }
 }

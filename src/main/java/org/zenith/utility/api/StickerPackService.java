@@ -33,37 +33,37 @@ public final class StickerPackService {
    private volatile int revision;
    private volatile StickerPackService.Data2 data2 = new StickerPackService.Data2("", new ConcurrentHashMap<>(), new AtomicInteger());
 
-   public static boolean method5503(String var0) {
-      return var0 != null && pattern2.matcher(var0).matches();
+   public static boolean method5503(String string) {
+      return string != null && pattern2.matcher(string).matches();
    }
 
-   public static StickerPackService.Data3 method5504(String var0) {
-      if (var0 == null) {
+   public static StickerPackService.Data3 method5504(String input) {
+      if (input == null) {
          return null;
       } else {
-         Object var1 = items.get(var0);
-         if (var1 == null) {
+         Object obj2 = items.get(input);
+         if (obj2 == null) {
             if (items.size() >= 1024) {
                items.clear();
             }
 
-            StickerPackService.Data3 var2 = method5505(var0);
-            var1 = var2 == null ? obj : var2;
-            items.put(var0, var1);
+            StickerPackService.Data3 data3 = method5505(input);
+            obj2 = data3 == null ? obj : data3;
+            items.put(input, obj2);
          }
 
-         return var1 == obj ? null : (StickerPackService.Data3)var1;
+         return obj2 == obj ? null : (StickerPackService.Data3)obj2;
       }
    }
 
-   private static StickerPackService.Data3 method5505(String var0) {
-      Matcher var1 = pattern.matcher(var0);
-      if (!var1.find()) {
+   private static StickerPackService.Data3 method5505(String input) {
+      Matcher matcher = pattern.matcher(input);
+      if (!matcher.find()) {
          return null;
       } else {
-         int var2 = Integer.parseInt(var1.group(1));
-         int var3 = Integer.parseInt(var1.group(2));
-         return var2 >= 2 && var3 >= 1 && var3 <= var2 ? new StickerPackService.Data3(var2, var3, (var2 + var3 - 1) / var3) : null;
+         int intValue = Integer.parseInt(matcher.group(1));
+         int columns = Integer.parseInt(matcher.group(2));
+         return intValue >= 2 && columns >= 1 && columns <= intValue ? new StickerPackService.Data3(intValue, columns, (intValue + columns - 1) / columns) : null;
       }
    }
 
@@ -86,33 +86,33 @@ public final class StickerPackService {
       return this.revision;
    }
 
-   public String method5507(String var1, String var2) {
-      String var3 = this.text;
-      if (!var3.isEmpty() && var1 != null && var2 != null) {
-         StickerPackService.Data2 var4 = this.data2;
-         if (var4.getText() != var3 || var4.getAtomicInteger().get() >= 4096) {
-            var4 = new StickerPackService.Data2(var3, new ConcurrentHashMap<>(), new AtomicInteger());
-            this.data2 = var4;
+   public String method5507(String text, String string) {
+      String str = this.text;
+      if (!str.isEmpty() && text != null && string != null) {
+         StickerPackService.Data2 data2 = this.data2;
+         if (data2.getText() != str || data2.getAtomicInteger().get() >= 4096) {
+            data2 = new StickerPackService.Data2(str, new ConcurrentHashMap<>(), new AtomicInteger());
+            this.data2 = data2;
          }
 
-         var var5 = var4.getItems().get(var1);
-         String var6 = var5 == null ? null : (String)var5.get(var2);
-         if (var6 == null) {
-            if (!method5503(var1) || !method5503(var2)) {
+         var map = data2.getItems().get(text);
+         String str2 = map == null ? null : (String)map.get(string);
+         if (str2 == null) {
+            if (!method5503(text) || !method5503(string)) {
                return "";
             }
 
-            if (var5 == null) {
-               var5 = var4.getItems().computeIfAbsent(var1, var0 -> new ConcurrentHashMap<>());
+            if (map == null) {
+               map = data2.getItems().computeIfAbsent(text, str3 -> new ConcurrentHashMap<>());
             }
 
-            var6 = var3 + var1 + "/" + var2 + ".png";
-            if (var5.putIfAbsent(var2, var6) == null) {
-               var4.getAtomicInteger().incrementAndGet();
+            str2 = str + text + "/" + string + ".png";
+            if (map.putIfAbsent(string, str2) == null) {
+               data2.getAtomicInteger().incrementAndGet();
             }
          }
 
-         return var6;
+         return str2;
       } else {
          return "";
       }
@@ -125,36 +125,36 @@ public final class StickerPackService {
             this.longValue = System.currentTimeMillis();
             SiteHttpClient.method2412("/chat/stickers", new JsonObject())
                .whenComplete(
-                  (var1, var2) -> {
+                  (jsonObject, throwable) -> {
                      this.loading = false;
-                     if (var2 == null) {
-                        this.text = method5509(SiteHttpClient.method2417(var1, "base", ""));
-                        ArrayList var3 = new ArrayList();
-                        JsonArray var4 = SiteHttpClient.method2419(var1, "packs");
-                        if (var4 != null) {
-                           for (JsonElement var6 : var4) {
-                              if (var6.isJsonObject()) {
-                                 JsonObject var7 = var6.getAsJsonObject();
-                                 String var8 = SiteHttpClient.method2417(var7, "id", "");
-                                 if (method5503(var8)) {
-                                    ArrayList var9 = new ArrayList();
-                                    JsonArray var10 = SiteHttpClient.method2419(var7, "items");
-                                    if (var10 != null) {
-                                       for (JsonElement var12 : var10) {
-                                          if (var12.isJsonPrimitive() && method5503(var12.getAsString())) {
-                                             var9.add(var12.getAsString());
+                     if (throwable == null) {
+                        this.text = method5509(SiteHttpClient.method2417(jsonObject, "base", ""));
+                        ArrayList arrayList = new ArrayList();
+                        JsonArray jsonArray = SiteHttpClient.method2419(jsonObject, "packs");
+                        if (jsonArray != null) {
+                           for (JsonElement jsonElement : jsonArray) {
+                              if (jsonElement.isJsonObject()) {
+                                 JsonObject json = jsonElement.getAsJsonObject();
+                                 String string = SiteHttpClient.method2417(json, "id", "");
+                                 if (method5503(string)) {
+                                    ArrayList coll = new ArrayList();
+                                    JsonArray jsonArray2 = SiteHttpClient.method2419(json, "items");
+                                    if (jsonArray2 != null) {
+                                       for (JsonElement jsonElement2 : jsonArray2) {
+                                          if (jsonElement2.isJsonPrimitive() && method5503(jsonElement2.getAsString())) {
+                                             coll.add(jsonElement2.getAsString());
                                           }
                                        }
                                     }
 
-                                    if (!var9.isEmpty()) {
-                                       String var13 = SiteHttpClient.method2417(var7, "cover", (String)var9.get(0));
-                                       var3.add(
+                                    if (!coll.isEmpty()) {
+                                       String str = SiteHttpClient.method2417(json, "cover", (String)coll.get(0));
+                                       arrayList.add(
                                           new StickerPackService.Data(
-                                             var8,
-                                             SiteHttpClient.method2417(var7, "name", ""),
-                                             method5503(var13) ? var13 : (String)var9.get(0),
-                                             List.copyOf(var9)
+                                             string,
+                                             SiteHttpClient.method2417(json, "name", ""),
+                                             method5503(str) ? str : (String)coll.get(0),
+                                             List.copyOf(coll)
                                           )
                                        );
                                     }
@@ -164,7 +164,7 @@ public final class StickerPackService {
                         }
 
                         this.items2.clear();
-                        this.items2.addAll(var3);
+                        this.items2.addAll(arrayList);
                         this.revision++;
                      }
                   }
@@ -173,22 +173,22 @@ public final class StickerPackService {
       }
    }
 
-   private static String method5509(String var0) {
-      if (var0 != null && !var0.isBlank()) {
+   private static String method5509(String str) {
+      if (str != null && !str.isBlank()) {
          try {
-            URI var1 = URI.create(var0.strip());
-            if ("https".equalsIgnoreCase(var1.getScheme())
-               && var1.getRawUserInfo() == null
-               && var1.getRawQuery() == null
-               && var1.getRawFragment() == null
-               && RegionUtil.method2044(var1.getHost())) {
-               String var2 = var1.toString();
-               return var2.endsWith("/") ? var2 : var2 + "/";
+            URI uri = URI.create(str.strip());
+            if ("https".equalsIgnoreCase(uri.getScheme())
+               && uri.getRawUserInfo() == null
+               && uri.getRawQuery() == null
+               && uri.getRawFragment() == null
+               && RegionUtil.method2044(uri.getHost())) {
+               String string = uri.toString();
+               return string.endsWith("/") ? string : string + "/";
             } else {
-               logger.warn("Стикеры: корень адресов с сайта отвергнут: {}", var0.length() > 200 ? var0.substring(0, 200) + "…" : var0);
+               logger.warn("Стикеры: корень адресов с сайта отвергнут: {}", str.length() > 200 ? str.substring(0, 200) + "…" : str);
                return "";
             }
-         } catch (RuntimeException var3) {
+         } catch (RuntimeException e) {
             return "";
          }
       } else {
@@ -196,8 +196,8 @@ public final class StickerPackService {
       }
    }
 
-   public static String method5510(String var0, String var1) {
-      return Coord.method5171("st").method5177("p", var0).method5177("i", var1).toString();
+   public static String method5510(String text, String dimension) {
+      return Coord.method5171("st").method5177("p", text).method5177("i", dimension).toString();
    }
 
    public static final class Data {
@@ -239,11 +239,11 @@ public final class StickerPackService {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "items=" + this.items + "]";
       }
 
-      public Data(String var1, String var2, String var3, List<String> var4) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
-         this.items = var4;
+      public Data(String text, String str, String str2, List<String> items) {
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.items = items;
       }
 
       public String getText() {
@@ -297,10 +297,10 @@ public final class StickerPackService {
          return "Data2[" + "text=" + this.text + ", " + "items=" + this.items + ", " + "atomicInteger=" + this.atomicInteger + "]";
       }
 
-      private Data2(String var1, Map<String, Map<String, String>> var2, AtomicInteger var3) {
-         this.text = var1;
-         this.items = var2;
-         this.atomicInteger = var3;
+      private Data2(String text, Map<String, Map<String, String>> items, AtomicInteger atomicInteger) {
+         this.text = text;
+         this.items = items;
+         this.atomicInteger = atomicInteger;
       }
 
       public String getText() {
@@ -350,15 +350,15 @@ public final class StickerPackService {
          return "Data3[" + "intValue=" + this.intValue + ", " + "columns=" + this.columns + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data3(int var1, int var2, int var3) {
-         this.intValue = var1;
-         this.columns = var2;
-         this.intValue2 = var3;
+      public Data3(int intValue, int columns, int n) {
+         this.intValue = intValue;
+         this.columns = columns;
+         this.intValue2 = n;
       }
 
-      public int method5511(long var1) {
-         long var3 = Math.max(16L, 3000L / Math.max(1, this.intValue));
-         return Math.floorMod(var1 / var3, this.intValue);
+      public int method5511(long now) {
+         long l = Math.max(16L, 3000L / Math.max(1, this.intValue));
+         return Math.floorMod(now / l, this.intValue);
       }
 
       public int getIntValue() {

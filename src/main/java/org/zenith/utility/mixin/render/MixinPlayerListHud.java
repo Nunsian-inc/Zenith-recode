@@ -35,13 +35,13 @@ public abstract class MixinPlayerListHud {
    private Component zenith$savedFooter;
 
    @Shadow
-   public abstract Component decorateName(PlayerInfo var1, MutableComponent var2);
+   public abstract Component decorateName(PlayerInfo playerInfo, MutableComponent formatNameForTeam);
 
    @Inject(
       method = {"extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$streamerTabStart(GuiGraphicsExtractor var1, int var2, Scoreboard var3, Objective var4, CallbackInfo var5) {
+   private void zenith$streamerTabStart(GuiGraphicsExtractor guiGraphicsExtractor, int n, Scoreboard scoreboard, Objective objective, CallbackInfo callbackInfo) {
       if (ScoreboardParser.isActive()) {
          this.zenith$savedHeader = this.header;
          this.zenith$savedFooter = this.footer;
@@ -54,7 +54,7 @@ public abstract class MixinPlayerListHud {
       method = {"extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;ILnet/minecraft/world/scores/Scoreboard;Lnet/minecraft/world/scores/Objective;)V"},
       at = {@At("RETURN")}
    )
-   private void zenith$streamerTabEnd(GuiGraphicsExtractor var1, int var2, Scoreboard var3, Objective var4, CallbackInfo var5) {
+   private void zenith$streamerTabEnd(GuiGraphicsExtractor guiGraphicsExtractor, int n, Scoreboard scoreboard, Objective objective, CallbackInfo callbackInfo) {
       if (this.zenith$savedHeader != null || this.zenith$savedFooter != null) {
          this.header = this.zenith$savedHeader;
          this.footer = this.zenith$savedFooter;
@@ -68,26 +68,26 @@ public abstract class MixinPlayerListHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void getPlayerName(PlayerInfo var1, CallbackInfoReturnable<Component> var2) {
+   public void getPlayerName(PlayerInfo playerInfo, CallbackInfoReturnable<Component> callbackInfoReturnable) {
       if (NameProtectModule.INSTANCE.isEnabled()) {
-         Minecraft var3 = Minecraft.getInstance();
-         boolean var4 = var3.player != null && var3.player.getUUID().equals(var1.getProfile().id());
-         if (var4 || NameProtectModule.INSTANCE.method5140() && Zenith.getInstance().getFriends().method7627(var1.getProfile().name())) {
-            var2.setReturnValue(
+         Minecraft minecraft = Minecraft.getInstance();
+         boolean flag = minecraft.player != null && minecraft.player.getUUID().equals(playerInfo.getProfile().id());
+         if (flag || NameProtectModule.INSTANCE.method5140() && Zenith.getInstance().getFriends().method7627(playerInfo.getProfile().name())) {
+            callbackInfoReturnable.setReturnValue(
                NameProtectModule.INSTANCE
                   .method5142(
-                     var1.getTabListDisplayName() != null
-                        ? this.decorateName(var1, var1.getTabListDisplayName().copy())
-                        : this.decorateName(var1, PlayerTeam.formatNameForTeam(var1.getTeam(), Component.literal(var1.getProfile().name())))
+                     playerInfo.getTabListDisplayName() != null
+                        ? this.decorateName(playerInfo, playerInfo.getTabListDisplayName().copy())
+                        : this.decorateName(playerInfo, PlayerTeam.formatNameForTeam(playerInfo.getTeam(), Component.literal(playerInfo.getProfile().name())))
                   )
             );
             return;
          }
       }
 
-      Component var5 = StreamerModeModule.INSTANCE.method6290(var1);
-      if (var5 != null) {
-         var2.setReturnValue(var5);
+      Component returnValue = StreamerModeModule.INSTANCE.method6290(playerInfo);
+      if (returnValue != null) {
+         callbackInfoReturnable.setReturnValue(returnValue);
       }
    }
 
@@ -96,46 +96,46 @@ public abstract class MixinPlayerListHud {
       at = {@At("RETURN")},
       cancellable = true
    )
-   private void collectPlayerEntries(CallbackInfoReturnable<List<PlayerInfo>> var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2.player != null) {
-         List<PlayerInfo> var3 = (List)var1.getReturnValue();
-         if (var3 != null && !var3.isEmpty()) {
+   private void collectPlayerEntries(CallbackInfoReturnable<List<PlayerInfo>> callbackInfoReturnable) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.player != null) {
+         List<PlayerInfo> returnValue = (List)callbackInfoReturnable.getReturnValue();
+         if (returnValue != null && !returnValue.isEmpty()) {
             if (StreamerModeModule.INSTANCE.isEnabled()) {
-               ArrayList var9 = new ArrayList();
+               ArrayList arrayList = new ArrayList();
 
-               for (PlayerInfo var11 : var3) {
-                  if (!var11.getProfile().id().equals(var2.player.getUUID())) {
-                     var9.add(var11);
+               for (PlayerInfo playerInfo : returnValue) {
+                  if (!playerInfo.getProfile().id().equals(minecraft.player.getUUID())) {
+                     arrayList.add(playerInfo);
                   }
                }
 
-               StreamerModeModule.INSTANCE.method6296(var9);
-               var1.setReturnValue(var9);
+               StreamerModeModule.INSTANCE.method6296(arrayList);
+               callbackInfoReturnable.setReturnValue(arrayList);
             } else if (NameProtectModule.INSTANCE.isEnabled()) {
-               int var4 = NameProtectModule.INSTANCE.getIntValue18();
-               if (var4 != Integer.MIN_VALUE) {
-                  if (var3.size() >= 2) {
-                     var var5 = new ArrayList<>(var3);
-                     int var6 = -1;
+               int n = NameProtectModule.INSTANCE.getIntValue18();
+               if (n != Integer.MIN_VALUE) {
+                  if (returnValue.size() >= 2) {
+                     var playerInfos = new ArrayList<>(returnValue);
+                     int index = -1;
 
-                     for (int var7 = 0; var7 < var5.size(); var7++) {
-                        if (((PlayerInfo)var5.get(var7)).getProfile().id().equals(var2.player.getUUID())) {
-                           var6 = var7;
+                     for (int i = 0; i < playerInfos.size(); i++) {
+                        if (((PlayerInfo)playerInfos.get(i)).getProfile().id().equals(minecraft.player.getUUID())) {
+                           index = i;
                            break;
                         }
                      }
 
-                     if (var6 != -1) {
-                        int var12 = Math.max(0, Math.min(var5.size() - 1, var4));
-                        if (var12 != var6) {
-                           PlayerInfo var8 = (PlayerInfo)var5.remove(var6);
-                           if (var12 > var6) {
-                              var12--;
+                     if (index != -1) {
+                        int n2 = Math.max(0, Math.min(playerInfos.size() - 1, n));
+                        if (n2 != index) {
+                           PlayerInfo playerInfo = (PlayerInfo)playerInfos.remove(index);
+                           if (n2 > index) {
+                              n2--;
                            }
 
-                           var5.add(Math.min(var5.size(), var12), var8);
-                           var1.setReturnValue(var5);
+                           playerInfos.add(Math.min(playerInfos.size(), n2), playerInfo);
+                           callbackInfoReturnable.setReturnValue(playerInfos);
                         }
                      }
                   }

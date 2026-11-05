@@ -38,12 +38,12 @@ public final class SiteLicenseService {
 
    public static void start() {
       if (atomicBoolean.compareAndSet(false, true)) {
-         ScheduledExecutorService var0 = Executors.newSingleThreadScheduledExecutor(var0x -> {
-            Thread var1 = new Thread(var0x, "zenith-site-licenses");
-            var1.setDaemon(true);
-            return var1;
+         ScheduledExecutorService singleThreadScheduledExecutor = Executors.newSingleThreadScheduledExecutor(var0x -> {
+            Thread thread = new Thread(var0x, "zenith-site-licenses");
+            thread.setDaemon(true);
+            return thread;
          });
-         var0.scheduleWithFixedDelay(SiteLicenseService::tick, 0L, 60L, TimeUnit.SECONDS);
+         singleThreadScheduledExecutor.scheduleWithFixedDelay(SiteLicenseService::tick, 0L, 60L, TimeUnit.SECONDS);
       }
    }
 
@@ -59,22 +59,22 @@ public final class SiteLicenseService {
 
    private static void tick() {
       try {
-         long var0 = System.currentTimeMillis();
-         String var2 = SiteSession.method2289();
-         if (atomicBoolean2.get() || var2.isEmpty()) {
+         long now = System.currentTimeMillis();
+         String str = SiteSession.method2289();
+         if (atomicBoolean2.get() || str.isEmpty()) {
             return;
          }
 
-         if (!var2.equals(text)) {
+         if (!str.equals(text)) {
             longValue = 0L;
             longValue2 = 0L;
          }
 
-         if (longValue != 0L && var0 - longValue < 1800000L) {
+         if (longValue != 0L && now - longValue < 1800000L) {
             return;
          }
 
-         if (longValue2 != 0L && var0 - longValue2 < 300000L) {
+         if (longValue2 != 0L && now - longValue2 < 300000L) {
             return;
          }
 
@@ -82,20 +82,20 @@ public final class SiteLicenseService {
             return;
          }
 
-         text = var2;
-         method4605().whenComplete((var0x, var1) -> atomicBoolean2.set(false));
-      } catch (Throwable var3) {
+         text = str;
+         method4605().whenComplete((var0x, throwable) -> atomicBoolean2.set(false));
+      } catch (Throwable e) {
          atomicBoolean2.set(false);
-         logger.debug("Лицензии сайта: {}", var3.toString());
+         logger.debug("Лицензии сайта: {}", e.toString());
       }
    }
 
    private static CompletableFuture<Void> method4605() {
-      var var0 = SiteHttpClient.method2411("/license/get_all_working", new JsonObject()).thenApply(SiteLicenseService::method4606);
-      var var1 = SiteHttpClient.method2411("/user/login_token", new JsonObject())
+      var thenApply = SiteHttpClient.method2411("/license/get_all_working", new JsonObject()).thenApply(SiteLicenseService::method4606);
+      var exceptionally = SiteHttpClient.method2411("/user/login_token", new JsonObject())
          .thenApply(var0x -> "admin".equalsIgnoreCase(SiteHttpClient.method2417(var0x, "role", "").trim()))
          .exceptionally(var0x -> false);
-      return var0.<Boolean, Void>thenCombine(var1, (var0x, var1x) -> {
+      return thenApply.<Boolean, Void>thenCombine(exceptionally, (var0x, var1x) -> {
          method4607((List<SiteLicenseService.Data>)var0x, var1x);
          return (Void)null;
       }).whenComplete((var0x, var1x) -> {
@@ -106,58 +106,58 @@ public final class SiteLicenseService {
       });
    }
 
-   private static List<SiteLicenseService.Data> method4606(JsonObject var0) {
-      JsonElement var1 = var0 == null ? null : var0.get("current_licenses");
-      if (var1 != null && var1.isJsonArray()) {
-         JsonArray var2 = var1.getAsJsonArray();
-         List<Data> var3 = new ArrayList<>(var2.size());
+   private static List<SiteLicenseService.Data> method4606(JsonObject json) {
+      JsonElement jsonElement = json == null ? null : json.get("current_licenses");
+      if (jsonElement != null && jsonElement.isJsonArray()) {
+         JsonArray jsonArray = jsonElement.getAsJsonArray();
+         List<Data> coll = new ArrayList<>(jsonArray.size());
 
-         for (JsonElement var5 : var2) {
-            if (var5.isJsonObject()) {
-               JsonObject var6 = var5.getAsJsonObject();
-               int var7 = SiteHttpClient.method2421(var6, "id", 0);
-               if (var7 > 0) {
-                  var3.add(
-                     new SiteLicenseService.Data(var7, SiteHttpClient.method2417(var6, "name", ""), Math.max(0, SiteHttpClient.method2421(var6, "days", 0)))
+         for (JsonElement json2 : jsonArray) {
+            if (json2.isJsonObject()) {
+               JsonObject jsonObject = json2.getAsJsonObject();
+               int intValue = SiteHttpClient.method2421(jsonObject, "id", 0);
+               if (intValue > 0) {
+                  coll.add(
+                     new SiteLicenseService.Data(intValue, SiteHttpClient.method2417(jsonObject, "name", ""), Math.max(0, SiteHttpClient.method2421(jsonObject, "days", 0)))
                   );
                }
             }
          }
 
-         return List.copyOf(var3);
+         return List.copyOf(coll);
       } else {
          return List.of();
       }
    }
 
-   private static void method4607(List<SiteLicenseService.Data> var0, boolean var1) {
-      items = var0;
+   private static void method4607(List<SiteLicenseService.Data> datas, boolean flag) {
+      items = datas;
       longValue = System.currentTimeMillis();
       longValue2 = 0L;
-      SiteLicenseService.Data var2 = null;
+      SiteLicenseService.Data data = null;
 
-      for (SiteLicenseService.Data var4 : var0) {
-         int var5 = method4608(var4.getIntValue());
-         if (var5 > 0
-            && (var2 == null || var5 > method4608(var2.getIntValue()) || var5 == method4608(var2.getIntValue()) && var4.getIntValue2() > var2.getIntValue2())) {
-            var2 = var4;
+      for (SiteLicenseService.Data data2 : datas) {
+         int n = method4608(data2.getIntValue());
+         if (n > 0
+            && (data == null || n > method4608(data.getIntValue()) || n == method4608(data.getIntValue()) && data2.getIntValue2() > data.getIntValue2())) {
+            data = data2;
          }
       }
 
-      Zenith.Entry.Type var7 = var2 == null ? null : method4609(var2.getIntValue());
-      long var8 = var2 == null ? -1L : var2.getIntValue2();
-      Zenith var6 = Zenith.getInstance();
-      if (var6 != null && var6.getEntry() != null) {
-         var6.getEntry().method1505(var7, var8, var1);
+      Zenith.Entry.Type type = data == null ? null : method4609(data.getIntValue());
+      long l = data == null ? -1L : data.getIntValue2();
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getEntry() != null) {
+         zenith.getEntry().method1505(type, l, flag);
       }
 
       logger.info(
-         "Лицензии сайта: {} → {}{}", new Object[]{method4610(var0), var7 == null ? "нет лицензии этой сборки" : var7.getName(), var1 ? " (админ)" : ""}
+         "Лицензии сайта: {} → {}{}", new Object[]{method4610(datas), type == null ? "нет лицензии этой сборки" : type.getName(), flag ? " (админ)" : ""}
       );
    }
 
-   private static int method4608(int var0) {
-      return switch (var0) {
+   private static int method4608(int intValue) {
+      return switch (intValue) {
          case 1, 2, 3 -> 1;
          case 4 -> 3;
          default -> 0;
@@ -165,29 +165,29 @@ public final class SiteLicenseService {
       };
    }
 
-   private static Zenith.Entry.Type method4609(int var0) {
-      return switch (var0) {
+   private static Zenith.Entry.Type method4609(int intValue) {
+      return switch (intValue) {
          case 4 -> Zenith.Entry.Type.PRIVATE;
          case 9 -> Zenith.Entry.Type.OPUS;
          default -> Zenith.Entry.Type.method1514(null);
       };
    }
 
-   private static String method4610(List<SiteLicenseService.Data> var0) {
-      if (var0.isEmpty()) {
+   private static String method4610(List<SiteLicenseService.Data> datas) {
+      if (datas.isEmpty()) {
          return "[]";
       } else {
-         StringBuilder var1 = new StringBuilder("[");
+         StringBuilder builder = new StringBuilder("[");
 
-         for (SiteLicenseService.Data var3 : var0) {
-            if (var1.length() > 1) {
-               var1.append(", ");
+         for (SiteLicenseService.Data data : datas) {
+            if (builder.length() > 1) {
+               builder.append(", ");
             }
 
-            var1.append(var3.getIntValue()).append(':').append(var3.name().toLowerCase(Locale.ROOT)).append('/').append(var3.getIntValue2()).append('d');
+            builder.append(data.getIntValue()).append(':').append(data.name().toLowerCase(Locale.ROOT)).append('/').append(data.getIntValue2()).append('d');
          }
 
-         return var1.append(']').toString();
+         return builder.append(']').toString();
       }
    }
 
@@ -225,10 +225,10 @@ public final class SiteLicenseService {
          return "Data[" + "intValue=" + this.intValue + ", " + "text=" + this.text + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data(int var1, String var2, int var3) {
-         this.intValue = var1;
-         this.text = var2;
-         this.intValue2 = var3;
+      public Data(int intValue, String text, int n) {
+         this.intValue = intValue;
+         this.text = text;
+         this.intValue2 = n;
       }
 
       public int getIntValue() {

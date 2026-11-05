@@ -47,11 +47,11 @@ public class HolyWorldServerTracker implements ZenithAccess {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (this.anarchy != 0 && var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundSystemChatPacket var2) {
-            String var4 = var2.content().getString().toLowerCase(Locale.ROOT);
-            if (!var4.contains("хаб") && var4.contains("не удалось")) {
+   public void onPacket(PacketEvent event) {
+      if (this.anarchy != 0 && event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+            String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
+            if (!lowerCase.contains("хаб") && lowerCase.contains("не удалось")) {
                mc.execute(() -> {
                   if (this.anarchy != 0) {
                      HudHolder.method6969().method6972("0", Component.literal(" На данную анархию " + ChatFormatting.RED + "нельзя" + ChatFormatting.RESET + " зайти"));
@@ -65,42 +65,42 @@ public class HolyWorldServerTracker implements ZenithAccess {
    }
 
    @EventTarget
-   public void method6150(UpdateEvent var1) {
+   public void method6150(UpdateEvent event) {
       if (this.anarchy != 0 && mc.player != null && mc.player.connection != null && mc.level != null) {
          if (this.isHolyWorldHere() && !this.method6149()) {
-            int var2 = this.currentAnarchyHere();
+            int currentAnarchyHere = this.currentAnarchyHere();
             if (this.lobby) {
-               if (var2 == -1) {
+               if (currentAnarchyHere == -1) {
                   this.lobby = false;
                   this.stopWatch.reset();
                } else if (this.stopWatch.method7544(1500L)) {
                   mc.player.connection.sendCommand("hub");
                }
-            } else if (var2 == this.anarchy) {
+            } else if (currentAnarchyHere == this.anarchy) {
                this.anarchy = 0;
-            } else if (mc.gui.screen() instanceof ContainerScreen var3 && var3.getTitle().getString().toLowerCase(Locale.ROOT).contains("лайт анархии")
+            } else if (mc.gui.screen() instanceof ContainerScreen containerScreen && containerScreen.getTitle().getString().toLowerCase(Locale.ROOT).contains("лайт анархии")
                )
              {
                if (System.currentTimeMillis() - ((Handler1)mc.gui.screen()).zenithDLC$callGetStartTime() > 4000L) {
                   mc.player.closeContainer();
                } else if (this.stopWatch.method7546(500L)) {
-                  byte var6 = 0;
-                  byte var5 = 1;
+                  byte index = 0;
+                  byte b = 1;
                   if (this.anarchy >= 10 && this.anarchy <= 19) {
-                     var6 = 1;
-                     var5 = 10;
+                     index = 1;
+                     b = 10;
                   } else if (this.anarchy >= 20 && this.anarchy <= 29) {
-                     var6 = 2;
-                     var5 = 20;
+                     index = 2;
+                     b = 20;
                   } else if (this.anarchy >= 30 && this.anarchy <= 36) {
-                     var6 = 3;
-                     var5 = 30;
+                     index = 3;
+                     b = 30;
                   }
 
-                  if (var3.getMenu().getContainer().getContainerSize() < 10) {
-                     InventoryUtils.method904(var6, 0, ContainerInput.PICKUP, false);
+                  if (containerScreen.getMenu().getContainer().getContainerSize() < 10) {
+                     InventoryUtils.method904(index, 0, ContainerInput.PICKUP, false);
                   } else {
-                     InventoryUtils.method904(18 + this.anarchy - var5, 0, ContainerInput.PICKUP, false);
+                     InventoryUtils.method904(18 + this.anarchy - b, 0, ContainerInput.PICKUP, false);
                      mc.player.closeContainer();
                   }
                }
@@ -116,9 +116,9 @@ public class HolyWorldServerTracker implements ZenithAccess {
       }
    }
 
-   public void reconnect(int var1) {
-      if (var1 >= 1 && var1 <= 36) {
-         this.anarchy = var1;
+   public void reconnect(int anarchy) {
+      if (anarchy >= 1 && anarchy <= 36) {
+         this.anarchy = anarchy;
          this.lobby = true;
          this.stopWatch.reset();
       } else {

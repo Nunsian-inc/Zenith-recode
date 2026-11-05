@@ -11,7 +11,7 @@ import org.zenith.utility.misc.HandRenderState;
 @Mixin({SubmitNodeCollection.class})
 public class MixinItemRenderer {
    @ModifyVariable(method = "submitItem", at = @At("HEAD"), argsOnly = true)
-   private FoilType noItemGlintInHandFirePass(FoilType var1) {
-      return HandRenderState.isActive() ? FoilType.NONE : var1;
+   private FoilType noItemGlintInHandFirePass(FoilType foilType) {
+      return HandRenderState.isActive() ? FoilType.NONE : foilType;
    }
 }

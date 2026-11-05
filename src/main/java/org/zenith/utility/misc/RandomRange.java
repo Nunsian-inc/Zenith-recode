@@ -8,12 +8,12 @@ public class RandomRange {
    private final int intValue2;
    private final Random random = new Random();
 
-   public RandomRange(int var1, int var2) {
-      if (var1 > var2) {
+   public RandomRange(int intValue, int n) {
+      if (intValue > n) {
          throw new IllegalArgumentException("Start must be less than or equal to endInclusive");
       } else {
-         this.intValue = var1;
-         this.intValue2 = var2;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
    }
 

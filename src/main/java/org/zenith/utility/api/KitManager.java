@@ -28,50 +28,50 @@ public class KitManager {
 
    public void method7274() {
       this.items.clear();
-      File[] var1 = file.listFiles();
-      if (var1 != null) {
-         for (File var5 : var1) {
-            if (var5.getName().endsWith("." + "Zenith".toLowerCase())) {
-               SborProfile var6 = this.method7276(var5);
-               if (var6 != null) {
-                  this.items.add(var6);
+      File[] listFiles = file.listFiles();
+      if (listFiles != null) {
+         for (File listFile : listFiles) {
+            if (listFile.getName().endsWith("." + "Zenith".toLowerCase())) {
+               SborProfile sborProfile = this.method7276(listFile);
+               if (sborProfile != null) {
+                  this.items.add(sborProfile);
                }
             }
          }
       }
    }
 
-   public SborProfile method7275(String var1) {
-      if (var1 == null) {
+   public SborProfile method7275(String str) {
+      if (str == null) {
          return null;
       } else {
-         File var2 = new File(file, var1 + "." + "Zenith".toLowerCase());
-         return !var2.exists() ? null : this.method7276(var2);
+         File listFile = new File(file, str + "." + "Zenith".toLowerCase());
+         return !listFile.exists() ? null : this.method7276(listFile);
       }
    }
 
-   private SborProfile method7276(File var1) {
-      if (var1 != null && var1.exists()) {
+   private SborProfile method7276(File listFile) {
+      if (listFile != null && listFile.exists()) {
          try {
-            SborProfile var13;
-            try (BufferedReader var2 = new BufferedReader(new FileReader(var1))) {
-               JsonParser var3 = new JsonParser();
-               String var4 = var2.readLine();
-               byte[] var5 = Base64.getDecoder().decode(var4);
-               byte[] var6 = AesGcmCrypto.method5340(var5, "kit");
-               String var7 = new String(var6, StandardCharsets.UTF_8);
-               JsonObject var8 = (JsonObject)var3.parse(var7);
-               String var9 = var1.getName().replace("." + "Zenith".toLowerCase(), "");
-               String var10 = var8.has("name") ? var8.get("name").getAsString() : var9;
-               String var11 = var8.has("server") ? var8.get("server").getAsString() : "HolyWorld";
-               SborProfile var12 = new SborProfile(var10, var11, var1);
-               var12.load(var8);
-               var13 = var12;
+            SborProfile sborProfile;
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(listFile))) {
+               JsonParser jsonParser = new JsonParser();
+               String line = bufferedReader.readLine();
+               byte[] allBytes = Base64.getDecoder().decode(line);
+               byte[] bytes = AesGcmCrypto.method5340(allBytes, "kit");
+               String str = new String(bytes, StandardCharsets.UTF_8);
+               JsonObject json = (JsonObject)jsonParser.parse(str);
+               String str2 = listFile.getName().replace("." + "Zenith".toLowerCase(), "");
+               String string = json.has("name") ? json.get("name").getAsString() : str2;
+               String string2 = json.has("server") ? json.get("server").getAsString() : "HolyWorld";
+               SborProfile sborProfile2 = new SborProfile(string, string2, listFile);
+               sborProfile2.load(json);
+               sborProfile = sborProfile2;
             }
 
-            return var13;
-         } catch (Exception var16) {
-            var16.printStackTrace();
+            return sborProfile;
+         } catch (Exception e) {
+            e.printStackTrace();
             return null;
          }
       } else {
@@ -79,59 +79,59 @@ public class KitManager {
       }
    }
 
-   public boolean method7277(SborProfile var1) {
+   public boolean method7277(SborProfile sborProfile) {
       try {
-         if (var1 == null) {
+         if (sborProfile == null) {
             return false;
          } else {
-            String var2 = new GsonBuilder().setPrettyPrinting().create().toJson(var1.save());
-            var2 = Base64.getEncoder().encodeToString(AesGcmCrypto.method5339(var2.getBytes(), "kit"));
+            String json = new GsonBuilder().setPrettyPrinting().create().toJson(sborProfile.save());
+            json = Base64.getEncoder().encodeToString(AesGcmCrypto.method5339(json.getBytes(), "kit"));
 
             try {
-               FileWriter var3 = new FileWriter(var1.getFile());
-               var3.write(var2);
-               var3.close();
+               FileWriter fileWriter = new FileWriter(sborProfile.getFile());
+               fileWriter.write(json);
+               fileWriter.close();
                return true;
-            } catch (IOException var4) {
+            } catch (IOException e) {
                return false;
             }
          }
-      } catch (Exception var5) {
+      } catch (Exception e) {
          return false;
       }
    }
 
-   public SborProfile method7278(String var1, List<SborItem> var2) {
-      SborProfile var3 = new SborProfile(var1);
-      var3.setItems(var2);
-      if (this.method7277(var3)) {
-         this.items.add(var3);
-         return var3;
+   public SborProfile method7278(String string, List<SborItem> items) {
+      SborProfile sborProfile = new SborProfile(string);
+      sborProfile.setItems(items);
+      if (this.method7277(sborProfile)) {
+         this.items.add(sborProfile);
+         return sborProfile;
       } else {
          return null;
       }
    }
 
-   public SborProfile method7279(String var1, List<SborItem> var2, String var3) {
-      SborProfile var4 = new SborProfile(var1, var3);
-      var4.setItems(var2);
-      if (this.method7277(var4)) {
-         this.items.add(var4);
-         return var4;
+   public SborProfile method7279(String string, List<SborItem> items, String str) {
+      SborProfile sborProfile = new SborProfile(string, str);
+      sborProfile.setItems(items);
+      if (this.method7277(sborProfile)) {
+         this.items.add(sborProfile);
+         return sborProfile;
       } else {
          return null;
       }
    }
 
-   public boolean method7280(String var1) {
-      if (var1 == null) {
+   public boolean method7280(String anObject) {
+      if (anObject == null) {
          return false;
       } else {
-         SborProfile var2;
-         if ((var2 = this.method7282(var1)) != null) {
-            File var3 = var2.getFile();
-            if (var3.exists() && var3.delete()) {
-               this.items.remove(var2);
+         SborProfile sborProfile;
+         if ((sborProfile = this.method7282(anObject)) != null) {
+            File file = sborProfile.getFile();
+            if (file.exists() && file.delete()) {
+               this.items.remove(sborProfile);
                return true;
             }
          }
@@ -140,13 +140,13 @@ public class KitManager {
       }
    }
 
-   public boolean method7281(SborProfile var1) {
-      if (var1 == null) {
+   public boolean method7281(SborProfile sborProfile) {
+      if (sborProfile == null) {
          return false;
       } else {
-         File var2 = var1.getFile();
-         if (var2.exists() && var2.delete()) {
-            this.items.remove(var1);
+         File file = sborProfile.getFile();
+         if (file.exists() && file.delete()) {
+            this.items.remove(sborProfile);
             return true;
          } else {
             return false;
@@ -154,28 +154,28 @@ public class KitManager {
       }
    }
 
-   public SborProfile method7282(String var1) {
-      return var1 == null ? null : this.items.stream().filter(var1x -> var1x.getName().equals(var1)).findFirst().orElse(null);
+   public SborProfile method7282(String anObject) {
+      return anObject == null ? null : this.items.stream().filter(var1x -> var1x.getName().equals(anObject)).findFirst().orElse(null);
    }
 
-   public SborProfile method7283(String var1, String var2) {
-      return var1 == null ? null : this.items.stream().filter(var2x -> var2x.getName().equals(var1) && var2x.method2406(var2)).findFirst().orElse(null);
+   public SborProfile method7283(String anObject, String string) {
+      return anObject == null ? null : this.items.stream().filter(var2x -> var2x.getName().equals(anObject) && var2x.method2406(string)).findFirst().orElse(null);
    }
 
-   public List<SborProfile> method7284(String var1) {
-      return this.items.stream().filter(var1x -> var1x.method2406(var1)).toList();
+   public List<SborProfile> method7284(String string) {
+      return this.items.stream().filter(var1x -> var1x.method2406(string)).toList();
    }
 
    public List<String> method7285() {
-      ArrayList<String> var1 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (SborProfile var3 : this.items) {
-         if (!var1.contains(var3.getName())) {
-            var1.add(var3.getName());
+      for (SborProfile sborProfile : this.items) {
+         if (!strings.contains(sborProfile.getName())) {
+            strings.add(sborProfile.getName());
          }
       }
 
-      return var1;
+      return strings;
    }
 
    @Generated

@@ -59,45 +59,45 @@ public final class Data2 {
    private static final Pattern pattern8 = Pattern.compile("\\d\\s*:\\s*\\d");
    private static final Pattern pattern9 = Pattern.compile("(?<![\\p{L}])(?:мин(?:ут[аыу]?)?|minutes?|mins?)\\.?(?![\\p{L}])", 322);
 
-   public Data2(String var1, boolean var2, int var3) {
-      this.text = var1;
-      this.flag = var2;
-      this.intValue = var3;
+   public Data2(String text, boolean flag, int intValue) {
+      this.text = text;
+      this.flag = flag;
+      this.intValue = intValue;
    }
 
-   public static Data2 method1515(String var0) {
-      String var1 = method1518(var0);
-      String var2 = var1.toLowerCase(Locale.ROOT);
-      String var3 = method1517(var2);
-      boolean var4 = pattern2.matcher(var3).find();
-      if (var4 && pattern3.matcher(var3).find() && !pattern4.matcher(var3).find()) {
-         return new Data2(var1, false, -1);
+   public static Data2 method1515(String string) {
+      String text = method1518(string);
+      String lowerCase = text.toLowerCase(Locale.ROOT);
+      String input = method1517(lowerCase);
+      boolean flag = pattern2.matcher(input).find();
+      if (flag && pattern3.matcher(input).find() && !pattern4.matcher(input).find()) {
+         return new Data2(text, false, -1);
       } else {
-         int var5 = method1516(var2, var4);
-         return new Data2(var1, var4 && var5 != 0, var5);
+         int intValue = method1516(lowerCase, flag);
+         return new Data2(text, flag && intValue != 0, intValue);
       }
    }
 
-   private static int method1516(String var0, boolean var1) {
-      Matcher var2 = pattern5.matcher(var0);
-      if (var2.find()) {
-         return Integer.parseInt(var2.group(1)) * 60 + Integer.parseInt(var2.group(2));
-      } else if (!pattern9.matcher(var0).find() && !pattern8.matcher(var0).find()) {
-         Matcher var3 = pattern6.matcher(var0);
-         if (var3.find()) {
-            int var7 = Integer.parseInt(var3.group(1));
-            return var3.find() ? -1 : var7;
-         } else if (var1 && var0.indexOf(37) < 0 && var0.indexOf(65285) < 0) {
-            Matcher var4 = pattern7.matcher(var0);
-            if (!var4.find()) {
+   private static int method1516(String lowerCase, boolean flag) {
+      Matcher matcher = pattern5.matcher(lowerCase);
+      if (matcher.find()) {
+         return Integer.parseInt(matcher.group(1)) * 60 + Integer.parseInt(matcher.group(2));
+      } else if (!pattern9.matcher(lowerCase).find() && !pattern8.matcher(lowerCase).find()) {
+         Matcher matcher2 = pattern6.matcher(lowerCase);
+         if (matcher2.find()) {
+            int n = Integer.parseInt(matcher2.group(1));
+            return matcher2.find() ? -1 : n;
+         } else if (flag && lowerCase.indexOf(37) < 0 && lowerCase.indexOf(65285) < 0) {
+            Matcher matcher3 = pattern7.matcher(lowerCase);
+            if (!matcher3.find()) {
                return -1;
             } else {
-               String var5 = var4.group();
-               if (var5.length() > 4) {
+               String group = matcher3.group();
+               if (group.length() > 4) {
                   return -1;
                } else {
-                  int var6 = Integer.parseInt(var5);
-                  return var4.find() ? -1 : var6;
+                  int n = Integer.parseInt(group);
+                  return matcher3.find() ? -1 : n;
                }
             }
          } else {
@@ -108,46 +108,46 @@ public final class Data2 {
       }
    }
 
-   private static String method1517(String var0) {
-      StringBuilder var1 = new StringBuilder(var0.length());
-      String var2 = "асеорхукнвтм";
-      String var3 = "aceopxykhbtm";
+   private static String method1517(String lowerCase) {
+      StringBuilder builder = new StringBuilder(lowerCase.length());
+      String str = "асеорхукнвтм";
+      String str2 = "aceopxykhbtm";
 
-      for (int var4 = 0; var4 < var0.length(); var4++) {
-         char var5 = var0.charAt(var4);
-         int var6 = var2.indexOf(var5);
-         var1.append(var6 < 0 ? var5 : var3.charAt(var6));
+      for (int i = 0; i < lowerCase.length(); i++) {
+         char charAt = lowerCase.charAt(i);
+         int indexOf = str.indexOf(charAt);
+         builder.append(indexOf < 0 ? charAt : str2.charAt(indexOf));
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
-   private static String method1518(String var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         String var1 = pattern.matcher(var0).replaceAll("");
-         StringBuilder var2 = new StringBuilder(var1.length());
-         boolean var3 = false;
-         int var4 = 0;
+   private static String method1518(String string) {
+      if (string != null && !string.isEmpty()) {
+         String str = pattern.matcher(string).replaceAll("");
+         StringBuilder builder = new StringBuilder(str.length());
+         boolean flag = false;
+         int index = 0;
 
-         while (var4 < var1.length()) {
-            int var5 = var1.codePointAt(var4);
-            var4 += Character.charCount(var5);
-            int var6 = Character.getType(var5);
-            if (var6 != 18 && var6 != 16) {
-               if (!Character.isWhitespace(var5) && !Character.isSpaceChar(var5)) {
-                  if (var3) {
-                     var2.append(' ');
-                     var3 = false;
+         while (index < str.length()) {
+            int codePointAt = str.codePointAt(index);
+            index += Character.charCount(codePointAt);
+            int type = Character.getType(codePointAt);
+            if (type != 18 && type != 16) {
+               if (!Character.isWhitespace(codePointAt) && !Character.isSpaceChar(codePointAt)) {
+                  if (flag) {
+                     builder.append(' ');
+                     flag = false;
                   }
 
-                  var2.appendCodePoint(var5);
+                  builder.appendCodePoint(codePointAt);
                } else {
-                  var3 = !var2.isEmpty();
+                  flag = !builder.isEmpty();
                }
             }
          }
 
-         return var2.toString();
+         return builder.toString();
       } else {
          return "";
       }

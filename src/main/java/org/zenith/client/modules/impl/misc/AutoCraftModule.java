@@ -147,8 +147,8 @@ public final class AutoCraftModule extends Module {
    private Rotation rotation;
 
    private AutoCraftModule() {
-      for (Setting var4 : new Setting[]{this.autoTake, this.autoStore, this.batch}) {
-         var4.setVisible(() -> false);
+      for (Setting setting : new Setting[]{this.autoTake, this.autoStore, this.batch}) {
+         setting.setVisible(() -> false);
       }
 
       this.method1091();
@@ -177,9 +177,9 @@ public final class AutoCraftModule extends Module {
    @Override
    public void onDisable() {
       if (mc.player != null) {
-         AbstractContainerMenu var2 = mc.player.containerMenu;
-         if (var2 instanceof AbstractContainerMenu) {
-            this.method1075(var2);
+         AbstractContainerMenu containerMenu = mc.player.containerMenu;
+         if (containerMenu instanceof AbstractContainerMenu) {
+            this.method1075(containerMenu);
          }
       }
 
@@ -201,18 +201,18 @@ public final class AutoCraftModule extends Module {
    }
 
    @EventTarget
-   public void onTick(TickEvent var1) {
+   public void onTick(TickEvent event) {
       if (!this.craftPresetSaver.method3191()) {
          this.method1015();
       }
    }
 
    @EventTarget
-   public void method1012(Event5 var1) {
+   public void method1012(Event5 event) {
       if (this.rotation != null) {
-         Rotation var2 = this.rotation;
+         Rotation rotation = this.rotation;
          rotationManager.method7849(
-            new RotationRequest(var2, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var2), bcCameraTestnerv.getRotationConfig()),
+            new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
             5,
             this
          );
@@ -220,13 +220,13 @@ public final class AutoCraftModule extends Module {
    }
 
    @EventTarget
-   public void method1013(MouseButtonEvent var1) {
-      this.craftBindingController.method7228(var1);
+   public void method1013(MouseButtonEvent event) {
+      this.craftBindingController.method7228(event);
    }
 
    @EventTarget
-   public void method1014(DrawEvent var1) {
-      this.method1080(var1);
+   public void method1014(DrawEvent event) {
+      this.method1080(event);
    }
 
    public void method1015() {
@@ -239,19 +239,19 @@ public final class AutoCraftModule extends Module {
          if (!this.craftBindingController.isBinding()) {
             this.method1081(false);
             this.method1091();
-            CraftRecipe var1 = this.method1096();
-            if (var1 == null) {
+            CraftRecipe craftRecipe = this.method1096();
+            if (craftRecipe == null) {
                this.method1076("В списке нет серверных рецептов");
             } else {
-               AbstractContainerMenu var2 = mc.player.containerMenu;
-               if (var2 instanceof CraftingMenu var3) {
-                  this.method1016(var1, var3);
-               } else if (this.method1019(var2)) {
-                  if (this.type != AutoCraftModule.Type.OPENING_OUTPUT && !var2.getCarried().isEmpty() && this.stopWatch.method7546(85L)) {
-                     this.method1075(var2);
+               AbstractContainerMenu containerMenu = mc.player.containerMenu;
+               if (containerMenu instanceof CraftingMenu craftingMenu) {
+                  this.method1016(craftRecipe, craftingMenu);
+               } else if (this.method1019(containerMenu)) {
+                  if (this.type != AutoCraftModule.Type.OPENING_OUTPUT && !containerMenu.getCarried().isEmpty() && this.stopWatch.method7546(85L)) {
+                     this.method1075(containerMenu);
                      this.stopWatch.reset();
                   } else {
-                     this.method1023(var1, var2);
+                     this.method1023(craftRecipe, containerMenu);
                   }
                } else if (this.intValue > 0 && this.method1059()) {
                   this.intValue--;
@@ -265,9 +265,9 @@ public final class AutoCraftModule extends Module {
                   this.method1057();
                } else if (mc.gui.screen() == null) {
                   if (this.flag2 && this.type != AutoCraftModule.Type.SCANNING) {
-                     this.method1035(var1);
+                     this.method1035(craftRecipe);
                   } else {
-                     this.method1037(var1);
+                     this.method1037(craftRecipe);
                   }
                }
             }
@@ -275,48 +275,48 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private void method1016(CraftRecipe var1, CraftingMenu var2) {
+   private void method1016(CraftRecipe craftRecipe, CraftingMenu containerMenu) {
       this.intValue = 0;
       this.type = AutoCraftModule.Type.CRAFTING;
-      this.statusText = "Крафчу " + var1.method5400(this);
+      this.statusText = "Крафчу " + craftRecipe.method5400(this);
       if (this.stopWatch.method7546(85L)) {
-         if (!var2.getCarried().isEmpty()) {
-            this.method1075(var2);
+         if (!containerMenu.getCarried().isEmpty()) {
+            this.method1075(containerMenu);
             this.stopWatch.reset();
-         } else if (!var2.getSlot(0).getItem().isEmpty()) {
-            if (!this.method1048(var1)) {
+         } else if (!containerMenu.getSlot(0).getItem().isEmpty()) {
+            if (!this.method1048(craftRecipe)) {
                this.flag4 = true;
                this.method1077("Инвентарь заполнен, складываю результат", true);
             } else {
-               mc.gameMode.handleContainerInput(var2.containerId, 0, 0, ContainerInput.QUICK_MOVE, mc.player);
+               mc.gameMode.handleContainerInput(containerMenu.containerId, 0, 0, ContainerInput.QUICK_MOVE, mc.player);
                this.flag4 = true;
                this.method1018();
                this.stopWatch.reset();
             }
-         } else if (this.flag4 && this.method1046(var1)) {
+         } else if (this.flag4 && this.method1046(craftRecipe)) {
             this.method1077("Складываю результат крафта", true);
          } else if (this.intValue2 > 0) {
             this.intValue2--;
             if (this.intValue2 == 0) {
-               String var4 = this.flag4 ? "Складываю результат крафта" : "Не хватает ресурсов или сервер отклонил рецепт";
-               this.method1077(var4, false);
+               String statusText = this.flag4 ? "Складываю результат крафта" : "Не хватает ресурсов или сервер отклонил рецепт";
+               this.method1077(statusText, false);
             }
          } else {
-            RecipeDisplayEntry var3 = this.items3.get(var1.getId());
-            if (var3 == null) {
+            RecipeDisplayEntry recipeDisplayEntry = this.items3.get(craftRecipe.getId());
+            if (recipeDisplayEntry == null) {
                this.method1076("Рецепт больше не доступен в книге");
             } else {
-               this.method1017(var2, var3);
+               this.method1017(containerMenu, recipeDisplayEntry);
             }
          }
       }
    }
 
-   private void method1017(CraftingMenu var1, RecipeDisplayEntry var2) {
+   private void method1017(CraftingMenu containerMenu, RecipeDisplayEntry recipeDisplayEntry) {
       if (mc.getConnection() == null) {
          this.method1076("Нет сетевого подключения к серверу");
       } else {
-         mc.getConnection().send(new ServerboundPlaceRecipePacket(var1.containerId, var2.id(), this.method1045()));
+         mc.getConnection().send(new ServerboundPlaceRecipePacket(containerMenu.containerId, recipeDisplayEntry.id(), this.method1045()));
          this.intValue2 = 5;
          this.statusText = "Запрашиваю рецепт из книги...";
          this.stopWatch.reset();
@@ -327,17 +327,17 @@ public final class AutoCraftModule extends Module {
       this.intValue2 = 0;
    }
 
-   private boolean method1019(AbstractContainerMenu var1) {
-      return var1 instanceof ChestMenu || var1 instanceof ShulkerBoxMenu;
+   private boolean method1019(AbstractContainerMenu containerMenu) {
+      return containerMenu instanceof ChestMenu || containerMenu instanceof ShulkerBoxMenu;
    }
 
-   private int method1020(AbstractContainerMenu var1) {
-      return Math.max(0, var1.slots.size() - 36);
+   private int method1020(AbstractContainerMenu containerMenu) {
+      return Math.max(0, containerMenu.slots.size() - 36);
    }
 
-   private boolean method1021(AbstractContainerMenu var1) {
-      if (this.intValue4 != var1.containerId) {
-         this.intValue4 = var1.containerId;
+   private boolean method1021(AbstractContainerMenu containerMenu) {
+      if (this.intValue4 != containerMenu.containerId) {
+         this.intValue4 = containerMenu.containerId;
          this.intValue3 = 5;
       }
 
@@ -362,11 +362,11 @@ public final class AutoCraftModule extends Module {
       this.intValue3 = 0;
    }
 
-   private void method1023(CraftRecipe var1, AbstractContainerMenu var2) {
-      if (!this.method1021(var2)) {
+   private void method1023(CraftRecipe craftRecipe, AbstractContainerMenu containerMenu) {
+      if (!this.method1021(containerMenu)) {
          this.intValue = 0;
          if (this.type == AutoCraftModule.Type.OPENING_ANALYZE) {
-            this.method1040(var2, this.blockPos2);
+            this.method1040(containerMenu, this.blockPos2);
             mc.player.closeContainer();
             this.method1022();
             this.blockPos2 = null;
@@ -374,7 +374,7 @@ public final class AutoCraftModule extends Module {
             this.stopWatch.reset();
          } else if (this.type == AutoCraftModule.Type.OPENING_SOURCE) {
             if (!this.text3.isBlank() && this.blockPos3 != null) {
-               this.method1024(var1, var2, this.text3, this.blockPos3);
+               this.method1024(craftRecipe, containerMenu, this.text3, this.blockPos3);
             } else {
                this.method1077(this.statusText, true);
             }
@@ -382,10 +382,10 @@ public final class AutoCraftModule extends Module {
             this.autoCraftState.method744();
             if (this.type == AutoCraftModule.Type.OPENING_OUTPUT) {
                if (this.blockPos4 != null) {
-                  this.method1040(var2, this.blockPos4);
+                  this.method1040(containerMenu, this.blockPos4);
                }
 
-               this.method1026(var1, var2);
+               this.method1026(craftRecipe, containerMenu);
             } else {
                mc.player.closeContainer();
                this.method1022();
@@ -395,122 +395,122 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private void method1024(CraftRecipe var1, AbstractContainerMenu var2, String var3, BlockPos var4) {
-      String var5 = var1.method5395(var3);
-      String var6 = var1.method5396(var3);
-      this.statusText = "Забираю " + this.method1107(var5, var6);
+   private void method1024(CraftRecipe craftRecipe, AbstractContainerMenu containerMenu, String key, BlockPos blockPos3) {
+      String str = craftRecipe.method5395(key);
+      String anotherString = craftRecipe.method5396(key);
+      this.statusText = "Забираю " + this.method1107(str, anotherString);
       if (this.stopWatch.method7546(85L)) {
-         if (!this.autoCraftState.method746(var1, var3)) {
-            int var7 = this.items6.getOrDefault(var3, var1.method5389(var3));
-            int var8 = this.method1067(var5, var6);
-            if (var8 < var7 && this.method1049(var5, var6)) {
-               int var9 = this.method1020(var2);
-               int var10 = Math.max(1, var7 - var8);
-               int var11 = this.method1025(var2, var9, var5, var6, var10);
-               if (var11 != -1) {
-                  mc.gameMode.handleContainerInput(var2.containerId, var11, 0, ContainerInput.QUICK_MOVE, mc.player);
-                  this.autoCraftState.method750(var1, var3);
+         if (!this.autoCraftState.method746(craftRecipe, key)) {
+            int n = this.items6.getOrDefault(key, craftRecipe.method5389(key));
+            int n2 = this.method1067(str, anotherString);
+            if (n2 < n && this.method1049(str, anotherString)) {
+               int n3 = this.method1020(containerMenu);
+               int n4 = Math.max(1, n - n2);
+               int slotNum = this.method1025(containerMenu, n3, str, anotherString, n4);
+               if (slotNum != -1) {
+                  mc.gameMode.handleContainerInput(containerMenu.containerId, slotNum, 0, ContainerInput.QUICK_MOVE, mc.player);
+                  this.autoCraftState.method750(craftRecipe, key);
                   this.stopWatch.reset();
                } else {
-                  int var12 = this.autoCraftState.method749(var1, var3);
-                  this.method1040(var2, var4);
-                  this.autoCraftState.method751(var1, var3, var5, var6, var12 <= this.autoCraftState.method745());
-                  this.method1077("Источник пуст: " + this.method1107(var5, var6), true);
+                  int n5 = this.autoCraftState.method749(craftRecipe, key);
+                  this.method1040(containerMenu, blockPos3);
+                  this.autoCraftState.method751(craftRecipe, key, str, anotherString, n5 <= this.autoCraftState.method745());
+                  this.method1077("Источник пуст: " + this.method1107(str, anotherString), true);
                }
             } else {
-               this.method1040(var2, var4);
-               this.autoCraftState.method750(var1, var3);
+               this.method1040(containerMenu, blockPos3);
+               this.autoCraftState.method750(craftRecipe, key);
                this.method1077(this.statusText, true);
             }
          }
       }
    }
 
-   private int method1025(AbstractContainerMenu var1, int var2, String var3, String var4, int var5) {
-      int var6 = -1;
-      int var7 = -1;
-      int var8 = -1;
-      int var9 = Integer.MAX_VALUE;
-      int var10 = -1;
-      int var11 = -1;
+   private int method1025(AbstractContainerMenu containerMenu, int n, String str, String anotherString, int n2) {
+      int n3 = -1;
+      int count = -1;
+      int n4 = -1;
+      int count2 = Integer.MAX_VALUE;
+      int n5 = -1;
+      int count3 = -1;
 
-      for (int var12 = 0; var12 < var2; var12++) {
-         Slot var13 = var1.getSlot(var12);
-         if (var13.hasItem() && this.method1073(var13.getItem(), var3, var4)) {
-            int var14 = var13.getItem().getCount();
-            if (var14 == var5) {
-               return var12;
+      for (int i = 0; i < n; i++) {
+         Slot slot = containerMenu.getSlot(i);
+         if (slot.hasItem() && this.method1073(slot.getItem(), str, anotherString)) {
+            int count4 = slot.getItem().getCount();
+            if (count4 == n2) {
+               return i;
             }
 
-            if (var14 < var5 && var14 > var11) {
-               var11 = var14;
-               var10 = var12;
+            if (count4 < n2 && count4 > count3) {
+               count3 = count4;
+               n5 = i;
             }
 
-            if (var14 <= var5 && var14 > var7) {
-               var7 = var14;
-               var6 = var12;
+            if (count4 <= n2 && count4 > count) {
+               count = count4;
+               n3 = i;
             }
 
-            if (var14 > var5 && var14 < var9) {
-               var9 = var14;
-               var8 = var12;
+            if (count4 > n2 && count4 < count2) {
+               count2 = count4;
+               n4 = i;
             }
          }
       }
 
-      if (var6 != -1) {
-         return var6;
+      if (n3 != -1) {
+         return n3;
       } else {
-         return var8 != -1 ? var8 : var10;
+         return n4 != -1 ? n4 : n5;
       }
    }
 
-   private void method1026(CraftRecipe var1, AbstractContainerMenu var2) {
-      this.statusText = "Складываю " + var1.method5400(this);
-      int var3 = this.method1020(var2);
+   private void method1026(CraftRecipe craftRecipe, AbstractContainerMenu containerMenu) {
+      this.statusText = "Складываю " + craftRecipe.method5400(this);
+      int n = this.method1020(containerMenu);
       if (this.type2 != AutoCraftModule.Type2.IDLE) {
-         this.method1028(var2, var3);
-      } else if (!var2.getCarried().isEmpty()) {
+         this.method1028(containerMenu, n);
+      } else if (!containerMenu.getCarried().isEmpty()) {
          this.type2 = AutoCraftModule.Type2.DEPOSIT_CURSOR;
-         this.method1028(var2, var3);
+         this.method1028(containerMenu, n);
       } else if (this.stopWatch.method7546(85L)) {
-         int var4 = this.method1067(var1.getText4(), var1.getText5());
-         if (var4 <= 0 && this.method1066() <= 1) {
-            var4 = this.method1068(var1);
+         int n2 = this.method1067(craftRecipe.getText4(), craftRecipe.getText5());
+         if (n2 <= 0 && this.method1066() <= 1) {
+            n2 = this.method1068(craftRecipe);
          }
 
-         if (var4 <= 0) {
+         if (n2 <= 0) {
             this.method1034();
          } else {
             if (this.intValue5 == -1) {
-               this.intValue5 = var4;
+               this.intValue5 = n2;
                this.intValue6 = 0;
-            } else if (var4 < this.intValue5) {
+            } else if (n2 < this.intValue5) {
                this.intValue6 = 0;
-               this.intValue5 = var4;
-            } else if (var4 == this.intValue5) {
+               this.intValue5 = n2;
+            } else if (n2 == this.intValue5) {
                this.intValue6++;
             } else {
                this.intValue6 = 0;
-               this.intValue5 = var4;
+               this.intValue5 = n2;
             }
 
-            if (this.method1069(var1, var2, var3) && this.intValue6 < 3) {
-               for (int var5 = var3; var5 < var2.slots.size(); var5++) {
-                  Slot var6 = var2.getSlot(var5);
-                  if (var6.hasItem() && var1.method5399(var6.getItem(), this)) {
-                     this.method1027(var2, var5);
+            if (this.method1069(craftRecipe, containerMenu, n) && this.intValue6 < 3) {
+               for (int i = n; i < containerMenu.slots.size(); i++) {
+                  Slot slot = containerMenu.getSlot(i);
+                  if (slot.hasItem() && craftRecipe.method5399(slot.getItem(), this)) {
+                     this.method1027(containerMenu, i);
                      this.stopWatch.reset();
                      return;
                   }
                }
 
                if (this.method1066() <= 1) {
-                  for (int var7 = var3; var7 < var2.slots.size(); var7++) {
-                     Slot var8 = var2.getSlot(var7);
-                     if (var8.hasItem() && !this.method1070(var1, var8.getItem())) {
-                        this.method1027(var2, var7);
+                  for (int i = n; i < containerMenu.slots.size(); i++) {
+                     Slot slot = containerMenu.getSlot(i);
+                     if (slot.hasItem() && !this.method1070(craftRecipe, slot.getItem())) {
+                        this.method1027(containerMenu, i);
                         this.stopWatch.reset();
                         return;
                      }
@@ -519,33 +519,33 @@ public final class AutoCraftModule extends Module {
 
                this.method1034();
             } else {
-               this.method1040(var2, this.blockPos4);
+               this.method1040(containerMenu, this.blockPos4);
                this.method1033();
             }
          }
       }
    }
 
-   private void method1027(AbstractContainerMenu var1, int var2) {
-      if (!var1.getCarried().isEmpty()) {
+   private void method1027(AbstractContainerMenu containerMenu, int index) {
+      if (!containerMenu.getCarried().isEmpty()) {
          this.type2 = AutoCraftModule.Type2.DEPOSIT_CURSOR;
       } else {
-         Slot var3 = var1.getSlot(var2);
-         if (var3.hasItem()) {
-            this.itemStack = var3.getItem().copy();
-            this.intValue8 = var2;
+         Slot slot = containerMenu.getSlot(index);
+         if (slot.hasItem()) {
+            this.itemStack = slot.getItem().copy();
+            this.intValue8 = index;
             this.intValue9 = 2;
             this.type2 = AutoCraftModule.Type2.QUICK_MOVE;
-            mc.gameMode.handleContainerInput(var1.containerId, var2, 0, ContainerInput.PICKUP, mc.player);
+            mc.gameMode.handleContainerInput(containerMenu.containerId, index, 0, ContainerInput.PICKUP, mc.player);
          }
       }
    }
 
-   private void method1028(AbstractContainerMenu var1, int var2) {
+   private void method1028(AbstractContainerMenu containerMenu, int n) {
       if (this.type2 == AutoCraftModule.Type2.QUICK_MOVE) {
-         int var4 = this.method1030(var1, var2);
-         if (var4 != -1) {
-            mc.gameMode.handleContainerInput(var1.containerId, var4, 0, ContainerInput.QUICK_MOVE, mc.player);
+         int slotNum = this.method1030(containerMenu, n);
+         if (slotNum != -1) {
+            mc.gameMode.handleContainerInput(containerMenu.containerId, slotNum, 0, ContainerInput.QUICK_MOVE, mc.player);
          }
 
          this.intValue9--;
@@ -553,19 +553,19 @@ public final class AutoCraftModule extends Module {
             this.type2 = AutoCraftModule.Type2.DEPOSIT_CURSOR;
          }
       } else if (this.type2 == AutoCraftModule.Type2.DEPOSIT_CURSOR) {
-         if (var1.getCarried().isEmpty()) {
-            this.method1029(var1);
+         if (containerMenu.getCarried().isEmpty()) {
+            this.method1029(containerMenu);
          } else {
-            int var3 = this.method1031(var1, var2);
-            if (var3 != -1) {
-               mc.gameMode.handleContainerInput(var1.containerId, var3, 0, ContainerInput.PICKUP, mc.player);
-               if (var1.getCarried().isEmpty()) {
-                  this.method1029(var1);
+            int slotNum = this.method1031(containerMenu, n);
+            if (slotNum != -1) {
+               mc.gameMode.handleContainerInput(containerMenu.containerId, slotNum, 0, ContainerInput.PICKUP, mc.player);
+               if (containerMenu.getCarried().isEmpty()) {
+                  this.method1029(containerMenu);
                }
             } else {
-               this.method1040(var1, this.blockPos4);
-               this.method1032(var1);
-               if (!var1.getCarried().isEmpty()) {
+               this.method1040(containerMenu, this.blockPos4);
+               this.method1032(containerMenu);
+               if (!containerMenu.getCarried().isEmpty()) {
                   this.statusText = "Нет места под hovered-предмет";
                } else {
                   this.method1033();
@@ -575,21 +575,21 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private void method1029(AbstractContainerMenu var1) {
-      this.method1040(var1, this.blockPos4);
+   private void method1029(AbstractContainerMenu containerMenu) {
+      this.method1040(containerMenu, this.blockPos4);
       this.method1079();
       this.stopWatch.reset();
    }
 
-   private int method1030(AbstractContainerMenu var1, int var2) {
+   private int method1030(AbstractContainerMenu containerMenu, int n) {
       if (this.itemStack.isEmpty()) {
          return -1;
       } else {
-         for (int var3 = var2; var3 < var1.slots.size(); var3++) {
-            if (var3 != this.intValue8) {
-               Slot var4 = var1.getSlot(var3);
-               if (var4.hasItem() && this.method1074(var4.getItem(), this.itemStack)) {
-                  return var3;
+         for (int i = n; i < containerMenu.slots.size(); i++) {
+            if (i != this.intValue8) {
+               Slot slot = containerMenu.getSlot(i);
+               if (slot.hasItem() && this.method1074(slot.getItem(), this.itemStack)) {
+                  return i;
                }
             }
          }
@@ -598,21 +598,21 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private int method1031(AbstractContainerMenu var1, int var2) {
-      ItemStack var3 = var1.getCarried();
-      if (var3.isEmpty()) {
+   private int method1031(AbstractContainerMenu containerMenu, int n) {
+      ItemStack carried = containerMenu.getCarried();
+      if (carried.isEmpty()) {
          return -1;
       } else {
-         for (int var4 = 0; var4 < var2; var4++) {
-            Slot var5 = var1.getSlot(var4);
-            if (var5.hasItem() && this.method1074(var5.getItem(), var3) && var5.getItem().getCount() < var5.getItem().getMaxStackSize()) {
-               return var4;
+         for (int i = 0; i < n; i++) {
+            Slot slot = containerMenu.getSlot(i);
+            if (slot.hasItem() && this.method1074(slot.getItem(), carried) && slot.getItem().getCount() < slot.getItem().getMaxStackSize()) {
+               return i;
             }
          }
 
-         for (int var6 = 0; var6 < var2; var6++) {
-            if (!var1.getSlot(var6).hasItem()) {
-               return var6;
+         for (int i = 0; i < n; i++) {
+            if (!containerMenu.getSlot(i).hasItem()) {
+               return i;
             }
          }
 
@@ -620,22 +620,22 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private void method1032(AbstractContainerMenu var1) {
-      if (!var1.getCarried().isEmpty()) {
-         if (this.intValue8 >= 0 && this.intValue8 < var1.slots.size()) {
-            Slot var2 = var1.getSlot(this.intValue8);
-            if (!var2.hasItem() || this.method1074(var2.getItem(), var1.getCarried())) {
-               mc.gameMode.handleContainerInput(var1.containerId, this.intValue8, 0, ContainerInput.PICKUP, mc.player);
+   private void method1032(AbstractContainerMenu containerMenu) {
+      if (!containerMenu.getCarried().isEmpty()) {
+         if (this.intValue8 >= 0 && this.intValue8 < containerMenu.slots.size()) {
+            Slot slot = containerMenu.getSlot(this.intValue8);
+            if (!slot.hasItem() || this.method1074(slot.getItem(), containerMenu.getCarried())) {
+               mc.gameMode.handleContainerInput(containerMenu.containerId, this.intValue8, 0, ContainerInput.PICKUP, mc.player);
                return;
             }
          }
 
-         int var5 = this.method1020(var1);
+         int n = this.method1020(containerMenu);
 
-         for (int var3 = var5; var3 < var1.slots.size(); var3++) {
-            ItemStack var4 = var1.getSlot(var3).getItem();
-            if (var4.isEmpty() || this.method1074(var4, var1.getCarried()) && var4.getCount() < var4.getMaxStackSize()) {
-               mc.gameMode.handleContainerInput(var1.containerId, var3, 0, ContainerInput.PICKUP, mc.player);
+         for (int i = n; i < containerMenu.slots.size(); i++) {
+            ItemStack stack = containerMenu.getSlot(i).getItem();
+            if (stack.isEmpty() || this.method1074(stack, containerMenu.getCarried()) && stack.getCount() < stack.getMaxStackSize()) {
+               mc.gameMode.handleContainerInput(containerMenu.containerId, i, 0, ContainerInput.PICKUP, mc.player);
                return;
             }
          }
@@ -669,19 +669,19 @@ public final class AutoCraftModule extends Module {
       this.flag4 = false;
    }
 
-   private void method1035(CraftRecipe var1) {
-      this.method1041(var1);
-      this.method1042(var1);
-      boolean var2 = this.method1066() <= 1;
-      boolean var3 = this.flag4 && this.method1064(var1);
-      boolean var4 = var2 && this.method1068(var1) > 0;
-      boolean var5 = this.method1063(var1);
-      if (this.autoStore.isEnabled() && (var3 || var5 || var4)) {
-         var var6 = this.method1053(var1);
-         if (!var6.isEmpty()) {
-            this.blockPos4 = (BlockPos)var6.get();
-            var1.method5407(Class1.method55(this.blockPos4));
-            this.statusText = var2 ? "Инвентарь полон, складываю..." : "Открываю сундук-склад";
+   private void method1035(CraftRecipe craftRecipe) {
+      this.method1041(craftRecipe);
+      this.method1042(craftRecipe);
+      boolean flag = this.method1066() <= 1;
+      boolean flag2 = this.flag4 && this.method1064(craftRecipe);
+      boolean flag3 = flag && this.method1068(craftRecipe) > 0;
+      boolean flag4 = this.method1063(craftRecipe);
+      if (this.autoStore.isEnabled() && (flag2 || flag4 || flag3)) {
+         var optionalPos = this.method1053(craftRecipe);
+         if (!optionalPos.isEmpty()) {
+            this.blockPos4 = (BlockPos)optionalPos.get();
+            craftRecipe.method5407(Class1.method55(this.blockPos4));
+            this.statusText = flag ? "Инвентарь полон, складываю..." : "Открываю сундук-склад";
             if (this.method1054(this.blockPos4, AutoCraftModule.Type.OPENING_OUTPUT) == AutoCraftModule.Type3.FAILED) {
                this.items4.remove(this.blockPos4);
                this.blockPos4 = null;
@@ -690,7 +690,7 @@ public final class AutoCraftModule extends Module {
             return;
          }
 
-         if (var2) {
+         if (flag) {
             this.method1126("Автокрафт остановлен: нет сундука со свободным местом.");
             return;
          }
@@ -699,34 +699,34 @@ public final class AutoCraftModule extends Module {
          this.statusText = "Нет свободного склада, продолжаю крафт";
       }
 
-      String var8 = this.method1065(var1);
-      if (this.intValue7 <= 0 && !var8.isBlank() && !this.method1044(var1, 1)) {
+      String key = this.method1065(craftRecipe);
+      if (this.intValue7 <= 0 && !key.isBlank() && !this.method1044(craftRecipe, 1)) {
          this.method1076("Нет места под ресурсы");
-      } else if (!var8.isBlank()) {
+      } else if (!key.isBlank()) {
          if (this.autoTake.isEnabled()) {
-            if (!this.method1049(var1.method5395(var8), var1.method5396(var8))) {
+            if (!this.method1049(craftRecipe.method5395(key), craftRecipe.method5396(key))) {
                this.method1076("Нет места под ресурсы");
             } else {
-               var var7 = this.method1052(var1, var8);
-               if (var7.isPresent()) {
-                  this.blockPos3 = (BlockPos)var7.get();
-                  var1.getItems3().put(var8, Class1.method55(this.blockPos3));
+               var optionalPos = this.method1052(craftRecipe, key);
+               if (optionalPos.isPresent()) {
+                  this.blockPos3 = (BlockPos)optionalPos.get();
+                  craftRecipe.getItems3().put(key, Class1.method55(this.blockPos3));
                   this.statusText = "Открываю сундук с ресурсами";
-                  this.text3 = var8;
+                  this.text3 = key;
                   if (this.method1054(this.blockPos3, AutoCraftModule.Type.OPENING_SOURCE) == AutoCraftModule.Type3.FAILED) {
                      this.items4.remove(this.blockPos3);
                      this.blockPos3 = null;
                      this.text3 = "";
                   }
                } else {
-                  this.method1076("Не найден ресурс: " + this.method1108(var8));
+                  this.method1076("Не найден ресурс: " + this.method1108(key));
                }
             }
          } else {
             this.method1076("Не хватает ингредиентов");
          }
       } else if (this.blockPos != null) {
-         var1.method5408(Class1.method55(this.blockPos));
+         craftRecipe.method5408(Class1.method55(this.blockPos));
          this.statusText = "Открываю верстак";
          if (this.method1054(this.blockPos, AutoCraftModule.Type.OPENING_WORKBENCH) == AutoCraftModule.Type3.FAILED) {
             this.blockPos = null;
@@ -754,7 +754,7 @@ public final class AutoCraftModule extends Module {
       this.method1022();
    }
 
-   private void method1037(CraftRecipe var1) {
+   private void method1037(CraftRecipe craftRecipe) {
       if (!this.flag3) {
          this.method1038();
       }
@@ -762,15 +762,15 @@ public final class AutoCraftModule extends Module {
       if (this.items5.isEmpty()) {
          this.flag2 = true;
          this.type = AutoCraftModule.Type.IDLE;
-         this.method1041(var1);
+         this.method1041(craftRecipe);
          this.statusText = this.items4.isEmpty() ? "Сундуки в зоне досягаемости не найдены" : "Анализ сундуков завершен";
       } else {
          this.blockPos2 = this.items5.getFirst();
          this.statusText = "Анализирую сундук " + this.method1062(this.blockPos2);
-         AutoCraftModule.Type3 var2 = this.method1054(this.blockPos2, AutoCraftModule.Type.OPENING_ANALYZE);
-         if (var2 == AutoCraftModule.Type3.OPENED || var2 == AutoCraftModule.Type3.FAILED) {
+         AutoCraftModule.Type3 type3 = this.method1054(this.blockPos2, AutoCraftModule.Type.OPENING_ANALYZE);
+         if (type3 == AutoCraftModule.Type3.OPENED || type3 == AutoCraftModule.Type3.FAILED) {
             this.items5.removeFirst();
-            if (var2 == AutoCraftModule.Type3.FAILED) {
+            if (type3 == AutoCraftModule.Type3.FAILED) {
                this.blockPos2 = null;
                this.stopWatch.reset();
             }
@@ -783,12 +783,12 @@ public final class AutoCraftModule extends Module {
       this.items5.clear();
       this.blockPos = null;
       this.flag3 = true;
-      double var1 = this.method1061();
-      BlockPos var3 = mc.player.blockPosition();
-      int var4 = (int)Math.ceil(var1);
-      ArrayList var5 = new ArrayList();
-      HashSet var6 = new HashSet();
-      BlockPos.betweenClosedStream(var3.offset(-var4, -var4, -var4), var3.offset(var4, var4, var4))
+      double d = this.method1061();
+      BlockPos blockPosition = mc.player.blockPosition();
+      int x = (int)Math.ceil(d);
+      ArrayList arrayList = new ArrayList();
+      HashSet hashSet = new HashSet();
+      BlockPos.betweenClosedStream(blockPosition.offset(-x, -x, -x), blockPosition.offset(x, x, x))
          .map(BlockPos::immutable)
          .forEach(
             var3x -> {
@@ -803,119 +803,119 @@ public final class AutoCraftModule extends Module {
                   this.blockPos = var3x;
                }
 
-               if (this.method1060(var3x) && this.method1056(var3x) != null && var6.add(this.method1039(var3x, var4x))) {
-                  var5.add(var3x);
+               if (this.method1060(var3x) && this.method1056(var3x) != null && hashSet.add(this.method1039(var3x, var4x))) {
+                  arrayList.add(var3x);
                }
             }
          );
-      var5.sort(Comparator.comparingDouble((net.minecraft.core.Vec3i var0) -> Vec3.atCenterOf(var0).distanceToSqr(mc.player.getEyePosition())));
-      this.items5.addAll(var5);
+      arrayList.sort(Comparator.comparingDouble((net.minecraft.core.Vec3i pos) -> Vec3.atCenterOf(pos).distanceToSqr(mc.player.getEyePosition())));
+      this.items5.addAll(arrayList);
    }
 
-   private BlockPos method1039(BlockPos var1, BlockState var2) {
-      if (var2.hasProperty(ChestBlock.TYPE) && var2.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
-         BlockPos var3 = var1.relative(ChestBlock.getConnectedDirection(var2));
-         return var3.asLong() < var1.asLong() ? var3.immutable() : var1.immutable();
+   private BlockPos method1039(BlockPos mutablePos, BlockState blockState) {
+      if (blockState.hasProperty(ChestBlock.TYPE) && blockState.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+         BlockPos relative = mutablePos.relative(ChestBlock.getConnectedDirection(blockState));
+         return relative.asLong() < mutablePos.asLong() ? relative.immutable() : mutablePos.immutable();
       } else {
-         return var1.immutable();
+         return mutablePos.immutable();
       }
    }
 
-   private void method1040(AbstractContainerMenu var1, BlockPos var2) {
-      if (var2 != null) {
-         int var3 = this.method1020(var1);
-         AutoCraftModule.Entry var4 = new AutoCraftModule.Entry(var2.immutable());
+   private void method1040(AbstractContainerMenu containerMenu, BlockPos blockPos4) {
+      if (blockPos4 != null) {
+         int n = this.method1020(containerMenu);
+         AutoCraftModule.Entry entry = new AutoCraftModule.Entry(blockPos4.immutable());
 
-         for (int var5 = 0; var5 < var3; var5++) {
-            ItemStack var6 = var1.getSlot(var5).getItem();
-            if (var6.isEmpty()) {
-               var4.intValue++;
+         for (int i = 0; i < n; i++) {
+            ItemStack forFirstStack = containerMenu.getSlot(i).getItem();
+            if (forFirstStack.isEmpty()) {
+               entry.intValue++;
             } else {
-               var4.method1132(new AutoCraftModule.Data(var5, method1116(var6.getItem()), this.method1090(var6), var6.getCount(), var6.getMaxStackSize()));
+               entry.method1132(new AutoCraftModule.Data(i, method1116(forFirstStack.getItem()), this.method1090(forFirstStack), forFirstStack.getCount(), forFirstStack.getMaxStackSize()));
             }
          }
 
-         this.items4.put(var2.immutable(), var4);
+         this.items4.put(blockPos4.immutable(), entry);
       }
    }
 
-   private void method1041(CraftRecipe var1) {
-      if (var1 != null) {
+   private void method1041(CraftRecipe craftRecipe) {
+      if (craftRecipe != null) {
          if (this.blockPos != null) {
-            var1.method5408(Class1.method55(this.blockPos));
+            craftRecipe.method5408(Class1.method55(this.blockPos));
          }
 
-         for (String var3 : var1.method5388().keySet()) {
-            this.method1052(var1, var3).ifPresent(var2 -> var1.getItems3().put(var3, Class1.method55(var2)));
+         for (String key : craftRecipe.method5388().keySet()) {
+            this.method1052(craftRecipe, key).ifPresent(blockPos -> craftRecipe.getItems3().put(key, Class1.method55(blockPos)));
          }
 
-         this.method1053(var1).ifPresent(var1x -> var1.method5407(Class1.method55(var1x)));
+         this.method1053(craftRecipe).ifPresent(var1x -> craftRecipe.method5407(Class1.method55(var1x)));
       }
    }
 
-   private void method1042(CraftRecipe var1) {
+   private void method1042(CraftRecipe craftRecipe) {
       this.items6.clear();
-      this.intValue7 = this.method1043(var1);
-      int var2 = Math.max(1, this.intValue7);
+      this.intValue7 = this.method1043(craftRecipe);
+      int n = Math.max(1, this.intValue7);
 
-      for (Map.Entry var4 : var1.method5388().entrySet()) {
-         int var5 = (Integer)var4.getValue() * var2;
-         this.items6.put((String)var4.getKey(), var5);
+      for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+         int n2 = (Integer)entry.getValue() * n;
+         this.items6.put((String)entry.getKey(), n2);
       }
    }
 
-   private int method1043(CraftRecipe var1) {
-      int var2 = Integer.MAX_VALUE;
+   private int method1043(CraftRecipe craftRecipe) {
+      int n = Integer.MAX_VALUE;
 
-      for (Map.Entry var4 : var1.method5388().entrySet()) {
-         String var5 = (String)var4.getKey();
-         int var6 = this.method1067(var1.method5395(var5), var1.method5396(var5)) + this.method1051(var1.method5395(var5), var1.method5396(var5));
-         var2 = Math.min(var2, var6 / Math.max(1, (Integer)var4.getValue()));
+      for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+         String key = (String)entry.getKey();
+         int n2 = this.method1067(craftRecipe.method5395(key), craftRecipe.method5396(key)) + this.method1051(craftRecipe.method5395(key), craftRecipe.method5396(key));
+         n = Math.min(n, n2 / Math.max(1, (Integer)entry.getValue()));
       }
 
-      if (var2 != Integer.MAX_VALUE && var2 > 0) {
+      if (n != Integer.MAX_VALUE && n > 0) {
          if (!this.batch.isEnabled()) {
             return 1;
          } else {
-            int var7 = 1;
-            int var8 = var2;
-            int var9 = 0;
+            int n2 = 1;
+            int n3 = n;
+            int n4 = 0;
 
-            while (var7 <= var8) {
-               int var10 = var7 + (var8 - var7) / 2;
-               if (this.method1044(var1, var10)) {
-                  var9 = var10;
-                  var7 = var10 + 1;
+            while (n2 <= n3) {
+               int n5 = n2 + (n3 - n2) / 2;
+               if (this.method1044(craftRecipe, n5)) {
+                  n4 = n5;
+                  n2 = n5 + 1;
                } else {
-                  var8 = var10 - 1;
+                  n3 = n5 - 1;
                }
             }
 
-            return var9;
+            return n4;
          }
       } else {
          return 0;
       }
    }
 
-   private boolean method1044(CraftRecipe var1, int var2) {
-      int var3 = 0;
-      int var4 = this.method1066();
+   private boolean method1044(CraftRecipe craftRecipe, int n) {
+      int n2 = 0;
+      int n3 = this.method1066();
 
-      for (Map.Entry var6 : var1.method5388().entrySet()) {
-         String var7 = (String)var6.getKey();
-         String var8 = var1.method5395(var7);
-         String var9 = var1.method5396(var7);
-         int var10 = (Integer)var6.getValue() * var2;
-         int var11 = this.method1067(var8, var9);
-         int var12 = Math.max(0, var10 - var11);
-         if (var12 != 0) {
-            int var13 = this.method1050(var8, var9);
-            int var14 = Math.max(0, var12 - var13);
-            if (var14 > 0) {
-               int var15 = Math.max(1, this.method1129(var8));
-               var3 += (var14 + var15 - 1) / var15;
-               if (var3 > var4) {
+      for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+         String key = (String)entry.getKey();
+         String identifier = craftRecipe.method5395(key);
+         String anotherString = craftRecipe.method5396(key);
+         int n4 = (Integer)entry.getValue() * n;
+         int n5 = this.method1067(identifier, anotherString);
+         int n6 = Math.max(0, n4 - n5);
+         if (n6 != 0) {
+            int n7 = this.method1050(identifier, anotherString);
+            int n8 = Math.max(0, n6 - n7);
+            if (n8 > 0) {
+               int n9 = Math.max(1, this.method1129(identifier));
+               n2 += (n8 + n9 - 1) / n9;
+               if (n2 > n3) {
                   return false;
                }
             }
@@ -929,14 +929,14 @@ public final class AutoCraftModule extends Module {
       return this.batch.isEnabled();
    }
 
-   private boolean method1046(CraftRecipe var1) {
-      return !this.autoStore.isEnabled() ? false : !this.method1047(var1) || this.method1063(var1) || !this.method1048(var1);
+   private boolean method1046(CraftRecipe craftRecipe) {
+      return !this.autoStore.isEnabled() ? false : !this.method1047(craftRecipe) || this.method1063(craftRecipe) || !this.method1048(craftRecipe);
    }
 
-   private boolean method1047(CraftRecipe var1) {
-      for (Map.Entry var3 : var1.method5388().entrySet()) {
-         String var4 = (String)var3.getKey();
-         if (this.method1067(var1.method5395(var4), var1.method5396(var4)) < (Integer)var3.getValue()) {
+   private boolean method1047(CraftRecipe craftRecipe) {
+      for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+         String key = (String)entry.getKey();
+         if (this.method1067(craftRecipe.method5395(key), craftRecipe.method5396(key)) < (Integer)entry.getValue()) {
             return false;
          }
       }
@@ -944,78 +944,78 @@ public final class AutoCraftModule extends Module {
       return true;
    }
 
-   private boolean method1048(CraftRecipe var1) {
-      return var1.getText4().isBlank() ? false : this.method1050(var1.getText4(), var1.getText5()) > 0 || this.method1066() > 0;
+   private boolean method1048(CraftRecipe craftRecipe) {
+      return craftRecipe.getText4().isBlank() ? false : this.method1050(craftRecipe.getText4(), craftRecipe.getText5()) > 0 || this.method1066() > 0;
    }
 
-   private boolean method1049(String var1, String var2) {
-      return this.method1050(var1, var2) > 0 || this.method1066() > 0;
+   private boolean method1049(String str, String anotherString) {
+      return this.method1050(str, anotherString) > 0 || this.method1066() > 0;
    }
 
-   private int method1050(String var1, String var2) {
-      int var3 = 0;
+   private int method1050(String identifier, String anotherString) {
+      int n = 0;
 
-      for (int var4 = 0; var4 < 36; var4++) {
-         ItemStack var5 = mc.player.getInventory().getItem(var4);
-         if (!var5.isEmpty() && this.method1073(var5, var1, var2)) {
-            var3 += Math.max(0, var5.getMaxStackSize() - var5.getCount());
+      for (int i = 0; i < 36; i++) {
+         ItemStack carried = mc.player.getInventory().getItem(i);
+         if (!carried.isEmpty() && this.method1073(carried, identifier, anotherString)) {
+            n += Math.max(0, carried.getMaxStackSize() - carried.getCount());
          }
       }
 
-      return var3;
+      return n;
    }
 
-   private int method1051(String var1, String var2) {
-      int var3 = 0;
+   private int method1051(String str, String anotherString) {
+      int n = 0;
 
-      for (AutoCraftModule.Entry var5 : this.items4.values()) {
-         var3 += var5.method1133(var1, var2);
+      for (AutoCraftModule.Entry entry : this.items4.values()) {
+         n += entry.method1133(str, anotherString);
       }
 
-      return var3;
+      return n;
    }
 
-   private Optional<BlockPos> method1052(CraftRecipe var1, String var2) {
-      String var3 = var1.method5395(var2);
-      String var4 = var1.method5396(var2);
+   private Optional<BlockPos> method1052(CraftRecipe craftRecipe, String key) {
+      String str = craftRecipe.method5395(key);
+      String anotherString = craftRecipe.method5396(key);
       return this.items4
          .values()
          .stream()
-         .filter(var2x -> var2x.method1133(var3, var4) > 0)
+         .filter(var2x -> var2x.method1133(str, anotherString) > 0)
          .min(
-            Comparator.<AutoCraftModule.Entry>comparingInt(var2x -> var2x.method1133(var3, var4))
+            Comparator.<AutoCraftModule.Entry>comparingInt(var2x -> var2x.method1133(str, anotherString))
                .reversed()
-               .thenComparingDouble(var0 -> Vec3.atCenterOf(var0.blockPos).distanceToSqr(mc.player.getEyePosition()))
+               .thenComparingDouble(entry -> Vec3.atCenterOf(entry.blockPos).distanceToSqr(mc.player.getEyePosition()))
          )
-         .map(var0 -> var0.blockPos);
+         .map(entry -> entry.blockPos);
    }
 
-   private Optional<BlockPos> method1053(CraftRecipe var1) {
-      String var2 = var1.getText4();
-      String var3 = var1.getText5();
+   private Optional<BlockPos> method1053(CraftRecipe craftRecipe) {
+      String str = craftRecipe.getText4();
+      String anotherString = craftRecipe.getText5();
       return this.items4
          .values()
          .stream()
-         .filter(var2x -> var2x.method1134(var2, var3))
-         .min(Comparator.comparingDouble(var0 -> Vec3.atCenterOf(var0.blockPos).distanceToSqr(mc.player.getEyePosition())))
-         .map(var0 -> var0.blockPos);
+         .filter(var2x -> var2x.method1134(str, anotherString))
+         .min(Comparator.comparingDouble(entry -> Vec3.atCenterOf(entry.blockPos).distanceToSqr(mc.player.getEyePosition())))
+         .map(entry -> entry.blockPos);
    }
 
-   private AutoCraftModule.Type3 method1054(BlockPos var1, AutoCraftModule.Type var2) {
-      if (var1 != null && this.stopWatch.method7546(85L)) {
-         BlockHitResult var3 = this.method1056(var1);
-         if (var3 == null) {
-            this.statusText = "Нет луча до блока " + this.method1062(var1);
+   private AutoCraftModule.Type3 method1054(BlockPos blockPos4, AutoCraftModule.Type type) {
+      if (blockPos4 != null && this.stopWatch.method7546(85L)) {
+         BlockHitResult blockHitResult = this.method1056(blockPos4);
+         if (blockHitResult == null) {
+            this.statusText = "Нет луча до блока " + this.method1062(blockPos4);
             this.method1058();
             return AutoCraftModule.Type3.FAILED;
          } else {
-            this.rotation = RotationUtils.method6913(var3.getLocation());
-            if (!this.method1055(var1)) {
-               this.statusText = "Поворачиваюсь к " + this.method1062(var1);
+            this.rotation = RotationUtils.method6913(blockHitResult.getLocation());
+            if (!this.method1055(blockPos4)) {
+               this.statusText = "Поворачиваюсь к " + this.method1062(blockPos4);
                return AutoCraftModule.Type3.WAITING;
             } else {
-               UseItemUtils.method6514(var3, InteractionHand.MAIN_HAND);
-               this.type = var2;
+               UseItemUtils.method6514(blockHitResult, InteractionHand.MAIN_HAND);
+               this.type = type;
                this.intValue = 30;
                this.stopWatch.reset();
                this.method1022();
@@ -1028,31 +1028,31 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private boolean method1055(BlockPos var1) {
-      Rotation var2 = rotationManager.method7844();
-      BlockHitResult var3 = TargetUtils.method3216(
-         mc.player.getEyePosition(1.0F), var2, this.method1061(), var1x -> var1x != null && var1x.getBlockPos().equals(var1)
+   private boolean method1055(BlockPos blockPos4) {
+      Rotation rotation = rotationManager.method7844();
+      BlockHitResult blockHitResult = TargetUtils.method3216(
+         mc.player.getEyePosition(1.0F), rotation, this.method1061(), var1x -> var1x != null && var1x.getBlockPos().equals(blockPos4)
       );
-      return var3 != null && var3.getType() != HitResult.Type.MISS && var3.getBlockPos().equals(var1);
+      return blockHitResult != null && blockHitResult.getType() != HitResult.Type.MISS && blockHitResult.getBlockPos().equals(blockPos4);
    }
 
-   private BlockHitResult method1056(BlockPos var1) {
-      Vec3 var2 = Vec3.atCenterOf(var1);
-      ArrayList<Vec3> var3 = new ArrayList();
-      var3.add(var2);
+   private BlockHitResult method1056(BlockPos blockPos4) {
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos4);
+      ArrayList<Vec3> vecs = new ArrayList();
+      vecs.add(atCenterOf);
 
-      for (Direction var7 : Direction.values()) {
-         var3.add(var2.add(Vec3.atLowerCornerOf(var7.getUnitVec3i()).scale(0.5)));
+      for (Direction direction : Direction.values()) {
+         vecs.add(atCenterOf.add(Vec3.atLowerCornerOf(direction.getUnitVec3i()).scale(0.5)));
       }
 
-      Vec3 var11 = mc.player.getEyePosition(1.0F);
-      double var12 = this.method1061();
+      Vec3 eyePosition = mc.player.getEyePosition(1.0F);
+      double blockInteractionRange = this.method1061();
 
-      for (Vec3 var8 : var3) {
-         Rotation var9 = RotationUtils.method6913(var8);
-         BlockHitResult var10 = TargetUtils.method3216(var11, var9, var12, var1x -> var1x != null && var1x.getBlockPos().equals(var1));
-         if (var10 != null && var10.getType() != HitResult.Type.MISS && var10.getBlockPos().equals(var1)) {
-            return var10;
+      for (Vec3 location : vecs) {
+         Rotation rotation = RotationUtils.method6913(location);
+         BlockHitResult blockHitResult = TargetUtils.method3216(eyePosition, rotation, blockInteractionRange, var1x -> var1x != null && var1x.getBlockPos().equals(blockPos4));
+         if (blockHitResult != null && blockHitResult.getType() != HitResult.Type.MISS && blockHitResult.getBlockPos().equals(blockPos4)) {
+            return blockHitResult;
          }
       }
 
@@ -1087,47 +1087,47 @@ public final class AutoCraftModule extends Module {
          || this.type == AutoCraftModule.Type.OPENING_WORKBENCH;
    }
 
-   private boolean method1060(BlockPos var1) {
-      BlockEntity var2 = mc.level.getBlockEntity(var1);
-      return var2 instanceof ChestBlockEntity || var2 instanceof BarrelBlockEntity || var2 instanceof ShulkerBoxBlockEntity;
+   private boolean method1060(BlockPos mutablePos) {
+      BlockEntity blockEntity = mc.level.getBlockEntity(mutablePos);
+      return blockEntity instanceof ChestBlockEntity || blockEntity instanceof BarrelBlockEntity || blockEntity instanceof ShulkerBoxBlockEntity;
    }
 
    private double method1061() {
       return mc.player.blockInteractionRange() + 0.15;
    }
 
-   private String method1062(BlockPos var1) {
-      return var1 == null ? "?" : var1.getX() + " " + var1.getY() + " " + var1.getZ();
+   private String method1062(BlockPos blockPos4) {
+      return blockPos4 == null ? "?" : blockPos4.getX() + " " + blockPos4.getY() + " " + blockPos4.getZ();
    }
 
-   private boolean method1063(CraftRecipe var1) {
-      if (var1.getText4().isBlank()) {
+   private boolean method1063(CraftRecipe craftRecipe) {
+      if (craftRecipe.getText4().isBlank()) {
          return false;
       } else {
-         int var2 = 0;
+         int n = 0;
 
-         for (int var3 = 0; var3 < 36; var3++) {
-            ItemStack var4 = mc.player.getInventory().getItem(var3);
-            if (!var4.isEmpty() && var1.method5399(var4, this)) {
-               var2++;
+         for (int i = 0; i < 36; i++) {
+            ItemStack carried = mc.player.getInventory().getItem(i);
+            if (!carried.isEmpty() && craftRecipe.method5399(carried, this)) {
+               n++;
             }
          }
 
-         return var2 / 36.0F >= 0.5F;
+         return n / 36.0F >= 0.5F;
       }
    }
 
-   private boolean method1064(CraftRecipe var1) {
-      return !var1.getText4().isBlank() && this.method1067(var1.getText4(), var1.getText5()) > 0;
+   private boolean method1064(CraftRecipe craftRecipe) {
+      return !craftRecipe.getText4().isBlank() && this.method1067(craftRecipe.getText4(), craftRecipe.getText5()) > 0;
    }
 
-   private String method1065(CraftRecipe var1) {
-      for (Map.Entry var3 : var1.method5388().entrySet()) {
-         String var4 = (String)var3.getKey();
-         int var5 = this.items6.getOrDefault(var4, (Integer)var3.getValue());
-         int var6 = this.method1067(var1.method5395(var4), var1.method5396(var4));
-         if (var6 < var5) {
-            return var4;
+   private String method1065(CraftRecipe craftRecipe) {
+      for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+         String key = (String)entry.getKey();
+         int n = this.items6.getOrDefault(key, (Integer)entry.getValue());
+         int n2 = this.method1067(craftRecipe.method5395(key), craftRecipe.method5396(key));
+         if (n2 < n) {
+            return key;
          }
       }
 
@@ -1135,66 +1135,55 @@ public final class AutoCraftModule extends Module {
    }
 
    private int method1066() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (mc.player.getInventory().getItem(var2).isEmpty()) {
-            var1++;
+      for (int i = 0; i < 36; i++) {
+         if (mc.player.getInventory().getItem(i).isEmpty()) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private int method1067(String var1, String var2) {
-      int var3 = 0;
+   private int method1067(String identifier, String anotherString) {
+      int n = 0;
 
-      for (int var4 = 0; var4 < 36; var4++) {
-         ItemStack var5 = mc.player.getInventory().getItem(var4);
-         if (!var5.isEmpty() && this.method1073(var5, var1, var2)) {
-            var3 += var5.getCount();
+      for (int i = 0; i < 36; i++) {
+         ItemStack carried = mc.player.getInventory().getItem(i);
+         if (!carried.isEmpty() && this.method1073(carried, identifier, anotherString)) {
+            n += carried.getCount();
          }
       }
 
-      return var3;
+      return n;
    }
 
-   private int method1068(CraftRecipe var1) {
-      int var2 = 0;
+   private int method1068(CraftRecipe craftRecipe) {
+      int n = 0;
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         ItemStack var4 = mc.player.getInventory().getItem(var3);
-         if (!var4.isEmpty() && !this.method1070(var1, var4)) {
-            var2 += var4.getCount();
+      for (int i = 0; i < 36; i++) {
+         ItemStack carried = mc.player.getInventory().getItem(i);
+         if (!carried.isEmpty() && !this.method1070(craftRecipe, carried)) {
+            n += carried.getCount();
          }
       }
 
-      return var2;
+      return n;
    }
 
-   private boolean method1069(CraftRecipe var1, AbstractContainerMenu var2, int var3) {
-      String var4 = var1.getText4();
-      String var5 = var1.getText5();
+   private boolean method1069(CraftRecipe craftRecipe, AbstractContainerMenu containerMenu, int n) {
+      String identifier = craftRecipe.getText4();
+      String anotherString = craftRecipe.getText5();
 
-      for (int var6 = 0; var6 < var3; var6++) {
-         Slot var7 = var2.getSlot(var6);
-         if (!var7.hasItem()) {
+      for (int i = 0; i < n; i++) {
+         Slot slot = containerMenu.getSlot(i);
+         if (!slot.hasItem()) {
             return true;
          }
 
-         ItemStack var8 = var7.getItem();
-         if (this.method1073(var8, var4, var5) && var8.getCount() < var8.getMaxStackSize()) {
-            return true;
-         }
-      }
-
-      return false;
-   }
-
-   private boolean method1070(CraftRecipe var1, ItemStack var2) {
-      for (Map.Entry var4 : var1.method5388().entrySet()) {
-         String var5 = (String)var4.getKey();
-         if (this.method1073(var2, var1.method5395(var5), var1.method5396(var5))) {
+         ItemStack carried = slot.getItem();
+         if (this.method1073(carried, identifier, anotherString) && carried.getCount() < carried.getMaxStackSize()) {
             return true;
          }
       }
@@ -1202,53 +1191,64 @@ public final class AutoCraftModule extends Module {
       return false;
    }
 
-   private boolean method1071(Item var1, String var2) {
-      return Objects.equals(method1072(var1), var2);
+   private boolean method1070(CraftRecipe craftRecipe, ItemStack carried) {
+      for (Map.Entry entry : craftRecipe.method5388().entrySet()) {
+         String key = (String)entry.getKey();
+         if (this.method1073(carried, craftRecipe.method5395(key), craftRecipe.method5396(key))) {
+            return true;
+         }
+      }
+
+      return false;
    }
 
-   private static String method1072(Item var0) {
-      return items.computeIfAbsent(var0, var0x -> BuiltInRegistries.ITEM.getKey(var0x).toString());
+   private boolean method1071(Item key, String identifier) {
+      return Objects.equals(method1072(key), identifier);
    }
 
-   public boolean method1073(ItemStack var1, String var2, String var3) {
-      if (var1 == null || var1.isEmpty() || !this.method1071(var1.getItem(), var2)) {
+   private static String method1072(Item key) {
+      return items.computeIfAbsent(key, var0x -> BuiltInRegistries.ITEM.getKey(var0x).toString());
+   }
+
+   public boolean method1073(ItemStack carried, String identifier, String anotherString) {
+      if (carried == null || carried.isEmpty() || !this.method1071(carried.getItem(), identifier)) {
          return false;
-      } else if (var3 != null && !var3.isBlank()) {
-         String var4 = var1.getHoverName().getString();
-         return var4.equalsIgnoreCase(var3) || var4.toLowerCase(Locale.ROOT).contains(var3.toLowerCase(Locale.ROOT));
+      } else if (anotherString != null && !anotherString.isBlank()) {
+         String string = carried.getHoverName().getString();
+         return string.equalsIgnoreCase(anotherString) || string.toLowerCase(Locale.ROOT).contains(anotherString.toLowerCase(Locale.ROOT));
       } else {
          return true;
       }
    }
 
-   private boolean method1074(ItemStack var1, ItemStack var2) {
-      if (var1 != null && var2 != null && !var1.isEmpty() && !var2.isEmpty()) {
-         ItemStack var3 = var1.copy();
-         ItemStack var4 = var2.copy();
-         var3.setCount(1);
-         var4.setCount(1);
-         return ItemStack.isSameItem(var3, var4) && ItemStack.matches(var3, var4);
+   private boolean method1074(ItemStack stack, ItemStack carried) {
+      if (stack != null && carried != null && !stack.isEmpty() && !carried.isEmpty()) {
+         ItemStack stack2 = stack.copy();
+         ItemStack stack3 = carried.copy();
+         stack2.setCount(1);
+         stack3.setCount(1);
+         return ItemStack.isSameItem(stack2, stack3) && ItemStack.matches(stack2, stack3);
       } else {
          return false;
       }
    }
 
-   private void method1075(AbstractContainerMenu var1) {
-      ItemStack var2 = var1.getCarried();
-      if (!var2.isEmpty()) {
-         for (Slot var4 : var1.slots) {
-            if (var4.container instanceof Inventory && var4.getContainerSlot() < 36 && var4.getItem().isEmpty()) {
-               mc.gameMode.handleContainerInput(var1.containerId, var4.index, 0, ContainerInput.PICKUP, mc.player);
+   private void method1075(AbstractContainerMenu containerMenu) {
+      ItemStack carried = containerMenu.getCarried();
+      if (!carried.isEmpty()) {
+         for (Slot slot : containerMenu.slots) {
+            if (slot.container instanceof Inventory && slot.getContainerSlot() < 36 && slot.getItem().isEmpty()) {
+               mc.gameMode.handleContainerInput(containerMenu.containerId, slot.index, 0, ContainerInput.PICKUP, mc.player);
                return;
             }
          }
 
-         mc.gameMode.handleContainerInput(var1.containerId, 64537, 0, ContainerInput.PICKUP, mc.player);
+         mc.gameMode.handleContainerInput(containerMenu.containerId, 64537, 0, ContainerInput.PICKUP, mc.player);
       }
    }
 
-   private void method1076(String var1) {
-      this.statusText = var1;
+   private void method1076(String statusText) {
+      this.statusText = statusText;
       this.text3 = "";
       this.type = AutoCraftModule.Type.IDLE;
       this.autoCraftState.method744();
@@ -1257,14 +1257,14 @@ public final class AutoCraftModule extends Module {
       this.method1022();
    }
 
-   private void method1077(String var1, boolean var2) {
+   private void method1077(String statusText, boolean flag) {
       if (mc.player != null && mc.player.containerMenu != mc.player.inventoryMenu) {
          mc.player.closeContainer();
       }
 
       this.blockPos3 = null;
-      this.method1076(var1);
-      if (var2) {
+      this.method1076(statusText);
+      if (flag) {
          this.stopWatch.reset();
       }
    }
@@ -1282,81 +1282,81 @@ public final class AutoCraftModule extends Module {
       this.intValue9 = 0;
    }
 
-   private void method1080(DrawEvent var1) {
+   private void method1080(DrawEvent event) {
       if (this.isEnabled() || this.craftBindingController.isBinding() || this.craftPresetSaver.isActive()) {
-         String var2;
+         String statusText;
          if (this.craftBindingController.isBinding()) {
-            var2 = this.craftBindingController.method7223();
+            statusText = this.craftBindingController.method7223();
          } else if (this.craftPresetSaver.isActive()) {
-            var2 = this.craftPresetSaver.method3189();
+            statusText = this.craftPresetSaver.method3189();
          } else {
-            var2 = this.statusText;
+            statusText = this.statusText;
          }
 
-         if (var2 != null && !var2.isBlank()) {
-            Font var3 = Fonts.NEW_REGULAR.getFont(8.0F);
-            float var4 = var3.width(var2) + 14.0F;
-            float var5 = mc.getWindow().getGuiScaledWidth() / 2.0F - var4 / 2.0F;
-            float var6 = mc.getWindow().getGuiScaledHeight() - 54;
-            ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-            ZenithColor var8 = var7 == null ? new ZenithColor(14, 14, 16, 160) : var7.getPanelLeftBackground().getZenithColor().method7293(160);
-            var1.getCustomDrawContext().drawRoundedRect(var5, var6, var4, 16.0F, ProxyDotRadiusData.method8069(5.0F), var8);
-            float var9 = var6 + (16.0F - var3.height()) / 2.0F - 1.0F;
-            var1.getCustomDrawContext().drawText(var3, var2, var5 + var4 / 2.0F - var3.width(var2) / 2.0F, var9, ZenithColor.INSTANCE);
+         if (statusText != null && !statusText.isBlank()) {
+            Font font = Fonts.NEW_REGULAR.getFont(8.0F);
+            float width = font.width(statusText) + 14.0F;
+            float floatValue = mc.getWindow().getGuiScaledWidth() / 2.0F - width / 2.0F;
+            float y = mc.getWindow().getGuiScaledHeight() - 54;
+            ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+            ZenithColor zenithColor = currentStyle == null ? new ZenithColor(14, 14, 16, 160) : currentStyle.getPanelLeftBackground().getZenithColor().method7293(160);
+            event.getCustomDrawContext().drawRoundedRect(floatValue, y, width, 16.0F, ProxyDotRadiusData.method8069(5.0F), zenithColor);
+            float centeredTextY = y + (16.0F - font.height()) / 2.0F - 1.0F;
+            event.getCustomDrawContext().drawText(font, statusText, floatValue + width / 2.0F - font.width(statusText) / 2.0F, centeredTextY, ZenithColor.INSTANCE);
          }
       }
    }
 
-   private void method1081(boolean var1) {
+   private void method1081(boolean flag) {
       if (mc.player != null && mc.level != null) {
-         long var2 = System.currentTimeMillis();
-         if (var1 || var2 - this.longValue >= 600L) {
-            this.longValue = var2;
-            ClientRecipeBook var4 = mc.player.getRecipeBook();
-            List<RecipeCollection> var5 = var4.getCollections();
-            RegistryAccess var6 = mc.level.registryAccess();
-            Language var7 = Language.getInstance();
-            if (!var1 && !this.flag && var5 == this.items7 && var6 == this.dynamicRegistryManager && var7 == this.language) {
+         long now = System.currentTimeMillis();
+         if (flag || now - this.longValue >= 600L) {
+            this.longValue = now;
+            ClientRecipeBook recipeBook = mc.player.getRecipeBook();
+            List<RecipeCollection> collections = recipeBook.getCollections();
+            RegistryAccess registryAccess = mc.level.registryAccess();
+            Language language = Language.getInstance();
+            if (!flag && !this.flag && collections == this.items7 && registryAccess == this.dynamicRegistryManager && language == this.language) {
                this.method1091();
             } else {
-               this.items7 = var5;
-               this.dynamicRegistryManager = var6;
-               this.language = var7;
+               this.items7 = collections;
+               this.dynamicRegistryManager = registryAccess;
+               this.language = language;
                this.flag = false;
-               ContextMap var8 = SlotDisplayContext.fromLevel(mc.level);
-               HashSet var9 = new HashSet();
-               HashMap var10 = new HashMap();
+               ContextMap context = SlotDisplayContext.fromLevel(mc.level);
+               HashSet hashSet = new HashSet();
+               HashMap map = new HashMap();
                this.items3.clear();
 
-               for (RecipeCollection var12 : var5) {
-                  for (RecipeDisplayEntry var14 : var12.getRecipes()) {
-                     RecipeDisplay var15 = var14.display();
-                     if (this.method1088(var15)) {
-                        ItemStack var16 = var15.result().resolveForFirstStack(var8);
-                        if (!var16.isEmpty() && this.method1089(var16)) {
-                           AutoCraftModule.Data3 var17 = this.method1082(var14, var16, var8);
-                           String var18 = var17.getText();
-                           int var19 = (Integer)var10.merge(var18, 1, (a, b) -> (Integer)a + (Integer)b);
-                           if (var19 > 1) {
-                              var18 = var18 + "_" + var19;
+               for (RecipeCollection collection : collections) {
+                  for (RecipeDisplayEntry recipe : collection.getRecipes()) {
+                     RecipeDisplay display = recipe.display();
+                     if (this.method1088(display)) {
+                        ItemStack forFirstStack = display.result().resolveForFirstStack(context);
+                        if (!forFirstStack.isEmpty() && this.method1089(forFirstStack)) {
+                           AutoCraftModule.Data3 data3 = this.method1082(recipe, forFirstStack, context);
+                           String text = data3.getText();
+                           int n = (Integer)map.merge(text, 1, (a, b) -> (Integer)a + (Integer)b);
+                           if (n > 1) {
+                              text = text + "_" + n;
                            }
 
-                           CraftRecipe var20 = this.method1095(var18);
-                           if (var20 == null) {
-                              var20 = new CraftRecipe(var18, "servers", var17.getText2());
-                              this.items2.add(var20);
+                           CraftRecipe craftRecipe = this.method1095(text);
+                           if (craftRecipe == null) {
+                              craftRecipe = new CraftRecipe(text, "servers", data3.getText2());
+                              this.items2.add(craftRecipe);
                            }
 
-                           this.method1086(var20, var17);
-                           this.items3.put(var18, var14);
-                           var9.add(var18);
+                           this.method1086(craftRecipe, data3);
+                           this.items3.put(text, recipe);
+                           hashSet.add(text);
                         }
                      }
                   }
                }
 
-               if (!var9.isEmpty()) {
-                  this.items2.removeIf(var1x -> var1x.isFlag2() && !var9.contains(var1x.getId()));
+               if (!hashSet.isEmpty()) {
+                  this.items2.removeIf(var1x -> var1x.isFlag2() && !hashSet.contains(var1x.getId()));
                }
 
                this.method1091();
@@ -1365,127 +1365,127 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   private AutoCraftModule.Data3 method1082(RecipeDisplayEntry var1, ItemStack var2, ContextMap var3) {
-      String var4 = method1116(var2.getItem());
-      String var5 = this.method1090(var2);
-      String var6 = this.method1107(var4, var5);
-      String[] var7 = new String[9];
-      String[] var8 = new String[9];
+   private AutoCraftModule.Data3 method1082(RecipeDisplayEntry recipe, ItemStack forFirstStack, ContextMap context) {
+      String str = method1116(forFirstStack.getItem());
+      String anotherString = this.method1090(forFirstStack);
+      String str2 = this.method1107(str, anotherString);
+      String[] texts = new String[9];
+      String[] texts2 = new String[9];
 
-      for (int var9 = 0; var9 < 9; var9++) {
-         var7[var9] = "";
-         var8[var9] = "";
+      for (int i = 0; i < 9; i++) {
+         texts[i] = "";
+         texts2[i] = "";
       }
 
-      RecipeDisplay var12 = var1.display();
-      if (var12 instanceof ShapedCraftingRecipeDisplay var10) {
-         this.method1083(var10, var3, var7, var8);
-      } else if (var12 instanceof ShapelessCraftingRecipeDisplay var11) {
-         this.method1084(var11, var3, var7, var8);
+      RecipeDisplay display = recipe.display();
+      if (display instanceof ShapedCraftingRecipeDisplay craftingRecipeDisplay) {
+         this.method1083(craftingRecipeDisplay, context, texts, texts2);
+      } else if (display instanceof ShapelessCraftingRecipeDisplay craftingRecipeDisplay2) {
+         this.method1084(craftingRecipeDisplay2, context, texts, texts2);
       }
 
-      String var13 = this.method1087(var4, var5, var7, var8);
-      return new AutoCraftModule.Data3(var13, var6, var4, var5, var7, var8);
+      String text = this.method1087(str, anotherString, texts, texts2);
+      return new AutoCraftModule.Data3(text, str2, str, anotherString, texts, texts2);
    }
 
-   private void method1083(ShapedCraftingRecipeDisplay var1, ContextMap var2, String[] var3, String[] var4) {
-      var var5 = var1.ingredients();
-      int var6 = Math.min(3, var1.width());
-      int var7 = Math.min(3, var1.height());
+   private void method1083(ShapedCraftingRecipeDisplay craftingRecipeDisplay, ContextMap context, String[] texts, String[] texts2) {
+      var ingredients = craftingRecipeDisplay.ingredients();
+      int n = Math.min(3, craftingRecipeDisplay.width());
+      int n2 = Math.min(3, craftingRecipeDisplay.height());
 
-      for (int var8 = 0; var8 < var7; var8++) {
-         for (int var9 = 0; var9 < var6; var9++) {
-            int var10 = var8 * var1.width() + var9;
-            int var11 = var8 * 3 + var9;
-            if (var10 < var5.size()) {
-               this.method1085((SlotDisplay)var5.get(var10), var2, var3, var4, var11);
+      for (int i = 0; i < n2; i++) {
+         for (int j = 0; j < n; j++) {
+            int n3 = i * craftingRecipeDisplay.width() + j;
+            int n4 = i * 3 + j;
+            if (n3 < ingredients.size()) {
+               this.method1085((SlotDisplay)ingredients.get(n3), context, texts, texts2, n4);
             }
          }
       }
    }
 
-   private void method1084(ShapelessCraftingRecipeDisplay var1, ContextMap var2, String[] var3, String[] var4) {
-      var var5 = var1.ingredients();
+   private void method1084(ShapelessCraftingRecipeDisplay craftingRecipeDisplay, ContextMap context, String[] texts, String[] texts2) {
+      var ingredients = craftingRecipeDisplay.ingredients();
 
-      for (int var6 = 0; var6 < Math.min(9, var5.size()); var6++) {
-         this.method1085((SlotDisplay)var5.get(var6), var2, var3, var4, var6);
+      for (int i = 0; i < Math.min(9, ingredients.size()); i++) {
+         this.method1085((SlotDisplay)ingredients.get(i), context, texts, texts2, i);
       }
    }
 
-   private void method1085(SlotDisplay var1, ContextMap var2, String[] var3, String[] var4, int var5) {
-      ItemStack var6 = var1.resolveForFirstStack(var2);
-      if (!var6.isEmpty()) {
-         var3[var5] = method1116(var6.getItem());
-         var4[var5] = this.method1090(var6);
+   private void method1085(SlotDisplay slotDisplay, ContextMap context, String[] texts, String[] texts2, int n) {
+      ItemStack forFirstStack = slotDisplay.resolveForFirstStack(context);
+      if (!forFirstStack.isEmpty()) {
+         texts[n] = method1116(forFirstStack.getItem());
+         texts2[n] = this.method1090(forFirstStack);
       }
    }
 
-   private void method1086(CraftRecipe var1, AutoCraftModule.Data3 var2) {
-      var1.setFlag2(true);
-      var1.setLocked(true);
-      var1.method5402(var2.getText2());
-      var1.method5403(var2.getText3());
-      var1.method5404(var2.getText4());
-      var1.method5405(var2.getText3());
-      var1.setFlag(false);
+   private void method1086(CraftRecipe craftRecipe, AutoCraftModule.Data3 data3) {
+      craftRecipe.setFlag2(true);
+      craftRecipe.setLocked(true);
+      craftRecipe.method5402(data3.getText2());
+      craftRecipe.method5403(data3.getText3());
+      craftRecipe.method5404(data3.getText4());
+      craftRecipe.method5405(data3.getText3());
+      craftRecipe.setFlag(false);
 
-      for (int var3 = 0; var3 < 9; var3++) {
-         var1.method5390(var3, var2.getTexts()[var3]);
-         var1.method5392(var3, var2.getTexts2()[var3]);
+      for (int i = 0; i < 9; i++) {
+         craftRecipe.method5390(i, data3.getTexts()[i]);
+         craftRecipe.method5392(i, data3.getTexts2()[i]);
       }
    }
 
-   private String method1087(String var1, String var2, String[] var3, String[] var4) {
-      StringBuilder var5 = new StringBuilder("servers").append('|').append(var1).append('|').append(var2);
+   private String method1087(String str, String anotherString, String[] texts, String[] texts2) {
+      StringBuilder builder = new StringBuilder("servers").append('|').append(str).append('|').append(anotherString);
 
-      for (int var6 = 0; var6 < 9; var6++) {
-         var5.append('|').append(var3[var6]).append('#').append(var4[var6]);
+      for (int i = 0; i < 9; i++) {
+         builder.append('|').append(texts[i]).append('#').append(texts2[i]);
       }
 
-      String var9 = var1;
-      int var7 = var1.indexOf(58);
-      if (var7 != -1 && var7 + 1 < var1.length()) {
-         var9 = var1.substring(var7 + 1);
+      String str2 = str;
+      int indexOf = str.indexOf(58);
+      if (indexOf != -1 && indexOf + 1 < str.length()) {
+         str2 = str.substring(indexOf + 1);
       }
 
-      String var8 = (var2 != null && !var2.isBlank() ? var2 : var9).toLowerCase(Locale.ROOT).replace(" ", "_");
-      var8 = pattern.matcher(var8).replaceAll("_");
-      if (var8.isBlank()) {
-         var8 = "recipe";
+      String input = (anotherString != null && !anotherString.isBlank() ? anotherString : str2).toLowerCase(Locale.ROOT).replace(" ", "_");
+      input = pattern.matcher(input).replaceAll("_");
+      if (input.isBlank()) {
+         input = "recipe";
       }
 
-      return "servers_" + var8 + "_" + Integer.toHexString(var5.toString().hashCode());
+      return "servers_" + input + "_" + Integer.toHexString(builder.toString().hashCode());
    }
 
-   private boolean method1088(RecipeDisplay var1) {
-      return var1 instanceof ShapedCraftingRecipeDisplay || var1 instanceof ShapelessCraftingRecipeDisplay;
+   private boolean method1088(RecipeDisplay display) {
+      return display instanceof ShapedCraftingRecipeDisplay || display instanceof ShapelessCraftingRecipeDisplay;
    }
 
-   private boolean method1089(ItemStack var1) {
-      if (var1.isEmpty()) {
+   private boolean method1089(ItemStack forFirstStack) {
+      if (forFirstStack.isEmpty()) {
          return false;
       } else {
-         Identifier var2 = BuiltInRegistries.ITEM.getKey(var1.getItem());
-         if (!"minecraft".equals(var2.getNamespace())) {
+         Identifier key = BuiltInRegistries.ITEM.getKey(forFirstStack.getItem());
+         if (!"minecraft".equals(key.getNamespace())) {
             return true;
          } else {
-            String var3 = var1.getItem().getName(var1.getItem().getDefaultInstance()).getString();
-            String var4 = var1.getHoverName().getString();
-            return !var4.equals(var3)
-               || var1.has(DataComponents.CUSTOM_NAME)
-               || var1.has(DataComponents.LORE)
-               || var1.has(DataComponents.CUSTOM_DATA)
-               || var1.has(DataComponents.CUSTOM_MODEL_DATA)
-               || var1.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+            String string = forFirstStack.getItem().getName(forFirstStack.getItem().getDefaultInstance()).getString();
+            String str = forFirstStack.getHoverName().getString();
+            return !str.equals(string)
+               || forFirstStack.has(DataComponents.CUSTOM_NAME)
+               || forFirstStack.has(DataComponents.LORE)
+               || forFirstStack.has(DataComponents.CUSTOM_DATA)
+               || forFirstStack.has(DataComponents.CUSTOM_MODEL_DATA)
+               || forFirstStack.has(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
          }
       }
    }
 
-   private String method1090(ItemStack var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         String var2 = var1.getItem().getName(var1.getItem().getDefaultInstance()).getString();
-         String var3 = var1.getHoverName().getString();
-         return var3.equals(var2) ? "" : var3;
+   private String method1090(ItemStack forFirstStack) {
+      if (forFirstStack != null && !forFirstStack.isEmpty()) {
+         String string = forFirstStack.getItem().getName(forFirstStack.getItem().getDefaultInstance()).getString();
+         String str = forFirstStack.getHoverName().getString();
+         return str.equals(string) ? "" : str;
       } else {
          return "";
       }
@@ -1493,30 +1493,30 @@ public final class AutoCraftModule extends Module {
 
    public void method1091() {
       if (this.method1095(this.text2) == null) {
-         var var1 = this.method1093();
-         if (!var1.isEmpty()) {
-            this.text2 = ((CraftRecipe)var1.getFirst()).getId();
+         var craftRecipes = this.method1093();
+         if (!craftRecipes.isEmpty()) {
+            this.text2 = ((CraftRecipe)craftRecipes.getFirst()).getId();
          }
       }
    }
 
-   public List<CraftRecipe> method1092(String var1) {
+   public List<CraftRecipe> method1092(String text) {
       this.method1081(false);
       return this.method1093();
    }
 
    private List<CraftRecipe> method1093() {
-      return this.items2.stream().filter(var0 -> var0.getText2().equalsIgnoreCase("servers")).sorted(Comparator.comparing(CraftRecipe::getText3)).toList();
+      return this.items2.stream().filter(craftRecipe -> craftRecipe.getText2().equalsIgnoreCase("servers")).sorted(Comparator.comparing(CraftRecipe::getText3)).toList();
    }
 
-   public CraftRecipe method1094(String var1, String var2) {
+   public CraftRecipe method1094(String text, String str) {
       this.method1081(false);
-      return this.method1095(var2);
+      return this.method1095(str);
    }
 
-   private CraftRecipe method1095(String var1) {
-      return var1 != null && !var1.isBlank()
-         ? this.items2.stream().filter(var1x -> var1x.getText2().equalsIgnoreCase("servers") && var1x.getId().equalsIgnoreCase(var1)).findFirst().orElse(null)
+   private CraftRecipe method1095(String text) {
+      return text != null && !text.isBlank()
+         ? this.items2.stream().filter(var1x -> var1x.getText2().equalsIgnoreCase("servers") && var1x.getId().equalsIgnoreCase(text)).findFirst().orElse(null)
          : null;
    }
 
@@ -1533,7 +1533,7 @@ public final class AutoCraftModule extends Module {
       return "servers";
    }
 
-   public void method1099(String var1) {
+   public void method1099(String str) {
       this.autoCraftState.reset();
       this.method1078();
       this.method1018();
@@ -1543,10 +1543,10 @@ public final class AutoCraftModule extends Module {
       return this.text2;
    }
 
-   public void method1100(String var1) {
-      String var2 = var1 == null ? "" : var1;
-      if (!this.text2.equals(var2)) {
-         this.text2 = var2;
+   public void method1100(String id) {
+      String anObject = id == null ? "" : id;
+      if (!this.text2.equals(anObject)) {
+         this.text2 = anObject;
          this.autoCraftState.reset();
          this.method1078();
          this.method1018();
@@ -1554,41 +1554,41 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   public CraftRecipe method1101(String var1) {
+   public CraftRecipe method1101(String str) {
       this.method1128("Ручные пресеты отключены: рецепты берутся из книги");
       return null;
    }
 
-   public boolean method1102(CraftRecipe var1) {
+   public boolean method1102(CraftRecipe craftRecipe) {
       return false;
    }
 
-   public boolean method1103(String var1) {
+   public boolean method1103(String str) {
       return false;
    }
 
-   public void method1104(CraftRecipe var1) {
-      if (var1 != null) {
-         this.items2.add(var1);
+   public void method1104(CraftRecipe craftRecipe) {
+      if (craftRecipe != null) {
+         this.items2.add(craftRecipe);
          this.flag = true;
       }
    }
 
-   public void method1105(String var1) {
-      this.craftBindingController.method7225(var1);
+   public void method1105(String str) {
+      this.craftBindingController.method7225(str);
    }
 
    public void method1106() {
       this.autoCraftState.reset();
    }
 
-   public String method1107(String var1, String var2) {
-      return var2 != null && !var2.isBlank() ? var2 : this.method1118(var1);
+   public String method1107(String str, String anotherString) {
+      return anotherString != null && !anotherString.isBlank() ? anotherString : this.method1118(str);
    }
 
-   public String method1108(String var1) {
-      int var2 = var1.indexOf(35);
-      return var2 == -1 ? this.method1118(var1) : this.method1107(var1.substring(0, var2), var1.substring(var2 + 1));
+   public String method1108(String key) {
+      int indexOf = key.indexOf(35);
+      return indexOf == -1 ? this.method1118(key) : this.method1107(key.substring(0, indexOf), key.substring(indexOf + 1));
    }
 
    public void method1109() {
@@ -1615,26 +1615,26 @@ public final class AutoCraftModule extends Module {
       this.craftBindingController.method7230();
    }
 
-   public void method1115(String var1, String var2) {
-      this.text2 = var2 == null ? "" : var2;
+   public void method1115(String text, String str) {
+      this.text2 = str == null ? "" : str;
    }
 
-   private static String method1116(Item var0) {
-      return var0 != null && var0 != Items.AIR ? method1072(var0) : "";
+   private static String method1116(Item key) {
+      return key != null && key != Items.AIR ? method1072(key) : "";
    }
 
-   public Item method1117(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         Identifier var2 = Identifier.tryParse(var1);
-         return var2 != null && BuiltInRegistries.ITEM.containsKey(var2) ? BuiltInRegistries.ITEM.getValue(var2) : Items.AIR;
+   public Item method1117(String identifier) {
+      if (identifier != null && !identifier.isBlank()) {
+         Identifier tryParse = Identifier.tryParse(identifier);
+         return tryParse != null && BuiltInRegistries.ITEM.containsKey(tryParse) ? BuiltInRegistries.ITEM.getValue(tryParse) : Items.AIR;
       } else {
          return Items.AIR;
       }
    }
 
-   public String method1118(String var1) {
-      Item var2 = this.method1117(var1);
-      return var2 == Items.AIR ? "Пусто" : var2.getName(var2.getDefaultInstance()).getString();
+   public String method1118(String str) {
+      Item item = this.method1117(str);
+      return item == Items.AIR ? "Пусто" : item.getName(item.getDefaultInstance()).getString();
    }
 
    public BooleanSetting getAutoTake() {
@@ -1659,87 +1659,87 @@ public final class AutoCraftModule extends Module {
 
    public AutoCraftModule.Data2 method1120() {
       if (mc.player != null && mc.level != null) {
-         double var1 = this.method1061();
-         double var3 = var1 * var1;
-         Vec3 var5 = mc.player.getEyePosition();
-         BlockPos var6 = mc.player.blockPosition();
-         int var7 = (int)Math.ceil(var1);
-         MutableBlockPos var8 = new MutableBlockPos();
-         HashSet var9 = new HashSet();
-         BlockPos var10 = null;
-         double var11 = Double.MAX_VALUE;
+         double d = this.method1061();
+         double d2 = d * d;
+         Vec3 eyePosition = mc.player.getEyePosition();
+         BlockPos blockPosition = mc.player.blockPosition();
+         int n = (int)Math.ceil(d);
+         MutableBlockPos mutablePos = new MutableBlockPos();
+         HashSet hashSet = new HashSet();
+         BlockPos immutable = null;
+         double d3 = Double.MAX_VALUE;
 
-         for (int var13 = var6.getX() - var7; var13 <= var6.getX() + var7; var13++) {
-            for (int var14 = var6.getY() - var7; var14 <= var6.getY() + var7; var14++) {
-               for (int var15 = var6.getZ() - var7; var15 <= var6.getZ() + var7; var15++) {
-                  double var16 = var13 + 0.5 - var5.x;
-                  double var18 = var14 + 0.5 - var5.y;
-                  double var20 = var15 + 0.5 - var5.z;
-                  double var22 = var16 * var16 + var18 * var18 + var20 * var20;
-                  if (!(var22 > var3)) {
-                     var8.set(var13, var14, var15);
-                     BlockState var24 = mc.level.getBlockState(var8);
-                     if (var24.getBlock() == Blocks.CRAFTING_TABLE) {
-                        if (var22 < var11) {
-                           var11 = var22;
-                           var10 = var8.immutable();
+         for (int i = blockPosition.getX() - n; i <= blockPosition.getX() + n; i++) {
+            for (int j = blockPosition.getY() - n; j <= blockPosition.getY() + n; j++) {
+               for (int k = blockPosition.getZ() - n; k <= blockPosition.getZ() + n; k++) {
+                  double d4 = i + 0.5 - eyePosition.x;
+                  double d5 = j + 0.5 - eyePosition.y;
+                  double d6 = k + 0.5 - eyePosition.z;
+                  double d7 = d4 * d4 + d5 * d5 + d6 * d6;
+                  if (!(d7 > d2)) {
+                     mutablePos.set(i, j, k);
+                     BlockState blockState = mc.level.getBlockState(mutablePos);
+                     if (blockState.getBlock() == Blocks.CRAFTING_TABLE) {
+                        if (d7 < d3) {
+                           d3 = d7;
+                           immutable = mutablePos.immutable();
                         }
-                     } else if (var24.hasBlockEntity() && this.method1060(var8)) {
-                        var9.add(this.method1039(var8, var24));
+                     } else if (blockState.hasBlockEntity() && this.method1060(mutablePos)) {
+                        hashSet.add(this.method1039(mutablePos, blockState));
                      }
                   }
                }
             }
          }
 
-         return new AutoCraftModule.Data2(var10, var9.size());
+         return new AutoCraftModule.Data2(immutable, hashSet.size());
       } else {
          return new AutoCraftModule.Data2(null, 0);
       }
    }
 
-   public int method1121(String var1, String var2) {
-      return mc.player != null && var1 != null && !var1.isBlank() ? this.method1067(var1, var2) : 0;
+   public int method1121(String identifier, String anotherString) {
+      return mc.player != null && identifier != null && !identifier.isBlank() ? this.method1067(identifier, anotherString) : 0;
    }
 
    public Map<String, Integer> method1122() {
-      HashMap var1 = new HashMap();
+      HashMap map = new HashMap();
       if (mc.player == null) {
-         return var1;
+         return map;
       } else {
-         for (int var2 = 0; var2 < 36; var2++) {
-            ItemStack var3 = mc.player.getInventory().getItem(var2);
-            if (var3 != null && !var3.isEmpty()) {
-               var1.merge(method1116(var3.getItem()), var3.getCount(), (a, b) -> (Integer)a + (Integer)b);
+         for (int i = 0; i < 36; i++) {
+            ItemStack stack = mc.player.getInventory().getItem(i);
+            if (stack != null && !stack.isEmpty()) {
+               map.merge(method1116(stack.getItem()), stack.getCount(), (a, b) -> (Integer)a + (Integer)b);
             }
          }
 
-         return var1;
+         return map;
       }
    }
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      var1.add("AutoCraftData", this.method1123());
-      return var1;
+      JsonObject json = super.save();
+      json.add("AutoCraftData", this.method1123());
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 == null) {
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json == null) {
          this.method1091();
       } else {
-         JsonObject var2 = null;
-         if (var1.has("AutoCraftData") && var1.get("AutoCraftData").isJsonObject()) {
-            var2 = var1.getAsJsonObject("AutoCraftData");
-         } else if (var1.has("presets") || var1.has("selectedProfile")) {
-            var2 = var1;
+         JsonObject jsonObject = null;
+         if (json.has("AutoCraftData") && json.get("AutoCraftData").isJsonObject()) {
+            jsonObject = json.getAsJsonObject("AutoCraftData");
+         } else if (json.has("presets") || json.has("selectedProfile")) {
+            jsonObject = json;
          }
 
-         if (var2 != null) {
-            this.method1124(var2);
+         if (jsonObject != null) {
+            this.method1124(jsonObject);
          } else {
             this.method1091();
          }
@@ -1747,75 +1747,75 @@ public final class AutoCraftModule extends Module {
    }
 
    public JsonObject method1123() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("selectedProfile", "servers");
-      var1.addProperty("selectedServersPreset", this.text2);
-      var1.addProperty("batch", this.batch.isEnabled());
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      json.addProperty("selectedProfile", "servers");
+      json.addProperty("selectedServersPreset", this.text2);
+      json.addProperty("batch", this.batch.isEnabled());
+      JsonArray jsonArray = new JsonArray();
 
-      for (CraftRecipe var4 : new ArrayList<>(this.items2)) {
-         if (this.method1125(var4)) {
-            JsonObject var5 = new JsonObject();
-            var5.addProperty("id", var4.getId());
-            var5.addProperty("profile", "servers");
-            JsonObject var6 = new JsonObject();
+      for (CraftRecipe craftRecipe : new ArrayList<>(this.items2)) {
+         if (this.method1125(craftRecipe)) {
+            JsonObject json2 = new JsonObject();
+            json2.addProperty("id", craftRecipe.getId());
+            json2.addProperty("profile", "servers");
+            JsonObject json3 = new JsonObject();
 
-            for (Map.Entry var8 : var4.getItems3().entrySet()) {
-               var6.add((String)var8.getKey(), ((Class1)var8.getValue()).toJson());
+            for (Map.Entry entry : craftRecipe.getItems3().entrySet()) {
+               json3.add((String)entry.getKey(), ((Class1)entry.getValue()).toJson());
             }
 
-            var5.add("sources", var6);
-            var5.add("output", var4.getClass1().toJson());
-            var5.add("workbench", var4.getClass12().toJson());
-            var2.add(var5);
+            json2.add("sources", json3);
+            json2.add("output", craftRecipe.getClass1().toJson());
+            json2.add("workbench", craftRecipe.getClass12().toJson());
+            jsonArray.add(json2);
          }
       }
 
-      var1.add("presets", var2);
-      return var1;
+      json.add("presets", jsonArray);
+      return json;
    }
 
-   public void method1124(JsonObject var1) {
+   public void method1124(JsonObject jsonObject) {
       this.flag = true;
-      if (var1.has("selectedServersPreset")) {
-         this.text2 = var1.get("selectedServersPreset").getAsString();
-      } else if (var1.has("selectedFunTimePreset")) {
-         this.text2 = var1.get("selectedFunTimePreset").getAsString();
+      if (jsonObject.has("selectedServersPreset")) {
+         this.text2 = jsonObject.get("selectedServersPreset").getAsString();
+      } else if (jsonObject.has("selectedFunTimePreset")) {
+         this.text2 = jsonObject.get("selectedFunTimePreset").getAsString();
       }
 
-      if (var1.has("batch")) {
-         this.batch.setEnabled(var1.get("batch").getAsBoolean());
+      if (jsonObject.has("batch")) {
+         this.batch.setEnabled(jsonObject.get("batch").getAsBoolean());
       }
 
-      if (var1.has("presets") && var1.get("presets").isJsonArray()) {
-         for (JsonElement var3 : var1.getAsJsonArray("presets")) {
-            if (var3.isJsonObject()) {
-               JsonObject var4 = var3.getAsJsonObject();
-               String var5 = var4.has("id") ? var4.get("id").getAsString() : "";
-               if (!var5.isBlank()) {
-                  CraftRecipe var6 = this.method1095(var5);
-                  if (var6 == null) {
-                     var6 = new CraftRecipe(var5, "servers", var5);
-                     var6.setFlag2(true);
-                     var6.setLocked(true);
-                     this.items2.add(var6);
+      if (jsonObject.has("presets") && jsonObject.get("presets").isJsonArray()) {
+         for (JsonElement json : jsonObject.getAsJsonArray("presets")) {
+            if (json.isJsonObject()) {
+               JsonObject jsonObject2 = json.getAsJsonObject();
+               String string = jsonObject2.has("id") ? jsonObject2.get("id").getAsString() : "";
+               if (!string.isBlank()) {
+                  CraftRecipe craftRecipe = this.method1095(string);
+                  if (craftRecipe == null) {
+                     craftRecipe = new CraftRecipe(string, "servers", string);
+                     craftRecipe.setFlag2(true);
+                     craftRecipe.setLocked(true);
+                     this.items2.add(craftRecipe);
                   }
 
-                  if (var4.has("sources") && var4.get("sources").isJsonObject()) {
-                     JsonObject var7 = var4.getAsJsonObject("sources");
-                     var6.getItems3().clear();
+                  if (jsonObject2.has("sources") && jsonObject2.get("sources").isJsonObject()) {
+                     JsonObject jsonObject3 = jsonObject2.getAsJsonObject("sources");
+                     craftRecipe.getItems3().clear();
 
-                     for (Map.Entry var9 : var7.entrySet()) {
-                        var6.getItems3().put((String)var9.getKey(), Class1.method58(((JsonElement)var9.getValue()).getAsJsonObject()));
+                     for (Map.Entry entry : jsonObject3.entrySet()) {
+                        craftRecipe.getItems3().put((String)entry.getKey(), Class1.method58(((JsonElement)entry.getValue()).getAsJsonObject()));
                      }
                   }
 
-                  if (var4.has("output") && var4.get("output").isJsonObject()) {
-                     var6.method5407(Class1.method58(var4.getAsJsonObject("output")));
+                  if (jsonObject2.has("output") && jsonObject2.get("output").isJsonObject()) {
+                     craftRecipe.method5407(Class1.method58(jsonObject2.getAsJsonObject("output")));
                   }
 
-                  if (var4.has("workbench") && var4.get("workbench").isJsonObject()) {
-                     var6.method5408(Class1.method58(var4.getAsJsonObject("workbench")));
+                  if (jsonObject2.has("workbench") && jsonObject2.get("workbench").isJsonObject()) {
+                     craftRecipe.method5408(Class1.method58(jsonObject2.getAsJsonObject("workbench")));
                   }
                }
             }
@@ -1825,13 +1825,13 @@ public final class AutoCraftModule extends Module {
       this.method1091();
    }
 
-   private boolean method1125(CraftRecipe var1) {
-      return var1 != null && (!var1.getItems3().isEmpty() || var1.getClass1().method56() || var1.getClass12().method56());
+   private boolean method1125(CraftRecipe craftRecipe) {
+      return craftRecipe != null && (!craftRecipe.getItems3().isEmpty() || craftRecipe.getClass1().method56() || craftRecipe.getClass12().method56());
    }
 
-   private void method1126(String var1) {
-      this.statusText = var1;
-      this.method1128(var1);
+   private void method1126(String statusText) {
+      this.statusText = statusText;
+      this.method1128(statusText);
       if (mc.player != null && mc.player.containerMenu != mc.player.inventoryMenu) {
          mc.player.closeContainer();
       }
@@ -1841,25 +1841,25 @@ public final class AutoCraftModule extends Module {
       }
    }
 
-   public void method1127(String var1) {
-      Zenith.getInstance().getHudHolder().method6972("S", Component.literal(var1));
+   public void method1127(String text) {
+      Zenith.getInstance().getHudHolder().method6972("S", Component.literal(text));
    }
 
-   public void method1128(String var1) {
-      Zenith.getInstance().getHudHolder().method6972("!", Component.literal(var1));
+   public void method1128(String statusText) {
+      Zenith.getInstance().getHudHolder().method6972("!", Component.literal(statusText));
    }
 
-   private int method1129(String var1) {
-      Item var2 = this.method1117(var1);
-      return var2 == Items.AIR ? 64 : var2.getDefaultMaxStackSize();
+   private int method1129(String identifier) {
+      Item item = this.method1117(identifier);
+      return item == Items.AIR ? 64 : item.getDefaultMaxStackSize();
    }
 
-   private boolean method1130(AutoCraftModule.Data var1, String var2, String var3) {
-      if (!Objects.equals(var1.getText(), var2)) {
+   private boolean method1130(AutoCraftModule.Data data, String str, String anotherString) {
+      if (!Objects.equals(data.getText(), str)) {
          return false;
-      } else if (var3 != null && !var3.isBlank()) {
-         String var4 = var1.getText2();
-         return var4.equalsIgnoreCase(var3) || var4.toLowerCase(Locale.ROOT).contains(var3.toLowerCase(Locale.ROOT));
+      } else if (anotherString != null && !anotherString.isBlank()) {
+         String str2 = data.getText2();
+         return str2.equalsIgnoreCase(anotherString) || str2.toLowerCase(Locale.ROOT).contains(anotherString.toLowerCase(Locale.ROOT));
       } else {
          return true;
       }
@@ -1909,12 +1909,12 @@ public final class AutoCraftModule extends Module {
          return "Data[" + "intValue=" + this.intValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + "]";
       }
 
-      private Data(int var1, String var2, String var3, int var4, int var5) {
-         this.intValue = var1;
-         this.text = var2;
-         this.text2 = var3;
-         this.intValue2 = var4;
-         this.intValue3 = var5;
+      private Data(int intValue, String text, String str, int count, int maxStackSize) {
+         this.intValue = intValue;
+         this.text = text;
+         this.text2 = str;
+         this.intValue2 = count;
+         this.intValue3 = maxStackSize;
       }
 
       public int getIntValue() {
@@ -1967,9 +1967,9 @@ public final class AutoCraftModule extends Module {
          return "Data2[" + "blockPos=" + this.blockPos + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data2(BlockPos var1, int var2) {
-         this.blockPos = var1;
-         this.intValue = var2;
+      public Data2(BlockPos blockPos, int intValue) {
+         this.blockPos = blockPos;
+         this.intValue = intValue;
       }
 
       public boolean method1131() {
@@ -2034,13 +2034,13 @@ public final class AutoCraftModule extends Module {
          return "Data3[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "text4=" + this.text4 + ", " + "texts=" + this.texts + ", " + "texts2=" + this.texts2 + "]";
       }
 
-      private Data3(String var1, String var2, String var3, String var4, String[] var5, String[] var6) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
-         this.text4 = var4;
-         this.texts = var5;
-         this.texts2 = var6;
+      private Data3(String text, String str, String str2, String anotherString, String[] texts, String[] texts2) {
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.text4 = anotherString;
+         this.texts = texts;
+         this.texts2 = texts2;
       }
 
       public String getText() {
@@ -2073,34 +2073,34 @@ public final class AutoCraftModule extends Module {
       private final List<AutoCraftModule.Data> items = new ArrayList<>();
       private int intValue;
 
-      private Entry(BlockPos var2) {
-         this.blockPos = var2;
+      private Entry(BlockPos blockPos) {
+         this.blockPos = blockPos;
       }
 
-      private void method1132(AutoCraftModule.Data var1) {
-         if (var1.count() > 0) {
-            this.items.add(var1);
+      private void method1132(AutoCraftModule.Data data) {
+         if (data.count() > 0) {
+            this.items.add(data);
          }
       }
 
-      private int method1133(String var1, String var2) {
-         int var3 = 0;
+      private int method1133(String str, String anotherString) {
+         int n = 0;
 
-         for (AutoCraftModule.Data var5 : this.items) {
-            if (AutoCraftModule.this.method1130(var5, var1, var2)) {
-               var3 += var5.count();
+         for (AutoCraftModule.Data data : this.items) {
+            if (AutoCraftModule.this.method1130(data, str, anotherString)) {
+               n += data.count();
             }
          }
 
-         return var3;
+         return n;
       }
 
-      private boolean method1134(String var1, String var2) {
+      private boolean method1134(String str, String anotherString) {
          if (this.intValue > 0) {
             return true;
          } else {
-            for (AutoCraftModule.Data var4 : this.items) {
-               if (AutoCraftModule.this.method1130(var4, var1, var2) && var4.count() < var4.getIntValue3()) {
+            for (AutoCraftModule.Data data : this.items) {
+               if (AutoCraftModule.this.method1130(data, str, anotherString) && data.count() < data.getIntValue3()) {
                   return true;
                }
             }

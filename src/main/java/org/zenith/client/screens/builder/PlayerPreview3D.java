@@ -47,31 +47,31 @@ public class PlayerPreview3D {
    private float shownHeight = Float.NaN;
    private float shownZoom = 1.0F;
 
-   public PlayerPreview3D(float var1, float var2, float var3, float var4) {
-      this.x = var1;
-      this.y = var2;
-      this.width = var3;
-      this.height = var4;
+   public PlayerPreview3D(float x, float y, float width, float height) {
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
    }
 
-   public void setMaxSize(float var1) {
-      this.maxSize = Math.max(12.0F, var1);
+   public void setMaxSize(float maxSize) {
+      this.maxSize = Math.max(12.0F, maxSize);
    }
 
-   public void setIdleSpin(float var1) {
-      this.idleSpin = var1;
+   public void setIdleSpin(float idleSpin) {
+      this.idleSpin = idleSpin;
    }
 
-   public void setHideHeldItems(boolean var1) {
-      this.hideHeldItems = var1;
+   public void setHideHeldItems(boolean hideHeldItems) {
+      this.hideHeldItems = hideHeldItems;
    }
 
-   public void setForcedMainHand(ItemStack var1) {
-      this.forcedMainHand = var1;
+   public void setForcedMainHand(ItemStack forcedMainHand) {
+      this.forcedMainHand = forcedMainHand;
    }
 
-   public void setFreePitch(boolean var1) {
-      this.freePitch = var1;
+   public void setFreePitch(boolean freePitch) {
+      this.freePitch = freePitch;
    }
 
    public void resetRotation() {
@@ -81,167 +81,167 @@ public class PlayerPreview3D {
    }
 
    private void advanceIdleSpin() {
-      long var1 = System.nanoTime();
-      long var3 = this.lastFrameNanos;
-      this.lastFrameNanos = var1;
-      if (this.idleSpin != 0.0F && !this.isDragging && !this.turnedByHand && var3 != 0L) {
-         float var5 = (float)((var1 - var3) / 1.0E9);
-         if (!(var5 <= 0.0F) && !(var5 > 0.25F)) {
-            this.rotationY = (this.rotationY + this.idleSpin * var5) % 360.0F;
+      long nanoTime = System.nanoTime();
+      long lastFrameNanos = this.lastFrameNanos;
+      this.lastFrameNanos = nanoTime;
+      if (this.idleSpin != 0.0F && !this.isDragging && !this.turnedByHand && lastFrameNanos != 0L) {
+         float f = (float)((nanoTime - lastFrameNanos) / 1.0E9);
+         if (!(f <= 0.0F) && !(f > 0.25F)) {
+            this.rotationY = (this.rotationY + this.idleSpin * f) % 360.0F;
          }
       }
    }
 
-   public void setFocus(float var1, float var2, float var3) {
-      if (!Float.isNaN(var3) && (Float.isNaN(this.focusYaw) || Math.abs(Mth.wrapDegrees(var3 - this.focusYaw)) > 1.0F)) {
+   public void setFocus(float focusHeight, float focusZoom, float focusYaw) {
+      if (!Float.isNaN(focusYaw) && (Float.isNaN(this.focusYaw) || Math.abs(Mth.wrapDegrees(focusYaw - this.focusYaw)) > 1.0F)) {
          this.turnedByHand = false;
       }
 
-      this.focusHeight = var1;
-      this.focusZoom = var2;
-      this.focusYaw = var3;
+      this.focusHeight = focusHeight;
+      this.focusZoom = focusZoom;
+      this.focusYaw = focusYaw;
    }
 
    public void clearFocus() {
       this.setFocus(Float.NaN, 1.0F, Float.NaN);
    }
 
-   private void advanceFocus(LivingEntity var1) {
-      float var2 = Float.isNaN(this.focusHeight) ? var1.getBbHeight() / 2.0F : this.focusHeight;
+   private void advanceFocus(LivingEntity player) {
+      float focusHeight = Float.isNaN(this.focusHeight) ? player.getBbHeight() / 2.0F : this.focusHeight;
       if (Float.isNaN(this.shownHeight)) {
-         this.shownHeight = var2;
+         this.shownHeight = focusHeight;
       }
 
-      this.shownHeight = this.shownHeight + (var2 - this.shownHeight) * 0.12F;
+      this.shownHeight = this.shownHeight + (focusHeight - this.shownHeight) * 0.12F;
       this.shownZoom = this.shownZoom + (this.focusZoom - this.shownZoom) * 0.12F;
       if (!Float.isNaN(this.focusYaw) && !this.isDragging && !this.turnedByHand) {
-         float var3 = (float)Math.sin(System.nanoTime() / 1.0E9 * 0.6) * 18.0F / Math.max(1.0F, this.focusZoom * this.focusZoom);
-         float var4 = this.focusYaw + var3;
-         this.rotationY = this.rotationY + Mth.wrapDegrees(var4 - this.rotationY) * 0.1F;
+         float f = (float)Math.sin(System.nanoTime() / 1.0E9 * 0.6) * 18.0F / Math.max(1.0F, this.focusZoom * this.focusZoom);
+         float f2 = this.focusYaw + f;
+         this.rotationY = this.rotationY + Mth.wrapDegrees(f2 - this.rotationY) * 0.1F;
       }
    }
 
-   public void setBounds(float var1, float var2, float var3, float var4) {
-      this.x = var1;
-      this.y = var2;
-      this.width = var3;
-      this.height = var4;
+   public void setBounds(float x, float y, float width, float height) {
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
    }
 
-   public void render(GuiGraphicsExtractor var1, LivingEntity var2, float var3, float var4) {
-      this.render(var1, var2, var3, var4, null);
+   public void render(GuiGraphicsExtractor context, LivingEntity player, float transformX, float transformY) {
+      this.render(context, player, transformX, transformY, null);
    }
 
-   public void render(GuiGraphicsExtractor var1, LivingEntity var2, float var3, float var4, PlayerPreview3D.PreviewOverlay var5) {
-      if (var2 != null) {
-         float var6 = this.x + this.width / 2.0F;
-         float var7 = this.y + this.height / 2.0F;
-         this.advanceFocus(var2);
-         int var8 = (int)Math.max(12.0F, Math.min(this.maxSize, 60.0F * this.zoom) * this.shownZoom);
-         float var9 = var2.yBodyRot;
-         float var10 = var2.yBodyRotO;
-         float var11 = var2.getYRot();
-         float var12 = var2.yRotO;
-         float var13 = var2.getXRot();
-         float var14 = var2.xRotO;
-         float var15 = var2.yHeadRot;
-         float var16 = var2.yHeadRotO;
-         ItemStack var17 = var2.getItemInHand(InteractionHand.MAIN_HAND);
-         ItemStack var18 = var2.getItemInHand(InteractionHand.OFF_HAND);
-         float var19 = var2.walkAnimation.speed();
+   public void render(GuiGraphicsExtractor context, LivingEntity player, float transformX, float transformY, PlayerPreview3D.PreviewOverlay previewOverlay) {
+      if (player != null) {
+         float xo = this.x + this.width / 2.0F;
+         float yo = this.y + this.height / 2.0F;
+         this.advanceFocus(player);
+         int n = (int)Math.max(12.0F, Math.min(this.maxSize, 60.0F * this.zoom) * this.shownZoom);
+         float yBodyRot = player.yBodyRot;
+         float yBodyRotO = player.yBodyRotO;
+         float yRot = player.getYRot();
+         float yRotO = player.yRotO;
+         float xRot = player.getXRot();
+         float xRotO = player.xRotO;
+         float yHeadRot = player.yHeadRot;
+         float yHeadRotO = player.yHeadRotO;
+         ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+         ItemStack itemStack = player.getItemInHand(InteractionHand.OFF_HAND);
+         float speed = player.walkAnimation.speed();
 
          try {
-            var2.yBodyRot = 0.0F;
-            var2.yBodyRotO = 0.0F;
-            var2.setYRot(0.0F);
-            var2.yRotO = 0.0F;
-            var2.setXRot(0.0F);
-            var2.xRotO = 0.0F;
-            var2.yHeadRot = 0.0F;
-            var2.yHeadRotO = 0.0F;
-            var2.walkAnimation.setSpeed(0.0F);
+            player.yBodyRot = 0.0F;
+            player.yBodyRotO = 0.0F;
+            player.setYRot(0.0F);
+            player.yRotO = 0.0F;
+            player.setXRot(0.0F);
+            player.xRotO = 0.0F;
+            player.yHeadRot = 0.0F;
+            player.yHeadRotO = 0.0F;
+            player.walkAnimation.setSpeed(0.0F);
             if (this.forcedMainHand != null) {
-               var2.setItemInHand(InteractionHand.MAIN_HAND, this.forcedMainHand);
-               var2.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+               player.setItemInHand(InteractionHand.MAIN_HAND, this.forcedMainHand);
+               player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
             } else if (this.hideHeldItems) {
-               var2.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-               var2.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+               player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+               player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
             }
 
             if (Float.isNaN(this.focusYaw)) {
                this.advanceIdleSpin();
             }
 
-            this.renderEntityWithRotation(var1, var2, var6, var7, var8, this.rotationX, this.rotationY, var5);
+            this.renderEntityWithRotation(context, player, xo, yo, n, this.rotationX, this.rotationY, previewOverlay);
          } finally {
             if (this.forcedMainHand != null || this.hideHeldItems) {
-               var2.setItemInHand(InteractionHand.MAIN_HAND, var17);
-               var2.setItemInHand(InteractionHand.OFF_HAND, var18);
+               player.setItemInHand(InteractionHand.MAIN_HAND, itemInHand);
+               player.setItemInHand(InteractionHand.OFF_HAND, itemStack);
             }
 
-            var2.yBodyRot = var9;
-            var2.yBodyRotO = var10;
-            var2.setYRot(var11);
-            var2.yRotO = var12;
-            var2.setXRot(var13);
-            var2.xRotO = var14;
-            var2.yHeadRot = var15;
-            var2.yHeadRotO = var16;
-            var2.walkAnimation.setSpeed(var19);
+            player.yBodyRot = yBodyRot;
+            player.yBodyRotO = yBodyRotO;
+            player.setYRot(yRot);
+            player.yRotO = yRotO;
+            player.setXRot(xRot);
+            player.xRotO = xRotO;
+            player.yHeadRot = yHeadRot;
+            player.yHeadRotO = yHeadRotO;
+            player.walkAnimation.setSpeed(speed);
          }
       }
    }
 
    private void renderEntityWithRotation(
-      GuiGraphicsExtractor var1, LivingEntity var2, float var3, float var4, int var5, float var6, float var7, PlayerPreview3D.PreviewOverlay var8
+      GuiGraphicsExtractor context, LivingEntity player, float xo, float yo, int n, float rotationX, float rotationY, PlayerPreview3D.PreviewOverlay previewOverlay
    ) {
-      PoseStack var9 = MatrixUtils.method666(var1.pose());
-      var9.pushPose();
-      EntityRenderDispatcher var10 = mc.getEntityRenderDispatcher();
+      PoseStack poseStack = MatrixUtils.method666(context.pose());
+      poseStack.pushPose();
+      EntityRenderDispatcher entityRenderDispatcher = mc.getEntityRenderDispatcher();
 
       try {
-         float var11 = var2.getScale();
-         float var12 = var5 / Math.max(var11, 1.0E-4F);
-         var9.translate(var3, var4, 50.0F);
-         var9.scale(var12, var12, -var12);
-         var9.translate(0.0F, (Float.isNaN(this.shownHeight) ? var2.getBbHeight() / 2.0F : this.shownHeight) + 0.0625F * var11, 0.0F);
-         Quaternionf var13 = new Quaternionf().rotateX((float)Math.toRadians(var6)).rotateY((float)Math.toRadians(180.0F + var7)).rotateZ((float) Math.PI);
-         var9.rotate(var13);
+         float scale = player.getScale();
+         float xScale = n / Math.max(scale, 1.0E-4F);
+         poseStack.translate(xo, yo, 50.0F);
+         poseStack.scale(xScale, xScale, -xScale);
+         poseStack.translate(0.0F, (Float.isNaN(this.shownHeight) ? player.getBbHeight() / 2.0F : this.shownHeight) + 0.0625F * scale, 0.0F);
+         Quaternionf rotateZ = new Quaternionf().rotateX((float)Math.toRadians(rotationX)).rotateY((float)Math.toRadians(180.0F + rotationY)).rotateZ((float) Math.PI);
+         poseStack.rotate(rotateZ);
          ScissorFlusher.flush();
-         float var14 = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
-         EntityRenderState var16 = var10.extractEntity(var2, var14);
-         var16.lightCoords = 15728880;
-         var16.shadowPieces.clear();
-         var16.outlineColor = 0;
-         OutlineVertexProvider.method1540(var16);
-         CameraRenderState var17 = OutlineVertexProvider.method1541(var2.position());
-         var17.orientation = new Quaternionf().rotateX((float)Math.toRadians(var6)).conjugate().rotateY((float) Math.PI);
-         FiguraGuiRenderContext.mark(var2, EntityRenderMode.FIGURA_GUI);
+         float gameTimeDeltaPartialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+         EntityRenderState extractEntity = entityRenderDispatcher.extractEntity(player, gameTimeDeltaPartialTick);
+         extractEntity.lightCoords = 15728880;
+         extractEntity.shadowPieces.clear();
+         extractEntity.outlineColor = 0;
+         OutlineVertexProvider.method1540(extractEntity);
+         CameraRenderState camera = OutlineVertexProvider.method1541(player.position());
+         camera.orientation = new Quaternionf().rotateX((float)Math.toRadians(rotationX)).conjugate().rotateY((float) Math.PI);
+         FiguraGuiRenderContext.mark(player, EntityRenderMode.FIGURA_GUI);
          OutlineVertexProvider.method1542(var9x -> {
-            var10.submit(var16, var17, 0.0, 0.0, 0.0, var9, var9x);
+            entityRenderDispatcher.submit(extractEntity, camera, 0.0, 0.0, 0.0, poseStack, var9x);
             if (this.queueOverlay != null) {
-               var9.pushPose();
+               poseStack.pushPose();
 
                try {
-                  this.queueOverlay.render(var9, var9x, 15728880, var2, var14);
+                  this.queueOverlay.render(poseStack, var9x, 15728880, player, gameTimeDeltaPartialTick);
                } finally {
-                  var9.popPose();
+                  poseStack.popPose();
                }
             }
 
-            if (var8 != null) {
-               var9.pushPose();
+            if (previewOverlay != null) {
+               poseStack.pushPose();
 
                try {
-                  var8.render(var9, var9x, 15728880, var2, var14);
+                  previewOverlay.render(poseStack, var9x, 15728880, player, gameTimeDeltaPartialTick);
                } finally {
-                  var9.popPose();
+                  poseStack.popPose();
                }
             }
          });
          ScissorFlusher.flush();
       } finally {
-         var9.popPose();
+         poseStack.popPose();
       }
    }
 
@@ -253,19 +253,19 @@ public class PlayerPreview3D {
       return this.y + this.height / 2.0F + 40.0F;
    }
 
-   public boolean onMouseClicked(double var1, double var3, int var5) {
-      if (this.isInBounds(var1, var3) && var5 == 0) {
+   public boolean onMouseClicked(double lastMouseX, double lastMouseY, int mouseToGlfw) {
+      if (this.isInBounds(lastMouseX, lastMouseY) && mouseToGlfw == 0) {
          this.isDragging = true;
-         this.lastMouseX = var1;
-         this.lastMouseY = var3;
+         this.lastMouseX = lastMouseX;
+         this.lastMouseY = lastMouseY;
          return true;
       } else {
          return false;
       }
    }
 
-   public boolean onMouseReleased(double var1, double var3, int var5) {
-      if (var5 == 0 && this.isDragging) {
+   public boolean onMouseReleased(double x, double y, int mouseToGlfw) {
+      if (mouseToGlfw == 0 && this.isDragging) {
          this.isDragging = false;
          return true;
       } else {
@@ -273,24 +273,24 @@ public class PlayerPreview3D {
       }
    }
 
-   public boolean onMouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      if (this.isDragging && var5 == 0) {
-         float var10 = (float)(var1 - this.lastMouseX) * 1.0F;
-         float var11 = (float)(var3 - this.lastMouseY) * 1.0F;
-         this.rotationY = (this.rotationY - var10) % 360.0F;
-         this.rotationX = this.freePitch ? (this.rotationX - var11) % 360.0F : Mth.clamp(this.rotationX - var11, -45.0F, 45.0F);
+   public boolean onMouseDragged(double lastMouseX, double lastMouseY, int mouseToGlfw, double offsetX, double offsetY) {
+      if (this.isDragging && mouseToGlfw == 0) {
+         float f = (float)(lastMouseX - this.lastMouseX) * 1.0F;
+         float f2 = (float)(lastMouseY - this.lastMouseY) * 1.0F;
+         this.rotationY = (this.rotationY - f) % 360.0F;
+         this.rotationX = this.freePitch ? (this.rotationX - f2) % 360.0F : Mth.clamp(this.rotationX - f2, -45.0F, 45.0F);
          this.turnedByHand = true;
-         this.lastMouseX = var1;
-         this.lastMouseY = var3;
+         this.lastMouseX = lastMouseX;
+         this.lastMouseY = lastMouseY;
          return true;
       } else {
          return false;
       }
    }
 
-   public boolean onMouseScrolled(double var1, double var3, double var5) {
-      if (this.isInBounds(var1, var3)) {
-         this.zoom += (float)var5 * 0.1F;
+   public boolean onMouseScrolled(double mouseX, double mouseY, double verticalAmount) {
+      if (this.isInBounds(mouseX, mouseY)) {
+         this.zoom += (float)verticalAmount * 0.1F;
          this.zoom = Math.max(0.3F, Math.min(3.0F, this.zoom));
          return true;
       } else {
@@ -298,8 +298,8 @@ public class PlayerPreview3D {
       }
    }
 
-   public boolean isInBounds(double var1, double var3) {
-      return var1 >= this.x && var1 <= this.x + this.width && var3 >= this.y && var3 <= this.y + this.height;
+   public boolean isInBounds(double lastMouseX, double lastMouseY) {
+      return lastMouseX >= this.x && lastMouseX <= this.x + this.width && lastMouseY >= this.y && lastMouseY <= this.y + this.height;
    }
 
    @Generated
@@ -418,102 +418,102 @@ public class PlayerPreview3D {
    }
 
    @Generated
-   public void setQueueOverlay(PlayerPreview3D.QueueOverlay var1) {
-      this.queueOverlay = var1;
+   public void setQueueOverlay(PlayerPreview3D.QueueOverlay queueOverlay) {
+      this.queueOverlay = queueOverlay;
    }
 
    @Generated
-   public void setX(float var1) {
-      this.x = var1;
+   public void setX(float x) {
+      this.x = x;
    }
 
    @Generated
-   public void setY(float var1) {
-      this.y = var1;
+   public void setY(float y) {
+      this.y = y;
    }
 
    @Generated
-   public void setWidth(float var1) {
-      this.width = var1;
+   public void setWidth(float width) {
+      this.width = width;
    }
 
    @Generated
-   public void setHeight(float var1) {
-      this.height = var1;
+   public void setHeight(float height) {
+      this.height = height;
    }
 
    @Generated
-   public void setZoom(float var1) {
-      this.zoom = var1;
+   public void setZoom(float zoom) {
+      this.zoom = zoom;
    }
 
    @Generated
-   public void setRotationY(float var1) {
-      this.rotationY = var1;
+   public void setRotationY(float rotationY) {
+      this.rotationY = rotationY;
    }
 
    @Generated
-   public void setRotationX(float var1) {
-      this.rotationX = var1;
+   public void setRotationX(float rotationX) {
+      this.rotationX = rotationX;
    }
 
    @Generated
-   public void setDragging(boolean var1) {
-      this.isDragging = var1;
+   public void setDragging(boolean isDragging) {
+      this.isDragging = isDragging;
    }
 
    @Generated
-   public void setLastFrameNanos(long var1) {
-      this.lastFrameNanos = var1;
+   public void setLastFrameNanos(long lastFrameNanos) {
+      this.lastFrameNanos = lastFrameNanos;
    }
 
    @Generated
-   public void setLastMouseX(double var1) {
-      this.lastMouseX = var1;
+   public void setLastMouseX(double lastMouseX) {
+      this.lastMouseX = lastMouseX;
    }
 
    @Generated
-   public void setLastMouseY(double var1) {
-      this.lastMouseY = var1;
+   public void setLastMouseY(double lastMouseY) {
+      this.lastMouseY = lastMouseY;
    }
 
    @Generated
-   public void setTurnedByHand(boolean var1) {
-      this.turnedByHand = var1;
+   public void setTurnedByHand(boolean turnedByHand) {
+      this.turnedByHand = turnedByHand;
    }
 
    @Generated
-   public void setFocusHeight(float var1) {
-      this.focusHeight = var1;
+   public void setFocusHeight(float focusHeight) {
+      this.focusHeight = focusHeight;
    }
 
    @Generated
-   public void setFocusZoom(float var1) {
-      this.focusZoom = var1;
+   public void setFocusZoom(float focusZoom) {
+      this.focusZoom = focusZoom;
    }
 
    @Generated
-   public void setFocusYaw(float var1) {
-      this.focusYaw = var1;
+   public void setFocusYaw(float focusYaw) {
+      this.focusYaw = focusYaw;
    }
 
    @Generated
-   public void setShownHeight(float var1) {
-      this.shownHeight = var1;
+   public void setShownHeight(float shownHeight) {
+      this.shownHeight = shownHeight;
    }
 
    @Generated
-   public void setShownZoom(float var1) {
-      this.shownZoom = var1;
+   public void setShownZoom(float shownZoom) {
+      this.shownZoom = shownZoom;
    }
 
    @FunctionalInterface
    public interface PreviewOverlay {
-      void render(PoseStack var1, SubmitNodeCollector var2, int var3, LivingEntity var4, float var5);
+      void render(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int n, LivingEntity player, float gameTimeDeltaPartialTick);
    }
 
    @FunctionalInterface
    public interface QueueOverlay {
-      void render(PoseStack var1, SubmitNodeCollector var2, int var3, LivingEntity var4, float var5);
+      void render(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int n, LivingEntity player, float gameTimeDeltaPartialTick);
    }
 }

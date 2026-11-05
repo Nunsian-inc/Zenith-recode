@@ -12,7 +12,7 @@ public class FovEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 }

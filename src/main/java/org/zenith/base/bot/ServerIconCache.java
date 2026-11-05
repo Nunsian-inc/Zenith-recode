@@ -17,45 +17,45 @@ import net.minecraft.server.network.EventLoopGroupHolder;
 public final class ServerIconCache {
    private static final ServerStatusPinger pinger = new ServerStatusPinger();
    private static final Map<String, ServerIconCache.Entry> entries = new ConcurrentHashMap<>();
-   private static final ExecutorService pingExecutor = Executors.newFixedThreadPool(2, var0 -> {
-      Thread var1 = new Thread(var0, "zenith-bot-server-pinger");
-      var1.setDaemon(true);
-      return var1;
+   private static final ExecutorService pingExecutor = Executors.newFixedThreadPool(2, task -> {
+      Thread thread = new Thread(task, "zenith-bot-server-pinger");
+      thread.setDaemon(true);
+      return thread;
    });
 
    private ServerIconCache() {
    }
 
-   public static Identifier get(String var0) {
-      if (var0 != null && !var0.isEmpty() && !"No Server".equalsIgnoreCase(var0)) {
-         ServerIconCache.Entry var1 = entries.get(var0);
-         if (var1 == null) {
-            Minecraft var2 = Minecraft.getInstance();
-            ServerData var3 = new ServerData(var0, var0, Type.OTHER);
-            FaviconTexture var4 = FaviconTexture.forServer(var2.getTextureManager(), var0);
-            var1 = new ServerIconCache.Entry(var3, var4);
-            ServerIconCache.Entry var5 = entries.putIfAbsent(var0, var1);
-            if (var5 != null) {
-               var4.close();
-               var1 = var5;
+   public static Identifier get(String address) {
+      if (address != null && !address.isEmpty() && !"No Server".equalsIgnoreCase(address)) {
+         ServerIconCache.Entry entry = entries.get(address);
+         if (entry == null) {
+            Minecraft minecraft = Minecraft.getInstance();
+            ServerData serverData = new ServerData(address, address, Type.OTHER);
+            FaviconTexture icon = FaviconTexture.forServer(minecraft.getTextureManager(), address);
+            entry = new ServerIconCache.Entry(serverData, icon);
+            ServerIconCache.Entry putIfAbsent = entries.putIfAbsent(address, entry);
+            if (putIfAbsent != null) {
+               icon.close();
+               entry = putIfAbsent;
             } else {
-               startPing(var1);
+               startPing(entry);
             }
          }
 
-         return var1.icon.textureLocation();
+         return entry.icon.textureLocation();
       } else {
          return null;
       }
    }
 
-   private static void startPing(ServerIconCache.Entry var0) {
-      var0.info.setState(State.PINGING);
+   private static void startPing(ServerIconCache.Entry entry) {
+      entry.info.setState(State.PINGING);
       pingExecutor.execute(() -> {
          try {
-            pinger.pingServer(var0.info, () -> {}, () -> {}, EventLoopGroupHolder.remote(false));
-         } catch (Exception var2) {
-            var0.info.setState(State.UNREACHABLE);
+            pinger.pingServer(entry.info, () -> {}, () -> {}, EventLoopGroupHolder.remote(false));
+         } catch (Exception e) {
+            entry.info.setState(State.UNREACHABLE);
          }
       });
    }
@@ -63,16 +63,16 @@ public final class ServerIconCache {
    public static void tick() {
       try {
          pinger.tick();
-      } catch (Throwable var5) {
+      } catch (Throwable e) {
       }
 
-      for (ServerIconCache.Entry var1 : entries.values()) {
-         byte[] var2 = var1.info.getIconBytes();
-         if (var2 != null && var2 != var1.lastFavicon) {
+      for (ServerIconCache.Entry entry : entries.values()) {
+         byte[] iconBytes = entry.info.getIconBytes();
+         if (iconBytes != null && iconBytes != entry.lastFavicon) {
             try {
-               var1.icon.upload(NativeImage.read(var2));
-               var1.lastFavicon = var2;
-            } catch (Throwable var4) {
+               entry.icon.upload(NativeImage.read(iconBytes));
+               entry.lastFavicon = iconBytes;
+            } catch (Throwable e) {
             }
          }
       }
@@ -81,13 +81,13 @@ public final class ServerIconCache {
    public static void clear() {
       try {
          pinger.removeAll();
-      } catch (Throwable var4) {
+      } catch (Throwable e) {
       }
 
-      for (ServerIconCache.Entry var1 : entries.values()) {
+      for (ServerIconCache.Entry entry : entries.values()) {
          try {
-            var1.icon.close();
-         } catch (Throwable var3) {
+            entry.icon.close();
+         } catch (Throwable e) {
          }
       }
 
@@ -99,9 +99,9 @@ public final class ServerIconCache {
       public final FaviconTexture icon;
       public byte[] lastFavicon;
 
-      public Entry(ServerData var1, FaviconTexture var2) {
-         this.info = var1;
-         this.icon = var2;
+      public Entry(ServerData info, FaviconTexture icon) {
+         this.info = info;
+         this.icon = icon;
       }
    }
 }

@@ -27,7 +27,7 @@ public final class RotationEvent implements Event {
       return "RotationEvent[" + "rotation=" + this.rotation + "]";
    }
 
-   public RotationEvent(Rotation var1) {
-      this.rotation = var1;
+   public RotationEvent(Rotation rotation) {
+      this.rotation = rotation;
    }
 }

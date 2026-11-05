@@ -35,7 +35,7 @@ public final class FastBreakModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.entry.isSelected()) {
          mc.gameMode.destroyDelay = 0;
          if (mc.gameMode.destroyProgress > 0.0F) {
@@ -49,17 +49,17 @@ public final class FastBreakModule extends Module {
       }
    }
 
-   public float method5660(float var1) {
-      return this.isEnabled() && this.entry2.isSelected() ? var1 / this.airMultiplier.getValue3() : var1;
+   public float method5660(float f) {
+      return this.isEnabled() && this.entry2.isSelected() ? f / this.airMultiplier.getValue3() : f;
    }
 
    @EventTarget
-   public void method5661(PacketEvent var1) {
+   public void method5661(PacketEvent event) {
       if (this.bypass.isEnabled()) {
-         if (var1.getPacket3() instanceof ServerboundPlayerActionPacket var3 && var3.getAction() == Action.STOP_DESTROY_BLOCK) {
-            BlockPos var4 = var3.getPos();
-            if (var4 != null) {
-               mc.getConnection().send(new ServerboundPlayerActionPacket(Action.ABORT_DESTROY_BLOCK, var4.above(), var3.getDirection()));
+         if (event.getPacket3() instanceof ServerboundPlayerActionPacket playerActionPacket && playerActionPacket.getAction() == Action.STOP_DESTROY_BLOCK) {
+            BlockPos pos = playerActionPacket.getPos();
+            if (pos != null) {
+               mc.getConnection().send(new ServerboundPlayerActionPacket(Action.ABORT_DESTROY_BLOCK, pos.above(), playerActionPacket.getDirection()));
             }
          }
       }

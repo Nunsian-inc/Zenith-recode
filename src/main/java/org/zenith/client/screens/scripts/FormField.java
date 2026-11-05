@@ -35,14 +35,14 @@ public final class FormField {
    private float shownWidth = Float.NaN;
    private String shownText;
 
-   public FormField(int var1, boolean var2) {
-      this.maxLength = var1;
-      this.multiline = var2;
+   public FormField(int maxLength, boolean multiline) {
+      this.maxLength = maxLength;
+      this.multiline = multiline;
    }
 
-   public void set(String var1) {
+   public void set(String description) {
       this.text.setLength(0);
-      this.text.append(var1 == null ? "" : var1);
+      this.text.append(description == null ? "" : description);
       this.version++;
       this.caret = this.text.length();
       this.original = this.text.toString();
@@ -64,21 +64,21 @@ public final class FormField {
       return this.focused;
    }
 
-   public void setFocused(boolean var1) {
-      this.focused = var1;
-      if (var1) {
+   public void setFocused(boolean focused) {
+      this.focused = focused;
+      if (focused) {
          this.caret = this.text.length();
       }
    }
 
-   public FormField masked(boolean var1) {
-      this.masked = var1;
+   public FormField masked(boolean masked) {
+      this.masked = masked;
       return this;
    }
 
-   public FormField lines(int var1, int var2) {
-      this.minLines = var1;
-      this.maxLines = var2;
+   public FormField lines(int minLines, int maxLines) {
+      this.minLines = minLines;
+      this.maxLines = maxLines;
       return this;
    }
 
@@ -88,12 +88,12 @@ public final class FormField {
       this.caret = 0;
    }
 
-   public float height(Font var1, float var2) {
+   public float height(Font font, float f) {
       if (!this.multiline) {
          return 16.0F;
       } else {
-         int var3 = Math.min(this.maxLines, Math.max(this.minLines, this.wrap(var1, var2 - 12.0F).size()));
-         return var3 * (var1.height() + 3.0F) + 8.0F;
+         int n = Math.min(this.maxLines, Math.max(this.minLines, this.wrap(font, f - 12.0F).size()));
+         return n * (font.height() + 3.0F) + 8.0F;
       }
    }
 
@@ -102,174 +102,174 @@ public final class FormField {
    }
 
    public float render(
-      MenuDrawContext var1,
-      Font var2,
-      float var3,
-      float var4,
-      float var5,
-      float var6,
-      String var7,
-      ZenithColor var8,
-      ZenithColor var9,
-      ZenithColor var10,
-      ZenithColor var11,
-      ZenithColor var12
+      MenuDrawContext menuDrawContext,
+      Font shownFont,
+      float floatValue,
+      float y,
+      float shownWidth,
+      float previewAlpha,
+      String name,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      ZenithColor zenithColor3,
+      ZenithColor zenithColor4,
+      ZenithColor zenithColor5
    ) {
-      var var13 = this.multiline ? this.wrap(var2, var5 - 12.0F) : List.of(this.text.toString());
-      int var14 = Math.max(0, var13.size() - this.maxLines);
-      List<String> var15 = var14 > 0 ? var13.subList(var14, var13.size()) : var13;
-      float var16 = var2.height() + 3.0F;
-      float var17 = this.multiline ? Math.min(this.maxLines, Math.max(this.minLines, var15.size())) * var16 + 8.0F : 16.0F;
-      this.bounds = new BoundsData(var3, var4, var5, var17);
-      ProxyDotRadiusData var18 = ProxyDotRadiusData.method8069(4.0F);
-      float var19 = this.focus.method2808(this.focused ? 1.0F : 0.0F);
-      var1.drawRoundedRect(var3, var4, var5, var17, var18, var8.method7295(var10.method7292(0.08F), var19 * 0.6F).method7294(var6));
-      var1.drawRoundedBorder(var3, var4, var5, var17, 0.15F, var18, var9.method7295(var10, var19).method7294(var6));
-      if (var19 > 0.01F) {
-         var1.drawRoundedBorder(
-            var3 - var19,
-            var4 - var19,
-            var5 + var19 * 2.0F,
-            var17 + var19 * 2.0F,
+      var strings = this.multiline ? this.wrap(shownFont, shownWidth - 12.0F) : List.of(this.text.toString());
+      int n = Math.max(0, strings.size() - this.maxLines);
+      List<String> subList = n > 0 ? strings.subList(n, strings.size()) : strings;
+      float f = shownFont.height() + 3.0F;
+      float height = this.multiline ? Math.min(this.maxLines, Math.max(this.minLines, subList.size())) * f + 8.0F : 16.0F;
+      this.bounds = new BoundsData(floatValue, y, shownWidth, height);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(4.0F);
+      float hover = this.focus.method2808(this.focused ? 1.0F : 0.0F);
+      menuDrawContext.drawRoundedRect(floatValue, y, shownWidth, height, headerRadius, zenithColor.method7295(zenithColor3.method7292(0.08F), hover * 0.6F).method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(floatValue, y, shownWidth, height, 0.15F, headerRadius, zenithColor2.method7295(zenithColor3, hover).method7294(previewAlpha));
+      if (hover > 0.01F) {
+         menuDrawContext.drawRoundedBorder(
+            floatValue - hover,
+            y - hover,
+            shownWidth + hover * 2.0F,
+            height + hover * 2.0F,
             0.12F,
-            ProxyDotRadiusData.method8069(4.0F + var19),
-            var10.method7292(0.18F * var19).method7294(var6)
+            ProxyDotRadiusData.method8069(4.0F + hover),
+            zenithColor3.method7292(0.18F * hover).method7294(previewAlpha)
          );
       }
 
-      long var20 = System.currentTimeMillis() - this.typedAt;
-      float var22 = var20 < 500L ? 1.0F : 0.5F + 0.5F * (float)Math.cos((var20 - 500L) / 530.0 * Math.PI);
-      boolean var23 = this.focused && var22 > 0.02F;
+      long l = System.currentTimeMillis() - this.typedAt;
+      float f2 = l < 500L ? 1.0F : 0.5F + 0.5F * (float)Math.cos((l - 500L) / 530.0 * Math.PI);
+      boolean flag = this.focused && f2 > 0.02F;
       if (this.text.isEmpty() && !this.focused) {
-         var1.drawText(
-            var2, var2.clip(var7, var5 - 12.0F), var3 + 6.0F, var4 + (this.multiline ? 5.0F : (var17 - var2.height()) / 2.0F), var12.method7294(var6)
+         menuDrawContext.drawText(
+            shownFont, shownFont.clip(name, shownWidth - 12.0F), floatValue + 6.0F, y + (this.multiline ? 5.0F : (height - shownFont.height()) / 2.0F), zenithColor5.method7294(previewAlpha)
          );
-         return var17;
+         return height;
       } else if (!this.multiline) {
-         String var29 = this.masked ? "*".repeat(this.text.length()) : this.text.toString();
-         String var30;
-         if (this.shownVersion == this.version && this.shownMasked == this.masked && sameFont(this.shownFont, var2) && this.shownWidth == var5) {
-            var30 = this.shownText;
+         String repeat = this.masked ? "*".repeat(this.text.length()) : this.text.toString();
+         String shownText;
+         if (this.shownVersion == this.version && this.shownMasked == this.masked && sameFont(this.shownFont, shownFont) && this.shownWidth == shownWidth) {
+            shownText = this.shownText;
          } else {
-            var30 = var29;
+            shownText = repeat;
 
-            while (var2.width(var30) > var5 - 14.0F && var30.length() > 1) {
-               var30 = var30.substring(1);
+            while (shownFont.width(shownText) > shownWidth - 14.0F && shownText.length() > 1) {
+               shownText = shownText.substring(1);
             }
 
             this.shownVersion = this.version;
             this.shownMasked = this.masked;
-            this.shownFont = var2;
-            this.shownWidth = var5;
-            this.shownText = var30;
+            this.shownFont = shownFont;
+            this.shownWidth = shownWidth;
+            this.shownText = shownText;
          }
 
-         float var32 = var4 + (var17 - var2.height()) / 2.0F;
-         var1.drawText(var2, var30, var3 + 6.0F, var32, var11.method7294(var6));
-         if (var23) {
-            int var33 = var29.length() - var30.length();
-            float var34 = var3 + 6.0F + var2.width(var30.substring(0, Math.max(0, Math.min(var30.length(), this.caret - var33))));
-            var1.drawRect(var34, var32 - 0.5F, 0.7F, var2.height() + 1.0F, var11.method7294(var6 * var22 * var19));
+         float centeredTextY = y + (height - shownFont.height()) / 2.0F;
+         menuDrawContext.drawText(shownFont, shownText, floatValue + 6.0F, centeredTextY, zenithColor4.method7294(previewAlpha));
+         if (flag) {
+            int n2 = repeat.length() - shownText.length();
+            float floatValue2 = floatValue + 6.0F + shownFont.width(shownText.substring(0, Math.max(0, Math.min(shownText.length(), this.caret - n2))));
+            menuDrawContext.drawRect(floatValue2, centeredTextY - 0.5F, 0.7F, shownFont.height() + 1.0F, zenithColor4.method7294(previewAlpha * f2 * hover));
          }
 
-         return var17;
+         return height;
       } else {
-         float var24 = var4 + 5.0F;
-         int var25 = 0;
+         float centeredTextY = y + 5.0F;
+         int n2 = 0;
 
-         for (int var26 = 0; var26 < var14; var26++) {
-            var25 += ((String)var13.get(var26)).length();
+         for (int i = 0; i < n; i++) {
+            n2 += ((String)strings.get(i)).length();
          }
 
-         for (String var27 : var15) {
-            var1.drawText(var2, var27, var3 + 6.0F, var24, var11.method7294(var6));
-            if (var23 && this.caret >= var25 && this.caret <= var25 + var27.length()) {
-               float var28 = var3 + 6.0F + var2.width(var27.substring(0, this.caret - var25));
-               var1.drawRect(var28, var24 - 0.5F, 0.7F, var2.height() + 1.0F, var11.method7294(var6 * var22 * var19));
-               var23 = false;
+         for (String sub : subList) {
+            menuDrawContext.drawText(shownFont, sub, floatValue + 6.0F, centeredTextY, zenithColor4.method7294(previewAlpha));
+            if (flag && this.caret >= n2 && this.caret <= n2 + sub.length()) {
+               float floatValue2 = floatValue + 6.0F + shownFont.width(sub.substring(0, this.caret - n2));
+               menuDrawContext.drawRect(floatValue2, centeredTextY - 0.5F, 0.7F, shownFont.height() + 1.0F, zenithColor4.method7294(previewAlpha * f2 * hover));
+               flag = false;
             }
 
-            var25 += var27.length();
-            var24 += var16;
+            n2 += sub.length();
+            centeredTextY += f;
          }
 
-         return var17;
+         return height;
       }
    }
 
-   private List<String> wrap(Font var1, float var2) {
-      if (this.wrapVersion == this.version && sameFont(this.wrapFont, var1) && this.wrapWidth == var2) {
+   private List<String> wrap(Font wrapFont, float wrapWidth) {
+      if (this.wrapVersion == this.version && sameFont(this.wrapFont, wrapFont) && this.wrapWidth == wrapWidth) {
          return this.wrapLines;
       } else {
-         var var3 = this.wrapUncached(var1, var2);
+         var wrapUncached = this.wrapUncached(wrapFont, wrapWidth);
          this.wrapVersion = this.version;
-         this.wrapFont = var1;
-         this.wrapWidth = var2;
-         this.wrapLines = var3;
-         return var3;
+         this.wrapFont = wrapFont;
+         this.wrapWidth = wrapWidth;
+         this.wrapLines = wrapUncached;
+         return wrapUncached;
       }
    }
 
-   private static boolean sameFont(Font var0, Font var1) {
-      return var0 != null && var0.getFont() == var1.getFont() && var0.getSize() == var1.getSize();
+   private static boolean sameFont(Font shownFont, Font font) {
+      return shownFont != null && shownFont.getFont() == font.getFont() && shownFont.getSize() == font.getSize();
    }
 
-   private List<String> wrapUncached(Font var1, float var2) {
-      ArrayList<String> var3 = new ArrayList<>();
-      String var4 = this.text.toString();
-      int var5 = 0;
+   private List<String> wrapUncached(Font wrapFont, float wrapWidth) {
+      ArrayList<String> strings = new ArrayList<>();
+      String string = this.text.toString();
+      int index = 0;
 
-      while (var5 < var4.length()) {
-         int var6 = var5;
+      while (index < string.length()) {
+         int n = index;
 
-         int var7;
-         for (var7 = -1; var6 < var4.length() && var1.width(var4.substring(var5, var6 + 1)) <= var2; var6++) {
-            if (var4.charAt(var6) == ' ') {
-               var7 = var6;
+         int n2;
+         for (n2 = -1; n < string.length() && wrapFont.width(string.substring(index, n + 1)) <= wrapWidth; n++) {
+            if (string.charAt(n) == ' ') {
+               n2 = n;
             }
          }
 
-         if (var6 < var4.length() && var7 > var5) {
-            var6 = var7 + 1;
+         if (n < string.length() && n2 > index) {
+            n = n2 + 1;
          }
 
-         if (var6 == var5) {
-            var6 = var5 + 1;
+         if (n == index) {
+            n = index + 1;
          }
 
-         var3.add(var4.substring(var5, var6));
-         var5 = var6;
+         strings.add(string.substring(index, n));
+         index = n;
       }
 
-      if (var3.isEmpty()) {
-         var3.add("");
+      if (strings.isEmpty()) {
+         strings.add("");
       }
 
-      return var3;
+      return strings;
    }
 
-   public boolean keyPressed(int var1, int var2) {
+   public boolean keyPressed(int keyCode, int modifiers) {
       if (!this.focused) {
          return false;
       } else {
          this.typedAt = System.currentTimeMillis();
-         boolean var3 = (var2 & 2) != 0;
-         switch (var1) {
+         boolean flag = (modifiers & 2) != 0;
+         switch (keyCode) {
             case 65:
-               if (var3) {
+               if (flag) {
                   this.caret = this.text.length();
                }
                break;
             case 67:
-               if (var3 && !this.masked) {
+               if (flag && !this.masked) {
                   Minecraft.getInstance().keyboardHandler.setClipboard(this.text.toString());
                }
                break;
             case 86:
-               if (var3) {
-                  String var5 = Minecraft.getInstance().keyboardHandler.getClipboard();
-                  if (var5 != null) {
-                     this.insert(var5.replace("\r", " ").replace("\n", " "));
+               if (flag) {
+                  String clipboard = Minecraft.getInstance().keyboardHandler.getClipboard();
+                  if (clipboard != null) {
+                     this.insert(clipboard.replace("\r", " ").replace("\n", " "));
                   }
                }
                break;
@@ -280,20 +280,20 @@ public final class FormField {
                this.focused = false;
                break;
             case 259:
-               if (var3) {
-                  int var4 = this.caret;
+               if (flag) {
+                  int caret = this.caret;
 
-                  while (var4 > 0 && this.text.charAt(var4 - 1) == ' ') {
-                     var4--;
+                  while (caret > 0 && this.text.charAt(caret - 1) == ' ') {
+                     caret--;
                   }
 
-                  while (var4 > 0 && this.text.charAt(var4 - 1) != ' ') {
-                     var4--;
+                  while (caret > 0 && this.text.charAt(caret - 1) != ' ') {
+                     caret--;
                   }
 
-                  this.text.delete(var4, this.caret);
+                  this.text.delete(caret, this.caret);
                   this.version++;
-                  this.caret = var4;
+                  this.caret = caret;
                } else if (this.caret > 0) {
                   this.text.deleteCharAt(--this.caret);
                   this.version++;
@@ -322,23 +322,23 @@ public final class FormField {
       }
    }
 
-   public boolean charTyped(char var1) {
-      if (this.focused && var1 >= ' ') {
-         this.insert(String.valueOf(var1));
+   public boolean charTyped(char codepoint) {
+      if (this.focused && codepoint >= ' ') {
+         this.insert(String.valueOf(codepoint));
          return true;
       } else {
          return false;
       }
    }
 
-   private void insert(String var1) {
+   private void insert(String str) {
       this.typedAt = System.currentTimeMillis();
-      int var2 = this.maxLength - this.text.length();
-      if (var2 > 0) {
-         String var3 = var1.length() > var2 ? var1.substring(0, var2) : var1;
-         this.text.insert(this.caret, var3);
+      int endIndex = this.maxLength - this.text.length();
+      if (endIndex > 0) {
+         String str2 = str.length() > endIndex ? str.substring(0, endIndex) : str;
+         this.text.insert(this.caret, str2);
          this.version++;
-         this.caret = this.caret + var3.length();
+         this.caret = this.caret + str2.length();
       }
    }
 }

@@ -10,30 +10,30 @@ public final class Util6 {
    private Util6() {
    }
 
-   public static int method1439(int var0, int var1) {
-      if (var0 > var1) {
+   public static int method1439(int origin, int n) {
+      if (origin > n) {
          throw new IllegalArgumentException("min > max");
       } else {
-         return ThreadLocalRandom.current().nextInt(var0, var1 + 1);
+         return ThreadLocalRandom.current().nextInt(origin, n + 1);
       }
    }
 
-   public static int method1440(int var0, int var1) {
-      return method1439(var0, var1);
+   public static int method1440(int origin, int n) {
+      return method1439(origin, n);
    }
 
-   public static boolean method1441(int var0, int var1) {
-      int var2 = method1439(var0, var1);
-      return var2 > ThreadLocalRandom.current().nextInt(100);
+   public static boolean method1441(int origin, int n) {
+      int n2 = method1439(origin, n);
+      return n2 > ThreadLocalRandom.current().nextInt(100);
    }
 
-   public static <T> List<T> method1442(List<T> var0) {
-      var var1 = new ArrayList<>(var0);
-      Collections.shuffle(var1, (Random)ThreadLocalRandom.current());
-      return var1;
+   public static <T> List<T> method1442(List<T> list) {
+      var arrayList = new ArrayList<>(list);
+      Collections.shuffle(arrayList, (Random)ThreadLocalRandom.current());
+      return arrayList;
    }
 
-   public static <T> void method1443(List<T> var0) {
-      Collections.shuffle(var0, (Random)ThreadLocalRandom.current());
+   public static <T> void method1443(List<T> list) {
+      Collections.shuffle(list, (Random)ThreadLocalRandom.current());
    }
 }

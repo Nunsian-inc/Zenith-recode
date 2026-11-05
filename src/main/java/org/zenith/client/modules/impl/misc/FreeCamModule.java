@@ -39,8 +39,8 @@ public final class FreeCamModule extends Module {
 
    @Override
    public void onEnable() {
-      Camera var1 = mc.getEntityRenderDispatcher() == null ? null : mc.getEntityRenderDispatcher().camera;
-      this.vec3d2 = this.vec3d = var1 != null && mc.level != null ? new Vec3(var1.position().toVector3f()) : null;
+      Camera camera = mc.getEntityRenderDispatcher() == null ? null : mc.getEntityRenderDispatcher().camera;
+      this.vec3d2 = this.vec3d = camera != null && mc.level != null ? new Vec3(camera.position().toVector3f()) : null;
       super.onEnable();
    }
 
@@ -51,7 +51,7 @@ public final class FreeCamModule extends Module {
    }
 
    @EventTarget
-   public void method1661(WorldRenderEvent var1) {
+   public void method1661(WorldRenderEvent event) {
       GlowUtil.method2230(
          mc.player.getBoundingBox().move(MathUtils.method2656(mc.player).subtract(mc.player.position())),
          zenith.getStyleManager().getClientColor(90).method7287(),
@@ -60,15 +60,15 @@ public final class FreeCamModule extends Module {
    }
 
    @EventTarget
-   public void method1662(DrawEvent var1) {
+   public void method1662(DrawEvent event) {
       if (this.vec3d != null) {
-         String var2 = MathUtils.round((float)this.vec3d.x) + "   " + MathUtils.round((float)this.vec3d.y) + "   " + MathUtils.round((float)this.vec3d.z);
-         float var3 = Fonts.MEDIUM.getWidth(var2, 7.0F);
-         var1.getCustomDrawContext()
+         String text = MathUtils.round((float)this.vec3d.x) + "   " + MathUtils.round((float)this.vec3d.y) + "   " + MathUtils.round((float)this.vec3d.z);
+         float width = Fonts.MEDIUM.getWidth(text, 7.0F);
+         event.getCustomDrawContext()
             .drawText(
                Fonts.MEDIUM.getFont(7.0F),
-               var2,
-               mc.getWindow().getGuiScaledWidth() / 2.0F - var3 / 2.0F,
+               text,
+               mc.getWindow().getGuiScaledWidth() / 2.0F - width / 2.0F,
                10.0F,
                Zenith.getInstance().getStyleManager().getCurrentStyle().getTextEnable().getZenithColor()
             );
@@ -76,32 +76,32 @@ public final class FreeCamModule extends Module {
    }
 
    @EventTarget
-   public void method1663(MoveInputEvent var1) {
+   public void method1663(MoveInputEvent event) {
       if (this.vec3d == null) {
-         Entity var2 = mc.getCameraEntity();
-         if (var2 == null) {
-            var1.method3044();
+         Entity cameraEntity = mc.getCameraEntity();
+         if (cameraEntity == null) {
+            event.method3044();
             return;
          }
 
-         this.vec3d2 = this.vec3d = var2.getEyePosition();
+         this.vec3d2 = this.vec3d = cameraEntity.getEyePosition();
       }
 
-      float var4 = this.speedSetting.getValue3();
-      double[] var3 = MovementInputUtils.method7421(var4);
+      float f = this.speedSetting.getValue3();
+      double[] doubles = MovementInputUtils.method7421(f);
       this.vec3d2 = this.vec3d;
-      this.vec3d = this.vec3d.add(var3[0], var1.getPlayerInput().jump() ? var4 : (var1.getPlayerInput().shift() ? -var4 : 0.0), var3[1]);
-      var1.method3044();
+      this.vec3d = this.vec3d.add(doubles[0], event.getPlayerInput().jump() ? f : (event.getPlayerInput().shift() ? -f : 0.0), doubles[1]);
+      event.method3044();
    }
 
    @EventTarget
-   public void method1664(CameraPosEvent var1) {
-      if (this.vec3d == null && var1.getVec3d() != null) {
-         this.vec3d2 = this.vec3d = var1.getVec3d();
+   public void method1664(CameraPosEvent event) {
+      if (this.vec3d == null && event.getVec3d() != null) {
+         this.vec3d2 = this.vec3d = event.getVec3d();
       }
 
       if (this.vec3d2 != null && this.vec3d != null) {
-         var1.setVec3d(MathUtils.method2655(this.vec3d2, this.vec3d));
+         event.setVec3d(MathUtils.method2655(this.vec3d2, this.vec3d));
          mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
       }
    }

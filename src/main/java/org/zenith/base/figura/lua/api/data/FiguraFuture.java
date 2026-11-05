@@ -33,14 +33,14 @@ public class FiguraFuture<T> {
       if (!this.isDone) {
          this.hasError = true;
          this.isDone = true;
-         LuaError var10001;
+         LuaError luaError;
          if (t instanceof LuaError e) {
-            var10001 = e;
+            luaError = e;
          } else {
-            var10001 = new LuaError(t);
+            luaError = new LuaError(t);
          }
 
-         this.errorObject = var10001;
+         this.errorObject = luaError;
       }
    }
 

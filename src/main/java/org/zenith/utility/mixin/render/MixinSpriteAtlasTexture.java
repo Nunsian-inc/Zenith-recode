@@ -15,7 +15,7 @@ public class MixinSpriteAtlasTexture {
       method = {"uploadInitialContents()V"},
       at = {@At("TAIL")}
    )
-   private void zenith$applyAnisotropy(CallbackInfo var1) {
+   private void zenith$applyAnisotropy(CallbackInfo callbackInfo) {
       AtlasProfiler.method7952((TextureAtlas)(Object)this);
       LoggerFactory.getLogger("Zenith/Render").info("snow foliage painted: {} sprites", FoliageSprites.intValue);
    }

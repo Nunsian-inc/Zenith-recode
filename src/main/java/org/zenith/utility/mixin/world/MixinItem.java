@@ -21,8 +21,8 @@ public class MixinItem {
          target = "Lnet/minecraft/world/entity/player/Player;calculateViewVector(FF)Lnet/minecraft/world/phys/Vec3;"
       )}
    )
-   private static Vec3 hookFixRotation(Vec3 var0, Level var1, Player var2, Fluid var3) {
-      Rotation var4 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-      return var2 == Minecraft.getInstance().player && var4 != null ? var4.method3135() : var0;
+   private static Vec3 hookFixRotation(Vec3 vec, Level level, Player player, Fluid fluid) {
+      Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+      return player == Minecraft.getInstance().player && currentRotation != null ? currentRotation.method3135() : vec;
    }
 }

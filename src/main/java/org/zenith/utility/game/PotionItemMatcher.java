@@ -16,61 +16,61 @@ public class PotionItemMatcher extends ItemMatcher {
    private static final Pattern pattern2 = Pattern.compile(".*\".*\".*");
    private final Map<String, String> items;
 
-   public PotionItemMatcher(ItemStack var1, String var2, String var3, ItemMatcher.Type var4) {
-      super(var1, var2, var3, var4);
+   public PotionItemMatcher(ItemStack itemStack, String text, String str, ItemMatcher.Type type) {
+      super(itemStack, text, str, type);
       this.items = new HashMap<>();
    }
 
-   public PotionItemMatcher(ItemStack var1, String var2, ItemMatcher.Type var3, Map<String, String> var4) {
-      super(var1, var2, var3);
-      this.items = var4;
+   public PotionItemMatcher(ItemStack itemStack, String text, ItemMatcher.Type type, Map<String, String> items) {
+      super(itemStack, text, type);
+      this.items = items;
    }
 
-   public PotionItemMatcher(ItemStack var1, String var2, ItemMatcher.Type var3, String var4, String var5) {
-      super(var1, var2, var3);
+   public PotionItemMatcher(ItemStack defaultInstance, String text, ItemMatcher.Type type, String str, String str2) {
+      super(defaultInstance, text, type);
       this.items = new HashMap<>();
-      this.items.put(var4, var5);
+      this.items.put(str, str2);
    }
 
-   public PotionItemMatcher(ItemStack var1, String var2, String var3, ItemMatcher.Type var4, String var5, String var6) {
-      super(var1, var2, var3, var4);
+   public PotionItemMatcher(ItemStack defaultInstance, String text, String str, ItemMatcher.Type type, String str2, String str3) {
+      super(defaultInstance, text, str, type);
       this.items = new HashMap<>();
-      this.items.put(var5, var6);
+      this.items.put(str2, str3);
    }
 
    @Override
-   public boolean method2672(ItemStack var1) {
-      if (!super.method2672(var1)) {
+   public boolean method2672(ItemStack stack) {
+      if (!super.method2672(stack)) {
          return false;
       } else {
-         CustomData var2 = var1.get(DataComponents.CUSTOM_DATA);
-         if (var2 == null) {
+         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+         if (customData == null) {
             return false;
          } else {
-            CompoundTag var3 = var2.copyTag();
+            CompoundTag copyTag = customData.copyTag();
 
-            for (Entry var5 : this.items.entrySet()) {
-               String var6 = (String)var5.getKey();
-               String var7 = (String)var5.getValue();
-               if (!var3.contains(var6)) {
+            for (Entry entry : this.items.entrySet()) {
+               String key = (String)entry.getKey();
+               String input = (String)entry.getValue();
+               if (!copyTag.contains(key)) {
                   return false;
                }
 
-               if (method2673(var6, var7)) {
-                  if (!method2674(var3, var6, var7)) {
+               if (method2673(key, input)) {
+                  if (!method2674(copyTag, key, input)) {
                      return false;
                   }
                } else {
-                  String var8 = pattern.matcher(var3.get(var6).toString()).replaceAll("");
-                  String var9 = pattern.matcher(var7).replaceAll("");
-                  if (!var8.contains(var9)) {
+                  String str = pattern.matcher(copyTag.get(key).toString()).replaceAll("");
+                  String str2 = pattern.matcher(input).replaceAll("");
+                  if (!str.contains(str2)) {
                      return false;
                   }
 
-                  boolean var10 = var9.startsWith("{") || var9.startsWith("[");
-                  if (!var10 && pattern2.matcher(var8).matches()) {
-                     String var11 = "\"" + var9 + "\"";
-                     if (!var8.contains(var11)) {
+                  boolean flag = str2.startsWith("{") || str2.startsWith("[");
+                  if (!flag && pattern2.matcher(str).matches()) {
+                     String str3 = "\"" + str2 + "\"";
+                     if (!str.contains(str3)) {
                         return false;
                      }
                   }
@@ -82,51 +82,51 @@ public class PotionItemMatcher extends ItemMatcher {
       }
    }
 
-   private static boolean method2673(String var0, String var1) {
-      return "custom_potion_effects".equals(var0) && var1.startsWith("minecraft:") && !var1.contains("{") && !var1.contains("[");
+   private static boolean method2673(String key, String input) {
+      return "custom_potion_effects".equals(key) && input.startsWith("minecraft:") && !input.contains("{") && !input.contains("[");
    }
 
-   private static boolean method2674(CompoundTag var0, String var1, String var2) {
-      String var3 = var2;
-      int var4 = -1;
-      int var5 = var2.indexOf(64);
-      if (var5 > 0) {
-         var3 = var2.substring(0, var5);
+   private static boolean method2674(CompoundTag copyTag, String key, String input) {
+      String stringOr = input;
+      int n = -1;
+      int indexOf = input.indexOf(64);
+      if (indexOf > 0) {
+         stringOr = input.substring(0, indexOf);
 
          try {
-            var4 = Integer.parseInt(var2.substring(var5 + 1));
-         } catch (NumberFormatException var11) {
-            var4 = -1;
+            n = Integer.parseInt(input.substring(indexOf + 1));
+         } catch (NumberFormatException e) {
+            n = -1;
          }
       }
 
-      if (!(var0.get(var1) instanceof ListTag)) {
-         return var0.get(var1).toString().contains(var3);
+      if (!(copyTag.get(key) instanceof ListTag)) {
+         return copyTag.get(key).toString().contains(stringOr);
       } else {
-         String var6 = method2675(var3);
-         ListTag var7 = var0.getListOrEmpty(var1);
-         boolean var8 = false;
+         String str = method2675(stringOr);
+         ListTag listOrEmpty = copyTag.getListOrEmpty(key);
+         boolean flag = false;
 
-         for (int var9 = 0; var9 < var7.size(); var9++) {
-            CompoundTag var10 = var7.getCompoundOrEmpty(var9);
-            if (!var6.equals(method2675(var10.getStringOr("id", "")))) {
+         for (int i = 0; i < listOrEmpty.size(); i++) {
+            CompoundTag compoundOrEmpty = listOrEmpty.getCompoundOrEmpty(i);
+            if (!str.equals(method2675(compoundOrEmpty.getStringOr("id", "")))) {
                return false;
             }
 
-            if (var4 < 0 || method2676(var10) >= var4) {
-               var8 = true;
+            if (n < 0 || method2676(compoundOrEmpty) >= n) {
+               flag = true;
             }
          }
 
-         return var8;
+         return flag;
       }
    }
 
-   private static String method2675(String var0) {
-      return var0 != null && var0.startsWith("minecraft:") ? var0.substring("minecraft:".length()) : String.valueOf(var0);
+   private static String method2675(String stringOr) {
+      return stringOr != null && stringOr.startsWith("minecraft:") ? stringOr.substring("minecraft:".length()) : String.valueOf(stringOr);
    }
 
-   private static int method2676(CompoundTag var0) {
-      return var0.get("amplifier") instanceof NumericTag var1 ? var1.intValue() : 0;
+   private static int method2676(CompoundTag compoundOrEmpty) {
+      return compoundOrEmpty.get("amplifier") instanceof NumericTag numericTag ? numericTag.intValue() : 0;
    }
 }

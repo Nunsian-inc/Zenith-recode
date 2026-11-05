@@ -355,9 +355,9 @@ public class HostAPI {
    )
    public ItemStackAPI getScreenSlot(@LuaNotNil Object slot) {
       if (this.isHost() && this.minecraft.gui.screen() instanceof AbstractContainerScreen<?> screen) {
-         NonNullList var5 = screen.getMenu().slots;
+         NonNullList slots = screen.getMenu().slots;
          int index = LuaUtils.parseSlot(slot, null);
-         return index >= 0 && index < var5.size() ? ItemStackAPI.verify(((Slot)var5.get(index)).getItem()) : null;
+         return index >= 0 && index < slots.size() ? ItemStackAPI.verify(((Slot)slots.get(index)).getItem()) : null;
       } else {
          return null;
       }

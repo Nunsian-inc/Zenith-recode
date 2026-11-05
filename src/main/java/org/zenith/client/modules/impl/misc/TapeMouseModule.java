@@ -34,7 +34,7 @@ public final class TapeMouseModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gui.screen() == null) {
          if (!this.stopWatch.method7546((long)this.delay.getValue3())) {
             this.method2780();
@@ -52,9 +52,9 @@ public final class TapeMouseModule extends Module {
       return this.mouseButton.isSelected(0) ? mc.options.keyUse : mc.options.keyAttack;
    }
 
-   private void method2779(KeyMapping var1) {
-      var1.setDown(true);
-      KeyMapping.click(KeyMappingHelper.getBoundKeyOf(var1));
+   private void method2779(KeyMapping keyMapping) {
+      keyMapping.setDown(true);
+      KeyMapping.click(KeyMappingHelper.getBoundKeyOf(keyMapping));
    }
 
    private void method2780() {

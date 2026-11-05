@@ -60,20 +60,20 @@ public class BcHand extends Util22 {
       } else {
          if (this.completableFuture == null) {
             this.completableFuture = CompletableFuture.runAsync(() -> {
-               try (InputStream var1 = this.method3868()) {
-                  HandAnchorNet var2 = HandAnchorNet.method3417(var1);
-                  this.status = "NeuroBC-Hand загружен (bc_hand.json). " + var2.text2 + "; модель " + var2.source;
-                  this.handAnchorNet = var2;
-               } catch (Exception var6) {
-                  this.status = "NeuroBC-Hand НЕ загружен (bc_hand.json): " + var6.getMessage();
+               try (InputStream inputStream = this.method3868()) {
+                  HandAnchorNet handAnchorNet = HandAnchorNet.method3417(inputStream);
+                  this.status = "NeuroBC-Hand загружен (bc_hand.json). " + handAnchorNet.text2 + "; модель " + handAnchorNet.source;
+                  this.handAnchorNet = handAnchorNet;
+               } catch (Exception e) {
+                  this.status = "NeuroBC-Hand НЕ загружен (bc_hand.json): " + e.getMessage();
                }
 
                System.out.println(this.status);
                if (mc != null) {
-                  String var7 = this.status;
+                  String status = this.status;
                   mc.execute(() -> {
                      if (mc.player != null) {
-                        ChatLogger.method2019(var7);
+                        ChatLogger.method2019(status);
                      }
                   });
                }
@@ -85,17 +85,17 @@ public class BcHand extends Util22 {
    }
 
    private InputStream method3868() throws IOException {
-      for (Path var2 : List.of(Path.of("bc_hand.json"), Path.of("models", "bc_hand.json"), Path.of("..", "models", "bc_hand.json"))) {
-         if (Files.isRegularFile(var2)) {
-            return Files.newInputStream(var2);
+      for (Path path : List.of(Path.of("bc_hand.json"), Path.of("models", "bc_hand.json"), Path.of("..", "models", "bc_hand.json"))) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var3 = BcHand.class.getClassLoader().getResourceAsStream("models/bc_hand.json");
-      if (var3 == null) {
+      InputStream resourceAsStream = BcHand.class.getClassLoader().getResourceAsStream("models/bc_hand.json");
+      if (resourceAsStream == null) {
          throw new FileNotFoundException("bc_hand.json не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var3;
+         return resourceAsStream;
       }
    }
 
@@ -113,8 +113,8 @@ public class BcHand extends Util22 {
    }
 
    private static double method3870() {
-      double var0 = mc.options.sensitivity().get() * 0.6F + 0.2F;
-      return var0 * var0 * var0 * 8.0 * 0.15;
+      double d = mc.options.sensitivity().get() * 0.6F + 0.2F;
+      return d * d * d * 8.0 * 0.15;
    }
 
    private static BcHand.Type method3871() {
@@ -126,90 +126,90 @@ public class BcHand extends Util22 {
    }
 
    @EventTarget
-   public void onTick(TickEvent var1) {
+   public void onTick(TickEvent event) {
       this.longValue++;
       if (this.entry42 != null) {
          this.method3872(null);
          this.rotation = null;
       }
 
-      BcHand.Type var2 = method3871();
-      if (mc.player != null && mc.level != null && var2 != BcHand.Type.NONE) {
-         HandAnchorNet var3 = this.method3867();
-         if (var3 == null) {
+      BcHand.Type type = method3871();
+      if (mc.player != null && mc.level != null && type != BcHand.Type.NONE) {
+         HandAnchorNet handAnchorNet = this.method3867();
+         if (handAnchorNet == null) {
             this.reset();
          } else {
             if (this.entry == null || mc.level != this.obj) {
-               this.entry = var3.method3398();
+               this.entry = handAnchorNet.method3398();
                this.flag = false;
                this.entry4 = null;
             }
 
             this.obj = mc.level;
-            Rotation var4 = zenith.getRotationManager().method7844();
-            double var5 = var4.getFloatValue();
-            double var7 = var4.getFloatValue2();
-            BcCameraNet.Entry4 var9 = new BcCameraNet.Entry4();
-            var9.doubleValue = mc.player.getX();
-            var9.doubleValue2 = mc.player.getY();
-            var9.doubleValue3 = mc.player.getZ();
-            Input var10 = mc.player.input.keyPresses;
-            var9.intValue = (var10.forward() ? 1 : 0)
-               | (var10.backward() ? 2 : 0)
-               | (var10.left() ? 4 : 0)
-               | (var10.right() ? 8 : 0)
-               | (var10.jump() ? 16 : 0)
-               | (var10.shift() ? 32 : 0)
-               | (var10.sprint() ? 64 : 0);
-            var9.flag = mc.player.onGround();
-            LivingEntity var11 = var2 == BcHand.Type.AURA ? AuraModule.INSTANCE.method6358() : null;
-            if (var11 != null && var11.isAlive()) {
-               var9.doubleValue4 = var11.getX();
-               var9.doubleValue5 = var11.getY();
-               var9.doubleValue6 = var11.getZ();
-               var9.intValue2 = var11.getId();
-               var9.flag4 = var11.isShiftKeyDown();
+            Rotation rotation2 = zenith.getRotationManager().method7844();
+            double floatValue = rotation2.getFloatValue();
+            double d = rotation2.getFloatValue2();
+            BcCameraNet.Entry4 entry4 = new BcCameraNet.Entry4();
+            entry4.doubleValue = mc.player.getX();
+            entry4.doubleValue2 = mc.player.getY();
+            entry4.doubleValue3 = mc.player.getZ();
+            Input keyPresses = mc.player.input.keyPresses;
+            entry4.intValue = (keyPresses.forward() ? 1 : 0)
+               | (keyPresses.backward() ? 2 : 0)
+               | (keyPresses.left() ? 4 : 0)
+               | (keyPresses.right() ? 8 : 0)
+               | (keyPresses.jump() ? 16 : 0)
+               | (keyPresses.shift() ? 32 : 0)
+               | (keyPresses.sprint() ? 64 : 0);
+            entry4.flag = mc.player.onGround();
+            LivingEntity livingEntity = type == BcHand.Type.AURA ? AuraModule.INSTANCE.method6358() : null;
+            if (livingEntity != null && livingEntity.isAlive()) {
+               entry4.doubleValue4 = livingEntity.getX();
+               entry4.doubleValue5 = livingEntity.getY();
+               entry4.doubleValue6 = livingEntity.getZ();
+               entry4.intValue2 = livingEntity.getId();
+               entry4.flag4 = livingEntity.isShiftKeyDown();
             }
 
-            var9.doubleValue7 = var5;
-            var9.doubleValue8 = var7;
+            entry4.doubleValue7 = floatValue;
+            entry4.doubleValue8 = d;
             if (this.flag) {
-               var9.doubleValue9 = var5 - this.doubleValue;
-               var9.doubleValue10 = var7 - this.doubleValue2;
-               var9.flag5 = Math.abs(var9.doubleValue9) <= 180.0;
+               entry4.doubleValue9 = floatValue - this.doubleValue;
+               entry4.doubleValue10 = d - this.doubleValue2;
+               entry4.flag5 = Math.abs(entry4.doubleValue9) <= 180.0;
             } else {
-               var9.flag5 = false;
+               entry4.flag5 = false;
             }
 
-            this.doubleValue = var5;
-            this.doubleValue2 = var7;
+            this.doubleValue = floatValue;
+            this.doubleValue2 = d;
             this.flag = true;
-            double[] var12 = null;
-            boolean var13 = var9.intValue2 >= 0 && BcCameraNet.method3361(var9.doubleValue4, var9.doubleValue5, var9.doubleValue6);
-            if (var13) {
-               boolean var14 = this.entry4 != null
-                  && this.entry4.intValue2 == var9.intValue2
+            double[] doubles = null;
+            boolean flag = entry4.intValue2 >= 0 && BcCameraNet.method3361(entry4.doubleValue4, entry4.doubleValue5, entry4.doubleValue6);
+            if (flag) {
+               boolean flag2 = this.entry4 != null
+                  && this.entry4.intValue2 == entry4.intValue2
                   && BcCameraNet.method3361(this.entry4.doubleValue4, this.entry4.doubleValue5, this.entry4.doubleValue6);
-               var12 = var3.method3410(
-                  new double[]{var9.doubleValue, var9.doubleValue2, var9.doubleValue3},
+               doubles = handAnchorNet.method3410(
+                  new double[]{entry4.doubleValue, entry4.doubleValue2, entry4.doubleValue3},
                   this.entry4 == null ? null : new double[]{this.entry4.doubleValue, this.entry4.doubleValue2, this.entry4.doubleValue3},
-                  new double[]{var9.doubleValue4, var9.doubleValue5, var9.doubleValue6},
-                  var14 ? new double[]{this.entry4.doubleValue4, this.entry4.doubleValue5, this.entry4.doubleValue6} : null,
-                  var14,
-                  var9.flag4,
-                  (var9.intValue >> 5 & 1) != 0,
-                  var5,
-                  var7
+                  new double[]{entry4.doubleValue4, entry4.doubleValue5, entry4.doubleValue6},
+                  flag2 ? new double[]{this.entry4.doubleValue4, this.entry4.doubleValue5, this.entry4.doubleValue6} : null,
+                  flag2,
+                  entry4.flag4,
+                  (entry4.intValue >> 5 & 1) != 0,
+                  floatValue,
+                  d
                );
             }
 
-            this.entry4 = var9;
-            this.entry42 = var9;
+            this.entry4 = entry4;
+            this.entry42 = entry4;
             this.longValue4 = this.longValue;
-            this.rotation2 = var4;
+            this.rotation2 = rotation2;
             this.doubleValue3 = method3870();
-            if (var2 == BcHand.Type.AURA) {
-               this.method3872(var12);
+            if (type == BcHand.Type.AURA) {
+               this.method3872(doubles);
             }
          }
       } else {
@@ -217,26 +217,26 @@ public class BcHand extends Util22 {
       }
    }
 
-   private void method3872(double[] var1) {
-      BcCameraNet.Entry4 var2 = this.entry42;
-      HandAnchorNet var3 = this.handAnchorNet;
+   private void method3872(double[] doubles) {
+      BcCameraNet.Entry4 entry4 = this.entry42;
+      HandAnchorNet handAnchorNet = this.handAnchorNet;
       this.entry42 = null;
-      if (var2 != null && var3 != null && this.entry != null) {
-         double var4 = this.doubleValue3;
+      if (entry4 != null && handAnchorNet != null && this.entry != null) {
+         double d = this.doubleValue3;
          if (this.longValue3 != this.longValue4 - 1L) {
             this.entry.method3419();
          }
 
-         double[] var6 = var2.flag5 ? new double[]{var2.doubleValue9, var2.doubleValue10} : new double[2];
-         double[] var7 = var3.method3414(this.entry, var6, var1, var2.doubleValue7, var2.doubleValue8, var4, this.random);
-         double[] var8 = HandAnchorNet.method3415(this.entry, var7[0], var7[1], var4, var2.doubleValue8);
-         this.rotation = this.rotation2.method3140((float)var8[0], (float)var8[1]);
-         this.method3873(this.longValue4, var2, var1, var7, var8, var4);
+         double[] doubles2 = entry4.flag5 ? new double[]{entry4.doubleValue9, entry4.doubleValue10} : new double[2];
+         double[] doubles3 = handAnchorNet.method3414(this.entry, doubles2, doubles, entry4.doubleValue7, entry4.doubleValue8, d, this.random);
+         double[] doubles4 = HandAnchorNet.method3415(this.entry, doubles3[0], doubles3[1], d, entry4.doubleValue8);
+         this.rotation = this.rotation2.method3140((float)doubles4[0], (float)doubles4[1]);
+         this.method3873(this.longValue4, entry4, doubles, doubles3, doubles4, d);
          this.longValue2 = this.longValue4;
       }
    }
 
-   private void method3873(long var1, BcCameraNet.Entry4 var3, double[] var4, double[] var5, double[] var6, double var7) {
+   private void method3873(long lng, BcCameraNet.Entry4 entry4, double[] doubles, double[] doubles2, double[] doubles3, double d) {
       if (this.intValue < 72000) {
          try {
             if (this.bufferedWriter == null) {
@@ -249,90 +249,90 @@ public class BcHand extends Util22 {
                   );
             }
 
-            StringBuilder var9 = new StringBuilder(320);
-            var9.append(var1)
+            StringBuilder builder = new StringBuilder(320);
+            builder.append(lng)
                .append(',')
                .append(mc.player.tickCount)
                .append(',')
-               .append(this.longValue3 == var1 - 1L ? 1 : 0)
+               .append(this.longValue3 == lng - 1L ? 1 : 0)
                .append(',')
-               .append(var7)
+               .append(d)
                .append(',')
-               .append(var3.doubleValue)
+               .append(entry4.doubleValue)
                .append(',')
-               .append(var3.doubleValue2)
+               .append(entry4.doubleValue2)
                .append(',')
-               .append(var3.doubleValue3)
+               .append(entry4.doubleValue3)
                .append(',')
-               .append(var3.intValue)
+               .append(entry4.intValue)
                .append(',')
-               .append(var3.flag ? 1 : 0)
+               .append(entry4.flag ? 1 : 0)
                .append(',')
-               .append(var3.intValue2)
+               .append(entry4.intValue2)
                .append(',')
-               .append(var3.doubleValue4)
+               .append(entry4.doubleValue4)
                .append(',')
-               .append(var3.doubleValue5)
+               .append(entry4.doubleValue5)
                .append(',')
-               .append(var3.doubleValue6)
+               .append(entry4.doubleValue6)
                .append(',')
-               .append(var3.flag4 ? 1 : 0)
+               .append(entry4.flag4 ? 1 : 0)
                .append(',')
-               .append(var3.doubleValue7)
+               .append(entry4.doubleValue7)
                .append(',')
-               .append(var3.doubleValue8)
+               .append(entry4.doubleValue8)
                .append(',')
-               .append(var3.doubleValue9)
+               .append(entry4.doubleValue9)
                .append(',')
-               .append(var3.doubleValue10)
+               .append(entry4.doubleValue10)
                .append(',')
-               .append(var3.flag5 ? 1 : 0)
+               .append(entry4.flag5 ? 1 : 0)
                .append(',')
-               .append(var4 == null ? Double.NaN : var4[0])
+               .append(doubles == null ? Double.NaN : doubles[0])
                .append(',')
-               .append(var4 == null ? Double.NaN : var4[1])
+               .append(doubles == null ? Double.NaN : doubles[1])
                .append(',')
-               .append(var5[0])
+               .append(doubles2[0])
                .append(',')
-               .append(var5[1])
+               .append(doubles2[1])
                .append(',')
-               .append(var6[0])
+               .append(doubles3[0])
                .append(',')
-               .append(var6[1])
+               .append(doubles3[1])
                .append(',')
                .append(mc.player.getYRot())
                .append(',')
                .append(mc.player.getXRot())
                .append(',')
                .append(this.handAnchorNet != null ? this.handAnchorNet.source : "?");
-            this.bufferedWriter.write(var9.append('\n').toString());
+            this.bufferedWriter.write(builder.append('\n').toString());
             if (++this.intValue % 20 == 0) {
                this.bufferedWriter.flush();
             }
-         } catch (IOException var10) {
+         } catch (IOException e) {
             this.intValue = 72000;
          }
       }
    }
 
-   public Rotation method3874(Rotation var1) {
+   public Rotation method3874(Rotation rotation) {
       if (this.entry42 != null && this.longValue4 == this.longValue) {
          this.method3872(
-            var1 == null
+            rotation == null
                ? null
                : new double[]{
-                  BcCameraNet.method3357(var1.getFloatValue() - this.entry42.doubleValue7),
-                  BcCameraNet.method3358(var1.getFloatValue2(), -90.0, 90.0) - this.entry42.doubleValue8
+                  BcCameraNet.method3357(rotation.getFloatValue() - this.entry42.doubleValue7),
+                  BcCameraNet.method3358(rotation.getFloatValue2(), -90.0, 90.0) - this.entry42.doubleValue8
                }
          );
       }
 
-      Rotation var2 = zenith.getRotationManager().method7844();
+      Rotation rotation2 = zenith.getRotationManager().method7844();
       if (this.rotation != null && this.longValue2 == this.longValue) {
          this.longValue3 = this.longValue;
          return this.rotation;
       } else {
-         return var2;
+         return rotation2;
       }
    }
 

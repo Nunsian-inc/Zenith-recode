@@ -28,13 +28,13 @@ public class MenuTextField extends MenuWidget {
    private Runnable onChange;
    private long caretResetTime = Util.getMillis();
 
-   public MenuTextField(MenuIcon var1, String var2) {
-      this.icon = var1;
-      this.placeholder = var2;
+   public MenuTextField(MenuIcon icon, String placeholder) {
+      this.icon = icon;
+      this.placeholder = placeholder;
    }
 
-   public void setValue(String var1) {
-      this.value = var1 == null ? "" : var1;
+   public void setValue(String randomName) {
+      this.value = randomName == null ? "" : randomName;
       if (this.value.length() > this.maxLength) {
          this.value = this.value.substring(0, this.maxLength);
       }
@@ -49,74 +49,74 @@ public class MenuTextField extends MenuWidget {
       this.setValue("");
    }
 
-   public void setFocused(boolean var1) {
-      this.focused = var1;
+   public void setFocused(boolean focused) {
+      this.focused = focused;
       this.caretResetTime = Util.getMillis();
    }
 
    @Override
-   public void draw(MenuDrawContext var1, float var2, float var3) {
-      MenuSurface.plate(var1, this.x, this.y, this.width, this.height, RADIUS, MenuTheme.plate().method7295(MenuTheme.track(), this.hover() * 0.5F));
+   public void draw(MenuDrawContext menuDrawContext, float f, float f2) {
+      MenuSurface.plate(menuDrawContext, this.x, this.y, this.width, this.height, RADIUS, MenuTheme.plate().method7295(MenuTheme.track(), this.hover() * 0.5F));
       if (this.focused) {
-         var1.drawRoundedBorder(this.x, this.y, this.width, this.height, -0.1F, ProxyDotRadiusData.method8069(RADIUS), MenuTheme.accent().method7294(0.6F));
+         menuDrawContext.drawRoundedBorder(this.x, this.y, this.width, this.height, -0.1F, ProxyDotRadiusData.method8069(RADIUS), MenuTheme.accent().method7294(0.6F));
       }
 
-      float var4 = this.x + PADDING;
+      float floatValue = this.x + PADDING;
       if (this.icon != null) {
-         Font var5 = this.icon.font(12.0F);
-         ZenithColor var6 = this.focused ? MenuTheme.accent() : MenuTheme.textTertiary();
-         var1.drawText(var5, this.icon.glyph(), var4, this.y + (this.height - var5.height()) / 2.0F, var6);
-         var4 += this.icon.width(12.0F) + GAP;
+         Font font = this.icon.font(12.0F);
+         ZenithColor accent = this.focused ? MenuTheme.accent() : MenuTheme.textTertiary();
+         menuDrawContext.drawText(font, this.icon.glyph(), floatValue, this.y + (this.height - font.height()) / 2.0F, accent);
+         floatValue += this.icon.width(12.0F) + GAP;
       }
 
-      Font var12 = MenuTheme.medium(12.0F);
-      float var13 = this.y + (this.height - var12.height()) / 2.0F;
-      float var7 = this.x + this.width - PADDING - var4;
-      boolean var8 = this.value.isEmpty();
-      String var9 = var8 && !this.focused ? this.placeholder : this.value;
-      ZenithColor var10 = var8 ? MenuTheme.textSecondary() : MenuTheme.text();
+      Font medium = MenuTheme.medium(12.0F);
+      float centeredTextY = this.y + (this.height - medium.height()) / 2.0F;
+      float f3 = this.x + this.width - PADDING - floatValue;
+      boolean empty = this.value.isEmpty();
+      String placeholder = empty && !this.focused ? this.placeholder : this.value;
+      ZenithColor textSecondary = empty ? MenuTheme.textSecondary() : MenuTheme.text();
 
-      while (var9.length() > 1 && var12.width(var9) > var7) {
-         var9 = var9.substring(1);
+      while (placeholder.length() > 1 && medium.width(placeholder) > f3) {
+         placeholder = placeholder.substring(1);
       }
 
-      var1.enableScissor(var4, this.y, this.x + this.width - PADDING, this.y + this.height);
-      var1.drawText(var12, var9, var4, var13, var10);
-      var1.disableScissor();
+      menuDrawContext.enableScissor(floatValue, this.y, this.x + this.width - PADDING, this.y + this.height);
+      menuDrawContext.drawText(medium, placeholder, floatValue, centeredTextY, textSecondary);
+      menuDrawContext.disableScissor();
       if (this.focused && (Util.getMillis() - this.caretResetTime) / 500L % 2L == 0L) {
-         float var11 = var4 + var12.width(var9) + MenuTheme.px(1.0F);
-         var1.drawRect(var11, var13, MenuTheme.px(1.0F), var12.height(), MenuTheme.accent());
+         float floatValue2 = floatValue + medium.width(placeholder) + MenuTheme.px(1.0F);
+         menuDrawContext.drawRect(floatValue2, centeredTextY, MenuTheme.px(1.0F), medium.height(), MenuTheme.accent());
       }
    }
 
    @Override
-   public boolean mouseClicked(double var1, double var3, int var5) {
+   public boolean mouseClicked(double lastClickX, double lastClickY, int glfwButton) {
       if (this.visible && this.enabled) {
-         boolean var6 = this.contains(var1, var3);
-         this.setFocused(var6 && var5 == 0);
-         return var6;
+         boolean contains = this.contains(lastClickX, lastClickY);
+         this.setFocused(contains && glfwButton == 0);
+         return contains;
       } else {
          return false;
       }
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int n, int n2, int n3) {
       if (this.focused && this.visible && this.enabled) {
-         switch (var1) {
+         switch (n) {
             case 65:
-               if ((var3 & 2) != 0) {
+               if ((n3 & 2) != 0) {
                   return true;
                }
                break;
             case 67:
-               if ((var3 & 2) != 0) {
+               if ((n3 & 2) != 0) {
                   Minecraft.getInstance().keyboardHandler.setClipboard(this.value);
                   return true;
                }
                break;
             case 86:
-               if ((var3 & 2) != 0) {
+               if ((n3 & 2) != 0) {
                   this.setValue(this.value + Minecraft.getInstance().keyboardHandler.getClipboard());
                   return true;
                }
@@ -146,14 +146,14 @@ public class MenuTextField extends MenuWidget {
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char c, int n) {
       if (!this.focused || !this.visible || !this.enabled) {
          return false;
-      } else if (var1 >= ' ' && var1 != 127) {
+      } else if (c >= ' ' && c != 127) {
          if (this.value.length() >= this.maxLength) {
             return true;
          } else {
-            this.setValue(this.value + var1);
+            this.setValue(this.value + c);
             return true;
          }
       } else {
@@ -172,17 +172,17 @@ public class MenuTextField extends MenuWidget {
    }
 
    @Generated
-   public void setMaxLength(int var1) {
-      this.maxLength = var1;
+   public void setMaxLength(int maxLength) {
+      this.maxLength = maxLength;
    }
 
    @Generated
-   public void setOnEnter(Runnable var1) {
-      this.onEnter = var1;
+   public void setOnEnter(Runnable onEnter) {
+      this.onEnter = onEnter;
    }
 
    @Generated
-   public void setOnChange(Runnable var1) {
-      this.onChange = var1;
+   public void setOnChange(Runnable onChange) {
+      this.onChange = onChange;
    }
 }

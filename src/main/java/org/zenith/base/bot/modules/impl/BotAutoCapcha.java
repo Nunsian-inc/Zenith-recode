@@ -75,10 +75,10 @@ public final class BotAutoCapcha extends BotModule {
       "капч", "captcha", "введите код", "введи код", "код с карты", "введите номер", "номер с картин", "с картинки", "картинке", "введите число"
    };
    private static final String[] SUCCESS_MARKERS = new String[]{"успеш", "passed", "verified"};
-   private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(var0 -> {
-      Thread var1 = new Thread(var0, "bot-auto-capcha");
-      var1.setDaemon(true);
-      return var1;
+   private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool(task -> {
+      Thread thread = new Thread(task, "bot-auto-capcha");
+      thread.setDaemon(true);
+      return thread;
    });
    private final Map<Integer, byte[]> buffers = new ConcurrentHashMap<>();
    private final LinkedHashSet<Integer> bufferOrder = new LinkedHashSet<>();
@@ -111,120 +111,120 @@ public final class BotAutoCapcha extends BotModule {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      Packet var2 = var1.getPacket();
-      BotAutoCapcha.SolveTarget var3 = this.currentTarget();
-      if (var2 instanceof ClientboundLoginPacket || var2 instanceof ClientboundRespawnPacket) {
+   public void onPacket(PacketEvent event) {
+      Packet packet = event.getPacket();
+      BotAutoCapcha.SolveTarget currentTarget = this.currentTarget();
+      if (packet instanceof ClientboundLoginPacket || packet instanceof ClientboundRespawnPacket) {
          this.resetState(true);
          this.log("join detected, armed");
-      } else if (var2 instanceof ClientboundPlayerPositionPacket var11) {
-         PositionMoveRotation var12 = var11.change();
-         this.look = new double[]{var12.position().x, var12.position().y, var12.position().z, var12.yRot()};
-      } else if (var2 instanceof ClientboundAddEntityPacket var4
-         && (var4.getType() == net.minecraft.world.entity.EntityTypes.ITEM_FRAME || var4.getType() == net.minecraft.world.entity.EntityTypes.GLOW_ITEM_FRAME)) {
-         this.frames.put(var4.getId(), new double[]{var4.getX(), var4.getY(), var4.getZ(), var4.getData()});
-      } else if (var2 instanceof ClientboundSetEntityDataPacket var10) {
-         this.handleTrackedValues(var10, var3);
-      } else if (var2 instanceof ClientboundRemoveEntitiesPacket var7) {
-         for (int var5 = 0; var5 < var7.entityIds().size(); var5++) {
-            int var6 = var7.entityIds().getInt(var5);
-            this.frames.remove(var6);
-            this.frameItems.remove(var6);
-            this.frameRotations.remove(var6);
+      } else if (packet instanceof ClientboundPlayerPositionPacket playerPositionPacket) {
+         PositionMoveRotation change = playerPositionPacket.change();
+         this.look = new double[]{change.position().x, change.position().y, change.position().z, change.yRot()};
+      } else if (packet instanceof ClientboundAddEntityPacket addEntityPacket
+         && (addEntityPacket.getType() == net.minecraft.world.entity.EntityTypes.ITEM_FRAME || addEntityPacket.getType() == net.minecraft.world.entity.EntityTypes.GLOW_ITEM_FRAME)) {
+         this.frames.put(addEntityPacket.getId(), new double[]{addEntityPacket.getX(), addEntityPacket.getY(), addEntityPacket.getZ(), addEntityPacket.getData()});
+      } else if (packet instanceof ClientboundSetEntityDataPacket setEntityDataPacket) {
+         this.handleTrackedValues(setEntityDataPacket, currentTarget);
+      } else if (packet instanceof ClientboundRemoveEntitiesPacket removeEntitiesPacket) {
+         for (int i = 0; i < removeEntitiesPacket.entityIds().size(); i++) {
+            int n = removeEntitiesPacket.entityIds().getInt(i);
+            this.frames.remove(n);
+            this.frameItems.remove(n);
+            this.frameRotations.remove(n);
          }
-      } else if (var2 instanceof ClientboundMapItemDataPacket var9) {
-         this.handleMapUpdate(var9.mapId().id(), var9.colorPatch().orElse(null), var3);
+      } else if (packet instanceof ClientboundMapItemDataPacket mapItemDataPacket) {
+         this.handleMapUpdate(mapItemDataPacket.mapId().id(), mapItemDataPacket.colorPatch().orElse(null), currentTarget);
       } else {
-         String var8 = packetText(var2);
-         if (var8 != null) {
-            this.handleText(var8, var3);
+         String content = packetText(packet);
+         if (content != null) {
+            this.handleText(content, currentTarget);
          }
       }
    }
 
-   private void handleTrackedValues(ClientboundSetEntityDataPacket var1, BotAutoCapcha.SolveTarget var2) {
-      boolean var10;
+   private void handleTrackedValues(ClientboundSetEntityDataPacket setEntityDataPacket, BotAutoCapcha.SolveTarget currentTarget) {
+      boolean containsKey;
       label37: {
-         var var10000 = this.frames;
-         Integer var10001 = var1.id();
-         if (var10000 != null) {
-            if (var10000.isEmpty()) {
-               var10 = false;
+         var frames = this.frames;
+         Integer id = setEntityDataPacket.id();
+         if (frames != null) {
+            if (frames.isEmpty()) {
+               containsKey = false;
                break label37;
             }
          }
 
-         var10 = var10000.containsKey(var10001);
+         containsKey = frames.containsKey(id);
       }
 
-      if (var10) {
-         for (DataValue var4 : var1.packedItems()) {
-            if (var4.value() instanceof ItemStack var5) {
-               MapId var8 = var5.get(DataComponents.MAP_ID);
-               if (var8 != null) {
-                  this.frameItems.put(var1.id(), var8.id());
+      if (containsKey) {
+         for (DataValue packedItem : setEntityDataPacket.packedItems()) {
+            if (packedItem.value() instanceof ItemStack stack) {
+               MapId mapId = stack.get(DataComponents.MAP_ID);
+               if (mapId != null) {
+                  this.frameItems.put(setEntityDataPacket.id(), mapId.id());
                   this.lastTileTime = System.currentTimeMillis();
-                  this.tryTrigger(var2);
+                  this.tryTrigger(currentTarget);
                }
-            } else if (var4.id() == ItemFrameEntityAccessor.getRotationData().id() && var4.value() instanceof Integer var6) {
-               this.frameRotations.put(var1.id(), var6);
+            } else if (packedItem.id() == ItemFrameEntityAccessor.getRotationData().id() && packedItem.value() instanceof Integer n) {
+               this.frameRotations.put(setEntityDataPacket.id(), n);
                this.lastTileTime = System.currentTimeMillis();
             }
          }
       }
    }
 
-   private void handleMapUpdate(int var1, MapPatch var2, BotAutoCapcha.SolveTarget var3) {
-      if (var2 != null && var2.width() > 0 && var2.height() > 0) {
-         byte[] var4 = var2.mapColors();
-         int var5 = var2.width();
-         int var6 = var2.height();
-         if (var4.length >= var5 * var6) {
+   private void handleMapUpdate(int lastMapId, MapPatch mapPatch, BotAutoCapcha.SolveTarget currentTarget) {
+      if (mapPatch != null && mapPatch.width() > 0 && mapPatch.height() > 0) {
+         byte[] mapColors = mapPatch.mapColors();
+         int width = mapPatch.width();
+         int height = mapPatch.height();
+         if (mapColors.length >= width * height) {
             synchronized (this.bufferLock) {
-               byte[] var8 = this.buffers.get(var1);
-               if (var8 == null) {
-                  var8 = new byte[16384];
-                  this.buffers.put(var1, var8);
-                  this.bufferOrder.add(var1);
-                  this.trimBuffers(var1);
+               byte[] buffer = this.buffers.get(lastMapId);
+               if (buffer == null) {
+                  buffer = new byte[16384];
+                  this.buffers.put(lastMapId, buffer);
+                  this.bufferOrder.add(lastMapId);
+                  this.trimBuffers(lastMapId);
                }
 
-               for (int var9 = 0; var9 < var6; var9++) {
-                  int var10;
-                  if ((var10 = var2.startY() + var9) >= 0 && var10 < 128) {
-                     for (int var11 = 0; var11 < var5; var11++) {
-                        int var12;
-                        if ((var12 = var2.startX() + var11) >= 0 && var12 < 128) {
-                           var8[var12 + var10 * 128] = var4[var11 + var9 * var5];
+               for (int i = 0; i < height; i++) {
+                  int n;
+                  if ((n = mapPatch.startY() + i) >= 0 && n < 128) {
+                     for (int j = 0; j < width; j++) {
+                        int n2;
+                        if ((n2 = mapPatch.startX() + j) >= 0 && n2 < 128) {
+                           buffer[n2 + n * 128] = mapColors[j + i * width];
                         }
                      }
                   }
                }
             }
 
-            this.lastMapId = var1;
+            this.lastMapId = lastMapId;
             this.lastTileTime = System.currentTimeMillis();
-            this.tryTrigger(var3);
+            this.tryTrigger(currentTarget);
          }
       }
    }
 
-   private void handleText(String var1, BotAutoCapcha.SolveTarget var2) {
-      if (!var1.isBlank()) {
-         String var3 = var1.toLowerCase(Locale.ROOT);
+   private void handleText(String content, BotAutoCapcha.SolveTarget currentTarget) {
+      if (!content.isBlank()) {
+         String lowerCase = content.toLowerCase(Locale.ROOT);
 
-         for (String var7 : KEYWORDS) {
-            if (var3.contains(var7)) {
+         for (String str : KEYWORDS) {
+            if (lowerCase.contains(str)) {
                this.keywordTime = System.currentTimeMillis();
-               this.log("captcha prompt: " + CaptchaLogger.trim(var1));
-               this.tryTrigger(var2);
+               this.log("captcha prompt: " + CaptchaLogger.trim(content));
+               this.tryTrigger(currentTarget);
                return;
             }
          }
 
-         for (String var11 : SUCCESS_MARKERS) {
-            if (var3.contains(var11)) {
-               this.log("captcha accepted: " + CaptchaLogger.trim(var1));
+         for (String str : SUCCESS_MARKERS) {
+            if (lowerCase.contains(str)) {
+               this.log("captcha accepted: " + CaptchaLogger.trim(content));
                this.resetState(false);
                return;
             }
@@ -232,22 +232,22 @@ public final class BotAutoCapcha extends BotModule {
       }
    }
 
-   private void tryTrigger(BotAutoCapcha.SolveTarget var1) {
-      if (var1 != null) {
+   private void tryTrigger(BotAutoCapcha.SolveTarget currentTarget) {
+      if (currentTarget != null) {
          if (this.lastMapId < 0) {
-            boolean var10000 = this.frameItems.isEmpty();
+            boolean empty = this.frameItems.isEmpty();
 
-            if (var10000) {
+            if (empty) {
                return;
             }
          }
 
-         long var2 = System.currentTimeMillis();
-         int var4 = this.joinTime != 0L && var2 - this.joinTime <= 15000L ? 1 : 0;
-         int var5 = this.keywordTime != 0L && var2 - this.keywordTime <= 10000L ? 1 : 0;
-         if (var4 != 0 || var5 != 0) {
+         long now = System.currentTimeMillis();
+         int n = this.joinTime != 0L && now - this.joinTime <= 15000L ? 1 : 0;
+         int n2 = this.keywordTime != 0L && now - this.keywordTime <= 10000L ? 1 : 0;
+         if (n != 0 || n2 != 0) {
             if (this.pending.compareAndSet(false, true)) {
-               long var6 = this.generation.get();
+               long l = this.generation.get();
                EXECUTOR.submit(() -> {
                   label62: {
                      label63: {
@@ -255,24 +255,24 @@ public final class BotAutoCapcha extends BotModule {
                            try {
                               while (true) {
                                  long var4x;
-                                 if (var6 == this.generation.get() && (var4x = System.currentTimeMillis() - this.lastTileTime) < 700L) {
+                                 if (l == this.generation.get() && (var4x = System.currentTimeMillis() - this.lastTileTime) < 700L) {
                                     Thread.sleep(700L - var4x);
                                  } else {
-                                    if (var6 != this.generation.get()) {
+                                    if (l != this.generation.get()) {
                                        break label62;
                                     }
 
-                                    this.awaitFullWall(var6);
-                                    this.launch(var1, var6);
+                                    this.awaitFullWall(l);
+                                    this.launch(currentTarget, l);
                                     break label63;
                                  }
                               }
-                           } catch (InterruptedException var9) {
+                           } catch (InterruptedException e) {
                               Thread.currentThread().interrupt();
                            }
-                        } catch (Throwable var10) {
+                        } catch (Throwable e) {
                            this.pending.set(false);
-                           throw var10;
+                           throw e;
                         }
 
                         this.pending.set(false);
@@ -290,12 +290,12 @@ public final class BotAutoCapcha extends BotModule {
       }
    }
 
-   private void awaitFullWall(long var1) throws InterruptedException {
-      long var3 = System.currentTimeMillis() + 5000L;
+   private void awaitFullWall(long l) throws InterruptedException {
+      long l2 = System.currentTimeMillis() + 5000L;
 
-      while (var1 == this.generation.get() && System.currentTimeMillis() < var3) {
-         BotAutoCapcha.Stitched var5 = this.stitchCaptchaWall();
-         if (var5 == null || var5.tiles() >= var5.cols() * var5.rows()) {
+      while (l == this.generation.get() && System.currentTimeMillis() < l2) {
+         BotAutoCapcha.Stitched stitchCaptchaWall = this.stitchCaptchaWall();
+         if (stitchCaptchaWall == null || stitchCaptchaWall.tiles() >= stitchCaptchaWall.cols() * stitchCaptchaWall.rows()) {
             return;
          }
 
@@ -303,43 +303,43 @@ public final class BotAutoCapcha extends BotModule {
       }
    }
 
-   private void launch(BotAutoCapcha.SolveTarget var1, long var2) {
-      if (var2 == this.generation.get() && this.isEnabled() && this.solving.compareAndSet(false, true)) {
-         BotAutoCapcha.Stitched var6 = this.stitchCaptchaWall();
-         BufferedImage var4;
-         int var5;
-         if (var6 != null) {
-            var4 = var6.image();
-            var5 = var6.hash();
-            log(var1, "prepared wall " + var6.cols() + "x" + var6.rows() + " tiles=" + var6.tiles());
+   private void launch(BotAutoCapcha.SolveTarget currentTarget, long l) {
+      if (l == this.generation.get() && this.isEnabled() && this.solving.compareAndSet(false, true)) {
+         BotAutoCapcha.Stitched stitchCaptchaWall = this.stitchCaptchaWall();
+         BufferedImage image;
+         int lastAttemptHash;
+         if (stitchCaptchaWall != null) {
+            image = stitchCaptchaWall.image();
+            lastAttemptHash = stitchCaptchaWall.hash();
+            log(currentTarget, "prepared wall " + stitchCaptchaWall.cols() + "x" + stitchCaptchaWall.rows() + " tiles=" + stitchCaptchaWall.tiles());
          } else {
-            int[] var7 = this.cloneBuffer(this.lastMapId);
-            if (var7 == null || isUniform(var7)) {
+            int[] cloneBuffer = this.cloneBuffer(this.lastMapId);
+            if (cloneBuffer == null || isUniform(cloneBuffer)) {
                this.solving.set(false);
                return;
             }
 
-            var4 = render(var7);
-            var5 = Arrays.hashCode(var7);
-            log(var1, "prepared map " + this.lastMapId);
+            image = render(cloneBuffer);
+            lastAttemptHash = Arrays.hashCode(cloneBuffer);
+            log(currentTarget, "prepared map " + this.lastMapId);
          }
 
-         long var10 = System.currentTimeMillis();
-         if (var5 == this.lastAttemptHash && var10 - this.lastAttemptTime < 6000L) {
+         long now = System.currentTimeMillis();
+         if (lastAttemptHash == this.lastAttemptHash && now - this.lastAttemptTime < 6000L) {
             this.solving.set(false);
          } else {
-            this.lastAttemptHash = var5;
-            BufferedImage var9 = resizeForApi(var4);
-            EXECUTOR.submit(() -> this.solve(var9, var1, var2));
+            this.lastAttemptHash = lastAttemptHash;
+            BufferedImage im = resizeForApi(image);
+            EXECUTOR.submit(() -> this.solve(im, currentTarget, l));
          }
       }
    }
 
    // $VF: Could not verify finally blocks. A semaphore variable has been added to preserve control flow.
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   private void solve(BufferedImage var1, BotAutoCapcha.SolveTarget var2, long var3) {
-      String var5 = null;
-      boolean var17 = false /* VF: Semaphore variable */;
+   private void solve(BufferedImage im, BotAutoCapcha.SolveTarget currentTarget, long l) {
+      String str = null;
+      boolean flag = false /* VF: Semaphore variable */;
 
       label177: {
          label176: {
@@ -347,98 +347,98 @@ public final class BotAutoCapcha extends BotModule {
                label189: {
                   label190: {
                      try {
-                        var17 = true;
-                        int var6 = 1;
+                        flag = true;
+                        int n = 1;
 
                         while (true) {
                            label182: {
                               label161:
-                              if (var6 <= 3) {
-                                 if (var3 != this.generation.get()) {
-                                    var17 = false;
+                              if (n <= 3) {
+                                 if (l != this.generation.get()) {
+                                    flag = false;
                                     break label177;
                                  }
 
                                  if (!this.isEnabled()) {
-                                    var17 = false;
+                                    flag = false;
                                     break label177;
                                  }
 
-                                 if (!var2.isConnected()) {
-                                    var17 = false;
+                                 if (!currentTarget.isConnected()) {
+                                    flag = false;
                                     break label177;
                                  }
 
-                                 StoreApi var7 = Zenith.getInstance().getStoreApi();
-                                 if (var7 == null || Cloud.accountUid() <= 0L) {
-                                    var5 = "Cloud account is not ready";
-                                    log(var2, var5);
-                                    feedback(var2, "облако ещё не готово для решения капчи");
-                                    var17 = false;
+                                 StoreApi storeApi = Zenith.getInstance().getStoreApi();
+                                 if (storeApi == null || Cloud.accountUid() <= 0L) {
+                                    str = "Cloud account is not ready";
+                                    log(currentTarget, str);
+                                    feedback(currentTarget, "облако ещё не готово для решения капчи");
+                                    flag = false;
                                     break label176;
                                  }
 
                                  try {
-                                    log(var2, "Cloud captcha attempt " + var6 + "/3");
-                                    int var8 = this.expectedLength(var2);
-                                    byte[] var9 = encodePng(var1);
-                                    String var10 = var7.method1984(var9, var8, var8).join();
-                                    if (isSafeAnswer(var10)) {
-                                       String var11 = var10.trim();
-                                       if (var8 > 0 && var11.length() != var8) {
-                                          var5 = "answer length " + var11.length() + " != " + var8;
-                                          log(var2, var5 + ": " + CaptchaLogger.trim(var11));
-                                          Thread.sleep(1000L * var6);
+                                    log(currentTarget, "Cloud captcha attempt " + n + "/3");
+                                    int expectedLength = this.expectedLength(currentTarget);
+                                    byte[] src = encodePng(im);
+                                    String content = storeApi.method1984(src, expectedLength, expectedLength).join();
+                                    if (isSafeAnswer(content)) {
+                                       String content2 = content.trim();
+                                       if (expectedLength > 0 && content2.length() != expectedLength) {
+                                          str = "answer length " + content2.length() + " != " + expectedLength;
+                                          log(currentTarget, str + ": " + CaptchaLogger.trim(content2));
+                                          Thread.sleep(1000L * n);
                                           break label182;
                                        }
 
-                                       if (this.sendAnswer(var2, var11)) {
-                                          log(var2, "answer sent: " + var11);
-                                          feedback(var2, "капча решена -> " + var11);
+                                       if (this.sendAnswer(currentTarget, content2)) {
+                                          log(currentTarget, "answer sent: " + content2);
+                                          feedback(currentTarget, "капча решена -> " + content2);
                                           this.resetState(false);
-                                          var17 = false;
+                                          flag = false;
                                        } else {
-                                          feedback(var2, "не удалось отправить ответ капчи");
-                                          var17 = false;
+                                          feedback(currentTarget, "не удалось отправить ответ капчи");
+                                          flag = false;
                                        }
                                        break label175;
                                     }
 
-                                    if (var10 != null && !var10.isBlank()) {
-                                       var5 = "Cloud returned an unsafe answer";
-                                       log(var2, var5 + ": " + CaptchaLogger.trim(var10));
+                                    if (content != null && !content.isBlank()) {
+                                       str = "Cloud returned an unsafe answer";
+                                       log(currentTarget, str + ": " + CaptchaLogger.trim(content));
                                        break label161;
                                     }
 
-                                    log(var2, "Cloud returned no answer on attempt " + var6);
-                                 } catch (InterruptedException var18) {
+                                    log(currentTarget, "Cloud returned no answer on attempt " + n);
+                                 } catch (InterruptedException e) {
                                     Thread.currentThread().interrupt();
-                                    var17 = false;
+                                    flag = false;
                                     break label189;
-                                 } catch (Exception var19) {
-                                    var5 = rootMessage(var19);
-                                    log(var2, "Cloud attempt " + var6 + " failed: " + var5);
-                                    if (isFinalFailure(var19)) {
+                                 } catch (Exception e) {
+                                    str = rootMessage(e);
+                                    log(currentTarget, "Cloud attempt " + n + " failed: " + str);
+                                    if (isFinalFailure(e)) {
                                        break label161;
                                     }
                                  }
 
-                                 Thread.sleep(1000L * var6);
+                                 Thread.sleep(1000L * n);
                                  break label182;
                               }
 
-                              feedback(var2, "капча не решена" + (var5 == null ? "" : " (" + var5 + ")"));
-                              var17 = false;
+                              feedback(currentTarget, "капча не решена" + (str == null ? "" : " (" + str + ")"));
+                              flag = false;
                               break label190;
                            }
 
-                           var6++;
+                           n++;
                         }
-                     } catch (InterruptedException var20) {
+                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        var17 = false;
+                        flag = false;
                      } finally {
-                        if (var17) {
+                        if (flag) {
                            this.lastAttemptTime = System.currentTimeMillis();
                            this.solving.set(false);
                         }
@@ -473,115 +473,115 @@ public final class BotAutoCapcha extends BotModule {
       this.solving.set(false);
    }
 
-   private int expectedLength(BotAutoCapcha.SolveTarget var1) {
-      String var2 = var1.bot().getAddress();
-      return var2.toLowerCase(Locale.ROOT).contains("funtime.su") ? 5 : 0;
+   private int expectedLength(BotAutoCapcha.SolveTarget currentTarget) {
+      String address = currentTarget.bot().getAddress();
+      return address.toLowerCase(Locale.ROOT).contains("funtime.su") ? 5 : 0;
    }
 
-   private boolean sendAnswer(BotAutoCapcha.SolveTarget var1, String var2) {
-      return var1.bot().sendChat(var2);
+   private boolean sendAnswer(BotAutoCapcha.SolveTarget currentTarget, String text) {
+      return currentTarget.bot().sendChat(text);
    }
 
    private BotAutoCapcha.Stitched stitchCaptchaWall() {
-      HashMap var1 = new HashMap();
+      HashMap map = new HashMap();
 
-      for (Entry var3 : this.frameItems.entrySet()) {
-         double[] var4 = this.frames.get(var3.getKey());
-         if (var4 != null) {
-            boolean var40;
+      for (Entry entry : this.frameItems.entrySet()) {
+         double[] frame = this.frames.get(entry.getKey());
+         if (frame != null) {
+            boolean containsKey;
             label122: {
-               var var10000 = this.buffers;
-               Object var10001 = var3.getValue();
-               if (var10000 != null) {
-                  if (var10000.isEmpty()) {
-                     var40 = false;
+               var buffers = this.buffers;
+               Object obj = entry.getValue();
+               if (buffers != null) {
+                  if (buffers.isEmpty()) {
+                     containsKey = false;
                      break label122;
                   }
                }
 
-               var40 = var10000.containsKey(var10001);
+               containsKey = buffers.containsKey(obj);
             }
 
-            int var5;
-            if (var40 && (var5 = (int)var4[3]) >= 2 && var5 <= 5) {
-               double var6 = var5 >= 4 ? var4[0] : var4[2];
-               long var8 = (long)var5 << 40 ^ Math.round(var6 * 4.0) & 1099511627775L;
-               ((java.util.List)var1.computeIfAbsent(var8, var0 -> new ArrayList<>())).add(new int[]{(Integer)var3.getKey(), (Integer)var3.getValue()});
+            int n;
+            if (containsKey && (n = (int)frame[3]) >= 2 && n <= 5) {
+               double d = n >= 4 ? frame[0] : frame[2];
+               long key = (long)n << 40 ^ Math.round(d * 4.0) & 1099511627775L;
+               ((java.util.List)map.computeIfAbsent(key, obj -> new ArrayList<>())).add(new int[]{(Integer)entry.getKey(), (Integer)entry.getValue()});
             }
          }
       }
 
-      List<int[]> var29 = this.choosePlane(var1);
-      if (var29 != null) {
-         boolean var41;
+      List<int[]> plane = this.choosePlane(map);
+      if (plane != null) {
+         boolean empty;
          label113: {
-            if (var29 != null) {
-               if (var29.isEmpty()) {
-                  var41 = true;
+            if (plane != null) {
+               if (plane.isEmpty()) {
+                  empty = true;
                   break label113;
                }
             }
 
-            var41 = var29.isEmpty();
+            empty = plane.isEmpty();
          }
 
-         if (!var41) {
-            double[] var30 = this.frames.get(((int[])var29.getFirst())[0]);
-            if (var30 == null) {
+         if (!empty) {
+            double[] frame = this.frames.get(((int[])plane.getFirst())[0]);
+            if (frame == null) {
                return null;
             }
 
-            int var31;
-            int var32 = (var31 = (int)var30[3]) >= 4 ? 1 : 0;
-            double var33 = Double.MAX_VALUE;
-            double var34 = -Double.MAX_VALUE;
-            double var10 = Double.MAX_VALUE;
-            double var12 = -Double.MAX_VALUE;
+            int n;
+            int n2 = (n = (int)frame[3]) >= 4 ? 1 : 0;
+            double d = Double.MAX_VALUE;
+            double d2 = -Double.MAX_VALUE;
+            double d3 = Double.MAX_VALUE;
+            double d4 = -Double.MAX_VALUE;
 
-            for (int[] var15 : var29) {
-               double[] var16 = this.frames.get(var15[0]);
-               if (var16 != null) {
-                  double var17 = var32 != 0 ? var16[2] : var16[0];
-                  var33 = Math.min(var33, var17);
-                  var34 = Math.max(var34, var17);
-                  var10 = Math.min(var10, var16[1]);
-                  var12 = Math.max(var12, var16[1]);
+            for (int[] ints : plane) {
+               double[] doubles = this.frames.get(ints[0]);
+               if (doubles != null) {
+                  double d5 = n2 != 0 ? doubles[2] : doubles[0];
+                  d = Math.min(d, d5);
+                  d2 = Math.max(d2, d5);
+                  d3 = Math.min(d3, doubles[1]);
+                  d4 = Math.max(d4, doubles[1]);
                }
             }
 
-            int var35 = (int)Math.round(var34 - var33) + 1;
-            int var36 = (int)Math.round(var12 - var10) + 1;
-            if (var35 >= 1 && var36 >= 1 && var35 <= 8 && var36 <= 8 && var35 * var36 >= 2) {
-               BufferedImage var37 = new BufferedImage(var35 * 128, var36 * 128, 1);
-               Graphics2D var38 = var37.createGraphics();
-               var38.setColor(Color.WHITE);
-               var38.fillRect(0, 0, var37.getWidth(), var37.getHeight());
-               int var18 = 1;
-               int var19 = 0;
+            int cols = (int)Math.round(d2 - d) + 1;
+            int rows = (int)Math.round(d4 - d3) + 1;
+            if (cols >= 1 && rows >= 1 && cols <= 8 && rows <= 8 && cols * rows >= 2) {
+               BufferedImage bufferedImage = new BufferedImage(cols * 128, rows * 128, 1);
+               Graphics2D graphics = bufferedImage.createGraphics();
+               graphics.setColor(Color.WHITE);
+               graphics.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+               int hash = 1;
+               int tiles = 0;
 
-               for (int[] var21 : var29) {
-                  int[] var22 = this.cloneBuffer(var21[1]);
-                  double[] var23 = this.frames.get(var21[0]);
-                  if (var22 != null && var23 != null) {
-                     int var24 = this.frameRotations.getOrDefault(var21[0], 0) & 3;
-                     var22 = rotateClockwise(var22, var24);
-                     double var25 = var32 != 0 ? var23[2] : var23[0];
+               for (int[] ints : plane) {
+                  int[] cloneBuffer = this.cloneBuffer(ints[1]);
+                  double[] doubles = this.frames.get(ints[0]);
+                  if (cloneBuffer != null && doubles != null) {
+                     int n3 = this.frameRotations.getOrDefault(ints[0], 0) & 3;
+                     cloneBuffer = rotateClockwise(cloneBuffer, n3);
+                     double d5 = n2 != 0 ? doubles[2] : doubles[0];
 
-                     int var27 = switch (var31) {
-                        case 3, 4 -> (int)Math.round(var25 - var33);
-                        default -> (int)Math.round(var34 - var25);
+                     int n4 = switch (n) {
+                        case 3, 4 -> (int)Math.round(d5 - d);
+                        default -> (int)Math.round(d2 - d5);
                      };
-                     int var28 = (int)Math.round(var12 - var23[1]);
-                     if (var27 >= 0 && var27 < var35 && var28 >= 0 && var28 < var36) {
-                        var38.drawImage(render(var22), var27 * 128, var28 * 128, null);
-                        var18 = ((var18 * 31 + var21[1]) * 31 + Arrays.hashCode(var22)) * 31 + var27 * 17 + var28;
-                        var19++;
+                     int n5 = (int)Math.round(d4 - doubles[1]);
+                     if (n4 >= 0 && n4 < cols && n5 >= 0 && n5 < rows) {
+                        graphics.drawImage(render(cloneBuffer), n4 * 128, n5 * 128, null);
+                        hash = ((hash * 31 + ints[1]) * 31 + Arrays.hashCode(cloneBuffer)) * 31 + n4 * 17 + n5;
+                        tiles++;
                      }
                   }
                }
 
-               var38.dispose();
-               return var19 == 0 ? null : new BotAutoCapcha.Stitched(var37, var18, var35, var36, var19);
+               graphics.dispose();
+               return tiles == 0 ? null : new BotAutoCapcha.Stitched(bufferedImage, hash, cols, rows, tiles);
             }
 
             return null;
@@ -591,119 +591,119 @@ public final class BotAutoCapcha extends BotModule {
       return null;
    }
 
-   private List<int[]> choosePlane(Map<Long, List<int[]>> var1) {
-      boolean var10000;
+   private List<int[]> choosePlane(Map<Long, List<int[]>> map) {
+      boolean empty;
       label75: {
-         if (var1 != null) {
-            if (var1.isEmpty()) {
-               var10000 = true;
+         if (map != null) {
+            if (map.isEmpty()) {
+               empty = true;
                break label75;
             }
          }
 
-         var10000 = var1.isEmpty();
+         empty = map.isEmpty();
       }
 
-      if (var10000) {
+      if (empty) {
          return null;
       } else {
-         List var2 = null;
-         double var3 = -1.0;
-         double[] var5 = this.look;
-         if (var5 != null) {
-            double var6;
-            double var8 = -Math.sin(var6 = Math.toRadians(var5[3]));
-            double var10 = Math.cos(var6);
+         List list = null;
+         double d = -1.0;
+         double[] look = this.look;
+         if (look != null) {
+            double d2;
+            double d3 = -Math.sin(d2 = Math.toRadians(look[3]));
+            double d4 = Math.cos(d2);
 
-            for (List var13 : var1.values()) {
-               double var14 = 0.0;
-               double var16 = 0.0;
-               int var18 = 0;
+            for (List list2 : map.values()) {
+               double d5 = 0.0;
+               double d6 = 0.0;
+               int n = 0;
 
-               for (Object var20_o : (Iterable<?>)(Object)(var13)) {
-                  int[] var20 = (int[])var20_o;
-                  double[] var21 = this.frames.get(var20[0]);
-                  if (var21 != null) {
-                     var14 += var21[0];
-                     var16 += var21[2];
-                     var18++;
+               for (Object obj : (Iterable<?>)(Object)(list2)) {
+                  int[] ints = (int[])obj;
+                  double[] frame = this.frames.get(ints[0]);
+                  if (frame != null) {
+                     d5 += frame[0];
+                     d6 += frame[2];
+                     n++;
                   }
                }
 
-               if (var18 != 0) {
-                  var14 /= var18;
-                  var16 /= var18;
-                  double var32 = var14 - var5[0];
-                  double var33 = var16 - var5[2];
-                  double var23;
-                  double var25;
-                  double var27;
-                  if (!((var23 = Math.sqrt(var32 * var32 + var33 * var33)) < 0.01)
-                     && !(var23 > 32.0)
-                     && (var27 = (var25 = var32 / var23 * var8 + var33 / var23 * var10) < 0.2 ? -1.0 : var25 * 100.0 / (1.0 + var23)) > var3) {
-                     var3 = var27;
-                     var2 = var13;
+               if (n != 0) {
+                  d5 /= n;
+                  d6 /= n;
+                  double d7 = d5 - look[0];
+                  double d8 = d6 - look[2];
+                  double d9;
+                  double d10;
+                  double d11;
+                  if (!((d9 = Math.sqrt(d7 * d7 + d8 * d8)) < 0.01)
+                     && !(d9 > 32.0)
+                     && (d11 = (d10 = d7 / d9 * d3 + d8 / d9 * d4) < 0.2 ? -1.0 : d10 * 100.0 / (1.0 + d9)) > d) {
+                     d = d11;
+                     list = list2;
                   }
                }
             }
          }
 
-         if (var2 == null) {
-            for (List var7 : var1.values()) {
-               if (var2 == null || var7.size() > var2.size()) {
-                  var2 = var7;
+         if (list == null) {
+            for (List list2 : map.values()) {
+               if (list == null || list2.size() > list.size()) {
+                  list = list2;
                }
             }
          }
 
-         return var2;
+         return list;
       }
    }
 
-   private int[] cloneBuffer(int var1) {
+   private int[] cloneBuffer(int lastMapId) {
       synchronized (this.bufferLock) {
-         byte[] var3 = this.buffers.get(var1);
-         if (var3 == null) {
+         byte[] buffer = this.buffers.get(lastMapId);
+         if (buffer == null) {
             return null;
          } else {
-            int[] var4 = new int[var3.length];
+            int[] ints = new int[buffer.length];
 
-            for (int var5 = 0; var5 < var3.length; var5++) {
-               var4[var5] = var3[var5] & 255;
+            for (int i = 0; i < buffer.length; i++) {
+               ints[i] = buffer[i] & 255;
             }
 
-            return var4;
+            return ints;
          }
       }
    }
 
-   private void trimBuffers(int var1) {
+   private void trimBuffers(int lastMapId) {
       if (this.buffers.size() > 128) {
-         var var2 = new HashSet<>(this.frameItems.values());
-         var2.add(var1);
-         var2.add(this.lastMapId);
-         int var3 = 0;
+         var integers = new HashSet<>(this.frameItems.values());
+         integers.add(lastMapId);
+         integers.add(this.lastMapId);
+         int n = 0;
 
-         for (Integer var5 : this.bufferOrder) {
-            if (!var2.contains(var5)) {
-               var3++;
+         for (Integer n2 : this.bufferOrder) {
+            if (!integers.contains(n2)) {
+               n++;
             }
          }
 
-         var var6 = this.bufferOrder.iterator();
+         var iterator = this.bufferOrder.iterator();
 
-         while (var3 > 128 && var6.hasNext()) {
-            Integer var7 = (Integer)var6.next();
-            if (!var2.contains(var7)) {
-               var6.remove();
-               this.buffers.remove(var7);
-               var3--;
+         while (n > 128 && iterator.hasNext()) {
+            Integer n2 = (Integer)iterator.next();
+            if (!integers.contains(n2)) {
+               iterator.remove();
+               this.buffers.remove(n2);
+               n--;
             }
          }
       }
    }
 
-   private void resetState(boolean var1) {
+   private void resetState(boolean flag) {
       this.generation.incrementAndGet();
       synchronized (this.bufferLock) {
          this.buffers.clear();
@@ -721,148 +721,148 @@ public final class BotAutoCapcha extends BotModule {
       this.lastAttemptTime = 0L;
       this.lastTileTime = System.currentTimeMillis();
       this.keywordTime = 0L;
-      this.joinTime = var1 ? System.currentTimeMillis() : 0L;
+      this.joinTime = flag ? System.currentTimeMillis() : 0L;
    }
 
    private BotAutoCapcha.SolveTarget currentTarget() {
-      BotClient var1 = this.bot();
-      return var1 != null && var1.isJoined() ? new BotAutoCapcha.SolveTarget(var1) : null;
+      BotClient bot = this.bot();
+      return bot != null && bot.isJoined() ? new BotAutoCapcha.SolveTarget(bot) : null;
    }
 
-   private void log(String var1) {
-      CaptchaLogger.log("[" + this.botLabel() + "] " + var1);
+   private void log(String str) {
+      CaptchaLogger.log("[" + this.botLabel() + "] " + str);
    }
 
-   private static void log(BotAutoCapcha.SolveTarget var0, String var1) {
-      CaptchaLogger.log("[" + var0.label() + "] " + var1);
+   private static void log(BotAutoCapcha.SolveTarget currentTarget, String str) {
+      CaptchaLogger.log("[" + currentTarget.label() + "] " + str);
    }
 
    private String botLabel() {
-      BotClient var1 = this.bot();
-      return var1 == null ? "bot" : var1.name();
+      BotClient bot = this.bot();
+      return bot == null ? "bot" : bot.name();
    }
 
-   private static void feedback(BotAutoCapcha.SolveTarget var0, String var1) {
-      var0.bot().execute(() -> var0.bot().systemMessage("AutoCapcha: " + var1));
+   private static void feedback(BotAutoCapcha.SolveTarget currentTarget, String str) {
+      currentTarget.bot().execute(() -> currentTarget.bot().systemMessage("AutoCapcha: " + str));
    }
 
-   private static String packetText(Packet<?> var0) {
-      if (var0 instanceof ClientboundSystemChatPacket var6) {
-         return var6.content().getString();
-      } else if (var0 instanceof ClientboundDisguisedChatPacket var5) {
-         return var5.message().getString();
-      } else if (var0 instanceof ClientboundPlayerChatPacket var4) {
-         return var4.unsignedContent().map(net.minecraft.network.chat.Component::getString).orElse(var4.body().content());
-      } else if (var0 instanceof ClientboundSetActionBarTextPacket var3) {
-         return var3.text().getString();
-      } else if (var0 instanceof ClientboundSetSubtitleTextPacket var2) {
-         return var2.text().getString();
+   private static String packetText(Packet<?> packet) {
+      if (packet instanceof ClientboundSystemChatPacket systemChatPacket) {
+         return systemChatPacket.content().getString();
+      } else if (packet instanceof ClientboundDisguisedChatPacket disguisedChatPacket) {
+         return disguisedChatPacket.message().getString();
+      } else if (packet instanceof ClientboundPlayerChatPacket playerChatPacket) {
+         return playerChatPacket.unsignedContent().map(net.minecraft.network.chat.Component::getString).orElse(playerChatPacket.body().content());
+      } else if (packet instanceof ClientboundSetActionBarTextPacket setActionBarTextPacket) {
+         return setActionBarTextPacket.text().getString();
+      } else if (packet instanceof ClientboundSetSubtitleTextPacket setSubtitleTextPacket) {
+         return setSubtitleTextPacket.text().getString();
       } else {
-         return var0 instanceof ClientboundSetTitleTextPacket var1 ? var1.text().getString() : null;
+         return packet instanceof ClientboundSetTitleTextPacket setTitleTextPacket ? setTitleTextPacket.text().getString() : null;
       }
    }
 
-   private static boolean isSafeAnswer(String var0) {
-      if (var0 == null) {
+   private static boolean isSafeAnswer(String content) {
+      if (content == null) {
          return false;
       } else {
-         String var1 = var0.trim();
-         return !var1.isEmpty() && var1.length() <= 64
-            && var1.codePoints().allMatch(var0x -> Character.isLetterOrDigit(var0x) || var0x == 95 || var0x == 45);
+         String str = content.trim();
+         return !str.isEmpty() && str.length() <= 64
+            && str.codePoints().allMatch(var0x -> Character.isLetterOrDigit(var0x) || var0x == 95 || var0x == 45);
       }
    }
 
-   private static int[] rotateClockwise(int[] var0, int var1) {
-      int[] var2 = var0;
+   private static int[] rotateClockwise(int[] cloneBuffer, int n) {
+      int[] ints = cloneBuffer;
 
-      for (int var3 = 0; var3 < var1; var3++) {
-         int[] var4 = new int[16384];
+      for (int i = 0; i < n; i++) {
+         int[] ints2 = new int[16384];
 
-         for (int var5 = 0; var5 < 128; var5++) {
-            for (int var6 = 0; var6 < 128; var6++) {
-               var4[var6 + var5 * 128] = var2[var5 + (127 - var6) * 128];
+         for (int j = 0; j < 128; j++) {
+            for (int k = 0; k < 128; k++) {
+               ints2[k + j * 128] = ints[j + (127 - k) * 128];
             }
          }
 
-         var2 = var4;
+         ints = ints2;
       }
 
-      return var2;
+      return ints;
    }
 
-   private static BufferedImage resizeForApi(BufferedImage var0) {
-      if (var0.getWidth() == 250 && var0.getHeight() == 150) {
-         return var0;
+   private static BufferedImage resizeForApi(BufferedImage image) {
+      if (image.getWidth() == 250 && image.getHeight() == 150) {
+         return image;
       } else {
-         BufferedImage var1 = new BufferedImage(250, 150, 1);
-         Graphics2D var2 = var1.createGraphics();
-         var2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-         var2.drawImage(var0, 0, 0, 250, 150, null);
-         var2.dispose();
-         return var1;
+         BufferedImage bufferedImage = new BufferedImage(250, 150, 1);
+         Graphics2D graphics = bufferedImage.createGraphics();
+         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+         graphics.drawImage(image, 0, 0, 250, 150, null);
+         graphics.dispose();
+         return bufferedImage;
       }
    }
 
-   private static byte[] encodePng(BufferedImage var0) throws Exception {
-      ByteArrayOutputStream var1 = new ByteArrayOutputStream();
-      if (!ImageIO.write(var0, "png", var1)) {
+   private static byte[] encodePng(BufferedImage im) throws Exception {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      if (!ImageIO.write(im, "png", byteArrayOutputStream)) {
          throw new IllegalStateException("PNG encoder is unavailable");
       } else {
-         return var1.toByteArray();
+         return byteArrayOutputStream.toByteArray();
       }
    }
 
-   private static String rootMessage(Throwable var0) {
-      Throwable var1 = var0;
+   private static String rootMessage(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      String var2 = var1.getMessage();
-      return var2 != null && !var2.isBlank() ? var2 : var1.getClass().getSimpleName();
+      String message = throwable2.getMessage();
+      return message != null && !message.isBlank() ? message : throwable2.getClass().getSimpleName();
    }
 
-   private static boolean isFinalFailure(Throwable var0) {
-      Throwable var1 = var0;
+   private static boolean isFinalFailure(Throwable throwable) {
+      Throwable throwable2 = throwable;
 
-      while (var1.getCause() != null && var1.getCause() != var1) {
-         var1 = var1.getCause();
+      while (throwable2.getCause() != null && throwable2.getCause() != throwable2) {
+         throwable2 = throwable2.getCause();
       }
 
-      if (!(var1 instanceof StoreApi.Entry var2)) {
+      if (!(throwable2 instanceof StoreApi.Entry entry)) {
          return false;
       } else {
-         int var3;
-         return !((var3 = var2.getIntValue()) != 503 && (var3 < 400 || var3 >= 500 || var3 == 429));
+         int intValue;
+         return !((intValue = entry.getIntValue()) != 503 && (intValue < 400 || intValue >= 500 || intValue == 429));
       }
    }
 
-   private static BufferedImage render(int[] var0) {
-      BufferedImage var1 = new BufferedImage(128, 128, 1);
+   private static BufferedImage render(int[] cloneBuffer) {
+      BufferedImage bufferedImage = new BufferedImage(128, 128, 1);
 
-      for (int var2 = 0; var2 < 128; var2++) {
-         for (int var3 = 0; var3 < 128; var3++) {
-            int var4;
-            if ((var4 = MapColor.getColorFromPackedId(var0[var3 + var2 * 128])) >>> 24 == 0) {
-               var4 = 16777215;
+      for (int i = 0; i < 128; i++) {
+         for (int j = 0; j < 128; j++) {
+            int colorFromPackedId;
+            if ((colorFromPackedId = MapColor.getColorFromPackedId(cloneBuffer[j + i * 128])) >>> 24 == 0) {
+               colorFromPackedId = 16777215;
             }
 
-            var1.setRGB(var3, var2, var4 & 16777215);
+            bufferedImage.setRGB(j, i, colorFromPackedId & 16777215);
          }
       }
 
-      return var1;
+      return bufferedImage;
    }
 
-   private static boolean isUniform(int[] var0) {
-      int var1 = var0[0];
-      int[] var2 = var0;
-      int var3 = var0.length;
+   private static boolean isUniform(int[] cloneBuffer) {
+      int n = cloneBuffer[0];
+      int[] ints = cloneBuffer;
+      int length = cloneBuffer.length;
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         int var5;
-         if ((var5 = var2[var4]) != var1) {
+      for (int i = 0; i < length; i++) {
+         int n2;
+         if ((n2 = ints[i]) != n) {
             return false;
          }
       }
@@ -894,8 +894,8 @@ public final class BotAutoCapcha extends BotModule {
          return "SolveTarget[" + "bot=" + this.bot + "]";
       }
 
-      private SolveTarget(BotClient var1) {
-         this.bot = var1;
+      private SolveTarget(BotClient bot) {
+         this.bot = bot;
       }
 
       private boolean isConnected() {
@@ -951,12 +951,12 @@ public final class BotAutoCapcha extends BotModule {
          return "Stitched[" + "image=" + this.image + ", " + "hash=" + this.hash + ", " + "cols=" + this.cols + ", " + "rows=" + this.rows + ", " + "tiles=" + this.tiles + "]";
       }
 
-      private Stitched(BufferedImage var1, int var2, int var3, int var4, int var5) {
-         this.image = var1;
-         this.hash = var2;
-         this.cols = var3;
-         this.rows = var4;
-         this.tiles = var5;
+      private Stitched(BufferedImage image, int hash, int cols, int rows, int tiles) {
+         this.image = image;
+         this.hash = hash;
+         this.cols = cols;
+         this.rows = rows;
+         this.tiles = tiles;
       }
    }
 }

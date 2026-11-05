@@ -162,9 +162,9 @@ public final class InterfaceModule extends Module {
    private final ButtonSetting resetLayout = new ButtonSetting("module.interface.hud.resetLayout", this::method6791);
    private long longValue2 = -4611686018427387904L;
    private final SliderSetting scale = new SliderSetting(
-      "module.interface.hudElement.scale", 100.0F, 50.0F, 250.0F, 1.0F, "module.interface.hudElement.scale.desc", "%", () -> true, (var1x, var2) -> {
-         for (Interface var4 : this.items) {
-            var4.getScale().method2400(var2);
+      "module.interface.hudElement.scale", 100.0F, 50.0F, 250.0F, 1.0F, "module.interface.hudElement.scale.desc", "%", () -> true, (var1x, floatValue) -> {
+         for (Interface interfaceValue : this.items) {
+            interfaceValue.getScale().method2400(floatValue);
          }
       }
    );
@@ -204,20 +204,20 @@ public final class InterfaceModule extends Module {
    }
 
    private List<Setting> method6777() {
-      var var1 = new ArrayList<>(this.method6774());
-      var1.remove(this.scale);
-      var1.addAll(this.method6775());
-      var1.addAll(this.method6776());
-      return var1;
+      var settings = new ArrayList<>(this.method6774());
+      settings.remove(this.scale);
+      settings.addAll(this.method6775());
+      settings.addAll(this.method6776());
+      return settings;
    }
 
    public float method6778() {
       return this.density.getValue3() / 100.0F;
    }
 
-   public float method6779(float var1) {
-      float var2 = this.blur.getValue3();
-      return var2 <= 0.0F ? 0.0F : var1 * var2 / 21.0F;
+   public float method6779(float blurPower) {
+      float f = this.blur.getValue3();
+      return f <= 0.0F ? 0.0F : blurPower * f / 21.0F;
    }
 
    public boolean method6780() {
@@ -229,11 +229,11 @@ public final class InterfaceModule extends Module {
    }
 
    public ZenithColor method6782() {
-      ZenithStyle var1 = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
 
       return switch (this.outline.getIndex()) {
-         case 1 -> var1.getTextTertiary().getZenithColor().method7293(70);
-         case 2 -> var1.getPrimaryColor().getZenithColor().method7293(150);
+         case 1 -> currentStyle.getTextTertiary().getZenithColor().method7293(70);
+         case 2 -> currentStyle.getPrimaryColor().getZenithColor().method7293(150);
          default -> this.colorSetting.getZenithColor();
       };
    }
@@ -264,23 +264,23 @@ public final class InterfaceModule extends Module {
 
    private void method6789() {
       if (mc.player != null) {
-         boolean var1 = mc.player.hurtTime > 0;
-         boolean var2 = mc.player.isSwinging() && mc.crosshairPickEntity instanceof LivingEntity;
-         if (var1 || var2) {
+         boolean flag = mc.player.hurtTime > 0;
+         boolean flag2 = mc.player.isSwinging() && mc.crosshairPickEntity instanceof LivingEntity;
+         if (flag || flag2) {
             this.longValue2 = System.currentTimeMillis();
          }
       }
    }
 
-   public void method6790(boolean var1) {
-      for (Interface var3 : this.items) {
-         var3.setEnabled(var1);
+   public void method6790(boolean flag) {
+      for (Interface interfaceValue : this.items) {
+         interfaceValue.setEnabled(flag);
       }
    }
 
    public void method6791() {
-      for (Interface var2 : this.items) {
-         var2.method2063();
+      for (Interface interfaceValue : this.items) {
+         interfaceValue.method2063();
       }
    }
 
@@ -293,9 +293,9 @@ public final class InterfaceModule extends Module {
       this.method6793(new WatermarkIslandHud("Watermark", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 10.0F, Interface.Type.TOP_LEFT));
       this.method6793(new PotionsHud("Potions", 0.0F, 0.0F, 960.0F, 495.5F, 119.15234F, 73.0F, Interface.Type.TOP_LEFT));
       this.method6793(new StaffListHud("Staffs", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 73.0F, Interface.Type.TOP_LEFT));
-      InterfaceHud var1 = new InterfaceHud("Notifications", 181.80615F, 135.5F, 960.0F, 495.5F, 157.03516F, -72.5F, Interface.Type.CENTER);
-      this.method6793(var1);
-      Zenith.getInstance().getHudHolder().setInterfaceHud(var1);
+      InterfaceHud interfaceHud = new InterfaceHud("Notifications", 181.80615F, 135.5F, 960.0F, 495.5F, 157.03516F, -72.5F, Interface.Type.CENTER);
+      this.method6793(interfaceHud);
+      Zenith.getInstance().getHudHolder().setInterfaceHud(interfaceHud);
       this.method6793(new Hud4("Inventory", 269.0F, 229.0F, 960.0F, 495.5F, -11.5F, -74.0F, Interface.Type.BOTTOM_RIGHT));
       this.method6793(new CooldownsHud("Cooldowns", 349.0F, 0.0F, 960.0F, 495.5F, -11.5F, 73.0F, Interface.Type.TOP_RIGHT));
       this.method6793(new InfoBoxesHud("Information", 0.0F, 0.0F, 960.0F, 495.5F, 10.0F, 41.5F, Interface.Type.TOP_LEFT));
@@ -327,68 +327,68 @@ public final class InterfaceModule extends Module {
    }
 
    @Override
-   public void setKeyCode(int var1) {
+   public void setKeyCode(int keyCode) {
       super.setKeyCode(-1);
    }
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      JsonObject var2 = new JsonObject();
+      JsonObject json = super.save();
+      JsonObject jsonObject = new JsonObject();
 
-      for (Setting var4 : this.method6777()) {
-         var4.safe(var2);
+      for (Setting setting : this.method6777()) {
+         setting.safe(jsonObject);
       }
 
-      var1.add("HudLook", var2);
-      JsonObject var6 = new JsonObject();
+      json.add("HudLook", jsonObject);
+      JsonObject json2 = new JsonObject();
 
-      for (Interface var5 : this.items) {
-         var6.add(var5.getName(), var5.save());
+      for (Interface interfaceValue : this.items) {
+         json2.add(interfaceValue.getName(), interfaceValue.save());
       }
 
-      var1.add("HudElements", var6);
-      return var1;
+      json.add("HudElements", json2);
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 != null) {
-         if (var1.has("HudLook") && var1.get("HudLook").isJsonObject()) {
-            JsonObject var2 = var1.getAsJsonObject("HudLook");
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json != null) {
+         if (json.has("HudLook") && json.get("HudLook").isJsonObject()) {
+            JsonObject jsonObject = json.getAsJsonObject("HudLook");
 
-            for (Setting var4 : this.method6777()) {
-               if (var2.has(var4.getKey())) {
-                  var4.load(var2);
+            for (Setting setting : this.method6777()) {
+               if (jsonObject.has(setting.getKey())) {
+                  setting.load(jsonObject);
                }
             }
          }
 
-         if (var1.has("HudElements") && var1.get("HudElements").isJsonObject()) {
-            JsonObject var6 = var1.getAsJsonObject("HudElements");
+         if (json.has("HudElements") && json.get("HudElements").isJsonObject()) {
+            JsonObject jsonObject = json.getAsJsonObject("HudElements");
 
-            for (Interface var8 : this.items) {
-               String var5 = var8.getName();
-               if (var6.has(var5) && var6.get(var5).isJsonObject()) {
-                  var8.load(var6.getAsJsonObject(var5));
+            for (Interface interfaceValue : this.items) {
+               String name = interfaceValue.getName();
+               if (jsonObject.has(name) && jsonObject.get(name).isJsonObject()) {
+                  interfaceValue.load(jsonObject.getAsJsonObject(name));
                }
             }
          }
       }
    }
 
-   private void method6793(Interface var1) {
-      this.items.add(var1);
-      this.items2.put(var1.getName(), var1);
+   private void method6793(Interface hud3) {
+      this.items.add(hud3);
+      this.items2.put(hud3.getName(), hud3);
    }
 
    public List<Interface> method6794() {
       return Collections.unmodifiableList(this.items);
    }
 
-   public boolean method6795(Interface var1) {
-      return this.class31.method4878(var1) || var1 != null && var1 == this.interfaceValue;
+   public boolean method6795(Interface key) {
+      return this.class31.method4878(key) || key != null && key == this.interfaceValue;
    }
 
    public boolean method6796() {
@@ -401,7 +401,7 @@ public final class InterfaceModule extends Module {
    }
 
    @EventTarget
-   public void method6797(ScreenRenderEvent var1) {
+   public void method6797(ScreenRenderEvent event) {
       if (mc.level != null && mc.gameMode != null && mc.player != null && !mc.gui.hud.isHidden()) {
          if (!(mc.gui.screen() instanceof ChatScreen)) {
             this.class31.cancel();
@@ -412,63 +412,63 @@ public final class InterfaceModule extends Module {
             this.method6804();
          }
 
-         MenuDrawContext var2 = var1.getMenuDrawContext();
-         HudQueuedContext var3 = HudQueuedContext.of(var2);
-         float var4 = mc.getWindow().getGuiScaledWidth();
-         float var5 = mc.getWindow().getGuiScaledHeight();
+         MenuDrawContext menuDrawContext = event.getMenuDrawContext();
+         HudQueuedContext hudQueuedContext = HudQueuedContext.of(menuDrawContext);
+         float guiScaledWidth = mc.getWindow().getGuiScaledWidth();
+         float guiScaledHeight = mc.getWindow().getGuiScaledHeight();
          this.method6789();
-         var2.pushMatrix();
+         menuDrawContext.pushMatrix();
          Jebriksheet.method2346(this.jebriksheet);
 
          try {
-            for (Interface var7 : this.items) {
-               if (!this.class31.method4878(var7)) {
-                  var7.method288(var4, var5);
+            for (Interface key : this.items) {
+               if (!this.class31.method4878(key)) {
+                  key.method288(guiScaledWidth, guiScaledHeight);
                }
 
-               if (this.method6800(var7)) {
+               if (this.method6800(key)) {
                   try {
-                     var7.method291(var3);
-                  } catch (Exception var18) {
-                     var18.printStackTrace();
+                     key.method291(hudQueuedContext);
+                  } catch (Exception e) {
+                     e.printStackTrace();
                   }
                }
             }
 
-            ArrayList var20 = new ArrayList();
+            ArrayList arrayList = new ArrayList();
 
-            for (Interface var8 : this.items) {
-               if (this.method6800(var8) && var8.method296() > 0.0F && var8.method297() > 0.0F) {
-                  var20.add(var8);
+            for (Interface key : this.items) {
+               if (this.method6800(key) && key.method296() > 0.0F && key.method297() > 0.0F) {
+                  arrayList.add(key);
                }
             }
 
-            UVPair var23 = this.method6808();
-            this.class31.method4880(var3, var20, var23.u(), var23.v(), var4, var5, mc.gui.screen() instanceof ChatScreen);
+            UVPair uvPair = this.method6808();
+            this.class31.method4880(hudQueuedContext, arrayList, uvPair.u(), uvPair.v(), guiScaledWidth, guiScaledHeight, mc.gui.screen() instanceof ChatScreen);
             this.jebriksheet.flush();
          } finally {
             Jebriksheet.method2347(this.jebriksheet);
          }
 
-         boolean var21 = mc.gui.screen() instanceof ChatScreen;
-         UVPair var24 = this.method6808();
-         if (var21) {
-            float var9 = var24.u();
-            float var10 = var24.v();
+         boolean flag = mc.gui.screen() instanceof ChatScreen;
+         UVPair uvPair = this.method6808();
+         if (flag) {
+            float floatValue = uvPair.u();
+            float f = uvPair.v();
             if (this.interfaceValue != null) {
-               float var11 = this.floatValue - this.floatValue3;
-               float var12 = this.floatValue2 - this.floatValue4;
-               float var13 = var11 * var11 + var12 * var12;
-               if (var13 > 1.0F) {
-                  float var14 = ((var9 - this.floatValue3) * var11 + (var10 - this.floatValue4) * var12) / var13;
-                  float var15 = this.floatValue5 * var14;
-                  var15 = Math.clamp(var15, this.interfaceValue.getScale().getMin(), this.interfaceValue.getScale().getMax());
-                  this.interfaceValue.getScale().method2400(var15);
+               float f2 = this.floatValue - this.floatValue3;
+               float f3 = this.floatValue2 - this.floatValue4;
+               float f4 = f2 * f2 + f3 * f3;
+               if (f4 > 1.0F) {
+                  float f5 = ((floatValue - this.floatValue3) * f2 + (f - this.floatValue4) * f3) / f4;
+                  float floatValue2 = this.floatValue5 * f5;
+                  floatValue2 = Math.clamp(floatValue2, this.interfaceValue.getScale().getMin(), this.interfaceValue.getScale().getMax());
+                  this.interfaceValue.getScale().method2400(floatValue2);
                }
             }
 
-            Interface var25 = this.method6805(var9, var10);
-            if (this.interfaceValue == null && (var25 == null || var25.method2059() || !var25.method2075(var9, var10))) {
+            Interface interfaceValue = this.method6805(floatValue, f);
+            if (this.interfaceValue == null && (interfaceValue == null || interfaceValue.method2059() || !interfaceValue.method2075(floatValue, f))) {
                this.method6804();
             } else {
                this.method6803();
@@ -477,20 +477,20 @@ public final class InterfaceModule extends Module {
             this.method6804();
          }
 
-         var2.popMatrix();
+         menuDrawContext.popMatrix();
       }
    }
 
-   private float method6798(Interface var1) {
-      return var1.method294();
+   private float method6798(Interface key) {
+      return key.method294();
    }
 
-   private float method6799(Interface var1) {
-      return var1.method295();
+   private float method6799(Interface key) {
+      return key.method295();
    }
 
-   private boolean method6800(Interface var1) {
-      return var1.isEnabled();
+   private boolean method6800(Interface key) {
+      return key.isEnabled();
    }
 
    public static float method6801() {
@@ -498,7 +498,7 @@ public final class InterfaceModule extends Module {
    }
 
    @EventTarget
-   public void method6802(MouseButtonEvent var1) {
+   public void method6802(MouseButtonEvent event) {
       if (!(mc.gui.screen() instanceof ChatScreen)) {
          this.class31.cancel();
          if (this.interfaceValue != null) {
@@ -506,33 +506,33 @@ public final class InterfaceModule extends Module {
             this.method6804();
          }
       } else {
-         UVPair var2 = this.method6808();
-         double var3 = var2.u();
-         double var5 = var2.v();
-         if (var1.getIntValue2() == 0 && var1.getIntValue() == 1) {
-            Interface var8 = this.method6805(var3, var5);
-            if (var8 != null) {
+         UVPair uvPair = this.method6808();
+         double floatValue = uvPair.u();
+         double d = uvPair.v();
+         if (event.getIntValue2() == 0 && event.getIntValue() == 1) {
+            Interface selectedElement = this.method6805(floatValue, d);
+            if (selectedElement != null) {
                this.class31.cancel();
-               this.method6806(var8);
+               this.method6806(selectedElement);
             }
          } else {
-            if (var1.getIntValue2() == 1 && var1.getIntValue() == 0) {
-               Interface var7 = this.method6805(var3, var5);
-               if (var7 != null) {
-                  if (var7.method2059()) {
-                     var7.method2056(var1);
-                  } else if (var7.method2075(var3, var5)) {
-                     this.interfaceValue = var7;
-                     this.floatValue = (float)var3;
-                     this.floatValue2 = (float)var5;
-                     this.floatValue3 = var7.method294() + var7.method296() / 2.0F;
-                     this.floatValue4 = var7.method295() + var7.method297() / 2.0F;
-                     this.floatValue5 = var7.getScale().getValue3();
-                  } else if (!var7.method2056(var1)) {
-                     this.class31.method4877(var7, (float)var3, (float)var5);
+            if (event.getIntValue2() == 1 && event.getIntValue() == 0) {
+               Interface interfaceValue = this.method6805(floatValue, d);
+               if (interfaceValue != null) {
+                  if (interfaceValue.method2059()) {
+                     interfaceValue.method2056(event);
+                  } else if (interfaceValue.method2075(floatValue, d)) {
+                     this.interfaceValue = interfaceValue;
+                     this.floatValue = (float)floatValue;
+                     this.floatValue2 = (float)d;
+                     this.floatValue3 = interfaceValue.method294() + interfaceValue.method296() / 2.0F;
+                     this.floatValue4 = interfaceValue.method295() + interfaceValue.method297() / 2.0F;
+                     this.floatValue5 = interfaceValue.getScale().getValue3();
+                  } else if (!interfaceValue.method2056(event)) {
+                     this.class31.method4877(interfaceValue, (float)floatValue, (float)d);
                   }
                }
-            } else if (var1.getIntValue2() == 0) {
+            } else if (event.getIntValue2() == 0) {
                if (this.interfaceValue != null) {
                   this.interfaceValue = null;
                   this.method6804();
@@ -564,29 +564,29 @@ public final class InterfaceModule extends Module {
       }
    }
 
-   private Interface method6805(double var1, double var3) {
-      for (int var5 = this.items.size() - 1; var5 >= 0; var5--) {
-         Interface var6 = this.items.get(var5);
-         if (this.method6800(var6) && var6.method293(var1, var3)) {
-            return var6;
+   private Interface method6805(double floatValue, double d) {
+      for (int i = this.items.size() - 1; i >= 0; i--) {
+         Interface key = this.items.get(i);
+         if (this.method6800(key) && key.method293(floatValue, d)) {
+            return key;
          }
       }
 
       return null;
    }
 
-   private void method6806(Interface var1) {
-      NLMenuScreen var2 = Zenith.getInstance().getNLMenuScreen();
-      if (var2 != null && var1 != null) {
-         if (mc.gui.screen() != var2) {
+   private void method6806(Interface selectedElement) {
+      NLMenuScreen nlMenuScreen = Zenith.getInstance().getNLMenuScreen();
+      if (nlMenuScreen != null && selectedElement != null) {
+         if (mc.gui.screen() != nlMenuScreen) {
             if (!MenuModule.INSTANCE.isEnabled()) {
                MenuModule.INSTANCE.toggle();
             } else {
-               mc.gui.setScreen(var2);
+               mc.gui.setScreen(nlMenuScreen);
             }
          }
 
-         var2.openHudElementSettings(var1);
+         nlMenuScreen.openHudElementSettings(selectedElement);
       }
    }
 
@@ -598,76 +598,76 @@ public final class InterfaceModule extends Module {
       return Vec2Utils.method8068(this.method6807());
    }
 
-   public org.joml.Vector2f method6809(float var1, float var2) {
-      float var3 = Float.MAX_VALUE;
-      float var4 = Float.MAX_VALUE;
-      float var5 = 2.0F;
-      org.joml.Vector2f var6 = new org.joml.Vector2f(-1.0F, -1.0F);
-      float var7 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-      float var8 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-      float var9 = this.method6810(var7, var7, var7, var1);
-      float var10 = this.method6810(var8, var8, var8, var2);
-      float var11 = MathUtils.method2650(var9, var1);
-      float var12 = MathUtils.method2650(var10, var2);
-      boolean var13 = false;
-      if (var11 < var3 && var11 < var5) {
-         var6.x = var9;
-         var13 = true;
+   public org.joml.Vector2f method6809(float f, float f2) {
+      float f3 = Float.MAX_VALUE;
+      float f4 = Float.MAX_VALUE;
+      float f5 = 2.0F;
+      org.joml.Vector2f vec = new org.joml.Vector2f(-1.0F, -1.0F);
+      float x = mc.getWindow().getGuiScaledWidth() / 2.0F;
+      float x2 = mc.getWindow().getGuiScaledHeight() / 2.0F;
+      float y = this.method6810(x, x, x, f);
+      float y2 = this.method6810(x2, x2, x2, f2);
+      float y3 = MathUtils.method2650(y, f);
+      float y4 = MathUtils.method2650(y2, f2);
+      boolean flag = false;
+      if (y3 < f3 && y3 < f5) {
+         vec.x = y;
+         flag = true;
       }
 
-      if (var12 < var4 && var12 < var5) {
-         var6.y = var10;
-         var13 = true;
+      if (y4 < f4 && y4 < f5) {
+         vec.y = y2;
+         flag = true;
       }
 
-      if (var13) {
-         return var6;
+      if (flag) {
+         return vec;
       } else if (!this.guides.isEnabled()) {
-         return var6;
+         return vec;
       } else {
-         for (Interface var20 : this.items) {
-            if (!var20.equals(this.class31.getInterfaceValue()) && this.method6800(var20)) {
-               var9 = this.method6798(var20);
-               var10 = this.method6799(var20);
-               var11 = var9 + var20.method296();
-               var12 = var10 + var20.method297();
-               float var25 = var9 + var20.method296() / 2.0F;
-               float var14 = var10 + var20.method297() / 2.0F;
-               float var15 = this.method6810(var9, var11, var25, var1);
-               float var16 = this.method6810(var10, var12, var14, var2);
-               float var17 = MathUtils.method2650(var15, var1);
-               float var18 = MathUtils.method2650(var16, var2);
-               if (var17 < var3) {
-                  var3 = var17;
-                  if (var17 < var5) {
-                     var6.x = var15;
+         for (Interface key : this.items) {
+            if (!key.equals(this.class31.getInterfaceValue()) && this.method6800(key)) {
+               y = this.method6798(key);
+               y2 = this.method6799(key);
+               y3 = y + key.method296();
+               y4 = y2 + key.method297();
+               float f6 = y + key.method296() / 2.0F;
+               float f7 = y2 + key.method297() / 2.0F;
+               float x3 = this.method6810(y, y3, f6, f);
+               float y5 = this.method6810(y2, y4, f7, f2);
+               float f8 = MathUtils.method2650(x3, f);
+               float f9 = MathUtils.method2650(y5, f2);
+               if (f8 < f3) {
+                  f3 = f8;
+                  if (f8 < f5) {
+                     vec.x = x3;
                   }
                }
 
-               if (var18 < var4) {
-                  var4 = var18;
-                  if (var18 < var5) {
-                     var6.y = var16;
+               if (f9 < f4) {
+                  f4 = f9;
+                  if (f9 < f5) {
+                     vec.y = y5;
                   }
                }
             }
          }
 
-         return var6;
+         return vec;
       }
    }
 
-   public float method6810(float var1, float var2, float var3, float var4) {
-      float var5 = var1;
-      if (MathUtils.method2650(var2, var4) < MathUtils.method2650(var1, var4)) {
-         var5 = var2;
+   public float method6810(float x, float y, float f, float f2) {
+      float x2 = x;
+      if (MathUtils.method2650(y, f2) < MathUtils.method2650(x, f2)) {
+         x2 = y;
       }
 
-      if (MathUtils.method2650(var3, var4) < MathUtils.method2650(var5, var4)) {
-         var5 = var3;
+      if (MathUtils.method2650(f, f2) < MathUtils.method2650(x2, f2)) {
+         x2 = f;
       }
 
-      return var5;
+      return x2;
    }
 
    public boolean method6811() {
@@ -686,17 +686,17 @@ public final class InterfaceModule extends Module {
       return this.method6815("Notifications");
    }
 
-   private boolean method6815(String var1) {
-      Interface var2 = this.items2.get(var1);
-      return var2 != null && var2.isEnabled();
+   private boolean method6815(String str) {
+      Interface interfaceValue = this.items2.get(str);
+      return interfaceValue != null && interfaceValue.isEnabled();
    }
 
    @EventTarget
-   public void method6816(UpdateEvent var1) {
+   public void method6816(UpdateEvent event) {
       if (ShapeRenderer.hashMap.size() > 64) {
-         ShapeRenderer.hashMap.values().removeIf(var0 -> {
-            if (var0.method7214()) {
-               var0.method7215();
+         ShapeRenderer.hashMap.values().removeIf(entry2 -> {
+            if (entry2.method7214()) {
+               entry2.method7215();
                return true;
             } else {
                return false;
@@ -704,13 +704,13 @@ public final class InterfaceModule extends Module {
          });
       }
 
-      for (Interface var3 : this.items) {
-         if (this.method6800(var3)) {
+      for (Interface key : this.items) {
+         if (this.method6800(key)) {
             try {
-               var3.tick();
-            } catch (Throwable var5) {
-               System.out.println(var3.getName());
-               var5.printStackTrace();
+               key.tick();
+            } catch (Throwable e) {
+               System.out.println(key.getName());
+               e.printStackTrace();
             }
          }
       }
@@ -753,8 +753,8 @@ public final class InterfaceModule extends Module {
    }
 
    public int method6826() {
-      int var1 = this.glareMode.getIndex();
-      return var1 >= 0 && var1 < CONST_intValues.length ? CONST_intValues[var1] : 0;
+      int index = this.glareMode.getIndex();
+      return index >= 0 && index < CONST_intValues.length ? CONST_intValues[index] : 0;
    }
 
    public int method6827() {

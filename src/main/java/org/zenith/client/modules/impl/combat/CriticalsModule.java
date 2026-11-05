@@ -57,16 +57,16 @@ public final class CriticalsModule extends Module {
    }
 
    @EventTarget
-   public void method4660(PacketEvent var1) {
-      if (var1.method7099() && mc.player != null && var1.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
+   public void method4660(PacketEvent event) {
+      if (event.method7099() && mc.player != null && event.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
          if (this.method4667()) {
             this.doubleValue = AuraModule.INSTANCE.method6346();
             this.flag = true;
             Util13.method2404(this.method4661(this.method4669().method1709(this.doubleValue, 0.0)));
          } else {
-            boolean var5 = this.mode.method5226("module.criticals.levitation") && mc.player.hasEffect(MobEffects.LEVITATION);
-            boolean var4 = this.mode.method5226("module.criticals.web") && UseItemUtils.method6513(Blocks.COBWEB);
-            if (!var5 && !var4) {
+            boolean flag = this.mode.method5226("module.criticals.levitation") && mc.player.hasEffect(MobEffects.LEVITATION);
+            boolean flag2 = this.mode.method5226("module.criticals.web") && UseItemUtils.method6513(Blocks.COBWEB);
+            if (!flag && !flag2) {
                if (this.mode.method5226("module.criticals.packet") && !mc.player.onGround() && mc.player.fallDistance == 0.0) {
                   UseItemUtils.method6533(
                      -(mc.player.fallDistance = (float)MathUtils.method2651(1.0E-5F, 1.0E-4F)),
@@ -88,7 +88,7 @@ public final class CriticalsModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (!this.method4667()) {
             if (this.flag) {
@@ -98,47 +98,47 @@ public final class CriticalsModule extends Module {
          } else {
             this.method4666();
             if (this.flag) {
-               CriticalsState var2 = this.method4669();
+               CriticalsState criticalsState = this.method4669();
                this.doubleValue = AuraModule.INSTANCE.method6346();
-               long var3 = var2.method1709(this.doubleValue, 0.0);
-               if (mc.player.fallDistance > 0.0 && var2.method1708(this.doubleValue, 0.0) && AuraModule.INSTANCE.method6348()) {
+               long l = criticalsState.method1709(this.doubleValue, 0.0);
+               if (mc.player.fallDistance > 0.0 && criticalsState.method1708(this.doubleValue, 0.0) && AuraModule.INSTANCE.method6348()) {
                   this.flag = false;
                   this.method4665();
                   Util13.method2404(1.0F);
                } else {
-                  Util13.method2404(this.method4661(var3));
+                  Util13.method2404(this.method4661(l));
                }
             }
          }
       }
    }
 
-   private float method4661(long var1) {
+   private float method4661(long l) {
       if (mc.player != null && !mc.player.onGround()) {
-         double var3 = var1 / 1000000.0;
+         double d = l / 1000000.0;
          if (mc.player.fallDistance > 0.0) {
             this.method4665();
-            return this.method4664(var3);
+            return this.method4664(d);
          } else if (mc.player.fallDistance != 0.0) {
             this.method4665();
             return 1.0F;
          } else {
-            int var5 = AuraModule.INSTANCE.method6349(12, true);
-            if (var5 < 0) {
+            int n = AuraModule.INSTANCE.method6349(12, true);
+            if (n < 0) {
                this.method4665();
                return 1.0F;
-            } else if (var1 <= 0L) {
-               float var14 = this.method4662(var5);
-               if (var14 <= 1.0F) {
+            } else if (l <= 0L) {
+               float floatValue = this.method4662(n);
+               if (floatValue <= 1.0F) {
                   this.method4665();
                   return 1.0F;
                } else {
                   this.flag2 = true;
-                  this.floatValue = var14;
-                  return var14;
+                  this.floatValue = floatValue;
+                  return floatValue;
                }
             } else if (this.flag2) {
-               this.floatValue = Math.min(this.floatValue, this.method4662(var5));
+               this.floatValue = Math.min(this.floatValue, this.method4662(n));
                if (this.floatValue <= 1.0F) {
                   this.method4665();
                   return 1.0F;
@@ -146,20 +146,20 @@ public final class CriticalsModule extends Module {
                   return this.floatValue;
                }
             } else {
-               long var6 = (long)Math.ceil(this.method4669().getDoubleValue());
-               if (var1 > var6) {
+               long l2 = (long)Math.ceil(this.method4669().getDoubleValue());
+               if (l > l2) {
                   return 0.3F;
                } else {
-                  double var8 = var5 * 50.0 / var3;
-                  if (var8 <= 1.0) {
+                  double d2 = n * 50.0 / d;
+                  if (d2 <= 1.0) {
                      return 1.0F;
                   } else {
-                     float var10 = (float)Math.min(6.0, var8);
-                     double var11 = var5 * (50.0 - 50.0 / var10);
-                     boolean var13 = var8 <= 6.0;
-                     if (var13 && this.method4663() + 0.001 >= var11) {
+                     float floatValue = (float)Math.min(6.0, d2);
+                     double d3 = n * (50.0 - 50.0 / floatValue);
+                     boolean flag = d2 <= 6.0;
+                     if (flag && this.method4663() + 0.001 >= d3) {
                         this.flag2 = true;
-                        this.floatValue = var10;
+                        this.floatValue = floatValue;
                         return this.floatValue;
                      } else {
                         return 0.3F;
@@ -174,16 +174,16 @@ public final class CriticalsModule extends Module {
       }
    }
 
-   private float method4662(int var1) {
-      double var2 = var1 * 50.0;
-      double var4 = this.method4663();
-      if (var2 <= 0.0 || var4 <= 0.0) {
+   private float method4662(int n) {
+      double d = n * 50.0;
+      double d2 = this.method4663();
+      if (d <= 0.0 || d2 <= 0.0) {
          return 1.0F;
-      } else if (var4 >= var2) {
+      } else if (d2 >= d) {
          return 6.0F;
       } else {
-         double var6 = 1.0 / (1.0 - var4 / var2);
-         return (float)Math.min(6.0, var6);
+         double d3 = 1.0 / (1.0 - d2 / d);
+         return (float)Math.min(6.0, d3);
       }
    }
 
@@ -191,17 +191,17 @@ public final class CriticalsModule extends Module {
       return Math.max(0.0, this.doubleValue2 - 15.0);
    }
 
-   private float method4664(double var1) {
-      int var3 = AuraModule.INSTANCE.method6350(12);
-      if (var3 < 0) {
+   private float method4664(double d) {
+      int n = AuraModule.INSTANCE.method6350(12);
+      if (n < 0) {
          return 1.0F;
       } else {
-         double var4 = var3 * 50.0;
-         if (var1 <= var4) {
+         double d2 = n * 50.0;
+         if (d <= d2) {
             return 1.0F;
          } else {
-            double var6 = var4 / 0.3F;
-            return var1 > var6 ? 1.0F : (float)Math.max(0.3F, var4 / var1);
+            double d3 = d2 / 0.3F;
+            return d > d3 ? 1.0F : (float)Math.max(0.3F, d2 / d);
          }
       }
    }
@@ -212,26 +212,26 @@ public final class CriticalsModule extends Module {
    }
 
    private void method4666() {
-      long var1 = System.nanoTime();
+      long nanoTime = System.nanoTime();
       if (this.longValue != 0L) {
-         double var3 = (var1 - this.longValue) / 1000000.0;
-         this.doubleValue2 = Math.max(0.0, Math.min(120.0, this.doubleValue2 + var3 - 50.0));
+         double d = (nanoTime - this.longValue) / 1000000.0;
+         this.doubleValue2 = Math.max(0.0, Math.min(120.0, this.doubleValue2 + d - 50.0));
       }
 
-      this.longValue = var1;
+      this.longValue = nanoTime;
    }
 
    public boolean method4667() {
       return this.isEnabled() && this.mode.method5226("module.criticals.cooldownTimer") && AuraModule.INSTANCE.method6347();
    }
 
-   public boolean method4668(float var1) {
+   public boolean method4668(float f) {
       if (!this.method4667()) {
          return true;
       } else {
          this.doubleValue = AuraModule.INSTANCE.method6346();
-         CriticalsState var2 = this.method4669();
-         return mc.player != null && !(mc.player.fallDistance <= 0.0) ? var2.method1708(this.doubleValue, var1) : false;
+         CriticalsState criticalsState = this.method4669();
+         return mc.player != null && !(mc.player.fallDistance <= 0.0) ? criticalsState.method1708(this.doubleValue, f) : false;
       }
    }
 

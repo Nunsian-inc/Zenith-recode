@@ -25,12 +25,12 @@ public abstract class MixinAbstractBlockState {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void onEntityCollision(Level var1, BlockPos var2, Entity var3, InsideBlockEffectApplier var4, boolean var5, CallbackInfo var6) {
-      if (var3 == Minecraft.getInstance().player) {
-         BlockCollisionEvent var7 = new BlockCollisionEvent(this.getBlock(), var2);
-         EventManager.call(var7);
-         if (var7.isCancelled()) {
-            var6.cancel();
+   public void onEntityCollision(Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier blockEffectApplier, boolean flag, CallbackInfo callbackInfo) {
+      if (entity == Minecraft.getInstance().player) {
+         BlockCollisionEvent event = new BlockCollisionEvent(this.getBlock(), blockPos);
+         EventManager.call(event);
+         if (event.isCancelled()) {
+            callbackInfo.cancel();
          }
       }
    }

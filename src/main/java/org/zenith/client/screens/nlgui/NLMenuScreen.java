@@ -146,145 +146,145 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
 
    // $VF: Could not inline inconsistent finally blocks
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   public void renderTop(MenuDrawContext var1, int var2, int var3) {
-      ZenithStyle var4 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var4 != null) {
+   public void renderTop(MenuDrawContext menuDrawContext, int mouseX, int mouseY) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
          HoverInfo.beginFrame();
          RoundedRectBatch.begin();
 
          try {
-            this.renderTopDeferred(ZenithDrawContext.method8095(var1), var2, var3, var4);
-         } catch (Throwable var7) {
+            this.renderTopDeferred(ZenithDrawContext.method8095(menuDrawContext), mouseX, mouseY, currentStyle);
+         } catch (Throwable e) {
             RoundedRectBatch.method2933();
-            throw var7;
+            throw e;
          }
 
          RoundedRectBatch.method2933();
       }
    }
 
-   private void renderTopDeferred(MenuDrawContext var1, int var2, int var3, ZenithStyle var4) {
+   private void renderTopDeferred(MenuDrawContext customDrawContext, int mouseX, int mouseY, ZenithStyle currentStyle) {
       this.updateSmoothValues();
-      float var5 = GuiStyle.PANEL_ROUND.intValue();
+      float intValue = GuiStyle.PANEL_ROUND.intValue();
       this.animationClose.setDuration(MenuModule.INSTANCE.method5345());
       this.setTypeAnimation.setDuration(MenuModule.INSTANCE.method5346());
-      float var6 = this.animationClose.method2808(this.closing ? 0.0F : 1.0F);
+      float previewAlpha = this.animationClose.method2808(this.closing ? 0.0F : 1.0F);
       this.contentDip = 0.32F + 0.68F * this.languageSwitch();
-      float var7 = var6 * this.contentDip;
-      ElementPanel var8 = this.type.getPanelSupplier().get();
-      ElementPanel var9 = this.prevType != null ? this.prevType.getPanelSupplier().get() : null;
-      float var10 = this.setTypeAnimation.getValue();
-      float var11 = mc.getWindow().getGuiScaledWidth();
-      float var12 = mc.getWindow().getGuiScaledHeight();
-      boolean var13 = var8 == this.guiModulePanel;
+      float f = previewAlpha * this.contentDip;
+      ElementPanel leftOwner = this.type.getPanelSupplier().get();
+      ElementPanel elementPanel = this.prevType != null ? this.prevType.getPanelSupplier().get() : null;
+      float alpha1 = this.setTypeAnimation.getValue();
+      float guiScaledWidth = mc.getWindow().getGuiScaledWidth();
+      float guiScaledHeight = mc.getWindow().getGuiScaledHeight();
+      boolean active = leftOwner == this.guiModulePanel;
       leftWidthPanel = 100.0F;
-      boolean var14;
-      if (var14 = var13 && this.inspectorPanel.hasPreview()) {
+      boolean flag;
+      if (flag = active && this.inspectorPanel.hasPreview()) {
          this.previewStage.show(this.inspectorPanel.previewKind(), this.inspectorPanel.previewOwner());
       } else if (this.previewStage.isOpen()) {
          this.previewStage.hide();
       }
 
-      float var15 = this.previewWidthAnimation.method2808(var14 ? 128.0F : 0.0F);
-      float var16 = this.crosshairWidthAnimation.method2808(this.crosshairEditor.isOpen() ? 176.0F : 0.0F);
-      extraWidth = this.extraWidthAnimation.method2808(var8.extraWidth());
-      widthPanel = leftWidthPanel + 380.0F + var15 + var16 + extraWidth;
+      float f2 = this.previewWidthAnimation.method2808(flag ? 128.0F : 0.0F);
+      float f3 = this.crosshairWidthAnimation.method2808(this.crosshairEditor.isOpen() ? 176.0F : 0.0F);
+      extraWidth = this.extraWidthAnimation.method2808(leftOwner.extraWidth());
+      widthPanel = leftWidthPanel + 380.0F + f2 + f3 + extraWidth;
       heightPanel = 320.0F;
-      float var17 = var11 / 2.0F - widthPanel / 2.0F;
-      float var18 = var12 / 1.9F - heightPanel / 2.0F;
-      this.rawX = MenuModule.INSTANCE.method5348() ? MenuModule.INSTANCE.method5351(var17) : var17;
-      this.rawY = MenuModule.INSTANCE.method5348() ? MenuModule.INSTANCE.method5352(var18) : var18;
-      this.x = this.clampRenderPosition(this.rawX, widthPanel, var11);
-      this.y = this.clampRenderPosition(this.rawY, heightPanel, var12);
-      float var19 = this.getGuiScale();
-      float var20 = this.x + widthPanel / 2.0F;
-      float var21 = this.y + heightPanel / 2.0F;
-      var2 = (int)((var2 - var20) / var19 + var20);
-      var3 = (int)((var3 - var21) / var19 + var21);
-      var1.pushMatrix();
-      var1.pose().translate(var20, var21);
-      var1.pose().scale(var19, var19);
-      var1.pose().translate(-var20, -var21);
-      float var22;
-      float var23 = (var22 = this.x + leftWidthPanel) + 236.0F;
-      float var24 = this.x + widthPanel + GuiStyle.PADDING * 2;
-      float var25;
-      if ((var25 = this.getBlurPower() * var6) != 0.0F) {
+      float f4 = guiScaledWidth / 2.0F - widthPanel / 2.0F;
+      float f5 = guiScaledHeight / 1.9F - heightPanel / 2.0F;
+      this.rawX = MenuModule.INSTANCE.method5348() ? MenuModule.INSTANCE.method5351(f4) : f4;
+      this.rawY = MenuModule.INSTANCE.method5348() ? MenuModule.INSTANCE.method5352(f5) : f5;
+      this.x = this.clampRenderPosition(this.rawX, widthPanel, guiScaledWidth);
+      this.y = this.clampRenderPosition(this.rawY, heightPanel, guiScaledHeight);
+      float guiScale = this.getGuiScale();
+      float x = this.x + widthPanel / 2.0F;
+      float y = this.y + heightPanel / 2.0F;
+      mouseX = (int)((mouseX - x) / guiScale + x);
+      mouseY = (int)((mouseY - y) / guiScale + y);
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(x, y);
+      customDrawContext.pose().scale(guiScale, guiScale);
+      customDrawContext.pose().translate(-x, -y);
+      float floatValue;
+      float floatValue2 = (floatValue = this.x + leftWidthPanel) + 236.0F;
+      float f6 = this.x + widthPanel + GuiStyle.PADDING * 2;
+      float blurPower;
+      if ((blurPower = this.getBlurPower() * previewAlpha) != 0.0F) {
          RenderShaders.method5287(
-            MatrixUtils.method664(var1.pose()),
+            MatrixUtils.method664(customDrawContext.pose()),
             this.x,
             this.y,
             widthPanel,
             heightPanel,
-            var25,
-            ProxyDotRadiusData.method8069(var5),
-            ZenithColor.INSTANCE.method7294(var6),
+            blurPower,
+            ProxyDotRadiusData.method8069(intValue),
+            ZenithColor.INSTANCE.method7294(previewAlpha),
             true,
             false
          );
       }
 
-      var1.drawRoundedRect(
+      customDrawContext.drawRoundedRect(
          this.x,
          this.y,
          leftWidthPanel + 0.5F,
          heightPanel,
-         ProxyDotRadiusData.method8078(var5, var5),
-         var4.getLeftBackground().getZenithColor().method7294(var6)
+         ProxyDotRadiusData.method8078(intValue, intValue),
+         currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawRoundedRect(
-         var22 - 0.5F,
+      customDrawContext.drawRoundedRect(
+         floatValue - 0.5F,
          this.y,
-         380.0F + var15 + var16 + extraWidth + 0.5F,
+         380.0F + f2 + f3 + extraWidth + 0.5F,
          heightPanel,
-         ProxyDotRadiusData.method8079(var5, var5),
-         var4.getRightBackground().getZenithColor().method7294(var6)
+         ProxyDotRadiusData.method8079(intValue, intValue),
+         currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha)
       );
       this.dragBounds = new BoundsData(this.x, this.y, widthPanel, 23.0F);
-      float var26 = this.clientSwapAnimation.method2808(this.quickMenuPanel.isExpanded() ? 1.0F : 0.0F);
-      boolean var27 = this.quickMenuPanel.isExpanded();
-      float var28 = swapOut(var26, var27);
-      float var29 = swapIn(var26, var27);
-      boolean var30;
-      if (var30 = var8.hasLeftColumn()) {
-         this.leftOwner = var8;
+      float f7 = this.clientSwapAnimation.method2808(this.quickMenuPanel.isExpanded() ? 1.0F : 0.0F);
+      boolean expanded = this.quickMenuPanel.isExpanded();
+      float swapOut2 = swapOut(f7, expanded);
+      float swapIn2 = swapIn(f7, expanded);
+      boolean hasLeftColumn;
+      if (hasLeftColumn = leftOwner.hasLeftColumn()) {
+         this.leftOwner = leftOwner;
       }
 
-      float var31 = this.leftSwapAnimation.method2808(var30 ? 1.0F : 0.0F);
-      float var32 = 1.0F - Mth.clamp(var31 * 1.6F, 0.0F, 1.0F);
-      boolean var33;
-      if (var33 = var26 > 0.001F && var26 < 0.999F || var31 > 0.001F && var31 < 0.999F) {
-         var1.enableScissor(this.x, this.y, this.x + leftWidthPanel, this.y + heightPanel);
+      float f8 = this.leftSwapAnimation.method2808(hasLeftColumn ? 1.0F : 0.0F);
+      float f9 = 1.0F - Mth.clamp(f8 * 1.6F, 0.0F, 1.0F);
+      boolean flag2;
+      if (flag2 = f7 > 0.001F && f7 < 0.999F || f8 > 0.001F && f8 < 0.999F) {
+         customDrawContext.enableScissor(this.x, this.y, this.x + leftWidthPanel, this.y + heightPanel);
       }
 
       try {
-         if (var32 > 0.001F) {
+         if (f9 > 0.001F) {
             this.categoryPanel
                .render(
-                  var1,
-                  var2,
-                  var3,
-                  var7 * (var27 ? var28 : var29) * var32,
-                  this.x - (var27 ? 16.0F * var26 : 0.0F) - 16.0F * var31,
+                  customDrawContext,
+                  mouseX,
+                  mouseY,
+                  f * (expanded ? swapOut2 : swapIn2) * f9,
+                  this.x - (expanded ? 16.0F * f7 : 0.0F) - 16.0F * f8,
                   this.y,
-                  var27 ? 1.0F : var29
+                  expanded ? 1.0F : swapIn2
                );
          }
 
-         if (var31 > 0.001F && this.leftOwner != null) {
-            float var34 = Mth.clamp((var31 - 0.25F) / 0.75F, 0.0F, 1.0F);
-            this.leftOwner.renderLeftColumn(var1, var2, var3, var7 * var34, this.x + 16.0F * (1.0F - var31), this.y, leftWidthPanel, heightPanel);
+         if (f8 > 0.001F && this.leftOwner != null) {
+            float f10 = Mth.clamp((f8 - 0.25F) / 0.75F, 0.0F, 1.0F);
+            this.leftOwner.renderLeftColumn(customDrawContext, mouseX, mouseY, f * f10, this.x + 16.0F * (1.0F - f8), this.y, leftWidthPanel, heightPanel);
          }
 
-         if (var30 && this.quickMenuPanel.isExpanded()) {
+         if (hasLeftColumn && this.quickMenuPanel.isExpanded()) {
             this.quickMenuPanel.setExpanded(false);
          }
 
          this.quickMenuPanel
-            .renderColumn(var1, var2, var3, var7 * (var27 ? var29 : var28) * var32, this.x + (var27 ? 0.0F : 16.0F * (1.0F - var26)), this.y, leftWidthPanel);
+            .renderColumn(customDrawContext, mouseX, mouseY, f * (expanded ? swapIn2 : swapOut2) * f9, this.x + (expanded ? 0.0F : 16.0F * (1.0F - f7)), this.y, leftWidthPanel);
       } finally {
-         if (var33) {
-            var1.disableScissor();
+         if (flag2) {
+            customDrawContext.disableScissor();
          }
       }
 
@@ -295,27 +295,27 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          this.setTypeAnimation.method2808(1.0F);
       }
 
-      float var41 = this.y
-         + (var9 != null ? Mth.lerp(var10, this.headerContentOffset(var9), this.headerContentOffset(var8)) : this.headerContentOffset(var8));
+      float y2 = this.y
+         + (elementPanel != null ? Mth.lerp(alpha1, this.headerContentOffset(elementPanel), this.headerContentOffset(leftOwner)) : this.headerContentOffset(leftOwner));
       contentBottom = this.y + heightPanel;
-      float var35 = Mth.lerp(this.seamRetract(), this.y + GuiStyle.PADDING.intValue(), var41);
-      this.renderColumnSeams(var1, var4, var22, var23, var35, var6, var13, var10);
-      this.renderContentHeader(var1, var2, var3, var7, var22, this.y, var8, var9, var10, var13);
-      if (var9 != null) {
-         rightWidthPanel = var9.getContentWidth();
-         var9.render(var1, var2, var3, var7 * (1.0F - var10), var22, var41);
+      float y3 = Mth.lerp(this.seamRetract(), this.y + GuiStyle.PADDING.intValue(), y2);
+      this.renderColumnSeams(customDrawContext, currentStyle, floatValue, floatValue2, y3, previewAlpha, active, alpha1);
+      this.renderContentHeader(customDrawContext, mouseX, mouseY, f, floatValue, this.y, leftOwner, elementPanel, alpha1, active);
+      if (elementPanel != null) {
+         rightWidthPanel = elementPanel.getContentWidth();
+         elementPanel.render(customDrawContext, mouseX, mouseY, f * (1.0F - alpha1), floatValue, y2);
       }
 
-      rightWidthPanel = var8.getContentWidth();
-      var8.render(var1, var2, var3, var7 * var10, var22, var41);
-      this.inspectorPanel.setActive(var13);
-      if (var13) {
-         this.inspectorPanel.render(var1, var2, var3, var7 * var10, var23, this.y);
-         if (var15 > 1.0F) {
-            this.renderPreviewColumn(var1, var2, var3, var23 + 144.0F, this.y, var15, var6 * var10, var4);
+      rightWidthPanel = leftOwner.getContentWidth();
+      leftOwner.render(customDrawContext, mouseX, mouseY, f * alpha1, floatValue, y2);
+      this.inspectorPanel.setActive(active);
+      if (active) {
+         this.inspectorPanel.render(customDrawContext, mouseX, mouseY, f * alpha1, floatValue2, this.y);
+         if (f2 > 1.0F) {
+            this.renderPreviewColumn(customDrawContext, mouseX, mouseY, floatValue2 + 144.0F, this.y, f2, previewAlpha * alpha1, currentStyle);
          }
 
-         this.renderCommandBar(var1, var2, var3, var22, this.y + heightPanel - 20.0F, 236.0F, var7 * var10);
+         this.renderCommandBar(customDrawContext, mouseX, mouseY, floatValue, this.y + heightPanel - 20.0F, 236.0F, f * alpha1);
       } else {
          this.commandBarBounds = null;
          if (this.commandField != null) {
@@ -323,44 +323,44 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          }
       }
 
-      if (var9 != null && var9.isRender()) {
-         var9.renderRightPanel(var1, var2, var3, var6 * (1.0F - var10), var24, this.y, 1.0F - var10);
+      if (elementPanel != null && elementPanel.isRender()) {
+         elementPanel.renderRightPanel(customDrawContext, mouseX, mouseY, previewAlpha * (1.0F - alpha1), f6, this.y, 1.0F - alpha1);
       }
 
-      if (var8.isRender()) {
-         var8.renderRightPanel(var1, var2, var3, var6 * var10, var24, this.y, var10);
+      if (leftOwner.isRender()) {
+         leftOwner.renderRightPanel(customDrawContext, mouseX, mouseY, previewAlpha * alpha1, f6, this.y, alpha1);
       }
 
       ScissorFlusher.flush();
-      Zenith.getInstance().getKawaseBlur().method7350(var1);
-      if (var9 != null) {
-         var9.renderPriority(var1, var2, var3, var7 * (1.0F - var10), var22, var41);
+      Zenith.getInstance().getKawaseBlur().method7350(customDrawContext);
+      if (elementPanel != null) {
+         elementPanel.renderPriority(customDrawContext, mouseX, mouseY, f * (1.0F - alpha1), floatValue, y2);
       }
 
-      var8.renderPriority(var1, var2, var3, var7 * var10, var22, var41);
+      leftOwner.renderPriority(customDrawContext, mouseX, mouseY, f * alpha1, floatValue, y2);
       if (!this.closing && this.prevType != null) {
-         float var36 = var9 != null ? Math.max(var9.getContentWidth(), var8.getContentWidth()) : var8.getContentWidth();
-         this.renderElementSwapBlur(var1, var22, var41, var36, contentBottom - var41, ProxyDotRadiusData.method8076(0.0F, var5), 1.0F - var10);
+         float contentWidth = elementPanel != null ? Math.max(elementPanel.getContentWidth(), leftOwner.getContentWidth()) : leftOwner.getContentWidth();
+         this.renderElementSwapBlur(customDrawContext, floatValue, y2, contentWidth, contentBottom - y2, ProxyDotRadiusData.method8076(0.0F, intValue), 1.0F - alpha1);
       }
 
-      this.renderMenuBlurLayers(var1, var6, var8, var9, var10, var24, this.y, var5);
-      if (var16 > 1.0F) {
-         this.renderCrosshairColumn(var1, var2, var3, this.x + widthPanel - var16, this.y, var16, var6);
+      this.renderMenuBlurLayers(customDrawContext, previewAlpha, leftOwner, elementPanel, alpha1, f6, this.y, intValue);
+      if (f3 > 1.0F) {
+         this.renderCrosshairColumn(customDrawContext, mouseX, mouseY, this.x + widthPanel - f3, this.y, f3, previewAlpha);
       }
 
-      var1.popMatrix();
+      customDrawContext.popMatrix();
    }
 
    private float languageSwitch() {
-      Zenith var1 = Zenith.getInstance();
-      String var2 = var1 == null ? null : var1.getLocalization().getLanguageName();
-      if (var2 == null) {
+      Zenith zenith = Zenith.getInstance();
+      String languageName = zenith == null ? null : zenith.getLocalization().getLanguageName();
+      if (languageName == null) {
          return 1.0F;
       } else {
          if (this.seenLanguage == null) {
-            this.seenLanguage = var2;
-         } else if (!this.seenLanguage.equals(var2)) {
-            this.seenLanguage = var2;
+            this.seenLanguage = languageName;
+         } else if (!this.seenLanguage.equals(languageName)) {
+            this.seenLanguage = languageName;
             this.languageAnimation.reset(0.0F);
             this.languageAnimation.method2810(1.0F);
          }
@@ -369,325 +369,325 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       }
    }
 
-   private static float swapOut(float var0, boolean var1) {
-      float var2 = var1 ? var0 : 1.0F - var0;
-      return Mth.clamp(1.0F - var2 / 0.45F, 0.0F, 1.0F);
+   private static float swapOut(float f, boolean expanded) {
+      float f2 = expanded ? f : 1.0F - f;
+      return Mth.clamp(1.0F - f2 / 0.45F, 0.0F, 1.0F);
    }
 
-   private static float swapIn(float var0, boolean var1) {
-      return Mth.clamp(((var1 ? var0 : 1.0F - var0) - 0.3F) / 0.7F, 0.0F, 1.0F);
+   private static float swapIn(float f, boolean expanded) {
+      return Mth.clamp(((expanded ? f : 1.0F - f) - 0.3F) / 0.7F, 0.0F, 1.0F);
    }
 
-   private void renderPreviewColumn(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      var1.drawRect(
-         var4,
-         var5 + GuiStyle.PADDING.intValue(),
+   private void renderPreviewColumn(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float f, float f2, ZenithStyle currentStyle) {
+      customDrawContext.drawRect(
+         floatValue,
+         y + GuiStyle.PADDING.intValue(),
          1.0F,
          heightPanel - GuiStyle.PADDING.intValue() * 2.0F,
-         var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F)
+         currentStyle.getFieldBorder().getZenithColor().method7294(f2 * 2.0F)
       );
-      float var9 = Mth.clamp(var6 / 128.0F, 0.0F, 1.0F);
-      float var10;
-      if (!((var10 = var7 * var9 * var9) <= 0.01F)) {
-         Font var11 = Fonts.NEW_MEDIUM.getFont(5.0F);
-         Font var12 = Fonts.NEW_REGULAR.getFont(4.3F);
-         float var13 = var4 + GuiStyle.PADDING * 2;
-         float var14 = var5 + GuiStyle.PADDING * 2;
-         var1.drawText(
-            var11,
+      float f3 = Mth.clamp(f / 128.0F, 0.0F, 1.0F);
+      float previewAlpha;
+      if (!((previewAlpha = f2 * f3 * f3) <= 0.01F)) {
+         Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+         float floatValue2 = floatValue + GuiStyle.PADDING * 2;
+         float f4 = y + GuiStyle.PADDING * 2;
+         customDrawContext.drawText(
+            font,
             Zenith.getInstance().getLocalization().translate("esp.preview"),
-            var13,
-            var14 + 1.0F,
-            var8.getTextEnable().getZenithColor().method7294(var10)
+            floatValue2,
+            f4 + 1.0F,
+            currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
          );
-         var1.drawText(
-            var12,
+         customDrawContext.drawText(
+            font2,
             Zenith.getInstance().getLocalization().translate("esp.preview.desc"),
-            var13,
-            var14 + var11.height() + 3.0F,
-            var8.getTextTertiary().getZenithColor().method7294(var10)
+            floatValue2,
+            f4 + font.height() + 3.0F,
+            currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
          if (!this.previewStage.isLive()) {
-            Font var15 = Fonts.NEW_REGULAR.getFont(4.6F);
-            String var16 = Zenith.getInstance().getLocalization().translate("esp.preview.disabled");
-            var1.drawText(
-               var15,
-               var16,
-               var4 + (var6 - var15.width(var16)) / 2.0F,
-               var5 + 23.0F + GuiStyle.PADDING * 2,
-               var8.getTextTertiary().getZenithColor().method7294(var10)
+            Font font3 = Fonts.NEW_REGULAR.getFont(4.6F);
+            String text = Zenith.getInstance().getLocalization().translate("esp.preview.disabled");
+            customDrawContext.drawText(
+               font3,
+               text,
+               floatValue + (f - font3.width(text)) / 2.0F,
+               y + 23.0F + GuiStyle.PADDING * 2,
+               currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
          }
 
-         boolean var20;
-         if (var20 = var9 < 0.995F) {
-            var1.enableScissor(var4, var5, var4 + var6, var5 + heightPanel);
+         boolean flag;
+         if (flag = f3 < 0.995F) {
+            customDrawContext.enableScissor(floatValue, y, floatValue + f, y + heightPanel);
          }
 
          try {
-            this.previewStage.render(var1, var2, var3, var4, var5 + 23.0F, 128.0F, heightPanel - 23.0F, var10, var9);
+            this.previewStage.render(customDrawContext, mouseX, mouseY, floatValue, y + 23.0F, 128.0F, heightPanel - 23.0F, previewAlpha, f3);
          } finally {
-            if (var20) {
-               var1.disableScissor();
+            if (flag) {
+               customDrawContext.disableScissor();
             }
          }
       }
    }
 
-   private void renderCrosshairColumn(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null) {
-         var1.drawRect(
-            var4,
-            var5 + GuiStyle.PADDING.intValue(),
+   private void renderCrosshairColumn(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float f, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         customDrawContext.drawRect(
+            floatValue,
+            y + GuiStyle.PADDING.intValue(),
             1.0F,
             heightPanel - GuiStyle.PADDING.intValue() * 2.0F,
-            var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F)
+            currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F)
          );
-         float var9 = Mth.clamp(var6 / 176.0F, 0.0F, 1.0F);
-         this.crosshairEditor.render(var1, var2, var3, var4, var5, 176.0F, heightPanel, var7, var9);
+         float f2 = Mth.clamp(f / 176.0F, 0.0F, 1.0F);
+         this.crosshairEditor.render(customDrawContext, mouseX, mouseY, floatValue, y, 176.0F, heightPanel, previewAlpha, f2);
       }
    }
 
-   private void renderColumnSeams(MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5, float var6, boolean var7, float var8) {
-      float var9;
-      if (!((var9 = this.y + heightPanel - GuiStyle.PADDING.intValue() - var5) <= 0.0F)) {
-         var1.drawRect(var3, var5, 1.0F, var9, var2.getFieldBorder().getZenithColor().method7294(var6 * 2.0F));
-         if (var7) {
-            float var10;
-            if ((var10 = Mth.clamp((var8 - 0.8F) / 0.19999999F, 0.0F, 1.0F)) > 0.001F) {
-               var1.drawRect(var4, var5, 1.0F, var9, var2.getFieldBorder().getZenithColor().method7294(var6 * var10 * 2.0F));
+   private void renderColumnSeams(MenuDrawContext customDrawContext, ZenithStyle currentStyle, float floatValue, float f, float y, float previewAlpha, boolean active, float alpha1) {
+      float height;
+      if (!((height = this.y + heightPanel - GuiStyle.PADDING.intValue() - y) <= 0.0F)) {
+         customDrawContext.drawRect(floatValue, y, 1.0F, height, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
+         if (active) {
+            float f2;
+            if ((f2 = Mth.clamp((alpha1 - 0.8F) / 0.19999999F, 0.0F, 1.0F)) > 0.001F) {
+               customDrawContext.drawRect(f, y, 1.0F, height, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * f2 * 2.0F));
             }
          }
       }
    }
 
    private float seamRetract() {
-      boolean var1 = !this.closing && this.prevType != null && MenuModule.INSTANCE.method5344() && this.getBlurPower() != 0.0F;
-      return this.seamRetractAnimation.method2808(var1 ? 1.0F : 0.0F);
+      boolean flag = !this.closing && this.prevType != null && MenuModule.INSTANCE.method5344() && this.getBlurPower() != 0.0F;
+      return this.seamRetractAnimation.method2808(flag ? 1.0F : 0.0F);
    }
 
    private void renderContentHeader(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, ElementPanel var7, ElementPanel var8, float var9, boolean var10
+      MenuDrawContext customDrawContext, int mouseX, int mouseY, float previewAlpha, float floatValue, float y, ElementPanel leftOwner, ElementPanel elementPanel, float alpha1, boolean active
    ) {
-      float var11 = var6 + GuiStyle.PADDING.intValue();
-      float var12 = this.headerSearchWidth(var7);
-      float var13;
-      float var14 = (var13 = this.headerSearchX(var5, var7, var12)) + var12;
-      float var15 = var13;
-      float var16 = var12;
-      float var17 = this.headerBandHeight(var7);
-      if (var8 != null) {
-         float var18 = this.headerSearchWidth(var8);
-         float var19;
-         float var20 = (var19 = this.headerSearchX(var5, var8, var18)) + var18;
-         var17 = Mth.lerp(var9, this.headerBandHeight(var8), var17);
-         var15 = Mth.lerp(var9, var19, var13);
-         var16 = Mth.lerp(var9, var20, var14) - var15;
+      float animationPosY = y + GuiStyle.PADDING.intValue();
+      float headerSearchWidth = this.headerSearchWidth(leftOwner);
+      float headerSearchX;
+      float f = (headerSearchX = this.headerSearchX(floatValue, leftOwner, headerSearchWidth)) + headerSearchWidth;
+      float headerSearchX2 = headerSearchX;
+      float headerSearchWidth2 = headerSearchWidth;
+      float headerBandHeight = this.headerBandHeight(leftOwner);
+      if (elementPanel != null) {
+         float headerSearchWidth3 = this.headerSearchWidth(elementPanel);
+         float headerSearchX3;
+         float f2 = (headerSearchX3 = this.headerSearchX(floatValue, elementPanel, headerSearchWidth3)) + headerSearchWidth3;
+         headerBandHeight = Mth.lerp(alpha1, this.headerBandHeight(elementPanel), headerBandHeight);
+         headerSearchX2 = Mth.lerp(alpha1, headerSearchX3, headerSearchX);
+         headerSearchWidth2 = Mth.lerp(alpha1, f2, f) - headerSearchX2;
       }
 
-      if (var8 != null) {
-         this.renderPanelHeader(var1, var2, var3, var8, var5, var11, var4 * (1.0F - var9), 1.0F - var9);
+      if (elementPanel != null) {
+         this.renderPanelHeader(customDrawContext, mouseX, mouseY, elementPanel, floatValue, animationPosY, previewAlpha * (1.0F - alpha1), 1.0F - alpha1);
       }
 
-      this.renderPanelHeader(var1, var2, var3, var7, var5, var11, var4 * var9, var9);
-      this.renderSearch(var1, var15, var11, var17, var16, var4, var10, var10 ? var9 : 0.0F);
+      this.renderPanelHeader(customDrawContext, mouseX, mouseY, leftOwner, floatValue, animationPosY, previewAlpha * alpha1, alpha1);
+      this.renderSearch(customDrawContext, headerSearchX2, animationPosY, headerBandHeight, headerSearchWidth2, previewAlpha, active, active ? alpha1 : 0.0F);
    }
 
-   private void renderPanelHeader(MenuDrawContext var1, int var2, int var3, ElementPanel var4, float var5, float var6, float var7, float var8) {
-      if (!(var7 <= 0.001F)) {
-         float var9 = Math.max(0.0F, var4.getContentWidth() - this.headerSearchWidth(var4) - GuiStyle.PADDING.intValue());
-         var4.renderHeader(var1, var2, var3, var7, var5, var6, var9);
-         float var10;
-         if ((var10 = var4.getButtonWidth()) > 0.01F) {
-            var4.renderHeaderButtons(var1, var2, var3, var7, var5 + var4.getHeaderTitleWidth() + GuiStyle.PADDING.intValue() * 2.0F, var6, var10, var8);
+   private void renderPanelHeader(MenuDrawContext customDrawContext, int mouseX, int mouseY, ElementPanel leftOwner, float floatValue, float animationPosY, float f, float alpha1) {
+      if (!(f <= 0.001F)) {
+         float f2 = Math.max(0.0F, leftOwner.getContentWidth() - this.headerSearchWidth(leftOwner) - GuiStyle.PADDING.intValue());
+         leftOwner.renderHeader(customDrawContext, mouseX, mouseY, f, floatValue, animationPosY, f2);
+         float buttonWidth;
+         if ((buttonWidth = leftOwner.getButtonWidth()) > 0.01F) {
+            leftOwner.renderHeaderButtons(customDrawContext, mouseX, mouseY, f, floatValue + leftOwner.getHeaderTitleWidth() + GuiStyle.PADDING.intValue() * 2.0F, animationPosY, buttonWidth, alpha1);
          }
       }
    }
 
-   private float headerSearchWidth(ElementPanel var1) {
-      return var1.isHeaderSearchOnly() ? 236.0F : Math.min(120.0F, var1.getContentWidth());
+   private float headerSearchWidth(ElementPanel leftOwner) {
+      return leftOwner.isHeaderSearchOnly() ? 236.0F : Math.min(120.0F, leftOwner.getContentWidth());
    }
 
-   private float headerSearchX(float var1, ElementPanel var2, float var3) {
-      return var2.isHeaderSearchOnly() ? var1 : var1 + var2.getContentWidth() - var3;
+   private float headerSearchX(float floatValue, ElementPanel leftOwner, float headerSearchWidth) {
+      return leftOwner.isHeaderSearchOnly() ? floatValue : floatValue + leftOwner.getContentWidth() - headerSearchWidth;
    }
 
-   private float headerBandHeight(ElementPanel var1) {
-      return var1.isHeaderSearchOnly() ? 23.0F - GuiStyle.PADDING.intValue() * 2.0F : 23.0F;
+   private float headerBandHeight(ElementPanel leftOwner) {
+      return leftOwner.isHeaderSearchOnly() ? 23.0F - GuiStyle.PADDING.intValue() * 2.0F : 23.0F;
    }
 
-   private float headerContentOffset(ElementPanel var1) {
-      return var1.isHeaderSearchOnly() ? 23.0F : 23.0F + GuiStyle.PADDING.intValue() * 2.0F;
+   private float headerContentOffset(ElementPanel leftOwner) {
+      return leftOwner.isHeaderSearchOnly() ? 23.0F : 23.0F + GuiStyle.PADDING.intValue() * 2.0F;
    }
 
-   private void renderSearch(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, boolean var7, float var8) {
-      ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var9 != null) {
-         boolean var10 = this.searchField != null && this.searchField.isSelected();
-         float var11 = 8.0F;
-         float var12 = this.searchFocusAnimation.method2808(var10 ? 1.0F : 0.0F);
-         ProxyDotRadiusData var13 = ProxyDotRadiusData.method8069(var4 / 2.0F);
-         var1.drawRoundedRectBatched(
-            var2 + GuiStyle.PADDING.intValue(),
-            var3,
-            var5 - GuiStyle.PADDING.intValue() * 2.0F,
-            var4,
-            var13,
-            var9.getPanelLeftBackground().getZenithColor().method7294(var6)
+   private void renderSearch(MenuDrawContext customDrawContext, float f, float animationPosY, float headerBandHeight, float f2, float previewAlpha, boolean active, float f3) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         boolean flag = this.searchField != null && this.searchField.isSelected();
+         float f4 = 8.0F;
+         float hover = this.searchFocusAnimation.method2808(flag ? 1.0F : 0.0F);
+         ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(headerBandHeight / 2.0F);
+         customDrawContext.drawRoundedRectBatched(
+            f + GuiStyle.PADDING.intValue(),
+            animationPosY,
+            f2 - GuiStyle.PADDING.intValue() * 2.0F,
+            headerBandHeight,
+            proxyDotRadiusData,
+            currentStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha)
          );
-         var1.flushRoundedRects();
-         if (var12 > 0.01F) {
-            var1.drawRoundedBorder(
-               var2 + GuiStyle.PADDING.intValue(),
-               var3,
-               var5 - GuiStyle.PADDING.intValue() * 2.0F,
-               var4,
+         customDrawContext.flushRoundedRects();
+         if (hover > 0.01F) {
+            customDrawContext.drawRoundedBorder(
+               f + GuiStyle.PADDING.intValue(),
+               animationPosY,
+               f2 - GuiStyle.PADDING.intValue() * 2.0F,
+               headerBandHeight,
                0.15F,
-               var13,
-               var9.getPrimaryColor().getZenithColor().method7292(0.34F).method7294(var6 * var12)
+               proxyDotRadiusData,
+               currentStyle.getPrimaryColor().getZenithColor().method7292(0.34F).method7294(previewAlpha * hover)
             );
          }
 
-         Font var14 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         float var15 = var3 + (var4 - var14.height()) / 2.0F;
+         Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+         float centeredTextY = animationPosY + (headerBandHeight - font.height()) / 2.0F;
          MenuGlyph.SEARCH
             .draw(
-               var1,
-               var2 + var11 + GuiStyle.PADDING.intValue(),
-               var3 + (var4 - 6.0F) / 2.0F,
-               var9.getTextTertiary().getZenithColor().method7295(var9.getTextEnable().getZenithColor(), var12).method7294(var6)
+               customDrawContext,
+               f + f4 + GuiStyle.PADDING.intValue(),
+               animationPosY + (headerBandHeight - 6.0F) / 2.0F,
+               currentStyle.getTextTertiary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha)
             );
-         this.searchField.setFont(var14);
-         this.searchField.setWidth(var5 - var11 * 2.0F - 30.0F);
+         this.searchField.setFont(font);
+         this.searchField.setWidth(f2 - f4 * 2.0F - 30.0F);
          this.searchField
             .method987(
-               var1,
-               var2 + var11 + GuiStyle.PADDING.intValue() + 8.0F,
-               var15,
-               var9.getTextEnable().getZenithColor().method7294(var6),
-               var9.getTextTertiary().getZenithColor().method7294(var6)
+               customDrawContext,
+               f + f4 + GuiStyle.PADDING.intValue() + 8.0F,
+               centeredTextY,
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+               currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
-         if (var7 && this.guiModulePanel != null && var8 > 0.01F) {
-            String var16 = String.valueOf(this.guiModulePanel.getVisibleCount());
-            Font var17 = Fonts.NEW_REGULAR.getFont(4.8F);
-            var1.drawText(
-               var17,
-               var16,
-               var2 + var5 - var11 - GuiStyle.PADDING.intValue() - var17.width(var16),
-               var3 + (var4 - var17.height()) / 2.0F,
-               var9.getTextTertiary().getZenithColor().method7294(var6 * var8)
+         if (active && this.guiModulePanel != null && f3 > 0.01F) {
+            String text = String.valueOf(this.guiModulePanel.getVisibleCount());
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.8F);
+            customDrawContext.drawText(
+               font2,
+               text,
+               f + f2 - f4 - GuiStyle.PADDING.intValue() - font2.width(text),
+               animationPosY + (headerBandHeight - font2.height()) / 2.0F,
+               currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * f3)
             );
          }
       }
    }
 
-   private void renderCommandBar(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null) {
-         var1.drawRect(
-            var4 + GuiStyle.PADDING.intValue() * 2.0F,
-            var5,
-            var6 - GuiStyle.PADDING.intValue() * 4.0F,
+   private void renderCommandBar(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float width, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         customDrawContext.drawRect(
+            floatValue + GuiStyle.PADDING.intValue() * 2.0F,
+            y,
+            width - GuiStyle.PADDING.intValue() * 4.0F,
             1.0F,
-            var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F)
+            currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F)
          );
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.0F);
-         float var10 = var5 + (20.0F - var9.height()) / 2.0F + 1.0F;
-         float var11 = 8.0F;
-         boolean var12 = this.commandField != null && this.commandField.isSelected();
-         var1.drawText(var9, ":", var4 + var11, var10, (var12 ? var8.getPrimaryColor() : var8.getTextTertiary()).getZenithColor().method7294(var7));
-         this.commandField.setFont(var9);
-         this.commandField.setWidth(var6 - var11 * 2.0F - 12.0F);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+         float centeredTextY = y + (20.0F - font.height()) / 2.0F + 1.0F;
+         float f = 8.0F;
+         boolean flag = this.commandField != null && this.commandField.isSelected();
+         customDrawContext.drawText(font, ":", floatValue + f, centeredTextY, (flag ? currentStyle.getPrimaryColor() : currentStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha));
+         this.commandField.setFont(font);
+         this.commandField.setWidth(width - f * 2.0F - 12.0F);
          this.commandField
             .method987(
-               var1,
-               var4 + var11 + 8.0F,
-               var10,
-               var8.getTextEnable().getZenithColor().method7294(var7),
-               var8.getTextTertiary().getZenithColor().method7294(var7)
+               customDrawContext,
+               floatValue + f + 8.0F,
+               centeredTextY,
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+               currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
-         this.commandBarBounds = new BoundsData(var4, var5, var6, 20.0F);
-         if (!this.commandFeedback.isEmpty() && !var12) {
-            Font var13 = Fonts.NEW_REGULAR.getFont(4.8F);
-            var1.drawText(
-               var13,
+         this.commandBarBounds = new BoundsData(floatValue, y, width, 20.0F);
+         if (!this.commandFeedback.isEmpty() && !flag) {
+            Font font2 = Fonts.NEW_REGULAR.getFont(4.8F);
+            customDrawContext.drawText(
+               font2,
                this.commandFeedback,
-               var4 + var6 - var11 - var13.width(this.commandFeedback),
-               var10,
-               var8.getTextTertiary().getZenithColor().method7294(var7)
+               floatValue + width - f - font2.width(this.commandFeedback),
+               centeredTextY,
+               currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             );
          }
       }
    }
 
    private void runCommand() {
-      String var1 = this.commandField.getText();
-      if (var1 != null && !var1.isBlank()) {
-         String var2;
+      String text = this.commandField.getText();
+      if (text != null && !text.isBlank()) {
+         String str;
          try {
-            Zenith.getInstance().getCommandManager().getDispatcher().execute(var1.trim(), Zenith.getInstance().getCommandManager().getSource());
-            var2 = "gui.command.ok";
-         } catch (Exception var4) {
-            var2 = "gui.command.error";
+            Zenith.getInstance().getCommandManager().getDispatcher().execute(text.trim(), Zenith.getInstance().getCommandManager().getSource());
+            str = "gui.command.ok";
+         } catch (Exception e) {
+            str = "gui.command.error";
          }
 
-         this.commandFeedback = Zenith.getInstance().getLocalization().translate(var2);
+         this.commandFeedback = Zenith.getInstance().getLocalization().translate(str);
          this.commandField.setText("");
          this.commandField.setCursor(0);
       }
    }
 
-   private void renderMenuBlurLayers(MenuDrawContext var1, float var2, ElementPanel var3, ElementPanel var4, float var5, float var6, float var7, float var8) {
+   private void renderMenuBlurLayers(MenuDrawContext customDrawContext, float previewAlpha, ElementPanel leftOwner, ElementPanel elementPanel, float alpha1, float f, float y, float intValue) {
       if (MenuModule.INSTANCE.method5344()) {
-         float var9;
-         if ((var9 = this.getBlurPower()) != 0.0F) {
+         float blurPower;
+         if ((blurPower = this.getBlurPower()) != 0.0F) {
             if (this.closing) {
-               this.drawBlurLayer(var1, this.x, this.y, widthPanel, heightPanel, var8, var2, var9);
-               this.drawRightPanelBlur(var1, var4, var2 * (1.0F - var5), 1.0F - var5, var6, var7, var2, var9);
-               this.drawRightPanelBlur(var1, var3, var2 * var5, var5, var6, var7, var2, var9);
+               this.drawBlurLayer(customDrawContext, this.x, this.y, widthPanel, heightPanel, intValue, previewAlpha, blurPower);
+               this.drawRightPanelBlur(customDrawContext, elementPanel, previewAlpha * (1.0F - alpha1), 1.0F - alpha1, f, y, previewAlpha, blurPower);
+               this.drawRightPanelBlur(customDrawContext, leftOwner, previewAlpha * alpha1, alpha1, f, y, previewAlpha, blurPower);
             }
          }
       }
    }
 
-   private void drawRightPanelBlur(MenuDrawContext var1, ElementPanel var2, float var3, float var4, float var5, float var6, float var7, float var8) {
-      if (var2 != null && var2.isRender()) {
-         BoundsData var9 = var2.getRightPanelBlurBounds(var5, var6, var3, var4);
-         if (var9 != null) {
-            this.drawBlurLayer(var1, var9.getFloatValue(), var9.getFloatValue2(), var9.width(), var9.height(), GuiStyle.ROUND.intValue(), var7, var8);
+   private void drawRightPanelBlur(MenuDrawContext customDrawContext, ElementPanel leftOwner, float f, float alpha1, float f2, float y, float previewAlpha, float blurPower) {
+      if (leftOwner != null && leftOwner.isRender()) {
+         BoundsData rightPanelBlurBounds = leftOwner.getRightPanelBlurBounds(f2, y, f, alpha1);
+         if (rightPanelBlurBounds != null) {
+            this.drawBlurLayer(customDrawContext, rightPanelBlurBounds.getFloatValue(), rightPanelBlurBounds.getFloatValue2(), rightPanelBlurBounds.width(), rightPanelBlurBounds.height(), GuiStyle.ROUND.intValue(), previewAlpha, blurPower);
          }
       }
    }
 
-   private void drawBlurLayer(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8) {
-      this.drawBlurLayer(var1, var2, var3, var4, var5, ProxyDotRadiusData.method8069(var6), var7, var8);
+   private void drawBlurLayer(MenuDrawContext customDrawContext, float x, float y, float widthPanel, float heightPanel, float intValue, float previewAlpha, float blurPower) {
+      this.drawBlurLayer(customDrawContext, x, y, widthPanel, heightPanel, ProxyDotRadiusData.method8069(intValue), previewAlpha, blurPower);
    }
 
-   private void drawBlurLayer(MenuDrawContext var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, float var7, float var8) {
-      float var9;
-      if (!((var9 = this.getBlurLayerAlpha(var7)) <= 0.001F)) {
-         RenderShaders.method5289(MatrixUtils.method664(var1.pose()), var2, var3, var4, var5, var8, var6, ZenithColor.INSTANCE.method7294(var9));
+   private void drawBlurLayer(MenuDrawContext customDrawContext, float x, float y, float widthPanel, float heightPanel, ProxyDotRadiusData headerRadius, float previewAlpha, float blurPower) {
+      float blurLayerAlpha;
+      if (!((blurLayerAlpha = this.getBlurLayerAlpha(previewAlpha)) <= 0.001F)) {
+         RenderShaders.method5289(MatrixUtils.method664(customDrawContext.pose()), x, y, widthPanel, heightPanel, blurPower, headerRadius, ZenithColor.INSTANCE.method7294(blurLayerAlpha));
       }
    }
 
-   public void renderElementSwapBlur(MenuDrawContext var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, float var7) {
+   public void renderElementSwapBlur(MenuDrawContext customDrawContext, float floatValue, float y, float contentWidth, float heightPanel, ProxyDotRadiusData headerRadius, float previewAlpha) {
       if (MenuModule.INSTANCE.method5344()) {
-         float var8;
-         if ((var8 = this.getBlurPower()) != 0.0F) {
-            this.drawBlurLayer(var1, var2, var3, var4, var5, var6, var7, var8);
+         float blurPower;
+         if ((blurPower = this.getBlurPower()) != 0.0F) {
+            this.drawBlurLayer(customDrawContext, floatValue, y, contentWidth, heightPanel, headerRadius, previewAlpha, blurPower);
          }
       }
    }
 
-   private float getBlurLayerAlpha(float var1) {
-      float var2;
-      if ((var2 = Mth.clamp(var1, 0.0F, 1.0F)) >= 0.75F) {
-         float var4;
-         return (var4 = (1.0F - var2) / 0.25F) * var4 * (3.0F - 2.0F * var4);
+   private float getBlurLayerAlpha(float previewAlpha) {
+      float f;
+      if ((f = Mth.clamp(previewAlpha, 0.0F, 1.0F)) >= 0.75F) {
+         float f2;
+         return (f2 = (1.0F - f) / 0.25F) * f2 * (3.0F - 2.0F * f2);
       } else {
-         float var3;
-         return var2 >= 0.3F ? 1.0F : (float)Math.sqrt(var3 = var2 / 0.3F);
+         float f2;
+         return f >= 0.3F ? 1.0F : (float)Math.sqrt(f2 = f / 0.3F);
       }
    }
 
@@ -703,22 +703,22 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.searchField == null ? "" : this.searchField.getText();
    }
 
-   public void openTool(int var1) {
+   public void openTool(int active) {
       this.ensurePanelsInitialized();
       this.resetSearch();
       this.setType(NLMenuScreen.ElementsType.TOOLS);
-      this.toolsSectionPanel.open(var1);
+      this.toolsSectionPanel.open(active);
       if (mc.gui.screen() != this) {
          mc.gui.setScreen(this);
       }
    }
 
-   public void openCosmetics(int var1) {
+   public void openCosmetics(int activeTab) {
       this.ensurePanelsInitialized();
       this.resetSearch();
       this.setType(NLMenuScreen.ElementsType.COSMETICS);
-      if (var1 >= 0) {
-         this.cosmeticsSectionPanel.devTab(var1);
+      if (activeTab >= 0) {
+         this.cosmeticsSectionPanel.devTab(activeTab);
       }
 
       if (mc.gui.screen() != this) {
@@ -726,38 +726,38 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       }
    }
 
-   public void openMarket(int var1) {
+   public void openMarket(int n) {
       this.ensurePanelsInitialized();
       this.resetSearch();
       this.setType(NLMenuScreen.ElementsType.SCRIPTS);
-      this.scriptsSectionPanel.openMarket(var1);
+      this.scriptsSectionPanel.openMarket(n);
       if (mc.gui.screen() != this) {
          mc.gui.setScreen(this);
       }
    }
 
-   public void openScriptSettings(Script var1) {
+   public void openScriptSettings(Script workspace) {
       this.ensurePanelsInitialized();
       this.resetSearch();
       this.setType(NLMenuScreen.ElementsType.SCRIPTS);
-      this.scriptsSectionPanel.openScriptSettings(var1);
+      this.scriptsSectionPanel.openScriptSettings(workspace);
       if (mc.gui.screen() != this) {
          mc.gui.setScreen(this);
       }
    }
 
-   public void devShowModule(Module var1) {
+   public void devShowModule(Module moduleValue) {
       this.ensurePanelsInitialized();
       this.setType(NLMenuScreen.ElementsType.CATEGORY);
-      this.inspectorPanel.showFor(var1);
+      this.inspectorPanel.showFor(moduleValue);
    }
 
-   public void openHudElementSettings(Interface var1) {
-      if (var1 != null) {
+   public void openHudElementSettings(Interface selectedElement) {
+      if (selectedElement != null) {
          this.ensurePanelsInitialized();
          this.resetSearch();
          this.setType(NLMenuScreen.ElementsType.INTERFACE);
-         this.interfaceSectionPanel.openHudElementSettings(var1);
+         this.interfaceSectionPanel.openHudElementSettings(selectedElement);
       }
    }
 
@@ -767,11 +767,11 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
 
    @Override
    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-      float var9 = this.getGuiScale();
-      float var10 = this.x + widthPanel / 2.0F;
-      float var11 = this.y + heightPanel / 2.0F;
-      mouseX = (int)((mouseX - var10) / var9 + var10);
-      mouseY = (int)((mouseY - var11) / var9 + var11);
+      float guiScale = this.getGuiScale();
+      float f = this.x + widthPanel / 2.0F;
+      float f2 = this.y + heightPanel / 2.0F;
+      mouseX = (int)((mouseX - f) / guiScale + f);
+      mouseY = (int)((mouseY - f2) / guiScale + f2);
       if (this.crosshairEditor.onMouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
          return true;
       } else if (this.quickMenuPanel != null && this.quickMenuPanel.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
@@ -789,20 +789,20 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
-      if (this.crosshairEditor.keyPressed(var1, var2, var3)) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      if (this.crosshairEditor.keyPressed(keyCode, keycode, modifiers)) {
          return true;
       } else {
          if (BindCapture.isActive()) {
-            if (BindCapture.owner() == this.inspectorPanel && this.inspectorPanel.keyPressed(var1, var2, var3)) {
+            if (BindCapture.owner() == this.inspectorPanel && this.inspectorPanel.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
 
-            if (this.getType().getPanelSupplier().get().keyPressed(var1, var2, var3)) {
+            if (this.getType().getPanelSupplier().get().keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
 
-            if (this.inspectorPanel.keyPressed(var1, var2, var3)) {
+            if (this.inspectorPanel.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
 
@@ -810,31 +810,31 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          }
 
          if (this.commandField != null && this.commandField.isSelected()) {
-            if (var1 == 257 || var1 == 335) {
+            if (keyCode == 257 || keyCode == 335) {
                this.runCommand();
                return true;
             }
 
-            if (var1 == 256) {
+            if (keyCode == 256) {
                this.commandField.setSelected(false);
                return true;
             }
 
-            if (this.commandField.keyPressed(var1, var2, var3)) {
+            if (this.commandField.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
-         if (this.searchField.keyPressed(var1, var2, var3)) {
+         if (this.searchField.keyPressed(keyCode, keycode, modifiers)) {
             return true;
-         } else if (this.getType().getPanelSupplier().get().keyPressed(var1, var2, var3)) {
+         } else if (this.getType().getPanelSupplier().get().keyPressed(keyCode, keycode, modifiers)) {
             return true;
-         } else if (this.inspectorPanel.keyPressed(var1, var2, var3)) {
+         } else if (this.inspectorPanel.keyPressed(keyCode, keycode, modifiers)) {
             return true;
-         } else if (this.handleNavigation(var1)) {
+         } else if (this.handleNavigation(keyCode)) {
             return true;
          } else {
-            if (var1 == 256 && !this.closing) {
+            if (keyCode == 256 && !this.closing) {
                if (this.quickMenuPanel != null) {
                   this.quickMenuPanel.collapseOpenRow();
                   this.quickMenuPanel.setExpanded(false);
@@ -852,31 +852,31 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
                Zenith.getInstance().getClientSounds().method1561(Zenith.getInstance().getClientSounds().soundEvent2);
             }
 
-            return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+            return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
          }
       }
    }
 
-   private boolean handleNavigation(int var1) {
+   private boolean handleNavigation(int keyCode) {
       if (this.type != NLMenuScreen.ElementsType.CATEGORY || this.guiModulePanel == null) {
          return false;
-      } else if (var1 == 70 && WindowUtils.method5475()) {
+      } else if (keyCode == 70 && WindowUtils.method5475()) {
          this.searchField.setSelected(true);
          return true;
       } else {
-         boolean var2 = this.searchField != null && this.searchField.isSelected();
-         switch (var1) {
+         boolean flag = this.searchField != null && this.searchField.isSelected();
+         switch (keyCode) {
             case 257:
             case 335:
                return this.guiModulePanel.toggleCaret();
             case 262:
-               if (var2) {
+               if (flag) {
                   return false;
                }
 
                return this.guiModulePanel.openCaret();
             case 263:
-               if (var2) {
+               if (flag) {
                   return false;
                } else {
                   if (this.inspectorPanel.isOpen()) {
@@ -903,17 +903,17 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.charTyped((char)input.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
-      if (this.crosshairEditor.charTyped(var1, var2)) {
+   public boolean charTyped(char codepoint, int n) {
+      if (this.crosshairEditor.charTyped(codepoint, n)) {
          return true;
-      } else if (this.commandField != null && this.commandField.isSelected() && this.commandField.charTyped(var1, var2)) {
+      } else if (this.commandField != null && this.commandField.isSelected() && this.commandField.charTyped(codepoint, n)) {
          return true;
-      } else if (this.searchField.charTyped(var1, var2)) {
+      } else if (this.searchField.charTyped(codepoint, n)) {
          return true;
-      } else if (this.inspectorPanel.charTyped(var1, var2)) {
+      } else if (this.inspectorPanel.charTyped(codepoint, n)) {
          return true;
       } else {
-         return this.getType().getPanelSupplier().get().charTyped(var1, var2) ? true : super.charTyped(new CharacterEvent(var1));
+         return this.getType().getPanelSupplier().get().charTyped(codepoint, n) ? true : super.charTyped(new CharacterEvent(codepoint));
       }
    }
 
@@ -922,67 +922,67 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.mouseClicked(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      float var6 = this.getGuiScale();
-      float var7 = this.x + widthPanel / 2.0F;
-      float var8 = this.y + heightPanel / 2.0F;
-      var1 = (int)((var1 - var7) / var6 + var7);
-      var3 = (int)((var3 - var8) / var6 + var8);
-      Enum3 var9 = Enum3.method6094(var5);
-      if (BindCapture.owner() == this.inspectorPanel && !MouseBindTarget.bindable(var9)) {
-         this.inspectorPanel.cancelHeaderBindingOutside(var1, var3);
+   public boolean mouseClicked(double x, double y, int mouseToGlfw) {
+      float guiScale = this.getGuiScale();
+      float f = this.x + widthPanel / 2.0F;
+      float f2 = this.y + heightPanel / 2.0F;
+      x = (int)((x - f) / guiScale + f);
+      y = (int)((y - f2) / guiScale + f2);
+      Enum3 enum2 = Enum3.method6094(mouseToGlfw);
+      if (BindCapture.owner() == this.inspectorPanel && !MouseBindTarget.bindable(enum2)) {
+         this.inspectorPanel.cancelHeaderBindingOutside(x, y);
       }
 
-      if (BindCapture.owner() instanceof InspectorRow var10 && !MouseBindTarget.bindable(var9)) {
-         var10.cancelModuleBindingOutside(var1, var3);
+      if (BindCapture.owner() instanceof InspectorRow inspectorRow && !MouseBindTarget.bindable(enum2)) {
+         inspectorRow.cancelModuleBindingOutside(x, y);
       }
 
-      if (this.crosshairEditor.onMouseClicked(var1, var3, var9)) {
+      if (this.crosshairEditor.onMouseClicked(x, y, enum2)) {
          return true;
-      } else if (BindCapture.owner() instanceof MouseBindTarget var15 && MouseBindTarget.bindable(var9) && var15.bindMouse(var9)) {
+      } else if (BindCapture.owner() instanceof MouseBindTarget mouseBindTarget && MouseBindTarget.bindable(enum2) && mouseBindTarget.bindMouse(enum2)) {
          return true;
       } else if (this.quickMenuPanel != null
          && !this.getType().getPanelSupplier().get().hasLeftColumn()
-         && this.quickMenuPanel.onMouseClicked(var1, var3, var9)) {
+         && this.quickMenuPanel.onMouseClicked(x, y, enum2)) {
          return true;
-      } else if (this.previewStage.onMouseClicked(var1, var3, var9)) {
+      } else if (this.previewStage.onMouseClicked(x, y, enum2)) {
          return true;
-      } else if (this.searchField.onMouseClicked(var1, var3, var9)) {
+      } else if (this.searchField.onMouseClicked(x, y, enum2)) {
          this.commandField.setSelected(false);
          return true;
-      } else if (this.commandBarBounds != null && this.commandBarBounds.contains(var1, var3)) {
+      } else if (this.commandBarBounds != null && this.commandBarBounds.contains(x, y)) {
          this.searchField.setSelected(false);
          this.commandField.setSelected(true);
          this.commandFeedback = "";
          return true;
-      } else if (this.commandField.onMouseClicked(var1, var3, var9)) {
+      } else if (this.commandField.onMouseClicked(x, y, enum2)) {
          return true;
       } else {
          try {
-            ElementPanel var16 = this.getType().getPanelSupplier().get();
-            if (var16.onHeaderButtonsClicked(var1, var3, var9)) {
+            ElementPanel elementPanel = this.getType().getPanelSupplier().get();
+            if (elementPanel.onHeaderButtonsClicked(x, y, enum2)) {
                return true;
             }
 
-            if (MenuModule.INSTANCE.method5348() && var5 == 2 && this.dragBounds != null && this.dragBounds.contains(var1, var3)) {
+            if (MenuModule.INSTANCE.method5348() && mouseToGlfw == 2 && this.dragBounds != null && this.dragBounds.contains(x, y)) {
                this.draggingGui = true;
                return true;
             }
 
-            if (this.inspectorPanel.onMouseClicked(var1, var3, var9)) {
+            if (this.inspectorPanel.onMouseClicked(x, y, enum2)) {
                return true;
             }
 
-            if (var16.onMouseClicked(var1, var3, var9)) {
+            if (elementPanel.onMouseClicked(x, y, enum2)) {
                return true;
             }
-         } catch (Exception var12) {
-            var12.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
 
-         return !this.getType().getPanelSupplier().get().hasLeftColumn() && this.categoryPanel.onMouseClicked(var1, var3, var9)
+         return !this.getType().getPanelSupplier().get().hasLeftColumn() && this.categoryPanel.onMouseClicked(x, y, enum2)
             ? true
-            : super.mouseClicked(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);
+            : super.mouseClicked(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);
       }
    }
 
@@ -991,28 +991,28 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.mouseReleased(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseReleased(double var1, double var3, int var5) {
-      if (var5 == 2) {
+   public boolean mouseReleased(double x, double y, int mouseToGlfw) {
+      if (mouseToGlfw == 2) {
          this.draggingGui = false;
       }
 
       this.unlockGuiScale();
-      float var6 = this.getGuiScale();
-      float var7 = this.x + widthPanel / 2.0F;
-      float var8 = this.y + heightPanel / 2.0F;
-      var1 = (int)((var1 - var7) / var6 + var7);
-      var3 = (int)((var3 - var8) / var6 + var8);
-      this.crosshairEditor.onMouseReleased(var1, var3, Enum3.method6094(var5));
+      float guiScale = this.getGuiScale();
+      float f = this.x + widthPanel / 2.0F;
+      float f2 = this.y + heightPanel / 2.0F;
+      x = (int)((x - f) / guiScale + f);
+      y = (int)((y - f2) / guiScale + f2);
+      this.crosshairEditor.onMouseReleased(x, y, Enum3.method6094(mouseToGlfw));
       this.previewStage.onMouseReleased();
       if (this.quickMenuPanel != null) {
-         this.quickMenuPanel.onMouseReleased(var1, var3, Enum3.method6094(var5));
+         this.quickMenuPanel.onMouseReleased(x, y, Enum3.method6094(mouseToGlfw));
       }
 
-      if (this.getType().getPanelSupplier().get().onMouseReleased(var1, var3, Enum3.method6094(var5))) {
+      if (this.getType().getPanelSupplier().get().onMouseReleased(x, y, Enum3.method6094(mouseToGlfw))) {
          return true;
       } else {
-         this.inspectorPanel.onMouseReleased(var1, var3, Enum3.method6094(var5));
-         return super.mouseReleased(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
+         this.inspectorPanel.onMouseReleased(x, y, Enum3.method6094(mouseToGlfw));
+         return super.mouseReleased(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
       }
    }
 
@@ -1021,30 +1021,30 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.mouseDragged(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()), offsetX, offsetY);
    }
 
-   public boolean mouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      if (MenuModule.INSTANCE.method5348() && this.draggingGui && var5 == 2) {
-         this.rawX += (float)var6;
-         this.rawY += (float)var8;
+   public boolean mouseDragged(double x, double y, int mouseToGlfw, double offsetX, double offsetY) {
+      if (MenuModule.INSTANCE.method5348() && this.draggingGui && mouseToGlfw == 2) {
+         this.rawX += (float)offsetX;
+         this.rawY += (float)offsetY;
          MenuModule.INSTANCE.method5353(this.rawX, this.rawY);
          return true;
       } else {
-         float var10 = this.getGuiScale();
-         float var11 = this.x + widthPanel / 2.0F;
-         float var12 = this.y + heightPanel / 2.0F;
-         double var13 = (int)((var1 - var11) / var10 + var11);
-         double var15 = (int)((var3 - var12) / var10 + var12);
-         if (this.quickMenuPanel != null && this.quickMenuPanel.onMouseDragged(var6, var10)) {
+         float guiScale = this.getGuiScale();
+         float f = this.x + widthPanel / 2.0F;
+         float f2 = this.y + heightPanel / 2.0F;
+         double doubleValue = (int)((x - f) / guiScale + f);
+         double mouseY = (int)((y - f2) / guiScale + f2);
+         if (this.quickMenuPanel != null && this.quickMenuPanel.onMouseDragged(offsetX, guiScale)) {
             return true;
-         } else if (this.inspectorPanel.onMouseDragged(var13, var15)) {
+         } else if (this.inspectorPanel.onMouseDragged(doubleValue, mouseY)) {
             return true;
-         } else if (this.crosshairEditor.onMouseDragged(var6, var8)) {
+         } else if (this.crosshairEditor.onMouseDragged(offsetX, offsetY)) {
             return true;
-         } else if (this.previewStage.onMouseDragged(var13, var15, var6, var8)) {
+         } else if (this.previewStage.onMouseDragged(doubleValue, mouseY, offsetX, offsetY)) {
             return true;
          } else {
-            return this.getType().getPanelSupplier().get().onMouseDragged(var13, var15, var5, var6, var8)
+            return this.getType().getPanelSupplier().get().onMouseDragged(doubleValue, mouseY, mouseToGlfw, offsetX, offsetY)
                ? true
-               : super.mouseDragged(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), var6, var8);
+               : super.mouseDragged(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), offsetX, offsetY);
          }
       }
    }
@@ -1095,9 +1095,9 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return mc.gui.screen() == this && !this.closing && this.getType() == NLMenuScreen.ElementsType.INTERFACE && this.interfaceSectionPanel.isHudTab();
    }
 
-   private float clampRenderPosition(float var1, float var2, float var3) {
-      float var4 = Math.max(0.0F, var3 - var2);
-      return Mth.clamp(var1, 0.0F, var4);
+   private float clampRenderPosition(float rawX, float widthPanel, float guiScaledWidth) {
+      float max = Math.max(0.0F, guiScaledWidth - widthPanel);
+      return Mth.clamp(rawX, 0.0F, max);
    }
 
    public boolean isFinish() {
@@ -1112,8 +1112,8 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.clientPanel != null && !this.clientPanel.getRenderDescription().getSetting().isEnabled();
    }
 
-   public void setRenderIcon(boolean var1) {
-      this.clientPanel.getRenderIcon().getSetting().setEnabled(var1);
+   public void setRenderIcon(boolean renderIcon) {
+      this.clientPanel.getRenderIcon().getSetting().setEnabled(renderIcon);
    }
 
    public boolean isRenderIcon() {
@@ -1145,61 +1145,61 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       } else if (this.clientPanel == null) {
          return 1.0F;
       } else {
-         float var1 = (Float.isNaN(this.smoothScale) ? this.clientPanel.getGuiScale().getApplayValue() : this.smoothScale) / 100.0F;
-         float var2 = 0.35F;
-         float var3 = 100.0F;
-         float var4 = mc.getWindow().getGuiScaledWidth();
-         float var5 = mc.getWindow().getGuiScaledHeight();
-         float var6 = var4 / (widthPanel + var3);
-         float var7 = var5 / (heightPanel + var3);
-         float var8 = Math.min(var6, var7);
-         if (Float.isNaN(var1) || Float.isInfinite(var1)) {
+         float f = (Float.isNaN(this.smoothScale) ? this.clientPanel.getGuiScale().getApplayValue() : this.smoothScale) / 100.0F;
+         float min = 0.35F;
+         float f2 = 100.0F;
+         float guiScaledWidth = mc.getWindow().getGuiScaledWidth();
+         float guiScaledHeight = mc.getWindow().getGuiScaledHeight();
+         float f3 = guiScaledWidth / (widthPanel + f2);
+         float f4 = guiScaledHeight / (heightPanel + f2);
+         float max = Math.min(f3, f4);
+         if (Float.isNaN(f) || Float.isInfinite(f)) {
             return 1.0F;
-         } else if (var8 <= 0.0F) {
-            return var2;
+         } else if (max <= 0.0F) {
+            return min;
          } else {
-            return var8 < var2 ? var8 : Mth.clamp(var1, var2, var8);
+            return max < min ? max : Mth.clamp(f, min, max);
          }
       }
    }
 
-   public void safe(JsonObject var1) {
+   public void safe(JsonObject json) {
       this.ensurePanelsInitialized();
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("type", this.type.name());
-      JsonObject var3 = new JsonObject();
-      this.profilePanel.safe(var3);
-      var2.add("profilePanel", var3);
-      JsonObject var4 = new JsonObject();
-      this.clientPanel.safe(var4);
-      var2.add("clientPanel", var4);
-      var1.add("NLMenuScreen", var2);
+      JsonObject json2 = new JsonObject();
+      json2.addProperty("type", this.type.name());
+      JsonObject json3 = new JsonObject();
+      this.profilePanel.safe(json3);
+      json2.add("profilePanel", json3);
+      JsonObject json4 = new JsonObject();
+      this.clientPanel.safe(json4);
+      json2.add("clientPanel", json4);
+      json.add("NLMenuScreen", json2);
    }
 
-   public void load(JsonObject var1) {
+   public void load(JsonObject json) {
       this.ensurePanelsInitialized();
-      if (var1.has("NLMenuScreen") && var1.get("NLMenuScreen").isJsonObject()) {
-         JsonObject var2 = var1.getAsJsonObject("NLMenuScreen");
-         if (var2.has("type")) {
+      if (json.has("NLMenuScreen") && json.get("NLMenuScreen").isJsonObject()) {
+         JsonObject jsonObject = json.getAsJsonObject("NLMenuScreen");
+         if (jsonObject.has("type")) {
             try {
-               this.setType(NLMenuScreen.ElementsType.valueOf(var2.get("type").getAsString()));
-            } catch (IllegalArgumentException var4) {
+               this.setType(NLMenuScreen.ElementsType.valueOf(jsonObject.get("type").getAsString()));
+            } catch (IllegalArgumentException e) {
             }
          }
 
-         if (var2.has("profilePanel") && var2.get("profilePanel").isJsonObject()) {
-            this.profilePanel.load(var2.getAsJsonObject("profilePanel"));
+         if (jsonObject.has("profilePanel") && jsonObject.get("profilePanel").isJsonObject()) {
+            this.profilePanel.load(jsonObject.getAsJsonObject("profilePanel"));
          }
 
-         if (var2.has("clientPanel") && var2.get("clientPanel").isJsonObject()) {
-            this.clientPanel.load(var2.getAsJsonObject("clientPanel"));
+         if (jsonObject.has("clientPanel") && jsonObject.get("clientPanel").isJsonObject()) {
+            this.clientPanel.load(jsonObject.getAsJsonObject("clientPanel"));
          }
       }
    }
 
-   public void refreshModules(Collection<Module> var1) {
-      for (Module var3 : var1) {
-         this.inspectorPanel.forget(var3);
+   public void refreshModules(Collection<Module> moduleValues) {
+      for (Module moduleValue : moduleValues) {
+         this.inspectorPanel.forget(moduleValue);
       }
 
       if (this.init && this.guiModulePanel != null) {
@@ -1239,12 +1239,12 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       }
    }
 
-   private static float approach(float var0, float var1, float var2, float var3) {
-      if (Float.isNaN(var0)) {
-         return var1;
+   private static float approach(float smoothBlur, float applayValue, float alpha1, float f) {
+      if (Float.isNaN(smoothBlur)) {
+         return applayValue;
       } else {
-         float var4 = Mth.lerp(var2, var0, var1);
-         return Math.abs(var1 - var4) < var3 ? var1 : var4;
+         float f2 = Mth.lerp(alpha1, smoothBlur, applayValue);
+         return Math.abs(applayValue - f2) < f ? applayValue : f2;
       }
    }
 
@@ -1252,22 +1252,22 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       return this.prevType != null || this.guiModulePanel != null && this.guiModulePanel.isCategorySwitching();
    }
 
-   public void setType(NLMenuScreen.ElementsType var1) {
-      if (var1 != this.type) {
+   public void setType(NLMenuScreen.ElementsType type) {
+      if (type != this.type) {
          if (this.prevType != null && !this.setTypeAnimation.isDone()) {
-            float var2 = this.setTypeAnimation.getValue();
-            NLMenuScreen.ElementsType var3 = this.type;
-            if (this.prevType == var1) {
-               this.prevType = var3;
-               this.type = var1;
-               this.setTypeAnimation.reset(1.0F - var2);
+            float f = this.setTypeAnimation.getValue();
+            NLMenuScreen.ElementsType prevType = this.type;
+            if (this.prevType == type) {
+               this.prevType = prevType;
+               this.type = type;
+               this.setTypeAnimation.reset(1.0F - f);
                this.setTypeAnimation.method2810(1.0F);
                return;
             }
 
-            if (var2 < 0.5F) {
-               var3.getPanelSupplier().get().close();
-               this.type = var1;
+            if (f < 0.5F) {
+               prevType.getPanelSupplier().get().close();
+               this.type = type;
                return;
             }
 
@@ -1277,7 +1277,7 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
          this.setTypeAnimation.reset(0.0F);
          this.setTypeAnimation.method2810(1.0F);
          this.prevType = this.type;
-         this.type = var1;
+         this.type = type;
       }
    }
 
@@ -1373,10 +1373,10 @@ public class NLMenuScreen extends Screen implements MinecraftAccess {
       public final Supplier<ElementPanel> panelSupplier;
 
       @Generated
-      private ElementsType(String var3, String var4, Supplier<ElementPanel> var5) {
-         this.name = var3;
-         this.icon = var4;
-         this.panelSupplier = var5;
+      private ElementsType(String name, String icon, Supplier<ElementPanel> panelSupplier) {
+         this.name = name;
+         this.icon = icon;
+         this.panelSupplier = panelSupplier;
       }
 
       @Generated

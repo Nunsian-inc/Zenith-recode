@@ -13,8 +13,8 @@ import org.zenith.utility.network.UseItemUtils;
 import org.zenith.utility.render.MathUtils;
 
 public final class AttackUtils implements ZenithAccess {
-   public static void method816(Entity var0) {
-      mc.gameMode.attack(mc.player, var0);
+   public static void method816(Entity livingEntity) {
+      mc.gameMode.attack(mc.player, livingEntity);
       org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
       BcCamera.method3546();
    }
@@ -31,22 +31,22 @@ public final class AttackUtils implements ZenithAccess {
          || mc.player.getAbilities().flying;
    }
 
-   public static boolean method818(PlayerSimulation var0) {
-      return var0.method6084(MobEffects.BLINDNESS)
-         || var0.method6084(MobEffects.LEVITATION)
-         || UseItemUtils.method6515(var0.box, Blocks.COBWEB)
-         || var0.method6078()
-         || var0.flag8
-         || var0.method6064()
-         || var0.method6046()
+   public static boolean method818(PlayerSimulation playerSimulation) {
+      return playerSimulation.method6084(MobEffects.BLINDNESS)
+         || playerSimulation.method6084(MobEffects.LEVITATION)
+         || UseItemUtils.method6515(playerSimulation.box, Blocks.COBWEB)
+         || playerSimulation.method6078()
+         || playerSimulation.flag8
+         || playerSimulation.method6064()
+         || playerSimulation.method6046()
          || !UseItemUtils.method6511(Pose.STANDING) && mc.player.isCrouching()
          || mc.player.getAbilities().flying;
    }
 
    public static boolean method819() {
-      boolean var0 = mc.player.fallDistance > (method821() ? MathUtils.method2643(0.15F, 0.7F) : 0.0F)
+      boolean flag = mc.player.fallDistance > (method821() ? MathUtils.method2643(0.15F, 0.7F) : 0.0F)
          && (mc.player.fallDistance < 0.08 || !PlayerSimulation.method6031(1).flag4);
-      return !mc.player.onGround() && var0 || CriticalsModule.INSTANCE.isEnabled() && CriticalsModule.INSTANCE.method4672();
+      return !mc.player.onGround() && flag || CriticalsModule.INSTANCE.isEnabled() && CriticalsModule.INSTANCE.method4672();
    }
 
    private static boolean method820() {
@@ -57,9 +57,9 @@ public final class AttackUtils implements ZenithAccess {
       return false;
    }
 
-   public static boolean method822(PlayerSimulation var0) {
-      boolean var1 = var0.floatValue3 > 0.0F && (var0.floatValue3 < 0.08 || !PlayerSimulation.method6031(2).flag4);
-      return !var0.flag4 && var1 || CriticalsModule.INSTANCE.isEnabled() && CriticalsModule.INSTANCE.method4672();
+   public static boolean method822(PlayerSimulation playerSimulation) {
+      boolean flag = playerSimulation.floatValue3 > 0.0F && (playerSimulation.floatValue3 < 0.08 || !PlayerSimulation.method6031(2).flag4);
+      return !playerSimulation.flag4 && flag || CriticalsModule.INSTANCE.isEnabled() && CriticalsModule.INSTANCE.method4672();
    }
 
    @Generated

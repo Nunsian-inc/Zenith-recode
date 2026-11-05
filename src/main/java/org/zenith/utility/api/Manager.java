@@ -42,17 +42,17 @@ import org.zenith.utility.misc.AesGcmCrypto;
 
 public class Manager implements MinecraftAccess {
    public static final File file = new File(Zenith.file, "configs");
-   private static final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "Config-AutoSave");
-      var1.setDaemon(true);
-      var1.setPriority(1);
-      return var1;
+   private static final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(task -> {
+      Thread thread = new Thread(task, "Config-AutoSave");
+      thread.setDaemon(true);
+      thread.setPriority(1);
+      return thread;
    });
-   private static final ExecutorService executorService = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "Config-IO");
-      var1.setDaemon(true);
-      var1.setPriority(4);
-      return var1;
+   private static final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "Config-IO");
+      thread.setDaemon(true);
+      thread.setPriority(4);
+      return thread;
    });
    private final AtomicInteger atomicInteger = new AtomicInteger();
    private final Set<String> items = ConcurrentHashMap.newKeySet();
@@ -71,66 +71,66 @@ public class Manager implements MinecraftAccess {
       scheduledExecutorService.scheduleAtFixedRate(() -> {
          try {
             this.method7789();
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
       }, 5L, 5L, TimeUnit.MINUTES);
    }
 
-   public boolean method7766(String var1) {
-      return this.method7767(var1, Manager.Type.ALL);
+   public boolean method7766(String argument) {
+      return this.method7767(argument, Manager.Type.ALL);
    }
 
-   public boolean method7767(String var1, Manager.Type var2) {
+   public boolean method7767(String argument, Manager.Type mode) {
       try {
-         if (var1 == null) {
+         if (argument == null) {
             return false;
          } else {
-            ConfigFile var3 = this.method7783(var1);
-            if (var3 == null) {
+            ConfigFile configFile = this.method7783(argument);
+            if (configFile == null) {
                return false;
             } else {
                try {
-                  boolean var6;
-                  try (BufferedReader var4 = new BufferedReader(new FileReader(var3.getFile()))) {
-                     String var5 = var4.readLine();
-                     if (var5 == null || var5.isBlank()) {
+                  boolean flag;
+                  try (BufferedReader bufferedReader = new BufferedReader(new FileReader(configFile.getFile()))) {
+                     String line = bufferedReader.readLine();
+                     if (line == null || line.isBlank()) {
                         return false;
                      }
 
-                     var6 = this.method7775(this.method7774(var5), var2, var3);
+                     flag = this.method7775(this.method7774(line), mode, configFile);
                   }
 
-                  return var6;
-               } catch (Exception var9) {
-                  var9.printStackTrace();
+                  return flag;
+               } catch (Exception e) {
+                  e.printStackTrace();
                   return false;
                }
             }
          }
-      } catch (Exception var10) {
+      } catch (Exception e) {
          return false;
       }
    }
 
-   public CompletableFuture<Boolean> method7768(String var1, Manager.Type var2) {
+   public CompletableFuture<Boolean> method7768(String appliedName, Manager.Type mode) {
       return CompletableFuture.<Object[]>supplyAsync(() -> {
-         ConfigFile var2x = this.method7783(var1);
+         ConfigFile var2x = this.method7783(appliedName);
          if (var2x == null) {
             return null;
          } else {
             try {
-               Object[] var5;
-               try (BufferedReader var3 = new BufferedReader(new FileReader(var2x.getFile()))) {
-                  String var4 = var3.readLine();
-                  if (var4 == null || var4.isBlank()) {
+               Object[] objects;
+               try (BufferedReader bufferedReader = new BufferedReader(new FileReader(var2x.getFile()))) {
+                  String line = bufferedReader.readLine();
+                  if (line == null || line.isBlank()) {
                      return null;
                   }
 
-                  var5 = new Object[]{var2x, this.method7774(var4)};
+                  objects = new Object[]{var2x, this.method7774(line)};
                }
 
-               return var5;
-            } catch (Exception var8) {
+               return objects;
+            } catch (Exception e) {
                return null;
             }
          }
@@ -139,80 +139,80 @@ public class Manager implements MinecraftAccess {
             return false;
          } else {
             try {
-               return this.method7775((JsonObject)var2x[1], var2, (ConfigFile)var2x[0]);
-            } catch (Exception var4) {
-               var4.printStackTrace();
+               return this.method7775((JsonObject)var2x[1], mode, (ConfigFile)var2x[0]);
+            } catch (Exception e) {
+               e.printStackTrace();
                return false;
             }
          }
       }, mc);
    }
 
-   public CompletableFuture<Boolean> method7769(byte[] var1, Manager.Type var2) {
+   public CompletableFuture<Boolean> method7769(byte[] buf, Manager.Type mode) {
       return CompletableFuture.<JsonObject>supplyAsync(() -> {
-         if (var1 != null && var1.length != 0) {
+         if (buf != null && buf.length != 0) {
             try {
-               JsonObject var4;
-               try (BufferedReader var2x = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(var1), StandardCharsets.UTF_8))) {
-                  String var3 = var2x.readLine();
-                  var4 = var3 != null && !var3.isBlank() ? this.method7774(var3) : null;
+               JsonObject json;
+               try (BufferedReader var2x = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buf), StandardCharsets.UTF_8))) {
+                  String line = var2x.readLine();
+                  json = line != null && !line.isBlank() ? this.method7774(line) : null;
                }
 
-               return var4;
-            } catch (Exception var7) {
+               return json;
+            } catch (Exception e) {
                return null;
             }
          } else {
             return null;
          }
-      }, executorService).thenApplyAsync(var2x -> var2x != null && this.method7775(var2x, var2, null), mc);
+      }, executorService).thenApplyAsync(var2x -> var2x != null && this.method7775(var2x, mode, null), mc);
    }
 
    public int method7770() {
       return this.atomicInteger.get();
    }
 
-   private static File method7771(String var0) {
-      String var1 = var0 == null ? "" : var0.replace("." + "Zenith".toLowerCase(), "");
-      return new File(file, var1 + "." + "Zenith".toLowerCase());
+   private static File method7771(String selectedLocal) {
+      String str = selectedLocal == null ? "" : selectedLocal.replace("." + "Zenith".toLowerCase(), "");
+      return new File(file, str + "." + "Zenith".toLowerCase());
    }
 
-   public Manager.Data method7772(String var1) {
-      File var2 = method7771(var1);
-      Object[] var3 = this.items3.get(var2.getAbsolutePath());
-      if (var3 != null && (Long)var3[0] == var2.lastModified()) {
-         return (Manager.Data)var3[1];
+   public Manager.Data method7772(String selectedLocal) {
+      File file = method7771(selectedLocal);
+      Object[] objects = this.items3.get(file.getAbsolutePath());
+      if (objects != null && (Long)objects[0] == file.lastModified()) {
+         return (Manager.Data)objects[1];
       } else {
-         if (this.items.add(var2.getAbsolutePath())) {
+         if (this.items.add(file.getAbsolutePath())) {
             executorService.execute(() -> {
                try {
-                  this.method7784(var1);
+                  this.method7784(selectedLocal);
                } finally {
-                  this.items.remove(var2.getAbsolutePath());
+                  this.items.remove(file.getAbsolutePath());
                   this.atomicInteger.incrementAndGet();
                }
             });
          }
 
-         return var3 == null ? null : (Manager.Data)var3[1];
+         return objects == null ? null : (Manager.Data)objects[1];
       }
    }
 
-   public boolean method7773(byte[] var1, Manager.Type var2) {
-      if (var1 != null && var1.length != 0) {
+   public boolean method7773(byte[] buf, Manager.Type mode) {
+      if (buf != null && buf.length != 0) {
          try {
-            boolean var5;
-            try (BufferedReader var3 = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(var1), StandardCharsets.UTF_8))) {
-               String var4 = var3.readLine();
-               if (var4 == null || var4.isBlank()) {
+            boolean flag;
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buf), StandardCharsets.UTF_8))) {
+               String line = bufferedReader.readLine();
+               if (line == null || line.isBlank()) {
                   return false;
                }
 
-               var5 = this.method7775(this.method7774(var4), var2, null);
+               flag = this.method7775(this.method7774(line), mode, null);
             }
 
-            return var5;
-         } catch (Exception var8) {
+            return flag;
+         } catch (Exception e) {
             return false;
          }
       } else {
@@ -220,41 +220,41 @@ public class Manager implements MinecraftAccess {
       }
    }
 
-   private JsonObject method7774(String var1) throws Exception {
-      byte[] var2 = Base64.getDecoder().decode(var1);
-      byte[] var3 = AesGcmCrypto.method5340(var2, "siMunids");
-      String var4 = new String(var3, StandardCharsets.UTF_8);
-      return JsonParser.parseString(var4).getAsJsonObject();
+   private JsonObject method7774(String line) throws Exception {
+      byte[] allBytes = Base64.getDecoder().decode(line);
+      byte[] bytes = AesGcmCrypto.method5340(allBytes, "siMunids");
+      String str = new String(bytes, StandardCharsets.UTF_8);
+      return JsonParser.parseString(str).getAsJsonObject();
    }
 
-   private boolean method7775(JsonObject var1, Manager.Type var2, ConfigFile var3) {
-      if (var2 == Manager.Type.ONLY_THEMES) {
-         JsonObject var9 = new JsonObject();
-         if (var1.has("Styles")) {
-            var9.add("Styles", var1.get("Styles"));
+   private boolean method7775(JsonObject json, Manager.Type mode, ConfigFile configFile) {
+      if (mode == Manager.Type.ONLY_THEMES) {
+         JsonObject json2 = new JsonObject();
+         if (json.has("Styles")) {
+            json2.add("Styles", json.get("Styles"));
          }
 
-         this.method7777(var3, var9);
+         this.method7777(configFile, json2);
          this.method7778();
          return true;
       } else {
-         HashMap var4 = new HashMap();
+         HashMap map = new HashMap();
 
-         for (Module var6 : Zenith.getInstance().getModuleManager().getItems()) {
-            var4.put(var6.getId(), new int[]{var6.getKeyCode(), var6.getKeyModifiers()});
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+            map.put(moduleValue.getId(), new int[]{moduleValue.getKeyCode(), moduleValue.getKeyModifiers()});
          }
 
-         this.method7777(var3, var1);
-         JsonObject var10 = var1.has("Modules") && var1.get("Modules").isJsonObject() ? var1.getAsJsonObject("Modules") : null;
+         this.method7777(configFile, json);
+         JsonObject jsonObject = json.has("Modules") && json.get("Modules").isJsonObject() ? json.getAsJsonObject("Modules") : null;
 
-         for (Module var7 : Zenith.getInstance().getModuleManager().getItems()) {
-            int[] var8 = (int[])var4.get(var7.getId());
-            if (var8 != null) {
-               if (var2 == Manager.Type.IGNORE_BINDS) {
-                  var7.setKeyCode(var8[0]);
-                  var7.setKeyModifiers(var8[1]);
-               } else if (method7776(var10, var7)) {
-                  var7.setKeyModifiers(var8[1]);
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+            int[] ints = (int[])map.get(moduleValue.getId());
+            if (ints != null) {
+               if (mode == Manager.Type.IGNORE_BINDS) {
+                  moduleValue.setKeyCode(ints[0]);
+                  moduleValue.setKeyModifiers(ints[1]);
+               } else if (method7776(jsonObject, moduleValue)) {
+                  moduleValue.setKeyModifiers(ints[1]);
                }
             }
          }
@@ -264,24 +264,24 @@ public class Manager implements MinecraftAccess {
       }
    }
 
-   private static boolean method7776(JsonObject var0, Module var1) {
-      if (var0 == null) {
+   private static boolean method7776(JsonObject jsonObject, Module moduleValue) {
+      if (jsonObject == null) {
          return false;
       } else {
-         JsonElement var2 = var0.get(var1.getId());
-         if ((var2 == null || !var2.isJsonObject()) && var1.getId().startsWith("zenith:")) {
-            var2 = var0.get(var1.getName());
+         JsonElement jsonElement = jsonObject.get(moduleValue.getId());
+         if ((jsonElement == null || !jsonElement.isJsonObject()) && moduleValue.getId().startsWith("zenith:")) {
+            jsonElement = jsonObject.get(moduleValue.getName());
          }
 
-         return var2 != null && var2.isJsonObject() && !var2.getAsJsonObject().has("keyCode");
+         return jsonElement != null && jsonElement.isJsonObject() && !jsonElement.getAsJsonObject().has("keyCode");
       }
    }
 
-   private void method7777(ConfigFile var1, JsonObject var2) {
-      if (var1 == null) {
-         ConfigFile.loadState(var2);
+   private void method7777(ConfigFile configFile, JsonObject json) {
+      if (configFile == null) {
+         ConfigFile.loadState(json);
       } else {
-         var1.load(var2);
+         configFile.load(json);
       }
    }
 
@@ -289,210 +289,210 @@ public class Manager implements MinecraftAccess {
       if (mc.player != null && Zenith.getInstance().getCommandManager() != null) {
          try {
             Zenith.getInstance().getCommandManager().getDispatcher().execute("binds list", Zenith.getInstance().getCommandManager().getSource());
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
       }
    }
 
-   public boolean method7779(String var1) {
-      return this.method7780(var1, true, true, true);
+   public boolean method7779(String argument) {
+      return this.method7780(argument, true, true, true);
    }
 
-   public boolean method7780(String var1, boolean var2, boolean var3, boolean var4) {
+   public boolean method7780(String argument, boolean flag, boolean flag2, boolean flag3) {
       try {
-         if (var1 == null) {
+         if (argument == null) {
             return false;
          } else {
-            ConfigFile var5 = this.method7783(var1);
-            if (var5 == null) {
-               var5 = new ConfigFile(var1);
+            ConfigFile configFile = this.method7783(argument);
+            if (configFile == null) {
+               configFile = new ConfigFile(argument);
             }
 
-            long var6 = this.atomicLong.incrementAndGet();
-            JsonObject var8 = var5.save();
-            if (var8 == null) {
+            long incrementAndGet = this.atomicLong.incrementAndGet();
+            JsonObject jsonElement = configFile.save();
+            if (jsonElement == null) {
                return false;
             } else {
-               this.method7782(var8, var2, var3, var4);
-               this.method7781(var1, var5, var8, var6);
+               this.method7782(jsonElement, flag, flag2, flag3);
+               this.method7781(argument, configFile, jsonElement, incrementAndGet);
                return true;
             }
          }
-      } catch (Exception var9) {
+      } catch (Exception e) {
          return false;
       }
    }
 
-   private void method7781(String var1, ConfigFile var2, JsonObject var3, long var4) throws Exception {
-      String var6 = new GsonBuilder().setPrettyPrinting().create().toJson(var3);
-      String var7 = Base64.getEncoder().encodeToString(AesGcmCrypto.method5339(var6.getBytes(), "siMunids"));
-      byte[] var8 = var7.getBytes(StandardCharsets.US_ASCII);
-      Path var9 = var2.getFile().toPath().toAbsolutePath();
-      Path var10 = Zenith.file.toPath().toAbsolutePath().resolve(var9.getFileName() + ".tmp");
-      String var11 = var9.toString();
+   private void method7781(String argument, ConfigFile configFile, JsonObject jsonElement, long incrementAndGet) throws Exception {
+      String json = new GsonBuilder().setPrettyPrinting().create().toJson(jsonElement);
+      String encodeToString = Base64.getEncoder().encodeToString(AesGcmCrypto.method5339(json.getBytes(), "siMunids"));
+      byte[] bytes = encodeToString.getBytes(StandardCharsets.US_ASCII);
+      Path absolutePath = configFile.getFile().toPath().toAbsolutePath();
+      Path path = Zenith.file.toPath().toAbsolutePath().resolve(absolutePath.getFileName() + ".tmp");
+      String string = absolutePath.toString();
       synchronized (obj) {
-         Long var13 = this.items2.get(var11);
-         if (var13 != null && var13 >= var4) {
+         Long l = this.items2.get(string);
+         if (l != null && l >= incrementAndGet) {
             return;
          }
 
-         Files.write(var10, var8);
+         Files.write(path, bytes);
 
          try {
-            Files.move(var10, var9, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-         } catch (IOException var16) {
-            Files.write(var9, var8);
-            Files.deleteIfExists(var10);
+            Files.move(path, absolutePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+         } catch (IOException e) {
+            Files.write(absolutePath, bytes);
+            Files.deleteIfExists(path);
          }
 
-         this.items2.put(var11, var4);
+         this.items2.put(string, incrementAndGet);
       }
 
-      if (!var1.replace("." + "Zenith".toLowerCase(), "").equalsIgnoreCase("current_config")) {
+      if (!argument.replace("." + "Zenith".toLowerCase(), "").equalsIgnoreCase("current_config")) {
          ConfigSyncService.getInstance().method675();
       }
    }
 
-   private void method7782(JsonObject var1, boolean var2, boolean var3, boolean var4) {
-      if (!var2) {
-         var1.remove("Styles");
-         var1.remove("FiguraData");
-         var1.remove("PetData");
-         var1.remove("Wardrobe");
-         var1.remove("Language");
-         var1.remove("Interface");
+   private void method7782(JsonObject jsonElement, boolean flag, boolean flag2, boolean flag3) {
+      if (!flag) {
+         jsonElement.remove("Styles");
+         jsonElement.remove("FiguraData");
+         jsonElement.remove("PetData");
+         jsonElement.remove("Wardrobe");
+         jsonElement.remove("Language");
+         jsonElement.remove("Interface");
       }
 
-      if (!var3) {
-         var1.remove("BotData");
+      if (!flag2) {
+         jsonElement.remove("BotData");
       }
 
-      JsonObject var5 = var1.has("Modules") && var1.get("Modules").isJsonObject() ? var1.getAsJsonObject("Modules") : null;
-      if (var5 != null) {
-         for (Module var7 : Zenith.getInstance().getModuleManager().getItems()) {
-            ModuleCategory var8 = var7.getCategory();
-            boolean var9 = var8 == ModuleCategory.RENDER || var8 == ModuleCategory.THEMES;
-            if ((!var9 || var2) && (var9 || var3)) {
-               if (!var4 && var5.has(var7.getId()) && var5.get(var7.getId()).isJsonObject()) {
-                  var5.getAsJsonObject(var7.getId()).remove("keyCode");
-                  var5.getAsJsonObject(var7.getId()).remove("keyModifiers");
+      JsonObject jsonObject = jsonElement.has("Modules") && jsonElement.get("Modules").isJsonObject() ? jsonElement.getAsJsonObject("Modules") : null;
+      if (jsonObject != null) {
+         for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+            ModuleCategory category = moduleValue.getCategory();
+            boolean flag4 = category == ModuleCategory.RENDER || category == ModuleCategory.THEMES;
+            if ((!flag4 || flag) && (flag4 || flag2)) {
+               if (!flag3 && jsonObject.has(moduleValue.getId()) && jsonObject.get(moduleValue.getId()).isJsonObject()) {
+                  jsonObject.getAsJsonObject(moduleValue.getId()).remove("keyCode");
+                  jsonObject.getAsJsonObject(moduleValue.getId()).remove("keyModifiers");
                }
             } else {
-               var5.remove(var7.getId());
+               jsonObject.remove(moduleValue.getId());
             }
          }
       }
    }
 
-   public ConfigFile method7783(String var1) {
-      if (var1 == null) {
+   public ConfigFile method7783(String argument) {
+      if (argument == null) {
          return null;
       } else {
-         var1 = var1.replace("." + "Zenith".toLowerCase(), "");
-         File var2 = new File(file, var1 + "." + "Zenith".toLowerCase());
-         return var2.exists() ? new ConfigFile(var1) : null;
+         argument = argument.replace("." + "Zenith".toLowerCase(), "");
+         File file2 = new File(file, argument + "." + "Zenith".toLowerCase());
+         return file2.exists() ? new ConfigFile(argument) : null;
       }
    }
 
-   public Manager.Data method7784(String var1) {
-      ConfigFile var2 = this.method7783(var1);
-      if (var2 == null) {
-         this.items3.put(method7771(var1).getAbsolutePath(), new Object[]{0L, Manager.Data.INSTANCE});
+   public Manager.Data method7784(String selectedLocal) {
+      ConfigFile configFile = this.method7783(selectedLocal);
+      if (configFile == null) {
+         this.items3.put(method7771(selectedLocal).getAbsolutePath(), new Object[]{0L, Manager.Data.INSTANCE});
          return Manager.Data.INSTANCE;
       } else {
-         File var3 = var2.getFile();
-         String var4 = var3.getAbsolutePath();
-         Object[] var5 = this.items3.get(var4);
-         if (var5 != null && (Long)var5[0] == var3.lastModified()) {
-            return (Manager.Data)var5[1];
+         File file = configFile.getFile();
+         String absolutePath = file.getAbsolutePath();
+         Object[] objects = this.items3.get(absolutePath);
+         if (objects != null && (Long)objects[0] == file.lastModified()) {
+            return (Manager.Data)objects[1];
          } else {
-            Manager.Data var6 = Manager.Data.INSTANCE;
+            Manager.Data data = Manager.Data.INSTANCE;
 
-            try (BufferedReader var7 = new BufferedReader(new FileReader(var3))) {
-               String var8 = var7.readLine();
-               if (var8 != null && !var8.isBlank()) {
-                  JsonObject var9 = this.method7774(var8);
-                  HashSet var10 = new HashSet();
-                  int var11 = 0;
-                  if (var9.has("Modules") && var9.get("Modules").isJsonObject()) {
-                     for (Entry var13 : var9.getAsJsonObject("Modules").entrySet()) {
-                        if (((JsonElement)var13.getValue()).isJsonObject()) {
-                           JsonObject var14 = ((JsonElement)var13.getValue()).getAsJsonObject();
-                           if (var14.has("enabled") && var14.get("enabled").getAsBoolean()) {
-                              var10.add((String)var13.getKey());
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+               String line = bufferedReader.readLine();
+               if (line != null && !line.isBlank()) {
+                  JsonObject json = this.method7774(line);
+                  HashSet coll = new HashSet();
+                  int intValue = 0;
+                  if (json.has("Modules") && json.get("Modules").isJsonObject()) {
+                     for (Entry entry : json.getAsJsonObject("Modules").entrySet()) {
+                        if (((JsonElement)entry.getValue()).isJsonObject()) {
+                           JsonObject jsonObject = ((JsonElement)entry.getValue()).getAsJsonObject();
+                           if (jsonObject.has("enabled") && jsonObject.get("enabled").getAsBoolean()) {
+                              coll.add((String)entry.getKey());
                            }
 
-                           if (var14.has("keyCode") && var14.get("keyCode").getAsInt() > 0) {
-                              var11++;
+                           if (jsonObject.has("keyCode") && jsonObject.get("keyCode").getAsInt() > 0) {
+                              intValue++;
                            }
                         }
                      }
                   }
 
-                  var6 = new Manager.Data(Set.copyOf(var10), var11, var9.has("Styles"));
+                  data = new Manager.Data(Set.copyOf(coll), intValue, json.has("Styles"));
                }
-            } catch (Exception var17) {
+            } catch (Exception e) {
             }
 
-            this.items3.put(var4, new Object[]{var3.lastModified(), var6});
-            return var6;
+            this.items3.put(absolutePath, new Object[]{file.lastModified(), data});
+            return data;
          }
       }
    }
 
    public List<String> method7785() {
-      File[] var1 = file.listFiles();
-      ArrayList<String> var2 = new ArrayList<>();
-      if (var1 != null) {
-         for (File var6 : var1) {
-            var2.add(var6.getName());
+      File[] listFiles = file.listFiles();
+      ArrayList<String> strings = new ArrayList<>();
+      if (listFiles != null) {
+         for (File listFile : listFiles) {
+            strings.add(listFile.getName());
          }
       }
 
-      return var2;
+      return strings;
    }
 
-   public boolean method7786(String var1) {
-      if (var1 == null) {
+   public boolean method7786(String selectedLocal) {
+      if (selectedLocal == null) {
          return false;
       } else {
-         ConfigFile var2 = this.method7783(var1);
-         if (var2 == null) {
+         ConfigFile configFile = this.method7783(selectedLocal);
+         if (configFile == null) {
             return false;
          } else {
-            File var3 = var2.getFile();
-            boolean var4 = var3.exists() && var3.delete();
-            if (var4) {
-               ConfigSyncService.getInstance().method680(var1.replace("." + "Zenith".toLowerCase(), ""));
+            File file = configFile.getFile();
+            boolean flag = file.exists() && file.delete();
+            if (flag) {
+               ConfigSyncService.getInstance().method680(selectedLocal.replace("." + "Zenith".toLowerCase(), ""));
             }
 
-            return var4;
+            return flag;
          }
       }
    }
 
-   public synchronized boolean method7787(String var1, String var2) {
-      if (var1 != null && var2 != null) {
-         String var3 = var1.replace("." + "Zenith".toLowerCase(), "").trim();
-         String var4 = var2.replace("." + "Zenith".toLowerCase(), "").trim();
-         if (var3.isEmpty() || var4.isEmpty()) {
+   public synchronized boolean method7787(String display, String str) {
+      if (display != null && str != null) {
+         String argument = display.replace("." + "Zenith".toLowerCase(), "").trim();
+         String anotherString = str.replace("." + "Zenith".toLowerCase(), "").trim();
+         if (argument.isEmpty() || anotherString.isEmpty()) {
             return false;
-         } else if (var3.equalsIgnoreCase(var4)) {
+         } else if (argument.equalsIgnoreCase(anotherString)) {
             return true;
          } else {
-            ConfigFile var5 = this.method7783(var3);
-            if (var5 != null && this.method7783(var4) == null) {
+            ConfigFile configFile = this.method7783(argument);
+            if (configFile != null && this.method7783(anotherString) == null) {
                try {
-                  ConfigFile var6 = new ConfigFile(var4);
-                  Files.copy(var5.getFile().toPath(), var6.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-                  if (!var5.getFile().delete()) {
-                     var6.getFile().delete();
+                  ConfigFile configFile2 = new ConfigFile(anotherString);
+                  Files.copy(configFile.getFile().toPath(), configFile2.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+                  if (!configFile.getFile().delete()) {
+                     configFile2.getFile().delete();
                      return false;
                   } else {
-                     ConfigSyncService.getInstance().method678(var3, var4);
+                     ConfigSyncService.getInstance().method678(argument, anotherString);
                      return true;
                   }
-               } catch (Exception var7) {
+               } catch (Exception e) {
                   return false;
                }
             } else {
@@ -516,7 +516,7 @@ public class Manager implements MinecraftAccess {
 
             try {
                this.method7789();
-            } catch (Exception var2) {
+            } catch (Exception e) {
             }
          }, 400L, TimeUnit.MILLISECONDS);
       }
@@ -526,25 +526,25 @@ public class Manager implements MinecraftAccess {
       ConfigSyncService.getInstance().method676();
       mc.execute(() -> {
          try {
-            ConfigFile var1 = this.method7783("current_config");
-            if (var1 == null) {
-               var1 = new ConfigFile("current_config");
+            ConfigFile configFile = this.method7783("current_config");
+            if (configFile == null) {
+               configFile = new ConfigFile("current_config");
             }
 
-            long var2 = this.atomicLong.incrementAndGet();
-            JsonObject var4 = var1.save();
-            if (var4 == null) {
+            long incrementAndGet = this.atomicLong.incrementAndGet();
+            JsonObject jsonElement = configFile.save();
+            if (jsonElement == null) {
                return;
             }
 
-            ConfigFile var5 = var1;
+            ConfigFile configFile2 = configFile;
             executorService.execute(() -> {
                try {
-                  this.method7781("current_config", var5, var4, var2);
+                  this.method7781("current_config", configFile2, jsonElement, incrementAndGet);
                } catch (Exception var6x) {
                }
             });
-         } catch (Exception var6) {
+         } catch (Exception e) {
          }
       });
    }
@@ -623,10 +623,10 @@ public class Manager implements MinecraftAccess {
       }
       public static final Manager.Data INSTANCE = new Manager.Data(Set.of(), 0, false);
 
-      public Data(Set<String> var1, int var2, boolean var3) {
-         this.items = var1;
-         this.intValue = var2;
-         this.flag = var3;
+      public Data(Set<String> items, int intValue, boolean flag) {
+         this.items = items;
+         this.intValue = intValue;
+         this.flag = flag;
       }
 
       public Set<String> getItems() {

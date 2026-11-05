@@ -36,8 +36,8 @@ public final class CloudConnectionState {
       return this.type;
    }
 
-   public void setType(CloudConnectionState.Type var1) {
-      this.type = var1;
+   public void setType(CloudConnectionState.Type type) {
+      this.type = type;
    }
 
    public boolean method8035() {
@@ -48,69 +48,69 @@ public final class CloudConnectionState {
       return this.lastError;
    }
 
-   public void method8036(String var1) {
-      this.lastError = var1 == null ? "" : var1;
+   public void method8036(String text) {
+      this.lastError = text == null ? "" : text;
    }
 
    public String note() {
       return this.text;
    }
 
-   public void method8037(String var1) {
-      this.text = var1 == null ? "" : var1;
+   public void method8037(String text) {
+      this.text = text == null ? "" : text;
    }
 
    public int getIntValue() {
       return this.intValue;
    }
 
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    public Collection<PartyPlayerInfo> method8038() {
       return this.items.values();
    }
 
-   public PartyPlayerInfo method8039(long var1) {
-      return this.items.get(var1);
+   public PartyPlayerInfo method8039(long uid) {
+      return this.items.get(uid);
    }
 
-   public PartyPlayerInfo method8040(long var1) {
-      PartyPlayerInfo var3 = this.items.get(var1);
-      return var3 != null ? var3 : this.items2.get(var1);
+   public PartyPlayerInfo method8040(long uid) {
+      PartyPlayerInfo partyPlayerInfo = this.items.get(uid);
+      return partyPlayerInfo != null ? partyPlayerInfo : this.items2.get(uid);
    }
 
    public Collection<PartyPlayerInfo> method8041() {
       return this.items2.values();
    }
 
-   public PartyPlayerInfo method8042(long var1, String var3, String var4) {
-      PartyPlayerInfo var5 = this.items2.get(var1);
-      if (var5 != null && var5.getText2().equalsIgnoreCase(var4) && var5.username().equalsIgnoreCase(var3)) {
-         return var5;
+   public PartyPlayerInfo method8042(long uid, String username, String anotherString) {
+      PartyPlayerInfo partyPlayerInfo = this.items2.get(uid);
+      if (partyPlayerInfo != null && partyPlayerInfo.getText2().equalsIgnoreCase(anotherString) && partyPlayerInfo.username().equalsIgnoreCase(username)) {
+         return partyPlayerInfo;
       } else {
-         PartyPlayerInfo var6 = new PartyPlayerInfo(var1, var3, var4);
-         this.items2.put(var1, var6);
-         return var6;
+         PartyPlayerInfo partyPlayerInfo2 = new PartyPlayerInfo(uid, username, anotherString);
+         this.items2.put(uid, partyPlayerInfo2);
+         return partyPlayerInfo2;
       }
    }
 
-   public void method8043(Set<Long> var1) {
-      this.items2.keySet().retainAll(var1);
+   public void method8043(Set<Long> longs) {
+      this.items2.keySet().retainAll(longs);
    }
 
-   public PartyPlayerInfo method8044(String var1) {
-      if (var1 != null && !this.items.isEmpty()) {
-         for (PartyPlayerInfo var3 : this.items.values()) {
-            if (var3.username().equalsIgnoreCase(var1)) {
-               return var3;
+   public PartyPlayerInfo method8044(String selected) {
+      if (selected != null && !this.items.isEmpty()) {
+         for (PartyPlayerInfo partyPlayerInfo : this.items.values()) {
+            if (partyPlayerInfo.username().equalsIgnoreCase(selected)) {
+               return partyPlayerInfo;
             }
          }
 
-         for (PartyPlayerInfo var5 : this.items.values()) {
-            if (var5.getText2().equalsIgnoreCase(var1)) {
-               return var5;
+         for (PartyPlayerInfo partyPlayerInfo : this.items.values()) {
+            if (partyPlayerInfo.getText2().equalsIgnoreCase(selected)) {
+               return partyPlayerInfo;
             }
          }
 
@@ -124,29 +124,29 @@ public final class CloudConnectionState {
       return this.items.size();
    }
 
-   public PartyPlayerInfo method8046(CloudPackets.Data8 var1) {
-      this.items8.put(var1.username().toLowerCase(Locale.ROOT), var1.uid());
-      PartyPlayerInfo var2 = this.items.get(var1.uid());
-      if (var2 != null && var2.getText2().equalsIgnoreCase(var1.getText2()) && var2.username().equalsIgnoreCase(var1.username())) {
-         return var2;
+   public PartyPlayerInfo method8046(CloudPackets.Data8 data8) {
+      this.items8.put(data8.username().toLowerCase(Locale.ROOT), data8.uid());
+      PartyPlayerInfo partyPlayerInfo = this.items.get(data8.uid());
+      if (partyPlayerInfo != null && partyPlayerInfo.getText2().equalsIgnoreCase(data8.getText2()) && partyPlayerInfo.username().equalsIgnoreCase(data8.username())) {
+         return partyPlayerInfo;
       } else {
-         PartyPlayerInfo var3 = new PartyPlayerInfo(var1.uid(), var1.username(), var1.getText2());
-         this.items.put(var1.uid(), var3);
-         return var3;
+         PartyPlayerInfo partyPlayerInfo2 = new PartyPlayerInfo(data8.uid(), data8.username(), data8.getText2());
+         this.items.put(data8.uid(), partyPlayerInfo2);
+         return partyPlayerInfo2;
       }
    }
 
-   public long uidOf(String var1) {
-      if (var1 == null) {
+   public long uidOf(String displayName) {
+      if (displayName == null) {
          return 0L;
       } else {
-         Long var2 = this.items8.get(var1.toLowerCase(Locale.ROOT));
-         return var2 == null ? 0L : var2;
+         Long l = this.items8.get(displayName.toLowerCase(Locale.ROOT));
+         return l == null ? 0L : l;
       }
    }
 
-   public PartyPlayerInfo method8047(long var1) {
-      return this.items.remove(var1);
+   public PartyPlayerInfo method8047(long l) {
+      return this.items.remove(l);
    }
 
    public void method8048() {
@@ -161,51 +161,51 @@ public final class CloudConnectionState {
       return this.arrayDeque;
    }
 
-   public void method8050(CloudPackets.Data13 var1) {
+   public void method8050(CloudPackets.Data13 data13) {
       if (this.arrayDeque.size() >= 200) {
          this.arrayDeque.pollFirst();
       }
 
-      this.arrayDeque.addLast(var1);
+      this.arrayDeque.addLast(data13);
    }
 
-   public void method8051(long var1) {
-      this.arrayDeque.removeIf(var2 -> var2.getLongValue3() == var1);
+   public void method8051(long l) {
+      this.arrayDeque.removeIf(data13 -> data13.getLongValue3() == l);
    }
 
-   public void method8052(List<CloudPackets.Data13> var1) {
-      if (!var1.isEmpty()) {
-         ArrayList<CloudPackets.Data13> var2 = new ArrayList(var1.size() + this.arrayDeque.size());
-         HashSet var3 = new HashSet();
-         HashSet var4 = new HashSet();
+   public void method8052(List<CloudPackets.Data13> data13s) {
+      if (!data13s.isEmpty()) {
+         ArrayList<CloudPackets.Data13> data13s2 = new ArrayList(data13s.size() + this.arrayDeque.size());
+         HashSet hashSet = new HashSet();
+         HashSet hashSet2 = new HashSet();
 
-         for (CloudPackets.Data13 var6 : var1) {
-            method8053(var2, var3, var4, var6);
+         for (CloudPackets.Data13 data13 : data13s) {
+            method8053(data13s2, hashSet, hashSet2, data13);
          }
 
-         for (CloudPackets.Data13 var9 : this.arrayDeque) {
-            method8053(var2, var3, var4, var9);
+         for (CloudPackets.Data13 data13 : this.arrayDeque) {
+            method8053(data13s2, hashSet, hashSet2, data13);
          }
 
-         var2.sort(Comparator.comparingLong(CloudPackets.Data13::time).thenComparingLong(CloudPackets.Data13::getLongValue3));
+         data13s2.sort(Comparator.comparingLong(CloudPackets.Data13::time).thenComparingLong(CloudPackets.Data13::getLongValue3));
          this.arrayDeque.clear();
 
-         for (CloudPackets.Data13 var10 : var2.subList(Math.max(0, var2.size() - 200), var2.size())) {
-            this.arrayDeque.addLast(var10);
+         for (CloudPackets.Data13 sub : data13s2.subList(Math.max(0, data13s2.size() - 200), data13s2.size())) {
+            this.arrayDeque.addLast(sub);
          }
       }
    }
 
-   private static void method8053(List<CloudPackets.Data13> var0, Set<Long> var1, Set<String> var2, CloudPackets.Data13 var3) {
-      if (var3.getLongValue3() <= 0L || var1.add(var3.getLongValue3())) {
-         if (var2.add(method8054(var3))) {
-            var0.add(var3);
+   private static void method8053(List<CloudPackets.Data13> data13s, Set<Long> longs, Set<String> strings, CloudPackets.Data13 data13) {
+      if (data13.getLongValue3() <= 0L || longs.add(data13.getLongValue3())) {
+         if (strings.add(method8054(data13))) {
+            data13s.add(data13);
          }
       }
    }
 
-   private static String method8054(CloudPackets.Data13 var0) {
-      return var0.uid() + "@" + var0.time() + "@" + var0.text();
+   private static String method8054(CloudPackets.Data13 data13) {
+      return data13.uid() + "@" + data13.time() + "@" + data13.text();
    }
 
    public Collection<CloudPackets.Data8> method8055() {
@@ -216,48 +216,48 @@ public final class CloudConnectionState {
       return !this.items3.isEmpty();
    }
 
-   public boolean method8057(CloudPackets.Data8 var1) {
-      String var2 = var1.username().toLowerCase(Locale.ROOT);
-      return !this.items3.containsKey(var2) && this.items3.size() >= 100 ? false : this.items3.put(var2, var1) == null;
+   public boolean method8057(CloudPackets.Data8 data8) {
+      String lowerCase = data8.username().toLowerCase(Locale.ROOT);
+      return !this.items3.containsKey(lowerCase) && this.items3.size() >= 100 ? false : this.items3.put(lowerCase, data8) == null;
    }
 
-   public List<CloudPackets.Data9> method8058(String var1) {
-      return var1 != null && !this.items5.isEmpty() ? this.items5.getOrDefault(var1.toLowerCase(Locale.ROOT), List.of()) : List.of();
+   public List<CloudPackets.Data9> method8058(String str) {
+      return str != null && !this.items5.isEmpty() ? this.items5.getOrDefault(str.toLowerCase(Locale.ROOT), List.of()) : List.of();
    }
 
-   public void method8059(long var1, String var3, List<CloudPackets.Data9> var4) {
-      if (var3 != null && !var3.isBlank()) {
-         String var5 = var3.toLowerCase(Locale.ROOT);
-         String var6 = this.items6.put(var1, var5);
-         if (var6 != null && !var6.equals(var5) && this.items7.remove(var6, var1)) {
-            this.items5.remove(var6);
+   public void method8059(long uid, String text, List<CloudPackets.Data9> items) {
+      if (text != null && !text.isBlank()) {
+         String lowerCase = text.toLowerCase(Locale.ROOT);
+         String key = this.items6.put(uid, lowerCase);
+         if (key != null && !key.equals(lowerCase) && this.items7.remove(key, uid)) {
+            this.items5.remove(key);
          }
 
-         if (this.items5.containsKey(var5) || this.items5.size() < 4096) {
-            this.items7.put(var5, var1);
-            this.items5.put(var5, var4);
+         if (this.items5.containsKey(lowerCase) || this.items5.size() < 4096) {
+            this.items7.put(lowerCase, uid);
+            this.items5.put(lowerCase, items);
          }
       }
    }
 
-   public void method8060(String var1) {
-      this.items3.remove(var1.toLowerCase(Locale.ROOT));
+   public void method8060(String username) {
+      this.items3.remove(username.toLowerCase(Locale.ROOT));
    }
 
-   public boolean method8061(String var1) {
-      return var1 != null && this.items4.contains(var1.toLowerCase(Locale.ROOT));
+   public boolean method8061(String selected) {
+      return selected != null && this.items4.contains(selected.toLowerCase(Locale.ROOT));
    }
 
    public int method8062() {
       return this.items4.size();
    }
 
-   public void method8063(List<CloudPackets.Data14> var1) {
+   public void method8063(List<CloudPackets.Data14> data14s) {
       this.items4.clear();
 
-      for (CloudPackets.Data14 var3 : var1) {
-         if (!var3.isFlag()) {
-            this.items4.add(var3.username().toLowerCase(Locale.ROOT));
+      for (CloudPackets.Data14 data14 : data14s) {
+         if (!data14.isFlag()) {
+            this.items4.add(data14.username().toLowerCase(Locale.ROOT));
          }
       }
    }
@@ -279,8 +279,8 @@ public final class CloudConnectionState {
 
       private final String text;
 
-      private Type(String var3) {
-         this.text = var3;
+      private Type(String text) {
+         this.text = text;
       }
 
       public String label() {

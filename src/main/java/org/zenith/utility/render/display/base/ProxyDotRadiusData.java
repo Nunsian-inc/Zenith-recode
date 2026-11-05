@@ -37,55 +37,55 @@ public final class ProxyDotRadiusData {
    }
    public static final ProxyDotRadiusData INSTANCE = new ProxyDotRadiusData(0.0F, 0.0F, 0.0F, 0.0F);
 
-   public ProxyDotRadiusData(float var1, float var2, float var3, float var4) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      this.floatValue3 = var3;
-      this.floatValue4 = var4;
+   public ProxyDotRadiusData(float floatValue, float intValue, float f, float intValue2) {
+      this.floatValue = floatValue;
+      this.floatValue2 = intValue;
+      this.floatValue3 = f;
+      this.floatValue4 = intValue2;
    }
 
-   public static ProxyDotRadiusData method8069(float var0) {
-      return new ProxyDotRadiusData(var0, var0, var0, var0);
+   public static ProxyDotRadiusData method8069(float intValue) {
+      return new ProxyDotRadiusData(intValue, intValue, intValue, intValue);
    }
 
-   public static ProxyDotRadiusData method8070(float var0) {
-      return new ProxyDotRadiusData(var0, 0.0F, 0.0F, 0.0F);
+   public static ProxyDotRadiusData method8070(float floatValue) {
+      return new ProxyDotRadiusData(floatValue, 0.0F, 0.0F, 0.0F);
    }
 
-   public static ProxyDotRadiusData method8071(float var0) {
-      return new ProxyDotRadiusData(0.0F, var0, 0.0F, 0.0F);
+   public static ProxyDotRadiusData method8071(float intValue) {
+      return new ProxyDotRadiusData(0.0F, intValue, 0.0F, 0.0F);
    }
 
-   public static ProxyDotRadiusData method8072(float var0) {
-      return new ProxyDotRadiusData(0.0F, 0.0F, var0, 0.0F);
+   public static ProxyDotRadiusData method8072(float f) {
+      return new ProxyDotRadiusData(0.0F, 0.0F, f, 0.0F);
    }
 
-   public static ProxyDotRadiusData method8073(float var0) {
-      return new ProxyDotRadiusData(0.0F, 0.0F, 0.0F, var0);
+   public static ProxyDotRadiusData method8073(float f) {
+      return new ProxyDotRadiusData(0.0F, 0.0F, 0.0F, f);
    }
 
-   public static ProxyDotRadiusData method8074(float var0, float var1) {
-      return new ProxyDotRadiusData(var0, var1, 0.0F, 0.0F);
+   public static ProxyDotRadiusData method8074(float floatValue, float intValue) {
+      return new ProxyDotRadiusData(floatValue, intValue, 0.0F, 0.0F);
    }
 
-   public static ProxyDotRadiusData method8075(float var0) {
-      return new ProxyDotRadiusData(var0, var0, 0.0F, 0.0F);
+   public static ProxyDotRadiusData method8075(float intValue) {
+      return new ProxyDotRadiusData(intValue, intValue, 0.0F, 0.0F);
    }
 
-   public static ProxyDotRadiusData method8076(float var0, float var1) {
-      return new ProxyDotRadiusData(0.0F, 0.0F, var1, var0);
+   public static ProxyDotRadiusData method8076(float f, float intValue) {
+      return new ProxyDotRadiusData(0.0F, 0.0F, intValue, f);
    }
 
-   public static ProxyDotRadiusData method8077(float var0) {
-      return new ProxyDotRadiusData(0.0F, 0.0F, var0, var0);
+   public static ProxyDotRadiusData method8077(float intValue) {
+      return new ProxyDotRadiusData(0.0F, 0.0F, intValue, intValue);
    }
 
-   public static ProxyDotRadiusData method8078(float var0, float var1) {
-      return new ProxyDotRadiusData(var0, 0.0F, 0.0F, var1);
+   public static ProxyDotRadiusData method8078(float intValue, float f) {
+      return new ProxyDotRadiusData(intValue, 0.0F, 0.0F, f);
    }
 
-   public static ProxyDotRadiusData method8079(float var0, float var1) {
-      return new ProxyDotRadiusData(0.0F, var0, var1, 0.0F);
+   public static ProxyDotRadiusData method8079(float intValue, float f) {
+      return new ProxyDotRadiusData(0.0F, intValue, f, 0.0F);
    }
 
    @NotNull

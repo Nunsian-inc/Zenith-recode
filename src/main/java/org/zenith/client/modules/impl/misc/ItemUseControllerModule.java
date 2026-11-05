@@ -50,16 +50,16 @@ public final class ItemUseControllerModule extends Module {
    public boolean flag2 = false;
 
    public boolean method4810() {
-      ItemStack var1 = mc.player.getMainHandItem();
-      Item var2 = var1.getItem();
-      if (this.items.method5226("module.itemUseController.bow") && var2 == Items.BOW) {
+      ItemStack mainHandItem = mc.player.getMainHandItem();
+      Item item = mainHandItem.getItem();
+      if (this.items.method5226("module.itemUseController.bow") && item == Items.BOW) {
          return true;
-      } else if (this.items.method5226("module.itemUseController.crossbow") && var2 == Items.CROSSBOW) {
+      } else if (this.items.method5226("module.itemUseController.crossbow") && item == Items.CROSSBOW) {
          return true;
       } else {
-         return this.items.method5226("module.itemUseController.snowball") && var2 == Items.SNOWBALL
+         return this.items.method5226("module.itemUseController.snowball") && item == Items.SNOWBALL
             ? true
-            : this.items.method5226("module.itemUseController.trident") && var2 == Items.TRIDENT;
+            : this.items.method5226("module.itemUseController.trident") && item == Items.TRIDENT;
       }
    }
 
@@ -67,7 +67,7 @@ public final class ItemUseControllerModule extends Module {
    }
 
    @EventTarget
-   public void method4811(Event5 var1) {
+   public void method4811(Event5 event) {
       if (!this.newVersion.isEnabled()) {
          this.flag = false;
          if (mc.gui.overlay() == null
@@ -81,9 +81,9 @@ public final class ItemUseControllerModule extends Module {
                      && mc.player.getMainHandItem().getUseDuration(mc.player) == 0
                   || Zenith.getInstance().getTaskScheduler().method5118(HandleInputEvent.class)
             )) {
-            Rotation var2 = this.method4813();
-            Rotation var3 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var2);
-            Zenith.getInstance().getRotationManager().method7849(new RotationRequest(var3, () -> var3, bcCameraTestnerv.getRotationConfig()), 20, this);
+            Rotation rotation = this.method4813();
+            Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
+            Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
             this.flag = true;
          }
       } else if (mc.gui.overlay() == null
@@ -93,93 +93,93 @@ public final class ItemUseControllerModule extends Module {
             mc.options.keyUse.isDown() && mc.rightClickDelay == 0 && !mc.player.isUsingItem() && mc.player.getMainHandItem().getUseDuration(mc.player) == 0
                || Zenith.getInstance().getTaskScheduler().method5118(HandleInputEvent.class)
          )) {
-         Rotation var4 = this.method4813();
-         Rotation var6 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var4);
-         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(var6, () -> var6, bcCameraTestnerv.getRotationConfig()), 20, this);
+         Rotation rotation = this.method4813();
+         Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
+         Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
       }
 
       this.flag2 = false;
       if (!mc.options.keyUse.isDown()
          && mc.player.isUsingItem()
          && (Zenith.getInstance().getRotationManager().getCurrentRotation() != null || this.aim.isEnabled() && this.method4810())) {
-         Rotation var5 = this.method4813();
-         if (!Zenith.getInstance().getRotationManager().method7844().method3131(var5).method5329(5.0F)) {
-            Rotation var7 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var5);
-            Zenith.getInstance().getRotationManager().method7849(new RotationRequest(var7, () -> var7, bcCameraTestnerv.getRotationConfig()), 20, this);
+         Rotation rotation = this.method4813();
+         if (!Zenith.getInstance().getRotationManager().method7844().method3131(rotation).method5329(5.0F)) {
+            Rotation rotation2 = bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
+            Zenith.getInstance().getRotationManager().method7849(new RotationRequest(rotation2, () -> rotation2, bcCameraTestnerv.getRotationConfig()), 20, this);
             this.flag2 = true;
          }
       }
    }
 
    @EventTarget
-   public void method4812(Event9 var1) {
+   public void method4812(Event9 event) {
       if (!this.newVersion.isEnabled() && this.flag) {
-         var1.cancel();
+         event.cancel();
       }
    }
 
    private Rotation method4813() {
-      Rotation var1 = new Rotation(mc.player.getYRot(), mc.player.getXRot());
+      Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
 
       try {
          if (this.aim.isEnabled() && this.method4810()) {
-            ItemStack var2 = mc.player.getMainHandItem();
-            LivingEntity var3 = AuraModule.INSTANCE.getLivingEntity22();
-            if (!(var3 instanceof Player var4)) {
-               return var1;
+            ItemStack mainHandItem = mc.player.getMainHandItem();
+            LivingEntity livingEntity22 = AuraModule.INSTANCE.getLivingEntity22();
+            if (!(livingEntity22 instanceof Player player)) {
+               return rotation;
             } else {
-               Rotation var5 = RotationUtils.method6912(
+               Rotation rotation2 = RotationUtils.method6912(
                   this.method4814(
                         this.predictSetting.getValue3() == 0.0F
-                           ? var4.getBoundingBox()
-                           : PlayerSimulation.method6032(var4, (int)this.predictSetting.getValue3()).box
+                           ? player.getBoundingBox()
+                           : PlayerSimulation.method6032(player, (int)this.predictSetting.getValue3()).box
                      )
                      .subtract(PlayerSimulation.method6031(1).vec3d.add(0.0, mc.player.getEyeHeight(mc.player.getPose()), 0.0))
                );
-               float var6 = var5.getFloatValue();
-               int var7 = Math.round(var5.getFloatValue2());
-               float var8 = Float.MAX_VALUE;
-               Rotation var9 = var1;
+               float floatValue = rotation2.getFloatValue();
+               int n = Math.round(rotation2.getFloatValue2());
+               float f = Float.MAX_VALUE;
+               Rotation rotation3 = rotation;
 
-               for (int var10 = 0; var10 < 90; var10++) {
-                  int[] var11 = new int[]{var7 + var10, var7 - var10};
+               for (int i = 0; i < 90; i++) {
+                  int[] ints = new int[]{n + i, n - i};
 
-                  for (int var15 : var11) {
-                     Rotation var16 = new Rotation(var6, var15);
-                     var var17 = PredictionsModule.INSTANCE.method2903(var2, var2.getItem(), var16);
-                     if (var17 != null && !var17.isEmpty() && var17.getFirst() instanceof EntityHitResult var18 && var18.getEntity().equals(var3)) {
-                        float var21 = Math.abs(var5.getFloatValue2() - var15);
-                        if (var21 <= 5.0F) {
-                           return var16;
+                  for (int xRot : ints) {
+                     Rotation rotation4 = new Rotation(floatValue, xRot);
+                     var hitResults = PredictionsModule.INSTANCE.method2903(mainHandItem, mainHandItem.getItem(), rotation4);
+                     if (hitResults != null && !hitResults.isEmpty() && hitResults.getFirst() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity().equals(livingEntity22)) {
+                        float f2 = Math.abs(rotation2.getFloatValue2() - xRot);
+                        if (f2 <= 5.0F) {
+                           return rotation4;
                         }
 
-                        if (var21 < var8) {
-                           var8 = var21;
-                           var9 = var16;
+                        if (f2 < f) {
+                           f = f2;
+                           rotation3 = rotation4;
                         }
                      }
                   }
                }
 
-               return var9;
+               return rotation3;
             }
          } else {
-            return var1;
+            return rotation;
          }
-      } catch (Exception var20) {
-         var20.printStackTrace();
-         return var1;
+      } catch (Exception e) {
+         e.printStackTrace();
+         return rotation;
       }
    }
 
-   public Vec3 method4814(AABB var1) {
-      return new Vec3(Mth.lerp(0.5, var1.minX, var1.maxX), Mth.lerp(0.8, var1.minY, var1.maxY), Mth.lerp(0.5, var1.minZ, var1.maxZ));
+   public Vec3 method4814(AABB boundingBox) {
+      return new Vec3(Mth.lerp(0.5, boundingBox.minX, boundingBox.maxX), Mth.lerp(0.8, boundingBox.minY, boundingBox.maxY), Mth.lerp(0.5, boundingBox.minZ, boundingBox.maxZ));
    }
 
    @EventTarget
-   public void method4815(StopUsingItemEvent var1) {
+   public void method4815(StopUsingItemEvent event) {
       if (this.flag2) {
-         var1.cancel();
+         event.cancel();
       }
    }
 }

@@ -64,14 +64,14 @@ public final class BotConnectionState {
    }
 
    public BotConnectionState(
-      GameProfile var1, Frozen var2, FeatureFlagSet var3, @Nullable String var4, Map<Identifier, byte[]> var5, Map<String, String> var6, ServerLinks var7
+      GameProfile profile, Frozen receivedRegistries, FeatureFlagSet enabledFeatures, @Nullable String brand, Map<Identifier, byte[]> serverCookies, Map<String, String> customReportDetails, ServerLinks serverLinks
    ) {
-      this.profile = var1;
-      this.receivedRegistries = var2;
-      this.enabledFeatures = var3;
-      this.brand = var4;
-      this.serverCookies = var5;
-      this.customReportDetails = var6;
-      this.serverLinks = var7;
+      this.profile = profile;
+      this.receivedRegistries = receivedRegistries;
+      this.enabledFeatures = enabledFeatures;
+      this.brand = brand;
+      this.serverCookies = serverCookies;
+      this.customReportDetails = customReportDetails;
+      this.serverLinks = serverLinks;
    }
 }

@@ -39,57 +39,57 @@ public final class AutoExplosionModule extends Module {
    private Slot slot = null;
 
    @EventTarget
-   public void method4898(BlockPlacedEvent var1) {
-      if (var1.getBlockState().getBlock() == Blocks.OBSIDIAN) {
+   public void method4898(BlockPlacedEvent event) {
+      if (event.getBlockState().getBlock() == Blocks.OBSIDIAN) {
          this.ticks = 5;
-         Slot var2 = InventoryUtils.method906(Items.END_CRYSTAL);
-         if (var2 == null) {
+         Slot slot = InventoryUtils.method906(Items.END_CRYSTAL);
+         if (slot == null) {
             return;
          }
 
-         this.blockPos2 = var1.getBlockPos();
+         this.blockPos2 = event.getBlockPos();
       }
    }
 
    @EventTarget
-   public void method4899(Event5 var1) {
+   public void method4899(Event5 event) {
       if (this.blockPos2 != null) {
-         Rotation var2 = rotationManager.method7844()
+         Rotation rotation = rotationManager.method7844()
             .method3141(
                Zenith.getInstance().getRotationManager().method7844().method3131(RotationUtils.method6913(net.minecraft.world.phys.Vec3.atCenterOf(this.blockPos2).add(0.0, 0.5, 0.0)))
             );
-         rotationManager.method7848(new RotationRequest(var2, () -> var2, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
+         rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
       }
 
       if (this.blockPos != null) {
          if (this.intValue > 0) {
-            Rotation var3 = rotationManager.method7844()
+            Rotation rotation = rotationManager.method7844()
                .method3141(
                   Zenith.getInstance().getRotationManager().method7844().method3131(RotationUtils.method6913(net.minecraft.world.phys.Vec3.atCenterOf(this.blockPos).add(0.0, 1.2F, 0.0)))
                );
-            rotationManager.method7848(new RotationRequest(var3, () -> var3, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
+            rotationManager.method7848(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 4, this, 1);
             this.intValue--;
          }
       }
    }
 
    @EventTarget
-   public void method4900(EntityAddEvent var1) {
-      if (var1.getEntity() instanceof EndCrystal var2 && var2.blockPosition().equals(this.blockPos)) {
+   public void method4900(EntityAddEvent event) {
+      if (event.getEntity() instanceof EndCrystal endCrystal && endCrystal.blockPosition().equals(this.blockPos)) {
          this.intValue = 4;
       }
    }
 
    @EventTarget
-   public void method4901(Event9 var1) {
-      if (!var1.isCancelled()
+   public void method4901(Event9 event) {
+      if (!event.isCancelled()
          && this.blockPos != null
          && this.intValue > 0
-         && mc.hitResult instanceof EntityHitResult var2
-         && var2.getEntity() instanceof EndCrystal) {
-         AttackUtils.method816(var2.getEntity());
+         && mc.hitResult instanceof EntityHitResult entityHitResult
+         && entityHitResult.getEntity() instanceof EndCrystal) {
+         AttackUtils.method816(entityHitResult.getEntity());
          this.blockPos = null;
-         var1.setCancelled(true);
+         event.setCancelled(true);
       }
 
       if (this.ticks > 0) {
@@ -99,26 +99,26 @@ public final class AutoExplosionModule extends Module {
       if (this.ticks <= 0) {
          this.blockPos2 = null;
          if (this.slot != null && KeyBindUtils.method2630(AutoExplosionModule.class)) {
-            Slot var6 = this.slot;
-            KeyBindUtils.method2627(AutoExplosionModule.class, () -> InventoryUtils.method900(var6, InteractionHand.MAIN_HAND, true));
+            Slot slot = this.slot;
+            KeyBindUtils.method2627(AutoExplosionModule.class, () -> InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true));
             this.slot = null;
          }
       } else if (this.blockPos2 != null) {
-         Slot var5 = InventoryUtils.method906(Items.END_CRYSTAL);
-         if (var5 != null) {
-            if (!var1.isCancelled()
-               && mc.hitResult instanceof BlockHitResult var7
-               && mc.level.getBlockState(var7.getBlockPos()).getBlock() == Blocks.OBSIDIAN) {
+         Slot slot = InventoryUtils.method906(Items.END_CRYSTAL);
+         if (slot != null) {
+            if (!event.isCancelled()
+               && mc.hitResult instanceof BlockHitResult blockHitResult
+               && mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock() == Blocks.OBSIDIAN) {
                if (mc.player.getMainHandItem().getItem() == Items.END_CRYSTAL) {
-                  UseItemUtils.method6514(var7, InteractionHand.MAIN_HAND);
-                  var1.setCancelled(true);
-                  this.blockPos = var7.getBlockPos().above();
+                  UseItemUtils.method6514(blockHitResult, InteractionHand.MAIN_HAND);
+                  event.setCancelled(true);
+                  this.blockPos = blockHitResult.getBlockPos().above();
                   this.blockPos2 = null;
                   this.ticks = -4;
                } else if (KeyBindUtils.method2629(AutoExplosionModule.class)) {
-                  KeyBindUtils.method2627(AutoExplosionModule.class, () -> InventoryUtils.method900(var5, InteractionHand.MAIN_HAND, true));
+                  KeyBindUtils.method2627(AutoExplosionModule.class, () -> InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true));
                   if (this.slot == null) {
-                     this.slot = var5;
+                     this.slot = slot;
                   }
                }
             }

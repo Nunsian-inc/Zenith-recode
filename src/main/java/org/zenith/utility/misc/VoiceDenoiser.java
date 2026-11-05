@@ -19,7 +19,7 @@ public final class VoiceDenoiser {
       return this.floatValue;
    }
 
-   public boolean method802(short[] var1, int var2) {
+   public boolean method802(short[] shortValues, int length) {
       if (broken) {
          return false;
       } else {
@@ -29,20 +29,20 @@ public final class VoiceDenoiser {
                this.shortValues = new short[this.denoiser.getFrameSize()];
             }
 
-            int var3 = this.shortValues.length;
-            float var4 = 0.0F;
+            int n = this.shortValues.length;
+            float floatValue = 0.0F;
 
-            for (int var5 = 0; var5 + var3 <= var2; var5 += var3) {
-               System.arraycopy(var1, var5, this.shortValues, 0, var3);
-               var4 = Math.max(var4, this.denoiser.denoiseInPlace(this.shortValues));
-               System.arraycopy(this.shortValues, 0, var1, var5, var3);
+            for (int i = 0; i + n <= length; i += n) {
+               System.arraycopy(shortValues, i, this.shortValues, 0, n);
+               floatValue = Math.max(floatValue, this.denoiser.denoiseInPlace(this.shortValues));
+               System.arraycopy(this.shortValues, 0, shortValues, i, n);
             }
 
-            this.floatValue = var4;
+            this.floatValue = floatValue;
             return true;
-         } catch (Throwable var6) {
+         } catch (Throwable e) {
             broken = true;
-            logger.warn("Голос: RNNoise недоступен, остаётся простой шумодав: {}", var6.toString());
+            logger.warn("Голос: RNNoise недоступен, остаётся простой шумодав: {}", e.toString());
             this.close();
             return false;
          }
@@ -53,7 +53,7 @@ public final class VoiceDenoiser {
       if (this.denoiser != null) {
          try {
             this.denoiser.close();
-         } catch (Throwable var2) {
+         } catch (Throwable e) {
          }
 
          this.denoiser = null;

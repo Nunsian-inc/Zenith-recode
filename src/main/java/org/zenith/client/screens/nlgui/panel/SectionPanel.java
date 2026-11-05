@@ -75,7 +75,7 @@ public abstract class SectionPanel extends ElementPanel {
       return false;
    }
 
-   public float entryEnter(int var1, boolean var2) {
+   public float entryEnter(int n, boolean flag) {
       return 1.0F;
    }
 
@@ -88,53 +88,53 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    private void renderEntry(
-      SectionPanel.Entry var1,
-      String var2,
-      int var3,
-      boolean var4,
-      MenuDrawContext var5,
-      int var6,
-      int var7,
-      float var8,
-      float var9,
-      float var10,
-      float var11,
-      ZenithStyle var12
+      SectionPanel.Entry mainEntry,
+      String str,
+      int n,
+      boolean flag,
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      float floatValue,
+      float y,
+      float mainWidth,
+      float previewAlpha,
+      ZenithStyle currentStyle
    ) {
-      float var13;
-      if (!((var13 = this.entryEnter(var3, var4)) <= 0.001F)) {
-         boolean var14;
-         if (var14 = var13 < 0.999F) {
-            var5.pushMatrix();
-            var5.pose().translate((1.0F - var13) * 4.0F, (1.0F - var13) * 6.0F);
+      float entryEnter;
+      if (!((entryEnter = this.entryEnter(n, flag)) <= 0.001F)) {
+         boolean flag2;
+         if (flag2 = entryEnter < 0.999F) {
+            menuDrawContext.pushMatrix();
+            menuDrawContext.pose().translate((1.0F - entryEnter) * 4.0F, (1.0F - entryEnter) * 6.0F);
          }
 
-         float var15 = var11 * var13;
-         boolean var16;
-         BoundsData var17 = (var16 = this.pressFeedback() && var1.kind != SectionPanel.Entry.Kind.SETTING && var1.kind != SectionPanel.Entry.Kind.CAPTION)
-            ? new BoundsData(var8, var9, var10, var1.height())
+         float f = previewAlpha * entryEnter;
+         boolean flag3;
+         BoundsData boundsData = (flag3 = this.pressFeedback() && mainEntry.kind != SectionPanel.Entry.Kind.SETTING && mainEntry.kind != SectionPanel.Entry.Kind.CAPTION)
+            ? new BoundsData(floatValue, y, mainWidth, mainEntry.height())
             : null;
-         boolean var18 = var16 && this.pressFx.begin(var5, var2, var17);
-         var1.render(var5, var6, var7, var8, var9, var10, var15, var12);
-         if (var16 && var1.kind == SectionPanel.Entry.Kind.ROW) {
-            this.pressFx.ink(var5, var2, var17, 3.0F, var12.getPrimaryColor().getZenithColor().method7292(0.2F), var15);
+         boolean begin = flag3 && this.pressFx.begin(menuDrawContext, str, boundsData);
+         mainEntry.render(menuDrawContext, lastClickX, lastClickY, floatValue, y, mainWidth, f, currentStyle);
+         if (flag3 && mainEntry.kind == SectionPanel.Entry.Kind.ROW) {
+            this.pressFx.ink(menuDrawContext, str, boundsData, 3.0F, currentStyle.getPrimaryColor().getZenithColor().method7292(0.2F), f);
          }
 
-         this.pressFx.end(var5, var18);
-         if (var14) {
-            var5.popMatrix();
+         this.pressFx.end(menuDrawContext, begin);
+         if (flag2) {
+            menuDrawContext.popMatrix();
          }
       }
    }
 
-   private void markPress(SectionPanel.Entry var1, String var2, double var3, double var5) {
-      if (this.pressFeedback() && var1.kind != SectionPanel.Entry.Kind.SETTING) {
-         this.pressFx.press(var2, var3, var5);
+   private void markPress(SectionPanel.Entry entry, String str, double lastClickX, double lastClickY) {
+      if (this.pressFeedback() && entry.kind != SectionPanel.Entry.Kind.SETTING) {
+         this.pressFx.press(str, lastClickX, lastClickY);
       }
    }
 
-   public static String t(String var0) {
-      return var0 == null ? "" : Zenith.getInstance().getLocalization().translate(var0);
+   public static String t(String key) {
+      return key == null ? "" : Zenith.getInstance().getLocalization().translate(key);
    }
 
    public abstract void build();
@@ -154,11 +154,11 @@ public abstract class SectionPanel extends ElementPanel {
       this.built = false;
    }
 
-   public void tabs(String... var1) {
+   public void tabs(String... strings) {
       this.tabs.clear();
 
-      for (String var5 : var1) {
-         this.tabs.add(var5);
+      for (String str : strings) {
+         this.tabs.add(str);
       }
 
       if (this.activeTab >= this.tabs.size()) {
@@ -166,11 +166,11 @@ public abstract class SectionPanel extends ElementPanel {
       }
    }
 
-   public void tabIcons(MenuGlyph... var1) {
+   public void tabIcons(MenuGlyph... menuGlyphs) {
       this.tabIcons.clear();
 
-      for (MenuGlyph var5 : var1) {
-         this.tabIcons.add(var5);
+      for (MenuGlyph menuGlyph : menuGlyphs) {
+         this.tabIcons.add(menuGlyph);
       }
    }
 
@@ -183,8 +183,8 @@ public abstract class SectionPanel extends ElementPanel {
       return this.activeTab;
    }
 
-   public void setEmbedded(boolean var1) {
-      this.embedded = var1;
+   public void setEmbedded(boolean embedded) {
+      this.embedded = embedded;
    }
 
    private float inlineTabsHeight() {
@@ -192,13 +192,13 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    public String searchQuery() {
-      String var1 = Zenith.getInstance().getNLMenuScreen().getSearchValue();
-      return var1 == null ? "" : var1.trim().toLowerCase(Locale.ROOT);
+      String searchValue = Zenith.getInstance().getNLMenuScreen().getSearchValue();
+      return searchValue == null ? "" : searchValue.trim().toLowerCase(Locale.ROOT);
    }
 
-   public void selectTab(int var1) {
-      if (this.activeTab != var1) {
-         this.activeTab = var1;
+   public void selectTab(int activeTab) {
+      if (this.activeTab != activeTab) {
+         this.activeTab = activeTab;
          this.scroll = 0.0F;
          this.scrollTarget = 0.0F;
          this.resetAsideScroll();
@@ -207,51 +207,51 @@ public abstract class SectionPanel extends ElementPanel {
       }
    }
 
-   public void caption(String var1) {
+   public void caption(String key) {
       this.mainEntries
          .add(
             SectionPanel.Entry.caption(
-               var1,
+               key,
                this.mainEntries.isEmpty()
                   && this.mainHeaderHeight() <= 0.0F
             )
          );
    }
 
-   public void setting(Setting var1) {
-      if (var1 != null) {
-         this.mainEntries.add(SectionPanel.Entry.setting(new InspectorRow(var1, 0)));
+   public void setting(Setting autoAfk) {
+      if (autoAfk != null) {
+         this.mainEntries.add(SectionPanel.Entry.setting(new InspectorRow(autoAfk, 0)));
       }
    }
 
-   public void setting(InspectorRow var1) {
-      if (var1 != null) {
-         this.mainEntries.add(SectionPanel.Entry.setting(var1));
+   public void setting(InspectorRow inspectorRow) {
+      if (inspectorRow != null) {
+         this.mainEntries.add(SectionPanel.Entry.setting(inspectorRow));
       }
    }
 
-   public void info(String var1, Supplier<String> var2, String var3) {
-      this.row(var1).value(var2).description(var3).add();
+   public void info(String username, Supplier<String> supplier, String description) {
+      this.row(username).value(supplier).description(description).add();
    }
 
-   public void action(String var1, MenuGlyph var2, Supplier<String> var3, Runnable var4, String var5) {
-      this.row(var1).icon(var2).value(var3).onClick(var4).description(var5).add();
+   public void action(String text, MenuGlyph icon, Supplier<String> supplier, Runnable onClick, String description) {
+      this.row(text).icon(icon).value(supplier).onClick(onClick).description(description).add();
    }
 
-   public SectionPanel.RowBuilder row(String var1) {
-      return new SectionPanel.RowBuilder(var1, this.mainEntries);
+   public SectionPanel.RowBuilder row(String text) {
+      return new SectionPanel.RowBuilder(text, this.mainEntries);
    }
 
-   public void custom(float var1, SectionPanel.AsideRenderer var2) {
-      this.mainEntries.add(SectionPanel.Entry.custom(var1, var2));
+   public void custom(float hintsHeight, SectionPanel.AsideRenderer entering) {
+      this.mainEntries.add(SectionPanel.Entry.custom(hintsHeight, entering));
    }
 
-   public void custom(float var1, SectionPanel.AsideRenderer var2, Runnable var3, BooleanSupplier var4) {
-      this.mainEntries.add(SectionPanel.Entry.custom(var1, var2, var3, var4, null));
+   public void custom(float customHeight, SectionPanel.AsideRenderer entering, Runnable onClick, BooleanSupplier selected) {
+      this.mainEntries.add(SectionPanel.Entry.custom(customHeight, entering, onClick, selected, null));
    }
 
-   public void custom(float var1, SectionPanel.AsideRenderer var2, Runnable var3, BooleanSupplier var4, Runnable var5) {
-      this.mainEntries.add(SectionPanel.Entry.custom(var1, var2, var3, var4, var5));
+   public void custom(float hintsHeight, SectionPanel.AsideRenderer entering, Runnable onClick, BooleanSupplier selected, Runnable onRightClick) {
+      this.mainEntries.add(SectionPanel.Entry.custom(hintsHeight, entering, onClick, selected, onRightClick));
    }
 
    public BoundsData footerBounds() {
@@ -262,7 +262,7 @@ public abstract class SectionPanel extends ElementPanel {
       return 0.0F;
    }
 
-   public void renderMainHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+   public void renderMainHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float mainWidth, float previewAlpha, ZenithStyle currentStyle) {
    }
 
    public BoundsData mainHeaderBounds() {
@@ -273,51 +273,51 @@ public abstract class SectionPanel extends ElementPanel {
       return this.lastRightClickBounds;
    }
 
-   public void gap(float var1) {
-      this.mainEntries.add(SectionPanel.Entry.custom(var1, (var0, var1x, var2, var3, var4, var5, var6, var7) -> {}));
+   public void gap(float intValue) {
+      this.mainEntries.add(SectionPanel.Entry.custom(intValue, (menuDrawContext, var1x, n, f, f2, f3, f4, zenithStyle) -> {}));
    }
 
-   public void asideCaption(String var1) {
+   public void asideCaption(String elementName) {
       this.asideEntries
          .add(
-            SectionPanel.Entry.caption(var1, this.asideEntries.isEmpty())
+            SectionPanel.Entry.caption(elementName, this.asideEntries.isEmpty())
          );
    }
 
-   public void asideSetting(Setting var1) {
-      if (var1 != null) {
-         this.asideEntries.add(SectionPanel.Entry.setting(new InspectorRow(var1, 0)));
+   public void asideSetting(Setting hudBackground) {
+      if (hudBackground != null) {
+         this.asideEntries.add(SectionPanel.Entry.setting(new InspectorRow(hudBackground, 0)));
       }
    }
 
-   public void asideSetting(InspectorRow var1) {
-      if (var1 != null) {
-         this.asideEntries.add(SectionPanel.Entry.setting(var1));
+   public void asideSetting(InspectorRow codeRow) {
+      if (codeRow != null) {
+         this.asideEntries.add(SectionPanel.Entry.setting(codeRow));
       }
    }
 
-   public void asideCustom(float var1, SectionPanel.AsideRenderer var2, Runnable var3, BooleanSupplier var4) {
-      this.asideEntries.add(SectionPanel.Entry.custom(var1, var2, var3, var4, null));
+   public void asideCustom(float customHeight, SectionPanel.AsideRenderer entering, Runnable onClick, BooleanSupplier selected) {
+      this.asideEntries.add(SectionPanel.Entry.custom(customHeight, entering, onClick, selected, null));
    }
 
-   public void asideCustom(float var1, SectionPanel.AsideRenderer var2, Runnable var3, BooleanSupplier var4, Runnable var5) {
-      this.asideEntries.add(SectionPanel.Entry.custom(var1, var2, var3, var4, var5));
+   public void asideCustom(float customHeight, SectionPanel.AsideRenderer asideEntering, Runnable onClick, BooleanSupplier selected, Runnable onRightClick) {
+      this.asideEntries.add(SectionPanel.Entry.custom(customHeight, asideEntering, onClick, selected, onRightClick));
    }
 
-   public void asideInfo(String var1, Supplier<String> var2, String var3) {
-      this.asideEntries.add(SectionPanel.Entry.info(var1, var2, var3));
+   public void asideInfo(String serverName, Supplier<String> supplier, String description) {
+      this.asideEntries.add(SectionPanel.Entry.info(serverName, supplier, description));
    }
 
-   public void asideAction(String var1, MenuGlyph var2, Supplier<String> var3, Runnable var4, String var5) {
-      this.asideEntries.add(SectionPanel.Entry.action(var1, var2, var3, var4, var5));
+   public void asideAction(String label, MenuGlyph icon, Supplier<String> supplier, Runnable onClick, String description) {
+      this.asideEntries.add(SectionPanel.Entry.action(label, icon, supplier, onClick, description));
    }
 
-   public void asideCustom(float var1, SectionPanel.AsideRenderer var2) {
-      this.asideEntries.add(SectionPanel.Entry.custom(var1, var2));
+   public void asideCustom(float hintsHeight, SectionPanel.AsideRenderer entering) {
+      this.asideEntries.add(SectionPanel.Entry.custom(hintsHeight, entering));
    }
 
-   public void asideFull(SectionPanel.AsideRenderer var1) {
-      this.asideFull = var1;
+   public void asideFull(SectionPanel.AsideRenderer asideFull) {
+      this.asideFull = asideFull;
    }
 
    private void ensureBuilt() {
@@ -336,13 +336,13 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null) {
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         float var10 = var5 + 8.0F;
-         this.headerIcon().draw(var1, var10, var6 + 8.5F, var8.getTextEnable().getZenithColor().method7294(var4));
-         var1.drawText(var9, this.headerTitle(), var10 + 11.0F, var6 + (23.0F - var9.height()) / 2.0F, var8.getTextEnable().getZenithColor().method7294(var4));
+   public void renderHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float f, float f2, float f3) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         float floatValue = f + 8.0F;
+         this.headerIcon().draw(menuDrawContext, floatValue, f2 + 8.5F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawText(font, this.headerTitle(), floatValue + 11.0F, f2 + (23.0F - font.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
       }
    }
 
@@ -350,204 +350,204 @@ public abstract class SectionPanel extends ElementPanel {
    public float getButtonWidth() {
       this.ensureBuilt();
       if (!this.tabs.isEmpty() && !this.embedded) {
-         Font var1 = Fonts.NEW_MEDIUM.getFont(5.0F);
-         float var2 = 0.0F;
+         Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+         float f = 0.0F;
 
-         for (String var4 : this.tabs) {
-            var2 += var1.width(t(var4)) + 16.0F;
+         for (String tab : this.tabs) {
+            f += font.width(t(tab)) + 16.0F;
          }
 
-         return var2;
+         return f;
       } else {
          return 0.0F;
       }
    }
 
    @Override
-   public void renderHeaderButtons(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
+   public void renderHeaderButtons(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float floatValue, float y, float mainWidth, float f) {
       if (!this.embedded) {
          this.ensureBuilt();
-         ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var9 != null && !this.tabs.isEmpty()) {
-            this.renderTabStrip(var1, var2, var3, var4, var5, var6, 23.0F, var7, var9, false);
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null && !this.tabs.isEmpty()) {
+            this.renderTabStrip(menuDrawContext, lastClickX, lastClickY, previewAlpha, floatValue, y, 23.0F, mainWidth, currentStyle, false);
          }
       }
    }
 
    private void renderTabStrip(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9, boolean var10
+      MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float floatValue, float y, float inlineTabsHeight, float mainWidth, ZenithStyle currentStyle, boolean flag
    ) {
-      Font var11 = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
       this.tabBounds.clear();
-      boolean var12 = !this.tabIcons.isEmpty();
-      float var13 = 8.0F;
-      boolean var14 = false;
-      float var15 = var10 ? var5 + 8.0F - 2.0F : var5;
-      float var16 = var10 ? var8 - 12.0F : var8;
-      if (var10) {
-         if (this.tabsWidth(var11, var12, var13) > var16) {
-            var12 = false;
-            float var17 = this.tabsWidth(var11, false, 0.0F);
-            float var18;
-            if ((var18 = var16 - var17) >= this.tabs.size() * 3.0F * 2.0F) {
-               var13 = Math.min(8.0F, var18 / (this.tabs.size() * 2.0F));
+      boolean flag2 = !this.tabIcons.isEmpty();
+      float f = 8.0F;
+      boolean tabsScrollable = false;
+      float f2 = flag ? floatValue + 8.0F - 2.0F : floatValue;
+      float f3 = flag ? mainWidth - 12.0F : mainWidth;
+      if (flag) {
+         if (this.tabsWidth(font, flag2, f) > f3) {
+            flag2 = false;
+            float tabsWidth = this.tabsWidth(font, false, 0.0F);
+            float f4;
+            if ((f4 = f3 - tabsWidth) >= this.tabs.size() * 3.0F * 2.0F) {
+               f = Math.min(8.0F, f4 / (this.tabs.size() * 2.0F));
             } else {
-               float var19 = var16 - this.tabs.size() * 3.0F * 2.0F;
-               float var20;
-               if ((var20 = (float)Math.floor(5.0F * var19 / var17 * 10.0F) / 10.0F) >= 4.5F) {
-                  var11 = Fonts.NEW_MEDIUM.getFont(var20);
-                  var13 = 3.0F;
+               float f5 = f3 - this.tabs.size() * 3.0F * 2.0F;
+               float px;
+               if ((px = (float)Math.floor(5.0F * f5 / tabsWidth * 10.0F) / 10.0F) >= 4.5F) {
+                  font = Fonts.NEW_MEDIUM.getFont(px);
+                  f = 3.0F;
                } else {
-                  var14 = true;
-                  var13 = 6.0F;
+                  tabsScrollable = true;
+                  f = 6.0F;
                }
             }
          }
       } else {
-         float var37;
-         if ((var37 = this.tabsWidth(var11, false, 3.0F)) > var8 && var37 > 0.0F) {
-            float var39 = this.tabsWidth(var11, false, 0.0F);
-            float var42 = var8 - this.tabs.size() * 3.0F * 2.0F;
-            float var44 = Math.max(3.8F, Math.round(5.0F * var42 / var39 * 10.0F) / 10.0F);
-            var11 = Fonts.NEW_MEDIUM.getFont(var44);
+         float tabsWidth;
+         if ((tabsWidth = this.tabsWidth(font, false, 3.0F)) > mainWidth && tabsWidth > 0.0F) {
+            float tabsWidth2 = this.tabsWidth(font, false, 0.0F);
+            float f4 = mainWidth - this.tabs.size() * 3.0F * 2.0F;
+            float px = Math.max(3.8F, Math.round(5.0F * f4 / tabsWidth2 * 10.0F) / 10.0F);
+            font = Fonts.NEW_MEDIUM.getFont(px);
          }
 
-         for (int var40 = 0; var40 < 2 && !(this.tabsWidth(var11, var12, var13) <= var8); var40++) {
-            if (var40 != 0 || !var12) {
-               float var45 = this.tabsWidth(var11, var12, 0.0F);
-               var13 = Math.max(3.0F, (var8 - var45) / (this.tabs.size() * 2.0F));
+         for (int i = 0; i < 2 && !(this.tabsWidth(font, flag2, f) <= mainWidth); i++) {
+            if (i != 0 || !flag2) {
+               float tabsWidth2 = this.tabsWidth(font, flag2, 0.0F);
+               f = Math.max(3.0F, (mainWidth - tabsWidth2) / (this.tabs.size() * 2.0F));
                break;
             }
 
-            var12 = false;
+            flag2 = false;
          }
       }
 
-      float var38 = 0.0F;
-      float var41 = 0.0F;
-      float var43 = 0.0F;
-      float[] var46 = new float[this.tabs.size()];
-      float[] var21 = new float[this.tabs.size()];
+      float f4 = 0.0F;
+      float floatValue2 = 0.0F;
+      float floatValue3 = 0.0F;
+      float[] floats = new float[this.tabs.size()];
+      float[] floats2 = new float[this.tabs.size()];
 
-      for (int var22 = 0; var22 < this.tabs.size(); var22++) {
-         String var23 = t(this.tabs.get(var22));
-         boolean var24 = var12 && var22 < this.tabIcons.size() && this.tabIcons.get(var22) != null;
-         float var25 = var11.width(var23) + var13 * 2.0F + (var24 ? 9.0F : 0.0F);
-         var46[var22] = var38;
-         var21[var22] = var25;
-         if (var22 == this.activeTab) {
-            var41 = var38;
-            var43 = var25;
+      for (int i = 0; i < this.tabs.size(); i++) {
+         String text = t(this.tabs.get(i));
+         boolean flag3 = flag2 && i < this.tabIcons.size() && this.tabIcons.get(i) != null;
+         float f5 = font.width(text) + f * 2.0F + (flag3 ? 9.0F : 0.0F);
+         floats[i] = f4;
+         floats2[i] = f5;
+         if (i == this.activeTab) {
+            floatValue2 = f4;
+            floatValue3 = f5;
          }
 
-         var38 += var25;
+         f4 += f5;
       }
 
-      float var47 = 0.0F;
-      if (var14) {
-         float var48 = Math.max(0.0F, var38 - var16);
+      float tabScroll = 0.0F;
+      if (tabsScrollable) {
+         float max = Math.max(0.0F, f4 - f3);
          if (this.tabScrolledTo != this.activeTab) {
             this.tabScrolledTo = this.activeTab;
-            float var51 = 12.0F;
-            if (var41 - var51 < this.tabScrollTarget) {
-               this.tabScrollTarget = var41 - var51;
-            } else if (var41 + var43 + var51 > this.tabScrollTarget + var16) {
-               this.tabScrollTarget = var41 + var43 + var51 - var16;
+            float f5 = 12.0F;
+            if (floatValue2 - f5 < this.tabScrollTarget) {
+               this.tabScrollTarget = floatValue2 - f5;
+            } else if (floatValue2 + floatValue3 + f5 > this.tabScrollTarget + f3) {
+               this.tabScrollTarget = floatValue2 + floatValue3 + f5 - f3;
             }
          }
 
-         this.tabScrollTarget = Mth.clamp(this.tabScrollTarget, 0.0F, var48);
-         this.tabScroll = Mth.clamp(this.tabScroll + (this.tabScrollTarget - this.tabScroll) * 0.25F, 0.0F, var48);
-         var47 = this.tabScroll;
+         this.tabScrollTarget = Mth.clamp(this.tabScrollTarget, 0.0F, max);
+         this.tabScroll = Mth.clamp(this.tabScroll + (this.tabScrollTarget - this.tabScroll) * 0.25F, 0.0F, max);
+         tabScroll = this.tabScroll;
       } else {
          this.tabScroll = 0.0F;
          this.tabScrollTarget = 0.0F;
          this.tabScrolledTo = -1;
       }
 
-      this.tabsScrollable = var14;
-      this.tabViewport = var10 ? new BoundsData(var15 + 2.0F, var6, var16 - 4.0F, var7) : null;
+      this.tabsScrollable = tabsScrollable;
+      this.tabViewport = flag ? new BoundsData(f2 + 2.0F, y, f3 - 4.0F, inlineTabsHeight) : null;
 
-      for (int var49 = 0; var49 < this.tabs.size(); var49++) {
-         this.tabBounds.add(new BoundsData(var15 + var46[var49] - var47, var6, var21[var49], var7));
+      for (int i = 0; i < this.tabs.size(); i++) {
+         this.tabBounds.add(new BoundsData(f2 + floats[i] - tabScroll, y, floats2[i], inlineTabsHeight));
       }
 
       if (!this.plateReady) {
-         this.plateX.method2809(var41);
-         this.plateWidth.method2809(var43);
+         this.plateX.method2809(floatValue2);
+         this.plateWidth.method2809(floatValue3);
          this.plateReady = true;
       }
 
-      float var50 = var15 - var47 + this.plateX.method2808(var41);
-      float var52 = this.plateWidth.method2808(var43);
-      float var53 = var7 - 7.0F;
-      float var26;
-      float var27 = Math.min(var26 = Math.max(0.0F, var52 - 4.0F), var53) / 2.0F;
-      var1.drawRoundedRect(
-         var50 + 2.0F,
-         var6 + (var7 - var53) / 2.0F,
-         var26,
-         var53,
-         ProxyDotRadiusData.method8069(var27),
-         var9.getDisableActiveBg().getZenithColor().method7294(var4)
+      float f5 = f2 - tabScroll + this.plateX.method2808(floatValue2);
+      float f6 = this.plateWidth.method2808(floatValue3);
+      float height = inlineTabsHeight - 7.0F;
+      float width;
+      float intValue = Math.min(width = Math.max(0.0F, f6 - 4.0F), height) / 2.0F;
+      menuDrawContext.drawRoundedRect(
+         f5 + 2.0F,
+         y + (inlineTabsHeight - height) / 2.0F,
+         width,
+         height,
+         ProxyDotRadiusData.method8069(intValue),
+         currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha)
       );
-      float var28 = var15 + var16;
+      float f7 = f2 + f3;
 
-      for (int var29 = 0; var29 < this.tabs.size(); var29++) {
-         BoundsData var30 = this.tabBounds.get(var29);
-         String var31 = t(this.tabs.get(var29));
-         boolean var32 = var29 == this.activeTab;
-         boolean var33 = var30.contains(var2, var3) && (this.tabViewport == null || this.tabViewport.contains(var2, var3));
-         float var34 = 1.0F;
-         if (var14) {
-            var34 = (
-                  var34 = Mth.clamp(
-                     (Math.min(var30.getFloatValue() + var30.width(), var28) - Math.max(var30.getFloatValue(), var15)) / var30.width(), 0.0F, 1.0F
+      for (int i = 0; i < this.tabs.size(); i++) {
+         BoundsData tabBound = this.tabBounds.get(i);
+         String text = t(this.tabs.get(i));
+         boolean flag3 = i == this.activeTab;
+         boolean flag4 = tabBound.contains(lastClickX, lastClickY) && (this.tabViewport == null || this.tabViewport.contains(lastClickX, lastClickY));
+         float f8 = 1.0F;
+         if (tabsScrollable) {
+            f8 = (
+                  f8 = Mth.clamp(
+                     (Math.min(tabBound.getFloatValue() + tabBound.width(), f7) - Math.max(tabBound.getFloatValue(), f2)) / tabBound.width(), 0.0F, 1.0F
                   )
                )
-               * var34;
+               * f8;
          }
 
-         ZenithColor var35 = (var32 ? var9.getTextEnable() : var9.getTextTertiary())
+         ZenithColor zenithColor = (flag3 ? currentStyle.getTextEnable() : currentStyle.getTextTertiary())
             .getZenithColor()
-            .method7295(var9.getTextEnable().getZenithColor(), var33 && !var32 ? 0.5F : 0.0F)
-            .method7294(var4 * var34);
-         float var36 = var30.getFloatValue() + var13;
-         if (var12 && var29 < this.tabIcons.size() && this.tabIcons.get(var29) != null) {
-            this.tabIcons.get(var29).draw(var1, var36, var6 + (var7 - 6.0F) / 2.0F, var35);
-            var36 += 9.0F;
+            .method7295(currentStyle.getTextEnable().getZenithColor(), flag4 && !flag3 ? 0.5F : 0.0F)
+            .method7294(previewAlpha * f8);
+         float floatValue4 = tabBound.getFloatValue() + f;
+         if (flag2 && i < this.tabIcons.size() && this.tabIcons.get(i) != null) {
+            this.tabIcons.get(i).draw(menuDrawContext, floatValue4, y + (inlineTabsHeight - 6.0F) / 2.0F, zenithColor);
+            floatValue4 += 9.0F;
          }
 
-         var1.drawText(var11, var31, var36, var6 + (var7 - var11.height()) / 2.0F, var35);
+         menuDrawContext.drawText(font, text, floatValue4, y + (inlineTabsHeight - font.height()) / 2.0F, zenithColor);
       }
    }
 
-   private float tabsWidth(Font var1, boolean var2, float var3) {
-      float var4 = 0.0F;
+   private float tabsWidth(Font font, boolean flag, float f) {
+      float f2 = 0.0F;
 
-      for (int var5 = 0; var5 < this.tabs.size(); var5++) {
-         boolean var6 = var2 && var5 < this.tabIcons.size() && this.tabIcons.get(var5) != null;
-         var4 += var1.width(t(this.tabs.get(var5))) + var3 * 2.0F + (var6 ? 9.0F : 0.0F);
+      for (int i = 0; i < this.tabs.size(); i++) {
+         boolean flag2 = flag && i < this.tabIcons.size() && this.tabIcons.get(i) != null;
+         f2 += font.width(t(this.tabs.get(i))) + f * 2.0F + (flag2 ? 9.0F : 0.0F);
       }
 
-      return var4;
+      return f2;
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double var1, double var3, Enum3 var5) {
-      return this.clickTabs(var1, var3);
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      return this.clickTabs(lastClickX, lastClickY);
    }
 
-   private boolean clickTabs(double var1, double var3) {
-      if (this.tabViewport != null && !this.tabViewport.contains(var1, var3)) {
+   private boolean clickTabs(double lastClickX, double lastClickY) {
+      if (this.tabViewport != null && !this.tabViewport.contains(lastClickX, lastClickY)) {
          return false;
       } else {
-         for (int var5 = 0; var5 < this.tabBounds.size(); var5++) {
-            if (this.tabBounds.get(var5).contains(var1, var3)) {
-               boolean var6 = var5 != this.activeTab;
-               this.selectTab(var5);
-               if (var6) {
-                  Zenith.getInstance().getClientSounds().method1564(var5, Math.max(1, this.tabBounds.size()));
+         for (int i = 0; i < this.tabBounds.size(); i++) {
+            if (this.tabBounds.get(i).contains(lastClickX, lastClickY)) {
+               boolean flag = i != this.activeTab;
+               this.selectTab(i);
+               if (flag) {
+                  Zenith.getInstance().getClientSounds().method1564(i, Math.max(1, this.tabBounds.size()));
                }
 
                return true;
@@ -559,249 +559,249 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float panelAlpha, float f, float y) {
       this.ensureBuilt();
-      this.panelAlpha = var4;
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
-         float var8 = NLMenuScreen.contentBottom - var6;
-         boolean var9 = this.asideFirst();
-         float var10 = this.asideWidth();
-         float var11 = this.mainWidth();
-         boolean var12 = var10 >= 1.0F;
-         float var13 = var9 ? var5 : var5 + var11;
-         float var14 = var9 ? var5 + var10 : var5;
-         float var15 = var9 ? var5 + var10 : var5 + var11;
-         if (var12) {
-            var1.drawRect(var15, var6, 1.0F, var8 - GuiStyle.PADDING.intValue(), var7.getFieldBorder().getZenithColor().method7294(var4 * 2.0F));
+      this.panelAlpha = panelAlpha;
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         float f2 = NLMenuScreen.contentBottom - y;
+         boolean asideFirst = this.asideFirst();
+         float asideWidth = this.asideWidth();
+         float mainWidth = this.mainWidth();
+         boolean flag = asideWidth >= 1.0F;
+         float floatValue = asideFirst ? f : f + mainWidth;
+         float floatValue2 = asideFirst ? f + asideWidth : f;
+         float floatValue3 = asideFirst ? f + asideWidth : f + mainWidth;
+         if (flag) {
+            menuDrawContext.drawRect(floatValue3, y, 1.0F, f2 - GuiStyle.PADDING.intValue(), currentStyle.getFieldBorder().getZenithColor().method7294(panelAlpha * 2.0F));
          }
 
-         float var16 = this.switchAnimation.method2808(1.0F);
-         float var17 = var4 * var16;
-         float var18 = (1.0F - var16) * 6.0F;
-         this.renderMain(var1, var2, var3, var14, var6 + var18, var8 - var18, var17, var7);
-         if (var12) {
-            this.renderAside(var1, var2, var3, var13, var6 + var18, var8 - var18, var17, var7);
+         float f3 = this.switchAnimation.method2808(1.0F);
+         float previewAlpha = panelAlpha * f3;
+         float f4 = (1.0F - f3) * 6.0F;
+         this.renderMain(menuDrawContext, lastClickX, lastClickY, floatValue2, y + f4, f2 - f4, previewAlpha, currentStyle);
+         if (flag) {
+            this.renderAside(menuDrawContext, lastClickX, lastClickY, floatValue, y + f4, f2 - f4, previewAlpha, currentStyle);
          } else if (!HoverInfo.hasText()) {
             HoverInfo.request(this.headerTitle(), t(this.sectionDescription()));
          }
 
-         this.renderFloating(var1, var2, var3, var17, var7);
+         this.renderFloating(menuDrawContext, lastClickX, lastClickY, previewAlpha, currentStyle);
       }
    }
 
-   public void renderFloating(MenuDrawContext var1, int var2, int var3, float var4, ZenithStyle var5) {
+   public void renderFloating(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, ZenithStyle currentStyle) {
    }
 
-   private void renderMain(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = this.mainWidth();
-      float var10;
-      if ((var10 = this.inlineTabsHeight()) > 0.0F) {
+   private void renderMain(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float f, float previewAlpha, ZenithStyle currentStyle) {
+      float mainWidth = this.mainWidth();
+      float inlineTabsHeight;
+      if ((inlineTabsHeight = this.inlineTabsHeight()) > 0.0F) {
          MsdfRenderer.flushBatch();
-         var1.enableScissor(var4 + 8.0F, var5, var4 + var9 - 8.0F, var5 + var10);
-         this.renderTabStrip(var1, var2, var3, Math.min(1.0F, var7 / Math.max(0.001F, this.switchAnimation.getValue())), var4, var5, var10, var9, var8, true);
+         menuDrawContext.enableScissor(floatValue + 8.0F, y, floatValue + mainWidth - 8.0F, y + inlineTabsHeight);
+         this.renderTabStrip(menuDrawContext, lastClickX, lastClickY, Math.min(1.0F, previewAlpha / Math.max(0.001F, this.switchAnimation.getValue())), floatValue, y, inlineTabsHeight, mainWidth, currentStyle, true);
          MsdfRenderer.flushBatch();
-         var1.disableScissor();
-         var1.drawRect(var4 + 8.0F, var5 + var10, var9 - 16.0F, 1.0F, var8.getFieldBorder().getZenithColor().method7294(var7));
-         var5 += var10 + GuiStyle.PADDING.intValue();
-         var6 -= var10 + GuiStyle.PADDING.intValue();
+         menuDrawContext.disableScissor();
+         menuDrawContext.drawRect(floatValue + 8.0F, y + inlineTabsHeight, mainWidth - 16.0F, 1.0F, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha));
+         y += inlineTabsHeight + GuiStyle.PADDING.intValue();
+         f -= inlineTabsHeight + GuiStyle.PADDING.intValue();
       }
 
-      float var11;
-      if ((var11 = this.mainHeaderHeight()) > 0.0F) {
-         this.mainHeaderBounds = new BoundsData(var4, var5, var9, var11);
-         this.renderMainHeader(var1, var2, var3, var4, var5, var9, var7, var8);
-         var5 += var11;
-         var6 -= var11;
+      float mainHeaderHeight;
+      if ((mainHeaderHeight = this.mainHeaderHeight()) > 0.0F) {
+         this.mainHeaderBounds = new BoundsData(floatValue, y, mainWidth, mainHeaderHeight);
+         this.renderMainHeader(menuDrawContext, lastClickX, lastClickY, floatValue, y, mainWidth, previewAlpha, currentStyle);
+         y += mainHeaderHeight;
+         f -= mainHeaderHeight;
       } else {
          this.mainHeaderBounds = null;
       }
 
-      float var12 = this.footerHeight();
-      float var13 = var6 - GuiStyle.PADDING.intValue() - var12;
-      this.mainBounds = new BoundsData(var4, var5, var9, var13);
-      if (var12 > 0.0F) {
-         this.footerBounds = new BoundsData(var4, var5 + var13, var9, var12);
-         this.renderFooter(var1, var2, var3, var4, var5 + var13, var9, var7, var8);
+      float footerHeight = this.footerHeight();
+      float height = f - GuiStyle.PADDING.intValue() - footerHeight;
+      this.mainBounds = new BoundsData(floatValue, y, mainWidth, height);
+      if (footerHeight > 0.0F) {
+         this.footerBounds = new BoundsData(floatValue, y + height, mainWidth, footerHeight);
+         this.renderFooter(menuDrawContext, lastClickX, lastClickY, floatValue, y + height, mainWidth, previewAlpha, currentStyle);
       } else {
          this.footerBounds = null;
       }
 
-      InspectorRow.alignTracks(settingRows(this.mainEntries), var9);
-      float var14 = 0.0F;
+      InspectorRow.alignTracks(settingRows(this.mainEntries), mainWidth);
+      float shownContentHeight = 0.0F;
 
-      for (SectionPanel.Entry var16 : this.mainEntries) {
-         var14 += var16.height();
+      for (SectionPanel.Entry mainEntry : this.mainEntries) {
+         shownContentHeight += mainEntry.height();
       }
 
-      float var24 = var12 > 0.0F ? var13 - GuiStyle.PADDING.intValue() * 2.0F : var13;
-      this.clampScroll(var14, var24);
+      float max = footerHeight > 0.0F ? height - GuiStyle.PADDING.intValue() * 2.0F : height;
+      this.clampScroll(shownContentHeight, max);
       this.scroll = this.mainScrollbar.isDragging() ? this.scrollTarget : this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
       if (this.mainEntries.isEmpty()) {
-         Font var26 = Fonts.NEW_REGULAR.getFont(5.0F);
-         float var27 = var5 + 40.0F;
+         Font font = Fonts.NEW_REGULAR.getFont(5.0F);
+         float centeredTextY = y + 40.0F;
 
-         for (String var29 : wrapText(t(this.emptyText()), var26, var9 - 16.0F, 4)) {
-            var1.drawText(var26, var29, var4 + (var9 - var26.width(var29)) / 2.0F, var27, var8.getTextTertiary().getZenithColor().method7294(var7));
-            var27 += var26.height() + 2.0F;
+         for (String text : wrapText(t(this.emptyText()), font, mainWidth - 16.0F, 4)) {
+            menuDrawContext.drawText(font, text, floatValue + (mainWidth - font.width(text)) / 2.0F, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY += font.height() + 2.0F;
          }
       } else {
-         float var25 = var5 + var24;
+         float guiScaledHeight = y + max;
          MsdfRenderer.flushBatch();
-         var1.enableScissor(var4, var5, var4 + var9, var25);
-         float var17 = var5 + this.scroll;
-         float var18 = var25;
-         int var19 = 0;
+         menuDrawContext.enableScissor(floatValue, y, floatValue + mainWidth, guiScaledHeight);
+         float y2 = y + this.scroll;
+         float guiScaledHeight2 = guiScaledHeight;
+         int n = 0;
 
-         for (SectionPanel.Entry var21 : this.mainEntries) {
-            int var22 = var19++;
-            float var23 = var21.height();
-            if (var21.cullable() && (!(var17 + var23 > var5) || !(var17 < var18))) {
-               var21.detach();
+         for (SectionPanel.Entry mainEntry : this.mainEntries) {
+            int n2 = n++;
+            float height2 = mainEntry.height();
+            if (mainEntry.cullable() && (!(y2 + height2 > y) || !(y2 < guiScaledHeight2))) {
+               mainEntry.detach();
             } else {
-               this.renderEntry(var21, "main:" + var22, var22, false, var1, var2, var3, var4, var17, var9, var7, var8);
+               this.renderEntry(mainEntry, "main:" + n2, n2, false, menuDrawContext, lastClickX, lastClickY, floatValue, y2, mainWidth, previewAlpha, currentStyle);
             }
 
-            var17 += var23;
+            y2 += height2;
          }
 
-         this.renderMainOverlay(var1);
+         this.renderMainOverlay(menuDrawContext);
          MsdfRenderer.flushBatch();
-         var1.disableScissor();
-         this.mainScrollbar.render(var1, var4 + var9 - 2.0F, var5, var24, var14, this.scroll, var8.getTextTertiary().getZenithColor().method7294(var7 * 0.6F));
+         menuDrawContext.disableScissor();
+         this.mainScrollbar.render(menuDrawContext, floatValue + mainWidth - 2.0F, y, max, shownContentHeight, this.scroll, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.6F));
       }
    }
 
-   public static List<String> wrapText(String var0, Font var1, float var2, int var3) {
-      ArrayList<String> var4 = new ArrayList<>();
-      StringBuilder var5 = new StringBuilder();
+   public static List<String> wrapText(String description, Font font, float shownWidth, int n) {
+      ArrayList<String> strings = new ArrayList<>();
+      StringBuilder builder = new StringBuilder();
 
-      for (String var9 : (var0 == null ? "" : var0).split(" ")) {
-         while (var1.width(var9) > var2) {
-            if (var5.length() > 0) {
-               var4.add(var5.toString());
-               if (var4.size() == var3) {
-                  return var4;
+      for (String text : (description == null ? "" : description).split(" ")) {
+         while (font.width(text) > shownWidth) {
+            if (builder.length() > 0) {
+               strings.add(builder.toString());
+               if (strings.size() == n) {
+                  return strings;
                }
 
-               var5 = new StringBuilder();
+               builder = new StringBuilder();
             }
 
-            int var10 = 1;
+            int endIndex = 1;
 
-            while (var10 < var9.length() && var1.width(var9.substring(0, var10 + 1)) <= var2) {
-               var10++;
+            while (endIndex < text.length() && font.width(text.substring(0, endIndex + 1)) <= shownWidth) {
+               endIndex++;
             }
 
-            var4.add(var9.substring(0, var10));
-            if (var4.size() == var3) {
-               return var4;
+            strings.add(text.substring(0, endIndex));
+            if (strings.size() == n) {
+               return strings;
             }
 
-            var9 = var9.substring(var10);
+            text = text.substring(endIndex);
          }
 
-         String var11 = var5.length() == 0 ? var9 : var5 + " " + var9;
-         if (var1.width(var11) > var2 && var5.length() > 0) {
-            var4.add(var5.toString());
-            if (var4.size() == var3) {
-               return var4;
+         String str = builder.length() == 0 ? text : builder + " " + text;
+         if (font.width(str) > shownWidth && builder.length() > 0) {
+            strings.add(builder.toString());
+            if (strings.size() == n) {
+               return strings;
             }
 
-            var5 = new StringBuilder(var9);
+            builder = new StringBuilder(text);
          } else {
-            var5 = new StringBuilder(var11);
+            builder = new StringBuilder(str);
          }
       }
 
-      if (var5.length() > 0) {
-         var4.add(var5.toString());
+      if (builder.length() > 0) {
+         strings.add(builder.toString());
       }
 
-      return var4;
+      return strings;
    }
 
    public String emptyText() {
       return "gui.section.empty";
    }
 
-   private static List<InspectorRow> settingRows(List<SectionPanel.Entry> var0) {
-      ArrayList<InspectorRow> var1 = new ArrayList<>();
+   private static List<InspectorRow> settingRows(List<SectionPanel.Entry> mainEntries) {
+      ArrayList<InspectorRow> inspectorRows = new ArrayList<>();
 
-      for (SectionPanel.Entry var3 : var0) {
-         if (var3.row != null) {
-            var1.add(var3.row);
+      for (SectionPanel.Entry mainEntry : mainEntries) {
+         if (mainEntry.row != null) {
+            inspectorRows.add(mainEntry.row);
          }
       }
 
-      return var1;
+      return inspectorRows;
    }
 
    public float footerHeight() {
       return 0.0F;
    }
 
-   public void renderFooter(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+   public void renderFooter(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float f, float mainWidth, float previewAlpha, ZenithStyle currentStyle) {
    }
 
-   public boolean onFooterClicked(double var1, double var3, Enum3 var5) {
+   public boolean onFooterClicked(double lastClickX, double lastClickY, Enum3 enum2) {
       return false;
    }
 
-   private void renderAside(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = this.asideWidth();
-      float var10 = HoverInfo.boxHeight();
-      float var11;
-      float var12 = (var11 = var5 + var6 - var10) - GuiStyle.PADDING.intValue() - var5;
-      float var13 = var7 * this.asideAlpha();
+   private void renderAside(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float f, float previewAlpha, ZenithStyle currentStyle) {
+      float asideWidth = this.asideWidth();
+      float boxHeight = HoverInfo.boxHeight();
+      float f2;
+      float height = (f2 = y + f - boxHeight) - GuiStyle.PADDING.intValue() - y;
+      float previewAlpha2 = previewAlpha * this.asideAlpha();
       if (this.asideFull != null) {
          this.asideBounds = null;
-         this.asideFull.render(var1, var2, var3, var4, var5, var9, var13, var8);
+         this.asideFull.render(menuDrawContext, lastClickX, lastClickY, floatValue, y, asideWidth, previewAlpha2, currentStyle);
       } else {
-         this.asideBounds = new BoundsData(var4, var5, var9, var12);
-         InspectorRow.alignTracks(settingRows(this.asideEntries), var9);
-         float var14 = 0.0F;
+         this.asideBounds = new BoundsData(floatValue, y, asideWidth, height);
+         InspectorRow.alignTracks(settingRows(this.asideEntries), asideWidth);
+         float shownContentHeight = 0.0F;
 
-         for (SectionPanel.Entry var16 : this.asideEntries) {
-            var14 += var16.height();
+         for (SectionPanel.Entry asideEntry : this.asideEntries) {
+            shownContentHeight += asideEntry.height();
          }
 
-         this.asideScrollTarget = clamp(this.asideScrollTarget, var14, var12);
-         this.asideScroll = clamp(this.asideScroll, var14, var12);
+         this.asideScrollTarget = clamp(this.asideScrollTarget, shownContentHeight, height);
+         this.asideScroll = clamp(this.asideScroll, shownContentHeight, height);
          this.asideScroll = this.asideScrollbar.isDragging() ? this.asideScrollTarget : this.asideScroll + (this.asideScrollTarget - this.asideScroll) * 0.25F;
          MsdfRenderer.flushBatch();
-         var1.enableScissor(var4, var5, var4 + var9, var5 + var12);
-         float var21 = var5 + this.asideScroll;
-         int var22 = 0;
+         menuDrawContext.enableScissor(floatValue, y, floatValue + asideWidth, y + height);
+         float y2 = y + this.asideScroll;
+         int n = 0;
 
-         for (SectionPanel.Entry var18 : this.asideEntries) {
-            int var19 = var22++;
-            float var20 = var18.height();
-            if (var18.cullable() && (!(var21 + var20 > var5) || !(var21 < var5 + var12))) {
-               var18.detach();
+         for (SectionPanel.Entry asideEntry : this.asideEntries) {
+            int n2 = n++;
+            float height2 = asideEntry.height();
+            if (asideEntry.cullable() && (!(y2 + height2 > y) || !(y2 < y + height))) {
+               asideEntry.detach();
             } else {
-               this.renderEntry(var18, "aside:" + var19, var19, true, var1, var2, var3, var4, var21, var9, var13, var8);
+               this.renderEntry(asideEntry, "aside:" + n2, n2, true, menuDrawContext, lastClickX, lastClickY, floatValue, y2, asideWidth, previewAlpha2, currentStyle);
             }
 
-            var21 += var20;
+            y2 += height2;
          }
 
          MsdfRenderer.flushBatch();
-         var1.disableScissor();
+         menuDrawContext.disableScissor();
          this.asideScrollbar
-            .render(var1, var4 + var9 - 2.0F, var5, var12, var14, this.asideScroll, var8.getTextTertiary().getZenithColor().method7294(var7 * 0.6F));
+            .render(menuDrawContext, floatValue + asideWidth - 2.0F, y, height, shownContentHeight, this.asideScroll, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.6F));
       }
 
-      if (!(var10 <= 0.01F)) {
-         var1.drawRect(
-            var4 + 8.0F, var11 - GuiStyle.PADDING.intValue(), var9 - 16.0F, 1.0F, var8.getFieldBorder().getZenithColor().method7294(var7 * var10 / 34.0F)
+      if (!(boxHeight <= 0.01F)) {
+         menuDrawContext.drawRect(
+            floatValue + 8.0F, f2 - GuiStyle.PADDING.intValue(), asideWidth - 16.0F, 1.0F, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * boxHeight / 34.0F)
          );
          if (!HoverInfo.hasText()) {
             HoverInfo.request(this.headerTitle(), t(this.sectionDescription()));
          }
 
          HoverInfo.render(
-            var1, var4 + 8.0F, var11 + GuiStyle.PADDING.intValue(), var9 - 16.0F, Math.max(0.0F, var10 - GuiStyle.PADDING.intValue() * 2.0F), var7
+            menuDrawContext, floatValue + 8.0F, f2 + GuiStyle.PADDING.intValue(), asideWidth - 16.0F, Math.max(0.0F, boxHeight - GuiStyle.PADDING.intValue() * 2.0F), previewAlpha
          );
       }
    }
@@ -823,12 +823,12 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    public boolean isFullyVisible() {
-      NLMenuScreen var1 = Zenith.getInstance() == null ? null : Zenith.getInstance().getNLMenuScreen();
-      float var2 = var1 == null ? 1.0F : var1.getContentDip();
-      return this.panelAlpha > 0.995F * var2;
+      NLMenuScreen nlMenuScreen = Zenith.getInstance() == null ? null : Zenith.getInstance().getNLMenuScreen();
+      float contentDip = nlMenuScreen == null ? 1.0F : nlMenuScreen.getContentDip();
+      return this.panelAlpha > 0.995F * contentDip;
    }
 
-   public void renderMainOverlay(MenuDrawContext var1) {
+   public void renderMainOverlay(MenuDrawContext menuDrawContext) {
    }
 
    public BoundsData mainViewport() {
@@ -854,68 +854,68 @@ public abstract class SectionPanel extends ElementPanel {
       this.asideScrollTarget = 0.0F;
    }
 
-   private static float clamp(float var0, float var1, float var2) {
-      return var1 <= var2 ? 0.0F : Mth.clamp(var0, var2 - var1, 0.0F);
+   private static float clamp(float asideScrollTarget, float shownContentHeight, float height) {
+      return shownContentHeight <= height ? 0.0F : Mth.clamp(asideScrollTarget, height - shownContentHeight, 0.0F);
    }
 
-   private void clampScroll(float var1, float var2) {
-      if (var1 <= var2) {
+   private void clampScroll(float shownContentHeight, float max) {
+      if (shownContentHeight <= max) {
          this.scrollTarget = 0.0F;
          this.scroll = 0.0F;
       } else {
-         float var3 = var2 - var1;
-         this.scrollTarget = Mth.clamp(this.scrollTarget, var3, 0.0F);
-         this.scroll = Mth.clamp(this.scroll, var3, 0.0F);
+         float min = max - shownContentHeight;
+         this.scrollTarget = Mth.clamp(this.scrollTarget, min, 0.0F);
+         this.scroll = Mth.clamp(this.scroll, min, 0.0F);
       }
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
       this.ensureBuilt();
-      if (this.embedded && this.clickTabs(var1, var3)) {
+      if (this.embedded && this.clickTabs(lastClickX, lastClickY)) {
          return true;
       } else {
-         float var6 = this.mainScrollbar.onMouseClicked(var1, var3);
+         float scrollTarget = this.mainScrollbar.onMouseClicked(lastClickX, lastClickY);
          if (this.mainScrollbar.isDragging()) {
-            if (!Float.isNaN(var6)) {
-               this.scrollTarget = var6;
+            if (!Float.isNaN(scrollTarget)) {
+               this.scrollTarget = scrollTarget;
             }
 
             return true;
          } else {
-            var6 = this.asideScrollbar.onMouseClicked(var1, var3);
+            scrollTarget = this.asideScrollbar.onMouseClicked(lastClickX, lastClickY);
             if (this.asideScrollbar.isDragging()) {
-               if (!Float.isNaN(var6)) {
-                  this.asideScrollTarget = var6;
+               if (!Float.isNaN(scrollTarget)) {
+                  this.asideScrollTarget = scrollTarget;
                }
 
                return true;
-            } else if (this.footerBounds != null && this.footerBounds.contains(var1, var3) && this.onFooterClicked(var1, var3, var5)) {
+            } else if (this.footerBounds != null && this.footerBounds.contains(lastClickX, lastClickY) && this.onFooterClicked(lastClickX, lastClickY, enum2)) {
                return true;
             } else {
-               if (this.asideBounds == null || this.asideBounds.contains(var1, var3)) {
-                  int var7 = 0;
+               if (this.asideBounds == null || this.asideBounds.contains(lastClickX, lastClickY)) {
+                  int n = 0;
 
-                  for (SectionPanel.Entry var9 : new ArrayList<>(this.asideEntries)) {
-                     String var10 = "aside:" + var7++;
-                     if (var9.onMouseClicked(var1, var3, var5)) {
-                        this.markPress(var9, var10, var1, var3);
+                  for (SectionPanel.Entry entry : new ArrayList<>(this.asideEntries)) {
+                     String str = "aside:" + n++;
+                     if (entry.onMouseClicked(lastClickX, lastClickY, enum2)) {
+                        this.markPress(entry, str, lastClickX, lastClickY);
                         return true;
                      }
                   }
                }
 
-               if (this.mainBounds != null && this.mainBounds.contains(var1, var3)) {
-                  int var12 = 0;
+               if (this.mainBounds != null && this.mainBounds.contains(lastClickX, lastClickY)) {
+                  int n = 0;
 
-                  for (SectionPanel.Entry var14 : new ArrayList<>(this.mainEntries)) {
-                     String var15 = "main:" + var12++;
-                     if (var5 == Enum3.RIGHT && var14.bounds != null && var14.bounds.contains(var1, var3)) {
-                        this.lastRightClickBounds = var14.bounds;
+                  for (SectionPanel.Entry entry : new ArrayList<>(this.mainEntries)) {
+                     String str = "main:" + n++;
+                     if (enum2 == Enum3.RIGHT && entry.bounds != null && entry.bounds.contains(lastClickX, lastClickY)) {
+                        this.lastRightClickBounds = entry.bounds;
                      }
 
-                     if (var14.onMouseClicked(var1, var3, var5)) {
-                        this.markPress(var14, var15, var1, var3);
+                     if (entry.onMouseClicked(lastClickX, lastClickY, enum2)) {
+                        this.markPress(entry, str, lastClickX, lastClickY);
                         return true;
                      }
                   }
@@ -928,59 +928,59 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
       this.mainScrollbar.release();
       this.asideScrollbar.release();
 
-      for (SectionPanel.Entry var7 : this.mainEntries) {
-         var7.onMouseReleased(var1, var3, var5);
+      for (SectionPanel.Entry mainEntry : this.mainEntries) {
+         mainEntry.onMouseReleased(x, y, enum2);
       }
 
-      for (SectionPanel.Entry var9 : this.asideEntries) {
-         var9.onMouseReleased(var1, var3, var5);
+      for (SectionPanel.Entry asideEntry : this.asideEntries) {
+         asideEntry.onMouseReleased(x, y, enum2);
       }
 
       return false;
    }
 
    @Override
-   public boolean onMouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      float var10;
-      if (!Float.isNaN(var10 = this.mainScrollbar.onMouseDragged(var3))) {
-         this.scrollTarget = var10;
+   public boolean onMouseDragged(double mouseX, double mouseY, int mouseToGlfw, double offsetX, double offsetY) {
+      float scrollTarget;
+      if (!Float.isNaN(scrollTarget = this.mainScrollbar.onMouseDragged(mouseY))) {
+         this.scrollTarget = scrollTarget;
          return true;
-      } else if (!Float.isNaN(var10 = this.asideScrollbar.onMouseDragged(var3))) {
-         this.asideScrollTarget = var10;
+      } else if (!Float.isNaN(scrollTarget = this.asideScrollbar.onMouseDragged(mouseY))) {
+         this.asideScrollTarget = scrollTarget;
          return true;
       } else {
-         boolean var11 = false;
+         boolean flag = false;
 
-         for (SectionPanel.Entry var13 : this.mainEntries) {
-            if (var13.onMouseDragged(var1, var3)) {
-               var11 = true;
+         for (SectionPanel.Entry mainEntry : this.mainEntries) {
+            if (mainEntry.onMouseDragged(mouseX, mouseY)) {
+               flag = true;
             }
          }
 
-         for (SectionPanel.Entry var16 : this.asideEntries) {
-            if (var16.onMouseDragged(var1, var3)) {
-               var11 = true;
+         for (SectionPanel.Entry asideEntry : this.asideEntries) {
+            if (asideEntry.onMouseDragged(mouseX, mouseY)) {
+               flag = true;
             }
          }
 
-         return var11;
+         return flag;
       }
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
-      if (this.tabsScrollable && this.tabViewport != null && this.tabViewport.contains(var1, var3)) {
-         this.tabScrollTarget -= (float)(var7 + var5) * 24.0F;
+   public boolean mouseScrolled(double lastClickX, double lastClickY, double d, double verticalAmount) {
+      if (this.tabsScrollable && this.tabViewport != null && this.tabViewport.contains(lastClickX, lastClickY)) {
+         this.tabScrollTarget -= (float)(verticalAmount + d) * 24.0F;
          return true;
-      } else if (this.asideBounds != null && this.asideBounds.contains(var1, var3)) {
-         this.asideScrollTarget = this.asideScrollTarget + (float)var7 * this.scrollStep();
+      } else if (this.asideBounds != null && this.asideBounds.contains(lastClickX, lastClickY)) {
+         this.asideScrollTarget = this.asideScrollTarget + (float)verticalAmount * this.scrollStep();
          return true;
-      } else if (this.mainBounds != null && this.mainBounds.contains(var1, var3)) {
-         this.scrollTarget = this.scrollTarget + (float)var7 * this.scrollStep();
+      } else if (this.mainBounds != null && this.mainBounds.contains(lastClickX, lastClickY)) {
+         this.scrollTarget = this.scrollTarget + (float)verticalAmount * this.scrollStep();
          return true;
       } else {
          return false;
@@ -992,15 +992,15 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      for (SectionPanel.Entry var5 : this.mainEntries) {
-         if (var5.keyPressed(var1, var2, var3)) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      for (SectionPanel.Entry mainEntry : this.mainEntries) {
+         if (mainEntry.keyPressed(keyCode, keycode, modifiers)) {
             return true;
          }
       }
 
-      for (SectionPanel.Entry var7 : this.asideEntries) {
-         if (var7.keyPressed(var1, var2, var3)) {
+      for (SectionPanel.Entry asideEntry : this.asideEntries) {
+         if (asideEntry.keyPressed(keyCode, keycode, modifiers)) {
             return true;
          }
       }
@@ -1009,15 +1009,15 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      for (SectionPanel.Entry var4 : this.mainEntries) {
-         if (var4.charTyped(var1, var2)) {
+   public boolean charTyped(char codepoint, int n) {
+      for (SectionPanel.Entry mainEntry : this.mainEntries) {
+         if (mainEntry.charTyped(codepoint, n)) {
             return true;
          }
       }
 
-      for (SectionPanel.Entry var6 : this.asideEntries) {
-         if (var6.charTyped(var1, var2)) {
+      for (SectionPanel.Entry asideEntry : this.asideEntries) {
+         if (asideEntry.charTyped(codepoint, n)) {
             return true;
          }
       }
@@ -1035,7 +1035,7 @@ public abstract class SectionPanel extends ElementPanel {
    }
 
    public interface AsideRenderer {
-      void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8);
+      void render(MenuDrawContext menuDrawContext, int mouseX, int mouseY, float floatValue, float y, float asideWidth, float previewAlpha, ZenithStyle currentStyle);
    }
 
    private static final class Entry {
@@ -1063,63 +1063,63 @@ public abstract class SectionPanel extends ElementPanel {
       private String fitShown;
 
       private Entry(
-         SectionPanel.Entry.Kind var1,
-         String var2,
-         MenuGlyph var3,
-         Supplier<String> var4,
-         String var5,
-         Runnable var6,
-         Runnable var7,
-         BooleanSupplier var8,
-         boolean var9,
-         InspectorRow var10,
-         float var11,
-         SectionPanel.AsideRenderer var12
+         SectionPanel.Entry.Kind kind,
+         String label,
+         MenuGlyph icon,
+         Supplier<String> supplier,
+         String description,
+         Runnable onClick,
+         Runnable onRightClick,
+         BooleanSupplier selected,
+         boolean accentValue,
+         InspectorRow row,
+         float customHeight,
+         SectionPanel.AsideRenderer renderer
       ) {
-         this.kind = var1;
-         this.label = var2;
-         this.icon = var3;
-         this.value = var4;
-         this.description = var5;
-         this.onClick = var6;
-         this.onRightClick = var7;
-         this.selected = var8;
-         this.accentValue = var9;
-         this.row = var10;
-         this.customHeight = var11;
-         this.renderer = var12;
+         this.kind = kind;
+         this.label = label;
+         this.icon = icon;
+         this.value = supplier;
+         this.description = description;
+         this.onClick = onClick;
+         this.onRightClick = onRightClick;
+         this.selected = selected;
+         this.accentValue = accentValue;
+         this.row = row;
+         this.customHeight = customHeight;
+         this.renderer = renderer;
       }
 
-      private static SectionPanel.Entry caption(String var0, boolean var1) {
-         SectionPanel.Entry var2 = new SectionPanel.Entry(SectionPanel.Entry.Kind.CAPTION, var0, null, null, null, null, null, null, false, null, 0.0F, null);
-         var2.lead = var1;
-         return var2;
+      private static SectionPanel.Entry caption(String key, boolean lead) {
+         SectionPanel.Entry entry = new SectionPanel.Entry(SectionPanel.Entry.Kind.CAPTION, key, null, null, null, null, null, null, false, null, 0.0F, null);
+         entry.lead = lead;
+         return entry;
       }
 
-      private static SectionPanel.Entry setting(InspectorRow var0) {
-         return new SectionPanel.Entry(SectionPanel.Entry.Kind.SETTING, null, null, null, null, null, null, null, false, var0, 0.0F, null);
+      private static SectionPanel.Entry setting(InspectorRow inspectorRow) {
+         return new SectionPanel.Entry(SectionPanel.Entry.Kind.SETTING, null, null, null, null, null, null, null, false, inspectorRow, 0.0F, null);
       }
 
-      private static SectionPanel.Entry info(String var0, Supplier<String> var1, String var2) {
-         return new SectionPanel.Entry(SectionPanel.Entry.Kind.ROW, var0, null, var1, var2, null, null, null, false, null, 0.0F, null);
+      private static SectionPanel.Entry info(String serverName, Supplier<String> supplier, String description) {
+         return new SectionPanel.Entry(SectionPanel.Entry.Kind.ROW, serverName, null, supplier, description, null, null, null, false, null, 0.0F, null);
       }
 
-      private static SectionPanel.Entry action(String var0, MenuGlyph var1, Supplier<String> var2, Runnable var3, String var4) {
-         return new SectionPanel.Entry(SectionPanel.Entry.Kind.ROW, var0, var1, var2, var4, var3, null, null, true, null, 0.0F, null);
+      private static SectionPanel.Entry action(String label, MenuGlyph icon, Supplier<String> supplier, Runnable onClick, String description) {
+         return new SectionPanel.Entry(SectionPanel.Entry.Kind.ROW, label, icon, supplier, description, onClick, null, null, true, null, 0.0F, null);
       }
 
       private static SectionPanel.Entry row(
-         String var0, MenuGlyph var1, Supplier<String> var2, String var3, Runnable var4, Runnable var5, BooleanSupplier var6, boolean var7
+         String label, MenuGlyph icon, Supplier<String> supplier, String description, Runnable onClick, Runnable onRightClick, BooleanSupplier selected, boolean accentValue
       ) {
-         return new SectionPanel.Entry(SectionPanel.Entry.Kind.ROW, var0, var1, var2, var3, var4, var5, var6, var7, null, 0.0F, null);
+         return new SectionPanel.Entry(SectionPanel.Entry.Kind.ROW, label, icon, supplier, description, onClick, onRightClick, selected, accentValue, null, 0.0F, null);
       }
 
-      private static SectionPanel.Entry custom(float var0, SectionPanel.AsideRenderer var1) {
-         return new SectionPanel.Entry(SectionPanel.Entry.Kind.CUSTOM, null, null, null, null, null, null, null, false, null, var0, var1);
+      private static SectionPanel.Entry custom(float hintsHeight, SectionPanel.AsideRenderer entering) {
+         return new SectionPanel.Entry(SectionPanel.Entry.Kind.CUSTOM, null, null, null, null, null, null, null, false, null, hintsHeight, entering);
       }
 
-      private static SectionPanel.Entry custom(float var0, SectionPanel.AsideRenderer var1, Runnable var2, BooleanSupplier var3, Runnable var4) {
-         return new SectionPanel.Entry(SectionPanel.Entry.Kind.CUSTOM, null, null, null, null, var2, var4, var3, false, null, var0, var1);
+      private static SectionPanel.Entry custom(float customHeight, SectionPanel.AsideRenderer entering, Runnable onClick, BooleanSupplier selected, Runnable onRightClick) {
+         return new SectionPanel.Entry(SectionPanel.Entry.Kind.CUSTOM, null, null, null, null, onClick, onRightClick, selected, false, null, customHeight, entering);
       }
 
       private float height() {
@@ -1139,131 +1139,131 @@ public abstract class SectionPanel extends ElementPanel {
          this.bounds = null;
       }
 
-      private void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+      private void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float mainWidth, float previewAlpha, ZenithStyle currentStyle) {
          switch (this.kind) {
             case CAPTION:
-               Font var9 = Fonts.NEW_MEDIUM.getFont(4.0F);
-               var1.drawText(
-                  var9,
+               Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+               menuDrawContext.drawText(
+                  font,
                   HoverInfo.spaced(SectionPanel.t(this.label).toUpperCase(Locale.ROOT)),
-                  var4 + 8.0F,
-                  var5 + (16.0F - var9.height()) / 2.0F + 2.0F - (this.lead ? 6.0F : 0.0F),
-                  var8.getTextTertiary().getZenithColor().method7294(var7)
+                  floatValue + 8.0F,
+                  y + (16.0F - font.height()) / 2.0F + 2.0F - (this.lead ? 6.0F : 0.0F),
+                  currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                );
                break;
             case SETTING:
-               this.row.render(var1, var2, var3, var4, var5, var6, var7);
+               this.row.render(menuDrawContext, lastClickX, lastClickY, floatValue, y, mainWidth, previewAlpha);
                break;
             case ROW:
             default:
-               this.renderTextRow(var1, var2, var3, var4, var5, var6, var7, var8);
+               this.renderTextRow(menuDrawContext, lastClickX, lastClickY, floatValue, y, mainWidth, previewAlpha, currentStyle);
                break;
             case CUSTOM:
                if (this.onClick != null || this.onRightClick != null) {
-                  this.bounds = new BoundsData(var4, var5, var6, this.customHeight);
+                  this.bounds = new BoundsData(floatValue, y, mainWidth, this.customHeight);
                }
 
-               this.renderer.render(var1, var2, var3, var4, var5, var6, var7, var8);
+               this.renderer.render(menuDrawContext, lastClickX, lastClickY, floatValue, y, mainWidth, previewAlpha, currentStyle);
          }
       }
 
-      private void renderTextRow(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-         this.bounds = new BoundsData(var4, var5, var6, 16.0F);
-         boolean var9 = this.bounds.contains(var2, var3);
-         boolean var10 = this.onClick != null || this.onRightClick != null;
-         boolean var11 = this.selected != null && this.selected.getAsBoolean();
-         float var12 = this.hoverAnimation.method2808(var9 && var10 ? 1.0F : 0.0F);
-         float var13 = this.selectAnimation.method2808(var11 ? 1.0F : 0.0F);
-         float var14 = Math.max(var13, var12 * 0.45F);
-         if (var14 > 0.002F) {
-            var1.drawRect(var4, var5, var6, 16.0F, var8.getDisableActiveBg().getZenithColor().method7294(var7 * var14));
+      private void renderTextRow(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float mainWidth, float previewAlpha, ZenithStyle currentStyle) {
+         this.bounds = new BoundsData(floatValue, y, mainWidth, 16.0F);
+         boolean contains = this.bounds.contains(lastClickX, lastClickY);
+         boolean flag = this.onClick != null || this.onRightClick != null;
+         boolean flag2 = this.selected != null && this.selected.getAsBoolean();
+         float f = this.hoverAnimation.method2808(contains && flag ? 1.0F : 0.0F);
+         float f2 = this.selectAnimation.method2808(flag2 ? 1.0F : 0.0F);
+         float f3 = Math.max(f2, f * 0.45F);
+         if (f3 > 0.002F) {
+            menuDrawContext.drawRect(floatValue, y, mainWidth, 16.0F, currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f3));
          }
 
-         if (var13 > 0.002F) {
-            float var15 = 12.0F * var13;
-            var1.drawRect(var4, var5 + (16.0F - var15) / 2.0F, 2.0F, var15, var8.getPrimaryColor().getZenithColor().method7294(var7));
+         if (f2 > 0.002F) {
+            float height = 12.0F * f2;
+            menuDrawContext.drawRect(floatValue, y + (16.0F - height) / 2.0F, 2.0F, height, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
          }
 
-         if (var9 && this.description != null && !this.description.isBlank()) {
+         if (contains && this.description != null && !this.description.isBlank()) {
             HoverInfo.request(SectionPanel.t(this.label), SectionPanel.t(this.description));
          }
 
-         Font var24 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         ZenithColor var16 = var8.getTextSecondary()
+         Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+         ZenithColor zenithColor = currentStyle.getTextSecondary()
             .getZenithColor()
-            .method7295(var8.getTextEnable().getZenithColor(), Math.max(var13, var12 * 0.6F))
-            .method7294(var7);
-         float var17 = var4 + 8.0F;
-         boolean var18 = Zenith.getInstance().getNLMenuScreen().isRenderIcon();
-         if (var18 && this.iconRenderer != null && this.iconRenderer.draw(var1, var17, var5 + 8.0F, 14.0F, var7)) {
-            var17 += 14.0F;
-         } else if (this.icon != null && var18) {
-            this.icon.draw(var1, var17, var5 + 5.0F, var16);
-            var17 += 9.0F;
+            .method7295(currentStyle.getTextEnable().getZenithColor(), Math.max(f2, f * 0.6F))
+            .method7294(previewAlpha);
+         float floatValue2 = floatValue + 8.0F;
+         boolean renderIcon = Zenith.getInstance().getNLMenuScreen().isRenderIcon();
+         if (renderIcon && this.iconRenderer != null && this.iconRenderer.draw(menuDrawContext, floatValue2, y + 8.0F, 14.0F, previewAlpha)) {
+            floatValue2 += 14.0F;
+         } else if (this.icon != null && renderIcon) {
+            this.icon.draw(menuDrawContext, floatValue2, y + 5.0F, zenithColor);
+            floatValue2 += 9.0F;
          }
 
-         String var19 = SectionPanel.t(this.label);
-         var1.drawText(var24, var19, var17, var5 + (16.0F - var24.height()) / 2.0F, var16);
-         String var20 = this.value == null ? null : this.value.get();
-         if (var20 != null && !var20.isEmpty()) {
-            Font var21 = Fonts.NEW_MEDIUM.getFont(5.0F);
-            float var22 = var4 + var6 - 8.0F - (var17 + var24.width(var19)) - 6.0F;
-            String var23;
-            if (var22 == this.fitRoom && var21.getFont() == this.fitFont && var21.getSize() == this.fitSize && var20.equals(this.fitSource)) {
-               var23 = this.fitShown;
+         String text = SectionPanel.t(this.label);
+         menuDrawContext.drawText(font, text, floatValue2, y + (16.0F - font.height()) / 2.0F, zenithColor);
+         String fitSource = this.value == null ? null : this.value.get();
+         if (fitSource != null && !fitSource.isEmpty()) {
+            Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+            float fitRoom = floatValue + mainWidth - 8.0F - (floatValue2 + font.width(text)) - 6.0F;
+            String fitShown;
+            if (fitRoom == this.fitRoom && font2.getFont() == this.fitFont && font2.getSize() == this.fitSize && fitSource.equals(this.fitSource)) {
+               fitShown = this.fitShown;
             } else {
-               var23 = fit(var21, var20, var22);
-               this.fitSource = var20;
-               this.fitRoom = var22;
-               this.fitFont = var21.getFont();
-               this.fitSize = var21.getSize();
-               this.fitShown = var23;
+               fitShown = fit(font2, fitSource, fitRoom);
+               this.fitSource = fitSource;
+               this.fitRoom = fitRoom;
+               this.fitFont = font2.getFont();
+               this.fitSize = font2.getSize();
+               this.fitShown = fitShown;
             }
 
-            if (!var23.isEmpty()) {
-               var1.drawText(
-                  var21,
-                  var23,
-                  var4 + var6 - 8.0F - var21.width(var23),
-                  var5 + (16.0F - var21.height()) / 2.0F,
-                  (this.accentValue ? var8.getPrimaryColor() : var8.getTextEnable()).getZenithColor().method7294(var7)
+            if (!fitShown.isEmpty()) {
+               menuDrawContext.drawText(
+                  font2,
+                  fitShown,
+                  floatValue + mainWidth - 8.0F - font2.width(fitShown),
+                  y + (16.0F - font2.height()) / 2.0F,
+                  (this.accentValue ? currentStyle.getPrimaryColor() : currentStyle.getTextEnable()).getZenithColor().method7294(previewAlpha)
                );
-               if (var9 && !var23.equals(var20)) {
-                  HoverInfo.request(var19, var20);
+               if (contains && !fitShown.equals(fitSource)) {
+                  HoverInfo.request(text, fitSource);
                }
             }
          }
       }
 
-      private static String fit(Font var0, String var1, float var2) {
-         if (var2 <= 0.0F) {
+      private static String fit(Font font, String fitSource, float fitRoom) {
+         if (fitRoom <= 0.0F) {
             return "";
-         } else if (var0.width(var1) <= var2) {
-            return var1;
+         } else if (font.width(fitSource) <= fitRoom) {
+            return fitSource;
          } else {
-            String var3 = "…";
-            float var4 = var0.width(var3);
-            if (var4 > var2) {
+            String text = "…";
+            float width = font.width(text);
+            if (width > fitRoom) {
                return "";
             } else {
-               int var5 = var1.length();
+               int length = fitSource.length();
 
-               while (var5 > 0 && var0.width(var1.substring(0, var5)) + var4 > var2) {
-                  var5--;
+               while (length > 0 && font.width(fitSource.substring(0, length)) + width > fitRoom) {
+                  length--;
                }
 
-               return var5 == 0 ? "" : var1.substring(0, var5) + var3;
+               return length == 0 ? "" : fitSource.substring(0, length) + text;
             }
          }
       }
 
-      private boolean onMouseClicked(double var1, double var3, Enum3 var5) {
+      private boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
          if (this.kind == SectionPanel.Entry.Kind.SETTING) {
-            return this.row.onMouseClicked(var1, var3, var5);
+            return this.row.onMouseClicked(lastClickX, lastClickY, enum2);
          } else if ((this.kind == SectionPanel.Entry.Kind.ROW || this.kind == SectionPanel.Entry.Kind.CUSTOM)
             && this.bounds != null
-            && this.bounds.contains(var1, var3)) {
-            if (var5 == Enum3.RIGHT && this.onRightClick != null) {
+            && this.bounds.contains(lastClickX, lastClickY)) {
+            if (enum2 == Enum3.RIGHT && this.onRightClick != null) {
                this.onRightClick.run();
                Zenith.getInstance().getClientSounds().method1570(true);
                return true;
@@ -1279,22 +1279,22 @@ public abstract class SectionPanel extends ElementPanel {
          }
       }
 
-      private void onMouseReleased(double var1, double var3, Enum3 var5) {
+      private void onMouseReleased(double x, double y, Enum3 enum2) {
          if (this.kind == SectionPanel.Entry.Kind.SETTING) {
-            this.row.onMouseReleased(var1, var3, var5);
+            this.row.onMouseReleased(x, y, enum2);
          }
       }
 
-      private boolean onMouseDragged(double var1, double var3) {
-         return this.kind == SectionPanel.Entry.Kind.SETTING && this.row.onMouseDragged(var1, var3);
+      private boolean onMouseDragged(double mouseX, double mouseY) {
+         return this.kind == SectionPanel.Entry.Kind.SETTING && this.row.onMouseDragged(mouseX, mouseY);
       }
 
-      private boolean keyPressed(int var1, int var2, int var3) {
-         return this.kind == SectionPanel.Entry.Kind.SETTING && this.row.keyPressed(var1, var2, var3);
+      private boolean keyPressed(int keyCode, int keycode, int modifiers) {
+         return this.kind == SectionPanel.Entry.Kind.SETTING && this.row.keyPressed(keyCode, keycode, modifiers);
       }
 
-      private boolean charTyped(char var1, int var2) {
-         return this.kind == SectionPanel.Entry.Kind.SETTING && this.row.charTyped(var1, var2);
+      private boolean charTyped(char codepoint, int n) {
+         return this.kind == SectionPanel.Entry.Kind.SETTING && this.row.charTyped(codepoint, n);
       }
 
       private static enum Kind {
@@ -1307,7 +1307,7 @@ public abstract class SectionPanel extends ElementPanel {
 
    @FunctionalInterface
    public interface IconRenderer {
-      boolean draw(MenuDrawContext var1, float var2, float var3, float var4, float var5);
+      boolean draw(MenuDrawContext menuDrawContext, float f, float f2, float f3, float previewAlpha);
    }
 
    public final class RowBuilder {
@@ -1322,43 +1322,43 @@ public abstract class SectionPanel extends ElementPanel {
       private BooleanSupplier selected;
       private boolean accentValue;
 
-      private RowBuilder(String var2, List<SectionPanel.Entry> var3) {
-         this.label = var2;
-         this.target = var3;
+      private RowBuilder(String label, List<SectionPanel.Entry> target) {
+         this.label = label;
+         this.target = target;
       }
 
-      public SectionPanel.RowBuilder icon(MenuGlyph var1) {
-         this.icon = var1;
+      public SectionPanel.RowBuilder icon(MenuGlyph icon) {
+         this.icon = icon;
          return this;
       }
 
-      public SectionPanel.RowBuilder iconRenderer(SectionPanel.IconRenderer var1) {
-         this.iconRenderer = var1;
+      public SectionPanel.RowBuilder iconRenderer(SectionPanel.IconRenderer iconRenderer) {
+         this.iconRenderer = iconRenderer;
          return this;
       }
 
-      public SectionPanel.RowBuilder value(Supplier<String> var1) {
-         this.value = var1;
+      public SectionPanel.RowBuilder value(Supplier<String> supplier) {
+         this.value = supplier;
          return this;
       }
 
-      public SectionPanel.RowBuilder description(String var1) {
-         this.description = var1;
+      public SectionPanel.RowBuilder description(String description) {
+         this.description = description;
          return this;
       }
 
-      public SectionPanel.RowBuilder onClick(Runnable var1) {
-         this.onClick = var1;
+      public SectionPanel.RowBuilder onClick(Runnable onClick) {
+         this.onClick = onClick;
          return this;
       }
 
-      public SectionPanel.RowBuilder onRightClick(Runnable var1) {
-         this.onRightClick = var1;
+      public SectionPanel.RowBuilder onRightClick(Runnable onRightClick) {
+         this.onRightClick = onRightClick;
          return this;
       }
 
-      public SectionPanel.RowBuilder selected(BooleanSupplier var1) {
-         this.selected = var1;
+      public SectionPanel.RowBuilder selected(BooleanSupplier selected) {
+         this.selected = selected;
          return this;
       }
 
@@ -1368,19 +1368,19 @@ public abstract class SectionPanel extends ElementPanel {
       }
 
       public void add() {
-         SectionPanel.Entry var1 = SectionPanel.Entry.row(
+         SectionPanel.Entry row = SectionPanel.Entry.row(
             this.label, this.icon, this.value, this.description, this.onClick, this.onRightClick, this.selected, this.accentValue
          );
-         var1.iconRenderer = this.iconRenderer;
-         this.target.add(var1);
+         row.iconRenderer = this.iconRenderer;
+         this.target.add(row);
       }
 
       public void addAside() {
-         SectionPanel.Entry var1 = SectionPanel.Entry.row(
+         SectionPanel.Entry row = SectionPanel.Entry.row(
             this.label, this.icon, this.value, this.description, this.onClick, this.onRightClick, this.selected, this.accentValue
          );
-         var1.iconRenderer = this.iconRenderer;
-         SectionPanel.this.asideEntries.add(var1);
+         row.iconRenderer = this.iconRenderer;
+         SectionPanel.this.asideEntries.add(row);
       }
    }
 }

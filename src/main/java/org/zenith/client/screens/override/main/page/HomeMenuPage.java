@@ -56,24 +56,24 @@ public final class HomeMenuPage implements MainMenuPage {
       if (changelog != null) {
          return changelog;
       } else {
-         ArrayList var0 = new ArrayList();
+         ArrayList arrayList = new ArrayList();
 
          try {
-            var var1 = Minecraft.getInstance().getResourceManager().getResource(Zenith.method1501("menu/changelog.json"));
-            if (var1.isPresent()) {
-               try (InputStreamReader var2 = new InputStreamReader(((Resource)var1.get()).open(), StandardCharsets.UTF_8)) {
-                  JsonObject var3 = JsonParser.parseReader(var2).getAsJsonObject();
+            var resource = Minecraft.getInstance().getResourceManager().getResource(Zenith.method1501("menu/changelog.json"));
+            if (resource.isPresent()) {
+               try (InputStreamReader inputStreamReader = new InputStreamReader(((Resource)resource.get()).open(), StandardCharsets.UTF_8)) {
+                  JsonObject jsonObject = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
 
-                  for (JsonElement var5 : var3.getAsJsonArray("entries")) {
-                     JsonObject var6 = var5.getAsJsonObject();
-                     var0.add(new HomeMenuPage.Entry(var6.get("text").getAsString(), var6.has("added") && var6.get("added").getAsBoolean()));
+                  for (JsonElement json : jsonObject.getAsJsonArray("entries")) {
+                     JsonObject jsonObject2 = json.getAsJsonObject();
+                     arrayList.add(new HomeMenuPage.Entry(jsonObject2.get("text").getAsString(), jsonObject2.has("added") && jsonObject2.get("added").getAsBoolean()));
                   }
                }
             }
-         } catch (Exception var9) {
+         } catch (Exception e) {
          }
 
-         changelog = var0;
+         changelog = arrayList;
          return changelog;
       }
    }
@@ -104,133 +104,133 @@ public final class HomeMenuPage implements MainMenuPage {
    }
 
    @Override
-   public void layout(BoundsData var1) {
-      this.headerBounds = new BoundsData(var1.getFloatValue(), var1.getFloatValue2(), var1.width(), HEADER_HEIGHT);
+   public void layout(BoundsData boundsData) {
+      this.headerBounds = new BoundsData(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), HEADER_HEIGHT);
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-      drawCard(var1, var4.getFloatValue(), var4.getFloatValue2(), var4.width(), HEADER_HEIGHT);
-      this.drawHeader(var1, var4, var2, var3);
-      float var5 = var4.height() - HEADER_HEIGHT - HEADER_GAP;
-      if (!(var5 <= 1.0F)) {
-         float var6 = var4.getFloatValue2() + HEADER_HEIGHT + HEADER_GAP;
-         drawCard(var1, var4.getFloatValue(), var6, var4.width(), var5);
-         this.drawChangelog(var1, var4.getFloatValue(), var6, var4.width(), var5);
+   public void render(MenuDrawContext graphics, float lastClickX, float lastClickY, BoundsData boundsData) {
+      drawCard(graphics, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), HEADER_HEIGHT);
+      this.drawHeader(graphics, boundsData, lastClickX, lastClickY);
+      float height = boundsData.height() - HEADER_HEIGHT - HEADER_GAP;
+      if (!(height <= 1.0F)) {
+         float snap = boundsData.getFloatValue2() + HEADER_HEIGHT + HEADER_GAP;
+         drawCard(graphics, boundsData.getFloatValue(), snap, boundsData.width(), height);
+         this.drawChangelog(graphics, boundsData.getFloatValue(), snap, boundsData.width(), height);
       }
    }
 
-   private void drawHeader(MenuDrawContext var1, BoundsData var2, float var3, float var4) {
-      MenuSkin.header(var1, var2.getFloatValue(), var2.getFloatValue2(), MenuIcons.REFRESH, MenuTheme.t("menu.home.version") + " 3.5");
-      MenuIcon var5 = this.expanded ? MenuIcons.CHEVRON_UP : MenuIcons.CHEVRON_DOWN;
-      Font var6 = var5.font(12.0F);
-      boolean var7 = this.headerBounds.contains(var3, var4);
-      var1.drawText(
-         var6,
-         var5.glyph(),
-         var2.getFloatValue() + var2.width() - MenuSkin.EDGE - var5.width(12.0F),
-         var2.getFloatValue2() + (HEADER_HEIGHT - var6.height()) / 2.0F,
-         var7 ? MenuTheme.text() : MenuTheme.textTertiary()
+   private void drawHeader(MenuDrawContext graphics, BoundsData boundsData, float lastClickX, float lastClickY) {
+      MenuSkin.header(graphics, boundsData.getFloatValue(), boundsData.getFloatValue2(), MenuIcons.REFRESH, MenuTheme.t("menu.home.version") + " 3.5");
+      MenuIcon menuIcon = this.expanded ? MenuIcons.CHEVRON_UP : MenuIcons.CHEVRON_DOWN;
+      Font font = menuIcon.font(12.0F);
+      boolean contains = this.headerBounds.contains(lastClickX, lastClickY);
+      graphics.drawText(
+         font,
+         menuIcon.glyph(),
+         boundsData.getFloatValue() + boundsData.width() - MenuSkin.EDGE - menuIcon.width(12.0F),
+         boundsData.getFloatValue2() + (HEADER_HEIGHT - font.height()) / 2.0F,
+         contains ? MenuTheme.text() : MenuTheme.textTertiary()
       );
    }
 
-   private void drawChangelog(MenuDrawContext var1, float var2, float var3, float var4, float var5) {
-      float var6 = var2 + CARD_PADDING_X;
-      float var7 = var3 + CARD_PADDING_Y;
-      float var8 = var4 - CARD_PADDING_X * 2.0F - RAIL_GAP - RAIL_WIDTH;
-      float var9 = var5 - CARD_PADDING_Y * 2.0F;
-      List<HomeMenuPage.Entry> var10 = changelog();
-      float var11 = var10.isEmpty() ? 0.0F : var10.size() * ROW_HEIGHT + (var10.size() - 1) * ROW_GAP;
-      this.scroll.update(var9, var11);
-      var1.enableScissor(var6, var7, var6 + var8, var7 + var9);
-      Font var12 = MenuTheme.regular(11.0F);
-      float var13 = var7 - this.scroll.offset();
+   private void drawChangelog(MenuDrawContext graphics, float floatValue, float snap, float width, float height) {
+      float f = floatValue + CARD_PADDING_X;
+      float y = snap + CARD_PADDING_Y;
+      float f2 = width - CARD_PADDING_X * 2.0F - RAIL_GAP - RAIL_WIDTH;
+      float viewport = height - CARD_PADDING_Y * 2.0F;
+      List<HomeMenuPage.Entry> entries = changelog();
+      float content = entries.isEmpty() ? 0.0F : entries.size() * ROW_HEIGHT + (entries.size() - 1) * ROW_GAP;
+      this.scroll.update(viewport, content);
+      graphics.enableScissor(f, y, f + f2, y + viewport);
+      Font regular = MenuTheme.regular(11.0F);
+      float f3 = y - this.scroll.offset();
 
-      for (HomeMenuPage.Entry var15 : var10) {
-         MenuIcon var16 = var15.added() ? MenuIcons.PLUS : MenuIcons.MINUS;
-         Font var17 = var16.font(11.0F);
-         ZenithColor var18 = var15.added() ? MenuTheme.accent() : MenuTheme.textTertiary();
-         ZenithColor var19 = var15.added() ? MenuTheme.text() : MenuTheme.textSecondary();
-         var1.drawText(var17, var16.glyph(), var6 + (MARKER_BOX - var16.width(11.0F)) / 2.0F, var13 + (ROW_HEIGHT - var17.height()) / 2.0F, var18);
-         var1.drawText(var12, MenuTheme.t(var15.text()), var6 + MARKER_BOX + MARKER_GAP, var13 + (ROW_HEIGHT - var12.height()) / 2.0F, var19);
-         var13 += ROW_HEIGHT + ROW_GAP;
+      for (HomeMenuPage.Entry entry : entries) {
+         MenuIcon menuIcon = entry.added() ? MenuIcons.PLUS : MenuIcons.MINUS;
+         Font font = menuIcon.font(11.0F);
+         ZenithColor accent = entry.added() ? MenuTheme.accent() : MenuTheme.textTertiary();
+         ZenithColor text = entry.added() ? MenuTheme.text() : MenuTheme.textSecondary();
+         graphics.drawText(font, menuIcon.glyph(), f + (MARKER_BOX - menuIcon.width(11.0F)) / 2.0F, f3 + (ROW_HEIGHT - font.height()) / 2.0F, accent);
+         graphics.drawText(regular, MenuTheme.t(entry.text()), f + MARKER_BOX + MARKER_GAP, f3 + (ROW_HEIGHT - regular.height()) / 2.0F, text);
+         f3 += ROW_HEIGHT + ROW_GAP;
       }
 
-      var1.disableScissor();
-      this.scroll.renderRail(var1, var2 + var4 - CARD_PADDING_X - RAIL_WIDTH, var7, var9);
+      graphics.disableScissor();
+      this.scroll.renderRail(graphics, floatValue + width - CARD_PADDING_X - RAIL_WIDTH, y, viewport);
    }
 
    @Override
-   public void renderFooter(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-      Zenith.Entry var5 = Zenith.getInstance().getEntry();
-      List<HomeMenuPage.Stat> var6 = List.of(
-         new HomeMenuPage.Stat(MenuIcons.SUBSCRIPTION, this.subscriptionDays(var5), MenuTheme.t("menu.home.subscription")),
-         new HomeMenuPage.Stat(MenuIcons.UID, var5.getText2() == null ? "-" : var5.getText2(), MenuTheme.t("menu.home.uid")),
+   public void renderFooter(MenuDrawContext menuDrawContext, float f, float f2, BoundsData boundsData) {
+      Zenith.Entry entry = Zenith.getInstance().getEntry();
+      List<HomeMenuPage.Stat> stats = List.of(
+         new HomeMenuPage.Stat(MenuIcons.SUBSCRIPTION, this.subscriptionDays(entry), MenuTheme.t("menu.home.subscription")),
+         new HomeMenuPage.Stat(MenuIcons.UID, entry.getText2() == null ? "-" : entry.getText2(), MenuTheme.t("menu.home.uid")),
          new HomeMenuPage.Stat(MenuIcons.PLAYTIME, playTime(), MenuTheme.t("menu.home.playtime")),
          new HomeMenuPage.Stat(MenuIcons.ONLINE, onlineFriends(), MenuTheme.t("menu.home.online"))
       );
-      float var7 = var4.getFloatValue();
+      float floatValue = boundsData.getFloatValue();
 
-      for (HomeMenuPage.Stat var9 : var6) {
-         this.drawStat(var1, var9, var7, var4.getFloatValue2());
-         var7 += STAT_WIDTH + STAT_GAP;
+      for (HomeMenuPage.Stat stat : stats) {
+         this.drawStat(menuDrawContext, stat, floatValue, boundsData.getFloatValue2());
+         floatValue += STAT_WIDTH + STAT_GAP;
       }
    }
 
-   private void drawStat(MenuDrawContext var1, HomeMenuPage.Stat var2, float var3, float var4) {
-      Font var5 = var2.icon().font(16.0F);
-      Font var6 = MenuTheme.medium(10.0F);
-      Font var7 = MenuTheme.regular(9.0F);
-      var1.drawText(
-         var5,
-         var2.icon().glyph(),
-         var3 + (STAT_WIDTH - var2.icon().width(16.0F)) / 2.0F,
-         var4 + (MenuTheme.px(16.0F) - var5.height()) / 2.0F,
+   private void drawStat(MenuDrawContext menuDrawContext, HomeMenuPage.Stat stat, float floatValue, float f) {
+      Font font = stat.icon().font(16.0F);
+      Font medium = MenuTheme.medium(10.0F);
+      Font regular = MenuTheme.regular(9.0F);
+      menuDrawContext.drawText(
+         font,
+         stat.icon().glyph(),
+         floatValue + (STAT_WIDTH - stat.icon().width(16.0F)) / 2.0F,
+         f + (MenuTheme.px(16.0F) - font.height()) / 2.0F,
          MenuTheme.accent()
       );
-      float var8 = var4 + MenuTheme.px(24.0F);
-      var1.drawText(var6, var2.value(), var3 + (STAT_WIDTH - var6.width(var2.value())) / 2.0F, var8, MenuTheme.text());
-      var1.drawText(var7, var2.label(), var3 + (STAT_WIDTH - var7.width(var2.label())) / 2.0F, var8 + MenuTheme.px(14.0F), MenuTheme.textTertiary());
+      float centeredTextY = f + MenuTheme.px(24.0F);
+      menuDrawContext.drawText(medium, stat.value(), floatValue + (STAT_WIDTH - medium.width(stat.value())) / 2.0F, centeredTextY, MenuTheme.text());
+      menuDrawContext.drawText(regular, stat.label(), floatValue + (STAT_WIDTH - regular.width(stat.label())) / 2.0F, centeredTextY + MenuTheme.px(14.0F), MenuTheme.textTertiary());
    }
 
    private static String playTime() {
-      PlayTimeTracker var0 = Zenith.getInstance().getPlayTimeTracker();
-      return var0 == null ? "0m" : PlayTimeTracker.method1402(var0.method1401());
+      PlayTimeTracker playTimeTracker = Zenith.getInstance().getPlayTimeTracker();
+      return playTimeTracker == null ? "0m" : PlayTimeTracker.method1402(playTimeTracker.method1401());
    }
 
    private static String onlineFriends() {
-      Cloud var0 = Zenith.getInstance().getCloud();
-      return var0 != null && var0.method7862() ? String.valueOf(var0.state().method8045()) : "0";
+      Cloud cloud = Zenith.getInstance().getCloud();
+      return cloud != null && cloud.method7862() ? String.valueOf(cloud.state().method8045()) : "0";
    }
 
-   private String subscriptionDays(Zenith.Entry var1) {
-      long var2 = System.currentTimeMillis();
-      long var4 = var1.method1510();
-      if (var4 == this.subscriptionRevision && var2 - this.subscriptionCheckedAt < 60000L) {
+   private String subscriptionDays(Zenith.Entry entry) {
+      long now = System.currentTimeMillis();
+      long subscriptionRevision = entry.method1510();
+      if (subscriptionRevision == this.subscriptionRevision && now - this.subscriptionCheckedAt < 60000L) {
          return this.subscriptionLabel;
       } else {
-         this.subscriptionRevision = var4;
-         this.subscriptionCheckedAt = var2;
-         long var6 = var1.method1506();
-         if (var6 == Long.MAX_VALUE) {
+         this.subscriptionRevision = subscriptionRevision;
+         this.subscriptionCheckedAt = now;
+         long l = entry.method1506();
+         if (l == Long.MAX_VALUE) {
             this.subscriptionLabel = MenuTheme.t("gui.sub.lifetime");
-         } else if (var6 == -1L) {
+         } else if (l == -1L) {
             this.subscriptionLabel = MenuTheme.t("gui.sub.active");
          } else {
-            this.subscriptionLabel = var6 + " " + MenuTheme.t("menu.home.daysLeft");
+            this.subscriptionLabel = l + " " + MenuTheme.t("menu.home.daysLeft");
          }
 
          return this.subscriptionLabel;
       }
    }
 
-   private static void drawCard(MenuDrawContext var0, float var1, float var2, float var3, float var4) {
-      MenuSkin.panel(var0, var1, var2, var3, var4);
+   private static void drawCard(MenuDrawContext graphics, float floatValue, float snap, float width, float height) {
+      MenuSkin.panel(graphics, floatValue, snap, width, height);
    }
 
    @Override
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      if (var5 == 0 && this.headerBounds.contains(var1, var3)) {
+   public boolean mouseClicked(double lastClickX, double lastClickY, int n) {
+      if (n == 0 && this.headerBounds.contains(lastClickX, lastClickY)) {
          this.expanded = !this.expanded;
          return true;
       } else {
@@ -239,8 +239,8 @@ public final class HomeMenuPage implements MainMenuPage {
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5) {
-      return this.scroll.scroll(var5, ROW_HEIGHT + ROW_GAP);
+   public boolean mouseScrolled(double d, double d2, double d3) {
+      return this.scroll.scroll(d3, ROW_HEIGHT + ROW_GAP);
    }
 
    private static final class Entry {
@@ -272,9 +272,9 @@ public final class HomeMenuPage implements MainMenuPage {
          return "Entry[" + "text=" + this.text + ", " + "added=" + this.added + "]";
       }
 
-      private Entry(String var1, boolean var2) {
-         this.text = var1;
-         this.added = var2;
+      private Entry(String text, boolean added) {
+         this.text = text;
+         this.added = added;
       }
    }
 
@@ -312,10 +312,10 @@ public final class HomeMenuPage implements MainMenuPage {
          return "Stat[" + "icon=" + this.icon + ", " + "value=" + this.value + ", " + "label=" + this.label + "]";
       }
 
-      private Stat(MenuIcon var1, String var2, String var3) {
-         this.icon = var1;
-         this.value = var2;
-         this.label = var3;
+      private Stat(MenuIcon icon, String subscriptionDays, String label) {
+         this.icon = icon;
+         this.value = subscriptionDays;
+         this.label = label;
       }
    }
 }

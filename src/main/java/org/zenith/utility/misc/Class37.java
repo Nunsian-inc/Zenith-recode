@@ -11,15 +11,15 @@ public final class Class37 {
    private final boolean flag;
    private final Class37.Entry[][] entrys;
 
-   public Class37(String var1, float var2, boolean var3, Map<Integer, Class37.Entry[]> var4, int var5) {
-      this.text = var1;
-      this.floatValue = var2;
-      this.flag = var3;
-      this.entrys = new Class37.Entry[var5][];
+   public Class37(String text, float floatValue, boolean flag, Map<Integer, Class37.Entry[]> map, int n) {
+      this.text = text;
+      this.floatValue = floatValue;
+      this.flag = flag;
+      this.entrys = new Class37.Entry[n][];
 
-      for (Map.Entry var7 : var4.entrySet()) {
-         if ((Integer)var7.getKey() >= 0 && (Integer)var7.getKey() < var5) {
-            this.entrys[(Integer)var7.getKey()] = (Class37.Entry[])var7.getValue();
+      for (Map.Entry entry : map.entrySet()) {
+         if ((Integer)entry.getKey() >= 0 && (Integer)entry.getKey() < n) {
+            this.entrys[(Integer)entry.getKey()] = (Class37.Entry[])entry.getValue();
          }
       }
    }
@@ -36,37 +36,37 @@ public final class Class37 {
       return this.flag;
    }
 
-   public float method6240(float var1) {
+   public float method6240(float f) {
       if (this.floatValue <= 0.0F) {
          return 0.0F;
       } else if (!this.flag) {
-         return Math.min(Math.max(var1, 0.0F), this.floatValue);
+         return Math.min(Math.max(f, 0.0F), this.floatValue);
       } else {
-         float var2 = var1 % this.floatValue;
-         return var2 < 0.0F ? var2 + this.floatValue : var2;
+         float f2 = f % this.floatValue;
+         return f2 < 0.0F ? f2 + this.floatValue : f2;
       }
    }
 
-   public boolean method6241(int var1) {
-      return var1 >= 0 && var1 < this.entrys.length && this.entrys[var1] != null;
+   public boolean method6241(int n) {
+      return n >= 0 && n < this.entrys.length && this.entrys[n] != null;
    }
 
-   public void method6242(int var1, float var2, float[] var3) {
-      var3[0] = var3[1] = var3[2] = 0.0F;
-      var3[3] = var3[4] = var3[5] = 0.0F;
-      var3[6] = var3[7] = var3[8] = 1.0F;
-      if (this.method6241(var1)) {
-         Class37.Entry[] var4 = this.entrys[var1];
-         if (var4[0] != null) {
-            var4[0].method6243(var2, var3, 0, this.flag);
+   public void method6242(int n, float f, float[] floatValues) {
+      floatValues[0] = floatValues[1] = floatValues[2] = 0.0F;
+      floatValues[3] = floatValues[4] = floatValues[5] = 0.0F;
+      floatValues[6] = floatValues[7] = floatValues[8] = 1.0F;
+      if (this.method6241(n)) {
+         Class37.Entry[] entry = this.entrys[n];
+         if (entry[0] != null) {
+            entry[0].method6243(f, floatValues, 0, this.flag);
          }
 
-         if (var4[1] != null) {
-            var4[1].method6243(var2, var3, 3, this.flag);
+         if (entry[1] != null) {
+            entry[1].method6243(f, floatValues, 3, this.flag);
          }
 
-         if (var4[2] != null) {
-            var4[2].method6243(var2, var3, 6, this.flag);
+         if (entry[2] != null) {
+            entry[2].method6243(f, floatValues, 6, this.flag);
          }
       }
    }
@@ -76,63 +76,63 @@ public final class Class37 {
       public final float[] floatValues2;
       public final boolean flag;
 
-      public Entry(float[] var1, float[] var2, boolean var3) {
-         this.floatValues = var1;
-         this.floatValues2 = var2;
-         this.flag = var3;
+      public Entry(float[] floatValues, float[] floatValues2, boolean flag) {
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.flag = flag;
       }
 
-      public void method6243(float var1, float[] var2, int var3, boolean var4) {
-         int var5 = this.floatValues.length - 1;
-         if (var5 >= 0) {
-            if (var1 <= this.floatValues[0] || var5 == 0) {
-               this.method6244(0, var2, var3);
-            } else if (var1 >= this.floatValues[var5]) {
-               this.method6244(var5, var2, var3);
+      public void method6243(float f, float[] floatValues, int n, boolean flag) {
+         int n2 = this.floatValues.length - 1;
+         if (n2 >= 0) {
+            if (f <= this.floatValues[0] || n2 == 0) {
+               this.method6244(0, floatValues, n);
+            } else if (f >= this.floatValues[n2]) {
+               this.method6244(n2, floatValues, n);
             } else {
-               int var6 = 0;
+               int n3 = 0;
 
-               while (var6 < var5 && this.floatValues[var6 + 1] < var1) {
-                  var6++;
+               while (n3 < n2 && this.floatValues[n3 + 1] < f) {
+                  n3++;
                }
 
-               float var7 = this.floatValues[var6];
-               float var8 = this.floatValues[var6 + 1];
-               float var9 = var8 - var7 <= 1.0E-6F ? 0.0F : (var1 - var7) / (var8 - var7);
+               float floatValue = this.floatValues[n3];
+               float floatValue2 = this.floatValues[n3 + 1];
+               float f2 = floatValue2 - floatValue <= 1.0E-6F ? 0.0F : (f - floatValue) / (floatValue2 - floatValue);
                if (this.flag) {
-                  int var13 = var6 - 1 >= 0 ? var6 - 1 : (var4 && var5 >= 2 ? var5 - 1 : 0);
-                  int var14 = var6 + 2 <= var5 ? var6 + 2 : (var4 && var5 >= 2 ? Math.min(var6 + 2 - var5, var5) : var5);
+                  int n4 = n3 - 1 >= 0 ? n3 - 1 : (flag && n2 >= 2 ? n2 - 1 : 0);
+                  int n5 = n3 + 2 <= n2 ? n3 + 2 : (flag && n2 >= 2 ? Math.min(n3 + 2 - n2, n2) : n2);
 
-                  for (int var12 = 0; var12 < 3; var12++) {
-                     var2[var3 + var12] = method6245(
-                        this.floatValues2[var13 * 3 + var12],
-                        this.floatValues2[var6 * 3 + var12],
-                        this.floatValues2[(var6 + 1) * 3 + var12],
-                        this.floatValues2[var14 * 3 + var12],
-                        var9
+                  for (int i = 0; i < 3; i++) {
+                     floatValues[n + i] = method6245(
+                        this.floatValues2[n4 * 3 + i],
+                        this.floatValues2[n3 * 3 + i],
+                        this.floatValues2[(n3 + 1) * 3 + i],
+                        this.floatValues2[n5 * 3 + i],
+                        f2
                      );
                   }
                } else {
-                  for (int var10 = 0; var10 < 3; var10++) {
-                     float var11 = this.floatValues2[var6 * 3 + var10];
-                     var2[var3 + var10] = var11 + (this.floatValues2[(var6 + 1) * 3 + var10] - var11) * var9;
+                  for (int i = 0; i < 3; i++) {
+                     float f3 = this.floatValues2[n3 * 3 + i];
+                     floatValues[n + i] = f3 + (this.floatValues2[(n3 + 1) * 3 + i] - f3) * f2;
                   }
                }
             }
          }
       }
 
-      private void method6244(int var1, float[] var2, int var3) {
-         var2[var3] = this.floatValues2[var1 * 3];
-         var2[var3 + 1] = this.floatValues2[var1 * 3 + 1];
-         var2[var3 + 2] = this.floatValues2[var1 * 3 + 2];
+      private void method6244(int n, float[] floatValues, int n2) {
+         floatValues[n2] = this.floatValues2[n * 3];
+         floatValues[n2 + 1] = this.floatValues2[n * 3 + 1];
+         floatValues[n2 + 2] = this.floatValues2[n * 3 + 2];
       }
 
-      private static float method6245(float var0, float var1, float var2, float var3, float var4) {
-         float var5 = var4 * var4;
-         float var6 = var5 * var4;
+      private static float method6245(float f, float f2, float f3, float f4, float f5) {
+         float f6 = f5 * f5;
+         float f7 = f6 * f5;
          return 0.5F
-            * (2.0F * var1 + (var2 - var0) * var4 + (2.0F * var0 - 5.0F * var1 + 4.0F * var2 - var3) * var5 + (3.0F * var1 - var0 - 3.0F * var2 + var3) * var6);
+            * (2.0F * f2 + (f3 - f) * f5 + (2.0F * f - 5.0F * f2 + 4.0F * f3 - f4) * f6 + (3.0F * f2 - f - 3.0F * f3 + f4) * f7);
       }
    }
 }

@@ -65,69 +65,69 @@ public class FiguraTextureSet {
             case SKIN, CAPE, ELYTRA -> {
                ClientPacketListener connection = Minecraft.getInstance().getConnection();
                if (connection == null) {
-                  Object var16 = null;
-                  Identifier var171 = (Identifier)var16;
-                  yield var171;
+                  Object obj = null;
+                  Identifier id = (Identifier)obj;
+                  yield id;
                } else {
                   PlayerInfo info = connection.getPlayerInfo(owner);
                   if (info == null) {
-                     Object var17 = null;
-                     Identifier var18 = (Identifier)var17;
-                     yield var18;
+                     Object obj = null;
+                     Identifier id = (Identifier)obj;
+                     yield id;
                   } else {
-                     Identifier var19 = switch (type) {
+                     Identifier id = switch (type) {
                         case CAPE -> info.getSkin().cape() == null ? null : info.getSkin().cape().texturePath();
                         case ELYTRA -> info.getSkin().elytra() == null ? Identifier.withDefaultNamespace("elytra") : info.getSkin().elytra().texturePath();
                         default -> info.getSkin().body().texturePath();
                      };
-                     yield var19;
+                     yield id;
                   }
                }
             }
             case RESOURCE -> {
-               Identifier var15;
+               Identifier location;
                try {
-                  var15 = Identifier.parse(String.valueOf(pair.getValue()));
-               } catch (Exception var14) {
-                  var15 = MissingTextureAtlasSprite.getLocation();
-                  yield var15;
+                  location = Identifier.parse(String.valueOf(pair.getValue()));
+               } catch (Exception e) {
+                  location = MissingTextureAtlasSprite.getLocation();
+                  yield location;
                }
 
-               Identifier var16 = var15;
-               yield var16;
+               Identifier id = location;
+               yield id;
             }
             case PRIMARY -> {
-               Identifier var13 = this.textures[0] == null ? null : this.textures[0].getLocation();
-               Identifier var14 = var13;
-               yield var14;
+               Identifier location = this.textures[0] == null ? null : this.textures[0].getLocation();
+               Identifier id = location;
+               yield id;
             }
             case SECONDARY -> {
-               Identifier var12 = this.textures[1] == null ? null : this.textures[1].getLocation();
-               Identifier var13 = var12;
-               yield var13;
+               Identifier location = this.textures[1] == null ? null : this.textures[1].getLocation();
+               Identifier id = location;
+               yield id;
             }
             case SPECULAR -> {
-               Identifier var11 = this.textures[2] == null ? null : this.textures[2].getLocation();
-               Identifier var12 = var11;
-               yield var12;
+               Identifier location = this.textures[2] == null ? null : this.textures[2].getLocation();
+               Identifier id = location;
+               yield id;
             }
             case NORMAL -> {
-               Identifier var10 = this.textures[3] == null ? null : this.textures[3].getLocation();
-               Identifier var11 = var10;
-               yield var11;
+               Identifier location = this.textures[3] == null ? null : this.textures[3].getLocation();
+               Identifier id = location;
+               yield id;
             }
             case CUSTOM -> {
-               Identifier var9;
+               Identifier location;
                try {
-                  var9 = ((FiguraTexture)pair.getValue()).getLocation();
-               } catch (Exception var131) {
-                  var9 = MissingTextureAtlasSprite.getLocation();
-                  Identifier var4 = var9;
-                  yield var4;
+                  location = ((FiguraTexture)pair.getValue()).getLocation();
+               } catch (Exception e) {
+                  location = MissingTextureAtlasSprite.getLocation();
+                  Identifier id = location;
+                  yield id;
                }
 
-               Identifier var10 = var9;
-               yield var10;
+               Identifier id = location;
+               yield id;
             }
          };
       } else {

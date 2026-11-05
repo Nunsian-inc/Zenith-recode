@@ -17,7 +17,7 @@ public abstract class MixinAbstractBoatEntity {
       ),
       index = 1
    )
-   private Vec3 zenith$boatFlyVelocity(Vec3 var1) {
-      return BoatFlyModule.INSTANCE.method1932((AbstractBoat)(Object)this, var1);
+   private Vec3 zenith$boatFlyVelocity(Vec3 vec) {
+      return BoatFlyModule.INSTANCE.method1932((AbstractBoat)(Object)this, vec);
    }
 }

@@ -240,9 +240,9 @@ public class AutoZamokModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.getConnection() != null && mc.gameMode != null) {
-         long var2 = System.currentTimeMillis();
+         long now = System.currentTimeMillis();
          if (this.type != AutoZamokModule.Type.DRINK_INVIS && !this.flag8 && !this.flag9) {
             this.method4209();
          }
@@ -258,8 +258,8 @@ public class AutoZamokModule extends Module {
          if (this.method4207()) {
             this.method4210();
             this.method4132();
-            if (var2 - this.longValue10 >= 1000L) {
-               this.longValue10 = var2;
+            if (now - this.longValue10 >= 1000L) {
+               this.longValue10 = now;
                mc.player.respawn();
                if (mc.gui.screen() instanceof DeathScreen) {
                   mc.gui.setScreen(null);
@@ -272,110 +272,110 @@ public class AutoZamokModule extends Module {
                this.method4206(AutoZamokModule.Type.TP_TO_SKLAD);
             }
          } else {
-            float var4 = mc.player.getHealth();
-            if (this.floatValue > 0.0F && var4 < this.floatValue - 0.01F && this.method4149()) {
-               Player var5 = this.method4153(12.0);
-               if (var5 != null) {
-                  this.floatValue = var4;
-                  this.method4150(var2, var5);
+            float health = mc.player.getHealth();
+            if (this.floatValue > 0.0F && health < this.floatValue - 0.01F && this.method4149()) {
+               Player player = this.method4153(12.0);
+               if (player != null) {
+                  this.floatValue = health;
+                  this.method4150(now, player);
                   return;
                }
             }
 
-            this.floatValue = var4;
-            if (!this.method4131(var2) && !this.method4135(var2)) {
+            this.floatValue = health;
+            if (!this.method4131(now) && !this.method4135(now)) {
                this.method4142();
-               if (this.method4139(var2)) {
-                  this.longValue9 = var2;
+               if (this.method4139(now)) {
+                  this.longValue9 = now;
                } else {
-                  this.method4143(var2);
+                  this.method4143(now);
                   switch (this.type) {
                      case TP_TO_SKLAD:
-                        if (this.method4197(var2) && this.method4194(var2, "home sklad")) {
+                        if (this.method4197(now) && this.method4194(now, "home sklad")) {
                            this.log("/home sklad");
                            this.method4206(AutoZamokModule.Type.WAIT_SKLAD);
                         }
                         break;
                      case WAIT_SKLAD:
-                        this.method4195(var2, AutoZamokModule.Type.REFILL_INVIS, AutoZamokModule.Type.TP_TO_SKLAD, true);
+                        this.method4195(now, AutoZamokModule.Type.REFILL_INVIS, AutoZamokModule.Type.TP_TO_SKLAD, true);
                         break;
                      case REFILL_INVIS:
-                        this.method4129(var2, texts, AutoZamokModule.Type.REFILL_PICK, true);
+                        this.method4129(now, texts, AutoZamokModule.Type.REFILL_PICK, true);
                         break;
                      case REFILL_PICK:
-                        this.method4129(var2, texts2, AutoZamokModule.Type.DRINK_INVIS, false);
+                        this.method4129(now, texts2, AutoZamokModule.Type.DRINK_INVIS, false);
                         break;
                      case DRINK_INVIS:
-                        this.method4130(var2);
+                        this.method4130(now);
                         break;
                      case TP_TO_ZAMOK:
                         this.closeScreen();
-                        if (this.method4197(var2) && this.method4194(var2, "home zamok")) {
+                        if (this.method4197(now) && this.method4194(now, "home zamok")) {
                            this.log("/home zamok");
                            this.method4206(AutoZamokModule.Type.WAIT_ZAMOK);
                         }
                         break;
                      case WAIT_ZAMOK:
-                        this.method4195(var2, AutoZamokModule.Type.GO_ENTRY, AutoZamokModule.Type.TP_TO_ZAMOK, false);
+                        this.method4195(now, AutoZamokModule.Type.GO_ENTRY, AutoZamokModule.Type.TP_TO_ZAMOK, false);
                         break;
                      case GO_ENTRY:
-                        this.method4136(var2);
+                        this.method4136(now);
                         break;
                      case GO_SHULKER:
-                        this.method4138(var2);
+                        this.method4138(now);
                         break;
                      case BREAK_SHULKER:
-                        this.method4156(var2);
+                        this.method4156(now);
                         break;
                      case COLLECT:
-                        this.method4164(var2);
+                        this.method4164(now);
                         break;
                      case GO_EXIT:
-                        this.method4155(var2);
+                        this.method4155(now);
                         break;
                      case FLEE:
-                        this.method4152(var2);
+                        this.method4152(now);
                         break;
                      case TP_TO_DEPOSIT:
                         mc.gameMode.stopDestroyBlock();
-                        if (this.method4197(var2) && this.method4194(var2, "home sklad")) {
+                        if (this.method4197(now) && this.method4194(now, "home sklad")) {
                            this.log("/home sklad (сдача)");
                            this.method4206(AutoZamokModule.Type.WAIT_DEPOSIT);
                         }
                         break;
                      case WAIT_DEPOSIT:
-                        this.method4195(var2, AutoZamokModule.Type.DEPOSIT, AutoZamokModule.Type.TP_TO_DEPOSIT, true);
+                        this.method4195(now, AutoZamokModule.Type.DEPOSIT, AutoZamokModule.Type.TP_TO_DEPOSIT, true);
                         break;
                      case DEPOSIT:
-                        this.method4171(var2);
+                        this.method4171(now);
                   }
 
                   if (this.method4191()) {
-                     this.method4192(var2);
+                     this.method4192(now);
                   }
                }
             } else {
-               this.longValue9 = var2;
+               this.longValue9 = now;
             }
          }
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() instanceof ClientboundExplodePacket var2) {
-         BlockPos var4 = BlockPos.containing(var2.center());
-         if (method4128(var4)) {
-            this.blockPos6 = var4;
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() instanceof ClientboundExplodePacket explodePacket) {
+         BlockPos containing = BlockPos.containing(explodePacket.center());
+         if (method4128(containing)) {
+            this.blockPos6 = containing;
             this.longValue11 = System.currentTimeMillis();
             this.longValue14 = 0L;
          }
       }
    }
 
-   private static boolean method4128(BlockPos var0) {
-      for (double[] var4 : CONST_doubleValues) {
-         if (var0.distToLowCornerSqr(var4[0], var4[1], var4[2]) <= 144.0) {
+   private static boolean method4128(BlockPos containing) {
+      for (double[] doubles : CONST_doubleValues) {
+         if (containing.distToLowCornerSqr(doubles[0], doubles[1], doubles[2]) <= 144.0) {
             return true;
          }
       }
@@ -384,116 +384,116 @@ public class AutoZamokModule extends Module {
    }
 
    @EventTarget
-   public void onChatReceive(ChatReceiveEvent var1) {
-      if (var1.getText() != null && this.method4196()) {
-         String var2 = var1.getText().getString().toLowerCase(Locale.ROOT);
-         long var3 = System.currentTimeMillis();
-         if (!var2.contains("времени до следующей телепортаци") && (!var2.contains("ошибк") || !var2.contains("телепортаци"))) {
-            if (!var2.contains("не двигайтесь") && !var2.contains("начнется через") && !var2.contains("начнётся через")) {
-               if (var2.contains("телепортирование") || var2.contains("вы телепортированы")) {
+   public void onChatReceive(ChatReceiveEvent event) {
+      if (event.getText() != null && this.method4196()) {
+         String lowerCase = event.getText().getString().toLowerCase(Locale.ROOT);
+         long now = System.currentTimeMillis();
+         if (!lowerCase.contains("времени до следующей телепортаци") && (!lowerCase.contains("ошибк") || !lowerCase.contains("телепортаци"))) {
+            if (!lowerCase.contains("не двигайтесь") && !lowerCase.contains("начнется через") && !lowerCase.contains("начнётся через")) {
+               if (lowerCase.contains("телепортирование") || lowerCase.contains("вы телепортированы")) {
                   this.intValue13 = 1;
-                  this.longValue18 = var3;
+                  this.longValue18 = now;
                }
             } else {
                this.flag7 = true;
             }
          } else {
-            long var5 = method4198(var2);
-            this.longValue17 = var3 + (var5 > 0L ? var5 * 1000L : 1500L) + 700L;
+            long l = method4198(lowerCase);
+            this.longValue17 = now + (l > 0L ? l * 1000L : 1500L) + 700L;
             this.intValue13 = -1;
-            this.longValue18 = var3;
+            this.longValue18 = now;
          }
       }
    }
 
-   private void method4129(long var1, String[] var3, AutoZamokModule.Type var4, boolean var5) {
-      if (var5 ? !this.method4187() : !this.method4183()) {
-         if (!(mc.player.containerMenu instanceof ChestMenu var7)) {
+   private void method4129(long now, String[] texts, AutoZamokModule.Type type, boolean flag) {
+      if (flag ? !this.method4187() : !this.method4183()) {
+         if (!(mc.player.containerMenu instanceof ChestMenu chestMenu)) {
             if (this.blockPos2 == null) {
-               this.blockPos2 = this.method4177(var3, var1, false);
+               this.blockPos2 = this.method4177(texts, now, false);
                if (this.blockPos2 == null) {
-                  if (var1 - this.longValue > 6000L) {
-                     this.log("Не найден сундук с табличкой " + var3[0]);
-                     this.method4206(var4);
+                  if (now - this.longValue > 6000L) {
+                     this.log("Не найден сундук с табличкой " + texts[0]);
+                     this.method4206(type);
                   }
 
                   return;
                }
             }
 
-            if (var1 - this.longValue2 >= 70L) {
+            if (now - this.longValue2 >= 70L) {
                this.method4181(this.blockPos2);
-               this.longValue2 = var1;
+               this.longValue2 = now;
             }
-         } else if (var1 - this.longValue2 >= 70L) {
-            Slot var8 = this.method4182(var7, var5 ? this::method4185 : this::method4184);
-            if (var8 != null) {
-               mc.gameMode.handleContainerInput(var7.containerId, var8.index, 0, ContainerInput.QUICK_MOVE, mc.player);
-               this.longValue2 = var1;
-               this.log("Взял предмет из сундука " + var3[0]);
-               if (var5 && !this.method4187() && !this.method4168()) {
+         } else if (now - this.longValue2 >= 70L) {
+            Slot slot = this.method4182(chestMenu, flag ? this::method4185 : this::method4184);
+            if (slot != null) {
+               mc.gameMode.handleContainerInput(chestMenu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, mc.player);
+               this.longValue2 = now;
+               this.log("Взял предмет из сундука " + texts[0]);
+               if (flag && !this.method4187() && !this.method4168()) {
                   return;
                }
-            } else if (!var5 || this.method4169(this::method4185) == 0) {
-               var8 = this.method4182(var7, var0 -> true);
-               if (var8 != null) {
-                  mc.gameMode.handleContainerInput(var7.containerId, var8.index, 0, ContainerInput.QUICK_MOVE, mc.player);
-                  this.longValue2 = var1;
-                  this.log("Взял предмет из сундука " + var3[0]);
+            } else if (!flag || this.method4169(this::method4185) == 0) {
+               slot = this.method4182(chestMenu, stack -> true);
+               if (slot != null) {
+                  mc.gameMode.handleContainerInput(chestMenu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, mc.player);
+                  this.longValue2 = now;
+                  this.log("Взял предмет из сундука " + texts[0]);
                }
             }
 
             this.closeScreen();
-            this.method4206(var4);
+            this.method4206(type);
          }
       } else {
          this.closeScreen();
-         this.method4206(var4);
+         this.method4206(type);
       }
    }
 
-   private void method4130(long var1) {
+   private void method4130(long now) {
       if (mc.player.hasEffect(MobEffects.INVISIBILITY)) {
          this.method4209();
          this.method4206(AutoZamokModule.Type.TP_TO_ZAMOK);
       } else {
-         int var3 = this.method4188(this::method4185);
-         if (var3 == -1 || var1 - this.longValue > 5000L) {
+         int slotNum = this.method4188(this::method4185);
+         if (slotNum == -1 || now - this.longValue > 5000L) {
             this.method4209();
             this.method4206(AutoZamokModule.Type.TP_TO_ZAMOK);
-         } else if (var3 > 8) {
-            this.method4190(var3, var1);
+         } else if (slotNum > 8) {
+            this.method4190(slotNum, now);
          } else {
-            this.method4211(var3);
+            this.method4211(slotNum);
             this.method4208();
          }
       }
    }
 
-   private boolean method4131(long var1) {
+   private boolean method4131(long now) {
       if (!this.method4134() || this.flag8) {
          this.method4132();
          return false;
       } else if (!this.flag9 && !this.method4133()) {
          return false;
-      } else if (!this.flag9 || (this.method4133() || mc.player.isUsingItem()) && var1 - this.longValue19 <= 8000L) {
-         int var3 = this.method4188(this::method4185);
-         if (var3 == -1) {
+      } else if (!this.flag9 || (this.method4133() || mc.player.isUsingItem()) && now - this.longValue19 <= 8000L) {
+         int slotNum = this.method4188(this::method4185);
+         if (slotNum == -1) {
             this.method4132();
             return false;
          } else {
             if (!this.flag9) {
                this.flag9 = true;
-               this.longValue19 = var1;
+               this.longValue19 = now;
                this.log("Обновляю невидимость");
             }
 
             this.method4204();
-            if (var3 > 8) {
-               this.method4190(var3, var1);
+            if (slotNum > 8) {
+               this.method4190(slotNum, now);
                return true;
             } else {
-               this.method4211(var3);
+               this.method4211(slotNum);
                this.method4208();
                return true;
             }
@@ -512,8 +512,8 @@ public class AutoZamokModule extends Module {
    }
 
    private boolean method4133() {
-      MobEffectInstance var1 = mc.player.getEffect(MobEffects.INVISIBILITY);
-      return var1 == null ? true : !var1.isInfiniteDuration() && var1.getDuration() <= 200;
+      MobEffectInstance effect = mc.player.getEffect(MobEffects.INVISIBILITY);
+      return effect == null ? true : !effect.isInfiniteDuration() && effect.getDuration() <= 200;
    }
 
    private boolean method4134() {
@@ -524,30 +524,30 @@ public class AutoZamokModule extends Module {
          || this.type == AutoZamokModule.Type.GO_EXIT;
    }
 
-   private boolean method4135(long var1) {
+   private boolean method4135(long now) {
       if (!this.method4134()) {
          this.method4210();
          return false;
       } else {
-         boolean var3 = mc.player.getFoodData().getFoodLevel() <= 17;
-         if (!this.flag8 && !var3) {
+         boolean flag = mc.player.getFoodData().getFoodLevel() <= 17;
+         if (!this.flag8 && !flag) {
             return false;
-         } else if (this.flag8 && !var3 && !mc.player.isUsingItem()) {
+         } else if (this.flag8 && !flag && !mc.player.isUsingItem()) {
             this.method4210();
             return false;
          } else {
-            int var4 = this.method4188(this::method4186);
-            if (var4 == -1) {
+            int slotNum = this.method4188(this::method4186);
+            if (slotNum == -1) {
                this.method4210();
                return false;
             } else {
                this.flag8 = true;
                this.method4204();
-               if (var4 > 8) {
-                  this.method4190(var4, var1);
+               if (slotNum > 8) {
+                  this.method4190(slotNum, now);
                   return true;
                } else {
-                  this.method4211(var4);
+                  this.method4211(slotNum);
                   this.method4208();
                   return true;
                }
@@ -556,39 +556,39 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4136(long var1) {
+   private void method4136(long now) {
       if (!(mc.player.position().distanceToSqr(Vec3.atCenterOf(blockPos)) <= 9.0)
-         && (var1 - this.longValue <= 2000L || this.method4173(var1) == null)
-         && var1 - this.longValue <= 20000L) {
-         if (var1 - this.longValue > 1000L) {
-            this.method4201(blockPos, var1);
+         && (now - this.longValue <= 2000L || this.method4173(now) == null)
+         && now - this.longValue <= 20000L) {
+         if (now - this.longValue > 1000L) {
+            this.method4201(blockPos, now);
          }
       } else {
-         this.method4137(var1);
+         this.method4137(now);
       }
    }
 
-   private void method4137(long var1) {
+   private void method4137(long now) {
       this.intValue = 0;
-      this.longValue3 = var1;
+      this.longValue3 = now;
       this.blockPos4 = null;
       this.flag = false;
       this.flag2 = false;
       this.method4206(AutoZamokModule.Type.GO_SHULKER);
    }
 
-   private void method4138(long var1) {
-      BlockPos var3 = this.method4173(var1);
-      if (var3 != null) {
+   private void method4138(long longValue) {
+      BlockPos blockPos4 = this.method4173(longValue);
+      if (blockPos4 != null) {
          this.flag = false;
-         if (!var3.equals(this.blockPos4)) {
-            this.blockPos4 = var3;
-            this.longValue7 = var1;
+         if (!blockPos4.equals(this.blockPos4)) {
+            this.blockPos4 = blockPos4;
+            this.longValue7 = longValue;
          }
 
-         if (this.method4176(var3) <= 4.41) {
+         if (this.method4176(blockPos4) <= 4.41) {
             this.method4204();
-            this.blockPos3 = var3;
+            this.blockPos3 = blockPos4;
             this.longValue13 = 0L;
             this.flag5 = false;
             this.floatValue2 = 0.0F;
@@ -597,28 +597,28 @@ public class AutoZamokModule extends Module {
             this.intValue11 = this.method4169(null);
             this.intValue12 = this.method4169(this::method4170);
             this.type = AutoZamokModule.Type.BREAK_SHULKER;
-            this.longValue = var1;
-         } else if (var1 - this.longValue7 > 15000L) {
+            this.longValue = longValue;
+         } else if (longValue - this.longValue7 > 15000L) {
             this.log("Бокс недоступен, пропускаю");
-            this.items.put(var3, var1);
+            this.items.put(blockPos4, longValue);
             this.blockPos4 = null;
             this.longValue14 = 0L;
             this.method4204();
          } else {
-            this.method4202(var3, var1);
+            this.method4202(blockPos4, longValue);
          }
       } else {
          this.blockPos4 = null;
-         BlockPos var4 = this.blockPos6;
-         if (var4 != null) {
-            if (var1 - this.longValue11 <= 15000L && !(mc.player.position().distanceToSqr(Vec3.atCenterOf(var4)) <= 9.0)) {
-               if (!var4.equals(this.blockPos7)) {
-                  this.blockPos7 = var4;
+         BlockPos blockPos6 = this.blockPos6;
+         if (blockPos6 != null) {
+            if (longValue - this.longValue11 <= 15000L && !(mc.player.position().distanceToSqr(Vec3.atCenterOf(blockPos6)) <= 9.0)) {
+               if (!blockPos6.equals(this.blockPos7)) {
+                  this.blockPos7 = blockPos6;
                   this.log("Взрыв у точки спавна — иду туда");
                }
 
-               this.longValue3 = var1;
-               this.method4202(var4, var1);
+               this.longValue3 = longValue;
+               this.method4202(blockPos6, longValue);
                return;
             }
 
@@ -626,13 +626,13 @@ public class AutoZamokModule extends Module {
          }
 
          if (this.flag2) {
-            int var5 = this.method4148();
-            if (var5 == -1) {
-               this.longValue9 = var1;
-               if (var1 - this.longValue3 > 50000L) {
-                  this.longValue3 = var1;
+            int intValue = this.method4148();
+            if (intValue == -1) {
+               this.longValue9 = longValue;
+               if (longValue - this.longValue3 > 50000L) {
+                  this.longValue3 = longValue;
                   this.flag = false;
-                  this.method4145(var1);
+                  this.method4145(longValue);
                   if (this.type == AutoZamokModule.Type.GO_SHULKER) {
                      this.intValue = 0;
                      this.flag2 = false;
@@ -647,62 +647,62 @@ public class AutoZamokModule extends Module {
                   this.log("Боксов нет — жду спавн в укрытии");
                }
 
-               double var11 = mc.player.getX() - (this.intValue6 + 0.5);
-               double var8 = mc.player.getZ() - (this.intValue7 + 0.5);
-               if (var11 * var11 + var8 * var8 <= 9.0) {
+               double d = mc.player.getX() - (this.intValue6 + 0.5);
+               double d2 = mc.player.getZ() - (this.intValue7 + 0.5);
+               if (d * d + d2 * d2 <= 9.0) {
                   this.method4204();
                } else {
-                  this.method4203(this.intValue6, this.intValue7, var1);
+                  this.method4203(this.intValue6, this.intValue7, longValue);
                }
 
                return;
             }
 
-            if (var5 != this.intValue) {
-               this.intValue = var5;
-               this.longValue3 = var1;
+            if (intValue != this.intValue) {
+               this.intValue = intValue;
+               this.longValue3 = longValue;
             }
          }
 
          this.flag = false;
-         double[] var10 = CONST_doubleValues[this.intValue];
-         BlockPos var6 = BlockPos.containing(var10[0], var10[1], var10[2]);
-         if (!(mc.player.position().distanceToSqr(Vec3.atCenterOf(var6)) <= 9.0) && var1 - this.longValue3 <= 12000L) {
-            this.method4201(var6, var1);
+         double[] doubles = CONST_doubleValues[this.intValue];
+         BlockPos containing = BlockPos.containing(doubles[0], doubles[1], doubles[2]);
+         if (!(mc.player.position().distanceToSqr(Vec3.atCenterOf(containing)) <= 9.0) && longValue - this.longValue3 <= 12000L) {
+            this.method4201(containing, longValue);
          } else {
-            this.method4144(var1);
+            this.method4144(longValue);
          }
       }
    }
 
-   private boolean method4139(long var1) {
-      boolean var3 = this.type == AutoZamokModule.Type.GO_ENTRY
+   private boolean method4139(long now) {
+      boolean flag = this.type == AutoZamokModule.Type.GO_ENTRY
          || this.type == AutoZamokModule.Type.GO_SHULKER
          || this.type == AutoZamokModule.Type.GO_EXIT
          || this.type == AutoZamokModule.Type.FLEE;
-      if (!var3) {
+      if (!flag) {
          this.method4140();
          return false;
       } else {
-         boolean var4 = this.method4141();
+         boolean flag2 = this.method4141();
          if (this.vec3d2 == null) {
-            if (!var4 || this.blockPos8 == null) {
+            if (!flag2 || this.blockPos8 == null) {
                return false;
             }
 
             this.vec3d2 = new Vec3(this.blockPos8.getX() + 0.5, mc.player.getY(), this.blockPos8.getZ() + 0.5);
-            this.longValue5 = var1;
+            this.longValue5 = now;
             this.method4204();
-         } else if (!var4 && var1 - this.longValue6 > 700L) {
+         } else if (!flag2 && now - this.longValue6 > 700L) {
             this.method4140();
             return false;
          }
 
-         if (var4) {
-            this.longValue6 = var1;
+         if (flag2) {
+            this.longValue6 = now;
          }
 
-         if (var1 - this.longValue5 <= 20000L) {
+         if (now - this.longValue5 <= 20000L) {
             Util17.method3336(this.vec3d2);
             mc.options.keyJump.setDown(true);
             return true;
@@ -729,17 +729,17 @@ public class AutoZamokModule extends Module {
    }
 
    private boolean method4141() {
-      AABB var1 = mc.player.getBoundingBox().inflate(0.05);
+      AABB inflate = mc.player.getBoundingBox().inflate(0.05);
 
-      for (BlockPos var3 : BlockPos.betweenClosed(
-         Mth.floor(var1.minX),
-         Mth.floor(var1.minY),
-         Mth.floor(var1.minZ),
-         Mth.floor(var1.maxX),
-         Mth.floor(var1.maxY),
-         Mth.floor(var1.maxZ)
+      for (BlockPos pos : BlockPos.betweenClosed(
+         Mth.floor(inflate.minX),
+         Mth.floor(inflate.minY),
+         Mth.floor(inflate.minZ),
+         Mth.floor(inflate.maxX),
+         Mth.floor(inflate.maxY),
+         Mth.floor(inflate.maxZ)
       )) {
-         if (mc.level.getBlockState(var3).getBlock() == Blocks.COBWEB) {
+         if (mc.level.getBlockState(pos).getBlock() == Blocks.COBWEB) {
             return true;
          }
       }
@@ -748,8 +748,8 @@ public class AutoZamokModule extends Module {
    }
 
    private void method4142() {
-      boolean var1 = mc.player.isInWater() && this.method4205();
-      if (var1) {
+      boolean flag = mc.player.isInWater() && this.method4205();
+      if (flag) {
          mc.options.keySprint.setDown(true);
          this.flag4 = true;
       } else if (this.flag4) {
@@ -758,83 +758,83 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4143(long var1) {
-      boolean var3 = this.type == AutoZamokModule.Type.GO_ENTRY || this.type == AutoZamokModule.Type.GO_SHULKER || this.type == AutoZamokModule.Type.GO_EXIT;
-      Vec3 var4 = mc.player.position();
-      if (var3 && this.vec3d3 != null && !(var4.distanceToSqr(this.vec3d3) > 0.25)) {
-         if (var1 - this.longValue9 > 20000L) {
+   private void method4143(long now) {
+      boolean flag = this.type == AutoZamokModule.Type.GO_ENTRY || this.type == AutoZamokModule.Type.GO_SHULKER || this.type == AutoZamokModule.Type.GO_EXIT;
+      Vec3 position = mc.player.position();
+      if (flag && this.vec3d3 != null && !(position.distanceToSqr(this.vec3d3) > 0.25)) {
+         if (now - this.longValue9 > 20000L) {
             this.log("Застрял — повторяю заход на замок");
             if (this.blockPos4 != null) {
-               this.items.put(this.blockPos4, var1);
+               this.items.put(this.blockPos4, now);
                this.blockPos4 = null;
             }
 
             this.vec3d3 = null;
-            this.longValue9 = var1;
+            this.longValue9 = now;
             this.method4204();
             this.method4206(this.type == AutoZamokModule.Type.GO_EXIT ? AutoZamokModule.Type.TP_TO_DEPOSIT : AutoZamokModule.Type.TP_TO_ZAMOK);
          }
       } else {
-         this.vec3d3 = var4;
-         this.longValue9 = var1;
+         this.vec3d3 = position;
+         this.longValue9 = now;
       }
    }
 
-   private void method4144(long var1) {
+   private void method4144(long longValue) {
       this.method4204();
-      this.longValue3 = var1;
+      this.longValue3 = longValue;
       if (++this.intValue >= CONST_doubleValues.length) {
          this.intValue = 0;
          this.flag2 = true;
-         this.method4145(var1);
+         this.method4145(longValue);
       }
    }
 
-   private void method4145(long var1) {
+   private void method4145(long longValue) {
       if (this.intValue10 <= 0 && !this.method4167()) {
          this.items.clear();
       } else {
          this.log("Обход завершён, боксов выбито: " + this.intValue10);
-         this.method4154(var1);
+         this.method4154(longValue);
       }
    }
 
    private void method4146() {
-      ThreadLocalRandom var1 = ThreadLocalRandom.current();
-      double var2 = -1.0;
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      double d = -1.0;
 
-      for (int var4 = 0; var4 < 8; var4++) {
-         double var5 = var1.nextDouble(Math.PI * 2);
-         double var7 = blockPos.getX() + 0.5 + Math.cos(var5) * 35.0;
-         double var9 = blockPos.getZ() + 0.5 + Math.sin(var5) * 35.0;
-         double var11 = Double.MAX_VALUE;
+      for (int i = 0; i < 8; i++) {
+         double nextDouble = current.nextDouble(Math.PI * 2);
+         double d2 = blockPos.getX() + 0.5 + Math.cos(nextDouble) * 35.0;
+         double d3 = blockPos.getZ() + 0.5 + Math.sin(nextDouble) * 35.0;
+         double d4 = Double.MAX_VALUE;
 
-         for (double[] var16 : CONST_doubleValues) {
-            double var17 = var7 - var16[0];
-            double var19 = var9 - var16[2];
-            var11 = Math.min(var11, var17 * var17 + var19 * var19);
+         for (double[] doubles : CONST_doubleValues) {
+            double d5 = d2 - doubles[0];
+            double d6 = d3 - doubles[2];
+            d4 = Math.min(d4, d5 * d5 + d6 * d6);
          }
 
-         if (var11 > var2) {
-            var2 = var11;
-            this.intValue6 = Mth.floor(var7);
-            this.intValue7 = Mth.floor(var9);
+         if (d4 > d) {
+            d = d4;
+            this.intValue6 = Mth.floor(d2);
+            this.intValue7 = Mth.floor(d3);
          }
       }
 
       this.flag = true;
    }
 
-   private boolean method4147(int var1) {
-      double[] var2 = CONST_doubleValues[var1];
-      return mc.level.hasChunk(Mth.floor(var2[0]) >> 4, Mth.floor(var2[2]) >> 4);
+   private boolean method4147(int n) {
+      double[] doubles = CONST_doubleValues[n];
+      return mc.level.hasChunk(Mth.floor(doubles[0]) >> 4, Mth.floor(doubles[2]) >> 4);
    }
 
    private int method4148() {
-      for (int var1 = 0; var1 < CONST_doubleValues.length; var1++) {
-         int var2 = (this.intValue + var1) % CONST_doubleValues.length;
-         if (!this.method4147(var2)) {
-            return var2;
+      for (int i = 0; i < CONST_doubleValues.length; i++) {
+         int n = (this.intValue + i) % CONST_doubleValues.length;
+         if (!this.method4147(n)) {
+            return n;
          }
       }
 
@@ -848,7 +848,7 @@ public class AutoZamokModule extends Module {
       };
    }
 
-   private void method4150(long var1, Player var3) {
+   private void method4150(long longValue, Player player) {
       this.method4210();
       this.method4132();
       this.method4159();
@@ -857,80 +857,80 @@ public class AutoZamokModule extends Module {
       }
 
       this.blockPos6 = null;
-      this.method4151(var3);
+      this.method4151(player);
       if (this.type != AutoZamokModule.Type.FLEE) {
          this.log("Получил урон от игрока — убегаю");
          this.method4206(AutoZamokModule.Type.FLEE);
       } else {
-         this.longValue = var1;
+         this.longValue = longValue;
       }
    }
 
-   private void method4151(Player var1) {
-      Vec3 var2 = mc.player.position();
-      Vec3 var3 = new Vec3(var2.x - var1.getX(), 0.0, var2.z - var1.getZ());
-      if (var3.lengthSqr() < 0.01) {
-         var3 = new Vec3(1.0, 0.0, 0.0);
+   private void method4151(Player player) {
+      Vec3 position = mc.player.position();
+      Vec3 vec = new Vec3(position.x - player.getX(), 0.0, position.z - player.getZ());
+      if (vec.lengthSqr() < 0.01) {
+         vec = new Vec3(1.0, 0.0, 0.0);
       }
 
-      var3 = var3.normalize();
-      this.intValue4 = Mth.floor(var2.x + var3.x * 25.0);
-      this.intValue5 = Mth.floor(var2.z + var3.z * 25.0);
+      vec = vec.normalize();
+      this.intValue4 = Mth.floor(position.x + vec.x * 25.0);
+      this.intValue5 = Mth.floor(position.z + vec.z * 25.0);
    }
 
-   private void method4152(long var1) {
-      Player var3 = this.method4153(20.0);
-      if (var3 != null && var1 - this.longValue <= 12000L) {
-         double var4 = mc.player.getX() - this.intValue4;
-         double var6 = mc.player.getZ() - this.intValue5;
-         if (var4 * var4 + var6 * var6 <= 9.0) {
-            this.method4151(var3);
+   private void method4152(long now) {
+      Player player = this.method4153(20.0);
+      if (player != null && now - this.longValue <= 12000L) {
+         double d = mc.player.getX() - this.intValue4;
+         double d2 = mc.player.getZ() - this.intValue5;
+         if (d * d + d2 * d2 <= 9.0) {
+            this.method4151(player);
          }
 
-         this.method4203(this.intValue4, this.intValue5, var1);
+         this.method4203(this.intValue4, this.intValue5, now);
       } else {
          this.method4204();
          this.method4206(AutoZamokModule.Type.TP_TO_DEPOSIT);
       }
    }
 
-   private Player method4153(double var1) {
-      Player var3 = null;
-      double var4 = var1 * var1;
+   private Player method4153(double d) {
+      Player player = null;
+      double d2 = d * d;
 
-      for (Player var7 : mc.level.players()) {
-         if (var7 != mc.player && !var7.isSpectator()) {
-            double var8 = var7.distanceToSqr(mc.player);
-            if (var8 < var4) {
-               var4 = var8;
-               var3 = var7;
+      for (Player player2 : mc.level.players()) {
+         if (player2 != mc.player && !player2.isSpectator()) {
+            double d3 = player2.distanceToSqr(mc.player);
+            if (d3 < d2) {
+               d2 = d3;
+               player = player2;
             }
          }
       }
 
-      return var3;
+      return player;
    }
 
-   private void method4154(long var1) {
-      Vec3 var3 = mc.player.position();
-      Vec3 var4 = Vec3.atCenterOf(blockPos);
-      Vec3 var5 = new Vec3(var3.x - var4.x, 0.0, var3.z - var4.z);
-      if (var5.lengthSqr() < 1.0) {
-         var5 = new Vec3(1.0, 0.0, 0.0);
+   private void method4154(long longValue) {
+      Vec3 position = mc.player.position();
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos);
+      Vec3 vec = new Vec3(position.x - atCenterOf.x, 0.0, position.z - atCenterOf.z);
+      if (vec.lengthSqr() < 1.0) {
+         vec = new Vec3(1.0, 0.0, 0.0);
       }
 
-      var5 = var5.normalize();
-      this.intValue2 = Mth.floor(var4.x + var5.x * 30.0);
-      this.intValue3 = Mth.floor(var4.z + var5.z * 30.0);
+      vec = vec.normalize();
+      this.intValue2 = Mth.floor(atCenterOf.x + vec.x * 30.0);
+      this.intValue3 = Mth.floor(atCenterOf.z + vec.z * 30.0);
       this.log("Ухожу из замка перед телепортом");
       this.method4206(AutoZamokModule.Type.GO_EXIT);
    }
 
-   private void method4155(long var1) {
-      double var3 = mc.player.getX() - this.intValue2;
-      double var5 = mc.player.getZ() - this.intValue3;
-      if (!(var3 * var3 + var5 * var5 <= 16.0) && var1 - this.longValue <= 20000L) {
-         this.method4203(this.intValue2, this.intValue3, var1);
+   private void method4155(long now) {
+      double d = mc.player.getX() - this.intValue2;
+      double d2 = mc.player.getZ() - this.intValue3;
+      if (!(d * d + d2 * d2 <= 16.0) && now - this.longValue <= 20000L) {
+         this.method4203(this.intValue2, this.intValue3, now);
          if (!this.method4205()) {
             this.flag3 = true;
             Util17.method3336(new Vec3(this.intValue2 + 0.5, mc.player.getY(), this.intValue3 + 0.5));
@@ -944,84 +944,84 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4156(long var1) {
-      BlockPos var3 = this.blockPos3;
-      if (var3 == null) {
+   private void method4156(long now) {
+      BlockPos blockPos3 = this.blockPos3;
+      if (blockPos3 == null) {
          this.method4159();
          this.method4206(AutoZamokModule.Type.COLLECT);
       } else {
-         boolean var4 = var1 - this.longValue >= 20000L;
-         if (this.method4175(var3)) {
+         boolean flag = now - this.longValue >= 20000L;
+         if (this.method4175(blockPos3)) {
             this.longValue13 = 0L;
-            double var5 = 2.6;
-            if (this.method4176(var3) > var5 * var5) {
+            double d = 2.6;
+            if (this.method4176(blockPos3) > d * d) {
                this.method4159();
                this.method4206(AutoZamokModule.Type.GO_SHULKER);
                return;
             }
 
-            if (!this.method4189(var1)) {
+            if (!this.method4189(now)) {
                return;
             }
 
-            this.method4162(this.method4161(var3));
+            this.method4162(this.method4161(blockPos3));
             if (!this.flag5) {
-               if (var1 >= this.longValue8) {
-                  this.method4157(var3);
+               if (now >= this.longValue8) {
+                  this.method4157(blockPos3);
                }
             } else {
-               this.floatValue2 = this.floatValue2 + mc.level.getBlockState(var3).getDestroyProgress(mc.player, mc.level, var3);
+               this.floatValue2 = this.floatValue2 + mc.level.getBlockState(blockPos3).getDestroyProgress(mc.player, mc.level, blockPos3);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
-               mc.level.destroyBlockProgress(mc.player.getId(), var3, Mth.clamp((int)(this.floatValue2 * 10.0F), 0, 9));
+               mc.level.destroyBlockProgress(mc.player.getId(), blockPos3, Mth.clamp((int)(this.floatValue2 * 10.0F), 0, 9));
                if (this.floatValue2 >= 1.35F) {
-                  this.method4158(var1);
+                  this.method4158(now);
                }
             }
          } else {
             this.flag5 = false;
             if (this.longValue13 == 0L) {
-               this.longValue13 = var1;
+               this.longValue13 = now;
             }
 
-            if (var1 - this.longValue13 >= 100L) {
-               this.vec3d = Vec3.atCenterOf(var3);
+            if (now - this.longValue13 >= 100L) {
+               this.vec3d = Vec3.atCenterOf(blockPos3);
                this.method4206(AutoZamokModule.Type.COLLECT);
                return;
             }
          }
 
-         if (var4) {
+         if (flag) {
             this.method4159();
-            if (this.method4175(var3)) {
+            if (this.method4175(blockPos3)) {
                this.log("Бокс не поддаётся — пропускаю");
-               this.items.put(var3, var1);
+               this.items.put(blockPos3, now);
                this.blockPos4 = null;
                this.longValue14 = 0L;
                this.method4206(AutoZamokModule.Type.GO_SHULKER);
             } else {
-               this.vec3d = Vec3.atCenterOf(var3);
+               this.vec3d = Vec3.atCenterOf(blockPos3);
                this.method4206(AutoZamokModule.Type.COLLECT);
             }
          }
       }
    }
 
-   private void method4157(BlockPos var1) {
-      Direction var2 = this.method4163(var1);
-      mc.gameMode.startPrediction(mc.level, var2x -> new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, var1, var2, var2x));
+   private void method4157(BlockPos blockPos5) {
+      Direction direction = this.method4163(blockPos5);
+      mc.gameMode.startPrediction(mc.level, var2x -> new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, blockPos5, direction, var2x));
       this.flag5 = true;
-      this.blockPos5 = var1;
+      this.blockPos5 = blockPos5;
       this.floatValue2 = 0.0F;
       org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
    }
 
-   private void method4158(long var1) {
-      BlockPos var3 = this.blockPos5;
-      Direction var4 = this.method4163(var3);
-      mc.gameMode.startPrediction(mc.level, var2 -> new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, var3, var4, var2));
-      mc.level.destroyBlockProgress(mc.player.getId(), var3, -1);
+   private void method4158(long now) {
+      BlockPos blockPos5 = this.blockPos5;
+      Direction direction = this.method4163(blockPos5);
+      mc.gameMode.startPrediction(mc.level, sequence -> new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, blockPos5, direction, sequence));
+      mc.level.destroyBlockProgress(mc.player.getId(), blockPos5, -1);
       this.flag5 = false;
-      this.longValue8 = var1 + 120L + ThreadLocalRandom.current().nextLong(180L);
+      this.longValue8 = now + 120L + ThreadLocalRandom.current().nextLong(180L);
       this.method4160();
    }
 
@@ -1034,48 +1034,48 @@ public class AutoZamokModule extends Module {
    }
 
    private void method4160() {
-      ThreadLocalRandom var1 = ThreadLocalRandom.current();
-      this.doubleValue = var1.nextDouble(-0.18, 0.18);
-      this.doubleValue2 = var1.nextDouble(-0.18, 0.18);
-      this.doubleValue3 = var1.nextDouble(-0.18, 0.18);
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      this.doubleValue = current.nextDouble(-0.18, 0.18);
+      this.doubleValue2 = current.nextDouble(-0.18, 0.18);
+      this.doubleValue3 = current.nextDouble(-0.18, 0.18);
    }
 
-   private Vec3 method4161(BlockPos var1) {
-      return new Vec3(var1.getX() + 0.5 + this.doubleValue, var1.getY() + 0.5 + this.doubleValue2, var1.getZ() + 0.5 + this.doubleValue3);
+   private Vec3 method4161(BlockPos blockPos3) {
+      return new Vec3(blockPos3.getX() + 0.5 + this.doubleValue, blockPos3.getY() + 0.5 + this.doubleValue2, blockPos3.getZ() + 0.5 + this.doubleValue3);
    }
 
-   private void method4162(Vec3 var1) {
-      Util17.method3329(var1);
+   private void method4162(Vec3 atCenterOf) {
+      Util17.method3329(atCenterOf);
    }
 
-   private Direction method4163(BlockPos var1) {
-      Vec3 var2 = mc.player.getEyePosition().subtract(Vec3.atCenterOf(var1));
-      double var3 = Math.abs(var2.x);
-      double var5 = Math.abs(var2.y);
-      double var7 = Math.abs(var2.z);
-      if (var3 >= var5 && var3 >= var7) {
-         return var2.x >= 0.0 ? Direction.EAST : Direction.WEST;
-      } else if (var7 >= var3 && var7 >= var5) {
-         return var2.z >= 0.0 ? Direction.SOUTH : Direction.NORTH;
+   private Direction method4163(BlockPos blockPos5) {
+      Vec3 vec = mc.player.getEyePosition().subtract(Vec3.atCenterOf(blockPos5));
+      double d = Math.abs(vec.x);
+      double d2 = Math.abs(vec.y);
+      double d3 = Math.abs(vec.z);
+      if (d >= d2 && d >= d3) {
+         return vec.x >= 0.0 ? Direction.EAST : Direction.WEST;
+      } else if (d3 >= d && d3 >= d2) {
+         return vec.z >= 0.0 ? Direction.SOUTH : Direction.NORTH;
       } else {
-         return var2.y >= 0.0 ? Direction.UP : Direction.DOWN;
+         return vec.y >= 0.0 ? Direction.UP : Direction.DOWN;
       }
    }
 
-   private void method4164(long var1) {
+   private void method4164(long now) {
       this.method4204();
-      boolean var3 = this.method4169(this::method4170) > this.intValue12 || this.method4169(null) > this.intValue11;
-      if (var3) {
+      boolean flag = this.method4169(this::method4170) > this.intValue12 || this.method4169(null) > this.intValue11;
+      if (flag) {
          this.intValue10++;
          this.log("Бокс выбит (" + this.intValue10 + "/" + (int)this.boxesPerTrip.getValue3() + ")");
-         this.method4166(var1, true);
-      } else if (var1 - this.longValue >= 3500L) {
+         this.method4166(now, true);
+      } else if (now - this.longValue >= 3500L) {
          this.log("Бокс достался не нам, продолжаю обход");
-         this.method4166(var1, false);
+         this.method4166(now, false);
       } else if (this.vec3d != null) {
-         double var4 = this.vec3d.x - mc.player.getX();
-         double var6 = this.vec3d.z - mc.player.getZ();
-         if (var4 * var4 + var6 * var6 > 0.64) {
+         double d = this.vec3d.x - mc.player.getX();
+         double d2 = this.vec3d.z - mc.player.getZ();
+         if (d * d + d2 * d2 > 0.64) {
             this.flag3 = true;
             Util17.method3336(this.vec3d);
          } else {
@@ -1091,14 +1091,14 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4166(long var1, boolean var3) {
+   private void method4166(long now, boolean flag) {
       this.method4165();
-      if ((!var3 || this.intValue10 < (int)this.boxesPerTrip.getValue3()) && !this.method4168() && !this.method4167()) {
-         this.longValue3 = var1;
+      if ((!flag || this.intValue10 < (int)this.boxesPerTrip.getValue3()) && !this.method4168() && !this.method4167()) {
+         this.longValue3 = now;
          this.blockPos4 = null;
          this.method4206(AutoZamokModule.Type.GO_SHULKER);
       } else {
-         this.method4154(var1);
+         this.method4154(now);
       }
    }
 
@@ -1107,8 +1107,8 @@ public class AutoZamokModule extends Module {
    }
 
    private boolean method4168() {
-      for (int var1 = 0; var1 < 36; var1++) {
-         if (mc.player.getInventory().getItem(var1).isEmpty()) {
+      for (int i = 0; i < 36; i++) {
+         if (mc.player.getInventory().getItem(i).isEmpty()) {
             return false;
          }
       }
@@ -1116,34 +1116,34 @@ public class AutoZamokModule extends Module {
       return true;
    }
 
-   private int method4169(Predicate<ItemStack> var1) {
-      int var2 = 0;
-      int var3 = mc.player.getInventory().getContainerSize();
+   private int method4169(Predicate<ItemStack> predicate) {
+      int n = 0;
+      int containerSize = mc.player.getInventory().getContainerSize();
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         ItemStack var5 = mc.player.getInventory().getItem(var4);
-         if (!var5.isEmpty() && (var1 == null || var1.test(var5))) {
-            var2 += var5.getCount();
+      for (int i = 0; i < containerSize; i++) {
+         ItemStack stack = mc.player.getInventory().getItem(i);
+         if (!stack.isEmpty() && (predicate == null || predicate.test(stack))) {
+            n += stack.getCount();
          }
       }
 
-      return var2;
+      return n;
    }
 
-   private boolean method4170(ItemStack var1) {
-      return var1 != null && !var1.isEmpty() && BuiltInRegistries.ITEM.getKey(var1.getItem()).getPath().endsWith("shulker_box");
+   private boolean method4170(ItemStack stack) {
+      return stack != null && !stack.isEmpty() && BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().endsWith("shulker_box");
    }
 
-   private void method4171(long var1) {
-      if (mc.player.containerMenu instanceof ChestMenu var4) {
-         if (var1 - this.longValue2 >= 70L) {
-            int var5 = this.method4169(null);
+   private void method4171(long now) {
+      if (mc.player.containerMenu instanceof ChestMenu chestMenu) {
+         if (now - this.longValue2 >= 70L) {
+            int n = this.method4169(null);
             if (this.flag6) {
                this.flag6 = false;
-               if (var5 == this.intValue9) {
+               if (n == this.intValue9) {
                   if (++this.intValue8 >= 2) {
                      this.log("Сундук забит — ищу другой");
-                     this.method4180(this.blockPos2, var1);
+                     this.method4180(this.blockPos2, now);
                      this.closeScreen();
                      this.method4206(AutoZamokModule.Type.DEPOSIT);
                      return;
@@ -1153,15 +1153,15 @@ public class AutoZamokModule extends Module {
                }
             }
 
-            int var6 = var4.getContainer().getContainerSize();
+            int containerSize = chestMenu.getContainer().getContainerSize();
 
-            for (Slot var8 : var4.slots) {
-               if (var8.index >= var6) {
-                  ItemStack var9 = var8.getItem();
-                  if (!var9.isEmpty() && !this.method4184(var9) && !this.method4185(var9) && !this.method4186(var9)) {
-                     mc.gameMode.handleContainerInput(var4.containerId, var8.index, 0, ContainerInput.QUICK_MOVE, mc.player);
-                     this.longValue2 = var1;
-                     this.intValue9 = var5;
+            for (Slot slot : chestMenu.slots) {
+               if (slot.index >= containerSize) {
+                  ItemStack stack = slot.getItem();
+                  if (!stack.isEmpty() && !this.method4184(stack) && !this.method4185(stack) && !this.method4186(stack)) {
+                     mc.gameMode.handleContainerInput(chestMenu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, mc.player);
+                     this.longValue2 = now;
+                     this.intValue9 = n;
                      this.flag6 = true;
                      return;
                   }
@@ -1174,9 +1174,9 @@ public class AutoZamokModule extends Module {
          }
       } else {
          if (this.blockPos2 == null) {
-            this.blockPos2 = this.method4177(texts3, var1, true);
+            this.blockPos2 = this.method4177(texts3, now, true);
             if (this.blockPos2 == null) {
-               if (var1 - this.longValue > 6000L) {
+               if (now - this.longValue > 6000L) {
                   this.log(this.items2.isEmpty() ? "Не найден сундук 'склад'" : "Все сундуки 'склад' забиты");
                   this.method4172();
                }
@@ -1185,9 +1185,9 @@ public class AutoZamokModule extends Module {
             }
          }
 
-         if (var1 - this.longValue2 >= 70L) {
+         if (now - this.longValue2 >= 70L) {
             this.method4181(this.blockPos2);
-            this.longValue2 = var1;
+            this.longValue2 = now;
          }
       }
    }
@@ -1199,10 +1199,10 @@ public class AutoZamokModule extends Module {
       this.method4206(AutoZamokModule.Type.REFILL_INVIS);
    }
 
-   private BlockPos method4173(long var1) {
-      if (var1 - this.longValue14 >= 200L) {
-         this.longValue14 = var1;
-         this.items.values().removeIf(var2 -> var1 - var2 > 60000L);
+   private BlockPos method4173(long now) {
+      if (now - this.longValue14 >= 200L) {
+         this.longValue14 = now;
+         this.items.values().removeIf(l -> now - l > 60000L);
          this.blockPos9 = this.method4174();
       }
 
@@ -1210,29 +1210,29 @@ public class AutoZamokModule extends Module {
    }
 
    private BlockPos method4174() {
-      byte var1 = 3;
-      double var2 = var1 * 1.7321 + 1.0;
-      Vec3 var4 = mc.player.getEyePosition();
-      MutableBlockPos var5 = new MutableBlockPos();
-      BlockPos var6 = null;
-      double var7 = Double.MAX_VALUE;
+      byte b = 3;
+      double d = b * 1.7321 + 1.0;
+      Vec3 eyePosition = mc.player.getEyePosition();
+      MutableBlockPos mutablePos = new MutableBlockPos();
+      BlockPos immutable = null;
+      double d2 = Double.MAX_VALUE;
 
-      for (double[] var12 : CONST_doubleValues) {
-         double var13 = Math.sqrt(var4.distanceToSqr(var12[0], var12[1], var12[2])) - var2;
-         if (!(var13 > 0.0) || !(var13 * var13 >= var7)) {
-            int var15 = Mth.floor(var12[0]);
-            int var16 = Mth.floor(var12[1]);
-            int var17 = Mth.floor(var12[2]);
+      for (double[] doubles : CONST_doubleValues) {
+         double d3 = Math.sqrt(eyePosition.distanceToSqr(doubles[0], doubles[1], doubles[2])) - d;
+         if (!(d3 > 0.0) || !(d3 * d3 >= d2)) {
+            int n = Mth.floor(doubles[0]);
+            int n2 = Mth.floor(doubles[1]);
+            int n3 = Mth.floor(doubles[2]);
 
-            for (int var18 = -var1; var18 <= var1; var18++) {
-               for (int var19 = -var1; var19 <= var1; var19++) {
-                  for (int var20 = -var1; var20 <= var1; var20++) {
-                     var5.set(var15 + var18, var16 + var19, var17 + var20);
-                     if (mc.level.getBlockState(var5).getBlock() instanceof ShulkerBoxBlock && !this.items.containsKey(var5)) {
-                        double var21 = var4.distanceToSqr(var5.getX() + 0.5, var5.getY() + 0.5, var5.getZ() + 0.5);
-                        if (var21 < var7) {
-                           var7 = var21;
-                           var6 = var5.immutable();
+            for (int i = -b; i <= b; i++) {
+               for (int j = -b; j <= b; j++) {
+                  for (int k = -b; k <= b; k++) {
+                     mutablePos.set(n + i, n2 + j, n3 + k);
+                     if (mc.level.getBlockState(mutablePos).getBlock() instanceof ShulkerBoxBlock && !this.items.containsKey(mutablePos)) {
+                        double d4 = eyePosition.distanceToSqr(mutablePos.getX() + 0.5, mutablePos.getY() + 0.5, mutablePos.getZ() + 0.5);
+                        if (d4 < d2) {
+                           d2 = d4;
+                           immutable = mutablePos.immutable();
                         }
                      }
                   }
@@ -1241,57 +1241,57 @@ public class AutoZamokModule extends Module {
          }
       }
 
-      return var6;
+      return immutable;
    }
 
-   private boolean method4175(BlockPos var1) {
-      return mc.level.getBlockState(var1).getBlock() instanceof ShulkerBoxBlock;
+   private boolean method4175(BlockPos blockPos3) {
+      return mc.level.getBlockState(blockPos3).getBlock() instanceof ShulkerBoxBlock;
    }
 
-   private double method4176(BlockPos var1) {
-      Vec3 var2 = mc.player.getEyePosition();
-      double var3 = Math.max(Math.max(var1.getX() - var2.x, 0.0), var2.x - (var1.getX() + 1));
-      double var5 = Math.max(Math.max(var1.getY() - var2.y, 0.0), var2.y - (var1.getY() + 1));
-      double var7 = Math.max(Math.max(var1.getZ() - var2.z, 0.0), var2.z - (var1.getZ() + 1));
-      return var3 * var3 + var5 * var5 + var7 * var7;
+   private double method4176(BlockPos blockPos4) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      double d = Math.max(Math.max(blockPos4.getX() - eyePosition.x, 0.0), eyePosition.x - (blockPos4.getX() + 1));
+      double d2 = Math.max(Math.max(blockPos4.getY() - eyePosition.y, 0.0), eyePosition.y - (blockPos4.getY() + 1));
+      double d3 = Math.max(Math.max(blockPos4.getZ() - eyePosition.z, 0.0), eyePosition.z - (blockPos4.getZ() + 1));
+      return d * d + d2 * d2 + d3 * d3;
    }
 
-   private BlockPos method4177(String[] var1, long var2, boolean var4) {
-      if (var2 - this.longValue15 < 500L) {
+   private BlockPos method4177(String[] texts, long now, boolean flag) {
+      if (now - this.longValue15 < 500L) {
          return null;
       } else {
-         this.longValue15 = var2;
-         this.items2.values().removeIf(var2x -> var2 - var2x > 300000L);
-         byte var5 = 10;
-         double var6 = var5 * var5;
-         BlockPos var8 = mc.player.blockPosition();
-         BlockPos var9 = null;
-         double var10 = Double.MAX_VALUE;
-         int var12 = Integer.MAX_VALUE;
-         int var13 = (var5 >> 4) + 1;
-         int var14 = mc.player.chunkPosition().x();
-         int var15 = mc.player.chunkPosition().z();
+         this.longValue15 = now;
+         this.items2.values().removeIf(var2x -> now - var2x > 300000L);
+         byte b = 10;
+         double d = b * b;
+         BlockPos blockPosition = mc.player.blockPosition();
+         BlockPos pos = null;
+         double distSqr = Double.MAX_VALUE;
+         int n = Integer.MAX_VALUE;
+         int n2 = (b >> 4) + 1;
+         int x = mc.player.chunkPosition().x();
+         int z = mc.player.chunkPosition().z();
 
-         for (int var16 = var14 - var13; var16 <= var14 + var13; var16++) {
-            for (int var17 = var15 - var13; var17 <= var15 + var13; var17++) {
-               if (mc.level.hasChunk(var16, var17)) {
-                  LevelChunk var18 = mc.level.getChunk(var16, var17);
-                  if (var18 != null) {
-                     for (BlockEntity var20 : var18.getBlockEntities().values()) {
-                        if (var20 instanceof SignBlockEntity var21 && !(var8.distSqr(var21.getBlockPos()) > var6)) {
-                           int var22 = this.method4178(var21, var1);
-                           if (var22 >= 0) {
-                              if (!var4) {
-                                 var22 = 0;
+         for (int i = x - n2; i <= x + n2; i++) {
+            for (int j = z - n2; j <= z + n2; j++) {
+               if (mc.level.hasChunk(i, j)) {
+                  LevelChunk chunk = mc.level.getChunk(i, j);
+                  if (chunk != null) {
+                     for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                        if (blockEntity instanceof SignBlockEntity signBlockEntity && !(blockPosition.distSqr(signBlockEntity.getBlockPos()) > d)) {
+                           int n3 = this.method4178(signBlockEntity, texts);
+                           if (n3 >= 0) {
+                              if (!flag) {
+                                 n3 = 0;
                               }
 
-                              BlockPos var23 = this.method4179(var21.getBlockPos());
-                              if (var23 != null && !this.items2.containsKey(var23)) {
-                                 double var24 = var8.distSqr(var23);
-                                 if (var22 < var12 || var22 == var12 && var24 < var10) {
-                                    var12 = var22;
-                                    var10 = var24;
-                                    var9 = var23;
+                              BlockPos pos2 = this.method4179(signBlockEntity.getBlockPos());
+                              if (pos2 != null && !this.items2.containsKey(pos2)) {
+                                 double distSqr2 = blockPosition.distSqr(pos2);
+                                 if (n3 < n || n3 == n && distSqr2 < distSqr) {
+                                    n = n3;
+                                    distSqr = distSqr2;
+                                    pos = pos2;
                                  }
                               }
                            }
@@ -1302,70 +1302,70 @@ public class AutoZamokModule extends Module {
             }
          }
 
-         return var9;
+         return pos;
       }
    }
 
-   private int method4178(SignBlockEntity var1, String[] var2) {
-      StringBuilder var3 = new StringBuilder();
+   private int method4178(SignBlockEntity signBlockEntity, String[] texts) {
+      StringBuilder builder = new StringBuilder();
 
-      for (int var4 = 0; var4 < 4; var4++) {
-         var3.append(var1.getText(net.minecraft.world.level.block.entity.SignTextSlot.FRONT).getMessages(false).get(var4).getString()).append(' ');
-         var3.append(var1.getText(net.minecraft.world.level.block.entity.SignTextSlot.BACK).getMessages(false).get(var4).getString()).append(' ');
+      for (int i = 0; i < 4; i++) {
+         builder.append(signBlockEntity.getText(net.minecraft.world.level.block.entity.SignTextSlot.FRONT).getMessages(false).get(i).getString()).append(' ');
+         builder.append(signBlockEntity.getText(net.minecraft.world.level.block.entity.SignTextSlot.BACK).getMessages(false).get(i).getString()).append(' ');
       }
 
-      String var13 = var3.toString().toLowerCase(Locale.ROOT);
+      String lowerCase = builder.toString().toLowerCase(Locale.ROOT);
 
-      for (String var8 : var2) {
-         int var9 = var13.indexOf(var8);
-         if (var9 != -1) {
-            int var10 = var9 + var8.length();
+      for (String text : texts) {
+         int indexOf = lowerCase.indexOf(text);
+         if (indexOf != -1) {
+            int index = indexOf + text.length();
 
-            while (var10 < var13.length() && !Character.isDigit(var13.charAt(var10)) && !Character.isLetter(var13.charAt(var10))) {
-               var10++;
+            while (index < lowerCase.length() && !Character.isDigit(lowerCase.charAt(index)) && !Character.isLetter(lowerCase.charAt(index))) {
+               index++;
             }
 
-            int var11 = 0;
+            int n = 0;
 
-            boolean var12;
-            for (var12 = false; var10 < var13.length() && Character.isDigit(var13.charAt(var10)); var10++) {
-               var11 = var11 * 10 + (var13.charAt(var10) - '0');
-               var12 = true;
+            boolean flag;
+            for (flag = false; index < lowerCase.length() && Character.isDigit(lowerCase.charAt(index)); index++) {
+               n = n * 10 + (lowerCase.charAt(index) - '0');
+               flag = true;
             }
 
-            return var12 ? var11 : 1;
+            return flag ? n : 1;
          }
       }
 
       return -1;
    }
 
-   private BlockPos method4179(BlockPos var1) {
-      BlockState var2 = mc.level.getBlockState(var1);
-      if (var2.getBlock() instanceof WallSignBlock) {
-         BlockPos var3 = var1.relative(var2.getValue(WallSignBlock.FACING).getOpposite());
-         if (mc.level.getBlockState(var3).getBlock() instanceof ChestBlock) {
-            return var3;
+   private BlockPos method4179(BlockPos blockPos) {
+      BlockState blockState = mc.level.getBlockState(blockPos);
+      if (blockState.getBlock() instanceof WallSignBlock) {
+         BlockPos relative = blockPos.relative(blockState.getValue(WallSignBlock.FACING).getOpposite());
+         if (mc.level.getBlockState(relative).getBlock() instanceof ChestBlock) {
+            return relative;
          }
-      } else if (var2.getBlock() instanceof StandingSignBlock) {
-         BlockPos var9 = var1.below();
-         if (mc.level.getBlockState(var9).getBlock() instanceof ChestBlock) {
-            return var9;
+      } else if (blockState.getBlock() instanceof StandingSignBlock) {
+         BlockPos below = blockPos.below();
+         if (mc.level.getBlockState(below).getBlock() instanceof ChestBlock) {
+            return below;
          }
       }
 
-      if (var2.getBlock() instanceof ChestBlock) {
-         return var1.immutable();
+      if (blockState.getBlock() instanceof ChestBlock) {
+         return blockPos.immutable();
       } else {
-         for (Direction var6 : Direction.values()) {
-            BlockPos var7 = var1.relative(var6);
-            if (mc.level.getBlockState(var7).getBlock() instanceof ChestBlock) {
-               return var7;
+         for (Direction direction : Direction.values()) {
+            BlockPos relative = blockPos.relative(direction);
+            if (mc.level.getBlockState(relative).getBlock() instanceof ChestBlock) {
+               return relative;
             }
 
-            BlockPos var8 = var7.below();
-            if (mc.level.getBlockState(var8).getBlock() instanceof ChestBlock) {
-               return var8;
+            BlockPos below = relative.below();
+            if (mc.level.getBlockState(below).getBlock() instanceof ChestBlock) {
+               return below;
             }
          }
 
@@ -1373,31 +1373,31 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4180(BlockPos var1, long var2) {
-      this.items2.put(var1, var2);
-      BlockState var4 = mc.level.getBlockState(var1);
-      if (var4.getBlock() instanceof ChestBlock && var4.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
-         this.items2.put(var1.relative(ChestBlock.getConnectedDirection(var4)), var2);
+   private void method4180(BlockPos blockPos2, long now) {
+      this.items2.put(blockPos2, now);
+      BlockState blockState = mc.level.getBlockState(blockPos2);
+      if (blockState.getBlock() instanceof ChestBlock && blockState.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+         this.items2.put(blockPos2.relative(ChestBlock.getConnectedDirection(blockState)), now);
       }
    }
 
-   private void method4181(BlockPos var1) {
-      Vec3 var2 = Vec3.atCenterOf(var1);
-      this.method4212(var2);
-      mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(var2, Direction.UP, var1, false));
+   private void method4181(BlockPos blockPos2) {
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos2);
+      this.method4212(atCenterOf);
+      mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(atCenterOf, Direction.UP, blockPos2, false));
       org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
    }
 
-   private Slot method4182(ChestMenu var1, Predicate<ItemStack> var2) {
-      int var3 = var1.getContainer().getContainerSize();
+   private Slot method4182(ChestMenu chestMenu, Predicate<ItemStack> predicate) {
+      int containerSize = chestMenu.getContainer().getContainerSize();
 
-      for (Slot var5 : var1.slots) {
-         if (var5.index >= var3) {
+      for (Slot slot : chestMenu.slots) {
+         if (slot.index >= containerSize) {
             break;
          }
 
-         if (var5.hasItem() && var2.test(var5.getItem())) {
-            return var5;
+         if (slot.hasItem() && predicate.test(slot.getItem())) {
+            return slot;
          }
       }
 
@@ -1408,18 +1408,18 @@ public class AutoZamokModule extends Module {
       return this.method4188(this::method4184) != -1;
    }
 
-   private boolean method4184(ItemStack var1) {
-      return var1 != null && !var1.isEmpty() && BuiltInRegistries.ITEM.getKey(var1.getItem()).getPath().contains("pickaxe");
+   private boolean method4184(ItemStack stack) {
+      return stack != null && !stack.isEmpty() && BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().contains("pickaxe");
    }
 
-   private boolean method4185(ItemStack var1) {
-      if (var1 != null && !var1.isEmpty() && var1.getItem() instanceof PotionItem) {
-         PotionContents var2 = var1.get(DataComponents.POTION_CONTENTS);
-         if (var2 == null) {
+   private boolean method4185(ItemStack stack) {
+      if (stack != null && !stack.isEmpty() && stack.getItem() instanceof PotionItem) {
+         PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+         if (potionContents == null) {
             return false;
          } else {
-            for (MobEffectInstance var4 : var2.getAllEffects()) {
-               if (var4.getEffect().equals(MobEffects.INVISIBILITY)) {
+            for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
+               if (allEffect.getEffect().equals(MobEffects.INVISIBILITY)) {
                   return true;
                }
             }
@@ -1431,61 +1431,61 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private boolean method4186(ItemStack var1) {
-      return var1 != null
-         && !var1.isEmpty()
-         && !var1.is(Items.CHORUS_FRUIT)
-         && !var1.is(Items.SPIDER_EYE)
-         && !var1.is(Items.POISONOUS_POTATO)
-         && !var1.is(Items.PUFFERFISH)
-         && !var1.is(Items.ROTTEN_FLESH)
-         && var1.getUseAnimation() == ItemUseAnimation.EAT;
+   private boolean method4186(ItemStack stack) {
+      return stack != null
+         && !stack.isEmpty()
+         && !stack.is(Items.CHORUS_FRUIT)
+         && !stack.is(Items.SPIDER_EYE)
+         && !stack.is(Items.POISONOUS_POTATO)
+         && !stack.is(Items.PUFFERFISH)
+         && !stack.is(Items.ROTTEN_FLESH)
+         && stack.getUseAnimation() == ItemUseAnimation.EAT;
    }
 
    private boolean method4187() {
-      int var1 = 2;
+      int n = 2;
       if (!mc.player.hasEffect(MobEffects.INVISIBILITY)) {
-         var1++;
+         n++;
       }
 
-      return this.method4169(this::method4185) >= var1;
+      return this.method4169(this::method4185) >= n;
    }
 
-   private int method4188(Predicate<ItemStack> var1) {
-      byte var2 = 36;
+   private int method4188(Predicate<ItemStack> predicate) {
+      byte b = 36;
 
-      for (int var3 = 0; var3 < 9 && var3 < var2; var3++) {
-         if (var1.test(mc.player.getInventory().getItem(var3))) {
-            return var3;
+      for (int i = 0; i < 9 && i < b; i++) {
+         if (predicate.test(mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
-      for (int var4 = 9; var4 < var2; var4++) {
-         if (var1.test(mc.player.getInventory().getItem(var4))) {
-            return var4;
+      for (int i = 9; i < b; i++) {
+         if (predicate.test(mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   private boolean method4189(long var1) {
-      int var3 = this.method4188(this::method4184);
-      if (var3 == -1) {
+   private boolean method4189(long now) {
+      int slotNum = this.method4188(this::method4184);
+      if (slotNum == -1) {
          return false;
-      } else if (var3 <= 8) {
-         this.method4211(var3);
+      } else if (slotNum <= 8) {
+         this.method4211(slotNum);
          return true;
       } else {
-         this.method4190(var3, var1);
+         this.method4190(slotNum, now);
          return false;
       }
    }
 
-   private void method4190(int var1, long var2) {
-      if (var2 - this.longValue2 >= 70L) {
-         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, var1, 8, ContainerInput.SWAP, mc.player);
-         this.longValue2 = var2;
+   private void method4190(int slotNum, long now) {
+      if (now - this.longValue2 >= 70L) {
+         mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, slotNum, 8, ContainerInput.SWAP, mc.player);
+         this.longValue2 = now;
       }
    }
 
@@ -1500,46 +1500,46 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4192(long var1) {
+   private void method4192(long now) {
       if (!mc.player.getInventory().getItem(mc.player.getInventory().getSelectedSlot()).isEmpty()) {
-         for (int var3 = 0; var3 < 9; var3++) {
-            if (mc.player.getInventory().getItem(var3).isEmpty()) {
-               this.method4211(var3);
+         for (int i = 0; i < 9; i++) {
+            if (mc.player.getInventory().getItem(i).isEmpty()) {
+               this.method4211(i);
                return;
             }
          }
 
-         if (var1 - this.longValue2 >= 70L && this.method4193()) {
-            int var6 = -1;
+         if (now - this.longValue2 >= 70L && this.method4193()) {
+            int n = -1;
 
-            for (int var4 = 0; var4 < 9; var4++) {
-               ItemStack var5 = mc.player.getInventory().getItem(var4);
-               if (!this.method4184(var5) && !this.method4185(var5) && !this.method4186(var5)) {
-                  var6 = var4;
+            for (int i = 0; i < 9; i++) {
+               ItemStack stack = mc.player.getInventory().getItem(i);
+               if (!this.method4184(stack) && !this.method4185(stack) && !this.method4186(stack)) {
+                  n = i;
                   break;
                }
             }
 
-            if (var6 == -1) {
-               for (int var7 = 0; var7 < 9; var7++) {
-                  if (!this.method4184(mc.player.getInventory().getItem(var7))) {
-                     var6 = var7;
+            if (n == -1) {
+               for (int i = 0; i < 9; i++) {
+                  if (!this.method4184(mc.player.getInventory().getItem(i))) {
+                     n = i;
                      break;
                   }
                }
             }
 
-            if (var6 != -1) {
-               mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, 36 + var6, 0, ContainerInput.QUICK_MOVE, mc.player);
-               this.longValue2 = var1;
+            if (n != -1) {
+               mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, 36 + n, 0, ContainerInput.QUICK_MOVE, mc.player);
+               this.longValue2 = now;
             }
          }
       }
    }
 
    private boolean method4193() {
-      for (int var1 = 9; var1 < 36; var1++) {
-         if (mc.player.getInventory().getItem(var1).isEmpty()) {
+      for (int i = 9; i < 36; i++) {
+         if (mc.player.getInventory().getItem(i).isEmpty()) {
             return true;
          }
       }
@@ -1547,36 +1547,36 @@ public class AutoZamokModule extends Module {
       return false;
    }
 
-   private boolean method4194(long var1, String var3) {
-      if (var1 >= this.longValue17 && var1 - this.longValue4 >= 4000L) {
+   private boolean method4194(long now, String command) {
+      if (now >= this.longValue17 && now - this.longValue4 >= 4000L) {
          this.intValue13 = 0;
          this.longValue18 = 0L;
          this.flag7 = false;
-         this.longValue16 = var1;
-         this.longValue4 = var1;
-         mc.getConnection().sendCommand(var3);
+         this.longValue16 = now;
+         this.longValue4 = now;
+         mc.getConnection().sendCommand(command);
          return true;
       } else {
          return false;
       }
    }
 
-   private void method4195(long var1, AutoZamokModule.Type var3, AutoZamokModule.Type var4, boolean var5) {
+   private void method4195(long now, AutoZamokModule.Type type, AutoZamokModule.Type type2, boolean flag) {
       if (this.intValue13 == 1) {
-         if (var5) {
-            mc.options.keyJump.setDown(var1 - this.longValue18 < 300L);
+         if (flag) {
+            mc.options.keyJump.setDown(now - this.longValue18 < 300L);
          }
 
-         if (var1 - this.longValue18 >= 1000L) {
-            this.method4206(var3);
+         if (now - this.longValue18 >= 1000L) {
+            this.method4206(type);
          }
       } else if (this.intValue13 == -1) {
-         if (var1 >= this.longValue17 && var1 - this.longValue4 >= 4000L) {
-            this.method4206(var4);
+         if (now >= this.longValue17 && now - this.longValue4 >= 4000L) {
+            this.method4206(type2);
          }
       } else {
-         if (var1 - this.longValue16 > (this.flag7 ? 12000L : 8000L)) {
-            this.method4206(var4);
+         if (now - this.longValue16 > (this.flag7 ? 12000L : 8000L)) {
+            this.method4206(type2);
          }
       }
    }
@@ -1585,27 +1585,27 @@ public class AutoZamokModule extends Module {
       return this.type == AutoZamokModule.Type.WAIT_SKLAD || this.type == AutoZamokModule.Type.WAIT_ZAMOK || this.type == AutoZamokModule.Type.WAIT_DEPOSIT;
    }
 
-   private boolean method4197(long var1) {
+   private boolean method4197(long now) {
       this.method4204();
-      Vec3 var3 = mc.player.getDeltaMovement();
-      return Math.abs(var3.x) < 0.05 && Math.abs(var3.z) < 0.05 || var1 - this.longValue > 2000L;
+      Vec3 deltaMovement = mc.player.getDeltaMovement();
+      return Math.abs(deltaMovement.x) < 0.05 && Math.abs(deltaMovement.z) < 0.05 || now - this.longValue > 2000L;
    }
 
-   private static long method4198(String var0) {
-      long var1 = 0L;
-      boolean var3 = false;
+   private static long method4198(String lowerCase) {
+      long l = 0L;
+      boolean flag = false;
 
-      for (int var4 = 0; var4 < var0.length(); var4++) {
-         char var5 = var0.charAt(var4);
-         if (var5 >= '0' && var5 <= '9') {
-            var1 = var1 * 10L + (var5 - '0');
-            var3 = true;
-         } else if (var3) {
+      for (int i = 0; i < lowerCase.length(); i++) {
+         char charAt = lowerCase.charAt(i);
+         if (charAt >= '0' && charAt <= '9') {
+            l = l * 10L + (charAt - '0');
+            flag = true;
+         } else if (flag) {
             break;
          }
       }
 
-      return var3 ? var1 : 0L;
+      return flag ? l : 0L;
    }
 
    private void method4199() {
@@ -1616,31 +1616,31 @@ public class AutoZamokModule extends Module {
       SettingsBackup.restore();
    }
 
-   private void method4201(BlockPos var1, long var2) {
-      if (!var1.equals(this.blockPos8) || !this.method4205() && var2 - this.longValue12 >= 6000L) {
+   private void method4201(BlockPos blockPos8, long now) {
+      if (!blockPos8.equals(this.blockPos8) || !this.method4205() && now - this.longValue12 >= 6000L) {
          this.method4199();
-         BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalNear(var1, 2));
-         this.blockPos8 = var1;
-         this.longValue12 = var2;
+         BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalNear(blockPos8, 2));
+         this.blockPos8 = blockPos8;
+         this.longValue12 = now;
       }
    }
 
-   private void method4202(BlockPos var1, long var2) {
-      if (!var1.equals(this.blockPos8) || !this.method4205() && var2 - this.longValue12 >= 6000L) {
+   private void method4202(BlockPos blockPos8, long longValue) {
+      if (!blockPos8.equals(this.blockPos8) || !this.method4205() && longValue - this.longValue12 >= 6000L) {
          this.method4199();
-         BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalGetToBlock(var1));
-         this.blockPos8 = var1;
-         this.longValue12 = var2;
+         BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalGetToBlock(blockPos8));
+         this.blockPos8 = blockPos8;
+         this.longValue12 = longValue;
       }
    }
 
-   private void method4203(int var1, int var2, long var3) {
-      BlockPos var5 = new BlockPos(var1, 0, var2);
-      if (!var5.equals(this.blockPos8) || !this.method4205() && var3 - this.longValue12 >= 6000L) {
+   private void method4203(int x, int z, long now) {
+      BlockPos pos = new BlockPos(x, 0, z);
+      if (!pos.equals(this.blockPos8) || !this.method4205() && now - this.longValue12 >= 6000L) {
          this.method4199();
-         BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalXZ(var1, var2));
-         this.blockPos8 = var5;
-         this.longValue12 = var3;
+         BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalXZ(x, z));
+         this.blockPos8 = pos;
+         this.longValue12 = now;
       }
    }
 
@@ -1655,8 +1655,8 @@ public class AutoZamokModule extends Module {
       return BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing();
    }
 
-   private void method4206(AutoZamokModule.Type var1) {
-      this.type = var1;
+   private void method4206(AutoZamokModule.Type type) {
+      this.type = type;
       this.longValue = System.currentTimeMillis();
       this.blockPos2 = null;
       this.blockPos3 = null;
@@ -1698,19 +1698,19 @@ public class AutoZamokModule extends Module {
       }
    }
 
-   private void method4211(int var1) {
-      if (var1 >= 0 && var1 <= 8 && mc.player.getInventory().getSelectedSlot() != var1) {
-         mc.player.getInventory().setSelectedSlot(var1);
-         mc.getConnection().send(new ServerboundSetCarriedItemPacket(var1));
+   private void method4211(int slotNum) {
+      if (slotNum >= 0 && slotNum <= 8 && mc.player.getInventory().getSelectedSlot() != slotNum) {
+         mc.player.getInventory().setSelectedSlot(slotNum);
+         mc.getConnection().send(new ServerboundSetCarriedItemPacket(slotNum));
       }
    }
 
-   private void method4212(Vec3 var1) {
-      Util17.method3329(var1);
+   private void method4212(Vec3 atCenterOf) {
+      Util17.method3329(atCenterOf);
    }
 
-   private void log(String var1) {
-      ChatLogger.method2019("AutoZamok: " + var1);
+   private void log(String str) {
+      ChatLogger.method2019("AutoZamok: " + str);
    }
 
    private static enum Type {

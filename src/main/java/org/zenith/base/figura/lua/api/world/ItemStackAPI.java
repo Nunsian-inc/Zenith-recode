@@ -192,9 +192,9 @@ public final class ItemStackAPI {
 
    @LuaWhitelist
    public Object __index(String key) {
-      String var2 = key == null ? "" : key;
+      String str = key == null ? "" : key;
 
-      return switch (var2) {
+      return switch (str) {
          case "id" -> this.id;
          case "tag" -> this.tag;
          default -> null;

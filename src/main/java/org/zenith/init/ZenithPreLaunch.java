@@ -11,9 +11,9 @@ public final class ZenithPreLaunch implements PreLaunchEntrypoint {
    public void onPreLaunch() {
       ReleaseStartup.configure();
       if (FabricLoader.getInstance().isDevelopmentEnvironment() && System.getProperty("jdk.net.unixdomain.tmpdir") == null) {
-         File var1 = FabricLoader.getInstance().getGameDir().resolve(".nio-tmp").toFile();
-         if (var1.isDirectory() || var1.mkdirs()) {
-            System.setProperty("jdk.net.unixdomain.tmpdir", var1.getAbsolutePath());
+         File file = FabricLoader.getInstance().getGameDir().resolve(".nio-tmp").toFile();
+         if (file.isDirectory() || file.mkdirs()) {
+            System.setProperty("jdk.net.unixdomain.tmpdir", file.getAbsolutePath());
          }
       }
    }

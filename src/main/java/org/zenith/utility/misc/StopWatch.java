@@ -9,17 +9,17 @@ public class StopWatch {
       this.reset();
    }
 
-   public boolean method317(double var1) {
-      return System.currentTimeMillis() - var1 >= this.startTime;
+   public boolean method317(double intValue) {
+      return System.currentTimeMillis() - intValue >= this.startTime;
    }
 
-   public boolean method318(double var1) {
-      boolean var3 = this.method317(var1);
-      if (var3) {
+   public boolean method318(double intValue) {
+      boolean flag = this.method317(intValue);
+      if (flag) {
          this.reset();
       }
 
-      return var3;
+      return flag;
    }
 
    public void reset() {
@@ -30,8 +30,8 @@ public class StopWatch {
       return Math.toIntExact(System.currentTimeMillis() - this.startTime);
    }
 
-   public void method320(long var1) {
-      this.startTime = System.currentTimeMillis() - var1;
+   public void method320(long l) {
+      this.startTime = System.currentTimeMillis() - l;
    }
 
    @Generated

@@ -13,12 +13,12 @@ public class CameraPosEvent implements Event {
    }
 
    @Generated
-   public void setVec3d(Vec3 var1) {
-      this.vec3d = var1;
+   public void setVec3d(Vec3 vec3d) {
+      this.vec3d = vec3d;
    }
 
    @Generated
-   public CameraPosEvent(Vec3 var1) {
-      this.vec3d = var1;
+   public CameraPosEvent(Vec3 vec3d) {
+      this.vec3d = vec3d;
    }
 }

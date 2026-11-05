@@ -44,89 +44,89 @@ public class StaffListHud extends Interface {
    private long longValue2 = 0L;
    private final Set<String> items4 = new HashSet<>();
 
-   public StaffListHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public StaffListHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      long var2 = System.currentTimeMillis();
-      if (var2 - this.longValue > 1000L && mc.getConnection() != null) {
+   public void method8(CustomDrawContext customDrawContext) {
+      long now = System.currentTimeMillis();
+      if (now - this.longValue > 1000L && mc.getConnection() != null) {
          this.method4481();
-         this.longValue = var2;
+         this.longValue = now;
       }
 
-      if (var2 - this.longValue2 > 30000L) {
+      if (now - this.longValue2 > 30000L) {
          this.items3.clear();
-         this.longValue2 = var2;
+         this.longValue2 = now;
       }
 
-      this.items.entrySet().removeIf(var0 -> var0.getValue().method4488());
+      this.items.entrySet().removeIf(entry -> entry.getValue().method4488());
       if (this.items.isEmpty()) {
          this.animation2.method2808(0.0F);
       } else {
-         StaffListHud.Entry2 var4 = this.items.values().iterator().next();
-         this.animation2.method2808(this.items.size() == 1 && var4.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+         StaffListHud.Entry2 entry2 = this.items.values().iterator().next();
+         this.animation2.method2808(this.items.size() == 1 && entry2.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
       }
 
-      float var13 = this.floatValue;
-      float var5 = this.floatValue2;
-      float var6 = (float)(
+      float floatValue = this.floatValue;
+      float y1 = this.floatValue2;
+      float height = (float)(
          20.0F + GuiStyle.PADDING.intValue() / 2.0F
-            + this.items.values().stream().mapToDouble(var0 -> (var0.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var0.animation.getValue()).sum()
+            + this.items.values().stream().mapToDouble(entry2 -> (entry2.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry2.animation.getValue()).sum()
       );
-      float var7 = (float)this.items.values().stream().mapToDouble(StaffListHud.Entry2::method4485).max().orElse(0.0);
-      var7 = this.animation.method2808(Math.max(HudListLayout.method7638("P", "Staffs"), var7));
-      this.width = var7;
-      this.height = var6;
-      float var8 = InterfaceModule.method6801();
+      float width = (float)this.items.values().stream().mapToDouble(StaffListHud.Entry2::method4485).max().orElse(0.0);
+      width = this.animation.method2808(Math.max(HudListLayout.method7638("P", "Staffs"), width));
+      this.width = width;
+      this.height = height;
+      float f = InterfaceModule.method6801();
       this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
-      var1.pushMatrix();
-      var1.pose().translate(var13 + var7 / 2.0F, var5 + var6 / 2.0F);
-      var1.pose().scale(this.animation3.getValue(), this.animation3.getValue());
-      var1.pose().translate(-(var13 + var7 / 2.0F), -(var5 + var6 / 2.0F));
-      HudListLayout.method7635(var1, var13, var5, var7, var6);
-      HudListLayout.method7636(var1, var13, var5, var7, "P", "Staffs");
+      customDrawContext.pushMatrix();
+      customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
+      customDrawContext.pose().scale(this.animation3.getValue(), this.animation3.getValue());
+      customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + height / 2.0F));
+      HudListLayout.method7635(customDrawContext, floatValue, y1, width, height);
+      HudListLayout.method7636(customDrawContext, floatValue, y1, width, "P", "Staffs");
       if (this.animation3.getValue() == 1.0F) {
-         float var9 = var5 + 20.0F;
-         var1.enableScissor((int)var13, (int)var5, (int)(var13 + var7), (int)(var5 + var6));
+         float y12 = y1 + 20.0F;
+         customDrawContext.enableScissor((int)floatValue, (int)y1, (int)(floatValue + width), (int)(y1 + height));
 
-         for (Map.Entry var11 : this.items.entrySet()) {
-            StaffListHud.Entry2 var12 = (StaffListHud.Entry2)var11.getValue();
-            var12.method4487(var1, var13, var9, var7, this.items4.contains(var11.getKey()));
-            var9 += (var12.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var12.animation.getValue();
+         for (Map.Entry entry : this.items.entrySet()) {
+            StaffListHud.Entry2 entry2 = (StaffListHud.Entry2)entry.getValue();
+            entry2.method4487(customDrawContext, floatValue, y12, width, this.items4.contains(entry.getKey()));
+            y12 += (entry2.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry2.animation.getValue();
          }
 
-         var1.disableScissor();
+         customDrawContext.disableScissor();
       }
 
-      var1.popMatrix();
+      customDrawContext.popMatrix();
    }
 
    private void method4481() {
       if (mc.getConnection() != null) {
          this.items4.clear();
 
-         for (PlayerInfo var2 : mc.getConnection().getOnlinePlayers()) {
-            GameProfile var3 = var2.getProfile();
-            Component var4 = var2.getTabListDisplayName();
-            if (var3 != null) {
-               String var5 = var3.name();
-               boolean var6 = Zenith.getInstance().getStaffName().method1668(var5);
-               if (var4 != null || var6) {
-                  String var7 = var4 != null ? var4.getString() : var5;
-                  String var8 = var7.replace(var5, "").trim();
-                  if (var6 || this.method4482(var8) && var8.length() >= 2) {
-                     StaffListHud.Type var9 = var2.getGameMode() == GameType.SPECTATOR ? StaffListHud.Type.VANISHED : StaffListHud.Type.NONE;
-                     if (var4 != null) {
-                        var4 = var4.getString().contains(var3.name()) ? TextUtils.method2118(var4, var3.name(), false) : TextUtils.method2108(var4, false);
+         for (PlayerInfo onlinePlayer : mc.getConnection().getOnlinePlayers()) {
+            GameProfile profile = onlinePlayer.getProfile();
+            Component tabListDisplayName = onlinePlayer.getTabListDisplayName();
+            if (profile != null) {
+               String name = profile.name();
+               boolean flag = Zenith.getInstance().getStaffName().method1668(name);
+               if (tabListDisplayName != null || flag) {
+                  String string = tabListDisplayName != null ? tabListDisplayName.getString() : name;
+                  String str = string.replace(name, "").trim();
+                  if (flag || this.method4482(str) && str.length() >= 2) {
+                     StaffListHud.Type type = onlinePlayer.getGameMode() == GameType.SPECTATOR ? StaffListHud.Type.VANISHED : StaffListHud.Type.NONE;
+                     if (tabListDisplayName != null) {
+                        tabListDisplayName = tabListDisplayName.getString().contains(profile.name()) ? TextUtils.method2118(tabListDisplayName, profile.name(), false) : TextUtils.method2108(tabListDisplayName, false);
                      } else {
-                        var4 = Component.nullToEmpty(var5);
+                        tabListDisplayName = Component.nullToEmpty(name);
                      }
 
-                     Component var10 = var4;
-                     this.items.computeIfAbsent(var7, var5x -> new StaffListHud.Entry2(var10, var7, var5, var9));
-                     this.items4.add(var7);
+                     Component text = tabListDisplayName;
+                     this.items.computeIfAbsent(string, var5x -> new StaffListHud.Entry2(text, string, name, type));
+                     this.items4.add(string);
                   }
                }
             }
@@ -134,11 +134,11 @@ public class StaffListHud extends Interface {
       }
    }
 
-   public boolean method4482(String var1) {
-      String var2 = var1.toLowerCase(Locale.US);
+   public boolean method4482(String str) {
+      String lowerCase = str.toLowerCase(Locale.US);
 
-      for (String var4 : this.items2) {
-         if (var2.contains(var4)) {
+      for (String str2 : this.items2) {
+         if (lowerCase.contains(str2)) {
             return true;
          }
       }
@@ -146,10 +146,10 @@ public class StaffListHud extends Interface {
       return false;
    }
 
-   private String method4483(long var1) {
-      long var3 = var1 / 60000L;
-      long var5 = var1 % 60000L / 1000L;
-      return String.format("%d:%02d", var3, var5);
+   private String method4483(long l) {
+      long l2 = l / 60000L;
+      long l3 = l % 60000L / 1000L;
+      return String.format("%d:%02d", l2, l3);
    }
 
    @Override
@@ -184,46 +184,46 @@ public class StaffListHud extends Interface {
       }
 
       @Generated
-      public void setText(Component var1) {
-         this.text = var1;
+      public void setText(Component text) {
+         this.text = text;
       }
 
       @Generated
-      public void setName(String var1) {
-         this.name = var1;
+      public void setName(String name) {
+         this.name = name;
       }
 
       @Generated
-      public void setFlag(boolean var1) {
-         this.flag = var1;
+      public void setFlag(boolean flag) {
+         this.flag = flag;
       }
 
       @Generated
-      public void setType(StaffListHud.Type var1) {
-         this.type = var1;
+      public void setType(StaffListHud.Type type) {
+         this.type = type;
       }
 
       @Generated
       @Override
-      public boolean equals(Object var1) {
-         if (var1 == this) {
+      public boolean equals(Object obj) {
+         if (obj == this) {
             return true;
-         } else if (!(var1 instanceof StaffListHud.Entry var2)) {
+         } else if (!(obj instanceof StaffListHud.Entry entry)) {
             return false;
-         } else if (!var2.method4484(this)) {
+         } else if (!entry.method4484(this)) {
             return false;
-         } else if (this.isFlag() != var2.isFlag()) {
+         } else if (this.isFlag() != entry.isFlag()) {
             return false;
          } else {
-            Component var3 = this.getText();
-            Component var4 = var2.getText();
-            if (var3 == null ? var4 == null : var3.equals(var4)) {
-               String var5 = this.getName();
-               String var6 = var2.getName();
-               if (var5 == null ? var6 == null : var5.equals(var6)) {
-                  StaffListHud.Type var7 = this.getType();
-                  StaffListHud.Type var8 = var2.getType();
-                  return var7 == null ? var8 == null : var7.equals(var8);
+            Component text = this.getText();
+            Component component = entry.getText();
+            if (text == null ? component == null : text.equals(component)) {
+               String name = this.getName();
+               String anObject = entry.getName();
+               if (name == null ? anObject == null : name.equals(anObject)) {
+                  StaffListHud.Type type = this.getType();
+                  StaffListHud.Type type2 = entry.getType();
+                  return type == null ? type2 == null : type.equals(type2);
                } else {
                   return false;
                }
@@ -234,22 +234,22 @@ public class StaffListHud extends Interface {
       }
 
       @Generated
-      public boolean method4484(Object var1) {
-         return var1 instanceof StaffListHud.Entry;
+      public boolean method4484(Object obj) {
+         return obj instanceof StaffListHud.Entry;
       }
 
       @Generated
       @Override
       public int hashCode() {
-         byte var1 = 59;
-         int var2 = 1;
-         var2 = var2 * 59 + (this.isFlag() ? 79 : 97);
-         Component var3 = this.getText();
-         var2 = var2 * 59 + (var3 == null ? 43 : var3.hashCode());
-         String var4 = this.getName();
-         var2 = var2 * 59 + (var4 == null ? 43 : var4.hashCode());
-         StaffListHud.Type var5 = this.getType();
-         return var2 * 59 + (var5 == null ? 43 : var5.hashCode());
+         byte b = 59;
+         int n = 1;
+         n = n * 59 + (this.isFlag() ? 79 : 97);
+         Component text = this.getText();
+         n = n * 59 + (text == null ? 43 : text.hashCode());
+         String name = this.getName();
+         n = n * 59 + (name == null ? 43 : name.hashCode());
+         StaffListHud.Type type = this.getType();
+         return n * 59 + (type == null ? 43 : type.hashCode());
       }
 
       @Generated
@@ -259,11 +259,11 @@ public class StaffListHud extends Interface {
       }
 
       @Generated
-      public Entry(Component var1, String var2, boolean var3, StaffListHud.Type var4) {
-         this.text = var1;
-         this.name = var2;
-         this.flag = var3;
-         this.type = var4;
+      public Entry(Component text, String name, boolean flag, StaffListHud.Type type) {
+         this.text = text;
+         this.name = name;
+         this.flag = flag;
+         this.type = type;
       }
    }
 
@@ -277,11 +277,11 @@ public class StaffListHud extends Interface {
       private long longValue2 = Long.MIN_VALUE;
       private String text4;
 
-      public Entry2(Component var2, String var3, String var4, StaffListHud.Type var5) {
-         this.text = var2;
-         this.text2 = var3;
-         this.text3 = var4;
-         this.type = var5;
+      public Entry2(Component text, String string, String name, StaffListHud.Type type) {
+         this.text = text;
+         this.text2 = string;
+         this.text3 = name;
+         this.type = type;
          this.longValue = System.currentTimeMillis();
       }
 
@@ -294,11 +294,11 @@ public class StaffListHud extends Interface {
       }
 
       private String method4486() {
-         long var1 = System.currentTimeMillis() - this.longValue;
-         long var3 = var1 / 1000L;
-         if (this.text4 == null || var3 != this.longValue2) {
-            this.longValue2 = var3;
-            this.text4 = StaffListHud.this.method4483(var1);
+         long l = System.currentTimeMillis() - this.longValue;
+         long l2 = l / 1000L;
+         if (this.text4 == null || l2 != this.longValue2) {
+            this.longValue2 = l2;
+            this.text4 = StaffListHud.this.method4483(l);
          }
 
          return this.text4;
@@ -308,44 +308,44 @@ public class StaffListHud extends Interface {
          return 14.0F;
       }
 
-      public void method4487(CustomDrawContext var1, float var2, float var3, float var4, boolean var5) {
-         ZenithStyle var6 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         Font var7 = HudListLayout.nameFont();
-         this.animation.method2808(var5 ? 1.0F : 0.0F);
-         var1.pushMatrix();
-         var1.pose().translate(var2 + var4 / 2.0F, var3 + this.getHeight() / 2.0F);
-         var1.pose().scale(this.animation.getValue(), this.animation.getValue());
-         var1.pose().translate(-(var2 + var4 / 2.0F), -(var3 + this.getHeight() / 2.0F));
-         Identifier var8 = null;
-         PlayerInfo var9 = StaffListHud.this.items3.get(this.text3);
-         if (var9 == null && MinecraftAccess.mc.getConnection() != null) {
-            var9 = MinecraftAccess.mc
+      public void method4487(CustomDrawContext customDrawContext, float floatValue, float y1, float width, boolean contains) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         Font nameFont = HudListLayout.nameFont();
+         this.animation.method2808(contains ? 1.0F : 0.0F);
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
+         customDrawContext.pose().scale(this.animation.getValue(), this.animation.getValue());
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + this.getHeight() / 2.0F));
+         Identifier texturePath = null;
+         PlayerInfo playerInfo = StaffListHud.this.items3.get(this.text3);
+         if (playerInfo == null && MinecraftAccess.mc.getConnection() != null) {
+            playerInfo = MinecraftAccess.mc
                .getConnection()
                .getOnlinePlayers()
                .stream()
                .filter(var1x -> var1x.getProfile() != null && this.text3.equals(var1x.getProfile().name()))
                .findFirst()
                .orElse(null);
-            if (var9 != null && var9.getSkin() != null) {
-               StaffListHud.this.items3.put(this.text3, var9);
+            if (playerInfo != null && playerInfo.getSkin() != null) {
+               StaffListHud.this.items3.put(this.text3, playerInfo);
             }
          }
 
-         if (var9 != null && var9.getSkin() != null) {
-            var8 = var9.getSkin().body().texturePath();
+         if (playerInfo != null && playerInfo.getSkin() != null) {
+            texturePath = playerInfo.getSkin().body().texturePath();
          }
 
-         if (var8 == null) {
-            var8 = DefaultPlayerSkin.getDefaultSkin().body().texturePath();
+         if (texturePath == null) {
+            texturePath = DefaultPlayerSkin.getDefaultSkin().body().texturePath();
          }
 
-         float var10 = HudListLayout.method7640(var1, var2, var3);
-         var1.drawPlayerHeadWithRoundedShader(
-            var8, HudListLayout.method7641(var2), HudListLayout.method7642(var3), 10.0F, ProxyDotRadiusData.method8069(3.0F), ZenithColor.INSTANCE
+         float x1 = HudListLayout.method7640(customDrawContext, floatValue, y1);
+         customDrawContext.drawPlayerHeadWithRoundedShader(
+            texturePath, HudListLayout.method7641(floatValue), HudListLayout.method7642(y1), 10.0F, ProxyDotRadiusData.method8069(3.0F), ZenithColor.INSTANCE
          );
-         var1.drawText(var7, this.text, var10, var3 + (this.getHeight() - var7.height()) / 2.0F, var6.getTextEnable().getZenithColor().method7287());
-         HudListLayout.method7646(var1, var2, var3, var4, this.method4486());
-         var1.popMatrix();
+         customDrawContext.drawText(nameFont, this.text, x1, y1 + (this.getHeight() - nameFont.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor().method7287());
+         HudListLayout.method7646(customDrawContext, floatValue, y1, width, this.method4486());
+         customDrawContext.popMatrix();
       }
 
       public boolean method4488() {

@@ -30,7 +30,7 @@ public class ClientPanel extends Panel {
    private final Animation animationVisible = new Animation(300L, 0.0F, Easing.INSTANCE13);
    private boolean expanded = false;
    private final GuiNumberSetting guiScale = new GuiNumberSetting(
-      new SliderSetting("panel.client.setting.guiScale", 100.0F, 100.0F, 250.0F, 5.0F, "", "%", () -> true, (var0, var1) -> {}), 112.0F
+      new SliderSetting("panel.client.setting.guiScale", 100.0F, 100.0F, 250.0F, 5.0F, "", "%", () -> true, (f, f2) -> {}), 112.0F
    );
    private final GuiNumberSetting blurStrength = new GuiNumberSetting(
       new SliderSetting("panel.client.setting.backgroundBlur", 20.0F, 0.0F, 30.0F, 5.0F, "", "px"), 112.0F
@@ -40,271 +40,271 @@ public class ClientPanel extends Panel {
    private final GuiButtonSetting webProfile = new GuiButtonSetting(new ButtonSetting("panel.client.setting.telegram", "W", () -> {
       try {
          Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler https://t.me/zenithdlcdevlog");
-      } catch (IOException var1) {
-         var1.printStackTrace();
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }), 112.0F);
    private final GuiButtonSetting openFolder = new GuiButtonSetting(new ButtonSetting("panel.client.setting.chat", "T", () -> {
       try {
          Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler https://t.me/+J-lV24z-Wmg1M2Y6");
-      } catch (IOException var1) {
-         var1.printStackTrace();
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }), 112.0F);
    private BoundsData exitBounds;
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f) {
       this.animationVisible.method2807(this.expanded);
       this.animationVisible.setDuration(200L);
-      var4 *= this.animationVisible.getValue();
-      float var7 = 128.0F;
-      float var8 = 227.0F;
-      var1.enableScissor(var5 - GuiStyle.PADDING * 3, var6, var5 + var7 + GuiStyle.PADDING * 4, var6 + var8);
-      var5 -= (var7 + GuiStyle.PADDING.intValue()) * (1.0F - this.animationVisible.getValue());
+      previewAlpha *= this.animationVisible.getValue();
+      float panelWidth = 128.0F;
+      float height = 227.0F;
+      menuDrawContext.enableScissor(moduleMenuX - GuiStyle.PADDING * 3, f, moduleMenuX + panelWidth + GuiStyle.PADDING * 4, f + height);
+      moduleMenuX -= (panelWidth + GuiStyle.PADDING.intValue()) * (1.0F - this.animationVisible.getValue());
       if (Zenith.getInstance().getNLMenuScreen().getBlurPower() != 0.0F) {
          RenderShaders.method5287(
-            MatrixUtils.method664(var1.pose()),
-            var5,
-            var6,
-            var7,
-            var8,
+            MatrixUtils.method664(menuDrawContext.pose()),
+            moduleMenuX,
+            f,
+            panelWidth,
+            height,
             Zenith.getInstance().getNLMenuScreen().getBlurPower(),
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()),
-            ZenithColor.INSTANCE.method7294(var4),
+            ZenithColor.INSTANCE.method7294(previewAlpha),
             true,
             false
          );
       }
 
-      float var9 = 29.0F;
-      float var10 = 45.0F;
-      float var11 = 67.0F;
-      float var12 = 56.0F;
-      float var13 = 30.0F;
-      ZenithStyle var14 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      this.renderHeader(var1, var2, var3, var4, var5, var6, var7, var9, var14);
-      this.renderTill(var1, var2, var3, var4, var5, var6 + var9, var7, var10, var14);
-      this.renderSettings(var1, var2, var3, var4, var5, var6 + var9 + var10, var7, var11, var14);
-      this.renderInfo(var1, var2, var3, var4, var5, var6 + var9 + var10 + var11, var7, var12, var14);
-      this.renderButton(var1, var2, var3, var4, var5, var6 + var9 + var10 + var11 + var12, var7, var13, var14);
-      var1.disableScissor();
+      float height2 = 29.0F;
+      float height3 = 45.0F;
+      float height4 = 67.0F;
+      float height5 = 56.0F;
+      float height6 = 30.0F;
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      this.renderHeader(menuDrawContext, x, y, previewAlpha, moduleMenuX, f, panelWidth, height2, currentStyle);
+      this.renderTill(menuDrawContext, x, y, previewAlpha, moduleMenuX, f + height2, panelWidth, height3, currentStyle);
+      this.renderSettings(menuDrawContext, x, y, previewAlpha, moduleMenuX, f + height2 + height3, panelWidth, height4, currentStyle);
+      this.renderInfo(menuDrawContext, x, y, previewAlpha, moduleMenuX, f + height2 + height3 + height4, panelWidth, height5, currentStyle);
+      this.renderButton(menuDrawContext, x, y, previewAlpha, moduleMenuX, f + height2 + height3 + height4 + height5, panelWidth, height6, currentStyle);
+      menuDrawContext.disableScissor();
    }
 
-   public void renderButton(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      var1.drawRoundedRect(
-         var5, var6, var7, var8, ProxyDotRadiusData.method8077(GuiStyle.ROUND.intValue()), var9.getRightBackground().getZenithColor().method7294(var4)
+   public void renderButton(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f, float panelWidth, float height, ZenithStyle currentStyle) {
+      menuDrawContext.drawRoundedRect(
+         moduleMenuX, f, panelWidth, height, ProxyDotRadiusData.method8077(GuiStyle.ROUND.intValue()), currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha)
       );
-      float var10 = var5 + GuiStyle.PADDING * 2;
-      float var11 = var6 + GuiStyle.PADDING * 2;
-      float var12 = 112.0F;
-      float var13 = 14.0F;
-      Font var14 = Fonts.NEW_REGULAR.getFont(5.0F);
-      Font var15 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var16 = Fonts.NEW_ICONS.getFont(5.0F);
-      float var17 = var12 / 3.0F;
-      var1.drawRoundedRect(
-         var10 + var17, var11 + 1.0F, 0.5F, var13 - 2.0F, ProxyDotRadiusData.INSTANCE, var9.getTextTertiary().getZenithColor().method7294(var4)
+      float f2 = moduleMenuX + GuiStyle.PADDING * 2;
+      float centeredTextY = f + GuiStyle.PADDING * 2;
+      float f3 = 112.0F;
+      float f4 = 14.0F;
+      Font font = Fonts.NEW_REGULAR.getFont(5.0F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font3 = Fonts.NEW_ICONS.getFont(5.0F);
+      float f5 = f3 / 3.0F;
+      menuDrawContext.drawRoundedRect(
+         f2 + f5, centeredTextY + 1.0F, 0.5F, f4 - 2.0F, ProxyDotRadiusData.INSTANCE, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawRoundedRect(
-         var10 + var17 * 2.0F, var11 + 1.0F, 0.5F, var13 - 2.0F, ProxyDotRadiusData.INSTANCE, var9.getTextTertiary().getZenithColor().method7294(var4)
+      menuDrawContext.drawRoundedRect(
+         f2 + f5 * 2.0F, centeredTextY + 1.0F, 0.5F, f4 - 2.0F, ProxyDotRadiusData.INSTANCE, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      this.renderBox(var1, var14, var15, var16, "Version", "P", "3.5", var10, var11, var17, var13, var9, var4);
-      this.renderBox(var1, var14, var15, var16, "Commit", "Q", "129", var10 + var17, var11, var17, var13, var9, var4);
+      this.renderBox(menuDrawContext, font, font2, font3, "Version", "P", "3.5", f2, centeredTextY, f5, f4, currentStyle, previewAlpha);
+      this.renderBox(menuDrawContext, font, font2, font3, "Commit", "Q", "129", f2 + f5, centeredTextY, f5, f4, currentStyle, previewAlpha);
       this.renderBox(
-         var1,
-         var14,
-         var15,
-         var16,
+         menuDrawContext,
+         font,
+         font2,
+         font3,
          "Build",
          "R",
          Zenith.getInstance().getEntry().method1504().getName(),
-         var10 + var17 + var17,
-         var11,
-         var17,
-         var13,
-         var9,
-         var4
+         f2 + f5 + f5,
+         centeredTextY,
+         f5,
+         f4,
+         currentStyle,
+         previewAlpha
       );
    }
 
    private void renderBox(
-      MenuDrawContext var1,
-      Font var2,
-      Font var3,
-      Font var4,
-      String var5,
-      String var6,
-      String var7,
-      float var8,
-      float var9,
-      float var10,
-      float var11,
-      ZenithStyle var12,
-      float var13
+      MenuDrawContext menuDrawContext,
+      Font font,
+      Font font2,
+      Font font3,
+      String text,
+      String str,
+      String name,
+      float f,
+      float centeredTextY,
+      float f2,
+      float f3,
+      ZenithStyle currentStyle,
+      float previewAlpha
    ) {
-      var1.drawText(var2, var5, var8 + (var10 - var2.width(var5)) / 2.0F, var9, var12.getTextSecondary().method1447(var13));
-      float var14;
-      float var15 = (var14 = var4.width(var6)) + GuiStyle.PADDING.intValue() / 2.0F + var3.width(var7);
-      var1.drawText(
-         var4,
-         var6,
-         var8 + (var10 - var15) / 2.0F,
-         var9 + var11 - var4.height() - GuiStyle.PADDING.intValue() / 2.0F,
-         var12.getPrimaryColor().method1447(var13)
+      menuDrawContext.drawText(font, text, f + (f2 - font.width(text)) / 2.0F, centeredTextY, currentStyle.getTextSecondary().method1447(previewAlpha));
+      float width;
+      float f4 = (width = font3.width(str)) + GuiStyle.PADDING.intValue() / 2.0F + font2.width(name);
+      menuDrawContext.drawText(
+         font3,
+         str,
+         f + (f2 - f4) / 2.0F,
+         centeredTextY + f3 - font3.height() - GuiStyle.PADDING.intValue() / 2.0F,
+         currentStyle.getPrimaryColor().method1447(previewAlpha)
       );
-      var1.drawText(
-         var3,
-         var7,
-         var8 + (var10 - var15) / 2.0F + var14 + GuiStyle.PADDING.intValue() / 2.0F,
-         var9 + var11 - var3.height() - GuiStyle.PADDING.intValue() / 2.0F,
-         var12.getTextEnable().method1447(var13)
+      menuDrawContext.drawText(
+         font2,
+         name,
+         f + (f2 - f4) / 2.0F + width + GuiStyle.PADDING.intValue() / 2.0F,
+         centeredTextY + f3 - font2.height() - GuiStyle.PADDING.intValue() / 2.0F,
+         currentStyle.getTextEnable().method1447(previewAlpha)
       );
    }
 
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      var1.drawRoundedRect(
-         var5, var6, var7, var8, ProxyDotRadiusData.method8075(GuiStyle.ROUND.intValue()), var9.getRightBackground().getZenithColor().method7294(var4)
+   public void renderHeader(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f, float panelWidth, float height, ZenithStyle currentStyle) {
+      menuDrawContext.drawRoundedRect(
+         moduleMenuX, f, panelWidth, height, ProxyDotRadiusData.method8075(GuiStyle.ROUND.intValue()), currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha)
       );
-      float var10 = var5 + GuiStyle.PADDING * 2;
-      float var11 = var6 + GuiStyle.PADDING * 2;
-      Font var12 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var13 = Fonts.NEW_REGULAR.getFont(5.0F);
+      float floatValue = moduleMenuX + GuiStyle.PADDING * 2;
+      float f2 = f + GuiStyle.PADDING * 2;
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(5.0F);
       Zenith.getInstance().getEntry();
-      var1.drawText(var12, "Client", var10, var11 + 1.0F, var9.getTextEnable().getZenithColor().method7294(var4));
-      var1.drawText(var13, "Global system settings", var10, var11 + var12.height() + 3.0F, var9.getTextTertiary().getZenithColor().method7294(var4));
-      Font var15 = Fonts.NEW_ICONS.getFont(4.0F);
-      float var16 = var5 + var7 - var15.width("2") - GuiStyle.PADDING * 2;
-      float var17 = var11 + 2.0F;
-      this.exitBounds = new BoundsData(var16, var17, 5.0F, 5.0F);
-      var1.drawText(var15, "2", var16, var17, var9.getTextTertiary().getZenithColor().method7294(var4));
+      menuDrawContext.drawText(font, "Client", floatValue, f2 + 1.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawText(font2, "Global system settings", floatValue, f2 + font.height() + 3.0F, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+      Font font3 = Fonts.NEW_ICONS.getFont(4.0F);
+      float floatValue2 = moduleMenuX + panelWidth - font3.width("2") - GuiStyle.PADDING * 2;
+      float y2 = f2 + 2.0F;
+      this.exitBounds = new BoundsData(floatValue2, y2, 5.0F, 5.0F);
+      menuDrawContext.drawText(font3, "2", floatValue2, y2, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
    }
 
-   public void renderTill(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      var1.drawRoundedRect(var5, var6, var7, var8, ProxyDotRadiusData.INSTANCE, var9.getLeftBackground().getZenithColor().method7294(var4));
-      float var10 = var5 + GuiStyle.PADDING * 2;
-      float var11 = var6 + GuiStyle.PADDING * 2;
+   public void renderTill(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f, float panelWidth, float height, ZenithStyle currentStyle) {
+      menuDrawContext.drawRoundedRect(moduleMenuX, f, panelWidth, height, ProxyDotRadiusData.INSTANCE, currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha));
+      float floatValue = moduleMenuX + GuiStyle.PADDING * 2;
+      float centeredTextY = f + GuiStyle.PADDING * 2;
       Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var13 = Fonts.NEW_REGULAR.getFont(5.0F);
-      var1.drawText(var13, "Navigation", var10, var11, var9.getTextSecondary().getZenithColor().method7294(var4));
-      var11 += var13.height() + GuiStyle.PADDING.intValue();
-      this.webProfile.render(var1, var2, var3, var10, var11, var4);
-      var11 += this.webProfile.getAnimHeight() + GuiStyle.PADDING.intValue();
-      this.openFolder.render(var1, var2, var3, var10, var11, var4);
+      Font font = Fonts.NEW_REGULAR.getFont(5.0F);
+      menuDrawContext.drawText(font, "Navigation", floatValue, centeredTextY, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      centeredTextY += font.height() + GuiStyle.PADDING.intValue();
+      this.webProfile.render(menuDrawContext, x, y, floatValue, centeredTextY, previewAlpha);
+      centeredTextY += this.webProfile.getAnimHeight() + GuiStyle.PADDING.intValue();
+      this.openFolder.render(menuDrawContext, x, y, floatValue, centeredTextY, previewAlpha);
    }
 
-   public void renderSettings(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      var1.drawRoundedRect(var5, var6, var7, var8, ProxyDotRadiusData.INSTANCE, var9.getRightBackground().getZenithColor().method7294(var4));
-      float var10 = var5 + GuiStyle.PADDING * 2;
-      float var11 = var6 + GuiStyle.PADDING * 2;
+   public void renderSettings(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f, float panelWidth, float height, ZenithStyle currentStyle) {
+      menuDrawContext.drawRoundedRect(moduleMenuX, f, panelWidth, height, ProxyDotRadiusData.INSTANCE, currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha));
+      float floatValue = moduleMenuX + GuiStyle.PADDING * 2;
+      float centeredTextY = f + GuiStyle.PADDING * 2;
       Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var13 = Fonts.NEW_REGULAR.getFont(5.0F);
-      var1.drawText(var13, "Settings", var10, var11, var9.getTextSecondary().getZenithColor().method7294(var4));
-      var11 += var13.height() + GuiStyle.PADDING * 2;
-      this.guiScale.render(var1, var2, var3, var10, var11, var4);
-      var11 += this.guiScale.getAnimHeight() + GuiStyle.PADDING.intValue();
-      this.blurStrength.render(var1, var2, var3, var10, var11, var4);
-      var11 += this.blurStrength.getAnimHeight() + GuiStyle.PADDING.intValue();
-      this.renderDescription.render(var1, var2, var3, var10, var11, var4);
-      var11 += this.renderDescription.getAnimHeight() + GuiStyle.PADDING.intValue();
-      this.renderIcon.render(var1, var2, var3, var10, var11, var4);
+      Font font = Fonts.NEW_REGULAR.getFont(5.0F);
+      menuDrawContext.drawText(font, "Settings", floatValue, centeredTextY, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      centeredTextY += font.height() + GuiStyle.PADDING * 2;
+      this.guiScale.render(menuDrawContext, x, y, floatValue, centeredTextY, previewAlpha);
+      centeredTextY += this.guiScale.getAnimHeight() + GuiStyle.PADDING.intValue();
+      this.blurStrength.render(menuDrawContext, x, y, floatValue, centeredTextY, previewAlpha);
+      centeredTextY += this.blurStrength.getAnimHeight() + GuiStyle.PADDING.intValue();
+      this.renderDescription.render(menuDrawContext, x, y, floatValue, centeredTextY, previewAlpha);
+      centeredTextY += this.renderDescription.getAnimHeight() + GuiStyle.PADDING.intValue();
+      this.renderIcon.render(menuDrawContext, x, y, floatValue, centeredTextY, previewAlpha);
    }
 
-   public void renderInfo(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      var1.drawRoundedRect(var5, var6, var7, var8, ProxyDotRadiusData.INSTANCE, var9.getLeftBackground().getZenithColor().method7294(var4));
-      float var10 = var5 + GuiStyle.PADDING * 2;
-      float var11 = var6 + GuiStyle.PADDING * 2;
-      float var12 = var7 - GuiStyle.PADDING * 4;
-      Font var13 = Fonts.NEW_REGULAR.getFont(5.0F);
-      Font var14 = Fonts.NEW_MEDIUM.getFont(5.5F);
-      String var15 = Zenith.getInstance().getLocalization().translate("panel.client.playtime");
-      var1.drawText(var13, var15, var10, var11, var9.getTextSecondary().getZenithColor().method7294(var4));
-      var11 += var13.height() + GuiStyle.PADDING.intValue();
-      PlayTimeTracker var16 = Zenith.getInstance().getPlayTimeTracker();
-      float var17 = var14.height() + GuiStyle.PADDING * 2;
+   public void renderInfo(MenuDrawContext menuDrawContext, int x, int y, float previewAlpha, float moduleMenuX, float f, float panelWidth, float height, ZenithStyle currentStyle) {
+      menuDrawContext.drawRoundedRect(moduleMenuX, f, panelWidth, height, ProxyDotRadiusData.INSTANCE, currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha));
+      float floatValue = moduleMenuX + GuiStyle.PADDING * 2;
+      float centeredTextY = f + GuiStyle.PADDING * 2;
+      float f2 = panelWidth - GuiStyle.PADDING * 4;
+      Font font = Fonts.NEW_REGULAR.getFont(5.0F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
+      String text = Zenith.getInstance().getLocalization().translate("panel.client.playtime");
+      menuDrawContext.drawText(font, text, floatValue, centeredTextY, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      centeredTextY += font.height() + GuiStyle.PADDING.intValue();
+      PlayTimeTracker playTimeTracker = Zenith.getInstance().getPlayTimeTracker();
+      float f3 = font2.height() + GuiStyle.PADDING * 2;
       this.renderTimeRow(
-         var1,
-         var14,
-         var14,
+         menuDrawContext,
+         font2,
+         font2,
          Zenith.getInstance().getLocalization().translate("panel.client.playtime.session"),
-         PlayTimeTracker.method1402(var16.method1399()),
-         var10,
-         var11,
-         var12,
-         var9,
-         var4
+         PlayTimeTracker.method1402(playTimeTracker.method1399()),
+         floatValue,
+         centeredTextY,
+         f2,
+         currentStyle,
+         previewAlpha
       );
-      var11 += var17;
+      centeredTextY += f3;
       this.renderTimeRow(
-         var1,
-         var14,
-         var14,
+         menuDrawContext,
+         font2,
+         font2,
          Zenith.getInstance().getLocalization().translate("panel.client.playtime.week"),
-         PlayTimeTracker.method1402(var16.method1400()),
-         var10,
-         var11,
-         var12,
-         var9,
-         var4
+         PlayTimeTracker.method1402(playTimeTracker.method1400()),
+         floatValue,
+         centeredTextY,
+         f2,
+         currentStyle,
+         previewAlpha
       );
-      var11 += var17;
+      centeredTextY += f3;
       this.renderTimeRow(
-         var1,
-         var14,
-         var14,
+         menuDrawContext,
+         font2,
+         font2,
          Zenith.getInstance().getLocalization().translate("panel.client.playtime.total"),
-         PlayTimeTracker.method1402(var16.method1401()),
-         var10,
-         var11,
-         var12,
-         var9,
-         var4
+         PlayTimeTracker.method1402(playTimeTracker.method1401()),
+         floatValue,
+         centeredTextY,
+         f2,
+         currentStyle,
+         previewAlpha
       );
    }
 
    private void renderTimeRow(
-      MenuDrawContext var1, Font var2, Font var3, String var4, String var5, float var6, float var7, float var8, ZenithStyle var9, float var10
+      MenuDrawContext menuDrawContext, Font font, Font font2, String text, String str, float floatValue, float centeredTextY, float f, ZenithStyle currentStyle, float previewAlpha
    ) {
-      float var11 = GuiStyle.PADDING.intValue();
-      float var12 = GuiStyle.PADDING.intValue() / 2.0F;
-      float var13 = var3.width(var5) + var11 * 2.0F;
-      float var14 = var3.height() + var12 * 2.0F;
-      float var15 = var6 + var8 - var13;
-      float var16 = var7 - var12;
-      var1.drawRoundedRect(var15, var16, var13, var14, ProxyDotRadiusData.method8069(2.0F), GuiStyle.FIELD_SURFACE_BACKGROUND.method7294(var10));
-      var1.drawRoundedBorder(var15, var16, var13, var14, 0.5F, ProxyDotRadiusData.method8069(2.0F), GuiStyle.FIELD_BORDER.method7294(var10));
-      var1.drawText(var3, var5, var15 + var11, var7, var9.getPrimaryColor().getZenithColor().method7294(var10));
-      var1.drawRoundedRect(
-         var6, var7 + var2.height() / 2.0F - 0.6F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), var9.getPrimaryColor().getZenithColor().method7294(var10)
+      float intValue = GuiStyle.PADDING.intValue();
+      float f2 = GuiStyle.PADDING.intValue() / 2.0F;
+      float width = font2.width(str) + intValue * 2.0F;
+      float height = font2.height() + f2 * 2.0F;
+      float floatValue2 = floatValue + f - width;
+      float y = centeredTextY - f2;
+      menuDrawContext.drawRoundedRect(floatValue2, y, width, height, ProxyDotRadiusData.method8069(2.0F), GuiStyle.FIELD_SURFACE_BACKGROUND.method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(floatValue2, y, width, height, 0.5F, ProxyDotRadiusData.method8069(2.0F), GuiStyle.FIELD_BORDER.method7294(previewAlpha));
+      menuDrawContext.drawText(font2, str, floatValue2 + intValue, centeredTextY, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawRoundedRect(
+         floatValue, centeredTextY + font.height() / 2.0F - 0.6F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawText(var2, var4, var6 + 7.0F, var7, var9.getTextEnable().getZenithColor().method7294(var10));
+      menuDrawContext.drawText(font, text, floatValue + 7.0F, centeredTextY, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (var5.getIntValue() != 0) {
+   public boolean onMouseClicked(double anchorMouseX, double lastClickY, Enum3 enum2) {
+      if (enum2.getIntValue() != 0) {
          return false;
-      } else if (this.expanded && this.exitBounds != null && this.exitBounds.method8092(var1, var3, 2.0F)) {
+      } else if (this.expanded && this.exitBounds != null && this.exitBounds.method8092(anchorMouseX, lastClickY, 2.0F)) {
          this.expanded = false;
          return true;
-      } else if (this.renderDescription.onMouseClicked(var1, var3, var5)) {
+      } else if (this.renderDescription.onMouseClicked(anchorMouseX, lastClickY, enum2)) {
          return true;
-      } else if (this.renderIcon.onMouseClicked(var1, var3, var5)) {
+      } else if (this.renderIcon.onMouseClicked(anchorMouseX, lastClickY, enum2)) {
          return true;
-      } else if (this.webProfile.onMouseClicked(var1, var3, var5)) {
+      } else if (this.webProfile.onMouseClicked(anchorMouseX, lastClickY, enum2)) {
          return true;
-      } else if (this.guiScale.onMouseClicked(var1, var3, var5)) {
+      } else if (this.guiScale.onMouseClicked(anchorMouseX, lastClickY, enum2)) {
          return true;
       } else {
-         return this.blurStrength.onMouseClicked(var1, var3, var5) ? true : this.openFolder.onMouseClicked(var1, var3, var5);
+         return this.blurStrength.onMouseClicked(anchorMouseX, lastClickY, enum2) ? true : this.openFolder.onMouseClicked(anchorMouseX, lastClickY, enum2);
       }
    }
 
    @Override
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
-      this.guiScale.onMouseReleased(var1, var3, var5);
-      this.blurStrength.onMouseReleased(var1, var3, var5);
-      return super.onMouseReleased(var1, var3, var5);
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+      this.guiScale.onMouseReleased(x, y, enum2);
+      this.blurStrength.onMouseReleased(x, y, enum2);
+      return super.onMouseReleased(x, y, enum2);
    }
 
    public void toggleExpanded() {
@@ -319,33 +319,33 @@ public class ClientPanel extends Panel {
       return this.animationVisible.getValue();
    }
 
-   public void safe(JsonObject var1) {
-      var1.addProperty("expanded", this.expanded);
-      this.guiScale.getSetting().safe(var1);
-      this.blurStrength.getSetting().safe(var1);
-      this.renderDescription.getSetting().safe(var1);
-      this.renderIcon.getSetting().safe(var1);
+   public void safe(JsonObject json) {
+      json.addProperty("expanded", this.expanded);
+      this.guiScale.getSetting().safe(json);
+      this.blurStrength.getSetting().safe(json);
+      this.renderDescription.getSetting().safe(json);
+      this.renderIcon.getSetting().safe(json);
    }
 
-   public void load(JsonObject var1) {
-      if (var1.has("expanded")) {
-         this.expanded = var1.get("expanded").getAsBoolean();
+   public void load(JsonObject jsonObject) {
+      if (jsonObject.has("expanded")) {
+         this.expanded = jsonObject.get("expanded").getAsBoolean();
       }
 
-      if (var1.has(this.guiScale.getSetting().getKey())) {
-         this.guiScale.getSetting().load(var1);
+      if (jsonObject.has(this.guiScale.getSetting().getKey())) {
+         this.guiScale.getSetting().load(jsonObject);
       }
 
-      if (var1.has(this.blurStrength.getSetting().getKey())) {
-         this.blurStrength.getSetting().load(var1);
+      if (jsonObject.has(this.blurStrength.getSetting().getKey())) {
+         this.blurStrength.getSetting().load(jsonObject);
       }
 
-      if (var1.has(this.renderDescription.getSetting().getKey())) {
-         this.renderDescription.getSetting().load(var1);
+      if (jsonObject.has(this.renderDescription.getSetting().getKey())) {
+         this.renderDescription.getSetting().load(jsonObject);
       }
 
-      if (var1.has(this.renderIcon.getSetting().getKey())) {
-         this.renderIcon.getSetting().load(var1);
+      if (jsonObject.has(this.renderIcon.getSetting().getKey())) {
+         this.renderIcon.getSetting().load(jsonObject);
       }
    }
 
@@ -395,7 +395,7 @@ public class ClientPanel extends Panel {
    }
 
    @Generated
-   public void setExpanded(boolean var1) {
-      this.expanded = var1;
+   public void setExpanded(boolean expanded) {
+      this.expanded = expanded;
    }
 }

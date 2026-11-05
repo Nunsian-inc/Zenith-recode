@@ -35,14 +35,14 @@ public final class AirStuckModule extends Module {
    }
 
    @EventTarget
-   public void method1577(PlayerMoveEvent var1) {
+   public void method1577(PlayerMoveEvent event) {
       if (this.method1581()) {
-         var1.setVec3d(Vec3.ZERO);
+         event.setVec3d(Vec3.ZERO);
       }
    }
 
    @EventTarget
-   public void onTick(TickEvent var1) {
+   public void onTick(TickEvent event) {
       if (mc.player != null) {
          if (!this.method1581()) {
             this.frozen = false;
@@ -60,27 +60,27 @@ public final class AirStuckModule extends Module {
    }
 
    @EventTarget
-   public void method1578(PlayerTickEvent var1) {
+   public void method1578(PlayerTickEvent event) {
       if (mc.player != null && this.frozen && this.flag && this.method1581()) {
          mc.player.setOnGround(true);
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (mc.player != null && this.method1581()) {
          if (this.method1580()) {
-            if (var1.getPacket3() instanceof ServerboundMovePlayerPacket) {
-               var1.setCancelled(true);
+            if (event.getPacket3() instanceof ServerboundMovePlayerPacket) {
+               event.setCancelled(true);
             }
-         } else if (var1.getPacket3() instanceof Pos || var1.getPacket3() instanceof PosRot || var1.getPacket3() instanceof StatusOnly) {
-            var1.setCancelled(true);
+         } else if (event.getPacket3() instanceof Pos || event.getPacket3() instanceof PosRot || event.getPacket3() instanceof StatusOnly) {
+            event.setCancelled(true);
          }
       }
    }
 
    @EventTarget(0)
-   public void method1579(UpdateEvent var1) {
+   public void method1579(UpdateEvent event) {
       if (mc.player != null && !this.method1580() && this.method1581()) {
          if (Math.abs(zenith.getRotationManager().method7844().getFloatValue() - mc.player.yRotLast) != 0.0F
             || Math.abs(zenith.getRotationManager().method7844().getFloatValue2() - mc.player.xRotLast) != 0.0F) {

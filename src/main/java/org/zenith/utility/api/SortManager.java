@@ -36,32 +36,32 @@ public final class SortManager {
       return List.copyOf(this.items);
    }
 
-   public SortManager.Entry2 method7003(String var1) {
-      return var1 == null ? null : this.items.stream().filter(var1x -> var1x.getName().equalsIgnoreCase(var1)).findFirst().orElse(null);
+   public SortManager.Entry2 method7003(String string) {
+      return string == null ? null : this.items.stream().filter(var1x -> var1x.getName().equalsIgnoreCase(string)).findFirst().orElse(null);
    }
 
-   public boolean method7004(String var1, Collection<SortManager.Entry> var2) {
-      var var3 = new ArrayList<>(this.items);
-      this.items.removeIf(var1x -> var1x.getName().equalsIgnoreCase(var1));
-      this.items.add(new SortManager.Entry2(var1, System.currentTimeMillis(), var2));
+   public boolean method7004(String activeLayoutName, Collection<SortManager.Entry> entries) {
+      var entry2s = new ArrayList<>(this.items);
+      this.items.removeIf(var1x -> var1x.getName().equalsIgnoreCase(activeLayoutName));
+      this.items.add(new SortManager.Entry2(activeLayoutName, System.currentTimeMillis(), entries));
       if (this.method7006()) {
          return true;
       } else {
          this.items.clear();
-         this.items.addAll(var3);
+         this.items.addAll(entry2s);
          return false;
       }
    }
 
-   public boolean method7005(String var1) {
-      var var2 = new ArrayList<>(this.items);
-      if (!this.items.removeIf(var1x -> var1x.getName().equalsIgnoreCase(var1))) {
+   public boolean method7005(String string) {
+      var entry2s = new ArrayList<>(this.items);
+      if (!this.items.removeIf(var1x -> var1x.getName().equalsIgnoreCase(string))) {
          return false;
       } else if (this.method7006()) {
          return true;
       } else {
          this.items.clear();
-         this.items.addAll(var2);
+         this.items.addAll(entry2s);
          return false;
       }
    }
@@ -70,43 +70,43 @@ public final class SortManager {
       this.items.clear();
       if (Files.isRegularFile(this.path)) {
          try {
-            String var1 = Files.readString(this.path, StandardCharsets.UTF_8);
-            if (var1.isBlank()) {
+            String string = Files.readString(this.path, StandardCharsets.UTF_8);
+            if (string.isBlank()) {
                return;
             }
 
-            List<SortManager.Entry2> var2 = (List)gson.fromJson(var1, type);
-            if (var2 == null) {
+            List<SortManager.Entry2> entry2s = (List)gson.fromJson(string, type);
+            if (entry2s == null) {
                return;
             }
 
-            for (SortManager.Entry2 var4 : var2) {
-               if (var4 != null && var4.method7010()) {
-                  this.items.add(var4);
+            for (SortManager.Entry2 entry2 : entry2s) {
+               if (entry2 != null && entry2.method7010()) {
+                  this.items.add(entry2);
                }
             }
-         } catch (Exception var5) {
-            logger.warn("Не удалось загрузить раскладки сортировки из {}", this.path, var5);
+         } catch (Exception e) {
+            logger.warn("Не удалось загрузить раскладки сортировки из {}", this.path, e);
          }
       }
    }
 
    private boolean method7006() {
-      Path var1 = this.path.resolveSibling(this.path.getFileName() + ".tmp");
+      Path sibling = this.path.resolveSibling(this.path.getFileName() + ".tmp");
 
       try {
          Files.createDirectories(this.path.getParent());
-         Files.writeString(var1, gson.toJson(this.items), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+         Files.writeString(sibling, gson.toJson(this.items), StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
          try {
-            Files.move(var1, this.path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-         } catch (AtomicMoveNotSupportedException var3) {
-            Files.move(var1, this.path, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(sibling, this.path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+         } catch (AtomicMoveNotSupportedException e) {
+            Files.move(sibling, this.path, StandardCopyOption.REPLACE_EXISTING);
          }
 
          return true;
-      } catch (IOException var4) {
-         logger.warn("Не удалось сохранить раскладки сортировки в {}", this.path, var4);
+      } catch (IOException e) {
+         logger.warn("Не удалось сохранить раскладки сортировки в {}", this.path, e);
          return false;
       }
    }
@@ -117,11 +117,11 @@ public final class SortManager {
       private boolean flag;
       private Set<String> items;
 
-      public Entry(int var1, String var2, boolean var3, Collection<String> var4) {
-         this.slot = var1;
-         this.text = var2;
-         this.flag = var3;
-         this.items = new LinkedHashSet<>(var4);
+      public Entry(int slot, String text, boolean flag, Collection<String> customDataKeys) {
+         this.slot = slot;
+         this.text = text;
+         this.flag = flag;
+         this.items = new LinkedHashSet<>(customDataKeys);
       }
 
       public int getSlot() {
@@ -160,10 +160,10 @@ public final class SortManager {
       private long longValue;
       private List<SortManager.Entry> items;
 
-      private Entry2(String var1, long var2, Collection<SortManager.Entry> var4) {
-         this.name = var1;
-         this.longValue = var2;
-         this.items = new ArrayList<>(var4);
+      private Entry2(String name, long longValue, Collection<SortManager.Entry> entries) {
+         this.name = name;
+         this.longValue = longValue;
+         this.items = new ArrayList<>(entries);
       }
 
       public String getName() {
@@ -183,7 +183,7 @@ public final class SortManager {
             if (this.items == null) {
                this.items = new ArrayList<>();
             } else {
-               this.items.removeIf(var0 -> var0 == null || !var0.method7008());
+               this.items.removeIf(entry -> entry == null || !entry.method7008());
             }
 
             return true;

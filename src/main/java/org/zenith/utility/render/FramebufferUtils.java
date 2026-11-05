@@ -35,54 +35,54 @@ public final class FramebufferUtils {
          return;
       }
 
-      GlCommandEncoderAccessor var0 = (GlCommandEncoderAccessor)(Object)GlBridge.encoder();
-      var0.zenith$setCurrentProgram(null);
-      var0.zenith$setCurrentPipeline(null);
+      GlCommandEncoderAccessor encoder = (GlCommandEncoderAccessor)(Object)GlBridge.encoder();
+      encoder.zenith$setCurrentProgram(null);
+      encoder.zenith$setCurrentPipeline(null);
    }
 
-   public static void method5654(int var0, @Nullable RenderTarget var1) {
-      method5655(var0, var1, -1.0F, -1.0F, 1.0F, 1.0F);
+   public static void method5654(int current, @Nullable RenderTarget renderTarget) {
+      method5655(current, renderTarget, -1.0F, -1.0F, 1.0F, 1.0F);
    }
 
-   public static void method5655(int var0, @Nullable RenderTarget var1, float var2, float var3, float var4, float var5) {
+   public static void method5655(int current, @Nullable RenderTarget renderTarget, float f, float f2, float f3, float f4) {
       RenderSystem.assertOnRenderThread();
       if (!GlBridge.isOpenGl()) {
          return;
       }
 
-      RenderTarget var6 = var1 != null ? var1 : Minecraft.getInstance().gameRenderer.mainRenderTarget();
-      GpuTextureView var7 = var6.getColorTextureView();
-      if (var7 != null) {
-         GpuTextureView var8 = var6.hasDepth() ? var6.getDepthTextureView() : null;
-         int var10 = GlBridge.fbo(var7, var8);
-         GlStateManager._glBindFramebuffer(36160, var10);
-         GlStateManager._viewport(0, 0, var6.width, var6.height);
-         GlStateManager._glUseProgram(var0);
+      RenderTarget mainRenderTarget = renderTarget != null ? renderTarget : Minecraft.getInstance().gameRenderer.mainRenderTarget();
+      GpuTextureView colorTextureView = mainRenderTarget.getColorTextureView();
+      if (colorTextureView != null) {
+         GpuTextureView depthTextureView = mainRenderTarget.hasDepth() ? mainRenderTarget.getDepthTextureView() : null;
+         int fbo = GlBridge.fbo(colorTextureView, depthTextureView);
+         GlStateManager._glBindFramebuffer(36160, fbo);
+         GlStateManager._viewport(0, 0, mainRenderTarget.width, mainRenderTarget.height);
+         GlStateManager._glUseProgram(current);
          method5656(RenderState.method1904());
          method5657();
          method5658();
          method5659();
          GlStateManager._glBindVertexArray(intValue);
          GlStateManager._glBindBuffer(34962, intValue2);
-         MemoryStack var11 = MemoryStack.stackPush();
+         MemoryStack stackPush = MemoryStack.stackPush();
 
          try {
-            FloatBuffer var12 = var11.floats(new float[]{var2, var3, 0.0F, var4, var3, 0.0F, var2, var5, 0.0F, var4, var5, 0.0F});
-            GL15.glBufferSubData(34962, 0L, var12);
-         } catch (Throwable var15) {
-            if (var11 != null) {
+            FloatBuffer floats = stackPush.floats(new float[]{f, f2, 0.0F, f3, f2, 0.0F, f, f4, 0.0F, f3, f4, 0.0F});
+            GL15.glBufferSubData(34962, 0L, floats);
+         } catch (Throwable e) {
+            if (stackPush != null) {
                try {
-                  var11.close();
-               } catch (Throwable var14) {
-                  var15.addSuppressed(var14);
+                  stackPush.close();
+               } catch (Throwable ex) {
+                  e.addSuppressed(ex);
                }
             }
 
-            throw var15;
+            throw e;
          }
 
-         if (var11 != null) {
-            var11.close();
+         if (stackPush != null) {
+            stackPush.close();
          }
 
          GL11.glDrawArrays(5, 0, 4);
@@ -93,57 +93,57 @@ public final class FramebufferUtils {
       }
    }
 
-   private static void method5656(RenderState.Data2 var0) {
-      if (var0.isFlag()) {
+   private static void method5656(RenderState.Data2 data2) {
+      if (data2.isFlag()) {
          GlStateManager._enableBlend(0);
          GlStateManager._blendFuncSeparate(
-            GlConst.toGl(var0.getSourceFactor()),
-            GlConst.toGl(var0.getDestFactor()),
-            GlConst.toGl(var0.getSourceFactor2()),
-            GlConst.toGl(var0.getDestFactor2())
+            GlConst.toGl(data2.getSourceFactor()),
+            GlConst.toGl(data2.getDestFactor()),
+            GlConst.toGl(data2.getSourceFactor2()),
+            GlConst.toGl(data2.getDestFactor2())
          );
       } else {
          GlStateManager._disableBlend(0);
       }
 
-      if (var0.isFlag2()) {
+      if (data2.isFlag2()) {
          GlStateManager._enableCull();
       } else {
          GlStateManager._disableCull();
       }
 
-      if (var0.getDepthTestFunction() != CompareOp.ALWAYS_PASS) {
+      if (data2.getDepthTestFunction() != CompareOp.ALWAYS_PASS) {
          GlStateManager._enableDepthTest();
-         GlStateManager._depthFunc(GlConst.toGl(var0.getDepthTestFunction()));
+         GlStateManager._depthFunc(GlConst.toGl(data2.getDepthTestFunction()));
       } else {
          GlStateManager._disableDepthTest();
       }
 
-      GlStateManager._depthMask(var0.isFlag3());
-      boolean var1 = RenderState.isFlag5();
-      GlStateManager._colorMask((var1 ? 7 : 0) | (RenderState.isFlag6() ? 8 : 0));
+      GlStateManager._depthMask(data2.isFlag3());
+      boolean flag = RenderState.isFlag5();
+      GlStateManager._colorMask((flag ? 7 : 0) | (RenderState.isFlag6() ? 8 : 0));
       GlStateManager._disablePolygonOffset();
       GlStateManager._disableColorLogicOp();
    }
 
    private static void method5657() {
-      ScissorState var0 = RenderSystem.getScissorStateForRenderTypeDraws();
-      if (var0.enabled()) {
+      ScissorState scissorStateForRenderTypeDraws = RenderSystem.getScissorStateForRenderTypeDraws();
+      if (scissorStateForRenderTypeDraws.enabled()) {
          GlStateManager._enableScissorTest();
-         GlStateManager._scissorBox(var0.x(), var0.y(), var0.width(), var0.height());
+         GlStateManager._scissorBox(scissorStateForRenderTypeDraws.x(), scissorStateForRenderTypeDraws.y(), scissorStateForRenderTypeDraws.width(), scissorStateForRenderTypeDraws.height());
       } else {
          GlStateManager._disableScissorTest();
       }
    }
 
    private static void method5658() {
-      for (int var0 = 0; var0 < 8; var0++) {
-         GpuTextureView var1 = RenderState.method1894(var0);
-         if (var1 != null) {
-            GlStateManager._activeTexture(33984 + var0);
-            GlStateManager._bindTexture(((GlTexture)var1.texture()).glId());
-            GlSampler var2 = (GlSampler)RenderState.method1896(var0);
-            GL33.glBindSampler(var0, var2.getId());
+      for (int i = 0; i < 8; i++) {
+         GpuTextureView gpuTextureView = RenderState.method1894(i);
+         if (gpuTextureView != null) {
+            GlStateManager._activeTexture(33984 + i);
+            GlStateManager._bindTexture(((GlTexture)gpuTextureView.texture()).glId());
+            GlSampler glSampler = (GlSampler)RenderState.method1896(i);
+            GL33.glBindSampler(i, glSampler.getId());
          }
       }
 

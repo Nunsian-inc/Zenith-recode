@@ -9,13 +9,13 @@ public class ChatReceiveEvent extends CancellableEvent {
    private boolean flag;
    private boolean flag2;
 
-   public ChatReceiveEvent(Component var1) {
-      this.text = var1;
+   public ChatReceiveEvent(Component text) {
+      this.text = text;
    }
 
-   public void method7858(Component var1) {
+   public void method7858(Component text) {
       this.flag = true;
-      this.text = var1;
+      this.text = text;
       super.cancel();
    }
 
@@ -24,9 +24,9 @@ public class ChatReceiveEvent extends CancellableEvent {
    }
 
    @Override
-   public void setCancelled(boolean var1) {
-      super.setCancelled(var1);
-      this.flag2 = var1;
+   public void setCancelled(boolean cancelled) {
+      super.setCancelled(cancelled);
+      this.flag2 = cancelled;
    }
 
    @Override

@@ -63,20 +63,20 @@ public final class ReachV3Module extends Module {
          this.queue.clear();
       }
 
-      ReachV3Module.Entry var1;
-      while ((var1 = this.queue.poll()) != null) {
-         this.method5536(var1);
+      ReachV3Module.Entry entry;
+      while ((entry = this.queue.poll()) != null) {
+         this.method5536(entry);
       }
 
       this.method5537();
    }
 
-   private void method5536(ReachV3Module.Entry var1) {
+   private void method5536(ReachV3Module.Entry entry) {
       try {
-         var1.getPacket().handle(mc.getConnection());
-      } catch (ClassCastException var3) {
-      } catch (Throwable var4) {
-         var4.printStackTrace();
+         entry.getPacket().handle(mc.getConnection());
+      } catch (ClassCastException e) {
+      } catch (Throwable e) {
+         e.printStackTrace();
       }
    }
 
@@ -87,50 +87,50 @@ public final class ReachV3Module extends Module {
       this.vec3d2 = null;
    }
 
-   private void method5538(LivingEntity var1) {
-      Vec3 var2 = var1.getPositionCodec().getBase();
+   private void method5538(LivingEntity livingEntity) {
+      Vec3 base = livingEntity.getPositionCodec().getBase();
 
-      for (ReachV3Module.Entry var4 : this.queue) {
-         Vec3 var5 = this.method5539(var4.getPacket(), var1, var2);
-         if (var5 != null) {
-            var2 = var5;
+      for (ReachV3Module.Entry entry : this.queue) {
+         Vec3 vec = this.method5539(entry.getPacket(), livingEntity, base);
+         if (vec != null) {
+            base = vec;
          }
       }
 
-      this.vec3d = var2;
-      this.vec3d2 = var2;
-      this.intValue = var1.getId();
+      this.vec3d = base;
+      this.vec3d2 = base;
+      this.intValue = livingEntity.getId();
    }
 
    // 26.3: move deltas are a VecDelta decoded against a base position (was xa/ya/za / 4096)
-   private static Vec3 zenith$decode(Vec3 var0, ClientboundMoveEntityPacket var1) {
-      if (!var1.hasPosition()) {
-         return var0;
+   private static Vec3 zenith$decode(Vec3 base, ClientboundMoveEntityPacket moveEntityPacket) {
+      if (!moveEntityPacket.hasPosition()) {
+         return base;
       }
 
-      net.minecraft.network.protocol.game.VecDeltaCodec var2 = new net.minecraft.network.protocol.game.VecDeltaCodec();
-      var2.setBase(var0);
-      return var1.getPositionDelta().decode(var2).endPosition();
+      net.minecraft.network.protocol.game.VecDeltaCodec vecDeltaCodec = new net.minecraft.network.protocol.game.VecDeltaCodec();
+      vecDeltaCodec.setBase(base);
+      return moveEntityPacket.getPositionDelta().decode(vecDeltaCodec).endPosition();
    }
 
-   private Vec3 method5539(Packet<?> var1, Entity var2, Vec3 var3) {
-      int var4 = var2.getId();
-      if (var1 instanceof ClientboundTeleportEntityPacket var5 && var5.id() == var4) {
-         return var5.change().position();
-      } else if (var1 instanceof ClientboundEntityPositionSyncPacket var6 && var6.id() == var4) {
-         return var6.position().endPosition();
+   private Vec3 method5539(Packet<?> packet, Entity entity, Vec3 base) {
+      int id = entity.getId();
+      if (packet instanceof ClientboundTeleportEntityPacket teleportEntityPacket && teleportEntityPacket.id() == id) {
+         return teleportEntityPacket.change().position();
+      } else if (packet instanceof ClientboundEntityPositionSyncPacket positionSyncPacket && positionSyncPacket.id() == id) {
+         return positionSyncPacket.position().endPosition();
       } else {
-         return var1 instanceof ClientboundMoveEntityPacket var7 && var7.entityId == var4
-            ? zenith$decode(var3, var7)
+         return packet instanceof ClientboundMoveEntityPacket moveEntityPacket && moveEntityPacket.entityId == id
+            ? zenith$decode(base, moveEntityPacket)
             : null;
       }
    }
 
-   public void method5540(Vec3 var1) {
-      if (var1 != null && !this.queue.isEmpty()) {
-         for (ReachV3Module.Entry var3 : this.queue) {
-            var3.setFlag(true);
-            if (var3.getVec3d() != null && var3.getVec3d().equals(var1)) {
+   public void method5540(Vec3 vec3d) {
+      if (vec3d != null && !this.queue.isEmpty()) {
+         for (ReachV3Module.Entry entry : this.queue) {
+            entry.setFlag(true);
+            if (entry.getVec3d() != null && entry.getVec3d().equals(vec3d)) {
                break;
             }
          }
@@ -138,17 +138,17 @@ public final class ReachV3Module extends Module {
    }
 
    @EventTarget
-   public void method5541(UpdateEvent var1) {
-      LivingEntity var2 = this.method5542();
-      if (var2 == null) {
+   public void method5541(UpdateEvent event) {
+      LivingEntity livingEntity = this.method5542();
+      if (livingEntity == null) {
          this.method5537();
       } else {
-         if (this.vec3d == null || var2.getId() != this.intValue || this.stopWatch.method7546(1000L)) {
-            this.method5538(var2);
+         if (this.vec3d == null || livingEntity.getId() != this.intValue || this.stopWatch.method7546(1000L)) {
+            this.method5538(livingEntity);
          }
 
-         Vec3 var3 = this.vec3d;
-         this.box = var3 != null ? var2.dimensions.makeBoundingBox(var3) : null;
+         Vec3 vec3d = this.vec3d;
+         this.box = vec3d != null ? livingEntity.dimensions.makeBoundingBox(vec3d) : null;
       }
    }
 
@@ -157,132 +157,132 @@ public final class ReachV3Module extends Module {
    }
 
    @EventTarget
-   public void method5543(PlayerTickEvent var1) {
-      LivingEntity var2 = this.method5542();
-      if (mc.player != null && var2 != null) {
-         int var3 = var2.getId();
+   public void method5543(PlayerTickEvent event) {
+      LivingEntity livingEntity = this.method5542();
+      if (mc.player != null && livingEntity != null) {
+         int id = livingEntity.getId();
          mc.player.getEyePosition(1.0F);
          mc.player.getBoundingBox();
-         ReachV3Module.Entry var7 = null;
-         int var8 = 0;
+         ReachV3Module.Entry entry = null;
+         int n = 0;
 
-         for (ReachV3Module.Entry var10 : this.queue) {
-            if (var10.getVec3d() != null && var10.getIntValue() == var3 && var2.dimensions.makeBoundingBox(var10.getVec3d()).intersects(mc.player.getBoundingBox())) {
-               var7 = var10;
-               if (var8 > 0) {
+         for (ReachV3Module.Entry entry2 : this.queue) {
+            if (entry2.getVec3d() != null && entry2.getIntValue() == id && livingEntity.dimensions.makeBoundingBox(entry2.getVec3d()).intersects(mc.player.getBoundingBox())) {
+               entry = entry2;
+               if (n > 0) {
                   break;
                }
 
-               var8++;
+               n++;
             }
          }
 
-         ReachV3Module.Entry var6;
-         if (var7 != null) {
-            var6 = var7;
+         ReachV3Module.Entry entry2;
+         if (entry != null) {
+            entry2 = entry;
          } else {
-            double var16 = Double.POSITIVE_INFINITY;
-            ReachV3Module.Entry var11 = null;
+            double d = Double.POSITIVE_INFINITY;
+            ReachV3Module.Entry entry3 = null;
 
-            for (ReachV3Module.Entry var13 : this.queue) {
-               double var14;
-               if (var13.getVec3d() != null && var13.getIntValue() == var3 && (var14 = mc.player.distanceToSqr(var13.vec3d)) < var16) {
-                  var16 = var14;
-                  var11 = var13;
+            for (ReachV3Module.Entry entry4 : this.queue) {
+               double d2;
+               if (entry4.getVec3d() != null && entry4.getIntValue() == id && (d2 = mc.player.distanceToSqr(entry4.vec3d)) < d) {
+                  d = d2;
+                  entry3 = entry4;
                }
             }
 
-            var6 = var11;
+            entry2 = entry3;
          }
 
-         Vec3 var17 = var6 != null ? var6.getVec3d() : null;
-         this.vec3d2 = var17;
-         this.method5540(var17);
+         Vec3 vec3d = entry2 != null ? entry2.getVec3d() : null;
+         this.vec3d2 = vec3d;
+         this.method5540(vec3d);
       } else {
          this.vec3d2 = null;
       }
    }
 
    @EventTarget
-   public void method5544(WorldRenderEvent var1) {
+   public void method5544(WorldRenderEvent event) {
       if (this.box != null && this.renderBox.isEnabled()) {
          GlowUtil.method2230(this.box, -1, 1.0F);
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
          if (this.stopWatch == null) {
             this.stopWatch = new StopWatch();
          }
 
          try {
-            Packet var2 = var1.getPacket3();
-            if (var2 instanceof ClientboundDisconnectPacket || var2 instanceof ClientboundPlayerPositionPacket) {
+            Packet packet3 = event.getPacket3();
+            if (packet3 instanceof ClientboundDisconnectPacket || packet3 instanceof ClientboundPlayerPositionPacket) {
                this.stopWatch2.reset();
                this.stopWatch3.reset();
             }
 
-            LivingEntity var3 = mc.level == null ? null : this.method5542();
-            Vec3 var4 = null;
-            if (var3 != null) {
-               if (var3.getId() != this.intValue || this.vec3d == null) {
-                  this.method5538(var3);
+            LivingEntity livingEntity = mc.level == null ? null : this.method5542();
+            Vec3 vec3d = null;
+            if (livingEntity != null) {
+               if (livingEntity.getId() != this.intValue || this.vec3d == null) {
+                  this.method5538(livingEntity);
                }
 
-               Vec3 var5 = this.vec3d;
-               Vec3 var6 = var5 == null ? null : this.method5539(var2, var3, var5);
-               if (var6 != null) {
-                  this.vec3d = var6;
-                  var4 = var6;
+               Vec3 base = this.vec3d;
+               Vec3 vec = base == null ? null : this.method5539(packet3, livingEntity, base);
+               if (vec != null) {
+                  this.vec3d = vec;
+                  vec3d = vec;
                   this.stopWatch.reset();
                }
             }
 
-            if (this.queue.isEmpty() && (!this.stopWatch2.method7546(200L) || mc.level == null || var3 == null || !this.stopWatch3.method7546(200L))) {
+            if (this.queue.isEmpty() && (!this.stopWatch2.method7546(200L) || mc.level == null || livingEntity == null || !this.stopWatch3.method7546(200L))) {
                return;
             }
 
-            if (var2 instanceof ServerboundChatPacket
-               || var2 instanceof ClientboundSetHealthPacket
-               || var2 instanceof ClientboundSoundPacket
-               || var2 instanceof ClientboundSystemChatPacket
-               || var2 instanceof ServerboundChatCommandPacket) {
+            if (packet3 instanceof ServerboundChatPacket
+               || packet3 instanceof ClientboundSetHealthPacket
+               || packet3 instanceof ClientboundSoundPacket
+               || packet3 instanceof ClientboundSystemChatPacket
+               || packet3 instanceof ServerboundChatCommandPacket) {
                return;
             }
 
-            var1.cancel();
-            this.queue.add(new ReachV3Module.Entry(var2, var4, var4 != null ? var3.getId() : -32768 << 16 | 0));
+            event.cancel();
+            this.queue.add(new ReachV3Module.Entry(packet3, vec3d, vec3d != null ? livingEntity.getId() : -32768 << 16 | 0));
             if (!this.isEnabled()) {
                mc.execute(this::releaseAll);
             }
-         } catch (Exception var7) {
-            var7.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
 
    @EventTarget
-   public void method5545(PacketProcessEndEvent var1) {
-      long var2 = System.currentTimeMillis();
+   public void method5545(PacketProcessEndEvent event) {
+      long now = System.currentTimeMillis();
       if (mc.level == null || mc.player == null) {
          this.queue.clear();
       }
 
       try {
-         this.queue.removeIf(var3 -> {
-            boolean var4 = (float)(var2 - var3.getTime()) >= this.delay.getValue3();
-            boolean var5x = var3.isFlag();
-            if (!var4 && this.stopWatch2.method7546(200L) && !var5x && mc.level != null && this.method5542() != null) {
+         this.queue.removeIf(entry -> {
+            boolean flag = (float)(now - entry.getTime()) >= this.delay.getValue3();
+            boolean var5x = entry.isFlag();
+            if (!flag && this.stopWatch2.method7546(200L) && !var5x && mc.level != null && this.method5542() != null) {
                return false;
             } else {
-               this.method5536(var3);
+               this.method5536(entry);
                return true;
             }
          });
-      } catch (Exception var5) {
-         var5.printStackTrace();
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    }
 
@@ -292,8 +292,8 @@ public final class ReachV3Module extends Module {
    }
 
    @Generated
-   public void setVec3d(Vec3 var1) {
-      this.vec3d = var1;
+   public void setVec3d(Vec3 vec3d) {
+      this.vec3d = vec3d;
    }
 
    @Generated
@@ -308,15 +308,15 @@ public final class ReachV3Module extends Module {
       private final int intValue;
       private boolean flag;
 
-      public Entry(Packet<?> var1, Vec3 var2) {
-         this(var1, var2, Integer.MIN_VALUE);
+      public Entry(Packet<?> packet3, Vec3 vec) {
+         this(packet3, vec, Integer.MIN_VALUE);
       }
 
-      public Entry(Packet<?> var1, Vec3 var2, int var3) {
-         this.packet = var1;
+      public Entry(Packet<?> packet, Vec3 vec3d, int intValue) {
+         this.packet = packet;
          this.longValue = System.currentTimeMillis();
-         this.vec3d = var2;
-         this.intValue = var3;
+         this.vec3d = vec3d;
+         this.intValue = intValue;
          this.flag = false;
       }
 
@@ -350,8 +350,8 @@ public final class ReachV3Module extends Module {
       }
 
       @Generated
-      public void setFlag(boolean var1) {
-         this.flag = var1;
+      public void setFlag(boolean flag) {
+         this.flag = flag;
       }
    }
 }

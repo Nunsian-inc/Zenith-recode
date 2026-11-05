@@ -29,37 +29,37 @@ public final class WardrobeRenderer implements MinecraftAccess {
    private WardrobeRenderer() {
    }
 
-   public static boolean method6687(PlayerModel var0, AvatarRenderState var1) {
-      Wardrobe var2 = Wardrobe.method2488();
-      HoveredData var3 = WardrobeFeatureRenderer.method4445(var1);
-      if (var2 != null && var3 != null) {
-         Class15 var4 = var2.getRegistry().method1427(var3);
-         if (var4 == null) {
+   public static boolean method6687(PlayerModel playerModel, AvatarRenderState state) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      HoveredData hoveredData = WardrobeFeatureRenderer.method4445(state);
+      if (wardrobe != null && hoveredData != null) {
+         Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+         if (class2 == null) {
             return false;
          } else {
-            if (var4.data != null && var4.data.getFloatValues() != null) {
-               float var5 = 1.0F - Math.min(1.0F, var1.walkAnimationSpeed * 2.5F);
-               if (var1.swingAnimation > 0.0F || var1.isUsingItem || var1.isFallFlying || var1.isVisuallySwimming || var1.isPassenger || var1.isCrouching) {
-                  var5 = 0.0F;
+            if (class2.data != null && class2.data.getFloatValues() != null) {
+               float f = 1.0F - Math.min(1.0F, state.walkAnimationSpeed * 2.5F);
+               if (state.swingAnimation > 0.0F || state.isUsingItem || state.isFallFlying || state.isVisuallySwimming || state.isPassenger || state.isCrouching) {
+                  f = 0.0F;
                }
 
-               if (var5 > 0.0F) {
-                  float[] var6 = var4.data.getFloatValues();
-                  ModelPart[] var7 = new ModelPart[]{var0.head, var0.body, var0.rightArm, var0.leftArm, var0.rightLeg, var0.leftLeg};
+               if (f > 0.0F) {
+                  float[] floatValues = class2.data.getFloatValues();
+                  ModelPart[] modelParts = new ModelPart[]{playerModel.head, playerModel.body, playerModel.rightArm, playerModel.leftArm, playerModel.rightLeg, playerModel.leftLeg};
 
-                  for (int var8 = 0; var8 < var7.length; var8++) {
-                     ModelPart var9 = var7[var8];
-                     float var10 = var6[var8 * 3];
-                     float var11 = var6[var8 * 3 + 1];
-                     float var12 = var6[var8 * 3 + 2];
-                     if (var8 == 0) {
-                        var9.xRot += var10 * var5;
-                        var9.yRot += var11 * var5;
-                        var9.zRot += var12 * var5;
-                     } else if (var10 != 0.0F || var11 != 0.0F || var12 != 0.0F) {
-                        var9.xRot = var9.xRot + (var10 - var9.xRot) * var5;
-                        var9.yRot = var9.yRot + (var11 - var9.yRot) * var5;
-                        var9.zRot = var9.zRot + (var12 - var9.zRot) * var5;
+                  for (int i = 0; i < modelParts.length; i++) {
+                     ModelPart modelPart = modelParts[i];
+                     float f2 = floatValues[i * 3];
+                     float f3 = floatValues[i * 3 + 1];
+                     float f4 = floatValues[i * 3 + 2];
+                     if (i == 0) {
+                        modelPart.xRot += f2 * f;
+                        modelPart.yRot += f3 * f;
+                        modelPart.zRot += f4 * f;
+                     } else if (f2 != 0.0F || f3 != 0.0F || f4 != 0.0F) {
+                        modelPart.xRot = modelPart.xRot + (f2 - modelPart.xRot) * f;
+                        modelPart.yRot = modelPart.yRot + (f3 - modelPart.yRot) * f;
+                        modelPart.zRot = modelPart.zRot + (f4 - modelPart.zRot) * f;
                      }
                   }
                }
@@ -72,64 +72,64 @@ public final class WardrobeRenderer implements MinecraftAccess {
       }
    }
 
-   public static boolean method6688(AvatarRenderState var0) {
-      Wardrobe var1 = Wardrobe.method2488();
-      if (var1 != null && !var1.armorOnSkins.isEnabled()) {
-         HoveredData var2 = WardrobeFeatureRenderer.method4445(var0);
-         if (var2 == null) {
+   public static boolean method6688(AvatarRenderState state) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      if (wardrobe != null && !wardrobe.armorOnSkins.isEnabled()) {
+         HoveredData hoveredData = WardrobeFeatureRenderer.method4445(state);
+         if (hoveredData == null) {
             return false;
          } else {
-            Class15 var3 = var1.getRegistry().method1427(var2);
-            return var3 != null && (var3.data == null || var3.data.isFlag());
+            Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+            return class2 != null && (class2.data == null || class2.data.isFlag());
          }
       } else {
          return false;
       }
    }
 
-   public static boolean method6689(AvatarRenderState var0) {
-      Wardrobe var1 = Wardrobe.method2488();
-      if (var1 != null && !var1.armorOnSkins.isEnabled() && !var0.isFallFlying) {
-         var var2 = WardrobeFeatureRenderer.method4444(var0);
-         return var1.method2499(var2, FocusSlotEnum.BACK) != null || var1.method2499(var2, FocusSlotEnum.CAPE) != null || method6688(var0);
+   public static boolean method6689(AvatarRenderState state) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      if (wardrobe != null && !wardrobe.armorOnSkins.isEnabled() && !state.isFallFlying) {
+         var hoveredDatas = WardrobeFeatureRenderer.method4444(state);
+         return wardrobe.method2499(hoveredDatas, FocusSlotEnum.BACK) != null || wardrobe.method2499(hoveredDatas, FocusSlotEnum.CAPE) != null || method6688(state);
       } else {
          return false;
       }
    }
 
    public static boolean method6690(
-      AvatarRenderer var0, PoseStack var1, SubmitNodeCollector var2, int var3, ModelPart var4, boolean var5, boolean var6
+      AvatarRenderer avatarRenderer, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, ModelPart modelPart, boolean flag, boolean flag2
    ) {
-      Wardrobe var7 = Wardrobe.method2488();
-      if (var7 != null && mc.player != null && var7.showSelf.isEnabled()) {
-         if (var0.getModel() instanceof PlayerModel var8) {
-            List<HoveredData> var16 = List.copyOf(var7.method2498(mc.player.getGameProfile().name(), true));
-            HoveredData var10 = var7.method2499(var16, FocusSlotEnum.CHARACTER);
-            int var11 = var4 == var8.rightArm ? Class15.Type.RIGHT_ARM.ordinal() : Class15.Type.LEFT_ARM.ordinal();
-            if (!var6 || var10 != null && method6696(var7, var10, var11)) {
-               if (!var6 && var10 != null) {
+      Wardrobe wardrobe = Wardrobe.method2488();
+      if (wardrobe != null && mc.player != null && wardrobe.showSelf.isEnabled()) {
+         if (avatarRenderer.getModel() instanceof PlayerModel playerModel) {
+            List<HoveredData> hoveredDatas = List.copyOf(wardrobe.method2498(mc.player.getGameProfile().name(), true));
+            HoveredData hoveredData = wardrobe.method2499(hoveredDatas, FocusSlotEnum.CHARACTER);
+            int ordinal = modelPart == playerModel.rightArm ? Class15.Type.RIGHT_ARM.ordinal() : Class15.Type.LEFT_ARM.ordinal();
+            if (!flag2 || hoveredData != null && method6696(wardrobe, hoveredData, ordinal)) {
+               if (!flag2 && hoveredData != null) {
                   return false;
                } else {
-                  boolean var12 = mc.player.getSkin().model() == PlayerModelType.SLIM;
-                  Util3.Entry var13 = Util3.method827(var7, var16, var10, var12, var11, var5);
-                  if (var6) {
-                     var4.resetPose();
-                     var4.visible = true;
-                     var8.leftArm.zRot = -0.1F;
-                     var8.rightArm.zRot = 0.1F;
-                     method6697(var7, var10, var11, var1, var2, var3, var4, false, Util3.Data.INSTANCE);
+                  boolean flag3 = mc.player.getSkin().model() == PlayerModelType.SLIM;
+                  Util3.Entry entry = Util3.method827(wardrobe, hoveredDatas, hoveredData, flag3, ordinal, flag);
+                  if (flag2) {
+                     modelPart.resetPose();
+                     modelPart.visible = true;
+                     playerModel.leftArm.zRot = -0.1F;
+                     playerModel.rightArm.zRot = 0.1F;
+                     method6697(wardrobe, hoveredData, ordinal, poseStack, orderedRenderCommandQueue, lightCoords, modelPart, false, Util3.Data.INSTANCE);
                   }
 
-                  for (HoveredData var15 : var16) {
-                     if (var15 != var10
-                        && Util3.method824(var15.getFocusSlotEnum()) >= 0
-                        && method6696(var7, var15, var11)
-                        && (var10 == null || var15.method1546() == WardrobeCategory.ACCESSORY)) {
-                        method6697(var7, var15, var11, var1, var2, var3, var4, var15.method1546() == WardrobeCategory.ACCESSORY, var13.method845(var15, var11));
+                  for (HoveredData hoveredData2 : hoveredDatas) {
+                     if (hoveredData2 != hoveredData
+                        && Util3.method824(hoveredData2.getFocusSlotEnum()) >= 0
+                        && method6696(wardrobe, hoveredData2, ordinal)
+                        && (hoveredData == null || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
+                        method6697(wardrobe, hoveredData2, ordinal, poseStack, orderedRenderCommandQueue, lightCoords, modelPart, hoveredData2.method1546() == WardrobeCategory.ACCESSORY, entry.method845(hoveredData2, ordinal));
                      }
                   }
 
-                  return var6;
+                  return flag2;
                }
             } else {
                return false;
@@ -142,9 +142,9 @@ public final class WardrobeRenderer implements MinecraftAccess {
       }
    }
 
-   private static void method6691(PoseStack var0, WardrobeRenderer.Data var1) {
-      var1.getModelPart().translateAndRotate(var0);
-      var1.getData().method842(var0);
+   private static void method6691(PoseStack poseStack, WardrobeRenderer.Data data) {
+      data.getModelPart().translateAndRotate(poseStack);
+      data.getData().method842(poseStack);
    }
 
    public static boolean method6692() {
@@ -156,56 +156,56 @@ public final class WardrobeRenderer implements MinecraftAccess {
    }
 
    public static void method6694() {
-      Matrix4fStack var1 = RenderSystem.getModelViewStack();
+      Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
 
-      for (WardrobeRenderer.Data var3 : items) {
-         PoseStack var4 = new PoseStack();
-         var4.last().pose().set(var3.getMatrix4f());
-         var4.last().normal().set(var3.getMatrix3f());
-         method6691(var4, var3);
-         var1.pushMatrix();
+      for (WardrobeRenderer.Data data : items) {
+         PoseStack poseStack = new PoseStack();
+         poseStack.last().pose().set(data.getMatrix4f());
+         poseStack.last().normal().set(data.getMatrix3f());
+         method6691(poseStack, data);
+         modelViewStack.pushMatrix();
 
          try {
-            var1.set(var3.getMatrix4f2());
-            OutlineVertexProvider.method1542(var5 -> BoneMatrices.method4787(
-               var3.getClass15(),
-               var3.getFloatValues(),
-               var3.getIntValue(),
-               var4,
-               var5,
-               var3.getIntValue2(),
+            modelViewStack.set(data.getMatrix4f2());
+            OutlineVertexProvider.method1542(orderedRenderCommandQueue -> BoneMatrices.method4787(
+               data.getClass15(),
+               data.getFloatValues(),
+               data.getIntValue(),
+               poseStack,
+               orderedRenderCommandQueue,
+               data.getIntValue2(),
                OverlayTexture.NO_OVERLAY,
                true,
-               var3.isFlag(),
+               data.isFlag(),
                -1
             ));
          } finally {
-            var1.popMatrix();
+            modelViewStack.popMatrix();
          }
       }
 
       items.clear();
    }
 
-   public static boolean method6695(SubmitNodeCollector var0) {
+   public static boolean method6695(SubmitNodeCollector submitNodeCollector) {
       if (items.isEmpty()) {
          return false;
       } else {
-         for (WardrobeRenderer.Data var2 : items) {
-            PoseStack var3 = new PoseStack();
-            var3.last().pose().set(var2.getMatrix4f());
-            var3.last().normal().set(var2.getMatrix3f());
-            method6691(var3, var2);
+         for (WardrobeRenderer.Data data : items) {
+            PoseStack poseStack = new PoseStack();
+            poseStack.last().pose().set(data.getMatrix4f());
+            poseStack.last().normal().set(data.getMatrix3f());
+            method6691(poseStack, data);
             BoneMatrices.method4787(
-               var2.getClass15(),
-               var2.getFloatValues(),
-               var2.getIntValue(),
-               var3,
-               var0 != null ? var0 : var2.getOrderedRenderCommandQueue(),
-               var2.getIntValue2(),
+               data.getClass15(),
+               data.getFloatValues(),
+               data.getIntValue(),
+               poseStack,
+               submitNodeCollector != null ? submitNodeCollector : data.getOrderedRenderCommandQueue(),
+               data.getIntValue2(),
                OverlayTexture.NO_OVERLAY,
                true,
-               var2.isFlag(),
+               data.isFlag(),
                -1
             );
          }
@@ -215,53 +215,53 @@ public final class WardrobeRenderer implements MinecraftAccess {
       }
    }
 
-   private static boolean method6696(Wardrobe var0, HoveredData var1, int var2) {
-      Class15 var3 = var0.getRegistry().method1427(var1);
-      return var3 != null && var3.method2033(var2);
+   private static boolean method6696(Wardrobe wardrobe, HoveredData hoveredData, int ordinal) {
+      Class15 class2 = wardrobe.getRegistry().method1427(hoveredData);
+      return class2 != null && class2.method2033(ordinal);
    }
 
    private static void method6697(
-      Wardrobe var0, HoveredData var1, int var2, PoseStack var3, SubmitNodeCollector var4, int var5, ModelPart var6, boolean var7, Util3.Data var8
+      Wardrobe wardrobe, HoveredData hoveredData, int ordinal, PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int lightCoords, ModelPart modelPart, boolean flag, Util3.Data data
    ) {
-      Class15 var9 = var0.getRegistry().method1427(var1);
-      AnimationCache.Entry var10 = AnimationCache.method7621(mc.player.getId(), var1, false);
-      float var11 = (mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)) / 20.0F;
-      var10.animationState.method6539(var9, "idle", var11);
-      float[] var12 = var10.class16.method2139(var9, var10.animationState, var11, null);
-      if (var1.method1546() == WardrobeCategory.CHARACTER) {
-         var10.class16.method2140(var9);
+      Class15 key = wardrobe.getRegistry().method1427(hoveredData);
+      AnimationCache.Entry entry = AnimationCache.method7621(mc.player.getId(), hoveredData, false);
+      float floatValue = (mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(true)) / 20.0F;
+      entry.animationState.method6539(key, "idle", floatValue);
+      float[] floats = entry.class16.method2139(key, entry.animationState, floatValue, null);
+      if (hoveredData.method1546() == WardrobeCategory.CHARACTER) {
+         entry.class16.method2140(key);
       }
 
-      if (var7 && ShaderHandModule.INSTANCE != null && ShaderHandModule.INSTANCE.isFlag23()) {
+      if (flag && ShaderHandModule.INSTANCE != null && ShaderHandModule.INSTANCE.isFlag23()) {
          items.add(
             new WardrobeRenderer.Data(
-               var9,
-               (float[])var12.clone(),
-               var2,
-               new Matrix4f(var3.last().pose()),
-               new Matrix3f(var3.last().normal()),
-               var5,
-               var1.getRarity().isFlag(),
-               var4,
+               key,
+               (float[])floats.clone(),
+               ordinal,
+               new Matrix4f(poseStack.last().pose()),
+               new Matrix3f(poseStack.last().normal()),
+               lightCoords,
+               hoveredData.getRarity().isFlag(),
+               orderedRenderCommandQueue,
                new Matrix4f(RenderSystem.getModelViewMatrixCopy()),
-               var6,
-               var8
+               modelPart,
+               data
             )
          );
       } else {
-         boolean var13 = !var7 && var1.method1546() != WardrobeCategory.CHARACTER;
+         boolean flag2 = !flag && hoveredData.method1546() != WardrobeCategory.CHARACTER;
          BoneMatrices.method4791(
-            var9,
-            var12,
-            var2,
-            var3,
-            var4,
-            var5,
+            key,
+            floats,
+            ordinal,
+            poseStack,
+            orderedRenderCommandQueue,
+            lightCoords,
             OverlayTexture.NO_OVERLAY,
-            var1.getRarity().isFlag(),
-            var6,
-            var8 == Util3.Data.INSTANCE ? null : var8::method842,
-            var13
+            hoveredData.getRarity().isFlag(),
+            modelPart,
+            data == Util3.Data.INSTANCE ? null : data::method842,
+            flag2
          );
       }
    }
@@ -341,29 +341,29 @@ public final class WardrobeRenderer implements MinecraftAccess {
       }
 
       private Data(
-         Class15 var1,
-         float[] var2,
-         int var3,
-         Matrix4f var4,
-         Matrix3f var5,
-         int var6,
-         boolean var7,
-         SubmitNodeCollector var8,
-         Matrix4f var9,
-         ModelPart var10,
-         Util3.Data var11
+         Class15 key,
+         float[] floatValues,
+         int intValue,
+         Matrix4f matrix4f,
+         Matrix3f matrix3f,
+         int lightCoords,
+         boolean flag,
+         SubmitNodeCollector orderedRenderCommandQueue,
+         Matrix4f matrix4f2,
+         ModelPart modelPart,
+         Util3.Data data
       ) {
-         this.class15 = var1;
-         this.floatValues = var2;
-         this.intValue = var3;
-         this.matrix4f = var4;
-         this.matrix3f = var5;
-         this.intValue2 = var6;
-         this.flag = var7;
-         this.orderedRenderCommandQueue = var8;
-         this.matrix4f2 = var9;
-         this.modelPart = var10;
-         this.data = var11;
+         this.class15 = key;
+         this.floatValues = floatValues;
+         this.intValue = intValue;
+         this.matrix4f = matrix4f;
+         this.matrix3f = matrix3f;
+         this.intValue2 = lightCoords;
+         this.flag = flag;
+         this.orderedRenderCommandQueue = orderedRenderCommandQueue;
+         this.matrix4f2 = matrix4f2;
+         this.modelPart = modelPart;
+         this.data = data;
       }
 
       public Class15 getClass15() {

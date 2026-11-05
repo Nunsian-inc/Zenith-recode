@@ -23,9 +23,9 @@ public interface MixinBaritoneMovementHelper {
       cancellable = true,
       require = 0
    )
-   private static void zenith$walkThroughWeb(BlockState var0, CallbackInfoReturnable<Ternary> var1) {
-      if (var0.getBlock() == Blocks.COBWEB && zenith$isAutoZamokEnabled()) {
-         var1.setReturnValue(Ternary.a);
+   private static void zenith$walkThroughWeb(BlockState blockState, CallbackInfoReturnable<Ternary> callbackInfoReturnable) {
+      if (blockState.getBlock() == Blocks.COBWEB && zenith$isAutoZamokEnabled()) {
+         callbackInfoReturnable.setReturnValue(Ternary.a);
       }
    }
 
@@ -35,15 +35,15 @@ public interface MixinBaritoneMovementHelper {
       cancellable = true,
       require = 0
    )
-   private static void zenith$walkIntoWeb(BlockState var0, CallbackInfoReturnable<Boolean> var1) {
-      if (var0.getBlock() == Blocks.COBWEB && zenith$isAutoZamokEnabled()) {
-         var1.setReturnValue(false);
+   private static void zenith$walkIntoWeb(BlockState blockState, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      if (blockState.getBlock() == Blocks.COBWEB && zenith$isAutoZamokEnabled()) {
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 
    @Unique
    private static boolean zenith$isAutoZamokEnabled() {
-      Module var0 = Zenith.getInstance().getModuleManager().method2484("AutoZamok");
-      return var0 != null && var0.isEnabled();
+      Module moduleValue = Zenith.getInstance().getModuleManager().method2484("AutoZamok");
+      return moduleValue != null && moduleValue.isEnabled();
    }
 }

@@ -38,14 +38,14 @@ public final class WaterRiseModule extends Module {
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.active()) {
-         if (var1.getPlayerInput().forward()) {
-            var1.method3039(true);
+         if (event.getPlayerInput().forward()) {
+            event.method3039(true);
          }
 
-         if (var1.getPlayerInput().shift()) {
-            var1.method3040(false);
+         if (event.getPlayerInput().shift()) {
+            event.method3040(false);
          }
       }
    }
@@ -78,11 +78,11 @@ public final class WaterRiseModule extends Module {
    }
 
    @EventTarget
-   public void method1745(Event5 var1) {
+   public void method1745(Event5 event) {
       if (this.active()) {
-         float var2 = this.method1741() ? -90.0F : 90.0F;
-         Rotation var3 = new Rotation(mc.player.getYRot(), var2);
-         rotationManager.method7849(new RotationRequest(var3, () -> var3, bcCameraTestnerv.getRotationConfig()), 0, this);
+         float xRot = this.method1741() ? -90.0F : 90.0F;
+         Rotation rotation = new Rotation(mc.player.getYRot(), xRot);
+         rotationManager.method7849(new RotationRequest(rotation, () -> rotation, bcCameraTestnerv.getRotationConfig()), 0, this);
       }
    }
 }

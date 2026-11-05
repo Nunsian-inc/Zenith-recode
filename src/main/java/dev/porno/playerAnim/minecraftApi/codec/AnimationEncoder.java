@@ -8,5 +8,5 @@ import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface AnimationEncoder<T extends IPlayable> {
-   void encode(@NotNull OutputStream var1, @NotNull Identifier var2, @NotNull T var3) throws IOException;
+   void encode(@NotNull OutputStream outputStream, @NotNull Identifier id, @NotNull T value) throws IOException;
 }

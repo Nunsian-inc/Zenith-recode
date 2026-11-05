@@ -21,8 +21,8 @@ public final class MenuSurface {
    private static MainMenuBlurRenderer backgroundBlur;
    private static GpuTextureView menuSource;
 
-   public static void useBackgroundBlur(MainMenuBlurRenderer var0) {
-      backgroundBlur = var0;
+   public static void useBackgroundBlur(MainMenuBlurRenderer mainMenuBlurRenderer) {
+      backgroundBlur = mainMenuBlurRenderer;
    }
 
    public static void clearBackgroundBlur() {
@@ -32,73 +32,73 @@ public final class MenuSurface {
    private MenuSurface() {
    }
 
-   public static void card(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5) {
-      card(var0, var1, var2, var3, var4, var5, MenuTheme.panel(), null);
+   public static void card(MenuDrawContext graphics, float floatValue, float y, float width, float height, float intValue) {
+      card(graphics, floatValue, y, width, height, intValue, MenuTheme.panel(), null);
    }
 
-   public static void plate(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
-      var0.drawRoundedRect(var1, var2, var3, var4, ProxyDotRadiusData.method8069(var5), var6);
+   public static void plate(MenuDrawContext menuDrawContext, float x, float y, float width, float height, float intValue, ZenithColor plate) {
+      menuDrawContext.drawRoundedRect(x, y, width, height, ProxyDotRadiusData.method8069(intValue), plate);
    }
 
-   public static void card(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5, ZenithColor var6, ZenithColor var7) {
-      ProxyDotRadiusData var8 = ProxyDotRadiusData.method8069(var5);
-      blur(var0, var1, var2, var3, var4, var8, 1.0F);
-      var0.drawRoundedRect(var1, var2, var3, var4, var8, var6);
-      if (var7 != null) {
-         var0.drawRoundedBorder(var1, var2, var3, var4, -0.1F, var8, var7);
+   public static void card(MenuDrawContext graphics, float floatValue, float y, float width, float height, float intValue, ZenithColor panel, ZenithColor border) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(intValue);
+      blur(graphics, floatValue, y, width, height, headerRadius, 1.0F);
+      graphics.drawRoundedRect(floatValue, y, width, height, headerRadius, panel);
+      if (border != null) {
+         graphics.drawRoundedBorder(floatValue, y, width, height, -0.1F, headerRadius, border);
       }
    }
 
-   public static void setMenuSource(GpuTextureView var0) {
-      menuSource = var0;
+   public static void setMenuSource(GpuTextureView texture) {
+      menuSource = texture;
    }
 
-   public static void blur(MenuDrawContext var0, float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, float var6) {
-      if (!(var6 <= 0.01F) && !(var3 <= 0.0F) && !(var4 <= 0.0F)) {
+   public static void blur(MenuDrawContext graphics, float floatValue, float y, float width, float height, ProxyDotRadiusData headerRadius, float previewAlpha) {
+      if (!(previewAlpha <= 0.01F) && !(width <= 0.0F) && !(height <= 0.0F)) {
          MsdfRenderer.flushBatch();
-         ZenithColor var7 = ZenithColor.INSTANCE.method7294(var6);
-         Matrix4f var8 = MatrixUtils.method664(var0.pose());
+         ZenithColor zenithColor = ZenithColor.INSTANCE.method7294(previewAlpha);
+         Matrix4f pose = MatrixUtils.method664(graphics.pose());
          if (Minecraft.getInstance().level == null && menuSource != null) {
             RenderShaders.gpuTextureView = menuSource;
 
             try {
-               RenderShaders.method5264(var8, var1, var2, var3, var4, 10.0F, 0.08F, var5, var7);
+               RenderShaders.method5264(pose, floatValue, y, width, height, 10.0F, 0.08F, headerRadius, zenithColor);
             } finally {
                RenderShaders.gpuTextureView = null;
             }
          } else if (backgroundBlur != null) {
-            backgroundBlur.render(var8, var1, var2, var3, var4, var5, var7);
+            backgroundBlur.render(pose, floatValue, y, width, height, headerRadius, zenithColor);
          } else {
-            KawaseBlur var9 = Zenith.getInstance().getKawaseBlur();
-            if (var9 != null) {
+            KawaseBlur kawaseBlur = Zenith.getInstance().getKawaseBlur();
+            if (kawaseBlur != null) {
                if (Minecraft.getInstance().level != null) {
-                  var9.method7353(var8, var1, var2, var3, var4, var5, var7);
+                  kawaseBlur.method7353(pose, floatValue, y, width, height, headerRadius, zenithColor);
                } else {
-                  var9.method7355(var8, var1, var2, var3, var4, var5, var7);
+                  kawaseBlur.method7355(pose, floatValue, y, width, height, headerRadius, zenithColor);
                }
             }
          }
       }
    }
 
-   public static void backdrop(MenuDrawContext var0, float var1, float var2, float var3) {
-      blur(var0, 0.0F, 0.0F, var1, var2, ProxyDotRadiusData.INSTANCE, 1.0F);
-      if (var3 > 0.0F) {
-         var0.drawRect(0.0F, 0.0F, var1, var2, ZenithColor.INSTANCE2.method7294(var3));
+   public static void backdrop(MenuDrawContext graphics, float guiWidth, float guiHeight, float previewAlpha) {
+      blur(graphics, 0.0F, 0.0F, guiWidth, guiHeight, ProxyDotRadiusData.INSTANCE, 1.0F);
+      if (previewAlpha > 0.0F) {
+         graphics.drawRect(0.0F, 0.0F, guiWidth, guiHeight, ZenithColor.INSTANCE2.method7294(previewAlpha));
       }
    }
 
-   public static void glow(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5, ZenithColor var6, float var7) {
-      if (!(var7 <= 0.01F)) {
+   public static void glow(MenuDrawContext graphics, float x, float y, float width, float height, float radius, ZenithColor accent, float previewAlpha) {
+      if (!(previewAlpha <= 0.01F)) {
          ShapeRenderer.method7167(
-            MatrixUtils.method664(var0.pose()),
-            var1,
-            var2,
-            var3,
-            var4,
+            MatrixUtils.method664(graphics.pose()),
+            x,
+            y,
+            width,
+            height,
             (int)MenuTheme.px(24.0F),
-            ProxyDotRadiusData.method8069(var5),
-            GlowColor.method8097(var6.method7294(var7))
+            ProxyDotRadiusData.method8069(radius),
+            GlowColor.method8097(accent.method7294(previewAlpha))
          );
       }
    }

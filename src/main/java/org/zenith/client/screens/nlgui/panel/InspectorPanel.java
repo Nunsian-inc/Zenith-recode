@@ -62,15 +62,15 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    private BoundsData contentBounds;
    private final Scrollbar scrollbar = new Scrollbar();
 
-   public void setActive(boolean var1) {
-      this.active = var1;
-      if (!var1) {
+   public void setActive(boolean active) {
+      this.active = active;
+      if (!active) {
          this.resetHeaderBind();
       }
    }
 
-   public boolean isShowing(Module var1) {
-      return this.module != null && this.module == var1;
+   public boolean isShowing(Module moduleValue) {
+      return this.module != null && this.module == moduleValue;
    }
 
    public boolean isOpen() {
@@ -93,16 +93,16 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
       return this.sectionPreviewOwner != null ? this.sectionPreviewOwner : this.module;
    }
 
-   public void openSection(String var1, List<Setting> var2, ModulePreviewStage.Kind var3, Module var4) {
+   public void openSection(String sectionTitle, List<Setting> sectionSettings, ModulePreviewStage.Kind sectionPreview, Module sectionPreviewOwner) {
       this.resetHeaderBind();
-      this.sectionTitle = var1;
-      this.sectionSettings = var2;
-      this.sectionPreview = var3;
-      this.sectionPreviewOwner = var4;
+      this.sectionTitle = sectionTitle;
+      this.sectionSettings = sectionSettings;
+      this.sectionPreview = sectionPreview;
+      this.sectionPreviewOwner = sectionPreviewOwner;
       this.sectionRows = new ArrayList<>();
 
-      for (Setting var6 : var2) {
-         this.sectionRows.add(new InspectorRow(var6, 0, var4 == null ? "" : var4.getClass().getSimpleName()));
+      for (Setting sectionSetting : sectionSettings) {
+         this.sectionRows.add(new InspectorRow(sectionSetting, 0, sectionPreviewOwner == null ? "" : sectionPreviewOwner.getClass().getSimpleName()));
       }
 
       this.scroll = 0.0F;
@@ -132,8 +132,8 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
       return this.sectionSettings != null;
    }
 
-   public void showFor(Module var1) {
-      if (this.module != var1) {
+   public void showFor(Module moduleValue) {
+      if (this.module != moduleValue) {
          this.resetHeaderBind();
          this.closeSection();
          this.scroll = 0.0F;
@@ -143,14 +143,14 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
          this.openAnimation.method2810(1.0F);
       }
 
-      this.module = var1;
+      this.module = moduleValue;
    }
 
-   public void toggleFor(Module var1) {
-      if (this.isShowing(var1)) {
+   public void toggleFor(Module moduleValue) {
+      if (this.isShowing(moduleValue)) {
          this.close();
       } else {
-         this.showFor(var1);
+         this.showFor(moduleValue);
       }
    }
 
@@ -165,14 +165,14 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    private void resetHeaderBind() {
-      for (InspectorRow var2 : this.sectionRows) {
-         var2.cancelBinding();
+      for (InspectorRow sectionRow : this.sectionRows) {
+         sectionRow.cancelBinding();
       }
 
-      List<InspectorRow> var4 = this.cache.get(this.module);
-      if (var4 != null) {
-         for (InspectorRow var3 : var4) {
-            var3.cancelBinding();
+      List<InspectorRow> inspectorRows = this.cache.get(this.module);
+      if (inspectorRows != null) {
+         for (InspectorRow inspectorRow : inspectorRows) {
+            inspectorRow.cancelBinding();
          }
       }
 
@@ -185,27 +185,27 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
       this.backBounds = null;
    }
 
-   public void forget(Module var1) {
-      this.cache.remove(var1);
-      if (this.module == var1) {
+   public void forget(Module moduleValue) {
+      this.cache.remove(moduleValue);
+      if (this.module == moduleValue) {
          this.close();
       }
    }
 
-   private List<InspectorRow> visibleRows(Module var1) {
-      return this.sectionSettings != null ? this.sectionRows : this.rowsOf(var1);
+   private List<InspectorRow> visibleRows(Module key) {
+      return this.sectionSettings != null ? this.sectionRows : this.rowsOf(key);
    }
 
-   private List<InspectorRow> rowsOf(Module var1) {
-      return this.cache.computeIfAbsent(var1, var0 -> {
+   private List<InspectorRow> rowsOf(Module key) {
+      return this.cache.computeIfAbsent(key, sectionPreviewOwner -> {
          ArrayList<InspectorRow> var1x = new ArrayList<>();
 
-         for (Setting var3 : var0.getSettings()) {
-            var1x.add(new InspectorRow(var3, 0, var0.getClass().getSimpleName()));
+         for (Setting setting : sectionPreviewOwner.getSettings()) {
+            var1x.add(new InspectorRow(setting, 0, sectionPreviewOwner.getClass().getSimpleName()));
          }
 
          if (var1x.isEmpty()) {
-            var1x.add(new InspectorRow(new HeaderBindSetting(var0), 0));
+            var1x.add(new InspectorRow(new HeaderBindSetting(sectionPreviewOwner), 0));
          }
 
          return var1x;
@@ -213,168 +213,168 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
-         float var8 = 144.0F;
-         float var9 = NLMenuScreen.heightPanel;
-         this.columnBounds = new BoundsData(var5, var6, var8, var9);
-         float var10 = HoverInfo.boxHeight();
-         float var11 = var6 + var9 - var10;
-         this.renderHeader(var1, var2, var3, var5, var6, var8, var4, var7);
-         float var12 = var6 + 23.0F;
-         float var13 = var11 - GuiStyle.PADDING.intValue();
-         this.contentBounds = new BoundsData(var5, var12, var8, var13 - var12);
-         this.renderRows(var1, var2, var3, var5, var12, var8, var13 - var12, var4, var7);
-         if (!(var10 <= 0.01F)) {
-            var1.drawRect(
-               var5 + 8.0F, var11 - GuiStyle.PADDING.intValue(), var8 - 16.0F, 1.0F, var7.getFieldBorder().getZenithColor().method7294(var4 * var10 / 34.0F)
+   public void render(MenuDrawContext customDrawContext, int mouseX, int mouseY, float previewAlpha, float floatValue, float y) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         float width = 144.0F;
+         float heightPanel = NLMenuScreen.heightPanel;
+         this.columnBounds = new BoundsData(floatValue, y, width, heightPanel);
+         float boxHeight = HoverInfo.boxHeight();
+         float f = y + heightPanel - boxHeight;
+         this.renderHeader(customDrawContext, mouseX, mouseY, floatValue, y, width, previewAlpha, currentStyle);
+         float y2 = y + 23.0F;
+         float f2 = f - GuiStyle.PADDING.intValue();
+         this.contentBounds = new BoundsData(floatValue, y2, width, f2 - y2);
+         this.renderRows(customDrawContext, mouseX, mouseY, floatValue, y2, width, f2 - y2, previewAlpha, currentStyle);
+         if (!(boxHeight <= 0.01F)) {
+            customDrawContext.drawRect(
+               floatValue + 8.0F, f - GuiStyle.PADDING.intValue(), width - 16.0F, 1.0F, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * boxHeight / 34.0F)
             );
             if (!HoverInfo.hasText() && this.module != null) {
-               String var14 = this.module.getDescription();
-               if (var14 != null && !var14.isBlank()) {
-                  HoverInfo.request(this.module.getName(), var14);
+               String description = this.module.getDescription();
+               if (description != null && !description.isBlank()) {
+                  HoverInfo.request(this.module.getName(), description);
                }
             }
 
             HoverInfo.render(
-               var1, var5 + 8.0F, var11 + GuiStyle.PADDING.intValue(), var8 - 16.0F, Math.max(0.0F, var10 - GuiStyle.PADDING.intValue() * 2.0F), var4
+               customDrawContext, floatValue + 8.0F, f + GuiStyle.PADDING.intValue(), width - 16.0F, Math.max(0.0F, boxHeight - GuiStyle.PADDING.intValue() * 2.0F), previewAlpha
             );
          }
       }
    }
 
-   private void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-      Font var10 = Fonts.NEW_MEDIUM.getFont(5.01F);
-      float var11 = var5 + (23.0F - var9.height()) / 2.0F;
+   private void renderHeader(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float width, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.01F);
+      float centeredTextY = y + (23.0F - font.height()) / 2.0F;
       this.headerBindBounds = null;
       if (this.module == null) {
-         var1.drawText(var9, "-", var4 + 8.0F, var11, var8.getTextTertiary().getZenithColor().method7294(var7));
+         customDrawContext.drawText(font, "-", floatValue + 8.0F, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
          this.headerToggleBounds = null;
          this.backBounds = null;
       } else {
-         Module var12 = this.sectionSettings == null ? this.module : this.sectionPreviewOwner;
-         if (this.headerBindOwner != var12) {
+         Module sectionPreviewOwner = this.sectionSettings == null ? this.module : this.sectionPreviewOwner;
+         if (this.headerBindOwner != sectionPreviewOwner) {
             this.resetHeaderBind();
          }
 
-         if (this.headerBind == null && var12 != null) {
-            boolean var34;
+         if (this.headerBind == null && sectionPreviewOwner != null) {
+            boolean headerHasSettings;
             label152: {
-               this.headerBind = new HeaderBindSetting(var12);
-               this.headerBindOwner = var12;
+               this.headerBind = new HeaderBindSetting(sectionPreviewOwner);
+               this.headerBindOwner = sectionPreviewOwner;
                this.headerBindLabel = new BindLabel();
                if (this.sectionSettings == null) {
-                  var var10001 = var12.getSettings();
-                  if (var10001.isEmpty()) {
-                     var34 = false;
+                  var settings = sectionPreviewOwner.getSettings();
+                  if (settings.isEmpty()) {
+                     headerHasSettings = false;
                      break label152;
                   }
                }
 
-               var34 = true;
+               headerHasSettings = true;
             }
 
-            this.headerHasSettings = var34;
+            this.headerHasSettings = headerHasSettings;
          }
 
          if (this.sectionSettings != null) {
-            float var24 = var4 + 8.0F + 11.0F;
-            float var26 = var4 + var6 - 8.0F;
-            boolean var28 = BindCapture.owner() == this;
-            String var30 = this.headerBind == null ? null : BindLabel.text(var28, this.headerBind.getKeyCode(), this.headerBind.getModifiers());
-            if (this.headerBind != null && var30 == null) {
-               var30 = "+";
+            float f = floatValue + 8.0F + 11.0F;
+            float f2 = floatValue + width - 8.0F;
+            boolean binding = BindCapture.owner() == this;
+            String text = this.headerBind == null ? null : BindLabel.text(binding, this.headerBind.getKeyCode(), this.headerBind.getModifiers());
+            if (this.headerBind != null && text == null) {
+               text = "+";
             }
 
-            float var31 = var30 == null ? var26 : var26 - var10.width(var30) - GuiStyle.PADDING.intValue() * 2.0F;
-            float var32 = Math.max(0.0F, var31 - var24);
-            var1.drawText(
-               var9,
-               var9.clip(this.sectionTitle == null ? this.module.getName() : this.sectionTitle, var32),
-               var24,
-               var11,
-               var8.getTextEnable().getZenithColor().method7294(var7)
+            float f3 = text == null ? f2 : f2 - font2.width(text) - GuiStyle.PADDING.intValue() * 2.0F;
+            float width2 = Math.max(0.0F, f3 - f);
+            customDrawContext.drawText(
+               font,
+               font.clip(this.sectionTitle == null ? this.module.getName() : this.sectionTitle, width2),
+               f,
+               centeredTextY,
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
             );
-            boolean var33 = var2 >= var4 && var2 <= var4 + var6 && var3 >= var5 && var3 <= var5 + 23.0F;
+            boolean flag = mouseX >= floatValue && mouseX <= floatValue + width && mouseY >= y && mouseY <= y + 23.0F;
             if (this.headerBind != null) {
                this.headerBindBounds = this.headerBindLabel
-                  .render(var1, var2, var3, var5, 23.0F, var26, var30, var28, var10, var31 + GuiStyle.PADDING.intValue(), var33, var7, null, var8);
-               if (this.headerBindBounds != null && this.headerBindBounds.contains(var2, var3)) {
+                  .render(customDrawContext, mouseX, mouseY, y, 23.0F, f2, text, binding, font2, f3 + GuiStyle.PADDING.intValue(), flag, previewAlpha, null, currentStyle);
+               if (this.headerBindBounds != null && this.headerBindBounds.contains(mouseX, mouseY)) {
                   HoverInfo.request(this.headerBind.getName(), this.headerBind.getDescription());
                }
             }
 
-            float var20 = this.headerBindBounds == null ? var4 + var6 : this.headerBindBounds.getFloatValue() - 1.0F;
-            this.backBounds = new BoundsData(var4, var5, Math.max(0.0F, var20 - var4), 23.0F);
-            boolean var21 = this.backBounds.contains(var2, var3);
-            ZenithColor var22 = var8.getTextSecondary()
+            float f4 = this.headerBindBounds == null ? floatValue + width : this.headerBindBounds.getFloatValue() - 1.0F;
+            this.backBounds = new BoundsData(floatValue, y, Math.max(0.0F, f4 - floatValue), 23.0F);
+            boolean contains = this.backBounds.contains(mouseX, mouseY);
+            ZenithColor zenithColor = currentStyle.getTextSecondary()
                .getZenithColor()
-               .method7295(var8.getTextEnable().getZenithColor(), var21 ? 1.0F : 0.4F)
-               .method7294(var7);
-            MenuGlyph.drawChevron(var1, var4 + 8.0F, var5 + 11.5F, 0.0F, var22);
+               .method7295(currentStyle.getTextEnable().getZenithColor(), contains ? 1.0F : 0.4F)
+               .method7294(previewAlpha);
+            MenuGlyph.drawChevron(customDrawContext, floatValue + 8.0F, y + 11.5F, 0.0F, zenithColor);
             this.headerToggleBounds = null;
          } else {
             this.backBounds = null;
-            MenuGlyph.forCategory(this.module.getCategory()).draw(var1, var4 + 8.0F, var5 + 8.5F, var8.getTextEnable().getZenithColor().method7294(var7));
-            float var13 = var4 + 8.0F + 11.0F;
+            MenuGlyph.forCategory(this.module.getCategory()).draw(customDrawContext, floatValue + 8.0F, y + 8.5F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+            float f = floatValue + 8.0F + 11.0F;
             if (this.headerHasSettings) {
                this.headerToggleBounds = null;
-               boolean var25;
-               String var27 = BindLabel.text(var25 = BindCapture.owner() == this, this.headerBind.getKeyCode(), this.headerBind.getModifiers());
-               if (var27 == null) {
-                  var27 = "+";
+               boolean binding;
+               String text = BindLabel.text(binding = BindCapture.owner() == this, this.headerBind.getKeyCode(), this.headerBind.getModifiers());
+               if (text == null) {
+                  text = "+";
                }
 
-               float var29;
-               float var17 = (var29 = var4 + var6 - 8.0F) - var10.width(var27) - GuiStyle.PADDING.intValue() * 2.0F;
-               String var18 = var9.clip(this.module.getName(), Math.max(0.0F, var17 - var13));
-               var1.drawText(var9, var18, var13, var11, var8.getTextEnable().getZenithColor().method7294(var7));
-               boolean var19 = var2 >= var4 && var2 <= var4 + var6 && var3 >= var5 && var3 <= var5 + 23.0F;
+               float f2;
+               float f3 = (f2 = floatValue + width - 8.0F) - font2.width(text) - GuiStyle.PADDING.intValue() * 2.0F;
+               String clip = font.clip(this.module.getName(), Math.max(0.0F, f3 - f));
+               customDrawContext.drawText(font, clip, f, centeredTextY, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+               boolean flag = mouseX >= floatValue && mouseX <= floatValue + width && mouseY >= y && mouseY <= y + 23.0F;
                this.headerBindBounds = this.headerBindLabel
                   .render(
-                     var1,
-                     var2,
-                     var3,
-                     var5,
+                     customDrawContext,
+                     mouseX,
+                     mouseY,
+                     y,
                      23.0F,
-                     var29,
-                     var27,
-                     var25,
-                     var10,
-                     var13 + var9.width(var18) + GuiStyle.PADDING.intValue(),
-                     var19,
-                     var7,
+                     f2,
+                     text,
+                     binding,
+                     font2,
+                     f + font.width(clip) + GuiStyle.PADDING.intValue(),
+                     flag,
+                     previewAlpha,
                      null,
-                     var8
+                     currentStyle
                   );
-               if (this.headerBindBounds != null && this.headerBindBounds.contains(var2, var3)) {
+               if (this.headerBindBounds != null && this.headerBindBounds.contains(mouseX, mouseY)) {
                   HoverInfo.request(this.headerBind.getName(), this.headerBind.getDescription());
                }
             } else {
-               String var14 = this.module.isEnabled() ? "ON" : "OFF";
-               float var15 = var10.width(var14);
-               float var16 = var4 + var6 - 8.0F - var15;
-               var1.drawText(
-                  var9,
-                  var9.clip(this.module.getName(), var16 - GuiStyle.PADDING * 2 - var13),
-                  var13,
-                  var11,
-                  var8.getTextEnable().getZenithColor().method7294(var7)
+               String text = this.module.isEnabled() ? "ON" : "OFF";
+               float width2 = font2.width(text);
+               float f2 = floatValue + width - 8.0F - width2;
+               customDrawContext.drawText(
+                  font,
+                  font.clip(this.module.getName(), f2 - GuiStyle.PADDING * 2 - f),
+                  f,
+                  centeredTextY,
+                  currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                );
-               this.headerToggleBounds = new BoundsData(var16 - GuiStyle.PADDING.intValue(), var5, var15 + GuiStyle.PADDING.intValue() + 8.0F, 23.0F);
+               this.headerToggleBounds = new BoundsData(f2 - GuiStyle.PADDING.intValue(), y, width2 + GuiStyle.PADDING.intValue() + 8.0F, 23.0F);
                this.stateRoll
                   .draw(
-                     var1,
-                     var10,
-                     var14,
-                     var16 + var15,
-                     var5 + (23.0F - var10.height()) / 2.0F,
-                     (this.module.isEnabled() ? var8.getPrimaryColor().getZenithColor() : var8.getTextTertiary().getZenithColor()).method7294(var7),
+                     customDrawContext,
+                     font2,
+                     text,
+                     f2 + width2,
+                     y + (23.0F - font2.height()) / 2.0F,
+                     (this.module.isEnabled() ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getTextTertiary().getZenithColor()).method7294(previewAlpha),
                      this.module.isEnabled() ? 1 : -1
                   );
-               if (this.headerToggleBounds.contains(var2, var3)) {
+               if (this.headerToggleBounds.contains(mouseX, mouseY)) {
                   HoverInfo.request(
                      this.module.getName(),
                      Zenith.getInstance().getLocalization().translate(this.module.isEnabled() ? "gui.inspector.toggle.off" : "gui.inspector.toggle.on")
@@ -385,70 +385,70 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
       }
    }
 
-   private void renderRows(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
+   private void renderRows(MenuDrawContext customDrawContext, int mouseX, int mouseY, float floatValue, float y, float width, float max, float previewAlpha, ZenithStyle currentStyle) {
       if (this.module != null) {
-         List<InspectorRow> var10 = this.visibleRows(this.module);
-         InspectorRow.alignTracks(var10, var6);
-         float var11 = 0.0F;
+         List<InspectorRow> visibleRows = this.visibleRows(this.module);
+         InspectorRow.alignTracks(visibleRows, width);
+         float shownContentHeight = 0.0F;
 
-         for (InspectorRow var13 : var10) {
-            if (var13.isVisible()) {
-               var11 += var13.height();
+         for (InspectorRow visibleRow : visibleRows) {
+            if (visibleRow.isVisible()) {
+               shownContentHeight += visibleRow.height();
             }
          }
 
-         this.clampScroll(var11, var7);
+         this.clampScroll(shownContentHeight, max);
          this.scroll = this.scrollbar.isDragging() ? this.scrollTarget : this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-         float var18 = this.openAnimation.method2808(1.0F);
-         var1.enableScissor(var4, var5, var4 + var6, var5 + var7);
-         float var19 = var5 + this.scroll;
-         int var14 = 0;
+         float f = this.openAnimation.method2808(1.0F);
+         customDrawContext.enableScissor(floatValue, y, floatValue + width, y + max);
+         float y2 = y + this.scroll;
+         int n = 0;
 
-         for (InspectorRow var16 : var10) {
-            if (var16.isVisible()) {
-               float var17;
-               if ((var17 = rowEntrance(var18, var14++)) > 0.001F) {
-                  var16.render(var1, var2, var3, var4 + (1.0F - var17) * this.entranceShift, var19, var6, var8 * var17);
+         for (InspectorRow visibleRow : visibleRows) {
+            if (visibleRow.isVisible()) {
+               float rowEntrance2;
+               if ((rowEntrance2 = rowEntrance(f, n++)) > 0.001F) {
+                  visibleRow.render(customDrawContext, mouseX, mouseY, floatValue + (1.0F - rowEntrance2) * this.entranceShift, y2, width, previewAlpha * rowEntrance2);
                }
 
-               var19 += var16.height();
+               y2 += visibleRow.height();
             }
          }
 
-         var1.disableScissor();
-         this.scrollbar.render(var1, var4 + var6 - 2.0F, var5, var7, var11, this.scroll, var9.getTextTertiary().getZenithColor().method7294(var8 * 0.6F));
+         customDrawContext.disableScissor();
+         this.scrollbar.render(customDrawContext, floatValue + width - 2.0F, y, max, shownContentHeight, this.scroll, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.6F));
       }
    }
 
-   private static float rowEntrance(float var0, int var1) {
-      if (var0 >= 1.0F) {
+   private static float rowEntrance(float f, int n) {
+      if (f >= 1.0F) {
          return 1.0F;
       } else {
-         float var2 = Math.min(var1 * 0.045F, 0.4F);
-         return Mth.clamp((var0 - var2) / 0.6F, 0.0F, 1.0F);
+         float f2 = Math.min(n * 0.045F, 0.4F);
+         return Mth.clamp((f - f2) / 0.6F, 0.0F, 1.0F);
       }
    }
 
-   private void clampScroll(float var1, float var2) {
-      if (var1 <= var2) {
+   private void clampScroll(float shownContentHeight, float max) {
+      if (shownContentHeight <= max) {
          this.scrollTarget = 0.0F;
          this.scroll = 0.0F;
       } else {
-         float var3 = var2 - var1;
-         this.scrollTarget = Mth.clamp(this.scrollTarget, var3, 0.0F);
-         this.scroll = Mth.clamp(this.scroll, var3, 0.0F);
+         float min = max - shownContentHeight;
+         this.scrollTarget = Mth.clamp(this.scrollTarget, min, 0.0F);
+         this.scroll = Mth.clamp(this.scroll, min, 0.0F);
       }
    }
 
    @Override
-   public boolean bindMouse(Enum3 var1) {
+   public boolean bindMouse(Enum3 enum2) {
       if (this.active
          && this.module != null
          && BindCapture.owner() == this
          && this.headerBind != null
          && this.headerBindOwner == (this.sectionSettings == null ? this.module : this.sectionPreviewOwner)
-         && MouseBindTarget.bindable(var1)) {
-         this.headerBind.setBind(var1.getIntValue(), 0);
+         && MouseBindTarget.bindable(enum2)) {
+         this.headerBind.setBind(enum2.getIntValue(), 0);
          BindCapture.end(this);
          this.headerBindLabel.set();
          Zenith.getInstance().getClientSounds().method1566();
@@ -458,24 +458,24 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
       }
    }
 
-   public void cancelHeaderBindingOutside(double var1, double var3) {
-      if (this.headerBindBounds == null || !this.headerBindBounds.contains(var1, var3)) {
+   public void cancelHeaderBindingOutside(double x, double y) {
+      if (this.headerBindBounds == null || !this.headerBindBounds.contains(x, y)) {
          BindCapture.end(this);
       }
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bindMouse(var5)) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+      if (this.bindMouse(enum2)) {
          return true;
       } else {
-         this.cancelHeaderBindingOutside(var1, var3);
-         if (this.active && this.module != null && this.columnBounds != null && this.columnBounds.contains(var1, var3)) {
+         this.cancelHeaderBindingOutside(x, y);
+         if (this.active && this.module != null && this.columnBounds != null && this.columnBounds.contains(x, y)) {
             if (this.headerBind != null
                && this.headerBindOwner == (this.sectionSettings == null ? this.module : this.sectionPreviewOwner)
                && this.headerBindBounds != null
-               && this.headerBindBounds.contains(var1, var3)) {
-               if (var5 == Enum3.RIGHT) {
+               && this.headerBindBounds.contains(x, y)) {
+               if (enum2 == Enum3.RIGHT) {
                   this.headerBind.setBind(-1, 0);
                   BindCapture.end(this);
                   this.headerBindLabel.cleared();
@@ -487,25 +487,25 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
                }
 
                return true;
-            } else if (this.backBounds != null && this.backBounds.contains(var1, var3)) {
+            } else if (this.backBounds != null && this.backBounds.contains(x, y)) {
                this.closeSection();
                Zenith.getInstance().getClientSounds().method1563();
                return true;
-            } else if (this.headerToggleBounds != null && this.headerToggleBounds.contains(var1, var3)) {
+            } else if (this.headerToggleBounds != null && this.headerToggleBounds.contains(x, y)) {
                this.module.toggle();
                return true;
             } else {
-               float var6 = this.scrollbar.onMouseClicked(var1, var3);
+               float scrollTarget = this.scrollbar.onMouseClicked(x, y);
                if (this.scrollbar.isDragging()) {
-                  if (!Float.isNaN(var6)) {
-                     this.scrollTarget = var6;
+                  if (!Float.isNaN(scrollTarget)) {
+                     this.scrollTarget = scrollTarget;
                   }
 
                   return true;
                } else {
-                  if (this.contentBounds != null && this.contentBounds.contains(var1, var3)) {
-                     for (InspectorRow var8 : this.visibleRows(this.module)) {
-                        if (var8.isVisible() && var8.onMouseClicked(var1, var3, var5)) {
+                  if (this.contentBounds != null && this.contentBounds.contains(x, y)) {
+                     for (InspectorRow visibleRow : this.visibleRows(this.module)) {
+                        if (visibleRow.isVisible() && visibleRow.onMouseClicked(x, y, enum2)) {
                            return true;
                         }
                      }
@@ -521,36 +521,36 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
       if (this.module == null) {
          return false;
       } else {
          this.scrollbar.release();
 
-         for (InspectorRow var7 : this.visibleRows(this.module)) {
-            var7.onMouseReleased(var1, var3, var5);
+         for (InspectorRow visibleRow : this.visibleRows(this.module)) {
+            visibleRow.onMouseReleased(x, y, enum2);
          }
 
          return false;
       }
    }
 
-   public boolean onMouseDragged(double var1, double var3) {
+   public boolean onMouseDragged(double doubleValue, double mouseY) {
       if (this.active && this.module != null) {
-         float var5;
-         if (!Float.isNaN(var5 = this.scrollbar.onMouseDragged(var3))) {
-            this.scrollTarget = var5;
+         float scrollTarget;
+         if (!Float.isNaN(scrollTarget = this.scrollbar.onMouseDragged(mouseY))) {
+            this.scrollTarget = scrollTarget;
             return true;
          } else {
-            boolean var6 = false;
+            boolean flag = false;
 
-            for (InspectorRow var8 : this.visibleRows(this.module)) {
-               if (var8.onMouseDragged(var1, var3)) {
-                  var6 = true;
+            for (InspectorRow visibleRow : this.visibleRows(this.module)) {
+               if (visibleRow.onMouseDragged(doubleValue, mouseY)) {
+                  flag = true;
                }
             }
 
-            return var6;
+            return flag;
          }
       } else {
          return false;
@@ -558,9 +558,9 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
-      if (this.active && this.module != null && this.columnBounds != null && this.columnBounds.contains(var1, var3)) {
-         this.scrollTarget += (float)var7 * 18.0F;
+   public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+      if (this.active && this.module != null && this.columnBounds != null && this.columnBounds.contains(mouseX, mouseY)) {
+         this.scrollTarget += (float)verticalAmount * 18.0F;
          return true;
       } else {
          return false;
@@ -568,17 +568,17 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.active && this.module != null) {
          if (BindCapture.owner() == this
             && this.headerBind != null
             && this.headerBindOwner == (this.sectionSettings == null ? this.module : this.sectionPreviewOwner)) {
-            if (var1 == 256) {
+            if (keyCode == 256) {
                this.headerBind.setBind(-1, 0);
                this.headerBindLabel.cleared();
                Zenith.getInstance().getClientSounds().method1567();
             } else {
-               this.headerBind.setBind(var1, KeyName.method6700(var1, var3));
+               this.headerBind.setBind(keyCode, KeyName.method6700(keyCode, modifiers));
                this.headerBindLabel.set();
                Zenith.getInstance().getClientSounds().method1566();
             }
@@ -586,8 +586,8 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
             BindCapture.end(this);
             return true;
          } else {
-            for (InspectorRow var5 : this.visibleRows(this.module)) {
-               if (var5.isVisible() && var5.keyPressed(var1, var2, var3)) {
+            for (InspectorRow visibleRow : this.visibleRows(this.module)) {
+               if (visibleRow.isVisible() && visibleRow.keyPressed(keyCode, keycode, modifiers)) {
                   return true;
                }
             }
@@ -600,10 +600,10 @@ public class InspectorPanel extends Panel implements MouseBindTarget {
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.active && this.module != null) {
-         for (InspectorRow var4 : this.visibleRows(this.module)) {
-            if (var4.isVisible() && var4.charTyped(var1, var2)) {
+         for (InspectorRow visibleRow : this.visibleRows(this.module)) {
+            if (visibleRow.isVisible() && visibleRow.charTyped(codepoint, n)) {
                return true;
             }
          }

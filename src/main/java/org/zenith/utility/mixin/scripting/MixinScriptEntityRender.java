@@ -16,9 +16,9 @@ public abstract class MixinScriptEntityRender {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private <E extends Entity> void zenith$scriptHidden(E var1, Frustum var2, double var3, double var5, double var7, float var10, CallbackInfoReturnable<Boolean> var9) {
-      if (Util4.method1280(var1.getId())) {
-         var9.setReturnValue(false);
+   private <E extends Entity> void zenith$scriptHidden(E value2, Frustum frustum, double d, double d2, double d3, float f, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      if (Util4.method1280(value2.getId())) {
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 }

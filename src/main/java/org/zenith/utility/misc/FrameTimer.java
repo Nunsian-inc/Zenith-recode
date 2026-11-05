@@ -16,11 +16,11 @@ public final class FrameTimer {
    }
 
    public static void beginFrame() {
-      WorldModule var0 = WorldModule.INSTANCE;
-      WeatherModule var1 = WeatherModule.INSTANCE;
-      var1.method3108(CONST_floatValues2);
-      CONST_floatValues2[3] = CONST_floatValues2[3] * var0.method5646();
-      floatValue = var0.method5645() * var1.method3107();
+      WorldModule worldModule = WorldModule.INSTANCE;
+      WeatherModule weatherModule = WeatherModule.INSTANCE;
+      weatherModule.method3108(CONST_floatValues2);
+      CONST_floatValues2[3] = CONST_floatValues2[3] * worldModule.method5646();
+      floatValue = worldModule.method5645() * weatherModule.method3107();
       flag = true;
    }
 
@@ -28,12 +28,12 @@ public final class FrameTimer {
       flag = false;
    }
 
-   public static void method753(float var0, float var1, float var2, float var3, float var4) {
-      floatValue2 = var0;
-      CONST_floatValues3[0] = var1;
-      CONST_floatValues3[1] = var2;
-      CONST_floatValues3[2] = var3;
-      CONST_floatValues3[3] = var4;
+   public static void method753(float f, float f2, float f3, float f4, float f5) {
+      floatValue2 = f;
+      CONST_floatValues3[0] = f2;
+      CONST_floatValues3[1] = f3;
+      CONST_floatValues3[2] = f4;
+      CONST_floatValues3[3] = f5;
       flag2 = true;
    }
 

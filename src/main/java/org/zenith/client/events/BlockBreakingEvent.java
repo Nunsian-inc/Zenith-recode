@@ -8,9 +8,9 @@ public class BlockBreakingEvent extends CancellableEvent {
    private final BlockPos blockPos;
    private final Direction direction;
 
-   public BlockBreakingEvent(BlockPos var1, Direction var2) {
-      this.blockPos = var1;
-      this.direction = var2;
+   public BlockBreakingEvent(BlockPos blockPos, Direction direction) {
+      this.blockPos = blockPos;
+      this.direction = direction;
    }
 
    public BlockPos getBlockPos() {

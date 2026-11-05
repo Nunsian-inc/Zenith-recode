@@ -66,123 +66,123 @@ public final class ScriptNetApi {
    private ScriptNetApi() {
    }
 
-   private static boolean method3274(Map<Script, Deque<Long>> var0, Script var1, int var2) {
-      Deque<Long> var3 = var0.computeIfAbsent(var1, var0x -> new ArrayDeque<Long>());
-      long var4 = System.currentTimeMillis();
-      synchronized (var3) {
-         while (!var3.isEmpty() && var4 - var3.peekFirst() > 60000L) {
-            var3.pollFirst();
+   private static boolean method3274(Map<Script, Deque<Long>> items, Script workspace, int n) {
+      Deque<Long> longs = items.computeIfAbsent(workspace, var0x -> new ArrayDeque<Long>());
+      long now = System.currentTimeMillis();
+      synchronized (longs) {
+         while (!longs.isEmpty() && now - longs.peekFirst() > 60000L) {
+            longs.pollFirst();
          }
 
-         if (var3.size() >= var2) {
+         if (longs.size() >= n) {
             return false;
          } else {
-            var3.addLast(var4);
+            longs.addLast(now);
             return true;
          }
       }
    }
 
-   public static URI method3275(Script var0, String var1) {
-      URI var2;
+   public static URI method3275(Script workspace, String str) {
+      URI uri;
       try {
-         var2 = URI.create(var1.strip());
-      } catch (IllegalArgumentException var8) {
-         throw ScriptValueUtils.method6251("неверный адрес: " + var1);
+         uri = URI.create(str.strip());
+      } catch (IllegalArgumentException e) {
+         throw ScriptValueUtils.method6251("неверный адрес: " + str);
       }
 
-      String var3 = var2.getScheme() == null ? "" : var2.getScheme().toLowerCase(Locale.ROOT);
-      if (!var3.equals("https") && !var3.equals("http")) {
+      String lowerCase = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase(Locale.ROOT);
+      if (!lowerCase.equals("https") && !lowerCase.equals("http")) {
          throw ScriptValueUtils.method6251("разрешены только http и https");
       } else {
-         String var4 = var2.getHost() == null ? "" : var2.getHost().toLowerCase(Locale.ROOT);
-         if (var4.isEmpty()) {
+         String lowerCase2 = uri.getHost() == null ? "" : uri.getHost().toLowerCase(Locale.ROOT);
+         if (lowerCase2.isEmpty()) {
             throw ScriptValueUtils.method6251("в адресе нет хоста");
          } else {
-            boolean var5 = false;
+            boolean flag = false;
 
-            for (String var7 : var0.method1407()) {
-               if (var4.equals(var7) || var4.endsWith("." + var7)) {
-                  var5 = true;
+            for (String anObject : workspace.method1407()) {
+               if (lowerCase2.equals(anObject) || lowerCase2.endsWith("." + anObject)) {
+                  flag = true;
                   break;
                }
             }
 
-            if (!var5) {
-               if (!var0.method1408().isEmpty()) {
+            if (!flag) {
+               if (!workspace.method1408().isEmpty()) {
                   throw ScriptValueUtils.method6251(
-                     "в // @net есть недопустимые записи " + var0.method1408() + " — укажи полный домен сайта, например api.example.com, а не зону вроде com"
+                     "в // @net есть недопустимые записи " + workspace.method1408() + " — укажи полный домен сайта, например api.example.com, а не зону вроде com"
                   );
                } else {
-                  throw ScriptValueUtils.method6251("домен " + var4 + " не объявлен: добавь в шапку скрипта строку // @net " + var4);
+                  throw ScriptValueUtils.method6251("домен " + lowerCase2 + " не объявлен: добавь в шапку скрипта строку // @net " + lowerCase2);
                }
-            } else if (var2.getUserInfo() != null) {
+            } else if (uri.getUserInfo() != null) {
                throw ScriptValueUtils.method6251("логин и пароль в адресе запрещены");
             } else {
-               return var2;
+               return uri;
             }
          }
       }
    }
 
-   public static boolean method3276(InetAddress var0) {
-      if (!var0.isLoopbackAddress() && !var0.isSiteLocalAddress() && !var0.isLinkLocalAddress() && !var0.isAnyLocalAddress() && !var0.isMulticastAddress()) {
-         byte[] var1 = var0.getAddress();
-         if (var1.length == 16) {
-            boolean var2 = true;
+   public static boolean method3276(InetAddress inetAddress) {
+      if (!inetAddress.isLoopbackAddress() && !inetAddress.isSiteLocalAddress() && !inetAddress.isLinkLocalAddress() && !inetAddress.isAnyLocalAddress() && !inetAddress.isMulticastAddress()) {
+         byte[] address = inetAddress.getAddress();
+         if (address.length == 16) {
+            boolean flag = true;
 
-            for (int var3 = 0; var3 < 10; var3++) {
-               if (var1[var3] != 0) {
-                  var2 = false;
+            for (int i = 0; i < 10; i++) {
+               if (address[i] != 0) {
+                  flag = false;
                }
             }
 
-            if (var2 && (var1[10] & 255) == 255 && (var1[11] & 255) == 255) {
-               var1 = new byte[]{var1[12], var1[13], var1[14], var1[15]};
+            if (flag && (address[10] & 255) == 255 && (address[11] & 255) == 255) {
+               address = new byte[]{address[12], address[13], address[14], address[15]};
             } else {
-               int var5 = var1[0] & 255;
-               if ((var5 & 254) == 252) {
+               int n = address[0] & 255;
+               if ((n & 254) == 252) {
                   return true;
                }
 
-               if (var5 == 32 && (var1[1] & 255) == 1 && (var1[2] & 255) == 13 && (var1[3] & 255) == 184) {
+               if (n == 32 && (address[1] & 255) == 1 && (address[2] & 255) == 13 && (address[3] & 255) == 184) {
                   return true;
                }
 
-               if (var5 != 0 || (var1[1] & 255) != 100 || (var1[2] & 255) != 255 || (var1[3] & 255) != 155) {
+               if (n != 0 || (address[1] & 255) != 100 || (address[2] & 255) != 255 || (address[3] & 255) != 155) {
                   return false;
                }
 
-               var1 = new byte[]{var1[12], var1[13], var1[14], var1[15]};
+               address = new byte[]{address[12], address[13], address[14], address[15]};
             }
          }
 
-         int var4 = var1[0] & 255;
-         int var6 = var1[1] & 255;
-         return var4 == 0
-            || var4 == 10
-            || var4 == 127
-            || var4 >= 224
-            || var4 == 100 && (var6 & 192) == 64
-            || var4 == 169 && var6 == 254
-            || var4 == 172 && (var6 & 240) == 16
-            || var4 == 192 && var6 == 168
-            || var4 == 192 && var6 == 0 && (var1[2] & 255) == 0
-            || var4 == 198 && (var6 & 254) == 18;
+         int n = address[0] & 255;
+         int n2 = address[1] & 255;
+         return n == 0
+            || n == 10
+            || n == 127
+            || n >= 224
+            || n == 100 && (n2 & 192) == 64
+            || n == 169 && n2 == 254
+            || n == 172 && (n2 & 240) == 16
+            || n == 192 && n2 == 168
+            || n == 192 && n2 == 0 && (address[2] & 255) == 0
+            || n == 198 && (n2 & 254) == 18;
       } else {
          return true;
       }
    }
 
-   private static void method3277(URI var0) throws IOException {
-      String var1 = var0.getHost().toLowerCase(Locale.ROOT);
-      if (!var1.equals("localhost") && !var1.endsWith(".localhost") && !var1.endsWith(".local") && !var1.endsWith(".internal")) {
-         InetAddress[] var2 = InetAddress.getAllByName(var1);
-         if (var2.length == 0) {
+   private static void method3277(URI uri) throws IOException {
+      String lowerCase = uri.getHost().toLowerCase(Locale.ROOT);
+      if (!lowerCase.equals("localhost") && !lowerCase.endsWith(".localhost") && !lowerCase.endsWith(".local") && !lowerCase.endsWith(".internal")) {
+         InetAddress[] allByName = InetAddress.getAllByName(lowerCase);
+         if (allByName.length == 0) {
             throw new IOException("адрес не найден");
          } else {
-            for (InetAddress var6 : var2) {
-               if (method3276(var6)) {
+            for (InetAddress inetAddress : allByName) {
+               if (method3276(inetAddress)) {
                   throw new IOException("запросы в локальную сеть запрещены");
                }
             }
@@ -193,10 +193,10 @@ public final class ScriptNetApi {
    }
 
    public static void method3278(
-      Script var0, String var1, String var2, byte[] var3, Map<String, String> var4, long var5, BiConsumer<ScriptNetApi.Data, String> var7
+      Script workspace, String str, String str2, byte[] bytes, Map<String, String> map, long l, BiConsumer<ScriptNetApi.Data, String> biConsumer
    ) {
-      URI var8 = method3275(var0, var2);
-      if (!method3274(items, var0, 30)) {
+      URI uri = method3275(workspace, str2);
+      if (!method3274(items, workspace, 30)) {
          throw ScriptValueUtils.method6251("больше 30 запросов в минуту");
       } else {
          Thread.ofPlatform()
@@ -205,137 +205,137 @@ public final class ScriptNetApi {
             .start(
                () -> {
                   try {
-                     method3277(var8);
-                     Builder var8x = HttpRequest.newBuilder(var8).timeout(Duration.ofSeconds(15L)).header("User-Agent", "ZenithScript/" + var0.getId());
-                     int var9 = 0;
+                     method3277(uri);
+                     Builder var8x = HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(15L)).header("User-Agent", "ZenithScript/" + workspace.getId());
+                     int n = 0;
 
-                     for (Entry var11 : var4.entrySet()) {
-                        String var12 = ((String)var11.getKey()).toLowerCase(Locale.ROOT);
-                        if (!var12.equals("host")
-                           && !var12.equals("cookie")
-                           && !var12.startsWith("proxy")
-                           && !var12.equals("connection")
-                           && !var12.startsWith("x-forwarded")
-                           && !var12.equals("forwarded")
-                           && !var12.equals("x-real-ip")) {
-                           var9++;
-                           if (var9 <= 32 && ((String)var11.getKey()).length() <= 64 && ((String)var11.getValue()).length() <= 4096) {
+                     for (Entry entry : map.entrySet()) {
+                        String lowerCase = ((String)entry.getKey()).toLowerCase(Locale.ROOT);
+                        if (!lowerCase.equals("host")
+                           && !lowerCase.equals("cookie")
+                           && !lowerCase.startsWith("proxy")
+                           && !lowerCase.equals("connection")
+                           && !lowerCase.startsWith("x-forwarded")
+                           && !lowerCase.equals("forwarded")
+                           && !lowerCase.equals("x-real-ip")) {
+                           n++;
+                           if (n <= 32 && ((String)entry.getKey()).length() <= 64 && ((String)entry.getValue()).length() <= 4096) {
                               try {
-                                 var8x.header((String)var11.getKey(), (String)var11.getValue());
-                              } catch (IllegalArgumentException var16) {
+                                 var8x.header((String)entry.getKey(), (String)entry.getValue());
+                              } catch (IllegalArgumentException e) {
                               }
                            }
                         }
                      }
 
-                     var8x.method(var1, var3 == null ? BodyPublishers.noBody() : BodyPublishers.ofByteArray(var3));
-                     HttpResponse var19 = httpClient.send(var8x.build(), BodyHandlers.ofInputStream());
+                     var8x.method(str, bytes == null ? BodyPublishers.noBody() : BodyPublishers.ofByteArray(bytes));
+                     HttpResponse send = httpClient.send(var8x.build(), BodyHandlers.ofInputStream());
 
-                     byte[] var20;
-                     try (InputStream var21 = (InputStream)var19.body()) {
-                        var20 = var21.readNBytes((int)var5 + 1);
+                     byte[] nBytes;
+                     try (InputStream body = (InputStream)send.body()) {
+                        nBytes = body.readNBytes((int)l + 1);
                      }
 
-                     if (var20.length > var5) {
-                        var7.accept(null, "ответ больше " + var5 / 1024L + " КБ");
+                     if (nBytes.length > l) {
+                        biConsumer.accept(null, "ответ больше " + l / 1024L + " КБ");
                         return;
                      }
 
-                     var7.accept(new ScriptNetApi.Data(var19.statusCode(), var20, var19.headers().map()), null);
-                  } catch (Exception var18) {
-                     var7.accept(null, var18.getMessage() == null ? var18.getClass().getSimpleName() : var18.getMessage());
+                     biConsumer.accept(new ScriptNetApi.Data(send.statusCode(), nBytes, send.headers().map()), null);
+                  } catch (Exception e) {
+                     biConsumer.accept(null, e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
                   }
                }
             );
       }
    }
 
-   public static void method3279(Script var0, String var1, long var2, BiConsumer<byte[], String> var4) {
-      method3278(var0, "GET", var1, null, Map.of(), var2, (var1x, var2x) -> {
+   public static void method3279(Script workspace, String str, long l, BiConsumer<byte[], String> biConsumer) {
+      method3278(workspace, "GET", str, null, Map.of(), l, (var1x, var2x) -> {
          if (var2x != null) {
-            var4.accept(null, var2x);
+            biConsumer.accept(null, var2x);
          } else if (var1x.getIntValue() / 100 != 2) {
-            var4.accept(null, "сервер ответил " + var1x.getIntValue());
+            biConsumer.accept(null, "сервер ответил " + var1x.getIntValue());
          } else {
-            var4.accept(var1x.getByteValues(), null);
+            biConsumer.accept(var1x.getByteValues(), null);
          }
       });
    }
 
-   private static Scriptable method3280(Scriptable var0, ScriptNetApi.Data var1) {
-      String var2 = new String(var1.getByteValues(), StandardCharsets.UTF_8);
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var0);
-      var1.getItems().forEach((var1x, var2x) -> {
+   private static Scriptable method3280(Scriptable scope, ScriptNetApi.Data data) {
+      String str = new String(data.getByteValues(), StandardCharsets.UTF_8);
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      data.getItems().forEach((var1x, var2x) -> {
          if (var1x != null && !var2x.isEmpty()) {
-            var3.method6277(var1x.toLowerCase(Locale.ROOT), var2x.get(0));
+            entry2.method6277(var1x.toLowerCase(Locale.ROOT), var2x.get(0));
          }
       });
-      return ScriptValueUtils.method6247(var0)
-         .method6277("status", (double)var1.getIntValue())
-         .method6277("ok", var1.getIntValue() / 100 == 2)
-         .method6277("body", var2)
-         .method6277("headers", var3.getScriptableObject())
+      return ScriptValueUtils.method6247(scope)
+         .method6277("status", (double)data.getIntValue())
+         .method6277("ok", data.getIntValue() / 100 == 2)
+         .method6277("body", str)
+         .method6277("headers", entry2.getScriptableObject())
          .method6274("json", var2x -> {
             try {
-               return ScriptValueUtils.method6273(var0, JsonParser.parseString(var2));
-            } catch (RuntimeException var4) {
+               return ScriptValueUtils.method6273(scope, JsonParser.parseString(str));
+            } catch (RuntimeException e) {
                throw ScriptValueUtils.method6251("ответ не JSON");
             }
          })
          .getScriptableObject();
    }
 
-   public static Scriptable method3281(Script var0, Storage var1, Scriptable var2) {
-      ScriptValueUtils.Entry2 var3 = ScriptValueUtils.method6247(var2);
-      BiFunction<String, Object[], Object> var4 = (var3x, var4x) -> {
-         String var5 = ScriptValueUtils.method6254(var4x, 0, "");
-         byte var6 = 1;
-         byte[] var7 = null;
-         HashMap var8 = new HashMap();
+   public static Scriptable method3281(Script workspace, Storage storage, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      BiFunction<String, Object[], Object> biFunction = (var3x, var4x) -> {
+         String str = ScriptValueUtils.method6254(var4x, 0, "");
+         byte b = 1;
+         byte[] bytes = null;
+         HashMap map = new HashMap();
          if (!var3x.equals("GET") && !var3x.equals("DELETE")) {
-            Object var9 = ScriptValueUtils.arg(var4x, 1);
-            if (var9 instanceof Scriptable var10 && !(var9 instanceof Function)) {
-               var7 = ScriptValueUtils.method6271(var10, 0).toString().getBytes(StandardCharsets.UTF_8);
-               var8.put("Content-Type", "application/json");
-            } else if (!ScriptValueUtils.method6253(var9)) {
-               var7 = ScriptValueUtils.method6255(var9).getBytes(StandardCharsets.UTF_8);
+            Object id = ScriptValueUtils.arg(var4x, 1);
+            if (id instanceof Scriptable scriptable && !(id instanceof Function)) {
+               bytes = ScriptValueUtils.method6271(scriptable, 0).toString().getBytes(StandardCharsets.UTF_8);
+               map.put("Content-Type", "application/json");
+            } else if (!ScriptValueUtils.method6253(id)) {
+               bytes = ScriptValueUtils.method6255(id).getBytes(StandardCharsets.UTF_8);
             }
 
-            var6 = 2;
+            b = 2;
          }
 
-         Function var20;
-         if (ScriptValueUtils.arg(var4x, var6) instanceof Function var11) {
-            var20 = var11;
+         Function function;
+         if (ScriptValueUtils.arg(var4x, b) instanceof Function function2) {
+            function = function2;
          } else {
-            Scriptable var12 = ScriptValueUtils.method6262(var4x, var6);
-            if (var12 != null && ScriptValueUtils.method6263(var12, "headers") instanceof Scriptable var14) {
-               for (Object var18 : var14.getIds()) {
-                  var8.put(String.valueOf(var18), ScriptValueUtils.method6255(var14.get(String.valueOf(var18), var14)));
+            Scriptable scriptable2 = ScriptValueUtils.method6262(var4x, b);
+            if (scriptable2 != null && ScriptValueUtils.method6263(scriptable2, "headers") instanceof Scriptable scriptable3) {
+               for (Object id : scriptable3.getIds()) {
+                  map.put(String.valueOf(id), ScriptValueUtils.method6255(scriptable3.get(String.valueOf(id), scriptable3)));
                }
             }
 
-            var20 = ScriptValueUtils.method6261(var4x, var6 + 1);
+            function = ScriptValueUtils.method6261(var4x, b + 1);
          }
 
-         var var21 = var20;
-         method3278(var0, var3x, var5, var7, var8, 2097152L, (var4xx, var5x) -> Minecraft.getInstance().execute(() -> {
-            if (var0.isRunning() && var21 != null) {
+         var function3 = function;
+         method3278(workspace, var3x, str, bytes, map, 2097152L, (var4xx, var5x) -> Minecraft.getInstance().execute(() -> {
+            if (workspace.isRunning() && function3 != null) {
                if (var5x != null) {
-                  var1.method1321(var0, var21, null, var5x);
+                  storage.method1321(workspace, function3, null, var5x);
                } else {
-                  var1.method1321(var0, var21, method3280(var2, var4xx), null);
+                  storage.method1321(workspace, function3, method3280(scope, var4xx), null);
                }
             }
          }));
          return null;
       };
-      var3.method6274("get", var1x -> var4.apply("GET", var1x));
-      var3.method6274("post", var1x -> var4.apply("POST", var1x));
-      var3.method6274("put", var1x -> var4.apply("PUT", var1x));
-      var3.method6274("delete", var1x -> var4.apply("DELETE", var1x));
-      var3.method6274("domains", var2x -> ScriptValueUtils.method6267(var2, new ArrayList<>(var0.method1407())));
-      var3.method6274(
+      entry2.method6274("get", var1x -> biFunction.apply("GET", var1x));
+      entry2.method6274("post", var1x -> biFunction.apply("POST", var1x));
+      entry2.method6274("put", var1x -> biFunction.apply("PUT", var1x));
+      entry2.method6274("delete", var1x -> biFunction.apply("DELETE", var1x));
+      entry2.method6274("domains", var2x -> ScriptValueUtils.method6267(scope, new ArrayList<>(workspace.method1407())));
+      entry2.method6274(
          "webhook",
          var2x -> {
             String var3x = ScriptValueUtils.method6254(var2x, 0, "");
@@ -343,7 +343,7 @@ public final class ScriptNetApi {
             var4x.addProperty("content", ScriptValueUtils.method6254(var2x, 1, ""));
             var4x.addProperty("username", ScriptValueUtils.method6254(var2x, 2, "Zenith"));
             method3278(
-               var0,
+               workspace,
                "POST",
                var3x,
                var4x.toString().getBytes(StandardCharsets.UTF_8),
@@ -351,59 +351,59 @@ public final class ScriptNetApi {
                65536L,
                (var2xx, var3xx) -> {
                   if (var3xx != null) {
-                     Minecraft.getInstance().execute(() -> var1.method1327(var0, "warn", "webhook: " + var3xx));
+                     Minecraft.getInstance().execute(() -> storage.method1327(workspace, "warn", "webhook: " + var3xx));
                   }
                }
             );
             return null;
          }
       );
-      return var3.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
    private static Cloud cloud() {
       return Zenith.getInstance() == null ? null : Zenith.getInstance().getCloud();
    }
 
-   public static String method3282(Script var0) {
-      OriginUtil.Data2 var1 = OriginUtil.method6921(var0);
-      return var1 != null ? "m:" + var1.getUUID() : "l:" + var0.getId();
+   public static String method3282(Script workspace) {
+      OriginUtil.Data2 data2 = OriginUtil.method6921(workspace);
+      return data2 != null ? "m:" + data2.getUUID() : "l:" + workspace.getId();
    }
 
-   public static Scriptable method3283(Script var0, Storage var1, Scriptable var2) {
-      ConcurrentHashMap var3 = new ConcurrentHashMap();
-      String var4 = method3282(var0);
-      Runnable var5 = EventManager.main()
+   public static Scriptable method3283(Script workspace, Storage storage, Scriptable scope) {
+      ConcurrentHashMap map = new ConcurrentHashMap();
+      String anObject = method3282(workspace);
+      Runnable subscribe = EventManager.main()
          .subscribe(
             Event10.class,
             (byte)2,
             (var5x, var6x) -> {
-               CloudPackets.Data18 var7 = ((Event10)var6x).getData18();
-               if (var7.kind() == 50 && var0.isRunning()) {
-                  JsonObject var8 = var7.getJsonObject();
-                  String var9 = var8.has("s") ? var8.get("s").getAsString() : "";
-                  String var10 = var8.has("c") ? var8.get("c").getAsString() : "";
-                  if (var9.equals(var4)) {
-                     List<Function> var11 = (List)var3.get(var10);
-                     if (var11 != null && !var11.isEmpty()) {
-                        String var12 = var8.has("d") ? var8.get("d").getAsString() : "null";
+               CloudPackets.Data18 data18 = ((Event10)var6x).getData18();
+               if (data18.kind() == 50 && workspace.isRunning()) {
+                  JsonObject jsonObject = data18.getJsonObject();
+                  String string = jsonObject.has("s") ? jsonObject.get("s").getAsString() : "";
+                  String key = jsonObject.has("c") ? jsonObject.get("c").getAsString() : "";
+                  if (string.equals(anObject)) {
+                     List<Function> functions = (List)map.get(key);
+                     if (functions != null && !functions.isEmpty()) {
+                        String json = jsonObject.has("d") ? jsonObject.get("d").getAsString() : "null";
                         Minecraft.getInstance()
                            .execute(
                               () -> {
                                  Object var6xx;
                                  try {
-                                    var6xx = ScriptValueUtils.method6273(var2, JsonParser.parseString(var12));
+                                    var6xx = ScriptValueUtils.method6273(scope, JsonParser.parseString(json));
                                  } catch (RuntimeException var10x) {
-                                    var6xx = var12;
+                                    var6xx = json;
                                  }
 
-                                 ScriptableObject var7x = ScriptValueUtils.method6247(var2)
-                                    .method6277("uid", (double)var7.uid())
-                                    .method6277("name", var7.username())
+                                 ScriptableObject var7x = ScriptValueUtils.method6247(scope)
+                                    .method6277("uid", (double)data18.uid())
+                                    .method6277("name", data18.username())
                                     .getScriptableObject();
 
-                                 for (Function var9x : var11) {
-                                    var1.method1321(var0, var9x, var6xx, var7x);
+                                 for (Function var9x : functions) {
+                                    storage.method1321(workspace, var9x, var6xx, var7x);
                                  }
                               }
                            );
@@ -412,32 +412,32 @@ public final class ScriptNetApi {
                }
             }
          );
-      var0.method1413(var5::run);
-      ScriptValueUtils.Entry2 var6 = ScriptValueUtils.method6247(var2);
-      var6.method6274("on", var2x -> {
+      workspace.method1413(subscribe::run);
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("on", var2x -> {
          var var3x = ScriptValueUtils.method6260(var2x, 1);
          String var4x = ScriptValueUtils.method6254(var2x, 0, "default");
          if (var4x.length() > 64) {
             throw ScriptValueUtils.method6251("имя канала длиннее 64 символов");
          } else {
-            java.util.List<Function> var5x = (java.util.List<Function>)var3.computeIfAbsent(var4x, var0xx -> new CopyOnWriteArrayList());
+            java.util.List<Function> var5x = (java.util.List<Function>)map.computeIfAbsent(var4x, var0xx -> new CopyOnWriteArrayList());
             if (var5x.size() >= 32) {
                throw ScriptValueUtils.method6251("больше 32 обработчиков на канал");
             } else {
                var5x.add(var3x);
-               return ScriptValueUtils.method6247(var2).method6274("off", var2xx -> var5x.remove(var3x)).getScriptableObject();
+               return ScriptValueUtils.method6247(scope).method6274("off", var2xx -> var5x.remove(var3x)).getScriptableObject();
             }
          }
       });
-      var6.method6274("off", var1x -> {
-         List var2x = (List)var3.remove(ScriptValueUtils.method6254(var1x, 0, "default"));
+      entry2.method6274("off", var1x -> {
+         List var2x = (List)map.remove(ScriptValueUtils.method6254(var1x, 0, "default"));
          return var2x != null;
       });
-      var6.method6274("send", var2x -> {
+      entry2.method6274("send", var2x -> {
          Cloud var3x = cloud();
          if (var3x == null || !var3x.method7860()) {
             return false;
-         } else if (!method3274(items2, var0, 120)) {
+         } else if (!method3274(items2, workspace, 120)) {
             throw ScriptValueUtils.method6251("больше 120 сообщений в минуту");
          } else {
             String var4x = ScriptValueUtils.method6271(ScriptValueUtils.arg(var2x, 1), 0).toString();
@@ -449,16 +449,16 @@ public final class ScriptNetApi {
                if (var6x.length() > 64) {
                   throw ScriptValueUtils.method6251("имя канала длиннее 64 символов");
                } else {
-                  var5x.addProperty("s", var4);
+                  var5x.addProperty("s", anObject);
                   var5x.addProperty("c", var6x);
                   var5x.addProperty("d", var4x);
-                  Object var7 = ScriptValueUtils.arg(var2x, 2);
-                  if (ScriptValueUtils.method6253(var7)) {
+                  Object id = ScriptValueUtils.arg(var2x, 2);
+                  if (ScriptValueUtils.method6253(id)) {
                      var5x.addProperty("to", "party");
-                  } else if (var7 instanceof Number var8) {
-                     var5x.addProperty("to", String.valueOf(var8.longValue()));
+                  } else if (id instanceof Number number) {
+                     var5x.addProperty("to", String.valueOf(number.longValue()));
                   } else {
-                     var5x.addProperty("to", ScriptValueUtils.method6255(var7));
+                     var5x.addProperty("to", ScriptValueUtils.method6255(id));
                   }
 
                   var3x.getPartyMember().method1179(var5x);
@@ -467,50 +467,50 @@ public final class ScriptNetApi {
             }
          }
       });
-      var6.method6274("online", var0x -> {
+      entry2.method6274("online", var0x -> {
          Cloud var1x = cloud();
          return var1x != null && var1x.method7860();
       });
-      var6.method6274(
+      entry2.method6274(
          "me",
-         var1x -> ScriptValueUtils.method6247(var2).method6277("uid", (double)Cloud.accountUid()).method6277("name", Cloud.accountName()).getScriptableObject()
+         var1x -> ScriptValueUtils.method6247(scope).method6277("uid", (double)Cloud.accountUid()).method6277("name", Cloud.accountName()).getScriptableObject()
       );
-      return var6.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method3284(Script var0, Scriptable var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      var2.method6274(
+   public static Scriptable method3284(Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274(
          "send",
          var1x -> {
             Minecraft var2x = Minecraft.getInstance();
             if (var2x.player != null && var2x.getConnection() != null) {
-               ClientPacketListener var3 = var2x.getConnection();
-               String var4 = ScriptValueUtils.method6254(var1x, 0, "").toLowerCase(Locale.ROOT);
-               if (var4.equals("chat") || var4.equals("command")) {
-                  ScriptPermissions.method4(var0, "chat");
-                  String var5 = ScriptValueUtils.method6254(var1x, 1, "");
-                  if (var5.isBlank() || var5.length() > 256) {
+               ClientPacketListener connection = var2x.getConnection();
+               String lowerCase = ScriptValueUtils.method6254(var1x, 0, "").toLowerCase(Locale.ROOT);
+               if (lowerCase.equals("chat") || lowerCase.equals("command")) {
+                  ScriptPermissions.method4(workspace, "chat");
+                  String str = ScriptValueUtils.method6254(var1x, 1, "");
+                  if (str.isBlank() || str.length() > 256) {
                      return false;
                   }
 
-                  ScriptScreenApi.method7062(var0);
+                  ScriptScreenApi.method7062(workspace);
                }
 
-               switch (var4) {
+               switch (lowerCase) {
                   case "swing":
-                     var3.send(ServerboundPunchPacket.INSTANCE);
+                     connection.send(ServerboundPunchPacket.INSTANCE);
                      break;
                   case "slot":
-                     var3.send(new ServerboundSetCarriedItemPacket(Math.max(0, Math.min(8, ScriptValueUtils.method6257(var1x, 1, 0)))));
+                     connection.send(new ServerboundSetCarriedItemPacket(Math.max(0, Math.min(8, ScriptValueUtils.method6257(var1x, 1, 0)))));
                      break;
                   case "sprint":
-                     var3.send(
+                     connection.send(
                         new ServerboundPlayerCommandPacket(var2x.player, ScriptValueUtils.method6259(var1x, 1, true) ? Action.START_SPRINTING : Action.STOP_SPRINTING)
                      );
                      break;
                   case "look":
-                     var3.send(
+                     connection.send(
                         new Rot(
                            (float)ScriptValueUtils.method6256(var1x, 1, var2x.player.getYRot()),
                            (float)Math.max(-90.0, Math.min(90.0, ScriptValueUtils.method6256(var1x, 2, var2x.player.getXRot()))),
@@ -520,29 +520,29 @@ public final class ScriptNetApi {
                      );
                      break;
                   case "ground":
-                     var3.send(new StatusOnly(ScriptValueUtils.method6259(var1x, 1, var2x.player.onGround()), var2x.player.horizontalCollision));
+                     connection.send(new StatusOnly(ScriptValueUtils.method6259(var1x, 1, var2x.player.onGround()), var2x.player.horizontalCollision));
                      break;
                   case "swap_hands":
-                     var3.send(new ServerboundPlayerActionPacket(net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN));
+                     connection.send(new ServerboundPlayerActionPacket(net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ZERO, Direction.DOWN));
                      break;
                   case "drop":
-                     var3.send(
+                     connection.send(
                         new ServerboundPlayerActionPacket(
                            ScriptValueUtils.method6259(var1x, 1, false) ? net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS : net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.DROP_ITEM, BlockPos.ZERO, Direction.DOWN
                         )
                      );
                      break;
                   case "release_use":
-                     var3.send(new ServerboundPlayerActionPacket(net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.RELEASE_USE_ITEM, BlockPos.ZERO, Direction.DOWN));
+                     connection.send(new ServerboundPlayerActionPacket(net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.RELEASE_USE_ITEM, BlockPos.ZERO, Direction.DOWN));
                      break;
                   case "close":
-                     var3.send(new ServerboundContainerClosePacket(var2x.player.containerMenu.containerId));
+                     connection.send(new ServerboundContainerClosePacket(var2x.player.containerMenu.containerId));
                      break;
                   case "chat":
-                     var3.sendChat(ScriptValueUtils.method6254(var1x, 1, ""));
+                     connection.sendChat(ScriptValueUtils.method6254(var1x, 1, ""));
                      break;
                   case "command":
-                     var3.sendCommand(ScriptValueUtils.method6254(var1x, 1, "").replaceFirst("^/", ""));
+                     connection.sendCommand(ScriptValueUtils.method6254(var1x, 1, "").replaceFirst("^/", ""));
                      break;
                   default:
                      throw ScriptValueUtils.method6251("packets.send: swing, slot, sprint, look, ground, swap_hands, drop, release_use, close, chat, command");
@@ -554,62 +554,62 @@ public final class ScriptNetApi {
             }
          }
       );
-      var2.method6274(
+      entry2.method6274(
          "names",
          var1x -> ScriptValueUtils.method6267(
-            var1, List.of("swing", "slot", "sprint", "look", "ground", "swap_hands", "drop", "release_use", "close", "chat", "command")
+            scope, List.of("swing", "slot", "sprint", "look", "ground", "swap_hands", "drop", "release_use", "close", "chat", "command")
          )
       );
-      return var2.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method3285(Script var0, Scriptable var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      var2.method6274("list", var1x -> ScriptValueUtils.method6267(var1, new ArrayList<>(Zenith.getInstance().getFriends().getItems())));
-      var2.method6274("is", var0x -> Zenith.getInstance().getFriends().method7627(ScriptValueUtils.method6254(var0x, 0, "")));
-      var2.method6274("add", var1x -> {
-         ScriptPermissions.method4(var0, "friends");
+   public static Scriptable method3285(Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("list", var1x -> ScriptValueUtils.method6267(scope, new ArrayList<>(Zenith.getInstance().getFriends().getItems())));
+      entry2.method6274("is", var0x -> Zenith.getInstance().getFriends().method7627(ScriptValueUtils.method6254(var0x, 0, "")));
+      entry2.method6274("add", var1x -> {
+         ScriptPermissions.method4(workspace, "friends");
          String var2x = ScriptValueUtils.method6254(var1x, 0, "").strip();
          if (!var2x.matches("[A-Za-z0-9_]{2,16}")) {
             throw ScriptValueUtils.method6251("ник: 2-16 символов, латиница, цифры и _");
          } else {
-            Friends var3 = Zenith.getInstance().getFriends();
-            if (!var3.method7627(var2x)) {
-               var3.add(var2x);
-               var3.save();
+            Friends friends = Zenith.getInstance().getFriends();
+            if (!friends.method7627(var2x)) {
+               friends.add(var2x);
+               friends.save();
             }
 
             return null;
          }
       });
-      var2.method6274("remove", var1x -> {
-         ScriptPermissions.method4(var0, "friends");
+      entry2.method6274("remove", var1x -> {
+         ScriptPermissions.method4(workspace, "friends");
          Zenith.getInstance().getFriends().method7629(ScriptValueUtils.method6254(var1x, 0, ""));
          return null;
       });
-      return var2.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
-   public static Scriptable method3286(Script var0, Scriptable var1) {
-      ScriptValueUtils.Entry2 var2 = ScriptValueUtils.method6247(var1);
-      var2.method6274("list", var1x -> {
+   public static Scriptable method3286(Script workspace, Scriptable scope) {
+      ScriptValueUtils.Entry2 entry2 = ScriptValueUtils.method6247(scope);
+      entry2.method6274("list", var1x -> {
          ArrayList var2x = new ArrayList();
-         File var3 = Manager.file;
-         File[] var4 = var3 == null ? null : var3.listFiles();
-         if (var4 != null) {
-            for (File var8 : var4) {
-               String var9 = var8.getName();
-               int var10 = var9.lastIndexOf(46);
-               if (var8.isFile() && var10 > 0) {
-                  var2x.add(var9.substring(0, var10));
+         File file = Manager.file;
+         File[] listFiles = file == null ? null : file.listFiles();
+         if (listFiles != null) {
+            for (File listFile : listFiles) {
+               String name = listFile.getName();
+               int lastIndexOf = name.lastIndexOf(46);
+               if (listFile.isFile() && lastIndexOf > 0) {
+                  var2x.add(name.substring(0, lastIndexOf));
                }
             }
          }
 
-         return ScriptValueUtils.method6267(var1, var2x);
+         return ScriptValueUtils.method6267(scope, var2x);
       });
-      var2.method6274("load", var1x -> {
-         ScriptPermissions.method4(var0, "configs");
+      entry2.method6274("load", var1x -> {
+         ScriptPermissions.method4(workspace, "configs");
          String var2x = ScriptValueUtils.method6254(var1x, 0, "");
          if (var2x.matches("[\\p{L}\\p{N} _.-]{1,64}") && !var2x.contains("..")) {
             return Zenith.getInstance().getManager().method7766(var2x);
@@ -617,7 +617,7 @@ public final class ScriptNetApi {
             throw ScriptValueUtils.method6251("неверное имя конфига");
          }
       });
-      return var2.getScriptableObject();
+      return entry2.getScriptableObject();
    }
 
    public static final class Data {
@@ -654,10 +654,10 @@ public final class ScriptNetApi {
          return "Data[" + "intValue=" + this.intValue + ", " + "byteValues=" + this.byteValues + ", " + "items=" + this.items + "]";
       }
 
-      public Data(int var1, byte[] var2, Map<String, List<String>> var3) {
-         this.intValue = var1;
-         this.byteValues = var2;
-         this.items = var3;
+      public Data(int intValue, byte[] byteValues, Map<String, List<String>> items) {
+         this.intValue = intValue;
+         this.byteValues = byteValues;
+         this.items = items;
       }
 
       public int getIntValue() {

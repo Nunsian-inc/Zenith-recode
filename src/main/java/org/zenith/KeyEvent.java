@@ -8,24 +8,24 @@ public final class KeyEvent implements Event {
    private final int keyCode;
    private final int modifiers;
 
-   public boolean isKey(int var1) {
-      return var1 == this.keyCode;
+   public boolean isKey(int keyCode) {
+      return keyCode == this.keyCode;
    }
 
-   public boolean isPress(int var1) {
-      return this.isPress(var1, MinecraftAccess.mc.gui.screen() == null);
+   public boolean isPress(int keyCode) {
+      return this.isPress(keyCode, MinecraftAccess.mc.gui.screen() == null);
    }
 
-   public boolean isPress(int var1, boolean var2) {
-      return this.keyCode == var1 && this.intValue == 1 && var2;
+   public boolean isPress(int keyCode, boolean flag) {
+      return this.keyCode == keyCode && this.intValue == 1 && flag;
    }
 
-   public boolean isRelease(int var1) {
-      return this.isRelease(var1, MinecraftAccess.mc.gui.screen() == null);
+   public boolean isRelease(int keyCode) {
+      return this.isRelease(keyCode, MinecraftAccess.mc.gui.screen() == null);
    }
 
-   public boolean isRelease(int var1, boolean var2) {
-      return this.keyCode == var1 && this.intValue == 0 && var2;
+   public boolean isRelease(int keyCode, boolean flag) {
+      return this.keyCode == keyCode && this.intValue == 0 && flag;
    }
 
    @Generated
@@ -44,9 +44,9 @@ public final class KeyEvent implements Event {
    }
 
    @Generated
-   public KeyEvent(int var1, int var2, int var3) {
-      this.intValue = var1;
-      this.keyCode = var2;
-      this.modifiers = var3;
+   public KeyEvent(int intValue, int keyCode, int modifiers) {
+      this.intValue = intValue;
+      this.keyCode = keyCode;
+      this.modifiers = modifiers;
    }
 }

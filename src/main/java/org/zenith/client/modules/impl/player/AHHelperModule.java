@@ -79,16 +79,16 @@ public final class AHHelperModule extends Module {
    }
 
    @EventTarget
-   public void method4042(KeyEvent var1) {
+   public void method4042(KeyEvent event) {
       if (this.isEnabled() && this.method4053() && this.sellKeyHw.getKeyCode() != -1) {
-         if (var1.isPress(this.sellKeyHw.getKeyCode())) {
+         if (event.isPress(this.sellKeyHw.getKeyCode())) {
             this.method4045();
          }
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.isEnabled() && mc.player != null && mc.getConnection() != null) {
          switch (this.type) {
             case WAIT_PRICE_SCREEN:
@@ -106,34 +106,34 @@ public final class AHHelperModule extends Module {
    }
 
    @EventTarget
-   public void getInstance(ChatReceiveEvent var1) {
+   public void getInstance(ChatReceiveEvent event) {
       if ((this.autoConfirm.isVisible() && this.autoConfirm.isEnabled() || this.type == AHHelperModule.Type.WAIT_CONFIRM)
-         && var1.getText().getString().startsWith("▶ Введите /ah sell auto confirm,")) {
+         && event.getText().getString().startsWith("▶ Введите /ah sell auto confirm,")) {
          mc.getConnection().sendCommand("ah sell auto confirm");
          this.type = AHHelperModule.Type.IDLE;
       }
    }
 
-   public void method4043(GuiGraphicsExtractor var1, Slot var2) {
-      this.method4044(var1, 0, 0, var2, true);
+   public void method4043(GuiGraphicsExtractor guiGraphicsExtractor, Slot lowSumSlotId) {
+      this.method4044(guiGraphicsExtractor, 0, 0, lowSumSlotId, true);
    }
 
-   public void getInstance(GuiGraphicsExtractor var1, Slot var2) {
-      this.method4044(var1, 0, 0, var2, false);
+   public void getInstance(GuiGraphicsExtractor guiGraphicsExtractor, Slot lowSumSlotId) {
+      this.method4044(guiGraphicsExtractor, 0, 0, lowSumSlotId, false);
    }
 
-   public void method4044(GuiGraphicsExtractor var1, int var2, int var3, Slot var4, boolean var5) {
-      int var6 = var5 ? this.colorSetting.method1445() : this.colorSetting2.method1445();
-      int var7 = var2 + var4.x;
-      int var8 = var3 + var4.y;
-      var1.fill(var7, var8, var7 + 16, var8 + 16, var6);
+   public void method4044(GuiGraphicsExtractor guiGraphicsExtractor, int leftPos, int topPos, Slot lowSumSlotId, boolean flag) {
+      int col = flag ? this.colorSetting.method1445() : this.colorSetting2.method1445();
+      int x0 = leftPos + lowSumSlotId.x;
+      int y0 = topPos + lowSumSlotId.y;
+      guiGraphicsExtractor.fill(x0, y0, x0 + 16, y0 + 16, col);
    }
 
    private void method4045() {
       if (this.type == AHHelperModule.Type.IDLE && this.method4053()) {
-         ItemStack var1 = mc.player.getMainHandItem();
-         if (var1 != null && !var1.isEmpty()) {
-            this.itemStack = var1.copy();
+         ItemStack mainHandItem = mc.player.getMainHandItem();
+         if (mainHandItem != null && !mainHandItem.isEmpty()) {
+            this.itemStack = mainHandItem.copy();
             this.longValue = -1L;
             this.intValue = 1;
             this.method4046();
@@ -164,15 +164,15 @@ public final class AHHelperModule extends Module {
                this.method4048("Аукцион не открылся");
             }
          } else {
-            Long var1 = this.method4051();
-            if (var1 == null) {
+            Long l = this.method4051();
+            if (l == null) {
                if (this.stopWatch.method7546(5000L)) {
                   this.method4048("Не удалось найти цену на аукционе");
                }
             } else {
-               long var2 = var1;
+               long l2 = l;
                this.longValue = Math.max(
-                  1L, var2 <= 2147483647L ? Math.round((int)var2 * this.discount.getValue3()) : Math.round((double)var2 * this.discount.getValue3())
+                  1L, l2 <= 2147483647L ? Math.round((int)l2 * this.discount.getValue3()) : Math.round((double)l2 * this.discount.getValue3())
                );
                this.closeScreen();
                ChatLogger.method2019("Найдена цена: " + this.longValue);
@@ -184,8 +184,8 @@ public final class AHHelperModule extends Module {
       }
    }
 
-   private void method4048(String var1) {
-      ChatLogger.method2022(var1);
+   private void method4048(String status) {
+      ChatLogger.method2022(status);
       this.closeScreen();
       this.method4055();
    }
@@ -202,8 +202,8 @@ public final class AHHelperModule extends Module {
 
    private void method4050() {
       if (this.longValue > 0L && mc.getConnection() != null) {
-         ItemStack var1 = mc.player.getMainHandItem();
-         if (var1.isEmpty() || !ItemStack.isSameItemSameComponents(var1, this.itemStack)) {
+         ItemStack mainHandItem = mc.player.getMainHandItem();
+         if (mainHandItem.isEmpty() || !ItemStack.isSameItemSameComponents(mainHandItem, this.itemStack)) {
             this.method4048("Держи тот же предмет в руке");
          } else if (mc.gui.screen() == null || this.stopWatch.method7546(1500L)) {
             if (this.stopWatch2.method7546(250L)) {
@@ -220,37 +220,37 @@ public final class AHHelperModule extends Module {
       if (!this.method4049()) {
          return null;
       } else {
-         ArrayList var1 = new ArrayList();
-         int var2 = Math.min(45, mc.player.containerMenu.slots.size());
+         ArrayList arrayList = new ArrayList();
+         int n = Math.min(45, mc.player.containerMenu.slots.size());
 
-         for (int var3 = 0; var3 < var2; var3++) {
-            Slot var4 = mc.player.containerMenu.getSlot(var3);
-            ItemStack var5 = var4.getItem();
-            long var6;
-            if (!var5.isEmpty() && !ItemNbtUtils.method87(var5) && (var6 = this.method4052(var5)) != Long.MAX_VALUE) {
-               var1.add((int)Math.min(2147483647L, var6));
+         for (int i = 0; i < n; i++) {
+            Slot slot = mc.player.containerMenu.getSlot(i);
+            ItemStack stack = slot.getItem();
+            long l;
+            if (!stack.isEmpty() && !ItemNbtUtils.method87(stack) && (l = this.method4052(stack)) != Long.MAX_VALUE) {
+               arrayList.add((int)Math.min(2147483647L, l));
             }
          }
 
-         if (var1.isEmpty()) {
+         if (arrayList.isEmpty()) {
             return null;
          } else {
-            var1.sort(Comparator.naturalOrder());
-            int var8 = Math.min(Math.max(0, this.intValue - 1), var1.size() - 1);
-            return (long)((Integer)var1.get(var8)).intValue() * Math.max(1, this.itemStack.getCount());
+            arrayList.sort(Comparator.naturalOrder());
+            int index = Math.min(Math.max(0, this.intValue - 1), arrayList.size() - 1);
+            return (long)((Integer)arrayList.get(index)).intValue() * Math.max(1, this.itemStack.getCount());
          }
       }
    }
 
-   private long method4052(ItemStack var1) {
-      int var2;
-      if ((var2 = ItemNbtUtils.method62(var1)) == (32767 << 16 | (char)-1)) {
+   private long method4052(ItemStack stack) {
+      int n;
+      if ((n = ItemNbtUtils.method62(stack)) == (32767 << 16 | (char)-1)) {
          return Long.MAX_VALUE;
       } else {
-         ItemLore var3 = var1.get(DataComponents.LORE);
-         return var3 != null && var3.styledLines().stream().map(Component::getString).collect(Collectors.joining()).contains("только полностью.")
+         ItemLore itemLore = stack.get(DataComponents.LORE);
+         return itemLore != null && itemLore.styledLines().stream().map(Component::getString).collect(Collectors.joining()).contains("только полностью.")
             ? Long.MAX_VALUE
-            : var2 / var1.getCount();
+            : n / stack.getCount();
       }
    }
 

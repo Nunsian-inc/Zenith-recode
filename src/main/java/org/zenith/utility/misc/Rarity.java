@@ -13,10 +13,10 @@ public enum Rarity {
    private final boolean flag;
    private final int intValue2;
 
-   private Rarity(int var3, boolean var4, int var5) {
-      this.intValue = var3;
-      this.flag = var4;
-      this.intValue2 = var5;
+   private Rarity(int intValue, boolean flag, int n) {
+      this.intValue = intValue;
+      this.flag = flag;
+      this.intValue2 = n;
    }
 
    public int getIntValue() {
@@ -35,13 +35,13 @@ public enum Rarity {
       return "wardrobe.rarity." + this.name().toLowerCase(Locale.ROOT);
    }
 
-   public static Rarity method4709(String var0) {
-      if (var0 == null) {
+   public static Rarity method4709(String str) {
+      if (str == null) {
          return COMMON;
       } else {
          try {
-            return valueOf(var0.strip().toUpperCase(Locale.ROOT));
-         } catch (IllegalArgumentException var2) {
+            return valueOf(str.strip().toUpperCase(Locale.ROOT));
+         } catch (IllegalArgumentException e) {
             return COMMON;
          }
       }

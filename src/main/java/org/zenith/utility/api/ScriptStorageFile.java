@@ -22,92 +22,92 @@ public final class ScriptStorageFile {
    private int size;
    private int intValue;
 
-   public ScriptStorageFile(Path var1) {
-      this.path = var1;
+   public ScriptStorageFile(Path path) {
+      this.path = path;
 
       try {
-         if (Files.isRegularFile(var1)) {
-            if (Files.size(var1) > 262144L) {
-               Path var2 = var1.resolveSibling(var1.getFileName() + ".too-big-" + System.currentTimeMillis());
-               Files.move(var1, var2, StandardCopyOption.REPLACE_EXISTING);
-               LoggerFactory.getLogger("ZenithScripts").warn("Хранилище {} больше {} КБ — сохранено как {}", new Object[]{var1, 256, var2.getFileName()});
+         if (Files.isRegularFile(path)) {
+            if (Files.size(path) > 262144L) {
+               Path sibling = path.resolveSibling(path.getFileName() + ".too-big-" + System.currentTimeMillis());
+               Files.move(path, sibling, StandardCopyOption.REPLACE_EXISTING);
+               LoggerFactory.getLogger("ZenithScripts").warn("Хранилище {} больше {} КБ — сохранено как {}", new Object[]{path, 256, sibling.getFileName()});
             } else {
-               JsonElement var6 = JsonParser.parseString(Files.readString(var1, StandardCharsets.UTF_8));
-               if (var6.isJsonObject()) {
-                  this.jsonObject = var6.getAsJsonObject();
+               JsonElement string = JsonParser.parseString(Files.readString(path, StandardCharsets.UTF_8));
+               if (string.isJsonObject()) {
+                  this.jsonObject = string.getAsJsonObject();
                }
             }
          }
-      } catch (Exception var5) {
+      } catch (Exception e) {
          try {
-            if (Files.isRegularFile(var1)) {
-               Files.copy(var1, var1.resolveSibling(var1.getFileName() + ".broken-" + System.currentTimeMillis()), StandardCopyOption.REPLACE_EXISTING);
+            if (Files.isRegularFile(path)) {
+               Files.copy(path, path.resolveSibling(path.getFileName() + ".broken-" + System.currentTimeMillis()), StandardCopyOption.REPLACE_EXISTING);
             }
-         } catch (Exception var4) {
+         } catch (Exception ex) {
          }
       }
 
       this.size = method1005(gson.toJson(this.jsonObject));
 
-      for (JsonElement var3 : this.jsonObject.asMap().values()) {
-         if (!var3.isJsonNull()) {
+      for (JsonElement jsonElement : this.jsonObject.asMap().values()) {
+         if (!jsonElement.isJsonNull()) {
             this.intValue++;
          }
       }
    }
 
-   public static int method1005(CharSequence var0) {
-      int var1 = 0;
-      int var2 = 0;
+   public static int method1005(CharSequence json) {
+      int n = 0;
+      int n2 = 0;
 
-      for (int var3 = var0.length(); var2 < var3; var2++) {
-         char var4 = var0.charAt(var2);
-         if (var4 < 128) {
-            var1++;
-         } else if (var4 < 2048) {
-            var1 += 2;
-         } else if (Character.isHighSurrogate(var4) && var2 + 1 < var3 && Character.isLowSurrogate(var0.charAt(var2 + 1))) {
-            var1 += 4;
-            var2++;
+      for (int i = json.length(); n2 < i; n2++) {
+         char charAt = json.charAt(n2);
+         if (charAt < 128) {
+            n++;
+         } else if (charAt < 2048) {
+            n += 2;
+         } else if (Character.isHighSurrogate(charAt) && n2 + 1 < i && Character.isLowSurrogate(json.charAt(n2 + 1))) {
+            n += 4;
+            n2++;
          } else {
-            var1 += 3;
+            n += 3;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   public JsonElement method1006(String var1) {
-      return this.jsonObject.get(var1);
+   public JsonElement method1006(String memberName) {
+      return this.jsonObject.get(memberName);
    }
 
    public Set<String> method1007() {
       return this.jsonObject.keySet();
    }
 
-   public void method1008(String var1, JsonElement var2) {
-      if (var1.length() > 128) {
+   public void method1008(String property, JsonElement json) {
+      if (property.length() > 128) {
          throw ScriptValueUtils.method6251("ключ длиннее 128 символов");
       } else {
-         JsonElement var3 = this.jsonObject.get(var1);
-         boolean var4 = var3 != null && !var3.isJsonNull();
-         boolean var5 = var2 != null && !var2.isJsonNull();
-         int var6 = !var4 && !var5 ? 0 : method1005(gson.toJson(var1)) + 1;
-         int var7 = var4 ? var6 + method1005(gson.toJson(var3)) : 0;
-         int var8 = var5 ? var6 + method1005(gson.toJson(var2)) : 0;
-         int var9 = this.intValue - (var4 ? 1 : 0) + (var5 ? 1 : 0);
-         int var10 = this.size - var7 + var8 - Math.max(0, this.intValue - 1) + Math.max(0, var9 - 1);
-         if (var10 > 262144) {
+         JsonElement jsonElement = this.jsonObject.get(property);
+         boolean flag = jsonElement != null && !jsonElement.isJsonNull();
+         boolean flag2 = json != null && !json.isJsonNull();
+         int n = !flag && !flag2 ? 0 : method1005(gson.toJson(property)) + 1;
+         int n2 = flag ? n + method1005(gson.toJson(jsonElement)) : 0;
+         int n3 = flag2 ? n + method1005(gson.toJson(json)) : 0;
+         int intValue = this.intValue - (flag ? 1 : 0) + (flag2 ? 1 : 0);
+         int size = this.size - n2 + n3 - Math.max(0, this.intValue - 1) + Math.max(0, intValue - 1);
+         if (size > 262144) {
             throw ScriptValueUtils.method6251("хранилище скрипта больше 256 КБ");
          } else {
-            if (var5) {
-               this.jsonObject.add(var1, var2);
+            if (flag2) {
+               this.jsonObject.add(property, json);
             } else {
-               this.jsonObject.remove(var1);
+               this.jsonObject.remove(property);
             }
 
-            this.intValue = var9;
-            this.size = var10;
+            this.intValue = intValue;
+            this.size = size;
             this.dirty = true;
          }
       }
@@ -123,10 +123,10 @@ public final class ScriptStorageFile {
 
          try {
             Files.createDirectories(this.path.getParent());
-            Path var1 = this.path.resolveSibling(this.path.getFileName() + ".tmp");
-            Files.writeString(var1, gson.toJson(this.jsonObject), StandardCharsets.UTF_8);
-            Files.move(var1, this.path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-         } catch (Exception var2) {
+            Path sibling = this.path.resolveSibling(this.path.getFileName() + ".tmp");
+            Files.writeString(sibling, gson.toJson(this.jsonObject), StandardCharsets.UTF_8);
+            Files.move(sibling, this.path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+         } catch (Exception e) {
             this.dirty = true;
          }
       }

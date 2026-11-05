@@ -30,22 +30,22 @@ public class BackgroundRenderEvent extends EventCancellable {
    }
 
    @Generated
-   public void setFloatValue(float var1) {
-      this.floatValue = var1;
+   public void setFloatValue(float floatValue) {
+      this.floatValue = floatValue;
    }
 
    @Generated
-   public void setColor(int var1) {
-      this.color = var1;
+   public void setColor(int color) {
+      this.color = color;
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated
-   public void setFloatValue2(float var1) {
-      this.floatValue2 = var1;
+   public void setFloatValue2(float renderDistanceEnd) {
+      this.floatValue2 = renderDistanceEnd;
    }
 }

@@ -70,77 +70,77 @@ public class JumpCircleModule extends Module {
    }
 
    @EventTarget
-   public void method4575(UpdateEvent var1) {
+   public void method4575(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         boolean var2 = mc.player.onGround();
-         if (var2) {
+         boolean lastOnGround = mc.player.onGround();
+         if (lastOnGround) {
             this.vec3d = mc.player.position();
          }
 
-         if (this.lastOnGround && !var2 && mc.player.getDeltaMovement().y > 0.05) {
+         if (this.lastOnGround && !lastOnGround && mc.player.getDeltaMovement().y > 0.05) {
             this.items.add(new JumpCircleModule.Entry(this.vec3d == null ? mc.player.position() : this.vec3d, System.currentTimeMillis()));
-            int var3 = this.items.size() - 8;
-            if (var3 > 0) {
-               this.items.subList(0, var3).clear();
+            int n = this.items.size() - 8;
+            if (n > 0) {
+               this.items.subList(0, n).clear();
             }
          }
 
-         this.lastOnGround = var2;
+         this.lastOnGround = lastOnGround;
       }
    }
 
    @EventTarget
-   public void method4576(WorldRenderEvent var1) {
+   public void method4576(WorldRenderEvent event) {
       if (mc.player != null && mc.level != null && !this.items.isEmpty()) {
-         long var2 = System.currentTimeMillis();
-         float var4 = this.lifetime.getValue3();
+         long now = System.currentTimeMillis();
+         float f = this.lifetime.getValue3();
 
-         for (int var5 = this.items.size() - 1; var5 >= 0; var5--) {
-            if ((float)(var2 - this.items.get(var5).longValue) > var4) {
-               this.items.remove(var5);
+         for (int i = this.items.size() - 1; i >= 0; i--) {
+            if ((float)(now - this.items.get(i).longValue) > f) {
+               this.items.remove(i);
             }
          }
 
          if (!this.items.isEmpty()) {
-            this.method4577(var1.getMatrixStack(), var2, var4);
+            this.method4577(event.getMatrixStack(), now, f);
          }
       }
    }
 
-   private void method4577(PoseStack var1, long var2, float var4) {
+   private void method4577(PoseStack matrixStack, long now, float f) {
       RenderState.method1871();
       RenderState.method1877();
       RenderState.method1875(BlendFactor.SRC_ALPHA, BlendFactor.ONE, BlendFactor.ZERO, BlendFactor.ONE);
       RenderState.method1898("core/position_tex_color");
       RenderState.method1878();
       RenderState.method1882(false);
-      int var5 = this.texture.getIndex();
-      if (var5 < 0 || var5 >= identifiers.length) {
-         var5 = 0;
+      int index = this.texture.getIndex();
+      if (index < 0 || index >= identifiers.length) {
+         index = 0;
       }
 
-      Identifier[] var6 = identifiers[var5];
-      Camera var7 = mc.getEntityRenderDispatcher().camera;
-      Vec3 var8 = var7.position();
-      Matrix4f var9 = var1.last().pose();
-      float var10 = this.size.getValue3();
-      float var11 = this.speed.getValue3();
-      int var12 = zenith.getStyleManager().getClientColor(0).method7287();
-      int var13 = zenith.getStyleManager().getClientColor(180).method7287();
+      Identifier[] identifier = identifiers[index];
+      Camera camera = mc.getEntityRenderDispatcher().camera;
+      Vec3 position = camera.position();
+      Matrix4f pose = matrixStack.last().pose();
+      float f2 = this.size.getValue3();
+      float f3 = this.speed.getValue3();
+      int color = zenith.getStyleManager().getClientColor(0).method7287();
+      int n = zenith.getStyleManager().getClientColor(180).method7287();
 
-      for (JumpCircleModule.Entry var15 : this.items) {
-         this.method4578(var15, var2, var8, var11, var4, var10, var12, var13);
+      for (JumpCircleModule.Entry entry : this.items) {
+         this.method4578(entry, now, position, f3, f, f2, color, n);
       }
 
-      for (Identifier var17 : var6) {
-         RenderState.method1890(0, var17);
-         BufferBuilder var18 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+      for (Identifier id : identifier) {
+         RenderState.method1890(0, id);
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-         for (JumpCircleModule.Entry var20 : this.items) {
-            this.method4579(var9, var18, var20);
+         for (JumpCircleModule.Entry entry : this.items) {
+            this.method4579(pose, begin, entry);
          }
 
-         ImmediateRenderer.method8015(var18.buildOrThrow());
+         ImmediateRenderer.method8015(begin.buildOrThrow());
       }
 
       RenderState.method1882(true);
@@ -149,68 +149,68 @@ public class JumpCircleModule extends Module {
       RenderState.method1873();
    }
 
-   private void method4578(JumpCircleModule.Entry var1, long var2, Vec3 var4, float var5, float var6, float var7, int var8, int var9) {
-      long var10 = var2 - var1.longValue;
-      var1.floatValue = (float)(var1.vec3d.x - var4.x);
-      var1.floatValue2 = (float)(var1.vec3d.y - var4.y) + 0.04F;
-      var1.floatValue3 = (float)(var1.vec3d.z - var4.z);
-      float var12 = (float)var10 * 0.001F * (float) (Math.PI * 2) * var5;
-      var1.floatValue4 = Mth.cos(var12);
-      var1.floatValue5 = Mth.sin(var12);
-      float var13 = Mth.clamp((float)var10 / var6, 0.0F, 1.0F);
-      float var14 = 1.0F - var13;
-      float var15 = var14 * var14;
-      float var16 = Mth.lerp(var13, 0.15F, var7);
-      var1.floatValue6 = var16 * 1.22F;
-      var1.floatValue7 = var16;
-      var1.intValue = ColorUtils.method6439(var8, var15 * 0.45F);
-      var1.intValue2 = ColorUtils.method6439(var9, var15);
+   private void method4578(JumpCircleModule.Entry entry, long now, Vec3 position, float f, float f2, float f3, int color, int n) {
+      long l = now - entry.longValue;
+      entry.floatValue = (float)(entry.vec3d.x - position.x);
+      entry.floatValue2 = (float)(entry.vec3d.y - position.y) + 0.04F;
+      entry.floatValue3 = (float)(entry.vec3d.z - position.z);
+      float f4 = (float)l * 0.001F * (float) (Math.PI * 2) * f;
+      entry.floatValue4 = Mth.cos(f4);
+      entry.floatValue5 = Mth.sin(f4);
+      float alpha1 = Mth.clamp((float)l / f2, 0.0F, 1.0F);
+      float f5 = 1.0F - alpha1;
+      float alpha = f5 * f5;
+      float f6 = Mth.lerp(alpha1, 0.15F, f3);
+      entry.floatValue6 = f6 * 1.22F;
+      entry.floatValue7 = f6;
+      entry.intValue = ColorUtils.method6439(color, alpha * 0.45F);
+      entry.intValue2 = ColorUtils.method6439(n, alpha);
    }
 
-   private void method4579(Matrix4f var1, BufferBuilder var2, JumpCircleModule.Entry var3) {
-      this.method4580(var1, var2, var3.floatValue, var3.floatValue2, var3.floatValue3, var3.floatValue6, var3.floatValue4, var3.floatValue5, var3.intValue);
+   private void method4579(Matrix4f pose, BufferBuilder begin, JumpCircleModule.Entry entry) {
+      this.method4580(pose, begin, entry.floatValue, entry.floatValue2, entry.floatValue3, entry.floatValue6, entry.floatValue4, entry.floatValue5, entry.intValue);
       this.method4580(
-         var1, var2, var3.floatValue, var3.floatValue2 + 0.002F, var3.floatValue3, var3.floatValue7, var3.floatValue4, var3.floatValue5, var3.intValue2
+         pose, begin, entry.floatValue, entry.floatValue2 + 0.002F, entry.floatValue3, entry.floatValue7, entry.floatValue4, entry.floatValue5, entry.intValue2
       );
    }
 
-   private void method4580(Matrix4f var1, BufferBuilder var2, float var3, float var4, float var5, float var6, float var7, float var8, int var9) {
-      float var10 = var6 * var7;
-      float var11 = var6 * var8;
-      this.method4581(var1, var2, var3 - var10 + var11, var4, var5 - var11 - var10, 0.0F, 0.0F, var9);
-      this.method4581(var1, var2, var3 - var10 - var11, var4, var5 - var11 + var10, 0.0F, 1.0F, var9);
-      this.method4581(var1, var2, var3 + var10 - var11, var4, var5 + var11 + var10, 1.0F, 1.0F, var9);
-      this.method4581(var1, var2, var3 + var10 + var11, var4, var5 + var11 - var10, 1.0F, 0.0F, var9);
+   private void method4580(Matrix4f pose, BufferBuilder begin, float floatValue, float y, float f, float f2, float f3, float f4, int intValue) {
+      float f5 = f2 * f3;
+      float f6 = f2 * f4;
+      this.method4581(pose, begin, floatValue - f5 + f6, y, f - f6 - f5, 0.0F, 0.0F, intValue);
+      this.method4581(pose, begin, floatValue - f5 - f6, y, f - f6 + f5, 0.0F, 1.0F, intValue);
+      this.method4581(pose, begin, floatValue + f5 - f6, y, f + f6 + f5, 1.0F, 1.0F, intValue);
+      this.method4581(pose, begin, floatValue + f5 + f6, y, f + f6 - f5, 1.0F, 0.0F, intValue);
    }
 
-   private void method4581(Matrix4f var1, BufferBuilder var2, float var3, float var4, float var5, float var6, float var7, int var8) {
-      var2.addVertex(var1, var3, var4, var5).setUv(var6, var7).setColor(var8);
+   private void method4581(Matrix4f pose, BufferBuilder begin, float x, float y, float z, float f, float f2, int intValue) {
+      begin.addVertex(pose, x, y, z).setUv(f, f2).setColor(intValue);
    }
 
    private static String[] method4582() {
-      String[] var0 = new String[texts.length];
+      String[] strings = new String[texts.length];
 
-      for (int var1 = 0; var1 < texts.length; var1++) {
-         var0[var1] = texts[var1][0];
+      for (int i = 0; i < texts.length; i++) {
+         strings[i] = texts[i][0];
       }
 
-      return var0;
+      return strings;
    }
 
    private static Identifier[][] method4583() {
-      Identifier[][] var0 = new Identifier[texts.length][];
+      Identifier[][] idses = new Identifier[texts.length][];
 
-      for (int var1 = 0; var1 < texts.length; var1++) {
-         String[] var2 = texts[var1];
-         int var3 = var2.length == 1 ? 0 : 1;
-         var0[var1] = new Identifier[var2.length - var3];
+      for (int i = 0; i < texts.length; i++) {
+         String[] text = texts[i];
+         int n = text.length == 1 ? 0 : 1;
+         idses[i] = new Identifier[text.length - n];
 
-         for (int var4 = var3; var4 < var2.length; var4++) {
-            var0[var1][var4 - var3] = Zenith.method1501("visuals/jumpcircle/" + var2[var4] + ".png");
+         for (int j = n; j < text.length; j++) {
+            idses[i][j - n] = Zenith.method1501("visuals/jumpcircle/" + text[j] + ".png");
          }
       }
 
-      return var0;
+      return idses;
    }
 
    private static class Entry {
@@ -226,9 +226,9 @@ public class JumpCircleModule extends Module {
       private int intValue;
       private int intValue2;
 
-      private Entry(Vec3 var1, long var2) {
-         this.vec3d = var1;
-         this.longValue = var2;
+      private Entry(Vec3 vec3d, long longValue) {
+         this.vec3d = vec3d;
+         this.longValue = longValue;
       }
    }
 }

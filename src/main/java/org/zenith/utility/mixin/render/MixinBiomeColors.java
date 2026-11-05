@@ -17,30 +17,30 @@ public class MixinBiomeColors {
       method = {"getAverageGrassColor(Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"},
       at = {@At("RETURN")}
    )
-   private static int zenith$frostGrass(int var0, BlockAndTintGetter var1, BlockPos var2) {
-      float var3 = WeatherModule.INSTANCE.method3101();
-      return var3 > 0.001F ? blend(var0, 14215388, var3) : var0;
+   private static int zenith$frostGrass(int n, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
+      float f = WeatherModule.INSTANCE.method3101();
+      return f > 0.001F ? blend(n, 14215388, f) : n;
    }
 
    @ModifyReturnValue(
       method = {"getAverageFoliageColor(Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"},
       at = {@At("RETURN")}
    )
-   private static int zenith$frostFoliage(int var0, BlockAndTintGetter var1, BlockPos var2) {
-      float var3 = WeatherModule.INSTANCE.method3101();
-      return var3 > 0.001F ? blend(var0, 13821144, var3) : var0;
+   private static int zenith$frostFoliage(int n, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
+      float f = WeatherModule.INSTANCE.method3101();
+      return f > 0.001F ? blend(n, 13821144, f) : n;
    }
 
-   private static int blend(int var0, int var1, float var2) {
-      int var3 = channel(var0 >> 16, var1 >> 16, var2);
-      int var4 = channel(var0 >> 8, var1 >> 8, var2);
-      int var5 = channel(var0, var1, var2);
-      return var3 << 16 | var4 << 8 | var5;
+   private static int blend(int n, int n2, float f) {
+      int channel2 = channel(n >> 16, n2 >> 16, f);
+      int channel3 = channel(n >> 8, n2 >> 8, f);
+      int channel4 = channel(n, n2, f);
+      return channel2 << 16 | channel3 << 8 | channel4;
    }
 
-   private static int channel(int var0, int var1, float var2) {
-      int var3 = var0 & 0xFF;
-      int var4 = var1 & 0xFF;
-      return Math.clamp((long)((int)(var3 + (var4 - var3) * var2 + 0.5F)), 0, 255);
+   private static int channel(int n, int n2, float f) {
+      int n3 = n & 0xFF;
+      int n4 = n2 & 0xFF;
+      return Math.clamp((long)((int)(n3 + (n4 - n3) * f + 0.5F)), 0, 255);
    }
 }

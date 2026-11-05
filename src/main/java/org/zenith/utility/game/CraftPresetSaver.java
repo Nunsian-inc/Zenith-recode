@@ -18,8 +18,8 @@ public final class CraftPresetSaver {
    private final AutoCraftModule autoCraftModule;
    private CraftPresetData craftPresetData = CraftPresetData.method6198();
 
-   public CraftPresetSaver(AutoCraftModule var1) {
-      this.autoCraftModule = var1;
+   public CraftPresetSaver(AutoCraftModule autoCraftModule) {
+      this.autoCraftModule = autoCraftModule;
    }
 
    public boolean isActive() {
@@ -35,13 +35,13 @@ public final class CraftPresetSaver {
    }
 
    public void method3190() {
-      String var1 = this.autoCraftModule.method1098();
-      if (var1 == null || var1.isBlank()) {
-         var1 = "custom";
+      String str = this.autoCraftModule.method1098();
+      if (str == null || str.isBlank()) {
+         str = "custom";
       }
 
       this.autoCraftModule.method1112();
-      this.craftPresetData = new CraftPresetData(var1);
+      this.craftPresetData = new CraftPresetData(str);
       this.autoCraftModule.method1113();
       AutoCraftModule.mc.gui.setScreen(null);
    }
@@ -50,11 +50,11 @@ public final class CraftPresetSaver {
       if (this.craftPresetData.method6199()) {
          return false;
       } else if (AutoCraftModule.mc.player != null && AutoCraftModule.mc.level != null) {
-         CraftingMenu var1 = AutoCraftModule.mc.player.containerMenu instanceof CraftingMenu var2 ? var2 : null;
-         if (var1 != null && this.craftPresetData.method6202() && this.method3193(var1)) {
+         CraftingMenu craftingMenu = AutoCraftModule.mc.player.containerMenu instanceof CraftingMenu craftingMenu2 ? craftingMenu2 : null;
+         if (craftingMenu != null && this.craftPresetData.method6202() && this.method3193(craftingMenu)) {
             this.method3196();
             return true;
-         } else if (var1 == null) {
+         } else if (craftingMenu == null) {
             if (this.craftPresetData.method6202()) {
                if (this.method3193(null)) {
                   this.method3196();
@@ -66,9 +66,9 @@ public final class CraftPresetSaver {
 
             return true;
          } else {
-            ItemStack var4 = var1.getSlot(0).getItem();
-            if (this.craftPresetData.method6202() && var4.isEmpty()) {
-               if (this.method3193(var1)) {
+            ItemStack stack = craftingMenu.getSlot(0).getItem();
+            if (this.craftPresetData.method6202() && stack.isEmpty()) {
+               if (this.method3193(craftingMenu)) {
                   this.method3196();
                   return true;
                } else {
@@ -76,11 +76,11 @@ public final class CraftPresetSaver {
                   return true;
                }
             } else {
-               if (!var4.isEmpty() && !this.craftPresetData.method6202()) {
-                  this.method3192(var1, var4);
+               if (!stack.isEmpty() && !this.craftPresetData.method6202()) {
+                  this.method3192(craftingMenu, stack);
                }
 
-               if (this.craftPresetData.method6202() && this.method3193(var1)) {
+               if (this.craftPresetData.method6202() && this.method3193(craftingMenu)) {
                   this.method3196();
                }
 
@@ -92,143 +92,143 @@ public final class CraftPresetSaver {
       }
    }
 
-   private void method3192(CraftingMenu var1, ItemStack var2) {
-      String var3 = method3201(var2.getItem());
-      if (!var3.isBlank()) {
-         String var4 = this.method3195(var2);
-         String[] var5 = new String[9];
-         String[] var6 = new String[9];
-         int var7 = 0;
+   private void method3192(CraftingMenu craftingMenu, ItemStack stack) {
+      String identifier = method3201(stack.getItem());
+      if (!identifier.isBlank()) {
+         String anotherString = this.method3195(stack);
+         String[] strings = new String[9];
+         String[] strings2 = new String[9];
+         int n = 0;
 
-         for (int var8 = 0; var8 < 9; var8++) {
-            ItemStack var9 = var1.getSlot(1 + var8).getItem();
-            if (var9.isEmpty()) {
-               var5[var8] = "";
-               var6[var8] = "";
+         for (int i = 0; i < 9; i++) {
+            ItemStack stack2 = craftingMenu.getSlot(1 + i).getItem();
+            if (stack2.isEmpty()) {
+               strings[i] = "";
+               strings2[i] = "";
             } else {
-               var5[var8] = method3201(var9.getItem());
-               var6[var8] = this.method3195(var9);
-               if (!var5[var8].isBlank()) {
-                  var7++;
+               strings[i] = method3201(stack2.getItem());
+               strings2[i] = this.method3195(stack2);
+               if (!strings[i].isBlank()) {
+                  n++;
                }
             }
          }
 
-         if (var7 >= 2) {
-            int var10 = this.method3194(var1, var3, var4);
-            this.craftPresetData.method6203(var3, var4, var5, var6, var10);
+         if (n >= 2) {
+            int n2 = this.method3194(craftingMenu, identifier, anotherString);
+            this.craftPresetData.method6203(identifier, anotherString, strings, strings2, n2);
          }
       }
    }
 
-   private boolean method3193(CraftingMenu var1) {
+   private boolean method3193(CraftingMenu craftingMenu) {
       if (!this.craftPresetData.method6199() && this.craftPresetData.method6202()) {
-         int var2 = this.method3194(var1, this.craftPresetData.getText2(), this.craftPresetData.getText3());
-         return var2 > this.craftPresetData.getIntValue();
+         int n = this.method3194(craftingMenu, this.craftPresetData.getText2(), this.craftPresetData.getText3());
+         return n > this.craftPresetData.getIntValue();
       } else {
          return false;
       }
    }
 
-   private int method3194(CraftingMenu var1, String var2, String var3) {
-      int var4 = 0;
+   private int method3194(CraftingMenu craftingMenu, String identifier, String anotherString) {
+      int n = 0;
 
-      for (int var5 = 0; var5 < 36; var5++) {
-         ItemStack var6 = AutoCraftModule.mc.player.getInventory().getItem(var5);
-         if (!var6.isEmpty() && this.autoCraftModule.method1073(var6, var2, var3)) {
-            var4 += var6.getCount();
+      for (int i = 0; i < 36; i++) {
+         ItemStack carried = AutoCraftModule.mc.player.getInventory().getItem(i);
+         if (!carried.isEmpty() && this.autoCraftModule.method1073(carried, identifier, anotherString)) {
+            n += carried.getCount();
          }
       }
 
-      if (var1 != null) {
-         ItemStack var7 = var1.getCarried();
-         if (!var7.isEmpty() && this.autoCraftModule.method1073(var7, var2, var3)) {
-            var4 += var7.getCount();
+      if (craftingMenu != null) {
+         ItemStack carried = craftingMenu.getCarried();
+         if (!carried.isEmpty() && this.autoCraftModule.method1073(carried, identifier, anotherString)) {
+            n += carried.getCount();
          }
       }
 
-      return var4;
+      return n;
    }
 
-   private String method3195(ItemStack var1) {
-      if (var1 == null || var1.isEmpty()) {
+   private String method3195(ItemStack stack) {
+      if (stack == null || stack.isEmpty()) {
          return "";
       } else {
-         return var1.get(DataComponents.CUSTOM_NAME) == null ? "" : var1.getHoverName().getString();
+         return stack.get(DataComponents.CUSTOM_NAME) == null ? "" : stack.getHoverName().getString();
       }
    }
 
    private void method3196() {
-      CraftRecipe var1 = this.method3197(this.craftPresetData);
+      CraftRecipe craftRecipe = this.method3197(this.craftPresetData);
       this.craftPresetData = CraftPresetData.method6198();
       if (!this.autoCraftModule.isEnabledRaw()) {
          this.autoCraftModule.method1114();
       }
 
-      if (var1 != null) {
-         this.autoCraftModule.method1127("Craft saved: " + var1.getText3());
+      if (craftRecipe != null) {
+         this.autoCraftModule.method1127("Craft saved: " + craftRecipe.getText3());
       } else {
          this.autoCraftModule.method1128("Unable to save crafted preset");
       }
    }
 
-   private CraftRecipe method3197(CraftPresetData var1) {
-      if (var1 != null && !var1.method6199() && var1.method6202()) {
-         String var2 = var1.getText();
-         if (var2 == null || var2.isBlank()) {
-            var2 = "custom";
+   private CraftRecipe method3197(CraftPresetData craftPresetData) {
+      if (craftPresetData != null && !craftPresetData.method6199() && craftPresetData.method6202()) {
+         String text = craftPresetData.getText();
+         if (text == null || text.isBlank()) {
+            text = "custom";
          }
 
-         String var3 = this.autoCraftModule.method1107(var1.getText2(), var1.getText3());
-         String var4 = this.method3198(var2, var3);
-         String var5 = this.method3200(var4, var1.getText2());
-         String var6 = var5;
-         int var7 = 1;
+         String str = this.autoCraftModule.method1107(craftPresetData.getText2(), craftPresetData.getText3());
+         String string = this.method3198(text, str);
+         String str2 = this.method3200(string, craftPresetData.getText2());
+         String text2 = str2;
+         int n = 1;
 
-         while (this.autoCraftModule.method1094(var2, var6) != null) {
-            var6 = var5 + "_" + var7++;
+         while (this.autoCraftModule.method1094(text, text2) != null) {
+            text2 = str2 + "_" + n++;
          }
 
-         CraftRecipe var8 = new CraftRecipe(var6, var2, var4);
-         var8.setFlag2(false);
-         var8.setLocked(false);
-         var8.method5403(var1.getText2());
-         var8.method5404(var1.getText3());
+         CraftRecipe craftRecipe = new CraftRecipe(text2, text, string);
+         craftRecipe.setFlag2(false);
+         craftRecipe.setLocked(false);
+         craftRecipe.method5403(craftPresetData.getText2());
+         craftRecipe.method5404(craftPresetData.getText3());
 
-         for (int var9 = 0; var9 < 9; var9++) {
-            var8.method5390(var9, var1.method6200(var9));
-            var8.method5392(var9, var1.method6201(var9));
+         for (int i = 0; i < 9; i++) {
+            craftRecipe.method5390(i, craftPresetData.method6200(i));
+            craftRecipe.method5392(i, craftPresetData.method6201(i));
          }
 
-         this.autoCraftModule.method1104(var8);
-         this.autoCraftModule.method1115(var2, var6);
+         this.autoCraftModule.method1104(craftRecipe);
+         this.autoCraftModule.method1115(text, text2);
          this.autoCraftModule.method1091();
          Zenith.getInstance().getManager().save();
-         return var8;
+         return craftRecipe;
       } else {
          return null;
       }
    }
 
-   private String method3198(String var1, String var2) {
-      String var3 = var2 == null ? "" : var2;
-      if (var3.isBlank()) {
-         var3 = "New Craft";
+   private String method3198(String text, String str) {
+      String str2 = str == null ? "" : str;
+      if (str2.isBlank()) {
+         str2 = "New Craft";
       }
 
-      String var4 = var3;
-      int var5 = 2;
+      String anotherString = str2;
+      int n = 2;
 
-      while (this.method3199(var1, var4)) {
-         var4 = var3 + " " + var5++;
+      while (this.method3199(text, anotherString)) {
+         anotherString = str2 + " " + n++;
       }
 
-      return var4;
+      return anotherString;
    }
 
-   private boolean method3199(String var1, String var2) {
-      for (CraftRecipe var4 : this.autoCraftModule.method1092(var1)) {
-         if (var4.getText3().equalsIgnoreCase(var2)) {
+   private boolean method3199(String text, String anotherString) {
+      for (CraftRecipe craftRecipe : this.autoCraftModule.method1092(text)) {
+         if (craftRecipe.getText3().equalsIgnoreCase(anotherString)) {
             return true;
          }
       }
@@ -236,26 +236,26 @@ public final class CraftPresetSaver {
       return false;
    }
 
-   private String method3200(String var1, String var2) {
-      String var3 = var1 == null ? "" : var1.toLowerCase(Locale.ROOT).replace(" ", "_").replaceAll("[^a-z0-9_]+", "");
-      if (var3.isBlank()) {
-         String var4 = var2 == null ? "" : var2;
-         int var5 = var4.indexOf(58);
-         if (var5 != -1 && var5 + 1 < var4.length()) {
-            var4 = var4.substring(var5 + 1);
+   private String method3200(String string, String str) {
+      String str2 = string == null ? "" : string.toLowerCase(Locale.ROOT).replace(" ", "_").replaceAll("[^a-z0-9_]+", "");
+      if (str2.isBlank()) {
+         String str3 = str == null ? "" : str;
+         int indexOf = str3.indexOf(58);
+         if (indexOf != -1 && indexOf + 1 < str3.length()) {
+            str3 = str3.substring(indexOf + 1);
          }
 
-         var3 = var4.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]+", "_");
+         str2 = str3.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]+", "_");
       }
 
-      if (var3.isBlank()) {
-         var3 = "item";
+      if (str2.isBlank()) {
+         str2 = "item";
       }
 
-      return "captured_" + var3;
+      return "captured_" + str2;
    }
 
-   private static String method3201(Item var0) {
-      return var0 != null && var0 != Items.AIR ? BuiltInRegistries.ITEM.getKey(var0).toString() : "";
+   private static String method3201(Item thing) {
+      return thing != null && thing != Items.AIR ? BuiltInRegistries.ITEM.getKey(thing).toString() : "";
    }
 }

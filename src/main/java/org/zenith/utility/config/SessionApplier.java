@@ -17,46 +17,46 @@ public final class SessionApplier {
    private SessionApplier() {
    }
 
-   public static void method4657(Minecraft var0, User var1) {
-      MinecraftClientAccessor var2 = (MinecraftClientAccessor)(Object)var0;
-      var2.zenith$setSession(var1);
+   public static void method4657(Minecraft minecraft, User user) {
+      MinecraftClientAccessor clientAccessor = (MinecraftClientAccessor)(Object)minecraft;
+      clientAccessor.zenith$setSession(user);
 
       try {
-         MinecraftServicesDiscoveryService var3 = MinecraftServicesDiscoveryService.create(var2.zenith$getNetworkProxy(), true);
+         MinecraftServicesDiscoveryService serviceAccess = MinecraftServicesDiscoveryService.create(clientAccessor.zenith$getNetworkProxy(), true);
 
          try {
-            Services var4 = Services.create(var3, var0.gameDirectory);
-            var2.zenith$setApiServices(var4);
+            Services services = Services.create(serviceAccess, minecraft.gameDirectory);
+            clientAccessor.zenith$setApiServices(services);
             System.out.println("[ZenithAlts] Обновлены ApiServices на окружение Mojang PROD.");
-         } catch (Throwable var9) {
-            System.err.println("[ZenithAlts] Не удалось обновить ApiServices: " + var9.getMessage());
-            var9.printStackTrace();
+         } catch (Throwable e) {
+            System.err.println("[ZenithAlts] Не удалось обновить ApiServices: " + e.getMessage());
+            e.printStackTrace();
          }
 
-         UserApiService var11 = UserApiService.OFFLINE;
+         UserApiService userApiService = UserApiService.OFFLINE;
 
          try {
-            if (var1.getAccessToken() != null && !var1.getAccessToken().isBlank()) {
-               var11 = var3.createUserApiService(var1.getAccessToken());
+            if (user.getAccessToken() != null && !user.getAccessToken().isBlank()) {
+               userApiService = serviceAccess.createUserApiService(user.getAccessToken());
                System.out.println("[ZenithAlts] UserApiService создан с access-токеном.");
             }
-         } catch (Throwable var8) {
+         } catch (Throwable e) {
          }
 
-         var2.zenith$setUserApiService(var11);
-
-         try {
-            var2.zenith$setProfileKeys(ProfileKeyPairManager.create(var11, var1, var0.gameDirectory.toPath()));
-         } catch (Throwable var7) {
-         }
+         clientAccessor.zenith$setUserApiService(userApiService);
 
          try {
-            var2.zenith$setAbuseReportContext(ReportingContext.create(ReportEnvironment.local(), var11));
-         } catch (Throwable var6) {
+            clientAccessor.zenith$setProfileKeys(ProfileKeyPairManager.create(userApiService, user, minecraft.gameDirectory.toPath()));
+         } catch (Throwable e) {
          }
-      } catch (Throwable var10) {
-         System.err.println("[ZenithAlts] Ошибка в applySession: " + var10.getMessage());
-         var10.printStackTrace();
+
+         try {
+            clientAccessor.zenith$setAbuseReportContext(ReportingContext.create(ReportEnvironment.local(), userApiService));
+         } catch (Throwable e) {
+         }
+      } catch (Throwable e) {
+         System.err.println("[ZenithAlts] Ошибка в applySession: " + e.getMessage());
+         e.printStackTrace();
       }
    }
 }

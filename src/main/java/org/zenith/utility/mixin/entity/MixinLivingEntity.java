@@ -59,7 +59,7 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       method = {"jumpFromGround()V"},
       at = {@At("RETURN")}
    )
-   public void replaceMovePacketPitche3(CallbackInfo var1) {
+   public void replaceMovePacketPitche3(CallbackInfo callbackInfo) {
       if ((Object)this == mc.player) {
          EventManager.call(new JumpEvent());
       }
@@ -70,12 +70,12 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       at = @At("STORE"),
       ordinal = 1
    )
-   private float hookJumpSprintRadians(float var1) {
+   private float hookJumpSprintRadians(float f) {
       if ((Object)this != mc.player) {
-         return var1;
+         return f;
       } else {
-         Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return var2 == null ? var1 : var2.getFloatValue() * (float) (Math.PI / 180.0);
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         return currentRotation == null ? f : currentRotation.getFloatValue() * (float) (Math.PI / 180.0);
       }
    }
 
@@ -87,7 +87,7 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
          shift = Shift.AFTER
       )}
    )
-   public void gownso(CallbackInfo var1) {
+   public void gownso(CallbackInfo callbackInfo) {
       if ((Object)this == mc.player && Zenith.getInstance().getRotationManager().getCurrentRotation() != null) {
          mc.player.setYRot(this.safeYaw);
          mc.player.setXRot(this.safePitch);
@@ -101,15 +101,15 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
          target = "Lnet/minecraft/world/entity/LivingEntity;travel(Lnet/minecraft/world/phys/Vec3;)V"
       )}
    )
-   public void replaceMo(CallbackInfo var1) {
+   public void replaceMo(CallbackInfo callbackInfo) {
       if ((Object)this == mc.player) {
          mc.player.setDeltaMovement(ElytraBoosterModule.INSTANCE.method1769(mc.player.getDeltaMovement()));
          if (Zenith.getInstance().getRotationManager().getCurrentRotation() != null) {
-            Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
+            Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
             this.safeYaw = mc.player.getYRot();
             this.safePitch = mc.player.getXRot();
-            mc.player.setYRot(var2.getFloatValue());
-            mc.player.setXRot(var2.getFloatValue2());
+            mc.player.setYRot(currentRotation.getFloatValue());
+            mc.player.setXRot(currentRotation.getFloatValue2());
          }
       }
    }
@@ -119,17 +119,17 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       at = {@At("RETURN")},
       cancellable = true
    )
-   private void hookLightningGrimPlayerTick(Vec3 var1, CallbackInfoReturnable<Vec3> var2) {
+   private void hookLightningGrimPlayerTick(Vec3 vec, CallbackInfoReturnable<Vec3> callbackInfoReturnable) {
       if ((Object)this == Minecraft.getInstance().player) {
-         RotationManager var3 = Zenith.getInstance().getRotationManager();
-         Rotation var4 = var3.getCurrentRotation();
-         Vec3 var5 = var4 == null ? Minecraft.getInstance().player.getLookAngle() : var4.method3135();
-         Rotation var6 = var3.getRotation2();
-         Vec3 var7 = var6 == null ? var5 : var6.method3135();
-         Vec3 var8 = ElytraBoosterModule.INSTANCE.method1770(var1, (Vec3)var2.getReturnValue(), var5, var7);
-         var8 = GrimGlideModule.INSTANCE.method5976(var1, var8, var5);
-         var8 = ElytraTargetModule.INSTANCE.method5249(var1, var8, var5);
-         var2.setReturnValue(var8);
+         RotationManager rotationManager = Zenith.getInstance().getRotationManager();
+         Rotation currentRotation = rotationManager.getCurrentRotation();
+         Vec3 lookAngle = currentRotation == null ? Minecraft.getInstance().player.getLookAngle() : currentRotation.method3135();
+         Rotation rotation2 = rotationManager.getRotation2();
+         Vec3 vec2 = rotation2 == null ? lookAngle : rotation2.method3135();
+         Vec3 returnValue = ElytraBoosterModule.INSTANCE.method1770(vec, (Vec3)callbackInfoReturnable.getReturnValue(), lookAngle, vec2);
+         returnValue = GrimGlideModule.INSTANCE.method5976(vec, returnValue, lookAngle);
+         returnValue = ElytraTargetModule.INSTANCE.method5249(vec, returnValue, lookAngle);
+         callbackInfoReturnable.setReturnValue(returnValue);
       }
    }
 
@@ -140,12 +140,12 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
          target = "Lnet/minecraft/world/entity/LivingEntity;getXRot()F"
       )}
    )
-   private float hookModifyFallFlyingPitch(float var1) {
+   private float hookModifyFallFlyingPitch(float f) {
       if ((Object)this != Minecraft.getInstance().player) {
-         return var1;
+         return f;
       } else {
-         Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return var2 == null ? var1 : var2.getFloatValue2();
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         return currentRotation == null ? f : currentRotation.getFloatValue2();
       }
    }
 
@@ -156,12 +156,12 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
          target = "Lnet/minecraft/world/entity/LivingEntity;getLookAngle()Lnet/minecraft/world/phys/Vec3;"
       )}
    )
-   private Vec3 hookModifyFallFlyingRotationVector(Vec3 var1) {
+   private Vec3 hookModifyFallFlyingRotationVector(Vec3 vec) {
       if ((Object)this != Minecraft.getInstance().player) {
-         return var1;
+         return vec;
       } else {
-         Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return var2 == null ? var1 : var2.method3135();
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         return currentRotation == null ? vec : currentRotation.method3135();
       }
    }
 
@@ -169,9 +169,9 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       method = {"getModifiedSwingDuration(Lnet/minecraft/world/item/component/SwingAnimation;)I"},
       at = {@At("RETURN")}
    )
-   private int modifySwingDuration(int var1) {
-      SwingAnimationModule var2 = SwingAnimationModule.INSTANCE;
-      return (LivingEntity)(Object)this == Minecraft.getInstance().player && var2.active() ? var2.method3269(var1) : var1;
+   private int modifySwingDuration(int n) {
+      SwingAnimationModule swingAnimationModule = SwingAnimationModule.INSTANCE;
+      return (LivingEntity)(Object)this == Minecraft.getInstance().player && swingAnimationModule.active() ? swingAnimationModule.method3269(n) : n;
    }
 
    @Inject(
@@ -179,7 +179,7 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void onDead(DamageSource var1, CallbackInfo var2) {
+   public void onDead(DamageSource damageSource, CallbackInfo callbackInfo) {
       EventManager.call(new EntityDeathEvent((LivingEntity)(Object)this));
    }
 
@@ -188,11 +188,11 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void isPushable(CallbackInfoReturnable<Boolean> var1) {
-      EntityPushEvent var2 = new EntityPushEvent(EntityPushEvent.Type.COLLISION);
-      EventManager.call(var2);
-      if (var2.isCancelled()) {
-         var1.setReturnValue(false);
+   public void isPushable(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      EntityPushEvent event = new EntityPushEvent(EntityPushEvent.Type.COLLISION);
+      EventManager.call(event);
+      if (event.isCancelled()) {
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 
@@ -212,29 +212,29 @@ public class MixinLivingEntity implements MinecraftAccess, Handler6 {
    }
 
    @Override
-   public void zenithDLC$trackServerPos(double var1, double var3, double var5) {
+   public void zenithDLC$trackServerPos(double prevServerX, double prevServerY, double prevServerZ) {
       if (this.serverPosTracked) {
          this.prevServerX = this.serverX;
          this.prevServerY = this.serverY;
          this.prevServerZ = this.serverZ;
       } else {
-         this.prevServerX = var1;
-         this.prevServerY = var3;
-         this.prevServerZ = var5;
+         this.prevServerX = prevServerX;
+         this.prevServerY = prevServerY;
+         this.prevServerZ = prevServerZ;
          this.serverPosTracked = true;
       }
 
-      this.serverX = var1;
-      this.serverY = var3;
-      this.serverZ = var5;
+      this.serverX = prevServerX;
+      this.serverY = prevServerY;
+      this.serverZ = prevServerZ;
       this.serverPosTime = ((LivingEntity)(Object)this).level().getGameTime();
    }
 
    @Override
    public Vec3 zenithDLC$getServerDelta() {
       if (this.serverPosTracked && ((LivingEntity)(Object)this).level().getGameTime() - this.serverPosTime <= 4L) {
-         Vec3 var1 = new Vec3(this.serverX - this.prevServerX, this.serverY - this.prevServerY, this.serverZ - this.prevServerZ);
-         return var1.lengthSqr() > 100.0 ? Vec3.ZERO : var1;
+         Vec3 vec = new Vec3(this.serverX - this.prevServerX, this.serverY - this.prevServerY, this.serverZ - this.prevServerZ);
+         return vec.lengthSqr() > 100.0 ? Vec3.ZERO : vec;
       } else {
          return Vec3.ZERO;
       }

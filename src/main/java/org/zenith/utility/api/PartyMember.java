@@ -64,8 +64,8 @@ public final class PartyMember implements MinecraftAccess {
    private volatile long longValue4;
    private long longValue5 = -1L;
 
-   public PartyMember(Cloud var1, Path var2) {
-      this.cloud = var1;
+   public PartyMember(Cloud cloud, Path path) {
+      this.cloud = cloud;
    }
 
    public boolean method1135() {
@@ -84,9 +84,9 @@ public final class PartyMember implements MinecraftAccess {
       return this.data6 != null;
    }
 
-   public boolean method1137(long var1) {
-      PartyMember.Data6 var3 = this.data6;
-      return var3 != null && var1 != this.cloud.getLongValue() && var3.method1216(var1) != null;
+   public boolean method1137(long uid) {
+      PartyMember.Data6 data6 = this.data6;
+      return data6 != null && uid != this.cloud.getLongValue() && data6.method1216(uid) != null;
    }
 
    public synchronized List<PartyMember.Data12> method1138() {
@@ -94,29 +94,29 @@ public final class PartyMember implements MinecraftAccess {
    }
 
    public synchronized List<PartyMember.Data4> method1139() {
-      var var1 = new ArrayList<>(this.items2.values());
-      var1.sort((var0, var1x) -> Long.compare(var1x.time(), var0.time()));
-      return var1;
+      var data4s = new ArrayList<>(this.items2.values());
+      data4s.sort((data4, var1x) -> Long.compare(var1x.time(), data4.time()));
+      return data4s;
    }
 
-   public synchronized PartyMember.Data4 method1140(long var1) {
-      return this.items2.get(var1);
+   public synchronized PartyMember.Data4 method1140(long death) {
+      return this.items2.get(death);
    }
 
-   public PartyMember.Data2 method1141(long var1) {
-      return var1 != 0L && var1 == this.cloud.getLongValue() ? this.data2 : this.items3.getOrDefault(var1, PartyMember.Data2.INSTANCE);
+   public PartyMember.Data2 method1141(long uid) {
+      return uid != 0L && uid == this.cloud.getLongValue() ? this.data2 : this.items3.getOrDefault(uid, PartyMember.Data2.INSTANCE);
    }
 
-   public boolean method1142(long var1) {
-      return this.items3.containsKey(var1);
+   public boolean method1142(long uid) {
+      return this.items3.containsKey(uid);
    }
 
    public PartyMember.Data2 getData2() {
       return this.data2;
    }
 
-   public List<String> method1143(String var1) {
-      return var1 == null ? List.of() : this.items4.getOrDefault(var1.toLowerCase(Locale.ROOT), List.of());
+   public List<String> method1143(String str) {
+      return str == null ? List.of() : this.items4.getOrDefault(str.toLowerCase(Locale.ROOT), List.of());
    }
 
    public synchronized List<PartyMember.Data7> method1144() {
@@ -143,12 +143,12 @@ public final class PartyMember implements MinecraftAccess {
       return this.data;
    }
 
-   public boolean method1148(long var1) {
-      PartyMember.Data var3 = this.data;
-      if (var3 != null && var1 != this.cloud.getLongValue()) {
-         for (PartyMember.Data3 var5 : var3.getItems()) {
-            if (var5.uid() == var1) {
-               return !this.cloud.prefs().method3316(var5.username());
+   public boolean method1148(long uid) {
+      PartyMember.Data data = this.data;
+      if (data != null && uid != this.cloud.getLongValue()) {
+         for (PartyMember.Data3 data3 : data.getItems()) {
+            if (data3.uid() == uid) {
+               return !this.cloud.prefs().method3316(data3.username());
             }
          }
 
@@ -174,23 +174,23 @@ public final class PartyMember implements MinecraftAccess {
       return this.text;
    }
 
-   public String method1149(long var1) {
-      if (var1 == this.cloud.getLongValue()) {
+   public String method1149(long uid) {
+      if (uid == this.cloud.getLongValue()) {
          return Cloud.accountName();
       } else {
-         PartyPlayerInfo var3 = this.cloud.state().method8040(var1);
-         if (var3 != null) {
-            return var3.username();
+         PartyPlayerInfo partyPlayerInfo = this.cloud.state().method8040(uid);
+         if (partyPlayerInfo != null) {
+            return partyPlayerInfo.username();
          } else {
-            PartyMember.Data6 var4 = this.data6;
-            if (var4 != null) {
-               PartyMember.Data3 var5 = var4.method1216(var1);
-               if (var5 != null) {
-                  return var5.username();
+            PartyMember.Data6 data6 = this.data6;
+            if (data6 != null) {
+               PartyMember.Data3 data3 = data6.method1216(uid);
+               if (data3 != null) {
+                  return data3.username();
                }
             }
 
-            return "#" + var1;
+            return "#" + uid;
          }
       }
    }
@@ -214,38 +214,38 @@ public final class PartyMember implements MinecraftAccess {
       this.version++;
    }
 
-   public void method1152(String var1) {
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("name", method1211(var1, 24));
-      this.cloud.method7861(2, var2);
+   public void method1152(String string) {
+      JsonObject json = new JsonObject();
+      json.addProperty("name", method1211(string, 24));
+      this.cloud.method7861(2, json);
    }
 
-   public void method1153(long var1) {
+   public void method1153(long uid) {
       if (this.data6 == null) {
          if (this.method1135()) {
-            this.longValue3 = var1;
+            this.longValue3 = uid;
             this.longValue4 = System.currentTimeMillis();
             this.method1152("");
          }
       } else {
-         this.cloud.method7861(3, method1208(var1));
+         this.cloud.method7861(3, method1208(uid));
       }
    }
 
-   public synchronized void method1154(PartyMember.Data7 var1) {
-      this.items5.removeIf(var1x -> var1x.getLongValue() == var1.getLongValue());
+   public synchronized void method1154(PartyMember.Data7 data7) {
+      this.items5.removeIf(var1x -> var1x.getLongValue() == data7.getLongValue());
       this.longValue3 = 0L;
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("id", var1.getLongValue());
-      this.cloud.method7861(4, var2);
+      JsonObject json = new JsonObject();
+      json.addProperty("id", data7.getLongValue());
+      this.cloud.method7861(4, json);
       this.version++;
    }
 
-   public synchronized void method1155(PartyMember.Data7 var1) {
-      this.items5.removeIf(var1x -> var1x.getLongValue() == var1.getLongValue());
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("id", var1.getLongValue());
-      this.cloud.method7861(5, var2);
+   public synchronized void method1155(PartyMember.Data7 data7) {
+      this.items5.removeIf(var1x -> var1x.getLongValue() == data7.getLongValue());
+      JsonObject json = new JsonObject();
+      json.addProperty("id", data7.getLongValue());
+      this.cloud.method7861(5, json);
       this.version++;
    }
 
@@ -253,194 +253,194 @@ public final class PartyMember implements MinecraftAccess {
       this.cloud.method7861(6, new JsonObject());
    }
 
-   public void method1157(long var1) {
-      this.cloud.method7861(7, method1208(var1));
+   public void method1157(long uid) {
+      this.cloud.method7861(7, method1208(uid));
    }
 
-   public void method1158(long var1) {
-      this.cloud.method7861(8, method1208(var1));
+   public void method1158(long uid) {
+      this.cloud.method7861(8, method1208(uid));
    }
 
-   public void method1159(String var1) {
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("name", method1211(var1, 24));
-      this.cloud.method7861(9, var2);
+   public void method1159(String string) {
+      JsonObject json = new JsonObject();
+      json.addProperty("name", method1211(string, 24));
+      this.cloud.method7861(9, json);
    }
 
-   public void method1160(long var1, String var3, String var4, double var5, double var7, double var9, String var11, String var12, int var13) {
-      JsonObject var14 = new JsonObject();
-      if (var1 > 0L) {
-         var14.addProperty("id", var1);
+   public void method1160(long l, String str, String str2, double x, double y, double z, String name, String key, int color) {
+      JsonObject json = new JsonObject();
+      if (l > 0L) {
+         json.addProperty("id", l);
       }
 
-      var14.addProperty("server", var3);
-      var14.addProperty("dim", var4);
-      var14.addProperty("x", var5);
-      var14.addProperty("y", var7);
-      var14.addProperty("z", var9);
-      var14.addProperty("name", method1211(var11, 32));
-      var14.addProperty("icon", var12);
-      var14.addProperty("color", var13);
-      this.cloud.method7861(10, var14);
+      json.addProperty("server", str);
+      json.addProperty("dim", str2);
+      json.addProperty("x", x);
+      json.addProperty("y", y);
+      json.addProperty("z", z);
+      json.addProperty("name", method1211(name, 32));
+      json.addProperty("icon", key);
+      json.addProperty("color", color);
+      this.cloud.method7861(10, json);
    }
 
-   public void method1161(long var1) {
-      JsonObject var3 = new JsonObject();
-      var3.addProperty("id", var1);
-      this.cloud.method7861(11, var3);
+   public void method1161(long longValue) {
+      JsonObject json = new JsonObject();
+      json.addProperty("id", longValue);
+      this.cloud.method7861(11, json);
    }
 
-   public void method1162(String var1, String var2, double var3, double var5, double var7, String var9, List<PartyMember.Data11> var10, int var11) {
-      JsonObject var12 = new JsonObject();
-      var12.addProperty("server", var1);
-      var12.addProperty("dim", var2);
-      var12.addProperty("x", var3);
-      var12.addProperty("y", var5);
-      var12.addProperty("z", var7);
-      var12.addProperty("cause", method1211(var9, 120));
-      var12.addProperty("xp", var11);
-      JsonArray var13 = new JsonArray();
+   public void method1162(String server, String dimension, double doubleValue, double d, double d2, String string, List<PartyMember.Data11> items, int intValue) {
+      JsonObject json = new JsonObject();
+      json.addProperty("server", server);
+      json.addProperty("dim", dimension);
+      json.addProperty("x", doubleValue);
+      json.addProperty("y", d);
+      json.addProperty("z", d2);
+      json.addProperty("cause", method1211(string, 120));
+      json.addProperty("xp", intValue);
+      JsonArray jsonArray = new JsonArray();
 
-      for (PartyMember.Data11 var15 : var10) {
-         if (var13.size() >= 64) {
+      for (PartyMember.Data11 data11 : items) {
+         if (jsonArray.size() >= 64) {
             break;
          }
 
-         JsonArray var16 = new JsonArray();
-         var16.add(var15.getText());
-         var16.add(var15.count());
-         var16.add(var15.getIntValue2());
-         var16.add(var15.getIntValue3());
-         var16.add(var15.isFlag() ? 1 : 0);
-         var13.add(var16);
+         JsonArray jsonArray2 = new JsonArray();
+         jsonArray2.add(data11.getText());
+         jsonArray2.add(data11.count());
+         jsonArray2.add(data11.getIntValue2());
+         jsonArray2.add(data11.getIntValue3());
+         jsonArray2.add(data11.isFlag() ? 1 : 0);
+         jsonArray.add(jsonArray2);
       }
 
-      var12.add("items", var13);
-      this.cloud.method7861(12, var12);
+      json.add("items", jsonArray);
+      this.cloud.method7861(12, json);
    }
 
-   public synchronized void method1163(String var1, String var2, double var3, double var5, double var7, String var9, List<PartyMember.Data11> var10, int var11) {
-      PartyMember.Data4 var12 = new PartyMember.Data4(
+   public synchronized void method1163(String server, String dimension, double doubleValue, double d, double d2, String string, List<PartyMember.Data11> items, int intValue) {
+      PartyMember.Data4 data4 = new PartyMember.Data4(
          this.longValue5--,
          this.cloud.getLongValue() == 0L ? Cloud.accountUid() : this.cloud.getLongValue(),
          Cloud.accountName(),
-         var1,
-         var2,
-         var3,
-         var5,
-         var7,
-         var9,
-         List.copyOf(var10),
-         var11,
+         server,
+         dimension,
+         doubleValue,
+         d,
+         d2,
+         string,
+         List.copyOf(items),
+         intValue,
          System.currentTimeMillis()
       );
-      this.items2.put(var12.getLongValue(), var12);
+      this.items2.put(data4.getLongValue(), data4);
       this.method1191();
       this.version++;
    }
 
-   public synchronized void method1164(long var1) {
-      PartyMember.Data4 var3 = this.items2.get(var1);
-      if (var3 != null) {
-         if (var3.getLongValue() > 0L && var3.uid() == this.cloud.getLongValue() && this.method1135()) {
-            JsonObject var4 = new JsonObject();
-            var4.addProperty("id", var1);
-            this.cloud.method7861(24, var4);
+   public synchronized void method1164(long longValue) {
+      PartyMember.Data4 data4 = this.items2.get(longValue);
+      if (data4 != null) {
+         if (data4.getLongValue() > 0L && data4.uid() == this.cloud.getLongValue() && this.method1135()) {
+            JsonObject json = new JsonObject();
+            json.addProperty("id", longValue);
+            this.cloud.method7861(24, json);
          } else {
-            this.items2.remove(var1);
+            this.items2.remove(longValue);
             this.version++;
          }
       }
    }
 
-   public void method1165(PartyMember.Data2 var1) {
-      this.data2 = var1;
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("status", var1.getText());
-      var2.addProperty("text", method1211(var1.text(), 48));
-      var2.addProperty("join", method1211(var1.getText3(), 80));
-      var2.addProperty("mode", method1211(var1.mode(), 40));
-      var2.addProperty("server", method1211(var1.server(), 64));
-      var2.addProperty("since", var1.getSince());
-      this.cloud.method7861(1, var2);
+   public void method1165(PartyMember.Data2 data2) {
+      this.data2 = data2;
+      JsonObject json = new JsonObject();
+      json.addProperty("status", data2.getText());
+      json.addProperty("text", method1211(data2.text(), 48));
+      json.addProperty("join", method1211(data2.getText3(), 80));
+      json.addProperty("mode", method1211(data2.mode(), 40));
+      json.addProperty("server", method1211(data2.server(), 64));
+      json.addProperty("since", data2.getSince());
+      this.cloud.method7861(1, json);
    }
 
-   public void method1166(Collection<String> var1) {
-      JsonObject var2 = new JsonObject();
-      JsonArray var3 = new JsonArray();
+   public void method1166(Collection<String> strings) {
+      JsonObject json = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
 
-      for (String var5 : var1) {
-         if (var3.size() < 24) {
-            var3.add(var5);
+      for (String string : strings) {
+         if (jsonArray.size() < 24) {
+            jsonArray.add(string);
          }
       }
 
-      var2.add("items", var3);
-      this.cloud.method7861(13, var2);
+      json.add("items", jsonArray);
+      this.cloud.method7861(13, json);
    }
 
-   public synchronized void method1167(String var1, Collection<String> var2, Consumer<String> var3) {
-      JsonObject var4 = new JsonObject();
-      var4.addProperty("name", method1211(var1, 32));
-      JsonArray var5 = new JsonArray();
+   public synchronized void method1167(String string, Collection<String> strings, Consumer<String> consumer) {
+      JsonObject json = new JsonObject();
+      json.addProperty("name", method1211(string, 32));
+      JsonArray jsonArray = new JsonArray();
 
-      for (String var7 : var2) {
-         if (var5.size() < 24) {
-            var5.add(var7);
+      for (String str : strings) {
+         if (jsonArray.size() < 24) {
+            jsonArray.add(str);
          }
       }
 
-      var4.add("items", var5);
-      if (var3 != null && this.method1135()) {
-         this.items9.add(var3);
+      json.add("items", jsonArray);
+      if (consumer != null && this.method1135()) {
+         this.items9.add(consumer);
       }
 
-      this.cloud.method7861(22, var4);
+      this.cloud.method7861(22, json);
    }
 
-   public synchronized void method1168(String var1, Consumer<PartyMember.Data15> var2) {
-      JsonObject var3 = new JsonObject();
-      var3.addProperty("code", var1.trim().toUpperCase(Locale.ROOT));
-      if (var2 != null && this.method1135()) {
-         this.items8.add(var2);
+   public synchronized void method1168(String str, Consumer<PartyMember.Data15> consumer) {
+      JsonObject json = new JsonObject();
+      json.addProperty("code", str.trim().toUpperCase(Locale.ROOT));
+      if (consumer != null && this.method1135()) {
+         this.items8.add(consumer);
       }
 
-      this.cloud.method7861(23, var3);
+      this.cloud.method7861(23, json);
    }
 
-   public void method1169(int var1, int var2) {
-      JsonObject var3 = new JsonObject();
-      var3.addProperty("kills", var1);
-      var3.addProperty("deaths", var2);
-      this.cloud.method7861(14, var3);
+   public void method1169(int n, int n2) {
+      JsonObject json = new JsonObject();
+      json.addProperty("kills", n);
+      json.addProperty("deaths", n2);
+      this.cloud.method7861(14, json);
    }
 
-   public void method1170(String var1) {
-      JsonObject var2 = new JsonObject();
-      if (var1 != null && !var1.isEmpty()) {
-         var2.addProperty("week", var1);
+   public void method1170(String str) {
+      JsonObject json = new JsonObject();
+      if (str != null && !str.isEmpty()) {
+         json.addProperty("week", str);
       }
 
-      this.cloud.method7861(15, var2);
+      this.cloud.method7861(15, json);
    }
 
-   public void method1171(String var1) {
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("name", method1211(var1, 24));
-      this.cloud.method7861(16, var2);
+   public void method1171(String string) {
+      JsonObject json = new JsonObject();
+      json.addProperty("name", method1211(string, 24));
+      this.cloud.method7861(16, json);
    }
 
-   public synchronized void method1172(String var1) {
-      String var2 = var1.trim().toUpperCase(Locale.ROOT);
-      this.items6.removeIf(var1x -> var1x.getText().equals(var2));
-      JsonObject var3 = new JsonObject();
-      var3.addProperty("code", var2);
-      this.cloud.method7861(17, var3);
+   public synchronized void method1172(String text) {
+      String upperCase = text.trim().toUpperCase(Locale.ROOT);
+      this.items6.removeIf(var1x -> var1x.getText().equals(upperCase));
+      JsonObject json = new JsonObject();
+      json.addProperty("code", upperCase);
+      this.cloud.method7861(17, json);
       this.version++;
    }
 
-   public synchronized void method1173(PartyMember.Data16 var1) {
-      this.items6.remove(var1);
+   public synchronized void method1173(PartyMember.Data16 data16) {
+      this.items6.remove(data16);
       this.version++;
    }
 
@@ -448,27 +448,27 @@ public final class PartyMember implements MinecraftAccess {
       this.cloud.method7861(18, new JsonObject());
    }
 
-   public void method1175(long var1) {
-      this.cloud.method7861(19, method1208(var1));
+   public void method1175(long uid) {
+      this.cloud.method7861(19, method1208(uid));
    }
 
-   public void method1176(long var1) {
-      this.longValue = var1;
-      this.cloud.method7861(20, method1208(var1));
+   public void method1176(long longValue) {
+      this.longValue = longValue;
+      this.cloud.method7861(20, method1208(longValue));
       this.version++;
    }
 
-   public void method1177(long var1, String var3, String var4, String var5, String var6) {
-      JsonObject var7 = method1208(var1);
-      var7.addProperty("join", method1211(var3, 80));
-      var7.addProperty("mode", method1211(var4, 40));
-      var7.addProperty("server", method1211(var5, 64));
-      var7.addProperty("note", method1211(var6, 60));
-      this.cloud.method7861(21, var7);
+   public void method1177(long uid, String string, String mode, String str, String string2) {
+      JsonObject json = method1208(uid);
+      json.addProperty("join", method1211(string, 80));
+      json.addProperty("mode", method1211(mode, 40));
+      json.addProperty("server", method1211(str, 64));
+      json.addProperty("note", method1211(string2, 60));
+      this.cloud.method7861(21, json);
    }
 
-   public synchronized void method1178(PartyMember.Data13 var1) {
-      this.items7.remove(var1);
+   public synchronized void method1178(PartyMember.Data13 data13) {
+      this.items7.remove(data13);
       this.version++;
    }
 
@@ -480,17 +480,17 @@ public final class PartyMember implements MinecraftAccess {
       return this.longValue2;
    }
 
-   public void method1179(JsonObject var1) {
-      this.cloud.method7861(50, var1);
+   public void method1179(JsonObject json) {
+      this.cloud.method7861(50, json);
    }
 
-   public void method1180(CloudPackets.Data18 var1) {
-      JsonObject var2 = var1.getJsonObject();
+   public void method1180(CloudPackets.Data18 data18) {
+      JsonObject jsonObject = data18.getJsonObject();
 
       try {
-         switch (var1.kind()) {
+         switch (data18.kind()) {
             case 1:
-               this.items3.put(var1.uid(), method1201(var2));
+               this.items3.put(data18.uid(), method1201(jsonObject));
                break;
             case 2:
             case 3:
@@ -527,60 +527,60 @@ public final class PartyMember implements MinecraftAccess {
             default:
                return;
             case 10:
-               this.method1186(var2);
+               this.method1186(jsonObject);
                break;
             case 11:
-               this.method1188(var2);
+               this.method1188(jsonObject);
                break;
             case 12:
-               this.method1190(var2);
+               this.method1190(jsonObject);
                break;
             case 13:
-               this.method1193(var1, var2);
+               this.method1193(data18, jsonObject);
                break;
             case 21:
-               this.method1197(var1, var2);
+               this.method1197(data18, jsonObject);
                break;
             case 24:
-               this.method1192(var2);
+               this.method1192(jsonObject);
                break;
             case 40:
-               this.method1181(var2);
+               this.method1181(jsonObject);
                break;
             case 41:
-               this.method1184(var1, var2);
+               this.method1184(data18, jsonObject);
                break;
             case 42:
-               this.method1185(var2);
+               this.method1185(jsonObject);
                break;
             case 43:
-               this.method1189(var2);
+               this.method1189(jsonObject);
                break;
             case 44:
-               this.data14 = method1204(var2);
+               this.data14 = method1204(jsonObject);
                break;
             case 45:
-               this.method1195(var2);
+               this.method1195(jsonObject);
                break;
             case 46:
-               this.method1196(var1, var2);
+               this.method1196(data18, jsonObject);
                break;
             case 47:
-               this.method1198(var2);
+               this.method1198(jsonObject);
                break;
             case 48:
-               this.method1199(var2);
+               this.method1199(jsonObject);
                break;
             case 49:
-               this.method1200(var2);
+               this.method1200(jsonObject);
             case 50:
                break;
             case 51:
-               this.longValue2 = var1.uid();
+               this.longValue2 = data18.uid();
                this.intValue++;
          }
-      } catch (RuntimeException var6) {
-         logger.warn("Облако: событие {} от {}#{} не разобрано — {}", new Object[]{var1.kind(), var1.username(), var1.uid(), var6.toString()});
+      } catch (RuntimeException e) {
+         logger.warn("Облако: событие {} от {}#{} не разобрано — {}", new Object[]{data18.kind(), data18.username(), data18.uid(), e.toString()});
          return;
       }
 
@@ -588,12 +588,12 @@ public final class PartyMember implements MinecraftAccess {
          this.version++;
       }
 
-      EventManager.call(new Event10(var1));
+      EventManager.call(new Event10(data18));
    }
 
-   private void method1181(JsonObject var1) {
-      long var2 = var1.has("id") ? var1.get("id").getAsLong() : 0L;
-      if (var2 == 0L) {
+   private void method1181(JsonObject jsonObject) {
+      long longValue = jsonObject.has("id") ? jsonObject.get("id").getAsLong() : 0L;
+      if (longValue == 0L) {
          this.data6 = null;
          synchronized (this) {
             this.items.clear();
@@ -601,175 +601,175 @@ public final class PartyMember implements MinecraftAccess {
 
          this.cloud.state().method8043(Set.of());
       } else {
-         ArrayList var4 = new ArrayList();
-         HashSet var5 = new HashSet();
+         ArrayList list = new ArrayList();
+         HashSet hashSet = new HashSet();
 
-         for (JsonElement var7 : var1.getAsJsonArray("members")) {
-            JsonObject var8 = var7.getAsJsonObject();
-            PartyMember.Data3 var9 = new PartyMember.Data3(
-               var8.get("uid").getAsLong(), method1209(var8, "name"), method1209(var8, "mc"), var8.has("online") && var8.get("online").getAsBoolean()
+         for (JsonElement json : jsonObject.getAsJsonArray("members")) {
+            JsonObject jsonObject2 = json.getAsJsonObject();
+            PartyMember.Data3 data3 = new PartyMember.Data3(
+               jsonObject2.get("uid").getAsLong(), method1209(jsonObject2, "name"), method1209(jsonObject2, "mc"), jsonObject2.has("online") && jsonObject2.get("online").getAsBoolean()
             );
-            var4.add(var9);
-            if (var9.uid() != this.cloud.getLongValue() && var9.isFlag()) {
-               var5.add(var9.uid());
-               if (this.cloud.state().method8039(var9.uid()) == null) {
-                  this.cloud.state().method8042(var9.uid(), var9.username(), var9.getText2());
+            list.add(data3);
+            if (data3.uid() != this.cloud.getLongValue() && data3.isFlag()) {
+               hashSet.add(data3.uid());
+               if (this.cloud.state().method8039(data3.uid()) == null) {
+                  this.cloud.state().method8042(data3.uid(), data3.username(), data3.getText2());
                }
             }
          }
 
-         ArrayList var13 = new ArrayList();
-         if (var1.has("invited")) {
-            for (JsonElement var16 : var1.getAsJsonArray("invited")) {
-               JsonObject var18 = var16.getAsJsonObject();
-               var13.add(new PartyMember.Data8(var18.get("uid").getAsLong(), method1209(var18, "name")));
+         ArrayList arrayList = new ArrayList();
+         if (jsonObject.has("invited")) {
+            for (JsonElement json : jsonObject.getAsJsonArray("invited")) {
+               JsonObject jsonObject2 = json.getAsJsonObject();
+               arrayList.add(new PartyMember.Data8(jsonObject2.get("uid").getAsLong(), method1209(jsonObject2, "name")));
             }
          }
 
-         this.cloud.state().method8043(var5);
-         PartyMember.Data6 var15 = this.data6;
+         this.cloud.state().method8043(hashSet);
+         PartyMember.Data6 data6 = this.data6;
          this.data6 = new PartyMember.Data6(
-            var2,
-            method1209(var1, "name"),
-            var1.get("leader").getAsLong(),
-            var1.has("created") ? var1.get("created").getAsLong() : 0L,
-            Collections.unmodifiableList(var4),
-            Collections.unmodifiableList(var13)
+            longValue,
+            method1209(jsonObject, "name"),
+            jsonObject.get("leader").getAsLong(),
+            jsonObject.has("created") ? jsonObject.get("created").getAsLong() : 0L,
+            Collections.unmodifiableList(list),
+            Collections.unmodifiableList(arrayList)
          );
-         if (var15 == null || var15.getLongValue() != var2) {
+         if (data6 == null || data6.getLongValue() != longValue) {
             synchronized (this) {
-               this.items5.removeIf(var2x -> var2x.getLongValue() == var2);
+               this.items5.removeIf(var2x -> var2x.getLongValue() == longValue);
             }
 
-            long var17 = this.longValue3;
-            if (var17 != 0L) {
+            long uid = this.longValue3;
+            if (uid != 0L) {
                this.longValue3 = 0L;
                if (System.currentTimeMillis() - this.longValue4 <= 15000L) {
-                  this.cloud.method7861(3, method1208(var17));
+                  this.cloud.method7861(3, method1208(uid));
                }
             }
          }
       }
    }
 
-   private boolean method1182(CloudPackets.Data18 var1) {
-      return this.cloud.prefs().method3316(var1.username());
+   private boolean method1182(CloudPackets.Data18 data18) {
+      return this.cloud.prefs().method3316(data18.username());
    }
 
-   private static boolean method1183(long var0, CloudPackets.Data18 var2) {
-      return var2.uid() != 0L && var0 == var2.uid();
+   private static boolean method1183(long longValue, CloudPackets.Data18 data18) {
+      return data18.uid() != 0L && longValue == data18.uid();
    }
 
-   private synchronized void method1184(CloudPackets.Data18 var1, JsonObject var2) {
-      long var3 = var2.get("id").getAsLong();
-      if (!this.method1182(var1)) {
-         this.items5.removeIf(var3x -> var3x.getLongValue() == var3 || method1183(var3x.getLongValue2(), var1));
-         ArrayList var5 = new ArrayList();
-         if (var2.has("members")) {
-            for (JsonElement var7 : var2.getAsJsonArray("members")) {
-               if (var5.size() >= 12) {
+   private synchronized void method1184(CloudPackets.Data18 data18, JsonObject jsonObject) {
+      long longValue = jsonObject.get("id").getAsLong();
+      if (!this.method1182(data18)) {
+         this.items5.removeIf(var3x -> var3x.getLongValue() == longValue || method1183(var3x.getLongValue2(), data18));
+         ArrayList items = new ArrayList();
+         if (jsonObject.has("members")) {
+            for (JsonElement json : jsonObject.getAsJsonArray("members")) {
+               if (items.size() >= 12) {
                   break;
                }
 
-               var5.add(method1211(var7.getAsString(), 32));
+               items.add(method1211(json.getAsString(), 32));
             }
          }
 
-         this.items5.add(new PartyMember.Data7(var3, method1209(var2, "name"), var1.uid(), var1.username(), var5, System.currentTimeMillis()));
+         this.items5.add(new PartyMember.Data7(longValue, method1209(jsonObject, "name"), data18.uid(), data18.username(), items, System.currentTimeMillis()));
          method1207(this.items5);
       }
    }
 
-   private synchronized void method1185(JsonObject var1) {
+   private synchronized void method1185(JsonObject jsonObject) {
       this.items.clear();
 
-      for (JsonElement var3 : var1.getAsJsonArray("marks")) {
-         PartyMember.Data12 var4 = method1202(var3.getAsJsonObject());
-         this.items.put(var4.getLongValue(), var4);
+      for (JsonElement json : jsonObject.getAsJsonArray("marks")) {
+         PartyMember.Data12 data12 = method1202(json.getAsJsonObject());
+         this.items.put(data12.getLongValue(), data12);
       }
 
       this.method1187();
    }
 
-   private synchronized void method1186(JsonObject var1) {
-      PartyMember.Data12 var2 = method1202(var1);
-      this.items.put(var2.getLongValue(), var2);
+   private synchronized void method1186(JsonObject jsonObject) {
+      PartyMember.Data12 data12 = method1202(jsonObject);
+      this.items.put(data12.getLongValue(), data12);
       this.method1187();
    }
 
    private void method1187() {
-      var var1 = this.items.keySet().iterator();
+      var iterator = this.items.keySet().iterator();
 
-      while (this.items.size() > 128 && var1.hasNext()) {
-         var1.next();
-         var1.remove();
+      while (this.items.size() > 128 && iterator.hasNext()) {
+         iterator.next();
+         iterator.remove();
       }
    }
 
-   private synchronized void method1188(JsonObject var1) {
-      this.items.remove(var1.get("id").getAsLong());
+   private synchronized void method1188(JsonObject jsonObject) {
+      this.items.remove(jsonObject.get("id").getAsLong());
    }
 
-   private synchronized void method1189(JsonObject var1) {
-      this.items2.values().removeIf(var0 -> var0.getLongValue() > 0L);
+   private synchronized void method1189(JsonObject jsonObject) {
+      this.items2.values().removeIf(data4 -> data4.getLongValue() > 0L);
 
-      for (JsonElement var3 : var1.getAsJsonArray("deaths")) {
-         PartyMember.Data4 var4 = method1203(var3.getAsJsonObject());
-         this.items2.put(var4.getLongValue(), var4);
+      for (JsonElement json : jsonObject.getAsJsonArray("deaths")) {
+         PartyMember.Data4 data4 = method1203(json.getAsJsonObject());
+         this.items2.put(data4.getLongValue(), data4);
       }
 
       this.method1191();
    }
 
-   private synchronized void method1190(JsonObject var1) {
-      PartyMember.Data4 var2 = method1203(var1);
-      this.items2.put(var2.getLongValue(), var2);
+   private synchronized void method1190(JsonObject jsonObject) {
+      PartyMember.Data4 data4 = method1203(jsonObject);
+      this.items2.put(data4.getLongValue(), data4);
       this.method1191();
    }
 
    private void method1191() {
       while (this.items2.size() > 32) {
-         PartyMember.Data4 var1 = null;
+         PartyMember.Data4 data4 = null;
 
-         for (PartyMember.Data4 var3 : this.items2.values()) {
-            if (var1 == null || var3.time() < var1.time()) {
-               var1 = var3;
+         for (PartyMember.Data4 data42 : this.items2.values()) {
+            if (data4 == null || data42.time() < data4.time()) {
+               data4 = data42;
             }
          }
 
-         this.items2.remove(var1.getLongValue());
+         this.items2.remove(data4.getLongValue());
       }
    }
 
-   private synchronized void method1192(JsonObject var1) {
-      this.items2.remove(var1.get("id").getAsLong());
+   private synchronized void method1192(JsonObject jsonObject) {
+      this.items2.remove(jsonObject.get("id").getAsLong());
    }
 
-   private void method1193(CloudPackets.Data18 var1, JsonObject var2) {
-      String var3 = method1209(var2, "mc");
-      if (var3.isEmpty()) {
-         logger.warn("Гардероб: образ от {}#{} пришёл без ника Minecraft — не к кому привязать", var1.username(), var1.uid());
+   private void method1193(CloudPackets.Data18 data18, JsonObject jsonObject) {
+      String str = method1209(jsonObject, "mc");
+      if (str.isEmpty()) {
+         logger.warn("Гардероб: образ от {}#{} пришёл без ника Minecraft — не к кому привязать", data18.username(), data18.uid());
       } else {
-         List<String> var4 = method1210(var2);
-         var var5 = this.items4.put(var3.toLowerCase(Locale.ROOT), List.copyOf(var4));
-         Wardrobe var6 = Wardrobe.method2488();
-         if (var6 != null) {
-            var var7 = method1194(var6, var4);
-            var6.method2501(var3, var7);
-            if (!var4.equals(var5)) {
-               ArrayList var8 = new ArrayList();
+         List<String> coll = method1210(jsonObject);
+         var strings = this.items4.put(str.toLowerCase(Locale.ROOT), List.copyOf(coll));
+         Wardrobe wardrobe = Wardrobe.method2488();
+         if (wardrobe != null) {
+            var map = method1194(wardrobe, coll);
+            wardrobe.method2501(str, map);
+            if (!coll.equals(strings)) {
+               ArrayList arrayList = new ArrayList();
 
-               for (String var10 : var4) {
-                  if (var6.getRegistry().method1421(var10) == null) {
-                     var8.add(var10);
+               for (String string : coll) {
+                  if (wardrobe.getRegistry().method1421(string) == null) {
+                     arrayList.add(string);
                   }
                }
 
-               if (var8.isEmpty()) {
-                  logger.info("Гардероб: образ {}#{} (ник {}) — {} вещей", new Object[]{var1.username(), var1.uid(), var3, var7.size()});
+               if (arrayList.isEmpty()) {
+                  logger.info("Гардероб: образ {}#{} (ник {}) — {} вещей", new Object[]{data18.username(), data18.uid(), str, map.size()});
                } else {
                   logger.warn(
-                     "Гардероб: образ {}#{} (ник {}) — {} вещей, неизвестны реестру: {}", new Object[]{var1.username(), var1.uid(), var3, var7.size(), var8}
+                     "Гардероб: образ {}#{} (ник {}) — {} вещей, неизвестны реестру: {}", new Object[]{data18.username(), data18.uid(), str, map.size(), arrayList}
                   );
                }
             }
@@ -777,47 +777,47 @@ public final class PartyMember implements MinecraftAccess {
       }
    }
 
-   public static Map<FocusSlotEnum, String> method1194(Wardrobe var0, Collection<String> var1) {
-      EnumMap var2 = new EnumMap<>(FocusSlotEnum.class);
+   public static Map<FocusSlotEnum, String> method1194(Wardrobe wardrobe, Collection<String> coll) {
+      EnumMap map = new EnumMap<>(FocusSlotEnum.class);
 
-      for (String var4 : var1) {
-         HoveredData var5 = var0.getRegistry().method1421(var4);
-         if (var5 != null) {
-            var2.put(var5.getFocusSlotEnum(), var5.getText());
+      for (String string : coll) {
+         HoveredData hoveredData = wardrobe.getRegistry().method1421(string);
+         if (hoveredData != null) {
+            map.put(hoveredData.getFocusSlotEnum(), hoveredData.getText());
          }
       }
 
-      return var2;
+      return map;
    }
 
-   private void method1195(JsonObject var1) {
-      String var2 = method1209(var1, "code");
-      if (var2.isEmpty()) {
+   private void method1195(JsonObject jsonObject) {
+      String text = method1209(jsonObject, "code");
+      if (text.isEmpty()) {
          this.data = null;
       } else {
-         ArrayList var3 = new ArrayList();
+         ArrayList list = new ArrayList();
 
-         for (JsonElement var5 : var1.getAsJsonArray("members")) {
-            JsonObject var6 = var5.getAsJsonObject();
-            var3.add(new PartyMember.Data3(var6.get("uid").getAsLong(), method1209(var6, "name"), method1209(var6, "mc"), true));
+         for (JsonElement json : jsonObject.getAsJsonArray("members")) {
+            JsonObject jsonObject2 = json.getAsJsonObject();
+            list.add(new PartyMember.Data3(jsonObject2.get("uid").getAsLong(), method1209(jsonObject2, "name"), method1209(jsonObject2, "mc"), true));
          }
 
-         this.data = new PartyMember.Data(var2, method1209(var1, "name"), var1.get("owner").getAsLong(), Collections.unmodifiableList(var3));
+         this.data = new PartyMember.Data(text, method1209(jsonObject, "name"), jsonObject.get("owner").getAsLong(), Collections.unmodifiableList(list));
       }
    }
 
-   private synchronized void method1196(CloudPackets.Data18 var1, JsonObject var2) {
-      String var3 = method1209(var2, "code");
-      if (!this.method1182(var1)) {
-         this.items6.removeIf(var2x -> var2x.getText().equals(var3) || method1183(var2x.getLongValue(), var1));
+   private synchronized void method1196(CloudPackets.Data18 data18, JsonObject jsonObject) {
+      String anObject = method1209(jsonObject, "code");
+      if (!this.method1182(data18)) {
+         this.items6.removeIf(var2x -> var2x.getText().equals(anObject) || method1183(var2x.getLongValue(), data18));
          this.items6
             .add(
                new PartyMember.Data16(
-                  var3,
-                  method1209(var2, "name"),
-                  var1.uid(),
-                  var1.username(),
-                  var2.has("members") ? var2.get("members").getAsInt() : 0,
+                  anObject,
+                  method1209(jsonObject, "name"),
+                  data18.uid(),
+                  data18.username(),
+                  jsonObject.has("members") ? jsonObject.get("members").getAsInt() : 0,
                   System.currentTimeMillis()
                )
             );
@@ -825,19 +825,19 @@ public final class PartyMember implements MinecraftAccess {
       }
    }
 
-   private synchronized void method1197(CloudPackets.Data18 var1, JsonObject var2) {
-      if (!this.method1182(var1)) {
-         this.items7.removeIf(var1x -> var1x.getLongValue() == var1.uid());
+   private synchronized void method1197(CloudPackets.Data18 data18, JsonObject jsonObject) {
+      if (!this.method1182(data18)) {
+         this.items7.removeIf(var1x -> var1x.getLongValue() == data18.uid());
          this.items7
             .add(
                new PartyMember.Data13(
-                  var1.uid(),
-                  var1.username(),
-                  method1209(var2, "mc"),
-                  method1209(var2, "join"),
-                  method1209(var2, "mode"),
-                  method1209(var2, "server"),
-                  method1209(var2, "note"),
+                  data18.uid(),
+                  data18.username(),
+                  method1209(jsonObject, "mc"),
+                  method1209(jsonObject, "join"),
+                  method1209(jsonObject, "mode"),
+                  method1209(jsonObject, "server"),
+                  method1209(jsonObject, "note"),
                   System.currentTimeMillis()
                )
             );
@@ -845,227 +845,227 @@ public final class PartyMember implements MinecraftAccess {
       }
    }
 
-   private void method1198(JsonObject var1) {
-      String var2 = method1209(var1, "code");
-      this.text = var2;
-      ArrayList<Consumer> var3;
+   private void method1198(JsonObject jsonObject) {
+      String text = method1209(jsonObject, "code");
+      this.text = text;
+      ArrayList<Consumer> consumers;
       synchronized (this) {
-         var3 = new ArrayList<>(this.items9);
+         consumers = new ArrayList<>(this.items9);
          this.items9.clear();
       }
 
-      for (Consumer var5 : var3) {
-         var5.accept(var2);
+      for (Consumer consumer : consumers) {
+         consumer.accept(text);
       }
    }
 
-   private void method1199(JsonObject var1) {
-      var var2 = method1210(var1);
-      PartyMember.Data15 var3 = new PartyMember.Data15(
-         method1209(var1, "code"),
-         method1209(var1, "name"),
-         var1.has("owner") ? var1.get("owner").getAsLong() : 0L,
-         method1209(var1, "ownerName"),
-         List.copyOf(var2)
+   private void method1199(JsonObject jsonObject) {
+      var coll = method1210(jsonObject);
+      PartyMember.Data15 data15 = new PartyMember.Data15(
+         method1209(jsonObject, "code"),
+         method1209(jsonObject, "name"),
+         jsonObject.has("owner") ? jsonObject.get("owner").getAsLong() : 0L,
+         method1209(jsonObject, "ownerName"),
+         List.copyOf(coll)
       );
-      ArrayList<Consumer> var4;
+      ArrayList<Consumer> consumers;
       synchronized (this) {
-         var4 = new ArrayList<>(this.items8);
+         consumers = new ArrayList<>(this.items8);
          this.items8.clear();
       }
 
-      for (Consumer var6 : var4) {
-         var6.accept(var3);
+      for (Consumer consumer : consumers) {
+         consumer.accept(data15);
       }
    }
 
-   private void method1200(JsonObject var1) {
-      String var2 = method1209(var1, "code");
-      long var3 = var1.has("uid") ? var1.get("uid").getAsLong() : 0L;
-      this.data10 = new PartyMember.Data10(var2, var3, System.currentTimeMillis());
-      if ("look_missing".equals(var2)) {
-         ArrayList<Consumer> var5;
+   private void method1200(JsonObject jsonObject) {
+      String anObject = method1209(jsonObject, "code");
+      long longValue = jsonObject.has("uid") ? jsonObject.get("uid").getAsLong() : 0L;
+      this.data10 = new PartyMember.Data10(anObject, longValue, System.currentTimeMillis());
+      if ("look_missing".equals(anObject)) {
+         ArrayList<Consumer> consumers;
          synchronized (this) {
-            var5 = new ArrayList<>(this.items8);
+            consumers = new ArrayList<>(this.items8);
             this.items8.clear();
          }
 
-         for (Consumer var7 : var5) {
-            var7.accept(null);
+         for (Consumer consumer : consumers) {
+            consumer.accept(null);
          }
       }
 
-      if ("mate_gone".equals(var2) && var3 != 0L) {
-         PartyMember.Data6 var10 = this.data6;
-         if (var10 == null || var10.method1216(var3) == null) {
-            HashSet var11 = new HashSet();
+      if ("mate_gone".equals(anObject) && longValue != 0L) {
+         PartyMember.Data6 data6 = this.data6;
+         if (data6 == null || data6.method1216(longValue) == null) {
+            HashSet hashSet = new HashSet();
 
-            for (PartyPlayerInfo var8 : this.cloud.state().method8041()) {
-               if (var8.uid() != var3) {
-                  var11.add(var8.uid());
+            for (PartyPlayerInfo partyPlayerInfo : this.cloud.state().method8041()) {
+               if (partyPlayerInfo.uid() != longValue) {
+                  hashSet.add(partyPlayerInfo.uid());
                }
             }
 
-            this.cloud.state().method8043(var11);
+            this.cloud.state().method8043(hashSet);
          }
       }
    }
 
-   private static PartyMember.Data2 method1201(JsonObject var0) {
+   private static PartyMember.Data2 method1201(JsonObject jsonObject) {
       return new PartyMember.Data2(
-         method1209(var0, "status"),
-         method1209(var0, "text"),
-         method1209(var0, "join"),
-         method1209(var0, "mode"),
-         method1209(var0, "server"),
-         var0.has("since") ? var0.get("since").getAsLong() : 0L
+         method1209(jsonObject, "status"),
+         method1209(jsonObject, "text"),
+         method1209(jsonObject, "join"),
+         method1209(jsonObject, "mode"),
+         method1209(jsonObject, "server"),
+         jsonObject.has("since") ? jsonObject.get("since").getAsLong() : 0L
       );
    }
 
-   private static PartyMember.Data12 method1202(JsonObject var0) {
+   private static PartyMember.Data12 method1202(JsonObject jsonObject) {
       return new PartyMember.Data12(
-         var0.get("id").getAsLong(),
-         method1209(var0, "server"),
-         method1209(var0, "dim"),
-         var0.get("x").getAsDouble(),
-         var0.get("y").getAsDouble(),
-         var0.get("z").getAsDouble(),
-         method1209(var0, "name"),
-         method1209(var0, "icon"),
-         var0.has("color") ? var0.get("color").getAsInt() : -1,
-         var0.has("author") ? var0.get("author").getAsLong() : 0L,
-         method1209(var0, "authorName"),
-         var0.has("time") ? var0.get("time").getAsLong() : 0L
+         jsonObject.get("id").getAsLong(),
+         method1209(jsonObject, "server"),
+         method1209(jsonObject, "dim"),
+         jsonObject.get("x").getAsDouble(),
+         jsonObject.get("y").getAsDouble(),
+         jsonObject.get("z").getAsDouble(),
+         method1209(jsonObject, "name"),
+         method1209(jsonObject, "icon"),
+         jsonObject.has("color") ? jsonObject.get("color").getAsInt() : -1,
+         jsonObject.has("author") ? jsonObject.get("author").getAsLong() : 0L,
+         method1209(jsonObject, "authorName"),
+         jsonObject.has("time") ? jsonObject.get("time").getAsLong() : 0L
       );
    }
 
-   private static PartyMember.Data4 method1203(JsonObject var0) {
-      ArrayList var1 = new ArrayList();
-      if (var0.has("items")) {
-         for (JsonElement var3 : var0.getAsJsonArray("items")) {
-            if (var1.size() >= 64) {
+   private static PartyMember.Data4 method1203(JsonObject jsonObject) {
+      ArrayList coll = new ArrayList();
+      if (jsonObject.has("items")) {
+         for (JsonElement json : jsonObject.getAsJsonArray("items")) {
+            if (coll.size() >= 64) {
                break;
             }
 
-            JsonArray var4 = var3.getAsJsonArray();
-            var1.add(
+            JsonArray jsonArray = json.getAsJsonArray();
+            coll.add(
                new PartyMember.Data11(
-                  method1211(var4.get(0).getAsString(), 256),
-                  var4.get(1).getAsInt(),
-                  var4.size() > 2 ? var4.get(2).getAsInt() : 0,
-                  var4.size() > 3 ? var4.get(3).getAsInt() : 0,
-                  var4.size() > 4 && var4.get(4).getAsInt() != 0
+                  method1211(jsonArray.get(0).getAsString(), 256),
+                  jsonArray.get(1).getAsInt(),
+                  jsonArray.size() > 2 ? jsonArray.get(2).getAsInt() : 0,
+                  jsonArray.size() > 3 ? jsonArray.get(3).getAsInt() : 0,
+                  jsonArray.size() > 4 && jsonArray.get(4).getAsInt() != 0
                )
             );
          }
       }
 
       return new PartyMember.Data4(
-         var0.get("id").getAsLong(),
-         var0.get("uid").getAsLong(),
-         method1209(var0, "name"),
-         method1209(var0, "server"),
-         method1209(var0, "dim"),
-         var0.get("x").getAsDouble(),
-         var0.get("y").getAsDouble(),
-         var0.get("z").getAsDouble(),
-         method1209(var0, "cause"),
-         List.copyOf(var1),
-         var0.has("xp") ? var0.get("xp").getAsInt() : 0,
-         var0.has("time") ? var0.get("time").getAsLong() : 0L
+         jsonObject.get("id").getAsLong(),
+         jsonObject.get("uid").getAsLong(),
+         method1209(jsonObject, "name"),
+         method1209(jsonObject, "server"),
+         method1209(jsonObject, "dim"),
+         jsonObject.get("x").getAsDouble(),
+         jsonObject.get("y").getAsDouble(),
+         jsonObject.get("z").getAsDouble(),
+         method1209(jsonObject, "cause"),
+         List.copyOf(coll),
+         jsonObject.has("xp") ? jsonObject.get("xp").getAsInt() : 0,
+         jsonObject.has("time") ? jsonObject.get("time").getAsLong() : 0L
       );
    }
 
-   private static PartyMember.Data14 method1204(JsonObject var0) {
-      ArrayList var1 = new ArrayList();
-      if (var0.has("weeks")) {
-         for (JsonElement var3 : var0.getAsJsonArray("weeks")) {
-            var1.add(var3.getAsString());
+   private static PartyMember.Data14 method1204(JsonObject jsonObject) {
+      ArrayList coll = new ArrayList();
+      if (jsonObject.has("weeks")) {
+         for (JsonElement json : jsonObject.getAsJsonArray("weeks")) {
+            coll.add(json.getAsString());
          }
       }
 
-      ArrayList var6 = new ArrayList();
+      ArrayList arrayList = new ArrayList();
 
-      for (JsonElement var4 : var0.getAsJsonArray("entries")) {
-         JsonObject var5 = var4.getAsJsonObject();
-         var6.add(
+      for (JsonElement json : jsonObject.getAsJsonArray("entries")) {
+         JsonObject jsonObject2 = json.getAsJsonObject();
+         arrayList.add(
             new PartyMember.Data5(
-               var5.get("uid").getAsLong(),
-               method1209(var5, "name"),
-               var5.has("self") && var5.get("self").getAsBoolean(),
-               var5.has("online") && var5.get("online").getAsBoolean(),
-               method1205(var5.getAsJsonObject("servers")),
-               method1205(var5.getAsJsonObject("prev"))
+               jsonObject2.get("uid").getAsLong(),
+               method1209(jsonObject2, "name"),
+               jsonObject2.has("self") && jsonObject2.get("self").getAsBoolean(),
+               jsonObject2.has("online") && jsonObject2.get("online").getAsBoolean(),
+               method1205(jsonObject2.getAsJsonObject("servers")),
+               method1205(jsonObject2.getAsJsonObject("prev"))
             )
          );
       }
 
       return new PartyMember.Data14(
-         method1209(var0, "week"), method1209(var0, "prevWeek"), method1209(var0, "current"), List.copyOf(var1), List.copyOf(var6), System.currentTimeMillis()
+         method1209(jsonObject, "week"), method1209(jsonObject, "prevWeek"), method1209(jsonObject, "current"), List.copyOf(coll), List.copyOf(arrayList), System.currentTimeMillis()
       );
    }
 
-   private static Map<String, PartyMember.Data9> method1205(JsonObject var0) {
-      LinkedHashMap var1 = new LinkedHashMap();
-      if (var0 != null) {
-         for (Entry var3 : var0.entrySet()) {
-            JsonObject var4 = ((JsonElement)var3.getValue()).getAsJsonObject();
-            var1.put((String)var3.getKey(), new PartyMember.Data9(var4.get("ms").getAsLong(), var4.get("kills").getAsLong(), var4.get("deaths").getAsLong()));
+   private static Map<String, PartyMember.Data9> method1205(JsonObject jsonObject) {
+      LinkedHashMap map = new LinkedHashMap();
+      if (jsonObject != null) {
+         for (Entry entry : jsonObject.entrySet()) {
+            JsonObject json = ((JsonElement)entry.getValue()).getAsJsonObject();
+            map.put((String)entry.getKey(), new PartyMember.Data9(json.get("ms").getAsLong(), json.get("kills").getAsLong(), json.get("deaths").getAsLong()));
          }
       }
 
-      return var1;
+      return map;
    }
 
    private synchronized void method1206() {
-      long var1 = System.currentTimeMillis() - 300000L;
-      this.items5.removeIf(var2 -> var2.getLongValue3() < var1);
-      this.items6.removeIf(var2 -> var2.getLongValue2() < var1);
-      this.items7.removeIf(var2 -> var2.getLongValue2() < var1);
+      long l = System.currentTimeMillis() - 300000L;
+      this.items5.removeIf(data7 -> data7.getLongValue3() < l);
+      this.items6.removeIf(data16 -> data16.getLongValue2() < l);
+      this.items7.removeIf(data13 -> data13.getLongValue2() < l);
    }
 
-   private static <T> void method1207(List<T> var0) {
-      while (var0.size() > 8) {
-         var0.remove(0);
+   private static <T> void method1207(List<T> list) {
+      while (list.size() > 8) {
+         list.remove(0);
       }
    }
 
-   private static JsonObject method1208(long var0) {
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("uid", var0);
-      return var2;
+   private static JsonObject method1208(long uid) {
+      JsonObject json = new JsonObject();
+      json.addProperty("uid", uid);
+      return json;
    }
 
-   public static String method1209(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      if (var2 != null && var2.isJsonPrimitive()) {
-         String var3 = var2.getAsString();
-         return var3.length() > 256 ? var3.substring(0, 256) : var3;
+   public static String method1209(JsonObject jsonObject, String memberName) {
+      JsonElement jsonElement = jsonObject.get(memberName);
+      if (jsonElement != null && jsonElement.isJsonPrimitive()) {
+         String string = jsonElement.getAsString();
+         return string.length() > 256 ? string.substring(0, 256) : string;
       } else {
          return "";
       }
    }
 
-   private static List<String> method1210(JsonObject var0) {
-      ArrayList<String> var1 = new ArrayList<>();
+   private static List<String> method1210(JsonObject jsonObject) {
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (JsonElement var3 : var0.getAsJsonArray("items")) {
-         if (var1.size() >= 64) {
+      for (JsonElement json : jsonObject.getAsJsonArray("items")) {
+         if (strings.size() >= 64) {
             break;
          }
 
-         var1.add(method1211(var3.getAsString(), 256));
+         strings.add(method1211(json.getAsString(), 256));
       }
 
-      return var1;
+      return strings;
    }
 
-   private static String method1211(String var0, int var1) {
-      if (var0 == null) {
+   private static String method1211(String string, int endIndex) {
+      if (string == null) {
          return "";
       } else {
-         String var2 = var0.strip();
-         return var2.length() > var1 ? var2.substring(0, var1) : var2;
+         String str = string.strip();
+         return str.length() > endIndex ? str.substring(0, endIndex) : str;
       }
    }
 
@@ -1112,11 +1112,11 @@ public final class PartyMember implements MinecraftAccess {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "longValue=" + this.longValue + ", " + "items=" + this.items + "]";
       }
 
-      public Data(String var1, String var2, long var3, List<PartyMember.Data3> var5) {
-         this.text = var1;
-         this.text2 = var2;
-         this.longValue = var3;
-         this.items = var5;
+      public Data(String text, String str, long longValue, List<PartyMember.Data3> items) {
+         this.text = text;
+         this.text2 = str;
+         this.longValue = longValue;
+         this.items = items;
       }
 
       public String getText() {
@@ -1170,10 +1170,10 @@ public final class PartyMember implements MinecraftAccess {
          return "Data10[" + "text=" + this.text + ", " + "longValue=" + this.longValue + ", " + "longValue2=" + this.longValue2 + "]";
       }
 
-      public Data10(String var1, long var2, long var4) {
-         this.text = var1;
-         this.longValue = var2;
-         this.longValue2 = var4;
+      public Data10(String text, long longValue, long now) {
+         this.text = text;
+         this.longValue = longValue;
+         this.longValue2 = now;
       }
 
       public String getText() {
@@ -1233,12 +1233,12 @@ public final class PartyMember implements MinecraftAccess {
          return "Data11[" + "text=" + this.text + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data11(String var1, int var2, int var3, int var4, boolean var5) {
-         this.text = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
-         this.intValue3 = var4;
-         this.flag = var5;
+      public Data11(String text, int intValue, int n, int n2, boolean flag) {
+         this.text = text;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.flag = flag;
       }
 
       public String getText() {
@@ -1342,31 +1342,31 @@ public final class PartyMember implements MinecraftAccess {
       }
 
       public Data12(
-         long var1,
-         String var3,
-         String var4,
-         double var5,
-         double var7,
-         double var9,
-         String var11,
-         String var12,
-         int var13,
-         long var14,
-         String var16,
-         long var17
+         long longValue,
+         String text,
+         String str,
+         double doubleValue,
+         double d,
+         double d2,
+         String str2,
+         String str3,
+         int color,
+         long l,
+         String str4,
+         long l2
       ) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.doubleValue = var5;
-         this.doubleValue2 = var7;
-         this.doubleValue3 = var9;
-         this.text3 = var11;
-         this.text4 = var12;
-         this.color = var13;
-         this.longValue2 = var14;
-         this.text5 = var16;
-         this.longValue3 = var17;
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = str;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.text3 = str2;
+         this.text4 = str3;
+         this.color = color;
+         this.longValue2 = l;
+         this.text5 = str4;
+         this.longValue3 = l2;
       }
 
       public long getLongValue() {
@@ -1473,15 +1473,15 @@ public final class PartyMember implements MinecraftAccess {
          return "Data13[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "text4=" + this.text4 + ", " + "text5=" + this.text5 + ", " + "text6=" + this.text6 + ", " + "longValue2=" + this.longValue2 + "]";
       }
 
-      public Data13(long var1, String var3, String var4, String var5, String var6, String var7, String var8, long var9) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.text3 = var5;
-         this.text4 = var6;
-         this.text5 = var7;
-         this.text6 = var8;
-         this.longValue2 = var9;
+      public Data13(long longValue, String text, String str, String str2, String str3, String str4, String str5, long now) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.text4 = str3;
+         this.text5 = str4;
+         this.text6 = str5;
+         this.longValue2 = now;
       }
 
       public long getLongValue() {
@@ -1566,19 +1566,19 @@ public final class PartyMember implements MinecraftAccess {
          return "Data14[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "current=" + this.current + ", " + "items=" + this.items + ", " + "items2=" + this.items2 + ", " + "longValue=" + this.longValue + "]";
       }
 
-      public Data14(String var1, String var2, String var3, List<String> var4, List<PartyMember.Data5> var5, long var6) {
-         this.text = var1;
-         this.text2 = var2;
-         this.current = var3;
-         this.items = var4;
-         this.items2 = var5;
-         this.longValue = var6;
+      public Data14(String text, String str, String current, List<String> items, List<PartyMember.Data5> data5s, long longValue) {
+         this.text = text;
+         this.text2 = str;
+         this.current = current;
+         this.items = items;
+         this.items2 = data5s;
+         this.longValue = longValue;
       }
 
       public PartyMember.Data5 method1219() {
-         for (PartyMember.Data5 var2 : this.items2) {
-            if (var2.isFlag()) {
-               return var2;
+         for (PartyMember.Data5 data5 : this.items2) {
+            if (data5.isFlag()) {
+               return data5;
             }
          }
 
@@ -1654,12 +1654,12 @@ public final class PartyMember implements MinecraftAccess {
          return "Data15[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "longValue=" + this.longValue + ", " + "text3=" + this.text3 + ", " + "items=" + this.items + "]";
       }
 
-      public Data15(String var1, String var2, long var3, String var5, List<String> var6) {
-         this.text = var1;
-         this.text2 = var2;
-         this.longValue = var3;
-         this.text3 = var5;
-         this.items = var6;
+      public Data15(String text, String str, long longValue, String str2, List<String> items) {
+         this.text = text;
+         this.text2 = str;
+         this.longValue = longValue;
+         this.text3 = str2;
+         this.items = items;
       }
 
       public String getText() {
@@ -1732,13 +1732,13 @@ public final class PartyMember implements MinecraftAccess {
          return "Data16[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "longValue=" + this.longValue + ", " + "text3=" + this.text3 + ", " + "intValue=" + this.intValue + ", " + "longValue2=" + this.longValue2 + "]";
       }
 
-      public Data16(String var1, String var2, long var3, String var5, int var6, long var7) {
-         this.text = var1;
-         this.text2 = var2;
-         this.longValue = var3;
-         this.text3 = var5;
-         this.intValue = var6;
-         this.longValue2 = var7;
+      public Data16(String text, String str, long longValue, String username, int intValue, long now) {
+         this.text = text;
+         this.text2 = str;
+         this.longValue = longValue;
+         this.text3 = username;
+         this.intValue = intValue;
+         this.longValue2 = now;
       }
 
       public String getText() {
@@ -1812,13 +1812,13 @@ public final class PartyMember implements MinecraftAccess {
       }
       public static final PartyMember.Data2 INSTANCE = new PartyMember.Data2("online", "", "", "", "", 0L);
 
-      public Data2(String var1, String var2, String var3, String var4, String var5, long var6) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
-         this.text4 = var4;
-         this.text5 = var5;
-         this.since = var6;
+      public Data2(String text, String str, String str2, String mode, String str3, long since) {
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.text4 = mode;
+         this.text5 = str3;
+         this.since = since;
       }
 
       public String getText() {
@@ -1885,11 +1885,11 @@ public final class PartyMember implements MinecraftAccess {
          return "Data3[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data3(long var1, String var3, String var4, boolean var5) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.flag = var5;
+      public Data3(long longValue, String text, String str, boolean flag) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = str;
+         this.flag = flag;
       }
 
       public long uid() {
@@ -1989,31 +1989,31 @@ public final class PartyMember implements MinecraftAccess {
       }
 
       public Data4(
-         long var1,
-         long var3,
-         String var5,
-         String var6,
-         String var7,
-         double var8,
-         double var10,
-         double var12,
-         String var14,
-         List<PartyMember.Data11> var15,
-         int var16,
-         long var17
+         long longValue,
+         long accountUid,
+         String text,
+         String server,
+         String dimension,
+         double doubleValue,
+         double d,
+         double d2,
+         String string,
+         List<PartyMember.Data11> items,
+         int intValue,
+         long now
       ) {
-         this.longValue = var1;
-         this.longValue2 = var3;
-         this.text = var5;
-         this.text2 = var6;
-         this.text3 = var7;
-         this.doubleValue = var8;
-         this.doubleValue2 = var10;
-         this.doubleValue3 = var12;
-         this.text4 = var14;
-         this.items = var15;
-         this.intValue = var16;
-         this.longValue3 = var17;
+         this.longValue = longValue;
+         this.longValue2 = accountUid;
+         this.text = text;
+         this.text2 = server;
+         this.text3 = dimension;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.text4 = string;
+         this.items = items;
+         this.intValue = intValue;
+         this.longValue3 = now;
       }
 
       public long getLongValue() {
@@ -2114,33 +2114,33 @@ public final class PartyMember implements MinecraftAccess {
          return "Data5[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "flag=" + this.flag + ", " + "flag2=" + this.flag2 + ", " + "items=" + this.items + ", " + "items2=" + this.items2 + "]";
       }
 
-      public Data5(long var1, String var3, boolean var4, boolean var5, Map<String, PartyMember.Data9> var6, Map<String, PartyMember.Data9> var7) {
-         this.longValue = var1;
-         this.text = var3;
-         this.flag = var4;
-         this.flag2 = var5;
-         this.items = var6;
-         this.items2 = var7;
+      public Data5(long longValue, String text, boolean flag, boolean flag2, Map<String, PartyMember.Data9> items, Map<String, PartyMember.Data9> map) {
+         this.longValue = longValue;
+         this.text = text;
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.items = items;
+         this.items2 = map;
       }
 
       public PartyMember.Data9 method1213() {
-         PartyMember.Data9 var1 = PartyMember.Data9.INSTANCE;
+         PartyMember.Data9 data9 = PartyMember.Data9.INSTANCE;
 
-         for (PartyMember.Data9 var3 : this.items.values()) {
-            var1 = var1.method1218(var3);
+         for (PartyMember.Data9 data92 : this.items.values()) {
+            data9 = data9.method1218(data92);
          }
 
-         return var1;
+         return data9;
       }
 
       public PartyMember.Data9 method1214() {
-         PartyMember.Data9 var1 = PartyMember.Data9.INSTANCE;
+         PartyMember.Data9 data9 = PartyMember.Data9.INSTANCE;
 
-         for (PartyMember.Data9 var3 : this.items2.values()) {
-            var1 = var1.method1218(var3);
+         for (PartyMember.Data9 data92 : this.items2.values()) {
+            data9 = data9.method1218(data92);
          }
 
-         return var1;
+         return data9;
       }
 
       public long uid() {
@@ -2217,23 +2217,23 @@ public final class PartyMember implements MinecraftAccess {
          return "Data6[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "longValue2=" + this.longValue2 + ", " + "longValue3=" + this.longValue3 + ", " + "items=" + this.items + ", " + "items2=" + this.items2 + "]";
       }
 
-      public Data6(long var1, String var3, long var4, long var6, List<PartyMember.Data3> var8, List<PartyMember.Data8> var9) {
-         this.longValue = var1;
-         this.text = var3;
-         this.longValue2 = var4;
-         this.longValue3 = var6;
-         this.items = var8;
-         this.items2 = var9;
+      public Data6(long longValue, String text, long l, long l2, List<PartyMember.Data3> items, List<PartyMember.Data8> unmodifiableList) {
+         this.longValue = longValue;
+         this.text = text;
+         this.longValue2 = l;
+         this.longValue3 = l2;
+         this.items = items;
+         this.items2 = unmodifiableList;
       }
 
-      public boolean method1215(long var1) {
-         return this.longValue2 == var1;
+      public boolean method1215(long uid) {
+         return this.longValue2 == uid;
       }
 
-      public PartyMember.Data3 method1216(long var1) {
-         for (PartyMember.Data3 var4 : this.items) {
-            if (var4.uid() == var1) {
-               return var4;
+      public PartyMember.Data3 method1216(long uid) {
+         for (PartyMember.Data3 data3 : this.items) {
+            if (data3.uid() == uid) {
+               return data3;
             }
          }
 
@@ -2241,15 +2241,15 @@ public final class PartyMember implements MinecraftAccess {
       }
 
       public int method1217() {
-         int var1 = 0;
+         int n = 0;
 
-         for (PartyMember.Data3 var3 : this.items) {
-            if (var3.isFlag()) {
-               var1++;
+         for (PartyMember.Data3 data3 : this.items) {
+            if (data3.isFlag()) {
+               n++;
             }
          }
 
-         return var1;
+         return n;
       }
 
       public long getLongValue() {
@@ -2326,13 +2326,13 @@ public final class PartyMember implements MinecraftAccess {
          return "Data7[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "longValue2=" + this.longValue2 + ", " + "text2=" + this.text2 + ", " + "items=" + this.items + ", " + "longValue3=" + this.longValue3 + "]";
       }
 
-      public Data7(long var1, String var3, long var4, String var6, List<String> var7, long var8) {
-         this.longValue = var1;
-         this.text = var3;
-         this.longValue2 = var4;
-         this.text2 = var6;
-         this.items = var7;
-         this.longValue3 = var8;
+      public Data7(long longValue, String text, long uid, String username, List<String> items, long now) {
+         this.longValue = longValue;
+         this.text = text;
+         this.longValue2 = uid;
+         this.text2 = username;
+         this.items = items;
+         this.longValue3 = now;
       }
 
       public long getLongValue() {
@@ -2389,9 +2389,9 @@ public final class PartyMember implements MinecraftAccess {
          return "Data8[" + "longValue=" + this.longValue + ", " + "text=" + this.text + "]";
       }
 
-      public Data8(long var1, String var3) {
-         this.longValue = var1;
-         this.text = var3;
+      public Data8(long longValue, String text) {
+         this.longValue = longValue;
+         this.text = text;
       }
 
       public long uid() {
@@ -2438,14 +2438,14 @@ public final class PartyMember implements MinecraftAccess {
       }
       public static final PartyMember.Data9 INSTANCE = new PartyMember.Data9(0L, 0L, 0L);
 
-      public Data9(long var1, long var3, long var5) {
-         this.longValue = var1;
-         this.longValue2 = var3;
-         this.longValue3 = var5;
+      public Data9(long longValue, long l, long l2) {
+         this.longValue = longValue;
+         this.longValue2 = l;
+         this.longValue3 = l2;
       }
 
-      public PartyMember.Data9 method1218(PartyMember.Data9 var1) {
-         return new PartyMember.Data9(this.longValue + var1.longValue, this.longValue2 + var1.longValue2, this.longValue3 + var1.longValue3);
+      public PartyMember.Data9 method1218(PartyMember.Data9 data9) {
+         return new PartyMember.Data9(this.longValue + data9.longValue, this.longValue2 + data9.longValue2, this.longValue3 + data9.longValue3);
       }
 
       public long getLongValue() {

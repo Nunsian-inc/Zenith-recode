@@ -18,8 +18,8 @@ public final class AutoCraftState {
    private final Set<String> items = new HashSet<>();
    private final Map<String, Integer> items2 = new HashMap<>();
 
-   public AutoCraftState(AutoCraftModule var1) {
-      this.autoCraftModule = var1;
+   public AutoCraftState(AutoCraftModule autoCraftModule) {
+      this.autoCraftModule = autoCraftModule;
    }
 
    public void reset() {
@@ -37,10 +37,10 @@ public final class AutoCraftState {
       return 2;
    }
 
-   public boolean method746(CraftRecipe var1, String var2) {
-      String var3 = this.method752(var1, var2);
-      if (!var3.isBlank() && !var3.equals(this.text)) {
-         this.text = var3;
+   public boolean method746(CraftRecipe craftRecipe, String key) {
+      String text = this.method752(craftRecipe, key);
+      if (!text.isBlank() && !text.equals(this.text)) {
+         this.text = text;
          this.intValue = 2;
       }
 
@@ -52,51 +52,51 @@ public final class AutoCraftState {
       }
    }
 
-   public boolean method747(CraftRecipe var1, String var2) {
-      String var3 = this.method752(var1, var2);
-      return !var3.isBlank() && this.items.contains(var3);
+   public boolean method747(CraftRecipe craftRecipe, String key) {
+      String str = this.method752(craftRecipe, key);
+      return !str.isBlank() && this.items.contains(str);
    }
 
-   public boolean method748(CraftRecipe var1, String var2) {
-      String var3 = this.method752(var1, var2);
-      return !var3.isBlank() && this.items2.getOrDefault(var3, 0) >= 2;
+   public boolean method748(CraftRecipe craftRecipe, String key) {
+      String str = this.method752(craftRecipe, key);
+      return !str.isBlank() && this.items2.getOrDefault(str, 0) >= 2;
    }
 
-   public int method749(CraftRecipe var1, String var2) {
-      String var3 = this.method752(var1, var2);
-      if (var3.isBlank()) {
+   public int method749(CraftRecipe craftRecipe, String key) {
+      String str = this.method752(craftRecipe, key);
+      if (str.isBlank()) {
          return 0;
       } else {
-         int var4 = this.items2.getOrDefault(var3, 0) + 1;
-         this.items2.put(var3, var4);
-         return var4;
+         int n = this.items2.getOrDefault(str, 0) + 1;
+         this.items2.put(str, n);
+         return n;
       }
    }
 
-   public void method750(CraftRecipe var1, String var2) {
-      String var3 = this.method752(var1, var2);
-      if (!var3.isBlank()) {
-         this.items2.remove(var3);
-         this.items.remove(var3);
+   public void method750(CraftRecipe craftRecipe, String key) {
+      String str = this.method752(craftRecipe, key);
+      if (!str.isBlank()) {
+         this.items2.remove(str);
+         this.items.remove(str);
       }
    }
 
-   public void method751(CraftRecipe var1, String var2, String var3, String var4, boolean var5) {
-      String var6 = this.method752(var1, var2);
-      if (!var6.isBlank()) {
-         boolean var7 = this.items.add(var6);
-         this.items2.put(var6, 2);
-         if (var5 && var7) {
-            this.autoCraftModule.method1128("Source empty: " + this.autoCraftModule.method1107(var3, var4));
+   public void method751(CraftRecipe craftRecipe, String key, String str, String anotherString, boolean flag) {
+      String str2 = this.method752(craftRecipe, key);
+      if (!str2.isBlank()) {
+         boolean flag2 = this.items.add(str2);
+         this.items2.put(str2, 2);
+         if (flag && flag2) {
+            this.autoCraftModule.method1128("Source empty: " + this.autoCraftModule.method1107(str, anotherString));
          }
       }
    }
 
-   private String method752(CraftRecipe var1, String var2) {
-      if (var1 != null && var2 != null && !var2.isBlank()) {
-         Class1 var3 = var1.method5398(var2);
-         long var4 = var3 != null && var3.method56() ? var3.method57().asLong() : Long.MIN_VALUE;
-         return var1.getText2().toLowerCase(Locale.ROOT) + ":" + var1.getId().toLowerCase(Locale.ROOT) + ":" + var2 + ":" + var4;
+   private String method752(CraftRecipe craftRecipe, String key) {
+      if (craftRecipe != null && key != null && !key.isBlank()) {
+         Class1 class2 = craftRecipe.method5398(key);
+         long l = class2 != null && class2.method56() ? class2.method57().asLong() : Long.MIN_VALUE;
+         return craftRecipe.getText2().toLowerCase(Locale.ROOT) + ":" + craftRecipe.getId().toLowerCase(Locale.ROOT) + ":" + key + ":" + l;
       } else {
          return "";
       }

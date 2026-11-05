@@ -15,25 +15,25 @@ public final class Scrollbar {
    private boolean dragging;
    private float grab;
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, ZenithColor var7) {
-      this.render(var1, var2, var3, var4, var5, var5, var6, var7);
+   public void render(MenuDrawContext menuDrawContext, float floatValue, float y, float max, float shownContentHeight, float scroll, ZenithColor zenithColor) {
+      this.render(menuDrawContext, floatValue, y, max, shownContentHeight, shownContentHeight, scroll, zenithColor);
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7, ZenithColor var8) {
-      if (!(var5 <= var4) && !(var4 <= 0.0F) && var8.getIntValue4() != 0) {
-         float var9 = Mth.clamp(var4 * (var4 / var5), Math.min(12.0F, var4), var4);
-         this.span = Math.max(0.0F, var6 - var4);
-         this.travel = Math.max(0.0F, var4 - var9);
-         float var10 = this.span > 0.0F ? Mth.clamp(-var7 / this.span, 0.0F, 1.0F) : 0.0F;
-         float var11 = var3 + this.travel * var10;
+   public void render(MenuDrawContext menuDrawContext, float floatValue, float y, float max, float shownContentHeight, float f, float scroll, ZenithColor zenithColor) {
+      if (!(shownContentHeight <= max) && !(max <= 0.0F) && zenithColor.getIntValue4() != 0) {
+         float height = Mth.clamp(max * (max / shownContentHeight), Math.min(12.0F, max), max);
+         this.span = Math.max(0.0F, f - max);
+         this.travel = Math.max(0.0F, max - height);
+         float f2 = this.span > 0.0F ? Mth.clamp(-scroll / this.span, 0.0F, 1.0F) : 0.0F;
+         float y2 = y + this.travel * f2;
          if (this.span > 0.0F) {
-            this.track = new BoundsData(var2 - 3.0F, var3, 7.0F, var4);
-            this.thumb = new BoundsData(var2, var11, 1.0F, var9);
+            this.track = new BoundsData(floatValue - 3.0F, y, 7.0F, max);
+            this.thumb = new BoundsData(floatValue, y2, 1.0F, height);
          } else {
             this.clear();
          }
 
-         var1.drawRect(var2, var11, 1.0F, var9, var8);
+         menuDrawContext.drawRect(floatValue, y2, 1.0F, height, zenithColor);
       } else {
          this.clear();
       }
@@ -47,27 +47,27 @@ public final class Scrollbar {
       this.dragging = false;
    }
 
-   public float onMouseClicked(double var1, double var3) {
-      if (this.track != null && this.thumb != null && this.track.contains(var1, var3)) {
+   public float onMouseClicked(double lastClickX, double lastClickY) {
+      if (this.track != null && this.thumb != null && this.track.contains(lastClickX, lastClickY)) {
          this.dragging = true;
-         if (var3 >= this.thumb.getFloatValue2() && var3 <= this.thumb.getFloatValue2() + this.thumb.height()) {
-            this.grab = (float)(var3 - this.thumb.getFloatValue2());
+         if (lastClickY >= this.thumb.getFloatValue2() && lastClickY <= this.thumb.getFloatValue2() + this.thumb.height()) {
+            this.grab = (float)(lastClickY - this.thumb.getFloatValue2());
             return Float.NaN;
          } else {
             this.grab = this.thumb.height() / 2.0F;
-            return this.scrollAt(var3);
+            return this.scrollAt(lastClickY);
          }
       } else {
          return Float.NaN;
       }
    }
 
-   public float onMouseDragged(double var1) {
-      return this.dragging ? this.scrollAt(var1) : Float.NaN;
+   public float onMouseDragged(double mouseY) {
+      return this.dragging ? this.scrollAt(mouseY) : Float.NaN;
    }
 
-   private float scrollAt(double var1) {
-      return this.travel <= 0.0F ? 0.0F : -Mth.clamp((float)(var1 - this.grab - this.track.getFloatValue2()) / this.travel, 0.0F, 1.0F) * this.span;
+   private float scrollAt(double lastClickY) {
+      return this.travel <= 0.0F ? 0.0F : -Mth.clamp((float)(lastClickY - this.grab - this.track.getFloatValue2()) / this.travel, 0.0F, 1.0F) * this.span;
    }
 
    public boolean isDragging() {

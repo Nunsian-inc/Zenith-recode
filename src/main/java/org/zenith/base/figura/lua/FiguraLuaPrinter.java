@@ -190,8 +190,8 @@ public final class FiguraLuaPrinter {
                      Object obj = field.get(data);
                      text.append(getTableEntry(typeManager, spacing, LuaValue.valueOf(name), typeManager.javaToLua(obj).arg1(), hasTooltip, depth, indent));
                      fields.add(name);
-                  } catch (Exception var16) {
-                     FiguraMod.LOGGER.error("", var16);
+                  } catch (Exception e) {
+                     FiguraMod.LOGGER.error("", e);
                   }
                }
             }

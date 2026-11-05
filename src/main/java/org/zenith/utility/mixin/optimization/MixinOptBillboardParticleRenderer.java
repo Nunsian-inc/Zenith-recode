@@ -23,18 +23,18 @@ public abstract class MixinOptBillboardParticleRenderer {
       )}
    )
    private boolean zenith$lod(
-      Frustum var1, double var2, double var4, double var6, Operation<Boolean> var8, Frustum var9, Camera var10, float var11, @Local SingleQuadParticle var12
+      Frustum frustum, double d, double d2, double d3, Operation<Boolean> operation, Frustum frustum2, Camera camera, float f, @Local SingleQuadParticle singleQuadParticle
    ) {
-      if (!(Boolean)var8.call(new Object[]{var1, var2, var4, var6})) {
+      if (!(Boolean)operation.call(new Object[]{frustum, d, d2, d3})) {
          return false;
       } else if (!OptimizationFlags.flag3) {
          return true;
       } else {
-         Vec3 var13 = var10.position();
-         double var14 = var2 - var13.x;
-         double var16 = var4 - var13.y;
-         double var18 = var6 - var13.z;
-         return FluidColorCache.method7102(var12, var14 * var14 + var16 * var16 + var18 * var18);
+         Vec3 position = camera.position();
+         double d4 = d - position.x;
+         double d5 = d2 - position.y;
+         double d6 = d3 - position.z;
+         return FluidColorCache.method7102(singleQuadParticle, d4 * d4 + d5 * d5 + d6 * d6);
       }
    }
 }

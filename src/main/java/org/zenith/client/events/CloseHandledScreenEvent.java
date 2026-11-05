@@ -8,7 +8,7 @@ public class CloseHandledScreenEvent extends CancellableEvent {
    private final Screen screen;
 
    @Generated
-   public CloseHandledScreenEvent(Screen var1) {
-      this.screen = var1;
+   public CloseHandledScreenEvent(Screen screen) {
+      this.screen = screen;
    }
 }

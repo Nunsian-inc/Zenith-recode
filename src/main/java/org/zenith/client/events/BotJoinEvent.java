@@ -27,9 +27,9 @@ public class BotJoinEvent implements Event {
    }
 
    @Generated
-   public BotJoinEvent(BotClient var1, BotWorld var2, BotPlayer var3) {
-      this.botClient = var1;
-      this.botWorld = var2;
-      this.botPlayer = var3;
+   public BotJoinEvent(BotClient botClient, BotWorld botWorld, BotPlayer botPlayer) {
+      this.botClient = botClient;
+      this.botWorld = botWorld;
+      this.botPlayer = botPlayer;
    }
 }

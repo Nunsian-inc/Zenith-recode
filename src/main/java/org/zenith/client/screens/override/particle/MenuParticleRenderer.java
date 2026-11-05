@@ -21,7 +21,7 @@ public class MenuParticleRenderer implements MinecraftAccess {
    private final List<MenuParticleRenderer.MenuParticle> particles = new ArrayList<>();
 
    public MenuParticleRenderer() {
-      for (int var1 = 0; var1 < 100; var1++) {
+      for (int i = 0; i < 100; i++) {
          this.particles.add(new MenuParticleRenderer.MenuParticle(1920.0F, 1080.0F, true));
       }
 
@@ -29,57 +29,57 @@ public class MenuParticleRenderer implements MinecraftAccess {
    }
 
    @EventTarget
-   public void resize(WindowResizeEvent var1) {
+   public void resize(WindowResizeEvent event) {
       this.init();
    }
 
    public void init() {
       this.particles.clear();
 
-      for (int var1 = 0; var1 < 100; var1++) {
+      for (int i = 0; i < 100; i++) {
          this.particles.add(new MenuParticleRenderer.MenuParticle(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), true));
       }
    }
 
-   public static void renderBackgroundAndParticles(MenuDrawContext var0) {
-      Window var1 = mc.getWindow();
-      float var2 = var1.getGuiScaledWidth();
-      float var3 = var1.getGuiScaledHeight();
-      ZenithColor var4 = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
-      ZenithColor var5 = Zenith.getInstance().getStyleManager().getCurrentStyle().getSecondaryPrimaryColor().getZenithColor();
-      RenderShaders.method5261(MatrixUtils.method664(var0.pose()), var2, var3, var4, var5, 1.0F);
-      Zenith.getInstance().getMenuParticleRenderer().renderParticles(var0, getScreenFadeProgress());
+   public static void renderBackgroundAndParticles(MenuDrawContext graphics) {
+      Window window = mc.getWindow();
+      float guiScaledWidth = window.getGuiScaledWidth();
+      float guiScaledHeight = window.getGuiScaledHeight();
+      ZenithColor zenithColor = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
+      ZenithColor zenithColor2 = Zenith.getInstance().getStyleManager().getCurrentStyle().getSecondaryPrimaryColor().getZenithColor();
+      RenderShaders.method5261(MatrixUtils.method664(graphics.pose()), guiScaledWidth, guiScaledHeight, zenithColor, zenithColor2, 1.0F);
+      Zenith.getInstance().getMenuParticleRenderer().renderParticles(graphics, getScreenFadeProgress());
    }
 
    public static float getScreenFadeProgress() {
-      Screen var0 = mc.gui.screen();
-      if (var0 == null) {
+      Screen screen = mc.gui.screen();
+      if (screen == null) {
          return 1.0F;
       } else {
-         Handler1 var1 = (Handler1)var0;
-         long var2 = var1.zenithDLC$callGetStartTime();
-         long var4 = System.currentTimeMillis();
-         float var6 = (float)(var4 - var2) / 200.0F;
-         return Math.max(0.0F, Math.min(1.0F, var6));
+         Handler1 handler1 = (Handler1)screen;
+         long zenithDLC$callGetStartTime = handler1.zenithDLC$callGetStartTime();
+         long now = System.currentTimeMillis();
+         float f = (float)(now - zenithDLC$callGetStartTime) / 200.0F;
+         return Math.max(0.0F, Math.min(1.0F, f));
       }
    }
 
-   public void renderParticles(MenuDrawContext var1) {
-      this.renderParticles(var1, 1.0F);
+   public void renderParticles(MenuDrawContext graphics) {
+      this.renderParticles(graphics, 1.0F);
    }
 
-   public void renderParticles(MenuDrawContext var1, float var2) {
-      ZenithColor var3 = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7293(255);
-      Window var4 = mc.getWindow();
-      float var5 = var4.getGuiScaledWidth();
-      float var6 = var4.getGuiScaledHeight();
-      ZenithColor var7 = ZenithColor.INSTANCE.method7295(var3, 0.55F);
+   public void renderParticles(MenuDrawContext graphics, float screenFadeProgress) {
+      ZenithColor zenithColor = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7293(255);
+      Window window = mc.getWindow();
+      float guiScaledWidth = window.getGuiScaledWidth();
+      float guiScaledHeight = window.getGuiScaledHeight();
+      ZenithColor zenithColor2 = ZenithColor.INSTANCE.method7295(zenithColor, 0.55F);
 
-      for (MenuParticleRenderer.MenuParticle var9 : this.particles) {
-         var9.update(var5, var6, var1.getDelta());
-         int var10 = (int)(var9.alpha * 180.0F);
-         ZenithColor var11 = var7.method7293((int)(var10 * var2));
-         var1.drawTexture(GLOW, var9.x, var9.y, var9.size, var9.size, var11);
+      for (MenuParticleRenderer.MenuParticle particle : this.particles) {
+         particle.update(guiScaledWidth, guiScaledHeight, graphics.getDelta());
+         int n = (int)(particle.alpha * 180.0F);
+         ZenithColor zenithColor3 = zenithColor2.method7293((int)(n * screenFadeProgress));
+         graphics.drawTexture(GLOW, particle.x, particle.y, particle.size, particle.size, zenithColor3);
       }
    }
 
@@ -92,43 +92,43 @@ public class MenuParticleRenderer implements MinecraftAccess {
       public float maxTime;
       public float alpha;
 
-      public MenuParticle(float var2, float var3, boolean var4) {
-         this.reset(var2, var3, var4);
+      public MenuParticle(float guiScaledWidth, float guiScaledHeight, boolean flag) {
+         this.reset(guiScaledWidth, guiScaledHeight, flag);
       }
 
-      public void reset(float var1, float var2, boolean var3) {
+      public void reset(float guiScaledWidth, float guiScaledHeight, boolean flag) {
          this.size = 2 + (int)(Math.random() * 4.0);
          this.speed = 2.0F + (float)(Math.random() * 0.8F);
          this.maxTime = 100.0F + (float)(Math.random() * 200.0);
-         this.time = var3 ? (float)(Math.random() * this.maxTime) : 0.0F;
-         if (var3) {
-            this.x = (float)(Math.random() * var1);
-            this.y = (float)(Math.random() * var2);
+         this.time = flag ? (float)(Math.random() * this.maxTime) : 0.0F;
+         if (flag) {
+            this.x = (float)(Math.random() * guiScaledWidth);
+            this.y = (float)(Math.random() * guiScaledHeight);
          } else if (Math.random() > 0.5) {
             this.x = -20.0F;
-            this.y = (float)(Math.random() * var2);
+            this.y = (float)(Math.random() * guiScaledHeight);
          } else {
-            this.x = (float)(Math.random() * var1);
+            this.x = (float)(Math.random() * guiScaledWidth);
             this.y = -20.0F;
          }
       }
 
-      public void update(float var1, float var2, float var3) {
-         this.x = this.x + this.speed * var3;
-         this.y = this.y + this.speed * var3;
-         this.time += var3;
-         float var4 = this.maxTime * 0.2F;
-         if (this.time < var4) {
-            this.alpha = this.time / var4;
-         } else if (this.time > this.maxTime - var4) {
-            this.alpha = (this.maxTime - this.time) / var4;
+      public void update(float guiScaledWidth, float guiScaledHeight, float delta) {
+         this.x = this.x + this.speed * delta;
+         this.y = this.y + this.speed * delta;
+         this.time += delta;
+         float f = this.maxTime * 0.2F;
+         if (this.time < f) {
+            this.alpha = this.time / f;
+         } else if (this.time > this.maxTime - f) {
+            this.alpha = (this.maxTime - this.time) / f;
          } else {
             this.alpha = 1.0F;
          }
 
          this.alpha = Math.max(0.0F, Math.min(1.0F, this.alpha));
-         if (this.time >= this.maxTime || this.x > var1 + 50.0F || this.y > var2 + 50.0F) {
-            this.reset(var1, var2, false);
+         if (this.time >= this.maxTime || this.x > guiScaledWidth + 50.0F || this.y > guiScaledHeight + 50.0F) {
+            this.reset(guiScaledWidth, guiScaledHeight, false);
          }
       }
    }

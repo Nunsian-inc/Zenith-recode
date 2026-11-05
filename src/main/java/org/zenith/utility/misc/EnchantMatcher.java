@@ -8,7 +8,7 @@ public abstract class EnchantMatcher {
    public final String text2;
    public int intValue;
 
-   public abstract boolean method1746(ItemStack var1);
+   public abstract boolean method1746(ItemStack stack);
 
    @Override
    public String toString() {
@@ -16,10 +16,10 @@ public abstract class EnchantMatcher {
    }
 
    @Generated
-   public EnchantMatcher(String var1, String var2, int var3) {
-      this.text = var1;
-      this.text2 = var2;
-      this.intValue = var3;
+   public EnchantMatcher(String text, String str, int intValue) {
+      this.text = text;
+      this.text2 = str;
+      this.intValue = intValue;
    }
 
    @Generated
@@ -38,7 +38,7 @@ public abstract class EnchantMatcher {
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 }

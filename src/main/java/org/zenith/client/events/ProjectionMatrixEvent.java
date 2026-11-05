@@ -12,7 +12,7 @@ public class ProjectionMatrixEvent extends EventCancellable {
    }
 
    @Generated
-   public void setFloatValue(float var1) {
-      this.floatValue = var1;
+   public void setFloatValue(float floatValue) {
+      this.floatValue = floatValue;
    }
 }

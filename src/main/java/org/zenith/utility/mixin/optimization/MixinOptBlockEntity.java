@@ -12,12 +12,12 @@ public class MixinOptBlockEntity implements Util20.Handler {
 
    @Override
    public Util20.Entry zenith$optData() {
-      Util20.Entry var1 = this.zenith$optData;
-      if (var1 == null) {
-         var1 = new Util20.Entry();
-         this.zenith$optData = var1;
+      Util20.Entry zenith$optData = this.zenith$optData;
+      if (zenith$optData == null) {
+         zenith$optData = new Util20.Entry();
+         this.zenith$optData = zenith$optData;
       }
 
-      return var1;
+      return zenith$optData;
    }
 }

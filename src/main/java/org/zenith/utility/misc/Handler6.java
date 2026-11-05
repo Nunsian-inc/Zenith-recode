@@ -9,7 +9,7 @@ public interface Handler6 {
 
    double zenithDLC$getPrevServerZ();
 
-   void zenithDLC$trackServerPos(double var1, double var3, double var5);
+   void zenithDLC$trackServerPos(double x, double y, double z);
 
    Vec3 zenithDLC$getServerDelta();
 }

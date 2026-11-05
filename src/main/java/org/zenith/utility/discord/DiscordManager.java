@@ -29,8 +29,8 @@ public class DiscordManager {
    private DiscordEventHandlers handlers;
 
    public void init() {
-      String var1 = System.getProperty("os.name").toLowerCase();
-      if (!var1.contains("linux")) {
+      String lowerCase = System.getProperty("os.name").toLowerCase();
+      if (!lowerCase.contains("linux")) {
          this.discordDaemonThread.start();
       }
    }
@@ -42,9 +42,9 @@ public class DiscordManager {
 
    private boolean wanted() {
       try {
-         ProfilePanel var1 = Zenith.getInstance().getNLMenuScreen().getProfilePanel();
-         return var1 == null || var1.getDiscordRPC().getSetting().isEnabled();
-      } catch (Exception var2) {
+         ProfilePanel profilePanel = Zenith.getInstance().getNLMenuScreen().getProfilePanel();
+         return profilePanel == null || profilePanel.getDiscordRPC().getSetting().isEnabled();
+      } catch (Exception e) {
          return true;
       }
    }
@@ -52,12 +52,12 @@ public class DiscordManager {
    private void connect() {
       this.handlers = new DiscordEventHandlers.Builder()
          .ready(
-            var1 -> {
+            discordUser -> {
                Zenith.getInstance()
                   .getDiscordManager()
                   .setInfo(
                      new DiscordManager.DiscordInfo(
-                        var1.username, "https://cdn.discordapp.com/avatars/" + var1.userId + "/" + var1.avatar + ".png", var1.userId
+                        discordUser.username, "https://cdn.discordapp.com/avatars/" + discordUser.userId + "/" + discordUser.avatar + ".png", discordUser.userId
                      )
                   );
                this.lastPushed = "";
@@ -71,21 +71,21 @@ public class DiscordManager {
    }
 
    private void push() {
-      String var1 = identity();
-      String var2 = withStatus(where());
-      String var3 = var1 + "\u0000" + var2;
-      long var4 = System.currentTimeMillis();
-      if (!var3.equals(this.lastPushed) && var4 - this.lastPushAt >= 5000L) {
-         this.lastPushed = var3;
-         this.lastPushAt = var4;
-         DiscordRichPresence var6 = new DiscordRichPresence.Builder()
+      String details = identity();
+      String status = withStatus(where());
+      String lastPushed = details + "\u0000" + status;
+      long now = System.currentTimeMillis();
+      if (!lastPushed.equals(this.lastPushed) && now - this.lastPushAt >= 5000L) {
+         this.lastPushed = lastPushed;
+         this.lastPushAt = now;
+         DiscordRichPresence discordRichPresence = new DiscordRichPresence.Builder()
             .setStartTimestamp(this.sessionStart)
-            .setDetails(var1)
-            .setState(var2)
+            .setDetails(details)
+            .setState(status)
             .setLargeImage("https://s13.gifyu.com/images/blr1p.png", "GlebVeaneqzhe")
             .setButtons(RPCButton.create("Telegram", "Нету"), RPCButton.create("Сайт", RegionUtil.method2038().get(0) + "/"))
             .build();
-         DiscordRPC.INSTANCE.Discord_UpdatePresence(var6);
+         DiscordRPC.INSTANCE.Discord_UpdatePresence(discordRichPresence);
       }
    }
 
@@ -94,25 +94,25 @@ public class DiscordManager {
    }
 
    private static String roleLabel() {
-      String var0 = "";
+      String name = "";
 
       try {
-         String var1 = CloudChatClient.getInstance().getText();
-         var0 = var1 == null ? "" : var1.trim();
-      } catch (Throwable var4) {
+         String text = CloudChatClient.getInstance().getText();
+         name = text == null ? "" : text.trim();
+      } catch (Throwable e) {
       }
 
-      if (var0.isEmpty()) {
+      if (name.isEmpty()) {
          try {
-            var0 = Zenith.getInstance().getEntry().method1504().getName();
-         } catch (Exception var3) {
+            name = Zenith.getInstance().getEntry().method1504().getName();
+         } catch (Exception e) {
             return "";
          }
       }
 
-      String var5 = var0.toLowerCase(Locale.ROOT);
+      String lowerCase = name.toLowerCase(Locale.ROOT);
 
-      return switch (var5) {
+      return switch (lowerCase) {
          case "administrator", "admin" -> "Админ";
          case "support", "moderator" -> "Модератор";
          case "media" -> "Медиа";
@@ -123,43 +123,43 @@ public class DiscordManager {
          case "autobuy" -> "AutoBuy";
          case "alpha" -> "Opus/Private";
          case "user" -> "Игрок";
-         default -> var0;
+         default -> name;
       };
    }
 
-   private static String withStatus(String var0) {
+   private static String withStatus(String where) {
       try {
-         PartyManager var1 = PartyManager.method17();
-         if (var1 == null) {
-            return var0;
+         PartyManager partyManager = PartyManager.method17();
+         if (partyManager == null) {
+            return where;
          } else {
-            String var2 = var1.method31();
-            String var3 = Zenith.getInstance().getShare().text.getValue();
-            String var4 = !"online".equals(var2) && !"menu".equals(var2) ? PartyManager.method50(var2) : "";
-            if (var3 != null && !var3.isBlank()) {
-               var4 = var4.isEmpty() ? var3.strip() : var4 + ": " + var3.strip();
+            String anObject = partyManager.method31();
+            String str = Zenith.getInstance().getShare().text.getValue();
+            String str2 = !"online".equals(anObject) && !"menu".equals(anObject) ? PartyManager.method50(anObject) : "";
+            if (str != null && !str.isBlank()) {
+               str2 = str2.isEmpty() ? str.strip() : str2 + ": " + str.strip();
             }
 
-            String var5 = var4.isEmpty() ? var0 : var0 + " · " + var4;
-            return var5.length() > 120 ? var5.substring(0, 120) : var5;
+            String str3 = str2.isEmpty() ? where : where + " · " + str2;
+            return str3.length() > 120 ? str3.substring(0, 120) : str3;
          }
-      } catch (Throwable var6) {
-         return var0;
+      } catch (Throwable e) {
+         return where;
       }
    }
 
    private static String where() {
       try {
-         String var0 = ChatCompose.server();
-         if (var0.isEmpty()) {
+         String server = ChatCompose.server();
+         if (server.isEmpty()) {
             return "В главном меню";
-         } else if (var0.startsWith("singleplayer")) {
+         } else if (server.startsWith("singleplayer")) {
             return "Одиночная игра";
          } else {
-            String var1 = ServerNameUtils.method5643(var0, ChatCompose.mode());
-            return var1.isEmpty() ? "В игре" : var1;
+            String str = ServerNameUtils.method5643(server, ChatCompose.mode());
+            return str.isEmpty() ? "В игре" : str;
          }
-      } catch (Throwable var2) {
+      } catch (Throwable e) {
          return "В главном меню";
       }
    }
@@ -179,28 +179,28 @@ public class DiscordManager {
    }
 
    @Generated
-   public void setRunning(boolean var1) {
-      this.running = var1;
+   public void setRunning(boolean running) {
+      this.running = running;
    }
 
    @Generated
-   public void setConnected(boolean var1) {
-      this.connected = var1;
+   public void setConnected(boolean connected) {
+      this.connected = connected;
    }
 
    @Generated
-   public void setInfo(DiscordManager.DiscordInfo var1) {
-      this.info = var1;
+   public void setInfo(DiscordManager.DiscordInfo info) {
+      this.info = info;
    }
 
    @Generated
-   public void setLastPushed(String var1) {
-      this.lastPushed = var1;
+   public void setLastPushed(String lastPushed) {
+      this.lastPushed = lastPushed;
    }
 
    @Generated
-   public void setLastPushAt(long var1) {
-      this.lastPushAt = var1;
+   public void setLastPushAt(long lastPushAt) {
+      this.lastPushAt = lastPushAt;
    }
 
    @Generated
@@ -244,15 +244,15 @@ public class DiscordManager {
          this.setName("Discord-RPC");
 
          try {
-            for (Minecraft var1 = Minecraft.getInstance(); var1 == null || var1.getTextureManager() == null; var1 = Minecraft.getInstance()) {
+            for (Minecraft minecraft = Minecraft.getInstance(); minecraft == null || minecraft.getTextureManager() == null; minecraft = Minecraft.getInstance()) {
                Thread.sleep(500L);
             }
 
             for (; DiscordManager.this.running; Thread.sleep(500L)) {
-               boolean var2 = DiscordManager.this.wanted();
-               if (var2 && !DiscordManager.this.connected) {
+               boolean wanted = DiscordManager.this.wanted();
+               if (wanted && !DiscordManager.this.connected) {
                   DiscordManager.this.connect();
-               } else if (!var2 && DiscordManager.this.connected) {
+               } else if (!wanted && DiscordManager.this.connected) {
                   DiscordManager.this.disconnect();
                }
 
@@ -262,7 +262,7 @@ public class DiscordManager {
                   DiscordManager.this.load();
                }
             }
-         } catch (Exception var3) {
+         } catch (Exception e) {
             DiscordManager.this.stopRPC();
          }
 
@@ -304,10 +304,10 @@ public class DiscordManager {
          return "DiscordInfo[" + "userName=" + this.userName + ", " + "avatarUrl=" + this.avatarUrl + ", " + "userId=" + this.userId + "]";
       }
 
-      public DiscordInfo(String var1, String var2, String var3) {
-         this.userName = var1;
-         this.avatarUrl = var2;
-         this.userId = var3;
+      public DiscordInfo(String userName, String avatarUrl, String userId) {
+         this.userName = userName;
+         this.avatarUrl = avatarUrl;
+         this.userId = userId;
       }
    }
 }

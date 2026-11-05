@@ -21,11 +21,11 @@ public class MixinPlayerInteractItemC2SPacket {
       method = {"<init>(Lnet/minecraft/world/InteractionHand;IFF)V"},
       at = {@At("RETURN")}
    )
-   private void modifyRotation(InteractionHand var1, int var2, float var3, float var4, CallbackInfo var5) {
+   private void modifyRotation(InteractionHand interactionHand, int n, float f, float f2, CallbackInfo callbackInfo) {
       if (Zenith.getInstance().getRotationManager().getCurrentRotation() != null) {
-         Rotation var6 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         this.yRot = var6.getFloatValue();
-         this.xRot = var6.getFloatValue2();
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         this.yRot = currentRotation.getFloatValue();
+         this.xRot = currentRotation.getFloatValue2();
       }
    }
 }

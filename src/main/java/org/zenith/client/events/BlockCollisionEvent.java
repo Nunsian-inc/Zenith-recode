@@ -20,8 +20,8 @@ public class BlockCollisionEvent extends EventCancellable {
    }
 
    @Generated
-   public BlockCollisionEvent(Block var1, BlockPos var2) {
-      this.block = var1;
-      this.blockPos = var2;
+   public BlockCollisionEvent(Block block, BlockPos blockPos) {
+      this.block = block;
+      this.blockPos = blockPos;
    }
 }

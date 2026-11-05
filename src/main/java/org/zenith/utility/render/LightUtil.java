@@ -35,165 +35,165 @@ public final class LightUtil {
    private LightUtil() {
    }
 
-   public static RenderPipeline method6706(String var0, VertexFormat var1, PrimitiveTopology var2, RenderState.Data2 var3) {
-      boolean var4 = method6718(var1);
-      return method6708(var0, var1, var2, var3, var4 ? texts : texts2, var4 ? "Sampler0" : "");
+   public static RenderPipeline method6706(String text, VertexFormat vertexFormat, PrimitiveTopology primitiveTopology, RenderState.Data2 data2) {
+      boolean flag = method6718(vertexFormat);
+      return method6708(text, vertexFormat, primitiveTopology, data2, flag ? texts : texts2, flag ? "Sampler0" : "");
    }
 
-   public static RenderPipeline method6707(String var0, VertexFormat var1, PrimitiveTopology var2, RenderState.Data2 var3, String[] var4) {
-      return method6708(var0, var1, var2, var3, var4, String.join(",", var4));
+   public static RenderPipeline method6707(String text, VertexFormat vertexFormat, PrimitiveTopology primitiveTopology, RenderState.Data2 data2, String[] texts) {
+      return method6708(text, vertexFormat, primitiveTopology, data2, texts, String.join(",", texts));
    }
 
-   private static RenderPipeline method6708(String var0, VertexFormat var1, PrimitiveTopology var2, RenderState.Data2 var3, String[] var4, String var5) {
-      LightUtil.Data var6 = new LightUtil.Data(var0, var1, var2, var3, var5, false);
-      RenderPipeline var7 = items.get(var6);
-      return var7 != null ? var7 : items.computeIfAbsent(var6, var1x -> method6711(var1x, var4, null, false));
+   private static RenderPipeline method6708(String text, VertexFormat vertexFormat, PrimitiveTopology primitiveTopology, RenderState.Data2 data2, String[] texts, String str) {
+      LightUtil.Data data = new LightUtil.Data(text, vertexFormat, primitiveTopology, data2, str, false);
+      RenderPipeline renderPipeline = items.get(data);
+      return renderPipeline != null ? renderPipeline : items.computeIfAbsent(data, var1x -> method6711(var1x, texts, null, false));
    }
 
    @Nullable
-   public static RenderPipeline method6709(Identifier var0, VertexFormat var1, PrimitiveTopology var2, RenderState.Data2 var3, String[] var4, boolean var5) {
-      return method6710(var0, var0.toString(), String.join(",", var4), var1, var2, var3, var4, var5);
+   public static RenderPipeline method6709(Identifier identifier, VertexFormat vertexFormat, PrimitiveTopology primitiveTopology, RenderState.Data2 data2, String[] elements, boolean flag) {
+      return method6710(identifier, identifier.toString(), String.join(",", elements), vertexFormat, primitiveTopology, data2, elements, flag);
    }
 
    @Nullable
    public static RenderPipeline method6710(
-      Identifier var0, String var1, String var2, VertexFormat var3, PrimitiveTopology var4, RenderState.Data2 var5, String[] var6, boolean var7
+      Identifier identifier, String string, String str, VertexFormat vertexFormat, PrimitiveTopology primitiveTopology, RenderState.Data2 data2, String[] elements, boolean flag
    ) {
-      LightUtil.Data var8 = new LightUtil.Data(var1, var3, var4, var5, var2, var7);
-      RenderPipeline var9 = items.get(var8);
-      if (var9 != null) {
-         return var9;
-      } else if (!method6712(var0)) {
+      LightUtil.Data data = new LightUtil.Data(string, vertexFormat, primitiveTopology, data2, str, flag);
+      RenderPipeline renderPipeline = items.get(data);
+      if (renderPipeline != null) {
+         return renderPipeline;
+      } else if (!method6712(identifier)) {
          return null;
       } else {
-         RenderPipeline var10 = method6711(var8, var6, var0, var7);
-         items.put(var8, var10);
-         return var10;
+         RenderPipeline renderPipeline2 = method6711(data, elements, identifier, flag);
+         items.put(data, renderPipeline2);
+         return renderPipeline2;
       }
    }
 
-   private static RenderPipeline method6711(LightUtil.Data var0, String[] var1, Identifier var2, boolean var3) {
-      Identifier var4;
-      Identifier var5;
-      if (var2 != null) {
-         String var6 = var2.getPath();
-         int var7 = var6.lastIndexOf(47);
-         var6 = var7 < 0 ? var6 : var6.substring(0, var7);
-         var5 = Identifier.fromNamespaceAndPath(var2.getNamespace(), var6 + "/fragment");
-         Identifier var8 = Identifier.fromNamespaceAndPath(var2.getNamespace(), var6 + "/vertex");
-         boolean var9 = var0.getVertexFormat().contains("UV0");
-         var4 = method6715(var8, ".vsh") ? var8 : Identifier.fromNamespaceAndPath(var2.getNamespace(), "core/" + (var9 ? "position_texture_color" : "position_color"));
+   private static RenderPipeline method6711(LightUtil.Data data, String[] texts, Identifier identifier, boolean flag) {
+      Identifier defaultNamespace;
+      Identifier fragmentShader;
+      if (identifier != null) {
+         String path = identifier.getPath();
+         int lastIndexOf = path.lastIndexOf(47);
+         path = lastIndexOf < 0 ? path : path.substring(0, lastIndexOf);
+         fragmentShader = Identifier.fromNamespaceAndPath(identifier.getNamespace(), path + "/fragment");
+         Identifier id = Identifier.fromNamespaceAndPath(identifier.getNamespace(), path + "/vertex");
+         boolean contains = data.getVertexFormat().contains("UV0");
+         defaultNamespace = method6715(id, ".vsh") ? id : Identifier.fromNamespaceAndPath(identifier.getNamespace(), "core/" + (contains ? "position_texture_color" : "position_color"));
       } else {
-         var4 = Identifier.withDefaultNamespace(var0.getText());
-         var5 = var4;
+         defaultNamespace = Identifier.withDefaultNamespace(data.getText());
+         fragmentShader = defaultNamespace;
       }
 
       // 26.2+: samplers/uniforms are declared through a BindGroupLayout, depth/blend through state records
-      BindGroupLayout.Builder var11 = BindGroupLayout.builder()
+      BindGroupLayout.Builder uniform = BindGroupLayout.builder()
          .withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
          .withUniform("Projection", UniformType.UNIFORM_BUFFER);
 
-      for (String var10 : var1) {
-         var11.withUniform(var10, UniformType.COMBINED_IMAGE_SAMPLER);
+      for (String text : texts) {
+         uniform.withUniform(text, UniformType.COMBINED_IMAGE_SAMPLER);
       }
 
-      if (method6713(var4, var5, "minecraft:globals.glsl")) {
-         var11.withUniform("Globals", UniformType.UNIFORM_BUFFER);
+      if (method6713(defaultNamespace, fragmentShader, "minecraft:globals.glsl")) {
+         uniform.withUniform("Globals", UniformType.UNIFORM_BUFFER);
       }
 
-      if (method6713(var4, var5, "minecraft:fog.glsl")) {
-         var11.withUniform("Fog", UniformType.UNIFORM_BUFFER);
+      if (method6713(defaultNamespace, fragmentShader, "minecraft:fog.glsl")) {
+         uniform.withUniform("Fog", UniformType.UNIFORM_BUFFER);
       }
 
-      if (method6713(var4, var5, "minecraft:light.glsl")) {
-         var11.withUniform("Lighting", UniformType.UNIFORM_BUFFER);
+      if (method6713(defaultNamespace, fragmentShader, "minecraft:light.glsl")) {
+         uniform.withUniform("Lighting", UniformType.UNIFORM_BUFFER);
       }
 
-      if (var3) {
-         var11.withUniform("ZenithData", UniformType.UNIFORM_BUFFER);
+      if (flag) {
+         uniform.withUniform("ZenithData", UniformType.UNIFORM_BUFFER);
       }
 
-      CompareOp var13 = var0.getData2().getDepthTestFunction();
-      boolean var15 = var0.getData2().isFlag3();
-      BlendFunction var14 = var0.getData2().method1908();
-      Builder var12 = RenderPipeline.builder()
-         .withLocation(Identifier.fromNamespaceAndPath("zenith", method6716(var0)))
-         .withVertexShader(var4)
-         .withFragmentShader(var5)
-         .withVertexBinding(0, var0.getVertexFormat())
-         .withPrimitiveTopology(var0.getDrawMode())
-         .withBindGroupLayout(var11.build())
-         .withCull(var0.getData2().isFlag2())
-         .withDepthStencilState(var13 == CompareOp.ALWAYS_PASS && !var15 ? Optional.empty() : Optional.of(new DepthStencilState(var13, var15)))
-         .withColorTargetState(new ColorTargetState(Optional.ofNullable(var14), GpuFormat.RGBA8_UNORM, ColorTargetState.WRITE_ALL));
-      return var12.build();
+      CompareOp depthTestFunction = data.getData2().getDepthTestFunction();
+      boolean depthWrite = data.getData2().isFlag3();
+      BlendFunction blendFunction = data.getData2().method1908();
+      Builder colorTargetState = RenderPipeline.builder()
+         .withLocation(Identifier.fromNamespaceAndPath("zenith", method6716(data)))
+         .withVertexShader(defaultNamespace)
+         .withFragmentShader(fragmentShader)
+         .withVertexBinding(0, data.getVertexFormat())
+         .withPrimitiveTopology(data.getDrawMode())
+         .withBindGroupLayout(uniform.build())
+         .withCull(data.getData2().isFlag2())
+         .withDepthStencilState(depthTestFunction == CompareOp.ALWAYS_PASS && !depthWrite ? Optional.empty() : Optional.of(new DepthStencilState(depthTestFunction, depthWrite)))
+         .withColorTargetState(new ColorTargetState(Optional.ofNullable(blendFunction), GpuFormat.RGBA8_UNORM, ColorTargetState.WRITE_ALL));
+      return colorTargetState.build();
    }
 
    // 26.3 moved shader sources into ShaderManager's post chain cache (widened in zenith.accesswidener)
    @Nullable
-   public static String shaderSource(Identifier var0, ShaderType var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      return var2 != null && var2.getShaderManager() != null ? var2.getShaderManager().postChains.configs.getShader(var0, var1) : null;
+   public static String shaderSource(Identifier defaultNamespace, ShaderType type) {
+      Minecraft minecraft = Minecraft.getInstance();
+      return minecraft != null && minecraft.getShaderManager() != null ? minecraft.getShaderManager().postChains.configs.getShader(defaultNamespace, type) : null;
    }
 
    public static void invalidate() {
       items.clear();
    }
 
-   public static boolean method6712(Identifier var0) {
-      Minecraft var1 = Minecraft.getInstance();
-      if (var1 != null && var1.getShaderManager() != null) {
-         String var2 = var0.getPath();
-         int var3 = var2.lastIndexOf(47);
-         var2 = var3 < 0 ? var2 : var2.substring(0, var3);
-         Identifier var4 = Identifier.fromNamespaceAndPath(var0.getNamespace(), var2 + "/fragment");
-         return shaderSource(var4, ShaderType.FRAGMENT) != null;
+   public static boolean method6712(Identifier identifier) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.getShaderManager() != null) {
+         String path = identifier.getPath();
+         int lastIndexOf = path.lastIndexOf(47);
+         path = lastIndexOf < 0 ? path : path.substring(0, lastIndexOf);
+         Identifier defaultNamespace = Identifier.fromNamespaceAndPath(identifier.getNamespace(), path + "/fragment");
+         return shaderSource(defaultNamespace, ShaderType.FRAGMENT) != null;
       } else {
          return false;
       }
    }
 
-   private static boolean method6713(Identifier var0, Identifier var1, String var2) {
-      return method6714(var0, ShaderType.VERTEX).contains(var2) || method6714(var1, ShaderType.FRAGMENT).contains(var2);
+   private static boolean method6713(Identifier defaultNamespace, Identifier fragmentShader, String str) {
+      return method6714(defaultNamespace, ShaderType.VERTEX).contains(str) || method6714(fragmentShader, ShaderType.FRAGMENT).contains(str);
    }
 
-   private static String method6714(Identifier var0, ShaderType var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2 != null && var2.getShaderManager() != null) {
-         String var3 = shaderSource(var0, var1);
-         return var3 == null ? "" : var3;
+   private static String method6714(Identifier defaultNamespace, ShaderType type) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null && minecraft.getShaderManager() != null) {
+         String str = shaderSource(defaultNamespace, type);
+         return str == null ? "" : str;
       } else {
          return "";
       }
    }
 
-   private static boolean method6715(Identifier var0, String var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      return var2 != null && var2.getResourceManager() != null
-         ? var2.getResourceManager().getResource(Identifier.fromNamespaceAndPath(var0.getNamespace(), "shaders/" + var0.getPath() + var1)).isPresent()
+   private static boolean method6715(Identifier id, String str) {
+      Minecraft minecraft = Minecraft.getInstance();
+      return minecraft != null && minecraft.getResourceManager() != null
+         ? minecraft.getResourceManager().getResource(Identifier.fromNamespaceAndPath(id.getNamespace(), "shaders/" + id.getPath() + str)).isPresent()
          : false;
    }
 
-   private static String method6716(LightUtil.Data var0) {
-      String var1 = var0.getText().replace(':', '_').replace('/', '_').toLowerCase(Locale.ROOT);
-      return "pipeline/" + var1 + "_" + Integer.toHexString(var0.hashCode() & 2147483647);
+   private static String method6716(LightUtil.Data data) {
+      String lowerCase = data.getText().replace(':', '_').replace('/', '_').toLowerCase(Locale.ROOT);
+      return "pipeline/" + lowerCase + "_" + Integer.toHexString(data.hashCode() & 2147483647);
    }
 
-   public static String[] method6717(VertexFormat var0) {
-      return method6718(var0) ? new String[]{"Sampler0"} : new String[0];
+   public static String[] method6717(VertexFormat vertexFormat) {
+      return method6718(vertexFormat) ? new String[]{"Sampler0"} : new String[0];
    }
 
-   private static boolean method6718(VertexFormat var0) {
-      return var0 == com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR
-         || var0 == com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX
-         || var0 == com.mojang.blaze3d.vertex.DefaultVertexFormat.PARTICLE;
+   private static boolean method6718(VertexFormat vertexFormat) {
+      return vertexFormat == com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR
+         || vertexFormat == com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX
+         || vertexFormat == com.mojang.blaze3d.vertex.DefaultVertexFormat.PARTICLE;
    }
 
-   public static String method6719(VertexFormat var0, PrimitiveTopology var1) {
-      if (var1 == PrimitiveTopology.LINES || var1 == PrimitiveTopology.DEBUG_LINE_STRIP) {
-         return var0 == com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH ? "core/rendertype_lines" : "core/position_color";
+   public static String method6719(VertexFormat vertexFormat, PrimitiveTopology primitiveTopology) {
+      if (primitiveTopology == PrimitiveTopology.LINES || primitiveTopology == PrimitiveTopology.DEBUG_LINE_STRIP) {
+         return vertexFormat == com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH ? "core/rendertype_lines" : "core/position_color";
       } else {
-         return var0 != com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR && var0 != com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX
+         return vertexFormat != com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR && vertexFormat != com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX
             ? "core/position_color"
             : "core/position_tex_color";
       }
@@ -248,13 +248,13 @@ public final class LightUtil {
          return "Data[" + "text=" + this.text + ", " + "vertexFormat=" + this.vertexFormat + ", " + "drawMode=" + this.drawMode + ", " + "data2=" + this.data2 + ", " + "text2=" + this.text2 + ", " + "flag=" + this.flag + "]";
       }
 
-      private Data(String var1, VertexFormat var2, PrimitiveTopology var3, RenderState.Data2 var4, String var5, boolean var6) {
-         this.text = var1;
-         this.vertexFormat = var2;
-         this.drawMode = var3;
-         this.data2 = var4;
-         this.text2 = var5;
-         this.flag = var6;
+      private Data(String text, VertexFormat vertexFormat, PrimitiveTopology drawMode, RenderState.Data2 data2, String str, boolean flag) {
+         this.text = text;
+         this.vertexFormat = vertexFormat;
+         this.drawMode = drawMode;
+         this.data2 = data2;
+         this.text2 = str;
+         this.flag = flag;
       }
 
       public String getText() {

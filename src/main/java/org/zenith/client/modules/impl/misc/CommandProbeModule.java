@@ -190,47 +190,47 @@ public class CommandProbeModule extends Module {
 
    private void method6364() {
       if (mc.getConnection() != null) {
-         RootCommandNode var1 = mc.getConnection().getCommands().getRoot();
+         RootCommandNode root = mc.getConnection().getCommands().getRoot();
          this.line("=== command tree ===");
 
-         for (Object var3_o : (Iterable<?>)(Object)(var1.getChildren())) {
-            CommandNode var3 = (CommandNode)var3_o;
-            this.method6365(var3, "", 0);
+         for (Object obj : (Iterable<?>)(Object)(root.getChildren())) {
+            CommandNode commandNode = (CommandNode)obj;
+            this.method6365(commandNode, "", 0);
          }
       }
    }
 
-   private void method6365(CommandNode<ClientSuggestionProvider> var1, String var2, int var3) {
-      if (var3 <= 4) {
-         String var4 = this.method6366(var1);
-         this.line("  ".repeat(var3) + var2 + var4);
+   private void method6365(CommandNode<ClientSuggestionProvider> commandNode, String str, int count) {
+      if (count <= 4) {
+         String str2 = this.method6366(commandNode);
+         this.line("  ".repeat(count) + str + str2);
 
-         for (CommandNode var6 : var1.getChildren()) {
-            this.method6365(var6, "", var3 + 1);
+         for (CommandNode commandNode2 : commandNode.getChildren()) {
+            this.method6365(commandNode2, "", count + 1);
          }
 
-         if (var1.getRedirect() != null) {
-            this.line("  ".repeat(var3 + 1) + "-> redirect " + var1.getRedirect().getName());
+         if (commandNode.getRedirect() != null) {
+            this.line("  ".repeat(count + 1) + "-> redirect " + commandNode.getRedirect().getName());
          }
       }
    }
 
-   private String method6366(CommandNode<ClientSuggestionProvider> var1) {
-      if (var1 instanceof LiteralCommandNode var4) {
-         return var4.getLiteral() + (var1.getCommand() != null ? " *" : "");
-      } else if (var1 instanceof ArgumentCommandNode var2) {
-         String var3 = var2.getCustomSuggestions() == null ? "" : " suggest=" + var2.getCustomSuggestions().getClass().getSimpleName();
-         return "<" + var2.getName() + ":" + var2.getType().getClass().getSimpleName() + ">" + var3 + (var1.getCommand() != null ? " *" : "");
+   private String method6366(CommandNode<ClientSuggestionProvider> commandNode) {
+      if (commandNode instanceof LiteralCommandNode literalCommandNode) {
+         return literalCommandNode.getLiteral() + (commandNode.getCommand() != null ? " *" : "");
+      } else if (commandNode instanceof ArgumentCommandNode argumentCommandNode) {
+         String str = argumentCommandNode.getCustomSuggestions() == null ? "" : " suggest=" + argumentCommandNode.getCustomSuggestions().getClass().getSimpleName();
+         return "<" + argumentCommandNode.getName() + ":" + argumentCommandNode.getType().getClass().getSimpleName() + ">" + str + (commandNode.getCommand() != null ? " *" : "");
       } else {
-         return var1.getName();
+         return commandNode.getName();
       }
    }
 
    private void method6367() {
       if (mc.getConnection() != null) {
-         for (CommandNode var2 : mc.getConnection().getCommands().getRoot().getChildren()) {
-            if (var2 instanceof LiteralCommandNode var3) {
-               this.deque.add(var3.getLiteral() + " ");
+         for (CommandNode commandNode : mc.getConnection().getCommands().getRoot().getChildren()) {
+            if (commandNode instanceof LiteralCommandNode literalCommandNode) {
+               this.deque.add(literalCommandNode.getLiteral() + " ");
             }
          }
 
@@ -239,27 +239,27 @@ public class CommandProbeModule extends Module {
    }
 
    private void method6368() {
-      for (String var4 : texts) {
-         this.deque.add(var4 + ":");
+      for (String text : texts) {
+         this.deque.add(text + ":");
       }
 
       this.line("=== namespace probe: " + texts.length + " ===");
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.getConnection() != null) {
          if (this.text == null || System.currentTimeMillis() - this.longValue >= 1500L) {
             if (System.currentTimeMillis() - this.longValue >= (long)this.delay.getValue3()) {
-               String var2 = this.deque.poll();
-               if (var2 == null) {
+               String text = this.deque.poll();
+               if (text == null) {
                   if (this.text == null) {
                      this.setToggled(false);
                   }
-               } else if (this.items.add(var2)) {
-                  this.text = var2;
+               } else if (this.items.add(text)) {
+                  this.text = text;
                   this.longValue = System.currentTimeMillis();
-                  mc.getConnection().send(new ServerboundCommandSuggestionPacket(++this.intValue, "/" + var2));
+                  mc.getConnection().send(new ServerboundCommandSuggestionPacket(++this.intValue, "/" + text));
                }
             }
          }
@@ -267,39 +267,39 @@ public class CommandProbeModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundCommandSuggestionsPacket var3) {
-            mc.execute(() -> this.method6369(var3));
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundCommandSuggestionsPacket suggestionsPacket) {
+            mc.execute(() -> this.method6369(suggestionsPacket));
          }
       }
    }
 
-   private void method6369(ClientboundCommandSuggestionsPacket var1) {
+   private void method6369(ClientboundCommandSuggestionsPacket suggestionsPacket) {
       if (this.isEnabled()) {
-         String var2 = this.text;
+         String text = this.text;
          this.text = null;
-         if (var2 != null) {
-            ArrayList<String> var3 = new ArrayList();
+         if (text != null) {
+            ArrayList<String> elements = new ArrayList();
 
-            for (Entry var5 : var1.suggestions()) {
-               var3.add(var5.text());
+            for (Entry suggestion : suggestionsPacket.suggestions()) {
+               elements.add(suggestion.text());
             }
 
-            if (!var3.isEmpty()) {
+            if (!elements.isEmpty()) {
                this.intValue2++;
-               this.line("suggest| /" + var2.trim() + " -> " + String.join(", ", var3));
-               int var8 = var2.trim().split("\\s+").length;
-               if (var8 < (int)this.depth.getValue3()) {
-                  int var9 = 0;
+               this.line("suggest| /" + text.trim() + " -> " + String.join(", ", elements));
+               int length = text.trim().split("\\s+").length;
+               if (length < (int)this.depth.getValue3()) {
+                  int n = 0;
 
-                  for (String var7 : var3) {
-                     if (!var7.startsWith("@") && var7.length() <= 24) {
-                        if (var9++ >= 12) {
+                  for (String str : elements) {
+                     if (!str.startsWith("@") && str.length() <= 24) {
+                        if (n++ >= 12) {
                            break;
                         }
 
-                        this.deque.add(var2 + var7 + " ");
+                        this.deque.add(text + str + " ");
                      }
                   }
                }
@@ -310,22 +310,22 @@ public class CommandProbeModule extends Module {
 
    private void method6370() {
       try {
-         File var1 = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
-         if (!var1.exists() && !var1.mkdirs()) {
+         File file = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
+         if (!file.exists() && !file.mkdirs()) {
             return;
          }
 
-         File var2 = new File(var1, "commandprobe-" + System.currentTimeMillis() + ".log");
-         this.printWriter = new PrintWriter(new FileWriter(var2, true), true);
-         ChatLogger.method2019("CommandProbe: " + var2.getName());
-      } catch (Exception var3) {
+         File file2 = new File(file, "commandprobe-" + System.currentTimeMillis() + ".log");
+         this.printWriter = new PrintWriter(new FileWriter(file2, true), true);
+         ChatLogger.method2019("CommandProbe: " + file2.getName());
+      } catch (Exception e) {
          this.printWriter = null;
       }
    }
 
-   private void line(String var1) {
+   private void line(String x) {
       if (this.printWriter != null) {
-         this.printWriter.println(var1);
+         this.printWriter.println(x);
       }
    }
 
@@ -333,7 +333,7 @@ public class CommandProbeModule extends Module {
       if (this.printWriter != null) {
          try {
             this.printWriter.close();
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
 
          this.printWriter = null;

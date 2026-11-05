@@ -9,5 +9,5 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface AnimationDecoder<T extends IPlayable> {
    @NotNull
-   Collection<T> decode(@NotNull InputStream var1) throws IOException;
+   Collection<T> decode(@NotNull InputStream bufferedInputStream) throws IOException;
 }

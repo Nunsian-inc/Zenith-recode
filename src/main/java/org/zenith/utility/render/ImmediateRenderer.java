@@ -66,16 +66,16 @@ public final class ImmediateRenderer {
       return intValue > 0;
    }
 
-   public static void method8006(Runnable var0) {
+   public static void method8006(Runnable runnable) {
       if (intValue <= 0) {
-         var0.run();
+         runnable.run();
       } else {
          RenderSystem.backupProjectionMatrix();
          RenderSystem.setProjectionMatrix(method8019(), ProjectionType.ORTHOGRAPHIC);
          RenderSystem.getModelViewStack().pushMatrix().set(matrix4f2);
 
          try {
-            var0.run();
+            runnable.run();
          } finally {
             RenderSystem.getModelViewStack().popMatrix();
             RenderSystem.restoreProjectionMatrix();
@@ -84,13 +84,13 @@ public final class ImmediateRenderer {
    }
 
    public static int method8007() {
-      int var0 = intValue;
+      int n = intValue;
       intValue = 0;
-      return var0;
+      return n;
    }
 
-   public static void method8008(int var0) {
-      intValue = var0;
+   public static void method8008(int n) {
+      intValue = n;
    }
 
    public static void method8009() {
@@ -99,29 +99,29 @@ public final class ImmediateRenderer {
       ScissorStack.clear();
    }
 
-   public static void method8010(float var0, float var1) {
+   public static void method8010(float width, float height) {
       type = ImmediateRenderer.Type.PIXEL;
-      floatValue = Math.max(1.0F, var0);
-      floatValue2 = Math.max(1.0F, var1);
+      floatValue = Math.max(1.0F, width);
+      floatValue2 = Math.max(1.0F, height);
    }
 
    public static void method8011() {
       type = ImmediateRenderer.Type.NDC;
    }
 
-   public static void method8012(@Nullable ShaderDefinition var0) {
-      shaderDefinition = var0;
+   public static void method8012(@Nullable ShaderDefinition shaderDefinition2) {
+      shaderDefinition = shaderDefinition2;
    }
 
-   public static void method8013(@Nullable RenderTarget var0) {
-      framebuffer = var0;
+   public static void method8013(@Nullable RenderTarget simpleFramebuffer2) {
+      framebuffer = simpleFramebuffer2;
    }
 
    @Nullable
    public static RenderTarget method8014() {
-      RenderTarget var0 = framebuffer;
+      RenderTarget renderTarget = framebuffer;
       framebuffer = null;
-      return var0;
+      return renderTarget;
    }
 
    @Nullable
@@ -129,141 +129,141 @@ public final class ImmediateRenderer {
       return shaderDefinition;
    }
 
-   public static void method8015(MeshData var0) {
-      if (var0 != null) {
+   public static void method8015(MeshData orThrow) {
+      if (orThrow != null) {
          if (!RenderSystem.isOnRenderThread()) {
-            var0.close();
+            orThrow.close();
          } else {
-            ShaderDefinition var1 = shaderDefinition;
+            ShaderDefinition shaderDefinition2 = shaderDefinition;
             shaderDefinition = null;
-            ImmediateRenderer.Type var2 = type;
+            ImmediateRenderer.Type type2 = type;
             type = ImmediateRenderer.Type.DEFAULT;
-            RenderTarget var3 = framebuffer;
+            RenderTarget renderTarget = framebuffer;
             framebuffer = null;
-            String var4 = RenderState.getText();
+            String text = RenderState.getText();
             RenderState.method1899();
-            MeshData var5 = var0;
+            MeshData meshData = orThrow;
 
             label295: {
                label296: {
                   try {
-                     DrawState var6 = var0.drawState();
-                     if (var6.indexCount() == 0) {
+                     DrawState drawState = orThrow.drawState();
+                     if (drawState.indexCount() == 0) {
                         break label295;
                      }
 
-                     boolean var7 = var2 != ImmediateRenderer.Type.DEFAULT || intValue > 0;
-                     RenderTarget var8 = var3 != null ? var3 : Minecraft.getInstance().gameRenderer.mainRenderTarget();
-                     RenderState.Data2 var9 = RenderState.method1904();
-                     if (var7) {
-                        boolean var10 = var2 == ImmediateRenderer.Type.DEFAULT && RenderState.isFlag4() && var8.hasDepth();
-                        var9 = var10 ? var9.method1910() : var9.method1909();
+                     boolean flag = type2 != ImmediateRenderer.Type.DEFAULT || intValue > 0;
+                     RenderTarget mainRenderTarget = renderTarget != null ? renderTarget : Minecraft.getInstance().gameRenderer.mainRenderTarget();
+                     RenderState.Data2 data2 = RenderState.method1904();
+                     if (flag) {
+                        boolean flag2 = type2 == ImmediateRenderer.Type.DEFAULT && RenderState.isFlag4() && mainRenderTarget.hasDepth();
+                        data2 = flag2 ? data2.method1910() : data2.method1909();
                      }
 
-                     RenderPipeline var34 = var1 != null
-                        ? var1.method5561(var6.format(), var6.primitiveTopology(), var9)
-                        : LightUtil.method6706(var4 != null ? var4 : LightUtil.method6719(var6.format(), var6.primitiveTopology()), var6.format(), var6.primitiveTopology(), var9);
-                     if (var34 == null) {
+                     RenderPipeline pipeline = shaderDefinition2 != null
+                        ? shaderDefinition2.method5561(drawState.format(), drawState.primitiveTopology(), data2)
+                        : LightUtil.method6706(text != null ? text : LightUtil.method6719(drawState.format(), drawState.primitiveTopology()), drawState.format(), drawState.primitiveTopology(), data2);
+                     if (pipeline == null) {
                         break label296;
                      }
 
                      // ponytail: one GPU buffer per immediate draw (closed after the pass, Vulkan defers destruction); pool it if draw counts get high
-                     GpuBuffer var11 = RenderSystem.getDevice().createBuffer(() -> "Zenith immediate vertices", GpuBuffer.USAGE_VERTEX, var0.vertexBuffer());
-                     GpuBuffer var36 = null;
-                     GpuBuffer var12;
-                     IndexType var13;
-                     if (var0.indexBuffer() == null) {
-                        AutoStorageIndexBuffer var14 = RenderSystem.getSequentialBuffer(var6.primitiveTopology());
-                        var12 = var14.getBuffer(var6.indexCount());
-                        var13 = var14.type();
+                     GpuBuffer buffer = RenderSystem.getDevice().createBuffer(() -> "Zenith immediate vertices", GpuBuffer.USAGE_VERTEX, orThrow.vertexBuffer());
+                     GpuBuffer gpuBuffer = null;
+                     GpuBuffer indexBuffer;
+                     IndexType indexType;
+                     if (orThrow.indexBuffer() == null) {
+                        AutoStorageIndexBuffer sequentialBuffer = RenderSystem.getSequentialBuffer(drawState.primitiveTopology());
+                        indexBuffer = sequentialBuffer.getBuffer(drawState.indexCount());
+                        indexType = sequentialBuffer.type();
                      } else {
-                        var36 = RenderSystem.getDevice().createBuffer(() -> "Zenith immediate indices", GpuBuffer.USAGE_INDEX, var0.indexBuffer());
-                        var12 = var36;
-                        var13 = var6.indexType();
+                        gpuBuffer = RenderSystem.getDevice().createBuffer(() -> "Zenith immediate indices", GpuBuffer.USAGE_INDEX, orThrow.indexBuffer());
+                        indexBuffer = gpuBuffer;
+                        indexType = drawState.indexType();
                      }
-                     Matrix4f var35 = switch (var2) {
+                     Matrix4f modelView = switch (type2) {
                         case DEFAULT -> intValue > 0 ? matrix4f2 : RenderSystem.getModelViewMatrixCopy();
                         case PIXEL -> matrix4f2;
                         case NDC -> matrix4f;
                      };
-                     GpuBufferSlice var15 = RenderSystem.getDynamicUniforms()
+                     GpuBufferSlice writeTransform = RenderSystem.getDynamicUniforms()
                         .writeTransform(
-                           var35,
+                           modelView,
                            vector4f.set(RenderState.getFloatValue(), RenderState.getFloatValue2(), RenderState.getFloatValue3(), RenderState.getAlpha()),
                            vector3f,
                            matrix4f
                         );
-                     GpuTextureView var16 = var8.getColorTextureView();
-                     GpuTextureView var17 = var8.hasDepth() && var34.getDepthStencilState() != null ? var8.getDepthTextureView() : null;
-                     if (var7) {
+                     GpuTextureView colorTextureView = mainRenderTarget.getColorTextureView();
+                     GpuTextureView depthTextureView = mainRenderTarget.hasDepth() && pipeline.getDepthStencilState() != null ? mainRenderTarget.getDepthTextureView() : null;
+                     if (flag) {
                         RenderSystem.backupProjectionMatrix();
-                        RenderSystem.setProjectionMatrix(method8016(var2), ProjectionType.ORTHOGRAPHIC);
+                        RenderSystem.setProjectionMatrix(method8016(type2), ProjectionType.ORTHOGRAPHIC);
                      }
 
-                     GpuBufferSlice var18 = var1 != null ? var1.method5562() : null;
-                     CommandEncoder var19 = RenderSystem.getDevice().createCommandEncoder();
+                     GpuBufferSlice gpuBufferSlice = shaderDefinition2 != null ? shaderDefinition2.method5562() : null;
+                     CommandEncoder commandEncoder = RenderSystem.getDevice().createCommandEncoder();
 
-                     try (RenderPass var20 = var19.createRenderPass(() -> "Zenith immediate", var16, Optional.empty(), var17, OptionalDouble.empty())) {
-                        var20.setPipeline(RenderSystem.getCompiledPipeline(var34));
-                        ScissorState var21 = RenderSystem.getScissorStateForRenderTypeDraws();
-                        if (var21.enabled()) {
-                           var20.enableScissor(var21.x(), var21.y(), var21.width(), var21.height());
+                     try (RenderPass renderPass = commandEncoder.createRenderPass(() -> "Zenith immediate", colorTextureView, Optional.empty(), depthTextureView, OptionalDouble.empty())) {
+                        renderPass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
+                        ScissorState scissorStateForRenderTypeDraws = RenderSystem.getScissorStateForRenderTypeDraws();
+                        if (scissorStateForRenderTypeDraws.enabled()) {
+                           renderPass.enableScissor(scissorStateForRenderTypeDraws.x(), scissorStateForRenderTypeDraws.y(), scissorStateForRenderTypeDraws.width(), scissorStateForRenderTypeDraws.height());
                         }
 
-                        RenderSystem.bindDefaultUniforms(var20);
-                        var20.setUniform("DynamicTransforms", var15);
-                        if (var1 != null) {
-                           var1.method5564(var20, var18);
+                        RenderSystem.bindDefaultUniforms(renderPass);
+                        renderPass.setUniform("DynamicTransforms", writeTransform);
+                        if (shaderDefinition2 != null) {
+                           shaderDefinition2.method5564(renderPass, gpuBufferSlice);
                         }
 
-                        method8020(var20, var34);
-                        var20.setVertexBuffer(0, var11.slice());
-                        var20.setIndexBuffer(var12, var13);
-                        var20.drawIndexed(var6.indexCount(), 1, 0, 0, 0);
+                        method8020(renderPass, pipeline);
+                        renderPass.setVertexBuffer(0, buffer.slice());
+                        renderPass.setIndexBuffer(indexBuffer, indexType);
+                        renderPass.drawIndexed(drawState.indexCount(), 1, 0, 0, 0);
                      } finally {
-                        if (var7) {
+                        if (flag) {
                            RenderSystem.restoreProjectionMatrix();
                         }
-                        var11.close();
-                        if (var36 != null) {
-                           var36.close();
+                        buffer.close();
+                        if (gpuBuffer != null) {
+                           gpuBuffer.close();
                         }
                      }
-                  } catch (Throwable var33) {
-                     if (var0 != null) {
+                  } catch (Throwable e) {
+                     if (orThrow != null) {
                         try {
-                           var5.close();
-                        } catch (Throwable var29) {
-                           var33.addSuppressed(var29);
+                           meshData.close();
+                        } catch (Throwable ex) {
+                           e.addSuppressed(ex);
                         }
                      }
 
-                     throw var33;
+                     throw e;
                   }
 
-                  if (var0 != null) {
-                     var0.close();
+                  if (orThrow != null) {
+                     orThrow.close();
                   }
 
                   return;
                }
 
-               if (var0 != null) {
-                  var0.close();
+               if (orThrow != null) {
+                  orThrow.close();
                }
 
                return;
             }
 
-            if (var0 != null) {
-               var0.close();
+            if (orThrow != null) {
+               orThrow.close();
             }
          }
       }
    }
 
-   private static GpuBufferSlice method8016(ImmediateRenderer.Type var0) {
-      return switch (var0) {
+   private static GpuBufferSlice method8016(ImmediateRenderer.Type type) {
+      return switch (type) {
          case DEFAULT -> method8019();
          case PIXEL -> method8018(floatValue, floatValue2);
          case NDC -> method8017();
@@ -278,12 +278,12 @@ public final class ImmediateRenderer {
       return projectionUniform.method551(matrix4f);
    }
 
-   private static GpuBufferSlice method8018(float var0, float var1) {
+   private static GpuBufferSlice method8018(float floatValue, float height) {
       if (projectionMatrix22 == null) {
          projectionMatrix22 = new ImmediateRenderer.Ortho("zenith pixel", 1000.0F, 21000.0F, true);
       }
 
-      return projectionMatrix22.getBuffer(var0, var1);
+      return projectionMatrix22.getBuffer(floatValue, height);
    }
 
    public static GpuBufferSlice method8019() {
@@ -291,27 +291,27 @@ public final class ImmediateRenderer {
          projectionMatrix2 = new ImmediateRenderer.Ortho("zenith gui", 1000.0F, 21000.0F, true);
       }
 
-      Window var0 = Minecraft.getInstance().getWindow();
-      return projectionMatrix2.getBuffer((float)var0.getWidth() / var0.getGuiScale(), (float)var0.getHeight() / var0.getGuiScale());
+      Window window = Minecraft.getInstance().getWindow();
+      return projectionMatrix2.getBuffer((float)window.getWidth() / window.getGuiScale(), (float)window.getHeight() / window.getGuiScale());
    }
 
-   private static void method8020(RenderPass var0, RenderPipeline var1) {
-      for (int var2 = 0; var2 < 8; var2++) {
-         GpuTextureView var3 = RenderState.method1894(var2);
-         if (var3 != null) {
-            String var4 = LightUtil.texts3[var2];
-            if (hasSampler(var1, var4)) {
-               var0.setUniform(var4, var3, RenderState.method1896(var2));
+   private static void method8020(RenderPass renderPass, RenderPipeline pipeline) {
+      for (int i = 0; i < 8; i++) {
+         GpuTextureView textureView = RenderState.method1894(i);
+         if (textureView != null) {
+            String name = LightUtil.texts3[i];
+            if (hasSampler(pipeline, name)) {
+               renderPass.setUniform(name, textureView, RenderState.method1896(i));
             }
          }
       }
    }
 
    // 26.2 replaced RenderPipeline#getSamplers with bind group layouts
-   public static boolean hasSampler(RenderPipeline var0, String var1) {
-      for (com.mojang.renderpearl.api.pipeline.BindGroupLayout var2 : var0.getBindGroupLayouts()) {
-         for (com.mojang.renderpearl.api.pipeline.BindGroupLayout.UniformDescription var3 : var2.uniforms()) {
-            if (var3.name().equals(var1)) {
+   public static boolean hasSampler(RenderPipeline pipeline, String name) {
+      for (com.mojang.renderpearl.api.pipeline.BindGroupLayout bindGroupLayout : pipeline.getBindGroupLayouts()) {
+         for (com.mojang.renderpearl.api.pipeline.BindGroupLayout.UniformDescription uniform : bindGroupLayout.uniforms()) {
+            if (uniform.name().equals(name)) {
                return true;
             }
          }
@@ -328,15 +328,15 @@ public final class ImmediateRenderer {
       private final float zFar;
       private final boolean invertY;
 
-      private Ortho(String var1, float var2, float var3, boolean var4) {
-         this.buffer = new ProjectionMatrixBuffer(var1);
-         this.zNear = var2;
-         this.zFar = var3;
-         this.invertY = var4;
+      private Ortho(String name, float zNear, float zFar, boolean invertY) {
+         this.buffer = new ProjectionMatrixBuffer(name);
+         this.zNear = zNear;
+         this.zFar = zFar;
+         this.invertY = invertY;
       }
 
-      private GpuBufferSlice getBuffer(float var1, float var2) {
-         this.projection.setupOrtho(this.zNear, this.zFar, var1, var2, this.invertY);
+      private GpuBufferSlice getBuffer(float floatValue, float height) {
+         this.projection.setupOrtho(this.zNear, this.zFar, floatValue, height, this.invertY);
          return this.buffer.getBuffer(this.projection);
       }
    }

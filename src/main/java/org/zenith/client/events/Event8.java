@@ -10,9 +10,9 @@ public class Event8 extends CancellableEvent {
    private final BlockPos blockPos;
 
    @Generated
-   public Event8(Block var1, BlockPos var2) {
-      this.block = var1;
-      this.blockPos = var2;
+   public Event8(Block block, BlockPos blockPos) {
+      this.block = block;
+      this.blockPos = blockPos;
    }
 
    @Generated

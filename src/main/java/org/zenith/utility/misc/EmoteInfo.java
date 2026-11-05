@@ -54,19 +54,19 @@ public final class EmoteInfo {
       return "EmoteInfo[" + "text=" + this.text + ", " + "uUID=" + this.uUID + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "identifier=" + this.identifier + ", " + "keyframeAnimation=" + this.keyframeAnimation + "]";
    }
 
-   public EmoteInfo(String var1, UUID var2, String var3, String var4, Identifier var5, KeyframeAnimation var6) {
-      Objects.requireNonNull(var1, "id");
-      Objects.requireNonNull(var2, "animationUuid");
-      Objects.requireNonNull(var3, "displayName");
-      Objects.requireNonNull(var4, "author");
-      Objects.requireNonNull(var5, "icon");
-      Objects.requireNonNull(var6, "animation");
-      this.text = var1;
-      this.uUID = var2;
-      this.text2 = var3;
-      this.text3 = var4;
-      this.identifier = var5;
-      this.keyframeAnimation = var6;
+   public EmoteInfo(String text, UUID uUID, String str, String str2, Identifier identifier, KeyframeAnimation keyframeAnimation) {
+      Objects.requireNonNull(text, "id");
+      Objects.requireNonNull(uUID, "animationUuid");
+      Objects.requireNonNull(str, "displayName");
+      Objects.requireNonNull(str2, "author");
+      Objects.requireNonNull(identifier, "icon");
+      Objects.requireNonNull(keyframeAnimation, "animation");
+      this.text = text;
+      this.uUID = uUID;
+      this.text2 = str;
+      this.text3 = str2;
+      this.identifier = identifier;
+      this.keyframeAnimation = keyframeAnimation;
    }
 
    public String getText() {

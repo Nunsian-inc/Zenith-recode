@@ -21,10 +21,10 @@ public abstract class MixinPacketApplyEntry {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$beforeApply(CallbackInfo var1) {
+   private void zenith$beforeApply(CallbackInfo callbackInfo) {
       if (EventManager.hasListeners(PacketReceiveEvent.class)) {
          if (((PacketReceiveEvent)EventManager.call(new PacketReceiveEvent(this.packet()))).isCancelled()) {
-            var1.cancel();
+            callbackInfo.cancel();
          }
       }
    }

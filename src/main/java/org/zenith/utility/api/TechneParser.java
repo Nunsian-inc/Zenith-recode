@@ -16,241 +16,241 @@ public final class TechneParser {
    private TechneParser() {
    }
 
-   public static CosmeticSkeleton method7430(String var0) {
-      return method7431(var0, null);
+   public static CosmeticSkeleton method7430(String json) {
+      return method7431(json, null);
    }
 
-   public static CosmeticSkeleton method7431(String var0, String var1) {
-      CosmeticSkeleton.Entry var2 = new CosmeticSkeleton.Entry();
-      JsonObject var3 = null;
+   public static CosmeticSkeleton method7431(String json, String str) {
+      CosmeticSkeleton.Entry entry = new CosmeticSkeleton.Entry();
+      JsonObject json2 = null;
 
       try {
-         var3 = method7439(JsonParser.parseString(var0).getAsJsonObject(), "Techne");
-      } catch (RuntimeException var10) {
+         json2 = method7439(JsonParser.parseString(json).getAsJsonObject(), "Techne");
+      } catch (RuntimeException e) {
       }
 
-      if (var3 == null) {
-         return var2.method7152();
+      if (json2 == null) {
+         return entry.method7152();
       } else {
-         HashSet var4 = new HashSet();
-         int var5 = 0;
+         HashSet hashSet = new HashSet();
+         int n = 0;
 
-         for (JsonElement var7 : method7437(var3.get("Models"))) {
-            if (var7.isJsonObject()) {
-               JsonObject var8 = var7.getAsJsonObject();
-               JsonObject var9 = method7439(var8, "Model");
-               method7432(var2, var9 == null ? var8 : var9, var1, var4, var5++);
+         for (JsonElement jsonElement : method7437(json2.get("Models"))) {
+            if (jsonElement.isJsonObject()) {
+               JsonObject jsonObject = jsonElement.getAsJsonObject();
+               JsonObject json3 = method7439(jsonObject, "Model");
+               method7432(entry, json3 == null ? jsonObject : json3, str, hashSet, n++);
             }
          }
 
-         return var2.method7152();
+         return entry.method7152();
       }
    }
 
-   private static void method7432(CosmeticSkeleton.Entry var0, JsonObject var1, String var2, Set<String> var3, int var4) {
-      String var5 = var2 != null && !var2.isBlank() ? var2 : method7440(var1, "@texture", "");
-      int var6 = var0.method7147(var5);
-      float[] var7 = method7441(method7440(var1, "TextureSize", ""), 2, 0.0F);
-      float var8 = var7[0] > 0.0F ? var7[0] : 64.0F;
-      float var9 = var7[1] > 0.0F ? var7[1] : 32.0F;
-      float[] var10 = method7441(method7440(var1, "GlScale", ""), 3, 1.0F);
+   private static void method7432(CosmeticSkeleton.Entry entry, JsonObject jsonObject, String str, Set<String> strings, int n) {
+      String str2 = str != null && !str.isBlank() ? str : method7440(jsonObject, "@texture", "");
+      int n2 = entry.method7147(str2);
+      float[] floats = method7441(method7440(jsonObject, "TextureSize", ""), 2, 0.0F);
+      float f = floats[0] > 0.0F ? floats[0] : 64.0F;
+      float f2 = floats[1] > 0.0F ? floats[1] : 32.0F;
+      float[] floats2 = method7441(method7440(jsonObject, "GlScale", ""), 3, 1.0F);
 
-      for (int var11 = 0; var11 < 3; var11++) {
-         if (var10[var11] == 0.0F) {
-            var10[var11] = 1.0F;
+      for (int i = 0; i < 3; i++) {
+         if (floats2[i] == 0.0F) {
+            floats2[i] = 1.0F;
          }
       }
 
-      int var15 = var0.method7146(method7438(var3, method7440(var1, "Name", "model" + var4)), -1, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-      JsonObject var12 = method7439(var1, "Geometry");
-      if (var12 != null) {
-         for (JsonElement var14 : method7437(var12.get("Shape"))) {
-            if (var14.isJsonObject()) {
-               method7433(var0, var15, var6, var14.getAsJsonObject(), var3, var10, var8, var9);
+      int intValue = entry.method7146(method7438(strings, method7440(jsonObject, "Name", "model" + n)), -1, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+      JsonObject json = method7439(jsonObject, "Geometry");
+      if (json != null) {
+         for (JsonElement jsonElement : method7437(json.get("Shape"))) {
+            if (jsonElement.isJsonObject()) {
+               method7433(entry, intValue, n2, jsonElement.getAsJsonObject(), strings, floats2, f, f2);
             }
          }
       }
    }
 
-   private static void method7433(CosmeticSkeleton.Entry var0, int var1, int var2, JsonObject var3, Set<String> var4, float[] var5, float var6, float var7) {
-      float[] var8 = method7441(method7440(var3, "Position", ""), 3, 0.0F);
-      float[] var9 = method7441(method7440(var3, "Offset", ""), 3, 0.0F);
-      float[] var10 = method7441(method7440(var3, "Size", ""), 3, 0.0F);
-      float[] var11 = method7441(method7440(var3, "Rotation", ""), 3, 0.0F);
-      float[] var12 = method7441(method7440(var3, "TextureOffset", ""), 2, 0.0F);
-      boolean var13 = "true".equals(method7440(var3, "IsMirrored", "False").strip().toLowerCase(Locale.ROOT));
-      int var14 = var0.method7146(
-         method7438(var4, method7440(var3, "@Name", "shape")),
-         var1,
-         method7436(var8[0], var5[0]),
-         method7436(var8[1], var5[1]),
-         method7436(var8[2], var5[2]),
-         (float)(-Math.toDegrees(var11[0])),
-         (float)Math.toDegrees(var11[1]),
-         (float)(-Math.toDegrees(var11[2]))
+   private static void method7433(CosmeticSkeleton.Entry entry, int intValue, int n, JsonObject jsonObject, Set<String> strings, float[] floats, float f, float f2) {
+      float[] floats2 = method7441(method7440(jsonObject, "Position", ""), 3, 0.0F);
+      float[] floats3 = method7441(method7440(jsonObject, "Offset", ""), 3, 0.0F);
+      float[] floats4 = method7441(method7440(jsonObject, "Size", ""), 3, 0.0F);
+      float[] floats5 = method7441(method7440(jsonObject, "Rotation", ""), 3, 0.0F);
+      float[] floats6 = method7441(method7440(jsonObject, "TextureOffset", ""), 2, 0.0F);
+      boolean flag = "true".equals(method7440(jsonObject, "IsMirrored", "False").strip().toLowerCase(Locale.ROOT));
+      int intValue2 = entry.method7146(
+         method7438(strings, method7440(jsonObject, "@Name", "shape")),
+         intValue,
+         method7436(floats2[0], floats[0]),
+         method7436(floats2[1], floats[1]),
+         method7436(floats2[2], floats[2]),
+         (float)(-Math.toDegrees(floats5[0])),
+         (float)Math.toDegrees(floats5[1]),
+         (float)(-Math.toDegrees(floats5[2]))
       );
-      float[] var15 = new float[3];
-      float[] var16 = new float[3];
+      float[] floats7 = new float[3];
+      float[] floats8 = new float[3];
 
-      for (int var17 = 0; var17 < 3; var17++) {
-         float var18 = method7436(var8[var17] + var9[var17], var5[var17]);
-         float var19 = method7436(var8[var17] + var9[var17] + var10[var17], var5[var17]);
-         var15[var17] = Math.min(var18, var19);
-         var16[var17] = Math.max(var18, var19);
+      for (int i = 0; i < 3; i++) {
+         float f3 = method7436(floats2[i] + floats3[i], floats[i]);
+         float f4 = method7436(floats2[i] + floats3[i] + floats4[i], floats[i]);
+         floats7[i] = Math.min(f3, f4);
+         floats8[i] = Math.max(f3, f4);
       }
 
-      float var24 = var15[0];
-      float var25 = var15[1];
-      float var26 = var15[2];
-      float var20 = var16[0];
-      float var21 = var16[1];
-      float var22 = var16[2];
-      float[][] var23 = new float[][]{
-         {var24, var25, var26},
-         {var20, var25, var26},
-         {var20, var21, var26},
-         {var24, var21, var26},
-         {var24, var25, var22},
-         {var20, var25, var22},
-         {var20, var21, var22},
-         {var24, var21, var22}
+      float f3 = floats7[0];
+      float f4 = floats7[1];
+      float f5 = floats7[2];
+      float f6 = floats8[0];
+      float f7 = floats8[1];
+      float f8 = floats8[2];
+      float[][] floatses = new float[][]{
+         {f3, f4, f5},
+         {f6, f4, f5},
+         {f6, f7, f5},
+         {f3, f7, f5},
+         {f3, f4, f8},
+         {f6, f4, f8},
+         {f6, f7, f8},
+         {f3, f7, f8}
       };
-      method7434(var0, var14, var2, var23, 5, 4, 7, 6, method7435(var12, var10, var13, 0, var6, var7));
-      method7434(var0, var14, var2, var23, 0, 1, 2, 3, method7435(var12, var10, var13, 1, var6, var7));
-      method7434(var0, var14, var2, var23, 4, 0, 3, 7, method7435(var12, var10, var13, 2, var6, var7));
-      method7434(var0, var14, var2, var23, 1, 5, 6, 2, method7435(var12, var10, var13, 3, var6, var7));
-      method7434(var0, var14, var2, var23, 3, 2, 6, 7, method7435(var12, var10, var13, 4, var6, var7));
-      method7434(var0, var14, var2, var23, 4, 5, 1, 0, method7435(var12, var10, var13, 5, var6, var7));
+      method7434(entry, intValue2, n, floatses, 5, 4, 7, 6, method7435(floats6, floats4, flag, 0, f, f2));
+      method7434(entry, intValue2, n, floatses, 0, 1, 2, 3, method7435(floats6, floats4, flag, 1, f, f2));
+      method7434(entry, intValue2, n, floatses, 4, 0, 3, 7, method7435(floats6, floats4, flag, 2, f, f2));
+      method7434(entry, intValue2, n, floatses, 1, 5, 6, 2, method7435(floats6, floats4, flag, 3, f, f2));
+      method7434(entry, intValue2, n, floatses, 3, 2, 6, 7, method7435(floats6, floats4, flag, 4, f, f2));
+      method7434(entry, intValue2, n, floatses, 4, 5, 1, 0, method7435(floats6, floats4, flag, 5, f, f2));
    }
 
-   private static void method7434(CosmeticSkeleton.Entry var0, int var1, int var2, float[][] var3, int var4, int var5, int var6, int var7, float[] var8) {
-      int[] var9 = new int[]{var4, var5, var6, var7};
-      float[] var10 = new float[12];
+   private static void method7434(CosmeticSkeleton.Entry entry, int intValue, int n, float[][] floatses, int n2, int n3, int n4, int n5, float[] floatValues2) {
+      int[] ints = new int[]{n2, n3, n4, n5};
+      float[] floatValues = new float[12];
 
-      for (int var11 = 0; var11 < 4; var11++) {
-         var10[var11 * 3] = var3[var9[var11]][0];
-         var10[var11 * 3 + 1] = var3[var9[var11]][1];
-         var10[var11 * 3 + 2] = var3[var9[var11]][2];
+      for (int i = 0; i < 4; i++) {
+         floatValues[i * 3] = floatses[ints[i]][0];
+         floatValues[i * 3 + 1] = floatses[ints[i]][1];
+         floatValues[i * 3 + 2] = floatses[ints[i]][2];
       }
 
-      var0.method7148(var1, var2, var10, var8, null);
+      entry.method7148(intValue, n, floatValues, floatValues2, null);
    }
 
-   private static float[] method7435(float[] var0, float[] var1, boolean var2, int var3, float var4, float var5) {
-      float var6 = var1[0];
-      float var7 = var1[1];
-      float var8 = var1[2];
-      float var9;
-      float var10;
-      float var11;
-      float var12;
-      switch (var3) {
+   private static float[] method7435(float[] floats, float[] floats2, boolean flag, int n, float f, float f2) {
+      float f3 = floats2[0];
+      float f4 = floats2[1];
+      float f5 = floats2[2];
+      float f6;
+      float f7;
+      float f8;
+      float f9;
+      switch (n) {
          case 0:
-            var9 = var0[0] + var8 + var6 + var8;
-            var10 = var0[1] + var8;
-            var11 = var6;
-            var12 = var7;
+            f6 = floats[0] + f5 + f3 + f5;
+            f7 = floats[1] + f5;
+            f8 = f3;
+            f9 = f4;
             break;
          case 1:
-            var9 = var0[0] + var8;
-            var10 = var0[1] + var8;
-            var11 = var6;
-            var12 = var7;
+            f6 = floats[0] + f5;
+            f7 = floats[1] + f5;
+            f8 = f3;
+            f9 = f4;
             break;
          case 2:
-            var9 = var0[0];
-            var10 = var0[1] + var8;
-            var11 = var8;
-            var12 = var7;
+            f6 = floats[0];
+            f7 = floats[1] + f5;
+            f8 = f5;
+            f9 = f4;
             break;
          case 3:
-            var9 = var0[0] + var8 + var6;
-            var10 = var0[1] + var8;
-            var11 = var8;
-            var12 = var7;
+            f6 = floats[0] + f5 + f3;
+            f7 = floats[1] + f5;
+            f8 = f5;
+            f9 = f4;
             break;
          case 4:
-            var9 = var0[0] + var8;
-            var10 = var0[1];
-            var11 = var6;
-            var12 = var8;
+            f6 = floats[0] + f5;
+            f7 = floats[1];
+            f8 = f3;
+            f9 = f5;
             break;
          default:
-            var9 = var0[0] + var8 + var6;
-            var10 = var0[1];
-            var11 = var6;
-            var12 = var8;
+            f6 = floats[0] + f5 + f3;
+            f7 = floats[1];
+            f8 = f3;
+            f9 = f5;
       }
 
-      float var13 = var9 / var4;
-      float var14 = var10 / var5;
-      float var15 = (var9 + var11) / var4;
-      float var16 = (var10 + var12) / var5;
-      if (var2) {
-         float var17 = var13;
-         var13 = var15;
-         var15 = var17;
+      float f10 = f6 / f;
+      float f11 = f7 / f2;
+      float f12 = (f6 + f8) / f;
+      float f13 = (f7 + f9) / f2;
+      if (flag) {
+         float f14 = f10;
+         f10 = f12;
+         f12 = f14;
       }
 
-      return new float[]{var13, var16, var15, var16, var15, var14, var13, var14};
+      return new float[]{f10, f13, f12, f13, f12, f11, f10, f11};
    }
 
-   private static float method7436(float var0, float var1) {
-      return -var0 * var1 / 16.0F;
+   private static float method7436(float f, float f2) {
+      return -f * f2 / 16.0F;
    }
 
-   private static JsonArray method7437(JsonElement var0) {
-      if (var0 == null || var0.isJsonNull()) {
+   private static JsonArray method7437(JsonElement jsonElement) {
+      if (jsonElement == null || jsonElement.isJsonNull()) {
          return new JsonArray();
-      } else if (var0.isJsonArray()) {
-         return var0.getAsJsonArray();
+      } else if (jsonElement.isJsonArray()) {
+         return jsonElement.getAsJsonArray();
       } else {
-         JsonArray var1 = new JsonArray(1);
-         var1.add(var0);
-         return var1;
+         JsonArray jsonArray = new JsonArray(1);
+         jsonArray.add(jsonElement);
+         return jsonArray;
       }
    }
 
-   private static String method7438(Set<String> var0, String var1) {
-      String var2 = var1 != null && !var1.isBlank() ? var1 : "bone";
-      String var3 = var2;
-      int var4 = 2;
+   private static String method7438(Set<String> strings, String str) {
+      String str2 = str != null && !str.isBlank() ? str : "bone";
+      String str3 = str2;
+      int n = 2;
 
-      while (!var0.add(var3)) {
-         var3 = var2 + "#" + var4++;
+      while (!strings.add(str3)) {
+         str3 = str2 + "#" + n++;
       }
 
-      return var3;
+      return str3;
    }
 
-   private static JsonObject method7439(JsonObject var0, String var1) {
-      return var0 != null && var0.has(var1) && var0.get(var1).isJsonObject() ? var0.getAsJsonObject(var1) : null;
+   private static JsonObject method7439(JsonObject jsonObject, String memberName) {
+      return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonObject() ? jsonObject.getAsJsonObject(memberName) : null;
    }
 
-   private static String method7440(JsonObject var0, String var1, String var2) {
+   private static String method7440(JsonObject jsonObject, String memberName, String str) {
       try {
-         return var0 != null && var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsString() : var2;
-      } catch (RuntimeException var4) {
-         return var2;
+         return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() ? jsonObject.get(memberName).getAsString() : str;
+      } catch (RuntimeException e) {
+         return str;
       }
    }
 
-   private static float[] method7441(String var0, int var1, float var2) {
-      float[] var3 = new float[var1];
-      Arrays.fill(var3, var2);
-      if (var0 != null && !var0.isBlank()) {
-         String[] var4 = var0.split(",");
+   private static float[] method7441(String str, int n, float f) {
+      float[] floats = new float[n];
+      Arrays.fill(floats, f);
+      if (str != null && !str.isBlank()) {
+         String[] strings = str.split(",");
 
-         for (int var5 = 0; var5 < var1 && var5 < var4.length; var5++) {
+         for (int i = 0; i < n && i < strings.length; i++) {
             try {
-               var3[var5] = Float.parseFloat(var4[var5].strip());
-            } catch (NumberFormatException var7) {
+               floats[i] = Float.parseFloat(strings[i].strip());
+            } catch (NumberFormatException e) {
             }
          }
 
-         return var3;
+         return floats;
       } else {
-         return var3;
+         return floats;
       }
    }
 }

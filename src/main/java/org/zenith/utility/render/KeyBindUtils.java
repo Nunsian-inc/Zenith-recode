@@ -26,13 +26,13 @@ public final class KeyBindUtils implements MinecraftAccess {
    public static final List<KeyMapping> items = List.of(mc.options.keyUp, mc.options.keyDown, mc.options.keyLeft, mc.options.keyRight, mc.options.keyJump);
    private static final Map<Class<?>, TaskScheduler.Entry2> items2 = new HashMap<>();
 
-   public static void method2627(Class<?> var0, Runnable var1) {
-      method2628(var0, var1, 0);
+   public static void method2627(Class<?> classValue, Runnable runnable) {
+      method2628(classValue, runnable, 0);
    }
 
-   public static void method2628(Class<?> var0, Runnable var1, int var2) {
-      TaskScheduler var3 = Zenith.getInstance().getTaskScheduler();
-      TaskScheduler.Entry2 var4 = var3.method5109(var0)
+   public static void method2628(Class<?> classValue, Runnable runnable, int n) {
+      TaskScheduler taskScheduler = Zenith.getInstance().getTaskScheduler();
+      TaskScheduler.Entry2 task = taskScheduler.method5109(classValue)
          .method5121(
             MoveInputEvent.class,
             var1x -> {
@@ -48,21 +48,21 @@ public final class KeyBindUtils implements MinecraftAccess {
                   }
                }
 
-               var1.run();
+               runnable.run();
                InventoryUtils.closeScreen();
                return true;
             },
-            var2
+            n
          );
-      var3.method5111(var4, var2);
+      taskScheduler.method5111(task, n);
    }
 
-   public static boolean method2629(Class<?> var0) {
-      return Zenith.getInstance().getTaskScheduler().method5117(var0);
+   public static boolean method2629(Class<?> clazz) {
+      return Zenith.getInstance().getTaskScheduler().method5117(clazz);
    }
 
-   public static boolean method2630(Class<?> var0) {
-      return var0 == AutoTotemModule.class ? !AutoTotemModule.INSTANCE.method725() : method2629(var0);
+   public static boolean method2630(Class<?> clazz) {
+      return clazz == AutoTotemModule.class ? !AutoTotemModule.INSTANCE.method725() : method2629(clazz);
    }
 
    public static void method2631() {
@@ -74,11 +74,11 @@ public final class KeyBindUtils implements MinecraftAccess {
    }
 
    public static void method2633() {
-      items.forEach(var0 -> var0.setDown(false));
+      items.forEach(keyMapping -> keyMapping.setDown(false));
    }
 
    public static void method2634() {
-      items.forEach(var0 -> var0.setDown(InputConstants.isKeyDown(var0.getDefaultKey().getValue())));
+      items.forEach(keyMapping -> keyMapping.setDown(InputConstants.isKeyDown(keyMapping.getDefaultKey().getValue())));
    }
 
    public static boolean method2635() {
@@ -96,10 +96,10 @@ public final class KeyBindUtils implements MinecraftAccess {
          return false;
       } else if (mc.gui.screen() instanceof StructureBlockEditScreen) {
          return false;
-      } else if (mc.gui.screen() instanceof BotScreen var2) {
-         return !var2.isSearch();
+      } else if (mc.gui.screen() instanceof BotScreen botScreen) {
+         return !botScreen.isSearch();
       } else {
-         return mc.gui.screen() instanceof NLMenuScreen var0 ? !var0.isSearch() : mc.player.containerMenu instanceof InventoryMenu;
+         return mc.gui.screen() instanceof NLMenuScreen nlMenuScreen ? !nlMenuScreen.isSearch() : mc.player.containerMenu instanceof InventoryMenu;
       }
    }
 

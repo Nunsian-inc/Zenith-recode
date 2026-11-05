@@ -13,16 +13,16 @@ public class ModeSetting extends Setting {
    private final List<ModeSetting.Entry> items = new ArrayList<>();
    private ModeSetting.Entry value;
 
-   public ModeSetting(String var1, String var2) {
-      super(var1, var2);
+   public ModeSetting(String key, String description) {
+      super(key, description);
    }
 
-   public ModeSetting(String var1, String var2, String... var3) {
-      super(var1, var2);
+   public ModeSetting(String key, String description, String... strings) {
+      super(key, description);
 
-      for (String var7 : var3) {
-         if (!var7.isEmpty()) {
-            new ModeSetting.Entry(this, var7);
+      for (String text : strings) {
+         if (!text.isEmpty()) {
+            new ModeSetting.Entry(this, text);
          }
       }
 
@@ -31,16 +31,16 @@ public class ModeSetting extends Setting {
       }
    }
 
-   public ModeSetting(String var1, Supplier<Boolean> var2, String... var3) {
-      this(var1, "", var2, var3);
+   public ModeSetting(String key, Supplier<Boolean> visible, String... strings) {
+      this(key, "", visible, strings);
    }
 
-   public ModeSetting(String var1, String var2, Supplier<Boolean> var3, String... var4) {
-      super(var1, var2);
+   public ModeSetting(String key, String description, Supplier<Boolean> visible, String... strings) {
+      super(key, description);
 
-      for (String var8 : var4) {
-         if (!var8.isEmpty()) {
-            new ModeSetting.Entry(this, var8);
+      for (String text : strings) {
+         if (!text.isEmpty()) {
+            new ModeSetting.Entry(this, text);
          }
       }
 
@@ -48,16 +48,16 @@ public class ModeSetting extends Setting {
          this.value = this.items.getFirst();
       }
 
-      this.setVisible(var3);
+      this.setVisible(visible);
    }
 
-   public void set(String var1) {
-      this.items.stream().filter(var1x -> var1x.getKey().equals(var1)).findFirst().ifPresent(var1x -> this.value = var1x);
+   public void set(String text) {
+      this.items.stream().filter(var1x -> var1x.getKey().equals(text)).findFirst().ifPresent(var1x -> this.value = var1x);
    }
 
-   public void method2100(ModeSetting.Entry var1) {
-      this.items.remove(var1);
-      if (this.value == var1 && !this.items.isEmpty()) {
+   public void method2100(ModeSetting.Entry entry) {
+      this.items.remove(entry);
+      if (this.value == entry && !this.items.isEmpty()) {
          this.value = this.items.getFirst();
       }
    }
@@ -66,27 +66,27 @@ public class ModeSetting extends Setting {
       return this.value != null ? this.value.getKey() : "";
    }
 
-   public boolean isSelected(int var1) {
-      return this.items.get(var1).isSelected();
+   public boolean isSelected(int n) {
+      return this.items.get(n).isSelected();
    }
 
-   public boolean method2101(String var1) {
-      return this.value.getKey().equals(var1);
+   public boolean method2101(String anObject) {
+      return this.value.getKey().equals(anObject);
    }
 
    public ModeSetting.Entry method2102() {
-      var var1 = this.items.stream().filter(ModeSetting.Entry::isSelected).toList();
-      return !var1.isEmpty() ? (ModeSetting.Entry)var1.get(new Random().nextInt(var1.size())) : null;
+      var entries = this.items.stream().filter(ModeSetting.Entry::isSelected).toList();
+      return !entries.isEmpty() ? (ModeSetting.Entry)entries.get(new Random().nextInt(entries.size())) : null;
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.addProperty(String.valueOf(this.key), this.get());
+   public void safe(JsonObject json) {
+      json.addProperty(String.valueOf(this.key), this.get());
    }
 
    @Override
-   public void load(JsonObject var1) {
-      this.set(var1.get(String.valueOf(this.key)).getAsString());
+   public void load(JsonObject json) {
+      this.set(json.get(String.valueOf(this.key)).getAsString());
    }
 
    public int getIndex() {
@@ -104,8 +104,8 @@ public class ModeSetting extends Setting {
    }
 
    @Generated
-   public void setValue(ModeSetting.Entry var1) {
-      this.value = var1;
+   public void setValue(ModeSetting.Entry entry) {
+      this.value = entry;
    }
 
    public static class Entry {
@@ -113,26 +113,26 @@ public class ModeSetting extends Setting {
       private final String text;
       private final String text2;
 
-      public Entry(ModeSetting var1, String var2) {
-         this.modeSetting = var1;
-         this.text = var2;
+      public Entry(ModeSetting modeSetting, String text) {
+         this.modeSetting = modeSetting;
+         this.text = text;
          this.text2 = "";
-         if (var1.items.isEmpty()) {
+         if (modeSetting.items.isEmpty()) {
             this.method2103();
          }
 
-         var1.items.add(this);
+         modeSetting.items.add(this);
       }
 
-      public Entry(ModeSetting var1, String var2, String var3) {
-         this.modeSetting = var1;
-         this.text = var2;
-         this.text2 = var3;
-         if (var1.items.isEmpty()) {
+      public Entry(ModeSetting modeSetting, String text, String str) {
+         this.modeSetting = modeSetting;
+         this.text = text;
+         this.text2 = str;
+         if (modeSetting.items.isEmpty()) {
             this.method2103();
          }
 
-         var1.items.add(this);
+         modeSetting.items.add(this);
       }
 
       public String getName() {
@@ -154,12 +154,12 @@ public class ModeSetting extends Setting {
       }
 
       @Override
-      public boolean equals(Object var1) {
-         if (var1 == this) {
+      public boolean equals(Object obj) {
+         if (obj == this) {
             return true;
-         } else if (var1 != null && var1.getClass() == this.getClass()) {
-            ModeSetting.Entry var2 = (ModeSetting.Entry)var1;
-            return Objects.equals(this.modeSetting, var2.modeSetting) && Objects.equals(this.text, var2.text) && Objects.equals(this.text2, var2.text2);
+         } else if (obj != null && obj.getClass() == this.getClass()) {
+            ModeSetting.Entry entry = (ModeSetting.Entry)obj;
+            return Objects.equals(this.modeSetting, entry.modeSetting) && Objects.equals(this.text, entry.text) && Objects.equals(this.text2, entry.text2);
          } else {
             return false;
          }

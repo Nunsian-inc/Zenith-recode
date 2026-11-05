@@ -391,8 +391,8 @@ public class EntityAPI<T extends Entity> {
       LuaTable table = avatar != null && avatar.luaRuntime != null && avatar.luaRuntime.avatar_meta != null
          ? avatar.luaRuntime.avatar_meta.storedStuff
          : new LuaTable();
-      LuaTable var4 = new ReadOnlyLuaTable(table);
-      return (LuaValue)(key == null ? var4 : var4.get(key));
+      LuaTable readOnlyLuaTable = new ReadOnlyLuaTable(table);
+      return (LuaValue)(key == null ? readOnlyLuaTable : readOnlyLuaTable.get(key));
    }
 
    @LuaWhitelist

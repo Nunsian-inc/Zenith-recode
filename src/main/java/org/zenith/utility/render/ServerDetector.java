@@ -41,7 +41,7 @@ public class ServerDetector implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method1623(UpdateEvent var1) {
+   public void method1623(UpdateEvent event) {
       this.anarchy = this.method1631();
       this.text = this.method1630();
       this.flag2 = this.method1637();
@@ -62,17 +62,17 @@ public class ServerDetector implements MinecraftAccess {
       return (float)(this.criticalsState.getDoubleValue() / 5.0E7);
    }
 
-   public static float method1627(double var0) {
-      BigDecimal var2 = new BigDecimal(var0);
-      var2 = var2.setScale(2, RoundingMode.HALF_UP);
-      return var2.floatValue();
+   public static float method1627(double d) {
+      BigDecimal bigDecimal = new BigDecimal(d);
+      bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_UP);
+      return bigDecimal.floatValue();
    }
 
    @EventTarget
-   public void method1628(PacketEvent var1) {
-      if (!var1.method7100() || !(var1.getPacket3() instanceof ClientboundLoginPacket) && !(var1.getPacket3() instanceof ClientboundRespawnPacket)) {
-         if (var1.method7100() && var1.getPacket3() instanceof ClientboundSetTimePacket var2) {
-            this.criticalsState.method1706(var2.gameTime(), System.nanoTime());
+   public void method1628(PacketEvent event) {
+      if (!event.method7100() || !(event.getPacket3() instanceof ClientboundLoginPacket) && !(event.getPacket3() instanceof ClientboundRespawnPacket)) {
+         if (event.method7100() && event.getPacket3() instanceof ClientboundSetTimePacket setTimePacket) {
+            this.criticalsState.method1706(setTimePacket.gameTime(), System.nanoTime());
          }
       } else {
          this.criticalsState.reset();
@@ -80,15 +80,15 @@ public class ServerDetector implements MinecraftAccess {
    }
 
    @EventTarget(0)
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7099() && var1.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7099() && event.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
          this.criticalsState.method1707(System.nanoTime());
       }
 
-      if (var1.getPacket3() instanceof ServerboundPlayerCommandPacket var4) {
-         if (var4.getAction().equals(Action.START_SPRINTING)) {
+      if (event.getPacket3() instanceof ServerboundPlayerCommandPacket playerCommandPacket) {
+         if (playerCommandPacket.getAction().equals(Action.START_SPRINTING)) {
             this.flag = true;
-         } else if (var4.getAction().equals(Action.STOP_SPRINTING)) {
+         } else if (playerCommandPacket.getAction().equals(Action.STOP_SPRINTING)) {
             this.flag = false;
          }
       }
@@ -99,16 +99,16 @@ public class ServerDetector implements MinecraftAccess {
          && mc.getConnection() != null
          && mc.getConnection().getServerData() != null
          && mc.getConnection().serverBrand() != null) {
-         String var1 = mc.getConnection().getServerData().ip.toLowerCase();
-         String var2 = mc.getConnection().serverBrand().toLowerCase();
-         if (var2.contains("botfilter")) {
+         String lowerCase = mc.getConnection().getServerData().ip.toLowerCase();
+         String brand = mc.getConnection().serverBrand().toLowerCase();
+         if (brand.contains("botfilter")) {
             return "FunTime";
-         } else if (var1.contains("funtime") || var1.contains("skytime") || var1.contains("space-times") || var1.contains("funsky")) {
+         } else if (lowerCase.contains("funtime") || lowerCase.contains("skytime") || lowerCase.contains("space-times") || lowerCase.contains("funsky")) {
             return "CopyTime";
-         } else if (method1634(var2)) {
+         } else if (method1634(brand)) {
             return "HolyWorld";
          } else {
-            return var1.contains("reallyworld") ? "ReallyWorld" : "Vanilla";
+            return lowerCase.contains("reallyworld") ? "ReallyWorld" : "Vanilla";
          }
       } else {
          return "Vanilla";
@@ -116,15 +116,15 @@ public class ServerDetector implements MinecraftAccess {
    }
 
    private int method1631() {
-      Scoreboard var1 = mc.level.getScoreboard();
-      Objective var2 = var1.getDisplayObjective(DisplaySlot.SIDEBAR);
-      String var3 = this.text;
-      switch (var3) {
+      Scoreboard scoreboard = mc.level.getScoreboard();
+      Objective displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
+      String text = this.text;
+      switch (text) {
          case "FunTime":
-            if (var2 != null) {
-               String[] var5 = var2.getDisplayName().getString().split("-");
-               if (var5.length > 1) {
-                  return method1632(var5[1]);
+            if (displayObjective != null) {
+               String[] strings = displayObjective.getDisplayName().getString().split("-");
+               if (strings.length > 1) {
+                  return method1632(strings[1]);
                }
             }
          default:
@@ -134,42 +134,42 @@ public class ServerDetector implements MinecraftAccess {
       }
    }
 
-   private static int method1632(String var0) {
-      String var1 = var0.trim();
-      if (var1.isEmpty()) {
+   private static int method1632(String str) {
+      String str2 = str.trim();
+      if (str2.isEmpty()) {
          return -1;
       } else {
-         for (int var2 = 0; var2 < var1.length(); var2++) {
-            if (!Character.isDigit(var1.charAt(var2))) {
+         for (int i = 0; i < str2.length(); i++) {
+            if (!Character.isDigit(str2.charAt(i))) {
                return -1;
             }
          }
 
          try {
-            return Integer.parseInt(var1);
-         } catch (NumberFormatException var3) {
+            return Integer.parseInt(str2);
+         } catch (NumberFormatException e) {
             return -1;
          }
       }
    }
 
-   public static int method1633(Level var0) {
-      if (var0 == null) {
+   public static int method1633(Level world) {
+      if (world == null) {
          return -1;
       } else {
-         Scoreboard var1 = var0.getScoreboard();
-         Objective var2 = var1.getDisplayObjective(DisplaySlot.SIDEBAR);
-         if (var2 == null) {
+         Scoreboard scoreboard = world.getScoreboard();
+         Objective displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
+         if (displayObjective == null) {
             return -1;
          } else {
-            for (PlayerScoreEntry var4 : var1.listPlayerScores(var2)) {
-               String var5 = PlayerTeam.formatNameForTeam(var1.getPlayersTeam(var4.owner()), var4.ownerName()).getString();
-               if (!var5.isEmpty()) {
-                  String var6 = StringUtils.substringBetween(var5, "#", " -◆-");
-                  if (var6 != null && !var6.isEmpty()) {
+            for (PlayerScoreEntry listPlayerScore : scoreboard.listPlayerScores(displayObjective)) {
+               String string = PlayerTeam.formatNameForTeam(scoreboard.getPlayersTeam(listPlayerScore.owner()), listPlayerScore.ownerName()).getString();
+               if (!string.isEmpty()) {
+                  String substringBetween = StringUtils.substringBetween(string, "#", " -◆-");
+                  if (substringBetween != null && !substringBetween.isEmpty()) {
                      try {
-                        return Integer.parseInt(var6);
-                     } catch (NumberFormatException var8) {
+                        return Integer.parseInt(substringBetween);
+                     } catch (NumberFormatException e) {
                      }
                   }
                }
@@ -180,12 +180,12 @@ public class ServerDetector implements MinecraftAccess {
       }
    }
 
-   public static boolean method1634(String var0) {
-      if (var0 == null) {
+   public static boolean method1634(String brand) {
+      if (brand == null) {
          return false;
       } else {
-         String var1 = var0.toLowerCase();
-         return var1.contains("holyworld") || var1.contains("holywоrld") || var1.contains("leaf") || var1.contains("vk.com/idwok");
+         String lowerCase = brand.toLowerCase();
+         return lowerCase.contains("holyworld") || lowerCase.contains("holywоrld") || lowerCase.contains("leaf") || lowerCase.contains("vk.com/idwok");
       }
    }
 
@@ -199,8 +199,8 @@ public class ServerDetector implements MinecraftAccess {
          .events
          .values()
          .stream()
-         .map(var0 -> var0.getName().getString().toLowerCase())
-         .anyMatch(var0 -> var0.contains("pvp") || var0.contains("пвп"));
+         .map(event -> event.getName().getString().toLowerCase())
+         .anyMatch(str -> str.contains("pvp") || str.contains("пвп"));
    }
 
    private boolean method1637() {
@@ -209,8 +209,8 @@ public class ServerDetector implements MinecraftAccess {
          .events
          .values()
          .stream()
-         .map(var0 -> var0.getName().getString().toLowerCase())
-         .anyMatch(var0 -> (var0.contains("pvp") || var0.contains("пвп")) && (var0.contains("0") || var0.contains("1")));
+         .map(event -> event.getName().getString().toLowerCase())
+         .anyMatch(str -> (str.contains("pvp") || str.contains("пвп")) && (str.contains("0") || str.contains("1")));
    }
 
    public String method1638() {

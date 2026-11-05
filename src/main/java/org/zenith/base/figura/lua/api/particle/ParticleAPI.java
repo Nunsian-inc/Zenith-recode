@@ -44,10 +44,10 @@ public final class ParticleAPI {
                return new LuaParticle(id, particle, this);
             }
          }
-      } catch (LuaError var18) {
-         throw var18;
-      } catch (Exception var19) {
-         String message = var19.getMessage();
+      } catch (LuaError e) {
+         throw e;
+      } catch (Exception e) {
+         String message = e.getMessage();
          throw new LuaError(message == null ? "Could not parse particle \"" + rawId + "\"" : message);
       }
    }
@@ -75,7 +75,7 @@ public final class ParticleAPI {
       try {
          this.generate(id, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
          return true;
-      } catch (RuntimeException var3) {
+      } catch (RuntimeException e) {
          return false;
       }
    }

@@ -23,10 +23,10 @@ public abstract class MixinPreparedRenderTypeUniforms {
       )}
    )
    private void zenith$bindLayerUniforms(
-      net.minecraft.client.renderer.StagedVertexBuffer.ExecuteInfo var1, RenderPass var2, RenderPipeline var3, CallbackInfo var4
+      net.minecraft.client.renderer.StagedVertexBuffer.ExecuteInfo executeInfo, RenderPass renderPass, RenderPipeline pipeline, CallbackInfo callbackInfo
    ) {
-      if (var3 == ((PreparedRenderType)(Object)this).pipeline()) {
-         UniformBinder.method5482(var2, var3);
+      if (pipeline == ((PreparedRenderType)(Object)this).pipeline()) {
+         UniformBinder.method5482(renderPass, pipeline);
       }
    }
 }

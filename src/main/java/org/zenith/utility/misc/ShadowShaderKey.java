@@ -12,17 +12,17 @@ public class ShadowShaderKey extends KawaseShaderKey implements Handler2 {
    private ShaderUniform shaderUniform5;
    private ShaderUniform shaderUniform6;
 
-   public ShadowShaderKey(Identifier var1) {
-      super(var1, DefaultVertexFormat.POSITION_COLOR);
+   public ShadowShaderKey(Identifier shaderIdentifier) {
+      super(shaderIdentifier, DefaultVertexFormat.POSITION_COLOR);
    }
 
-   public void method5497(float var1, float var2, float var3, float var4, float var5, float var6, float var7, ProxyDotRadiusData var8) {
-      this.shaderUniform.method7413(var1, var2);
-      this.shaderUniform2.method7413(var3, var4);
-      this.shaderUniform3.method7415(var8.getFloatValue(), var8.getFloatValue4(), var8.getFloatValue2(), var8.getFloatValue3());
-      this.shaderUniform4.method7412(var5);
-      this.shaderUniform5.method7412(var6 * 0.5F);
-      this.shaderUniform6.method7412(var7);
+   public void method5497(float width, float height, float f, float height2, float batchRange, float f2, float batchRange2, ProxyDotRadiusData panelRadius) {
+      this.shaderUniform.method7413(width, height);
+      this.shaderUniform2.method7413(f, height2);
+      this.shaderUniform3.method7415(panelRadius.getFloatValue(), panelRadius.getFloatValue4(), panelRadius.getFloatValue2(), panelRadius.getFloatValue3());
+      this.shaderUniform4.method7412(batchRange);
+      this.shaderUniform5.method7412(f2 * 0.5F);
+      this.shaderUniform6.method7412(batchRange2);
    }
 
    @Override

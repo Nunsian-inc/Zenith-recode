@@ -159,9 +159,9 @@ public class BlockbenchModelParser {
                path = path.substring(0, path.length() - 4);
                name = folders + name;
                FiguraMod.debug("Loaded {} Texture \"{}\" from {}", textureType.toUpperCase(Locale.US), name, p);
-            } catch (Exception var21) {
-               if (var21 instanceof IOException) {
-                  FiguraMod.LOGGER.error("", var21);
+            } catch (Exception e) {
+               if (e instanceof IOException) {
+                  FiguraMod.LOGGER.error("", e);
                }
 
                source = Base64.getDecoder().decode(texture.source.substring("data:image/png;base64,".length()));
@@ -266,7 +266,7 @@ public class BlockbenchModelParser {
             if (faceObj.has("texture")) {
                try {
                   faceObj.get("texture").getAsNumber();
-               } catch (Exception var10) {
+               } catch (Exception e) {
                   continue;
                }
 
@@ -487,8 +487,8 @@ public class BlockbenchModelParser {
                         keyframeNbt.put("brt", toNbtList(keyFrame.bezier_right_time));
                      }
 
-                     String var35 = keyFrame.channel;
-                     switch (var35) {
+                     String channel = keyFrame.channel;
+                     switch (channel) {
                         case "position":
                            posData.add(keyframeNbt);
                            break;
@@ -676,7 +676,7 @@ public class BlockbenchModelParser {
    public static float toFloat(String input, float fallback) {
       try {
          return Float.parseFloat(input);
-      } catch (Exception var3) {
+      } catch (Exception e) {
          return fallback;
       }
    }
@@ -684,7 +684,7 @@ public class BlockbenchModelParser {
    public static Object keyFrameData(String input, float fallback) {
       try {
          return Float.parseFloat(input);
-      } catch (Exception var3) {
+      } catch (Exception e) {
          return input != null && !input.isBlank() ? input : fallback;
       }
    }

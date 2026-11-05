@@ -12,25 +12,25 @@ public abstract class FiguraVector<T extends FiguraVector<T, M>, M extends Figur
 
    public abstract T copy();
 
-   public abstract double dot(T var1);
+   public abstract double dot(T value);
 
-   public abstract T set(T var1);
+   public abstract T set(T value);
 
-   public abstract T add(T var1);
+   public abstract T add(T value);
 
-   public abstract T subtract(T var1);
+   public abstract T subtract(T value);
 
-   public abstract T offset(double var1);
+   public abstract T offset(double factor);
 
-   public abstract T multiply(T var1);
+   public abstract T multiply(T value);
 
-   public abstract T transform(M var1);
+   public abstract T transform(M value);
 
-   public abstract T divide(T var1);
+   public abstract T divide(T value);
 
-   public abstract T reduce(T var1);
+   public abstract T reduce(T value);
 
-   public abstract T scale(double var1);
+   public abstract T scale(double factor);
 
    public abstract double[] unpack();
 
@@ -112,10 +112,10 @@ public abstract class FiguraVector<T extends FiguraVector<T, M>, M extends Figur
 
    public abstract int size();
 
-   public abstract double index(int var1);
+   public abstract double index(int n);
 
    @Override
-   public abstract boolean equals(Object var1);
+   public abstract boolean equals(Object obj);
 
    public double x() {
       return 0.0;

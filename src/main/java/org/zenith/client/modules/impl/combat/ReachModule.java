@@ -31,17 +31,17 @@ public final class ReachModule extends Module {
    @Override
    public void onEnable() {
       if (this.runnable == null) {
-         this.runnable = ModuleHookDefinitions.class12.method1646(0, var1 -> {
-            if (this.isEnabled() && this.entry.isEnabled() && this.reach.getValue3() > var1.value) {
-               var1.value = this.reach.getValue3();
+         this.runnable = ModuleHookDefinitions.class12.method1646(0, entry6 -> {
+            if (this.isEnabled() && this.entry.isEnabled() && this.reach.getValue3() > entry6.value) {
+               entry6.value = this.reach.getValue3();
             }
          });
       }
 
       if (this.runnable2 == null) {
-         this.runnable2 = ModuleHookDefinitions.class122.method1646(0, var1 -> {
-            if (this.isEnabled() && this.entry.isEnabled() && this.reachBlock.getValue3() > var1.value) {
-               var1.value = this.reachBlock.getValue3();
+         this.runnable2 = ModuleHookDefinitions.class122.method1646(0, entry6 -> {
+            if (this.isEnabled() && this.entry.isEnabled() && this.reachBlock.getValue3() > entry6.value) {
+               entry6.value = this.reachBlock.getValue3();
             }
          });
       }

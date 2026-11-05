@@ -20,8 +20,8 @@ public final class CraftBindingController {
    private CraftBinding craftBinding = CraftBinding.method1685();
    private boolean flag;
 
-   public CraftBindingController(AutoCraftModule var1) {
-      this.autoCraftModule = var1;
+   public CraftBindingController(AutoCraftModule autoCraftModule) {
+      this.autoCraftModule = autoCraftModule;
    }
 
    public boolean isBinding() {
@@ -41,69 +41,69 @@ public final class CraftBindingController {
       this.method7231(true);
    }
 
-   public void method7225(String var1) {
-      CraftRecipe var2 = this.autoCraftModule.method1096();
-      if (var2 != null && var1 != null && !var1.isBlank()) {
-         this.craftBinding = new CraftBinding(CraftBinding.Type.SOURCE, var2.getText2(), var2.getId(), var1);
+   public void method7225(String str) {
+      CraftRecipe craftRecipe = this.autoCraftModule.method1096();
+      if (craftRecipe != null && str != null && !str.isBlank()) {
+         this.craftBinding = new CraftBinding(CraftBinding.Type.SOURCE, craftRecipe.getText2(), craftRecipe.getId(), str);
          this.method7229();
          AutoCraftModule.mc.gui.setScreen(null);
       }
    }
 
    public void method7226() {
-      CraftRecipe var1 = this.autoCraftModule.method1096();
-      if (var1 != null) {
-         this.craftBinding = new CraftBinding(CraftBinding.Type.OUTPUT, var1.getText2(), var1.getId(), "");
+      CraftRecipe craftRecipe = this.autoCraftModule.method1096();
+      if (craftRecipe != null) {
+         this.craftBinding = new CraftBinding(CraftBinding.Type.OUTPUT, craftRecipe.getText2(), craftRecipe.getId(), "");
          this.method7229();
          AutoCraftModule.mc.gui.setScreen(null);
       }
    }
 
    public void method7227() {
-      CraftRecipe var1 = this.autoCraftModule.method1096();
-      if (var1 != null) {
-         this.craftBinding = new CraftBinding(CraftBinding.Type.WORKBENCH, var1.getText2(), var1.getId(), "");
+      CraftRecipe craftRecipe = this.autoCraftModule.method1096();
+      if (craftRecipe != null) {
+         this.craftBinding = new CraftBinding(CraftBinding.Type.WORKBENCH, craftRecipe.getText2(), craftRecipe.getId(), "");
          this.method7229();
          AutoCraftModule.mc.gui.setScreen(null);
       }
    }
 
-   public boolean method7228(MouseButtonEvent var1) {
+   public boolean method7228(MouseButtonEvent event) {
       if (this.craftBinding.method1686()) {
          return false;
       } else if (AutoCraftModule.mc.player != null && AutoCraftModule.mc.level != null) {
-         if (var1.getIntValue2() != 1 || var1.getIntValue() != 1) {
+         if (event.getIntValue2() != 1 || event.getIntValue() != 1) {
             return true;
          } else if (AutoCraftModule.mc.gui.screen() != null) {
             return true;
-         } else if (AutoCraftModule.mc.hitResult instanceof BlockHitResult var2 && AutoCraftModule.mc.hitResult.getType() == Type.BLOCK) {
-            CraftRecipe var6 = this.autoCraftModule.method1094(this.craftBinding.getText(), this.craftBinding.getText2());
-            if (var6 == null) {
+         } else if (AutoCraftModule.mc.hitResult instanceof BlockHitResult blockHitResult && AutoCraftModule.mc.hitResult.getType() == Type.BLOCK) {
+            CraftRecipe craftRecipe = this.autoCraftModule.method1094(this.craftBinding.getText(), this.craftBinding.getText2());
+            if (craftRecipe == null) {
                this.craftBinding = CraftBinding.method1685();
                this.method7230();
                return true;
             } else {
-               BlockPos var4 = var2.getBlockPos();
+               BlockPos blockPos = blockHitResult.getBlockPos();
                if (this.craftBinding.getType() == CraftBinding.Type.WORKBENCH
-                  && AutoCraftModule.mc.level.getBlockState(var4).getBlock() != Blocks.CRAFTING_TABLE) {
+                  && AutoCraftModule.mc.level.getBlockState(blockPos).getBlock() != Blocks.CRAFTING_TABLE) {
                   this.autoCraftModule.method1128("Этот блок не является верстаком");
                   return true;
                } else if ((this.craftBinding.getType() == CraftBinding.Type.SOURCE || this.craftBinding.getType() == CraftBinding.Type.OUTPUT)
-                  && !this.method7232(var4)) {
+                  && !this.method7232(blockPos)) {
                   this.autoCraftModule.method1128("Этот тип сундуков пока не поддерживается");
                   return true;
                } else {
-                  Class1 var5 = Class1.method55(var4);
+                  Class1 class2 = Class1.method55(blockPos);
                   if (this.craftBinding.getType() == CraftBinding.Type.SOURCE && !this.craftBinding.getText3().isBlank()) {
-                     var6.getItems3().put(this.craftBinding.getText3(), var5);
+                     craftRecipe.getItems3().put(this.craftBinding.getText3(), class2);
                      this.autoCraftModule.method1106();
-                     this.autoCraftModule.method1127("Сундук-источник сохранен для " + var6.method5397(this.craftBinding.getText3(), this.autoCraftModule));
+                     this.autoCraftModule.method1127("Сундук-источник сохранен для " + craftRecipe.method5397(this.craftBinding.getText3(), this.autoCraftModule));
                   } else if (this.craftBinding.getType() == CraftBinding.Type.OUTPUT) {
-                     var6.method5407(var5);
-                     this.autoCraftModule.method1127("Сундук-склад сохранен для " + var6.getText3());
+                     craftRecipe.method5407(class2);
+                     this.autoCraftModule.method1127("Сундук-склад сохранен для " + craftRecipe.getText3());
                   } else if (this.craftBinding.getType() == CraftBinding.Type.WORKBENCH) {
-                     var6.method5408(var5);
-                     this.autoCraftModule.method1127("Верстак сохранен для " + var6.getText3());
+                     craftRecipe.method5408(class2);
+                     this.autoCraftModule.method1127("Верстак сохранен для " + craftRecipe.getText3());
                   }
 
                   this.craftBinding = CraftBinding.method1685();
@@ -132,9 +132,9 @@ public final class CraftBindingController {
       this.method7231(false);
    }
 
-   public void method7231(boolean var1) {
+   public void method7231(boolean flag) {
       if (this.flag) {
-         if (!var1 && this.autoCraftModule.isEnabledRaw()) {
+         if (!flag && this.autoCraftModule.isEnabledRaw()) {
             this.flag = false;
          } else {
             EventManager.unregister(this.autoCraftModule);
@@ -143,8 +143,8 @@ public final class CraftBindingController {
       }
    }
 
-   private boolean method7232(BlockPos var1) {
-      BlockEntity var2 = AutoCraftModule.mc.level.getBlockEntity(var1);
-      return var2 instanceof ChestBlockEntity || var2 instanceof BarrelBlockEntity || var2 instanceof ShulkerBoxBlockEntity;
+   private boolean method7232(BlockPos blockPos) {
+      BlockEntity blockEntity = AutoCraftModule.mc.level.getBlockEntity(blockPos);
+      return blockEntity instanceof ChestBlockEntity || blockEntity instanceof BarrelBlockEntity || blockEntity instanceof ShulkerBoxBlockEntity;
    }
 }

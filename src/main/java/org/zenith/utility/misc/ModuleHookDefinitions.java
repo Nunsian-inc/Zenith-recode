@@ -53,10 +53,10 @@ public final class ModuleHookDefinitions {
       "sound", ModuleHookDefinitions.Entry2.class, "игровой звук перед проигрыванием: e.id, e.category, e.x, e.y, e.z, e.volume, e.pitch; e.cancel()"
    );
 
-   private static <C> Class12<C> method6116(String var0, Class<C> var1, String var2) {
-      Class12 var3 = new Class12(var0, var1, var2);
-      items.put(var0, var3);
-      return var3;
+   private static <C> Class12<C> method6116(String text, Class<C> classValue, String str) {
+      Class12 class2 = new Class12(text, classValue, str);
+      items.put(text, class2);
+      return class2;
    }
 
    private ModuleHookDefinitions() {
@@ -66,12 +66,12 @@ public final class ModuleHookDefinitions {
       return Collections.unmodifiableMap(items);
    }
 
-   public static double method6118(Class12<ModuleHookDefinitions.Entry6> var0, double var1) {
-      return var0.active() ? var0.method1645(new ModuleHookDefinitions.Entry6(var1)).value : var1;
+   public static double method6118(Class12<ModuleHookDefinitions.Entry6> class2, double returnValue) {
+      return class2.active() ? class2.method1645(new ModuleHookDefinitions.Entry6(returnValue)).value : returnValue;
    }
 
-   public static boolean method6119(Class12<ModuleHookDefinitions.Entry> var0) {
-      return var0.active() && var0.method1645(new ModuleHookDefinitions.Entry()).cancelled;
+   public static boolean method6119(Class12<ModuleHookDefinitions.Entry> class2) {
+      return class2.active() && class2.method1645(new ModuleHookDefinitions.Entry()).cancelled;
    }
 
    public static final class Entry {
@@ -88,14 +88,14 @@ public final class ModuleHookDefinitions {
       public final float floatValue2;
       public boolean cancelled;
 
-      public Entry2(String var1, String var2, double var3, double var5, double var7, float var9, float var10) {
-         this.text = var1;
-         this.text2 = var2;
-         this.doubleValue = var3;
-         this.doubleValue2 = var5;
-         this.doubleValue3 = var7;
-         this.floatValue = var9;
-         this.floatValue2 = var10;
+      public Entry2(String text, String name, double doubleValue, double y, double z, float floatValue, float f) {
+         this.text = text;
+         this.text2 = name;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = y;
+         this.doubleValue3 = z;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
    }
 
@@ -103,8 +103,8 @@ public final class ModuleHookDefinitions {
       public final String text;
       public boolean cancelled;
 
-      public Entry3(String var1) {
-         this.text = var1;
+      public Entry3(String text) {
+         this.text = text;
       }
    }
 
@@ -116,21 +116,21 @@ public final class ModuleHookDefinitions {
       public final int intValue;
       public final int intValue2;
 
-      public Entry4(Vec3 var1, Vec3 var2, Vec3 var3, int var4, int var5) {
-         this.vec3d = var1;
-         this.vec3d2 = var1;
-         this.vec3d3 = var2;
-         this.vec3d4 = var3;
-         this.intValue = var4;
-         this.intValue2 = var5;
+      public Entry4(Vec3 vec3d, Vec3 vec3d3, Vec3 vec3d4, int intValue, int n) {
+         this.vec3d = vec3d;
+         this.vec3d2 = vec3d;
+         this.vec3d3 = vec3d3;
+         this.vec3d4 = vec3d4;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
    }
 
    public static final class Entry5 {
       public String text;
 
-      public Entry5(String var1) {
-         this.text = var1;
+      public Entry5(String text) {
+         this.text = text;
       }
    }
 
@@ -138,9 +138,9 @@ public final class ModuleHookDefinitions {
       public double value;
       public final double doubleValue;
 
-      public Entry6(double var1) {
-         this.value = var1;
-         this.doubleValue = var1;
+      public Entry6(double doubleValue) {
+         this.value = doubleValue;
+         this.doubleValue = doubleValue;
       }
    }
 }

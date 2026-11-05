@@ -25,37 +25,37 @@ public final class JsonIo {
       return gson;
    }
 
-   public static JsonObject method1009(Path var0) {
-      if (!Files.isRegularFile(var0)) {
+   public static JsonObject method1009(Path path) {
+      if (!Files.isRegularFile(path)) {
          return null;
       } else {
          try {
-            JsonObject var2;
-            try (BufferedReader var1 = Files.newBufferedReader(var0, StandardCharsets.UTF_8)) {
-               var2 = JsonParser.parseReader(var1).getAsJsonObject();
+            JsonObject jsonObject;
+            try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+               jsonObject = JsonParser.parseReader(bufferedReader).getAsJsonObject();
             }
 
-            return var2;
-         } catch (RuntimeException | IOException var6) {
-            logger.error("Не удалось прочитать {}", var0, var6);
+            return jsonObject;
+         } catch (RuntimeException | IOException e) {
+            logger.error("Не удалось прочитать {}", path, e);
             return null;
          }
       }
    }
 
-   public static boolean method1010(Path var0, JsonObject var1) {
+   public static boolean method1010(Path path, JsonObject jsonObject2) {
       try {
-         Files.createDirectories(var0.getParent());
-         Path var2 = var0.resolveSibling(var0.getFileName() + ".tmp");
+         Files.createDirectories(path.getParent());
+         Path sibling = path.resolveSibling(path.getFileName() + ".tmp");
 
-         try (BufferedWriter var3 = Files.newBufferedWriter(var2, StandardCharsets.UTF_8)) {
-            gson.toJson(var1, var3);
+         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(sibling, StandardCharsets.UTF_8)) {
+            gson.toJson(jsonObject2, bufferedWriter);
          }
 
-         Files.move(var2, var0, StandardCopyOption.REPLACE_EXISTING);
+         Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING);
          return true;
-      } catch (RuntimeException | IOException var8) {
-         logger.error("Не удалось записать {}", var0, var8);
+      } catch (RuntimeException | IOException e) {
+         logger.error("Не удалось записать {}", path, e);
          return false;
       }
    }

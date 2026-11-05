@@ -19,8 +19,8 @@ public final class WorldRenderEvent implements Event {
    }
 
    @Generated
-   public WorldRenderEvent(PoseStack var1, float var2) {
-      this.matrixStack = var1;
-      this.floatValue = var2;
+   public WorldRenderEvent(PoseStack matrixStack, float floatValue) {
+      this.matrixStack = matrixStack;
+      this.floatValue = floatValue;
    }
 }

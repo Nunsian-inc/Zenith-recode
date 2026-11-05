@@ -6,8 +6,8 @@ import org.zenith.utility.network.CloudPackets;
 public class Event10 implements Event {
    private final CloudPackets.Data18 data18;
 
-   public Event10(CloudPackets.Data18 var1) {
-      this.data18 = var1;
+   public Event10(CloudPackets.Data18 data18) {
+      this.data18 = data18;
    }
 
    public CloudPackets.Data18 getData18() {

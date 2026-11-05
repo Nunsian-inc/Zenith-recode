@@ -61,45 +61,45 @@ public class SelfFlagModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null) {
-         float var2 = mc.player.getYRot();
-         float var3 = mc.player.getXRot();
+         float yRot = mc.player.getYRot();
+         float xRot = mc.player.getXRot();
          if (this.flag) {
-            float var4 = Math.abs(this.method7982(var2 - this.floatValue));
-            long var5 = System.currentTimeMillis();
-            this.deque.addLast(new long[]{var5, (long)(var4 * 100.0F)});
+            float f = Math.abs(this.method7982(yRot - this.floatValue));
+            long now = System.currentTimeMillis();
+            this.deque.addLast(new long[]{now, (long)(f * 100.0F)});
 
-            while (!this.deque.isEmpty() && var5 - ((long[])this.deque.peekFirst())[0] > 1000L) {
+            while (!this.deque.isEmpty() && now - ((long[])this.deque.peekFirst())[0] > 1000L) {
                this.deque.removeFirst();
             }
          }
 
-         this.floatValue = var2;
-         this.floatValue2 = var3;
+         this.floatValue = yRot;
+         this.floatValue2 = xRot;
          this.flag = true;
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (!var1.method7100() && mc.player != null) {
-         Packet var2 = var1.getPacket3();
-         if (var2 instanceof ServerboundInteractPacket || var2 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
-            long var3 = System.currentTimeMillis();
-            float var5 = this.flag ? Math.abs(this.method7982(mc.player.getYRot() - this.floatValue)) : 0.0F;
-            float var6 = this.longValue == 0L ? -1.0F : (float)(var3 - this.longValue);
-            this.longValue = var3;
-            float var7 = mc.crosshairPickEntity != null ? mc.player.distanceTo(mc.crosshairPickEntity) : -1.0F;
-            float var8 = mc.crosshairPickEntity != null ? 1.0F : 0.0F;
-            this.deque2.addLast(new float[]{(float)var3, var5, var6, var7, var8});
+   public void onPacket(PacketEvent event) {
+      if (!event.method7100() && mc.player != null) {
+         Packet packet3 = event.getPacket3();
+         if (packet3 instanceof ServerboundInteractPacket || packet3 instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket) {
+            long now = System.currentTimeMillis();
+            float f = this.flag ? Math.abs(this.method7982(mc.player.getYRot() - this.floatValue)) : 0.0F;
+            float f2 = this.longValue == 0L ? -1.0F : (float)(now - this.longValue);
+            this.longValue = now;
+            float f3 = mc.crosshairPickEntity != null ? mc.player.distanceTo(mc.crosshairPickEntity) : -1.0F;
+            float f4 = mc.crosshairPickEntity != null ? 1.0F : 0.0F;
+            this.deque2.addLast(new float[]{(float)now, f, f2, f3, f4});
 
             while (this.deque2.size() > 12) {
                this.deque2.removeFirst();
             }
 
-            if (this.warn.isEnabled() && this.method7979() >= 70.0F && var3 - this.longValue2 > 4000L) {
-               this.longValue2 = var3;
+            if (this.warn.isEnabled() && this.method7979() >= 70.0F && now - this.longValue2 > 4000L) {
+               this.longValue2 = now;
                Zenith.getInstance().getHudHolder().method6972("!", Component.nullToEmpty("SelfFlag: риск палева " + (int)this.method7979() + "%"));
             }
          }
@@ -107,93 +107,93 @@ public class SelfFlagModule extends Module {
    }
 
    private float method7972() {
-      long var1 = 0L;
+      long l = 0L;
 
-      for (long[] var4 : this.deque) {
-         var1 += var4[1];
+      for (long[] longs : this.deque) {
+         l += longs[1];
       }
 
-      return (float)var1 / 100.0F;
+      return (float)l / 100.0F;
    }
 
-   private float method7973(float var1, float var2, float var3) {
-      if (var1 <= var2) {
+   private float method7973(float f, float f2, float f3) {
+      if (f <= f2) {
          return 0.0F;
       } else {
-         return var1 >= var3 ? 100.0F : (var1 - var2) / (var3 - var2) * 100.0F;
+         return f >= f3 ? 100.0F : (f - f2) / (f3 - f2) * 100.0F;
       }
    }
 
    private float method7974() {
-      float var1 = 0.0F;
+      float f = 0.0F;
 
-      for (float[] var3 : this.deque2) {
-         if (this.method7978(var3) < 3000L) {
-            var1 = Math.max(var1, var3[1]);
+      for (float[] floats : this.deque2) {
+         if (this.method7978(floats) < 3000L) {
+            f = Math.max(f, floats[1]);
          }
       }
 
-      return this.method7973(var1, 12.0F, 30.0F);
+      return this.method7973(f, 12.0F, 30.0F);
    }
 
    private float method7975() {
-      float var1 = 0.0F;
-      int var2 = 0;
+      float f = 0.0F;
+      int n = 0;
 
-      for (float[] var4 : this.deque2) {
-         if (var4[2] > 0.0F && this.method7978(var4) < 9000L) {
-            var1 += var4[2];
-            var2++;
+      for (float[] floats : this.deque2) {
+         if (floats[2] > 0.0F && this.method7978(floats) < 9000L) {
+            f += floats[2];
+            n++;
          }
       }
 
-      if (var2 < 4) {
+      if (n < 4) {
          return 0.0F;
       } else {
-         var1 /= var2;
-         float var7 = 0.0F;
+         f /= n;
+         float f2 = 0.0F;
 
-         for (float[] var5 : this.deque2) {
-            if (var5[2] > 0.0F && this.method7978(var5) < 9000L) {
-               var7 += (var5[2] - var1) * (var5[2] - var1);
+         for (float[] floats : this.deque2) {
+            if (floats[2] > 0.0F && this.method7978(floats) < 9000L) {
+               f2 += (floats[2] - f) * (floats[2] - f);
             }
          }
 
-         float var9 = (float)Math.sqrt(var7 / var2) / Math.max(1.0F, var1);
-         return this.method7973(0.5F - var9, 0.0F, 0.35F);
+         float f3 = (float)Math.sqrt(f2 / n) / Math.max(1.0F, f);
+         return this.method7973(0.5F - f3, 0.0F, 0.35F);
       }
    }
 
    private float method7976() {
-      float var1 = 0.0F;
+      float f = 0.0F;
 
-      for (float[] var3 : this.deque2) {
-         if (var3[3] > 0.0F && this.method7978(var3) < 3000L) {
-            var1 = Math.max(var1, var3[3]);
+      for (float[] floats : this.deque2) {
+         if (floats[3] > 0.0F && this.method7978(floats) < 3000L) {
+            f = Math.max(f, floats[3]);
          }
       }
 
-      return this.method7973(var1, 3.0F, 3.6F);
+      return this.method7973(f, 3.0F, 3.6F);
    }
 
    private float method7977() {
-      int var1 = 0;
-      int var2 = 0;
+      int n = 0;
+      int n2 = 0;
 
-      for (float[] var4 : this.deque2) {
-         if (this.method7978(var4) < 3000L) {
-            var2++;
-            if (var4[4] < 0.5F) {
-               var1++;
+      for (float[] floats : this.deque2) {
+         if (this.method7978(floats) < 3000L) {
+            n2++;
+            if (floats[4] < 0.5F) {
+               n++;
             }
          }
       }
 
-      return var2 == 0 ? 0.0F : (float)var1 / var2 * 100.0F;
+      return n2 == 0 ? 0.0F : (float)n / n2 * 100.0F;
    }
 
-   private long method7978(float[] var1) {
-      return System.currentTimeMillis() - (long)var1[0];
+   private long method7978(float[] floats) {
+      return System.currentTimeMillis() - (long)floats[0];
    }
 
    private boolean active() {
@@ -204,65 +204,65 @@ public class SelfFlagModule extends Module {
       if (!this.active()) {
          return 0.0F;
       } else {
-         float var1 = this.method7974();
-         float var2 = this.method7973(this.method7972(), 220.0F, 500.0F);
-         float var3 = this.method7975();
-         float var4 = this.method7976();
-         float var5 = this.method7977();
-         return Math.min(100.0F, var1 * 0.3F + var2 * 0.2F + var3 * 0.2F + var4 * 0.2F + var5 * 0.1F);
+         float f = this.method7974();
+         float f2 = this.method7973(this.method7972(), 220.0F, 500.0F);
+         float f3 = this.method7975();
+         float f4 = this.method7976();
+         float f5 = this.method7977();
+         return Math.min(100.0F, f * 0.3F + f2 * 0.2F + f3 * 0.2F + f4 * 0.2F + f5 * 0.1F);
       }
    }
 
    @EventTarget
-   public void method7980(DrawEvent var1) {
+   public void method7980(DrawEvent event) {
       if (this.overlay.isEnabled()) {
-         CustomDrawContext var2 = var1.getCustomDrawContext();
-         if (var2 != null) {
-            ZenithStyle var3 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-            Font var4 = Fonts.NEW_MEDIUM.getFont(7.0F);
-            Font var5 = Fonts.NEW_MEDIUM.getFont(6.0F);
-            float var6 = this.x.getValue3();
-            float var7 = this.y.getValue3();
-            float var8 = 150.0F;
-            float var9 = 11.0F;
-            float var10 = 20.0F + var9 * 5.0F + 6.0F;
-            ZenithColor var11 = var3.getHudBackground().getZenithColor();
-            var2.drawRoundedRect(var6, var7, var8, var10, ProxyDotRadiusData.method8069(6.0F), var11);
-            float var12 = this.method7979();
-            ZenithColor var13 = var12 >= 70.0F
+         CustomDrawContext customDrawContext = event.getCustomDrawContext();
+         if (customDrawContext != null) {
+            ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+            Font font = Fonts.NEW_MEDIUM.getFont(7.0F);
+            Font font2 = Fonts.NEW_MEDIUM.getFont(6.0F);
+            float floatValue = this.x.getValue3();
+            float y = this.y.getValue3();
+            float width = 150.0F;
+            float f = 11.0F;
+            float height = 20.0F + f * 5.0F + 6.0F;
+            ZenithColor zenithColor = currentStyle.getHudBackground().getZenithColor();
+            customDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(6.0F), zenithColor);
+            float f2 = this.method7979();
+            ZenithColor zenithColor2 = f2 >= 70.0F
                ? new ZenithColor(239, 83, 83)
-               : (var12 >= 40.0F ? new ZenithColor(242, 169, 59) : new ZenithColor(51, 214, 166));
-            var2.drawText(var4, "DETECT RISK", var6 + 8.0F, var7 + 7.0F, var3.getTextEnable().getZenithColor());
-            var2.drawText(var4, (int)var12 + "%", var6 + var8 - 8.0F - var4.width((int)var12 + "%"), var7 + 7.0F, var13);
-            float var14 = var7 + 20.0F;
-            this.method7981(var2, var5, "Snap  ", this.method7974(), var6, var14, var8, var3);
-            this.method7981(var2, var5, "Spin  ", this.method7973(this.method7972(), 220.0F, 500.0F), var6, var14 + var9, var8, var3);
-            this.method7981(var2, var5, "Ритм  ", this.method7975(), var6, var14 + var9 * 2.0F, var8, var3);
-            this.method7981(var2, var5, "Reach ", this.method7976(), var6, var14 + var9 * 3.0F, var8, var3);
-            this.method7981(var2, var5, "МимоПрицела", this.method7977(), var6, var14 + var9 * 4.0F, var8, var3);
+               : (f2 >= 40.0F ? new ZenithColor(242, 169, 59) : new ZenithColor(51, 214, 166));
+            customDrawContext.drawText(font, "DETECT RISK", floatValue + 8.0F, y + 7.0F, currentStyle.getTextEnable().getZenithColor());
+            customDrawContext.drawText(font, (int)f2 + "%", floatValue + width - 8.0F - font.width((int)f2 + "%"), y + 7.0F, zenithColor2);
+            float centeredTextY = y + 20.0F;
+            this.method7981(customDrawContext, font2, "Snap  ", this.method7974(), floatValue, centeredTextY, width, currentStyle);
+            this.method7981(customDrawContext, font2, "Spin  ", this.method7973(this.method7972(), 220.0F, 500.0F), floatValue, centeredTextY + f, width, currentStyle);
+            this.method7981(customDrawContext, font2, "Ритм  ", this.method7975(), floatValue, centeredTextY + f * 2.0F, width, currentStyle);
+            this.method7981(customDrawContext, font2, "Reach ", this.method7976(), floatValue, centeredTextY + f * 3.0F, width, currentStyle);
+            this.method7981(customDrawContext, font2, "МимоПрицела", this.method7977(), floatValue, centeredTextY + f * 4.0F, width, currentStyle);
          }
       }
    }
 
-   private void method7981(CustomDrawContext var1, Font var2, String var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      var1.drawText(var2, var3, var5 + 8.0F, var6, var8.getTextSecondary().getZenithColor());
-      float var9 = var5 + 62.0F;
-      float var10 = var7 - 62.0F - 30.0F;
-      var1.drawRoundedRect(var9, var6 + 1.5F, var10, 4.0F, ProxyDotRadiusData.method8069(2.0F), var8.getTextTertiary().getZenithColor().method7294(0.25F));
-      ZenithColor var11 = var4 >= 70.0F ? new ZenithColor(239, 83, 83) : (var4 >= 40.0F ? new ZenithColor(242, 169, 59) : new ZenithColor(51, 214, 166));
-      var1.drawRoundedRect(var9, var6 + 1.5F, Math.max(1.0F, var10 * var4 / 100.0F), 4.0F, ProxyDotRadiusData.method8069(2.0F), var11);
-      var1.drawText(var2, (int)var4 + "", var5 + var7 - 8.0F - var2.width((int)var4 + ""), var6, var8.getTextSecondary().getZenithColor());
+   private void method7981(CustomDrawContext customDrawContext, Font font, String text, float f, float floatValue, float centeredTextY, float width, ZenithStyle currentStyle) {
+      customDrawContext.drawText(font, text, floatValue + 8.0F, centeredTextY, currentStyle.getTextSecondary().getZenithColor());
+      float floatValue2 = floatValue + 62.0F;
+      float width2 = width - 62.0F - 30.0F;
+      customDrawContext.drawRoundedRect(floatValue2, centeredTextY + 1.5F, width2, 4.0F, ProxyDotRadiusData.method8069(2.0F), currentStyle.getTextTertiary().getZenithColor().method7294(0.25F));
+      ZenithColor zenithColor = f >= 70.0F ? new ZenithColor(239, 83, 83) : (f >= 40.0F ? new ZenithColor(242, 169, 59) : new ZenithColor(51, 214, 166));
+      customDrawContext.drawRoundedRect(floatValue2, centeredTextY + 1.5F, Math.max(1.0F, width2 * f / 100.0F), 4.0F, ProxyDotRadiusData.method8069(2.0F), zenithColor);
+      customDrawContext.drawText(font, (int)f + "", floatValue + width - 8.0F - font.width((int)f + ""), centeredTextY, currentStyle.getTextSecondary().getZenithColor());
    }
 
-   private float method7982(float var1) {
-      while (var1 > 180.0F) {
-         var1 -= 360.0F;
+   private float method7982(float f) {
+      while (f > 180.0F) {
+         f -= 360.0F;
       }
 
-      while (var1 < -180.0F) {
-         var1 += 360.0F;
+      while (f < -180.0F) {
+         f += 360.0F;
       }
 
-      return var1;
+      return f;
    }
 }

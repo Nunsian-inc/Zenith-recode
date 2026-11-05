@@ -21,17 +21,17 @@ public class FriendArgumentType implements ArgumentType<String> {
       return new FriendArgumentType();
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      String var2 = var1.readString();
-      if (!Zenith.getInstance().getFriends().method7627(var2)) {
-         throw new DynamicCommandExceptionType(var1x -> Component.literal("У тебя нет друга " + var2)).create(var2);
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      String string = stringReader.readString();
+      if (!Zenith.getInstance().getFriends().method7627(string)) {
+         throw new DynamicCommandExceptionType(var1x -> Component.literal("У тебя нет друга " + string)).create(string);
       } else {
-         return var2;
+         return string;
       }
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(Zenith.getInstance().getFriends().getItems(), var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(Zenith.getInstance().getFriends().getItems(), builder);
    }
 
    public Collection<String> getExamples() {

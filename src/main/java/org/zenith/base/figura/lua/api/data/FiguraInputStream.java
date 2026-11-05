@@ -41,8 +41,8 @@ public class FiguraInputStream extends InputStream {
          } else {
             return this.sourceStream.read();
          }
-      } catch (IOException var2) {
-         throw new LuaError(var2);
+      } catch (IOException e) {
+         throw new LuaError(e);
       }
    }
 
@@ -85,8 +85,8 @@ public class FiguraInputStream extends InputStream {
    public int available() {
       try {
          return this.sourceStream.available();
-      } catch (IOException var2) {
-         throw new LuaError(var2);
+      } catch (IOException e) {
+         throw new LuaError(e);
       }
    }
 

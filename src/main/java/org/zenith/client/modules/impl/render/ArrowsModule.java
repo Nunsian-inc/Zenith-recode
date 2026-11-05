@@ -53,22 +53,22 @@ public final class ArrowsModule extends Module {
    }
 
    @EventTarget
-   public void method3036(UpdateEvent var1) {
+   public void method3036(UpdateEvent event) {
    }
 
    @EventTarget
-   public void onDraw(DrawEvent var1) {
-      PoseStack var2 = MatrixUtils.method666(var1.getCustomDrawContext().pose());
-      var var3 = Objects.requireNonNull(mc.level)
+   public void onDraw(DrawEvent event) {
+      PoseStack poseStack = MatrixUtils.method666(event.getCustomDrawContext().pose());
+      var players = Objects.requireNonNull(mc.level)
          .players()
          .stream()
          .filter(
             var1x -> var1x != mc.player && !PetManager.method4557(var1x.getId()) && (!this.ignoreGol.isEnabled() || UseItemUtils.method6529(var1x) != 0.0F)
          )
          .toList();
-      float var4 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-      float var5 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-      float var6 = var5
+      float xo = mc.getWindow().getGuiScaledWidth() / 2.0F;
+      float yo = mc.getWindow().getGuiScaledHeight() / 2.0F;
+      float y = yo
          - this.radiusSetting.getValue3()
          - this.animation
             .method2808(
@@ -76,46 +76,46 @@ public final class ArrowsModule extends Module {
                   ? 80.0F
                   : (mc.gui.screen() instanceof ContainerScreen ? 100.0F : (Objects.requireNonNull(mc.player).isSprinting() ? 12.0F : 0.0F))
             );
-      float var7 = this.sizeSetting.getValue3();
-      if (!mc.gui.hud.isHidden() && mc.options.getCameraType().equals(CameraType.FIRST_PERSON) && !var3.isEmpty()) {
+      float f = this.sizeSetting.getValue3();
+      if (!mc.gui.hud.isHidden() && mc.options.getCameraType().equals(CameraType.FIRST_PERSON) && !players.isEmpty()) {
          RenderState.method1871();
          RenderState.method1877();
          RenderState.method1879();
          RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
          RenderState.method1890(0, this.identifier);
          RenderState.method1898("core/position_tex_color");
-         BufferBuilder var8 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-         var3.forEach(
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+         players.forEach(
             var6x -> {
                int var7x = zenith.getFriends().method7626(var6x)
                   ? zenith.getStyleManager().getCurrentStyle().getFriendColor().getZenithColor().method7287()
                   : Zenith.getInstance().getStyleManager().getClientColor(90).method7287();
                float var8x = method3037(var6x) - Objects.requireNonNull(mc.player).getYRot();
-               var2.pushPose();
-               var2.translate(var4, var5, 0.0F);
-               var2.rotate(Axis.ZP.rotationDegrees(var8x));
-               var2.translate(-var4, -var5, 0.0F);
-               Matrix4f var9 = var2.last().pose();
+               poseStack.pushPose();
+               poseStack.translate(xo, yo, 0.0F);
+               poseStack.rotate(Axis.ZP.rotationDegrees(var8x));
+               poseStack.translate(-xo, -yo, 0.0F);
+               Matrix4f pose = poseStack.last().pose();
                if (zenith.getFriends().method7626(var6x)) {
-                  var8.addVertex(var9, var4 - var7 / 2.0F, var6 + var7, 0.0F).setUv(0.0F, 1.0F).setColor(var7x);
-                  var8.addVertex(var9, var4 + var7 / 2.0F, var6 + var7, 0.0F).setUv(1.0F, 1.0F).setColor(var7x);
-                  var8.addVertex(var9, var4 + var7 / 2.0F, var6, 0.0F).setUv(1.0F, 0.0F).setColor(var7x);
-                  var8.addVertex(var9, var4 - var7 / 2.0F, var6, 0.0F).setUv(0.0F, 0.0F).setColor(var7x);
+                  begin.addVertex(pose, xo - f / 2.0F, y + f, 0.0F).setUv(0.0F, 1.0F).setColor(var7x);
+                  begin.addVertex(pose, xo + f / 2.0F, y + f, 0.0F).setUv(1.0F, 1.0F).setColor(var7x);
+                  begin.addVertex(pose, xo + f / 2.0F, y, 0.0F).setUv(1.0F, 0.0F).setColor(var7x);
+                  begin.addVertex(pose, xo - f / 2.0F, y, 0.0F).setUv(0.0F, 0.0F).setColor(var7x);
                } else {
-                  GlowColor var10 = zenith.getStyleManager().getClientColor();
-                  var8.addVertex(var9, var4 - var7 / 2.0F, var6 + var7, 0.0F).setUv(0.0F, 1.0F).setColor(var10.getZenithColor2().method7287());
-                  var8.addVertex(var9, var4 + var7 / 2.0F, var6 + var7, 0.0F).setUv(1.0F, 1.0F).setColor(var10.getZenithColor4().method7287());
-                  var8.addVertex(var9, var4 + var7 / 2.0F, var6, 0.0F).setUv(1.0F, 0.0F).setColor(var10.getZenithColor3().method7287());
-                  var8.addVertex(var9, var4 - var7 / 2.0F, var6, 0.0F).setUv(0.0F, 0.0F).setColor(var10.getZenithColor().method7287());
+                  GlowColor clientColor = zenith.getStyleManager().getClientColor();
+                  begin.addVertex(pose, xo - f / 2.0F, y + f, 0.0F).setUv(0.0F, 1.0F).setColor(clientColor.getZenithColor2().method7287());
+                  begin.addVertex(pose, xo + f / 2.0F, y + f, 0.0F).setUv(1.0F, 1.0F).setColor(clientColor.getZenithColor4().method7287());
+                  begin.addVertex(pose, xo + f / 2.0F, y, 0.0F).setUv(1.0F, 0.0F).setColor(clientColor.getZenithColor3().method7287());
+                  begin.addVertex(pose, xo - f / 2.0F, y, 0.0F).setUv(0.0F, 0.0F).setColor(clientColor.getZenithColor().method7287());
                }
 
-               var2.translate(var4, var5, 0.0F);
-               var2.rotate(Axis.ZP.rotationDegrees(-var8x));
-               var2.translate(-var4, -var5, 0.0F);
-               var2.popPose();
+               poseStack.translate(xo, yo, 0.0F);
+               poseStack.rotate(Axis.ZP.rotationDegrees(-var8x));
+               poseStack.translate(-xo, -yo, 0.0F);
+               poseStack.popPose();
             }
          );
-         ImmediateRenderer.method8015(var8.buildOrThrow());
+         ImmediateRenderer.method8015(begin.buildOrThrow());
          RenderState.method1878();
          RenderState.method1876();
          RenderState.method1873();
@@ -123,9 +123,9 @@ public final class ArrowsModule extends Module {
       }
    }
 
-   public static float method3037(Entity var0) {
-      double var1 = MathUtils.method2658(var0.xo, var0.getX()) - MathUtils.method2658(mc.player.xo, mc.player.getX());
-      double var3 = MathUtils.method2658(var0.zo, var0.getZ()) - MathUtils.method2658(mc.player.zo, mc.player.getZ());
-      return (float)(-(Math.atan2(var1, var3) * (180.0 / Math.PI)));
+   public static float method3037(Entity entity) {
+      double y = MathUtils.method2658(entity.xo, entity.getX()) - MathUtils.method2658(mc.player.xo, mc.player.getX());
+      double x = MathUtils.method2658(entity.zo, entity.getZ()) - MathUtils.method2658(mc.player.zo, mc.player.getZ());
+      return (float)(-(Math.atan2(y, x) * (180.0 / Math.PI)));
    }
 }

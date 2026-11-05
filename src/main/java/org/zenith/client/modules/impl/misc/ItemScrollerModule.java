@@ -38,32 +38,32 @@ public final class ItemScrollerModule extends Module {
    }
 
    @EventTarget
-   public void method1757(HandledScreenRenderEvent var1) {
+   public void method1757(HandledScreenRenderEvent event) {
       if (mc.player != null && mc.gameMode != null) {
-         boolean var2 = UseItemUtils.method6520(mc.options.keyShift.getDefaultKey());
-         boolean var3 = UseItemUtils.method6520(mc.options.keyDrop.getDefaultKey());
-         boolean var4 = UseItemUtils.method6520(mc.options.keyAttack.getDefaultKey());
-         ContainerInput var5 = !var2 ? null : (var3 ? ContainerInput.THROW : (var4 ? ContainerInput.QUICK_MOVE : null));
-         Slot var6 = var1.getSlot();
-         if (var5 == null) {
+         boolean flag = UseItemUtils.method6520(mc.options.keyShift.getDefaultKey());
+         boolean flag2 = UseItemUtils.method6520(mc.options.keyDrop.getDefaultKey());
+         boolean flag3 = UseItemUtils.method6520(mc.options.keyAttack.getDefaultKey());
+         ContainerInput slotActionType = !flag ? null : (flag2 ? ContainerInput.THROW : (flag3 ? ContainerInput.QUICK_MOVE : null));
+         Slot slot = event.getSlot();
+         if (slotActionType == null) {
             this.flag = false;
             this.slot = null;
          } else if (!this.flag) {
             this.flag = true;
-            this.slot = var6;
+            this.slot = slot;
             this.stopWatch.reset();
-         } else if (var6 != null && var6 != this.slot) {
-            if (var6.hasItem() && var6.mayPickup(mc.player)) {
+         } else if (slot != null && slot != this.slot) {
+            if (slot.hasItem() && slot.mayPickup(mc.player)) {
                if (mc.player.containerMenu.getCarried().isEmpty()) {
                   if (this.stopWatch.method317(this.scrollerSetting.getValue3())) {
-                     this.slot = var6;
+                     this.slot = slot;
                      this.stopWatch.reset();
-                     int var7 = mc.player.containerMenu.containerId;
-                     int var8 = var5 == ContainerInput.THROW ? 1 : 0;
-                     SlotClickEvent var9 = new SlotClickEvent(var7, var6.index, var8, var5);
-                     EventManager.call(var9);
-                     if (!var9.isCancelled()) {
-                        mc.gameMode.handleContainerInput(var7, var6.index, var8, var5, mc.player);
+                     int containerId = mc.player.containerMenu.containerId;
+                     int count = slotActionType == ContainerInput.THROW ? 1 : 0;
+                     SlotClickEvent event2 = new SlotClickEvent(containerId, slot.index, count, slotActionType);
+                     EventManager.call(event2);
+                     if (!event2.isCancelled()) {
+                        mc.gameMode.handleContainerInput(containerId, slot.index, count, slotActionType, mc.player);
                      }
                   }
                }

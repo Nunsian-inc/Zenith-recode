@@ -9,47 +9,47 @@ public final class CompletionFence implements GpuFence {
    private final CompletionFence.Entry entry2;
    private boolean closed;
 
-   private CompletionFence(CompletionFence.Entry var1) {
-      this.entry2 = var1;
+   private CompletionFence(CompletionFence.Entry entry) {
+      this.entry2 = entry;
    }
 
    public static GpuFence method5163() {
-      CompletionFence.Entry var0 = entry;
-      if (var0 == null) {
-         var0 = new CompletionFence.Entry();
-         entry = var0;
+      CompletionFence.Entry entry2 = entry;
+      if (entry2 == null) {
+         entry2 = new CompletionFence.Entry();
+         entry = entry2;
       }
 
-      var0.intValue++;
-      return new CompletionFence(var0);
+      entry2.intValue++;
+      return new CompletionFence(entry2);
    }
 
    public static void endFrame() {
-      CompletionFence.Entry var0 = entry;
-      if (var0 != null) {
+      CompletionFence.Entry entry2 = entry;
+      if (entry2 != null) {
          entry = null;
-         if (var0.intValue > 0) {
-            var0.glGpuFence = new GlFence(GlBridge.encoder());
+         if (entry2.intValue > 0) {
+            entry2.glGpuFence = new GlFence(GlBridge.encoder());
          }
       }
    }
 
    @Override
-   public boolean awaitCompletion(long var1) {
+   public boolean awaitCompletion(long timeoutNS) {
       if (this.closed) {
          return true;
       } else {
-         CompletionFence.Entry var3 = this.entry2;
-         if (var3.glGpuFence == null) {
-            if (entry == var3) {
+         CompletionFence.Entry entry2 = this.entry2;
+         if (entry2.glGpuFence == null) {
+            if (entry == entry2) {
                entry = null;
             }
 
-            var3.glGpuFence = new GlFence(GlBridge.encoder());
+            entry2.glGpuFence = new GlFence(GlBridge.encoder());
             GL11.glFlush();
          }
 
-         return var3.glGpuFence.awaitCompletion(var1);
+         return entry2.glGpuFence.awaitCompletion(timeoutNS);
       }
    }
 
@@ -57,10 +57,10 @@ public final class CompletionFence implements GpuFence {
    public void close() {
       if (!this.closed) {
          this.closed = true;
-         CompletionFence.Entry var1 = this.entry2;
-         if (--var1.intValue == 0 && var1.glGpuFence != null) {
-            var1.glGpuFence.close();
-            var1.glGpuFence = null;
+         CompletionFence.Entry entry = this.entry2;
+         if (--entry.intValue == 0 && entry.glGpuFence != null) {
+            entry.glGpuFence.close();
+            entry.glGpuFence = null;
          }
       }
    }

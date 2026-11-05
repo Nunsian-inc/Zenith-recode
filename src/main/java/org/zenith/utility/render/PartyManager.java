@@ -91,15 +91,15 @@ public final class PartyManager implements MinecraftAccess {
    private boolean flag2;
    private int intValue6;
 
-   public PartyManager(Cloud var1, Share var2) {
-      this.cloud = var1;
-      this.share = var2;
+   public PartyManager(Cloud cloud, Share share) {
+      this.cloud = cloud;
+      this.share = share;
       EventManager.register(this);
    }
 
    public static PartyManager method17() {
-      Zenith var0 = Zenith.getInstance();
-      return var0 == null ? null : var0.getPartyManager();
+      Zenith zenith = Zenith.getInstance();
+      return zenith == null ? null : zenith.getPartyManager();
    }
 
    private PartyMember method18() {
@@ -107,8 +107,8 @@ public final class PartyManager implements MinecraftAccess {
    }
 
    @EventTarget
-   private void method19(CloudStateEvent var1) {
-      if (var1.method6858()) {
+   private void method19(CloudStateEvent event) {
+      if (event.method6858()) {
          this.text = "";
          this.intValue4 = -1;
          this.intValue5 = -1;
@@ -117,38 +117,38 @@ public final class PartyManager implements MinecraftAccess {
    }
 
    @EventTarget
-   private void setLongValue(KeyEvent var1) {
+   private void setLongValue(KeyEvent longValue) {
       this.longValue = System.currentTimeMillis();
    }
 
    @EventTarget
-   private void method20(AttackEvent var1) {
-      if (var1.getType4() == AttackEvent.Type.PRE) {
-         Entity var2 = var1.getEntity();
-         if (var2 instanceof Player && var2 != mc.player) {
-            long var3 = System.currentTimeMillis();
-            this.longValue2 = var3;
-            this.longValue = var3;
-            this.items.put(var2.getId(), var3);
+   private void method20(AttackEvent event) {
+      if (event.getType4() == AttackEvent.Type.PRE) {
+         Entity entity = event.getEntity();
+         if (entity instanceof Player && entity != mc.player) {
+            long now = System.currentTimeMillis();
+            this.longValue2 = now;
+            this.longValue = now;
+            this.items.put(entity.getId(), now);
          }
       }
    }
 
    @EventTarget
-   private void method21(EntityDeathEvent var1) {
+   private void method21(EntityDeathEvent event) {
       if (mc.isSameThread()) {
-         if (var1.getLivingEntity() == mc.player) {
+         if (event.getLivingEntity() == mc.player) {
             this.method29();
          }
       }
    }
 
    @EventTarget
-   private void method22(EntityStatusEvent var1) {
-      if (var1.getEntityStatusS2CPacket().getEventId() == 3 && mc.level != null && !this.items.isEmpty()) {
-         if (var1.getEntityStatusS2CPacket().getEntity(mc.level) instanceof Player var2 && var2 != mc.player) {
-            Long var4 = this.items.remove(var2.getId());
-            if (var4 != null && System.currentTimeMillis() - var4 < 6000L) {
+   private void method22(EntityStatusEvent event) {
+      if (event.getEntityStatusS2CPacket().getEventId() == 3 && mc.level != null && !this.items.isEmpty()) {
+         if (event.getEntityStatusS2CPacket().getEntity(mc.level) instanceof Player player && player != mc.player) {
+            Long l = this.items.remove(player.getId());
+            if (l != null && System.currentTimeMillis() - l < 6000L) {
                this.intValue2++;
             }
          }
@@ -168,54 +168,54 @@ public final class PartyManager implements MinecraftAccess {
       if (++this.intValue6 >= 40) {
          this.intValue6 = 0;
          this.method23();
-         JsonObject var1 = new JsonObject();
+         JsonObject json = new JsonObject();
 
-         for (Setting var3 : this.share.method946()) {
-            var3.safe(var1);
+         for (Setting setting : this.share.method946()) {
+            setting.safe(json);
          }
 
-         String var4 = var1.toString();
-         if (!this.text4.isEmpty() && !var4.equals(this.text4)) {
+         String string = json.toString();
+         if (!this.text4.isEmpty() && !string.equals(this.text4)) {
             this.share.save();
          }
 
-         this.text4 = var4;
+         this.text4 = string;
       }
    }
 
    @EventTarget
-   private void onTick(TickEvent var1) {
-      long var2 = System.currentTimeMillis();
+   private void onTick(TickEvent event) {
+      long now = System.currentTimeMillis();
       this.method24();
-      this.method25(var2);
-      this.method26(var2);
+      this.method25(now);
+      this.method26(now);
       this.method27();
       this.method28();
-      this.method30(var2);
-      this.items.values().removeIf(var2x -> var2 - var2x > 6000L);
+      this.method30(now);
+      this.items.values().removeIf(var2x -> now - var2x > 6000L);
       if (this.cloud.method7862()) {
-         PartyMember var4 = this.method18();
-         if (var4.version() != this.intValue) {
-            this.intValue = var4.version();
-            this.method37(var4);
+         PartyMember partyMember = this.method18();
+         if (partyMember.version() != this.intValue) {
+            this.intValue = partyMember.version();
+            this.method37(partyMember);
          }
 
-         this.method34(var2);
+         this.method34(now);
          this.method35();
-         this.method36(var2);
-         this.method46(var2);
+         this.method36(now);
+         this.method46(now);
       }
    }
 
-   private void method25(long var1) {
+   private void method25(long longValue) {
       if (mc.player != null) {
-         double var3 = mc.player.getX() - this.lastX;
-         double var5 = mc.player.getZ() - this.doubleValue;
-         double var7 = mc.player.getY() - this.lastY;
-         if (var3 * var3 + var7 * var7 + var5 * var5 > 0.01
+         double d = mc.player.getX() - this.lastX;
+         double d2 = mc.player.getZ() - this.doubleValue;
+         double d3 = mc.player.getY() - this.lastY;
+         if (d * d + d3 * d3 + d2 * d2 > 0.01
             || Math.abs(mc.player.getYRot() - this.floatValue) > 1.0F
             || Math.abs(mc.player.getXRot() - this.floatValue2) > 1.0F) {
-            this.longValue = var1;
+            this.longValue = longValue;
          }
 
          this.lastX = mc.player.getX();
@@ -226,44 +226,44 @@ public final class PartyManager implements MinecraftAccess {
       }
    }
 
-   private void method26(long var1) {
+   private void method26(long now) {
       if (mc.player != null && mc.player.hurtTime > 0) {
-         DamageSource var3 = mc.player.getLastDamageSource();
-         if (var3 != null && var3.getEntity() instanceof Player var4 && var4 != mc.player) {
-            this.longValue2 = var1;
+         DamageSource lastDamageSource = mc.player.getLastDamageSource();
+         if (lastDamageSource != null && lastDamageSource.getEntity() instanceof Player player && player != mc.player) {
+            this.longValue2 = now;
          }
       }
    }
 
    private void method27() {
       if (mc.player != null && !mc.player.isDeadOrDying() && !(mc.player.getHealth() <= 0.0F)) {
-         Inventory var1 = mc.player.getInventory();
-         int var2 = Math.min(var1.getContainerSize(), 64);
-         long var3 = 1469598103934665603L;
+         Inventory inventory = mc.player.getInventory();
+         int n = Math.min(inventory.getContainerSize(), 64);
+         long l = 1469598103934665603L;
 
-         for (int var5 = 0; var5 < var2; var5++) {
-            ItemStack var6 = var1.getItem(var5);
-            var3 = (var3 ^ (var6.isEmpty() ? 0 : System.identityHashCode(var6.getItem()))) * 1099511628211L;
-            var3 = (var3 ^ var6.getCount()) * 1099511628211L;
-            var3 = (var3 ^ var6.getDamageValue()) * 1099511628211L;
+         for (int i = 0; i < n; i++) {
+            ItemStack stack = inventory.getItem(i);
+            l = (l ^ (stack.isEmpty() ? 0 : System.identityHashCode(stack.getItem()))) * 1099511628211L;
+            l = (l ^ stack.getCount()) * 1099511628211L;
+            l = (l ^ stack.getDamageValue()) * 1099511628211L;
          }
 
-         if (var3 != this.longValue5) {
-            this.longValue5 = var3;
-            ArrayList var10 = new ArrayList();
+         if (l != this.longValue5) {
+            this.longValue5 = l;
+            ArrayList coll = new ArrayList();
 
-            for (int var11 = 0; var11 < var2; var11++) {
-               ItemStack var7 = var1.getItem(var11);
-               if (!var7.isEmpty()) {
-                  var10.add(
+            for (int i = 0; i < n; i++) {
+               ItemStack stack = inventory.getItem(i);
+               if (!stack.isEmpty()) {
+                  coll.add(
                      new PartyMember.Data11(
-                        BuiltInRegistries.ITEM.getKey(var7.getItem()).toString(), Math.min(var7.getCount(), 127), Math.max(0, var7.getDamageValue()), var11, var7.hasFoil()
+                        BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(), Math.min(stack.getCount(), 127), Math.max(0, stack.getDamageValue()), i, stack.hasFoil()
                      )
                   );
                }
             }
 
-            this.items3 = List.copyOf(var10);
+            this.items3 = List.copyOf(coll);
          }
       }
    }
@@ -272,19 +272,19 @@ public final class PartyManager implements MinecraftAccess {
       if (mc.player == null) {
          this.flag = false;
       } else {
-         boolean var1 = mc.player.isDeadOrDying() || mc.player.getHealth() <= 0.0F || mc.gui.screen() instanceof DeathScreen;
-         if (var1 && !this.flag) {
+         boolean flag = mc.player.isDeadOrDying() || mc.player.getHealth() <= 0.0F || mc.gui.screen() instanceof DeathScreen;
+         if (flag && !this.flag) {
             this.method29();
          }
 
-         this.flag = var1;
+         this.flag = flag;
       }
    }
 
    private void method29() {
-      long var1 = System.currentTimeMillis();
-      if (mc.player != null && var1 - this.longValue6 >= 3000L) {
-         this.longValue6 = var1;
+      long now = System.currentTimeMillis();
+      if (mc.player != null && now - this.longValue6 >= 3000L) {
+         this.longValue6 = now;
          this.intValue3++;
          this.data = new PartyManager.Data(
             this.cloud.method7911(),
@@ -294,18 +294,18 @@ public final class PartyManager implements MinecraftAccess {
             mc.player.getZ(),
             this.items3,
             mc.player.experienceLevel,
-            var1
+            now
          );
       }
    }
 
-   private void method30(long var1) {
-      PartyManager.Data var3 = this.data;
-      if (var3 != null) {
-         String var4 = "";
-         if (mc.gui.screen() instanceof DeathScreen var5 && var5.causeOfDeath != null) {
-            var4 = var5.causeOfDeath.getString();
-         } else if (var1 - var3.time() < 1500L) {
+   private void method30(long now) {
+      PartyManager.Data data = this.data;
+      if (data != null) {
+         String string = "";
+         if (mc.gui.screen() instanceof DeathScreen deathScreen && deathScreen.causeOfDeath != null) {
+            string = deathScreen.causeOfDeath.getString();
+         } else if (now - data.time() < 1500L) {
             return;
          }
 
@@ -318,44 +318,44 @@ public final class PartyManager implements MinecraftAccess {
          if (this.share.deaths.isEnabled() && this.cloud.method7860()) {
             this.method18()
                .method1162(
-                  var3.server(),
-                  var3.dimension(),
-                  var3.getDoubleValue(),
-                  var3.getDoubleValue2(),
-                  var3.getDoubleValue3(),
-                  var4,
-                  var3.getItems(),
-                  var3.getIntValue()
+                  data.server(),
+                  data.dimension(),
+                  data.getDoubleValue(),
+                  data.getDoubleValue2(),
+                  data.getDoubleValue3(),
+                  string,
+                  data.getItems(),
+                  data.getIntValue()
                );
          } else {
             this.method18()
                .method1163(
-                  var3.server(),
-                  var3.dimension(),
-                  var3.getDoubleValue(),
-                  var3.getDoubleValue2(),
-                  var3.getDoubleValue3(),
-                  var4,
-                  var3.getItems(),
-                  var3.getIntValue()
+                  data.server(),
+                  data.dimension(),
+                  data.getDoubleValue(),
+                  data.getDoubleValue2(),
+                  data.getDoubleValue3(),
+                  string,
+                  data.getItems(),
+                  data.getIntValue()
                );
          }
       }
    }
 
    public String method31() {
-      long var1 = System.currentTimeMillis();
-      String var3 = this.share.method947();
-      if ("dnd".equals(var3)) {
+      long now = System.currentTimeMillis();
+      String anObject = this.share.method947();
+      if ("dnd".equals(anObject)) {
          return "dnd";
       } else {
-         float var4 = this.share.autoAfk.getValue3();
-         if (var4 > 0.0F && (float)(var1 - this.longValue) > var4 * 60000.0F) {
+         float f = this.share.autoAfk.getValue3();
+         if (f > 0.0F && (float)(now - this.longValue) > f * 60000.0F) {
             return "afk";
-         } else if (this.share.autoPvp.isEnabled() && var1 - this.longValue2 < 15000L) {
+         } else if (this.share.autoPvp.isEnabled() && now - this.longValue2 < 15000L) {
             return "pvp";
-         } else if (!"auto".equals(var3)) {
-            return var3;
+         } else if (!"auto".equals(anObject)) {
+            return anObject;
          } else {
             return mc.level == null ? "menu" : "online";
          }
@@ -368,57 +368,57 @@ public final class PartyManager implements MinecraftAccess {
 
    public String method33() {
       if (this.share.allowJoin.isEnabled() && this.share.server.isEnabled()) {
-         ServerData var1 = mc.getCurrentServer();
-         return var1 != null && !var1.isRealm() && var1.ip != null && !mc.isLocalServer() ? var1.ip.trim() : "";
+         ServerData currentServer = mc.getCurrentServer();
+         return currentServer != null && !currentServer.isRealm() && currentServer.ip != null && !mc.isLocalServer() ? currentServer.ip.trim() : "";
       } else {
          return "";
       }
    }
 
-   private void method34(long var1) {
-      String var3 = this.method31();
-      if (!var3.equals(this.lastStatus)) {
-         this.lastStatus = var3;
-         this.longValue4 = var1;
+   private void method34(long now) {
+      String lastStatus = this.method31();
+      if (!lastStatus.equals(this.lastStatus)) {
+         this.lastStatus = lastStatus;
+         this.longValue4 = now;
       }
 
-      String var4 = this.share.server.isEnabled() ? this.cloud.method7911() : "";
-      String var5 = this.share.server.isEnabled() && mc.level != null ? ChatCompose.mode() : "";
-      String var6 = this.share.text.getValue() == null ? "" : this.share.text.getValue().strip();
-      String var7 = this.method33();
-      String var8 = var3 + "|" + var6 + "|" + var7 + "|" + var5 + "|" + var4;
-      if (!var8.equals(this.text) && var1 - this.longValue3 >= 1500L && this.cloud.method7860()) {
-         this.text = var8;
-         this.longValue3 = var1;
-         this.method18().method1165(new PartyMember.Data2(var3, var6, var7, var5, var4, this.longValue4));
+      String str = this.share.server.isEnabled() ? this.cloud.method7911() : "";
+      String mode = this.share.server.isEnabled() && mc.level != null ? ChatCompose.mode() : "";
+      String str2 = this.share.text.getValue() == null ? "" : this.share.text.getValue().strip();
+      String str3 = this.method33();
+      String text = lastStatus + "|" + str2 + "|" + str3 + "|" + mode + "|" + str;
+      if (!text.equals(this.text) && now - this.longValue3 >= 1500L && this.cloud.method7860()) {
+         this.text = text;
+         this.longValue3 = now;
+         this.method18().method1165(new PartyMember.Data2(lastStatus, str2, str3, mode, str, this.longValue4));
       }
    }
 
    private void method35() {
-      Wardrobe var1 = Wardrobe.method2488();
-      if (var1 != null && this.cloud.method7860()) {
-         int var2 = this.share.cosmeticsVisibility.getIndex();
-         if (var1.version() != this.intValue4 || var2 != this.intValue5) {
-            this.intValue4 = var1.version();
-            this.intValue5 = var2;
-            ArrayList var3 = new ArrayList();
+      Wardrobe wardrobe = Wardrobe.method2488();
+      if (wardrobe != null && this.cloud.method7860()) {
+         int index = this.share.cosmeticsVisibility.getIndex();
+         if (wardrobe.version() != this.intValue4 || index != this.intValue5) {
+            this.intValue4 = wardrobe.version();
+            this.intValue5 = index;
+            ArrayList arrayList = new ArrayList();
             if (!this.share.method949()) {
-               var var4 = var1.method2504();
-               var3.addAll(var4.values());
+               var map = wardrobe.method2504();
+               arrayList.addAll(map.values());
             }
 
-            this.method18().method1166(var3);
+            this.method18().method1166(arrayList);
             logger.info(
                "Гардероб: образ отправлен узлу — {} вещей, ник {}{}",
-               new Object[]{var3.size(), this.cloud.method7871(), this.share.method949() ? " (скрыт настройкой видимости косметики)" : ""}
+               new Object[]{arrayList.size(), this.cloud.method7871(), this.share.method949() ? " (скрыт настройкой видимости косметики)" : ""}
             );
          }
       }
    }
 
-   private void method36(long var1) {
-      if (var1 - this.longValue7 >= 60000L && this.cloud.method7860()) {
-         this.longValue7 = var1;
+   private void method36(long now) {
+      if (now - this.longValue7 >= 60000L && this.cloud.method7860()) {
+         this.longValue7 = now;
          if (!this.share.stats.isEnabled()) {
             this.intValue2 = 0;
             this.intValue3 = 0;
@@ -432,175 +432,175 @@ public final class PartyManager implements MinecraftAccess {
       }
    }
 
-   private void method37(PartyMember var1) {
-      PartyMember.Data6 var2 = var1.getData6();
-      PartyMember.Data6 var3 = this.data6;
-      this.data6 = var2;
-      if (var2 != null && var3 == null && !this.flag2) {
+   private void method37(PartyMember partyMember) {
+      PartyMember.Data6 data6 = partyMember.getData6();
+      PartyMember.Data6 data62 = this.data6;
+      this.data6 = data6;
+      if (data6 != null && data62 == null && !this.flag2) {
          this.flag2 = true;
          PartyMarksModule.INSTANCE.setToggled(true);
       }
 
-      if (var3 != null && var2 != null && var3.getLongValue() == var2.getLongValue() && !this.method32()) {
-         for (PartyMember.Data3 var5 : var2.getItems()) {
-            if (var5.uid() != this.cloud.getLongValue()) {
-               PartyMember.Data3 var6 = var3.method1216(var5.uid());
-               if (var6 == null) {
-                  method53(String.format(method54("cloud.party.toast.joined"), var5.username()));
-               } else if (var6.isFlag() != var5.isFlag() && !this.cloud.prefs().method3315(var5.username())) {
-                  method53(String.format(method54(var5.isFlag() ? "cloud.party.toast.online" : "cloud.party.toast.offline"), var5.username()));
+      if (data62 != null && data6 != null && data62.getLongValue() == data6.getLongValue() && !this.method32()) {
+         for (PartyMember.Data3 data3 : data6.getItems()) {
+            if (data3.uid() != this.cloud.getLongValue()) {
+               PartyMember.Data3 data32 = data62.method1216(data3.uid());
+               if (data32 == null) {
+                  method53(String.format(method54("cloud.party.toast.joined"), data3.username()));
+               } else if (data32.isFlag() != data3.isFlag() && !this.cloud.prefs().method3315(data3.username())) {
+                  method53(String.format(method54(data3.isFlag() ? "cloud.party.toast.online" : "cloud.party.toast.offline"), data3.username()));
                }
             }
          }
 
-         for (PartyMember.Data3 var8 : var3.getItems()) {
-            if (var8.uid() != this.cloud.getLongValue() && var2.method1216(var8.uid()) == null) {
-               method53(String.format(method54("cloud.party.toast.left"), var8.username()));
+         for (PartyMember.Data3 data3 : data62.getItems()) {
+            if (data3.uid() != this.cloud.getLongValue() && data6.method1216(data3.uid()) == null) {
+               method53(String.format(method54("cloud.party.toast.left"), data3.username()));
             }
          }
       }
    }
 
    @EventTarget
-   private void method38(Event10 var1) {
-      CloudPackets.Data18 var2 = var1.getData18();
-      boolean var3 = this.method32() || !this.share.notifyInvites.isEnabled();
-      if (!var3 && method39(var2.kind()) && !this.method40(var2)) {
-         var3 = true;
+   private void method38(Event10 event) {
+      CloudPackets.Data18 data18 = event.getData18();
+      boolean flag = this.method32() || !this.share.notifyInvites.isEnabled();
+      if (!flag && method39(data18.kind()) && !this.method40(data18)) {
+         flag = true;
       }
 
-      switch (var2.kind()) {
+      switch (data18.kind()) {
          case 12:
-            long var8 = var2.getJsonObject().has("uid") ? var2.getJsonObject().get("uid").getAsLong() : 0L;
-            if (var8 != 0L && var8 != this.cloud.getLongValue() && !this.method32() && !this.cloud.prefs().method3316(var2.username())) {
+            long l = data18.getJsonObject().has("uid") ? data18.getJsonObject().get("uid").getAsLong() : 0L;
+            if (l != 0L && l != this.cloud.getLongValue() && !this.method32() && !this.cloud.prefs().method3316(data18.username())) {
                method53(
                   String.format(
                      method54("cloud.death.toast.mate"),
-                     var2.username(),
-                     (int)Math.floor(var2.getJsonObject().get("x").getAsDouble()),
-                     (int)Math.floor(var2.getJsonObject().get("y").getAsDouble()),
-                     (int)Math.floor(var2.getJsonObject().get("z").getAsDouble())
+                     data18.username(),
+                     (int)Math.floor(data18.getJsonObject().get("x").getAsDouble()),
+                     (int)Math.floor(data18.getJsonObject().get("y").getAsDouble()),
+                     (int)Math.floor(data18.getJsonObject().get("z").getAsDouble())
                   )
                );
             }
             break;
          case 21:
-            if (!var3 && !this.cloud.prefs().method3316(var2.username())) {
-               String var7 = ServerNameUtils.method5643(
-                  PartyMember.method1209(var2.getJsonObject(), "server"), PartyMember.method1209(var2.getJsonObject(), "mode")
+            if (!flag && !this.cloud.prefs().method3316(data18.username())) {
+               String str = ServerNameUtils.method5643(
+                  PartyMember.method1209(data18.getJsonObject(), "server"), PartyMember.method1209(data18.getJsonObject(), "mode")
                );
                method53(
                   String.format(
-                     method54("cloud.join.toast.invited"), var2.username(), var7.isEmpty() ? PartyMember.method1209(var2.getJsonObject(), "join") : var7
+                     method54("cloud.join.toast.invited"), data18.username(), str.isEmpty() ? PartyMember.method1209(data18.getJsonObject(), "join") : str
                   )
                );
             }
             break;
          case 41:
-            if (!var3 && !this.cloud.prefs().method3316(var2.username())) {
-               method53(String.format(method54("cloud.party.toast.invited"), var2.username(), PartyMember.method1209(var2.getJsonObject(), "name")));
+            if (!flag && !this.cloud.prefs().method3316(data18.username())) {
+               method53(String.format(method54("cloud.party.toast.invited"), data18.username(), PartyMember.method1209(data18.getJsonObject(), "name")));
             }
             break;
          case 46:
-            if (!var3 && !this.cloud.prefs().method3316(var2.username())) {
-               method53(String.format(method54("cloud.room.toast.invited"), var2.username(), PartyMember.method1209(var2.getJsonObject(), "name")));
+            if (!flag && !this.cloud.prefs().method3316(data18.username())) {
+               method53(String.format(method54("cloud.room.toast.invited"), data18.username(), PartyMember.method1209(data18.getJsonObject(), "name")));
             }
             break;
          case 49:
-            String var6 = PartyMember.method1209(var2.getJsonObject(), "code");
-            if (!var6.isEmpty() && !"mate_gone".equals(var6)) {
-               method53(method54("cloud.notice." + var6));
+            String anObject = PartyMember.method1209(data18.getJsonObject(), "code");
+            if (!anObject.isEmpty() && !"mate_gone".equals(anObject)) {
+               method53(method54("cloud.notice." + anObject));
             }
             break;
          case 51:
-            if (this.share.notifyMessages.isEnabled() && !this.method32() && !this.cloud.prefs().method3316(var2.username())) {
-               String var4 = PartyMember.method1209(var2.getJsonObject(), "text");
-               method53(String.format(method54("cloud.dm.toast"), var2.username(), var4.length() > 60 ? var4.substring(0, 60) + "…" : var4));
+            if (this.share.notifyMessages.isEnabled() && !this.method32() && !this.cloud.prefs().method3316(data18.username())) {
+               String str = PartyMember.method1209(data18.getJsonObject(), "text");
+               method53(String.format(method54("cloud.dm.toast"), data18.username(), str.length() > 60 ? str.substring(0, 60) + "…" : str));
             }
       }
    }
 
-   private static boolean method39(int var0) {
-      return var0 == 41 || var0 == 46 || var0 == 21;
+   private static boolean method39(int kind) {
+      return kind == 41 || kind == 46 || kind == 21;
    }
 
-   private boolean method40(CloudPackets.Data18 var1) {
-      long var2 = System.currentTimeMillis();
-      this.items2.values().removeIf(var2x -> var2 - var2x > 10000L);
-      return this.items2.putIfAbsent(var1.uid() * 64L + var1.kind(), var2) == null;
+   private boolean method40(CloudPackets.Data18 data18) {
+      long now = System.currentTimeMillis();
+      this.items2.values().removeIf(var2x -> now - var2x > 10000L);
+      return this.items2.putIfAbsent(data18.uid() * 64L + data18.kind(), now) == null;
    }
 
    @EventTarget
-   private void method41(Event11 var1) {
-      CloudPackets.Data13 var2 = var1.getData13();
-      if (!var1.isFlag()
-         && var2.getIntValue() == 1
+   private void method41(Event11 event) {
+      CloudPackets.Data13 data13 = event.getData13();
+      if (!event.isFlag()
+         && data13.getIntValue() == 1
          && this.share.notifyMessages.isEnabled()
          && !this.method32()
-         && !this.cloud.prefs().method3316(var2.username())) {
-         String var3 = var2.text().length() > 60 ? var2.text().substring(0, 60) + "…" : var2.text();
-         method53(var2.username() + ": " + var3);
+         && !this.cloud.prefs().method3316(data13.username())) {
+         String text = data13.text().length() > 60 ? data13.text().substring(0, 60) + "…" : data13.text();
+         method53(data13.username() + ": " + text);
       }
    }
 
-   public boolean method42(long var1) {
-      PartyMember.Data2 var3 = this.method18().method1141(var1);
-      return !var3.getText3().isEmpty();
+   public boolean method42(long uid) {
+      PartyMember.Data2 data2 = this.method18().method1141(uid);
+      return !data2.getText3().isEmpty();
    }
 
-   public void method43(long var1) {
-      PartyMember.Data2 var3 = this.method18().method1141(var1);
-      if (!var3.getText3().isEmpty()) {
-         this.method45(var3.getText3(), var3.server(), var3.mode());
+   public void method43(long uid) {
+      PartyMember.Data2 data2 = this.method18().method1141(uid);
+      if (!data2.getText3().isEmpty()) {
+         this.method45(data2.getText3(), data2.server(), data2.mode());
       }
    }
 
-   public void method44(PartyMember.Data13 var1) {
-      this.method18().method1178(var1);
-      if (!var1.getText3().isEmpty()) {
-         this.method45(var1.getText3(), var1.server(), var1.mode());
+   public void method44(PartyMember.Data13 data13) {
+      this.method18().method1178(data13);
+      if (!data13.getText3().isEmpty()) {
+         this.method45(data13.getText3(), data13.server(), data13.mode());
       }
    }
 
-   public void method45(String var1, String var2, String var3) {
-      String var4 = var1.trim();
-      if (!var4.isEmpty()) {
-         String var5 = this.cloud.method7911();
-         String var6 = var2.isEmpty() ? Cloud.method7912(var4.toLowerCase(Locale.ROOT)) : var2;
-         this.text2 = var6;
-         this.text3 = var3;
+   public void method45(String str, String server, String mode) {
+      String ip = str.trim();
+      if (!ip.isEmpty()) {
+         String str2 = this.cloud.method7911();
+         String anObject = server.isEmpty() ? Cloud.method7912(ip.toLowerCase(Locale.ROOT)) : server;
+         this.text2 = anObject;
+         this.text3 = mode;
          this.longValue8 = System.currentTimeMillis();
-         if (var5.isEmpty() || !var5.equals(var6) || mc.level == null) {
+         if (str2.isEmpty() || !str2.equals(anObject) || mc.level == null) {
             mc.execute(() -> {
                if (mc.level != null) {
                   mc.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE);
                }
 
-               ServerData var2x = new ServerData(ServerNameUtils.display(var6), var4, Type.OTHER);
-               ConnectScreen.startConnecting(new JoinMultiplayerScreen(new TitleScreen()), mc, ServerAddress.parseString(var4), var2x, false, null);
+               ServerData var2x = new ServerData(ServerNameUtils.display(anObject), ip, Type.OTHER);
+               ConnectScreen.startConnecting(new JoinMultiplayerScreen(new TitleScreen()), mc, ServerAddress.parseString(ip), var2x, false, null);
             });
          }
       }
    }
 
-   private void method46(long var1) {
+   private void method46(long now) {
       if (!this.text2.isEmpty() && mc.level != null && mc.player != null) {
-         if (var1 - this.longValue8 > 90000L) {
+         if (now - this.longValue8 > 90000L) {
             this.text2 = "";
-         } else if (var1 - this.longValue8 >= 4000L && this.text2.equals(this.cloud.method7911())) {
-            String var3 = this.text3;
-            String var4 = this.text2;
+         } else if (now - this.longValue8 >= 4000L && this.text2.equals(this.cloud.method7911())) {
+            String string = this.text3;
+            String ip = this.text2;
             this.text2 = "";
-            if (!var3.isEmpty()) {
-               String var5 = ChatCompose.mode();
-               if (var5.isEmpty() || !ServerNameUtils.method5641(var5).equalsIgnoreCase(ServerNameUtils.method5641(var3))) {
-                  String var6 = ServerNameUtils.method5642(var4, var3);
-                  if (var6.isEmpty()) {
-                     method53(String.format(method54("cloud.join.toast.mode"), ServerNameUtils.method5641(var3)));
+            if (!string.isEmpty()) {
+               String mode = ChatCompose.mode();
+               if (mode.isEmpty() || !ServerNameUtils.method5641(mode).equalsIgnoreCase(ServerNameUtils.method5641(string))) {
+                  String initial = ServerNameUtils.method5642(ip, string);
+                  if (initial.isEmpty()) {
+                     method53(String.format(method54("cloud.join.toast.mode"), ServerNameUtils.method5641(string)));
                   } else {
-                     method53(String.format(method54("cloud.join.toast.command"), ServerNameUtils.method5641(var3), var6));
+                     method53(String.format(method54("cloud.join.toast.command"), ServerNameUtils.method5641(string), initial));
                      if (mc.gui.screen() == null) {
-                        mc.gui.setScreen(new ChatScreen(var6, false));
+                        mc.gui.setScreen(new ChatScreen(initial, false));
                      }
                   }
                }
@@ -613,16 +613,16 @@ public final class PartyManager implements MinecraftAccess {
       return !this.method33().isEmpty() && this.cloud.method7860();
    }
 
-   public void method48(long var1) {
-      String var3 = this.method33();
-      if (!var3.isEmpty()) {
-         String var4 = mc.level == null ? "" : ChatCompose.mode();
-         this.method18().method1177(var1, var3, var4, this.cloud.method7911(), "");
-         method53(String.format(method54("cloud.join.toast.sent"), this.method18().method1149(var1)));
+   public void method48(long uid) {
+      String string = this.method33();
+      if (!string.isEmpty()) {
+         String mode = mc.level == null ? "" : ChatCompose.mode();
+         this.method18().method1177(uid, string, mode, this.cloud.method7911(), "");
+         method53(String.format(method54("cloud.join.toast.sent"), this.method18().method1149(uid)));
       }
    }
 
-   public boolean method49(String var1, String var2, int var3) {
+   public boolean method49(String name, String key, int color) {
       if (mc.player != null && this.method18().method1136()) {
          this.method18()
             .method1160(
@@ -632,9 +632,9 @@ public final class PartyManager implements MinecraftAccess {
                Math.floor(mc.player.getX()) + 0.5,
                Math.floor(mc.player.getY()),
                Math.floor(mc.player.getZ()) + 0.5,
-               var1,
-               var2,
-               var3
+               name,
+               key,
+               color
             );
          return true;
       } else {
@@ -642,14 +642,14 @@ public final class PartyManager implements MinecraftAccess {
       }
    }
 
-   public static String method50(String var0) {
-      return method54("cloud.presence." + (var0 != null && !var0.isEmpty() ? var0 : "online"));
+   public static String method50(String anObject) {
+      return method54("cloud.presence." + (anObject != null && !anObject.isEmpty() ? anObject : "online"));
    }
 
-   public static ZenithColor method51(String var0) {
-      String var1 = var0 == null ? "" : var0;
+   public static ZenithColor method51(String text) {
+      String str = text == null ? "" : text;
 
-      return switch (var1) {
+      return switch (str) {
          case "pvp" -> new ZenithColor(-495247);
          case "farm" -> new ZenithColor(-11870592);
          case "build" -> new ZenithColor(-278748);
@@ -661,18 +661,18 @@ public final class PartyManager implements MinecraftAccess {
       };
    }
 
-   public static String method52(PartyMember.Data2 var0) {
-      String var1 = method50(var0.getText());
-      return var0.text().isEmpty() ? var1 : var1 + " · " + var0.text();
+   public static String method52(PartyMember.Data2 data2) {
+      String str = method50(data2.getText());
+      return data2.text().isEmpty() ? str : str + " · " + data2.text();
    }
 
-   private static void method53(String var0) {
-      Cloud.method7914(var0);
+   private static void method53(String str) {
+      Cloud.method7914(str);
    }
 
-   public static String method54(String var0) {
-      Zenith var1 = Zenith.getInstance();
-      return var1 == null ? var0 : var1.getLocalization().translate(var0);
+   public static String method54(String text) {
+      Zenith zenith = Zenith.getInstance();
+      return zenith == null ? text : zenith.getLocalization().translate(text);
    }
 
    private static final class Data {
@@ -734,15 +734,15 @@ public final class PartyManager implements MinecraftAccess {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "items=" + this.items + ", " + "intValue=" + this.intValue + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data(String var1, String var2, double var3, double var5, double var7, List<PartyMember.Data11> var9, int var10, long var11) {
-         this.text = var1;
-         this.text2 = var2;
-         this.doubleValue = var3;
-         this.doubleValue2 = var5;
-         this.doubleValue3 = var7;
-         this.items = var9;
-         this.intValue = var10;
-         this.longValue = var11;
+      private Data(String text, String str, double doubleValue, double y, double z, List<PartyMember.Data11> items, int intValue, long longValue) {
+         this.text = text;
+         this.text2 = str;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = y;
+         this.doubleValue3 = z;
+         this.items = items;
+         this.intValue = intValue;
+         this.longValue = longValue;
       }
 
       public String server() {

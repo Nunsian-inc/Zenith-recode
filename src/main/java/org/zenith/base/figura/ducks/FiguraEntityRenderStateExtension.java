@@ -9,5 +9,5 @@ public interface FiguraEntityRenderStateExtension {
 
    float figura$getTickDelta();
 
-   void figura$setEntity(UUID var1, int var2, float var3);
+   void figura$setEntity(UUID uuid, int id, float tickDelta);
 }

@@ -17,18 +17,18 @@ public abstract class Particle implements Handler7 {
    public float floatValue2;
    public final float floatValue3;
 
-   public Particle(Vec3 var1, Vec3 var2, int var3, float var4, ZenithColor var5, String var6, float var7, float var8) {
-      this.vec3d = var1;
-      this.vec3d2 = var1;
-      this.vec3d3 = var2;
-      this.intValue = var3;
-      this.intValue2 = var3;
-      this.intValue3 = var3;
-      this.floatValue = var4;
-      this.zenithColor = var5;
-      this.text = var6;
-      this.floatValue2 = var7;
-      this.floatValue3 = var8;
+   public Particle(Vec3 vec3d, Vec3 vec3d3, int intValue, float floatValue, ZenithColor zenithColor, String text, float nextFloat, float f) {
+      this.vec3d = vec3d;
+      this.vec3d2 = vec3d;
+      this.vec3d3 = vec3d3;
+      this.intValue = intValue;
+      this.intValue2 = intValue;
+      this.intValue3 = intValue;
+      this.floatValue = floatValue;
+      this.zenithColor = zenithColor;
+      this.text = text;
+      this.floatValue2 = nextFloat;
+      this.floatValue3 = f;
    }
 
    @Override
@@ -40,14 +40,14 @@ public abstract class Particle implements Handler7 {
       this.floatValue2 = this.floatValue2 + this.floatValue3;
    }
 
-   public float method6571(float var1) {
-      float var2 = this.intValue2 + (this.intValue - this.intValue2) * var1;
-      return 1.0F - var2 / this.intValue3;
+   public float method6571(float f) {
+      float f2 = this.intValue2 + (this.intValue - this.intValue2) * f;
+      return 1.0F - f2 / this.intValue3;
    }
 
-   public void method6572(Vec3 var1) {
-      double var2 = this.vec3d.distanceTo(var1);
-      this.intValue -= var2 > 64.0 ? 8 : 1;
+   public void method6572(Vec3 vec) {
+      double d = this.vec3d.distanceTo(vec);
+      this.intValue -= d > 64.0 ? 8 : 1;
    }
 
    @Generated
@@ -112,37 +112,37 @@ public abstract class Particle implements Handler7 {
    }
 
    @Generated
-   public void setVec3d(Vec3 var1) {
-      this.vec3d = var1;
+   public void setVec3d(Vec3 vec3d) {
+      this.vec3d = vec3d;
    }
 
    @Generated
-   public void setVec3d2(Vec3 var1) {
-      this.vec3d2 = var1;
+   public void setVec3d2(Vec3 vec3d2) {
+      this.vec3d2 = vec3d2;
    }
 
    @Generated
-   public void setVec3d3(Vec3 var1) {
-      this.vec3d3 = var1;
+   public void setVec3d3(Vec3 vec3d3) {
+      this.vec3d3 = vec3d3;
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated
-   public void setIntValue2(int var1) {
-      this.intValue2 = var1;
+   public void setIntValue2(int n) {
+      this.intValue2 = n;
    }
 
    @Generated
-   public void setZenithColor(ZenithColor var1) {
-      this.zenithColor = var1;
+   public void setZenithColor(ZenithColor zenithColor) {
+      this.zenithColor = zenithColor;
    }
 
    @Generated
-   public void setFloatValue2(float var1) {
-      this.floatValue2 = var1;
+   public void setFloatValue2(float f) {
+      this.floatValue2 = f;
    }
 }

@@ -21,11 +21,11 @@ public class MixinClientChunkManager {
       at = {@At("RETURN")}
    )
    private void zenith$onChunkLoaded(
-      int var1, int var2, net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData var3, CallbackInfoReturnable<LevelChunk> var6
+      int x, int z, net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData levelChunkPacketData, CallbackInfoReturnable<LevelChunk> callbackInfoReturnable
    ) {
-      LevelChunk var7 = (LevelChunk)var6.getReturnValue();
-      if (var7 != null) {
-         BlockESPModule.INSTANCE.method7560(var7, var1, var2);
+      LevelChunk returnValue = (LevelChunk)callbackInfoReturnable.getReturnValue();
+      if (returnValue != null) {
+         BlockESPModule.INSTANCE.method7560(returnValue, x, z);
       }
    }
 
@@ -33,7 +33,7 @@ public class MixinClientChunkManager {
       method = {"drop(Lnet/minecraft/world/level/ChunkPos;)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$onChunkUnloaded(ChunkPos var1, CallbackInfo var2) {
-      BlockESPModule.INSTANCE.method7561(var1.x(), var1.z());
+   private void zenith$onChunkUnloaded(ChunkPos chunkPos, CallbackInfo callbackInfo) {
+      BlockESPModule.INSTANCE.method7561(chunkPos.x(), chunkPos.z());
    }
 }

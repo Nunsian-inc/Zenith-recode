@@ -22,7 +22,7 @@ public class MixinGuiRenderState implements ScissorFlusher.Handler {
       method = {"addItem(Lnet/minecraft/client/renderer/state/gui/GuiItemRenderState;)V", "addText(Lnet/minecraft/client/renderer/state/gui/GuiTextRenderState;)V", "addPicturesInPictureState(Lnet/minecraft/client/renderer/state/gui/pip/PictureInPictureRenderState;)V", "addGuiElement(Lnet/minecraft/client/renderer/state/gui/GuiElementRenderState;)V", "addBlitToCurrentLayer(Lnet/minecraft/client/renderer/state/gui/BlitRenderState;)V", "addGlyphToCurrentLayer(Lnet/minecraft/client/renderer/state/gui/GuiElementRenderState;)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$markPending(CallbackInfo var1) {
+   private void zenith$markPending(CallbackInfo callbackInfo) {
       this.zenith$pending = true;
    }
 
@@ -30,7 +30,7 @@ public class MixinGuiRenderState implements ScissorFlusher.Handler {
       method = {"reset()V"},
       at = {@At("HEAD")}
    )
-   private void zenith$clearPending(CallbackInfo var1) {
+   private void zenith$clearPending(CallbackInfo callbackInfo) {
       this.zenith$pending = false;
       GuiVertexBatch.clear();
    }
@@ -40,24 +40,24 @@ public class MixinGuiRenderState implements ScissorFlusher.Handler {
       at = @At("HEAD"),
       argsOnly = true
    )
-   private GuiElementRenderState zenith$tintSimple(GuiElementRenderState var1) {
-      return GuiVertexBatch.method102(var1);
+   private GuiElementRenderState zenith$tintSimple(GuiElementRenderState simpleGuiElementRenderState) {
+      return GuiVertexBatch.method102(simpleGuiElementRenderState);
    }
 
    @Inject(
       method = {"addItem(Lnet/minecraft/client/renderer/state/gui/GuiItemRenderState;)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$tintItem(GuiItemRenderState var1, CallbackInfo var2) {
-      GuiVertexBatch.method98(var1);
+   private void zenith$tintItem(GuiItemRenderState guiItemRenderState, CallbackInfo callbackInfo) {
+      GuiVertexBatch.method98(guiItemRenderState);
    }
 
    @Inject(
       method = {"addPicturesInPictureState(Lnet/minecraft/client/renderer/state/gui/pip/PictureInPictureRenderState;)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$tintSpecial(PictureInPictureRenderState var1, CallbackInfo var2) {
-      GuiVertexBatch.method98(var1);
+   private void zenith$tintSpecial(PictureInPictureRenderState inPictureRenderState, CallbackInfo callbackInfo) {
+      GuiVertexBatch.method98(inPictureRenderState);
    }
 
    @Override

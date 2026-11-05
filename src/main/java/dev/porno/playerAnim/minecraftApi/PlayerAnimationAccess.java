@@ -40,7 +40,7 @@ public final class PlayerAnimationAccess {
 
    @FunctionalInterface
    public interface AnimationRegister {
-      void registerAnimation(@NotNull AbstractClientPlayer var1, @NotNull AnimationStack var2);
+      void registerAnimation(@NotNull AbstractClientPlayer player, @NotNull AnimationStack animationStack);
    }
 
    public static class PlayerAssociatedAnimationData {

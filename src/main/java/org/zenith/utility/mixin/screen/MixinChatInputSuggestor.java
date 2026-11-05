@@ -32,7 +32,7 @@ public abstract class MixinChatInputSuggestor {
    private SuggestionsList suggestions;
 
    @Shadow
-   protected abstract void updateUsageInfo(ParseResults<net.minecraft.client.multiplayer.ClientSuggestionProvider> var1, Suggestions var2);
+   protected abstract void updateUsageInfo(ParseResults<net.minecraft.client.multiplayer.ClientSuggestionProvider> currentParse, Suggestions pendingSuggestion);
 
    @Inject(
       method = {"updateCommandInfo()V"},
@@ -44,25 +44,25 @@ public abstract class MixinChatInputSuggestor {
       cancellable = true,
       locals = LocalCapture.CAPTURE_FAILHARD
    )
-   public void refreshHook(CallbackInfo var1, String var2, StringReader var3) {
-      if (var3.canRead(Zenith.getInstance().getCommandManager().getPrefix().length())
-         && var3.getString().startsWith(Zenith.getInstance().getCommandManager().getPrefix(), var3.getCursor())) {
-         var3.setCursor(var3.getCursor() + 1);
+   public void refreshHook(CallbackInfo callbackInfo, String str, StringReader command) {
+      if (command.canRead(Zenith.getInstance().getCommandManager().getPrefix().length())
+         && command.getString().startsWith(Zenith.getInstance().getCommandManager().getPrefix(), command.getCursor())) {
+         command.setCursor(command.getCursor() + 1);
          if (this.currentParse == null) {
-            this.currentParse = Zenith.getInstance().getCommandManager().getDispatcher().parse(var3, Zenith.getInstance().getCommandManager().getSource());
+            this.currentParse = Zenith.getInstance().getCommandManager().getDispatcher().parse(command, Zenith.getInstance().getCommandManager().getSource());
          }
 
-         int var4 = this.input.getCursorPosition();
-         if (var4 >= 1 && (this.suggestions == null || !this.keepSuggestions)) {
-            this.pendingSuggestions = Zenith.getInstance().getCommandManager().getDispatcher().getCompletionSuggestions(this.currentParse, var4);
-            this.pendingSuggestions.thenAccept(var5 -> {
+         int cursorPosition = this.input.getCursorPosition();
+         if (cursorPosition >= 1 && (this.suggestions == null || !this.keepSuggestions)) {
+            this.pendingSuggestions = Zenith.getInstance().getCommandManager().getDispatcher().getCompletionSuggestions(this.currentParse, cursorPosition);
+            this.pendingSuggestions.thenAccept(pendingSuggestion -> {
                if (this.pendingSuggestions.isDone()) {
-                  this.updateUsageInfo((ParseResults)this.currentParse, var5);
+                  this.updateUsageInfo((ParseResults)this.currentParse, pendingSuggestion);
                }
             });
          }
 
-         var1.cancel();
+         callbackInfo.cancel();
       }
    }
 }

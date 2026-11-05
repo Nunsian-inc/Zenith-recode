@@ -25,11 +25,11 @@ public class MixinTextGuiElementTint {
       method = {"<init>(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;Lorg/joml/Matrix3x2fc;IIIIZZLnet/minecraft/client/gui/navigation/ScreenRectangle;)V"},
       at = {@At("RETURN")}
    )
-   private void zenith$tint(CallbackInfo var1) {
-      float[] var2 = GuiVertexBatch.method97();
-      if (var2 != null) {
-         this.color = GuiVertexBatch.method100(this.color, var2, false);
-         this.backgroundColor = GuiVertexBatch.method100(this.backgroundColor, var2, false);
+   private void zenith$tint(CallbackInfo callbackInfo) {
+      float[] floatValues = GuiVertexBatch.method97();
+      if (floatValues != null) {
+         this.color = GuiVertexBatch.method100(this.color, floatValues, false);
+         this.backgroundColor = GuiVertexBatch.method100(this.backgroundColor, floatValues, false);
       }
    }
 }

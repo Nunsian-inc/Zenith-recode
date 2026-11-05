@@ -46,10 +46,10 @@ public final class CloudAvatarCache {
    private static final long CONST_longValue3 = 30000L;
    private static final long CONST_longValue4 = 120L;
    private static long longValue2;
-   private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(64), var0 -> {
-      Thread var1 = new Thread(var0, "cloud-avatar-loader");
-      var1.setDaemon(true);
-      return var1;
+   private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(64), task -> {
+      Thread thread = new Thread(task, "cloud-avatar-loader");
+      thread.setDaemon(true);
+      return thread;
    });
    private static final long CONST_longValue5 = 86400000L;
    private static final int CONST_intValue2 = 1024;
@@ -60,29 +60,29 @@ public final class CloudAvatarCache {
    private CloudAvatarCache() {
    }
 
-   public static Identifier get(String var0) {
-      if (var0 != null && !var0.isBlank()) {
+   public static Identifier get(String string) {
+      if (string != null && !string.isBlank()) {
          synchronized (linkedHashMap) {
-            CloudAvatarCache.Entry var2 = linkedHashMap.get(var0);
-            if (var2 != null) {
-               var2.longValue2 = System.currentTimeMillis();
-               return var2.getIdentifier();
+            CloudAvatarCache.Entry entry = linkedHashMap.get(string);
+            if (entry != null) {
+               entry.longValue2 = System.currentTimeMillis();
+               return entry.getIdentifier();
             }
          }
 
-         if (items2.contains(var0)) {
+         if (items2.contains(string)) {
             return null;
          } else {
-            Long var6 = items3.get(var0);
-            if (var6 != null && System.currentTimeMillis() < var6) {
+            Long l = items3.get(string);
+            if (l != null && System.currentTimeMillis() < l) {
                return null;
-            } else if (!items.add(var0)) {
+            } else if (!items.add(string)) {
                return null;
             } else {
                try {
-                  threadPoolExecutor.execute(() -> load(var0));
-               } catch (RejectedExecutionException var4) {
-                  items.remove(var0);
+                  threadPoolExecutor.execute(() -> load(string));
+               } catch (RejectedExecutionException e) {
+                  items.remove(string);
                }
 
                return null;
@@ -93,50 +93,50 @@ public final class CloudAvatarCache {
       }
    }
 
-   private static void load(String var0) {
-      if (!pattern.matcher(var0).matches()) {
-         method2127(var0);
-         items.remove(var0);
+   private static void load(String string) {
+      if (!pattern.matcher(string).matches()) {
+         method2127(string);
+         items.remove(string);
       } else {
-         Path var1 = cacheDir().resolve(var0 + ".img");
-         byte[] var2 = method2128(var1);
-         boolean var3 = var2 != null && method2129(var1);
-         if (var2 != null && var3) {
-            NativeImage var4 = method2132(var2);
-            if (var4 != null) {
-               Minecraft.getInstance().execute(() -> method2136(var0, var4));
+         Path path = cacheDir().resolve(string + ".img");
+         byte[] allBytes = method2128(path);
+         boolean flag = allBytes != null && method2129(path);
+         if (allBytes != null && flag) {
+            NativeImage image = method2132(allBytes);
+            if (image != null) {
+               Minecraft.getInstance().execute(() -> method2136(string, image));
                return;
             }
 
-            method2131(var1);
-            var2 = null;
+            method2131(path);
+            allBytes = null;
          }
 
          try {
-            byte[] var8 = method2138(var0);
-            if (var8 == null || var8.length == 0) {
-               method2127(var0);
-               items.remove(var0);
+            byte[] bytes = method2138(string);
+            if (bytes == null || bytes.length == 0) {
+               method2127(string);
+               items.remove(string);
                return;
             }
 
-            NativeImage var9 = method2132(var8);
-            if (var9 == null) {
-               method2127(var0);
-               items.remove(var0);
+            NativeImage image = method2132(bytes);
+            if (image == null) {
+               method2127(string);
+               items.remove(string);
                return;
             }
 
-            method2130(var1, var8);
-            Minecraft.getInstance().execute(() -> method2136(var0, var9));
-         } catch (CloudAvatarCache.Entry2 var6) {
-            method2131(var1);
-            method2127(var0);
-            items.remove(var0);
-         } catch (Throwable var7) {
-            NativeImage var5 = var2 == null ? null : method2132(var2);
-            if (var5 != null) {
-               Minecraft.getInstance().execute(() -> method2136(var0, var5));
+            method2130(path, bytes);
+            Minecraft.getInstance().execute(() -> method2136(string, image));
+         } catch (CloudAvatarCache.Entry2 e) {
+            method2131(path);
+            method2127(string);
+            items.remove(string);
+         } catch (Throwable e) {
+            NativeImage image = allBytes == null ? null : method2132(allBytes);
+            if (image != null) {
+               Minecraft.getInstance().execute(() -> method2136(string, image));
                return;
             }
 
@@ -144,239 +144,239 @@ public final class CloudAvatarCache {
                items3.clear();
             }
 
-            items3.put(var0, System.currentTimeMillis() + 30000L);
-            items.remove(var0);
+            items3.put(string, System.currentTimeMillis() + 30000L);
+            items.remove(string);
          }
       }
    }
 
-   private static void method2127(String var0) {
+   private static void method2127(String string) {
       if (items2.size() > 4096) {
          items2.clear();
       }
 
-      items2.add(var0);
+      items2.add(string);
    }
 
-   private static byte[] method2128(Path var0) {
+   private static byte[] method2128(Path path) {
       try {
-         if (Files.isRegularFile(var0)) {
-            byte[] var1 = Files.readAllBytes(var0);
-            return var1.length > 0 ? var1 : null;
+         if (Files.isRegularFile(path)) {
+            byte[] allBytes = Files.readAllBytes(path);
+            return allBytes.length > 0 ? allBytes : null;
          }
-      } catch (Exception var2) {
+      } catch (Exception e) {
       }
 
       return null;
    }
 
-   private static boolean method2129(Path var0) {
+   private static boolean method2129(Path path) {
       try {
-         return System.currentTimeMillis() - Files.getLastModifiedTime(var0).toMillis() < 86400000L;
-      } catch (Exception var2) {
+         return System.currentTimeMillis() - Files.getLastModifiedTime(path).toMillis() < 86400000L;
+      } catch (Exception e) {
          return false;
       }
    }
 
-   private static void method2130(Path var0, byte[] var1) {
+   private static void method2130(Path path, byte[] bytes) {
       try {
-         Files.createDirectories(var0.getParent());
-         Path var2 = var0.resolveSibling(var0.getFileName() + ".tmp");
-         Files.write(var2, var1);
+         Files.createDirectories(path.getParent());
+         Path sibling = path.resolveSibling(path.getFileName() + ".tmp");
+         Files.write(sibling, bytes);
 
          try {
-            Files.move(var2, var0, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-         } catch (AtomicMoveNotSupportedException var4) {
-            Files.move(var2, var0, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+         } catch (AtomicMoveNotSupportedException e) {
+            Files.move(sibling, path, StandardCopyOption.REPLACE_EXISTING);
          }
-      } catch (Exception var5) {
+      } catch (Exception e) {
       }
    }
 
-   private static void method2131(Path var0) {
+   private static void method2131(Path path) {
       try {
-         Files.deleteIfExists(var0);
-      } catch (Exception var2) {
+         Files.deleteIfExists(path);
+      } catch (Exception e) {
       }
    }
 
-   private static NativeImage method2132(byte[] var0) {
+   private static NativeImage method2132(byte[] allBytes) {
       try {
-         int[] var1 = ImageLoader.method231(var0);
-         return var1[0] > 0 && var1[1] > 0 && var1[0] <= 1024 && var1[1] <= 1024 ? method2133(var0) : null;
-      } catch (Exception var2) {
+         int[] ints = ImageLoader.method231(allBytes);
+         return ints[0] > 0 && ints[1] > 0 && ints[0] <= 1024 && ints[1] <= 1024 ? method2133(allBytes) : null;
+      } catch (Exception e) {
          return null;
       }
    }
 
-   private static NativeImage method2133(byte[] var0) throws Exception {
+   private static NativeImage method2133(byte[] allBytes) throws Exception {
       try {
-         NativeImage var2;
-         try (ByteArrayInputStream var1 = new ByteArrayInputStream(var0)) {
-            var2 = NativeImage.read(var1);
+         NativeImage nativeImage;
+         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(allBytes)) {
+            nativeImage = NativeImage.read(byteArrayInputStream);
          }
 
-         return var2;
-      } catch (Exception var6) {
-         return method2134(var0);
+         return nativeImage;
+      } catch (Exception e) {
+         return method2134(allBytes);
       }
    }
 
-   private static NativeImage method2134(byte[] var0) throws Exception {
-      ByteArrayInputStream var2 = new ByteArrayInputStream(var0);
+   private static NativeImage method2134(byte[] allBytes) throws Exception {
+      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(allBytes);
 
-      BufferedImage var1;
+      BufferedImage bufferedImage;
       try {
-         var1 = ImageIO.read(var2);
-      } catch (Throwable var8) {
+         bufferedImage = ImageIO.read(byteArrayInputStream);
+      } catch (Throwable e) {
          try {
-            var2.close();
-         } catch (Throwable var7) {
-            var8.addSuppressed(var7);
+            byteArrayInputStream.close();
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var8;
+         throw e;
       }
 
-      var2.close();
-      if (var1 == null) {
+      byteArrayInputStream.close();
+      if (bufferedImage == null) {
          throw new IllegalStateException("формат аватара не распознан");
       } else {
-         int var9 = var1.getWidth();
-         int var3 = var1.getHeight();
-         NativeImage var4 = new NativeImage(Format.RGBA, var9, var3, false);
+         int width = bufferedImage.getWidth();
+         int height = bufferedImage.getHeight();
+         NativeImage nativeImage = new NativeImage(Format.RGBA, width, height, false);
 
-         for (int var5 = 0; var5 < var3; var5++) {
-            for (int var6 = 0; var6 < var9; var6++) {
-               var4.setPixel(var6, var5, var1.getRGB(var6, var5));
+         for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+               nativeImage.setPixel(j, i, bufferedImage.getRGB(j, i));
             }
          }
 
-         return var4;
+         return nativeImage;
       }
    }
 
    private static void method2135() throws InterruptedException {
-      long var0 = System.currentTimeMillis();
-      long var2;
+      long now = System.currentTimeMillis();
+      long millis;
       synchronized (CloudAvatarCache.class) {
-         var2 = Math.max(0L, longValue2 - var0);
-         longValue2 = Math.max(var0, longValue2) + 120L;
+         millis = Math.max(0L, longValue2 - now);
+         longValue2 = Math.max(now, longValue2) + 120L;
       }
 
-      if (var2 > 0L) {
-         Thread.sleep(var2);
+      if (millis > 0L) {
+         Thread.sleep(millis);
       }
    }
 
-   private static void method2136(String var0, NativeImage var1) {
-      DynamicTexture var2 = null;
-      boolean var3 = false;
+   private static void method2136(String string, NativeImage image) {
+      DynamicTexture dynamicTexture = null;
+      boolean flag = false;
 
       try {
-         Identifier var4 = Identifier.fromNamespaceAndPath("zenith", "cloud_avatar/" + var0.toLowerCase(Locale.ROOT));
-         long var5 = (long)var1.getWidth() * var1.getHeight() * 4L;
-         var2 = new DynamicTexture(() -> "zenith", var1);
-         Minecraft.getInstance().getTextureManager().register(var4, var2);
-         var3 = true;
-         method2137(var0, var4, var5);
-      } catch (Throwable var10) {
+         Identifier location = Identifier.fromNamespaceAndPath("zenith", "cloud_avatar/" + string.toLowerCase(Locale.ROOT));
+         long l = (long)image.getWidth() * image.getHeight() * 4L;
+         dynamicTexture = new DynamicTexture(() -> "zenith", image);
+         Minecraft.getInstance().getTextureManager().register(location, dynamicTexture);
+         flag = true;
+         method2137(string, location, l);
+      } catch (Throwable e) {
       } finally {
-         if (!var3) {
-            if (var2 != null) {
-               var2.close();
+         if (!flag) {
+            if (dynamicTexture != null) {
+               dynamicTexture.close();
             } else {
-               var1.close();
+               image.close();
             }
          }
 
-         items.remove(var0);
+         items.remove(string);
       }
    }
 
-   private static void method2137(String var0, Identifier var1, long var2) {
-      ArrayList<Identifier> var4 = new ArrayList();
-      long var5 = System.currentTimeMillis();
+   private static void method2137(String string, Identifier location, long l) {
+      ArrayList<Identifier> ids = new ArrayList();
+      long now = System.currentTimeMillis();
       synchronized (linkedHashMap) {
-         CloudAvatarCache.Entry var8 = linkedHashMap.put(var0, new CloudAvatarCache.Entry(var1, var2, var5));
-         longValue = longValue + (var2 - (var8 == null ? 0L : var8.bytes()));
-         var var9 = linkedHashMap.entrySet().iterator();
+         CloudAvatarCache.Entry entry = linkedHashMap.put(string, new CloudAvatarCache.Entry(location, l, now));
+         longValue = longValue + (l - (entry == null ? 0L : entry.bytes()));
+         var iterator = linkedHashMap.entrySet().iterator();
 
-         while (longValue > 12582912L && linkedHashMap.size() > 1 && var9.hasNext()) {
-            Map.Entry var10 = (Map.Entry)var9.next();
-            if (!((String)var10.getKey()).equals(var0) && var5 - ((CloudAvatarCache.Entry)var10.getValue()).longValue2 >= 2000L) {
-               longValue = longValue - ((CloudAvatarCache.Entry)var10.getValue()).bytes();
-               var4.add(((CloudAvatarCache.Entry)var10.getValue()).getIdentifier());
-               var9.remove();
+         while (longValue > 12582912L && linkedHashMap.size() > 1 && iterator.hasNext()) {
+            Map.Entry entry2 = (Map.Entry)iterator.next();
+            if (!((String)entry2.getKey()).equals(string) && now - ((CloudAvatarCache.Entry)entry2.getValue()).longValue2 >= 2000L) {
+               longValue = longValue - ((CloudAvatarCache.Entry)entry2.getValue()).bytes();
+               ids.add(((CloudAvatarCache.Entry)entry2.getValue()).getIdentifier());
+               iterator.remove();
             }
          }
       }
 
-      for (Identifier var14 : var4) {
-         Minecraft.getInstance().getTextureManager().release(var14);
+      for (Identifier id : ids) {
+         Minecraft.getInstance().getTextureManager().release(id);
       }
    }
 
-   private static byte[] method2138(String var0) throws Exception {
+   private static byte[] method2138(String string) throws Exception {
       if (System.currentTimeMillis() < longValue3) {
          throw new IllegalStateException("avatar site backoff");
       } else {
          method2135();
-         byte[] var1 = null;
-         Exception var2 = null;
+         byte[] bytes = null;
+         Exception e = null;
 
-         for (String var4 : RegionUtil.method2037()) {
+         for (String str : RegionUtil.method2037()) {
             try {
-               var1 = download(var4 + "/user/avatar/" + var0);
-               var2 = null;
+               bytes = download(str + "/user/avatar/" + string);
+               e = null;
                break;
-            } catch (CloudAvatarCache.Entry2 var6) {
-               throw var6;
-            } catch (Exception var7) {
-               var2 = var7;
+            } catch (CloudAvatarCache.Entry2 ex) {
+               throw ex;
+            } catch (Exception ex) {
+               e = ex;
             }
          }
 
-         if (var2 != null) {
+         if (e != null) {
             longValue3 = System.currentTimeMillis() + 10000L;
-            throw var2;
+            throw e;
          } else {
-            return var1;
+            return bytes;
          }
       }
    }
 
-   private static byte[] download(String var0) throws Exception {
-      HttpURLConnection var1 = (HttpURLConnection)new URL(var0).openConnection();
-      var1.setConnectTimeout(5000);
-      var1.setReadTimeout(5000);
-      var1.setRequestProperty("User-Agent", "ZenithDLC");
-      var1.setRequestProperty("Accept", "image/*");
+   private static byte[] download(String spec) throws Exception {
+      HttpURLConnection openConnection = (HttpURLConnection)new URL(spec).openConnection();
+      openConnection.setConnectTimeout(5000);
+      openConnection.setReadTimeout(5000);
+      openConnection.setRequestProperty("User-Agent", "ZenithDLC");
+      openConnection.setRequestProperty("Accept", "image/*");
 
-      Object var4;
+      Object obj;
       try {
-         int var2 = var1.getResponseCode();
-         if (var2 == 404) {
+         int responseCode = openConnection.getResponseCode();
+         if (responseCode == 404) {
             throw new CloudAvatarCache.Entry2();
          }
 
-         if (var2 != 200) {
-            throw new IllegalStateException("avatar http " + var2);
+         if (responseCode != 200) {
+            throw new IllegalStateException("avatar http " + responseCode);
          }
 
-         String var3 = var1.getContentType();
-         if (var3 == null || var3.toLowerCase(Locale.ROOT).startsWith("image/")) {
-            try (InputStream var14 = var1.getInputStream()) {
-               return var14.readNBytes(2097152);
+         String contentType = openConnection.getContentType();
+         if (contentType == null || contentType.toLowerCase(Locale.ROOT).startsWith("image/")) {
+            try (InputStream inputStream = openConnection.getInputStream()) {
+               return inputStream.readNBytes(2097152);
             }
          }
 
-         var4 = null;
+         obj = null;
       } finally {
-         var1.disconnect();
+         openConnection.disconnect();
       }
 
-      return (byte[])var4;
+      return (byte[])obj;
    }
 
    private static Path cacheDir() {
@@ -388,10 +388,10 @@ public final class CloudAvatarCache {
       private final long longValue;
       private long longValue2;
 
-      private Entry(Identifier var1, long var2, long var4) {
-         this.identifier = var1;
-         this.longValue = var2;
-         this.longValue2 = var4;
+      private Entry(Identifier identifier, long longValue, long now) {
+         this.identifier = identifier;
+         this.longValue = longValue;
+         this.longValue2 = now;
       }
 
       public Identifier getIdentifier() {

@@ -20,8 +20,8 @@ public class MixinOtherClientPlayerEntity extends AbstractClientPlayer implement
    @Unique
    private double backUpZ;
 
-   public MixinOtherClientPlayerEntity(ClientLevel var1, GameProfile var2) {
-      super(var1, var2);
+   public MixinOtherClientPlayerEntity(ClientLevel level, GameProfile gameProfile) {
+      super(level, gameProfile);
    }
 
    @Unique
@@ -30,14 +30,14 @@ public class MixinOtherClientPlayerEntity extends AbstractClientPlayer implement
       this.backUpX = this.getX();
       this.backUpY = this.getY();
       this.backUpZ = this.getZ();
-      Vec3 var1 = new Vec3(
+      Vec3 vec = new Vec3(
          ((Handler6)(Object)this).zenithDLC$getPrevServerX(), ((Handler6)(Object)this).zenithDLC$getPrevServerY(), ((Handler6)(Object)this).zenithDLC$getPrevServerZ()
       );
-      Vec3 var2 = this.position();
-      if (Minecraft.getInstance().player.distanceToSqr(var1) > Minecraft.getInstance().player.distanceToSqr(var2)) {
-         this.setPos(var2.x, var2.y, var2.z);
+      Vec3 position = this.position();
+      if (Minecraft.getInstance().player.distanceToSqr(vec) > Minecraft.getInstance().player.distanceToSqr(position)) {
+         this.setPos(position.x, position.y, position.z);
       } else {
-         this.setPos(var1.x, var1.y, var1.z);
+         this.setPos(vec.x, vec.y, vec.z);
       }
    }
 

@@ -28,6 +28,6 @@ public class Event<T> {
 
    @FunctionalInterface
    public interface Invoker<T> {
-      T invoker(Iterable<T> var1);
+      T invoker(Iterable<T> listeners);
    }
 }

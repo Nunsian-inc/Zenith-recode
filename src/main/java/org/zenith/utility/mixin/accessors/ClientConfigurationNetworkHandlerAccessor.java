@@ -30,8 +30,8 @@ public interface ClientConfigurationNetworkHandlerAccessor {
    KnownPacksManager zenith$getDataPackManager();
 
    @Accessor("knownPacks")
-   void zenith$setDataPackManager(KnownPacksManager var1);
+   void zenith$setDataPackManager(KnownPacksManager knownPacksManager);
 
    @Invoker("runWithResources")
-   <T> T zenith$openClientDataPack(Function<ResourceProvider, T> var1);
+   <T> T zenith$openClientDataPack(Function<ResourceProvider, T> function);
 }

@@ -99,9 +99,9 @@ public final class HandFireModule extends Module {
    }
 
    public static float method6615() {
-      float var0 = floatValue;
+      float f = floatValue;
       floatValue = 1.0F;
-      return var0;
+      return f;
    }
 
    public static boolean method6616() {
@@ -119,10 +119,10 @@ public final class HandFireModule extends Module {
       if (this.method6612() && !HandRenderState.isActive()) {
          method6620();
          if (initialized) {
-            HandFireModule.Data var1 = HandFireModule.Data.method6645();
-            if (var1.intValue3 > 0 && var1.intValue4 > 0) {
+            HandFireModule.Data data = HandFireModule.Data.method6645();
+            if (data.intValue3 > 0 && data.intValue4 > 0) {
                try {
-                  method6628(var1.intValue3, var1.intValue4);
+                  method6628(data.intValue3, data.intValue4);
                   if (method6629()) {
                      method6632(simpleFramebuffer);
                      method6632(simpleFramebuffer2);
@@ -134,11 +134,11 @@ public final class HandFireModule extends Module {
                      floatValue2 = 0.0F;
                      return;
                   }
-               } catch (Exception var6) {
-                  method6638(var6);
+               } catch (Exception e) {
+                  method6638(e);
                   return;
                } finally {
-                  method6633(var1);
+                  method6633(data);
                }
             }
          }
@@ -147,7 +147,7 @@ public final class HandFireModule extends Module {
 
    public void method6618() {
       if (flag3) {
-         HandFireModule.Data var1 = HandFireModule.Data.method6645();
+         HandFireModule.Data data = HandFireModule.Data.method6645();
 
          try {
             if (ShaderHandModule.INSTANCE.method1256()) {
@@ -162,35 +162,35 @@ public final class HandFireModule extends Module {
                   method6621();
                }
 
-               GpuTextureView var2 = this.method6622();
-               this.method6623(var1, var2);
+               GpuTextureView colorTextureView = this.method6622();
+               this.method6623(data, colorTextureView);
                method6639();
             }
-         } catch (Exception var6) {
-            method6638(var6);
+         } catch (Exception e) {
+            method6638(e);
          } finally {
             flag3 = false;
             flag4 = false;
             flag5 = false;
             flag6 = false;
             floatValue = 1.0F;
-            method6633(var1);
+            method6633(data);
          }
       }
    }
 
    public void method6619(
-      AbstractClientPlayer var1,
-      float var2,
-      float var3,
-      InteractionHand var4,
-      float var5,
-      ItemStack var6,
-      float var7,
-      PoseStack var8,
-      SubmitNodeCollector var9,
-      int var10,
-      Consumer<SubmitNodeCollector> var11
+      AbstractClientPlayer abstractClientPlayerEntity,
+      float f,
+      float f2,
+      InteractionHand hand,
+      float f3,
+      ItemStack itemStack,
+      float f4,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int n,
+      Consumer<SubmitNodeCollector> consumer
    ) {
       if (this.method6612() && !HandRenderState.isActive()) {
          if (!flag3) {
@@ -199,10 +199,10 @@ public final class HandFireModule extends Module {
 
          method6620();
          if (initialized && flag3) {
-            HandFireModule.Data var12 = HandFireModule.Data.method6645();
-            if (var12.intValue3 > 0 && var12.intValue4 > 0) {
-               float var13 = this.method6641();
-               floatValue = var13;
+            HandFireModule.Data data = HandFireModule.Data.method6645();
+            if (data.intValue3 > 0 && data.intValue4 > 0) {
+               float floatValue3 = this.method6641();
+               floatValue = floatValue3;
                floatValue2 = Math.max(floatValue2, 1.0F);
 
                try {
@@ -210,15 +210,15 @@ public final class HandFireModule extends Module {
                   RenderState.method1882(true);
                   RenderState.method1878();
                   HandRenderState.begin();
-                  ByteBufferBuilder var14 = method6635();
+                  ByteBufferBuilder byteBufferBuilder = method6635();
 
                   try {
-                     OutlineVertexProvider.method1542(simpleFramebuffer, var11::accept);
+                     OutlineVertexProvider.method1542(simpleFramebuffer, consumer::accept);
 
                      flag4 = true;
                      longValue = System.currentTimeMillis();
                   } finally {
-                     var14.discard();
+                     byteBufferBuilder.discard();
                      HandRenderState.end();
                   }
 
@@ -227,37 +227,37 @@ public final class HandFireModule extends Module {
                         flag6 = true;
                      } else {
                         method6621();
-                        GpuTextureView var37 = this.method6622();
-                        this.method6623(var12, var37);
+                        GpuTextureView colorTextureView = this.method6622();
+                        this.method6623(data, colorTextureView);
                         flag5 = true;
-                        method6633(var12);
+                        method6633(data);
                      }
                   }
 
-                  if (var13 > 0.0F) {
-                     method6631(var12);
-                     var11.accept(var9);
+                  if (floatValue3 > 0.0F) {
+                     method6631(data);
+                     consumer.accept(submitNodeCollector);
                   }
-               } catch (Exception var35) {
-                  method6631(var12);
-                  if (var13 > 0.0F) {
-                     floatValue = var13;
-                     var11.accept(var9);
+               } catch (Exception e) {
+                  method6631(data);
+                  if (floatValue3 > 0.0F) {
+                     floatValue = floatValue3;
+                     consumer.accept(submitNodeCollector);
                   }
 
-                  method6638(var35);
+                  method6638(e);
                } finally {
                   HandRenderState.end();
-                  method6633(var12);
+                  method6633(data);
                }
             } else {
-               var11.accept(var9);
+               consumer.accept(submitNodeCollector);
             }
          } else {
-            var11.accept(var9);
+            consumer.accept(submitNodeCollector);
          }
       } else {
-         var11.accept(var9);
+         consumer.accept(submitNodeCollector);
       }
    }
 
@@ -268,10 +268,10 @@ public final class HandFireModule extends Module {
             shaderProgram2 = new ShaderProgram("hand", "hand_fire_accumulate", "smoke");
             shaderProgram3 = new ShaderProgram("hand", "hand_fire_composite", "smoke");
             initialized = true;
-         } catch (Exception var1) {
+         } catch (Exception e) {
             if (!flag) {
                System.err.println("Failed to initialize HandFire shaders");
-               var1.printStackTrace();
+               e.printStackTrace();
                flag = true;
             }
 
@@ -304,7 +304,7 @@ public final class HandFireModule extends Module {
       RenderState.method1882(false);
       RenderState.method1872();
       RenderState.method1903(true, true, true, true);
-      int[] var1 = this.method6625();
+      int[] ints = this.method6625();
       shaderProgram2.method5517();
       shaderProgram2.method5518("PreviousTex", 0);
       shaderProgram2.method5518("HandTex", 1);
@@ -317,10 +317,10 @@ public final class HandFireModule extends Module {
       shaderProgram2.method5519("Turbulence", 0.25F);
       shaderProgram2.method5519("Alpha", ShaderHandModule.INSTANCE.method1255());
       shaderProgram2.method5519("EmitStrength", floatValue2);
-      method6634(shaderProgram2, "ColorHot", var1[0]);
-      method6634(shaderProgram2, "ColorMid", var1[1]);
-      method6634(shaderProgram2, "ColorEdge", var1[2]);
-      method6634(shaderProgram2, "ColorSmoke", var1[3]);
+      method6634(shaderProgram2, "ColorHot", ints[0]);
+      method6634(shaderProgram2, "ColorMid", ints[1]);
+      method6634(shaderProgram2, "ColorEdge", ints[2]);
+      method6634(shaderProgram2, "ColorSmoke", ints[3]);
       RenderState.method1889(0, BlitUtils.method6450(simpleFramebuffer3));
       RenderState.method1889(1, BlitUtils.method6450(simpleFramebuffer));
       RenderState.method1889(2, BlitUtils.method6450(simpleFramebuffer2));
@@ -328,14 +328,14 @@ public final class HandFireModule extends Module {
       HandShaders.method6282();
       shaderProgram2.unbind();
       method6624();
-      TextureTarget var2 = simpleFramebuffer3;
+      TextureTarget textureTarget = simpleFramebuffer3;
       simpleFramebuffer3 = simpleFramebuffer4;
-      simpleFramebuffer4 = var2;
+      simpleFramebuffer4 = textureTarget;
       return BlitUtils.method6450(simpleFramebuffer3);
    }
 
-   private void method6623(HandFireModule.Data var1, GpuTextureView var2) {
-      method6631(var1);
+   private void method6623(HandFireModule.Data data, GpuTextureView colorTextureView) {
+      method6631(data);
       RenderState.method1879();
       RenderState.method1882(false);
       RenderState.method1871();
@@ -344,15 +344,15 @@ public final class HandFireModule extends Module {
       shaderProgram3.method5518("FireTex", 0);
       shaderProgram3.method5518("HandTex", 1);
       shaderProgram3.method5518("MaskTex", 2);
-      shaderProgram3.method5521("TexelSize", 1.0F / var1.intValue3, 1.0F / var1.intValue4);
+      shaderProgram3.method5521("TexelSize", 1.0F / data.intValue3, 1.0F / data.intValue4);
       shaderProgram3.method5519("Time", method6627());
       shaderProgram3.method5519("Intensity", 1.0F);
       shaderProgram3.method5519("Alpha", ShaderHandModule.INSTANCE.method1255());
-      int[] var3 = this.method6625();
-      method6634(shaderProgram3, "ColorHot", var3[0]);
-      method6634(shaderProgram3, "ColorMid", var3[1]);
-      method6634(shaderProgram3, "ColorEdge", var3[2]);
-      RenderState.method1889(0, var2);
+      int[] ints = this.method6625();
+      method6634(shaderProgram3, "ColorHot", ints[0]);
+      method6634(shaderProgram3, "ColorMid", ints[1]);
+      method6634(shaderProgram3, "ColorEdge", ints[2]);
+      RenderState.method1889(0, colorTextureView);
       RenderState.method1889(1, BlitUtils.method6450(simpleFramebuffer));
       RenderState.method1889(2, BlitUtils.method6450(simpleFramebuffer2));
       HandShaders.method6282();
@@ -368,20 +368,20 @@ public final class HandFireModule extends Module {
 
    private int[] method6625() {
       if (ShaderHandModule.INSTANCE.method1257()) {
-         long var4 = System.currentTimeMillis() / 7L;
-         this.intValues[0] = method6642((var4 + 8L) % 360L, 255);
-         this.intValues[1] = method6642((var4 + 45L) % 360L, 255);
-         this.intValues[2] = method6642((var4 + 120L) % 360L, 255);
-         this.intValues[3] = method6642((var4 + 210L) % 360L, 185);
+         long l = System.currentTimeMillis() / 7L;
+         this.intValues[0] = method6642((l + 8L) % 360L, 255);
+         this.intValues[1] = method6642((l + 45L) % 360L, 255);
+         this.intValues[2] = method6642((l + 120L) % 360L, 255);
+         this.intValues[3] = method6642((l + 210L) % 360L, 185);
          return this.intValues;
       } else if (ShaderHandModule.INSTANCE.method1258()) {
-         int var3 = method6644(Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 255);
-         this.method6626(var3, var3);
+         int shade = method6644(Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 255);
+         this.method6626(shade, shade);
          return this.intValues;
       } else if (ShaderHandModule.INSTANCE.method1259()) {
-         int var1 = method6644(ShaderHandModule.INSTANCE.method1260(), 255);
-         int var2 = method6644(ShaderHandModule.INSTANCE.method1261(), 255);
-         this.method6626(var1, var2);
+         int shade = method6644(ShaderHandModule.INSTANCE.method1260(), 255);
+         int n = method6644(ShaderHandModule.INSTANCE.method1261(), 255);
+         this.method6626(shade, n);
          return this.intValues;
       } else {
          this.intValues[0] = -1;
@@ -392,38 +392,38 @@ public final class HandFireModule extends Module {
       }
    }
 
-   private void method6626(int var1, int var2) {
-      this.intValues[0] = method6643(var1, CONST_intValue2, 0.25F);
-      this.intValues[1] = var1;
-      this.intValues[2] = method6643(var2, CONST_intValue4, 0.2F);
-      this.intValues[3] = method6644(method6643(var2, CONST_intValue3, 0.58F), 185);
+   private void method6626(int shade, int n) {
+      this.intValues[0] = method6643(shade, CONST_intValue2, 0.25F);
+      this.intValues[1] = shade;
+      this.intValues[2] = method6643(n, CONST_intValue4, 0.2F);
+      this.intValues[3] = method6644(method6643(n, CONST_intValue3, 0.58F), 185);
    }
 
    private static float method6627() {
       return (float)(System.currentTimeMillis() % 100000L) / 1000.0F;
    }
 
-   private static void method6628(int var0, int var1) {
+   private static void method6628(int width, int height) {
       if (simpleFramebuffer == null
          || simpleFramebuffer2 == null
          || simpleFramebuffer3 == null
          || simpleFramebuffer4 == null
-         || simpleFramebuffer.width != var0
-         || simpleFramebuffer.height != var1
-         || simpleFramebuffer2.width != var0
-         || simpleFramebuffer2.height != var1
-         || simpleFramebuffer3.width != var0
-         || simpleFramebuffer3.height != var1
-         || simpleFramebuffer4.width != var0
-         || simpleFramebuffer4.height != var1) {
+         || simpleFramebuffer.width != width
+         || simpleFramebuffer.height != height
+         || simpleFramebuffer2.width != width
+         || simpleFramebuffer2.height != height
+         || simpleFramebuffer3.width != width
+         || simpleFramebuffer3.height != height
+         || simpleFramebuffer4.width != width
+         || simpleFramebuffer4.height != height) {
          method6637(simpleFramebuffer);
          method6637(simpleFramebuffer2);
          method6637(simpleFramebuffer3);
          method6637(simpleFramebuffer4);
-         simpleFramebuffer = BlitUtils.method6448("zenith handfire", var0, var1, true);
-         simpleFramebuffer2 = BlitUtils.method6448("zenith handfire", var0, var1, false);
-         simpleFramebuffer3 = BlitUtils.method6448("zenith handfire", var0, var1, false);
-         simpleFramebuffer4 = BlitUtils.method6448("zenith handfire", var0, var1, false);
+         simpleFramebuffer = BlitUtils.method6448("zenith handfire", width, height, true);
+         simpleFramebuffer2 = BlitUtils.method6448("zenith handfire", width, height, false);
+         simpleFramebuffer3 = BlitUtils.method6448("zenith handfire", width, height, false);
+         simpleFramebuffer4 = BlitUtils.method6448("zenith handfire", width, height, false);
          method6630(simpleFramebuffer);
          method6630(simpleFramebuffer2);
          method6630(simpleFramebuffer3);
@@ -436,22 +436,22 @@ public final class HandFireModule extends Module {
       return simpleFramebuffer != null && simpleFramebuffer2 != null && simpleFramebuffer3 != null && simpleFramebuffer4 != null;
    }
 
-   private static void method6630(TextureTarget var0) {
-      if (var0 != null) {
+   private static void method6630(TextureTarget simpleFramebuffer) {
+      if (simpleFramebuffer != null) {
       }
    }
 
-   private static void method6631(HandFireModule.Data var0) {
+   private static void method6631(HandFireModule.Data data) {
       ImmediateRenderer.method8013(null);
    }
 
-   private static void method6632(TextureTarget var0) {
-      if (var0 != null) {
-         BlitUtils.method6456(var0, 0);
+   private static void method6632(TextureTarget simpleFramebuffer3) {
+      if (simpleFramebuffer3 != null) {
+         BlitUtils.method6456(simpleFramebuffer3, 0);
       }
    }
 
-   private static void method6633(HandFireModule.Data var0) {
+   private static void method6633(HandFireModule.Data data) {
       RenderState.method1903(true, true, true, true);
       RenderState.method1882(true);
       RenderState.method1878();
@@ -462,8 +462,8 @@ public final class HandFireModule extends Module {
       FramebufferUtils.method5653();
    }
 
-   private static void method6634(ShaderProgram var0, String var1, int var2) {
-      var0.method5523(var1, ColorUtils.method6424(var2), ColorUtils.method6425(var2), ColorUtils.method6426(var2), ColorUtils.method6427(var2));
+   private static void method6634(ShaderProgram shaderProgram2, String key, int intValue) {
+      shaderProgram2.method5523(key, ColorUtils.method6424(intValue), ColorUtils.method6425(intValue), ColorUtils.method6426(intValue), ColorUtils.method6427(intValue));
    }
 
    private static ByteBufferBuilder method6635() {
@@ -481,16 +481,16 @@ public final class HandFireModule extends Module {
       }
    }
 
-   private static void method6637(TextureTarget var0) {
-      if (var0 != null) {
-         var0.destroyBuffers();
+   private static void method6637(TextureTarget simpleFramebuffer) {
+      if (simpleFramebuffer != null) {
+         simpleFramebuffer.destroyBuffers();
       }
    }
 
-   private static void method6638(Exception var0) {
+   private static void method6638(Exception e) {
       if (!flag2) {
          System.err.println("HandFire render failed");
-         var0.printStackTrace();
+         e.printStackTrace();
          flag2 = true;
       }
    }
@@ -518,17 +518,17 @@ public final class HandFireModule extends Module {
       return Math.max(0.0F, Math.min(255.0F, 255.0F)) / 255.0F;
    }
 
-   private static int method6642(long var0, int var2) {
-      float var3 = (float)((var0 % 360L + 360L) % 360L) / 360.0F;
-      return ZenithColor.method7297(var3, 1.0F, 1.0F).method7293(var2).method7287();
+   private static int method6642(long l, int alphaValue) {
+      float hue = (float)((l % 360L + 360L) % 360L) / 360.0F;
+      return ZenithColor.method7297(hue, 1.0F, 1.0F).method7293(alphaValue).method7287();
    }
 
-   private static int method6643(int var0, int var1, float var2) {
-      return ZenithColor.method7291(var0).method7295(ZenithColor.method7291(var1), var2).method7287();
+   private static int method6643(int shade, int n, float hover) {
+      return ZenithColor.method7291(shade).method7295(ZenithColor.method7291(n), hover).method7287();
    }
 
-   private static int method6644(int var0, int var1) {
-      return ZenithColor.method7291(var0).method7293(var1).method7287();
+   private static int method6644(int shade, int alphaValue) {
+      return ZenithColor.method7291(shade).method7293(alphaValue).method7287();
    }
 
    private static final class Data {
@@ -570,16 +570,16 @@ public final class HandFireModule extends Module {
          return "Data[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "intValue4=" + this.intValue4 + "]";
       }
 
-      private Data(int var1, int var2, int var3, int var4) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.intValue3 = var3;
-         this.intValue4 = var4;
+      private Data(int intValue, int n, int width, int height) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = width;
+         this.intValue4 = height;
       }
 
       public static HandFireModule.Data method6645() {
-         RenderTarget var0 = BlitUtils.method6452();
-         return new HandFireModule.Data(0, 0, var0.width, var0.height);
+         RenderTarget renderTarget = BlitUtils.method6452();
+         return new HandFireModule.Data(0, 0, renderTarget.width, renderTarget.height);
       }
 
       public void restore() {

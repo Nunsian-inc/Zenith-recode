@@ -103,8 +103,8 @@ public final class SnowShader {
             } else {
                return kawaseShaderKey.method5560("Origin") ? "ок" : "юниформ Origin не найден";
             }
-         } catch (RuntimeException var1) {
-            return "программа не загрузилась: " + var1;
+         } catch (RuntimeException e) {
+            return "программа не загрузилась: " + e;
          }
       }
    }
@@ -122,7 +122,7 @@ public final class SnowShader {
       if (kawaseShaderKey != null && kawaseShaderKey.text3 == null) {
          try {
             return LightUtil.method6712(kawaseShaderKey.getIdentifier()) && kawaseShaderKey.method5560("Origin");
-         } catch (RuntimeException var1) {
+         } catch (RuntimeException e) {
             return false;
          }
       } else {
@@ -130,28 +130,28 @@ public final class SnowShader {
       }
    }
 
-   public static void method392(Vec3 var0, WeatherFlakeChannel var1, float var2) {
-      doubleValue10 = var0.x;
-      doubleValue11 = var0.y;
-      doubleValue12 = var0.z;
+   public static void method392(Vec3 position, WeatherFlakeChannel weatherFlakeChannel, float f) {
+      doubleValue10 = position.x;
+      doubleValue11 = position.y;
+      doubleValue12 = position.z;
       intValue = 0;
       flag2 = false;
       flag6 = false;
-      float var3 = (float)Math.sqrt(
-         var1.floatValues4[0] * var1.floatValues4[0] + var1.floatValues4[1] * var1.floatValues4[1] + var1.floatValues4[2] * var1.floatValues4[2]
+      float f2 = (float)Math.sqrt(
+         weatherFlakeChannel.floatValues4[0] * weatherFlakeChannel.floatValues4[0] + weatherFlakeChannel.floatValues4[1] * weatherFlakeChannel.floatValues4[1] + weatherFlakeChannel.floatValues4[2] * weatherFlakeChannel.floatValues4[2]
       );
-      if (var3 < 1.0E-5F) {
-         var3 = 1.0F;
+      if (f2 < 1.0E-5F) {
+         f2 = 1.0F;
       }
 
-      floatValues2[0] = var1.floatValues4[0] / var3;
-      floatValues2[1] = var1.floatValues4[1] / var3;
-      floatValues2[2] = var1.floatValues4[2] / var3;
-      System.arraycopy(var1.floatValues5, 0, floatValues3, 0, 3);
-      floatValues4[0] = (var1.floatValues[0] + var1.floatValues2[0]) * 0.5F + 0.16F;
-      floatValues4[1] = (var1.floatValues[1] + var1.floatValues2[1]) * 0.5F + 0.16F;
-      floatValues4[2] = (var1.floatValues[2] + var1.floatValues2[2]) * 0.5F + 0.17F;
-      floatValue8 = var2;
+      floatValues2[0] = weatherFlakeChannel.floatValues4[0] / f2;
+      floatValues2[1] = weatherFlakeChannel.floatValues4[1] / f2;
+      floatValues2[2] = weatherFlakeChannel.floatValues4[2] / f2;
+      System.arraycopy(weatherFlakeChannel.floatValues5, 0, floatValues3, 0, 3);
+      floatValues4[0] = (weatherFlakeChannel.floatValues[0] + weatherFlakeChannel.floatValues2[0]) * 0.5F + 0.16F;
+      floatValues4[1] = (weatherFlakeChannel.floatValues[1] + weatherFlakeChannel.floatValues2[1]) * 0.5F + 0.16F;
+      floatValues4[2] = (weatherFlakeChannel.floatValues[2] + weatherFlakeChannel.floatValues2[2]) * 0.5F + 0.17F;
+      floatValue8 = f;
    }
 
    public static void method393() {
@@ -162,13 +162,13 @@ public final class SnowShader {
    }
 
    private static void method394() {
-      double var0 = Math.floor(doubleValue10);
-      double var2 = Math.floor(doubleValue11);
-      double var4 = Math.floor(doubleValue12);
-      if (!flag4 || Math.abs(var0 - doubleValue7) > 24.0 || Math.abs(var2 - doubleValue8) > 24.0 || Math.abs(var4 - doubleValue9) > 24.0) {
-         doubleValue7 = var0;
-         doubleValue8 = var2;
-         doubleValue9 = var4;
+      double d = Math.floor(doubleValue10);
+      double d2 = Math.floor(doubleValue11);
+      double d3 = Math.floor(doubleValue12);
+      if (!flag4 || Math.abs(d - doubleValue7) > 24.0 || Math.abs(d2 - doubleValue8) > 24.0 || Math.abs(d3 - doubleValue9) > 24.0) {
+         doubleValue7 = d;
+         doubleValue8 = d2;
+         doubleValue9 = d3;
          flag4 = true;
       }
 
@@ -178,22 +178,22 @@ public final class SnowShader {
    }
 
    public static void method395(
-      double var0,
-      double var2,
-      double var4,
-      double var6,
-      double var8,
-      double var10,
-      double var12,
-      double var14,
-      double var16,
-      double var18,
-      double var20,
-      double var22,
-      int var24,
-      int var25,
-      int var26,
-      int var27
+      double d,
+      double d2,
+      double d3,
+      double d4,
+      double d5,
+      double d6,
+      double d7,
+      double d8,
+      double d9,
+      double d10,
+      double d11,
+      double d12,
+      int n,
+      int n2,
+      int n3,
+      int n4
    ) {
       if (!flag2) {
          method394();
@@ -201,49 +201,49 @@ public final class SnowShader {
       }
 
       ensure(intValue + 1);
-      int var28 = intValue * 12;
-      floatValues[var28] = (float)(var0 - doubleValue4);
-      floatValues[var28 + 1] = (float)(var2 - doubleValue5);
-      floatValues[var28 + 2] = (float)(var4 - doubleValue6);
-      floatValues[var28 + 3] = (float)(var6 - doubleValue4);
-      floatValues[var28 + 4] = (float)(var8 - doubleValue5);
-      floatValues[var28 + 5] = (float)(var10 - doubleValue6);
-      floatValues[var28 + 6] = (float)(var12 - doubleValue4);
-      floatValues[var28 + 7] = (float)(var14 - doubleValue5);
-      floatValues[var28 + 8] = (float)(var16 - doubleValue6);
-      floatValues[var28 + 9] = (float)(var18 - doubleValue4);
-      floatValues[var28 + 10] = (float)(var20 - doubleValue5);
-      floatValues[var28 + 11] = (float)(var22 - doubleValue6);
-      int var29 = intValue * 4;
-      intValues[var29] = var24;
-      intValues[var29 + 1] = var25;
-      intValues[var29 + 2] = var26;
-      intValues[var29 + 3] = var27;
-      intValues2[intValue] = method396(floatValues[var28], floatValues[var28 + 2]);
+      int n5 = intValue * 12;
+      floatValues[n5] = (float)(d - doubleValue4);
+      floatValues[n5 + 1] = (float)(d2 - doubleValue5);
+      floatValues[n5 + 2] = (float)(d3 - doubleValue6);
+      floatValues[n5 + 3] = (float)(d4 - doubleValue4);
+      floatValues[n5 + 4] = (float)(d5 - doubleValue5);
+      floatValues[n5 + 5] = (float)(d6 - doubleValue6);
+      floatValues[n5 + 6] = (float)(d7 - doubleValue4);
+      floatValues[n5 + 7] = (float)(d8 - doubleValue5);
+      floatValues[n5 + 8] = (float)(d9 - doubleValue6);
+      floatValues[n5 + 9] = (float)(d10 - doubleValue4);
+      floatValues[n5 + 10] = (float)(d11 - doubleValue5);
+      floatValues[n5 + 11] = (float)(d12 - doubleValue6);
+      int n6 = intValue * 4;
+      intValues[n6] = n;
+      intValues[n6 + 1] = n2;
+      intValues[n6 + 2] = n3;
+      intValues[n6 + 3] = n4;
+      intValues2[intValue] = method396(floatValues[n5], floatValues[n5 + 2]);
       intValue++;
    }
 
-   private static int method396(float var0, float var1) {
-      int var2 = Math.clamp((long)((int)Math.floor((var0 + 80.0F) / 16.0F)), 0, 9);
-      int var3 = Math.clamp((long)((int)Math.floor((var1 + 80.0F) / 16.0F)), 0, 9);
-      return var3 * 10 + var2;
+   private static int method396(float floatValue, float f) {
+      int n = Math.clamp((long)((int)Math.floor((floatValue + 80.0F) / 16.0F)), 0, 9);
+      int n2 = Math.clamp((long)((int)Math.floor((f + 80.0F) / 16.0F)), 0, 9);
+      return n2 * 10 + n;
    }
 
    public static boolean isEmpty() {
       return intValue == 0;
    }
 
-   public static void method397(PoseStack var0) {
+   public static void method397(PoseStack matrixStack) {
       if (flag2) {
-         long var1 = WorldProfiler.method782();
+         long l = WorldProfiler.method782();
          method398();
-         WorldProfiler.method783(15, var1);
+         WorldProfiler.method783(15, l);
          WorldProfiler.method784(2);
       }
 
       if (intValue2 != 0 && method390()) {
-         KawaseShaderKey var12 = kawaseShaderKey.method5165();
-         if (var12 == null) {
+         KawaseShaderKey kawaseShaderKey2 = kawaseShaderKey.method5165();
+         if (kawaseShaderKey2 == null) {
             intValue = 0;
          } else {
             floatValue = (float)method402(doubleValue10);
@@ -265,46 +265,46 @@ public final class SnowShader {
             RenderState.method1877();
             RenderState.method1878();
             RenderState.method1882(true);
-            float var2 = (float)(doubleValue - doubleValue10);
-            float var3 = (float)(doubleValue2 - doubleValue11);
-            float var4 = (float)(doubleValue3 - doubleValue12);
-            Matrix4f var5 = matrix4f.set(var0.last().pose()).translate(var2, var3, var4);
-            method406("InverseView", matrix4f2.translation(var2, var3, var4));
-            Frustum var6 = FrustumHolder.getFrustum();
-            var var7 = items;
-            var7.clear();
+            float x = (float)(doubleValue - doubleValue10);
+            float y = (float)(doubleValue2 - doubleValue11);
+            float z = (float)(doubleValue3 - doubleValue12);
+            Matrix4f modelView = matrix4f.set(matrixStack.last().pose()).translate(x, y, z);
+            method406("InverseView", matrix4f2.translation(x, y, z));
+            Frustum frustum = FrustumHolder.getFrustum();
+            var meshBuffers = items;
+            meshBuffers.clear();
 
-            for (SnowShader.Entry var11 : entrys) {
-               if (var11 != null
-                  && var11.intValue != 0
-                  && var11.meshBuffer != null
-                  && !var11.meshBuffer.isEmpty()
+            for (SnowShader.Entry entry : entrys) {
+               if (entry != null
+                  && entry.intValue != 0
+                  && entry.meshBuffer != null
+                  && !entry.meshBuffer.isEmpty()
                   && (
-                     var6 == null
-                        || var6.isVisible(
+                     frustum == null
+                        || frustum.isVisible(
                            new AABB(
-                              doubleValue + var11.floatValue,
-                              doubleValue2 + var11.floatValue2,
-                              doubleValue3 + var11.floatValue3,
-                              doubleValue + var11.floatValue4,
-                              doubleValue2 + var11.floatValue5,
-                              doubleValue3 + var11.floatValue6
+                              doubleValue + entry.floatValue,
+                              doubleValue2 + entry.floatValue2,
+                              doubleValue3 + entry.floatValue3,
+                              doubleValue + entry.floatValue4,
+                              doubleValue2 + entry.floatValue5,
+                              doubleValue3 + entry.floatValue6
                            )
                         )
                   )) {
-                  var7.add(var11.meshBuffer);
+                  meshBuffers.add(entry.meshBuffer);
                }
             }
 
-            if (!var7.isEmpty()) {
-               RenderPipeline var13 = kawaseShaderKey.method5561(
+            if (!meshBuffers.isEmpty()) {
+               RenderPipeline pipeline = kawaseShaderKey.method5561(
                   com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR, PrimitiveTopology.QUADS, RenderState.method1904()
                );
-               if (var13 != null) {
-                  MeshBuffer.method6589(var7, var13, var5, null, kawaseShaderKey.method5562());
+               if (pipeline != null) {
+                  MeshBuffer.method6589(meshBuffers, pipeline, modelView, null, kawaseShaderKey.method5562());
                }
 
-               var7.clear();
+               meshBuffers.clear();
             }
 
             ImmediateRenderer.method8012(null);
@@ -323,40 +323,40 @@ public final class SnowShader {
       if (intValue == 0) {
          method400();
       } else {
-         for (SnowShader.Entry var3 : entrys) {
-            if (var3 != null) {
-               var3.intValue = 0;
+         for (SnowShader.Entry entry : entrys) {
+            if (entry != null) {
+               entry.intValue = 0;
             }
          }
 
-         int[] var4 = CONST_intValues3;
-         Arrays.fill(var4, 0);
+         int[] ints = CONST_intValues3;
+         Arrays.fill(ints, 0);
 
-         for (int var5 = 0; var5 < intValue; var5++) {
-            var4[intValues2[var5]]++;
+         for (int i = 0; i < intValue; i++) {
+            ints[intValues2[i]]++;
          }
 
          if (intValues3.length < intValue) {
             intValues3 = new int[Math.max(intValue, intValues3.length * 2)];
          }
 
-         int var6 = 0;
+         int n = 0;
 
-         for (int var7 = 0; var7 < var4.length; var7++) {
-            CONST_intValues[var7] = var6;
-            var6 += var4[var7];
+         for (int i = 0; i < ints.length; i++) {
+            CONST_intValues[i] = n;
+            n += ints[i];
          }
 
-         System.arraycopy(CONST_intValues, 0, CONST_intValues2, 0, var4.length);
-         int var8 = 0;
+         System.arraycopy(CONST_intValues, 0, CONST_intValues2, 0, ints.length);
+         int n2 = 0;
 
-         while (var8 < intValue) {
-            intValues3[CONST_intValues2[intValues2[var8]]++] = var8++;
+         while (n2 < intValue) {
+            intValues3[CONST_intValues2[intValues2[n2]]++] = n2++;
          }
 
-         for (int var9 = 0; var9 < var4.length; var9++) {
-            if (var4[var9] > 0) {
-               method399(var9, CONST_intValues[var9], var4[var9]);
+         for (int i = 0; i < ints.length; i++) {
+            if (ints[i] > 0) {
+               method399(i, CONST_intValues[i], ints[i]);
             }
          }
 
@@ -367,48 +367,48 @@ public final class SnowShader {
       }
    }
 
-   private static void method399(int var0, int var1, int var2) {
-      SnowShader.Entry var3 = entrys[var0];
-      if (var3 == null) {
-         var3 = new SnowShader.Entry();
-         entrys[var0] = var3;
+   private static void method399(int n, int n2, int intValue) {
+      SnowShader.Entry entry = entrys[n];
+      if (entry == null) {
+         entry = new SnowShader.Entry();
+         entrys[n] = entry;
       }
 
-      if (var3.meshBuffer == null) {
-         var3.meshBuffer = new MeshBuffer("zenith snow tile " + var0);
+      if (entry.meshBuffer == null) {
+         entry.meshBuffer = new MeshBuffer("zenith snow tile " + n);
       }
 
-      if (var3.method408(intValues3, var1, var2) && !var3.meshBuffer.isEmpty()) {
-         var3.intValue = var2;
+      if (entry.method408(intValues3, n2, intValue) && !entry.meshBuffer.isEmpty()) {
+         entry.intValue = intValue;
       } else {
-         var3.intValue2 = 0;
-         var3.reset();
+         entry.intValue2 = 0;
+         entry.reset();
          if (allocator == null) {
             allocator = new ByteBufferBuilder(262144);
          }
 
          allocator.discard();
-         BufferBuilder var4 = new BufferBuilder(allocator, PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+         BufferBuilder bufferBuilder = new BufferBuilder(allocator, PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
 
-         for (int var5 = var1; var5 < var1 + var2; var5++) {
-            int var6 = intValues3[var5];
-            int var7 = var6 * 12;
-            int var8 = var6 * 4;
+         for (int i = n2; i < n2 + intValue; i++) {
+            int n3 = intValues3[i];
+            int n4 = n3 * 12;
+            int n5 = n3 * 4;
 
-            for (int var9 = 0; var9 < 4; var9++) {
-               float var10 = floatValues[var7 + var9 * 3];
-               float var11 = floatValues[var7 + var9 * 3 + 1];
-               float var12 = floatValues[var7 + var9 * 3 + 2];
-               var3.method410(var10, var11, var12);
-               var4.addVertex(var10, var11, var12).setColor(intValues[var8 + var9]);
+            for (int j = 0; j < 4; j++) {
+               float floatValue = floatValues[n4 + j * 3];
+               float y = floatValues[n4 + j * 3 + 1];
+               float z = floatValues[n4 + j * 3 + 2];
+               entry.method410(floatValue, y, z);
+               bufferBuilder.addVertex(floatValue, y, z).setColor(intValues[n5 + j]);
             }
          }
 
-         MeshData var13 = var4.build();
-         if (var13 != null) {
-            var3.meshBuffer.method6583(var13);
-            var3.intValue = var2;
-            var3.method409(intValues3, var1, var2);
+         MeshData buffer = bufferBuilder.build();
+         if (buffer != null) {
+            entry.meshBuffer.method6583(buffer);
+            entry.intValue = intValue;
+            entry.method409(intValues3, n2, intValue);
          }
       }
    }
@@ -416,9 +416,9 @@ public final class SnowShader {
    private static void method400() {
       intValue2 = 0;
 
-      for (SnowShader.Entry var3 : entrys) {
-         if (var3 != null) {
-            var3.intValue = 0;
+      for (SnowShader.Entry entry : entrys) {
+         if (entry != null) {
+            entry.intValue = 0;
          }
       }
    }
@@ -434,54 +434,54 @@ public final class SnowShader {
       return flag3;
    }
 
-   private static double method402(double var0) {
-      return var0 - Math.floor(var0 / 256.0) * 256.0;
+   private static double method402(double d) {
+      return d - Math.floor(d / 256.0) * 256.0;
    }
 
-   public static void method403(float var0) {
-      floatValue9 = Math.clamp(var0, 0.0F, 2.5F);
+   public static void method403(float f) {
+      floatValue9 = Math.clamp(f, 0.0F, 2.5F);
    }
 
-   public static void method404(float var0, float var1, float var2, float var3) {
-      floatValue4 = Math.max(1.0F, (float)Math.round(var0));
-      floatValue5 = var1;
-      floatValue6 = var2;
-      floatValue7 = var3;
+   public static void method404(float f, float f2, float f3, float f4) {
+      floatValue4 = Math.max(1.0F, (float)Math.round(f));
+      floatValue5 = f2;
+      floatValue6 = f3;
+      floatValue7 = f4;
    }
 
-   private static void method405(String var0, float var1) {
-      ShaderUniform var2 = kawaseShaderKey.method5166(var0);
-      if (var2 != null) {
-         var2.method7412(var1);
+   private static void method405(String key, float batchRange) {
+      ShaderUniform shaderUniform = kawaseShaderKey.method5166(key);
+      if (shaderUniform != null) {
+         shaderUniform.method7412(batchRange);
       }
    }
 
-   private static void method406(String var0, Matrix4f var1) {
-      ShaderUniform var2 = kawaseShaderKey.method5166(var0);
-      if (var2 != null) {
-         var1.get(CONST_floatValues);
-         var2.method7417(CONST_floatValues);
+   private static void method406(String key, Matrix4f translation) {
+      ShaderUniform shaderUniform = kawaseShaderKey.method5166(key);
+      if (shaderUniform != null) {
+         translation.get(CONST_floatValues);
+         shaderUniform.method7417(CONST_floatValues);
       }
    }
 
-   private static void method407(String var0, float var1, float var2, float var3) {
-      ShaderUniform var4 = kawaseShaderKey.method5166(var0);
-      if (var4 != null) {
-         var4.method7414(var1, var2, var3);
+   private static void method407(String key, float floatValue, float f, float f2) {
+      ShaderUniform shaderUniform = kawaseShaderKey.method5166(key);
+      if (shaderUniform != null) {
+         shaderUniform.method7414(floatValue, f, f2);
       }
    }
 
-   private static void ensure(int var0) {
-      if (var0 * 12 > floatValues.length) {
-         float[] var1 = new float[Math.max(floatValues.length * 2, var0 * 12)];
-         int[] var2 = new int[Math.max(intValues.length * 2, var0 * 4)];
-         int[] var3 = new int[Math.max(intValues2.length * 2, var0)];
-         System.arraycopy(floatValues, 0, var1, 0, intValue * 12);
-         System.arraycopy(intValues, 0, var2, 0, intValue * 4);
-         System.arraycopy(intValues2, 0, var3, 0, intValue);
-         floatValues = var1;
-         intValues = var2;
-         intValues2 = var3;
+   private static void ensure(int n) {
+      if (n * 12 > floatValues.length) {
+         float[] floats = new float[Math.max(floatValues.length * 2, n * 12)];
+         int[] ints = new int[Math.max(intValues.length * 2, n * 4)];
+         int[] intValues22 = new int[Math.max(intValues2.length * 2, n)];
+         System.arraycopy(floatValues, 0, floats, 0, intValue * 12);
+         System.arraycopy(intValues, 0, ints, 0, intValue * 4);
+         System.arraycopy(intValues2, 0, intValues22, 0, intValue);
+         floatValues = floats;
+         intValues = ints;
+         intValues2 = intValues22;
       }
    }
 
@@ -498,28 +498,28 @@ public final class SnowShader {
       private int[] intValues = new int[0];
       private int[] intValues2 = new int[0];
 
-      private boolean method408(int[] var1, int var2, int var3) {
-         if (this.intValue2 != var3) {
+      private boolean method408(int[] intValues3, int n, int intValue) {
+         if (this.intValue2 != intValue) {
             return false;
          } else {
-            int[] var4 = this.intValues;
-            int[] var5 = this.intValues2;
+            int[] intValues = this.intValues;
+            int[] intValues2 = this.intValues2;
 
-            for (int var6 = 0; var6 < var3; var6++) {
-               int var7 = var1[var2 + var6];
-               int var8 = var7 * 12;
-               int var9 = var7 * 4;
-               int var10 = var6 * 12;
-               int var11 = var6 * 4;
+            for (int i = 0; i < intValue; i++) {
+               int n2 = intValues3[n + i];
+               int n3 = n2 * 12;
+               int n4 = n2 * 4;
+               int n5 = i * 12;
+               int n6 = i * 4;
 
-               for (int var12 = 0; var12 < 12; var12++) {
-                  if (Float.floatToRawIntBits(SnowShader.floatValues[var8 + var12]) != var4[var10 + var12]) {
+               for (int j = 0; j < 12; j++) {
+                  if (Float.floatToRawIntBits(SnowShader.floatValues[n3 + j]) != intValues[n5 + j]) {
                      return false;
                   }
                }
 
-               for (int var13 = 0; var13 < 4; var13++) {
-                  if (SnowShader.intValues[var9 + var13] != var5[var11 + var13]) {
+               for (int j = 0; j < 4; j++) {
+                  if (SnowShader.intValues[n4 + j] != intValues2[n6 + j]) {
                      return false;
                   }
                }
@@ -529,25 +529,25 @@ public final class SnowShader {
          }
       }
 
-      private void method409(int[] var1, int var2, int var3) {
-         if (this.intValues.length < var3 * 12) {
-            this.intValues = new int[Math.max(var3 * 12, this.intValues.length * 2)];
-            this.intValues2 = new int[Math.max(var3 * 4, this.intValues2.length * 2)];
+      private void method409(int[] intValues3, int n, int intValue) {
+         if (this.intValues.length < intValue * 12) {
+            this.intValues = new int[Math.max(intValue * 12, this.intValues.length * 2)];
+            this.intValues2 = new int[Math.max(intValue * 4, this.intValues2.length * 2)];
          }
 
-         for (int var4 = 0; var4 < var3; var4++) {
-            int var5 = var1[var2 + var4];
-            int var6 = var5 * 12;
-            int var7 = var5 * 4;
+         for (int i = 0; i < intValue; i++) {
+            int n2 = intValues3[n + i];
+            int n3 = n2 * 12;
+            int n4 = n2 * 4;
 
-            for (int var8 = 0; var8 < 12; var8++) {
-               this.intValues[var4 * 12 + var8] = Float.floatToRawIntBits(SnowShader.floatValues[var6 + var8]);
+            for (int j = 0; j < 12; j++) {
+               this.intValues[i * 12 + j] = Float.floatToRawIntBits(SnowShader.floatValues[n3 + j]);
             }
 
-            System.arraycopy(SnowShader.intValues, var7, this.intValues2, var4 * 4, 4);
+            System.arraycopy(SnowShader.intValues, n4, this.intValues2, i * 4, 4);
          }
 
-         this.intValue2 = var3;
+         this.intValue2 = intValue;
       }
 
       private void reset() {
@@ -559,29 +559,29 @@ public final class SnowShader {
          this.floatValue6 = -Float.MAX_VALUE;
       }
 
-      private void method410(float var1, float var2, float var3) {
-         if (var1 < this.floatValue) {
-            this.floatValue = var1;
+      private void method410(float floatValue, float y, float z) {
+         if (floatValue < this.floatValue) {
+            this.floatValue = floatValue;
          }
 
-         if (var2 < this.floatValue2) {
-            this.floatValue2 = var2;
+         if (y < this.floatValue2) {
+            this.floatValue2 = y;
          }
 
-         if (var3 < this.floatValue3) {
-            this.floatValue3 = var3;
+         if (z < this.floatValue3) {
+            this.floatValue3 = z;
          }
 
-         if (var1 > this.floatValue4) {
-            this.floatValue4 = var1;
+         if (floatValue > this.floatValue4) {
+            this.floatValue4 = floatValue;
          }
 
-         if (var2 > this.floatValue5) {
-            this.floatValue5 = var2;
+         if (y > this.floatValue5) {
+            this.floatValue5 = y;
          }
 
-         if (var3 > this.floatValue6) {
-            this.floatValue6 = var3;
+         if (z > this.floatValue6) {
+            this.floatValue6 = z;
          }
       }
    }

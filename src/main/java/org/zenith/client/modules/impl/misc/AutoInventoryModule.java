@@ -181,7 +181,7 @@ public class AutoInventoryModule extends Module {
    }
 
    @EventTarget
-   public void method161(TickEvent var1) {
+   public void method161(TickEvent event) {
       if (this.type == AutoInventoryModule.Type.FINISHED) {
          this.method162();
          this.setToggled(false);
@@ -220,43 +220,43 @@ public class AutoInventoryModule extends Module {
 
    private void method162() {
       if (this.intValue4 > 0) {
-         String var1 = "АвтоСбор: закуплено " + this.intValue5 + " из " + this.intValue4;
+         String status = "АвтоСбор: закуплено " + this.intValue5 + " из " + this.intValue4;
          if (this.intValue6 > 0) {
-            var1 = var1 + ", пропущено " + this.intValue6;
+            status = status + ", пропущено " + this.intValue6;
          }
 
          if (this.longValue > 0L) {
-            var1 = var1 + ", потрачено " + this.longValue;
+            status = status + ", потрачено " + this.longValue;
          }
 
-         ChatLogger.method2019(var1);
+         ChatLogger.method2019(status);
          this.intValue4 = 0;
       }
    }
 
    private void method163() {
       this.items.clear();
-      HashMap var1 = new HashMap();
-      HashMap var2 = new HashMap();
-      HashMap var3 = new HashMap();
-      InventoryPreset var4 = this.method207();
+      HashMap map = new HashMap();
+      HashMap map2 = new HashMap();
+      HashMap map3 = new HashMap();
+      InventoryPreset inventoryPreset = this.method207();
 
-      for (int var5 = 0; var5 < 36; var5++) {
-         ItemMatcher var6 = var4.method870(var5);
-         if (var6 != null && !var6.getItemStack().isEmpty()) {
-            String var7 = var6.getText22();
-            if (var7 != null && !var7.isBlank()) {
-               int var8 = var4.method877(var5);
-               float var9 = var4.method881(var5);
-               long var10 = var4.method879(var5);
-               String var12 = this.method203(var6, var9);
-               int var13 = ((Integer)var1.computeIfAbsent(var12, var3x -> this.method202(var6, var9)));
-               int var14 = ((Integer)var2.getOrDefault(var12, 0)) + var8;
-               int var15 = ((Integer)var3.getOrDefault(var12, var13));
-               var2.put(var12, var14);
-               var3.put(var12, Math.max(var15, var14));
-               if (var15 < var14) {
-                  this.items.add(new AutoInventoryModule.Entry2(var6, var7, var14 - var15, var14, var9, var10));
+      for (int i = 0; i < 36; i++) {
+         ItemMatcher itemMatcher = inventoryPreset.method870(i);
+         if (itemMatcher != null && !itemMatcher.getItemStack().isEmpty()) {
+            String text = itemMatcher.getText22();
+            if (text != null && !text.isBlank()) {
+               int n = inventoryPreset.method877(i);
+               float floatValue = inventoryPreset.method881(i);
+               long longValue = inventoryPreset.method879(i);
+               String key = this.method203(itemMatcher, floatValue);
+               int defaultValue = ((Integer)map.computeIfAbsent(key, var3x -> this.method202(itemMatcher, floatValue)));
+               int n2 = ((Integer)map2.getOrDefault(key, 0)) + n;
+               int n3 = ((Integer)map3.getOrDefault(key, defaultValue));
+               map2.put(key, n2);
+               map3.put(key, Math.max(n3, n2));
+               if (n3 < n2) {
+                  this.items.add(new AutoInventoryModule.Entry2(itemMatcher, text, n2 - n3, n2, floatValue, longValue));
                }
             }
          }
@@ -265,10 +265,10 @@ public class AutoInventoryModule extends Module {
 
    private void method164() {
       for (this.entry2 = null; !this.items.isEmpty(); this.intValue5++) {
-         AutoInventoryModule.Entry2 var1 = this.items.removeFirst();
-         if (this.method202(var1.itemMatcher, var1.floatValue) < var1.intValue2) {
+         AutoInventoryModule.Entry2 entry2 = this.items.removeFirst();
+         if (this.method202(entry2.itemMatcher, entry2.floatValue) < entry2.intValue2) {
             this.intValue3 = 0;
-            this.method165(var1);
+            this.method165(entry2);
             return;
          }
       }
@@ -276,19 +276,19 @@ public class AutoInventoryModule extends Module {
       this.type = AutoInventoryModule.Type.FINISHED;
    }
 
-   private void method165(AutoInventoryModule.Entry2 var1) {
+   private void method165(AutoInventoryModule.Entry2 entry2) {
       if (mc.player != null && mc.level != null && mc.player.connection != null) {
          this.method205();
          this.entry3 = null;
-         this.entry2 = var1;
-         var1.intValue3 = this.method202(var1.itemMatcher, var1.floatValue);
-         mc.player.connection.sendCommand("ah search " + var1.text);
+         this.entry2 = entry2;
+         entry2.intValue3 = this.method202(entry2.itemMatcher, entry2.floatValue);
+         mc.player.connection.sendCommand("ah search " + entry2.text);
          this.stopWatch.reset();
          this.stopWatch2.reset();
          this.type = AutoInventoryModule.Type.AUCTION;
          this.intValue = -1;
       } else {
-         this.items.addFirst(var1);
+         this.items.addFirst(entry2);
          this.entry2 = null;
          this.type = AutoInventoryModule.Type.IDLE;
          this.stopWatch.reset();
@@ -301,8 +301,8 @@ public class AutoInventoryModule extends Module {
          this.stopWatch.reset();
          this.method164();
       } else {
-         int var1;
-         if ((var1 = this.method202(this.entry2.itemMatcher, this.entry2.floatValue)) > this.entry2.intValue3) {
+         int n;
+         if ((n = this.method202(this.entry2.itemMatcher, this.entry2.floatValue)) > this.entry2.intValue3) {
             this.method175();
             this.intValue3 = 0;
          } else {
@@ -310,7 +310,7 @@ public class AutoInventoryModule extends Module {
          }
 
          this.entry3 = null;
-         if (var1 >= this.entry2.intValue2) {
+         if (n >= this.entry2.intValue2) {
             this.intValue5++;
             this.entry2 = null;
             this.type = AutoInventoryModule.Type.IDLE;
@@ -325,7 +325,7 @@ public class AutoInventoryModule extends Module {
          } else {
             this.method165(
                new AutoInventoryModule.Entry2(
-                  this.entry2.itemMatcher, this.entry2.text, this.entry2.intValue2 - var1, this.entry2.intValue2, this.entry2.floatValue, this.entry2.longValue
+                  this.entry2.itemMatcher, this.entry2.text, this.entry2.intValue2 - n, this.entry2.intValue2, this.entry2.floatValue, this.entry2.longValue
                )
             );
          }
@@ -335,24 +335,24 @@ public class AutoInventoryModule extends Module {
    private void method167() {
       if (mc.gameMode != null) {
          if (mc.gui.screen() != null && mc.player.containerMenu != mc.player.inventoryMenu) {
-            AbstractContainerMenu var1 = mc.player.containerMenu;
-            if (ItemNbtUtils.method81(var1)) {
+            AbstractContainerMenu containerMenu = mc.player.containerMenu;
+            if (ItemNbtUtils.method81(containerMenu)) {
                if (this.entry2 == null) {
                   this.type = AutoInventoryModule.Type.IDLE;
                   this.stopWatch.reset();
-               } else if (this.intValue != var1.containerId) {
-                  this.intValue = var1.containerId;
+               } else if (this.intValue != containerMenu.containerId) {
+                  this.intValue = containerMenu.containerId;
                   this.stopWatch2.reset();
                } else if (this.stopWatch2.method7546(300L)) {
-                  int var2 = this.method168(var1, this.entry2);
+                  int n = this.method168(containerMenu, this.entry2);
                   this.intValue = -1;
-                  if (var2 >= 0) {
+                  if (n >= 0) {
                      this.type = AutoInventoryModule.Type.PURCHASE;
-                     this.intValue2 = this.method210() ? 0 : var2;
+                     this.intValue2 = this.method210() ? 0 : n;
                      this.intValue = -1;
                      this.stopWatch.reset();
                      this.stopWatch2.reset();
-                  } else if (!this.method169(var1)) {
+                  } else if (!this.method169(containerMenu)) {
                      ChatLogger.method2021("АвтоСбор: нет подходящих лотов «" + this.entry2.text + "»");
                      this.intValue6++;
                      this.entry2 = null;
@@ -366,60 +366,60 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private int method168(AbstractContainerMenu var1, AutoInventoryModule.Entry2 var2) {
+   private int method168(AbstractContainerMenu containerMenu, AutoInventoryModule.Entry2 entry2) {
       this.entry3 = null;
-      if (var2 != null && mc.gameMode != null && mc.player != null) {
-         Slot var3 = null;
-         long var4 = Long.MAX_VALUE;
-         int var6 = Math.min(45, var1.slots.size());
+      if (entry2 != null && mc.gameMode != null && mc.player != null) {
+         Slot slot = null;
+         long l = Long.MAX_VALUE;
+         int n = Math.min(45, containerMenu.slots.size());
 
-         for (int var7 = 0; var7 < var6; var7++) {
-            Slot var8 = var1.getSlot(var7);
-            if (var8 != null && var8.hasItem()) {
-               ItemStack var9 = var8.getItem();
-               long var10;
-               if (var2.itemMatcher.method2672(var9)
-                  && this.method204(var9, var2.floatValue)
-                  && !ItemNbtUtils.method87(var9)
-                  && (var10 = this.method198(var9)) != Long.MAX_VALUE
-                  && !this.method197(var2, var9, var10)
-                  && var10 < var4) {
-                  var3 = var8;
-                  var4 = var10;
+         for (int i = 0; i < n; i++) {
+            Slot slot2 = containerMenu.getSlot(i);
+            if (slot2 != null && slot2.hasItem()) {
+               ItemStack stack = slot2.getItem();
+               long l2;
+               if (entry2.itemMatcher.method2672(stack)
+                  && this.method204(stack, entry2.floatValue)
+                  && !ItemNbtUtils.method87(stack)
+                  && (l2 = this.method198(stack)) != Long.MAX_VALUE
+                  && !this.method197(entry2, stack, l2)
+                  && l2 < l) {
+                  slot = slot2;
+                  l = l2;
                }
             }
          }
 
-         if (var3 == null) {
+         if (slot == null) {
             return -1;
          } else {
-            int var12 = ItemNbtUtils.method90(var3.getItem());
-            boolean var13 = !this.method210() && var12 > var2.intValue;
-            int var14 = Math.max(1, var13 ? var2.intValue : var12);
-            String var15 = var3.getItem().getHoverName().getString();
+            int n2 = ItemNbtUtils.method90(slot.getItem());
+            boolean flag = !this.method210() && n2 > entry2.intValue;
+            int intValue = Math.max(1, flag ? entry2.intValue : n2);
+            String string = slot.getItem().getHoverName().getString();
             this.entry3 = new AutoInventoryModule.Entry3(
-               var3.getItem(), var15 != null && !var15.isBlank() ? var15 : var2.text, var14, this.method200(var4, var14)
+               slot.getItem(), string != null && !string.isBlank() ? string : entry2.text, intValue, this.method200(l, intValue)
             );
-            int var11 = var13 ? 1 : 0;
-            mc.gameMode.handleContainerInput(var1.containerId, var3.index, var11, ContainerInput.PICKUP, mc.player);
-            return var13 ? Math.max(0, var2.intValue - 1) : 0;
+            int buttonNum = flag ? 1 : 0;
+            mc.gameMode.handleContainerInput(containerMenu.containerId, slot.index, buttonNum, ContainerInput.PICKUP, mc.player);
+            return flag ? Math.max(0, entry2.intValue - 1) : 0;
          }
       } else {
          return -1;
       }
    }
 
-   private boolean method169(AbstractContainerMenu var1) {
-      if (var1.slots.size() <= 50) {
+   private boolean method169(AbstractContainerMenu containerMenu) {
+      if (containerMenu.slots.size() <= 50) {
          return false;
       } else if (mc.gameMode != null && mc.player != null) {
-         Slot var2 = var1.getSlot(50);
-         if (var2 != null && var2.hasItem()) {
-            if (var2.getItem().getItem() != Items.DYE.pick(net.minecraft.world.item.DyeColor.LIME)) {
+         Slot slot = containerMenu.getSlot(50);
+         if (slot != null && slot.hasItem()) {
+            if (slot.getItem().getItem() != Items.DYE.pick(net.minecraft.world.item.DyeColor.LIME)) {
                return false;
             } else {
                this.entry3 = null;
-               mc.gameMode.handleContainerInput(var1.containerId, var2.index, 0, ContainerInput.PICKUP, mc.player);
+               mc.gameMode.handleContainerInput(containerMenu.containerId, slot.index, 0, ContainerInput.PICKUP, mc.player);
                this.intValue = -1;
                this.stopWatch.reset();
                this.stopWatch2.reset();
@@ -436,27 +436,27 @@ public class AutoInventoryModule extends Module {
    private void method170() {
       if (mc.gameMode != null) {
          if (mc.gui.screen() != null && mc.player.containerMenu != mc.player.inventoryMenu) {
-            AbstractContainerMenu var1 = mc.player.containerMenu;
-            if (ItemNbtUtils.method81(var1)) {
-               this.method171(var1);
+            AbstractContainerMenu containerMenu = mc.player.containerMenu;
+            if (ItemNbtUtils.method81(containerMenu)) {
+               this.method171(containerMenu);
             } else if (this.method210()) {
-               this.method172(var1);
+               this.method172(containerMenu);
             } else if (mc.gui.screen().getTitle() != null && mc.gui.screen().getTitle().getString().contains("Покупка предмета")) {
-               if (var1.slots.size() > 4) {
-                  if (this.intValue != var1.containerId) {
-                     this.intValue = var1.containerId;
+               if (containerMenu.slots.size() > 4) {
+                  if (this.intValue != containerMenu.containerId) {
+                     this.intValue = containerMenu.containerId;
                      this.stopWatch2.reset();
                   } else if (this.stopWatch2.method7546(100L)) {
                      if (this.intValue2 >= 10) {
-                        this.method174(var1, 4);
+                        this.method174(containerMenu, 4);
                         this.intValue2 -= 10;
                         this.stopWatch2.reset();
                      } else if (this.intValue2 > 0) {
-                        this.method174(var1, 3);
+                        this.method174(containerMenu, 3);
                         this.intValue2--;
                         this.stopWatch2.reset();
-                     } else if (var1.slots.size() > 2) {
-                        this.method174(var1, 2);
+                     } else if (containerMenu.slots.size() > 2) {
+                        this.method174(containerMenu, 2);
                         this.method175();
                         this.type = AutoInventoryModule.Type.INVENTORY;
                         this.intValue = -1;
@@ -470,37 +470,37 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private void method171(AbstractContainerMenu var1) {
+   private void method171(AbstractContainerMenu containerMenu) {
       if (this.entry2 == null) {
          this.type = AutoInventoryModule.Type.IDLE;
          this.stopWatch.reset();
       } else if (this.stopWatch2.method7546(300L)) {
-         int var2 = this.method168(var1, this.entry2);
+         int n = this.method168(containerMenu, this.entry2);
          this.intValue = -1;
-         if (var2 < 0) {
-            if (!this.method169(var1)) {
+         if (n < 0) {
+            if (!this.method169(containerMenu)) {
                this.type = AutoInventoryModule.Type.IDLE;
                this.stopWatch.reset();
                this.method164();
             }
          } else {
-            this.intValue2 = this.method210() ? 0 : var2;
+            this.intValue2 = this.method210() ? 0 : n;
             this.stopWatch.reset();
             this.stopWatch2.reset();
          }
       }
    }
 
-   private void method172(AbstractContainerMenu var1) {
+   private void method172(AbstractContainerMenu containerMenu) {
       if (mc.gui.screen().getTitle() != null) {
          if (mc.gui.screen().getTitle().getString().contains("Подтверждение покупки")) {
-            int var2;
-            if ((var2 = this.method173(var1)) >= 0) {
-               if (this.intValue != var1.containerId) {
-                  this.intValue = var1.containerId;
+            int index;
+            if ((index = this.method173(containerMenu)) >= 0) {
+               if (this.intValue != containerMenu.containerId) {
+                  this.intValue = containerMenu.containerId;
                   this.stopWatch2.reset();
                } else if (this.stopWatch2.method7546(100L)) {
-                  this.method174(var1, var2);
+                  this.method174(containerMenu, index);
                   this.type = AutoInventoryModule.Type.INVENTORY;
                   this.intValue = -1;
                   this.stopWatch.reset();
@@ -511,21 +511,21 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private int method173(AbstractContainerMenu var1) {
-      int var2;
-      if ((var2 = Math.max(0, var1.slots.size() - 36)) == 27) {
+   private int method173(AbstractContainerMenu containerMenu) {
+      int n;
+      if ((n = Math.max(0, containerMenu.slots.size() - 36)) == 27) {
          return 0;
-      } else if (var2 <= 27) {
+      } else if (n <= 27) {
          return -1;
       } else {
-         int var3 = Math.min(var2, var1.slots.size());
+         int n2 = Math.min(n, containerMenu.slots.size());
 
-         for (int var4 = 0; var4 < var3; var4++) {
-            Slot var5 = var1.getSlot(var4);
-            if (var5 != null && var5.hasItem()) {
-               ItemStack var6 = var5.getItem();
-               if (var6.getItem() == Items.PAPER && "[Кyпить]".equals(var6.getHoverName().getString())) {
-                  return var4;
+         for (int i = 0; i < n2; i++) {
+            Slot slot = containerMenu.getSlot(i);
+            if (slot != null && slot.hasItem()) {
+               ItemStack stack = slot.getItem();
+               if (stack.getItem() == Items.PAPER && "[Кyпить]".equals(stack.getHoverName().getString())) {
+                  return i;
                }
             }
          }
@@ -534,10 +534,10 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private void method174(AbstractContainerMenu var1, int var2) {
-      if (var2 >= 0 && var2 < var1.slots.size()) {
+   private void method174(AbstractContainerMenu containerMenu, int index) {
+      if (index >= 0 && index < containerMenu.slots.size()) {
          if (mc.gameMode != null && mc.player != null) {
-            mc.gameMode.handleContainerInput(var1.containerId, var1.getSlot(var2).index, 0, ContainerInput.PICKUP, mc.player);
+            mc.gameMode.handleContainerInput(containerMenu.containerId, containerMenu.getSlot(index).index, 0, ContainerInput.PICKUP, mc.player);
          }
       }
    }
@@ -590,18 +590,18 @@ public class AutoInventoryModule extends Module {
 
          if (this.intValue8 > 0) {
             this.intValue8--;
-            ThreadLocalRandom var1 = ThreadLocalRandom.current();
-            mc.player.setYRot(mc.player.getYRot() + (float)var1.nextDouble(-2.0, 2.0));
-            mc.player.setXRot(Math.max(-90.0F, Math.min(90.0F, mc.player.getXRot() + (float)var1.nextDouble(-1.0, 1.0))));
+            ThreadLocalRandom current = ThreadLocalRandom.current();
+            mc.player.setYRot(mc.player.getYRot() + (float)current.nextDouble(-2.0, 2.0));
+            mc.player.setXRot(Math.max(-90.0F, Math.min(90.0F, mc.player.getXRot() + (float)current.nextDouble(-1.0, 1.0))));
          }
 
          if (this.flag4) {
             this.flag4 = false;
             if (this.anarchyHop.isEnabled()) {
-               ThreadLocalRandom var4 = ThreadLocalRandom.current();
-               int var2 = var4.nextBoolean() ? var4.nextInt(205, 231) : var4.nextInt(305, 325);
-               mc.player.connection.sendCommand("an" + var2);
-               ChatLogger.method2019("АвтоСбор: аукцион тормозит, перехожу на " + var2 + " анархию");
+               ThreadLocalRandom current = ThreadLocalRandom.current();
+               int nextInt = current.nextBoolean() ? current.nextInt(205, 231) : current.nextInt(305, 325);
+               mc.player.connection.sendCommand("an" + nextInt);
+               ChatLogger.method2019("АвтоСбор: аукцион тормозит, перехожу на " + nextInt + " анархию");
             }
          }
 
@@ -614,17 +614,17 @@ public class AutoInventoryModule extends Module {
             this.type = AutoInventoryModule.Type.FINISHED;
          } else {
             this.intValue7++;
-            if (mc.gui.screen() instanceof ContainerScreen var5) {
-               AbstractContainerMenu var7 = var5.getMenu();
-               String var3 = var5.getTitle().getString().replaceAll("§.", "").toLowerCase(Locale.ROOT).trim();
-               if (var3.contains(this.entry2.text.toLowerCase(Locale.ROOT)) || ItemNbtUtils.method83(var7)) {
-                  this.method178(var7, var3, this.entry2);
-               } else if (!var3.contains("подтверждение покупки") && !var3.contains("подозрительная цена")) {
+            if (mc.gui.screen() instanceof ContainerScreen containerScreen) {
+               AbstractContainerMenu menu = containerScreen.getMenu();
+               String input = containerScreen.getTitle().getString().replaceAll("§.", "").toLowerCase(Locale.ROOT).trim();
+               if (input.contains(this.entry2.text.toLowerCase(Locale.ROOT)) || ItemNbtUtils.method83(menu)) {
+                  this.method178(menu, input, this.entry2);
+               } else if (!input.contains("подтверждение покупки") && !input.contains("подозрительная цена")) {
                   this.method192();
                } else {
                   this.type = AutoInventoryModule.Type.PURCHASE;
                   if (this.entry.method214(200L, 90L)) {
-                     this.method191(var7, "[Кyпить]");
+                     this.method191(menu, "[Кyпить]");
                      this.entry.reset();
                   }
                }
@@ -640,29 +640,29 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private void method178(AbstractContainerMenu var1, String var2, AutoInventoryModule.Entry2 var3) {
+   private void method178(AbstractContainerMenu menu, String input, AutoInventoryModule.Entry2 entry2) {
       this.type = AutoInventoryModule.Type.AUCTION;
-      int var4 = this.method202(var3.itemMatcher, var3.floatValue);
-      if (this.entry.method214(300L, 80L) && var4 >= var3.intValue2) {
-         ChatLogger.method2019("АвтоСбор: «" + var3.text + "» куплен, перехожу к следующему");
+      int n = this.method202(entry2.itemMatcher, entry2.floatValue);
+      if (this.entry.method214(300L, 80L) && n >= entry2.intValue2) {
+         ChatLogger.method2019("АвтоСбор: «" + entry2.text + "» куплен, перехожу к следующему");
          this.intValue5++;
          this.method184();
          this.method192();
       } else if (this.entry4.method214(1000L, 150L)) {
-         boolean var5 = InventoryPreset.method886(var3.itemMatcher);
-         if (this.entry.method214(var5 ? 400L : 550L, 120L)) {
-            Matcher var6 = pattern4.matcher(var2);
-            int var7 = 1;
-            int var8 = 1;
-            if (var6.find()) {
-               var7 = Integer.parseInt(var6.group(1));
-               var8 = Integer.parseInt(var6.group(2));
+         boolean flag = InventoryPreset.method886(entry2.itemMatcher);
+         if (this.entry.method214(flag ? 400L : 550L, 120L)) {
+            Matcher matcher = pattern4.matcher(input);
+            int intValue = 1;
+            int n2 = 1;
+            if (matcher.find()) {
+               intValue = Integer.parseInt(matcher.group(1));
+               n2 = Integer.parseInt(matcher.group(2));
             }
 
-            if (var5) {
-               this.method179(var1, var3, var4, var7, Math.min(4, var8));
+            if (flag) {
+               this.method179(menu, entry2, n, intValue, Math.min(4, n2));
             } else {
-               this.method180(var1, var3, var4, var7, Math.min(4, var8));
+               this.method180(menu, entry2, n, intValue, Math.min(4, n2));
             }
 
             this.entry.reset();
@@ -670,16 +670,16 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private void method179(AbstractContainerMenu var1, AutoInventoryModule.Entry2 var2, int var3, int var4, int var5) {
-      List<Slot> var6 = this.method185(var1, var2);
+   private void method179(AbstractContainerMenu menu, AutoInventoryModule.Entry2 entry2, int n, int intValue, int n2) {
+      List<Slot> slots = this.method185(menu, entry2);
       if (this.data != null) {
-         if (var4 == this.data.intValue) {
-            Slot var9 = var6.stream()
+         if (intValue == this.data.intValue) {
+            Slot slot = slots.stream()
                .filter(var1x -> this.method190(var1x.getItem()) == this.data.longValue)
                .findFirst()
-               .orElseGet(() -> var6.stream().min(Comparator.comparingLong(var1xx -> this.method190(var1xx.getItem()))).orElse(null));
-            if (var9 != null) {
-               this.method181(var1, var9, var2, var3);
+               .orElseGet(() -> slots.stream().min(Comparator.comparingLong(var1xx -> this.method190(var1xx.getItem()))).orElse(null));
+            if (slot != null) {
+               this.method181(menu, slot, entry2, n);
             } else {
                ChatLogger.method2019("АвтоСбор: лот пропал, пересканирую");
                this.data = null;
@@ -687,55 +687,55 @@ public class AutoInventoryModule extends Module {
                this.method192();
             }
          } else {
-            this.method191(var1, var4 < this.data.intValue ? "следующая страница" : "предыдущая страница");
+            this.method191(menu, intValue < this.data.intValue ? "следующая страница" : "предыдущая страница");
          }
       } else {
-         if (this.items2.stream().noneMatch(var1x -> var1x.intValue == var4)) {
-            for (Slot var8 : var6) {
-               this.items2.add(new AutoInventoryModule.Data(var4, this.method190(var8.getItem())));
+         if (this.items2.stream().noneMatch(var1x -> var1x.intValue == intValue)) {
+            for (Slot slot : slots) {
+               this.items2.add(new AutoInventoryModule.Data(intValue, this.method190(slot.getItem())));
             }
          }
 
-         if (var4 >= var5 || !this.method191(var1, "следующая страница")) {
+         if (intValue >= n2 || !this.method191(menu, "следующая страница")) {
             this.data = this.items2.stream().min(Comparator.comparingLong(AutoInventoryModule.Data::getLongValue)).orElse(null);
             if (this.data == null) {
-               this.method183(var2);
+               this.method183(entry2);
             }
          }
       }
    }
 
-   private void method180(AbstractContainerMenu var1, AutoInventoryModule.Entry2 var2, int var3, int var4, int var5) {
-      var var6 = this.method185(var1, var2);
-      long var7 = var6.stream().mapToLong(var1x -> this.method190(var1x.getItem())).min().orElse(0L);
-      int var9;
-      int var10 = (var9 = Math.max(1, var2.intValue2)) + Math.round(var9 * 0.2F) - var3;
-      int var11 = var9 - var3;
-      var var12 = var6.stream()
-         .filter(var3x -> this.method190(var3x.getItem()) <= Math.round((float)var7 * 2.0F))
-         .filter(var1x -> ItemNbtUtils.method90(var1x.getItem()) <= var10)
+   private void method180(AbstractContainerMenu menu, AutoInventoryModule.Entry2 entry2, int n, int intValue, int n2) {
+      var slots = this.method185(menu, entry2);
+      long l = slots.stream().mapToLong(var1x -> this.method190(var1x.getItem())).min().orElse(0L);
+      int n3;
+      int n4 = (n3 = Math.max(1, entry2.intValue2)) + Math.round(n3 * 0.2F) - n;
+      int n5 = n3 - n;
+      var slots2 = slots.stream()
+         .filter(var3x -> this.method190(var3x.getItem()) <= Math.round((float)l * 2.0F))
+         .filter(var1x -> ItemNbtUtils.method90(var1x.getItem()) <= n4)
          .toList();
-      var var13 = Comparator.comparingLong((net.minecraft.world.inventory.Slot var1x) -> this.method190(var1x.getItem()));
-      Slot var14 = var12.stream()
-         .filter(var1x -> ItemNbtUtils.method90(var1x.getItem()) >= var11)
-         .min(var13)
-         .orElseGet(() -> (Slot)var12.stream().min(var13).orElse(null));
-      if (var14 != null) {
-         this.method181(var1, var14, var2, var3);
-      } else if (var4 >= var5 || !this.method191(var1, "следующая страница")) {
-         this.method183(var2);
+      var comparingLong = Comparator.comparingLong((net.minecraft.world.inventory.Slot var1x) -> this.method190(var1x.getItem()));
+      Slot slot = slots2.stream()
+         .filter(var1x -> ItemNbtUtils.method90(var1x.getItem()) >= n5)
+         .min(comparingLong)
+         .orElseGet(() -> (Slot)slots2.stream().min(comparingLong).orElse(null));
+      if (slot != null) {
+         this.method181(menu, slot, entry2, n);
+      } else if (intValue >= n2 || !this.method191(menu, "следующая страница")) {
+         this.method183(entry2);
       }
    }
 
-   private void method181(AbstractContainerMenu var1, Slot var2, AutoInventoryModule.Entry2 var3, int var4) {
-      ItemStack var5 = var2.getItem();
-      String var6 = var5.getHoverName().getString();
-      long var7 = this.method199(var5);
+   private void method181(AbstractContainerMenu menu, Slot slot, AutoInventoryModule.Entry2 entry2, int n) {
+      ItemStack stack = slot.getItem();
+      String string = stack.getHoverName().getString();
+      long l = this.method199(stack);
       this.entry3 = new AutoInventoryModule.Entry3(
-         var5, var6 != null && !var6.isBlank() ? var6 : var3.text, Math.max(1, ItemNbtUtils.method90(var5)), var7 == Long.MAX_VALUE ? 0L : var7
+         stack, string != null && !string.isBlank() ? string : entry2.text, Math.max(1, ItemNbtUtils.method90(stack)), l == Long.MAX_VALUE ? 0L : l
       );
-      this.intValue9 = var4;
-      mc.gameMode.handleContainerInput(var1.containerId, var2.index, 0, ContainerInput.QUICK_MOVE, mc.player);
+      this.intValue9 = n;
+      mc.gameMode.handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, mc.player);
    }
 
    private void method182() {
@@ -746,8 +746,8 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private void method183(AutoInventoryModule.Entry2 var1) {
-      ChatLogger.method2021("АвтоСбор: нет подходящих лотов «" + var1.text + "», пропускаю");
+   private void method183(AutoInventoryModule.Entry2 entry2) {
+      ChatLogger.method2021("АвтоСбор: нет подходящих лотов «" + entry2.text + "», пропускаю");
       this.intValue6++;
       this.method184();
       this.method192();
@@ -760,11 +760,11 @@ public class AutoInventoryModule extends Module {
       this.items2.clear();
 
       while (!this.items.isEmpty()) {
-         AutoInventoryModule.Entry2 var1 = this.items.removeFirst();
-         if (this.method202(var1.itemMatcher, var1.floatValue) < var1.intValue2) {
-            this.entry2 = var1;
+         AutoInventoryModule.Entry2 entry2 = this.items.removeFirst();
+         if (this.method202(entry2.itemMatcher, entry2.floatValue) < entry2.intValue2) {
+            this.entry2 = entry2;
             this.type = AutoInventoryModule.Type.AUCTION;
-            ChatLogger.method2019("АвтоСбор: собираю «" + var1.text + "»");
+            ChatLogger.method2019("АвтоСбор: собираю «" + entry2.text + "»");
             return;
          }
 
@@ -774,74 +774,74 @@ public class AutoInventoryModule extends Module {
       this.type = AutoInventoryModule.Type.FINISHED;
    }
 
-   private List<Slot> method185(AbstractContainerMenu var1, AutoInventoryModule.Entry2 var2) {
-      ArrayList<Slot> var3 = new ArrayList<>();
-      ItemStack var4 = this.method187(var2.itemMatcher);
-      int var5 = Math.max(0, var1.slots.size() - 36);
+   private List<Slot> method185(AbstractContainerMenu menu, AutoInventoryModule.Entry2 entry2) {
+      ArrayList<Slot> slots = new ArrayList<>();
+      ItemStack stack = this.method187(entry2.itemMatcher);
+      int n = Math.max(0, menu.slots.size() - 36);
 
-      for (int var6 = 0; var6 < var5; var6++) {
-         Slot var7 = var1.getSlot(var6);
-         if (var7 != null && var7.hasItem() && this.method186(var7.getItem(), var2, var4)) {
-            var3.add(var7);
+      for (int i = 0; i < n; i++) {
+         Slot slot = menu.getSlot(i);
+         if (slot != null && slot.hasItem() && this.method186(slot.getItem(), entry2, stack)) {
+            slots.add(slot);
          }
       }
 
-      return var3;
+      return slots;
    }
 
-   private boolean method186(ItemStack var1, AutoInventoryModule.Entry2 var2, ItemStack var3) {
-      if (!var2.itemMatcher.method2672(var1)) {
+   private boolean method186(ItemStack stack, AutoInventoryModule.Entry2 entry2, ItemStack stack2) {
+      if (!entry2.itemMatcher.method2672(stack)) {
          return false;
-      } else if (!this.method204(var1, var2.floatValue)) {
+      } else if (!this.method204(stack, entry2.floatValue)) {
          return false;
-      } else if (ItemNbtUtils.method87(var1)) {
+      } else if (ItemNbtUtils.method87(stack)) {
          return false;
-      } else if (this.method189(var1)) {
+      } else if (this.method189(stack)) {
          return false;
       } else {
-         long var4;
-         if ((var4 = this.method190(var1)) <= 0L || var4 == Long.MAX_VALUE) {
+         long l;
+         if ((l = this.method190(stack)) <= 0L || l == Long.MAX_VALUE) {
             return false;
-         } else if (var2.longValue > 0L && var4 > var2.longValue) {
+         } else if (entry2.longValue > 0L && l > entry2.longValue) {
             return false;
          } else {
-            if (!var3.isEmpty()) {
-               if (method188(var1.getItem()) && !Objects.equals(var1.get(DataComponents.POTION_CONTENTS), var3.get(DataComponents.POTION_CONTENTS))) {
+            if (!stack2.isEmpty()) {
+               if (method188(stack.getItem()) && !Objects.equals(stack.get(DataComponents.POTION_CONTENTS), stack2.get(DataComponents.POTION_CONTENTS))) {
                   return false;
                }
 
-               if (!var1.getHoverName().getString().trim().equalsIgnoreCase(var3.getHoverName().getString().trim())) {
+               if (!stack.getHoverName().getString().trim().equalsIgnoreCase(stack2.getHoverName().getString().trim())) {
                   return false;
                }
             }
 
-            return !var1.is(Items.TOTEM_OF_UNDYING) || var2.itemMatcher.getClass() != ItemMatcher.class || !var1.hasFoil();
+            return !stack.is(Items.TOTEM_OF_UNDYING) || entry2.itemMatcher.getClass() != ItemMatcher.class || !stack.hasFoil();
          }
       }
    }
 
-   private ItemStack method187(ItemMatcher var1) {
-      for (int var2 = 0; var2 < mc.player.getInventory().getContainerSize(); var2++) {
-         ItemStack var3 = mc.player.getInventory().getItem(var2);
-         if (!var3.isEmpty() && var1.method2672(var3)) {
-            return var3;
+   private ItemStack method187(ItemMatcher itemMatcher) {
+      for (int i = 0; i < mc.player.getInventory().getContainerSize(); i++) {
+         ItemStack stack = mc.player.getInventory().getItem(i);
+         if (!stack.isEmpty() && itemMatcher.method2672(stack)) {
+            return stack;
          }
       }
 
       return ItemStack.EMPTY;
    }
 
-   private static boolean method188(Item var0) {
-      return var0 == Items.POTION || var0 == Items.SPLASH_POTION || var0 == Items.LINGERING_POTION;
+   private static boolean method188(Item item) {
+      return item == Items.POTION || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION;
    }
 
-   private boolean method189(ItemStack var1) {
-      ItemLore var2 = var1.get(DataComponents.LORE);
-      if (var2 == null) {
+   private boolean method189(ItemStack stack) {
+      ItemLore itemLore = stack.get(DataComponents.LORE);
+      if (itemLore == null) {
          return false;
       } else {
-         for (Component var4 : var2.lines()) {
-            if (var4.getString().toLowerCase(Locale.ROOT).contains("нажмите, чтобы забрать")) {
+         for (Component line : itemLore.lines()) {
+            if (line.getString().toLowerCase(Locale.ROOT).contains("нажмите, чтобы забрать")) {
                return true;
             }
          }
@@ -850,19 +850,19 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private long method190(ItemStack var1) {
-      long var2;
-      return (var2 = this.method199(var1)) == Long.MAX_VALUE ? Long.MAX_VALUE : var2 / Math.max(1, ItemNbtUtils.method90(var1));
+   private long method190(ItemStack stack) {
+      long l;
+      return (l = this.method199(stack)) == Long.MAX_VALUE ? Long.MAX_VALUE : l / Math.max(1, ItemNbtUtils.method90(stack));
    }
 
-   private boolean method191(AbstractContainerMenu var1, String var2) {
-      String var3 = var2.toLowerCase(Locale.ROOT);
-      int var4 = Math.max(0, var1.slots.size() - 36);
+   private boolean method191(AbstractContainerMenu menu, String str) {
+      String lowerCase = str.toLowerCase(Locale.ROOT);
+      int n = Math.max(0, menu.slots.size() - 36);
 
-      for (int var5 = 0; var5 < var4; var5++) {
-         Slot var6 = var1.getSlot(var5);
-         if (var6 != null && var6.hasItem() && var6.getItem().getHoverName().getString().toLowerCase(Locale.ROOT).contains(var3)) {
-            mc.gameMode.handleContainerInput(var1.containerId, var6.index, 0, ContainerInput.QUICK_MOVE, mc.player);
+      for (int i = 0; i < n; i++) {
+         Slot slot = menu.getSlot(i);
+         if (slot != null && slot.hasItem() && slot.getItem().getHoverName().getString().toLowerCase(Locale.ROOT).contains(lowerCase)) {
+            mc.gameMode.handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, mc.player);
             return true;
          }
       }
@@ -877,20 +877,20 @@ public class AutoInventoryModule extends Module {
    }
 
    @EventTarget
-   public void method193(PacketEvent var1) {
-      if (var1.method7100() && this.entry2 != null && this.method210()) {
-         if (var1.getPacket3() instanceof ClientboundSystemChatPacket var2) {
-            String var4 = var2.content().getString().toLowerCase(Locale.ROOT);
-            if (var4.contains("этот товар уже купили")) {
+   public void method193(PacketEvent event) {
+      if (event.method7100() && this.entry2 != null && this.method210()) {
+         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+            String lowerCase = systemChatPacket.content().getString().toLowerCase(Locale.ROOT);
+            if (lowerCase.contains("этот товар уже купили")) {
                this.flag = true;
-            } else if (var4.contains("не хватает монет")) {
+            } else if (lowerCase.contains("не хватает монет")) {
                this.flag2 = true;
-            } else if (var4.contains("недоступна в режиме afk")) {
+            } else if (lowerCase.contains("недоступна в режиме afk")) {
                this.flag3 = true;
             }
          }
 
-         if (var1.getPacket3() instanceof ClientboundOpenScreenPacket && !(mc.gui.screen() instanceof ContainerScreen)) {
+         if (event.getPacket3() instanceof ClientboundOpenScreenPacket && !(mc.gui.screen() instanceof ContainerScreen)) {
             if (this.intValue7 >= 8) {
                this.flag4 = true;
             }
@@ -901,85 +901,85 @@ public class AutoInventoryModule extends Module {
    }
 
    @EventTarget
-   public void method194(MoveInputEvent var1) {
+   public void method194(MoveInputEvent event) {
       if (this.method210() && this.entry2 != null) {
          if (this.intValue8 > 0) {
-            ThreadLocalRandom var2 = ThreadLocalRandom.current();
-            var1.method3042(var2.nextBoolean() ? 1.0F : -1.0F, var2.nextBoolean() ? 1.0F : -1.0F);
+            ThreadLocalRandom current = ThreadLocalRandom.current();
+            event.method3042(current.nextBoolean() ? 1.0F : -1.0F, current.nextBoolean() ? 1.0F : -1.0F);
          } else if (mc.gui.screen() instanceof AbstractContainerScreen) {
-            var1.method3042(0.0F, 0.0F);
+            event.method3042(0.0F, 0.0F);
          }
       }
    }
 
    @EventTarget
-   public void method195(KeyEvent var1) {
-      if (this.method210() && this.entry2 != null && var1.getKeyCode() == 256 && var1.getIntValue() == 1) {
+   public void method195(KeyEvent event) {
+      if (this.method210() && this.entry2 != null && event.getKeyCode() == 256 && event.getIntValue() == 1) {
          this.flag5 = true;
       }
    }
 
-   private long method196(ItemStack var1) {
-      ItemLore var2 = var1.get(DataComponents.LORE);
-      if (var2 == null) {
+   private long method196(ItemStack stack) {
+      ItemLore itemLore = stack.get(DataComponents.LORE);
+      if (itemLore == null) {
          return Long.MAX_VALUE;
       } else {
-         long var3 = Long.MAX_VALUE;
+         long l = Long.MAX_VALUE;
 
-         for (Component var6 : var2.lines()) {
-            String var7 = var6.getString().replace(' ', ' ');
-            Matcher var8 = pattern.matcher(var7);
-            if (var8.find()) {
-               long var9;
-               if ((var9 = this.method201(var8.group(1))) != Long.MAX_VALUE) {
-                  return var9;
+         for (Component line : itemLore.lines()) {
+            String input = line.getString().replace(' ', ' ');
+            Matcher matcher = pattern.matcher(input);
+            if (matcher.find()) {
+               long l2;
+               if ((l2 = this.method201(matcher.group(1))) != Long.MAX_VALUE) {
+                  return l2;
                }
-            } else if (var3 == Long.MAX_VALUE) {
-               Matcher var12 = pattern2.matcher(var7);
-               if (var12.find()) {
-                  var3 = this.method201(var12.group(1));
+            } else if (l == Long.MAX_VALUE) {
+               Matcher matcher2 = pattern2.matcher(input);
+               if (matcher2.find()) {
+                  l = this.method201(matcher2.group(1));
                }
             }
          }
 
-         if (var3 != Long.MAX_VALUE) {
-            return Math.max(1L, var3 / Math.max(1, ItemNbtUtils.method90(var1)));
+         if (l != Long.MAX_VALUE) {
+            return Math.max(1L, l / Math.max(1, ItemNbtUtils.method90(stack)));
          } else {
-            long var11;
-            return (var11 = this.method199(var1)) != Long.MAX_VALUE ? Math.max(1L, var11 / Math.max(1, ItemNbtUtils.method90(var1))) : Long.MAX_VALUE;
+            long l2;
+            return (l2 = this.method199(stack)) != Long.MAX_VALUE ? Math.max(1L, l2 / Math.max(1, ItemNbtUtils.method90(stack))) : Long.MAX_VALUE;
          }
       }
    }
 
-   private boolean method197(AutoInventoryModule.Entry2 var1, ItemStack var2, long var3) {
-      return var1.longValue <= 0L ? false : (this.method210() ? Math.max(1L, var3 / Math.max(1, ItemNbtUtils.method90(var2))) : var3) > var1.longValue;
+   private boolean method197(AutoInventoryModule.Entry2 entry2, ItemStack stack, long l) {
+      return entry2.longValue <= 0L ? false : (this.method210() ? Math.max(1L, l / Math.max(1, ItemNbtUtils.method90(stack))) : l) > entry2.longValue;
    }
 
-   private long method198(ItemStack var1) {
+   private long method198(ItemStack stack) {
       if (!this.method210()) {
-         return this.method196(var1);
+         return this.method196(stack);
       } else {
-         long var2;
-         if ((var2 = this.method199(var1)) != Long.MAX_VALUE) {
-            return var2;
+         long l;
+         if ((l = this.method199(stack)) != Long.MAX_VALUE) {
+            return l;
          } else {
-            long var4;
-            return (var4 = this.method196(var1)) == Long.MAX_VALUE ? Long.MAX_VALUE : var4 * Math.max(1, ItemNbtUtils.method90(var1));
+            long l2;
+            return (l2 = this.method196(stack)) == Long.MAX_VALUE ? Long.MAX_VALUE : l2 * Math.max(1, ItemNbtUtils.method90(stack));
          }
       }
    }
 
-   private long method199(ItemStack var1) {
-      ItemLore var2 = var1.get(DataComponents.LORE);
-      if (var2 == null) {
+   private long method199(ItemStack stack) {
+      ItemLore itemLore = stack.get(DataComponents.LORE);
+      if (itemLore == null) {
          return Long.MAX_VALUE;
       } else {
-         for (Component var4 : var2.lines()) {
-            String var5 = var4.getString().replace(' ', ' ');
-            Matcher var6 = pattern3.matcher(var5);
-            long var7;
-            if (var6.find() && (var7 = this.method201(var6.group(1))) != Long.MAX_VALUE) {
-               return var7;
+         for (Component line : itemLore.lines()) {
+            String input = line.getString().replace(' ', ' ');
+            Matcher matcher = pattern3.matcher(input);
+            long l;
+            if (matcher.find() && (l = this.method201(matcher.group(1))) != Long.MAX_VALUE) {
+               return l;
             }
          }
 
@@ -987,45 +987,45 @@ public class AutoInventoryModule extends Module {
       }
    }
 
-   private long method200(long var1, int var3) {
-      return this.method210() ? var1 : var1 * var3;
+   private long method200(long l, int intValue) {
+      return this.method210() ? l : l * intValue;
    }
 
-   private long method201(String var1) {
+   private long method201(String group) {
       try {
-         return Long.parseLong(var1.replace(" ", "").replace(",", ""));
-      } catch (NumberFormatException var3) {
+         return Long.parseLong(group.replace(" ", "").replace(",", ""));
+      } catch (NumberFormatException e) {
          return Long.MAX_VALUE;
       }
    }
 
-   private int method202(ItemMatcher var1, float var2) {
+   private int method202(ItemMatcher itemMatcher, float floatValue) {
       if (mc.player == null) {
          return 0;
       } else {
-         int var3 = 0;
+         int n = 0;
 
-         for (int var4 = 0; var4 < mc.player.getInventory().getContainerSize(); var4++) {
-            ItemStack var5 = mc.player.getInventory().getItem(var4);
-            if (var5 != null && !var5.isEmpty() && var1.method2672(var5) && this.method204(var5, var2)) {
-               var3 += Math.max(1, var5.getCount());
+         for (int i = 0; i < mc.player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = mc.player.getInventory().getItem(i);
+            if (stack != null && !stack.isEmpty() && itemMatcher.method2672(stack) && this.method204(stack, floatValue)) {
+               n += Math.max(1, stack.getCount());
             }
          }
 
-         return var3;
+         return n;
       }
    }
 
-   private String method203(ItemMatcher var1, float var2) {
-      return var1.getText22() + "|" + var1.getItemStack().getItem() + "|" + var2;
+   private String method203(ItemMatcher itemMatcher, float floatValue) {
+      return itemMatcher.getText22() + "|" + itemMatcher.getItemStack().getItem() + "|" + floatValue;
    }
 
-   private boolean method204(ItemStack var1, float var2) {
-      if (var2 <= 0.0F) {
+   private boolean method204(ItemStack stack, float floatValue) {
+      if (floatValue <= 0.0F) {
          return true;
       } else {
-         int var3;
-         return (var3 = var1.getMaxDamage()) <= 0 ? false : (float)(var3 - var1.getDamageValue()) / var3 >= var2;
+         int maxDamage;
+         return (maxDamage = stack.getMaxDamage()) <= 0 ? false : (float)(maxDamage - stack.getDamageValue()) / maxDamage >= floatValue;
       }
    }
 
@@ -1069,59 +1069,59 @@ public class AutoInventoryModule extends Module {
       if (mc.player == null) {
          return new AutoInventoryModule.Data2(0, 0, 0);
       } else {
-         InventoryPreset var1 = this.method207();
-         var1.method876();
-         Inventory var2 = mc.player.getInventory();
-         int var3 = 0;
-         int var4 = 0;
-         int var5 = 0;
+         InventoryPreset inventoryPreset = this.method207();
+         inventoryPreset.method876();
+         Inventory inventory = mc.player.getInventory();
+         int intValue = 0;
+         int n = 0;
+         int n2 = 0;
 
-         for (int var6 = 0; var6 < 36 && var6 < var2.getContainerSize(); var6++) {
-            ItemStack var7 = var2.getItem(var6);
-            if (var7 != null && !var7.isEmpty()) {
-               int var8 = var6 < 9 ? 27 + var6 : var6 - 9;
-               switch (method209(var1, var7, var8)) {
+         for (int i = 0; i < 36 && i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack != null && !stack.isEmpty()) {
+               int selectedSlot = i < 9 ? 27 + i : i - 9;
+               switch (method209(inventoryPreset, stack, selectedSlot)) {
                   case 0:
-                     var4++;
+                     n++;
                      break;
                   case 1:
-                     var3++;
+                     intValue++;
                      break;
                   default:
-                     var5++;
+                     n2++;
                }
             }
          }
 
-         for (int var9 = 36; var9 < var2.getContainerSize(); var9++) {
-            ItemStack var10 = var2.getItem(var9);
-            if (var10 != null && !var10.isEmpty()) {
-               switch (method209(var1, var10, var1.method873())) {
+         for (int i = 36; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack != null && !stack.isEmpty()) {
+               switch (method209(inventoryPreset, stack, inventoryPreset.method873())) {
                   case 0:
-                     var4++;
+                     n++;
                      break;
                   case 1:
-                     var3++;
+                     intValue++;
                      break;
                   default:
-                     var5++;
+                     n2++;
                }
             }
          }
 
-         return new AutoInventoryModule.Data2(var3, var4, var5);
+         return new AutoInventoryModule.Data2(intValue, n, n2);
       }
    }
 
-   private static int method209(InventoryPreset var0, ItemStack var1, int var2) {
-      ItemMatcher var3 = var0.method890(var1);
-      if (var3 == null) {
+   private static int method209(InventoryPreset inventoryPreset, ItemStack stack, int selectedSlot) {
+      ItemMatcher key = inventoryPreset.method890(stack);
+      if (key == null) {
          return 0;
-      } else if (var2 < 0) {
+      } else if (selectedSlot < 0) {
          return -1;
       } else {
-         var0.method874(var2, var3);
-         var0.method878(var2, var1.getCount());
+         inventoryPreset.method874(selectedSlot, key);
+         inventoryPreset.method878(selectedSlot, stack.getCount());
          return 1;
       }
    }
@@ -1158,32 +1158,32 @@ public class AutoInventoryModule extends Module {
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      var1.add("SetFuntime", this.inventoryPreset.save());
-      var1.add("SetHolyWorld", this.inventoryPreset2.save());
-      var1.add("SetSpookyTime", this.inventoryPreset3.save());
-      var1.add("Presets", this.serverNameNormalizer.method1234());
-      return var1;
+      JsonObject json = super.save();
+      json.add("SetFuntime", this.inventoryPreset.save());
+      json.add("SetHolyWorld", this.inventoryPreset2.save());
+      json.add("SetSpookyTime", this.inventoryPreset3.save());
+      json.add("Presets", this.serverNameNormalizer.method1234());
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 != null) {
-         if (var1.has("SetFuntime") && var1.get("SetFuntime").isJsonObject()) {
-            this.inventoryPreset.load(var1.getAsJsonObject("SetFuntime"));
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json != null) {
+         if (json.has("SetFuntime") && json.get("SetFuntime").isJsonObject()) {
+            this.inventoryPreset.load(json.getAsJsonObject("SetFuntime"));
          }
 
-         if (var1.has("SetHolyWorld") && var1.get("SetHolyWorld").isJsonObject()) {
-            this.inventoryPreset2.load(var1.getAsJsonObject("SetHolyWorld"));
+         if (json.has("SetHolyWorld") && json.get("SetHolyWorld").isJsonObject()) {
+            this.inventoryPreset2.load(json.getAsJsonObject("SetHolyWorld"));
          }
 
-         if (var1.has("SetSpookyTime") && var1.get("SetSpookyTime").isJsonObject()) {
-            this.inventoryPreset3.load(var1.getAsJsonObject("SetSpookyTime"));
+         if (json.has("SetSpookyTime") && json.get("SetSpookyTime").isJsonObject()) {
+            this.inventoryPreset3.load(json.getAsJsonObject("SetSpookyTime"));
          }
 
-         if (var1.has("Presets") && var1.get("Presets").isJsonArray()) {
-            this.serverNameNormalizer.method1235(var1.getAsJsonArray("Presets"));
+         if (json.has("Presets") && json.get("Presets").isJsonArray()) {
+            this.serverNameNormalizer.method1235(json.getAsJsonArray("Presets"));
          }
       }
    }
@@ -1217,9 +1217,9 @@ public class AutoInventoryModule extends Module {
          return "Data[" + "intValue=" + this.intValue + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data(int var1, long var2) {
-         this.intValue = var1;
-         this.longValue = var2;
+      private Data(int intValue, long longValue) {
+         this.intValue = intValue;
+         this.longValue = longValue;
       }
 
       public int getIntValue() {
@@ -1265,10 +1265,10 @@ public class AutoInventoryModule extends Module {
          return "Data2[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + "]";
       }
 
-      public Data2(int var1, int var2, int var3) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.intValue3 = var3;
+      public Data2(int intValue, int n, int n2) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
       }
 
       public int getIntValue() {
@@ -1297,8 +1297,8 @@ public class AutoInventoryModule extends Module {
          this.last = 0L;
       }
 
-      public boolean method214(long var1, long var3) {
-         return System.currentTimeMillis() - (var1 + this.longValue % (var3 + 1L)) >= this.last;
+      public boolean method214(long l, long l2) {
+         return System.currentTimeMillis() - (l + this.longValue % (l2 + 1L)) >= this.last;
       }
    }
 
@@ -1311,13 +1311,13 @@ public class AutoInventoryModule extends Module {
       private final long longValue;
       private int intValue3;
 
-      private Entry2(ItemMatcher var1, String var2, int var3, int var4, float var5, long var6) {
-         this.itemMatcher = var1;
-         this.text = var2;
-         this.intValue = var3;
-         this.intValue2 = var4;
-         this.floatValue = var5;
-         this.longValue = var6;
+      private Entry2(ItemMatcher itemMatcher, String text, int intValue, int n, float floatValue, long longValue) {
+         this.itemMatcher = itemMatcher;
+         this.text = text;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.floatValue = floatValue;
+         this.longValue = longValue;
       }
    }
 
@@ -1327,11 +1327,11 @@ public class AutoInventoryModule extends Module {
       private final int intValue;
       private final long longValue;
 
-      private Entry3(ItemStack var1, String var2, int var3, long var4) {
-         this.itemStack = var1.copy();
-         this.text = var2;
-         this.intValue = var3;
-         this.longValue = var4;
+      private Entry3(ItemStack stack, String text, int intValue, long longValue) {
+         this.itemStack = stack.copy();
+         this.text = text;
+         this.intValue = intValue;
+         this.longValue = longValue;
       }
    }
 

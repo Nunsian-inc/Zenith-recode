@@ -44,504 +44,504 @@ public final class MotorNet {
    public double doubleValue8;
    public String text2 = "";
 
-   public static double method3597(double var0) {
-      return var0 > 20.0 ? var0 : Math.log1p(Math.exp(var0));
+   public static double method3597(double d) {
+      return d > 20.0 ? d : Math.log1p(Math.exp(d));
    }
 
-   public static double method3598(double var0) {
-      return 1.0 / (1.0 + Math.exp(-var0));
+   public static double method3598(double d) {
+      return 1.0 / (1.0 + Math.exp(-d));
    }
 
-   public static double method3599(double var0) {
-      return var0 > 0.0 ? var0 : Math.expm1(var0);
+   public static double method3599(double x) {
+      return x > 0.0 ? x : Math.expm1(x);
    }
 
-   public static double[] method3600(double[] var0) {
-      double var1 = Double.NEGATIVE_INFINITY;
+   public static double[] method3600(double[] doubles) {
+      double d = Double.NEGATIVE_INFINITY;
 
-      for (double var6 : var0) {
-         var1 = Math.max(var1, var6);
+      for (double d2 : doubles) {
+         d = Math.max(d, d2);
       }
 
-      double var10 = 0.0;
+      double d2 = 0.0;
 
-      for (double var8 : var0) {
-         var10 += Math.exp(var8 - var1);
+      for (double d3 : doubles) {
+         d2 += Math.exp(d3 - d);
       }
 
-      double var12 = var1 + Math.log(var10);
-      double[] var14 = new double[var0.length];
+      double d3 = d + Math.log(d2);
+      double[] doubles2 = new double[doubles.length];
 
-      for (int var15 = 0; var15 < var0.length; var15++) {
-         var14[var15] = var0[var15] - var12;
+      for (int i = 0; i < doubles.length; i++) {
+         doubles2[i] = doubles[i] - d3;
       }
 
-      return var14;
+      return doubles2;
    }
 
-   public static int method3601(double[] var0, double var1) {
-      double[] var3 = method3600(var0);
-      double var4 = 0.0;
+   public static int method3601(double[] doubles, double d) {
+      double[] doubles2 = method3600(doubles);
+      double d2 = 0.0;
 
-      int var6;
-      for (var6 = 0; var6 < var3.length; var6++) {
-         var4 += Math.exp(var3[var6]);
-         if (var4 > var1) {
+      int n;
+      for (n = 0; n < doubles2.length; n++) {
+         d2 += Math.exp(doubles2[n]);
+         if (d2 > d) {
             break;
          }
       }
 
-      return Math.min(var6, var3.length - 1);
+      return Math.min(n, doubles2.length - 1);
    }
 
-   public static double[] method3602(double[][] var0, double[] var1, double[] var2) {
-      double[] var3 = new double[var0.length];
+   public static double[] method3602(double[][] doubleValues3, double[] doubles, double[] doubleValues8) {
+      double[] doubles2 = new double[doubleValues3.length];
 
-      for (int var4 = 0; var4 < var0.length; var4++) {
-         double var5 = var2[var4];
-         double[] var7 = var0[var4];
+      for (int i = 0; i < doubleValues3.length; i++) {
+         double d = doubleValues8[i];
+         double[] doubles3 = doubleValues3[i];
 
-         for (int var8 = 0; var8 < var7.length; var8++) {
-            var5 += var7[var8] * var1[var8];
+         for (int j = 0; j < doubles3.length; j++) {
+            d += doubles3[j] * doubles[j];
          }
 
-         var3[var4] = var5;
+         doubles2[i] = d;
       }
 
-      return var3;
+      return doubles2;
    }
 
-   public static double[] method3603(double[] var0, double[] var1) {
-      double[] var2 = new double[var0.length + var1.length];
-      System.arraycopy(var0, 0, var2, 0, var0.length);
-      System.arraycopy(var1, 0, var2, var0.length, var1.length);
-      return var2;
+   public static double[] method3603(double[] doubles, double[] original) {
+      double[] doubles2 = new double[doubles.length + original.length];
+      System.arraycopy(doubles, 0, doubles2, 0, doubles.length);
+      System.arraycopy(original, 0, doubles2, doubles.length, original.length);
+      return doubles2;
    }
 
-   public double[] method3604(double[] var1, double[] var2) {
-      double[] var3 = method3602(this.doubleValues3, var1, this.doubleValues8);
-      double[] var4 = method3602(this.doubleValues4, var2, this.doubleValues9);
-      double[] var5 = new double[this.intValue7];
+   public double[] method3604(double[] doubles, double[] doubles2) {
+      double[] doubles3 = method3602(this.doubleValues3, doubles, this.doubleValues8);
+      double[] doubles4 = method3602(this.doubleValues4, doubles2, this.doubleValues9);
+      double[] doubles5 = new double[this.intValue7];
 
-      for (int var6 = 0; var6 < this.intValue7; var6++) {
-         double var7 = method3598(var3[var6] + var4[var6]);
-         double var9 = method3598(var3[this.intValue7 + var6] + var4[this.intValue7 + var6]);
-         double var11 = Math.tanh(var3[2 * this.intValue7 + var6] + var7 * var4[2 * this.intValue7 + var6]);
-         var5[var6] = (1.0 - var9) * var11 + var9 * var2[var6];
+      for (int i = 0; i < this.intValue7; i++) {
+         double d = method3598(doubles3[i] + doubles4[i]);
+         double d2 = method3598(doubles3[this.intValue7 + i] + doubles4[this.intValue7 + i]);
+         double tanh = Math.tanh(doubles3[2 * this.intValue7 + i] + d * doubles4[2 * this.intValue7 + i]);
+         doubles5[i] = (1.0 - d2) * tanh + d2 * doubles2[i];
       }
 
-      return var5;
+      return doubles5;
    }
 
-   public double method3605(double var1) {
-      return Math.signum(var1) * Math.log1p(Math.abs(var1) / this.doubleValue5);
+   public double method3605(double d) {
+      return Math.signum(d) * Math.log1p(Math.abs(d) / this.doubleValue5);
    }
 
-   public double[] method3606(double[][] var1) {
-      int var2 = var1.length;
-      double[] var3 = new double[var2];
+   public double[] method3606(double[][] doubleses) {
+      int length = doubleses.length;
+      double[] doubles = new double[length];
 
-      for (int var4 = 0; var4 < var2; var4++) {
-         var3[var4] = Math.abs(var1[var4][0]) + Math.abs(var1[var4][1]) == 0.0 ? 1.0 : 0.0;
+      for (int i = 0; i < length; i++) {
+         doubles[i] = Math.abs(doubleses[i][0]) + Math.abs(doubleses[i][1]) == 0.0 ? 1.0 : 0.0;
       }
 
-      double[] var18 = new double[this.intValue2];
-      int var5 = 0;
+      double[] doubles2 = new double[this.intValue2];
+      int n = 0;
 
-      for (int var9 : new int[]{3, 10, this.intValue}) {
-         double var10 = 0.0;
-         double var12 = 0.0;
-         double var14 = 0.0;
+      for (int n2 : new int[]{3, 10, this.intValue}) {
+         double d = 0.0;
+         double d2 = 0.0;
+         double d3 = 0.0;
 
-         for (int var16 = var2 - var9; var16 < var2; var16++) {
-            var10 += Math.abs(var1[var16][0]);
-            var12 += Math.abs(var1[var16][1]);
-            var14 += var3[var16];
+         for (int i = length - n2; i < length; i++) {
+            d += Math.abs(doubleses[i][0]);
+            d2 += Math.abs(doubleses[i][1]);
+            d3 += doubles[i];
          }
 
-         var18[var5++] = var10 / var9;
-         var18[var5++] = var12 / var9;
-         var18[var5++] = var14 / var9;
+         doubles2[n++] = d / n2;
+         doubles2[n++] = d2 / n2;
+         doubles2[n++] = d3 / n2;
       }
 
-      double var22 = 0.0;
-      double var23 = 0.0;
-      int var24 = 0;
-      double var11 = 0.0;
+      double d = 0.0;
+      double d2 = 0.0;
+      int n2 = 0;
+      double d3 = 0.0;
 
-      for (int var13 = 0; var13 < var2; var13++) {
-         double var25 = 1.0 - var3[var13];
-         var11 += var25;
-         var22 = Math.max(var22, var25 * var13);
-         double var26 = var25 * (var13 + 1.0);
-         if (var26 > var23) {
-            var23 = var26;
-            var24 = var13;
+      for (int i = 0; i < length; i++) {
+         double d4 = 1.0 - doubles[i];
+         d3 += d4;
+         d = Math.max(d, d4 * i);
+         double d5 = d4 * (i + 1.0);
+         if (d5 > d2) {
+            d2 = d5;
+            n2 = i;
          }
       }
 
-      var18[var5++] = (var2 - 1.0 - var22) / this.intValue;
-      var18[var5] = Math.abs(var1[var24][0]) * (var11 > 0.0 ? 1.0 : 0.0);
-      return var18;
+      doubles2[n++] = (length - 1.0 - d) / this.intValue;
+      doubles2[n] = Math.abs(doubleses[n2][0]) * (d3 > 0.0 ? 1.0 : 0.0);
+      return doubles2;
    }
 
-   public static double method3607(double var0) {
-      return Math.signum(var0) * Math.log1p(Math.abs(var0)) / 5.0;
+   public static double method3607(double doubleValue) {
+      return Math.signum(doubleValue) * Math.log1p(Math.abs(doubleValue)) / 5.0;
    }
 
-   public static double[] method3608(double var0, double var2, int var4, Double var5, double var6, double var8) {
-      double var10 = Math.sqrt(var0 * var0 + var2 * var2 + 1.0E-9);
+   public static double[] method3608(double doubleValue, double d, int n, Double doubleValue2, double d2, double d3) {
+      double x = Math.sqrt(doubleValue * doubleValue + d * d + 1.0E-9);
       return new double[]{
-         method3607(var0),
-         method3607(var2),
-         Math.log1p(var10) / 5.0,
-         var5 == null ? 0.0 : method3607(var5),
-         var4 / 2.0,
+         method3607(doubleValue),
+         method3607(d),
+         Math.log1p(x) / 5.0,
+         doubleValue2 == null ? 0.0 : method3607(doubleValue2),
+         n / 2.0,
          0.0,
-         Math.signum(var0) * var6,
-         Math.signum(var2) * var8
+         Math.signum(doubleValue) * d2,
+         Math.signum(d) * d3
       };
    }
 
-   public double method3609(double[] var1, double[] var2, double[] var3, double[] var4, double var5, double var7, double var9) {
-      int var11 = method3601(var1, var5);
-      double[] var12 = new double[this.intValue6];
-      double[] var13 = new double[this.intValue6];
-      double[] var14 = method3600(var2);
+   public double method3609(double[] doubles, double[] doubles2, double[] doubles3, double[] doubles4, double d, double d2, double d3) {
+      int n = method3601(doubles, d);
+      double[] doubles5 = new double[this.intValue6];
+      double[] doubles6 = new double[this.intValue6];
+      double[] doubles7 = method3600(doubles2);
 
-      for (int var15 = 0; var15 < this.intValue6; var15++) {
-         var12[var15] = Math.exp(Math.max(-7.0, Math.min(7.0, var4[var15])));
-         var13[var15] = var14[var15] - method3597((0.5 - var3[var15]) / var12[var15]);
+      for (int i = 0; i < this.intValue6; i++) {
+         doubles5[i] = Math.exp(Math.max(-7.0, Math.min(7.0, doubles4[i])));
+         doubles6[i] = doubles7[i] - method3597((0.5 - doubles3[i]) / doubles5[i]);
       }
 
-      int var24 = method3601(var13, var7);
-      double var16 = method3598((0.5 - var3[var24]) / var12[var24]);
-      double var18 = var16 + (1.0 - var16) * var9;
-      var18 = Math.min(Math.max(var18, 1.0E-6), 0.999999);
-      double var20 = var3[var24] + var12[var24] * (Math.log(var18) - Math.log1p(-var18));
-      double var22 = Math.min(Math.max(Math.rint(var20), 1.0), this.doubleValue) + this.intValue5;
-      return var11 < this.intValue5 ? var11 + 1.0 : var22;
+      int n2 = method3601(doubles6, d2);
+      double d4 = method3598((0.5 - doubles3[n2]) / doubles5[n2]);
+      double d5 = d4 + (1.0 - d4) * d3;
+      d5 = Math.min(Math.max(d5, 1.0E-6), 0.999999);
+      double d6 = doubles3[n2] + doubles5[n2] * (Math.log(d5) - Math.log1p(-d5));
+      double d7 = Math.min(Math.max(Math.rint(d6), 1.0), this.doubleValue) + this.intValue5;
+      return n < this.intValue5 ? n + 1.0 : d7;
    }
 
-   public double method3610(double[] var1, double var2, double var4, boolean var6, double[] var7, int var8, double[] var9) {
-      double[] var10 = method3602(this.doubleValues5, var1, this.doubleValues10);
-      System.arraycopy(var10, 0, var9, 0, var10.length);
-      double var11 = var10[0];
-      double var13 = var10[1];
-      double[] var15 = new double[this.intValue5 + 1];
-      System.arraycopy(var10, 2, var15, 0, this.intValue5 + 1);
-      int var16 = 2 + this.intValue5 + 1;
-      double[] var17 = new double[this.intValue6];
-      double[] var18 = new double[this.intValue6];
-      double[] var19 = new double[this.intValue6];
-      boolean var20 = var7[var8 + 1] < method3598(var13);
-      double var21 = var20 ? -var4 : var4;
-      boolean var23 = var21 == Math.signum(var2) && var2 != 0.0;
-      double var24 = var23 ? Math.abs(var2) : 0.0;
+   public double method3610(double[] doubles, double doubleValue, double d, boolean flag, double[] doubles2, int n, double[] doubleValues) {
+      double[] doubles3 = method3602(this.doubleValues5, doubles, this.doubleValues10);
+      System.arraycopy(doubles3, 0, doubleValues, 0, doubles3.length);
+      double d2 = doubles3[0];
+      double d3 = doubles3[1];
+      double[] doubles4 = new double[this.intValue5 + 1];
+      System.arraycopy(doubles3, 2, doubles4, 0, this.intValue5 + 1);
+      int n2 = 2 + this.intValue5 + 1;
+      double[] doubles5 = new double[this.intValue6];
+      double[] doubles6 = new double[this.intValue6];
+      double[] doubles7 = new double[this.intValue6];
+      boolean flag2 = doubles2[n + 1] < method3598(d3);
+      double d4 = flag2 ? -d : d;
+      boolean flag3 = d4 == Math.signum(doubleValue) && doubleValue != 0.0;
+      double d5 = flag3 ? Math.abs(doubleValue) : 0.0;
 
-      for (int var26 = 0; var26 < this.intValue6; var26++) {
-         var17[var26] = var10[var16 + var26];
-         double var27 = this.doubleValue3 * method3598(var10[var16 + 2 * this.intValue6 + var26]);
-         double var29 = this.doubleValue2 * method3598(var10[var16 + 3 * this.intValue6 + var26]);
-         var18[var26] = var27 * var24 + var29;
-         var19[var26] = Math.log(method3597(var10[var16 + this.intValue6 + var26]) + this.doubleValue4 + this.doubleValue7 * var18[var26]);
+      for (int i = 0; i < this.intValue6; i++) {
+         doubles5[i] = doubles3[n2 + i];
+         double d6 = this.doubleValue3 * method3598(doubles3[n2 + 2 * this.intValue6 + i]);
+         double d7 = this.doubleValue2 * method3598(doubles3[n2 + 3 * this.intValue6 + i]);
+         doubles6[i] = d6 * d5 + d7;
+         doubles7[i] = Math.log(method3597(doubles3[n2 + this.intValue6 + i]) + this.doubleValue4 + this.doubleValue7 * doubles6[i]);
       }
 
-      boolean var31 = var7[var8] < method3598(var11);
-      double var32 = this.method3609(var15, var17, var18, var19, var7[var8 + 2], var7[var8 + 3], var7[var8 + 4]);
-      double var33 = var31 ? 0.0 : var21 * var32;
-      return var6 ? 0.0 : var33;
+      boolean flag4 = doubles2[n] < method3598(d2);
+      double d6 = this.method3609(doubles4, doubles5, doubles6, doubles7, doubles2[n + 2], doubles2[n + 3], doubles2[n + 4]);
+      double d7 = flag4 ? 0.0 : d4 * d6;
+      return flag ? 0.0 : d7;
    }
 
-   public MotorNet.Entry method3611(double[][] var1, double[] var2, double[] var3, double[] var4) {
-      double[][] var5 = new double[this.intValue][2];
-      double[] var6 = new double[this.intValue * 2];
+   public MotorNet.Entry method3611(double[][] doubleValues, double[] original, double[] doubleValues2, double[] doubles) {
+      double[][] doubleses = new double[this.intValue][2];
+      double[] doubles2 = new double[this.intValue * 2];
 
-      for (int var7 = 0; var7 < this.intValue; var7++) {
-         var5[var7][0] = this.method3605(var1[var7][0]);
-         var5[var7][1] = this.method3605(var1[var7][1]);
-         var6[2 * var7] = var5[var7][0];
-         var6[2 * var7 + 1] = var5[var7][1];
+      for (int i = 0; i < this.intValue; i++) {
+         doubleses[i][0] = this.method3605(doubleValues[i][0]);
+         doubleses[i][1] = this.method3605(doubleValues[i][1]);
+         doubles2[2 * i] = doubleses[i][0];
+         doubles2[2 * i + 1] = doubleses[i][1];
       }
 
-      double[] var23 = method3603(method3603(var6, this.method3606(var5)), var2);
-      double[] var8 = method3602(this.doubleValues, var23, this.doubleValues6);
+      double[] doubles3 = method3603(method3603(doubles2, this.method3606(doubleses)), original);
+      double[] doubles4 = method3602(this.doubleValues, doubles3, this.doubleValues6);
 
-      for (int var9 = 0; var9 < var8.length; var9++) {
-         var8[var9] = method3599(var8[var9]);
+      for (int i = 0; i < doubles4.length; i++) {
+         doubles4[i] = method3599(doubles4[i]);
       }
 
-      double[] var24 = method3602(this.doubleValues2, var8, this.doubleValues7);
+      double[] original2 = method3602(this.doubleValues2, doubles4, this.doubleValues7);
 
-      for (int var10 = 0; var10 < var24.length; var10++) {
-         var24[var10] = Math.tanh(var24[var10]);
+      for (int i = 0; i < original2.length; i++) {
+         original2[i] = Math.tanh(original2[i]);
       }
 
-      double var25 = var2[0] >= 0.0 ? 1.0 : -1.0;
-      double var12 = var2[1] >= 0.0 ? 1.0 : -1.0;
-      double var14 = var3[0];
-      double var16 = var3[1];
-      MotorNet.Entry var18 = new MotorNet.Entry();
-      double[] var19 = this.method3604(method3603(method3608(var14, var16, 0, null, var25, var12), var24), var24);
-      double var20 = this.doubleValue8;
+      double d = original[0] >= 0.0 ? 1.0 : -1.0;
+      double d2 = original[1] >= 0.0 ? 1.0 : -1.0;
+      double doubleValue = doubleValues2[0];
+      double doubleValue2 = doubleValues2[1];
+      MotorNet.Entry entry = new MotorNet.Entry();
+      double[] doubles5 = this.method3604(method3603(method3608(doubleValue, doubleValue2, 0, null, d, d2), original2), original2);
+      double d3 = this.doubleValue8;
 
-      for (int var22 = 0; var22 < this.intValue7; var22++) {
-         var20 += this.doubleValues11[var22] * var19[var22];
+      for (int i = 0; i < this.intValue7; i++) {
+         d3 += this.doubleValues11[i] * doubles5[i];
       }
 
-      var18.doubleValue3 = var20;
-      boolean var28 = var4[0] < method3598(var20);
-      var19 = this.method3604(method3603(method3608(var14, var16, 1, null, var25, var12), var24), var19);
-      var18.doubleValues = new double[this.intValue4];
-      var18.doubleValue = this.method3610(var19, var14, var25, var28, var4, 1, var18.doubleValues);
-      var19 = this.method3604(method3603(method3608(var14, var16, 2, var18.doubleValue, var25, var12), var24), var19);
-      var18.doubleValues2 = new double[this.intValue4];
-      var18.doubleValue2 = this.method3610(var19, var16, var12, var28, var4, 6, var18.doubleValues2);
-      return var18;
+      entry.doubleValue3 = d3;
+      boolean flag = doubles[0] < method3598(d3);
+      doubles5 = this.method3604(method3603(method3608(doubleValue, doubleValue2, 1, null, d, d2), original2), doubles5);
+      entry.doubleValues = new double[this.intValue4];
+      entry.doubleValue = this.method3610(doubles5, doubleValue, d, flag, doubles, 1, entry.doubleValues);
+      doubles5 = this.method3604(method3603(method3608(doubleValue, doubleValue2, 2, entry.doubleValue, d, d2), original2), doubles5);
+      entry.doubleValues2 = new double[this.intValue4];
+      entry.doubleValue2 = this.method3610(doubles5, doubleValue2, d2, flag, doubles, 6, entry.doubleValues2);
+      return entry;
    }
 
-   public static double[] method3612(double var0, double var2, double[] var4, double[] var5, double[] var6, double var7, double var9, double var11) {
-      double var13 = var5[3] - var5[0];
-      double var15 = (var5[0] + var5[3]) / 2.0;
-      double var17 = (var5[1] + var5[4]) / 2.0;
-      double var19 = (var5[2] + var5[5]) / 2.0;
-      double var21 = var15 - var4[0];
-      double var23 = var17 - var4[1];
-      double var25 = var19 - var4[2];
-      double var27 = Math.sqrt(var21 * var21 + var25 * var25 + 1.0E-12);
-      double var29 = Math.toDegrees(Math.atan2(-var21, var25));
-      double var31 = Math.toDegrees(Math.atan2(-var23, var27));
-      double var33 = Math.toDegrees(Math.atan2(var13 * 0.5, var27));
-      double var35 = Math.toDegrees(Math.atan2(-(var5[4] - var4[1]), var27));
-      double var37 = Math.toDegrees(Math.atan2(-(var5[1] - var4[1]), var27));
-      double var39 = 0.5 * Math.abs(var37 - var35);
-      double var41 = method3614(var29 - var0 + 180.0, 360.0) - 180.0;
-      double var43 = var31 - var2;
-      double var45 = Math.sqrt(var41 * var41 + var43 * var43 + 1.0E-12);
+   public static double[] method3612(double floatValue, double d, double[] doubles, double[] doubles2, double[] doubles3, double d2, double d3, double attackStrengthScale) {
+      double d4 = doubles2[3] - doubles2[0];
+      double d5 = (doubles2[0] + doubles2[3]) / 2.0;
+      double d6 = (doubles2[1] + doubles2[4]) / 2.0;
+      double d7 = (doubles2[2] + doubles2[5]) / 2.0;
+      double d8 = d5 - doubles[0];
+      double d9 = d6 - doubles[1];
+      double x = d7 - doubles[2];
+      double x2 = Math.sqrt(d8 * d8 + x * x + 1.0E-12);
+      double d10 = Math.toDegrees(Math.atan2(-d8, x));
+      double d11 = Math.toDegrees(Math.atan2(-d9, x2));
+      double x3 = Math.toDegrees(Math.atan2(d4 * 0.5, x2));
+      double d12 = Math.toDegrees(Math.atan2(-(doubles2[4] - doubles[1]), x2));
+      double d13 = Math.toDegrees(Math.atan2(-(doubles2[1] - doubles[1]), x2));
+      double x4 = 0.5 * Math.abs(d13 - d12);
+      double d14 = method3614(d10 - floatValue + 180.0, 360.0) - 180.0;
+      double d15 = d11 - d;
+      double x5 = Math.sqrt(d14 * d14 + d15 * d15 + 1.0E-12);
       return new double[]{
-         method3615(var41 / Math.max(var33, 0.001), 12.0),
-         method3615(var43 / Math.max(var39, 0.001), 12.0),
-         Math.log1p(var45) / 5.0,
-         var41 / var45,
-         var43 / var45,
-         Math.log1p(var33) / 3.0,
-         Math.log1p(var39) / 3.0,
-         var6[0],
-         var6[1],
-         var6[2],
-         var6[3],
-         var6[4],
-         var7,
-         var9,
-         var11
+         method3615(d14 / Math.max(x3, 0.001), 12.0),
+         method3615(d15 / Math.max(x4, 0.001), 12.0),
+         Math.log1p(x5) / 5.0,
+         d14 / x5,
+         d15 / x5,
+         Math.log1p(x3) / 3.0,
+         Math.log1p(x4) / 3.0,
+         doubles3[0],
+         doubles3[1],
+         doubles3[2],
+         doubles3[3],
+         doubles3[4],
+         d2,
+         d3,
+         attackStrengthScale
       };
    }
 
-   public double[] method3613(double[] var1, double var2, double[] var4) {
-      if (this.intValue3 == var1.length) {
-         return var1;
-      } else if (this.intValue3 != var1.length + 3) {
+   public double[] method3613(double[] original, double floatValue, double[] doubles) {
+      if (this.intValue3 == original.length) {
+         return original;
+      } else if (this.intValue3 != original.length + 3) {
          throw new IllegalStateException("раскладка геометрии: модель ждёт " + this.intValue3);
       } else {
-         double var5 = Math.toRadians(var2);
-         double var7 = -var4[0] * Math.sin(var5) + var4[2] * Math.cos(var5);
-         double var9 = -var4[0] * Math.cos(var5) - var4[2] * Math.sin(var5);
-         double[] var11 = Arrays.copyOf(var1, this.intValue3);
-         var11[var1.length] = Math.tanh(var7 / 0.3);
-         var11[var1.length + 1] = Math.tanh(var9 / 0.3);
-         var11[var1.length + 2] = Math.tanh(var4[1] / 0.3);
-         return var11;
+         double d = Math.toRadians(floatValue);
+         double d2 = -doubles[0] * Math.sin(d) + doubles[2] * Math.cos(d);
+         double d3 = -doubles[0] * Math.cos(d) - doubles[2] * Math.sin(d);
+         double[] doubles2 = Arrays.copyOf(original, this.intValue3);
+         doubles2[original.length] = Math.tanh(d2 / 0.3);
+         doubles2[original.length + 1] = Math.tanh(d3 / 0.3);
+         doubles2[original.length + 2] = Math.tanh(doubles[1] / 0.3);
+         return doubles2;
       }
    }
 
-   public static double method3614(double var0, double var2) {
-      double var4 = var0 % var2;
-      return var4 < 0.0 ? var4 + var2 : var4;
+   public static double method3614(double d, double d2) {
+      double d3 = d % d2;
+      return d3 < 0.0 ? d3 + d2 : d3;
    }
 
-   public static double method3615(double var0, double var2) {
-      return Math.max(-var2, Math.min(var2, var0));
+   public static double method3615(double d, double d2) {
+      return Math.max(-d2, Math.min(d2, d));
    }
 
-   public static MotorNet method3616(InputStream var0) throws IOException {
-      InputStreamReader var2 = new InputStreamReader(var0, StandardCharsets.UTF_8);
+   public static MotorNet method3616(InputStream inputStream) throws IOException {
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 
-      JsonObject var1;
+      JsonObject jsonObject;
       try {
-         var1 = JsonParser.parseReader(var2).getAsJsonObject();
-      } catch (Throwable var7) {
+         jsonObject = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+      } catch (Throwable e) {
          try {
-            var2.close();
-         } catch (Throwable var6) {
-            var7.addSuppressed(var6);
+            inputStreamReader.close();
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var7;
+         throw e;
       }
 
-      var2.close();
-      String var8 = var1.get("format").getAsString();
-      if (!"neurotest-motor-v1".equals(var8)) {
-         throw new IOException("формат " + var8 + ", ожидался neurotest-motor-v1");
+      inputStreamReader.close();
+      String string = jsonObject.get("format").getAsString();
+      if (!"neurotest-motor-v1".equals(string)) {
+         throw new IOException("формат " + string + ", ожидался neurotest-motor-v1");
       } else {
-         MotorNet var3 = new MotorNet();
-         JsonObject var4 = var1.getAsJsonObject("const");
-         var3.intValue = var4.get("p_ctx").getAsInt();
-         var3.intValue2 = var4.get("n_sum").getAsInt();
-         var3.intValue3 = var4.get("n_geom").getAsInt();
-         var3.intValue4 = var4.get("n_out").getAsInt();
-         var3.intValue5 = var4.get("m_core").getAsInt();
-         var3.intValue6 = var4.get("k_mix").getAsInt();
-         var3.intValue7 = var4.get("hid").getAsInt();
-         var3.intValue8 = var4.get("n_u").getAsInt();
-         var3.doubleValue = var4.get("c_max").getAsDouble();
-         var3.doubleValue2 = var4.get("b_max").getAsDouble();
-         var3.doubleValue3 = var4.get("k_max").getAsDouble();
-         var3.doubleValue4 = var4.get("s_min").getAsDouble();
-         var3.doubleValue7 = var4.has("s_rel") ? var4.get("s_rel").getAsDouble() : 0.0;
-         var3.doubleValue5 = var4.get("scale").getAsDouble();
-         var3.doubleValue6 = var4.get("mdpc_train").getAsDouble();
-         JsonObject var5 = var1.getAsJsonObject("weights");
-         var3.doubleValues = method3619(var5, "cond.0.weight");
-         var3.doubleValues6 = method3618(var5, "cond.0.bias");
-         var3.doubleValues2 = method3619(var5, "cond.2.weight");
-         var3.doubleValues7 = method3618(var5, "cond.2.bias");
-         var3.doubleValues3 = method3619(var5, "cell.weight_ih");
-         var3.doubleValues4 = method3619(var5, "cell.weight_hh");
-         var3.doubleValues8 = method3618(var5, "cell.bias_ih");
-         var3.doubleValues9 = method3618(var5, "cell.bias_hh");
-         var3.doubleValues5 = method3619(var5, "head.weight");
-         var3.doubleValues10 = method3618(var5, "head.bias");
-         var3.doubleValues11 = method3618(var5, "rest.weight");
-         var3.doubleValue8 = method3618(var5, "rest.bias")[0];
-         method3617(var3.doubleValues[0].length == var3.intValue * 2 + var3.intValue2 + var3.intValue3, "вход cond");
-         method3617(var3.doubleValues3.length == 3 * var3.intValue7 && var3.doubleValues3[0].length == 8 + var3.intValue7, "вход GRU");
-         method3617(var3.doubleValues5.length == var3.intValue4, "голова");
-         var3.method3621(var1);
-         return var3;
+         MotorNet motorNet = new MotorNet();
+         JsonObject json = jsonObject.getAsJsonObject("const");
+         motorNet.intValue = json.get("p_ctx").getAsInt();
+         motorNet.intValue2 = json.get("n_sum").getAsInt();
+         motorNet.intValue3 = json.get("n_geom").getAsInt();
+         motorNet.intValue4 = json.get("n_out").getAsInt();
+         motorNet.intValue5 = json.get("m_core").getAsInt();
+         motorNet.intValue6 = json.get("k_mix").getAsInt();
+         motorNet.intValue7 = json.get("hid").getAsInt();
+         motorNet.intValue8 = json.get("n_u").getAsInt();
+         motorNet.doubleValue = json.get("c_max").getAsDouble();
+         motorNet.doubleValue2 = json.get("b_max").getAsDouble();
+         motorNet.doubleValue3 = json.get("k_max").getAsDouble();
+         motorNet.doubleValue4 = json.get("s_min").getAsDouble();
+         motorNet.doubleValue7 = json.has("s_rel") ? json.get("s_rel").getAsDouble() : 0.0;
+         motorNet.doubleValue5 = json.get("scale").getAsDouble();
+         motorNet.doubleValue6 = json.get("mdpc_train").getAsDouble();
+         JsonObject jsonObject2 = jsonObject.getAsJsonObject("weights");
+         motorNet.doubleValues = method3619(jsonObject2, "cond.0.weight");
+         motorNet.doubleValues6 = method3618(jsonObject2, "cond.0.bias");
+         motorNet.doubleValues2 = method3619(jsonObject2, "cond.2.weight");
+         motorNet.doubleValues7 = method3618(jsonObject2, "cond.2.bias");
+         motorNet.doubleValues3 = method3619(jsonObject2, "cell.weight_ih");
+         motorNet.doubleValues4 = method3619(jsonObject2, "cell.weight_hh");
+         motorNet.doubleValues8 = method3618(jsonObject2, "cell.bias_ih");
+         motorNet.doubleValues9 = method3618(jsonObject2, "cell.bias_hh");
+         motorNet.doubleValues5 = method3619(jsonObject2, "head.weight");
+         motorNet.doubleValues10 = method3618(jsonObject2, "head.bias");
+         motorNet.doubleValues11 = method3618(jsonObject2, "rest.weight");
+         motorNet.doubleValue8 = method3618(jsonObject2, "rest.bias")[0];
+         method3617(motorNet.doubleValues[0].length == motorNet.intValue * 2 + motorNet.intValue2 + motorNet.intValue3, "вход cond");
+         method3617(motorNet.doubleValues3.length == 3 * motorNet.intValue7 && motorNet.doubleValues3[0].length == 8 + motorNet.intValue7, "вход GRU");
+         method3617(motorNet.doubleValues5.length == motorNet.intValue4, "голова");
+         motorNet.method3621(jsonObject);
+         return motorNet;
       }
    }
 
-   public static void method3617(boolean var0, String var1) throws IOException {
-      if (!var0) {
-         throw new IOException("не тот размер: " + var1);
+   public static void method3617(boolean flag, String str) throws IOException {
+      if (!flag) {
+         throw new IOException("не тот размер: " + str);
       }
    }
 
-   public static double[] method3618(JsonObject var0, String var1) throws IOException {
-      JsonElement var2 = var0.get(var1);
-      if (var2 == null) {
-         throw new IOException("нет весов " + var1);
+   public static double[] method3618(JsonObject json, String memberName) throws IOException {
+      JsonElement jsonElement = json.get(memberName);
+      if (jsonElement == null) {
+         throw new IOException("нет весов " + memberName);
       } else {
-         return method3620(var2.getAsJsonArray());
+         return method3620(jsonElement.getAsJsonArray());
       }
    }
 
-   public static double[][] method3619(JsonObject var0, String var1) throws IOException {
-      JsonElement var2 = var0.get(var1);
-      if (var2 == null) {
-         throw new IOException("нет весов " + var1);
+   public static double[][] method3619(JsonObject json, String memberName) throws IOException {
+      JsonElement jsonElement = json.get(memberName);
+      if (jsonElement == null) {
+         throw new IOException("нет весов " + memberName);
       } else {
-         JsonArray var3 = var2.getAsJsonArray();
-         double[][] var4 = new double[var3.size()][];
+         JsonArray jsonArray = jsonElement.getAsJsonArray();
+         double[][] doubleses = new double[jsonArray.size()][];
 
-         for (int var5 = 0; var5 < var3.size(); var5++) {
-            var4[var5] = method3620(var3.get(var5).getAsJsonArray());
+         for (int i = 0; i < jsonArray.size(); i++) {
+            doubleses[i] = method3620(jsonArray.get(i).getAsJsonArray());
          }
 
-         return var4;
+         return doubleses;
       }
    }
 
-   public static double[] method3620(JsonArray var0) {
-      double[] var1 = new double[var0.size()];
+   public static double[] method3620(JsonArray jsonArray) {
+      double[] doubles = new double[jsonArray.size()];
 
-      for (int var2 = 0; var2 < var0.size(); var2++) {
-         var1[var2] = var0.get(var2).getAsDouble();
+      for (int i = 0; i < jsonArray.size(); i++) {
+         doubles[i] = jsonArray.get(i).getAsDouble();
       }
 
-      return var1;
+      return doubles;
    }
 
-   public void method3621(JsonObject var1) throws IOException {
-      double var2 = 0.0;
+   public void method3621(JsonObject jsonObject) throws IOException {
+      double d = 0.0;
 
-      for (JsonElement var5 : var1.getAsJsonArray("ref_feats")) {
-         JsonObject var6 = var5.getAsJsonObject();
-         double[] var7 = method3620(var6.getAsJsonArray("cam"));
-         double[] var8 = method3612(
-            var7[0],
-            var7[1],
-            method3620(var6.getAsJsonArray("eye")),
-            method3620(var6.getAsJsonArray("box")),
-            method3620(var6.getAsJsonArray("keys")),
-            var6.get("ground").getAsDouble(),
-            var6.get("sprint").getAsDouble(),
-            var6.get("cool").getAsDouble()
+      for (JsonElement json : jsonObject.getAsJsonArray("ref_feats")) {
+         JsonObject jsonObject2 = json.getAsJsonObject();
+         double[] doubles = method3620(jsonObject2.getAsJsonArray("cam"));
+         double[] original = method3612(
+            doubles[0],
+            doubles[1],
+            method3620(jsonObject2.getAsJsonArray("eye")),
+            method3620(jsonObject2.getAsJsonArray("box")),
+            method3620(jsonObject2.getAsJsonArray("keys")),
+            jsonObject2.get("ground").getAsDouble(),
+            jsonObject2.get("sprint").getAsDouble(),
+            jsonObject2.get("cool").getAsDouble()
          );
-         if (var6.has("vel")) {
-            var8 = this.method3613(var8, var7[0], method3620(var6.getAsJsonArray("vel")));
+         if (jsonObject2.has("vel")) {
+            original = this.method3613(original, doubles[0], method3620(jsonObject2.getAsJsonArray("vel")));
          }
 
-         double[] var9 = method3620(var6.getAsJsonArray("g"));
-         method3617(var8.length == var9.length, "длина геометрии в эталоне");
+         double[] doubles2 = method3620(jsonObject2.getAsJsonArray("g"));
+         method3617(original.length == doubles2.length, "длина геометрии в эталоне");
 
-         for (int var10 = 0; var10 < var9.length; var10++) {
-            var2 = Math.max(var2, Math.abs(var8[var10] - var9[var10]));
+         for (int i = 0; i < doubles2.length; i++) {
+            d = Math.max(d, Math.abs(original[i] - doubles2[i]));
          }
       }
 
-      double var17 = 0.0;
-      int var19 = 0;
-      int var20 = 0;
+      double d2 = 0.0;
+      int n = 0;
+      int n2 = 0;
 
-      for (JsonElement var22 : var1.getAsJsonArray("ref_ticks")) {
-         JsonObject var23 = var22.getAsJsonObject();
-         JsonArray var11 = var23.getAsJsonArray("hist");
-         double[][] var12 = new double[var11.size()][];
+      for (JsonElement json : jsonObject.getAsJsonArray("ref_ticks")) {
+         JsonObject jsonObject2 = json.getAsJsonObject();
+         JsonArray jsonArray = jsonObject2.getAsJsonArray("hist");
+         double[][] doubleValues = new double[jsonArray.size()][];
 
-         for (int var13 = 0; var13 < var11.size(); var13++) {
-            var12[var13] = method3620(var11.get(var13).getAsJsonArray());
+         for (int i = 0; i < jsonArray.size(); i++) {
+            doubleValues[i] = method3620(jsonArray.get(i).getAsJsonArray());
          }
 
-         MotorNet.Entry var24 = this.method3611(
-            var12, method3620(var23.getAsJsonArray("g")), method3620(var23.getAsJsonArray("v")), method3620(var23.getAsJsonArray("u"))
+         MotorNet.Entry entry = this.method3611(
+            doubleValues, method3620(jsonObject2.getAsJsonArray("g")), method3620(jsonObject2.getAsJsonArray("v")), method3620(jsonObject2.getAsJsonArray("u"))
          );
-         var17 = Math.max(var17, Math.abs(var24.doubleValue3 - var23.get("rest").getAsDouble()));
-         double[] var14 = method3620(var23.getAsJsonArray("oy"));
-         double[] var15 = method3620(var23.getAsJsonArray("op"));
+         d2 = Math.max(d2, Math.abs(entry.doubleValue3 - jsonObject2.get("rest").getAsDouble()));
+         double[] doubles = method3620(jsonObject2.getAsJsonArray("oy"));
+         double[] doubles2 = method3620(jsonObject2.getAsJsonArray("op"));
 
-         for (int var16 = 0; var16 < var14.length; var16++) {
-            var17 = Math.max(var17, Math.abs(var24.doubleValues[var16] - var14[var16]));
-            var17 = Math.max(var17, Math.abs(var24.doubleValues2[var16] - var15[var16]));
+         for (int i = 0; i < doubles.length; i++) {
+            d2 = Math.max(d2, Math.abs(entry.doubleValues[i] - doubles[i]));
+            d2 = Math.max(d2, Math.abs(entry.doubleValues2[i] - doubles2[i]));
          }
 
-         if (var24.doubleValue != var23.get("dy").getAsDouble() || var24.doubleValue2 != var23.get("dp").getAsDouble()) {
-            var19++;
+         if (entry.doubleValue != jsonObject2.get("dy").getAsDouble() || entry.doubleValue2 != jsonObject2.get("dp").getAsDouble()) {
+            n++;
          }
 
-         var20++;
+         n2++;
       }
 
-      this.text2 = String.format("мотор: признаки сошлись до %.2e, тики до %.2e, счета совпали в %d из %d", var2, var17, var20 - var19, var20);
-      if (var2 > 1.0E-7 || var17 > 1.0E-7 || var19 > 0) {
+      this.text2 = String.format("мотор: признаки сошлись до %.2e, тики до %.2e, счета совпали в %d из %d", d, d2, n2 - n, n2);
+      if (d > 1.0E-7 || d2 > 1.0E-7 || n > 0) {
          throw new IOException("ЭТАЛОН РАЗОШЁЛСЯ — " + this.text2);
       }
    }
 
-   public static MotorNet method3622(Path var0) throws IOException {
-      MotorNet var2;
-      try (InputStream var1 = Files.newInputStream(var0)) {
-         var2 = method3616(var1);
+   public static MotorNet method3622(Path path) throws IOException {
+      MotorNet motorNet;
+      try (InputStream inputStream = Files.newInputStream(path)) {
+         motorNet = method3616(inputStream);
       }
 
-      return var2;
+      return motorNet;
    }
 
-   public static void main(String[] var0) throws Exception {
-      MotorNet var1 = method3622(Path.of(var0[0]));
-      System.out.println(var1.text2);
-      System.out.println("ок: скрытых " + var1.intValue7 + ", сенса обучения " + var1.doubleValue6);
+   public static void main(String[] strings) throws Exception {
+      MotorNet motorNet = method3622(Path.of(strings[0]));
+      System.out.println(motorNet.text2);
+      System.out.println("ок: скрытых " + motorNet.intValue7 + ", сенса обучения " + motorNet.doubleValue6);
    }
 
    public static final class Entry {

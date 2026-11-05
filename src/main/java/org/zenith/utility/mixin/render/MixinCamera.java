@@ -44,28 +44,28 @@ public abstract class MixinCamera {
    private net.minecraft.client.renderer.culling.Frustum cullFrustum;
 
    @Shadow
-   public abstract void setRotation(float var1, float var2);
+   public abstract void setRotation(float f, float f2);
 
    @Shadow
-   public abstract void move(float var1, float var2, float var3);
+   public abstract void move(float f, float f2, float f3);
 
    @Shadow
-   public abstract float getMaxZoom(float var1);
+   public abstract float getMaxZoom(float floatValue);
 
    @Inject(
       method = {"tick()V"},
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$keepStandingCameraHeight(CallbackInfo var1) {
-      if (this.entity instanceof LocalPlayer var2
-         && var2 == Minecraft.getInstance().player
+   private void zenith$keepStandingCameraHeight(CallbackInfo callbackInfo) {
+      if (this.entity instanceof LocalPlayer player
+         && player == Minecraft.getInstance().player
          && SpeedModule.INSTANCE.isEnabled()
          && SpeedModule.INSTANCE.method6606()) {
-         float var4 = var2.getEyeHeight(Pose.STANDING);
-         this.eyeHeight = var4;
-         this.eyeHeightOld = var4;
-         var1.cancel();
+         float eyeHeight = player.getEyeHeight(Pose.STANDING);
+         this.eyeHeight = eyeHeight;
+         this.eyeHeightOld = eyeHeight;
+         callbackInfo.cancel();
       }
    }
 
@@ -79,21 +79,21 @@ public abstract class MixinCamera {
       )},
       cancellable = true
    )
-   private void updateHook(float var5, CallbackInfo var6) {
-      Entity var2 = this.entity;
-      boolean var3 = !Minecraft.getInstance().options.getCameraType().isFirstPerson();
-      boolean var4 = Minecraft.getInstance().options.getCameraType().isMirrored();
-      CameraUpdateEvent var7 = new CameraUpdateEvent(false, 4.0F, new Rotation(this.yRot, this.xRot));
-      EventManager.call(var7);
-      Rotation var8 = var7.getRotation();
-      if (var7.isCancelled() && var2 instanceof LocalPlayer var9 && !var9.isSleeping() && var3) {
-         float var10 = var4 ? -var8.getFloatValue2() : var8.getFloatValue2();
-         float var11 = var8.getFloatValue() - (var4 ? 180 : 0);
-         float var12 = var7.getFloatValue();
-         this.setRotation(var11, var10);
+   private void updateHook(float f, CallbackInfo callbackInfo) {
+      Entity entity = this.entity;
+      boolean flag = !Minecraft.getInstance().options.getCameraType().isFirstPerson();
+      boolean mirrored = Minecraft.getInstance().options.getCameraType().isMirrored();
+      CameraUpdateEvent event = new CameraUpdateEvent(false, 4.0F, new Rotation(this.yRot, this.xRot));
+      EventManager.call(event);
+      Rotation rotation = event.getRotation();
+      if (event.isCancelled() && entity instanceof LocalPlayer player && !player.isSleeping() && flag) {
+         float f2 = mirrored ? -rotation.getFloatValue2() : rotation.getFloatValue2();
+         float f3 = rotation.getFloatValue() - (mirrored ? 180 : 0);
+         float floatValue = event.getFloatValue();
+         this.setRotation(f3, f2);
          this.detached = true;
-         this.move(var7.isFlag() ? -var12 : -this.getMaxZoom(var12), 0.0F, 0.0F);
-         var6.cancel();
+         this.move(event.isFlag() ? -floatValue : -this.getMaxZoom(floatValue), 0.0F, 0.0F);
+         callbackInfo.cancel();
       }
    }
 
@@ -102,17 +102,17 @@ public abstract class MixinCamera {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void posHook(Vec3 var1, CallbackInfo var2) {
-      CameraPosEvent var3 = new CameraPosEvent(var1);
-      EventManager.call(var3);
-      this.position = var1 = var3.getVec3d();
-      this.blockPosition.set(var1.x, var1.y, var1.z);
-      var2.cancel();
+   private void posHook(Vec3 vec3d, CallbackInfo callbackInfo) {
+      CameraPosEvent event = new CameraPosEvent(vec3d);
+      EventManager.call(event);
+      this.position = vec3d = event.getVec3d();
+      this.blockPosition.set(vec3d.x, vec3d.y, vec3d.z);
+      callbackInfo.cancel();
    }
 
    // moved from MixinWorldRenderer: 26.3 builds the cull frustum in Camera
    @Inject(method = {"prepareCullFrustum"}, at = {@At("RETURN")})
-   private void zenith$captureFrustum(CallbackInfo var1) {
+   private void zenith$captureFrustum(CallbackInfo callbackInfo) {
       org.zenith.utility.misc.FrustumHolder.method3035(this.cullFrustum);
    }
 
@@ -121,22 +121,22 @@ public abstract class MixinCamera {
       method = {"calculateFov(F)F"},
       at = {@At(value = "INVOKE", target = "Ljava/lang/Integer;intValue()I", remap = false)}
    )
-   private int hookGetFov(int var1) {
-      org.zenith.client.events.FovEvent var2 = new org.zenith.client.events.FovEvent();
-      EventManager.call(var2);
-      return var2.isCancelled() ? var2.getIntValue() : var1;
+   private int hookGetFov(int n) {
+      org.zenith.client.events.FovEvent event = new org.zenith.client.events.FovEvent();
+      EventManager.call(event);
+      return event.isCancelled() ? event.getIntValue() : n;
    }
 
    // script zoom (was MixinScriptCamera on GameRenderer.getFov); runs before the weather capture below
    @com.llamalad7.mixinextras.injector.ModifyReturnValue(method = {"calculateFov(F)F"}, at = {@At("RETURN")})
-   private float zenith$scriptZoom(float var1) {
-      float var2 = org.zenith.utility.game.Util4.method1281();
-      return var2 > 1.001F ? Math.max(1.0F, var1 / var2) : var1;
+   private float zenith$scriptZoom(float f) {
+      float f2 = org.zenith.utility.game.Util4.method1281();
+      return f2 > 1.001F ? Math.max(1.0F, f / f2) : f;
    }
 
    @Inject(method = {"calculateFov(F)F"}, at = {@At("RETURN")})
-   private void captureWeatherFov(float var1, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Float> var2) {
-      org.zenith.utility.misc.Util15.method2703(var2.getReturnValueF());
+   private void captureWeatherFov(float f, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Float> callbackInfoReturnable) {
+      org.zenith.utility.misc.Util15.method2703(callbackInfoReturnable.getReturnValueF());
    }
 
    // ProjectionMatrixEvent overrides the aspect ratio (old GameRenderer.getProjectionMatrix hook)
@@ -144,12 +144,12 @@ public abstract class MixinCamera {
       method = {"update(Lnet/minecraft/client/DeltaTracker;)V"},
       at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setupPerspective(FFFFF)V")
    )
-   private void zenith$aspect(Camera var1, float var2, float var3, float var4, float var5, float var6) {
-      org.zenith.client.events.ProjectionMatrixEvent var7 = new org.zenith.client.events.ProjectionMatrixEvent();
-      EventManager.call(var7);
-      this.setupPerspective(var2, var3, var4, var7.isCancelled() ? var7.getFloatValue() * var6 : var5, var6);
+   private void zenith$aspect(Camera camera, float f, float f2, float f3, float f4, float f5) {
+      org.zenith.client.events.ProjectionMatrixEvent event = new org.zenith.client.events.ProjectionMatrixEvent();
+      EventManager.call(event);
+      this.setupPerspective(f, f2, f3, event.isCancelled() ? event.getFloatValue() * f5 : f4, f5);
    }
 
    @Shadow
-   protected abstract void setupPerspective(float var1, float var2, float var3, float var4, float var5);
+   protected abstract void setupPerspective(float f, float f2, float f3, float f4, float f5);
 }

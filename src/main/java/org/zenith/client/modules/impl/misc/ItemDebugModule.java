@@ -82,15 +82,15 @@ public class ItemDebugModule extends Module {
    }
 
    @EventTarget
-   public void method4620(SlotClickEvent var1) {
+   public void method4620(SlotClickEvent event) {
       if (this.clickedSlots.isEnabled() && mc.player != null) {
-         AbstractContainerMenu var2 = mc.player.containerMenu;
-         if (var2 != null) {
-            int var3 = var1.getIntValue2();
-            if (var2.isValidSlotIndex(var3)) {
-               ItemStack var4 = var2.getSlot(var3).getItem();
-               if (!var4.isEmpty()) {
-                  this.method4624("click", "self", "slot" + var3, var4, true);
+         AbstractContainerMenu containerMenu = mc.player.containerMenu;
+         if (containerMenu != null) {
+            int slotIndex = event.getIntValue2();
+            if (containerMenu.isValidSlotIndex(slotIndex)) {
+               ItemStack second = containerMenu.getSlot(slotIndex).getItem();
+               if (!second.isEmpty()) {
+                  this.method4624("click", "self", "slot" + slotIndex, second, true);
                }
             }
          }
@@ -98,65 +98,65 @@ public class ItemDebugModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         Packet var2 = var1.getPacket3();
-         if (var2 instanceof ClientboundSetEquipmentPacket var10) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         Packet packet3 = event.getPacket3();
+         if (packet3 instanceof ClientboundSetEquipmentPacket setEquipmentPacket) {
             if (this.equipmentPackets.isEnabled()) {
-               int var12 = var10.getEntity();
-               ArrayList<Pair> var14 = new ArrayList();
+               int entity = setEquipmentPacket.getEntity();
+               ArrayList<Pair> pairs = new ArrayList();
 
-               for (Pair var19 : var10.getSlots()) {
-                  ItemStack var8 = (ItemStack)var19.getSecond();
-                  if (var8 != null && !var8.isEmpty()) {
-                     var14.add(Pair.of((EquipmentSlot)var19.getFirst(), var8.copy()));
+               for (Pair slot : setEquipmentPacket.getSlots()) {
+                  ItemStack second = (ItemStack)slot.getSecond();
+                  if (second != null && !second.isEmpty()) {
+                     pairs.add(Pair.of((EquipmentSlot)slot.getFirst(), second.copy()));
                   }
                }
 
-               if (!var14.isEmpty()) {
+               if (!pairs.isEmpty()) {
                   this.method4621(() -> {
-                     String var3x = this.method4623(var12);
+                     String var3x = this.method4623(entity);
 
-                     for (Pair var5x : var14) {
+                     for (Pair var5x : pairs) {
                         this.method4624("packet:equip", var3x, ((EquipmentSlot)var5x.getFirst()).getSerializedName(), (ItemStack)var5x.getSecond(), false);
                      }
                   });
                }
             }
-         } else if (var2 instanceof ClientboundContainerSetSlotPacket var9) {
+         } else if (packet3 instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket) {
             if (this.containerPackets.isEnabled()) {
-               ItemStack var11 = var9.getItem();
-               if (var11 != null && !var11.isEmpty()) {
-                  ItemStack var13 = var11.copy();
-                  String var16 = "window" + var9.getContainerId();
-                  String var18 = "slot" + var9.getSlot();
-                  this.method4621(() -> this.method4624("packet:slot", var16, var18, var13, false));
+               ItemStack stack = containerSetSlotPacket.getItem();
+               if (stack != null && !stack.isEmpty()) {
+                  ItemStack second = stack.copy();
+                  String string = "window" + containerSetSlotPacket.getContainerId();
+                  String serializedName = "slot" + containerSetSlotPacket.getSlot();
+                  this.method4621(() -> this.method4624("packet:slot", string, serializedName, second, false));
                }
             }
          } else {
-            if (var2 instanceof ClientboundContainerSetContentPacket var3) {
+            if (packet3 instanceof ClientboundContainerSetContentPacket setContentPacket) {
                if (!this.containerPackets.isEnabled()) {
                   return;
                }
 
-               var var4 = var3.items();
-               ArrayList<Pair> var5 = new ArrayList();
+               var items = setContentPacket.items();
+               ArrayList<Pair> pairs = new ArrayList();
 
-               for (int var6 = 0; var6 < var4.size(); var6++) {
-                  ItemStack var7 = (ItemStack)var4.get(var6);
-                  if (var7 != null && !var7.isEmpty()) {
-                     var5.add(Pair.of("slot" + var6, var7.copy()));
+               for (int i = 0; i < items.size(); i++) {
+                  ItemStack stack = (ItemStack)items.get(i);
+                  if (stack != null && !stack.isEmpty()) {
+                     pairs.add(Pair.of("slot" + i, stack.copy()));
                   }
                }
 
-               if (var5.isEmpty()) {
+               if (pairs.isEmpty()) {
                   return;
                }
 
-               String var15 = "window" + var3.containerId();
+               String string = "window" + setContentPacket.containerId();
                this.method4621(() -> {
-                  for (Pair var4x : var5) {
-                     this.method4624("packet:inv", var15, (String)var4x.getFirst(), (ItemStack)var4x.getSecond(), false);
+                  for (Pair var4x : pairs) {
+                     this.method4624("packet:inv", string, (String)var4x.getFirst(), (ItemStack)var4x.getSecond(), false);
                   }
                });
             }
@@ -164,38 +164,38 @@ public class ItemDebugModule extends Module {
       }
    }
 
-   private void method4621(Runnable var1) {
+   private void method4621(Runnable runnable) {
       mc.execute(() -> {
          if (this.isEnabled()) {
-            var1.run();
+            runnable.run();
          }
       });
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         long var2 = System.currentTimeMillis();
-         if (var2 - this.longValue >= 500L) {
-            this.longValue = var2;
-            if (this.crosshairTarget.isEnabled() && mc.crosshairPickEntity instanceof LivingEntity var4) {
-               this.method4622("crosshair", var4);
+         long now = System.currentTimeMillis();
+         if (now - this.longValue >= 500L) {
+            this.longValue = now;
+            if (this.crosshairTarget.isEnabled() && mc.crosshairPickEntity instanceof LivingEntity player) {
+               this.method4622("crosshair", player);
             }
 
             if (this.nearbyPlayers.isEnabled()) {
-               for (Player var10 : mc.level.players()) {
-                  if (var10 != mc.player && !(var10.distanceToSqr(mc.player) > 256.0)) {
-                     this.method4622("nearby", var10);
+               for (Player player2 : mc.level.players()) {
+                  if (player2 != mc.player && !(player2.distanceToSqr(mc.player) > 256.0)) {
+                     this.method4622("nearby", player2);
                   }
                }
             }
 
             if (this.drops.isEnabled()) {
-               for (Entity var11 : mc.level.entitiesForRendering()) {
-                  if (var11 instanceof ItemEntity var6 && !(var6.distanceToSqr(mc.player) > 256.0)) {
-                     ItemStack var7 = var6.getItem();
-                     if (var7 != null && !var7.isEmpty()) {
-                        this.method4624("drop", "id" + var6.getId(), "stack", var7, false);
+               for (Entity entity : mc.level.entitiesForRendering()) {
+                  if (entity instanceof ItemEntity itemEntity && !(itemEntity.distanceToSqr(mc.player) > 256.0)) {
+                     ItemStack second = itemEntity.getItem();
+                     if (second != null && !second.isEmpty()) {
+                        this.method4624("drop", "id" + itemEntity.getId(), "stack", second, false);
                      }
                   }
                }
@@ -204,161 +204,161 @@ public class ItemDebugModule extends Module {
       }
    }
 
-   private void method4622(String var1, LivingEntity var2) {
-      String var3 = var2.getName().getString();
+   private void method4622(String str, LivingEntity player) {
+      String string = player.getName().getString();
 
-      for (EquipmentSlot var7 : EquipmentSlot.values()) {
-         ItemStack var8;
+      for (EquipmentSlot slot : EquipmentSlot.values()) {
+         ItemStack itemBySlot;
          try {
-            var8 = var2.getItemBySlot(var7);
-         } catch (Exception var10) {
+            itemBySlot = player.getItemBySlot(slot);
+         } catch (Exception e) {
             continue;
          }
 
-         if (var8 != null && !var8.isEmpty()) {
-            this.method4624(var1, var3, var7.getSerializedName(), var8, false);
+         if (itemBySlot != null && !itemBySlot.isEmpty()) {
+            this.method4624(str, string, slot.getSerializedName(), itemBySlot, false);
          }
       }
    }
 
-   private String method4623(int var1) {
+   private String method4623(int entity) {
       if (mc.level == null) {
-         return "id" + var1;
+         return "id" + entity;
       } else {
-         Entity var2 = mc.level.getEntity(var1);
-         return var2 == null ? "id" + var1 : var2.getName().getString() + "/id" + var1;
+         Entity entity2 = mc.level.getEntity(entity);
+         return entity2 == null ? "id" + entity : entity2.getName().getString() + "/id" + entity;
       }
    }
 
-   private void method4624(String var1, String var2, String var3, ItemStack var4, boolean var5) {
-      String var6 = var1 + "|" + var2 + "|" + var3;
-      String var7 = this.method4626(var4);
-      if (var5 || !var7.equals(this.items.get(var6))) {
-         this.items.put(var6, var7);
-         StringBuilder var8 = new StringBuilder();
-         var8.append("==================== ItemDebug [")
-            .append(var1)
+   private void method4624(String str, String string, String serializedName, ItemStack second, boolean flag) {
+      String str2 = str + "|" + string + "|" + serializedName;
+      String str3 = this.method4626(second);
+      if (flag || !str3.equals(this.items.get(str2))) {
+         this.items.put(str2, str3);
+         StringBuilder x = new StringBuilder();
+         x.append("==================== ItemDebug [")
+            .append(str)
             .append("] ")
             .append(simpleDateFormat.format(new Date()))
             .append(" ====================\n");
-         var8.append("Owner: ").append(var2).append("  Slot: ").append(var3).append("\n");
-         var8.append("Item: ").append(BuiltInRegistries.ITEM.getKey(var4.getItem())).append("\n");
-         var8.append("Name: ").append(var4.getHoverName().getString()).append("\n");
-         var8.append("Count: ").append(var4.getCount()).append("  Damage: ").append(var4.getDamageValue()).append("\n");
-         Component var9 = var4.get(DataComponents.CUSTOM_NAME);
-         var8.append("CustomName: ").append(var9 == null ? "<none>" : var9.getString()).append("\n");
-         Component var10 = var4.get(DataComponents.ITEM_NAME);
-         var8.append("ItemName: ").append(var10 == null ? "<none>" : var10.getString()).append("\n");
-         ItemLore var11 = var4.get(DataComponents.LORE);
-         if (var11 != null && !var11.lines().isEmpty()) {
-            var8.append("Lore:\n");
+         x.append("Owner: ").append(string).append("  Slot: ").append(serializedName).append("\n");
+         x.append("Item: ").append(BuiltInRegistries.ITEM.getKey(second.getItem())).append("\n");
+         x.append("Name: ").append(second.getHoverName().getString()).append("\n");
+         x.append("Count: ").append(second.getCount()).append("  Damage: ").append(second.getDamageValue()).append("\n");
+         Component component = second.get(DataComponents.CUSTOM_NAME);
+         x.append("CustomName: ").append(component == null ? "<none>" : component.getString()).append("\n");
+         Component component2 = second.get(DataComponents.ITEM_NAME);
+         x.append("ItemName: ").append(component2 == null ? "<none>" : component2.getString()).append("\n");
+         ItemLore itemLore = second.get(DataComponents.LORE);
+         if (itemLore != null && !itemLore.lines().isEmpty()) {
+            x.append("Lore:\n");
 
-            for (Component var13 : var11.lines()) {
-               var8.append("  ").append(var13.getString()).append("\n");
+            for (Component line : itemLore.lines()) {
+               x.append("  ").append(line.getString()).append("\n");
             }
          } else {
-            var8.append("Lore: <none>\n");
+            x.append("Lore: <none>\n");
          }
 
-         ItemEnchantments var16 = var4.get(DataComponents.ENCHANTMENTS);
-         if (var16 != null && !var16.isEmpty()) {
-            var8.append("Enchantments:\n");
+         ItemEnchantments itemEnchantments = second.get(DataComponents.ENCHANTMENTS);
+         if (itemEnchantments != null && !itemEnchantments.isEmpty()) {
+            x.append("Enchantments:\n");
 
-            for (Holder var14 : var16.keySet()) {
-               String var15 = (String)var14.unwrapKey().map(var0 -> ((net.minecraft.resources.ResourceKey<?>)var0).identifier().toString()).orElse((Object)"unknown");
-               var8.append("  ").append(var15).append(" ").append(var16.getLevel(var14)).append("\n");
+            for (Holder enchantment : itemEnchantments.keySet()) {
+               String str4 = (String)enchantment.unwrapKey().map(obj -> ((net.minecraft.resources.ResourceKey<?>)obj).identifier().toString()).orElse((Object)"unknown");
+               x.append("  ").append(str4).append(" ").append(itemEnchantments.getLevel(enchantment)).append("\n");
             }
          } else {
-            var8.append("Enchantments: <none>\n");
+            x.append("Enchantments: <none>\n");
          }
 
-         var8.append("ComponentChanges: ").append(var4.getComponentsPatch()).append("\n");
-         var8.append("Components:\n");
+         x.append("ComponentChanges: ").append(second.getComponentsPatch()).append("\n");
+         x.append("Components:\n");
 
-         for (TypedDataComponent var19 : var4.getComponents()) {
-            var8.append("  ").append(var19.type()).append(" = ").append(var19.value()).append("\n");
+         for (TypedDataComponent typedDataComponent : second.getComponents()) {
+            x.append("  ").append(typedDataComponent.type()).append(" = ").append(typedDataComponent.value()).append("\n");
          }
 
-         var8.append("===================================================");
-         System.out.println(var8);
-         this.method4628(var8.toString());
+         x.append("===================================================");
+         System.out.println(x);
+         this.method4628(x.toString());
          if (this.chatSummary.isEnabled()) {
-            ChatLogger.method2019(this.method4625(var1, var2, var3, var4));
+            ChatLogger.method2019(this.method4625(str, string, serializedName, second));
          }
       }
    }
 
-   private String method4625(String var1, String var2, String var3, ItemStack var4) {
-      StringBuilder var5 = new StringBuilder();
-      if (var4.has(DataComponents.CUSTOM_NAME)) {
-         var5.append("name ");
+   private String method4625(String str, String string, String serializedName, ItemStack second) {
+      StringBuilder builder = new StringBuilder();
+      if (second.has(DataComponents.CUSTOM_NAME)) {
+         builder.append("name ");
       }
 
-      if (var4.has(DataComponents.ITEM_NAME)) {
-         var5.append("itemname ");
+      if (second.has(DataComponents.ITEM_NAME)) {
+         builder.append("itemname ");
       }
 
-      if (var4.has(DataComponents.LORE)) {
-         var5.append("lore ");
+      if (second.has(DataComponents.LORE)) {
+         builder.append("lore ");
       }
 
-      if (var4.has(DataComponents.ENCHANTMENTS)) {
-         var5.append("ench ");
+      if (second.has(DataComponents.ENCHANTMENTS)) {
+         builder.append("ench ");
       }
 
-      if (var4.has(DataComponents.CUSTOM_DATA)) {
-         var5.append("nbt ");
+      if (second.has(DataComponents.CUSTOM_DATA)) {
+         builder.append("nbt ");
       }
 
-      if (var4.has(DataComponents.CUSTOM_MODEL_DATA)) {
-         var5.append("model ");
+      if (second.has(DataComponents.CUSTOM_MODEL_DATA)) {
+         builder.append("model ");
       }
 
-      if (var4.has(DataComponents.ITEM_MODEL)) {
-         var5.append("itemmodel ");
+      if (second.has(DataComponents.ITEM_MODEL)) {
+         builder.append("itemmodel ");
       }
 
-      if (var4.has(DataComponents.DAMAGE)) {
-         var5.append("damage ");
+      if (second.has(DataComponents.DAMAGE)) {
+         builder.append("damage ");
       }
 
-      if (var5.isEmpty()) {
-         var5.append("<empty>");
+      if (builder.isEmpty()) {
+         builder.append("<empty>");
       }
 
-      int var6 = var4.getComponentsPatch().size();
-      return var1 + " " + var2 + " " + var3 + ": " + BuiltInRegistries.ITEM.getKey(var4.getItem()) + " changes=" + var6 + " [" + var5.toString().trim() + "]";
+      int size = second.getComponentsPatch().size();
+      return str + " " + string + " " + serializedName + ": " + BuiltInRegistries.ITEM.getKey(second.getItem()) + " changes=" + size + " [" + builder.toString().trim() + "]";
    }
 
-   private String method4626(ItemStack var1) {
-      return BuiltInRegistries.ITEM.getKey(var1.getItem()) + "x" + var1.getCount() + ":" + var1.getComponentsPatch().hashCode();
+   private String method4626(ItemStack second) {
+      return BuiltInRegistries.ITEM.getKey(second.getItem()) + "x" + second.getCount() + ":" + second.getComponentsPatch().hashCode();
    }
 
    private void method4627() {
       try {
-         File var1 = new File(mc.gameDirectory, "zenith-itemdump");
-         if (!var1.exists() && !var1.mkdirs()) {
+         File file = new File(mc.gameDirectory, "zenith-itemdump");
+         if (!file.exists() && !file.mkdirs()) {
             return;
          }
 
-         this.file = new File(var1, "dump-" + System.currentTimeMillis() + ".log");
+         this.file = new File(file, "dump-" + System.currentTimeMillis() + ".log");
          this.printWriter = new PrintWriter(new FileWriter(this.file, true), true);
          ChatLogger.method2019("ItemDebug: лог " + this.file.getAbsolutePath());
-      } catch (Exception var2) {
+      } catch (Exception e) {
          this.printWriter = null;
          this.file = null;
-         ChatLogger.method2022("ItemDebug: не открылся файл лога — " + var2.getMessage());
+         ChatLogger.method2022("ItemDebug: не открылся файл лога — " + e.getMessage());
       }
    }
 
-   private void method4628(String var1) {
+   private void method4628(String string) {
       if (this.toFile.isEnabled()) {
          if (this.printWriter == null) {
             this.method4627();
          }
 
          if (this.printWriter != null) {
-            this.printWriter.println(var1);
+            this.printWriter.println(string);
          }
       }
    }
@@ -367,7 +367,7 @@ public class ItemDebugModule extends Module {
       if (this.printWriter != null) {
          try {
             this.printWriter.close();
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
 
          this.printWriter = null;

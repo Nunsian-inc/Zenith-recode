@@ -51,11 +51,11 @@ public abstract class AddonSetting<T> implements SettingDefinition {
       this.value = this.defaultValue;
    }
 
-   public abstract void safe(ModuleConfig var1);
+   public abstract void safe(ModuleConfig config);
 
-   public abstract void load(ModuleConfig var1);
+   public abstract void load(ModuleConfig config);
 
-   public abstract void setObject(Object var1);
+   public abstract void setObject(Object obj);
 
-   protected abstract T validate(T var1);
+   protected abstract T validate(T value);
 }

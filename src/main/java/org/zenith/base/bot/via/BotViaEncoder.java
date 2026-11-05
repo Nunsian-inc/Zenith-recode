@@ -8,16 +8,16 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.List;
 
 public final class BotViaEncoder extends ViaEncoder {
-   public BotViaEncoder(UserConnection var1) {
-      super(var1);
+   public BotViaEncoder(UserConnection userConnectionImpl) {
+      super(userConnectionImpl);
    }
 
    @Override
-   public void encode(ChannelHandlerContext var1, ByteBuf var2, List<Object> var3) {
-      super.encode(var1, var2, var3);
-      ProtocolPipeline var4 = this.connection.getProtocolInfo().getPipeline();
-      if (var4.hasNonBaseProtocols() && !var4.contains(BotViaCompatibilityProtocol.class)) {
-         var4.add(BotViaCompatibilityProtocol.INSTANCE);
+   public void encode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) {
+      super.encode(channelHandlerContext, byteBuf, list);
+      ProtocolPipeline pipeline = this.connection.getProtocolInfo().getPipeline();
+      if (pipeline.hasNonBaseProtocols() && !pipeline.contains(BotViaCompatibilityProtocol.class)) {
+         pipeline.add(BotViaCompatibilityProtocol.INSTANCE);
       }
    }
 }

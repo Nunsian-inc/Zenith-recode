@@ -48,19 +48,19 @@ public final class HeldItemAnimator implements MinecraftAccess {
    public HeldItemAnimator() {
       INSTANCE = this;
       EventManager.register(this);
-      ClientTickEvents.END_CLIENT_TICK.register((EndTick)var1 -> this.tick());
+      ClientTickEvents.END_CLIENT_TICK.register((EndTick)minecraft -> this.tick());
    }
 
    private static Vector3f method4770() {
-      Vector3f var0 = new Vector3f(vector3f2).negate().normalize();
-      return var0.sub(new Vector3f(vector3f3).mul(var0.dot(vector3f3))).normalize();
+      Vector3f vec = new Vector3f(vector3f2).negate().normalize();
+      return vec.sub(new Vector3f(vector3f3).mul(vec.dot(vector3f3))).normalize();
    }
 
    @EventTarget
-   private void method4771(KeyEvent var1) {
-      if (var1.isPress(74) && this.longValue < 0L && method4772()) {
-         InteractionHand var2 = method4773();
-         this.flag = var2 != null && !mc.player.getItemInHand(var2).isEmpty();
+   private void method4771(KeyEvent event) {
+      if (event.isPress(74) && this.longValue < 0L && method4772()) {
+         InteractionHand hand = method4773();
+         this.flag = hand != null && !mc.player.getItemInHand(hand).isEmpty();
          this.slot = mc.player.getInventory().getSelectedSlot();
          this.longValue = System.nanoTime();
       }
@@ -80,9 +80,9 @@ public final class HeldItemAnimator implements MinecraftAccess {
 
    private void stop() {
       this.longValue = -1L;
-      InteractionHand var1 = method4773();
-      if (this.flag && var1 != null && mc.gameRenderer != null) {
-         mc.player.itemUsed(var1);
+      InteractionHand hand = method4773();
+      if (this.flag && hand != null && mc.gameRenderer != null) {
+         mc.player.itemUsed(hand);
       }
 
       this.flag = false;
@@ -90,9 +90,9 @@ public final class HeldItemAnimator implements MinecraftAccess {
 
    private static boolean method4772() {
       if (mc.player != null && mc.gui.screen() == null && mc.options.getCameraType().isFirstPerson() && !mc.player.isInvisible()) {
-         Wardrobe var0 = Wardrobe.method2488();
-         return var0 != null && var0.showSelf.isEnabled()
-            ? var0.method2499(var0.method2498(mc.player.getGameProfile().name(), true), FocusSlotEnum.WATCH) != null
+         Wardrobe wardrobe = Wardrobe.method2488();
+         return wardrobe != null && wardrobe.showSelf.isEnabled()
+            ? wardrobe.method2499(wardrobe.method2498(mc.player.getGameProfile().name(), true), FocusSlotEnum.WATCH) != null
             : false;
       } else {
          return false;
@@ -112,72 +112,72 @@ public final class HeldItemAnimator implements MinecraftAccess {
    }
 
    public static boolean method4775(
-      FirstPersonHandsAndItemsRenderer var0, AbstractClientPlayer var1, InteractionHand var2, PoseStack var3, SubmitNodeCollector var4, int var5
+      FirstPersonHandsAndItemsRenderer handsAndItemsRenderer, AbstractClientPlayer abstractClientPlayerEntity, InteractionHand hand, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int n
    ) {
-      HeldItemAnimator var6 = INSTANCE;
-      if (var6 != null && var6.longValue >= 0L && var1 == mc.player && var2 == method4773()) {
-         float var7 = CONST_floatValues[CONST_floatValues.length - 1][0];
-         float var8 = Math.min(var6.method4774(), var7);
-         float var9 = method4776(var8 / 0.6F) * method4776((var7 - var8) / 0.55F);
-         float var10 = method4777(var8, 1);
-         float var11 = (float)Math.sin(var8 * 2.4F) * 0.0035F * var9;
-         Vector3f var12 = new Vector3f(vector3f2).add(method4777(var8, 2), method4777(var8, 3) + var11, method4777(var8, 4));
-         Vector3f var13 = new Vector3f(vector3f);
-         if (var6.flag) {
-            var13.y -= 0.75F;
+      HeldItemAnimator heldItemAnimator = INSTANCE;
+      if (heldItemAnimator != null && heldItemAnimator.longValue >= 0L && abstractClientPlayerEntity == mc.player && hand == method4773()) {
+         float f = CONST_floatValues[CONST_floatValues.length - 1][0];
+         float f2 = Math.min(heldItemAnimator.method4774(), f);
+         float alpha = method4776(f2 / 0.6F) * method4776((f - f2) / 0.55F);
+         float f3 = method4777(f2, 1);
+         float f4 = (float)Math.sin(f2 * 2.4F) * 0.0035F * alpha;
+         Vector3f vec = new Vector3f(vector3f2).add(method4777(f2, 2), method4777(f2, 3) + f4, method4777(f2, 4));
+         Vector3f vec2 = new Vector3f(vector3f);
+         if (heldItemAnimator.flag) {
+            vec2.y -= 0.75F;
          }
 
-         Vector3f var14 = var13.lerp(var12, var9);
-         Quaternionf var15 = new Quaternionf().slerp(quaternionf, var9);
-         Vector3f var16 = new Vector3f(vector3f4).mul(-0.15F);
-         var3.pushPose();
-         var3.translate(var14.x, var14.y, var14.z);
-         var3.translate(var16.x, var16.y, var16.z);
-         var3.rotate(new Quaternionf().rotationAxis(var10 * (float) (Math.PI / 180.0), vector3f3));
-         var3.translate(-var16.x, -var16.y, -var16.z);
-         var3.rotate(var15);
-         var3.translate(-vector3f.x, -vector3f.y, -vector3f.z);
-         ((HeldItemRendererAccessor)(Object)var0).zenith$renderArmHoldingItem(var3, var4, var5, 0.0F, 0.0F, HumanoidArm.RIGHT, mc.gameRenderer.gameRenderState().levelRenderState.playerRenderState);
-         var3.popPose();
+         Vector3f vec3 = vec2.lerp(vec, alpha);
+         Quaternionf slerp = new Quaternionf().slerp(quaternionf, alpha);
+         Vector3f vec4 = new Vector3f(vector3f4).mul(-0.15F);
+         poseStack.pushPose();
+         poseStack.translate(vec3.x, vec3.y, vec3.z);
+         poseStack.translate(vec4.x, vec4.y, vec4.z);
+         poseStack.rotate(new Quaternionf().rotationAxis(f3 * (float) (Math.PI / 180.0), vector3f3));
+         poseStack.translate(-vec4.x, -vec4.y, -vec4.z);
+         poseStack.rotate(slerp);
+         poseStack.translate(-vector3f.x, -vector3f.y, -vector3f.z);
+         ((HeldItemRendererAccessor)(Object)handsAndItemsRenderer).zenith$renderArmHoldingItem(poseStack, submitNodeCollector, n, 0.0F, 0.0F, HumanoidArm.RIGHT, mc.gameRenderer.gameRenderState().levelRenderState.playerRenderState);
+         poseStack.popPose();
          return true;
       } else {
          return false;
       }
    }
 
-   private static float method4776(float var0) {
-      float var1 = Mth.clamp(var0, 0.0F, 1.0F);
-      return var1 * var1 * var1 * (var1 * (var1 * 6.0F - 15.0F) + 10.0F);
+   private static float method4776(float f) {
+      float f2 = Mth.clamp(f, 0.0F, 1.0F);
+      return f2 * f2 * f2 * (f2 * (f2 * 6.0F - 15.0F) + 10.0F);
    }
 
-   private static float method4777(float var0, int var1) {
-      int var2 = 0;
+   private static float method4777(float f, int n) {
+      int n2 = 0;
 
-      while (var2 < CONST_floatValues.length - 2 && var0 > CONST_floatValues[var2 + 1][0]) {
-         var2++;
+      while (n2 < CONST_floatValues.length - 2 && f > CONST_floatValues[n2 + 1][0]) {
+         n2++;
       }
 
-      float var3 = CONST_floatValues[var2][0];
-      float var4 = CONST_floatValues[var2 + 1][0];
-      float var5 = var4 - var3;
-      float var6 = Mth.clamp((var0 - var3) / var5, 0.0F, 1.0F);
-      float var7 = CONST_floatValues[var2][var1];
-      float var8 = CONST_floatValues[var2 + 1][var1];
-      float var9 = method4778(var2, var1) * var5;
-      float var10 = method4778(var2 + 1, var1) * var5;
-      float var11 = var6 * var6;
-      float var12 = var11 * var6;
-      return (2.0F * var12 - 3.0F * var11 + 1.0F) * var7
-         + (var12 - 2.0F * var11 + var6) * var9
-         + (-2.0F * var12 + 3.0F * var11) * var8
-         + (var12 - var11) * var10;
+      float f2 = CONST_floatValues[n2][0];
+      float f3 = CONST_floatValues[n2 + 1][0];
+      float f4 = f3 - f2;
+      float f5 = Mth.clamp((f - f2) / f4, 0.0F, 1.0F);
+      float f6 = CONST_floatValues[n2][n];
+      float f7 = CONST_floatValues[n2 + 1][n];
+      float f8 = method4778(n2, n) * f4;
+      float f9 = method4778(n2 + 1, n) * f4;
+      float f10 = f5 * f5;
+      float f11 = f10 * f5;
+      return (2.0F * f11 - 3.0F * f10 + 1.0F) * f6
+         + (f11 - 2.0F * f10 + f5) * f8
+         + (-2.0F * f11 + 3.0F * f10) * f7
+         + (f11 - f10) * f9;
    }
 
-   private static float method4778(int var0, int var1) {
-      if (var0 > 0 && var0 < CONST_floatValues.length - 1) {
-         float[] var2 = CONST_floatValues[var0 - 1];
-         float[] var3 = CONST_floatValues[var0 + 1];
-         return (var3[var1] - var2[var1]) / (var3[0] - var2[0]);
+   private static float method4778(int n, int n2) {
+      if (n > 0 && n < CONST_floatValues.length - 1) {
+         float[] floats = CONST_floatValues[n - 1];
+         float[] floats2 = CONST_floatValues[n + 1];
+         return (floats2[n2] - floats[n2]) / (floats2[0] - floats[0]);
       } else {
          return 0.0F;
       }

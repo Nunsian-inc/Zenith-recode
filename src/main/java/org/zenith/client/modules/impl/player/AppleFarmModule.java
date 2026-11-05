@@ -62,7 +62,7 @@ public final class AppleFarmModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null) {
          if (mc.player.tickCount % 600 < 10) {
             if (mc.player.getMainHandItem().is(net.minecraft.tags.ItemTags.AXES)) {
@@ -70,22 +70,22 @@ public final class AppleFarmModule extends Module {
             }
          } else if (!this.method4103(19)) {
             if (KeyBindUtils.method2630(AppleFarmModule.class) && this.method4105()) {
-               BlockPos var2 = this.method4111(5.0, var0 -> var0.is(BlockTags.LEAVES), this::method4110);
-               if (var2 != null) {
-                  this.method4087(var2, var0 -> var0.is(net.minecraft.tags.ItemTags.HOES));
+               BlockPos pos = this.method4111(5.0, blockState -> blockState.is(BlockTags.LEAVES), this::method4110);
+               if (pos != null) {
+                  this.method4087(pos, stack -> stack.is(net.minecraft.tags.ItemTags.HOES));
                } else {
-                  BlockPos var3 = this.method4111(5.0, var0 -> var0.is(BlockTags.LOGS), Vec3i::getY);
-                  if (var3 != null) {
-                     this.method4087(var3, var0 -> var0.is(net.minecraft.tags.ItemTags.AXES));
+                  BlockPos pos2 = this.method4111(5.0, blockState -> blockState.is(BlockTags.LOGS), Vec3i::getY);
+                  if (pos2 != null) {
+                     this.method4087(pos2, stack -> stack.is(net.minecraft.tags.ItemTags.AXES));
                   } else if (mc.gui.screen() instanceof ContainerScreen) {
                      this.method4089();
                   } else if (this.method4099(Items.BONE) > 0 && this.method4099(Items.BONE_MEAL) == 0) {
                      this.method4090();
                   } else if (!this.method4101() && !this.method4102()) {
-                     BlockPos var4 = this.method4112(16.0, var0 -> var0.is(BlockTags.DIRT));
-                     if (var4 != null) {
+                     BlockPos pos3 = this.method4112(16.0, blockState -> blockState.is(BlockTags.DIRT));
+                     if (pos3 != null) {
                         if (this.method4099(Items.STICK) <= 128 && this.method4099(Items.OAK_SAPLING) <= 128) {
-                           this.method4088(var4);
+                           this.method4088(pos3);
                         } else {
                            this.method4091();
                         }
@@ -99,50 +99,50 @@ public final class AppleFarmModule extends Module {
       }
    }
 
-   private void method4087(BlockPos var1, Predicate<ItemStack> var2) {
-      if (!var2.test(mc.player.getMainHandItem())) {
-         this.method4094(var2);
+   private void method4087(BlockPos pos, Predicate<ItemStack> predicate) {
+      if (!predicate.test(mc.player.getMainHandItem())) {
+         this.method4094(predicate);
       } else if (!(mc.player.getMainHandItem().is(net.minecraft.tags.ItemTags.AXES)) || !(mc.player.getAttackStrengthScale(0.0F) <= 0.15F)) {
-         Vec3 var3 = net.minecraft.world.phys.Vec3.atCenterOf(var1);
-         if (this.method4107(var3)) {
-            Vec3 var4 = new AABB(var1).clip(mc.player.getEyePosition(), var3).orElse(var3);
-            mc.gameMode.continueDestroyBlock(var1, Direction.getApproximateNearest(var4.subtract(var3)));
+         Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+         if (this.method4107(atCenterOf)) {
+            Vec3 vec = new AABB(pos).clip(mc.player.getEyePosition(), atCenterOf).orElse(atCenterOf);
+            mc.gameMode.continueDestroyBlock(pos, Direction.getApproximateNearest(vec.subtract(atCenterOf)));
             org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
          }
       }
    }
 
-   private void method4088(BlockPos var1) {
-      boolean var2;
-      Predicate<net.minecraft.world.item.ItemStack> var3 = (var2 = mc.level.getBlockState(var1.above()).getBlock() instanceof SaplingBlock)
-         ? var0 -> var0.is(Items.BONE_MEAL)
-         : var0 -> var0.getItem() instanceof BlockItem var1x && var1x.getBlock() instanceof SaplingBlock;
-      if (!var3.test(mc.player.getMainHandItem())) {
-         this.method4094(var3);
+   private void method4088(BlockPos pos) {
+      boolean flag;
+      Predicate<net.minecraft.world.item.ItemStack> predicate = (flag = mc.level.getBlockState(pos.above()).getBlock() instanceof SaplingBlock)
+         ? stack -> stack.is(Items.BONE_MEAL)
+         : stack -> stack.getItem() instanceof BlockItem var1x && var1x.getBlock() instanceof SaplingBlock;
+      if (!predicate.test(mc.player.getMainHandItem())) {
+         this.method4094(predicate);
       } else {
-         Vec3 var4 = new Vec3(var1.getX() + 0.5, var1.getY() + 1, var1.getZ() + 0.5);
-         if (this.method4107(var4) && mc.player.tickCount % 4 == 0) {
-            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(var4, Direction.UP, var2 ? var1.above() : var1, false));
+         Vec3 vec = new Vec3(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+         if (this.method4107(vec) && mc.player.tickCount % 4 == 0) {
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(vec, Direction.UP, flag ? pos.above() : pos, false));
             org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
          }
       }
    }
 
    private void method4089() {
-      if (!(mc.gui.screen() instanceof ContainerScreen var1)) {
+      if (!(mc.gui.screen() instanceof ContainerScreen containerScreen)) {
          this.method4092(this.method4112(5.0, var1x -> var1x.is(this.method4101() ? Blocks.CHEST : Blocks.BARREL)));
       } else if (mc.player.tickCount % 50 == 0) {
          mc.player.closeContainer();
       } else if (mc.player.tickCount % 2 == 0) {
-         AbstractContainerMenu var6 = var1.getMenu();
-         int var7;
-         if (var1.getTitle().getContents() instanceof TranslatableContents var4 && var4.getKey().contains("chest")) {
-            var7 = this.method4093(var6, false, 5, var0 -> var0.is(Items.APPLE) || var0.is(Items.OAK_LOG));
+         AbstractContainerMenu menu = containerScreen.getMenu();
+         int n;
+         if (containerScreen.getTitle().getContents() instanceof TranslatableContents translatableContents && translatableContents.getKey().contains("chest")) {
+            n = this.method4093(menu, false, 5, stack -> stack.is(Items.APPLE) || stack.is(Items.OAK_LOG));
          } else {
-            var7 = this.method4102() ? this.method4093(var6, true, 3, this::method4100) : 0;
+            n = this.method4102() ? this.method4093(menu, true, 3, this::method4100) : 0;
          }
 
-         if (var7 == 0) {
+         if (n == 0) {
             mc.player.closeContainer();
          }
       }
@@ -150,122 +150,122 @@ public final class AppleFarmModule extends Module {
 
    private void method4090() {
       if (mc.player.tickCount % 2 == 0) {
-         InventoryMenu var1 = mc.player.inventoryMenu;
-         if (var1.getSlot(0).getItem().is(Items.BONE_MEAL)) {
-            this.method4096(var1, 0, 0, ContainerInput.QUICK_MOVE);
+         InventoryMenu inventoryMenu = mc.player.inventoryMenu;
+         if (inventoryMenu.getSlot(0).getItem().is(Items.BONE_MEAL)) {
+            this.method4096(inventoryMenu, 0, 0, ContainerInput.QUICK_MOVE);
             mc.player.closeContainer();
          } else {
-            int var2;
-            if ((var2 = this.method4098(Items.BONE)) >= 0) {
-               this.method4096(var1, var2, 0, ContainerInput.PICKUP);
-               this.method4096(var1, 1, 0, ContainerInput.PICKUP);
+            int index;
+            if ((index = this.method4098(Items.BONE)) >= 0) {
+               this.method4096(inventoryMenu, index, 0, ContainerInput.PICKUP);
+               this.method4096(inventoryMenu, 1, 0, ContainerInput.PICKUP);
             }
          }
       }
    }
 
    private void method4091() {
-      float var1;
-      Util17.method3332((var1 = this.method4108()) * 10.0F, Mth.clamp(var1 / 4.0F, -30.0F, 30.0F));
+      float f;
+      Util17.method3332((f = this.method4108()) * 10.0F, Mth.clamp(f / 4.0F, -30.0F, 30.0F));
       if (mc.player.tickCount % 5 == 0) {
-         InventoryMenu var2 = mc.player.inventoryMenu;
-         int var3 = -1;
-         int var4 = -1;
+         InventoryMenu inventoryMenu = mc.player.inventoryMenu;
+         int index = -1;
+         int count = -1;
 
-         for (Slot var6 : var2.slots) {
-            if (this.method4097(var6) && var6.getItem().is(Items.OAK_SAPLING) && var6.getItem().getCount() > var4) {
-               var4 = var6.getItem().getCount();
-               var3 = var6.index;
+         for (Slot slot : inventoryMenu.slots) {
+            if (this.method4097(slot) && slot.getItem().is(Items.OAK_SAPLING) && slot.getItem().getCount() > count) {
+               count = slot.getItem().getCount();
+               index = slot.index;
             }
          }
 
-         for (Slot var8 : var2.slots) {
-            if (this.method4097(var8) && (var8.getItem().is(Items.STICK) || var8.getItem().is(Items.OAK_SAPLING) && var8.index != var3)) {
-               this.method4096(var2, var8.index, 1, ContainerInput.THROW);
+         for (Slot slot : inventoryMenu.slots) {
+            if (this.method4097(slot) && (slot.getItem().is(Items.STICK) || slot.getItem().is(Items.OAK_SAPLING) && slot.index != index)) {
+               this.method4096(inventoryMenu, slot.index, 1, ContainerInput.THROW);
             }
          }
       }
    }
 
-   private void method4092(BlockPos var1) {
-      if (var1 != null && this.method4107(net.minecraft.world.phys.Vec3.atCenterOf(var1)) && mc.player.tickCount % 4 == 0) {
-         Vec3 var2 = net.minecraft.world.phys.Vec3.atCenterOf(var1);
-         Vec3 var3 = new AABB(var1).clip(mc.player.getEyePosition(), var2).orElse(var2);
-         mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(var3, Direction.getApproximateNearest(var3.subtract(var2)), var1, false));
+   private void method4092(BlockPos pos) {
+      if (pos != null && this.method4107(net.minecraft.world.phys.Vec3.atCenterOf(pos)) && mc.player.tickCount % 4 == 0) {
+         Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+         Vec3 location = new AABB(pos).clip(mc.player.getEyePosition(), atCenterOf).orElse(atCenterOf);
+         mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(location, Direction.getApproximateNearest(location.subtract(atCenterOf)), pos, false));
       }
    }
 
-   private int method4093(AbstractContainerMenu var1, boolean var2, int var3, Predicate<ItemStack> var4) {
-      int var5 = 0;
+   private int method4093(AbstractContainerMenu menu, boolean flag, int n, Predicate<ItemStack> predicate) {
+      int n2 = 0;
 
-      for (Slot var7 : var1.slots) {
-         if (var5 >= var3) {
+      for (Slot slot : menu.slots) {
+         if (n2 >= n) {
             break;
          }
 
-         if (this.method4097(var7) != var2 && var4.test(var7.getItem())) {
-            this.method4096(var1, var7.index, 0, ContainerInput.QUICK_MOVE);
-            var5++;
+         if (this.method4097(slot) != flag && predicate.test(slot.getItem())) {
+            this.method4096(menu, slot.index, 0, ContainerInput.QUICK_MOVE);
+            n2++;
          }
       }
 
-      return var5;
+      return n2;
    }
 
-   private void method4094(Predicate<ItemStack> var1) {
-      int var2;
-      if ((var2 = IntStream.range(0, 36).filter(var1x -> var1.test(mc.player.getInventory().getItem(var1x))).findFirst().orElse(-1)) >= 0) {
-         if (var2 < 9) {
-            mc.player.getInventory().setSelectedSlot(var2);
+   private void method4094(Predicate<ItemStack> predicate) {
+      int selected;
+      if ((selected = IntStream.range(0, 36).filter(var1x -> predicate.test(mc.player.getInventory().getItem(var1x))).findFirst().orElse(-1)) >= 0) {
+         if (selected < 9) {
+            mc.player.getInventory().setSelectedSlot(selected);
          } else if (mc.player.tickCount % 4 == 0) {
-            int var3 = IntStream.range(0, 9)
-               .filter(var0 -> mc.player.getInventory().getItem(var0).isEmpty())
+            int n = IntStream.range(0, 9)
+               .filter(slot -> mc.player.getInventory().getItem(slot).isEmpty())
                .findFirst()
                .orElse(mc.player.getInventory().getSelectedSlot());
-            InventoryUtils.method935(this.method4095(var2), this.method4095(var3), true, false);
-            mc.player.getInventory().setSelectedSlot(var3);
+            InventoryUtils.method935(this.method4095(selected), this.method4095(n), true, false);
+            mc.player.getInventory().setSelectedSlot(n);
          }
       }
    }
 
-   private int method4095(int var1) {
-      return var1 < 9 ? var1 + 36 : var1;
+   private int method4095(int selected) {
+      return selected < 9 ? selected + 36 : selected;
    }
 
-   private void method4096(AbstractContainerMenu var1, int var2, int var3, ContainerInput var4) {
-      mc.gameMode.handleContainerInput(var1.containerId, var2, var3, var4, mc.player);
+   private void method4096(AbstractContainerMenu inventoryMenu, int index, int buttonNum, ContainerInput containerInput) {
+      mc.gameMode.handleContainerInput(inventoryMenu.containerId, index, buttonNum, containerInput, mc.player);
    }
 
-   private boolean method4097(Slot var1) {
-      return var1.container == mc.player.getInventory();
+   private boolean method4097(Slot slot) {
+      return slot.container == mc.player.getInventory();
    }
 
-   private int method4098(Item var1) {
-      for (Slot var3 : mc.player.inventoryMenu.slots) {
-         if (this.method4097(var3) && var3.getItem().is(var1)) {
-            return var3.index;
+   private int method4098(Item rawType) {
+      for (Slot slot : mc.player.inventoryMenu.slots) {
+         if (this.method4097(slot) && slot.getItem().is(rawType)) {
+            return slot.index;
          }
       }
 
       return -1;
    }
 
-   private int method4099(Item var1) {
-      int var2 = 0;
+   private int method4099(Item item) {
+      int n = 0;
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         ItemStack var4 = mc.player.getInventory().getItem(var3);
-         if (var4.getItem() == var1) {
-            var2 += var4.getCount();
+      for (int i = 0; i < 36; i++) {
+         ItemStack stack = mc.player.getInventory().getItem(i);
+         if (stack.getItem() == item) {
+            n += stack.getCount();
          }
       }
 
-      return var2;
+      return n;
    }
 
-   private boolean method4100(ItemStack var1) {
-      return var1.getItem() instanceof BlockItem var2 && !(var2.getBlock() instanceof SaplingBlock)
-         ? !var1.is(Items.BONE_MEAL) || var1.is(Items.BONE) && this.method4099(Items.BONE_MEAL) == 0
+   private boolean method4100(ItemStack stack) {
+      return stack.getItem() instanceof BlockItem blockItem && !(blockItem.getBlock() instanceof SaplingBlock)
+         ? !stack.is(Items.BONE_MEAL) || stack.is(Items.BONE) && this.method4099(Items.BONE_MEAL) == 0
          : true;
    }
 
@@ -277,45 +277,45 @@ public final class AppleFarmModule extends Module {
       return this.method4099(Items.OAK_SAPLING) == 0 || this.method4099(Items.BONE_MEAL) == 0;
    }
 
-   private boolean method4103(int var1) {
-      if (mc.player.getFoodData().getFoodLevel() < var1 && KeyBindUtils.method2630(AppleFarmModule.class)) {
-         int var2 = -1;
-         int var3 = 32767 << 16 | (char)-1;
+   private boolean method4103(int n) {
+      if (mc.player.getFoodData().getFoodLevel() < n && KeyBindUtils.method2630(AppleFarmModule.class)) {
+         int selected = -1;
+         int n2 = 32767 << 16 | (char)-1;
 
-         for (int var4 = 0; var4 < 36 && var3 > 0; var4++) {
-            ItemStack var5 = mc.player.getInventory().getItem(var4);
-            if (!var5.isEmpty()
-               && var5.getUseAnimation() == ItemUseAnimation.EAT
-               && !var5.has(DataComponents.CUSTOM_NAME)
-               && !var5.is(Items.CHORUS_FRUIT)
-               && !var5.is(Items.PUFFERFISH)
-               && !var5.is(Items.DRIED_KELP)) {
-               int var6;
-               if (var5.is(Items.ENCHANTED_GOLDEN_APPLE)) {
-                  var6 = 3;
-               } else if (var5.is(Items.GOLDEN_APPLE)) {
-                  var6 = 2;
+         for (int i = 0; i < 36 && n2 > 0; i++) {
+            ItemStack stack = mc.player.getInventory().getItem(i);
+            if (!stack.isEmpty()
+               && stack.getUseAnimation() == ItemUseAnimation.EAT
+               && !stack.has(DataComponents.CUSTOM_NAME)
+               && !stack.is(Items.CHORUS_FRUIT)
+               && !stack.is(Items.PUFFERFISH)
+               && !stack.is(Items.DRIED_KELP)) {
+               int n3;
+               if (stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+                  n3 = 3;
+               } else if (stack.is(Items.GOLDEN_APPLE)) {
+                  n3 = 2;
                } else {
-                  var6 = this.method4104(var5) ? 1 : 0;
+                  n3 = this.method4104(stack) ? 1 : 0;
                }
 
-               if (var6 < var3) {
-                  var3 = var6;
-                  var2 = var4;
+               if (n3 < n2) {
+                  n2 = n3;
+                  selected = i;
                }
             }
          }
 
-         if (var2 < 0) {
+         if (selected < 0) {
             return false;
-         } else if (var2 > 8) {
+         } else if (selected > 8) {
             if (mc.player.tickCount % 5 == 0) {
-               this.method4096(mc.player.inventoryMenu, this.method4095(var2), 8, ContainerInput.SWAP);
+               this.method4096(mc.player.inventoryMenu, this.method4095(selected), 8, ContainerInput.SWAP);
             }
 
             return true;
          } else {
-            mc.player.getInventory().setSelectedSlot(var2);
+            mc.player.getInventory().setSelectedSlot(selected);
             if (!mc.player.isUsingItem() || mc.player.getUsedItemHand() != InteractionHand.MAIN_HAND) {
                mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
             }
@@ -327,23 +327,23 @@ public final class AppleFarmModule extends Module {
       }
    }
 
-   private boolean method4104(ItemStack var1) {
-      return var1.is(Items.BEEF)
-         || var1.is(Items.PORKCHOP)
-         || var1.is(Items.CHICKEN)
-         || var1.is(Items.MUTTON)
-         || var1.is(Items.RABBIT)
-         || var1.is(Items.COD)
-         || var1.is(Items.SALMON)
-         || var1.is(Items.POTATO);
+   private boolean method4104(ItemStack stack) {
+      return stack.is(Items.BEEF)
+         || stack.is(Items.PORKCHOP)
+         || stack.is(Items.CHICKEN)
+         || stack.is(Items.MUTTON)
+         || stack.is(Items.RABBIT)
+         || stack.is(Items.COD)
+         || stack.is(Items.SALMON)
+         || stack.is(Items.POTATO);
    }
 
    private boolean method4105() {
-      ItemStack var1 = mc.player.getMainHandItem();
-      if (this.method4106(var1) > 10.0) {
+      ItemStack mainHandItem = mc.player.getMainHandItem();
+      if (this.method4106(mainHandItem) > 10.0) {
          this.flag = false;
          return true;
-      } else if (var1.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
+      } else if (mainHandItem.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
             .getLevel(mc.level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.MENDING))
          < 1) {
          if (!this.flag) {
@@ -362,75 +362,75 @@ public final class AppleFarmModule extends Module {
       }
    }
 
-   private double method4106(ItemStack var1) {
-      return var1.isDamageableItem() && var1.getMaxDamage() > 0 ? (1.0 - (double)var1.getDamageValue() / var1.getMaxDamage()) * 100.0 : 100.0;
+   private double method4106(ItemStack mainHandItem) {
+      return mainHandItem.isDamageableItem() && mainHandItem.getMaxDamage() > 0 ? (1.0 - (double)mainHandItem.getDamageValue() / mainHandItem.getMaxDamage()) * 100.0 : 100.0;
    }
 
-   private boolean method4107(Vec3 var1) {
-      Util17.method3329(var1);
-      return Util17.method3330(var1, 20.0F);
+   private boolean method4107(Vec3 atCenterOf) {
+      Util17.method3329(atCenterOf);
+      return Util17.method3330(atCenterOf, 20.0F);
    }
 
    private float method4108() {
-      float var1;
+      float f;
       return (float)(
          (
-               Math.sin((var1 = mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) * 0.31F) * 0.5
-                  + Math.sin(var1 * 0.73F + 1.1F) * 0.30000003042305273
-                  + Math.sin(var1 * 1.7F + 2.6F) * 0.2000000149681302
+               Math.sin((f = mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) * 0.31F) * 0.5
+                  + Math.sin(f * 0.73F + 1.1F) * 0.30000003042305273
+                  + Math.sin(f * 1.7F + 2.6F) * 0.2000000149681302
             )
             * 8.0
       );
    }
 
-   private double method4109(BlockPos var1) {
-      return mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(var1));
+   private double method4109(BlockPos pos) {
+      return mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos));
    }
 
-   private double method4110(BlockPos var1) {
-      Vec3 var2 = mc.player.getEyePosition();
-      Vec3 var3 = mc.player.getViewVector(1.0F);
-      Vec3 var4 = Vec3.atCenterOf(var1).subtract(var2);
-      double var5;
-      return (var5 = var4.dot(var3)) <= 0.0 ? 1.7976922776554332E308 : var4.subtract(var3.scale(var5)).lengthSqr();
+   private double method4110(BlockPos pos) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      Vec3 viewVector = mc.player.getViewVector(1.0F);
+      Vec3 vec = Vec3.atCenterOf(pos).subtract(eyePosition);
+      double scale;
+      return (scale = vec.dot(viewVector)) <= 0.0 ? 1.7976922776554332E308 : vec.subtract(viewVector.scale(scale)).lengthSqr();
    }
 
-   private BlockPos method4111(double var1, Predicate<BlockState> var3, ToDoubleFunction<BlockPos> var4) {
-      return this.method4113(var1, var3, var4, false);
+   private BlockPos method4111(double d, Predicate<BlockState> predicate, ToDoubleFunction<BlockPos> toDoubleFunction) {
+      return this.method4113(d, predicate, toDoubleFunction, false);
    }
 
-   private BlockPos method4112(double var1, Predicate<BlockState> var3) {
-      return this.method4113(var1, var3, null, true);
+   private BlockPos method4112(double d, Predicate<BlockState> predicate) {
+      return this.method4113(d, predicate, null, true);
    }
 
-   private BlockPos method4113(double var1, Predicate<BlockState> var3, ToDoubleFunction<BlockPos> var4, boolean var5) {
-      BlockPos var6 = mc.player.blockPosition();
-      Vec3 var7 = mc.player.getEyePosition();
-      BlockPos var8 = null;
-      double var9 = 1.7976922776554332E308;
-      double var11 = var1 * var1;
-      int var13 = (int)Math.ceil(var1);
-      MutableBlockPos var14 = new MutableBlockPos();
+   private BlockPos method4113(double d, Predicate<BlockState> predicate, ToDoubleFunction<BlockPos> toDoubleFunction, boolean flag) {
+      BlockPos blockPosition = mc.player.blockPosition();
+      Vec3 eyePosition = mc.player.getEyePosition();
+      BlockPos immutable = null;
+      double applyAsDouble = 1.7976922776554332E308;
+      double d2 = d * d;
+      int n = (int)Math.ceil(d);
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var15 = -var13; var15 <= var13; var15++) {
-         for (int var16 = -var13; var16 <= var13; var16++) {
-            for (int var17 = -var13; var17 <= var13; var17++) {
-               double var18 = var6.getX() + var15 + 0.5 - var7.x;
-               double var20 = var6.getY() + var16 + 0.5 - var7.y;
-               double var22 = var6.getZ() + var17 + 0.5 - var7.z;
-               double var24;
-               if (!((var24 = var18 * var18 + var20 * var20 + var22 * var22) > var11)) {
-                  var14.set(var6.getX() + var15, var6.getY() + var16, var6.getZ() + var17);
-                  double var26;
-                  if (var3.test(mc.level.getBlockState(var14)) && (var26 = var5 ? var24 : var4.applyAsDouble(var14)) < var9) {
-                     var9 = var26;
-                     var8 = var14.immutable();
+      for (int i = -n; i <= n; i++) {
+         for (int j = -n; j <= n; j++) {
+            for (int k = -n; k <= n; k++) {
+               double d3 = blockPosition.getX() + i + 0.5 - eyePosition.x;
+               double d4 = blockPosition.getY() + j + 0.5 - eyePosition.y;
+               double d5 = blockPosition.getZ() + k + 0.5 - eyePosition.z;
+               double d6;
+               if (!((d6 = d3 * d3 + d4 * d4 + d5 * d5) > d2)) {
+                  mutablePos.set(blockPosition.getX() + i, blockPosition.getY() + j, blockPosition.getZ() + k);
+                  double applyAsDouble2;
+                  if (predicate.test(mc.level.getBlockState(mutablePos)) && (applyAsDouble2 = flag ? d6 : toDoubleFunction.applyAsDouble(mutablePos)) < applyAsDouble) {
+                     applyAsDouble = applyAsDouble2;
+                     immutable = mutablePos.immutable();
                   }
                }
             }
          }
       }
 
-      return var8;
+      return immutable;
    }
 }

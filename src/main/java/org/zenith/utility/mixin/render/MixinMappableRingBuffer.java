@@ -17,7 +17,7 @@ public class MixinMappableRingBuffer {
          intValue = 3
       )}
    )
-   private int zenith$depth(int var1) {
+   private int zenith$depth(int n) {
       return 6;
    }
 }

@@ -31,63 +31,63 @@ public final class EventTrackerModule extends Module implements MinecraftAccess 
    }
 
    @EventTarget
-   public void onChatReceive(ChatReceiveEvent var1) {
-      String var2 = var1.getText().getString();
-      Matcher var3 = pattern2.matcher(var2);
-      String var4 = null;
-      if (var3.find()) {
-         String var5 = var3.group(1).trim();
-         if (!var5.matches("[-\\d\\s]*")) {
-            var4 = var5;
+   public void onChatReceive(ChatReceiveEvent event) {
+      String string = event.getText().getString();
+      Matcher matcher = pattern2.matcher(string);
+      String text = null;
+      if (matcher.find()) {
+         String str = matcher.group(1).trim();
+         if (!str.matches("[-\\d\\s]*")) {
+            text = str;
          }
       }
 
-      if (var4 == null) {
-         Matcher var10 = pattern3.matcher(var2);
-         if (var10.find()) {
-            var4 = var10.group(1).trim();
+      if (text == null) {
+         Matcher matcher2 = pattern3.matcher(string);
+         if (matcher2.find()) {
+            text = matcher2.group(1).trim();
          }
       }
 
-      if (var4 == null) {
-         Matcher var11 = pattern4.matcher(var2);
-         if (var11.find()) {
-            var4 = var11.group(1).trim();
+      if (text == null) {
+         Matcher matcher2 = pattern4.matcher(string);
+         if (matcher2.find()) {
+            text = matcher2.group(1).trim();
          }
       }
 
-      Matcher var12 = pattern.matcher(var2);
-      if (var12.find()) {
-         String var13 = var4 != null ? var4 : this.text;
-         if (var13 != null) {
-            int var7 = Integer.parseInt(var12.group(1));
-            int var8 = Integer.parseInt(var12.group(2));
-            int var9 = Integer.parseInt(var12.group(3));
-            this.method952(var13, var7, var8, var9);
+      Matcher matcher2 = pattern.matcher(string);
+      if (matcher2.find()) {
+         String anotherString = text != null ? text : this.text;
+         if (anotherString != null) {
+            int x = Integer.parseInt(matcher2.group(1));
+            int y = Integer.parseInt(matcher2.group(2));
+            int z = Integer.parseInt(matcher2.group(3));
+            this.method952(anotherString, x, y, z);
             this.text = null;
          }
-      } else if (var4 != null) {
-         this.text = var4;
-      } else if (var2.contains("▍")) {
-         String var6 = var2.replace("▍", "").trim();
-         if (!var6.isEmpty() && !var6.startsWith("Редкость") && !var6.startsWith("Уровень лута")) {
-            this.text = var6;
+      } else if (text != null) {
+         this.text = text;
+      } else if (string.contains("▍")) {
+         String str = string.replace("▍", "").trim();
+         if (!str.isEmpty() && !str.startsWith("Редкость") && !str.startsWith("Уровень лута")) {
+            this.text = str;
          }
       }
    }
 
-   private void method952(String var1, int var2, int var3, int var4) {
-      WayManager var5 = Zenith.getInstance().getWayManager();
+   private void method952(String anotherString, int x, int y, int z) {
+      WayManager wayManager = Zenith.getInstance().getWayManager();
       if (this.text2 != null) {
-         var5.deleteWay(this.text2);
+         wayManager.deleteWay(this.text2);
       }
 
-      var5.deleteWay(var1);
-      String var6 = mc.getConnection() != null && mc.getConnection().getServerData() != null
+      wayManager.deleteWay(anotherString);
+      String ip = mc.getConnection() != null && mc.getConnection().getServerData() != null
          ? mc.getConnection().getServerData().ip
          : "VANILLA";
-      var5.addWay(new Way(var1, new BlockPos(var2, var3, var4), var6));
-      this.text2 = var1;
+      wayManager.addWay(new Way(anotherString, new BlockPos(x, y, z), ip));
+      this.text2 = anotherString;
    }
 
    @Override

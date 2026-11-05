@@ -230,7 +230,7 @@ public final class WorldAPI {
       Types heightmapType;
       try {
          heightmapType = heightmap != null ? Types.valueOf(heightmap.toUpperCase(Locale.US)) : Types.MOTION_BLOCKING;
-      } catch (IllegalArgumentException var8) {
+      } catch (IllegalArgumentException e) {
          throw new LuaError("Invalid heightmap type provided");
       }
 
@@ -300,7 +300,7 @@ public final class WorldAPI {
                return EntityAPI.wrap(player);
             }
          }
-      } catch (IllegalArgumentException var5) {
+      } catch (IllegalArgumentException e) {
       }
 
       return null;

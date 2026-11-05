@@ -66,8 +66,8 @@ public class NowPlayingScreen extends Screen {
    }
 
    public static boolean coversWorld() {
-      Minecraft var0 = Minecraft.getInstance();
-      return !(var0.gui.screen() instanceof NowPlayingScreen var1) ? false : var1.closingAt < 0L && System.currentTimeMillis() - var1.openedAt > 400L;
+      Minecraft minecraft = Minecraft.getInstance();
+      return !(minecraft.gui.screen() instanceof NowPlayingScreen nowPlayingScreen) ? false : nowPlayingScreen.closingAt < 0L && System.currentTimeMillis() - nowPlayingScreen.openedAt > 400L;
    }
 
    @Override
@@ -93,595 +93,595 @@ public class NowPlayingScreen extends Screen {
       }
    }
 
-   private float visibility(long var1) {
-      float var3 = Math.min(1.0F, (float)(var1 - this.openedAt) / 360.0F);
-      float var4 = 1.0F - (1.0F - var3) * (1.0F - var3) * (1.0F - var3);
+   private float visibility(long now) {
+      float f = Math.min(1.0F, (float)(now - this.openedAt) / 360.0F);
+      float f2 = 1.0F - (1.0F - f) * (1.0F - f) * (1.0F - f);
       if (this.closingAt >= 0L) {
-         float var5 = Math.min(1.0F, (float)(var1 - this.closingAt) / 240.0F);
-         var4 *= 1.0F - var5 * var5;
+         float f3 = Math.min(1.0F, (float)(now - this.closingAt) / 240.0F);
+         f2 *= 1.0F - f3 * f3;
       }
 
-      return var4;
+      return f2;
    }
 
    @Override
    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-      long var5 = System.currentTimeMillis();
-      float var7 = this.lastFrame == 0L ? 0.016F : Math.min(0.1F, (float)(var5 - this.lastFrame) / 1000.0F);
-      this.lastFrame = var5;
-      float var8 = this.visibility(var5);
-      if (this.closingAt >= 0L && var5 - this.closingAt >= 240L) {
+      long now = System.currentTimeMillis();
+      float f = this.lastFrame == 0L ? 0.016F : Math.min(0.1F, (float)(now - this.lastFrame) / 1000.0F);
+      this.lastFrame = now;
+      float visibility = this.visibility(now);
+      if (this.closingAt >= 0L && now - this.closingAt >= 240L) {
          if (this.minecraft != null) {
             this.minecraft.gui.setScreen(null);
          }
       } else {
-         MenuDrawContext var9 = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
-         MediaSessionManager var10 = MediaSessionManager.getInstance();
-         float var11 = this.width;
-         float var12 = this.height;
-         this.drawBackdrop(var9, var10, var11, var12, var5, var7, var8);
-         float var13 = 0.97F + 0.03F * var8;
-         var9.pose().pushMatrix();
-         var9.pose().translate(var11 / 2.0F, var12 / 2.0F);
-         var9.pose().scale(var13, var13);
-         var9.pose().translate(-var11 / 2.0F, -var12 / 2.0F);
-         float var14 = (mouseX - var11 / 2.0F) / var13 + var11 / 2.0F;
-         float var15 = (mouseY - var12 / 2.0F) / var13 + var12 / 2.0F;
-         this.drawClose(var9, var8, var14, var15);
-         if (!var10.active()) {
-            Font var16 = Fonts.BOLD.getFont(14.0F);
-            String var17 = t("gui.music.nothing");
-            var9.drawText(var16, var17, (var11 - var16.width(var17)) / 2.0F, var12 / 2.0F - var16.height() / 2.0F, WHITE.method7292(0.7F * var8));
+         MenuDrawContext menuDrawContext = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
+         MediaSessionManager mediaSessionManager = MediaSessionManager.getInstance();
+         float width = this.width;
+         float height = this.height;
+         this.drawBackdrop(menuDrawContext, mediaSessionManager, width, height, now, f, visibility);
+         float x = 0.97F + 0.03F * visibility;
+         menuDrawContext.pose().pushMatrix();
+         menuDrawContext.pose().translate(width / 2.0F, height / 2.0F);
+         menuDrawContext.pose().scale(x, x);
+         menuDrawContext.pose().translate(-width / 2.0F, -height / 2.0F);
+         float lastClickX = (mouseX - width / 2.0F) / x + width / 2.0F;
+         float lastClickY = (mouseY - height / 2.0F) / x + height / 2.0F;
+         this.drawClose(menuDrawContext, visibility, lastClickX, lastClickY);
+         if (!mediaSessionManager.active()) {
+            Font font = Fonts.BOLD.getFont(14.0F);
+            String text = t("gui.music.nothing");
+            menuDrawContext.drawText(font, text, (width - font.width(text)) / 2.0F, height / 2.0F - font.height() / 2.0F, WHITE.method7292(0.7F * visibility));
             this.clearHits();
          } else {
-            boolean var22 = var11 > var12 * 1.15F;
-            if (var22) {
-               float var23 = Math.min(var12 * 0.56F, var11 * 0.29F);
-               float var18 = var23 + 124.0F;
-               float var19 = Math.max(26.0F, (var12 - var18) / 2.0F - 6.0F);
-               this.drawNowPlaying(var9, var10, var11 * 0.28F, var19, var23, var5, var7, var8, var14, var15);
-               float var20 = var11 * 0.49F;
-               float var21 = var11 * 0.4F;
-               this.drawLyrics(var9, var10, var20, 0.0F, var21, var12, var5, var7, var8, var14, var15);
+            boolean flag = width > height * 1.15F;
+            if (flag) {
+               float maxWidth = Math.min(height * 0.56F, width * 0.29F);
+               float f2 = maxWidth + 124.0F;
+               float f3 = Math.max(26.0F, (height - f2) / 2.0F - 6.0F);
+               this.drawNowPlaying(menuDrawContext, mediaSessionManager, width * 0.28F, f3, maxWidth, now, f, visibility, lastClickX, lastClickY);
+               float floatValue = width * 0.49F;
+               float layoutWidth = width * 0.4F;
+               this.drawLyrics(menuDrawContext, mediaSessionManager, floatValue, 0.0F, layoutWidth, height, now, f, visibility, lastClickX, lastClickY);
             } else {
-               float var24 = Math.min(var12 * 0.3F, var11 * 0.6F);
-               float var25 = 30.0F;
-               this.drawNowPlaying(var9, var10, var11 / 2.0F, var25, var24, var5, var7, var8, var14, var15);
-               float var26 = var25 + var24 + 130.0F;
-               this.drawLyrics(var9, var10, var11 * 0.1F, var26, var11 * 0.8F, var12 - var26, var5, var7, var8, var14, var15);
+               float maxWidth = Math.min(height * 0.3F, width * 0.6F);
+               float f2 = 30.0F;
+               this.drawNowPlaying(menuDrawContext, mediaSessionManager, width / 2.0F, f2, maxWidth, now, f, visibility, lastClickX, lastClickY);
+               float y1 = f2 + maxWidth + 130.0F;
+               this.drawLyrics(menuDrawContext, mediaSessionManager, width * 0.1F, y1, width * 0.8F, height - y1, now, f, visibility, lastClickX, lastClickY);
             }
          }
 
-         var9.pose().popMatrix();
+         menuDrawContext.pose().popMatrix();
       }
    }
 
-   private void drawBackdrop(MenuDrawContext var1, MediaSessionManager var2, float var3, float var4, long var5, float var7, float var8) {
-      float var9 = MediaPlayerState.getInstance().method1672();
-      float var10 = 0.0F;
-      if (var2.method6007() && var9 >= 0.0F) {
-         double var11 = 20.0 * Math.log10(Math.max(var9, 1.0E-4F));
-         var10 = (float)Math.max(0.0, Math.min(1.0, (var11 + 36.0) / 34.0));
+   private void drawBackdrop(MenuDrawContext menuDrawContext, MediaSessionManager mediaSessionManager, float width, float height, long now, float f, float visibility) {
+      float f2 = MediaPlayerState.getInstance().method1672();
+      float f3 = 0.0F;
+      if (mediaSessionManager.method6007() && f2 >= 0.0F) {
+         double d = 20.0 * Math.log10(Math.max(f2, 1.0E-4F));
+         f3 = (float)Math.max(0.0, Math.min(1.0, (d + 36.0) / 34.0));
       }
 
-      this.energy = this.energy + (var10 - this.energy) * Math.min(1.0F, var7 * 1.5F);
-      this.phase = this.phase + var7 * (var2.method6007() ? 1.0 : 0.35);
-      ZenithColor var18 = var2.color(0);
-      ZenithColor var12 = var2.color(1);
-      ZenithColor var13 = var2.color(2);
-      ZenithColor var14 = var18.method7295(var13, 0.5F).method7296(0.4F);
-      var1.drawRect(0.0F, 0.0F, var3, var4, new ZenithColor(8, 8, 10).method7292(var8));
+      this.energy = this.energy + (f3 - this.energy) * Math.min(1.0F, f * 1.5F);
+      this.phase = this.phase + f * (mediaSessionManager.method6007() ? 1.0 : 0.35);
+      ZenithColor color = mediaSessionManager.color(0);
+      ZenithColor zenithColor = mediaSessionManager.color(1);
+      ZenithColor color2 = mediaSessionManager.color(2);
+      ZenithColor zenithColor2 = color.method7295(color2, 0.5F).method7296(0.4F);
+      menuDrawContext.drawRect(0.0F, 0.0F, width, height, new ZenithColor(8, 8, 10).method7292(visibility));
       RenderShaders.method5262(
-         MatrixUtils.method664(var1.pose()),
-         var3,
-         var4,
-         new ZenithColor[]{var18, var12, var13, var14},
+         MatrixUtils.method664(menuDrawContext.pose()),
+         width,
+         height,
+         new ZenithColor[]{color, zenithColor, color2, zenithColor2},
          (float)(this.phase % 100000.0),
          this.energy,
-         var8
+         visibility
       );
-      float var15 = Math.min(1.0F, (float)(var5 - var2.getLongValue4()) / 1200.0F);
-      Identifier var16 = var2.method6017();
-      Identifier var17 = var2.method6018();
-      if (var16 != null) {
-         if (var17 != null && var15 < 1.0F) {
-            this.drawSwirl(var1, var17, var3, var4, var8 * 0.5F * (1.0F - var15));
+      float f4 = Math.min(1.0F, (float)(now - mediaSessionManager.getLongValue4()) / 1200.0F);
+      Identifier identifier = mediaSessionManager.method6017();
+      Identifier id = mediaSessionManager.method6018();
+      if (identifier != null) {
+         if (id != null && f4 < 1.0F) {
+            this.drawSwirl(menuDrawContext, id, width, height, visibility * 0.5F * (1.0F - f4));
          }
 
-         this.drawSwirl(var1, var16, var3, var4, var8 * 0.5F * (var17 == null ? 1.0F : var15));
+         this.drawSwirl(menuDrawContext, identifier, width, height, visibility * 0.5F * (id == null ? 1.0F : f4));
       }
 
-      var1.drawRoundedRect(
+      menuDrawContext.drawRoundedRect(
          0.0F,
          0.0F,
-         var3,
-         var4,
+         width,
+         height,
          ProxyDotRadiusData.INSTANCE,
-         GlowColor.method8096(BLACK.method7292(0.25F * var8), BLACK.method7292(0.45F * var8), BLACK.method7292(0.35F * var8), BLACK.method7292(0.5F * var8))
+         GlowColor.method8096(BLACK.method7292(0.25F * visibility), BLACK.method7292(0.45F * visibility), BLACK.method7292(0.35F * visibility), BLACK.method7292(0.5F * visibility))
       );
    }
 
-   private void drawSwirl(MenuDrawContext var1, Identifier var2, float var3, float var4, float var5) {
-      if (!(var5 <= 0.01F)) {
-         double var6 = this.phase;
-         float var8 = Math.max(var3, var4);
+   private void drawSwirl(MenuDrawContext menuDrawContext, Identifier identifier, float width, float height, float visibility) {
+      if (!(visibility <= 0.01F)) {
+         double phase = this.phase;
+         float f = Math.max(width, height);
          this.layer(
-            var1,
-            var2,
-            var3 * 0.3F + (float)Math.sin(var6 * 0.05) * var3 * 0.05F,
-            var4 * 0.45F + (float)Math.cos(var6 * 0.04) * var4 * 0.05F,
-            var8 * 1.9F,
-            (float)(var6 * 1.6),
-            var5
+            menuDrawContext,
+            identifier,
+            width * 0.3F + (float)Math.sin(phase * 0.05) * width * 0.05F,
+            height * 0.45F + (float)Math.cos(phase * 0.04) * height * 0.05F,
+            f * 1.9F,
+            (float)(phase * 1.6),
+            visibility
          );
          this.layer(
-            var1,
-            var2,
-            var3 * 0.75F + (float)Math.cos(var6 * 0.045) * var3 * 0.06F,
-            var4 * 0.6F + (float)Math.sin(var6 * 0.035) * var4 * 0.06F,
-            var8 * 1.5F,
-            (float)(-var6 * 2.2 + 140.0),
-            var5 * 0.7F
+            menuDrawContext,
+            identifier,
+            width * 0.75F + (float)Math.cos(phase * 0.045) * width * 0.06F,
+            height * 0.6F + (float)Math.sin(phase * 0.035) * height * 0.06F,
+            f * 1.5F,
+            (float)(-phase * 2.2 + 140.0),
+            visibility * 0.7F
          );
       }
    }
 
-   private void layer(MenuDrawContext var1, Identifier var2, float var3, float var4, float var5, float var6, float var7) {
-      var1.pose().pushMatrix();
-      var1.pose().translate(var3, var4);
-      var1.pose().rotate((float)Math.toRadians(var6));
-      var1.drawTexture(var2, -var5 / 2.0F, -var5 / 2.0F, var5, var5, WHITE.method7292(var7));
-      var1.pose().popMatrix();
+   private void layer(MenuDrawContext menuDrawContext, Identifier identifier, float x, float y, float guiScaledWidth, float angdeg, float visibility) {
+      menuDrawContext.pose().pushMatrix();
+      menuDrawContext.pose().translate(x, y);
+      menuDrawContext.pose().rotate((float)Math.toRadians(angdeg));
+      menuDrawContext.drawTexture(identifier, -guiScaledWidth / 2.0F, -guiScaledWidth / 2.0F, guiScaledWidth, guiScaledWidth, WHITE.method7292(visibility));
+      menuDrawContext.pose().popMatrix();
    }
 
-   private void drawClose(MenuDrawContext var1, float var2, float var3, float var4) {
+   private void drawClose(MenuDrawContext menuDrawContext, float visibility, float lastClickX, float lastClickY) {
       this.closeButton = new BoundsData(10.0F, 10.0F, 18.0F, 18.0F);
-      boolean var5 = this.closeButton.contains(var3, var4);
-      if (var5) {
-         var1.drawRoundedRect(
+      boolean contains = this.closeButton.contains(lastClickX, lastClickY);
+      if (contains) {
+         menuDrawContext.drawRoundedRect(
             this.closeButton.getFloatValue(),
             this.closeButton.getFloatValue2(),
             18.0F,
             18.0F,
             ProxyDotRadiusData.method8069(9.0F),
-            WHITE.method7292(0.14F * var2)
+            WHITE.method7292(0.14F * visibility)
          );
       }
 
       MediaGlyphs.close(
-         var1, this.closeButton.getFloatValue() + 9.0F, this.closeButton.getFloatValue2() + 9.0F, 9.0F, WHITE.method7292((var5 ? 1.0F : 0.75F) * var2)
+         menuDrawContext, this.closeButton.getFloatValue() + 9.0F, this.closeButton.getFloatValue2() + 9.0F, 9.0F, WHITE.method7292((contains ? 1.0F : 0.75F) * visibility)
       );
    }
 
-   private float appear(long var1, float var3, float var4) {
-      float var5 = clamp01(((float)(var1 - this.openedAt) - var3) / var4);
-      if (var5 <= 0.0F) {
+   private float appear(long now, float f, float f2) {
+      float clamp012 = clamp01(((float)(now - this.openedAt) - f) / f2);
+      if (clamp012 <= 0.0F) {
          return 0.0F;
       } else {
-         float var6 = 1.4F;
-         float var7 = var6 + 1.0F;
-         float var8 = var5 - 1.0F;
-         return 1.0F + var7 * var8 * var8 * var8 + var6 * var8 * var8;
+         float f3 = 1.4F;
+         float f4 = f3 + 1.0F;
+         float f5 = clamp012 - 1.0F;
+         return 1.0F + f4 * f5 * f5 * f5 + f3 * f5 * f5;
       }
    }
 
    private void drawNowPlaying(
-      MenuDrawContext var1, MediaSessionManager var2, float var3, float var4, float var5, long var6, float var8, float var9, float var10, float var11
+      MenuDrawContext customDrawContext, MediaSessionManager mediaSessionManager, float x, float f, float maxWidth, long now, float f2, float visibility, float lastClickX, float lastClickY
    ) {
-      float var12 = var3 - var5 / 2.0F;
-      this.leftPanel = new BoundsData(var12 - 10.0F, var4 - 10.0F, var5 + 20.0F, var5 + 140.0F);
-      float var13 = this.appear(var6, 40.0F, 700.0F);
-      float var14 = this.appear(var6, 150.0F, 600.0F);
-      float var15 = this.appear(var6, 240.0F, 600.0F);
-      float var16 = var9 * clamp01(var13);
-      float var17 = var9 * clamp01(var14);
-      float var18 = var9 * clamp01(var15);
-      float var19 = var2.method6007() ? 1.0F : 0.88F;
-      this.coverScale = this.coverScale + (var19 - this.coverScale) * Math.min(1.0F, var8 * 6.0F);
-      float var20 = Math.min(1.0F, (float)(var6 - var2.getLongValue4()) / 600.0F);
-      float var21 = 1.0F - (1.0F - var20) * (1.0F - var20) * (1.0F - var20);
-      var1.pose().pushMatrix();
-      var1.pose().translate(var3, var4 + var5 / 2.0F + (1.0F - var13) * 30.0F);
-      var1.pose().scale(0.82F + 0.18F * var13, 0.82F + 0.18F * var13);
-      var1.pose().translate(-var3, -(var4 + var5 / 2.0F));
-      float var22 = var5 * this.coverScale;
-      float var23 = var3 - var22 / 2.0F;
-      float var24 = var4 + (var5 - var22) / 2.0F;
-      float var25 = Math.max(4.0F, var5 * 0.03F);
+      float x1 = x - maxWidth / 2.0F;
+      this.leftPanel = new BoundsData(x1 - 10.0F, f - 10.0F, maxWidth + 20.0F, maxWidth + 140.0F);
+      float appear = this.appear(now, 40.0F, 700.0F);
+      float appear2 = this.appear(now, 150.0F, 600.0F);
+      float appear3 = this.appear(now, 240.0F, 600.0F);
+      float f3 = visibility * clamp01(appear);
+      float f4 = visibility * clamp01(appear2);
+      float visibility2 = visibility * clamp01(appear3);
+      float f5 = mediaSessionManager.method6007() ? 1.0F : 0.88F;
+      this.coverScale = this.coverScale + (f5 - this.coverScale) * Math.min(1.0F, f2 * 6.0F);
+      float f6 = Math.min(1.0F, (float)(now - mediaSessionManager.getLongValue4()) / 600.0F);
+      float f7 = 1.0F - (1.0F - f6) * (1.0F - f6) * (1.0F - f6);
+      customDrawContext.pose().pushMatrix();
+      customDrawContext.pose().translate(x, f + maxWidth / 2.0F + (1.0F - appear) * 30.0F);
+      customDrawContext.pose().scale(0.82F + 0.18F * appear, 0.82F + 0.18F * appear);
+      customDrawContext.pose().translate(-x, -(f + maxWidth / 2.0F));
+      float height = maxWidth * this.coverScale;
+      float floatValue = x - height / 2.0F;
+      float y = f + (maxWidth - height) / 2.0F;
+      float intValue = Math.max(4.0F, maxWidth * 0.03F);
       RenderShaders.method5288(
-         MatrixUtils.method664(var1.pose()),
-         var23,
-         var24,
-         var22,
-         var22,
+         MatrixUtils.method664(customDrawContext.pose()),
+         floatValue,
+         y,
+         height,
+         height,
          0.0F,
-         var5 * 0.05F,
-         var5 * 0.16F,
+         maxWidth * 0.05F,
+         maxWidth * 0.16F,
          0.0F,
-         ProxyDotRadiusData.method8069(var25),
-         BLACK.method7292(0.45F * var16 * this.coverScale)
+         ProxyDotRadiusData.method8069(intValue),
+         BLACK.method7292(0.45F * f3 * this.coverScale)
       );
-      Identifier var26 = var2.method6011();
-      Identifier var27 = var2.method6012();
-      if (var26 == null) {
-         var1.drawRoundedRect(var23, var24, var22, var22, ProxyDotRadiusData.method8069(var25), WHITE.method7292(0.1F * var16));
-         MediaGlyphs.playPause(var1, var3, var24 + var22 / 2.0F, var22 * 0.22F, false, WHITE.method7292(0.4F * var16));
+      Identifier texture = mediaSessionManager.method6011();
+      Identifier id = mediaSessionManager.method6012();
+      if (texture == null) {
+         customDrawContext.drawRoundedRect(floatValue, y, height, height, ProxyDotRadiusData.method8069(intValue), WHITE.method7292(0.1F * f3));
+         MediaGlyphs.playPause(customDrawContext, x, y + height / 2.0F, height * 0.22F, false, WHITE.method7292(0.4F * f3));
       } else {
-         if (var27 != null && var21 < 1.0F) {
-            var1.drawRoundedTexture(var27, var23, var24, var22, var22, ProxyDotRadiusData.method8069(var25 / 2.0F), WHITE.method7292(var16 * (1.0F - var21)));
+         if (id != null && f7 < 1.0F) {
+            customDrawContext.drawRoundedTexture(id, floatValue, y, height, height, ProxyDotRadiusData.method8069(intValue / 2.0F), WHITE.method7292(f3 * (1.0F - f7)));
          }
 
-         var1.drawRoundedTexture(
-            var26, var23, var24, var22, var22, ProxyDotRadiusData.method8069(var25 / 2.0F), WHITE.method7292(var16 * (var27 == null ? 1.0F : var21))
+         customDrawContext.drawRoundedTexture(
+            texture, floatValue, y, height, height, ProxyDotRadiusData.method8069(intValue / 2.0F), WHITE.method7292(f3 * (id == null ? 1.0F : f7))
          );
       }
 
-      var1.pose().popMatrix();
-      var1.pose().pushMatrix();
-      var1.pose().translate(0.0F, (1.0F - var14) * 16.0F);
-      float var28 = var4 + var5 + 11.0F;
-      Font var29 = Fonts.NEW_SEMIBOLD.getFont(8.0F);
-      Font var30 = Fonts.NEW_MEDIUM.getFont(7.5F);
-      boolean var31 = var10 >= var12 && var10 <= var12 + var5 && var11 >= var28 - 2.0F && var11 <= var28 + 20.0F;
-      this.text(var1, var29, var2.title(), var12, var28, var5, WHITE.method7292(0.95F * var17), var31);
-      this.text(var1, var30, var2.method6006(), var12, var28 + 10.5F, var5, WHITE.method7292(0.6F * var17), var31);
-      var1.pose().popMatrix();
-      var1.pose().pushMatrix();
-      var1.pose().translate(0.0F, (1.0F - var15) * 18.0F);
-      float var32 = var28 + 30.0F;
-      double var33 = var2.method6008();
-      double var35 = var2.method6009();
+      customDrawContext.pose().popMatrix();
+      customDrawContext.pose().pushMatrix();
+      customDrawContext.pose().translate(0.0F, (1.0F - appear2) * 16.0F);
+      float centeredTextY = f + maxWidth + 11.0F;
+      Font font = Fonts.NEW_SEMIBOLD.getFont(8.0F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(7.5F);
+      boolean flag = lastClickX >= x1 && lastClickX <= x1 + maxWidth && lastClickY >= centeredTextY - 2.0F && lastClickY <= centeredTextY + 20.0F;
+      this.text(customDrawContext, font, mediaSessionManager.title(), x1, centeredTextY, maxWidth, WHITE.method7292(0.95F * f4), flag);
+      this.text(customDrawContext, font2, mediaSessionManager.method6006(), x1, centeredTextY + 10.5F, maxWidth, WHITE.method7292(0.6F * f4), flag);
+      customDrawContext.pose().popMatrix();
+      customDrawContext.pose().pushMatrix();
+      customDrawContext.pose().translate(0.0F, (1.0F - appear3) * 18.0F);
+      float f8 = centeredTextY + 30.0F;
+      double d = mediaSessionManager.method6008();
+      double d2 = mediaSessionManager.method6009();
       if (this.seekDrag) {
-         this.seekPreview = clamp01((var10 - var12) / var5);
+         this.seekPreview = clamp01((lastClickX - x1) / maxWidth);
       }
 
-      boolean var37 = var10 >= var12 - 3.0F && var10 <= var12 + var5 + 3.0F && var11 >= var32 - 5.0F && var11 <= var32 + 6.0F;
-      this.barHover = this.barHover + ((!var37 && !this.seekDrag ? 0.0F : 1.0F) - this.barHover) * Math.min(1.0F, var8 * 12.0F);
-      this.seekBar = new BoundsData(var12 - 3.0F, var32 - 5.0F, var5 + 6.0F, 11.0F);
-      float var38 = this.seekDrag ? this.seekPreview : (var33 > 0.0 ? clamp01((float)(var35 / var33)) : 0.0F);
-      this.slider(var1, var12, var32, var5, var38, 2.2F + 1.4F * this.barHover, 5.0F + 2.0F * this.barHover, var18);
-      Font var39 = Fonts.NEW_MEDIUM.getFont(5.2F);
-      double var40 = this.seekDrag ? this.seekPreview * var33 : var35;
-      String var42 = MediaGlyphs.time(var40);
-      String var43 = "-" + MediaGlyphs.time(Math.max(0.0, var33 - var40));
-      var1.drawText(var39, var42, var12, var32 + 5.0F, WHITE.method7292(0.45F * var18));
-      var1.drawText(var39, var43, var12 + var5 - var39.width(var43), var32 + 5.0F, WHITE.method7292(0.45F * var18));
-      float var44 = var32 + 27.0F;
-      MediaHelperProcess var45 = MediaHelperProcess.getInstance();
-      float var46 = Math.min(34.0F, var5 * 0.13F);
-      this.previousButton = square(var3 - var46, var44, 20.0F);
-      this.playButton = square(var3, var44, 24.0F);
-      this.nextButton = square(var3 + var46, var44, 20.0F);
-      this.shuffleButton = var45.isFlag2() ? square(var3 - var46 * 2.0F, var44, 16.0F) : null;
-      this.repeatButton = var45.isFlag3() ? square(var3 + var46 * 2.0F, var44, 16.0F) : null;
-      this.hoverBack(var1, this.previousButton, var10, var11, var18);
-      this.hoverBack(var1, this.playButton, var10, var11, var18);
-      this.hoverBack(var1, this.nextButton, var10, var11, var18);
-      MediaGlyphs.skip(var1, var3 - var46, var44, 13.0F, false, WHITE.method7292(0.92F * var18));
-      MediaGlyphs.playPause(var1, var3, var44, 15.0F, var2.method6007(), WHITE.method7292(var18));
-      MediaGlyphs.skip(var1, var3 + var46, var44, 13.0F, true, WHITE.method7292(0.92F * var18));
+      boolean flag2 = lastClickX >= x1 - 3.0F && lastClickX <= x1 + maxWidth + 3.0F && lastClickY >= f8 - 5.0F && lastClickY <= f8 + 6.0F;
+      this.barHover = this.barHover + ((!flag2 && !this.seekDrag ? 0.0F : 1.0F) - this.barHover) * Math.min(1.0F, f2 * 12.0F);
+      this.seekBar = new BoundsData(x1 - 3.0F, f8 - 5.0F, maxWidth + 6.0F, 11.0F);
+      float seekPreview = this.seekDrag ? this.seekPreview : (d > 0.0 ? clamp01((float)(d2 / d)) : 0.0F);
+      this.slider(customDrawContext, x1, f8, maxWidth, seekPreview, 2.2F + 1.4F * this.barHover, 5.0F + 2.0F * this.barHover, visibility2);
+      Font font3 = Fonts.NEW_MEDIUM.getFont(5.2F);
+      double d3 = this.seekDrag ? this.seekPreview * d : d2;
+      String time = MediaGlyphs.time(d3);
+      String text = "-" + MediaGlyphs.time(Math.max(0.0, d - d3));
+      customDrawContext.drawText(font3, time, x1, f8 + 5.0F, WHITE.method7292(0.45F * visibility2));
+      customDrawContext.drawText(font3, text, x1 + maxWidth - font3.width(text), f8 + 5.0F, WHITE.method7292(0.45F * visibility2));
+      float y2 = f8 + 27.0F;
+      MediaHelperProcess mediaHelperProcess = MediaHelperProcess.getInstance();
+      float f9 = Math.min(34.0F, maxWidth * 0.13F);
+      this.previousButton = square(x - f9, y2, 20.0F);
+      this.playButton = square(x, y2, 24.0F);
+      this.nextButton = square(x + f9, y2, 20.0F);
+      this.shuffleButton = mediaHelperProcess.isFlag2() ? square(x - f9 * 2.0F, y2, 16.0F) : null;
+      this.repeatButton = mediaHelperProcess.isFlag3() ? square(x + f9 * 2.0F, y2, 16.0F) : null;
+      this.hoverBack(customDrawContext, this.previousButton, lastClickX, lastClickY, visibility2);
+      this.hoverBack(customDrawContext, this.playButton, lastClickX, lastClickY, visibility2);
+      this.hoverBack(customDrawContext, this.nextButton, lastClickX, lastClickY, visibility2);
+      MediaGlyphs.skip(customDrawContext, x - f9, y2, 13.0F, false, WHITE.method7292(0.92F * visibility2));
+      MediaGlyphs.playPause(customDrawContext, x, y2, 15.0F, mediaSessionManager.method6007(), WHITE.method7292(visibility2));
+      MediaGlyphs.skip(customDrawContext, x + f9, y2, 13.0F, true, WHITE.method7292(0.92F * visibility2));
       if (this.shuffleButton != null) {
-         this.hoverBack(var1, this.shuffleButton, var10, var11, var18);
-         MediaGlyphs.shuffle(var1, var3 - var46 * 2.0F, var44, 8.0F, WHITE.method7292((var45.isFlag() ? 1.0F : 0.5F) * var18));
+         this.hoverBack(customDrawContext, this.shuffleButton, lastClickX, lastClickY, visibility2);
+         MediaGlyphs.shuffle(customDrawContext, x - f9 * 2.0F, y2, 8.0F, WHITE.method7292((mediaHelperProcess.isFlag() ? 1.0F : 0.5F) * visibility2));
       }
 
       if (this.repeatButton != null) {
-         this.hoverBack(var1, this.repeatButton, var10, var11, var18);
+         this.hoverBack(customDrawContext, this.repeatButton, lastClickX, lastClickY, visibility2);
          MediaGlyphs.repeat(
-            var1, var3 + var46 * 2.0F, var44, 8.5F, var45.getIntValue() == 1, WHITE.method7292((var45.getIntValue() != 0 ? 1.0F : 0.5F) * var18)
+            customDrawContext, x + f9 * 2.0F, y2, 8.5F, mediaHelperProcess.getIntValue() == 1, WHITE.method7292((mediaHelperProcess.getIntValue() != 0 ? 1.0F : 0.5F) * visibility2)
          );
       }
 
-      float var47 = var44 + 25.0F;
-      float var48 = var12 + 12.0F;
-      float var49 = var5 - 12.0F;
-      MediaPlayerState var50 = MediaPlayerState.getInstance();
+      float y3 = y2 + 25.0F;
+      float x12 = x1 + 12.0F;
+      float maxWidth2 = maxWidth - 12.0F;
+      MediaPlayerState mediaPlayerState = MediaPlayerState.getInstance();
       if (this.volumeDrag) {
-         var50.method1675(clamp01((var10 - var48) / var49));
+         mediaPlayerState.method1675(clamp01((lastClickX - x12) / maxWidth2));
       }
 
-      boolean var51 = var10 >= var48 - 3.0F && var10 <= var48 + var49 + 3.0F && var11 >= var47 - 5.0F && var11 <= var47 + 5.0F;
-      this.volumeHover = this.volumeHover + ((!var51 && !this.volumeDrag ? 0.0F : 1.0F) - this.volumeHover) * Math.min(1.0F, var8 * 12.0F);
-      this.volumeBar = new BoundsData(var48 - 3.0F, var47 - 5.0F, var49 + 6.0F, 10.0F);
-      float var52 = var50.method1673() ? var50.method1679() : 0.0F;
-      int var53 = var52 < 0.02F ? 0 : (var52 < 0.5F ? 1 : 2);
-      MediaGlyphs.speaker(var1, var12 + 3.5F, var47, 7.0F, var53, WHITE.method7292(0.6F * var18));
-      this.slider(var1, var48, var47, var49, var52, 2.2F + 1.2F * this.volumeHover, 5.0F + 2.0F * this.volumeHover, var18);
-      if (var50.isFlag()) {
-         Font var54 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         String var55 = t("gui.music.ducked");
-         var1.drawText(var54, var55, var3 - var54.width(var55) / 2.0F, var47 + 6.0F, WHITE.method7292(0.45F * var18));
+      boolean flag3 = lastClickX >= x12 - 3.0F && lastClickX <= x12 + maxWidth2 + 3.0F && lastClickY >= y3 - 5.0F && lastClickY <= y3 + 5.0F;
+      this.volumeHover = this.volumeHover + ((!flag3 && !this.volumeDrag ? 0.0F : 1.0F) - this.volumeHover) * Math.min(1.0F, f2 * 12.0F);
+      this.volumeBar = new BoundsData(x12 - 3.0F, y3 - 5.0F, maxWidth2 + 6.0F, 10.0F);
+      float seekPreview2 = mediaPlayerState.method1673() ? mediaPlayerState.method1679() : 0.0F;
+      int n = seekPreview2 < 0.02F ? 0 : (seekPreview2 < 0.5F ? 1 : 2);
+      MediaGlyphs.speaker(customDrawContext, x1 + 3.5F, y3, 7.0F, n, WHITE.method7292(0.6F * visibility2));
+      this.slider(customDrawContext, x12, y3, maxWidth2, seekPreview2, 2.2F + 1.2F * this.volumeHover, 5.0F + 2.0F * this.volumeHover, visibility2);
+      if (mediaPlayerState.isFlag()) {
+         Font font4 = Fonts.NEW_MEDIUM.getFont(5.2F);
+         String str = t("gui.music.ducked");
+         customDrawContext.drawText(font4, str, x - font4.width(str) / 2.0F, y3 + 6.0F, WHITE.method7292(0.45F * visibility2));
       }
 
-      var1.pose().popMatrix();
+      customDrawContext.pose().popMatrix();
    }
 
-   private void slider(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8) {
-      float var9 = var3 - var6 / 2.0F;
-      var1.drawRoundedRect(var2, var9, var4, var6, ProxyDotRadiusData.method8069(var6 / 2.0F), WHITE.method7292(0.22F * var8));
-      var1.drawRoundedRect(var2, var9, Math.max(var6, var4 * var5), var6, ProxyDotRadiusData.method8069(var6 / 2.0F), WHITE.method7292(0.82F * var8));
-      float var10 = var2 + var4 * var5;
-      var1.drawRoundedRect(var10 - var7 / 2.0F, var3 - var7 / 2.0F, var7, var7, ProxyDotRadiusData.method8069(var7 / 2.0F), WHITE.method7292(var8));
+   private void slider(MenuDrawContext customDrawContext, float x1, float f, float maxWidth, float seekPreview, float height, float width, float visibility) {
+      float y = f - height / 2.0F;
+      customDrawContext.drawRoundedRect(x1, y, maxWidth, height, ProxyDotRadiusData.method8069(height / 2.0F), WHITE.method7292(0.22F * visibility));
+      customDrawContext.drawRoundedRect(x1, y, Math.max(height, maxWidth * seekPreview), height, ProxyDotRadiusData.method8069(height / 2.0F), WHITE.method7292(0.82F * visibility));
+      float f2 = x1 + maxWidth * seekPreview;
+      customDrawContext.drawRoundedRect(f2 - width / 2.0F, f - width / 2.0F, width, width, ProxyDotRadiusData.method8069(width / 2.0F), WHITE.method7292(visibility));
    }
 
    private void drawLyrics(
-      MenuDrawContext var1,
-      MediaSessionManager var2,
-      float var3,
-      float var4,
-      float var5,
-      float var6,
-      long var7,
-      float var9,
-      float var10,
-      float var11,
-      float var12
+      MenuDrawContext menuDrawContext,
+      MediaSessionManager mediaSessionManager,
+      float floatValue,
+      float y1,
+      float layoutWidth,
+      float height,
+      long now,
+      float f,
+      float visibility,
+      float lastClickX,
+      float lastClickY
    ) {
       this.lyricHits.clear();
-      LyricsFetcher.Data2 var13 = LyricsFetcher.method528(var2.title(), var2.method6006(), var2.method6008());
-      float var14 = Math.max(15.0F, Math.min(34.0F, var6 * 0.058F));
-      Font var15 = Fonts.BOLD.getFont(var14);
-      if (var13 != LyricsFetcher.Data2.INSTANCE2 && !var13.lines().isEmpty()) {
-         String var44 = var2.getText() + var13.isFlag();
-         if (!var44.equals(this.layoutKey) || Math.abs(var5 - this.layoutWidth) > 0.5F || Math.abs(var14 - this.layoutSize) > 0.1F) {
-            this.layout(var13, var15, var5, var14);
-            this.layoutKey = var44;
-            this.layoutWidth = var5;
-            this.layoutSize = var14;
+      LyricsFetcher.Data2 data2 = LyricsFetcher.method528(mediaSessionManager.title(), mediaSessionManager.method6006(), mediaSessionManager.method6008());
+      float layoutSize = Math.max(15.0F, Math.min(34.0F, height * 0.058F));
+      Font font = Fonts.BOLD.getFont(layoutSize);
+      if (data2 != LyricsFetcher.Data2.INSTANCE2 && !data2.lines().isEmpty()) {
+         String layoutKey = mediaSessionManager.getText() + data2.isFlag();
+         if (!layoutKey.equals(this.layoutKey) || Math.abs(layoutWidth - this.layoutWidth) > 0.5F || Math.abs(layoutSize - this.layoutSize) > 0.1F) {
+            this.layout(data2, font, layoutWidth, layoutSize);
+            this.layoutKey = layoutKey;
+            this.layoutWidth = layoutWidth;
+            this.layoutSize = layoutSize;
             this.lyricScroll = Float.NaN;
             this.manualOffset = 0.0F;
          }
 
-         double var45 = var2.method6009() + MusicHud.method6121();
-         int var19 = var13.isFlag() ? this.activeBlock(var45) : -1;
-         float var20 = var4 + var6 * 0.36F;
-         float var21;
-         if (var19 >= 0) {
-            var21 = this.blocks.get(var19).top;
-         } else if (var13.isFlag()) {
-            var21 = -var14 * 2.5F;
+         double d = mediaSessionManager.method6009() + MusicHud.method6121();
+         int activeBlock = data2.isFlag() ? this.activeBlock(d) : -1;
+         float f2 = y1 + height * 0.36F;
+         float top;
+         if (activeBlock >= 0) {
+            top = this.blocks.get(activeBlock).top;
+         } else if (data2.isFlag()) {
+            top = -layoutSize * 2.5F;
          } else {
-            var21 = 0.0F;
-            var20 = var4 + var6 * 0.12F;
+            top = 0.0F;
+            f2 = y1 + height * 0.12F;
          }
 
-         if (var7 > this.manualUntil) {
-            this.manualOffset = this.manualOffset + -this.manualOffset * Math.min(1.0F, var9 * 4.0F);
+         if (now > this.manualUntil) {
+            this.manualOffset = this.manualOffset + -this.manualOffset * Math.min(1.0F, f * 4.0F);
          }
 
-         var21 += this.manualOffset;
+         top += this.manualOffset;
          if (Float.isNaN(this.lyricScroll)) {
-            this.lyricScroll = var21;
+            this.lyricScroll = top;
          }
 
-         float var22 = 90.0F;
-         float var23 = 2.0F * (float)Math.sqrt(var22) * 0.95F;
-         this.lyricVelocity = this.lyricVelocity + ((var21 - this.lyricScroll) * var22 - this.lyricVelocity * var23) * var9;
-         this.lyricScroll = this.lyricScroll + this.lyricVelocity * var9;
+         float f3 = 90.0F;
+         float f4 = 2.0F * (float)Math.sqrt(f3) * 0.95F;
+         this.lyricVelocity = this.lyricVelocity + ((top - this.lyricScroll) * f3 - this.lyricVelocity * f4) * f;
+         this.lyricScroll = this.lyricScroll + this.lyricVelocity * f;
          if (this.emphasis.length != this.blocks.size()) {
             this.emphasis = new float[this.blocks.size()];
          }
 
-         var1.enableScissor((int)(var3 - 30.0F), (int)var4, (int)(var3 + var5 + 40.0F), (int)(var4 + var6));
-         float var24 = var15.height() * 1.08F;
-         int var25 = 0;
+         menuDrawContext.enableScissor((int)(floatValue - 30.0F), (int)y1, (int)(floatValue + layoutWidth + 40.0F), (int)(y1 + height));
+         float f5 = font.height() * 1.08F;
+         int n = 0;
 
-         for (int var26 = 0; var26 < this.blocks.size(); var26++) {
-            NowPlayingScreen.Block var27 = this.blocks.get(var26);
-            int var28 = var19 >= 0 ? var26 - var19 : 2;
-            float var29 = var19 >= 0 ? Math.min(4, Math.max(0, var28)) * 0.035F : 0.0F;
-            float var30 = var20 + var27.top - this.lyricScroll + var29 * (var21 - this.lyricScroll);
-            if (!(var30 + var27.height < var4 - 20.0F) && !(var30 > var4 + var6 + 20.0F)) {
-               boolean var31 = var26 == var19;
-               this.emphasis[var26] = this.emphasis[var26] + ((var31 ? 1.0F : 0.0F) - this.emphasis[var26]) * Math.min(1.0F, var9 * 10.0F);
-               float var32 = this.emphasis[var26];
-               float var33 = this.appear(var7, 200.0F + var25 * 55.0F, 700.0F);
-               var25++;
-               boolean var34 = var11 >= var3 - 8.0F && var11 <= var3 + var5 && var12 >= var30 - 4.0F && var12 <= var30 + var27.height + 4.0F;
-               float var35;
-               if (!var13.isFlag()) {
-                  var35 = 0.75F;
-               } else if (var28 < 0) {
-                  var35 = Math.max(0.05F, 0.22F + var28 * 0.06F);
+         for (int i = 0; i < this.blocks.size(); i++) {
+            NowPlayingScreen.Block block = this.blocks.get(i);
+            int n2 = activeBlock >= 0 ? i - activeBlock : 2;
+            float f6 = activeBlock >= 0 ? Math.min(4, Math.max(0, n2)) * 0.035F : 0.0F;
+            float f7 = f2 + block.top - this.lyricScroll + f6 * (top - this.lyricScroll);
+            if (!(f7 + block.height < y1 - 20.0F) && !(f7 > y1 + height + 20.0F)) {
+               boolean flag = i == activeBlock;
+               this.emphasis[i] = this.emphasis[i] + ((flag ? 1.0F : 0.0F) - this.emphasis[i]) * Math.min(1.0F, f * 10.0F);
+               float emphasi = this.emphasis[i];
+               float appear = this.appear(now, 200.0F + n * 55.0F, 700.0F);
+               n++;
+               boolean flag2 = lastClickX >= floatValue - 8.0F && lastClickX <= floatValue + layoutWidth && lastClickY >= f7 - 4.0F && lastClickY <= f7 + block.height + 4.0F;
+               float f8;
+               if (!data2.isFlag()) {
+                  f8 = 0.75F;
+               } else if (n2 < 0) {
+                  f8 = Math.max(0.05F, 0.22F + n2 * 0.06F);
                } else {
-                  var35 = Math.max(0.12F, 0.34F - var28 * 0.05F);
+                  f8 = Math.max(0.12F, 0.34F - n2 * 0.05F);
                }
 
-               float var36 = var35 + (1.0F - var35) * var32;
-               if (var34 && var13.isFlag()) {
-                  var36 = Math.max(var36, 0.7F);
+               float visibility2 = f8 + (1.0F - f8) * emphasi;
+               if (flag2 && data2.isFlag()) {
+                  visibility2 = Math.max(visibility2, 0.7F);
                }
 
-               float var37 = clamp01(Math.min(var30 - var4, var4 + var6 - (var30 + var27.height)) / (var14 * 3.0F) + 0.15F);
-               var36 *= var37 * var10 * clamp01(var33);
-               if (var13.isFlag()) {
-                  this.lyricHits.add(new NowPlayingScreen.Hit(new BoundsData(var3 - 8.0F, var30 - 4.0F, var5 + 8.0F, var27.height + 8.0F), var27.time));
-                  if (var34 && !var31) {
-                     var1.drawRoundedRect(
-                        var3 - 8.0F, var30 - 5.0F, var5 + 8.0F, var27.height + 10.0F, ProxyDotRadiusData.method8069(8.0F), WHITE.method7292(0.08F * var10)
+               float clamp012 = clamp01(Math.min(f7 - y1, y1 + height - (f7 + block.height)) / (layoutSize * 3.0F) + 0.15F);
+               visibility2 *= clamp012 * visibility * clamp01(appear);
+               if (data2.isFlag()) {
+                  this.lyricHits.add(new NowPlayingScreen.Hit(new BoundsData(floatValue - 8.0F, f7 - 4.0F, layoutWidth + 8.0F, block.height + 8.0F), block.time));
+                  if (flag2 && !flag) {
+                     menuDrawContext.drawRoundedRect(
+                        floatValue - 8.0F, f7 - 5.0F, layoutWidth + 8.0F, block.height + 10.0F, ProxyDotRadiusData.method8069(8.0F), WHITE.method7292(0.08F * visibility)
                      );
                   }
                }
 
-               float var38 = var13.isFlag() && !var34 ? (1.0F - var32) * Math.min(1.0F, 0.45F + Math.abs(var28) * 0.18F) : 0.0F;
-               float var39 = 0.96F + 0.04F * var32;
-               float var40 = (1.0F - var33) * 50.0F;
-               var1.pose().pushMatrix();
-               var1.pose().translate(var3 + var40, var30 + var27.height / 2.0F);
-               var1.pose().scale(var39, var39);
-               var1.pose().translate(-var3, -(var30 + var27.height / 2.0F));
-               if (var27.dots) {
-                  this.drawDots(var1, var3, var30 + var27.height / 2.0F, var14, var31, var7, var36);
+               float f9 = data2.isFlag() && !flag2 ? (1.0F - emphasi) * Math.min(1.0F, 0.45F + Math.abs(n2) * 0.18F) : 0.0F;
+               float x = 0.96F + 0.04F * emphasi;
+               float f10 = (1.0F - appear) * 50.0F;
+               menuDrawContext.pose().pushMatrix();
+               menuDrawContext.pose().translate(floatValue + f10, f7 + block.height / 2.0F);
+               menuDrawContext.pose().scale(x, x);
+               menuDrawContext.pose().translate(-floatValue, -(f7 + block.height / 2.0F));
+               if (block.dots) {
+                  this.drawDots(menuDrawContext, floatValue, f7 + block.height / 2.0F, layoutSize, flag, now, visibility2);
                } else {
-                  float var41 = var30;
+                  float centeredTextY = f7;
 
-                  for (String var43 : var27.lines) {
-                     this.drawSoftText(var1, var15, var43, var3, var41, var36, var38 * var14 * 0.09F);
-                     var41 += var24;
+                  for (String line : block.lines) {
+                     this.drawSoftText(menuDrawContext, font, line, floatValue, centeredTextY, visibility2, f9 * layoutSize * 0.09F);
+                     centeredTextY += f5;
                   }
                }
 
-               var1.pose().popMatrix();
+               menuDrawContext.pose().popMatrix();
             }
          }
 
-         if (var13.isFlag() && var19 < 0 && !this.blocks.isEmpty() && this.blocks.get(0).time > 2.5) {
-            float var47 = var20 - var14 * 2.5F - this.lyricScroll + var21 - this.manualOffset + var14 * 0.5F;
-            this.drawDots(var1, var3, var47, var14, true, var7, var10);
+         if (data2.isFlag() && activeBlock < 0 && !this.blocks.isEmpty() && this.blocks.get(0).time > 2.5) {
+            float f6 = f2 - layoutSize * 2.5F - this.lyricScroll + top - this.manualOffset + layoutSize * 0.5F;
+            this.drawDots(menuDrawContext, floatValue, f6, layoutSize, true, now, visibility);
          }
 
-         var1.disableScissor();
+         menuDrawContext.disableScissor();
       } else {
-         Font var16 = Fonts.BOLD.getFont(var14 * 0.8F);
-         String var17 = t(var13 == LyricsFetcher.Data2.INSTANCE2 ? "gui.music.searching" : (var13.isFlag2() ? "gui.music.instrumental" : "gui.music.noLyrics"));
-         var1.drawText(var16, var17, var3, var4 + var6 * 0.42F, WHITE.method7292(0.5F * var10));
-         if (var13 != LyricsFetcher.Data2.INSTANCE2 && !var13.isFlag2()) {
-            Font var18 = Fonts.NEW_MEDIUM.getFont(6.5F);
-            var1.drawText(var18, t("gui.music.source"), var3, var4 + var6 * 0.42F + var16.height() + 4.0F, WHITE.method7292(0.3F * var10));
+         Font font2 = Fonts.BOLD.getFont(layoutSize * 0.8F);
+         String text = t(data2 == LyricsFetcher.Data2.INSTANCE2 ? "gui.music.searching" : (data2.isFlag2() ? "gui.music.instrumental" : "gui.music.noLyrics"));
+         menuDrawContext.drawText(font2, text, floatValue, y1 + height * 0.42F, WHITE.method7292(0.5F * visibility));
+         if (data2 != LyricsFetcher.Data2.INSTANCE2 && !data2.isFlag2()) {
+            Font font3 = Fonts.NEW_MEDIUM.getFont(6.5F);
+            menuDrawContext.drawText(font3, t("gui.music.source"), floatValue, y1 + height * 0.42F + font2.height() + 4.0F, WHITE.method7292(0.3F * visibility));
          }
       }
    }
 
-   private void drawSoftText(MenuDrawContext var1, Font var2, String var3, float var4, float var5, float var6, float var7) {
-      if (!(var6 <= 0.01F)) {
-         if (var7 < 0.25F) {
-            var1.drawText(var2, var3, var4, var5, WHITE.method7292(var6));
+   private void drawSoftText(MenuDrawContext menuDrawContext, Font font, String line, float floatValue, float centeredTextY, float visibility, float f) {
+      if (!(visibility <= 0.01F)) {
+         if (f < 0.25F) {
+            menuDrawContext.drawText(font, line, floatValue, centeredTextY, WHITE.method7292(visibility));
          } else {
-            ZenithColor var8 = WHITE.method7292(var6 * 0.2F);
+            ZenithColor zenithColor = WHITE.method7292(visibility * 0.2F);
 
-            for (int var9 = 1; var9 <= 2; var9++) {
-               float var10 = var7 * var9 / 2.0F;
+            for (int i = 1; i <= 2; i++) {
+               float f2 = f * i / 2.0F;
 
-               for (int var11 = 0; var11 < 6; var11++) {
-                  double var12 = (Math.PI * 2) * var11 / 6.0 + var9 * 0.5;
-                  var1.drawText(var2, var3, var4 + (float)Math.cos(var12) * var10, var5 + (float)Math.sin(var12) * var10, var8);
+               for (int j = 0; j < 6; j++) {
+                  double d = (Math.PI * 2) * j / 6.0 + i * 0.5;
+                  menuDrawContext.drawText(font, line, floatValue + (float)Math.cos(d) * f2, centeredTextY + (float)Math.sin(d) * f2, zenithColor);
                }
             }
 
-            var1.drawText(var2, var3, var4, var5, WHITE.method7292(var6 * 0.25F));
+            menuDrawContext.drawText(font, line, floatValue, centeredTextY, WHITE.method7292(visibility * 0.25F));
          }
       }
    }
 
-   private void drawDots(MenuDrawContext var1, float var2, float var3, float var4, boolean var5, long var6, float var8) {
-      float var9 = var4 * 0.26F;
+   private void drawDots(MenuDrawContext menuDrawContext, float floatValue, float f, float layoutSize, boolean flag, long now, float visibility) {
+      float f2 = layoutSize * 0.26F;
 
-      for (int var10 = 0; var10 < 3; var10++) {
-         float var11 = var5 ? 0.5F + 0.5F * (float)Math.sin(var6 / 280.0 - var10 * 0.9) : 0.0F;
-         float var12 = var9 * (1.0F + 0.3F * var11);
-         var1.drawRoundedRect(
-            var2 + var10 * var9 * 1.9F + (var9 - var12) / 2.0F,
-            var3 - var12 / 2.0F,
-            var12,
-            var12,
-            ProxyDotRadiusData.method8069(var12 / 2.0F),
-            WHITE.method7292(var8 * (var5 ? 0.5F + 0.5F * var11 : 0.4F))
+      for (int i = 0; i < 3; i++) {
+         float f3 = flag ? 0.5F + 0.5F * (float)Math.sin(now / 280.0 - i * 0.9) : 0.0F;
+         float width = f2 * (1.0F + 0.3F * f3);
+         menuDrawContext.drawRoundedRect(
+            floatValue + i * f2 * 1.9F + (f2 - width) / 2.0F,
+            f - width / 2.0F,
+            width,
+            width,
+            ProxyDotRadiusData.method8069(width / 2.0F),
+            WHITE.method7292(visibility * (flag ? 0.5F + 0.5F * f3 : 0.4F))
          );
       }
    }
 
-   private int activeBlock(double var1) {
-      int var3 = -1;
-      int var4 = 0;
+   private int activeBlock(double d) {
+      int n = -1;
+      int n2 = 0;
 
-      while (var4 < this.blocks.size() && this.blocks.get(var4).time <= var1) {
-         var3 = var4++;
+      while (n2 < this.blocks.size() && this.blocks.get(n2).time <= d) {
+         n = n2++;
       }
 
-      return var3;
+      return n;
    }
 
-   private void layout(LyricsFetcher.Data2 var1, Font var2, float var3, float var4) {
+   private void layout(LyricsFetcher.Data2 data2, Font font, float layoutWidth, float layoutSize) {
       this.blocks.clear();
-      float var5 = var2.height() * 1.08F;
-      float var6 = var4 * 0.85F;
-      float var7 = 0.0F;
-      var var8 = var1.lines();
+      float f = font.height() * 1.08F;
+      float f2 = layoutSize * 0.85F;
+      float blocksHeight = 0.0F;
+      var lines = data2.lines();
 
-      for (int var9 = 0; var9 < var8.size(); var9++) {
-         LyricsFetcher.Data3 var10 = (LyricsFetcher.Data3)var8.get(var9);
-         String var11 = var10.text().trim();
-         boolean var12 = var11.isEmpty();
-         if (var12 && var1.isFlag()) {
-            double var13 = var9 + 1 < var8.size() ? ((LyricsFetcher.Data3)var8.get(var9 + 1)).time() : var10.time() + 10.0;
-            if (var13 - var10.time() < 4.0) {
+      for (int i = 0; i < lines.size(); i++) {
+         LyricsFetcher.Data3 data3 = (LyricsFetcher.Data3)lines.get(i);
+         String str = data3.text().trim();
+         boolean empty = str.isEmpty();
+         if (empty && data2.isFlag()) {
+            double time = i + 1 < lines.size() ? ((LyricsFetcher.Data3)lines.get(i + 1)).time() : data3.time() + 10.0;
+            if (time - data3.time() < 4.0) {
                continue;
             }
          }
 
-         if (var12 && !var1.isFlag()) {
-            var7 += var6 * 0.5F;
+         if (empty && !data2.isFlag()) {
+            blocksHeight += f2 * 0.5F;
          } else {
-            List<String> var15 = var12 ? List.<String>of() : wrap(var2, var11, var3);
-            float var14 = var12 ? var4 * 0.6F : (var15.size() - 1) * var5 + var2.height();
-            this.blocks.add(new NowPlayingScreen.Block(var10.time(), var15, var7, var14, var12));
-            var7 += var14 + var6;
+            List<String> strings = empty ? List.<String>of() : wrap(font, str, layoutWidth);
+            float height = empty ? layoutSize * 0.6F : (strings.size() - 1) * f + font.height();
+            this.blocks.add(new NowPlayingScreen.Block(data3.time(), strings, blocksHeight, height, empty));
+            blocksHeight += height + f2;
          }
       }
 
-      this.blocksHeight = var7;
+      this.blocksHeight = blocksHeight;
    }
 
-   private static List<String> wrap(Font var0, String var1, float var2) {
-      ArrayList<String> var3 = new ArrayList<>();
-      StringBuilder var4 = new StringBuilder();
+   private static List<String> wrap(Font font, String str, float layoutWidth) {
+      ArrayList<String> strings = new ArrayList<>();
+      StringBuilder builder = new StringBuilder();
 
-      for (String var8 : var1.split(" ")) {
-         String var9 = var4.isEmpty() ? var8 : var4 + " " + var8;
-         if (!(var0.width(var9) <= var2) && !var4.isEmpty()) {
-            var3.add(var4.toString());
-            var4.setLength(0);
-            var4.append(var8);
+      for (String str2 : str.split(" ")) {
+         String text = builder.isEmpty() ? str2 : builder + " " + str2;
+         if (!(font.width(text) <= layoutWidth) && !builder.isEmpty()) {
+            strings.add(builder.toString());
+            builder.setLength(0);
+            builder.append(str2);
          } else {
-            var4.setLength(0);
-            var4.append(var9);
+            builder.setLength(0);
+            builder.append(text);
          }
       }
 
-      if (!var4.isEmpty()) {
-         var3.add(var4.toString());
+      if (!builder.isEmpty()) {
+         strings.add(builder.toString());
       }
 
-      return var3;
+      return strings;
    }
 
-   private void text(MenuDrawContext var1, Font var2, String var3, float var4, float var5, float var6, ZenithColor var7, boolean var8) {
-      if (var3 != null && !var3.isEmpty()) {
-         float var9 = var2.width(var3);
-         if (var9 <= var6) {
-            var1.drawText(var2, var3, var4, var5, var7);
-         } else if (!var8) {
-            var1.drawText(var2, MediaGlyphs.ellipsize(var2, var3, var6), var4, var5, var7);
+   private void text(MenuDrawContext customDrawContext, Font font, String title, float x1, float centeredTextY, float maxWidth, ZenithColor zenithColor, boolean flag) {
+      if (title != null && !title.isEmpty()) {
+         float width = font.width(title);
+         if (width <= maxWidth) {
+            customDrawContext.drawText(font, title, x1, centeredTextY, zenithColor);
+         } else if (!flag) {
+            customDrawContext.drawText(font, MediaGlyphs.ellipsize(font, title, maxWidth), x1, centeredTextY, zenithColor);
          } else {
-            float var10 = 30.0F;
-            float var11 = var9 + var10;
-            long var12 = (long)(var11 / 30.0F * 1000.0F);
-            long var14 = 1200L;
-            long var16 = System.currentTimeMillis() % (var12 + var14);
-            float var18 = var16 < var14 ? 0.0F : (float)(var16 - var14) / (float)var12 * var11;
-            var1.enableScissor((int)var4, (int)(var5 - 2.0F), (int)Math.ceil(var4 + var6), (int)Math.ceil(var5 + var2.height() + 3.0F));
-            var1.drawText(var2, var3, var4 - var18, var5, var7);
-            var1.drawText(var2, var3, var4 - var18 + var11, var5, var7);
-            var1.disableScissor();
+            float f = 30.0F;
+            float f2 = width + f;
+            long l = (long)(f2 / 30.0F * 1000.0F);
+            long l2 = 1200L;
+            long l3 = System.currentTimeMillis() % (l + l2);
+            float f3 = l3 < l2 ? 0.0F : (float)(l3 - l2) / (float)l * f2;
+            customDrawContext.enableScissor((int)x1, (int)(centeredTextY - 2.0F), (int)Math.ceil(x1 + maxWidth), (int)Math.ceil(centeredTextY + font.height() + 3.0F));
+            customDrawContext.drawText(font, title, x1 - f3, centeredTextY, zenithColor);
+            customDrawContext.drawText(font, title, x1 - f3 + f2, centeredTextY, zenithColor);
+            customDrawContext.disableScissor();
          }
       }
    }
 
-   private void hoverBack(MenuDrawContext var1, BoundsData var2, float var3, float var4, float var5) {
-      if (var2 != null && var2.contains(var3, var4)) {
-         var1.drawRoundedRect(
-            var2.getFloatValue(),
-            var2.getFloatValue2(),
-            var2.width(),
-            var2.height(),
-            ProxyDotRadiusData.method8069(var2.width() / 2.0F),
-            WHITE.method7292(0.1F * var5)
+   private void hoverBack(MenuDrawContext customDrawContext, BoundsData previousButton, float lastClickX, float lastClickY, float f) {
+      if (previousButton != null && previousButton.contains(lastClickX, lastClickY)) {
+         customDrawContext.drawRoundedRect(
+            previousButton.getFloatValue(),
+            previousButton.getFloatValue2(),
+            previousButton.width(),
+            previousButton.height(),
+            ProxyDotRadiusData.method8069(previousButton.width() / 2.0F),
+            WHITE.method7292(0.1F * f)
          );
       }
    }
 
-   private static BoundsData square(float var0, float var1, float var2) {
-      return new BoundsData(var0 - var2 / 2.0F, var1 - var2 / 2.0F, var2, var2);
+   private static BoundsData square(float x, float f, float width) {
+      return new BoundsData(x - width / 2.0F, f - width / 2.0F, width, width);
    }
 
    private void clearHits() {
@@ -689,10 +689,10 @@ public class NowPlayingScreen extends Screen {
       this.lyricHits.clear();
    }
 
-   private float[] toContent(double var1, double var3) {
-      float var5 = this.visibility(System.currentTimeMillis());
-      float var6 = 0.97F + 0.03F * var5;
-      return new float[]{(float)((var1 - this.width / 2.0F) / var6 + this.width / 2.0F), (float)((var3 - this.height / 2.0F) / var6 + this.height / 2.0F)};
+   private float[] toContent(double x, double y) {
+      float visibility = this.visibility(System.currentTimeMillis());
+      float f = 0.97F + 0.03F * visibility;
+      return new float[]{(float)((x - this.width / 2.0F) / f + this.width / 2.0F), (float)((y - this.height / 2.0F) / f + this.height / 2.0F)};
    }
 
    @Override
@@ -700,40 +700,40 @@ public class NowPlayingScreen extends Screen {
       if (org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()) != 0) {
          return super.mouseClicked(click, doubled);
       } else {
-         float[] var3 = this.toContent(click.x(), click.y());
-         float var4 = var3[0];
-         float var5 = var3[1];
-         MediaSessionManager var6 = MediaSessionManager.getInstance();
-         if (this.closeButton != null && this.closeButton.contains(var4, var5)) {
+         float[] content = this.toContent(click.x(), click.y());
+         float lastClickX = content[0];
+         float lastClickY = content[1];
+         MediaSessionManager mediaSessionManager = MediaSessionManager.getInstance();
+         if (this.closeButton != null && this.closeButton.contains(lastClickX, lastClickY)) {
             this.onClose();
             return true;
-         } else if (this.seekBar != null && this.seekBar.contains(var4, var5) && var6.method6008() > 0.0) {
+         } else if (this.seekBar != null && this.seekBar.contains(lastClickX, lastClickY) && mediaSessionManager.method6008() > 0.0) {
             this.seekDrag = true;
-            this.seekPreview = clamp01((var4 - this.seekBar.getFloatValue() - 3.0F) / (this.seekBar.width() - 6.0F));
+            this.seekPreview = clamp01((lastClickX - this.seekBar.getFloatValue() - 3.0F) / (this.seekBar.width() - 6.0F));
             return true;
-         } else if (this.volumeBar != null && this.volumeBar.contains(var4, var5)) {
+         } else if (this.volumeBar != null && this.volumeBar.contains(lastClickX, lastClickY)) {
             this.volumeDrag = true;
-            MediaPlayerState.getInstance().method1675(clamp01((var4 - this.volumeBar.getFloatValue() - 3.0F) / (this.volumeBar.width() - 6.0F)));
+            MediaPlayerState.getInstance().method1675(clamp01((lastClickX - this.volumeBar.getFloatValue() - 3.0F) / (this.volumeBar.width() - 6.0F)));
             return true;
-         } else if (contains(this.playButton, var4, var5)) {
-            var6.playPause();
+         } else if (contains(this.playButton, lastClickX, lastClickY)) {
+            mediaSessionManager.playPause();
             return true;
-         } else if (contains(this.previousButton, var4, var5)) {
-            var6.previous();
+         } else if (contains(this.previousButton, lastClickX, lastClickY)) {
+            mediaSessionManager.previous();
             return true;
-         } else if (contains(this.nextButton, var4, var5)) {
-            var6.next();
+         } else if (contains(this.nextButton, lastClickX, lastClickY)) {
+            mediaSessionManager.next();
             return true;
-         } else if (contains(this.shuffleButton, var4, var5) && var6.getIMediaSession() != null) {
-            MediaHelperProcess.getInstance().method6864(var6.getIMediaSession().getOwner());
+         } else if (contains(this.shuffleButton, lastClickX, lastClickY) && mediaSessionManager.getIMediaSession() != null) {
+            MediaHelperProcess.getInstance().method6864(mediaSessionManager.getIMediaSession().getOwner());
             return true;
-         } else if (contains(this.repeatButton, var4, var5) && var6.getIMediaSession() != null) {
-            MediaHelperProcess.getInstance().method6865(var6.getIMediaSession().getOwner());
+         } else if (contains(this.repeatButton, lastClickX, lastClickY) && mediaSessionManager.getIMediaSession() != null) {
+            MediaHelperProcess.getInstance().method6865(mediaSessionManager.getIMediaSession().getOwner());
             return true;
          } else {
-            for (NowPlayingScreen.Hit var8 : this.lyricHits) {
-               if (var8.rect.contains(var4, var5)) {
-                  var6.method6019(Math.max(0.0, var8.time - MusicHud.method6121() + 0.05));
+            for (NowPlayingScreen.Hit lyricHit : this.lyricHits) {
+               if (lyricHit.rect.contains(lastClickX, lastClickY)) {
+                  mediaSessionManager.method6019(Math.max(0.0, lyricHit.time - MusicHud.method6121() + 0.05));
                   this.manualOffset = 0.0F;
                   this.manualUntil = 0L;
                   return true;
@@ -761,8 +761,8 @@ public class NowPlayingScreen extends Screen {
 
    @Override
    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-      float[] var9 = this.toContent(mouseX, mouseY);
-      if (this.leftPanel != null && this.leftPanel.contains(var9[0], var9[1])) {
+      float[] content = this.toContent(mouseX, mouseY);
+      if (this.leftPanel != null && this.leftPanel.contains(content[0], content[1])) {
          MediaPlayerState.getInstance().method1676((float)Math.signum(verticalAmount) * 0.05F);
          return true;
       } else if (!this.blocks.isEmpty()) {
@@ -777,35 +777,35 @@ public class NowPlayingScreen extends Screen {
 
    @Override
    public boolean keyPressed(KeyEvent input) {
-      int var2 = org.zenith.utility.misc.KeyCompat.toGlfw(input.key());
-      MediaSessionManager var3 = MediaSessionManager.getInstance();
-      if (var2 == 32) {
-         var3.playPause();
+      int keyCode = org.zenith.utility.misc.KeyCompat.toGlfw(input.key());
+      MediaSessionManager mediaSessionManager = MediaSessionManager.getInstance();
+      if (keyCode == 32) {
+         mediaSessionManager.playPause();
          return true;
-      } else if (var2 == 262) {
-         var3.method6019(var3.method6009() + 5.0);
+      } else if (keyCode == 262) {
+         mediaSessionManager.method6019(mediaSessionManager.method6009() + 5.0);
          return true;
-      } else if (var2 == 263) {
-         var3.method6019(var3.method6009() - 5.0);
+      } else if (keyCode == 263) {
+         mediaSessionManager.method6019(mediaSessionManager.method6009() - 5.0);
          return true;
-      } else if (var2 != 265 && var2 != 264) {
+      } else if (keyCode != 265 && keyCode != 264) {
          return super.keyPressed(input);
       } else {
-         MediaPlayerState.getInstance().method1676(var2 == 265 ? 0.05F : -0.05F);
+         MediaPlayerState.getInstance().method1676(keyCode == 265 ? 0.05F : -0.05F);
          return true;
       }
    }
 
-   private static boolean contains(BoundsData var0, float var1, float var2) {
-      return var0 != null && var0.contains(var1, var2);
+   private static boolean contains(BoundsData playButton, float lastClickX, float lastClickY) {
+      return playButton != null && playButton.contains(lastClickX, lastClickY);
    }
 
-   private static float clamp01(float var0) {
-      return Math.max(0.0F, Math.min(1.0F, var0));
+   private static float clamp01(float appear) {
+      return Math.max(0.0F, Math.min(1.0F, appear));
    }
 
-   private static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String t(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    private static final class Block {
@@ -852,12 +852,12 @@ public class NowPlayingScreen extends Screen {
          return "Block[" + "time=" + this.time + ", " + "lines=" + this.lines + ", " + "top=" + this.top + ", " + "height=" + this.height + ", " + "dots=" + this.dots + "]";
       }
 
-      private Block(double var1, List<String> var3, float var4, float var5, boolean var6) {
-         this.time = var1;
-         this.lines = var3;
-         this.top = var4;
-         this.height = var5;
-         this.dots = var6;
+      private Block(double time, List<String> lines, float top, float height, boolean dots) {
+         this.time = time;
+         this.lines = lines;
+         this.top = top;
+         this.height = height;
+         this.dots = dots;
       }
    }
 
@@ -890,9 +890,9 @@ public class NowPlayingScreen extends Screen {
          return "Hit[" + "rect=" + this.rect + ", " + "time=" + this.time + "]";
       }
 
-      private Hit(BoundsData var1, double var2) {
-         this.rect = var1;
-         this.time = var2;
+      private Hit(BoundsData rect, double time) {
+         this.rect = rect;
+         this.time = time;
       }
    }
 }

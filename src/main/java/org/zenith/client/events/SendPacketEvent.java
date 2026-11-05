@@ -13,12 +13,12 @@ public class SendPacketEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setPacket(Packet<?> var1) {
-      this.packet = var1;
+   public void setPacket(Packet<?> packet) {
+      this.packet = packet;
    }
 
    @Generated
-   public SendPacketEvent(Packet<?> var1) {
-      this.packet = var1;
+   public SendPacketEvent(Packet<?> packet) {
+      this.packet = packet;
    }
 }

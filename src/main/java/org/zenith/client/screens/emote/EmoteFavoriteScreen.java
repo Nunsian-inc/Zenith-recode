@@ -70,17 +70,17 @@ public final class EmoteFavoriteScreen extends Screen {
    private boolean draggingScrollBar;
    private float scrollBarDragOffset;
 
-   public EmoteFavoriteScreen(EmotesModule var1, int var2) {
+   public EmoteFavoriteScreen(EmotesModule owner, int favoriteSlot) {
       super(Component.literal("Favorite emote"));
-      this.owner = var1;
-      this.favoriteSlot = var2;
+      this.owner = owner;
+      this.favoriteSlot = favoriteSlot;
       this.allEmotes = EmoteAccess.method7917().stream().sorted(Comparator.comparing(EmoteInfo::getText2, String.CASE_INSENSITIVE_ORDER)).toList();
       this.filteredEmotes = this.allEmotes;
       this.searchBox = new SearchBox(new UVPair(0.0F, 0.0F), Fonts.NEW_MEDIUM.getFont(5.0F), t("gui.emote.search"), 180.0F);
       this.searchBox.setMaxLength(80);
 
-      for (EmoteInfo var4 : this.allEmotes) {
-         this.cardAnimations.put(var4.getText(), new Animation(140L, 0.0F, Easing.INSTANCE12));
+      for (EmoteInfo allEmote : this.allEmotes) {
+         this.cardAnimations.put(allEmote.getText(), new Animation(140L, 0.0F, Easing.INSTANCE12));
       }
    }
 
@@ -104,58 +104,58 @@ public final class EmoteFavoriteScreen extends Screen {
 
    @Override
    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-      float var5;
-      float var6 = Math.clamp(var5 = this.openAnimation.method2808(this.closing ? 0.0F : 1.0F), 0.0F, 1.0F);
-      if (this.closing && var6 <= 0.001F) {
+      float f;
+      float previewAlpha = Math.clamp(f = this.openAnimation.method2808(this.closing ? 0.0F : 1.0F), 0.0F, 1.0F);
+      if (this.closing && previewAlpha <= 0.001F) {
          this.finishClose();
       } else {
-         ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var7 != null) {
-            MenuDrawContext var8 = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
-            var8.drawRect(0.0F, 0.0F, this.width, this.height, var7.getRightBackground().getZenithColor().method7293((int)(145.0F * var6)));
-            EmoteFavoriteScreen.Layout var9 = this.layout();
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            MenuDrawContext menuDrawContext = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
+            menuDrawContext.drawRect(0.0F, 0.0F, this.width, this.height, currentStyle.getRightBackground().getZenithColor().method7293((int)(145.0F * previewAlpha)));
+            EmoteFavoriteScreen.Layout layout = this.layout();
             this.updateFilter();
-            this.interactiveScale = 0.9F + 0.1F * var5;
-            float var10 = this.transformX(mouseX, var9);
-            float var11 = this.transformY(mouseY, var9);
-            var8.pose().pushMatrix();
-            var8.pose().translate(var9.centerX(), var9.centerY());
-            var8.pose().scale(this.interactiveScale, this.interactiveScale);
-            var8.pose().translate(-var9.centerX(), -var9.centerY());
-            ZenithColor var12 = var7.getLeftBackground().getZenithColor().method7294(var6);
-            ZenithColor var13 = var7.getRightBackground().getZenithColor().method7294(var6);
-            ZenithColor var14 = var7.getSurfaceDisableBackground().getZenithColor().method7294(var6);
-            ZenithColor var15 = var7.getSurfaceEnableBackground().getZenithColor().method7294(var6);
-            ZenithColor var16 = var7.getDisableActiveBg().getZenithColor().method7294(var6);
-            ZenithColor var17 = var7.getTextEnable().getZenithColor().method7294(var6);
-            ZenithColor var18 = var7.getTextSecondary().getZenithColor().method7294(var6);
-            ZenithColor var19 = var7.getTextTertiary().getZenithColor().method7294(var6);
-            ZenithColor var20 = var7.getPrimaryColor().getZenithColor().method7294(var6);
-            float var21;
-            if ((var21 = Zenith.getInstance().getNLMenuScreen().getBlurPower()) != 0.0F) {
+            this.interactiveScale = 0.9F + 0.1F * f;
+            float transformX = this.transformX(mouseX, layout);
+            float transformY = this.transformY(mouseY, layout);
+            menuDrawContext.pose().pushMatrix();
+            menuDrawContext.pose().translate(layout.centerX(), layout.centerY());
+            menuDrawContext.pose().scale(this.interactiveScale, this.interactiveScale);
+            menuDrawContext.pose().translate(-layout.centerX(), -layout.centerY());
+            ZenithColor zenithColor = currentStyle.getLeftBackground().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor2 = currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor3 = currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor4 = currentStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor5 = currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor6 = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor7 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor8 = currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha);
+            ZenithColor zenithColor9 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
+            float blurPower;
+            if ((blurPower = Zenith.getInstance().getNLMenuScreen().getBlurPower()) != 0.0F) {
                RenderShaders.method5287(
-                  MatrixUtils.method664(var8.pose()),
-                  var9.panelX,
-                  var9.panelY,
-                  var9.panelWidth,
-                  var9.panelHeight,
-                  var21,
+                  MatrixUtils.method664(menuDrawContext.pose()),
+                  layout.panelX,
+                  layout.panelY,
+                  layout.panelWidth,
+                  layout.panelHeight,
+                  blurPower,
                   ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()),
-                  ZenithColor.INSTANCE.method7294(var6),
+                  ZenithColor.INSTANCE.method7294(previewAlpha),
                   true,
                   false
                );
             }
 
-            var8.drawRoundedRect(var9.panelX, var9.panelY, var9.panelWidth, var9.panelHeight, ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()), var12);
-            var8.drawRoundedRect(
-               var9.panelX + 6.0F, var9.panelY + 6.0F, var9.panelWidth - 12.0F, 37.0F, ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() - 1.0F), var13
+            menuDrawContext.drawRoundedRect(layout.panelX, layout.panelY, layout.panelWidth, layout.panelHeight, ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()), zenithColor);
+            menuDrawContext.drawRoundedRect(
+               layout.panelX + 6.0F, layout.panelY + 6.0F, layout.panelWidth - 12.0F, 37.0F, ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() - 1.0F), zenithColor2
             );
-            this.renderHeader(var8, var9, var10, var11, var7, var14, var15, var17, var18, var6);
-            this.renderCards(var8, var9, var10, var11, var14, var15, var16, var17, var19, var20, var6);
-            this.renderScrollBar(var8, var9, var10, var11, var7, var6);
-            this.renderPlayerPreview(context, var8, var9, var10, var11, var14, var6);
-            var8.pose().popMatrix();
+            this.renderHeader(menuDrawContext, layout, transformX, transformY, currentStyle, zenithColor3, zenithColor4, zenithColor6, zenithColor7, previewAlpha);
+            this.renderCards(menuDrawContext, layout, transformX, transformY, zenithColor3, zenithColor4, zenithColor5, zenithColor6, zenithColor8, zenithColor9, previewAlpha);
+            this.renderScrollBar(menuDrawContext, layout, transformX, transformY, currentStyle, previewAlpha);
+            this.renderPlayerPreview(context, menuDrawContext, layout, transformX, transformY, zenithColor3, previewAlpha);
+            menuDrawContext.pose().popMatrix();
          }
       }
    }
@@ -164,211 +164,211 @@ public final class EmoteFavoriteScreen extends Screen {
    // $VF: Could not inline inconsistent finally blocks
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
    private void renderPlayerPreview(
-      GuiGraphicsExtractor var1, MenuDrawContext var2, EmoteFavoriteScreen.Layout var3, float var4, float var5, ZenithColor var6, float var7
+      GuiGraphicsExtractor context, MenuDrawContext menuDrawContext, EmoteFavoriteScreen.Layout layout, float transformX, float transformY, ZenithColor zenithColor, float previewAlpha
    ) {
-      var2.drawRoundedRect(var3.previewX, var3.gridY, var3.previewWidth, var3.gridHeight, ProxyDotRadiusData.method8069(6.0F), var6);
+      menuDrawContext.drawRoundedRect(layout.previewX, layout.gridY, layout.previewWidth, layout.gridHeight, ProxyDotRadiusData.method8069(6.0F), zenithColor);
       if (this.minecraft != null && this.minecraft.player != null) {
-         this.playerPreview.setBounds(var3.previewX, var3.gridY, var3.previewWidth, var3.gridHeight);
-         var2.enableScissor((int)var3.previewX, (int)var3.gridY, (int)(var3.previewX + var3.previewWidth), (int)(var3.gridY + var3.gridHeight));
-         RenderState.method1883(1.0F, 1.0F, 1.0F, var7);
-         boolean var12 = false /* VF: Semaphore variable */;
+         this.playerPreview.setBounds(layout.previewX, layout.gridY, layout.previewWidth, layout.gridHeight);
+         menuDrawContext.enableScissor((int)layout.previewX, (int)layout.gridY, (int)(layout.previewX + layout.previewWidth), (int)(layout.gridY + layout.gridHeight));
+         RenderState.method1883(1.0F, 1.0F, 1.0F, previewAlpha);
+         boolean flag = false /* VF: Semaphore variable */;
 
          try {
-            var12 = true;
+            flag = true;
             if (this.previewEmotePlayer == null) {
                this.detachPreviewAnimationLayer();
-               this.playerPreview.render(var1, this.minecraft.player, var4, var5);
-               var12 = false;
+               this.playerPreview.render(context, this.minecraft.player, transformX, transformY);
+               flag = false;
             } else {
                this.attachPreviewAnimation(this.minecraft.player);
                this.previewAnimation.setAnim(this.previewEmotePlayer);
 
                try {
-                  this.playerPreview.render(var1, this.minecraft.player, var4, var5);
-               } catch (Throwable var15) {
+                  this.playerPreview.render(context, this.minecraft.player, transformX, transformY);
+               } catch (Throwable e) {
                   this.previewAnimation.setAnim(null);
-                  throw var15;
+                  throw e;
                }
 
                this.previewAnimation.setAnim(null);
-               var12 = false;
+               flag = false;
             }
          } finally {
-            if (var12) {
+            if (flag) {
                RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
-               var2.disableScissor();
+               menuDrawContext.disableScissor();
             }
          }
 
          RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
-         var2.disableScissor();
+         menuDrawContext.disableScissor();
       }
    }
 
    private void renderHeader(
-      MenuDrawContext var1,
-      EmoteFavoriteScreen.Layout var2,
-      float var3,
-      float var4,
-      ZenithStyle var5,
-      ZenithColor var6,
-      ZenithColor var7,
-      ZenithColor var8,
-      ZenithColor var9,
-      float var10
+      MenuDrawContext menuDrawContext,
+      EmoteFavoriteScreen.Layout layout,
+      float transformX,
+      float transformY,
+      ZenithStyle currentStyle,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      ZenithColor zenithColor3,
+      ZenithColor zenithColor4,
+      float previewAlpha
    ) {
-      Font var11 = Fonts.NEW_MEDIUM.getFont(5.8F);
-      String var12 = t("gui.emote.pick");
-      var1.drawText(var11, var12, var2.contentX, var2.panelY + (37.0F - var11.height()) / 2.0F + 6.0F, var8);
-      double var10000 = var3;
-      double var10001 = var4;
-      float var26 = 18.0F;
-      float var25 = 18.0F;
-      float var24 = var2.closeY;
-      float var23 = var2.closeX;
-      double var21 = var10001;
-      double var19 = var10000;
-      int var13 = var10000 >= var23 && var21 >= var24 && var19 <= var23 + var25 && var21 <= var24 + var26 ? 1 : 0;
-      float var14 = this.closeAnimation.method2808(var13 != 0 ? 1.0F : 0.0F);
-      var1.drawRoundedRect(var2.closeX, var2.closeY, 18.0F, 18.0F, ProxyDotRadiusData.method8069(5.0F), var6.method7295(var7, var14));
-      Font var15 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-      var1.drawText(var15, "×", var2.closeX + (18.0F - var15.width("×")) / 2.0F, var2.closeY + (18.0F - var15.height()) / 2.0F - 0.5F, var8);
-      float var16 = this.searchAnimation.method2808(this.searchBox.isSelected() ? 1.0F : 0.0F);
-      ZenithColor var17 = var5.getFieldSurfaceBackground()
+      Font font = Fonts.NEW_MEDIUM.getFont(5.8F);
+      String text = t("gui.emote.pick");
+      menuDrawContext.drawText(font, text, layout.contentX, layout.panelY + (37.0F - font.height()) / 2.0F + 6.0F, zenithColor3);
+      double d = transformX;
+      double transformY2 = transformY;
+      float f = 18.0F;
+      float f2 = 18.0F;
+      float closeY = layout.closeY;
+      float closeX = layout.closeX;
+      double d2 = transformY2;
+      double d3 = d;
+      int n = d >= closeX && d2 >= closeY && d3 <= closeX + f2 && d2 <= closeY + f ? 1 : 0;
+      float hover = this.closeAnimation.method2808(n != 0 ? 1.0F : 0.0F);
+      menuDrawContext.drawRoundedRect(layout.closeX, layout.closeY, 18.0F, 18.0F, ProxyDotRadiusData.method8069(5.0F), zenithColor.method7295(zenithColor2, hover));
+      Font font2 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+      menuDrawContext.drawText(font2, "×", layout.closeX + (18.0F - font2.width("×")) / 2.0F, layout.closeY + (18.0F - font2.height()) / 2.0F - 0.5F, zenithColor3);
+      float f3 = this.searchAnimation.method2808(this.searchBox.isSelected() ? 1.0F : 0.0F);
+      ZenithColor zenithColor5 = currentStyle.getFieldSurfaceBackground()
          .getZenithColor()
-         .method7294(var10)
-         .method7295(var5.getPanelLeftBackground().getZenithColor().method7294(var10), var16 * 0.35F);
-      var1.drawRoundedRect(var2.searchX, var2.searchY, var2.searchWidth, 20.0F, ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()), var17);
-      this.searchBox.setWidth(var2.searchWidth - 23.0F);
-      this.searchBox.method987(var1, var2.searchX + 7.0F, var2.searchY + (20.0F - this.searchBox.getFont().height()) / 2.0F, var8, var9);
-      Font var18 = Fonts.NEW_ICONS.getFont(4.5F);
-      var1.drawText(var18, "S", var2.searchX + var2.searchWidth - var18.width("S") - 7.0F, var2.searchY + (20.0F - var18.height()) / 2.0F, var9);
+         .method7294(previewAlpha)
+         .method7295(currentStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha), f3 * 0.35F);
+      menuDrawContext.drawRoundedRect(layout.searchX, layout.searchY, layout.searchWidth, 20.0F, ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue()), zenithColor5);
+      this.searchBox.setWidth(layout.searchWidth - 23.0F);
+      this.searchBox.method987(menuDrawContext, layout.searchX + 7.0F, layout.searchY + (20.0F - this.searchBox.getFont().height()) / 2.0F, zenithColor3, zenithColor4);
+      Font font3 = Fonts.NEW_ICONS.getFont(4.5F);
+      menuDrawContext.drawText(font3, "S", layout.searchX + layout.searchWidth - font3.width("S") - 7.0F, layout.searchY + (20.0F - font3.height()) / 2.0F, zenithColor4);
    }
 
    private void renderCards(
-      MenuDrawContext var1,
-      EmoteFavoriteScreen.Layout var2,
-      float var3,
-      float var4,
-      ZenithColor var5,
-      ZenithColor var6,
-      ZenithColor var7,
-      ZenithColor var8,
-      ZenithColor var9,
-      ZenithColor var10,
-      float var11
+      MenuDrawContext menuDrawContext,
+      EmoteFavoriteScreen.Layout layout,
+      float transformX,
+      float transformY,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      ZenithColor zenithColor3,
+      ZenithColor zenithColor4,
+      ZenithColor zenithColor5,
+      ZenithColor zenithColor6,
+      float previewAlpha
    ) {
-      float var12 = this.contentHeight();
-      this.clampScroll(var12, var2.gridHeight);
+      float contentHeight = this.contentHeight();
+      this.clampScroll(contentHeight, layout.gridHeight);
       this.scroll = this.scroll + (this.scrollTarget - this.scroll) * 0.25F;
-      float var13 = Math.clamp(this.contentAnimation.method2808(1.0F), 0.0F, 1.0F);
-      String var14 = this.owner.method6905(this.favoriteSlot);
-      Font var15 = Fonts.NEW_MEDIUM.getFont(5.2F);
-      Font var16 = Fonts.NEW_REGULAR.getFont(4.3F);
-      var1.enableScissor((int)var2.gridX, (int)var2.gridY, (int)(var2.gridX + var2.gridWidth), (int)(var2.gridY + var2.gridHeight));
-      int var17 = 0;
-      EmoteInfo var18 = null;
+      float f = Math.clamp(this.contentAnimation.method2808(1.0F), 0.0F, 1.0F);
+      String anObject = this.owner.method6905(this.favoriteSlot);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+      menuDrawContext.enableScissor((int)layout.gridX, (int)layout.gridY, (int)(layout.gridX + layout.gridWidth), (int)(layout.gridY + layout.gridHeight));
+      int n = 0;
+      EmoteInfo filteredEmote = null;
 
-      for (int var19 = 0; var19 < this.filteredEmotes.size(); var19++) {
-         EmoteInfo var20 = this.filteredEmotes.get(var19);
-         int var21 = var19 % 3;
-         int var22 = var19 / 3;
-         float var23 = var2.gridX + var21 * (var2.cardWidth + 5.0F);
-         float var24;
-         if (!((var24 = var2.gridY + var22 * 77.0F + this.scroll) + 72.0F < var2.gridY) && !(var24 > var2.gridY + var2.gridHeight)) {
-            byte var53;
+      for (int i = 0; i < this.filteredEmotes.size(); i++) {
+         EmoteInfo emoteInfo = this.filteredEmotes.get(i);
+         int n2 = i % 3;
+         int n3 = i / 3;
+         float floatValue = layout.gridX + n2 * (layout.cardWidth + 5.0F);
+         float f2;
+         if (!((f2 = layout.gridY + n3 * 77.0F + this.scroll) + 72.0F < layout.gridY) && !(f2 > layout.gridY + layout.gridHeight)) {
+            byte b;
             label82: {
-               double var10000 = var3;
-               double var10001 = var4;
-               float var45 = var2.gridHeight;
-               float var44 = var2.gridWidth;
-               float var43 = var2.gridY;
-               float var42 = var2.gridX;
-               double var40 = var10001;
-               double var38 = var10000;
-               if ((var10000 >= var42 && var40 >= var43 && var38 <= var42 + var44 && var40 <= var43 + var45 ? 1 : 0) != 0) {
-                  double var52 = var3;
-                  var10001 = var4;
-                  var45 = 72.0F;
-                  var44 = var2.cardWidth;
-                  var40 = var10001;
-                  var38 = var52;
-                  if ((var52 >= var23 && var40 >= var24 && var38 <= var23 + var44 && var40 <= var24 + var45 ? 1 : 0) != 0) {
-                     var53 = 1;
+               double d = transformX;
+               double transformY2 = transformY;
+               float gridHeight = layout.gridHeight;
+               float gridWidth = layout.gridWidth;
+               float gridY = layout.gridY;
+               float gridX = layout.gridX;
+               double d2 = transformY2;
+               double d3 = d;
+               if ((d >= gridX && d2 >= gridY && d3 <= gridX + gridWidth && d2 <= gridY + gridHeight ? 1 : 0) != 0) {
+                  double transformX2 = transformX;
+                  transformY2 = transformY;
+                  gridHeight = 72.0F;
+                  gridWidth = layout.cardWidth;
+                  d2 = transformY2;
+                  d3 = transformX2;
+                  if ((transformX2 >= floatValue && d2 >= f2 && d3 <= floatValue + gridWidth && d2 <= f2 + gridHeight ? 1 : 0) != 0) {
+                     b = 1;
                      break label82;
                   }
                }
 
-               var53 = 0;
+               b = 0;
             }
 
-            byte var25 = var53;
-            if (var53 != 0) {
-               var18 = var20;
+            byte b2 = b;
+            if (b != 0) {
+               filteredEmote = emoteInfo;
             }
 
-            boolean var26 = var20.getText().equals(var14);
-            float var27 = this.cardAnimations.get(var20.getText()).method2808(var25 != 0 ? 1.0F : 0.0F);
-            float var28 = Math.clamp(var13 * 1.25F - var17 * 0.035F, 0.0F, 1.0F);
-            float var29 = var24 + (1.0F - var28) * 8.0F;
-            float var30 = var11 * var28;
-            var17++;
-            ZenithColor var31 = var5.method7294(var28).method7295(var6.method7294(var28), var27);
-            if (var26) {
-               var31 = var31.method7295(var7.method7294(var28), 0.75F);
+            boolean flag = emoteInfo.getText().equals(anObject);
+            float hover = this.cardAnimations.get(emoteInfo.getText()).method2808(b2 != 0 ? 1.0F : 0.0F);
+            float previewAlpha2 = Math.clamp(f * 1.25F - n * 0.035F, 0.0F, 1.0F);
+            float y = f2 + (1.0F - previewAlpha2) * 8.0F;
+            float previewAlpha3 = previewAlpha * previewAlpha2;
+            n++;
+            ZenithColor zenithColor7 = zenithColor.method7294(previewAlpha2).method7295(zenithColor2.method7294(previewAlpha2), hover);
+            if (flag) {
+               zenithColor7 = zenithColor7.method7295(zenithColor3.method7294(previewAlpha2), 0.75F);
             }
 
-            var1.drawRoundedRect(var23, var29, var2.cardWidth, 72.0F, ProxyDotRadiusData.method8069(6.0F), var31);
-            float var32 = 39.0F + var27 * 3.0F;
-            float var33 = var23 + (var2.cardWidth - var32) / 2.0F;
-            float var34 = var29 + 5.0F - var27;
-            var1.drawTexture(var20.getIdentifier(), var33, var34, var32, var32, ZenithColor.INSTANCE.method7294(var30));
-            String var35 = fit(var15, var20.getText2(), var2.cardWidth - 8.0F);
-            var1.drawText(var15, var35, var23 + (var2.cardWidth - var15.width(var35)) / 2.0F, var29 + 72.0F - 17.0F, var8.method7294(var28));
-            String var36 = var20.getText().startsWith("spemotes/") ? "SPEmotes" : "Zenith";
-            ZenithColor var37 = var26 ? var10.method7294(var28) : var9.method7294(var28);
-            var1.drawText(var16, var36, var23 + (var2.cardWidth - var16.width(var36)) / 2.0F, var29 + 72.0F - 8.0F, var37);
+            menuDrawContext.drawRoundedRect(floatValue, y, layout.cardWidth, 72.0F, ProxyDotRadiusData.method8069(6.0F), zenithColor7);
+            float guiScaledWidth = 39.0F + hover * 3.0F;
+            float x = floatValue + (layout.cardWidth - guiScaledWidth) / 2.0F;
+            float y2 = y + 5.0F - hover;
+            menuDrawContext.drawTexture(emoteInfo.getIdentifier(), x, y2, guiScaledWidth, guiScaledWidth, ZenithColor.INSTANCE.method7294(previewAlpha3));
+            String text = fit(font, emoteInfo.getText2(), layout.cardWidth - 8.0F);
+            menuDrawContext.drawText(font, text, floatValue + (layout.cardWidth - font.width(text)) / 2.0F, y + 72.0F - 17.0F, zenithColor4.method7294(previewAlpha2));
+            String str = emoteInfo.getText().startsWith("spemotes/") ? "SPEmotes" : "Zenith";
+            ZenithColor zenithColor8 = flag ? zenithColor6.method7294(previewAlpha2) : zenithColor5.method7294(previewAlpha2);
+            menuDrawContext.drawText(font2, str, floatValue + (layout.cardWidth - font2.width(str)) / 2.0F, y + 72.0F - 8.0F, zenithColor8);
          }
       }
 
-      if (var18 != null) {
-         this.updatePreviewEmote(var18);
+      if (filteredEmote != null) {
+         this.updatePreviewEmote(filteredEmote);
       }
 
-      boolean var54 = this.filteredEmotes.isEmpty();
+      boolean empty = this.filteredEmotes.isEmpty();
 
-      if (var54) {
-         Font var46 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         String var47 = t("gui.configs.empty.query");
-         var1.drawText(var46, var47, var2.gridX + (var2.gridWidth - var46.width(var47)) / 2.0F, var2.gridY + (var2.gridHeight - var46.height()) / 2.0F, var9);
+      if (empty) {
+         Font font3 = Fonts.NEW_MEDIUM.getFont(5.5F);
+         String text = t("gui.configs.empty.query");
+         menuDrawContext.drawText(font3, text, layout.gridX + (layout.gridWidth - font3.width(text)) / 2.0F, layout.gridY + (layout.gridHeight - font3.height()) / 2.0F, zenithColor5);
       }
 
-      var1.disableScissor();
+      menuDrawContext.disableScissor();
    }
 
-   private void renderScrollBar(MenuDrawContext var1, EmoteFavoriteScreen.Layout var2, float var3, float var4, ZenithStyle var5, float var6) {
-      EmoteFavoriteScreen.ScrollBarMetrics var7 = this.scrollBarMetrics(var2);
-      if (var7 != null) {
-         double var10000 = var3;
-         double var10001 = var4;
-         float var10002 = var2.scrollBarX - 2.0F;
-         float var21 = var2.gridHeight;
-         float var20 = 7.0F;
-         float var19 = var2.gridY;
-         float var18 = var10002;
-         double var16 = var10001;
-         double var14 = var10000;
-         int var8 = var10000 >= var18 && var16 >= var19 && var14 <= var18 + var20 && var16 <= var19 + var21 ? 1 : 0;
-         float var9 = this.scrollBarAnimation.method2808(var8 == 0 && !this.draggingScrollBar ? 0.0F : 1.0F);
-         float var10 = 3.0F + var9;
-         float var11 = var2.scrollBarX - var9 / 2.0F;
-         ZenithColor var12 = var5.getFieldSurfaceBackground().getZenithColor().method7294(var6);
-         ZenithColor var13 = var5.getTextTertiary()
+   private void renderScrollBar(MenuDrawContext menuDrawContext, EmoteFavoriteScreen.Layout layout, float transformX, float transformY, ZenithStyle currentStyle, float previewAlpha) {
+      EmoteFavoriteScreen.ScrollBarMetrics scrollBarMetrics = this.scrollBarMetrics(layout);
+      if (scrollBarMetrics != null) {
+         double d = transformX;
+         double transformY2 = transformY;
+         float f = layout.scrollBarX - 2.0F;
+         float gridHeight = layout.gridHeight;
+         float f2 = 7.0F;
+         float gridY = layout.gridY;
+         float f3 = f;
+         double d2 = transformY2;
+         double d3 = d;
+         int n = d >= f3 && d2 >= gridY && d3 <= f3 + f2 && d2 <= gridY + gridHeight ? 1 : 0;
+         float f4 = this.scrollBarAnimation.method2808(n == 0 && !this.draggingScrollBar ? 0.0F : 1.0F);
+         float width = 3.0F + f4;
+         float floatValue = layout.scrollBarX - f4 / 2.0F;
+         ZenithColor zenithColor = currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor2 = currentStyle.getTextTertiary()
             .getZenithColor()
-            .method7294(var6)
-            .method7295(var5.getPrimaryColor().getZenithColor().method7294(var6), var9 * 0.35F);
-         var1.drawRoundedRect(var11, var2.gridY, var10, var2.gridHeight, ProxyDotRadiusData.method8069(var10 / 2.0F), var12);
-         var1.drawRoundedRect(var11, var7.thumbY, var10, var7.thumbHeight, ProxyDotRadiusData.method8069(var10 / 2.0F), var13);
+            .method7294(previewAlpha)
+            .method7295(currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha), f4 * 0.35F);
+         menuDrawContext.drawRoundedRect(floatValue, layout.gridY, width, layout.gridHeight, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor);
+         menuDrawContext.drawRoundedRect(floatValue, scrollBarMetrics.thumbY, width, scrollBarMetrics.thumbHeight, ProxyDotRadiusData.method8069(width / 2.0F), zenithColor2);
       }
    }
 
@@ -377,59 +377,59 @@ public final class EmoteFavoriteScreen extends Screen {
       return this.mouseClicked(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseClicked(double var1, double var3, int var5) {
+   public boolean mouseClicked(double x, double y, int mouseToGlfw) {
       if (this.closing) {
          return true;
       } else {
-         EmoteFavoriteScreen.Layout var6 = this.layout();
-         var1 = this.transformX(var1, var6);
-         var3 = this.transformY(var3, var6);
-         float var16 = 18.0F;
-         float var15 = 18.0F;
-         float var14 = var6.closeY;
-         float var13 = var6.closeX;
-         if ((var1 >= var13 && var3 >= var14 && var1 <= var13 + var15 && var3 <= var14 + var16 ? 1 : 0) != 0) {
+         EmoteFavoriteScreen.Layout layout = this.layout();
+         x = this.transformX(x, layout);
+         y = this.transformY(y, layout);
+         float gridHeight = 18.0F;
+         float gridWidth = 18.0F;
+         float closeY = layout.closeY;
+         float closeX = layout.closeX;
+         if ((x >= closeX && y >= closeY && x <= closeX + gridWidth && y <= closeY + gridHeight ? 1 : 0) != 0) {
             this.onClose();
             return true;
-         } else if (this.searchBox.onMouseClicked(var1, var3, Enum3.method6094(var5))) {
+         } else if (this.searchBox.onMouseClicked(x, y, Enum3.method6094(mouseToGlfw))) {
             return true;
-         } else if (this.playerPreview.onMouseClicked(var1, var3, var5)) {
+         } else if (this.playerPreview.onMouseClicked(x, y, mouseToGlfw)) {
             return true;
          } else {
-            EmoteFavoriteScreen.ScrollBarMetrics var7 = this.scrollBarMetrics(var6);
-            if (var5 == 0 && var7 != null) {
-               float var10002 = var6.scrollBarX - 2.0F;
-               var16 = var6.gridHeight;
-               var15 = 7.0F;
-               var14 = var6.gridY;
-               var13 = var10002;
-               if ((var1 >= var13 && var3 >= var14 && var1 <= var13 + var15 && var3 <= var14 + var16 ? 1 : 0) != 0) {
+            EmoteFavoriteScreen.ScrollBarMetrics scrollBarMetrics = this.scrollBarMetrics(layout);
+            if (mouseToGlfw == 0 && scrollBarMetrics != null) {
+               float f = layout.scrollBarX - 2.0F;
+               gridHeight = layout.gridHeight;
+               gridWidth = 7.0F;
+               closeY = layout.gridY;
+               closeX = f;
+               if ((x >= closeX && y >= closeY && x <= closeX + gridWidth && y <= closeY + gridHeight ? 1 : 0) != 0) {
                   this.draggingScrollBar = true;
-                  var10002 = var6.scrollBarX - 2.0F;
-                  var16 = var7.thumbHeight;
-                  var15 = 7.0F;
-                  var14 = var7.thumbY;
-                  var13 = var10002;
-                  if ((var1 >= var13 && var3 >= var14 && var1 <= var13 + var15 && var3 <= var14 + var16 ? 1 : 0) != 0) {
-                     this.scrollBarDragOffset = (float)var3 - var7.thumbY;
+                  f = layout.scrollBarX - 2.0F;
+                  gridHeight = scrollBarMetrics.thumbHeight;
+                  gridWidth = 7.0F;
+                  closeY = scrollBarMetrics.thumbY;
+                  closeX = f;
+                  if ((x >= closeX && y >= closeY && x <= closeX + gridWidth && y <= closeY + gridHeight ? 1 : 0) != 0) {
+                     this.scrollBarDragOffset = (float)y - scrollBarMetrics.thumbY;
                   } else {
-                     this.scrollBarDragOffset = var7.thumbHeight / 2.0F;
-                     this.updateDraggedScrollBar(var3, var6, var7);
+                     this.scrollBarDragOffset = scrollBarMetrics.thumbHeight / 2.0F;
+                     this.updateDraggedScrollBar(y, layout, scrollBarMetrics);
                   }
 
                   return true;
                }
             }
 
-            if (var5 == 0) {
-               var16 = var6.gridHeight;
-               var15 = var6.gridWidth;
-               var14 = var6.gridY;
-               var13 = var6.gridX;
-               if ((var1 >= var13 && var3 >= var14 && var1 <= var13 + var15 && var3 <= var14 + var16 ? 1 : 0) != 0) {
-                  int var8;
-                  if ((var8 = this.cardAt(var1, var3, var6)) >= 0 && var8 < this.filteredEmotes.size()) {
-                     this.owner.method6903(this.favoriteSlot, this.filteredEmotes.get(var8).getText());
+            if (mouseToGlfw == 0) {
+               gridHeight = layout.gridHeight;
+               gridWidth = layout.gridWidth;
+               closeY = layout.gridY;
+               closeX = layout.gridX;
+               if ((x >= closeX && y >= closeY && x <= closeX + gridWidth && y <= closeY + gridHeight ? 1 : 0) != 0) {
+                  int cardAt;
+                  if ((cardAt = this.cardAt(x, y, layout)) >= 0 && cardAt < this.filteredEmotes.size()) {
+                     this.owner.method6903(this.favoriteSlot, this.filteredEmotes.get(cardAt).getText());
                      this.onClose();
                      return true;
                   }
@@ -448,23 +448,23 @@ public final class EmoteFavoriteScreen extends Screen {
       return this.mouseDragged(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()), offsetX, offsetY);
    }
 
-   public boolean mouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      EmoteFavoriteScreen.Layout var10 = this.layout();
-      double var11 = this.transformX(var1, var10);
-      double var13 = this.transformY(var3, var10);
-      if (this.playerPreview.onMouseDragged(var11, var13, var5, var6, var8)) {
+   public boolean mouseDragged(double x, double y, int mouseToGlfw, double offsetX, double offsetY) {
+      EmoteFavoriteScreen.Layout layout = this.layout();
+      double transformX = this.transformX(x, layout);
+      double transformY = this.transformY(y, layout);
+      if (this.playerPreview.onMouseDragged(transformX, transformY, mouseToGlfw, offsetX, offsetY)) {
          return true;
       } else {
-         if (this.draggingScrollBar && var5 == 0) {
-            var3 = var13;
-            EmoteFavoriteScreen.ScrollBarMetrics var15 = this.scrollBarMetrics(var10);
-            if (var15 != null) {
-               this.updateDraggedScrollBar(var13, var10, var15);
+         if (this.draggingScrollBar && mouseToGlfw == 0) {
+            y = transformY;
+            EmoteFavoriteScreen.ScrollBarMetrics scrollBarMetrics = this.scrollBarMetrics(layout);
+            if (scrollBarMetrics != null) {
+               this.updateDraggedScrollBar(transformY, layout, scrollBarMetrics);
                return true;
             }
          }
 
-         return super.mouseDragged(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), var6, var8);
+         return super.mouseDragged(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), offsetX, offsetY);
       }
    }
 
@@ -473,39 +473,39 @@ public final class EmoteFavoriteScreen extends Screen {
       return this.mouseReleased(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseReleased(double var1, double var3, int var5) {
-      if (this.playerPreview.onMouseReleased(var1, var3, var5)) {
+   public boolean mouseReleased(double x, double y, int mouseToGlfw) {
+      if (this.playerPreview.onMouseReleased(x, y, mouseToGlfw)) {
          return true;
-      } else if (var5 == 0 && this.draggingScrollBar) {
+      } else if (mouseToGlfw == 0 && this.draggingScrollBar) {
          this.draggingScrollBar = false;
          return true;
       } else {
-         return super.mouseReleased(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
+         return super.mouseReleased(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))));
       }
    }
 
    @Override
    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
       if (!this.closing && verticalAmount != 0.0) {
-         EmoteFavoriteScreen.Layout var9 = this.layout();
-         mouseX = this.transformX(mouseX, var9);
-         mouseY = this.transformY(mouseY, var9);
+         EmoteFavoriteScreen.Layout layout = this.layout();
+         mouseX = this.transformX(mouseX, layout);
+         mouseY = this.transformY(mouseY, layout);
          if (this.playerPreview.onMouseScrolled(mouseX, mouseY, verticalAmount)) {
             return true;
          } else {
-            float var18 = var9.gridHeight;
-            float var17 = var9.gridWidth;
-            float var16 = var9.gridY;
-            float var15 = var9.gridX;
-            if ((mouseX >= var15 && mouseY >= var16 && mouseX <= var15 + var17 && mouseY <= var16 + var18 ? 1 : 0) == 0) {
+            float gridHeight = layout.gridHeight;
+            float gridWidth = layout.gridWidth;
+            float gridY = layout.gridY;
+            float gridX = layout.gridX;
+            if ((mouseX >= gridX && mouseY >= gridY && mouseX <= gridX + gridWidth && mouseY <= gridY + gridHeight ? 1 : 0) == 0) {
                return false;
             } else {
-               float var10;
-               if ((var10 = this.contentHeight()) <= var9.gridHeight) {
+               float contentHeight;
+               if ((contentHeight = this.contentHeight()) <= layout.gridHeight) {
                   return false;
                } else {
                   this.scrollTarget += (float)verticalAmount * 38.0F;
-                  this.clampScroll(var10, var9.gridHeight);
+                  this.clampScroll(contentHeight, layout.gridHeight);
                   return true;
                }
             }
@@ -520,14 +520,14 @@ public final class EmoteFavoriteScreen extends Screen {
       return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.closing) {
          return true;
-      } else if (var1 == 256) {
+      } else if (keyCode == 256) {
          this.onClose();
          return true;
       } else {
-         return !(!this.searchBox.keyPressed(var1, var2, var3) && !super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3))));
+         return !(!this.searchBox.keyPressed(keyCode, keycode, modifiers) && !super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers))));
       }
    }
 
@@ -536,11 +536,11 @@ public final class EmoteFavoriteScreen extends Screen {
       return this.charTyped((char)input.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.closing) {
          return true;
       } else {
-         return !(!this.searchBox.charTyped(var1, var2) && !super.charTyped(new CharacterEvent(var1)));
+         return !(!this.searchBox.charTyped(codepoint, n) && !super.charTyped(new CharacterEvent(codepoint)));
       }
    }
 
@@ -569,17 +569,17 @@ public final class EmoteFavoriteScreen extends Screen {
    }
 
    private void updateFilter() {
-      String var1 = this.searchBox.getText().trim().toLowerCase(Locale.ROOT);
-      if (!var1.equals(this.previousSearch)) {
-         this.previousSearch = var1;
-         this.filteredEmotes = var1.isEmpty()
+      String lowerCase = this.searchBox.getText().trim().toLowerCase(Locale.ROOT);
+      if (!lowerCase.equals(this.previousSearch)) {
+         this.previousSearch = lowerCase;
+         this.filteredEmotes = lowerCase.isEmpty()
             ? this.allEmotes
             : this.allEmotes
                .stream()
                .filter(
-                  var1x -> !(!var1x.getText2().toLowerCase(Locale.ROOT).contains(var1)
-                        && !var1x.getText().toLowerCase(Locale.ROOT).contains(var1)
-                        && !var1x.author().toLowerCase(Locale.ROOT).contains(var1))
+                  var1x -> !(!var1x.getText2().toLowerCase(Locale.ROOT).contains(lowerCase)
+                        && !var1x.getText().toLowerCase(Locale.ROOT).contains(lowerCase)
+                        && !var1x.author().toLowerCase(Locale.ROOT).contains(lowerCase))
                )
                .toList();
          this.scroll = 0.0F;
@@ -589,16 +589,16 @@ public final class EmoteFavoriteScreen extends Screen {
       }
    }
 
-   private int cardAt(double var1, double var3, EmoteFavoriteScreen.Layout var5) {
-      for (int var6 = 0; var6 < this.filteredEmotes.size(); var6++) {
-         int var7 = var6 % 3;
-         int var8 = var6 / 3;
-         float var9 = var5.gridX + var7 * (var5.cardWidth + 5.0F);
-         float var10 = var5.gridY + var8 * 77.0F + this.scroll;
-         float var18 = 72.0F;
-         float var17 = var5.cardWidth;
-         if ((var1 >= var9 && var3 >= var10 && var1 <= var9 + var17 && var3 <= var10 + var18 ? 1 : 0) != 0) {
-            return var6;
+   private int cardAt(double x, double y, EmoteFavoriteScreen.Layout layout) {
+      for (int i = 0; i < this.filteredEmotes.size(); i++) {
+         int n = i % 3;
+         int n2 = i / 3;
+         float f = layout.gridX + n * (layout.cardWidth + 5.0F);
+         float f2 = layout.gridY + n2 * 77.0F + this.scroll;
+         float f3 = 72.0F;
+         float cardWidth = layout.cardWidth;
+         if ((x >= f && y >= f2 && x <= f + cardWidth && y <= f2 + f3 ? 1 : 0) != 0) {
+            return i;
          }
       }
 
@@ -606,39 +606,39 @@ public final class EmoteFavoriteScreen extends Screen {
    }
 
    private float contentHeight() {
-      int var2;
-      return this.filteredEmotes.isEmpty() ? 0.0F : (var2 = (this.filteredEmotes.size() + 3 - 1) / 3) * 72.0F + Math.max(0, var2 - 1) * 5.0F;
+      int n;
+      return this.filteredEmotes.isEmpty() ? 0.0F : (n = (this.filteredEmotes.size() + 3 - 1) / 3) * 72.0F + Math.max(0, n - 1) * 5.0F;
    }
 
-   private void clampScroll(float var1, float var2) {
-      if (var1 <= var2) {
+   private void clampScroll(float contentHeight, float gridHeight) {
+      if (contentHeight <= gridHeight) {
          this.scroll = 0.0F;
          this.scrollTarget = 0.0F;
       } else {
-         float var3 = var2 - var1;
-         this.scrollTarget = Math.clamp(this.scrollTarget, var3, 0.0F);
-         this.scroll = Math.clamp(this.scroll, var3, 0.0F);
+         float min = gridHeight - contentHeight;
+         this.scrollTarget = Math.clamp(this.scrollTarget, min, 0.0F);
+         this.scroll = Math.clamp(this.scroll, min, 0.0F);
       }
    }
 
-   private EmoteFavoriteScreen.ScrollBarMetrics scrollBarMetrics(EmoteFavoriteScreen.Layout var1) {
-      float var2;
-      if ((var2 = this.contentHeight()) <= var1.gridHeight) {
+   private EmoteFavoriteScreen.ScrollBarMetrics scrollBarMetrics(EmoteFavoriteScreen.Layout layout) {
+      float contentHeight;
+      if ((contentHeight = this.contentHeight()) <= layout.gridHeight) {
          return null;
       } else {
-         float var3 = var1.gridHeight - var2;
-         float var4 = Math.max(24.0F, var1.gridHeight * var1.gridHeight / var2);
-         var4 = Math.min(var1.gridHeight, var4);
-         float var5 = var1.gridHeight - var4;
-         float var6 = Math.clamp(this.scroll / var3, 0.0F, 1.0F);
-         return new EmoteFavoriteScreen.ScrollBarMetrics(var1.gridY + var5 * var6, var4, var5, var3);
+         float minimum = layout.gridHeight - contentHeight;
+         float thumbHeight = Math.max(24.0F, layout.gridHeight * layout.gridHeight / contentHeight);
+         thumbHeight = Math.min(layout.gridHeight, thumbHeight);
+         float travel = layout.gridHeight - thumbHeight;
+         float f = Math.clamp(this.scroll / minimum, 0.0F, 1.0F);
+         return new EmoteFavoriteScreen.ScrollBarMetrics(layout.gridY + travel * f, thumbHeight, travel, minimum);
       }
    }
 
-   private void updateDraggedScrollBar(double var1, EmoteFavoriteScreen.Layout var3, EmoteFavoriteScreen.ScrollBarMetrics var4) {
-      float var5 = Math.clamp((float)var1 - this.scrollBarDragOffset, var3.gridY, var3.gridY + var4.travel);
-      float var6 = var4.travel <= 0.0F ? 0.0F : (var5 - var3.gridY) / var4.travel;
-      this.scroll = var4.minimum * var6;
+   private void updateDraggedScrollBar(double y, EmoteFavoriteScreen.Layout layout, EmoteFavoriteScreen.ScrollBarMetrics scrollBarMetrics) {
+      float f = Math.clamp((float)y - this.scrollBarDragOffset, layout.gridY, layout.gridY + scrollBarMetrics.travel);
+      float f2 = scrollBarMetrics.travel <= 0.0F ? 0.0F : (f - layout.gridY) / scrollBarMetrics.travel;
+      this.scroll = scrollBarMetrics.minimum * f2;
       this.scrollTarget = this.scroll;
    }
 
@@ -647,26 +647,26 @@ public final class EmoteFavoriteScreen extends Screen {
       this.contentAnimation.method2808(1.0F);
    }
 
-   private void updatePreviewEmote(EmoteInfo var1) {
-      String var2 = var1 == null ? null : var1.getText();
-      if (!Objects.equals(this.previewEmoteId, var2) || this.previewEmotePlayer != null && !this.previewEmotePlayer.isActive()) {
+   private void updatePreviewEmote(EmoteInfo filteredEmote) {
+      String text = filteredEmote == null ? null : filteredEmote.getText();
+      if (!Objects.equals(this.previewEmoteId, text) || this.previewEmotePlayer != null && !this.previewEmotePlayer.isActive()) {
          if (this.previewEmotePlayer != null) {
             this.previewEmotePlayer.stop();
          }
 
-         this.previewEmoteId = var2;
-         this.previewEmotePlayer = var1 == null ? null : new PreviewEmotePlayer(var1, 0);
-         if (var1 == null) {
+         this.previewEmoteId = text;
+         this.previewEmotePlayer = filteredEmote == null ? null : new PreviewEmotePlayer(filteredEmote, 0);
+         if (filteredEmote == null) {
             this.detachPreviewAnimationLayer();
          }
       }
    }
 
-   private void attachPreviewAnimation(LocalPlayer var1) {
-      if (this.previewAnimationEntity != var1) {
+   private void attachPreviewAnimation(LocalPlayer previewAnimationEntity) {
+      if (this.previewAnimationEntity != previewAnimationEntity) {
          this.detachPreviewAnimationLayer();
-         ((IPlayer)var1).playerAnimator$getAnimationStack().addAnimLayer(2000, this.previewAnimation);
-         this.previewAnimationEntity = var1;
+         ((IPlayer)previewAnimationEntity).playerAnimator$getAnimationStack().addAnimLayer(2000, this.previewAnimation);
+         this.previewAnimationEntity = previewAnimationEntity;
       }
    }
 
@@ -695,56 +695,56 @@ public final class EmoteFavoriteScreen extends Screen {
    }
 
    private EmoteFavoriteScreen.Layout layout() {
-      float var1 = Math.min(this.width - 30.0F, 520.0F);
-      float var2 = Math.min(this.height - 24.0F, 360.0F);
-      float var3 = (this.width - var1) / 2.0F;
-      float var4 = (this.height - var2) / 2.0F;
-      float var5 = var3 + 14.0F;
-      float var6 = var1 - 28.0F;
-      float var7 = Math.min(190.0F, var6 * 0.4F);
-      float var8 = var3 + var1 - 14.0F - var7;
-      float var9 = var4 + 14.5F;
-      float var10 = var4 + 51.0F;
-      float var11 = var4 + var2 - 14.0F - var10;
-      float var12 = var6 * 0.39F;
-      float var13 = var6 - var12 - 12.0F;
-      float var14 = var5 + var13 + 3.0F;
-      float var15 = var5 + var13 + 12.0F;
-      float var16 = (var13 - 10.0F) / 3.0F;
+      float panelWidth = Math.min(this.width - 30.0F, 520.0F);
+      float panelHeight = Math.min(this.height - 24.0F, 360.0F);
+      float panelX = (this.width - panelWidth) / 2.0F;
+      float panelY = (this.height - panelHeight) / 2.0F;
+      float contentX = panelX + 14.0F;
+      float f = panelWidth - 28.0F;
+      float searchWidth = Math.min(190.0F, f * 0.4F);
+      float searchX = panelX + panelWidth - 14.0F - searchWidth;
+      float searchY = panelY + 14.5F;
+      float gridY = panelY + 51.0F;
+      float gridHeight = panelY + panelHeight - 14.0F - gridY;
+      float previewWidth = f * 0.39F;
+      float gridWidth = f - previewWidth - 12.0F;
+      float scrollBarX = contentX + gridWidth + 3.0F;
+      float previewX = contentX + gridWidth + 12.0F;
+      float cardWidth = (gridWidth - 10.0F) / 3.0F;
       return new EmoteFavoriteScreen.Layout(
-         var3, var4, var1, var2, var5, var8, var9, var7, var5, var10, var13, var11, var16, var14, var15, var12, var8 - 24.0F, var4 + 15.5F
+         panelX, panelY, panelWidth, panelHeight, contentX, searchX, searchY, searchWidth, contentX, gridY, gridWidth, gridHeight, cardWidth, scrollBarX, previewX, previewWidth, searchX - 24.0F, panelY + 15.5F
       );
    }
 
-   private float transformX(double var1, EmoteFavoriteScreen.Layout var3) {
-      return (float)((var1 - var3.centerX()) / this.interactiveScale + var3.centerX());
+   private float transformX(double mouseX, EmoteFavoriteScreen.Layout layout) {
+      return (float)((mouseX - layout.centerX()) / this.interactiveScale + layout.centerX());
    }
 
-   private float transformY(double var1, EmoteFavoriteScreen.Layout var3) {
-      return (float)((var1 - var3.centerY()) / this.interactiveScale + var3.centerY());
+   private float transformY(double mouseY, EmoteFavoriteScreen.Layout layout) {
+      return (float)((mouseY - layout.centerY()) / this.interactiveScale + layout.centerY());
    }
 
-   private static String fit(Font var0, String var1, float var2) {
-      if (var0.width(var1) <= var2) {
-         return var1;
+   private static String fit(Font font, String text, float f) {
+      if (font.width(text) <= f) {
+         return text;
       } else {
-         String var3 = "…";
-         int var4 = var1.length();
+         String str = "…";
+         int length = text.length();
 
-         while (var4 > 0 && var0.width(var1.substring(0, var4) + var3) > var2) {
-            var4--;
+         while (length > 0 && font.width(text.substring(0, length) + str) > f) {
+            length--;
          }
 
-         return var1.substring(0, var4) + var3;
+         return text.substring(0, length) + str;
       }
    }
 
-   private static boolean inside(double var0, double var2, float var4, float var5, float var6, float var7) {
-      return (var0 >= var4 && var2 >= var5 && var0 <= var4 + var6 && var2 <= var5 + var7);
+   private static boolean inside(double d, double d2, float f, float f2, float f3, float f4) {
+      return (d >= f && d2 >= f2 && d <= f + f3 && d2 <= f2 + f4);
    }
 
-   private static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String t(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    private static final class Layout {
@@ -857,43 +857,43 @@ public final class EmoteFavoriteScreen extends Screen {
       }
 
       private Layout(
-         float var1,
-         float var2,
-         float var3,
-         float var4,
-         float var5,
-         float var6,
-         float var7,
-         float var8,
-         float var9,
-         float var10,
-         float var11,
-         float var12,
-         float var13,
-         float var14,
-         float var15,
-         float var16,
-         float var17,
-         float var18
+         float panelX,
+         float panelY,
+         float panelWidth,
+         float panelHeight,
+         float contentX,
+         float searchX,
+         float searchY,
+         float searchWidth,
+         float gridX,
+         float gridY,
+         float gridWidth,
+         float gridHeight,
+         float cardWidth,
+         float scrollBarX,
+         float previewX,
+         float previewWidth,
+         float closeX,
+         float closeY
       ) {
-         this.panelX = var1;
-         this.panelY = var2;
-         this.panelWidth = var3;
-         this.panelHeight = var4;
-         this.contentX = var5;
-         this.searchX = var6;
-         this.searchY = var7;
-         this.searchWidth = var8;
-         this.gridX = var9;
-         this.gridY = var10;
-         this.gridWidth = var11;
-         this.gridHeight = var12;
-         this.cardWidth = var13;
-         this.scrollBarX = var14;
-         this.previewX = var15;
-         this.previewWidth = var16;
-         this.closeX = var17;
-         this.closeY = var18;
+         this.panelX = panelX;
+         this.panelY = panelY;
+         this.panelWidth = panelWidth;
+         this.panelHeight = panelHeight;
+         this.contentX = contentX;
+         this.searchX = searchX;
+         this.searchY = searchY;
+         this.searchWidth = searchWidth;
+         this.gridX = gridX;
+         this.gridY = gridY;
+         this.gridWidth = gridWidth;
+         this.gridHeight = gridHeight;
+         this.cardWidth = cardWidth;
+         this.scrollBarX = scrollBarX;
+         this.previewX = previewX;
+         this.previewWidth = previewWidth;
+         this.closeX = closeX;
+         this.closeY = closeY;
       }
 
       private float centerX() {
@@ -944,11 +944,11 @@ public final class EmoteFavoriteScreen extends Screen {
          return "ScrollBarMetrics[" + "thumbY=" + this.thumbY + ", " + "thumbHeight=" + this.thumbHeight + ", " + "travel=" + this.travel + ", " + "minimum=" + this.minimum + "]";
       }
 
-      private ScrollBarMetrics(float var1, float var2, float var3, float var4) {
-         this.thumbY = var1;
-         this.thumbHeight = var2;
-         this.travel = var3;
-         this.minimum = var4;
+      private ScrollBarMetrics(float thumbY, float thumbHeight, float travel, float minimum) {
+         this.thumbY = thumbY;
+         this.thumbHeight = thumbHeight;
+         this.travel = travel;
+         this.minimum = minimum;
       }
    }
 }

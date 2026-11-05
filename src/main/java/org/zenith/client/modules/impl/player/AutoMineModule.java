@@ -142,12 +142,12 @@ public final class AutoMineModule extends Module {
    }
 
    @EventTarget
-   public void method4353(Event5 var1) {
+   public void method4353(Event5 event) {
       if (mc.player != null && mc.level != null) {
          this.ticks++;
          this.flag = false;
-         var var2 = this.onTeleportation();
-         if (var2 != null && this.data != null) {
+         var datas = this.onTeleportation();
+         if (datas != null && this.data != null) {
             this.method4373();
             if (this.method4377() || !this.method4379()) {
                this.method4356(null);
@@ -155,22 +155,22 @@ public final class AutoMineModule extends Module {
                this.intValue--;
                this.method4356(null);
             } else {
-               Vec3 var3 = mc.player.getEyePosition();
-               double var4 = mc.player.blockInteractionRange();
-               Rotation var6 = rotationManager.method7844();
+               Vec3 eyePosition = mc.player.getEyePosition();
+               double blockInteractionRange = mc.player.blockInteractionRange();
+               Rotation rotation = rotationManager.method7844();
                if (this.data3 != null) {
-                  this.data3 = this.method4361(this.data3, var3, var4, var6);
+                  this.data3 = this.method4361(this.data3, eyePosition, blockInteractionRange, rotation);
                }
 
                if (this.data3 == null) {
-                  this.data3 = this.method4360(var3, var4, var6);
+                  this.data3 = this.method4360(eyePosition, blockInteractionRange, rotation);
                }
 
                if (this.data3 == null) {
-                  this.data3 = this.method4362(var3, var4, var6);
+                  this.data3 = this.method4362(eyePosition, blockInteractionRange, rotation);
                }
 
-               this.method4356(this.data3 == null ? null : this.method4359(this.data3, var3, var4, var6));
+               this.method4356(this.data3 == null ? null : this.method4359(this.data3, eyePosition, blockInteractionRange, rotation));
             }
          } else {
             this.data = null;
@@ -181,16 +181,16 @@ public final class AutoMineModule extends Module {
    }
 
    @EventTarget
-   public void method4354(Event2 var1) {
+   public void method4354(Event2 event) {
       this.flag = false;
       this.blockPos = null;
       if (mc.player != null && this.data != null && !this.flag2 && this.intValue <= 0) {
-         ItemStack var2 = mc.player.getMainHandItem();
-         if (Util10.method2177(var2) && method4380(var2) >= 30) {
+         ItemStack mainHandItem = mc.player.getMainHandItem();
+         if (Util10.method2177(mainHandItem) && method4380(mainHandItem) >= 30) {
             if (mc.missTime <= 0) {
                this.flag = true;
-               if (mc.hitResult instanceof BlockHitResult var3 && var3.getType() == Type.BLOCK) {
-                  this.blockPos = var3.getBlockPos().immutable();
+               if (mc.hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getType() == Type.BLOCK) {
+                  this.blockPos = blockHitResult.getBlockPos().immutable();
                }
             }
          }
@@ -198,139 +198,139 @@ public final class AutoMineModule extends Module {
    }
 
    @EventTarget
-   public void method4355(MoveInputEvent var1) {
+   public void method4355(MoveInputEvent event) {
       if (!zenith.getHolyWorldServerTracker().isActive() && mc.player != null) {
-         var1.method3038(true);
+         event.method3038(true);
       }
    }
 
-   private void method4356(Rotation var1) {
-      Rotation var2 = var1 != null ? var1 : rotationManager.method7844();
-      rotationManager.method7849(new RotationRequest(var2, () -> this.method4357(var2), bcCameraTestnerv.getRotationConfig()), 1, this);
+   private void method4356(Rotation rotation) {
+      Rotation rotation2 = rotation != null ? rotation : rotationManager.method7844();
+      rotationManager.method7849(new RotationRequest(rotation2, () -> this.method4357(rotation2), bcCameraTestnerv.getRotationConfig()), 1, this);
    }
 
-   private Rotation method4357(Rotation var1) {
-      Rotation var2 = rotationManager.method7844();
-      Vec2f var3 = var2.method3131(var1);
-      ThreadLocalRandom var4 = ThreadLocalRandom.current();
-      float var5 = (float)Math.hypot(var3.getFloatValue(), var3.getFloatValue2());
-      float var6 = 0.0F;
-      float var7 = 0.0F;
-      if (var5 > 0.2F) {
-         float var8 = Math.min(var5 * (0.5F + var4.nextFloat() * 0.18F), 45.0F);
-         var6 = var3.getFloatValue() / var5 * var8;
-         var7 = var3.getFloatValue2() / var5 * var8 * 0.92F;
+   private Rotation method4357(Rotation rotation) {
+      Rotation rotation2 = rotationManager.method7844();
+      Vec2f vec2f = rotation2.method3131(rotation);
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      float hypot = (float)Math.hypot(vec2f.getFloatValue(), vec2f.getFloatValue2());
+      float f = 0.0F;
+      float f2 = 0.0F;
+      if (hypot > 0.2F) {
+         float f3 = Math.min(hypot * (0.5F + current.nextFloat() * 0.18F), 45.0F);
+         f = vec2f.getFloatValue() / hypot * f3;
+         f2 = vec2f.getFloatValue2() / hypot * f3 * 0.92F;
       }
 
-      float var15 = 7.0F + var5 * 0.2F;
-      this.floatValue = this.floatValue + Mth.clamp(var6 - this.floatValue, -var15, var15);
-      this.floatValue2 = this.floatValue2 + Mth.clamp(var7 - this.floatValue2, -var15, var15);
-      if (var5 <= 0.2F && Math.abs(this.floatValue) + Math.abs(this.floatValue2) < 0.3F) {
+      float max = 7.0F + hypot * 0.2F;
+      this.floatValue = this.floatValue + Mth.clamp(f - this.floatValue, -max, max);
+      this.floatValue2 = this.floatValue2 + Mth.clamp(f2 - this.floatValue2, -max, max);
+      if (hypot <= 0.2F && Math.abs(this.floatValue) + Math.abs(this.floatValue2) < 0.3F) {
          this.floatValue = this.floatValue2 = 0.0F;
-         return var2;
+         return rotation2;
       } else {
-         float var9 = 0.05F + (Math.abs(this.floatValue) + Math.abs(this.floatValue2)) * 0.012F;
-         float var10 = this.floatValue + (float)var4.nextGaussian() * var9 + this.floatValue3;
-         float var11 = this.floatValue2 + (float)var4.nextGaussian() * var9 * 0.7F + this.floatValue4;
-         float var12;
-         if (!((var12 = Rotation.method3138()) > 0.0F) || Float.isInfinite(var12)) {
-            var12 = 0.15F;
+         float f3 = 0.05F + (Math.abs(this.floatValue) + Math.abs(this.floatValue2)) * 0.012F;
+         float f4 = this.floatValue + (float)current.nextGaussian() * f3 + this.floatValue3;
+         float f5 = this.floatValue2 + (float)current.nextGaussian() * f3 * 0.7F + this.floatValue4;
+         float f6;
+         if (!((f6 = Rotation.method3138()) > 0.0F) || Float.isInfinite(f6)) {
+            f6 = 0.15F;
          }
 
-         float var13 = Math.round(var10 / var12) * var12;
-         float var14 = Math.round(var11 / var12) * var12;
-         this.floatValue3 = var10 - var13;
-         this.floatValue4 = var11 - var14;
-         return new Rotation(var2.getFloatValue() + var13, var2.getFloatValue2() + var14, true);
+         float f7 = Math.round(f4 / f6) * f6;
+         float f8 = Math.round(f5 / f6) * f6;
+         this.floatValue3 = f4 - f7;
+         this.floatValue4 = f5 - f8;
+         return new Rotation(rotation2.getFloatValue() + f7, rotation2.getFloatValue2() + f8, true);
       }
    }
 
    private void method4358() {
-      Rotation var1 = rotationManager.getCurrentRotation();
-      if (var1 != null && rotationManager.getModule() == this) {
-         mc.player.setYRot(var1.getFloatValue());
-         mc.player.setXRot(var1.getFloatValue2());
+      Rotation currentRotation = rotationManager.getCurrentRotation();
+      if (currentRotation != null && rotationManager.getModule() == this) {
+         mc.player.setYRot(currentRotation.getFloatValue());
+         mc.player.setXRot(currentRotation.getFloatValue2());
          this.floatValue = this.floatValue2 = this.floatValue3 = this.floatValue4 = 0.0F;
       }
    }
 
-   private Rotation method4359(AutoMineModule.Data3 var1, Vec3 var2, double var3, Rotation var5) {
-      if (method4386(method4385(var2, var3, var5), var1.pos())) {
+   private Rotation method4359(AutoMineModule.Data3 data3, Vec3 eyePosition, double blockInteractionRange, Rotation rotation) {
+      if (method4386(method4385(eyePosition, blockInteractionRange, rotation), data3.pos())) {
          return null;
       } else {
-         Rotation var6 = Rotation.method3128(var1.getVec3d(), var2);
-         return var5.method3141(var5.method3131(var6));
+         Rotation rotation2 = Rotation.method3128(data3.getVec3d(), eyePosition);
+         return rotation.method3141(rotation.method3131(rotation2));
       }
    }
 
-   private AutoMineModule.Data3 method4360(Vec3 var1, double var2, Rotation var4) {
-      BlockHitResult var5 = method4385(var1, var2, var4);
-      if (var5 != null && var5.getType() == Type.BLOCK) {
-         BlockPos var6 = var5.getBlockPos();
-         return this.method4382(var6) && this.method4372(var6) ? new AutoMineModule.Data3(var6.immutable(), var5.getLocation()) : null;
+   private AutoMineModule.Data3 method4360(Vec3 eyePosition, double blockInteractionRange, Rotation rotation) {
+      BlockHitResult blockHitResult = method4385(eyePosition, blockInteractionRange, rotation);
+      if (blockHitResult != null && blockHitResult.getType() == Type.BLOCK) {
+         BlockPos blockPos = blockHitResult.getBlockPos();
+         return this.method4382(blockPos) && this.method4372(blockPos) ? new AutoMineModule.Data3(blockPos.immutable(), blockHitResult.getLocation()) : null;
       } else {
          return null;
       }
    }
 
-   private AutoMineModule.Data3 method4361(AutoMineModule.Data3 var1, Vec3 var2, double var3, Rotation var5) {
-      BlockPos var6 = var1.pos();
-      if (this.method4382(var6) && method4384(var6, var2, var3)) {
-         if (method4386(method4385(var2, var3, var5), var6)) {
-            return var1;
-         } else if (this.method4364(var6, var1.getVec3d(), var2, var3)) {
-            return var1;
+   private AutoMineModule.Data3 method4361(AutoMineModule.Data3 data3, Vec3 eyePosition, double blockInteractionRange, Rotation rotation) {
+      BlockPos pos = data3.pos();
+      if (this.method4382(pos) && method4384(pos, eyePosition, blockInteractionRange)) {
+         if (method4386(method4385(eyePosition, blockInteractionRange, rotation), pos)) {
+            return data3;
+         } else if (this.method4364(pos, data3.getVec3d(), eyePosition, blockInteractionRange)) {
+            return data3;
          } else {
-            Vec3 var7 = var5.method3135();
-            AutoMineModule.Data3 var8 = null;
-            double var9 = Double.MAX_VALUE;
+            Vec3 vec = rotation.method3135();
+            AutoMineModule.Data3 data32 = null;
+            double d = Double.MAX_VALUE;
 
-            for (Direction var14 : Direction.values()) {
-               if (this.method4366(var6, var14, var2)) {
-                  AutoMineModule.Data3 var15 = this.method4363(var6, var14, method4367(var6, var14, var2, var7), var2, var3, var5);
-                  double var16;
-                  if (var15 != null && (var16 = method4365(var5, Rotation.method3128(var15.getVec3d(), var2))) < var9) {
-                     var9 = var16;
-                     var8 = var15;
+            for (Direction direction : Direction.values()) {
+               if (this.method4366(pos, direction, eyePosition)) {
+                  AutoMineModule.Data3 data33 = this.method4363(pos, direction, method4367(pos, direction, eyePosition, vec), eyePosition, blockInteractionRange, rotation);
+                  double d2;
+                  if (data33 != null && (d2 = method4365(rotation, Rotation.method3128(data33.getVec3d(), eyePosition))) < d) {
+                     d = d2;
+                     data32 = data33;
                   }
                }
             }
 
-            return var8;
+            return data32;
          }
       } else {
          return null;
       }
    }
 
-   private AutoMineModule.Data3 method4362(Vec3 var1, double var2, Rotation var4) {
-      MineTargetFinder.Data var5 = this.data;
-      int var6 = (int)Math.ceil(var2) + 1;
-      BlockPos var7 = BlockPos.containing(var1);
-      int var8 = Math.max(var5.getIntValue(), var7.getX() - var6);
-      int var9 = Math.min(var5.getIntValue2(), var7.getX() + var6);
-      int var10 = Math.max(var5.getIntValue3(), var7.getY() - var6);
-      int var11 = Math.min(var5.getIntValue4(), var7.getY() + var6);
-      int var12 = Math.max(var5.getIntValue5(), var7.getZ() - var6);
-      int var13 = Math.min(var5.getIntValue6(), var7.getZ() + var6);
-      if (var8 <= var9 && var10 <= var11 && var12 <= var13) {
-         Vec3 var14 = var4.method3135();
-         ArrayList<AutoMineModule.Data2> var15 = new ArrayList();
-         MutableBlockPos var16 = new MutableBlockPos();
+   private AutoMineModule.Data3 method4362(Vec3 eyePosition, double blockInteractionRange, Rotation rotation) {
+      MineTargetFinder.Data data = this.data;
+      int n = (int)Math.ceil(blockInteractionRange) + 1;
+      BlockPos containing = BlockPos.containing(eyePosition);
+      int n2 = Math.max(data.getIntValue(), containing.getX() - n);
+      int n3 = Math.min(data.getIntValue2(), containing.getX() + n);
+      int n4 = Math.max(data.getIntValue3(), containing.getY() - n);
+      int n5 = Math.min(data.getIntValue4(), containing.getY() + n);
+      int n6 = Math.max(data.getIntValue5(), containing.getZ() - n);
+      int n7 = Math.min(data.getIntValue6(), containing.getZ() + n);
+      if (n2 <= n3 && n4 <= n5 && n6 <= n7) {
+         Vec3 vec = rotation.method3135();
+         ArrayList<AutoMineModule.Data2> data2s = new ArrayList();
+         MutableBlockPos mutablePos = new MutableBlockPos();
 
-         for (int var17 = var8; var17 <= var9; var17++) {
-            for (int var18 = var10; var18 <= var11; var18++) {
-               for (int var19 = var12; var19 <= var13; var19++) {
-                  var16.set(var17, var18, var19);
-                  if (this.method4382(var16) && method4384(var16, var1, var2)) {
-                     BlockPos var20 = var16.immutable();
-                     if (this.method4372(var20)) {
-                        double var21 = Math.sqrt(MineTargetFinder.method1939(var1, var20)) * 6.0;
+         for (int i = n2; i <= n3; i++) {
+            for (int j = n4; j <= n5; j++) {
+               for (int k = n6; k <= n7; k++) {
+                  mutablePos.set(i, j, k);
+                  if (this.method4382(mutablePos) && method4384(mutablePos, eyePosition, blockInteractionRange)) {
+                     BlockPos immutable = mutablePos.immutable();
+                     if (this.method4372(immutable)) {
+                        double d = Math.sqrt(MineTargetFinder.method1939(eyePosition, immutable)) * 6.0;
 
-                        for (Direction var26 : Direction.values()) {
-                           if (this.method4366(var20, var26, var1)) {
-                              Vec3 var27 = method4367(var20, var26, var1, var14);
-                              var15.add(new AutoMineModule.Data2(var20, var26, var27, var21 + method4365(var4, Rotation.method3128(var27, var1))));
+                        for (Direction direction : Direction.values()) {
+                           if (this.method4366(immutable, direction, eyePosition)) {
+                              Vec3 vec3d = method4367(immutable, direction, eyePosition, vec);
+                              data2s.add(new AutoMineModule.Data2(immutable, direction, vec3d, d + method4365(rotation, Rotation.method3128(vec3d, eyePosition))));
                            }
                         }
                      }
@@ -339,17 +339,17 @@ public final class AutoMineModule extends Module {
             }
          }
 
-         var15.sort(Comparator.comparingDouble(AutoMineModule.Data2::getDoubleValue));
-         int var28 = 0;
+         data2s.sort(Comparator.comparingDouble(AutoMineModule.Data2::getDoubleValue));
+         int n8 = 0;
 
-         for (AutoMineModule.Data2 var30 : var15) {
-            if (var28++ >= 48) {
+         for (AutoMineModule.Data2 data2 : data2s) {
+            if (n8++ >= 48) {
                break;
             }
 
-            AutoMineModule.Data3 var31 = this.method4363(var30.pos(), var30.getDirection(), var30.getVec3d(), var1, var2, var4);
-            if (var31 != null) {
-               return var31;
+            AutoMineModule.Data3 data3 = this.method4363(data2.pos(), data2.getDirection(), data2.getVec3d(), eyePosition, blockInteractionRange, rotation);
+            if (data3 != null) {
+               return data3;
             }
          }
 
@@ -359,119 +359,119 @@ public final class AutoMineModule extends Module {
       }
    }
 
-   private AutoMineModule.Data3 method4363(BlockPos var1, Direction var2, Vec3 var3, Vec3 var4, double var5, Rotation var7) {
-      ArrayList<Vec3> var8 = new ArrayList(CONST_doubleValues.length + 1);
-      var8.add(var3);
+   private AutoMineModule.Data3 method4363(BlockPos pos, Direction direction, Vec3 vec3d, Vec3 eyePosition, double blockInteractionRange, Rotation rotation) {
+      ArrayList<Vec3> vecs = new ArrayList(CONST_doubleValues.length + 1);
+      vecs.add(vec3d);
 
-      for (double[] var12 : CONST_doubleValues) {
-         var8.add(method4368(var1, var2, var12[0], var12[1]));
+      for (double[] doubles : CONST_doubleValues) {
+         vecs.add(method4368(pos, direction, doubles[0], doubles[1]));
       }
 
-      var8.subList(1, var8.size()).sort(Comparator.comparingDouble(var2x -> method4365(var7, Rotation.method3128(var2x, var4))));
+      vecs.subList(1, vecs.size()).sort(Comparator.comparingDouble(var2x -> method4365(rotation, Rotation.method3128(var2x, eyePosition))));
 
-      for (Vec3 var14 : var8) {
-         if (this.method4364(var1, var14, var4, var5)) {
-            return new AutoMineModule.Data3(var1, var14);
+      for (Vec3 vec : vecs) {
+         if (this.method4364(pos, vec, eyePosition, blockInteractionRange)) {
+            return new AutoMineModule.Data3(pos, vec);
          }
       }
 
       return null;
    }
 
-   private boolean method4364(BlockPos var1, Vec3 var2, Vec3 var3, double var4) {
-      BlockHitResult var6 = method4385(var3, var4, Rotation.method3128(var2, var3));
-      return method4386(var6, var1) && !this.method4387(var3, var6.getLocation());
+   private boolean method4364(BlockPos pos, Vec3 vec3d, Vec3 eyePosition, double blockInteractionRange) {
+      BlockHitResult blockHitResult = method4385(eyePosition, blockInteractionRange, Rotation.method3128(vec3d, eyePosition));
+      return method4386(blockHitResult, pos) && !this.method4387(eyePosition, blockHitResult.getLocation());
    }
 
-   private static double method4365(Rotation var0, Rotation var1) {
-      Vec2f var2 = var0.method3131(var1);
-      return Math.abs(var2.getFloatValue()) + Math.abs(var2.getFloatValue2()) * 1.5;
+   private static double method4365(Rotation rotation, Rotation rotation2) {
+      Vec2f vec2f = rotation.method3131(rotation2);
+      return Math.abs(vec2f.getFloatValue()) + Math.abs(vec2f.getFloatValue2()) * 1.5;
    }
 
-   private boolean method4366(BlockPos var1, Direction var2, Vec3 var3) {
-      Vec3i var4 = var2.getUnitVec3i();
-      Vec3 var5 = net.minecraft.world.phys.Vec3.atCenterOf(var1).add(var4.getX() * 0.5, var4.getY() * 0.5, var4.getZ() * 0.5);
-      return (var3.x - var5.x) * var4.getX() + (var3.y - var5.y) * var4.getY() + (var3.z - var5.z) * var4.getZ() <= 0.02
+   private boolean method4366(BlockPos pos, Direction direction, Vec3 eyePosition) {
+      Vec3i unitVec3i = direction.getUnitVec3i();
+      Vec3 vec = net.minecraft.world.phys.Vec3.atCenterOf(pos).add(unitVec3i.getX() * 0.5, unitVec3i.getY() * 0.5, unitVec3i.getZ() * 0.5);
+      return (eyePosition.x - vec.x) * unitVec3i.getX() + (eyePosition.y - vec.y) * unitVec3i.getY() + (eyePosition.z - vec.z) * unitVec3i.getZ() <= 0.02
          ? false
-         : !mc.level.getBlockState(var1.relative(var2)).isSolidRender();
+         : !mc.level.getBlockState(pos.relative(direction)).isSolidRender();
    }
 
-   private static Vec3 method4367(BlockPos var0, Direction var1, Vec3 var2, Vec3 var3) {
-      Axis var4 = var1.getAxis();
-      double var5 = method4369(var0, var1);
-      double var7 = var4.choose(var3.x, var3.y, var3.z);
-      Vec3 var9 = net.minecraft.world.phys.Vec3.atCenterOf(var0);
-      double var10;
-      if (Math.abs(var7) > 1.0E-4 && (var10 = (var5 - var4.choose(var2.x, var2.y, var2.z)) / var7) > 0.0) {
-         var9 = var2.add(var3.scale(var10));
+   private static Vec3 method4367(BlockPos pos, Direction direction, Vec3 eyePosition, Vec3 vec) {
+      Axis axis = direction.getAxis();
+      double d = method4369(pos, direction);
+      double choose = axis.choose(vec.x, vec.y, vec.z);
+      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      double scale;
+      if (Math.abs(choose) > 1.0E-4 && (scale = (d - axis.choose(eyePosition.x, eyePosition.y, eyePosition.z)) / choose) > 0.0) {
+         atCenterOf = eyePosition.add(vec.scale(scale));
       }
 
-      double var12;
-      switch (var4) {
+      double d2;
+      switch (axis) {
          case X:
-            var10 = var9.y - var0.getY();
-            var12 = var9.z - var0.getZ();
+            scale = atCenterOf.y - pos.getY();
+            d2 = atCenterOf.z - pos.getZ();
             break;
          case Y:
-            var10 = var9.x - var0.getX();
-            var12 = var9.z - var0.getZ();
+            scale = atCenterOf.x - pos.getX();
+            d2 = atCenterOf.z - pos.getZ();
             break;
          default:
-            var10 = var9.x - var0.getX();
-            var12 = var9.y - var0.getY();
+            scale = atCenterOf.x - pos.getX();
+            d2 = atCenterOf.y - pos.getY();
       }
 
-      return method4368(var0, var1, Mth.clamp(var10, 0.2, 0.8), Mth.clamp(var12, 0.2, 0.8));
+      return method4368(pos, direction, Mth.clamp(scale, 0.2, 0.8), Mth.clamp(d2, 0.2, 0.8));
    }
 
-   private static Vec3 method4368(BlockPos var0, Direction var1, double var2, double var4) {
-      double var6 = method4369(var0, var1) - var1.getAxisDirection().getStep() * 0.01;
+   private static Vec3 method4368(BlockPos pos, Direction direction, double d, double d2) {
+      double x = method4369(pos, direction) - direction.getAxisDirection().getStep() * 0.01;
 
-      return switch (var1.getAxis()) {
-         case X -> new Vec3(var6, var0.getY() + var2, var0.getZ() + var4);
-         case Y -> new Vec3(var0.getX() + var2, var6, var0.getZ() + var4);
-         case Z -> new Vec3(var0.getX() + var2, var0.getY() + var4, var6);
+      return switch (direction.getAxis()) {
+         case X -> new Vec3(x, pos.getY() + d, pos.getZ() + d2);
+         case Y -> new Vec3(pos.getX() + d, x, pos.getZ() + d2);
+         case Z -> new Vec3(pos.getX() + d, pos.getY() + d2, x);
       };
    }
 
-   private static double method4369(BlockPos var0, Direction var1) {
-      int var2 = var1.getAxis().choose(var0.getX(), var0.getY(), var0.getZ());
-      return var1.getAxisDirection() == AxisDirection.POSITIVE ? var2 + 1 : var2;
+   private static double method4369(BlockPos pos, Direction direction) {
+      int choose = direction.getAxis().choose(pos.getX(), pos.getY(), pos.getZ());
+      return direction.getAxisDirection() == AxisDirection.POSITIVE ? choose + 1 : choose;
    }
 
-   private Collection<BlockPos> method4370(BlockPos var1) {
-      return this.intValue2 > 0 ? method4371(var1) : List.of(var1);
+   private Collection<BlockPos> method4370(BlockPos blockPos) {
+      return this.intValue2 > 0 ? method4371(blockPos) : List.of(blockPos);
    }
 
-   private static List<BlockPos> method4371(BlockPos var0) {
-      ArrayList var1 = new ArrayList(27);
+   private static List<BlockPos> method4371(BlockPos blockPos) {
+      ArrayList arrayList = new ArrayList(27);
 
-      for (BlockPos var3 : BlockPos.betweenClosed(var0.offset(-1, -1, -1), var0.offset(1, 1, 1))) {
-         var1.add(var3.immutable());
+      for (BlockPos pos : BlockPos.betweenClosed(blockPos.offset(-1, -1, -1), blockPos.offset(1, 1, 1))) {
+         arrayList.add(pos.immutable());
       }
 
-      return var1;
+      return arrayList;
    }
 
-   private boolean method4372(BlockPos var1) {
+   private boolean method4372(BlockPos blockPos) {
       if (!mc.player.onGround()) {
          return true;
       } else {
-         var var2 = this.method4370(var1);
-         BlockPos var3 = mc.player.blockPosition();
-         if (!var2.contains(var3.below())) {
+         var poses = this.method4370(blockPos);
+         BlockPos blockPosition = mc.player.blockPosition();
+         if (!poses.contains(blockPosition.below())) {
             return true;
          } else {
-            MutableBlockPos var4 = var3.below().mutable();
-            int var5 = 0;
+            MutableBlockPos mutable = blockPosition.below().mutable();
+            int n = 0;
 
-            while (var5 <= 3) {
-               if (!var2.contains(var4) && this.method4383(var4)) {
+            while (n <= 3) {
+               if (!poses.contains(mutable) && this.method4383(mutable)) {
                   return true;
                }
 
-               var5++;
-               var4.move(Direction.DOWN);
+               n++;
+               mutable.move(Direction.DOWN);
             }
 
             return false;
@@ -485,59 +485,59 @@ public final class AutoMineModule extends Module {
       }
 
       this.blockPos = null;
-      var var1 = this.items2.iterator();
+      var iterator = this.items2.iterator();
 
-      while (var1.hasNext()) {
-         AutoMineModule.Entry var2 = (AutoMineModule.Entry)var1.next();
-         var2.getItems().removeIf(var1x -> {
+      while (iterator.hasNext()) {
+         AutoMineModule.Entry entry = (AutoMineModule.Entry)iterator.next();
+         entry.getItems().removeIf(var1x -> {
             if (!mc.level.getBlockState(var1x).isAir()) {
                return false;
             } else {
-               var2.flag2 = true;
+               entry.flag2 = true;
                return true;
             }
          });
-         var var10000 = var2.getItems();
-         if ((var10000.isEmpty()) || this.ticks >= var2.getIntValue()) {
-            this.intValue2 = var2.flag2 ? Math.min(3, this.intValue2 + 1) : Math.max(-2, this.intValue2 - 1);
-            var1.remove();
+         var items = entry.getItems();
+         if ((items.isEmpty()) || this.ticks >= entry.getIntValue()) {
+            this.intValue2 = entry.flag2 ? Math.min(3, this.intValue2 + 1) : Math.max(-2, this.intValue2 - 1);
+            iterator.remove();
          }
       }
    }
 
-   private void method4374(BlockPos var1) {
-      if (this.data3 != null && this.data3.pos().equals(var1)) {
+   private void method4374(BlockPos blockPos) {
+      if (this.data3 != null && this.data3.pos().equals(blockPos)) {
          this.data3 = null;
       }
 
-      ThreadLocalRandom var2 = ThreadLocalRandom.current();
-      if (var2.nextFloat() < 0.005F) {
-         this.intValue = 6 + var2.nextInt(10);
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      if (current.nextFloat() < 0.005F) {
+         this.intValue = 6 + current.nextInt(10);
       }
 
-      if (MineTargetFinder.method1935(this.data, var1)) {
-         HashSet var3 = new HashSet();
+      if (MineTargetFinder.method1935(this.data, blockPos)) {
+         HashSet items = new HashSet();
 
-         for (BlockPos var5 : method4371(var1)) {
-            if (!var5.equals(var1) && MineTargetFinder.method1935(this.data, var5) && !mc.level.getBlockState(var5).isAir()) {
-               var3.add(var5);
+         for (BlockPos pos : method4371(blockPos)) {
+            if (!pos.equals(blockPos) && MineTargetFinder.method1935(this.data, pos) && !mc.level.getBlockState(pos).isAir()) {
+               items.add(pos);
             }
          }
 
-         if (!var3.isEmpty()) {
-            this.items2.add(new AutoMineModule.Entry(var3, this.ticks + this.method4375(), this.intValue2 > 0));
+         if (!items.isEmpty()) {
+            this.items2.add(new AutoMineModule.Entry(items, this.ticks + this.method4375(), this.intValue2 > 0));
          }
       }
    }
 
    private int method4375() {
-      PlayerInfo var1 = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(mc.player.getUUID());
-      return Mth.clamp((var1 == null ? 100 : var1.getLatency()) * 2 / 50 + 4, 4, 30);
+      PlayerInfo playerInfo = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(mc.player.getUUID());
+      return Mth.clamp((playerInfo == null ? 100 : playerInfo.getLatency()) * 2 / 50 + 4, 4, 30);
    }
 
-   private boolean method4376(BlockPos var1) {
-      for (AutoMineModule.Entry var3 : this.items2) {
-         if (var3.isFlag() && var3.getItems().contains(var1)) {
+   private boolean method4376(BlockPos blockPos) {
+      for (AutoMineModule.Entry entry : this.items2) {
+         if (entry.isFlag() && entry.getItems().contains(blockPos)) {
             return true;
          }
       }
@@ -546,12 +546,12 @@ public final class AutoMineModule extends Module {
    }
 
    private boolean method4377() {
-      Inventory var1 = mc.player.getInventory();
+      Inventory inventory = mc.player.getInventory();
       if (!this.flag2) {
-         ItemStack var4 = mc.player.getMainHandItem();
-         if (Util10.method2177(var4) && method4380(var4) < 30) {
+         ItemStack mainHandItem = mc.player.getMainHandItem();
+         if (Util10.method2177(mainHandItem) && method4380(mainHandItem) < 30) {
             this.flag2 = true;
-            this.intValue3 = var1.getSelectedSlot();
+            this.intValue3 = inventory.getSelectedSlot();
             this.intValue4 = 2 + ThreadLocalRandom.current().nextInt(3);
             this.data3 = null;
             return true;
@@ -562,11 +562,11 @@ public final class AutoMineModule extends Module {
          this.intValue4--;
          return true;
       } else {
-         ItemStack var2 = Inventory.isHotbarSlot(this.intValue3) ? var1.getItem(this.intValue3) : ItemStack.EMPTY;
-         if (Util10.method2177(var2) && method4380(var2) < 150 && var2.getDamageValue() != 0) {
+         ItemStack mainHandItem = Inventory.isHotbarSlot(this.intValue3) ? inventory.getItem(this.intValue3) : ItemStack.EMPTY;
+         if (Util10.method2177(mainHandItem) && method4380(mainHandItem) < 150 && mainHandItem.getDamageValue() != 0) {
             if (mc.player.getOffhandItem().is(Items.EXPERIENCE_BOTTLE)) {
-               if (var1.getSelectedSlot() != this.intValue3) {
-                  var1.setSelectedSlot(this.intValue3);
+               if (inventory.getSelectedSlot() != this.intValue3) {
+                  inventory.setSelectedSlot(this.intValue3);
                   this.intValue4 = 2 + ThreadLocalRandom.current().nextInt(3);
                   return true;
                } else {
@@ -577,10 +577,10 @@ public final class AutoMineModule extends Module {
             } else {
                this.releaseUse();
 
-               for (int var3 = 0; var3 < 9; var3++) {
-                  if (var1.getItem(var3).is(Items.EXPERIENCE_BOTTLE)) {
-                     if (var1.getSelectedSlot() != var3) {
-                        var1.setSelectedSlot(var3);
+               for (int i = 0; i < 9; i++) {
+                  if (inventory.getItem(i).is(Items.EXPERIENCE_BOTTLE)) {
+                     if (inventory.getSelectedSlot() != i) {
+                        inventory.setSelectedSlot(i);
                         this.intValue4 = 2 + ThreadLocalRandom.current().nextInt(3);
                         return true;
                      }
@@ -591,14 +591,14 @@ public final class AutoMineModule extends Module {
                   }
                }
 
-               Slot var5 = InventoryUtils.method906(Items.EXPERIENCE_BOTTLE);
-               if (var5 == null) {
+               Slot slot = InventoryUtils.method906(Items.EXPERIENCE_BOTTLE);
+               if (slot == null) {
                   ChatLogger.method2019("AutoMine: закончились пузырьки опыта");
                   this.method4378();
                   this.toggle();
                   return true;
                } else {
-                  InventoryUtils.method900(var5, InteractionHand.OFF_HAND, true);
+                  InventoryUtils.method900(slot, InteractionHand.OFF_HAND, true);
                   this.intValue4 = 6 + ThreadLocalRandom.current().nextInt(4);
                   return true;
                }
@@ -626,63 +626,63 @@ public final class AutoMineModule extends Module {
    }
 
    private boolean method4379() {
-      Inventory var1 = mc.player.getInventory();
-      ItemStack var2 = mc.player.getMainHandItem();
-      if (Util10.method2177(var2) && method4380(var2) >= 30) {
-         this.intValue3 = var1.getSelectedSlot();
+      Inventory inventory = mc.player.getInventory();
+      ItemStack mainHandItem = mc.player.getMainHandItem();
+      if (Util10.method2177(mainHandItem) && method4380(mainHandItem) >= 30) {
+         this.intValue3 = inventory.getSelectedSlot();
          return true;
       } else {
-         int var3 = -1;
+         int selected = -1;
 
-         for (int var4 = 0; var4 < 9; var4++) {
-            ItemStack var5 = var1.getItem(var4);
-            if (Util10.method2177(var5) && method4380(var5) >= 30 && (var3 == -1 || var4 == this.intValue3)) {
-               var3 = var4;
+         for (int i = 0; i < 9; i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (Util10.method2177(stack) && method4380(stack) >= 30 && (selected == -1 || i == this.intValue3)) {
+               selected = i;
             }
          }
 
-         if (var3 >= 0) {
-            var1.setSelectedSlot(var3);
+         if (selected >= 0) {
+            inventory.setSelectedSlot(selected);
          }
 
          return false;
       }
    }
 
-   private static int method4380(ItemStack var0) {
-      return var0.isDamageableItem() ? var0.getMaxDamage() - var0.getDamageValue() : 32767 << 16 | (char)-1;
+   private static int method4380(ItemStack mainHandItem) {
+      return mainHandItem.isDamageableItem() ? mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() : 32767 << 16 | (char)-1;
    }
 
-   private boolean method4381(BlockPos var1, BlockState var2) {
-      return !var2.isAir() && var2.getFluidState().isEmpty() && var2.getDestroySpeed(mc.level, var1) >= 0.0F && !var2.is(Blocks.OBSIDIAN);
+   private boolean method4381(BlockPos blockPos, BlockState blockState) {
+      return !blockState.isAir() && blockState.getFluidState().isEmpty() && blockState.getDestroySpeed(mc.level, blockPos) >= 0.0F && !blockState.is(Blocks.OBSIDIAN);
    }
 
-   private boolean method4382(BlockPos var1) {
-      return this.data != null && MineTargetFinder.method1935(this.data, var1) && this.method4381(var1, mc.level.getBlockState(var1)) && !this.method4376(var1);
+   private boolean method4382(BlockPos blockPos) {
+      return this.data != null && MineTargetFinder.method1935(this.data, blockPos) && this.method4381(blockPos, mc.level.getBlockState(blockPos)) && !this.method4376(blockPos);
    }
 
-   private boolean method4383(BlockPos var1) {
-      return !mc.level.getBlockState(var1).getCollisionShape(mc.level, var1).isEmpty();
+   private boolean method4383(BlockPos mutable) {
+      return !mc.level.getBlockState(mutable).getCollisionShape(mc.level, mutable).isEmpty();
    }
 
-   private static boolean method4384(BlockPos var0, Vec3 var1, double var2) {
-      double var4 = var2 - 0.3;
-      return MineTargetFinder.method1939(var1, var0) <= var4 * var4;
+   private static boolean method4384(BlockPos pos, Vec3 eyePosition, double blockInteractionRange) {
+      double d = blockInteractionRange - 0.3;
+      return MineTargetFinder.method1939(eyePosition, pos) <= d * d;
    }
 
-   private static BlockHitResult method4385(Vec3 var0, double var1, Rotation var3) {
-      return TargetUtils.method3205(var0, var1, var3, false);
+   private static BlockHitResult method4385(Vec3 eyePosition, double blockInteractionRange, Rotation rotation) {
+      return TargetUtils.method3205(eyePosition, blockInteractionRange, rotation, false);
    }
 
-   private static boolean method4386(BlockHitResult var0, BlockPos var1) {
-      return var0 != null && var0.getType() == Type.BLOCK && var1.equals(var0.getBlockPos());
+   private static boolean method4386(BlockHitResult blockHitResult, BlockPos pos) {
+      return blockHitResult != null && blockHitResult.getType() == Type.BLOCK && pos.equals(blockHitResult.getBlockPos());
    }
 
-   private boolean method4387(Vec3 var1, Vec3 var2) {
-      AABB var3 = new AABB(var1, var2).inflate(1.0);
+   private boolean method4387(Vec3 eyePosition, Vec3 location) {
+      AABB inflate = new AABB(eyePosition, location).inflate(1.0);
 
-      for (Entity var5 : mc.level.getEntities(mc.player, var3, var0 -> !var0.isSpectator() && var0.isPickable())) {
-         if (var5.getBoundingBox().inflate(var5.getPickRadius()).clip(var1, var2).isPresent()) {
+      for (Entity entity : mc.level.getEntities(mc.player, inflate, entity2 -> !entity2.isSpectator() && entity2.isPickable())) {
+         if (entity.getBoundingBox().inflate(entity.getPickRadius()).clip(eyePosition, location).isPresent()) {
             return true;
          }
       }
@@ -705,41 +705,41 @@ public final class AutoMineModule extends Module {
 
    private void onDrop() {
       if (mc.gui.screen() != null && mc.gui.screen().getTitle().getString().toLowerCase(Locale.ROOT).contains("для продажи")) {
-         if (mc.player.containerMenu instanceof ChestMenu var1) {
-            int var3;
-            if (this.moveBuyerResources() && (var3 = this.getContainerSlotCount(var1)) > 0) {
-               InventoryUtils.method904(var3 - 1, 0, ContainerInput.QUICK_MOVE, false);
+         if (mc.player.containerMenu instanceof ChestMenu chestMenu) {
+            int containerSlotCount;
+            if (this.moveBuyerResources() && (containerSlotCount = this.getContainerSlotCount(chestMenu)) > 0) {
+               InventoryUtils.method904(containerSlotCount - 1, 0, ContainerInput.QUICK_MOVE, false);
             }
 
-            Slot var4 = this.findTrashSlot();
-            if (var4 != null) {
-               InventoryUtils.method903(var4, 1, ContainerInput.THROW, false);
+            Slot trashSlot = this.findTrashSlot();
+            if (trashSlot != null) {
+               InventoryUtils.method903(trashSlot, 1, ContainerInput.THROW, false);
             }
          }
       }
    }
 
    private boolean moveBuyerResources() {
-      boolean var1 = false;
-      int var2 = 0;
+      boolean flag = false;
+      int n = 0;
 
-      for (Slot var4 : mc.player.containerMenu.slots) {
-         if (this.isPlayerInventorySlot(var4) && this.isBuyerResource(var4.getItem())) {
-            if (var2 > 5) {
+      for (Slot slot : mc.player.containerMenu.slots) {
+         if (this.isPlayerInventorySlot(slot) && this.isBuyerResource(slot.getItem())) {
+            if (n > 5) {
                break;
             }
 
-            InventoryUtils.method903(var4, 0, ContainerInput.QUICK_MOVE, false);
-            var2++;
-            var1 = true;
+            InventoryUtils.method903(slot, 0, ContainerInput.QUICK_MOVE, false);
+            n++;
+            flag = true;
          }
       }
 
-      return var1;
+      return flag;
    }
 
-   private boolean isBuyerResource(ItemStack var1) {
-      return !var1.isEmpty() && items.contains(var1.getItem());
+   private boolean isBuyerResource(ItemStack stack) {
+      return !stack.isEmpty() && items.contains(stack.getItem());
    }
 
    private Slot findTrashSlot() {
@@ -748,27 +748,27 @@ public final class AutoMineModule extends Module {
          .slots
          .stream()
          .filter(this::isPlayerInventorySlot)
-         .filter(var1 -> this.isTrash(var1.getItem()))
+         .filter(slot -> this.isTrash(slot.getItem()))
          .findFirst()
          .orElse(null);
    }
 
-   private boolean isPlayerInventorySlot(Slot var1) {
-      if (mc.player.containerMenu instanceof ChestMenu var2) {
-         int var4 = this.getContainerSlotCount(var2);
-         return var1.container == mc.player.getInventory() || var1.index >= var4 && var1.index < var4 + 36;
+   private boolean isPlayerInventorySlot(Slot slot) {
+      if (mc.player.containerMenu instanceof ChestMenu chestMenu) {
+         int containerSlotCount = this.getContainerSlotCount(chestMenu);
+         return slot.container == mc.player.getInventory() || slot.index >= containerSlotCount && slot.index < containerSlotCount + 36;
       } else {
-         return var1.container == mc.player.getInventory() && var1.index >= 9 && var1.index <= 44;
+         return slot.container == mc.player.getInventory() && slot.index >= 9 && slot.index <= 44;
       }
    }
 
-   private int getContainerSlotCount(ChestMenu var1) {
-      return Math.min(var1.getContainer().getContainerSize(), Math.max(0, mc.player.containerMenu.slots.size() - 36));
+   private int getContainerSlotCount(ChestMenu chestMenu) {
+      return Math.min(chestMenu.getContainer().getContainerSize(), Math.max(0, mc.player.containerMenu.slots.size() - 36));
    }
 
-   private boolean isTrash(ItemStack var1) {
-      return !var1.isEmpty() && !var1.is(Items.PLAYER_HEAD) && !var1.is(Items.TRIPWIRE_HOOK) && !this.isBuyerResource(var1)
-         ? var1.getItem() instanceof BlockItem var2 && !MineTargetFinder.method1934(var2.getBlock())
+   private boolean isTrash(ItemStack stack) {
+      return !stack.isEmpty() && !stack.is(Items.PLAYER_HEAD) && !stack.is(Items.TRIPWIRE_HOOK) && !this.isBuyerResource(stack)
+         ? stack.getItem() instanceof BlockItem blockItem && !MineTargetFinder.method1934(blockItem.getBlock())
          : false;
    }
 
@@ -786,9 +786,9 @@ public final class AutoMineModule extends Module {
       } else {
          this.combinedMineSwitched = false;
          this.selectedMine = null;
-         MineTargetFinder.Data var1 = MineTargetFinder.method1933(this.mode.method2101("module.autoMine.modeNether"));
-         if (MineTargetFinder.method1938(var1, mc.level) && !(this.getMineDistance(var1) > 25.0)) {
-            return this.getAvailableMine(var1);
+         MineTargetFinder.Data selectedMine = MineTargetFinder.method1933(this.mode.method2101("module.autoMine.modeNether"));
+         if (MineTargetFinder.method1938(selectedMine, mc.level) && !(this.getMineDistance(selectedMine) > 25.0)) {
+            return this.getAvailableMine(selectedMine);
          } else {
             this.handleWarpTp();
             return null;
@@ -797,26 +797,26 @@ public final class AutoMineModule extends Module {
    }
 
    private List<AutoMineModule.Data> selectCombinedMine() {
-      MineTargetFinder.Data var1 = MineTargetFinder.method1933(false);
-      MineTargetFinder.Data var2 = MineTargetFinder.method1933(true);
-      if (MineTargetFinder.method1938(var1, mc.level) && MineTargetFinder.method1938(var2, mc.level)) {
-         var var3 = this.getArena(var1);
-         var var4 = this.getArena(var2);
-         boolean var5 = this.isMineAvailable(var3);
-         boolean var6 = this.isMineAvailable(var4);
+      MineTargetFinder.Data data = MineTargetFinder.method1933(false);
+      MineTargetFinder.Data data2 = MineTargetFinder.method1933(true);
+      if (MineTargetFinder.method1938(data, mc.level) && MineTargetFinder.method1938(data2, mc.level)) {
+         var arena = this.getArena(data);
+         var datas = this.getArena(data2);
+         boolean mineAvailable = this.isMineAvailable(arena);
+         boolean flag = this.isMineAvailable(datas);
          if (this.selectedMine != null) {
             if (this.getMineDistance(this.selectedMine) > 25.0) {
                this.handleWarpTp();
                return null;
             }
 
-            boolean var7;
-            if ((var7 = this.selectedMine.equals(var2)) && var6) {
-               return this.method4389(var2, var4);
+            boolean flag2;
+            if ((flag2 = this.selectedMine.equals(data2)) && flag) {
+               return this.method4389(data2, datas);
             }
 
-            if (!var7 && var5) {
-               return this.method4389(var1, var3);
+            if (!flag2 && mineAvailable) {
+               return this.method4389(data, arena);
             }
 
             if (this.combinedMineSwitched) {
@@ -825,9 +825,9 @@ public final class AutoMineModule extends Module {
             }
          }
 
-         if (!var5 && !var6) {
-            MineTargetFinder.Data var10 = this.selectedMine == null ? var1 : this.selectedMine;
-            if (MineTargetFinder.method1938(var10, mc.level) && !(this.getMineDistance(var10) > 25.0)) {
+         if (!mineAvailable && !flag) {
+            MineTargetFinder.Data selectedMine = this.selectedMine == null ? data : this.selectedMine;
+            if (MineTargetFinder.method1938(selectedMine, mc.level) && !(this.getMineDistance(selectedMine) > 25.0)) {
                this.reconnectToRandomAnarchy();
                return null;
             } else {
@@ -835,15 +835,15 @@ public final class AutoMineModule extends Module {
                return null;
             }
          } else {
-            MineTargetFinder.Data var9 = this.selectedMine;
-            boolean var8 = var6 && (!var5 || this.getFillPercentage(var4) > this.getFillPercentage(var3));
-            this.selectedMine = var8 ? var2 : var1;
-            if (!this.selectedMine.equals(var9)) {
-               this.combinedMineSwitched = var9 != null;
+            MineTargetFinder.Data selectedMine = this.selectedMine;
+            boolean flag2 = flag && (!mineAvailable || this.getFillPercentage(datas) > this.getFillPercentage(arena));
+            this.selectedMine = flag2 ? data2 : data;
+            if (!this.selectedMine.equals(selectedMine)) {
+               this.combinedMineSwitched = selectedMine != null;
                this.sendWarpCommand();
                return null;
             } else {
-               return var8 ? this.method4389(var2, var4) : this.method4389(var1, var3);
+               return flag2 ? this.method4389(data2, datas) : this.method4389(data, arena);
             }
          }
       } else {
@@ -852,9 +852,9 @@ public final class AutoMineModule extends Module {
       }
    }
 
-   private List<AutoMineModule.Data> method4389(MineTargetFinder.Data var1, List<AutoMineModule.Data> var2) {
-      this.data = var1;
-      return var2;
+   private List<AutoMineModule.Data> method4389(MineTargetFinder.Data data, List<AutoMineModule.Data> arena) {
+      this.data = data;
+      return arena;
    }
 
    private boolean isWaitingForMineData() {
@@ -878,11 +878,11 @@ public final class AutoMineModule extends Module {
          : MineTargetFinder.method1933(this.mode.method2101("module.autoMine.modeNether"));
    }
 
-   private boolean hasLoadedMineBlocks(MineTargetFinder.Data var1) {
-      for (BlockPos var3 : BlockPos.betweenClosed(
-         var1.getIntValue(), var1.getIntValue3(), var1.getIntValue5(), var1.getIntValue2(), var1.getIntValue4(), var1.getIntValue6()
+   private boolean hasLoadedMineBlocks(MineTargetFinder.Data expectedMineBounds) {
+      for (BlockPos pos : BlockPos.betweenClosed(
+         expectedMineBounds.getIntValue(), expectedMineBounds.getIntValue3(), expectedMineBounds.getIntValue5(), expectedMineBounds.getIntValue2(), expectedMineBounds.getIntValue4(), expectedMineBounds.getIntValue6()
       )) {
-         if (mc.level.hasChunkAt(var3) && !mc.level.getBlockState(var3).isAir()) {
+         if (mc.level.hasChunkAt(pos) && !mc.level.getBlockState(pos).isAir()) {
             return true;
          }
       }
@@ -890,67 +890,67 @@ public final class AutoMineModule extends Module {
       return false;
    }
 
-   private double getMineDistance(MineTargetFinder.Data var1) {
-      double var2 = (var1.getIntValue() + var1.getIntValue2() + 1.0) * 0.5;
-      double var4 = (var1.getIntValue5() + var1.getIntValue6() + 1.0) * 0.5;
-      double var6 = Math.abs(mc.player.getX() - var2);
-      double var8 = Math.abs(mc.player.getZ() - var4);
-      return Math.hypot(var6, var8);
+   private double getMineDistance(MineTargetFinder.Data selectedMine) {
+      double d = (selectedMine.getIntValue() + selectedMine.getIntValue2() + 1.0) * 0.5;
+      double d2 = (selectedMine.getIntValue5() + selectedMine.getIntValue6() + 1.0) * 0.5;
+      double x = Math.abs(mc.player.getX() - d);
+      double y = Math.abs(mc.player.getZ() - d2);
+      return Math.hypot(x, y);
    }
 
-   private List<AutoMineModule.Data> getAvailableMine(MineTargetFinder.Data var1) {
-      var var2 = this.getArena(var1);
-      if (!this.isMineAvailable(var2)) {
+   private List<AutoMineModule.Data> getAvailableMine(MineTargetFinder.Data selectedMine) {
+      var arena = this.getArena(selectedMine);
+      if (!this.isMineAvailable(arena)) {
          this.reconnectToRandomAnarchy();
          return null;
       } else {
-         return this.method4389(var1, var2);
+         return this.method4389(selectedMine, arena);
       }
    }
 
-   private boolean isMineAvailable(List<AutoMineModule.Data> var1) {
-      return var1.size() - this.countAirBlocks(var1) < 600L ? false : !mc.player.onGround() || this.hasReachableBlockByHeight(var1);
+   private boolean isMineAvailable(List<AutoMineModule.Data> arena) {
+      return arena.size() - this.countAirBlocks(arena) < 600L ? false : !mc.player.onGround() || this.hasReachableBlockByHeight(arena);
    }
 
-   private boolean hasReachableBlockByHeight(List<AutoMineModule.Data> var1) {
-      int var2 = Mth.floor(mc.player.getEyeY() + mc.player.blockInteractionRange() - 1.0);
-      return var1.stream().anyMatch(var1x -> !var1x.state().isAir() && !var1x.state().is(Blocks.OBSIDIAN) && var1x.pos().getY() <= var2);
+   private boolean hasReachableBlockByHeight(List<AutoMineModule.Data> arena) {
+      int n = Mth.floor(mc.player.getEyeY() + mc.player.blockInteractionRange() - 1.0);
+      return arena.stream().anyMatch(var1x -> !var1x.state().isAir() && !var1x.state().is(Blocks.OBSIDIAN) && var1x.pos().getY() <= n);
    }
 
-   private long countAirBlocks(List<AutoMineModule.Data> var1) {
-      return var1.stream().filter(var0 -> var0.state().isAir()).count();
+   private long countAirBlocks(List<AutoMineModule.Data> arena) {
+      return arena.stream().filter(data -> data.state().isAir()).count();
    }
 
-   private double getFillPercentage(List<AutoMineModule.Data> var1) {
-      return (var1.isEmpty()) ? 0.0 : 1.0 - (double)this.countAirBlocks(var1) / var1.size();
+   private double getFillPercentage(List<AutoMineModule.Data> arena) {
+      return (arena.isEmpty()) ? 0.0 : 1.0 - (double)this.countAirBlocks(arena) / arena.size();
    }
 
-   private List<AutoMineModule.Data> getArena(MineTargetFinder.Data var1) {
+   private List<AutoMineModule.Data> getArena(MineTargetFinder.Data data) {
       return this.getBlocksInZone(
-         new BlockPos(var1.getIntValue(), var1.getIntValue3(), var1.getIntValue5()),
-         new BlockPos(var1.getIntValue2(), var1.getIntValue4(), var1.getIntValue6())
+         new BlockPos(data.getIntValue(), data.getIntValue3(), data.getIntValue5()),
+         new BlockPos(data.getIntValue2(), data.getIntValue4(), data.getIntValue6())
       );
    }
 
-   private List<AutoMineModule.Data> getBlocksInZone(BlockPos var1, BlockPos var2) {
-      ArrayList<AutoMineModule.Data> var3 = new ArrayList<>();
-      int var4 = Math.min(var1.getX(), var2.getX());
-      int var5 = Math.max(var1.getX(), var2.getX());
-      int var6 = Math.min(var1.getY(), var2.getY());
-      int var7 = Math.max(var1.getY(), var2.getY());
-      int var8 = Math.min(var1.getZ(), var2.getZ());
-      int var9 = Math.max(var1.getZ(), var2.getZ());
+   private List<AutoMineModule.Data> getBlocksInZone(BlockPos pos, BlockPos pos2) {
+      ArrayList<AutoMineModule.Data> datas = new ArrayList<>();
+      int n = Math.min(pos.getX(), pos2.getX());
+      int n2 = Math.max(pos.getX(), pos2.getX());
+      int n3 = Math.min(pos.getY(), pos2.getY());
+      int n4 = Math.max(pos.getY(), pos2.getY());
+      int n5 = Math.min(pos.getZ(), pos2.getZ());
+      int n6 = Math.max(pos.getZ(), pos2.getZ());
 
-      for (int var10 = var4; var10 <= var5; var10++) {
-         for (int var11 = var6; var11 <= var7; var11++) {
-            for (int var12 = var8; var12 <= var9; var12++) {
-               BlockPos var13 = new BlockPos(var10, var11, var12);
-               var3.add(new AutoMineModule.Data(var13, mc.level.getBlockState(var13)));
+      for (int i = n; i <= n2; i++) {
+         for (int j = n3; j <= n4; j++) {
+            for (int k = n5; k <= n6; k++) {
+               BlockPos blockPos = new BlockPos(i, j, k);
+               datas.add(new AutoMineModule.Data(blockPos, mc.level.getBlockState(blockPos)));
             }
          }
       }
 
-      return var3;
+      return datas;
    }
 
    public void handleWarpTp() {
@@ -960,10 +960,10 @@ public final class AutoMineModule extends Module {
    }
 
    private void sendWarpCommand() {
-      boolean var1 = this.mode.method2101("module.autoMine.modeCombined")
+      boolean flag = this.mode.method2101("module.autoMine.modeCombined")
          ? MineTargetFinder.method1933(true).equals(this.selectedMine)
          : this.mode.method2101("module.autoMine.modeNether");
-      mc.getConnection().sendCommand(var1 ? "warp mine2" : "warp mine");
+      mc.getConnection().sendCommand(flag ? "warp mine2" : "warp mine");
       this.mineDataCooldown = 20;
    }
 
@@ -973,15 +973,15 @@ public final class AutoMineModule extends Module {
       this.combinedMineSwitched = false;
       this.items2.clear();
       this.method4388();
-      int var1 = zenith.getHolyWorldServerTracker().currentAnarchyHere();
+      int currentAnarchyHere = zenith.getHolyWorldServerTracker().currentAnarchyHere();
 
-      int var2;
+      int nextInt;
       do {
-         while ((var2 = ThreadLocalRandom.current().nextInt(1, 64)) == var1) {
+         while ((nextInt = ThreadLocalRandom.current().nextInt(1, 64)) == currentAnarchyHere) {
          }
-      } while (var2 == 2 || var2 == 17 || var2 == 33 || var2 == 49);
+      } while (nextInt == 2 || nextInt == 17 || nextInt == 33 || nextInt == 49);
 
-      zenith.getHolyWorldServerTracker().reconnect(var2);
+      zenith.getHolyWorldServerTracker().reconnect(nextInt);
    }
 
    @Generated
@@ -1018,9 +1018,9 @@ public final class AutoMineModule extends Module {
          return "Data[" + "blockPos=" + this.blockPos + ", " + "blockState=" + this.blockState + "]";
       }
 
-      private Data(BlockPos var1, BlockState var2) {
-         this.blockPos = var1;
-         this.blockState = var2;
+      private Data(BlockPos blockPos, BlockState blockState) {
+         this.blockPos = blockPos;
+         this.blockState = blockState;
       }
 
       public BlockPos pos() {
@@ -1071,11 +1071,11 @@ public final class AutoMineModule extends Module {
          return "Data2[" + "blockPos=" + this.blockPos + ", " + "direction=" + this.direction + ", " + "vec3d=" + this.vec3d + ", " + "doubleValue=" + this.doubleValue + "]";
       }
 
-      private Data2(BlockPos var1, Direction var2, Vec3 var3, double var4) {
-         this.blockPos = var1;
-         this.direction = var2;
-         this.vec3d = var3;
-         this.doubleValue = var4;
+      private Data2(BlockPos blockPos, Direction direction, Vec3 vec3d, double doubleValue) {
+         this.blockPos = blockPos;
+         this.direction = direction;
+         this.vec3d = vec3d;
+         this.doubleValue = doubleValue;
       }
 
       public BlockPos pos() {
@@ -1124,9 +1124,9 @@ public final class AutoMineModule extends Module {
          return "Data3[" + "blockPos=" + this.blockPos + ", " + "vec3d=" + this.vec3d + "]";
       }
 
-      private Data3(BlockPos var1, Vec3 var2) {
-         this.blockPos = var1;
-         this.vec3d = var2;
+      private Data3(BlockPos blockPos, Vec3 vec3d) {
+         this.blockPos = blockPos;
+         this.vec3d = vec3d;
       }
 
       public BlockPos pos() {
@@ -1144,10 +1144,10 @@ public final class AutoMineModule extends Module {
       private final boolean flag;
       private boolean flag2;
 
-      private Entry(Set<BlockPos> var1, int var2, boolean var3) {
-         this.items = var1;
-         this.intValue = var2;
-         this.flag = var3;
+      private Entry(Set<BlockPos> items, int intValue, boolean flag) {
+         this.items = items;
+         this.intValue = intValue;
+         this.flag = flag;
       }
 
       public Set<BlockPos> getItems() {

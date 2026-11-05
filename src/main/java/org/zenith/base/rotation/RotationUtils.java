@@ -11,15 +11,15 @@ public final class RotationUtils implements MinecraftAccess {
       return new Rotation(mc.player.getYRot(), mc.player.getXRot());
    }
 
-   public static Rotation method6912(Vec3 var0) {
+   public static Rotation method6912(Vec3 vec) {
       return new Rotation(
-         (float)Mth.wrapDegrees(Math.toDegrees(Math.atan2(var0.z, var0.x)) - 90.0),
-         (float)Mth.wrapDegrees(Math.toDegrees(-Math.atan2(var0.y, Math.hypot(var0.x, var0.z))))
+         (float)Mth.wrapDegrees(Math.toDegrees(Math.atan2(vec.z, vec.x)) - 90.0),
+         (float)Mth.wrapDegrees(Math.toDegrees(-Math.atan2(vec.y, Math.hypot(vec.x, vec.z))))
       );
    }
 
-   public static Rotation method6913(Vec3 var0) {
-      return method6912(var0.subtract(mc.player.getEyePosition()));
+   public static Rotation method6913(Vec3 location) {
+      return method6912(location.subtract(mc.player.getEyePosition()));
    }
 
    @Generated

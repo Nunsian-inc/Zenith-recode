@@ -13,16 +13,16 @@ import org.zenith.client.modules.impl.misc.NameProtectModule;
 import org.zenith.utility.misc.ColorUtils;
 
 public class FormattedTextProcessor {
-   public static List<FormattedTextProcessor.TextSegment> processText(Component var0, int var1) {
-      ArrayList<FormattedTextProcessor.TextSegment> var2 = new ArrayList<>();
-      var0.visit((var2x, var3) -> {
-         if (!var3.isEmpty()) {
-            appendSegments(var2, NameProtectModule.method5149(var3), var2x, var1);
+   public static List<FormattedTextProcessor.TextSegment> processText(Component text, int color) {
+      ArrayList<FormattedTextProcessor.TextSegment> segments = new ArrayList<>();
+      text.visit((var2x, str) -> {
+         if (!str.isEmpty()) {
+            appendSegments(segments, NameProtectModule.method5149(str), var2x, color);
          }
 
          return Optional.empty();
       }, Style.EMPTY);
-      return var2;
+      return segments;
    }
 
    /**
@@ -103,13 +103,13 @@ public class FormattedTextProcessor {
       return runs;
    }
 
-   private static int extractColor(Style var0, int var1) {
-      TextColor var2 = var0.getColor();
-      if (var2 != null) {
-         int var3 = var2.getValue() | 0xFF000000;
-         return var3 != -1 ? ColorUtils.method6439(var3, ColorUtils.method6427(var1)) : var1;
+   private static int extractColor(Style style, int baseColor) {
+      TextColor color = style.getColor();
+      if (color != null) {
+         int n = color.getValue() | 0xFF000000;
+         return n != -1 ? ColorUtils.method6439(n, ColorUtils.method6427(baseColor)) : baseColor;
       } else {
-         return var1;
+         return baseColor;
       }
    }
 
@@ -177,8 +177,8 @@ public class FormattedTextProcessor {
          return "TextSegment[" + "text=" + this.text + ", " + "color=" + this.color + ", " + "bold=" + this.bold + ", " + "italic=" + this.italic + ", " + "underlined=" + this.underlined + ", " + "strikethrough=" + this.strikethrough + ", " + "style=" + this.style + "]";
       }
 
-      public TextSegment(String var1, int var2, boolean var3, boolean var4, boolean var5, boolean var6) {
-         this(var1, var2, var3, var4, var5, var6, Style.EMPTY);
+      public TextSegment(String text, int color, boolean bold, boolean italic, boolean underlined, boolean strikethrough) {
+         this(text, color, bold, italic, underlined, strikethrough, Style.EMPTY);
       }
 
       public TextSegment(String text, int color, boolean bold, boolean italic, boolean underlined, boolean strikethrough, Style style) {

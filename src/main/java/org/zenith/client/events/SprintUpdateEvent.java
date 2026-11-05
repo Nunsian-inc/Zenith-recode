@@ -7,8 +7,8 @@ public class SprintUpdateEvent extends CancellableEvent {
    private boolean flag;
 
    @Generated
-   public SprintUpdateEvent(boolean var1) {
-      this.flag = var1;
+   public SprintUpdateEvent(boolean flag) {
+      this.flag = flag;
    }
 
    @Generated
@@ -17,7 +17,7 @@ public class SprintUpdateEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setFlag2(boolean var1) {
-      this.flag = var1;
+   public void setFlag2(boolean flag) {
+      this.flag = flag;
    }
 }

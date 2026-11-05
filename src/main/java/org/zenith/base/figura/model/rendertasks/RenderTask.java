@@ -43,7 +43,7 @@ public abstract class RenderTask {
       stack.pop();
    }
 
-   public abstract void render(PoseStack var1, SubmitNodeCollector var2, FiguraBufferSource var3, int var4, int var5);
+   public abstract void render(PoseStack poseStack, SubmitNodeCollector queue, FiguraBufferSource buffer, int light, int overlay);
 
    public abstract int getComplexity();
 

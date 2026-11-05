@@ -22,10 +22,10 @@ import org.zenith.utility.misc.MediaSessionManager;
 public final class MediaHelperProcess {
    private static final MediaHelperProcess INSTANCE = new MediaHelperProcess();
    private static final boolean CONST_flag = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("win");
-   private final ExecutorService executorService = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "zenith-media-helper");
-      var1.setDaemon(true);
-      return var1;
+   private final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "zenith-media-helper");
+      thread.setDaemon(true);
+      return thread;
    });
    private Process process;
    private BufferedWriter bufferedWriter;
@@ -68,13 +68,13 @@ public final class MediaHelperProcess {
       return this.longValue2;
    }
 
-   public void method6860(String var1, double var2) {
-      this.method6869("seek|" + clean(var1) + "|" + String.format(Locale.ROOT, "%.3f", var2));
+   public void method6860(String owner, double doubleValue) {
+      this.method6869("seek|" + clean(owner) + "|" + String.format(Locale.ROOT, "%.3f", doubleValue));
    }
 
-   public void method6861(String var1, float var2) {
-      String var3 = "vol|" + clean(var1) + "|" + String.format(Locale.ROOT, "%.3f", var2);
-      if (this.atomicReference.getAndSet(var3) == null && CONST_flag) {
+   public void method6861(String owner, float floatValue) {
+      String newValue = "vol|" + clean(owner) + "|" + String.format(Locale.ROOT, "%.3f", floatValue);
+      if (this.atomicReference.getAndSet(newValue) == null && CONST_flag) {
          this.executorService.execute(() -> {
             String var1x = this.atomicReference.getAndSet(null);
             if (var1x != null) {
@@ -84,54 +84,54 @@ public final class MediaHelperProcess {
       }
    }
 
-   public void method6862(String var1, float var2, int var3) {
-      this.method6869("fade|" + clean(var1) + "|" + String.format(Locale.ROOT, "%.3f", var2) + "|" + var3);
+   public void method6862(String owner, float f, int n) {
+      this.method6869("fade|" + clean(owner) + "|" + String.format(Locale.ROOT, "%.3f", f) + "|" + n);
    }
 
-   public void method6863(String var1) {
-      this.method6869("getvol|" + clean(var1));
+   public void method6863(String owner) {
+      this.method6869("getvol|" + clean(owner));
    }
 
-   public void method6864(String var1) {
-      this.method6869("shuffle|" + clean(var1));
+   public void method6864(String owner) {
+      this.method6869("shuffle|" + clean(owner));
    }
 
-   public void method6865(String var1) {
-      this.method6869("repeat|" + clean(var1));
+   public void method6865(String owner) {
+      this.method6869("repeat|" + clean(owner));
    }
 
-   public void method6866(String var1) {
-      this.method6869("time|" + clean(var1));
+   public void method6866(String owner) {
+      this.method6869("time|" + clean(owner));
    }
 
-   public void method6867(String var1) {
-      this.method6869("meter|" + clean(var1));
+   public void method6867(String owner) {
+      this.method6869("meter|" + clean(owner));
    }
 
-   public void method6868(String var1) {
-      this.method6869("state|" + clean(var1));
+   public void method6868(String owner) {
+      this.method6869("state|" + clean(owner));
    }
 
-   private static String clean(String var0) {
-      return var0 == null ? "" : var0.replace('|', ' ').replace('\n', ' ');
+   private static String clean(String owner) {
+      return owner == null ? "" : owner.replace('|', ' ').replace('\n', ' ');
    }
 
-   private void method6869(String var1) {
+   private void method6869(String str) {
       if (CONST_flag) {
-         this.executorService.execute(() -> this.write(var1));
+         this.executorService.execute(() -> this.write(str));
       }
    }
 
-   private void write(String var1) {
+   private void write(String str) {
       try {
          if (!this.method6870()) {
             return;
          }
 
-         this.bufferedWriter.write(var1);
+         this.bufferedWriter.write(str);
          this.bufferedWriter.write(10);
          this.bufferedWriter.flush();
-      } catch (Throwable var3) {
+      } catch (Throwable e) {
          this.stop();
       }
    }
@@ -143,32 +143,32 @@ public final class MediaHelperProcess {
          return false;
       } else {
          try {
-            Path var1 = Zenith.file.toPath().resolve("media");
-            Files.createDirectories(var1);
-            Path var2 = var1.resolve("helper.ps1");
+            Path dir = Zenith.file.toPath().resolve("media");
+            Files.createDirectories(dir);
+            Path target = dir.resolve("helper.ps1");
 
-            try (InputStream var3 = MediaHelperProcess.class.getResourceAsStream("/assets/zenith/media/helper.ps1")) {
-               if (var3 == null) {
+            try (InputStream resourceAsStream = MediaHelperProcess.class.getResourceAsStream("/assets/zenith/media/helper.ps1")) {
+               if (resourceAsStream == null) {
                   this.longValue = System.currentTimeMillis();
                   return false;
                }
 
-               Files.copy(var3, var2, StandardCopyOption.REPLACE_EXISTING);
+               Files.copy(resourceAsStream, target, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            ProcessBuilder var9 = new ProcessBuilder(
-               "powershell.exe", "-NoLogo", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", var2.toString()
+            ProcessBuilder processBuilder = new ProcessBuilder(
+               "powershell.exe", "-NoLogo", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", target.toString()
             );
-            var9.redirectErrorStream(false);
-            var9.redirectError(Redirect.DISCARD);
-            this.process = var9.start();
+            processBuilder.redirectErrorStream(false);
+            processBuilder.redirectError(Redirect.DISCARD);
+            this.process = processBuilder.start();
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream(), StandardCharsets.UTF_8));
-            Process var4 = this.process;
-            Thread var5 = new Thread(() -> this.method6871(var4), "zenith-media-reader");
-            var5.setDaemon(true);
-            var5.start();
+            Process process = this.process;
+            Thread thread = new Thread(() -> this.method6871(process), "zenith-media-reader");
+            thread.setDaemon(true);
+            thread.start();
             return true;
-         } catch (Throwable var8) {
+         } catch (Throwable e) {
             this.longValue = System.currentTimeMillis();
             this.process = null;
             return false;
@@ -176,55 +176,55 @@ public final class MediaHelperProcess {
       }
    }
 
-   private void method6871(Process var1) {
-      String var3;
-      try (BufferedReader var2 = new BufferedReader(new InputStreamReader(var1.getInputStream(), StandardCharsets.UTF_8))) {
-         while ((var3 = var2.readLine()) != null) {
-            String var4 = var3.trim();
-            if (var4.startsWith("peak ")) {
-               MediaPlayerState.getInstance().method1671(method6873(var4.substring(5)));
-            } else if (var4.startsWith("time ")) {
-               String[] var5 = var4.split(" ");
-               if (var5.length >= 5) {
-                  double var6 = method6873(var5[1]);
-                  double var8 = method6873(var5[2]);
-                  long var10 = method6872(var5[3]);
-                  boolean var12 = var5[4].trim().equals("4");
-                  Minecraft.getInstance().execute(() -> MediaSessionManager.getInstance().method6002(var6, var8, var10, var12));
+   private void method6871(Process process) {
+      String line;
+      try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+         while ((line = bufferedReader.readLine()) != null) {
+            String str = line.trim();
+            if (str.startsWith("peak ")) {
+               MediaPlayerState.getInstance().method1671(method6873(str.substring(5)));
+            } else if (str.startsWith("time ")) {
+               String[] strings = str.split(" ");
+               if (strings.length >= 5) {
+                  double d = method6873(strings[1]);
+                  double d2 = method6873(strings[2]);
+                  long l = method6872(strings[3]);
+                  boolean flag = strings[4].trim().equals("4");
+                  Minecraft.getInstance().execute(() -> MediaSessionManager.getInstance().method6002(d, d2, l, flag));
                }
-            } else if (var4.startsWith("vol ")) {
-               float var16 = method6873(var4.substring(4));
-               Minecraft.getInstance().execute(() -> MediaPlayerState.getInstance().method1670(var16));
-            } else if (var4.startsWith("state ")) {
-               String[] var17 = var4.split(" ");
-               if (var17.length >= 3) {
-                  this.flag = var17[1].equalsIgnoreCase("true");
-                  this.intValue = (int)method6873(var17[2]);
-                  if (var17.length >= 5) {
-                     this.flag2 = var17[3].equalsIgnoreCase("true");
-                     this.flag3 = var17[4].equalsIgnoreCase("true");
+            } else if (str.startsWith("vol ")) {
+               float floatValue = method6873(str.substring(4));
+               Minecraft.getInstance().execute(() -> MediaPlayerState.getInstance().method1670(floatValue));
+            } else if (str.startsWith("state ")) {
+               String[] strings = str.split(" ");
+               if (strings.length >= 3) {
+                  this.flag = strings[1].equalsIgnoreCase("true");
+                  this.intValue = (int)method6873(strings[2]);
+                  if (strings.length >= 5) {
+                     this.flag2 = strings[3].equalsIgnoreCase("true");
+                     this.flag3 = strings[4].equalsIgnoreCase("true");
                   }
 
                   this.longValue2 = System.currentTimeMillis();
                }
             }
          }
-      } catch (Throwable var15) {
+      } catch (Throwable e) {
       }
    }
 
-   private static long method6872(String var0) {
+   private static long method6872(String str) {
       try {
-         return Long.parseLong(var0.trim());
-      } catch (NumberFormatException var2) {
+         return Long.parseLong(str.trim());
+      } catch (NumberFormatException e) {
          return 0L;
       }
    }
 
-   private static float method6873(String var0) {
+   private static float method6873(String str) {
       try {
-         return Float.parseFloat(var0.trim().replace(',', '.'));
-      } catch (NumberFormatException var2) {
+         return Float.parseFloat(str.trim().replace(',', '.'));
+      } catch (NumberFormatException e) {
          return -1.0F;
       }
    }

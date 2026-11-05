@@ -49,28 +49,28 @@ public final class CloudDmClient {
    }
 
    public List<CloudDmClient.Data2> method4856() {
-      List<CloudDmClient.Data2> var1 = this.items;
-      boolean var2 = false;
+      List<CloudDmClient.Data2> items = this.items;
+      boolean flag = false;
 
-      for (CloudDmClient.Data2 var4 : var1) {
-         if (method4858(var4.getText())) {
-            var2 = true;
+      for (CloudDmClient.Data2 data2 : items) {
+         if (method4858(data2.getText())) {
+            flag = true;
             break;
          }
       }
 
-      if (!var2) {
-         return var1;
+      if (!flag) {
+         return items;
       } else {
-         List<Data2> var6 = new ArrayList<>(var1.size());
+         List<Data2> data2s = new ArrayList<>(items.size());
 
-         for (CloudDmClient.Data2 var5 : var1) {
-            if (!method4858(var5.getText())) {
-               var6.add(var5);
+         for (CloudDmClient.Data2 data2 : items) {
+            if (!method4858(data2.getText())) {
+               data2s.add(data2);
             }
          }
 
-         return var6;
+         return data2s;
       }
    }
 
@@ -78,23 +78,23 @@ public final class CloudDmClient {
       return method4858(this.peerName) ? List.of() : this.messages;
    }
 
-   public static boolean method4858(String var0) {
-      if (var0 != null && !var0.isEmpty()) {
-         Zenith var1 = Zenith.getInstance();
-         Cloud var2 = var1 == null ? null : var1.getCloud();
-         return var2 != null && var2.prefs().method3316(var0);
+   public static boolean method4858(String text) {
+      if (text != null && !text.isEmpty()) {
+         Zenith zenith = Zenith.getInstance();
+         Cloud cloud = zenith == null ? null : zenith.getCloud();
+         return cloud != null && cloud.prefs().method3316(text);
       } else {
          return false;
       }
    }
 
    private boolean method4859() {
-      String var1 = SiteSession.method2289();
-      if (this.owner.isEmpty() && !var1.isEmpty()) {
-         this.owner = var1;
-      } else if (!var1.equals(this.owner)) {
+      String owner = SiteSession.method2289();
+      if (this.owner.isEmpty() && !owner.isEmpty()) {
+         this.owner = owner;
+      } else if (!owner.equals(this.owner)) {
          synchronized (this.obj) {
-            this.owner = var1;
+            this.owner = owner;
             this.intValue2++;
             this.items = List.of();
             this.messages = List.of();
@@ -107,12 +107,12 @@ public final class CloudDmClient {
          this.longValue2 = 0L;
          this.longValue3 = 0L;
          this.revision++;
-         if (var1.isEmpty()) {
+         if (owner.isEmpty()) {
             this.webSocketClient.release();
          }
       }
 
-      return !var1.isEmpty();
+      return !owner.isEmpty();
    }
 
    public void method4860() {
@@ -124,8 +124,8 @@ public final class CloudDmClient {
       }
    }
 
-   public void method4861(long var1) {
-      if (this.longValue4 != 0L && System.currentTimeMillis() - this.longValue4 > var1) {
+   public void method4861(long l) {
+      if (this.longValue4 != 0L && System.currentTimeMillis() - this.longValue4 > l) {
          this.longValue4 = 0L;
          this.webSocketClient.release();
       }
@@ -170,9 +170,9 @@ public final class CloudDmClient {
    public void method4863() {
       if (this.method4859()) {
          this.webSocketClient.method491();
-         long var1 = System.currentTimeMillis();
-         this.longValue4 = var1;
-         if (!this.flag && var1 - this.longValue2 > 20000L) {
+         long now = System.currentTimeMillis();
+         this.longValue4 = now;
+         if (!this.flag && now - this.longValue2 > 20000L) {
             this.method4864();
          }
       }
@@ -186,32 +186,32 @@ public final class CloudDmClient {
       if (!this.flag) {
          this.flag = true;
          this.longValue2 = System.currentTimeMillis();
-         int var1 = this.intValue2;
+         int n = this.intValue2;
          SiteHttpClient.method2411("/dm/threads", new JsonObject())
             .whenComplete(
-               (var2, var3) -> {
+               (jsonObject, throwable) -> {
                   this.flag = false;
-                  if (var1 == this.intValue2) {
-                     if (var3 != null) {
-                        this.error = SiteHttpClient.method2424(var3);
+                  if (n == this.intValue2) {
+                     if (throwable != null) {
+                        this.error = SiteHttpClient.method2424(throwable);
                         this.revision++;
                      } else {
                         this.error = "";
-                        ArrayList var4 = new ArrayList();
-                        JsonArray var5 = SiteHttpClient.method2419(var2, "threads");
-                        if (var5 != null) {
-                           for (JsonElement var7 : var5) {
-                              if (var7.isJsonObject()) {
-                                 JsonObject var8 = var7.getAsJsonObject();
-                                 var4.add(
+                        ArrayList coll = new ArrayList();
+                        JsonArray jsonArray = SiteHttpClient.method2419(jsonObject, "threads");
+                        if (jsonArray != null) {
+                           for (JsonElement jsonElement : jsonArray) {
+                              if (jsonElement.isJsonObject()) {
+                                 JsonObject json = jsonElement.getAsJsonObject();
+                                 coll.add(
                                     new CloudDmClient.Data2(
-                                       SiteHttpClient.method2421(var8, "peer_id", 0),
-                                       SiteHttpClient.method2417(var8, "peer_name", ""),
-                                       SiteHttpClient.method2417(var8, "peer_avatar_path", null),
-                                       SiteHttpClient.method2417(var8, "last_body", ""),
-                                       SiteHttpClient.method2422(SiteHttpClient.method2417(var8, "last_at", "")),
-                                       SiteHttpClient.method2420(var8, "last_mine", false),
-                                       SiteHttpClient.method2421(var8, "unread", 0)
+                                       SiteHttpClient.method2421(json, "peer_id", 0),
+                                       SiteHttpClient.method2417(json, "peer_name", ""),
+                                       SiteHttpClient.method2417(json, "peer_avatar_path", null),
+                                       SiteHttpClient.method2417(json, "last_body", ""),
+                                       SiteHttpClient.method2422(SiteHttpClient.method2417(json, "last_at", "")),
+                                       SiteHttpClient.method2420(json, "last_mine", false),
+                                       SiteHttpClient.method2421(json, "unread", 0)
                                     )
                                  );
                               }
@@ -219,14 +219,14 @@ public final class CloudDmClient {
                         }
 
                         synchronized (this.obj) {
-                           if (var1 != this.intValue2) {
+                           if (n != this.intValue2) {
                               return;
                            }
 
-                           this.items = List.copyOf(var4);
+                           this.items = List.copyOf(coll);
                         }
 
-                        this.intValue = SiteHttpClient.method2421(var2, "unread_total", 0);
+                        this.intValue = SiteHttpClient.method2421(jsonObject, "unread_total", 0);
                         this.revision++;
                      }
                   }
@@ -235,17 +235,17 @@ public final class CloudDmClient {
       }
    }
 
-   public void method4865(long var1, String var3) {
-      if (var1 != this.longValue) {
-         this.longValue = var1;
-         this.peerName = var3 == null ? "" : var3;
+   public void method4865(long longValue, String peerName) {
+      if (longValue != this.longValue) {
+         this.longValue = longValue;
+         this.peerName = peerName == null ? "" : peerName;
          synchronized (this.obj) {
             this.messages = List.of();
          }
 
          this.revision++;
-         if (var1 != 0L) {
-            this.method4866(var1);
+         if (longValue != 0L) {
+            this.method4866(longValue);
          }
       }
    }
@@ -260,54 +260,54 @@ public final class CloudDmClient {
       this.revision++;
    }
 
-   private void method4866(long var1) {
+   private void method4866(long longValue) {
       if (!this.flag2) {
          this.flag2 = true;
-         JsonObject var3 = new JsonObject();
-         var3.addProperty("peer_id", var1);
-         var3.addProperty("limit", 100);
-         int var4 = this.intValue2;
-         SiteHttpClient.method2411("/dm/history", var3).whenComplete((var4x, var5) -> {
+         JsonObject json = new JsonObject();
+         json.addProperty("peer_id", longValue);
+         json.addProperty("limit", 100);
+         int n = this.intValue2;
+         SiteHttpClient.method2411("/dm/history", json).whenComplete((var4x, throwable) -> {
             this.flag2 = false;
-            if (var4 == this.intValue2) {
-               long var6 = this.longValue;
-               boolean var8 = var1 != var6;
-               if (var5 != null) {
-                  this.error = SiteHttpClient.method2424(var5);
+            if (n == this.intValue2) {
+               long l = this.longValue;
+               boolean flag = longValue != l;
+               if (throwable != null) {
+                  this.error = SiteHttpClient.method2424(throwable);
                   this.revision++;
-                  if (var8 && var6 != 0L && this.messages.isEmpty()) {
-                     this.method4866(var6);
+                  if (flag && l != 0L && this.messages.isEmpty()) {
+                     this.method4866(l);
                   }
-               } else if (var8) {
-                  if (var6 != 0L && this.messages.isEmpty()) {
-                     this.method4866(var6);
+               } else if (flag) {
+                  if (l != 0L && this.messages.isEmpty()) {
+                     this.method4866(l);
                   }
                } else {
                   this.error = "";
-                  ArrayList var9 = new ArrayList();
-                  JsonArray var10 = SiteHttpClient.method2419(var4x, "messages");
-                  if (var10 != null) {
-                     for (JsonElement var12 : var10) {
-                        if (var12.isJsonObject()) {
-                           var9.add(method4876(var12.getAsJsonObject()));
+                  ArrayList arrayList = new ArrayList();
+                  JsonArray jsonArray = SiteHttpClient.method2419(var4x, "messages");
+                  if (jsonArray != null) {
+                     for (JsonElement jsonElement : jsonArray) {
+                        if (jsonElement.isJsonObject()) {
+                           arrayList.add(method4876(jsonElement.getAsJsonObject()));
                         }
                      }
                   }
 
                   synchronized (this.obj) {
-                     if (var4 != this.intValue2) {
+                     if (n != this.intValue2) {
                         return;
                      }
 
-                     this.messages = List.copyOf(method4873(var9, this.messages));
+                     this.messages = List.copyOf(method4873(arrayList, this.messages));
                   }
 
-                  JsonObject var16 = SiteHttpClient.method2418(var4x, "peer");
-                  if (var16 != null) {
-                     this.peerName = SiteHttpClient.method2417(var16, "name", this.peerName);
+                  JsonObject jsonObject = SiteHttpClient.method2418(var4x, "peer");
+                  if (jsonObject != null) {
+                     this.peerName = SiteHttpClient.method2417(jsonObject, "name", this.peerName);
                   }
 
-                  this.method4875(var1);
+                  this.method4875(longValue);
                   this.revision++;
                }
             }
@@ -315,15 +315,15 @@ public final class CloudDmClient {
       }
    }
 
-   public CompletableFuture<CloudDmClient.Data> method4867(long var1, String var3) {
-      String var4 = var3 == null ? "" : var3.strip();
-      if (var4.isEmpty()) {
+   public CompletableFuture<CloudDmClient.Data> method4867(long openPeerUid, String text) {
+      String str = text == null ? "" : text.strip();
+      if (str.isEmpty()) {
          return CompletableFuture.failedFuture(new SiteHttpClient.Entry2("пустое сообщение"));
       } else {
-         JsonObject var5 = new JsonObject();
-         var5.addProperty("peer_id", var1);
-         var5.addProperty("body", var4.length() > 1000 ? var4.substring(0, 1000) : var4);
-         return SiteHttpClient.method2411("/dm/send", var5).handle((var3x, var4x) -> {
+         JsonObject json = new JsonObject();
+         json.addProperty("peer_id", openPeerUid);
+         json.addProperty("body", str.length() > 1000 ? str.substring(0, 1000) : str);
+         return SiteHttpClient.method2411("/dm/send", json).handle((var3x, var4x) -> {
             if (var4x != null) {
                this.error = SiteHttpClient.method2424(var4x);
                this.revision++;
@@ -331,7 +331,7 @@ public final class CloudDmClient {
             } else {
                this.error = "";
                CloudDmClient.Data var5x = method4876(SiteHttpClient.method2418(var3x, "message_data"));
-               if (!this.webSocketClient.isLive() && var1 == this.longValue) {
+               if (!this.webSocketClient.isLive() && openPeerUid == this.longValue) {
                   this.method4872(var5x);
                }
 
@@ -343,14 +343,14 @@ public final class CloudDmClient {
    }
 
    public CompletableFuture<Integer> method4868() {
-      int var1 = this.intValue2;
-      return SiteHttpClient.method2411("/dm/unread", new JsonObject()).thenApply(var2 -> {
-         int var3 = SiteHttpClient.method2421(var2, "unread_total", 0);
-         if (var1 == this.intValue2) {
-            this.intValue = var3;
+      int n = this.intValue2;
+      return SiteHttpClient.method2411("/dm/unread", new JsonObject()).thenApply(jsonObject -> {
+         int intValue = SiteHttpClient.method2421(jsonObject, "unread_total", 0);
+         if (n == this.intValue2) {
+            this.intValue = intValue;
          }
 
-         return var3;
+         return intValue;
       });
    }
 
@@ -358,35 +358,35 @@ public final class CloudDmClient {
       if (!this.method4859()) {
          return 0;
       } else {
-         long var1 = System.currentTimeMillis();
-         if (!this.flag3 && var1 - this.longValue3 > 30000L) {
+         long now = System.currentTimeMillis();
+         if (!this.flag3 && now - this.longValue3 > 30000L) {
             this.flag3 = true;
-            this.longValue3 = var1;
-            this.method4868().whenComplete((var1x, var2) -> this.flag3 = false);
+            this.longValue3 = now;
+            this.method4868().whenComplete((var1x, throwable) -> this.flag3 = false);
          }
 
          return this.intValue;
       }
    }
 
-   private void method4870(JsonObject var1) {
-      String var2 = SiteHttpClient.method2417(var1, "type", "");
-      if (var2.equals("dm")) {
-         JsonObject var5 = SiteHttpClient.method2418(var1, "msg");
-         if (var5 != null) {
-            CloudDmClient.Data var4 = method4876(var5);
-            this.method4871(var4);
-            if (var4.getLongValue2() == this.longValue || var4.getLongValue3() == this.longValue) {
-               this.method4872(var4);
+   private void method4870(JsonObject jsonObject) {
+      String str = SiteHttpClient.method2417(jsonObject, "type", "");
+      if (str.equals("dm")) {
+         JsonObject json = SiteHttpClient.method2418(jsonObject, "msg");
+         if (json != null) {
+            CloudDmClient.Data data = method4876(json);
+            this.method4871(data);
+            if (data.getLongValue2() == this.longValue || data.getLongValue3() == this.longValue) {
+               this.method4872(data);
             }
 
             this.longValue2 = 0L;
             this.revision++;
          }
       } else {
-         if (var2.equals("read")) {
-            long var3 = SiteHttpClient.method2421(var1, "peer_id", 0);
-            if (var3 == this.longValue) {
+         if (str.equals("read")) {
+            long l = SiteHttpClient.method2421(jsonObject, "peer_id", 0);
+            if (l == this.longValue) {
                this.method4874();
             }
 
@@ -395,49 +395,49 @@ public final class CloudDmClient {
       }
    }
 
-   private void method4871(CloudDmClient.Data var1) {
-      Zenith var2 = Zenith.getInstance();
-      if (var2 != null && var2.getEntry() != null) {
-         long var3;
+   private void method4871(CloudDmClient.Data data) {
+      Zenith zenith = Zenith.getInstance();
+      if (zenith != null && zenith.getEntry() != null) {
+         long l;
          try {
-            var3 = Long.parseLong(var2.getEntry().getText2().trim());
-         } catch (RuntimeException var12) {
+            l = Long.parseLong(zenith.getEntry().getText2().trim());
+         } catch (RuntimeException e) {
             return;
          }
 
-         if (var1.getLongValue2() != var3) {
-            Share var5 = var2.getShare();
-            if (var5 == null || var5.notifyMessages.isEnabled()) {
-               PartyManager var6 = PartyManager.method17();
-               if (var6 == null || !var6.method32()) {
-                  String var7 = "";
+         if (data.getLongValue2() != l) {
+            Share share = zenith.getShare();
+            if (share == null || share.notifyMessages.isEnabled()) {
+               PartyManager partyManager = PartyManager.method17();
+               if (partyManager == null || !partyManager.method32()) {
+                  String text = "";
 
-                  for (CloudDmClient.Data2 var9 : this.items) {
-                     if (var9.getLongValue() == var1.getLongValue2()) {
-                        var7 = var9.getText();
+                  for (CloudDmClient.Data2 data2 : this.items) {
+                     if (data2.getLongValue() == data.getLongValue2()) {
+                        text = data2.getText();
                         break;
                      }
                   }
 
-                  if (var7.isEmpty() && var1.getLongValue2() == this.longValue) {
-                     var7 = this.peerName;
+                  if (text.isEmpty() && data.getLongValue2() == this.longValue) {
+                     text = this.peerName;
                   }
 
-                  if (!method4858(var7)) {
-                     Minecraft var13 = Minecraft.getInstance();
-                     boolean var14 = var1.getLongValue2() == this.longValue && var13 != null && var13.gui.screen() instanceof NLMenuScreen;
-                     if (!var14) {
-                        String var10 = var1.body() == null ? "" : var1.body();
-                        if (var10.contains("[z:")) {
-                           var10 = var2.getLocalization().translate("cloud.dm.attachment");
+                  if (!method4858(text)) {
+                     Minecraft minecraft = Minecraft.getInstance();
+                     boolean flag = data.getLongValue2() == this.longValue && minecraft != null && minecraft.gui.screen() instanceof NLMenuScreen;
+                     if (!flag) {
+                        String body = data.body() == null ? "" : data.body();
+                        if (body.contains("[z:")) {
+                           body = zenith.getLocalization().translate("cloud.dm.attachment");
                         }
 
-                        String var11 = ((var7.isEmpty() ? var2.getLocalization().translate("cloud.dm.someone") : var7)
+                        String str = ((text.isEmpty() ? zenith.getLocalization().translate("cloud.dm.someone") : text)
                               + ": "
-                              + (var10.length() > 60 ? var10.substring(0, 60) + "…" : var10))
+                              + (body.length() > 60 ? body.substring(0, 60) + "…" : body))
                            .replace('§', ' ');
-                        if (var13 != null) {
-                           var13.execute(() -> Cloud.method7914(var11));
+                        if (minecraft != null) {
+                           minecraft.execute(() -> Cloud.method7914(str));
                         }
                      }
                   }
@@ -447,98 +447,98 @@ public final class CloudDmClient {
       }
    }
 
-   private void method4872(CloudDmClient.Data var1) {
+   private void method4872(CloudDmClient.Data data) {
       synchronized (this.obj) {
-         List<CloudDmClient.Data> var3 = this.messages;
+         List<CloudDmClient.Data> messages = this.messages;
 
-         for (CloudDmClient.Data var5 : var3) {
-            if (var5.getLongValue() == var1.getLongValue()) {
+         for (CloudDmClient.Data message : messages) {
+            if (message.getLongValue() == data.getLongValue()) {
                return;
             }
          }
 
-         List<Data> var8 = new ArrayList<>(var3.size() + 1);
-         var8.addAll(var3);
-         var8.add(var1);
-         this.messages = List.copyOf(var8);
+         List<Data> coll = new ArrayList<>(messages.size() + 1);
+         coll.addAll(messages);
+         coll.add(data);
+         this.messages = List.copyOf(coll);
       }
 
       this.revision++;
    }
 
-   private static List<CloudDmClient.Data> method4873(List<CloudDmClient.Data> var0, List<CloudDmClient.Data> var1) {
-      long var2 = 0L;
-      long var4 = 0L;
-      LinkedHashMap var6 = new LinkedHashMap(var0.size() + 8);
+   private static List<CloudDmClient.Data> method4873(List<CloudDmClient.Data> datas, List<CloudDmClient.Data> messages) {
+      long l = 0L;
+      long l2 = 0L;
+      LinkedHashMap map = new LinkedHashMap(datas.size() + 8);
 
-      for (CloudDmClient.Data var8 : var0) {
-         var2 = Math.max(var2, var8.getLongValue());
-         var4 = Math.max(var4, var8.getLongValue4());
-         var6.put(var8.getLongValue(), var8);
+      for (CloudDmClient.Data data : datas) {
+         l = Math.max(l, data.getLongValue());
+         l2 = Math.max(l2, data.getLongValue4());
+         map.put(data.getLongValue(), data);
       }
 
-      for (CloudDmClient.Data var11 : var1) {
-         if (!var6.containsKey(var11.getLongValue()) && (var0.isEmpty() || var11.getLongValue() > var2 || var11.getLongValue4() > var4)) {
-            var6.put(var11.getLongValue(), var11);
+      for (CloudDmClient.Data message : messages) {
+         if (!map.containsKey(message.getLongValue()) && (datas.isEmpty() || message.getLongValue() > l || message.getLongValue4() > l2)) {
+            map.put(message.getLongValue(), message);
          }
       }
 
-      var var10 = new ArrayList<>(var6.values());
-      var10.sort(comparator);
-      return var10;
+      var arrayList = new ArrayList<>(map.values());
+      arrayList.sort(comparator);
+      return arrayList;
    }
 
    private void method4874() {
       synchronized (this.obj) {
-         var var2 = this.messages;
-         ArrayList var3 = null;
+         var messages = this.messages;
+         ArrayList coll = null;
 
-         for (int var4 = 0; var4 < var2.size(); var4++) {
-            CloudDmClient.Data var5 = (CloudDmClient.Data)var2.get(var4);
-            if (!var5.read()) {
-               if (var3 == null) {
-                  var3 = new ArrayList(var2);
+         for (int i = 0; i < messages.size(); i++) {
+            CloudDmClient.Data data = (CloudDmClient.Data)messages.get(i);
+            if (!data.read()) {
+               if (coll == null) {
+                  coll = new ArrayList(messages);
                }
 
-               var3.set(var4, new CloudDmClient.Data(var5.getLongValue(), var5.getLongValue2(), var5.getLongValue3(), var5.body(), var5.getLongValue4(), true));
+               coll.set(i, new CloudDmClient.Data(data.getLongValue(), data.getLongValue2(), data.getLongValue3(), data.body(), data.getLongValue4(), true));
             }
          }
 
-         if (var3 != null) {
-            this.messages = List.copyOf(var3);
+         if (coll != null) {
+            this.messages = List.copyOf(coll);
          }
       }
    }
 
-   private void method4875(long var1) {
+   private void method4875(long longValue) {
       synchronized (this.obj) {
-         var var4 = this.items;
+         var items = this.items;
 
-         for (int var5 = 0; var5 < var4.size(); var5++) {
-            CloudDmClient.Data2 var6 = (CloudDmClient.Data2)var4.get(var5);
-            if (var6.getLongValue() == var1 && var6.getIntValue() > 0) {
-               this.intValue = Math.max(0, this.intValue - var6.getIntValue());
-               var var7 = new ArrayList<>(var4);
-               var7.set(
-                  var5, new CloudDmClient.Data2(var6.getLongValue(), var6.getText(), var6.getText2(), var6.getText3(), var6.getLongValue2(), var6.isFlag(), 0)
+         for (int i = 0; i < items.size(); i++) {
+            CloudDmClient.Data2 data2 = (CloudDmClient.Data2)items.get(i);
+            if (data2.getLongValue() == longValue && data2.getIntValue() > 0) {
+               this.intValue = Math.max(0, this.intValue - data2.getIntValue());
+               var coll = new ArrayList<>(items);
+               coll.set(
+                  i, new CloudDmClient.Data2(data2.getLongValue(), data2.getText(), data2.getText2(), data2.getText3(), data2.getLongValue2(), data2.isFlag(), 0)
                );
-               this.items = List.copyOf(var7);
+               this.items = List.copyOf(coll);
                return;
             }
          }
       }
    }
 
-   private static CloudDmClient.Data method4876(JsonObject var0) {
-      return var0 == null
+   private static CloudDmClient.Data method4876(JsonObject jsonObject) {
+      return jsonObject == null
          ? new CloudDmClient.Data(0L, 0L, 0L, "", 0L, false)
          : new CloudDmClient.Data(
-            SiteHttpClient.method2421(var0, "id", 0),
-            SiteHttpClient.method2421(var0, "sender_id", 0),
-            SiteHttpClient.method2421(var0, "recipient_id", 0),
-            SiteHttpClient.method2417(var0, "body", ""),
-            SiteHttpClient.method2422(SiteHttpClient.method2417(var0, "created_at", "")),
-            var0.has("read_at") && !var0.get("read_at").isJsonNull()
+            SiteHttpClient.method2421(jsonObject, "id", 0),
+            SiteHttpClient.method2421(jsonObject, "sender_id", 0),
+            SiteHttpClient.method2421(jsonObject, "recipient_id", 0),
+            SiteHttpClient.method2417(jsonObject, "body", ""),
+            SiteHttpClient.method2422(SiteHttpClient.method2417(jsonObject, "created_at", "")),
+            jsonObject.has("read_at") && !jsonObject.get("read_at").isJsonNull()
          );
    }
 
@@ -591,13 +591,13 @@ public final class CloudDmClient {
          return "Data[" + "longValue=" + this.longValue + ", " + "longValue2=" + this.longValue2 + ", " + "longValue3=" + this.longValue3 + ", " + "text=" + this.text + ", " + "longValue4=" + this.longValue4 + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data(long var1, long var3, long var5, String var7, long var8, boolean var10) {
-         this.longValue = var1;
-         this.longValue2 = var3;
-         this.longValue3 = var5;
-         this.text = var7;
-         this.longValue4 = var8;
-         this.flag = var10;
+      public Data(long longValue, long l, long l2, String text, long l3, boolean flag) {
+         this.longValue = longValue;
+         this.longValue2 = l;
+         this.longValue3 = l2;
+         this.text = text;
+         this.longValue4 = l3;
+         this.flag = flag;
       }
 
       public long getLongValue() {
@@ -679,14 +679,14 @@ public final class CloudDmClient {
          return "Data2[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "longValue2=" + this.longValue2 + ", " + "flag=" + this.flag + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data2(long var1, String var3, String var4, String var5, long var6, boolean var8, int var9) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.text3 = var5;
-         this.longValue2 = var6;
-         this.flag = var8;
-         this.intValue = var9;
+      public Data2(long longValue, String text, String str, String str2, long l, boolean flag, int intValue) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.longValue2 = l;
+         this.flag = flag;
+         this.intValue = intValue;
       }
 
       public long getLongValue() {

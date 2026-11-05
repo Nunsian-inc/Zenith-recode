@@ -10,9 +10,9 @@ public final class WindowUtils {
    private WindowUtils() {
    }
 
-   private static boolean method5474(int var0, int var1) {
-      Window var2 = Minecraft.getInstance().getWindow();
-      return org.zenith.utility.misc.KeyCompat.isKeyDown(var0) || org.zenith.utility.misc.KeyCompat.isKeyDown(var1);
+   private static boolean method5474(int glfwKey, int n) {
+      Window window = Minecraft.getInstance().getWindow();
+      return org.zenith.utility.misc.KeyCompat.isKeyDown(glfwKey) || org.zenith.utility.misc.KeyCompat.isKeyDown(n);
    }
 
    public static boolean method5475() {

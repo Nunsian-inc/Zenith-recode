@@ -7,13 +7,13 @@ import org.zenith.Zenith;
 public class CategoryIcon {
    private final Identifier identifier;
 
-   public CategoryIcon(String var1) {
-      if (var1.contains(":")) {
-         this.identifier = Identifier.parse(var1);
-      } else if (var1.contains("/")) {
-         this.identifier = Zenith.method1501(var1);
+   public CategoryIcon(String identifier) {
+      if (identifier.contains(":")) {
+         this.identifier = Identifier.parse(identifier);
+      } else if (identifier.contains("/")) {
+         this.identifier = Zenith.method1501(identifier);
       } else {
-         this.identifier = Zenith.method1501("icons/category/" + var1);
+         this.identifier = Zenith.method1501("icons/category/" + identifier);
       }
    }
 

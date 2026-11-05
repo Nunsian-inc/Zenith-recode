@@ -17,62 +17,62 @@ public abstract class MenuWidget {
    public boolean visible = true;
    public boolean enabled = true;
 
-   public void setBounds(float var1, float var2, float var3, float var4) {
-      this.x = MenuTheme.snap(var1);
-      this.y = MenuTheme.snap(var2);
-      this.width = MenuTheme.snap(var1 + var3) - this.x;
-      this.height = MenuTheme.snap(var2 + var4) - this.y;
+   public void setBounds(float floatValue, float f, float preferredWidth, float f2) {
+      this.x = MenuTheme.snap(floatValue);
+      this.y = MenuTheme.snap(f);
+      this.width = MenuTheme.snap(floatValue + preferredWidth) - this.x;
+      this.height = MenuTheme.snap(f + f2) - this.y;
    }
 
    public BoundsData bounds() {
       return new BoundsData(this.x, this.y, this.width, this.height);
    }
 
-   public boolean contains(double var1, double var3) {
-      return var1 >= this.x && var1 <= this.x + this.width && var3 >= this.y && var3 <= this.y + this.height;
+   public boolean contains(double lastClickX, double lastClickY) {
+      return lastClickX >= this.x && lastClickX <= this.x + this.width && lastClickY >= this.y && lastClickY <= this.y + this.height;
    }
 
-   public MenuWidget setVisible(boolean var1) {
-      this.visible = var1;
+   public MenuWidget setVisible(boolean visible) {
+      this.visible = visible;
       return this;
    }
 
-   public MenuWidget setEnabled(boolean var1) {
-      this.enabled = var1;
+   public MenuWidget setEnabled(boolean enabled) {
+      this.enabled = enabled;
       return this;
    }
 
-   public final void render(MenuDrawContext var1, float var2, float var3) {
+   public final void render(MenuDrawContext graphics, float mouseX, float mouseY) {
       if (this.visible) {
-         this.hovered = this.enabled && this.contains(var2, var3);
+         this.hovered = this.enabled && this.contains(mouseX, mouseY);
          this.hoverAnimation.method2807(this.hovered);
-         this.draw(var1, var2, var3);
+         this.draw(graphics, mouseX, mouseY);
       }
    }
 
-   public abstract void draw(MenuDrawContext var1, float var2, float var3);
+   public abstract void draw(MenuDrawContext graphics, float mouseX, float mouseY);
 
-   public boolean mouseClicked(double var1, double var3, int var5) {
+   public boolean mouseClicked(double d, double d2, int n) {
       return false;
    }
 
-   public boolean mouseReleased(double var1, double var3, int var5) {
+   public boolean mouseReleased(double d, double d2, int n) {
       return false;
    }
 
-   public boolean mouseDragged(double var1, double var3, int var5) {
+   public boolean mouseDragged(double d, double d2, int n) {
       return false;
    }
 
-   public boolean mouseScrolled(double var1, double var3, double var5) {
+   public boolean mouseScrolled(double d, double d2, double d3) {
       return false;
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int n, int n2, int n3) {
       return false;
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char c, int n) {
       return false;
    }
 

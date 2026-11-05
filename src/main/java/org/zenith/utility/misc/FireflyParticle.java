@@ -23,16 +23,16 @@ public class FireflyParticle implements Handler7 {
    private int intValue4 = -1;
    private float floatValue2 = 1.0F;
 
-   public FireflyParticle(Vec3 var1, Vec3 var2, int var3, float var4, ZenithColor var5) {
-      this.vec3d = var1;
-      this.vec3d2 = var1;
+   public FireflyParticle(Vec3 vec3d, Vec3 vec3d4, int intValue, float floatValue, ZenithColor zenithColor) {
+      this.vec3d = vec3d;
+      this.vec3d2 = vec3d;
       this.vec3d3 = Vec3.ZERO;
-      this.vec3d4 = var2;
-      this.intValue = var3;
-      this.intValue2 = var3;
-      this.intValue3 = var3;
-      this.floatValue = var4;
-      this.zenithColor = var5;
+      this.vec3d4 = vec3d4;
+      this.intValue = intValue;
+      this.intValue2 = intValue;
+      this.intValue3 = intValue;
+      this.floatValue = floatValue;
+      this.zenithColor = zenithColor;
    }
 
    @Override
@@ -45,33 +45,33 @@ public class FireflyParticle implements Handler7 {
       return 0.0F;
    }
 
-   public void method4704(Vec3 var1) {
-      Minecraft var2 = Minecraft.getInstance();
+   public void method4704(Vec3 vec) {
+      Minecraft minecraft = Minecraft.getInstance();
       this.intValue2 = this.intValue;
-      double var3 = this.vec3d.distanceTo(var1);
-      this.intValue -= var3 > 64.0 ? 8 : 1;
+      double d = this.vec3d.distanceTo(vec);
+      this.intValue -= d > 64.0 ? 8 : 1;
       if (this.intValue > 0) {
-         Vec3 var5 = this.vec3d;
+         Vec3 vec3d = this.vec3d;
          this.vec3d2 = this.vec3d;
-         float var6 = 1.0F - (float)this.intValue / this.intValue3;
-         if (var6 < 0.35F) {
-            float var7 = 1.0F - (float)Math.pow(1.0F - var6 / 0.35F, 3.0);
-            this.vec3d3 = this.vec3d4.scale(var7);
-         } else if (var6 > 0.6F) {
-            float var9 = 1.0F - (float)Math.pow((var6 - 0.6F) / 0.4F, 3.0);
-            this.vec3d3 = this.vec3d3.scale(0.92 + 0.08 * var9);
+         float f = 1.0F - (float)this.intValue / this.intValue3;
+         if (f < 0.35F) {
+            float scale = 1.0F - (float)Math.pow(1.0F - f / 0.35F, 3.0);
+            this.vec3d3 = this.vec3d4.scale(scale);
+         } else if (f > 0.6F) {
+            float f2 = 1.0F - (float)Math.pow((f - 0.6F) / 0.4F, 3.0);
+            this.vec3d3 = this.vec3d3.scale(0.92 + 0.08 * f2);
          } else {
             this.vec3d3 = this.vec3d3.scale(0.998);
          }
 
-         if (var2.level != null) {
+         if (minecraft.level != null) {
             this.intValue4 = -1;
-            Vec3 var10 = this.vec3d;
+            Vec3 pos = this.vec3d;
 
-            for (int var8 = 1; var8 <= 15; var8++) {
-               var10 = var10.add(this.vec3d3);
-               if (!var2.level.getBlockState(BlockPos.containing(var10)).isAir()) {
-                  this.intValue4 = var8;
+            for (int i = 1; i <= 15; i++) {
+               pos = pos.add(this.vec3d3);
+               if (!minecraft.level.getBlockState(BlockPos.containing(pos)).isAir()) {
+                  this.intValue4 = i;
                   break;
                }
             }
@@ -89,10 +89,10 @@ public class FireflyParticle implements Handler7 {
          }
 
          this.vec3d = this.vec3d.add(this.vec3d3);
-         this.items.add(new FireflyParticle.Entry(var5, this.vec3d, this.zenithColor));
-         this.items.removeIf(var0 -> {
-            var0.update();
-            return var0.method4708();
+         this.items.add(new FireflyParticle.Entry(vec3d, this.vec3d, this.zenithColor));
+         this.items.removeIf(entry -> {
+            entry.update();
+            return entry.method4708();
          });
       }
    }
@@ -108,21 +108,21 @@ public class FireflyParticle implements Handler7 {
    }
 
    @Override
-   public float method1449(float var1) {
-      float var2 = this.intValue2 + (this.intValue - this.intValue2) * var1;
-      float var3 = var2 / this.intValue3;
-      return var3 * this.floatValue2;
+   public float method1449(float f) {
+      float f2 = this.intValue2 + (this.intValue - this.intValue2) * f;
+      float f3 = f2 / this.intValue3;
+      return f3 * this.floatValue2;
    }
 
-   public void method4705(Vec3 var1, Vec3 var2) {
+   public void method4705(Vec3 vec3d, Vec3 vec3d3) {
       this.vec3d2 = this.vec3d;
-      this.vec3d = var1;
-      this.vec3d3 = var2;
-      this.vec3d4 = var2;
+      this.vec3d = vec3d;
+      this.vec3d3 = vec3d3;
+      this.vec3d4 = vec3d3;
       this.items.add(new FireflyParticle.Entry(this.vec3d2, this.vec3d, this.zenithColor));
-      this.items.removeIf(var0 -> {
-         var0.update();
-         return var0.method4708();
+      this.items.removeIf(entry -> {
+         entry.update();
+         return entry.method4708();
       });
    }
 
@@ -199,13 +199,13 @@ public class FireflyParticle implements Handler7 {
    }
 
    @Generated
-   public void setVec3d3(Vec3 var1) {
-      this.vec3d3 = var1;
+   public void setVec3d3(Vec3 vec3d3) {
+      this.vec3d3 = vec3d3;
    }
 
    @Generated
-   public void setZenithColor(ZenithColor var1) {
-      this.zenithColor = var1;
+   public void setZenithColor(ZenithColor zenithColor) {
+      this.zenithColor = zenithColor;
    }
 
    public static class Entry {
@@ -215,10 +215,10 @@ public class FireflyParticle implements Handler7 {
       private int intValue;
       private static final int CONST_intValue = 20;
 
-      public Entry(Vec3 var1, Vec3 var2, ZenithColor var3) {
-         this.vec3d = var1;
-         this.vec3d2 = var2;
-         this.zenithColor = var3;
+      public Entry(Vec3 vec3d, Vec3 vec3d2, ZenithColor zenithColor) {
+         this.vec3d = vec3d;
+         this.vec3d2 = vec3d2;
+         this.zenithColor = zenithColor;
          this.intValue = 20;
       }
 

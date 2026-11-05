@@ -18,135 +18,135 @@ public final class Prefs {
    private long longValue;
    private long longValue2;
 
-   public Prefs(Path var1) {
-      this.path = var1.resolve("nexus-friends-prefs.json");
+   public Prefs(Path path) {
+      this.path = path.resolve("nexus-friends-prefs.json");
       this.load();
    }
 
-   private Prefs.Entry method3305(String var1) {
-      return this.items.computeIfAbsent(key(var1), var0 -> new Prefs.Entry());
+   private Prefs.Entry method3305(String username) {
+      return this.items.computeIfAbsent(key(username), str -> new Prefs.Entry());
    }
 
-   private static String key(String var0) {
-      return var0 == null ? "" : var0.toLowerCase(Locale.ROOT);
+   private static String key(String username) {
+      return username == null ? "" : username.toLowerCase(Locale.ROOT);
    }
 
-   public void method3306(String var1) {
-      Prefs.Entry var2 = this.method3305(var1);
-      if (var2.longValue2 == 0L) {
-         var2.longValue2 = System.currentTimeMillis();
+   public void method3306(String username) {
+      Prefs.Entry entry = this.method3305(username);
+      if (entry.longValue2 == 0L) {
+         entry.longValue2 = System.currentTimeMillis();
       }
 
-      var2.longValue = System.currentTimeMillis();
+      entry.longValue = System.currentTimeMillis();
    }
 
-   public void method3307(String var1) {
-      Prefs.Entry var2 = this.method3305(var1);
-      var2.longValue = System.currentTimeMillis();
-      var2.longValue2 = 0L;
+   public void method3307(String username) {
+      Prefs.Entry entry = this.method3305(username);
+      entry.longValue = System.currentTimeMillis();
+      entry.longValue2 = 0L;
    }
 
    public void method3308() {
-      for (Prefs.Entry var2 : this.items.values()) {
-         var2.longValue2 = 0L;
+      for (Prefs.Entry entry : this.items.values()) {
+         entry.longValue2 = 0L;
       }
    }
 
-   public long method3309(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 != null && var2.longValue2 != 0L ? System.currentTimeMillis() - var2.longValue2 : 0L;
+   public long method3309(String selected) {
+      Prefs.Entry entry = this.items.get(key(selected));
+      return entry != null && entry.longValue2 != 0L ? System.currentTimeMillis() - entry.longValue2 : 0L;
    }
 
-   public long method3310(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 == null ? 0L : var2.longValue;
+   public long method3310(String selected) {
+      Prefs.Entry entry = this.items.get(key(selected));
+      return entry == null ? 0L : entry.longValue;
    }
 
-   public long method3311(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 == null ? 0L : var2.longValue3;
+   public long method3311(String selected) {
+      Prefs.Entry entry = this.items.get(key(selected));
+      return entry == null ? 0L : entry.longValue3;
    }
 
-   public void method3312(String var1, long var2) {
-      if (var2 > 0L) {
-         Prefs.Entry var4 = this.method3305(var1);
-         if (var4.longValue3 != var2) {
-            var4.longValue3 = var2;
+   public void method3312(String name, long uid) {
+      if (uid > 0L) {
+         Prefs.Entry entry = this.method3305(name);
+         if (entry.longValue3 != uid) {
+            entry.longValue3 = uid;
             this.save();
          }
       }
    }
 
-   public String method3313(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 != null && var2.text != null ? var2.text : "";
+   public String method3313(String selected) {
+      Prefs.Entry entry = this.items.get(key(selected));
+      return entry != null && entry.text != null ? entry.text : "";
    }
 
-   public void method3314(String var1, String var2) {
-      if (var2 != null && !var2.isBlank()) {
-         Prefs.Entry var3 = this.method3305(var1);
-         if (!var2.equals(var3.text)) {
-            var3.text = var2;
+   public void method3314(String username, String text) {
+      if (text != null && !text.isBlank()) {
+         Prefs.Entry entry = this.method3305(username);
+         if (!text.equals(entry.text)) {
+            entry.text = text;
             this.save();
          }
       }
    }
 
-   public boolean method3315(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 != null && var2.flag;
+   public boolean method3315(String username) {
+      Prefs.Entry entry = this.items.get(key(username));
+      return entry != null && entry.flag;
    }
 
-   public boolean method3316(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 != null && var2.flag2;
+   public boolean method3316(String username) {
+      Prefs.Entry entry = this.items.get(key(username));
+      return entry != null && entry.flag2;
    }
 
-   public void method3317(String var1, boolean var2) {
-      this.method3305(var1).flag = var2;
+   public void method3317(String selected, boolean flag) {
+      this.method3305(selected).flag = flag;
       this.save();
    }
 
-   public void method3318(String var1, boolean var2) {
-      Prefs.Entry var3 = this.method3305(var1);
-      var3.flag2 = var2;
-      if (var2) {
-         var3.flag = true;
+   public void method3318(String selected, boolean flag) {
+      Prefs.Entry entry = this.method3305(selected);
+      entry.flag2 = flag;
+      if (flag) {
+         entry.flag = true;
       }
 
       this.save();
    }
 
-   public boolean method3319(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 != null && var2.flag4;
+   public boolean method3319(String selected) {
+      Prefs.Entry entry = this.items.get(key(selected));
+      return entry != null && entry.flag4;
    }
 
-   public void method3320(String var1, boolean var2) {
-      this.method3305(var1).flag4 = var2;
+   public void method3320(String selected, boolean flag) {
+      this.method3305(selected).flag4 = flag;
       this.save();
    }
 
-   public boolean method3321(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 != null && (var2.flag3 || var2.flag2);
+   public boolean method3321(String username) {
+      Prefs.Entry entry = this.items.get(key(username));
+      return entry != null && (entry.flag3 || entry.flag2);
    }
 
-   public void method3322(String var1, boolean var2) {
-      this.method3305(var1).flag3 = var2;
+   public void method3322(String voiceVolumeFor, boolean flag) {
+      this.method3305(voiceVolumeFor).flag3 = flag;
       this.save();
    }
 
-   public int method3323(String var1) {
-      Prefs.Entry var2 = this.items.get(key(var1));
-      return var2 == null ? 100 : var2.intValue;
+   public int method3323(String username) {
+      Prefs.Entry entry = this.items.get(key(username));
+      return entry == null ? 100 : entry.intValue;
    }
 
-   public void method3324(String var1, int var2) {
-      int var3 = Math.max(0, Math.min(200, var2));
-      Prefs.Entry var4 = this.method3305(var1);
-      if (var4.intValue != var3) {
-         var4.intValue = var3;
+   public void method3324(String voiceVolumeFor, int n) {
+      int intValue = Math.max(0, Math.min(200, n));
+      Prefs.Entry entry = this.method3305(voiceVolumeFor);
+      if (entry.intValue != intValue) {
+         entry.intValue = intValue;
          this.save();
       }
    }
@@ -159,11 +159,11 @@ public final class Prefs {
       if (this.dirty && !this.flag) {
          this.dirty = false;
          this.flag = true;
-         long var1 = ++this.longValue;
-         JsonObject var3 = this.method3327();
+         long l = ++this.longValue;
+         JsonObject json = this.method3327();
          Util.ioPool().execute(() -> {
             try {
-               this.method3326(var1, var3);
+               this.method3326(l, json);
             } finally {
                this.flag = false;
             }
@@ -176,93 +176,93 @@ public final class Prefs {
       this.method3326(++this.longValue, this.method3327());
    }
 
-   private void method3326(long var1, JsonObject var3) {
+   private void method3326(long l, JsonObject json) {
       synchronized (this.obj) {
-         if (var1 > this.longValue2) {
-            if (CloudJsonIo.method5993(this.path, var3)) {
-               this.longValue2 = var1;
+         if (l > this.longValue2) {
+            if (CloudJsonIo.method5993(this.path, json)) {
+               this.longValue2 = l;
             }
          }
       }
    }
 
    private JsonObject method3327() {
-      JsonObject var1 = new JsonObject();
+      JsonObject json = new JsonObject();
       this.items
          .forEach(
-            (var1x, var2) -> {
-               if (var2.longValue != 0L
-                  || var2.flag
-                  || var2.flag2
-                  || var2.longValue3 != 0L
-                  || var2.text != null && !var2.text.isEmpty()
-                  || var2.flag3
-                  || var2.intValue != 100
-                  || var2.flag4) {
-                  JsonObject var3 = new JsonObject();
-                  var3.addProperty("lastSeen", var2.longValue);
-                  if (var2.longValue3 > 0L) {
-                     var3.addProperty("uid", var2.longValue3);
+            (var1x, entry) -> {
+               if (entry.longValue != 0L
+                  || entry.flag
+                  || entry.flag2
+                  || entry.longValue3 != 0L
+                  || entry.text != null && !entry.text.isEmpty()
+                  || entry.flag3
+                  || entry.intValue != 100
+                  || entry.flag4) {
+                  JsonObject json2 = new JsonObject();
+                  json2.addProperty("lastSeen", entry.longValue);
+                  if (entry.longValue3 > 0L) {
+                     json2.addProperty("uid", entry.longValue3);
                   }
 
-                  if (var2.text != null && !var2.text.isEmpty()) {
-                     var3.addProperty("mcName", var2.text);
+                  if (entry.text != null && !entry.text.isEmpty()) {
+                     json2.addProperty("mcName", entry.text);
                   }
 
-                  if (var2.flag) {
-                     var3.addProperty("muted", true);
+                  if (entry.flag) {
+                     json2.addProperty("muted", true);
                   }
 
-                  if (var2.flag2) {
-                     var3.addProperty("blocked", true);
+                  if (entry.flag2) {
+                     json2.addProperty("blocked", true);
                   }
 
-                  if (var2.flag3) {
-                     var3.addProperty("voiceMuted", true);
+                  if (entry.flag3) {
+                     json2.addProperty("voiceMuted", true);
                   }
 
-                  if (var2.intValue != 100) {
-                     var3.addProperty("voiceVolume", var2.intValue);
+                  if (entry.intValue != 100) {
+                     json2.addProperty("voiceVolume", entry.intValue);
                   }
 
-                  if (var2.flag4) {
-                     var3.addProperty("favorite", true);
+                  if (entry.flag4) {
+                     json2.addProperty("favorite", true);
                   }
 
-                  var1.add(var1x, var3);
+                  json.add(var1x, json2);
                }
             }
          );
-      return var1;
+      return json;
    }
 
    private void load() {
-      JsonObject var1 = CloudJsonIo.method5992(this.path);
-      if (var1 != null) {
-         var1.entrySet().forEach(var1x -> {
+      JsonObject json = CloudJsonIo.method5992(this.path);
+      if (json != null) {
+         json.entrySet().forEach(var1x -> {
             if (((JsonElement)var1x.getValue()).isJsonObject()) {
-               JsonObject var2 = ((JsonElement)var1x.getValue()).getAsJsonObject();
+               JsonObject jsonObject = ((JsonElement)var1x.getValue()).getAsJsonObject();
 
                try {
-                  this.items.put((String)var1x.getKey(), method3328(var2));
-               } catch (RuntimeException var4) {
+                  this.items.put((String)var1x.getKey(), method3328(jsonObject));
+               } catch (RuntimeException e) {
                }
             }
          });
       }
    }
 
-   private static Prefs.Entry method3328(JsonObject var0) {
-      Prefs.Entry var1 = new Prefs.Entry();
-      var1.longValue = var0.has("lastSeen") ? var0.get("lastSeen").getAsLong() : 0L;
-      var1.flag = var0.has("muted") && var0.get("muted").getAsBoolean();
-      var1.flag2 = var0.has("blocked") && var0.get("blocked").getAsBoolean();
-      var1.longValue3 = var0.has("uid") ? var0.get("uid").getAsLong() : 0L;
-      var1.text = var0.has("mcName") ? var0.get("mcName").getAsString() : "";
-      var1.flag3 = var0.has("voiceMuted") && var0.get("voiceMuted").getAsBoolean();
-      var1.intValue = var0.has("voiceVolume") ? Math.max(0, Math.min(200, var0.get("voiceVolume").getAsInt())) : 100;
-      var1.flag4 = var0.has("favorite") && var0.get("favorite").getAsBoolean();
-      return var1;
+   private static Prefs.Entry method3328(JsonObject jsonObject) {
+      Prefs.Entry entry = new Prefs.Entry();
+      entry.longValue = jsonObject.has("lastSeen") ? jsonObject.get("lastSeen").getAsLong() : 0L;
+      entry.flag = jsonObject.has("muted") && jsonObject.get("muted").getAsBoolean();
+      entry.flag2 = jsonObject.has("blocked") && jsonObject.get("blocked").getAsBoolean();
+      entry.longValue3 = jsonObject.has("uid") ? jsonObject.get("uid").getAsLong() : 0L;
+      entry.text = jsonObject.has("mcName") ? jsonObject.get("mcName").getAsString() : "";
+      entry.flag3 = jsonObject.has("voiceMuted") && jsonObject.get("voiceMuted").getAsBoolean();
+      entry.intValue = jsonObject.has("voiceVolume") ? Math.max(0, Math.min(200, jsonObject.get("voiceVolume").getAsInt())) : 100;
+      entry.flag4 = jsonObject.has("favorite") && jsonObject.get("favorite").getAsBoolean();
+      return entry;
    }
 
    public static final class Entry {

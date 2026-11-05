@@ -25,9 +25,9 @@ public class MixinOptSodiumVertexConsumerUtils {
       remap = false,
       require = 0
    )
-   private static void zenith$cachedWriter(VertexConsumer var0, CallbackInfoReturnable<Object> var1) {
-      if (OptimizationFlags.flag14 && var0 != null && var0 == zenith$lastWriter) {
-         var1.setReturnValue(var0);
+   private static void zenith$cachedWriter(VertexConsumer returnValue, CallbackInfoReturnable<Object> callbackInfoReturnable) {
+      if (OptimizationFlags.flag14 && returnValue != null && returnValue == zenith$lastWriter) {
+         callbackInfoReturnable.setReturnValue(returnValue);
       }
    }
 
@@ -37,9 +37,9 @@ public class MixinOptSodiumVertexConsumerUtils {
       remap = false,
       require = 0
    )
-   private static void zenith$rememberWriter(VertexConsumer var0, CallbackInfoReturnable<Object> var1) {
-      if (var1.getReturnValue() == var0) {
-         zenith$lastWriter = var0;
+   private static void zenith$rememberWriter(VertexConsumer consumer, CallbackInfoReturnable<Object> callbackInfoReturnable) {
+      if (callbackInfoReturnable.getReturnValue() == consumer) {
+         zenith$lastWriter = consumer;
       }
    }
 }

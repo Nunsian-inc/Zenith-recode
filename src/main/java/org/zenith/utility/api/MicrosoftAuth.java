@@ -26,10 +26,10 @@ public final class MicrosoftAuth {
    private static final String text2 = "XboxLive.signin XboxLive.offline_access";
    private static final Duration duration = Duration.ofSeconds(30L);
    private static final String text3 = "Zenith/3.5";
-   private static final Executor executor = Executors.newCachedThreadPool(var0 -> {
-      Thread var1 = new Thread(var0, "Zenith Microsoft Auth");
-      var1.setDaemon(true);
-      return var1;
+   private static final Executor executor = Executors.newCachedThreadPool(task -> {
+      Thread thread = new Thread(task, "Zenith Microsoft Auth");
+      thread.setDaemon(true);
+      return thread;
    });
    private static final HttpClient httpClient = HttpClients.method2671(duration, Redirect.NORMAL);
 
@@ -37,8 +37,8 @@ public final class MicrosoftAuth {
    }
 
    public static CompletableFuture<MicrosoftAuth.Data> method3056() {
-      String var0 = "client_id=54fd49e4-2103-4044-9603-2b028c814ec3&scope=" + encode("XboxLive.signin XboxLive.offline_access");
-      return method3067("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode", "application/x-www-form-urlencoded", var0)
+      String string = "client_id=54fd49e4-2103-4044-9603-2b028c814ec3&scope=" + encode("XboxLive.signin XboxLive.offline_access");
+      return method3067("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode", "application/x-www-form-urlencoded", string)
          .thenApply(
             var0x -> new MicrosoftAuth.Data(
                var0x.get("user_code").getAsString(),
@@ -50,127 +50,127 @@ public final class MicrosoftAuth {
          );
    }
 
-   public static CompletableFuture<MicrosoftAuth.Data2> method3057(MicrosoftAuth.Data var0, Consumer<String> var1) {
-      return method3058(var0, var1, () -> false);
+   public static CompletableFuture<MicrosoftAuth.Data2> method3057(MicrosoftAuth.Data deviceCode, Consumer<String> consumer) {
+      return method3058(deviceCode, consumer, () -> false);
    }
 
-   public static CompletableFuture<MicrosoftAuth.Data2> method3058(MicrosoftAuth.Data var0, Consumer<String> var1, BooleanSupplier var2) {
+   public static CompletableFuture<MicrosoftAuth.Data2> method3058(MicrosoftAuth.Data deviceCode, Consumer<String> consumer, BooleanSupplier booleanSupplier) {
       return CompletableFuture.<String[]>supplyAsync(() -> {
-         long var2x = System.currentTimeMillis() + var0.getIntValue2() * 1000L;
-         long var4 = Math.max(1, var0.getIntValue()) * 1000L;
+         long var2x = System.currentTimeMillis() + deviceCode.getIntValue2() * 1000L;
+         long millis = Math.max(1, deviceCode.getIntValue()) * 1000L;
 
          while (System.currentTimeMillis() < var2x) {
-            if (var2.getAsBoolean()) {
+            if (booleanSupplier.getAsBoolean()) {
                throw new CancellationException("Login cancelled");
             }
 
-            method3070(var4);
-            if (var2.getAsBoolean()) {
+            method3070(millis);
+            if (booleanSupplier.getAsBoolean()) {
                throw new CancellationException("Login cancelled");
             }
 
-            JsonObject var6 = method3066(var0.getText3());
-            if (var6 != null) {
-               if (var6.has("access_token")) {
-                  return new String[]{var6.get("access_token").getAsString(), var6.has("refresh_token") ? var6.get("refresh_token").getAsString() : ""};
+            JsonObject json = method3066(deviceCode.getText3());
+            if (json != null) {
+               if (json.has("access_token")) {
+                  return new String[]{json.get("access_token").getAsString(), json.has("refresh_token") ? json.get("refresh_token").getAsString() : ""};
                }
 
-               String var7 = var6.has("error") ? var6.get("error").getAsString() : "";
-               switch (var7) {
+               String string = json.has("error") ? json.get("error").getAsString() : "";
+               switch (string) {
                   case "authorization_pending":
                      break;
                   case "slow_down":
-                     var4 += 5000L;
+                     millis += 5000L;
                      break;
                   case "authorization_declined":
                      throw new IllegalStateException("Login declined");
                   case "expired_token":
                      throw new IllegalStateException("Code expired");
                   default:
-                     throw new IllegalStateException("Microsoft error: " + var7);
+                     throw new IllegalStateException("Microsoft error: " + string);
                }
             }
          }
 
          throw new IllegalStateException("Code expired");
       }, executor).thenCompose(var1x -> {
-         var1.accept("Signing in to Xbox Live...");
-         return method3060(var1x[0], var1x[1], var1);
+         consumer.accept("Signing in to Xbox Live...");
+         return method3060(var1x[0], var1x[1], consumer);
       });
    }
 
-   public static CompletableFuture<MicrosoftAuth.Data2> method3059(String var0, Consumer<String> var1) {
-      String var2 = "client_id=54fd49e4-2103-4044-9603-2b028c814ec3&refresh_token="
-         + encode(var0)
+   public static CompletableFuture<MicrosoftAuth.Data2> method3059(String str, Consumer<String> consumer) {
+      String string = "client_id=54fd49e4-2103-4044-9603-2b028c814ec3&refresh_token="
+         + encode(str)
          + "&grant_type=refresh_token&scope="
          + encode("XboxLive.signin XboxLive.offline_access");
-      return method3067("https://login.microsoftonline.com/consumers/oauth2/v2.0/token", "application/x-www-form-urlencoded", var2)
+      return method3067("https://login.microsoftonline.com/consumers/oauth2/v2.0/token", "application/x-www-form-urlencoded", string)
          .thenCompose(
-            var2x -> method3060(var2x.get("access_token").getAsString(), var2x.has("refresh_token") ? var2x.get("refresh_token").getAsString() : var0, var1)
+            var2x -> method3060(var2x.get("access_token").getAsString(), var2x.has("refresh_token") ? var2x.get("refresh_token").getAsString() : str, consumer)
          );
    }
 
-   private static CompletableFuture<MicrosoftAuth.Data2> method3060(String var0, String var1, Consumer<String> var2) {
-      return method3061(var0).thenCompose(var1x -> {
-         var2.accept("Requesting XSTS token...");
+   private static CompletableFuture<MicrosoftAuth.Data2> method3060(String string, String str, Consumer<String> consumer) {
+      return method3061(string).thenCompose(var1x -> {
+         consumer.accept("Requesting XSTS token...");
          return method3062(var1x[0]).thenApply(var0xx -> new String[]{var0xx[0], var0xx[1]});
       }).thenCompose(var1x -> {
-         var2.accept("Authenticating with Minecraft...");
+         consumer.accept("Authenticating with Minecraft...");
          return method3064(var1x[0], var1x[1]);
       }).thenCompose(var2x -> {
-         var2.accept("Loading profile...");
-         return method3065(var2x).thenApply(var2xx -> new MicrosoftAuth.Data2(var2xx[0], method3069(var2xx[1]), var2x, var1));
+         consumer.accept("Loading profile...");
+         return method3065(var2x).thenApply(var2xx -> new MicrosoftAuth.Data2(var2xx[0], method3069(var2xx[1]), var2x, str));
       });
    }
 
-   private static CompletableFuture<String[]> method3061(String var0) {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("AuthMethod", "RPS");
-      var1.addProperty("SiteName", "user.auth.xboxlive.com");
-      var1.addProperty("RpsTicket", "d=" + var0);
-      JsonObject var2 = new JsonObject();
-      var2.add("Properties", var1);
-      var2.addProperty("RelyingParty", "http://auth.xboxlive.com");
-      var2.addProperty("TokenType", "JWT");
-      return method3067("https://user.auth.xboxlive.com/user/authenticate", "application/json", var2.toString()).thenApply(MicrosoftAuth::method3063);
+   private static CompletableFuture<String[]> method3061(String string) {
+      JsonObject json = new JsonObject();
+      json.addProperty("AuthMethod", "RPS");
+      json.addProperty("SiteName", "user.auth.xboxlive.com");
+      json.addProperty("RpsTicket", "d=" + string);
+      JsonObject json2 = new JsonObject();
+      json2.add("Properties", json);
+      json2.addProperty("RelyingParty", "http://auth.xboxlive.com");
+      json2.addProperty("TokenType", "JWT");
+      return method3067("https://user.auth.xboxlive.com/user/authenticate", "application/json", json2.toString()).thenApply(MicrosoftAuth::method3063);
    }
 
-   private static CompletableFuture<String[]> method3062(String var0) {
-      JsonArray var1 = new JsonArray();
-      var1.add(var0);
-      JsonObject var2 = new JsonObject();
-      var2.add("UserTokens", var1);
-      var2.addProperty("SandboxId", "RETAIL");
-      JsonObject var3 = new JsonObject();
-      var3.add("Properties", var2);
-      var3.addProperty("RelyingParty", "rp://api.minecraftservices.com/");
-      var3.addProperty("TokenType", "JWT");
-      return method3067("https://xsts.auth.xboxlive.com/xsts/authorize", "application/json", var3.toString()).thenApply(MicrosoftAuth::method3063);
+   private static CompletableFuture<String[]> method3062(String string) {
+      JsonArray jsonArray = new JsonArray();
+      jsonArray.add(string);
+      JsonObject json = new JsonObject();
+      json.add("UserTokens", jsonArray);
+      json.addProperty("SandboxId", "RETAIL");
+      JsonObject json2 = new JsonObject();
+      json2.add("Properties", json);
+      json2.addProperty("RelyingParty", "rp://api.minecraftservices.com/");
+      json2.addProperty("TokenType", "JWT");
+      return method3067("https://xsts.auth.xboxlive.com/xsts/authorize", "application/json", json2.toString()).thenApply(MicrosoftAuth::method3063);
    }
 
-   private static String[] method3063(JsonObject var0) {
-      String var1 = var0.get("Token").getAsString();
-      String var2 = var0.getAsJsonObject("DisplayClaims").getAsJsonArray("xui").get(0).getAsJsonObject().get("uhs").getAsString();
-      return new String[]{var1, var2};
+   private static String[] method3063(JsonObject json) {
+      String string = json.get("Token").getAsString();
+      String str = json.getAsJsonObject("DisplayClaims").getAsJsonArray("xui").get(0).getAsJsonObject().get("uhs").getAsString();
+      return new String[]{string, str};
    }
 
-   private static CompletableFuture<String> method3064(String var0, String var1) {
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("identityToken", "XBL3.0 x=" + var1 + ";" + var0);
-      return method3067("https://api.minecraftservices.com/authentication/login_with_xbox", "application/json", var2.toString())
+   private static CompletableFuture<String> method3064(String str, String str2) {
+      JsonObject json = new JsonObject();
+      json.addProperty("identityToken", "XBL3.0 x=" + str2 + ";" + str);
+      return method3067("https://api.minecraftservices.com/authentication/login_with_xbox", "application/json", json.toString())
          .thenApply(var0x -> var0x.get("access_token").getAsString());
    }
 
-   private static CompletableFuture<String[]> method3065(String var0) {
-      HttpRequest var1 = HttpRequest.newBuilder()
+   private static CompletableFuture<String[]> method3065(String str) {
+      HttpRequest httpRequest = HttpRequest.newBuilder()
          .uri(URI.create("https://api.minecraftservices.com/minecraft/profile"))
-         .header("Authorization", "Bearer " + var0)
+         .header("Authorization", "Bearer " + str)
          .header("Accept", "application/json")
          .header("User-Agent", "Zenith/3.5")
          .timeout(duration)
          .GET()
          .build();
-      return httpClient.sendAsync(var1, BodyHandlers.ofString()).thenApplyAsync(var0x -> {
+      return httpClient.sendAsync(httpRequest, BodyHandlers.ofString()).thenApplyAsync(var0x -> {
          if (var0x.statusCode() == 404) {
             throw new IllegalStateException("This account does not own Minecraft");
          } else {
@@ -180,60 +180,60 @@ public final class MicrosoftAuth {
       }, executor);
    }
 
-   private static JsonObject method3066(String var0) {
-      String var1 = "grant_type=urn:ietf:params:oauth:grant-type:device_code&client_id=54fd49e4-2103-4044-9603-2b028c814ec3&device_code=" + encode(var0);
-      HttpRequest var2 = HttpRequest.newBuilder()
+   private static JsonObject method3066(String str) {
+      String body = "grant_type=urn:ietf:params:oauth:grant-type:device_code&client_id=54fd49e4-2103-4044-9603-2b028c814ec3&device_code=" + encode(str);
+      HttpRequest httpRequest = HttpRequest.newBuilder()
          .uri(URI.create("https://login.microsoftonline.com/consumers/oauth2/v2.0/token"))
          .header("Content-Type", "application/x-www-form-urlencoded")
          .header("Accept", "application/json")
          .header("User-Agent", "Zenith/3.5")
          .timeout(duration)
-         .POST(BodyPublishers.ofString(var1))
+         .POST(BodyPublishers.ofString(body))
          .build();
 
       try {
-         HttpResponse var3 = httpClient.send(var2, BodyHandlers.ofString());
-         return JsonParser.parseString((String)var3.body()).getAsJsonObject();
-      } catch (Exception var4) {
+         HttpResponse send = httpClient.send(httpRequest, BodyHandlers.ofString());
+         return JsonParser.parseString((String)send.body()).getAsJsonObject();
+      } catch (Exception e) {
          return null;
       }
    }
 
-   private static CompletableFuture<JsonObject> method3067(String var0, String var1, String var2) {
-      HttpRequest var3 = HttpRequest.newBuilder()
-         .uri(URI.create(var0))
-         .header("Content-Type", var1)
+   private static CompletableFuture<JsonObject> method3067(String str, String str2, String string) {
+      HttpRequest httpRequest = HttpRequest.newBuilder()
+         .uri(URI.create(str))
+         .header("Content-Type", str2)
          .header("Accept", "application/json")
          .header("User-Agent", "Zenith/3.5")
          .timeout(duration)
-         .POST(BodyPublishers.ofString(var2))
+         .POST(BodyPublishers.ofString(string))
          .build();
-      return httpClient.sendAsync(var3, BodyHandlers.ofString()).thenApplyAsync(var1x -> method3068((HttpResponse<String>)var1x, var0), executor);
+      return httpClient.sendAsync(httpRequest, BodyHandlers.ofString()).thenApplyAsync(var1x -> method3068((HttpResponse<String>)var1x, str), executor);
    }
 
-   private static JsonObject method3068(HttpResponse<String> var0, String var1) {
-      if (var0.statusCode() / 100 != 2) {
-         throw new IllegalStateException("HTTP " + var0.statusCode() + " from " + var1);
+   private static JsonObject method3068(HttpResponse<String> httpResponse, String str) {
+      if (httpResponse.statusCode() / 100 != 2) {
+         throw new IllegalStateException("HTTP " + httpResponse.statusCode() + " from " + str);
       } else {
-         return JsonParser.parseString((String)var0.body()).getAsJsonObject();
+         return JsonParser.parseString((String)httpResponse.body()).getAsJsonObject();
       }
    }
 
-   private static UUID method3069(String var0) {
-      String var1 = var0.length() == 32
-         ? var0.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5")
-         : var0;
-      return UUID.fromString(var1);
+   private static UUID method3069(String str) {
+      String replaceFirst = str.length() == 32
+         ? str.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5")
+         : str;
+      return UUID.fromString(replaceFirst);
    }
 
-   private static String encode(String var0) {
-      return URLEncoder.encode(var0, StandardCharsets.UTF_8);
+   private static String encode(String str) {
+      return URLEncoder.encode(str, StandardCharsets.UTF_8);
    }
 
-   private static void method3070(long var0) {
+   private static void method3070(long millis) {
       try {
-         Thread.sleep(var0);
-      } catch (InterruptedException var3) {
+         Thread.sleep(millis);
+      } catch (InterruptedException e) {
          Thread.currentThread().interrupt();
          throw new IllegalStateException("Interrupted");
       }
@@ -283,12 +283,12 @@ public final class MicrosoftAuth {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data(String var1, String var2, String var3, int var4, int var5) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
-         this.intValue = var4;
-         this.intValue2 = var5;
+      public Data(String text, String string, String str, int intValue, int n) {
+         this.text = text;
+         this.text2 = string;
+         this.text3 = str;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
 
       public String getText() {
@@ -351,11 +351,11 @@ public final class MicrosoftAuth {
          return "Data2[" + "text=" + this.text + ", " + "uUID=" + this.uUID + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + "]";
       }
 
-      public Data2(String var1, UUID var2, String var3, String var4) {
-         this.text = var1;
-         this.uUID = var2;
-         this.text2 = var3;
-         this.text3 = var4;
+      public Data2(String text, UUID uUID, String str, String str2) {
+         this.text = text;
+         this.uUID = uUID;
+         this.text2 = str;
+         this.text3 = str2;
       }
 
       public String name() {

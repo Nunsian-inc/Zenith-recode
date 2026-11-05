@@ -181,7 +181,7 @@ public final class ServerHelperModule extends Module {
                new BindSetting("module.serverHelper.enderTrap", "module.serverHelper.enderTrap.desc", this::method5181),
                0.0F,
                new Class27(),
-               var0 -> var0.getItem().getHoverName().getString().equals("Эндер Ловушка")
+               slot -> slot.getItem().getHoverName().getString().equals("Эндер Ловушка")
             )
          );
       this.items3
@@ -191,7 +191,7 @@ public final class ServerHelperModule extends Module {
                new BindSetting("module.serverHelper.reallyWorldTrap", "module.serverHelper.reallyWorldTrap.desc", this::method5181),
                0.0F,
                new Class27(),
-               var0 -> var0.getItem().getHoverName().getString().equals("Ловушка")
+               slot -> slot.getItem().getHoverName().getString().equals("Ловушка")
             )
          );
       this.items3
@@ -282,7 +282,7 @@ public final class ServerHelperModule extends Module {
 
    @Override
    public List<Setting> getSettings() {
-      var var1 = new ArrayList<>(
+      var settings = new ArrayList<>(
          List.of(
             this.serverMode,
             this.consumablesSetting,
@@ -295,26 +295,26 @@ public final class ServerHelperModule extends Module {
             this.antiFlyRadius
          )
       );
-      var1.addAll(this.items3.stream().map(ServerHelperModule.Data3::getBindSetting).toList());
-      return var1;
+      settings.addAll(this.items3.stream().map(ServerHelperModule.Data3::getBindSetting).toList());
+      return settings;
    }
 
    @EventTarget
-   public void method5184(KeyEvent var1) {
+   public void method5184(KeyEvent event) {
       this.items3
          .stream()
-         .filter(var1x -> var1.isPress(var1x.bindSetting.getKeyCode()) && var1x.bindSetting.isVisible() && var1x.method5218() != null)
-         .forEach(var0 -> var0.class27.setFlag(true));
-      this.items3.stream().filter(var1x -> var1.isRelease(var1x.bindSetting.getKeyCode()) && var1x.bindSetting.isVisible()).forEach(var1x -> {
+         .filter(var1x -> event.isPress(var1x.bindSetting.getKeyCode()) && var1x.bindSetting.isVisible() && var1x.method5218() != null)
+         .forEach(data3 -> data3.class27.setFlag(true));
+      this.items3.stream().filter(var1x -> event.isRelease(var1x.bindSetting.getKeyCode()) && var1x.bindSetting.isVisible()).forEach(var1x -> {
          if (this.method5208(var1x.floatValue)) {
             InventoryUtils.method928(var1x.getItem(), var1x.method5219());
          }
 
          var1x.class27.setFlag(false);
       });
-      if (var1.isRelease(this.shulkerKey.getKeyCode())) {
-         Slot var2 = InventoryUtils.method910(var0 -> var0.getItem().getItem() instanceof BlockItem var1x && var1x.getBlock() instanceof ShulkerBoxBlock);
-         if (var2 == null) {
+      if (event.isRelease(this.shulkerKey.getKeyCode())) {
+         Slot slot = InventoryUtils.method910(slot2 -> slot2.getItem().getItem() instanceof BlockItem var1x && var1x.getBlock() instanceof ShulkerBoxBlock);
+         if (slot == null) {
             Zenith.getInstance()
                .getHudHolder()
                .method6972(
@@ -333,9 +333,9 @@ public final class ServerHelperModule extends Module {
             return;
          }
 
-         this.slot = var2;
-         TaskScheduler.Entry2 var3 = new TaskScheduler.Entry2(ServerHelperModule.class);
-         var3.method5120(
+         this.slot = slot;
+         TaskScheduler.Entry2 task = new TaskScheduler.Entry2(ServerHelperModule.class);
+         task.method5120(
             HandleInputPostEvent.class,
             var1x -> {
                if (!mc.player.lastSentInput.jump()
@@ -344,7 +344,7 @@ public final class ServerHelperModule extends Module {
                   && !mc.player.lastSentInput.backward()
                   && !mc.player.lastSentInput.left()
                   && !mc.player.lastSentInput.right()) {
-                  InventoryUtils.method900(var2, InteractionHand.MAIN_HAND, false);
+                  InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, false);
                   InventoryUtils.closeScreen();
                   return true;
                } else {
@@ -352,8 +352,8 @@ public final class ServerHelperModule extends Module {
                }
             }
          );
-         var3.method5120(HandleInputPostEvent.class, var0 -> true);
-         var3.method5120(
+         task.method5120(HandleInputPostEvent.class, event2 -> true);
+         task.method5120(
             HandleInputEvent.class,
             var1x -> {
                if (var1x.isCancelled()) {
@@ -373,7 +373,7 @@ public final class ServerHelperModule extends Module {
                }
             }
          );
-         var3.method5120(
+         task.method5120(
             HandleInputPostEvent.class,
             var2x -> {
                if (!mc.player.lastSentInput.jump()
@@ -384,7 +384,7 @@ public final class ServerHelperModule extends Module {
                   && !mc.player.lastSentInput.right()) {
                   if (mc.player.containerMenu instanceof InventoryMenu) {
                      if (this.stopWatch2.method7546(1000L)) {
-                        InventoryUtils.method900(var2, InteractionHand.MAIN_HAND, true);
+                        InventoryUtils.method900(slot, InteractionHand.MAIN_HAND, true);
                         InventoryUtils.closeScreen();
                         return true;
                      }
@@ -398,16 +398,16 @@ public final class ServerHelperModule extends Module {
                }
             }
          );
-         var3.method5123(MoveInputEvent.class, var0 -> {
-            var0.method3044();
+         task.method5123(MoveInputEvent.class, event2 -> {
+            event2.method3044();
             return true;
          });
-         Zenith.getInstance().getTaskScheduler().method5110(var3);
+         Zenith.getInstance().getTaskScheduler().method5110(task);
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.autoFixAll.isEnabled() && this.method5181()) {
          if (Zenith.getInstance().getServerDetector().method1635()) {
             this.flag = true;
@@ -422,12 +422,12 @@ public final class ServerHelperModule extends Module {
    }
 
    @EventTarget
-   public void method5185(ChatSendEvent var1) {
-      if (var1.method4603() && this.chatFilter.isEnabled() && this.method5181()) {
-         String var2 = var1.getMessage();
-         if (var2 != null && !var2.startsWith(".")) {
-            if (pattern.matcher(var2).find()) {
-               var1.cancel();
+   public void method5185(ChatSendEvent event) {
+      if (event.method4603() && this.chatFilter.isEnabled() && this.method5181()) {
+         String message = event.getMessage();
+         if (message != null && !message.startsWith(".")) {
+            if (pattern.matcher(message).find()) {
+               event.cancel();
                ChatLogger.method2021("В сообщении запретное для RW слово — отправка отменена");
             }
          }
@@ -435,80 +435,80 @@ public final class ServerHelperModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()
-         && var1.getPacket3() instanceof ClientboundOpenScreenPacket var2
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()
+         && event.getPacket3() instanceof ClientboundOpenScreenPacket openScreenPacket
          && this.closeMenu.isEnabled()
          && this.method5181()
          && mc.player != null
          && mc.player.tickCount < 100
-         && var2.getTitle().getString().contains("ꈁꀀꈂꌁꈂꀁ§0ꈃꄀ")) {
-         var1.cancel();
-         int var24 = var2.getContainerId();
+         && openScreenPacket.getTitle().getString().contains("ꈁꀀꈂꌁꈂꀁ§0ꈃꄀ")) {
+         event.cancel();
+         int containerId = openScreenPacket.getContainerId();
          mc.execute(() -> {
             if (mc.getConnection() != null) {
-               mc.getConnection().send(new ServerboundContainerClosePacket(var24));
+               mc.getConnection().send(new ServerboundContainerClosePacket(containerId));
             }
          });
       } else {
-         this.method5190(var1);
+         this.method5190(event);
          if (this.consumablesSetting.isEnabled()) {
-            if (Zenith.getInstance().getServerDetector().method1639() && var1.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket var14) {
-               mc.execute(() -> this.method5186(var14));
+            if (Zenith.getInstance().getServerDetector().method1639() && event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+               mc.execute(() -> this.method5186(blocksUpdatePacket));
             }
 
-            if (var1.getPacket3() instanceof ClientboundSoundPacket var15
+            if (event.getPacket3() instanceof ClientboundSoundPacket clientboundSoundPacket
                && Zenith.getInstance().getServerDetector().method1642()
-               && var15.getSound().unwrapKey().isPresent()
-               && var15.getSound().unwrapKey().get().identifier().getPath().equals("block.beacon.deactivate")) {
-               this.method5206(Items.NETHER_STAR, new Vec3(var15.getX(), var15.getY(), var15.getZ()), System.currentTimeMillis() + 15000L);
+               && clientboundSoundPacket.getSound().unwrapKey().isPresent()
+               && clientboundSoundPacket.getSound().unwrapKey().get().identifier().getPath().equals("block.beacon.deactivate")) {
+               this.method5206(Items.NETHER_STAR, new Vec3(clientboundSoundPacket.getX(), clientboundSoundPacket.getY(), clientboundSoundPacket.getZ()), System.currentTimeMillis() + 15000L);
             }
 
-            if (Zenith.getInstance().getServerDetector().method1642() && var1.getPacket3() instanceof ClientboundLevelParticlesPacket var16) {
-               Class var21 = ((ParticleProvider)mc.particleEngine.resourceManager
+            if (Zenith.getInstance().getServerDetector().method1642() && event.getPacket3() instanceof ClientboundLevelParticlesPacket levelParticlesPacket) {
+               Class clazz = ((ParticleProvider)mc.particleEngine.resourceManager
                      .getProviders()
-                     .get(BuiltInRegistries.PARTICLE_TYPE.getId(var16.particle().getType())))
+                     .get(BuiltInRegistries.PARTICLE_TYPE.getId(levelParticlesPacket.particle().getType())))
                   .getClass();
-               if (var21 == Provider.class) {
-                  this.method5206(Items.PRISMARINE_SHARD, new Vec3(var16.x(), var16.y(), var16.z()), System.currentTimeMillis() + 11000L);
+               if (clazz == Provider.class) {
+                  this.method5206(Items.PRISMARINE_SHARD, new Vec3(levelParticlesPacket.x(), levelParticlesPacket.y(), levelParticlesPacket.z()), System.currentTimeMillis() + 11000L);
                }
             }
          }
 
-         if (var1.getPacket3() instanceof ClientboundSystemChatPacket var17 && this.autoPointSetting.isEnabled() && this.autoPointSetting.getVisible().get()) {
-            Component var23 = var17.content();
-            String var4 = var23.toString();
-            String var5 = var23.getString();
-            String var6 = StringUtils.substringBetween(var5, "|||   [", "]   ");
-            if (var6 != null) {
-               String var7 = StringUtils.substringBetween(var4, "value='/gps ", "'");
-               String var8 = StringUtils.substringBetween(var5, "Уровень лута: ", "\n ║");
-               String var9 = StringUtils.substringBetween(var5, "Призван игроком: ", "\n ║");
-               if (var7 != null) {
-                  String[] var10 = var7.split(" ");
-                  Vec3 var11 = Vec3.atCenterOf(BlockPos.containing(Integer.parseInt(var10[0]), Integer.parseInt(var10[1]), Integer.parseInt(var10[2])));
-                  switch (var6) {
+         if (event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket && this.autoPointSetting.isEnabled() && this.autoPointSetting.getVisible().get()) {
+            Component content = systemChatPacket.content();
+            String string = content.toString();
+            String str = content.getString();
+            String substringBetween = StringUtils.substringBetween(str, "|||   [", "]   ");
+            if (substringBetween != null) {
+               String substringBetween2 = StringUtils.substringBetween(string, "value='/gps ", "'");
+               String substringBetween3 = StringUtils.substringBetween(str, "Уровень лута: ", "\n ║");
+               String substringBetween4 = StringUtils.substringBetween(str, "Призван игроком: ", "\n ║");
+               if (substringBetween2 != null) {
+                  String[] strings = substringBetween2.split(" ");
+                  Vec3 atCenterOf = Vec3.atCenterOf(BlockPos.containing(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2])));
+                  switch (substringBetween) {
                      case "Мистический сундук":
-                        this.method5205(var6, var8, var9, var11, "overworld", 300, 0);
+                        this.method5205(substringBetween, substringBetween3, substringBetween4, atCenterOf, "overworld", 300, 0);
                         break;
                      case "Вулкан":
-                        this.method5205(var6, var8, var9, var11, "overworld", 300, 120);
+                        this.method5205(substringBetween, substringBetween3, substringBetween4, atCenterOf, "overworld", 300, 120);
                         break;
                      case "Метеоритный дождь":
                      case "Маяк убийца":
                      case "Мистический Алтарь":
-                        this.method5205(var6, var8, var9, var11, "overworld", 360, 0);
+                        this.method5205(substringBetween, substringBetween3, substringBetween4, atCenterOf, "overworld", 360, 0);
                         break;
                      case "Загадочный маяк":
-                        this.method5205(var6, var8, var9, var11, "overworld", 60, 180);
+                        this.method5205(substringBetween, substringBetween3, substringBetween4, atCenterOf, "overworld", 60, 180);
                   }
                } else {
-                  switch (var6) {
+                  switch (substringBetween) {
                      case "Сундук смерти":
-                        this.method5205(var6, var8, var9, net.minecraft.world.phys.Vec3.atCenterOf(BlockPos.containing(-155.0, 64.0, 205.0)), "lobby", 300, 0);
+                        this.method5205(substringBetween, substringBetween3, substringBetween4, net.minecraft.world.phys.Vec3.atCenterOf(BlockPos.containing(-155.0, 64.0, 205.0)), "lobby", 300, 0);
                         break;
                      case "Адская резня":
-                        this.method5205(var6, var8, var9, net.minecraft.world.phys.Vec3.atCenterOf(BlockPos.containing(48.0, 87.0, 73.0)), "lobby", 180, 120);
+                        this.method5205(substringBetween, substringBetween3, substringBetween4, net.minecraft.world.phys.Vec3.atCenterOf(BlockPos.containing(48.0, 87.0, 73.0)), "lobby", 180, 120);
                   }
                }
             }
@@ -516,199 +516,199 @@ public final class ServerHelperModule extends Module {
       }
    }
 
-   private void method5186(ClientboundSectionBlocksUpdatePacket var1) {
-      long var2 = System.currentTimeMillis();
-      this.method5187(var2);
-      var1.runUpdates((var3, var4) -> {
-         BlockPos var5 = var3.immutable();
-         this.linkedHashMap.remove(var5);
-         this.linkedHashMap.put(var5, new ServerHelperModule.Data5(var4, var2));
+   private void method5186(ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+      long now = System.currentTimeMillis();
+      this.method5187(now);
+      blocksUpdatePacket.runUpdates((pos, blockState) -> {
+         BlockPos immutable = pos.immutable();
+         this.linkedHashMap.remove(immutable);
+         this.linkedHashMap.put(immutable, new ServerHelperModule.Data5(blockState, now));
       });
-      var1.runUpdates((var1x, var2x) -> {
-         Vec3 var3 = net.minecraft.world.phys.Vec3.atCenterOf(var1x.offset(0, 0, 0));
+      blocksUpdatePacket.runUpdates((var1x, var2x) -> {
+         Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(var1x.offset(0, 0, 0));
          if (this.linkedHashMap.size() > 50 && this.linkedHashMap.size() < 600) {
             if (this.method5209(var1x.above(2))) {
-               this.method5206(Items.NETHERITE_SCRAP, var3, System.currentTimeMillis() + 15000L);
+               this.method5206(Items.NETHERITE_SCRAP, atCenterOf, System.currentTimeMillis() + 15000L);
             } else if (this.method5211(var1x.above(3))) {
-               this.method5206(Items.NETHERITE_SCRAP, var3, System.currentTimeMillis() + 30000L);
+               this.method5206(Items.NETHERITE_SCRAP, atCenterOf, System.currentTimeMillis() + 30000L);
             }
          }
       });
    }
 
-   private void method5187(long var1) {
-      var var3 = this.linkedHashMap.values().iterator();
+   private void method5187(long now) {
+      var iterator = this.linkedHashMap.values().iterator();
 
-      while (var3.hasNext() && var1 - ((ServerHelperModule.Data5)var3.next()).time() > 2000L) {
-         var3.remove();
+      while (iterator.hasNext() && now - ((ServerHelperModule.Data5)iterator.next()).time() > 2000L) {
+         iterator.remove();
       }
    }
 
-   private BlockState method5188(BlockPos var1) {
-      ServerHelperModule.Data5 var2 = this.linkedHashMap.get(var1);
-      return var2 == null ? null : var2.state();
+   private BlockState method5188(BlockPos key) {
+      ServerHelperModule.Data5 data5 = this.linkedHashMap.get(key);
+      return data5 == null ? null : data5.state();
    }
 
    @EventTarget
-   public void method5189(WorldRenderEvent var1) {
+   public void method5189(WorldRenderEvent event) {
       if (System.currentTimeMillis() % 5000L < 16L) {
          this.method5214();
       }
 
-      BlockPos var4 = mc.player.blockPosition();
-      Vec3 var5 = Vec3.ZERO;
-      PoseStack var6 = var1.getMatrixStack();
-      this.items3.stream().filter(var0 -> var0.class27.isValue()).forEach(var4x -> {
+      BlockPos blockPosition = mc.player.blockPosition();
+      Vec3 vec = Vec3.ZERO;
+      PoseStack matrixStack = event.getMatrixStack();
+      this.items3.stream().filter(data3 -> data3.class27.isValue()).forEach(var4x -> {
          String var5x = var4x.bindSetting.getKey();
          switch (var5x) {
             case "module.serverHelper.trap":
             case "module.serverHelper.normalTrap":
-               this.method5197(var4, var5, 1.99F, Zenith.getInstance().getStyleManager().getClientColor(90).method7287());
+               this.method5197(blockPosition, vec, 1.99F, Zenith.getInstance().getStyleManager().getClientColor(90).method7287());
                break;
             case "module.serverHelper.disorient":
             case "module.serverHelper.fireTornado":
             case "module.serverHelper.clearDust":
-               this.method5198(var6, var4x.floatValue, ColorUtils.CONST_intValue);
+               this.method5198(matrixStack, var4x.floatValue, ColorUtils.CONST_intValue);
                break;
             case "module.serverHelper.explosiveThing":
-               this.method5198(var6, 5.0F, Zenith.getInstance().getStyleManager().getClientColor(90).method7287());
+               this.method5198(matrixStack, 5.0F, Zenith.getInstance().getStyleManager().getClientColor(90).method7287());
                break;
             case "module.serverHelper.plast":
-               float var7 = Mth.wrapDegrees(mc.player.getYRot());
+               float f = Mth.wrapDegrees(mc.player.getYRot());
                if (Math.abs(mc.player.getXRot()) > 60.0F) {
-                  BlockPos var8 = var4.above().relative(mc.player.getNearestViewDirection(), 3);
-                  Vec3 var9 = Vec3.atLowerCornerOf(var8.east(3).south(3).below()).add(var5);
-                  Vec3 var10 = Vec3.atLowerCornerOf(var8.west(2).north(2).above()).add(var5);
-                  GlowUtil.method2232(new AABB(var9, var10), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
-               } else if (var7 <= -157.5F || var7 >= 157.5F) {
-                  BlockPos var14 = var4.north(3).above();
-                  Vec3 var18 = Vec3.atLowerCornerOf(var14.below(2).east(3)).add(var5);
-                  Vec3 var22 = Vec3.atLowerCornerOf(var14.above(3).west(2).south(2)).add(var5);
-                  GlowUtil.method2232(new AABB(var18, var22), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
-               } else if (var7 <= -112.5F) {
-                  this.method5200(var4.east(5).south().below(), var5, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), -1, true);
-               } else if (var7 <= -67.5F) {
-                  BlockPos var11 = var4.east(2).above();
-                  Vec3 var15 = Vec3.atLowerCornerOf(var11.below(2).south(3)).add(var5);
-                  Vec3 var19 = Vec3.atLowerCornerOf(var11.above(3).north(2).east(2)).add(var5);
-                  GlowUtil.method2232(new AABB(var15, var19), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
-               } else if (var7 <= -22.5F) {
-                  this.method5200(var4.east(5).below(), var5, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 1, false);
-               } else if (var7 >= -22.5 && var7 <= 22.5) {
-                  BlockPos var13 = var4.south(2).above();
-                  Vec3 var17 = Vec3.atLowerCornerOf(var13.below(2).east(3)).add(var5);
-                  Vec3 var21 = Vec3.atLowerCornerOf(var13.above(3).west(2).south(2)).add(var5);
-                  GlowUtil.method2232(new AABB(var17, var21), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
-               } else if (var7 <= 67.5F) {
-                  this.method5200(var4.west(4).below(), var5, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 1, true);
-               } else if (var7 <= 112.5F) {
-                  BlockPos var12 = var4.west(3).above();
-                  Vec3 var16 = Vec3.atLowerCornerOf(var12.below(2).south(3)).add(var5);
-                  Vec3 var20 = Vec3.atLowerCornerOf(var12.above(3).north(2).east(2)).add(var5);
-                  GlowUtil.method2232(new AABB(var16, var20), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
-               } else if (var7 <= 157.5F) {
-                  this.method5200(var4.west(4).south().below(), var5, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), -1, false);
+                  BlockPos relative = blockPosition.above().relative(mc.player.getNearestViewDirection(), 3);
+                  Vec3 begin = Vec3.atLowerCornerOf(relative.east(3).south(3).below()).add(vec);
+                  Vec3 end = Vec3.atLowerCornerOf(relative.west(2).north(2).above()).add(vec);
+                  GlowUtil.method2232(new AABB(begin, end), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
+               } else if (f <= -157.5F || f >= 157.5F) {
+                  BlockPos above = blockPosition.north(3).above();
+                  Vec3 begin = Vec3.atLowerCornerOf(above.below(2).east(3)).add(vec);
+                  Vec3 end = Vec3.atLowerCornerOf(above.above(3).west(2).south(2)).add(vec);
+                  GlowUtil.method2232(new AABB(begin, end), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
+               } else if (f <= -112.5F) {
+                  this.method5200(blockPosition.east(5).south().below(), vec, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), -1, true);
+               } else if (f <= -67.5F) {
+                  BlockPos above = blockPosition.east(2).above();
+                  Vec3 begin = Vec3.atLowerCornerOf(above.below(2).south(3)).add(vec);
+                  Vec3 end = Vec3.atLowerCornerOf(above.above(3).north(2).east(2)).add(vec);
+                  GlowUtil.method2232(new AABB(begin, end), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
+               } else if (f <= -22.5F) {
+                  this.method5200(blockPosition.east(5).below(), vec, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 1, false);
+               } else if (f >= -22.5 && f <= 22.5) {
+                  BlockPos above = blockPosition.south(2).above();
+                  Vec3 begin = Vec3.atLowerCornerOf(above.below(2).east(3)).add(vec);
+                  Vec3 end = Vec3.atLowerCornerOf(above.above(3).west(2).south(2)).add(vec);
+                  GlowUtil.method2232(new AABB(begin, end), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
+               } else if (f <= 67.5F) {
+                  this.method5200(blockPosition.west(4).below(), vec, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 1, true);
+               } else if (f <= 112.5F) {
+                  BlockPos above = blockPosition.west(3).above();
+                  Vec3 begin = Vec3.atLowerCornerOf(above.below(2).south(3)).add(vec);
+                  Vec3 end = Vec3.atLowerCornerOf(above.above(3).north(2).east(2)).add(vec);
+                  GlowUtil.method2232(new AABB(begin, end), Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), 3.0F, true, true, true);
+               } else if (f <= 157.5F) {
+                  this.method5200(blockPosition.west(4).south().below(), vec, Zenith.getInstance().getStyleManager().getClientColor(90).method7287(), -1, false);
                }
                break;
             case "module.serverHelper.explosiveTrap":
-               this.method5197(var4, var5, 3.99F, ColorUtils.CONST_intValue);
+               this.method5197(blockPosition, vec, 3.99F, ColorUtils.CONST_intValue);
                break;
             case "module.serverHelper.stun":
-               this.method5197(var4, var5, 15.01F, ColorUtils.CONST_intValue);
+               this.method5197(blockPosition, vec, 15.01F, ColorUtils.CONST_intValue);
                break;
             case "module.serverHelper.snowball":
-               PredictionsModule.INSTANCE.method2902(var6, PredictionsModule.snowball());
+               PredictionsModule.INSTANCE.method2902(matrixStack, PredictionsModule.snowball());
          }
       });
       if (this.antiFlyRadius.isEnabled()
          && this.method5181()
          && (mc.player.getMainHandItem().is(Items.FIREWORK_STAR) || mc.player.getOffhandItem().is(Items.FIREWORK_STAR))) {
-         this.method5198(var6, 16.0F, ColorUtils.CONST_intValue);
+         this.method5198(matrixStack, 16.0F, ColorUtils.CONST_intValue);
       }
 
-      this.items2.forEach(var2 -> {
-         if (var2.item == Items.NETHER_STAR) {
-            this.method5197(BlockPos.containing(var2.vec3d), var5, 15.01F, Zenith.getInstance().getStyleManager().getClientColor(90).method7287());
+      this.items2.forEach(data4 -> {
+         if (data4.item == Items.NETHER_STAR) {
+            this.method5197(BlockPos.containing(data4.vec3d), vec, 15.01F, Zenith.getInstance().getStyleManager().getClientColor(90).method7287());
          }
       });
    }
 
    @EventTarget
-   public void onDraw(DrawEvent var1) {
-      CustomDrawContext var2 = var1.getCustomDrawContext();
-      MatrixUtils.method666(var2.pose());
+   public void onDraw(DrawEvent event) {
+      CustomDrawContext customDrawContext = event.getCustomDrawContext();
+      MatrixUtils.method666(customDrawContext.pose());
       if (this.hitDisplaySetting.isEnabled() && this.hitDisplaySetting.getVisible().get()) {
-         this.method5194(var2);
+         this.method5194(customDrawContext);
       }
 
       this.items2
          .forEach(
             var1x -> {
                double var2x = (var1x.doubleValue - System.currentTimeMillis()) / 1000.0;
-               Vec3 var4 = ProjectionUtils.method301(var1x.vec3d);
-               String var5 = MathUtils.method2652(var2x, 0.1F) + "с";
-               Font var6 = Fonts.MEDIUM.getFont(10.0F);
-               float var7 = var6.width(var5);
-               float var8 = (float)(var4.x - var7 / 2.0F);
-               float var9 = (float)var4.y;
+               Vec3 vec = ProjectionUtils.method301(var1x.vec3d);
+               String text = MathUtils.method2652(var2x, 0.1F) + "с";
+               Font font = Fonts.MEDIUM.getFont(10.0F);
+               float width = font.width(text);
+               float x = (float)(vec.x - width / 2.0F);
+               float y = (float)vec.y;
                if (ProjectionUtils.method302(var1x.vec3d)
                   && var1x.intValue == Zenith.getInstance().getServerDetector().getAnarchy()
                   && Zenith.getInstance().getServerDetector().method1638().equals(var1x.text)) {
                   RenderShaders.method5286(
-                     MatrixUtils.method664(var1.getCustomDrawContext().pose()),
-                     var8 - 4.0F,
-                     var9 - 4.0F,
-                     16.8F + var6.width(var5) + 8.0F,
+                     MatrixUtils.method664(event.getCustomDrawContext().pose()),
+                     x - 4.0F,
+                     y - 4.0F,
+                     16.8F + font.width(text) + 8.0F,
                      20.8F,
                      22.0F,
                      ProxyDotRadiusData.method8069(4.0F),
                      ZenithColor.INSTANCE
                   );
-                  var1.getCustomDrawContext()
+                  event.getCustomDrawContext()
                      .drawRoundedRect(
-                        var8 - 4.0F,
-                        var9 - 4.0F,
-                        16.8F + var6.width(var5) + 8.0F,
+                        x - 4.0F,
+                        y - 4.0F,
+                        16.8F + font.width(text) + 8.0F,
                         20.8F,
                         ProxyDotRadiusData.method8069(4.0F),
                         Zenith.getInstance().getStyleManager().getCurrentStyle().getHudBackground().getZenithColor()
                      );
                   RenderShaders.method5278(
-                     MatrixUtils.method664(var1.getCustomDrawContext().pose()),
-                     var8 - 4.0F,
-                     var9 - 4.0F,
-                     16.8F + var6.width(var5) + 8.0F,
+                     MatrixUtils.method664(event.getCustomDrawContext().pose()),
+                     x - 4.0F,
+                     y - 4.0F,
+                     16.8F + font.width(text) + 8.0F,
                      20.8F,
                      0.1F,
                      10.0F,
                      Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor(),
                      ProxyDotRadiusData.method8069(4.0F)
                   );
-                  var1.getCustomDrawContext()
+                  event.getCustomDrawContext()
                      .drawText(
-                        var6,
-                        var5,
-                        var8 + 12.8F + 4.0F,
-                        var9 + 2.5F,
+                        font,
+                        text,
+                        x + 12.8F + 4.0F,
+                        y + 2.5F,
                         Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor()
                      );
-                  var1.getCustomDrawContext().pose().pushMatrix();
-                  var1.getCustomDrawContext().pose().translate(var8, var9);
-                  var1.getCustomDrawContext().pose().scale(0.8F, 0.8F);
-                  var1.getCustomDrawContext().item(var1x.item.getDefaultInstance(), 0, 0);
-                  var1.getCustomDrawContext().pose().popMatrix();
+                  event.getCustomDrawContext().pose().pushMatrix();
+                  event.getCustomDrawContext().pose().translate(x, y);
+                  event.getCustomDrawContext().pose().scale(0.8F, 0.8F);
+                  event.getCustomDrawContext().item(var1x.item.getDefaultInstance(), 0, 0);
+                  event.getCustomDrawContext().pose().popMatrix();
                }
             }
          );
-      this.items2.removeIf(var0 -> var0.doubleValue - System.currentTimeMillis() <= 0.0);
-      this.items.removeIf(var0 -> var0.doubleValue2 + 90000.0 - System.currentTimeMillis() <= 0.0);
+      this.items2.removeIf(data4 -> data4.doubleValue - System.currentTimeMillis() <= 0.0);
+      this.items.removeIf(data2 -> data2.doubleValue2 + 90000.0 - System.currentTimeMillis() <= 0.0);
    }
 
-   private void method5190(PacketEvent var1) {
+   private void method5190(PacketEvent event) {
       if (this.hitDisplaySetting.isEnabled() && this.hitDisplaySetting.getVisible().get() && mc.level != null) {
-         long var2 = System.currentTimeMillis();
-         if (var1.getPacket3() instanceof ClientboundSetEntityDataPacket var4) {
-            this.method5191(var4, var2);
+         long now = System.currentTimeMillis();
+         if (event.getPacket3() instanceof ClientboundSetEntityDataPacket setEntityDataPacket) {
+            this.method5191(setEntityDataPacket, now);
          }
       } else {
          if (!this.items4.isEmpty()) {
@@ -717,13 +717,13 @@ public final class ServerHelperModule extends Module {
       }
    }
 
-   private void method5191(ClientboundSetEntityDataPacket var1, long var2) {
-      for (DataValue var5 : var1.packedItems()) {
-         if (var5.id() == 10) {
-            if (this.method5192(var5.value())) {
-               ServerHelperModule.Data var6 = this.items4.get(var1.id());
-               if (var6 == null || var6.getLongValue2() <= var2) {
-                  this.items4.put(var1.id(), new ServerHelperModule.Data(var2, var2 + 10000L));
+   private void method5191(ClientboundSetEntityDataPacket setEntityDataPacket, long now) {
+      for (DataValue packedItem : setEntityDataPacket.packedItems()) {
+         if (packedItem.id() == 10) {
+            if (this.method5192(packedItem.value())) {
+               ServerHelperModule.Data data = this.items4.get(setEntityDataPacket.id());
+               if (data == null || data.getLongValue2() <= now) {
+                  this.items4.put(setEntityDataPacket.id(), new ServerHelperModule.Data(now, now + 10000L));
                }
             }
 
@@ -732,39 +732,39 @@ public final class ServerHelperModule extends Module {
       }
    }
 
-   private boolean method5192(Object var1) {
-      return var1 instanceof List var2
-         ? var2.stream().filter(ColorParticleOption.class::isInstance).map(ColorParticleOption.class::cast).anyMatch(x -> this.method5193((ColorParticleOption)x))
+   private boolean method5192(Object obj) {
+      return obj instanceof List list
+         ? list.stream().filter(ColorParticleOption.class::isInstance).map(ColorParticleOption.class::cast).anyMatch(x -> this.method5193((ColorParticleOption)x))
          : false;
    }
 
-   private boolean method5193(ColorParticleOption var1) {
-      return Math.abs(var1.getRed() - 0.29411766F) <= 1.0E-4F
-         && Math.abs(var1.getGreen() - 0.34509805F) <= 1.0E-4F
-         && Math.abs(var1.getBlue() - 0.4117647F) <= 1.0E-4F;
+   private boolean method5193(ColorParticleOption x) {
+      return Math.abs(x.getRed() - 0.29411766F) <= 1.0E-4F
+         && Math.abs(x.getGreen() - 0.34509805F) <= 1.0E-4F
+         && Math.abs(x.getBlue() - 0.4117647F) <= 1.0E-4F;
    }
 
-   private void method5194(CustomDrawContext var1) {
+   private void method5194(CustomDrawContext customDrawContext) {
       if (mc.player != null && mc.level != null) {
-         long var2 = System.currentTimeMillis();
+         long now = System.currentTimeMillis();
          this.items4
             .entrySet()
-            .removeIf(var2x -> var2x.getValue().getLongValue2() <= var2 || !(mc.level.getEntity(var2x.getKey()) instanceof Player));
+            .removeIf(var2x -> var2x.getValue().getLongValue2() <= now || !(mc.level.getEntity(var2x.getKey()) instanceof Player));
 
-         for (Player var5 : mc.level.players()) {
-            if (var5 != mc.player) {
-               ServerHelperModule.Data var6 = this.items4.get(var5.getId());
-               if (var6 != null && var6.getLongValue2() > var2) {
-                  Vec3 var7 = MathUtils.method2656(var5).add(0.0, var5.getBbHeight() * 0.5, 0.0);
-                  if (ProjectionUtils.method302(var7)) {
-                     Vec3 var8 = ProjectionUtils.method301(var7);
-                     if (!(var8.z <= 0.0) && !(var8.z >= 1.0)) {
-                        float var9 = 18.0F;
-                        float var10 = Mth.clamp((float)(var6.getLongValue2() - var2) / 10000.0F, 0.0F, 1.0F);
-                        float var11 = this.method5195(var6, var2);
-                        float var12 = (float)var8.x - var9 / 2.0F;
-                        float var13 = (float)var8.y - var9 / 2.0F;
-                        this.method5196(var1, var12, var13, var9, var10, var11);
+         for (Player player : mc.level.players()) {
+            if (player != mc.player) {
+               ServerHelperModule.Data data = this.items4.get(player.getId());
+               if (data != null && data.getLongValue2() > now) {
+                  Vec3 vec3d = MathUtils.method2656(player).add(0.0, player.getBbHeight() * 0.5, 0.0);
+                  if (ProjectionUtils.method302(vec3d)) {
+                     Vec3 vec = ProjectionUtils.method301(vec3d);
+                     if (!(vec.z <= 0.0) && !(vec.z >= 1.0)) {
+                        float width = 18.0F;
+                        float f = Mth.clamp((float)(data.getLongValue2() - now) / 10000.0F, 0.0F, 1.0F);
+                        float previewAlpha = this.method5195(data, now);
+                        float floatValue = (float)vec.x - width / 2.0F;
+                        float y = (float)vec.y - width / 2.0F;
+                        this.method5196(customDrawContext, floatValue, y, width, f, previewAlpha);
                      }
                   }
                }
@@ -773,56 +773,56 @@ public final class ServerHelperModule extends Module {
       }
    }
 
-   private float method5195(ServerHelperModule.Data var1, long var2) {
-      float var4 = Mth.clamp((float)(var2 - var1.getLongValue()) / 250.0F, 0.0F, 1.0F);
-      float var5 = Mth.clamp((float)(var1.getLongValue2() - var2) / 250.0F, 0.0F, 1.0F);
-      return Math.min(var4, var5);
+   private float method5195(ServerHelperModule.Data data, long now) {
+      float f = Mth.clamp((float)(now - data.getLongValue()) / 250.0F, 0.0F, 1.0F);
+      float f2 = Mth.clamp((float)(data.getLongValue2() - now) / 250.0F, 0.0F, 1.0F);
+      return Math.min(f, f2);
    }
 
    // $VF: Could not inline inconsistent finally blocks
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   private void method5196(CustomDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      RenderState.method1883(1.0F, 1.0F, 1.0F, var6);
+   private void method5196(CustomDrawContext customDrawContext, float floatValue, float y, float width, float f, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      RenderState.method1883(1.0F, 1.0F, 1.0F, previewAlpha);
 
       try {
-         var1.drawArcBorder(var2, var3, var4, var4, 1.0F, 360.0F, 0.5F, var7.getFieldBorder().getZenithColor());
-         var1.drawArcBorder(var2, var3, var4, var4, 1.0F, 360.0F * var5, 0.5F, var7.getPrimaryColor().getZenithColor());
-         float var8 = 0.65F;
-         float var9 = (var4 - 16.0F * var8) / 2.0F;
-         var1.pose().pushMatrix();
-         var1.pose().translate(var2 + var9, var3 + var9);
-         var1.pose().scale(var8, var8);
-         var1.item(Items.SNOWBALL.getDefaultInstance(), 0, 0);
-         var1.pose().popMatrix();
-      } catch (Throwable var12) {
+         customDrawContext.drawArcBorder(floatValue, y, width, width, 1.0F, 360.0F, 0.5F, currentStyle.getFieldBorder().getZenithColor());
+         customDrawContext.drawArcBorder(floatValue, y, width, width, 1.0F, 360.0F * f, 0.5F, currentStyle.getPrimaryColor().getZenithColor());
+         float x = 0.65F;
+         float f2 = (width - 16.0F * x) / 2.0F;
+         customDrawContext.pose().pushMatrix();
+         customDrawContext.pose().translate(floatValue + f2, y + f2);
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.item(Items.SNOWBALL.getDefaultInstance(), 0, 0);
+         customDrawContext.pose().popMatrix();
+      } catch (Throwable e) {
          RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
-         throw var12;
+         throw e;
       }
 
       RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
    }
 
-   private void method5197(BlockPos var1, Vec3 var2, float var3, int var4) {
-      AABB var5 = new AABB(var1.above()).move(var2).deflate(0.0, 0.2F, 0.0).inflate(var3);
-      boolean var6 = mc.level
+   private void method5197(BlockPos blockPosition, Vec3 vec, float amountToAddInAllDirections, int n) {
+      AABB inflate = new AABB(blockPosition.above()).move(vec).deflate(0.0, 0.2F, 0.0).inflate(amountToAddInAllDirections);
+      boolean anyMatch = mc.level
          .players()
          .stream()
          .anyMatch(
             var1x -> var1x != mc.player
-               && var5.intersects(var1x.getBoundingBox())
+               && inflate.intersects(var1x.getBoundingBox())
                && !Zenith.getInstance().getFriends().method7627(var1x.getGameProfile().name())
          );
       GlowUtil.method2232(
-         var5, var6 ? Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287() : var4, 3.0F, true, true, true
+         inflate, anyMatch ? Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287() : n, 3.0F, true, true, true
       );
    }
 
-   private void method5198(PoseStack var1, float var2, int var3) {
-      float var4 = mc.player.getBbWidth() / 2.0F;
-      int var5 = this.method5208(var2) ? Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287() : var3;
-      Vec3 var6 = MathUtils.method2656(mc.player).add(var4, 0.02, var4);
-      Vec3 var7 = var6.subtract(mc.getEntityRenderDispatcher().camera.position());
+   private void method5198(PoseStack matrixStack, float floatValue, int n) {
+      float x = mc.player.getBbWidth() / 2.0F;
+      int color = this.method5208(floatValue) ? Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287() : n;
+      Vec3 vec = MathUtils.method2656(mc.player).add(x, 0.02, x);
+      Vec3 vec2 = vec.subtract(mc.getEntityRenderDispatcher().camera.position());
       GL11.glEnable(2881);
       RenderState.method1871();
       RenderState.method1878();
@@ -830,236 +830,236 @@ public final class ServerHelperModule extends Module {
       RenderState.method1877();
       RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
       RenderState.method1898("core/position_color");
-      BufferBuilder var8 = Tesselator.getInstance().begin(PrimitiveTopology.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-      int var9 = 0;
+      BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+      int n2 = 0;
 
-      for (byte var10 = 90; var9 <= var10; var9++) {
-         Vec3 var11 = MathUtils.method2653(var9, var10, var2);
-         Vec3 var12 = MathUtils.method2653(var9 + 1, var10, var2);
+      for (byte i = 90; n2 <= i; n2++) {
+         Vec3 vec3 = MathUtils.method2653(n2, i, floatValue);
+         Vec3 vec4 = MathUtils.method2653(n2 + 1, i, floatValue);
          GlowUtil.method2235(
-            var1, var8, var7.add(var11), var7.add(var11.x, var11.y + 2.0, var11.z), ColorUtils.method6439(var5, 0.2F), ColorUtils.method6439(var5, 0.0F)
+            matrixStack, begin, vec2.add(vec3), vec2.add(vec3.x, vec3.y + 2.0, vec3.z), ColorUtils.method6439(color, 0.2F), ColorUtils.method6439(color, 0.0F)
          );
-         GlowUtil.method2245(var6.add(var11), var6.add(var12), var5, 2.0F, true);
+         GlowUtil.method2245(vec.add(vec3), vec.add(vec4), color, 2.0F, true);
       }
 
-      var9 = 0;
+      n2 = 0;
 
-      for (byte var14 = 90; var9 <= var14; var9++) {
-         Vec3 var15 = MathUtils.method2653(var9, var14, var2);
+      for (byte i = 90; n2 <= i; n2++) {
+         Vec3 vec3 = MathUtils.method2653(n2, i, floatValue);
          GlowUtil.method2235(
-            var1, var8, var7.add(var15), var7.add(var15.x, var15.y - 2.0, var15.z), ColorUtils.method6439(var5, 0.2F), ColorUtils.method6439(var5, 0.0F)
+            matrixStack, begin, vec2.add(vec3), vec2.add(vec3.x, vec3.y - 2.0, vec3.z), ColorUtils.method6439(color, 0.2F), ColorUtils.method6439(color, 0.0F)
          );
       }
 
-      ImmediateRenderer.method8015(var8.buildOrThrow());
+      ImmediateRenderer.method8015(begin.buildOrThrow());
       RenderState.method1879();
       RenderState.method1882(true);
       RenderState.method1872();
       GL11.glDisable(2881);
    }
 
-   private void method5199(PoseStack var1, Font var2, List<String> var3, Vec3 var4) {
-      float var5 = 0.0F;
+   private void method5199(PoseStack poseStack, Font font, List<String> strings, Vec3 vec) {
+      float f = 0.0F;
 
-      for (int var6 = 0; var6 < var3.size(); var6++) {
-         String var7 = (String)var3.get(var6);
-         float var8 = var2.width(var7);
-         float var10000 = (float)(var4.x - var8 / 2.0F);
-         var5 += 10.0F;
+      for (int i = 0; i < strings.size(); i++) {
+         String text = (String)strings.get(i);
+         float width = font.width(text);
+         float f2 = (float)(vec.x - width / 2.0F);
+         f += 10.0F;
       }
    }
 
-   public void method5200(BlockPos var1, Vec3 var2, int var3, int var4, boolean var5) {
-      Vec3 var6 = Vec3.atLowerCornerOf(var1).add(var2);
-      float var7 = 2.0F;
-      int var8 = ColorUtils.method6439(var3, 0.15F);
-      this.method5201(var6, var3, var7, var4, var5);
-      this.method5201(var6, var3, var7, var4, var5);
-      this.method5202(var6, var3, var7, var4, var5);
-      this.method5203(var6, var8, var4, var5);
-      this.method5203(var6, var8, var4, var5);
-      this.method5204(var6, var8, var4, var5);
+   public void method5200(BlockPos below, Vec3 vec, int color, int z, boolean flag) {
+      Vec3 vec2 = Vec3.atLowerCornerOf(below).add(vec);
+      float width = 2.0F;
+      int n = ColorUtils.method6439(color, 0.15F);
+      this.method5201(vec2, color, width, z, flag);
+      this.method5201(vec2, color, width, z, flag);
+      this.method5202(vec2, color, width, z, flag);
+      this.method5203(vec2, n, z, flag);
+      this.method5203(vec2, n, z, flag);
+      this.method5204(vec2, n, z, flag);
    }
 
-   private void method5201(Vec3 var1, int var2, float var3, int var4, boolean var5) {
-      float var6 = var5 ? var4 : -var4;
-      Vec3 var7;
-      GlowUtil.method2245(var1, var7 = var1.add(var6, 0.0, 0.0), var2, var3, true);
+   private void method5201(Vec3 vec, int color, float width, int z, boolean flag) {
+      float x = flag ? z : -z;
+      Vec3 vec2;
+      GlowUtil.method2245(vec, vec2 = vec.add(x, 0.0, 0.0), color, width, true);
 
-      for (int var8 = 0; var8 < 4; var8++) {
-         Vec3 var9;
-         GlowUtil.method2245(var7, var9 = var7.add(0.0, 0.0, var4), var2, var3, true);
-         GlowUtil.method2245(var9, var7 = var9.add(var6, 0.0, 0.0), var2, var3, true);
+      for (int i = 0; i < 4; i++) {
+         Vec3 vec3;
+         GlowUtil.method2245(vec2, vec3 = vec2.add(0.0, 0.0, z), color, width, true);
+         GlowUtil.method2245(vec3, vec2 = vec3.add(x, 0.0, 0.0), color, width, true);
       }
 
-      Vec3 var10;
-      GlowUtil.method2245(var7, var10 = var7.add(0.0, 0.0, var4), var2, var3, true);
-      GlowUtil.method2245(var10, var7 = var10.add(var6 * -2.0F, 0.0, 0.0), var2, var3, true);
+      Vec3 vec3;
+      GlowUtil.method2245(vec2, vec3 = vec2.add(0.0, 0.0, z), color, width, true);
+      GlowUtil.method2245(vec3, vec2 = vec3.add(x * -2.0F, 0.0, 0.0), color, width, true);
 
-      for (int var13 = 0; var13 < 3; var13++) {
-         Vec3 var12;
-         GlowUtil.method2245(var7, var12 = var7.add(0.0, 0.0, var4 * -1), var2, var3, true);
-         GlowUtil.method2245(var12, var7 = var12.add(var6 * -1.0F, 0.0, 0.0), var2, var3, true);
+      for (int i = 0; i < 3; i++) {
+         Vec3 vec4;
+         GlowUtil.method2245(vec2, vec4 = vec2.add(0.0, 0.0, z * -1), color, width, true);
+         GlowUtil.method2245(vec4, vec2 = vec4.add(x * -1.0F, 0.0, 0.0), color, width, true);
       }
 
-      GlowUtil.method2245(var7, var7.add(0.0, 0.0, var4 * -2), var2, var3, true);
+      GlowUtil.method2245(vec2, vec2.add(0.0, 0.0, z * -2), color, width, true);
    }
 
-   private void method5202(Vec3 var1, int var2, float var3, int var4, boolean var5) {
-      float var6 = var5 ? var4 : -var4;
-      GlowUtil.method2245(var1, var1.add(0.0, 5.0, 0.0), var2, var3, true);
-      Vec3 var8;
-      GlowUtil.method2245(var8 = var1.add(var6, 0.0, 0.0), var8.add(0.0, 5.0, 0.0), var2, var3, true);
+   private void method5202(Vec3 vec, int color, float width, int z, boolean flag) {
+      float x = flag ? z : -z;
+      GlowUtil.method2245(vec, vec.add(0.0, 5.0, 0.0), color, width, true);
+      Vec3 vec2;
+      GlowUtil.method2245(vec2 = vec.add(x, 0.0, 0.0), vec2.add(0.0, 5.0, 0.0), color, width, true);
 
-      for (int var7 = 0; var7 < 4; var7++) {
-         GlowUtil.method2245(var8 = var8.add(var6, 0.0, var4), var8.add(0.0, 5.0, 0.0), var2, var3, true);
+      for (int i = 0; i < 4; i++) {
+         GlowUtil.method2245(vec2 = vec2.add(x, 0.0, z), vec2.add(0.0, 5.0, 0.0), color, width, true);
       }
 
-      GlowUtil.method2245(var1 = var8.add(0.0, 0.0, var4), var1.add(0.0, 5.0, 0.0), var2, var3, true);
-      Vec3 var10;
-      GlowUtil.method2245(var10 = var1.add(var6 * -2.0F, 0.0, 0.0), var10.add(0.0, 5.0, 0.0), var2, var3, true);
+      GlowUtil.method2245(vec = vec2.add(0.0, 0.0, z), vec.add(0.0, 5.0, 0.0), color, width, true);
+      Vec3 vec3;
+      GlowUtil.method2245(vec3 = vec.add(x * -2.0F, 0.0, 0.0), vec3.add(0.0, 5.0, 0.0), color, width, true);
 
-      for (int var11 = 0; var11 < 3; var11++) {
-         GlowUtil.method2245(var10 = var10.add(var6 * -1.0F, 0.0, var4 * -1), var10.add(0.0, 5.0, 0.0), var2, var3, true);
+      for (int i = 0; i < 3; i++) {
+         GlowUtil.method2245(vec3 = vec3.add(x * -1.0F, 0.0, z * -1), vec3.add(0.0, 5.0, 0.0), color, width, true);
       }
    }
 
-   private void method5203(Vec3 var1, int var2, int var3, boolean var4) {
-      var1 = var1.add(0.0, 0.001, 0.0);
-      float var5 = var4 ? var3 : -var3;
-      GlowUtil.method2247(var1, var1.add(var5, 0.0, 0.0), var1.add(var5, 0.0, var3 * 2), var1.add(0.0, 0.0, var3 * 2), var2, true);
+   private void method5203(Vec3 vec, int n, int z, boolean flag) {
+      vec = vec.add(0.0, 0.001, 0.0);
+      float x = flag ? z : -z;
+      GlowUtil.method2247(vec, vec.add(x, 0.0, 0.0), vec.add(x, 0.0, z * 2), vec.add(0.0, 0.0, z * 2), n, true);
 
-      for (int var6 = 0; var6 < 3; var6++) {
+      for (int i = 0; i < 3; i++) {
          GlowUtil.method2247(
-            var1 = var1.add(var5, 0.0, var3), var1.add(var5, 0.0, 0.0), var1.add(var5, 0.0, var3 * 2), var1.add(0.0, 0.0, var3 * 2), var2, true
+            vec = vec.add(x, 0.0, z), vec.add(x, 0.0, 0.0), vec.add(x, 0.0, z * 2), vec.add(0.0, 0.0, z * 2), n, true
          );
       }
 
-      Vec3 var8;
-      GlowUtil.method2247(var8 = var1.add(var5, 0.0, var3), var8.add(var5, 0.0, 0.0), var8.add(var5, 0.0, var3), var8.add(0.0, 0.0, var3), var2, true);
+      Vec3 vec2;
+      GlowUtil.method2247(vec2 = vec.add(x, 0.0, z), vec2.add(x, 0.0, 0.0), vec2.add(x, 0.0, z), vec2.add(0.0, 0.0, z), n, true);
    }
 
-   private void method5204(Vec3 var1, int var2, int var3, boolean var4) {
-      float var5 = var4 ? var3 : -var3;
-      GlowUtil.method2247(var1, var1.add(var5, 0.0, 0.0), var1.add(var5, 5.0, 0.0), var1.add(0.0, 5.0, 0.0), var2, true);
+   private void method5204(Vec3 vec, int n, int z, boolean flag) {
+      float x = flag ? z : -z;
+      GlowUtil.method2247(vec, vec.add(x, 0.0, 0.0), vec.add(x, 5.0, 0.0), vec.add(0.0, 5.0, 0.0), n, true);
 
-      for (int var6 = 0; var6 < 4; var6++) {
-         Vec3 var7;
-         GlowUtil.method2247(var7 = var1.add(var5, 0.0, 0.0), var7.add(0.0, 0.0, var3), var7.add(0.0, 5.0, var3), var7.add(0.0, 5.0, 0.0), var2, true);
-         GlowUtil.method2247(var1 = var7.add(0.0, 0.0, var3), var1.add(var5, 0.0, 0.0), var1.add(var5, 5.0, 0.0), var1.add(0.0, 5.0, 0.0), var2, true);
+      for (int i = 0; i < 4; i++) {
+         Vec3 vec2;
+         GlowUtil.method2247(vec2 = vec.add(x, 0.0, 0.0), vec2.add(0.0, 0.0, z), vec2.add(0.0, 5.0, z), vec2.add(0.0, 5.0, 0.0), n, true);
+         GlowUtil.method2247(vec = vec2.add(0.0, 0.0, z), vec.add(x, 0.0, 0.0), vec.add(x, 5.0, 0.0), vec.add(0.0, 5.0, 0.0), n, true);
       }
 
-      Vec3 var8;
-      GlowUtil.method2247(var8 = var1.add(var5, 0.0, 0.0), var8.add(0.0, 0.0, var3), var8.add(0.0, 5.0, var3), var8.add(0.0, 5.0, 0.0), var2, true);
+      Vec3 vec2;
+      GlowUtil.method2247(vec2 = vec.add(x, 0.0, 0.0), vec2.add(0.0, 0.0, z), vec2.add(0.0, 5.0, z), vec2.add(0.0, 5.0, 0.0), n, true);
       GlowUtil.method2247(
-         var1 = var8.add(0.0, 0.0, var3), var1.add(var5 * -2.0F, 0.0, 0.0), var1.add(var5 * -2.0F, 5.0, 0.0), var1.add(0.0, 5.0, 0.0), var2, true
+         vec = vec2.add(0.0, 0.0, z), vec.add(x * -2.0F, 0.0, 0.0), vec.add(x * -2.0F, 5.0, 0.0), vec.add(0.0, 5.0, 0.0), n, true
       );
-      var1 = var1.add(var5 * -1.0F, 0.0, 0.0);
+      vec = vec.add(x * -1.0F, 0.0, 0.0);
 
-      for (int var13 = 0; var13 < 3; var13++) {
-         Vec3 var11;
+      for (int i = 0; i < 3; i++) {
+         Vec3 vec3;
          GlowUtil.method2247(
-            var11 = var1.add(var5 * -1.0F, 0.0, 0.0), var11.add(0.0, 0.0, var3 * -1), var11.add(0.0, 5.0, var3 * -1), var11.add(0.0, 5.0, 0.0), var2, true
+            vec3 = vec.add(x * -1.0F, 0.0, 0.0), vec3.add(0.0, 0.0, z * -1), vec3.add(0.0, 5.0, z * -1), vec3.add(0.0, 5.0, 0.0), n, true
          );
          GlowUtil.method2247(
-            var1 = var11.add(0.0, 0.0, var3 * -1), var1.add(var5 * -1.0F, 0.0, 0.0), var1.add(var5 * -1.0F, 5.0, 0.0), var1.add(0.0, 5.0, 0.0), var2, true
+            vec = vec3.add(0.0, 0.0, z * -1), vec.add(x * -1.0F, 0.0, 0.0), vec.add(x * -1.0F, 5.0, 0.0), vec.add(0.0, 5.0, 0.0), n, true
          );
       }
 
-      Vec3 var12;
+      Vec3 vec3;
       GlowUtil.method2247(
-         var12 = var1.add(var5 * -1.0F, 0.0, 0.0), var12.add(0.0, 0.0, var3 * -2), var12.add(0.0, 5.0, var3 * -2), var12.add(0.0, 5.0, 0.0), var2, true
+         vec3 = vec.add(x * -1.0F, 0.0, 0.0), vec3.add(0.0, 0.0, z * -2), vec3.add(0.0, 5.0, z * -2), vec3.add(0.0, 5.0, 0.0), n, true
       );
    }
 
-   private void method5205(String var1, String var2, String var3, Vec3 var4, String var5, int var6, int var7) {
+   private void method5205(String substringBetween, String str, String str2, Vec3 atCenterOf, String str3, int n, int n2) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> this.method5205(var1, var2, var3, var4, var5, var6, var7));
+         mc.execute(() -> this.method5205(substringBetween, str, str2, atCenterOf, str3, n, n2));
       } else {
-         if (this.items.stream().noneMatch(var1x -> var1x.vec3d.equals(var4))) {
-            Island.method2880(var1, var6 * 1000L);
-            long var8;
-            long var10 = (var8 = System.currentTimeMillis() + var6 * 1000L) + var7 * 1000L;
-            this.items.add(new ServerHelperModule.Data2(var1, var2, var3, var4, var5, Zenith.getInstance().getServerDetector().getAnarchy(), var8, var10));
+         if (this.items.stream().noneMatch(var1x -> var1x.vec3d.equals(atCenterOf))) {
+            Island.method2880(substringBetween, n * 1000L);
+            long doubleValue;
+            long l = (doubleValue = System.currentTimeMillis() + n * 1000L) + n2 * 1000L;
+            this.items.add(new ServerHelperModule.Data2(substringBetween, str, str2, atCenterOf, str3, Zenith.getInstance().getServerDetector().getAnarchy(), doubleValue, l));
          }
       }
    }
 
-   private void method5206(Item var1, Vec3 var2, double var3) {
+   private void method5206(Item item, Vec3 vec, double doubleValue) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> this.method5206(var1, var2, var3));
+         mc.execute(() -> this.method5206(item, vec, doubleValue));
       } else {
-         if (this.items2.stream().noneMatch(var1x -> var1x.vec3d.equals(var2))) {
-            long var5 = (long)(var3 - System.currentTimeMillis());
-            String var7 = var1 == Items.NETHER_STAR ? "beacon" : (var1 == Items.PRISMARINE_SHARD ? "blast" : (var5 > 20000L ? "bigTrap" : "trap"));
-            Island.method2879(var7, var5);
+         if (this.items2.stream().noneMatch(var1x -> var1x.vec3d.equals(vec))) {
+            long l = (long)(doubleValue - System.currentTimeMillis());
+            String str = item == Items.NETHER_STAR ? "beacon" : (item == Items.PRISMARINE_SHARD ? "blast" : (l > 20000L ? "bigTrap" : "trap"));
+            Island.method2879(str, l);
             this.items2
                .add(
                   new ServerHelperModule.Data4(
-                     var1, var2, Zenith.getInstance().getServerDetector().method1638(), Zenith.getInstance().getServerDetector().getAnarchy(), var3
+                     item, vec, Zenith.getInstance().getServerDetector().method1638(), Zenith.getInstance().getServerDetector().getAnarchy(), doubleValue
                   )
                );
          }
       }
    }
 
-   private Vector4f method5207(Font var1, List<String> var2, int var3, float var4) {
-      if (var3 == 0) {
-         return var1.width((String)var2.get(var3 + 1)) >= var4 ? new Vector4f(2.0F, 0.0F, 2.0F, 0.0F) : new Vector4f(2.0F);
-      } else if (var3 == var2.size() - 1) {
-         return var1.width((String)var2.get(var3 - 1)) >= var4 ? new Vector4f(0.0F, 2.0F, 0.0F, 2.0F) : new Vector4f(2.0F);
+   private Vector4f method5207(Font font, List<String> strings, int n, float f) {
+      if (n == 0) {
+         return font.width((String)strings.get(n + 1)) >= f ? new Vector4f(2.0F, 0.0F, 2.0F, 0.0F) : new Vector4f(2.0F);
+      } else if (n == strings.size() - 1) {
+         return font.width((String)strings.get(n - 1)) >= f ? new Vector4f(0.0F, 2.0F, 0.0F, 2.0F) : new Vector4f(2.0F);
       } else {
-         float var5 = var1.width((String)var2.get(var3 - 1));
-         float var6 = var1.width((String)var2.get(var3 + 1));
-         return var5 >= var4 ? (var6 >= var4 ? new Vector4f() : new Vector4f(0.0F, 2.0F, 0.0F, 2.0F)) : new Vector4f(2.0F);
+         float width = font.width((String)strings.get(n - 1));
+         float width2 = font.width((String)strings.get(n + 1));
+         return width >= f ? (width2 >= f ? new Vector4f() : new Vector4f(0.0F, 2.0F, 0.0F, 2.0F)) : new Vector4f(2.0F);
       }
    }
 
-   private boolean method5208(float var1) {
-      return var1 == 0.0F
+   private boolean method5208(float floatValue) {
+      return floatValue == 0.0F
          || mc.level
             .players()
             .stream()
             .anyMatch(
                var1x -> var1x != mc.player
                   && !Zenith.getInstance().getFriends().method7627(var1x.getGameProfile().name())
-                  && mc.player.distanceTo(var1x) <= var1
+                  && mc.player.distanceTo(var1x) <= floatValue
             );
    }
 
-   private boolean method5209(BlockPos var1) {
-      long var2 = System.currentTimeMillis();
-      boolean var10000 = this.items7.containsKey(var1);
-      if (var10000 && var2 - this.items7.get(var1) < 1000L) {
-         return this.items5.get(var1);
+   private boolean method5209(BlockPos above) {
+      long now = System.currentTimeMillis();
+      boolean containsKey = this.items7.containsKey(above);
+      if (containsKey && now - this.items7.get(above) < 1000L) {
+         return this.items5.get(above);
       } else {
-         boolean var4 = this.method5210(var1);
-         this.items5.put(var1, var4);
-         this.items7.put(var1, var2);
-         return var4;
+         boolean flag = this.method5210(above);
+         this.items5.put(above, flag);
+         this.items7.put(above, now);
+         return flag;
       }
    }
 
-   private boolean method5210(BlockPos var1) {
-      int var2 = 0;
+   private boolean method5210(BlockPos above) {
+      int n = 0;
 
-      for (BlockPos var4 : UseItemUtils.method6505(var1, 2.0F)) {
-         if (MathUtils.method2662(net.minecraft.world.phys.Vec3.atCenterOf(var4), net.minecraft.world.phys.Vec3.atCenterOf(var1)) < 2.0) {
-            BlockState var5 = this.method5188(var4);
-            if (var5 != null && !var5.isAir()) {
-               var2++;
+      for (BlockPos key : UseItemUtils.method6505(above, 2.0F)) {
+         if (MathUtils.method2662(net.minecraft.world.phys.Vec3.atCenterOf(key), net.minecraft.world.phys.Vec3.atCenterOf(above)) < 2.0) {
+            BlockState blockState = this.method5188(key);
+            if (blockState != null && !blockState.isAir()) {
+               n++;
             }
-         } else if (!var4.equals(var1.above(2).north().east())
-            && !var4.equals(var1.above(2).north().west())
-            && !var4.equals(var1.above(2).south().east())
-            && !var4.equals(var1.above(2).south().west())) {
-            BlockState var6 = this.method5188(var4);
-            if (var6 == null || var6.isAir()) {
-               var2++;
+         } else if (!key.equals(above.above(2).north().east())
+            && !key.equals(above.above(2).north().west())
+            && !key.equals(above.above(2).south().east())
+            && !key.equals(above.above(2).south().west())) {
+            BlockState blockState = this.method5188(key);
+            if (blockState == null || blockState.isAir()) {
+               n++;
             }
          }
 
-         if (var2 > 1) {
+         if (n > 1) {
             return false;
          }
       }
@@ -1067,36 +1067,36 @@ public final class ServerHelperModule extends Module {
       return true;
    }
 
-   private boolean method5211(BlockPos var1) {
-      long var2 = System.currentTimeMillis();
-      boolean var10000 = this.items8.containsKey(var1);
-      if (var10000 && var2 - this.items8.get(var1) < 1000L) {
-         return this.items6.get(var1);
+   private boolean method5211(BlockPos above) {
+      long now = System.currentTimeMillis();
+      boolean containsKey = this.items8.containsKey(above);
+      if (containsKey && now - this.items8.get(above) < 1000L) {
+         return this.items6.get(above);
       } else {
-         boolean var4 = this.method5212(var1);
-         this.items6.put(var1, var4);
-         this.items8.put(var1, var2);
-         return var4;
+         boolean flag = this.method5212(above);
+         this.items6.put(above, flag);
+         this.items8.put(above, now);
+         return flag;
       }
    }
 
-   private boolean method5212(BlockPos var1) {
-      int var2 = 0;
+   private boolean method5212(BlockPos above) {
+      int n = 0;
 
-      for (BlockPos var4 : UseItemUtils.method6505(var1, 3.0F)) {
-         if (Math.abs(var4.getX() - var1.getX()) <= 2 && Math.abs(var4.getY() - var1.getY()) <= 2 && Math.abs(var4.getZ() - var1.getZ()) <= 2) {
-            BlockState var6 = this.method5188(var4);
-            if (var6 != null && !var6.isAir()) {
-               var2++;
+      for (BlockPos key : UseItemUtils.method6505(above, 3.0F)) {
+         if (Math.abs(key.getX() - above.getX()) <= 2 && Math.abs(key.getY() - above.getY()) <= 2 && Math.abs(key.getZ() - above.getZ()) <= 2) {
+            BlockState blockState = this.method5188(key);
+            if (blockState != null && !blockState.isAir()) {
+               n++;
             }
-         } else if (!var4.equals(var1.above(3))) {
-            BlockState var5 = this.method5188(var4);
-            if (var5 == null || var5.isAir()) {
-               var2++;
+         } else if (!key.equals(above.above(3))) {
+            BlockState blockState = this.method5188(key);
+            if (blockState == null || blockState.isAir()) {
+               n++;
             }
          }
 
-         if (var2 > 1) {
+         if (n > 1) {
             return false;
          }
       }
@@ -1104,35 +1104,35 @@ public final class ServerHelperModule extends Module {
       return true;
    }
 
-   private static boolean method5213(BlockState var0) {
-      return var0 != null && !var0.isAir();
+   private static boolean method5213(BlockState blockState) {
+      return blockState != null && !blockState.isAir();
    }
 
    private void method5214() {
-      long var1 = System.currentTimeMillis();
-      this.items7.entrySet().removeIf(var2 -> var1 - var2.getValue() > 1000L);
+      long now = System.currentTimeMillis();
+      this.items7.entrySet().removeIf(entry -> now - entry.getValue() > 1000L);
       this.items5.entrySet().removeIf(var1x -> {
-         var var10000 = this.items7;
-         Object var10001 = var1x.getKey();
-         if (var10000 != null) {
-            if (var10000.isEmpty()) {
+         var map = this.items7;
+         Object key = var1x.getKey();
+         if (map != null) {
+            if (map.isEmpty()) {
                return true;
             }
          }
 
-         return !var10000.containsKey(var10001);
+         return !map.containsKey(key);
       });
-      this.items8.entrySet().removeIf(var2 -> var1 - var2.getValue() > 1000L);
+      this.items8.entrySet().removeIf(entry -> now - entry.getValue() > 1000L);
       this.items6.entrySet().removeIf(var1x -> {
-         var var10000 = this.items8;
-         Object var10001 = var1x.getKey();
-         if (var10000 != null) {
-            if (var10000.isEmpty()) {
+         var map = this.items8;
+         Object key = var1x.getKey();
+         if (map != null) {
+            if (map.isEmpty()) {
                return true;
             }
          }
 
-         return !var10000.containsKey(var10001);
+         return !map.containsKey(key);
       });
       if (this.items5.size() > 1000) {
          this.items5.clear();
@@ -1145,20 +1145,20 @@ public final class ServerHelperModule extends Module {
       }
    }
 
-   private boolean method5215(BlockPos var1, byte[][][] var2, int var3, int var4) {
-      int var5 = 0;
-      MutableBlockPos var6 = new MutableBlockPos();
+   private boolean method5215(BlockPos pos, byte[][][] byteseses, int n, int n2) {
+      int n3 = 0;
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var7 = -var3; var7 <= var3; var7++) {
-         for (int var8 = -var3; var8 <= var3; var8++) {
-            for (int var9 = -var3; var9 <= var3; var9++) {
-               byte var10;
-               if ((var10 = var2[var7 + var3][var8 + var3][var9 + var3]) != -1) {
-                  var6.set(var1.getX() + var9, var1.getY() + var7, var1.getZ() + var8);
-                  BlockState var11 = this.method5188(var6);
-                  boolean var12 = method5213(var11);
-                  if (var10 != 0 && !var12 || var10 == 0 && var12) {
-                     if (++var5 > var4) {
+      for (int i = -n; i <= n; i++) {
+         for (int j = -n; j <= n; j++) {
+            for (int k = -n; k <= n; k++) {
+               byte b;
+               if ((b = byteseses[i + n][j + n][k + n]) != -1) {
+                  mutablePos.set(pos.getX() + k, pos.getY() + i, pos.getZ() + j);
+                  BlockState blockState = this.method5188(mutablePos);
+                  boolean flag = method5213(blockState);
+                  if (b != 0 && !flag || b == 0 && flag) {
+                     if (++n3 > n2) {
                         return false;
                      }
                   }
@@ -1179,7 +1179,7 @@ public final class ServerHelperModule extends Module {
    }
 
    public Slot method5217() {
-      return InventoryUtils.method910(var0 -> var0.getItem().getItem() instanceof BlockItem var1 && var1.getBlock() instanceof ShulkerBoxBlock);
+      return InventoryUtils.method910(slot -> slot.getItem().getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock);
    }
 
    private static final class Data {
@@ -1211,9 +1211,9 @@ public final class ServerHelperModule extends Module {
          return "Data[" + "longValue=" + this.longValue + ", " + "longValue2=" + this.longValue2 + "]";
       }
 
-      private Data(long var1, long var3) {
-         this.longValue = var1;
-         this.longValue2 = var3;
+      private Data(long longValue, long l) {
+         this.longValue = longValue;
+         this.longValue2 = l;
       }
 
       public long getLongValue() {
@@ -1284,15 +1284,15 @@ public final class ServerHelperModule extends Module {
          return "Data2[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "vec3d=" + this.vec3d + ", " + "text4=" + this.text4 + ", " + "intValue=" + this.intValue + ", " + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + "]";
       }
 
-      public Data2(String var1, String var2, String var3, Vec3 var4, String var5, int var6, double var7, double var9) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
-         this.vec3d = var4;
-         this.text4 = var5;
-         this.intValue = var6;
-         this.doubleValue = var7;
-         this.doubleValue2 = var9;
+      public Data2(String text, String str, String str2, Vec3 vec3d, String str3, int intValue, double doubleValue, double d) {
+         this.text = text;
+         this.text2 = str;
+         this.text3 = str2;
+         this.vec3d = vec3d;
+         this.text4 = str3;
+         this.intValue = intValue;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
       }
 
       public String name() {
@@ -1372,16 +1372,16 @@ public final class ServerHelperModule extends Module {
          return "Data3[" + "item=" + this.item + ", " + "bindSetting=" + this.bindSetting + ", " + "floatValue=" + this.floatValue + ", " + "class27=" + this.class27 + ", " + "predicate=" + this.predicate + "]";
       }
 
-      public Data3(Item var1, BindSetting var2, float var3, Class27 var4) {
-         this(var1, var2, var3, var4, null);
+      public Data3(Item item, BindSetting bindSetting, float floatValue, Class27 class2) {
+         this(item, bindSetting, floatValue, class2, null);
       }
 
-      public Data3(Item var1, BindSetting var2, float var3, Class27 var4, Predicate<Slot> var5) {
-         this.item = var1;
-         this.bindSetting = var2;
-         this.floatValue = var3;
-         this.class27 = var4;
-         this.predicate = var5;
+      public Data3(Item item, BindSetting bindSetting, float floatValue, Class27 class2, Predicate<Slot> predicate) {
+         this.item = item;
+         this.bindSetting = bindSetting;
+         this.floatValue = floatValue;
+         this.class27 = class2;
+         this.predicate = predicate;
       }
 
       public Slot method5218() {
@@ -1389,7 +1389,7 @@ public final class ServerHelperModule extends Module {
       }
 
       public Predicate<Slot> method5219() {
-         return this.predicate != null ? this.predicate : var0 -> true;
+         return this.predicate != null ? this.predicate : slot -> true;
       }
 
       public Item getItem() {
@@ -1457,12 +1457,12 @@ public final class ServerHelperModule extends Module {
          return "Data4[" + "item=" + this.item + ", " + "vec3d=" + this.vec3d + ", " + "text=" + this.text + ", " + "intValue=" + this.intValue + ", " + "doubleValue=" + this.doubleValue + "]";
       }
 
-      public Data4(Item var1, Vec3 var2, String var3, int var4, double var5) {
-         this.item = var1;
-         this.vec3d = var2;
-         this.text = var3;
-         this.intValue = var4;
-         this.doubleValue = var5;
+      public Data4(Item item, Vec3 vec3d, String text, int intValue, double doubleValue) {
+         this.item = item;
+         this.vec3d = vec3d;
+         this.text = text;
+         this.intValue = intValue;
+         this.doubleValue = doubleValue;
       }
 
       public Item getItem() {
@@ -1515,9 +1515,9 @@ public final class ServerHelperModule extends Module {
          return "Data5[" + "blockState=" + this.blockState + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data5(BlockState var1, long var2) {
-         this.blockState = var1;
-         this.longValue = var2;
+      private Data5(BlockState blockState, long longValue) {
+         this.blockState = blockState;
+         this.longValue = longValue;
       }
 
       public BlockState state() {

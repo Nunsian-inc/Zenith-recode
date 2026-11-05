@@ -29,36 +29,36 @@ public class TaskScheduler {
       this(true);
    }
 
-   public TaskScheduler(boolean var1) {
-      if (var1) {
+   public TaskScheduler(boolean flag) {
+      if (flag) {
          EventManager.register(this);
          new TaskScheduler.Entry().start();
       }
    }
 
-   public void method5102(Object var1) {
-      if (var1 != null) {
-         var var2 = this.getLinkedList();
-         TaskScheduler.Entry2 var3;
-         synchronized (var2) {
-            var3 = (TaskScheduler.Entry2)var2.peek();
+   public void method5102(Object obj) {
+      if (obj != null) {
+         var linkedList = this.getLinkedList();
+         TaskScheduler.Entry2 entry2;
+         synchronized (linkedList) {
+            entry2 = (TaskScheduler.Entry2)linkedList.peek();
          }
 
-         if (var3 != null) {
-            boolean var4 = true;
+         if (entry2 != null) {
+            boolean flag = true;
 
             try {
-               var4 = var3.method5124(var1);
-            } catch (Throwable var8) {
-               var4 = false;
+               flag = entry2.method5124(obj);
+            } catch (Throwable e) {
+               flag = false;
             }
 
-            if (var4) {
-               synchronized (var2) {
-                  if (var2.peek() == var3) {
-                     var2.poll();
+            if (flag) {
+               synchronized (linkedList) {
+                  if (linkedList.peek() == entry2) {
+                     linkedList.poll();
                   } else {
-                     var2.removeIf(var1x -> var1x == var3);
+                     linkedList.removeIf(var1x -> var1x == entry2);
                   }
                }
             }
@@ -67,67 +67,67 @@ public class TaskScheduler {
    }
 
    @EventTarget
-   public void method5103(Event1 var1) {
-      this.method5102(var1);
+   public void method5103(Event1 event) {
+      this.method5102(event);
    }
 
    @EventTarget
-   public void method5104(Event5 var1) {
-      this.method5102(var1);
+   public void method5104(Event5 event) {
+      this.method5102(event);
    }
 
    @EventTarget(4)
-   public void method5105(MoveInputEvent var1) {
-      this.method5102(var1);
+   public void method5105(MoveInputEvent event) {
+      this.method5102(event);
    }
 
    @EventTarget(0)
-   public void method5106(UpdateEvent var1) {
-      this.method5102(var1);
+   public void method5106(UpdateEvent event) {
+      this.method5102(event);
    }
 
    @EventTarget(3)
-   public void method5107(HandleInputEvent var1) {
-      this.method5102(var1);
+   public void method5107(HandleInputEvent event) {
+      this.method5102(event);
    }
 
    @EventTarget(0)
-   public void method5108(HandleInputPostEvent var1) {
-      this.method5102(var1);
+   public void method5108(HandleInputPostEvent event) {
+      this.method5102(event);
    }
 
-   public TaskScheduler.Entry2 method5109(Class<?> var1) {
-      LinkedList<TaskScheduler.Entry2> var2 = this.getLinkedList();
-      synchronized (var2) {
-         for (TaskScheduler.Entry2 var5 : var2) {
-            if (var5.getClassValue() == var1) {
-               return var5;
+   public TaskScheduler.Entry2 method5109(Class<?> classValue) {
+      LinkedList<TaskScheduler.Entry2> linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         for (TaskScheduler.Entry2 linked : linkedList) {
+            if (linked.getClassValue() == classValue) {
+               return linked;
             }
          }
 
-         return new TaskScheduler.Entry2(var1);
+         return new TaskScheduler.Entry2(classValue);
       }
    }
 
-   public void method5110(TaskScheduler.Entry2 var1) {
-      this.method5111(var1, 0);
+   public void method5110(TaskScheduler.Entry2 task) {
+      this.method5111(task, 0);
    }
 
-   public void method5111(TaskScheduler.Entry2 var1, int var2) {
-      if (var1 != null) {
-         var var3 = this.getLinkedList();
-         synchronized (var3) {
-            boolean var5 = var3.stream().anyMatch(var1x -> var1x == var1);
-            if (!var5) {
-               var1.setIntValue3(var2);
-               if (var2 > this.method5112()) {
-                  if (!var3.isEmpty()) {
-                     var3.add(1, var1);
+   public void method5111(TaskScheduler.Entry2 task, int n) {
+      if (task != null) {
+         var linkedList = this.getLinkedList();
+         synchronized (linkedList) {
+            boolean anyMatch = linkedList.stream().anyMatch(var1x -> var1x == task);
+            if (!anyMatch) {
+               task.setIntValue3(n);
+               if (n > this.method5112()) {
+                  if (!linkedList.isEmpty()) {
+                     linkedList.add(1, task);
                   } else {
-                     var3.addFirst(var1);
+                     linkedList.addFirst(task);
                   }
                } else {
-                  var3.add(var1);
+                  linkedList.add(task);
                }
             }
          }
@@ -135,66 +135,66 @@ public class TaskScheduler {
    }
 
    private int method5112() {
-      LinkedList<TaskScheduler.Entry2> var1 = this.getLinkedList();
-      int var2 = Integer.MIN_VALUE;
+      LinkedList<TaskScheduler.Entry2> linkedList = this.getLinkedList();
+      int n = Integer.MIN_VALUE;
 
-      for (TaskScheduler.Entry2 var4 : var1) {
-         if (var4.getIntValue3() > var2) {
-            var2 = var4.getIntValue3();
+      for (TaskScheduler.Entry2 linked : linkedList) {
+         if (linked.getIntValue3() > n) {
+            n = linked.getIntValue3();
          }
       }
 
-      return var2 == Integer.MIN_VALUE ? 0 : var2;
+      return n == Integer.MIN_VALUE ? 0 : n;
    }
 
    public void method5113() {
-      var var1 = this.getLinkedList();
-      synchronized (var1) {
-         var1.clear();
+      var linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         linkedList.clear();
          logger.warning("All tasks cleared manually. tasks.size=0");
       }
    }
 
-   public void method5114(Class<?> var1) {
-      var var2 = this.getLinkedList();
-      synchronized (var2) {
-         var2.removeIf(var1x -> var1x.getClassValue() == var1);
-         logger.info("Tasks cleared for owner: " + var1.getSimpleName());
+   public void method5114(Class<?> clazz) {
+      var linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         linkedList.removeIf(var1x -> var1x.getClassValue() == clazz);
+         logger.info("Tasks cleared for owner: " + clazz.getSimpleName());
       }
    }
 
    public int method5115() {
-      var var1 = this.getLinkedList();
-      synchronized (var1) {
-         return var1.size();
+      var linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         return linkedList.size();
       }
    }
 
    public boolean method5116() {
-      var var1 = this.getLinkedList();
-      synchronized (var1) {
-         boolean var3 = var1.isEmpty();
-         logger.finest(() -> "isFinished() -> " + var3);
-         return var3;
+      var linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         boolean empty = linkedList.isEmpty();
+         logger.finest(() -> "isFinished() -> " + empty);
+         return empty;
       }
    }
 
-   public boolean method5117(Class<?> var1) {
-      var var2 = this.getLinkedList();
-      synchronized (var2) {
-         return var2.stream().filter(var1x -> var1x.getClassValue() == var1).allMatch(TaskScheduler.Entry2::method5125);
+   public boolean method5117(Class<?> clazz) {
+      var linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         return linkedList.stream().filter(var1x -> var1x.getClassValue() == clazz).allMatch(TaskScheduler.Entry2::method5125);
       }
    }
 
-   public boolean method5118(Class<?> var1) {
-      var var2 = this.getLinkedList();
-      synchronized (var2) {
-         TaskScheduler.Entry2 var4 = (TaskScheduler.Entry2)var2.peek();
-         if (var4 == null) {
+   public boolean method5118(Class<?> clazz) {
+      var linkedList = this.getLinkedList();
+      synchronized (linkedList) {
+         TaskScheduler.Entry2 entry2 = (TaskScheduler.Entry2)linkedList.peek();
+         if (entry2 == null) {
             return false;
          } else {
-            Class var5 = var4.method5127();
-            return var5 == var1;
+            Class clazz2 = entry2.method5127();
+            return clazz2 == clazz;
          }
       }
    }
@@ -217,13 +217,13 @@ public class TaskScheduler {
                         if (Minecraft.getInstance().player != null) {
                            Minecraft.getInstance().execute(() -> EventManager.call(new Event1()));
                         }
-                     } catch (Exception var2) {
-                        var2.printStackTrace();
+                     } catch (Exception e) {
+                        e.printStackTrace();
                      }
 
-                     int var1 = ThreadLocalRandom.current().nextInt(40, 60);
-                     Thread.sleep(var1);
-                  } catch (InterruptedException var3) {
+                     int nextInt = ThreadLocalRandom.current().nextInt(40, 60);
+                     Thread.sleep(nextInt);
+                  } catch (InterruptedException e) {
                   }
                }
             }, "RandomEventCaller");
@@ -255,49 +255,49 @@ public class TaskScheduler {
          this.classValue = TaskScheduler.class;
       }
 
-      public Entry2(Class<?> var1) {
-         this.classValue = var1;
+      public Entry2(Class<?> classValue) {
+         this.classValue = classValue;
       }
 
-      public TaskScheduler.Entry2 method5119(int var1) {
-         this.intValue2 = Math.max(1, var1);
+      public TaskScheduler.Entry2 method5119(int n) {
+         this.intValue2 = Math.max(1, n);
          TaskScheduler.logger.finest(this.method5126() + " set maxIdleTicks=" + this.intValue2);
          return this;
       }
 
-      public <E> TaskScheduler.Entry2 method5120(Class<E> var1, TaskScheduler.Entry2.Handler<E> var2) {
-         return this.method5121(var1, var2, 0);
+      public <E> TaskScheduler.Entry2 method5120(Class<E> classValue, TaskScheduler.Entry2.Handler<E> handler) {
+         return this.method5121(classValue, handler, 0);
       }
 
-      public <E> TaskScheduler.Entry2 method5121(Class<E> var1, TaskScheduler.Entry2.Handler<E> var2, int var3) {
-         TaskScheduler.Entry2.Entry var4 = new TaskScheduler.Entry2.Entry(var1, var2, this.queue.size() + 1, false, var3);
-         if (var3 > this.method5122()) {
-            LinkedList var5 = (LinkedList)this.queue;
-            var5.addFirst(var4);
+      public <E> TaskScheduler.Entry2 method5121(Class<E> classValue, TaskScheduler.Entry2.Handler<E> handler, int n) {
+         TaskScheduler.Entry2.Entry entry = new TaskScheduler.Entry2.Entry(classValue, handler, this.queue.size() + 1, false, n);
+         if (n > this.method5122()) {
+            LinkedList queue = (LinkedList)this.queue;
+            queue.addFirst(entry);
          } else {
-            this.queue.add(var4);
+            this.queue.add(entry);
          }
 
-         TaskScheduler.logger.finest(this.method5126() + " scheduled step#" + var4.intValue + " for event=" + var1.getSimpleName());
+         TaskScheduler.logger.finest(this.method5126() + " scheduled step#" + entry.intValue + " for event=" + classValue.getSimpleName());
          return this;
       }
 
       private int method5122() {
-         int var1 = Integer.MIN_VALUE;
+         int n = Integer.MIN_VALUE;
 
-         for (TaskScheduler.Entry2.Entry var3 : this.queue) {
-            if (var3.intValue2 > var1) {
-               var1 = var3.intValue2;
+         for (TaskScheduler.Entry2.Entry entry : this.queue) {
+            if (entry.intValue2 > n) {
+               n = entry.intValue2;
             }
          }
 
-         return var1 == Integer.MIN_VALUE ? 0 : var1;
+         return n == Integer.MIN_VALUE ? 0 : n;
       }
 
-      public <E> TaskScheduler.Entry2 method5123(Class<E> var1, TaskScheduler.Entry2.Handler<E> var2) {
-         TaskScheduler.Entry2.Entry var3 = new TaskScheduler.Entry2.Entry(var1, var2, this.linkedList.size() + 1, true, 0);
-         this.linkedList.add(var3);
-         TaskScheduler.logger.finest(this.method5126() + " scheduled PERSISTENT step#" + var3.intValue + " for event=" + var1.getSimpleName());
+      public <E> TaskScheduler.Entry2 method5123(Class<E> classValue, TaskScheduler.Entry2.Handler<E> handler) {
+         TaskScheduler.Entry2.Entry entry = new TaskScheduler.Entry2.Entry(classValue, handler, this.linkedList.size() + 1, true, 0);
+         this.linkedList.add(entry);
+         TaskScheduler.logger.finest(this.method5126() + " scheduled PERSISTENT step#" + entry.intValue + " for event=" + classValue.getSimpleName());
          return this;
       }
 
@@ -306,52 +306,52 @@ public class TaskScheduler {
          this.linkedList.clear();
       }
 
-      public boolean method5124(Object var1) {
-         if (var1 == null) {
+      public boolean method5124(Object obj) {
+         if (obj == null) {
             return false;
          } else {
-            TaskScheduler.Entry2.Entry var2 = this.queue.peek();
-            if (var2 == null) {
+            TaskScheduler.Entry2.Entry entry = this.queue.peek();
+            if (entry == null) {
                TaskScheduler.logger.info(this.method5126() + "task COMPLETE.");
                return true;
             } else {
-               for (TaskScheduler.Entry2.Entry var4 : this.linkedList) {
-                  if (var4.classValue.isInstance(var1)) {
+               for (TaskScheduler.Entry2.Entry linked : this.linkedList) {
+                  if (linked.classValue.isInstance(obj)) {
                      try {
-                        var4.method5128(var1);
-                     } catch (Throwable var7) {
-                        var7.printStackTrace();
+                        linked.method5128(obj);
+                     } catch (Throwable e) {
+                        e.printStackTrace();
                      }
                   }
                }
 
-               boolean var8 = false;
-               if (var2.classValue.isInstance(var1)) {
-                  boolean var9;
+               boolean flag = false;
+               if (entry.classValue.isInstance(obj)) {
+                  boolean flag2;
                   try {
-                     var9 = var2.method5128(var1);
-                  } catch (Throwable var6) {
-                     var6.printStackTrace();
-                     var9 = true;
+                     flag2 = entry.method5128(obj);
+                  } catch (Throwable e) {
+                     e.printStackTrace();
+                     flag2 = true;
                   }
 
-                  if (var9) {
+                  if (flag2) {
                      this.queue.poll();
-                     var8 = true;
-                     TaskScheduler.logger.info(this.method5126() + " step#" + var2.intValue + " DONE size=" + this.queue.size());
+                     flag = true;
+                     TaskScheduler.logger.info(this.method5126() + " step#" + entry.intValue + " DONE size=" + this.queue.size());
                   } else {
-                     TaskScheduler.logger.finest(() -> this.method5126() + " step#" + var2.intValue + " NOT done");
+                     TaskScheduler.logger.finest(() -> this.method5126() + " step#" + entry.intValue + " NOT done");
                   }
                }
 
-               if (var8) {
+               if (flag) {
                   this.intValue = 0;
-                  boolean var10 = this.queue.isEmpty();
-                  if (var10) {
+                  boolean empty = this.queue.isEmpty();
+                  if (empty) {
                      TaskScheduler.logger.info(this.method5126() + "TASK COMPLETE.");
                   }
 
-                  return var10;
+                  return empty;
                } else {
                   if (this.intValue2 != Integer.MAX_VALUE) {
                      this.intValue++;
@@ -370,9 +370,9 @@ public class TaskScheduler {
       }
 
       public boolean method5125() {
-         boolean var1 = this.queue.isEmpty();
-         TaskScheduler.logger.finest(() -> this.method5126() + " isCompleted() -> " + var1);
-         return var1;
+         boolean empty = this.queue.isEmpty();
+         TaskScheduler.logger.finest(() -> this.method5126() + " isCompleted() -> " + empty);
+         return empty;
       }
 
       private String method5126() {
@@ -399,8 +399,8 @@ public class TaskScheduler {
       }
 
       public Class<?> method5127() {
-         TaskScheduler.Entry2.Entry var1 = this.queue.peek();
-         return var1 == null ? null : var1.classValue;
+         TaskScheduler.Entry2.Entry entry = this.queue.peek();
+         return entry == null ? null : entry.classValue;
       }
 
       @Generated
@@ -419,8 +419,8 @@ public class TaskScheduler {
       }
 
       @Generated
-      public void setIntValue3(int var1) {
-         this.intValue3 = var1;
+      public void setIntValue3(int n) {
+         this.intValue3 = n;
       }
 
       private static class Entry<E> {
@@ -430,16 +430,16 @@ public class TaskScheduler {
          private final boolean flag;
          private final int intValue2;
 
-         public Entry(Class<E> var1, TaskScheduler.Entry2.Handler<E> var2, int var3, boolean var4, int var5) {
-            this.classValue = var1;
-            this.handler = var2;
-            this.intValue = var3;
-            this.flag = var4;
-            this.intValue2 = var5;
+         public Entry(Class<E> classValue, TaskScheduler.Entry2.Handler<E> handler, int intValue, boolean flag, int n) {
+            this.classValue = classValue;
+            this.handler = handler;
+            this.intValue = intValue;
+            this.flag = flag;
+            this.intValue2 = n;
          }
 
-         public boolean method5128(Object var1) {
-            return this.handler.accept(this.classValue.cast(var1));
+         public boolean method5128(Object obj) {
+            return this.handler.accept(this.classValue.cast(obj));
          }
 
          @Override
@@ -458,7 +458,7 @@ public class TaskScheduler {
 
       @FunctionalInterface
       public interface Handler<E> {
-         boolean accept(E var1);
+         boolean accept(E value);
       }
    }
 }

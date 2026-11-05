@@ -13,7 +13,7 @@ public abstract class MixinDrawContextScissor {
       method = {"enableScissor(IIII)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$pushScissor(int var1, int var2, int var3, int var4, CallbackInfo var5) {
+   private void zenith$pushScissor(int n, int n2, int n3, int n4, CallbackInfo callbackInfo) {
       ScissorStack.method1750(((GuiGraphicsExtractor)(Object)this).scissorStack.peek());
    }
 
@@ -21,7 +21,7 @@ public abstract class MixinDrawContextScissor {
       method = {"disableScissor()V"},
       at = {@At("TAIL")}
    )
-   private void zenith$popScissor(CallbackInfo var1) {
+   private void zenith$popScissor(CallbackInfo callbackInfo) {
       ScissorStack.method1750(((GuiGraphicsExtractor)(Object)this).scissorStack.peek());
    }
 }

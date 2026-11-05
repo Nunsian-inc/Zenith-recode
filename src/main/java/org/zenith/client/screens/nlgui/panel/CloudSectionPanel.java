@@ -43,34 +43,34 @@ public class CloudSectionPanel extends ElementPanel {
    private final int[] badgeLast = new int[7];
    private final Animation[] tabHover = new Animation[7];
 
-   public CloudSectionPanel(FriendsSectionPanel var1, CloudChatSectionPanel var2, VoiceSectionPanel var3) {
-      this.friendsPanel = var1;
-      this.add("gui.cloud.tab.friends", MenuGlyph.FRIENDS, var1);
-      var1.openChatWith(var2x -> {
-         if (!var2.openDirectWith(var2x)) {
+   public CloudSectionPanel(FriendsSectionPanel friendsPanel, CloudChatSectionPanel cloudChatSectionPanel, VoiceSectionPanel voiceSectionPanel) {
+      this.friendsPanel = friendsPanel;
+      this.add("gui.cloud.tab.friends", MenuGlyph.FRIENDS, friendsPanel);
+      friendsPanel.openChatWith(var2x -> {
+         if (!cloudChatSectionPanel.openDirectWith(var2x)) {
             return false;
          } else {
             this.open(1);
             return true;
          }
       });
-      this.add("gui.cloud.tab.chat", MenuGlyph.CHAT, var2);
-      this.add("gui.cloud.tab.voice", MenuGlyph.MIC, var3);
+      this.add("gui.cloud.tab.chat", MenuGlyph.CHAT, cloudChatSectionPanel);
+      this.add("gui.cloud.tab.voice", MenuGlyph.MIC, voiceSectionPanel);
    }
 
-   private void add(String var1, MenuGlyph var2, SectionPanel var3) {
-      var3.setEmbedded(true);
+   private void add(String str, MenuGlyph menuGlyph, SectionPanel friendsPanel) {
+      friendsPanel.setEmbedded(true);
       this.badgeShow[this.names.size()] = new Animation(220L, 0.0F, Easing.INSTANCE12);
       this.tabHover[this.names.size()] = new Animation(130L, 0.0F, Easing.INSTANCE12);
-      this.names.add(var1);
-      this.icons.add(var2);
-      this.children.add(var3);
+      this.names.add(str);
+      this.icons.add(menuGlyph);
+      this.children.add(friendsPanel);
    }
 
-   private void switchTo(int var1) {
-      if (var1 != this.active && var1 >= 0 && var1 < this.children.size()) {
-         this.switchDirection = var1 > this.active ? 1.0F : -1.0F;
-         this.active = var1;
+   private void switchTo(int active) {
+      if (active != this.active && active >= 0 && active < this.children.size()) {
+         this.switchDirection = active > this.active ? 1.0F : -1.0F;
+         this.active = active;
          this.switchAnimation.reset(0.0F);
          this.switchAnimation.method2810(1.0F);
          if (this.switchDirection > 0.0F) {
@@ -81,27 +81,27 @@ public class CloudSectionPanel extends ElementPanel {
       }
    }
 
-   private int badge(int var1) {
-      long var2 = System.currentTimeMillis();
-      if (var2 - this.badgeStamp > 250L) {
-         this.badgeStamp = var2;
+   private int badge(int n) {
+      long now = System.currentTimeMillis();
+      if (now - this.badgeStamp > 250L) {
+         this.badgeStamp = now;
          this.badgeCache[0] = this.computeBadge(0);
          this.badgeCache[1] = this.computeBadge(1);
       }
 
-      return var1 >= 0 && var1 < this.badgeCache.length ? this.badgeCache[var1] : 0;
+      return n >= 0 && n < this.badgeCache.length ? this.badgeCache[n] : 0;
    }
 
-   private int computeBadge(int var1) {
-      if (var1 == 1) {
+   private int computeBadge(int n) {
+      if (n == 1) {
          return CloudDmClient.getInstance().method4869();
       } else {
-         CloudConnectionState var2 = state();
-         if (var2 == null || !var2.method8035()) {
+         CloudConnectionState cloudConnectionState = state();
+         if (cloudConnectionState == null || !cloudConnectionState.method8035()) {
             return 0;
-         } else if (var1 == 0) {
-            Cloud var3 = Zenith.getInstance().getCloud();
-            return var2.method8055().size() + (var3 == null ? 0 : var3.getPartyMember().method1147());
+         } else if (n == 0) {
+            Cloud cloud = Zenith.getInstance().getCloud();
+            return cloudConnectionState.method8055().size() + (cloud == null ? 0 : cloud.getPartyMember().method1147());
          } else {
             return 0;
          }
@@ -109,26 +109,26 @@ public class CloudSectionPanel extends ElementPanel {
    }
 
    private static CloudConnectionState state() {
-      Cloud var0 = Zenith.getInstance() == null ? null : Zenith.getInstance().getCloud();
-      return var0 == null ? null : var0.state();
+      Cloud cloud = Zenith.getInstance() == null ? null : Zenith.getInstance().getCloud();
+      return cloud == null ? null : cloud.state();
    }
 
-   private static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String t(String name) {
+      return Zenith.getInstance().getLocalization().translate(name);
    }
 
    private SectionPanel current() {
       return this.children.get(this.active);
    }
 
-   public void open(int var1) {
-      this.switchTo(var1);
+   public void open(int active) {
+      this.switchTo(active);
    }
 
-   public void openFriendsAdd(String var1) {
+   public void openFriendsAdd(String string) {
       this.open(0);
       if (this.friendsPanel != null) {
-         this.friendsPanel.devOpenAdd(var1);
+         this.friendsPanel.devOpenAdd(string);
       }
    }
 
@@ -148,147 +148,147 @@ public class CloudSectionPanel extends ElementPanel {
    }
 
    @Override
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null) {
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         float var10 = var5 + 8.0F;
-         MenuGlyph.CLOUD.draw(var1, var10, var6 + 8.5F, var8.getTextEnable().getZenithColor().method7294(var4));
-         var1.drawText(var9, "Cloud", var10 + 11.0F, var6 + (23.0F - var9.height()) / 2.0F, var8.getTextEnable().getZenithColor().method7294(var4));
+   public void renderHeader(MenuDrawContext menuDrawContext, int n, int n2, float previewAlpha, float f, float f2, float f3) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         float floatValue = f + 8.0F;
+         MenuGlyph.CLOUD.draw(menuDrawContext, floatValue, f2 + 8.5F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawText(font, "Cloud", floatValue + 11.0F, f2 + (23.0F - font.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
       }
    }
 
    @Override
    public float getButtonWidth() {
-      Font var1 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      float var2 = 0.0F;
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      float f = 0.0F;
 
-      for (int var3 = 0; var3 < this.names.size(); var3++) {
-         var2 += this.tabWidth(var1, var3);
+      for (int i = 0; i < this.names.size(); i++) {
+         f += this.tabWidth(font, i);
       }
 
-      return var2;
+      return f;
    }
 
-   private float tabWidth(Font var1, int var2) {
-      float var3 = var1.width(t(this.names.get(var2))) + 16.0F + 9.0F;
-      float var4 = this.badgeShow(var2);
-      if (var4 > 0.001F) {
-         var3 += (badgeWidth(this.badgeLast[var2]) + 4.0F) * var4;
+   private float tabWidth(Font font, int n) {
+      float f = font.width(t(this.names.get(n))) + 16.0F + 9.0F;
+      float badgeShow = this.badgeShow(n);
+      if (badgeShow > 0.001F) {
+         f += (badgeWidth(this.badgeLast[n]) + 4.0F) * badgeShow;
       }
 
-      return var3;
+      return f;
    }
 
-   private float badgeShow(int var1) {
-      if (var1 >= 0 && var1 < this.badgeShow.length && this.badgeShow[var1] != null) {
-         int var2 = this.badge(var1);
-         if (var2 > 0) {
-            this.badgeLast[var1] = var2;
+   private float badgeShow(int n) {
+      if (n >= 0 && n < this.badgeShow.length && this.badgeShow[n] != null) {
+         int badge = this.badge(n);
+         if (badge > 0) {
+            this.badgeLast[n] = badge;
          }
 
-         return this.badgeShow[var1].method2808(var2 > 0 ? 1.0F : 0.0F);
+         return this.badgeShow[n].method2808(badge > 0 ? 1.0F : 0.0F);
       } else {
          return 0.0F;
       }
    }
 
-   private static float badgeWidth(int var0) {
-      Font var1 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      return Math.max(9.0F, var1.width(badgeText(var0)) + 6.0F);
+   private static float badgeWidth(int n) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+      return Math.max(9.0F, font.width(badgeText(n)) + 6.0F);
    }
 
-   private static String badgeText(int var0) {
-      return var0 > 99 ? "99+" : String.valueOf(var0);
+   private static String badgeText(int n) {
+      return n > 99 ? "99+" : String.valueOf(n);
    }
 
    @Override
-   public void renderHeaderButtons(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
-      ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var9 != null) {
-         Font var10 = Fonts.NEW_MEDIUM.getFont(5.0F);
+   public void renderHeaderButtons(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float f, float y, float f2, float f3) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
          this.tabBounds.clear();
-         float var11 = var5;
-         float var12 = var5;
-         float var13 = 0.0F;
+         float floatValue = f;
+         float floatValue2 = f;
+         float tabWidth = 0.0F;
 
-         for (int var14 = 0; var14 < this.names.size(); var14++) {
-            float var15 = this.tabWidth(var10, var14);
-            this.tabBounds.add(new BoundsData(var11, var6, var15, 23.0F));
-            if (var14 == this.active) {
-               var12 = var11;
-               var13 = var15;
+         for (int i = 0; i < this.names.size(); i++) {
+            float width = this.tabWidth(font, i);
+            this.tabBounds.add(new BoundsData(floatValue, y, width, 23.0F));
+            if (i == this.active) {
+               floatValue2 = floatValue;
+               tabWidth = width;
             }
 
-            var11 += var15;
+            floatValue += width;
          }
 
          if (!this.plateReady) {
-            this.plateX.method2809(var12);
-            this.plateWidth.method2809(var13);
+            this.plateX.method2809(floatValue2);
+            this.plateWidth.method2809(tabWidth);
             this.plateReady = true;
          }
 
-         float var25 = this.plateX.method2808(var12);
-         float var26 = this.plateWidth.method2808(var13);
-         float var16 = 15.0F;
-         var1.drawRoundedRect(
-            var25 + 2.0F,
-            var6 + 4.0F,
-            Math.max(0.0F, var26 - 4.0F),
-            var16,
-            ProxyDotRadiusData.method8069(var16 / 2.0F),
-            var9.getDisableActiveBg().getZenithColor().method7294(var4)
+         float f4 = this.plateX.method2808(floatValue2);
+         float f5 = this.plateWidth.method2808(tabWidth);
+         float height = 15.0F;
+         menuDrawContext.drawRoundedRect(
+            f4 + 2.0F,
+            y + 4.0F,
+            Math.max(0.0F, f5 - 4.0F),
+            height,
+            ProxyDotRadiusData.method8069(height / 2.0F),
+            currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha)
          );
 
-         for (int var17 = 0; var17 < this.names.size(); var17++) {
-            BoundsData var18 = this.tabBounds.get(var17);
-            boolean var19 = var17 == this.active;
-            float var20 = this.tabHover[var17].method2808(!var19 && var18.contains(var2, var3) ? 1.0F : 0.0F);
-            ZenithColor var21 = (var19 ? var9.getTextEnable() : var9.getTextTertiary())
+         for (int i = 0; i < this.names.size(); i++) {
+            BoundsData tabBound = this.tabBounds.get(i);
+            boolean flag = i == this.active;
+            float f6 = this.tabHover[i].method2808(!flag && tabBound.contains(lastClickX, lastClickY) ? 1.0F : 0.0F);
+            ZenithColor zenithColor = (flag ? currentStyle.getTextEnable() : currentStyle.getTextTertiary())
                .getZenithColor()
-               .method7295(var9.getTextEnable().getZenithColor(), var20 * 0.5F)
-               .method7294(var4);
-            float var22 = var18.getFloatValue() + 8.0F;
-            this.icons.get(var17).draw(var1, var22, var6 + 8.5F, var21);
-            var22 += 9.0F;
-            String var23 = t(this.names.get(var17));
-            var1.drawText(var10, var23, var22, var6 + (23.0F - var10.height()) / 2.0F, var21);
-            float var24 = this.badgeShow(var17);
-            if (var24 > 0.01F) {
-               this.drawBadge(var1, var22 + var10.width(var23) + 4.0F, var6, this.badgeLast[var17], var24, var4, var9);
+               .method7295(currentStyle.getTextEnable().getZenithColor(), f6 * 0.5F)
+               .method7294(previewAlpha);
+            float floatValue3 = tabBound.getFloatValue() + 8.0F;
+            this.icons.get(i).draw(menuDrawContext, floatValue3, y + 8.5F, zenithColor);
+            floatValue3 += 9.0F;
+            String text = t(this.names.get(i));
+            menuDrawContext.drawText(font, text, floatValue3, y + (23.0F - font.height()) / 2.0F, zenithColor);
+            float badgeShow = this.badgeShow(i);
+            if (badgeShow > 0.01F) {
+               this.drawBadge(menuDrawContext, floatValue3 + font.width(text) + 4.0F, y, this.badgeLast[i], badgeShow, previewAlpha, currentStyle);
             }
          }
       }
    }
 
-   private void drawBadge(MenuDrawContext var1, float var2, float var3, int var4, float var5, float var6, ZenithStyle var7) {
-      Font var8 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      String var9 = badgeText(var4);
-      float var10 = badgeWidth(var4);
-      float var11 = 7.0F;
-      float var12 = var3 + (23.0F - var11) / 2.0F;
-      float var13 = 0.5F + 0.5F * var5;
-      var1.pushMatrix();
-      var1.pose().translate(var2 + var10 / 2.0F, var12 + var11 / 2.0F);
-      var1.pose().scale(var13, var13);
-      var1.drawRoundedRect(
-         -var10 / 2.0F,
-         -var11 / 2.0F,
-         var10,
-         var11,
-         ProxyDotRadiusData.method8069(var11 / 2.0F),
-         var7.getPrimaryColor().getZenithColor().method7294(var6 * var5)
+   private void drawBadge(MenuDrawContext menuDrawContext, float f, float y, int n, float badgeShow, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+      String text = badgeText(n);
+      float width = badgeWidth(n);
+      float height = 7.0F;
+      float f2 = y + (23.0F - height) / 2.0F;
+      float x = 0.5F + 0.5F * badgeShow;
+      menuDrawContext.pushMatrix();
+      menuDrawContext.pose().translate(f + width / 2.0F, f2 + height / 2.0F);
+      menuDrawContext.pose().scale(x, x);
+      menuDrawContext.drawRoundedRect(
+         -width / 2.0F,
+         -height / 2.0F,
+         width,
+         height,
+         ProxyDotRadiusData.method8069(height / 2.0F),
+         currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * badgeShow)
       );
-      var1.drawText(var8, var9, -var8.width(var9) / 2.0F, -var8.height() / 2.0F, new ZenithColor(255, 255, 255).method7294(var6 * var5));
-      var1.popMatrix();
+      menuDrawContext.drawText(font, text, -font.width(text) / 2.0F, -font.height() / 2.0F, new ZenithColor(255, 255, 255).method7294(previewAlpha * badgeShow));
+      menuDrawContext.popMatrix();
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double var1, double var3, Enum3 var5) {
-      for (int var6 = 0; var6 < this.tabBounds.size(); var6++) {
-         if (this.tabBounds.get(var6).contains(var1, var3)) {
-            this.switchTo(var6);
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      for (int i = 0; i < this.tabBounds.size(); i++) {
+         if (this.tabBounds.get(i).contains(lastClickX, lastClickY)) {
+            this.switchTo(i);
             return true;
          }
       }
@@ -297,18 +297,18 @@ public class CloudSectionPanel extends ElementPanel {
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      float var7 = this.switchAnimation.method2808(1.0F);
-      float var8 = 14.0F * this.switchDirection * (1.0F - var7);
-      var1.pose().pushMatrix();
-      var1.pose().translate(var8, 0.0F);
-      this.current().render(var1, var2, var3, var4 * var7, var5, var6);
-      var1.pose().popMatrix();
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float y) {
+      float f3 = this.switchAnimation.method2808(1.0F);
+      float x = 14.0F * this.switchDirection * (1.0F - f3);
+      menuDrawContext.pose().pushMatrix();
+      menuDrawContext.pose().translate(x, 0.0F);
+      this.current().render(menuDrawContext, lastClickX, lastClickY, f * f3, f2, y);
+      menuDrawContext.pose().popMatrix();
    }
 
    @Override
-   public void renderPriority(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      this.current().renderPriority(var1, var2, var3, var4, var5, var6);
+   public void renderPriority(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float floatValue, float f2) {
+      this.current().renderPriority(customDrawContext, mouseX, mouseY, f, floatValue, f2);
    }
 
    @Override
@@ -317,33 +317,33 @@ public class CloudSectionPanel extends ElementPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      return this.current().onMouseClicked(var1, var3, var5);
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      return this.current().onMouseClicked(lastClickX, lastClickY, enum2);
    }
 
    @Override
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
-      return this.current().onMouseReleased(var1, var3, var5);
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
+      return this.current().onMouseReleased(x, y, enum2);
    }
 
    @Override
-   public boolean onMouseDragged(double var1, double var3, int var5, double var6, double var8) {
-      return this.current().onMouseDragged(var1, var3, var5, var6, var8);
+   public boolean onMouseDragged(double mouseX, double mouseY, int mouseToGlfw, double offsetX, double offsetY) {
+      return this.current().onMouseDragged(mouseX, mouseY, mouseToGlfw, offsetX, offsetY);
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
-      return this.current().mouseScrolled(var1, var3, var5, var7);
+   public boolean mouseScrolled(double lastClickX, double lastClickY, double d, double verticalAmount) {
+      return this.current().mouseScrolled(lastClickX, lastClickY, d, verticalAmount);
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return this.current().keyPressed(var1, var2, var3);
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      return this.current().keyPressed(keyCode, keycode, modifiers);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      return this.current().charTyped(var1, var2);
+   public boolean charTyped(char codepoint, int n) {
+      return this.current().charTyped(codepoint, n);
    }
 
    @Override
@@ -353,8 +353,8 @@ public class CloudSectionPanel extends ElementPanel {
 
    @Override
    public void close() {
-      for (SectionPanel var2 : this.children) {
-         var2.close();
+      for (SectionPanel sectionPanel : this.children) {
+         sectionPanel.close();
       }
    }
 }

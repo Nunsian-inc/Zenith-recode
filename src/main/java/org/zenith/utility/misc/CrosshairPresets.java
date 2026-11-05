@@ -17,116 +17,116 @@ public final class CrosshairPresets {
    private CrosshairPresets() {
    }
 
-   public static int[] method5712(int var0) {
-      int[] var1 = new int[961];
-      switch (var0) {
+   public static int[] method5712(int n) {
+      int[] ints = new int[961];
+      switch (n) {
          case 1:
-            method5715(var1);
+            method5715(ints);
             break;
          case 2:
-            method5714(var1, 3, 5);
-            method5715(var1);
+            method5714(ints, 3, 5);
+            method5715(ints);
             break;
          case 3:
-            method5716(var1);
+            method5716(ints);
             break;
          case 4:
-            method5717(var1, 6);
+            method5717(ints, 6);
             break;
          case 5:
-            method5718(var1, 6);
+            method5718(ints, 6);
             break;
          case 6:
-            method5719(var1, 7, 3);
+            method5719(ints, 7, 3);
             break;
          case 7:
-            method5720(var1);
+            method5720(ints);
             break;
          default:
-            method5714(var1, 3, 5);
+            method5714(ints, 3, 5);
       }
 
-      return var1;
+      return ints;
    }
 
-   private static void method5713(int[] var0, int var1, int var2) {
-      if (var1 >= 0 && var2 >= 0 && var1 < 31 && var2 < 31) {
-         var0[var2 * 31 + var1] = -1;
-      }
-   }
-
-   private static void method5714(int[] var0, int var1, int var2) {
-      for (int var3 = var1; var3 < var1 + var2; var3++) {
-         method5713(var0, 15, 15 - var3);
-         method5713(var0, 15, 15 + var3);
-         method5713(var0, 15 - var3, 15);
-         method5713(var0, 15 + var3, 15);
+   private static void method5713(int[] ints, int n, int n2) {
+      if (n >= 0 && n2 >= 0 && n < 31 && n2 < 31) {
+         ints[n2 * 31 + n] = -1;
       }
    }
 
-   private static void method5715(int[] var0) {
-      method5713(var0, 15, 15);
-   }
-
-   private static void method5716(int[] var0) {
-      for (int var1 = 3; var1 < 8; var1++) {
-         method5713(var0, 15 - var1, 15);
-         method5713(var0, 15 + var1, 15);
-         method5713(var0, 15, 15 + var1);
+   private static void method5714(int[] ints, int n, int n2) {
+      for (int i = n; i < n + n2; i++) {
+         method5713(ints, 15, 15 - i);
+         method5713(ints, 15, 15 + i);
+         method5713(ints, 15 - i, 15);
+         method5713(ints, 15 + i, 15);
       }
    }
 
-   private static void method5717(int[] var0, int var1) {
-      int var2 = var1;
-      int var3 = 0;
-      int var4 = 1 - var1;
+   private static void method5715(int[] ints) {
+      method5713(ints, 15, 15);
+   }
 
-      while (var2 >= var3) {
-         method5713(var0, 15 + var2, 15 + var3);
-         method5713(var0, 15 + var3, 15 + var2);
-         method5713(var0, 15 - var3, 15 + var2);
-         method5713(var0, 15 - var2, 15 + var3);
-         method5713(var0, 15 - var2, 15 - var3);
-         method5713(var0, 15 - var3, 15 - var2);
-         method5713(var0, 15 + var3, 15 - var2);
-         method5713(var0, 15 + var2, 15 - var3);
-         var3++;
-         if (var4 < 0) {
-            var4 += 2 * var3 + 1;
+   private static void method5716(int[] ints) {
+      for (int i = 3; i < 8; i++) {
+         method5713(ints, 15 - i, 15);
+         method5713(ints, 15 + i, 15);
+         method5713(ints, 15, 15 + i);
+      }
+   }
+
+   private static void method5717(int[] ints, int n) {
+      int n2 = n;
+      int n3 = 0;
+      int n4 = 1 - n;
+
+      while (n2 >= n3) {
+         method5713(ints, 15 + n2, 15 + n3);
+         method5713(ints, 15 + n3, 15 + n2);
+         method5713(ints, 15 - n3, 15 + n2);
+         method5713(ints, 15 - n2, 15 + n3);
+         method5713(ints, 15 - n2, 15 - n3);
+         method5713(ints, 15 - n3, 15 - n2);
+         method5713(ints, 15 + n3, 15 - n2);
+         method5713(ints, 15 + n2, 15 - n3);
+         n3++;
+         if (n4 < 0) {
+            n4 += 2 * n3 + 1;
          } else {
-            var2--;
-            var4 += 2 * (var3 - var2) + 1;
+            n2--;
+            n4 += 2 * (n3 - n2) + 1;
          }
       }
    }
 
-   private static void method5718(int[] var0, int var1) {
-      for (int var2 = 0; var2 < var1; var2++) {
-         int var3 = var1 - var2;
-         method5713(var0, 15 + var2, 15 + var3);
-         method5713(var0, 15 + var2, 15 - var3);
-         method5713(var0, 15 - var2, 15 + var3);
-         method5713(var0, 15 - var2, 15 - var3);
+   private static void method5718(int[] ints, int n) {
+      for (int i = 0; i < n; i++) {
+         int n2 = n - i;
+         method5713(ints, 15 + i, 15 + n2);
+         method5713(ints, 15 + i, 15 - n2);
+         method5713(ints, 15 - i, 15 + n2);
+         method5713(ints, 15 - i, 15 - n2);
       }
    }
 
-   private static void method5719(int[] var0, int var1, int var2) {
-      for (int var3 = 0; var3 < var2; var3++) {
-         method5713(var0, 15 - var1 + var3, 15 - var1);
-         method5713(var0, 15 - var1, 15 - var1 + var3);
-         method5713(var0, 15 + var1 - var3, 15 - var1);
-         method5713(var0, 15 + var1, 15 - var1 + var3);
-         method5713(var0, 15 - var1 + var3, 15 + var1);
-         method5713(var0, 15 - var1, 15 + var1 - var3);
-         method5713(var0, 15 + var1 - var3, 15 + var1);
-         method5713(var0, 15 + var1, 15 + var1 - var3);
+   private static void method5719(int[] ints, int n, int n2) {
+      for (int i = 0; i < n2; i++) {
+         method5713(ints, 15 - n + i, 15 - n);
+         method5713(ints, 15 - n, 15 - n + i);
+         method5713(ints, 15 + n - i, 15 - n);
+         method5713(ints, 15 + n, 15 - n + i);
+         method5713(ints, 15 - n + i, 15 + n);
+         method5713(ints, 15 - n, 15 + n - i);
+         method5713(ints, 15 + n - i, 15 + n);
+         method5713(ints, 15 + n, 15 + n - i);
       }
    }
 
-   private static void method5720(int[] var0) {
-      for (int var1 = 0; var1 <= 6; var1++) {
-         method5713(var0, 15 - var1, 15 + var1 - 3);
-         method5713(var0, 15 + var1, 15 + var1 - 3);
+   private static void method5720(int[] ints) {
+      for (int i = 0; i <= 6; i++) {
+         method5713(ints, 15 - i, 15 + i - 3);
+         method5713(ints, 15 + i, 15 + i - 3);
       }
    }
 }

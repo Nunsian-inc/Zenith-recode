@@ -58,17 +58,17 @@ public final class Cosmetics implements MinecraftAccess {
    private final Overrides overrides;
    private final Presets presets;
    private final LinkedBlockingDeque<Runnable> linkedBlockingDeque = new LinkedBlockingDeque<Runnable>() {
-      public boolean offer(Runnable var1) {
-         if (var1 instanceof Cosmetics.Entry && this.size() >= 128) {
-            Runnable var2 = this.pollLast();
-            if (var2 instanceof Cosmetics.Entry var3) {
-               var3.method3019();
-            } else if (var2 != null) {
-               this.offerLast(var2);
+      public boolean offer(Runnable runnable) {
+         if (runnable instanceof Cosmetics.Entry && this.size() >= 128) {
+            Runnable pollLast = this.pollLast();
+            if (pollLast instanceof Cosmetics.Entry entry) {
+               entry.method3019();
+            } else if (pollLast != null) {
+               this.offerLast(pollLast);
             }
          }
 
-         return this.offerFirst(var1);
+         return this.offerFirst(runnable);
       }
    };
    private final ExecutorService executorService;
@@ -94,15 +94,15 @@ public final class Cosmetics implements MinecraftAccess {
    private final Map<String, StoreEntry> items13 = new ConcurrentHashMap<>();
    private final Set<String> items14 = ConcurrentHashMap.newKeySet();
 
-   public Cosmetics(Path var1) {
-      this.path = var1.resolve("cosmetics");
+   public Cosmetics(Path path) {
+      this.path = path.resolve("cosmetics");
       this.path2 = this.path.resolve("cosmetics.json");
       this.index = new Index(this.path.resolve("cache"), this::method2997);
       this.overrides = new Overrides(this.path);
       this.presets = new Presets(this.path);
-      AtomicInteger var2 = new AtomicInteger();
+      AtomicInteger counter = new AtomicInteger();
       this.executorService = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, this.linkedBlockingDeque, var1x -> {
-         Thread var2x = new Thread(var1x, "Nexus-Cosmetics-" + var2.incrementAndGet());
+         Thread var2x = new Thread(var1x, "Nexus-Cosmetics-" + counter.incrementAndGet());
          var2x.setDaemon(true);
          var2x.setPriority(1);
          return var2x;
@@ -115,67 +115,67 @@ public final class Cosmetics implements MinecraftAccess {
    }
 
    public static Cosmetics method2960() {
-      Zenith var0 = Zenith.getInstance();
-      return var0 == null ? null : var0.getCosmetics();
+      Zenith zenith = Zenith.getInstance();
+      return zenith == null ? null : zenith.getCosmetics();
    }
 
-   public void method2961(StoreEntry var1) {
-      this.method2962(var1, false);
+   public void method2961(StoreEntry storeEntry) {
+      this.method2962(storeEntry, false);
    }
 
-   public void method2962(StoreEntry var1, boolean var2) {
-      if (var1 != null) {
-         StoreEntry var3 = this.items13.get(var1.userId());
-         if (var2 || var3 == null || var1.method1681(var3)) {
-            this.items13.put(var1.userId(), var1);
-            if (var3 != null && var3.name() != null && !var3.name().isBlank()) {
-               this.items12.remove(var3.name().toLowerCase(Locale.ROOT));
+   public void method2962(StoreEntry storeEntry, boolean flag) {
+      if (storeEntry != null) {
+         StoreEntry storeEntry2 = this.items13.get(storeEntry.userId());
+         if (flag || storeEntry2 == null || storeEntry.method1681(storeEntry2)) {
+            this.items13.put(storeEntry.userId(), storeEntry);
+            if (storeEntry2 != null && storeEntry2.name() != null && !storeEntry2.name().isBlank()) {
+               this.items12.remove(storeEntry2.name().toLowerCase(Locale.ROOT));
             }
 
-            if (var1.name() != null && !var1.name().isBlank()) {
-               this.items12.put(var1.name().toLowerCase(Locale.ROOT), var1);
+            if (storeEntry.name() != null && !storeEntry.name().isBlank()) {
+               this.items12.put(storeEntry.name().toLowerCase(Locale.ROOT), storeEntry);
             }
 
-            for (Data1 var5 : var1.getItems()) {
-               this.method2990(var5.getText());
+            for (Data1 data1 : storeEntry.getItems()) {
+               this.method2990(data1.getText());
             }
          }
       }
    }
 
-   public List<Data1> method2963(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         String var2 = var1.toLowerCase(Locale.ROOT);
-         if (this.items14.contains(var2)) {
+   public List<Data1> method2963(String str) {
+      if (str != null && !str.isBlank()) {
+         String lowerCase = str.toLowerCase(Locale.ROOT);
+         if (this.items14.contains(lowerCase)) {
             return List.of();
          } else {
-            StoreEntry var3 = this.items12.get(var2);
-            return var3 == null ? List.of() : var3.getItems();
+            StoreEntry storeEntry = this.items12.get(lowerCase);
+            return storeEntry == null ? List.of() : storeEntry.getItems();
          }
       } else {
          return List.of();
       }
    }
 
-   public boolean method2964(String var1) {
-      return var1 != null && this.items12.containsKey(var1.toLowerCase(Locale.ROOT));
+   public boolean method2964(String str) {
+      return str != null && this.items12.containsKey(str.toLowerCase(Locale.ROOT));
    }
 
-   public StoreEntry method2965(String var1) {
-      return var1 == null ? null : this.items13.get(var1);
+   public StoreEntry method2965(String str) {
+      return str == null ? null : this.items13.get(str);
    }
 
-   public void method2966(String var1, boolean var2) {
-      if (var1 != null && !var1.isBlank()) {
-         String var3 = var1.toLowerCase(Locale.ROOT);
-         if (var2 ? this.items14.add(var3) : this.items14.remove(var3)) {
+   public void method2966(String str, boolean flag) {
+      if (str != null && !str.isBlank()) {
+         String lowerCase = str.toLowerCase(Locale.ROOT);
+         if (flag ? this.items14.add(lowerCase) : this.items14.remove(lowerCase)) {
             this.intValue++;
          }
       }
    }
 
-   public boolean method2967(String var1) {
-      return var1 != null && this.items14.contains(var1.toLowerCase(Locale.ROOT));
+   public boolean method2967(String str) {
+      return str != null && this.items14.contains(str.toLowerCase(Locale.ROOT));
    }
 
    public void method2968() {
@@ -191,35 +191,35 @@ public final class Cosmetics implements MinecraftAccess {
       return this.items3;
    }
 
-   public List<CosmeticItemInfo> method2969(String var1) {
-      var var2 = this.items4.get(var1);
-      return var2 == null ? List.of() : var2;
+   public List<CosmeticItemInfo> method2969(String str) {
+      var cosmeticItemInfos = this.items4.get(str);
+      return cosmeticItemInfos == null ? List.of() : cosmeticItemInfos;
    }
 
-   public List<CosmeticItemInfo> method2970(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         String var2 = var1.strip().toLowerCase(Locale.ROOT);
-         ArrayList var3 = new ArrayList();
+   public List<CosmeticItemInfo> method2970(String str) {
+      if (str != null && !str.isBlank()) {
+         String lowerCase = str.strip().toLowerCase(Locale.ROOT);
+         ArrayList coll = new ArrayList();
 
-         for (CosmeticItemInfo var5 : this.items) {
-            if (!this.overrides.method6459(var5.getText())
+         for (CosmeticItemInfo cosmeticItemInfo : this.items) {
+            if (!this.overrides.method6459(cosmeticItemInfo.getText())
                && (
-                  this.overrides.method6460(var5).toLowerCase(Locale.ROOT).contains(var2)
-                     || var5.method7749().toLowerCase(Locale.ROOT).contains(var2)
-                     || method3011(var5).toLowerCase(Locale.ROOT).contains(var2)
+                  this.overrides.method6460(cosmeticItemInfo).toLowerCase(Locale.ROOT).contains(lowerCase)
+                     || cosmeticItemInfo.method7749().toLowerCase(Locale.ROOT).contains(lowerCase)
+                     || method3011(cosmeticItemInfo).toLowerCase(Locale.ROOT).contains(lowerCase)
                )) {
-               var3.add(var5);
+               coll.add(cosmeticItemInfo);
             }
          }
 
-         return List.copyOf(var3);
+         return List.copyOf(coll);
       } else {
          return this.items;
       }
    }
 
-   public CosmeticItemInfo method2971(String var1) {
-      return var1 == null ? null : this.items2.get(var1);
+   public CosmeticItemInfo method2971(String text) {
+      return text == null ? null : this.items2.get(text);
    }
 
    public boolean method2972() {
@@ -243,91 +243,91 @@ public final class Cosmetics implements MinecraftAccess {
       return this.presets;
    }
 
-   public boolean method2974(String var1) {
-      return this.overrides.method6459(var1);
+   public boolean method2974(String text) {
+      return this.overrides.method6459(text);
    }
 
-   public void method2975(String var1, boolean var2) {
-      Overrides.Data var3 = this.overrides.method6458(var1);
-      this.overrides.method6464(var1, method2978(var3, var3 == null ? null : var3.getCosmeticType(), var2, method2979(var3), method2980(var3)));
-      if (var2) {
-         this.method2994(var1);
+   public void method2975(String text, boolean flag) {
+      Overrides.Data data = this.overrides.method6458(text);
+      this.overrides.method6464(text, method2978(data, data == null ? null : data.getCosmeticType(), flag, method2979(data), method2980(data)));
+      if (flag) {
+         this.method2994(text);
       }
 
-      this.method2981(var1);
+      this.method2981(text);
    }
 
    public int method2976() {
-      int var1 = 0;
+      int n = 0;
 
-      for (CosmeticItemInfo var3 : this.items) {
-         if (this.overrides.method6459(var3.getText())) {
-            this.method2975(var3.getText(), false);
-            var1++;
+      for (CosmeticItemInfo cosmeticItemInfo : this.items) {
+         if (this.overrides.method6459(cosmeticItemInfo.getText())) {
+            this.method2975(cosmeticItemInfo.getText(), false);
+            n++;
          }
       }
 
-      if (var1 > 0) {
+      if (n > 0) {
          this.intValue++;
       }
 
-      return var1;
+      return n;
    }
 
-   public void rename(String var1, String var2) {
-      Overrides.Data var3 = this.overrides.method6458(var1);
+   public void rename(String text, String str) {
+      Overrides.Data data = this.overrides.method6458(text);
       this.overrides
          .method6464(
-            var1,
-            method2978(var3, var3 == null ? null : var3.getCosmeticType(), var3 != null && var3.isFlag(), var2 == null ? "" : var2.strip(), method2980(var3))
+            text,
+            method2978(data, data == null ? null : data.getCosmeticType(), data != null && data.isFlag(), str == null ? "" : str.strip(), method2980(data))
          );
       this.intValue++;
    }
 
-   public void method2977(String var1, String var2) {
-      Overrides.Data var3 = this.overrides.method6458(var1);
+   public void method2977(String text, String str) {
+      Overrides.Data data = this.overrides.method6458(text);
       this.overrides
          .method6464(
-            var1,
-            method2978(var3, var3 == null ? null : var3.getCosmeticType(), var3 != null && var3.isFlag(), method2979(var3), var2 == null ? "" : var2.strip())
+            text,
+            method2978(data, data == null ? null : data.getCosmeticType(), data != null && data.isFlag(), method2979(data), str == null ? "" : str.strip())
          );
       this.intValue++;
    }
 
-   private static Overrides.Data method2978(Overrides.Data var0, CosmeticType var1, boolean var2, String var3, String var4) {
+   private static Overrides.Data method2978(Overrides.Data data, CosmeticType cosmeticType, boolean flag, String text, String str) {
       return new Overrides.Data(
-         var1,
-         var0 == null ? new float[3] : var0.getFloatValues(),
-         var0 == null ? new float[3] : var0.getFloatValues2(),
-         var0 == null ? new float[]{1.0F, 1.0F, 1.0F} : var0.getFloatValues3(),
-         var2,
-         var3,
-         var4
+         cosmeticType,
+         data == null ? new float[3] : data.getFloatValues(),
+         data == null ? new float[3] : data.getFloatValues2(),
+         data == null ? new float[]{1.0F, 1.0F, 1.0F} : data.getFloatValues3(),
+         flag,
+         text,
+         str
       );
    }
 
-   private static String method2979(Overrides.Data var0) {
-      return var0 != null && var0.name() != null ? var0.name() : "";
+   private static String method2979(Overrides.Data data) {
+      return data != null && data.name() != null ? data.name() : "";
    }
 
-   private static String method2980(Overrides.Data var0) {
-      return var0 != null && var0.getText2() != null ? var0.getText2() : "";
+   private static String method2980(Overrides.Data data) {
+      return data != null && data.getText2() != null ? data.getText2() : "";
    }
 
-   public void method2981(String var1) {
-      if (var1 != null) {
+   public void method2981(String text) {
+      if (text != null) {
          synchronized (this.linkedHashMap) {
-            this.linkedHashMap.remove(var1);
-            this.items5.remove(var1);
+            this.linkedHashMap.remove(text);
+            this.items5.remove(text);
          }
 
-         this.items7.remove(var1);
-         this.method2990(var1);
+         this.items7.remove(text);
+         this.method2990(text);
       }
    }
 
    public long method2982() {
-      long var1 = this.index.method1461();
+      long l = this.index.method1461();
       this.items7.clear();
       this.items8.clear();
       synchronized (this.linkedHashMap) {
@@ -337,30 +337,30 @@ public final class Cosmetics implements MinecraftAccess {
 
       this.cosmeticTextureCache.releaseAll();
       this.method3009(this::reload);
-      return var1;
+      return l;
    }
 
-   public boolean method2983(CosmeticItemInfo var1) {
-      return var1 != null && this.index.method1459(var1);
+   public boolean method2983(CosmeticItemInfo cosmeticItemInfo) {
+      return cosmeticItemInfo != null && this.index.method1459(cosmeticItemInfo);
    }
 
-   public CosmeticModel method2984(String var1) {
-      if (var1 == null) {
+   public CosmeticModel method2984(String key) {
+      if (key == null) {
          return null;
       } else {
          synchronized (this.linkedHashMap) {
-            CosmeticModel var3 = this.linkedHashMap.get(var1);
-            if (var3 != null) {
-               this.items5.put(var1, System.nanoTime());
+            CosmeticModel cosmeticModel = this.linkedHashMap.get(key);
+            if (cosmeticModel != null) {
+               this.items5.put(key, System.nanoTime());
             }
 
-            return var3;
+            return cosmeticModel;
          }
       }
    }
 
-   public boolean method2985(String var1) {
-      return var1 != null && this.items6.contains(var1);
+   public boolean method2985(String str) {
+      return str != null && this.items6.contains(str);
    }
 
    public int method2986() {
@@ -377,23 +377,23 @@ public final class Cosmetics implements MinecraftAccess {
       return this.items7.size();
    }
 
-   public boolean method2989(String var1) {
-      return var1 != null && this.items7.contains(var1);
+   public boolean method2989(String str) {
+      return str != null && this.items7.contains(str);
    }
 
-   public void method2990(String var1) {
-      if (this.method2972() && var1 != null && !var1.isBlank() && !this.items7.contains(var1)) {
-         Cosmetics.Data var2 = this.items8.get(var1);
-         if (var2 == null || System.currentTimeMillis() >= var2.getLongValue()) {
+   public void method2990(String text) {
+      if (this.method2972() && text != null && !text.isBlank() && !this.items7.contains(text)) {
+         Cosmetics.Data data = this.items8.get(text);
+         if (data == null || System.currentTimeMillis() >= data.getLongValue()) {
             synchronized (this.linkedHashMap) {
-               if (this.linkedHashMap.containsKey(var1)) {
+               if (this.linkedHashMap.containsKey(text)) {
                   return;
                }
             }
 
-            if (this.items6.add(var1)) {
-               if (!this.method3009(new Cosmetics.Entry(var1))) {
-                  this.items6.remove(var1);
+            if (this.items6.add(text)) {
+               if (!this.method3009(new Cosmetics.Entry(text))) {
+                  this.items6.remove(text);
                }
             }
          }
@@ -412,39 +412,39 @@ public final class Cosmetics implements MinecraftAccess {
       return this.intValue;
    }
 
-   public boolean method2991(String var1) {
-      return var1 != null && this.items10.contains(var1);
+   public boolean method2991(String str) {
+      return str != null && this.items10.contains(str);
    }
 
-   public void method2992(String var1) {
-      if (this.method2971(var1) != null) {
-         if (this.items9.add(var1)) {
+   public void method2992(String text) {
+      if (this.method2971(text) != null) {
+         if (this.items9.add(text)) {
             this.method2996();
          }
 
-         this.method2990(var1);
+         this.method2990(text);
       }
    }
 
-   public void method2993(Collection<String> var1) {
-      LinkedHashSet var2 = new LinkedHashSet();
-      if (var1 != null) {
-         for (String var4 : var1) {
-            if (var4 != null && !var4.isBlank() && this.method2971(var4) != null) {
-               var2.add(var4);
+   public void method2993(Collection<String> strings) {
+      LinkedHashSet linkedHashSet = new LinkedHashSet();
+      if (strings != null) {
+         for (String text : strings) {
+            if (text != null && !text.isBlank() && this.method2971(text) != null) {
+               linkedHashSet.add(text);
             }
          }
       }
 
-      if (!var2.equals(this.items9)) {
+      if (!linkedHashSet.equals(this.items9)) {
          this.items9.clear();
-         this.items9.addAll(var2);
+         this.items9.addAll(linkedHashSet);
          this.method2996();
       }
    }
 
-   public void method2994(String var1) {
-      if (var1 != null && this.items9.remove(var1)) {
+   public void method2994(String text) {
+      if (text != null && this.items9.remove(text)) {
          this.method2996();
       }
    }
@@ -461,31 +461,31 @@ public final class Cosmetics implements MinecraftAccess {
       this.items11 = List.copyOf(this.items9);
       this.intValue++;
 
-      for (String var2 : this.items9) {
-         this.method2990(var2);
+      for (String text : this.items9) {
+         this.method2990(text);
       }
 
       this.method3002();
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
 
-      for (String var4 : this.items9) {
-         var2.add(var4);
+      for (String string : this.items9) {
+         jsonArray.add(string);
       }
 
-      var1.add("equipped", var2);
-      return var1;
+      json.add("equipped", jsonArray);
+      return json;
    }
 
-   public void load(JsonObject var1) {
+   public void load(JsonObject json) {
       this.items9.clear();
-      if (var1 != null && var1.has("equipped") && var1.get("equipped").isJsonArray()) {
-         for (JsonElement var3 : var1.getAsJsonArray("equipped")) {
-            if (var3.isJsonPrimitive()) {
-               this.items9.add(var3.getAsString());
+      if (json != null && json.has("equipped") && json.get("equipped").isJsonArray()) {
+         for (JsonElement jsonElement : json.getAsJsonArray("equipped")) {
+            if (jsonElement.isJsonPrimitive()) {
+               this.items9.add(jsonElement.getAsString());
             }
          }
       }
@@ -494,46 +494,46 @@ public final class Cosmetics implements MinecraftAccess {
       this.items11 = List.copyOf(this.items9);
       this.intValue++;
       if (this.method2972()) {
-         for (String var5 : this.items9) {
-            this.method2990(var5);
+         for (String text : this.items9) {
+            this.method2990(text);
          }
       }
    }
 
    public String url() {
-      String var1 = System.getProperty("zenith.cosmetics.url", "").strip();
-      if (!var1.isEmpty()) {
-         return var1;
+      String str = System.getProperty("zenith.cosmetics.url", "").strip();
+      if (!str.isEmpty()) {
+         return str;
       } else {
          return !this.url.isBlank() ? this.url : this.method2997().get(0);
       }
    }
 
    public List<String> method2997() {
-      String var1 = System.getProperty("zenith.cosmetics.url", "").strip();
-      if (!var1.isEmpty()) {
-         return List.of(var1);
+      String str = System.getProperty("zenith.cosmetics.url", "").strip();
+      if (!str.isEmpty()) {
+         return List.of(str);
       } else if (!this.url.isBlank()) {
          return List.of(this.url);
       } else {
-         ArrayList<String> var2 = new ArrayList<>();
-         Zenith var3 = Zenith.getInstance();
-         Cloud var4 = var3 == null ? null : var3.getCloud();
-         if (var4 != null) {
-            String var5 = StoreApi.method1994(var4.method7870());
-            if (!var5.isEmpty()) {
-               var2.add(var5);
+         ArrayList<String> strings = new ArrayList<>();
+         Zenith zenith = Zenith.getInstance();
+         Cloud cloud = zenith == null ? null : zenith.getCloud();
+         if (cloud != null) {
+            String str2 = StoreApi.method1994(cloud.method7870());
+            if (!str2.isEmpty()) {
+               strings.add(str2);
             }
          }
 
-         for (String var6 : RegionUtil.method2040()) {
-            String var7 = StoreApi.method1994(var6);
-            if (!var7.isEmpty() && !var2.contains(var7)) {
-               var2.add(var7);
+         for (String str2 : RegionUtil.method2040()) {
+            String str3 = StoreApi.method1994(str2);
+            if (!str3.isEmpty() && !strings.contains(str3)) {
+               strings.add(str3);
             }
          }
 
-         return var2;
+         return strings;
       }
    }
 
@@ -549,84 +549,84 @@ public final class Cosmetics implements MinecraftAccess {
       }
    }
 
-   public void method3000(String var1) {
-      this.url = var1 == null ? "" : var1.strip();
+   public void method3000(String str) {
+      this.url = str == null ? "" : str.strip();
       this.method3002();
       this.method2973();
    }
 
    private void method3001() {
-      JsonObject var1 = JsonIo.method1009(this.path2);
-      if (var1 != null) {
-         if (var1.has("url")) {
-            this.url = var1.get("url").getAsString();
+      JsonObject json = JsonIo.method1009(this.path2);
+      if (json != null) {
+         if (json.has("url")) {
+            this.url = json.get("url").getAsString();
          }
 
-         if (var1.has("secret")) {
-            this.text5 = var1.get("secret").getAsString();
+         if (json.has("secret")) {
+            this.text5 = json.get("secret").getAsString();
          }
 
-         if (var1.has("petScale")) {
-            this.floatValue = method3004(var1.get("petScale").getAsFloat());
+         if (json.has("petScale")) {
+            this.floatValue = method3004(json.get("petScale").getAsFloat());
          }
 
-         if (var1.has("equipped")) {
-            this.load(var1);
+         if (json.has("equipped")) {
+            this.load(json);
          }
       }
    }
 
    private void method3002() {
-      JsonObject var1 = this.save();
-      var1.addProperty("url", this.url);
-      var1.addProperty("secret", this.text5);
-      var1.addProperty("petScale", this.floatValue);
-      JsonIo.method1010(this.path2, var1);
+      JsonObject jsonObject2 = this.save();
+      jsonObject2.addProperty("url", this.url);
+      jsonObject2.addProperty("secret", this.text5);
+      jsonObject2.addProperty("petScale", this.floatValue);
+      JsonIo.method1010(this.path2, jsonObject2);
    }
 
    public float getFloatValue() {
       return this.floatValue;
    }
 
-   public void method3003(float var1) {
-      this.floatValue = method3004(var1);
+   public void method3003(float f) {
+      this.floatValue = method3004(f);
       this.method3002();
    }
 
-   private static float method3004(float var0) {
-      return Math.max(0.4F, Math.min(4.0F, var0));
+   private static float method3004(float f) {
+      return Math.max(0.4F, Math.min(4.0F, f));
    }
 
    public String getText5() {
       return this.text5;
    }
 
-   public void method3005(String var1) {
-      this.text5 = var1 == null ? "" : var1.strip();
+   public void method3005(String str) {
+      this.text5 = str == null ? "" : str.strip();
       this.method3002();
    }
 
-   public void method3006(Consumer<String> var1) {
-      JsonObject var2 = this.overrides.getJsonObject2();
-      if (var2.isEmpty()) {
-         var1.accept("Править нечего: своих правок нет");
+   public void method3006(Consumer<String> consumer) {
+      JsonObject jsonObject2 = this.overrides.getJsonObject2();
+      if (jsonObject2.isEmpty()) {
+         consumer.accept("Править нечего: своих правок нет");
       } else if (this.text5.isBlank()) {
-         var1.accept("Нужен секрет узла: .cosmetics secret <секрет>");
+         consumer.accept("Нужен секрет узла: .cosmetics secret <секрет>");
       } else {
-         int var3 = var2.size();
-         byte[] var4 = var2.toString().getBytes(StandardCharsets.UTF_8);
+         int size = jsonObject2.size();
+         byte[] bytes = jsonObject2.toString().getBytes(StandardCharsets.UTF_8);
          this.method3009(() -> {
-            String var4x = this.index.method1456(var4, this.text5);
-            byte[] var5 = var4x == null ? null : this.index.method1455();
+            String var4x = this.index.method1456(bytes, this.text5);
+            byte[] bytes2 = var4x == null ? null : this.index.method1455();
             mc.execute(() -> {
                if (var4x == null) {
-                  var1.accept("Не отправилось: " + this.index.getLastError());
+                  consumer.accept("Не отправилось: " + this.index.getLastError());
                } else {
-                  if (var5 != null) {
-                     this.overrides.method6466(var5);
+                  if (bytes2 != null) {
+                     this.overrides.method6466(bytes2);
                   }
 
-                  var1.accept("Применено всем: " + var3 + " " + (var3 == 1 ? "вещь" : "вещей"));
+                  consumer.accept("Применено всем: " + size + " " + (size == 1 ? "вещь" : "вещей"));
                }
             });
          });
@@ -634,11 +634,11 @@ public final class Cosmetics implements MinecraftAccess {
    }
 
    private void method3007() {
-      byte[] var1 = this.index.method1455();
-      if (var1 != null) {
+      byte[] bytes = this.index.method1455();
+      if (bytes != null) {
          mc.execute(() -> {
-            int var2 = this.overrides.method6466(var1);
-            if (var2 >= 0) {
+            int n = this.overrides.method6466(bytes);
+            if (n >= 0) {
                this.method3008();
             }
          });
@@ -646,7 +646,7 @@ public final class Cosmetics implements MinecraftAccess {
    }
 
    private void method3008() {
-      List<String> var1 = List.copyOf(this.items9);
+      List<String> strings = List.copyOf(this.items9);
       synchronized (this.linkedHashMap) {
          this.linkedHashMap.clear();
          this.items5.clear();
@@ -654,8 +654,8 @@ public final class Cosmetics implements MinecraftAccess {
 
       this.items7.clear();
 
-      for (String var3 : var1) {
-         this.method2990(var3);
+      for (String text : strings) {
+         this.method2990(text);
       }
 
       this.intValue++;
@@ -670,200 +670,200 @@ public final class Cosmetics implements MinecraftAccess {
       }
    }
 
-   private boolean method3009(Runnable var1) {
+   private boolean method3009(Runnable entry) {
       try {
-         this.executorService.execute(var1);
+         this.executorService.execute(entry);
          return true;
-      } catch (RejectedExecutionException var3) {
+      } catch (RejectedExecutionException e) {
          return false;
       }
    }
 
    private void reload() {
-      var var1 = this.index.method1453();
-      mc.execute(() -> this.method3010(var1));
+      var cosmeticItemInfos = this.index.method1453();
+      mc.execute(() -> this.method3010(cosmeticItemInfos));
       this.method3007();
    }
 
-   private void method3010(List<CosmeticItemInfo> var1) {
-      if (var1.isEmpty()) {
+   private void method3010(List<CosmeticItemInfo> cosmeticItemInfos) {
+      if (cosmeticItemInfos.isEmpty()) {
          logger.warn("Косметика: каталог пуст — узел недоступен и кеша нет");
-         String var10 = this.index.getLastError();
-         logger.warn("Косметика: каталог не приехал — " + (var10.isEmpty() ? "узел недоступен" : var10));
+         String lastError = this.index.getLastError();
+         logger.warn("Косметика: каталог не приехал — " + (lastError.isEmpty() ? "узел недоступен" : lastError));
       } else {
-         LinkedHashMap var2 = new LinkedHashMap();
-         HashMap var3 = new HashMap(var1.size() * 2);
-         int var4 = 0;
+         LinkedHashMap map = new LinkedHashMap();
+         HashMap map2 = new HashMap(cosmeticItemInfos.size() * 2);
+         int n = 0;
 
-         for (CosmeticItemInfo var6 : var1) {
-            if (!var6.method7750()) {
-               var4++;
+         for (CosmeticItemInfo cosmeticItemInfo : cosmeticItemInfos) {
+            if (!cosmeticItemInfo.method7750()) {
+               n++;
             } else {
-               var3.putIfAbsent(var6.getText(), var6);
-               ((java.util.List)var2.computeIfAbsent(method3011(var6), var0 -> new ArrayList<>())).add(var6);
+               map2.putIfAbsent(cosmeticItemInfo.getText(), cosmeticItemInfo);
+               ((java.util.List)map.computeIfAbsent(method3011(cosmeticItemInfo), obj -> new ArrayList<>())).add(cosmeticItemInfo);
             }
          }
 
-         if (var2.isEmpty()) {
-            logger.warn("Косметика: в каталоге {} записей, и ни одной пригодной", var1.size());
+         if (map.isEmpty()) {
+            logger.warn("Косметика: в каталоге {} записей, и ни одной пригодной", cosmeticItemInfos.size());
          } else {
-            var var11 = Comparator.comparing(CosmeticItemInfo::method7749, String.CASE_INSENSITIVE_ORDER).thenComparing(CosmeticItemInfo::getText);
-            List<CosmeticItemInfo> var12 = new ArrayList<>(var1.size());
-            LinkedHashMap var7 = new LinkedHashMap();
+            var thenComparing = Comparator.comparing(CosmeticItemInfo::method7749, String.CASE_INSENSITIVE_ORDER).thenComparing(CosmeticItemInfo::getText);
+            List<CosmeticItemInfo> coll = new ArrayList<>(cosmeticItemInfos.size());
+            LinkedHashMap map3 = new LinkedHashMap();
 
-            for (Object var9_o : (Iterable<?>)(Object)(var2.entrySet())) {
-               Map.Entry var9 = (Map.Entry)var9_o;
-               ((List)var9.getValue()).sort(var11);
-               var7.put((String)var9.getKey(), List.copyOf((Collection)var9.getValue()));
-               var12.addAll((Collection)var9.getValue());
+            for (Object obj : (Iterable<?>)(Object)(map.entrySet())) {
+               Map.Entry entry = (Map.Entry)obj;
+               ((List)entry.getValue()).sort(thenComparing);
+               map3.put((String)entry.getKey(), List.copyOf((Collection)entry.getValue()));
+               coll.addAll((Collection)entry.getValue());
             }
 
             this.items7.clear();
             this.items8.clear();
-            this.items = List.copyOf(var12);
-            this.items2 = Map.copyOf(var3);
-            this.items4 = Collections.unmodifiableMap(var7);
-            this.items3 = List.copyOf(var7.keySet());
-            logger.info("Косметика: каталог {} элементов, {} категорий (пропущено непригодных: {})", new Object[]{this.items.size(), this.items3.size(), var4});
+            this.items = List.copyOf(coll);
+            this.items2 = Map.copyOf(map2);
+            this.items4 = Collections.unmodifiableMap(map3);
+            this.items3 = List.copyOf(map3.keySet());
+            logger.info("Косметика: каталог {} элементов, {} категорий (пропущено непригодных: {})", new Object[]{this.items.size(), this.items3.size(), n});
             this.intValue++;
 
-            for (String var14 : this.items9) {
-               this.method2990(var14);
+            for (String text : this.items9) {
+               this.method2990(text);
             }
          }
       }
    }
 
-   private static String method3011(CosmeticItemInfo var0) {
-      if (var0.getText3() != null && !var0.getText3().isBlank()) {
-         return var0.getText3();
+   private static String method3011(CosmeticItemInfo cosmeticItemInfo) {
+      if (cosmeticItemInfo.getText3() != null && !cosmeticItemInfo.getText3().isBlank()) {
+         return cosmeticItemInfo.getText3();
       } else {
-         return var0.getText4() != null && !var0.getText4().isBlank() ? var0.getText4() : "прочее";
+         return cosmeticItemInfo.getText4() != null && !cosmeticItemInfo.getText4().isBlank() ? cosmeticItemInfo.getText4() : "прочее";
       }
    }
 
-   private void load(String var1) {
-      Cosmetics.Data2 var2 = null;
-      boolean var3 = false;
+   private void load(String text) {
+      Cosmetics.Data2 data2 = null;
+      boolean flag = false;
 
       try {
-         var2 = this.method3012(this.method2971(var1));
-      } catch (Exception var6) {
-         var3 = true;
-         logger.warn("Косметика: {} не загрузился: {}", var1, var6.toString());
+         data2 = this.method3012(this.method2971(text));
+      } catch (Exception e) {
+         flag = true;
+         logger.warn("Косметика: {} не загрузился: {}", text, e.toString());
       }
 
-      Cosmetics.Data2 var4 = var2;
-      boolean var5 = var3;
-      mc.execute(() -> this.method3013(var1, var4, var5));
+      Cosmetics.Data2 data22 = data2;
+      boolean flag2 = flag;
+      mc.execute(() -> this.method3013(text, data22, flag2));
    }
 
-   private Cosmetics.Data2 method3012(CosmeticItemInfo var1) throws Exception {
-      if (var1 == null) {
+   private Cosmetics.Data2 method3012(CosmeticItemInfo cosmeticItemInfo) throws Exception {
+      if (cosmeticItemInfo == null) {
          return null;
       } else {
-         CosmeticFileLoader var2 = CosmeticFileLoader.method7345(new ByteArrayInputStream(this.index.method1458(var1)));
+         CosmeticFileLoader cosmeticFileLoader = CosmeticFileLoader.method7345(new ByteArrayInputStream(this.index.method1458(cosmeticItemInfo)));
 
-         CosmeticSkeleton var3 = switch (var2.getType()) {
-            case WAVEFRONT -> ObjParser.method8021(var2.method7339(var2.getText()), var2.method7339(var2.getText3()));
-            case BEDROCK -> GeometryParser.method2261(var2.method7339(var2.getText()), var1.getText7());
-            case TECHNE -> TechneParser.method7431(var2.method7339(var2.getText()), var1.getText7());
+         CosmeticSkeleton cosmeticSkeleton = switch (cosmeticFileLoader.getType()) {
+            case WAVEFRONT -> ObjParser.method8021(cosmeticFileLoader.method7339(cosmeticFileLoader.getText()), cosmeticFileLoader.method7339(cosmeticFileLoader.getText3()));
+            case BEDROCK -> GeometryParser.method2261(cosmeticFileLoader.method7339(cosmeticFileLoader.getText()), cosmeticItemInfo.getText7());
+            case TECHNE -> TechneParser.method7431(cosmeticFileLoader.method7339(cosmeticFileLoader.getText()), cosmeticItemInfo.getText7());
             case EMPTY -> null;
          };
-         if (var3 != null && var3.method7138() != 0) {
-            String[] var4 = var3.getTexts();
-            byte[][] var5 = new byte[Math.max(1, var4.length)][];
+         if (cosmeticSkeleton != null && cosmeticSkeleton.method7138() != 0) {
+            String[] texts = cosmeticSkeleton.getTexts();
+            byte[][] byteValues = new byte[Math.max(1, texts.length)][];
 
-            for (int var6 = 0; var6 < var5.length; var6++) {
-               String var7 = var6 < var4.length && !var4[var6].isBlank() ? var4[var6] : var1.getText7();
-               var5[var6] = var2.method7340(var7);
+            for (int i = 0; i < byteValues.length; i++) {
+               String key = i < texts.length && !texts[i].isBlank() ? texts[i] : cosmeticItemInfo.getText7();
+               byteValues[i] = cosmeticFileLoader.method7340(key);
             }
 
-            String var8 = var2.method7339(var2.getText2());
-            CosmeticAnimation var9 = var8 == null ? null : CosmeticAnimation.method7814(var8);
-            return new Cosmetics.Data2(var1, var3, var5, var9);
+            String json = cosmeticFileLoader.method7339(cosmeticFileLoader.getText2());
+            CosmeticAnimation cosmeticAnimation = json == null ? null : CosmeticAnimation.method7814(json);
+            return new Cosmetics.Data2(cosmeticItemInfo, cosmeticSkeleton, byteValues, cosmeticAnimation);
          } else {
             return null;
          }
       }
    }
 
-   private void method3013(String var1, Cosmetics.Data2 var2, boolean var3) {
-      this.items6.remove(var1);
-      if (var2 == null) {
-         if (!var3 || !this.method3014(var1)) {
-            this.items7.add(var1);
-            this.items8.remove(var1);
+   private void method3013(String text, Cosmetics.Data2 data2, boolean flag) {
+      this.items6.remove(text);
+      if (data2 == null) {
+         if (!flag || !this.method3014(text)) {
+            this.items7.add(text);
+            this.items8.remove(text);
          }
       } else {
-         String var4 = var2.getCosmeticItemInfo().getText6();
-         String[] var5 = var2.getCosmeticSkeleton().getTexts();
-         Identifier[] var6 = new Identifier[var2.getByteValues().length];
+         String str = data2.getCosmeticItemInfo().getText6();
+         String[] texts = data2.getCosmeticSkeleton().getTexts();
+         Identifier[] identifiers = new Identifier[data2.getByteValues().length];
 
-         for (int var7 = 0; var7 < var6.length; var7++) {
-            String var8 = var7 < var5.length ? var5[var7] : "";
-            var6[var7] = this.cosmeticTextureCache.method2616(CosmeticTextureCache.method2623(var4, var8), var2.getByteValues()[var7]);
+         for (int i = 0; i < identifiers.length; i++) {
+            String str2 = i < texts.length ? texts[i] : "";
+            identifiers[i] = this.cosmeticTextureCache.method2616(CosmeticTextureCache.method2623(str, str2), data2.getByteValues()[i]);
          }
 
-         if (var6[0] == null) {
-            this.items7.add(var1);
-            this.items8.remove(var1);
+         if (identifiers[0] == null) {
+            this.items7.add(text);
+            this.items8.remove(text);
          } else {
-            for (int var11 = 1; var11 < var6.length; var11++) {
-               if (var6[var11] == null) {
-                  var6[var11] = var6[0];
+            for (int i = 1; i < identifiers.length; i++) {
+               if (identifiers[i] == null) {
+                  identifiers[i] = identifiers[0];
                }
             }
 
-            this.items8.remove(var1);
-            CosmeticModel var12 = new CosmeticModel(var2.getCosmeticItemInfo(), var2.getCosmeticSkeleton(), var6, var2.getCosmeticAnimation(), this.overrides);
+            this.items8.remove(text);
+            CosmeticModel cosmeticModel = new CosmeticModel(data2.getCosmeticItemInfo(), data2.getCosmeticSkeleton(), identifiers, data2.getCosmeticAnimation(), this.overrides);
             synchronized (this.linkedHashMap) {
-               this.linkedHashMap.put(var1, var12);
+               this.linkedHashMap.put(text, cosmeticModel);
                this.method3015();
             }
          }
       }
    }
 
-   private boolean method3014(String var1) {
-      Cosmetics.Data var2 = this.items8.get(var1);
-      int var3 = var2 == null ? 1 : var2.getIntValue() + 1;
-      if (var3 >= 3) {
+   private boolean method3014(String text) {
+      Cosmetics.Data data = this.items8.get(text);
+      int intValue = data == null ? 1 : data.getIntValue() + 1;
+      if (intValue >= 3) {
          return false;
       } else {
-         this.items8.put(var1, new Cosmetics.Data(var3, System.currentTimeMillis() + 4000L * var3));
+         this.items8.put(text, new Cosmetics.Data(intValue, System.currentTimeMillis() + 4000L * intValue));
          return true;
       }
    }
 
    private void method3015() {
       if (this.linkedHashMap.size() > 64) {
-         long var1 = System.nanoTime();
-         var var3 = this.linkedHashMap.entrySet().iterator();
+         long nanoTime = System.nanoTime();
+         var iterator = this.linkedHashMap.entrySet().iterator();
 
-         while (this.linkedHashMap.size() > 64 && var3.hasNext()) {
-            Map.Entry var4 = (Map.Entry)var3.next();
-            String var5 = (String)var4.getKey();
-            if (!this.items9.contains(var5) && !this.method3016(var5, var1)) {
-               String var6 = ((CosmeticModel)var4.getValue()).getCosmeticItemInfo().getText6();
-               var3.remove();
-               this.items5.remove(var5);
-               if (!this.method3017(var6)) {
-                  this.cosmeticTextureCache.method2622(var6);
+         while (this.linkedHashMap.size() > 64 && iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry)iterator.next();
+            String key = (String)entry.getKey();
+            if (!this.items9.contains(key) && !this.method3016(key, nanoTime)) {
+               String anObject = ((CosmeticModel)entry.getValue()).getCosmeticItemInfo().getText6();
+               iterator.remove();
+               this.items5.remove(key);
+               if (!this.method3017(anObject)) {
+                  this.cosmeticTextureCache.method2622(anObject);
                }
             }
          }
       }
    }
 
-   private boolean method3016(String var1, long var2) {
-      Long var4 = this.items5.get(var1);
-      return var4 != null && var2 - var4 < 250000000L;
+   private boolean method3016(String key, long nanoTime) {
+      Long l = this.items5.get(key);
+      return l != null && nanoTime - l < 250000000L;
    }
 
-   private boolean method3017(String var1) {
-      for (CosmeticModel var3 : this.linkedHashMap.values()) {
-         if (var3.getCosmeticItemInfo().getText6().equals(var1)) {
+   private boolean method3017(String anObject) {
+      for (CosmeticModel cosmeticModel : this.linkedHashMap.values()) {
+         if (cosmeticModel.getCosmeticItemInfo().getText6().equals(anObject)) {
             return true;
          }
       }
@@ -900,9 +900,9 @@ public final class Cosmetics implements MinecraftAccess {
          return "Data[" + "intValue=" + this.intValue + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data(int var1, long var2) {
-         this.intValue = var1;
-         this.longValue = var2;
+      private Data(int intValue, long longValue) {
+         this.intValue = intValue;
+         this.longValue = longValue;
       }
 
       public int getIntValue() {
@@ -953,11 +953,11 @@ public final class Cosmetics implements MinecraftAccess {
          return "Data2[" + "cosmeticItemInfo=" + this.cosmeticItemInfo + ", " + "cosmeticSkeleton=" + this.cosmeticSkeleton + ", " + "byteValues=" + this.byteValues + ", " + "cosmeticAnimation=" + this.cosmeticAnimation + "]";
       }
 
-      private Data2(CosmeticItemInfo var1, CosmeticSkeleton var2, byte[][] var3, CosmeticAnimation var4) {
-         this.cosmeticItemInfo = var1;
-         this.cosmeticSkeleton = var2;
-         this.byteValues = var3;
-         this.cosmeticAnimation = var4;
+      private Data2(CosmeticItemInfo cosmeticItemInfo, CosmeticSkeleton cosmeticSkeleton, byte[][] byteValues, CosmeticAnimation cosmeticAnimation) {
+         this.cosmeticItemInfo = cosmeticItemInfo;
+         this.cosmeticSkeleton = cosmeticSkeleton;
+         this.byteValues = byteValues;
+         this.cosmeticAnimation = cosmeticAnimation;
       }
 
       public CosmeticItemInfo getCosmeticItemInfo() {
@@ -980,8 +980,8 @@ public final class Cosmetics implements MinecraftAccess {
    private final class Entry implements Runnable {
       private final String text;
 
-      private Entry(String var2) {
-         this.text = var2;
+      private Entry(String text) {
+         this.text = text;
       }
 
       @Override

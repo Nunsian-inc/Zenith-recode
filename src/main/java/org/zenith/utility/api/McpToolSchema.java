@@ -20,40 +20,40 @@ public final class McpToolSchema {
    private McpToolSchema() {
    }
 
-   private static void method5498(JsonArray var0, String var1, String var2, String... var3) {
-      JsonObject var4 = new JsonObject();
-      var4.addProperty("name", var1);
-      var4.addProperty("description", var2);
-      JsonObject var5 = new JsonObject();
-      var5.addProperty("type", "object");
-      JsonObject var6 = new JsonObject();
-      JsonArray var7 = new JsonArray();
+   private static void method5498(JsonArray jsonArray, String str, String str2, String... strings) {
+      JsonObject json = new JsonObject();
+      json.addProperty("name", str);
+      json.addProperty("description", str2);
+      JsonObject json2 = new JsonObject();
+      json2.addProperty("type", "object");
+      JsonObject json3 = new JsonObject();
+      JsonArray jsonArray2 = new JsonArray();
 
-      for (String var11 : var3) {
-         boolean var12 = var11.endsWith("?");
-         String[] var13 = (var12 ? var11.substring(0, var11.length() - 1) : var11).split(":");
-         JsonObject var14 = new JsonObject();
-         var14.addProperty("type", var13[1]);
-         var14.addProperty("description", var13.length > 2 ? var13[2] : var13[0]);
-         var6.add(var13[0], var14);
-         if (!var12) {
-            var7.add(var13[0]);
+      for (String str3 : strings) {
+         boolean endsWith = str3.endsWith("?");
+         String[] strings2 = (endsWith ? str3.substring(0, str3.length() - 1) : str3).split(":");
+         JsonObject json4 = new JsonObject();
+         json4.addProperty("type", strings2[1]);
+         json4.addProperty("description", strings2.length > 2 ? strings2[2] : strings2[0]);
+         json3.add(strings2[0], json4);
+         if (!endsWith) {
+            jsonArray2.add(strings2[0]);
          }
       }
 
-      var5.add("properties", var6);
-      var5.add("required", var7);
-      var4.add("inputSchema", var5);
-      var0.add(var4);
+      json2.add("properties", json3);
+      json2.add("required", jsonArray2);
+      json.add("inputSchema", json2);
+      jsonArray.add(json);
    }
 
    public static JsonArray method5499() {
-      JsonArray var0 = new JsonArray();
-      method5498(var0, "get_api_docs", "Полная справка по JS API скриптов Zenith. Начни с неё.");
-      method5498(var0, "list_scripts", "Все скрипты: состояние, включён ли, ошибка, модули, файлы.");
-      method5498(var0, "read_file", "Прочитать файл скрипта.", "script:string:id скрипта", "path:string:путь внутри папки скрипта, например main.js");
+      JsonArray jsonArray = new JsonArray();
+      method5498(jsonArray, "get_api_docs", "Полная справка по JS API скриптов Zenith. Начни с неё.");
+      method5498(jsonArray, "list_scripts", "Все скрипты: состояние, включён ли, ошибка, модули, файлы.");
+      method5498(jsonArray, "read_file", "Прочитать файл скрипта.", "script:string:id скрипта", "path:string:путь внутри папки скрипта, например main.js");
       method5498(
-         var0,
+         jsonArray,
          "write_file",
          "Записать файл скрипта. Скрипт сразу перезагружается, в ответе — его состояние и ошибка.",
          "script:string:id скрипта",
@@ -61,166 +61,166 @@ public final class McpToolSchema {
          "content:string:новое содержимое"
       );
       method5498(
-         var0,
+         jsonArray,
          "create_script",
          "Создать скрипт-папку из шаблона (" + Server.method229() + ") и включить его.",
          "name:string:имя скрипта",
          "template:string:шаблон?"
       );
-      method5498(var0, "delete_file", "Удалить файл скрипта (кроме main.js).", "script:string:id скрипта", "path:string:путь внутри папки скрипта");
-      method5498(var0, "reload_script", "Перезагрузить скрипт.", "script:string:id скрипта");
-      method5498(var0, "set_script_enabled", "Включить или выключить скрипт.", "script:string:id скрипта", "enabled:boolean:включить?");
-      method5498(var0, "check_syntax", "Проверить синтаксис JS без записи.", "code:string:код");
-      method5498(var0, "get_logs", "Последние строки консоли скриптов.", "script:string:id скрипта?", "limit:number:сколько строк, до 300?");
+      method5498(jsonArray, "delete_file", "Удалить файл скрипта (кроме main.js).", "script:string:id скрипта", "path:string:путь внутри папки скрипта");
+      method5498(jsonArray, "reload_script", "Перезагрузить скрипт.", "script:string:id скрипта");
+      method5498(jsonArray, "set_script_enabled", "Включить или выключить скрипт.", "script:string:id скрипта", "enabled:boolean:включить?");
+      method5498(jsonArray, "check_syntax", "Проверить синтаксис JS без записи.", "code:string:код");
+      method5498(jsonArray, "get_logs", "Последние строки консоли скриптов.", "script:string:id скрипта?", "limit:number:сколько строк, до 300?");
       method5498(
-         var0, "run_js", "Выполнить JS в живом окружении скрипта (или в общей консоли). Возвращает результат.", "code:string:код", "script:string:id скрипта?"
+         jsonArray, "run_js", "Выполнить JS в живом окружении скрипта (или в общей консоли). Возвращает результат.", "code:string:код", "script:string:id скрипта?"
       );
-      method5498(var0, "game_state", "Состояние игры: мир, сервер, позиция и здоровье игрока, FPS, экран.");
-      return var0;
+      method5498(jsonArray, "game_state", "Состояние игры: мир, сервер, позиция и здоровье игрока, FPS, экран.");
+      return jsonArray;
    }
 
    private static Storage host() {
-      Storage var0 = Zenith.getInstance().getStorage();
-      if (var0 == null) {
+      Storage storage = Zenith.getInstance().getStorage();
+      if (storage == null) {
          throw new IllegalStateException("скриптовый движок не запущен");
       } else {
-         return var0;
+         return storage;
       }
    }
 
-   private static String method5500(JsonObject var0, String var1) {
-      if (var0.has(var1) && !var0.get(var1).isJsonNull()) {
-         return var0.get(var1).getAsString();
+   private static String method5500(JsonObject json, String memberName) {
+      if (json.has(memberName) && !json.get(memberName).isJsonNull()) {
+         return json.get(memberName).getAsString();
       } else {
-         throw new IllegalArgumentException("нет параметра " + var1);
+         throw new IllegalArgumentException("нет параметра " + memberName);
       }
    }
 
-   private static JsonObject method5501(Storage var0, Script var1) {
-      JsonObject var2 = new JsonObject();
-      var2.addProperty("id", var1.getId());
-      var2.addProperty("name", var1.method1403());
-      var2.addProperty("version", var1.getVersion());
-      var2.addProperty("state", var1.getType2().name().toLowerCase());
-      var2.addProperty("enabled", var0.method1297(var1));
-      var2.addProperty("error", var1.getError());
-      JsonArray var3 = new JsonArray();
+   private static JsonObject method5501(Storage storage, Script script) {
+      JsonObject json = new JsonObject();
+      json.addProperty("id", script.getId());
+      json.addProperty("name", script.method1403());
+      json.addProperty("version", script.getVersion());
+      json.addProperty("state", script.getType2().name().toLowerCase());
+      json.addProperty("enabled", storage.method1297(script));
+      json.addProperty("error", script.getError());
+      JsonArray jsonArray = new JsonArray();
 
-      for (Module1 var5 : var1.getItems3().values()) {
-         JsonObject var6 = new JsonObject();
-         var6.addProperty("name", var5.getName());
-         var6.addProperty("enabled", var5.isEnabled());
-         var6.addProperty("settings", var5.getSettings().size());
-         var3.add(var6);
+      for (Module1 module1 : script.getItems3().values()) {
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("name", module1.getName());
+         json2.addProperty("enabled", module1.isEnabled());
+         json2.addProperty("settings", module1.getSettings().size());
+         jsonArray.add(json2);
       }
 
-      var2.add("modules", var3);
-      JsonArray var8 = new JsonArray();
-      Path var9 = var1.getPath() == null ? var0.getPath() : var1.getPath();
+      json.add("modules", jsonArray);
+      JsonArray jsonArray2 = new JsonArray();
+      Path path = script.getPath() == null ? storage.getPath() : script.getPath();
 
-      for (Path var7 : var0.method1345(var1)) {
-         var8.add(var9.relativize(var7).toString().replace('\\', '/'));
+      for (Path path2 : storage.method1345(script)) {
+         jsonArray2.add(path.relativize(path2).toString().replace('\\', '/'));
       }
 
-      var2.add("files", var8);
-      return var2;
+      json.add("files", jsonArray2);
+      return json;
    }
 
-   public static String method5502(String var0, JsonObject var1) throws Exception {
-      Storage var2 = host();
-      switch (var0) {
+   public static String method5502(String str, JsonObject json) throws Exception {
+      Storage storage = host();
+      switch (str) {
          case "get_api_docs":
-            return Files.readString(var2.getPath().resolve("API.md"), StandardCharsets.UTF_8);
+            return Files.readString(storage.getPath().resolve("API.md"), StandardCharsets.UTF_8);
          case "list_scripts":
-            JsonArray var21 = new JsonArray();
+            JsonArray jsonArray = new JsonArray();
 
-            for (Script var28 : var2.method1293()) {
-               var21.add(method5501(var2, var28));
+            for (Script script : storage.method1293()) {
+               jsonArray.add(method5501(storage, script));
             }
 
-            return gson.toJson(var21);
+            return gson.toJson(jsonArray);
          case "read_file":
-            Script var20 = Server.method230(var2, var1);
-            Path var25 = var2.method1346(var20, method5500(var1, "path"));
-            return var2.method1306(var25);
+            Script workspace = Server.method230(storage, json);
+            Path path2 = storage.method1346(workspace, method5500(json, "path"));
+            return storage.method1306(path2);
          case "write_file":
-            Script var19 = Server.method230(var2, var1);
-            Path var24 = var2.method1346(var19, method5500(var1, "path"));
-            String var27 = var24.getFileName().toString().toLowerCase();
-            if (!var27.endsWith(".js") && !var27.endsWith(".json") && !var27.endsWith(".md") && !var27.endsWith(".txt")) {
+            Script script = Server.method230(storage, json);
+            Path file = storage.method1346(script, method5500(json, "path"));
+            String lowerCase = file.getFileName().toString().toLowerCase();
+            if (!lowerCase.endsWith(".js") && !lowerCase.endsWith(".json") && !lowerCase.endsWith(".md") && !lowerCase.endsWith(".txt")) {
                throw new IllegalArgumentException("можно писать только .js, .json, .md и .txt");
             }
 
-            var2.method1347(var19, var24, method5500(var1, "content"));
-            var2.method1299(var19);
-            return gson.toJson(method5501(var2, var19));
+            storage.method1347(script, file, method5500(json, "content"));
+            storage.method1299(script);
+            return gson.toJson(method5501(storage, script));
          case "create_script":
-            Script var18 = var2.method1340(method5500(var1, "name"), var1.has("template") ? var1.get("template").getAsString() : "empty");
-            var2.method1298(var18, true);
-            return gson.toJson(method5501(var2, var18));
+            Script workspace2 = storage.method1340(method5500(json, "name"), json.has("template") ? json.get("template").getAsString() : "empty");
+            storage.method1298(workspace2, true);
+            return gson.toJson(method5501(storage, workspace2));
          case "delete_file":
-            Script var17 = Server.method230(var2, var1);
-            Path var23 = var2.method1346(var17, method5500(var1, "path"));
-            if (var23.equals(var17.getPath2().toAbsolutePath().normalize())) {
+            Script workspace3 = Server.method230(storage, json);
+            Path path = storage.method1346(workspace3, method5500(json, "path"));
+            if (path.equals(workspace3.getPath2().toAbsolutePath().normalize())) {
                throw new IllegalArgumentException("main.js удалить нельзя");
             }
 
-            Files.deleteIfExists(var23);
-            var2.method1299(var17);
+            Files.deleteIfExists(path);
+            storage.method1299(workspace3);
             return "удалён";
          case "reload_script":
-            Script var16 = Server.method230(var2, var1);
-            var2.method1299(var16);
-            return gson.toJson(method5501(var2, var16));
+            Script workspace4 = Server.method230(storage, json);
+            storage.method1299(workspace4);
+            return gson.toJson(method5501(storage, workspace4));
          case "set_script_enabled":
-            Script var15 = Server.method230(var2, var1);
-            var2.method1298(var15, var1.has("enabled") && var1.get("enabled").getAsBoolean());
-            return gson.toJson(method5501(var2, var15));
+            Script workspace5 = Server.method230(storage, json);
+            storage.method1298(workspace5, json.has("enabled") && json.get("enabled").getAsBoolean());
+            return gson.toJson(method5501(storage, workspace5));
          case "check_syntax":
             try {
-               var2.method1292(method5500(var1, "code"));
+               storage.method1292(method5500(json, "code"));
                return "ok";
-            } catch (Exception var11) {
-               return "ошибка: " + Storage.method1325(var11);
+            } catch (Exception e) {
+               return "ошибка: " + Storage.method1325(e);
             }
          case "get_logs":
-            Script var14 = var1.has("script") ? var2.method1294(var1.get("script").getAsString()) : null;
-            int var22 = var1.has("limit") ? Math.max(1, Math.min(300, var1.get("limit").getAsInt())) : 60;
-            var var7 = var2.method1349(var14);
-            StringBuilder var8 = new StringBuilder();
+            Script workspace6 = json.has("script") ? storage.method1294(json.get("script").getAsString()) : null;
+            int n = json.has("limit") ? Math.max(1, Math.min(300, json.get("limit").getAsInt())) : 60;
+            var data2s = storage.method1349(workspace6);
+            StringBuilder builder = new StringBuilder();
 
-            for (int var9 = Math.max(0, var7.size() - var22); var9 < var7.size(); var9++) {
-               Storage.Data2 var10 = (Storage.Data2)var7.get(var9);
-               var8.append('[').append(var10.getText2()).append("] ").append(var10.getText()).append(": ").append(var10.text()).append('\n');
+            for (int i = Math.max(0, data2s.size() - n); i < data2s.size(); i++) {
+               Storage.Data2 data2 = (Storage.Data2)data2s.get(i);
+               builder.append('[').append(data2.getText2()).append("] ").append(data2.getText()).append(": ").append(data2.text()).append('\n');
             }
 
-            return var8.isEmpty() ? "пусто" : var8.toString();
+            return builder.isEmpty() ? "пусто" : builder.toString();
          case "run_js":
-            Script var13 = var1.has("script") ? var2.method1294(var1.get("script").getAsString()) : null;
+            Script script2 = json.has("script") ? storage.method1294(json.get("script").getAsString()) : null;
 
             try {
-               return String.valueOf(var2.method1341(var13 != null && var13.isRunning() ? var13 : null, method5500(var1, "code")));
-            } catch (Throwable var12) {
-               return "ошибка: " + Storage.method1325(var12);
+               return String.valueOf(storage.method1341(script2 != null && script2.isRunning() ? script2 : null, method5500(json, "code")));
+            } catch (Throwable e) {
+               return "ошибка: " + Storage.method1325(e);
             }
          case "game_state":
-            Minecraft var5 = Minecraft.getInstance();
-            JsonObject var6 = new JsonObject();
-            var6.addProperty("inGame", var5.level != null && var5.player != null);
-            var6.addProperty("server", var5.getCurrentServer() == null ? "" : var5.getCurrentServer().ip);
-            var6.addProperty("fps", var5.getFps());
-            var6.addProperty("screen", var5.gui.screen() == null ? "" : var5.gui.screen().getClass().getSimpleName());
-            if (var5.player != null) {
-               var6.addProperty("x", var5.player.getX());
-               var6.addProperty("y", var5.player.getY());
-               var6.addProperty("z", var5.player.getZ());
-               var6.addProperty("health", var5.player.getHealth());
-               var6.addProperty("dimension", var5.level.dimension().identifier().toString());
+            Minecraft minecraft = Minecraft.getInstance();
+            JsonObject jsonElement = new JsonObject();
+            jsonElement.addProperty("inGame", minecraft.level != null && minecraft.player != null);
+            jsonElement.addProperty("server", minecraft.getCurrentServer() == null ? "" : minecraft.getCurrentServer().ip);
+            jsonElement.addProperty("fps", minecraft.getFps());
+            jsonElement.addProperty("screen", minecraft.gui.screen() == null ? "" : minecraft.gui.screen().getClass().getSimpleName());
+            if (minecraft.player != null) {
+               jsonElement.addProperty("x", minecraft.player.getX());
+               jsonElement.addProperty("y", minecraft.player.getY());
+               jsonElement.addProperty("z", minecraft.player.getZ());
+               jsonElement.addProperty("health", minecraft.player.getHealth());
+               jsonElement.addProperty("dimension", minecraft.level.dimension().identifier().toString());
             }
 
-            return gson.toJson(var6);
+            return gson.toJson(jsonElement);
          default:
-            throw new IllegalArgumentException("неизвестный инструмент: " + var0);
+            throw new IllegalArgumentException("неизвестный инструмент: " + str);
       }
    }
 }

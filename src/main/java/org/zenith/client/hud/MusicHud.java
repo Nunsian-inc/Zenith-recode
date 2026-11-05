@@ -86,11 +86,11 @@ public class MusicHud extends Interface {
    private BoundsData boundsData6;
    private BoundsData boundsData7;
 
-   public MusicHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public MusicHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
       INSTANCE = this;
       ClientTickEvents.END_CLIENT_TICK.register((EndTick)var1x -> this.method6120());
-      ClientLifecycleEvents.CLIENT_STOPPING.register((ClientStopping)var0 -> {
+      ClientLifecycleEvents.CLIENT_STOPPING.register((ClientStopping)minecraft -> {
          if (MediaPlayerState.getInstance().isFlag()) {
             MediaPlayerState.getInstance().method1677(false, 0.0F, false);
          }
@@ -104,18 +104,18 @@ public class MusicHud extends Interface {
    }
 
    public static float method6121() {
-      MusicHud var0 = INSTANCE;
-      return 0.6F + (var0 == null ? 0.0F : var0.lyricsOffset.getValue3());
+      MusicHud musicHud = INSTANCE;
+      return 0.6F + (musicHud == null ? 0.0F : musicHud.lyricsOffset.getValue3());
    }
 
-   public static boolean method6122(double var0) {
-      MusicHud var2 = INSTANCE;
-      if (var2 != null && var2.isEnabled() && MediaSessionManager.getInstance().active() && !(var2.animation.getValue() <= 0.01F)) {
-         UVPair var3 = var2.method2099();
-         if (!var2.inside(var3.u(), var3.v(), var2.floatValue, var2.floatValue2, var2.width, var2.height)) {
+   public static boolean method6122(double d) {
+      MusicHud musicHud = INSTANCE;
+      if (musicHud != null && musicHud.isEnabled() && MediaSessionManager.getInstance().active() && !(musicHud.animation.getValue() <= 0.01F)) {
+         UVPair uvPair = musicHud.method2099();
+         if (!musicHud.inside(uvPair.u(), uvPair.v(), musicHud.floatValue, musicHud.floatValue2, musicHud.width, musicHud.height)) {
             return false;
          } else {
-            MediaPlayerState.getInstance().method1676((float)Math.signum(var0) * 0.05F);
+            MediaPlayerState.getInstance().method1676((float)Math.signum(d) * 0.05F);
             return true;
          }
       } else {
@@ -126,61 +126,61 @@ public class MusicHud extends Interface {
    @Override
    public void tick() {
       if (mc.player != null) {
-         long var1 = System.currentTimeMillis();
-         if (var1 - this.lastPoll > 500L) {
-            this.lastPoll = var1;
+         long now = System.currentTimeMillis();
+         if (now - this.lastPoll > 500L) {
+            this.lastPoll = now;
             MediaSessionManager.getInstance().method6000();
          }
 
-         Voice var3 = Zenith.getInstance().getVoice();
-         boolean var4 = var3 != null && var3.method358();
-         MediaPlayerState.getInstance().method1677(var4, this.duckLevel.getValue3() / 100.0F, this.duck.isEnabled());
-         boolean var5 = this.openKey.getKeyCode() > 0 && mc.gui.screen() == null && UseItemUtils.method6521(this.openKey);
-         if (var5 && !this.flag2) {
+         Voice voice = Zenith.getInstance().getVoice();
+         boolean flag = voice != null && voice.method358();
+         MediaPlayerState.getInstance().method1677(flag, this.duckLevel.getValue3() / 100.0F, this.duck.isEnabled());
+         boolean flag2 = this.openKey.getKeyCode() > 0 && mc.gui.screen() == null && UseItemUtils.method6521(this.openKey);
+         if (flag2 && !this.flag2) {
             mc.gui.setScreen(new NowPlayingScreen());
          }
 
-         this.flag2 = var5;
+         this.flag2 = flag2;
       }
    }
 
    @Override
-   public boolean method2056(MouseButtonEvent var1) {
-      if (var1.getIntValue2() == 1 && var1.getIntValue() == 0 && MediaSessionManager.getInstance().active()) {
-         UVPair var2 = this.method2099();
-         float var3 = var2.u();
-         float var4 = var2.v();
-         MediaSessionManager var5 = MediaSessionManager.getInstance();
-         if (this.method6138(this.boundsData, var3, var4)) {
+   public boolean method2056(MouseButtonEvent event) {
+      if (event.getIntValue2() == 1 && event.getIntValue() == 0 && MediaSessionManager.getInstance().active()) {
+         UVPair uvPair = this.method2099();
+         float lastClickX = uvPair.u();
+         float lastClickY = uvPair.v();
+         MediaSessionManager mediaSessionManager = MediaSessionManager.getInstance();
+         if (this.method6138(this.boundsData, lastClickX, lastClickY)) {
             mc.gui.setScreen(new NowPlayingScreen());
             return true;
          } else if (this.boundsData3 != null
             && this.inside(
-               var3,
-               var4,
+               lastClickX,
+               lastClickY,
                this.boundsData3.getFloatValue(),
                this.boundsData3.getFloatValue2() - 3.0F,
                this.boundsData3.width(),
                this.boundsData3.height() + 6.0F
             )
-            && var5.method6008() > 0.0) {
+            && mediaSessionManager.method6008() > 0.0) {
             this.flag = true;
-            this.seekPreview = this.method6137(var3);
+            this.seekPreview = this.method6137(lastClickX);
             return true;
-         } else if (this.method6138(this.playBounds, var3, var4) || this.method6138(this.boundsData2, var3, var4)) {
-            var5.playPause();
+         } else if (this.method6138(this.playBounds, lastClickX, lastClickY) || this.method6138(this.boundsData2, lastClickX, lastClickY)) {
+            mediaSessionManager.playPause();
             return true;
-         } else if (this.method6138(this.boundsData5, var3, var4)) {
-            var5.previous();
+         } else if (this.method6138(this.boundsData5, lastClickX, lastClickY)) {
+            mediaSessionManager.previous();
             return true;
-         } else if (this.method6138(this.boundsData6, var3, var4)) {
-            var5.next();
+         } else if (this.method6138(this.boundsData6, lastClickX, lastClickY)) {
+            mediaSessionManager.next();
             return true;
-         } else if (this.method6138(this.boundsData4, var3, var4) && var5.getIMediaSession() != null) {
-            MediaHelperProcess.getInstance().method6864(var5.getIMediaSession().getOwner());
+         } else if (this.method6138(this.boundsData4, lastClickX, lastClickY) && mediaSessionManager.getIMediaSession() != null) {
+            MediaHelperProcess.getInstance().method6864(mediaSessionManager.getIMediaSession().getOwner());
             return true;
-         } else if (this.method6138(this.boundsData7, var3, var4) && var5.getIMediaSession() != null) {
-            MediaHelperProcess.getInstance().method6865(var5.getIMediaSession().getOwner());
+         } else if (this.method6138(this.boundsData7, lastClickX, lastClickY) && mediaSessionManager.getIMediaSession() != null) {
+            MediaHelperProcess.getInstance().method6865(mediaSessionManager.getIMediaSession().getOwner());
             return true;
          } else {
             return false;
@@ -196,140 +196,140 @@ public class MusicHud extends Interface {
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
+   public void method8(CustomDrawContext customDrawContext) {
       if (!(mc.gui.screen() instanceof PauseScreen)) {
-         MediaSessionManager var2 = MediaSessionManager.getInstance();
-         long var3 = System.currentTimeMillis();
-         if (var3 - this.lastPoll > 500L) {
-            this.lastPoll = var3;
-            var2.method6000();
+         MediaSessionManager mediaSessionManager = MediaSessionManager.getInstance();
+         long now = System.currentTimeMillis();
+         if (now - this.lastPoll > 500L) {
+            this.lastPoll = now;
+            mediaSessionManager.method6000();
          }
 
-         float var5 = this.lastFrame == 0L ? 0.016F : Math.min(0.1F, (float)(var3 - this.lastFrame) / 1000.0F);
-         this.lastFrame = var3;
-         boolean var6 = mc.gui.screen() instanceof ChatScreen;
-         boolean var7 = var2.active();
-         boolean var8 = var7 && (var2.method6007() || var3 - var2.getLongValue9() < 1500L);
-         boolean var9 = var8 && var3 - var2.getSeenAt() < 1200L || this.method2074();
-         if (var9 && !this.flag3) {
+         float f = this.lastFrame == 0L ? 0.016F : Math.min(0.1F, (float)(now - this.lastFrame) / 1000.0F);
+         this.lastFrame = now;
+         boolean flag = mc.gui.screen() instanceof ChatScreen;
+         boolean active = mediaSessionManager.active();
+         boolean flag2 = active && (mediaSessionManager.method6007() || now - mediaSessionManager.getLongValue9() < 1500L);
+         boolean visible = flag2 && now - mediaSessionManager.getSeenAt() < 1200L || this.method2074();
+         if (visible && !this.flag3) {
             this.entry.previous = "";
-            this.entry.changedAt = var3 + 120L;
+            this.entry.changedAt = now + 120L;
             this.entry2.previous = "";
-            this.entry2.changedAt = var3 + 200L;
+            this.entry2.changedAt = now + 200L;
          }
 
-         this.flag3 = var9;
-         this.animation.method2807(var9);
+         this.flag3 = visible;
+         this.animation.method2807(visible);
          if (this.animation.getValue() <= 0.001F) {
             this.flag = false;
             this.clearBounds();
          } else {
-            UVPair var10 = this.method2099();
-            float var11 = var10.u();
-            float var12 = var10.v();
-            boolean var13 = var6 || this.method2074();
-            boolean var14 = var13 && var7 && (this.inside(var11, var12, this.floatValue, this.floatValue2, this.animWidth, this.height) || this.flag);
-            this.animation2.method2807(var14);
-            float var15 = this.animation2.getValue();
-            double var16 = var2.method6009();
-            double var18 = var2.method6008();
-            String var20 = var7 ? var2.title() : Zenith.getInstance().getLocalization().translate("gui.music.nothing");
-            String var21 = this.method6123(var2, var7, var16, var18);
-            this.entry.method6139(var20, false, var3);
-            this.entry2.method6139(var21 != null ? var21 : (var7 ? var2.method6006() : ""), var21 != null, var3);
-            Font var22 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-            Font var23 = Fonts.NEW_MEDIUM.getFont(5.5F);
-            float var24 = 63.0F;
-            float var25 = Math.max(var22.width(this.entry.text), var23.width(this.entry2.text)) + var24 + 2.0F;
-            float var26 = Math.max(122.0F, Math.min(250.0F, var25));
-            this.animWidth = this.animWidth + (var26 - this.animWidth) * Math.min(1.0F, var5 * 7.0F);
-            if (Math.abs(var26 - this.animWidth) < 0.2F) {
-               this.animWidth = var26;
+            UVPair uvPair = this.method2099();
+            float lastClickX = uvPair.u();
+            float lastClickY = uvPair.v();
+            boolean flag3 = flag || this.method2074();
+            boolean visible2 = flag3 && active && (this.inside(lastClickX, lastClickY, this.floatValue, this.floatValue2, this.animWidth, this.height) || this.flag);
+            this.animation2.method2807(visible2);
+            float previewAlpha = this.animation2.getValue();
+            double d = mediaSessionManager.method6009();
+            double d2 = mediaSessionManager.method6008();
+            String title = active ? mediaSessionManager.title() : Zenith.getInstance().getLocalization().translate("gui.music.nothing");
+            String str = this.method6123(mediaSessionManager, active, d, d2);
+            this.entry.method6139(title, false, now);
+            this.entry2.method6139(str != null ? str : (active ? mediaSessionManager.method6006() : ""), str != null, now);
+            Font font = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+            Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
+            float f2 = 63.0F;
+            float f3 = Math.max(font.width(this.entry.text), font2.width(this.entry2.text)) + f2 + 2.0F;
+            float animWidth = Math.max(122.0F, Math.min(250.0F, f3));
+            this.animWidth = this.animWidth + (animWidth - this.animWidth) * Math.min(1.0F, f * 7.0F);
+            if (Math.abs(animWidth - this.animWidth) < 0.2F) {
+               this.animWidth = animWidth;
             }
 
             this.width = this.animWidth;
-            this.height = 25.0F + 22.0F * var15;
-            ZenithStyle var27 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-            ZenithColor var28 = var27.getPrimaryColor().getZenithColor();
-            boolean var29 = this.colors.isEnabled() && var7;
-            ZenithColor var30 = var29 ? var2.color(0) : var28;
-            ZenithColor var31 = var27.getTextEnable().getZenithColor();
-            ZenithColor var32 = var27.getTextSecondary().getZenithColor().method7295(var31, 0.35F);
-            ZenithColor var33 = var29 ? var31.method7295(var30.method7295(ZenithColor.INSTANCE, 0.45F).method7293(var31.getIntValue4()), 0.4F) : var31;
-            float var34 = InterfaceModule.method6801();
-            float var35 = Math.max(0.0F, this.animation.getValue());
-            var1.pushMatrix();
-            float var36 = this.floatValue + this.width / 2.0F;
-            float var37 = this.floatValue2 + this.height / 2.0F;
-            float var38 = 0.55F + 0.45F * var35;
-            float var39 = 0.35F + 0.65F * var35;
-            var1.pose().translate(var36, var37 + (1.0F - Math.min(1.0F, var35)) * 6.0F);
-            var1.pose().scale(var38, var39);
-            var1.pose().translate(-var36, -var37);
-            float var40 = 25.0F;
-            var1.drawBlurHud(this.floatValue, this.floatValue2, this.width, this.height, 21.0F, ProxyDotRadiusData.method8069(var34), ZenithColor.INSTANCE);
-            var1.drawRoundedRect(
+            this.height = 25.0F + 22.0F * previewAlpha;
+            ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+            ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+            boolean flag4 = this.colors.isEnabled() && active;
+            ZenithColor color = flag4 ? mediaSessionManager.color(0) : zenithColor;
+            ZenithColor zenithColor2 = currentStyle.getTextEnable().getZenithColor();
+            ZenithColor zenithColor3 = currentStyle.getTextSecondary().getZenithColor().method7295(zenithColor2, 0.35F);
+            ZenithColor zenithColor4 = flag4 ? zenithColor2.method7295(color.method7295(ZenithColor.INSTANCE, 0.45F).method7293(zenithColor2.getIntValue4()), 0.4F) : zenithColor2;
+            float intValue = InterfaceModule.method6801();
+            float f4 = Math.max(0.0F, this.animation.getValue());
+            customDrawContext.pushMatrix();
+            float x = this.floatValue + this.width / 2.0F;
+            float f5 = this.floatValue2 + this.height / 2.0F;
+            float x2 = 0.55F + 0.45F * f4;
+            float y = 0.35F + 0.65F * f4;
+            customDrawContext.pose().translate(x, f5 + (1.0F - Math.min(1.0F, f4)) * 6.0F);
+            customDrawContext.pose().scale(x2, y);
+            customDrawContext.pose().translate(-x, -f5);
+            float width = 25.0F;
+            customDrawContext.drawBlurHud(this.floatValue, this.floatValue2, this.width, this.height, 21.0F, ProxyDotRadiusData.method8069(intValue), ZenithColor.INSTANCE);
+            customDrawContext.drawRoundedRect(
                this.floatValue,
                this.floatValue2,
                this.width,
                this.height,
-               ProxyDotRadiusData.method8069(var34),
-               var27.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778())
+               ProxyDotRadiusData.method8069(intValue),
+               currentStyle.getHudBackground().getZenithColor().method7294(InterfaceModule.INSTANCE.method6778())
             );
-            ZenithColor var41 = var27.getHeaderHudBackground().getZenithColor();
-            if (var29) {
-               var41 = var41.method7295(var30.method7293(var41.getIntValue4()), 0.16F);
+            ZenithColor zenithColor5 = currentStyle.getHeaderHudBackground().getZenithColor();
+            if (flag4) {
+               zenithColor5 = zenithColor5.method7295(color.method7293(zenithColor5.getIntValue4()), 0.16F);
             }
 
-            var1.drawRoundedRect(this.floatValue, this.floatValue2, var40, 25.0F, ProxyDotRadiusData.method8069(var34), var41);
-            this.boundsData = new BoundsData(this.floatValue, this.floatValue2, var40, 25.0F);
-            this.method6128(var1, var2, this.floatValue + 4.0F, this.floatValue2 + 4.0F, var3, var5, var7);
-            float var42 = this.floatValue + this.width - 4.0F - 15.0F;
-            float var43 = this.floatValue2 + 5.0F;
-            float var44 = this.floatValue + var40 + 4.0F;
-            boolean var45 = this.equalizer.isEnabled() && var7;
-            float var46 = var42 - 4.0F - 8.0F;
-            float var47 = !var45 && !this.method6131(var3) ? var42 - 3.0F : var46 - 3.0F;
-            float var48 = Math.max(10.0F, var47 - var44);
-            boolean var49 = var14 && this.inside(var11, var12, var44, this.floatValue2, var48, 25.0F);
-            float var50 = this.floatValue2 + 5.5F;
-            float var51 = var50 + var22.height() + 1.5F;
-            this.method6124(var1, var22, this.entry, var44, var50, var48, this.floatValue2 + 1.0F, var51 - 0.5F, var31, var31, var3, var49);
-            this.method6124(var1, var23, this.entry2, var44, var51, var48, var51 - 0.5F, this.floatValue2 + 25.0F - 1.0F, var32, var33, var3, var49);
-            if (this.method6131(var3)) {
-               this.method6132(var1, var46 - 3.0F, var43 + 2.0F, var3, var31, var30);
-            } else if (var45) {
-               this.method6130(var1, var46, this.floatValue2 + 8.0F, var2, var5, var30);
+            customDrawContext.drawRoundedRect(this.floatValue, this.floatValue2, width, 25.0F, ProxyDotRadiusData.method8069(intValue), zenithColor5);
+            this.boundsData = new BoundsData(this.floatValue, this.floatValue2, width, 25.0F);
+            this.method6128(customDrawContext, mediaSessionManager, this.floatValue + 4.0F, this.floatValue2 + 4.0F, now, f, active);
+            float floatValue = this.floatValue + this.width - 4.0F - 15.0F;
+            float y2 = this.floatValue2 + 5.0F;
+            float floatValue2 = this.floatValue + width + 4.0F;
+            boolean flag5 = this.equalizer.isEnabled() && active;
+            float f6 = floatValue - 4.0F - 8.0F;
+            float f7 = !flag5 && !this.method6131(now) ? floatValue - 3.0F : f6 - 3.0F;
+            float maxWidth = Math.max(10.0F, f7 - floatValue2);
+            boolean flag6 = visible2 && this.inside(lastClickX, lastClickY, floatValue2, this.floatValue2, maxWidth, 25.0F);
+            float centeredTextY = this.floatValue2 + 5.5F;
+            float centeredTextY2 = centeredTextY + font.height() + 1.5F;
+            this.method6124(customDrawContext, font, this.entry, floatValue2, centeredTextY, maxWidth, this.floatValue2 + 1.0F, centeredTextY2 - 0.5F, zenithColor2, zenithColor2, now, flag6);
+            this.method6124(customDrawContext, font2, this.entry2, floatValue2, centeredTextY2, maxWidth, centeredTextY2 - 0.5F, this.floatValue2 + 25.0F - 1.0F, zenithColor3, zenithColor4, now, flag6);
+            if (this.method6131(now)) {
+               this.method6132(customDrawContext, f6 - 3.0F, y2 + 2.0F, now, zenithColor2, color);
+            } else if (flag5) {
+               this.method6130(customDrawContext, f6, this.floatValue2 + 8.0F, mediaSessionManager, f, color);
             }
 
-            this.boundsData2 = new BoundsData(var42 - 1.0F, var43 - 1.0F, 17.0F, 17.0F);
+            this.boundsData2 = new BoundsData(floatValue - 1.0F, y2 - 1.0F, 17.0F, 17.0F);
             this.method6133(
-               var1, var42, var43, var16, var18, var30, var31, var27, var7 && var2.method6007(), this.method6138(this.boundsData2, var11, var12) && var6
+               customDrawContext, floatValue, y2, d, d2, color, zenithColor2, currentStyle, active && mediaSessionManager.method6007(), this.method6138(this.boundsData2, lastClickX, lastClickY) && flag
             );
-            this.method6134(var1, var2, var15, var30, var31, var32, var11, var12, var16, var18);
-            var1.popMatrix();
+            this.method6134(customDrawContext, mediaSessionManager, previewAlpha, color, zenithColor2, zenithColor3, lastClickX, lastClickY, d, d2);
+            customDrawContext.popMatrix();
          }
       }
    }
 
-   private String method6123(MediaSessionManager var1, boolean var2, double var3, double var5) {
-      if (this.lyrics.isEnabled() && var2) {
-         LyricsFetcher.Data2 var7 = LyricsFetcher.method528(var1.title(), var1.method6006(), var5);
-         if (!var7.isFlag()) {
+   private String method6123(MediaSessionManager mediaSessionManager, boolean active, double d, double d2) {
+      if (this.lyrics.isEnabled() && active) {
+         LyricsFetcher.Data2 data2 = LyricsFetcher.method528(mediaSessionManager.title(), mediaSessionManager.method6006(), d2);
+         if (!data2.isFlag()) {
             return null;
          } else {
-            if (!var1.getText().equals(this.text)) {
-               this.text = var1.getText();
+            if (!mediaSessionManager.getText().equals(this.text)) {
+               this.text = mediaSessionManager.getText();
                this.intValue = -1;
             }
 
-            int var8 = var7.method541(var3 + method6121());
-            this.intValue = var8;
-            if (var8 < 0) {
+            int intValue = data2.method541(d + method6121());
+            this.intValue = intValue;
+            if (intValue < 0) {
                return null;
             } else {
-               String var9 = var7.lines().get(var8).text().trim();
-               return var9.isEmpty() ? null : var9;
+               String str = data2.lines().get(intValue).text().trim();
+               return str.isEmpty() ? null : str;
             }
          }
       } else {
@@ -338,328 +338,328 @@ public class MusicHud extends Interface {
    }
 
    private void method6124(
-      CustomDrawContext var1,
-      Font var2,
-      MusicHud.Entry var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      float var8,
-      ZenithColor var9,
-      ZenithColor var10,
-      long var11,
-      boolean var13
+      CustomDrawContext customDrawContext,
+      Font font,
+      MusicHud.Entry entry,
+      float floatValue,
+      float centeredTextY,
+      float maxWidth,
+      float f,
+      float f2,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      long now,
+      boolean flag
    ) {
-      float var14 = (float)(var11 - var3.changedAt);
-      var1.enableScissor((int)Math.floor(var4 - 1.0F), (int)Math.floor(var7), (int)Math.ceil(var4 + var6 + 1.0F), (int)Math.ceil(var8));
-      if (!var3.previous.isEmpty()) {
-         String var15 = MediaGlyphs.ellipsize(var2, var3.previous, var6);
-         if (var14 < 200.0F + var15.length() * 10.0F * 0.5F) {
-            this.method6125(var1, var2, var15, var4, var5, var3.flag2 ? var10 : var9, var14, false);
+      float f3 = (float)(now - entry.changedAt);
+      customDrawContext.enableScissor((int)Math.floor(floatValue - 1.0F), (int)Math.floor(f), (int)Math.ceil(floatValue + maxWidth + 1.0F), (int)Math.ceil(f2));
+      if (!entry.previous.isEmpty()) {
+         String ellipsize = MediaGlyphs.ellipsize(font, entry.previous, maxWidth);
+         if (f3 < 200.0F + ellipsize.length() * 10.0F * 0.5F) {
+            this.method6125(customDrawContext, font, ellipsize, floatValue, centeredTextY, entry.flag2 ? zenithColor2 : zenithColor, f3, false);
          }
       }
 
-      if (!var3.text.isEmpty()) {
-         float var19 = !var3.previous.isEmpty() && !var3.flag ? 60.0F : 0.0F;
-         float var16 = var14 - var19;
-         float var17 = 300.0F + var3.text.length() * 10.0F;
-         ZenithColor var18 = var3.flag ? var10 : var9;
-         if (var16 >= var17) {
-            this.method6127(var1, var2, var3.text, var4, var5, var6, var18, var13);
-         } else if (var16 > 0.0F) {
-            this.method6125(var1, var2, MediaGlyphs.ellipsize(var2, var3.text, var6), var4, var5, var18, var16, true);
+      if (!entry.text.isEmpty()) {
+         float f4 = !entry.previous.isEmpty() && !entry.flag ? 60.0F : 0.0F;
+         float f5 = f3 - f4;
+         float f6 = 300.0F + entry.text.length() * 10.0F;
+         ZenithColor zenithColor3 = entry.flag ? zenithColor2 : zenithColor;
+         if (f5 >= f6) {
+            this.method6127(customDrawContext, font, entry.text, floatValue, centeredTextY, maxWidth, zenithColor3, flag);
+         } else if (f5 > 0.0F) {
+            this.method6125(customDrawContext, font, MediaGlyphs.ellipsize(font, entry.text, maxWidth), floatValue, centeredTextY, zenithColor3, f5, true);
          }
       }
 
-      var1.disableScissor();
+      customDrawContext.disableScissor();
    }
 
-   private void method6125(CustomDrawContext var1, Font var2, String var3, float var4, float var5, ZenithColor var6, float var7, boolean var8) {
-      float var9 = var4;
+   private void method6125(CustomDrawContext customDrawContext, Font font, String ellipsize, float floatValue, float centeredTextY, ZenithColor zenithColor, float f, boolean flag) {
+      float floatValue2 = floatValue;
 
-      for (int var10 = 0; var10 < var3.length(); var10++) {
-         String var11 = String.valueOf(var3.charAt(var10));
-         float var12 = var2.width(var11);
-         if (!var11.isBlank()) {
-            if (var8) {
-               float var13 = clamp01((var7 - var10 * 10.0F) / 300.0F);
-               if (var13 > 0.0F) {
-                  float var14 = method6126(var13);
-                  float var15 = 1.0F - (1.0F - var13) * (1.0F - var13);
-                  var1.drawText(var2, var11, var9 - (1.0F - var13) * 1.5F, var5 + (1.0F - var14) * 6.0F, var6.method7294(var15));
+      for (int i = 0; i < ellipsize.length(); i++) {
+         String text = String.valueOf(ellipsize.charAt(i));
+         float width = font.width(text);
+         if (!text.isBlank()) {
+            if (flag) {
+               float clamp012 = clamp01((f - i * 10.0F) / 300.0F);
+               if (clamp012 > 0.0F) {
+                  float f2 = method6126(clamp012);
+                  float previewAlpha = 1.0F - (1.0F - clamp012) * (1.0F - clamp012);
+                  customDrawContext.drawText(font, text, floatValue2 - (1.0F - clamp012) * 1.5F, centeredTextY + (1.0F - f2) * 6.0F, zenithColor.method7294(previewAlpha));
                }
             } else {
-               float var16 = clamp01((var7 - var10 * 10.0F * 0.5F) / 200.0F);
-               if (var16 < 1.0F) {
-                  float var17 = var16 * var16;
-                  var1.drawText(var2, var11, var9 + var17 * 1.0F, var5 - var17 * 5.0F, var6.method7294(1.0F - var16));
+               float clamp012 = clamp01((f - i * 10.0F * 0.5F) / 200.0F);
+               if (clamp012 < 1.0F) {
+                  float f2 = clamp012 * clamp012;
+                  customDrawContext.drawText(font, text, floatValue2 + f2 * 1.0F, centeredTextY - f2 * 5.0F, zenithColor.method7294(1.0F - clamp012));
                }
             }
          }
 
-         var9 += var12;
+         floatValue2 += width;
       }
    }
 
-   private static float method6126(float var0) {
-      float var1 = 1.9F;
-      float var2 = var1 + 1.0F;
-      float var3 = var0 - 1.0F;
-      return 1.0F + var2 * var3 * var3 * var3 + var1 * var3 * var3;
+   private static float method6126(float visibility) {
+      float f = 1.9F;
+      float f2 = f + 1.0F;
+      float f3 = visibility - 1.0F;
+      return 1.0F + f2 * f3 * f3 * f3 + f * f3 * f3;
    }
 
-   private void method6127(CustomDrawContext var1, Font var2, String var3, float var4, float var5, float var6, ZenithColor var7, boolean var8) {
-      float var9 = var2.width(var3);
-      if (var9 <= var6) {
-         var1.drawText(var2, var3, var4, var5, var7);
-      } else if (var8) {
-         float var10 = 18.0F;
-         float var11 = var9 + var10;
-         long var12 = (long)(var11 / 22.0F * 1000.0F);
-         long var14 = 900L;
-         long var16 = System.currentTimeMillis() % (var12 + var14);
-         float var18 = var16 < var14 ? 0.0F : (float)(var16 - var14) / (float)var12 * var11;
-         var1.drawText(var2, var3, var4 - var18, var5, var7);
-         var1.drawText(var2, var3, var4 - var18 + var11, var5, var7);
+   private void method6127(CustomDrawContext customDrawContext, Font font, String text, float floatValue, float centeredTextY, float maxWidth, ZenithColor zenithColor, boolean flag) {
+      float width = font.width(text);
+      if (width <= maxWidth) {
+         customDrawContext.drawText(font, text, floatValue, centeredTextY, zenithColor);
+      } else if (flag) {
+         float f = 18.0F;
+         float f2 = width + f;
+         long l = (long)(f2 / 22.0F * 1000.0F);
+         long l2 = 900L;
+         long l3 = System.currentTimeMillis() % (l + l2);
+         float f3 = l3 < l2 ? 0.0F : (float)(l3 - l2) / (float)l * f2;
+         customDrawContext.drawText(font, text, floatValue - f3, centeredTextY, zenithColor);
+         customDrawContext.drawText(font, text, floatValue - f3 + f2, centeredTextY, zenithColor);
       } else {
-         var1.drawText(var2, MediaGlyphs.ellipsize(var2, var3, var6), var4, var5, var7);
+         customDrawContext.drawText(font, MediaGlyphs.ellipsize(font, text, maxWidth), floatValue, centeredTextY, zenithColor);
       }
    }
 
-   private void method6128(CustomDrawContext var1, MediaSessionManager var2, float var3, float var4, long var5, float var7, boolean var8) {
-      boolean var9 = this.vinyl.isEnabled();
-      float var10 = var9 && var2.method6007() ? 55.0F : 0.0F;
-      this.floatValue3 = this.floatValue3 + (var10 - this.floatValue3) * Math.min(1.0F, var7 * (var10 > this.floatValue3 ? 2.2F : 3.5F));
-      this.discRotation = (this.discRotation + this.floatValue3 * var7) % 360.0F;
-      Identifier var11 = var8 ? var2.method6013() : null;
-      Identifier var12 = var2.method6014();
-      float var13 = Math.min(1.0F, (float)(var5 - var2.getLongValue4()) / 520.0F);
-      float var14 = 1.0F - (1.0F - var13) * (1.0F - var13) * (1.0F - var13);
-      float var15 = var3 + 8.5F;
-      float var16 = var4 + 8.5F;
-      if (var11 == null) {
-         var1.drawRoundedRect(var3, var4, 17.0F, 17.0F, ProxyDotRadiusData.method8069(var9 ? 8.5F : 3.0F), ZenithColor.INSTANCE.method7292(0.08F));
-         MediaGlyphs.playPause(var1, var15, var16, 7.0F, false, ZenithColor.INSTANCE.method7292(0.45F));
+   private void method6128(CustomDrawContext customDrawContext, MediaSessionManager mediaSessionManager, float floatValue, float y, long now, float f, boolean active) {
+      boolean enabled = this.vinyl.isEnabled();
+      float f2 = enabled && mediaSessionManager.method6007() ? 55.0F : 0.0F;
+      this.floatValue3 = this.floatValue3 + (f2 - this.floatValue3) * Math.min(1.0F, f * (f2 > this.floatValue3 ? 2.2F : 3.5F));
+      this.discRotation = (this.discRotation + this.floatValue3 * f) % 360.0F;
+      Identifier texture = active ? mediaSessionManager.method6013() : null;
+      Identifier id = mediaSessionManager.method6014();
+      float f3 = Math.min(1.0F, (float)(now - mediaSessionManager.getLongValue4()) / 520.0F);
+      float visibility = 1.0F - (1.0F - f3) * (1.0F - f3) * (1.0F - f3);
+      float x = floatValue + 8.5F;
+      float y2 = y + 8.5F;
+      if (texture == null) {
+         customDrawContext.drawRoundedRect(floatValue, y, 17.0F, 17.0F, ProxyDotRadiusData.method8069(enabled ? 8.5F : 3.0F), ZenithColor.INSTANCE.method7292(0.08F));
+         MediaGlyphs.playPause(customDrawContext, x, y2, 7.0F, false, ZenithColor.INSTANCE.method7292(0.45F));
       } else {
-         if (var14 < 1.0F && var12 != null) {
-            this.method6129(var1, var12, var15, var16, 17.0F * (1.0F - 0.35F * var14), 1.0F - var14, var9);
+         if (visibility < 1.0F && id != null) {
+            this.method6129(customDrawContext, id, x, y2, 17.0F * (1.0F - 0.35F * visibility), 1.0F - visibility, enabled);
          }
 
-         this.method6129(var1, var11, var15, var16, 17.0F * (0.65F + 0.35F * method6126(var14)), var14, var9);
-         if (var9) {
-            float var17 = 3.6F;
-            var1.drawArcBorder(var15 - 6.1200004F, var16 - 6.1200004F, 12.240001F, 12.240001F, 0.4F, 360.0F, 0.5F, ZenithColor.INSTANCE.method7292(0.08F));
-            var1.drawRoundedRect(
-               var15 - var17 / 2.0F,
-               var16 - var17 / 2.0F,
-               var17,
-               var17,
-               ProxyDotRadiusData.method8069(var17 / 2.0F),
+         this.method6129(customDrawContext, texture, x, y2, 17.0F * (0.65F + 0.35F * method6126(visibility)), visibility, enabled);
+         if (enabled) {
+            float width = 3.6F;
+            customDrawContext.drawArcBorder(x - 6.1200004F, y2 - 6.1200004F, 12.240001F, 12.240001F, 0.4F, 360.0F, 0.5F, ZenithColor.INSTANCE.method7292(0.08F));
+            customDrawContext.drawRoundedRect(
+               x - width / 2.0F,
+               y2 - width / 2.0F,
+               width,
+               width,
+               ProxyDotRadiusData.method8069(width / 2.0F),
                new ZenithColor(14, 14, 18).method7292(0.92F)
             );
-            var1.drawArcBorder(
-               var15 - var17 / 2.0F - 0.5F, var16 - var17 / 2.0F - 0.5F, var17 + 1.0F, var17 + 1.0F, 0.5F, 360.0F, 0.5F, ZenithColor.INSTANCE.method7292(0.3F)
+            customDrawContext.drawArcBorder(
+               x - width / 2.0F - 0.5F, y2 - width / 2.0F - 0.5F, width + 1.0F, width + 1.0F, 0.5F, 360.0F, 0.5F, ZenithColor.INSTANCE.method7292(0.3F)
             );
          }
       }
    }
 
-   private void method6129(CustomDrawContext var1, Identifier var2, float var3, float var4, float var5, float var6, boolean var7) {
-      if (!(var6 <= 0.01F)) {
-         var1.pushMatrix();
-         var1.pose().translate(var3, var4);
-         if (var7) {
-            var1.pose().rotate((float)Math.toRadians(this.discRotation));
+   private void method6129(CustomDrawContext customDrawContext, Identifier texture, float x, float y, float size, float visibility, boolean enabled) {
+      if (!(visibility <= 0.01F)) {
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(x, y);
+         if (enabled) {
+            customDrawContext.pose().rotate((float)Math.toRadians(this.discRotation));
          }
 
-         var1.drawRoundedTexture(
-            var2, -var5 / 2.0F, -var5 / 2.0F, var5, var5, ProxyDotRadiusData.method8069(var7 ? var5 / 4.0F : 1.5F), ZenithColor.INSTANCE.method7292(var6)
+         customDrawContext.drawRoundedTexture(
+            texture, -size / 2.0F, -size / 2.0F, size, size, ProxyDotRadiusData.method8069(enabled ? size / 4.0F : 1.5F), ZenithColor.INSTANCE.method7292(visibility)
          );
-         var1.popMatrix();
+         customDrawContext.popMatrix();
       }
    }
 
-   private void method6130(CustomDrawContext var1, float var2, float var3, MediaSessionManager var4, float var5, ZenithColor var6) {
-      float var7 = MediaPlayerState.getInstance().method1672();
-      boolean var8 = var4.method6007();
-      float var9;
-      if (!var8) {
-         var9 = 0.0F;
-      } else if (var7 >= 0.0F) {
-         double var10 = 20.0 * Math.log10(Math.max(var7, 1.0E-4F));
-         var9 = (float)Math.max(0.0, Math.min(1.0, (var10 + 38.0) / 36.0));
+   private void method6130(CustomDrawContext customDrawContext, float f, float f2, MediaSessionManager mediaSessionManager, float f3, ZenithColor color) {
+      float f4 = MediaPlayerState.getInstance().method1672();
+      boolean flag = mediaSessionManager.method6007();
+      float f5;
+      if (!flag) {
+         f5 = 0.0F;
+      } else if (f4 >= 0.0F) {
+         double d = 20.0 * Math.log10(Math.max(f4, 1.0E-4F));
+         f5 = (float)Math.max(0.0, Math.min(1.0, (d + 38.0) / 36.0));
       } else {
-         var9 = 0.62F;
+         f5 = 0.62F;
       }
 
-      double var24 = System.currentTimeMillis() / 1000.0;
-      float var12 = 9.0F;
-      float var13 = 1.6F;
-      float var14 = (8.0F - var13 * this.floatValues.length) / (this.floatValues.length - 1);
-      float var15 = var3 + var12;
-      ZenithColor var16 = var6.method7295(ZenithColor.INSTANCE, 0.2F);
+      double d = System.currentTimeMillis() / 1000.0;
+      float f6 = 9.0F;
+      float width = 1.6F;
+      float f7 = (8.0F - width * this.floatValues.length) / (this.floatValues.length - 1);
+      float f8 = f2 + f6;
+      ZenithColor zenithColor = color.method7295(ZenithColor.INSTANCE, 0.2F);
 
-      for (int var17 = 0; var17 < this.floatValues.length; var17++) {
-         double var18 = 0.5 + 0.3 * Math.sin(var24 * (7.1 + var17 * 2.3) + var17 * 1.9) + 0.2 * Math.sin(var24 * (13.7 - var17 * 1.7) + var17);
-         float var20 = (float)(var9 * (0.35 + 0.65 * var18));
-         float var21 = var20 > this.floatValues[var17] ? 22.0F : 7.0F;
-         this.floatValues[var17] = this.floatValues[var17] + (var20 - this.floatValues[var17]) * Math.min(1.0F, var5 * var21);
-         float var22 = 1.6F + (var12 - 1.6F) * clamp01(this.floatValues[var17]);
-         float var23 = var2 + var17 * (var13 + var14);
-         var1.drawRoundedRect(var23, var15 - var22, var13, var22, ProxyDotRadiusData.method8069(0.8F), var16.method7292(var8 ? 0.95F : 0.4F));
+      for (int i = 0; i < this.floatValues.length; i++) {
+         double d2 = 0.5 + 0.3 * Math.sin(d * (7.1 + i * 2.3) + i * 1.9) + 0.2 * Math.sin(d * (13.7 - i * 1.7) + i);
+         float f9 = (float)(f5 * (0.35 + 0.65 * d2));
+         float f10 = f9 > this.floatValues[i] ? 22.0F : 7.0F;
+         this.floatValues[i] = this.floatValues[i] + (f9 - this.floatValues[i]) * Math.min(1.0F, f3 * f10);
+         float height = 1.6F + (f6 - 1.6F) * clamp01(this.floatValues[i]);
+         float floatValue = f + i * (width + f7);
+         customDrawContext.drawRoundedRect(floatValue, f8 - height, width, height, ProxyDotRadiusData.method8069(0.8F), zenithColor.method7292(flag ? 0.95F : 0.4F));
       }
    }
 
-   private boolean method6131(long var1) {
-      return MediaPlayerState.getInstance().method1673() && var1 - MediaPlayerState.getInstance().getChangedAt() < 1400L;
+   private boolean method6131(long now) {
+      return MediaPlayerState.getInstance().method1673() && now - MediaPlayerState.getInstance().getChangedAt() < 1400L;
    }
 
-   private void method6132(CustomDrawContext var1, float var2, float var3, long var4, ZenithColor var6, ZenithColor var7) {
-      float var8 = Math.min(1.0F, (float)(1400L - (var4 - MediaPlayerState.getInstance().getChangedAt())) / 250.0F);
-      float var9 = MediaPlayerState.getInstance().method1679();
-      float var10 = 11.0F;
-      Font var11 = Fonts.NEW_SEMIBOLD.getFont(4.5F);
-      String var12 = String.valueOf(Math.round(var9 * 100.0F));
-      var1.drawText(var11, var12, var2 + (var10 - var11.width(var12)) / 2.0F, var3, var6.method7294(var8));
-      float var13 = var3 + 8.0F;
-      var1.drawRoundedRect(var2, var13, var10, 1.6F, ProxyDotRadiusData.method8069(0.8F), ZenithColor.INSTANCE.method7292(0.18F * var8));
-      var1.drawRoundedRect(
-         var2, var13, Math.max(1.6F, var10 * var9), 1.6F, ProxyDotRadiusData.method8069(0.8F), var7.method7295(ZenithColor.INSTANCE, 0.2F).method7292(var8)
+   private void method6132(CustomDrawContext customDrawContext, float floatValue, float centeredTextY, long now, ZenithColor zenithColor, ZenithColor color) {
+      float previewAlpha = Math.min(1.0F, (float)(1400L - (now - MediaPlayerState.getInstance().getChangedAt())) / 250.0F);
+      float f = MediaPlayerState.getInstance().method1679();
+      float width = 11.0F;
+      Font font = Fonts.NEW_SEMIBOLD.getFont(4.5F);
+      String text = String.valueOf(Math.round(f * 100.0F));
+      customDrawContext.drawText(font, text, floatValue + (width - font.width(text)) / 2.0F, centeredTextY, zenithColor.method7294(previewAlpha));
+      float y = centeredTextY + 8.0F;
+      customDrawContext.drawRoundedRect(floatValue, y, width, 1.6F, ProxyDotRadiusData.method8069(0.8F), ZenithColor.INSTANCE.method7292(0.18F * previewAlpha));
+      customDrawContext.drawRoundedRect(
+         floatValue, y, Math.max(1.6F, width * f), 1.6F, ProxyDotRadiusData.method8069(0.8F), color.method7295(ZenithColor.INSTANCE, 0.2F).method7292(previewAlpha)
       );
    }
 
    private void method6133(
-      CustomDrawContext var1,
-      float var2,
-      float var3,
-      double var4,
-      double var6,
-      ZenithColor var8,
-      ZenithColor var9,
-      ZenithStyle var10,
-      boolean var11,
-      boolean var12
+      CustomDrawContext customDrawContext,
+      float floatValue,
+      float y,
+      double d,
+      double d2,
+      ZenithColor color,
+      ZenithColor zenithColor,
+      ZenithStyle currentStyle,
+      boolean flag,
+      boolean flag2
    ) {
-      float var13 = var6 > 0.0 ? (float)Math.max(0.0, Math.min(1.0, var4 / var6)) : 0.0F;
+      float seekPreview = d2 > 0.0 ? (float)Math.max(0.0, Math.min(1.0, d / d2)) : 0.0F;
       if (this.flag) {
-         var13 = this.seekPreview;
+         seekPreview = this.seekPreview;
       }
 
-      if (var12) {
-         var1.drawRoundedRect(var2, var3, 15.0F, 15.0F, ProxyDotRadiusData.method8069(7.5F), ZenithColor.INSTANCE.method7292(0.08F));
+      if (flag2) {
+         customDrawContext.drawRoundedRect(floatValue, y, 15.0F, 15.0F, ProxyDotRadiusData.method8069(7.5F), ZenithColor.INSTANCE.method7292(0.08F));
       }
 
-      var1.drawArcBorder(var2, var3, 15.0F, 15.0F, 1.1F, 360.0F, 0.5F, var10.getFieldBorder().getZenithColor());
-      if (var13 > 0.001F) {
-         var1.drawArcBorder(var2, var3, 15.0F, 15.0F, 1.1F, 360.0F * var13, 0.5F, var8.method7295(ZenithColor.INSTANCE, 0.15F));
+      customDrawContext.drawArcBorder(floatValue, y, 15.0F, 15.0F, 1.1F, 360.0F, 0.5F, currentStyle.getFieldBorder().getZenithColor());
+      if (seekPreview > 0.001F) {
+         customDrawContext.drawArcBorder(floatValue, y, 15.0F, 15.0F, 1.1F, 360.0F * seekPreview, 0.5F, color.method7295(ZenithColor.INSTANCE, 0.15F));
       }
 
-      MediaGlyphs.playPause(var1, var2 + 7.5F, var3 + 7.5F, 5.6F, var11, var12 ? var9 : var9.method7294(0.85F));
+      MediaGlyphs.playPause(customDrawContext, floatValue + 7.5F, y + 7.5F, 5.6F, flag, flag2 ? zenithColor : zenithColor.method7294(0.85F));
    }
 
    private void method6134(
-      CustomDrawContext var1,
-      MediaSessionManager var2,
-      float var3,
-      ZenithColor var4,
-      ZenithColor var5,
-      ZenithColor var6,
-      float var7,
-      float var8,
-      double var9,
-      double var11
+      CustomDrawContext customDrawContext,
+      MediaSessionManager mediaSessionManager,
+      float previewAlpha,
+      ZenithColor color,
+      ZenithColor zenithColor,
+      ZenithColor zenithColor2,
+      float lastClickX,
+      float lastClickY,
+      double d,
+      double d2
    ) {
       if (this.flag) {
          if (org.zenith.utility.misc.KeyCompat.isMouseDown(0)) {
-            this.seekPreview = this.method6137(var7);
+            this.seekPreview = this.method6137(lastClickX);
          } else {
             this.flag = false;
-            MediaSessionManager.getInstance().method6019(this.seekPreview * var11);
+            MediaSessionManager.getInstance().method6019(this.seekPreview * d2);
          }
       }
 
-      if (var3 <= 0.02F) {
+      if (previewAlpha <= 0.02F) {
          this.boundsData3 = this.boundsData4 = this.boundsData5 = this.playBounds = this.boundsData6 = this.boundsData7 = null;
       } else {
-         float var14 = (1.0F - var3) * 4.0F;
-         float var15 = this.floatValue + 4.0F + 2.0F;
-         float var16 = this.width - 8.0F - 4.0F;
-         float var17 = this.floatValue2 + 25.0F + 3.0F - var14;
-         boolean var18 = this.inside(var7, var8, var15, var17 - 3.0F, var16, 8.0F);
-         this.animation3.method2807(var18 || this.flag);
-         float var19 = 1.6F + 1.2F * this.animation3.getValue();
-         this.boundsData3 = new BoundsData(var15, var17, var16, var19);
-         float var20 = this.flag ? this.seekPreview : (var11 > 0.0 ? clamp01((float)(var9 / var11)) : 0.0F);
-         float var21 = var17 + (2.8F - var19) / 2.0F;
-         var1.drawRoundedRect(var15, var21, var16, var19, ProxyDotRadiusData.method8069(var19 / 2.0F), ZenithColor.INSTANCE.method7292(0.14F * var3));
-         var1.drawRoundedRect(
-            var15,
-            var21,
-            Math.max(var19, var16 * var20),
-            var19,
-            ProxyDotRadiusData.method8069(var19 / 2.0F),
-            var4.method7295(ZenithColor.INSTANCE, 0.2F).method7294(var3)
+         float f = (1.0F - previewAlpha) * 4.0F;
+         float floatValue = this.floatValue + 4.0F + 2.0F;
+         float width = this.width - 8.0F - 4.0F;
+         float y = this.floatValue2 + 25.0F + 3.0F - f;
+         boolean inside = this.inside(lastClickX, lastClickY, floatValue, y - 3.0F, width, 8.0F);
+         this.animation3.method2807(inside || this.flag);
+         float height = 1.6F + 1.2F * this.animation3.getValue();
+         this.boundsData3 = new BoundsData(floatValue, y, width, height);
+         float seekPreview = this.flag ? this.seekPreview : (d2 > 0.0 ? clamp01((float)(d / d2)) : 0.0F);
+         float y2 = y + (2.8F - height) / 2.0F;
+         customDrawContext.drawRoundedRect(floatValue, y2, width, height, ProxyDotRadiusData.method8069(height / 2.0F), ZenithColor.INSTANCE.method7292(0.14F * previewAlpha));
+         customDrawContext.drawRoundedRect(
+            floatValue,
+            y2,
+            Math.max(height, width * seekPreview),
+            height,
+            ProxyDotRadiusData.method8069(height / 2.0F),
+            color.method7295(ZenithColor.INSTANCE, 0.2F).method7294(previewAlpha)
          );
          if (this.animation3.getValue() > 0.02F) {
-            float var22 = 4.0F * this.animation3.getValue();
-            var1.drawRoundedRect(
-               var15 + var16 * var20 - var22 / 2.0F,
-               var21 + var19 / 2.0F - var22 / 2.0F,
-               var22,
-               var22,
-               ProxyDotRadiusData.method8069(var22 / 2.0F),
-               var5.method7294(var3)
+            float width2 = 4.0F * this.animation3.getValue();
+            customDrawContext.drawRoundedRect(
+               floatValue + width * seekPreview - width2 / 2.0F,
+               y2 + height / 2.0F - width2 / 2.0F,
+               width2,
+               width2,
+               ProxyDotRadiusData.method8069(width2 / 2.0F),
+               zenithColor.method7294(previewAlpha)
             );
          }
 
-         float var32 = var17 + 11.0F;
-         Font var23 = Fonts.NEW_MEDIUM.getFont(4.6F);
-         double var24 = this.flag ? this.seekPreview * var11 : var9;
-         String var26 = "-" + MediaGlyphs.time(Math.max(0.0, var11 - var24));
-         var1.drawText(var23, MediaGlyphs.time(var24), var15, var32 - var23.height() / 2.0F, var6.method7294(var3));
-         var1.drawText(var23, var26, var15 + var16 - var23.width(var26), var32 - var23.height() / 2.0F, var6.method7294(var3));
-         float var27 = 15.0F;
-         float var28 = this.floatValue + this.width / 2.0F;
-         this.boundsData4 = this.method6136(var28 - var27 * 2.0F, var32, 11.0F);
-         this.boundsData5 = this.method6136(var28 - var27, var32, 11.0F);
-         this.playBounds = this.method6136(var28, var32, 13.0F);
-         this.boundsData6 = this.method6136(var28 + var27, var32, 11.0F);
-         this.boundsData7 = this.method6136(var28 + var27 * 2.0F, var32, 11.0F);
-         MediaHelperProcess var29 = MediaHelperProcess.getInstance();
-         ZenithColor var30 = var4.method7295(ZenithColor.INSTANCE, 0.3F).method7294(var3);
-         ZenithColor var31 = var5.method7294(var3 * 0.5F);
-         MediaGlyphs.shuffle(var1, var28 - var27 * 2.0F, var32, 6.0F, this.method6135(var29.isFlag() ? var30 : var31, this.boundsData4, var7, var8));
-         MediaGlyphs.skip(var1, var28 - var27, var32, 7.0F, false, this.method6135(var5.method7294(var3), this.boundsData5, var7, var8));
-         MediaGlyphs.playPause(var1, var28, var32, 8.0F, var2.method6007(), this.method6135(var5.method7294(var3), this.playBounds, var7, var8));
-         MediaGlyphs.skip(var1, var28 + var27, var32, 7.0F, true, this.method6135(var5.method7294(var3), this.boundsData6, var7, var8));
+         float y3 = y + 11.0F;
+         Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+         double d3 = this.flag ? this.seekPreview * d2 : d;
+         String text = "-" + MediaGlyphs.time(Math.max(0.0, d2 - d3));
+         customDrawContext.drawText(font, MediaGlyphs.time(d3), floatValue, y3 - font.height() / 2.0F, zenithColor2.method7294(previewAlpha));
+         customDrawContext.drawText(font, text, floatValue + width - font.width(text), y3 - font.height() / 2.0F, zenithColor2.method7294(previewAlpha));
+         float f2 = 15.0F;
+         float x = this.floatValue + this.width / 2.0F;
+         this.boundsData4 = this.method6136(x - f2 * 2.0F, y3, 11.0F);
+         this.boundsData5 = this.method6136(x - f2, y3, 11.0F);
+         this.playBounds = this.method6136(x, y3, 13.0F);
+         this.boundsData6 = this.method6136(x + f2, y3, 11.0F);
+         this.boundsData7 = this.method6136(x + f2 * 2.0F, y3, 11.0F);
+         MediaHelperProcess mediaHelperProcess = MediaHelperProcess.getInstance();
+         ZenithColor zenithColor3 = color.method7295(ZenithColor.INSTANCE, 0.3F).method7294(previewAlpha);
+         ZenithColor zenithColor4 = zenithColor.method7294(previewAlpha * 0.5F);
+         MediaGlyphs.shuffle(customDrawContext, x - f2 * 2.0F, y3, 6.0F, this.method6135(mediaHelperProcess.isFlag() ? zenithColor3 : zenithColor4, this.boundsData4, lastClickX, lastClickY));
+         MediaGlyphs.skip(customDrawContext, x - f2, y3, 7.0F, false, this.method6135(zenithColor.method7294(previewAlpha), this.boundsData5, lastClickX, lastClickY));
+         MediaGlyphs.playPause(customDrawContext, x, y3, 8.0F, mediaSessionManager.method6007(), this.method6135(zenithColor.method7294(previewAlpha), this.playBounds, lastClickX, lastClickY));
+         MediaGlyphs.skip(customDrawContext, x + f2, y3, 7.0F, true, this.method6135(zenithColor.method7294(previewAlpha), this.boundsData6, lastClickX, lastClickY));
          MediaGlyphs.repeat(
-            var1,
-            var28 + var27 * 2.0F,
-            var32,
+            customDrawContext,
+            x + f2 * 2.0F,
+            y3,
             6.0F,
-            var29.getIntValue() == 1,
-            this.method6135(var29.getIntValue() != 0 ? var30 : var31, this.boundsData7, var7, var8)
+            mediaHelperProcess.getIntValue() == 1,
+            this.method6135(mediaHelperProcess.getIntValue() != 0 ? zenithColor3 : zenithColor4, this.boundsData7, lastClickX, lastClickY)
          );
       }
    }
 
-   private ZenithColor method6135(ZenithColor var1, BoundsData var2, float var3, float var4) {
-      return this.method6138(var2, var3, var4) ? var1.method7295(ZenithColor.INSTANCE.method7293(var1.getIntValue4()), 0.5F) : var1;
+   private ZenithColor method6135(ZenithColor zenithColor, BoundsData boundsData4, float lastClickX, float lastClickY) {
+      return this.method6138(boundsData4, lastClickX, lastClickY) ? zenithColor.method7295(ZenithColor.INSTANCE.method7293(zenithColor.getIntValue4()), 0.5F) : zenithColor;
    }
 
-   private BoundsData method6136(float var1, float var2, float var3) {
-      return new BoundsData(var1 - var3 / 2.0F, var2 - var3 / 2.0F, var3, var3);
+   private BoundsData method6136(float x, float f, float width) {
+      return new BoundsData(x - width / 2.0F, f - width / 2.0F, width, width);
    }
 
-   private float method6137(float var1) {
+   private float method6137(float lastClickX) {
       return this.boundsData3 != null && !(this.boundsData3.width() <= 0.0F)
-         ? clamp01((var1 - this.boundsData3.getFloatValue()) / this.boundsData3.width())
+         ? clamp01((lastClickX - this.boundsData3.getFloatValue()) / this.boundsData3.width())
          : 0.0F;
    }
 
-   private static float clamp01(float var0) {
-      return Math.max(0.0F, Math.min(1.0F, var0));
+   private static float clamp01(float floatValue) {
+      return Math.max(0.0F, Math.min(1.0F, floatValue));
    }
 
    private void clearBounds() {
@@ -667,12 +667,12 @@ public class MusicHud extends Interface {
       this.boundsData = this.boundsData3 = this.boundsData4 = this.boundsData5 = this.playBounds = this.boundsData6 = this.boundsData7 = null;
    }
 
-   private boolean method6138(BoundsData var1, float var2, float var3) {
-      return var1 != null && var1.contains(var2, var3);
+   private boolean method6138(BoundsData boundsData2, float lastClickX, float lastClickY) {
+      return boundsData2 != null && boundsData2.contains(lastClickX, lastClickY);
    }
 
-   private boolean inside(double var1, double var3, float var5, float var6, float var7, float var8) {
-      return var1 >= var5 && var1 <= var5 + var7 && var3 >= var6 && var3 <= var6 + var8;
+   private boolean inside(double lastClickX, double lastClickY, float floatValue, float f, float width, float height) {
+      return lastClickX >= floatValue && lastClickX <= floatValue + width && lastClickY >= f && lastClickY <= f + height;
    }
 
    private static final class Entry {
@@ -682,16 +682,16 @@ public class MusicHud extends Interface {
       public boolean flag;
       public boolean flag2;
 
-      public void method6139(String var1, boolean var2, long var3) {
-         String var5 = var1 == null ? "" : var1;
-         if (!var5.equals(this.text)) {
+      public void method6139(String title, boolean flag, long changedAt) {
+         String text = title == null ? "" : title;
+         if (!text.equals(this.text)) {
             this.previous = this.text;
             this.flag2 = this.flag;
-            this.text = var5;
-            this.changedAt = var3;
+            this.text = text;
+            this.changedAt = changedAt;
          }
 
-         this.flag = var2;
+         this.flag = flag;
       }
    }
 }

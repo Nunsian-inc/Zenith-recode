@@ -18,21 +18,21 @@ public final class WeatherDepthBuffer {
 
    public static void method5130() {
       flag = false;
-      RenderTarget var0 = Minecraft.getInstance().gameRenderer.mainRenderTarget();
-      if (var0 != null && var0.hasDepth()) {
-         int var1 = var0.width;
-         int var2 = var0.height;
-         if (var1 > 0 && var2 > 0) {
+      RenderTarget mainRenderTarget = Minecraft.getInstance().gameRenderer.mainRenderTarget();
+      if (mainRenderTarget != null && mainRenderTarget.hasDepth()) {
+         int width = mainRenderTarget.width;
+         int height = mainRenderTarget.height;
+         if (width > 0 && height > 0) {
             if (simpleFramebuffer == null) {
-               simpleFramebuffer = BlitUtils.method6448("zenith weather depth", var1, var2, true);
-            } else if (simpleFramebuffer.width != var1 || simpleFramebuffer.height != var2) {
-               simpleFramebuffer.resize(var1, var2);
+               simpleFramebuffer = BlitUtils.method6448("zenith weather depth", width, height, true);
+            } else if (simpleFramebuffer.width != width || simpleFramebuffer.height != height) {
+               simpleFramebuffer.resize(width, height);
             }
 
-            GpuTexture var3 = var0.getDepthTexture();
-            GpuTexture var4 = simpleFramebuffer.getDepthTexture();
-            if (var3 != null && var4 != null) {
-               RenderSystem.getDevice().createCommandEncoder().copyTextureToTexture(var3, var4, 0, 0, 0, 0, 0, var1, var2);
+            GpuTexture depthTexture = mainRenderTarget.getDepthTexture();
+            GpuTexture destination = simpleFramebuffer.getDepthTexture();
+            if (depthTexture != null && destination != null) {
+               RenderSystem.getDevice().createCommandEncoder().copyTextureToTexture(depthTexture, destination, 0, 0, 0, 0, 0, width, height);
                flag = true;
             }
          }

@@ -8,52 +8,52 @@ import org.zenith.base.Module;
 public class TickingList<T> {
    private int intValue = 0;
    private final PriorityBlockingQueue<TickingList.Entry<T>> priorityBlockingQueue = new PriorityBlockingQueue<>(
-      11, Comparator.comparingInt(var0 -> -var0.intValue2)
+      11, Comparator.comparingInt(entry -> -entry.intValue2)
    );
 
-   public void method13(int var1) {
-      this.intValue += var1;
+   public void method13(int n) {
+      this.intValue += n;
    }
 
    public void tick() {
       this.method13(1);
    }
 
-   public void method14(TickingList.Entry<T> var1) {
-      this.priorityBlockingQueue.removeIf(var1x -> var1x.module == var1.module);
-      var1.intValue = var1.intValue + this.intValue;
-      this.priorityBlockingQueue.add(var1);
+   public void method14(TickingList.Entry<T> entry) {
+      this.priorityBlockingQueue.removeIf(var1x -> var1x.module == entry.module);
+      entry.intValue = entry.intValue + this.intValue;
+      this.priorityBlockingQueue.add(entry);
    }
 
    public T method15() {
-      TickingList.Entry var1 = this.priorityBlockingQueue.peek();
-      if (var1 == null) {
+      TickingList.Entry entry = this.priorityBlockingQueue.peek();
+      if (entry == null) {
          return null;
       } else {
          if (Minecraft.getInstance().isSameThread()) {
-            while (var1 != null && (var1.intValue <= this.intValue || !var1.module.isEnabled())) {
+            while (entry != null && (entry.intValue <= this.intValue || !entry.module.isEnabled())) {
                this.priorityBlockingQueue.poll();
-               var1 = this.priorityBlockingQueue.peek();
+               entry = this.priorityBlockingQueue.peek();
             }
          }
 
-         return var1 != null ? (T)var1.obj : null;
+         return entry != null ? (T)entry.obj : null;
       }
    }
 
    public TickingList.Entry<T> method16() {
-      TickingList.Entry var1 = this.priorityBlockingQueue.peek();
-      if (var1 == null) {
+      TickingList.Entry entry = this.priorityBlockingQueue.peek();
+      if (entry == null) {
          return null;
       } else {
          if (Minecraft.getInstance().isSameThread()) {
-            while (var1 != null && (var1.intValue <= this.intValue || !var1.module.isEnabled())) {
+            while (entry != null && (entry.intValue <= this.intValue || !entry.module.isEnabled())) {
                this.priorityBlockingQueue.poll();
-               var1 = this.priorityBlockingQueue.peek();
+               entry = this.priorityBlockingQueue.peek();
             }
          }
 
-         return var1;
+         return entry;
       }
    }
 
@@ -67,11 +67,11 @@ public class TickingList<T> {
       public final Module module;
       public final T obj;
 
-      public Entry(int var1, int var2, Module var3, T var4) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.module = var3;
-         this.obj = (T)var4;
+      public Entry(int intValue, int priority, Module moduleValue, T rotationRequest) {
+         this.intValue = intValue;
+         this.intValue2 = priority;
+         this.module = moduleValue;
+         this.obj = (T)rotationRequest;
       }
    }
 }

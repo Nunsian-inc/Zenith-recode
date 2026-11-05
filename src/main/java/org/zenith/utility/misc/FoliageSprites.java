@@ -49,20 +49,20 @@ public final class FoliageSprites {
    private FoliageSprites() {
    }
 
-   public static boolean method1431(Identifier var0) {
-      if (enabled && var0 != null && "minecraft".equals(var0.getNamespace())) {
-         String var1 = var0.getPath();
-         if (!var1.startsWith("block/")) {
+   public static boolean method1431(Identifier id) {
+      if (enabled && id != null && "minecraft".equals(id.getNamespace())) {
+         String path = id.getPath();
+         if (!path.startsWith("block/")) {
             return false;
          } else {
-            for (String var5 : texts2) {
-               if (var1.contains(var5)) {
+            for (String str : texts2) {
+               if (path.contains(str)) {
                   return false;
                }
             }
 
-            for (String var9 : texts) {
-               if (var1.contains(var9)) {
+            for (String text : texts) {
+               if (path.contains(text)) {
                   return true;
                }
             }
@@ -74,91 +74,91 @@ public final class FoliageSprites {
       }
    }
 
-   public static void method1432(Identifier var0, NativeImage var1) {
-      int var2 = var1.getWidth();
-      int var3 = var1.getHeight();
-      if (var2 > 0 && var3 > 0) {
+   public static void method1432(Identifier id, NativeImage originalImage) {
+      int width = originalImage.getWidth();
+      int height = originalImage.getHeight();
+      if (width > 0 && height > 0) {
          intValue++;
-         boolean var4 = var0.getPath().contains("leaves");
-         if (var4) {
-            for (int var5 = 0; var5 < var2; var5++) {
-               for (int var6 = 0; var6 < var3; var6++) {
-                  int var7 = var1.getPixel(var5, var6);
-                  if (var7 >>> 24 > 16) {
-                     int var8 = method1434(14213872, 16777215, method1436(method1433(var0), var5, var6));
-                     var1.setPixel(var5, var6, var7 & 0xFF000000 | method1435(var7, var8, 0.8F));
+         boolean contains = id.getPath().contains("leaves");
+         if (contains) {
+            for (int i = 0; i < width; i++) {
+               for (int j = 0; j < height; j++) {
+                  int pixel = originalImage.getPixel(i, j);
+                  if (pixel >>> 24 > 16) {
+                     int n = method1434(14213872, 16777215, method1436(method1433(id), i, j));
+                     originalImage.setPixel(i, j, pixel & 0xFF000000 | method1435(pixel, n, 0.8F));
                   }
                }
             }
          }
 
-         float var18 = var2 / 16.0F;
-         long var19 = method1433(var0);
+         float f = width / 16.0F;
+         long l = method1433(id);
 
-         for (int var20 = 0; var20 < var2; var20++) {
-            int var9 = -1;
+         for (int i = 0; i < width; i++) {
+            int n = -1;
 
-            for (int var10 = 0; var10 < var3; var10++) {
-               if (var1.getPixel(var20, var10) >>> 24 > 128) {
-                  var9 = var10;
+            for (int j = 0; j < height; j++) {
+               if (originalImage.getPixel(i, j) >>> 24 > 128) {
+                  n = j;
                   break;
                }
             }
 
-            if (var9 >= 0) {
-               float var21 = method1436(var19, var20, 0) + 0.5F * method1436(var19, var20, 7);
-               int var11 = Math.max(1, Math.round(3.2F * var18 * (0.55F + 0.75F * var21)));
+            if (n >= 0) {
+               float f2 = method1436(l, i, 0) + 0.5F * method1436(l, i, 7);
+               int n2 = Math.max(1, Math.round(3.2F * f * (0.55F + 0.75F * f2)));
 
-               for (int var12 = 0; var12 < var11; var12++) {
-                  int var13 = var9 + var12;
-                  if (var13 >= var3) {
+               for (int j = 0; j < n2; j++) {
+                  int y = n + j;
+                  if (y >= height) {
                      break;
                   }
 
-                  int var14 = var1.getPixel(var20, var13);
-                  int var15 = var14 >>> 24;
-                  if (var15 <= 128) {
+                  int pixel = originalImage.getPixel(i, y);
+                  int n3 = pixel >>> 24;
+                  if (n3 <= 128) {
                      break;
                   }
 
-                  int var16 = method1434(14213872, 16777215, method1436(var19, var20, var13 + 3));
-                  float var17 = var12 == var11 - 1 ? 0.45F : 1.0F;
-                  var1.setPixel(var20, var13, var15 << 24 | method1435(var14, var16, var17));
+                  int n4 = method1434(14213872, 16777215, method1436(l, i, y + 3));
+                  float f3 = j == n2 - 1 ? 0.45F : 1.0F;
+                  originalImage.setPixel(i, y, n3 << 24 | method1435(pixel, n4, f3));
                }
             }
          }
       }
    }
 
-   private static long method1433(Identifier var0) {
-      return var0.hashCode() * -7046029254386353131L;
+   private static long method1433(Identifier id) {
+      return id.hashCode() * -7046029254386353131L;
    }
 
-   private static int method1434(int var0, int var1, float var2) {
-      int var3 = channel(var0 >> 16, var1 >> 16, var2);
-      int var4 = channel(var0 >> 8, var1 >> 8, var2);
-      int var5 = channel(var0, var1, var2);
-      return var3 << 16 | var4 << 8 | var5;
+   private static int method1434(int pixel, int n, float f) {
+      int channel2 = channel(pixel >> 16, n >> 16, f);
+      int channel3 = channel(pixel >> 8, n >> 8, f);
+      int channel4 = channel(pixel, n, f);
+      return channel2 << 16 | channel3 << 8 | channel4;
    }
 
-   private static int method1435(int var0, int var1, float var2) {
-      int var3 = channel(var0 >> 16, var1 >> 16, var2);
-      int var4 = channel(var0 >> 8, var1 >> 8, var2);
-      int var5 = channel(var0, var1, var2);
-      return var3 << 16 | var4 << 8 | var5;
+   private static int method1435(int pixel, int n, float f) {
+      int channel2 = channel(pixel >> 16, n >> 16, f);
+      int channel3 = channel(pixel >> 8, n >> 8, f);
+      int channel4 = channel(pixel, n, f);
+      return channel2 << 16 | channel3 << 8 | channel4;
    }
 
-   private static int channel(int var0, int var1, float var2) {
-      int var3 = var0 & 0xFF;
-      int var4 = var1 & 0xFF;
-      return Math.clamp((long)((int)(var3 + (var4 - var3) * var2 + 0.5F)), 0, 255);
+   private static int channel(int pixel, int n, float f) {
+      int n2 = pixel & 0xFF;
+      int n3 = n & 0xFF;
+      return Math.clamp((long)((int)(n2 + (n3 - n2) * f + 0.5F)), 0, 255);
    }
 
-   private static float method1436(long var0, int var2, int var3) {
-      long var4 = var0 ^ var2 * -6752110988234923001L ^ var3 * -6939452855193903323L;
-      var4 ^= var4 >>> 29;
-      var4 *= -4658895280553007687L;
-      var4 ^= var4 >>> 32;
-      return (float)(var4 >>> 40) / 1.6777216E7F;
+   private static float method1436(long l, int n, int n2) {
+      long l2 = l ^ n * -6752110988234923001L ^ n2 * -6939452855193903323L;
+      l2 ^= l2 >>> 29;
+      l2 *= -4658895280553007687L;
+      l2 ^= l2 >>> 32;
+      return (float)(l2 >>> 40) / 1.6777216E7F;
    }
 }

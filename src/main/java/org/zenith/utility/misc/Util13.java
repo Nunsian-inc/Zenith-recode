@@ -10,9 +10,9 @@ public final class Util13 {
       return floatValue;
    }
 
-   public static void method2404(float var0) {
-      if (Float.isFinite(var0) && var0 > 0.0F) {
-         floatValue = var0;
+   public static void method2404(float f) {
+      if (Float.isFinite(f) && f > 0.0F) {
+         floatValue = f;
       }
    }
 }

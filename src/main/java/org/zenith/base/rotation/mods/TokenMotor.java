@@ -62,57 +62,57 @@ public final class TokenMotor extends Util22 {
    private Rotation rotation;
 
    public Rotation method3467() {
-      Rotation var1 = rotationManager.method7844();
-      LivingEntity var2 = AuraModule.INSTANCE.method6358();
-      if (mc.player != null && var2 != null && var2.isAlive()) {
-         TokenMotor.Entry4 var3 = this.method3481();
-         if (var3 == null) {
-            return var1;
+      Rotation rotation = rotationManager.method7844();
+      LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+      if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
+         TokenMotor.Entry4 entry4 = this.method3481();
+         if (entry4 == null) {
+            return rotation;
          } else {
-            int var4 = mc.player.tickCount;
-            if (var4 == this.intValue6 && this.rotation != null) {
+            int tickCount = mc.player.tickCount;
+            if (tickCount == this.intValue6 && this.rotation != null) {
                return this.rotation;
             } else {
-               if (this.intValue5 != Integer.MIN_VALUE && var4 != this.intValue5 + 1) {
-                  this.method3478(var2.getId());
-               } else if (var2.getId() != this.intValue4) {
-                  this.method3479(var2.getId());
+               if (this.intValue5 != Integer.MIN_VALUE && tickCount != this.intValue5 + 1) {
+                  this.method3478(livingEntity.getId());
+               } else if (livingEntity.getId() != this.intValue4) {
+                  this.method3479(livingEntity.getId());
                }
 
-               this.intValue5 = var4;
+               this.intValue5 = tickCount;
                this.method3477();
-               TokenMotor.Entry var5 = this.method3472(var1, var2);
-               if (var5 == null) {
-                  this.method3480(var4, var1);
-                  return var1;
+               TokenMotor.Entry entry = this.method3472(rotation, livingEntity);
+               if (entry == null) {
+                  this.method3480(tickCount, rotation);
+                  return rotation;
                } else {
-                  this.method3473(var5);
-                  if (this.intValue < var3.intValue10 + 3) {
-                     this.method3480(var4, var1);
-                     return var1;
+                  this.method3473(entry);
+                  if (this.intValue < entry4.intValue10 + 3) {
+                     this.method3480(tickCount, rotation);
+                     return rotation;
                   } else {
-                     double[] var6 = new double[]{var1.getFloatValue(), var1.getFloatValue2()};
-                     double[] var7 = new double[6];
-                     double[] var8 = this.method3476(var3, var6, var7);
-                     if (!method3485(var8)) {
-                        this.method3480(var4, var1);
-                        return var1;
+                     double[] doubleValues = new double[]{rotation.getFloatValue(), rotation.getFloatValue2()};
+                     double[] doubles = new double[6];
+                     double[] doubles2 = this.method3476(entry4, doubleValues, doubles);
+                     if (!method3485(doubles2)) {
+                        this.method3480(tickCount, rotation);
+                        return rotation;
                      } else {
-                        int[] var9;
+                        int[] ints;
                         if (this.flag2) {
-                           var9 = this.intValues2[this.intValue3++];
+                           ints = this.intValues2[this.intValue3++];
                            this.flag2 = this.intValue3 < this.intValues2.length;
                         } else {
-                           var9 = this.method3470(var3, var8, var6);
+                           ints = this.method3470(entry4, doubles2, doubleValues);
                         }
 
-                        double var10 = var3.doubleValue4;
-                        Rotation var12 = var1.method3140((float)(var9[0] * var10), (float)(var9[1] * var10));
-                        this.method3475(var8, new int[]{var3.method3488(var9[0]), var3.method3488(var9[1])});
-                        System.arraycopy(var7, 0, this.doubleValues2, 0, 6);
-                        this.doubleValue = var9[0] == 0 && var9[1] == 0 ? 0.0 : this.doubleValue + 1.0;
-                        this.method3480(var4, var12);
-                        return var12;
+                        double d = entry4.doubleValue4;
+                        Rotation rotation2 = rotation.method3140((float)(ints[0] * d), (float)(ints[1] * d));
+                        this.method3475(doubles2, new int[]{entry4.method3488(ints[0]), entry4.method3488(ints[1])});
+                        System.arraycopy(doubles, 0, this.doubleValues2, 0, 6);
+                        this.doubleValue = ints[0] == 0 && ints[1] == 0 ? 0.0 : this.doubleValue + 1.0;
+                        this.method3480(tickCount, rotation2);
+                        return rotation2;
                      }
                   }
                }
@@ -121,11 +121,11 @@ public final class TokenMotor extends Util22 {
       } else {
          this.reset();
          if (mc.player != null) {
-            mc.player.setYRot(var1.getFloatValue());
-            mc.player.setXRot(var1.getFloatValue2());
+            mc.player.setYRot(rotation.getFloatValue());
+            mc.player.setXRot(rotation.getFloatValue2());
          }
 
-         return var1;
+         return rotation;
       }
    }
 
@@ -133,245 +133,245 @@ public final class TokenMotor extends Util22 {
       return this.method3481() != null;
    }
 
-   public static void method3469(Path var0) throws IOException {
-      long var1 = System.currentTimeMillis();
-      TokenMotor.Entry4 var3 = TokenMotor.Entry4.method3507(var0);
-      var3.method3504();
+   public static void method3469(Path path) throws IOException {
+      long now = System.currentTimeMillis();
+      TokenMotor.Entry4 entry4 = TokenMotor.Entry4.method3507(path);
+      entry4.method3504();
       System.out
          .println(
             "v5 token motor: эталон сошёлся, окно "
-               + var3.intValue
+               + entry4.intValue
                + ", префикс "
-               + var3.intValue2
+               + entry4.intValue2
                + ", словарь "
-               + var3.intValue3
+               + entry4.intValue3
                + ", сенса-константа "
-               + var3.doubleValue4
+               + entry4.doubleValue4
                + ", "
-               + (System.currentTimeMillis() - var1)
+               + (System.currentTimeMillis() - now)
                + " мс"
          );
-      int var4 = var3.intValue;
-      int var5 = var3.intValue2;
-      double[][] var6 = new double[var4][];
-      int[][] var7 = new int[var4][2];
+      int intValue = entry4.intValue;
+      int n = entry4.intValue2;
+      double[][] doubleValues10 = new double[intValue][];
+      int[][] intValues = new int[intValue][2];
 
-      for (int var8 = 0; var8 < var4; var8++) {
-         var6[var8] = var3.entry3.doubleValues10[var8];
-         var7[var8] = var8 < var5 ? (int[])var3.entry3.intValues[var8].clone() : new int[]{var3.intValue4, var3.intValue4};
+      for (int i = 0; i < intValue; i++) {
+         doubleValues10[i] = entry4.entry3.doubleValues10[i];
+         intValues[i] = i < n ? (int[])entry4.entry3.intValues[i].clone() : new int[]{entry4.intValue4, entry4.intValue4};
       }
 
-      Random var18 = new Random(0L);
-      double var9 = -1.0;
-      double var11 = -1.0;
+      Random random = new Random(0L);
+      double d = -1.0;
+      double d2 = -1.0;
 
-      for (int var13 = 0; var13 < 4; var13++) {
-         long var14 = System.nanoTime();
+      for (int i = 0; i < 4; i++) {
+         long nanoTime = System.nanoTime();
 
-         for (int var16 = 0; var16 < var3.intValue12; var16++) {
-            if (var3.flag) {
-               var3.method3500(method3471(var7), var6, var3.intValue11, true, var18);
+         for (int j = 0; j < entry4.intValue12; j++) {
+            if (entry4.flag) {
+               entry4.method3500(method3471(intValues), doubleValues10, entry4.intValue11, true, random);
             } else {
-               var3.method3499(method3471(var7), var6, var3.intValue13, true, true, var18);
+               entry4.method3499(method3471(intValues), doubleValues10, entry4.intValue13, true, true, random);
             }
          }
 
-         double var20 = (System.nanoTime() - var14) / 1000000.0;
-         if (var13 == 0) {
-            var9 = var20;
+         double d3 = (System.nanoTime() - nanoTime) / 1000000.0;
+         if (i == 0) {
+            d = d3;
          }
 
-         var11 = var20;
+         d2 = d3;
       }
 
-      int var19 = var3.flag ? 2 * var3.intValue11 : var3.intValue13;
+      int n2 = entry4.flag ? 2 * entry4.intValue11 : entry4.intValue13;
       System.out
          .println(
             "v5 одно решение ("
-               + var3.intValue12
+               + entry4.intValue12
                + " x "
-               + var19
+               + n2
                + " проходов, режим "
-               + (var3.flag ? "first" : "fill")
+               + (entry4.flag ? "first" : "fill")
                + "): холодное "
-               + String.format(Locale.ROOT, "%.0f", var9)
+               + String.format(Locale.ROOT, "%.0f", d)
                + " мс, прогретое "
-               + String.format(Locale.ROOT, "%.0f", var11)
+               + String.format(Locale.ROOT, "%.0f", d2)
                + " мс при бюджете "
-               + var3.intValue11 * 50
+               + entry4.intValue11 * 50
                + " мс"
          );
    }
 
-   private int[] method3470(TokenMotor.Entry4 var1, double[] var2, double[] var3) {
-      int var4 = var1.intValue;
-      int var5 = var1.intValue2;
-      double[][] var6 = new double[var4][];
-      int[][] var7 = new int[var4][2];
+   private int[] method3470(TokenMotor.Entry4 entry4, double[] doubles, double[] doubleValues) {
+      int intValue = entry4.intValue;
+      int n = entry4.intValue2;
+      double[][] doubleValues10 = new double[intValue][];
+      int[][] intValues = new int[intValue][2];
 
-      for (int var8 = 0; var8 < var5; var8++) {
-         if (var8 < this.intValue2) {
-            int var9 = this.intValue2 == var5 ? var8 : var8 - (var5 - this.intValue2);
-            if (var9 >= 0) {
-               var6[var8] = this.doubleValues[var9];
-               var7[var8] = (int[])this.intValues[var9].clone();
+      for (int i = 0; i < n; i++) {
+         if (i < this.intValue2) {
+            int n2 = this.intValue2 == n ? i : i - (n - this.intValue2);
+            if (n2 >= 0) {
+               doubleValues10[i] = this.doubleValues[n2];
+               intValues[i] = (int[])this.intValues[n2].clone();
                continue;
             }
          }
 
-         var6[var8] = var1.method3491(var2);
-         var7[var8] = new int[]{var1.intValue4, var1.intValue4};
+         doubleValues10[i] = entry4.method3491(doubles);
+         intValues[i] = new int[]{entry4.intValue4, entry4.intValue4};
       }
 
-      var6[var5] = var2;
+      doubleValues10[n] = doubles;
 
-      for (int var15 = var5 + 1; var15 < var4; var15++) {
-         var6[var15] = var1.method3491(var2);
+      for (int i = n + 1; i < intValue; i++) {
+         doubleValues10[i] = entry4.method3491(doubles);
       }
 
-      for (int var16 = var5; var16 < var4; var16++) {
-         var7[var16] = new int[]{var1.intValue4, var1.intValue4};
+      for (int i = n; i < intValue; i++) {
+         intValues[i] = new int[]{entry4.intValue4, entry4.intValue4};
       }
 
-      TokenMotor.Entry var17 = this.method3474(var1.intValue10);
-      TokenMotor.Entry var18 = this.method3474(var1.intValue10 + 1);
-      long[] var10 = new long[var1.intValue12];
+      TokenMotor.Entry entry = this.method3474(entry4.intValue10);
+      TokenMotor.Entry entry2 = this.method3474(entry4.intValue10 + 1);
+      long[] longs = new long[entry4.intValue12];
 
-      for (int var11 = 0; var11 < var1.intValue12; var11++) {
-         var10[var11] = this.random.nextLong();
+      for (int i = 0; i < entry4.intValue12; i++) {
+         longs[i] = this.random.nextLong();
       }
 
-      int[][][] var19 = new int[var1.intValue12][][];
-      double[] var12 = new double[var1.intValue12];
-      IntStream.range(0, var1.intValue12)
+      int[][][] intseses = new int[entry4.intValue12][][];
+      double[] doubles2 = new double[entry4.intValue12];
+      IntStream.range(0, entry4.intValue12)
          .parallel()
          .forEach(
             var10x -> {
-               Random var11x = new Random(var10[var10x]);
-               int[][] var12x = var1.flag
-                  ? var1.method3500(method3471(var7), var6, var1.intValue11, true, var11x)
-                  : var1.method3499(method3471(var7), var6, var1.intValue13, true, true, var11x);
-               int[][] var13x = new int[var1.intValue11][2];
+               Random var11x = new Random(longs[var10x]);
+               int[][] var12x = entry4.flag
+                  ? entry4.method3500(method3471(intValues), doubleValues10, entry4.intValue11, true, var11x)
+                  : entry4.method3499(method3471(intValues), doubleValues10, entry4.intValue13, true, true, var11x);
+               int[][] var13x = new int[entry4.intValue11][2];
                double var14x = 0.0;
                double var16x = 0.0;
 
-               for (int var18x = 0; var18x < var1.intValue11; var18x++) {
-                  var13x[var18x][0] = var1.method3490(var12x[var5 + var18x][0], 0, var11x);
-                  var13x[var18x][1] = var1.method3490(var12x[var5 + var18x][1], 1, var11x);
-                  var14x += var13x[var18x][0] * var1.doubleValue4;
-                  var16x += var13x[var18x][1] * var1.doubleValue4;
+               for (int var18x = 0; var18x < entry4.intValue11; var18x++) {
+                  var13x[var18x][0] = entry4.method3490(var12x[n + var18x][0], 0, var11x);
+                  var13x[var18x][1] = entry4.method3490(var12x[n + var18x][1], 1, var11x);
+                  var14x += var13x[var18x][0] * entry4.doubleValue4;
+                  var16x += var13x[var18x][1] * entry4.doubleValue4;
                }
 
-               var19[var10x] = var13x;
-               var12[var10x] = TokenMotor.Entry4.method3493(var1, var17, var18, var3, var14x, var16x);
+               intseses[var10x] = var13x;
+               doubles2[var10x] = TokenMotor.Entry4.method3493(entry4, entry, entry2, doubleValues, var14x, var16x);
             }
          );
-      int var13 = 0;
+      int n2 = 0;
 
-      for (int var14 = 1; var14 < var1.intValue12; var14++) {
-         if (var12[var14] < var12[var13]) {
-            var13 = var14;
+      for (int i = 1; i < entry4.intValue12; i++) {
+         if (doubles2[i] < doubles2[n2]) {
+            n2 = i;
          }
       }
 
-      int[][] var20 = var19[var13];
-      this.intValues2 = var20;
+      int[][] intValues2 = intseses[n2];
+      this.intValues2 = intValues2;
       this.intValue3 = 1;
-      this.flag2 = var20.length > 1;
-      return var20[0];
+      this.flag2 = intValues2.length > 1;
+      return intValues2[0];
    }
 
-   private static int[][] method3471(int[][] var0) {
-      int[][] var1 = new int[var0.length][];
+   private static int[][] method3471(int[][] intValues) {
+      int[][] intses = new int[intValues.length][];
 
-      for (int var2 = 0; var2 < var0.length; var2++) {
-         var1[var2] = (int[])var0[var2].clone();
+      for (int i = 0; i < intValues.length; i++) {
+         intses[i] = (int[])intValues[i].clone();
       }
 
-      return var1;
+      return intses;
    }
 
-   private TokenMotor.Entry method3472(Rotation var1, LivingEntity var2) {
-      Vec3 var3 = mc.player.getEyePosition();
-      AABB var4 = var2.getBoundingBox();
-      Vec3 var5 = var4.getCenter();
-      double var6 = var5.x - var3.x;
-      double var8 = var5.y - var3.y;
-      double var10 = var5.z - var3.z;
-      if (var6 * var6 + var8 * var8 + var10 * var10 < 1.0E-10) {
+   private TokenMotor.Entry method3472(Rotation rotation, LivingEntity livingEntity) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      AABB boundingBox = livingEntity.getBoundingBox();
+      Vec3 center = boundingBox.getCenter();
+      double x = center.x - eyePosition.x;
+      double d = center.y - eyePosition.y;
+      double x2 = center.z - eyePosition.z;
+      if (x * x + d * d + x2 * x2 < 1.0E-10) {
          return null;
       } else {
-         TokenMotor.Entry var12 = new TokenMotor.Entry();
-         var12.doubleValue = var1.getFloatValue();
-         var12.doubleValue2 = var1.getFloatValue2();
-         var12.doubleValue3 = Math.toDegrees(Math.atan2(-var6, var10));
-         var12.doubleValue4 = Math.toDegrees(Math.atan2(-var8, Math.hypot(var6, var10)));
-         var12.doubleValue9 = Math.sqrt(var6 * var6 + var8 * var8 + var10 * var10);
-         double var13 = Double.MAX_VALUE;
-         double var15 = -Double.MAX_VALUE;
-         double var17 = Double.MAX_VALUE;
-         double var19 = -Double.MAX_VALUE;
+         TokenMotor.Entry entry = new TokenMotor.Entry();
+         entry.doubleValue = rotation.getFloatValue();
+         entry.doubleValue2 = rotation.getFloatValue2();
+         entry.doubleValue3 = Math.toDegrees(Math.atan2(-x, x2));
+         entry.doubleValue4 = Math.toDegrees(Math.atan2(-d, Math.hypot(x, x2)));
+         entry.doubleValue9 = Math.sqrt(x * x + d * d + x2 * x2);
+         double d2 = Double.MAX_VALUE;
+         double d3 = -Double.MAX_VALUE;
+         double d4 = Double.MAX_VALUE;
+         double d5 = -Double.MAX_VALUE;
 
-         for (int var21 = 0; var21 < 8; var21++) {
-            double var22 = ((var21 & 1) == 0 ? var4.minX : var4.maxX) - var3.x;
-            double var24 = ((var21 & 2) == 0 ? var4.minY : var4.maxY) - var3.y;
-            double var26 = ((var21 & 4) == 0 ? var4.minZ : var4.maxZ) - var3.z;
-            double var28 = Math.toDegrees(Math.atan2(-var22, var26));
-            double var30 = Math.toDegrees(Math.atan2(-var24, Math.hypot(var22, var26)));
-            if (Double.isFinite(var28) && Double.isFinite(var30)) {
-               double var32 = Mth.wrapDegrees(var28 - var12.doubleValue3);
-               double var34 = var30 - var12.doubleValue4;
-               var13 = Math.min(var13, var32);
-               var15 = Math.max(var15, var32);
-               var17 = Math.min(var17, var34);
-               var19 = Math.max(var19, var34);
+         for (int i = 0; i < 8; i++) {
+            double x3 = ((i & 1) == 0 ? boundingBox.minX : boundingBox.maxX) - eyePosition.x;
+            double d6 = ((i & 2) == 0 ? boundingBox.minY : boundingBox.maxY) - eyePosition.y;
+            double x4 = ((i & 4) == 0 ? boundingBox.minZ : boundingBox.maxZ) - eyePosition.z;
+            double d7 = Math.toDegrees(Math.atan2(-x3, x4));
+            double d8 = Math.toDegrees(Math.atan2(-d6, Math.hypot(x3, x4)));
+            if (Double.isFinite(d7) && Double.isFinite(d8)) {
+               double d9 = Mth.wrapDegrees(d7 - entry.doubleValue3);
+               double d10 = d8 - entry.doubleValue4;
+               d2 = Math.min(d2, d9);
+               d3 = Math.max(d3, d9);
+               d4 = Math.min(d4, d10);
+               d5 = Math.max(d5, d10);
             }
          }
 
-         if (var13 == Double.MAX_VALUE) {
+         if (d2 == Double.MAX_VALUE) {
             return null;
          } else {
-            var12.doubleValue5 = var13;
-            var12.doubleValue6 = var15;
-            var12.doubleValue7 = var17;
-            var12.doubleValue8 = var19;
-            return var12;
+            entry.doubleValue5 = d2;
+            entry.doubleValue6 = d3;
+            entry.doubleValue7 = d4;
+            entry.doubleValue8 = d5;
+            return entry;
          }
       }
    }
 
-   private void method3473(TokenMotor.Entry var1) {
+   private void method3473(TokenMotor.Entry entry) {
       System.arraycopy(this.entrys, 0, this.entrys, 1, 7);
-      this.entrys[0] = var1;
+      this.entrys[0] = entry;
       if (this.intValue < 8) {
          this.intValue++;
       }
    }
 
-   private TokenMotor.Entry method3474(int var1) {
-      return this.entrys[Math.min(var1, this.intValue - 1)];
+   private TokenMotor.Entry method3474(int n) {
+      return this.entrys[Math.min(n, this.intValue - 1)];
    }
 
-   private void method3475(double[] var1, int[] var2) {
-      int var3 = this.entry4.intValue2;
-      if (this.intValue2 < var3) {
-         this.doubleValues[this.intValue2] = var1;
-         this.intValues[this.intValue2] = var2;
+   private void method3475(double[] doubles, int[] ints) {
+      int n = this.entry4.intValue2;
+      if (this.intValue2 < n) {
+         this.doubleValues[this.intValue2] = doubles;
+         this.intValues[this.intValue2] = ints;
          this.intValue2++;
       } else {
-         System.arraycopy(this.doubleValues, 1, this.doubleValues, 0, var3 - 1);
-         System.arraycopy(this.intValues, 1, this.intValues, 0, var3 - 1);
-         this.doubleValues[var3 - 1] = var1;
-         this.intValues[var3 - 1] = var2;
+         System.arraycopy(this.doubleValues, 1, this.doubleValues, 0, n - 1);
+         System.arraycopy(this.intValues, 1, this.intValues, 0, n - 1);
+         this.doubleValues[n - 1] = doubles;
+         this.intValues[n - 1] = ints;
       }
    }
 
-   private double[] method3476(TokenMotor.Entry4 var1, double[] var2, double[] var3) {
-      int var4 = var1.intValue10;
-      TokenMotor.Entry var5 = this.method3474(var4);
-      TokenMotor.Entry var6 = this.method3474(var4 + 1);
-      TokenMotor.Entry var7 = this.method3474(var4 + 2);
-      double[] var8 = new double[]{
+   private double[] method3476(TokenMotor.Entry4 entry4, double[] doubleValues, double[] doubles) {
+      int n = entry4.intValue10;
+      TokenMotor.Entry entry = this.method3474(n);
+      TokenMotor.Entry entry2 = this.method3474(n + 1);
+      TokenMotor.Entry entry3 = this.method3474(n + 2);
+      double[] doubleValues6 = new double[]{
          mc.options.keyUp.isDown() ? 1.0 : 0.0,
          mc.options.keyDown.isDown() ? 1.0 : 0.0,
          mc.options.keyLeft.isDown() ? 1.0 : 0.0,
@@ -385,32 +385,32 @@ public final class TokenMotor extends Util22 {
          this.flag3 ? 1.0 : 0.0
       };
       return TokenMotor.Entry4.method3492(
-         var1,
-         var2,
-         new double[]{var5.doubleValue3, var5.doubleValue4},
-         new double[]{var6.doubleValue3, var6.doubleValue4},
-         new double[]{var7.doubleValue3, var7.doubleValue4},
-         new double[]{var5.doubleValue5, var5.doubleValue7, var5.doubleValue6, var5.doubleValue8},
-         var5.doubleValue9,
-         var6.doubleValue9,
-         var8,
+         entry4,
+         doubleValues,
+         new double[]{entry.doubleValue3, entry.doubleValue4},
+         new double[]{entry2.doubleValue3, entry2.doubleValue4},
+         new double[]{entry3.doubleValue3, entry3.doubleValue4},
+         new double[]{entry.doubleValue5, entry.doubleValue7, entry.doubleValue6, entry.doubleValue8},
+         entry.doubleValue9,
+         entry2.doubleValue9,
+         doubleValues6,
          this.doubleValue,
          this.doubleValues2,
-         var3
+         doubles
       );
    }
 
    private void method3477() {
-      float var1 = mc.player.getAttackStrengthScale(0.0F);
-      this.flag3 = var1 < this.floatValue - 1.0E-4F;
-      this.floatValue = var1;
+      float attackStrengthScale = mc.player.getAttackStrengthScale(0.0F);
+      this.flag3 = attackStrengthScale < this.floatValue - 1.0E-4F;
+      this.floatValue = attackStrengthScale;
    }
 
-   private void method3478(int var1) {
-      TokenMotor.Entry4 var2 = this.entry4;
-      int var3 = var2 == null ? 16 : var2.intValue2;
-      this.doubleValues = new double[var3][];
-      this.intValues = new int[var3][];
+   private void method3478(int id) {
+      TokenMotor.Entry4 entry4 = this.entry4;
+      int n = entry4 == null ? 16 : entry4.intValue2;
+      this.doubleValues = new double[n][];
+      this.intValues = new int[n][];
       this.intValue2 = 0;
       Arrays.fill(this.entrys, null);
       this.intValue = 0;
@@ -421,21 +421,21 @@ public final class TokenMotor extends Util22 {
       this.flag2 = false;
       this.floatValue = 1.0F;
       this.flag3 = false;
-      this.intValue4 = var1;
+      this.intValue4 = id;
       this.intValue5 = Integer.MIN_VALUE;
       this.intValue6 = Integer.MIN_VALUE;
       this.rotation = null;
    }
 
-   private void method3479(int var1) {
-      this.intValue4 = var1;
+   private void method3479(int id) {
+      this.intValue4 = id;
       this.intValue6 = Integer.MIN_VALUE;
       this.rotation = null;
    }
 
-   private void method3480(int var1, Rotation var2) {
-      this.intValue6 = var1;
-      this.rotation = var2;
+   private void method3480(int tickCount, Rotation rotation) {
+      this.intValue6 = tickCount;
+      this.rotation = rotation;
    }
 
    public void reset() {
@@ -449,11 +449,11 @@ public final class TokenMotor extends Util22 {
          this.longValue = System.currentTimeMillis();
          this.completableFuture = CompletableFuture.supplyAsync(() -> {
             try {
-               TokenMotor.Entry4 var0 = method3482();
-               var0.method3504();
-               return var0;
-            } catch (IOException var1) {
-               throw new CompletionException(var1);
+               TokenMotor.Entry4 entry4 = method3482();
+               entry4.method3504();
+               return entry4;
+            } catch (IOException e) {
+               throw new CompletionException(e);
             }
          });
          return null;
@@ -485,11 +485,11 @@ public final class TokenMotor extends Util22 {
                      + (System.currentTimeMillis() - this.longValue)
                      + " мс"
                );
-         } catch (Exception var3) {
-            Object var2 = var3 instanceof CompletionException && var3.getCause() != null ? var3.getCause() : var3;
+         } catch (Exception e) {
+            Object cause = e instanceof CompletionException && e.getCause() != null ? e.getCause() : e;
             this.entry4 = null;
             this.flag = true;
-            System.out.println("v5 не смог загрузить token_motor.json: " + var2);
+            System.out.println("v5 не смог загрузить token_motor.json: " + cause);
          }
 
          this.completableFuture = null;
@@ -498,42 +498,42 @@ public final class TokenMotor extends Util22 {
    }
 
    private static TokenMotor.Entry4 method3482() throws IOException {
-      for (Path var1 : items) {
-         if (Files.isRegularFile(var1)) {
-            TokenMotor.Entry4 var2 = TokenMotor.Entry4.method3507(var1);
-            System.out.println("v5 token motor: " + var1.toAbsolutePath());
-            return var2;
+      for (Path path : items) {
+         if (Files.isRegularFile(path)) {
+            TokenMotor.Entry4 entry4 = TokenMotor.Entry4.method3507(path);
+            System.out.println("v5 token motor: " + path.toAbsolutePath());
+            return entry4;
          }
       }
 
-      InputStream var6 = TokenMotor.class.getClassLoader().getResourceAsStream("models/token_motor.json");
-      if (var6 == null) {
+      InputStream resourceAsStream = TokenMotor.class.getClassLoader().getResourceAsStream("models/token_motor.json");
+      if (resourceAsStream == null) {
          throw new IOException("token_motor.json не найден ни рядом с клиентом, ни в jar");
       } else {
-         TokenMotor.Entry4 var8;
-         try (InputStreamReader var7 = new InputStreamReader(var6, StandardCharsets.UTF_8)) {
-            var8 = TokenMotor.Entry4.method3508(var7);
+         TokenMotor.Entry4 entry4;
+         try (InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8)) {
+            entry4 = TokenMotor.Entry4.method3508(inputStreamReader);
          }
 
-         return var8;
+         return entry4;
       }
    }
 
-   private static double method3483(double var0) {
-      return ((var0 + 180.0) % 360.0 + 360.0) % 360.0 - 180.0;
+   private static double method3483(double d) {
+      return ((d + 180.0) % 360.0 + 360.0) % 360.0 - 180.0;
    }
 
-   private static double asinh(double var0) {
-      return var0 >= 0.0 ? Math.log(var0 + Math.sqrt(var0 * var0 + 1.0)) : -Math.log(-var0 + Math.sqrt(var0 * var0 + 1.0));
+   private static double asinh(double x) {
+      return x >= 0.0 ? Math.log(x + Math.sqrt(x * x + 1.0)) : -Math.log(-x + Math.sqrt(x * x + 1.0));
    }
 
-   private static double method3484(double var0, double var2, double var4) {
-      return Math.max(var2, Math.min(var4, var0));
+   private static double method3484(double d, double d2, double d3) {
+      return Math.max(d2, Math.min(d3, d));
    }
 
-   private static boolean method3485(double[] var0) {
-      for (double var4 : var0) {
-         if (!Double.isFinite(var4)) {
+   private static boolean method3485(double[] doubles) {
+      for (double d : doubles) {
+         if (!Double.isFinite(d)) {
             return false;
          }
       }
@@ -541,51 +541,51 @@ public final class TokenMotor extends Util22 {
       return true;
    }
 
-   private static double method3486(double var0) {
-      return 0.5 * var0 * (1.0 + method3487(var0 / Math.sqrt(2.0)));
+   private static double method3486(double d) {
+      return 0.5 * d * (1.0 + method3487(d / Math.sqrt(2.0)));
    }
 
-   private static double method3487(double var0) {
-      double var2 = Math.abs(var0);
-      double var4;
-      if (var2 < 2.5) {
-         double var6 = var2;
-         double var8 = var2;
-         double var10 = var2 * var2;
+   private static double method3487(double d) {
+      double d2 = Math.abs(d);
+      double d3;
+      if (d2 < 2.5) {
+         double d4 = d2;
+         double d5 = d2;
+         double d6 = d2 * d2;
 
-         for (int var12 = 1; var12 < 200; var12++) {
-            var6 *= -var10 / var12;
-            double var13 = var6 / (2 * var12 + 1);
-            var8 += var13;
-            if (Math.abs(var13) < 1.0E-17 * Math.abs(var8)) {
+         for (int i = 1; i < 200; i++) {
+            d4 *= -d6 / i;
+            double d7 = d4 / (2 * i + 1);
+            d5 += d7;
+            if (Math.abs(d7) < 1.0E-17 * Math.abs(d5)) {
                break;
             }
          }
 
-         var4 = 2.0 / Math.sqrt(Math.PI) * var8;
+         d3 = 2.0 / Math.sqrt(Math.PI) * d5;
       } else {
-         double var19 = var2 * var2;
-         double var20 = var2;
-         double var21 = var2;
-         double var22 = 0.0;
+         double d4 = d2 * d2;
+         double d5 = d2;
+         double d6 = d2;
+         double d7 = 0.0;
 
-         for (int var14 = 1; var14 < 400; var14++) {
-            double var15 = var14 / 2.0;
-            double var23 = var2 + var15 * var22;
-            var22 = var23 == 0.0 ? 1.0E-300 : 1.0 / var23;
-            var21 = var2 + var15 / var21;
-            double var17 = var21 * var22;
-            var20 *= var17;
-            if (Math.abs(var17 - 1.0) < 1.0E-16) {
+         for (int i = 1; i < 400; i++) {
+            double d8 = i / 2.0;
+            double d9 = d2 + d8 * d7;
+            d7 = d9 == 0.0 ? 1.0E-300 : 1.0 / d9;
+            d6 = d2 + d8 / d6;
+            double d10 = d6 * d7;
+            d5 *= d10;
+            if (Math.abs(d10 - 1.0) < 1.0E-16) {
                break;
             }
          }
 
-         double var24 = Math.exp(-var19) / Math.sqrt(Math.PI) / var20;
-         var4 = 1.0 - var24;
+         double d8 = Math.exp(-d4) / Math.sqrt(Math.PI) / d5;
+         d3 = 1.0 - d8;
       }
 
-      return var0 < 0.0 ? -var4 : var4;
+      return d < 0.0 ? -d3 : d3;
    }
 
    private static final class Entry {
@@ -679,959 +679,959 @@ public final class TokenMotor extends Util22 {
       public TokenMotor.Entry3 entry3;
       public boolean[][] flags;
 
-      public int method3488(int var1) {
-         int var2 = Math.abs(var1);
-         if (var2 <= this.intValue14) {
-            return var1 + this.intValue14;
+      public int method3488(int n) {
+         int n2 = Math.abs(n);
+         if (n2 <= this.intValue14) {
+            return n + this.intValue14;
          } else {
-            int var3 = 0;
+            int n3 = 0;
 
-            while (var3 + 1 < this.doubleValues.length && this.doubleValues[var3 + 1] <= var2) {
-               var3++;
+            while (n3 + 1 < this.doubleValues.length && this.doubleValues[n3 + 1] <= n2) {
+               n3++;
             }
 
-            var3 = Math.max(0, Math.min(var3, this.intValue16 - 1));
-            return var1 > 0 ? this.intValue15 + var3 : this.intValue15 + this.intValue16 + var3;
+            n3 = Math.max(0, Math.min(n3, this.intValue16 - 1));
+            return n > 0 ? this.intValue15 + n3 : this.intValue15 + this.intValue16 + n3;
          }
       }
 
-      private double[] method3489(double[] var1, int var2) {
-         double[] var3 = (double[])var1.clone();
-         boolean[] var4 = this.flags[var2];
+      private double[] method3489(double[] doubles, int n) {
+         double[] doubles2 = (double[])doubles.clone();
+         boolean[] flag = this.flags[n];
 
-         for (int var5 = 0; var5 < var3.length; var5++) {
-            if (!var4[var5]) {
-               var3[var5] = Double.NEGATIVE_INFINITY;
+         for (int i = 0; i < doubles2.length; i++) {
+            if (!flag[i]) {
+               doubles2[i] = Double.NEGATIVE_INFINITY;
             }
          }
 
-         return var3;
+         return doubles2;
       }
 
-      public int method3490(int var1, int var2, Random var3) {
-         if (var1 < this.intValue15) {
-            return var1 - this.intValue14;
+      public int method3490(int n, int n2, Random random) {
+         if (n < this.intValue15) {
+            return n - this.intValue14;
          } else {
-            int[] var4 = this.itemss[var2].get(var1);
-            if (var4 != null && var4.length > 0) {
-               return var3 == null ? var4[0] : var4[var3.nextInt(var4.length)];
+            int[] ints = this.itemss[n2].get(n);
+            if (ints != null && ints.length > 0) {
+               return random == null ? ints[0] : ints[random.nextInt(ints.length)];
             } else {
-               int var5 = var1 - this.intValue15;
-               byte var6 = 1;
-               if (var5 >= this.intValue16) {
-                  var5 -= this.intValue16;
-                  var6 = -1;
+               int n3 = n - this.intValue15;
+               byte b = 1;
+               if (n3 >= this.intValue16) {
+                  n3 -= this.intValue16;
+                  b = -1;
                }
 
-               return var6 * (int)Math.round(Math.sqrt(this.doubleValues[var5] * this.doubleValues[var5 + 1]));
+               return b * (int)Math.round(Math.sqrt(this.doubleValues[n3] * this.doubleValues[n3 + 1]));
             }
          }
       }
 
-      public double[] method3491(double[] var1) {
-         double[] var2 = new double[this.intValue7];
-         System.arraycopy(var1, 0, var2, 0, this.intValue8);
-         return var2;
+      public double[] method3491(double[] doubles) {
+         double[] doubles2 = new double[this.intValue7];
+         System.arraycopy(doubles, 0, doubles2, 0, this.intValue8);
+         return doubles2;
       }
 
       public static double[] method3492(
-         TokenMotor.Entry4 var0,
-         double[] var1,
-         double[] var2,
-         double[] var3,
-         double[] var4,
-         double[] var5,
-         double var6,
-         double var8,
-         double[] var10,
-         double var11,
-         double[] var13,
-         double[] var14
+         TokenMotor.Entry4 entry4,
+         double[] doubleValues,
+         double[] doubleValues2,
+         double[] doubleValues3,
+         double[] doubleValues4,
+         double[] doubleValues5,
+         double doubleValue,
+         double d,
+         double[] doubleValues6,
+         double doubleValue2,
+         double[] doubles,
+         double[] doubles2
       ) {
-         double var15 = TokenMotor.method3483(var2[0] - var3[0]);
-         double var17 = var2[1] - var3[1];
-         var14[0] = var0.doubleValue * var15 + (1.0 - var0.doubleValue) * var13[0];
-         var14[1] = var0.doubleValue * var17 + (1.0 - var0.doubleValue) * var13[1];
-         var14[2] = var0.doubleValue2 * var15 + (1.0 - var0.doubleValue2) * var13[2];
-         var14[3] = var0.doubleValue2 * var17 + (1.0 - var0.doubleValue2) * var13[3];
-         var14[4] = var0.doubleValue3 * Math.abs(var15) + (1.0 - var0.doubleValue3) * var13[4];
-         var14[5] = var0.doubleValue3 * Math.abs(var17) + (1.0 - var0.doubleValue3) * var13[5];
-         double var19 = TokenMotor.method3483(var3[0] - var4[0]);
-         double var21 = var3[1] - var4[1];
-         double var23 = 0.5 * (var5[2] - var5[0]);
-         double var25 = 0.5 * (var5[3] - var5[1]);
-         double[] var27 = new double[var0.intValue7];
-         int var28 = 0;
-         var27[var28++] = TokenMotor.asinh(var15);
-         var27[var28++] = TokenMotor.asinh(var17);
-         var27[var28++] = TokenMotor.asinh(var15 - var19);
-         var27[var28++] = TokenMotor.asinh(var17 - var21);
-         var27[var28++] = TokenMotor.asinh(var23);
-         var27[var28++] = TokenMotor.asinh(var25);
-         var27[var28++] = Math.log1p(var6);
-         var27[var28++] = TokenMotor.method3484(var6 - var8, -2.0, 2.0);
-         var27[var28++] = Math.log(var0.doubleValue4);
+         double x = TokenMotor.method3483(doubleValues2[0] - doubleValues3[0]);
+         double x2 = doubleValues2[1] - doubleValues3[1];
+         doubles2[0] = entry4.doubleValue * x + (1.0 - entry4.doubleValue) * doubles[0];
+         doubles2[1] = entry4.doubleValue * x2 + (1.0 - entry4.doubleValue) * doubles[1];
+         doubles2[2] = entry4.doubleValue2 * x + (1.0 - entry4.doubleValue2) * doubles[2];
+         doubles2[3] = entry4.doubleValue2 * x2 + (1.0 - entry4.doubleValue2) * doubles[3];
+         doubles2[4] = entry4.doubleValue3 * Math.abs(x) + (1.0 - entry4.doubleValue3) * doubles[4];
+         doubles2[5] = entry4.doubleValue3 * Math.abs(x2) + (1.0 - entry4.doubleValue3) * doubles[5];
+         double d2 = TokenMotor.method3483(doubleValues3[0] - doubleValues4[0]);
+         double d3 = doubleValues3[1] - doubleValues4[1];
+         double x3 = 0.5 * (doubleValues5[2] - doubleValues5[0]);
+         double x4 = 0.5 * (doubleValues5[3] - doubleValues5[1]);
+         double[] doubles3 = new double[entry4.intValue7];
+         int n = 0;
+         doubles3[n++] = TokenMotor.asinh(x);
+         doubles3[n++] = TokenMotor.asinh(x2);
+         doubles3[n++] = TokenMotor.asinh(x - d2);
+         doubles3[n++] = TokenMotor.asinh(x2 - d3);
+         doubles3[n++] = TokenMotor.asinh(x3);
+         doubles3[n++] = TokenMotor.asinh(x4);
+         doubles3[n++] = Math.log1p(doubleValue);
+         doubles3[n++] = TokenMotor.method3484(doubleValue - d, -2.0, 2.0);
+         doubles3[n++] = Math.log(entry4.doubleValue4);
 
-         for (double var32 : var10) {
-            var27[var28++] = var32;
+         for (double d4 : doubleValues6) {
+            doubles3[n++] = d4;
          }
 
-         for (int var89 = 0; var89 < 6; var89++) {
-            var27[var28++] = TokenMotor.asinh(var14[var89]);
+         for (int i = 0; i < 6; i++) {
+            doubles3[n++] = TokenMotor.asinh(doubles2[i]);
          }
 
-         double var90 = TokenMotor.method3483(var2[0] - var1[0]);
-         double var91 = var2[1] - var1[1];
-         double var33 = var90 + (var0.intValue10 + 1) * var15;
-         double var35 = var91 + (var0.intValue10 + 1) * var17;
-         double var37 = Math.max(Math.hypot(var90, var91), 1.0E-6);
-         double var39 = 0.5 * (var5[0] + var5[2]);
-         double var41 = 0.5 * (var5[1] + var5[3]);
-         double var43 = Math.max(var23, 0.001);
-         double var45 = Math.max(var25, 0.001);
-         double var47 = TokenMotor.method3484((-var90 - var39) / var43, -4.0, 4.0);
-         double var49 = TokenMotor.method3484((-var91 - var41) / var45, -4.0, 4.0);
-         double var51 = Math.max(Math.abs(var47), Math.abs(var49));
-         double var53 = 1.0 / (1.0 + Math.exp(-6.0 * (1.0 - var51)));
-         double var55 = -var15 / var43;
-         double var57 = -var17 / var45;
-         double var59 = Math.max(1.0 - var47 * (var55 >= 0.0 ? 1.0 : -1.0), 0.0);
-         double var61 = Math.max(1.0 - var49 * (var57 >= 0.0 ? 1.0 : -1.0), 0.0);
-         double var63 = Math.min(var59 / Math.max(Math.abs(var55), 1.0E-4), var61 / Math.max(Math.abs(var57), 1.0E-4));
-         var63 = TokenMotor.method3484(var63, 0.0, 400.0);
-         var27[var28++] = TokenMotor.asinh(var90);
-         var27[var28++] = TokenMotor.asinh(var91);
-         var27[var28++] = TokenMotor.asinh(var33);
-         var27[var28++] = TokenMotor.asinh(var35);
-         var27[var28++] = TokenMotor.asinh(var37);
-         var27[var28++] = var90 / var37;
-         var27[var28++] = var91 / var37;
-         var27[var28++] = var47;
-         var27[var28++] = var49;
-         var27[var28++] = var53;
-         var27[var28++] = Math.tanh(var63 / 8.0);
-         var27[var28++] = 1.0 / (1.0 + var63);
-         var27[var28++] = var1[1] / 90.0;
-         var27[var28++] = (90.0 - Math.abs(var1[1])) / 90.0;
-         var27[var28++] = Math.tanh(var11 / 32.0);
-         var27[var28] = 1.0;
-         return var27;
+         double x5 = TokenMotor.method3483(doubleValues2[0] - doubleValues[0]);
+         double y = doubleValues2[1] - doubleValues[1];
+         double x6 = x5 + (entry4.intValue10 + 1) * x;
+         double x7 = y + (entry4.intValue10 + 1) * x2;
+         double x8 = Math.max(Math.hypot(x5, y), 1.0E-6);
+         double d4 = 0.5 * (doubleValues5[0] + doubleValues5[2]);
+         double d5 = 0.5 * (doubleValues5[1] + doubleValues5[3]);
+         double d6 = Math.max(x3, 0.001);
+         double d7 = Math.max(x4, 0.001);
+         double d8 = TokenMotor.method3484((-x5 - d4) / d6, -4.0, 4.0);
+         double d9 = TokenMotor.method3484((-y - d5) / d7, -4.0, 4.0);
+         double d10 = Math.max(Math.abs(d8), Math.abs(d9));
+         double d11 = 1.0 / (1.0 + Math.exp(-6.0 * (1.0 - d10)));
+         double d12 = -x / d6;
+         double d13 = -x2 / d7;
+         double d14 = Math.max(1.0 - d8 * (d12 >= 0.0 ? 1.0 : -1.0), 0.0);
+         double d15 = Math.max(1.0 - d9 * (d13 >= 0.0 ? 1.0 : -1.0), 0.0);
+         double d16 = Math.min(d14 / Math.max(Math.abs(d12), 1.0E-4), d15 / Math.max(Math.abs(d13), 1.0E-4));
+         d16 = TokenMotor.method3484(d16, 0.0, 400.0);
+         doubles3[n++] = TokenMotor.asinh(x5);
+         doubles3[n++] = TokenMotor.asinh(y);
+         doubles3[n++] = TokenMotor.asinh(x6);
+         doubles3[n++] = TokenMotor.asinh(x7);
+         doubles3[n++] = TokenMotor.asinh(x8);
+         doubles3[n++] = x5 / x8;
+         doubles3[n++] = y / x8;
+         doubles3[n++] = d8;
+         doubles3[n++] = d9;
+         doubles3[n++] = d11;
+         doubles3[n++] = Math.tanh(d16 / 8.0);
+         doubles3[n++] = 1.0 / (1.0 + d16);
+         doubles3[n++] = doubleValues[1] / 90.0;
+         doubles3[n++] = (90.0 - Math.abs(doubleValues[1])) / 90.0;
+         doubles3[n++] = Math.tanh(doubleValue2 / 32.0);
+         doubles3[n] = 1.0;
+         return doubles3;
       }
 
-      public static double method3493(TokenMotor.Entry4 var0, TokenMotor.Entry var1, TokenMotor.Entry var2, double[] var3, double var4, double var6) {
+      public static double method3493(TokenMotor.Entry4 entry4, TokenMotor.Entry entry, TokenMotor.Entry entry2, double[] doubleValues, double d, double d2) {
          return method3494(
-            var0,
-            new double[]{var1.doubleValue3, var1.doubleValue4},
-            new double[]{var2.doubleValue3, var2.doubleValue4},
-            new double[]{var1.doubleValue5, var1.doubleValue7, var1.doubleValue6, var1.doubleValue8},
-            var3,
-            var4,
-            var6
+            entry4,
+            new double[]{entry.doubleValue3, entry.doubleValue4},
+            new double[]{entry2.doubleValue3, entry2.doubleValue4},
+            new double[]{entry.doubleValue5, entry.doubleValue7, entry.doubleValue6, entry.doubleValue8},
+            doubleValues,
+            d,
+            d2
          );
       }
 
-      public static double method3494(TokenMotor.Entry4 var0, double[] var1, double[] var2, double[] var3, double[] var4, double var5, double var7) {
-         double var9 = TokenMotor.method3483(var1[0] - var2[0]);
-         double var11 = var1[1] - var2[1];
-         int var13 = var0.intValue11 - 1 + var0.intValue10;
-         double var14 = TokenMotor.method3483(var1[0] + var13 * var9 - (var4[0] + var5));
-         double var16 = var1[1] + var13 * var11 - TokenMotor.method3484(var4[1] + var7, -90.0, 90.0);
-         double var18 = 0.5 * (var3[0] + var3[2]);
-         double var20 = 0.5 * (var3[1] + var3[3]);
-         double var22 = Math.max(0.5 * (var3[2] - var3[0]), 0.001);
-         double var24 = Math.max(0.5 * (var3[3] - var3[1]), 0.001);
-         return Math.max(Math.abs((-var14 - var18) / var22), Math.abs((-var16 - var20) / var24));
+      public static double method3494(TokenMotor.Entry4 entry4, double[] doubleValues2, double[] doubleValues3, double[] doubleValues5, double[] doubleValues, double d, double d2) {
+         double d3 = TokenMotor.method3483(doubleValues2[0] - doubleValues3[0]);
+         double d4 = doubleValues2[1] - doubleValues3[1];
+         int n = entry4.intValue11 - 1 + entry4.intValue10;
+         double d5 = TokenMotor.method3483(doubleValues2[0] + n * d3 - (doubleValues[0] + d));
+         double d6 = doubleValues2[1] + n * d4 - TokenMotor.method3484(doubleValues[1] + d2, -90.0, 90.0);
+         double d7 = 0.5 * (doubleValues5[0] + doubleValues5[2]);
+         double d8 = 0.5 * (doubleValues5[1] + doubleValues5[3]);
+         double d9 = Math.max(0.5 * (doubleValues5[2] - doubleValues5[0]), 0.001);
+         double d10 = Math.max(0.5 * (doubleValues5[3] - doubleValues5[1]), 0.001);
+         return Math.max(Math.abs((-d5 - d7) / d9), Math.abs((-d6 - d8) / d10));
       }
 
-      public double[][] method3495(int[][] var1, double[][] var2) {
-         int var3 = var1.length;
-         int var4 = var3 * 2;
-         int var5 = this.intValue5;
-         double[][] var6 = new double[var4][var5];
+      public double[][] method3495(int[][] intValues, double[][] doubleValues10) {
+         int length = intValues.length;
+         int endExclusive = length * 2;
+         int n = this.intValue5;
+         double[][] doubleses = new double[endExclusive][n];
 
-         for (int var7 = 0; var7 < var3; var7++) {
-            double[] var8 = this.method3496(var2[var7]);
+         for (int i = 0; i < length; i++) {
+            double[] doubles = this.method3496(doubleValues10[i]);
 
-            for (int var9 = 0; var9 < 2; var9++) {
-               double[] var10 = var6[var7 * 2 + var9];
-               double[] var11 = this.doubleValues2[var1[var7][var9]];
-               double[] var12 = this.doubleValues3[var7];
-               double[] var13 = this.doubleValues4[var9];
+            for (int j = 0; j < 2; j++) {
+               double[] doubles2 = doubleses[i * 2 + j];
+               double[] doubles3 = this.doubleValues2[intValues[i][j]];
+               double[] doubles4 = this.doubleValues3[i];
+               double[] doubles5 = this.doubleValues4[j];
 
-               for (int var14 = 0; var14 < var5; var14++) {
-                  var10[var14] = var11[var14] + var12[var14] + var13[var14] + var8[var14];
+               for (int k = 0; k < n; k++) {
+                  doubles2[k] = doubles3[k] + doubles4[k] + doubles5[k] + doubles[k];
                }
             }
          }
 
-         int var18 = var5 / this.intValue6;
-         double var19 = 1.0 / Math.sqrt(var18);
+         int n2 = n / this.intValue6;
+         double d = 1.0 / Math.sqrt(n2);
 
-         for (TokenMotor.Entry2 var24 : this.entry2s) {
-            double[][] var25 = new double[var4][var5];
-            double[][] var15 = new double[var4][var5];
-            double[][] var16 = new double[var4][var5];
-            IntStream.range(0, var4).parallel().forEach(var6x -> {
-               double[] var7x = method3498(var24.doubleValues, method3497(var6[var6x], var24.doubleValues9, var24.doubleValues10), var24.doubleValues2);
-               System.arraycopy(var7x, 0, var25[var6x], 0, var5);
-               System.arraycopy(var7x, var5, var15[var6x], 0, var5);
-               System.arraycopy(var7x, 2 * var5, var16[var6x], 0, var5);
+         for (TokenMotor.Entry2 entry2 : this.entry2s) {
+            double[][] doubleses2 = new double[endExclusive][n];
+            double[][] doubleses3 = new double[endExclusive][n];
+            double[][] doubleses4 = new double[endExclusive][n];
+            IntStream.range(0, endExclusive).parallel().forEach(var6x -> {
+               double[] var7x = method3498(entry2.doubleValues, method3497(doubleses[var6x], entry2.doubleValues9, entry2.doubleValues10), entry2.doubleValues2);
+               System.arraycopy(var7x, 0, doubleses2[var6x], 0, n);
+               System.arraycopy(var7x, n, doubleses3[var6x], 0, n);
+               System.arraycopy(var7x, 2 * n, doubleses4[var6x], 0, n);
             });
-            double[][] var17 = new double[var4][var5];
-            IntStream.range(0, this.intValue6 * var4).parallel().forEach(var8x -> {
-               int var9x = var8x / var4;
-               int var10x = var8x % var4;
-               int var11x = var9x * var18;
-               double[] var12x = new double[var4];
+            double[][] doubleses5 = new double[endExclusive][n];
+            IntStream.range(0, this.intValue6 * endExclusive).parallel().forEach(var8x -> {
+               int var9x = var8x / endExclusive;
+               int var10x = var8x % endExclusive;
+               int var11x = var9x * n2;
+               double[] var12x = new double[endExclusive];
                double var13x = Double.NEGATIVE_INFINITY;
 
-               for (int var15x = 0; var15x < var4; var15x++) {
+               for (int var15x = 0; var15x < endExclusive; var15x++) {
                   double var16x = 0.0;
 
-                  for (int var18x = 0; var18x < var18; var18x++) {
-                     var16x += var25[var10x][var11x + var18x] * var15[var15x][var11x + var18x];
+                  for (int var18x = 0; var18x < n2; var18x++) {
+                     var16x += doubleses2[var10x][var11x + var18x] * doubleses3[var15x][var11x + var18x];
                   }
 
-                  var12x[var15x] = var16x * var19;
+                  var12x[var15x] = var16x * d;
                   var13x = Math.max(var13x, var12x[var15x]);
                }
 
                double var21x = 0.0;
 
-               for (int var17x = 0; var17x < var4; var17x++) {
+               for (int var17x = 0; var17x < endExclusive; var17x++) {
                   var12x[var17x] = Math.exp(var12x[var17x] - var13x);
                   var21x += var12x[var17x];
                }
 
-               for (int var22 = 0; var22 < var18; var22++) {
-                  double var23 = 0.0;
+               for (int i = 0; i < n2; i++) {
+                  double d2 = 0.0;
 
-                  for (int var20 = 0; var20 < var4; var20++) {
-                     var23 += var12x[var20] * var16[var20][var11x + var22];
+                  for (int j = 0; j < endExclusive; j++) {
+                     d2 += var12x[j] * doubleses4[j][var11x + i];
                   }
 
-                  var17[var10x][var11x + var22] = var23 / var21x;
+                  doubleses5[var10x][var11x + i] = d2 / var21x;
                }
             });
-            IntStream.range(0, var4).parallel().forEach(var4x -> {
-               double[] var5x = method3498(var24.doubleValues3, var17[var4x], var24.doubleValues4);
+            IntStream.range(0, endExclusive).parallel().forEach(var4x -> {
+               double[] var5x = method3498(entry2.doubleValues3, doubleses5[var4x], entry2.doubleValues4);
 
-               for (int var6x = 0; var6x < var5; var6x++) {
-                  var6[var4x][var6x] = var6[var4x][var6x] + var5x[var6x];
+               for (int var6x = 0; var6x < n; var6x++) {
+                  doubleses[var4x][var6x] = doubleses[var4x][var6x] + var5x[var6x];
                }
 
-               double[] var9x = method3498(var24.doubleValues5, method3497(var6[var4x], var24.doubleValues11, var24.doubleValues12), var24.doubleValues6);
+               double[] var9x = method3498(entry2.doubleValues5, method3497(doubleses[var4x], entry2.doubleValues11, entry2.doubleValues12), entry2.doubleValues6);
 
                for (int var7x = 0; var7x < var9x.length; var7x++) {
                   var9x[var7x] = TokenMotor.method3486(var9x[var7x]);
                }
 
-               double[] var10x = method3498(var24.doubleValues7, var9x, var24.doubleValues8);
+               double[] var10x = method3498(entry2.doubleValues7, var9x, entry2.doubleValues8);
 
-               for (int var8x = 0; var8x < var5; var8x++) {
-                  var6[var4x][var8x] = var6[var4x][var8x] + var10x[var8x];
+               for (int var8x = 0; var8x < n; var8x++) {
+                  doubleses[var4x][var8x] = doubleses[var4x][var8x] + var10x[var8x];
                }
             });
          }
 
-         double[][] var21 = new double[var4][];
-         IntStream.range(0, var4)
+         double[][] doubleses2 = new double[endExclusive][];
+         IntStream.range(0, endExclusive)
             .parallel()
             .forEach(
-               var3x -> var21[var3x] = method3498(this.doubleValues11, method3497(var6[var3x], this.doubleValues9, this.doubleValues10), this.doubleValues12)
+               var3x -> doubleses2[var3x] = method3498(this.doubleValues11, method3497(doubleses[var3x], this.doubleValues9, this.doubleValues10), this.doubleValues12)
             );
-         return var21;
+         return doubleses2;
       }
 
-      private double[] method3496(double[] var1) {
-         double[] var2 = method3498(this.doubleValues5, var1, this.doubleValues6);
+      private double[] method3496(double[] doubles) {
+         double[] doubles2 = method3498(this.doubleValues5, doubles, this.doubleValues6);
 
-         for (int var3 = 0; var3 < var2.length; var3++) {
-            var2[var3] /= 1.0 + Math.exp(-var2[var3]);
+         for (int i = 0; i < doubles2.length; i++) {
+            doubles2[i] /= 1.0 + Math.exp(-doubles2[i]);
          }
 
-         return method3498(this.doubleValues7, var2, this.doubleValues8);
+         return method3498(this.doubleValues7, doubles2, this.doubleValues8);
       }
 
-      private static double[] method3497(double[] var0, double[] var1, double[] var2) {
-         double var3 = 0.0;
+      private static double[] method3497(double[] doubles, double[] doubleValues9, double[] doubleValues10) {
+         double d = 0.0;
 
-         for (double var8 : var0) {
-            var3 += var8;
+         for (double d2 : doubles) {
+            d += d2;
          }
 
-         var3 /= var0.length;
-         double var13 = 0.0;
+         d /= doubles.length;
+         double d2 = 0.0;
 
-         for (double var10 : var0) {
-            var13 += (var10 - var3) * (var10 - var3);
+         for (double d3 : doubles) {
+            d2 += (d3 - d) * (d3 - d);
          }
 
-         var13 /= var0.length;
-         double var16 = 1.0 / Math.sqrt(var13 + 1.0E-5);
-         double[] var18 = new double[var0.length];
+         d2 /= doubles.length;
+         double d3 = 1.0 / Math.sqrt(d2 + 1.0E-5);
+         double[] doubles2 = new double[doubles.length];
 
-         for (int var19 = 0; var19 < var0.length; var19++) {
-            var18[var19] = (var0[var19] - var3) * var16 * var1[var19] + var2[var19];
+         for (int i = 0; i < doubles.length; i++) {
+            doubles2[i] = (doubles[i] - d) * d3 * doubleValues9[i] + doubleValues10[i];
          }
 
-         return var18;
+         return doubles2;
       }
 
-      private static double[] method3498(double[][] var0, double[] var1, double[] var2) {
-         double[] var3 = new double[var0.length];
+      private static double[] method3498(double[][] doubleValues5, double[] doubles, double[] doubleValues6) {
+         double[] doubles2 = new double[doubleValues5.length];
 
-         for (int var4 = 0; var4 < var0.length; var4++) {
-            double var5 = var2[var4];
-            double[] var7 = var0[var4];
+         for (int i = 0; i < doubleValues5.length; i++) {
+            double d = doubleValues6[i];
+            double[] doubles3 = doubleValues5[i];
 
-            for (int var8 = 0; var8 < var1.length; var8++) {
-               var5 += var7[var8] * var1[var8];
+            for (int j = 0; j < doubles.length; j++) {
+               d += doubles3[j] * doubles[j];
             }
 
-            var3[var4] = var5;
+            doubles2[i] = d;
          }
 
-         return var3;
+         return doubles2;
       }
 
-      public int[][] method3499(int[][] var1, double[][] var2, int var3, boolean var4, boolean var5, Random var6) {
-         int var7 = var1.length;
-         int var8 = var7 * 2;
+      public int[][] method3499(int[][] intValues, double[][] doubleValues10, int n, boolean flag, boolean flag2, Random random) {
+         int length = intValues.length;
+         int n2 = length * 2;
 
-         for (int var9 = 0; var9 < Math.max(1, var3); var9++) {
-            int var10 = 0;
+         for (int i = 0; i < Math.max(1, n); i++) {
+            int n3 = 0;
 
-            for (int var11 = 0; var11 < var8; var11++) {
-               if (var1[var11 / 2][var11 % 2] == this.intValue4) {
-                  var10++;
+            for (int j = 0; j < n2; j++) {
+               if (intValues[j / 2][j % 2] == this.intValue4) {
+                  n3++;
                }
             }
 
-            if (var10 == 0) {
+            if (n3 == 0) {
                break;
             }
 
-            double[][] var22 = this.method3495(var1, var2);
-            int[] var12 = new int[var8];
-            double[] var13 = new double[var8];
+            double[][] doubleses = this.method3495(intValues, doubleValues10);
+            int[] ints = new int[n2];
+            double[] doubles = new double[n2];
 
-            for (int var14 = 0; var14 < var8; var14++) {
-               boolean var15 = var1[var14 / 2][var14 % 2] == this.intValue4;
-               double[] var16 = method3501(this.method3489(var22[var14], var14 % 2));
-               var12[var14] = var5 ? method3502(var16, var6) : method3503(var16);
-               var13[var14] = !var15 ? -1.0 : (var4 ? var6.nextDouble() : var16[var12[var14]]);
+            for (int j = 0; j < n2; j++) {
+               boolean flag3 = intValues[j / 2][j % 2] == this.intValue4;
+               double[] doubles2 = method3501(this.method3489(doubleses[j], j % 2));
+               ints[j] = flag2 ? method3502(doubles2, random) : method3503(doubles2);
+               doubles[j] = !flag3 ? -1.0 : (flag ? random.nextDouble() : doubles2[ints[j]]);
             }
 
-            int var24 = Math.min(Math.max(1, (int)Math.ceil((double)var10 / Math.max(1, var3))), var10);
-            boolean[] var25 = new boolean[var8];
+            int n4 = Math.min(Math.max(1, (int)Math.ceil((double)n3 / Math.max(1, n))), n3);
+            boolean[] flags = new boolean[n2];
 
-            for (int var26 = 0; var26 < var24; var26++) {
-               int var17 = -1;
+            for (int j = 0; j < n4; j++) {
+               int n5 = -1;
 
-               for (int var18 = 0; var18 < var8; var18++) {
-                  if (!var25[var18] && var13[var18] >= 0.0 && (var17 < 0 || var13[var18] > var13[var17])) {
-                     var17 = var18;
+               for (int k = 0; k < n2; k++) {
+                  if (!flags[k] && doubles[k] >= 0.0 && (n5 < 0 || doubles[k] > doubles[n5])) {
+                     n5 = k;
                   }
                }
 
-               if (var17 < 0) {
+               if (n5 < 0) {
                   break;
                }
 
-               var25[var17] = true;
-               var1[var17 / 2][var17 % 2] = var12[var17];
+               flags[n5] = true;
+               intValues[n5 / 2][n5 % 2] = ints[n5];
             }
          }
 
-         boolean var19 = false;
+         boolean flag3 = false;
 
-         for (int var20 = 0; var20 < var8; var20++) {
-            if (var1[var20 / 2][var20 % 2] == this.intValue4) {
-               var19 = true;
+         for (int i = 0; i < n2; i++) {
+            if (intValues[i / 2][i % 2] == this.intValue4) {
+               flag3 = true;
                break;
             }
          }
 
-         if (var19) {
-            double[][] var21 = this.method3495(var1, var2);
+         if (flag3) {
+            double[][] doubleses = this.method3495(intValues, doubleValues10);
 
-            for (int var23 = 0; var23 < var8; var23++) {
-               if (var1[var23 / 2][var23 % 2] == this.intValue4) {
-                  var1[var23 / 2][var23 % 2] = method3503(this.method3489(var21[var23], var23 % 2));
+            for (int i = 0; i < n2; i++) {
+               if (intValues[i / 2][i % 2] == this.intValue4) {
+                  intValues[i / 2][i % 2] = method3503(this.method3489(doubleses[i], i % 2));
                }
             }
          }
 
-         return var1;
+         return intValues;
       }
 
-      public int[][] method3500(int[][] var1, double[][] var2, int var3, boolean var4, Random var5) {
-         for (int var6 = 0; var6 < var3; var6++) {
-            for (int var7 = 0; var7 < 2; var7++) {
-               double[][] var8 = this.method3495(var1, var2);
-               double[] var9 = method3501(this.method3489(var8[(this.intValue2 + var6) * 2 + var7], var7));
-               var1[this.intValue2 + var6][var7] = var4 ? method3502(var9, var5) : method3503(var9);
+      public int[][] method3500(int[][] intValues, double[][] doubleValues10, int n, boolean flag, Random random) {
+         for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 2; j++) {
+               double[][] doubleses = this.method3495(intValues, doubleValues10);
+               double[] doubles = method3501(this.method3489(doubleses[(this.intValue2 + i) * 2 + j], j));
+               intValues[this.intValue2 + i][j] = flag ? method3502(doubles, random) : method3503(doubles);
             }
          }
 
-         return var1;
+         return intValues;
       }
 
-      private static double[] method3501(double[] var0) {
-         double var1 = Double.NEGATIVE_INFINITY;
+      private static double[] method3501(double[] doubles) {
+         double d = Double.NEGATIVE_INFINITY;
 
-         for (double var6 : var0) {
-            var1 = Math.max(var1, var6);
+         for (double d2 : doubles) {
+            d = Math.max(d, d2);
          }
 
-         double[] var8 = new double[var0.length];
-         double var9 = 0.0;
+         double[] doubles2 = new double[doubles.length];
+         double d2 = 0.0;
 
-         for (int var10 = 0; var10 < var0.length; var10++) {
-            var8[var10] = Math.exp(var0[var10] - var1);
-            var9 += var8[var10];
+         for (int i = 0; i < doubles.length; i++) {
+            doubles2[i] = Math.exp(doubles[i] - d);
+            d2 += doubles2[i];
          }
 
-         for (int var11 = 0; var11 < var0.length; var11++) {
-            var8[var11] /= var9;
+         for (int i = 0; i < doubles.length; i++) {
+            doubles2[i] /= d2;
          }
 
-         return var8;
+         return doubles2;
       }
 
-      private static int method3502(double[] var0, Random var1) {
-         double var2 = var1.nextDouble();
-         double var4 = 0.0;
+      private static int method3502(double[] doubles, Random random) {
+         double nextDouble = random.nextDouble();
+         double d = 0.0;
 
-         for (int var6 = 0; var6 < var0.length; var6++) {
-            var4 += var0[var6];
-            if (var2 < var4) {
-               return var6;
+         for (int i = 0; i < doubles.length; i++) {
+            d += doubles[i];
+            if (nextDouble < d) {
+               return i;
             }
          }
 
-         return var0.length - 1;
+         return doubles.length - 1;
       }
 
-      private static int method3503(double[] var0) {
-         int var1 = 0;
+      private static int method3503(double[] doubles) {
+         int n = 0;
 
-         for (int var2 = 1; var2 < var0.length; var2++) {
-            if (var0[var2] > var0[var1]) {
-               var1 = var2;
+         for (int i = 1; i < doubles.length; i++) {
+            if (doubles[i] > doubles[n]) {
+               n = i;
             }
          }
 
-         return var1;
+         return n;
       }
 
       public void method3504() {
-         TokenMotor.Entry3 var1 = this.entry3;
-         if (var1 == null) {
+         TokenMotor.Entry3 entry3 = this.entry3;
+         if (entry3 == null) {
             throw new IllegalStateException("в модели нет эталонного тика");
          } else {
-            double[] var2 = new double[6];
-            double[] var3 = method3492(
+            double[] doubles = new double[6];
+            double[] doubles2 = method3492(
                this,
-               var1.doubleValues,
-               var1.doubleValues2,
-               var1.doubleValues3,
-               var1.doubleValues4,
-               var1.doubleValues5,
-               var1.doubleValue,
-               var1.doubleValue2,
-               var1.doubleValues6,
-               var1.doubleValue4,
-               var1.doubleValues7,
-               var2
+               entry3.doubleValues,
+               entry3.doubleValues2,
+               entry3.doubleValues3,
+               entry3.doubleValues4,
+               entry3.doubleValues5,
+               entry3.doubleValue,
+               entry3.doubleValue2,
+               entry3.doubleValues6,
+               entry3.doubleValue4,
+               entry3.doubleValues7,
+               doubles
             );
-            method3505(method3506(var3, var1.doubleValues8), "контекст");
-            method3505(method3506(var2, var1.doubleValues9), "EMA");
-            double[][] var4 = this.method3495(var1.intValues, var1.doubleValues10);
-            method3505(method3506(var4[this.intValue2 * 2], var1.doubleValues11), "логиты yaw");
-            method3505(method3506(var4[this.intValue2 * 2 + 1], var1.doubleValues12), "логиты pitch");
-            int[][] var5 = this.method3499(TokenMotor.method3471(var1.intValues), var1.doubleValues10, this.intValue13, false, false, null);
+            method3505(method3506(doubles2, entry3.doubleValues8), "контекст");
+            method3505(method3506(doubles, entry3.doubleValues9), "EMA");
+            double[][] doubleses = this.method3495(entry3.intValues, entry3.doubleValues10);
+            method3505(method3506(doubleses[this.intValue2 * 2], entry3.doubleValues11), "логиты yaw");
+            method3505(method3506(doubleses[this.intValue2 * 2 + 1], entry3.doubleValues12), "логиты pitch");
+            int[][] intses = this.method3499(TokenMotor.method3471(entry3.intValues), entry3.doubleValues10, this.intValue13, false, false, null);
 
-            for (int var6 = 0; var6 < this.intValue; var6++) {
-               for (int var7 = 0; var7 < 2; var7++) {
-                  if (var5[var6][var7] != var1.intValues2[var6][var7]) {
+            for (int i = 0; i < this.intValue; i++) {
+               for (int j = 0; j < 2; j++) {
+                  if (intses[i][j] != entry3.intValues2[i][j]) {
                      throw new IllegalStateException(
-                        "эталон: заполнение разошлось в позиции " + var6 + "/" + var7 + ": " + var5[var6][var7] + " вместо " + var1.intValues2[var6][var7]
+                        "эталон: заполнение разошлось в позиции " + i + "/" + j + ": " + intses[i][j] + " вместо " + entry3.intValues2[i][j]
                      );
                   }
                }
             }
 
-            double var15 = 0.0;
-            double var8 = 0.0;
+            double d = 0.0;
+            double d2 = 0.0;
 
-            for (int var10 = 0; var10 < this.intValue11; var10++) {
-               int var11 = this.method3490(var5[this.intValue2 + var10][0], 0, null);
-               int var12 = this.method3490(var5[this.intValue2 + var10][1], 1, null);
-               if (var11 != var1.intValues3[var10][0] || var12 != var1.intValues3[var10][1]) {
-                  throw new IllegalStateException("эталон: декод тика " + var10 + " разошёлся");
+            for (int i = 0; i < this.intValue11; i++) {
+               int n = this.method3490(intses[this.intValue2 + i][0], 0, null);
+               int n2 = this.method3490(intses[this.intValue2 + i][1], 1, null);
+               if (n != entry3.intValues3[i][0] || n2 != entry3.intValues3[i][1]) {
+                  throw new IllegalStateException("эталон: декод тика " + i + " разошёлся");
                }
 
-               var15 += var11 * this.doubleValue4;
-               var8 += var12 * this.doubleValue4;
+               d += n * this.doubleValue4;
+               d2 += n2 * this.doubleValue4;
             }
 
-            double var16 = method3494(this, var1.doubleValues2, var1.doubleValues3, var1.doubleValues5, var1.doubleValues, var15, var8);
-            method3505(Math.abs(var16 - var1.doubleValue5), "оценка плана");
-            if (var1.intValues4 == null) {
+            double d3 = method3494(this, entry3.doubleValues2, entry3.doubleValues3, entry3.doubleValues5, entry3.doubleValues, d, d2);
+            method3505(Math.abs(d3 - entry3.doubleValue5), "оценка плана");
+            if (entry3.intValues4 == null) {
                if (this.flag) {
                   throw new IllegalStateException("файл требует режим first, но эталона для него нет");
                }
             } else {
-               int[][] var17 = this.method3500(TokenMotor.method3471(var1.intValues), var1.doubleValues10, this.intValue11, false, null);
+               int[][] intses2 = this.method3500(TokenMotor.method3471(entry3.intValues), entry3.doubleValues10, this.intValue11, false, null);
 
-               for (int var13 = 0; var13 < this.intValue11; var13++) {
-                  for (int var14 = 0; var14 < 2; var14++) {
-                     if (var17[this.intValue2 + var13][var14] != var1.intValues4[var13][var14]) {
+               for (int i = 0; i < this.intValue11; i++) {
+                  for (int j = 0; j < 2; j++) {
+                     if (intses2[this.intValue2 + i][j] != entry3.intValues4[i][j]) {
                         throw new IllegalStateException(
                            "эталон first: тик "
-                              + var13
+                              + i
                               + "/"
-                              + var14
+                              + j
                               + ": "
-                              + var17[this.intValue2 + var13][var14]
+                              + intses2[this.intValue2 + i][j]
                               + " вместо "
-                              + var1.intValues4[var13][var14]
+                              + entry3.intValues4[i][j]
                         );
                      }
                   }
 
-                  if (this.method3490(var17[this.intValue2 + var13][0], 0, null) != var1.intValues5[var13][0]
-                     || this.method3490(var17[this.intValue2 + var13][1], 1, null) != var1.intValues5[var13][1]) {
-                     throw new IllegalStateException("эталон first: декод тика " + var13 + " разошёлся");
+                  if (this.method3490(intses2[this.intValue2 + i][0], 0, null) != entry3.intValues5[i][0]
+                     || this.method3490(intses2[this.intValue2 + i][1], 1, null) != entry3.intValues5[i][1]) {
+                     throw new IllegalStateException("эталон first: декод тика " + i + " разошёлся");
                   }
                }
             }
          }
       }
 
-      private static void method3505(double var0, String var2) {
-         if (!(var0 <= 1.0E-9)) {
+      private static void method3505(double d, String str) {
+         if (!(d <= 1.0E-9)) {
             throw new IllegalStateException(
-               "эталон не сошёлся: max|Δ| = " + var0 + " в '" + var2 + "', допуск 1.0E-9. Раскладка весов не та, что ожидает рантайм."
+               "эталон не сошёлся: max|Δ| = " + d + " в '" + str + "', допуск 1.0E-9. Раскладка весов не та, что ожидает рантайм."
             );
          }
       }
 
-      private static double method3506(double[] var0, double[] var1) {
-         if (var0.length != var1.length) {
+      private static double method3506(double[] doubles, double[] doubleValues8) {
+         if (doubles.length != doubleValues8.length) {
             return Double.POSITIVE_INFINITY;
          } else {
-            double var2 = 0.0;
+            double d = 0.0;
 
-            for (int var4 = 0; var4 < var0.length; var4++) {
-               var2 = Math.max(var2, Math.abs(var0[var4] - var1[var4]));
+            for (int i = 0; i < doubles.length; i++) {
+               d = Math.max(d, Math.abs(doubles[i] - doubleValues8[i]));
             }
 
-            return var2;
+            return d;
          }
       }
 
-      public static TokenMotor.Entry4 method3507(Path var0) throws IOException {
-         TokenMotor.Entry4 var2;
-         try (BufferedReader var1 = Files.newBufferedReader(var0, StandardCharsets.UTF_8)) {
-            var2 = method3508(var1);
+      public static TokenMotor.Entry4 method3507(Path path) throws IOException {
+         TokenMotor.Entry4 entry4;
+         try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            entry4 = method3508(bufferedReader);
          }
 
-         return var2;
+         return entry4;
       }
 
-      public static TokenMotor.Entry4 method3508(Reader var0) throws IOException {
-         TokenMotor.Entry4 var1 = new TokenMotor.Entry4();
-         JsonReader var2 = new JsonReader(var0);
+      public static TokenMotor.Entry4 method3508(Reader inputStreamReader) throws IOException {
+         TokenMotor.Entry4 entry4 = new TokenMotor.Entry4();
+         JsonReader jsonReader = new JsonReader(inputStreamReader);
 
          try {
-            var2.beginObject();
+            jsonReader.beginObject();
 
-            while (var2.hasNext()) {
-               String var3 = var2.nextName();
-               switch (var3) {
+            while (jsonReader.hasNext()) {
+               String nextName = jsonReader.nextName();
+               switch (nextName) {
                   case "format":
-                     String var5 = var2.nextString();
-                     if (!"neurotest-token-motor-v2".equals(var5)) {
-                        throw new IllegalStateException("формат '" + var5 + "', ожидался 'neurotest-token-motor-v2'");
+                     String nextString = jsonReader.nextString();
+                     if (!"neurotest-token-motor-v2".equals(nextString)) {
+                        throw new IllegalStateException("формат '" + nextString + "', ожидался 'neurotest-token-motor-v2'");
                      }
                      break;
                   case "config":
-                     var1.method3509(var2);
+                     entry4.method3509(jsonReader);
                      break;
                   case "decode_pools":
-                     var1.method3511(var2);
+                     entry4.method3511(jsonReader);
                      break;
                   case "support":
-                     var1.method3510(var2);
+                     entry4.method3510(jsonReader);
                      break;
                   case "weights":
-                     var1.method3512(var2);
+                     entry4.method3512(jsonReader);
                      break;
                   case "golden":
-                     var1.method3513(var2);
+                     entry4.method3513(jsonReader);
                      break;
                   default:
-                     var2.skipValue();
+                     jsonReader.skipValue();
                }
             }
 
-            var2.endObject();
-         } catch (Throwable var7) {
+            jsonReader.endObject();
+         } catch (Throwable e) {
             try {
-               var2.close();
-            } catch (Throwable var6) {
-               var7.addSuppressed(var6);
+               jsonReader.close();
+            } catch (Throwable ex) {
+               e.addSuppressed(ex);
             }
 
-            throw var7;
+            throw e;
          }
 
-         var2.close();
-         var1.method3514();
-         return var1;
+         jsonReader.close();
+         entry4.method3514();
+         return entry4;
       }
 
-      private void method3509(JsonReader var1) throws IOException {
-         var1.beginObject();
+      private void method3509(JsonReader jsonReader) throws IOException {
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var2 = var1.nextName();
-            switch (var2) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            switch (nextName) {
                case "window":
-                  this.intValue = var1.nextInt();
+                  this.intValue = jsonReader.nextInt();
                   break;
                case "prefix":
-                  this.intValue2 = var1.nextInt();
+                  this.intValue2 = jsonReader.nextInt();
                   break;
                case "vocab":
-                  this.intValue3 = var1.nextInt();
+                  this.intValue3 = jsonReader.nextInt();
                   break;
                case "mask_id":
-                  this.intValue4 = var1.nextInt();
+                  this.intValue4 = jsonReader.nextInt();
                   break;
                case "d_model":
-                  this.intValue5 = var1.nextInt();
+                  this.intValue5 = jsonReader.nextInt();
                   break;
                case "n_head":
-                  this.intValue6 = var1.nextInt();
+                  this.intValue6 = jsonReader.nextInt();
                   break;
                case "n_ctx":
-                  this.intValue7 = var1.nextInt();
+                  this.intValue7 = jsonReader.nextInt();
                   break;
                case "n_ctx_exo":
-                  this.intValue8 = var1.nextInt();
+                  this.intValue8 = jsonReader.nextInt();
                   break;
                case "n_ctx_endo":
-                  this.intValue9 = var1.nextInt();
+                  this.intValue9 = jsonReader.nextInt();
                   break;
                case "latency":
-                  this.intValue10 = var1.nextInt();
+                  this.intValue10 = jsonReader.nextInt();
                   break;
                case "exec_k":
-                  this.intValue11 = var1.nextInt();
+                  this.intValue11 = jsonReader.nextInt();
                   break;
                case "best_of":
-                  this.intValue12 = var1.nextInt();
+                  this.intValue12 = jsonReader.nextInt();
                   break;
                case "steps_fill":
-                  this.intValue13 = var1.nextInt();
+                  this.intValue13 = jsonReader.nextInt();
                   break;
                case "fill_mode":
-                  this.flag = "first".equals(var1.nextString());
+                  this.flag = "first".equals(jsonReader.nextString());
                   break;
                case "mdpc":
-                  this.doubleValue4 = var1.nextDouble();
+                  this.doubleValue4 = jsonReader.nextDouble();
                   break;
                case "vocab_n_named":
-                  this.intValue14 = var1.nextInt();
+                  this.intValue14 = jsonReader.nextInt();
                   break;
                case "vocab_n_named_tok":
-                  this.intValue15 = var1.nextInt();
+                  this.intValue15 = jsonReader.nextInt();
                   break;
                case "vocab_n_bucket":
-                  this.intValue16 = var1.nextInt();
+                  this.intValue16 = jsonReader.nextInt();
                   break;
                case "vocab_edges":
-                  this.doubleValues = method3516(var1);
+                  this.doubleValues = method3516(jsonReader);
                   break;
                case "ema":
-                  var1.beginObject();
+                  jsonReader.beginObject();
 
-                  while (var1.hasNext()) {
-                     String var4 = var1.nextName();
-                     switch (var4) {
+                  while (jsonReader.hasNext()) {
+                     String str = jsonReader.nextName();
+                     switch (str) {
                         case "a8":
-                           this.doubleValue = var1.nextDouble();
+                           this.doubleValue = jsonReader.nextDouble();
                            break;
                         case "a32":
-                           this.doubleValue2 = var1.nextDouble();
+                           this.doubleValue2 = jsonReader.nextDouble();
                            break;
                         case "a16":
-                           this.doubleValue3 = var1.nextDouble();
+                           this.doubleValue3 = jsonReader.nextDouble();
                            break;
                         default:
-                           var1.skipValue();
+                           jsonReader.skipValue();
                      }
                   }
 
-                  var1.endObject();
+                  jsonReader.endObject();
                   break;
                default:
-                  var1.skipValue();
+                  jsonReader.skipValue();
             }
          }
 
-         var1.endObject();
+         jsonReader.endObject();
       }
 
-      private void method3510(JsonReader var1) throws IOException {
+      private void method3510(JsonReader jsonReader) throws IOException {
          this.flags = new boolean[2][];
-         var1.beginObject();
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var2 = var1.nextName();
-            int var3 = var2.equals("yaw") ? 0 : (var2.equals("pitch") ? 1 : -1);
-            double[] var4 = method3516(var1);
-            if (var3 >= 0) {
-               this.flags[var3] = new boolean[var4.length];
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            int n = nextName.equals("yaw") ? 0 : (nextName.equals("pitch") ? 1 : -1);
+            double[] doubles = method3516(jsonReader);
+            if (n >= 0) {
+               this.flags[n] = new boolean[doubles.length];
 
-               for (int var5 = 0; var5 < var4.length; var5++) {
-                  this.flags[var3][var5] = var4[var5] > 0.5;
+               for (int i = 0; i < doubles.length; i++) {
+                  this.flags[n][i] = doubles[i] > 0.5;
                }
             }
          }
 
-         var1.endObject();
+         jsonReader.endObject();
       }
 
-      private void method3511(JsonReader var1) throws IOException {
-         var1.beginObject();
+      private void method3511(JsonReader jsonReader) throws IOException {
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var2 = var1.nextName();
-            int var3 = "yaw".equals(var2) ? 0 : 1;
-            var1.beginObject();
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            int n = "yaw".equals(nextName) ? 0 : 1;
+            jsonReader.beginObject();
 
-            while (var1.hasNext()) {
-               int var4 = Integer.parseInt(var1.nextName());
-               double[] var5 = method3516(var1);
-               int[] var6 = new int[var5.length];
+            while (jsonReader.hasNext()) {
+               int n2 = Integer.parseInt(jsonReader.nextName());
+               double[] doubles = method3516(jsonReader);
+               int[] ints = new int[doubles.length];
 
-               for (int var7 = 0; var7 < var5.length; var7++) {
-                  var6[var7] = (int)Math.round(var5[var7]);
+               for (int i = 0; i < doubles.length; i++) {
+                  ints[i] = (int)Math.round(doubles[i]);
                }
 
-               this.itemss[var3].put(var4, var6);
+               this.itemss[n].put(n2, ints);
             }
 
-            var1.endObject();
+            jsonReader.endObject();
          }
 
-         var1.endObject();
+         jsonReader.endObject();
       }
 
-      private void method3512(JsonReader var1) throws IOException {
-         ArrayList var2 = new ArrayList();
-         var1.beginObject();
+      private void method3512(JsonReader jsonReader) throws IOException {
+         ArrayList arrayList = new ArrayList();
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var3 = var1.nextName();
-            switch (var3) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            switch (nextName) {
                case "tok":
-                  this.doubleValues2 = method3518(var1);
+                  this.doubleValues2 = method3518(jsonReader);
                   break;
                case "pos":
-                  this.doubleValues3 = method3518(var1);
+                  this.doubleValues3 = method3518(jsonReader);
                   break;
                case "axis":
-                  this.doubleValues4 = method3518(var1);
+                  this.doubleValues4 = method3518(jsonReader);
                   break;
                case "ctx0_w":
-                  this.doubleValues5 = method3518(var1);
+                  this.doubleValues5 = method3518(jsonReader);
                   break;
                case "ctx0_b":
-                  this.doubleValues6 = method3516(var1);
+                  this.doubleValues6 = method3516(jsonReader);
                   break;
                case "ctx2_w":
-                  this.doubleValues7 = method3518(var1);
+                  this.doubleValues7 = method3518(jsonReader);
                   break;
                case "ctx2_b":
-                  this.doubleValues8 = method3516(var1);
+                  this.doubleValues8 = method3516(jsonReader);
                   break;
                case "norm_w":
-                  this.doubleValues9 = method3516(var1);
+                  this.doubleValues9 = method3516(jsonReader);
                   break;
                case "norm_b":
-                  this.doubleValues10 = method3516(var1);
+                  this.doubleValues10 = method3516(jsonReader);
                   break;
                case "out_w":
-                  this.doubleValues11 = method3518(var1);
+                  this.doubleValues11 = method3518(jsonReader);
                   break;
                case "out_b":
-                  this.doubleValues12 = method3516(var1);
+                  this.doubleValues12 = method3516(jsonReader);
                   break;
                case "layers":
-                  var1.beginArray();
+                  jsonReader.beginArray();
 
-                  while (var1.hasNext()) {
-                     TokenMotor.Entry2 var5 = new TokenMotor.Entry2();
-                     var1.beginObject();
+                  while (jsonReader.hasNext()) {
+                     TokenMotor.Entry2 entry2 = new TokenMotor.Entry2();
+                     jsonReader.beginObject();
 
-                     while (var1.hasNext()) {
-                        String var6 = var1.nextName();
-                        switch (var6) {
+                     while (jsonReader.hasNext()) {
+                        String str = jsonReader.nextName();
+                        switch (str) {
                            case "in_w":
-                              var5.doubleValues = method3518(var1);
+                              entry2.doubleValues = method3518(jsonReader);
                               break;
                            case "in_b":
-                              var5.doubleValues2 = method3516(var1);
+                              entry2.doubleValues2 = method3516(jsonReader);
                               break;
                            case "out_w":
-                              var5.doubleValues3 = method3518(var1);
+                              entry2.doubleValues3 = method3518(jsonReader);
                               break;
                            case "out_b":
-                              var5.doubleValues4 = method3516(var1);
+                              entry2.doubleValues4 = method3516(jsonReader);
                               break;
                            case "l1_w":
-                              var5.doubleValues5 = method3518(var1);
+                              entry2.doubleValues5 = method3518(jsonReader);
                               break;
                            case "l1_b":
-                              var5.doubleValues6 = method3516(var1);
+                              entry2.doubleValues6 = method3516(jsonReader);
                               break;
                            case "l2_w":
-                              var5.doubleValues7 = method3518(var1);
+                              entry2.doubleValues7 = method3518(jsonReader);
                               break;
                            case "l2_b":
-                              var5.doubleValues8 = method3516(var1);
+                              entry2.doubleValues8 = method3516(jsonReader);
                               break;
                            case "n1_w":
-                              var5.doubleValues9 = method3516(var1);
+                              entry2.doubleValues9 = method3516(jsonReader);
                               break;
                            case "n1_b":
-                              var5.doubleValues10 = method3516(var1);
+                              entry2.doubleValues10 = method3516(jsonReader);
                               break;
                            case "n2_w":
-                              var5.doubleValues11 = method3516(var1);
+                              entry2.doubleValues11 = method3516(jsonReader);
                               break;
                            case "n2_b":
-                              var5.doubleValues12 = method3516(var1);
+                              entry2.doubleValues12 = method3516(jsonReader);
                               break;
                            default:
-                              var1.skipValue();
+                              jsonReader.skipValue();
                         }
                      }
 
-                     var1.endObject();
-                     var2.add(var5);
+                     jsonReader.endObject();
+                     arrayList.add(entry2);
                   }
 
-                  var1.endArray();
+                  jsonReader.endArray();
                   break;
                default:
-                  var1.skipValue();
+                  jsonReader.skipValue();
             }
          }
 
-         var1.endObject();
-         this.entry2s = (TokenMotor.Entry2[])var2.toArray(new TokenMotor.Entry2[0]);
+         jsonReader.endObject();
+         this.entry2s = (TokenMotor.Entry2[])arrayList.toArray(new TokenMotor.Entry2[0]);
       }
 
-      private void method3513(JsonReader var1) throws IOException {
-         TokenMotor.Entry3 var2 = new TokenMotor.Entry3();
-         var1.beginObject();
+      private void method3513(JsonReader jsonReader) throws IOException {
+         TokenMotor.Entry3 entry3 = new TokenMotor.Entry3();
+         jsonReader.beginObject();
 
-         while (var1.hasNext()) {
-            String var3 = var1.nextName();
-            switch (var3) {
+         while (jsonReader.hasNext()) {
+            String nextName = jsonReader.nextName();
+            switch (nextName) {
                case "inputs":
-                  var1.beginObject();
+                  jsonReader.beginObject();
 
-                  while (var1.hasNext()) {
-                     String var5 = var1.nextName();
-                     switch (var5) {
+                  while (jsonReader.hasNext()) {
+                     String str = jsonReader.nextName();
+                     switch (str) {
                         case "cam":
-                           var2.doubleValues = method3516(var1);
+                           entry3.doubleValues = method3516(jsonReader);
                            break;
                         case "tgt_lag":
-                           var2.doubleValues2 = method3516(var1);
+                           entry3.doubleValues2 = method3516(jsonReader);
                            break;
                         case "tgt_lag1":
-                           var2.doubleValues3 = method3516(var1);
+                           entry3.doubleValues3 = method3516(jsonReader);
                            break;
                         case "tgt_lag2":
-                           var2.doubleValues4 = method3516(var1);
+                           entry3.doubleValues4 = method3516(jsonReader);
                            break;
                         case "box":
-                           var2.doubleValues5 = method3516(var1);
+                           entry3.doubleValues5 = method3516(jsonReader);
                            break;
                         case "dist":
-                           var2.doubleValue = var1.nextDouble();
+                           entry3.doubleValue = jsonReader.nextDouble();
                            break;
                         case "dist_prev":
-                           var2.doubleValue2 = var1.nextDouble();
+                           entry3.doubleValue2 = jsonReader.nextDouble();
                            break;
                         case "ctx11":
-                           var2.doubleValues6 = method3516(var1);
+                           entry3.doubleValues6 = method3516(jsonReader);
                            break;
                         case "mdpc":
-                           var2.doubleValue3 = var1.nextDouble();
+                           entry3.doubleValue3 = jsonReader.nextDouble();
                            break;
                         case "since_zero":
-                           var2.doubleValue4 = var1.nextDouble();
+                           entry3.doubleValue4 = jsonReader.nextDouble();
                            break;
                         case "slow":
-                           var2.doubleValues7 = method3516(var1);
+                           entry3.doubleValues7 = method3516(jsonReader);
                            break;
                         default:
-                           var1.skipValue();
+                           jsonReader.skipValue();
                      }
                   }
 
-                  var1.endObject();
+                  jsonReader.endObject();
                   break;
                case "context":
-                  var2.doubleValues8 = method3516(var1);
+                  entry3.doubleValues8 = method3516(jsonReader);
                   break;
                case "slow_out":
-                  var2.doubleValues9 = method3516(var1);
+                  entry3.doubleValues9 = method3516(jsonReader);
                   break;
                case "tokens_in":
-                  var2.intValues = method3515(method3518(var1));
+                  entry3.intValues = method3515(method3518(jsonReader));
                   break;
                case "ctx_window":
-                  var2.doubleValues10 = method3518(var1);
+                  entry3.doubleValues10 = method3518(jsonReader);
                   break;
                case "logits_yaw_at_p":
-                  var2.doubleValues11 = method3516(var1);
+                  entry3.doubleValues11 = method3516(jsonReader);
                   break;
                case "logits_pitch_at_p":
-                  var2.doubleValues12 = method3516(var1);
+                  entry3.doubleValues12 = method3516(jsonReader);
                   break;
                case "filled_greedy":
-                  var2.intValues2 = method3515(method3518(var1));
+                  entry3.intValues2 = method3515(method3518(jsonReader));
                   break;
                case "decoded_first":
-                  var2.intValues3 = method3515(method3518(var1));
+                  entry3.intValues3 = method3515(method3518(jsonReader));
                   break;
                case "plan_score":
-                  var2.doubleValue5 = var1.nextDouble();
+                  entry3.doubleValue5 = jsonReader.nextDouble();
                   break;
                case "first_greedy":
-                  var2.intValues4 = method3515(method3518(var1));
+                  entry3.intValues4 = method3515(method3518(jsonReader));
                   break;
                case "decoded_first_mode":
-                  var2.intValues5 = method3515(method3518(var1));
+                  entry3.intValues5 = method3515(method3518(jsonReader));
                   break;
                default:
-                  var1.skipValue();
+                  jsonReader.skipValue();
             }
          }
 
-         var1.endObject();
-         this.entry3 = var2;
+         jsonReader.endObject();
+         this.entry3 = entry3;
       }
 
       private void method3514() {
@@ -1658,15 +1658,15 @@ public final class TokenMotor extends Util22 {
                && this.flags[1] != null
                && this.flags[0].length == this.intValue3
                && this.flags[1].length == this.intValue3) {
-               for (int var1 = 0; var1 < 2; var1++) {
-                  boolean var2 = false;
+               for (int i = 0; i < 2; i++) {
+                  boolean flag = false;
 
-                  for (boolean var6 : this.flags[var1]) {
-                     var2 |= var6;
+                  for (boolean flag2 : this.flags[i]) {
+                     flag |= flag2;
                   }
 
-                  if (!var2) {
-                     throw new IllegalStateException("носитель оси " + var1 + " пуст");
+                  if (!flag) {
+                     throw new IllegalStateException("носитель оси " + i + " пуст");
                   }
                }
             } else {
@@ -1677,56 +1677,56 @@ public final class TokenMotor extends Util22 {
          }
       }
 
-      private static int[][] method3515(double[][] var0) {
-         int[][] var1 = new int[var0.length][];
+      private static int[][] method3515(double[][] doubleses) {
+         int[][] intses = new int[doubleses.length][];
 
-         for (int var2 = 0; var2 < var0.length; var2++) {
-            var1[var2] = new int[var0[var2].length];
+         for (int i = 0; i < doubleses.length; i++) {
+            intses[i] = new int[doubleses[i].length];
 
-            for (int var3 = 0; var3 < var0[var2].length; var3++) {
-               var1[var2][var3] = (int)Math.round(var0[var2][var3]);
+            for (int j = 0; j < doubleses[i].length; j++) {
+               intses[i][j] = (int)Math.round(doubleses[i][j]);
             }
          }
 
-         return var1;
+         return intses;
       }
 
-      private static double[] method3516(JsonReader var0) throws IOException {
-         var0.beginArray();
-         double[] var1 = method3517(var0);
-         var0.endArray();
-         return var1;
+      private static double[] method3516(JsonReader jsonReader) throws IOException {
+         jsonReader.beginArray();
+         double[] doubles = method3517(jsonReader);
+         jsonReader.endArray();
+         return doubles;
       }
 
-      private static double[] method3517(JsonReader var0) throws IOException {
-         double[] var1 = new double[32];
-         int var2 = 0;
+      private static double[] method3517(JsonReader jsonReader) throws IOException {
+         double[] original = new double[32];
+         int newLength = 0;
 
-         while (var0.hasNext()) {
-            if (var2 == var1.length) {
-               var1 = Arrays.copyOf(var1, var2 * 2);
+         while (jsonReader.hasNext()) {
+            if (newLength == original.length) {
+               original = Arrays.copyOf(original, newLength * 2);
             }
 
-            var1[var2++] = var0.nextDouble();
+            original[newLength++] = jsonReader.nextDouble();
          }
 
-         return Arrays.copyOf(var1, var2);
+         return Arrays.copyOf(original, newLength);
       }
 
-      private static double[][] method3518(JsonReader var0) throws IOException {
-         ArrayList var1 = new ArrayList();
-         var0.beginArray();
+      private static double[][] method3518(JsonReader jsonReader) throws IOException {
+         ArrayList arrayList = new ArrayList();
+         jsonReader.beginArray();
 
-         while (var0.hasNext()) {
-            if (var0.peek() == JsonToken.BEGIN_ARRAY) {
-               var1.add(method3516(var0));
+         while (jsonReader.hasNext()) {
+            if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
+               arrayList.add(method3516(jsonReader));
             } else {
-               var1.add(method3517(var0));
+               arrayList.add(method3517(jsonReader));
             }
          }
 
-         var0.endArray();
-         return (double[][])var1.toArray(new double[0][]);
+         jsonReader.endArray();
+         return (double[][])arrayList.toArray(new double[0][]);
       }
    }
 }

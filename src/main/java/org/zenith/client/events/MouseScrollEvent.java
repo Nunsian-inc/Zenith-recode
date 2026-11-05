@@ -18,18 +18,18 @@ public class MouseScrollEvent extends EventCancellable {
    }
 
    @Generated
-   public void setDoubleValue(double var1) {
-      this.doubleValue = var1;
+   public void setDoubleValue(double doubleValue) {
+      this.doubleValue = doubleValue;
    }
 
    @Generated
-   public void setDoubleValue2(double var1) {
-      this.doubleValue2 = var1;
+   public void setDoubleValue2(double d) {
+      this.doubleValue2 = d;
    }
 
    @Generated
-   public MouseScrollEvent(double var1, double var3) {
-      this.doubleValue = var1;
-      this.doubleValue2 = var3;
+   public MouseScrollEvent(double doubleValue, double d) {
+      this.doubleValue = doubleValue;
+      this.doubleValue2 = d;
    }
 }

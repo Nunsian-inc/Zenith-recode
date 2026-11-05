@@ -18,7 +18,7 @@ public class MixinGuiRendererTint {
       method = {"render()V"},
       at = {@At("HEAD")}
    )
-   private void zenith$enter(CallbackInfo var1) {
+   private void zenith$enter(CallbackInfo callbackInfo) {
       GuiVertexBatch.method103();
    }
 
@@ -26,7 +26,7 @@ public class MixinGuiRendererTint {
       method = {"render()V"},
       at = {@At("RETURN")}
    )
-   private void zenith$exit(CallbackInfo var1) {
+   private void zenith$exit(CallbackInfo callbackInfo) {
       GuiVertexBatch.method104();
    }
 
@@ -35,9 +35,9 @@ public class MixinGuiRendererTint {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$keepOversizedMidFrame(CallbackInfo var1) {
+   private void zenith$keepOversizedMidFrame(CallbackInfo callbackInfo) {
       if (ScissorFlusher.method6646()) {
-         var1.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -48,7 +48,7 @@ public class MixinGuiRendererTint {
          target = "Lnet/minecraft/client/renderer/state/gui/GuiRenderState;addBlitToCurrentLayer(Lnet/minecraft/client/renderer/state/gui/BlitRenderState;)V"
       )
    )
-   private BlitRenderState zenith$itemColor(BlitRenderState var1, @Local(argsOnly = true) GuiItemRenderState var2) {
-      return GuiVertexBatch.method99(var1, var2);
+   private BlitRenderState zenith$itemColor(BlitRenderState blitRenderState, @Local(argsOnly = true) GuiItemRenderState guiItemRenderState) {
+      return GuiVertexBatch.method99(blitRenderState, guiItemRenderState);
    }
 }

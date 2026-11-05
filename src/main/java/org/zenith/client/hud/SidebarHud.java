@@ -38,24 +38,24 @@ import org.zenith.utility.render.display.base.MenuDrawContext;
 public class SidebarHud extends Interface {
    private final Animation animation = new Animation(250L, Easing.INSTANCE4);
 
-   public SidebarHud(String var1) {
-      super(var1, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, null);
+   public SidebarHud(String text) {
+      super(text, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, null);
    }
 
    @Override
-   public void method285(CustomDrawContext var1, Interface.Entry var2) {
+   public void method285(CustomDrawContext customDrawContext, Interface.Entry entry) {
    }
 
    @Override
-   public void method286(CustomDrawContext var1, Interface.Entry var2) {
+   public void method286(CustomDrawContext customDrawContext, Interface.Entry entry) {
    }
 
    @Override
-   public void method287(float var1, float var2) {
+   public void method287(float f, float f2) {
    }
 
    @Override
-   public void update(float var1, float var2) {
+   public void update(float f, float f2) {
    }
 
    @Override
@@ -63,11 +63,11 @@ public class SidebarHud extends Interface {
    }
 
    @Override
-   public void method288(float var1, float var2) {
+   public void method288(float f, float f2) {
    }
 
    @Override
-   public void method289(CustomDrawContext var1, float var2, float var3, InterfaceModule var4, float var5, float var6) {
+   public void method289(CustomDrawContext customDrawContext, float f, float f2, InterfaceModule interfaceModule, float f3, float f4) {
    }
 
    @Override
@@ -76,7 +76,7 @@ public class SidebarHud extends Interface {
    }
 
    @Override
-   public void load(JsonObject var1) {
+   public void load(JsonObject json) {
    }
 
    @Override
@@ -85,191 +85,191 @@ public class SidebarHud extends Interface {
    }
 
    @Override
-   public void method291(MenuDrawContext var1) {
-      float var2 = this.method290();
-      var1.pushMatrix();
-      var1.pose().translate(this.floatValue + this.width / 2.0F, this.floatValue2);
-      var1.pose().scale(var2, var2);
-      var1.pose().translate(-this.floatValue - this.width / 2.0F, -this.floatValue2);
-      this.method8(var1);
-      var1.popMatrix();
+   public void method291(MenuDrawContext graphics) {
+      float x = this.method290();
+      graphics.pushMatrix();
+      graphics.pose().translate(this.floatValue + this.width / 2.0F, this.floatValue2);
+      graphics.pose().scale(x, x);
+      graphics.pose().translate(-this.floatValue - this.width / 2.0F, -this.floatValue2);
+      this.method8(graphics);
+      graphics.popMatrix();
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      Scoreboard var2 = mc.level.getScoreboard();
-      Objective var3 = var2.getDisplayObjective(DisplaySlot.LIST);
+   public void method8(CustomDrawContext graphics) {
+      Scoreboard scoreboard = mc.level.getScoreboard();
+      Objective displayObjective = scoreboard.getDisplayObjective(DisplaySlot.LIST);
       this.animation
          .method2807(
             mc.options.keyPlayerList.isDown()
-               && (!mc.isLocalServer() || mc.player.connection.getListedOnlinePlayers().size() > 1 || var3 != null)
+               && (!mc.isLocalServer() || mc.player.connection.getListedOnlinePlayers().size() > 1 || displayObjective != null)
          );
       if (this.animation.getValue() != 0.0F) {
-         this.method292(var1, var1.guiWidth(), var2, var3);
+         this.method292(graphics, graphics.guiWidth(), scoreboard, displayObjective);
       }
 
       this.animation.setDuration(250L);
       this.animation.setEasing(Easing.INSTANCE4);
    }
 
-   public void method292(GuiGraphicsExtractor var1, int var2, Scoreboard var3, @Nullable Objective var4) {
-      float var5 = this.animation.getValue();
-      List<PlayerInfo> var6 = mc.gui.hud.getTabList().getPlayerInfos();
-      var var7 = new ArrayList<>(var6.size());
-      int var8 = mc.font.width(" ");
-      int var9 = 0;
-      int var10 = 0;
+   public void method292(GuiGraphicsExtractor graphics, int guiWidth, Scoreboard scoreboard, @Nullable Objective displayObjective) {
+      float f = this.animation.getValue();
+      List<PlayerInfo> playerInfos = mc.gui.hud.getTabList().getPlayerInfos();
+      var arrayList = new ArrayList<>(playerInfos.size());
+      int width = mc.font.width(" ");
+      int n = 0;
+      int n2 = 0;
 
-      for (PlayerInfo var12 : var6) {
-         Component var13 = mc.gui.hud.getTabList().getNameForDisplay(var12);
-         var9 = Math.max(var9, mc.font.width(var13));
-         int var14 = 0;
-         MutableComponent var15 = null;
-         int var16 = 0;
-         if (var4 != null) {
-            ScoreHolder var17 = ScoreHolder.fromGameProfile(var12.getProfile());
-            ReadOnlyScoreInfo var18 = var3.getPlayerScoreInfo(var17, var4);
-            if (var18 != null) {
-               var14 = var18.value();
+      for (PlayerInfo playerInfo : playerInfos) {
+         Component nameForDisplay = mc.gui.hud.getTabList().getNameForDisplay(playerInfo);
+         n = Math.max(n, mc.font.width(nameForDisplay));
+         int score = 0;
+         MutableComponent empty = null;
+         int scoreWidth = 0;
+         if (displayObjective != null) {
+            ScoreHolder name = ScoreHolder.fromGameProfile(playerInfo.getProfile());
+            ReadOnlyScoreInfo playerScoreInfo = scoreboard.getPlayerScoreInfo(name, displayObjective);
+            if (playerScoreInfo != null) {
+               score = playerScoreInfo.value();
             }
 
-            if (var4.getRenderType() != RenderType.HEARTS) {
-               NumberFormat var19 = var4.numberFormatOrDefault(StyledFormat.PLAYER_LIST_DEFAULT);
-               var15 = var18 == null ? net.minecraft.network.chat.Component.empty() : var18.formatValue(var19);
-               var16 = mc.font.width(var15);
-               var10 = Math.max(var10, var16 > 0 ? var8 + var16 : 0);
+            if (displayObjective.getRenderType() != RenderType.HEARTS) {
+               NumberFormat numberFormatOrDefault = displayObjective.numberFormatOrDefault(StyledFormat.PLAYER_LIST_DEFAULT);
+               empty = playerScoreInfo == null ? net.minecraft.network.chat.Component.empty() : playerScoreInfo.formatValue(numberFormatOrDefault);
+               scoreWidth = mc.font.width(empty);
+               n2 = Math.max(n2, scoreWidth > 0 ? width + scoreWidth : 0);
             }
          }
 
-         var7.add(new ScoreDisplayEntry(var13, var14, var15, var16));
+         arrayList.add(new ScoreDisplayEntry(nameForDisplay, score, empty, scoreWidth));
       }
 
       if (!mc.gui.hud.getTabList().healthStates.isEmpty()) {
-         var var45 = var6.stream().map(var0 -> var0.getProfile().id()).collect(Collectors.toSet());
-         mc.gui.hud.getTabList().healthStates.keySet().removeIf(var1x -> !var45.contains(var1x));
+         var uuids = playerInfos.stream().map(playerInfo -> playerInfo.getProfile().id()).collect(Collectors.toSet());
+         mc.gui.hud.getTabList().healthStates.keySet().removeIf(var1x -> !uuids.contains(var1x));
       }
 
-      int var46 = var6.size();
-      int var47 = var46;
+      int size = playerInfos.size();
+      int size2 = size;
 
-      int var48;
-      for (var48 = 1; var47 > 20; var47 = (var46 + var48 - 1) / var48) {
-         var48++;
+      int n3;
+      for (n3 = 1; size2 > 20; size2 = (size + n3 - 1) / n3) {
+         n3++;
       }
 
-      boolean var49 = true;
-      int var50;
-      if (var4 != null) {
-         var50 = var4.getRenderType() == RenderType.HEARTS ? 90 : var10;
+      boolean flag = true;
+      int n4;
+      if (displayObjective != null) {
+         n4 = displayObjective.getRenderType() == RenderType.HEARTS ? 90 : n2;
       } else {
-         var50 = 0;
+         n4 = 0;
       }
 
-      int var51 = Math.min(var48 * ((var49 ? 9 : 0) + var9 + var50 + 13), var2 - 50) / var48;
-      int var52 = var2 / 2 - (var51 * var48 + (var48 - 1) * 5) / 2;
-      this.floatValue = var52;
-      int var53 = 10;
-      int var55 = var51 * var48 + (var48 - 1) * 5;
-      this.floatValue2 = var53;
-      this.width = var55;
-      List<FormattedCharSequence> var20 = null;
+      int slotWidth = Math.min(n3 * ((flag ? 9 : 0) + n + n4 + 13), guiWidth - 50) / n3;
+      int floatValue = guiWidth / 2 - (slotWidth * n3 + (n3 - 1) * 5) / 2;
+      this.floatValue = floatValue;
+      int y = 10;
+      int width2 = slotWidth * n3 + (n3 - 1) * 5;
+      this.floatValue2 = y;
+      this.width = width2;
+      List<FormattedCharSequence> formattedCharSequences = null;
       if (mc.gui.hud.getTabList().header != null) {
-         Component var21 = ScoreboardParser.method7074(mc.gui.hud.getTabList().header);
-         var20 = mc.font.split(var21, var2 - 50);
+         Component input = ScoreboardParser.method7074(mc.gui.hud.getTabList().header);
+         formattedCharSequences = mc.font.split(input, guiWidth - 50);
 
-         for (FormattedCharSequence var23 : var20) {
-            var55 = Math.max(var55, mc.font.width(var23));
+         for (FormattedCharSequence text : formattedCharSequences) {
+            width2 = Math.max(width2, mc.font.width(text));
          }
       }
 
-      List<FormattedCharSequence> var56 = null;
+      List<FormattedCharSequence> formattedCharSequences2 = null;
       if (mc.gui.hud.getTabList().footer != null) {
-         Component var57 = ScoreboardParser.method7074(mc.gui.hud.getTabList().footer);
-         var56 = mc.font.split(var57, var2 - 50);
+         Component input = ScoreboardParser.method7074(mc.gui.hud.getTabList().footer);
+         formattedCharSequences2 = mc.font.split(input, guiWidth - 50);
 
-         for (FormattedCharSequence var24 : var56) {
-            var55 = Math.max(var55, mc.font.width(var24));
+         for (FormattedCharSequence text : formattedCharSequences2) {
+            width2 = Math.max(width2, mc.font.width(text));
          }
       }
 
-      int var58 = var20 != null ? var20.size() * 9 : 0;
-      int var60 = var20 != null ? 1 : 0;
-      int var61 = var47 * 9;
-      int var25 = var56 != null ? 1 : 0;
-      int var26 = var56 != null ? var56.size() * 9 : 0;
-      int var27 = var58 + var60 + var61 + var25 + var26;
-      this.height = var27;
-      float var28 = var2 / 2 - 1;
-      float var29 = 10.0F + var27 / 2.0F;
-      float var30 = Math.max(1.0E-4F, var5);
-      Matrix3x2fStack var31 = var1.pose();
-      var31.pushMatrix();
-      var31.translate(var28, var29);
-      var31.scale(var30, var30);
-      var31.translate(-var28, -var29);
-      if (var20 != null) {
-         var1.fill(var2 / 2 - var55 / 2 - 1, var53 - 1, var2 / 2 + var55 / 2 + 1, var53 + var20.size() * 9, Integer.MIN_VALUE);
+      int n5 = formattedCharSequences != null ? formattedCharSequences.size() * 9 : 0;
+      int n6 = formattedCharSequences != null ? 1 : 0;
+      int n7 = size2 * 9;
+      int n8 = formattedCharSequences2 != null ? 1 : 0;
+      int n9 = formattedCharSequences2 != null ? formattedCharSequences2.size() * 9 : 0;
+      int height = n5 + n6 + n7 + n8 + n9;
+      this.height = height;
+      float x = guiWidth / 2 - 1;
+      float y2 = 10.0F + height / 2.0F;
+      float x2 = Math.max(1.0E-4F, f);
+      Matrix3x2fStack pose = graphics.pose();
+      pose.pushMatrix();
+      pose.translate(x, y2);
+      pose.scale(x2, x2);
+      pose.translate(-x, -y2);
+      if (formattedCharSequences != null) {
+         graphics.fill(guiWidth / 2 - width2 / 2 - 1, y - 1, guiWidth / 2 + width2 / 2 + 1, y + formattedCharSequences.size() * 9, Integer.MIN_VALUE);
 
-         for (FormattedCharSequence var33 : var20) {
-            int var34 = mc.font.width(var33);
-            var1.text(mc.font, var33, var2 / 2 - var34 / 2, var53, -1);
-            var53 += 9;
+         for (FormattedCharSequence text : formattedCharSequences) {
+            int width3 = mc.font.width(text);
+            graphics.text(mc.font, text, guiWidth / 2 - width3 / 2, y, -1);
+            y += 9;
          }
 
-         var53++;
+         y++;
       }
 
-      var1.fill(var2 / 2 - var55 / 2 - 1, var53 - 1, var2 / 2 + var55 / 2 + 1, var53 + var47 * 9, Integer.MIN_VALUE);
-      int var62 = mc.options.getBackgroundColor(553648127);
+      graphics.fill(guiWidth / 2 - width2 / 2 - 1, y - 1, guiWidth / 2 + width2 / 2 + 1, y + size2 * 9, Integer.MIN_VALUE);
+      int backgroundColor = mc.options.getBackgroundColor(553648127);
 
-      for (int var63 = 0; var63 < var46; var63++) {
-         int var65 = var63 / var47;
-         int var35 = var63 % var47;
-         int var36 = var52 + var65 * var51 + var65 * 5;
-         int var37 = var53 + var35 * 9;
-         var1.fill(var36, var37, var36 + var51, var37 + 8, var62);
-         if (var63 < var6.size()) {
-            PlayerInfo var38 = (PlayerInfo)var6.get(var63);
-            ScoreDisplayEntry var39 = (ScoreDisplayEntry)var7.get(var63);
-            GameProfile var40 = var38.getProfile();
-            int var41 = var36;
-            if (var49) {
-               Player var42 = mc.level.getPlayerByUUID(var40.id());
-               boolean var43 = var42 != null && method298(var42);
-               PlayerFaceExtractor.extractRenderState(var1, var38.getSkin().body().texturePath(), var36, var37, 8, var38.showHat(), var43, -1);
-               var41 = var36 + 9;
+      for (int i = 0; i < size; i++) {
+         int n10 = i / size2;
+         int n11 = i % size2;
+         int x0 = floatValue + n10 * slotWidth + n10 * 5;
+         int y3 = y + n11 * 9;
+         graphics.fill(x0, y3, x0 + slotWidth, y3 + 8, backgroundColor);
+         if (i < playerInfos.size()) {
+            PlayerInfo info = (PlayerInfo)playerInfos.get(i);
+            ScoreDisplayEntry entry = (ScoreDisplayEntry)arrayList.get(i);
+            GameProfile profile = info.getProfile();
+            int x02 = x0;
+            if (flag) {
+               Player playerByUUID = mc.level.getPlayerByUUID(profile.id());
+               boolean flip = playerByUUID != null && method298(playerByUUID);
+               PlayerFaceExtractor.extractRenderState(graphics, info.getSkin().body().texturePath(), x0, y3, 8, info.showHat(), flip, -1);
+               x02 = x0 + 9;
             }
 
-            int var68 = var38.getGameMode() == GameType.SPECTATOR ? -1859310289 : -1;
-            var1.text(mc.font, var39.name(), var41, var37, var68);
-            if (var4 != null && var38.getGameMode() != GameType.SPECTATOR) {
-               int var69 = var41 + var9 + 1;
-               int var44 = var69 + var50;
-               if (var44 - var69 > 5) {
-                  mc.gui.hud.getTabList().extractTablistScore(var4, var37, var39, var69, var44, var40.id(), var1);
+            int color = info.getGameMode() == GameType.SPECTATOR ? -1859310289 : -1;
+            graphics.text(mc.font, entry.name(), x02, y3, color);
+            if (displayObjective != null && info.getGameMode() != GameType.SPECTATOR) {
+               int left = x02 + n + 1;
+               int right = left + n4;
+               if (right - left > 5) {
+                  mc.gui.hud.getTabList().extractTablistScore(displayObjective, y3, entry, left, right, profile.id(), graphics);
                }
             }
 
-            mc.gui.hud.getTabList().extractPingIcon(var1, var51, var41 - (var49 ? 9 : 0), var37, var38);
+            mc.gui.hud.getTabList().extractPingIcon(graphics, slotWidth, x02 - (flag ? 9 : 0), y3, info);
          }
       }
 
-      if (var56 != null) {
-         var53 += var47 * 9 + 1;
-         var1.fill(var2 / 2 - var55 / 2 - 1, var53 - 1, var2 / 2 + var55 / 2 + 1, var53 + var56.size() * 9, Integer.MIN_VALUE);
+      if (formattedCharSequences2 != null) {
+         y += size2 * 9 + 1;
+         graphics.fill(guiWidth / 2 - width2 / 2 - 1, y - 1, guiWidth / 2 + width2 / 2 + 1, y + formattedCharSequences2.size() * 9, Integer.MIN_VALUE);
 
-         for (FormattedCharSequence var66 : var56) {
-            int var67 = mc.font.width(var66);
-            var1.text(mc.font, var66, var2 / 2 - var67 / 2, var53, -1);
-            var53 += 9;
+         for (FormattedCharSequence text : formattedCharSequences2) {
+            int width3 = mc.font.width(text);
+            graphics.text(mc.font, text, guiWidth / 2 - width3 / 2, y, -1);
+            y += 9;
          }
       }
 
-      var31.popMatrix();
+      pose.popMatrix();
    }
 
    @Override
-   public boolean method293(double var1, double var3) {
+   public boolean method293(double d, double d2) {
       return false;
    }
 
@@ -293,7 +293,7 @@ public class SidebarHud extends Interface {
       return 0.0F;
    }
 
-   private static boolean method298(Player var0) {
-      return AvatarRenderer.isPlayerUpsideDown(var0) && var0.isModelPartShown(PlayerModelPart.CAPE);
+   private static boolean method298(Player playerByUUID) {
+      return AvatarRenderer.isPlayerUpsideDown(playerByUUID) && playerByUUID.isModelPartShown(PlayerModelPart.CAPE);
    }
 }

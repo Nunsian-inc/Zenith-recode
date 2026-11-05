@@ -30,8 +30,8 @@ public final class BotVia {
    private BotVia() {
    }
 
-   public static boolean isTranslationNeeded(int var0) {
-      return var0 > 0 && var0 != NATIVE_PROTOCOL;
+   public static boolean isTranslationNeeded(int viaProtocolVersion) {
+      return viaProtocolVersion > 0 && viaProtocolVersion != NATIVE_PROTOCOL;
    }
 
    public static synchronized boolean ensureInitialized() {
@@ -63,9 +63,9 @@ public final class BotVia {
 
             initialized = true;
             return true;
-         } catch (Throwable var1) {
+         } catch (Throwable e) {
             failed = true;
-            LOGGER.error("Failed to initialize ViaVersion for bots", var1);
+            LOGGER.error("Failed to initialize ViaVersion for bots", e);
             return false;
          }
       }
@@ -74,29 +74,29 @@ public final class BotVia {
    private static boolean isViaLoaded() {
       try {
          return Via.getManager() != null;
-      } catch (Throwable var1) {
+      } catch (Throwable e) {
          return false;
       }
    }
 
    private static void installVersionProvider() {
-      ViaProviders var0 = Via.getManager().getProviders();
-      VersionProvider var1 = (VersionProvider)var0.get(VersionProvider.class);
-      if (!(var1 instanceof BotViaVersionProvider)) {
-         var0.use(VersionProvider.class, new BotViaVersionProvider(var1));
+      ViaProviders providers = Via.getManager().getProviders();
+      VersionProvider delegate = (VersionProvider)providers.get(VersionProvider.class);
+      if (!(delegate instanceof BotViaVersionProvider)) {
+         providers.use(VersionProvider.class, new BotViaVersionProvider(delegate));
       }
    }
 
-   public static void injectPipeline(Channel var0, int var1) {
-      var0.attr(TARGET_PROTOCOL).set(var1);
-      UserConnectionImpl var2 = new UserConnectionImpl(var0, true);
-      new ProtocolPipelineImpl(var2);
-      ChannelPipeline var3 = var0.pipeline();
-      var3.addBefore("encoder", "via-encoder", new BotViaEncoder(var2));
-      var3.addBefore("inbound_config", "via-decoder", new ViaDecoder(var2));
+   public static void injectPipeline(Channel channel, int viaProtocolVersion) {
+      channel.attr(TARGET_PROTOCOL).set(viaProtocolVersion);
+      UserConnectionImpl userConnectionImpl = new UserConnectionImpl(channel, true);
+      new ProtocolPipelineImpl(userConnectionImpl);
+      ChannelPipeline pipeline = channel.pipeline();
+      pipeline.addBefore("encoder", "via-encoder", new BotViaEncoder(userConnectionImpl));
+      pipeline.addBefore("inbound_config", "via-decoder", new ViaDecoder(userConnectionImpl));
    }
 
-   public static Integer targetProtocol(Channel var0) {
-      return (Integer)var0.attr(TARGET_PROTOCOL).get();
+   public static Integer targetProtocol(Channel channel) {
+      return (Integer)channel.attr(TARGET_PROTOCOL).get();
    }
 }

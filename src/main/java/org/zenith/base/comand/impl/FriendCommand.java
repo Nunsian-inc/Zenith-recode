@@ -14,9 +14,9 @@ public class FriendCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(literal("add").then(arg("player", PlayerArgumentType.create()).executes(var0 -> {
-         String var1x = (String)var0.getArgument("player", String.class);
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(literal("add").then(arg("player", PlayerArgumentType.create()).executes(commandContext -> {
+         String var1x = (String)commandContext.getArgument("player", String.class);
          if (Zenith.getInstance().getFriends().getItems().contains(var1x)) {
             ChatLogger.method2020(ChatLogger.Type.WARN, "Уже добавлен " + var1x);
             return 1;
@@ -26,13 +26,13 @@ public class FriendCommand extends CommandAbstract {
             return 1;
          }
       })));
-      var1.then(literal("remove").then(arg("player", FriendArgumentType.create()).executes(var0 -> {
-         String var1x = (String)var0.getArgument("player", String.class);
+      literalArgumentBuilder.then(literal("remove").then(arg("player", FriendArgumentType.create()).executes(commandContext -> {
+         String var1x = (String)commandContext.getArgument("player", String.class);
          Zenith.getInstance().getFriends().method7629(var1x);
          ChatLogger.method2020(ChatLogger.Type.INFO, var1x + " удален из друзей");
          return 1;
       })));
-      var1.then(literal("list").executes(var0 -> {
+      literalArgumentBuilder.then(literal("list").executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, Zenith.getInstance().getFriends().getItems().toString());
          return 1;
       }));

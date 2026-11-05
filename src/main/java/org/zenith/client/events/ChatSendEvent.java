@@ -32,10 +32,10 @@ public final class ChatSendEvent extends CancellableEvent {
    }
 
    @Generated
-   public ChatSendEvent(String var1, ChatSendEvent.Type var2, ChatSendEvent.Type2 var3) {
-      this.message = var1;
-      this.type = var2;
-      this.type2 = var3;
+   public ChatSendEvent(String message, ChatSendEvent.Type type, ChatSendEvent.Type2 type2) {
+      this.message = message;
+      this.type = type;
+      this.type2 = type2;
    }
 
    public static enum Type {

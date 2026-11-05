@@ -126,14 +126,14 @@ public class AimAssistModule extends Module {
    }
 
    @EventTarget
-   public void method5157(MouseRotationEvent var1) {
+   public void method5157(MouseRotationEvent event) {
       if (mc.player != null && mc.level != null) {
          this.livingEntity = this.method5159();
          if (!RotationRecorderModule.INSTANCE.isEnabled()) {
             if (this.method5154()) {
                ReplayStrokes.INSTANCE
                   .method6649(
-                     var1,
+                     event,
                      this.livingEntity,
                      this.replayLearn.isEnabled(),
                      this.replayFov.getValue3(),
@@ -151,20 +151,20 @@ public class AimAssistModule extends Module {
                ReplayStrokes.INSTANCE.reset();
                if (this.method5155() == null) {
                   if (this.livingEntity != null) {
-                     Rotation var2 = new Rotation(mc.player.getYRot(), mc.player.getXRot());
-                     Rotation var3 = RotationUtils.method6912(this.livingEntity.getBoundingBox().getCenter().subtract(mc.player.getEyePosition()));
-                     float var4 = Mth.wrapDegrees(var3.getFloatValue() - var2.getFloatValue());
-                     float var5 = Mth.wrapDegrees(var3.getFloatValue2() - var2.getFloatValue2());
-                     if (this.changeX.isEnabled() && Math.abs(var4) > this.diffRangeX.getValue3()) {
-                        var1.setDoubleValue(
+                     Rotation rotation = new Rotation(mc.player.getYRot(), mc.player.getXRot());
+                     Rotation rotation2 = RotationUtils.method6912(this.livingEntity.getBoundingBox().getCenter().subtract(mc.player.getEyePosition()));
+                     float f = Mth.wrapDegrees(rotation2.getFloatValue() - rotation.getFloatValue());
+                     float f2 = Mth.wrapDegrees(rotation2.getFloatValue2() - rotation.getFloatValue2());
+                     if (this.changeX.isEnabled() && Math.abs(f) > this.diffRangeX.getValue3()) {
+                        event.setDoubleValue(
                            this.method5161(
-                              var1.getDoubleValue(), var4, this.accelerationX.getValue3(), Math.abs(var4) < 40.0F ? this.decelerationX.getValue3() : 1.0F
+                              event.getDoubleValue(), f, this.accelerationX.getValue3(), Math.abs(f) < 40.0F ? this.decelerationX.getValue3() : 1.0F
                            )
                         );
                      }
 
-                     if (this.changeY.isEnabled() && Math.abs(var5) > this.diffRangeY.getValue3()) {
-                        var1.setDoubleValue2(this.method5161(var1.getDoubleValue2(), var5, this.accelerationY.getValue3(), this.decelerationY.getValue3()));
+                     if (this.changeY.isEnabled() && Math.abs(f2) > this.diffRangeY.getValue3()) {
+                        event.setDoubleValue2(this.method5161(event.getDoubleValue2(), f2, this.accelerationY.getValue3(), this.decelerationY.getValue3()));
                      }
                   }
                }
@@ -176,22 +176,22 @@ public class AimAssistModule extends Module {
    }
 
    @EventTarget
-   public void method5158(HandleInputPostEvent var1) {
-      AssistSilent var2 = this.method5155();
-      if (var2 != AssistSilent.INSTANCE) {
+   public void method5158(HandleInputPostEvent event) {
+      AssistSilent assistSilent = this.method5155();
+      if (assistSilent != AssistSilent.INSTANCE) {
          AssistSilent.INSTANCE.reset();
       }
 
-      if (var2 != AssistSilent.INSTANCE2) {
+      if (assistSilent != AssistSilent.INSTANCE2) {
          AssistSilent.INSTANCE2.reset();
       }
 
-      if (var2 != null && mc.player != null && mc.level != null && !RotationRecorderModule.INSTANCE.isEnabled()) {
+      if (assistSilent != null && mc.player != null && mc.level != null && !RotationRecorderModule.INSTANCE.isEnabled()) {
          this.livingEntity = this.method5159();
-         var2.method6309(this.livingEntity, this);
+         assistSilent.method6309(this.livingEntity, this);
          if (Zenith.method1502() && this.neuroDebug.isEnabled() && ++this.intValue2 >= 20) {
             this.intValue2 = 0;
-            ChatLogger.method2019(var2.method6312());
+            ChatLogger.method2019(assistSilent.method6312());
          }
       }
    }
@@ -206,43 +206,43 @@ public class AimAssistModule extends Module {
    }
 
    private LivingEntity method5159() {
-      float var1 = this.distance.getValue3();
-      LivingEntity var2 = AuraUtil.method7446(
-         this.method5160(var1),
-         var1,
+      float f = this.distance.getValue3();
+      LivingEntity livingEntity = AuraUtil.method7446(
+         this.method5160(f),
+         f,
          true,
          ((MultiSelectSetting)this.safeTarget.getSettings().get(0)).method5229(),
          ((MultiSelectSetting)this.safeTarget.getSettings().get(1)).method5229(),
          ((BooleanSetting)this.safeTarget.getSettings().get(2)).isEnabled()
       );
       this.items.clear();
-      return var2;
+      return livingEntity;
    }
 
-   private List<Entity> method5160(float var1) {
+   private List<Entity> method5160(float f) {
       this.items.clear();
-      Vec3 var2 = mc.player.getEyePosition();
-      double var3 = (var1 + 0.01) * (var1 + 0.01);
+      Vec3 eyePosition = mc.player.getEyePosition();
+      double d = (f + 0.01) * (f + 0.01);
 
-      for (Entity var6 : mc.level.entitiesForRendering()) {
-         if (var6 instanceof LivingEntity && var6.getBoundingBox().distanceToSqr(var2) <= var3) {
-            this.items.add(var6);
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof LivingEntity && entity.getBoundingBox().distanceToSqr(eyePosition) <= d) {
+            this.items.add(entity);
          }
       }
 
       return this.items;
    }
 
-   private double method5161(double var1, float var3, float var4, float var5) {
-      float var7 = Math.signum(var1) == Math.signum(var3) ? var4 : var5;
-      return var1 * var7;
+   private double method5161(double doubleValue, float f, float f2, float f3) {
+      float f4 = Math.signum(doubleValue) == Math.signum(f) ? f2 : f3;
+      return doubleValue * f4;
    }
 
    @EventTarget
-   private void method5162(MoveInputEvent var1) {
+   private void method5162(MoveInputEvent event) {
       if (!this.entry2.isSelected() && this.livingEntity != null) {
-         Rotation var2 = RotationUtils.method6912(this.livingEntity.getBoundingBox().getCenter().subtract(mc.player.getBoundingBox().getCenter()));
-         MovementInputUtils.method7426(var1, rotationManager.method7844().getFloatValue(), var2.getFloatValue());
+         Rotation rotation = RotationUtils.method6912(this.livingEntity.getBoundingBox().getCenter().subtract(mc.player.getBoundingBox().getCenter()));
+         MovementInputUtils.method7426(event, rotationManager.method7844().getFloatValue(), rotation.getFloatValue());
       }
    }
 }

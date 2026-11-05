@@ -12,32 +12,32 @@ public final class ChamsRenderLayer {
    }
 
    @Nullable
-   public static RenderType method3202(String var0, @Nullable RenderPipeline var1, @Nullable Identifier var2, boolean var3, boolean var4, boolean var5) {
-      if (var1 == null) {
+   public static RenderType method3202(String name, @Nullable RenderPipeline pipeline, @Nullable Identifier texture, boolean flag, boolean flag2, boolean flag3) {
+      if (pipeline == null) {
          return null;
       } else {
-         RenderSetupBuilder var6 = RenderSetup.builder(var1);
-         if (var2 != null) {
-            var6.withTexture("Sampler0", var2);
+         RenderSetupBuilder builder = RenderSetup.builder(pipeline);
+         if (texture != null) {
+            builder.withTexture("Sampler0", texture);
          }
 
-         if (var3) {
-            var6.useLightmap();
+         if (flag) {
+            builder.useLightmap();
          }
 
-         if (var4) {
-            var6.useOverlay();
+         if (flag2) {
+            builder.useOverlay();
          }
 
-         if (var5) {
-            var6.sortOnUpload();
+         if (flag3) {
+            builder.sortOnUpload();
          }
 
-         return RenderType.create(var0, var6.createRenderSetup());
+         return RenderType.create(name, builder.createRenderSetup());
       }
    }
 
-   public static RenderPipeline method3203(RenderType var0) {
-      return var0.state.pipeline;
+   public static RenderPipeline method3203(RenderType renderType) {
+      return renderType.state.pipeline;
    }
 }

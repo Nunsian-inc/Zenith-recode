@@ -22,40 +22,40 @@ public final class BotClientRegistries {
    private final Map<ResourceKey<? extends Registry<?>>, List<PackedRegistryEntry>> dynamicRegistries = new HashMap<>();
    private final Map<ResourceKey<? extends Registry<?>>, NetworkPayload> tags = new HashMap<>();
 
-   public void putDynamicRegistry(ResourceKey<? extends Registry<?>> var1, List<PackedRegistryEntry> var2) {
-      this.dynamicRegistries.computeIfAbsent(var1, var0 -> new ArrayList<>()).addAll(var2);
+   public void putDynamicRegistry(ResourceKey<? extends Registry<?>> registry, List<PackedRegistryEntry> entries) {
+      this.dynamicRegistries.computeIfAbsent(registry, dynamicRegistry -> new ArrayList<>()).addAll(entries);
    }
 
-   public void putTags(Map<ResourceKey<? extends Registry<?>>, NetworkPayload> var1) {
-      this.tags.putAll(var1);
+   public void putTags(Map<ResourceKey<? extends Registry<?>>, NetworkPayload> tags) {
+      this.tags.putAll(tags);
    }
 
-   public Frozen createRegistryManager(ResourceProvider var1, Frozen var2) {
+   public Frozen createRegistryManager(ResourceProvider knownDataSource, Frozen receivedRegistries) {
       if (this.dynamicRegistries.isEmpty()) {
-         return var2;
+         return receivedRegistries;
       } else {
-         LayeredRegistryAccess var3 = ClientRegistryLayer.createRegistryAccess();
-         Frozen var4 = var3.getAccessForLoading(ClientRegistryLayer.REMOTE);
-         HashMap var5 = new HashMap();
-         this.dynamicRegistries.forEach((var1x, var2x) -> var5.put(var1x, new NetworkedRegistryData((List<PackedRegistryEntry>)var2x, NetworkPayload.EMPTY)));
-         ArrayList var6 = new ArrayList();
+         LayeredRegistryAccess registryAccess = ClientRegistryLayer.createRegistryAccess();
+         Frozen accessForLoading = registryAccess.getAccessForLoading(ClientRegistryLayer.REMOTE);
+         HashMap entries = new HashMap();
+         this.dynamicRegistries.forEach((var1x, var2x) -> entries.put(var1x, new NetworkedRegistryData((List<PackedRegistryEntry>)var2x, NetworkPayload.EMPTY)));
+         ArrayList tags = new ArrayList();
          this.tags.forEach((var3x, var4x) -> {
             if (!var4x.isEmpty()) {
                if (RegistrySynchronization.isNetworkable((ResourceKey<? extends Registry<?>>)var3x)) {
-                  var5.compute(var3x, (var1xx, var2xx) -> new NetworkedRegistryData(var2xx != null ? ((NetworkedRegistryData)var2xx).elements() : List.of(), var4x));
+                  entries.compute(var3x, (var1xx, var2xx) -> new NetworkedRegistryData(var2xx != null ? ((NetworkedRegistryData)var2xx).elements() : List.of(), var4x));
                } else {
-                  var6.add(startTagReload(var4, (ResourceKey<? extends Registry<?>>)var3x, var4x));
+                  tags.add(startTagReload(accessForLoading, (ResourceKey<? extends Registry<?>>)var3x, var4x));
                }
             }
          });
-         var var7 = TagLoader.buildUpdatedLookups(var4, var6);
-         Frozen var8 = (Frozen)RegistryDataLoader.load(var5, var1, var7, RegistryDataLoader.SYNCHRONIZED_REGISTRIES, net.minecraft.util.Util.backgroundExecutor()).join();
-         return var3.replaceFrom(ClientRegistryLayer.REMOTE, var8).compositeAccess().freeze();
+         var updatedLookups = TagLoader.buildUpdatedLookups(accessForLoading, tags);
+         Frozen layers = (Frozen)RegistryDataLoader.load(entries, knownDataSource, updatedLookups, RegistryDataLoader.SYNCHRONIZED_REGISTRIES, net.minecraft.util.Util.backgroundExecutor()).join();
+         return registryAccess.replaceFrom(ClientRegistryLayer.REMOTE, layers).compositeAccess().freeze();
       }
    }
 
-   private static <T> PendingTags<T> startTagReload(Frozen var0, ResourceKey<? extends Registry<? extends T>> var1, NetworkPayload var2) {
-      Registry var3 = var0.lookupOrThrow(var1);
-      return var3.prepareTagReload(var2.resolve(var3));
+   private static <T> PendingTags<T> startTagReload(Frozen accessForLoading, ResourceKey<? extends Registry<? extends T>> name, NetworkPayload networkPayload) {
+      Registry orThrow = accessForLoading.lookupOrThrow(name);
+      return orThrow.prepareTagReload(networkPayload.resolve(orThrow));
    }
 }

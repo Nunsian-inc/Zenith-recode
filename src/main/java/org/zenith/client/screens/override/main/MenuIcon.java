@@ -37,41 +37,41 @@ public final class MenuIcon {
       return "MenuIcon[" + "glyph=" + this.glyph + ", " + "legacy=" + this.legacy + ", " + "vector=" + this.vector + "]";
    }
 
-   public MenuIcon(String var1, boolean var2) {
-      this(var1, var2, false);
+   public MenuIcon(String glyph, boolean legacy) {
+      this(glyph, legacy, false);
    }
 
-   public MenuIcon(String var1, boolean var2, boolean var3) {
-      this.glyph = var1;
-      this.legacy = var2;
-      this.vector = var3;
+   public MenuIcon(String glyph, boolean legacy, boolean vector) {
+      this.glyph = glyph;
+      this.legacy = legacy;
+      this.vector = vector;
    }
 
-   public static MenuIcon of(char var0) {
-      return new MenuIcon(String.valueOf(var0), false);
+   public static MenuIcon of(char c) {
+      return new MenuIcon(String.valueOf(c), false);
    }
 
-   public static MenuIcon legacy(char var0) {
-      return new MenuIcon(String.valueOf(var0), true);
+   public static MenuIcon legacy(char c) {
+      return new MenuIcon(String.valueOf(c), true);
    }
 
-   public static MenuIcon svg(SvgIcon var0) {
-      return new MenuIcon(var0.glyph(), false, true);
+   public static MenuIcon svg(SvgIcon svgIcon) {
+      return new MenuIcon(svgIcon.glyph(), false, true);
    }
 
-   public Font font(float var1) {
+   public Font font(float f) {
       if (this.vector) {
-         return SvgIcon.font(MenuTheme.px(var1));
+         return SvgIcon.font(MenuTheme.px(f));
       } else {
-         return this.legacy ? MenuTheme.legacyIcon(var1) : MenuTheme.icon(var1);
+         return this.legacy ? MenuTheme.legacyIcon(f) : MenuTheme.icon(f);
       }
    }
 
-   public float width(float var1) {
-      return this.font(var1).width(this.glyph);
+   public float width(float f) {
+      return this.font(f).width(this.glyph);
    }
 
-   public float height(float var1) {
-      return this.font(var1).height();
+   public float height(float f) {
+      return this.font(f).height();
    }
 }

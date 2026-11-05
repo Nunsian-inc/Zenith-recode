@@ -22,8 +22,8 @@ public enum CosmeticType {
 
    private final CosmeticType.Type type;
 
-   private CosmeticType(CosmeticType.Type var3) {
-      this.type = var3;
+   private CosmeticType(CosmeticType.Type type) {
+      this.type = type;
    }
 
    public CosmeticType.Type getType() {
@@ -44,11 +44,11 @@ public enum CosmeticType {
       };
    }
 
-   public static CosmeticType method1684(String var0) {
-      if (var0 != null && !var0.isBlank()) {
+   public static CosmeticType method1684(String str) {
+      if (str != null && !str.isBlank()) {
          try {
-            return valueOf(var0.strip().toUpperCase(Locale.ROOT));
-         } catch (IllegalArgumentException var2) {
+            return valueOf(str.strip().toUpperCase(Locale.ROOT));
+         } catch (IllegalArgumentException e) {
             return UNKNOWN;
          }
       } else {

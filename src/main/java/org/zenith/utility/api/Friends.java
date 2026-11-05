@@ -15,24 +15,24 @@ public final class Friends {
    private final Set<String> items = new LinkedHashSet<>();
    private Friends.Handler handler;
 
-   public Friends(Path var1) {
-      this.path = var1.resolve("nexus-friends.json");
+   public Friends(Path path) {
+      this.path = path.resolve("nexus-friends.json");
       this.load();
    }
 
-   public void setHandler(Friends.Handler var1) {
-      this.handler = var1;
+   public void setHandler(Friends.Handler handler) {
+      this.handler = handler;
    }
 
-   public boolean method6442(String var1) {
-      return var1 != null && !this.items.isEmpty() ? this.items.contains(var1.toLowerCase(Locale.ROOT)) : false;
+   public boolean method6442(String username) {
+      return username != null && !this.items.isEmpty() ? this.items.contains(username.toLowerCase(Locale.ROOT)) : false;
    }
 
-   public boolean add(String var1) {
-      String var2 = var1.toLowerCase(Locale.ROOT);
-      if (!this.isFull() && this.items.add(var2)) {
+   public boolean add(String username) {
+      String lowerCase = username.toLowerCase(Locale.ROOT);
+      if (!this.isFull() && this.items.add(lowerCase)) {
          if (this.handler != null) {
-            this.handler.method6445(var2);
+            this.handler.method6445(lowerCase);
          }
 
          return true;
@@ -41,46 +41,46 @@ public final class Friends {
       }
    }
 
-   public boolean method6443(String var1) {
-      String var2 = var1.toLowerCase(Locale.ROOT);
-      if (!this.items.remove(var2)) {
+   public boolean method6443(String selected) {
+      String lowerCase = selected.toLowerCase(Locale.ROOT);
+      if (!this.items.remove(lowerCase)) {
          return false;
       } else {
          if (this.handler != null) {
-            this.handler.method6446(var2);
+            this.handler.method6446(lowerCase);
          }
 
          return true;
       }
    }
 
-   public boolean method6444(Collection<String> var1) {
-      LinkedHashSet<String> var2 = new LinkedHashSet();
+   public boolean method6444(Collection<String> strings) {
+      LinkedHashSet<String> strings2 = new LinkedHashSet();
 
-      for (String var4 : var1) {
-         if (var4 != null && !var4.isBlank()) {
-            var2.add(var4.toLowerCase(Locale.ROOT));
+      for (String str : strings) {
+         if (str != null && !str.isBlank()) {
+            strings2.add(str.toLowerCase(Locale.ROOT));
          }
       }
 
-      if (var2.equals(this.items)) {
+      if (strings2.equals(this.items)) {
          return false;
-      } else if (var2.size() >= this.items.size()) {
+      } else if (strings2.size() >= this.items.size()) {
          this.items.clear();
-         this.items.addAll(var2);
+         this.items.addAll(strings2);
          return true;
       } else {
-         boolean var6 = false;
+         boolean flag = false;
 
-         for (String var5 : var2) {
+         for (String str : strings2) {
             if (this.items.size() >= 200) {
                break;
             }
 
-            var6 |= this.items.add(var5);
+            flag |= this.items.add(str);
          }
 
-         return var6;
+         return flag;
       }
    }
 
@@ -104,21 +104,21 @@ public final class Friends {
    }
 
    public void save() {
-      JsonArray var1 = new JsonArray();
-      this.items.forEach(var1::add);
-      JsonObject var2 = new JsonObject();
-      var2.add("friends", var1);
-      CloudJsonIo.method5993(this.path, var2);
+      JsonArray jsonArray = new JsonArray();
+      this.items.forEach(jsonArray::add);
+      JsonObject json = new JsonObject();
+      json.add("friends", jsonArray);
+      CloudJsonIo.method5993(this.path, json);
    }
 
    private void load() {
-      JsonObject var1 = CloudJsonIo.method5992(this.path);
-      if (var1 != null && var1.has("friends") && var1.get("friends").isJsonArray()) {
-         var1.getAsJsonArray("friends").forEach(var1x -> {
+      JsonObject json = CloudJsonIo.method5992(this.path);
+      if (json != null && json.has("friends") && json.get("friends").isJsonArray()) {
+         json.getAsJsonArray("friends").forEach(var1x -> {
             if (var1x.isJsonPrimitive() && this.items.size() < 200) {
-               String var2 = var1x.getAsString();
-               if (!var2.isBlank() && var2.length() <= 32) {
-                  this.items.add(var2.toLowerCase(Locale.ROOT));
+               String string = var1x.getAsString();
+               if (!string.isBlank() && string.length() <= 32) {
+                  this.items.add(string.toLowerCase(Locale.ROOT));
                }
             }
          });
@@ -126,9 +126,9 @@ public final class Friends {
    }
 
    public interface Handler {
-      void method6445(String var1);
+      void method6445(String lowerCase);
 
-      void method6446(String var1);
+      void method6446(String lowerCase);
 
       void method6447();
    }

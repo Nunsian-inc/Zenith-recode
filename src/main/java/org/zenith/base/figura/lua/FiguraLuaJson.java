@@ -41,8 +41,8 @@ public class FiguraLuaJson {
       JsonElement jsonElement;
       try {
          jsonElement = JsonParser.parseString(json);
-      } catch (JsonSyntaxException var3) {
-         throw new LuaError("Failed to parse malformed Json: " + var3.getCause());
+      } catch (JsonSyntaxException e) {
+         throw new LuaError("Failed to parse malformed Json: " + e.getCause());
       }
 
       return JsonUtils.asLuaValue(jsonElement);

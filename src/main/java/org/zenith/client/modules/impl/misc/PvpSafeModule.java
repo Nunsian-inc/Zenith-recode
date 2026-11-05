@@ -17,11 +17,11 @@ public final class PvpSafeModule extends Module {
    public static final PvpSafeModule INSTANCE = new PvpSafeModule();
 
    @EventTarget
-   public void method1004(PacketEvent var1) {
-      if (var1.method7099() && Zenith.getInstance().getServerDetector().method1635() && var1.getPacket3() instanceof ServerboundChatCommandPacket(String var7)) {
-         String var5 = var7;
-         if (var5.contains("hub")) {
-            var1.setCancelled(true);
+   public void method1004(PacketEvent event) {
+      if (event.method7099() && Zenith.getInstance().getServerDetector().method1635() && event.getPacket3() instanceof ServerboundChatCommandPacket(String str)) {
+         String str2 = str;
+         if (str2.contains("hub")) {
+            event.setCancelled(true);
          }
       }
    }

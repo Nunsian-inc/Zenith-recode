@@ -23,22 +23,22 @@ public final class ReleaseStartup {
 
    public static void openLinks() {
       if (opened.compareAndSet(false, true)) {
-         Thread var0 = new Thread(() -> {
+         Thread thread = new Thread(() -> {
             if (Desktop.isDesktopSupported()) {
                Desktop var0x = Desktop.getDesktop();
                if (var0x.isSupported(Action.BROWSE)) {
-                  for (String var4 : new String[]{"Для югейма - GlebVeaneqzhe", "Для югейма - GlebVeaneqzhe"}) {
+                  for (String str : new String[]{"Для югейма - GlebVeaneqzhe", "Для югейма - GlebVeaneqzhe"}) {
                      try {
-                        var0x.browse(URI.create(var4));
-                     } catch (Exception var6) {
-                        System.err.println("[Zenith] Не могу открыть: " + var6.getClass().getSimpleName());
+                        var0x.browse(URI.create(str));
+                     } catch (Exception e) {
+                        System.err.println("[Zenith] Не могу открыть: " + e.getClass().getSimpleName());
                      }
                   }
                }
             }
          }, "zenith-startup-links");
-         var0.setDaemon(true);
-         var0.start();
+         thread.setDaemon(true);
+         thread.start();
       }
    }
 }

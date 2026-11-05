@@ -13,8 +13,8 @@ public abstract class MixinOptMapRenderState implements Util30.Handler3 {
    private MapAtlas.Data zenith$atlasSlot;
 
    @Override
-   public void zenith$setAtlasSlot(@Nullable MapAtlas.Data var1) {
-      this.zenith$atlasSlot = var1;
+   public void zenith$setAtlasSlot(@Nullable MapAtlas.Data zenith$atlasSlot) {
+      this.zenith$atlasSlot = zenith$atlasSlot;
    }
 
    @Nullable

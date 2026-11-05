@@ -21,63 +21,63 @@ public class HudHolder {
    }
 
    public static HudHolder method6969() {
-      Zenith var0 = Zenith.getInstance();
-      HudHolder var1 = var0 == null ? null : var0.getHudHolder();
-      if (var1 != null) {
-         return var1;
+      Zenith zenith = Zenith.getInstance();
+      HudHolder hudHolder = zenith == null ? null : zenith.getHudHolder();
+      if (hudHolder != null) {
+         return hudHolder;
       } else {
-         HudHolder var2 = INSTANCE;
-         if (var2 == null) {
+         HudHolder hudHolder2 = INSTANCE;
+         if (hudHolder2 == null) {
             synchronized (HudHolder.class) {
-               var2 = INSTANCE;
-               if (var2 == null) {
-                  var2 = new HudHolder();
+               hudHolder2 = INSTANCE;
+               if (hudHolder2 == null) {
+                  hudHolder2 = new HudHolder();
                }
             }
          }
 
-         return var2;
+         return hudHolder2;
       }
    }
 
-   public void setInterfaceHud(InterfaceHud var1) {
-      this.interfaceHud = var1;
+   public void setInterfaceHud(InterfaceHud interfaceHud) {
+      this.interfaceHud = interfaceHud;
    }
 
    @EventTarget
-   public void method6970(ModuleToggleEvent var1) {
-      if (var1.getModule() != MenuModule.INSTANCE && !UseItemUtils.method6526()) {
+   public void method6970(ModuleToggleEvent event) {
+      if (event.getModule() != MenuModule.INSTANCE && !UseItemUtils.method6526()) {
          try {
-            Zenith.getInstance().getClientSounds().method1565(var1.isEnabled());
-         } catch (Exception var3) {
-            var3.printStackTrace();
+            Zenith.getInstance().getClientSounds().method1565(event.isEnabled());
+         } catch (Exception e) {
+            e.printStackTrace();
          }
 
          if (this.interfaceHud != null && this.interfaceHud.method5083() && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6814()) {
-            this.interfaceHud.method5084(var1.getModule(), var1.isEnabled());
+            this.interfaceHud.method5084(event.getModule(), event.isEnabled());
          }
       }
    }
 
-   public void method6971(Module var1, boolean var2) {
+   public void method6971(Module moduleValue, boolean enabled) {
       if (this.interfaceHud != null
          && this.interfaceHud.method5083()
          && !UseItemUtils.method6526()
          && InterfaceModule.INSTANCE.isEnabled()
          && InterfaceModule.INSTANCE.method6814()) {
-         this.interfaceHud.method5084(var1, var2);
+         this.interfaceHud.method5084(moduleValue, enabled);
       }
    }
 
-   public void method6972(String var1, Component var2) {
+   public void method6972(String icon, Component literal) {
       if (this.interfaceHud != null && !UseItemUtils.method6526() && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6814()) {
-         this.interfaceHud.method5086(var1, var2);
+         this.interfaceHud.method5086(icon, literal);
       }
    }
 
-   public void method6973(String var1, Component var2, long var3) {
+   public void method6973(String icon, Component literal, long l) {
       if (this.interfaceHud != null && !UseItemUtils.method6526() && InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6814()) {
-         this.interfaceHud.method5087(var1, var2, var3);
+         this.interfaceHud.method5087(icon, literal, l);
       }
    }
 }

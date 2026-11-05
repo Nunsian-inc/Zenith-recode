@@ -156,7 +156,7 @@ public class AvatarMetadataParser {
          if (customization.primaryRenderType != null) {
             try {
                modelPart.putString("primary", RenderTypes.valueOf(customization.primaryRenderType.toUpperCase(Locale.US)).name());
-            } catch (Exception var7) {
+            } catch (Exception e) {
                throw new IOException("Invalid render type \"" + customization.primaryRenderType + "\"!");
             }
          }
@@ -164,7 +164,7 @@ public class AvatarMetadataParser {
          if (customization.secondaryRenderType != null) {
             try {
                modelPart.putString("secondary", RenderTypes.valueOf(customization.secondaryRenderType.toUpperCase(Locale.US)).name());
-            } catch (Exception var6) {
+            } catch (Exception e) {
                throw new IOException("Invalid render type \"" + customization.secondaryRenderType + "\"!");
             }
          }

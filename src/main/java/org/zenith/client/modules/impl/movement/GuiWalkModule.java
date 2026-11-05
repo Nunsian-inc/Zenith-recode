@@ -54,7 +54,7 @@ public final class GuiWalkModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (!this.entry3.isSelected()) {
          try {
             if (UseItemUtils.method6526()) {
@@ -67,22 +67,22 @@ public final class GuiWalkModule extends Module {
                }
 
                this.flag = false;
-               if (Objects.requireNonNull(var1.getPacket3()) instanceof ServerboundContainerClickPacket var2
+               if (Objects.requireNonNull(event.getPacket3()) instanceof ServerboundContainerClickPacket containerClickPacket
                   && (!this.items.isEmpty() || MovementInputUtils.method7418())
                   && KeyBindUtils.method2635()) {
-                  this.items.add(var2);
-                  this.slotActionType = var2.containerInput();
-                  var1.setCancelled(true);
+                  this.items.add(containerClickPacket);
+                  this.slotActionType = containerClickPacket.containerInput();
+                  event.setCancelled(true);
                }
             }
-         } catch (Exception var5) {
-            var5.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
 
    @EventTarget
-   public void method1665(UpdateEvent var1) {
+   public void method1665(UpdateEvent event) {
       if (mc.player.containerMenu instanceof InventoryMenu) {
          if (KeyBindUtils.method2635()
             && (!this.entry.isSelected() || !this.flag2)
@@ -100,20 +100,20 @@ public final class GuiWalkModule extends Module {
    }
 
    @EventTarget
-   public void method1666(SlotClickEvent var1) {
-      if (var1.getIntValue2() >= 0) {
-         Slot var2 = mc.player.containerMenu.getSlot(var1.getIntValue2());
-         ItemStack var3 = var2.getItem();
-         if (var3.get(DataComponents.CUSTOM_DATA) != null) {
+   public void method1666(SlotClickEvent event) {
+      if (event.getIntValue2() >= 0) {
+         Slot slot = mc.player.containerMenu.getSlot(event.getIntValue2());
+         ItemStack stack = slot.getItem();
+         if (stack.get(DataComponents.CUSTOM_DATA) != null) {
          }
       }
 
       if (!this.entry3.isSelected()) {
          if (mc.player.containerMenu instanceof InventoryMenu) {
-            ContainerInput var4 = var1.getSlotActionType();
+            ContainerInput slotActionType = event.getSlotActionType();
             if (this.entry.isSelected()) {
                if (MovementInputUtils.method7418()) {
-                  var1.setCancelled(true);
+                  event.setCancelled(true);
                } else {
                   this.flag2 = true;
                }
@@ -121,26 +121,26 @@ public final class GuiWalkModule extends Module {
 
             if (this.items.isEmpty() && !MovementInputUtils.method7418()) {
                this.flag3 = true;
-            } else if ((var1.getIntValue3() != 1 || !var4.equals(ContainerInput.PICKUP))
-               && (this.slotActionType != ContainerInput.PICKUP || var1.getSlotActionType() != ContainerInput.QUICK_MOVE)
-               && (this.slotActionType != ContainerInput.QUICK_MOVE || var1.getSlotActionType() != ContainerInput.PICKUP)
-               && (this.slotActionType != ContainerInput.QUICK_MOVE || var1.getSlotActionType() != ContainerInput.PICKUP_ALL)
-               && (this.slotActionType != ContainerInput.PICKUP_ALL || var1.getSlotActionType() != ContainerInput.QUICK_MOVE)) {
+            } else if ((event.getIntValue3() != 1 || !slotActionType.equals(ContainerInput.PICKUP))
+               && (this.slotActionType != ContainerInput.PICKUP || event.getSlotActionType() != ContainerInput.QUICK_MOVE)
+               && (this.slotActionType != ContainerInput.QUICK_MOVE || event.getSlotActionType() != ContainerInput.PICKUP)
+               && (this.slotActionType != ContainerInput.QUICK_MOVE || event.getSlotActionType() != ContainerInput.PICKUP_ALL)
+               && (this.slotActionType != ContainerInput.PICKUP_ALL || event.getSlotActionType() != ContainerInput.QUICK_MOVE)) {
                this.flag = true;
             } else {
-               var1.setCancelled(true);
+               event.setCancelled(true);
             }
          }
       }
    }
 
    @EventTarget
-   public void method1667(CloseHandledScreenEvent var1) {
+   public void method1667(CloseHandledScreenEvent event) {
       if (!this.entry3.isSelected()) {
          if (mc.player.containerMenu instanceof InventoryMenu) {
             if (this.entry.isSelected()) {
                if (!this.flag2) {
-                  var1.setCancelled(true);
+                  event.setCancelled(true);
                }
 
                this.flag2 = false;
@@ -149,17 +149,17 @@ public final class GuiWalkModule extends Module {
             } else {
                this.flag3 = false;
                if (MovementInputUtils.method7418() || !this.items.isEmpty()) {
-                  var1.setCancelled(true);
+                  event.setCancelled(true);
                }
 
                if (!this.items.isEmpty()) {
                   this.slotActionType = null;
                   this.flag = false;
-                  var var2 = new ArrayList<>(this.items);
+                  var packets = new ArrayList<>(this.items);
                   this.items.clear();
-                  TaskScheduler.Entry2 var3 = new TaskScheduler.Entry2(GuiWalkModule.class);
+                  TaskScheduler.Entry2 task = new TaskScheduler.Entry2(GuiWalkModule.class);
                   if (InventorySettingModule.INSTANCE.method2396()) {
-                     var3.method5120(
+                     task.method5120(
                         MoveInputEvent.class,
                         var1x -> {
                            var1x.method3044();
@@ -169,7 +169,7 @@ public final class GuiWalkModule extends Module {
                               && !mc.player.lastSentInput.backward()
                               && !mc.player.lastSentInput.left()
                               && !mc.player.lastSentInput.right()) {
-                              var2.forEach(var0x -> mc.getConnection().send(var0x));
+                              packets.forEach(var0x -> mc.getConnection().send(var0x));
                               InventoryUtils.closeScreen();
                               return true;
                            } else {
@@ -178,9 +178,9 @@ public final class GuiWalkModule extends Module {
                         }
                      );
                   } else {
-                     for (int var4 = 0; var4 < var2.size(); var4++) {
-                        Packet var5 = (Packet)var2.get(var4);
-                        var3.method5120(
+                     for (int i = 0; i < packets.size(); i++) {
+                        Packet packet = (Packet)packets.get(i);
+                        task.method5120(
                            Event1.class,
                            var1x -> {
                               if (!(mc.player.containerMenu instanceof InventoryMenu)) {
@@ -193,7 +193,7 @@ public final class GuiWalkModule extends Module {
                                  && !mc.player.lastSentInput.backward()
                                  && !mc.player.lastSentInput.left()
                                  && !mc.player.lastSentInput.right()) {
-                                 mc.getConnection().send(var5);
+                                 mc.getConnection().send(packet);
                                  return true;
                               } else {
                                  return false;
@@ -202,9 +202,9 @@ public final class GuiWalkModule extends Module {
                         );
                      }
 
-                     var3.method5120(
+                     task.method5120(
                         MoveInputEvent.class,
-                        var0 -> {
+                        event2 -> {
                            if (!mc.player.lastSentInput.jump()
                               && !mc.player.isSprinting()
                               && !mc.player.lastSentInput.forward()
@@ -218,12 +218,12 @@ public final class GuiWalkModule extends Module {
                            }
                         }
                      );
-                     var3.method5123(MoveInputEvent.class, var0 -> {
-                        var0.method3044();
+                     task.method5123(MoveInputEvent.class, event2 -> {
+                        event2.method3044();
                         return true;
                      });
                      if (this.cameraLock.isEnabled()) {
-                        var3.method5123(
+                        task.method5123(
                            Event5.class,
                            var1x -> {
                               rotationManager.method7848(
@@ -240,7 +240,7 @@ public final class GuiWalkModule extends Module {
                      }
                   }
 
-                  Zenith.getInstance().getTaskScheduler().method5110(var3);
+                  Zenith.getInstance().getTaskScheduler().method5110(task);
                }
             }
          }

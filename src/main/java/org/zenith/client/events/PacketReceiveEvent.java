@@ -7,8 +7,8 @@ import org.zenith.CancellableEvent;
 public final class PacketReceiveEvent extends CancellableEvent {
    private final Packet<?> packet;
 
-   public PacketReceiveEvent(Packet<?> var1) {
-      this.packet = var1;
+   public PacketReceiveEvent(Packet<?> packet) {
+      this.packet = packet;
    }
 
    @Generated

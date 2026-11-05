@@ -20,17 +20,17 @@ public class MixinWeatherRendering {
       method = {"extractRenderState(Lnet/minecraft/client/multiplayer/ClientLevel;FLnet/minecraft/world/phys/Vec3;Lnet/minecraft/client/renderer/state/level/WeatherRenderState;)V"},
       at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
    )
-   private Precipitation zenith$forcePrecipitation(net.minecraft.client.multiplayer.ClientLevel var1, BlockPos var2) {
-      int var4 = WeatherModule.INSTANCE.method3112();
-      if (var4 >= 0) {
-         return switch (var4) {
+   private Precipitation zenith$forcePrecipitation(net.minecraft.client.multiplayer.ClientLevel level, BlockPos pos) {
+      int n = WeatherModule.INSTANCE.method3112();
+      if (n >= 0) {
+         return switch (n) {
             case 1 -> Precipitation.RAIN;
             case 2 -> Precipitation.SNOW;
             default -> Precipitation.NONE;
          };
       }
 
-      return var1.getPrecipitationAt(var2);
+      return level.getPrecipitationAt(pos);
    }
 
    @Inject(
@@ -38,10 +38,10 @@ public class MixinWeatherRendering {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$skipHiddenPieces(net.minecraft.client.multiplayer.ClientLevel var1, float var3, Vec3 var4, WeatherRenderState var5, CallbackInfo var6) {
+   private void zenith$skipHiddenPieces(net.minecraft.client.multiplayer.ClientLevel level, float f, Vec3 vec, WeatherRenderState weatherRenderState, CallbackInfo callbackInfo) {
       if (WeatherModule.INSTANCE.method3113()) {
-         var5.reset();
-         var6.cancel();
+         weatherRenderState.reset();
+         callbackInfo.cancel();
       }
    }
 }

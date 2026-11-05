@@ -127,27 +127,27 @@ public final class StreamerModeModule extends Module {
    private StreamerModeModule() {
    }
 
-   public void method6283(int var1) {
+   public void method6283(int intValue) {
       if (!this.isEnabled()) {
          ChatLogger.method2021("Сначала включи StreamerMode");
       } else if (mc.player != null && mc.player.connection != null) {
          if (this.type != StreamerModeModule.Type.IDLE) {
             ChatLogger.method2021("Парс уже идёт");
          } else {
-            int var2 = Zenith.getInstance().getServerDetector().getAnarchy();
-            if (var2 == -1) {
+            int anarchy = Zenith.getInstance().getServerDetector().getAnarchy();
+            if (anarchy == -1) {
                ChatLogger.method2022("Не вижу номер текущей анархии, зайди на анку");
-            } else if (var2 == var1) {
-               ChatLogger.method2022("Ты уже на ан" + var1 + ", выбери другую");
+            } else if (anarchy == intValue) {
+               ChatLogger.method2022("Ты уже на ан" + intValue + ", выбери другую");
             } else {
-               this.intValue2 = var2;
-               this.intValue = var1;
+               this.intValue2 = anarchy;
+               this.intValue = intValue;
                this.flag = false;
                this.method6285();
                this.type = StreamerModeModule.Type.GO_TARGET;
                this.stopWatch.reset();
-               this.method6286(var1);
-               ChatLogger.method2019("Иду на ан" + var1 + " за табом, потом вернусь на ан" + var2);
+               this.method6286(intValue);
+               ChatLogger.method2019("Иду на ан" + intValue + " за табом, потом вернусь на ан" + anarchy);
             }
          }
       }
@@ -201,12 +201,12 @@ public final class StreamerModeModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.type != StreamerModeModule.Type.IDLE && mc.player != null && mc.level != null) {
-         int var2 = Zenith.getInstance().getServerDetector().getAnarchy();
+         int anarchy = Zenith.getInstance().getServerDetector().getAnarchy();
          switch (this.type) {
             case GO_TARGET:
-               if (var2 == this.intValue) {
+               if (anarchy == this.intValue) {
                   this.type = StreamerModeModule.Type.WAIT_TAB;
                   this.stopWatch.reset();
                } else if (this.stopWatch.method7546(60000L)) {
@@ -215,8 +215,8 @@ public final class StreamerModeModule extends Module {
                }
                break;
             case WAIT_TAB:
-               int var3 = mc.player.connection.getListedOnlinePlayers().size();
-               if (this.stopWatch.method7546(5000L) && var3 > 1 || this.stopWatch.method7546(15000L)) {
+               int size = mc.player.connection.getListedOnlinePlayers().size();
+               if (this.stopWatch.method7546(5000L) && size > 1 || this.stopWatch.method7546(15000L)) {
                   this.method6287();
                   this.type = StreamerModeModule.Type.RETURN;
                   this.stopWatch.reset();
@@ -224,7 +224,7 @@ public final class StreamerModeModule extends Module {
                }
                break;
             case RETURN:
-               if (var2 == this.intValue2 || this.stopWatch.method7546(60000L)) {
+               if (anarchy == this.intValue2 || this.stopWatch.method7546(60000L)) {
                   this.type = StreamerModeModule.Type.IDLE;
                   this.flag = !this.items.isEmpty();
                   if (this.flag) {
@@ -237,11 +237,11 @@ public final class StreamerModeModule extends Module {
       }
    }
 
-   private void method6286(int var1) {
+   private void method6286(int intValue) {
       if (Zenith.getInstance().getServerDetector().method1642()) {
-         Zenith.getInstance().getHolyWorldServerTracker().reconnect(var1);
+         Zenith.getInstance().getHolyWorldServerTracker().reconnect(intValue);
       } else {
-         mc.player.connection.sendCommand("an" + var1);
+         mc.player.connection.sendCommand("an" + intValue);
       }
    }
 
@@ -249,13 +249,13 @@ public final class StreamerModeModule extends Module {
       this.items.clear();
       this.items2.clear();
       this.method6285();
-      String var1 = mc.player.getScoreboardName();
+      String scoreboardName = mc.player.getScoreboardName();
 
-      for (PlayerInfo var3 : mc.gui.hud.getTabList().getPlayerInfos()) {
-         String var4 = var3.getProfile().name();
-         if (!var4.equals(var1)) {
-            MutableComponent var5 = NameProtectModule.INSTANCE.method5146(var3).copy();
-            this.items.add(new StreamerModeModule.Data(var4, var5, this.method6304(var5, var4)));
+      for (PlayerInfo playerInfo : mc.gui.hud.getTabList().getPlayerInfos()) {
+         String name = playerInfo.getProfile().name();
+         if (!name.equals(scoreboardName)) {
+            MutableComponent setStyle = NameProtectModule.INSTANCE.method5146(playerInfo).copy();
+            this.items.add(new StreamerModeModule.Data(name, setStyle, this.method6304(setStyle, name)));
          }
       }
 
@@ -265,38 +265,38 @@ public final class StreamerModeModule extends Module {
    private void method6288() {
       if (mc.player != null && mc.level != null) {
          this.intValue3 = mc.player.connection.getListedOnlinePlayers().size();
-         PlayerTabOverlay var1 = mc.gui.hud.getTabList();
-         this.text3 = ScoreboardParser.method7082(var1.header);
+         PlayerTabOverlay tabList = mc.gui.hud.getTabList();
+         this.text3 = ScoreboardParser.method7082(tabList.header);
          if (this.text3 == null) {
-            this.text3 = ScoreboardParser.method7082(var1.footer);
+            this.text3 = ScoreboardParser.method7082(tabList.footer);
          }
 
-         this.text4 = ScoreboardParser.method7084(var1.header);
+         this.text4 = ScoreboardParser.method7084(tabList.header);
          if (this.text4 == null) {
-            this.text4 = ScoreboardParser.method7084(var1.footer);
+            this.text4 = ScoreboardParser.method7084(tabList.footer);
          }
 
          if (this.text4 != null) {
-            int var2 = ScoreboardParser.method7085(this.text4);
-            if (var2 > 0) {
-               this.intValue3 = var2;
+            int n = ScoreboardParser.method7085(this.text4);
+            if (n > 0) {
+               this.intValue3 = n;
             }
          }
 
-         Scoreboard var9 = mc.level.getScoreboard();
-         Objective var3 = var9.getDisplayObjective(DisplaySlot.SIDEBAR);
-         if (var3 != null) {
-            for (PlayerScoreEntry var5 : var9.listPlayerScores(var3)) {
-               if (!var5.isHidden()) {
-                  PlayerTeam var6 = var9.getPlayersTeam(var5.owner());
-                  MutableComponent var7 = PlayerTeam.formatNameForTeam(var6, var5.ownerName());
-                  if (ScoreboardParser.method7078(var7)) {
-                     this.text = var7.copy();
-                  } else if (ScoreboardParser.method7079(var7)) {
-                     this.text2 = var7.copy();
-                     int var8 = ScoreboardParser.method7085(var7);
-                     if (var8 > 0) {
-                        this.intValue3 = var8;
+         Scoreboard scoreboard = mc.level.getScoreboard();
+         Objective displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
+         if (displayObjective != null) {
+            for (PlayerScoreEntry listPlayerScore : scoreboard.listPlayerScores(displayObjective)) {
+               if (!listPlayerScore.isHidden()) {
+                  PlayerTeam playersTeam = scoreboard.getPlayersTeam(listPlayerScore.owner());
+                  MutableComponent formatNameForTeam = PlayerTeam.formatNameForTeam(playersTeam, listPlayerScore.ownerName());
+                  if (ScoreboardParser.method7078(formatNameForTeam)) {
+                     this.text = formatNameForTeam.copy();
+                  } else if (ScoreboardParser.method7079(formatNameForTeam)) {
+                     this.text2 = formatNameForTeam.copy();
+                     int n = ScoreboardParser.method7085(formatNameForTeam);
+                     if (n > 0) {
+                        this.intValue3 = n;
                      }
                   }
                }
@@ -314,61 +314,61 @@ public final class StreamerModeModule extends Module {
       return this.isEnabled() && this.flag && this.type == StreamerModeModule.Type.IDLE && !this.items.isEmpty();
    }
 
-   public Component method6290(PlayerInfo var1) {
-      if (this.method6289() && var1 != null && mc.player != null) {
-         String var2 = var1.getProfile().name();
-         if (var2.equals(mc.player.getScoreboardName())) {
+   public Component method6290(PlayerInfo playerInfo) {
+      if (this.method6289() && playerInfo != null && mc.player != null) {
+         String name = playerInfo.getProfile().name();
+         if (name.equals(mc.player.getScoreboardName())) {
             return null;
          } else {
-            StreamerModeModule.Data var3 = this.method6297(var2);
-            return var3 == null ? null : var3.getText2().copy();
+            StreamerModeModule.Data data = this.method6297(name);
+            return data == null ? null : data.getText2().copy();
          }
       } else {
          return null;
       }
    }
 
-   public String method6291(String var1) {
-      if (!this.method6289() || var1 == null || mc.player == null) {
-         return var1;
-      } else if (var1.equals(mc.player.getScoreboardName())) {
-         return var1;
+   public String method6291(String name) {
+      if (!this.method6289() || name == null || mc.player == null) {
+         return name;
+      } else if (name.equals(mc.player.getScoreboardName())) {
+         return name;
       } else {
-         StreamerModeModule.Data var2 = this.method6297(var1);
-         return var2 == null ? var1 : var2.getText();
+         StreamerModeModule.Data data = this.method6297(name);
+         return data == null ? name : data.getText();
       }
    }
 
-   public Component method6292(Component var1, String var2) {
-      if (!this.method6289() || var1 == null || var2 == null || mc.player == null) {
-         return var1;
-      } else if (var2.equals(mc.player.getScoreboardName())) {
-         return var1;
+   public Component method6292(Component nameTag, String name) {
+      if (!this.method6289() || nameTag == null || name == null || mc.player == null) {
+         return nameTag;
+      } else if (name.equals(mc.player.getScoreboardName())) {
+         return nameTag;
       } else {
-         StreamerModeModule.Data var3 = this.method6297(var2);
-         return (Component)(var3 == null ? var1 : TextUtils.method2107(var1, var2, var3.getText3().copy()));
+         StreamerModeModule.Data data = this.method6297(name);
+         return (Component)(data == null ? nameTag : TextUtils.method2107(nameTag, name, data.getText3().copy()));
       }
    }
 
-   public Component method6293(Component var1) {
-      if (this.method6289() && var1 != null && mc.player != null && mc.player.connection != null) {
-         String var2 = this.method6294(var1.getString());
-         return var2 == null ? var1 : this.method6292(var1, var2);
+   public Component method6293(Component nameTag) {
+      if (this.method6289() && nameTag != null && mc.player != null && mc.player.connection != null) {
+         String name = this.method6294(nameTag.getString());
+         return name == null ? nameTag : this.method6292(nameTag, name);
       } else {
-         return var1;
+         return nameTag;
       }
    }
 
-   private String method6294(String var1) {
+   private String method6294(String string) {
       this.method6295();
-      if (this.items3.containsKey(var1)) {
-         return this.items3.get(var1);
+      if (this.items3.containsKey(string)) {
+         return this.items3.get(string);
       } else {
-         String var2 = null;
+         String str = null;
 
-         for (String var4 : this.items4) {
-            if ((var2 == null || var4.length() > var2.length()) && var1.contains(var4)) {
-               var2 = var4;
+         for (String str2 : this.items4) {
+            if ((str == null || str2.length() > str.length()) && string.contains(str2)) {
+               str = str2;
             }
          }
 
@@ -376,76 +376,76 @@ public final class StreamerModeModule extends Module {
             this.items3.clear();
          }
 
-         this.items3.put(var1, var2);
-         return var2;
+         this.items3.put(string, str);
+         return str;
       }
    }
 
    private void method6295() {
-      Collection<PlayerInfo> var1 = mc.player.connection.getListedOnlinePlayers();
-      boolean var2 = var1.size() == this.items4.size();
-      if (var2) {
-         int var3 = 0;
+      Collection<PlayerInfo> listedOnlinePlayers = mc.player.connection.getListedOnlinePlayers();
+      boolean flag = listedOnlinePlayers.size() == this.items4.size();
+      if (flag) {
+         int n = 0;
 
-         for (PlayerInfo var5 : var1) {
-            if (!var5.getProfile().name().equals(this.items4.get(var3++))) {
-               var2 = false;
+         for (PlayerInfo listedOnlinePlayer : listedOnlinePlayers) {
+            if (!listedOnlinePlayer.getProfile().name().equals(this.items4.get(n++))) {
+               flag = false;
                break;
             }
          }
       }
 
-      if (!var2) {
+      if (!flag) {
          this.items4.clear();
 
-         for (PlayerInfo var7 : var1) {
-            this.items4.add(var7.getProfile().name());
+         for (PlayerInfo listedOnlinePlayer : listedOnlinePlayers) {
+            this.items4.add(listedOnlinePlayer.getProfile().name());
          }
 
          this.items3.clear();
       }
    }
 
-   public void method6296(List<PlayerInfo> var1) {
+   public void method6296(List<PlayerInfo> playerInfos) {
       if (this.method6289()) {
-         for (PlayerInfo var3 : var1) {
-            this.method6297(var3.getProfile().name());
+         for (PlayerInfo playerInfo : playerInfos) {
+            this.method6297(playerInfo.getProfile().name());
          }
 
-         var1.sort(Comparator.comparingInt(var1x -> this.items2.getOrDefault(var1x.getProfile().name(), Integer.MAX_VALUE)));
+         playerInfos.sort(Comparator.comparingInt(var1x -> this.items2.getOrDefault(var1x.getProfile().name(), Integer.MAX_VALUE)));
       }
    }
 
-   private StreamerModeModule.Data method6297(String var1) {
+   private StreamerModeModule.Data method6297(String name) {
       if (this.items.isEmpty()) {
          return null;
       } else {
-         Integer var2 = this.items2.get(var1);
-         if (var2 == null) {
-            var2 = this.method6298();
-            this.items2.put(var1, var2);
+         Integer n = this.items2.get(name);
+         if (n == null) {
+            n = this.method6298();
+            this.items2.put(name, n);
          }
 
-         return this.items.get(var2);
+         return this.items.get(n);
       }
    }
 
    private int method6298() {
-      HashSet var1 = new HashSet();
+      HashSet hashSet = new HashSet();
       if (mc.player != null && mc.player.connection != null) {
-         for (PlayerInfo var3 : mc.player.connection.getListedOnlinePlayers()) {
-            Integer var4 = this.items2.get(var3.getProfile().name());
-            if (var4 != null) {
-               var1.add(var4);
+         for (PlayerInfo listedOnlinePlayer : mc.player.connection.getListedOnlinePlayers()) {
+            Integer n = this.items2.get(listedOnlinePlayer.getProfile().name());
+            if (n != null) {
+               hashSet.add(n);
             }
          }
       } else {
-         var1.addAll(this.items2.values());
+         hashSet.addAll(this.items2.values());
       }
 
-      for (int var5 = 0; var5 < this.items.size(); var5++) {
-         if (!var1.contains(var5)) {
-            return var5;
+      for (int i = 0; i < this.items.size(); i++) {
+         if (!hashSet.contains(i)) {
+            return i;
          }
       }
 
@@ -454,55 +454,55 @@ public final class StreamerModeModule extends Module {
    }
 
    private StreamerModeModule.Data method6299() {
-      String var1 = this.method6300();
-      MutableComponent var2 = Component.literal(var1).setStyle(this.method6303());
-      return new StreamerModeModule.Data(var1, var2, var2);
+      String text = this.method6300();
+      MutableComponent setStyle = Component.literal(text).setStyle(this.method6303());
+      return new StreamerModeModule.Data(text, setStyle, setStyle);
    }
 
    private String method6300() {
-      ThreadLocalRandom var1 = ThreadLocalRandom.current();
+      ThreadLocalRandom current = ThreadLocalRandom.current();
 
-      for (int var2 = 0; var2 < 100; var2++) {
-         String var3 = this.method6301(var1);
-         if (var3.length() <= 16 && !this.method6302(var3)) {
-            return var3;
+      for (int i = 0; i < 100; i++) {
+         String anotherString = this.method6301(current);
+         if (anotherString.length() <= 16 && !this.method6302(anotherString)) {
+            return anotherString;
          }
       }
 
-      String var4 = "Player" + var1.nextInt(1000, 10000);
+      String anotherString = "Player" + current.nextInt(1000, 10000);
 
-      while (this.method6302(var4)) {
-         var4 = "Player" + var1.nextInt(1000, 10000);
+      while (this.method6302(anotherString)) {
+         anotherString = "Player" + current.nextInt(1000, 10000);
       }
 
-      return var4;
+      return anotherString;
    }
 
-   private String method6301(ThreadLocalRandom var1) {
-      String var2 = texts[var1.nextInt(texts.length)];
-      String var3 = texts2[var1.nextInt(texts2.length)];
+   private String method6301(ThreadLocalRandom current) {
+      String text = texts[current.nextInt(texts.length)];
+      String str = texts2[current.nextInt(texts2.length)];
 
-      return switch (var1.nextInt(7)) {
-         case 0 -> var2 + var3;
-         case 1 -> var2 + var3 + var1.nextInt(1, 100);
-         case 2 -> var2 + var3 + var1.nextInt(2007, 2013);
-         case 3 -> var2 + "_" + var3;
-         case 4 -> (var2 + var3).toLowerCase(Locale.ROOT);
-         case 5 -> "_" + var2 + var3 + "_";
-         default -> "x" + var2 + var3 + "x";
+      return switch (current.nextInt(7)) {
+         case 0 -> text + str;
+         case 1 -> text + str + current.nextInt(1, 100);
+         case 2 -> text + str + current.nextInt(2007, 2013);
+         case 3 -> text + "_" + str;
+         case 4 -> (text + str).toLowerCase(Locale.ROOT);
+         case 5 -> "_" + text + str + "_";
+         default -> "x" + text + str + "x";
       };
    }
 
-   private boolean method6302(String var1) {
-      for (StreamerModeModule.Data var3 : this.items) {
-         if (var3.getText().equalsIgnoreCase(var1)) {
+   private boolean method6302(String anotherString) {
+      for (StreamerModeModule.Data data : this.items) {
+         if (data.getText().equalsIgnoreCase(anotherString)) {
             return true;
          }
       }
 
       if (mc.player != null && mc.player.connection != null) {
-         for (PlayerInfo var5 : mc.player.connection.getListedOnlinePlayers()) {
-            if (var5.getProfile().name().equalsIgnoreCase(var1)) {
+         for (PlayerInfo listedOnlinePlayer : mc.player.connection.getListedOnlinePlayers()) {
+            if (listedOnlinePlayer.getProfile().name().equalsIgnoreCase(anotherString)) {
                return true;
             }
          }
@@ -512,15 +512,15 @@ public final class StreamerModeModule extends Module {
    }
 
    private Style method6303() {
-      for (StreamerModeModule.Data var2 : this.items) {
-         if (var2.getText3().getString().equals(var2.getText())) {
-            Style[] var3 = new Style[1];
-            var2.getText3().getVisualOrderText().accept((var1, var2x, var3x) -> {
-               var3[0] = var2x;
+      for (StreamerModeModule.Data data : this.items) {
+         if (data.getText3().getString().equals(data.getText())) {
+            Style[] styles = new Style[1];
+            data.getText3().getVisualOrderText().accept((n, var2x, var3x) -> {
+               styles[0] = var2x;
                return false;
             });
-            if (var3[0] != null) {
-               return var3[0];
+            if (styles[0] != null) {
+               return styles[0];
             }
          }
       }
@@ -528,26 +528,26 @@ public final class StreamerModeModule extends Module {
       return Style.EMPTY;
    }
 
-   private Component method6304(Component var1, String var2) {
-      ArrayList var3 = new ArrayList();
-      StringBuilder var4 = new StringBuilder();
-      var1.getVisualOrderText().accept((var2x, var3x, var4x) -> {
-         var3.add(Component.literal(new String(Character.toChars(var4x))).setStyle(var3x));
-         var4.appendCodePoint(var4x);
+   private Component method6304(Component setStyle, String name) {
+      ArrayList arrayList = new ArrayList();
+      StringBuilder builder = new StringBuilder();
+      setStyle.getVisualOrderText().accept((var2x, var3x, var4x) -> {
+         arrayList.add(Component.literal(new String(Character.toChars(var4x))).setStyle(var3x));
+         builder.appendCodePoint(var4x);
          return true;
       });
-      int var5 = var4.indexOf(var2);
-      if (var5 == -1) {
-         return var1.copy();
+      int indexOf = builder.indexOf(name);
+      if (indexOf == -1) {
+         return setStyle.copy();
       } else {
-         int var6 = var4.toString().codePointCount(0, var5 + var2.length());
-         MutableComponent var7 = Component.empty();
+         int codePointCount = builder.toString().codePointCount(0, indexOf + name.length());
+         MutableComponent empty = Component.empty();
 
-         for (int var8 = 0; var8 < var6 && var8 < var3.size(); var8++) {
-            var7.append((Component)var3.get(var8));
+         for (int i = 0; i < codePointCount && i < arrayList.size(); i++) {
+            empty.append((Component)arrayList.get(i));
          }
 
-         return var7;
+         return empty;
       }
    }
 
@@ -585,10 +585,10 @@ public final class StreamerModeModule extends Module {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + "]";
       }
 
-      private Data(String var1, Component var2, Component var3) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
+      private Data(String text, Component setStyle, Component component) {
+         this.text = text;
+         this.text2 = setStyle;
+         this.text3 = component;
       }
 
       public String getText() {

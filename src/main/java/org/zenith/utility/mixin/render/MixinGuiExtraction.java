@@ -35,26 +35,26 @@ public class MixinGuiExtraction {
       method = {"extract(Lnet/minecraft/client/DeltaTracker;Z)V"},
       at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;extractRenderState(Lnet/minecraft/client/DeltaTracker;ZZ)V")
    )
-   private void zenith$deferGui(Gui var1, DeltaTracker var2, boolean var3, boolean var4) {
-      zenith$tracker = var2;
-      zenith$renderLevel = var3;
-      zenith$loaded = var4;
+   private void zenith$deferGui(Gui gui, DeltaTracker deltaTracker, boolean flag, boolean zenith$loaded2) {
+      zenith$tracker = deltaTracker;
+      zenith$renderLevel = flag;
+      zenith$loaded = zenith$loaded2;
       zenith$pending = true;
    }
 
    @Inject(method = {"render()V"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V")})
-   private void zenith$extractGui(CallbackInfo var1) {
+   private void zenith$extractGui(CallbackInfo callbackInfo) {
       if (zenith$pending) {
          zenith$pending = false;
-         Minecraft var2 = Minecraft.getInstance();
+         Minecraft minecraft = Minecraft.getInstance();
          ImmediateRenderer.method8003();
 
          try {
-            var2.gui.extractRenderState(zenith$tracker, zenith$renderLevel, zenith$loaded);
+            minecraft.gui.extractRenderState(zenith$tracker, zenith$renderLevel, zenith$loaded);
             // the loading overlay asks for a full-frame clear colour; render() already cleared before it was set
-            GuiRenderState var3 = var2.gameRenderer.gameRenderState().guiRenderState;
-            if (!zenith$renderLevel && var3.clearColorOverride.w() > 0.0F) {
-               RenderSystem.getDevice().createCommandEncoder().clearColorTexture(var2.gameRenderer.mainRenderTarget().getColorTexture(), var3.clearColorOverride);
+            GuiRenderState guiRenderState = minecraft.gameRenderer.gameRenderState().guiRenderState;
+            if (!zenith$renderLevel && guiRenderState.clearColorOverride.w() > 0.0F) {
+               RenderSystem.getDevice().createCommandEncoder().clearColorTexture(minecraft.gameRenderer.mainRenderTarget().getColorTexture(), guiRenderState.clearColorOverride);
             }
          } finally {
             MsdfRenderer.flushBatch();

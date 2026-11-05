@@ -13,10 +13,10 @@ public enum Enum3 {
 
    private final int intValue;
 
-   public static Enum3 method6094(int var0) {
-      for (Enum3 var4 : values()) {
-         if (var4.getIntValue() == var0) {
-            return var4;
+   public static Enum3 method6094(int mouseToGlfw) {
+      for (Enum3 enum2 : values()) {
+         if (enum2.getIntValue() == mouseToGlfw) {
+            return enum2;
          }
       }
 
@@ -24,8 +24,8 @@ public enum Enum3 {
    }
 
    @Generated
-   private Enum3(int var3) {
-      this.intValue = var3;
+   private Enum3(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated

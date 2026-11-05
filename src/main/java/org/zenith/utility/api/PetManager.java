@@ -48,14 +48,14 @@ public class PetManager implements MinecraftAccess {
    private static final Set<Integer> items3 = ConcurrentHashMap.newKeySet();
 
    public List<Setting> getSettings() {
-      return Arrays.stream(this.getClass().getDeclaredFields()).map(var1 -> {
+      return Arrays.stream(this.getClass().getDeclaredFields()).map(field -> {
          try {
-            var1.setAccessible(true);
-            return var1.get(this);
-         } catch (Exception var3) {
+            field.setAccessible(true);
+            return field.get(this);
+         } catch (Exception e) {
             return null;
          }
-      }).filter(var0 -> var0 instanceof Setting).map(var0 -> (Setting)var0).collect(Collectors.toList());
+      }).filter(obj -> obj instanceof Setting).map(obj -> (Setting)obj).collect(Collectors.toList());
    }
 
    public boolean method4551() {
@@ -73,17 +73,17 @@ public class PetManager implements MinecraftAccess {
    public PetManager() {
       new MultiSelectSetting.Entry(this.render, "cosmetics.pet.render.self", true);
       new MultiSelectSetting.Entry(this.render, "cosmetics.pet.render.friends", true);
-      this.scale = new SliderSetting("cosmetics.pet.scale", 0.4F, 0.1F, 2.0F, 0.05F, (var1, var2) -> this.method4573());
+      this.scale = new SliderSetting("cosmetics.pet.scale", 0.4F, 0.1F, 2.0F, 0.05F, (f, f2) -> this.method4573());
       this.items = new ConcurrentHashMap<>();
       EventManager.register(this);
    }
 
-   public void method4554(Path var1) {
-      this.path = var1;
-      if (var1 != null && this.method4566(var1) && mc.player != null && mc.level != null) {
+   public void method4554(Path path) {
+      this.path = path;
+      if (path != null && this.method4566(path) && mc.player != null && mc.level != null) {
          this.method4570();
-         this.petEntityState.method2307(var1);
-      } else if (var1 == null && this.petEntityState != null) {
+         this.petEntityState.method2307(path);
+      } else if (path == null && this.petEntityState != null) {
          this.method4571();
       }
    }
@@ -92,18 +92,18 @@ public class PetManager implements MinecraftAccess {
       return this.method4566(this.path) ? org.zenith.utility.config.AvatarUtil.method7257(this.path) : "";
    }
 
-   public static boolean method4556(UUID var0) {
-      return var0 != null && items2.contains(var0);
+   public static boolean method4556(UUID uuid) {
+      return uuid != null && items2.contains(uuid);
    }
 
-   public static boolean method4557(int var0) {
-      return items3.contains(var0);
+   public static boolean method4557(int id) {
+      return items3.contains(id);
    }
 
-   public static void method4558(PetEntityState var0) {
-      if (var0 != null && var0.getImplOtherClientPlayerEntity() != null) {
-         items2.add(var0.getUUID());
-         items3.add(var0.getImplOtherClientPlayerEntity().getId());
+   public static void method4558(PetEntityState petEntityState) {
+      if (petEntityState != null && petEntityState.getImplOtherClientPlayerEntity() != null) {
+         items2.add(petEntityState.getUUID());
+         items3.add(petEntityState.getImplOtherClientPlayerEntity().getId());
       }
    }
 
@@ -111,17 +111,17 @@ public class PetManager implements MinecraftAccess {
       return !items3.isEmpty();
    }
 
-   public static void method4560(PetEntityState var0) {
-      if (var0 != null) {
-         items2.remove(var0.getUUID());
-         if (var0.getImplOtherClientPlayerEntity() != null) {
-            items3.remove(var0.getImplOtherClientPlayerEntity().getId());
+   public static void method4560(PetEntityState petEntityState) {
+      if (petEntityState != null) {
+         items2.remove(petEntityState.getUUID());
+         if (petEntityState.getImplOtherClientPlayerEntity() != null) {
+            items3.remove(petEntityState.getImplOtherClientPlayerEntity().getId());
          }
       }
    }
 
    @EventTarget
-   public void method4561(UpdateEvent var1) {
+   public void method4561(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          this.method4565();
          this.method4567();
@@ -131,11 +131,11 @@ public class PetManager implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method4562(TickEvent var1) {
+   public void method4562(TickEvent event) {
       if (mc.level == null && (this.petEntityState != null || !this.items.isEmpty())) {
          try {
             this.method4574();
-         } catch (Throwable var3) {
+         } catch (Throwable e) {
             this.petEntityState = null;
             this.items.clear();
             items2.clear();
@@ -145,26 +145,26 @@ public class PetManager implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method4563(JumpEvent var1) {
+   public void method4563(JumpEvent event) {
       if (this.petEntityState != null && this.petEntityState.method2304()) {
          this.petEntityState.method2310();
       }
    }
 
    @EventTarget
-   public void method4564(WorldRenderEvent var1) {
+   public void method4564(WorldRenderEvent event) {
       if (this.petEntityState != null && this.petEntityState.method2304()) {
-         Vec3 var2 = this.petEntityState.method2313(var1.getFloatValue());
-         if (var2 != null && this.petEntityState.getImplOtherClientPlayerEntity() != null) {
-            this.petEntityState.getImplOtherClientPlayerEntity().syncPacketPositionCodec(var2.x, var2.y, var2.z);
+         Vec3 vec = this.petEntityState.method2313(event.getFloatValue());
+         if (vec != null && this.petEntityState.getImplOtherClientPlayerEntity() != null) {
+            this.petEntityState.getImplOtherClientPlayerEntity().syncPacketPositionCodec(vec.x, vec.y, vec.z);
          }
       }
 
-      for (PetEntityState var3 : this.items.values()) {
-         if (var3.method2304()) {
-            Vec3 var4 = var3.method2313(var1.getFloatValue());
-            if (var4 != null && var3.getImplOtherClientPlayerEntity() != null) {
-               var3.getImplOtherClientPlayerEntity().syncPacketPositionCodec(var4.x, var4.y, var4.z);
+      for (PetEntityState petEntityState : this.items.values()) {
+         if (petEntityState.method2304()) {
+            Vec3 vec = petEntityState.method2313(event.getFloatValue());
+            if (vec != null && petEntityState.getImplOtherClientPlayerEntity() != null) {
+               petEntityState.getImplOtherClientPlayerEntity().syncPacketPositionCodec(vec.x, vec.y, vec.z);
             }
          }
       }
@@ -174,30 +174,30 @@ public class PetManager implements MinecraftAccess {
       if (this.path != null && this.method4552() && this.method4566(this.path)) {
          this.method4570();
          if (!this.petEntityState.method2304()) {
-            Vec3 var1 = mc.player.position().add(2.0, 0.0, 0.0);
-            this.petEntityState.method2302(mc.level, var1);
+            Vec3 vec3d = mc.player.position().add(2.0, 0.0, 0.0);
+            this.petEntityState.method2302(mc.level, vec3d);
             this.petEntityState.method2307(this.path);
             method4558(this.petEntityState);
          }
 
          this.petEntityState.setFlag(this.method4569());
-         LivingEntity var4 = null;
+         LivingEntity livingEntity = null;
 
          try {
-            AuraModule var2 = AuraModule.INSTANCE;
-            var4 = var2.method6358() == null ? AimAssistModule.INSTANCE.method5156() : var2.method6358();
-         } catch (Exception var3) {
+            AuraModule auraModule = AuraModule.INSTANCE;
+            livingEntity = auraModule.method6358() == null ? AimAssistModule.INSTANCE.method5156() : auraModule.method6358();
+         } catch (Exception e) {
          }
 
-         this.petEntityState.method2308(mc.player.position(), mc.player.yBodyRot, mc.player.isShiftKeyDown(), var4);
+         this.petEntityState.method2308(mc.player.position(), mc.player.yBodyRot, mc.player.isShiftKeyDown(), livingEntity);
          this.petEntityState.method2312(mc.player);
          if (this.petEntityState.getImplOtherClientPlayerEntity() != null) {
-            LivingEntity.SwingState var5 = this.petEntityState.getImplOtherClientPlayerEntity().swingState;
-            LivingEntity.SwingState var6 = mc.player.swingState;
-            var5.currentSwing = var6.currentSwing;
-            var5.ticks = var6.ticks;
-            var5.oldAnimation = var6.oldAnimation;
-            var5.animation = var6.animation;
+            LivingEntity.SwingState swingState = this.petEntityState.getImplOtherClientPlayerEntity().swingState;
+            LivingEntity.SwingState swingState2 = mc.player.swingState;
+            swingState.currentSwing = swingState2.currentSwing;
+            swingState.ticks = swingState2.ticks;
+            swingState.oldAnimation = swingState2.oldAnimation;
+            swingState.animation = swingState2.animation;
             this.petEntityState.getImplOtherClientPlayerEntity().setShiftKeyDown(mc.player.isShiftKeyDown());
             this.petEntityState.getImplOtherClientPlayerEntity().setPose(mc.player.isShiftKeyDown() ? Pose.CROUCHING : Pose.STANDING);
          }
@@ -208,75 +208,75 @@ public class PetManager implements MinecraftAccess {
       }
    }
 
-   private boolean method4566(Path var1) {
-      return var1 != null && !org.zenith.utility.config.AvatarUtil.method7257(var1).isBlank();
+   private boolean method4566(Path path) {
+      return path != null && !org.zenith.utility.config.AvatarUtil.method7257(path).isBlank();
    }
 
    private void method4567() {
       if (mc.level != null && mc.player != null) {
          if (!this.method4553()) {
-            for (PetEntityState var13 : this.items.values()) {
-               method4560(var13);
-               var13.method2303();
+            for (PetEntityState petEntityState : this.items.values()) {
+               method4560(petEntityState);
+               petEntityState.method2303();
             }
 
             this.items.clear();
          } else {
-            HashSet var1 = new HashSet();
-            int var2 = 0;
-            Cloud var3 = Zenith.getInstance().getCloud();
-            String var4 = var3 != null && var3.method7862() ? var3.method7911() : "";
-            if (!var4.isEmpty()) {
-               for (PartyPlayerInfo var6 : var3.state().method8038()) {
-                  if (var2 >= 8) {
+            HashSet hashSet = new HashSet();
+            int n = 0;
+            Cloud cloud = Zenith.getInstance().getCloud();
+            String str = cloud != null && cloud.method7862() ? cloud.method7911() : "";
+            if (!str.isEmpty()) {
+               for (PartyPlayerInfo partyPlayerInfo : cloud.state().method8038()) {
+                  if (n >= 8) {
                      break;
                   }
 
-                  if (!var3.prefs().method3316(var6.username()) && var4.equals(var6.server())) {
-                     ShareCodec.Data2 var7 = ShareCodec.method6724(var6.uid(), var6.getItems());
-                     String var8 = var7.getText3();
-                     if (!var8.isBlank()) {
-                        Player var9 = this.method4568(var6.getText2());
-                        if (var9 != null) {
-                           UUID var10 = var9.getUUID();
-                           var1.add(var10);
-                           PetEntityState var11 = this.items.computeIfAbsent(var10, PetEntityState::new);
-                           if (!var11.method2304()) {
-                              var11.method2302(mc.level, var9.position().add(2.0, 0.0, 0.0));
-                              method4558(var11);
+                  if (!cloud.prefs().method3316(partyPlayerInfo.username()) && str.equals(partyPlayerInfo.server())) {
+                     ShareCodec.Data2 data2 = ShareCodec.method6724(partyPlayerInfo.uid(), partyPlayerInfo.getItems());
+                     String text = data2.getText3();
+                     if (!text.isBlank()) {
+                        Player player = this.method4568(partyPlayerInfo.getText2());
+                        if (player != null) {
+                           UUID uuid = player.getUUID();
+                           hashSet.add(uuid);
+                           PetEntityState petEntityState = this.items.computeIfAbsent(uuid, PetEntityState::new);
+                           if (!petEntityState.method2304()) {
+                              petEntityState.method2302(mc.level, player.position().add(2.0, 0.0, 0.0));
+                              method4558(petEntityState);
                            }
 
-                           var11.method2306(var8);
-                           var11.method2305(var7.getFloatValue());
-                           var11.setFlag(var9.getAbilities().flying || var9.isFallFlying());
-                           var11.method2308(var9.position(), var9.yBodyRot, var9.isShiftKeyDown(), null);
-                           var11.method2312(var9);
-                           var2++;
+                           petEntityState.method2306(text);
+                           petEntityState.method2305(data2.getFloatValue());
+                           petEntityState.setFlag(player.getAbilities().flying || player.isFallFlying());
+                           petEntityState.method2308(player.position(), player.yBodyRot, player.isShiftKeyDown(), null);
+                           petEntityState.method2312(player);
+                           n++;
                         }
                      }
                   }
                }
             }
 
-            var var14 = this.items.entrySet().iterator();
+            var iterator = this.items.entrySet().iterator();
 
-            while (var14.hasNext()) {
-               Entry var15 = (Entry)var14.next();
-               if (!var1.contains(var15.getKey())) {
-                  method4560((PetEntityState)var15.getValue());
-                  ((PetEntityState)var15.getValue()).method2303();
-                  var14.remove();
+            while (iterator.hasNext()) {
+               Entry entry = (Entry)iterator.next();
+               if (!hashSet.contains(entry.getKey())) {
+                  method4560((PetEntityState)entry.getValue());
+                  ((PetEntityState)entry.getValue()).method2303();
+                  iterator.remove();
                }
             }
          }
       }
    }
 
-   private Player method4568(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         for (AbstractClientPlayer var3 : mc.level.players()) {
-            if (var3 != mc.player && var1.equalsIgnoreCase(var3.getGameProfile().name())) {
-               return var3;
+   private Player method4568(String str) {
+      if (str != null && !str.isBlank()) {
+         for (AbstractClientPlayer player : mc.level.players()) {
+            if (player != mc.player && str.equalsIgnoreCase(player.getGameProfile().name())) {
+               return player;
             }
          }
 
@@ -315,33 +315,33 @@ public class PetManager implements MinecraftAccess {
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("name", org.zenith.utility.config.AvatarUtil.method7257(this.path));
-      JsonObject var2 = new JsonObject();
+      JsonObject json = new JsonObject();
+      json.addProperty("name", org.zenith.utility.config.AvatarUtil.method7257(this.path));
+      JsonObject jsonObject = new JsonObject();
 
-      for (Setting var4 : this.getSettings()) {
-         var4.safe(var2);
+      for (Setting setting : this.getSettings()) {
+         setting.safe(jsonObject);
       }
 
-      var1.add("settings", var2);
-      return var1;
+      json.add("settings", jsonObject);
+      return json;
    }
 
-   public void load(JsonObject var1) {
-      if (var1 != null) {
-         if (var1.has("settings") && var1.get("settings").isJsonObject()) {
-            JsonObject var2 = var1.getAsJsonObject("settings");
+   public void load(JsonObject jsonObject) {
+      if (jsonObject != null) {
+         if (jsonObject.has("settings") && jsonObject.get("settings").isJsonObject()) {
+            JsonObject json = jsonObject.getAsJsonObject("settings");
 
-            for (Setting var4 : this.getSettings()) {
-               if (var2.has(var4.getKey())) {
-                  var4.load(var2);
+            for (Setting setting : this.getSettings()) {
+               if (json.has(setting.getKey())) {
+                  setting.load(json);
                }
             }
          }
 
-         if (var1.has("name")) {
-            String var5 = var1.get("name").isJsonNull() ? "" : var1.get("name").getAsString();
-            this.method4554(var5 != null && !var5.isBlank() ? org.zenith.utility.config.AvatarUtil.method7258(var5) : null);
+         if (jsonObject.has("name")) {
+            String string = jsonObject.get("name").isJsonNull() ? "" : jsonObject.get("name").getAsString();
+            this.method4554(string != null && !string.isBlank() ? org.zenith.utility.config.AvatarUtil.method7258(string) : null);
          }
       }
    }
@@ -349,9 +349,9 @@ public class PetManager implements MinecraftAccess {
    public void method4574() {
       this.method4571();
 
-      for (PetEntityState var2 : this.items.values()) {
-         method4560(var2);
-         var2.method2303();
+      for (PetEntityState petEntityState : this.items.values()) {
+         method4560(petEntityState);
+         petEntityState.method2303();
       }
 
       this.items.clear();

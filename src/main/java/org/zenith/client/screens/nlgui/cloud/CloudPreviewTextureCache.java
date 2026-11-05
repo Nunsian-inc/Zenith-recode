@@ -35,32 +35,32 @@ public final class CloudPreviewTextureCache {
    private CloudPreviewTextureCache() {
    }
 
-   public static Identifier get(UUID var0, String var1) {
-      String var2 = var1 == null ? null : var1.toLowerCase(Locale.ROOT);
-      if (var0 != null && validKey(var2)) {
+   public static Identifier get(UUID uuid, String str) {
+      String lowerCase = str == null ? null : str.toLowerCase(Locale.ROOT);
+      if (uuid != null && validKey(lowerCase)) {
          synchronized (textures) {
-            Identifier var4 = textures.get(var2);
-            if (var4 != null) {
-               return var4;
+            Identifier texture = textures.get(lowerCase);
+            if (texture != null) {
+               return texture;
             }
          }
 
-         Long var7 = failures.get(var2);
-         if (var7 != null && System.currentTimeMillis() - var7 < 15000L) {
+         Long failure = failures.get(lowerCase);
+         if (failure != null && System.currentTimeMillis() - failure < 15000L) {
             return null;
          } else {
-            StoreApi var8 = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
-            if (var8 != null && !inFlight.contains(var2) && inFlight.size() < 6 && inFlight.add(var2)) {
-               var8.method1971(var0).whenComplete((var1x, var2x) -> {
+            StoreApi storeApi = Zenith.getInstance() == null ? null : Zenith.getInstance().getStoreApi();
+            if (storeApi != null && !inFlight.contains(lowerCase) && inFlight.size() < 6 && inFlight.add(lowerCase)) {
+               storeApi.method1971(uuid).whenComplete((var1x, var2x) -> {
                   try {
                      if (var2x == null && var1x != null && var1x.length != 0) {
-                        install(var2, var1x);
+                        install(lowerCase, var1x);
                         return;
                      }
 
-                     failures.put(var2, System.currentTimeMillis());
+                     failures.put(lowerCase, System.currentTimeMillis());
                   } finally {
-                     inFlight.remove(var2);
+                     inFlight.remove(lowerCase);
                   }
                });
                return null;
@@ -73,46 +73,46 @@ public final class CloudPreviewTextureCache {
       }
    }
 
-   private static void install(String var0, byte[] var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2 != null) {
-         if (!sane(var1)) {
-            failures.put(var0, System.currentTimeMillis());
+   private static void install(String lowerCase, byte[] buf) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft != null) {
+         if (!sane(buf)) {
+            failures.put(lowerCase, System.currentTimeMillis());
          } else {
-            NativeImage var3;
-            try (ByteArrayInputStream var4 = new ByteArrayInputStream(var1)) {
-               var3 = NativeImage.read(var4);
-            } catch (Exception var9) {
-               failures.put(var0, System.currentTimeMillis());
+            NativeImage image;
+            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buf)) {
+               image = NativeImage.read(byteArrayInputStream);
+            } catch (Exception e) {
+               failures.put(lowerCase, System.currentTimeMillis());
                return;
             }
 
-            var2.execute(() -> {
-               Identifier var3x = Identifier.fromNamespaceAndPath("zenith", "cloud_config_preview/" + var0);
+            minecraft.execute(() -> {
+               Identifier var3x = Identifier.fromNamespaceAndPath("zenith", "cloud_config_preview/" + lowerCase);
 
                try {
-                  var2.getTextureManager().register(var3x, new DynamicTexture(() -> "zenith", var3));
-               } catch (Exception var7) {
-                  var3.close();
-                  failures.put(var0, System.currentTimeMillis());
+                  minecraft.getTextureManager().register(var3x, new DynamicTexture(() -> "zenith", image));
+               } catch (Exception e) {
+                  image.close();
+                  failures.put(lowerCase, System.currentTimeMillis());
                   return;
                }
 
-               failures.remove(var0);
+               failures.remove(lowerCase);
                synchronized (textures) {
-                  textures.put(var0, var3x);
-                  evictOverflow(var2);
+                  textures.put(lowerCase, var3x);
+                  evictOverflow(minecraft);
                }
             });
          }
       }
    }
 
-   private static boolean validKey(String var0) {
-      if (var0 != null && !var0.isEmpty() && var0.length() <= 128) {
-         for (int var1 = 0; var1 < var0.length(); var1++) {
-            char var2 = var0.charAt(var1);
-            if ((var2 < '0' || var2 > '9') && (var2 < 'a' || var2 > 'z') && var2 != '_' && var2 != '.' && var2 != '-') {
+   private static boolean validKey(String lowerCase) {
+      if (lowerCase != null && !lowerCase.isEmpty() && lowerCase.length() <= 128) {
+         for (int i = 0; i < lowerCase.length(); i++) {
+            char charAt = lowerCase.charAt(i);
+            if ((charAt < '0' || charAt > '9') && (charAt < 'a' || charAt > 'z') && charAt != '_' && charAt != '.' && charAt != '-') {
                return false;
             }
          }
@@ -123,64 +123,64 @@ public final class CloudPreviewTextureCache {
       }
    }
 
-   private static boolean sane(byte[] var0) {
-      if (var0.length >= 24
-         && var0.length <= 4194304
-         && (var0[0] & 255) == 137
-         && var0[1] == 80
-         && var0[2] == 78
-         && var0[3] == 71
-         && var0[12] == 73
-         && var0[13] == 72
-         && var0[14] == 68
-         && var0[15] == 82) {
-         int var1 = (var0[16] & 255) << 24 | (var0[17] & 255) << 16 | (var0[18] & 255) << 8 | var0[19] & 255;
-         int var2 = (var0[20] & 255) << 24 | (var0[21] & 255) << 16 | (var0[22] & 255) << 8 | var0[23] & 255;
-         return var1 > 0 && var2 > 0 && var1 <= 2048 && var2 <= 2048 && (long)var1 * var2 <= 2359296L;
+   private static boolean sane(byte[] buf) {
+      if (buf.length >= 24
+         && buf.length <= 4194304
+         && (buf[0] & 255) == 137
+         && buf[1] == 80
+         && buf[2] == 78
+         && buf[3] == 71
+         && buf[12] == 73
+         && buf[13] == 72
+         && buf[14] == 68
+         && buf[15] == 82) {
+         int n = (buf[16] & 255) << 24 | (buf[17] & 255) << 16 | (buf[18] & 255) << 8 | buf[19] & 255;
+         int n2 = (buf[20] & 255) << 24 | (buf[21] & 255) << 16 | (buf[22] & 255) << 8 | buf[23] & 255;
+         return n > 0 && n2 > 0 && n <= 2048 && n2 <= 2048 && (long)n * n2 <= 2359296L;
       } else {
          return false;
       }
    }
 
-   private static void evictOverflow(Minecraft var0) {
-      var var1 = textures.entrySet().iterator();
+   private static void evictOverflow(Minecraft minecraft) {
+      var iterator = textures.entrySet().iterator();
 
-      while (textures.size() > 32 && var1.hasNext()) {
-         Entry var2 = (Entry)var1.next();
-         var1.remove();
+      while (textures.size() > 32 && iterator.hasNext()) {
+         Entry entry = (Entry)iterator.next();
+         iterator.remove();
 
          try {
-            var0.getTextureManager().release((Identifier)var2.getValue());
-         } catch (Exception var4) {
+            minecraft.getTextureManager().release((Identifier)entry.getValue());
+         } catch (Exception e) {
          }
       }
    }
 
-   public static synchronized Identifier draft(byte[] var0) {
-      if (var0 != null && var0.length != 0) {
-         int var1 = Arrays.hashCode(var0);
-         if (draftId != null && draftFingerprint == var1) {
+   public static synchronized Identifier draft(byte[] buf) {
+      if (buf != null && buf.length != 0) {
+         int n = Arrays.hashCode(buf);
+         if (draftId != null && draftFingerprint == n) {
             return draftId;
          } else {
-            Minecraft var2 = Minecraft.getInstance();
-            if (var2 == null) {
+            Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft == null) {
                return null;
             } else {
                clearDraft();
 
                try {
-                  Identifier var6;
-                  try (ByteArrayInputStream var3 = new ByteArrayInputStream(var0)) {
-                     NativeImage var4 = NativeImage.read(var3);
-                     Identifier var5 = Identifier.fromNamespaceAndPath("zenith", "cloud_config_preview/draft_" + Integer.toHexString(var1));
-                     var2.getTextureManager().register(var5, new DynamicTexture(() -> "zenith", var4));
-                     draftId = var5;
-                     draftFingerprint = var1;
-                     var6 = var5;
+                  Identifier location;
+                  try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buf)) {
+                     NativeImage image = NativeImage.read(byteArrayInputStream);
+                     Identifier id = Identifier.fromNamespaceAndPath("zenith", "cloud_config_preview/draft_" + Integer.toHexString(n));
+                     minecraft.getTextureManager().register(id, new DynamicTexture(() -> "zenith", image));
+                     draftId = id;
+                     draftFingerprint = n;
+                     location = id;
                   }
 
-                  return var6;
-               } catch (Exception var9) {
+                  return location;
+               } catch (Exception e) {
                   return null;
                }
             }
@@ -191,11 +191,11 @@ public final class CloudPreviewTextureCache {
    }
 
    public static synchronized void clearDraft() {
-      Minecraft var0 = Minecraft.getInstance();
-      if (draftId != null && var0 != null && var0.getTextureManager() != null) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (draftId != null && minecraft != null && minecraft.getTextureManager() != null) {
          try {
-            var0.getTextureManager().release(draftId);
-         } catch (Exception var2) {
+            minecraft.getTextureManager().release(draftId);
+         } catch (Exception e) {
          }
       }
 
@@ -204,13 +204,13 @@ public final class CloudPreviewTextureCache {
    }
 
    public static void clear() {
-      Minecraft var0 = Minecraft.getInstance();
+      Minecraft minecraft = Minecraft.getInstance();
       synchronized (textures) {
-         if (var0 != null && var0.getTextureManager() != null) {
-            for (Identifier var3 : textures.values()) {
+         if (minecraft != null && minecraft.getTextureManager() != null) {
+            for (Identifier location : textures.values()) {
                try {
-                  var0.getTextureManager().release(var3);
-               } catch (Exception var6) {
+                  minecraft.getTextureManager().release(location);
+               } catch (Exception e) {
                }
             }
          }

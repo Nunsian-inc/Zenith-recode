@@ -35,7 +35,7 @@ public enum PartFilterScheme {
 
    @FunctionalInterface
    private interface SchemeFunction {
-      Boolean test(ParentType var1, boolean var2);
+      Boolean test(ParentType toTest, boolean prevResult);
 
       static PartFilterScheme.SchemeFunction onlyThisSeparate(ParentType typeToAllow) {
          return (parent, prev) -> parent == typeToAllow ? !prev : (parent.isSeparate ? false : prev);

@@ -34,22 +34,22 @@ public final class Class31 implements MinecraftAccess {
    private float floatValue9;
    private long last;
 
-   public boolean method4877(Interface var1, float var2, float var3) {
-      if (var1 == null) {
+   public boolean method4877(Interface interfaceValue, float floatValue, float f) {
+      if (interfaceValue == null) {
          return false;
       } else {
-         if (this.interfaceValue2 != null && this.interfaceValue2 != var1) {
+         if (this.interfaceValue2 != null && this.interfaceValue2 != interfaceValue) {
             this.method4879(this.interfaceValue2);
          }
 
-         this.interfaceValue = var1;
+         this.interfaceValue = interfaceValue;
          this.interfaceValue2 = null;
-         this.floatValue5 = var1.method294();
-         this.floatValue6 = var1.method295();
+         this.floatValue5 = interfaceValue.method294();
+         this.floatValue6 = interfaceValue.method295();
          this.floatValue3 = this.floatValue5;
          this.floatValue4 = this.floatValue6;
-         this.floatValue = var2 - this.floatValue5;
-         this.floatValue2 = var3 - this.floatValue6;
+         this.floatValue = floatValue - this.floatValue5;
+         this.floatValue2 = f - this.floatValue6;
          return true;
       }
    }
@@ -76,302 +76,302 @@ public final class Class31 implements MinecraftAccess {
       return this.interfaceValue;
    }
 
-   public boolean method4878(Interface var1) {
-      return var1 != null && (var1 == this.interfaceValue || var1 == this.interfaceValue2);
+   public boolean method4878(Interface key) {
+      return key != null && (key == this.interfaceValue || key == this.interfaceValue2);
    }
 
-   private void method4879(Interface var1) {
-      float var2 = mc.getWindow().getGuiScaledWidth();
-      float var3 = mc.getWindow().getGuiScaledHeight();
-      var1.method2067(this.floatValue3, this.floatValue4, var2, var3);
-      var1.release();
-      var1.setFloatValue14(1.0F);
-      if (this.interfaceValue2 == var1) {
+   private void method4879(Interface interfaceValue2) {
+      float guiScaledWidth = mc.getWindow().getGuiScaledWidth();
+      float guiScaledHeight = mc.getWindow().getGuiScaledHeight();
+      interfaceValue2.method2067(this.floatValue3, this.floatValue4, guiScaledWidth, guiScaledHeight);
+      interfaceValue2.release();
+      interfaceValue2.setFloatValue14(1.0F);
+      if (this.interfaceValue2 == interfaceValue2) {
          this.interfaceValue2 = null;
       }
    }
 
-   public void method4880(CustomDrawContext var1, List<Interface> var2, float var3, float var4, float var5, float var6, boolean var7) {
-      long var8 = System.nanoTime();
-      float var10 = this.last == 0L ? 0.016F : Math.min(0.05F, (float)(var8 - this.last) / 1.0E9F);
-      this.last = var8;
-      this.floatValue8 = method4888(this.floatValue8, var7 ? 1.0F : 0.0F, var10 * 7.0F);
-      this.floatValue7 = method4888(this.floatValue7, this.interfaceValue != null ? 1.0F : 0.0F, var10 * 9.0F);
+   public void method4880(CustomDrawContext customDrawContext, List<Interface> interfaceValues, float floatValue, float f, float guiScaledWidth, float guiScaledHeight, boolean flag) {
+      long nanoTime = System.nanoTime();
+      float f2 = this.last == 0L ? 0.016F : Math.min(0.05F, (float)(nanoTime - this.last) / 1.0E9F);
+      this.last = nanoTime;
+      this.floatValue8 = method4888(this.floatValue8, flag ? 1.0F : 0.0F, f2 * 7.0F);
+      this.floatValue7 = method4888(this.floatValue7, this.interfaceValue != null ? 1.0F : 0.0F, f2 * 9.0F);
 
-      for (Class31.Entry var12 : this.items2) {
-         var12.flag3 = false;
+      for (Class31.Entry entry : this.items2) {
+         entry.flag3 = false;
       }
 
-      Interface var24 = this.interfaceValue != null ? this.interfaceValue : this.interfaceValue2;
-      boolean var25 = false;
-      boolean var13 = false;
+      Interface interfaceValue = this.interfaceValue != null ? this.interfaceValue : this.interfaceValue2;
+      boolean flag2 = false;
+      boolean flag3 = false;
       if (this.interfaceValue != null) {
-         float var14 = var3 - this.floatValue;
-         float var15 = var4 - this.floatValue2;
-         boolean var16 = org.zenith.utility.misc.KeyCompat.isKeyDown(340);
-         float var17 = this.interfaceValue.method296();
-         float var18 = this.interfaceValue.method297();
-         Class31.Data var19 = var16 ? null : method4886(var14, var17, this.method4884(var2, var5));
-         Class31.Data var20 = var16 ? null : method4886(var15, var18, this.method4885(var2, var6));
-         this.floatValue3 = var19 != null ? var19.getFloatValue() - var19.getFloatValue2() * var17 : var14;
-         this.floatValue4 = var20 != null ? var20.getFloatValue() - var20.getFloatValue2() * var18 : var15;
-         float var21 = InterfaceModule.INSTANCE.method6786();
-         if (var21 >= 1.0F) {
-            if (var19 == null) {
-               this.floatValue3 = Math.round(this.floatValue3 / var21) * var21;
+         float f3 = floatValue - this.floatValue;
+         float f4 = f - this.floatValue2;
+         boolean keyDown = org.zenith.utility.misc.KeyCompat.isKeyDown(340);
+         float f5 = this.interfaceValue.method296();
+         float f6 = this.interfaceValue.method297();
+         Class31.Data data = keyDown ? null : method4886(f3, f5, this.method4884(interfaceValues, guiScaledWidth));
+         Class31.Data data2 = keyDown ? null : method4886(f4, f6, this.method4885(interfaceValues, guiScaledHeight));
+         this.floatValue3 = data != null ? data.getFloatValue() - data.getFloatValue2() * f5 : f3;
+         this.floatValue4 = data2 != null ? data2.getFloatValue() - data2.getFloatValue2() * f6 : f4;
+         float f7 = InterfaceModule.INSTANCE.method6786();
+         if (f7 >= 1.0F) {
+            if (data == null) {
+               this.floatValue3 = Math.round(this.floatValue3 / f7) * f7;
             }
 
-            if (var20 == null) {
-               this.floatValue4 = Math.round(this.floatValue4 / var21) * var21;
+            if (data2 == null) {
+               this.floatValue4 = Math.round(this.floatValue4 / f7) * f7;
             }
          }
 
-         this.floatValue3 = this.interfaceValue.method2088(this.floatValue3, var5);
-         this.floatValue4 = this.interfaceValue.method2089(this.floatValue4, var6);
-         if (var19 != null) {
-            this.method4887(true, var19, this.floatValue4, this.floatValue4 + var18, var6);
-            var25 = var19.isFlag();
+         this.floatValue3 = this.interfaceValue.method2088(this.floatValue3, guiScaledWidth);
+         this.floatValue4 = this.interfaceValue.method2089(this.floatValue4, guiScaledHeight);
+         if (data != null) {
+            this.method4887(true, data, this.floatValue4, this.floatValue4 + f6, guiScaledHeight);
+            flag2 = data.isFlag();
          }
 
-         if (var20 != null) {
-            this.method4887(false, var20, this.floatValue3, this.floatValue3 + var17, var5);
-            var13 = var20.isFlag();
+         if (data2 != null) {
+            this.method4887(false, data2, this.floatValue3, this.floatValue3 + f5, guiScaledWidth);
+            flag3 = data2.isFlag();
          }
       }
 
-      this.floatValue9 = method4888(this.floatValue9, this.interfaceValue != null ? 1.0F : 0.0F, var10 * 6.0F);
-      if (var24 != null) {
-         float var26 = 1.0F - (float)Math.exp(-var10 * 32.0F);
-         this.floatValue5 = this.floatValue5 + (this.floatValue3 - this.floatValue5) * var26;
-         this.floatValue6 = this.floatValue6 + (this.floatValue4 - this.floatValue6) * var26;
-         var24.method2067(this.floatValue5, this.floatValue6, var5, var6);
-         var24.setFloatValue14(1.0F + 0.035F * this.floatValue7);
-         if (var24 == this.interfaceValue2
+      this.floatValue9 = method4888(this.floatValue9, this.interfaceValue != null ? 1.0F : 0.0F, f2 * 6.0F);
+      if (interfaceValue != null) {
+         float f3 = 1.0F - (float)Math.exp(-f2 * 32.0F);
+         this.floatValue5 = this.floatValue5 + (this.floatValue3 - this.floatValue5) * f3;
+         this.floatValue6 = this.floatValue6 + (this.floatValue4 - this.floatValue6) * f3;
+         interfaceValue.method2067(this.floatValue5, this.floatValue6, guiScaledWidth, guiScaledHeight);
+         interfaceValue.setFloatValue14(1.0F + 0.035F * this.floatValue7);
+         if (interfaceValue == this.interfaceValue2
             && Math.abs(this.floatValue3 - this.floatValue5) < 0.15F
             && Math.abs(this.floatValue4 - this.floatValue6) < 0.15F
             && this.floatValue7 < 0.02F) {
-            this.method4879(var24);
+            this.method4879(interfaceValue);
          }
       }
 
-      var var27 = this.items2.iterator();
+      var iterator = this.items2.iterator();
 
-      while (var27.hasNext()) {
-         Class31.Entry var28 = (Class31.Entry)var27.next();
-         var28.alpha = method4888(var28.alpha, var28.flag3 ? 1.0F : 0.0F, var10 * (var28.flag3 ? 14.0F : 6.0F));
-         if (!var28.flag3 && var28.alpha <= 0.01F) {
-            var27.remove();
+      while (iterator.hasNext()) {
+         Class31.Entry entry = (Class31.Entry)iterator.next();
+         entry.alpha = method4888(entry.alpha, entry.flag3 ? 1.0F : 0.0F, f2 * (entry.flag3 ? 14.0F : 6.0F));
+         if (!entry.flag3 && entry.alpha <= 0.01F) {
+            iterator.remove();
          }
       }
 
-      Interface var29 = null;
-      if (var7) {
-         for (int var30 = var2.size() - 1; var30 >= 0; var30--) {
-            if (((Interface)var2.get(var30)).method293(var3, var4)) {
-               var29 = (Interface)var2.get(var30);
+      Interface interfaceValue2 = null;
+      if (flag) {
+         for (int i = interfaceValues.size() - 1; i >= 0; i--) {
+            if (((Interface)interfaceValues.get(i)).method293(floatValue, f)) {
+               interfaceValue2 = (Interface)interfaceValues.get(i);
                break;
             }
          }
       }
 
-      Interface var31 = var24 != null ? var24 : var29;
-      long var32 = ++this.longValue;
+      Interface interfaceValue3 = interfaceValue != null ? interfaceValue : interfaceValue2;
+      long longValue = ++this.longValue;
 
-      for (Interface var35 : var2) {
-         float var37 = var35 == var31 && var7 ? 1.0F : 0.0F;
-         Class31.Entry2 var22 = this.items.computeIfAbsent(var35, var0 -> new Class31.Entry2());
-         float var23 = method4888(var22.value, var37, var10 * 12.0F);
-         var22.value = var23;
-         var22.longValue = var32;
-         var35.method2066(var23 * Math.max(this.floatValue8, 0.001F), this.method4878(var35));
+      for (Interface key : interfaceValues) {
+         float f3 = key == interfaceValue3 && flag ? 1.0F : 0.0F;
+         Class31.Entry2 entry2 = this.items.computeIfAbsent(key, interfaceValue4 -> new Class31.Entry2());
+         float f4 = method4888(entry2.value, f3, f2 * 12.0F);
+         entry2.value = f4;
+         entry2.longValue = longValue;
+         key.method2066(f4 * Math.max(this.floatValue8, 0.001F), this.method4878(key));
       }
 
-      var var34 = this.items.entrySet().iterator();
+      var iterator2 = this.items.entrySet().iterator();
 
-      while (var34.hasNext()) {
-         Map.Entry var36 = (Map.Entry)var34.next();
-         if (((Class31.Entry2)var36.getValue()).longValue != var32) {
-            ((Interface)var36.getKey()).method2066(0.0F, false);
-            var34.remove();
+      while (iterator2.hasNext()) {
+         Map.Entry entry = (Map.Entry)iterator2.next();
+         if (((Class31.Entry2)entry.getValue()).longValue != longValue) {
+            ((Interface)entry.getKey()).method2066(0.0F, false);
+            iterator2.remove();
          }
       }
 
       if (!(this.floatValue8 <= 0.01F)) {
-         this.method4881(var1, var2, var5, var6, var29, var25, var13);
+         this.method4881(customDrawContext, interfaceValues, guiScaledWidth, guiScaledHeight, interfaceValue2, flag2, flag3);
       }
    }
 
-   private void method4881(CustomDrawContext var1, List<Interface> var2, float var3, float var4, Interface var5, boolean var6, boolean var7) {
-      ZenithColor var8 = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
-      ZenithColor var9 = ZenithColor.INSTANCE;
+   private void method4881(CustomDrawContext customDrawContext, List<Interface> interfaceValues, float guiScaledWidth, float guiScaledHeight, Interface interfaceValue, boolean flag, boolean flag2) {
+      ZenithColor zenithColor = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
+      ZenithColor zenithColor2 = ZenithColor.INSTANCE;
       if (this.floatValue9 > 0.01F) {
-         float var10 = var3 / 2.0F;
-         float var11 = var4 / 2.0F;
-         this.method4883(var1, true, var10, 0.0F, var4, var9.method7292(0.1F * this.floatValue9 * this.floatValue8), var6);
-         this.method4883(var1, false, var11, 0.0F, var3, var9.method7292(0.1F * this.floatValue9 * this.floatValue8), var7);
-         var1.drawRoundedRect(
-            var10 - 2.0F, var11 - 2.0F, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var9.method7292(0.25F * this.floatValue9 * this.floatValue8)
+         float f = guiScaledWidth / 2.0F;
+         float f2 = guiScaledHeight / 2.0F;
+         this.method4883(customDrawContext, true, f, 0.0F, guiScaledHeight, zenithColor2.method7292(0.1F * this.floatValue9 * this.floatValue8), flag);
+         this.method4883(customDrawContext, false, f2, 0.0F, guiScaledWidth, zenithColor2.method7292(0.1F * this.floatValue9 * this.floatValue8), flag2);
+         customDrawContext.drawRoundedRect(
+            f - 2.0F, f2 - 2.0F, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), zenithColor2.method7292(0.25F * this.floatValue9 * this.floatValue8)
          );
       }
 
-      for (Interface var19 : var2) {
-         Class31.Entry2 var12 = this.items.get(var19);
-         float var13 = var12 == null ? 0.0F : var12.value;
-         if (var13 > 0.02F && !var19.method2059() && var19 == var5 && !this.method4878(var19)) {
-            float var14 = 5.0F;
-            float var15 = var19.method294() + var19.method296();
-            float var16 = var19.method295() + var19.method297();
-            var1.drawRoundedRect(
-               var15 - var14 + 1.0F, var16 - var14 + 1.0F, var14, var14, ProxyDotRadiusData.method8069(1.5F), var8.method7292(0.85F * var13 * this.floatValue8)
+      for (Interface key : interfaceValues) {
+         Class31.Entry2 entry2 = this.items.get(key);
+         float f = entry2 == null ? 0.0F : entry2.value;
+         if (f > 0.02F && !key.method2059() && key == interfaceValue && !this.method4878(key)) {
+            float width = 5.0F;
+            float f2 = key.method294() + key.method296();
+            float f3 = key.method295() + key.method297();
+            customDrawContext.drawRoundedRect(
+               f2 - width + 1.0F, f3 - width + 1.0F, width, width, ProxyDotRadiusData.method8069(1.5F), zenithColor.method7292(0.85F * f * this.floatValue8)
             );
          }
       }
 
-      for (Class31.Entry var20 : this.items2) {
-         float var21 = var20.alpha * this.floatValue8;
-         if (!(var21 <= 0.01F)) {
-            ZenithColor var22 = (var20.flag2 ? var9.method7295(var8, 0.35F) : var8).method7292(0.9F * var21);
-            if (var20.flag) {
-               var1.drawRect(var20.floatValue - 0.5F, var20.floatValue2, 1.0F, var20.floatValue3 - var20.floatValue2, var22);
-               method4882(var1, var20.floatValue, var20.floatValue2, var22);
-               method4882(var1, var20.floatValue, var20.floatValue3, var22);
+      for (Class31.Entry entry : this.items2) {
+         float f = entry.alpha * this.floatValue8;
+         if (!(f <= 0.01F)) {
+            ZenithColor zenithColor3 = (entry.flag2 ? zenithColor2.method7295(zenithColor, 0.35F) : zenithColor).method7292(0.9F * f);
+            if (entry.flag) {
+               customDrawContext.drawRect(entry.floatValue - 0.5F, entry.floatValue2, 1.0F, entry.floatValue3 - entry.floatValue2, zenithColor3);
+               method4882(customDrawContext, entry.floatValue, entry.floatValue2, zenithColor3);
+               method4882(customDrawContext, entry.floatValue, entry.floatValue3, zenithColor3);
             } else {
-               var1.drawRect(var20.floatValue2, var20.floatValue - 0.5F, var20.floatValue3 - var20.floatValue2, 1.0F, var22);
-               method4882(var1, var20.floatValue2, var20.floatValue, var22);
-               method4882(var1, var20.floatValue3, var20.floatValue, var22);
+               customDrawContext.drawRect(entry.floatValue2, entry.floatValue - 0.5F, entry.floatValue3 - entry.floatValue2, 1.0F, zenithColor3);
+               method4882(customDrawContext, entry.floatValue2, entry.floatValue, zenithColor3);
+               method4882(customDrawContext, entry.floatValue3, entry.floatValue, zenithColor3);
             }
          }
       }
    }
 
-   private static void method4882(CustomDrawContext var0, float var1, float var2, ZenithColor var3) {
-      var0.drawRoundedRect(var1 - 1.5F, var2 - 1.5F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), var3);
+   private static void method4882(CustomDrawContext customDrawContext, float floatValue, float f, ZenithColor zenithColor) {
+      customDrawContext.drawRoundedRect(floatValue - 1.5F, f - 1.5F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor);
    }
 
-   private void method4883(CustomDrawContext var1, boolean var2, float var3, float var4, float var5, ZenithColor var6, boolean var7) {
-      if (!var7) {
-         float var8 = 4.0F;
-         float var9 = 4.0F;
+   private void method4883(CustomDrawContext customDrawContext, boolean flag, float f, float f2, float guiScaledHeight, ZenithColor zenithColor, boolean flag2) {
+      if (!flag2) {
+         float f3 = 4.0F;
+         float f4 = 4.0F;
 
-         for (float var10 = var4; var10 < var5; var10 += var8 + var9) {
-            float var11 = Math.min(var8, var5 - var10);
-            if (var2) {
-               var1.drawRect(var3 - 0.5F, var10, 1.0F, var11, var6);
+         for (float y = f2; y < guiScaledHeight; y += f3 + f4) {
+            float height = Math.min(f3, guiScaledHeight - y);
+            if (flag) {
+               customDrawContext.drawRect(f - 0.5F, y, 1.0F, height, zenithColor);
             } else {
-               var1.drawRect(var10, var3 - 0.5F, var11, 1.0F, var6);
+               customDrawContext.drawRect(y, f - 0.5F, height, 1.0F, zenithColor);
             }
          }
       }
    }
 
-   private List<Class31.Data> method4884(List<Interface> var1, float var2) {
-      ArrayList<Class31.Data> var3 = new ArrayList<>();
-      float var4 = this.interfaceValue.method2081(var2);
-      float var5 = this.interfaceValue.method2082(var2);
-      var3.add(new Class31.Data(var4, 0.0F, null, false));
-      var3.add(new Class31.Data(var5, 1.0F, null, false));
-      var3.add(new Class31.Data(var2 / 2.0F, 0.5F, null, true));
+   private List<Class31.Data> method4884(List<Interface> interfaceValues, float guiScaledWidth) {
+      ArrayList<Class31.Data> datas = new ArrayList<>();
+      float floatValue = this.interfaceValue.method2081(guiScaledWidth);
+      float f = this.interfaceValue.method2082(guiScaledWidth);
+      datas.add(new Class31.Data(floatValue, 0.0F, null, false));
+      datas.add(new Class31.Data(f, 1.0F, null, false));
+      datas.add(new Class31.Data(guiScaledWidth / 2.0F, 0.5F, null, true));
 
-      for (Interface var7 : var1) {
-         if (var7 != this.interfaceValue) {
-            float var8 = var7.method294();
-            float var9 = var8 + var7.method296();
-            float var10 = (var8 + var9) / 2.0F;
+      for (Interface interfaceValue : interfaceValues) {
+         if (interfaceValue != this.interfaceValue) {
+            float floatValue2 = interfaceValue.method294();
+            float floatValue3 = floatValue2 + interfaceValue.method296();
+            float floatValue4 = (floatValue2 + floatValue3) / 2.0F;
 
-            for (float var14 : new float[]{0.0F, 0.5F, 1.0F}) {
-               var3.add(new Class31.Data(var8, var14, var7, false));
-               var3.add(new Class31.Data(var10, var14, var7, false));
-               var3.add(new Class31.Data(var9, var14, var7, false));
+            for (float f2 : new float[]{0.0F, 0.5F, 1.0F}) {
+               datas.add(new Class31.Data(floatValue2, f2, interfaceValue, false));
+               datas.add(new Class31.Data(floatValue4, f2, interfaceValue, false));
+               datas.add(new Class31.Data(floatValue3, f2, interfaceValue, false));
             }
 
-            var3.add(new Class31.Data(var9 + 4.0F, 0.0F, var7, false));
-            var3.add(new Class31.Data(var8 - 4.0F, 1.0F, var7, false));
+            datas.add(new Class31.Data(floatValue3 + 4.0F, 0.0F, interfaceValue, false));
+            datas.add(new Class31.Data(floatValue2 - 4.0F, 1.0F, interfaceValue, false));
          }
       }
 
-      return var3;
+      return datas;
    }
 
-   private List<Class31.Data> method4885(List<Interface> var1, float var2) {
-      ArrayList<Class31.Data> var3 = new ArrayList<>();
-      float var4 = this.interfaceValue.method2084(var2);
-      float var5 = this.interfaceValue.method2085(var2);
-      var3.add(new Class31.Data(var4, 0.0F, null, false));
-      var3.add(new Class31.Data(var5, 1.0F, null, false));
-      var3.add(new Class31.Data(var2 / 2.0F, 0.5F, null, true));
+   private List<Class31.Data> method4885(List<Interface> interfaceValues, float guiScaledHeight) {
+      ArrayList<Class31.Data> datas = new ArrayList<>();
+      float floatValue = this.interfaceValue.method2084(guiScaledHeight);
+      float f = this.interfaceValue.method2085(guiScaledHeight);
+      datas.add(new Class31.Data(floatValue, 0.0F, null, false));
+      datas.add(new Class31.Data(f, 1.0F, null, false));
+      datas.add(new Class31.Data(guiScaledHeight / 2.0F, 0.5F, null, true));
 
-      for (Interface var7 : var1) {
-         if (var7 != this.interfaceValue) {
-            float var8 = var7.method295();
-            float var9 = var8 + var7.method297();
-            float var10 = (var8 + var9) / 2.0F;
+      for (Interface interfaceValue : interfaceValues) {
+         if (interfaceValue != this.interfaceValue) {
+            float floatValue2 = interfaceValue.method295();
+            float floatValue3 = floatValue2 + interfaceValue.method297();
+            float floatValue4 = (floatValue2 + floatValue3) / 2.0F;
 
-            for (float var14 : new float[]{0.0F, 0.5F, 1.0F}) {
-               var3.add(new Class31.Data(var8, var14, var7, false));
-               var3.add(new Class31.Data(var10, var14, var7, false));
-               var3.add(new Class31.Data(var9, var14, var7, false));
+            for (float f2 : new float[]{0.0F, 0.5F, 1.0F}) {
+               datas.add(new Class31.Data(floatValue2, f2, interfaceValue, false));
+               datas.add(new Class31.Data(floatValue4, f2, interfaceValue, false));
+               datas.add(new Class31.Data(floatValue3, f2, interfaceValue, false));
             }
 
-            var3.add(new Class31.Data(var9 + 4.0F, 0.0F, var7, false));
-            var3.add(new Class31.Data(var8 - 4.0F, 1.0F, var7, false));
+            datas.add(new Class31.Data(floatValue3 + 4.0F, 0.0F, interfaceValue, false));
+            datas.add(new Class31.Data(floatValue2 - 4.0F, 1.0F, interfaceValue, false));
          }
       }
 
-      return var3;
+      return datas;
    }
 
-   private static Class31.Data method4886(float var0, float var1, List<Class31.Data> var2) {
-      Class31.Data var3 = null;
-      float var4 = 5.0F;
+   private static Class31.Data method4886(float f, float f2, List<Class31.Data> datas) {
+      Class31.Data data = null;
+      float f3 = 5.0F;
 
-      for (Class31.Data var6 : var2) {
-         float var7 = Math.abs(var6.getFloatValue() - (var0 + var6.getFloatValue2() * var1));
-         float var8 = var6.isFlag() ? 0.5F : 0.0F;
-         if (var7 - var8 < var4) {
-            var4 = var7 - var8;
-            var3 = var6;
+      for (Class31.Data data2 : datas) {
+         float f4 = Math.abs(data2.getFloatValue() - (f + data2.getFloatValue2() * f2));
+         float f5 = data2.isFlag() ? 0.5F : 0.0F;
+         if (f4 - f5 < f3) {
+            f3 = f4 - f5;
+            data = data2;
          }
       }
 
-      return var3;
+      return data;
    }
 
-   private void method4887(boolean var1, Class31.Data var2, float var3, float var4, float var5) {
-      float var6;
-      float var7;
-      if (var2.getInterfaceValue() != null) {
-         Interface var8 = var2.getInterfaceValue();
-         float var9 = var1 ? var8.method295() : var8.method294();
-         float var10 = var9 + (var1 ? var8.method297() : var8.method296());
-         var6 = Math.min(var3, var9) - 3.0F;
-         var7 = Math.max(var4, var10) + 3.0F;
-      } else if (var2.isFlag()) {
-         var6 = 0.0F;
-         var7 = var5;
+   private void method4887(boolean flag, Class31.Data data, float f, float f2, float guiScaledHeight) {
+      float f3;
+      float guiScaledHeight2;
+      if (data.getInterfaceValue() != null) {
+         Interface interfaceValue = data.getInterfaceValue();
+         float f4 = flag ? interfaceValue.method295() : interfaceValue.method294();
+         float f5 = f4 + (flag ? interfaceValue.method297() : interfaceValue.method296());
+         f3 = Math.min(f, f4) - 3.0F;
+         guiScaledHeight2 = Math.max(f2, f5) + 3.0F;
+      } else if (data.isFlag()) {
+         f3 = 0.0F;
+         guiScaledHeight2 = guiScaledHeight;
       } else {
-         var6 = var3 - 6.0F;
-         var7 = var4 + 6.0F;
+         f3 = f - 6.0F;
+         guiScaledHeight2 = f2 + 6.0F;
       }
 
-      for (Class31.Entry var13 : this.items2) {
-         if (var13.flag == var1 && Math.abs(var13.floatValue - var2.getFloatValue()) < 0.5F) {
-            var13.flag3 = true;
-            var13.floatValue = var2.getFloatValue();
-            var13.floatValue2 = var6;
-            var13.floatValue3 = var7;
+      for (Class31.Entry entry : this.items2) {
+         if (entry.flag == flag && Math.abs(entry.floatValue - data.getFloatValue()) < 0.5F) {
+            entry.flag3 = true;
+            entry.floatValue = data.getFloatValue();
+            entry.floatValue2 = f3;
+            entry.floatValue3 = guiScaledHeight2;
             return;
          }
       }
 
-      Class31.Entry var12 = new Class31.Entry(var1, var2.isFlag(), var2.getFloatValue());
-      var12.floatValue2 = var6;
-      var12.floatValue3 = var7;
-      var12.flag3 = true;
-      this.items2.add(var12);
+      Class31.Entry entry = new Class31.Entry(flag, data.isFlag(), data.getFloatValue());
+      entry.floatValue2 = f3;
+      entry.floatValue3 = guiScaledHeight2;
+      entry.flag3 = true;
+      this.items2.add(entry);
    }
 
-   private static float method4888(float var0, float var1, float var2) {
-      return var0 < var1 ? Math.min(var1, var0 + var2) : Math.max(var1, var0 - var2);
+   private static float method4888(float alpha, float f, float f2) {
+      return alpha < f ? Math.min(f, alpha + f2) : Math.max(f, alpha - f2);
    }
 
    private static final class Data {
@@ -413,11 +413,11 @@ public final class Class31 implements MinecraftAccess {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "interfaceValue=" + this.interfaceValue + ", " + "flag=" + this.flag + "]";
       }
 
-      private Data(float var1, float var2, Interface var3, boolean var4) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.interfaceValue = var3;
-         this.flag = var4;
+      private Data(float floatValue, float f, Interface interfaceValue, boolean flag) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.interfaceValue = interfaceValue;
+         this.flag = flag;
       }
 
       public float getFloatValue() {
@@ -446,10 +446,10 @@ public final class Class31 implements MinecraftAccess {
       public float alpha;
       public boolean flag3;
 
-      public Entry(boolean var1, boolean var2, float var3) {
-         this.flag = var1;
-         this.flag2 = var2;
-         this.floatValue = var3;
+      public Entry(boolean flag, boolean flag2, float floatValue) {
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.floatValue = floatValue;
       }
    }
 

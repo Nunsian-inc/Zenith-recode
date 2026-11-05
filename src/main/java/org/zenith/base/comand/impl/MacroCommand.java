@@ -11,14 +11,14 @@ import org.zenith.utility.api.MacroManager;
 import org.zenith.utility.misc.KeyName;
 
 public class MacroCommand extends CommandAbstract {
-   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_KEYS = (var0, var1) -> {
-      for (KeyName var5 : KeyName.values()) {
-         if (!var5.text.isEmpty()) {
-            var1.suggest(var5.text);
+   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_KEYS = (commandContext, suggestionsBuilder) -> {
+      for (KeyName keyName : KeyName.values()) {
+         if (!keyName.text.isEmpty()) {
+            suggestionsBuilder.suggest(keyName.text);
          }
       }
 
-      return var1.buildFuture();
+      return suggestionsBuilder.buildFuture();
    };
 
    public MacroCommand() {
@@ -26,8 +26,8 @@ public class MacroCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(
          literal("add")
             .then(
                arg("name", StringArgumentType.word())
@@ -35,19 +35,19 @@ public class MacroCommand extends CommandAbstract {
                      arg("key", StringArgumentType.word())
                         .suggests(this.SUGGEST_KEYS)
                         .then(arg("command", StringArgumentType.greedyString()).executes(var1x -> {
-                           String var2 = (String)var1x.getArgument("name", String.class);
-                           String var3 = (String)var1x.getArgument("key", String.class);
-                           String var4 = (String)var1x.getArgument("command", String.class);
-                           this.handleAddMacro(var2, var3, var4);
+                           String argument = (String)var1x.getArgument("name", String.class);
+                           String string = (String)var1x.getArgument("key", String.class);
+                           String str = (String)var1x.getArgument("command", String.class);
+                           this.handleAddMacro(argument, string, str);
                            return 1;
                         }))
                   )
             )
       );
-      var1.then(literal("remove").then(arg("name", StringArgumentType.word()).executes(var0 -> {
-         String var1x = (String)var0.getArgument("name", String.class);
-         MacroManager.Entry var2 = Zenith.getInstance().getMacroManager().method6986(var1x);
-         if (var2 == null) {
+      literalArgumentBuilder.then(literal("remove").then(arg("name", StringArgumentType.word()).executes(commandContext -> {
+         String var1x = (String)commandContext.getArgument("name", String.class);
+         MacroManager.Entry entry = Zenith.getInstance().getMacroManager().method6986(var1x);
+         if (entry == null) {
             ChatLogger.method2021("Макрос не найден!");
             return 1;
          } else {
@@ -56,15 +56,15 @@ public class MacroCommand extends CommandAbstract {
             return 1;
          }
       })));
-      var1.then(literal("clear").executes(var0 -> {
+      literalArgumentBuilder.then(literal("clear").executes(commandContext -> {
          Zenith.getInstance().getMacroManager().clear();
          ChatLogger.method2019("Все макросы удалены");
          return 1;
       }));
-      var1.then(literal("list").executes(var0 -> {
+      literalArgumentBuilder.then(literal("list").executes(commandContext -> {
          if (!Zenith.getInstance().getMacroManager().getItems().isEmpty()) {
-            for (MacroManager.Entry var2 : Zenith.getInstance().getMacroManager().getItems()) {
-               mc.player.sendSystemMessage(var2.toText());
+            for (MacroManager.Entry entry : Zenith.getInstance().getMacroManager().getItems()) {
+               mc.player.sendSystemMessage(entry.toText());
             }
          } else {
             ChatLogger.method2019("Список макросов пуст!");
@@ -74,21 +74,21 @@ public class MacroCommand extends CommandAbstract {
       }));
    }
 
-   private void handleAddMacro(String var1, String var2, String var3) {
-      MacroManager var4 = Zenith.getInstance().getMacroManager();
-      int var5 = KeyName.method6704(var2);
-      if (var5 == KeyName.KEY_NONE.intValue) {
-         ChatLogger.method2021("Неизвестная клавиша: " + var2);
+   private void handleAddMacro(String argument, String string, String str) {
+      MacroManager macroManager = Zenith.getInstance().getMacroManager();
+      int intValue = KeyName.method6704(string);
+      if (intValue == KeyName.KEY_NONE.intValue) {
+         ChatLogger.method2021("Неизвестная клавиша: " + string);
       } else {
-         MacroManager.Entry var6 = var4.method6986(var1);
-         if (var6 != null) {
+         MacroManager.Entry entry = macroManager.method6986(argument);
+         if (entry != null) {
             ChatLogger.method2021("Макрос с таким именем уже существует!");
             ChatLogger.method2019("Наведи мышку на сообщение ниже чтобы удалить его");
-            mc.player.sendSystemMessage(var6.toText());
+            mc.player.sendSystemMessage(entry.toText());
          } else {
-            MacroManager.Entry var7 = new MacroManager.Entry(var1, var5, var3);
-            var4.method6983(var7);
-            mc.player.sendSystemMessage(var7.toText());
+            MacroManager.Entry entry2 = new MacroManager.Entry(argument, intValue, str);
+            macroManager.method6983(entry2);
+            mc.player.sendSystemMessage(entry2.toText());
             ChatLogger.method2019("Макрос добавлен");
          }
       }

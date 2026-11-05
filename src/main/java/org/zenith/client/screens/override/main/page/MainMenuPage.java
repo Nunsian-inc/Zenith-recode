@@ -19,11 +19,11 @@ public interface MainMenuPage {
    default void update() {
    }
 
-   void layout(BoundsData var1);
+   void layout(BoundsData boundsData);
 
-   void render(MenuDrawContext var1, float var2, float var3, BoundsData var4);
+   void render(MenuDrawContext graphics, float f, float f2, BoundsData boundsData);
 
-   default void renderFooter(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
+   default void renderFooter(MenuDrawContext graphics, float f, float f2, BoundsData boundsData) {
    }
 
    default void onShow() {
@@ -35,27 +35,27 @@ public interface MainMenuPage {
    default void tick() {
    }
 
-   default boolean mouseClicked(double var1, double var3, int var5) {
+   default boolean mouseClicked(double d, double d2, int mouseToGlfw) {
       return false;
    }
 
-   default boolean mouseReleased(double var1, double var3, int var5) {
+   default boolean mouseReleased(double d, double d2, int mouseToGlfw) {
       return false;
    }
 
-   default boolean mouseDragged(double var1, double var3, int var5) {
+   default boolean mouseDragged(double d, double d2, int mouseToGlfw) {
       return false;
    }
 
-   default boolean mouseScrolled(double var1, double var3, double var5) {
+   default boolean mouseScrolled(double d, double d2, double verticalAmount) {
       return false;
    }
 
-   default boolean keyPressed(int var1, int var2, int var3) {
+   default boolean keyPressed(int keyCode, int keycode, int modifiers) {
       return false;
    }
 
-   default boolean charTyped(char var1, int var2) {
+   default boolean charTyped(char codepoint, int n) {
       return false;
    }
 }

@@ -30,30 +30,30 @@ public class MouseRotationEvent extends EventCancellable {
    }
 
    @Generated
-   public void setDoubleValue(double var1) {
-      this.doubleValue = var1;
+   public void setDoubleValue(double doubleValue) {
+      this.doubleValue = doubleValue;
    }
 
    @Generated
-   public void setDoubleValue2(double var1) {
-      this.doubleValue2 = var1;
+   public void setDoubleValue2(double d) {
+      this.doubleValue2 = d;
    }
 
    @Generated
-   public void setDoubleValue3(double var1) {
-      this.doubleValue3 = var1;
+   public void setDoubleValue3(double d) {
+      this.doubleValue3 = d;
    }
 
    @Generated
-   public void setDoubleValue4(double var1) {
-      this.doubleValue4 = var1;
+   public void setDoubleValue4(double d) {
+      this.doubleValue4 = d;
    }
 
    @Generated
-   public MouseRotationEvent(double var1, double var3, double var5, double var7) {
-      this.doubleValue = var1;
-      this.doubleValue2 = var3;
-      this.doubleValue3 = var5;
-      this.doubleValue4 = var7;
+   public MouseRotationEvent(double doubleValue, double d, double accumulatedDX, double accumulatedDY) {
+      this.doubleValue = doubleValue;
+      this.doubleValue2 = d;
+      this.doubleValue3 = accumulatedDX;
+      this.doubleValue4 = accumulatedDY;
    }
 }

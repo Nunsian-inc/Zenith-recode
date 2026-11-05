@@ -13,7 +13,7 @@ public class ScreenRenderEvent implements Event {
    }
 
    @Generated
-   public ScreenRenderEvent(MenuDrawContext var1) {
-      this.menuDrawContext = var1;
+   public ScreenRenderEvent(MenuDrawContext menuDrawContext) {
+      this.menuDrawContext = menuDrawContext;
    }
 }

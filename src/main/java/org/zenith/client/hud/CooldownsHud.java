@@ -43,17 +43,17 @@ public class CooldownsHud extends Interface {
    private final Animation animation2 = new Animation(200L, 0.0F, Easing.INSTANCE13);
    private final Animation animation3 = new Animation(200L, 0.0F, Easing.INSTANCE13);
 
-   public CooldownsHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public CooldownsHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
       EventManager.register(this);
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (mc != null && mc.level != null) {
-         if (var1.getPacket3() instanceof ClientboundCooldownPacket var2) {
-            this.method6829(() -> this.method6830(var2));
-         } else if (var1.getPacket3() instanceof ClientboundRespawnPacket) {
+         if (event.getPacket3() instanceof ClientboundCooldownPacket cooldownPacket) {
+            this.method6829(() -> this.method6830(cooldownPacket));
+         } else if (event.getPacket3() instanceof ClientboundRespawnPacket) {
             this.method6829(() -> {
                this.items3.clear();
                this.items2.clear();
@@ -63,56 +63,56 @@ public class CooldownsHud extends Interface {
       }
    }
 
-   private void method6829(Runnable var1) {
+   private void method6829(Runnable command) {
       if (mc.isSameThread()) {
-         var1.run();
+         command.run();
       } else {
-         mc.execute(var1);
+         mc.execute(command);
       }
    }
 
-   private void method6830(ClientboundCooldownPacket var1) {
+   private void method6830(ClientboundCooldownPacket cooldownPacket) {
       if (mc.level != null) {
-         Identifier var2 = var1.cooldownGroup();
-         int var3 = var1.duration();
-         String var4 = "vanilla:" + var2;
-         if (var3 <= 0) {
-            this.items3.remove(var4);
-            this.items.remove(var4);
+         Identifier cooldownGroup = cooldownPacket.cooldownGroup();
+         int duration = cooldownPacket.duration();
+         String text = "vanilla:" + cooldownGroup;
+         if (duration <= 0) {
+            this.items3.remove(text);
+            this.items.remove(text);
          } else {
-            String var5;
-            ItemStack var6;
-            if (BuiltInRegistries.ITEM.containsKey(var2)) {
-               Item var7 = BuiltInRegistries.ITEM.getValue(var2);
-               var5 = var7.getName(var7.getDefaultInstance()).getString();
-               var6 = var7.getDefaultInstance();
+            String string;
+            ItemStack defaultInstance;
+            if (BuiltInRegistries.ITEM.containsKey(cooldownGroup)) {
+               Item item = BuiltInRegistries.ITEM.getValue(cooldownGroup);
+               string = item.getName(item.getDefaultInstance()).getString();
+               defaultInstance = item.getDefaultInstance();
             } else {
-               ItemStack var9 = this.method6831(var2);
-               if (var9 != null) {
-                  var5 = var9.getHoverName().getString();
-                  var6 = var9.copyWithCount(1);
+               ItemStack stack = this.method6831(cooldownGroup);
+               if (stack != null) {
+                  string = stack.getHoverName().getString();
+                  defaultInstance = stack.copyWithCount(1);
                } else {
-                  var5 = var2.getPath();
-                  var6 = ItemStack.EMPTY;
+                  string = cooldownGroup.getPath();
+                  defaultInstance = ItemStack.EMPTY;
                }
             }
 
-            long var10 = mc.level.getGameTime();
-            this.items3.put(var4, CooldownsHud.Entry2.method6848(var4, var5, var6, var10, var3));
+            long gameTime = mc.level.getGameTime();
+            this.items3.put(text, CooldownsHud.Entry2.method6848(text, string, defaultInstance, gameTime, duration));
          }
       }
    }
 
-   private ItemStack method6831(Identifier var1) {
+   private ItemStack method6831(Identifier cooldownGroup) {
       if (mc.player == null) {
          return null;
       } else {
-         Inventory var2 = mc.player.getInventory();
+         Inventory inventory = mc.player.getInventory();
 
-         for (int var3 = 0; var3 < var2.getContainerSize(); var3++) {
-            ItemStack var4 = var2.getItem(var3);
-            if (!var4.isEmpty() && var4.has(DataComponents.USE_COOLDOWN) && var1.equals(mc.player.getCooldowns().getCooldownGroup(var4))) {
-               return var4;
+         for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (!stack.isEmpty() && stack.has(DataComponents.USE_COOLDOWN) && cooldownGroup.equals(mc.player.getCooldowns().getCooldownGroup(stack))) {
+               return stack;
             }
          }
 
@@ -121,135 +121,135 @@ public class CooldownsHud extends Interface {
    }
 
    @EventTarget
-   public void method6832(PacketEvent var1) {
+   public void method6832(PacketEvent event) {
       if (mc != null && mc.player != null) {
-         ItemStack var2 = mc.player.getUseItem();
-         if (var2 != null && !var2.isEmpty()) {
-            if (mc.player.getTicksUsingItem() >= var2.getUseDuration(mc.player)) {
-               PotionContents var3 = var2.get(DataComponents.POTION_CONTENTS);
-               if (var3 != null && (var3.getColor() == 33461 || var3.getColor() == -515037)) {
-                  ItemStack var4 = Items.POTION.getDefaultInstance();
-                  var4.set(
+         ItemStack useItem = mc.player.getUseItem();
+         if (useItem != null && !useItem.isEmpty()) {
+            if (mc.player.getTicksUsingItem() >= useItem.getUseDuration(mc.player)) {
+               PotionContents potionContents = useItem.get(DataComponents.POTION_CONTENTS);
+               if (potionContents != null && (potionContents.getColor() == 33461 || potionContents.getColor() == -515037)) {
+                  ItemStack defaultInstance = Items.POTION.getDefaultInstance();
+                  defaultInstance.set(
                      DataComponents.POTION_CONTENTS,
-                     new PotionContents(Optional.of(Potions.SWIFTNESS), Optional.of(var3.getColor()), List.of(), Optional.empty())
+                     new PotionContents(Optional.of(Potions.SWIFTNESS), Optional.of(potionContents.getColor()), List.of(), Optional.empty())
                   );
-                  this.method6834(var4, "Исцел", 10000L);
+                  this.method6834(defaultInstance, "Исцел", 10000L);
                }
             }
          }
       }
    }
 
-   public void method6833(ItemStack var1, long var2) {
-      String var4 = "custom:" + var1.getItem().getDescriptionId();
-      this.method6835(var4, var1.getItem().getName(var1.getItem().getDefaultInstance()).getString(), var1, var2);
+   public void method6833(ItemStack defaultInstance, long l) {
+      String text = "custom:" + defaultInstance.getItem().getDescriptionId();
+      this.method6835(text, defaultInstance.getItem().getName(defaultInstance.getItem().getDefaultInstance()).getString(), defaultInstance, l);
    }
 
-   public void method6834(ItemStack var1, String var2, long var3) {
-      this.method6835("custom:" + var2, var2, var1, var3);
+   public void method6834(ItemStack defaultInstance, String string, long l) {
+      this.method6835("custom:" + string, string, defaultInstance, l);
    }
 
-   public void method6835(String var1, String var2, ItemStack var3, long var4) {
+   public void method6835(String text, String string, ItemStack defaultInstance, long l) {
       if (mc != null) {
          if (!mc.isSameThread()) {
-            mc.execute(() -> this.method6835(var1, var2, var3, var4));
-         } else if (!this.items.containsKey(var1)) {
-            long var6 = System.nanoTime();
-            this.items2.put(var1, CooldownsHud.Entry2.method6849(var1, var2, var3, var6, Math.max(1L, var4) * 1000000L));
+            mc.execute(() -> this.method6835(text, string, defaultInstance, l));
+         } else if (!this.items.containsKey(text)) {
+            long nanoTime = System.nanoTime();
+            this.items2.put(text, CooldownsHud.Entry2.method6849(text, string, defaultInstance, nanoTime, Math.max(1L, l) * 1000000L));
          }
       }
    }
 
-   public void method6836(String var1, String var2, ItemStack var3, long var4) {
+   public void method6836(String text, String string, ItemStack defaultInstance, long l) {
       if (mc != null) {
          if (!mc.isSameThread()) {
-            mc.execute(() -> this.method6836(var1, var2, var3, var4));
-         } else if (mc.level != null && !this.items.containsKey(var1)) {
-            long var6 = mc.level.getGameTime();
-            this.items2.put(var1, CooldownsHud.Entry2.method6848(var1, var2, var3, var6, Math.max(1L, var4)));
+            mc.execute(() -> this.method6836(text, string, defaultInstance, l));
+         } else if (mc.level != null && !this.items.containsKey(text)) {
+            long gameTime = mc.level.getGameTime();
+            this.items2.put(text, CooldownsHud.Entry2.method6848(text, string, defaultInstance, gameTime, Math.max(1L, l)));
          }
       }
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
+   public void method8(CustomDrawContext customDrawContext) {
       if (mc != null) {
          this.method6837();
          if (this.items.isEmpty()) {
             this.animation2.method2808(0.0F);
          } else {
-            CooldownsHud.Entry var2 = this.items.values().iterator().next();
-            this.animation2.method2808(this.items.size() == 1 && var2.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
+            CooldownsHud.Entry entry = this.items.values().iterator().next();
+            this.animation2.method2808(this.items.size() == 1 && entry.animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
          }
 
-         float var10 = this.floatValue;
-         float var3 = this.floatValue2;
-         float var4 = (float)(
+         float floatValue = this.floatValue;
+         float y1 = this.floatValue2;
+         float height = (float)(
             20.0F + GuiStyle.PADDING.intValue() / 2.0F
-               + this.items.values().stream().mapToDouble(var0 -> (var0.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var0.animation.getValue()).sum()
+               + this.items.values().stream().mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue()).sum()
          );
-         float var5 = (float)this.items.values().stream().mapToDouble(CooldownsHud.Entry::method6842).max().orElse(0.0);
-         var5 = this.animation.method2808(Math.max(HudListLayout.method7638("n", "Cooldown"), var5));
-         this.width = var5;
-         this.height = var4;
-         float var6 = InterfaceModule.method6801();
+         float width = (float)this.items.values().stream().mapToDouble(CooldownsHud.Entry::method6842).max().orElse(0.0);
+         width = this.animation.method2808(Math.max(HudListLayout.method7638("n", "Cooldown"), width));
+         this.width = width;
+         this.height = height;
+         float f = InterfaceModule.method6801();
          this.animation3.method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.items.isEmpty());
-         var1.pushMatrix();
-         var1.pose().translate(var10 + var5 / 2.0F, var3 + var4 / 2.0F);
-         var1.pose().scale(this.animation3.getValue(), this.animation3.getValue());
-         var1.pose().translate(-(var10 + var5 / 2.0F), -(var3 + var4 / 2.0F));
-         HudListLayout.method7635(var1, var10, var3, var5, var4);
-         HudListLayout.method7636(var1, var10, var3, var5, "n", "Cooldown");
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
+         customDrawContext.pose().scale(this.animation3.getValue(), this.animation3.getValue());
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + height / 2.0F));
+         HudListLayout.method7635(customDrawContext, floatValue, y1, width, height);
+         HudListLayout.method7636(customDrawContext, floatValue, y1, width, "n", "Cooldown");
          if (this.animation3.getValue() == 1.0F) {
-            float var7 = var3 + 20.0F;
-            var1.enableScissor((int)var10, (int)var3, (int)(var10 + var5), (int)(var3 + var4));
+            float y12 = y1 + 20.0F;
+            customDrawContext.enableScissor((int)floatValue, (int)y1, (int)(floatValue + width), (int)(y1 + height));
 
-            for (CooldownsHud.Entry var9 : this.items.values()) {
-               var9.method6843(var1, var10, var7, var5);
-               var7 += (var9.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var9.animation.getValue();
+            for (CooldownsHud.Entry entry : this.items.values()) {
+               entry.method6843(customDrawContext, floatValue, y12, width);
+               y12 += (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue();
             }
 
-            var1.disableScissor();
+            customDrawContext.disableScissor();
          }
 
-         this.items.entrySet().removeIf(var0 -> var0.getValue().method6844());
+         this.items.entrySet().removeIf(entry -> entry.getValue().method6844());
          this.method6839();
-         var1.popMatrix();
+         customDrawContext.popMatrix();
       }
    }
 
    private void method6837() {
-      long var1 = this.method6840();
+      long l = this.method6840();
 
-      for (CooldownsHud.Entry2 var4 : this.items3.values()) {
-         if (!var4.method6851(var1)) {
-            this.items.computeIfAbsent(var4.text, var2 -> this.method2070(var4));
+      for (CooldownsHud.Entry2 entry2 : this.items3.values()) {
+         if (!entry2.method6851(l)) {
+            this.items.computeIfAbsent(entry2.text, str -> this.method2070(entry2));
          }
       }
 
-      for (CooldownsHud.Entry2 var8 : this.items2.values()) {
-         long var5 = this.method6841(var8.type);
-         if (!var8.method6851(var5)) {
-            this.items.computeIfAbsent(var8.text, var2 -> this.method2070(var8));
+      for (CooldownsHud.Entry2 entry2 : this.items2.values()) {
+         long l2 = this.method6841(entry2.type);
+         if (!entry2.method6851(l2)) {
+            this.items.computeIfAbsent(entry2.text, str -> this.method2070(entry2));
          }
       }
    }
 
-   private CooldownsHud.Entry method2070(CooldownsHud.Entry2 var1) {
-      long var2 = this.method6841(var1.type);
+   private CooldownsHud.Entry method2070(CooldownsHud.Entry2 entry2) {
+      long l = this.method6841(entry2.type);
       return new CooldownsHud.Entry(
-         var1.itemStack,
-         var1.text2,
-         var1.method6850(var2),
-         () -> var1.method6850(this.method6841(var1.type)),
-         () -> var1.method6851(this.method6841(var1.type)),
-         () -> var1.method6852(this.method6841(var1.type))
+         entry2.itemStack,
+         entry2.text2,
+         entry2.method6850(l),
+         () -> entry2.method6850(this.method6841(entry2.type)),
+         () -> entry2.method6851(this.method6841(entry2.type)),
+         () -> entry2.method6852(this.method6841(entry2.type))
       );
    }
 
    private void method6839() {
-      long var1 = this.method6840();
-      this.items3.entrySet().removeIf(var2 -> var2.getValue().method6851(var1));
+      long l = this.method6840();
+      this.items3.entrySet().removeIf(entry -> entry.getValue().method6851(l));
       this.items2.entrySet().removeIf(var1x -> var1x.getValue().method6851(this.method6841(var1x.getValue().type)));
    }
 
@@ -257,8 +257,8 @@ public class CooldownsHud extends Interface {
       return mc != null && mc.level != null ? mc.level.getGameTime() : 0L;
    }
 
-   private long method6841(CooldownsHud.Type var1) {
-      return var1 == CooldownsHud.Type.TICKS ? this.method6840() : 0L;
+   private long method6841(CooldownsHud.Type type) {
+      return type == CooldownsHud.Type.TICKS ? this.method6840() : 0L;
    }
 
    @Override
@@ -277,13 +277,13 @@ public class CooldownsHud extends Interface {
       private int intValue;
       private String text2;
 
-      public Entry(ItemStack var2, String var3, float var4, Supplier<Float> var5, BooleanSupplier var6, Supplier<Integer> var7) {
-         this.itemStack = var2;
-         this.text = var3;
-         this.supplier = var5;
-         this.booleanSupplier = var6;
-         this.supplier2 = var7;
-         this.animation2 = new Animation(200L, var4, Easing.INSTANCE10);
+      public Entry(ItemStack itemStack, String text, float floatValue, Supplier<Float> supplier, BooleanSupplier booleanSupplier, Supplier<Integer> supplier2) {
+         this.itemStack = itemStack;
+         this.text = text;
+         this.supplier = supplier;
+         this.booleanSupplier = booleanSupplier;
+         this.supplier2 = supplier2;
+         this.animation2 = new Animation(200L, floatValue, Easing.INSTANCE10);
       }
 
       public float method6842() {
@@ -294,24 +294,24 @@ public class CooldownsHud extends Interface {
          return 14.0F;
       }
 
-      public void method6843(CustomDrawContext var1, float var2, float var3, float var4) {
-         float var5 = this.method6845();
-         this.animation.method2808(var5 > 0.0F ? 1.0F : 0.0F);
-         var1.pushMatrix();
-         var1.pose().translate(var2 + var4 / 2.0F, var3 + this.getHeight() / 2.0F);
-         var1.pose().scale(this.animation.getValue(), this.animation.getValue());
-         var1.pose().translate(-(var2 + var4 / 2.0F), -(var3 + this.getHeight() / 2.0F));
-         float var6 = HudListLayout.method7640(var1, var2, var3);
-         float var7 = 8.0F;
-         float var8 = var7 / 16.0F;
-         var1.pushMatrix();
-         var1.pose().translate(HudListLayout.method7641(var2) + (10.0F - var7) / 2.0F, HudListLayout.method7642(var3) + (10.0F - var7) / 2.0F);
-         var1.pose().scale(var8, var8);
-         var1.item(this.itemStack, 0, 0);
-         var1.popMatrix();
-         HudListLayout.method7644(var1, var6, var3, this.text);
-         HudListLayout.method7649(var1, var2, var3, var4, this.method6846(), var5);
-         var1.popMatrix();
+      public void method6843(CustomDrawContext customDrawContext, float floatValue, float y1, float width) {
+         float f = this.method6845();
+         this.animation.method2808(f > 0.0F ? 1.0F : 0.0F);
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
+         customDrawContext.pose().scale(this.animation.getValue(), this.animation.getValue());
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + this.getHeight() / 2.0F));
+         float floatValue2 = HudListLayout.method7640(customDrawContext, floatValue, y1);
+         float f2 = 8.0F;
+         float x = f2 / 16.0F;
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(HudListLayout.method7641(floatValue) + (10.0F - f2) / 2.0F, HudListLayout.method7642(y1) + (10.0F - f2) / 2.0F);
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.item(this.itemStack, 0, 0);
+         customDrawContext.popMatrix();
+         HudListLayout.method7644(customDrawContext, floatValue2, y1, this.text);
+         HudListLayout.method7649(customDrawContext, floatValue, y1, width, this.method6846(), f);
+         customDrawContext.popMatrix();
       }
 
       public boolean method6844() {
@@ -319,29 +319,29 @@ public class CooldownsHud extends Interface {
       }
 
       private float method6845() {
-         float var1 = Mth.clamp(this.supplier.get(), 0.0F, 1.0F);
-         this.animation2.method2808(var1);
+         float floatValue = Mth.clamp(this.supplier.get(), 0.0F, 1.0F);
+         this.animation2.method2808(floatValue);
          return Mth.clamp(this.animation2.getValue(), 0.0F, 1.0F);
       }
 
       private String method6846() {
-         int var1 = this.supplier2.get();
-         if (this.text2 == null || var1 != this.intValue) {
-            this.intValue = var1;
-            this.text2 = this.method6847(var1);
+         int intValue = this.supplier2.get();
+         if (this.text2 == null || intValue != this.intValue) {
+            this.intValue = intValue;
+            this.text2 = this.method6847(intValue);
          }
 
          return this.text2;
       }
 
-      private String method6847(int var1) {
-         if (var1 < 0) {
-            var1 = 0;
+      private String method6847(int intValue) {
+         if (intValue < 0) {
+            intValue = 0;
          }
 
-         int var2 = var1 / 60;
-         int var3 = var1 % 60;
-         return String.format("%d:%02d", var2, var3);
+         int n = intValue / 60;
+         int n2 = intValue % 60;
+         return String.format("%d:%02d", n, n2);
       }
    }
 
@@ -353,44 +353,44 @@ public class CooldownsHud extends Interface {
       public final long longValue;
       public final long longValue2;
 
-      private Entry2(String var1, String var2, ItemStack var3, CooldownsHud.Type var4, long var5, long var7) {
-         this.text = var1;
-         this.text2 = var2;
-         this.itemStack = var3;
-         this.type = var4;
-         this.longValue = var5;
-         this.longValue2 = var7;
+      private Entry2(String text, String string, ItemStack itemStack, CooldownsHud.Type type, long longValue, long duration) {
+         this.text = text;
+         this.text2 = string;
+         this.itemStack = itemStack;
+         this.type = type;
+         this.longValue = longValue;
+         this.longValue2 = duration;
       }
 
-      public static CooldownsHud.Entry2 method6848(String var0, String var1, ItemStack var2, long var3, long var5) {
-         return new CooldownsHud.Entry2(var0, var1, var2, CooldownsHud.Type.TICKS, var3, var5);
+      public static CooldownsHud.Entry2 method6848(String text, String string, ItemStack defaultInstance, long gameTime, long duration) {
+         return new CooldownsHud.Entry2(text, string, defaultInstance, CooldownsHud.Type.TICKS, gameTime, duration);
       }
 
-      public static CooldownsHud.Entry2 method6849(String var0, String var1, ItemStack var2, long var3, long var5) {
-         return new CooldownsHud.Entry2(var0, var1, var2, CooldownsHud.Type.REAL, var3, var5);
+      public static CooldownsHud.Entry2 method6849(String text, String string, ItemStack defaultInstance, long nanoTime, long duration) {
+         return new CooldownsHud.Entry2(text, string, defaultInstance, CooldownsHud.Type.REAL, nanoTime, duration);
       }
 
-      public float method6850(long var1) {
-         long var3 = switch (this.type) {
-            case TICKS -> Math.max(0L, this.longValue + this.longValue2 - var1);
+      public float method6850(long l) {
+         long l2 = switch (this.type) {
+            case TICKS -> Math.max(0L, this.longValue + this.longValue2 - l);
             case REAL -> Math.max(0L, this.longValue + this.longValue2 - System.nanoTime());
          };
-         return this.longValue2 <= 0L ? 0.0F : (float)var3 / (float)this.longValue2;
+         return this.longValue2 <= 0L ? 0.0F : (float)l2 / (float)this.longValue2;
       }
 
-      public boolean method6851(long var1) {
+      public boolean method6851(long l) {
          return switch (this.type) {
-            case TICKS -> var1 >= this.longValue + this.longValue2;
+            case TICKS -> l >= this.longValue + this.longValue2;
             case REAL -> System.nanoTime() >= this.longValue + this.longValue2;
          };
       }
 
-      public int method6852(long var1) {
-         long var3 = switch (this.type) {
-            case TICKS -> Math.max(0L, this.longValue + this.longValue2 - var1);
+      public int method6852(long l) {
+         long l2 = switch (this.type) {
+            case TICKS -> Math.max(0L, this.longValue + this.longValue2 - l);
             case REAL -> Math.max(0L, this.longValue + this.longValue2 - System.nanoTime());
          };
-         return this.type == CooldownsHud.Type.TICKS ? (int)(var3 / 20L) : (int)(var3 / 1000000000L);
+         return this.type == CooldownsHud.Type.TICKS ? (int)(l2 / 20L) : (int)(l2 / 1000000000L);
       }
    }
 

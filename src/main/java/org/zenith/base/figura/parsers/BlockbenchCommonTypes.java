@@ -170,7 +170,7 @@ public class BlockbenchCommonTypes {
       if (floatLike != null && !floatLike.isBlank()) {
          try {
             return Float.parseFloat(floatLike);
-         } catch (NumberFormatException var3) {
+         } catch (NumberFormatException e) {
             return fallback;
          }
       } else {
@@ -426,7 +426,7 @@ public class BlockbenchCommonTypes {
          if (context.options.partsWithUUIDs) {
             try {
                tag.putIntArray("nr", UUIDUtil.uuidToIntArray(UUID.fromString(this.uuid)));
-            } catch (IllegalArgumentException var4) {
+            } catch (IllegalArgumentException e) {
                tag.putString("nr", this.uuid);
             }
          }
@@ -478,7 +478,7 @@ public class BlockbenchCommonTypes {
          if (in != null && !in.isBlank()) {
             try {
                return Float.parseFloat(in);
-            } catch (NumberFormatException var3) {
+            } catch (NumberFormatException e) {
                return in;
             }
          } else {
@@ -671,11 +671,11 @@ public class BlockbenchCommonTypes {
 
       public abstract Map<String, BlockbenchCommonTypes.UUIDReferable> getAllReferences();
 
-      public abstract CompoundTag convert(BlockbenchParser2.Intermediary var1);
+      public abstract CompoundTag convert(BlockbenchParser2.Intermediary container);
    }
 
    public interface NBTRepresentation<T extends Tag> {
-      T toNBT(BlockbenchParser2.Intermediary var1);
+      T toNBT(BlockbenchParser2.Intermediary intermediary);
    }
 
    public static class PointElement extends BlockbenchCommonTypes.Element {

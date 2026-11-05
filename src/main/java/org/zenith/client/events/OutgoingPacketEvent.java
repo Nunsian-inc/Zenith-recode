@@ -13,7 +13,7 @@ public class OutgoingPacketEvent extends CancellableEvent {
    }
 
    @Generated
-   public OutgoingPacketEvent(Packet<?> var1) {
-      this.packet = var1;
+   public OutgoingPacketEvent(Packet<?> packet) {
+      this.packet = packet;
    }
 }

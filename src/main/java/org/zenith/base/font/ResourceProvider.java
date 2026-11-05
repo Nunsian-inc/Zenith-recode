@@ -15,31 +15,31 @@ public final class ResourceProvider implements MinecraftAccess {
    private static final ResourceManager RESOURCE_MANAGER = mc.getResourceManager();
    private static final Gson GSON = new Gson();
 
-   public static Identifier getShaderIdentifier(String var0) {
-      return Zenith.method1501("core/" + var0);
+   public static Identifier getShaderIdentifier(String str) {
+      return Zenith.method1501("core/" + str);
    }
 
-   public static <T> T fromJsonToInstance(Identifier var0, Class<T> var1) {
-      return (T)GSON.fromJson(toString(var0), var1);
+   public static <T> T fromJsonToInstance(Identifier dataIdentifer, Class<T> classOfT) {
+      return (T)GSON.fromJson(toString(dataIdentifer), classOfT);
    }
 
-   public static String toString(Identifier var0) {
-      return toString(var0, "\n");
+   public static String toString(Identifier dataIdentifer) {
+      return toString(dataIdentifer, "\n");
    }
 
-   public static String toString(Identifier var0, String var1) {
+   public static String toString(Identifier dataIdentifer, String delimiter) {
       try {
-         String var4;
+         String str;
          try (
-            InputStream var2 = RESOURCE_MANAGER.open(var0);
-            BufferedReader var3 = new BufferedReader(new InputStreamReader(var2));
+            InputStream inputStream = RESOURCE_MANAGER.open(dataIdentifer);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
          ) {
-            var4 = var3.lines().collect(Collectors.joining(var1));
+            str = bufferedReader.lines().collect(Collectors.joining(delimiter));
          }
 
-         return var4;
-      } catch (IOException var10) {
-         throw new RuntimeException(var10);
+         return str;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       }
    }
 }

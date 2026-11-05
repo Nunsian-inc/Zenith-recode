@@ -45,46 +45,46 @@ public final class PvpDetector implements MinecraftAccess {
    }
 
    private static Map<BlockPos, PvpDetector.Entry> method2716() {
-      int var0 = method2724();
-      if (var0 < 0) {
+      int n = method2724();
+      if (n < 0) {
          return Collections.emptyMap();
       } else {
-         var var1 = items.get(var0);
-         return var1 == null ? Collections.emptyMap() : var1;
+         var map = items.get(n);
+         return map == null ? Collections.emptyMap() : map;
       }
    }
 
    private static Map<BlockPos, PvpDetector.Entry> method2717() {
-      int var0 = method2724();
-      return var0 < 0 ? null : items.computeIfAbsent(var0, var0x -> new HashMap<>());
+      int key = method2724();
+      return key < 0 ? null : items.computeIfAbsent(key, var0x -> new HashMap<>());
    }
 
    public static List<BlockPos> method2718() {
       return new ArrayList<>(method2716().keySet());
    }
 
-   public static boolean method2719(BlockPos var0) {
-      return var0 != null && !method2716().containsKey(var0);
+   public static boolean method2719(BlockPos pos) {
+      return pos != null && !method2716().containsKey(pos);
    }
 
-   public static boolean method2720(BlockPos var0) {
-      PvpDetector.Entry var1 = var0 == null ? null : method2716().get(var0);
-      return var1 == null || var1.longValue2 == 0L || var1.method2734() <= 0L;
+   public static boolean method2720(BlockPos key) {
+      PvpDetector.Entry entry = key == null ? null : method2716().get(key);
+      return entry == null || entry.longValue2 == 0L || entry.method2734() <= 0L;
    }
 
-   public static long method2721(BlockPos var0) {
-      return method2720(var0) ? 0L : method2722(var0);
+   public static long method2721(BlockPos key) {
+      return method2720(key) ? 0L : method2722(key);
    }
 
-   public static long method2722(BlockPos var0) {
-      PvpDetector.Entry var1 = var0 == null ? null : method2716().get(var0);
-      return var1 == null ? -1L : var1.method2734();
+   public static long method2722(BlockPos key) {
+      PvpDetector.Entry entry = key == null ? null : method2716().get(key);
+      return entry == null ? -1L : entry.method2734();
    }
 
-   public static void method2723(BlockPos var0) {
-      var var1 = method2717();
-      if (var0 != null && var1 != null) {
-         var1.computeIfAbsent(var0.immutable(), PvpDetector.Entry::new).method2733();
+   public static void method2723(BlockPos key) {
+      var map = method2717();
+      if (key != null && map != null) {
+         map.computeIfAbsent(key.immutable(), PvpDetector.Entry::new).method2733();
       }
    }
 
@@ -92,7 +92,7 @@ public final class PvpDetector implements MinecraftAccess {
       if (mc.player != null && mc.level != null) {
          try {
             return Zenith.getInstance().getServerDetector().getAnarchy();
-         } catch (Exception var1) {
+         } catch (Exception e) {
             return -1;
          }
       } else {
@@ -102,9 +102,9 @@ public final class PvpDetector implements MinecraftAccess {
 
    public static boolean method2725() {
       if (mc.player != null && mc.gui != null) {
-         for (LerpingBossEvent var1 : mc.gui.hud.getBossOverlay().events.values()) {
-            String var2 = var1.getName().getString().toLowerCase(Locale.ROOT);
-            if (var2.contains("pvp") || var2.contains("пвп") || var2.contains("дуэль")) {
+         for (LerpingBossEvent event : mc.gui.hud.getBossOverlay().events.values()) {
+            String lowerCase = event.getName().getString().toLowerCase(Locale.ROOT);
+            if (lowerCase.contains("pvp") || lowerCase.contains("пвп") || lowerCase.contains("дуэль")) {
                return true;
             }
          }
@@ -117,23 +117,23 @@ public final class PvpDetector implements MinecraftAccess {
 
    public static int method2726() {
       if (mc.player != null && mc.gui != null) {
-         for (LerpingBossEvent var1 : mc.gui.hud.getBossOverlay().events.values()) {
-            String var2 = var1.getName().getString().toLowerCase(Locale.ROOT);
-            if (var2.contains("pvp") || var2.contains("пвп")) {
-               Matcher var3 = pattern2.matcher(var2);
-               if (var3.find()) {
+         for (LerpingBossEvent event : mc.gui.hud.getBossOverlay().events.values()) {
+            String lowerCase = event.getName().getString().toLowerCase(Locale.ROOT);
+            if (lowerCase.contains("pvp") || lowerCase.contains("пвп")) {
+               Matcher matcher = pattern2.matcher(lowerCase);
+               if (matcher.find()) {
                   try {
-                     return Integer.parseInt(var3.group(1)) * 60 + Integer.parseInt(var3.group(2));
-                  } catch (NumberFormatException var6) {
+                     return Integer.parseInt(matcher.group(1)) * 60 + Integer.parseInt(matcher.group(2));
+                  } catch (NumberFormatException e) {
                      return -1;
                   }
                }
 
-               Matcher var4 = pattern3.matcher(var2);
-               if (var4.find()) {
+               Matcher matcher2 = pattern3.matcher(lowerCase);
+               if (matcher2.find()) {
                   try {
-                     return Integer.parseInt(var4.group(1));
-                  } catch (NumberFormatException var7) {
+                     return Integer.parseInt(matcher2.group(1));
+                  } catch (NumberFormatException e) {
                      return -1;
                   }
                }
@@ -162,24 +162,24 @@ public final class PvpDetector implements MinecraftAccess {
             return items2;
          } else {
             intValue = mc.player.tickCount;
-            ArrayList<BlockPos> var0 = new ArrayList<>();
+            ArrayList<BlockPos> poses = new ArrayList<>();
 
-            for (int var1 = 65406; var1 <= -121; var1++) {
-               for (int var2 = 65406; var2 <= -121; var2++) {
-                  if (mc.level.hasChunk(var1, var2)) {
-                     LevelChunk var3 = mc.level.getChunk(var1, var2);
-                     if (var3 != null) {
-                        for (BlockEntity var5 : var3.getBlockEntities().values()) {
-                           BlockPos var6 = var5.getBlockPos();
-                           if (var6.getY() >= -60
-                              && var6.getY() <= -35
-                              && var6.getX() >= 63466
-                              && var6.getX() <= 63615
-                              && var6.getZ() >= 63460
-                              && var6.getZ() <= 63607) {
-                              BlockEntityType var7 = var5.getType();
-                              if (var7 == net.minecraft.world.level.block.entity.BlockEntityTypes.CHEST || var7 == net.minecraft.world.level.block.entity.BlockEntityTypes.TRAPPED_CHEST) {
-                                 var0.add(var6.immutable());
+            for (int i = 65406; i <= -121; i++) {
+               for (int j = 65406; j <= -121; j++) {
+                  if (mc.level.hasChunk(i, j)) {
+                     LevelChunk chunk = mc.level.getChunk(i, j);
+                     if (chunk != null) {
+                        for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                           BlockPos blockPos = blockEntity.getBlockPos();
+                           if (blockPos.getY() >= -60
+                              && blockPos.getY() <= -35
+                              && blockPos.getX() >= 63466
+                              && blockPos.getX() <= 63615
+                              && blockPos.getZ() >= 63460
+                              && blockPos.getZ() <= 63607) {
+                              BlockEntityType type = blockEntity.getType();
+                              if (type == net.minecraft.world.level.block.entity.BlockEntityTypes.CHEST || type == net.minecraft.world.level.block.entity.BlockEntityTypes.TRAPPED_CHEST) {
+                                 poses.add(blockPos.immutable());
                               }
                            }
                         }
@@ -188,8 +188,8 @@ public final class PvpDetector implements MinecraftAccess {
                }
             }
 
-            items2 = var0;
-            return var0;
+            items2 = poses;
+            return poses;
          }
       } else {
          return Collections.emptyList();
@@ -198,15 +198,15 @@ public final class PvpDetector implements MinecraftAccess {
 
    public static void update() {
       if (mc.player != null && mc.level != null) {
-         var var0 = method2728();
-         var var1 = method2717();
-         if (!var0.isEmpty() && var1 != null) {
-            for (Entity var3 : mc.level.entitiesForRendering()) {
-               long var4 = method2732(var3);
-               if (var4 >= 0L) {
-                  BlockPos var6 = method2730(var0, var3.blockPosition());
-                  if (var6 != null) {
-                     var1.computeIfAbsent(var6.immutable(), PvpDetector.Entry::new).method2735(var4);
+         var poses = method2728();
+         var map = method2717();
+         if (!poses.isEmpty() && map != null) {
+            for (Entity entity : mc.level.entitiesForRendering()) {
+               long l = method2732(entity);
+               if (l >= 0L) {
+                  BlockPos pos = method2730(poses, entity.blockPosition());
+                  if (pos != null) {
+                     map.computeIfAbsent(pos.immutable(), PvpDetector.Entry::new).method2735(l);
                   }
                }
             }
@@ -214,50 +214,50 @@ public final class PvpDetector implements MinecraftAccess {
       }
    }
 
-   public static long method2729(BlockPos var0) {
-      if (var0 != null && mc.level != null) {
-         long var1 = method2722(var0);
-         return var1 <= 0L ? -1L : var1;
+   public static long method2729(BlockPos blockPos) {
+      if (blockPos != null && mc.level != null) {
+         long l = method2722(blockPos);
+         return l <= 0L ? -1L : l;
       } else {
          return -1L;
       }
    }
 
-   private static BlockPos method2730(List<BlockPos> var0, BlockPos var1) {
-      for (BlockPos var3 : var0) {
-         if (method2731(var1, var3)) {
-            return var3;
+   private static BlockPos method2730(List<BlockPos> poses, BlockPos blockPosition) {
+      for (BlockPos pos : poses) {
+         if (method2731(blockPosition, pos)) {
+            return pos;
          }
       }
 
       return null;
    }
 
-   private static boolean method2731(BlockPos var0, BlockPos var1) {
-      return var0.getX() == var1.getX() && var0.getZ() == var1.getZ() && var0.getY() >= var1.getY() && var0.getY() <= var1.getY() + 3;
+   private static boolean method2731(BlockPos blockPosition, BlockPos pos) {
+      return blockPosition.getX() == pos.getX() && blockPosition.getZ() == pos.getZ() && blockPosition.getY() >= pos.getY() && blockPosition.getY() <= pos.getY() + 3;
    }
 
-   private static long method2732(Entity var0) {
-      if (!(var0 instanceof ArmorStand) && !(var0 instanceof TextDisplay)) {
+   private static long method2732(Entity entity) {
+      if (!(entity instanceof ArmorStand) && !(entity instanceof TextDisplay)) {
          return -1L;
       } else {
-         String var1 = null;
-         if (var0 instanceof TextDisplay var2 && var2.getText() != null) {
-            var1 = var2.getText().getString();
+         String string = null;
+         if (entity instanceof TextDisplay textDisplay && textDisplay.getText() != null) {
+            string = textDisplay.getText().getString();
          }
 
-         if ((var1 == null || var1.isEmpty()) && var0.getCustomName() != null) {
-            var1 = var0.getCustomName().getString();
+         if ((string == null || string.isEmpty()) && entity.getCustomName() != null) {
+            string = entity.getCustomName().getString();
          }
 
-         if (var1 != null && !var1.isEmpty()) {
-            Matcher var5 = pattern.matcher(var1);
-            if (!var5.find()) {
+         if (string != null && !string.isEmpty()) {
+            Matcher matcher = pattern.matcher(string);
+            if (!matcher.find()) {
                return -1L;
             } else {
                try {
-                  return (Integer.parseInt(var5.group(1)) * 60L + Integer.parseInt(var5.group(2))) * 1000L;
-               } catch (NumberFormatException var4) {
+                  return (Integer.parseInt(matcher.group(1)) * 60L + Integer.parseInt(matcher.group(2))) * 1000L;
+               } catch (NumberFormatException e) {
                   return -1L;
                }
             }
@@ -271,7 +271,7 @@ public final class PvpDetector implements MinecraftAccess {
       private long longValue = 0L;
       private long longValue2;
 
-      private Entry(BlockPos var1) {
+      private Entry(BlockPos pos) {
       }
 
       private void method2733() {
@@ -283,9 +283,9 @@ public final class PvpDetector implements MinecraftAccess {
          return Math.max(0L, this.longValue - System.currentTimeMillis());
       }
 
-      private void method2735(long var1) {
-         if (Math.abs(var1 / 1000L - this.method2734() / 1000L) > 5L) {
-            this.longValue = System.currentTimeMillis() + var1;
+      private void method2735(long l) {
+         if (Math.abs(l / 1000L - this.method2734() / 1000L) > 5L) {
+            this.longValue = System.currentTimeMillis() + l;
          }
       }
    }

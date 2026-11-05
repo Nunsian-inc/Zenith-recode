@@ -7,17 +7,17 @@ public interface AddonRenderContext {
 
    float tickDelta();
 
-   void rect(float var1, float var2, float var3, float var4, int var5);
+   void rect(float f, float f2, float f3, float f4, int n);
 
-   void roundedRect(float var1, float var2, float var3, float var4, float var5, int var6);
+   void roundedRect(float f, float f2, float f3, float f4, float f5, int n);
 
-   void text(String var1, float var2, float var3, float var4, int var5);
+   void text(String text, float f, float y, float size, int argb);
 
-   float textWidth(String var1, float var2);
+   float textWidth(String text, float size);
 
-   float textHeight(float var1);
+   float textHeight(float f);
 
-   void pushClip(float var1, float var2, float var3, float var4);
+   void pushClip(float f, float f2, float f3, float f4);
 
    void popClip();
 

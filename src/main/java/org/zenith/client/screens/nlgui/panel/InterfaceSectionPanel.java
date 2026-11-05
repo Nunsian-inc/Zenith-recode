@@ -96,8 +96,8 @@ public class InterfaceSectionPanel extends SectionPanel {
       return this.getActiveTab() == 1;
    }
 
-   public void openHudElementSettings(Interface var1) {
-      this.selectedElement = var1;
+   public void openHudElementSettings(Interface selectedElement) {
+      this.selectedElement = selectedElement;
       this.selectTab(1);
       this.invalidate();
    }
@@ -105,36 +105,36 @@ public class InterfaceSectionPanel extends SectionPanel {
    @Override
    public void tick() {
       super.tick();
-      String var1 = this.getActiveTab() + "|" + this.searchQuery();
-      ZenithStyle var2 = styles().getCurrentStyle();
-      if (!var1.equals(this.lastSignature) || var2 != this.lastStyle) {
-         this.lastSignature = var1;
-         this.lastStyle = var2;
+      String lastSignature = this.getActiveTab() + "|" + this.searchQuery();
+      ZenithStyle currentStyle = styles().getCurrentStyle();
+      if (!lastSignature.equals(this.lastSignature) || currentStyle != this.lastStyle) {
+         this.lastSignature = lastSignature;
+         this.lastStyle = currentStyle;
          this.invalidate();
       }
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float panelAlpha, float f, float y) {
       this.cardBounds.clear();
       this.switchBounds.clear();
-      super.render(var1, var2, var3, var4, var5, var6);
+      super.render(menuDrawContext, lastClickX, lastClickY, panelAlpha, f, y);
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      BoundsData var6 = this.mainViewport();
-      if (var5 == Enum3.LEFT && var6 != null && var6.contains(var1, var3)) {
-         for (Map.Entry var8 : this.switchBounds.entrySet()) {
-            if (((BoundsData)var8.getValue()).contains(var1, var3)) {
-               this.toggleElement((Interface)var8.getKey());
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      BoundsData mainViewport = this.mainViewport();
+      if (enum2 == Enum3.LEFT && mainViewport != null && mainViewport.contains(lastClickX, lastClickY)) {
+         for (Map.Entry entry : this.switchBounds.entrySet()) {
+            if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
+               this.toggleElement((Interface)entry.getKey());
                return true;
             }
          }
 
-         for (Map.Entry var10 : this.cardBounds.entrySet()) {
-            if (((BoundsData)var10.getValue()).contains(var1, var3)) {
-               styles().setCurrentStyle((ZenithStyle)var10.getKey());
+         for (Map.Entry entry : this.cardBounds.entrySet()) {
+            if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
+               styles().setCurrentStyle((ZenithStyle)entry.getKey());
                Zenith.getInstance().getClientSounds().method1570(false);
                this.invalidate();
                return true;
@@ -142,7 +142,7 @@ public class InterfaceSectionPanel extends SectionPanel {
          }
       }
 
-      return super.onMouseClicked(var1, var3, var5);
+      return super.onMouseClicked(lastClickX, lastClickY, enum2);
    }
 
    @Override
@@ -165,14 +165,14 @@ public class InterfaceSectionPanel extends SectionPanel {
       this.caption("gui.interface.caption.menuControl");
       this.setting(this.menuBind);
 
-      for (Setting var2 : MenuModule.INSTANCE.method5349()) {
-         this.setting(var2);
+      for (Setting autoAfk : MenuModule.INSTANCE.method5349()) {
+         this.setting(autoAfk);
       }
 
       this.asideCaption("gui.interface.caption.menuAnimation");
 
-      for (Setting var4 : MenuModule.INSTANCE.method5350()) {
-         this.asideSetting(var4);
+      for (Setting hudBackground : MenuModule.INSTANCE.method5350()) {
+         this.asideSetting(hudBackground);
       }
    }
 
@@ -181,25 +181,25 @@ public class InterfaceSectionPanel extends SectionPanel {
    }
 
    private void buildTheme() {
-      String var1 = this.searchQuery();
-      StyleManager var2 = styles();
-      ArrayList var3 = new ArrayList();
+      String searchQuery = this.searchQuery();
+      StyleManager styleManager = styles();
+      ArrayList arrayList = new ArrayList();
 
-      for (ZenithStyle var5 : var2.getStyles()) {
-         if (matches(styleName(var5), var1)) {
-            var3.add(var5);
+      for (ZenithStyle style : styleManager.getStyles()) {
+         if (matches(styleName(style), searchQuery)) {
+            arrayList.add(style);
          }
       }
 
       this.caption("gui.interface.caption.styles");
-      if (var3.isEmpty()) {
+      if (arrayList.isEmpty()) {
          this.custom(22.0F, this::renderNoMatch);
       } else {
-         for (byte var6 = 0; var6 < var3.size(); var6 += 2) {
-            byte var9 = var6;
+         for (byte i = 0; i < arrayList.size(); i += 2) {
+            byte b = i;
             this.custom(
                46.0F,
-               (var3x, var4, var5x, var6x, var7, var8x, var9x, var10x) -> this.renderCardRow(var3x, var4, var5x, var6x, var7, var8x, var9x, var10x, var3, var9)
+               (var3x, lastClickX, var5x, var6x, y, var8x, var9x, var10x) -> this.renderCardRow(var3x, lastClickX, var5x, var6x, y, var8x, var9x, var10x, arrayList, b)
             );
          }
       }
@@ -207,148 +207,148 @@ public class InterfaceSectionPanel extends SectionPanel {
       this.gap(GuiStyle.PADDING.intValue() * 2.0F);
       this.caption("gui.interface.caption.look");
 
-      for (Setting var10 : InterfaceModule.INSTANCE.method6771()) {
-         this.setting(var10);
+      for (Setting autoAfk : InterfaceModule.INSTANCE.method6771()) {
+         this.setting(autoAfk);
       }
 
-      ZenithStyle var8 = var2.getCurrentStyle();
-      if (var8 != null) {
+      ZenithStyle currentStyle = styleManager.getCurrentStyle();
+      if (currentStyle != null) {
          this.asideCaption("gui.interface.caption.colors");
-         this.asideSetting(var8.getPrimaryColor());
-         this.asideSetting(var8.getSecondaryPrimaryColor());
-         this.asideSetting(var8.getTextEnable());
-         this.asideSetting(var8.getTextSecondary());
-         this.asideSetting(var8.getTextTertiary());
-         this.asideSetting(var8.getLeftBackground());
-         this.asideSetting(var8.getRightBackground());
-         this.asideSetting(var8.getHudBackground());
-         this.asideSetting(var8.getFriendColor());
+         this.asideSetting(currentStyle.getPrimaryColor());
+         this.asideSetting(currentStyle.getSecondaryPrimaryColor());
+         this.asideSetting(currentStyle.getTextEnable());
+         this.asideSetting(currentStyle.getTextSecondary());
+         this.asideSetting(currentStyle.getTextTertiary());
+         this.asideSetting(currentStyle.getLeftBackground());
+         this.asideSetting(currentStyle.getRightBackground());
+         this.asideSetting(currentStyle.getHudBackground());
+         this.asideSetting(currentStyle.getFriendColor());
       }
    }
 
-   private static String styleName(ZenithStyle var0) {
-      return var0.getName() != null && !var0.getName().isBlank() ? var0.getName() : "Style";
+   private static String styleName(ZenithStyle style) {
+      return style.getName() != null && !style.getName().isBlank() ? style.getName() : "Style";
    }
 
    private void renderCardRow(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, List<ZenithStyle> var9, int var10
+      MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float y, float f2, float previewAlpha, ZenithStyle zenithStyle, List<ZenithStyle> zenithStyles, int n
    ) {
-      float var11 = var6 - 16.0F;
-      float var12 = (var11 - 5.0F) / 2.0F;
+      float f3 = f2 - 16.0F;
+      float width = (f3 - 5.0F) / 2.0F;
 
-      for (int var13 = 0; var13 < 2; var13++) {
-         int var14 = var10 + var13;
-         if (var14 >= var9.size()) {
+      for (int i = 0; i < 2; i++) {
+         int n2 = n + i;
+         if (n2 >= zenithStyles.size()) {
             return;
          }
 
-         this.renderCard(var1, var2, var3, (ZenithStyle)var9.get(var14), var4 + 8.0F + var13 * (var12 + 5.0F), var5, var12, var7, var8);
+         this.renderCard(menuDrawContext, lastClickX, lastClickY, (ZenithStyle)zenithStyles.get(n2), f + 8.0F + i * (width + 5.0F), y, width, previewAlpha, zenithStyle);
       }
    }
 
-   private void renderCard(MenuDrawContext var1, int var2, int var3, ZenithStyle var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      boolean var10 = var4 == styles().getCurrentStyle();
-      BoundsData var11 = new BoundsData(var5, var6, var7, 41.0F);
-      this.cardBounds.put(var4, var11);
-      boolean var12 = var11.contains(var2, var3);
-      float var13 = this.cardHover.computeIfAbsent(var4, var0 -> new Animation(140L, 0.0F, Easing.INSTANCE12)).method2808(var12 ? 1.0F : 0.0F);
-      if (var12) {
-         HoverInfo.request(styleName(var4), t("gui.interface.style.desc"));
+   private void renderCard(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, ZenithStyle style, float floatValue, float y, float width, float previewAlpha, ZenithStyle zenithStyle) {
+      boolean flag = style == styles().getCurrentStyle();
+      BoundsData boundsData = new BoundsData(floatValue, y, width, 41.0F);
+      this.cardBounds.put(style, boundsData);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float f = this.cardHover.computeIfAbsent(style, zenithStyle2 -> new Animation(140L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      if (contains) {
+         HoverInfo.request(styleName(style), t("gui.interface.style.desc"));
       }
 
-      ProxyDotRadiusData var14 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.6F);
-      var1.drawRoundedRect(
-         var5,
-         var6,
-         var7,
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.6F);
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         y,
+         width,
          41.0F,
-         var14,
-         var9.getFieldSurfaceBackground().getZenithColor().method7295(var9.getDisableActiveBg().getZenithColor(), 0.35F + var13 * 0.5F).method7294(var8)
+         headerRadius,
+         zenithStyle.getFieldSurfaceBackground().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), 0.35F + f * 0.5F).method7294(previewAlpha)
       );
-      float var15 = var5 + 3.0F;
-      float var16 = var6 + 3.0F;
-      float var17 = var7 - 6.0F;
-      float var18 = 22.0F;
-      ProxyDotRadiusData var19 = ProxyDotRadiusData.method8069(3.0F);
-      float var20 = var17 * 0.34F;
-      var1.drawRoundedRect(var15, var16, var17, var18, var19, var4.getRightBackground().getZenithColor().method7293(255).method7294(var8));
-      var1.drawRoundedRect(
-         var15, var16, var20, var18, ProxyDotRadiusData.method8078(3.0F, 3.0F), var4.getLeftBackground().getZenithColor().method7293(255).method7294(var8)
+      float floatValue2 = floatValue + 3.0F;
+      float y2 = y + 3.0F;
+      float width2 = width - 6.0F;
+      float height = 22.0F;
+      ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(3.0F);
+      float width3 = width2 * 0.34F;
+      menuDrawContext.drawRoundedRect(floatValue2, y2, width2, height, proxyDotRadiusData, style.getRightBackground().getZenithColor().method7293(255).method7294(previewAlpha));
+      menuDrawContext.drawRoundedRect(
+         floatValue2, y2, width3, height, ProxyDotRadiusData.method8078(3.0F, 3.0F), style.getLeftBackground().getZenithColor().method7293(255).method7294(previewAlpha)
       );
-      float var21 = var20 - 5.0F;
-      var1.drawRoundedRect(
-         var15 + 2.5F, var16 + 3.5F, var21, 1.8F, ProxyDotRadiusData.method8069(0.9F), var4.getPrimaryColor().getZenithColor().method7294(var8)
+      float width4 = width3 - 5.0F;
+      menuDrawContext.drawRoundedRect(
+         floatValue2 + 2.5F, y2 + 3.5F, width4, 1.8F, ProxyDotRadiusData.method8069(0.9F), style.getPrimaryColor().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawRoundedRect(
-         var15 + 2.5F,
-         var16 + 8.0F,
-         var21 * 0.7F,
+      menuDrawContext.drawRoundedRect(
+         floatValue2 + 2.5F,
+         y2 + 8.0F,
+         width4 * 0.7F,
          1.3F,
          ProxyDotRadiusData.method8069(0.65F),
-         var4.getTextTertiary().getZenithColor().method7293(255).method7294(var8 * 0.7F)
+         style.getTextTertiary().getZenithColor().method7293(255).method7294(previewAlpha * 0.7F)
       );
-      var1.drawRoundedRect(
-         var15 + 2.5F,
-         var16 + 12.0F,
-         var21 * 0.85F,
+      menuDrawContext.drawRoundedRect(
+         floatValue2 + 2.5F,
+         y2 + 12.0F,
+         width4 * 0.85F,
          1.3F,
          ProxyDotRadiusData.method8069(0.65F),
-         var4.getTextTertiary().getZenithColor().method7293(255).method7294(var8 * 0.5F)
+         style.getTextTertiary().getZenithColor().method7293(255).method7294(previewAlpha * 0.5F)
       );
-      float var22 = var15 + var20 + 3.0F;
-      float var23 = var17 - var20 - 6.0F;
-      var1.drawRoundedRect(
-         var22,
-         var16 + 3.5F,
-         var23 * 0.8F,
+      float floatValue3 = floatValue2 + width3 + 3.0F;
+      float f2 = width2 - width3 - 6.0F;
+      menuDrawContext.drawRoundedRect(
+         floatValue3,
+         y2 + 3.5F,
+         f2 * 0.8F,
          1.8F,
          ProxyDotRadiusData.method8069(0.9F),
-         var4.getTextEnable().getZenithColor().method7293(255).method7294(var8 * 0.8F)
+         style.getTextEnable().getZenithColor().method7293(255).method7294(previewAlpha * 0.8F)
       );
-      var1.drawRoundedRect(
-         var22,
-         var16 + 8.0F,
-         var23 * 0.55F,
+      menuDrawContext.drawRoundedRect(
+         floatValue3,
+         y2 + 8.0F,
+         f2 * 0.55F,
          1.3F,
          ProxyDotRadiusData.method8069(0.65F),
-         var4.getTextSecondary().getZenithColor().method7293(255).method7294(var8 * 0.55F)
+         style.getTextSecondary().getZenithColor().method7293(255).method7294(previewAlpha * 0.55F)
       );
-      var1.drawRoundedRect(
-         var22,
-         var16 + 12.0F,
-         var23 * 0.68F,
+      menuDrawContext.drawRoundedRect(
+         floatValue3,
+         y2 + 12.0F,
+         f2 * 0.68F,
          1.3F,
          ProxyDotRadiusData.method8069(0.65F),
-         var4.getTextTertiary().getZenithColor().method7293(255).method7294(var8 * 0.5F)
+         style.getTextTertiary().getZenithColor().method7293(255).method7294(previewAlpha * 0.5F)
       );
-      var1.drawRoundedRect(
-         var22 + var23 - 5.0F,
-         var16 + var18 - 5.5F,
+      menuDrawContext.drawRoundedRect(
+         floatValue3 + f2 - 5.0F,
+         y2 + height - 5.5F,
          5.0F,
          2.4F,
          ProxyDotRadiusData.method8069(1.2F),
-         var4.getSecondaryPrimaryColor().getZenithColor().method7294(var8)
+         style.getSecondaryPrimaryColor().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawRoundedBorder(var15, var16, var17, var18, 0.3F, var19, var4.getFieldBorder().getZenithColor().method7294(var8 * 2.0F));
-      Font var24 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      float var25 = var6 + 28.0F + (13.0F - var24.height()) / 2.0F - 1.0F;
-      float var26 = var7 - 8.0F - (var10 ? 9.0F : 0.0F);
-      String var27 = fit(var24, styleName(var4), var26);
-      var1.drawText(
-         var24,
-         var27,
-         var5 + 4.0F,
-         var25,
-         (var10 ? var9.getTextEnable() : var9.getTextSecondary()).getZenithColor().method7294(var8 * (var10 ? 1.0F : 0.75F + var13 * 0.25F))
+      menuDrawContext.drawRoundedBorder(floatValue2, y2, width2, height, 0.3F, proxyDotRadiusData, style.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      float centeredTextY = y + 28.0F + (13.0F - font.height()) / 2.0F - 1.0F;
+      float f3 = width - 8.0F - (flag ? 9.0F : 0.0F);
+      String text = fit(font, styleName(style), f3);
+      menuDrawContext.drawText(
+         font,
+         text,
+         floatValue + 4.0F,
+         centeredTextY,
+         (flag ? zenithStyle.getTextEnable() : zenithStyle.getTextSecondary()).getZenithColor().method7294(previewAlpha * (flag ? 1.0F : 0.75F + f * 0.25F))
       );
-      if (var10) {
-         MenuGlyph.CHECK.draw(var1, var5 + var7 - 4.0F - 6.0F, var6 + 28.0F + 3.5F - 1.0F, var9.getPrimaryColor().getZenithColor().method7294(var8));
+      if (flag) {
+         MenuGlyph.CHECK.draw(menuDrawContext, floatValue + width - 4.0F - 6.0F, y + 28.0F + 3.5F - 1.0F, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
       }
 
-      ZenithColor var28 = var10
-         ? var9.getPrimaryColor().getZenithColor().method7292(0.5F)
-         : var9.getFieldBorder().getZenithColor().method7294(2.0F + var13 * 1.5F);
-      var1.drawRoundedBorder(var5, var6, var7, 41.0F, 0.2F, var14, var28.method7294(var8));
+      ZenithColor zenithColor = flag
+         ? zenithStyle.getPrimaryColor().getZenithColor().method7292(0.5F)
+         : zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F + f * 1.5F);
+      menuDrawContext.drawRoundedBorder(floatValue, y, width, 41.0F, 0.2F, headerRadius, zenithColor.method7294(previewAlpha));
    }
 
    @Override
@@ -357,75 +357,75 @@ public class InterfaceSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderMainHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      List<Interface> var9 = InterfaceModule.INSTANCE.method6794();
-      int var10 = var9.size();
-      int var11 = 0;
+   public void renderMainHeader(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      List<Interface> interfaceValues = InterfaceModule.INSTANCE.method6794();
+      int size = interfaceValues.size();
+      int n3 = 0;
 
-      for (Interface var13 : var9) {
-         if (var13.isEnabled()) {
-            var11++;
+      for (Interface interfaceValue : interfaceValues) {
+         if (interfaceValue.isEnabled()) {
+            n3++;
          }
       }
 
-      Font var20 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var21 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      String var14 = t("gui.interface.hud.shown");
-      String var15 = var11 + " / " + var10;
-      float var16 = var5 + 3.0F;
-      var1.drawText(var20, var14, var4 + 8.0F, var16, var8.getTextSecondary().getZenithColor().method7294(var7));
-      var1.drawText(var21, var15, var4 + var6 - 8.0F - var21.width(var15), var16, var8.getPrimaryColor().getZenithColor().method7294(var7));
-      float var17 = var6 - 16.0F;
-      float var18 = var16 + var20.height() + 5.0F;
-      var1.drawRoundedRect(var4 + 8.0F, var18, var17, 2.0F, ProxyDotRadiusData.method8069(1.0F), var8.getDisableActiveBg().getZenithColor().method7294(var7));
-      float var19 = this.countBar.method2808(var10 == 0 ? 0.0F : (float)var11 / var10);
-      if (var19 > 0.001F) {
-         var1.drawRoundedRect(
-            var4 + 8.0F,
-            var18,
-            Math.max(2.0F, var17 * var19),
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+      String text = t("gui.interface.hud.shown");
+      String str = n3 + " / " + size;
+      float centeredTextY = f2 + 3.0F;
+      menuDrawContext.drawText(font, text, f + 8.0F, centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawText(font2, str, f + f3 - 8.0F - font2.width(str), centeredTextY, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+      float width = f3 - 16.0F;
+      float y = centeredTextY + font.height() + 5.0F;
+      menuDrawContext.drawRoundedRect(f + 8.0F, y, width, 2.0F, ProxyDotRadiusData.method8069(1.0F), zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha));
+      float f4 = this.countBar.method2808(size == 0 ? 0.0F : (float)n3 / size);
+      if (f4 > 0.001F) {
+         menuDrawContext.drawRoundedRect(
+            f + 8.0F,
+            y,
+            Math.max(2.0F, width * f4),
             2.0F,
             ProxyDotRadiusData.method8069(1.0F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
          );
       }
    }
 
    private void buildHud() {
-      List<Interface> var1 = InterfaceModule.INSTANCE.method6794();
-      if (this.selectedElement != null && !var1.contains(this.selectedElement)) {
+      List<Interface> interfaceValues = InterfaceModule.INSTANCE.method6794();
+      if (this.selectedElement != null && !interfaceValues.contains(this.selectedElement)) {
          this.selectedElement = null;
       }
 
-      String var2 = this.searchQuery();
-      LinkedHashMap var3 = new LinkedHashMap();
+      String searchQuery = this.searchQuery();
+      LinkedHashMap map = new LinkedHashMap();
 
-      for (String var7 : GROUP_ORDER) {
-         var3.put(var7, new ArrayList());
+      for (String key : GROUP_ORDER) {
+         map.put(key, new ArrayList());
       }
 
-      for (Interface var14 : var1) {
-         if (matches(elementName(var14), var2) || matches(var14.getName(), var2)) {
-            ((List)var3.get(GROUPS.getOrDefault(var14.getName(), "gui.interface.hud.group.other"))).add(var14);
+      for (Interface selectedElement : interfaceValues) {
+         if (matches(elementName(selectedElement), searchQuery) || matches(selectedElement.getName(), searchQuery)) {
+            ((List)map.get(GROUPS.getOrDefault(selectedElement.getName(), "gui.interface.hud.group.other"))).add(selectedElement);
          }
       }
 
-      boolean var13 = false;
+      boolean flag = false;
 
-      for (String var8 : GROUP_ORDER) {
-         List<Interface> var9 = (List)var3.get(var8);
-         if (!var9.isEmpty()) {
-            var13 = true;
-            this.caption(var8);
+      for (String key : GROUP_ORDER) {
+         List<Interface> interfaceValues2 = (List)map.get(key);
+         if (!interfaceValues2.isEmpty()) {
+            flag = true;
+            this.caption(key);
 
-            for (Interface var11 : var9) {
+            for (Interface selectedElement : interfaceValues2) {
                this.custom(
                   16.0F,
-                  (var2x, var3x, var4, var5, var6, var7x, var8x, var9x) -> this.renderHudRow(var2x, var3x, var4, var5, var6, var7x, var8x, var9x, var11),
-                  () -> this.toggleElement(var11),
-                  () -> var11 == this.selectedElement,
+                  (var2x, var3x, lastClickY, floatValue, y, var7x, var8x, var9x) -> this.renderHudRow(var2x, var3x, lastClickY, floatValue, y, var7x, var8x, var9x, selectedElement),
+                  () -> this.toggleElement(selectedElement),
+                  () -> selectedElement == this.selectedElement,
                   () -> {
-                     this.selectedElement = var11;
+                     this.selectedElement = selectedElement;
                      this.resetAsideScroll();
                      this.invalidate();
                   }
@@ -434,175 +434,175 @@ public class InterfaceSectionPanel extends SectionPanel {
          }
       }
 
-      if (!var13) {
+      if (!flag) {
          this.custom(22.0F, this::renderNoMatch);
       }
 
       this.buildHudAside();
    }
 
-   private void toggleElement(Interface var1) {
-      var1.toggle();
-      ClientSounds var2 = Zenith.getInstance().getClientSounds();
-      var2.method1561(var1.isEnabled() ? var2.soundEvent5 : var2.soundEvent6);
+   private void toggleElement(Interface key) {
+      key.toggle();
+      ClientSounds clientSounds = Zenith.getInstance().getClientSounds();
+      clientSounds.method1561(key.isEnabled() ? clientSounds.soundEvent5 : clientSounds.soundEvent6);
    }
 
-   private void renderHudRow(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, Interface var9) {
-      BoundsData var10 = new BoundsData(var4, var5, var6, 16.0F);
-      boolean var11 = var10.contains(var2, var3);
-      float var12 = this.rowHover.computeIfAbsent(var9, var0 -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(var11 ? 1.0F : 0.0F);
-      float var13 = this.rowSelect
-         .computeIfAbsent(var9, var0 -> new Animation(140L, 0.0F, Easing.INSTANCE12))
-         .method2808(var9 == this.selectedElement ? 1.0F : 0.0F);
-      float var14 = Math.max(var13, var12 * 0.45F);
-      if (var14 > 0.002F) {
-         var1.drawRect(var4, var5, var6, 16.0F, var8.getDisableActiveBg().getZenithColor().method7294(var7 * var14));
+   private void renderHudRow(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float floatValue, float y, float width, float previewAlpha, ZenithStyle zenithStyle, Interface selectedElement) {
+      BoundsData boundsData = new BoundsData(floatValue, y, width, 16.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float f = this.rowHover.computeIfAbsent(selectedElement, interfaceValue -> new Animation(120L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
+      float f2 = this.rowSelect
+         .computeIfAbsent(selectedElement, interfaceValue -> new Animation(140L, 0.0F, Easing.INSTANCE12))
+         .method2808(selectedElement == this.selectedElement ? 1.0F : 0.0F);
+      float f3 = Math.max(f2, f * 0.45F);
+      if (f3 > 0.002F) {
+         menuDrawContext.drawRect(floatValue, y, width, 16.0F, zenithStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * f3));
       }
 
-      if (var13 > 0.002F) {
-         float var15 = 11.0F * var13;
-         var1.drawRect(var4, var5 + (16.0F - var15) / 2.0F, 2.0F, var15, var8.getPrimaryColor().getZenithColor().method7294(var7));
+      if (f2 > 0.002F) {
+         float height = 11.0F * f2;
+         menuDrawContext.drawRect(floatValue, y + (16.0F - height) / 2.0F, 2.0F, height, zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
       }
 
-      boolean var34 = var9.isEnabled();
-      Font var16 = Fonts.NEW_MEDIUM.getFont(5.01F);
-      String var17 = t(var34 ? "gui.value.on" : "gui.value.off");
-      float var18 = var16.width(var17);
-      float var19 = Math.max(var16.width(t("gui.value.on")), var16.width(t("gui.value.off")));
-      float var20 = var4 + var6 - 8.0F;
-      float var21 = var20 - var19 - GuiStyle.PADDING.intValue() - 9.0F;
-      BoundsData var22 = new BoundsData(var21, var5, var20 - var21, 16.0F);
-      this.switchBounds.put(var9, var22);
-      boolean var23 = var22.contains(var2, var3);
-      String var24 = elementName(var9);
-      if (var11) {
-         HoverInfo.request(var24, t(var23 ? "gui.interface.hud.show.desc" : "gui.interface.hud.row.desc"));
+      boolean enabled = selectedElement.isEnabled();
+      Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
+      String text = t(enabled ? "gui.value.on" : "gui.value.off");
+      float width2 = font.width(text);
+      float f4 = Math.max(font.width(t("gui.value.on")), font.width(t("gui.value.off")));
+      float f5 = floatValue + width - 8.0F;
+      float floatValue2 = f5 - f4 - GuiStyle.PADDING.intValue() - 9.0F;
+      BoundsData boundsData2 = new BoundsData(floatValue2, y, f5 - floatValue2, 16.0F);
+      this.switchBounds.put(selectedElement, boundsData2);
+      boolean flag = boundsData2.contains(lastClickX, lastClickY);
+      String name = elementName(selectedElement);
+      if (contains) {
+         HoverInfo.request(name, t(flag ? "gui.interface.hud.show.desc" : "gui.interface.hud.row.desc"));
       }
 
-      ZenithColor var25 = var8.getTextSecondary()
+      ZenithColor zenithColor = zenithStyle.getTextSecondary()
          .getZenithColor()
-         .method7295(var8.getTextEnable().getZenithColor(), Math.max(var13, var12 * 0.6F))
-         .method7294(var7);
-      float var26 = var4 + 8.0F;
+         .method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(f2, f * 0.6F))
+         .method7294(previewAlpha);
+      float floatValue3 = floatValue + 8.0F;
       if (Zenith.getInstance().getNLMenuScreen().isRenderIcon()) {
-         MenuGlyph var27 = GLYPHS.getOrDefault(var9.getName(), MenuGlyph.INTERFACE);
-         var27.draw(var1, var26, var5 + 5.0F, var25);
-         var26 += 9.0F;
+         MenuGlyph menuGlyph = GLYPHS.getOrDefault(selectedElement.getName(), MenuGlyph.INTERFACE);
+         menuGlyph.draw(menuDrawContext, floatValue3, y + 5.0F, zenithColor);
+         floatValue3 += 9.0F;
       }
 
-      Font var35 = Fonts.NEW_MEDIUM.getFont(5.2F);
-      Font var28 = Fonts.NEW_REGULAR.getFont(4.4F);
-      String var29 = elementTag(var9);
-      float var30 = var21 - GuiStyle.PADDING.intValue() - var26;
-      float var31 = var29.isEmpty() ? 0.0F : var28.width(var29) + GuiStyle.PADDING.intValue();
-      String var32 = fit(var35, var24, var30 - var31);
-      var1.drawText(var35, var32, var26, var5 + (16.0F - var35.height()) / 2.0F, var25);
-      if (!var29.isEmpty() && var35.width(var32) + var31 <= var30) {
-         var1.drawText(
-            var28,
-            var29,
-            var26 + var35.width(var32) + GuiStyle.PADDING.intValue(),
-            var5 + (16.0F - var28.height()) / 2.0F,
-            var8.getTextTertiary().getZenithColor().method7294(var7 * 0.85F)
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.2F);
+      Font font3 = Fonts.NEW_REGULAR.getFont(4.4F);
+      String str = elementTag(selectedElement);
+      float f6 = floatValue2 - GuiStyle.PADDING.intValue() - floatValue3;
+      float f7 = str.isEmpty() ? 0.0F : font3.width(str) + GuiStyle.PADDING.intValue();
+      String fit2 = fit(font2, name, f6 - f7);
+      menuDrawContext.drawText(font2, fit2, floatValue3, y + (16.0F - font2.height()) / 2.0F, zenithColor);
+      if (!str.isEmpty() && font2.width(fit2) + f7 <= f6) {
+         menuDrawContext.drawText(
+            font3,
+            str,
+            floatValue3 + font2.width(fit2) + GuiStyle.PADDING.intValue(),
+            y + (16.0F - font3.height()) / 2.0F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.85F)
          );
       }
 
-      var1.drawText(
-         var16,
-         var17,
-         var20 - var19,
-         var5 + (16.0F - var16.height()) / 2.0F,
-         (var34 ? var8.getTextEnable() : var8.getTextTertiary()).getZenithColor().method7294(var7)
+      menuDrawContext.drawText(
+         font,
+         text,
+         f5 - f4,
+         y + (16.0F - font.height()) / 2.0F,
+         (enabled ? zenithStyle.getTextEnable() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
-      float var33 = this.switchKnob.computeIfAbsent(var9, var0 -> new Animation(140L, 0.0F, Easing.INSTANCE10)).method2808(var34 ? 1.0F : 0.0F);
-      this.drawSwitch(var1, var21, var5 + 5.5F, var33, var23, var7, var8);
+      float hover = this.switchKnob.computeIfAbsent(selectedElement, interfaceValue -> new Animation(140L, 0.0F, Easing.INSTANCE10)).method2808(enabled ? 1.0F : 0.0F);
+      this.drawSwitch(menuDrawContext, floatValue2, y + 5.5F, hover, flag, previewAlpha, zenithStyle);
    }
 
-   private void drawSwitch(MenuDrawContext var1, float var2, float var3, float var4, boolean var5, float var6, ZenithStyle var7) {
-      var1.drawRect(var2, var3, 9.0F, 5.0F, var7.getFieldSurfaceBackground().getZenithColor().method7294(var6 * 3.0F));
-      var1.drawRoundedBorder(
-         var2, var3, 9.0F, 5.0F, 0.1F, ProxyDotRadiusData.INSTANCE, var7.getFieldBorder().getZenithColor().method7294(var6 * (var5 ? 6.0F : 4.0F))
+   private void drawSwitch(MenuDrawContext menuDrawContext, float floatValue, float y, float hover, boolean flag, float previewAlpha, ZenithStyle zenithStyle) {
+      menuDrawContext.drawRect(floatValue, y, 9.0F, 5.0F, zenithStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 3.0F));
+      menuDrawContext.drawRoundedBorder(
+         floatValue, y, 9.0F, 5.0F, 0.1F, ProxyDotRadiusData.INSTANCE, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * (flag ? 6.0F : 4.0F))
       );
-      float var8 = var2 + 1.0F + 4.0F * var4;
-      var1.drawRect(
-         var8, var3 + 1.0F, 3.0F, 3.0F, var7.getTextTertiary().getZenithColor().method7295(var7.getPrimaryColor().getZenithColor(), var4).method7294(var6)
+      float f = floatValue + 1.0F + 4.0F * hover;
+      menuDrawContext.drawRect(
+         f, y + 1.0F, 3.0F, 3.0F, zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha)
       );
    }
 
    private void buildHudAside() {
-      Interface var1 = this.selectedElement;
-      if (var1 == null) {
+      Interface selectedElement = this.selectedElement;
+      if (selectedElement == null) {
          this.asideCaption("gui.interface.caption.actions");
 
-         for (Setting var8 : InterfaceModule.INSTANCE.method6773()) {
-            this.asideSetting(var8);
+         for (Setting hudBackground : InterfaceModule.INSTANCE.method6773()) {
+            this.asideSetting(hudBackground);
          }
 
          this.asideCaption("gui.interface.caption.panels");
-         ZenithStyle var6 = styles().getCurrentStyle();
-         if (var6 != null) {
-            this.asideSetting(var6.getHudBackground());
+         ZenithStyle currentStyle = styles().getCurrentStyle();
+         if (currentStyle != null) {
+            this.asideSetting(currentStyle.getHudBackground());
          }
 
-         for (Setting var14 : InterfaceModule.INSTANCE.method6774()) {
-            this.asideSetting(var14);
+         for (Setting hudBackground : InterfaceModule.INSTANCE.method6774()) {
+            this.asideSetting(hudBackground);
          }
 
          this.asideCaption("gui.interface.caption.layout");
 
-         for (Setting var15 : InterfaceModule.INSTANCE.method6775()) {
-            this.asideSetting(var15);
+         for (Setting hudBackground : InterfaceModule.INSTANCE.method6775()) {
+            this.asideSetting(hudBackground);
          }
 
          this.asideCaption("gui.interface.caption.behaviour");
 
-         for (Setting var16 : InterfaceModule.INSTANCE.method6776()) {
-            this.asideSetting(var16);
+         for (Setting hudBackground : InterfaceModule.INSTANCE.method6776()) {
+            this.asideSetting(hudBackground);
          }
 
          this.asideCaption("gui.interface.caption.game");
 
-         for (Setting var17 : InterfaceModule.INSTANCE.method6772()) {
-            this.asideSetting(var17);
+         for (Setting hudBackground : InterfaceModule.INSTANCE.method6772()) {
+            this.asideSetting(hudBackground);
          }
 
          this.asideCaption("gui.interface.caption.element");
          this.asideCustom(this.hintsHeight(), this::renderHints);
       } else {
-         List<Setting> var2 = var1.method2058();
-         if (!var2.isEmpty()) {
-            this.asideCaption(elementName(var1));
+         List<Setting> settings = selectedElement.method2058();
+         if (!settings.isEmpty()) {
+            this.asideCaption(elementName(selectedElement));
 
-            for (Setting var4 : var2) {
-               this.asideSetting(var4);
+            for (Setting hudBackground : settings) {
+               this.asideSetting(hudBackground);
             }
 
             this.asideCaption(t("gui.interface.caption.display"));
          } else {
-            this.asideCaption(elementName(var1));
+            this.asideCaption(elementName(selectedElement));
          }
 
-         for (Setting var13 : var1.method2057()) {
-            this.asideSetting(var13);
+         for (Setting hudBackground : selectedElement.method2057()) {
+            this.asideSetting(hudBackground);
          }
       }
    }
 
-   private static String elementTag(Interface var0) {
-      ArrayList var1 = new ArrayList(2);
-      if (var0.method2060()) {
-         var1.add(t("gui.interface.hud.tag.conditional"));
+   private static String elementTag(Interface selectedElement) {
+      ArrayList elements = new ArrayList(2);
+      if (selectedElement.method2060()) {
+         elements.add(t("gui.interface.hud.tag.conditional"));
       }
 
-      if (var0.method2059()) {
-         var1.add(t("gui.interface.hud.tag.locked"));
+      if (selectedElement.method2059()) {
+         elements.add(t("gui.interface.hud.tag.locked"));
       }
 
-      if (Math.abs(var0.getScale().getValue3() - 100.0F) >= 1.0F) {
-         var1.add(Math.round(var0.getScale().getValue3()) + "%");
+      if (Math.abs(selectedElement.getScale().getValue3() - 100.0F) >= 1.0F) {
+         elements.add(Math.round(selectedElement.getScale().getValue3()) + "%");
       }
 
-      return String.join(" · ", var1);
+      return String.join(" · ", elements);
    }
 
    private static Font hintFont() {
@@ -610,77 +610,77 @@ public class InterfaceSectionPanel extends SectionPanel {
    }
 
    private float hintsHeight() {
-      Font var1 = hintFont();
-      float var2 = this.asideWidth() - 16.0F - 7.0F;
-      float var3 = 6.0F;
+      Font font = hintFont();
+      float shownWidth = this.asideWidth() - 16.0F - 7.0F;
+      float f = 6.0F;
 
-      for (String var7 : HINTS) {
-         var3 += wrapText(t(var7), var1, var2, 3).size() * (var1.height() + 2.0F) + 5.0F;
+      for (String key : HINTS) {
+         f += wrapText(t(key), font, shownWidth, 3).size() * (font.height() + 2.0F) + 5.0F;
       }
 
-      return var3;
+      return f;
    }
 
-   private void renderHints(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = hintFont();
-      float var10 = var6 - 16.0F - 7.0F;
-      float var11 = var5 + 6.0F;
+   private void renderHints(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = hintFont();
+      float shownWidth = f3 - 16.0F - 7.0F;
+      float centeredTextY = f2 + 6.0F;
 
-      for (String var15 : HINTS) {
-         var1.drawRoundedRect(
-            var4 + 8.0F,
-            var11 + var9.height() / 2.0F - 1.0F,
+      for (String key : HINTS) {
+         menuDrawContext.drawRoundedRect(
+            f + 8.0F,
+            centeredTextY + font.height() / 2.0F - 1.0F,
             2.0F,
             2.0F,
             ProxyDotRadiusData.method8069(1.0F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * 0.8F)
+            zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.8F)
          );
 
-         for (String var17 : wrapText(t(var15), var9, var10, 3)) {
-            var1.drawText(var9, var17, var4 + 8.0F + 7.0F, var11, var8.getTextTertiary().getZenithColor().method7294(var7));
-            var11 += var9.height() + 2.0F;
+         for (String text : wrapText(t(key), font, shownWidth, 3)) {
+            menuDrawContext.drawText(font, text, f + 8.0F + 7.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY += font.height() + 2.0F;
          }
 
-         var11 += 5.0F;
+         centeredTextY += 5.0F;
       }
    }
 
-   private void renderNoMatch(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = Fonts.NEW_REGULAR.getFont(4.8F);
-      String var10 = fit(var9, t("gui.interface.search.empty"), var6 - 16.0F);
-      var1.drawText(
-         var9, var10, var4 + (var6 - var9.width(var10)) / 2.0F, var5 + (22.0F - var9.height()) / 2.0F, var8.getTextTertiary().getZenithColor().method7294(var7)
+   private void renderNoMatch(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.8F);
+      String text = fit(font, t("gui.interface.search.empty"), f3 - 16.0F);
+      menuDrawContext.drawText(
+         font, text, f + (f3 - font.width(text)) / 2.0F, f2 + (22.0F - font.height()) / 2.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
    }
 
-   private static String elementName(Interface var0) {
-      String var1 = "gui.interface.hud.name." + var0.getName();
-      String var2 = t(var1);
-      return var2.equals(var1) ? var0.getName() : var2;
+   private static String elementName(Interface selectedElement) {
+      String key = "gui.interface.hud.name." + selectedElement.getName();
+      String str = t(key);
+      return str.equals(key) ? selectedElement.getName() : str;
    }
 
-   private static boolean matches(String var0, String var1) {
-      return var1.isEmpty() || var0.toLowerCase(Locale.ROOT).contains(var1);
+   private static boolean matches(String styleName, String searchQuery) {
+      return searchQuery.isEmpty() || styleName.toLowerCase(Locale.ROOT).contains(searchQuery);
    }
 
-   private static String fit(Font var0, String var1, float var2) {
-      if (var2 <= 0.0F) {
+   private static String fit(Font font, String styleName, float f) {
+      if (f <= 0.0F) {
          return "";
-      } else if (var0.width(var1) <= var2) {
-         return var1;
+      } else if (font.width(styleName) <= f) {
+         return styleName;
       } else {
-         String var3 = "…";
-         float var4 = var0.width(var3);
-         if (var4 > var2) {
+         String text = "…";
+         float width = font.width(text);
+         if (width > f) {
             return "";
          } else {
-            int var5 = var1.length();
+            int length = styleName.length();
 
-            while (var5 > 0 && var0.width(var1.substring(0, var5)) + var4 > var2) {
-               var5--;
+            while (length > 0 && font.width(styleName.substring(0, length)) + width > f) {
+               length--;
             }
 
-            return var5 == 0 ? "" : var1.substring(0, var5) + var3;
+            return length == 0 ? "" : styleName.substring(0, length) + text;
          }
       }
    }
@@ -751,19 +751,19 @@ public class InterfaceSectionPanel extends SectionPanel {
       }
 
       @Override
-      public void setBind(int var1, int var2) {
-         if (var1 != -1) {
-            MenuModule.INSTANCE.setKeyCode(var1);
-            MenuModule.INSTANCE.setKeyModifiers(KeyName.method6698(var2));
+      public void setBind(int keyCode, int keyModifiers) {
+         if (keyCode != -1) {
+            MenuModule.INSTANCE.setKeyCode(keyCode);
+            MenuModule.INSTANCE.setKeyModifiers(KeyName.method6698(keyModifiers));
          }
       }
 
       @Override
-      public void safe(JsonObject var1) {
+      public void safe(JsonObject json) {
       }
 
       @Override
-      public void load(JsonObject var1) {
+      public void load(JsonObject json) {
       }
    }
 }

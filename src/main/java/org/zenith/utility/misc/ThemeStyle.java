@@ -91,46 +91,46 @@ public class ThemeStyle {
       .method2857(false)
       .method2858("Custom", "F");
 
-   public ThemeStyle(String var1, String var2, ThemeStyle.Entry var3) {
-      this.text = var1;
-      this.text2 = var2;
-      this.zenithColor = var3.zenithColor;
-      this.zenithColor2 = var3.zenithColor2;
-      this.zenithColor3 = var3.zenithColor3 != null ? var3.zenithColor3 : ZenithColor.INSTANCE3;
-      this.zenithColor4 = var3.zenithColor4 != null ? var3.zenithColor4 : this.zenithColor2;
-      this.zenithColor5 = var3.zenithColor5 != null ? var3.zenithColor5 : this.zenithColor2;
-      this.zenithColor6 = var3.zenithColor6;
-      this.zenithColor7 = var3.zenithColor7;
-      this.zenithColor8 = var3.zenithColor8;
-      this.zenithColor9 = var3.zenithColor9;
-      this.zenithColor10 = var3.zenithColor10;
-      this.zenithColor11 = var3.zenithColor11;
-      this.zenithColor12 = var3.zenithColor12;
-      this.zenithColor13 = var3.zenithColor13;
-      this.zenithColor14 = var3.zenithColor14;
-      this.zenithColor15 = var3.zenithColor15;
-      this.zenithColor16 = var3.zenithColor16;
-      this.flag = var3.flag;
-      this.flag2 = var3.flag2;
-      this.flag3 = var3.flag3;
+   public ThemeStyle(String text, String str, ThemeStyle.Entry entry) {
+      this.text = text;
+      this.text2 = str;
+      this.zenithColor = entry.zenithColor;
+      this.zenithColor2 = entry.zenithColor2;
+      this.zenithColor3 = entry.zenithColor3 != null ? entry.zenithColor3 : ZenithColor.INSTANCE3;
+      this.zenithColor4 = entry.zenithColor4 != null ? entry.zenithColor4 : this.zenithColor2;
+      this.zenithColor5 = entry.zenithColor5 != null ? entry.zenithColor5 : this.zenithColor2;
+      this.zenithColor6 = entry.zenithColor6;
+      this.zenithColor7 = entry.zenithColor7;
+      this.zenithColor8 = entry.zenithColor8;
+      this.zenithColor9 = entry.zenithColor9;
+      this.zenithColor10 = entry.zenithColor10;
+      this.zenithColor11 = entry.zenithColor11;
+      this.zenithColor12 = entry.zenithColor12;
+      this.zenithColor13 = entry.zenithColor13;
+      this.zenithColor14 = entry.zenithColor14;
+      this.zenithColor15 = entry.zenithColor15;
+      this.zenithColor16 = entry.zenithColor16;
+      this.flag = entry.flag;
+      this.flag2 = entry.flag2;
+      this.flag3 = entry.flag3;
       this.data = new ThemeStyle.Data(
-         var3.zenithColor,
-         var3.zenithColor2,
-         var3.zenithColor3,
-         var3.zenithColor6,
-         var3.zenithColor7,
-         var3.zenithColor8,
-         var3.zenithColor9,
-         var3.zenithColor10,
-         var3.zenithColor11,
-         var3.zenithColor12,
-         var3.zenithColor13,
-         var3.zenithColor14,
-         var3.zenithColor15,
-         var3.zenithColor16,
-         var3.flag,
-         var3.flag2,
-         var3.flag3
+         entry.zenithColor,
+         entry.zenithColor2,
+         entry.zenithColor3,
+         entry.zenithColor6,
+         entry.zenithColor7,
+         entry.zenithColor8,
+         entry.zenithColor9,
+         entry.zenithColor10,
+         entry.zenithColor11,
+         entry.zenithColor12,
+         entry.zenithColor13,
+         entry.zenithColor14,
+         entry.zenithColor15,
+         entry.zenithColor16,
+         entry.flag,
+         entry.flag2,
+         entry.flag3
       );
    }
 
@@ -155,26 +155,26 @@ public class ThemeStyle {
       this.flag4 = true;
    }
 
-   public ThemeStyle method2837(ThemeStyle var1, float var2) {
+   public ThemeStyle method2837(ThemeStyle themeStyle2, float hover) {
       return ThemeStyle.Entry.method2838()
-         .method2839(this.zenithColor.method7295(var1.getZenithColor(), var2))
-         .method2840(this.zenithColor2.method7295(var1.getZenithColor2(), var2))
-         .method2841(this.zenithColor3.method7295(var1.getZenithColor3(), var2))
-         .method2844(this.zenithColor6.method7295(var1.getZenithColor6(), var2))
-         .method2845(this.zenithColor7.method7295(var1.getZenithColor7(), var2))
-         .method2846(this.zenithColor8.method7295(var1.getZenithColor8(), var2))
-         .method2847(this.zenithColor9.method7295(var1.getZenithColor9(), var2))
-         .method2848(this.zenithColor10.method7295(var1.getZenithColor10(), var2))
-         .method2849(this.zenithColor11.method7295(var1.getZenithColor11(), var2))
-         .method2850(this.zenithColor12.method7295(var1.getZenithColor12(), var2))
-         .method2851(this.zenithColor13.method7295(var1.getZenithColor13(), var2))
-         .method2852(this.zenithColor14.method7295(var1.getZenithColor14(), var2))
-         .method2853(this.zenithColor15.method7295(var1.getZenithColor15(), var2))
-         .method2854(this.zenithColor16.method7295(var1.getZenithColor16(), var2))
+         .method2839(this.zenithColor.method7295(themeStyle2.getZenithColor(), hover))
+         .method2840(this.zenithColor2.method7295(themeStyle2.getZenithColor2(), hover))
+         .method2841(this.zenithColor3.method7295(themeStyle2.getZenithColor3(), hover))
+         .method2844(this.zenithColor6.method7295(themeStyle2.getZenithColor6(), hover))
+         .method2845(this.zenithColor7.method7295(themeStyle2.getZenithColor7(), hover))
+         .method2846(this.zenithColor8.method7295(themeStyle2.getZenithColor8(), hover))
+         .method2847(this.zenithColor9.method7295(themeStyle2.getZenithColor9(), hover))
+         .method2848(this.zenithColor10.method7295(themeStyle2.getZenithColor10(), hover))
+         .method2849(this.zenithColor11.method7295(themeStyle2.getZenithColor11(), hover))
+         .method2850(this.zenithColor12.method7295(themeStyle2.getZenithColor12(), hover))
+         .method2851(this.zenithColor13.method7295(themeStyle2.getZenithColor13(), hover))
+         .method2852(this.zenithColor14.method7295(themeStyle2.getZenithColor14(), hover))
+         .method2853(this.zenithColor15.method7295(themeStyle2.getZenithColor15(), hover))
+         .method2854(this.zenithColor16.method7295(themeStyle2.getZenithColor16(), hover))
          .method2855(this.flag)
          .method2856(this.flag2)
          .method2857(this.flag3)
-         .method2858(var1.text, var1.text2);
+         .method2858(themeStyle2.text, themeStyle2.text2);
    }
 
    @Generated
@@ -293,103 +293,103 @@ public class ThemeStyle {
    }
 
    @Generated
-   public void setZenithColor(ZenithColor var1) {
-      this.zenithColor = var1;
+   public void setZenithColor(ZenithColor zenithColor) {
+      this.zenithColor = zenithColor;
    }
 
    @Generated
-   public void setZenithColor2(ZenithColor var1) {
-      this.zenithColor2 = var1;
+   public void setZenithColor2(ZenithColor zenithColor2) {
+      this.zenithColor2 = zenithColor2;
    }
 
    @Generated
-   public void setZenithColor3(ZenithColor var1) {
-      this.zenithColor3 = var1;
+   public void setZenithColor3(ZenithColor zenithColor3) {
+      this.zenithColor3 = zenithColor3;
    }
 
    @Generated
-   public void setZenithColor4(ZenithColor var1) {
-      this.zenithColor4 = var1;
+   public void setZenithColor4(ZenithColor zenithColor4) {
+      this.zenithColor4 = zenithColor4;
    }
 
    @Generated
-   public void setZenithColor5(ZenithColor var1) {
-      this.zenithColor5 = var1;
+   public void setZenithColor5(ZenithColor zenithColor5) {
+      this.zenithColor5 = zenithColor5;
    }
 
    @Generated
-   public void setZenithColor6(ZenithColor var1) {
-      this.zenithColor6 = var1;
+   public void setZenithColor6(ZenithColor zenithColor6) {
+      this.zenithColor6 = zenithColor6;
    }
 
    @Generated
-   public void setZenithColor7(ZenithColor var1) {
-      this.zenithColor7 = var1;
+   public void setZenithColor7(ZenithColor zenithColor7) {
+      this.zenithColor7 = zenithColor7;
    }
 
    @Generated
-   public void setZenithColor8(ZenithColor var1) {
-      this.zenithColor8 = var1;
+   public void setZenithColor8(ZenithColor zenithColor8) {
+      this.zenithColor8 = zenithColor8;
    }
 
    @Generated
-   public void setZenithColor9(ZenithColor var1) {
-      this.zenithColor9 = var1;
+   public void setZenithColor9(ZenithColor zenithColor9) {
+      this.zenithColor9 = zenithColor9;
    }
 
    @Generated
-   public void setZenithColor10(ZenithColor var1) {
-      this.zenithColor10 = var1;
+   public void setZenithColor10(ZenithColor zenithColor10) {
+      this.zenithColor10 = zenithColor10;
    }
 
    @Generated
-   public void setZenithColor11(ZenithColor var1) {
-      this.zenithColor11 = var1;
+   public void setZenithColor11(ZenithColor zenithColor11) {
+      this.zenithColor11 = zenithColor11;
    }
 
    @Generated
-   public void setZenithColor12(ZenithColor var1) {
-      this.zenithColor12 = var1;
+   public void setZenithColor12(ZenithColor zenithColor12) {
+      this.zenithColor12 = zenithColor12;
    }
 
    @Generated
-   public void setZenithColor13(ZenithColor var1) {
-      this.zenithColor13 = var1;
+   public void setZenithColor13(ZenithColor zenithColor13) {
+      this.zenithColor13 = zenithColor13;
    }
 
    @Generated
-   public void setZenithColor14(ZenithColor var1) {
-      this.zenithColor14 = var1;
+   public void setZenithColor14(ZenithColor zenithColor14) {
+      this.zenithColor14 = zenithColor14;
    }
 
    @Generated
-   public void setZenithColor15(ZenithColor var1) {
-      this.zenithColor15 = var1;
+   public void setZenithColor15(ZenithColor zenithColor15) {
+      this.zenithColor15 = zenithColor15;
    }
 
    @Generated
-   public void setZenithColor16(ZenithColor var1) {
-      this.zenithColor16 = var1;
+   public void setZenithColor16(ZenithColor zenithColor16) {
+      this.zenithColor16 = zenithColor16;
    }
 
    @Generated
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
    @Generated
-   public void setFlag2(boolean var1) {
-      this.flag2 = var1;
+   public void setFlag2(boolean flag) {
+      this.flag2 = flag;
    }
 
    @Generated
-   public void setFlag3(boolean var1) {
-      this.flag3 = var1;
+   public void setFlag3(boolean flag) {
+      this.flag3 = flag;
    }
 
    @Generated
-   public void setFlag4(boolean var1) {
-      this.flag4 = var1;
+   public void setFlag4(boolean flag) {
+      this.flag4 = flag;
    }
 
    private static final class Data {
@@ -497,41 +497,41 @@ public class ThemeStyle {
       }
 
       private Data(
-         ZenithColor var1,
-         ZenithColor var2,
-         ZenithColor var3,
-         ZenithColor var4,
-         ZenithColor var5,
-         ZenithColor var6,
-         ZenithColor var7,
-         ZenithColor var8,
-         ZenithColor var9,
-         ZenithColor var10,
-         ZenithColor var11,
-         ZenithColor var12,
-         ZenithColor var13,
-         ZenithColor var14,
-         boolean var15,
-         boolean var16,
-         boolean var17
+         ZenithColor zenithColor,
+         ZenithColor zenithColor2,
+         ZenithColor zenithColor3,
+         ZenithColor zenithColor4,
+         ZenithColor zenithColor5,
+         ZenithColor zenithColor6,
+         ZenithColor zenithColor7,
+         ZenithColor zenithColor8,
+         ZenithColor zenithColor9,
+         ZenithColor zenithColor10,
+         ZenithColor zenithColor11,
+         ZenithColor zenithColor12,
+         ZenithColor zenithColor13,
+         ZenithColor zenithColor14,
+         boolean flag,
+         boolean flag2,
+         boolean flag3
       ) {
-         this.zenithColor = var1;
-         this.zenithColor2 = var2;
-         this.zenithColor3 = var3;
-         this.zenithColor4 = var4;
-         this.zenithColor5 = var5;
-         this.zenithColor6 = var6;
-         this.zenithColor7 = var7;
-         this.zenithColor8 = var8;
-         this.zenithColor9 = var9;
-         this.zenithColor10 = var10;
-         this.zenithColor11 = var11;
-         this.zenithColor12 = var12;
-         this.zenithColor13 = var13;
-         this.zenithColor14 = var14;
-         this.flag = var15;
-         this.flag2 = var16;
-         this.flag3 = var17;
+         this.zenithColor = zenithColor;
+         this.zenithColor2 = zenithColor2;
+         this.zenithColor3 = zenithColor3;
+         this.zenithColor4 = zenithColor4;
+         this.zenithColor5 = zenithColor5;
+         this.zenithColor6 = zenithColor6;
+         this.zenithColor7 = zenithColor7;
+         this.zenithColor8 = zenithColor8;
+         this.zenithColor9 = zenithColor9;
+         this.zenithColor10 = zenithColor10;
+         this.zenithColor11 = zenithColor11;
+         this.zenithColor12 = zenithColor12;
+         this.zenithColor13 = zenithColor13;
+         this.zenithColor14 = zenithColor14;
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.flag3 = flag3;
       }
 
       public ZenithColor getZenithColor() {
@@ -628,103 +628,103 @@ public class ThemeStyle {
          return new ThemeStyle.Entry();
       }
 
-      public ThemeStyle.Entry method2839(ZenithColor var1) {
-         this.zenithColor = var1;
+      public ThemeStyle.Entry method2839(ZenithColor zenithColor) {
+         this.zenithColor = zenithColor;
          return this;
       }
 
-      public ThemeStyle.Entry method2840(ZenithColor var1) {
-         this.zenithColor2 = var1;
+      public ThemeStyle.Entry method2840(ZenithColor zenithColor2) {
+         this.zenithColor2 = zenithColor2;
          return this;
       }
 
-      public ThemeStyle.Entry method2841(ZenithColor var1) {
-         this.zenithColor3 = var1;
+      public ThemeStyle.Entry method2841(ZenithColor zenithColor3) {
+         this.zenithColor3 = zenithColor3;
          return this;
       }
 
-      public ThemeStyle.Entry method2842(ZenithColor var1) {
-         this.zenithColor4 = var1;
+      public ThemeStyle.Entry method2842(ZenithColor zenithColor4) {
+         this.zenithColor4 = zenithColor4;
          return this;
       }
 
-      public ThemeStyle.Entry method2843(ZenithColor var1) {
-         this.zenithColor5 = var1;
+      public ThemeStyle.Entry method2843(ZenithColor zenithColor5) {
+         this.zenithColor5 = zenithColor5;
          return this;
       }
 
-      public ThemeStyle.Entry method2844(ZenithColor var1) {
-         this.zenithColor6 = var1;
+      public ThemeStyle.Entry method2844(ZenithColor zenithColor6) {
+         this.zenithColor6 = zenithColor6;
          return this;
       }
 
-      public ThemeStyle.Entry method2845(ZenithColor var1) {
-         this.zenithColor7 = var1;
+      public ThemeStyle.Entry method2845(ZenithColor zenithColor7) {
+         this.zenithColor7 = zenithColor7;
          return this;
       }
 
-      public ThemeStyle.Entry method2846(ZenithColor var1) {
-         this.zenithColor8 = var1;
+      public ThemeStyle.Entry method2846(ZenithColor zenithColor8) {
+         this.zenithColor8 = zenithColor8;
          return this;
       }
 
-      public ThemeStyle.Entry method2847(ZenithColor var1) {
-         this.zenithColor9 = var1;
+      public ThemeStyle.Entry method2847(ZenithColor zenithColor9) {
+         this.zenithColor9 = zenithColor9;
          return this;
       }
 
-      public ThemeStyle.Entry method2848(ZenithColor var1) {
-         this.zenithColor10 = var1;
+      public ThemeStyle.Entry method2848(ZenithColor zenithColor10) {
+         this.zenithColor10 = zenithColor10;
          return this;
       }
 
-      public ThemeStyle.Entry method2849(ZenithColor var1) {
-         this.zenithColor11 = var1;
+      public ThemeStyle.Entry method2849(ZenithColor zenithColor11) {
+         this.zenithColor11 = zenithColor11;
          return this;
       }
 
-      public ThemeStyle.Entry method2850(ZenithColor var1) {
-         this.zenithColor12 = var1;
+      public ThemeStyle.Entry method2850(ZenithColor zenithColor12) {
+         this.zenithColor12 = zenithColor12;
          return this;
       }
 
-      public ThemeStyle.Entry method2851(ZenithColor var1) {
-         this.zenithColor13 = var1;
+      public ThemeStyle.Entry method2851(ZenithColor zenithColor13) {
+         this.zenithColor13 = zenithColor13;
          return this;
       }
 
-      public ThemeStyle.Entry method2852(ZenithColor var1) {
-         this.zenithColor14 = var1;
+      public ThemeStyle.Entry method2852(ZenithColor zenithColor14) {
+         this.zenithColor14 = zenithColor14;
          return this;
       }
 
-      public ThemeStyle.Entry method2853(ZenithColor var1) {
-         this.zenithColor15 = var1;
+      public ThemeStyle.Entry method2853(ZenithColor zenithColor15) {
+         this.zenithColor15 = zenithColor15;
          return this;
       }
 
-      public ThemeStyle.Entry method2854(ZenithColor var1) {
-         this.zenithColor16 = var1;
+      public ThemeStyle.Entry method2854(ZenithColor zenithColor16) {
+         this.zenithColor16 = zenithColor16;
          return this;
       }
 
-      public ThemeStyle.Entry method2855(boolean var1) {
-         this.flag = var1;
+      public ThemeStyle.Entry method2855(boolean flag) {
+         this.flag = flag;
          return this;
       }
 
-      public ThemeStyle.Entry method2856(boolean var1) {
-         this.flag2 = var1;
+      public ThemeStyle.Entry method2856(boolean flag) {
+         this.flag2 = flag;
          return this;
       }
 
-      public ThemeStyle.Entry method2857(boolean var1) {
-         this.flag3 = var1;
+      public ThemeStyle.Entry method2857(boolean flag) {
+         this.flag3 = flag;
          return this;
       }
 
-      public ThemeStyle method2858(String var1, String var2) {
-         return new ThemeStyle(var1, var2, this);
+      public ThemeStyle method2858(String text, String str) {
+         return new ThemeStyle(text, str, this);
       }
    }
 }

@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IActualAnimation<T extends IActualAnimation<T>> extends IAnimation {
    @NotNull
-   T setFirstPersonMode(@NotNull FirstPersonMode var1);
+   T setFirstPersonMode(@NotNull FirstPersonMode firstPersonMode);
 
    @NotNull
-   T setFirstPersonConfiguration(@NotNull FirstPersonConfiguration var1);
+   T setFirstPersonConfiguration(@NotNull FirstPersonConfiguration firstPersonConfiguration);
 }

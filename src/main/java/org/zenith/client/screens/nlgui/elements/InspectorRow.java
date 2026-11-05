@@ -128,33 +128,33 @@ public class InspectorRow implements MouseBindTarget {
    private static final int LETTERS_DROP = 1;
    private static final int LETTERS_CRUMBLE = 2;
 
-   public InspectorRow(Setting var1, int var2) {
-      this(var1, var2, "");
+   public InspectorRow(Setting newNameSetting, int depth) {
+      this(newNameSetting, depth, "");
    }
 
-   public InspectorRow(Setting var1, int var2, String var3) {
-      this(var1, var2, "", var3);
+   public InspectorRow(Setting newNameSetting, int depth, String simpleName) {
+      this(newNameSetting, depth, "", simpleName);
    }
 
-   private InspectorRow(Setting var1, int var2, String var3, String var4) {
-      this.setting = var1;
-      this.bindSetting = (BindSetting)(var1 instanceof ModuleHeaderSetting var6
-         ? var6.getHeaderBindSetting()
-         : (var1 instanceof BindSetting var5 ? var5 : null));
-      this.depth = var2;
-      this.subjectGlyph = SettingIcons.resolve(var1, var3, var4);
-      this.picker = var1 instanceof ColorSetting var9 ? new ColorPicker(var9) : null;
-      this.modeOptions = var1 instanceof ModeSetting var10 ? new ModeOptions(var10) : null;
+   private InspectorRow(Setting setting, int depth, String key, String simpleName) {
+      this.setting = setting;
+      this.bindSetting = (BindSetting)(setting instanceof ModuleHeaderSetting moduleHeaderSetting
+         ? moduleHeaderSetting.getHeaderBindSetting()
+         : (setting instanceof BindSetting bindSetting ? bindSetting : null));
+      this.depth = depth;
+      this.subjectGlyph = SettingIcons.resolve(setting, key, simpleName);
+      this.picker = setting instanceof ColorSetting colorSetting ? new ColorPicker(colorSetting) : null;
+      this.modeOptions = setting instanceof ModeSetting modeSetting ? new ModeOptions(modeSetting) : null;
       this.pickerHeight = this.picker == null ? 0.0F : this.picker.height(this.pickerWidth(144.0F));
-      this.visibleAnimation = new Animation(160L, var1 != null && var1.isVisible() ? 1.0F : 0.0F, Easing.INSTANCE13);
-      this.toggleAnimation = new Animation(220L, var1 instanceof BooleanSetting var11 && var11.isEnabled() ? 1.0F : 0.0F, Easing.INSTANCE10);
-      if (var1 instanceof GroupSetting var12) {
-         for (Setting var8 : var12.getSettings()) {
-            this.children.add(new InspectorRow(var8, var2 + 1, var1.getKey(), var4));
+      this.visibleAnimation = new Animation(160L, setting != null && setting.isVisible() ? 1.0F : 0.0F, Easing.INSTANCE13);
+      this.toggleAnimation = new Animation(220L, setting instanceof BooleanSetting booleanSetting && booleanSetting.isEnabled() ? 1.0F : 0.0F, Easing.INSTANCE10);
+      if (setting instanceof GroupSetting groupSetting) {
+         for (Setting setting2 : groupSetting.getSettings()) {
+            this.children.add(new InspectorRow(setting2, depth + 1, setting.getKey(), simpleName));
          }
-      } else if (var1 instanceof MultiSelectSetting var13) {
-         for (MultiSelectSetting.Entry var15 : var13.getItems2()) {
-            this.children.add(new InspectorRow(new InspectorRow.MultiValueAdapter(var13, var15), var2 + 1, var1.getKey(), var4));
+      } else if (setting instanceof MultiSelectSetting multiSelectSetting) {
+         for (MultiSelectSetting.Entry entry : multiSelectSetting.getItems2()) {
+            this.children.add(new InspectorRow(new InspectorRow.MultiValueAdapter(multiSelectSetting, entry), depth + 1, setting.getKey(), simpleName));
          }
       }
    }
@@ -163,59 +163,59 @@ public class InspectorRow implements MouseBindTarget {
       return this.visibleAnimation.getValue() > 0.001F || this.setting.isVisible();
    }
 
-   public static void alignTracks(List<InspectorRow> var0, float var1) {
-      float var2 = 34.0F;
+   public static void alignTracks(List<InspectorRow> settingRows, float width) {
+      float sharedTrackSpan = 34.0F;
 
-      for (InspectorRow var4 : var0) {
-         var4.prepareLayout(var1);
-         var2 = Math.min(var2, var4.narrowestTrack(var1));
+      for (InspectorRow settingRow : settingRows) {
+         settingRow.prepareLayout(width);
+         sharedTrackSpan = Math.min(sharedTrackSpan, settingRow.narrowestTrack(width));
       }
 
-      for (InspectorRow var6 : var0) {
-         var6.shareTrack(var2);
+      for (InspectorRow settingRow : settingRows) {
+         settingRow.shareTrack(sharedTrackSpan);
       }
    }
 
-   private void prepareLayout(float var1) {
+   private void prepareLayout(float width) {
       if (this.modeOptions != null) {
-         this.modeOptions.prepare(Math.max(0.0F, var1 - 16.0F - this.depth * 8.0F));
+         this.modeOptions.prepare(Math.max(0.0F, width - 16.0F - this.depth * 8.0F));
       }
 
-      for (InspectorRow var3 : this.children) {
-         var3.prepareLayout(var1);
+      for (InspectorRow inspectorRow : this.children) {
+         inspectorRow.prepareLayout(width);
       }
    }
 
-   private float narrowestTrack(float var1) {
-      float var2 = 34.0F;
+   private float narrowestTrack(float width) {
+      float f = 34.0F;
       if (this.setting instanceof SliderSetting && this.setting.isVisible()) {
-         Font var3 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         float var4 = this.labelOffset() + var3.width(this.label());
-         var2 = Mth.clamp(var1 - 8.0F - 30.0F - var4 - GuiStyle.PADDING.intValue(), 18.0F, 34.0F);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+         float f2 = this.labelOffset() + font.width(this.label());
+         f = Mth.clamp(width - 8.0F - 30.0F - f2 - GuiStyle.PADDING.intValue(), 18.0F, 34.0F);
       }
 
-      for (InspectorRow var6 : this.children) {
-         var2 = Math.min(var2, var6.narrowestTrack(var1));
+      for (InspectorRow inspectorRow : this.children) {
+         f = Math.min(f, inspectorRow.narrowestTrack(width));
       }
 
-      return var2;
+      return f;
    }
 
-   private void shareTrack(float var1) {
-      this.sharedTrackSpan = var1;
+   private void shareTrack(float sharedTrackSpan) {
+      this.sharedTrackSpan = sharedTrackSpan;
 
-      for (InspectorRow var3 : this.children) {
-         var3.shareTrack(var1);
+      for (InspectorRow inspectorRow : this.children) {
+         inspectorRow.shareTrack(sharedTrackSpan);
       }
    }
 
    private float labelOffset() {
-      float var1 = 8.0F + this.depth * 8.0F;
+      float f = 8.0F + this.depth * 8.0F;
       if (Zenith.getInstance().getNLMenuScreen().isRenderIcon()) {
-         var1 += 9.0F;
+         f += 9.0F;
       }
 
-      return var1;
+      return f;
    }
 
    private boolean expandable() {
@@ -228,32 +228,32 @@ public class InspectorRow implements MouseBindTarget {
       return 16.0F;
    }
 
-   private float pickerWidth(float var1) {
-      return Math.max(40.0F, var1 - 16.0F - this.depth * 8.0F);
+   private float pickerWidth(float width) {
+      return Math.max(40.0F, width - 16.0F - this.depth * 8.0F);
    }
 
    public float height() {
-      float var1 = this.ownHeight() * this.visibleAnimation.getValue();
+      float f = this.ownHeight() * this.visibleAnimation.getValue();
       if (this.modeOptions != null) {
-         return var1 + this.modeOptions.height() * this.expandAnimation.getValue() * this.visibleAnimation.getValue();
+         return f + this.modeOptions.height() * this.expandAnimation.getValue() * this.visibleAnimation.getValue();
       } else if (this.picker != null) {
-         return var1 + this.pickerHeight * this.expandAnimation.getValue() * this.visibleAnimation.getValue();
+         return f + this.pickerHeight * this.expandAnimation.getValue() * this.visibleAnimation.getValue();
       } else if (this.children.isEmpty()) {
-         return var1;
+         return f;
       } else {
-         float var2 = 0.0F;
+         float f2 = 0.0F;
 
-         for (InspectorRow var4 : this.children) {
-            if (var4.isVisible()) {
-               var2 += var4.height();
+         for (InspectorRow inspectorRow : this.children) {
+            if (inspectorRow.isVisible()) {
+               f2 += inspectorRow.height();
             }
          }
 
-         return var1 + var2 * this.expandAnimation.getValue();
+         return f + f2 * this.expandAnimation.getValue();
       }
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7) {
+   public void render(MenuDrawContext menuDrawContext, float mouseX, float mouseY, float floatValue, float y, float width, float previewAlpha) {
       if (this.binding && BindCapture.owner() != this) {
          this.binding = false;
       }
@@ -263,115 +263,115 @@ public class InspectorRow implements MouseBindTarget {
       }
 
       this.visibleAnimation.method2808(this.setting.isVisible() ? 1.0F : 0.0F);
-      float var8;
-      if (!((var8 = this.visibleAnimation.getValue()) <= 0.001F)) {
-         ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var9 != null) {
-            long var10 = System.currentTimeMillis();
-            this.frameDt = this.lastFrameAt == 0L ? 0.0F : Math.min(0.05F, (float)(var10 - this.lastFrameAt) / 1000.0F);
-            this.lastFrameAt = var10;
-            float var12 = var7 * var8;
-            float var13 = this.ownHeight() * var8;
-            this.bounds = new BoundsData(var4, var5, var6, var13);
-            boolean var14 = this.bounds.contains(var2, var3);
-            float var15;
-            if ((var15 = this.hoverAnimation.method2808(var14 ? 1.0F : 0.0F)) > 0.01F) {
-               var1.drawRect(var4, var5, var6, var13, var9.getFieldSurfaceBackground().getZenithColor().method7294(2.0F).method7294(var12 * var15));
+      float f;
+      if (!((f = this.visibleAnimation.getValue()) <= 0.001F)) {
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            long now = System.currentTimeMillis();
+            this.frameDt = this.lastFrameAt == 0L ? 0.0F : Math.min(0.05F, (float)(now - this.lastFrameAt) / 1000.0F);
+            this.lastFrameAt = now;
+            float previewAlpha2 = previewAlpha * f;
+            float height = this.ownHeight() * f;
+            this.bounds = new BoundsData(floatValue, y, width, height);
+            boolean contains = this.bounds.contains(mouseX, mouseY);
+            float f2;
+            if ((f2 = this.hoverAnimation.method2808(contains ? 1.0F : 0.0F)) > 0.01F) {
+               menuDrawContext.drawRect(floatValue, y, width, height, currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(2.0F).method7294(previewAlpha2 * f2));
             }
 
-            if (var14) {
+            if (contains) {
                HoverInfo.request(this.label(), this.setting.getDescription());
             }
 
-            this.renderFlash(var1, var4, var5, var6, var13, var10, var12, var9);
-            float var39;
-            float var16 = (var39 = var4 + (1.0F - var8) * 8.0F) + 8.0F + this.depth * 8.0F;
-            Font var17 = Fonts.NEW_MEDIUM.getFont(5.2F);
-            float var18 = var5 + (var13 - var17.height()) / 2.0F;
-            ZenithColor var19 = var9.getTextSecondary()
+            this.renderFlash(menuDrawContext, floatValue, y, width, height, now, previewAlpha2, currentStyle);
+            float floatValue2;
+            float floatValue3 = (floatValue2 = floatValue + (1.0F - f) * 8.0F) + 8.0F + this.depth * 8.0F;
+            Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+            float centeredTextY = y + (height - font.height()) / 2.0F;
+            ZenithColor zenithColor = currentStyle.getTextSecondary()
                .getZenithColor()
-               .method7295(var9.getTextEnable().getZenithColor(), var14 ? 0.6F : 0.0F)
-               .method7294(var12);
+               .method7295(currentStyle.getTextEnable().getZenithColor(), contains ? 0.6F : 0.0F)
+               .method7294(previewAlpha2);
             if (Zenith.getInstance().getNLMenuScreen().isRenderIcon()) {
-               this.subjectGlyph.draw(var1, var16, var5 + (var13 - 6.0F) / 2.0F, 6.0F, var19);
+               this.subjectGlyph.draw(menuDrawContext, floatValue3, y + (height - 6.0F) / 2.0F, 6.0F, zenithColor);
             }
 
-            float var20 = var39 + this.labelOffset();
-            String var21 = this.label();
-            float var22 = this.labelLimit(var39, var6, var20);
+            float floatValue4 = floatValue2 + this.labelOffset();
+            String label = this.label();
+            float labelLimit = this.labelLimit(floatValue2, width, floatValue4);
             if (this.labelScroll == null) {
                this.labelScroll = new HoverScrollText();
             }
 
-            float var23 = this.labelScroll.render(var1, var17, var21, var20, var18, var22, var19, var14);
-            float var24 = var20 + var23;
+            float render = this.labelScroll.render(menuDrawContext, font, label, floatValue4, centeredTextY, labelLimit, zenithColor, contains);
+            float f3 = floatValue4 + render;
             this.valueLeftPx = Float.NaN;
-            this.renderValue(var1, var2, var3, var39, var5, var6, var13, var12, var9, this.expandable() ? var24 + 7.0F : var24);
+            this.renderValue(menuDrawContext, mouseX, mouseY, floatValue2, y, width, height, previewAlpha2, currentStyle, this.expandable() ? f3 + 7.0F : f3);
             if (this.expandable() && !Float.isNaN(this.valueLeftPx)) {
-               MenuGlyph.drawChevron(var1, this.valueLeftPx - GuiStyle.PADDING.intValue() - 5.0F, var5 + var13 / 2.0F, this.expandAnimation.getValue(), var19);
+               MenuGlyph.drawChevron(menuDrawContext, this.valueLeftPx - GuiStyle.PADDING.intValue() - 5.0F, y + height / 2.0F, this.expandAnimation.getValue(), zenithColor);
             }
 
-            float var25;
-            if (!((var25 = this.expandAnimation.method2808(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
+            float f4;
+            if (!((f4 = this.expandAnimation.method2808(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
                if (this.modeOptions != null) {
-                  float var41 = Math.max(0.0F, var6 - 16.0F - this.depth * 8.0F);
-                  float var44 = var5 + var13;
-                  float var47 = this.modeOptions.height(var41) * var25 * var8;
-                  var1.enableScissor(var39, var44, var39 + var6, var44 + var47);
+                  float width2 = Math.max(0.0F, width - 16.0F - this.depth * 8.0F);
+                  float y2 = y + height;
+                  float f5 = this.modeOptions.height(width2) * f4 * f;
+                  menuDrawContext.enableScissor(floatValue2, y2, floatValue2 + width, y2 + f5);
 
                   try {
                      this.modeOptions
                         .render(
-                           var1,
-                           this.modeHoverAllowed ? var2 : Float.NaN,
-                           this.modeHoverAllowed ? var3 : Float.NaN,
-                           var39 + 8.0F + this.depth * 8.0F,
-                           var44,
-                           var41,
-                           var47,
-                           var12 * var25,
-                           this.expanded && var8 > 0.99F && var7 > 0.99F,
-                           var9
+                           menuDrawContext,
+                           this.modeHoverAllowed ? mouseX : Float.NaN,
+                           this.modeHoverAllowed ? mouseY : Float.NaN,
+                           floatValue2 + 8.0F + this.depth * 8.0F,
+                           y2,
+                           width2,
+                           f5,
+                           previewAlpha2 * f4,
+                           this.expanded && f > 0.99F && previewAlpha > 0.99F,
+                           currentStyle
                         );
                   } finally {
-                     var1.disableScissor();
+                     menuDrawContext.disableScissor();
                   }
                } else if (this.picker != null) {
-                  float var40 = this.pickerWidth(var6);
-                  this.pickerHeight = this.picker.height(var40);
-                  float var43 = this.pickerHeight * var25 * var8;
-                  float var46 = var5 + var13;
-                  var1.enableScissor(var39, var46, var39 + var6, var46 + var43);
-                  this.picker.render(var1, var2, var3, var39 + 8.0F + this.depth * 8.0F, var46, var40, var12);
-                  var1.disableScissor();
+                  float pickerWidth = this.pickerWidth(width);
+                  this.pickerHeight = this.picker.height(pickerWidth);
+                  float f5 = this.pickerHeight * f4 * f;
+                  float y2 = y + height;
+                  menuDrawContext.enableScissor(floatValue2, y2, floatValue2 + width, y2 + f5);
+                  this.picker.render(menuDrawContext, mouseX, mouseY, floatValue2 + 8.0F + this.depth * 8.0F, y2, pickerWidth, previewAlpha2);
+                  menuDrawContext.disableScissor();
                } else if (!this.children.isEmpty()) {
-                  float var26 = 0.0F;
+                  float f5 = 0.0F;
 
-                  for (InspectorRow var28 : this.children) {
-                     if (var28.isVisible()) {
-                        var26 += var28.height();
+                  for (InspectorRow inspectorRow : this.children) {
+                     if (inspectorRow.isVisible()) {
+                        f5 += inspectorRow.height();
                      }
                   }
 
-                  float var42 = var26 * var25;
-                  float var45 = var5 + var13;
-                  var1.enableScissor(var39, var45, var39 + var6, var45 + var42);
-                  boolean var29 = var2 >= var39 && var2 <= var39 + var6 && var3 >= var45 && var3 <= var45 + var42;
-                  float var30 = var45;
-                  int var31 = 0;
+                  float f6 = f5 * f4;
+                  float y2 = y + height;
+                  menuDrawContext.enableScissor(floatValue2, y2, floatValue2 + width, y2 + f6);
+                  boolean flag = mouseX >= floatValue2 && mouseX <= floatValue2 + width && mouseY >= y2 && mouseY <= y2 + f6;
+                  float y3 = y2;
+                  int n = 0;
 
-                  for (InspectorRow var33 : this.children) {
-                     if (var33.isVisible()) {
-                        float var34 = Mth.clamp(var25 * 1.5F - var31 * 0.07F, 0.0F, 1.0F);
-                        float var35 = 1.0F - (1.0F - var34) * (1.0F - var34);
-                        var33.modeHoverAllowed = this.modeHoverAllowed && var29;
-                        var33.render(var1, var2, var3, var39 + (1.0F - var35) * 7.0F, var30, var6, var12 * var35);
-                        var30 += var33.height();
-                        var31++;
+                  for (InspectorRow inspectorRow : this.children) {
+                     if (inspectorRow.isVisible()) {
+                        float f7 = Mth.clamp(f4 * 1.5F - n * 0.07F, 0.0F, 1.0F);
+                        float f8 = 1.0F - (1.0F - f7) * (1.0F - f7);
+                        inspectorRow.modeHoverAllowed = this.modeHoverAllowed && flag;
+                        inspectorRow.render(menuDrawContext, mouseX, mouseY, floatValue2 + (1.0F - f8) * 7.0F, y3, width, previewAlpha2 * f8);
+                        y3 += inspectorRow.height();
+                        n++;
                      }
                   }
 
-                  var1.disableScissor();
+                  menuDrawContext.disableScissor();
                }
             }
          }
@@ -379,379 +379,379 @@ public class InspectorRow implements MouseBindTarget {
    }
 
    private void renderModeValue(
-      MenuDrawContext var1, ModeSetting var2, float var3, float var4, float var5, float var6, Font var7, float var8, ZenithStyle var9, float var10
+      MenuDrawContext menuDrawContext, ModeSetting modeSetting, float f, float centeredTextY, float y, float height, Font font, float previewAlpha, ZenithStyle currentStyle, float f2
    ) {
-      String var11 = this.expanded ? String.valueOf(var2.getValues().size()) : (var2.getValue2() == null ? "—" : var2.getValue2().getName());
-      String var12 = fit(var7, var11, Math.max(0.0F, var10));
-      float var13 = this.valueRoll
+      String name = this.expanded ? String.valueOf(modeSetting.getValues().size()) : (modeSetting.getValue2() == null ? "—" : modeSetting.getValue2().getName());
+      String current = fit(font, name, Math.max(0.0F, f2));
+      float draw = this.valueRoll
          .draw(
-            var1,
-            var7,
-            var12,
-            var3 + this.shakeOffset(),
-            var4,
-            (this.expanded ? var9.getTextTertiary().getZenithColor() : var9.getTextEnable().getZenithColor()).method7294(var8),
+            menuDrawContext,
+            font,
+            current,
+            f + this.shakeOffset(),
+            centeredTextY,
+            (this.expanded ? currentStyle.getTextTertiary().getZenithColor() : currentStyle.getTextEnable().getZenithColor()).method7294(previewAlpha),
             1
          );
-      this.valueLeftPx = var3 - var13;
-      this.valueBounds = new BoundsData(this.valueLeftPx, var5, var13 + 8.0F, var6);
+      this.valueLeftPx = f - draw;
+      this.valueBounds = new BoundsData(this.valueLeftPx, y, draw + 8.0F, height);
    }
 
    private void renderValue(
-      MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, ZenithStyle var9, float var10
+      MenuDrawContext menuDrawContext, float mouseX, float mouseY, float f, float y, float width, float height, float previewAlpha, ZenithStyle currentStyle, float f2
    ) {
-      Font var11 = Fonts.NEW_MEDIUM.getFont(5.01F);
-      float var12;
-      float var13 = (var12 = var4 + var6 - 8.0F) - var10 - GuiStyle.PADDING.intValue();
-      float var14 = var5 + (var7 - var11.height()) / 2.0F;
-      if (this.setting instanceof SliderSetting var31) {
-         float var39 = var31.getValue3();
-         if (!Float.isNaN(this.lastNumber) && var39 != this.lastNumber) {
-            this.numberDirection = var39 > this.lastNumber ? 1 : -1;
+      Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
+      float f3;
+      float f4 = (f3 = f + width - 8.0F) - f2 - GuiStyle.PADDING.intValue();
+      float centeredTextY = y + (height - font.height()) / 2.0F;
+      if (this.setting instanceof SliderSetting sliderSetting) {
+         float lastNumber = sliderSetting.getValue3();
+         if (!Float.isNaN(this.lastNumber) && lastNumber != this.lastNumber) {
+            this.numberDirection = lastNumber > this.lastNumber ? 1 : -1;
          }
 
-         this.lastNumber = var39;
-         this.renderTrack(var1, var2, var3, var5, var7, var8, this.springNumber(var31), this.numberText(var31, var39), var11, var14, var12, var10, var9);
-         this.valueBounds = this.trackBounds(var5, var7);
-      } else if (this.setting instanceof ColorSetting var30) {
-         boolean var38 = this.expanded;
-         ZenithColor var43 = var30.getZenithColor();
-         this.shownColor = this.shownColor == null ? var43 : this.shownColor.method7295(var43, 1.0F - (float)Math.exp(-this.frameDt * 18.0F));
-         int var46 = var43.getIntValue() << 16 | var43.getIntValue2() << 8 | var43.getIntValue3();
-         if (this.hexText == null || var46 != this.hexKey) {
-            this.hexKey = var46;
-            this.hexText = String.format("%02X%02X%02X", var43.getIntValue(), var43.getIntValue2(), var43.getIntValue3());
+         this.lastNumber = lastNumber;
+         this.renderTrack(menuDrawContext, mouseX, mouseY, y, height, previewAlpha, this.springNumber(sliderSetting), this.numberText(sliderSetting, lastNumber), font, centeredTextY, f3, f2, currentStyle);
+         this.valueBounds = this.trackBounds(y, height);
+      } else if (this.setting instanceof ColorSetting colorSetting) {
+         boolean expanded = this.expanded;
+         ZenithColor zenithColor = colorSetting.getZenithColor();
+         this.shownColor = this.shownColor == null ? zenithColor : this.shownColor.method7295(zenithColor, 1.0F - (float)Math.exp(-this.frameDt * 18.0F));
+         int hexKey = zenithColor.getIntValue() << 16 | zenithColor.getIntValue2() << 8 | zenithColor.getIntValue3();
+         if (this.hexText == null || hexKey != this.hexKey) {
+            this.hexKey = hexKey;
+            this.hexText = String.format("%02X%02X%02X", zenithColor.getIntValue(), zenithColor.getIntValue2(), zenithColor.getIntValue3());
          }
 
-         String var48 = this.hexText;
-         float var20 = this.hexRoll.draw(var1, var11, var48, var12, var14, var9.getTextEnable().getZenithColor().method7294(var8), 1);
-         float var21 = this.expandAnimation.getValue();
-         float var22 = 7.0F + var21;
-         float var23 = var12 - var20 - GuiStyle.PADDING.intValue() - var22;
-         float var24 = var5 + (var7 - var22) / 2.0F;
-         float var25;
-         if ((var25 = this.pickerToggledAt < 0L ? 1.0F : Mth.clamp((float)(System.currentTimeMillis() - this.pickerToggledAt) / 420.0F, 0.0F, 1.0F))
+         String hexText = this.hexText;
+         float draw = this.hexRoll.draw(menuDrawContext, font, hexText, f3, centeredTextY, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha), 1);
+         float hover = this.expandAnimation.getValue();
+         float width2 = 7.0F + hover;
+         float valueLeftPx = f3 - draw - GuiStyle.PADDING.intValue() - width2;
+         float y2 = y + (height - width2) / 2.0F;
+         float f5;
+         if ((f5 = this.pickerToggledAt < 0L ? 1.0F : Mth.clamp((float)(System.currentTimeMillis() - this.pickerToggledAt) / 420.0F, 0.0F, 1.0F))
                < 1.0F
-            && var38) {
-            float var26 = var25 * 4.0F;
-            var1.drawRoundedBorder(
-               var23 - var26,
-               var24 - var26,
-               var22 + var26 * 2.0F,
-               var22 + var26 * 2.0F,
+            && expanded) {
+            float f6 = f5 * 4.0F;
+            menuDrawContext.drawRoundedBorder(
+               valueLeftPx - f6,
+               y2 - f6,
+               width2 + f6 * 2.0F,
+               width2 + f6 * 2.0F,
                0.5F,
-               ProxyDotRadiusData.method8069(var26 * 0.6F),
-               this.shownColor.method7292(1.0F).method7294((1.0F - var25) * (1.0F - var25) * var8)
+               ProxyDotRadiusData.method8069(f6 * 0.6F),
+               this.shownColor.method7292(1.0F).method7294((1.0F - f5) * (1.0F - f5) * previewAlpha)
             );
          }
 
-         var1.drawRect(var23 + 0.5F, var24 + 0.5F, var22 - 1.0F, var22 - 1.0F, this.shownColor.method7294(var8));
-         var1.drawRoundedBorder(
-            var23,
-            var24,
-            var22,
-            var22,
+         menuDrawContext.drawRect(valueLeftPx + 0.5F, y2 + 0.5F, width2 - 1.0F, width2 - 1.0F, this.shownColor.method7294(previewAlpha));
+         menuDrawContext.drawRoundedBorder(
+            valueLeftPx,
+            y2,
+            width2,
+            width2,
             0.1F,
             ProxyDotRadiusData.INSTANCE,
-            var9.getFieldBorder().getZenithColor().method7294(var8 * 3.0F).method7295(var9.getPrimaryColor().getZenithColor().method7294(var8), var21)
+            currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 3.0F).method7295(currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha), hover)
          );
-         this.valueBounds = new BoundsData(var23, var5, var12 - var23, var7);
-         this.valueLeftPx = var23;
-      } else if (this.setting instanceof BooleanSetting var29) {
-         String var37 = this.valueText();
-         float var42 = this.valueRoll
+         this.valueBounds = new BoundsData(valueLeftPx, y, f3 - valueLeftPx, height);
+         this.valueLeftPx = valueLeftPx;
+      } else if (this.setting instanceof BooleanSetting booleanSetting) {
+         String valueText = this.valueText();
+         float draw = this.valueRoll
             .draw(
-               var1,
-               var11,
-               var37,
-               var12,
-               var14,
-               var29.isEnabled() ? var9.getTextEnable().getZenithColor().method7294(var8) : var9.getTextTertiary().getZenithColor().method7294(var8),
-               var29.isEnabled() ? 1 : -1
+               menuDrawContext,
+               font,
+               valueText,
+               f3,
+               centeredTextY,
+               booleanSetting.isEnabled() ? currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha) : currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha),
+               booleanSetting.isEnabled() ? 1 : -1
             );
-         float var45 = var12 - var42 - GuiStyle.PADDING.intValue() - 9.0F;
-         this.renderSwitch(var1, var45, var5 + (var7 - 5.0F) / 2.0F, this.toggleAnimation.method2808(var29.isEnabled() ? 1.0F : 0.0F), var8, var9);
-         this.valueBounds = new BoundsData(var45, var5, var12 - var45, var7);
+         float floatValue = f3 - draw - GuiStyle.PADDING.intValue() - 9.0F;
+         this.renderSwitch(menuDrawContext, floatValue, y + (height - 5.0F) / 2.0F, this.toggleAnimation.method2808(booleanSetting.isEnabled() ? 1.0F : 0.0F), previewAlpha, currentStyle);
+         this.valueBounds = new BoundsData(floatValue, y, f3 - floatValue, height);
       } else if (this.bindSetting == null) {
-         if (this.setting instanceof ModeSetting var28) {
-            this.renderModeValue(var1, var28, var12, var14, var5, var7, var11, var8, var9, var13);
+         if (this.setting instanceof ModeSetting modeSetting) {
+            this.renderModeValue(menuDrawContext, modeSetting, f3, centeredTextY, y, height, font, previewAlpha, currentStyle, f4);
          } else if (this.editing && this.setting instanceof TextSetting) {
-            this.renderEditing(var1, var11, var12, var14, var5, var7, var8, var9, var13);
+            this.renderEditing(menuDrawContext, font, f3, centeredTextY, y, height, previewAlpha, currentStyle, f4);
          } else {
-            ZenithColor var27 = this.valueStrong() ? var9.getTextEnable().getZenithColor() : var9.getTextTertiary().getZenithColor();
-            float var36;
-            if ((var36 = this.flashProgress()) < 1.0F) {
-               var27 = var27.method7295(var9.getPrimaryColor().getZenithColor(), (1.0F - var36) * (1.0F - var36));
+            ZenithColor zenithColor = this.valueStrong() ? currentStyle.getTextEnable().getZenithColor() : currentStyle.getTextTertiary().getZenithColor();
+            float flashProgress;
+            if ((flashProgress = this.flashProgress()) < 1.0F) {
+               zenithColor = zenithColor.method7295(currentStyle.getPrimaryColor().getZenithColor(), (1.0F - flashProgress) * (1.0F - flashProgress));
             }
 
-            float var41 = var12 + this.shakeOffset();
+            float f5 = f3 + this.shakeOffset();
             if (this.setting instanceof ButtonSetting) {
-               var41 += 1.5F * this.hoverAnimation.getValue();
+               f5 += 1.5F * this.hoverAnimation.getValue();
             }
 
-            String var44 = fit(var11, this.valueText(), var13);
-            float var47 = this.valueRoll.draw(var1, var11, var44, var41, var14, var27.method7294(var8), this.counterDirection(var44));
-            this.valueBounds = new BoundsData(var12 - Math.max(var47, 30.0F), var5, Math.max(var47, 30.0F) + 8.0F, var7);
-            this.valueLeftPx = var12 - var47;
+            String current = fit(font, this.valueText(), f4);
+            float draw = this.valueRoll.draw(menuDrawContext, font, current, f5, centeredTextY, zenithColor.method7294(previewAlpha), this.counterDirection(current));
+            this.valueBounds = new BoundsData(f3 - Math.max(draw, 30.0F), y, Math.max(draw, 30.0F) + 8.0F, height);
+            this.valueLeftPx = f3 - draw;
          }
       } else {
-         boolean var15 = this.bounds != null && this.bounds.contains(var2, var3);
-         ScreenRectangle var34 = var1.scissorStack.peek();
-         if (var34 != null) {
-            Matrix3x2fStack var17 = var1.pose();
-            float var18 = var17.m00() * var2 + var17.m10() * var3 + var17.m20();
-            float var19 = var17.m01() * var2 + var17.m11() * var3 + var17.m21();
-            var15 &= var18 >= var34.left() && var18 < var34.right() && var19 >= var34.top() && var19 < var34.bottom();
+         boolean flag = this.bounds != null && this.bounds.contains(mouseX, mouseY);
+         ScreenRectangle screenRectangle = menuDrawContext.scissorStack.peek();
+         if (screenRectangle != null) {
+            Matrix3x2fStack pose = menuDrawContext.pose();
+            float f5 = pose.m00() * mouseX + pose.m10() * mouseY + pose.m20();
+            float f6 = pose.m01() * mouseX + pose.m11() * mouseY + pose.m21();
+            flag &= f5 >= screenRectangle.left() && f5 < screenRectangle.right() && f6 >= screenRectangle.top() && f6 < screenRectangle.bottom();
          }
 
-         String var40 = BindLabel.text(this.binding, this.bindSetting.getKeyCode(), this.bindSetting.getModifiers());
-         if (var40 == null && this.setting instanceof ModuleHeaderSetting) {
-            var40 = "+";
+         String text = BindLabel.text(this.binding, this.bindSetting.getKeyCode(), this.bindSetting.getModifiers());
+         if (text == null && this.setting instanceof ModuleHeaderSetting) {
+            text = "+";
          }
 
          this.valueBounds = this.bindLabel
             .render(
-               var1,
-               var15 ? var2 : Float.NaN,
-               var15 ? var3 : Float.NaN,
-               var5,
-               var7,
-               var12,
-               var40,
+               menuDrawContext,
+               flag ? mouseX : Float.NaN,
+               flag ? mouseY : Float.NaN,
+               y,
+               height,
+               f3,
+               text,
                this.binding,
-               var11,
-               var10 + GuiStyle.PADDING.intValue(),
-               var15,
-               var8,
+               font,
+               f2 + GuiStyle.PADDING.intValue(),
+               flag,
+               previewAlpha,
                null,
-               var9
+               currentStyle
             );
-         if (var15 && this.setting instanceof ModuleHeaderSetting && this.valueBounds != null && this.valueBounds.contains(var2, var3)) {
+         if (flag && this.setting instanceof ModuleHeaderSetting && this.valueBounds != null && this.valueBounds.contains(mouseX, mouseY)) {
             HoverInfo.request(this.bindSetting.getName(), this.bindSetting.getDescription());
          }
       }
    }
 
-   private int counterDirection(String var1) {
-      byte var2 = 1;
-      if (this.lastCounter != null && !this.lastCounter.equals(var1)) {
-         int var3 = leadingNumber(this.lastCounter);
-         int var4 = leadingNumber(var1);
-         if (var3 >= 0 && var4 >= 0 && var4 < var3) {
-            var2 = -1;
+   private int counterDirection(String lastCounter) {
+      byte b = 1;
+      if (this.lastCounter != null && !this.lastCounter.equals(lastCounter)) {
+         int n = leadingNumber(this.lastCounter);
+         int leadingNumber2 = leadingNumber(lastCounter);
+         if (n >= 0 && leadingNumber2 >= 0 && leadingNumber2 < n) {
+            b = -1;
          }
       }
 
-      this.lastCounter = var1;
-      return var2;
+      this.lastCounter = lastCounter;
+      return b;
    }
 
-   private static int leadingNumber(String var0) {
-      int var1 = 0;
+   private static int leadingNumber(String lastCounter) {
+      int index = 0;
 
-      while (var1 < var0.length() && Character.isDigit(var0.charAt(var1))) {
-         var1++;
+      while (index < lastCounter.length() && Character.isDigit(lastCounter.charAt(index))) {
+         index++;
       }
 
-      return var1 != 0 && var1 <= 9 ? Integer.parseInt(var0.substring(0, var1)) : -1;
+      return index != 0 && index <= 9 ? Integer.parseInt(lastCounter.substring(0, index)) : -1;
    }
 
-   private void renderEditing(MenuDrawContext var1, Font var2, float var3, float var4, float var5, float var6, float var7, ZenithStyle var8, float var9) {
-      long var10 = System.currentTimeMillis();
-      ZenithColor var12 = var8.getPrimaryColor().getZenithColor();
-      ZenithColor var13 = var8.getTextEnable().getZenithColor().method7294(var7);
-      float var14 = 1.5F;
-      String var15 = this.editBuffer.toString();
-      String var16 = var15;
+   private void renderEditing(MenuDrawContext menuDrawContext, Font font, float f, float centeredTextY, float y, float height, float previewAlpha, ZenithStyle currentStyle, float f2) {
+      long now = System.currentTimeMillis();
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      ZenithColor zenithColor2 = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+      float f3 = 1.5F;
+      String string = this.editBuffer.toString();
+      String text = string;
 
-      while (!var16.isEmpty() && var2.width(var16) > var9 - var14 - 2.0F) {
-         var16 = var16.substring(1);
+      while (!text.isEmpty() && font.width(text) > f2 - f3 - 2.0F) {
+         text = text.substring(1);
       }
 
-      float var17 = var3 - var14 - 1.0F;
-      float var18 = var2.width(var16);
-      float var19 = var17 - var18;
-      float var20;
-      if ((var20 = this.typedAt < 0L ? 1.0F : Mth.clamp((float)(var10 - this.typedAt) / 160.0F, 0.0F, 1.0F)) < 1.0F && !var16.isEmpty()) {
-         String var21 = var16.substring(0, var16.length() - 1);
-         String var22 = var16.substring(var16.length() - 1);
-         var1.drawText(var2, var21, var19, var4, var13);
-         float var23 = 1.0F - (1.0F - var20) * (1.0F - var20);
-         var1.drawText(
-            var2, var22, var19 + var2.width(var21), var4 + (1.0F - var23) * 2.5F, var13.method7295(var12.method7294(var7), 1.0F - var23).method7294(var23)
+      float f4 = f - f3 - 1.0F;
+      float width = font.width(text);
+      float floatValue = f4 - width;
+      float f5;
+      if ((f5 = this.typedAt < 0L ? 1.0F : Mth.clamp((float)(now - this.typedAt) / 160.0F, 0.0F, 1.0F)) < 1.0F && !text.isEmpty()) {
+         String str = text.substring(0, text.length() - 1);
+         String text2 = text.substring(text.length() - 1);
+         menuDrawContext.drawText(font, str, floatValue, centeredTextY, zenithColor2);
+         float previewAlpha2 = 1.0F - (1.0F - f5) * (1.0F - f5);
+         menuDrawContext.drawText(
+            font, text2, floatValue + font.width(str), centeredTextY + (1.0F - previewAlpha2) * 2.5F, zenithColor2.method7295(zenithColor.method7294(previewAlpha), 1.0F - previewAlpha2).method7294(previewAlpha2)
          );
       } else {
-         var1.drawText(var2, var16, var19, var4, var13);
+         menuDrawContext.drawText(font, text, floatValue, centeredTextY, zenithColor2);
       }
 
-      float var24 = 0.35F + 0.65F * (0.5F + 0.5F * Mth.cos((float)var10 / 170.0F));
-      var1.drawRect(var17 + var14 - 0.5F, var4 - 0.5F, 0.6F, var2.height() + 1.0F, var12.method7294(var24 * var7));
-      float var25 = this.editStartAt < 0L ? 1.0F : Mth.clamp((float)(var10 - this.editStartAt) / 240.0F, 0.0F, 1.0F);
-      float var26 = Math.max(var18 + var14 + 2.0F, 14.0F) * (1.0F - (1.0F - var25) * (1.0F - var25));
-      var1.drawRect(var3 - var26, var4 + var2.height() + 1.0F, var26, 0.5F, var12.method7294(0.7F * var7));
-      this.valueBounds = new BoundsData(var3 - Math.max(var18, 30.0F), var5, Math.max(var18, 30.0F) + 8.0F, var6);
+      float f6 = 0.35F + 0.65F * (0.5F + 0.5F * Mth.cos((float)now / 170.0F));
+      menuDrawContext.drawRect(f4 + f3 - 0.5F, centeredTextY - 0.5F, 0.6F, font.height() + 1.0F, zenithColor.method7294(f6 * previewAlpha));
+      float f7 = this.editStartAt < 0L ? 1.0F : Mth.clamp((float)(now - this.editStartAt) / 240.0F, 0.0F, 1.0F);
+      float width2 = Math.max(width + f3 + 2.0F, 14.0F) * (1.0F - (1.0F - f7) * (1.0F - f7));
+      menuDrawContext.drawRect(f - width2, centeredTextY + font.height() + 1.0F, width2, 0.5F, zenithColor.method7294(0.7F * previewAlpha));
+      this.valueBounds = new BoundsData(f - Math.max(width, 30.0F), y, Math.max(width, 30.0F) + 8.0F, height);
    }
 
-   private void renderKeyCap(MenuDrawContext var1, float var2, float var3, Font var4, float var5, float var6, float var7, float var8, ZenithStyle var9) {
-      long var10 = System.currentTimeMillis();
-      ZenithColor var12 = var9.getPrimaryColor().getZenithColor();
-      ZenithColor var13 = var9.getTextEnable().getZenithColor();
-      String var14 = this.binding ? null : this.valueText();
-      boolean var15 = var14 != null && !"-".equals(var14);
-      float var16 = this.binding ? 17.0F : Math.max(var4.width(var14) + 6.0F, 10.0F);
+   private void renderKeyCap(MenuDrawContext menuDrawContext, float lastClickX, float lastClickY, Font font, float f, float y, float height, float previewAlpha, ZenithStyle zenithStyle) {
+      long now = System.currentTimeMillis();
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      ZenithColor zenithColor2 = zenithStyle.getTextEnable().getZenithColor();
+      String valueText = this.binding ? null : this.valueText();
+      boolean flag = valueText != null && !"-".equals(valueText);
+      float floatValue = this.binding ? 17.0F : Math.max(font.width(valueText) + 6.0F, 10.0F);
       if (!this.keyCapKnown) {
          this.keyCapKnown = true;
-         this.keyCapWidth.method2809(var16);
+         this.keyCapWidth.method2809(floatValue);
       }
 
-      float var17 = this.keyCapWidth.method2808(var16);
-      float var18 = 8.0F;
-      float var19 = 1.1F;
-      float var20 = var5 - var17 + this.shakeOffset();
-      float var21 = var6 + (var7 - var18 - var19) / 2.0F;
-      BoundsData var22 = new BoundsData(var20, var6, var17, var7);
-      boolean var23 = var22.contains(var2, var3);
-      float var24 = this.keyHover.method2808(var23 && !this.binding ? 1.0F : 0.0F);
-      long var25;
-      if ((var25 = this.keyAnim == 0 ? Long.MAX_VALUE : var10 - this.keyAnimAt) >= 720L) {
+      float width = this.keyCapWidth.method2808(floatValue);
+      float height2 = 8.0F;
+      float f2 = 1.1F;
+      float floatValue2 = f - width + this.shakeOffset();
+      float f3 = y + (height - height2 - f2) / 2.0F;
+      BoundsData boundsData = new BoundsData(floatValue2, y, width, height);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float f4 = this.keyHover.method2808(contains && !this.binding ? 1.0F : 0.0F);
+      long l;
+      if ((l = this.keyAnim == 0 ? Long.MAX_VALUE : now - this.keyAnimAt) >= 720L) {
          this.keyAnim = 0;
          this.keyFrom = null;
       }
 
-      float var27 = 0.0F;
-      if (this.keyAnim == 1 && var25 < 320L) {
-         float var28;
-         var27 = (var28 = (float)var25 / 320.0F) < 0.3F ? var28 / 0.3F : 1.0F - (var28 - 0.3F) / 0.7F;
+      float f5 = 0.0F;
+      if (this.keyAnim == 1 && l < 320L) {
+         float f6;
+         f5 = (f6 = (float)l / 320.0F) < 0.3F ? f6 / 0.3F : 1.0F - (f6 - 0.3F) / 0.7F;
       }
 
-      float var40 = var21 - var24 * 0.6F + var27 * var19;
+      float y2 = f3 - f4 * 0.6F + f5 * f2;
       if (this.binding) {
-         float var29;
-         float var30 = (var29 = (float)(var10 % 950L) / 950.0F) * 4.0F;
-         var1.drawRoundedBorder(
-            var20 - var30,
-            var40 - var30,
-            var17 + var30 * 2.0F,
-            var18 + var30 * 2.0F,
+         float f6;
+         float f7 = (f6 = (float)(now % 950L) / 950.0F) * 4.0F;
+         menuDrawContext.drawRoundedBorder(
+            floatValue2 - f7,
+            y2 - f7,
+            width + f7 * 2.0F,
+            height2 + f7 * 2.0F,
             0.5F,
-            ProxyDotRadiusData.method8069(1.5F + var30),
-            var12.method7294((1.0F - var29) * (1.0F - var29) * 0.6F * var8)
+            ProxyDotRadiusData.method8069(1.5F + f7),
+            zenithColor.method7294((1.0F - f6) * (1.0F - f6) * 0.6F * previewAlpha)
          );
       }
 
-      if (this.keyAnim == 1 && var25 < 480L) {
-         float var41 = (float)var25 / 480.0F;
-         float var43 = (1.0F - (1.0F - var41) * (1.0F - var41)) * 5.0F;
-         var1.drawRoundedBorder(
-            var20 - var43,
-            var40 - var43,
-            var17 + var43 * 2.0F,
-            var18 + var43 * 2.0F,
+      if (this.keyAnim == 1 && l < 480L) {
+         float f6 = (float)l / 480.0F;
+         float f7 = (1.0F - (1.0F - f6) * (1.0F - f6)) * 5.0F;
+         menuDrawContext.drawRoundedBorder(
+            floatValue2 - f7,
+            y2 - f7,
+            width + f7 * 2.0F,
+            height2 + f7 * 2.0F,
             0.6F,
-            ProxyDotRadiusData.method8069(1.5F + var43),
-            var12.method7295(ZenithColor.INSTANCE, 0.3F).method7294((1.0F - var41) * (1.0F - var41) * var8)
+            ProxyDotRadiusData.method8069(1.5F + f7),
+            zenithColor.method7295(ZenithColor.INSTANCE, 0.3F).method7294((1.0F - f6) * (1.0F - f6) * previewAlpha)
          );
       }
 
-      var1.drawRoundedRect(
-         var20, var21 + var19, var17, var18, ProxyDotRadiusData.method8069(1.5F), ZenithColor.INSTANCE2.method7294((0.35F + 0.15F * var24) * var8)
+      menuDrawContext.drawRoundedRect(
+         floatValue2, f3 + f2, width, height2, ProxyDotRadiusData.method8069(1.5F), ZenithColor.INSTANCE2.method7294((0.35F + 0.15F * f4) * previewAlpha)
       );
-      ZenithColor var42 = var9.getFieldSurfaceBackground().getZenithColor().method7294(2.4F).method7295(var13, 0.06F * var24);
-      ZenithColor var44 = var9.getFieldBorder().getZenithColor().method7294(4.0F).method7295(var13.method7294(0.5F), 0.4F * var24);
+      ZenithColor zenithColor3 = zenithStyle.getFieldSurfaceBackground().getZenithColor().method7294(2.4F).method7295(zenithColor2, 0.06F * f4);
+      ZenithColor zenithColor4 = zenithStyle.getFieldBorder().getZenithColor().method7294(4.0F).method7295(zenithColor2.method7294(0.5F), 0.4F * f4);
       if (this.binding) {
-         float var31 = 0.5F + 0.5F * Mth.sin((float)var10 / 170.0F);
-         var42 = var42.method7295(var12.method7294(0.35F), 0.5F + 0.25F * var31);
-         var44 = var12.method7294(0.5F + 0.5F * var31);
+         float f6 = 0.5F + 0.5F * Mth.sin((float)now / 170.0F);
+         zenithColor3 = zenithColor3.method7295(zenithColor.method7294(0.35F), 0.5F + 0.25F * f6);
+         zenithColor4 = zenithColor.method7294(0.5F + 0.5F * f6);
       }
 
-      if (this.keyAnim == 1 && var25 < 520L) {
-         float var45 = 1.0F - (float)var25 / 520.0F;
-         var42 = var42.method7295(var12.method7295(ZenithColor.INSTANCE, 0.35F), 0.6F * var45 * var45);
-         var44 = var44.method7295(var12, var45);
+      if (this.keyAnim == 1 && l < 520L) {
+         float hover = 1.0F - (float)l / 520.0F;
+         zenithColor3 = zenithColor3.method7295(zenithColor.method7295(ZenithColor.INSTANCE, 0.35F), 0.6F * hover * hover);
+         zenithColor4 = zenithColor4.method7295(zenithColor, hover);
       }
 
-      var1.drawRoundedRect(var20, var40, var17, var18, ProxyDotRadiusData.method8069(1.5F), var42.method7294(var8));
-      var1.drawRoundedBorder(var20, var40, var17, var18, 0.1F, ProxyDotRadiusData.method8069(1.5F), var44.method7294(var8));
-      float var46 = var20 + var17 / 2.0F;
-      float var32 = var40 + (var18 - var4.height()) / 2.0F;
+      menuDrawContext.drawRoundedRect(floatValue2, y2, width, height2, ProxyDotRadiusData.method8069(1.5F), zenithColor3.method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(floatValue2, y2, width, height2, 0.1F, ProxyDotRadiusData.method8069(1.5F), zenithColor4.method7294(previewAlpha));
+      float f6 = floatValue2 + width / 2.0F;
+      float f7 = y2 + (height2 - font.height()) / 2.0F;
       if (this.binding) {
-         for (int var33 = 0; var33 < 3; var33++) {
-            float var34 = Math.max(0.0F, Mth.sin((float)var10 / 130.0F - var33 * 0.9F)) * 1.2F;
-            var1.drawRoundedRect(
-               var46 + (var33 - 1) * 2.8F - 0.6F,
-               var40 + var18 / 2.0F - 0.6F - var34,
+         for (int i = 0; i < 3; i++) {
+            float f8 = Math.max(0.0F, Mth.sin((float)now / 130.0F - i * 0.9F)) * 1.2F;
+            menuDrawContext.drawRoundedRect(
+               f6 + (i - 1) * 2.8F - 0.6F,
+               y2 + height2 / 2.0F - 0.6F - f8,
                1.2F,
                1.2F,
                ProxyDotRadiusData.method8069(0.6F),
-               var12.method7295(ZenithColor.INSTANCE, 0.3F).method7294(var8)
+               zenithColor.method7295(ZenithColor.INSTANCE, 0.3F).method7294(previewAlpha)
             );
          }
       } else {
-         ZenithColor var47 = (var15 ? var13 : var9.getTextTertiary().getZenithColor()).method7295(var13, 0.3F * var24);
+         ZenithColor zenithColor5 = (flag ? zenithColor2 : zenithStyle.getTextTertiary().getZenithColor()).method7295(zenithColor2, 0.3F * f4);
          if (this.keyAnim == 2 && this.keyFrom != null) {
-            drawKeyLetters(var1, var4, this.keyFrom, var46, var32, var25, var47.method7294(var8), var12, 2);
+            drawKeyLetters(menuDrawContext, font, this.keyFrom, f6, f7, l, zenithColor5.method7294(previewAlpha), zenithColor, 2);
          }
 
-         long var49 = this.keyAnim == 2 ? var25 - 150L : (this.keyAnim == 1 ? var25 - 60L : Long.MAX_VALUE);
-         drawKeyLetters(var1, var4, var14, var46, var32, var49, var47.method7294(var8), var12, this.keyAnim == 1 ? 1 : 0);
+         long l2 = this.keyAnim == 2 ? l - 150L : (this.keyAnim == 1 ? l - 60L : Long.MAX_VALUE);
+         drawKeyLetters(menuDrawContext, font, valueText, f6, f7, l2, zenithColor5.method7294(previewAlpha), zenithColor, this.keyAnim == 1 ? 1 : 0);
       }
 
-      if (this.keyAnim == 1 && var25 < 460L) {
-         float var48 = (float)var25 / 460.0F;
-         float var50 = 1.0F - (1.0F - var48) * (1.0F - var48) * (1.0F - var48);
-         float var35 = var40 + var18 / 2.0F;
+      if (this.keyAnim == 1 && l < 460L) {
+         float f8 = (float)l / 460.0F;
+         float f9 = 1.0F - (1.0F - f8) * (1.0F - f8) * (1.0F - f8);
+         float f10 = y2 + height2 / 2.0F;
 
-         for (int var36 = 0; var36 < 6; var36++) {
-            float var37 = (var36 * 60.0F + 30.0F) * (float) (Math.PI / 180.0);
-            float var38 = var50 * (var17 / 2.0F + 4.0F + var36 % 2 * 2.0F);
-            float var39;
-            if (!((var39 = 1.2F * (1.0F - var48)) < 0.05F)) {
-               var1.drawRoundedRect(
-                  var46 + Mth.cos(var37) * var38 - var39 / 2.0F,
-                  var35 + Mth.sin(var37) * var38 * 0.7F - var39 / 2.0F,
-                  var39,
-                  var39,
-                  ProxyDotRadiusData.method8069(var39 / 2.0F),
-                  (var36 % 2 == 0 ? var12 : var12.method7295(ZenithColor.INSTANCE, 0.5F)).method7294((1.0F - var48) * var8)
+         for (int i = 0; i < 6; i++) {
+            float f11 = (i * 60.0F + 30.0F) * (float) (Math.PI / 180.0);
+            float f12 = f9 * (width / 2.0F + 4.0F + i % 2 * 2.0F);
+            float width2;
+            if (!((width2 = 1.2F * (1.0F - f8)) < 0.05F)) {
+               menuDrawContext.drawRoundedRect(
+                  f6 + Mth.cos(f11) * f12 - width2 / 2.0F,
+                  f10 + Mth.sin(f11) * f12 * 0.7F - width2 / 2.0F,
+                  width2,
+                  width2,
+                  ProxyDotRadiusData.method8069(width2 / 2.0F),
+                  (i % 2 == 0 ? zenithColor : zenithColor.method7295(ZenithColor.INSTANCE, 0.5F)).method7294((1.0F - f8) * previewAlpha)
                );
             }
          }
       }
 
-      this.valueBounds = new BoundsData(var5 - var17, var6, var17, var7);
+      this.valueBounds = new BoundsData(f - width, y, width, height);
    }
 
    private static void drawKeyLetters(
-      MenuDrawContext var0, Font var1, String var2, float var3, float var4, long var5, ZenithColor var7, ZenithColor var8, int var9
+      MenuDrawContext menuDrawContext, Font font, String keyFrom, float f, float f2, long l, ZenithColor zenithColor, ZenithColor zenithColor2, int n
    ) {
-      float var10 = var3 - var1.width(var2) / 2.0F;
-      int var11 = var2.length();
-      boolean var12 = var9 == 1;
-      boolean var13 = var9 == 2;
+      float f3 = f - font.width(keyFrom) / 2.0F;
+      int length = keyFrom.length();
+      boolean flag = n == 1;
+      boolean flag2 = n == 2;
 
-      for (int var14 = 0; var14 < var11; var14++) {
-         String var15 = String.valueOf(var2.charAt(var14));
-         float var16 = var1.width(var15);
-         float var17 = 0.0F;
-         float var18 = 0.0F;
-         float var19 = 1.0F;
-         ZenithColor var20 = var7;
-         if (var5 != Long.MAX_VALUE) {
-            if (var12) {
-               float var21 = Mth.clamp((float)(var5 - var14 * 35L) / 420.0F, 0.0F, 1.0F);
-               var18 = -4.0F * (float)(Math.exp(-7.0F * var21) * Math.cos(11.0F * var21));
-               var19 = Math.min(1.0F, var21 * 4.0F);
-               var20 = var7.method7295(var8.method7295(ZenithColor.INSTANCE, 0.5F).method7293(var7.getIntValue4()), (1.0F - var21) * (1.0F - var21));
-            } else if (var13) {
-               float var25 = Mth.clamp((float)(var5 - (var11 - 1 - var14) * 28L) / 340.0F, 0.0F, 1.0F);
-               var18 = 4.5F * var25 * var25;
-               int var24;
-               int var27;
-               var17 = (
+      for (int i = 0; i < length; i++) {
+         String text = String.valueOf(keyFrom.charAt(i));
+         float width = font.width(text);
+         float f4 = 0.0F;
+         float f5 = 0.0F;
+         float previewAlpha = 1.0F;
+         ZenithColor zenithColor3 = zenithColor;
+         if (l != Long.MAX_VALUE) {
+            if (flag) {
+               float f6 = Mth.clamp((float)(l - i * 35L) / 420.0F, 0.0F, 1.0F);
+               f5 = -4.0F * (float)(Math.exp(-7.0F * f6) * Math.cos(11.0F * f6));
+               previewAlpha = Math.min(1.0F, f6 * 4.0F);
+               zenithColor3 = zenithColor.method7295(zenithColor2.method7295(ZenithColor.INSTANCE, 0.5F).method7293(zenithColor.getIntValue4()), (1.0F - f6) * (1.0F - f6));
+            } else if (flag2) {
+               float f6 = Mth.clamp((float)(l - (length - 1 - i) * 28L) / 340.0F, 0.0F, 1.0F);
+               f5 = 4.5F * f6 * f6;
+               int n2;
+               int n3;
+               f4 = (
                      (
                               (
-                                    (var27 = ((var24 = (var14 * 31 + var11) * (10196 << 16 | (char)-5331)) ^ var24 >>> 15) * (-31253 << 16 | (char)-13717))
-                                       ^ var27 >>> 13
+                                    (n3 = ((n2 = (i * 31 + length) * (10196 << 16 | (char)-5331)) ^ n2 >>> 15) * (-31253 << 16 | (char)-13717))
+                                       ^ n3 >>> 13
                                  )
                                  >>> 8
                            )
@@ -759,118 +759,118 @@ public class InspectorRow implements MouseBindTarget {
                         - 0.5F
                   )
                   * 3.5F
-                  * var25;
-               var19 = 1.0F - var25;
+                  * f6;
+               previewAlpha = 1.0F - f6;
             } else {
-               float var26 = Mth.clamp((float)(var5 - var14 * 18L) / 200.0F, 0.0F, 1.0F);
-               float var22;
-               var18 = (var22 = 1.0F - var26) * var22 * var22 * 3.0F;
-               var19 = var26;
+               float f6 = Mth.clamp((float)(l - i * 18L) / 200.0F, 0.0F, 1.0F);
+               float f7;
+               f5 = (f7 = 1.0F - f6) * f7 * f7 * 3.0F;
+               previewAlpha = f6;
             }
          }
 
-         if (var19 > 0.01F) {
-            var0.drawText(var1, var15, var10 + var17, var4 + var18, var20.method7294(var19));
+         if (previewAlpha > 0.01F) {
+            menuDrawContext.drawText(font, text, f3 + f4, f2 + f5, zenithColor3.method7294(previewAlpha));
          }
 
-         var10 += var16;
+         f3 += width;
       }
    }
 
-   private static float hash01(int var0) {
-      int var1;
-      int var2;
-      return (((var2 = ((var1 = var0 * (10196 << 16 | (char)-5331)) ^ var1 >>> 15) * (-31253 << 16 | (char)-13717)) ^ var2 >>> 13) >>> 8) / 1.6777216E7F;
+   private static float hash01(int n) {
+      int n2;
+      int n3;
+      return (((n3 = ((n2 = n * (10196 << 16 | (char)-5331)) ^ n2 >>> 15) * (-31253 << 16 | (char)-13717)) ^ n3 >>> 13) >>> 8) / 1.6777216E7F;
    }
 
    private void renderTrack(
-      MenuDrawContext var1,
-      float var2,
-      float var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      String var8,
-      Font var9,
-      float var10,
-      float var11,
-      float var12,
-      ZenithStyle var13
+      MenuDrawContext menuDrawContext,
+      float mouseX,
+      float mouseY,
+      float y,
+      float height,
+      float previewAlpha,
+      float springNumber,
+      String numberText,
+      Font font,
+      float centeredTextY,
+      float f,
+      float f2,
+      ZenithStyle currentStyle
    ) {
-      ZenithColor var14 = var13.getPrimaryColor().getZenithColor();
-      float var15 = this.dragAnimation.method2808(this.dragging ? 1.0F : 0.0F);
-      ZenithColor var16 = var13.getTextEnable().getZenithColor().method7295(var14, var15 * 0.6F);
-      this.valueRoll.draw(var1, var9, var8, var11, var10, var16.method7294(var6), this.numberDirection);
-      float var17 = var11 - 30.0F;
-      this.trackSpanPx = Float.isNaN(this.sharedTrackSpan) ? Mth.clamp(var17 - var12 - GuiStyle.PADDING.intValue(), 18.0F, 34.0F) : this.sharedTrackSpan;
-      this.trackLeftPx = var17 - this.trackSpanPx;
-      boolean var18 = this.bounds != null && this.trackBounds(var4, var5).method8092(var2, var3, 4.0F);
-      float var19 = Math.max(var15, var18 ? 0.4F : 0.0F);
-      float var20 = 1.0F + 0.5F * var15;
-      float var21 = var4 + var5 / 2.0F - var20 / 2.0F;
-      var1.drawRect(this.trackLeftPx, var21, this.trackSpanPx, var20, var13.getFieldBorder().getZenithColor().method7294(var6 * 3.0F));
-      float var22;
-      if ((var22 = this.edgeHitAt < 0L ? 1.0F : Mth.clamp((float)(System.currentTimeMillis() - this.edgeHitAt) / 380.0F, 0.0F, 1.0F)) >= 1.0F) {
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      float f3 = this.dragAnimation.method2808(this.dragging ? 1.0F : 0.0F);
+      ZenithColor zenithColor2 = currentStyle.getTextEnable().getZenithColor().method7295(zenithColor, f3 * 0.6F);
+      this.valueRoll.draw(menuDrawContext, font, numberText, f, centeredTextY, zenithColor2.method7294(previewAlpha), this.numberDirection);
+      float f4 = f - 30.0F;
+      this.trackSpanPx = Float.isNaN(this.sharedTrackSpan) ? Mth.clamp(f4 - f2 - GuiStyle.PADDING.intValue(), 18.0F, 34.0F) : this.sharedTrackSpan;
+      this.trackLeftPx = f4 - this.trackSpanPx;
+      boolean flag = this.bounds != null && this.trackBounds(y, height).method8092(mouseX, mouseY, 4.0F);
+      float f5 = Math.max(f3, flag ? 0.4F : 0.0F);
+      float height2 = 1.0F + 0.5F * f3;
+      float y2 = y + height / 2.0F - height2 / 2.0F;
+      menuDrawContext.drawRect(this.trackLeftPx, y2, this.trackSpanPx, height2, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 3.0F));
+      float f6;
+      if ((f6 = this.edgeHitAt < 0L ? 1.0F : Mth.clamp((float)(System.currentTimeMillis() - this.edgeHitAt) / 380.0F, 0.0F, 1.0F)) >= 1.0F) {
          this.edgeHitAt = -1L;
       }
 
-      float var23 = var22 >= 1.0F ? 0.0F : Mth.sin(var22 * (float) Math.PI * 3.0F) * (1.0F - var22) * 2.2F * this.edgeSide;
-      float var24 = Mth.clamp(var7, 0.0F, 1.0F);
-      float var25 = this.trackLeftPx + this.trackSpanPx * var24 + var23;
-      var1.drawRect(this.trackLeftPx, var21, Math.max(0.0F, var25 - this.trackLeftPx), var20, var14.method7294(var6));
-      if (var22 < 1.0F) {
-         float var26 = this.edgeSide < 0 ? this.trackLeftPx : this.trackLeftPx + this.trackSpanPx;
-         float var27 = 3.5F * (1.0F - var22) + 1.0F;
-         var1.drawRoundedRect(
-            var26 - var27,
-            var4 + var5 / 2.0F - var27,
-            var27 * 2.0F,
-            var27 * 2.0F,
-            ProxyDotRadiusData.method8069(var27),
-            var14.method7294(0.35F * (1.0F - var22) * var6)
+      float f7 = f6 >= 1.0F ? 0.0F : Mth.sin(f6 * (float) Math.PI * 3.0F) * (1.0F - f6) * 2.2F * this.edgeSide;
+      float f8 = Mth.clamp(springNumber, 0.0F, 1.0F);
+      float f9 = this.trackLeftPx + this.trackSpanPx * f8 + f7;
+      menuDrawContext.drawRect(this.trackLeftPx, y2, Math.max(0.0F, f9 - this.trackLeftPx), height2, zenithColor.method7294(previewAlpha));
+      if (f6 < 1.0F) {
+         float trackLeftPx = this.edgeSide < 0 ? this.trackLeftPx : this.trackLeftPx + this.trackSpanPx;
+         float intValue = 3.5F * (1.0F - f6) + 1.0F;
+         menuDrawContext.drawRoundedRect(
+            trackLeftPx - intValue,
+            y + height / 2.0F - intValue,
+            intValue * 2.0F,
+            intValue * 2.0F,
+            ProxyDotRadiusData.method8069(intValue),
+            zenithColor.method7294(0.35F * (1.0F - f6) * previewAlpha)
          );
       }
 
-      float var29 = 5.0F + 2.0F * var19;
-      float var30 = 1.5F + 0.5F * var19;
-      if (var15 > 0.01F) {
-         float var28 = 3.0F + 1.5F * var15;
-         var1.drawRoundedRect(
-            var25 - var28 + var30 / 2.0F,
-            var4 + var5 / 2.0F - var28,
-            var28 * 2.0F,
-            var28 * 2.0F,
-            ProxyDotRadiusData.method8069(var28),
-            var14.method7294(0.22F * var15 * var6)
+      float height3 = 5.0F + 2.0F * f5;
+      float width = 1.5F + 0.5F * f5;
+      if (f3 > 0.01F) {
+         float intValue = 3.0F + 1.5F * f3;
+         menuDrawContext.drawRoundedRect(
+            f9 - intValue + width / 2.0F,
+            y + height / 2.0F - intValue,
+            intValue * 2.0F,
+            intValue * 2.0F,
+            ProxyDotRadiusData.method8069(intValue),
+            zenithColor.method7294(0.22F * f3 * previewAlpha)
          );
       }
 
-      var1.drawRect(
-         var25 - var30 / 2.0F + 0.25F, var4 + var5 / 2.0F - var29 / 2.0F, var30, var29, var14.method7295(ZenithColor.INSTANCE, 0.25F * var15).method7294(var6)
+      menuDrawContext.drawRect(
+         f9 - width / 2.0F + 0.25F, y + height / 2.0F - height3 / 2.0F, width, height3, zenithColor.method7295(ZenithColor.INSTANCE, 0.25F * f3).method7294(previewAlpha)
       );
    }
 
-   private float springNumber(SliderSetting var1) {
-      float var2;
-      float var3 = (var2 = var1.getMax() - var1.getMin()) <= 0.0F ? 0.0F : (var1.getValue3() - var1.getMin()) / var2;
+   private float springNumber(SliderSetting sliderSetting) {
+      float f;
+      float springPos = (f = sliderSetting.getMax() - sliderSetting.getMin()) <= 0.0F ? 0.0F : (sliderSetting.getValue3() - sliderSetting.getMin()) / f;
       if (Float.isNaN(this.springPos)) {
-         this.springPos = var3;
+         this.springPos = springPos;
          this.springVel = 0.0F;
-         return var3;
+         return springPos;
       } else {
-         float var4 = this.frameDt;
-         float var5 = 0.004166667F;
+         float frameDt = this.frameDt;
+         float f2 = 0.004166667F;
 
-         while (var4 > 0.0F) {
-            float var6 = Math.min(var5, var4);
-            this.springVel = this.springVel + (380.0F * (var3 - this.springPos) - 30.0F * this.springVel) * var6;
-            this.springPos = this.springPos + this.springVel * var6;
-            var4 -= var6;
+         while (frameDt > 0.0F) {
+            float f3 = Math.min(f2, frameDt);
+            this.springVel = this.springVel + (380.0F * (springPos - this.springPos) - 30.0F * this.springVel) * f3;
+            this.springPos = this.springPos + this.springVel * f3;
+            frameDt -= f3;
          }
 
-         if (Math.abs(var3 - this.springPos) < 5.0E-4F && Math.abs(this.springVel) < 0.002F) {
-            this.springPos = var3;
+         if (Math.abs(springPos - this.springPos) < 5.0E-4F && Math.abs(this.springVel) < 0.002F) {
+            this.springPos = springPos;
             this.springVel = 0.0F;
          }
 
@@ -878,51 +878,51 @@ public class InspectorRow implements MouseBindTarget {
       }
    }
 
-   private float labelLimit(float var1, float var2, float var3) {
-      float var4 = var1 + var2 - 8.0F - var3;
-      Font var6 = Fonts.NEW_MEDIUM.getFont(5.01F);
-      float var5;
+   private float labelLimit(float f, float width, float f2) {
+      float f3 = f + width - 8.0F - f2;
+      Font font = Fonts.NEW_MEDIUM.getFont(5.01F);
+      float f4;
       if (this.setting instanceof SliderSetting) {
-         float var8 = Float.isNaN(this.sharedTrackSpan) ? 18.0F : this.sharedTrackSpan;
-         var5 = 30.0F + var8;
+         float sharedTrackSpan = Float.isNaN(this.sharedTrackSpan) ? 18.0F : this.sharedTrackSpan;
+         f4 = 30.0F + sharedTrackSpan;
       } else if (this.setting instanceof BooleanSetting) {
-         Localization var9 = Zenith.getInstance().getLocalization();
-         var5 = Math.max(var6.width(var9.translate("gui.inspector.on")), var6.width(var9.translate("gui.inspector.off"))) + GuiStyle.PADDING.intValue() + 9.0F;
+         Localization localization = Zenith.getInstance().getLocalization();
+         f4 = Math.max(font.width(localization.translate("gui.inspector.on")), font.width(localization.translate("gui.inspector.off"))) + GuiStyle.PADDING.intValue() + 9.0F;
       } else if (this.setting instanceof ColorSetting) {
-         var5 = var6.width("FFFFFF") + GuiStyle.PADDING.intValue() + 7.0F + 1.0F;
+         f4 = font.width("FFFFFF") + GuiStyle.PADDING.intValue() + 7.0F + 1.0F;
       } else if (this.bindSetting != null) {
-         String var10 = BindLabel.text(this.binding, this.bindSetting.getKeyCode(), this.bindSetting.getModifiers());
-         var5 = Math.max(30.0F, var6.width(var10 == null ? "+" : var10));
-      } else if (this.setting instanceof ModeSetting var7) {
-         String var12 = this.expanded ? String.valueOf(var7.getValues().size()) : (var7.getValue2() == null ? "—" : var7.getValue2().getName());
-         var5 = Math.min(Math.max(0.0F, var4 * 0.45F), Math.max(10.0F, var6.width(var12)));
+         String text = BindLabel.text(this.binding, this.bindSetting.getKeyCode(), this.bindSetting.getModifiers());
+         f4 = Math.max(30.0F, font.width(text == null ? "+" : text));
+      } else if (this.setting instanceof ModeSetting modeSetting) {
+         String name = this.expanded ? String.valueOf(modeSetting.getValues().size()) : (modeSetting.getValue2() == null ? "—" : modeSetting.getValue2().getName());
+         f4 = Math.min(Math.max(0.0F, f3 * 0.45F), Math.max(10.0F, font.width(name)));
       } else {
-         var5 = Math.max(30.0F, Math.min(var6.width(this.valueText()), var4 * 0.45F));
+         f4 = Math.max(30.0F, Math.min(font.width(this.valueText()), f3 * 0.45F));
       }
 
-      return Math.max(0.0F, var4 - var5 - GuiStyle.PADDING.intValue() - (this.expandable() ? 7.0F : 0.0F));
+      return Math.max(0.0F, f3 - f4 - GuiStyle.PADDING.intValue() - (this.expandable() ? 7.0F : 0.0F));
    }
 
-   private void renderSwitch(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6) {
-      var1.drawRect(var2, var3, 9.0F, 5.0F, var6.getFieldSurfaceBackground().getZenithColor().method7294(var5 * 3.0F));
-      var1.drawRoundedBorder(var2, var3, 9.0F, 5.0F, 0.1F, ProxyDotRadiusData.INSTANCE, var6.getFieldBorder().getZenithColor().method7294(var5 * 4.0F));
-      float var7 = var4 < 0.5F ? 2.0F * var4 * var4 : 1.0F - (float)Math.pow(-2.0F * var4 + 2.0F, 2.0) / 2.0F;
-      float var8 = 3.0F + 1.8F * Mth.sin(var4 * (float) Math.PI);
-      float var9 = Mth.lerp(var7, var2 + 1.0F, var2 + 9.0F - var8 - 1.0F);
-      ZenithColor var10 = var6.getTextTertiary().getZenithColor();
-      ZenithColor var11 = var6.getPrimaryColor().getZenithColor();
-      var1.drawRect(var9, var3 + 1.0F, var8, 3.0F, var10.method7295(var11, var4).method7294(var5));
-      float var12;
-      if ((var12 = this.flashProgress()) < 1.0F && var4 > 0.5F) {
-         float var13 = var12 * 4.0F;
-         var1.drawRoundedBorder(
-            var2 - var13,
-            var3 - var13,
-            9.0F + var13 * 2.0F,
-            5.0F + var13 * 2.0F,
+   private void renderSwitch(MenuDrawContext menuDrawContext, float floatValue, float y, float hover, float previewAlpha, ZenithStyle currentStyle) {
+      menuDrawContext.drawRect(floatValue, y, 9.0F, 5.0F, currentStyle.getFieldSurfaceBackground().getZenithColor().method7294(previewAlpha * 3.0F));
+      menuDrawContext.drawRoundedBorder(floatValue, y, 9.0F, 5.0F, 0.1F, ProxyDotRadiusData.INSTANCE, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 4.0F));
+      float alpha1 = hover < 0.5F ? 2.0F * hover * hover : 1.0F - (float)Math.pow(-2.0F * hover + 2.0F, 2.0) / 2.0F;
+      float width = 3.0F + 1.8F * Mth.sin(hover * (float) Math.PI);
+      float f = Mth.lerp(alpha1, floatValue + 1.0F, floatValue + 9.0F - width - 1.0F);
+      ZenithColor zenithColor = currentStyle.getTextTertiary().getZenithColor();
+      ZenithColor zenithColor2 = currentStyle.getPrimaryColor().getZenithColor();
+      menuDrawContext.drawRect(f, y + 1.0F, width, 3.0F, zenithColor.method7295(zenithColor2, hover).method7294(previewAlpha));
+      float flashProgress;
+      if ((flashProgress = this.flashProgress()) < 1.0F && hover > 0.5F) {
+         float f2 = flashProgress * 4.0F;
+         menuDrawContext.drawRoundedBorder(
+            floatValue - f2,
+            y - f2,
+            9.0F + f2 * 2.0F,
+            5.0F + f2 * 2.0F,
             0.5F,
-            ProxyDotRadiusData.method8069(var13 * 0.7F),
-            var11.method7294((1.0F - var12) * (1.0F - var12) * 0.8F * var5)
+            ProxyDotRadiusData.method8069(f2 * 0.7F),
+            zenithColor2.method7294((1.0F - flashProgress) * (1.0F - flashProgress) * 0.8F * previewAlpha)
          );
       }
    }
@@ -931,12 +931,12 @@ public class InspectorRow implements MouseBindTarget {
       if (this.flashAt < 0L) {
          return 1.0F;
       } else {
-         float var1;
-         if ((var1 = Mth.clamp((float)(System.currentTimeMillis() - this.flashAt) / 520.0F, 0.0F, 1.0F)) >= 1.0F) {
+         float f;
+         if ((f = Mth.clamp((float)(System.currentTimeMillis() - this.flashAt) / 520.0F, 0.0F, 1.0F)) >= 1.0F) {
             this.flashAt = -1L;
          }
 
-         return var1;
+         return f;
       }
    }
 
@@ -944,49 +944,49 @@ public class InspectorRow implements MouseBindTarget {
       if (this.shakeAt < 0L) {
          return 0.0F;
       } else {
-         float var1;
-         if ((var1 = Mth.clamp((float)(System.currentTimeMillis() - this.shakeAt) / 360.0F, 0.0F, 1.0F)) >= 1.0F) {
+         float f;
+         if ((f = Mth.clamp((float)(System.currentTimeMillis() - this.shakeAt) / 360.0F, 0.0F, 1.0F)) >= 1.0F) {
             this.shakeAt = -1L;
             return 0.0F;
          } else {
-            return Mth.sin(var1 * (float) Math.PI * 6.0F) * 2.0F * (1.0F - var1);
+            return Mth.sin(f * (float) Math.PI * 6.0F) * 2.0F * (1.0F - f);
          }
       }
    }
 
-   private void renderFlash(MenuDrawContext var1, float var2, float var3, float var4, float var5, long var6, float var8, ZenithStyle var9) {
+   private void renderFlash(MenuDrawContext menuDrawContext, float floatValue, float y, float width, float height, long now, float f, ZenithStyle currentStyle) {
       if (this.flashAt >= 0L) {
-         float var10;
-         if (!((var10 = Mth.clamp((float)(var6 - this.flashAt) / 520.0F, 0.0F, 1.0F)) >= 1.0F)) {
-            ZenithColor var11 = var9.getPrimaryColor().getZenithColor();
-            var1.drawRect(var2, var3, var4, var5, var11.method7294(0.07F * (1.0F - var10) * var8));
-            float var12 = 1.0F - (1.0F - var10) * (1.0F - var10);
-            float var13 = var2 - 20.0F + (var4 + 40.0F) * var12;
-            float var14 = 18.0F;
-            float var15;
-            if (!((var15 = 0.16F * Mth.sin(var10 * (float) Math.PI) * var8) <= 0.002F)) {
-               ZenithColor var16 = var11.method7294(0.0F);
-               ZenithColor var17 = var11.method7295(ZenithColor.INSTANCE, 0.3F).method7294(var15);
-               band(var1, var13 - var14, var13, var2, var3, var4, var5, var16, var17);
-               band(var1, var13, var13 + var14, var2, var3, var4, var5, var17, var16);
+         float f2;
+         if (!((f2 = Mth.clamp((float)(now - this.flashAt) / 520.0F, 0.0F, 1.0F)) >= 1.0F)) {
+            ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+            menuDrawContext.drawRect(floatValue, y, width, height, zenithColor.method7294(0.07F * (1.0F - f2) * f));
+            float f3 = 1.0F - (1.0F - f2) * (1.0F - f2);
+            float f4 = floatValue - 20.0F + (width + 40.0F) * f3;
+            float f5 = 18.0F;
+            float previewAlpha;
+            if (!((previewAlpha = 0.16F * Mth.sin(f2 * (float) Math.PI) * f) <= 0.002F)) {
+               ZenithColor zenithColor2 = zenithColor.method7294(0.0F);
+               ZenithColor zenithColor3 = zenithColor.method7295(ZenithColor.INSTANCE, 0.3F).method7294(previewAlpha);
+               band(menuDrawContext, f4 - f5, f4, floatValue, y, width, height, zenithColor2, zenithColor3);
+               band(menuDrawContext, f4, f4 + f5, floatValue, y, width, height, zenithColor3, zenithColor2);
             }
          }
       }
    }
 
-   private static void band(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5, float var6, ZenithColor var7, ZenithColor var8) {
-      float var9 = Math.max(var1, var3);
-      float var10;
-      if (!((var10 = Math.min(var2, var3 + var5)) - var9 <= 0.1F)) {
-         float var11 = var2 - var1;
-         ZenithColor var12 = var7.method7295(var8, (var9 - var1) / var11);
-         ZenithColor var13 = var7.method7295(var8, (var10 - var1) / var11);
-         var0.drawRoundedRect(var9, var4, var10 - var9, var6, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(var12, var12, var13, var13));
+   private static void band(MenuDrawContext menuDrawContext, float f, float f2, float floatValue, float y, float width, float height, ZenithColor zenithColor, ZenithColor zenithColor2) {
+      float floatValue2 = Math.max(f, floatValue);
+      float f3;
+      if (!((f3 = Math.min(f2, floatValue + width)) - floatValue2 <= 0.1F)) {
+         float f4 = f2 - f;
+         ZenithColor clientColor = zenithColor.method7295(zenithColor2, (floatValue2 - f) / f4);
+         ZenithColor zenithColor3 = zenithColor.method7295(zenithColor2, (f3 - f) / f4);
+         menuDrawContext.drawRoundedRect(floatValue2, y, f3 - floatValue2, height, ProxyDotRadiusData.INSTANCE, GlowColor.method8096(clientColor, clientColor, zenithColor3, zenithColor3));
       }
    }
 
-   private BoundsData trackBounds(float var1, float var2) {
-      return new BoundsData(this.trackLeftPx, var1, this.trackSpanPx, var2);
+   private BoundsData trackBounds(float y, float height) {
+      return new BoundsData(this.trackLeftPx, y, this.trackSpanPx, height);
    }
 
    private String label() {
@@ -994,108 +994,108 @@ public class InspectorRow implements MouseBindTarget {
    }
 
    private boolean valueStrong() {
-      if (this.setting instanceof BooleanSetting var3) {
-         return var3.isEnabled();
+      if (this.setting instanceof BooleanSetting booleanSetting) {
+         return booleanSetting.isEnabled();
       } else {
-         return this.setting instanceof BindSetting var1 ? var1.getKeyCode() != -1 : true;
+         return this.setting instanceof BindSetting bindSetting ? bindSetting.getKeyCode() != -1 : true;
       }
    }
 
    private String valueText() {
-      if (this.setting instanceof BooleanSetting var11) {
-         return Zenith.getInstance().getLocalization().translate(var11.isEnabled() ? "gui.inspector.on" : "gui.inspector.off");
-      } else if (this.setting instanceof ModeSetting var10) {
-         return var10.getValue2() == null ? "-" : var10.getValue2().getName().toLowerCase(Locale.ROOT);
-      } else if (this.setting instanceof BindSetting var9) {
+      if (this.setting instanceof BooleanSetting booleanSetting) {
+         return Zenith.getInstance().getLocalization().translate(booleanSetting.isEnabled() ? "gui.inspector.on" : "gui.inspector.off");
+      } else if (this.setting instanceof ModeSetting modeSetting) {
+         return modeSetting.getValue2() == null ? "-" : modeSetting.getValue2().getName().toLowerCase(Locale.ROOT);
+      } else if (this.setting instanceof BindSetting bindSetting) {
          if (this.binding) {
             return "...";
          } else {
-            int var20;
-            if ((var20 = var9.getKeyCode()) != -1 && var20 != 0) {
+            int keyCode;
+            if ((keyCode = bindSetting.getKeyCode()) != -1 && keyCode != 0) {
                try {
-                  String var21 = KeyName.method6702(var20, var9.getModifiers());
-                  return var21 != null && !var21.isBlank() ? var21.toUpperCase() : "-";
-               } catch (Exception var5) {
+                  String str = KeyName.method6702(keyCode, bindSetting.getModifiers());
+                  return str != null && !str.isBlank() ? str.toUpperCase() : "-";
+               } catch (Exception e) {
                   return "-";
                }
             } else {
                return "-";
             }
          }
-      } else if (this.setting instanceof MultiSelectSetting var8) {
-         int var19 = 0;
+      } else if (this.setting instanceof MultiSelectSetting multiSelectSetting) {
+         int n = 0;
 
-         for (MultiSelectSetting.Entry var4 : var8.getItems2()) {
-            if (var4.isEnabled()) {
-               var19++;
+         for (MultiSelectSetting.Entry entry : multiSelectSetting.getItems2()) {
+            if (entry.isEnabled()) {
+               n++;
             }
          }
 
-         return var19 + "/" + var8.getItems2().size();
-      } else if (this.setting instanceof GroupSetting var7) {
-         return String.valueOf(var7.getSettings().size());
-      } else if (this.setting instanceof TextSetting var6) {
+         return n + "/" + multiSelectSetting.getItems2().size();
+      } else if (this.setting instanceof GroupSetting groupSetting) {
+         return String.valueOf(groupSetting.getSettings().size());
+      } else if (this.setting instanceof TextSetting textSetting) {
          if (this.editing) {
             return this.editBuffer + "_";
          } else {
-            String var18 = var6.getValue();
-            return var18 != null && !var18.isBlank() ? var18 : "-";
+            String str = textSetting.getValue();
+            return str != null && !str.isBlank() ? str : "-";
          }
-      } else if (this.setting instanceof BlockListSetting var1) {
-         return String.valueOf(var1.getItems().size());
+      } else if (this.setting instanceof BlockListSetting blockListSetting) {
+         return String.valueOf(blockListSetting.getItems().size());
       } else {
          return this.setting instanceof ButtonSetting ? "›" : "";
       }
    }
 
-   private static String fit(Font var0, String var1, float var2) {
-      if (var1 != null && !var1.isEmpty() && !(var0.width(var1) <= var2)) {
-         String var3 = "...";
-         float var4 = var0.width(var3);
-         int var5 = var1.length();
+   private static String fit(Font font, String name, float f) {
+      if (name != null && !name.isEmpty() && !(font.width(name) <= f)) {
+         String text = "...";
+         float width = font.width(text);
+         int length = name.length();
 
-         while (var5 > 0 && var0.width(var1.substring(0, var5)) + var4 > var2) {
-            var5--;
+         while (length > 0 && font.width(name.substring(0, length)) + width > f) {
+            length--;
          }
 
-         return var5 <= 0 ? "" : var1.substring(0, var5).stripTrailing() + var3;
+         return length <= 0 ? "" : name.substring(0, length).stripTrailing() + text;
       } else {
-         return var1 == null ? "" : var1;
+         return name == null ? "" : name;
       }
    }
 
-   private String numberText(SliderSetting var1, float var2) {
-      SliderSetting.Handler var3 = var1.getHandler();
-      if (this.numberText == null || Float.floatToIntBits(var2) != Float.floatToIntBits(this.numberTextValue) || var3 != this.numberTextDisplay) {
-         this.numberText = formatNumber(var1, var2) + var1.getSuffix();
-         this.numberTextValue = var2;
-         this.numberTextDisplay = var3;
+   private String numberText(SliderSetting sliderSetting, float numberTextValue) {
+      SliderSetting.Handler handler = sliderSetting.getHandler();
+      if (this.numberText == null || Float.floatToIntBits(numberTextValue) != Float.floatToIntBits(this.numberTextValue) || handler != this.numberTextDisplay) {
+         this.numberText = formatNumber(sliderSetting, numberTextValue) + sliderSetting.getSuffix();
+         this.numberTextValue = numberTextValue;
+         this.numberTextDisplay = handler;
       }
 
       return this.numberText;
    }
 
-   private static String formatNumber(SliderSetting var0, float var1) {
-      SliderSetting.Handler var2 = var0.getHandler();
-      if (var2 != null) {
-         return var2.text(var1);
+   private static String formatNumber(SliderSetting sliderSetting, float numberTextValue) {
+      SliderSetting.Handler handler = sliderSetting.getHandler();
+      if (handler != null) {
+         return handler.text(numberTextValue);
       } else {
          // Знаков после запятой — столько же, сколько у шага (0.1 → 1, 0.05 → 2, 0.005 → 3);
          // раньше смотрелись только две первые цифры шага, и 0.005 давал 0 знаков («1.435» → «1»).
-         float var3 = Math.abs(var0.getFloatValue2());
-         int var4 = Float.isFinite(var3) && var3 != 0.0F ? Mth.clamp(new BigDecimal(Float.toString(var3)).stripTrailingZeros().scale(), 0, 8) : 0;
-         return String.format(Locale.US, "%." + var4 + "f", var1);
+         float f = Math.abs(sliderSetting.getFloatValue2());
+         int n = Float.isFinite(f) && f != 0.0F ? Mth.clamp(new BigDecimal(Float.toString(f)).stripTrailingZeros().scale(), 0, 8) : 0;
+         return String.format(Locale.US, "%." + n + "f", numberTextValue);
       }
    }
 
    @Override
-   public boolean bindMouse(Enum3 var1) {
+   public boolean bindMouse(Enum3 enum2) {
       if (this.binding && BindCapture.owner() != this) {
          this.binding = false;
       }
 
-      if (this.binding && this.bindSetting != null && this.setting.isVisible() && MouseBindTarget.bindable(var1)) {
-         this.bindSetting.setBind(var1.getIntValue(), 0);
+      if (this.binding && this.bindSetting != null && this.setting.isVisible() && MouseBindTarget.bindable(enum2)) {
+         this.bindSetting.setBind(enum2.getIntValue(), 0);
          this.binding = false;
          BindCapture.end(this);
          this.bindLabel.set();
@@ -1106,34 +1106,34 @@ public class InspectorRow implements MouseBindTarget {
       }
    }
 
-   private void startKeyAnim(int var1, String var2) {
-      this.keyAnim = var1;
+   private void startKeyAnim(int keyAnim, String anObject) {
+      this.keyAnim = keyAnim;
       this.keyAnimAt = System.currentTimeMillis();
-      this.keyFrom = var2 != null && !"-".equals(var2) ? var2 : null;
+      this.keyFrom = anObject != null && !"-".equals(anObject) ? anObject : null;
    }
 
    public void cancelBinding() {
       this.binding = false;
       BindCapture.end(this);
 
-      for (InspectorRow var2 : this.children) {
-         var2.cancelBinding();
+      for (InspectorRow inspectorRow : this.children) {
+         inspectorRow.cancelBinding();
       }
    }
 
-   public void cancelModuleBindingOutside(double var1, double var3) {
-      if (this.setting instanceof ModuleHeaderSetting && (this.valueBounds == null || !this.valueBounds.contains(var1, var3))) {
+   public void cancelModuleBindingOutside(double x, double y) {
+      if (this.setting instanceof ModuleHeaderSetting && (this.valueBounds == null || !this.valueBounds.contains(x, y))) {
          this.cancelBinding();
       }
    }
 
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
       if (!this.setting.isVisible()) {
          this.cancelBinding();
          return false;
       } else {
-         if (!MouseBindTarget.bindable(var5)) {
-            this.cancelModuleBindingOutside(var1, var3);
+         if (!MouseBindTarget.bindable(enum2)) {
+            this.cancelModuleBindingOutside(x, y);
          }
 
          if (this.modeOptions != null) {
@@ -1141,28 +1141,28 @@ public class InspectorRow implements MouseBindTarget {
                return false;
             }
 
-            if (this.expanded && this.modeOptions.onMouseClicked(var1, var3, var5)) {
+            if (this.expanded && this.modeOptions.onMouseClicked(x, y, enum2)) {
                return true;
             }
          }
 
-         if (this.expanded && this.picker != null && this.picker.onMouseClicked(var1, var3, var5)) {
+         if (this.expanded && this.picker != null && this.picker.onMouseClicked(x, y, enum2)) {
             return true;
          } else {
             if (this.expanded
                && this.bounds != null
-               && var1 >= this.bounds.getFloatValue()
-               && var1 <= this.bounds.getFloatValue() + this.bounds.width()
-               && var3 >= this.bounds.getFloatValue2() + this.bounds.height()
-               && var3 <= this.bounds.getFloatValue2() + this.height()) {
-               for (InspectorRow var7 : this.children) {
-                  if (var7.isVisible() && var7.onMouseClicked(var1, var3, var5)) {
+               && x >= this.bounds.getFloatValue()
+               && x <= this.bounds.getFloatValue() + this.bounds.width()
+               && y >= this.bounds.getFloatValue2() + this.bounds.height()
+               && y <= this.bounds.getFloatValue2() + this.height()) {
+               for (InspectorRow inspectorRow : this.children) {
+                  if (inspectorRow.isVisible() && inspectorRow.onMouseClicked(x, y, enum2)) {
                      return true;
                   }
                }
             }
 
-            if (this.bounds == null || !this.bounds.contains(var1, var3)) {
+            if (this.bounds == null || !this.bounds.contains(x, y)) {
                return false;
             } else if (this.picker != null) {
                this.expanded = !this.expanded;
@@ -1174,23 +1174,23 @@ public class InspectorRow implements MouseBindTarget {
 
                Zenith.getInstance().getClientSounds().method1570(false);
                return true;
-            } else if (this.setting instanceof SliderSetting var11) {
-               if (this.valueBounds != null && this.valueBounds.method8092(var1, var3, 4.0F)) {
+            } else if (this.setting instanceof SliderSetting sliderSetting) {
+               if (this.valueBounds != null && this.valueBounds.method8092(x, y, 4.0F)) {
                   this.dragging = true;
-                  this.dragOffset = this.grabOffset(var11, var1);
+                  this.dragOffset = this.grabOffset(sliderSetting, x);
                   Zenith.getInstance().getNLMenuScreen().lockGuiScale();
-                  this.applyDrag(var1);
+                  this.applyDrag(x);
                   return true;
                } else {
                   return true;
                }
-            } else if (this.setting instanceof BooleanSetting var10) {
-               var10.toggle();
-               this.flashAt = var10.isEnabled() ? System.currentTimeMillis() : -1L;
-               playToggleSound(var10.isEnabled());
+            } else if (this.setting instanceof BooleanSetting booleanSetting) {
+               booleanSetting.toggle();
+               this.flashAt = booleanSetting.isEnabled() ? System.currentTimeMillis() : -1L;
+               playToggleSound(booleanSetting.isEnabled());
                return true;
             } else if (this.modeOptions != null) {
-               if (var5 != Enum3.LEFT && var5 != Enum3.RIGHT) {
+               if (enum2 != Enum3.LEFT && enum2 != Enum3.RIGHT) {
                   return false;
                } else {
                   this.expanded = !this.expanded;
@@ -1199,14 +1199,14 @@ public class InspectorRow implements MouseBindTarget {
                   return true;
                }
             } else if (this.bindSetting == null
-               || this.setting instanceof ModuleHeaderSetting && (this.valueBounds == null || !this.valueBounds.contains(var1, var3))) {
-               if (this.setting instanceof ButtonSetting var9) {
-                  var9.toggle();
+               || this.setting instanceof ModuleHeaderSetting && (this.valueBounds == null || !this.valueBounds.contains(x, y))) {
+               if (this.setting instanceof ButtonSetting buttonSetting) {
+                  buttonSetting.toggle();
                   Zenith.getInstance().getClientSounds().method1562();
                   return true;
-               } else if (this.setting instanceof TextSetting var8) {
+               } else if (this.setting instanceof TextSetting textSetting) {
                   this.editing = true;
-                  this.editBuffer = new StringBuilder(var8.getValue() == null ? "" : var8.getValue());
+                  this.editBuffer = new StringBuilder(textSetting.getValue() == null ? "" : textSetting.getValue());
                   this.editOriginal = this.editBuffer.toString();
                   this.editStartAt = System.currentTimeMillis();
                   this.typedAt = -1L;
@@ -1219,10 +1219,10 @@ public class InspectorRow implements MouseBindTarget {
                } else {
                   return true;
                }
-            } else if (this.bindMouse(var5)) {
+            } else if (this.bindMouse(enum2)) {
                return true;
             } else {
-               if (var5 == Enum3.RIGHT) {
+               if (enum2 == Enum3.RIGHT) {
                   this.cancelBinding();
                   this.bindSetting.setBind(-1, 0);
                   this.bindLabel.cleared();
@@ -1248,9 +1248,9 @@ public class InspectorRow implements MouseBindTarget {
    }
 
    public void beginEdit() {
-      if (!this.editing && this.setting instanceof TextSetting var1) {
+      if (!this.editing && this.setting instanceof TextSetting textSetting) {
          this.editing = true;
-         this.editBuffer = new StringBuilder(var1.getValue() == null ? "" : var1.getValue());
+         this.editBuffer = new StringBuilder(textSetting.getValue() == null ? "" : textSetting.getValue());
          this.editOriginal = this.editBuffer.toString();
          this.editStartAt = System.currentTimeMillis();
          this.typedAt = -1L;
@@ -1261,7 +1261,7 @@ public class InspectorRow implements MouseBindTarget {
       this.editing = false;
    }
 
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double x, double y, Enum3 enum2) {
       this.dragging = false;
       this.dragOffset = 0.0F;
       this.edgePinned = false;
@@ -1269,90 +1269,90 @@ public class InspectorRow implements MouseBindTarget {
          this.picker.onMouseReleased();
       }
 
-      for (InspectorRow var7 : this.children) {
-         var7.onMouseReleased(var1, var3, var5);
+      for (InspectorRow inspectorRow : this.children) {
+         inspectorRow.onMouseReleased(x, y, enum2);
       }
    }
 
-   public boolean onMouseDragged(double var1, double var3) {
+   public boolean onMouseDragged(double mouseX, double mouseY) {
       if (this.dragging) {
-         this.applyDrag(var1);
+         this.applyDrag(mouseX);
          return true;
       } else {
-         boolean var5 = false;
+         boolean flag = false;
          if (this.expanded) {
-            for (InspectorRow var7 : this.children) {
-               if (var7.onMouseDragged(var1, var3)) {
-                  var5 = true;
+            for (InspectorRow inspectorRow : this.children) {
+               if (inspectorRow.onMouseDragged(mouseX, mouseY)) {
+                  flag = true;
                }
             }
          }
 
-         return var5;
+         return flag;
       }
    }
 
-   private float pointerAt(double var1) {
+   private float pointerAt(double x) {
       return this.bounds != null && !Float.isNaN(this.trackLeftPx) && !(this.trackSpanPx <= 0.0F)
-         ? Mth.clamp((float)(var1 - this.trackLeftPx) / this.trackSpanPx, 0.0F, 1.0F)
+         ? Mth.clamp((float)(x - this.trackLeftPx) / this.trackSpanPx, 0.0F, 1.0F)
          : 0.0F;
    }
 
-   private float grabOffset(SliderSetting var1, double var2) {
-      float var4;
-      float var5 = (var4 = var1.getMax() - var1.getMin()) <= 0.0F ? 0.0F : (var1.getValue3() - var1.getMin()) / var4;
-      float var6;
-      return Math.abs((var6 = this.pointerAt(var2)) - var5) * this.trackSpanPx <= 5.0F ? var5 - var6 : 0.0F;
+   private float grabOffset(SliderSetting sliderSetting, double x) {
+      float f;
+      float f2 = (f = sliderSetting.getMax() - sliderSetting.getMin()) <= 0.0F ? 0.0F : (sliderSetting.getValue3() - sliderSetting.getMin()) / f;
+      float pointerAt;
+      return Math.abs((pointerAt = this.pointerAt(x)) - f2) * this.trackSpanPx <= 5.0F ? f2 - pointerAt : 0.0F;
    }
 
-   private void applyDrag(double var1) {
+   private void applyDrag(double x) {
       if (this.bounds != null) {
-         float var3 = Mth.clamp(this.pointerAt(var1) + this.dragOffset, 0.0F, 1.0F);
+         float progress = Mth.clamp(this.pointerAt(x) + this.dragOffset, 0.0F, 1.0F);
          if (!Float.isNaN(this.trackLeftPx) && this.trackSpanPx > 0.0F) {
-            float var4;
-            int var5;
-            if ((var5 = (var4 = (float)(var1 - this.trackLeftPx) / this.trackSpanPx + this.dragOffset) < -0.02F ? -1 : (var4 > 1.02F ? 1 : 0)) != 0
+            float f;
+            int edgeSide;
+            if ((edgeSide = (f = (float)(x - this.trackLeftPx) / this.trackSpanPx + this.dragOffset) < -0.02F ? -1 : (f > 1.02F ? 1 : 0)) != 0
                && !this.edgePinned) {
                this.edgePinned = true;
-               this.edgeSide = var5;
+               this.edgeSide = edgeSide;
                this.edgeHitAt = System.currentTimeMillis();
-            } else if (var5 == 0) {
+            } else if (edgeSide == 0) {
                this.edgePinned = false;
             }
          }
 
-         if (this.setting instanceof SliderSetting var8) {
-            float var10 = var8.getMin() + (var8.getMax() - var8.getMin()) * var3;
-            float var6;
-            if ((var6 = var8.getFloatValue2()) > 0.0F) {
-               var10 = Math.round(var10 / var6) * var6;
+         if (this.setting instanceof SliderSetting sliderSetting) {
+            float f = sliderSetting.getMin() + (sliderSetting.getMax() - sliderSetting.getMin()) * progress;
+            float f2;
+            if ((f2 = sliderSetting.getFloatValue2()) > 0.0F) {
+               f = Math.round(f / f2) * f2;
             }
 
-            float var7 = var8.getValue3();
-            var8.method2400(Mth.clamp(var10, var8.getMin(), var8.getMax()));
-            if (var8.getValue3() != var7) {
-               Zenith.getInstance().getClientSounds().method1571(var3);
+            float f3 = sliderSetting.getValue3();
+            sliderSetting.method2400(Mth.clamp(f, sliderSetting.getMin(), sliderSetting.getMax()));
+            if (sliderSetting.getValue3() != f3) {
+               Zenith.getInstance().getClientSounds().method1571(progress);
             }
          }
       }
    }
 
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.binding && BindCapture.owner() != this) {
          this.binding = false;
       }
 
       if (this.binding && this.bindSetting != null) {
-         if (var1 == 256) {
+         if (keyCode == 256) {
             this.bindSetting.setBind(-1, 0);
             this.bindLabel.cleared();
             Zenith.getInstance().getClientSounds().method1567();
          } else {
-            this.bindSetting.setBind(var1, KeyName.method6700(var1, var3));
+            this.bindSetting.setBind(keyCode, KeyName.method6700(keyCode, modifiers));
             this.bindLabel.set();
             Zenith.getInstance().getClientSounds().method1566();
          }
@@ -1360,22 +1360,22 @@ public class InspectorRow implements MouseBindTarget {
          this.binding = false;
          BindCapture.end(this);
          return true;
-      } else if (this.editing && this.setting instanceof TextSetting var6) {
-         if (var1 == 259) {
+      } else if (this.editing && this.setting instanceof TextSetting textSetting) {
+         if (keyCode == 259) {
             if (!this.editBuffer.isEmpty()) {
                this.editBuffer.deleteCharAt(this.editBuffer.length() - 1);
-               this.publishEdit(var6);
+               this.publishEdit(textSetting);
             }
 
             return true;
-         } else if (var1 == 257 || var1 == 335) {
-            var6.method2122(this.editBuffer.toString());
+         } else if (keyCode == 257 || keyCode == 335) {
+            textSetting.method2122(this.editBuffer.toString());
             this.editing = false;
             this.flashAt = System.currentTimeMillis();
             Zenith.getInstance().getClientSounds().method1568();
             return true;
-         } else if (var1 == 256) {
-            var6.setValue(this.editOriginal);
+         } else if (keyCode == 256) {
+            textSetting.setValue(this.editOriginal);
             this.editBuffer.setLength(0);
             this.editBuffer.append(this.editOriginal);
             this.editing = false;
@@ -1385,12 +1385,12 @@ public class InspectorRow implements MouseBindTarget {
          } else {
             return true;
          }
-      } else if (this.expanded && this.picker != null && this.picker.keyPressed(var1, var2, var3)) {
+      } else if (this.expanded && this.picker != null && this.picker.keyPressed(keyCode, keycode, modifiers)) {
          return true;
       } else {
          if (this.expanded) {
-            for (InspectorRow var7 : this.children) {
-               if (var7.isVisible() && var7.keyPressed(var1, var2, var3)) {
+            for (InspectorRow inspectorRow : this.children) {
+               if (inspectorRow.isVisible() && inspectorRow.keyPressed(keyCode, keycode, modifiers)) {
                   return true;
                }
             }
@@ -1400,25 +1400,25 @@ public class InspectorRow implements MouseBindTarget {
       }
    }
 
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.editing) {
-         this.editBuffer.append(var1);
+         this.editBuffer.append(codepoint);
          this.typedAt = System.currentTimeMillis();
-         if (this.setting instanceof TextSetting var5) {
-            this.publishEdit(var5);
+         if (this.setting instanceof TextSetting textSetting) {
+            this.publishEdit(textSetting);
          }
 
          return true;
-      } else if (this.expanded && this.picker != null && this.picker.charTyped(var1, var2)) {
+      } else if (this.expanded && this.picker != null && this.picker.charTyped(codepoint, n)) {
          return true;
       } else {
          if (this.expanded) {
-            for (InspectorRow var4 : this.children) {
-               if (var4.isVisible() && var4.charTyped(var1, var2)) {
+            for (InspectorRow inspectorRow : this.children) {
+               if (inspectorRow.isVisible() && inspectorRow.charTyped(codepoint, n)) {
                   return true;
                }
             }
@@ -1428,22 +1428,22 @@ public class InspectorRow implements MouseBindTarget {
       }
    }
 
-   private void publishEdit(TextSetting var1) {
-      var1.setValue(this.editBuffer.toString());
+   private void publishEdit(TextSetting textSetting) {
+      textSetting.setValue(this.editBuffer.toString());
    }
 
-   private static void playToggleSound(boolean var0) {
+   private static void playToggleSound(boolean enabled) {
       Zenith.getInstance()
          .getClientSounds()
-         .method1561(var0 ? Zenith.getInstance().getClientSounds().soundEvent5 : Zenith.getInstance().getClientSounds().soundEvent6);
+         .method1561(enabled ? Zenith.getInstance().getClientSounds().soundEvent5 : Zenith.getInstance().getClientSounds().soundEvent6);
    }
 
    private static final class MultiValueAdapter extends BooleanSetting {
       private final MultiSelectSetting.Entry value;
 
-      private MultiValueAdapter(MultiSelectSetting var1, MultiSelectSetting.Entry var2) {
-         super(var2.getKey(), var1.getDescription(), var2.isEnabled());
-         this.value = var2;
+      private MultiValueAdapter(MultiSelectSetting multiSelectSetting, MultiSelectSetting.Entry entry) {
+         super(entry.getKey(), multiSelectSetting.getDescription(), entry.isEnabled());
+         this.value = entry;
       }
 
       @Override
@@ -1452,8 +1452,8 @@ public class InspectorRow implements MouseBindTarget {
       }
 
       @Override
-      public void setEnabled(boolean var1) {
-         this.value.setEnabled(var1);
+      public void setEnabled(boolean enabled) {
+         this.value.setEnabled(enabled);
       }
 
       @Override
@@ -1467,11 +1467,11 @@ public class InspectorRow implements MouseBindTarget {
       }
 
       @Override
-      public void safe(JsonObject var1) {
+      public void safe(JsonObject json) {
       }
 
       @Override
-      public void load(JsonObject var1) {
+      public void load(JsonObject json) {
       }
    }
 }

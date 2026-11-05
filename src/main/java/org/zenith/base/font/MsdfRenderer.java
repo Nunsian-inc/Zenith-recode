@@ -60,40 +60,40 @@ public final class MsdfRenderer {
    private static float lastUniformMaxWidth = Float.NaN;
    private static float lastUniformTextPosX = Float.NaN;
 
-   private static VertexConsumer beginBatch(MsdfFont var0, float var1, float var2, boolean var3, float var4, float var5, float var6, float var7) {
-      if (!var3) {
-         var4 = 0.0F;
-         var5 = 0.0F;
-         var6 = 0.0F;
-         var7 = 0.0F;
+   private static VertexConsumer beginBatch(MsdfFont font, float f, float batchSmoothness2, boolean flag, float batchFadeoutStart2, float batchFadeoutEnd2, float batchMaxWidth2, float batchTextPosX2) {
+      if (!flag) {
+         batchFadeoutStart2 = 0.0F;
+         batchFadeoutEnd2 = 0.0F;
+         batchMaxWidth2 = 0.0F;
+         batchTextPosX2 = 0.0F;
       }
 
       if (HintedText.pending()) {
          HintedText.flush();
       }
 
-      GpuTextureView var8 = var0.getTextureView();
-      float var9 = var0.getAtlas().range();
-      float[] var10 = RenderState.method1885();
-      float var11 = var10[0];
-      float var12 = var10[1];
-      float var13 = var10[2];
-      float var14 = var10[3];
+      GpuTextureView textureView = font.getTextureView();
+      float range = font.getAtlas().range();
+      float[] floats = RenderState.method1885();
+      float batchShaderColorR2 = floats[0];
+      float batchShaderColorG2 = floats[1];
+      float batchShaderColorB2 = floats[2];
+      float batchShaderColorA2 = floats[3];
       if (batchBuilder != null
          && (
-            batchTextureId != var8
-               || batchRange != var9
-               || batchThickness != var1
-               || batchSmoothness != var2
-               || batchFadeout != var3
-               || batchFadeoutStart != var4
-               || batchFadeoutEnd != var5
-               || batchMaxWidth != var6
-               || batchTextPosX != var7
-               || batchShaderColorR != var11
-               || batchShaderColorG != var12
-               || batchShaderColorB != var13
-               || batchShaderColorA != var14
+            batchTextureId != textureView
+               || batchRange != range
+               || batchThickness != f
+               || batchSmoothness != batchSmoothness2
+               || batchFadeout != flag
+               || batchFadeoutStart != batchFadeoutStart2
+               || batchFadeoutEnd != batchFadeoutEnd2
+               || batchMaxWidth != batchMaxWidth2
+               || batchTextPosX != batchTextPosX2
+               || batchShaderColorR != batchShaderColorR2
+               || batchShaderColorG != batchShaderColorG2
+               || batchShaderColorB != batchShaderColorB2
+               || batchShaderColorA != batchShaderColorA2
          )) {
          flushBatch();
       }
@@ -104,19 +104,19 @@ public final class MsdfRenderer {
          }
 
          batchBuilder = new BufferBuilder(batchAllocator, PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-         batchTextureId = var8;
-         batchRange = var9;
-         batchThickness = var1;
-         batchSmoothness = var2;
-         batchFadeout = var3;
-         batchFadeoutStart = var4;
-         batchFadeoutEnd = var5;
-         batchMaxWidth = var6;
-         batchTextPosX = var7;
-         batchShaderColorR = var11;
-         batchShaderColorG = var12;
-         batchShaderColorB = var13;
-         batchShaderColorA = var14;
+         batchTextureId = textureView;
+         batchRange = range;
+         batchThickness = f;
+         batchSmoothness = batchSmoothness2;
+         batchFadeout = flag;
+         batchFadeoutStart = batchFadeoutStart2;
+         batchFadeoutEnd = batchFadeoutEnd2;
+         batchMaxWidth = batchMaxWidth2;
+         batchTextPosX = batchTextPosX2;
+         batchShaderColorR = batchShaderColorR2;
+         batchShaderColorG = batchShaderColorG2;
+         batchShaderColorB = batchShaderColorB2;
+         batchShaderColorA = batchShaderColorA2;
       }
 
       return batchBuilder;
@@ -131,27 +131,27 @@ public final class MsdfRenderer {
 
    public static void flushMsdfPending() {
       if (batchBuilder != null) {
-         BufferBuilder var0 = batchBuilder;
+         BufferBuilder bufferBuilder = batchBuilder;
          batchBuilder = null;
-         MeshData var1 = var0.build();
-         if (var1 == null) {
+         MeshData orThrow = bufferBuilder.build();
+         if (orThrow == null) {
             batchAllocator.clear();
          } else {
-            float[] var2 = RenderState.method1885();
-            float var3 = var2[0];
-            float var4 = var2[1];
-            float var5 = var2[2];
-            float var6 = var2[3];
-            boolean var7 = var3 != batchShaderColorR || var4 != batchShaderColorG || var5 != batchShaderColorB || var6 != batchShaderColorA;
+            float[] floats = RenderState.method1885();
+            float f = floats[0];
+            float f2 = floats[1];
+            float f3 = floats[2];
+            float previewAlpha = floats[3];
+            boolean flag = f != batchShaderColorR || f2 != batchShaderColorG || f3 != batchShaderColorB || previewAlpha != batchShaderColorA;
             RenderState.method1871();
             RenderState.method1873();
             RenderState.method1877();
-            if (var7) {
+            if (flag) {
                RenderState.method1883(batchShaderColorR, batchShaderColorG, batchShaderColorB, batchShaderColorA);
             }
 
             RenderState.method1889(0, batchTextureId);
-            KawaseShaderKey var8 = MSDF_FONT_PROGRAM.method5165();
+            KawaseShaderKey kawaseShaderKey = MSDF_FONT_PROGRAM.method5165();
             if (uniformsDirty) {
                uniformsDirty = false;
                lastUniformRange = Float.NaN;
@@ -166,53 +166,53 @@ public final class MsdfRenderer {
 
             if (lastUniformRange != batchRange) {
                lastUniformRange = batchRange;
-               var8.method5166("Range").method7412(batchRange);
+               kawaseShaderKey.method5166("Range").method7412(batchRange);
             }
 
             if (lastUniformThickness != batchThickness) {
                lastUniformThickness = batchThickness;
-               var8.method5166("Thickness").method7412(batchThickness);
+               kawaseShaderKey.method5166("Thickness").method7412(batchThickness);
             }
 
             if (lastUniformSmoothness != batchSmoothness) {
                lastUniformSmoothness = batchSmoothness;
-               var8.method5166("Smoothness").method7412(batchSmoothness);
+               kawaseShaderKey.method5166("Smoothness").method7412(batchSmoothness);
             }
 
-            int var9 = batchFadeout ? 1 : 0;
-            if (lastUniformFadeout != var9) {
-               lastUniformFadeout = var9;
-               var8.method5166("EnableFadeout").set(var9);
+            int n = batchFadeout ? 1 : 0;
+            if (lastUniformFadeout != n) {
+               lastUniformFadeout = n;
+               kawaseShaderKey.method5166("EnableFadeout").set(n);
             }
 
             if (batchFadeout) {
                if (lastUniformFadeoutStart != batchFadeoutStart) {
                   lastUniformFadeoutStart = batchFadeoutStart;
-                  var8.method5166("FadeoutStart").method7412(batchFadeoutStart);
+                  kawaseShaderKey.method5166("FadeoutStart").method7412(batchFadeoutStart);
                }
 
                if (lastUniformFadeoutEnd != batchFadeoutEnd) {
                   lastUniformFadeoutEnd = batchFadeoutEnd;
-                  var8.method5166("FadeoutEnd").method7412(batchFadeoutEnd);
+                  kawaseShaderKey.method5166("FadeoutEnd").method7412(batchFadeoutEnd);
                }
 
                if (lastUniformMaxWidth != batchMaxWidth) {
                   lastUniformMaxWidth = batchMaxWidth;
-                  var8.method5166("MaxWidth").method7412(batchMaxWidth);
+                  kawaseShaderKey.method5166("MaxWidth").method7412(batchMaxWidth);
                }
 
                if (lastUniformTextPosX != batchTextPosX) {
                   lastUniformTextPosX = batchTextPosX;
-                  var8.method5166("TextPosX").method7412(batchTextPosX);
+                  kawaseShaderKey.method5166("TextPosX").method7412(batchTextPosX);
                }
             }
 
             try {
-               ImmediateRenderer.method8015(var1);
+               ImmediateRenderer.method8015(orThrow);
             } finally {
                RenderState.method1893(0);
-               if (var7) {
-                  RenderState.method1883(var3, var4, var5, var6);
+               if (flag) {
+                  RenderState.method1883(f, f2, f3, previewAlpha);
                }
 
                RenderState.method1876();
@@ -223,65 +223,65 @@ public final class MsdfRenderer {
       }
    }
 
-   public static void renderText(MsdfFont var0, String var1, float var2, int var3, Matrix4f var4, float var5, float var6, float var7) {
-      renderText(var0, var1, var2, var3, var4, var5, var6, var7, false, 0.0F, 1.0F, 0.0F);
+   public static void renderText(MsdfFont font, String text, float size, int color, Matrix4f matrix, float floatValue, float y, float z) {
+      renderText(font, text, size, color, matrix, floatValue, y, z, false, 0.0F, 1.0F, 0.0F);
    }
 
    public static void renderText(
-      MsdfFont var0, String var1, float var2, int var3, Matrix4f var4, float var5, float var6, float var7, boolean var8, float var9, float var10, float var11
+      MsdfFont font, String text, float size, int color, Matrix4f matrix, float floatValue, float y, float z, boolean flag, float f, float f2, float maxWidth
    ) {
-      float var12 = 0.0F;
-      float var13 = 0.45F;
-      float var14 = 0.0F;
-      var1 = NameProtectModule.method5149(var1);
-      if (var8 || !HintedText.render(var0, var1, var2, var3, var4, var5, var6 + textLineOffset(var0, var2), var7)) {
-         float var15 = var5;
-         float var16 = var11;
-         if (var8 && var11 > 0.0F) {
-            Vector4f var17 = new Vector4f(var5, 0.0F, 0.0F, 1.0F);
-            Vector4f var18 = new Vector4f(var5 + var11, 0.0F, 0.0F, 1.0F);
-            var4.transform(var17);
-            var4.transform(var18);
-            var15 = var17.x;
-            var16 = var18.x - var17.x;
+      float f3 = 0.0F;
+      float f4 = 0.45F;
+      float f5 = 0.0F;
+      text = NameProtectModule.method5149(text);
+      if (flag || !HintedText.render(font, text, size, color, matrix, floatValue, y + textLineOffset(font, size), z)) {
+         float floatValue2 = floatValue;
+         float maxWidth2 = maxWidth;
+         if (flag && maxWidth > 0.0F) {
+            Vector4f vec = new Vector4f(floatValue, 0.0F, 0.0F, 1.0F);
+            Vector4f vec2 = new Vector4f(floatValue + maxWidth, 0.0F, 0.0F, 1.0F);
+            matrix.transform(vec);
+            matrix.transform(vec2);
+            floatValue2 = vec.x;
+            maxWidth2 = vec2.x - vec.x;
          }
 
-         VertexConsumer var20 = beginBatch(var0, var12, var13, var8, var9, var10, var16, var15);
-         float var21 = var6 + textLineOffset(var0, var2);
-         var0.applyGlyphs(var4, var20, var1, var2, var12 * 0.5F * var2, var14, var5, var21, var7, var3);
+         VertexConsumer consumer = beginBatch(font, f3, f4, flag, f, f2, maxWidth2, floatValue2);
+         float f6 = y + textLineOffset(font, size);
+         font.applyGlyphs(matrix, consumer, text, size, f3 * 0.5F * size, f5, floatValue, f6, z, color);
       }
    }
 
    public static void renderText(
-      MsdfFont var0, String var1, float var2, int var3, Matrix4f var4, float var5, float var6, float var7, boolean var8, float var9, float var10
+      MsdfFont font, String text, float size, int color, Matrix4f matrix, float floatValue, float y, float z, boolean flag, float f, float f2
    ) {
-      float var11 = var0.getWidth(var1, var2) * 2.0F;
-      renderText(var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11);
+      float maxWidth = font.getWidth(text, size) * 2.0F;
+      renderText(font, text, size, color, matrix, floatValue, y, z, flag, f, f2, maxWidth);
    }
 
-   public static void renderText(MsdfFont var0, Component var1, float var2, Matrix4f var3, float var4, float var5, float var6) {
-      renderTextWithVanillaFallback(var0, var1, var2, var3, var4, var5, var6);
+   public static void renderText(MsdfFont font, Component text, float size, Matrix4f matrix, float floatValue, float y, float z) {
+      renderTextWithVanillaFallback(font, text, size, matrix, floatValue, y, z);
    }
 
    public static void renderText(
-      MsdfFont var0, Component var1, float var2, Matrix4f var3, float var4, float var5, float var6, boolean var7, float var8, float var9, float var10
+      MsdfFont font, Component text, float size, Matrix4f matrix, float floatValue, float y, float z, boolean flag, float f, float f2, float f3
    ) {
-      renderTextWithVanillaFallback(var0, var1, var2, var3, var4, var5, var6);
+      renderTextWithVanillaFallback(font, text, size, matrix, floatValue, y, z);
    }
 
    public static void renderText(
-      MsdfFont var0, Component var1, float var2, Matrix4f var3, float var4, float var5, float var6, boolean var7, float var8, float var9, float var10, int var11
+      MsdfFont font, Component text, float size, Matrix4f matrix, float x1, float y, float z, boolean flag, float f, float f2, float f3, int color
    ) {
-      renderTextWithVanillaFallback(var0, var1, var2, var3, var4, var5, var6, var11);
+      renderTextWithVanillaFallback(font, text, size, matrix, x1, y, z, color);
    }
 
-   public static void renderTextWithVanillaFallback(MsdfFont var0, Component var1, float var2, Matrix4f var3, float var4, float var5, float var6) {
-      renderTextWithVanillaFallback(var0, var1, var2, var3, var4, var5, var6, ZenithColor.INSTANCE.method7287());
+   public static void renderTextWithVanillaFallback(MsdfFont font, Component text, float size, Matrix4f matrix, float floatValue, float y, float z) {
+      renderTextWithVanillaFallback(font, text, size, matrix, floatValue, y, z, ZenithColor.INSTANCE.method7287());
    }
 
-   public static void renderTextWithVanillaFallback(MsdfFont var0, Component var1, float var2, Matrix4f var3, float var4, float var5, float var6, int var7) {
-      Minecraft var8 = Minecraft.getInstance();
-      renderTextWithVanillaFallback(var0, var1, var2, var8.font, null, var3, var4, var5, var6, var7);
+   public static void renderTextWithVanillaFallback(MsdfFont font, Component text, float size, Matrix4f matrix, float x1, float y, float z, int color) {
+      Minecraft minecraft = Minecraft.getInstance();
+      renderTextWithVanillaFallback(font, text, size, minecraft.font, null, matrix, x1, y, z, color);
    }
 
    public static void renderTextWithVanillaFallback(
@@ -312,51 +312,51 @@ public final class MsdfRenderer {
       }
    }
 
-   public static void renderText(MsdfFont var0, Component var1, float var2, Matrix4f var3, float var4, float var5, float var6, boolean var7, float var8, float var9) {
-      renderTextWithVanillaFallback(var0, var1, var2, var3, var4, var5, var6);
+   public static void renderText(MsdfFont font, Component text, float size, Matrix4f matrix, float floatValue, float y, float z, boolean flag, float f, float f2) {
+      renderTextWithVanillaFallback(font, text, size, matrix, floatValue, y, z);
    }
 
-   public static void renderText(MsdfFont var0, String var1, float var2, GlowColor var3, Matrix4f var4, float var5, float var6, float var7) {
-      renderText(var0, var1, var2, var3, var4, var5, var6, var7, false, 0.0F, 1.0F, 0.0F);
+   public static void renderText(MsdfFont font, String text, float size, GlowColor glowColor, Matrix4f matrix4f, float floatValue, float f, float f2) {
+      renderText(font, text, size, glowColor, matrix4f, floatValue, f, f2, false, 0.0F, 1.0F, 0.0F);
    }
 
    public static void renderText(
-      MsdfFont var0,
-      String var1,
-      float var2,
-      GlowColor var3,
-      Matrix4f var4,
-      float var5,
-      float var6,
-      float var7,
-      boolean var8,
-      float var9,
-      float var10,
-      float var11
+      MsdfFont font,
+      String text,
+      float size,
+      GlowColor glowColor,
+      Matrix4f matrix4f,
+      float floatValue,
+      float f,
+      float z,
+      boolean flag,
+      float f2,
+      float f3,
+      float f4
    ) {
-      var1 = var1.replace("і", "i").replace("І", "I");
-      float var12 = 0.05F;
-      float var13 = 0.5F;
-      float var14 = 0.0F;
-      var1 = NameProtectModule.method5149(var1);
-      float var15 = var5;
-      float var16 = var11;
-      if (var8 && var11 > 0.0F) {
-         Vector4f var17 = new Vector4f(var5, 0.0F, 0.0F, 1.0F);
-         Vector4f var18 = new Vector4f(var5 + var11, 0.0F, 0.0F, 1.0F);
-         var4.transform(var17);
-         var4.transform(var18);
-         var15 = var17.x;
-         var16 = var18.x - var17.x;
+      text = text.replace("і", "i").replace("І", "I");
+      float f5 = 0.05F;
+      float f6 = 0.5F;
+      float f7 = 0.0F;
+      text = NameProtectModule.method5149(text);
+      float floatValue2 = floatValue;
+      float f8 = f4;
+      if (flag && f4 > 0.0F) {
+         Vector4f vec = new Vector4f(floatValue, 0.0F, 0.0F, 1.0F);
+         Vector4f vec2 = new Vector4f(floatValue + f4, 0.0F, 0.0F, 1.0F);
+         matrix4f.transform(vec);
+         matrix4f.transform(vec2);
+         floatValue2 = vec.x;
+         f8 = vec2.x - vec.x;
       }
 
-      VertexConsumer var21 = beginBatch(var0, var12, var13, var8, var9, var10, var16, var15);
-      float var22 = var6 + textLineOffset(var0, var2);
-      var0.applyGlyphs(var4, var21, var1, var2, var12 * 0.5F * var2, var14, var5, var22, var7, var3);
+      VertexConsumer consumer = beginBatch(font, f5, f6, flag, f2, f3, f8, floatValue2);
+      float f9 = f + textLineOffset(font, size);
+      font.applyGlyphs(matrix4f, consumer, text, size, f5 * 0.5F * size, f7, floatValue, f9, z, glowColor);
    }
 
-   public static float textLineOffset(MsdfFont var0, float var1) {
-      return var0.getBaseline() * var1;
+   public static float textLineOffset(MsdfFont font, float size) {
+      return font.getBaseline() * size;
    }
 
    /**
@@ -378,15 +378,15 @@ public final class MsdfRenderer {
       });
    }
 
-   private static float vanillaTextScale(Font var0, float var1) {
-      return var1 / Math.max(1.0F, 9.0F);
+   private static float vanillaTextScale(Font vanillaFont, float size) {
+      return size / Math.max(1.0F, 9.0F);
    }
 
    public static void renderText(
-      MsdfFont var0, String var1, float var2, GlowColor var3, Matrix4f var4, float var5, float var6, float var7, boolean var8, float var9, float var10
+      MsdfFont font, String text, float size, GlowColor glowColor, Matrix4f matrix4f, float floatValue, float f, float z, boolean flag, float f2, float f3
    ) {
-      float var11 = var0.getWidth(var1, var2) * 2.0F;
-      renderText(var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11);
+      float f4 = font.getWidth(text, size) * 2.0F;
+      renderText(font, text, size, glowColor, matrix4f, floatValue, f, z, flag, f2, f3, f4);
    }
 
    private record VanillaRun(FormattedCharSequence text, float x, int color) {

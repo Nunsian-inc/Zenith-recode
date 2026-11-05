@@ -5,5 +5,5 @@ import java.util.UUID;
 public interface FiguraSkullStateExtension {
    UUID figura$getOwner();
 
-   void figura$setOwner(UUID var1);
+   void figura$setOwner(UUID owner);
 }

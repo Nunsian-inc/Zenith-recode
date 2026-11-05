@@ -25,44 +25,44 @@ public class SborItem {
    private String text3;
    private String text4;
 
-   public SborItem(String var1, String var2, int var3, int var4, long var5, int var7, String var8) {
-      this(var1, var2, var3, var4, var5, var7, var8, null);
+   public SborItem(String string, String str, int count, int intValue, long longValue, int n, String str2) {
+      this(string, str, count, intValue, longValue, n, str2, null);
    }
 
-   public SborItem(String var1, String var2, int var3, int var4, long var5, int var7, String var8, String var9) {
-      this.text = var1;
-      this.text2 = var2;
-      this.count = var3;
-      this.intValue = var4;
-      this.longValue = var5;
-      this.intValue2 = var7;
-      this.text3 = var8;
-      this.text4 = var9;
+   public SborItem(String text, String str, int count, int intValue, long longValue, int n, String str2, String str3) {
+      this.text = text;
+      this.text2 = str;
+      this.count = count;
+      this.intValue = intValue;
+      this.longValue = longValue;
+      this.intValue2 = n;
+      this.text3 = str2;
+      this.text4 = str3;
    }
 
    public SborItem() {
    }
 
-   public static SborItem method1747(ItemStack var0, String var1, int var2, long var3, int var5) {
-      String var6 = BuiltInRegistries.ITEM.getKey(var0.getItem()).toString();
-      String var7 = method1748(var0);
-      return new SborItem(var6, var1, var0.getCount(), var2, var3, var5, var7);
+   public static SborItem method1747(ItemStack input, String str, int intValue, long longValue, int n) {
+      String string = BuiltInRegistries.ITEM.getKey(input.getItem()).toString();
+      String str2 = method1748(input);
+      return new SborItem(string, str, input.getCount(), intValue, longValue, n, str2);
    }
 
-   public static String method1748(ItemStack var0) {
+   public static String method1748(ItemStack input) {
       try {
-         Minecraft var1 = Minecraft.getInstance();
-         ClientLevel var2 = var1.level;
-         if (var2 == null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         ClientLevel level = minecraft.level;
+         if (level == null) {
             return null;
          }
 
-         RegistryOps var3 = var2.registryAccess().createSerializationContext(JsonOps.INSTANCE);
-         DataResult var4 = ItemStack.CODEC.encodeStart(var3, var0);
-         if (var4.result().isPresent()) {
-            return ((JsonElement)var4.result().get()).toString();
+         RegistryOps serializationContext = level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
+         DataResult encodeStart = ItemStack.CODEC.encodeStart(serializationContext, input);
+         if (encodeStart.result().isPresent()) {
+            return ((JsonElement)encodeStart.result().get()).toString();
          }
-      } catch (Exception var5) {
+      } catch (Exception e) {
       }
 
       return null;
@@ -71,79 +71,79 @@ public class SborItem {
    public ItemStack method1749() {
       if (this.text3 != null && !this.text3.isEmpty()) {
          try {
-            Minecraft var1 = Minecraft.getInstance();
-            ClientLevel var2 = var1.level;
-            if (var2 == null) {
+            Minecraft minecraft = Minecraft.getInstance();
+            ClientLevel level = minecraft.level;
+            if (level == null) {
                throw new IllegalStateException("World is not loaded");
             }
 
-            JsonElement var3 = JsonParser.parseString(this.text3);
-            RegistryOps var4 = var2.registryAccess().createSerializationContext(JsonOps.INSTANCE);
-            DataResult var5 = ItemStack.CODEC.decode(var4, var3);
-            if (var5.result().isPresent()) {
-               return (ItemStack)((Pair)var5.result().get()).getFirst();
+            JsonElement string = JsonParser.parseString(this.text3);
+            RegistryOps serializationContext = level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
+            DataResult dataResult = ItemStack.CODEC.decode(serializationContext, string);
+            if (dataResult.result().isPresent()) {
+               return (ItemStack)((Pair)dataResult.result().get()).getFirst();
             }
-         } catch (Exception var6) {
+         } catch (Exception e) {
          }
       }
 
-      Item var7 = BuiltInRegistries.ITEM.getValue(Identifier.tryParse(this.text));
-      return new ItemStack(var7, this.count);
+      Item item = BuiltInRegistries.ITEM.getValue(Identifier.tryParse(this.text));
+      return new ItemStack(item, this.count);
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("itemId", this.text);
+      JsonObject json = new JsonObject();
+      json.addProperty("itemId", this.text);
       if (this.text2 != null) {
-         var1.addProperty("searchName", this.text2);
+         json.addProperty("searchName", this.text2);
       }
 
-      var1.addProperty("count", this.count);
-      var1.addProperty("slotId", this.intValue);
-      var1.addProperty("maxSumBuy", this.longValue);
-      var1.addProperty("countBuy", this.intValue2);
+      json.addProperty("count", this.count);
+      json.addProperty("slotId", this.intValue);
+      json.addProperty("maxSumBuy", this.longValue);
+      json.addProperty("countBuy", this.intValue2);
       if (this.text3 != null) {
-         var1.addProperty("componentsJson", this.text3);
+         json.addProperty("componentsJson", this.text3);
       }
 
       if (this.text4 != null) {
-         var1.addProperty("extraSettingsJson", this.text4);
+         json.addProperty("extraSettingsJson", this.text4);
       }
 
-      return var1;
+      return json;
    }
 
-   public void load(JsonObject var1) {
-      if (var1.has("itemId")) {
-         this.text = var1.get("itemId").getAsString();
+   public void load(JsonObject jsonObject) {
+      if (jsonObject.has("itemId")) {
+         this.text = jsonObject.get("itemId").getAsString();
       }
 
-      if (var1.has("searchName")) {
-         this.text2 = var1.get("searchName").getAsString();
+      if (jsonObject.has("searchName")) {
+         this.text2 = jsonObject.get("searchName").getAsString();
       }
 
-      if (var1.has("count")) {
-         this.count = var1.get("count").getAsInt();
+      if (jsonObject.has("count")) {
+         this.count = jsonObject.get("count").getAsInt();
       }
 
-      if (var1.has("slotId")) {
-         this.intValue = var1.get("slotId").getAsInt();
+      if (jsonObject.has("slotId")) {
+         this.intValue = jsonObject.get("slotId").getAsInt();
       }
 
-      if (var1.has("maxSumBuy")) {
-         this.longValue = var1.get("maxSumBuy").getAsLong();
+      if (jsonObject.has("maxSumBuy")) {
+         this.longValue = jsonObject.get("maxSumBuy").getAsLong();
       }
 
-      if (var1.has("countBuy")) {
-         this.intValue2 = var1.get("countBuy").getAsInt();
+      if (jsonObject.has("countBuy")) {
+         this.intValue2 = jsonObject.get("countBuy").getAsInt();
       }
 
-      if (var1.has("componentsJson")) {
-         this.text3 = var1.get("componentsJson").getAsString();
+      if (jsonObject.has("componentsJson")) {
+         this.text3 = jsonObject.get("componentsJson").getAsString();
       }
 
-      if (var1.has("extraSettingsJson")) {
-         this.text4 = var1.get("extraSettingsJson").getAsString();
+      if (jsonObject.has("extraSettingsJson")) {
+         this.text4 = jsonObject.get("extraSettingsJson").getAsString();
       }
    }
 
@@ -188,42 +188,42 @@ public class SborItem {
    }
 
    @Generated
-   public void setText(String var1) {
-      this.text = var1;
+   public void setText(String text) {
+      this.text = text;
    }
 
    @Generated
-   public void setText2(String var1) {
-      this.text2 = var1;
+   public void setText2(String str) {
+      this.text2 = str;
    }
 
    @Generated
-   public void setCount(int var1) {
-      this.count = var1;
+   public void setCount(int count) {
+      this.count = count;
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated
-   public void setLongValue(long var1) {
-      this.longValue = var1;
+   public void setLongValue(long longValue) {
+      this.longValue = longValue;
    }
 
    @Generated
-   public void setIntValue2(int var1) {
-      this.intValue2 = var1;
+   public void setIntValue2(int n) {
+      this.intValue2 = n;
    }
 
    @Generated
-   public void setText3(String var1) {
-      this.text3 = var1;
+   public void setText3(String str) {
+      this.text3 = str;
    }
 
    @Generated
-   public void setText4(String var1) {
-      this.text4 = var1;
+   public void setText4(String str) {
+      this.text4 = str;
    }
 }

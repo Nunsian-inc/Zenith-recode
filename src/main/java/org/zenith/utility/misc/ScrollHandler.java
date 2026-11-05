@@ -13,9 +13,9 @@ public class ScrollHandler implements MinecraftAccess {
 
    public void update() {
       this.doubleValue2 = Math.max(Math.min(this.doubleValue2, 0.0), -this.doubleValue);
-      double var1 = this.doubleValue2 - this.value;
-      this.value += var1 * 0.4;
-      if (Math.abs(var1) < 0.1) {
+      double d = this.doubleValue2 - this.value;
+      this.value += d * 0.4;
+      if (Math.abs(d) < 0.1) {
          this.value = this.doubleValue2;
       }
    }
@@ -24,8 +24,8 @@ public class ScrollHandler implements MinecraftAccess {
       return -this.value;
    }
 
-   public void method6104(double var1) {
-      this.doubleValue2 = this.doubleValue2 + var1 * this.doubleValue3;
+   public void method6104(double d) {
+      this.doubleValue2 = this.doubleValue2 + d * this.doubleValue3;
    }
 
    @Generated
@@ -44,22 +44,22 @@ public class ScrollHandler implements MinecraftAccess {
    }
 
    @Generated
-   public void setDoubleValue(double var1) {
-      this.doubleValue = var1;
+   public void setDoubleValue(double doubleValue) {
+      this.doubleValue = doubleValue;
    }
 
    @Generated
-   public void setValue(double var1) {
-      this.value = var1;
+   public void setValue(double d) {
+      this.value = d;
    }
 
    @Generated
-   public void setDoubleValue2(double var1) {
-      this.doubleValue2 = var1;
+   public void setDoubleValue2(double d) {
+      this.doubleValue2 = d;
    }
 
    @Generated
-   public void setDoubleValue3(double var1) {
-      this.doubleValue3 = var1;
+   public void setDoubleValue3(double d) {
+      this.doubleValue3 = d;
    }
 }

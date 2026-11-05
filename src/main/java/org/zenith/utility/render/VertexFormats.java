@@ -23,7 +23,7 @@ public final class VertexFormats {
 
    // BufferBuilder#beginElement only knows vanilla semantics; custom attributes are written at their offset
    // in the current vertex (vertexPointer widened in zenith.accesswidener).
-   public static long pointer(BufferBuilder var0, VertexFormatElement var1) {
-      return var0.vertexPointer + var1.offset();
+   public static long pointer(BufferBuilder builder, VertexFormatElement vertexFormatElement) {
+      return builder.vertexPointer + vertexFormatElement.offset();
    }
 }

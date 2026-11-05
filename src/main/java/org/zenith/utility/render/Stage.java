@@ -45,64 +45,64 @@ public final class Stage implements MinecraftAccess {
       this.intValue = -1;
    }
 
-   public void method893(GuiGraphicsExtractor var1, HoveredData var2, Class15 var3, float var4, float var5, float var6, float var7, float var8, float var9) {
-      if (var3 != null && var3.intValue3 != 0) {
-         float var10 = (float)(System.nanoTime() - CONST_longValue) / 1.0E9F;
-         if (var3 != this.class15) {
-            this.class15 = var3;
+   public void method893(GuiGraphicsExtractor context, HoveredData hoveredData, Class15 key, float stageX0, float stageY0, float stageX1, float stageY1, float stageYaw, float angdeg) {
+      if (key != null && key.intValue3 != 0) {
+         float floatValue = (float)(System.nanoTime() - CONST_longValue) / 1.0E9F;
+         if (key != this.class15) {
+            this.class15 = key;
             this.intValue = -1;
          }
 
-         Stage.Data[] var11 = var3.data3 == null || var3.data3.getType4() != Class15.Type4.FLYER && var3.data3.getType4() != Class15.Type4.FLOATER
+         Stage.Data[] datas3 = key.data3 == null || key.data3.getType4() != Class15.Type4.FLYER && key.data3.getType4() != Class15.Type4.FLOATER
             ? datas
             : datas2;
-         if (this.intValue < 0 || var10 - this.floatValue >= var11[this.intValue].getFloatValue()) {
-            this.intValue = (this.intValue + 1) % var11.length;
-            this.floatValue = var10;
-            Stage.Data var12 = var11[this.intValue];
-            if (var12.isFlag()) {
-               if (!this.animationState.method6540(var3, var12.getText(), var10)) {
-                  this.animationState.method6539(var3, "idle", var10);
+         if (this.intValue < 0 || floatValue - this.floatValue >= datas3[this.intValue].getFloatValue()) {
+            this.intValue = (this.intValue + 1) % datas3.length;
+            this.floatValue = floatValue;
+            Stage.Data data = datas3[this.intValue];
+            if (data.isFlag()) {
+               if (!this.animationState.method6540(key, data.getText(), floatValue)) {
+                  this.animationState.method6539(key, "idle", floatValue);
                }
             } else {
-               this.animationState.method6539(var3, var12.getText(), var10);
-               this.animationState.method6541(var10);
+               this.animationState.method6539(key, data.getText(), floatValue);
+               this.animationState.method6541(floatValue);
             }
          }
 
-         float[] var26 = this.class16.method2139(var3, this.animationState, var10, null);
-         PoseStack var13 = MatrixUtils.method666(var1.pose());
+         float[] floatValues = this.class16.method2139(key, this.animationState, floatValue, null);
+         PoseStack poseStack = MatrixUtils.method666(context.pose());
          ScissorFlusher.flush();
          RenderState.method1878();
          RenderState.method1882(true);
-         var1.enableScissor((int)Math.floor(var4), (int)Math.floor(var5), (int)Math.ceil(var6), (int)Math.ceil(var7));
-         var13.pushPose();
+         context.enableScissor((int)Math.floor(stageX0), (int)Math.floor(stageY0), (int)Math.ceil(stageX1), (int)Math.ceil(stageY1));
+         poseStack.pushPose();
 
          try {
-            float[] var15 = var3.floatValues7;
-            float var16 = (var15[0] + var15[3]) / 2.0F;
-            float var17 = (var15[1] + var15[4]) / 2.0F;
-            float var18 = (var15[2] + var15[5]) / 2.0F;
-            float var19 = Math.max(Math.max(var15[3] - var15[0], var15[4] - var15[1]), var15[5] - var15[2]);
-            float var20 = Math.min(var6 - var4, var7 - var5) * 0.62F;
-            float var21 = var20 / Math.max(0.05F, var19);
-            var13.translate((var4 + var6) / 2.0F, (var5 + var7) / 2.0F + (var7 - var5) * 0.06F, 80.0F);
-            var13.scale(var21, var21, -var21);
-            var13.rotate(new Quaternionf().rotationX((float)Math.toRadians(var9)));
-            var13.rotate(new Quaternionf().rotationY((float)Math.toRadians(var8)));
-            var13.translate(-var16, -var17, -var18);
-            boolean var22 = var2.getRarity().isFlag();
+            float[] floatValues7 = key.floatValues7;
+            float f = (floatValues7[0] + floatValues7[3]) / 2.0F;
+            float f2 = (floatValues7[1] + floatValues7[4]) / 2.0F;
+            float f3 = (floatValues7[2] + floatValues7[5]) / 2.0F;
+            float f4 = Math.max(Math.max(floatValues7[3] - floatValues7[0], floatValues7[4] - floatValues7[1]), floatValues7[5] - floatValues7[2]);
+            float f5 = Math.min(stageX1 - stageX0, stageY1 - stageY0) * 0.62F;
+            float xScale = f5 / Math.max(0.05F, f4);
+            poseStack.translate((stageX0 + stageX1) / 2.0F, (stageY0 + stageY1) / 2.0F + (stageY1 - stageY0) * 0.06F, 80.0F);
+            poseStack.scale(xScale, xScale, -xScale);
+            poseStack.rotate(new Quaternionf().rotationX((float)Math.toRadians(angdeg)));
+            poseStack.rotate(new Quaternionf().rotationY((float)Math.toRadians(stageYaw)));
+            poseStack.translate(-f, -f2, -f3);
+            boolean flag = hoveredData.getRarity().isFlag();
             OutlineVertexProvider.method1542(var4x -> {
                for (int var5x = 0; var5x <= 6; var5x++) {
-                  if (var3.method2033(var5x)) {
-                     BoneMatrices.method4787(var3, var26, var5x, var13, var4x, 15728880, OverlayTexture.NO_OVERLAY, true, var22, -1);
+                  if (key.method2033(var5x)) {
+                     BoneMatrices.method4787(key, floatValues, var5x, poseStack, var4x, 15728880, OverlayTexture.NO_OVERLAY, true, flag, -1);
                   }
                }
             });
          } finally {
-            var13.popPose();
+            poseStack.popPose();
          }
-         var1.disableScissor();
+         context.disableScissor();
       }
    }
 
@@ -140,10 +140,10 @@ public final class Stage implements MinecraftAccess {
          return "Data[" + "text=" + this.text + ", " + "floatValue=" + this.floatValue + ", " + "flag=" + this.flag + "]";
       }
 
-      private Data(String var1, float var2, boolean var3) {
-         this.text = var1;
-         this.floatValue = var2;
-         this.flag = var3;
+      private Data(String text, float floatValue, boolean flag) {
+         this.text = text;
+         this.floatValue = floatValue;
+         this.flag = flag;
       }
 
       public String getText() {

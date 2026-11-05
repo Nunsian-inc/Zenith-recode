@@ -18,41 +18,41 @@ public class DirectionEvent implements Event {
    }
 
    @Generated
-   public void setFloatValue(float var1) {
-      this.floatValue = var1;
+   public void setFloatValue(float floatValue) {
+      this.floatValue = floatValue;
    }
 
    @Generated
-   public void setFloatValue2(float var1) {
-      this.floatValue2 = var1;
+   public void setFloatValue2(float f) {
+      this.floatValue2 = f;
    }
 
    @Generated
    @Override
-   public boolean equals(Object var1) {
-      if (var1 == this) {
+   public boolean equals(Object obj) {
+      if (obj == this) {
          return true;
-      } else if (!(var1 instanceof DirectionEvent var2)) {
+      } else if (!(obj instanceof DirectionEvent event)) {
          return false;
-      } else if (!var2.method490(this)) {
+      } else if (!event.method490(this)) {
          return false;
       } else {
-         return Float.compare(this.getFloatValue(), var2.getFloatValue()) != 0 ? false : Float.compare(this.getFloatValue2(), var2.getFloatValue2()) == 0;
+         return Float.compare(this.getFloatValue(), event.getFloatValue()) != 0 ? false : Float.compare(this.getFloatValue2(), event.getFloatValue2()) == 0;
       }
    }
 
    @Generated
-   public boolean method490(Object var1) {
-      return var1 instanceof DirectionEvent;
+   public boolean method490(Object obj) {
+      return obj instanceof DirectionEvent;
    }
 
    @Generated
    @Override
    public int hashCode() {
-      byte var1 = 59;
-      int var2 = 1;
-      var2 = var2 * 59 + Float.floatToIntBits(this.getFloatValue());
-      return var2 * 59 + Float.floatToIntBits(this.getFloatValue2());
+      byte b = 59;
+      int n = 1;
+      n = n * 59 + Float.floatToIntBits(this.getFloatValue());
+      return n * 59 + Float.floatToIntBits(this.getFloatValue2());
    }
 
    @Generated
@@ -62,8 +62,8 @@ public class DirectionEvent implements Event {
    }
 
    @Generated
-   public DirectionEvent(float var1, float var2) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
+   public DirectionEvent(float floatValue, float f) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
    }
 }

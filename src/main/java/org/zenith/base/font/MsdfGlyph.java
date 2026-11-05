@@ -15,72 +15,72 @@ public final class MsdfGlyph {
    private final float width;
    private final float height;
 
-   public MsdfGlyph(FontData.GlyphData var1, float var2, float var3) {
-      this.code = var1.unicode();
-      this.advance = var1.advance();
-      FontData.BoundsData var4 = var1.atlasBounds();
-      if (var4 != null) {
-         this.minU = var4.left() / var2;
-         this.maxU = var4.right() / var2;
-         this.minV = 1.0F - var4.top() / var3;
-         this.maxV = 1.0F - var4.bottom() / var3;
+   public MsdfGlyph(FontData.GlyphData glyph, float width, float height) {
+      this.code = glyph.unicode();
+      this.advance = glyph.advance();
+      FontData.BoundsData atlasBounds = glyph.atlasBounds();
+      if (atlasBounds != null) {
+         this.minU = atlasBounds.left() / width;
+         this.maxU = atlasBounds.right() / width;
+         this.minV = 1.0F - atlasBounds.top() / height;
+         this.maxV = 1.0F - atlasBounds.bottom() / height;
       } else {
          this.minU = this.maxU = this.minV = this.maxV = 0.0F;
       }
 
-      FontData.BoundsData var5 = var1.planeBounds();
-      if (var5 != null) {
-         this.width = var5.right() - var5.left();
-         this.height = var5.top() - var5.bottom();
-         this.topPosition = var5.top();
+      FontData.BoundsData planeBounds = glyph.planeBounds();
+      if (planeBounds != null) {
+         this.width = planeBounds.right() - planeBounds.left();
+         this.height = planeBounds.top() - planeBounds.bottom();
+         this.topPosition = planeBounds.top();
       } else {
          this.width = this.height = this.topPosition = 0.0F;
       }
    }
 
-   private static void vertex(VertexConsumer var0, Matrix4f var1, float var2, float var3, float var4, float var5, float var6, int var7) {
-      float var8 = var1.m00() * var2 + var1.m10() * var3 + var1.m20() * var4 + var1.m30();
-      float var9 = var1.m01() * var2 + var1.m11() * var3 + var1.m21() * var4 + var1.m31();
-      float var10 = var1.m02() * var2 + var1.m12() * var3 + var1.m22() * var4 + var1.m32();
-      var0.addVertex(var8, var9, var10).setUv(var5, var6).setColor(var7);
+   private static void vertex(VertexConsumer consumer, Matrix4f matrix, float floatValue, float f, float z, float minU, float minV, int color) {
+      float x = matrix.m00() * floatValue + matrix.m10() * f + matrix.m20() * z + matrix.m30();
+      float y = matrix.m01() * floatValue + matrix.m11() * f + matrix.m21() * z + matrix.m31();
+      float z2 = matrix.m02() * floatValue + matrix.m12() * f + matrix.m22() * z + matrix.m32();
+      consumer.addVertex(x, y, z2).setUv(minU, minV).setColor(color);
    }
 
-   public float apply(Matrix4f var1, VertexConsumer var2, float var3, float var4, float var5, float var6, int var7) {
-      var5 -= this.topPosition * var3;
-      float var8 = var4 + this.width * var3;
-      float var9 = var5 + this.height * var3;
-      vertex(var2, var1, var4, var5, var6, this.minU, this.minV, var7);
-      vertex(var2, var1, var4, var9, var6, this.minU, this.maxV, var7);
-      vertex(var2, var1, var8, var9, var6, this.maxU, this.maxV, var7);
-      vertex(var2, var1, var8, var5, var6, this.maxU, this.minV, var7);
-      return this.advance * var3;
+   public float apply(Matrix4f matrix, VertexConsumer consumer, float size, float floatValue, float f, float z, int color) {
+      f -= this.topPosition * size;
+      float floatValue2 = floatValue + this.width * size;
+      float f2 = f + this.height * size;
+      vertex(consumer, matrix, floatValue, f, z, this.minU, this.minV, color);
+      vertex(consumer, matrix, floatValue, f2, z, this.minU, this.maxV, color);
+      vertex(consumer, matrix, floatValue2, f2, z, this.maxU, this.maxV, color);
+      vertex(consumer, matrix, floatValue2, f, z, this.maxU, this.minV, color);
+      return this.advance * size;
    }
 
-   public float apply(Matrix4f var1, VertexConsumer var2, float var3, float var4, float var5, float var6, GlowColor var7) {
-      var5 -= this.topPosition * var3;
-      float var8 = var4 + this.width * var3;
-      float var9 = var5 + this.height * var3;
-      vertex(var2, var1, var4, var5, var6, this.minU, this.minV, var7.getZenithColor().method7287());
-      vertex(var2, var1, var4, var9, var6, this.minU, this.maxV, var7.getZenithColor2().method7287());
-      vertex(var2, var1, var8, var9, var6, this.maxU, this.maxV, var7.getZenithColor4().method7287());
-      vertex(var2, var1, var8, var5, var6, this.maxU, this.minV, var7.getZenithColor3().method7287());
-      return this.advance * var3;
+   public float apply(Matrix4f matrix4f, VertexConsumer consumer, float size, float floatValue, float f, float z, GlowColor glowColor) {
+      f -= this.topPosition * size;
+      float floatValue2 = floatValue + this.width * size;
+      float f2 = f + this.height * size;
+      vertex(consumer, matrix4f, floatValue, f, z, this.minU, this.minV, glowColor.getZenithColor().method7287());
+      vertex(consumer, matrix4f, floatValue, f2, z, this.minU, this.maxV, glowColor.getZenithColor2().method7287());
+      vertex(consumer, matrix4f, floatValue2, f2, z, this.maxU, this.maxV, glowColor.getZenithColor4().method7287());
+      vertex(consumer, matrix4f, floatValue2, f, z, this.maxU, this.minV, glowColor.getZenithColor3().method7287());
+      return this.advance * size;
    }
 
-   public float getWidth(float var1) {
-      return this.advance * var1;
+   public float getWidth(float size) {
+      return this.advance * size;
    }
 
-   public float getInkWidth(float var1) {
-      return this.width * var1;
+   public float getInkWidth(float size) {
+      return this.width * size;
    }
 
-   public float getInkHeight(float var1) {
-      return this.height * var1;
+   public float getInkHeight(float size) {
+      return this.height * size;
    }
 
-   public float getInkTop(float var1) {
-      return this.topPosition * var1;
+   public float getInkTop(float size) {
+      return this.topPosition * size;
    }
 
    public int getCharCode() {

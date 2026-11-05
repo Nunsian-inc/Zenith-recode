@@ -59,7 +59,7 @@ public final class Util3 {
    private static final int CONST_intValue9 = 512;
    private static final Map<Util3.Entry2, Util3.Data[]> items = new LinkedHashMap<Util3.Entry2, Util3.Data[]>(64, 0.75F, true) {
       @Override
-      public boolean removeEldestEntry(java.util.Map.Entry<Util3.Entry2, Util3.Data[]> var1) {
+      public boolean removeEldestEntry(java.util.Map.Entry<Util3.Entry2, Util3.Data[]> eldest) {
          return this.size() > 512;
       }
    };
@@ -69,8 +69,8 @@ public final class Util3 {
    private Util3() {
    }
 
-   public static int method824(FocusSlotEnum var0) {
-      return switch (var0) {
+   public static int method824(FocusSlotEnum focusSlotEnum) {
+      return switch (focusSlotEnum) {
          case CHARACTER -> 0;
          case LEGS -> 1;
          case BODY -> 2;
@@ -81,278 +81,278 @@ public final class Util3 {
       };
    }
 
-   private static boolean method825(int var0) {
-      return var0 == CONST_intValue4 || var0 == CONST_intValue5;
+   private static boolean method825(int ordinal) {
+      return ordinal == CONST_intValue4 || ordinal == CONST_intValue5;
    }
 
-   public static Util3.Entry method826(AvatarRenderState var0, Wardrobe var1, List<HoveredData> var2, HoveredData var3) {
-      boolean var4 = var0.skin != null && var0.skin.model() == PlayerModelType.SLIM;
-      Util3.Entry var5 = Util3.Entry.method843(var1, var2, var3, var4);
-      if (var1.clothesOverArmor.isEnabled() && !WardrobeRenderer.method6688(var0)) {
-         method828(var0, var5.floatValues);
+   public static Util3.Entry method826(AvatarRenderState state, Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData) {
+      boolean flag = state.skin != null && state.skin.model() == PlayerModelType.SLIM;
+      Util3.Entry entry = Util3.Entry.method843(wardrobe, hoveredDatas, hoveredData, flag);
+      if (wardrobe.clothesOverArmor.isEnabled() && !WardrobeRenderer.method6688(state)) {
+         method828(state, entry.floatValues);
       }
 
-      if (var3 == null) {
-         var5.floatValues2[CONST_intValue2] = var0.showHat ? 0.03125F : 0.0F;
-         var5.floatValues2[CONST_intValue3] = var0.showJacket ? 0.015625F : 0.0F;
-         var5.floatValues2[CONST_intValue4] = var0.showRightSleeve ? 0.015625F : 0.0F;
-         var5.floatValues2[CONST_intValue5] = var0.showLeftSleeve ? 0.015625F : 0.0F;
-         var5.floatValues2[CONST_intValue6] = var0.showRightPants ? 0.015625F : 0.0F;
-         var5.floatValues2[CONST_intValue7] = var0.showLeftPants ? 0.015625F : 0.0F;
+      if (hoveredData == null) {
+         entry.floatValues2[CONST_intValue2] = state.showHat ? 0.03125F : 0.0F;
+         entry.floatValues2[CONST_intValue3] = state.showJacket ? 0.015625F : 0.0F;
+         entry.floatValues2[CONST_intValue4] = state.showRightSleeve ? 0.015625F : 0.0F;
+         entry.floatValues2[CONST_intValue5] = state.showLeftSleeve ? 0.015625F : 0.0F;
+         entry.floatValues2[CONST_intValue6] = state.showRightPants ? 0.015625F : 0.0F;
+         entry.floatValues2[CONST_intValue7] = state.showLeftPants ? 0.015625F : 0.0F;
       }
 
-      var5.method844();
-      return var5;
+      entry.method844();
+      return entry;
    }
 
-   public static Util3.Entry method827(Wardrobe var0, List<HoveredData> var1, HoveredData var2, boolean var3, int var4, boolean var5) {
-      Util3.Entry var6 = Util3.Entry.method843(var0, var1, var2, var3);
-      if (var2 == null && var5 && method825(var4)) {
-         boolean var7 = false;
+   public static Util3.Entry method827(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag, int ordinal, boolean flag2) {
+      Util3.Entry entry = Util3.Entry.method843(wardrobe, hoveredDatas, hoveredData, flag);
+      if (hoveredData == null && flag2 && method825(ordinal)) {
+         boolean flag3 = false;
 
-         for (Class15 var11 : var6.class15s) {
-            var7 |= (var11.intValue4 & 4) != 0;
+         for (Class15 class2 : entry.class15s) {
+            flag3 |= (class2.intValue4 & 4) != 0;
          }
 
-         var6.floatValues2[var4] = var7 ? 0.0F : 0.015625F;
+         entry.floatValues2[ordinal] = flag3 ? 0.0F : 0.015625F;
       }
 
-      var6.method844();
-      return var6;
+      entry.method844();
+      return entry;
    }
 
-   private static void method828(AvatarRenderState var0, float[] var1) {
-      boolean var2 = HumanoidArmorLayer.shouldRender(var0.headEquipment, EquipmentSlot.HEAD);
-      boolean var3 = HumanoidArmorLayer.shouldRender(var0.chestEquipment, EquipmentSlot.CHEST)
-         && !var0.chestEquipment.has(DataComponents.GLIDER);
-      boolean var4 = HumanoidArmorLayer.shouldRender(var0.legsEquipment, EquipmentSlot.LEGS);
-      boolean var5 = HumanoidArmorLayer.shouldRender(var0.feetEquipment, EquipmentSlot.FEET);
-      var1[CONST_intValue2] = var2 ? 0.0625F : 0.0F;
-      var1[CONST_intValue3] = var3 ? 0.0625F : (var4 ? 0.03125F : 0.0F);
-      var1[CONST_intValue4] = var3 ? 0.0625F : 0.0F;
-      var1[CONST_intValue5] = var1[CONST_intValue4];
-      var1[CONST_intValue6] = var5 ? 0.05625F : (var4 ? 0.025F : 0.0F);
-      var1[CONST_intValue7] = var1[CONST_intValue6];
+   private static void method828(AvatarRenderState state, float[] floatValues) {
+      boolean shouldRender = HumanoidArmorLayer.shouldRender(state.headEquipment, EquipmentSlot.HEAD);
+      boolean flag = HumanoidArmorLayer.shouldRender(state.chestEquipment, EquipmentSlot.CHEST)
+         && !state.chestEquipment.has(DataComponents.GLIDER);
+      boolean shouldRender2 = HumanoidArmorLayer.shouldRender(state.legsEquipment, EquipmentSlot.LEGS);
+      boolean shouldRender3 = HumanoidArmorLayer.shouldRender(state.feetEquipment, EquipmentSlot.FEET);
+      floatValues[CONST_intValue2] = shouldRender ? 0.0625F : 0.0F;
+      floatValues[CONST_intValue3] = flag ? 0.0625F : (shouldRender2 ? 0.03125F : 0.0F);
+      floatValues[CONST_intValue4] = flag ? 0.0625F : 0.0F;
+      floatValues[CONST_intValue5] = floatValues[CONST_intValue4];
+      floatValues[CONST_intValue6] = shouldRender3 ? 0.05625F : (shouldRender2 ? 0.025F : 0.0F);
+      floatValues[CONST_intValue7] = floatValues[CONST_intValue6];
    }
 
-   private static float[] method829(int var0, int var1) {
-      float var2 = var0 == CONST_intValue2 ? 0.0625F : 0.0F;
-      float var3 = var1 == 1 ? CONST_floatValues[var0] - CONST_floatValues2[var0] : CONST_floatValues4[var0] - var2;
-      float var4 = var1 == 1 ? CONST_floatValues[var0] + CONST_floatValues2[var0] : CONST_floatValues5[var0];
-      float var5 = var1 == 2 ? CONST_floatValues[var0] - CONST_floatValues2[var0] : -CONST_floatValues3[var0];
-      float var6 = var1 == 2 ? CONST_floatValues[var0] + CONST_floatValues2[var0] : CONST_floatValues3[var0];
-      return new float[]{var3, var4, var5, var6};
+   private static float[] method829(int ordinal, int n) {
+      float f = ordinal == CONST_intValue2 ? 0.0625F : 0.0F;
+      float f2 = n == 1 ? CONST_floatValues[ordinal] - CONST_floatValues2[ordinal] : CONST_floatValues4[ordinal] - f;
+      float f3 = n == 1 ? CONST_floatValues[ordinal] + CONST_floatValues2[ordinal] : CONST_floatValues5[ordinal];
+      float f4 = n == 2 ? CONST_floatValues[ordinal] - CONST_floatValues2[ordinal] : -CONST_floatValues3[ordinal];
+      float f5 = n == 2 ? CONST_floatValues[ordinal] + CONST_floatValues2[ordinal] : CONST_floatValues3[ordinal];
+      return new float[]{f2, f3, f4, f5};
    }
 
-   private static float method830(int var0, int var1) {
-      float var2 = var1 == 0 ? CONST_floatValues2[var0] : (var1 == 2 ? CONST_floatValues3[var0] : -CONST_floatValues4[var0]);
-      return var2 * 0.85F;
+   private static float method830(int ordinal, int n) {
+      float f = n == 0 ? CONST_floatValues2[ordinal] : (n == 2 ? CONST_floatValues3[ordinal] : -CONST_floatValues4[ordinal]);
+      return f * 0.85F;
    }
 
-   public static float method831(Class15 var0, int var1, int var2, float var3) {
-      Util3.Data3 var4 = new Util3.Data3(var1, var2, var3);
-      float[] var5 = var0.items4.get(var4);
-      if (var5 != null) {
-         return var5 == CONST_floatValues7 ? Float.NaN : var5[0];
+   public static float method831(Class15 class2, int ordinal, int n, float floatValue) {
+      Util3.Data3 data3 = new Util3.Data3(ordinal, n, floatValue);
+      float[] floats = class2.items4.get(data3);
+      if (floats != null) {
+         return floats == CONST_floatValues7 ? Float.NaN : floats[0];
       } else {
-         float[] var6 = method829(var1, var2);
-         int var7 = var2 == 1 ? 0 : 1;
-         int var8 = var2 == 2 ? 0 : 2;
-         float var9 = var2 == 0 ? CONST_floatValues[var1] : 0.0F;
-         float var10 = method830(var1, var2);
-         float[] var11 = new float[Math.max(0, var0.method2029(var1) - var0.method2028(var1)) * 5];
-         int var12 = method837(var0, var1, var2, var3, var9, var7, var8, false, var11);
-         float[] var13 = new float[]{Float.MAX_VALUE};
-         method833(var11, var12, var11, 0, var6, (var2x, var3x) -> {
-            if (var2x >= var10 && var2x < var13[0]) {
-               var13[0] = var2x;
+         float[] floats2 = method829(ordinal, n);
+         int n2 = n == 1 ? 0 : 1;
+         int n3 = n == 2 ? 0 : 2;
+         float f = n == 0 ? CONST_floatValues[ordinal] : 0.0F;
+         float f2 = method830(ordinal, n);
+         float[] floats3 = new float[Math.max(0, class2.method2029(ordinal) - class2.method2028(ordinal)) * 5];
+         int n4 = method837(class2, ordinal, n, floatValue, f, n2, n3, false, floats3);
+         float[] floats4 = new float[]{Float.MAX_VALUE};
+         method833(floats3, n4, floats3, 0, floats2, (var2x, var3x) -> {
+            if (var2x >= f2 && var2x < floats4[0]) {
+               floats4[0] = var2x;
             }
          });
-         float[] var14 = var13[0] < Float.MAX_VALUE ? new float[]{var13[0]} : CONST_floatValues7;
-         var0.items4.put(var4, var14);
-         return var14 == CONST_floatValues7 ? Float.NaN : var13[0];
+         float[] floats5 = floats4[0] < Float.MAX_VALUE ? new float[]{floats4[0]} : CONST_floatValues7;
+         class2.items4.put(data3, floats5);
+         return floats5 == CONST_floatValues7 ? Float.NaN : floats4[0];
       }
    }
 
-   private static float[] method832(Class15 var0, Class15 var1, int var2, int var3, float var4, float var5) {
-      Util3.Data2 var6 = new Util3.Data2(var0, var2, var3, var4, var5);
-      float[] var7 = var1.items4.get(var6);
-      if (var7 != null) {
-         return var7 == CONST_floatValues7 ? null : var7;
+   private static float[] method832(Class15 class2, Class15 class3, int ordinal, int n, float floatValue, float f) {
+      Util3.Data2 data2 = new Util3.Data2(class2, ordinal, n, floatValue, f);
+      float[] floats = class3.items4.get(data2);
+      if (floats != null) {
+         return floats == CONST_floatValues7 ? null : floats;
       } else {
-         float[] var8 = method829(var2, var3);
-         int var9 = var3 == 1 ? 0 : 1;
-         int var10 = var3 == 2 ? 0 : 2;
-         float var11 = var3 == 0 ? CONST_floatValues[var2] : 0.0F;
-         float var12 = method830(var2, var3);
-         float[] var13 = new float[Math.max(0, var1.method2029(var2) - var1.method2028(var2)) * 5];
-         float[] var14 = new float[Math.max(0, var0.method2029(var2) - var0.method2028(var2)) * 5];
-         int var15 = method837(var1, var2, var3, var4, var11, var9, var10, false, var13);
-         int var16 = method837(var0, var2, var3, var4, var11, var9, var10, true, var14);
-         Util3.Entry3 var17 = new Util3.Entry3();
-         if (var16 > 0) {
-            method833(var13, var15, var14, var16, var8, (var3x, var4x) -> {
-               if (var3x >= var12 && var4x >= var12 && var4x <= var3x * var5) {
-                  var17.method851(var3x, var4x);
+         float[] floats2 = method829(ordinal, n);
+         int n2 = n == 1 ? 0 : 1;
+         int n3 = n == 2 ? 0 : 2;
+         float f2 = n == 0 ? CONST_floatValues[ordinal] : 0.0F;
+         float f3 = method830(ordinal, n);
+         float[] floats3 = new float[Math.max(0, class3.method2029(ordinal) - class3.method2028(ordinal)) * 5];
+         float[] floats4 = new float[Math.max(0, class2.method2029(ordinal) - class2.method2028(ordinal)) * 5];
+         int n4 = method837(class3, ordinal, n, floatValue, f2, n2, n3, false, floats3);
+         int n5 = method837(class2, ordinal, n, floatValue, f2, n2, n3, true, floats4);
+         Util3.Entry3 entry3 = new Util3.Entry3();
+         if (n5 > 0) {
+            method833(floats3, n4, floats4, n5, floats2, (var3x, var4x) -> {
+               if (var3x >= f3 && var4x >= f3 && var4x <= var3x * f) {
+                  entry3.method851(var3x, var4x);
                }
             });
          }
 
-         float[] var18 = var17.method852();
-         var1.items4.put(var6, var18);
-         return var18 == CONST_floatValues7 ? null : var18;
+         float[] floats5 = entry3.method852();
+         class3.items4.put(data2, floats5);
+         return floats5 == CONST_floatValues7 ? null : floats5;
       }
    }
 
-   private static void method833(float[] var0, int var1, float[] var2, int var3, float[] var4, Util3.Handler var5) {
-      int[] var6 = new int[var1];
-      int[] var7 = new int[var3];
-      float[] var8 = new float[(var1 + var3) * 2 + 2];
-      float[] var9 = new float[var8.length];
+   private static void method833(float[] floats, int n, float[] floats2, int n2, float[] floats3, Util3.Handler handler) {
+      int[] ints = new int[n];
+      int[] ints2 = new int[n2];
+      float[] floats4 = new float[(n + n2) * 2 + 2];
+      float[] floats5 = new float[floats4.length];
 
-      for (int var10 = 0; var10 < var1; var10++) {
-         int var11 = var10 * 5;
-         float var12 = Math.max(var4[0], var0[var11 + 1]);
-         float var13 = Math.min(var4[1], var0[var11 + 2]);
-         float var14 = Math.max(var4[2], var0[var11 + 3]);
-         float var15 = Math.min(var4[3], var0[var11 + 4]);
-         if (!(var12 >= var13) && !(var14 >= var15)) {
-            int var16 = method834(var0, var1, var12, var13, var14, var15, var6);
-            int var17 = method834(var2, var3, var12, var13, var14, var15, var7);
-            int var18 = method835(var8, var12, var13, 1, var0, var6, var16, var2, var7, var17);
-            int var19 = method835(var9, var14, var15, 3, var0, var6, var16, var2, var7, var17);
+      for (int i = 0; i < n; i++) {
+         int n3 = i * 5;
+         float f = Math.max(floats3[0], floats[n3 + 1]);
+         float f2 = Math.min(floats3[1], floats[n3 + 2]);
+         float f3 = Math.max(floats3[2], floats[n3 + 3]);
+         float f4 = Math.min(floats3[3], floats[n3 + 4]);
+         if (!(f >= f2) && !(f3 >= f4)) {
+            int n4 = method834(floats, n, f, f2, f3, f4, ints);
+            int n5 = method834(floats2, n2, f, f2, f3, f4, ints2);
+            int n6 = method835(floats4, f, f2, 1, floats, ints, n4, floats2, ints2, n5);
+            int n7 = method835(floats5, f3, f4, 3, floats, ints, n4, floats2, ints2, n5);
 
-            for (int var20 = 0; var20 + 1 < var18; var20++) {
-               float var21 = (var8[var20] + var8[var20 + 1]) * 0.5F;
+            for (int j = 0; j + 1 < n6; j++) {
+               float f5 = (floats4[j] + floats4[j + 1]) * 0.5F;
 
-               for (int var22 = 0; var22 + 1 < var19; var22++) {
-                  float var23 = (var9[var22] + var9[var22 + 1]) * 0.5F;
-                  var5.accept(method838(var0, var6, var16, var21, var23), method838(var2, var7, var17, var21, var23));
+               for (int k = 0; k + 1 < n7; k++) {
+                  float f6 = (floats5[k] + floats5[k + 1]) * 0.5F;
+                  handler.accept(method838(floats, ints, n4, f5, f6), method838(floats2, ints2, n5, f5, f6));
                }
             }
          }
       }
    }
 
-   private static int method834(float[] var0, int var1, float var2, float var3, float var4, float var5, int[] var6) {
-      int var7 = 0;
+   private static int method834(float[] floats, int n, float f, float f2, float f3, float f4, int[] ints) {
+      int n2 = 0;
 
-      for (int var8 = 0; var8 < var1; var8++) {
-         int var9 = var8 * 5;
-         if (var0[var9 + 1] < var3 && var0[var9 + 2] > var2 && var0[var9 + 3] < var5 && var0[var9 + 4] > var4) {
-            var6[var7++] = var8;
+      for (int i = 0; i < n; i++) {
+         int n3 = i * 5;
+         if (floats[n3 + 1] < f2 && floats[n3 + 2] > f && floats[n3 + 3] < f4 && floats[n3 + 4] > f3) {
+            ints[n2++] = i;
          }
       }
 
-      return var7;
+      return n2;
    }
 
-   private static int method835(float[] var0, float var1, float var2, int var3, float[] var4, int[] var5, int var6, float[] var7, int[] var8, int var9) {
-      int var10 = 0;
-      var0[var10++] = var1;
-      var0[var10++] = var2;
+   private static int method835(float[] floats, float f, float f2, int n, float[] floats2, int[] ints, int n2, float[] floats3, int[] ints2, int n3) {
+      int toIndex = 0;
+      floats[toIndex++] = f;
+      floats[toIndex++] = f2;
 
-      for (int var11 = 0; var11 < var6; var11++) {
-         var10 = method836(var0, var10, var1, var2, var4[var5[var11] * 5 + var3]);
-         var10 = method836(var0, var10, var1, var2, var4[var5[var11] * 5 + var3 + 1]);
+      for (int i = 0; i < n2; i++) {
+         toIndex = method836(floats, toIndex, f, f2, floats2[ints[i] * 5 + n]);
+         toIndex = method836(floats, toIndex, f, f2, floats2[ints[i] * 5 + n + 1]);
       }
 
-      for (int var17 = 0; var17 < var9; var17++) {
-         var10 = method836(var0, var10, var1, var2, var7[var8[var17] * 5 + var3]);
-         var10 = method836(var0, var10, var1, var2, var7[var8[var17] * 5 + var3 + 1]);
+      for (int i = 0; i < n3; i++) {
+         toIndex = method836(floats, toIndex, f, f2, floats3[ints2[i] * 5 + n]);
+         toIndex = method836(floats, toIndex, f, f2, floats3[ints2[i] * 5 + n + 1]);
       }
 
-      Arrays.sort(var0, 0, var10);
-      int var18 = 1;
+      Arrays.sort(floats, 0, toIndex);
+      int n4 = 1;
 
-      for (int var12 = 1; var12 < var10; var12++) {
-         if (var0[var12] - var0[var18 - 1] > 1.0E-6F) {
-            var0[var18++] = var0[var12];
+      for (int i = 1; i < toIndex; i++) {
+         if (floats[i] - floats[n4 - 1] > 1.0E-6F) {
+            floats[n4++] = floats[i];
          }
       }
 
-      return var18;
+      return n4;
    }
 
-   private static int method836(float[] var0, int var1, float var2, float var3, float var4) {
-      if (var4 > var2 && var4 < var3) {
-         var0[var1++] = var4;
+   private static int method836(float[] floats, int toIndex, float f, float f2, float f3) {
+      if (f3 > f && f3 < f2) {
+         floats[toIndex++] = f3;
       }
 
-      return var1;
+      return toIndex;
    }
 
-   private static int method837(Class15 var0, int var1, int var2, float var3, float var4, int var5, int var6, boolean var7, float[] var8) {
-      float[] var9 = method841(var0, obj);
-      float[] var10 = method841(var0, obj2);
-      boolean var11 = var7 && method840(var0, var1);
-      int var12 = 0;
-      int var13 = var0.method2028(var1);
+   private static int method837(Class15 class2, int ordinal, int n, float floatValue, float f, int n2, int n3, boolean flag, float[] floats) {
+      float[] floats2 = method841(class2, obj);
+      float[] floats3 = method841(class2, obj2);
+      boolean flag2 = flag && method840(class2, ordinal);
+      int n4 = 0;
+      int n5 = class2.method2028(ordinal);
 
-      for (int var14 = var0.method2029(var1); var13 < var14; var13++) {
-         int var15 = var0.intValues4[var13];
-         if (var0.intValues3[var15] == var1
-            && (var0.intValues5[var13] & 4) == 0
-            && (!var11 || var0.intValues[var15] < 0)
-            && !(var10[var13 * 3 + var2] * var3 < 0.9F)) {
-            float var16 = 0.0F;
-            float var17 = Float.MAX_VALUE;
-            float var18 = -Float.MAX_VALUE;
-            float var19 = Float.MAX_VALUE;
-            float var20 = -Float.MAX_VALUE;
+      for (int i = class2.method2029(ordinal); n5 < i; n5++) {
+         int n6 = class2.intValues4[n5];
+         if (class2.intValues3[n6] == ordinal
+            && (class2.intValues5[n5] & 4) == 0
+            && (!flag2 || class2.intValues[n6] < 0)
+            && !(floats3[n5 * 3 + n] * floatValue < 0.9F)) {
+            float f2 = 0.0F;
+            float f3 = Float.MAX_VALUE;
+            float f4 = -Float.MAX_VALUE;
+            float f5 = Float.MAX_VALUE;
+            float f6 = -Float.MAX_VALUE;
 
-            for (int var21 = 0; var21 < 4; var21++) {
-               int var22 = var13 * 12 + var21 * 3;
-               var16 += var9[var22 + var2];
-               float var23 = var9[var22 + var5];
-               float var24 = var9[var22 + var6];
-               var17 = Math.min(var17, var23);
-               var18 = Math.max(var18, var23);
-               var19 = Math.min(var19, var24);
-               var20 = Math.max(var20, var24);
+            for (int j = 0; j < 4; j++) {
+               int n7 = n5 * 12 + j * 3;
+               f2 += floats2[n7 + n];
+               float f7 = floats2[n7 + n2];
+               float f8 = floats2[n7 + n3];
+               f3 = Math.min(f3, f7);
+               f4 = Math.max(f4, f7);
+               f5 = Math.min(f5, f8);
+               f6 = Math.max(f6, f8);
             }
 
-            int var25 = var12++ * 5;
-            var8[var25] = var3 * (var16 / 4.0F - var4);
-            var8[var25 + 1] = var17;
-            var8[var25 + 2] = var18;
-            var8[var25 + 3] = var19;
-            var8[var25 + 4] = var20;
+            int n7 = n4++ * 5;
+            floats[n7] = floatValue * (f2 / 4.0F - f);
+            floats[n7 + 1] = f3;
+            floats[n7 + 2] = f4;
+            floats[n7 + 3] = f5;
+            floats[n7 + 4] = f6;
          }
       }
 
-      return var12;
+      return n4;
    }
 
-   private static float method838(float[] var0, int[] var1, int var2, float var3, float var4) {
-      float var5 = -Float.MAX_VALUE;
+   private static float method838(float[] floats, int[] ints, int n, float f, float f2) {
+      float f3 = -Float.MAX_VALUE;
 
-      for (int var6 = 0; var6 < var2; var6++) {
-         int var7 = var1[var6] * 5;
-         if (var0[var7] > var5 && var3 >= var0[var7 + 1] && var3 <= var0[var7 + 2] && var4 >= var0[var7 + 3] && var4 <= var0[var7 + 4]) {
-            var5 = var0[var7];
+      for (int i = 0; i < n; i++) {
+         int n2 = ints[i] * 5;
+         if (floats[n2] > f3 && f >= floats[n2 + 1] && f <= floats[n2 + 2] && f2 >= floats[n2 + 3] && f2 <= floats[n2 + 4]) {
+            f3 = floats[n2];
          }
       }
 
-      return var5;
+      return f3;
    }
 
-   private static float method839(float[] var0, int var1, float var2, float var3) {
-      float var4 = -Float.MAX_VALUE;
+   private static float method839(float[] floats, int n, float f, float f2) {
+      float f3 = -Float.MAX_VALUE;
 
-      for (int var5 = 0; var5 < var1; var5++) {
-         int var6 = var5 * 5;
-         if (var0[var6] > var4 && var2 >= var0[var6 + 1] && var2 <= var0[var6 + 2] && var3 >= var0[var6 + 3] && var3 <= var0[var6 + 4]) {
-            var4 = var0[var6];
+      for (int i = 0; i < n; i++) {
+         int n2 = i * 5;
+         if (floats[n2] > f3 && f >= floats[n2 + 1] && f <= floats[n2 + 2] && f2 >= floats[n2 + 3] && f2 <= floats[n2 + 4]) {
+            f3 = floats[n2];
          }
       }
 
-      return var4;
+      return f3;
    }
 
-   private static boolean method840(Class15 var0, int var1) {
-      for (int var2 = 0; var2 < var0.method2030(); var2++) {
-         if (var0.intValues[var2] < 0 && var0.intValues2[var2] == var1) {
+   private static boolean method840(Class15 class2, int ordinal) {
+      for (int i = 0; i < class2.method2030(); i++) {
+         if (class2.intValues[i] < 0 && class2.intValues2[i] == ordinal) {
             return true;
          }
       }
@@ -360,49 +360,49 @@ public final class Util3 {
       return false;
    }
 
-   private static float[] method841(Class15 var0, Object var1) {
-      float[] var2 = var0.items4.get(var1);
-      if (var2 != null) {
-         return var2;
+   private static float[] method841(Class15 key, Object obj3) {
+      float[] floats = key.items4.get(obj3);
+      if (floats != null) {
+         return floats;
       } else {
-         int var3 = var0.method2030();
-         Matrix4f[] var4 = new Matrix4f[var3];
+         int n = key.method2030();
+         Matrix4f[] matrixes = new Matrix4f[n];
 
-         for (int var5 = 0; var5 < var3; var5++) {
-            var4[var5] = new Matrix4f();
-            BoneMatrices.method4808(var0, null, var5, var4[var5]);
+         for (int i = 0; i < n; i++) {
+            matrixes[i] = new Matrix4f();
+            BoneMatrices.method4808(key, null, i, matrixes[i]);
          }
 
-         float[] var12 = new float[var0.intValue3 * 12];
-         float[] var6 = new float[var0.intValue3 * 3];
-         Vector3f var7 = new Vector3f();
+         float[] floats2 = new float[key.intValue3 * 12];
+         float[] floats3 = new float[key.intValue3 * 3];
+         Vector3f vec = new Vector3f();
 
-         for (int var8 = 0; var8 < var0.intValue3; var8++) {
-            Matrix4f var9 = var4[var0.intValues4[var8]];
+         for (int i = 0; i < key.intValue3; i++) {
+            Matrix4f matrix = matrixes[key.intValues4[i]];
 
-            for (int var10 = 0; var10 < 4; var10++) {
-               int var11 = var8 * 12 + var10 * 3;
-               var7.set(var0.floatValues4[var11], var0.floatValues4[var11 + 1], var0.floatValues4[var11 + 2]);
-               var9.transformPosition(var7);
-               var12[var11] = var7.x;
-               var12[var11 + 1] = var7.y;
-               var12[var11 + 2] = var7.z;
+            for (int j = 0; j < 4; j++) {
+               int n2 = i * 12 + j * 3;
+               vec.set(key.floatValues4[n2], key.floatValues4[n2 + 1], key.floatValues4[n2 + 2]);
+               matrix.transformPosition(vec);
+               floats2[n2] = vec.x;
+               floats2[n2 + 1] = vec.y;
+               floats2[n2 + 2] = vec.z;
             }
 
-            var7.set(var0.floatValues6[var8 * 3], var0.floatValues6[var8 * 3 + 1], var0.floatValues6[var8 * 3 + 2]);
-            var9.transformDirection(var7);
-            if (var7.lengthSquared() > 1.0E-8F) {
-               var7.normalize();
+            vec.set(key.floatValues6[i * 3], key.floatValues6[i * 3 + 1], key.floatValues6[i * 3 + 2]);
+            matrix.transformDirection(vec);
+            if (vec.lengthSquared() > 1.0E-8F) {
+               vec.normalize();
             }
 
-            var6[var8 * 3] = var7.x;
-            var6[var8 * 3 + 1] = var7.y;
-            var6[var8 * 3 + 2] = var7.z;
+            floats3[i * 3] = vec.x;
+            floats3[i * 3 + 1] = vec.y;
+            floats3[i * 3 + 2] = vec.z;
          }
 
-         var0.items4.put(obj, var12);
-         var0.items4.put(obj2, var6);
-         return var1 == obj ? var12 : var6;
+         key.items4.put(obj, floats2);
+         key.items4.put(obj2, floats3);
+         return obj3 == obj ? floats2 : floats3;
       }
    }
 
@@ -461,21 +461,21 @@ public final class Util3 {
       }
       public static final Util3.Data INSTANCE = new Util3.Data(0.0F, 0.0F, 1.0F, 0.0F, 1.0F, 1.0F, 0.0F);
 
-      public Data(float var1, float var2, float var3, float var4, float var5, float var6, float var7) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
+      public Data(float floatValue, float f, float f2, float f3, float f4, float f5, float f6) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
       }
 
-      public void method842(PoseStack var1) {
+      public void method842(PoseStack poseStack) {
          if (this != INSTANCE) {
-            var1.translate(this.floatValue2 + this.floatValue4, 0.0F, this.floatValue7);
-            var1.scale(this.floatValue3, this.floatValue5, this.floatValue6);
-            var1.translate(-this.floatValue, 0.0F, 0.0F);
+            poseStack.translate(this.floatValue2 + this.floatValue4, 0.0F, this.floatValue7);
+            poseStack.scale(this.floatValue3, this.floatValue5, this.floatValue6);
+            poseStack.translate(-this.floatValue, 0.0F, 0.0F);
          }
       }
 
@@ -552,12 +552,12 @@ public final class Util3 {
          return "Data2[" + "class15=" + this.class15 + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + "]";
       }
 
-      private Data2(Class15 var1, int var2, int var3, float var4, float var5) {
-         this.class15 = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
-         this.floatValue = var4;
-         this.floatValue2 = var5;
+      private Data2(Class15 class2, int intValue, int n, float floatValue, float f) {
+         this.class15 = class2;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
 
       public Class15 getClass15() {
@@ -615,10 +615,10 @@ public final class Util3 {
          return "Data3[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + "]";
       }
 
-      private Data3(int var1, int var2, float var3) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.floatValue = var3;
+      private Data3(int intValue, int n, float floatValue) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.floatValue = floatValue;
       }
 
       public int getIntValue() {
@@ -643,228 +643,228 @@ public final class Util3 {
       private final float[] floatValues2 = new float[6];
       private Util3.Data[] datas;
 
-      public Entry(List<HoveredData> var1, List<Class15> var2, boolean var3) {
-         int var4 = var1.size();
-         this.hoveredDatas = var1.toArray(new HoveredData[0]);
-         this.class15s = var2.toArray(new Class15[0]);
-         this.intValues = new int[var4];
-         boolean var5 = false;
+      public Entry(List<HoveredData> hoveredDatas, List<Class15> classes, boolean flag) {
+         int size = hoveredDatas.size();
+         this.hoveredDatas = hoveredDatas.toArray(new HoveredData[0]);
+         this.class15s = classes.toArray(new Class15[0]);
+         this.intValues = new int[size];
+         boolean flag2 = false;
 
-         for (int var6 = 0; var6 < var4; var6++) {
-            this.intValues[var6] = Util3.method824(this.hoveredDatas[var6].getFocusSlotEnum());
-            var5 |= this.hoveredDatas[var6].getFocusSlotEnum() == FocusSlotEnum.CHARACTER;
+         for (int i = 0; i < size; i++) {
+            this.intValues[i] = Util3.method824(this.hoveredDatas[i].getFocusSlotEnum());
+            flag2 |= this.hoveredDatas[i].getFocusSlotEnum() == FocusSlotEnum.CHARACTER;
          }
 
-         this.flag = var3 && !var5;
-         this.datas = new Util3.Data[var4 * 6];
+         this.flag = flag && !flag2;
+         this.datas = new Util3.Data[size * 6];
       }
 
-      private static Util3.Entry method843(Wardrobe var0, List<HoveredData> var1, HoveredData var2, boolean var3) {
-         List<HoveredData> var4 = new ArrayList<>(var1.size());
-         List<Class15> var5 = new ArrayList<>(var1.size());
+      private static Util3.Entry method843(Wardrobe wardrobe, List<HoveredData> hoveredDatas, HoveredData hoveredData, boolean flag) {
+         List<HoveredData> hoveredDatas2 = new ArrayList<>(hoveredDatas.size());
+         List<Class15> classes = new ArrayList<>(hoveredDatas.size());
 
-         for (HoveredData var7 : var1) {
-            if (Util3.method824(var7.getFocusSlotEnum()) >= 0 && (var2 == null || var7 == var2 || var7.method1546() == WardrobeCategory.ACCESSORY)) {
-               Class15 var8 = var0.getRegistry().method1427(var7);
-               if (var8 != null) {
-                  var4.add(var7);
-                  var5.add(var8);
+         for (HoveredData hoveredData2 : hoveredDatas) {
+            if (Util3.method824(hoveredData2.getFocusSlotEnum()) >= 0 && (hoveredData == null || hoveredData2 == hoveredData || hoveredData2.method1546() == WardrobeCategory.ACCESSORY)) {
+               Class15 class2 = wardrobe.getRegistry().method1427(hoveredData2);
+               if (class2 != null) {
+                  hoveredDatas2.add(hoveredData2);
+                  classes.add(class2);
                }
             }
          }
 
-         return new Util3.Entry(var4, var5, var3);
+         return new Util3.Entry(hoveredDatas2, classes, flag);
       }
 
       private void method844() {
-         Util3.Entry2 var1 = new Util3.Entry2(this);
-         Util3.Data[] var2 = Util3.items.get(var1);
-         if (var2 == null) {
-            Util3.items.put(var1, this.datas);
+         Util3.Entry2 entry2 = new Util3.Entry2(this);
+         Util3.Data[] datas = Util3.items.get(entry2);
+         if (datas == null) {
+            Util3.items.put(entry2, this.datas);
          } else {
-            this.datas = var2;
+            this.datas = datas;
          }
       }
 
-      public Util3.Data method845(HoveredData var1, int var2) {
-         for (int var3 = 0; var3 < this.hoveredDatas.length; var3++) {
-            if (this.hoveredDatas[var3] == var1) {
-               return this.method847(var3, var2);
+      public Util3.Data method845(HoveredData hoveredData, int ordinal) {
+         for (int i = 0; i < this.hoveredDatas.length; i++) {
+            if (this.hoveredDatas[i] == hoveredData) {
+               return this.method847(i, ordinal);
             }
          }
 
          return Util3.Data.INSTANCE;
       }
 
-      public void method846(PoseStack var1, HoveredData var2, int var3) {
-         this.method845(var2, var3).method842(var1);
+      public void method846(PoseStack poseStack, HoveredData hoveredData, int ordinal) {
+         this.method845(hoveredData, ordinal).method842(poseStack);
       }
 
-      private Util3.Data method847(int var1, int var2) {
-         if (var2 >= 0 && var2 < 6) {
-            int var3 = var1 * 6 + var2;
-            Util3.Data var4 = this.datas[var3];
-            if (var4 == null) {
-               var4 = this.hoveredDatas[var1].getFocusSlotEnum() == FocusSlotEnum.CHARACTER ? Util3.Data.INSTANCE : this.method848(var1, var2);
-               this.datas[var3] = var4;
+      private Util3.Data method847(int n, int ordinal) {
+         if (ordinal >= 0 && ordinal < 6) {
+            int n2 = n * 6 + ordinal;
+            Util3.Data data = this.datas[n2];
+            if (data == null) {
+               data = this.hoveredDatas[n].getFocusSlotEnum() == FocusSlotEnum.CHARACTER ? Util3.Data.INSTANCE : this.method848(n, ordinal);
+               this.datas[n2] = data;
             }
 
-            return var4;
+            return data;
          } else {
             return Util3.Data.INSTANCE;
          }
       }
 
-      private Util3.Data method848(int var1, int var2) {
-         boolean var3 = this.flag && Util3.method825(var2) && this.floatValues[var2] <= 0.0F;
-         float var4 = var3 ? 0.09375F : Util3.CONST_floatValues2[var2];
-         float var5 = var3 ? Util3.CONST_floatValues6[var2] : Util3.CONST_floatValues[var2];
-         float[] var6 = this.method849(var1, var2, 0, var4, var4 / Util3.CONST_floatValues2[var2]);
-         float[] var7 = this.method849(var1, var2, 2, Util3.CONST_floatValues3[var2], 1.0F);
-         float var8 = var2 == Util3.CONST_intValue2 ? this.method849(var1, var2, 1, -Util3.CONST_floatValues4[Util3.CONST_intValue2], 1.0F)[0] : 1.0F;
-         return var6[0] == 1.0F && var6[1] == 0.0F && var7[0] == 1.0F && var7[1] == 0.0F && var8 == 1.0F && var5 == Util3.CONST_floatValues[var2]
+      private Util3.Data method848(int n, int ordinal) {
+         boolean flag = this.flag && Util3.method825(ordinal) && this.floatValues[ordinal] <= 0.0F;
+         float f = flag ? 0.09375F : Util3.CONST_floatValues2[ordinal];
+         float f2 = flag ? Util3.CONST_floatValues6[ordinal] : Util3.CONST_floatValues[ordinal];
+         float[] floats = this.method849(n, ordinal, 0, f, f / Util3.CONST_floatValues2[ordinal]);
+         float[] floats2 = this.method849(n, ordinal, 2, Util3.CONST_floatValues3[ordinal], 1.0F);
+         float f3 = ordinal == Util3.CONST_intValue2 ? this.method849(n, ordinal, 1, -Util3.CONST_floatValues4[Util3.CONST_intValue2], 1.0F)[0] : 1.0F;
+         return floats[0] == 1.0F && floats[1] == 0.0F && floats2[0] == 1.0F && floats2[1] == 0.0F && f3 == 1.0F && f2 == Util3.CONST_floatValues[ordinal]
             ? Util3.Data.INSTANCE
-            : new Util3.Data(Util3.CONST_floatValues[var2], var5, var6[0], var6[1], var8, var7[0], var7[1]);
+            : new Util3.Data(Util3.CONST_floatValues[ordinal], f2, floats[0], floats[1], f3, floats2[0], floats2[1]);
       }
 
-      private float[] method849(int var1, int var2, int var3, float var4, float var5) {
-         Class15 var6 = this.class15s[var1];
-         boolean var7 = this.hoveredDatas[var1].method1546() == WardrobeCategory.ACCESSORY;
-         float[][] var8 = new float[2][];
-         int[] var9 = new int[2];
+      private float[] method849(int n, int ordinal, int n2, float f, float f2) {
+         Class15 class2 = this.class15s[n];
+         boolean flag = this.hoveredDatas[n].method1546() == WardrobeCategory.ACCESSORY;
+         float[][] floatses = new float[2][];
+         int[] ints = new int[2];
 
-         for (int var10 = 0; var10 < 2; var10++) {
-            float var11 = var3 == 1 ? -1.0F : (var10 == 0 ? -1.0F : 1.0F);
-            if (var3 == 1 && var10 == 1) {
+         for (int i = 0; i < 2; i++) {
+            float floatValue = n2 == 1 ? -1.0F : (i == 0 ? -1.0F : 1.0F);
+            if (n2 == 1 && i == 1) {
                break;
             }
 
-            float var12 = Util3.method831(var6, var2, var3, var11);
-            if (!Float.isNaN(var12)) {
-               float var13 = var4 + this.floatValues2[var2];
-               float var14;
-               if (var7) {
-                  var14 = Util3.method825(var2) ? var13 + 0.00625F : Math.max(var12 * var5, var13 + 0.00625F);
+            float f3 = Util3.method831(class2, ordinal, n2, floatValue);
+            if (!Float.isNaN(f3)) {
+               float f4 = f + this.floatValues2[ordinal];
+               float f5;
+               if (flag) {
+                  f5 = Util3.method825(ordinal) ? f4 + 0.00625F : Math.max(f3 * f2, f4 + 0.00625F);
                } else {
-                  var14 = var12 * var5;
-                  if (this.floatValues2[var2] > 0.0F) {
-                     var14 = Math.max(var14, Math.min(var13 + 0.0125F, var12 * var5 * 1.25F));
+                  f5 = f3 * f2;
+                  if (this.floatValues2[ordinal] > 0.0F) {
+                     f5 = Math.max(f5, Math.min(f4 + 0.0125F, f3 * f2 * 1.25F));
                   }
                }
 
-               if (this.floatValues[var2] > 0.0F) {
-                  var14 = Math.max(var14, Math.min(var4 + this.floatValues[var2] + 0.0125F, var12 * var5 * 1.9F));
+               if (this.floatValues[ordinal] > 0.0F) {
+                  f5 = Math.max(f5, Math.min(f + this.floatValues[ordinal] + 0.0125F, f3 * f2 * 1.9F));
                }
 
-               float[] var15 = new float[8];
-               int var16 = 0;
-               var15[var16++] = var12;
-               var15[var16++] = var14;
-               float var17 = !var7 && this.intValues[var1] < Util3.method824(FocusSlotEnum.CAPE) ? 1.15F : 1.9F;
+               float[] original = new float[8];
+               int n3 = 0;
+               original[n3++] = f3;
+               original[n3++] = f5;
+               float f6 = !flag && this.intValues[n] < Util3.method824(FocusSlotEnum.CAPE) ? 1.15F : 1.9F;
 
-               for (int var18 = 0; var18 < this.hoveredDatas.length; var18++) {
-                  if (var18 != var1 && this.intValues[var18] < this.intValues[var1] && this.class15s[var18].method2033(var2)) {
-                     float[] var19 = Util3.method832(this.class15s[var18], var6, var2, var3, var11, var7 ? 1.6F : 1.35F);
-                     if (var19 != null) {
-                        Util3.Data var20 = this.method847(var18, var2);
-                        float var21 = var3 == 0 ? var20.getFloatValue3() : (var3 == 1 ? var20.getFloatValue5() : var20.getFloatValue6());
-                        float var22 = var3 == 0 ? var20.getFloatValue4() : (var3 == 1 ? 0.0F : var20.getFloatValue7());
-                        if (var16 + var19.length > var15.length) {
-                           var15 = Arrays.copyOf(var15, Math.max(var15.length * 2, var16 + var19.length));
+               for (int j = 0; j < this.hoveredDatas.length; j++) {
+                  if (j != n && this.intValues[j] < this.intValues[n] && this.class15s[j].method2033(ordinal)) {
+                     float[] floats = Util3.method832(this.class15s[j], class2, ordinal, n2, floatValue, flag ? 1.6F : 1.35F);
+                     if (floats != null) {
+                        Util3.Data data = this.method847(j, ordinal);
+                        float f7 = n2 == 0 ? data.getFloatValue3() : (n2 == 1 ? data.getFloatValue5() : data.getFloatValue6());
+                        float f8 = n2 == 0 ? data.getFloatValue4() : (n2 == 1 ? 0.0F : data.getFloatValue7());
+                        if (n3 + floats.length > original.length) {
+                           original = Arrays.copyOf(original, Math.max(original.length * 2, n3 + floats.length));
                         }
 
-                        for (byte var23 = 0; var23 < var19.length; var23 += 2) {
-                           float var24 = var19[var23];
-                           float var25 = var21 * var19[var23 + 1] + var11 * var22 + 0.0125F;
-                           if (var25 <= var24 * var5 * var17) {
-                              var15[var16++] = var24;
-                              var15[var16++] = var25;
+                        for (byte k = 0; k < floats.length; k += 2) {
+                           float f9 = floats[k];
+                           float f10 = f7 * floats[k + 1] + floatValue * f8 + 0.0125F;
+                           if (f10 <= f9 * f2 * f6) {
+                              original[n3++] = f9;
+                              original[n3++] = f10;
                            }
                         }
                      }
                   }
                }
 
-               var8[var10] = method850(var15, var16);
-               var9[var10] = var8[var10].length;
+               floatses[i] = method850(original, n3);
+               ints[i] = floatses[i].length;
             }
          }
 
-         float var26 = 0.0F;
-         float var28 = 0.0F;
-         if (var8[0] != null && var8[1] != null) {
-            float[] var31 = var8[0];
-            float[] var33 = var8[1];
+         float f3 = 0.0F;
+         float f4 = 0.0F;
+         if (floatses[0] != null && floatses[1] != null) {
+            float[] floats = floatses[0];
+            float[] floats2 = floatses[1];
 
-            for (byte var34 = 0; var34 < var9[0]; var34 += 2) {
-               for (byte var36 = 0; var36 < var9[1]; var36 += 2) {
-                  var26 = Math.max(var26, (var31[var34 + 1] + var33[var36 + 1]) / (var31[var34] + var33[var36]));
+            for (byte i = 0; i < ints[0]; i += 2) {
+               for (byte j = 0; j < ints[1]; j += 2) {
+                  f3 = Math.max(f3, (floats[i + 1] + floats2[j + 1]) / (floats[i] + floats2[j]));
                }
             }
 
-            float var35 = -Float.MAX_VALUE;
-            float var37 = Float.MAX_VALUE;
+            float f5 = -Float.MAX_VALUE;
+            float f6 = Float.MAX_VALUE;
 
-            for (byte var41 = 0; var41 < var9[1]; var41 += 2) {
-               var35 = Math.max(var35, var33[var41 + 1] - var26 * var33[var41]);
+            for (byte i = 0; i < ints[1]; i += 2) {
+               f5 = Math.max(f5, floats2[i + 1] - f3 * floats2[i]);
             }
 
-            for (byte var42 = 0; var42 < var9[0]; var42 += 2) {
-               var37 = Math.min(var37, var26 * var31[var42] - var31[var42 + 1]);
+            for (byte i = 0; i < ints[0]; i += 2) {
+               f6 = Math.min(f6, f3 * floats[i] - floats[i + 1]);
             }
 
-            var28 = Math.max(var35, Math.min(var37, 0.0F));
-         } else if (var8[0] == null && var8[1] == null) {
-            var26 = var5;
+            f4 = Math.max(f5, Math.min(f6, 0.0F));
+         } else if (floatses[0] == null && floatses[1] == null) {
+            f3 = f2;
          } else {
-            int var30 = var8[0] != null ? 0 : 1;
+            int n3 = floatses[0] != null ? 0 : 1;
 
-            for (byte var32 = 0; var32 < var9[var30]; var32 += 2) {
-               var26 = Math.max(var26, var8[var30][var32 + 1] / var8[var30][var32]);
+            for (byte i = 0; i < ints[n3]; i += 2) {
+               f3 = Math.max(f3, floatses[n3][i + 1] / floatses[n3][i]);
             }
          }
 
-         var26 = Math.max(0.5F, Math.min(2.5F, var26));
-         var28 = Math.max(-0.1875F, Math.min(0.1875F, var28));
-         if (Math.abs(var26 - 1.0F) < 0.005F) {
-            var26 = 1.0F;
+         f3 = Math.max(0.5F, Math.min(2.5F, f3));
+         f4 = Math.max(-0.1875F, Math.min(0.1875F, f4));
+         if (Math.abs(f3 - 1.0F) < 0.005F) {
+            f3 = 1.0F;
          }
 
-         if (Math.abs(var28) < 3.125E-4F) {
-            var28 = 0.0F;
+         if (Math.abs(f4) < 3.125E-4F) {
+            f4 = 0.0F;
          }
 
-         return new float[]{var26, var28};
+         return new float[]{f3, f4};
       }
 
-      private static float[] method850(float[] var0, int var1) {
-         int var2 = var1 / 2;
-         Integer[] var3 = new Integer[var2];
+      private static float[] method850(float[] original, int n) {
+         int n2 = n / 2;
+         Integer[] integers = new Integer[n2];
 
-         for (int var4 = 0; var4 < var2; var4++) {
-            var3[var4] = var4;
+         for (int i = 0; i < n2; i++) {
+            integers[i] = i;
          }
 
-         Arrays.sort(var3, (var1x, var2x) -> {
-            int var3x = Float.compare(var0[var1x * 2], var0[var2x * 2]);
-            return var3x != 0 ? var3x : Float.compare(var0[var2x * 2 + 1], var0[var1x * 2 + 1]);
+         Arrays.sort(integers, (var1x, var2x) -> {
+            int var3x = Float.compare(original[var1x * 2], original[var2x * 2]);
+            return var3x != 0 ? var3x : Float.compare(original[var2x * 2 + 1], original[var1x * 2 + 1]);
          });
-         float[] var11 = new float[var1];
-         int var5 = 0;
-         float var6 = -Float.MAX_VALUE;
-         Integer[] var7 = var3;
-         int var8 = var3.length;
+         float[] floats = new float[n];
+         int newLength = 0;
+         float f = -Float.MAX_VALUE;
+         Integer[] integers2 = integers;
+         int length = integers.length;
 
-         for (int var9 = 0; var9 < var8; var9++) {
-            int var10 = var7[var9];
-            if (var0[var10 * 2 + 1] > var6) {
-               var6 = var0[var10 * 2 + 1];
-               var11[var5++] = var0[var10 * 2];
-               var11[var5++] = var6;
+         for (int i = 0; i < length; i++) {
+            int n3 = integers2[i];
+            if (original[n3 * 2 + 1] > f) {
+               f = original[n3 * 2 + 1];
+               floats[newLength++] = original[n3 * 2];
+               floats[newLength++] = f;
             }
          }
 
-         return Arrays.copyOf(var11, var5);
+         return Arrays.copyOf(floats, newLength);
       }
    }
 
@@ -876,33 +876,33 @@ public final class Util3 {
       private final float[] floatValues2;
       private final int intValue;
 
-      public Entry2(Util3.Entry var1) {
-         this.class15s = var1.class15s;
-         this.focusSlotEnums = new FocusSlotEnum[var1.hoveredDatas.length];
+      public Entry2(Util3.Entry entry) {
+         this.class15s = entry.class15s;
+         this.focusSlotEnums = new FocusSlotEnum[entry.hoveredDatas.length];
 
-         for (int var2 = 0; var2 < this.focusSlotEnums.length; var2++) {
-            this.focusSlotEnums[var2] = var1.hoveredDatas[var2].getFocusSlotEnum();
+         for (int i = 0; i < this.focusSlotEnums.length; i++) {
+            this.focusSlotEnums[i] = entry.hoveredDatas[i].getFocusSlotEnum();
          }
 
-         this.flag = var1.flag;
-         this.floatValues = (float[])var1.floatValues.clone();
-         this.floatValues2 = (float[])var1.floatValues2.clone();
-         int var3 = Arrays.hashCode((Object[])this.class15s);
-         var3 = var3 * 31 + Arrays.hashCode((Object[])this.focusSlotEnums);
-         var3 = var3 * 31 + Boolean.hashCode(this.flag);
-         var3 = var3 * 31 + Arrays.hashCode(this.floatValues);
-         this.intValue = var3 * 31 + Arrays.hashCode(this.floatValues2);
+         this.flag = entry.flag;
+         this.floatValues = (float[])entry.floatValues.clone();
+         this.floatValues2 = (float[])entry.floatValues2.clone();
+         int n = Arrays.hashCode((Object[])this.class15s);
+         n = n * 31 + Arrays.hashCode((Object[])this.focusSlotEnums);
+         n = n * 31 + Boolean.hashCode(this.flag);
+         n = n * 31 + Arrays.hashCode(this.floatValues);
+         this.intValue = n * 31 + Arrays.hashCode(this.floatValues2);
       }
 
       @Override
-      public boolean equals(Object var1) {
-         return var1 instanceof Util3.Entry2 var2
-            && this.intValue == var2.intValue
-            && this.flag == var2.flag
-            && Arrays.equals((Object[])this.class15s, (Object[])var2.class15s)
-            && Arrays.equals((Object[])this.focusSlotEnums, (Object[])var2.focusSlotEnums)
-            && Arrays.equals(this.floatValues, var2.floatValues)
-            && Arrays.equals(this.floatValues2, var2.floatValues2);
+      public boolean equals(Object obj) {
+         return obj instanceof Util3.Entry2 entry2
+            && this.intValue == entry2.intValue
+            && this.flag == entry2.flag
+            && Arrays.equals((Object[])this.class15s, (Object[])entry2.class15s)
+            && Arrays.equals((Object[])this.focusSlotEnums, (Object[])entry2.focusSlotEnums)
+            && Arrays.equals(this.floatValues, entry2.floatValues)
+            && Arrays.equals(this.floatValues2, entry2.floatValues2);
       }
 
       @Override
@@ -915,38 +915,38 @@ public final class Util3 {
       private float[] floatValues = new float[64];
       private int size;
 
-      public void method851(float var1, float var2) {
+      public void method851(float f, float f2) {
          if (this.size == this.floatValues.length) {
             this.floatValues = Arrays.copyOf(this.floatValues, this.size * 2);
          }
 
-         this.floatValues[this.size++] = var1;
-         this.floatValues[this.size++] = var2;
+         this.floatValues[this.size++] = f;
+         this.floatValues[this.size++] = f2;
       }
 
       public float[] method852() {
          if (this.size == 0) {
             return Util3.CONST_floatValues7;
          } else {
-            HashSet var1 = new HashSet();
-            float[] var2 = new float[this.size];
-            int var3 = 0;
+            HashSet hashSet = new HashSet();
+            float[] original = new float[this.size];
+            int newLength = 0;
 
-            for (int var4 = 0; var4 < this.size; var4 += 2) {
-               long var5 = Math.round(this.floatValues[var4] * 16.0F * 256.0F);
-               long var7 = Math.round(this.floatValues[var4 + 1] * 16.0F * 256.0F);
-               if (var1.add(var5 << 32 | var7 & 4294967295L)) {
-                  var2[var3++] = this.floatValues[var4];
-                  var2[var3++] = this.floatValues[var4 + 1];
+            for (int i = 0; i < this.size; i += 2) {
+               long l = Math.round(this.floatValues[i] * 16.0F * 256.0F);
+               long l2 = Math.round(this.floatValues[i + 1] * 16.0F * 256.0F);
+               if (hashSet.add(l << 32 | l2 & 4294967295L)) {
+                  original[newLength++] = this.floatValues[i];
+                  original[newLength++] = this.floatValues[i + 1];
                }
             }
 
-            return Arrays.copyOf(var2, var3);
+            return Arrays.copyOf(original, newLength);
          }
       }
    }
 
    private interface Handler {
-      void accept(float var1, float var2);
+      void accept(float f, float f2);
    }
 }

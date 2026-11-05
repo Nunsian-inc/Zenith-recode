@@ -29,33 +29,33 @@ public class DiscordEventHandlers extends Structure {
          return this.handlers;
       }
 
-      public DiscordEventHandlers.Builder disconnected(DisconnectedCallback var1) {
-         this.handlers.disconnected = var1;
+      public DiscordEventHandlers.Builder disconnected(DisconnectedCallback disconnected) {
+         this.handlers.disconnected = disconnected;
          return this;
       }
 
-      public DiscordEventHandlers.Builder errored(ErroredCallback var1) {
-         this.handlers.errored = var1;
+      public DiscordEventHandlers.Builder errored(ErroredCallback errored) {
+         this.handlers.errored = errored;
          return this;
       }
 
-      public DiscordEventHandlers.Builder ready(ReadyCallback var1) {
-         this.handlers.ready = var1;
+      public DiscordEventHandlers.Builder ready(ReadyCallback ready) {
+         this.handlers.ready = ready;
          return this;
       }
 
-      public DiscordEventHandlers.Builder joinRequest(JoinRequestCallback var1) {
-         this.handlers.joinRequest = var1;
+      public DiscordEventHandlers.Builder joinRequest(JoinRequestCallback joinRequest) {
+         this.handlers.joinRequest = joinRequest;
          return this;
       }
 
-      public DiscordEventHandlers.Builder joinGame(JoinGameCallback var1) {
-         this.handlers.joinGame = var1;
+      public DiscordEventHandlers.Builder joinGame(JoinGameCallback joinGame) {
+         this.handlers.joinGame = joinGame;
          return this;
       }
 
-      public DiscordEventHandlers.Builder spectateGame(SpectateGameCallback var1) {
-         this.handlers.spectateGame = var1;
+      public DiscordEventHandlers.Builder spectateGame(SpectateGameCallback spectateGame) {
+         this.handlers.spectateGame = spectateGame;
          return this;
       }
    }

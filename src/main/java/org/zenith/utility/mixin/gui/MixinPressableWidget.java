@@ -15,10 +15,10 @@ public abstract class MixinPressableWidget {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$style(GuiGraphicsExtractor var1, int var2, int var3, float var4, CallbackInfo var5) {
+   private void zenith$style(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo callbackInfo) {
       if (VanillaOptionStyle.isActive()) {
-         VanillaOptionStyle.drawButton((AbstractButton)(Object)this, var1, var2, var3, var4);
-         var5.cancel();
+         VanillaOptionStyle.drawButton((AbstractButton)(Object)this, context, mouseX, mouseY, deltaTicks);
+         callbackInfo.cancel();
       }
    }
 }

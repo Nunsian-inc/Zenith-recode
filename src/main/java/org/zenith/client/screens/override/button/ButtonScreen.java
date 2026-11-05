@@ -8,13 +8,13 @@ import org.zenith.utility.render.display.base.MenuDrawContext;
 public abstract class ButtonScreen {
    public Bounds bounds;
 
-   public ButtonScreen(float var1, float var2) {
-      this.bounds = new Bounds(0.0F, 0.0F, var1, var2);
+   public ButtonScreen(float width, float height) {
+      this.bounds = new Bounds(0.0F, 0.0F, width, height);
    }
 
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5) {
-      this.bounds.setX(var4);
-      this.bounds.setY(var5);
+   public void render(MenuDrawContext customDrawContext, float x, float y, float floatValue, float f) {
+      this.bounds.setX(floatValue);
+      this.bounds.setY(f);
    }
 
    public float getWidth() {
@@ -25,29 +25,29 @@ public abstract class ButtonScreen {
       return this.bounds.getHeight();
    }
 
-   public void onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.bounds.contains(var1, var3)) {
-         this.onClick(var1, var3, var5);
+   public void onMouseClicked(double x, double y, Enum3 enum2) {
+      if (this.bounds.contains(x, y)) {
+         this.onClick(x, y, enum2);
       }
    }
 
-   public abstract void onClick(double var1, double var3, Enum3 var5);
+   public abstract void onClick(double x, double y, Enum3 enum2);
 
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double d, double d2, Enum3 enum2) {
    }
 
-   public void onMouseDragged(double var1, double var3, Enum3 var5, double var6, double var8) {
+   public void onMouseDragged(double d, double d2, Enum3 enum2, double d3, double d4) {
    }
 
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       return false;
    }
 
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
+   public boolean mouseScrolled(double d, double d2, double d3, double d4) {
       return false;
    }
 }

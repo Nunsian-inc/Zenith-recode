@@ -8,19 +8,19 @@ import org.zenith.utility.misc.Canvas;
 public class CanvasSetting extends Setting {
    private final Canvas canvas = new Canvas();
 
-   public CanvasSetting(String var1) {
-      super(var1, "");
+   public CanvasSetting(String key) {
+      super(key, "");
    }
 
    @Override
-   public void safe(JsonObject var1) {
-      var1.addProperty(this.key, this.canvas.method145());
+   public void safe(JsonObject json) {
+      json.addProperty(this.key, this.canvas.method145());
    }
 
    @Override
-   public void load(JsonObject var1) {
-      if (var1.has(this.key)) {
-         this.canvas.method147(var1.get(this.key).getAsString());
+   public void load(JsonObject json) {
+      if (json.has(this.key)) {
+         this.canvas.method147(json.get(this.key).getAsString());
       }
    }
 

@@ -31,30 +31,30 @@ public class ClickSlotEvent extends EventCancellable {
    }
 
    @Generated
-   public void setIntValue(int var1) {
-      this.intValue = var1;
+   public void setIntValue(int intValue) {
+      this.intValue = intValue;
    }
 
    @Generated
-   public void setIntValue2(int var1) {
-      this.intValue2 = var1;
+   public void setIntValue2(int n) {
+      this.intValue2 = n;
    }
 
    @Generated
-   public void setIntValue3(int var1) {
-      this.intValue3 = var1;
+   public void setIntValue3(int n) {
+      this.intValue3 = n;
    }
 
    @Generated
-   public void setSlotActionType(ContainerInput var1) {
-      this.slotActionType = var1;
+   public void setSlotActionType(ContainerInput slotActionType) {
+      this.slotActionType = slotActionType;
    }
 
    @Generated
-   public ClickSlotEvent(int var1, int var2, int var3, ContainerInput var4) {
-      this.intValue = var1;
-      this.intValue2 = var2;
-      this.intValue3 = var3;
-      this.slotActionType = var4;
+   public ClickSlotEvent(int intValue, int n, int n2, ContainerInput slotActionType) {
+      this.intValue = intValue;
+      this.intValue2 = n;
+      this.intValue3 = n2;
+      this.slotActionType = slotActionType;
    }
 }

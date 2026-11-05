@@ -20,45 +20,45 @@ public class RoundedRectBatch2 {
    private float batchSmoothness;
    private boolean flag;
 
-   public void method1534(ProxyDotRadiusData var1) {
-      this.method1535(var1, 0.8F);
+   public void method1534(ProxyDotRadiusData proxyDotRadiusData) {
+      this.method1535(proxyDotRadiusData, 0.8F);
    }
 
-   public void method1535(ProxyDotRadiusData var1, float var2) {
+   public void method1535(ProxyDotRadiusData proxyDotRadiusData, float batchSmoothness) {
       MsdfRenderer.flushBatch();
-      float var3 = var1.getFloatValue();
-      float var4 = var1.getFloatValue4();
-      float var5 = var1.getFloatValue2();
-      float var6 = var1.getFloatValue3();
+      float floatValue = proxyDotRadiusData.getFloatValue();
+      float f = proxyDotRadiusData.getFloatValue4();
+      float f2 = proxyDotRadiusData.getFloatValue2();
+      float f3 = proxyDotRadiusData.getFloatValue3();
       if (this.flag) {
-         if (var3 == this.floatValue && var4 == this.floatValue2 && var5 == this.floatValue3 && var6 == this.floatValue4 && var2 == this.batchSmoothness) {
+         if (floatValue == this.floatValue && f == this.floatValue2 && f2 == this.floatValue3 && f3 == this.floatValue4 && batchSmoothness == this.batchSmoothness) {
             return;
          }
 
          this.flush();
       }
 
-      this.floatValue = var3;
-      this.floatValue2 = var4;
-      this.floatValue3 = var5;
-      this.floatValue4 = var6;
-      this.batchSmoothness = var2;
-      KawaseShaderKey var7 = RenderShaders.kawaseShaderKey2;
-      var7.method5165();
-      var7.method5166("Radius").method7415(var3, var4, var5, var6);
-      var7.method5166("Smoothness").method7412(var2);
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      this.floatValue3 = f2;
+      this.floatValue4 = f3;
+      this.batchSmoothness = batchSmoothness;
+      KawaseShaderKey kawaseShaderKey2 = RenderShaders.kawaseShaderKey2;
+      kawaseShaderKey2.method5165();
+      kawaseShaderKey2.method5166("Radius").method7415(floatValue, f, f2, f3);
+      kawaseShaderKey2.method5166("Smoothness").method7412(batchSmoothness);
       RenderState.method1871();
       RenderState.method1873();
       this.builder = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
       this.flag = true;
    }
 
-   public void method1536(Matrix4f var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
-      int var11 = var6.method7287();
-      this.builder.addVertex(var1, var2, var3, 0.0F).setUv(var4, var5).setColor(var11);
-      this.builder.addVertex(var1, var2, var3 + var5, 0.0F).setUv(var4, var5).setColor(var11);
-      this.builder.addVertex(var1, var2 + var4, var3 + var5, 0.0F).setUv(var4, var5).setColor(var11);
-      this.builder.addVertex(var1, var2 + var4, var3, 0.0F).setUv(var4, var5).setColor(var11);
+   public void method1536(Matrix4f pose, float floatValue, float animationPosY, float width, float height, ZenithColor zenithColor) {
+      int color = zenithColor.method7287();
+      this.builder.addVertex(pose, floatValue, animationPosY, 0.0F).setUv(width, height).setColor(color);
+      this.builder.addVertex(pose, floatValue, animationPosY + height, 0.0F).setUv(width, height).setColor(color);
+      this.builder.addVertex(pose, floatValue + width, animationPosY + height, 0.0F).setUv(width, height).setColor(color);
+      this.builder.addVertex(pose, floatValue + width, animationPosY, 0.0F).setUv(width, height).setColor(color);
    }
 
    public void flush() {

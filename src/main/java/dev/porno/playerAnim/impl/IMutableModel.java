@@ -6,7 +6,7 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 
 @Internal
 public interface IMutableModel {
-   void playerAnimator$setAnimation(@NotNull AnimationProcessor var1);
+   void playerAnimator$setAnimation(@NotNull AnimationProcessor emote);
 
    @NotNull
    AnimationProcessor playerAnimator$getAnimation();

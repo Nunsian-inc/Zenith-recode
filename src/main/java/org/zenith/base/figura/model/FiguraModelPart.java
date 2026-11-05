@@ -603,7 +603,7 @@ public class FiguraModelPart implements Comparable<FiguraModelPart> {
       try {
          this.customization.setPrimaryRenderType(type == null ? null : RenderTypes.valueOf(type.toUpperCase(Locale.US)));
          return this;
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Illegal RenderType: \"" + type + "\".");
       }
    }
@@ -618,7 +618,7 @@ public class FiguraModelPart implements Comparable<FiguraModelPart> {
       try {
          this.customization.setSecondaryRenderType(type == null ? null : RenderTypes.valueOf(type.toUpperCase(Locale.US)));
          return this;
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Illegal RenderType: \"" + type + "\".");
       }
    }
@@ -740,7 +740,7 @@ public class FiguraModelPart implements Comparable<FiguraModelPart> {
          this.checkTexture(overrideType, x);
          this.customization.primaryTexture = type == null ? null : new TextureCustomization(overrideType, x);
          return this;
-      } catch (IllegalArgumentException var41) {
+      } catch (IllegalArgumentException e) {
          throw new LuaError("Invalid texture override type: " + type);
       }
    }
@@ -767,7 +767,7 @@ public class FiguraModelPart implements Comparable<FiguraModelPart> {
          this.checkTexture(overrideType, x);
          this.customization.secondaryTexture = type == null ? null : new TextureCustomization(overrideType, x);
          return this;
-      } catch (IllegalArgumentException var41) {
+      } catch (IllegalArgumentException e) {
          throw new LuaError("Invalid texture override type: " + type);
       }
    }
@@ -779,8 +779,8 @@ public class FiguraModelPart implements Comparable<FiguraModelPart> {
          }
 
          if (value == null || type.argumentType != value.getClass()) {
-            String var10002 = type.name();
-            throw new LuaError("\"" + var10002 + "\" texture type requires argument type: " + type.typeName);
+            String name = type.name();
+            throw new LuaError("\"" + name + "\" texture type requires argument type: " + type.typeName);
          }
       }
    }

@@ -26,32 +26,32 @@ public final class GuiVertexBatch {
       return RenderState.method1886() ? null : RenderState.method1885();
    }
 
-   public static void method98(Object var0) {
-      float[] var1 = method97();
-      if (var1 != null) {
-         items.put(var0, var1);
+   public static void method98(Object obj) {
+      float[] floats = method97();
+      if (floats != null) {
+         items.put(obj, floats);
       }
    }
 
-   public static BlitRenderState method99(BlitRenderState var0, @Nullable Object var1) {
-      float[] var2 = var1 == null ? null : items.get(var1);
-      return var2 == null
-         ? var0
+   public static BlitRenderState method99(BlitRenderState blitRenderState, @Nullable Object guiItemRenderState) {
+      float[] floatValues = guiItemRenderState == null ? null : items.get(guiItemRenderState);
+      return floatValues == null
+         ? blitRenderState
          : new BlitRenderState(
-            var0.pipeline(),
-            var0.textureSetup(),
-            var0.pose(),
-            var0.x0(),
-            var0.y0(),
-            var0.x1(),
-            var0.y1(),
-            var0.u0(),
-            var0.u1(),
-            var0.v0(),
-            var0.v1(),
-            method100(var0.color(), var2, var0.pipeline() == RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA),
-            var0.scissorArea(),
-            var0.bounds()
+            blitRenderState.pipeline(),
+            blitRenderState.textureSetup(),
+            blitRenderState.pose(),
+            blitRenderState.x0(),
+            blitRenderState.y0(),
+            blitRenderState.x1(),
+            blitRenderState.y1(),
+            blitRenderState.u0(),
+            blitRenderState.u1(),
+            blitRenderState.v0(),
+            blitRenderState.v1(),
+            method100(blitRenderState.color(), floatValues, blitRenderState.pipeline() == RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA),
+            blitRenderState.scissorArea(),
+            blitRenderState.bounds()
          );
    }
 
@@ -59,23 +59,23 @@ public final class GuiVertexBatch {
       items.clear();
    }
 
-   public static int method100(int var0, float[] var1, boolean var2) {
-      float var3 = var1[3];
-      float var4 = var2 ? var3 : 1.0F;
-      int var5 = Math.round((var0 >>> 24 & 0xFF) * var3);
-      int var6 = Math.round((var0 >> 16 & 0xFF) * var1[0] * var4);
-      int var7 = Math.round((var0 >> 8 & 0xFF) * var1[1] * var4);
-      int var8 = Math.round((var0 & 0xFF) * var1[2] * var4);
-      return method101(var5) << 24 | method101(var6) << 16 | method101(var7) << 8 | method101(var8);
+   public static int method100(int color, float[] floatValues, boolean flag) {
+      float f = floatValues[3];
+      float f2 = flag ? f : 1.0F;
+      int n = Math.round((color >>> 24 & 0xFF) * f);
+      int n2 = Math.round((color >> 16 & 0xFF) * floatValues[0] * f2);
+      int n3 = Math.round((color >> 8 & 0xFF) * floatValues[1] * f2);
+      int n4 = Math.round((color & 0xFF) * floatValues[2] * f2);
+      return method101(n) << 24 | method101(n2) << 16 | method101(n3) << 8 | method101(n4);
    }
 
-   private static int method101(int var0) {
-      return Math.max(0, Math.min(255, var0));
+   private static int method101(int n) {
+      return Math.max(0, Math.min(255, n));
    }
 
-   public static GuiElementRenderState method102(GuiElementRenderState var0) {
-      float[] var1 = method97();
-      return (GuiElementRenderState)(var1 != null && !(var0 instanceof GuiVertexBatch.Data) ? new GuiVertexBatch.Data(var0, (float[])var1.clone()) : var0);
+   public static GuiElementRenderState method102(GuiElementRenderState simpleGuiElementRenderState) {
+      float[] floats = method97();
+      return (GuiElementRenderState)(floats != null && !(simpleGuiElementRenderState instanceof GuiVertexBatch.Data) ? new GuiVertexBatch.Data(simpleGuiElementRenderState, (float[])floats.clone()) : simpleGuiElementRenderState);
    }
 
    public static void method103() {
@@ -88,10 +88,10 @@ public final class GuiVertexBatch {
       }
    }
 
-   public static Vector4fc method105(Vector4fc var0) {
+   public static Vector4fc method105(Vector4fc vec) {
       return (Vector4fc)(intValue <= 0 && !RenderState.method1886()
-         ? new Vector4f(var0).mul(RenderState.getFloatValue(), RenderState.getFloatValue2(), RenderState.getFloatValue3(), RenderState.getAlpha())
-         : var0);
+         ? new Vector4f(vec).mul(RenderState.getFloatValue(), RenderState.getFloatValue2(), RenderState.getFloatValue3(), RenderState.getAlpha())
+         : vec);
    }
 
    private static final class Data implements GuiElementRenderState {
@@ -123,9 +123,9 @@ public final class GuiVertexBatch {
          return "Data[" + "simpleGuiElementRenderState=" + this.simpleGuiElementRenderState + ", " + "floatValues=" + this.floatValues + "]";
       }
 
-      private Data(GuiElementRenderState var1, float[] var2) {
-         this.simpleGuiElementRenderState = var1;
-         this.floatValues = var2;
+      private Data(GuiElementRenderState simpleGuiElementRenderState, float[] floatValues) {
+         this.simpleGuiElementRenderState = simpleGuiElementRenderState;
+         this.floatValues = floatValues;
       }
 
       @Override
@@ -203,10 +203,10 @@ public final class GuiVertexBatch {
          return "Data2[" + "vertexConsumer=" + this.vertexConsumer + ", " + "floatValues=" + this.floatValues + ", " + "flag=" + this.flag + "]";
       }
 
-      private Data2(VertexConsumer var1, float[] var2, boolean var3) {
-         this.vertexConsumer = var1;
-         this.floatValues = var2;
-         this.flag = var3;
+      private Data2(VertexConsumer vertexConsumer, float[] floatValues, boolean flag) {
+         this.vertexConsumer = vertexConsumer;
+         this.floatValues = floatValues;
+         this.flag = flag;
       }
 
       @Override

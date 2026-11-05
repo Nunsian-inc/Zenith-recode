@@ -34,13 +34,13 @@ public abstract class MixinDrawContext {
       method = {"nextStratum()V"},
       at = {@At("HEAD")}
    )
-   private void zenith$flushMsdfTextBatch(CallbackInfo var1) {
+   private void zenith$flushMsdfTextBatch(CallbackInfo callbackInfo) {
       MsdfRenderer.flushBatch();
    }
 
    @Invoker("setTooltipForNextFrameInternal")
    public abstract void invokeDrawTooltip(
-      Font var1, List<ClientTooltipComponent> var2, int var3, int var4, ClientTooltipPositioner var5, @Nullable Identifier var6, boolean var7
+      Font font, List<ClientTooltipComponent> clientTooltipComponents, int n, int n2, ClientTooltipPositioner tooltipPositioner, @Nullable Identifier id, boolean flag
    );
 
    @ModifyVariable(
@@ -49,14 +49,14 @@ public abstract class MixinDrawContext {
       ordinal = 0,
       argsOnly = true
    )
-   private String zenith$showRealLotCount(@Nullable String var1, Font var2, ItemStack var3, int var4, int var5) {
-      if (var1 != null) {
-         return var1;
+   private String zenith$showRealLotCount(@Nullable String str, Font font, ItemStack stack, int n, int n2) {
+      if (str != null) {
+         return str;
       } else if (!AHHelperModule.INSTANCE.isEnabled() || !AHHelperModule.INSTANCE.method4054()) {
          return null;
-      } else if (var3 != null && !var3.isEmpty() && this.zenith$isContainerScreenOpen()) {
-         int var6 = ItemNbtUtils.method91(var3);
-         return var6 > 1 && var6 != var3.getCount() ? String.valueOf(var6) : null;
+      } else if (stack != null && !stack.isEmpty() && this.zenith$isContainerScreenOpen()) {
+         int n3 = ItemNbtUtils.method91(stack);
+         return n3 > 1 && n3 != stack.getCount() ? String.valueOf(n3) : null;
       } else {
          return null;
       }
@@ -64,8 +64,8 @@ public abstract class MixinDrawContext {
 
    @Unique
    private boolean zenith$isContainerScreenOpen() {
-      Minecraft var1 = Minecraft.getInstance();
-      return var1.gui.screen() instanceof AbstractContainerScreen;
+      Minecraft minecraft = Minecraft.getInstance();
+      return minecraft.gui.screen() instanceof AbstractContainerScreen;
    }
 
    @Inject(
@@ -74,35 +74,35 @@ public abstract class MixinDrawContext {
       cancellable = true
    )
    private void filterShulkerTooltip(
-      Font var1, List<Component> var2, Optional<TooltipComponent> var3, int var4, int var5, @Nullable Identifier var6, CallbackInfo var7
+      Font font, List<Component> components, Optional<TooltipComponent> optionalTooltipComponent, int n, int n2, @Nullable Identifier id, CallbackInfo callbackInfo
    ) {
-      if (var3 != null) {
-         TooltipComponent var8 = (TooltipComponent)var3.orElse(null);
-         if (var8 instanceof ShulkerPreviewModule.Entry) {
-            ArrayList var9 = new ArrayList(2);
-            if (var2 != null && !var2.isEmpty()) {
-               var9.add(ClientTooltipComponent.create(((Component)var2.get(0)).getVisualOrderText()));
+      if (optionalTooltipComponent != null) {
+         TooltipComponent tooltipComponent = (TooltipComponent)optionalTooltipComponent.orElse(null);
+         if (tooltipComponent instanceof ShulkerPreviewModule.Entry) {
+            ArrayList arrayList = new ArrayList(2);
+            if (components != null && !components.isEmpty()) {
+               arrayList.add(ClientTooltipComponent.create(((Component)components.get(0)).getVisualOrderText()));
             }
 
-            ClientTooltipComponent var10 = ShulkerPreviewModule.method1388(var8);
-            if (var10 != null) {
-               var9.add(var10);
+            ClientTooltipComponent clientTooltipComponent = ShulkerPreviewModule.method1388(tooltipComponent);
+            if (clientTooltipComponent != null) {
+               arrayList.add(clientTooltipComponent);
             }
 
-            if (var2 != null && var2.size() > 1) {
-               Integer var11 = java.util.Optional.ofNullable(net.minecraft.network.chat.Style.EMPTY.withColor(ChatFormatting.DARK_GRAY).getColor()).map(net.minecraft.network.chat.TextColor::getValue).orElse(null);
+            if (components != null && components.size() > 1) {
+               Integer n3 = java.util.Optional.ofNullable(net.minecraft.network.chat.Style.EMPTY.withColor(ChatFormatting.DARK_GRAY).getColor()).map(net.minecraft.network.chat.TextColor::getValue).orElse(null);
 
-               for (int var12 = 1; var12 < var2.size(); var12++) {
-                  Component var13 = (Component)var2.get(var12);
-                  if (var11 != null && var13.getStyle().getColor() != null && var13.getStyle().getColor().getValue() == var11) {
-                     var9.add(ClientTooltipComponent.create(var13.getVisualOrderText()));
+               for (int i = 1; i < components.size(); i++) {
+                  Component component = (Component)components.get(i);
+                  if (n3 != null && component.getStyle().getColor() != null && component.getStyle().getColor().getValue() == n3) {
+                     arrayList.add(ClientTooltipComponent.create(component.getVisualOrderText()));
                   }
                }
             }
 
-            if (!var9.isEmpty()) {
-               this.invokeDrawTooltip(var1, var9, var4, var5, DefaultTooltipPositioner.INSTANCE, var6, false);
-               var7.cancel();
+            if (!arrayList.isEmpty()) {
+               this.invokeDrawTooltip(font, arrayList, n, n2, DefaultTooltipPositioner.INSTANCE, id, false);
+               callbackInfo.cancel();
             }
          }
       }

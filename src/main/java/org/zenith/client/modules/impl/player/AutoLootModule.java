@@ -34,38 +34,38 @@ public final class AutoLootModule extends Module {
    }
 
    @EventTarget
-   public void method4321(Event5 var1) {
+   public void method4321(Event5 event) {
       UseItemUtils.method6510()
          .filter(AbstractVillager.class::isInstance)
          .map(AbstractVillager.class::cast)
-         .filter(var0 -> var0.hasItemInSlot(EquipmentSlot.MAINHAND) || var0.hasItemInSlot(EquipmentSlot.OFFHAND))
+         .filter(abstractVillager -> abstractVillager.hasItemInSlot(EquipmentSlot.MAINHAND) || abstractVillager.hasItemInSlot(EquipmentSlot.OFFHAND))
          .findFirst()
          .ifPresent(var1x -> {
-            double var2 = var1x.getX() - mc.player.getX();
-            double var4 = var1x.getY() - mc.player.getY();
-            double var6 = var1x.getZ() - mc.player.getZ();
-            double var8 = Math.sqrt(var2 * var2 + var6 * var6);
-            double var10 = Mth.wrapDegrees(-(Mth.atan2(var4, var8) * 180.0 / (float) Math.PI));
-            double var12 = Mth.wrapDegrees(Mth.atan2(var6, var2) * 180.0 / (float) Math.PI - 90.0);
-            Rotation var14 = new Rotation((float)var12, (float)var10);
-            rotationManager.method7849(new RotationRequest(var14, () -> {
+            double x = var1x.getX() - mc.player.getX();
+            double y = var1x.getY() - mc.player.getY();
+            double d = var1x.getZ() - mc.player.getZ();
+            double x2 = Math.sqrt(x * x + d * d);
+            double xRot = Mth.wrapDegrees(-(Mth.atan2(y, x2) * 180.0 / (float) Math.PI));
+            double yRot = Mth.wrapDegrees(Mth.atan2(d, x) * 180.0 / (float) Math.PI - 90.0);
+            Rotation rotation = new Rotation((float)yRot, (float)xRot);
+            rotationManager.method7849(new RotationRequest(rotation, () -> {
                this.merchantEntity = var1x;
-               return bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var14);
+               return bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation);
             }, bcCameraTestnerv.getRotationConfig()), 3, this);
          });
    }
 
    @EventTarget
-   public void method4322(Event2 var1) {
+   public void method4322(Event2 event) {
       if (this.merchantEntity != null) {
          if (!this.ignoreWalls.isEnabled() && !this.ignoreEntity.isEnabled()) {
-            if (mc.hitResult instanceof EntityHitResult var4 && var4.getEntity() == this.merchantEntity) {
-               mc.gameMode.interact(mc.player, var4.getEntity(), var4, InteractionHand.OFF_HAND);
+            if (mc.hitResult instanceof EntityHitResult hitResult && hitResult.getEntity() == this.merchantEntity) {
+               mc.gameMode.interact(mc.player, hitResult.getEntity(), hitResult, InteractionHand.OFF_HAND);
             }
 
             this.merchantEntity = null;
          } else {
-            EntityHitResult var2 = TargetUtils.method3210(
+            EntityHitResult entityHitResult = TargetUtils.method3210(
                3.0, zenith.getRotationManager().method7844(), var1x -> !this.ignoreEntity.isEnabled() || this.merchantEntity == var1x
             );
             if (!this.ignoreWalls.isEnabled()
@@ -74,9 +74,9 @@ public final class AutoLootModule extends Module {
                )) {
                this.merchantEntity = null;
             } else {
-               if (var2 != null && var2.getEntity() == this.merchantEntity) {
-                  InteractionResult var3 = mc.gameMode.interact(mc.player, var2.getEntity(), var2, InteractionHand.OFF_HAND);
-                  if (var3 instanceof Success) {
+               if (entityHitResult != null && entityHitResult.getEntity() == this.merchantEntity) {
+                  InteractionResult interact = mc.gameMode.interact(mc.player, entityHitResult.getEntity(), entityHitResult, InteractionHand.OFF_HAND);
+                  if (interact instanceof Success) {
                      org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.OFF_HAND);
                   }
                }

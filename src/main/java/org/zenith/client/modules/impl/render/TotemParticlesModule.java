@@ -104,17 +104,17 @@ public final class TotemParticlesModule extends Module {
    }
 
    @EventTarget
-   public void method4696(EntityStatusEvent var1) {
-      ClientboundEntityEventPacket var2 = var1.getEntityStatusS2CPacket();
-      if (var2.getEventId() == 35 && mc.level != null) {
-         this.method4697(var2.getEntity(mc.level));
+   public void method4696(EntityStatusEvent event) {
+      ClientboundEntityEventPacket entityStatusS2CPacket = event.getEntityStatusS2CPacket();
+      if (entityStatusS2CPacket.getEventId() == 35 && mc.level != null) {
+         this.method4697(entityStatusS2CPacket.getEntity(mc.level));
       }
    }
 
-   public void method4697(Entity var1) {
-      if (var1 != null) {
-         AABB var2 = var1.getBoundingBox();
-         Vec3 var3 = new Vec3((var2.minX + var2.maxX) * 0.5, var2.minY, (var2.minZ + var2.maxZ) * 0.5);
+   public void method4697(Entity npc) {
+      if (npc != null) {
+         AABB boundingBox = npc.getBoundingBox();
+         Vec3 vec = new Vec3((boundingBox.minX + boundingBox.maxX) * 0.5, boundingBox.minY, (boundingBox.minZ + boundingBox.maxZ) * 0.5);
          if (this.items.size() >= 8) {
             this.items.removeFirst();
          }
@@ -123,41 +123,41 @@ public final class TotemParticlesModule extends Module {
             .add(
                new Class28(
                      this.method4702(),
-                     var3,
+                     vec,
                      new Vec3(0.0, 1.0, 0.0),
-                     var1.getBbWidth(),
-                     var1.getBbHeight(),
-                     var2.minY,
+                     npc.getBbWidth(),
+                     npc.getBbHeight(),
+                     boundingBox.minY,
                      3000,
                      this.intValue += 53,
                      ++this.longValue
                   )
-                  .method4652(var1 instanceof LivingEntity var4 ? var4 : null)
+                  .method4652(npc instanceof LivingEntity livingEntity ? livingEntity : null)
             );
       }
    }
 
    @EventTarget
-   public void method4698(WorldRenderEvent var1) {
+   public void method4698(WorldRenderEvent event) {
       if (!this.items.isEmpty()) {
          if (mc.player != null && mc.level != null) {
-            long var2 = System.currentTimeMillis();
-            this.items.removeIf(var2x -> var2x.method4656(var2));
+            long now = System.currentTimeMillis();
+            this.items.removeIf(var2x -> var2x.method4656(now));
             if (!this.items.isEmpty()) {
-               Camera var4 = mc.getEntityRenderDispatcher().camera;
-               boolean var5 = false;
+               Camera camera = mc.getEntityRenderDispatcher().camera;
+               boolean flag = false;
 
-               for (Class28 var7 : this.items) {
-                  if (!var5) {
-                     this.glowboost.method3232(var4, method4701(this.method4702()));
-                     var5 = true;
+               for (Class28 class2 : this.items) {
+                  if (!flag) {
+                     this.glowboost.method3232(camera, method4701(this.method4702()));
+                     flag = true;
                   }
 
-                  this.method4700(this.glowboost, var7, var7.method4655(var2), 1.0F);
+                  this.method4700(this.glowboost, class2, class2.method4655(now), 1.0F);
                }
 
-               if (var5) {
-                  this.glowboost.method3253(var1.getMatrixStack());
+               if (flag) {
+                  this.glowboost.method3253(event.getMatrixStack());
                }
             }
          } else {
@@ -166,41 +166,41 @@ public final class TotemParticlesModule extends Module {
       }
    }
 
-   public void method4699(MenuDrawContext var1, float var2, float var3, float var4, float var5) {
-      long var6 = System.currentTimeMillis();
-      if (this.class28 == null || var6 >= this.longValue2) {
+   public void method4699(MenuDrawContext customDrawContext, float xo, float yo, float xScale, float previewAlpha) {
+      long now = System.currentTimeMillis();
+      if (this.class28 == null || now >= this.longValue2) {
          this.class28 = new Class28(this.method4702(), Vec3.ZERO, new Vec3(0.0, 1.0, 0.0), 0.6, 1.8, 0.0, 3000, this.intValue += 53, ++this.longValue);
-         this.longValue2 = var6 + 3000L + 350L;
+         this.longValue2 = now + 3000L + 350L;
       }
 
-      float var8 = this.class28.method4655(var6);
-      if (!(var8 >= 1.0F)) {
-         PoseStack var9 = MatrixStackUtils.method5467(var1, var2, var3, var4);
+      float f = this.class28.method4655(now);
+      if (!(f >= 1.0F)) {
+         PoseStack matrixStack = MatrixStackUtils.method5467(customDrawContext, xo, yo, xScale);
          this.glowboost.method3233(MatrixStackUtils.method5468(), MatrixStackUtils.method5469(), method4701(this.class28.intValue));
-         this.method4700(this.glowboost, this.class28, var8, var5);
-         this.glowboost.method3253(var9);
+         this.method4700(this.glowboost, this.class28, f, previewAlpha);
+         this.glowboost.method3253(matrixStack);
       }
    }
 
-   private void method4700(Glowboost var1, Class28 var2, float var3, float var4) {
-      if (!(var3 < 0.0F) && !(var3 >= 1.0F)) {
-         var1.method3235(method4701(var2.intValue) * var4);
-         int var5 = this.method4703(var2);
-         switch (var2.intValue) {
+   private void method4700(Glowboost glowboost, Class28 class2, float f, float previewAlpha) {
+      if (!(f < 0.0F) && !(f >= 1.0F)) {
+         glowboost.method3235(method4701(class2.intValue) * previewAlpha);
+         int color = this.method4703(class2);
+         switch (class2.intValue) {
             case 1:
-               Util24.method6029(var1, var2, var3, var5, 1.0F, 130.0F);
+               Util24.method6029(glowboost, class2, f, color, 1.0F, 130.0F);
                break;
             case 2:
-               Util24.method6030(var1, var2, var3, var5, this.stormScale.getValue3(), this.stormDensity.getValue3(), 1.6F);
+               Util24.method6030(glowboost, class2, f, color, this.stormScale.getValue3(), this.stormDensity.getValue3(), 1.6F);
                break;
             default:
-               Util24.method6028(var1, var2, var3, var5, this.burstScale.getValue3(), this.burstDensity.getValue3(), 2.5F);
+               Util24.method6028(glowboost, class2, f, color, this.burstScale.getValue3(), this.burstDensity.getValue3(), 2.5F);
          }
       }
    }
 
-   private static float method4701(int var0) {
-      return switch (var0) {
+   private static float method4701(int intValue) {
+      return switch (intValue) {
          case 1 -> 1.8F;
          case 2 -> 1.0F;
          default -> 0.5F;
@@ -208,23 +208,23 @@ public final class TotemParticlesModule extends Module {
    }
 
    private int method4702() {
-      for (int var1 = 0; var1 < 3; var1++) {
-         if (this.mode.isSelected(var1)) {
-            return var1;
+      for (int i = 0; i < 3; i++) {
+         if (this.mode.isSelected(i)) {
+            return i;
          }
       }
 
       return 0;
    }
 
-   private int method4703(Class28 var1) {
+   private int method4703(Class28 class2) {
       if (this.color.isSelected(2)) {
          return this.customColor.getZenithColor().method7287();
       } else if (this.color.isSelected(1)) {
-         return Zenith.getInstance().getStyleManager().getClientColor(var1.intValue3).method7287();
+         return Zenith.getInstance().getStyleManager().getClientColor(class2.intValue3).method7287();
       } else {
-         float var2 = 60.0F + Glowboost.method3268(var1.longValue2, 0, 31) * 60.0F;
-         return ZenithColor.method7297(var2 / 360.0F, 0.9F, 1.0F).method7287();
+         float f = 60.0F + Glowboost.method3268(class2.longValue2, 0, 31) * 60.0F;
+         return ZenithColor.method7297(f / 360.0F, 0.9F, 1.0F).method7287();
       }
    }
 }

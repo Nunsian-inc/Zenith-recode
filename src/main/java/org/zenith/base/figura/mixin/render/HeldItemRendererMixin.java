@@ -49,7 +49,7 @@ public abstract class HeldItemRendererMixin {
    private final ItemStackRenderState figura$itemState = new ItemStackRenderState();
 
    @Shadow
-   protected abstract void renderPlayerArm(PoseStack var1, SubmitNodeCollector var2, int var3, float var4, float var5, HumanoidArm var6, PlayerRenderState var7);
+   protected abstract void renderPlayerArm(PoseStack matrices, SubmitNodeCollector queue, int light, float equipProgress, float swingProgress, HumanoidArm arm, PlayerRenderState playerState);
 
    @Inject(method = HANDS, at = @At("HEAD"))
    private void figura$beginFirstPerson(

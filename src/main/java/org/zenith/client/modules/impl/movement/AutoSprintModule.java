@@ -41,7 +41,7 @@ public final class AutoSprintModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       mc.options.keySprint.setDown(true);
       if (this.keepSwing.isEnabled() && mc.player != null && mc.player.isUnderWater()) {
          mc.player.setSwimming(true);
@@ -49,9 +49,9 @@ public final class AutoSprintModule extends Module {
    }
 
    @EventTarget
-   public void method6418(AttackEvent var1) {
+   public void method6418(AttackEvent event) {
       if (this.keepSwing.isEnabled()) {
-         if (var1.getType4() == AttackEvent.Type.PRE) {
+         if (event.getType4() == AttackEvent.Type.PRE) {
             this.sprint = mc.player.isSprinting();
          } else if (this.sprint) {
             mc.player.setSprinting(true);

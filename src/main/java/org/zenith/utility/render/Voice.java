@@ -127,15 +127,15 @@ public final class Voice implements MinecraftAccess {
       this.voiceState = new VoiceState(new VoiceState.Handler() {
          @Override
          public boolean method377() {
-            Cloud var1 = Voice.cloud();
-            return Voice.this.enabled.isEnabled() && var1 != null && var1.method7863();
+            Cloud cloud = Voice.cloud();
+            return Voice.this.enabled.isEnabled() && cloud != null && cloud.method7863();
          }
 
          @Override
-         public void method378(int var1, int var2, int var3, byte[] var4, int var5) {
-            Cloud var6 = Voice.cloud();
-            if (var6 != null) {
-               var6.method7902(var1, var2, var3, var4, var5);
+         public void method378(int n, int n2, int n3, byte[] src, int length) {
+            Cloud cloud = Voice.cloud();
+            if (cloud != null) {
+               cloud.method7902(n, n2, n3, src, length);
             }
          }
       });
@@ -150,8 +150,8 @@ public final class Voice implements MinecraftAccess {
    }
 
    private static Cloud cloud() {
-      Zenith var0 = Zenith.getInstance();
-      return var0 == null ? null : var0.getCloud();
+      Zenith zenith = Zenith.getInstance();
+      return zenith == null ? null : zenith.getCloud();
    }
 
    public VoiceState getVoiceState() {
@@ -194,17 +194,17 @@ public final class Voice implements MinecraftAccess {
       return this.enabled.isEnabled();
    }
 
-   public void setEnabled(boolean var1) {
-      if (this.enabled.isEnabled() != var1) {
-         this.enabled.setEnabled(var1);
+   public void setEnabled(boolean enabled) {
+      if (this.enabled.isEnabled() != enabled) {
+         this.enabled.setEnabled(enabled);
       }
 
       this.apply();
    }
 
    private void apply() {
-      boolean var1 = this.enabled.isEnabled() || this.flag3;
-      if (var1 && !this.voiceState.method5360()) {
+      boolean flag = this.enabled.isEnabled() || this.flag3;
+      if (flag && !this.voiceState.method5360()) {
          if (!this.flag) {
             this.method335();
          }
@@ -212,26 +212,26 @@ public final class Voice implements MinecraftAccess {
          this.voiceState.method5359(this.method342());
       }
 
-      Cloud var2 = cloud();
+      Cloud cloud2 = cloud();
       if (this.enabled.isEnabled() && this.voiceState.method5360() && !this.flag2) {
-         if (var2 != null) {
-            var2.setHandler(this.voiceState::method5371);
+         if (cloud2 != null) {
+            cloud2.setHandler(this.voiceState::method5371);
          }
 
          this.flag2 = true;
          this.intValue2 = -1;
          this.method349();
       } else if (!this.enabled.isEnabled() && this.flag2) {
-         if (var2 != null) {
-            var2.setHandler(null);
-            var2.method7903(0);
+         if (cloud2 != null) {
+            cloud2.setHandler(null);
+            cloud2.method7903(0);
          }
 
          this.flag2 = false;
          this.intValue2 = -1;
       }
 
-      if (!var1 && this.voiceState.method5360()) {
+      if (!flag && this.voiceState.method5360()) {
          this.voiceState.stop();
       }
    }
@@ -244,11 +244,11 @@ public final class Voice implements MinecraftAccess {
       }
    }
 
-   public void method333(boolean var1) {
-      if (var1 != this.flag3) {
-         this.flag3 = var1;
+   public void method333(boolean flag) {
+      if (flag != this.flag3) {
+         this.flag3 = flag;
          this.longValue = System.currentTimeMillis();
-         if (var1) {
+         if (flag) {
             this.apply();
             this.voiceState.method5363(true);
          } else {
@@ -275,19 +275,19 @@ public final class Voice implements MinecraftAccess {
    }
 
    public String inputName() {
-      String var1 = method337(this.voiceState.getText3());
-      String var2 = this.input.method11();
-      return AudioDevices.display(!var1.isEmpty() ? var1 : (!var2.isEmpty() ? var2 : this.text2));
+      String str = method337(this.voiceState.getText3());
+      String str2 = this.input.method11();
+      return AudioDevices.display(!str.isEmpty() ? str : (!str2.isEmpty() ? str2 : this.text2));
    }
 
    public String method336() {
-      String var1 = method337(this.voiceState.getText4());
-      String var2 = this.output.method11();
-      return AudioDevices.display(!var1.isEmpty() ? var1 : (!var2.isEmpty() ? var2 : this.text3));
+      String str = method337(this.voiceState.getText4());
+      String str2 = this.output.method11();
+      return AudioDevices.display(!str.isEmpty() ? str : (!str2.isEmpty() ? str2 : this.text3));
    }
 
-   private static String method337(String var0) {
-      return var0 != null && !var0.equals("OpenAL Soft") ? var0 : "";
+   private static String method337(String str) {
+      return str != null && !str.equals("OpenAL Soft") ? str : "";
    }
 
    public String method338() {
@@ -303,8 +303,8 @@ public final class Voice implements MinecraftAccess {
    }
 
    public int method340() {
-      int var1 = this.range.getIndex();
-      return CONST_intValues[var1 >= 0 && var1 < CONST_intValues.length ? var1 : 1];
+      int index = this.range.getIndex();
+      return CONST_intValues[index >= 0 && index < CONST_intValues.length ? index : 1];
    }
 
    public float method341() {
@@ -312,7 +312,7 @@ public final class Voice implements MinecraftAccess {
    }
 
    private VoiceState.Data method342() {
-      char var1 = switch (this.quality.getIndex()) {
+      char intValue = switch (this.quality.getIndex()) {
          case 0 -> '丠';
          case 2 -> '뮀';
          default -> '紀';
@@ -323,7 +323,7 @@ public final class Voice implements MinecraftAccess {
          this.activation.isSelected(0),
          this.method341(),
          this.micGain.getValue3() / 100.0F,
-         var1,
+         intValue,
          this.method340(),
          this.spatial.isEnabled() && this.hrtf.isEnabled(),
          this.input.method11(),
@@ -335,7 +335,7 @@ public final class Voice implements MinecraftAccess {
    }
 
    @EventTarget
-   public void onTick(TickEvent var1) {
+   public void onTick(TickEvent event) {
       this.method375();
       if (this.flag3 && System.currentTimeMillis() - this.longValue > 1500L) {
          this.method333(false);
@@ -345,9 +345,9 @@ public final class Voice implements MinecraftAccess {
       if (!this.voiceState.method5360()) {
          this.items2 = null;
       } else {
-         VoiceState.Data var2 = this.method342();
-         if (!var2.equals(this.voiceState.getData())) {
-            this.voiceState.setData(var2);
+         VoiceState.Data data = this.method342();
+         if (!data.equals(this.voiceState.getData())) {
+            this.voiceState.setData(data);
          }
 
          this.voiceState.setFloatValue(this.volume.getValue3() / 100.0F);
@@ -360,42 +360,42 @@ public final class Voice implements MinecraftAccess {
    }
 
    @EventTarget
-   public void method343(CloudStateEvent var1) {
+   public void method343(CloudStateEvent event) {
       this.intValue2 = -1;
-      if (var1.method6858() && this.voiceState.method5360()) {
+      if (event.method6858() && this.voiceState.method5360()) {
          this.method349();
       }
    }
 
    @EventTarget
-   public void method344(KeyEvent var1) {
+   public void method344(KeyEvent event) {
       if (this.voiceState.method5360()) {
-         if (this.muteKey.getKeyCode() > 0 && var1.isPress(this.muteKey.getKeyCode())) {
+         if (this.muteKey.getKeyCode() > 0 && event.isPress(this.muteKey.getKeyCode())) {
             this.voiceState.setFlag3(!this.voiceState.isFlag3());
          }
 
-         if (this.deafenKey.getKeyCode() > 0 && var1.isPress(this.deafenKey.getKeyCode())) {
-            boolean var2 = !this.voiceState.isFlag4();
-            this.voiceState.method5362(var2);
-            this.voiceState.setFlag3(var2);
+         if (this.deafenKey.getKeyCode() > 0 && event.isPress(this.deafenKey.getKeyCode())) {
+            boolean flag = !this.voiceState.isFlag4();
+            this.voiceState.method5362(flag);
+            this.voiceState.setFlag3(flag);
             this.intValue2 = -1;
          }
       }
    }
 
    private void method345() {
-      boolean var1 = this.activation.isSelected(0) && UseItemUtils.method6521(this.talkKey);
-      this.voiceState.method5361(var1, this.method346());
+      boolean flag = this.activation.isSelected(0) && UseItemUtils.method6521(this.talkKey);
+      this.voiceState.method5361(flag, this.method346());
    }
 
    private int method346() {
-      Cloud var1 = cloud();
-      PartyMember var2 = var1 == null ? null : var1.getPartyMember();
-      if (var2 != null && var2.getLongValue() != 0L && UseItemUtils.method6521(this.whisperKey)) {
+      Cloud cloud2 = cloud();
+      PartyMember partyMember = cloud2 == null ? null : cloud2.getPartyMember();
+      if (partyMember != null && partyMember.getLongValue() != 0L && UseItemUtils.method6521(this.whisperKey)) {
          return 16;
-      } else if (var2 != null && var2.getData() != null && UseItemUtils.method6521(this.roomKey)) {
+      } else if (partyMember != null && partyMember.getData() != null && UseItemUtils.method6521(this.roomKey)) {
          return 8;
-      } else if (var2 != null && var2.method1136() && UseItemUtils.method6521(this.partyKey)) {
+      } else if (partyMember != null && partyMember.method1136() && UseItemUtils.method6521(this.partyKey)) {
          return 4;
       } else {
          return UseItemUtils.method6521(this.radioKey) ? 1 : 0;
@@ -403,132 +403,132 @@ public final class Voice implements MinecraftAccess {
    }
 
    public int method347() {
-      Cloud var1 = cloud();
-      PartyMember var2 = var1 == null ? null : var1.getPartyMember();
-      if (var2 == null) {
+      Cloud cloud2 = cloud();
+      PartyMember partyMember = cloud2 == null ? null : cloud2.getPartyMember();
+      if (partyMember == null) {
          return 0;
       } else {
          return switch (this.defaultChannel.getIndex()) {
-            case 1 -> var2.method1136() ? 4 : 0;
-            case 2 -> var2.getData() != null ? 8 : 0;
+            case 1 -> partyMember.method1136() ? 4 : 0;
+            case 2 -> partyMember.getData() != null ? 8 : 0;
             default -> 0;
          };
       }
    }
 
-   public String method348(long var1) {
-      Cloud var3 = cloud();
-      if (var3 == null) {
-         return "#" + var1;
+   public String method348(long longValue) {
+      Cloud cloud2 = cloud();
+      if (cloud2 == null) {
+         return "#" + longValue;
       } else {
-         PartyPlayerInfo var4 = var3.state().method8040(var1);
-         if (var4 != null) {
-            return method367(var4);
+         PartyPlayerInfo partyPlayerInfo = cloud2.state().method8040(longValue);
+         if (partyPlayerInfo != null) {
+            return method367(partyPlayerInfo);
          } else {
-            PartyMember.Data var5 = var3.getPartyMember().getData();
-            if (var5 != null) {
-               for (PartyMember.Data3 var7 : var5.getItems()) {
-                  if (var7.uid() == var1) {
-                     return var7.getText2().isEmpty() ? var7.username() : var7.getText2();
+            PartyMember.Data data = cloud2.getPartyMember().getData();
+            if (data != null) {
+               for (PartyMember.Data3 data3 : data.getItems()) {
+                  if (data3.uid() == longValue) {
+                     return data3.getText2().isEmpty() ? data3.username() : data3.getText2();
                   }
                }
             }
 
-            return var3.getPartyMember().method1149(var1);
+            return cloud2.getPartyMember().method1149(longValue);
          }
       }
    }
 
    private void method349() {
-      Cloud var1 = cloud();
-      if (var1 != null && var1.method7863()) {
-         int var2 = this.voiceState.isFlag4() ? 0 : 1 | (this.acceptRadio.isEnabled() ? 2 : 0);
-         if (var2 != this.intValue2) {
-            var1.method7903(var2);
-            this.intValue2 = var2;
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && cloud2.method7863()) {
+         int n = this.voiceState.isFlag4() ? 0 : 1 | (this.acceptRadio.isEnabled() ? 2 : 0);
+         if (n != this.intValue2) {
+            cloud2.method7903(n);
+            this.intValue2 = n;
          }
       }
    }
 
    private Map<Long, Float> method350() {
-      Cloud var1 = cloud();
-      if (var1 == null) {
+      Cloud cloud2 = cloud();
+      if (cloud2 == null) {
          return Map.of();
       } else {
-         Prefs var2 = var1.prefs();
-         HashMap var3 = new HashMap();
+         Prefs prefs = cloud2.prefs();
+         HashMap map = new HashMap();
 
-         for (PartyPlayerInfo var5 : var1.state().method8038()) {
-            if (!var2.method3321(var5.username()) && !var2.method3316(var5.username())) {
-               var3.put(var5.uid(), var2.method3323(var5.username()) / 100.0F);
+         for (PartyPlayerInfo partyPlayerInfo : cloud2.state().method8038()) {
+            if (!prefs.method3321(partyPlayerInfo.username()) && !prefs.method3316(partyPlayerInfo.username())) {
+               map.put(partyPlayerInfo.uid(), prefs.method3323(partyPlayerInfo.username()) / 100.0F);
             }
          }
 
-         for (PartyPlayerInfo var9 : var1.state().method8041()) {
-            if (!var3.containsKey(var9.uid()) && !var2.method3321(var9.username()) && !var2.method3316(var9.username())) {
-               var3.put(var9.uid(), var2.method3323(var9.username()) / 100.0F);
+         for (PartyPlayerInfo partyPlayerInfo : cloud2.state().method8041()) {
+            if (!map.containsKey(partyPlayerInfo.uid()) && !prefs.method3321(partyPlayerInfo.username()) && !prefs.method3316(partyPlayerInfo.username())) {
+               map.put(partyPlayerInfo.uid(), prefs.method3323(partyPlayerInfo.username()) / 100.0F);
             }
          }
 
-         PartyMember.Data var8 = var1.getPartyMember().getData();
-         if (var8 != null) {
-            for (PartyMember.Data3 var6 : var8.getItems()) {
-               if (var6.uid() != var1.getLongValue() && !var3.containsKey(var6.uid()) && !var2.method3321(var6.username()) && !var2.method3316(var6.username())
+         PartyMember.Data data = cloud2.getPartyMember().getData();
+         if (data != null) {
+            for (PartyMember.Data3 data3 : data.getItems()) {
+               if (data3.uid() != cloud2.getLongValue() && !map.containsKey(data3.uid()) && !prefs.method3321(data3.username()) && !prefs.method3316(data3.username())
                   )
                 {
-                  var3.put(var6.uid(), var2.method3323(var6.username()) / 100.0F);
+                  map.put(data3.uid(), prefs.method3323(data3.username()) / 100.0F);
                }
             }
          }
 
-         return var3;
+         return map;
       }
    }
 
-   private void method351(float var1) {
-      Set<Long> var2 = this.voiceState.method5364();
-      if (var2.isEmpty()) {
+   private void method351(float tickDelta) {
+      Set<Long> longs = this.voiceState.method5364();
+      if (longs.isEmpty()) {
          this.voiceState.setItems2(Map.of());
       } else {
-         Cloud var3 = cloud();
-         var var4 = this.items2 != null ? this.items2 : this.method350();
-         float var5 = this.volume.getValue3() / 100.0F;
-         float var6 = this.radioVolume.getValue3() / 100.0F;
-         HashMap var7 = new HashMap();
-         Camera var8 = mc.gameRenderer == null ? null : mc.gameRenderer.mainCamera();
-         Vec3 var9 = var8 == null ? null : var8.position();
-         Vec3 var10 = mc.player == null ? null : mc.player.getEyePosition(var1);
-         double var11 = var8 == null ? 0.0 : Math.toRadians(var8.yRot());
-         double var13 = var8 == null ? 0.0 : Math.toRadians(var8.xRot());
-         Vec3 var15 = new Vec3(-Math.sin(var11) * Math.cos(var13), -Math.sin(var13), Math.cos(var11) * Math.cos(var13));
-         Vec3 var16 = new Vec3(-Math.cos(var11), 0.0, -Math.sin(var11));
-         Vec3 var17 = var16.cross(var15);
+         Cloud cloud2 = cloud();
+         var map = this.items2 != null ? this.items2 : this.method350();
+         float f = this.volume.getValue3() / 100.0F;
+         float f2 = this.radioVolume.getValue3() / 100.0F;
+         HashMap map2 = new HashMap();
+         Camera mainCamera = mc.gameRenderer == null ? null : mc.gameRenderer.mainCamera();
+         Vec3 position = mainCamera == null ? null : mainCamera.position();
+         Vec3 eyePosition = mc.player == null ? null : mc.player.getEyePosition(tickDelta);
+         double d = mainCamera == null ? 0.0 : Math.toRadians(mainCamera.yRot());
+         double d2 = mainCamera == null ? 0.0 : Math.toRadians(mainCamera.xRot());
+         Vec3 vec = new Vec3(-Math.sin(d) * Math.cos(d2), -Math.sin(d2), Math.cos(d) * Math.cos(d2));
+         Vec3 vec2 = new Vec3(-Math.cos(d), 0.0, -Math.sin(d));
+         Vec3 vec3 = vec2.cross(vec);
 
-         for (long var19 : var2) {
-            Float var21 = (Float)var4.get(var19);
-            if (var21 != null && var3 != null) {
-               int var22 = this.voiceState.method5368(var19);
-               if ((var22 & 1) != 0) {
-                  var7.put(var19, new VoiceState.Data2(0.0F, 0.0F, 0.0F, var6 * var21));
-               } else if ((var22 & 28) != 0) {
-                  float var29 = (var22 & 16) != 0 ? 1.1F : 1.0F;
-                  var7.put(var19, new VoiceState.Data2(0.0F, 0.0F, 0.0F, var5 * var21 * var29 * this.channelVolume.getValue3() / 100.0F));
+         for (long key : longs) {
+            Float f3 = (Float)map.get(key);
+            if (f3 != null && cloud2 != null) {
+               int n = this.voiceState.method5368(key);
+               if ((n & 1) != 0) {
+                  map2.put(key, new VoiceState.Data2(0.0F, 0.0F, 0.0F, f2 * f3));
+               } else if ((n & 28) != 0) {
+                  float f4 = (n & 16) != 0 ? 1.1F : 1.0F;
+                  map2.put(key, new VoiceState.Data2(0.0F, 0.0F, 0.0F, f * f3 * f4 * this.channelVolume.getValue3() / 100.0F));
                } else {
-                  PartyPlayerInfo var23 = var3.state().method8040(var19);
-                  Vec3 var24 = var23 != null && var10 != null ? this.method354(var23, var10, var1, var3) : null;
-                  if (var24 != null && var9 != null) {
-                     float var25 = method356(var24.distanceTo(var10), this.voiceState.method5370(var19));
-                     if (!(var25 <= 0.0F)) {
-                        float var26 = var5 * var21 * var25;
-                        float var27 = this.muffle.isEnabled() ? this.method352(var19, var10, var24) : 0.0F;
+                  PartyPlayerInfo partyPlayerInfo = cloud2.state().method8040(key);
+                  Vec3 to = partyPlayerInfo != null && eyePosition != null ? this.method354(partyPlayerInfo, eyePosition, tickDelta, cloud2) : null;
+                  if (to != null && position != null) {
+                     float f4 = method356(to.distanceTo(eyePosition), this.voiceState.method5370(key));
+                     if (!(f4 <= 0.0F)) {
+                        float f5 = f * f3 * f4;
+                        float f6 = this.muffle.isEnabled() ? this.method352(key, eyePosition, to) : 0.0F;
                         if (!this.spatial.isEnabled()) {
-                           var7.put(var19, new VoiceState.Data2(0.0F, 0.0F, 0.0F, var26, var27));
+                           map2.put(key, new VoiceState.Data2(0.0F, 0.0F, 0.0F, f5, f6));
                         } else {
-                           Vec3 var28 = var24.subtract(var9);
-                           var7.put(
-                              var19,
+                           Vec3 vec4 = to.subtract(position);
+                           map2.put(
+                              key,
                               new VoiceState.Data2(
-                                 (float)var28.dot(var16), (float)var28.dot(var17), (float)(-var28.dot(var15)), var26, var27
+                                 (float)vec4.dot(vec2), (float)vec4.dot(vec3), (float)(-vec4.dot(vec)), f5, f6
                               )
                            );
                         }
@@ -538,31 +538,31 @@ public final class Voice implements MinecraftAccess {
             }
          }
 
-         this.voiceState.setItems2(var7);
+         this.voiceState.setItems2(map2);
       }
    }
 
-   private float method352(long var1, Vec3 var3, Vec3 var4) {
-      Voice.Entry var5 = this.items.computeIfAbsent(var1, var0 -> new Voice.Entry());
-      long var6 = System.currentTimeMillis();
-      if (var6 - var5.longValue > 150L) {
-         var5.target = this.method353(var3, var4);
-         var5.longValue = var6;
+   private float method352(long key, Vec3 eyePosition, Vec3 to) {
+      Voice.Entry entry = this.items.computeIfAbsent(key, l -> new Voice.Entry());
+      long now = System.currentTimeMillis();
+      if (now - entry.longValue > 150L) {
+         entry.target = this.method353(eyePosition, to);
+         entry.longValue = now;
       }
 
-      var5.value = var5.value + (var5.target - var5.value) * 0.25F;
-      return var5.value;
+      entry.value = entry.value + (entry.target - entry.value) * 0.25F;
+      return entry.value;
    }
 
-   private float method353(Vec3 var1, Vec3 var2) {
+   private float method353(Vec3 eyePosition, Vec3 to) {
       if (mc.level != null && mc.player != null) {
-         ClipContext var3 = new ClipContext(var1, var2, Block.COLLIDER, Fluid.NONE, mc.player);
-         BlockHitResult var4 = mc.level.clip(var3);
-         if (var4 != null && var4.getType() != HitResult.Type.MISS) {
-            ClipContext var5 = new ClipContext(var2, var1, Block.COLLIDER, Fluid.NONE, mc.player);
-            BlockHitResult var6 = mc.level.clip(var5);
-            double var7 = var6 != null && var6.getType() != HitResult.Type.MISS ? Math.max(1.0, var4.getLocation().distanceTo(var6.getLocation())) : 1.0;
-            return (float)Math.min(1.0, 0.55 + var7 * 0.12);
+         ClipContext clipContext = new ClipContext(eyePosition, to, Block.COLLIDER, Fluid.NONE, mc.player);
+         BlockHitResult clip = mc.level.clip(clipContext);
+         if (clip != null && clip.getType() != HitResult.Type.MISS) {
+            ClipContext clipContext2 = new ClipContext(to, eyePosition, Block.COLLIDER, Fluid.NONE, mc.player);
+            BlockHitResult blockHitResult = mc.level.clip(clipContext2);
+            double d = blockHitResult != null && blockHitResult.getType() != HitResult.Type.MISS ? Math.max(1.0, clip.getLocation().distanceTo(blockHitResult.getLocation())) : 1.0;
+            return (float)Math.min(1.0, 0.55 + d * 0.12);
          } else {
             return 0.0F;
          }
@@ -571,23 +571,23 @@ public final class Voice implements MinecraftAccess {
       }
    }
 
-   private Vec3 method354(PartyPlayerInfo var1, Vec3 var2, float var3, Cloud var4) {
-      Player var5 = this.method355(var1.getText2());
-      if (var5 != null) {
-         return var5.getEyePosition(var3);
-      } else if (var1.method3291(var4.method7911(), var4.method7913()) && var1.method3292()) {
-         Vec3 var6 = var1.method3294().add(0.0, 1.62, 0.0);
-         return var6.distanceTo(var2) < 32.0 ? null : var6;
+   private Vec3 method354(PartyPlayerInfo partyPlayerInfo, Vec3 eyePosition, float tickDelta, Cloud cloud) {
+      Player player = this.method355(partyPlayerInfo.getText2());
+      if (player != null) {
+         return player.getEyePosition(tickDelta);
+      } else if (partyPlayerInfo.method3291(cloud.method7911(), cloud.method7913()) && partyPlayerInfo.method3292()) {
+         Vec3 vec = partyPlayerInfo.method3294().add(0.0, 1.62, 0.0);
+         return vec.distanceTo(eyePosition) < 32.0 ? null : vec;
       } else {
          return null;
       }
    }
 
-   private Player method355(String var1) {
-      if (mc.level != null && var1 != null && !var1.isEmpty()) {
-         for (Player var3 : mc.level.players()) {
-            if (var3 != mc.player && var1.equalsIgnoreCase(var3.getGameProfile().name())) {
-               return var3;
+   private Player method355(String str) {
+      if (mc.level != null && str != null && !str.isEmpty()) {
+         for (Player player : mc.level.players()) {
+            if (player != mc.player && str.equalsIgnoreCase(player.getGameProfile().name())) {
+               return player;
             }
          }
 
@@ -597,12 +597,12 @@ public final class Voice implements MinecraftAccess {
       }
    }
 
-   public static float method356(double var0, int var2) {
-      if (var0 <= 4.0) {
+   public static float method356(double d, int n) {
+      if (d <= 4.0) {
          return 1.0F;
       } else {
-         double var3 = (var0 - 4.0) / Math.max(1.0, var2 - 4.0);
-         return var3 >= 1.0 ? 0.0F : (float)Math.pow(1.0 - var3, 1.6);
+         double d2 = (d - 4.0) / Math.max(1.0, n - 4.0);
+         return d2 >= 1.0 ? 0.0F : (float)Math.pow(1.0 - d2, 1.6);
       }
    }
 
@@ -612,33 +612,33 @@ public final class Voice implements MinecraftAccess {
       } else if (!this.voiceState.method5360()) {
          return Voice.Type.OFF;
       } else {
-         Cloud var1 = cloud();
+         Cloud cloud2 = cloud();
          if (!this.voiceState.getText().isEmpty()) {
             return Voice.Type.MIC_ERROR;
          } else if (!this.voiceState.getText2().isEmpty()) {
             return Voice.Type.OUTPUT_ERROR;
-         } else if (var1 == null || !var1.method7862()) {
+         } else if (cloud2 == null || !cloud2.method7862()) {
             return Voice.Type.OFFLINE;
-         } else if (!var1.method7863()) {
+         } else if (!cloud2.method7863()) {
             return Voice.Type.UNSUPPORTED;
          } else if (this.voiceState.isFlag4()) {
             return Voice.Type.DEAFENED;
          } else if (this.voiceState.isFlag3()) {
             return Voice.Type.MUTED;
          } else if (this.voiceState.isFlag6()) {
-            int var3 = this.voiceState.getIntValue() != 0 ? this.voiceState.getIntValue() : this.method347();
-            if ((var3 & 16) != 0) {
+            int intValue = this.voiceState.getIntValue() != 0 ? this.voiceState.getIntValue() : this.method347();
+            if ((intValue & 16) != 0) {
                return Voice.Type.WHISPER;
-            } else if ((var3 & 8) != 0) {
+            } else if ((intValue & 8) != 0) {
                return Voice.Type.ROOM;
-            } else if ((var3 & 4) != 0) {
+            } else if ((intValue & 4) != 0) {
                return Voice.Type.PARTY;
             } else {
-               return (var3 & 1) != 0 ? Voice.Type.RADIO : Voice.Type.TALKING;
+               return (intValue & 1) != 0 ? Voice.Type.RADIO : Voice.Type.TALKING;
             }
          } else {
-            Share var2 = Zenith.getInstance().getShare();
-            return var2 == null || var2.position.isEnabled() && var2.server.isEnabled() ? Voice.Type.READY : Voice.Type.NO_POSITION;
+            Share share = Zenith.getInstance().getShare();
+            return share == null || share.position.isEnabled() && share.server.isEnabled() ? Voice.Type.READY : Voice.Type.NO_POSITION;
          }
       }
    }
@@ -649,8 +649,8 @@ public final class Voice implements MinecraftAccess {
       } else if (this.voiceState.isFlag6()) {
          return true;
       } else {
-         for (long var2 : this.voiceState.method5364()) {
-            if (var2 != -1L && this.voiceState.method5365(var2)) {
+         for (long uid : this.voiceState.method5364()) {
+            if (uid != -1L && this.voiceState.method5365(uid)) {
                return true;
             }
          }
@@ -660,12 +660,12 @@ public final class Voice implements MinecraftAccess {
    }
 
    public String method359() {
-      Voice.Type var1 = this.method357();
-      String var2 = method373("gui.voice.status." + var1.name().toLowerCase(Locale.ROOT));
-      if (var1 == Voice.Type.MIC_ERROR) {
-         return var2 + ": " + this.voiceState.getText();
+      Voice.Type type = this.method357();
+      String str = method373("gui.voice.status." + type.name().toLowerCase(Locale.ROOT));
+      if (type == Voice.Type.MIC_ERROR) {
+         return str + ": " + this.voiceState.getText();
       } else {
-         return var1 == Voice.Type.OUTPUT_ERROR ? var2 + ": " + this.voiceState.getText2() : var2;
+         return type == Voice.Type.OUTPUT_ERROR ? str + ": " + this.voiceState.getText2() : str;
       }
    }
 
@@ -679,122 +679,122 @@ public final class Voice implements MinecraftAccess {
    }
 
    public int method361() {
-      Cloud var1 = cloud();
-      return var1 == null ? -1 : var1.method7864();
+      Cloud cloud2 = cloud();
+      return cloud2 == null ? -1 : cloud2.method7864();
    }
 
    public void method362() {
-      Cloud var1 = cloud();
-      if (var1 != null) {
-         var1.method7865();
+      Cloud cloud2 = cloud();
+      if (cloud2 != null) {
+         cloud2.method7865();
       }
    }
 
    public int latencyMs() {
-      int var1 = this.method361();
-      return var1 < 0 ? -1 : var1 + 124;
+      int n = this.method361();
+      return n < 0 ? -1 : n + 124;
    }
 
    public int method363() {
       return this.method342().getIntValue() / 1000;
    }
 
-   public static String method364(BindSetting var0) {
-      int var1 = var0.getKeyCode();
-      if (var1 < 0) {
+   public static String method364(BindSetting talkKey) {
+      int keyCode = talkKey.getKeyCode();
+      if (keyCode < 0) {
          return "—";
       } else {
-         String var2 = KeyName.method6701(var1);
-         return var2 != null && !var2.isEmpty() ? var2 : String.valueOf(var1);
+         String str = KeyName.method6701(keyCode);
+         return str != null && !str.isEmpty() ? str : String.valueOf(keyCode);
       }
    }
 
    public List<PartyPlayerInfo> method365() {
-      Cloud var1 = cloud();
-      ArrayList<PartyPlayerInfo> var2 = new ArrayList<>();
-      if (var1 != null) {
-         for (PartyPlayerInfo var4 : var1.state().method8038()) {
-            if (var4.method3289()) {
-               var2.add(var4);
+      Cloud cloud2 = cloud();
+      ArrayList<PartyPlayerInfo> partyPlayerInfos = new ArrayList<>();
+      if (cloud2 != null) {
+         for (PartyPlayerInfo partyPlayerInfo : cloud2.state().method8038()) {
+            if (partyPlayerInfo.method3289()) {
+               partyPlayerInfos.add(partyPlayerInfo);
             }
          }
 
-         for (PartyPlayerInfo var6 : var1.state().method8041()) {
-            if (var6.method3289() && var1.state().method8039(var6.uid()) == null) {
-               var2.add(var6);
+         for (PartyPlayerInfo partyPlayerInfo : cloud2.state().method8041()) {
+            if (partyPlayerInfo.method3289() && cloud2.state().method8039(partyPlayerInfo.uid()) == null) {
+               partyPlayerInfos.add(partyPlayerInfo);
             }
          }
       }
 
-      var2.sort((var0, var1x) -> method367(var0).compareToIgnoreCase(method367(var1x)));
-      return var2;
+      partyPlayerInfos.sort((partyPlayerInfo, var1x) -> method367(partyPlayerInfo).compareToIgnoreCase(method367(var1x)));
+      return partyPlayerInfos;
    }
 
-   public String method366(PartyPlayerInfo var1) {
-      Cloud var2 = cloud();
-      if (var2 == null || !var1.method3291(var2.method7911(), var2.method7913())) {
+   public String method366(PartyPlayerInfo partyPlayerInfo) {
+      Cloud cloud2 = cloud();
+      if (cloud2 == null || !partyPlayerInfo.method3291(cloud2.method7911(), cloud2.method7913())) {
          return method373("gui.voice.friend.elsewhere");
-      } else if (mc.player != null && var1.method3292()) {
-         double var3 = var1.method3294().distanceTo(mc.player.position());
-         return var3 <= this.method340() ? method373("gui.voice.friend.near") : method373("gui.voice.friend.far");
+      } else if (mc.player != null && partyPlayerInfo.method3292()) {
+         double d = partyPlayerInfo.method3294().distanceTo(mc.player.position());
+         return d <= this.method340() ? method373("gui.voice.friend.near") : method373("gui.voice.friend.far");
       } else {
          return method373("gui.voice.friend.sameServer");
       }
    }
 
-   public static String method367(PartyPlayerInfo var0) {
-      return var0.getText2() != null && !var0.getText2().isEmpty() ? var0.getText2() : var0.username();
+   public static String method367(PartyPlayerInfo partyPlayerInfo) {
+      return partyPlayerInfo.getText2() != null && !partyPlayerInfo.getText2().isEmpty() ? partyPlayerInfo.getText2() : partyPlayerInfo.username();
    }
 
    @EventTarget
-   public void method368(DrawEvent var1) {
+   public void method368(DrawEvent event) {
       if (this.voiceState.method5360()) {
          this.method345();
-         this.method351(var1.getTickDelta());
-         ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var2 != null) {
+         this.method351(event.getTickDelta());
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
             if (this.heads.isEnabled()) {
-               this.method372(var1.getCustomDrawContext(), var2, var1.getTickDelta());
+               this.method372(event.getCustomDrawContext(), currentStyle, event.getTickDelta());
             }
 
             if (this.overlay.isEnabled()) {
-               this.method369(var1.getCustomDrawContext(), var2);
+               this.method369(event.getCustomDrawContext(), currentStyle);
             }
          }
       }
    }
 
-   private void method369(CustomDrawContext var1, ZenithStyle var2) {
-      ArrayList<Voice.Data> var3 = new ArrayList();
-      Voice.Type var4 = this.method357();
-      if (var4 != Voice.Type.READY) {
-         boolean var5 = var4 == Voice.Type.TALKING
-            || var4 == Voice.Type.RADIO
-            || var4 == Voice.Type.TESTING
-            || var4 == Voice.Type.PARTY
-            || var4 == Voice.Type.ROOM
-            || var4 == Voice.Type.WHISPER;
-         var3.add(new Voice.Data(this.method359(), this.method360(), var5 ? this.voiceState.getFloatValue2() : -100.0F, false, true));
+   private void method369(CustomDrawContext customDrawContext, ZenithStyle currentStyle) {
+      ArrayList<Voice.Data> datas = new ArrayList();
+      Voice.Type type = this.method357();
+      if (type != Voice.Type.READY) {
+         boolean flag = type == Voice.Type.TALKING
+            || type == Voice.Type.RADIO
+            || type == Voice.Type.TESTING
+            || type == Voice.Type.PARTY
+            || type == Voice.Type.ROOM
+            || type == Voice.Type.WHISPER;
+         datas.add(new Voice.Data(this.method359(), this.method360(), flag ? this.voiceState.getFloatValue2() : -100.0F, false, true));
       }
 
-      Cloud var17 = cloud();
-      if (var17 != null) {
-         for (long var7 : this.voiceState.method5364()) {
-            if (this.voiceState.method5365(var7) && var7 != -1L) {
-               boolean var9 = this.voiceState.method5369(var7);
-               String var10 = this.method348(var7);
-               int var11 = this.voiceState.method5368(var7);
-               if ((var11 & 16) != 0) {
-                  var10 = var10 + " · " + method373("gui.voice.tag.whisper");
-               } else if ((var11 & 4) != 0) {
-                  var10 = var10 + " · " + method373("gui.voice.tag.party");
-               } else if ((var11 & 8) != 0) {
-                  var10 = var10 + " · " + method373("gui.voice.tag.room");
+      Cloud cloud2 = cloud();
+      if (cloud2 != null) {
+         for (long uid : this.voiceState.method5364()) {
+            if (this.voiceState.method5365(uid) && uid != -1L) {
+               boolean flag = this.voiceState.method5369(uid);
+               String text = this.method348(uid);
+               int n = this.voiceState.method5368(uid);
+               if ((n & 16) != 0) {
+                  text = text + " · " + method373("gui.voice.tag.whisper");
+               } else if ((n & 4) != 0) {
+                  text = text + " · " + method373("gui.voice.tag.party");
+               } else if ((n & 8) != 0) {
+                  text = text + " · " + method373("gui.voice.tag.room");
                }
 
-               var3.add(
+               datas.add(
                   new Voice.Data(
-                     var10, var9 ? new ZenithColor(-10443270) : var2.getPrimaryColor().getZenithColor(), this.voiceState.method5366(var7), var9, false
+                     text, flag ? new ZenithColor(-10443270) : currentStyle.getPrimaryColor().getZenithColor(), this.voiceState.method5366(uid), flag, false
                   )
                );
             }
@@ -802,96 +802,96 @@ public final class Voice implements MinecraftAccess {
       }
 
       if (WatermarkIslandHud.method5668()) {
-         this.method370(var4, var3);
-      } else if (!var3.isEmpty()) {
-         Font var18 = Fonts.NEW_MEDIUM.getFont(7.0F);
-         float var19 = GuiStyle.PADDING.intValue();
-         float var8 = var18.height() + var19;
-         float var20 = 6.0F;
-         float var21 = mc.getWindow().getGuiScaledHeight() * 0.38F;
-         ProxyDotRadiusData var22 = ProxyDotRadiusData.method8069(InterfaceModule.method6801() * 0.6F);
+         this.method370(type, datas);
+      } else if (!datas.isEmpty()) {
+         Font font = Fonts.NEW_MEDIUM.getFont(7.0F);
+         float intValue = GuiStyle.PADDING.intValue();
+         float height = font.height() + intValue;
+         float floatValue = 6.0F;
+         float y = mc.getWindow().getGuiScaledHeight() * 0.38F;
+         ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(InterfaceModule.method6801() * 0.6F);
 
-         for (Voice.Data var13 : var3) {
-            String var14 = var13.flag ? var13.text + " · " + method373("gui.voice.radioTag") : var13.text;
-            float var15 = var19 + 8.0F + var18.width(var14) + 5.0F + 12.0F + var19;
-            var1.drawRoundedRect(var20, var21, var15, var8, var22, var2.getHudBackground().getZenithColor());
-            var1.drawRoundedRect(var20 + var19, var21 + (var8 - 4.0F) / 2.0F, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var13.zenithColor);
-            float var16 = var20 + var19 + 8.0F;
-            var1.drawText(var18, var14, var16, var21 + (var8 - var18.height()) / 2.0F, var2.getTextEnable().getZenithColor());
-            method371(var1, var16 + var18.width(var14) + 5.0F, var21 + var8 / 2.0F, var13.floatValue, var13.zenithColor);
-            var21 += var8 + 2.0F;
+         for (Voice.Data data : datas) {
+            String text = data.flag ? data.text + " · " + method373("gui.voice.radioTag") : data.text;
+            float width = intValue + 8.0F + font.width(text) + 5.0F + 12.0F + intValue;
+            customDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, currentStyle.getHudBackground().getZenithColor());
+            customDrawContext.drawRoundedRect(floatValue + intValue, y + (height - 4.0F) / 2.0F, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), data.zenithColor);
+            float f = floatValue + intValue + 8.0F;
+            customDrawContext.drawText(font, text, f, y + (height - font.height()) / 2.0F, currentStyle.getTextEnable().getZenithColor());
+            method371(customDrawContext, f + font.width(text) + 5.0F, y + height / 2.0F, data.floatValue, data.zenithColor);
+            y += height + 2.0F;
          }
       }
    }
 
-   private void method370(Voice.Type var1, List<Voice.Data> var2) {
-      ArrayList<Voice.Data> var3 = new ArrayList();
-      Voice.Data var4 = null;
+   private void method370(Voice.Type type, List<Voice.Data> datas) {
+      ArrayList<Voice.Data> datas2 = new ArrayList();
+      Voice.Data data = null;
 
-      for (Voice.Data var6 : var2) {
-         if (var6.flag2) {
-            var4 = var6;
+      for (Voice.Data data2 : datas) {
+         if (data2.flag2) {
+            data = data2;
          } else {
-            var3.add(var6);
+            datas2.add(data2);
          }
       }
 
-      if (!var3.isEmpty()) {
-         StringBuilder var11 = new StringBuilder();
-         float var12 = -100.0F;
-         boolean var7 = false;
+      if (!datas2.isEmpty()) {
+         StringBuilder builder = new StringBuilder();
+         float floatValue = -100.0F;
+         boolean flag = false;
 
-         for (Voice.Data var9 : var3) {
-            if (!var11.isEmpty()) {
-               var11.append(", ");
+         for (Voice.Data data2 : datas2) {
+            if (!builder.isEmpty()) {
+               builder.append(", ");
             }
 
-            var11.append(var9.text);
-            var12 = Math.max(var12, var9.floatValue);
-            var7 |= var9.flag;
+            builder.append(data2.text);
+            floatValue = Math.max(floatValue, data2.floatValue);
+            flag |= data2.flag;
          }
 
-         String var13 = var7 ? var11 + " · " + method373("gui.voice.radioTag") : var11.toString();
-         Island.method2873("voice", var13, ((Voice.Data)var3.get(0)).zenithColor, 75, var12);
-      } else if (var4 == null) {
+         String string = flag ? builder + " · " + method373("gui.voice.radioTag") : builder.toString();
+         Island.method2873("voice", string, ((Voice.Data)datas2.get(0)).zenithColor, 75, floatValue);
+      } else if (data == null) {
          Island.drop("voice");
       } else {
-         boolean var10 = var1 == Voice.Type.TALKING || var1 == Voice.Type.RADIO || var1 == Voice.Type.TESTING;
-         Island.method2873("voice", var4.text, var4.zenithColor, var10 ? 75 : 35, var10 ? var4.floatValue : Float.NaN);
+         boolean flag = type == Voice.Type.TALKING || type == Voice.Type.RADIO || type == Voice.Type.TESTING;
+         Island.method2873("voice", data.text, data.zenithColor, flag ? 75 : 35, flag ? data.floatValue : Float.NaN);
       }
    }
 
-   public static void method371(CustomDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      float var5 = Mth.clamp((var3 + 60.0F) / 45.0F, 0.0F, 1.0F);
-      long var6 = System.currentTimeMillis();
+   public static void method371(CustomDrawContext customDrawContext, float f, float f2, float floatValue, ZenithColor zenithColor) {
+      float f3 = Mth.clamp((floatValue + 60.0F) / 45.0F, 0.0F, 1.0F);
+      long now = System.currentTimeMillis();
 
-      for (int var8 = 0; var8 < 3; var8++) {
-         float var9 = 0.55F + 0.45F * (float)Math.sin(var6 / 90.0 + var8 * 1.7);
-         float var10 = 2.0F + 6.0F * var5 * (var8 == 1 ? 1.0F : 0.7F) * (var5 > 0.0F ? var9 : 0.0F);
-         var0.drawRoundedRect(
-            var1 + var8 * 4.0F, var2 - var10 / 2.0F, 2.5F, var10, ProxyDotRadiusData.method8069(1.2F), var4.method7294(var5 > 0.0F ? 1.0F : 0.35F)
+      for (int i = 0; i < 3; i++) {
+         float f4 = 0.55F + 0.45F * (float)Math.sin(now / 90.0 + i * 1.7);
+         float height = 2.0F + 6.0F * f3 * (i == 1 ? 1.0F : 0.7F) * (f3 > 0.0F ? f4 : 0.0F);
+         customDrawContext.drawRoundedRect(
+            f + i * 4.0F, f2 - height / 2.0F, 2.5F, height, ProxyDotRadiusData.method8069(1.2F), zenithColor.method7294(f3 > 0.0F ? 1.0F : 0.35F)
          );
       }
    }
 
-   private void method372(CustomDrawContext var1, ZenithStyle var2, float var3) {
-      Cloud var4 = cloud();
-      if (var4 != null && mc.level != null) {
-         for (long var6 : this.voiceState.method5364()) {
-            if (var6 != -1L && this.voiceState.method5365(var6)) {
-               PartyPlayerInfo var8 = var4.state().method8040(var6);
-               Player var9 = var8 == null ? null : this.method355(var8.getText2());
-               if (var9 != null) {
-                  Vec3 var10 = var9.getPosition(var3).add(0.0, var9.getBbHeight() + 0.75, 0.0);
-                  if (ProjectionUtils.method302(var10)) {
-                     Vec3 var11 = ProjectionUtils.method301(var10);
-                     float var12 = 22.0F;
-                     float var13 = 11.0F;
-                     float var14 = (float)var11.x - var12 / 2.0F;
-                     float var15 = (float)var11.y - var13;
-                     ZenithColor var16 = this.voiceState.method5367(var6) ? new ZenithColor(-10443270) : var2.getPrimaryColor().getZenithColor();
-                     var1.drawRoundedRect(var14, var15, var12, var13, ProxyDotRadiusData.method8069(var13 / 2.0F), var2.getHudBackground().getZenithColor());
-                     method371(var1, var14 + 6.0F, var15 + var13 / 2.0F, this.voiceState.method5366(var6), var16);
+   private void method372(CustomDrawContext customDrawContext, ZenithStyle currentStyle, float tickDelta) {
+      Cloud cloud2 = cloud();
+      if (cloud2 != null && mc.level != null) {
+         for (long uid : this.voiceState.method5364()) {
+            if (uid != -1L && this.voiceState.method5365(uid)) {
+               PartyPlayerInfo partyPlayerInfo = cloud2.state().method8040(uid);
+               Player player = partyPlayerInfo == null ? null : this.method355(partyPlayerInfo.getText2());
+               if (player != null) {
+                  Vec3 vec3d = player.getPosition(tickDelta).add(0.0, player.getBbHeight() + 0.75, 0.0);
+                  if (ProjectionUtils.method302(vec3d)) {
+                     Vec3 vec = ProjectionUtils.method301(vec3d);
+                     float width = 22.0F;
+                     float height = 11.0F;
+                     float floatValue = (float)vec.x - width / 2.0F;
+                     float y = (float)vec.y - height;
+                     ZenithColor zenithColor = this.voiceState.method5367(uid) ? new ZenithColor(-10443270) : currentStyle.getPrimaryColor().getZenithColor();
+                     customDrawContext.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), currentStyle.getHudBackground().getZenithColor());
+                     method371(customDrawContext, floatValue + 6.0F, y + height / 2.0F, this.voiceState.method5366(uid), zenithColor);
                   }
                }
             }
@@ -899,59 +899,59 @@ public final class Voice implements MinecraftAccess {
       }
    }
 
-   private static String method373(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String method373(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    private JsonObject method374() {
-      JsonObject var1 = new JsonObject();
+      JsonObject json = new JsonObject();
 
-      for (Setting var3 : this.method332()) {
-         var3.safe(var1);
+      for (Setting setting : this.method332()) {
+         setting.safe(json);
       }
 
-      return var1;
+      return json;
    }
 
    private void method375() {
       if (++this.intValue % 20 == 0) {
-         JsonObject var1 = this.method374();
-         String var2 = var1.toString();
-         if (!var2.equals(this.text)) {
-            this.text = var2;
-            String var3 = gson.toJson(var1);
-            Util.ioPool().execute(() -> this.write(var3));
+         JsonObject jsonElement = this.method374();
+         String string = jsonElement.toString();
+         if (!string.equals(this.text)) {
+            this.text = string;
+            String json = gson.toJson(jsonElement);
+            Util.ioPool().execute(() -> this.write(json));
          }
       }
    }
 
    private void method376() {
-      JsonObject var1 = this.method374();
-      this.text = var1.toString();
-      this.write(gson.toJson(var1));
+      JsonObject jsonElement = this.method374();
+      this.text = jsonElement.toString();
+      this.write(gson.toJson(jsonElement));
    }
 
-   private synchronized void write(String var1) {
+   private synchronized void write(String json) {
       try {
          this.file.getParentFile().mkdirs();
-         Files.writeString(this.file.toPath(), var1, StandardCharsets.UTF_8);
-      } catch (Exception var3) {
-         logger.warn("Голос: настройки не записаны: {}", var3.toString());
+         Files.writeString(this.file.toPath(), json, StandardCharsets.UTF_8);
+      } catch (Exception e) {
+         logger.warn("Голос: настройки не записаны: {}", e.toString());
       }
    }
 
    private void load() {
       if (this.file.exists()) {
          try {
-            JsonObject var1 = JsonParser.parseString(Files.readString(this.file.toPath(), StandardCharsets.UTF_8)).getAsJsonObject();
+            JsonObject jsonObject = JsonParser.parseString(Files.readString(this.file.toPath(), StandardCharsets.UTF_8)).getAsJsonObject();
 
-            for (Setting var3 : this.method332()) {
-               if (var1.has(var3.getKey())) {
-                  var3.load(var1);
+            for (Setting setting : this.method332()) {
+               if (jsonObject.has(setting.getKey())) {
+                  setting.load(jsonObject);
                }
             }
-         } catch (Exception var4) {
-            logger.warn("Голос: voice.json не прочитан: {}", var4.toString());
+         } catch (Exception e) {
+            logger.warn("Голос: voice.json не прочитан: {}", e.toString());
          }
       }
    }
@@ -1000,12 +1000,12 @@ public final class Voice implements MinecraftAccess {
          return "Data[" + "text=" + this.text + ", " + "zenithColor=" + this.zenithColor + ", " + "floatValue=" + this.floatValue + ", " + "flag=" + this.flag + ", " + "flag2=" + this.flag2 + "]";
       }
 
-      private Data(String var1, ZenithColor var2, float var3, boolean var4, boolean var5) {
-         this.text = var1;
-         this.zenithColor = var2;
-         this.floatValue = var3;
-         this.flag = var4;
-         this.flag2 = var5;
+      private Data(String text, ZenithColor zenithColor, float floatValue, boolean flag, boolean flag2) {
+         this.text = text;
+         this.zenithColor = zenithColor;
+         this.floatValue = floatValue;
+         this.flag = flag;
+         this.flag2 = flag2;
       }
 
       public ZenithColor getZenithColor() {

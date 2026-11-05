@@ -9,93 +9,93 @@ public final class ObjParser {
    private ObjParser() {
    }
 
-   public static CosmeticSkeleton method8021(String var0, String var1) {
-      CosmeticSkeleton.Entry var2 = new CosmeticSkeleton.Entry();
-      int var3 = var2.method7146("root", -1, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-      var var4 = method8025(var1);
-      ArrayList var5 = new ArrayList();
-      ArrayList var6 = new ArrayList();
-      ArrayList var7 = new ArrayList();
-      int var8 = var2.method7147("");
+   public static CosmeticSkeleton method8021(String str, String str2) {
+      CosmeticSkeleton.Entry entry = new CosmeticSkeleton.Entry();
+      int intValue = entry.method7146("root", -1, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+      var map = method8025(str2);
+      ArrayList arrayList = new ArrayList();
+      ArrayList arrayList2 = new ArrayList();
+      ArrayList arrayList3 = new ArrayList();
+      int n = entry.method7147("");
 
-      for (String var12 : var0.split("\n")) {
-         String var13 = var12.strip();
-         if (!var13.isEmpty() && var13.charAt(0) != '#') {
-            String[] var14 = var13.split("\\s+");
-            String var15 = var14[0];
-            switch (var15) {
+      for (String str3 : str.split("\n")) {
+         String str4 = str3.strip();
+         if (!str4.isEmpty() && str4.charAt(0) != '#') {
+            String[] strings = str4.split("\\s+");
+            String str5 = strings[0];
+            switch (str5) {
                case "v":
-                  var5.add(method8024(var14, 3, 0.0F));
+                  arrayList.add(method8024(strings, 3, 0.0F));
                   break;
                case "vt":
-                  var6.add(method8024(var14, 2, 0.0F));
+                  arrayList2.add(method8024(strings, 2, 0.0F));
                   break;
                case "vn":
-                  var7.add(method8024(var14, 3, 0.0F));
+                  arrayList3.add(method8024(strings, 3, 0.0F));
                   break;
                case "usemtl":
-                  String var17 = var14.length > 1 ? (String)var4.get(var14[1]) : null;
-                  if (var17 != null) {
-                     var8 = var2.method7147(var17);
+                  String str6 = strings.length > 1 ? (String)map.get(strings[1]) : null;
+                  if (str6 != null) {
+                     n = entry.method7147(str6);
                   }
                   break;
                case "f":
-                  method8022(var2, var3, var8, var14, var5, var6, var7);
+                  method8022(entry, intValue, n, strings, arrayList, arrayList2, arrayList3);
             }
          }
       }
 
-      return var2.method7152();
+      return entry.method7152();
    }
 
-   private static void method8022(CosmeticSkeleton.Entry var0, int var1, int var2, String[] var3, List<float[]> var4, List<float[]> var5, List<float[]> var6) {
-      int var7 = var3.length - 1;
-      if (var7 >= 3) {
-         for (byte var8 = 2; var8 <= var7 - 1; var8 += 2) {
-            byte var9 = 1;
-            int var11 = Math.min(var8 + 1, var7);
-            int var12 = Math.min(var8 + 2, var7);
-            float[] var13 = new float[12];
-            float[] var14 = new float[8];
-            float[] var15 = null;
-            int[] var16 = new int[]{var9, var8, var11, var12};
+   private static void method8022(CosmeticSkeleton.Entry entry, int intValue, int n, String[] strings, List<float[]> floatses, List<float[]> floatses2, List<float[]> floatses3) {
+      int n2 = strings.length - 1;
+      if (n2 >= 3) {
+         for (byte i = 2; i <= n2 - 1; i += 2) {
+            byte b = 1;
+            int n3 = Math.min(i + 1, n2);
+            int n4 = Math.min(i + 2, n2);
+            float[] floatValues = new float[12];
+            float[] floatValues2 = new float[8];
+            float[] floats = null;
+            int[] ints = new int[]{b, i, n3, n4};
 
-            for (int var17 = 0; var17 < 4; var17++) {
-               String[] var18 = var3[var16[var17]].split("/", -1);
-               float[] var19 = method8023(var4, var18, 0);
-               if (var19 == null) {
+            for (int j = 0; j < 4; j++) {
+               String[] strings2 = strings[ints[j]].split("/", -1);
+               float[] floats2 = method8023(floatses, strings2, 0);
+               if (floats2 == null) {
                   return;
                }
 
-               var13[var17 * 3] = var19[0];
-               var13[var17 * 3 + 1] = var19[1];
-               var13[var17 * 3 + 2] = var19[2];
-               float[] var20 = method8023(var5, var18, 1);
-               if (var20 != null) {
-                  var14[var17 * 2] = var20[0];
-                  var14[var17 * 2 + 1] = 1.0F - var20[1];
+               floatValues[j * 3] = floats2[0];
+               floatValues[j * 3 + 1] = floats2[1];
+               floatValues[j * 3 + 2] = floats2[2];
+               float[] floats3 = method8023(floatses2, strings2, 1);
+               if (floats3 != null) {
+                  floatValues2[j * 2] = floats3[0];
+                  floatValues2[j * 2 + 1] = 1.0F - floats3[1];
                }
 
-               if (var15 == null) {
-                  float[] var21 = method8023(var6, var18, 2);
-                  if (var21 != null) {
-                     var15 = new float[]{var21[0], var21[1], var21[2]};
+               if (floats == null) {
+                  float[] floats4 = method8023(floatses3, strings2, 2);
+                  if (floats4 != null) {
+                     floats = new float[]{floats4[0], floats4[1], floats4[2]};
                   }
                }
             }
 
-            var0.method7148(var1, var2, var13, var14, var15);
+            entry.method7148(intValue, n, floatValues, floatValues2, floats);
          }
       }
    }
 
-   private static float[] method8023(List<float[]> var0, String[] var1, int var2) {
-      if (!var0.isEmpty() && var2 < var1.length && !var1[var2].isBlank()) {
+   private static float[] method8023(List<float[]> floatses, String[] strings, int n) {
+      if (!floatses.isEmpty() && n < strings.length && !strings[n].isBlank()) {
          try {
-            int var3 = Integer.parseInt(var1[var2]);
-            int var4 = var3 < 0 ? var0.size() + var3 : var3 - 1;
-            return var4 >= 0 && var4 < var0.size() ? (float[])var0.get(var4) : null;
-         } catch (NumberFormatException var5) {
+            int n2 = Integer.parseInt(strings[n]);
+            int n3 = n2 < 0 ? floatses.size() + n2 : n2 - 1;
+            return n3 >= 0 && n3 < floatses.size() ? (float[])floatses.get(n3) : null;
+         } catch (NumberFormatException e) {
             return null;
          }
       } else {
@@ -103,39 +103,39 @@ public final class ObjParser {
       }
    }
 
-   private static float[] method8024(String[] var0, int var1, float var2) {
-      float[] var3 = new float[var1];
+   private static float[] method8024(String[] strings, int n, float f) {
+      float[] floats = new float[n];
 
-      for (int var4 = 0; var4 < var1; var4++) {
-         var3[var4] = var2;
-         if (var4 + 1 < var0.length) {
+      for (int i = 0; i < n; i++) {
+         floats[i] = f;
+         if (i + 1 < strings.length) {
             try {
-               var3[var4] = Float.parseFloat(var0[var4 + 1]);
-            } catch (NumberFormatException var6) {
+               floats[i] = Float.parseFloat(strings[i + 1]);
+            } catch (NumberFormatException e) {
             }
          }
       }
 
-      return var3;
+      return floats;
    }
 
-   private static Map<String, String> method8025(String var0) {
-      HashMap var1 = new HashMap();
-      if (var0 == null) {
-         return var1;
+   private static Map<String, String> method8025(String str) {
+      HashMap map = new HashMap();
+      if (str == null) {
+         return map;
       } else {
-         String var2 = null;
+         String key = null;
 
-         for (String var6 : var0.split("\n")) {
-            String var7 = var6.strip();
-            if (var7.startsWith("newmtl ")) {
-               var2 = var7.substring(7).strip();
-            } else if (var7.startsWith("map_Kd ") && var2 != null) {
-               var1.put(var2, var7.substring(7).strip());
+         for (String str2 : str.split("\n")) {
+            String str3 = str2.strip();
+            if (str3.startsWith("newmtl ")) {
+               key = str3.substring(7).strip();
+            } else if (str3.startsWith("map_Kd ") && key != null) {
+               map.put(key, str3.substring(7).strip());
             }
          }
 
-         return var1;
+         return map;
       }
    }
 }

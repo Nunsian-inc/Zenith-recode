@@ -87,22 +87,22 @@ public abstract class Interface implements MinecraftAccess {
    public void tick() {
    }
 
-   public boolean method2056(MouseButtonEvent var1) {
+   public boolean method2056(MouseButtonEvent event) {
       return false;
    }
 
-   public Interface(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      this.text = var1;
-      this.floatValue = var2;
-      this.floatValue2 = var3;
-      this.floatValue3 = var4;
-      this.floatValue4 = var5;
-      this.floatValue12 = var6;
-      this.floatValue13 = var7;
-      this.type2 = var8 != null ? var8 : Interface.Type.TOP_LEFT;
+   public Interface(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      this.text = text;
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      this.floatValue3 = f2;
+      this.floatValue4 = f3;
+      this.floatValue12 = f4;
+      this.floatValue13 = f5;
+      this.type2 = type != null ? type : Interface.Type.TOP_LEFT;
       this.type = this.type2;
-      this.floatValue9 = var6;
-      this.floatValue10 = var7;
+      this.floatValue9 = f4;
+      this.floatValue10 = f5;
    }
 
    public List<Setting> method2057() {
@@ -110,9 +110,9 @@ public abstract class Interface implements MinecraftAccess {
    }
 
    public List<Setting> method2058() {
-      var var1 = new ArrayList<>(this.getSettings());
-      var1.removeAll(this.method2057());
-      return var1;
+      var settings = new ArrayList<>(this.getSettings());
+      settings.removeAll(this.method2057());
+      return settings;
    }
 
    public boolean method2059() {
@@ -137,33 +137,33 @@ public abstract class Interface implements MinecraftAccess {
    }
 
    private float method2062() {
-      long var1 = System.currentTimeMillis();
-      float var3 = this.lastFrame == 0L ? 0.0F : Math.min(250.0F, (float)(var1 - this.lastFrame));
-      this.lastFrame = var1;
-      float var4 = this.method2061() ? 1.0F : 0.0F;
+      long now = System.currentTimeMillis();
+      float f = this.lastFrame == 0L ? 0.0F : Math.min(250.0F, (float)(now - this.lastFrame));
+      this.lastFrame = now;
+      float f2 = this.method2061() ? 1.0F : 0.0F;
       if (!InterfaceModule.INSTANCE.method6783()) {
-         this.floatValue11 = var4;
+         this.floatValue11 = f2;
       } else {
-         float var5 = var3 / Math.max(1.0F, InterfaceModule.INSTANCE.method6784());
-         this.floatValue11 = var4 > this.floatValue11 ? Math.min(var4, this.floatValue11 + var5) : Math.max(var4, this.floatValue11 - var5);
+         float f3 = f / Math.max(1.0F, InterfaceModule.INSTANCE.method6784());
+         this.floatValue11 = f2 > this.floatValue11 ? Math.min(f2, this.floatValue11 + f3) : Math.max(f2, this.floatValue11 - f3);
       }
 
       return this.floatValue11;
    }
 
    public void method2063() {
-      float var1 = this.method2097(this.floatValue3);
-      float var2 = this.method2098(this.floatValue4);
-      if (!(var1 <= 0.0F) && !(var2 <= 0.0F)) {
+      float guiScaledWidth = this.method2097(this.floatValue3);
+      float guiScaledHeight = this.method2098(this.floatValue4);
+      if (!(guiScaledWidth <= 0.0F) && !(guiScaledHeight <= 0.0F)) {
          this.type2 = this.type;
          this.floatValue12 = this.floatValue9;
          this.floatValue13 = this.floatValue10;
-         float var3 = this.method2079(this.type, var1) + this.floatValue9;
-         float var4 = this.method2080(this.type, var2) + this.floatValue10;
-         this.floatValue = this.method2088(var3 - this.method2064(), var1) + this.method2064();
-         this.floatValue2 = this.method2089(var4 - this.method2065(), var2) + this.method2065();
-         this.method2094(var1, var2);
-         this.method2091(var1, var2);
+         float f = this.method2079(this.type, guiScaledWidth) + this.floatValue9;
+         float f2 = this.method2080(this.type, guiScaledHeight) + this.floatValue10;
+         this.floatValue = this.method2088(f - this.method2064(), guiScaledWidth) + this.method2064();
+         this.floatValue2 = this.method2089(f2 - this.method2065(), guiScaledHeight) + this.method2065();
+         this.method2094(guiScaledWidth, guiScaledHeight);
+         this.method2091(guiScaledWidth, guiScaledHeight);
       }
    }
 
@@ -195,23 +195,23 @@ public abstract class Interface implements MinecraftAccess {
       return (this.method297() - this.height) / 2.0F;
    }
 
-   public void method291(MenuDrawContext var1) {
-      float var2 = this.method2062();
-      float var3 = this.opacity.getValue3() / 100.0F * var2;
+   public void method291(MenuDrawContext menuDrawContext) {
+      float f = this.method2062();
+      float f2 = this.opacity.getValue3() / 100.0F * f;
       if (this.method2074()) {
-         var3 = Math.max(var3, 0.35F);
-      } else if (var3 <= 0.01F) {
+         f2 = Math.max(f2, 0.35F);
+      } else if (f2 <= 0.01F) {
          return;
       }
 
-      float var4 = this.method290();
-      float var5 = HudQueuedContext.getAlpha();
-      HudQueuedContext.setAlpha(var3);
+      float x = this.method290();
+      float alpha = HudQueuedContext.getAlpha();
+      HudQueuedContext.setAlpha(f2);
 
       try {
-         this.method2068(var1, var4);
+         this.method2068(menuDrawContext, x);
       } finally {
-         HudQueuedContext.setAlpha(var5);
+         HudQueuedContext.setAlpha(alpha);
       }
    }
 
@@ -219,103 +219,103 @@ public abstract class Interface implements MinecraftAccess {
       return this.floatValue14;
    }
 
-   public void setFloatValue14(float var1) {
-      this.floatValue14 = var1;
+   public void setFloatValue14(float f) {
+      this.floatValue14 = f;
    }
 
-   public void method2066(float var1, boolean var2) {
-      this.floatValue15 = var1;
-      this.flag2 = var2;
+   public void method2066(float f, boolean flag) {
+      this.floatValue15 = f;
+      this.flag2 = flag;
    }
 
-   public void method2067(float var1, float var2, float var3, float var4) {
-      this.floatValue = this.method2088(var1, var3) + this.method2064();
-      this.floatValue2 = this.method2089(var2, var4) + this.method2065();
-      this.floatValue3 = var3;
-      this.floatValue4 = var4;
-      this.method2091(var3, var4);
+   public void method2067(float f, float f2, float guiScaledWidth, float guiScaledHeight) {
+      this.floatValue = this.method2088(f, guiScaledWidth) + this.method2064();
+      this.floatValue2 = this.method2089(f2, guiScaledHeight) + this.method2065();
+      this.floatValue3 = guiScaledWidth;
+      this.floatValue4 = guiScaledHeight;
+      this.method2091(guiScaledWidth, guiScaledHeight);
    }
 
-   private void method2068(MenuDrawContext var1, float var2) {
-      var2 *= this.floatValue14;
-      var1.pushMatrix();
+   private void method2068(MenuDrawContext menuDrawContext, float x) {
+      x *= this.floatValue14;
+      menuDrawContext.pushMatrix();
 
       try {
-         var1.pose().translate(this.floatValue + this.width / 2.0F, this.floatValue2 + this.height / 2.0F);
-         var1.pose().scale(var2, var2);
-         var1.pose().translate(-this.floatValue - this.width / 2.0F, -this.floatValue2 - this.height / 2.0F);
-         float var3 = this.width;
-         float var4 = this.height;
+         menuDrawContext.pose().translate(this.floatValue + this.width / 2.0F, this.floatValue2 + this.height / 2.0F);
+         menuDrawContext.pose().scale(x, x);
+         menuDrawContext.pose().translate(-this.floatValue - this.width / 2.0F, -this.floatValue2 - this.height / 2.0F);
+         float width = this.width;
+         float height = this.height;
          this.width = 0.0F;
          this.height = 0.0F;
-         this.method8(var1);
+         this.method8(menuDrawContext);
          if (!(this.width <= 0.0F) && !(this.height <= 0.0F)) {
             if (this.floatValue15 > 0.01F) {
-               ZenithColor var5 = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
-               var1.drawRoundedRect(
+               ZenithColor zenithColor = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
+               menuDrawContext.drawRoundedRect(
                   this.floatValue,
                   this.floatValue2,
                   this.width,
                   this.height,
                   ProxyDotRadiusData.method8069(Math.max(0.0F, InterfaceModule.method6801())),
-                  var5.method7292((this.flag2 ? 0.12F : 0.06F) * this.floatValue15)
+                  zenithColor.method7292((this.flag2 ? 0.12F : 0.06F) * this.floatValue15)
                );
             }
 
-            this.method2069(var1);
+            this.method2069(menuDrawContext);
          } else {
-            this.width = var3;
-            this.height = var4;
+            this.width = width;
+            this.height = height;
          }
       } finally {
-         var1.popMatrix();
+         menuDrawContext.popMatrix();
       }
    }
 
-   public abstract void method8(CustomDrawContext var1);
+   public abstract void method8(CustomDrawContext customDrawContext);
 
-   public void method2069(CustomDrawContext var1) {
-      this.method4679(var1, this.floatValue, this.floatValue2, this.width, this.height, this.method254());
+   public void method2069(CustomDrawContext customDrawContext) {
+      this.method4679(customDrawContext, this.floatValue, this.floatValue2, this.width, this.height, this.method254());
    }
 
-   public void method4679(CustomDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      float var7 = this.floatValue15;
-      if (InterfaceModule.INSTANCE.method6822() || !(var7 <= 0.01F)) {
-         if (!(var4 <= 0.0F) && !(var5 <= 0.0F)) {
-            float var8 = Math.clamp(Math.max(var6, var7), 0.0F, 1.0F);
-            if (!(var8 <= 0.01F)) {
-               float var9 = var2 - 1.0F;
-               float var10 = var3 - 1.0F;
-               float var11 = var4 + 2.0F;
-               float var12 = var5 + 2.0F;
-               float var13 = Math.max(0.0F, InterfaceModule.method6801()) + 1.0F;
-               float var14 = Math.max(12.0F, var13 * 2.0F + 4.0F) + var7 * (this.flag2 ? 7.0F : 4.0F);
-               var14 = Math.min(var14, Math.min(var11, var12) / 2.0F);
-               float var15 = 1.2F + var7 * (this.flag2 ? 0.9F : 0.5F);
-               if (!(var14 <= var13)) {
-                  ZenithColor var16 = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
-                  ZenithColor var17 = InterfaceModule.INSTANCE.method6824();
-                  ProxyDotRadiusData var18 = ProxyDotRadiusData.method8069(var13);
-                  float[] var19 = this.method2071();
-                  float var22 = var9 + var11 - var14;
-                  float var23 = var10 + var12 - var14;
-                  float[] var24 = new float[]{var9, var22, var9, var22};
-                  float[] var25 = new float[]{var10, var10, var23, var23};
-                  var1.pushMatrix();
-                  var1.pose().translate(var2 + var4 / 2.0F, var3 + var5 / 2.0F);
-                  var1.pose().scale(var8, var8);
-                  var1.pose().translate(-(var2 + var4 / 2.0F), -(var3 + var5 / 2.0F));
-                  ZenithColor var26 = var16.method7295(ZenithColor.INSTANCE, 0.8F * (1.0F - var7 * 0.75F));
+   public void method4679(CustomDrawContext customDrawContext, float floatValue, float y, float width, float height, float x) {
+      float f = this.floatValue15;
+      if (InterfaceModule.INSTANCE.method6822() || !(f <= 0.01F)) {
+         if (!(width <= 0.0F) && !(height <= 0.0F)) {
+            float x2 = Math.clamp(Math.max(x, f), 0.0F, 1.0F);
+            if (!(x2 <= 0.01F)) {
+               float f2 = floatValue - 1.0F;
+               float f3 = y - 1.0F;
+               float f4 = width + 2.0F;
+               float f5 = height + 2.0F;
+               float intValue = Math.max(0.0F, InterfaceModule.method6801()) + 1.0F;
+               float width2 = Math.max(12.0F, intValue * 2.0F + 4.0F) + f * (this.flag2 ? 7.0F : 4.0F);
+               width2 = Math.min(width2, Math.min(f4, f5) / 2.0F);
+               float batchRange = 1.2F + f * (this.flag2 ? 0.9F : 0.5F);
+               if (!(width2 <= intValue)) {
+                  ZenithColor zenithColor = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor();
+                  ZenithColor zenithColor2 = InterfaceModule.INSTANCE.method6824();
+                  ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(intValue);
+                  float[] floats = this.method2071();
+                  float f6 = f2 + f4 - width2;
+                  float f7 = f3 + f5 - width2;
+                  float[] floats2 = new float[]{f2, f6, f2, f6};
+                  float[] floats3 = new float[]{f3, f3, f7, f7};
+                  customDrawContext.pushMatrix();
+                  customDrawContext.pose().translate(floatValue + width / 2.0F, y + height / 2.0F);
+                  customDrawContext.pose().scale(x2, x2);
+                  customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y + height / 2.0F));
+                  ZenithColor zenithColor3 = zenithColor.method7295(ZenithColor.INSTANCE, 0.8F * (1.0F - f * 0.75F));
 
-                  for (int var27 = 0; var27 < 4; var27++) {
-                     float var28 = var19[var27] * (1.0F - var7);
-                     float var29 = 0.5F * (0.75F + 0.5F * var28) * var8;
-                     var29 += (1.0F - var29) * var7 * 0.9F;
-                     ZenithColor var30 = var26.method7295(this.method2072(var17, var27), var28 * 0.7F).method7294(var29);
-                     var1.drawRoundedCornerOnly(var24[var27], var25[var27], var14, var14, var15, var18, var30, var27);
+                  for (int i = 0; i < 4; i++) {
+                     float f8 = floats[i] * (1.0F - f);
+                     float previewAlpha = 0.5F * (0.75F + 0.5F * f8) * x2;
+                     previewAlpha += (1.0F - previewAlpha) * f * 0.9F;
+                     ZenithColor zenithColor4 = zenithColor3.method7295(this.method2072(zenithColor2, i), f8 * 0.7F).method7294(previewAlpha);
+                     customDrawContext.drawRoundedCornerOnly(floats2[i], floats3[i], width2, width2, batchRange, proxyDotRadiusData, zenithColor4, i);
                   }
 
-                  var1.popMatrix();
+                  customDrawContext.popMatrix();
                }
             }
          }
@@ -323,112 +323,112 @@ public abstract class Interface implements MinecraftAccess {
    }
 
    private float[] method2071() {
-      long var1 = System.currentTimeMillis();
-      int var3 = InterfaceModule.INSTANCE.method6826();
-      int var4 = InterfaceModule.INSTANCE.method6827();
-      float var5 = InterfaceModule.INSTANCE.method6825();
-      if (var1 == longValue && var3 == intValue && var4 == intValue2 && var5 == floatValue16) {
+      long now = System.currentTimeMillis();
+      int n = InterfaceModule.INSTANCE.method6826();
+      int n2 = InterfaceModule.INSTANCE.method6827();
+      float f = InterfaceModule.INSTANCE.method6825();
+      if (now == longValue && n == intValue && n2 == intValue2 && f == floatValue16) {
          return CONST_floatValues;
       } else {
-         float[] var6 = method2073(var1, var3, var5);
+         float[] floats = method2073(now, n, f);
 
-         for (int var7 = 0; var7 < var6.length; var7++) {
-            float var8 = Math.max(0.0F, Math.min(1.0F, var6[var7]));
+         for (int i = 0; i < floats.length; i++) {
+            float f2 = Math.max(0.0F, Math.min(1.0F, floats[i]));
 
-            var6[var7] = switch (var4) {
-               case 2 -> Math.min(1.0F, (float)Math.pow(var8, 0.7) * 0.6F + (float)Math.pow(var8, 5.0) * 0.6F);
+            floats[i] = switch (n2) {
+               case 2 -> Math.min(1.0F, (float)Math.pow(f2, 0.7) * 0.6F + (float)Math.pow(f2, 5.0) * 0.6F);
                case 3 -> {
-                  float var10 = Math.max(0.0F, Math.min(1.0F, var8 * (1.0F - var8) * 4.0F));
-                  yield var10 * var10;
+                  float f3 = Math.max(0.0F, Math.min(1.0F, f2 * (1.0F - f2) * 4.0F));
+                  yield f3 * f3;
                }
                case 4 -> {
-                  float var9 = 0.5F + 0.5F * (float)Math.cos(var8 * Math.PI * 6.0);
-                  yield var8 * (0.3F + 0.7F * var9 * var9);
+                  float f3 = 0.5F + 0.5F * (float)Math.cos(f2 * Math.PI * 6.0);
+                  yield f2 * (0.3F + 0.7F * f3 * f3);
                }
-               case 5 -> var8 * (0.5F + 0.5F * (float)Math.pow(0.5 + 0.5 * Math.sin(var1 / 400.0 + var7 * 2.1), 2.0));
-               default -> var8;
+               case 5 -> f2 * (0.5F + 0.5F * (float)Math.pow(0.5 + 0.5 * Math.sin(now / 400.0 + i * 2.1), 2.0));
+               default -> f2;
             };
          }
 
-         longValue = var1;
-         intValue = var3;
-         intValue2 = var4;
-         floatValue16 = var5;
-         return var6;
+         longValue = now;
+         intValue = n;
+         intValue2 = n2;
+         floatValue16 = f;
+         return floats;
       }
    }
 
-   private ZenithColor method2072(ZenithColor var1, int var2) {
+   private ZenithColor method2072(ZenithColor zenithColor3, int n) {
       return switch (InterfaceModule.INSTANCE.method6827()) {
-         case 1 -> var1.method7295(var2 % 2 == 0 ? zenithColor : zenithColor2, 0.65F);
-         case 2, 4 -> var1.method7295(ZenithColor.INSTANCE, 0.55F);
-         default -> var1;
+         case 1 -> zenithColor3.method7295(n % 2 == 0 ? zenithColor : zenithColor2, 0.65F);
+         case 2, 4 -> zenithColor3.method7295(ZenithColor.INSTANCE, 0.55F);
+         default -> zenithColor3;
       };
    }
 
-   private static float[] method2073(long var0, int var2, float var3) {
-      float var4 = (float)(var0 % 1000000L / 1000.0 * var3);
-      float[] var5 = CONST_floatValues;
-      Arrays.fill(var5, 0.0F);
-      switch (var2) {
+   private static float[] method2073(long now, int n, float f) {
+      float f2 = (float)(now % 1000000L / 1000.0 * f);
+      float[] floats = CONST_floatValues;
+      Arrays.fill(floats, 0.0F);
+      switch (n) {
          case 1:
          case 2:
-            float var16 = var4 * 0.5F - (float)Math.floor(var4 * 0.5F);
-            float var20 = (float)Math.exp(-Math.pow((var16 - 0.25F) * 7.0F, 2.0));
-            float var24 = (float)Math.exp(-Math.pow((var16 - 0.75F) * 7.0F, 2.0));
-            var5[0] = var20;
-            var5[2] = var20;
-            var5[1] = var24;
-            var5[3] = var24;
-            return var5;
+            float f3 = f2 * 0.5F - (float)Math.floor(f2 * 0.5F);
+            float exp = (float)Math.exp(-Math.pow((f3 - 0.25F) * 7.0F, 2.0));
+            float exp2 = (float)Math.exp(-Math.pow((f3 - 0.75F) * 7.0F, 2.0));
+            floats[0] = exp;
+            floats[2] = exp;
+            floats[1] = exp2;
+            floats[3] = exp2;
+            return floats;
          case 3:
-            float var15 = (float)(var4 * Math.PI % (Math.PI * 2));
-            double[] var19 = CONST_doubleValues;
+            float f4 = (float)(f2 * Math.PI % (Math.PI * 2));
+            double[] doubles = CONST_doubleValues;
 
-            for (int var23 = 0; var23 < 4; var23++) {
-               double var27 = Math.abs(((var19[var23] - var15) % (Math.PI * 2) + (Math.PI * 3)) % (Math.PI * 2) - Math.PI);
-               var5[var23] = (float)Math.exp(-var27 * var27 * 2.5);
+            for (int i = 0; i < 4; i++) {
+               double d = Math.abs(((doubles[i] - f4) % (Math.PI * 2) + (Math.PI * 3)) % (Math.PI * 2) - Math.PI);
+               floats[i] = (float)Math.exp(-d * d * 2.5);
             }
 
-            return var5;
+            return floats;
          case 4:
          case 7:
          case 8:
          case 9:
          case 10:
          default:
-            float var14 = var4 % 4.0F;
-            int var18 = (int)var14;
-            float var22 = var14 - var18;
-            int[] var26 = CONST_intValues;
-            var5[var26[var18]] = (float)Math.sin(Math.PI * var22);
-            var5[var26[(var18 + 1) % 4]] = (float)Math.sin(Math.PI * var22) * 0.25F * var22;
-            return var5;
+            float f5 = f2 % 4.0F;
+            int n2 = (int)f5;
+            float f6 = f5 - n2;
+            int[] ints = CONST_intValues;
+            floats[ints[n2]] = (float)Math.sin(Math.PI * f6);
+            floats[ints[(n2 + 1) % 4]] = (float)Math.sin(Math.PI * f6) * 0.25F * f6;
+            return floats;
          case 5:
-            float var13 = (float)Math.sin(var4 * 1.7F);
-            float var17 = (float)Math.cos(var4 * 1.13F);
-            float[] var21 = CONST_floatValues2;
-            float[] var25 = CONST_floatValues3;
+            float f7 = (float)Math.sin(f2 * 1.7F);
+            float f8 = (float)Math.cos(f2 * 1.13F);
+            float[] floats2 = CONST_floatValues2;
+            float[] floats3 = CONST_floatValues3;
 
-            for (int var10 = 0; var10 < 4; var10++) {
-               float var11 = var13 - var21[var10];
-               float var12 = var17 - var25[var10];
-               var5[var10] = (float)Math.exp(-(var11 * var11 + var12 * var12) * 0.9F);
+            for (int i = 0; i < 4; i++) {
+               float f9 = f7 - floats2[i];
+               float f10 = f8 - floats3[i];
+               floats[i] = (float)Math.exp(-(f9 * f9 + f10 * f10) * 0.9F);
             }
 
-            return var5;
+            return floats;
          case 6:
-            float var6 = (float)Math.sin(var4 * 0.6F) * 0.35F;
-            float var7 = (float)Math.exp(-Math.pow((-1.0F - var6) * 1.6F, 2.0));
-            float var8 = (float)Math.exp(-Math.pow((1.0F - var6) * 1.6F, 2.0));
-            float var9 = 0.75F + 0.25F * (float)Math.sin(var4 * 3.0F);
-            var5[0] = var7 * var9;
-            var5[1] = var7 * var9;
-            var5[2] = var8 * var9;
-            var5[3] = var8 * var9;
-            return var5;
+            float f9 = (float)Math.sin(f2 * 0.6F) * 0.35F;
+            float exp3 = (float)Math.exp(-Math.pow((-1.0F - f9) * 1.6F, 2.0));
+            float exp4 = (float)Math.exp(-Math.pow((1.0F - f9) * 1.6F, 2.0));
+            float f10 = 0.75F + 0.25F * (float)Math.sin(f2 * 3.0F);
+            floats[0] = exp3 * f10;
+            floats[1] = exp3 * f10;
+            floats[2] = exp4 * f10;
+            floats[3] = exp4 * f10;
+            return floats;
          case 11:
-            return var5;
+            return floats;
       }
    }
 
@@ -444,8 +444,8 @@ public abstract class Interface implements MinecraftAccess {
       return this.flag;
    }
 
-   public void setEnabled(boolean var1) {
-      this.flag = var1;
+   public void setEnabled(boolean flag) {
+      this.flag = flag;
    }
 
    public void toggle() {
@@ -453,169 +453,169 @@ public abstract class Interface implements MinecraftAccess {
    }
 
    public List<Setting> getSettings() {
-      ArrayList<Setting> var1 = new ArrayList<>();
+      ArrayList<Setting> settings = new ArrayList<>();
 
-      for (Class var2 = this.getClass(); var2 != null && Interface.class.isAssignableFrom(var2); var2 = var2.getSuperclass()) {
-         Arrays.stream(var2.getDeclaredFields()).forEach(var2x -> {
+      for (Class clazz = this.getClass(); clazz != null && Interface.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
+         Arrays.stream(clazz.getDeclaredFields()).forEach(var2x -> {
             try {
                var2x.setAccessible(true);
-               if (var2x.get(this) instanceof Setting var4) {
-                  var1.add(var4);
+               if (var2x.get(this) instanceof Setting setting) {
+                  settings.add(setting);
                }
-            } catch (IllegalAccessException var5) {
+            } catch (IllegalAccessException e) {
             }
          });
-         if (var2 == Interface.class) {
+         if (clazz == Interface.class) {
             break;
          }
       }
 
-      return var1;
+      return settings;
    }
 
-   public boolean method293(double var1, double var3) {
-      float var5 = this.method294();
-      float var6 = this.method295();
-      return var1 >= var5 && var1 <= var5 + this.method296() && var3 >= var6 && var3 <= var6 + this.method297();
+   public boolean method293(double floatValue, double d) {
+      float f = this.method294();
+      float f2 = this.method295();
+      return floatValue >= f && floatValue <= f + this.method296() && d >= f2 && d <= f2 + this.method297();
    }
 
-   public boolean method2075(double var1, double var3) {
-      float var5 = this.method294();
-      float var6 = this.method295();
-      float var7 = var5 + this.method296();
-      float var8 = var6 + this.method297();
-      return var1 >= var7 - 8.0F && var1 <= var7 + 2.0F && var3 >= var8 - 8.0F && var3 <= var8 + 2.0F;
+   public boolean method2075(double floatValue, double d) {
+      float f = this.method294();
+      float f2 = this.method295();
+      float f3 = f + this.method296();
+      float f4 = f2 + this.method297();
+      return floatValue >= f3 - 8.0F && floatValue <= f3 + 2.0F && d >= f4 - 8.0F && d <= f4 + 2.0F;
    }
 
-   public void method2076(CustomDrawContext var1) {
-      float var2 = 5.5F;
-      float var3 = 6.0F;
-      ZenithColor var4 = new ZenithColor(179, 145, 255, 255);
-      var1.drawRoundedBorder(this.floatValue, this.floatValue2, this.width, this.height, var2, ProxyDotRadiusData.method8069(var3), var4);
+   public void method2076(CustomDrawContext customDrawContext) {
+      float batchRange = 5.5F;
+      float intValue = 6.0F;
+      ZenithColor zenithColor = new ZenithColor(179, 145, 255, 255);
+      customDrawContext.drawRoundedBorder(this.floatValue, this.floatValue2, this.width, this.height, batchRange, ProxyDotRadiusData.method8069(intValue), zenithColor);
    }
 
-   public void method289(CustomDrawContext var1, float var2, float var3, InterfaceModule var4, float var5, float var6) {
-      float var7 = this.method2088(var2, var5);
-      float var8 = this.method2089(var3, var6);
-      float var9 = this.method296();
-      float var10 = this.method297();
-      Vector2f var11 = var4.method6809(var7, var8);
-      Interface.Entry var12 = new Interface.Entry(var11.x(), 0.0F);
-      Interface.Entry var13 = new Interface.Entry(var11.y(), 0.0F);
-      Vector2f var14 = var4.method6809(var7 + var9, var8 + var10);
-      Interface.Entry var15 = new Interface.Entry(var14.x(), -var9);
-      Interface.Entry var16 = new Interface.Entry(var14.y(), -var10);
-      Vector2f var17 = var4.method6809(var7 + var9 / 2.0F, var8 + var10 / 2.0F);
-      Interface.Entry var18 = new Interface.Entry(var17.x(), -var9 / 2.0F);
-      Interface.Entry var19 = new Interface.Entry(var17.y(), -var10 / 2.0F);
-      float var20 = InterfaceModule.INSTANCE.method6786();
-      if (var20 >= 1.0F) {
-         var7 = this.method2088(Math.round(var7 / var20) * var20, var5);
-         var8 = this.method2089(Math.round(var8 / var20) * var20, var6);
+   public void method289(CustomDrawContext customDrawContext, float f, float f2, InterfaceModule interfaceModule, float guiScaledWidth, float guiScaledHeight) {
+      float f3 = this.method2088(f, guiScaledWidth);
+      float f4 = this.method2089(f2, guiScaledHeight);
+      float f5 = this.method296();
+      float f6 = this.method297();
+      Vector2f vec = interfaceModule.method6809(f3, f4);
+      Interface.Entry entry = new Interface.Entry(vec.x(), 0.0F);
+      Interface.Entry entry2 = new Interface.Entry(vec.y(), 0.0F);
+      Vector2f vec2 = interfaceModule.method6809(f3 + f5, f4 + f6);
+      Interface.Entry entry3 = new Interface.Entry(vec2.x(), -f5);
+      Interface.Entry entry4 = new Interface.Entry(vec2.y(), -f6);
+      Vector2f vec3 = interfaceModule.method6809(f3 + f5 / 2.0F, f4 + f6 / 2.0F);
+      Interface.Entry entry5 = new Interface.Entry(vec3.x(), -f5 / 2.0F);
+      Interface.Entry entry6 = new Interface.Entry(vec3.y(), -f6 / 2.0F);
+      float f7 = InterfaceModule.INSTANCE.method6786();
+      if (f7 >= 1.0F) {
+         f3 = this.method2088(Math.round(f3 / f7) * f7, guiScaledWidth);
+         f4 = this.method2089(Math.round(f4 / f7) * f7, guiScaledHeight);
       }
 
-      this.floatValue = var7 + this.method2064();
-      this.floatValue2 = var8 + this.method2065();
-      this.floatValue3 = var5;
-      this.floatValue4 = var6;
-      this.method2091(var5, var6);
-      Interface.Entry var21 = this.method2077(var12, var15, var18);
-      Interface.Entry var22 = this.method2077(var13, var16, var19);
-      this.method285(var1, var21);
-      this.method286(var1, var22);
+      this.floatValue = f3 + this.method2064();
+      this.floatValue2 = f4 + this.method2065();
+      this.floatValue3 = guiScaledWidth;
+      this.floatValue4 = guiScaledHeight;
+      this.method2091(guiScaledWidth, guiScaledHeight);
+      Interface.Entry entry7 = this.method2077(entry, entry3, entry5);
+      Interface.Entry entry8 = this.method2077(entry2, entry4, entry6);
+      this.method285(customDrawContext, entry7);
+      this.method286(customDrawContext, entry8);
    }
 
-   private Interface.Entry method2077(Interface.Entry var1, Interface.Entry var2, Interface.Entry var3) {
-      if (var1.floatValue != -1.0F) {
-         return var1;
+   private Interface.Entry method2077(Interface.Entry entry, Interface.Entry entry2, Interface.Entry entry3) {
+      if (entry.floatValue != -1.0F) {
+         return entry;
       } else {
-         return var2.floatValue != -1.0F ? var2 : var3;
+         return entry2.floatValue != -1.0F ? entry2 : entry3;
       }
    }
 
-   public void method286(CustomDrawContext var1, Interface.Entry var2) {
-      if (var2.floatValue == -1.0F) {
-         this.floatValue8 = var2.floatValue;
+   public void method286(CustomDrawContext customDrawContext, Interface.Entry entry) {
+      if (entry.floatValue == -1.0F) {
+         this.floatValue8 = entry.floatValue;
       } else {
-         float var3 = this.floatValue3 > 0.0F ? this.floatValue3 : var1.guiWidth();
-         var1.drawRoundedRect(
-            this.method2081(var3),
-            var2.floatValue,
-            this.method2083(var3),
+         float guiWidth = this.floatValue3 > 0.0F ? this.floatValue3 : customDrawContext.guiWidth();
+         customDrawContext.drawRoundedRect(
+            this.method2081(guiWidth),
+            entry.floatValue,
+            this.method2083(guiWidth),
             1.0F,
             ProxyDotRadiusData.INSTANCE,
             Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor()
          );
-         this.floatValue8 = var2.floatValue + var2.offset;
+         this.floatValue8 = entry.floatValue + entry.offset;
       }
    }
 
-   public void method285(CustomDrawContext var1, Interface.Entry var2) {
-      if (var2.floatValue == -1.0F) {
-         this.floatValue7 = var2.floatValue;
+   public void method285(CustomDrawContext customDrawContext, Interface.Entry entry) {
+      if (entry.floatValue == -1.0F) {
+         this.floatValue7 = entry.floatValue;
       } else {
-         float var3 = this.floatValue4 > 0.0F ? this.floatValue4 : var1.guiHeight();
-         var1.drawRoundedRect(
-            var2.floatValue,
-            this.method2084(var3),
+         float guiHeight = this.floatValue4 > 0.0F ? this.floatValue4 : customDrawContext.guiHeight();
+         customDrawContext.drawRoundedRect(
+            entry.floatValue,
+            this.method2084(guiHeight),
             1.0F,
-            this.method2086(var3),
+            this.method2086(guiHeight),
             ProxyDotRadiusData.INSTANCE,
             Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor()
          );
-         this.floatValue7 = var2.floatValue + var2.offset;
+         this.floatValue7 = entry.floatValue + entry.offset;
       }
    }
 
-   public void method287(float var1, float var2) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      float var3 = this.method2097(this.floatValue3);
-      float var4 = this.method2098(this.floatValue4);
-      if (var3 > 0.0F && var4 > 0.0F) {
-         this.update(var3, var4);
-         this.method2094(var3, var4);
+   public void method287(float floatValue, float f) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      float guiScaledWidth = this.method2097(this.floatValue3);
+      float guiScaledHeight = this.method2098(this.floatValue4);
+      if (guiScaledWidth > 0.0F && guiScaledHeight > 0.0F) {
+         this.update(guiScaledWidth, guiScaledHeight);
+         this.method2094(guiScaledWidth, guiScaledHeight);
       }
 
-      this.method2091(var3, var4);
+      this.method2091(guiScaledWidth, guiScaledHeight);
    }
 
-   public void method288(float var1, float var2) {
-      if (!(var2 <= 0.0F) && !(var1 <= 0.0F)) {
+   public void method288(float guiScaledWidth, float guiScaledHeight) {
+      if (!(guiScaledHeight <= 0.0F) && !(guiScaledWidth <= 0.0F)) {
          if (!this.method2090()) {
-            float var3 = this.floatValue3 > 0.0F ? this.floatValue3 : var1;
-            float var4 = this.floatValue4 > 0.0F ? this.floatValue4 : var2;
-            this.method2091(var3, var4);
+            float f = this.floatValue3 > 0.0F ? this.floatValue3 : guiScaledWidth;
+            float guiScaledHeight2 = this.floatValue4 > 0.0F ? this.floatValue4 : guiScaledHeight;
+            this.method2091(f, guiScaledHeight2);
          }
 
-         this.floatValue3 = var1;
-         this.floatValue4 = var2;
-         float var7;
-         float var8;
+         this.floatValue3 = guiScaledWidth;
+         this.floatValue4 = guiScaledHeight;
+         float f;
+         float f2;
          if (this.method2090()) {
-            var7 = this.method2081(var1) + this.floatValue5 * this.method2083(var1) - this.method2092() * this.method296();
-            var8 = this.method2084(var2) + this.floatValue6 * this.method2086(var2) - this.method2093() * this.method297();
+            f = this.method2081(guiScaledWidth) + this.floatValue5 * this.method2083(guiScaledWidth) - this.method2092() * this.method296();
+            f2 = this.method2084(guiScaledHeight) + this.floatValue6 * this.method2086(guiScaledHeight) - this.method2093() * this.method297();
          } else if (this.type2 != null) {
-            float var5 = this.method2079(this.type2, var1) + this.floatValue12;
-            float var6 = this.method2080(this.type2, var2) + this.floatValue13;
-            var7 = var5 - this.method2064();
-            var8 = var6 - this.method2065();
+            float f3 = this.method2079(this.type2, guiScaledWidth) + this.floatValue12;
+            float f4 = this.method2080(this.type2, guiScaledHeight) + this.floatValue13;
+            f = f3 - this.method2064();
+            f2 = f4 - this.method2065();
          } else {
-            var7 = this.method294();
-            var8 = this.method295();
+            f = this.method294();
+            f2 = this.method295();
          }
 
-         this.floatValue = this.method2088(var7, var1) + this.method2064();
-         this.floatValue2 = this.method2089(var8, var2) + this.method2065();
+         this.floatValue = this.method2088(f, guiScaledWidth) + this.method2064();
+         this.floatValue2 = this.method2089(f2, guiScaledHeight) + this.method2065();
       }
    }
 
-   public void update(float var1, float var2) {
-      if (!(var1 <= 0.0F) && !(var2 <= 0.0F)) {
-         float var3 = this.method2088(this.method294(), var1);
-         float var4 = this.method2089(this.method295(), var2);
-         this.floatValue = var3 + this.method2064();
-         this.floatValue2 = var4 + this.method2065();
+   public void update(float guiScaledWidth, float guiScaledHeight) {
+      if (!(guiScaledWidth <= 0.0F) && !(guiScaledHeight <= 0.0F)) {
+         float f = this.method2088(this.method294(), guiScaledWidth);
+         float f2 = this.method2089(this.method295(), guiScaledHeight);
+         this.floatValue = f + this.method2064();
+         this.floatValue2 = f2 + this.method2065();
       }
    }
 
@@ -628,102 +628,102 @@ public abstract class Interface implements MinecraftAccess {
          this.floatValue2 = this.floatValue8 + this.method2065();
       }
 
-      float var1 = this.method2097(this.floatValue3);
-      float var2 = this.method2098(this.floatValue4);
-      if (var1 > 0.0F && var2 > 0.0F) {
-         this.update(var1, var2);
-         this.method2094(var1, var2);
+      float guiScaledWidth = this.method2097(this.floatValue3);
+      float guiScaledHeight = this.method2098(this.floatValue4);
+      if (guiScaledWidth > 0.0F && guiScaledHeight > 0.0F) {
+         this.update(guiScaledWidth, guiScaledHeight);
+         this.method2094(guiScaledWidth, guiScaledHeight);
       }
 
       this.floatValue7 = -1.0F;
       this.floatValue8 = -1.0F;
-      this.method2091(var1, var2);
+      this.method2091(guiScaledWidth, guiScaledHeight);
    }
 
-   private Interface.Type method2078(float var1, float var2, float var3, float var4) {
-      float var5 = this.method2081(var3);
-      float var6 = this.method2084(var4);
-      float var7 = this.method2083(var3);
-      float var8 = this.method2086(var4);
-      float var9 = var1 - this.method2064();
-      float var10 = var2 - this.method2065();
-      float var11 = var9 + this.method296() / 2.0F;
-      float var12 = var10 + this.method297() / 2.0F;
-      boolean var13 = var11 < var5 + var7 / 3.0F;
-      boolean var14 = var11 > var5 + var7 * 2.0F / 3.0F;
-      boolean var15 = !var13 && !var14;
-      boolean var16 = var12 < var6 + var8 / 3.0F;
-      boolean var17 = var12 > var6 + var8 * 2.0F / 3.0F;
-      boolean var18 = !var16 && !var17;
-      if (var16) {
-         if (var13) {
+   private Interface.Type method2078(float x, float y, float guiScaledWidth, float guiScaledHeight) {
+      float f = this.method2081(guiScaledWidth);
+      float f2 = this.method2084(guiScaledHeight);
+      float f3 = this.method2083(guiScaledWidth);
+      float f4 = this.method2086(guiScaledHeight);
+      float f5 = x - this.method2064();
+      float f6 = y - this.method2065();
+      float f7 = f5 + this.method296() / 2.0F;
+      float f8 = f6 + this.method297() / 2.0F;
+      boolean flag = f7 < f + f3 / 3.0F;
+      boolean flag2 = f7 > f + f3 * 2.0F / 3.0F;
+      boolean flag3 = !flag && !flag2;
+      boolean flag4 = f8 < f2 + f4 / 3.0F;
+      boolean flag5 = f8 > f2 + f4 * 2.0F / 3.0F;
+      boolean flag6 = !flag4 && !flag5;
+      if (flag4) {
+         if (flag) {
             return Interface.Type.TOP_LEFT;
          } else {
-            return var15 ? Interface.Type.TOP_CENTER : Interface.Type.TOP_RIGHT;
+            return flag3 ? Interface.Type.TOP_CENTER : Interface.Type.TOP_RIGHT;
          }
-      } else if (var18) {
-         if (var13) {
+      } else if (flag6) {
+         if (flag) {
             return Interface.Type.CENTER_LEFT;
          } else {
-            return var15 ? Interface.Type.CENTER : Interface.Type.CENTER_RIGHT;
+            return flag3 ? Interface.Type.CENTER : Interface.Type.CENTER_RIGHT;
          }
-      } else if (var13) {
+      } else if (flag) {
          return Interface.Type.BOTTOM_LEFT;
       } else {
-         return var15 ? Interface.Type.BOTTOM_CENTER : Interface.Type.BOTTOM_RIGHT;
+         return flag3 ? Interface.Type.BOTTOM_CENTER : Interface.Type.BOTTOM_RIGHT;
       }
    }
 
-   private float method2079(Interface.Type var1, float var2) {
-      float var3 = this.method2081(var2);
-      float var4 = this.method2082(var2);
-      float var5 = var3 + this.method2083(var2) / 2.0F;
-      float var6 = this.method296();
+   private float method2079(Interface.Type type2, float guiScaledWidth) {
+      float f = this.method2081(guiScaledWidth);
+      float f2 = this.method2082(guiScaledWidth);
+      float f3 = f + this.method2083(guiScaledWidth) / 2.0F;
+      float f4 = this.method296();
 
-      float var7 = switch (var1) {
-         case TOP_LEFT, CENTER_LEFT, BOTTOM_LEFT -> var3;
-         case TOP_CENTER, CENTER, BOTTOM_CENTER -> var5 - var6 / 2.0F;
-         case TOP_RIGHT, CENTER_RIGHT, BOTTOM_RIGHT -> var4 - var6;
+      float f5 = switch (type2) {
+         case TOP_LEFT, CENTER_LEFT, BOTTOM_LEFT -> f;
+         case TOP_CENTER, CENTER, BOTTOM_CENTER -> f3 - f4 / 2.0F;
+         case TOP_RIGHT, CENTER_RIGHT, BOTTOM_RIGHT -> f2 - f4;
       };
-      return var7 + this.method2064();
+      return f5 + this.method2064();
    }
 
-   private float method2080(Interface.Type var1, float var2) {
-      float var3 = this.method2084(var2);
-      float var4 = this.method2085(var2);
-      float var5 = var3 + this.method2086(var2) / 2.0F;
-      float var6 = this.method297();
+   private float method2080(Interface.Type type2, float guiScaledHeight) {
+      float f = this.method2084(guiScaledHeight);
+      float f2 = this.method2085(guiScaledHeight);
+      float f3 = f + this.method2086(guiScaledHeight) / 2.0F;
+      float f4 = this.method297();
 
-      float var7 = switch (var1) {
-         case TOP_LEFT, TOP_CENTER, TOP_RIGHT -> var3;
-         case CENTER_LEFT, CENTER, CENTER_RIGHT -> var5 - var6 / 2.0F;
-         case BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT -> var4 - var6;
+      float f5 = switch (type2) {
+         case TOP_LEFT, TOP_CENTER, TOP_RIGHT -> f;
+         case CENTER_LEFT, CENTER, CENTER_RIGHT -> f3 - f4 / 2.0F;
+         case BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT -> f2 - f4;
       };
-      return var7 + this.method2065();
+      return f5 + this.method2065();
    }
 
-   public float method2081(float var1) {
-      return Math.min(InterfaceModule.INSTANCE.method6787(), var1 / 4.0F);
+   public float method2081(float guiScaledWidth) {
+      return Math.min(InterfaceModule.INSTANCE.method6787(), guiScaledWidth / 4.0F);
    }
 
-   public float method2082(float var1) {
-      return this.method2081(var1) + this.method2083(var1);
+   public float method2082(float guiScaledWidth) {
+      return this.method2081(guiScaledWidth) + this.method2083(guiScaledWidth);
    }
 
-   public float method2083(float var1) {
-      return Math.max(1.0F, var1 - this.method2081(var1) * 2.0F);
+   public float method2083(float guiScaledWidth) {
+      return Math.max(1.0F, guiScaledWidth - this.method2081(guiScaledWidth) * 2.0F);
    }
 
-   public float method2084(float var1) {
-      return Math.min(InterfaceModule.INSTANCE.method6787(), var1 / 4.0F);
+   public float method2084(float guiScaledHeight) {
+      return Math.min(InterfaceModule.INSTANCE.method6787(), guiScaledHeight / 4.0F);
    }
 
-   public float method2085(float var1) {
-      return this.method2084(var1) + this.method2086(var1);
+   public float method2085(float guiScaledHeight) {
+      return this.method2084(guiScaledHeight) + this.method2086(guiScaledHeight);
    }
 
-   public float method2086(float var1) {
-      return Math.max(1.0F, var1 - this.method2084(var1) * 2.0F);
+   public float method2086(float guiScaledHeight) {
+      return Math.max(1.0F, guiScaledHeight - this.method2084(guiScaledHeight) * 2.0F);
    }
 
    public JsonObject save() {
@@ -731,130 +731,130 @@ public abstract class Interface implements MinecraftAccess {
          this.method2091(this.method2097(this.floatValue3), this.method2098(this.floatValue4));
       }
 
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("enable", this.flag);
-      var1.addProperty("enabled", this.flag);
-      var1.addProperty("x", this.floatValue);
-      var1.addProperty("y", this.floatValue2);
-      var1.addProperty("width", this.width);
-      var1.addProperty("height", this.height);
-      var1.addProperty("windowWidth", this.floatValue3);
-      var1.addProperty("windowHeight", this.floatValue4);
-      var1.addProperty("offsetX", this.floatValue12);
-      var1.addProperty("offsetY", this.floatValue13);
-      var1.addProperty("align", this.type2.name());
-      var1.addProperty("anchored", true);
+      JsonObject json = new JsonObject();
+      json.addProperty("enable", this.flag);
+      json.addProperty("enabled", this.flag);
+      json.addProperty("x", this.floatValue);
+      json.addProperty("y", this.floatValue2);
+      json.addProperty("width", this.width);
+      json.addProperty("height", this.height);
+      json.addProperty("windowWidth", this.floatValue3);
+      json.addProperty("windowHeight", this.floatValue4);
+      json.addProperty("offsetX", this.floatValue12);
+      json.addProperty("offsetY", this.floatValue13);
+      json.addProperty("align", this.type2.name());
+      json.addProperty("anchored", true);
       if (Float.isFinite(this.floatValue5)) {
-         var1.addProperty("relativeX", this.floatValue5);
+         json.addProperty("relativeX", this.floatValue5);
       }
 
       if (Float.isFinite(this.floatValue6)) {
-         var1.addProperty("relativeY", this.floatValue6);
+         json.addProperty("relativeY", this.floatValue6);
       }
 
-      JsonObject var2 = new JsonObject();
+      JsonObject jsonObject = new JsonObject();
 
-      for (Setting var4 : this.getSettings()) {
-         var4.safe(var2);
+      for (Setting setting : this.getSettings()) {
+         setting.safe(jsonObject);
       }
 
-      var1.add("Settings", var2);
-      return var1;
+      json.add("Settings", jsonObject);
+      return json;
    }
 
-   public void load(JsonObject var1) {
-      boolean var2 = false;
-      boolean var3 = false;
-      boolean var4 = false;
-      if (var1.has("enable")) {
-         this.flag = var1.get("enable").getAsBoolean();
-      } else if (var1.has("enabled")) {
-         this.flag = var1.get("enabled").getAsBoolean();
+   public void load(JsonObject jsonObject) {
+      boolean flag = false;
+      boolean flag2 = false;
+      boolean flag3 = false;
+      if (jsonObject.has("enable")) {
+         this.flag = jsonObject.get("enable").getAsBoolean();
+      } else if (jsonObject.has("enabled")) {
+         this.flag = jsonObject.get("enabled").getAsBoolean();
       }
 
-      if (var1.has("x")) {
-         this.floatValue = var1.get("x").getAsFloat();
+      if (jsonObject.has("x")) {
+         this.floatValue = jsonObject.get("x").getAsFloat();
       }
 
-      if (var1.has("y")) {
-         this.floatValue2 = var1.get("y").getAsFloat();
+      if (jsonObject.has("y")) {
+         this.floatValue2 = jsonObject.get("y").getAsFloat();
       }
 
-      if (var1.has("width")) {
-         this.width = var1.get("width").getAsFloat();
+      if (jsonObject.has("width")) {
+         this.width = jsonObject.get("width").getAsFloat();
       }
 
-      if (var1.has("height")) {
-         this.height = var1.get("height").getAsFloat();
+      if (jsonObject.has("height")) {
+         this.height = jsonObject.get("height").getAsFloat();
       }
 
-      if (var1.has("windowWidth")) {
-         this.floatValue3 = var1.get("windowWidth").getAsFloat();
+      if (jsonObject.has("windowWidth")) {
+         this.floatValue3 = jsonObject.get("windowWidth").getAsFloat();
       }
 
-      if (var1.has("windowHeight")) {
-         this.floatValue4 = var1.get("windowHeight").getAsFloat();
+      if (jsonObject.has("windowHeight")) {
+         this.floatValue4 = jsonObject.get("windowHeight").getAsFloat();
       }
 
-      if (var1.has("offsetX")) {
-         this.floatValue12 = var1.get("offsetX").getAsFloat();
-         var3 = true;
+      if (jsonObject.has("offsetX")) {
+         this.floatValue12 = jsonObject.get("offsetX").getAsFloat();
+         flag2 = true;
       }
 
-      if (var1.has("offsetY")) {
-         this.floatValue13 = var1.get("offsetY").getAsFloat();
-         var4 = true;
+      if (jsonObject.has("offsetY")) {
+         this.floatValue13 = jsonObject.get("offsetY").getAsFloat();
+         flag3 = true;
       }
 
-      if (var1.has("align")) {
+      if (jsonObject.has("align")) {
          try {
-            this.type2 = Interface.Type.valueOf(var1.get("align").getAsString());
-            var2 = true;
-         } catch (IllegalArgumentException var10) {
+            this.type2 = Interface.Type.valueOf(jsonObject.get("align").getAsString());
+            flag = true;
+         } catch (IllegalArgumentException e) {
             this.type2 = Interface.Type.TOP_LEFT;
          }
       }
 
-      if (var1.has("relativeX")) {
-         this.floatValue5 = var1.get("relativeX").getAsFloat();
+      if (jsonObject.has("relativeX")) {
+         this.floatValue5 = jsonObject.get("relativeX").getAsFloat();
       }
 
-      if (var1.has("relativeY")) {
-         this.floatValue6 = var1.get("relativeY").getAsFloat();
+      if (jsonObject.has("relativeY")) {
+         this.floatValue6 = jsonObject.get("relativeY").getAsFloat();
       }
 
-      boolean var5 = this.method2090() && !var1.has("anchored");
-      if (var1.has("Settings") && var1.get("Settings").isJsonObject()) {
-         JsonObject var6 = var1.getAsJsonObject("Settings");
+      boolean flag4 = this.method2090() && !jsonObject.has("anchored");
+      if (jsonObject.has("Settings") && jsonObject.get("Settings").isJsonObject()) {
+         JsonObject json = jsonObject.getAsJsonObject("Settings");
 
-         for (Setting var8 : this.getSettings()) {
-            if (var6.has(var8.getKey()) || var8 instanceof GroupSetting) {
-               var8.load(var6);
+         for (Setting setting : this.getSettings()) {
+            if (json.has(setting.getKey()) || setting instanceof GroupSetting) {
+               setting.load(json);
             }
          }
       }
 
-      if (!var2 || !var3 || !var4) {
-         float var11 = this.method2097(this.floatValue3);
-         float var13 = this.method2098(this.floatValue4);
-         this.method2094(var11, var13);
+      if (!flag || !flag2 || !flag3) {
+         float guiScaledWidth = this.method2097(this.floatValue3);
+         float guiScaledHeight = this.method2098(this.floatValue4);
+         this.method2094(guiScaledWidth, guiScaledHeight);
       }
 
       if (!this.method2090()) {
          this.method2091(this.method2097(this.floatValue3), this.method2098(this.floatValue4));
       }
 
-      if (var5 && mc != null && mc.getWindow() != null) {
-         float var12 = mc.getWindow().getGuiScaledWidth();
-         float var14 = mc.getWindow().getGuiScaledHeight();
-         float var15 = this.method2081(var12) + this.floatValue5 * this.method2083(var12);
-         float var9 = this.method2084(var14) + this.floatValue6 * this.method2086(var14);
-         this.floatValue = this.method2088(var15, var12) + this.method2064();
-         this.floatValue2 = this.method2089(var9, var14) + this.method2065();
-         this.floatValue3 = var12;
-         this.floatValue4 = var14;
-         this.method2094(var12, var14);
-         this.method2091(var12, var14);
+      if (flag4 && mc != null && mc.getWindow() != null) {
+         float guiScaledWidth = mc.getWindow().getGuiScaledWidth();
+         float guiScaledHeight = mc.getWindow().getGuiScaledHeight();
+         float f = this.method2081(guiScaledWidth) + this.floatValue5 * this.method2083(guiScaledWidth);
+         float f2 = this.method2084(guiScaledHeight) + this.floatValue6 * this.method2086(guiScaledHeight);
+         this.floatValue = this.method2088(f, guiScaledWidth) + this.method2064();
+         this.floatValue2 = this.method2089(f2, guiScaledHeight) + this.method2065();
+         this.floatValue3 = guiScaledWidth;
+         this.floatValue4 = guiScaledHeight;
+         this.method2094(guiScaledWidth, guiScaledHeight);
+         this.method2091(guiScaledWidth, guiScaledHeight);
       }
 
       if (mc != null && mc.getWindow() != null) {
@@ -862,54 +862,54 @@ public abstract class Interface implements MinecraftAccess {
       }
    }
 
-   public void method2087(float var1, float var2) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      float var3 = this.method2097(this.floatValue3);
-      float var4 = this.method2098(this.floatValue4);
-      if (var3 > 0.0F && var4 > 0.0F) {
-         this.update(var3, var4);
-         this.method2094(var3, var4);
+   public void method2087(float floatValue, float f) {
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      float guiScaledWidth = this.method2097(this.floatValue3);
+      float guiScaledHeight = this.method2098(this.floatValue4);
+      if (guiScaledWidth > 0.0F && guiScaledHeight > 0.0F) {
+         this.update(guiScaledWidth, guiScaledHeight);
+         this.method2094(guiScaledWidth, guiScaledHeight);
       }
 
-      this.method2091(var3, var4);
+      this.method2091(guiScaledWidth, guiScaledHeight);
    }
 
-   public float method2088(float var1, float var2) {
-      float var3 = this.method2081(var2);
-      float var4 = this.method2082(var2) - this.method296();
-      if (var4 < var3) {
-         var4 = var3;
+   public float method2088(float f, float guiScaledWidth) {
+      float f2 = this.method2081(guiScaledWidth);
+      float f3 = this.method2082(guiScaledWidth) - this.method296();
+      if (f3 < f2) {
+         f3 = f2;
       }
 
-      return Math.max(var3, Math.min(var1, var4));
+      return Math.max(f2, Math.min(f, f3));
    }
 
-   public float method2089(float var1, float var2) {
-      float var3 = this.method2084(var2);
-      float var4 = this.method2085(var2) - this.method297();
-      if (var4 < var3) {
-         var4 = var3;
+   public float method2089(float f, float guiScaledHeight) {
+      float f2 = this.method2084(guiScaledHeight);
+      float f3 = this.method2085(guiScaledHeight) - this.method297();
+      if (f3 < f2) {
+         f3 = f2;
       }
 
-      return Math.max(var3, Math.min(var1, var4));
+      return Math.max(f2, Math.min(f, f3));
    }
 
    public boolean method2090() {
       return Float.isFinite(this.floatValue5) && Float.isFinite(this.floatValue6);
    }
 
-   public void method2091(float var1, float var2) {
-      if (!(var1 <= 0.0F) && !(var2 <= 0.0F)) {
-         float var3 = this.method2083(var1);
-         float var4 = this.method2086(var2);
-         if (!(var3 <= 0.0F) && !(var4 <= 0.0F)) {
-            float var5 = this.method2088(this.method294(), var1) + this.method2092() * this.method296();
-            float var6 = this.method2089(this.method295(), var2) + this.method2093() * this.method297();
-            float var7 = (var5 - this.method2081(var1)) / var3;
-            float var8 = (var6 - this.method2084(var2)) / var4;
-            this.floatValue5 = Math.max(0.0F, Math.min(1.0F, var7));
-            this.floatValue6 = Math.max(0.0F, Math.min(1.0F, var8));
+   public void method2091(float guiScaledWidth, float guiScaledHeight) {
+      if (!(guiScaledWidth <= 0.0F) && !(guiScaledHeight <= 0.0F)) {
+         float f = this.method2083(guiScaledWidth);
+         float f2 = this.method2086(guiScaledHeight);
+         if (!(f <= 0.0F) && !(f2 <= 0.0F)) {
+            float f3 = this.method2088(this.method294(), guiScaledWidth) + this.method2092() * this.method296();
+            float f4 = this.method2089(this.method295(), guiScaledHeight) + this.method2093() * this.method297();
+            float f5 = (f3 - this.method2081(guiScaledWidth)) / f;
+            float f6 = (f4 - this.method2084(guiScaledHeight)) / f2;
+            this.floatValue5 = Math.max(0.0F, Math.min(1.0F, f5));
+            this.floatValue6 = Math.max(0.0F, Math.min(1.0F, f6));
          }
       }
    }
@@ -930,53 +930,53 @@ public abstract class Interface implements MinecraftAccess {
       };
    }
 
-   public void method2094(float var1, float var2) {
-      if (!(var1 <= 0.0F) && !(var2 <= 0.0F)) {
-         Interface.Type var3 = this.method2078(this.getX(), this.getY(), var1, var2);
-         float var4 = this.method2079(var3, var1);
-         float var5 = this.method2080(var3, var2);
-         this.type2 = var3;
-         this.floatValue12 = this.getX() - var4;
-         this.floatValue13 = this.getY() - var5;
+   public void method2094(float guiScaledWidth, float guiScaledHeight) {
+      if (!(guiScaledWidth <= 0.0F) && !(guiScaledHeight <= 0.0F)) {
+         Interface.Type type2 = this.method2078(this.getX(), this.getY(), guiScaledWidth, guiScaledHeight);
+         float f = this.method2079(type2, guiScaledWidth);
+         float f2 = this.method2080(type2, guiScaledHeight);
+         this.type2 = type2;
+         this.floatValue12 = this.getX() - f;
+         this.floatValue13 = this.getY() - f2;
       }
    }
 
-   public float method2095(float var1) {
-      return Math.max(0.0F, this.method2083(var1) - this.method296());
+   public float method2095(float guiScaledWidth) {
+      return Math.max(0.0F, this.method2083(guiScaledWidth) - this.method296());
    }
 
-   public float method2096(float var1) {
-      return Math.max(0.0F, this.method2086(var1) - this.method297());
+   public float method2096(float guiScaledHeight) {
+      return Math.max(0.0F, this.method2086(guiScaledHeight) - this.method297());
    }
 
-   public float method2097(float var1) {
-      if (var1 > 0.0F) {
-         return var1;
+   public float method2097(float f) {
+      if (f > 0.0F) {
+         return f;
       } else if (this.floatValue3 > 0.0F) {
          return this.floatValue3;
       } else {
-         return mc != null && mc.getWindow() != null ? mc.getWindow().getGuiScaledWidth() : var1;
+         return mc != null && mc.getWindow() != null ? mc.getWindow().getGuiScaledWidth() : f;
       }
    }
 
-   public float method2098(float var1) {
-      if (var1 > 0.0F) {
-         return var1;
+   public float method2098(float f) {
+      if (f > 0.0F) {
+         return f;
       } else if (this.floatValue4 > 0.0F) {
          return this.floatValue4;
       } else {
-         return mc != null && mc.getWindow() != null ? mc.getWindow().getGuiScaledHeight() : var1;
+         return mc != null && mc.getWindow() != null ? mc.getWindow().getGuiScaledHeight() : f;
       }
    }
 
    public net.minecraft.client.model.geom.builders.UVPair method2099() {
-      net.minecraft.client.model.geom.builders.UVPair var1 = Vec2Utils.method8068(mc.getWindow().getGuiScale());
-      float var2 = this.method290();
-      float var3 = this.floatValue + this.width / 2.0F;
-      float var4 = this.floatValue2 + this.height / 2.0F;
-      float var5 = var3 + (var1.u() - var3) / var2;
-      float var6 = var4 + (var1.v() - var4) / var2;
-      return new net.minecraft.client.model.geom.builders.UVPair(var5, var6);
+      net.minecraft.client.model.geom.builders.UVPair uvPair = Vec2Utils.method8068(mc.getWindow().getGuiScale());
+      float f = this.method290();
+      float f2 = this.floatValue + this.width / 2.0F;
+      float f3 = this.floatValue2 + this.height / 2.0F;
+      float f4 = f2 + (uvPair.u() - f2) / f;
+      float f5 = f3 + (uvPair.v() - f3) / f;
+      return new net.minecraft.client.model.geom.builders.UVPair(f4, f5);
    }
 
    @Generated
@@ -1013,9 +1013,9 @@ public abstract class Interface implements MinecraftAccess {
       private float floatValue;
       private float offset;
 
-      public Entry(float var2, float var3) {
-         this.floatValue = var2;
-         this.offset = var3;
+      public Entry(float floatValue, float offset) {
+         this.floatValue = floatValue;
+         this.offset = offset;
       }
 
       @Generated
@@ -1029,13 +1029,13 @@ public abstract class Interface implements MinecraftAccess {
       }
 
       @Generated
-      public void setFloatValue(float var1) {
-         this.floatValue = var1;
+      public void setFloatValue(float floatValue) {
+         this.floatValue = floatValue;
       }
 
       @Generated
-      public void setOffset(float var1) {
-         this.offset = var1;
+      public void setOffset(float offset) {
+         this.offset = offset;
       }
    }
 

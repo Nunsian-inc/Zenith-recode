@@ -79,19 +79,19 @@ public final class PvpHelperModule extends Module {
       super.onDisable();
    }
 
-   public int method4641(Identifier var1, int var2) {
-      if (this.isEnabled() && this.reduceCooldown.isEnabled() && var2 > 0) {
-         Item var3 = BuiltInRegistries.ITEM.getValue(var1);
-         return var3 != Items.ENCHANTED_GOLDEN_APPLE && var3 != Items.GOLDEN_APPLE && var3 != Items.POTION && var3 != Items.CHORUS_FRUIT
-            ? var2
-            : Math.max(1, var2 - 32);
+   public int method4641(Identifier key, int n) {
+      if (this.isEnabled() && this.reduceCooldown.isEnabled() && n > 0) {
+         Item item = BuiltInRegistries.ITEM.getValue(key);
+         return item != Items.ENCHANTED_GOLDEN_APPLE && item != Items.GOLDEN_APPLE && item != Items.POTION && item != Items.CHORUS_FRUIT
+            ? n
+            : Math.max(1, n - 32);
       } else {
-         return var2;
+         return n;
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null) {
          this.method4642();
          this.method4643();
@@ -101,8 +101,8 @@ public final class PvpHelperModule extends Module {
    }
 
    private void method4642() {
-      ItemStack var1 = mc.player.getUseItem();
-      if (mc.player.isUsingItem() && PotionUtils.method2324(var1) && PotionUtils.method2322(var1, MobEffects.INSTANT_HEALTH)) {
+      ItemStack useItem = mc.player.getUseItem();
+      if (mc.player.isUsingItem() && PotionUtils.method2324(useItem) && PotionUtils.method2322(useItem, MobEffects.INSTANT_HEALTH)) {
          this.flag = true;
          this.intValue = mc.player.getUseItemRemainingTicks();
       } else if (this.flag) {
@@ -118,50 +118,50 @@ public final class PvpHelperModule extends Module {
       this.items.clear();
       if (this.healHelper.isEnabled() && Zenith.getInstance().getServerDetector().method1635()) {
          if (!mc.player.hasEffect(MobEffects.STRENGTH)) {
-            this.method4644(var0 -> PotionUtils.method2324(var0) && PotionUtils.method2322(var0, MobEffects.STRENGTH));
+            this.method4644(useItem -> PotionUtils.method2324(useItem) && PotionUtils.method2322(useItem, MobEffects.STRENGTH));
          }
 
          if (!(mc.player.getHealth() + mc.player.getAbsorptionAmount() > 19.0F)) {
-            long var1 = Zenith.getInstance().getServerDetector().method1642() ? 10000L : 20000L;
-            if (System.currentTimeMillis() - this.longValue >= var1) {
-               this.method4644(var0 -> PotionUtils.method2324(var0) && PotionUtils.method2322(var0, MobEffects.INSTANT_HEALTH));
+            long l = Zenith.getInstance().getServerDetector().method1642() ? 10000L : 20000L;
+            if (System.currentTimeMillis() - this.longValue >= l) {
+               this.method4644(useItem -> PotionUtils.method2324(useItem) && PotionUtils.method2322(useItem, MobEffects.INSTANT_HEALTH));
             } else if (mc.player.getFoodData().getFoodLevel() < 20) {
-               this.method4644(var0 -> var0.is(Items.GOLDEN_CARROT));
+               this.method4644(stack -> stack.is(Items.GOLDEN_CARROT));
             } else if (!mc.player.getCooldowns().isOnCooldown(Items.GOLDEN_APPLE.getDefaultInstance())) {
-               this.method4644(var0 -> var0.is(Items.GOLDEN_APPLE));
+               this.method4644(stack -> stack.is(Items.GOLDEN_APPLE));
             } else {
-               this.method4644(var0 -> var0.is(Items.ENCHANTED_GOLDEN_APPLE));
+               this.method4644(stack -> stack.is(Items.ENCHANTED_GOLDEN_APPLE));
             }
          }
       }
    }
 
-   private void method4644(Predicate<ItemStack> var1) {
-      int var2 = PotionUtils.method2326(var1);
-      if (var2 != -1) {
-         this.items.add(var2);
+   private void method4644(Predicate<ItemStack> predicate) {
+      int n = PotionUtils.method2326(predicate);
+      if (n != -1) {
+         this.items.add(n);
       }
    }
 
-   public boolean method4645(int var1) {
-      return this.isEnabled() && this.items.contains(var1);
+   public boolean method4645(int intValue) {
+      return this.isEnabled() && this.items.contains(intValue);
    }
 
    private void method4646() {
       if (this.warnArmor.isEnabled()) {
-         float var1 = 1.0F;
+         float f = 1.0F;
 
-         for (EquipmentSlot var3 : EquipmentSlot.VALUES) {
-            if (var3.getType() == Type.HUMANOID_ARMOR) {
-               ItemStack var4 = mc.player.getItemBySlot(var3);
-               if (!var4.isEmpty() && var4.isDamageableItem()) {
-                  float var5 = var4.getMaxDamage();
-                  var1 = Math.min(var1, (var5 - var4.getDamageValue()) / var5);
+         for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+            if (slot.getType() == Type.HUMANOID_ARMOR) {
+               ItemStack itemBySlot = mc.player.getItemBySlot(slot);
+               if (!itemBySlot.isEmpty() && itemBySlot.isDamageableItem()) {
+                  float maxDamage = itemBySlot.getMaxDamage();
+                  f = Math.min(f, (maxDamage - itemBySlot.getDamageValue()) / maxDamage);
                }
             }
          }
 
-         if (var1 < 0.36F) {
+         if (f < 0.36F) {
             if (this.flag4) {
                Zenith.getInstance().getHudHolder().method6972(this.getCategory().getIcon(), Component.nullToEmpty("Броня почти сломана!"));
                this.flag4 = false;
@@ -173,27 +173,27 @@ public final class PvpHelperModule extends Module {
    }
 
    @EventTarget
-   public void method4647(DrawEvent var1) {
+   public void method4647(DrawEvent event) {
       if (!this.items.isEmpty() && mc.player != null && !mc.gui.hud.isHidden()) {
          if (!InterfaceModule.INSTANCE.isEnabled() || !InterfaceModule.INSTANCE.method6812()) {
-            CustomDrawContext var2 = var1.getCustomDrawContext();
-            int var3 = var2.guiWidth() / 2 - 91;
-            int var4 = var2.guiHeight() - 22;
-            ZenithColor var5 = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7294(0.45F);
+            CustomDrawContext customDrawContext = event.getCustomDrawContext();
+            int n = customDrawContext.guiWidth() / 2 - 91;
+            int n2 = customDrawContext.guiHeight() - 22;
+            ZenithColor zenithColor = Zenith.getInstance().getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7294(0.45F);
 
-            for (int var7 : this.items) {
-               var2.drawRoundedRect((float)(var3 + 1 + var7 * 20), (float)(var4 + 1), 20.0F, 20.0F, ProxyDotRadiusData.method8069(3.0F), var5);
+            for (int n3 : this.items) {
+               customDrawContext.drawRoundedRect((float)(n + 1 + n3 * 20), (float)(n2 + 1), 20.0F, 20.0F, ProxyDotRadiusData.method8069(3.0F), zenithColor);
             }
          }
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (this.flag2 && var1.getPacket3() instanceof ClientboundMoveEntityPacket var2) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         if (this.flag2 && event.getPacket3() instanceof ClientboundMoveEntityPacket moveEntityPacket) {
             mc.execute(() -> {
-               if (mc.level != null && var2.getEntity(mc.level) != null && var2.getEntity(mc.level).getId() == this.intValue2) {
+               if (mc.level != null && moveEntityPacket.getEntity(mc.level) != null && moveEntityPacket.getEntity(mc.level).getId() == this.intValue2) {
                   this.stopWatch2.reset();
                }
             });
@@ -202,13 +202,13 @@ public final class PvpHelperModule extends Module {
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
    }
 
    @EventTarget
-   public void method4648(AttackEvent var1) {
+   public void method4648(AttackEvent event) {
       if (this.autoChorus.isEnabled() && this.flag2) {
-         var1.cancel();
+         event.cancel();
       }
    }
 
@@ -217,18 +217,18 @@ public final class PvpHelperModule extends Module {
          this.method4651();
          this.stopWatch.reset();
       } else {
-         LivingEntity var1 = AuraModule.INSTANCE.method6358();
-         if (var1 == null) {
+         LivingEntity entity = AuraModule.INSTANCE.method6358();
+         if (entity == null) {
             this.stopWatch.reset();
             if (this.flag2 && !mc.player.isUsingItem()) {
                this.method4651();
             }
-         } else if (!var1.isAlive()) {
+         } else if (!entity.isAlive()) {
             this.stopWatch.reset();
          } else {
-            this.intValue2 = var1.getId();
-            boolean var2 = var1.isUsingItem() && var1.getUseItem().is(Items.CHORUS_FRUIT);
-            if (!var2 || mc.player.distanceToSqr(var1) > 25.0) {
+            this.intValue2 = entity.getId();
+            boolean flag = entity.isUsingItem() && entity.getUseItem().is(Items.CHORUS_FRUIT);
+            if (!flag || mc.player.distanceToSqr(entity) > 25.0) {
                this.stopWatch.reset();
             } else if (!this.flag2 && mc.gui.screen() == null && !mc.player.isUsingItem() && this.stopWatch.method7546(200L)) {
                this.method4650();
@@ -252,16 +252,16 @@ public final class PvpHelperModule extends Module {
 
    private void method4650() {
       if (mc.player.containerMenu instanceof InventoryMenu) {
-         int var1 = PotionUtils.method2325(var0 -> var0.is(Items.CHORUS_FRUIT));
-         if (var1 != -1) {
-            int var2 = mc.player.getInventory().getSelectedSlot();
-            this.intValue3 = var2;
+         int slot = PotionUtils.method2325(stack -> stack.is(Items.CHORUS_FRUIT));
+         if (slot != -1) {
+            int selectedSlot = mc.player.getInventory().getSelectedSlot();
+            this.intValue3 = selectedSlot;
             this.intValue4 = -1;
-            if (var1 < 9) {
-               PotionUtils.method2329(var1);
+            if (slot < 9) {
+               PotionUtils.method2329(slot);
             } else {
-               this.intValue4 = var1;
-               PotionUtils.method2328(var1, var2);
+               this.intValue4 = slot;
+               PotionUtils.method2328(slot, selectedSlot);
             }
 
             mc.options.keyUse.setDown(true);

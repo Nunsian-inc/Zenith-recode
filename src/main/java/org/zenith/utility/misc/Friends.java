@@ -13,26 +13,26 @@ import org.zenith.utility.network.Cloud;
 public class Friends extends JsonListStorage<String> {
    public Friends() {
       super("friends.json", "", (new TypeToken<Set<String>>() {}).getType(), ConcurrentHashMap::newKeySet);
-      KeySetView var1 = ConcurrentHashMap.newKeySet();
-      var1.addAll(this.items);
-      this.items = var1;
+      KeySetView keySet = ConcurrentHashMap.newKeySet();
+      keySet.addAll(this.items);
+      this.items = keySet;
    }
 
-   public boolean method7626(Entity var1) {
-      return var1 instanceof Player var2 ? this.method7627(var2.getGameProfile().name()) : false;
+   public boolean method7626(Entity player) {
+      return player instanceof Player player2 ? this.method7627(player2.getGameProfile().name()) : false;
    }
 
-   public boolean method7627(String var1) {
-      return this.getItems().contains(var1) || this.method7628(var1);
+   public boolean method7627(String name) {
+      return this.getItems().contains(name) || this.method7628(name);
    }
 
-   public boolean method7628(String var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         Zenith var2 = Zenith.getInstance();
-         Cloud var3 = var2 == null ? null : var2.getCloud();
-         if (var3 != null && var3.method7862()) {
-            for (PartyPlayerInfo var5 : var3.state().method8038()) {
-               if (var1.equalsIgnoreCase(var5.getText2())) {
+   public boolean method7628(String name) {
+      if (name != null && !name.isEmpty()) {
+         Zenith zenith = Zenith.getInstance();
+         Cloud cloud = zenith == null ? null : zenith.getCloud();
+         if (cloud != null && cloud.method7862()) {
+            for (PartyPlayerInfo partyPlayerInfo : cloud.state().method8038()) {
+               if (name.equalsIgnoreCase(partyPlayerInfo.getText2())) {
                   return true;
                }
             }
@@ -46,7 +46,7 @@ public class Friends extends JsonListStorage<String> {
       }
    }
 
-   public void method7629(String var1) {
-      this.getItems().remove(var1);
+   public void method7629(String name) {
+      this.getItems().remove(name);
    }
 }

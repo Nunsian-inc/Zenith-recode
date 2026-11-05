@@ -41,9 +41,9 @@ public final class ReplayState {
    private int intValue6 = -1;
    private String text = "idle";
 
-   public ReplayState(IntentSelector var1, IntentLibraryRt var2) {
-      this.intentSelector = var1;
-      this.intentLibraryRt = var2;
+   public ReplayState(IntentSelector intentSelector, IntentLibraryRt intentLibraryRt) {
+      this.intentSelector = intentSelector;
+      this.intentLibraryRt = intentLibraryRt;
       this.random = new Random();
       this.reset();
    }
@@ -66,15 +66,15 @@ public final class ReplayState {
       return this.text;
    }
 
-   public int[] method7983(ReplayState.Entry var1) {
-      if (this.entry3 != null && this.method7985(var1)) {
+   public int[] method7983(ReplayState.Entry entry) {
+      if (this.entry3 != null && this.method7985(entry)) {
          this.entry3 = null;
          this.intValue = 0;
       }
 
       if (this.entry3 != null) {
-         int var13 = this.entry3.intValues[this.intValue];
-         int var14 = this.entry3.intValues2[this.intValue];
+         int intValue = this.entry3.intValues[this.intValue];
+         int n = this.entry3.intValues2[this.intValue];
          this.intValue++;
          this.text = "replay:" + IntentLibraryRt.texts[this.entry3.intValue2] + " " + this.intValue + "/" + this.entry3.length();
          if (this.intValue >= this.entry3.length()) {
@@ -82,8 +82,8 @@ public final class ReplayState {
             this.intValue = 0;
          }
 
-         this.method7991(var13, var14);
-         return new int[]{var13, var14};
+         this.method7991(intValue, n);
+         return new int[]{intValue, n};
       } else if (this.intValue2 > 0) {
          this.intValue2--;
          if (this.intValue2 <= 0) {
@@ -94,219 +94,219 @@ public final class ReplayState {
          this.method7991(0, 0);
          return new int[]{0, 0};
       } else {
-         IntentSelector.Entry var2 = this.intentSelector.method7315(this.method7986(var1));
-         double var3 = method7992((var2.floatValue + 0.0) / 1.0);
-         boolean var5 = this.flag2 || this.random.nextDouble() < var3;
+         IntentSelector.Entry entry2 = this.intentSelector.method7315(this.method7986(entry));
+         double d = method7992((entry2.floatValue + 0.0) / 1.0);
+         boolean flag = this.flag2 || this.random.nextDouble() < d;
          this.flag2 = false;
-         if (!var5) {
-            int var15 = 1;
-            if (var1.doubleValue13 >= 0.5) {
-               var15 = this.method7984(var2.floatValues3);
-               if (var15 > 1) {
-                  this.intValue2 = var15 - 1;
+         if (!flag) {
+            int n = 1;
+            if (entry.doubleValue13 >= 0.5) {
+               n = this.method7984(entry2.floatValues3);
+               if (n > 1) {
+                  this.intValue2 = n - 1;
                } else {
                   this.flag2 = true;
                }
             }
 
-            this.text = "wait dwell=" + var15;
+            this.text = "wait dwell=" + n;
             this.method7991(0, 0);
             return new int[]{0, 0};
          } else {
-            int var6 = this.method7989(var2.floatValues, 0.7);
-            double[] var7 = this.method7987(var2.floatValues2[var6]);
-            double[] var8 = this.method7988(var7, var1);
-            IntentLibraryRt.Entry2 var9 = new IntentLibraryRt.Entry2();
-            var9.doubleValue = var1.doubleValue;
-            var9.doubleValue2 = var1.doubleValue2;
-            var9.doubleValue3 = var1.doubleValue9;
-            var9.doubleValue4 = var1.doubleValue10;
-            var9.doubleValue5 = (var1.doubleValue4 - var1.doubleValue3) * 0.5;
-            var9.doubleValue6 = (var1.doubleValue6 - var1.doubleValue5) * 0.5;
-            var9.intValue = this.intValue3;
-            var9.intValue2 = this.intValue4;
-            IntentLibraryRt.Entry3 var10 = this.intentLibraryRt
-               .method1379(var6, var8, var9, this.random, 16, 0.35, this.intValue6, 1.0, 1.0, 0.6, 0.4, 0.5, 40.0);
-            this.intValue6 = var10.intValue;
-            this.entry3 = var10;
+            int n = this.method7989(entry2.floatValues, 0.7);
+            double[] doubles = this.method7987(entry2.floatValues2[n]);
+            double[] doubles2 = this.method7988(doubles, entry);
+            IntentLibraryRt.Entry2 entry22 = new IntentLibraryRt.Entry2();
+            entry22.doubleValue = entry.doubleValue;
+            entry22.doubleValue2 = entry.doubleValue2;
+            entry22.doubleValue3 = entry.doubleValue9;
+            entry22.doubleValue4 = entry.doubleValue10;
+            entry22.doubleValue5 = (entry.doubleValue4 - entry.doubleValue3) * 0.5;
+            entry22.doubleValue6 = (entry.doubleValue6 - entry.doubleValue5) * 0.5;
+            entry22.intValue = this.intValue3;
+            entry22.intValue2 = this.intValue4;
+            IntentLibraryRt.Entry3 entry3 = this.intentLibraryRt
+               .method1379(n, doubles2, entry22, this.random, 16, 0.35, this.intValue6, 1.0, 1.0, 0.6, 0.4, 0.5, 40.0);
+            this.intValue6 = entry3.intValue;
+            this.entry3 = entry3;
             this.intValue = 0;
-            this.doubleValue = Math.hypot(var1.doubleValue, var1.doubleValue2);
-            this.flag = var1.doubleValue13 >= 0.5;
-            int var11 = var10.intValues[0];
-            int var12 = var10.intValues2[0];
+            this.doubleValue = Math.hypot(entry.doubleValue, entry.doubleValue2);
+            this.flag = entry.doubleValue13 >= 0.5;
+            int intValue = entry3.intValues[0];
+            int n2 = entry3.intValues2[0];
             this.intValue = 1;
-            this.text = "start:" + IntentLibraryRt.texts[var6] + " #" + var10.intValue + " len=" + var10.length();
-            if (this.intValue >= var10.length()) {
+            this.text = "start:" + IntentLibraryRt.texts[n] + " #" + entry3.intValue + " len=" + entry3.length();
+            if (this.intValue >= entry3.length()) {
                this.entry3 = null;
                this.intValue = 0;
             }
 
-            this.method7991(var11, var12);
-            return new int[]{var11, var12};
+            this.method7991(intValue, n2);
+            return new int[]{intValue, n2};
          }
       }
    }
 
-   private int method7984(float[][] var1) {
-      float[] var2 = new float[var1.length];
+   private int method7984(float[][] floatValues3) {
+      float[] floatValues = new float[floatValues3.length];
 
-      for (int var3 = 0; var3 < var1.length; var3++) {
-         var2[var3] = var1[var3][0];
+      for (int i = 0; i < floatValues3.length; i++) {
+         floatValues[i] = floatValues3[i][0];
       }
 
-      int var8 = this.method7989(var2, 1.0);
-      double var4 = var1[var8][1];
-      double var6 = method7993(var1[var8][2], -2.5, 0.7F);
-      var4 += Math.exp(var6) * 1.0 * this.random.nextGaussian();
-      int var10 = (int)Math.round(Math.expm1(Math.max(var4, 0.0)));
-      return Math.max(1, Math.min(var10, 40));
+      int n = this.method7989(floatValues, 1.0);
+      double d = floatValues3[n][1];
+      double d2 = method7993(floatValues3[n][2], -2.5, 0.7F);
+      d += Math.exp(d2) * 1.0 * this.random.nextGaussian();
+      int n2 = (int)Math.round(Math.expm1(Math.max(d, 0.0)));
+      return Math.max(1, Math.min(n2, 40));
    }
 
-   private boolean method7985(ReplayState.Entry var1) {
+   private boolean method7985(ReplayState.Entry entry) {
       if (this.intValue < 2) {
          return false;
       } else {
-         double var2 = Math.hypot(var1.doubleValue, var1.doubleValue2);
-         boolean var4 = var2 > this.doubleValue * 1.25 && var2 > this.doubleValue + 25.0;
-         double var5 = 0.0;
-         double var7 = 0.0;
+         double hypot = Math.hypot(entry.doubleValue, entry.doubleValue2);
+         boolean flag = hypot > this.doubleValue * 1.25 && hypot > this.doubleValue + 25.0;
+         double x = 0.0;
+         double y = 0.0;
 
-         for (int var9 = this.intValue; var9 < this.entry3.length(); var9++) {
-            var5 += this.entry3.intValues[var9];
-            var7 += this.entry3.intValues2[var9];
+         for (int i = this.intValue; i < this.entry3.length(); i++) {
+            x += this.entry3.intValues[i];
+            y += this.entry3.intValues2[i];
          }
 
-         double var13 = Math.hypot(var5, var7);
-         boolean var11 = var2 >= 30.0 && var13 >= 15.0 && var5 * var1.doubleValue + var7 * var1.doubleValue2 < 0.0;
-         boolean var12 = this.flag && var1.doubleValue13 < 0.5;
-         return var4 || var11 || var12;
+         double d = Math.hypot(x, y);
+         boolean flag2 = hypot >= 30.0 && d >= 15.0 && x * entry.doubleValue + y * entry.doubleValue2 < 0.0;
+         boolean flag3 = this.flag && entry.doubleValue13 < 0.5;
+         return flag || flag2 || flag3;
       }
    }
 
-   private float[] method7986(ReplayState.Entry var1) {
-      float[] var2 = new float[this.intentSelector.intValue];
+   private float[] method7986(ReplayState.Entry entry) {
+      float[] floats = new float[this.intentSelector.intValue];
 
-      for (int var3 = 0; var3 < this.intentSelector.intValue; var3++) {
-         String var4 = this.intentSelector.texts[var3];
+      for (int i = 0; i < this.intentSelector.intValue; i++) {
+         String text = this.intentSelector.texts[i];
 
-         var2[var3] = (float)(switch (var4) {
-            case "center_yaw" -> var1.doubleValue;
-            case "center_pitch" -> var1.doubleValue2;
-            case "box_min_yaw" -> var1.doubleValue3;
-            case "box_max_yaw" -> var1.doubleValue4;
-            case "box_min_pitch" -> var1.doubleValue5;
-            case "box_max_pitch" -> var1.doubleValue6;
-            case "center_yaw_change" -> var1.doubleValue7;
-            case "center_pitch_change" -> var1.doubleValue8;
-            case "yaw_drift" -> var1.doubleValue9;
-            case "pitch_drift" -> var1.doubleValue10;
-            case "sim_2t_yaw" -> var1.doubleValue11;
-            case "sim_2t_pitch" -> var1.doubleValue12;
-            case "inside" -> var1.doubleValue13;
-            case "distance" -> var1.doubleValue14;
-            case "target_motion_x" -> var1.doubleValue15;
-            case "target_motion_y" -> var1.doubleValue16;
-            case "target_motion_z" -> var1.doubleValue17;
-            case "player_motion_x" -> var1.doubleValue18;
-            case "player_motion_y" -> var1.doubleValue19;
-            case "player_motion_z" -> var1.doubleValue20;
+         floats[i] = (float)(switch (text) {
+            case "center_yaw" -> entry.doubleValue;
+            case "center_pitch" -> entry.doubleValue2;
+            case "box_min_yaw" -> entry.doubleValue3;
+            case "box_max_yaw" -> entry.doubleValue4;
+            case "box_min_pitch" -> entry.doubleValue5;
+            case "box_max_pitch" -> entry.doubleValue6;
+            case "center_yaw_change" -> entry.doubleValue7;
+            case "center_pitch_change" -> entry.doubleValue8;
+            case "yaw_drift" -> entry.doubleValue9;
+            case "pitch_drift" -> entry.doubleValue10;
+            case "sim_2t_yaw" -> entry.doubleValue11;
+            case "sim_2t_pitch" -> entry.doubleValue12;
+            case "inside" -> entry.doubleValue13;
+            case "distance" -> entry.doubleValue14;
+            case "target_motion_x" -> entry.doubleValue15;
+            case "target_motion_y" -> entry.doubleValue16;
+            case "target_motion_z" -> entry.doubleValue17;
+            case "player_motion_x" -> entry.doubleValue18;
+            case "player_motion_y" -> entry.doubleValue19;
+            case "player_motion_z" -> entry.doubleValue20;
             case "prev_cmd_yaw" -> this.intValue3;
             case "prev_cmd_pitch" -> this.intValue4;
             case "rest_run_so_far_log" -> this.intValue5;
             case "in_gesture" -> this.intValue3 == 0 && this.intValue4 == 0 ? 0.0 : 1.0;
-            default -> throw new IllegalStateException("unknown selector input " + this.intentSelector.texts[var3]);
+            default -> throw new IllegalStateException("unknown selector input " + this.intentSelector.texts[i]);
          });
       }
 
-      return var2;
+      return floats;
    }
 
-   private double[] method7987(float[][] var1) {
-      float[] var2 = new float[var1.length];
+   private double[] method7987(float[][] floatses) {
+      float[] floatValues = new float[floatses.length];
 
-      for (int var3 = 0; var3 < var1.length; var3++) {
-         var2[var3] = var1[var3][0];
+      for (int i = 0; i < floatses.length; i++) {
+         floatValues[i] = floatses[i][0];
       }
 
-      int var6 = this.method7989(var2, 1.0);
-      double[] var4 = new double[4];
+      int n = this.method7989(floatValues, 1.0);
+      double[] doubles = new double[4];
 
-      for (int var5 = 0; var5 < var4.length; var5++) {
-         var4[var5] = var1[var6][1 + var5];
+      for (int i = 0; i < doubles.length; i++) {
+         doubles[i] = floatses[n][1 + i];
       }
 
-      return var4;
+      return doubles;
    }
 
-   private double[] method7988(double[] var1, ReplayState.Entry var2) {
-      double var3 = Math.max(Math.expm1(var1[2]), 1.0);
-      double var5 = Math.max(var3 - 2.0, 0.0);
-      double var7 = var2.doubleValue11 + var2.doubleValue9 * var5;
-      double var9 = var2.doubleValue12 + var2.doubleValue10 * var5;
+   private double[] method7988(double[] doubles, ReplayState.Entry entry) {
+      double d = Math.max(Math.expm1(doubles[2]), 1.0);
+      double d2 = Math.max(d - 2.0, 0.0);
+      double sign = entry.doubleValue11 + entry.doubleValue9 * d2;
+      double sign2 = entry.doubleValue12 + entry.doubleValue10 * d2;
       return new double[]{
-         var1[0] + IntentSelector.method7316((float)var7),
-         var1[1] + IntentSelector.method7316((float)var9),
-         var1[2],
-         var1[3],
+         doubles[0] + IntentSelector.method7316((float)sign),
+         doubles[1] + IntentSelector.method7316((float)sign2),
+         doubles[2],
+         doubles[3],
          0.0,
          0.0,
-         IntentSelector.method7316((float)(var2.doubleValue9 * var3)),
-         IntentSelector.method7316((float)(var2.doubleValue10 * var3))
+         IntentSelector.method7316((float)(entry.doubleValue9 * d)),
+         IntentSelector.method7316((float)(entry.doubleValue10 * d))
       };
    }
 
-   private int method7989(float[] var1, double var2) {
-      double var4 = Double.NEGATIVE_INFINITY;
+   private int method7989(float[] floatValues, double d) {
+      double d2 = Double.NEGATIVE_INFINITY;
 
-      for (float var9 : var1) {
-         var4 = Math.max(var4, (double)var9);
+      for (float floatValue : floatValues) {
+         d2 = Math.max(d2, (double)floatValue);
       }
 
-      double[] var14 = new double[var1.length];
-      double var15 = 0.0;
+      double[] doubles = new double[floatValues.length];
+      double d3 = 0.0;
 
-      for (int var16 = 0; var16 < var1.length; var16++) {
-         var14[var16] = Math.exp((var1[var16] - var4) / var2);
-         var15 += var14[var16];
+      for (int i = 0; i < floatValues.length; i++) {
+         doubles[i] = Math.exp((floatValues[i] - d2) / d);
+         d3 += doubles[i];
       }
 
-      double var17 = this.random.nextDouble() * var15;
-      double var11 = 0.0;
+      double d4 = this.random.nextDouble() * d3;
+      double d5 = 0.0;
 
-      for (int var13 = 0; var13 < var1.length; var13++) {
-         var11 += var14[var13];
-         if (var17 <= var11) {
-            return var13;
+      for (int i = 0; i < floatValues.length; i++) {
+         d5 += doubles[i];
+         if (d4 <= d5) {
+            return i;
          }
       }
 
-      return var1.length - 1;
+      return floatValues.length - 1;
    }
 
-   private static int method7990(float[] var0) {
-      int var1 = 0;
+   private static int method7990(float[] floats) {
+      int n = 0;
 
-      for (int var2 = 1; var2 < var0.length; var2++) {
-         if (var0[var2] > var0[var1]) {
-            var1 = var2;
+      for (int i = 1; i < floats.length; i++) {
+         if (floats[i] > floats[n]) {
+            n = i;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private void method7991(int var1, int var2) {
-      this.intValue3 = var1;
-      this.intValue4 = var2;
-      this.intValue5 = var1 == 0 && var2 == 0 ? this.intValue5 + 1 : 0;
+   private void method7991(int intValue, int n) {
+      this.intValue3 = intValue;
+      this.intValue4 = n;
+      this.intValue5 = intValue == 0 && n == 0 ? this.intValue5 + 1 : 0;
    }
 
-   private static double method7992(double var0) {
-      return 1.0 / (1.0 + Math.exp(-var0));
+   private static double method7992(double d) {
+      return 1.0 / (1.0 + Math.exp(-d));
    }
 
-   private static double method7993(double var0, double var2, double var4) {
-      return Math.max(var2, Math.min(var4, var0));
+   private static double method7993(double d, double d2, double d3) {
+      return Math.max(d2, Math.min(d3, d));
    }
 
    public static final class Entry {

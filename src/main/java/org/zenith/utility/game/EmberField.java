@@ -20,137 +20,137 @@ public final class EmberField {
    private float floatValue3;
 
    public EmberField() {
-      ArrayList var1 = new ArrayList();
+      ArrayList arrayList = new ArrayList();
 
-      for (byte var2 = -1; var2 <= 1; var2 += 2) {
-         for (int var3 = 0; var3 < 5; var3++) {
-            float var4 = var3 / 4.0F;
-            double var5 = -0.15 + var4 * 1.45;
-            EmberField.Entry var7 = new EmberField.Entry();
-            var7.doubleValue = 1.36 - var4 * 0.05;
-            var7.doubleValue2 = 0.15;
-            var7.doubleValue3 = var2 * 0.12;
-            var7.doubleValue4 = 0.55;
-            var7.doubleValue5 = var2 * (Math.sin(var5) * 1.15 + 0.25);
-            var7.doubleValue6 = Math.cos(var5) * 0.95;
-            var7.doubleValue7 = -0.45 - var4 * 0.25;
-            var7.doubleValue8 = 2.15 - var4 * 0.45;
-            var7.doubleValue9 = 0.085 - var4 * 0.01;
-            var7.doubleValue10 = 0.16;
-            var7.doubleValue11 = 0.1;
-            var7.doubleValue12 = 2.6;
-            var7.floatValue = var2 * 1.7F + var3 * 0.9F;
-            var1.add(var7);
+      for (byte i = -1; i <= 1; i += 2) {
+         for (int j = 0; j < 5; j++) {
+            float f = j / 4.0F;
+            double d = -0.15 + f * 1.45;
+            EmberField.Entry entry = new EmberField.Entry();
+            entry.doubleValue = 1.36 - f * 0.05;
+            entry.doubleValue2 = 0.15;
+            entry.doubleValue3 = i * 0.12;
+            entry.doubleValue4 = 0.55;
+            entry.doubleValue5 = i * (Math.sin(d) * 1.15 + 0.25);
+            entry.doubleValue6 = Math.cos(d) * 0.95;
+            entry.doubleValue7 = -0.45 - f * 0.25;
+            entry.doubleValue8 = 2.15 - f * 0.45;
+            entry.doubleValue9 = 0.085 - f * 0.01;
+            entry.doubleValue10 = 0.16;
+            entry.doubleValue11 = 0.1;
+            entry.doubleValue12 = 2.6;
+            entry.floatValue = i * 1.7F + j * 0.9F;
+            arrayList.add(entry);
          }
       }
 
-      this.entrys = (EmberField.Entry[])var1.toArray(new EmberField.Entry[0]);
+      this.entrys = (EmberField.Entry[])arrayList.toArray(new EmberField.Entry[0]);
    }
 
-   public void method7018(Player var1, float var2, float var3, double var4, float var6) {
-      Vec3 var7 = var1.getPosition(var2);
-      float var8 = Mth.rotLerp(var2, var1.yBodyRotO, var1.yBodyRot);
-      double var9 = Math.toRadians(var8);
-      double var11 = -Math.sin(var9);
-      double var13 = Math.cos(var9);
-      double var15 = -Math.cos(var9);
-      double var17 = -Math.sin(var9);
-      double var19 = var1.isCrouching() ? -0.3 : 0.0;
-      float var21 = (float)(System.currentTimeMillis() - this.longValue) / 1000.0F;
-      this.floatValue = Mth.clamp(var21 / 0.6F, 0.0F, 1.0F);
-      this.floatValue2 = Math.max(0.0F, this.floatValue2 - var3 * 1.4F);
-      this.floatValue3 = var3;
+   public void method7018(Player player, float floatValue, float f, double d, float f2) {
+      Vec3 position = player.getPosition(floatValue);
+      float rotLerp = Mth.rotLerp(floatValue, player.yBodyRotO, player.yBodyRot);
+      double d2 = Math.toRadians(rotLerp);
+      double d3 = -Math.sin(d2);
+      double d4 = Math.cos(d2);
+      double d5 = -Math.cos(d2);
+      double d6 = -Math.sin(d2);
+      double d7 = player.isCrouching() ? -0.3 : 0.0;
+      float f3 = (float)(System.currentTimeMillis() - this.longValue) / 1000.0F;
+      this.floatValue = Mth.clamp(f3 / 0.6F, 0.0F, 1.0F);
+      this.floatValue2 = Math.max(0.0F, this.floatValue2 - f * 1.4F);
+      this.floatValue3 = f;
 
-      for (EmberField.Entry var25 : this.entrys) {
-         System.arraycopy(var25.doubleValues, 0, var25.doubleValues4, 0, 12);
-         System.arraycopy(var25.doubleValues2, 0, var25.doubleValues5, 0, 12);
-         System.arraycopy(var25.doubleValues3, 0, var25.doubleValues6, 0, 12);
-         double var26 = var7.x - var11 * var25.doubleValue2 + var15 * var25.doubleValue3;
-         double var28 = var7.y + var25.doubleValue + var19;
-         double var30 = var7.z - var13 * var25.doubleValue2 + var17 * var25.doubleValue3;
-         double var32 = var25.doubleValue5 * (1.0 + 0.4 * this.floatValue2);
-         double var34 = -var11 * var25.doubleValue4 + var15 * var32;
-         double var36 = var25.doubleValue6 + 0.25 * this.floatValue2;
-         double var38 = -var13 * var25.doubleValue4 + var17 * var32;
-         double var40 = Math.sqrt(var34 * var34 + var36 * var36 + var38 * var38);
-         var34 /= var40;
-         var36 /= var40;
-         var38 /= var40;
-         double var42 = -var38;
-         double var46 = Math.sqrt(var42 * var42 + var34 * var34);
-         double var44;
-         if (var46 < 1.0E-5) {
-            var42 = var15;
-            var44 = var17;
+      for (EmberField.Entry entry : this.entrys) {
+         System.arraycopy(entry.doubleValues, 0, entry.doubleValues4, 0, 12);
+         System.arraycopy(entry.doubleValues2, 0, entry.doubleValues5, 0, 12);
+         System.arraycopy(entry.doubleValues3, 0, entry.doubleValues6, 0, 12);
+         double d8 = position.x - d3 * entry.doubleValue2 + d5 * entry.doubleValue3;
+         double d9 = position.y + entry.doubleValue + d7;
+         double d10 = position.z - d4 * entry.doubleValue2 + d6 * entry.doubleValue3;
+         double d11 = entry.doubleValue5 * (1.0 + 0.4 * this.floatValue2);
+         double d12 = -d3 * entry.doubleValue4 + d5 * d11;
+         double d13 = entry.doubleValue6 + 0.25 * this.floatValue2;
+         double d14 = -d4 * entry.doubleValue4 + d6 * d11;
+         double d15 = Math.sqrt(d12 * d12 + d13 * d13 + d14 * d14);
+         d12 /= d15;
+         d13 /= d15;
+         d14 /= d15;
+         double d16 = -d14;
+         double d17 = Math.sqrt(d16 * d16 + d12 * d12);
+         double d18;
+         if (d17 < 1.0E-5) {
+            d16 = d5;
+            d18 = d6;
          } else {
-            var42 /= var46;
-            var44 = var34 / var46;
+            d16 /= d17;
+            d18 = d12 / d17;
          }
 
-         double var48 = var25.doubleValue8 * var6 * this.floatValue / 11.0;
-         double var50 = var26;
-         double var52 = var28;
-         double var54 = var30;
-         var25.doubleValues[0] = var26;
-         var25.doubleValues2[0] = var28;
-         var25.doubleValues3[0] = var30;
+         double d19 = entry.doubleValue8 * f2 * this.floatValue / 11.0;
+         double d20 = d8;
+         double d21 = d9;
+         double d22 = d10;
+         entry.doubleValues[0] = d8;
+         entry.doubleValues2[0] = d9;
+         entry.doubleValues3[0] = d10;
 
-         for (int var56 = 1; var56 < 12; var56++) {
-            double var57 = var56 / 11.0;
-            double var59 = Math.pow(var57, 1.15);
-            double var61 = var25.doubleValue10 * Math.sin(var57 * 5.2 - var4 * 2.1 * var25.doubleValue12 + var25.floatValue) * var59;
-            double var63 = var25.doubleValue11 * Math.sin(var57 * 4.1 - var4 * 1.6 * var25.doubleValue12 + var25.floatValue * 1.9) * var59;
-            double var65 = var25.doubleValue7 * Math.pow(var57, 1.3) + var61;
-            double var67 = Math.cos(var65);
-            double var69 = Math.sin(var65);
-            double var71 = var34 * var67 + -var44 * var36 * var69;
-            double var73 = var36 * var67 + (var44 * var34 - var42 * var38) * var69;
-            double var75 = var38 * var67 + var42 * var36 * var69;
-            double var77 = Math.cos(var63);
-            double var79 = Math.sin(var63);
-            double var81 = var71 * var77 + var75 * var79;
-            double var83 = -var71 * var79 + var75 * var77;
-            var50 += var81 * var48;
-            var52 += var73 * var48;
-            var54 += var83 * var48;
-            var25.doubleValues[var56] = var50;
-            var25.doubleValues2[var56] = var52;
-            var25.doubleValues3[var56] = var54;
+         for (int i = 1; i < 12; i++) {
+            double d23 = i / 11.0;
+            double d24 = Math.pow(d23, 1.15);
+            double d25 = entry.doubleValue10 * Math.sin(d23 * 5.2 - d * 2.1 * entry.doubleValue12 + entry.floatValue) * d24;
+            double d26 = entry.doubleValue11 * Math.sin(d23 * 4.1 - d * 1.6 * entry.doubleValue12 + entry.floatValue * 1.9) * d24;
+            double d27 = entry.doubleValue7 * Math.pow(d23, 1.3) + d25;
+            double d28 = Math.cos(d27);
+            double d29 = Math.sin(d27);
+            double d30 = d12 * d28 + -d18 * d13 * d29;
+            double d31 = d13 * d28 + (d18 * d12 - d16 * d14) * d29;
+            double d32 = d14 * d28 + d16 * d13 * d29;
+            double d33 = Math.cos(d26);
+            double d34 = Math.sin(d26);
+            double d35 = d30 * d33 + d32 * d34;
+            double d36 = -d30 * d34 + d32 * d33;
+            d20 += d35 * d19;
+            d21 += d31 * d19;
+            d22 += d36 * d19;
+            entry.doubleValues[i] = d20;
+            entry.doubleValues2[i] = d21;
+            entry.doubleValues3[i] = d22;
          }
 
-         double var89 = method7022(var25.doubleValues[0] - var25.doubleValues4[0])
-            + method7022(var25.doubleValues2[0] - var25.doubleValues5[0])
-            + method7022(var25.doubleValues3[0] - var25.doubleValues6[0]);
-         if (!var25.initialized || var89 > 9.0) {
-            System.arraycopy(var25.doubleValues, 0, var25.doubleValues4, 0, 12);
-            System.arraycopy(var25.doubleValues2, 0, var25.doubleValues5, 0, 12);
-            System.arraycopy(var25.doubleValues3, 0, var25.doubleValues6, 0, 12);
-            var25.initialized = true;
+         double d23 = method7022(entry.doubleValues[0] - entry.doubleValues4[0])
+            + method7022(entry.doubleValues2[0] - entry.doubleValues5[0])
+            + method7022(entry.doubleValues3[0] - entry.doubleValues6[0]);
+         if (!entry.initialized || d23 > 9.0) {
+            System.arraycopy(entry.doubleValues, 0, entry.doubleValues4, 0, 12);
+            System.arraycopy(entry.doubleValues2, 0, entry.doubleValues5, 0, 12);
+            System.arraycopy(entry.doubleValues3, 0, entry.doubleValues6, 0, 12);
+            entry.initialized = true;
          }
       }
    }
 
-   public void method7019(EmberShards var1, float var2, float var3) {
-      if (!(var3 <= 0.0F)) {
-         float var4 = this.floatValue3 > 1.0E-4F ? 1.0F / this.floatValue3 : 0.0F;
+   public void method7019(EmberShards emberShards, float f, float f2) {
+      if (!(f2 <= 0.0F)) {
+         float f3 = this.floatValue3 > 1.0E-4F ? 1.0F / this.floatValue3 : 0.0F;
 
-         for (EmberField.Entry var8 : this.entrys) {
-            var8.floatValue2 = var8.floatValue2 + var2 * 9.0F * var3 * this.floatValue;
+         for (EmberField.Entry entry : this.entrys) {
+            entry.floatValue2 = entry.floatValue2 + f * 9.0F * f2 * this.floatValue;
 
-            while (var8.floatValue2 >= 1.0F) {
-               var8.floatValue2--;
-               int var9 = 3 + this.random.nextInt(9);
-               double var10 = var8.doubleValue9;
-               double var12 = method7021((var8.doubleValues[var9] - var8.doubleValues4[var9]) * var4) * 0.25 + this.random.nextGaussian() * 0.25;
-               double var14 = method7021((var8.doubleValues2[var9] - var8.doubleValues5[var9]) * var4) * 0.25 + 0.35 + this.random.nextDouble() * 0.3;
-               double var16 = method7021((var8.doubleValues3[var9] - var8.doubleValues6[var9]) * var4) * 0.25 + this.random.nextGaussian() * 0.25;
-               var1.method7578(
-                  var8.doubleValues[var9] + this.random.nextGaussian() * var10,
-                  var8.doubleValues2[var9] + this.random.nextGaussian() * var10,
-                  var8.doubleValues3[var9] + this.random.nextGaussian() * var10,
-                  var12,
-                  var14,
-                  var16,
+            while (entry.floatValue2 >= 1.0F) {
+               entry.floatValue2--;
+               int n = 3 + this.random.nextInt(9);
+               double d = entry.doubleValue9;
+               double d2 = method7021((entry.doubleValues[n] - entry.doubleValues4[n]) * f3) * 0.25 + this.random.nextGaussian() * 0.25;
+               double d3 = method7021((entry.doubleValues2[n] - entry.doubleValues5[n]) * f3) * 0.25 + 0.35 + this.random.nextDouble() * 0.3;
+               double d4 = method7021((entry.doubleValues3[n] - entry.doubleValues6[n]) * f3) * 0.25 + this.random.nextGaussian() * 0.25;
+               emberShards.method7578(
+                  entry.doubleValues[n] + this.random.nextGaussian() * d,
+                  entry.doubleValues2[n] + this.random.nextGaussian() * d,
+                  entry.doubleValues3[n] + this.random.nextGaussian() * d,
+                  d2,
+                  d3,
+                  d4,
                   0.016F + this.random.nextFloat() * 0.03F
                );
             }
@@ -158,17 +158,17 @@ public final class EmberField {
       }
    }
 
-   public boolean method7020(EmberShards var1, LivingEntity var2, int var3, float var4) {
+   public boolean method7020(EmberShards emberShards, LivingEntity referent, int n, float floatValue) {
       if (this.floatValue < 0.6F) {
          return false;
       } else {
-         var var5 = new ArrayList<>(List.of(this.entrys));
-         Collections.shuffle(var5, this.random);
-         int var6 = Math.min(var5.size(), 2 + var3 * 2);
+         var list = new ArrayList<>(List.of(this.entrys));
+         Collections.shuffle(list, this.random);
+         int n2 = Math.min(list.size(), 2 + n * 2);
 
-         for (int var7 = 0; var7 < var6; var7++) {
-            EmberField.Entry var8 = (EmberField.Entry)var5.get(var7);
-            var1.method7579(var8.doubleValues[11], var8.doubleValues2[11], var8.doubleValues3[11], var2, var7 * 0.045F, var4);
+         for (int i = 0; i < n2; i++) {
+            EmberField.Entry entry = (EmberField.Entry)list.get(i);
+            emberShards.method7579(entry.doubleValues[11], entry.doubleValues2[11], entry.doubleValues3[11], referent, i * 0.045F, floatValue);
          }
 
          this.floatValue2 = 1.0F;
@@ -176,12 +176,12 @@ public final class EmberField {
       }
    }
 
-   private static double method7021(double var0) {
-      return Math.max(-20.0, Math.min(20.0, var0));
+   private static double method7021(double d) {
+      return Math.max(-20.0, Math.min(20.0, d));
    }
 
-   private static double method7022(double var0) {
-      return var0 * var0;
+   private static double method7022(double d) {
+      return d * d;
    }
 
    private static final class Entry {

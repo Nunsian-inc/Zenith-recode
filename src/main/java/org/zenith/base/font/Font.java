@@ -15,51 +15,51 @@ public class Font {
       return MsdfRenderer.textLineOffset(this.font, this.size);
    }
 
-   public float getStringHeight(String var1) {
-      float var2 = 0.0F;
-      float var3 = 0.0F;
+   public float getStringHeight(String str) {
+      float height = 0.0F;
+      float f = 0.0F;
 
-      for (char var7 : (var1.isEmpty() ? " " : var1).toCharArray()) {
-         if (var7 == '\n') {
-            var2 = var2 == 0.0F ? this.height() : var2;
-            var3 += var2;
-            var2 = 0.0F;
+      for (char c : (str.isEmpty() ? " " : str).toCharArray()) {
+         if (c == '\n') {
+            height = height == 0.0F ? this.height() : height;
+            f += height;
+            height = 0.0F;
          } else {
-            var2 = Math.max(this.height(), var2);
+            height = Math.max(this.height(), height);
          }
       }
 
-      return var2 + var3;
+      return height + f;
    }
 
-   public float width(String var1) {
-      return this.font.getWidth(var1, this.size);
+   public float width(String text) {
+      return this.font.getWidth(text, this.size);
    }
 
-   public float[] inkBounds(String var1) {
-      if (var1 != null && !var1.isEmpty()) {
-         MsdfGlyph var2 = this.font.getGlyph(var1.charAt(0));
-         return var2 == null ? null : new float[]{var2.getInkWidth(this.size), var2.getInkHeight(this.size), var2.getInkTop(this.size)};
+   public float[] inkBounds(String text) {
+      if (text != null && !text.isEmpty()) {
+         MsdfGlyph glyph = this.font.getGlyph(text.charAt(0));
+         return glyph == null ? null : new float[]{glyph.getInkWidth(this.size), glyph.getInkHeight(this.size), glyph.getInkTop(this.size)};
       } else {
          return null;
       }
    }
 
-   public float width(Component var1) {
-      return this.font.getTextWidth(var1, this.size);
+   public float width(Component text) {
+      return this.font.getTextWidth(text, this.size);
    }
 
-   public String clip(String var1, float var2) {
-      if (var1 == null || var1.isEmpty()) {
-         return var1;
-      } else if (var2 <= 0.0F) {
+   public String clip(String name, float width) {
+      if (name == null || name.isEmpty()) {
+         return name;
+      } else if (width <= 0.0F) {
          return "";
-      } else if (this.width(var1) <= var2) {
-         return var1;
+      } else if (this.width(name) <= width) {
+         return name;
       } else {
-         float var3 = this.width("…");
-         int var4 = this.font.fitPrefix(var1, this.size, var3, var2);
-         return var4 == 0 ? "" : var1.substring(0, var4) + "…";
+         float f = this.width("…");
+         int fitPrefix = this.font.fitPrefix(name, this.size, f, width);
+         return fitPrefix == 0 ? "" : name.substring(0, fitPrefix) + "…";
       }
    }
 
@@ -74,8 +74,8 @@ public class Font {
    }
 
    @Generated
-   public Font(MsdfFont var1, float var2) {
-      this.font = var1;
-      this.size = var2;
+   public Font(MsdfFont font, float size) {
+      this.font = font;
+      this.size = size;
    }
 }

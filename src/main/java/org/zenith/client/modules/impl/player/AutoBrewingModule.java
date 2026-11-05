@@ -134,7 +134,7 @@ public final class AutoBrewingModule extends Module {
    }
 
    @EventTarget
-   public void method4268(Event5 var1) {
+   public void method4268(Event5 event) {
       if (this.rotation != null) {
          Zenith.getInstance().getRotationManager().method7849(new RotationRequest(this.rotation, () -> {
             BcCameraTestnerv var1x = Zenith.getInstance().getRotationManager().getBcCameraTestnerv();
@@ -144,7 +144,7 @@ public final class AutoBrewingModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null) {
          switch (this.type2) {
             case IDLE:
@@ -196,7 +196,7 @@ public final class AutoBrewingModule extends Module {
 
    private void method4269() {
       this.intValue = this.method4273();
-      int var1 = this.intValue * 3;
+      int n = this.intValue * 3;
       if (this.intValue <= 0) {
          if (!this.flag) {
             this.flag = true;
@@ -207,7 +207,7 @@ public final class AutoBrewingModule extends Module {
             this.setToggled(false);
          }
       } else {
-         ChatLogger.method2019("Ресурсов хватает на " + var1 + " зелий (" + this.intValue + " варки)");
+         ChatLogger.method2019("Ресурсов хватает на " + n + " зелий (" + this.intValue + " варки)");
          this.type2 = AutoBrewingModule.Type2.SCAN_STANDS;
       }
    }
@@ -223,10 +223,10 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4272() {
-      AbstractContainerMenu var1 = mc.player.containerMenu;
-      if (var1 != null && !var1.getCarried().isEmpty()) {
-         this.method4309(var1);
-         if (!var1.getCarried().isEmpty()) {
+      AbstractContainerMenu containerMenu = mc.player.containerMenu;
+      if (containerMenu != null && !containerMenu.getCarried().isEmpty()) {
+         this.method4309(containerMenu);
+         if (!containerMenu.getCarried().isEmpty()) {
             return;
          }
       }
@@ -235,54 +235,54 @@ public final class AutoBrewingModule extends Module {
    }
 
    private int method4273() {
-      int var1 = this.method4316() / 3;
+      int n = this.method4316() / 3;
 
-      for (Entry var3 : this.items4.entrySet()) {
-         var1 = Math.min(var1, this.method4317((Item)var3.getKey()) / (Integer)var3.getValue());
+      for (Entry entry : this.items4.entrySet()) {
+         n = Math.min(n, this.method4317((Item)entry.getKey()) / (Integer)entry.getValue());
       }
 
-      return var1;
+      return n;
    }
 
    private List<Item> method4274() {
       return AutoPotionBrewingEnum.method7(potion.get()).method6();
    }
 
-   private Map<Item, Integer> method4275(List<Item> var1) {
-      LinkedHashMap var2 = new LinkedHashMap();
-      this.method4276(var2, Items.BLAZE_POWDER, 1);
+   private Map<Item, Integer> method4275(List<Item> items) {
+      LinkedHashMap map = new LinkedHashMap();
+      this.method4276(map, Items.BLAZE_POWDER, 1);
 
-      for (Item var4 : var1) {
-         this.method4276(var2, var4, 1);
+      for (Item key : items) {
+         this.method4276(map, key, 1);
       }
 
-      return var2;
+      return map;
    }
 
-   private void method4276(Map<Item, Integer> var1, Item var2, int var3) {
-      var1.put(var2, var1.getOrDefault(var2, 0) + var3);
+   private void method4276(Map<Item, Integer> map, Item key, int n) {
+      map.put(key, map.getOrDefault(key, 0) + n);
    }
 
    private void method4277() {
-      ArrayList var1 = new ArrayList();
-      int var2;
-      if ((var2 = this.method4316()) < 3) {
-         var1.add(Items.POTION.getName(Items.POTION.getDefaultInstance()).getString() + " " + var2 + "/3");
+      ArrayList elements = new ArrayList();
+      int n;
+      if ((n = this.method4316()) < 3) {
+         elements.add(Items.POTION.getName(Items.POTION.getDefaultInstance()).getString() + " " + n + "/3");
       }
 
-      for (Entry var4 : this.items4.entrySet()) {
-         int var5 = this.method4317((Item)var4.getKey());
-         int var6 = (Integer)var4.getValue();
-         if (var5 < var6) {
-            var1.add(((Item)var4.getKey()).getName(((Item)var4.getKey()).getDefaultInstance()).getString() + " " + var5 + "/" + var6);
+      for (Entry entry : this.items4.entrySet()) {
+         int n2 = this.method4317((Item)entry.getKey());
+         int n3 = (Integer)entry.getValue();
+         if (n2 < n3) {
+            elements.add(((Item)entry.getKey()).getName(((Item)entry.getKey()).getDefaultInstance()).getString() + " " + n2 + "/" + n3);
          }
       }
 
-      String var7 = potion.getValue2().getName();
-      if (var1.isEmpty()) {
-         ChatLogger.method2019("Для зелья " + var7 + " ресурсов хватает");
+      String name = potion.getValue2().getName();
+      if (elements.isEmpty()) {
+         ChatLogger.method2019("Для зелья " + name + " ресурсов хватает");
       } else {
-         ChatLogger.method2021("Для зелья " + var7 + " не хватает: " + String.join(", ", var1));
+         ChatLogger.method2021("Для зелья " + name + " не хватает: " + String.join(", ", elements));
       }
    }
 
@@ -317,57 +317,57 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4281() {
-      ChestMenu var1 = this.method4305();
-      if (var1 == null) {
+      ChestMenu chestMenu = this.method4305();
+      if (chestMenu == null) {
          this.method4280();
       } else if (this.stopWatch.method7546(50L)) {
-         Slot var2 = this.method4282(var1);
-         if (var2 == null) {
+         Slot slot = this.method4282(chestMenu);
+         if (slot == null) {
             this.method4272();
             this.blockPos2 = null;
             this.method4279();
-         } else if (!this.method4284(var2.getItem())) {
+         } else if (!this.method4284(slot.getItem())) {
             this.method4272();
             this.blockPos2 = null;
             this.method4279();
          } else {
-            InventoryUtils.method905(var1.containerId, var2.index, 0, ContainerInput.QUICK_MOVE, false);
+            InventoryUtils.method905(chestMenu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, false);
             this.flag2 = true;
             this.stopWatch.reset();
          }
       }
    }
 
-   private Slot method4282(ChestMenu var1) {
-      int var2 = var1.getContainer().getContainerSize();
+   private Slot method4282(ChestMenu chestMenu) {
+      int containerSize = chestMenu.getContainer().getContainerSize();
 
-      for (int var3 = 0; var3 < var2; var3++) {
-         Slot var4 = var1.getSlot(var3);
-         if (this.method4283(var4.getItem())) {
-            return var4;
+      for (int i = 0; i < containerSize; i++) {
+         Slot slot = chestMenu.getSlot(i);
+         if (this.method4283(slot.getItem())) {
+            return slot;
          }
       }
 
       return null;
    }
 
-   private boolean method4283(ItemStack var1) {
-      if (!this.method4314(var1)) {
-         boolean var2;
+   private boolean method4283(ItemStack stack) {
+      if (!this.method4314(stack)) {
+         boolean containsKey;
          label20: {
-            var var10000 = this.items4;
-            Item var10001 = var1.getItem();
-            if (var10000 != null) {
-               if (var10000.isEmpty()) {
-                  var2 = false;
+            var map = this.items4;
+            Item item = stack.getItem();
+            if (map != null) {
+               if (map.isEmpty()) {
+                  containsKey = false;
                   break label20;
                }
             }
 
-            var2 = var10000.containsKey(var10001);
+            containsKey = map.containsKey(item);
          }
 
-         if (!var2) {
+         if (!containsKey) {
             return false;
          }
       }
@@ -375,10 +375,10 @@ public final class AutoBrewingModule extends Module {
       return true;
    }
 
-   private boolean method4284(ItemStack var1) {
-      for (int var2 = 0; var2 < 36; var2++) {
-         ItemStack var3 = mc.player.getInventory().getItem(var2);
-         if (var3.isEmpty() || this.method4312(var3, var1) && var3.getCount() < var3.getMaxStackSize()) {
+   private boolean method4284(ItemStack carried) {
+      for (int i = 0; i < 36; i++) {
+         ItemStack stack = mc.player.getInventory().getItem(i);
+         if (stack.isEmpty() || this.method4312(stack, carried) && stack.getCount() < stack.getMaxStackSize()) {
             return true;
          }
       }
@@ -394,14 +394,14 @@ public final class AutoBrewingModule extends Module {
    private void method4286() {
       this.items2.clear();
 
-      for (BlockPos var2 : UseItemUtils.method6506(mc.player.blockPosition(), 5.0F, 3.0F)) {
-         BlockPos var3 = var2.immutable();
-         if (this.method4320(mc.level.getBlockState(var3)) && this.method4319(var3) != null) {
-            this.items2.add(var3);
+      for (BlockPos pos : UseItemUtils.method6506(mc.player.blockPosition(), 5.0F, 3.0F)) {
+         BlockPos immutable = pos.immutable();
+         if (this.method4320(mc.level.getBlockState(immutable)) && this.method4319(immutable) != null) {
+            this.items2.add(immutable);
          }
       }
 
-      this.items2.sort(Comparator.comparingDouble(var0 -> net.minecraft.world.phys.Vec3.atCenterOf(var0).distanceToSqr(mc.player.getEyePosition())));
+      this.items2.sort(Comparator.comparingDouble(pos -> net.minecraft.world.phys.Vec3.atCenterOf(pos).distanceToSqr(mc.player.getEyePosition())));
    }
 
    private void method4287() {
@@ -418,25 +418,25 @@ public final class AutoBrewingModule extends Module {
       this.method4289(AutoBrewingModule.Type2.STORE_RESULTS, this::method4287);
    }
 
-   private void method4289(AutoBrewingModule.Type2 var1, Runnable var2) {
+   private void method4289(AutoBrewingModule.Type2 type2, Runnable runnable) {
       if (this.blockPos2 == null) {
-         var2.run();
+         runnable.run();
       } else if (mc.player.containerMenu instanceof ChestMenu) {
-         this.type2 = var1;
+         this.type2 = type2;
          this.rotation = null;
          this.stopWatch.reset();
       } else if (this.stopWatch.method7546(1500L)) {
          this.blockPos2 = null;
-         var2.run();
+         runnable.run();
       } else {
-         BlockHitResult var3 = this.method4319(this.blockPos2);
-         if (var3 == null) {
+         BlockHitResult blockHitResult = this.method4319(this.blockPos2);
+         if (blockHitResult == null) {
             this.blockPos2 = null;
-            var2.run();
+            runnable.run();
          } else {
-            this.rotation = RotationUtils.method6913(var3.getLocation());
+            this.rotation = RotationUtils.method6913(blockHitResult.getLocation());
             if (this.method4318(this.blockPos2) && this.stopWatch.method7546(50L)) {
-               UseItemUtils.method6514(var3, InteractionHand.MAIN_HAND);
+               UseItemUtils.method6514(blockHitResult, InteractionHand.MAIN_HAND);
                this.stopWatch.reset();
             }
          }
@@ -444,31 +444,31 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4290() {
-      ChestMenu var1 = this.method4305();
-      if (var1 == null) {
+      ChestMenu containerMenu = this.method4305();
+      if (containerMenu == null) {
          this.method4288();
       } else if (this.stopWatch.method7546(50L)) {
-         Slot var2 = this.method4313(var1, this::method4315);
-         if (var2 == null) {
+         Slot slot = this.method4313(containerMenu, this::method4315);
+         if (slot == null) {
             this.method4272();
             this.method4292();
-         } else if (!this.method4291(var1, var2.getItem())) {
+         } else if (!this.method4291(containerMenu, slot.getItem())) {
             this.method4272();
             this.blockPos2 = null;
             this.method4287();
          } else {
-            InventoryUtils.method905(var1.containerId, var2.index, 0, ContainerInput.QUICK_MOVE, false);
+            InventoryUtils.method905(containerMenu.containerId, slot.index, 0, ContainerInput.QUICK_MOVE, false);
             this.stopWatch.reset();
          }
       }
    }
 
-   private boolean method4291(ChestMenu var1, ItemStack var2) {
-      int var3 = var1.getContainer().getContainerSize();
+   private boolean method4291(ChestMenu containerMenu, ItemStack carried) {
+      int containerSize = containerMenu.getContainer().getContainerSize();
 
-      for (int var4 = 0; var4 < var3; var4++) {
-         ItemStack var5 = var1.getSlot(var4).getItem();
-         if (var5.isEmpty() || this.method4312(var5, var2) && var5.getCount() < var5.getMaxStackSize()) {
+      for (int i = 0; i < containerSize; i++) {
+         ItemStack stack = containerMenu.getSlot(i).getItem();
+         if (stack.isEmpty() || this.method4312(stack, carried) && stack.getCount() < stack.getMaxStackSize()) {
             return true;
          }
       }
@@ -490,14 +490,14 @@ public final class AutoBrewingModule extends Module {
    private void method4293() {
       this.items.clear();
 
-      for (BlockPos var2 : UseItemUtils.method6506(mc.player.blockPosition(), 5.0F, 3.0F)) {
-         BlockPos var3 = var2.immutable();
-         if (mc.level.getBlockState(var3).is(Blocks.BREWING_STAND) && this.method4319(var3) != null) {
-            this.items.add(var3);
+      for (BlockPos pos : UseItemUtils.method6506(mc.player.blockPosition(), 5.0F, 3.0F)) {
+         BlockPos immutable = pos.immutable();
+         if (mc.level.getBlockState(immutable).is(Blocks.BREWING_STAND) && this.method4319(immutable) != null) {
+            this.items.add(immutable);
          }
       }
 
-      this.items.sort(Comparator.comparingDouble(var0 -> net.minecraft.world.phys.Vec3.atCenterOf(var0).distanceToSqr(mc.player.getEyePosition())));
+      this.items.sort(Comparator.comparingDouble(pos -> net.minecraft.world.phys.Vec3.atCenterOf(pos).distanceToSqr(mc.player.getEyePosition())));
       if (this.items.isEmpty()) {
          ChatLogger.method2021("Рядом нет доступных зельеварок");
          this.setToggled(false);
@@ -572,15 +572,15 @@ public final class AutoBrewingModule extends Module {
          this.type2 = AutoBrewingModule.Type2.SCAN_STANDS;
          this.rotation = null;
       } else {
-         BlockHitResult var1 = this.method4319(this.blockPos);
-         if (var1 == null) {
+         BlockHitResult blockHitResult = this.method4319(this.blockPos);
+         if (blockHitResult == null) {
             this.blockPos = null;
             this.type2 = AutoBrewingModule.Type2.SCAN_STANDS;
             this.rotation = null;
          } else {
-            this.rotation = RotationUtils.method6913(var1.getLocation());
+            this.rotation = RotationUtils.method6913(blockHitResult.getLocation());
             if (this.method4318(this.blockPos) && this.stopWatch.method7546(50L)) {
-               UseItemUtils.method6514(var1, InteractionHand.MAIN_HAND);
+               UseItemUtils.method6514(blockHitResult, InteractionHand.MAIN_HAND);
                this.stopWatch.reset();
             }
          }
@@ -588,38 +588,38 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4299() {
-      BrewingStandMenu var1 = this.method4304();
-      if (var1 == null) {
+      BrewingStandMenu containerMenu = this.method4304();
+      if (containerMenu == null) {
          this.method4271();
       } else if (this.stopWatch.method7546(75L)) {
-         if (this.type3 == AutoBrewingModule.Type3.IDLE && !var1.getCarried().isEmpty()) {
-            this.method4309(var1);
+         if (this.type3 == AutoBrewingModule.Type3.IDLE && !containerMenu.getCarried().isEmpty()) {
+            this.method4309(containerMenu);
             this.stopWatch.reset();
          } else if (this.intValue5 >= CONST_intValues.length) {
-            int var4;
-            if ((var4 = this.method4306(var1)) != -1) {
-               this.intValue5 = var4;
+            int n;
+            if ((n = this.method4306(containerMenu)) != -1) {
+               this.intValue5 = n;
                this.stopWatch.reset();
             } else {
                this.type2 = AutoBrewingModule.Type2.LOAD_FUEL;
                this.stopWatch.reset();
             }
          } else {
-            int var2 = CONST_intValues[this.intValue5];
+            int index = CONST_intValues[this.intValue5];
             if (this.type3 != AutoBrewingModule.Type3.IDLE) {
-               this.method4307(var1, this::method4314, var2);
+               this.method4307(containerMenu, this::method4314, index);
                this.stopWatch.reset();
             } else {
-               ItemStack var3 = var1.getSlot(var2).getItem();
-               if (this.method4314(var3)) {
+               ItemStack stack = containerMenu.getSlot(index).getItem();
+               if (this.method4314(stack)) {
                   this.method4308();
                   this.intValue5++;
                   this.stopWatch.reset();
-               } else if (!var3.isEmpty()) {
+               } else if (!stack.isEmpty()) {
                   this.intValue6 = 0;
                   this.type2 = AutoBrewingModule.Type2.TAKE_RESULT;
                   this.stopWatch.reset();
-               } else if (!this.method4307(var1, this::method4314, var2)) {
+               } else if (!this.method4307(containerMenu, this::method4314, index)) {
                   ChatLogger.method2021("Не найдены бутылочки с водой");
                   this.method4270();
                } else {
@@ -631,27 +631,27 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4300() {
-      BrewingStandMenu var1 = this.method4304();
-      if (var1 == null) {
+      BrewingStandMenu containerMenu = this.method4304();
+      if (containerMenu == null) {
          this.method4271();
       } else if (this.stopWatch.method7546(50L)) {
-         if (this.type3 == AutoBrewingModule.Type3.IDLE && !var1.getCarried().isEmpty()) {
-            this.method4309(var1);
+         if (this.type3 == AutoBrewingModule.Type3.IDLE && !containerMenu.getCarried().isEmpty()) {
+            this.method4309(containerMenu);
             this.stopWatch.reset();
          } else if (this.type3 != AutoBrewingModule.Type3.IDLE) {
-            this.method4307(var1, var0 -> var0.is(Items.BLAZE_POWDER), 4);
+            this.method4307(containerMenu, stack -> stack.is(Items.BLAZE_POWDER), 4);
             this.stopWatch.reset();
-         } else if (!var1.getSlot(4).getItem().isEmpty()) {
-            int var2;
-            if ((var2 = this.method4306(var1)) != -1) {
-               this.intValue5 = var2;
+         } else if (!containerMenu.getSlot(4).getItem().isEmpty()) {
+            int n;
+            if ((n = this.method4306(containerMenu)) != -1) {
+               this.intValue5 = n;
                this.type2 = AutoBrewingModule.Type2.LOAD_BOTTLES;
                this.stopWatch.reset();
             } else {
                this.method4308();
                this.type2 = AutoBrewingModule.Type2.LOAD_INGREDIENT;
             }
-         } else if (!this.method4307(var1, var0 -> var0.is(Items.BLAZE_POWDER), 4)) {
+         } else if (!this.method4307(containerMenu, stack -> stack.is(Items.BLAZE_POWDER), 4)) {
             ChatLogger.method2021("Не найдено топливо для зельеварки");
             this.method4270();
          } else {
@@ -661,25 +661,25 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4301() {
-      BrewingStandMenu var1 = this.method4304();
-      if (var1 == null) {
+      BrewingStandMenu containerMenu = this.method4304();
+      if (containerMenu == null) {
          this.method4271();
       } else if (this.stopWatch.method7546(50L)) {
-         if (this.type3 == AutoBrewingModule.Type3.IDLE && !var1.getCarried().isEmpty()) {
-            this.method4309(var1);
+         if (this.type3 == AutoBrewingModule.Type3.IDLE && !containerMenu.getCarried().isEmpty()) {
+            this.method4309(containerMenu);
             this.stopWatch.reset();
          } else if (this.intValue4 >= this.items3.size()) {
             this.method4296();
          } else {
-            Item var2 = this.items3.get(this.intValue4);
+            Item rawType = this.items3.get(this.intValue4);
             if (this.type3 != AutoBrewingModule.Type3.IDLE) {
-               this.method4307(var1, var1x -> var1x.is(var2), 3);
+               this.method4307(containerMenu, var1x -> var1x.is(rawType), 3);
                this.stopWatch.reset();
-            } else if (!var1.getSlot(3).getItem().isEmpty()) {
+            } else if (!containerMenu.getSlot(3).getItem().isEmpty()) {
                this.method4308();
                this.method4296();
-            } else if (!this.method4307(var1, var1x -> var1x.is(var2), 3)) {
-               ChatLogger.method2021("Не найден ингредиент: " + var2.getName(var2.getDefaultInstance()).getString());
+            } else if (!this.method4307(containerMenu, var1x -> var1x.is(rawType), 3)) {
+               ChatLogger.method2021("Не найден ингредиент: " + rawType.getName(rawType.getDefaultInstance()).getString());
                this.method4270();
             } else {
                this.stopWatch.reset();
@@ -702,19 +702,19 @@ public final class AutoBrewingModule extends Module {
    }
 
    private void method4303() {
-      BrewingStandMenu var1 = this.method4304();
-      if (var1 == null) {
+      BrewingStandMenu brewingStandMenu = this.method4304();
+      if (brewingStandMenu == null) {
          this.method4271();
       } else if (this.stopWatch.method7546(50L)) {
          if (this.intValue6 >= CONST_intValues.length) {
             this.method4296();
          } else {
-            int var2 = CONST_intValues[this.intValue6];
-            if (var1.getSlot(var2).getItem().isEmpty()) {
+            int index = CONST_intValues[this.intValue6];
+            if (brewingStandMenu.getSlot(index).getItem().isEmpty()) {
                this.intValue6++;
                this.stopWatch.reset();
             } else {
-               InventoryUtils.method905(var1.containerId, var2, 0, ContainerInput.QUICK_MOVE, false);
+               InventoryUtils.method905(brewingStandMenu.containerId, index, 0, ContainerInput.QUICK_MOVE, false);
                this.stopWatch.reset();
             }
          }
@@ -722,18 +722,18 @@ public final class AutoBrewingModule extends Module {
    }
 
    private BrewingStandMenu method4304() {
-      return mc.player.containerMenu instanceof BrewingStandMenu var2 ? var2 : null;
+      return mc.player.containerMenu instanceof BrewingStandMenu brewingStandMenu ? brewingStandMenu : null;
    }
 
    private ChestMenu method4305() {
-      return mc.player.containerMenu instanceof ChestMenu var2 ? var2 : null;
+      return mc.player.containerMenu instanceof ChestMenu chestMenu ? chestMenu : null;
    }
 
-   private int method4306(BrewingStandMenu var1) {
-      if (var1.getCarried().isEmpty() && this.type3 == AutoBrewingModule.Type3.IDLE) {
-         for (int var2 = 0; var2 < CONST_intValues.length; var2++) {
-            if (!this.method4314(var1.getSlot(CONST_intValues[var2]).getItem())) {
-               return var2;
+   private int method4306(BrewingStandMenu containerMenu) {
+      if (containerMenu.getCarried().isEmpty() && this.type3 == AutoBrewingModule.Type3.IDLE) {
+         for (int i = 0; i < CONST_intValues.length; i++) {
+            if (!this.method4314(containerMenu.getSlot(CONST_intValues[i]).getItem())) {
+               return i;
             }
          }
 
@@ -743,44 +743,44 @@ public final class AutoBrewingModule extends Module {
       }
    }
 
-   private boolean method4307(AbstractContainerMenu var1, AutoBrewingModule.Handler var2, int var3) {
+   private boolean method4307(AbstractContainerMenu containerMenu, AutoBrewingModule.Handler handler, int index) {
       if (this.type3 == AutoBrewingModule.Type3.IDLE) {
-         Slot var4 = this.method4313(var1, var2);
-         if (var4 == null) {
+         Slot slot = this.method4313(containerMenu, handler);
+         if (slot == null) {
             return false;
          } else {
-            this.intValue7 = var4.index;
-            this.intValue8 = var3;
+            this.intValue7 = slot.index;
+            this.intValue8 = index;
             this.type3 = AutoBrewingModule.Type3.PICK_SOURCE;
-            InventoryUtils.method905(var1.containerId, var4.index, 0, ContainerInput.PICKUP, false);
+            InventoryUtils.method905(containerMenu.containerId, slot.index, 0, ContainerInput.PICKUP, false);
             return true;
          }
-      } else if (this.intValue8 != var3) {
+      } else if (this.intValue8 != index) {
          this.method4308();
          return true;
       } else if (this.type3 == AutoBrewingModule.Type3.PICK_SOURCE) {
-         if (var1.getCarried().isEmpty()) {
+         if (containerMenu.getCarried().isEmpty()) {
             this.method4308();
             return true;
          } else {
-            InventoryUtils.method905(var1.containerId, this.intValue8, 1, ContainerInput.PICKUP, false);
+            InventoryUtils.method905(containerMenu.containerId, this.intValue8, 1, ContainerInput.PICKUP, false);
             this.type3 = AutoBrewingModule.Type3.PLACE_ONE;
             return true;
          }
       } else if (this.type3 == AutoBrewingModule.Type3.PLACE_ONE) {
-         if (var1.getCarried().isEmpty()) {
+         if (containerMenu.getCarried().isEmpty()) {
             this.method4308();
             return true;
          } else {
-            this.method4309(var1);
+            this.method4309(containerMenu);
             this.type3 = AutoBrewingModule.Type3.RETURN_REMAINDER;
             return true;
          }
       } else {
-         if (var1.getCarried().isEmpty()) {
+         if (containerMenu.getCarried().isEmpty()) {
             this.method4308();
          } else {
-            this.method4309(var1);
+            this.method4309(containerMenu);
          }
 
          return true;
@@ -793,17 +793,17 @@ public final class AutoBrewingModule extends Module {
       this.type3 = AutoBrewingModule.Type3.IDLE;
    }
 
-   private void method4309(AbstractContainerMenu var1) {
-      if (var1.getCarried().isEmpty()) {
+   private void method4309(AbstractContainerMenu containerMenu) {
+      if (containerMenu.getCarried().isEmpty()) {
          this.method4308();
       } else {
-         Slot var2 = this.method4310(var1, this.intValue7);
-         if (this.method4311(var2, var1.getCarried())) {
-            InventoryUtils.method905(var1.containerId, var2.index, 0, ContainerInput.PICKUP, false);
+         Slot slot = this.method4310(containerMenu, this.intValue7);
+         if (this.method4311(slot, containerMenu.getCarried())) {
+            InventoryUtils.method905(containerMenu.containerId, slot.index, 0, ContainerInput.PICKUP, false);
          } else {
-            var2 = this.method4313(var1, ItemStack::isEmpty);
-            if (var2 != null) {
-               InventoryUtils.method905(var1.containerId, var2.index, 0, ContainerInput.PICKUP, false);
+            slot = this.method4313(containerMenu, ItemStack::isEmpty);
+            if (slot != null) {
+               InventoryUtils.method905(containerMenu.containerId, slot.index, 0, ContainerInput.PICKUP, false);
             } else {
                ChatLogger.method2021("Нет свободного слота, чтобы вернуть предмет с курсора");
             }
@@ -811,101 +811,101 @@ public final class AutoBrewingModule extends Module {
       }
    }
 
-   private Slot method4310(AbstractContainerMenu var1, int var2) {
-      return var1.slots.stream().filter(var1x -> var1x.index == var2).findFirst().orElse(null);
+   private Slot method4310(AbstractContainerMenu containerMenu, int n) {
+      return containerMenu.slots.stream().filter(var1x -> var1x.index == n).findFirst().orElse(null);
    }
 
-   private boolean method4311(Slot var1, ItemStack var2) {
-      return var1 != null
-         && var1.container instanceof Inventory
-         && (var1.getItem().isEmpty() || this.method4312(var1.getItem(), var2) && var1.getItem().getCount() < var1.getItem().getMaxStackSize());
+   private boolean method4311(Slot slot, ItemStack carried) {
+      return slot != null
+         && slot.container instanceof Inventory
+         && (slot.getItem().isEmpty() || this.method4312(slot.getItem(), carried) && slot.getItem().getCount() < slot.getItem().getMaxStackSize());
    }
 
-   private boolean method4312(ItemStack var1, ItemStack var2) {
-      return ItemStack.isSameItemSameComponents(var1, var2);
+   private boolean method4312(ItemStack stack, ItemStack carried) {
+      return ItemStack.isSameItemSameComponents(stack, carried);
    }
 
-   private Slot method4313(AbstractContainerMenu var1, AutoBrewingModule.Handler var2) {
-      return var1.slots
+   private Slot method4313(AbstractContainerMenu containerMenu, AutoBrewingModule.Handler handler) {
+      return containerMenu.slots
          .stream()
-         .filter(var0 -> var0.container instanceof Inventory)
-         .filter(var1x -> var2.matches(var1x.getItem()))
+         .filter(slot -> slot.container instanceof Inventory)
+         .filter(var1x -> handler.matches(var1x.getItem()))
          .findFirst()
          .orElse(null);
    }
 
-   private boolean method4314(ItemStack var1) {
-      if (!var1.is(Items.POTION)) {
+   private boolean method4314(ItemStack stack) {
+      if (!stack.is(Items.POTION)) {
          return false;
       } else {
-         PotionContents var2 = var1.get(DataComponents.POTION_CONTENTS);
-         return var2 != null && var2.potion().isPresent() && var2.potion().get().equals(Potions.WATER);
+         PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+         return potionContents != null && potionContents.potion().isPresent() && potionContents.potion().get().equals(Potions.WATER);
       }
    }
 
-   private boolean method4315(ItemStack var1) {
-      if (!var1.is(Items.POTION)) {
+   private boolean method4315(ItemStack stack) {
+      if (!stack.is(Items.POTION)) {
          return false;
       } else {
-         PotionContents var2 = var1.get(DataComponents.POTION_CONTENTS);
-         return var2 != null && var2.potion().isPresent() && !var2.potion().get().equals(Potions.WATER);
+         PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+         return potionContents != null && potionContents.potion().isPresent() && !potionContents.potion().get().equals(Potions.WATER);
       }
    }
 
    private int method4316() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         ItemStack var3 = mc.player.getInventory().getItem(var2);
-         if (this.method4314(var3)) {
-            var1 += var3.getCount();
+      for (int i = 0; i < 36; i++) {
+         ItemStack stack = mc.player.getInventory().getItem(i);
+         if (this.method4314(stack)) {
+            n += stack.getCount();
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private int method4317(Item var1) {
-      int var2 = 0;
+   private int method4317(Item key) {
+      int n = 0;
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         if (mc.player.getInventory().getItem(var3).is(var1)) {
-            var2 += mc.player.getInventory().getItem(var3).getCount();
+      for (int i = 0; i < 36; i++) {
+         if (mc.player.getInventory().getItem(i).is(key)) {
+            n += mc.player.getInventory().getItem(i).getCount();
          }
       }
 
-      return var2;
+      return n;
    }
 
-   private boolean method4318(BlockPos var1) {
-      Rotation var2 = Zenith.getInstance().getRotationManager().method7844();
-      BlockHitResult var3 = TargetUtils.method3216(
-         mc.player.getEyePosition(1.0F), var2, mc.player.blockInteractionRange(), var1x -> var1x != null && var1x.getBlockPos().equals(var1)
+   private boolean method4318(BlockPos blockPos2) {
+      Rotation rotation = Zenith.getInstance().getRotationManager().method7844();
+      BlockHitResult blockHitResult = TargetUtils.method3216(
+         mc.player.getEyePosition(1.0F), rotation, mc.player.blockInteractionRange(), var1x -> var1x != null && var1x.getBlockPos().equals(blockPos2)
       );
-      return var3 != null && var3.getType() != HitResult.Type.MISS && var3.getBlockPos().equals(var1);
+      return blockHitResult != null && blockHitResult.getType() != HitResult.Type.MISS && blockHitResult.getBlockPos().equals(blockPos2);
    }
 
-   private BlockHitResult method4319(BlockPos var1) {
-      BlockState var2 = mc.level.getBlockState(var1);
-      if (!var2.is(Blocks.BREWING_STAND) && !this.method4320(var2)) {
+   private BlockHitResult method4319(BlockPos immutable) {
+      BlockState blockState = mc.level.getBlockState(immutable);
+      if (!blockState.is(Blocks.BREWING_STAND) && !this.method4320(blockState)) {
          return null;
       } else {
-         Vec3 var3 = net.minecraft.world.phys.Vec3.atCenterOf(var1);
-         ArrayList<Vec3> var4 = new ArrayList();
-         var4.add(var3);
+         Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(immutable);
+         ArrayList<Vec3> vecs = new ArrayList();
+         vecs.add(atCenterOf);
 
-         for (Direction var8 : Direction.values()) {
-            var4.add(var3.add(Vec3.atLowerCornerOf(var8.getUnitVec3i()).scale(0.5)));
+         for (Direction direction : Direction.values()) {
+            vecs.add(atCenterOf.add(Vec3.atLowerCornerOf(direction.getUnitVec3i()).scale(0.5)));
          }
 
-         Vec3 var12 = mc.player.getEyePosition(1.0F);
-         double var13 = mc.player.blockInteractionRange();
+         Vec3 eyePosition = mc.player.getEyePosition(1.0F);
+         double blockInteractionRange = mc.player.blockInteractionRange();
 
-         for (Vec3 var9 : var4) {
-            Rotation var10 = RotationUtils.method6913(var9);
-            BlockHitResult var11 = TargetUtils.method3216(var12, var10, var13, var1x -> var1x != null && var1x.getBlockPos().equals(var1));
-            if (var11 != null && var11.getType() != HitResult.Type.MISS && var11.getBlockPos().equals(var1)) {
-               return var11;
+         for (Vec3 location : vecs) {
+            Rotation rotation = RotationUtils.method6913(location);
+            BlockHitResult blockHitResult = TargetUtils.method3216(eyePosition, rotation, blockInteractionRange, var1x -> var1x != null && var1x.getBlockPos().equals(immutable));
+            if (blockHitResult != null && blockHitResult.getType() != HitResult.Type.MISS && blockHitResult.getBlockPos().equals(immutable)) {
+               return blockHitResult;
             }
          }
 
@@ -913,13 +913,13 @@ public final class AutoBrewingModule extends Module {
       }
    }
 
-   private boolean method4320(BlockState var1) {
-      return var1.is(Blocks.CHEST) || var1.is(Blocks.TRAPPED_CHEST) || var1.is(Blocks.BARREL);
+   private boolean method4320(BlockState blockState) {
+      return blockState.is(Blocks.CHEST) || blockState.is(Blocks.TRAPPED_CHEST) || blockState.is(Blocks.BARREL);
    }
 
    @FunctionalInterface
    private interface Handler {
-      boolean matches(ItemStack var1);
+      boolean matches(ItemStack stack);
    }
 
    private static enum Type {

@@ -38,16 +38,16 @@ public final class Data1 {
    }
    public static final int CONST_intValue = -1;
 
-   public Data1(String var1, String var2, int var3) {
-      Objects.requireNonNull(var1, "id");
-      var2 = var2 != null && !var2.isBlank() ? var2.trim().toUpperCase(Locale.ROOT) : "UNKNOWN";
-      this.text = var1;
-      this.text2 = var2;
-      this.intValue = var3;
+   public Data1(String text, String name, int intValue) {
+      Objects.requireNonNull(text, "id");
+      name = name != null && !name.isBlank() ? name.trim().toUpperCase(Locale.ROOT) : "UNKNOWN";
+      this.text = text;
+      this.text2 = name;
+      this.intValue = intValue;
    }
 
-   public static Data1 method823(String var0, String var1) {
-      return new Data1(var0, var1, -1);
+   public static Data1 method823(String text, String name) {
+      return new Data1(text, name, -1);
    }
 
    public String getText() {

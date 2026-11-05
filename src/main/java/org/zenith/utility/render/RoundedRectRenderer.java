@@ -27,9 +27,9 @@ public class RoundedRectRenderer {
    public void begin() {
       MsdfRenderer.flushBatch();
       if (!this.flag) {
-         KawaseShaderKey var1 = RenderShaders.kawaseShaderKey3;
-         var1.method5165();
-         var1.method5166("Smoothness").method7413(0.8F, 1.0F);
+         KawaseShaderKey kawaseShaderKey3 = RenderShaders.kawaseShaderKey3;
+         kawaseShaderKey3.method5165();
+         kawaseShaderKey3.method5166("Smoothness").method7413(0.8F, 1.0F);
          RenderState.method1871();
          RenderState.method1873();
          this.builder = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, VertexFormats.vertexFormat);
@@ -37,55 +37,55 @@ public class RoundedRectRenderer {
       }
    }
 
-   public void method4779(Matrix4f var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
-      this.method4784(var1, var2, var3, var4, var5, var6, var7, 0.0F, 0.0F);
+   public void method4779(Matrix4f matrix4f, float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
+      this.method4784(matrix4f, floatValue, y, width, height, proxyDotRadiusData, zenithColor, 0.0F, 0.0F);
    }
 
-   public void method4780(Matrix4f var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
-      this.method4784(var1, var2, var3, var4, var5, ProxyDotRadiusData.INSTANCE, var6, 0.0F, 1.0F);
+   public void method4780(Matrix4f matrix4f, float floatValue, float y, float width, float height, ZenithColor zenithColor) {
+      this.method4784(matrix4f, floatValue, y, width, height, ProxyDotRadiusData.INSTANCE, zenithColor, 0.0F, 1.0F);
    }
 
-   public void method4781(Matrix4f var1, float var2, float var3, float var4, float var5, float var6, ProxyDotRadiusData var7, ZenithColor var8) {
-      this.method4784(var1, var2, var3, var4, var5, var7, var8, var6, 2.0F);
+   public void method4781(Matrix4f matrix4f, float floatValue, float y, float width, float height, float f, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor) {
+      this.method4784(matrix4f, floatValue, y, width, height, proxyDotRadiusData, zenithColor, f, 2.0F);
    }
 
-   public void method4782(Matrix4f var1, float var2, float var3, float var4, float var5, float var6, ProxyDotRadiusData var7, ZenithColor var8, float var9) {
-      this.method4784(var1, var2, var3, var4, var5, var7, var8, var6, 3.0F + var9);
+   public void method4782(Matrix4f matrix4f, float floatValue, float y, float width, float height, float f, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor, float f2) {
+      this.method4784(matrix4f, floatValue, y, width, height, proxyDotRadiusData, zenithColor, f, 3.0F + f2);
    }
 
-   public void method4783(Matrix4f var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, ZenithColor var9) {
-      ProxyDotRadiusData var10 = new ProxyDotRadiusData(var7, 0.0F, 0.0F, var8);
-      method4785(this.builder, var1, var2, var3, var4, var5, var10, var9, var6, 7.0F);
+   public void method4783(Matrix4f matrix4f, float floatValue, float y, float width, float height, float f, float floatValue2, float f2, ZenithColor zenithColor) {
+      ProxyDotRadiusData proxyDotRadiusData = new ProxyDotRadiusData(floatValue2, 0.0F, 0.0F, f2);
+      method4785(this.builder, matrix4f, floatValue, y, width, height, proxyDotRadiusData, zenithColor, f, 7.0F);
    }
 
-   private void method4784(Matrix4f var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7, float var8, float var9) {
-      method4785(this.builder, var1, var2, var3, var4, var5, var6, var7, var8, var9);
+   private void method4784(Matrix4f matrix4f, float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor, float f, float f2) {
+      method4785(this.builder, matrix4f, floatValue, y, width, height, proxyDotRadiusData, zenithColor, f, f2);
    }
 
    public static void method4785(
-      BufferBuilder var0, Matrix4f var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7, float var8, float var9
+      BufferBuilder builder, Matrix4f matrix4f, float floatValue, float y, float width, float height, ProxyDotRadiusData proxyDotRadiusData, ZenithColor zenithColor, float f, float f2
    ) {
-      int var10 = var7.method7287();
-      float var11 = var2 + var4;
-      float var12 = var3 + var5;
-      method4786(var0, var1, var2, var3, var4, var5, var10, var6, var8, var9);
-      method4786(var0, var1, var2, var12, var4, var5, var10, var6, var8, var9);
-      method4786(var0, var1, var11, var12, var4, var5, var10, var6, var8, var9);
-      method4786(var0, var1, var11, var3, var4, var5, var10, var6, var8, var9);
+      int color = zenithColor.method7287();
+      float floatValue2 = floatValue + width;
+      float y2 = y + height;
+      method4786(builder, matrix4f, floatValue, y, width, height, color, proxyDotRadiusData, f, f2);
+      method4786(builder, matrix4f, floatValue, y2, width, height, color, proxyDotRadiusData, f, f2);
+      method4786(builder, matrix4f, floatValue2, y2, width, height, color, proxyDotRadiusData, f, f2);
+      method4786(builder, matrix4f, floatValue2, y, width, height, color, proxyDotRadiusData, f, f2);
    }
 
    private static void method4786(
-      BufferBuilder var0, Matrix4f var1, float var2, float var3, float var4, float var5, int var6, ProxyDotRadiusData var7, float var8, float var9
+      BufferBuilder builder, Matrix4f matrix4f, float floatValue, float y, float width, float height, int color, ProxyDotRadiusData proxyDotRadiusData, float f, float f2
    ) {
-      var0.addVertex(var1, var2, var3, 0.0F).setColor(var6).setUv(var4, var5);
-      long var10 = VertexFormats.pointer(var0, VertexFormats.vertexFormatElement);
-      MemoryUtil.memPutFloat(var10, var7.getFloatValue());
-      MemoryUtil.memPutFloat(var10 + 4L, var7.getFloatValue4());
-      MemoryUtil.memPutFloat(var10 + 8L, var7.getFloatValue2());
-      MemoryUtil.memPutFloat(var10 + 12L, var7.getFloatValue3());
-      long var12 = VertexFormats.pointer(var0, VertexFormats.vertexFormatElement2);
-      MemoryUtil.memPutFloat(var12, var8);
-      MemoryUtil.memPutFloat(var12 + 4L, var9);
+      builder.addVertex(matrix4f, floatValue, y, 0.0F).setColor(color).setUv(width, height);
+      long pointer = VertexFormats.pointer(builder, VertexFormats.vertexFormatElement);
+      MemoryUtil.memPutFloat(pointer, proxyDotRadiusData.getFloatValue());
+      MemoryUtil.memPutFloat(pointer + 4L, proxyDotRadiusData.getFloatValue4());
+      MemoryUtil.memPutFloat(pointer + 8L, proxyDotRadiusData.getFloatValue2());
+      MemoryUtil.memPutFloat(pointer + 12L, proxyDotRadiusData.getFloatValue3());
+      long ptr = VertexFormats.pointer(builder, VertexFormats.vertexFormatElement2);
+      MemoryUtil.memPutFloat(ptr, f);
+      MemoryUtil.memPutFloat(ptr + 4L, f2);
    }
 
    public void flush() {

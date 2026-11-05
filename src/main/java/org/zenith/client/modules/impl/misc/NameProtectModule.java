@@ -59,7 +59,7 @@ public final class NameProtectModule extends Module {
    @Override
    public void onEnable() {
       if (this.runnable == null) {
-         this.runnable = ModuleHookDefinitions.class124.method1646(0, var0 -> var0.text = method5149(var0.text));
+         this.runnable = ModuleHookDefinitions.class124.method1646(0, entry5 -> entry5.text = method5149(entry5.text));
       }
 
       super.onEnable();
@@ -83,73 +83,73 @@ public final class NameProtectModule extends Module {
       return INSTANCE.isEnabled() ? INSTANCE.getNameSetting().getValue() : mc.player.getScoreboardName();
    }
 
-   public Component method5142(Component var1) {
-      String var2 = mc.player.getScoreboardName();
-      String var3 = method5141();
+   public Component method5142(Component decorateName) {
+      String scoreboardName = mc.player.getScoreboardName();
+      String text = method5141();
       this.setEnabled(false);
 
-      MutableComponent var5;
+      MutableComponent component;
       try {
-         Component var4 = this.method5143(var1, var2, var3);
+         Component component2 = this.method5143(decorateName, scoreboardName, text);
          if (this.text != null) {
-            return TextUtils.method2107(var1, var2, this.text.copy().append(var4.copy()));
+            return TextUtils.method2107(decorateName, scoreboardName, this.text.copy().append(component2.copy()));
          }
 
-         var5 = TextUtils.method2111(var1, var2, var4);
+         component = TextUtils.method2111(decorateName, scoreboardName, component2);
       } finally {
          this.setEnabled(true);
       }
 
-      return var5;
+      return component;
    }
 
-   private Component method5143(Component var1, String var2, String var3) {
-      if (var3 != null && !var3.isEmpty()) {
-         var var4 = this.method5144(var1, var2);
-         if (var4.isEmpty()) {
-            return Component.literal(var3);
+   private Component method5143(Component decorateName, String scoreboardName, String text) {
+      if (text != null && !text.isEmpty()) {
+         var styles = this.method5144(decorateName, scoreboardName);
+         if (styles.isEmpty()) {
+            return Component.literal(text);
          } else {
-            MutableComponent var5 = Component.empty();
-            int var6 = 0;
+            MutableComponent empty = Component.empty();
+            int index = 0;
 
-            for (int var7 = 0; var6 < var3.length(); var7++) {
-               int var8 = var3.codePointAt(var6);
-               Style var9 = (Style)var4.get(Math.min(var7, var4.size() - 1));
-               var5.append(Component.literal(new String(Character.toChars(var8))).setStyle(var9));
-               var6 += Character.charCount(var8);
+            for (int i = 0; index < text.length(); i++) {
+               int codePointAt = text.codePointAt(index);
+               Style style = (Style)styles.get(Math.min(i, styles.size() - 1));
+               empty.append(Component.literal(new String(Character.toChars(codePointAt))).setStyle(style));
+               index += Character.charCount(codePointAt);
             }
 
-            return var5;
+            return empty;
          }
       } else {
          return Component.empty();
       }
    }
 
-   private List<Style> method5144(Component var1, String var2) {
-      if (var1 != null && var2 != null && !var2.isEmpty()) {
-         ArrayList<Style> var3 = new ArrayList<>();
-         ArrayList var4 = new ArrayList();
-         StringBuilder var5 = new StringBuilder();
-         var1.getVisualOrderText().accept((var2x, var3x, var4x) -> {
-            var5.appendCodePoint(var4x);
-            var4.add(var3x != null ? var3x : Style.EMPTY);
+   private List<Style> method5144(Component decorateName, String scoreboardName) {
+      if (decorateName != null && scoreboardName != null && !scoreboardName.isEmpty()) {
+         ArrayList<Style> styles = new ArrayList<>();
+         ArrayList arrayList = new ArrayList();
+         StringBuilder builder = new StringBuilder();
+         decorateName.getVisualOrderText().accept((var2x, var3x, var4x) -> {
+            builder.appendCodePoint(var4x);
+            arrayList.add(var3x != null ? var3x : Style.EMPTY);
             return true;
          });
-         String var6 = var5.toString();
-         int var7 = var6.indexOf(var2);
-         if (var7 == -1) {
-            return var3;
+         String string = builder.toString();
+         int indexOf = string.indexOf(scoreboardName);
+         if (indexOf == -1) {
+            return styles;
          } else {
-            int var8 = var6.codePointCount(0, var7);
-            int var9 = var2.codePointCount(0, var2.length());
-            int var10 = Math.min(var8 + var9, var4.size());
+            int codePointCount = string.codePointCount(0, indexOf);
+            int n = scoreboardName.codePointCount(0, scoreboardName.length());
+            int n2 = Math.min(codePointCount + n, arrayList.size());
 
-            for (int var11 = var8; var11 < var10; var11++) {
-               var3.add((Style)var4.get(var11));
+            for (int i = codePointCount; i < n2; i++) {
+               styles.add((Style)arrayList.get(i));
             }
 
-            return var3;
+            return styles;
          }
       } else {
          return List.of();
@@ -157,83 +157,83 @@ public final class NameProtectModule extends Module {
    }
 
    @EventTarget
-   public void method5145(UpdateEvent var1) {
-      String var2 = this.gowno.getValue();
-      if (!var2.equals(this.text3)) {
-         this.text3 = var2;
-         if (var2.isEmpty()) {
+   public void method5145(UpdateEvent event) {
+      String str = this.gowno.getValue();
+      if (!str.equals(this.text3)) {
+         this.text3 = str;
+         if (str.isEmpty()) {
             this.text = null;
             this.intValue = Integer.MIN_VALUE;
          } else {
             try {
-               int var3 = var2.indexOf(32);
-               if (var3 <= 0 || var3 >= var2.length() - 1) {
+               int indexOf = str.indexOf(32);
+               if (indexOf <= 0 || indexOf >= str.length() - 1) {
                   this.text = null;
                   this.intValue = Integer.MIN_VALUE;
                   return;
                }
 
-               this.intValue = Integer.parseInt(var2.substring(0, var3));
-               JsonElement var4 = JsonParser.parseString(var2.substring(var3 + 1));
-               this.text = ComponentSerialization.CODEC.parse(JsonOps.INSTANCE, var4).result().orElse(Component.empty());
-            } catch (Exception var5) {
+               this.intValue = Integer.parseInt(str.substring(0, indexOf));
+               JsonElement string = JsonParser.parseString(str.substring(indexOf + 1));
+               this.text = ComponentSerialization.CODEC.parse(JsonOps.INSTANCE, string).result().orElse(Component.empty());
+            } catch (Exception e) {
                this.text = null;
                this.intValue = Integer.MIN_VALUE;
-               var5.printStackTrace();
+               e.printStackTrace();
             }
          }
       }
    }
 
-   public Component method5146(PlayerInfo var1) {
-      return var1.getTabListDisplayName() != null
-         ? this.method5147(var1, var1.getTabListDisplayName().copy())
-         : this.method5147(var1, PlayerTeam.formatNameForTeam(var1.getTeam(), Component.literal(var1.getProfile().name())));
+   public Component method5146(PlayerInfo playerInfo) {
+      return playerInfo.getTabListDisplayName() != null
+         ? this.method5147(playerInfo, playerInfo.getTabListDisplayName().copy())
+         : this.method5147(playerInfo, PlayerTeam.formatNameForTeam(playerInfo.getTeam(), Component.literal(playerInfo.getProfile().name())));
    }
 
-   private Component method5147(PlayerInfo var1, MutableComponent var2) {
-      return var1.getGameMode() == GameType.SPECTATOR ? var2.withStyle(ChatFormatting.ITALIC) : var2;
+   private Component method5147(PlayerInfo playerInfo, MutableComponent formatNameForTeam) {
+      return playerInfo.getGameMode() == GameType.SPECTATOR ? formatNameForTeam.withStyle(ChatFormatting.ITALIC) : formatNameForTeam;
    }
 
    @EventTarget
-   public void method5148(ChatReceiveEvent var1) {
-      String var2 = this.method5150(var1.getText().getString());
-      if (var2 != null) {
-         var1.method7858(TextUtils.method2110(var1.getText(), var2, method5141()));
+   public void method5148(ChatReceiveEvent event) {
+      String scoreboardName = this.method5150(event.getText().getString());
+      if (scoreboardName != null) {
+         event.method7858(TextUtils.method2110(event.getText(), scoreboardName, method5141()));
       }
    }
 
-   public static String method5149(String var0) {
-      NameProtectModule var1 = INSTANCE;
-      if (var0 != null && !var0.isEmpty() && var1 != null && var1.isEnabled() && mc.player != null) {
-         String var2 = mc.player.getScoreboardName();
-         if (var0.contains(var2)) {
-            return var0.replace(var2, INSTANCE.getNameSetting().getValue());
+   public static String method5149(String text) {
+      NameProtectModule nameProtectModule = INSTANCE;
+      if (text != null && !text.isEmpty() && nameProtectModule != null && nameProtectModule.isEnabled() && mc.player != null) {
+         String scoreboardName = mc.player.getScoreboardName();
+         if (text.contains(scoreboardName)) {
+            return text.replace(scoreboardName, INSTANCE.getNameSetting().getValue());
          } else {
-            if (var1 instanceof NameProtectModule var3 && var3.hideFriends.isEnabled()) {
-               for (String var6 : Zenith.getInstance().getFriends().getItems()) {
-                  if (var0.contains(var6)) {
-                     return var0.replace(var6, INSTANCE.getNameSetting().getValue());
+            if (nameProtectModule instanceof NameProtectModule nameProtectModule2 && nameProtectModule2.hideFriends.isEnabled()) {
+               for (String target : Zenith.getInstance().getFriends().getItems()) {
+                  if (text.contains(target)) {
+                     return text.replace(target, INSTANCE.getNameSetting().getValue());
                   }
                }
             }
 
-            return var0;
+            return text;
          }
       } else {
-         return var0;
+         return text;
       }
    }
 
-   private String method5150(String var1) {
-      String var2 = mc.player.getScoreboardName();
-      if (var1.contains(var2)) {
-         return var2;
+   private String method5150(String string) {
+      String scoreboardName = mc.player.getScoreboardName();
+      if (string.contains(scoreboardName)) {
+         return scoreboardName;
       } else {
          if (this.hideFriends.isEnabled()) {
-            for (String var5 : Zenith.getInstance().getFriends().getItems()) {
-               if (var1.contains(var5)) {
-                  return var5;
+            for (String str : Zenith.getInstance().getFriends().getItems()) {
+               if (string.contains(str)) {
+                  return str;
                }
             }
          }
@@ -242,9 +242,9 @@ public final class NameProtectModule extends Module {
       }
    }
 
-   public void method5151(JsonElement var1, int var2) {
-      this.gowno.setValue(var2 + " " + var1.toString());
-      this.intValue = var2;
+   public void method5151(JsonElement jsonElement, int intValue) {
+      this.gowno.setValue(intValue + " " + jsonElement.toString());
+      this.intValue = intValue;
    }
 
    public void method5152() {

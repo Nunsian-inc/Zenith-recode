@@ -10,8 +10,8 @@ public final class FrustumHolder {
    private FrustumHolder() {
    }
 
-   public static void method3035(@Nullable Frustum var0) {
-      frustum = var0;
+   public static void method3035(@Nullable Frustum cullFrustum) {
+      frustum = cullFrustum;
    }
 
    @Nullable

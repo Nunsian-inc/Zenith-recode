@@ -16,24 +16,24 @@ public abstract class Element implements MinecraftAccess {
 
    public abstract float getWidth();
 
-   public abstract boolean onMouseClicked(double var1, double var3, Enum3 var5);
+   public abstract boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2);
 
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       return false;
    }
 
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double d, double d2, Enum3 enum2) {
    }
 
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       return false;
    }
 }

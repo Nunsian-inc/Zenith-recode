@@ -15,11 +15,11 @@ public class MixinWorld {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void getRainGradient(float var1, CallbackInfoReturnable<Float> var2) {
+   public void getRainGradient(float f, CallbackInfoReturnable<Float> callbackInfoReturnable) {
       if ((Object)this instanceof ClientLevel) {
-         float var3 = WeatherModule.INSTANCE.method3110();
-         if (var3 >= 0.0F) {
-            var2.setReturnValue(var3);
+         float returnValue = WeatherModule.INSTANCE.method3110();
+         if (returnValue >= 0.0F) {
+            callbackInfoReturnable.setReturnValue(returnValue);
          }
       }
    }
@@ -29,11 +29,11 @@ public class MixinWorld {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void getThunderGradient(float var1, CallbackInfoReturnable<Float> var2) {
+   public void getThunderGradient(float f, CallbackInfoReturnable<Float> callbackInfoReturnable) {
       if ((Object)this instanceof ClientLevel) {
-         float var3 = WeatherModule.INSTANCE.method3111();
-         if (var3 >= 0.0F) {
-            var2.setReturnValue(var3);
+         float returnValue = WeatherModule.INSTANCE.method3111();
+         if (returnValue >= 0.0F) {
+            callbackInfoReturnable.setReturnValue(returnValue);
          }
       }
    }
@@ -43,11 +43,11 @@ public class MixinWorld {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void isRaining(CallbackInfoReturnable<Boolean> var1) {
+   public void isRaining(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
       if ((Object)this instanceof ClientLevel) {
-         float var2 = WeatherModule.INSTANCE.method3110();
-         if (var2 >= 0.0F) {
-            var1.setReturnValue(var2 > 0.2F);
+         float f = WeatherModule.INSTANCE.method3110();
+         if (f >= 0.0F) {
+            callbackInfoReturnable.setReturnValue(f > 0.2F);
          }
       }
    }
@@ -57,11 +57,11 @@ public class MixinWorld {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void isThundering(CallbackInfoReturnable<Boolean> var1) {
+   public void isThundering(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
       if ((Object)this instanceof ClientLevel) {
-         float var2 = WeatherModule.INSTANCE.method3111();
-         if (var2 >= 0.0F) {
-            var1.setReturnValue(var2 > 0.2F);
+         float f = WeatherModule.INSTANCE.method3111();
+         if (f >= 0.0F) {
+            callbackInfoReturnable.setReturnValue(f > 0.2F);
          }
       }
    }

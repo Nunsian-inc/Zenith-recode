@@ -31,18 +31,18 @@ public abstract class MixinRunArgsDirectories {
       ),
       index = 1
    )
-   private String zenith$gameAssetIndex(String var1) {
-      if (!"29".equals(var1) && this.assetDirectory != null) {
-         Path var2 = this.assetDirectory.toPath().resolve("indexes").resolve("29.json");
-         if (!Files.isRegularFile(var2)) {
-            ZENITH$LOGGER.warn("Индекс ассетов {} не от этой версии, а {} рядом нет — остаёмся на {}", new Object[]{var1, var2, var1});
-            return var1;
+   private String zenith$gameAssetIndex(String anObject) {
+      if (!"29".equals(anObject) && this.assetDirectory != null) {
+         Path path = this.assetDirectory.toPath().resolve("indexes").resolve("29.json");
+         if (!Files.isRegularFile(path)) {
+            ZENITH$LOGGER.warn("Индекс ассетов {} не от этой версии, а {} рядом нет — остаёмся на {}", new Object[]{anObject, path, anObject});
+            return anObject;
          } else {
-            ZENITH$LOGGER.info("Индекс ассетов {} от другой версии игры, берём свой {}", var1, "29");
+            ZENITH$LOGGER.info("Индекс ассетов {} от другой версии игры, берём свой {}", anObject, "29");
             return "29";
          }
       } else {
-         return var1;
+         return anObject;
       }
    }
 }

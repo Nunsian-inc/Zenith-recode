@@ -36,8 +36,8 @@ public class ResourcesAPI {
          } else {
             return null;
          }
-      } catch (IOException var3) {
-         throw new LuaError(var3);
+      } catch (IOException e) {
+         throw new LuaError(e);
       }
    }
 

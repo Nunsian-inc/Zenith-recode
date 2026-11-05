@@ -129,8 +129,8 @@ public final class FiguraLuaRuntime {
             val = args.arg(3);
             LuaTable environment = (LuaTable)(val.istable() ? val.checktable() : runtime.userGlobals);
             return runtime.userGlobals.load(ld, chunkName, "t", environment);
-         } catch (LuaError var6) {
-            return varargsOf(NIL, var6.getMessageObject());
+         } catch (LuaError e) {
+            return varargsOf(NIL, e.getMessageObject());
          }
       }
 
@@ -227,8 +227,8 @@ public final class FiguraLuaRuntime {
          }
 
          this.userGlobals.load(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8), "sandbox").call();
-      } catch (Exception var6) {
-         this.error(new LuaError("Failed to load builtin sandbox script:\n" + var6.getMessage()));
+      } catch (Exception e) {
+         this.error(new LuaError("Failed to load builtin sandbox script:\n" + e.getMessage()));
       }
 
       LuaString.s_metatable = new ReadOnlyLuaTable(LuaString.s_metatable);
@@ -249,8 +249,8 @@ public final class FiguraLuaRuntime {
          }
 
          this.userGlobals.load(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8), "math").call();
-      } catch (Exception var7) {
-         this.error(new LuaError("Failed to load builtin math script:\n" + var7.getMessage()));
+      } catch (Exception e) {
+         this.error(new LuaError("Failed to load builtin math script:\n" + e.getMessage()));
       }
 
       this.setGlobal("type", new OneArgFunction() {
@@ -358,8 +358,8 @@ public final class FiguraLuaRuntime {
          }
 
          return true;
-      } catch (StackOverflowError | Exception var4) {
-         this.error(var4);
+      } catch (StackOverflowError | Exception e) {
+         this.error(e);
          return false;
       }
    }
@@ -425,8 +425,8 @@ public final class FiguraLuaRuntime {
 
          limit.use(this.getInstructions());
          return ret;
-      } catch (StackOverflowError | Exception var11) {
-         this.error(var11);
+      } catch (StackOverflowError | Exception e) {
+         this.error(e);
          return null;
       }
    }

@@ -8,8 +8,8 @@ public class EntityDeathEvent implements Event {
    private final LivingEntity livingEntity;
 
    @Generated
-   public EntityDeathEvent(LivingEntity var1) {
-      this.livingEntity = var1;
+   public EntityDeathEvent(LivingEntity livingEntity) {
+      this.livingEntity = livingEntity;
    }
 
    @Generated

@@ -55,138 +55,138 @@ public final class Class15 {
    private final int intValue5;
 
    public Class15(
-      String var1,
-      Identifier var2,
-      int var3,
-      int var4,
-      String[] var5,
-      int[] var6,
-      float[] var7,
-      float[] var8,
-      int[] var9,
-      int[] var10,
-      Class15.Type2[] var11,
-      float[] var12,
-      float[] var13,
-      float[] var14,
-      float[] var15,
-      int[] var16,
-      int[] var17,
-      Map<String, Class37> var18,
-      List<Class15.Data4> var19,
-      Class15.Data3 var20,
-      Class15.Data2 var21,
-      Class15.Data var22,
-      float var23,
-      float[] var24,
-      int var25
+      String text,
+      Identifier identifier,
+      int intValue,
+      int n,
+      String[] texts,
+      int[] intValues,
+      float[] floatValues,
+      float[] floatValues2,
+      int[] intValues2,
+      int[] intValues3,
+      Class15.Type2[] type2s,
+      float[] floatValues3,
+      float[] floatValues4,
+      float[] floatValues5,
+      float[] floatValues6,
+      int[] intValues4,
+      int[] intValues5,
+      Map<String, Class37> items,
+      List<Class15.Data4> data4s,
+      Class15.Data3 data3,
+      Class15.Data2 data2,
+      Class15.Data data,
+      float floatValue,
+      float[] floatValues7,
+      int n2
    ) {
-      this.text = var1;
-      this.identifier = var2;
-      this.intValue = var3;
-      this.intValue2 = var4;
-      this.texts = var5;
-      this.intValues = var6;
-      this.floatValues = var7;
-      this.floatValues2 = var8;
-      this.intValues2 = var9;
-      this.intValues3 = var10;
-      this.type2s = var11;
-      this.floatValues3 = var12;
-      this.floatValues4 = var13;
-      this.floatValues5 = var14;
-      this.floatValues6 = var15;
-      this.intValues4 = var16;
-      this.intValues5 = var17;
-      this.intValue3 = var16.length;
-      this.items = var18;
-      this.items2 = var19;
-      this.data3 = var20;
-      this.data2 = var21;
-      this.data = var22;
-      this.floatValue = var23;
-      this.floatValues7 = var24;
-      this.intValue4 = var25;
-      int var26 = 0;
-      boolean var27 = true;
-      int var28 = -1;
+      this.text = text;
+      this.identifier = identifier;
+      this.intValue = intValue;
+      this.intValue2 = n;
+      this.texts = texts;
+      this.intValues = intValues;
+      this.floatValues = floatValues;
+      this.floatValues2 = floatValues2;
+      this.intValues2 = intValues2;
+      this.intValues3 = intValues3;
+      this.type2s = type2s;
+      this.floatValues3 = floatValues3;
+      this.floatValues4 = floatValues4;
+      this.floatValues5 = floatValues5;
+      this.floatValues6 = floatValues6;
+      this.intValues4 = intValues4;
+      this.intValues5 = intValues5;
+      this.intValue3 = intValues4.length;
+      this.items = items;
+      this.items2 = data4s;
+      this.data3 = data3;
+      this.data2 = data2;
+      this.data = data;
+      this.floatValue = floatValue;
+      this.floatValues7 = floatValues7;
+      this.intValue4 = n2;
+      int n3 = 0;
+      boolean flag = true;
+      int n4 = -1;
       Arrays.fill(this.intValues6, -1);
 
-      for (int var29 = 0; var29 < var16.length; var29++) {
-         int var30 = var10[var16[var29]];
-         this.flags[var30] = true;
-         var26 |= var17[var29];
-         if (var30 < var28) {
-            var27 = false;
+      for (int i = 0; i < intValues4.length; i++) {
+         int n5 = intValues3[intValues4[i]];
+         this.flags[n5] = true;
+         n3 |= intValues5[i];
+         if (n5 < n4) {
+            flag = false;
          }
 
-         var28 = var30;
-         if (this.intValues6[var30] < 0) {
-            this.intValues6[var30] = var29;
+         n4 = n5;
+         if (this.intValues6[n5] < 0) {
+            this.intValues6[n5] = i;
          }
 
-         this.intValues7[var30] = var29 + 1;
+         this.intValues7[n5] = i + 1;
       }
 
-      for (int var31 = 0; var31 <= 6; var31++) {
-         if (!var27) {
-            this.intValues6[var31] = 0;
-            this.intValues7[var31] = var16.length;
-         } else if (this.intValues6[var31] < 0) {
-            this.intValues6[var31] = 0;
-            this.intValues7[var31] = 0;
+      for (int i = 0; i <= 6; i++) {
+         if (!flag) {
+            this.intValues6[i] = 0;
+            this.intValues7[i] = intValues4.length;
+         } else if (this.intValues6[i] < 0) {
+            this.intValues6[i] = 0;
+            this.intValues7[i] = 0;
          }
       }
 
-      this.intValue5 = var26;
-      var var32 = var22 == null ? null : var22.getItems();
-      if (var32 == null || var32.isEmpty()) {
-         this.items3 = var19;
-      } else if (var19.isEmpty()) {
-         this.items3 = var32;
+      this.intValue5 = n3;
+      var items2 = data == null ? null : data.getItems();
+      if (items2 == null || items2.isEmpty()) {
+         this.items3 = data4s;
+      } else if (data4s.isEmpty()) {
+         this.items3 = items2;
       } else {
-         var var33 = new ArrayList<>(var19);
-         var33.addAll(var32);
-         this.items3 = var33;
+         var data4s2 = new ArrayList<>(data4s);
+         data4s2.addAll(items2);
+         this.items3 = data4s2;
       }
    }
 
-   public int method2028(int var1) {
-      return var1 >= 0 && var1 < this.intValues6.length ? this.intValues6[var1] : 0;
+   public int method2028(int ordinal) {
+      return ordinal >= 0 && ordinal < this.intValues6.length ? this.intValues6[ordinal] : 0;
    }
 
-   public int method2029(int var1) {
-      return var1 >= 0 && var1 < this.intValues7.length ? this.intValues7[var1] : this.intValue3;
+   public int method2029(int ordinal) {
+      return ordinal >= 0 && ordinal < this.intValues7.length ? this.intValues7[ordinal] : this.intValue3;
    }
 
    public int method2030() {
       return this.texts.length;
    }
 
-   public int method2031(String var1) {
-      for (int var2 = 0; var2 < this.texts.length; var2++) {
-         if (this.texts[var2].equals(var1)) {
-            return var2;
+   public int method2031(String anObject) {
+      for (int i = 0; i < this.texts.length; i++) {
+         if (this.texts[i].equals(anObject)) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   public Class37 method2032(String var1) {
-      return this.items.get(var1);
+   public Class37 method2032(String text) {
+      return this.items.get(text);
    }
 
-   public boolean method2033(int var1) {
-      return var1 >= 0 && var1 < this.flags.length && this.flags[var1];
+   public boolean method2033(int ordinal) {
+      return ordinal >= 0 && ordinal < this.flags.length && this.flags[ordinal];
    }
 
-   public boolean method2034(int var1) {
-      return (this.intValue5 & var1) != 0;
+   public boolean method2034(int n) {
+      return (this.intValue5 & n) != 0;
    }
 
-   public boolean method2035(Class15.Type var1) {
-      return this.method2033(var1.ordinal());
+   public boolean method2035(Class15.Type type) {
+      return this.method2033(type.ordinal());
    }
 
    public static final class Data {
@@ -223,10 +223,10 @@ public final class Class15 {
          return "Data[" + "floatValues=" + this.floatValues + ", " + "flag=" + this.flag + ", " + "items=" + this.items + "]";
       }
 
-      public Data(float[] var1, boolean var2, List<Class15.Data4> var3) {
-         this.floatValues = var1;
-         this.flag = var2;
-         this.items = var3;
+      public Data(float[] floatValues, boolean flag, List<Class15.Data4> items) {
+         this.floatValues = floatValues;
+         this.flag = flag;
+         this.items = items;
       }
 
       public float[] getFloatValues() {
@@ -306,16 +306,16 @@ public final class Class15 {
          return "Data2[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "particleEffect=" + this.particleEffect + ", " + "particleEffect2=" + this.particleEffect2 + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data2(float var1, float var2, float var3, float var4, float var5, float var6, ParticleOptions var7, ParticleOptions var8, int var9) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.particleEffect = var7;
-         this.particleEffect2 = var8;
-         this.intValue = var9;
+      public Data2(float floatValue, float f, float f2, float f3, float f4, float f5, ParticleOptions particleEffect, ParticleOptions particleEffect2, int intValue) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.particleEffect = particleEffect;
+         this.particleEffect2 = particleEffect2;
+         this.intValue = intValue;
       }
 
       public float getFloatValue() {
@@ -409,18 +409,18 @@ public final class Class15 {
          return "Data3[" + "type4=" + this.type4 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "text=" + this.text + ", " + "particleEffect=" + this.particleEffect + ", " + "items=" + this.items + "]";
       }
 
-      public Data3(Class15.Type4 var1, float var2, float var3, float var4, String var5, ParticleOptions var6, List<String> var7) {
-         this.type4 = var1;
-         this.floatValue = var2;
-         this.floatValue2 = var3;
-         this.floatValue3 = var4;
-         this.text = var5;
-         this.particleEffect = var6;
-         this.items = var7;
+      public Data3(Class15.Type4 type4, float floatValue, float f, float f2, String text, ParticleOptions particleEffect, List<String> items) {
+         this.type4 = type4;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.text = text;
+         this.particleEffect = particleEffect;
+         this.items = items;
       }
 
-      public boolean method2036(String var1) {
-         return this.items.contains(var1);
+      public boolean method2036(String str) {
+         return this.items.contains(str);
       }
 
       public Class15.Type4 getType4() {
@@ -527,19 +527,19 @@ public final class Class15 {
       }
 
       public Data4(
-         ParticleOptions var1, int var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10, Class15.Type3 var11
+         ParticleOptions particleEffect, int intValue, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7, Class15.Type3 type3
       ) {
-         this.particleEffect = var1;
-         this.intValue = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
-         this.floatValue4 = var6;
-         this.floatValue5 = var7;
-         this.floatValue6 = var8;
-         this.floatValue7 = var9;
-         this.floatValue8 = var10;
-         this.type3 = var11;
+         this.particleEffect = particleEffect;
+         this.intValue = intValue;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.type3 = type3;
       }
 
       public ParticleOptions getParticleEffect() {

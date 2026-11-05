@@ -6,8 +6,8 @@ import org.zenith.utility.misc.CloudConnectionState;
 public class CloudStateEvent implements Event {
    private final CloudConnectionState.Type type;
 
-   public CloudStateEvent(CloudConnectionState.Type var1) {
-      this.type = var1;
+   public CloudStateEvent(CloudConnectionState.Type type) {
+      this.type = type;
    }
 
    public CloudConnectionState.Type getType() {

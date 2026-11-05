@@ -62,8 +62,8 @@ public final class MenuIcons {
    private MenuIcons() {
    }
 
-   public static MenuIcon forCategory(ModuleCategory var0) {
-      return switch (var0) {
+   public static MenuIcon forCategory(ModuleCategory category) {
+      return switch (category) {
          case COMBAT -> CATEGORY_COMBAT;
          case MOVEMENT -> CATEGORY_MOVEMENT;
          case MISC -> CATEGORY_MISC;

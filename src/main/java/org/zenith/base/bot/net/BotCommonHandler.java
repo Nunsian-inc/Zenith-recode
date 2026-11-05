@@ -50,13 +50,13 @@ public abstract class BotCommonHandler implements ClientCommonPacketListener {
    public Map<String, String> customReportDetails;
    public ServerLinks serverLinks;
 
-   public BotCommonHandler(BotClient var1, BotConnection var2, BotConnectionState var3) {
-      this.client = var1;
-      this.connection = var2;
-      this.brand = var3.brand();
-      this.serverCookies = var3.serverCookies();
-      this.customReportDetails = var3.customReportDetails();
-      this.serverLinks = var3.serverLinks();
+   public BotCommonHandler(BotClient client, BotConnection connection, BotConnectionState botConnectionState) {
+      this.client = client;
+      this.connection = connection;
+      this.brand = botConnectionState.brand();
+      this.serverCookies = botConnectionState.serverCookies();
+      this.customReportDetails = botConnectionState.customReportDetails();
+      this.serverLinks = botConnectionState.serverLinks();
    }
 
    @Override
@@ -64,8 +64,8 @@ public abstract class BotCommonHandler implements ClientCommonPacketListener {
       return this.connection.isOpen();
    }
 
-   public final void firePacketEvent(Packet<?> var1) {
-      this.client.getEventBus().call(new PacketEvent(this.client, var1));
+   public final void firePacketEvent(Packet<?> packet) {
+      this.client.getEventBus().call(new PacketEvent(this.client, packet));
    }
 
    @Override
@@ -95,19 +95,19 @@ public abstract class BotCommonHandler implements ClientCommonPacketListener {
 
    @Override
    public void handleCustomPayload(ClientboundCustomPayloadPacket packet) {
-      CustomPacketPayload var2 = packet.payload();
-      if (!(var2 instanceof DiscardedPayload)) {
+      CustomPacketPayload payload = packet.payload();
+      if (!(payload instanceof DiscardedPayload)) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-         if (var2 instanceof BrandPayload var3) {
-            this.brand = var3.brand();
+         if (payload instanceof BrandPayload brandPayload) {
+            this.brand = brandPayload.brand();
          } else {
-            this.onCustomPayload(var2);
+            this.onCustomPayload(payload);
          }
       }
    }
 
-   public void onCustomPayload(CustomPacketPayload var1) {
-      LOGGER.debug("Bot {} ignored custom payload {}", this.client.name(), var1.type().id());
+   public void onCustomPayload(CustomPacketPayload payload) {
+      LOGGER.debug("Bot {} ignored custom payload {}", this.client.name(), payload.type().id());
    }
 
    @Override
@@ -147,18 +147,18 @@ public abstract class BotCommonHandler implements ClientCommonPacketListener {
    @Override
    public void handleServerLinks(ClientboundServerLinksPacket packet) {
       PacketUtils.ensureRunningOnSameThread(packet, this, this.client.getPacketApplyBatcher());
-      List<Entry> var2 = new ArrayList<>(packet.links().size());
+      List<Entry> entries = new ArrayList<>(packet.links().size());
 
-      for (UntrustedEntry var4 : packet.links()) {
+      for (UntrustedEntry link : packet.links()) {
          try {
-            URI var5 = Util.parseAndValidateUntrustedUri(var4.link());
-            var2.add(new Entry(var4.type(), var5));
-         } catch (Exception var6) {
-            LOGGER.warn("Bot {} received invalid server link {}: {}", new Object[]{this.client.name(), var4.type(), var4.link()});
+            URI andValidateUntrustedUri = Util.parseAndValidateUntrustedUri(link.link());
+            entries.add(new Entry(link.type(), andValidateUntrustedUri));
+         } catch (Exception e) {
+            LOGGER.warn("Bot {} received invalid server link {}: {}", new Object[]{this.client.name(), link.type(), link.link()});
          }
       }
 
-      this.serverLinks = new ServerLinks(var2);
+      this.serverLinks = new ServerLinks(entries);
    }
 
    @Override
@@ -171,9 +171,9 @@ public abstract class BotCommonHandler implements ClientCommonPacketListener {
       this.client.onConnectionTerminated(info);
    }
 
-   public void sendPacket(Packet<?> var1) {
+   public void sendPacket(Packet<?> playerActionPacket) {
       if (this.connection.getPacketListener() == this) {
-         this.connection.send(var1);
+         this.connection.send(playerActionPacket);
       }
    }
 

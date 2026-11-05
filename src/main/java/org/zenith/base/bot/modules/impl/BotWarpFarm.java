@@ -60,15 +60,15 @@ public class BotWarpFarm extends BotModule {
    }
 
    @EventTarget
-   public void onBotUpdate(BotUpdateEvent var1) {
-      this.world = var1.getWorld();
-      this.player = var1.getPlayer();
-      BotPlayHandler var2 = this.handler();
-      if (this.world != null && this.player != null && var2 != null) {
-         if (!this.handleEmergencyEvacuation(var2)) {
+   public void onBotUpdate(BotUpdateEvent event) {
+      this.world = event.getWorld();
+      this.player = event.getPlayer();
+      BotPlayHandler handler = this.handler();
+      if (this.world != null && this.player != null && handler != null) {
+         if (!this.handleEmergencyEvacuation(handler)) {
             this.tickCooldowns();
-            boolean var3 = this.tickFarm(var2);
-            if (var3 && this.nextRouteBlock != null) {
+            boolean tickFarm = this.tickFarm(handler);
+            if (tickFarm && this.nextRouteBlock != null) {
                this.rotateToRouteBlock();
                this.applyRouteMovement();
             } else {
@@ -78,53 +78,53 @@ public class BotWarpFarm extends BotModule {
       }
    }
 
-   private boolean tickFarm(BotPlayHandler var1) {
+   private boolean tickFarm(BotPlayHandler handler) {
       if (this.player.isDeadOrDying() || this.player.getHealth() <= 0.0F) {
          this.stopWalking();
          return false;
-      } else if (var1.hasOpenScreen()) {
+      } else if (handler.hasOpenScreen()) {
          return false;
       } else {
-         int var2 = WarpFarmModule.getIntValue17();
-         if (var2 == -1) {
+         int nextInt = WarpFarmModule.getIntValue17();
+         if (nextInt == -1) {
             this.stopWalking();
             return false;
          } else if (this.rct().isActive()) {
             this.stopWalking();
             return false;
          } else {
-            int var3 = this.rct().currentAnarchyHere();
-            if (var3 != this.lastAnarchy) {
-               this.lastAnarchy = var3;
+            int currentAnarchyHere = this.rct().currentAnarchyHere();
+            if (currentAnarchyHere != this.lastAnarchy) {
+               this.lastAnarchy = currentAnarchyHere;
                this.settleTicks = 80;
                this.stopWalking();
             }
 
-            if (var3 != var2) {
+            if (currentAnarchyHere != nextInt) {
                this.stopWalking();
                if (this.rctRetryCooldownTicks > 0) {
                   return false;
                } else {
                   this.rctRetryCooldownTicks = 40;
-                  this.bot().systemMessage("BotWarpFarm: иду на анку №" + var2 + " за маином");
-                  this.rct().reconnect(var2);
+                  this.bot().systemMessage("BotWarpFarm: иду на анку №" + nextInt + " за маином");
+                  this.rct().reconnect(nextInt);
                   return false;
                }
             } else {
-               double var4 = this.horizontalDistanceSq(Vec3.atCenterOf(WarpFarmModule.blockPos));
-               if (var4 > 40000.0) {
+               double horizontalDistanceSq = this.horizontalDistanceSq(Vec3.atCenterOf(WarpFarmModule.blockPos));
+               if (horizontalDistanceSq > 40000.0) {
                   this.stopWalking();
-                  this.sendWarpPvp(var1);
+                  this.sendWarpPvp(handler);
                   return false;
                } else if (this.settleTicks > 0) {
                   this.stopWalking();
                   return false;
                } else {
-                  Entity var6 = this.findHologram();
-                  if (var6 != null) {
-                     this.setWalkTarget(var6.blockPosition());
+                  Entity hologram = this.findHologram();
+                  if (hologram != null) {
+                     this.setWalkTarget(hologram.blockPosition());
                   } else {
-                     if (!(var4 > 4.0)) {
+                     if (!(horizontalDistanceSq > 4.0)) {
                         this.stopWalking();
                         return false;
                      }
@@ -132,7 +132,7 @@ public class BotWarpFarm extends BotModule {
                      this.setWalkTarget(WarpFarmModule.blockPos);
                   }
 
-                  this.updateRoute(var1);
+                  this.updateRoute(handler);
                   return true;
                }
             }
@@ -140,17 +140,17 @@ public class BotWarpFarm extends BotModule {
       }
    }
 
-   private boolean handleEmergencyEvacuation(BotPlayHandler var1) {
-      long var2 = WarpFarmModule.method4114();
-      if (var2 == this.observedEvacuationSequence) {
+   private boolean handleEmergencyEvacuation(BotPlayHandler handler) {
+      long observedEvacuationSequence = WarpFarmModule.method4114();
+      if (observedEvacuationSequence == this.observedEvacuationSequence) {
          return false;
       } else {
          this.stopWalking();
          this.applyInput(false, false);
          if (!this.player.isDeadOrDying() && !(this.player.getHealth() <= 0.0F)) {
-            this.observedEvacuationSequence = var2;
+            this.observedEvacuationSequence = observedEvacuationSequence;
             this.rct().stop();
-            var1.sendCommand("hub");
+            handler.sendCommand("hub");
             this.settleTicks = 80;
             return true;
          } else {
@@ -173,27 +173,27 @@ public class BotWarpFarm extends BotModule {
       }
    }
 
-   private void sendWarpPvp(BotPlayHandler var1) {
+   private void sendWarpPvp(BotPlayHandler handler) {
       if (this.warpCooldownTicks <= 0) {
-         var1.sendCommand("warp pvp");
+         handler.sendCommand("warp pvp");
          this.warpCooldownTicks = 100;
          this.settleTicks = 80;
       }
    }
 
-   private void setWalkTarget(BlockPos var1) {
-      if (!var1.equals(this.walkTarget)) {
-         this.walkTarget = var1;
+   private void setWalkTarget(BlockPos walkTarget) {
+      if (!walkTarget.equals(this.walkTarget)) {
+         this.walkTarget = walkTarget;
          this.nextRouteBlock = null;
       }
    }
 
-   private void updateRoute(BotPlayHandler var1) {
+   private void updateRoute(BotPlayHandler handler) {
       this.nextRouteBlock = null;
       if (this.walkTarget != null) {
-         BlockPos var2 = WarpFarmModule.method4126(this.world, this.player.position(), this.player.blockPosition());
-         Pathfinder.Entry2 var3 = Pathfinder.method759(this.world, var2, this.walkTarget, WarpFarmModule.data).orElse(null);
-         if (var3 == null) {
+         BlockPos blockPosition = WarpFarmModule.method4126(this.world, this.player.position(), this.player.blockPosition());
+         Pathfinder.Entry2 entry2 = Pathfinder.method759(this.world, blockPosition, this.walkTarget, WarpFarmModule.data).orElse(null);
+         if (entry2 == null) {
             if (!this.player.onGround()) {
                this.nextRouteBlock = this.walkTarget;
                this.pathFailStreak = 0;
@@ -201,33 +201,33 @@ public class BotWarpFarm extends BotModule {
                if (++this.pathFailStreak >= 5) {
                   this.pathFailStreak = 0;
                   this.stopWalking();
-                  this.sendWarpPvp(var1);
+                  this.sendWarpPvp(handler);
                }
             }
          } else {
             this.pathFailStreak = 0;
-            this.nextRouteBlock = WarpFarmModule.method4127(var3, this.player.position());
+            this.nextRouteBlock = WarpFarmModule.method4127(entry2, this.player.position());
          }
       }
    }
 
    private void rotateToRouteBlock() {
-      Vec3 var1 = Pathfinder.method761(this.nextRouteBlock);
-      Vec3 var2 = this.player.getEyePosition(1.0F);
-      Rotation var3 = Rotation.method3128(new Vec3(var1.x, var2.y, var1.z), var2);
-      this.player.setYRot(Mth.wrapDegrees(var3.getFloatValue()));
-      this.player.setXRot(Mth.clamp(var3.getFloatValue2(), -90.0F, 90.0F));
+      Vec3 vec = Pathfinder.method761(this.nextRouteBlock);
+      Vec3 eyePosition = this.player.getEyePosition(1.0F);
+      Rotation rotation = Rotation.method3128(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
+      this.player.setYRot(Mth.wrapDegrees(rotation.getFloatValue()));
+      this.player.setXRot(Mth.clamp(rotation.getFloatValue2(), -90.0F, 90.0F));
    }
 
    private void applyRouteMovement() {
       this.applyInput(true, true);
    }
 
-   private void applyInput(boolean var1, boolean var2) {
+   private void applyInput(boolean forward, boolean jump) {
       if (this.player != null) {
-         ViaCompat.method4848(this.player.input, var1 ? 1.0F : 0.0F);
+         ViaCompat.method4848(this.player.input, forward ? 1.0F : 0.0F);
          ViaCompat.method4849(this.player.input, 0.0F);
-         this.player.input.keyPresses = new Input(var1, false, false, false, var2, false, var1);
+         this.player.input.keyPresses = new Input(forward, false, false, false, jump, false, forward);
       }
    }
 
@@ -237,30 +237,30 @@ public class BotWarpFarm extends BotModule {
    }
 
    private Entity findHologram() {
-      String var1 = WarpFarmModule.method4115().toLowerCase(Locale.ROOT);
-      Entity var2 = null;
-      double var3 = 16384.0;
+      String lowerCase = WarpFarmModule.method4115().toLowerCase(Locale.ROOT);
+      Entity entity = null;
+      double d = 16384.0;
 
-      for (Entity var6 : this.world.entitiesForRendering()) {
-         if (var6 != this.player) {
-            double var7 = this.player.distanceToSqr(var6);
-            if (!(var7 > var3)) {
-               Component var9 = var6 instanceof TextDisplay var10 ? var10.getText() : var6.getCustomName();
-               if (var9 != null && var9.getString().toLowerCase(Locale.ROOT).contains(var1)) {
-                  var2 = var6;
-                  var3 = var7;
+      for (Entity entity2 : this.world.entitiesForRendering()) {
+         if (entity2 != this.player) {
+            double d2 = this.player.distanceToSqr(entity2);
+            if (!(d2 > d)) {
+               Component text = entity2 instanceof TextDisplay textDisplay ? textDisplay.getText() : entity2.getCustomName();
+               if (text != null && text.getString().toLowerCase(Locale.ROOT).contains(lowerCase)) {
+                  entity = entity2;
+                  d = d2;
                }
             }
          }
       }
 
-      return var2;
+      return entity;
    }
 
-   private double horizontalDistanceSq(Vec3 var1) {
-      double var2 = this.player.getX() - var1.x;
-      double var4 = this.player.getZ() - var1.z;
-      return var2 * var2 + var4 * var4;
+   private double horizontalDistanceSq(Vec3 atCenterOf) {
+      double d = this.player.getX() - atCenterOf.x;
+      double d2 = this.player.getZ() - atCenterOf.z;
+      return d * d + d2 * d2;
    }
 
    private BotRctService rct() {

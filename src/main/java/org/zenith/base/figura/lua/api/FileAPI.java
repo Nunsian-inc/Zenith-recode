@@ -112,8 +112,8 @@ public class FileAPI {
          File f = p.toFile();
          FileInputStream fis = new FileInputStream(f);
          return new FiguraInputStream(this.parent, fis);
-      } catch (FileNotFoundException var5) {
-         throw new LuaError(var5);
+      } catch (FileNotFoundException e) {
+         throw new LuaError(e);
       }
    }
 
@@ -132,8 +132,8 @@ public class FileAPI {
          File f = p.toFile();
          FileOutputStream fos = new FileOutputStream(f);
          return new FiguraOutputStream(this.parent, fos);
-      } catch (FileNotFoundException var5) {
-         throw new LuaError(var5);
+      } catch (FileNotFoundException e) {
+         throw new LuaError(e);
       }
    }
 
@@ -144,42 +144,42 @@ public class FileAPI {
    )
    public String readString(@LuaNotNil String path, String encoding) {
       try {
-         Charset var10000;
+         Charset charset2;
          if (encoding == null) {
-            var10000 = StandardCharsets.UTF_8;
+            charset2 = StandardCharsets.UTF_8;
          } else {
             String charset = encoding.toLowerCase(Locale.US);
             switch (charset) {
                case "utf_16":
                case "utf16":
-                  var10000 = StandardCharsets.UTF_16;
+                  charset2 = StandardCharsets.UTF_16;
                   break;
                case "utf_16be":
                case "utf16be":
-                  var10000 = StandardCharsets.UTF_16BE;
+                  charset2 = StandardCharsets.UTF_16BE;
                   break;
                case "utf_16le":
                case "utf16le":
-                  var10000 = StandardCharsets.UTF_16LE;
+                  charset2 = StandardCharsets.UTF_16LE;
                   break;
                case "ascii":
-                  var10000 = StandardCharsets.US_ASCII;
+                  charset2 = StandardCharsets.US_ASCII;
                   break;
                case "iso_8859_1":
                case "iso88591":
-                  var10000 = StandardCharsets.ISO_8859_1;
+                  charset2 = StandardCharsets.ISO_8859_1;
                   break;
                default:
-                  var10000 = StandardCharsets.UTF_8;
+                  charset2 = StandardCharsets.UTF_8;
             }
          }
 
          Path filePath = this.securityCheck(path);
          File file = filePath.toFile();
          byte[] data = com.google.common.io.Files.toByteArray(file);
-         return new String(data, var10000);
-      } catch (IOException var8) {
-         throw new LuaError(var8);
+         return new String(data, charset2);
+      } catch (IOException e) {
+         throw new LuaError(e);
       }
    }
 
@@ -190,39 +190,39 @@ public class FileAPI {
    )
    public void writeString(@LuaNotNil String path, @LuaNotNil String data, String encoding) {
       try (FiguraOutputStream fos = this.openWriteStream(path)) {
-         Charset var10000;
+         Charset charset;
          if (encoding == null) {
-            var10000 = StandardCharsets.UTF_8;
+            charset = StandardCharsets.UTF_8;
          } else {
-            String var8 = encoding.toLowerCase(Locale.US);
-            switch (var8) {
+            String lowerCase = encoding.toLowerCase(Locale.US);
+            switch (lowerCase) {
                case "utf_16":
                case "utf16":
-                  var10000 = StandardCharsets.UTF_16;
+                  charset = StandardCharsets.UTF_16;
                   break;
                case "utf_16be":
                case "utf16be":
-                  var10000 = StandardCharsets.UTF_16BE;
+                  charset = StandardCharsets.UTF_16BE;
                   break;
                case "utf_16le":
                case "utf16le":
-                  var10000 = StandardCharsets.UTF_16LE;
+                  charset = StandardCharsets.UTF_16LE;
                   break;
                case "ascii":
-                  var10000 = StandardCharsets.US_ASCII;
+                  charset = StandardCharsets.US_ASCII;
                   break;
                case "iso_8859_1":
                case "iso88591":
-                  var10000 = StandardCharsets.ISO_8859_1;
+                  charset = StandardCharsets.ISO_8859_1;
                   break;
                default:
-                  var10000 = StandardCharsets.UTF_8;
+                  charset = StandardCharsets.UTF_8;
             }
          }
 
-         fos.write(data.getBytes(var10000));
-      } catch (IOException var10) {
-         throw new LuaError(var10);
+         fos.write(data.getBytes(charset));
+      } catch (IOException e) {
+         throw new LuaError(e);
       }
    }
 

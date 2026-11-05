@@ -26,84 +26,84 @@ public final class Pathfinder implements MinecraftAccess {
    private Pathfinder() {
    }
 
-   public static Optional<Pathfinder.Entry2> method757(BlockPos var0, BlockPos var1) {
-      return mc.level == null ? Optional.empty() : method759(mc.level, var0, var1, Pathfinder.Data.INSTANCE);
+   public static Optional<Pathfinder.Entry2> method757(BlockPos blockPosition, BlockPos pos) {
+      return mc.level == null ? Optional.empty() : method759(mc.level, blockPosition, pos, Pathfinder.Data.INSTANCE);
    }
 
-   public static Optional<Pathfinder.Entry2> method758(BlockPos var0, BlockPos var1, Pathfinder.Data var2) {
-      return mc.level == null ? Optional.empty() : method759(mc.level, var0, var1, var2);
+   public static Optional<Pathfinder.Entry2> method758(BlockPos blockPosition, BlockPos walkTarget, Pathfinder.Data data) {
+      return mc.level == null ? Optional.empty() : method759(mc.level, blockPosition, walkTarget, data);
    }
 
-   public static Optional<Pathfinder.Entry2> method759(Level var0, BlockPos var1, BlockPos var2, Pathfinder.Data var3) {
-      if (var0 != null && var1 != null && var2 != null && var3 != null) {
-         BlockPos var4 = var1.immutable();
-         BlockPos var5 = var2.immutable();
-         boolean var6 = var0.hasChunk(var5.getX() >> 4, var5.getZ() >> 4);
-         if (!method771(var0, var4)
-            && !method771(var0, var5)
-            && var0.hasChunk(var4.getX() >> 4, var4.getZ() >> 4)
-            && (var3.getType() != Pathfinder.Type.EXACT || var6)) {
-            BlockPos var7 = method768(var0, var4, var3.isFlag());
-            BlockPos var8 = var3.getIntValue4() == 0 && var6 ? method768(var0, var5, var3.isFlag()) : var5;
-            if (var8 == null && var3.getType() == Pathfinder.Type.CLOSEST_REACHABLE) {
-               var8 = var5;
+   public static Optional<Pathfinder.Entry2> method759(Level world, BlockPos blockPosition, BlockPos walkTarget, Pathfinder.Data data) {
+      if (world != null && blockPosition != null && walkTarget != null && data != null) {
+         BlockPos immutable = blockPosition.immutable();
+         BlockPos pos = walkTarget.immutable();
+         boolean hasChunk = world.hasChunk(pos.getX() >> 4, pos.getZ() >> 4);
+         if (!method771(world, immutable)
+            && !method771(world, pos)
+            && world.hasChunk(immutable.getX() >> 4, immutable.getZ() >> 4)
+            && (data.getType() != Pathfinder.Type.EXACT || hasChunk)) {
+            BlockPos key = method768(world, immutable, data.isFlag());
+            BlockPos pos2 = data.getIntValue4() == 0 && hasChunk ? method768(world, pos, data.isFlag()) : pos;
+            if (pos2 == null && data.getType() == Pathfinder.Type.CLOSEST_REACHABLE) {
+               pos2 = pos;
             }
 
-            if (var7 == null || var8 == null) {
+            if (key == null || pos2 == null) {
                return Optional.empty();
-            } else if (method772(var7, var8, var3.getIntValue4())) {
-               return Optional.of(new Pathfinder.Entry2(List.of(var7)));
+            } else if (method772(key, pos2, data.getIntValue4())) {
+               return Optional.of(new Pathfinder.Entry2(List.of(key)));
             } else {
-               HashMap var9 = new HashMap();
-               PriorityQueue var10 = new PriorityQueue<>(
+               HashMap map = new HashMap();
+               PriorityQueue priorityQueue = new PriorityQueue<>(
                   Comparator.comparingDouble(Pathfinder.Data3::getDoubleValue).thenComparingLong(Pathfinder.Data3::getLongValue)
                );
-               Pathfinder.Entry var11 = new Pathfinder.Entry(var7, null, 0.0, method773(var7, var8, var3.getIntValue4()));
-               Pathfinder.Entry var12 = var11;
-               var9.put(var7, var11);
-               long var13 = 0L;
-               var10.add(new Pathfinder.Data3(var11, var11.doubleValue3, var13++));
-               int var15 = 0;
+               Pathfinder.Entry entry = new Pathfinder.Entry(key, null, 0.0, method773(key, pos2, data.getIntValue4()));
+               Pathfinder.Entry entry2 = entry;
+               map.put(key, entry);
+               long l = 0L;
+               priorityQueue.add(new Pathfinder.Data3(entry, entry.doubleValue3, l++));
+               int n = 0;
 
-               while (!var10.isEmpty() && var15 < var3.getIntValue()) {
-                  Pathfinder.Data3 var16 = (Pathfinder.Data3)var10.poll();
-                  Pathfinder.Entry var17 = var16.getEntry();
-                  if (!var17.closed && var16.getDoubleValue() == var17.doubleValue3) {
-                     var17.closed = true;
-                     var15++;
-                     if (method774(var17, var12)) {
-                        var12 = var17;
+               while (!priorityQueue.isEmpty() && n < data.getIntValue()) {
+                  Pathfinder.Data3 data3 = (Pathfinder.Data3)priorityQueue.poll();
+                  Pathfinder.Entry entry3 = data3.getEntry();
+                  if (!entry3.closed && data3.getDoubleValue() == entry3.doubleValue3) {
+                     entry3.closed = true;
+                     n++;
+                     if (method774(entry3, entry2)) {
+                        entry2 = entry3;
                      }
 
-                     if (method772(var17.blockPos, var8, var3.getIntValue4())) {
-                        return Optional.of(new Pathfinder.Entry2(method775(var17)));
+                     if (method772(entry3.blockPos, pos2, data.getIntValue4())) {
+                        return Optional.of(new Pathfinder.Entry2(method775(entry3)));
                      }
 
-                     for (Pathfinder.Data2 var19 : method763(var0, var17.blockPos, var7, var3)) {
-                        Pathfinder.Entry var20 = (Pathfinder.Entry)var9.get(var19.getBlockPos());
-                        double var21 = var17.doubleValue2 + var19.getDoubleValue();
-                        if (var20 == null || !(var21 >= var20.doubleValue2)) {
-                           if (var20 == null) {
-                              var20 = new Pathfinder.Entry(var19.getBlockPos(), var17, var21, method773(var19.getBlockPos(), var8, var3.getIntValue4()));
-                              var9.put(var19.getBlockPos(), var20);
+                     for (Pathfinder.Data2 data2 : method763(world, entry3.blockPos, key, data)) {
+                        Pathfinder.Entry entry4 = (Pathfinder.Entry)map.get(data2.getBlockPos());
+                        double d = entry3.doubleValue2 + data2.getDoubleValue();
+                        if (entry4 == null || !(d >= entry4.doubleValue2)) {
+                           if (entry4 == null) {
+                              entry4 = new Pathfinder.Entry(data2.getBlockPos(), entry3, d, method773(data2.getBlockPos(), pos2, data.getIntValue4()));
+                              map.put(data2.getBlockPos(), entry4);
                            } else {
-                              var20.entry = var17;
-                              var20.doubleValue2 = var21;
-                              var20.doubleValue3 = var21 + var20.doubleValue;
-                              var20.closed = false;
+                              entry4.entry = entry3;
+                              entry4.doubleValue2 = d;
+                              entry4.doubleValue3 = d + entry4.doubleValue;
+                              entry4.closed = false;
                            }
 
-                           if (method774(var20, var12)) {
-                              var12 = var20;
+                           if (method774(entry4, entry2)) {
+                              entry2 = entry4;
                            }
 
-                           var10.add(new Pathfinder.Data3(var20, var20.doubleValue3, var13++));
+                           priorityQueue.add(new Pathfinder.Data3(entry4, entry4.doubleValue3, l++));
                         }
                      }
                   }
                }
 
-               return var3.getType() == Pathfinder.Type.CLOSEST_REACHABLE ? Optional.of(new Pathfinder.Entry2(method775(var12))) : Optional.empty();
+               return data.getType() == Pathfinder.Type.CLOSEST_REACHABLE ? Optional.of(new Pathfinder.Entry2(method775(entry2))) : Optional.empty();
             }
          } else {
             return Optional.empty();
@@ -114,55 +114,55 @@ public final class Pathfinder implements MinecraftAccess {
    }
 
    @Nullable
-   public static BlockPos method760(BlockPos var0, BlockPos var1) {
-      return method757(var0, var1).map(var1x -> var1x.method778(var0)).orElse(null);
+   public static BlockPos method760(BlockPos blockPosition, BlockPos pos) {
+      return method757(blockPosition, pos).map(var1x -> var1x.method778(blockPosition)).orElse(null);
    }
 
-   public static Vec3 method761(BlockPos var0) {
-      return new Vec3(var0.getX() + 0.5, var0.getY() + 0.15, var0.getZ() + 0.5);
+   public static Vec3 method761(BlockPos nextRouteBlock) {
+      return new Vec3(nextRouteBlock.getX() + 0.5, nextRouteBlock.getY() + 0.15, nextRouteBlock.getZ() + 0.5);
    }
 
-   public static boolean method762(Level var0, BlockPos var1, boolean var2) {
-      return var0 != null && var1 != null && !method771(var0, var1) && var0.hasChunk(var1.getX() >> 4, var1.getZ() >> 4) && method767(var0, var1, var2);
+   public static boolean method762(Level world, BlockPos blockPosition, boolean flag) {
+      return world != null && blockPosition != null && !method771(world, blockPosition) && world.hasChunk(blockPosition.getX() >> 4, blockPosition.getZ() >> 4) && method767(world, blockPosition, flag);
    }
 
-   private static List<Pathfinder.Data2> method763(Level var0, BlockPos var1, BlockPos var2, Pathfinder.Data var3) {
-      List<Data2> var4 = new ArrayList<>(var3.isFlag2() ? 8 : 4);
-      method764(var0, var1, var2, var3, CONST_intValues, var4);
-      if (var3.isFlag2()) {
-         method764(var0, var1, var2, var3, CONST_intValues2, var4);
+   private static List<Pathfinder.Data2> method763(Level world, BlockPos blockPos, BlockPos key, Pathfinder.Data data) {
+      List<Data2> data2s = new ArrayList<>(data.isFlag2() ? 8 : 4);
+      method764(world, blockPos, key, data, CONST_intValues, data2s);
+      if (data.isFlag2()) {
+         method764(world, blockPos, key, data, CONST_intValues2, data2s);
       }
 
-      return var4;
+      return data2s;
    }
 
-   private static void method764(Level var0, BlockPos var1, BlockPos var2, Pathfinder.Data var3, int[][] var4, List<Pathfinder.Data2> var5) {
-      for (int[] var9 : var4) {
-         int var10 = var9[0];
-         int var11 = var9[1];
-         boolean var12 = var10 != 0 && var11 != 0;
-         double var13 = var12 ? CONST_doubleValue : 1.0;
-         if (!var12 || method766(var0, var1, var10, var11, var3.isFlag())) {
-            BlockPos var15 = var1.offset(var10, 0, var11);
-            if (method765(var0, var15, var2, var3) && method767(var0, var15, var3.isFlag())) {
-               var5.add(new Pathfinder.Data2(var15.immutable(), var13));
+   private static void method764(Level world, BlockPos blockPos, BlockPos key, Pathfinder.Data data, int[][] intses, List<Pathfinder.Data2> data2s) {
+      for (int[] ints : intses) {
+         int x = ints[0];
+         int z = ints[1];
+         boolean flag = x != 0 && z != 0;
+         double doubleValue = flag ? CONST_doubleValue : 1.0;
+         if (!flag || method766(world, blockPos, x, z, data.isFlag())) {
+            BlockPos offset = blockPos.offset(x, 0, z);
+            if (method765(world, offset, key, data) && method767(world, offset, data.isFlag())) {
+               data2s.add(new Pathfinder.Data2(offset.immutable(), doubleValue));
             } else {
-               BlockPos var16 = var1.offset(var10, 1, var11);
-               if (method765(var0, var16, var2, var3) && method769(var0, var1.above(2), var3.isFlag()) && method767(var0, var16, var3.isFlag())) {
-                  var5.add(new Pathfinder.Data2(var16.immutable(), var13 + 0.65));
-               } else if (method769(var0, var15, var3.isFlag()) && method769(var0, var15.above(), var3.isFlag())) {
-                  for (int var17 = 1; var17 <= var3.getIntValue3(); var17++) {
-                     BlockPos var18 = var1.offset(var10, -var17, var11);
-                     if (!method765(var0, var18, var2, var3)) {
+               BlockPos pos = blockPos.offset(x, 1, z);
+               if (method765(world, pos, key, data) && method769(world, blockPos.above(2), data.isFlag()) && method767(world, pos, data.isFlag())) {
+                  data2s.add(new Pathfinder.Data2(pos.immutable(), doubleValue + 0.65));
+               } else if (method769(world, offset, data.isFlag()) && method769(world, offset.above(), data.isFlag())) {
+                  for (int i = 1; i <= data.getIntValue3(); i++) {
+                     BlockPos offset2 = blockPos.offset(x, -i, z);
+                     if (!method765(world, offset2, key, data)) {
                         break;
                      }
 
-                     if (method767(var0, var18, var3.isFlag())) {
-                        var5.add(new Pathfinder.Data2(var18.immutable(), var13 + 0.2 + var17 * 0.15));
+                     if (method767(world, offset2, data.isFlag())) {
+                        data2s.add(new Pathfinder.Data2(offset2.immutable(), doubleValue + 0.2 + i * 0.15));
                         break;
                      }
 
-                     if (!method769(var0, var18, var3.isFlag())) {
+                     if (!method769(world, offset2, data.isFlag())) {
                         break;
                      }
                   }
@@ -172,110 +172,110 @@ public final class Pathfinder implements MinecraftAccess {
       }
    }
 
-   private static boolean method765(Level var0, BlockPos var1, BlockPos var2, Pathfinder.Data var3) {
-      if (!method771(var0, var1) && var0.hasChunk(var1.getX() >> 4, var1.getZ() >> 4)) {
-         int var4 = var1.getX() - var2.getX();
-         int var5 = var1.getZ() - var2.getZ();
-         return Math.max(Math.abs(var4), Math.abs(var5)) <= var3.getIntValue2();
+   private static boolean method765(Level world, BlockPos offset, BlockPos key, Pathfinder.Data data) {
+      if (!method771(world, offset) && world.hasChunk(offset.getX() >> 4, offset.getZ() >> 4)) {
+         int n = offset.getX() - key.getX();
+         int n2 = offset.getZ() - key.getZ();
+         return Math.max(Math.abs(n), Math.abs(n2)) <= data.getIntValue2();
       } else {
          return false;
       }
    }
 
-   private static boolean method766(Level var0, BlockPos var1, int var2, int var3, boolean var4) {
-      BlockPos var5 = var1.offset(var2, 0, 0);
-      BlockPos var6 = var1.offset(0, 0, var3);
-      return method769(var0, var5, var4) && method769(var0, var5.above(), var4) && method769(var0, var6, var4) && method769(var0, var6.above(), var4);
+   private static boolean method766(Level world, BlockPos blockPos, int x, int z, boolean flag) {
+      BlockPos offset = blockPos.offset(x, 0, 0);
+      BlockPos above = blockPos.offset(0, 0, z);
+      return method769(world, offset, flag) && method769(world, offset.above(), flag) && method769(world, above, flag) && method769(world, above.above(), flag);
    }
 
-   private static boolean method767(Level var0, BlockPos var1, boolean var2) {
-      if (!method769(var0, var1, var2) || !method769(var0, var1.above(), var2)) {
+   private static boolean method767(Level world, BlockPos blockPosition, boolean flag) {
+      if (!method769(world, blockPosition, flag) || !method769(world, blockPosition.above(), flag)) {
          return false;
-      } else if (var2 && !var0.getFluidState(var1).isEmpty()) {
+      } else if (flag && !world.getFluidState(blockPosition).isEmpty()) {
          return true;
       } else {
-         BlockPos var3 = var1.below();
-         BlockState var4 = var0.getBlockState(var3);
-         if (method770(var4)) {
+         BlockPos below = blockPosition.below();
+         BlockState blockState = world.getBlockState(below);
+         if (method770(blockState)) {
             return false;
          } else {
-            VoxelShape var5 = var4.getCollisionShape(var0, var3);
-            if (var5.isEmpty()) {
+            VoxelShape collisionShape = blockState.getCollisionShape(world, below);
+            if (collisionShape.isEmpty()) {
                return false;
             } else {
-               double var6 = var5.max(Axis.Y);
-               return var6 >= 0.499 && var6 <= 1.001;
+               double d = collisionShape.max(Axis.Y);
+               return d >= 0.499 && d <= 1.001;
             }
          }
       }
    }
 
    @Nullable
-   private static BlockPos method768(Level var0, BlockPos var1, boolean var2) {
-      if (method767(var0, var1, var2)) {
-         return var1.immutable();
+   private static BlockPos method768(Level world, BlockPos immutable, boolean flag) {
+      if (method767(world, immutable, flag)) {
+         return immutable.immutable();
       } else {
-         BlockPos var3 = var1.above();
-         return !method771(var0, var3) && method767(var0, var3, var2) ? var3.immutable() : null;
+         BlockPos above = immutable.above();
+         return !method771(world, above) && method767(world, above, flag) ? above.immutable() : null;
       }
    }
 
-   private static boolean method769(Level var0, BlockPos var1, boolean var2) {
-      BlockState var3 = var0.getBlockState(var1);
-      if (!method770(var3) && var3.getCollisionShape(var0, var1).isEmpty()) {
-         FluidState var4 = var3.getFluidState();
-         return var4.isEmpty() || var2;
+   private static boolean method769(Level world, BlockPos above, boolean flag) {
+      BlockState blockState = world.getBlockState(above);
+      if (!method770(blockState) && blockState.getCollisionShape(world, above).isEmpty()) {
+         FluidState fluidState = blockState.getFluidState();
+         return fluidState.isEmpty() || flag;
       } else {
          return false;
       }
    }
 
-   private static boolean method770(BlockState var0) {
-      return var0.is(Blocks.LAVA)
-         || var0.is(Blocks.FIRE)
-         || var0.is(Blocks.SOUL_FIRE)
-         || var0.is(Blocks.CACTUS)
-         || var0.is(Blocks.MAGMA_BLOCK)
-         || var0.is(Blocks.CAMPFIRE)
-         || var0.is(Blocks.SOUL_CAMPFIRE)
-         || var0.is(Blocks.SWEET_BERRY_BUSH)
-         || var0.is(Blocks.COBWEB)
-         || var0.is(Blocks.POWDER_SNOW);
+   private static boolean method770(BlockState blockState) {
+      return blockState.is(Blocks.LAVA)
+         || blockState.is(Blocks.FIRE)
+         || blockState.is(Blocks.SOUL_FIRE)
+         || blockState.is(Blocks.CACTUS)
+         || blockState.is(Blocks.MAGMA_BLOCK)
+         || blockState.is(Blocks.CAMPFIRE)
+         || blockState.is(Blocks.SOUL_CAMPFIRE)
+         || blockState.is(Blocks.SWEET_BERRY_BUSH)
+         || blockState.is(Blocks.COBWEB)
+         || blockState.is(Blocks.POWDER_SNOW);
    }
 
-   private static boolean method771(Level var0, BlockPos var1) {
-      return var1.getY() < var0.getMinY() || var1.getY() > var0.getMaxY() - 1;
+   private static boolean method771(Level world, BlockPos immutable) {
+      return immutable.getY() < world.getMinY() || immutable.getY() > world.getMaxY() - 1;
    }
 
-   private static boolean method772(BlockPos var0, BlockPos var1, int var2) {
-      return var0.getX() == var1.getX() && var0.getZ() == var1.getZ() && Math.abs(var0.getY() - var1.getY()) <= var2;
+   private static boolean method772(BlockPos key, BlockPos pos, int n) {
+      return key.getX() == pos.getX() && key.getZ() == pos.getZ() && Math.abs(key.getY() - pos.getY()) <= n;
    }
 
-   private static double method773(BlockPos var0, BlockPos var1, int var2) {
-      int var3 = Math.abs(var0.getX() - var1.getX());
-      int var4 = Math.abs(var0.getZ() - var1.getZ());
-      int var5 = Math.min(var3, var4);
-      int var6 = Math.max(var3, var4) - var5;
-      int var7 = var1.getY() - var0.getY();
-      int var8 = Math.max(0, Math.abs(var7) - var2);
-      double var9 = var7 > 0 ? var8 * 0.65 : var8 * 0.15;
-      return var5 * CONST_doubleValue + var6 + var9;
+   private static double method773(BlockPos key, BlockPos pos, int n) {
+      int n2 = Math.abs(key.getX() - pos.getX());
+      int n3 = Math.abs(key.getZ() - pos.getZ());
+      int n4 = Math.min(n2, n3);
+      int n5 = Math.max(n2, n3) - n4;
+      int n6 = pos.getY() - key.getY();
+      int n7 = Math.max(0, Math.abs(n6) - n);
+      double d = n6 > 0 ? n7 * 0.65 : n7 * 0.15;
+      return n4 * CONST_doubleValue + n5 + d;
    }
 
-   private static boolean method774(Pathfinder.Entry var0, Pathfinder.Entry var1) {
-      int var2 = Double.compare(var0.doubleValue, var1.doubleValue);
-      return var2 < 0 || var2 == 0 && var0.doubleValue2 < var1.doubleValue2;
+   private static boolean method774(Pathfinder.Entry entry, Pathfinder.Entry entry2) {
+      int n = Double.compare(entry.doubleValue, entry2.doubleValue);
+      return n < 0 || n == 0 && entry.doubleValue2 < entry2.doubleValue2;
    }
 
-   private static List<BlockPos> method775(Pathfinder.Entry var0) {
-      ArrayList<BlockPos> var1 = new ArrayList<>();
+   private static List<BlockPos> method775(Pathfinder.Entry entry) {
+      ArrayList<BlockPos> list = new ArrayList<>();
 
-      for (Pathfinder.Entry var2 = var0; var2 != null; var2 = var2.entry) {
-         var1.add(var2.blockPos);
+      for (Pathfinder.Entry entry2 = entry; entry2 != null; entry2 = entry2.entry) {
+         list.add(entry2.blockPos);
       }
 
-      Collections.reverse(var1);
-      return var1;
+      Collections.reverse(list);
+      return list;
    }
 
    public static final class Data {
@@ -333,33 +333,33 @@ public final class Pathfinder implements MinecraftAccess {
       }
       public static final Pathfinder.Data INSTANCE = new Pathfinder.Data(50000, 192, 3, 0, false, true, Pathfinder.Type.EXACT);
 
-      public Data(int var1, int var2, int var3, int var4, boolean var5, boolean var6) {
-         this(var1, var2, var3, var4, var5, var6, Pathfinder.Type.EXACT);
+      public Data(int intValue, int n, int n2, int n3, boolean flag, boolean flag2) {
+         this(intValue, n, n2, n3, flag, flag2, Pathfinder.Type.EXACT);
       }
 
-      public Data(int var1, int var2, int var3, boolean var4, boolean var5) {
-         this(var1, var2, var3, 0, var4, var5, Pathfinder.Type.EXACT);
+      public Data(int intValue, int n, int n2, boolean flag, boolean flag2) {
+         this(intValue, n, n2, 0, flag, flag2, Pathfinder.Type.EXACT);
       }
 
-      public Data(int var1, int var2, int var3, int var4, boolean var5, boolean var6, Pathfinder.Type var7) {
-         if (var1 <= 0) {
+      public Data(int intValue, int n, int n2, int n3, boolean flag, boolean flag2, Pathfinder.Type type) {
+         if (intValue <= 0) {
             throw new IllegalArgumentException("maxVisitedNodes must be positive");
-         } else if (var2 <= 0) {
+         } else if (n <= 0) {
             throw new IllegalArgumentException("maxRange must be positive");
-         } else if (var3 < 0) {
+         } else if (n2 < 0) {
             throw new IllegalArgumentException("maxFallDistance cannot be negative");
-         } else if (var4 < 0) {
+         } else if (n3 < 0) {
             throw new IllegalArgumentException("goalYTolerance cannot be negative");
-         } else if (var7 == null) {
+         } else if (type == null) {
             throw new IllegalArgumentException("pathMode cannot be null");
          } else {
-            this.intValue = var1;
-            this.intValue2 = var2;
-            this.intValue3 = var3;
-            this.intValue4 = var4;
-            this.flag = var5;
-            this.flag2 = var6;
-            this.type = var7;
+            this.intValue = intValue;
+            this.intValue2 = n;
+            this.intValue3 = n2;
+            this.intValue4 = n3;
+            this.flag = flag;
+            this.flag2 = flag2;
+            this.type = type;
          }
       }
 
@@ -421,9 +421,9 @@ public final class Pathfinder implements MinecraftAccess {
          return "Data2[" + "blockPos=" + this.blockPos + ", " + "doubleValue=" + this.doubleValue + "]";
       }
 
-      private Data2(BlockPos var1, double var2) {
-         this.blockPos = var1;
-         this.doubleValue = var2;
+      private Data2(BlockPos blockPos, double doubleValue) {
+         this.blockPos = blockPos;
+         this.doubleValue = doubleValue;
       }
 
       public BlockPos getBlockPos() {
@@ -469,10 +469,10 @@ public final class Pathfinder implements MinecraftAccess {
          return "Data3[" + "entry=" + this.entry + ", " + "doubleValue=" + this.doubleValue + ", " + "longValue=" + this.longValue + "]";
       }
 
-      private Data3(Pathfinder.Entry var1, double var2, long var4) {
-         this.entry = var1;
-         this.doubleValue = var2;
-         this.longValue = var4;
+      private Data3(Pathfinder.Entry entry, double doubleValue, long longValue) {
+         this.entry = entry;
+         this.doubleValue = doubleValue;
+         this.longValue = longValue;
       }
 
       public Pathfinder.Entry getEntry() {
@@ -496,12 +496,12 @@ public final class Pathfinder implements MinecraftAccess {
       private double doubleValue3;
       private boolean closed;
 
-      private Entry(BlockPos var1, Pathfinder.Entry var2, double var3, double var5) {
-         this.blockPos = var1;
-         this.entry = var2;
-         this.doubleValue2 = var3;
-         this.doubleValue = var5;
-         this.doubleValue3 = var3 + var5;
+      private Entry(BlockPos blockPos, Pathfinder.Entry entry, double d, double doubleValue) {
+         this.blockPos = blockPos;
+         this.entry = entry;
+         this.doubleValue2 = d;
+         this.doubleValue = doubleValue;
+         this.doubleValue3 = d + doubleValue;
       }
    }
 
@@ -509,9 +509,9 @@ public final class Pathfinder implements MinecraftAccess {
       private final List<BlockPos> items;
       private int intValue;
 
-      private Entry2(List<BlockPos> var1) {
-         this.items = List.copyOf(var1);
-         this.intValue = Math.min(1, var1.size());
+      private Entry2(List<BlockPos> coll) {
+         this.items = List.copyOf(coll);
+         this.intValue = Math.min(1, coll.size());
       }
 
       public List<BlockPos> getItems() {
@@ -527,10 +527,10 @@ public final class Pathfinder implements MinecraftAccess {
       }
 
       @Nullable
-      public BlockPos method778(BlockPos var1) {
-         for (int var2 = this.intValue; var2 < this.items.size(); var2++) {
-            if (this.items.get(var2).equals(var1)) {
-               this.intValue = var2 + 1;
+      public BlockPos method778(BlockPos blockPosition) {
+         for (int i = this.intValue; i < this.items.size(); i++) {
+            if (this.items.get(i).equals(blockPosition)) {
+               this.intValue = i + 1;
                break;
             }
          }
@@ -539,12 +539,12 @@ public final class Pathfinder implements MinecraftAccess {
       }
 
       @Nullable
-      public BlockPos method779(Vec3 var1) {
+      public BlockPos method779(Vec3 position) {
          while (!this.method777()) {
-            BlockPos var2 = this.items.get(this.intValue);
-            double var3 = var1.x - (var2.getX() + 0.5);
-            double var5 = var1.z - (var2.getZ() + 0.5);
-            if (!(var3 * var3 + var5 * var5 > 0.2025) && !(Math.abs(var1.y - var2.getY()) > 0.75)) {
+            BlockPos pos = this.items.get(this.intValue);
+            double d = position.x - (pos.getX() + 0.5);
+            double d2 = position.z - (pos.getZ() + 0.5);
+            if (!(d * d + d2 * d2 > 0.2025) && !(Math.abs(position.y - pos.getY()) > 0.75)) {
                this.intValue++;
                continue;
             }
@@ -555,15 +555,15 @@ public final class Pathfinder implements MinecraftAccess {
       }
 
       @Nullable
-      public Vec3 method780(BlockPos var1) {
-         BlockPos var2 = this.method778(var1);
-         return var2 == null ? null : Pathfinder.method761(var2);
+      public Vec3 method780(BlockPos blockPosition) {
+         BlockPos nextRouteBlock = this.method778(blockPosition);
+         return nextRouteBlock == null ? null : Pathfinder.method761(nextRouteBlock);
       }
 
       @Nullable
-      public Vec3 method781(Vec3 var1) {
-         BlockPos var2 = this.method779(var1);
-         return var2 == null ? null : Pathfinder.method761(var2);
+      public Vec3 method781(Vec3 position) {
+         BlockPos nextRouteBlock = this.method779(position);
+         return nextRouteBlock == null ? null : Pathfinder.method761(nextRouteBlock);
       }
 
       public void reset() {

@@ -11,16 +11,16 @@ public final class ArmorSlots {
    private ArmorSlots() {
    }
 
-   public static List<ItemStack> method5384(LivingEntity var0) {
+   public static List<ItemStack> method5384(LivingEntity player) {
       return List.of(
-         var0.getItemBySlot(EquipmentSlot.FEET),
-         var0.getItemBySlot(EquipmentSlot.LEGS),
-         var0.getItemBySlot(EquipmentSlot.CHEST),
-         var0.getItemBySlot(EquipmentSlot.HEAD)
+         player.getItemBySlot(EquipmentSlot.FEET),
+         player.getItemBySlot(EquipmentSlot.LEGS),
+         player.getItemBySlot(EquipmentSlot.CHEST),
+         player.getItemBySlot(EquipmentSlot.HEAD)
       );
    }
 
-   public static List<ItemStack> method5385(LivingEntity var0) {
-      return List.of(var0.getItemBySlot(EquipmentSlot.MAINHAND), var0.getItemBySlot(EquipmentSlot.OFFHAND));
+   public static List<ItemStack> method5385(LivingEntity player) {
+      return List.of(player.getItemBySlot(EquipmentSlot.MAINHAND), player.getItemBySlot(EquipmentSlot.OFFHAND));
    }
 }

@@ -19,10 +19,10 @@ public class Way {
    @SerializedName("server")
    private final String server;
 
-   public Way(String var1, BlockPos var2, String var3) {
-      this.name = var1;
-      this.pos = var2;
-      this.server = var3;
+   public Way(String name, BlockPos pos, String server) {
+      this.name = name;
+      this.pos = pos;
+      this.server = server;
    }
 
    public String name() {
@@ -38,32 +38,32 @@ public class Way {
    }
 
    public Component toText() {
-      String var1 = this.pos.getX() + " " + this.pos.getY() + " " + this.pos.getZ();
-      String var2 = this.name.replace("\"", "\\\"");
-      MutableComponent var3 = Component.literal("? " + this.name);
-      var3.setStyle(
+      String str = this.pos.getX() + " " + this.pos.getY() + " " + this.pos.getZ();
+      String str2 = this.name.replace("\"", "\\\"");
+      MutableComponent literal = Component.literal("? " + this.name);
+      literal.setStyle(
          Style.EMPTY
             .withBold(true)
             .withColor(TextColor.fromRgb(16765286))
             .withHoverEvent(new ShowText(Component.literal("Место: " + this.name + "\nСервер: " + this.server)))
       );
-      MutableComponent var4 = Component.literal("  ⟨" + this.pos.getX() + ", " + this.pos.getY() + ", " + this.pos.getZ() + "⟩");
-      var4.setStyle(
+      MutableComponent component = Component.literal("  ⟨" + this.pos.getX() + ", " + this.pos.getY() + ", " + this.pos.getZ() + "⟩");
+      component.setStyle(
          Style.EMPTY
             .withColor(TextColor.fromRgb(1149618))
             .withHoverEvent(new ShowText(Component.literal("Нажми, чтобы скопировать координаты")))
-            .withClickEvent(new CopyToClipboard(var1))
+            .withClickEvent(new CopyToClipboard(str))
       );
-      MutableComponent var5 = Component.literal("  @" + this.server);
-      var5.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
-      MutableComponent var6 = Component.literal("  [Удалить]");
-      var6.setStyle(
+      MutableComponent literal2 = Component.literal("  @" + this.server);
+      literal2.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+      MutableComponent literal3 = Component.literal("  [Удалить]");
+      literal3.setStyle(
          Style.EMPTY
             .withBold(true)
             .withColor(TextColor.fromRgb(15681391))
             .withHoverEvent(new ShowText(Component.literal("Подставить команду удаления точки " + this.name)))
-            .withClickEvent(new SuggestCommand(".way remove " + var2))
+            .withClickEvent(new SuggestCommand(".way remove " + str2))
       );
-      return Component.empty().append(var3).append(var4).append(var5).append(var6);
+      return Component.empty().append(literal).append(component).append(literal2).append(literal3);
    }
 }

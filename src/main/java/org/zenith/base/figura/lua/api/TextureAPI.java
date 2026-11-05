@@ -49,8 +49,8 @@ public class TextureAPI {
       NativeImage image;
       try {
          image = new NativeImage(width, height, true);
-      } catch (Exception var6) {
-         throw new LuaError(var6.getMessage());
+      } catch (Exception e) {
+         throw new LuaError(e.getMessage());
       }
 
       FiguraTexture texture = this.register(name, image, false);
@@ -87,8 +87,8 @@ public class TextureAPI {
          ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
          image = NativeImage.read(bais);
          bais.close();
-      } catch (Exception var6) {
-         throw new LuaError("Could not read image: " + var6.getMessage());
+      } catch (Exception e) {
+         throw new LuaError("Could not read image: " + e.getMessage());
       }
 
       return this.register(name, image, false);

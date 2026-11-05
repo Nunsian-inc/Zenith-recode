@@ -23,19 +23,19 @@ public class MixinHeldItemRendererWardrobe {
       )}
    )
    private void zenith$weaponSkin(
-      ItemStackRenderState var1,
-      PoseStack var2,
-      SubmitNodeCollector var3,
-      int var4,
-      int var5,
-      int var6,
-      Operation<Void> var7,
-      @Local(argsOnly = true) ItemStack var9
+      ItemStackRenderState itemStackRenderState,
+      PoseStack poseStack,
+      SubmitNodeCollector orderedRenderCommandQueue,
+      int lightCoords,
+      int n,
+      int n2,
+      Operation<Void> operation,
+      @Local(argsOnly = true) ItemStack mainHandItem
    ) {
       // 26.3 first person is always the local player
-      LivingEntity var8 = net.minecraft.client.Minecraft.getInstance().player;
-      if (!HeldItemPoseController.method6157(var8, var9, var1, var2, var3, var4)) {
-         var7.call(new Object[]{var1, var2, var3, var4, var5, var6});
+      LivingEntity player = net.minecraft.client.Minecraft.getInstance().player;
+      if (!HeldItemPoseController.method6157(player, mainHandItem, itemStackRenderState, poseStack, orderedRenderCommandQueue, lightCoords)) {
+         operation.call(new Object[]{itemStackRenderState, poseStack, orderedRenderCommandQueue, lightCoords, n, n2});
       }
    }
 }

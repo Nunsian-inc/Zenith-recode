@@ -90,184 +90,184 @@ public final class BlockESPModule extends Module {
       super.onDisable();
    }
 
-   public void method7560(ChunkAccess var1, int var2, int var3) {
+   public void method7560(ChunkAccess returnValue, int x, int z) {
       if (this.isEnabled() && this.entry2.isSelected()) {
-         this.method7569(var1, var2, var3, this.method7568(new HashMap<>()));
+         this.method7569(returnValue, x, z, this.method7568(new HashMap<>()));
       }
    }
 
-   public void method7561(int var1, int var2) {
-      this.items.remove(ChunkPos.pack(var1, var2));
+   public void method7561(int x, int z) {
+      this.items.remove(ChunkPos.pack(x, z));
    }
 
    @EventTarget
-   public void method7562(UpdateEvent var1) {
-      ClientLevel var2 = mc.level;
-      if (mc.player == null || var2 == null) {
+   public void method7562(UpdateEvent event) {
+      ClientLevel level = mc.level;
+      if (mc.player == null || level == null) {
          this.items.clear();
          this.clientWorld = null;
-      } else if (var2 != this.clientWorld) {
-         this.clientWorld = var2;
+      } else if (level != this.clientWorld) {
+         this.clientWorld = level;
          this.items.clear();
          if (this.entry2.isSelected()) {
             this.method7567();
          }
       } else {
-         boolean var3 = this.entry2.isSelected();
-         if (var3 && !this.flag) {
+         boolean selected = this.entry2.isSelected();
+         if (selected && !this.flag) {
             this.flag = true;
             this.method7567();
          } else {
-            this.flag = var3;
+            this.flag = selected;
             if (this.blockListSetting.getVersion() != this.intValue) {
                this.intValue = this.blockListSetting.getVersion();
                this.method7564();
-               if (var3) {
+               if (selected) {
                   this.method7567();
                }
             }
 
-            this.method7563(var2);
+            this.method7563(level);
          }
       }
    }
 
-   private void method7563(ClientLevel var1) {
+   private void method7563(ClientLevel level) {
       if (!this.items.isEmpty()) {
-         this.items.values().removeIf(var1x -> !var1.hasChunk(var1x.intValue, var1x.intValue2));
+         this.items.values().removeIf(var1x -> !level.hasChunk(var1x.intValue, var1x.intValue2));
       }
    }
 
    private void method7564() {
-      for (BlockESPModule.Entry var2 : this.items.values()) {
-         var2.items.values().removeIf(var1 -> !this.blockListSetting.method1621(var1.getBlock()));
+      for (BlockESPModule.Entry entry : this.items.values()) {
+         entry.items.values().removeIf(data -> !this.blockListSetting.method1621(data.getBlock()));
       }
 
-      this.items.values().removeIf(var0 -> var0.items.isEmpty());
+      this.items.values().removeIf(entry -> entry.items.isEmpty());
    }
 
    @EventTarget
-   public void method7565(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket var2) {
-            var2.runUpdates((var1x, var2x) -> this.method7566(var1x.immutable(), var2x.getBlock()));
+   public void method7565(PacketEvent event) {
+      if (event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+            blocksUpdatePacket.runUpdates((var1x, var2x) -> this.method7566(var1x.immutable(), var2x.getBlock()));
          }
 
-         if (var1.getPacket3() instanceof ClientboundBlockUpdatePacket var4) {
-            this.method7566(var4.getPos().immutable(), var4.getBlockState().getBlock());
+         if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+            this.method7566(blockUpdatePacket.getPos().immutable(), blockUpdatePacket.getBlockState().getBlock());
          }
       }
    }
 
-   private void method7566(BlockPos var1, Block var2) {
-      int var3 = var1.getX() >> 4;
-      int var4 = var1.getZ() >> 4;
-      long var5 = ChunkPos.pack(var3, var4);
-      if (this.method7570(var2)) {
-         this.items.computeIfAbsent(var5, var2x -> new BlockESPModule.Entry(var3, var4)).items.put(var1, new BlockESPModule.Data(var2, this.method7576(var2)));
+   private void method7566(BlockPos immutable, Block block) {
+      int x = immutable.getX() >> 4;
+      int z = immutable.getZ() >> 4;
+      long pack = ChunkPos.pack(x, z);
+      if (this.method7570(block)) {
+         this.items.computeIfAbsent(pack, var2x -> new BlockESPModule.Entry(x, z)).items.put(immutable, new BlockESPModule.Data(block, this.method7576(block)));
       } else {
-         BlockESPModule.Entry var7 = this.items.get(var5);
-         if (var7 != null) {
-            var7.items.remove(var1);
+         BlockESPModule.Entry entry = this.items.get(pack);
+         if (entry != null) {
+            entry.items.remove(immutable);
          }
       }
    }
 
    private void method7567() {
-      ClientLevel var1 = mc.level;
-      LocalPlayer var2 = mc.player;
-      if (var1 != null && var2 != null) {
-         int var3 = Math.max((int)this.range.getValue3(), mc.options.renderDistance().get() + 3);
-         int var4 = var2.getBlockX() >> 4;
-         int var5 = var2.getBlockZ() >> 4;
-         var var6 = this.method7568(new HashMap<>());
+      ClientLevel level = mc.level;
+      LocalPlayer player = mc.player;
+      if (level != null && player != null) {
+         int n = Math.max((int)this.range.getValue3(), mc.options.renderDistance().get() + 3);
+         int n2 = player.getBlockX() >> 4;
+         int n3 = player.getBlockZ() >> 4;
+         var predicate = this.method7568(new HashMap<>());
 
-         for (int var7 = var4 - var3; var7 <= var4 + var3; var7++) {
-            for (int var8 = var5 - var3; var8 <= var5 + var3; var8++) {
-               ChunkAccess var9 = var1.getChunk(var7, var8, ChunkStatus.FULL, false);
-               if (var9 != null) {
-                  this.method7569(var9, var7, var8, var6);
+         for (int i = n2 - n; i <= n2 + n; i++) {
+            for (int j = n3 - n; j <= n3 + n; j++) {
+               ChunkAccess chunk = level.getChunk(i, j, ChunkStatus.FULL, false);
+               if (chunk != null) {
+                  this.method7569(chunk, i, j, predicate);
                }
             }
          }
       }
    }
 
-   private Predicate<BlockState> method7568(Map<Block, Boolean> var1) {
-      return var2 -> var1.computeIfAbsent(var2.getBlock(), this::method7570);
+   private Predicate<BlockState> method7568(Map<Block, Boolean> map) {
+      return blockState -> map.computeIfAbsent(blockState.getBlock(), this::method7570);
    }
 
-   private void method7569(ChunkAccess var1, int var2, int var3, Predicate<BlockState> var4) {
-      BlockESPModule.Entry var5 = new BlockESPModule.Entry(var2, var3);
-      long var6 = ChunkPos.pack(var2, var3);
+   private void method7569(ChunkAccess returnValue, int x, int z, Predicate<BlockState> predicate) {
+      BlockESPModule.Entry entry = new BlockESPModule.Entry(x, z);
+      long pack = ChunkPos.pack(x, z);
 
       try {
-         LevelChunkSection[] var8 = var1.getSections();
-         int var9 = var1.getMinSectionY();
-         int var10 = var2 << 4;
-         int var11 = var3 << 4;
+         LevelChunkSection[] sections = returnValue.getSections();
+         int minSectionY = returnValue.getMinSectionY();
+         int n = x << 4;
+         int n2 = z << 4;
 
-         for (int var12 = 0; var12 < var8.length; var12++) {
-            LevelChunkSection var13 = var8[var12];
-            if (var13 != null && !var13.hasOnlyAir() && var13.maybeHas(var4)) {
-               int var14 = var9 + var12 << 4;
+         for (int i = 0; i < sections.length; i++) {
+            LevelChunkSection levelChunkSection = sections[i];
+            if (levelChunkSection != null && !levelChunkSection.hasOnlyAir() && levelChunkSection.maybeHas(predicate)) {
+               int n3 = minSectionY + i << 4;
 
-               for (int var15 = 0; var15 < 16; var15++) {
-                  for (int var16 = 0; var16 < 16; var16++) {
-                     for (int var17 = 0; var17 < 16; var17++) {
-                        BlockState var18 = var13.getBlockState(var15, var17, var16);
-                        if (var4.test(var18)) {
-                           Block var19 = var18.getBlock();
-                           var5.items.put(new BlockPos(var10 + var15, var14 + var17, var11 + var16), new BlockESPModule.Data(var19, this.method7576(var19)));
+               for (int j = 0; j < 16; j++) {
+                  for (int k = 0; k < 16; k++) {
+                     for (int m = 0; m < 16; m++) {
+                        BlockState blockState = levelChunkSection.getBlockState(j, m, k);
+                        if (predicate.test(blockState)) {
+                           Block block = blockState.getBlock();
+                           entry.items.put(new BlockPos(n + j, n3 + m, n2 + k), new BlockESPModule.Data(block, this.method7576(block)));
                         }
                      }
                   }
                }
             }
          }
-      } catch (Exception var20) {
+      } catch (Exception e) {
          return;
       }
 
-      if (var5.items.isEmpty()) {
-         this.items.remove(var6);
+      if (entry.items.isEmpty()) {
+         this.items.remove(pack);
       } else {
-         this.items.put(var6, var5);
+         this.items.put(pack, entry);
       }
    }
 
-   private boolean method7570(Block var1) {
-      return !(var1 instanceof AirBlock) && this.blockListSetting.method1621(var1);
+   private boolean method7570(Block block) {
+      return !(block instanceof AirBlock) && this.blockListSetting.method1621(block);
    }
 
    @EventTarget
-   public void method7571(WorldRenderEvent var1) {
+   public void method7571(WorldRenderEvent event) {
       if (mc.level != null && mc.player != null) {
-         boolean var2 = this.entry2.isSelected();
-         int var3 = (int)this.range.getValue3();
-         int var4 = mc.player.getBlockX() >> 4;
-         int var5 = mc.player.getBlockZ() >> 4;
-         Vec3 var6 = this.tracers.isEnabled() ? this.method7572() : null;
-         Frustum var7 = FrustumHolder.getFrustum();
-         int var8 = mc.level.getMinY();
-         int var9 = mc.level.getMaxY() + 1;
+         boolean selected = this.entry2.isSelected();
+         int n = (int)this.range.getValue3();
+         int n2 = mc.player.getBlockX() >> 4;
+         int n3 = mc.player.getBlockZ() >> 4;
+         Vec3 vec = this.tracers.isEnabled() ? this.method7572() : null;
+         Frustum frustum = FrustumHolder.getFrustum();
+         int minY = mc.level.getMinY();
+         int maxY = mc.level.getMaxY() + 1;
 
-         for (BlockESPModule.Entry var11 : this.items.values()) {
-            if (!var11.items.isEmpty() && (!var2 || Math.abs(var11.intValue - var4) <= var3 && Math.abs(var11.intValue2 - var5) <= var3)) {
-               int var12 = var11.intValue << 4;
-               int var13 = var11.intValue2 << 4;
-               boolean var14 = var7 == null || var7.isVisible(new AABB(var12, var8, var13, var12 + 16, var9, var13 + 16));
-               if (var14 || var6 != null) {
-                  for (Map.Entry var16 : var11.items.entrySet()) {
-                     int var17 = ((BlockESPModule.Data)var16.getValue()).color();
-                     if (var17 != 0) {
-                        BlockPos var18 = (BlockPos)var16.getKey();
-                        if (var14) {
-                           GlowUtil.method2230(new AABB(var18), var17, 1.0F);
+         for (BlockESPModule.Entry entry : this.items.values()) {
+            if (!entry.items.isEmpty() && (!selected || Math.abs(entry.intValue - n2) <= n && Math.abs(entry.intValue2 - n3) <= n)) {
+               int minX = entry.intValue << 4;
+               int minZ = entry.intValue2 << 4;
+               boolean flag = frustum == null || frustum.isVisible(new AABB(minX, minY, minZ, minX + 16, maxY, minZ + 16));
+               if (flag || vec != null) {
+                  for (Map.Entry entry2 : entry.items.entrySet()) {
+                     int color = ((BlockESPModule.Data)entry2.getValue()).color();
+                     if (color != 0) {
+                        BlockPos key = (BlockPos)entry2.getKey();
+                        if (flag) {
+                           GlowUtil.method2230(new AABB(key), color, 1.0F);
                         }
 
-                        if (var6 != null) {
-                           GlowUtil.method2245(var6, net.minecraft.world.phys.Vec3.atCenterOf(var18), var17, 1.0F, false);
+                        if (vec != null) {
+                           GlowUtil.method2245(vec, net.minecraft.world.phys.Vec3.atCenterOf(key), color, 1.0F, false);
                         }
                      }
                   }
@@ -289,90 +289,90 @@ public final class BlockESPModule extends Module {
       return ModulePreviewStage.Kind.BLOCK;
    }
 
-   public void method7573(CustomDrawContext var1, float var2, float var3, float var4, float var5) {
-      if (var1 != null) {
-         int var6 = this.method7576(Blocks.DIRT);
-         if (var6 != 0) {
+   public void method7573(CustomDrawContext customDrawContext, float x, float f, float f2, float y) {
+      if (customDrawContext != null) {
+         int shade = this.method7576(Blocks.DIRT);
+         if (shade != 0) {
             if (this.tracers.isEnabled()) {
-               this.method7575(var1, var2, var5, var2, var3, 1.2F, ZenithColor.method7291(var6).method7294(0.9F));
+               this.method7575(customDrawContext, x, y, x, f, 1.2F, ZenithColor.method7291(shade).method7294(0.9F));
             }
 
-            float var7 = var4 / 10.0F;
-            float var8 = 16.0F * var7;
-            var1.pushMatrix();
-            var1.pose().translate(var2 - var8 / 2.0F, var3 - var8 / 2.0F);
-            var1.pose().scale(var7, var7);
-            var1.item(Items.DIRT.getDefaultInstance(), 0, 0);
-            var1.popMatrix();
-            this.method7574(var1, var2, var3, var4, ZenithColor.method7291(var6));
+            float x2 = f2 / 10.0F;
+            float f3 = 16.0F * x2;
+            customDrawContext.pushMatrix();
+            customDrawContext.pose().translate(x - f3 / 2.0F, f - f3 / 2.0F);
+            customDrawContext.pose().scale(x2, x2);
+            customDrawContext.item(Items.DIRT.getDefaultInstance(), 0, 0);
+            customDrawContext.popMatrix();
+            this.method7574(customDrawContext, x, f, f2, ZenithColor.method7291(shade));
          }
       }
    }
 
-   private void method7574(CustomDrawContext var1, float var2, float var3, float var4, ZenithColor var5) {
-      float var6 = (float)Math.toRadians(45.0);
-      float var7 = (float)Math.toRadians(30.0);
-      float var8 = (float)Math.cos(var6);
-      float var9 = (float)Math.sin(var6);
-      float var10 = (float)Math.cos(var7);
-      float var11 = (float)Math.sin(var7);
-      float var12 = 0.5F;
-      float[][] var13 = new float[][]{
-         {-var12, -var12, -var12},
-         {var12, -var12, -var12},
-         {var12, -var12, var12},
-         {-var12, -var12, var12},
-         {-var12, var12, -var12},
-         {var12, var12, -var12},
+   private void method7574(CustomDrawContext customDrawContext, float x, float f, float f2, ZenithColor zenithColor) {
+      float f3 = (float)Math.toRadians(45.0);
+      float f4 = (float)Math.toRadians(30.0);
+      float f5 = (float)Math.cos(f3);
+      float f6 = (float)Math.sin(f3);
+      float f7 = (float)Math.cos(f4);
+      float f8 = (float)Math.sin(f4);
+      float f9 = 0.5F;
+      float[][] floatses = new float[][]{
+         {-f9, -f9, -f9},
+         {f9, -f9, -f9},
+         {f9, -f9, f9},
+         {-f9, -f9, f9},
+         {-f9, f9, -f9},
+         {f9, f9, -f9},
          {0.5F, 0.5F, 0.5F},
-         {-var12, var12, var12}
+         {-f9, f9, f9}
       };
-      float[][] var14 = new float[8][2];
+      float[][] floatses2 = new float[8][2];
 
-      for (int var15 = 0; var15 < 8; var15++) {
-         float var16 = var13[var15][0] * var8 + var13[var15][2] * var9;
-         float var17 = -var13[var15][0] * var9 + var13[var15][2] * var8;
-         var14[var15][0] = var2 + var16 * var4;
-         var14[var15][1] = var3 - (var13[var15][1] * var10 - var17 * var11) * var4;
+      for (int i = 0; i < 8; i++) {
+         float f10 = floatses[i][0] * f5 + floatses[i][2] * f6;
+         float f11 = -floatses[i][0] * f6 + floatses[i][2] * f5;
+         floatses2[i][0] = x + f10 * f2;
+         floatses2[i][1] = f - (floatses[i][1] * f7 - f11 * f8) * f2;
       }
 
-      for (int var18 = 0; var18 < 4; var18++) {
-         int var19 = (var18 + 1) % 4;
-         this.method7575(var1, var14[var18][0], var14[var18][1], var14[var19][0], var14[var19][1], 1.0F, var5);
-         this.method7575(var1, var14[var18 + 4][0], var14[var18 + 4][1], var14[var19 + 4][0], var14[var19 + 4][1], 1.0F, var5);
-         this.method7575(var1, var14[var18][0], var14[var18][1], var14[var18 + 4][0], var14[var18 + 4][1], 1.0F, var5);
-      }
-   }
-
-   private void method7575(CustomDrawContext var1, float var2, float var3, float var4, float var5, float var6, ZenithColor var7) {
-      float var8 = var4 - var2;
-      float var9 = var5 - var3;
-      float var10 = (float)Math.hypot(var8, var9);
-      if (!(var10 < 0.01F)) {
-         var1.pushMatrix();
-         var1.pose().translate(var2, var3);
-         var1.pose().rotate((float)Math.atan2(var9, var8));
-         var1.drawRect(0.0F, -var6 / 2.0F, var10, var6, var7);
-         var1.popMatrix();
+      for (int i = 0; i < 4; i++) {
+         int n = (i + 1) % 4;
+         this.method7575(customDrawContext, floatses2[i][0], floatses2[i][1], floatses2[n][0], floatses2[n][1], 1.0F, zenithColor);
+         this.method7575(customDrawContext, floatses2[i + 4][0], floatses2[i + 4][1], floatses2[n + 4][0], floatses2[n + 4][1], 1.0F, zenithColor);
+         this.method7575(customDrawContext, floatses2[i][0], floatses2[i][1], floatses2[i + 4][0], floatses2[i + 4][1], 1.0F, zenithColor);
       }
    }
 
-   private int method7576(Block var1) {
-      if (var1 == Blocks.DIAMOND_ORE || var1 == Blocks.DEEPSLATE_DIAMOND_ORE) {
+   private void method7575(CustomDrawContext customDrawContext, float x, float y, float f, float f2, float height, ZenithColor zenithColor) {
+      float x2 = f - x;
+      float y2 = f2 - y;
+      float hypot = (float)Math.hypot(x2, y2);
+      if (!(hypot < 0.01F)) {
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(x, y);
+         customDrawContext.pose().rotate((float)Math.atan2(y2, x2));
+         customDrawContext.drawRect(0.0F, -height / 2.0F, hypot, height, zenithColor);
+         customDrawContext.popMatrix();
+      }
+   }
+
+   private int method7576(Block block) {
+      if (block == Blocks.DIAMOND_ORE || block == Blocks.DEEPSLATE_DIAMOND_ORE) {
          return Color.cyan.getRGB();
-      } else if (var1 == Blocks.GOLD_ORE || var1 == Blocks.DEEPSLATE_GOLD_ORE || var1 == Blocks.NETHER_GOLD_ORE) {
+      } else if (block == Blocks.GOLD_ORE || block == Blocks.DEEPSLATE_GOLD_ORE || block == Blocks.NETHER_GOLD_ORE) {
          return 55040;
-      } else if (var1 == Blocks.EMERALD_ORE || var1 == Blocks.DEEPSLATE_EMERALD_ORE) {
+      } else if (block == Blocks.EMERALD_ORE || block == Blocks.DEEPSLATE_EMERALD_ORE) {
          return -16711859;
-      } else if (var1 == Blocks.IRON_ORE || var1 == Blocks.DEEPSLATE_IRON_ORE) {
+      } else if (block == Blocks.IRON_ORE || block == Blocks.DEEPSLATE_IRON_ORE) {
          return -2763307;
-      } else if (var1 == Blocks.REDSTONE_ORE || var1 == Blocks.DEEPSLATE_REDSTONE_ORE) {
+      } else if (block == Blocks.REDSTONE_ORE || block == Blocks.DEEPSLATE_REDSTONE_ORE) {
          return -65536;
-      } else if (var1 == Blocks.ANCIENT_DEBRIS) {
+      } else if (block == Blocks.ANCIENT_DEBRIS) {
          return -1;
       } else {
-         MapColor var2 = var1.defaultMapColor();
-         return var2 != null ? new Color(var2.col).getRGB() : 0;
+         MapColor defaultMapColor = block.defaultMapColor();
+         return defaultMapColor != null ? new Color(defaultMapColor.col).getRGB() : 0;
       }
    }
 
@@ -405,9 +405,9 @@ public final class BlockESPModule extends Module {
          return "Data[" + "block=" + this.block + ", " + "intValue=" + this.intValue + "]";
       }
 
-      private Data(Block var1, int var2) {
-         this.block = var1;
-         this.intValue = var2;
+      private Data(Block block, int intValue) {
+         this.block = block;
+         this.intValue = intValue;
       }
 
       public Block getBlock() {
@@ -424,9 +424,9 @@ public final class BlockESPModule extends Module {
       private final int intValue2;
       private final Map<BlockPos, BlockESPModule.Data> items = new ConcurrentHashMap<>();
 
-      private Entry(int var1, int var2) {
-         this.intValue = var1;
-         this.intValue2 = var2;
+      private Entry(int intValue, int z) {
+         this.intValue = intValue;
+         this.intValue2 = z;
       }
    }
 }

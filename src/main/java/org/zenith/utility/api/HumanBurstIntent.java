@@ -49,211 +49,211 @@ public final class HumanBurstIntent {
    private int intValue5;
 
    private HumanBurstIntent(
-      int var1,
-      int var2,
-      int var3,
-      int var4,
-      HumanBurstIntent.Data[] var5,
-      HumanBurstIntent.Data5[] var6,
-      HumanBurstIntent.Data2[] var7,
-      float[][] var8,
-      float[] var9,
-      float[][] var10,
-      float[] var11,
-      float[][] var12,
-      float[] var13,
-      float[] var14,
-      float[] var15,
-      float var16,
-      float[][] var17,
-      float[] var18,
-      float[][] var19,
-      float[] var20,
-      float[][] var21,
-      float[] var22,
-      float[][] var23,
-      float[] var24,
-      float[][] var25,
-      float[] var26,
-      float[][] var27,
-      float[] var28,
-      float[][] var29,
-      float[] var30
+      int intValue,
+      int n,
+      int n2,
+      int n3,
+      HumanBurstIntent.Data[] datas,
+      HumanBurstIntent.Data5[] data5s,
+      HumanBurstIntent.Data2[] data2s,
+      float[][] floatValues,
+      float[] floatValues2,
+      float[][] floatValues3,
+      float[] floatValues4,
+      float[][] floatValues5,
+      float[] floatValues6,
+      float[] floatValues7,
+      float[] floatValues8,
+      float floatValue,
+      float[][] floatValues9,
+      float[] floatValues10,
+      float[][] floatValues11,
+      float[] floatValues12,
+      float[][] floatValues13,
+      float[] floatValues14,
+      float[][] floatValues15,
+      float[] floatValues16,
+      float[][] floatValues17,
+      float[] floatValues18,
+      float[][] floatValues19,
+      float[] floatValues20,
+      float[][] floatValues21,
+      float[] floatValues22
    ) {
-      this.intValue = var1;
-      this.intValue2 = var2;
-      this.intValue3 = var3;
-      this.intValue4 = var4;
-      this.datas = var5;
-      this.data5s = var6;
-      this.data2s = var7;
-      this.floatValues = var8;
-      this.floatValues2 = var9;
-      this.floatValues3 = var10;
-      this.floatValues4 = var11;
-      this.floatValues5 = var12;
-      this.floatValues6 = var13;
-      this.floatValues7 = var14;
-      this.floatValues8 = var15;
-      this.floatValue = var16;
-      this.floatValues9 = var17;
-      this.floatValues10 = var18;
-      this.floatValues11 = var19;
-      this.floatValues12 = var20;
-      this.floatValues13 = var21;
-      this.floatValues14 = var22;
-      this.floatValues15 = var23;
-      this.floatValues16 = var24;
-      this.floatValues17 = var25;
-      this.floatValues18 = var26;
-      this.floatValues19 = var27;
-      this.floatValues20 = var28;
-      this.floatValues21 = var29;
-      this.floatValues22 = var30;
-      this.floatValues23 = new float[var4][var1];
+      this.intValue = intValue;
+      this.intValue2 = n;
+      this.intValue3 = n2;
+      this.intValue4 = n3;
+      this.datas = datas;
+      this.data5s = data5s;
+      this.data2s = data2s;
+      this.floatValues = floatValues;
+      this.floatValues2 = floatValues2;
+      this.floatValues3 = floatValues3;
+      this.floatValues4 = floatValues4;
+      this.floatValues5 = floatValues5;
+      this.floatValues6 = floatValues6;
+      this.floatValues7 = floatValues7;
+      this.floatValues8 = floatValues8;
+      this.floatValue = floatValue;
+      this.floatValues9 = floatValues9;
+      this.floatValues10 = floatValues10;
+      this.floatValues11 = floatValues11;
+      this.floatValues12 = floatValues12;
+      this.floatValues13 = floatValues13;
+      this.floatValues14 = floatValues14;
+      this.floatValues15 = floatValues15;
+      this.floatValues16 = floatValues16;
+      this.floatValues17 = floatValues17;
+      this.floatValues18 = floatValues18;
+      this.floatValues19 = floatValues19;
+      this.floatValues20 = floatValues20;
+      this.floatValues21 = floatValues21;
+      this.floatValues22 = floatValues22;
+      this.floatValues23 = new float[n3][intValue];
    }
 
    public static HumanBurstIntent method6372() {
-      HumanBurstIntent var0 = method6373(path);
-      if (var0 != null) {
-         return var0;
+      HumanBurstIntent humanBurstIntent = method6373(path);
+      if (humanBurstIntent != null) {
+         return humanBurstIntent;
       } else {
          try {
-            HumanBurstIntent var2;
-            try (InputStream var1 = HumanBurstIntent.class.getResourceAsStream("/assets/zenith/pointclick/human_burst_intent.json")) {
-               if (var1 == null) {
+            HumanBurstIntent humanBurstIntent2;
+            try (InputStream resourceAsStream = HumanBurstIntent.class.getResourceAsStream("/assets/zenith/pointclick/human_burst_intent.json")) {
+               if (resourceAsStream == null) {
                   return null;
                }
 
-               var2 = method6374(new String(var1.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/pointclick/human_burst_intent.json");
+               humanBurstIntent2 = method6374(new String(resourceAsStream.readAllBytes(), StandardCharsets.UTF_8), "/assets/zenith/pointclick/human_burst_intent.json");
             }
 
-            return var2;
-         } catch (Throwable var6) {
-            System.err.println("[HumanBurst] failed to load /assets/zenith/pointclick/human_burst_intent.json: " + var6);
+            return humanBurstIntent2;
+         } catch (Throwable e) {
+            System.err.println("[HumanBurst] failed to load /assets/zenith/pointclick/human_burst_intent.json: " + e);
             return null;
          }
       }
    }
 
-   private static HumanBurstIntent method6373(Path var0) {
+   private static HumanBurstIntent method6373(Path path) {
       try {
-         return !Files.isRegularFile(var0) ? null : method6374(Files.readString(var0, StandardCharsets.UTF_8), var0.toAbsolutePath().toString());
-      } catch (Throwable var2) {
-         System.err.println("[HumanBurst] failed to load " + var0 + ": " + var2);
+         return !Files.isRegularFile(path) ? null : method6374(Files.readString(path, StandardCharsets.UTF_8), path.toAbsolutePath().toString());
+      } catch (Throwable e) {
+         System.err.println("[HumanBurst] failed to load " + path + ": " + e);
          return null;
       }
    }
 
-   private static HumanBurstIntent method6374(String var0, String var1) {
-      JsonObject var2 = JsonParser.parseString(var0).getAsJsonObject();
-      method6399(var2.get("format_version").getAsInt() == 2, "format version");
-      method6399("human_burst_target_relative_gru_bump".equals(var2.get("model").getAsString()), "model name");
-      JsonObject var3 = var2.getAsJsonObject("architecture");
-      int var4 = var3.get("input_size").getAsInt();
-      int var5 = var3.get("hidden_size").getAsInt();
-      int var6 = var3.get("layers").getAsInt();
-      int var7 = var3.get("max_horizon").getAsInt();
-      int var8 = var2.get("history_ticks").getAsInt();
-      method6399(var4 == 61, "input size");
-      method6399(var5 > 0 && var6 > 0 && var7 >= 2 && var8 > 0, "architecture");
-      JsonArray var9 = var2.getAsJsonArray("feature_spec");
-      method6399(var9.size() == var4, "feature count");
-      HumanBurstIntent.Data[] var10 = new HumanBurstIntent.Data[var4];
+   private static HumanBurstIntent method6374(String str, String string) {
+      JsonObject jsonObject = JsonParser.parseString(str).getAsJsonObject();
+      method6399(jsonObject.get("format_version").getAsInt() == 2, "format version");
+      method6399("human_burst_target_relative_gru_bump".equals(jsonObject.get("model").getAsString()), "model name");
+      JsonObject json = jsonObject.getAsJsonObject("architecture");
+      int intValue = json.get("input_size").getAsInt();
+      int n = json.get("hidden_size").getAsInt();
+      int n2 = json.get("layers").getAsInt();
+      int n3 = json.get("max_horizon").getAsInt();
+      int n4 = jsonObject.get("history_ticks").getAsInt();
+      method6399(intValue == 61, "input size");
+      method6399(n > 0 && n2 > 0 && n3 >= 2 && n4 > 0, "architecture");
+      JsonArray jsonArray = jsonObject.getAsJsonArray("feature_spec");
+      method6399(jsonArray.size() == intValue, "feature count");
+      HumanBurstIntent.Data[] datas = new HumanBurstIntent.Data[intValue];
 
-      for (int var11 = 0; var11 < var4; var11++) {
-         JsonObject var12 = var9.get(var11).getAsJsonObject();
-         var10[var11] = new HumanBurstIntent.Data(
-            var12.get("name").getAsString(),
-            var12.get("transform").getAsString(),
-            var12.get("scale").getAsFloat(),
-            var12.get("mean").getAsFloat(),
-            var12.get("std").getAsFloat()
+      for (int i = 0; i < intValue; i++) {
+         JsonObject jsonObject2 = jsonArray.get(i).getAsJsonObject();
+         datas[i] = new HumanBurstIntent.Data(
+            jsonObject2.get("name").getAsString(),
+            jsonObject2.get("transform").getAsString(),
+            jsonObject2.get("scale").getAsFloat(),
+            jsonObject2.get("mean").getAsFloat(),
+            jsonObject2.get("std").getAsFloat()
          );
-         method6399(Float.isFinite(var10[var11].getFloatValue3()) && var10[var11].getFloatValue3() > 0.0F, "feature std " + var11);
+         method6399(Float.isFinite(datas[i].getFloatValue3()) && datas[i].getFloatValue3() > 0.0F, "feature std " + i);
       }
 
-      method6399("target_yaw_error_sin".equals(var10[var4 - 2].name()), "yaw sine feature");
-      method6399("target_yaw_error_cos".equals(var10[var4 - 1].name()), "yaw cosine feature");
-      JsonArray var19 = var2.getAsJsonArray("target_spec");
-      method6399(var19.size() == 6, "target count");
-      HumanBurstIntent.Data5[] var20 = new HumanBurstIntent.Data5[6];
+      method6399("target_yaw_error_sin".equals(datas[intValue - 2].name()), "yaw sine feature");
+      method6399("target_yaw_error_cos".equals(datas[intValue - 1].name()), "yaw cosine feature");
+      JsonArray jsonArray2 = jsonObject.getAsJsonArray("target_spec");
+      method6399(jsonArray2.size() == 6, "target count");
+      HumanBurstIntent.Data5[] data5s = new HumanBurstIntent.Data5[6];
 
-      for (int var13 = 0; var13 < var20.length; var13++) {
-         JsonObject var14 = var19.get(var13).getAsJsonObject();
-         var20[var13] = new HumanBurstIntent.Data5(
-            var14.get("transform").getAsString(), var14.get("scale").getAsFloat(), var14.get("mean").getAsFloat(), var14.get("std").getAsFloat()
+      for (int i = 0; i < data5s.length; i++) {
+         JsonObject jsonObject2 = jsonArray2.get(i).getAsJsonObject();
+         data5s[i] = new HumanBurstIntent.Data5(
+            jsonObject2.get("transform").getAsString(), jsonObject2.get("scale").getAsFloat(), jsonObject2.get("mean").getAsFloat(), jsonObject2.get("std").getAsFloat()
          );
-         method6399(Float.isFinite(var20[var13].getFloatValue3()) && var20[var13].getFloatValue3() > 0.0F, "target std " + var13);
+         method6399(Float.isFinite(data5s[i].getFloatValue3()) && data5s[i].getFloatValue3() > 0.0F, "target std " + i);
       }
 
-      JsonObject var21 = var2.getAsJsonObject("weights");
-      JsonArray var22 = var21.getAsJsonArray("gru_layers");
-      method6399(var22.size() == var6, "GRU layer count");
-      HumanBurstIntent.Data2[] var15 = new HumanBurstIntent.Data2[var6];
-      int var16 = var4;
+      JsonObject jsonObject2 = jsonObject.getAsJsonObject("weights");
+      JsonArray jsonArray3 = jsonObject2.getAsJsonArray("gru_layers");
+      method6399(jsonArray3.size() == n2, "GRU layer count");
+      HumanBurstIntent.Data2[] data2s = new HumanBurstIntent.Data2[n2];
+      int intValue2 = intValue;
 
-      for (int var17 = 0; var17 < var6; var17++) {
-         JsonObject var18 = var22.get(var17).getAsJsonObject();
-         var15[var17] = new HumanBurstIntent.Data2(
-            method6398(var18.getAsJsonArray("weight_ih")),
-            method6398(var18.getAsJsonArray("weight_hh")),
-            method6397(var18.getAsJsonArray("bias_ih")),
-            method6397(var18.getAsJsonArray("bias_hh"))
+      for (int i = 0; i < n2; i++) {
+         JsonObject jsonObject3 = jsonArray3.get(i).getAsJsonObject();
+         data2s[i] = new HumanBurstIntent.Data2(
+            method6398(jsonObject3.getAsJsonArray("weight_ih")),
+            method6398(jsonObject3.getAsJsonArray("weight_hh")),
+            method6397(jsonObject3.getAsJsonArray("bias_ih")),
+            method6397(jsonObject3.getAsJsonArray("bias_hh"))
          );
-         method6384(var15[var17], var16, var5, "GRU layer " + var17);
-         var16 = var5;
+         method6384(data2s[i], intValue2, n, "GRU layer " + i);
+         intValue2 = n;
       }
 
-      HumanBurstIntent var23 = new HumanBurstIntent(
-         var4,
-         var5,
-         var7,
-         var8,
-         var10,
-         var20,
-         var15,
-         method6398(var21.getAsJsonArray("attention_projection_weight")),
-         method6397(var21.getAsJsonArray("attention_projection_bias")),
-         method6398(var21.getAsJsonArray("attention_score_weight")),
-         method6397(var21.getAsJsonArray("attention_score_bias")),
-         method6398(var21.getAsJsonArray("trunk_weight")),
-         method6397(var21.getAsJsonArray("trunk_bias")),
-         method6397(var21.getAsJsonArray("layer_norm_weight")),
-         method6397(var21.getAsJsonArray("layer_norm_bias")),
-         var21.get("layer_norm_epsilon").getAsFloat(),
-         method6398(var21.getAsJsonArray("mode_weight")),
-         method6397(var21.getAsJsonArray("mode_bias")),
-         method6398(var21.getAsJsonArray("horizon_weight")),
-         method6397(var21.getAsJsonArray("horizon_bias")),
-         method6398(var21.getAsJsonArray("motion_weight")),
-         method6397(var21.getAsJsonArray("motion_bias")),
-         method6398(var21.getAsJsonArray("aim_weight")),
-         method6397(var21.getAsJsonArray("aim_bias")),
-         method6398(var21.getAsJsonArray("terminal_weight")),
-         method6397(var21.getAsJsonArray("terminal_bias")),
-         method6398(var21.getAsJsonArray("residual_weight")),
-         method6397(var21.getAsJsonArray("residual_bias")),
-         method6398(var21.getAsJsonArray("commit_weight")),
-         method6397(var21.getAsJsonArray("commit_bias"))
+      HumanBurstIntent humanBurstIntent = new HumanBurstIntent(
+         intValue,
+         n,
+         n3,
+         n4,
+         datas,
+         data5s,
+         data2s,
+         method6398(jsonObject2.getAsJsonArray("attention_projection_weight")),
+         method6397(jsonObject2.getAsJsonArray("attention_projection_bias")),
+         method6398(jsonObject2.getAsJsonArray("attention_score_weight")),
+         method6397(jsonObject2.getAsJsonArray("attention_score_bias")),
+         method6398(jsonObject2.getAsJsonArray("trunk_weight")),
+         method6397(jsonObject2.getAsJsonArray("trunk_bias")),
+         method6397(jsonObject2.getAsJsonArray("layer_norm_weight")),
+         method6397(jsonObject2.getAsJsonArray("layer_norm_bias")),
+         jsonObject2.get("layer_norm_epsilon").getAsFloat(),
+         method6398(jsonObject2.getAsJsonArray("mode_weight")),
+         method6397(jsonObject2.getAsJsonArray("mode_bias")),
+         method6398(jsonObject2.getAsJsonArray("horizon_weight")),
+         method6397(jsonObject2.getAsJsonArray("horizon_bias")),
+         method6398(jsonObject2.getAsJsonArray("motion_weight")),
+         method6397(jsonObject2.getAsJsonArray("motion_bias")),
+         method6398(jsonObject2.getAsJsonArray("aim_weight")),
+         method6397(jsonObject2.getAsJsonArray("aim_bias")),
+         method6398(jsonObject2.getAsJsonArray("terminal_weight")),
+         method6397(jsonObject2.getAsJsonArray("terminal_bias")),
+         method6398(jsonObject2.getAsJsonArray("residual_weight")),
+         method6397(jsonObject2.getAsJsonArray("residual_bias")),
+         method6398(jsonObject2.getAsJsonArray("commit_weight")),
+         method6397(jsonObject2.getAsJsonArray("commit_bias"))
       );
-      var23.method6383();
-      method6386(var23, var2.getAsJsonArray("parity"));
-      System.out.println("[HumanBurst] loaded " + var1 + " (GRU" + var5 + "x" + var6 + ", attention, history=" + var8 + ")");
-      return var23;
+      humanBurstIntent.method6383();
+      method6386(humanBurstIntent, jsonObject.getAsJsonArray("parity"));
+      System.out.println("[HumanBurst] loaded " + string + " (GRU" + n + "x" + n2 + ", attention, history=" + n4 + ")");
+      return humanBurstIntent;
    }
 
    public void reset() {
       this.intValue5 = 0;
    }
 
-   public void method6375(float[] var1, float var2) {
-      float[] var3 = this.method6378(var1, var2);
+   public void method6375(float[] floats, float f) {
+      float[] floats2 = this.method6378(floats, f);
       if (this.intValue5 < this.intValue4) {
-         this.floatValues23[this.intValue5++] = var3;
+         this.floatValues23[this.intValue5++] = floats2;
       } else {
          System.arraycopy(this.floatValues23, 1, this.floatValues23, 0, this.intValue4 - 1);
-         this.floatValues23[this.intValue4 - 1] = var3;
+         this.floatValues23[this.intValue4 - 1] = floats2;
       }
    }
 
@@ -265,168 +265,168 @@ public final class HumanBurstIntent {
       return new HumanBurstIntent.Data4(0, 0, 0.0F, 0.0F, 0.5F, 0.5F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
    }
 
-   private float[] method6378(float[] var1, float var2) {
-      if (var1 != null && var1.length == 59) {
-         method6399(Float.isFinite(var2) && var2 > 0.0F, "mouse GCD");
-         float[] var3 = new float[this.intValue];
+   private float[] method6378(float[] floats, float f) {
+      if (floats != null && floats.length == 59) {
+         method6399(Float.isFinite(f) && f > 0.0F, "mouse GCD");
+         float[] floats2 = new float[this.intValue];
 
-         for (int var4 = 0; var4 < 59; var4++) {
-            float var5 = var4 == 26 ? method6387(var1[var4], var2) : var1[var4];
-            var3[var4] = method6390(method6388(var5, this.datas[var4]), this.datas[var4], "feature " + var4);
+         for (int i = 0; i < 59; i++) {
+            float f2 = i == 26 ? method6387(floats[i], f) : floats[i];
+            floats2[i] = method6390(method6388(f2, this.datas[i]), this.datas[i], "feature " + i);
          }
 
-         double var6 = Math.toRadians(var1[0] * var2);
-         var3[59] = method6390((float)Math.sin(var6), this.datas[59], "yaw sine");
-         var3[60] = method6390((float)Math.cos(var6), this.datas[60], "yaw cosine");
-         return var3;
+         double d = Math.toRadians(floats[0] * f);
+         floats2[59] = method6390((float)Math.sin(d), this.datas[59], "yaw sine");
+         floats2[60] = method6390((float)Math.cos(d), this.datas[60], "yaw cosine");
+         return floats2;
       } else {
          throw new IllegalArgumentException("expected 59 raw features");
       }
    }
 
-   private HumanBurstIntent.Data3 method6379(float[][] var1, int var2) {
-      method6399(var2 > 0 && var2 <= var1.length, "history length");
-      float[][] var3 = new float[this.data2s.length][this.intValue2];
-      float[][] var4 = new float[var2][this.intValue2];
+   private HumanBurstIntent.Data3 method6379(float[][] floatValues23, int length) {
+      method6399(length > 0 && length <= floatValues23.length, "history length");
+      float[][] floatses = new float[this.data2s.length][this.intValue2];
+      float[][] floatses2 = new float[length][this.intValue2];
 
-      for (int var5 = 0; var5 < var2; var5++) {
-         float[] var6 = var1[var5];
+      for (int i = 0; i < length; i++) {
+         float[] floats = floatValues23[i];
 
-         for (int var7 = 0; var7 < this.data2s.length; var7++) {
-            var3[var7] = this.method6380(var6, var3[var7], this.data2s[var7]);
-            var6 = var3[var7];
+         for (int j = 0; j < this.data2s.length; j++) {
+            floatses[j] = this.method6380(floats, floatses[j], this.data2s[j]);
+            floats = floatses[j];
          }
 
-         var4[var5] = (float[])var6.clone();
+         floatses2[i] = (float[])floats.clone();
       }
 
-      float[] var11 = new float[var2];
+      float[] floatValues2 = new float[length];
 
-      for (int var12 = 0; var12 < var2; var12++) {
-         float[] var14 = method6392(var4[var12], this.floatValues, this.floatValues2);
+      for (int i = 0; i < length; i++) {
+         float[] floats = method6392(floatses2[i], this.floatValues, this.floatValues2);
 
-         for (int var8 = 0; var8 < var14.length; var8++) {
-            var14[var8] = (float)Math.tanh(var14[var8]);
+         for (int j = 0; j < floats.length; j++) {
+            floats[j] = (float)Math.tanh(floats[j]);
          }
 
-         var11[var12] = method6392(var14, this.floatValues3, this.floatValues4)[0];
+         floatValues2[i] = method6392(floats, this.floatValues3, this.floatValues4)[0];
       }
 
-      float[] var13 = method6394(var11);
-      float[] var15 = new float[this.intValue2];
+      float[] floats = method6394(floatValues2);
+      float[] floats2 = new float[this.intValue2];
 
-      for (int var16 = 0; var16 < var2; var16++) {
-         for (int var9 = 0; var9 < this.intValue2; var9++) {
-            var15[var9] += var13[var16] * var4[var16][var9];
+      for (int i = 0; i < length; i++) {
+         for (int j = 0; j < this.intValue2; j++) {
+            floats2[j] += floats[i] * floatses2[i][j];
          }
       }
 
-      float[] var17 = new float[this.intValue2 * 2];
-      System.arraycopy(var4[var2 - 1], 0, var17, 0, this.intValue2);
-      System.arraycopy(var15, 0, var17, this.intValue2, this.intValue2);
-      float[] var18 = method6392(var17, this.floatValues5, this.floatValues6);
+      float[] floats3 = new float[this.intValue2 * 2];
+      System.arraycopy(floatses2[length - 1], 0, floats3, 0, this.intValue2);
+      System.arraycopy(floats2, 0, floats3, this.intValue2, this.intValue2);
+      float[] floats4 = method6392(floats3, this.floatValues5, this.floatValues6);
 
-      for (int var10 = 0; var10 < var18.length; var10++) {
-         var18[var10] *= method6393(var18[var10]);
+      for (int i = 0; i < floats4.length; i++) {
+         floats4[i] *= method6393(floats4[i]);
       }
 
-      var18 = this.method6381(var18);
+      floats4 = this.method6381(floats4);
       return new HumanBurstIntent.Data3(
-         method6392(var18, this.floatValues9, this.floatValues10),
-         method6392(var18, this.floatValues11, this.floatValues12),
-         method6392(var18, this.floatValues13, this.floatValues14),
-         method6392(var18, this.floatValues15, this.floatValues16),
-         method6392(var18, this.floatValues17, this.floatValues18),
-         method6392(var18, this.floatValues19, this.floatValues20),
-         method6392(var18, this.floatValues21, this.floatValues22)[0]
+         method6392(floats4, this.floatValues9, this.floatValues10),
+         method6392(floats4, this.floatValues11, this.floatValues12),
+         method6392(floats4, this.floatValues13, this.floatValues14),
+         method6392(floats4, this.floatValues15, this.floatValues16),
+         method6392(floats4, this.floatValues17, this.floatValues18),
+         method6392(floats4, this.floatValues19, this.floatValues20),
+         method6392(floats4, this.floatValues21, this.floatValues22)[0]
       );
    }
 
-   private float[] method6380(float[] var1, float[] var2, HumanBurstIntent.Data2 var3) {
-      int var4 = this.intValue2;
-      float[] var5 = method6391(var1, var3.getFloatValues(), var3.getFloatValues3());
-      float[] var6 = method6391(var2, var3.getFloatValues2(), var3.getFloatValues4());
-      float[] var7 = new float[var4];
+   private float[] method6380(float[] floats, float[] floats2, HumanBurstIntent.Data2 data2) {
+      int n = this.intValue2;
+      float[] floats3 = method6391(floats, data2.getFloatValues(), data2.getFloatValues3());
+      float[] floats4 = method6391(floats2, data2.getFloatValues2(), data2.getFloatValues4());
+      float[] floats5 = new float[n];
 
-      for (int var8 = 0; var8 < var4; var8++) {
-         float var9 = method6393(var5[var8] + var6[var8]);
-         float var10 = method6393(var5[var4 + var8] + var6[var4 + var8]);
-         float var11 = (float)Math.tanh(var5[2 * var4 + var8] + var9 * var6[2 * var4 + var8]);
-         var7[var8] = (1.0F - var10) * var11 + var10 * var2[var8];
+      for (int i = 0; i < n; i++) {
+         float f = method6393(floats3[i] + floats4[i]);
+         float f2 = method6393(floats3[n + i] + floats4[n + i]);
+         float tanh = (float)Math.tanh(floats3[2 * n + i] + f * floats4[2 * n + i]);
+         floats5[i] = (1.0F - f2) * tanh + f2 * floats2[i];
       }
 
-      return var7;
+      return floats5;
    }
 
-   private float[] method6381(float[] var1) {
-      double var2 = 0.0;
+   private float[] method6381(float[] floats) {
+      double d = 0.0;
 
-      for (float var7 : var1) {
-         var2 += var7;
+      for (float f : floats) {
+         d += f;
       }
 
-      var2 /= var1.length;
-      double var13 = 0.0;
+      d /= floats.length;
+      double d2 = 0.0;
 
-      for (float var9 : var1) {
-         double var10 = var9 - var2;
-         var13 += var10 * var10;
+      for (float f : floats) {
+         double d3 = f - d;
+         d2 += d3 * d3;
       }
 
-      var13 /= var1.length;
-      double var16 = 1.0 / Math.sqrt(var13 + this.floatValue);
-      float[] var18 = new float[var1.length];
+      d2 /= floats.length;
+      double d3 = 1.0 / Math.sqrt(d2 + this.floatValue);
+      float[] floats2 = new float[floats.length];
 
-      for (int var19 = 0; var19 < var18.length; var19++) {
-         var18[var19] = (float)((var1[var19] - var2) * var16) * this.floatValues7[var19] + this.floatValues8[var19];
+      for (int i = 0; i < floats2.length; i++) {
+         floats2[i] = (float)((floats[i] - d) * d3) * this.floatValues7[i] + this.floatValues8[i];
       }
 
-      return var18;
+      return floats2;
    }
 
-   private HumanBurstIntent.Data4 method6382(HumanBurstIntent.Data3 var1) {
-      int var2 = method6395(var1.getFloatValues());
-      float[] var3 = method6394(var1.getFloatValues2());
-      double var4 = 0.0;
+   private HumanBurstIntent.Data4 method6382(HumanBurstIntent.Data3 data3) {
+      int intValue = method6395(data3.getFloatValues());
+      float[] floats = method6394(data3.getFloatValues2());
+      double d = 0.0;
 
-      for (int var6 = 0; var6 < var3.length; var6++) {
-         var4 += var3[var6] * (var6 + 2);
+      for (int i = 0; i < floats.length; i++) {
+         d += floats[i] * (i + 2);
       }
 
-      int var11 = Math.max(2, Math.min(this.intValue3, (int)Math.round(var4)));
-      if (var2 == 0) {
-         var11 = 0;
-      } else if (var2 == 1) {
-         var11 = 1;
+      int n = Math.max(2, Math.min(this.intValue3, (int)Math.round(d)));
+      if (intValue == 0) {
+         n = 0;
+      } else if (intValue == 1) {
+         n = 1;
       }
 
-      float[] var7 = new float[]{
-         var1.getFloatValues3()[0],
-         var1.getFloatValues3()[1],
-         var1.getFloatValues5()[0],
-         var1.getFloatValues5()[1],
-         var1.getFloatValues6()[0],
-         var1.getFloatValues6()[1]
+      float[] floats2 = new float[]{
+         data3.getFloatValues3()[0],
+         data3.getFloatValues3()[1],
+         data3.getFloatValues5()[0],
+         data3.getFloatValues5()[1],
+         data3.getFloatValues6()[0],
+         data3.getFloatValues6()[1]
       };
-      float[] var8 = new float[this.data5s.length];
+      float[] floats3 = new float[this.data5s.length];
 
-      for (int var9 = 0; var9 < var8.length; var9++) {
-         float var10 = var7[var9] * this.data5s[var9].getFloatValue3() + this.data5s[var9].getFloatValue2();
-         var8[var9] = method6389(var10, this.data5s[var9]);
+      for (int i = 0; i < floats3.length; i++) {
+         float x = floats2[i] * this.data5s[i].getFloatValue3() + this.data5s[i].getFloatValue2();
+         floats3[i] = method6389(x, this.data5s[i]);
       }
 
       return new HumanBurstIntent.Data4(
-         var2,
-         var11,
-         var8[0],
-         var8[1],
-         method6393(var1.getFloatValues4()[0]),
-         method6393(var1.getFloatValues4()[1]),
-         var8[2],
-         var8[3],
-         var8[4],
-         var8[5],
-         method6393(var1.getFloatValue())
+         intValue,
+         n,
+         floats3[0],
+         floats3[1],
+         method6393(data3.getFloatValues4()[0]),
+         method6393(data3.getFloatValues4()[1]),
+         floats3[2],
+         floats3[3],
+         floats3[4],
+         floats3[5],
+         method6393(data3.getFloatValue())
       );
    }
 
@@ -445,179 +445,179 @@ public final class HumanBurstIntent {
       method6399(Float.isFinite(this.floatValue) && this.floatValue > 0.0F, "layer norm epsilon");
    }
 
-   private static void method6384(HumanBurstIntent.Data2 var0, int var1, int var2, String var3) {
-      method6385(var0.getFloatValues(), var0.getFloatValues3(), var1, var2 * 3, var3 + " input");
-      method6385(var0.getFloatValues2(), var0.getFloatValues4(), var2, var2 * 3, var3 + " hidden");
+   private static void method6384(HumanBurstIntent.Data2 data2, int n, int n2, String str) {
+      method6385(data2.getFloatValues(), data2.getFloatValues3(), n, n2 * 3, str + " input");
+      method6385(data2.getFloatValues2(), data2.getFloatValues4(), n2, n2 * 3, str + " hidden");
    }
 
-   private static void method6385(float[][] var0, float[] var1, int var2, int var3, String var4) {
-      method6399(var0.length == var3 && var1.length == var3, var4 + " output size");
+   private static void method6385(float[][] floatValues, float[] floatValues4, int n, int n2, String str) {
+      method6399(floatValues.length == n2 && floatValues4.length == n2, str + " output size");
 
-      for (float[] var8 : var0) {
-         method6399(var8.length == var2, var4 + " input size");
+      for (float[] floatValue : floatValues) {
+         method6399(floatValue.length == n, str + " input size");
       }
    }
 
-   private static void method6386(HumanBurstIntent var0, JsonArray var1) {
-      for (int var2 = 0; var2 < var1.size(); var2++) {
-         JsonObject var3 = var1.get(var2).getAsJsonObject();
-         JsonArray var4 = var3.getAsJsonArray("raw_history");
-         float[][] var5 = new float[var4.size()][];
-         float var6 = var3.get("mouse_gcd").getAsFloat();
+   private static void method6386(HumanBurstIntent humanBurstIntent, JsonArray jsonArray) {
+      for (int i = 0; i < jsonArray.size(); i++) {
+         JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+         JsonArray jsonArray2 = jsonObject.getAsJsonArray("raw_history");
+         float[][] floatValues23 = new float[jsonArray2.size()][];
+         float f = jsonObject.get("mouse_gcd").getAsFloat();
 
-         for (int var7 = 0; var7 < var4.size(); var7++) {
-            var5[var7] = var0.method6378(method6397(var4.get(var7).getAsJsonArray()), var6);
+         for (int j = 0; j < jsonArray2.size(); j++) {
+            floatValues23[j] = humanBurstIntent.method6378(method6397(jsonArray2.get(j).getAsJsonArray()), f);
          }
 
-         HumanBurstIntent.Data3 var11 = var0.method6379(var5, var5.length);
-         float var8 = 0.0F;
-         var8 = Math.max(var8, method6396(var11.getFloatValues(), method6397(var3.getAsJsonArray("mode_logits"))));
-         var8 = Math.max(var8, method6396(var11.getFloatValues2(), method6397(var3.getAsJsonArray("horizon_logits"))));
-         var8 = Math.max(var8, method6396(var11.getFloatValues3(), method6397(var3.getAsJsonArray("motion"))));
-         var8 = Math.max(var8, method6396(var11.getFloatValues4(), method6397(var3.getAsJsonArray("aim_logits"))));
-         var8 = Math.max(var8, method6396(var11.getFloatValues5(), method6397(var3.getAsJsonArray("terminal"))));
-         var8 = Math.max(var8, method6396(var11.getFloatValues6(), method6397(var3.getAsJsonArray("residual"))));
-         var8 = Math.max(var8, Math.abs(var11.getFloatValue() - var3.get("commit_logit").getAsFloat()));
-         method6399(var8 <= 0.005F, "parity case " + var2 + ", error=" + var8);
-         HumanBurstIntent.Data4 var9 = var0.method6382(var11);
-         JsonObject var10 = var3.getAsJsonObject("intent");
-         method6399(var9.getIntValue() == var10.get("mode").getAsInt(), "parity mode " + var2);
-         method6399(var9.getIntValue2() == var10.get("horizon_ticks").getAsInt(), "parity horizon " + var2);
+         HumanBurstIntent.Data3 data3 = humanBurstIntent.method6379(floatValues23, floatValues23.length);
+         float f2 = 0.0F;
+         f2 = Math.max(f2, method6396(data3.getFloatValues(), method6397(jsonObject.getAsJsonArray("mode_logits"))));
+         f2 = Math.max(f2, method6396(data3.getFloatValues2(), method6397(jsonObject.getAsJsonArray("horizon_logits"))));
+         f2 = Math.max(f2, method6396(data3.getFloatValues3(), method6397(jsonObject.getAsJsonArray("motion"))));
+         f2 = Math.max(f2, method6396(data3.getFloatValues4(), method6397(jsonObject.getAsJsonArray("aim_logits"))));
+         f2 = Math.max(f2, method6396(data3.getFloatValues5(), method6397(jsonObject.getAsJsonArray("terminal"))));
+         f2 = Math.max(f2, method6396(data3.getFloatValues6(), method6397(jsonObject.getAsJsonArray("residual"))));
+         f2 = Math.max(f2, Math.abs(data3.getFloatValue() - jsonObject.get("commit_logit").getAsFloat()));
+         method6399(f2 <= 0.005F, "parity case " + i + ", error=" + f2);
+         HumanBurstIntent.Data4 data4 = humanBurstIntent.method6382(data3);
+         JsonObject json = jsonObject.getAsJsonObject("intent");
+         method6399(data4.getIntValue() == json.get("mode").getAsInt(), "parity mode " + i);
+         method6399(data4.getIntValue2() == json.get("horizon_ticks").getAsInt(), "parity horizon " + i);
       }
    }
 
-   private static float method6387(float var0, float var1) {
-      float var2 = 360.0F / var1;
-      return var0 - var2 * (float)Math.floor((var0 + var2 * 0.5F) / var2);
+   private static float method6387(float f, float f2) {
+      float f3 = 360.0F / f2;
+      return f - f3 * (float)Math.floor((f + f3 * 0.5F) / f3);
    }
 
-   private static float method6388(float var0, HumanBurstIntent.Data var1) {
-      method6399(Float.isFinite(var0), "non-finite " + var1.name());
-      String var2 = var1.getText2();
+   private static float method6388(float f, HumanBurstIntent.Data data) {
+      method6399(Float.isFinite(f), "non-finite " + data.name());
+      String str = data.getText2();
 
-      return switch (var2) {
-         case "signed_mu" -> (float)(Math.signum(var0) * Math.log1p(Math.abs(var0) / var1.getFloatValue()));
-         case "log1p" -> (float)Math.log1p(Math.max(var0, 0.0F) / var1.getFloatValue());
-         case "linear" -> var0;
-         default -> throw new IllegalStateException("unsupported feature transform " + var1.getText2());
+      return switch (str) {
+         case "signed_mu" -> (float)(Math.signum(f) * Math.log1p(Math.abs(f) / data.getFloatValue()));
+         case "log1p" -> (float)Math.log1p(Math.max(f, 0.0F) / data.getFloatValue());
+         case "linear" -> f;
+         default -> throw new IllegalStateException("unsupported feature transform " + data.getText2());
       };
    }
 
-   private static float method6389(float var0, HumanBurstIntent.Data5 var1) {
-      String var2 = var1.getText();
+   private static float method6389(float x, HumanBurstIntent.Data5 data5) {
+      String text = data5.getText();
 
-      return switch (var2) {
-         case "signed_mu" -> (float)(Math.signum(var0) * Math.expm1(Math.abs(var0)) * var1.getFloatValue());
-         case "log1p" -> (float)Math.max(Math.expm1(var0) * var1.getFloatValue(), 0.0);
-         case "linear" -> var0;
-         default -> throw new IllegalStateException("unsupported target transform " + var1.getText());
+      return switch (text) {
+         case "signed_mu" -> (float)(Math.signum(x) * Math.expm1(Math.abs(x)) * data5.getFloatValue());
+         case "log1p" -> (float)Math.max(Math.expm1(x) * data5.getFloatValue(), 0.0);
+         case "linear" -> x;
+         default -> throw new IllegalStateException("unsupported target transform " + data5.getText());
       };
    }
 
-   private static float method6390(float var0, HumanBurstIntent.Data var1, String var2) {
-      float var3 = (var0 - var1.getFloatValue2()) / var1.getFloatValue3();
-      method6399(Float.isFinite(var3), "non-finite normalized " + var2);
-      return var3;
+   private static float method6390(float f, HumanBurstIntent.Data data, String str) {
+      float f2 = (f - data.getFloatValue2()) / data.getFloatValue3();
+      method6399(Float.isFinite(f2), "non-finite normalized " + str);
+      return f2;
    }
 
-   private static float[] method6391(float[] var0, float[][] var1, float[] var2) {
-      float[] var3 = new float[var2.length];
+   private static float[] method6391(float[] floats, float[][] floatValues, float[] floatValues3) {
+      float[] floats2 = new float[floatValues3.length];
 
-      for (int var4 = 0; var4 < var3.length; var4++) {
-         double var5 = var2[var4];
+      for (int i = 0; i < floats2.length; i++) {
+         double d = floatValues3[i];
 
-         for (int var7 = 0; var7 < var0.length; var7++) {
-            var5 += var1[var4][var7] * var0[var7];
+         for (int j = 0; j < floats.length; j++) {
+            d += floatValues[i][j] * floats[j];
          }
 
-         var3[var4] = (float)var5;
+         floats2[i] = (float)d;
       }
 
-      return var3;
+      return floats2;
    }
 
-   private static float[] method6392(float[] var0, float[][] var1, float[] var2) {
-      return method6391(var0, var1, var2);
+   private static float[] method6392(float[] floats, float[][] floatValues, float[] floatValues2) {
+      return method6391(floats, floatValues, floatValues2);
    }
 
-   private static float method6393(float var0) {
-      if (var0 >= 0.0F) {
-         double var3 = Math.exp(-var0);
-         return (float)(1.0 / (1.0 + var3));
+   private static float method6393(float floatValue) {
+      if (floatValue >= 0.0F) {
+         double exp = Math.exp(-floatValue);
+         return (float)(1.0 / (1.0 + exp));
       } else {
-         double var1 = Math.exp(var0);
-         return (float)(var1 / (1.0 + var1));
+         double exp = Math.exp(floatValue);
+         return (float)(exp / (1.0 + exp));
       }
    }
 
-   private static float[] method6394(float[] var0) {
-      float var1 = var0[0];
+   private static float[] method6394(float[] floatValues2) {
+      float f = floatValues2[0];
 
-      for (int var2 = 1; var2 < var0.length; var2++) {
-         var1 = Math.max(var1, var0[var2]);
+      for (int i = 1; i < floatValues2.length; i++) {
+         f = Math.max(f, floatValues2[i]);
       }
 
-      float[] var6 = new float[var0.length];
-      double var3 = 0.0;
+      float[] floats = new float[floatValues2.length];
+      double d = 0.0;
 
-      for (int var5 = 0; var5 < var6.length; var5++) {
-         var6[var5] = (float)Math.exp(var0[var5] - var1);
-         var3 += var6[var5];
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = (float)Math.exp(floatValues2[i] - f);
+         d += floats[i];
       }
 
-      for (int var7 = 0; var7 < var6.length; var7++) {
-         var6[var7] /= (float)var3;
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] /= (float)d;
       }
 
-      return var6;
+      return floats;
    }
 
-   private static int method6395(float[] var0) {
-      int var1 = 0;
+   private static int method6395(float[] floatValues) {
+      int n = 0;
 
-      for (int var2 = 1; var2 < var0.length; var2++) {
-         if (var0[var2] > var0[var1]) {
-            var1 = var2;
+      for (int i = 1; i < floatValues.length; i++) {
+         if (floatValues[i] > floatValues[n]) {
+            n = i;
          }
       }
 
-      return var1;
+      return n;
    }
 
-   private static float method6396(float[] var0, float[] var1) {
-      method6399(var0.length == var1.length, "parity vector length");
-      float var2 = 0.0F;
+   private static float method6396(float[] floatValues, float[] floats) {
+      method6399(floatValues.length == floats.length, "parity vector length");
+      float f = 0.0F;
 
-      for (int var3 = 0; var3 < var0.length; var3++) {
-         var2 = Math.max(var2, Math.abs(var0[var3] - var1[var3]));
+      for (int i = 0; i < floatValues.length; i++) {
+         f = Math.max(f, Math.abs(floatValues[i] - floats[i]));
       }
 
-      return var2;
+      return f;
    }
 
-   private static float[] method6397(JsonArray var0) {
-      float[] var1 = new float[var0.size()];
+   private static float[] method6397(JsonArray jsonArray) {
+      float[] floats = new float[jsonArray.size()];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = var0.get(var2).getAsFloat();
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
       }
 
-      return var1;
+      return floats;
    }
 
-   private static float[][] method6398(JsonArray var0) {
-      float[][] var1 = new float[var0.size()][];
+   private static float[][] method6398(JsonArray jsonArray) {
+      float[][] floatses = new float[jsonArray.size()][];
 
-      for (int var2 = 0; var2 < var1.length; var2++) {
-         var1[var2] = method6397(var0.get(var2).getAsJsonArray());
+      for (int i = 0; i < floatses.length; i++) {
+         floatses[i] = method6397(jsonArray.get(i).getAsJsonArray());
       }
 
-      return var1;
+      return floatses;
    }
 
-   private static void method6399(boolean var0, String var1) {
-      if (!var0) {
-         throw new IllegalStateException("invalid human-burst artifact: " + var1);
+   private static void method6399(boolean finite, String str) {
+      if (!finite) {
+         throw new IllegalStateException("invalid human-burst artifact: " + str);
       }
    }
 
@@ -665,12 +665,12 @@ public final class HumanBurstIntent {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data(String var1, String var2, float var3, float var4, float var5) {
-         this.text = var1;
-         this.text2 = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
+      private Data(String text, String string, float floatValue, float f, float f2) {
+         this.text = text;
+         this.text2 = string;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
       }
 
       public String name() {
@@ -733,11 +733,11 @@ public final class HumanBurstIntent {
          return "Data2[" + "floatValues=" + this.floatValues + ", " + "floatValues2=" + this.floatValues2 + ", " + "floatValues3=" + this.floatValues3 + ", " + "floatValues4=" + this.floatValues4 + "]";
       }
 
-      private Data2(float[][] var1, float[][] var2, float[] var3, float[] var4) {
-         this.floatValues = var1;
-         this.floatValues2 = var2;
-         this.floatValues3 = var3;
-         this.floatValues4 = var4;
+      private Data2(float[][] floatValues, float[][] floatValues2, float[] floatValues3, float[] floatValues4) {
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.floatValues3 = floatValues3;
+         this.floatValues4 = floatValues4;
       }
 
       public float[][] getFloatValues() {
@@ -811,14 +811,14 @@ public final class HumanBurstIntent {
          return "Data3[" + "floatValues=" + this.floatValues + ", " + "floatValues2=" + this.floatValues2 + ", " + "floatValues3=" + this.floatValues3 + ", " + "floatValues4=" + this.floatValues4 + ", " + "floatValues5=" + this.floatValues5 + ", " + "floatValues6=" + this.floatValues6 + ", " + "floatValue=" + this.floatValue + "]";
       }
 
-      private Data3(float[] var1, float[] var2, float[] var3, float[] var4, float[] var5, float[] var6, float var7) {
-         this.floatValues = var1;
-         this.floatValues2 = var2;
-         this.floatValues3 = var3;
-         this.floatValues4 = var4;
-         this.floatValues5 = var5;
-         this.floatValues6 = var6;
-         this.floatValue = var7;
+      private Data3(float[] floatValues, float[] floatValues2, float[] floatValues3, float[] floatValues4, float[] floatValues5, float[] floatValues6, float floatValue) {
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.floatValues3 = floatValues3;
+         this.floatValues4 = floatValues4;
+         this.floatValues5 = floatValues5;
+         this.floatValues6 = floatValues6;
+         this.floatValue = floatValue;
       }
 
       public float[] getFloatValues() {
@@ -924,18 +924,18 @@ public final class HumanBurstIntent {
          return "Data4[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + ", " + "floatValue8=" + this.floatValue8 + ", " + "floatValue9=" + this.floatValue9 + "]";
       }
 
-      public Data4(int var1, int var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10, float var11) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
-         this.floatValue4 = var6;
-         this.floatValue5 = var7;
-         this.floatValue6 = var8;
-         this.floatValue7 = var9;
-         this.floatValue8 = var10;
-         this.floatValue9 = var11;
+      public Data4(int intValue, int n, float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
       }
 
       public int getIntValue() {
@@ -1022,11 +1022,11 @@ public final class HumanBurstIntent {
          return "Data5[" + "text=" + this.text + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data5(String var1, float var2, float var3, float var4) {
-         this.text = var1;
-         this.floatValue = var2;
-         this.floatValue2 = var3;
-         this.floatValue3 = var4;
+      private Data5(String text, float floatValue, float f, float f2) {
+         this.text = text;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
       }
 
       public String getText() {

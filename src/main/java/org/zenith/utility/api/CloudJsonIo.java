@@ -23,57 +23,57 @@ public final class CloudJsonIo {
    private CloudJsonIo() {
    }
 
-   public static JsonObject method5992(Path var0) {
-      if (!Files.isRegularFile(var0)) {
+   public static JsonObject method5992(Path path) {
+      if (!Files.isRegularFile(path)) {
          return null;
       } else {
          try {
-            JsonObject var2;
-            try (BufferedReader var1 = Files.newBufferedReader(var0, StandardCharsets.UTF_8)) {
-               var2 = JsonParser.parseReader(var1).getAsJsonObject();
+            JsonObject jsonObject;
+            try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+               jsonObject = JsonParser.parseReader(bufferedReader).getAsJsonObject();
             }
 
-            return var2;
-         } catch (RuntimeException | IOException var6) {
-            logger.error("Не удалось прочитать {}", var0, var6);
+            return jsonObject;
+         } catch (RuntimeException | IOException e) {
+            logger.error("Не удалось прочитать {}", path, e);
             return null;
          }
       }
    }
 
-   public static boolean method5993(Path var0, JsonObject var1) {
-      Path var2 = null;
+   public static boolean method5993(Path path, JsonObject json) {
+      Path tempFile = null;
 
-      boolean var4;
+      boolean flag;
       try {
-         Files.createDirectories(var0.getParent());
-         var2 = Files.createTempFile(var0.getParent(), var0.getFileName() + ".", ".tmp");
-         Files.writeString(var2, gson.toJson(var1), StandardCharsets.UTF_8);
+         Files.createDirectories(path.getParent());
+         tempFile = Files.createTempFile(path.getParent(), path.getFileName() + ".", ".tmp");
+         Files.writeString(tempFile, gson.toJson(json), StandardCharsets.UTF_8);
 
-         try (FileChannel var3 = FileChannel.open(var2, StandardOpenOption.WRITE)) {
-            var3.force(true);
+         try (FileChannel fileChannel = FileChannel.open(tempFile, StandardOpenOption.WRITE)) {
+            fileChannel.force(true);
          }
 
          try {
-            Files.move(var2, var0, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-         } catch (AtomicMoveNotSupportedException var18) {
-            Files.move(var2, var0, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(tempFile, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+         } catch (AtomicMoveNotSupportedException e) {
+            Files.move(tempFile, path, StandardCopyOption.REPLACE_EXISTING);
          }
 
-         var2 = null;
+         tempFile = null;
          return true;
-      } catch (RuntimeException | IOException var20) {
-         logger.error("Не удалось записать {}", var0, var20);
-         var4 = false;
+      } catch (RuntimeException | IOException e) {
+         logger.error("Не удалось записать {}", path, e);
+         flag = false;
       } finally {
-         if (var2 != null) {
+         if (tempFile != null) {
             try {
-               Files.deleteIfExists(var2);
-            } catch (IOException var16) {
+               Files.deleteIfExists(tempFile);
+            } catch (IOException e) {
             }
          }
       }
 
-      return var4;
+      return flag;
    }
 }

@@ -156,7 +156,7 @@ public final class TpKeyFinderModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.clientWorld != mc.level || this.player != mc.player) {
          this.resetAll();
          this.clientWorld = mc.level;
@@ -201,19 +201,19 @@ public final class TpKeyFinderModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (this.autoHeal.isEnabled() && var1.getPacket3() instanceof ClientboundSystemChatPacket var4) {
-            int var6 = method4339(var4.content().getString());
-            if (var6 > 0) {
-               this.longValue = Math.max(this.longValue, System.currentTimeMillis() + var6 * 1000L + 500L);
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         if (this.autoHeal.isEnabled() && event.getPacket3() instanceof ClientboundSystemChatPacket systemChatPacket) {
+            int n = method4339(systemChatPacket.content().getString());
+            if (n > 0) {
+               this.longValue = Math.max(this.longValue, System.currentTimeMillis() + n * 1000L + 500L);
             }
          }
       } else if (mc.isSameThread() && !this.flag3) {
          if (this.genericContainerScreenHandler == null
-            || !(var1.getPacket3() instanceof ServerboundContainerClickPacket var2 && var2.containerId() != this.genericContainerScreenHandler.containerId)
-               && !(var1.getPacket3() instanceof ServerboundContainerClosePacket)) {
-            if (this.flag && (var1.getPacket3() instanceof ServerboundUseItemOnPacket || var1.getPacket3() instanceof ServerboundInteractPacket || var1.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket)) {
+            || !(event.getPacket3() instanceof ServerboundContainerClickPacket containerClickPacket && containerClickPacket.containerId() != this.genericContainerScreenHandler.containerId)
+               && !(event.getPacket3() instanceof ServerboundContainerClosePacket)) {
+            if (this.flag && (event.getPacket3() instanceof ServerboundUseItemOnPacket || event.getPacket3() instanceof ServerboundInteractPacket || event.getPacket3() instanceof net.minecraft.network.protocol.game.ServerboundAttackPacket)) {
                this.method4331(true, false);
             }
          } else {
@@ -253,8 +253,8 @@ public final class TpKeyFinderModule extends Module {
 
    private void method4324() {
       if (this.flag2 && this.genericContainerScreenHandler == null && this.entry != null) {
-         if (mc.player.containerMenu instanceof ChestMenu var1 && this.entry.method4348() && this.entry.method4349(var1)) {
-            this.genericContainerScreenHandler = var1;
+         if (mc.player.containerMenu instanceof ChestMenu genericContainerScreenHandler && this.entry.method4348() && this.entry.method4349(genericContainerScreenHandler)) {
+            this.genericContainerScreenHandler = genericContainerScreenHandler;
             this.intValue4 = -1;
             this.intValue = 0;
          }
@@ -266,23 +266,23 @@ public final class TpKeyFinderModule extends Module {
          if (this.intValue3 > 0) {
             this.intValue3--;
          } else {
-            int var9 = this.genericContainerScreenHandler.getContainer().getContainerSize();
-            boolean var2 = false;
+            int containerSize = this.genericContainerScreenHandler.getContainer().getContainerSize();
+            boolean flag = false;
 
-            for (int var3 = 0; var3 < var9; var3++) {
-               Slot var4 = this.genericContainerScreenHandler.getSlot(var3);
-               ItemStack var5 = var4.getItem();
-               if (method4340(var5) != null) {
-                  var2 = true;
-                  if (var4.mayPickup(mc.player) && this.method4326(var5, var9)) {
-                     this.itemStack = var5.copy();
-                     this.intValue5 = var5.getCount();
-                     this.intValue4 = var3;
+            for (int i = 0; i < containerSize; i++) {
+               Slot slot = this.genericContainerScreenHandler.getSlot(i);
+               ItemStack itemStack = slot.getItem();
+               if (method4340(itemStack) != null) {
+                  flag = true;
+                  if (slot.mayPickup(mc.player) && this.method4326(itemStack, containerSize)) {
+                     this.itemStack = itemStack.copy();
+                     this.intValue5 = itemStack.getCount();
+                     this.intValue4 = i;
                      this.intValue = 0;
                      this.flag3 = true;
 
                      try {
-                        mc.gameMode.handleContainerInput(this.genericContainerScreenHandler.containerId, var3, 0, ContainerInput.QUICK_MOVE, mc.player);
+                        mc.gameMode.handleContainerInput(this.genericContainerScreenHandler.containerId, i, 0, ContainerInput.QUICK_MOVE, mc.player);
                      } finally {
                         this.flag3 = false;
                      }
@@ -292,15 +292,15 @@ public final class TpKeyFinderModule extends Module {
                }
             }
 
-            if (var2) {
+            if (flag) {
                ChatLogger.method2021("TpKeyFinder: нет места в инвентаре — сундук оставлен открытым");
             }
 
-            this.method4331(true, !var2);
+            this.method4331(true, !flag);
          }
       } else {
-         ItemStack var1 = this.genericContainerScreenHandler.getSlot(this.intValue4).getItem();
-         if (var1.isEmpty() || !ItemStack.isSameItemSameComponents(var1, this.itemStack) || var1.getCount() < this.intValue5) {
+         ItemStack stack = this.genericContainerScreenHandler.getSlot(this.intValue4).getItem();
+         if (stack.isEmpty() || !ItemStack.isSameItemSameComponents(stack, this.itemStack) || stack.getCount() < this.intValue5) {
             ChatLogger.method2019("Успешно подобрано: " + method4340(this.itemStack));
             this.intValue4 = -1;
             this.intValue3 = 3;
@@ -310,13 +310,13 @@ public final class TpKeyFinderModule extends Module {
       }
    }
 
-   private boolean method4326(ItemStack var1, int var2) {
-      for (int var3 = var2; var3 < this.genericContainerScreenHandler.slots.size(); var3++) {
-         Slot var4 = this.genericContainerScreenHandler.getSlot(var3);
-         if (var4.container == mc.player.getInventory() && var4.mayPlace(var1)) {
-            ItemStack var5 = var4.getItem();
-            if (var5.isEmpty()
-               || ItemStack.isSameItemSameComponents(var5, var1) && var5.getCount() < Math.min(var5.getMaxStackSize(), var4.getMaxStackSize(var5))) {
+   private boolean method4326(ItemStack itemStack, int containerSize) {
+      for (int i = containerSize; i < this.genericContainerScreenHandler.slots.size(); i++) {
+         Slot slot = this.genericContainerScreenHandler.getSlot(i);
+         if (slot.container == mc.player.getInventory() && slot.mayPlace(itemStack)) {
+            ItemStack stack = slot.getItem();
+            if (stack.isEmpty()
+               || ItemStack.isSameItemSameComponents(stack, itemStack) && stack.getCount() < Math.min(stack.getMaxStackSize(), slot.getMaxStackSize(stack))) {
                return true;
             }
          }
@@ -326,16 +326,16 @@ public final class TpKeyFinderModule extends Module {
    }
 
    private void method4327() {
-      Vec3 var1 = this.entry.method4347();
-      if (var1 == null) {
+      Vec3 vec3d = this.entry.method4347();
+      if (vec3d == null) {
          this.method4331(false, false);
-      } else if (SpawnTracker.method6210(var1) && SpawnTracker.method6211(this, var1)) {
-         this.vec3d = var1;
+      } else if (SpawnTracker.method6210(vec3d) && SpawnTracker.method6211(this, vec3d)) {
+         this.vec3d = vec3d;
          this.flag = true;
          this.flag2 = false;
          this.intValue = this.intValue2 = 0;
-      } else if (Math.hypot(var1.x - mc.player.getX(), var1.z - mc.player.getZ()) > 80.0) {
-         this.method4329(var1.x, var1.z);
+      } else if (Math.hypot(vec3d.x - mc.player.getX(), vec3d.z - mc.player.getZ()) > 80.0) {
+         this.method4329(vec3d.x, vec3d.z);
       } else {
          this.method4331(false, false);
       }
@@ -360,11 +360,11 @@ public final class TpKeyFinderModule extends Module {
       }
    }
 
-   private boolean method4329(double var1, double var3) {
-      if (!SpawnTracker.method6213(this, var1, var3, true)) {
+   private boolean method4329(double doubleValue, double z) {
+      if (!SpawnTracker.method6213(this, doubleValue, z, true)) {
          return false;
       } else {
-         this.vec3d = new Vec3(var1, -66.0, var3);
+         this.vec3d = new Vec3(doubleValue, -66.0, z);
          return true;
       }
    }
@@ -379,11 +379,11 @@ public final class TpKeyFinderModule extends Module {
       if (Math.hypot(mc.player.getX() - this.doubleValue, mc.player.getZ() - this.doubleValue2) > 0.5) {
          this.method4329(this.doubleValue, this.doubleValue2);
       } else {
-         double var1 = this.doubleValue + CONST_intValues[this.intValue11] * 80.0;
-         double var3 = this.doubleValue2 + CONST_intValues2[this.intValue11] * 80.0;
-         if (this.method4329(var1, var3)) {
-            this.doubleValue = var1;
-            this.doubleValue2 = var3;
+         double doubleValue = this.doubleValue + CONST_intValues[this.intValue11] * 80.0;
+         double z = this.doubleValue2 + CONST_intValues2[this.intValue11] * 80.0;
+         if (this.method4329(doubleValue, z)) {
+            this.doubleValue = doubleValue;
+            this.doubleValue2 = z;
             if (--this.intValue13 <= 0) {
                this.intValue11 = this.intValue11 + 1 & 3;
                if (++this.intValue14 == 2) {
@@ -397,8 +397,8 @@ public final class TpKeyFinderModule extends Module {
       }
    }
 
-   private void method4331(boolean var1, boolean var2) {
-      if (var2 && this.method4341() && this.genericContainerScreenHandler.getCarried().isEmpty()) {
+   private void method4331(boolean flag, boolean flag2) {
+      if (flag2 && this.method4341() && this.genericContainerScreenHandler.getCarried().isEmpty()) {
          this.flag3 = true;
 
          try {
@@ -409,24 +409,24 @@ public final class TpKeyFinderModule extends Module {
       }
 
       if (this.entry != null) {
-         Object var3 = this.entry.key();
-         if (var1) {
-            this.linkedHashMap.remove(var3);
+         Object key = this.entry.key();
+         if (flag) {
+            this.linkedHashMap.remove(key);
          } else {
-            this.linkedHashMap.put(var3, this.ticks + 60);
+            this.linkedHashMap.put(key, this.ticks + 60);
             if (this.linkedHashMap.size() > 4096) {
                this.linkedHashMap.remove(this.linkedHashMap.keySet().iterator().next());
             }
          }
 
          if (this.entry.blockPos != null) {
-            if (var1) {
+            if (flag) {
                method4344(this.linkedHashSet, this.entry.blockPos);
             }
 
             this.items2.remove(this.entry.blockPos);
          } else {
-            if (var1) {
+            if (flag) {
                method4344(this.linkedHashSet2, this.entry.uUID);
             }
 
@@ -453,55 +453,55 @@ public final class TpKeyFinderModule extends Module {
       }
    }
 
-   private void method4333(String var1) {
-      ChatLogger.method2021("TpKeyFinder: " + var1);
+   private void method4333(String str) {
+      ChatLogger.method2021("TpKeyFinder: " + str);
       this.setToggled(false);
    }
 
    private TpKeyFinderModule.Entry method4334() {
-      TpKeyFinderModule.Entry var1 = null;
-      double var2 = Double.MAX_VALUE;
+      TpKeyFinderModule.Entry entry = null;
+      double d = Double.MAX_VALUE;
 
-      for (int var4 = this.items.size() - 1; var4 >= 0; var4--) {
-         TpKeyFinderModule.Entry var5 = this.items.get(var4);
-         if (this.linkedHashMap.getOrDefault(var5.key(), 0) <= this.ticks) {
-            Vec3 var6 = var5.method4346();
-            if (var6 != null && method4343(var6.y)) {
-               double var7 = mc.player.distanceToSqr(var6);
-               if (var7 < var2) {
-                  var2 = var7;
-                  var1 = var5;
+      for (int i = this.items.size() - 1; i >= 0; i--) {
+         TpKeyFinderModule.Entry entry2 = this.items.get(i);
+         if (this.linkedHashMap.getOrDefault(entry2.key(), 0) <= this.ticks) {
+            Vec3 pos = entry2.method4346();
+            if (pos != null && method4343(pos.y)) {
+               double d2 = mc.player.distanceToSqr(pos);
+               if (d2 < d) {
+                  d = d2;
+                  entry = entry2;
                }
             } else {
-               this.items.remove(var4);
-               var5.method4345();
+               this.items.remove(i);
+               entry2.method4345();
             }
          }
       }
 
-      if (var1 != null) {
-         this.items.remove(var1);
+      if (entry != null) {
+         this.items.remove(entry);
       }
 
-      return var1;
+      return entry;
    }
 
    private void method4335() {
-      int var1 = Mth.clamp(mc.options.getEffectiveRenderDistance(), 2, 32);
-      int var2 = Mth.floor(mc.player.getX()) >> 4;
-      int var3 = Mth.floor(mc.player.getZ()) >> 4;
-      if (var2 != this.intValue6 || var3 != this.intValue7 || var1 != this.intValue8) {
-         this.intValue6 = var2;
-         this.intValue7 = var3;
-         this.intValue8 = var1;
+      int n = Mth.clamp(mc.options.getEffectiveRenderDistance(), 2, 32);
+      int n2 = Mth.floor(mc.player.getX()) >> 4;
+      int n3 = Mth.floor(mc.player.getZ()) >> 4;
+      if (n2 != this.intValue6 || n3 != this.intValue7 || n != this.intValue8) {
+         this.intValue6 = n2;
+         this.intValue7 = n3;
+         this.intValue8 = n;
          this.intValue9 = this.intValue10 = 0;
          this.flag4 = false;
          this.iterator = null;
          this.iterator2 = null;
-         double var4 = (var1 + 6) * 16;
+         double d = (n + 6) * 16;
          this.items.removeIf(var2x -> {
             Vec3 var3x = var2x.method4346();
-            if (var3x != null && Math.abs(var3x.x - mc.player.getX()) <= var4 && Math.abs(var3x.z - mc.player.getZ()) <= var4) {
+            if (var3x != null && Math.abs(var3x.x - mc.player.getX()) <= d && Math.abs(var3x.z - mc.player.getZ()) <= d) {
                return false;
             } else {
                var2x.method4345();
@@ -511,36 +511,36 @@ public final class TpKeyFinderModule extends Module {
       }
 
       if (this.intValue10 <= 0 || --this.intValue10 <= 0) {
-         int var13 = var1 * 2 + 1;
-         int var5 = 0;
-         int var6 = 0;
+         int n4 = n * 2 + 1;
+         int n5 = 0;
+         int n6 = 0;
 
-         while (var6 < 256 && var5 < 64 && this.intValue9 < var13 * var13) {
-            int var7 = var2 - var1 + this.intValue9 % var13;
-            int var8 = var3 - var1 + this.intValue9 / var13;
-            LevelChunk var9 = mc.level.getChunkSource().getChunk(var7, var8, ChunkStatus.FULL, false);
-            var5++;
-            if (var9 == null) {
+         while (n6 < 256 && n5 < 64 && this.intValue9 < n4 * n4) {
+            int x = n2 - n + this.intValue9 % n4;
+            int z = n3 - n + this.intValue9 / n4;
+            LevelChunk chunk = mc.level.getChunkSource().getChunk(x, z, ChunkStatus.FULL, false);
+            n5++;
+            if (chunk == null) {
                this.iterator = null;
                this.intValue9++;
             } else {
                if (this.iterator == null) {
-                  this.iterator = new ArrayList<>(var9.getBlockEntities().entrySet()).iterator();
+                  this.iterator = new ArrayList<>(chunk.getBlockEntities().entrySet()).iterator();
                }
 
-               while (this.iterator.hasNext() && var6 < 256) {
-                  Map.Entry var10 = this.iterator.next();
-                  var6++;
-                  BlockPos var11 = (BlockPos)var10.getKey();
-                  if (var10.getValue() instanceof ChestBlockEntity
-                     && method4343(var11.getY())
+               while (this.iterator.hasNext() && n6 < 256) {
+                  Map.Entry entry = this.iterator.next();
+                  n6++;
+                  BlockPos key = (BlockPos)entry.getKey();
+                  if (entry.getValue() instanceof ChestBlockEntity
+                     && method4343(key.getY())
                      && this.items.size() < 512
-                     && !this.linkedHashSet.contains(var11)
-                     && !this.items2.contains(var11)
-                     && method4337(var11)) {
-                     BlockPos var12 = var11.immutable();
-                     this.items2.add(var12);
-                     this.items.add(new TpKeyFinderModule.Entry(var12, null));
+                     && !this.linkedHashSet.contains(key)
+                     && !this.items2.contains(key)
+                     && method4337(key)) {
+                     BlockPos immutable = key.immutable();
+                     this.items2.add(immutable);
+                     this.items.add(new TpKeyFinderModule.Entry(immutable, null));
                   }
                }
 
@@ -554,7 +554,7 @@ public final class TpKeyFinderModule extends Module {
          }
 
          this.method4336();
-         if (this.intValue9 >= var13 * var13) {
+         if (this.intValue9 >= n4 * n4) {
             this.flag4 = true;
             this.intValue9 = 0;
             this.intValue10 = 10;
@@ -564,21 +564,21 @@ public final class TpKeyFinderModule extends Module {
 
    private void method4336() {
       if (this.iterator2 == null) {
-         ArrayList var1 = new ArrayList();
-         mc.level.entitiesForRendering().forEach(var1::add);
-         this.iterator2 = var1.iterator();
+         ArrayList arrayList = new ArrayList();
+         mc.level.entitiesForRendering().forEach(arrayList::add);
+         this.iterator2 = arrayList.iterator();
       }
 
-      for (int var4 = 0; var4 < 256 && this.iterator2.hasNext(); var4++) {
-         if (this.iterator2.next() instanceof MinecartChest var2
-            && var2.isAlive()
-            && !var2.isRemoved()
-            && mc.level.getEntity(var2.getId()) == var2
-            && method4343(var2.getY())
+      for (int i = 0; i < 256 && this.iterator2.hasNext(); i++) {
+         if (this.iterator2.next() instanceof MinecartChest chestMinecartEntity
+            && chestMinecartEntity.isAlive()
+            && !chestMinecartEntity.isRemoved()
+            && mc.level.getEntity(chestMinecartEntity.getId()) == chestMinecartEntity
+            && method4343(chestMinecartEntity.getY())
             && this.items.size() < 512
-            && !this.linkedHashSet2.contains(var2.getUUID())
-            && this.items3.add(var2.getUUID())) {
-            this.items.add(new TpKeyFinderModule.Entry(null, var2));
+            && !this.linkedHashSet2.contains(chestMinecartEntity.getUUID())
+            && this.items3.add(chestMinecartEntity.getUUID())) {
+            this.items.add(new TpKeyFinderModule.Entry(null, chestMinecartEntity));
          }
       }
 
@@ -587,16 +587,16 @@ public final class TpKeyFinderModule extends Module {
       }
    }
 
-   private static boolean method4337(BlockPos var0) {
-      MutableBlockPos var1 = new MutableBlockPos();
+   private static boolean method4337(BlockPos key) {
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var2 = -3; var2 <= 3; var2++) {
-         for (int var3 = -3; var3 <= 3; var3++) {
-            LevelChunk var4 = mc.level.getChunkSource().getChunk(var0.getX() + var2 >> 4, var0.getZ() + var3 >> 4, ChunkStatus.FULL, false);
-            if (var4 != null) {
-               for (int var5 = -1; var5 <= 1; var5++) {
-                  var1.set(var0.getX() + var2, var0.getY() + var5, var0.getZ() + var3);
-                  if (var4.getBlockEntities().get(var1) instanceof SpawnerBlockEntity) {
+      for (int i = -3; i <= 3; i++) {
+         for (int j = -3; j <= 3; j++) {
+            LevelChunk chunk = mc.level.getChunkSource().getChunk(key.getX() + i >> 4, key.getZ() + j >> 4, ChunkStatus.FULL, false);
+            if (chunk != null) {
+               for (int k = -1; k <= 1; k++) {
+                  mutablePos.set(key.getX() + i, key.getY() + k, key.getZ() + j);
+                  if (chunk.getBlockEntities().get(mutablePos) instanceof SpawnerBlockEntity) {
                      return true;
                   }
                }
@@ -609,25 +609,25 @@ public final class TpKeyFinderModule extends Module {
 
    private void method4338() {
       if (this.autoHeal.isEnabled() && System.currentTimeMillis() >= this.longValue && mc.getConnection() != null) {
-         float var1 = Mth.clamp(this.healHp.getValue3(), 0.0F, 20.0F);
-         float var2 = Mth.clamp(this.healFood.getValue3(), 0.0F, 20.0F);
-         if (var1 > 0.0F && mc.player.getHealth() < var1 || var2 > 0.0F && mc.player.getFoodData().getFoodLevel() < var2) {
+         float f = Mth.clamp(this.healHp.getValue3(), 0.0F, 20.0F);
+         float f2 = Mth.clamp(this.healFood.getValue3(), 0.0F, 20.0F);
+         if (f > 0.0F && mc.player.getHealth() < f || f2 > 0.0F && mc.player.getFoodData().getFoodLevel() < f2) {
             mc.getConnection().sendCommand("heal");
             this.longValue = System.currentTimeMillis() + 1000L;
          }
       }
    }
 
-   private static int method4339(String var0) {
-      String var1 = var0.replaceAll("§.", "").trim().toLowerCase(Locale.ROOT);
-      if (var1.contains("лечен") && (var1.contains("ошибка") || var1.contains("следующ") || var1.contains("секунд"))) {
-         Matcher var2 = pattern.matcher(var1);
-         if (!var2.find()) {
+   private static int method4339(String string) {
+      String lowerCase = string.replaceAll("§.", "").trim().toLowerCase(Locale.ROOT);
+      if (lowerCase.contains("лечен") && (lowerCase.contains("ошибка") || lowerCase.contains("следующ") || lowerCase.contains("секунд"))) {
+         Matcher matcher = pattern.matcher(lowerCase);
+         if (!matcher.find()) {
             return 60;
          } else {
             try {
-               return Math.clamp(Long.parseLong(var2.group(1)), 1, 86400);
-            } catch (NumberFormatException var4) {
+               return Math.clamp(Long.parseLong(matcher.group(1)), 1, 86400);
+            } catch (NumberFormatException e) {
                return 86400;
             }
          }
@@ -636,20 +636,20 @@ public final class TpKeyFinderModule extends Module {
       }
    }
 
-   private static String method4340(ItemStack var0) {
-      if (var0.isEmpty()) {
+   private static String method4340(ItemStack itemStack) {
+      if (itemStack.isEmpty()) {
          return null;
-      } else if (var0.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+      } else if (itemStack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
          return "зачарованное золотое яблоко";
-      } else if (var0.is(Items.GOLDEN_APPLE)) {
+      } else if (itemStack.is(Items.GOLDEN_APPLE)) {
          return "золотое яблоко";
       } else {
-         String var1 = ChatFormatting.stripFormatting(var0.getHoverName().getString());
-         if (var1 != null && var1.toLowerCase(Locale.ROOT).contains("ключ-карта")) {
+         String stripFormatting = ChatFormatting.stripFormatting(itemStack.getHoverName().getString());
+         if (stripFormatting != null && stripFormatting.toLowerCase(Locale.ROOT).contains("ключ-карта")) {
             return "ключ-карта";
          } else {
-            ItemEnchantments var2 = var0.get(DataComponents.STORED_ENCHANTMENTS);
-            return var2 != null && var2.keySet().stream().anyMatch(var0x -> var0x.is(Enchantments.MENDING)) ? "книга на починку" : null;
+            ItemEnchantments itemEnchantments = itemStack.get(DataComponents.STORED_ENCHANTMENTS);
+            return itemEnchantments != null && itemEnchantments.keySet().stream().anyMatch(var0x -> var0x.is(Enchantments.MENDING)) ? "книга на починку" : null;
          }
       }
    }
@@ -663,19 +663,19 @@ public final class TpKeyFinderModule extends Module {
          return false;
       } else {
          return mc.gui.screen() != null && !(mc.gui.screen() instanceof PauseScreen)
-            ? this.method4341() && mc.gui.screen() instanceof AbstractContainerScreen var1 && var1.getMenu() == this.genericContainerScreenHandler
+            ? this.method4341() && mc.gui.screen() instanceof AbstractContainerScreen containerScreen && containerScreen.getMenu() == this.genericContainerScreenHandler
             : true;
       }
    }
 
-   private static boolean method4343(double var0) {
-      return var0 >= -266.0 && var0 <= 134.0;
+   private static boolean method4343(double y) {
+      return y >= -266.0 && y <= 134.0;
    }
 
-   private static <T> void method4344(LinkedHashSet<T> var0, T var1) {
-      var0.add(var1);
-      if (var0.size() > 4096) {
-         var0.removeFirst();
+   private static <T> void method4344(LinkedHashSet<T> linkedHashSet, T blockPos) {
+      linkedHashSet.add(blockPos);
+      if (linkedHashSet.size() > 4096) {
+         linkedHashSet.removeFirst();
       }
    }
 
@@ -708,10 +708,10 @@ public final class TpKeyFinderModule extends Module {
       private final UUID uUID;
       private int intValue;
 
-      private Entry(BlockPos var2, MinecartChest var3) {
-         this.blockPos = var2;
-         this.chestMinecartEntity = var3;
-         this.uUID = var3 == null ? null : var3.getUUID();
+      private Entry(BlockPos blockPos, MinecartChest chestMinecartEntity) {
+         this.blockPos = blockPos;
+         this.chestMinecartEntity = chestMinecartEntity;
+         this.uUID = chestMinecartEntity == null ? null : chestMinecartEntity.getUUID();
       }
 
       private Object key() {
@@ -739,17 +739,17 @@ public final class TpKeyFinderModule extends Module {
       }
 
       private Vec3 method4347() {
-         Vec3 var1 = this.method4346();
-         return var1 == null ? null : SpawnTracker.method6215(var1);
+         Vec3 vec3d = this.method4346();
+         return vec3d == null ? null : SpawnTracker.method6215(vec3d);
       }
 
       private boolean method4348() {
-         Vec3 var1 = this.method4346();
-         return var1 != null && MinecraftAccess.mc.player.distanceToSqr(var1) <= 36.0;
+         Vec3 pos = this.method4346();
+         return pos != null && MinecraftAccess.mc.player.distanceToSqr(pos) <= 36.0;
       }
 
-      private boolean method4349(ChestMenu var1) {
-         return this.intValue > 0 && this.method4346() != null && var1.getContainer().getContainerSize() == this.intValue;
+      private boolean method4349(ChestMenu genericContainerScreenHandler) {
+         return this.intValue > 0 && this.method4346() != null && genericContainerScreenHandler.getContainer().getContainerSize() == this.intValue;
       }
 
       private boolean open() {
@@ -760,12 +760,12 @@ public final class TpKeyFinderModule extends Module {
 
             try {
                if (this.blockPos != null) {
-                  Container var1 = this.method4350();
-                  if (var1 == null || !MinecraftAccess.mc.player.isWithinBlockInteractionRange(this.blockPos, 0.0)) {
+                  Container container = this.method4350();
+                  if (container == null || !MinecraftAccess.mc.player.isWithinBlockInteractionRange(this.blockPos, 0.0)) {
                      return false;
                   }
 
-                  BlockHitResult var2 = MinecraftAccess.mc
+                  BlockHitResult clip = MinecraftAccess.mc
                      .level
                      .clip(
                         new ClipContext(
@@ -776,12 +776,12 @@ public final class TpKeyFinderModule extends Module {
                            MinecraftAccess.mc.player
                         )
                      );
-                  if (var2.getType() != Type.BLOCK || !var2.getBlockPos().equals(this.blockPos)) {
+                  if (clip.getType() != Type.BLOCK || !clip.getBlockPos().equals(this.blockPos)) {
                      return false;
                   }
 
-                  this.intValue = var1.getContainerSize();
-                  MinecraftAccess.mc.gameMode.useItemOn(MinecraftAccess.mc.player, InteractionHand.MAIN_HAND, var2);
+                  this.intValue = container.getContainerSize();
+                  MinecraftAccess.mc.gameMode.useItemOn(MinecraftAccess.mc.player, InteractionHand.MAIN_HAND, clip);
                } else {
                   if (!MinecraftAccess.mc.player.isWithinEntityInteractionRange(this.chestMinecartEntity, 0.0)) {
                      return false;
@@ -804,43 +804,43 @@ public final class TpKeyFinderModule extends Module {
          if (this.method4351(this.blockPos) == null) {
             return null;
          } else {
-            BlockState var1 = MinecraftAccess.mc.level.getBlockState(this.blockPos);
-            if (!(var1.getBlock() instanceof ChestBlock var2)) {
+            BlockState blockState = MinecraftAccess.mc.level.getBlockState(this.blockPos);
+            if (!(blockState.getBlock() instanceof ChestBlock block)) {
                return null;
             } else {
-               if (var1.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
-                  BlockPos var5 = this.blockPos.relative(ChestBlock.getConnectedDirection(var1));
-                  if (this.method4351(var5) == null) {
+               if (blockState.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+                  BlockPos relative = this.blockPos.relative(ChestBlock.getConnectedDirection(blockState));
+                  if (this.method4351(relative) == null) {
                      return null;
                   }
 
-                  BlockState var4 = MinecraftAccess.mc.level.getBlockState(var5);
-                  if (var4.getBlock() != var2
-                     || var4.getValue(ChestBlock.TYPE) == ChestType.SINGLE
-                     || var4.getValue(ChestBlock.TYPE) == var1.getValue(ChestBlock.TYPE)
-                     || var4.getValue(ChestBlock.FACING) != var1.getValue(ChestBlock.FACING)
-                     || !var5.relative(ChestBlock.getConnectedDirection(var4)).equals(this.blockPos)) {
+                  BlockState state = MinecraftAccess.mc.level.getBlockState(relative);
+                  if (state.getBlock() != block
+                     || state.getValue(ChestBlock.TYPE) == ChestType.SINGLE
+                     || state.getValue(ChestBlock.TYPE) == blockState.getValue(ChestBlock.TYPE)
+                     || state.getValue(ChestBlock.FACING) != blockState.getValue(ChestBlock.FACING)
+                     || !relative.relative(ChestBlock.getConnectedDirection(state)).equals(this.blockPos)) {
                      return null;
                   }
                }
 
-               return ChestBlock.getContainer(var2, var1, MinecraftAccess.mc.level, this.blockPos, false);
+               return ChestBlock.getContainer(block, blockState, MinecraftAccess.mc.level, this.blockPos, false);
             }
          }
       }
 
-      private ChestBlockEntity method4351(BlockPos var1) {
-         LevelChunk var2 = MinecraftAccess.mc.level.getChunkSource().getChunk(var1.getX() >> 4, var1.getZ() >> 4, ChunkStatus.FULL, false);
-         if (var2 == null) {
+      private ChestBlockEntity method4351(BlockPos blockPos) {
+         LevelChunk chunk = MinecraftAccess.mc.level.getChunkSource().getChunk(blockPos.getX() >> 4, blockPos.getZ() >> 4, ChunkStatus.FULL, false);
+         if (chunk == null) {
             return null;
          } else {
-            BlockState var3 = var2.getBlockState(var1);
-            return var3.getBlock() instanceof ChestBlock
-                  && var2.getBlockEntities().get(var1) instanceof ChestBlockEntity var4
-                  && !var4.isRemoved()
-                  && var4.getLevel() == MinecraftAccess.mc.level
-                  && var4.isValidBlockState(var3)
-               ? var4
+            BlockState blockState = chunk.getBlockState(blockPos);
+            return blockState.getBlock() instanceof ChestBlock
+                  && chunk.getBlockEntities().get(blockPos) instanceof ChestBlockEntity chestBlockEntity
+                  && !chestBlockEntity.isRemoved()
+                  && chestBlockEntity.getLevel() == MinecraftAccess.mc.level
+                  && chestBlockEntity.isValidBlockState(blockState)
+               ? chestBlockEntity
                : null;
          }
       }

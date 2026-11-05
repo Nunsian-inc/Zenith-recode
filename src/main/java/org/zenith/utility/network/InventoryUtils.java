@@ -64,23 +64,23 @@ public final class InventoryUtils implements ZenithAccess {
    }
 
    public static void method898() {
-      AbstractContainerMenu var0 = mc.player.containerMenu;
-      ItemStack var1 = BuiltInRegistries.ITEM.byId((int)MathUtils.method2651(0.0, 100.0)).getDefaultInstance();
-      HashedStack var2 = HashedStack.create(var1, mc.player.connection.decoratedHashOpsGenenerator());
+      AbstractContainerMenu containerMenu = mc.player.containerMenu;
+      ItemStack defaultInstance = BuiltInRegistries.ITEM.byId((int)MathUtils.method2651(0.0, 100.0)).getDefaultInstance();
+      HashedStack carriedItem = HashedStack.create(defaultInstance, mc.player.connection.decoratedHashOpsGenenerator());
       mc.player
          .connection
          .send(
-            new ServerboundContainerClickPacket(var0.containerId, var0.getStateId(), (short)0, (byte)0, ContainerInput.PICKUP_ALL, Int2ObjectMaps.singleton(0, var2), var2)
+            new ServerboundContainerClickPacket(containerMenu.containerId, containerMenu.getStateId(), (short)0, (byte)0, ContainerInput.PICKUP_ALL, Int2ObjectMaps.singleton(0, carriedItem), carriedItem)
          );
    }
 
    public static void method899() {
-      AbstractContainerMenu var0 = mc.player.containerMenu;
+      AbstractContainerMenu containerMenu = mc.player.containerMenu;
       mc.player
          .connection
          .send(
             new ServerboundContainerClickPacket(
-               var0.containerId, var0.getStateId() + 1, (short)0, (byte)0, ContainerInput.PICKUP_ALL, Int2ObjectMaps.emptyMap(), HashedStack.EMPTY
+               containerMenu.containerId, containerMenu.getStateId() + 1, (short)0, (byte)0, ContainerInput.PICKUP_ALL, Int2ObjectMaps.emptyMap(), HashedStack.EMPTY
             )
          );
    }
@@ -93,130 +93,130 @@ public final class InventoryUtils implements ZenithAccess {
       }
    }
 
-   public static void method900(Slot var0, InteractionHand var1, boolean var2) {
-      if (var0 != null
-         && var0.index != -1
-         && (!var1.equals(InteractionHand.OFF_HAND) || var0.container instanceof Inventory || var0.container instanceof PlayerEnderChestContainer)) {
-         int var3 = var1.equals(InteractionHand.MAIN_HAND) ? mc.player.getInventory().getSelectedSlot() : 40;
-         method901(var0, var3, var2);
+   public static void method900(Slot slot, InteractionHand hand, boolean flag) {
+      if (slot != null
+         && slot.index != -1
+         && (!hand.equals(InteractionHand.OFF_HAND) || slot.container instanceof Inventory || slot.container instanceof PlayerEnderChestContainer)) {
+         int selectedSlot = hand.equals(InteractionHand.MAIN_HAND) ? mc.player.getInventory().getSelectedSlot() : 40;
+         method901(slot, selectedSlot, flag);
       }
    }
 
-   public static void method901(Slot var0, int var1, boolean var2) {
-      method903(var0, var1, ContainerInput.SWAP, false);
-      if (var2) {
+   public static void method901(Slot slot, int selectedSlot, boolean flag) {
+      method903(slot, selectedSlot, ContainerInput.SWAP, false);
+      if (flag) {
          method897();
       }
    }
 
-   public static void method902(Slot var0, int var1) {
-      method903(var0, var1, ContainerInput.SWAP, false);
+   public static void method902(Slot slot, int selectedSlot) {
+      method903(slot, selectedSlot, ContainerInput.SWAP, false);
    }
 
-   public static void method903(Slot var0, int var1, ContainerInput var2, boolean var3) {
-      if (var0 != null) {
-         method904(var0.index, var1, var2, var3);
+   public static void method903(Slot slot, int selectedSlot, ContainerInput containerInput, boolean flag) {
+      if (slot != null) {
+         method904(slot.index, selectedSlot, containerInput, flag);
       }
    }
 
-   public static void method904(int var0, int var1, ContainerInput var2, boolean var3) {
-      method905(mc.player.containerMenu.containerId, var0, var1, var2, var3);
+   public static void method904(int index, int selectedSlot, ContainerInput containerInput, boolean flag) {
+      method905(mc.player.containerMenu.containerId, index, selectedSlot, containerInput, flag);
    }
 
-   public static void method905(int var0, int var1, int var2, ContainerInput var3, boolean var4) {
-      mc.gameMode.handleContainerInput(var0, var1, var2, var3, mc.player);
-      if (var4) {
-         mc.player.containerMenu.clicked(var1, var2, var3, mc.player);
+   public static void method905(int containerId, int index, int selectedSlot, ContainerInput containerInput, boolean flag) {
+      mc.gameMode.handleContainerInput(containerId, index, selectedSlot, containerInput, mc.player);
+      if (flag) {
+         mc.player.containerMenu.clicked(index, selectedSlot, containerInput, mc.player);
       }
    }
 
-   public static Slot method906(Item var0) {
-      return method907(var0, var0x -> true);
+   public static Slot method906(Item item) {
+      return method907(item, var0x -> true);
    }
 
-   public static Slot method907(Item var0, Predicate<Slot> var1) {
-      return method913(var0, Comparator.comparingInt(var0x -> var0x.index), var1);
+   public static Slot method907(Item item, Predicate<Slot> predicate) {
+      return method913(item, Comparator.comparingInt(var0x -> var0x.index), predicate);
    }
 
-   public static Slot method908(AbstractContainerMenu var0, Item var1) {
-      return var0.slots.stream().filter(var1x -> (var1x.getItem().getItem() == var1)).findFirst().orElse(null);
+   public static Slot method908(AbstractContainerMenu inventoryMenu, Item item) {
+      return inventoryMenu.slots.stream().filter(var1x -> (var1x.getItem().getItem() == item)).findFirst().orElse(null);
    }
 
-   public static Slot method909(AbstractContainerMenu var0, Predicate<Slot> var1) {
-      return var0.slots.stream().filter(var1).findFirst().orElse(null);
+   public static Slot method909(AbstractContainerMenu inventoryMenu, Predicate<Slot> predicate) {
+      return inventoryMenu.slots.stream().filter(predicate).findFirst().orElse(null);
    }
 
-   public static Slot method910(Predicate<Slot> var0) {
-      return method926().filter(var0).findFirst().orElse(null);
+   public static Slot method910(Predicate<Slot> predicate) {
+      return method926().filter(predicate).findFirst().orElse(null);
    }
 
-   public static Slot method911(Predicate<Slot> var0, Comparator<Slot> var1) {
-      return method926().filter(var0).max(var1).orElse(null);
+   public static Slot method911(Predicate<Slot> predicate, Comparator<Slot> comparator) {
+      return method926().filter(predicate).max(comparator).orElse(null);
    }
 
-   public static Slot method912(AbstractContainerMenu var0, Item var1, Comparator<Slot> var2, Predicate<Slot> var3) {
-      return var0.slots.stream().filter(var1x -> var1x.getItem().getItem().equals(var1)).filter(var3).max(var2).orElse(null);
+   public static Slot method912(AbstractContainerMenu inventoryMenu, Item item, Comparator<Slot> comparingInt, Predicate<Slot> predicate) {
+      return inventoryMenu.slots.stream().filter(var1x -> var1x.getItem().getItem().equals(item)).filter(predicate).max(comparingInt).orElse(null);
    }
 
-   public static Slot method913(Item var0, Comparator<Slot> var1, Predicate<Slot> var2) {
-      return method926().filter(var1x -> var1x.getItem().getItem().equals(var0)).filter(var2).max(var1).orElse(null);
+   public static Slot method913(Item item, Comparator<Slot> comparing, Predicate<Slot> predicate) {
+      return method926().filter(var1x -> var1x.getItem().getItem().equals(item)).filter(predicate).max(comparing).orElse(null);
    }
 
    public static Slot method914() {
       return method926()
          .filter(
-            var0 -> (var0.getItem().get(DataComponents.FOOD) != null && !var0.getItem().get(DataComponents.FOOD).canAlwaysEat())
+            slot -> (slot.getItem().get(DataComponents.FOOD) != null && !slot.getItem().get(DataComponents.FOOD).canAlwaysEat())
          )
-         .max(Comparator.comparingDouble(var0 -> var0.getItem().get(DataComponents.FOOD).saturation()))
+         .max(Comparator.comparingDouble(slot -> slot.getItem().get(DataComponents.FOOD).saturation()))
          .orElse(null);
    }
 
-   public static Slot method915(List<Item> var0) {
-      return method926().filter(var1 -> var0.contains(var1.getItem().getItem())).findFirst().orElse(null);
+   public static Slot method915(List<Item> items) {
+      return method926().filter(slot -> items.contains(slot.getItem().getItem())).findFirst().orElse(null);
    }
 
-   public static Slot method916(List<Item> var0, Comparator<Slot> var1) {
-      return method926().filter(var1x -> var0.contains(var1x.getItem().getItem())).max(var1).orElse(null);
+   public static Slot method916(List<Item> items, Comparator<Slot> comparingInt) {
+      return method926().filter(var1x -> items.contains(var1x.getItem().getItem())).max(comparingInt).orElse(null);
    }
 
-   public static Slot method917(Holder<MobEffect> var0) {
+   public static Slot method917(Holder<MobEffect> holder) {
       return method926()
          .filter(
-            var1 -> {
-               PotionContents var2 = var1.getItem().get(DataComponents.POTION_CONTENTS);
-               return (boolean)(var2 == null
+            slot -> {
+               PotionContents potionContents = slot.getItem().get(DataComponents.POTION_CONTENTS);
+               return (boolean)(potionContents == null
                   ? 0
-                  : StreamSupport.stream(var2.getAllEffects().spliterator(), false).anyMatch(var1x -> var1x.getEffect().equals(var0)));
+                  : StreamSupport.stream(potionContents.getAllEffects().spliterator(), false).anyMatch(var1x -> var1x.getEffect().equals(holder)));
             }
          )
          .findFirst()
          .orElse(null);
    }
 
-   public static boolean method918(ItemStack var0, String var1) {
-      if (var0.isEmpty()) {
+   public static boolean method918(ItemStack stack, String str) {
+      if (stack.isEmpty()) {
          return false;
       } else {
-         CustomData var2 = var0.get(DataComponents.CUSTOM_DATA);
-         return (boolean)(var2 == null ? 0 : var2.copyTag().toString().contains(var1));
+         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+         return (boolean)(customData == null ? 0 : customData.copyTag().toString().contains(str));
       }
    }
 
-   public static Slot method919(MobEffectCategory var0) {
+   public static Slot method919(MobEffectCategory mobEffectCategory) {
       return method926()
          .filter(
-            var1 -> {
-               ItemStack var2 = var1.getItem();
-               PotionContents var3 = var2.get(DataComponents.POTION_CONTENTS);
-               if (var2.getItem().equals(Items.SPLASH_POTION) && var3 != null) {
-                  MobEffectCategory var4 = var0.equals(MobEffectCategory.BENEFICIAL) ? MobEffectCategory.HARMFUL : MobEffectCategory.BENEFICIAL;
-                  long var5 = StreamSupport.stream(var3.getAllEffects().spliterator(), false)
-                     .filter(var1x -> var1x.getEffect().value().getCategory().equals(var0))
+            slot -> {
+               ItemStack stack = slot.getItem();
+               PotionContents potionContents = stack.get(DataComponents.POTION_CONTENTS);
+               if (stack.getItem().equals(Items.SPLASH_POTION) && potionContents != null) {
+                  MobEffectCategory mobEffectCategory2 = mobEffectCategory.equals(MobEffectCategory.BENEFICIAL) ? MobEffectCategory.HARMFUL : MobEffectCategory.BENEFICIAL;
+                  long count = StreamSupport.stream(potionContents.getAllEffects().spliterator(), false)
+                     .filter(var1x -> var1x.getEffect().value().getCategory().equals(mobEffectCategory))
                      .count();
-                  long var7 = StreamSupport.stream(var3.getAllEffects().spliterator(), false)
-                     .filter(var1x -> var1x.getEffect().value().getCategory().equals(var4))
+                  long l = StreamSupport.stream(potionContents.getAllEffects().spliterator(), false)
+                     .filter(var1x -> var1x.getEffect().value().getCategory().equals(mobEffectCategory2))
                      .count();
-                  return (var5 >= var7);
+                  return (count >= l);
                } else {
                   return false;
                }
@@ -226,29 +226,29 @@ public final class InventoryUtils implements ZenithAccess {
          .orElse(null);
    }
 
-   public static int method920(Item var0) {
+   public static int method920(Item item) {
       return IntStream.range(0, 45)
-         .filter(var1 -> Objects.requireNonNull(mc.player).getInventory().getItem(var1).getItem().equals(var0))
+         .filter(slot -> Objects.requireNonNull(mc.player).getInventory().getItem(slot).getItem().equals(item))
          .map(var0x -> mc.player.getInventory().getItem(var0x).getCount())
          .sum();
    }
 
-   public static int method921(List<Item> var0) {
-      return IntStream.range(0, 9).filter(var1 -> var0.contains(mc.player.getInventory().getItem(var1).getItem())).findFirst().orElse(-1);
+   public static int method921(List<Item> items) {
+      return IntStream.range(0, 9).filter(slot -> items.contains(mc.player.getInventory().getItem(slot).getItem())).findFirst().orElse(-1);
    }
 
-   public static int method922(IntPredicate var0) {
-      return IntStream.range(0, 9).filter(var0).findFirst().orElse(-1);
+   public static int method922(IntPredicate intPredicate) {
+      return IntStream.range(0, 9).filter(intPredicate).findFirst().orElse(-1);
    }
 
-   public static int method923(Predicate<Slot> var0) {
-      return method926().filter(var0).mapToInt(var0x -> var0x.getItem().getCount()).sum();
+   public static int method923(Predicate<Slot> predicate) {
+      return method926().filter(predicate).mapToInt(var0x -> var0x.getItem().getCount()).sum();
    }
 
    public static Slot method924() {
-      long var0;
-      int var2 = (var0 = method926().count()) == 46L ? 10 : 9;
-      return method926().toList().get(Math.toIntExact(var0 - var2 + mc.player.getInventory().getSelectedSlot()));
+      long count;
+      int n = (count = method926().count()) == 46L ? 10 : 9;
+      return method926().toList().get(Math.toIntExact(count - n + mc.player.getInventory().getSelectedSlot()));
    }
 
    public static boolean method925() {
@@ -259,28 +259,28 @@ public final class InventoryUtils implements ZenithAccess {
       return mc.player.containerMenu.slots.stream();
    }
 
-   public static void method927(Item var0) {
-      method928(var0, var0x -> true);
+   public static void method927(Item item) {
+      method928(item, var0x -> true);
    }
 
-   public static void method928(Item var0, Predicate<Slot> var1) {
-      method930(var0, var1, InteractionHand.MAIN_HAND);
+   public static void method928(Item item, Predicate<Slot> predicate) {
+      method930(item, predicate, InteractionHand.MAIN_HAND);
    }
 
-   public static void method929(Item var0, InteractionHand var1) {
-      method930(var0, var0x -> true, var1);
+   public static void method929(Item item, InteractionHand hand) {
+      method930(item, var0x -> true, hand);
    }
 
-   public static void method930(Item var0, Predicate<Slot> var1, InteractionHand var2) {
-      float var3;
-      if ((var3 = mc.player.getCooldowns().getCooldownPercent(var0.getDefaultInstance(), 0.0F)) > 0.0F) {
-         String cooldown = MathUtils.method2652(var3, 0.1) + "с";
+   public static void method930(Item item, Predicate<Slot> predicate, InteractionHand hand) {
+      float cooldownPercent;
+      if ((cooldownPercent = mc.player.getCooldowns().getCooldownPercent(item.getDefaultInstance(), 0.0F)) > 0.0F) {
+         String cooldown = MathUtils.method2652(cooldownPercent, 0.1) + "с";
          Zenith.getInstance()
             .getHudHolder()
             .method6972(
                "N",
                Component.translationArg(
-                  var0.getName(var0.getDefaultInstance())
+                  item.getName(item.getDefaultInstance())
                      .copy()
                      .setStyle(Style.EMPTY.withColor(zenith.getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()))
                      .append(
@@ -291,14 +291,14 @@ public final class InventoryUtils implements ZenithAccess {
                )
             );
       } else {
-         Slot var4 = method907(var0, var1);
-         if (var4 == null) {
+         Slot slot = method907(item, predicate);
+         if (slot == null) {
             Zenith.getInstance()
                .getHudHolder()
                .method6972(
                   "M",
                   Component.translationArg(
-                     var0.getName(var0.getDefaultInstance())
+                     item.getName(item.getDefaultInstance())
                         .copy()
                         .setStyle(Style.EMPTY.withColor(zenith.getStyleManager().getCurrentStyle().getPrimaryColor().getZenithColor().method7287()))
                         .append(
@@ -325,29 +325,29 @@ public final class InventoryUtils implements ZenithAccess {
                   )
                );
          } else {
-            TaskScheduler.Entry2 var5 = new TaskScheduler.Entry2();
+            TaskScheduler.Entry2 task = new TaskScheduler.Entry2();
             if (!InventorySettingModule.INSTANCE.method2397() && InventorySettingModule.INSTANCE.method2396()) {
-               var5.method5120(HandleInputEvent.class, var2x -> {
+               task.method5120(HandleInputEvent.class, var2x -> {
                   if (var2x.isCancelled()) {
                      return false;
                   } else {
-                     method931(var4, var2);
+                     method931(slot, hand);
                      closeScreen();
                      return true;
                   }
                });
             } else {
-               int var6 = Math.toIntExact(method926().count());
-               int var7 = var4.index - 36;
-               if (var2 == InteractionHand.MAIN_HAND && var7 >= 0 && var7 <= 8 && var6 == 46) {
-                  AtomicInteger var10 = new AtomicInteger(mc.player.inventory.getSelectedSlot());
+               int intExact = Math.toIntExact(method926().count());
+               int selected = slot.index - 36;
+               if (hand == InteractionHand.MAIN_HAND && selected >= 0 && selected <= 8 && intExact == 46) {
+                  AtomicInteger counter = new AtomicInteger(mc.player.inventory.getSelectedSlot());
                   if (!InventorySettingModule.INSTANCE.method2396()) {
-                     var5.method5120(HandleInputEvent.class, var2x -> {
-                        var10.set(mc.player.inventory.getSelectedSlot());
-                        mc.player.inventory.setSelectedSlot(var7);
+                     task.method5120(HandleInputEvent.class, var2x -> {
+                        counter.set(mc.player.inventory.getSelectedSlot());
+                        mc.player.inventory.setSelectedSlot(selected);
                         return true;
                      });
-                     var5.method5120(HandleInputEvent.class, var1x -> {
+                     task.method5120(HandleInputEvent.class, var1x -> {
                         if (var1x.isCancelled()) {
                            return false;
                         } else {
@@ -356,18 +356,18 @@ public final class InventoryUtils implements ZenithAccess {
                               mc.gameMode.releaseUsingItem(mc.player);
                            }
 
-                           mc.player.inventory.setSelectedSlot(var10.get());
+                           mc.player.inventory.setSelectedSlot(counter.get());
                            var1x.cancel();
                            return true;
                         }
                      });
                   } else {
-                     var5.method5120(HandleInputEvent.class, var1x -> {
+                     task.method5120(HandleInputEvent.class, var1x -> {
                         if (var1x.isCancelled()) {
                            return false;
                         } else {
                            int var2x = mc.player.inventory.getSelectedSlot();
-                           mc.player.inventory.setSelectedSlot(var7);
+                           mc.player.inventory.setSelectedSlot(selected);
                            UseItemUtils.useItem(InteractionHand.MAIN_HAND);
                            mc.player.inventory.setSelectedSlot(var2x);
                            var1x.cancel();
@@ -376,10 +376,10 @@ public final class InventoryUtils implements ZenithAccess {
                      });
                   }
                } else if (!InventorySettingModule.INSTANCE.method2396()) {
-                  if (KeyBindUtils.method2630(AutoTotemModule.class) && !AutoTotemModule.INSTANCE.method725() || var2 != InteractionHand.OFF_HAND) {
-                     int var8 = var2.equals(InteractionHand.MAIN_HAND) ? mc.player.getInventory().getSelectedSlot() : 40;
-                     int var9 = mc.player.getInventory().getSelectedSlot();
-                     var5.method5120(
+                  if (KeyBindUtils.method2630(AutoTotemModule.class) && !AutoTotemModule.INSTANCE.method725() || hand != InteractionHand.OFF_HAND) {
+                     int selectedSlot = hand.equals(InteractionHand.MAIN_HAND) ? mc.player.getInventory().getSelectedSlot() : 40;
+                     int n = mc.player.getInventory().getSelectedSlot();
+                     task.method5120(
                         HandleInputPostEvent.class,
                         var2x -> {
                            if (!InventorySettingModule.INSTANCE.method2397()
@@ -389,7 +389,7 @@ public final class InventoryUtils implements ZenithAccess {
                                  && !mc.player.lastSentInput.backward()
                                  && !mc.player.lastSentInput.left()
                                  && !mc.player.lastSentInput.right()) {
-                              method901(var4, var8, false);
+                              method901(slot, selectedSlot, false);
                               closeScreen();
                               return true;
                            } else {
@@ -397,25 +397,25 @@ public final class InventoryUtils implements ZenithAccess {
                            }
                         }
                      );
-                     var5.method5120(HandleInputEvent.class, var3x -> {
+                     task.method5120(HandleInputEvent.class, var3x -> {
                         if (var3x.isCancelled()) {
                            return false;
                         } else {
-                           if (var2 == InteractionHand.MAIN_HAND) {
-                              mc.player.getInventory().setSelectedSlot(var8);
-                              UseItemUtils.useItem(var2);
+                           if (hand == InteractionHand.MAIN_HAND) {
+                              mc.player.getInventory().setSelectedSlot(selectedSlot);
+                              UseItemUtils.useItem(hand);
                               if (Zenith.getInstance().getServerDetector().method1642()) {
-                                 UseItemUtils.useItem(var2);
+                                 UseItemUtils.useItem(hand);
                               }
 
-                              mc.player.getInventory().setSelectedSlot(var9);
+                              mc.player.getInventory().setSelectedSlot(n);
                               if (Zenith.getInstance().getServerDetector().method1642()) {
                                  mc.gameMode.releaseUsingItem(mc.player);
                               }
                            } else {
-                              UseItemUtils.useItem(var2);
+                              UseItemUtils.useItem(hand);
                               if (Zenith.getInstance().getServerDetector().method1642()) {
-                                 UseItemUtils.useItem(var2);
+                                 UseItemUtils.useItem(hand);
                               }
                            }
 
@@ -423,7 +423,7 @@ public final class InventoryUtils implements ZenithAccess {
                            return true;
                         }
                      });
-                     var5.method5120(
+                     task.method5120(
                         HandleInputPostEvent.class,
                         var2x -> {
                            if (!InventorySettingModule.INSTANCE.method2397()
@@ -433,7 +433,7 @@ public final class InventoryUtils implements ZenithAccess {
                                  && !mc.player.lastSentInput.backward()
                                  && !mc.player.lastSentInput.left()
                                  && !mc.player.lastSentInput.right()) {
-                              method901(var4, var8, false);
+                              method901(slot, selectedSlot, false);
                               closeScreen();
                               return true;
                            } else {
@@ -442,17 +442,17 @@ public final class InventoryUtils implements ZenithAccess {
                         }
                      );
                      if (InventorySettingModule.INSTANCE.method2397()) {
-                        var5.method5123(MoveInputEvent.class, var0x -> {
+                        task.method5123(MoveInputEvent.class, var0x -> {
                            var0x.method3044();
                            return true;
                         });
                      }
                   }
                } else {
-                  var5.method5120(
+                  task.method5120(
                      HandleInputEvent.class,
                      var2x -> {
-                        if ((!KeyBindUtils.method2630(AutoTotemModule.class) || AutoTotemModule.INSTANCE.method725()) && var2 == InteractionHand.OFF_HAND) {
+                        if ((!KeyBindUtils.method2630(AutoTotemModule.class) || AutoTotemModule.INSTANCE.method725()) && hand == InteractionHand.OFF_HAND) {
                            return true;
                         } else if (var2x.isCancelled()) {
                            return false;
@@ -463,7 +463,7 @@ public final class InventoryUtils implements ZenithAccess {
                               && !mc.player.lastSentInput.backward()
                               && !mc.player.lastSentInput.left()
                               && !mc.player.lastSentInput.right()) {
-                           method931(var4, var2);
+                           method931(slot, hand);
                            closeScreen();
                            return true;
                         } else {
@@ -472,7 +472,7 @@ public final class InventoryUtils implements ZenithAccess {
                      }
                   );
                   if (InventorySettingModule.INSTANCE.method2397()) {
-                     var5.method5123(MoveInputEvent.class, var0x -> {
+                     task.method5123(MoveInputEvent.class, var0x -> {
                         var0x.method3044();
                         return true;
                      });
@@ -480,16 +480,16 @@ public final class InventoryUtils implements ZenithAccess {
                }
             }
 
-            Zenith.getInstance().getTaskScheduler().method5110(var5);
+            Zenith.getInstance().getTaskScheduler().method5110(task);
          }
       }
    }
 
-   public static void method931(Slot var0, InteractionHand var1) {
-      method900(var0, var1, false);
+   public static void method931(Slot slot, InteractionHand hand) {
+      method900(slot, hand, false);
       closeScreen();
-      UseItemUtils.useItem(var1);
-      method900(var0, var1, true);
+      UseItemUtils.useItem(hand);
+      method900(slot, hand, true);
    }
 
    /**
@@ -570,39 +570,39 @@ public final class InventoryUtils implements ZenithAccess {
          );
    }
 
-   public static void method932(Slot var0, int var1) {
-      if (var0 != null) {
-         method935(var0.index, var1, false, false);
+   public static void method932(Slot slot, int n) {
+      if (slot != null) {
+         method935(slot.index, n, false, false);
       }
    }
 
-   public static void method933(Slot var0, int var1, boolean var2) {
-      method934(var0, var1, var2, false);
+   public static void method933(Slot slot, int index, boolean flag) {
+      method934(slot, index, flag, false);
    }
 
-   public static void method934(Slot var0, int var1, boolean var2, boolean var3) {
-      if (var0 != null) {
-         method935(var0.index, var1, var2, var3);
+   public static void method934(Slot slot, int index, boolean flag, boolean flag2) {
+      if (slot != null) {
+         method935(slot.index, index, flag, flag2);
       }
    }
 
-   public static void method935(int var0, int var1, boolean var2, boolean var3) {
-      if (var0 != var1 && var0 != -1) {
-         int var4 = Math.toIntExact(method926().count());
-         int var5;
-         if ((var5 = var0 - 36) >= 0 && var5 <= 8 && var4 == 46) {
-            if (var2) {
-               KeyBindUtils.method2627(InventoryUtils.class, () -> method904(var1, var5, ContainerInput.SWAP, false));
+   public static void method935(int index, int n, boolean flag, boolean flag2) {
+      if (index != n && index != -1) {
+         int intExact = Math.toIntExact(method926().count());
+         int selectedSlot;
+         if ((selectedSlot = index - 36) >= 0 && selectedSlot <= 8 && intExact == 46) {
+            if (flag) {
+               KeyBindUtils.method2627(InventoryUtils.class, () -> method904(n, selectedSlot, ContainerInput.SWAP, false));
             } else {
-               method904(var1, var5, ContainerInput.SWAP, false);
+               method904(n, selectedSlot, ContainerInput.SWAP, false);
                closeScreen();
             }
-         } else if (!ElytraHelperModule.INSTANCE.isEnabled() || var1 != 6 || !ElytraHelperModule.INSTANCE.method7456()) {
-            if (var2) {
+         } else if (!ElytraHelperModule.INSTANCE.isEnabled() || n != 6 || !ElytraHelperModule.INSTANCE.method7456()) {
+            if (flag) {
                if (InventorySettingModule.INSTANCE.method2396()) {
-                  KeyBindUtils.method2627(InventoryUtils.class, () -> method936(var0, var1, var3));
+                  KeyBindUtils.method2627(InventoryUtils.class, () -> method936(index, n, flag2));
                } else {
-                  TaskScheduler.Entry2 var6 = Zenith.getInstance()
+                  TaskScheduler.Entry2 task = Zenith.getInstance()
                      .getTaskScheduler()
                      .method5109(InventoryUtils.class)
                      .method5121(
@@ -620,7 +620,7 @@ public final class InventoryUtils implements ZenithAccess {
                               }
                            }
 
-                           method904(var0, 0, ContainerInput.SWAP, false);
+                           method904(index, 0, ContainerInput.SWAP, false);
                            closeScreen();
                            return true;
                         },
@@ -642,83 +642,83 @@ public final class InventoryUtils implements ZenithAccess {
                               }
                            }
 
-                           method904(var1, 0, ContainerInput.SWAP, false);
+                           method904(n, 0, ContainerInput.SWAP, false);
                            closeScreen();
-                           method904(var0, 0, ContainerInput.SWAP, false);
+                           method904(index, 0, ContainerInput.SWAP, false);
                            closeScreen();
                            return true;
                         }
                      );
-                  Zenith.getInstance().getTaskScheduler().method5111(var6, 0);
+                  Zenith.getInstance().getTaskScheduler().method5111(task, 0);
                }
             } else {
-               method936(var0, var1, var3);
+               method936(index, n, flag2);
                closeScreen();
             }
          }
       }
    }
 
-   public static void method936(int var0, int var1, boolean var2) {
-      method904(var0, 0, ContainerInput.SWAP, false);
+   public static void method936(int index, int n, boolean flag) {
+      method904(index, 0, ContainerInput.SWAP, false);
       closeScreen();
-      method904(var1, 0, ContainerInput.SWAP, false);
-      method904(var0, 0, ContainerInput.SWAP, false);
-      if (var2) {
+      method904(n, 0, ContainerInput.SWAP, false);
+      method904(index, 0, ContainerInput.SWAP, false);
+      if (flag) {
          method897();
       }
    }
 
-   public static InventoryUtils.Data method937(Item var0, Comparator<ItemStack> var1, Predicate<Slot> var2) {
-      return method938(var1x -> var1x.getItem().equals(var0), var1, var2);
+   public static InventoryUtils.Data method937(Item item, Comparator<ItemStack> comparator, Predicate<Slot> predicate) {
+      return method938(var1x -> var1x.getItem().equals(item), comparator, predicate);
    }
 
-   public static InventoryUtils.Data method938(Predicate<ItemStack> var0, Comparator<ItemStack> var1, Predicate<Slot> var2) {
+   public static InventoryUtils.Data method938(Predicate<ItemStack> predicate, Comparator<ItemStack> comparator, Predicate<Slot> predicate2) {
       if (mc.player != null && mc.player.containerMenu != null) {
-         InventoryUtils.Data var3 = null;
-         InventoryUtils.Data var4 = null;
+         InventoryUtils.Data data = null;
+         InventoryUtils.Data data2 = null;
 
-         for (Slot var6 : mc.player.containerMenu.slots) {
-            if (var2.test(var6)) {
-               ItemStack var7 = var6.getItem();
-               if (var7.isEmpty() || !var0.test(var7)) {
-                  BundleContents var8 = var7.get(DataComponents.BUNDLE_CONTENTS);
-                  if (var8 != null) {
-                     for (int var9 = 0; var9 < var8.size(); var9++) {
-                        ItemStack var10 = var8.items().get(var9).create();
-                        if (!var10.isEmpty() && var0.test(var10) && (var4 == null || var1.compare(var10, var4.getItemStack()) > 0)) {
-                           var4 = new InventoryUtils.Data(var6, var9, var10);
+         for (Slot slot : mc.player.containerMenu.slots) {
+            if (predicate2.test(slot)) {
+               ItemStack stack = slot.getItem();
+               if (stack.isEmpty() || !predicate.test(stack)) {
+                  BundleContents bundleContents = stack.get(DataComponents.BUNDLE_CONTENTS);
+                  if (bundleContents != null) {
+                     for (int i = 0; i < bundleContents.size(); i++) {
+                        ItemStack itemStack = bundleContents.items().get(i).create();
+                        if (!itemStack.isEmpty() && predicate.test(itemStack) && (data2 == null || comparator.compare(itemStack, data2.getItemStack()) > 0)) {
+                           data2 = new InventoryUtils.Data(slot, i, itemStack);
                         }
                      }
                   }
-               } else if (var3 == null || var1.compare(var7, var3.getItemStack()) > 0) {
-                  var3 = InventoryUtils.Data.method944(var6);
+               } else if (data == null || comparator.compare(stack, data.getItemStack()) > 0) {
+                  data = InventoryUtils.Data.method944(slot);
                }
             }
          }
 
-         return var3 != null ? var3 : var4;
+         return data != null ? data : data2;
       } else {
          return null;
       }
    }
 
-   public static int method939(Predicate<ItemStack> var0, Predicate<Slot> var1) {
+   public static int method939(Predicate<ItemStack> predicate, Predicate<Slot> predicate2) {
       if (mc.player != null && mc.player.containerMenu != null) {
-         int var2 = 0;
+         int n = 0;
 
-         for (Slot var4 : mc.player.containerMenu.slots) {
-            if (var1.test(var4)) {
-               ItemStack var5 = var4.getItem();
-               if (!var5.isEmpty() && var0.test(var5)) {
-                  var2 += var5.getCount();
+         for (Slot slot : mc.player.containerMenu.slots) {
+            if (predicate2.test(slot)) {
+               ItemStack stack = slot.getItem();
+               if (!stack.isEmpty() && predicate.test(stack)) {
+                  n += stack.getCount();
                } else {
-                  BundleContents var6 = var5.get(DataComponents.BUNDLE_CONTENTS);
-                  if (var6 != null) {
-                     for (int var7 = 0; var7 < var6.size(); var7++) {
-                        ItemStack var8 = var6.items().get(var7).create();
-                        if (!var8.isEmpty() && var0.test(var8)) {
-                           var2 += var8.getCount();
+                  BundleContents bundleContents = stack.get(DataComponents.BUNDLE_CONTENTS);
+                  if (bundleContents != null) {
+                     for (int i = 0; i < bundleContents.size(); i++) {
+                        ItemStack stack2 = bundleContents.items().get(i).create();
+                        if (!stack2.isEmpty() && predicate.test(stack2)) {
+                           n += stack2.getCount();
                         }
                      }
                   }
@@ -726,53 +726,53 @@ public final class InventoryUtils implements ZenithAccess {
             }
          }
 
-         return var2;
+         return n;
       } else {
          return 0;
       }
    }
 
-   public static boolean method940(InventoryUtils.Data var0, InteractionHand var1, boolean var2) {
-      if (var0 == null) {
+   public static boolean method940(InventoryUtils.Data data, InteractionHand hand, boolean flag) {
+      if (data == null) {
          return false;
-      } else if (!var0.method945()) {
-         method900(var0.getSlot(), var1, var2);
+      } else if (!data.method945()) {
+         method900(data.getSlot(), hand, flag);
          return true;
       } else {
-         return method941(var0.getSlot(), var0.getIntValue(), var1, var2);
+         return method941(data.getSlot(), data.getIntValue(), hand, flag);
       }
    }
 
-   public static boolean method941(Slot var0, int var1, InteractionHand var2, boolean var3) {
-      if (var0 != null && mc.player != null) {
-         AbstractContainerMenu var4 = mc.player.containerMenu;
-         if (!(var4 instanceof InventoryMenu) || !var4.getCarried().isEmpty()) {
+   public static boolean method941(Slot slot, int intValue, InteractionHand hand, boolean flag) {
+      if (slot != null && mc.player != null) {
+         AbstractContainerMenu containerMenu = mc.player.containerMenu;
+         if (!(containerMenu instanceof InventoryMenu) || !containerMenu.getCarried().isEmpty()) {
             return false;
-         } else if (!(var0.getItem().getItem() instanceof BundleItem)) {
+         } else if (!(slot.getItem().getItem() instanceof BundleItem)) {
             return false;
          } else {
-            BundleContents var5 = var0.getItem().get(DataComponents.BUNDLE_CONTENTS);
-            if (var5 != null && var1 >= 0 && var1 < var5.size()) {
-               int var6;
-               if ((var6 = var2.equals(InteractionHand.OFF_HAND) ? 45 : 36 + mc.player.getInventory().getSelectedSlot()) == var0.index) {
+            BundleContents bundleContents = slot.getItem().get(DataComponents.BUNDLE_CONTENTS);
+            if (bundleContents != null && intValue >= 0 && intValue < bundleContents.size()) {
+               int index;
+               if ((index = hand.equals(InteractionHand.OFF_HAND) ? 45 : 36 + mc.player.getInventory().getSelectedSlot()) == slot.index) {
                   return false;
                } else {
-                  method942(var0, var1);
-                  method904(var0.index, 1, ContainerInput.PICKUP, false);
-                  if (var4.getCarried().isEmpty()) {
+                  method942(slot, intValue);
+                  method904(slot.index, 1, ContainerInput.PICKUP, false);
+                  if (containerMenu.getCarried().isEmpty()) {
                      return false;
                   } else {
-                     method904(var6, 0, ContainerInput.PICKUP, false);
-                     if (!var4.getCarried().isEmpty()) {
-                        method904(var0.index, 0, ContainerInput.PICKUP, false);
+                     method904(index, 0, ContainerInput.PICKUP, false);
+                     if (!containerMenu.getCarried().isEmpty()) {
+                        method904(slot.index, 0, ContainerInput.PICKUP, false);
                      }
 
-                     if (!var4.getCarried().isEmpty()) {
-                        method943(var4, var0, var6);
+                     if (!containerMenu.getCarried().isEmpty()) {
+                        method943(containerMenu, slot, index);
                      }
 
                      closeScreen();
-                     if (var3) {
+                     if (flag) {
                         method897();
                      }
 
@@ -788,23 +788,23 @@ public final class InventoryUtils implements ZenithAccess {
       }
    }
 
-   private static void method942(Slot var0, int var1) {
-      if (BundleItem.getSelectedItemIndex(var0.getItem()) != var1) {
-         mc.player.connection.send(new ServerboundSelectBundleItemPacket(var0.index, var1));
-         BundleItem.toggleSelectedItem(var0.getItem(), var1);
+   private static void method942(Slot slot, int intValue) {
+      if (BundleItem.getSelectedItemIndex(slot.getItem()) != intValue) {
+         mc.player.connection.send(new ServerboundSelectBundleItemPacket(slot.index, intValue));
+         BundleItem.toggleSelectedItem(slot.getItem(), intValue);
       }
    }
 
-   private static void method943(AbstractContainerMenu var0, Slot var1, int var2) {
-      for (Slot var4 : var0.slots) {
-         if (var4.index >= 9 && var4.index <= 44 && var4.getItem().isEmpty()) {
-            method904(var4.index, 0, ContainerInput.PICKUP, false);
+   private static void method943(AbstractContainerMenu containerMenu, Slot slot, int index) {
+      for (Slot slot2 : containerMenu.slots) {
+         if (slot2.index >= 9 && slot2.index <= 44 && slot2.getItem().isEmpty()) {
+            method904(slot2.index, 0, ContainerInput.PICKUP, false);
             return;
          }
       }
 
-      method904(var2, 0, ContainerInput.PICKUP, false);
-      method904(var1.index, 0, ContainerInput.PICKUP, false);
+      method904(index, 0, ContainerInput.PICKUP, false);
+      method904(slot.index, 0, ContainerInput.PICKUP, false);
    }
 
    @Generated
@@ -846,14 +846,14 @@ public final class InventoryUtils implements ZenithAccess {
          return "Data[" + "slot=" + this.slot + ", " + "intValue=" + this.intValue + ", " + "itemStack=" + this.itemStack + "]";
       }
 
-      public Data(Slot var1, int var2, ItemStack var3) {
-         this.slot = var1;
-         this.intValue = var2;
-         this.itemStack = var3;
+      public Data(Slot slot, int intValue, ItemStack itemStack) {
+         this.slot = slot;
+         this.intValue = intValue;
+         this.itemStack = itemStack;
       }
 
-      public static InventoryUtils.Data method944(Slot var0) {
-         return var0 == null ? null : new InventoryUtils.Data(var0, -1, var0.getItem());
+      public static InventoryUtils.Data method944(Slot slot) {
+         return slot == null ? null : new InventoryUtils.Data(slot, -1, slot.getItem());
       }
 
       public boolean method945() {

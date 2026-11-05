@@ -52,8 +52,8 @@ public final class Wardrobe {
    private String text = "";
    private long longValue;
 
-   public Wardrobe(Path var1) {
-      this.path = var1.resolve("wardrobe").resolve("wardrobe.json");
+   public Wardrobe(Path path) {
+      this.path = path.resolve("wardrobe").resolve("wardrobe.json");
       this.registry.load();
       this.load();
       this.text = this.method2514();
@@ -71,8 +71,8 @@ public final class Wardrobe {
    }
 
    public static Wardrobe method2488() {
-      Zenith var0 = Zenith.getInstance();
-      return var0 == null ? null : var0.getWardrobe();
+      Zenith zenith = Zenith.getInstance();
+      return zenith == null ? null : zenith.getWardrobe();
    }
 
    public Registry getRegistry() {
@@ -87,20 +87,20 @@ public final class Wardrobe {
       return this.version;
    }
 
-   public boolean method2490(HoveredData var1) {
-      return var1 != null && var1.getText().equals(this.enumMap.get(var1.getFocusSlotEnum()));
+   public boolean method2490(HoveredData hoveredData) {
+      return hoveredData != null && hoveredData.getText().equals(this.enumMap.get(hoveredData.getFocusSlotEnum()));
    }
 
-   public HoveredData method2491(FocusSlotEnum var1) {
-      return this.registry.method1421(this.enumMap.get(var1));
+   public HoveredData method2491(FocusSlotEnum key) {
+      return this.registry.method1421(this.enumMap.get(key));
    }
 
-   public void method2492(HoveredData var1) {
-      if (var1 != null) {
-         this.enumMap.put(var1.getFocusSlotEnum(), var1.getText());
-         if (var1.getFocusSlotEnum() == FocusSlotEnum.CAPE) {
+   public void method2492(HoveredData hovered) {
+      if (hovered != null) {
+         this.enumMap.put(hovered.getFocusSlotEnum(), hovered.getText());
+         if (hovered.getFocusSlotEnum() == FocusSlotEnum.CAPE) {
             this.enumMap.remove(FocusSlotEnum.BACK);
-         } else if (var1.getFocusSlotEnum() == FocusSlotEnum.BACK) {
+         } else if (hovered.getFocusSlotEnum() == FocusSlotEnum.BACK) {
             this.enumMap.remove(FocusSlotEnum.CAPE);
          }
 
@@ -108,29 +108,29 @@ public final class Wardrobe {
       }
    }
 
-   public void method2493(FocusSlotEnum var1) {
-      if (this.enumMap.remove(var1) != null) {
+   public void method2493(FocusSlotEnum focusSlotEnum) {
+      if (this.enumMap.remove(focusSlotEnum) != null) {
          this.changed();
       }
    }
 
-   public void method2494(HoveredData var1) {
-      if (this.method2490(var1)) {
-         this.method2493(var1.getFocusSlotEnum());
+   public void method2494(HoveredData hovered) {
+      if (this.method2490(hovered)) {
+         this.method2493(hovered.getFocusSlotEnum());
       } else {
-         this.method2492(var1);
+         this.method2492(hovered);
       }
    }
 
-   public void method2495(WardrobeSetInfo var1) {
-      if (var1 != null) {
-         for (String var3 : var1.pieces()) {
-            HoveredData var4 = this.registry.method1421(var3);
-            if (var4 != null) {
-               this.enumMap.put(var4.getFocusSlotEnum(), var4.getText());
-               if (var4.getFocusSlotEnum() == FocusSlotEnum.CAPE) {
+   public void method2495(WardrobeSetInfo wardrobeSetInfo) {
+      if (wardrobeSetInfo != null) {
+         for (String piece : wardrobeSetInfo.pieces()) {
+            HoveredData hoveredData = this.registry.method1421(piece);
+            if (hoveredData != null) {
+               this.enumMap.put(hoveredData.getFocusSlotEnum(), hoveredData.getText());
+               if (hoveredData.getFocusSlotEnum() == FocusSlotEnum.CAPE) {
                   this.enumMap.remove(FocusSlotEnum.BACK);
-               } else if (var4.getFocusSlotEnum() == FocusSlotEnum.BACK) {
+               } else if (hoveredData.getFocusSlotEnum() == FocusSlotEnum.BACK) {
                   this.enumMap.remove(FocusSlotEnum.CAPE);
                }
             }
@@ -152,88 +152,88 @@ public final class Wardrobe {
       return this.enumMap.size();
    }
 
-   public void setHoveredData(HoveredData var1) {
-      this.hoveredData = var1;
+   public void setHoveredData(HoveredData hoveredData) {
+      this.hoveredData = hoveredData;
    }
 
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
    public boolean isFlag() {
       return this.flag;
    }
 
-   public List<HoveredData> method2498(String var1, boolean var2) {
+   public List<HoveredData> method2498(String name, boolean flag) {
       this.items2.clear();
-      EnumMap var3 = var2 ? this.enumMap : (var1 == null ? null : this.items.get(var1.toLowerCase(Locale.ROOT)));
-      if (var3 == null) {
+      EnumMap enumMap = flag ? this.enumMap : (name == null ? null : this.items.get(name.toLowerCase(Locale.ROOT)));
+      if (enumMap == null) {
          return this.items2;
       } else {
-         HoveredData var4 = var2 && this.flag ? this.hoveredData : null;
+         HoveredData hoveredData = flag && this.flag ? this.hoveredData : null;
 
-         for (FocusSlotEnum var8 : focusSlotEnums) {
-            HoveredData var9 = var4 != null && var4.getFocusSlotEnum() == var8 ? var4 : this.registry.method1421((String)var3.get(var8));
-            if (var9 != null) {
-               this.items2.add(var9);
+         for (FocusSlotEnum focusSlotEnum : focusSlotEnums) {
+            HoveredData hoveredData2 = hoveredData != null && hoveredData.getFocusSlotEnum() == focusSlotEnum ? hoveredData : this.registry.method1421((String)enumMap.get(focusSlotEnum));
+            if (hoveredData2 != null) {
+               this.items2.add(hoveredData2);
             }
          }
 
-         HoveredData var10 = this.method2499(this.items2, FocusSlotEnum.CAPE);
-         HoveredData var11 = this.method2499(this.items2, FocusSlotEnum.BACK);
-         if (var10 != null && var11 != null) {
-            this.items2.remove(var4 == var11 ? var10 : var11);
+         HoveredData hoveredData2 = this.method2499(this.items2, FocusSlotEnum.CAPE);
+         HoveredData hoveredData3 = this.method2499(this.items2, FocusSlotEnum.BACK);
+         if (hoveredData2 != null && hoveredData3 != null) {
+            this.items2.remove(hoveredData == hoveredData3 ? hoveredData2 : hoveredData3);
          }
 
          return this.items2;
       }
    }
 
-   public HoveredData method2499(List<HoveredData> var1, FocusSlotEnum var2) {
-      for (int var3 = 0; var3 < var1.size(); var3++) {
-         if (((HoveredData)var1.get(var3)).getFocusSlotEnum() == var2) {
-            return (HoveredData)var1.get(var3);
+   public HoveredData method2499(List<HoveredData> hoveredDatas, FocusSlotEnum focusSlotEnum) {
+      for (int i = 0; i < hoveredDatas.size(); i++) {
+         if (((HoveredData)hoveredDatas.get(i)).getFocusSlotEnum() == focusSlotEnum) {
+            return (HoveredData)hoveredDatas.get(i);
          }
       }
 
       return null;
    }
 
-   public WardrobeSetInfo method2500(List<HoveredData> var1) {
-      if (this.method2499(var1, FocusSlotEnum.CHARACTER) != null) {
+   public WardrobeSetInfo method2500(List<HoveredData> hoveredDatas) {
+      if (this.method2499(hoveredDatas, FocusSlotEnum.CHARACTER) != null) {
          return null;
       } else {
-         String var2 = null;
-         int var3 = 0;
+         String str = null;
+         int n = 0;
 
-         for (HoveredData var5 : var1) {
-            if (var5.method1546() == WardrobeCategory.CLOTHING) {
-               if (var5.getText2() == null) {
+         for (HoveredData hoveredData : hoveredDatas) {
+            if (hoveredData.method1546() == WardrobeCategory.CLOTHING) {
+               if (hoveredData.getText2() == null) {
                   return null;
                }
 
-               if (var2 == null) {
-                  var2 = var5.getText2();
-               } else if (!var2.equals(var5.getText2())) {
+               if (str == null) {
+                  str = hoveredData.getText2();
+               } else if (!str.equals(hoveredData.getText2())) {
                   return null;
                }
 
-               var3++;
+               n++;
             }
          }
 
-         WardrobeSetInfo var6 = this.registry.method1425(var2);
-         return var6 != null && var3 == var6.pieces().size() && var3 > 0 ? var6 : null;
+         WardrobeSetInfo wardrobeSetInfo = this.registry.method1425(str);
+         return wardrobeSetInfo != null && n == wardrobeSetInfo.pieces().size() && n > 0 ? wardrobeSetInfo : null;
       }
    }
 
-   public void method2501(String var1, Map<FocusSlotEnum, String> var2) {
-      if (var1 != null) {
-         String var3 = var1.toLowerCase(Locale.ROOT);
-         if (var2 != null && !var2.isEmpty()) {
-            this.items.put(var3, new EnumMap<>(var2));
+   public void method2501(String str, Map<FocusSlotEnum, String> map) {
+      if (str != null) {
+         String lowerCase = str.toLowerCase(Locale.ROOT);
+         if (map != null && !map.isEmpty()) {
+            this.items.put(lowerCase, new EnumMap<>(map));
          } else {
-            this.items.remove(var3);
+            this.items.remove(lowerCase);
          }
       }
    }
@@ -242,24 +242,24 @@ public final class Wardrobe {
       this.items.clear();
    }
 
-   public int method2503(Collection<String> var1) {
-      EnumMap var2 = new EnumMap<>(FocusSlotEnum.class);
+   public int method2503(Collection<String> items) {
+      EnumMap map = new EnumMap<>(FocusSlotEnum.class);
 
-      for (String var4 : var1) {
-         HoveredData var5 = this.registry.method1421(var4);
-         if (var5 != null) {
-            var2.put(var5.getFocusSlotEnum(), var5.getText());
+      for (String string : items) {
+         HoveredData hoveredData = this.registry.method1421(string);
+         if (hoveredData != null) {
+            map.put(hoveredData.getFocusSlotEnum(), hoveredData.getText());
          }
       }
 
-      if (var2.containsKey(FocusSlotEnum.CAPE)) {
-         var2.remove(FocusSlotEnum.BACK);
+      if (map.containsKey(FocusSlotEnum.CAPE)) {
+         map.remove(FocusSlotEnum.BACK);
       }
 
       this.enumMap.clear();
-      this.enumMap.putAll(var2);
+      this.enumMap.putAll(map);
       this.changed();
-      return var2.size();
+      return map.size();
    }
 
    public Map<FocusSlotEnum, String> method2504() {
@@ -270,24 +270,24 @@ public final class Wardrobe {
       return List.copyOf(this.items3);
    }
 
-   public Wardrobe.Data method2506(String var1) {
-      String var2 = var1 == null ? "" : var1.strip();
-      if (!var2.isEmpty() && !this.enumMap.isEmpty()) {
-         Wardrobe.Data var3 = new Wardrobe.Data(var2, new EnumMap<>(this.enumMap), System.currentTimeMillis());
-         this.items3.removeIf(var1x -> var1x.name().equalsIgnoreCase(var2));
-         this.items3.add(0, var3);
+   public Wardrobe.Data method2506(String replacement) {
+      String text = replacement == null ? "" : replacement.strip();
+      if (!text.isEmpty() && !this.enumMap.isEmpty()) {
+         Wardrobe.Data data = new Wardrobe.Data(text, new EnumMap<>(this.enumMap), System.currentTimeMillis());
+         this.items3.removeIf(var1x -> var1x.name().equalsIgnoreCase(text));
+         this.items3.add(0, data);
          this.changed();
-         return var3;
+         return data;
       } else {
          return null;
       }
    }
 
-   public boolean method2507(String var1) {
-      String var2 = var1 == null ? "" : var1.strip();
+   public boolean method2507(String replacement) {
+      String anotherString = replacement == null ? "" : replacement.strip();
 
-      for (Wardrobe.Data var4 : this.items3) {
-         if (var4.name().equalsIgnoreCase(var2)) {
+      for (Wardrobe.Data data : this.items3) {
+         if (data.name().equalsIgnoreCase(anotherString)) {
             return true;
          }
       }
@@ -295,34 +295,34 @@ public final class Wardrobe {
       return false;
    }
 
-   public int method2508(Wardrobe.Data var1) {
-      return var1 == null ? 0 : this.method2503(var1.getItems().values());
+   public int method2508(Wardrobe.Data data) {
+      return data == null ? 0 : this.method2503(data.getItems().values());
    }
 
-   public void method2509(Wardrobe.Data var1) {
-      if (this.items3.remove(var1)) {
+   public void method2509(Wardrobe.Data data) {
+      if (this.items3.remove(data)) {
          this.changed();
       }
    }
 
-   public boolean method2510(Wardrobe.Data var1) {
-      return var1 != null && !this.enumMap.isEmpty() && this.enumMap.equals(var1.getItems());
+   public boolean method2510(Wardrobe.Data data) {
+      return data != null && !this.enumMap.isEmpty() && this.enumMap.equals(data.getItems());
    }
 
    public JsonObject method2511() {
       return this.method2519();
    }
 
-   public void method2512(JsonObject var1) {
-      if (var1 != null) {
-         this.method2517(var1, var1.has("presets"));
+   public void method2512(JsonObject jsonObject) {
+      if (jsonObject != null) {
+         this.method2517(jsonObject, jsonObject.has("presets"));
          this.changed();
       }
    }
 
-   public boolean method2513(ItemStack var1) {
-      FocusSlotEnum var2 = FocusSlotEnum.method545(var1);
-      return var2 != null && this.enumMap.containsKey(var2);
+   public boolean method2513(ItemStack mainHandItem) {
+      FocusSlotEnum key = FocusSlotEnum.method545(mainHandItem);
+      return key != null && this.enumMap.containsKey(key);
    }
 
    private void changed() {
@@ -331,103 +331,103 @@ public final class Wardrobe {
    }
 
    private void tick() {
-      long var1 = System.currentTimeMillis();
-      if (var1 >= this.longValue && !this.method2514().equals(this.text)) {
-         this.longValue = var1 + (this.method2518() ? 500L : 10000L);
+      long now = System.currentTimeMillis();
+      if (now >= this.longValue && !this.method2514().equals(this.text)) {
+         this.longValue = now + (this.method2518() ? 500L : 10000L);
       }
    }
 
    private String method2514() {
-      StringBuilder var1 = new StringBuilder();
+      StringBuilder builder = new StringBuilder();
 
-      for (Setting var3 : this.method2489()) {
-         if (var3 instanceof BooleanSetting var4) {
-            var1.append(var4.isEnabled()).append('|');
-         } else if (var3 instanceof SliderSetting var5) {
-            var1.append(var5.getValue3()).append('|');
+      for (Setting setting : this.method2489()) {
+         if (setting instanceof BooleanSetting booleanSetting) {
+            builder.append(booleanSetting.isEnabled()).append('|');
+         } else if (setting instanceof SliderSetting sliderSetting) {
+            builder.append(sliderSetting.getValue3()).append('|');
          }
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
    private void load() {
-      JsonObject var1 = JsonIo.method1009(this.path);
-      if (var1 != null) {
-         this.method2517(var1, true);
+      JsonObject jsonObject = JsonIo.method1009(this.path);
+      if (jsonObject != null) {
+         this.method2517(jsonObject, true);
       }
    }
 
-   private EnumMap<FocusSlotEnum, String> method2515(JsonObject var1) {
-      EnumMap var2 = new EnumMap<>(FocusSlotEnum.class);
+   private EnumMap<FocusSlotEnum, String> method2515(JsonObject jsonObject) {
+      EnumMap map = new EnumMap<>(FocusSlotEnum.class);
 
-      for (Entry var4 : var1.entrySet()) {
-         FocusSlotEnum var5 = FocusSlotEnum.method546((String)var4.getKey());
-         if (var5 != null && ((JsonElement)var4.getValue()).isJsonPrimitive()) {
-            HoveredData var6 = this.registry.method1421(((JsonElement)var4.getValue()).getAsString());
-            if (var6 != null && var6.getFocusSlotEnum() == var5) {
-               var2.put(var5, var6.getText());
+      for (Entry entry : jsonObject.entrySet()) {
+         FocusSlotEnum key = FocusSlotEnum.method546((String)entry.getKey());
+         if (key != null && ((JsonElement)entry.getValue()).isJsonPrimitive()) {
+            HoveredData hoveredData = this.registry.method1421(((JsonElement)entry.getValue()).getAsString());
+            if (hoveredData != null && hoveredData.getFocusSlotEnum() == key) {
+               map.put(key, hoveredData.getText());
             }
          }
       }
 
-      return var2;
+      return map;
    }
 
-   private static JsonObject method2516(Map<FocusSlotEnum, String> var0) {
-      JsonObject var1 = new JsonObject();
+   private static JsonObject method2516(Map<FocusSlotEnum, String> enumMap) {
+      JsonObject json = new JsonObject();
 
-      for (Entry var3 : var0.entrySet()) {
-         var1.addProperty(((FocusSlotEnum)var3.getKey()).name(), (String)var3.getValue());
+      for (Entry entry : enumMap.entrySet()) {
+         json.addProperty(((FocusSlotEnum)entry.getKey()).name(), (String)entry.getValue());
       }
 
-      return var1;
+      return json;
    }
 
-   private void method2517(JsonObject var1, boolean var2) {
+   private void method2517(JsonObject jsonObject, boolean has) {
       try {
-         if (var1.has("equipped") && var1.get("equipped").isJsonObject()) {
-            EnumMap var3 = this.method2515(var1.getAsJsonObject("equipped"));
+         if (jsonObject.has("equipped") && jsonObject.get("equipped").isJsonObject()) {
+            EnumMap map = this.method2515(jsonObject.getAsJsonObject("equipped"));
             this.enumMap.clear();
-            this.enumMap.putAll(var3);
+            this.enumMap.putAll(map);
          }
-      } catch (RuntimeException var11) {
+      } catch (RuntimeException e) {
          this.enumMap.clear();
       }
 
-      if (var2 && var1.has("presets") && var1.get("presets").isJsonArray()) {
+      if (has && jsonObject.has("presets") && jsonObject.get("presets").isJsonArray()) {
          this.items3.clear();
 
-         for (JsonElement var4 : var1.getAsJsonArray("presets")) {
+         for (JsonElement json : jsonObject.getAsJsonArray("presets")) {
             try {
-               if (var4.isJsonObject()) {
-                  JsonObject var5 = var4.getAsJsonObject();
-                  String var6 = var5.has("name") ? var5.get("name").getAsString() : "";
-                  if (!var6.isBlank() && var5.has("items") && var5.get("items").isJsonObject()) {
-                     EnumMap var7 = this.method2515(var5.getAsJsonObject("items"));
-                     if (!var7.isEmpty()) {
-                        this.items3.add(new Wardrobe.Data(var6, var7, var5.has("createdAt") ? var5.get("createdAt").getAsLong() : 0L));
+               if (json.isJsonObject()) {
+                  JsonObject jsonObject2 = json.getAsJsonObject();
+                  String string = jsonObject2.has("name") ? jsonObject2.get("name").getAsString() : "";
+                  if (!string.isBlank() && jsonObject2.has("items") && jsonObject2.get("items").isJsonObject()) {
+                     EnumMap items = this.method2515(jsonObject2.getAsJsonObject("items"));
+                     if (!items.isEmpty()) {
+                        this.items3.add(new Wardrobe.Data(string, items, jsonObject2.has("createdAt") ? jsonObject2.get("createdAt").getAsLong() : 0L));
                      }
                   }
                }
-            } catch (RuntimeException var10) {
+            } catch (RuntimeException e) {
             }
          }
       }
 
-      JsonObject var13 = var1.has("settings") && var1.get("settings").isJsonObject() ? var1.getAsJsonObject("settings") : new JsonObject();
+      JsonObject json = jsonObject.has("settings") && jsonObject.get("settings").isJsonObject() ? jsonObject.getAsJsonObject("settings") : new JsonObject();
 
-      for (Setting var15 : this.method2489()) {
+      for (Setting setting : this.method2489()) {
          try {
-            JsonElement var16 = var13.get(var15.getKey());
-            if (var16 != null && var16.isJsonPrimitive()) {
-               if (var15 instanceof BooleanSetting var17) {
-                  var17.setEnabled(var16.getAsBoolean());
-               } else if (var15 instanceof SliderSetting var8) {
-                  var8.method2400(var16.getAsFloat());
+            JsonElement jsonElement = json.get(setting.getKey());
+            if (jsonElement != null && jsonElement.isJsonPrimitive()) {
+               if (setting instanceof BooleanSetting booleanSetting) {
+                  booleanSetting.setEnabled(jsonElement.getAsBoolean());
+               } else if (setting instanceof SliderSetting sliderSetting) {
+                  sliderSetting.method2400(jsonElement.getAsFloat());
                }
             }
-         } catch (RuntimeException var9) {
+         } catch (RuntimeException e) {
          }
       }
    }
@@ -442,32 +442,32 @@ public final class Wardrobe {
    }
 
    private JsonObject method2519() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("format", 1);
-      var1.add("equipped", method2516(this.enumMap));
-      JsonArray var2 = new JsonArray();
+      JsonObject json = new JsonObject();
+      json.addProperty("format", 1);
+      json.add("equipped", method2516(this.enumMap));
+      JsonArray jsonArray = new JsonArray();
 
-      for (Wardrobe.Data var4 : this.items3) {
-         JsonObject var5 = new JsonObject();
-         var5.addProperty("name", var4.name());
-         var5.addProperty("createdAt", var4.getLongValue());
-         var5.add("items", method2516(var4.getItems()));
-         var2.add(var5);
+      for (Wardrobe.Data data : this.items3) {
+         JsonObject json2 = new JsonObject();
+         json2.addProperty("name", data.name());
+         json2.addProperty("createdAt", data.getLongValue());
+         json2.add("items", method2516(data.getItems()));
+         jsonArray.add(json2);
       }
 
-      var1.add("presets", var2);
-      JsonObject var8 = new JsonObject();
+      json.add("presets", jsonArray);
+      JsonObject json2 = new JsonObject();
 
-      for (Setting var10 : this.method2489()) {
-         if (var10 instanceof BooleanSetting var6) {
-            var8.addProperty(var10.getKey(), var6.isEnabled());
-         } else if (var10 instanceof SliderSetting var7) {
-            var8.addProperty(var10.getKey(), var7.getValue3());
+      for (Setting setting : this.method2489()) {
+         if (setting instanceof BooleanSetting booleanSetting) {
+            json2.addProperty(setting.getKey(), booleanSetting.isEnabled());
+         } else if (setting instanceof SliderSetting sliderSetting) {
+            json2.addProperty(setting.getKey(), sliderSetting.getValue3());
          }
       }
 
-      var1.add("settings", var8);
-      return var1;
+      json.add("settings", json2);
+      return json;
    }
 
    public static final class Data {
@@ -504,10 +504,10 @@ public final class Wardrobe {
          return "Data[" + "text=" + this.text + ", " + "items=" + this.items + ", " + "longValue=" + this.longValue + "]";
       }
 
-      public Data(String var1, Map<FocusSlotEnum, String> var2, long var3) {
-         this.text = var1;
-         this.items = var2;
-         this.longValue = var3;
+      public Data(String text, Map<FocusSlotEnum, String> items, long longValue) {
+         this.text = text;
+         this.items = items;
+         this.longValue = longValue;
       }
 
       public String name() {

@@ -105,14 +105,14 @@ public final class AccountManagerPage implements MainMenuPage {
       return Zenith.getInstance().getAccounts();
    }
 
-   private PlayerSkinWidget skinWidget(int var1, Account var2) {
-      String var3 = var2.getName() + "#" + var2.getType();
+   private PlayerSkinWidget skinWidget(int n, Account account) {
+      String key = account.getName() + "#" + account.getType();
       return this.skinWidgets
          .computeIfAbsent(
-            var3,
+            key,
             var1x -> {
-               String var2x = var2.getName();
-               UUID var3x = var2.method5472();
+               String var2x = account.getName();
+               UUID var3x = account.method5472();
                return new PlayerSkinWidget(
                   Math.round(SKIN_WINDOW),
                   Math.round(SKIN_HEIGHT),
@@ -134,58 +134,58 @@ public final class AccountManagerPage implements MainMenuPage {
    }
 
    private void addOffline() {
-      String var1 = this.usernameField.getValue().trim();
-      if (!var1.isEmpty()) {
-         this.manager().method4753(Account.method5470(var1));
-         this.manager().method4757(MenuTheme.t("menu.accounts.added") + " " + var1);
+      String name = this.usernameField.getValue().trim();
+      if (!name.isEmpty()) {
+         this.manager().method4753(Account.method5470(name));
+         this.manager().method4757(MenuTheme.t("menu.accounts.added") + " " + name);
          this.usernameField.clear();
          this.usernameField.setFocused(false);
       }
    }
 
    private static String randomName() {
-      ThreadLocalRandom var0 = ThreadLocalRandom.current();
-      return NAME_PARTS.get(var0.nextInt(NAME_PARTS.size())) + NAME_PARTS.get(var0.nextInt(NAME_PARTS.size())).toLowerCase(Locale.ROOT) + var0.nextInt(10, 100);
+      ThreadLocalRandom current = ThreadLocalRandom.current();
+      return NAME_PARTS.get(current.nextInt(NAME_PARTS.size())) + NAME_PARTS.get(current.nextInt(NAME_PARTS.size())).toLowerCase(Locale.ROOT) + current.nextInt(10, 100);
    }
 
    private void startMicrosoftLogin() {
       if (!this.loginRunning) {
          this.loginRunning = true;
-         int var1 = ++this.loginGeneration;
-         Accounts var2 = this.manager();
-         var2.method4757(MenuTheme.t("menu.accounts.contacting"));
-         MicrosoftAuth.method3056().whenComplete((var3, var4) -> Minecraft.getInstance().execute(() -> {
-            if (var1 == this.loginGeneration) {
-               if (var4 == null && var3 != null) {
-                  this.deviceCode = var3;
-                  var2.method4757(MenuTheme.t("menu.accounts.waiting"));
-                  Minecraft.getInstance().keyboardHandler.setClipboard(var3.getText());
-                  com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(var3.getText2()));
-                  this.awaitLogin(var3, var1);
+         int n = ++this.loginGeneration;
+         Accounts manager = this.manager();
+         manager.method4757(MenuTheme.t("menu.accounts.contacting"));
+         MicrosoftAuth.method3056().whenComplete((deviceCode, throwable) -> Minecraft.getInstance().execute(() -> {
+            if (n == this.loginGeneration) {
+               if (throwable == null && deviceCode != null) {
+                  this.deviceCode = deviceCode;
+                  manager.method4757(MenuTheme.t("menu.accounts.waiting"));
+                  Minecraft.getInstance().keyboardHandler.setClipboard(deviceCode.getText());
+                  com.mojang.blaze3d.Blaze3D.openUri(java.net.URI.create(deviceCode.getText2()));
+                  this.awaitLogin(deviceCode, n);
                } else {
                   this.loginRunning = false;
-                  var2.method4757(MenuTheme.t("menu.accounts.loginFailed") + " " + Accounts.rootMessage(var4));
+                  manager.method4757(MenuTheme.t("menu.accounts.loginFailed") + " " + Accounts.rootMessage(throwable));
                }
             }
          }));
       }
    }
 
-   private void awaitLogin(MicrosoftAuth.Data var1, int var2) {
-      Accounts var3 = this.manager();
-      MicrosoftAuth.method3058(var1, var3x -> Minecraft.getInstance().execute(() -> {
-         if (var2 == this.loginGeneration) {
-            var3.method4757(var3x);
+   private void awaitLogin(MicrosoftAuth.Data deviceCode, int n) {
+      Accounts manager = this.manager();
+      MicrosoftAuth.method3058(deviceCode, var3x -> Minecraft.getInstance().execute(() -> {
+         if (n == this.loginGeneration) {
+            manager.method4757(var3x);
          }
-      }), () -> var2 != this.loginGeneration).whenComplete((var3x, var4) -> Minecraft.getInstance().execute(() -> {
-         if (var2 == this.loginGeneration) {
+      }), () -> n != this.loginGeneration).whenComplete((var3x, throwable) -> Minecraft.getInstance().execute(() -> {
+         if (n == this.loginGeneration) {
             this.loginRunning = false;
             this.deviceCode = null;
-            if (var4 == null && var3x != null) {
-               var3.method4753(Account.method5471(var3x.name(), var3x.uuid(), var3x.getText2(), var3x.getText3()));
-               var3.method4757(MenuTheme.t("menu.accounts.added") + " " + var3x.name());
+            if (throwable == null && var3x != null) {
+               manager.method4753(Account.method5471(var3x.name(), var3x.uuid(), var3x.getText2(), var3x.getText3()));
+               manager.method4757(MenuTheme.t("menu.accounts.added") + " " + var3x.name());
             } else {
-               var3.method4757(MenuTheme.t("menu.accounts.loginFailed") + " " + Accounts.rootMessage(var4));
+               manager.method4757(MenuTheme.t("menu.accounts.loginFailed") + " " + Accounts.rootMessage(throwable));
             }
          }
       }));
@@ -199,229 +199,229 @@ public final class AccountManagerPage implements MainMenuPage {
    }
 
    @Override
-   public void layout(BoundsData var1) {
-      float var2 = var1.getFloatValue2() + STRIP_HEIGHT + RAIL_GAP + RAIL_WIDTH + CONTROLS_GAP;
-      float var3 = INPUT_WIDTH + ACTION_GAP + MenuButton.HEIGHT * 4.0F + BUTTON_GAP * 3.0F;
-      float var4 = var1.getFloatValue() + (var1.width() - var3) / 2.0F;
-      this.usernameField.setBounds(var4, var2, INPUT_WIDTH, MenuTextField.HEIGHT);
-      var4 += INPUT_WIDTH + ACTION_GAP;
+   public void layout(BoundsData boundsData) {
+      float f = boundsData.getFloatValue2() + STRIP_HEIGHT + RAIL_GAP + RAIL_WIDTH + CONTROLS_GAP;
+      float f2 = INPUT_WIDTH + ACTION_GAP + MenuButton.HEIGHT * 4.0F + BUTTON_GAP * 3.0F;
+      float floatValue = boundsData.getFloatValue() + (boundsData.width() - f2) / 2.0F;
+      this.usernameField.setBounds(floatValue, f, INPUT_WIDTH, MenuTextField.HEIGHT);
+      floatValue += INPUT_WIDTH + ACTION_GAP;
 
-      for (MenuButton var6 : List.of(this.addButton, this.microsoftButton, this.randomButton, this.clearButton)) {
-         var6.setBounds(var4, var2, MenuButton.HEIGHT, MenuButton.HEIGHT);
-         var4 += MenuButton.HEIGHT + BUTTON_GAP;
+      for (MenuButton menuButton : List.of(this.addButton, this.microsoftButton, this.randomButton, this.clearButton)) {
+         menuButton.setBounds(floatValue, f, MenuButton.HEIGHT, MenuButton.HEIGHT);
+         floatValue += MenuButton.HEIGHT + BUTTON_GAP;
       }
 
       if (this.deviceCode != null) {
-         float var9 = MenuTheme.px(360.0F);
-         float var10 = MenuTheme.px(160.0F);
+         float px = MenuTheme.px(360.0F);
+         float height = MenuTheme.px(160.0F);
          this.deviceCodeBounds = new BoundsData(
-            var1.getFloatValue() + (var1.width() - var9) / 2.0F, var1.getFloatValue2() + (STRIP_HEIGHT - var10) / 2.0F, var9, var10
+            boundsData.getFloatValue() + (boundsData.width() - px) / 2.0F, boundsData.getFloatValue2() + (STRIP_HEIGHT - height) / 2.0F, px, height
          );
-         float var7 = this.cancelLoginButton.preferredWidth();
+         float preferredWidth = this.cancelLoginButton.preferredWidth();
          this.cancelLoginButton
             .setBounds(
-               this.deviceCodeBounds.getFloatValue() + (var9 - var7) / 2.0F,
-               this.deviceCodeBounds.getFloatValue2() + var10 - MenuTheme.px(16.0F) - MenuButton.HEIGHT,
-               var7,
+               this.deviceCodeBounds.getFloatValue() + (px - preferredWidth) / 2.0F,
+               this.deviceCodeBounds.getFloatValue2() + height - MenuTheme.px(16.0F) - MenuButton.HEIGHT,
+               preferredWidth,
                MenuButton.HEIGHT
             );
       }
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-      var var5 = this.manager().method4751();
-      float var6 = var5.isEmpty() ? 0.0F : var5.size() * CARD_WIDTH + (var5.size() - 1) * CARD_GAP;
-      this.scroll.update(var4.width(), var6);
-      this.cardSelect = new BoundsData[var5.size()];
-      this.cardRemove = new BoundsData[var5.size()];
-      BoundsData var7 = MenuSkin.listArea(var1, var4, STRIP_HEIGHT);
-      this.viewport = new BoundsData(var7.getFloatValue(), var7.getFloatValue2(), var7.width(), var7.height());
-      float var8 = this.entrance.method2808(1.0F);
-      var1.enableScissor(var7.getFloatValue(), var7.getFloatValue2(), var7.getFloatValue() + var7.width(), var7.getFloatValue2() + var7.height());
-      float var9 = var7.getFloatValue() + Math.max(0.0F, (var7.width() - var6) / 2.0F) - this.scroll.offset();
+   public void render(MenuDrawContext graphics, float mouseX, float mouseY, BoundsData boundsData) {
+      var accounts = this.manager().method4751();
+      float content = accounts.isEmpty() ? 0.0F : accounts.size() * CARD_WIDTH + (accounts.size() - 1) * CARD_GAP;
+      this.scroll.update(boundsData.width(), content);
+      this.cardSelect = new BoundsData[accounts.size()];
+      this.cardRemove = new BoundsData[accounts.size()];
+      BoundsData listArea = MenuSkin.listArea(graphics, boundsData, STRIP_HEIGHT);
+      this.viewport = new BoundsData(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.width(), listArea.height());
+      float f = this.entrance.method2808(1.0F);
+      graphics.enableScissor(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.getFloatValue() + listArea.width(), listArea.getFloatValue2() + listArea.height());
+      float floatValue = listArea.getFloatValue() + Math.max(0.0F, (listArea.width() - content) / 2.0F) - this.scroll.offset();
 
-      for (int var10 = 0; var10 < var5.size(); var10++) {
-         if (var9 + CARD_WIDTH >= var7.getFloatValue() && var9 <= var7.getFloatValue() + var7.width()) {
-            this.renderCard(var1, var2, var3, (Account)var5.get(var10), var10, var9, var7.getFloatValue2() + MenuSkin.enterOffset(var8, var10));
+      for (int i = 0; i < accounts.size(); i++) {
+         if (floatValue + CARD_WIDTH >= listArea.getFloatValue() && floatValue <= listArea.getFloatValue() + listArea.width()) {
+            this.renderCard(graphics, mouseX, mouseY, (Account)accounts.get(i), i, floatValue, listArea.getFloatValue2() + MenuSkin.enterOffset(f, i));
          }
 
-         var9 += CARD_WIDTH + CARD_GAP;
+         floatValue += CARD_WIDTH + CARD_GAP;
       }
 
-      var1.disableScissor();
-      if (var5.isEmpty()) {
-         Font var12 = MenuTheme.medium(12.0F);
-         String var11 = MenuTheme.t("menu.accounts.empty");
-         var1.drawText(
-            var12,
-            var11,
-            var7.getFloatValue() + (var7.width() - var12.width(var11)) / 2.0F,
-            var7.getFloatValue2() + (var7.height() - var12.height()) / 2.0F,
+      graphics.disableScissor();
+      if (accounts.isEmpty()) {
+         Font medium = MenuTheme.medium(12.0F);
+         String text = MenuTheme.t("menu.accounts.empty");
+         graphics.drawText(
+            medium,
+            text,
+            listArea.getFloatValue() + (listArea.width() - medium.width(text)) / 2.0F,
+            listArea.getFloatValue2() + (listArea.height() - medium.height()) / 2.0F,
             MenuTheme.textTertiary()
          );
       }
 
-      this.scroll.renderRailHorizontal(var1, var7.getFloatValue(), var7.getFloatValue2() + var7.height() - RAIL_WIDTH, var7.width());
-      this.usernameField.render(var1, var2, var3);
-      this.addButton.render(var1, var2, var3);
-      this.microsoftButton.render(var1, var2, var3);
-      this.randomButton.render(var1, var2, var3);
-      this.clearButton.render(var1, var2, var3);
-      this.renderStatus(var1, var4);
+      this.scroll.renderRailHorizontal(graphics, listArea.getFloatValue(), listArea.getFloatValue2() + listArea.height() - RAIL_WIDTH, listArea.width());
+      this.usernameField.render(graphics, mouseX, mouseY);
+      this.addButton.render(graphics, mouseX, mouseY);
+      this.microsoftButton.render(graphics, mouseX, mouseY);
+      this.randomButton.render(graphics, mouseX, mouseY);
+      this.clearButton.render(graphics, mouseX, mouseY);
+      this.renderStatus(graphics, boundsData);
       if (this.deviceCode != null) {
-         this.renderDeviceCode(var1, var2, var3);
+         this.renderDeviceCode(graphics, mouseX, mouseY);
       }
    }
 
-   private void renderStatus(MenuDrawContext var1, BoundsData var2) {
-      String var3 = this.manager().getStatus();
-      if (var3 != null && !var3.isEmpty()) {
-         Font var4 = MenuTheme.regular(10.0F);
-         var1.drawText(
-            var4,
-            var3,
-            var2.getFloatValue() + (var2.width() - var4.width(var3)) / 2.0F,
-            var2.getFloatValue2() + this.contentHeight() + MenuTheme.px(12.0F),
+   private void renderStatus(MenuDrawContext graphics, BoundsData boundsData) {
+      String status = this.manager().getStatus();
+      if (status != null && !status.isEmpty()) {
+         Font regular = MenuTheme.regular(10.0F);
+         graphics.drawText(
+            regular,
+            status,
+            boundsData.getFloatValue() + (boundsData.width() - regular.width(status)) / 2.0F,
+            boundsData.getFloatValue2() + this.contentHeight() + MenuTheme.px(12.0F),
             MenuTheme.textTertiary()
          );
       }
    }
 
-   private void renderCard(MenuDrawContext var1, float var2, float var3, Account var4, int var5, float var6, float var7) {
-      boolean var8 = this.manager().getIntValue() == var5;
-      ProxyDotRadiusData var9 = ProxyDotRadiusData.method8069(PANEL_RADIUS);
-      MenuSurface.card(var1, var6, var7, CARD_WIDTH, PANEL_HEIGHT, PANEL_RADIUS, MenuTheme.surface(), var8 ? MenuTheme.border() : MenuTheme.borderSubtle());
-      PlayerSkinWidget var10 = this.skinWidget(var5, var4);
-      float var11 = var6 + (CARD_WIDTH - SKIN_WINDOW) / 2.0F;
-      var10.setPosition(Math.round(var11), Math.round(var7 + PANEL_PADDING_Y));
-      var10.setSize(Math.round(SKIN_WINDOW), Math.round(SKIN_HEIGHT));
-      var1.enableScissor(var11, var7 + PANEL_PADDING_Y, var11 + SKIN_WINDOW, var7 + PANEL_PADDING_Y + SKIN_HEIGHT);
-      var10.extractRenderState(var1, (int)var2, (int)var3, 0.0F);
-      var1.disableScissor();
-      Font var12 = MenuTheme.medium(12.0F);
-      Font var13 = MenuTheme.regular(11.0F);
-      float var14 = var7 + PANEL_PADDING_Y + SKIN_HEIGHT + PANEL_GAP;
-      var1.drawText(var12, var4.getName(), var6 + (CARD_WIDTH - var12.width(var4.getName())) / 2.0F, var14, MenuTheme.text());
-      String var15 = ADDED_FORMAT.format(Instant.ofEpochMilli(var4.getLongValue()));
-      var1.drawText(var13, var15, var6 + (CARD_WIDTH - var13.width(var15)) / 2.0F, var14 + MenuTheme.px(18.0F), MenuTheme.textSecondary());
-      float var16 = var7 + PANEL_HEIGHT + PANEL_GAP;
-      float var17 = MenuButton.HEIGHT;
-      float var18 = Math.min(SELECT_WIDTH, CARD_WIDTH - var17 - ACTION_GAP);
-      BoundsData var19 = new BoundsData(var6, var16, var18, MenuButton.HEIGHT);
-      BoundsData var20 = new BoundsData(var6 + var18 + ACTION_GAP, var16, var17, MenuButton.HEIGHT);
-      this.cardSelect[var5] = var19;
-      this.cardRemove[var5] = var20;
-      this.drawAction(var1, var19, var8 ? MenuIcons.ACCEPT : MenuIcons.USER, var8 ? "Selected" : "Select", var8, var2, var3);
-      this.drawIconAction(var1, var20, MenuIcons.REMOVE, var8, var2, var3);
+   private void renderCard(MenuDrawContext graphics, float mouseX, float mouseY, Account account, int n, float floatValue, float y) {
+      boolean flag = this.manager().getIntValue() == n;
+      ProxyDotRadiusData proxyDotRadiusData = ProxyDotRadiusData.method8069(PANEL_RADIUS);
+      MenuSurface.card(graphics, floatValue, y, CARD_WIDTH, PANEL_HEIGHT, PANEL_RADIUS, MenuTheme.surface(), flag ? MenuTheme.border() : MenuTheme.borderSubtle());
+      PlayerSkinWidget skinWidget = this.skinWidget(n, account);
+      float f = floatValue + (CARD_WIDTH - SKIN_WINDOW) / 2.0F;
+      skinWidget.setPosition(Math.round(f), Math.round(y + PANEL_PADDING_Y));
+      skinWidget.setSize(Math.round(SKIN_WINDOW), Math.round(SKIN_HEIGHT));
+      graphics.enableScissor(f, y + PANEL_PADDING_Y, f + SKIN_WINDOW, y + PANEL_PADDING_Y + SKIN_HEIGHT);
+      skinWidget.extractRenderState(graphics, (int)mouseX, (int)mouseY, 0.0F);
+      graphics.disableScissor();
+      Font medium = MenuTheme.medium(12.0F);
+      Font regular = MenuTheme.regular(11.0F);
+      float centeredTextY = y + PANEL_PADDING_Y + SKIN_HEIGHT + PANEL_GAP;
+      graphics.drawText(medium, account.getName(), floatValue + (CARD_WIDTH - medium.width(account.getName())) / 2.0F, centeredTextY, MenuTheme.text());
+      String text = ADDED_FORMAT.format(Instant.ofEpochMilli(account.getLongValue()));
+      graphics.drawText(regular, text, floatValue + (CARD_WIDTH - regular.width(text)) / 2.0F, centeredTextY + MenuTheme.px(18.0F), MenuTheme.textSecondary());
+      float y2 = y + PANEL_HEIGHT + PANEL_GAP;
+      float width = MenuButton.HEIGHT;
+      float width2 = Math.min(SELECT_WIDTH, CARD_WIDTH - width - ACTION_GAP);
+      BoundsData boundsData = new BoundsData(floatValue, y2, width2, MenuButton.HEIGHT);
+      BoundsData boundsData2 = new BoundsData(floatValue + width2 + ACTION_GAP, y2, width, MenuButton.HEIGHT);
+      this.cardSelect[n] = boundsData;
+      this.cardRemove[n] = boundsData2;
+      this.drawAction(graphics, boundsData, flag ? MenuIcons.ACCEPT : MenuIcons.USER, flag ? "Selected" : "Select", flag, mouseX, mouseY);
+      this.drawIconAction(graphics, boundsData2, MenuIcons.REMOVE, flag, mouseX, mouseY);
    }
 
-   private void drawAction(MenuDrawContext var1, BoundsData var2, MenuIcon var3, String var4, boolean var5, float var6, float var7) {
-      boolean var8 = var2.contains(var6, var7);
-      ProxyDotRadiusData var9 = ProxyDotRadiusData.method8069(PANEL_RADIUS);
-      if (var5) {
-         var1.drawRoundedRect(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), var9, MenuTheme.accent());
+   private void drawAction(MenuDrawContext graphics, BoundsData boundsData, MenuIcon menuIcon, String text, boolean flag, float mouseX, float mouseY) {
+      boolean contains = boundsData.contains(mouseX, mouseY);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(PANEL_RADIUS);
+      if (flag) {
+         graphics.drawRoundedRect(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, MenuTheme.accent());
       } else {
-         var1.drawRoundedRect(
-            var2.getFloatValue(),
-            var2.getFloatValue2(),
-            var2.width(),
-            var2.height(),
-            var9,
-            var8 ? MenuTheme.surface().method7295(MenuTheme.track(), 0.6F) : MenuTheme.surface()
+         graphics.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
+            headerRadius,
+            contains ? MenuTheme.surface().method7295(MenuTheme.track(), 0.6F) : MenuTheme.surface()
          );
-         var1.drawRoundedBorder(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), -0.1F, var9, MenuTheme.borderSubtle());
+         graphics.drawRoundedBorder(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), -0.1F, headerRadius, MenuTheme.borderSubtle());
       }
 
-      Font var10 = MenuTheme.medium(12.0F);
-      Font var11 = var3.font(12.0F);
-      float var12 = var3.width(12.0F) + MenuTheme.px(8.0F) + var10.width(var4);
-      float var13 = var2.getFloatValue() + (var2.width() - var12) / 2.0F;
-      ZenithColor var14 = var5 ? MenuTheme.onAccent() : MenuTheme.textTertiary();
-      ZenithColor var15 = var5 ? MenuTheme.onAccent() : MenuTheme.textSecondary();
-      var1.drawText(var11, var3.glyph(), var13, var2.getFloatValue2() + (var2.height() - var11.height()) / 2.0F, var14);
-      var1.drawText(var10, var4, var13 + var3.width(12.0F) + MenuTheme.px(8.0F), var2.getFloatValue2() + (var2.height() - var10.height()) / 2.0F, var15);
+      Font medium = MenuTheme.medium(12.0F);
+      Font font = menuIcon.font(12.0F);
+      float f = menuIcon.width(12.0F) + MenuTheme.px(8.0F) + medium.width(text);
+      float floatValue = boundsData.getFloatValue() + (boundsData.width() - f) / 2.0F;
+      ZenithColor textTertiary = flag ? MenuTheme.onAccent() : MenuTheme.textTertiary();
+      ZenithColor textSecondary = flag ? MenuTheme.onAccent() : MenuTheme.textSecondary();
+      graphics.drawText(font, menuIcon.glyph(), floatValue, boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F, textTertiary);
+      graphics.drawText(medium, text, floatValue + menuIcon.width(12.0F) + MenuTheme.px(8.0F), boundsData.getFloatValue2() + (boundsData.height() - medium.height()) / 2.0F, textSecondary);
    }
 
-   private void drawIconAction(MenuDrawContext var1, BoundsData var2, MenuIcon var3, boolean var4, float var5, float var6) {
-      boolean var7 = var2.contains(var5, var6);
-      ProxyDotRadiusData var8 = ProxyDotRadiusData.method8069(PANEL_RADIUS);
-      if (var4) {
-         var1.drawRoundedRect(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), var8, MenuTheme.danger());
+   private void drawIconAction(MenuDrawContext graphics, BoundsData boundsData, MenuIcon menuIcon, boolean flag, float mouseX, float mouseY) {
+      boolean contains = boundsData.contains(mouseX, mouseY);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(PANEL_RADIUS);
+      if (flag) {
+         graphics.drawRoundedRect(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, MenuTheme.danger());
       } else {
-         var1.drawRoundedRect(
-            var2.getFloatValue(),
-            var2.getFloatValue2(),
-            var2.width(),
-            var2.height(),
-            var8,
-            var7 ? MenuTheme.surface().method7295(MenuTheme.track(), 0.6F) : MenuTheme.surface()
+         graphics.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
+            headerRadius,
+            contains ? MenuTheme.surface().method7295(MenuTheme.track(), 0.6F) : MenuTheme.surface()
          );
-         var1.drawRoundedBorder(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), -0.1F, var8, MenuTheme.borderSubtle());
+         graphics.drawRoundedBorder(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), -0.1F, headerRadius, MenuTheme.borderSubtle());
       }
 
-      Font var9 = var3.font(12.0F);
-      ZenithColor var10 = var4 ? MenuTheme.onAccent() : (var7 ? MenuTheme.danger() : MenuTheme.textTertiary());
-      var1.drawText(
-         var9,
-         var3.glyph(),
-         var2.getFloatValue() + (var2.width() - var3.width(12.0F)) / 2.0F,
-         var2.getFloatValue2() + (var2.height() - var9.height()) / 2.0F,
-         var10
+      Font font = menuIcon.font(12.0F);
+      ZenithColor danger = flag ? MenuTheme.onAccent() : (contains ? MenuTheme.danger() : MenuTheme.textTertiary());
+      graphics.drawText(
+         font,
+         menuIcon.glyph(),
+         boundsData.getFloatValue() + (boundsData.width() - menuIcon.width(12.0F)) / 2.0F,
+         boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+         danger
       );
    }
 
-   private void renderDeviceCode(MenuDrawContext var1, float var2, float var3) {
-      BoundsData var4 = this.deviceCodeBounds;
-      ProxyDotRadiusData var5 = ProxyDotRadiusData.method8069(PANEL_RADIUS);
-      var1.drawRoundedRect(
-         var4.getFloatValue(), var4.getFloatValue2(), var4.width(), var4.height(), var5, MenuTheme.surface().method7295(ZenithColor.INSTANCE2, 0.85F)
+   private void renderDeviceCode(MenuDrawContext graphics, float mouseX, float mouseY) {
+      BoundsData deviceCodeBounds = this.deviceCodeBounds;
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(PANEL_RADIUS);
+      graphics.drawRoundedRect(
+         deviceCodeBounds.getFloatValue(), deviceCodeBounds.getFloatValue2(), deviceCodeBounds.width(), deviceCodeBounds.height(), headerRadius, MenuTheme.surface().method7295(ZenithColor.INSTANCE2, 0.85F)
       );
-      var1.drawRoundedBorder(var4.getFloatValue(), var4.getFloatValue2(), var4.width(), var4.height(), -0.1F, var5, MenuTheme.borderSubtle());
-      Font var6 = MenuTheme.semibold(14.0F);
-      Font var7 = MenuTheme.semibold(20.0F);
-      Font var8 = MenuTheme.regular(10.0F);
-      String var9 = "Sign in to Microsoft";
-      var1.drawText(var6, var9, var4.getFloatValue() + (var4.width() - var6.width(var9)) / 2.0F, var4.getFloatValue2() + MenuTheme.px(16.0F), MenuTheme.text());
-      String var10 = this.deviceCode.getText();
-      var1.drawText(
-         var7, var10, var4.getFloatValue() + (var4.width() - var7.width(var10)) / 2.0F, var4.getFloatValue2() + MenuTheme.px(46.0F), MenuTheme.accent()
+      graphics.drawRoundedBorder(deviceCodeBounds.getFloatValue(), deviceCodeBounds.getFloatValue2(), deviceCodeBounds.width(), deviceCodeBounds.height(), -0.1F, headerRadius, MenuTheme.borderSubtle());
+      Font semibold = MenuTheme.semibold(14.0F);
+      Font font = MenuTheme.semibold(20.0F);
+      Font regular = MenuTheme.regular(10.0F);
+      String text = "Sign in to Microsoft";
+      graphics.drawText(semibold, text, deviceCodeBounds.getFloatValue() + (deviceCodeBounds.width() - semibold.width(text)) / 2.0F, deviceCodeBounds.getFloatValue2() + MenuTheme.px(16.0F), MenuTheme.text());
+      String str = this.deviceCode.getText();
+      graphics.drawText(
+         font, str, deviceCodeBounds.getFloatValue() + (deviceCodeBounds.width() - font.width(str)) / 2.0F, deviceCodeBounds.getFloatValue2() + MenuTheme.px(46.0F), MenuTheme.accent()
       );
-      String var11 = "Code copied - enter it at " + this.deviceCode.getText2();
-      var1.drawText(
-         var8, var11, var4.getFloatValue() + (var4.width() - var8.width(var11)) / 2.0F, var4.getFloatValue2() + MenuTheme.px(82.0F), MenuTheme.textSecondary()
+      String text2 = "Code copied - enter it at " + this.deviceCode.getText2();
+      graphics.drawText(
+         regular, text2, deviceCodeBounds.getFloatValue() + (deviceCodeBounds.width() - regular.width(text2)) / 2.0F, deviceCodeBounds.getFloatValue2() + MenuTheme.px(82.0F), MenuTheme.textSecondary()
       );
-      this.cancelLoginButton.render(var1, var2, var3);
+      this.cancelLoginButton.render(graphics, mouseX, mouseY);
    }
 
    @Override
-   public boolean mouseClicked(double var1, double var3, int var5) {
+   public boolean mouseClicked(double lastClickX, double lastClickY, int glfwButton) {
       if (this.deviceCode != null) {
-         if (this.cancelLoginButton.mouseClicked(var1, var3, var5)) {
+         if (this.cancelLoginButton.mouseClicked(lastClickX, lastClickY, glfwButton)) {
             return true;
          }
 
-         if (this.deviceCodeBounds.contains(var1, var3)) {
+         if (this.deviceCodeBounds.contains(lastClickX, lastClickY)) {
             Minecraft.getInstance().keyboardHandler.setClipboard(this.deviceCode.getText());
             return true;
          }
       }
 
-      if (this.usernameField.mouseClicked(var1, var3, var5)) {
+      if (this.usernameField.mouseClicked(lastClickX, lastClickY, glfwButton)) {
          return true;
-      } else if (!this.addButton.mouseClicked(var1, var3, var5)
-         && !this.microsoftButton.mouseClicked(var1, var3, var5)
-         && !this.randomButton.mouseClicked(var1, var3, var5)
-         && !this.clearButton.mouseClicked(var1, var3, var5)) {
-         if (var5 == 0 && this.viewport.contains(var1, var3)) {
-            for (int var6 = 0; var6 < this.cardSelect.length; var6++) {
-               if (this.cardRemove[var6] != null && this.cardRemove[var6].contains(var1, var3)) {
-                  this.manager().method4754(var6);
+      } else if (!this.addButton.mouseClicked(lastClickX, lastClickY, glfwButton)
+         && !this.microsoftButton.mouseClicked(lastClickX, lastClickY, glfwButton)
+         && !this.randomButton.mouseClicked(lastClickX, lastClickY, glfwButton)
+         && !this.clearButton.mouseClicked(lastClickX, lastClickY, glfwButton)) {
+         if (glfwButton == 0 && this.viewport.contains(lastClickX, lastClickY)) {
+            for (int i = 0; i < this.cardSelect.length; i++) {
+               if (this.cardRemove[i] != null && this.cardRemove[i].contains(lastClickX, lastClickY)) {
+                  this.manager().method4754(i);
                   return true;
                }
 
-               if (this.cardSelect[var6] != null && this.cardSelect[var6].contains(var1, var3)) {
-                  this.manager().select(var6);
+               if (this.cardSelect[i] != null && this.cardSelect[i].contains(lastClickX, lastClickY)) {
+                  this.manager().select(i);
                   return true;
                }
             }
@@ -436,17 +436,17 @@ public final class AccountManagerPage implements MainMenuPage {
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5) {
-      return this.scroll.scroll(var5, CARD_WIDTH + CARD_GAP);
+   public boolean mouseScrolled(double d, double d2, double d3) {
+      return this.scroll.scroll(d3, CARD_WIDTH + CARD_GAP);
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return this.usernameField.keyPressed(var1, var2, var3);
+   public boolean keyPressed(int n, int n2, int n3) {
+      return this.usernameField.keyPressed(n, n2, n3);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      return this.usernameField.charTyped(var1, var2);
+   public boolean charTyped(char c, int n) {
+      return this.usernameField.charTyped(c, n);
    }
 }

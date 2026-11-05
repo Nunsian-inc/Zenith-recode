@@ -41,9 +41,9 @@ public final class ESPModule extends Module {
    public void onEnable() {
       super.onEnable();
 
-      for (Module var2 : this.items) {
-         if (!var2.isEnabled()) {
-            var2.toggle();
+      for (Module moduleValue : this.items) {
+         if (!moduleValue.isEnabled()) {
+            moduleValue.toggle();
          }
       }
 
@@ -55,10 +55,10 @@ public final class ESPModule extends Module {
       super.onDisable();
       this.items.clear();
 
-      for (Module var2 : method7011()) {
-         if (var2.isEnabled()) {
-            this.items.add(var2);
-            var2.toggle();
+      for (Module moduleValue : method7011()) {
+         if (moduleValue.isEnabled()) {
+            this.items.add(moduleValue);
+            moduleValue.toggle();
          }
       }
    }
@@ -81,13 +81,13 @@ public final class ESPModule extends Module {
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      var1.addProperty("enabled", true);
-      return var1;
+      JsonObject json = super.save();
+      json.addProperty("enabled", true);
+      return json;
    }
 
-   private static ButtonSetting method7012(String var0, Module var1, ModulePreviewStage.Kind var2) {
-      var var3 = SectionSettings.of(var1);
-      return new ModuleHeaderSetting(var0, var1, () -> Zenith.getInstance().getNLMenuScreen().getInspectorPanel().openSection(var1.getName(), var3, var2, var1));
+   private static ButtonSetting method7012(String key, Module sectionPreviewOwner, ModulePreviewStage.Kind sectionPreview) {
+      var sectionSettings = SectionSettings.of(sectionPreviewOwner);
+      return new ModuleHeaderSetting(key, sectionPreviewOwner, () -> Zenith.getInstance().getNLMenuScreen().getInspectorPanel().openSection(sectionPreviewOwner.getName(), sectionSettings, sectionPreview, sectionPreviewOwner));
    }
 }

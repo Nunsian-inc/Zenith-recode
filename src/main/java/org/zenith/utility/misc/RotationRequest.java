@@ -37,10 +37,10 @@ public final class RotationRequest {
       return "RotationRequest[" + "rotation=" + this.rotation + ", " + "supplier=" + this.supplier + ", " + "rotationConfig=" + this.rotationConfig + "]";
    }
 
-   public RotationRequest(Rotation var1, Supplier<Rotation> var2, RotationConfig var3) {
-      this.rotation = var1;
-      this.supplier = var2;
-      this.rotationConfig = var3;
+   public RotationRequest(Rotation rotation, Supplier<Rotation> supplier, RotationConfig rotationConfig) {
+      this.rotation = rotation;
+      this.supplier = supplier;
+      this.rotationConfig = rotationConfig;
    }
 
    public Rotation getRotation() {

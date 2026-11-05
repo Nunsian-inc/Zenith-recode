@@ -6,7 +6,7 @@ import java.util.Optional;
 public interface ModuleCatalog {
    List<? extends ModuleAccess> modules();
 
-   Optional<? extends ModuleAccess> find(String var1);
+   Optional<? extends ModuleAccess> find(String str);
 
    default List<? extends ModuleAccess> modulesByOwner(String addonId) {
       return this.modules().stream().filter(module -> module.addonId().equals(addonId)).toList();

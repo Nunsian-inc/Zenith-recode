@@ -70,76 +70,76 @@ public final class HintedText {
    private HintedText() {
    }
 
-   public static boolean render(MsdfFont var0, String var1, float var2, int var3, Matrix4f var4, float var5, float var6, float var7) {
-      String var8 = var0.getHintedFace();
-      if (var2 > 0.0F && var2 <= 5.0F && ImmediateRenderer.method8005() && var8 != null && !broken && !var1.isEmpty()) {
-         float var9 = var4.m00();
-         if (!(var9 <= 0.0F)
-            && !(Math.abs(var4.m01()) > 1.0E-4F)
-            && !(Math.abs(var4.m10()) > 1.0E-4F)
-            && !(Math.abs(var4.m11() - var9) > 1.0E-4F * Math.max(1.0F, var9))) {
-            float var10 = Minecraft.getInstance().getWindow().getGuiScale();
-            float var11 = var2 * var9 * var10;
-            if (inMotion(var1, var11)) {
+   public static boolean render(MsdfFont font, String text, float size, int color, Matrix4f matrix, float floatValue, float f, float z) {
+      String hintedFace = font.getHintedFace();
+      if (size > 0.0F && size <= 5.0F && ImmediateRenderer.method8005() && hintedFace != null && !broken && !text.isEmpty()) {
+         float m00 = matrix.m00();
+         if (!(m00 <= 0.0F)
+            && !(Math.abs(matrix.m01()) > 1.0E-4F)
+            && !(Math.abs(matrix.m10()) > 1.0E-4F)
+            && !(Math.abs(matrix.m11() - m00) > 1.0E-4F * Math.max(1.0F, m00))) {
+            float guiScale = Minecraft.getInstance().getWindow().getGuiScale();
+            float em = size * m00 * guiScale;
+            if (inMotion(text, em)) {
                return false;
-            } else if (!(var11 < 5.0F) && !(var11 > 24.0F)) {
-               HintedText.Face var12 = face(var8);
-               if (var12 == null) {
+            } else if (!(em < 5.0F) && !(em > 24.0F)) {
+               HintedText.Face face2 = face(hintedFace);
+               if (face2 == null) {
                   return false;
                } else {
-                  int var13 = Math.round(var11 * 4.0F);
-                  float var14 = Math.round((var4.m11() * var6 + var4.m31()) * var10);
-                  float var15 = var4.m22() * var7 + var4.m32();
-                  BufferBuilder var16 = begin();
-                  int var17 = -1;
-                  boolean var18 = false;
-                  float var19 = var5;
+                  int sizeQuarter = Math.round(em * 4.0F);
+                  float f2 = Math.round((matrix.m11() * f + matrix.m31()) * guiScale);
+                  float z2 = matrix.m22() * z + matrix.m32();
+                  BufferBuilder bufferBuilder = begin();
+                  int charAt = -1;
+                  boolean flag = false;
+                  float floatValue2 = floatValue;
 
-                  for (int var20 = 0; var20 < var1.length(); var20++) {
-                     char var21 = var1.charAt(var20);
-                     if (var18) {
-                        var18 = false;
-                     } else if (var21 == 167) {
-                        var18 = true;
+                  for (int i = 0; i < text.length(); i++) {
+                     char c = text.charAt(i);
+                     if (flag) {
+                        flag = false;
+                     } else if (c == 167) {
+                        flag = true;
                      } else {
-                        MsdfGlyph var22 = var0.getGlyph(var21);
-                        if (var22 == null) {
-                           char var23 = MsdfFont.normalizeGlyphChar(var21);
-                           var22 = var23 == var21 ? null : var0.getGlyph(var23);
-                           if (var22 == null) {
+                        MsdfGlyph msdfGlyph = font.getGlyph(c);
+                        if (msdfGlyph == null) {
+                           char normalizeGlyphChar = MsdfFont.normalizeGlyphChar(c);
+                           msdfGlyph = normalizeGlyphChar == c ? null : font.getGlyph(normalizeGlyphChar);
+                           if (msdfGlyph == null) {
                               continue;
                            }
 
-                           var21 = var23;
+                           c = normalizeGlyphChar;
                         }
 
-                        var19 += var0.kerning(var17, var21) * var2;
-                        float var32 = (var9 * var19 + var4.m30()) * var10;
-                        float var24 = (float)Math.floor(var32);
-                        int var25 = Math.round((var32 - var24) * 4.0F);
-                        if (var25 == 4) {
-                           var24++;
-                           var25 = 0;
+                        floatValue2 += font.kerning(charAt, c) * size;
+                        float f3 = (m00 * floatValue2 + matrix.m30()) * guiScale;
+                        float f4 = (float)Math.floor(f3);
+                        int n = Math.round((f3 - f4) * 4.0F);
+                        if (n == 4) {
+                           f4++;
+                           n = 0;
                         }
 
-                        HintedText.Glyph var26 = glyph(var12, var21, var13, var25);
-                        if (builder != var16) {
-                           var16 = begin();
+                        HintedText.Glyph glyph2 = glyph(face2, c, sizeQuarter, n);
+                        if (builder != bufferBuilder) {
+                           bufferBuilder = begin();
                         }
 
-                        if (var26 != null && var26.width > 0) {
-                           float var27 = (var24 + var26.left) / var10;
-                           float var28 = (var14 - var26.top) / var10;
-                           float var29 = var27 + var26.width / var10;
-                           float var30 = var28 + var26.height / var10;
-                           var16.addVertex(var27, var28, var15).setUv(var26.u0, var26.v0).setColor(var3);
-                           var16.addVertex(var27, var30, var15).setUv(var26.u0, var26.v1).setColor(var3);
-                           var16.addVertex(var29, var30, var15).setUv(var26.u1, var26.v1).setColor(var3);
-                           var16.addVertex(var29, var28, var15).setUv(var26.u1, var26.v0).setColor(var3);
+                        if (glyph2 != null && glyph2.width > 0) {
+                           float x = (f4 + glyph2.left) / guiScale;
+                           float y = (f2 - glyph2.top) / guiScale;
+                           float x2 = x + glyph2.width / guiScale;
+                           float y2 = y + glyph2.height / guiScale;
+                           bufferBuilder.addVertex(x, y, z2).setUv(glyph2.u0, glyph2.v0).setColor(color);
+                           bufferBuilder.addVertex(x, y2, z2).setUv(glyph2.u0, glyph2.v1).setColor(color);
+                           bufferBuilder.addVertex(x2, y2, z2).setUv(glyph2.u1, glyph2.v1).setColor(color);
+                           bufferBuilder.addVertex(x2, y, z2).setUv(glyph2.u1, glyph2.v0).setColor(color);
                         }
 
-                        var19 += var22.getWidth(var2);
-                        var17 = var21;
+                        floatValue2 += msdfGlyph.getWidth(size);
+                        charAt = c;
                      }
                   }
 
@@ -156,35 +156,35 @@ public final class HintedText {
       }
    }
 
-   private static boolean inMotion(String var0, float var1) {
-      long var2 = System.nanoTime();
-      int var4 = OCCURRENCES.addTo(var0, 1);
-      var var5 = PLACEMENTS.computeIfAbsent(var0, var0x -> new ArrayList<>(1));
-      HintedText.Placement var6;
-      if (var4 < var5.size()) {
-         var6 = (HintedText.Placement)var5.get(var4);
-         if (Math.abs(var6.em - var1) > 0.001F) {
-            var6.movedAt = var2;
+   private static boolean inMotion(String text, float em) {
+      long nanoTime = System.nanoTime();
+      int addTo = OCCURRENCES.addTo(text, 1);
+      var placements = PLACEMENTS.computeIfAbsent(text, var0x -> new ArrayList<>(1));
+      HintedText.Placement placement;
+      if (addTo < placements.size()) {
+         placement = (HintedText.Placement)placements.get(addTo);
+         if (Math.abs(placement.em - em) > 0.001F) {
+            placement.movedAt = nanoTime;
          }
       } else {
-         var6 = new HintedText.Placement();
-         var6.movedAt = var2 - 300000000L;
-         var5.add(var6);
+         placement = new HintedText.Placement();
+         placement.movedAt = nanoTime - 300000000L;
+         placements.add(placement);
       }
 
-      var6.em = var1;
-      var6.seenAt = var2;
-      return var2 - var6.movedAt < 300000000L;
+      placement.em = em;
+      placement.seenAt = nanoTime;
+      return nanoTime - placement.movedAt < 300000000L;
    }
 
    public static void endFrame() {
       OCCURRENCES.clear();
-      long var0 = System.nanoTime();
-      if (var0 - lastPrune >= 1000000000L) {
-         lastPrune = var0;
-         PLACEMENTS.values().removeIf(var2 -> {
-            var2.removeIf(var2x -> var0 - var2x.seenAt > 5000000000L);
-            return var2.isEmpty();
+      long nanoTime = System.nanoTime();
+      if (nanoTime - lastPrune >= 1000000000L) {
+         lastPrune = nanoTime;
+         PLACEMENTS.values().removeIf(placements -> {
+            placements.removeIf(var2x -> nanoTime - var2x.seenAt > 5000000000L);
+            return placements.isEmpty();
          });
       }
    }
@@ -195,22 +195,22 @@ public final class HintedText {
 
    public static void flush() {
       if (builder != null) {
-         BufferBuilder var0 = builder;
+         BufferBuilder bufferBuilder = builder;
          builder = null;
-         MeshData var1 = var0.build();
-         if (var1 == null) {
+         MeshData orThrow = bufferBuilder.build();
+         if (orThrow == null) {
             allocator.clear();
          } else {
             if (dirtyX1 > dirtyX0 && dirtyY1 > dirtyY0) {
                uploadDirty();
             }
 
-            float[] var2 = RenderState.method1885();
-            boolean var3 = var2[0] != batchShaderColor[0] || var2[1] != batchShaderColor[1] || var2[2] != batchShaderColor[2] || var2[3] != batchShaderColor[3];
+            float[] floats = RenderState.method1885();
+            boolean flag = floats[0] != batchShaderColor[0] || floats[1] != batchShaderColor[1] || floats[2] != batchShaderColor[2] || floats[3] != batchShaderColor[3];
             RenderState.method1871();
             RenderState.method1873();
             RenderState.method1877();
-            if (var3) {
+            if (flag) {
                RenderState.method1883(batchShaderColor[0], batchShaderColor[1], batchShaderColor[2], batchShaderColor[3]);
             }
 
@@ -218,11 +218,11 @@ public final class HintedText {
             RenderState.method1898("core/position_tex_color");
 
             try {
-               ImmediateRenderer.method8015(var1);
+               ImmediateRenderer.method8015(orThrow);
             } finally {
                RenderState.method1893(0);
-               if (var3) {
-                  RenderState.method1883(var2[0], var2[1], var2[2], var2[3]);
+               if (flag) {
+                  RenderState.method1883(floats[0], floats[1], floats[2], floats[3]);
                }
 
                RenderState.method1876();
@@ -235,9 +235,9 @@ public final class HintedText {
 
    private static BufferBuilder begin() {
       MsdfRenderer.flushMsdfPending();
-      float[] var0 = RenderState.method1885();
+      float[] floats = RenderState.method1885();
       if (builder != null
-         && (var0[0] != batchShaderColor[0] || var0[1] != batchShaderColor[1] || var0[2] != batchShaderColor[2] || var0[3] != batchShaderColor[3])) {
+         && (floats[0] != batchShaderColor[0] || floats[1] != batchShaderColor[1] || floats[2] != batchShaderColor[2] || floats[3] != batchShaderColor[3])) {
          flush();
       }
 
@@ -248,79 +248,79 @@ public final class HintedText {
 
          ensureAtlas();
          builder = new BufferBuilder(allocator, PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-         System.arraycopy(var0, 0, batchShaderColor, 0, 4);
+         System.arraycopy(floats, 0, batchShaderColor, 0, 4);
       }
 
       return builder;
    }
 
-   private static HintedText.Face face(String var0) {
-      HintedText.Face var1 = FACES.get(var0);
-      if (var1 != null) {
-         return var1.handle == null ? null : var1;
+   private static HintedText.Face face(String hintedFace) {
+      HintedText.Face face = FACES.get(hintedFace);
+      if (face != null) {
+         return face.handle == null ? null : face;
       } else {
-         var1 = new HintedText.Face();
-         FACES.put(var0, var1);
+         face = new HintedText.Face();
+         FACES.put(hintedFace, face);
 
          try {
             if (library == 0L) {
-               MemoryStack var2 = MemoryStack.stackPush();
+               MemoryStack stackPush = MemoryStack.stackPush();
 
                try {
-                  PointerBuffer var3 = var2.mallocPointer(1);
-                  check(FreeType.FT_Init_FreeType(var3), "FT_Init_FreeType");
-                  library = var3.get(0);
-               } catch (Throwable var12) {
-                  if (var2 != null) {
+                  PointerBuffer mallocPointer = stackPush.mallocPointer(1);
+                  check(FreeType.FT_Init_FreeType(mallocPointer), "FT_Init_FreeType");
+                  library = mallocPointer.get(0);
+               } catch (Throwable e) {
+                  if (stackPush != null) {
                      try {
-                        var2.close();
-                     } catch (Throwable var9) {
-                        var12.addSuppressed(var9);
+                        stackPush.close();
+                     } catch (Throwable ex) {
+                        e.addSuppressed(ex);
                      }
                   }
 
-                  throw var12;
+                  throw e;
                }
 
-               if (var2 != null) {
-                  var2.close();
+               if (stackPush != null) {
+                  stackPush.close();
                }
             }
 
-            Identifier var15 = Zenith.method1501("fonts/ttf/" + var0 + ".otf");
+            Identifier location = Zenith.method1501("fonts/ttf/" + hintedFace + ".otf");
 
-            byte[] var16;
-            try (InputStream var4 = Minecraft.getInstance().getResourceManager().getResourceOrThrow(var15).open()) {
-               var16 = var4.readAllBytes();
+            byte[] allBytes;
+            try (InputStream inputStream = Minecraft.getInstance().getResourceManager().getResourceOrThrow(location).open()) {
+               allBytes = inputStream.readAllBytes();
             }
 
-            var1.data = MemoryUtil.memAlloc(var16.length).put(var16).flip();
-            MemoryStack var17 = MemoryStack.stackPush();
+            face.data = MemoryUtil.memAlloc(allBytes.length).put(allBytes).flip();
+            MemoryStack stackPush = MemoryStack.stackPush();
 
             try {
-               PointerBuffer var5 = var17.mallocPointer(1);
-               check(FreeType.FT_New_Memory_Face(library, var1.data, 0L, var5), "FT_New_Memory_Face " + var0);
-               var1.handle = FT_Face.create(var5.get(0));
-            } catch (Throwable var10) {
-               if (var17 != null) {
+               PointerBuffer mallocPointer = stackPush.mallocPointer(1);
+               check(FreeType.FT_New_Memory_Face(library, face.data, 0L, mallocPointer), "FT_New_Memory_Face " + hintedFace);
+               face.handle = FT_Face.create(mallocPointer.get(0));
+            } catch (Throwable e) {
+               if (stackPush != null) {
                   try {
-                     var17.close();
-                  } catch (Throwable var7) {
-                     var10.addSuppressed(var7);
+                     stackPush.close();
+                  } catch (Throwable ex) {
+                     e.addSuppressed(ex);
                   }
                }
 
-               throw var10;
+               throw e;
             }
 
-            if (var17 != null) {
-               var17.close();
+            if (stackPush != null) {
+               stackPush.close();
             }
 
-            var1.id = nextFaceId++;
-            return var1;
-         } catch (Throwable var13) {
-            LOGGER.warn("Hinted text disabled for {}: {}", var0, var13.toString());
+            face.id = nextFaceId++;
+            return face;
+         } catch (Throwable e) {
+            LOGGER.warn("Hinted text disabled for {}: {}", hintedFace, e.toString());
             if (library == 0L) {
                broken = true;
             }
@@ -330,110 +330,110 @@ public final class HintedText {
       }
    }
 
-   private static HintedText.Glyph glyph(HintedText.Face var0, char var1, int var2, int var3) {
-      long var4 = (long)var0.id << 40 | (long)var2 << 24 | (long)var3 << 16 | var1;
-      HintedText.Glyph var6 = (HintedText.Glyph)GLYPHS.get(var4);
-      if (var6 != null) {
-         return var6;
+   private static HintedText.Glyph glyph(HintedText.Face face, char charAt, int sizeQuarter, int n) {
+      long l = (long)face.id << 40 | (long)sizeQuarter << 24 | (long)n << 16 | charAt;
+      HintedText.Glyph glyph = (HintedText.Glyph)GLYPHS.get(l);
+      if (glyph != null) {
+         return glyph;
       } else {
-         HintedText.Glyph var7 = rasterize(var0, var1, var2, var3);
-         if (var7 == null) {
-            var7 = HintedText.Glyph.EMPTY;
+         HintedText.Glyph rasterize2 = rasterize(face, charAt, sizeQuarter, n);
+         if (rasterize2 == null) {
+            rasterize2 = HintedText.Glyph.EMPTY;
          }
 
-         GLYPHS.put(var4, var7);
-         return var7;
+         GLYPHS.put(l, rasterize2);
+         return rasterize2;
       }
    }
 
-   private static HintedText.Glyph rasterize(HintedText.Face var0, char var1, int var2, int var3) {
-      FT_Face var4 = var0.handle;
-      if (var0.sizeQuarter != var2) {
-         if (FreeType.FT_Set_Char_Size(var4, 0L, var2 * 16L, 72, 72) != 0) {
+   private static HintedText.Glyph rasterize(HintedText.Face face, char charAt, int sizeQuarter, int n) {
+      FT_Face handle = face.handle;
+      if (face.sizeQuarter != sizeQuarter) {
+         if (FreeType.FT_Set_Char_Size(handle, 0L, sizeQuarter * 16L, 72, 72) != 0) {
             return null;
          }
 
-         var0.sizeQuarter = var2;
+         face.sizeQuarter = sizeQuarter;
       }
 
-      int var5 = FreeType.FT_Get_Char_Index(var4, var1);
-      if (var5 == 0) {
+      int glyph_index = FreeType.FT_Get_Char_Index(handle, charAt);
+      if (glyph_index == 0) {
          return null;
-      } else if (FreeType.FT_Load_Glyph(var4, var5, 65544) != 0) {
+      } else if (FreeType.FT_Load_Glyph(handle, glyph_index, 65544) != 0) {
          return null;
       } else {
-         FT_GlyphSlot var6 = var4.glyph();
-         if (var6 == null) {
+         FT_GlyphSlot glyph = handle.glyph();
+         if (glyph == null) {
             return null;
          } else {
-            if (var3 != 0) {
-               FreeType.FT_Outline_Translate(var6.outline(), var3 * 16L, 0L);
+            if (n != 0) {
+               FreeType.FT_Outline_Translate(glyph.outline(), n * 16L, 0L);
             }
 
-            if (FreeType.FT_Render_Glyph(var6, 1) != 0) {
+            if (FreeType.FT_Render_Glyph(glyph, 1) != 0) {
                return null;
             } else {
-               FT_Bitmap var7 = var6.bitmap();
-               int var8 = var7.width();
-               int var9 = var7.rows();
-               HintedText.Glyph var10 = new HintedText.Glyph();
-               var10.left = var6.bitmap_left();
-               var10.top = var6.bitmap_top();
-               if (var8 != 0 && var9 != 0) {
-                  int var11 = var7.pitch();
-                  ByteBuffer var12 = var7.buffer(Math.abs(var11) * var9);
-                  if (var12 == null) {
-                     return var10;
+               FT_Bitmap bitmap = glyph.bitmap();
+               int width = bitmap.width();
+               int rows = bitmap.rows();
+               HintedText.Glyph glyph2 = new HintedText.Glyph();
+               glyph2.left = glyph.bitmap_left();
+               glyph2.top = glyph.bitmap_top();
+               if (width != 0 && rows != 0) {
+                  int pitch = bitmap.pitch();
+                  ByteBuffer buffer = bitmap.buffer(Math.abs(pitch) * rows);
+                  if (buffer == null) {
+                     return glyph2;
                   } else {
-                     if (!reserve(var8, var9)) {
+                     if (!reserve(width, rows)) {
                         resetAtlas();
-                        if (!reserve(var8, var9)) {
+                        if (!reserve(width, rows)) {
                            return null;
                         }
                      }
 
-                     int var13 = shelfX - var8 - 1;
-                     int var14 = shelfY;
+                     int n2 = shelfX - width - 1;
+                     int shelfY2 = shelfY;
 
-                     for (int var15 = 0; var15 < var9; var15++) {
-                        int var16 = var11 >= 0 ? var15 * var11 : (var9 - 1 - var15) * -var11;
+                     for (int i = 0; i < rows; i++) {
+                        int n3 = pitch >= 0 ? i * pitch : (rows - 1 - i) * -pitch;
 
-                        for (int var17 = 0; var17 < var8; var17++) {
-                           int var18 = GAMMA_LUT[var12.get(var16 + var17) & 255] & 255;
-                           atlasImage.setPixel(var13 + var17, var14 + var15, var18 << 24 | 16777215);
+                        for (int j = 0; j < width; j++) {
+                           int n4 = GAMMA_LUT[buffer.get(n3 + j) & 255] & 255;
+                           atlasImage.setPixel(n2 + j, shelfY2 + i, n4 << 24 | 16777215);
                         }
                      }
 
-                     markDirty(var13, var14, var8, var9);
-                     var10.width = var8;
-                     var10.height = var9;
-                     var10.u0 = var13 / 1024.0F;
-                     var10.v0 = var14 / 1024.0F;
-                     var10.u1 = (var13 + var8) / 1024.0F;
-                     var10.v1 = (var14 + var9) / 1024.0F;
-                     return var10;
+                     markDirty(n2, shelfY2, width, rows);
+                     glyph2.width = width;
+                     glyph2.height = rows;
+                     glyph2.u0 = n2 / 1024.0F;
+                     glyph2.v0 = shelfY2 / 1024.0F;
+                     glyph2.u1 = (n2 + width) / 1024.0F;
+                     glyph2.v1 = (shelfY2 + rows) / 1024.0F;
+                     return glyph2;
                   }
                } else {
-                  return var10;
+                  return glyph2;
                }
             }
          }
       }
    }
 
-   private static boolean reserve(int var0, int var1) {
-      if (var0 + 1 <= 1024 && var1 + 1 <= 1024) {
-         if (shelfX + var0 + 1 > 1024) {
+   private static boolean reserve(int width, int rows) {
+      if (width + 1 <= 1024 && rows + 1 <= 1024) {
+         if (shelfX + width + 1 > 1024) {
             shelfY = shelfY + shelfHeight + 1;
             shelfX = 0;
             shelfHeight = 0;
          }
 
-         if (shelfY + var1 + 1 > 1024) {
+         if (shelfY + rows + 1 > 1024) {
             return false;
          } else {
-            shelfX += var0 + 1;
-            shelfHeight = Math.max(shelfHeight, var1);
+            shelfX += width + 1;
+            shelfHeight = Math.max(shelfHeight, rows);
             return true;
          }
       } else {
@@ -450,25 +450,25 @@ public final class HintedText {
       }
    }
 
-   private static void markDirty(int var0, int var1, int var2, int var3) {
-      dirtyX0 = Math.min(dirtyX0, var0);
-      dirtyY0 = Math.min(dirtyY0, var1);
-      dirtyX1 = Math.max(dirtyX1, var0 + var2);
-      dirtyY1 = Math.max(dirtyY1, var1 + var3);
+   private static void markDirty(int n, int n2, int width, int rows) {
+      dirtyX0 = Math.min(dirtyX0, n);
+      dirtyY0 = Math.min(dirtyY0, n2);
+      dirtyX1 = Math.max(dirtyX1, n + width);
+      dirtyY1 = Math.max(dirtyY1, n2 + rows);
    }
 
    private static void uploadDirty() {
-      int var0 = dirtyX0;
-      int var1 = dirtyY0;
-      int var2 = dirtyX1 - dirtyX0;
-      int var3 = dirtyY1 - dirtyY0;
+      int dstX = dirtyX0;
+      int dstY = dirtyY0;
+      int n = dirtyX1 - dirtyX0;
+      int n2 = dirtyY1 - dirtyY0;
       dirtyX0 = 1024;
       dirtyY0 = 1024;
       dirtyX1 = 0;
       dirtyY1 = 0;
-      GpuTexture var4 = atlasTexture.getTexture();
-      if (var4 != null && (var0 != 0 || var1 != 0 || var2 != 1024 || var3 != 1024)) {
-         org.zenith.utility.render.RenderCompat.writeRegion(var4, atlasImage, 0, 0, var0, var1, var2, var3, var0, var1);
+      GpuTexture texture = atlasTexture.getTexture();
+      if (texture != null && (dstX != 0 || dstY != 0 || n != 1024 || n2 != 1024)) {
+         org.zenith.utility.render.RenderCompat.writeRegion(texture, atlasImage, 0, 0, dstX, dstY, n, n2, dstX, dstY);
       } else {
          atlasTexture.upload();
       }
@@ -487,15 +487,15 @@ public final class HintedText {
       markDirty(0, 0, 1024, 1024);
    }
 
-   private static void check(int var0, String var1) {
-      if (var0 != 0) {
-         throw new IllegalStateException(var1 + " failed: " + var0);
+   private static void check(int n, String str) {
+      if (n != 0) {
+         throw new IllegalStateException(str + " failed: " + n);
       }
    }
 
    static {
-      for (int var0 = 0; var0 < 256; var0++) {
-         GAMMA_LUT[var0] = (byte)Math.round(255.0 * Math.pow(var0 / 255.0, 0.8F));
+      for (int i = 0; i < 256; i++) {
+         GAMMA_LUT[i] = (byte)Math.round(255.0 * Math.pow(i / 255.0, 0.8F));
       }
 
       FACES = new HashMap<>();

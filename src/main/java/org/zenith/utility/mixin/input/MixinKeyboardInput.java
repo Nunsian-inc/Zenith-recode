@@ -21,23 +21,23 @@ public abstract class MixinKeyboardInput extends ClientInput {
       method = {"tick()V"},
       at = {@At("TAIL")}
    )
-   private void tickHook(CallbackInfo var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2.player != null && var2.player.input == this) {
-         MoveInputEvent var3 = new MoveInputEvent(this.keyPresses);
-         EventManager.call(var3);
-         Input var4 = var3.getPlayerInput();
-         if (var4 != null) {
-            this.keyPresses = new Input(var4.forward(), var4.backward(), var4.left(), var4.right(), var4.jump(), var4.shift(), var4.sprint());
+   private void tickHook(CallbackInfo callbackInfo) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.player != null && minecraft.player.input == this) {
+         MoveInputEvent event = new MoveInputEvent(this.keyPresses);
+         EventManager.call(event);
+         Input playerInput = event.getPlayerInput();
+         if (playerInput != null) {
+            this.keyPresses = new Input(playerInput.forward(), playerInput.backward(), playerInput.left(), playerInput.right(), playerInput.jump(), playerInput.shift(), playerInput.sprint());
             this.moveVector = ViaCompat.method4851(
-               new Vec2(zenith$multiplier(var4.left(), var4.right()), zenith$multiplier(var4.forward(), var4.backward()))
+               new Vec2(zenith$multiplier(playerInput.left(), playerInput.right()), zenith$multiplier(playerInput.forward(), playerInput.backward()))
             );
-            WaterRiseModule var5 = WaterRiseModule.INSTANCE;
-            if (var5.method1743()) {
-               if (var4.forward()) {
-                  var5.method1742();
-               } else if (!var4.backward()) {
-                  this.moveVector = new Vec2(this.moveVector.x, var5.method1744());
+            WaterRiseModule waterRiseModule = WaterRiseModule.INSTANCE;
+            if (waterRiseModule.method1743()) {
+               if (playerInput.forward()) {
+                  waterRiseModule.method1742();
+               } else if (!playerInput.backward()) {
+                  this.moveVector = new Vec2(this.moveVector.x, waterRiseModule.method1744());
                }
             }
          }
@@ -45,11 +45,11 @@ public abstract class MixinKeyboardInput extends ClientInput {
    }
 
    @Unique
-   private static float zenith$multiplier(boolean var0, boolean var1) {
-      if (var0 == var1) {
+   private static float zenith$multiplier(boolean left, boolean right) {
+      if (left == right) {
          return 0.0F;
       } else {
-         return var0 ? 1.0F : -1.0F;
+         return left ? 1.0F : -1.0F;
       }
    }
 }

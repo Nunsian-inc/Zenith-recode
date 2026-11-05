@@ -7,7 +7,7 @@ public interface ModuleContext {
 
    boolean development();
 
-   Object setting(String var1);
+   Object setting(String settingId);
 
    default boolean booleanSetting(String settingId) {
       return Boolean.TRUE.equals(this.setting(settingId));

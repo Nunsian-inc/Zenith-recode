@@ -18,44 +18,44 @@ public final class BlitUtils {
    private BlitUtils() {
    }
 
-   public static TextureTarget method6448(String var0, int var1, int var2, boolean var3) {
-      TextureTarget var4 = new TextureTarget(var0, Math.max(1, var1), Math.max(1, var2), com.mojang.renderpearl.api.GpuFormat.RGBA8_UNORM, org.zenith.utility.render.RenderCompat.depthFormat(var3));
-      method6456(var4, 0);
-      return var4;
+   public static TextureTarget method6448(String label, int width, int height, boolean useDepth) {
+      TextureTarget textureTarget = new TextureTarget(label, Math.max(1, width), Math.max(1, height), com.mojang.renderpearl.api.GpuFormat.RGBA8_UNORM, org.zenith.utility.render.RenderCompat.depthFormat(useDepth));
+      method6456(textureTarget, 0);
+      return textureTarget;
    }
 
-   public static void method6449(@Nullable RenderTarget var0) {
-      if (var0 != null) {
-         var0.destroyBuffers();
+   public static void method6449(@Nullable RenderTarget renderTarget) {
+      if (renderTarget != null) {
+         renderTarget.destroyBuffers();
       }
    }
 
    @Nullable
-   public static GpuTextureView method6450(@Nullable RenderTarget var0) {
-      return var0 == null ? null : var0.getColorTextureView();
+   public static GpuTextureView method6450(@Nullable RenderTarget simpleFramebuffer) {
+      return simpleFramebuffer == null ? null : simpleFramebuffer.getColorTextureView();
    }
 
    @Nullable
-   public static GpuTextureView method6451(@Nullable RenderTarget var0) {
-      return var0 != null && var0.hasDepth() ? var0.getDepthTextureView() : null;
+   public static GpuTextureView method6451(@Nullable RenderTarget renderTarget) {
+      return renderTarget != null && renderTarget.hasDepth() ? renderTarget.getDepthTextureView() : null;
    }
 
    public static RenderTarget method6452() {
       return Minecraft.getInstance().gameRenderer.mainRenderTarget();
    }
 
-   public static void method6453(@Nullable RenderTarget var0, @Nullable RenderTarget var1) {
-      if (var0 != null && var1 != null) {
-         GpuTexture var2 = var0.getColorTexture();
-         GpuTexture var3 = var1.getColorTexture();
-         if (var2 != null && var3 != null) {
-            if ((var0.width != var1.width || var0.height != var1.height) && method6454()) {
-               method6455(var0.getColorTextureView(), var1);
+   public static void method6453(@Nullable RenderTarget mainRenderTarget, @Nullable RenderTarget simpleFramebuffer) {
+      if (mainRenderTarget != null && simpleFramebuffer != null) {
+         GpuTexture colorTexture = mainRenderTarget.getColorTexture();
+         GpuTexture destination = simpleFramebuffer.getColorTexture();
+         if (colorTexture != null && destination != null) {
+            if ((mainRenderTarget.width != simpleFramebuffer.width || mainRenderTarget.height != simpleFramebuffer.height) && method6454()) {
+               method6455(mainRenderTarget.getColorTextureView(), simpleFramebuffer);
             } else {
                RenderSystem.getDevice()
                   .createCommandEncoder()
                   .copyTextureToTexture(
-                     var2, var3, 0, 0, 0, 0, 0, Math.min(var0.width, var1.width), Math.min(var0.height, var1.height)
+                     colorTexture, destination, 0, 0, 0, 0, 0, Math.min(mainRenderTarget.width, simpleFramebuffer.width), Math.min(mainRenderTarget.height, simpleFramebuffer.height)
                   );
             }
          }
@@ -63,40 +63,40 @@ public final class BlitUtils {
    }
 
    public static boolean method6454() {
-      Minecraft var0 = Minecraft.getInstance();
-      return var0 != null && var0.getShaderManager() != null
+      Minecraft minecraft = Minecraft.getInstance();
+      return minecraft != null && minecraft.getShaderManager() != null
          ? LightUtil.shaderSource(Identifier.withDefaultNamespace("core/screenquad"), ShaderType.VERTEX) != null
             && LightUtil.shaderSource(Identifier.withDefaultNamespace("core/blit_screen"), ShaderType.FRAGMENT) != null
          : false;
    }
 
-   public static void method6455(@Nullable GpuTextureView var0, @Nullable RenderTarget var1) {
-      if (var0 != null && var1 != null && var1.getColorTextureView() != null && method6454()) {
-         try (RenderPass var2 = RenderSystem.getDevice()
+   public static void method6455(@Nullable GpuTextureView colorTextureView, @Nullable RenderTarget backgroundFbo) {
+      if (colorTextureView != null && backgroundFbo != null && backgroundFbo.getColorTextureView() != null && method6454()) {
+         try (RenderPass renderPass = RenderSystem.getDevice()
                .createCommandEncoder()
-               .createRenderPass(() -> "Zenith blit", var1.getColorTextureView(), java.util.Optional.empty())) {
-            var2.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(RenderPipelines.TRACY_BLIT));
-            RenderSystem.bindDefaultUniforms(var2);
-            var2.setUniform("InSampler", var0, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
-            var2.draw(3, 1, 0, 0);
+               .createRenderPass(() -> "Zenith blit", backgroundFbo.getColorTextureView(), java.util.Optional.empty())) {
+            renderPass.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(RenderPipelines.TRACY_BLIT));
+            RenderSystem.bindDefaultUniforms(renderPass);
+            renderPass.setUniform("InSampler", colorTextureView, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR));
+            renderPass.draw(3, 1, 0, 0);
          }
       }
    }
 
-   public static void method6456(@Nullable RenderTarget var0, int var1) {
-      if (var0 != null && var0.getColorTexture() != null) {
-         if (var0.hasDepth() && var0.getDepthTexture() != null) {
-            RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(var0.getColorTexture(), org.zenith.utility.render.RenderCompat.argb(var1), var0.getDepthTexture(), org.zenith.utility.render.RenderCompat.CLEAR_DEPTH);
+   public static void method6456(@Nullable RenderTarget simpleFramebuffer, int colorFromFloat) {
+      if (simpleFramebuffer != null && simpleFramebuffer.getColorTexture() != null) {
+         if (simpleFramebuffer.hasDepth() && simpleFramebuffer.getDepthTexture() != null) {
+            RenderSystem.getDevice().createCommandEncoder().clearColorAndDepthTextures(simpleFramebuffer.getColorTexture(), org.zenith.utility.render.RenderCompat.argb(colorFromFloat), simpleFramebuffer.getDepthTexture(), org.zenith.utility.render.RenderCompat.CLEAR_DEPTH);
          } else {
-            RenderSystem.getDevice().createCommandEncoder().clearColorTexture(var0.getColorTexture(), org.zenith.utility.render.RenderCompat.argb(var1));
+            RenderSystem.getDevice().createCommandEncoder().clearColorTexture(simpleFramebuffer.getColorTexture(), org.zenith.utility.render.RenderCompat.argb(colorFromFloat));
          }
       }
    }
 
-   public static void method6457(@Nullable RenderTarget var0, int var1, int var2) {
-      if (var0 != null) {
-         var0.resize(Math.max(1, var1), Math.max(1, var2));
-         method6456(var0, 0);
+   public static void method6457(@Nullable RenderTarget backgroundFbo, int width, int height) {
+      if (backgroundFbo != null) {
+         backgroundFbo.resize(Math.max(1, width), Math.max(1, height));
+         method6456(backgroundFbo, 0);
       }
    }
 }

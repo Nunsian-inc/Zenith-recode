@@ -50,126 +50,126 @@ public final class Island implements MinecraftAccess {
       }
    }
 
-   private static Island.Entry method2868(String var0) {
-      for (Island.Entry var2 : INSTANCE.items) {
-         if (var2.text.equals(var0)) {
-            return var2;
+   private static Island.Entry method2868(String anObject) {
+      for (Island.Entry entry : INSTANCE.items) {
+         if (entry.text.equals(anObject)) {
+            return entry;
          }
       }
 
       return null;
    }
 
-   private static Island.Entry method2869(String var0, int var1) {
-      Island.Entry var2 = method2868(var0);
-      if (var2 == null) {
-         var2 = new Island.Entry(var0);
-         var2.intValue = var1;
-         var2.startedAt = System.currentTimeMillis();
-         INSTANCE.items.add(var2);
+   private static Island.Entry method2869(String anObject, int intValue) {
+      Island.Entry entry = method2868(anObject);
+      if (entry == null) {
+         entry = new Island.Entry(anObject);
+         entry.intValue = intValue;
+         entry.startedAt = System.currentTimeMillis();
+         INSTANCE.items.add(entry);
       }
 
-      return var2;
+      return entry;
    }
 
-   public static void method2870(String var0, String var1, ZenithColor var2, int var3, long var4, boolean var6) {
+   public static void method2870(String anObject, String title, ZenithColor zenithColor, int intValue, long l, boolean flag) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> method2870(var0, var1, var2, var3, var4, var6));
+         mc.execute(() -> method2870(anObject, title, zenithColor, intValue, l, flag));
       } else {
-         long var7 = System.currentTimeMillis();
-         Island.Entry var9 = method2869(var0, var3);
-         var9.title = var1;
-         var9.zenithColor = var2;
-         var9.intValue = var3;
-         var9.startedAt = var7;
-         var9.longValue = var4 <= 0L ? 0L : var7 + var4;
-         var9.flag = var6;
-         var9.longValue2 = var7;
-      }
-   }
-
-   public static void method2871(String var0, String var1, ZenithColor var2, int var3) {
-      if (!mc.isSameThread()) {
-         mc.execute(() -> method2871(var0, var1, var2, var3));
-      } else {
-         Island.Entry var4 = method2869(var0, var3);
-         long var5 = System.currentTimeMillis();
-         var4.title = var1;
-         var4.zenithColor = var2;
-         var4.intValue = var3;
-         var4.longValue = 0L;
-         var4.flag = false;
-         var4.longValue2 = var5;
+         long now = System.currentTimeMillis();
+         Island.Entry entry = method2869(anObject, intValue);
+         entry.title = title;
+         entry.zenithColor = zenithColor;
+         entry.intValue = intValue;
+         entry.startedAt = now;
+         entry.longValue = l <= 0L ? 0L : now + l;
+         entry.flag = flag;
+         entry.longValue2 = now;
       }
    }
 
-   public static void method2872(String var0, ZenithColor var1, float var2, String var3) {
+   public static void method2871(String anObject, String title, ZenithColor zenithColor, int intValue) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> method2872(var0, var1, var2, var3));
+         mc.execute(() -> method2871(anObject, title, zenithColor, intValue));
       } else {
-         method2871("boss", var0, var1, 100);
-         Island.Entry var4 = method2868("boss");
-         var4.floatValue = var2;
-         var4.text2 = var3;
+         Island.Entry entry = method2869(anObject, intValue);
+         long now = System.currentTimeMillis();
+         entry.title = title;
+         entry.zenithColor = zenithColor;
+         entry.intValue = intValue;
+         entry.longValue = 0L;
+         entry.flag = false;
+         entry.longValue2 = now;
       }
    }
 
-   public static void method2873(String var0, String var1, ZenithColor var2, int var3, float var4) {
+   public static void method2872(String title, ZenithColor zenithColor, float floatValue, String str) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> method2873(var0, var1, var2, var3, var4));
+         mc.execute(() -> method2872(title, zenithColor, floatValue, str));
       } else {
-         Island.Entry var5 = method2869(var0, var3);
-         long var6 = System.currentTimeMillis();
-         var5.title = var1;
-         var5.zenithColor = var2;
-         var5.intValue = var3;
-         var5.longValue = var6 + 350L;
-         var5.flag = false;
-         var5.floatValue = -1.0F;
-         var5.floatValue2 = var4;
-         var5.flag2 = true;
-         var5.longValue2 = var6;
+         method2871("boss", title, zenithColor, 100);
+         Island.Entry entry = method2868("boss");
+         entry.floatValue = floatValue;
+         entry.text2 = str;
       }
    }
 
-   public static void method2874(String var0, float var1) {
+   public static void method2873(String anObject, String title, ZenithColor zenithColor, int intValue, float floatValue) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> method2874(var0, var1));
+         mc.execute(() -> method2873(anObject, title, zenithColor, intValue, floatValue));
       } else {
-         Island.Entry var2 = method2868(var0);
-         if (var2 != null) {
-            var2.floatValue = var1;
+         Island.Entry entry = method2869(anObject, intValue);
+         long now = System.currentTimeMillis();
+         entry.title = title;
+         entry.zenithColor = zenithColor;
+         entry.intValue = intValue;
+         entry.longValue = now + 350L;
+         entry.flag = false;
+         entry.floatValue = -1.0F;
+         entry.floatValue2 = floatValue;
+         entry.flag2 = true;
+         entry.longValue2 = now;
+      }
+   }
+
+   public static void method2874(String anObject, float floatValue) {
+      if (!mc.isSameThread()) {
+         mc.execute(() -> method2874(anObject, floatValue));
+      } else {
+         Island.Entry entry = method2868(anObject);
+         if (entry != null) {
+            entry.floatValue = floatValue;
          }
       }
    }
 
-   public static void drop(String var0) {
+   public static void drop(String anObject) {
       if (!mc.isSameThread()) {
-         mc.execute(() -> drop(var0));
+         mc.execute(() -> drop(anObject));
       } else {
-         INSTANCE.items.removeIf(var1 -> var1.text.equals(var0));
+         INSTANCE.items.removeIf(entry -> entry.text.equals(anObject));
       }
    }
 
-   public static Island.Entry method2875(long var0) {
+   public static Island.Entry method2875(long now) {
       if (INSTANCE.weakReference.get() != mc.player) {
          INSTANCE.weakReference = new WeakReference<>(mc.player);
          INSTANCE.items.removeIf(var0x -> !var0x.text.equals("boss"));
       }
 
-      INSTANCE.items.removeIf(var2x -> !var2x.method2883(var0) || !var2x.text.equals("boss") && !var2x.flag2);
-      Island.Entry var2 = null;
+      INSTANCE.items.removeIf(var2x -> !var2x.method2883(now) || !var2x.text.equals("boss") && !var2x.flag2);
+      Island.Entry entry = null;
 
-      for (Island.Entry var4 : INSTANCE.items) {
-         if (var2 == null || var4.intValue > var2.intValue || var4.intValue == var2.intValue && var4.longValue2 > var2.longValue2) {
-            var2 = var4;
+      for (Island.Entry entry2 : INSTANCE.items) {
+         if (entry == null || entry2.intValue > entry.intValue || entry2.intValue == entry.intValue && entry2.longValue2 > entry.longValue2) {
+            entry = entry2;
          }
       }
 
-      return var2;
+      return entry;
    }
 
-   public static void method2876(long var0) {
+   public static void method2876(long l) {
       method2867();
       if (mc.player != null && mc.level != null) {
          if (INSTANCE.weakReference.get() != mc.player) {
@@ -189,9 +189,9 @@ public final class Island implements MinecraftAccess {
             method2877();
          }
 
-         BlockPos var2 = mc.player.blockPosition().above();
-         boolean var3 = mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB) || mc.level.getBlockState(var2).is(Blocks.COBWEB);
-         if (var3) {
+         BlockPos above = mc.player.blockPosition().above();
+         boolean flag = mc.level.getBlockState(mc.player.blockPosition()).is(Blocks.COBWEB) || mc.level.getBlockState(above).is(Blocks.COBWEB);
+         if (flag) {
             method2871("stun", method2882("hud.island.web"), zenithColor2, 90);
          } else {
             drop("stun");
@@ -206,48 +206,48 @@ public final class Island implements MinecraftAccess {
       method2870("combat", method2882("hud.island.combat"), zenithColor, 40, 15000L, true);
    }
 
-   public static void method2878(String var0) {
-      method2870("trap", var0, zenithColor3, 80, 4000L, true);
+   public static void method2878(String title) {
+      method2870("trap", title, zenithColor3, 80, 4000L, true);
    }
 
-   public static void method2879(String var0, long var1) {
-      if (var1 > 0L) {
-         switch (var0) {
+   public static void method2879(String str, long l) {
+      if (l > 0L) {
+         switch (str) {
             case "trap":
-               method2870("helper.trap", method2882("hud.island.trap.small"), zenithColor3, 80, var1, true);
+               method2870("helper.trap", method2882("hud.island.trap.small"), zenithColor3, 80, l, true);
                break;
             case "bigTrap":
-               method2870("helper.bigTrap", method2882("hud.island.trap.big"), zenithColor5, 81, var1, true);
+               method2870("helper.bigTrap", method2882("hud.island.trap.big"), zenithColor5, 81, l, true);
                break;
             case "beacon":
-               method2870("helper.beacon", method2882("hud.island.beacon"), zenithColor6, 60, var1, true);
+               method2870("helper.beacon", method2882("hud.island.beacon"), zenithColor6, 60, l, true);
                break;
             case "blast":
-               method2870("helper.blast", method2882("hud.island.blast"), zenithColor5, 82, var1, true);
+               method2870("helper.blast", method2882("hud.island.blast"), zenithColor5, 82, l, true);
          }
       }
    }
 
-   public static void method2880(String var0, long var1) {
-      if (var1 > 0L && var0 != null && !var0.isBlank()) {
-         method2870("helper.event", var0, zenithColor7, 60, var1, true);
+   public static void method2880(String substringBetween, long l) {
+      if (l > 0L && substringBetween != null && !substringBetween.isBlank()) {
+         method2870("helper.event", substringBetween, zenithColor7, 60, l, true);
       }
    }
 
    @EventTarget
-   public void method2881(AttackEvent var1) {
-      if (var1.getType4() == AttackEvent.Type.POST && var1.getEntity() instanceof Player) {
+   public void method2881(AttackEvent event) {
+      if (event.getType4() == AttackEvent.Type.POST && event.getEntity() instanceof Player) {
          method2877();
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
+   public void onPacket(PacketEvent event) {
       if (mc.player != null) {
-         if (var1.getPacket3() instanceof ClientboundEntityEventPacket var2 && var2.getEventId() == 35) {
+         if (event.getPacket3() instanceof ClientboundEntityEventPacket entityEventPacket && entityEventPacket.getEventId() == 35) {
             mc.execute(() -> {
                if (mc.player != null && mc.level != null) {
-                  Entity var1x = var2.getEntity(mc.level);
+                  Entity var1x = entityEventPacket.getEntity(mc.level);
                   if (var1x == mc.player) {
                      method2870("totem", method2882("hud.island.totem"), zenithColor4, 70, 3000L, true);
                   }
@@ -257,8 +257,8 @@ public final class Island implements MinecraftAccess {
       }
    }
 
-   private static String method2882(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String method2882(String text) {
+      return Zenith.getInstance().getLocalization().translate(text);
    }
 
    public static final class Entry {
@@ -275,30 +275,30 @@ public final class Island implements MinecraftAccess {
       public boolean flag2;
       public String text2;
 
-      private Entry(String var1) {
-         this.text = var1;
+      private Entry(String text) {
+         this.text = text;
       }
 
-      public boolean method2883(long var1) {
-         return this.longValue == 0L || var1 < this.longValue;
+      public boolean method2883(long now) {
+         return this.longValue == 0L || now < this.longValue;
       }
 
-      public float method2884(long var1) {
+      public float method2884(long now) {
          if (this.flag && this.longValue != 0L) {
-            float var3 = Math.max(1.0F, (float)(this.longValue - this.startedAt));
-            return Math.clamp((float)(this.longValue - var1) / var3, 0.0F, 1.0F);
+            float f = Math.max(1.0F, (float)(this.longValue - this.startedAt));
+            return Math.clamp((float)(this.longValue - now) / f, 0.0F, 1.0F);
          } else {
             return this.floatValue;
          }
       }
 
-      public String method2885(long var1) {
+      public String method2885(long now) {
          if (this.text2 != null) {
             return this.text2;
          } else if (this.flag && this.longValue != 0L) {
-            long var3 = Math.max(0L, this.longValue - var1);
-            long var5 = (var3 + 999L) / 1000L;
-            return var5 >= 60L ? var5 / 60L + ":" + String.format("%02d", var5 % 60L) : var5 + "s";
+            long l = Math.max(0L, this.longValue - now);
+            long l2 = (l + 999L) / 1000L;
+            return l2 >= 60L ? l2 / 60L + ":" + String.format("%02d", l2 % 60L) : l2 + "s";
          } else {
             return this.floatValue >= 0.0F ? Math.round(this.floatValue * 100.0F) + "%" : "";
          }

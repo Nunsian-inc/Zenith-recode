@@ -43,81 +43,81 @@ public final class OutlineVertexProvider {
    private OutlineVertexProvider() {
    }
 
-   public static void method1540(EntityRenderState var0) {
-      if (var0 instanceof HumanoidRenderState var1) {
-         var1.headEquipment = ItemStack.EMPTY;
-         var1.chestEquipment = ItemStack.EMPTY;
-         var1.legsEquipment = ItemStack.EMPTY;
-         var1.feetEquipment = ItemStack.EMPTY;
+   public static void method1540(EntityRenderState extractEntity) {
+      if (extractEntity instanceof HumanoidRenderState humanoidRenderState) {
+         humanoidRenderState.headEquipment = ItemStack.EMPTY;
+         humanoidRenderState.chestEquipment = ItemStack.EMPTY;
+         humanoidRenderState.legsEquipment = ItemStack.EMPTY;
+         humanoidRenderState.feetEquipment = ItemStack.EMPTY;
       }
 
-      if (var0 instanceof LivingEntityRenderState var2) {
-         var2.headItem.clear();
-         var2.wornHeadType = null;
+      if (extractEntity instanceof LivingEntityRenderState entityRenderState) {
+         entityRenderState.headItem.clear();
+         entityRenderState.wornHeadType = null;
       }
    }
 
-   public static CameraRenderState method1541(Vec3 var0) {
-      CameraRenderState var1 = new CameraRenderState();
-      var1.pos = var0;
-      var1.blockPos = BlockPos.containing(var0);
-      var1.initialized = true;
-      return var1;
+   public static CameraRenderState method1541(Vec3 pos) {
+      CameraRenderState cameraRenderState = new CameraRenderState();
+      cameraRenderState.pos = pos;
+      cameraRenderState.blockPos = BlockPos.containing(pos);
+      cameraRenderState.initialized = true;
+      return cameraRenderState;
    }
 
-   public static void method1542(Consumer<SubmitNodeCollector> var1) {
-      method1542(Minecraft.getInstance().gameRenderer.mainRenderTarget(), var1);
+   public static void method1542(Consumer<SubmitNodeCollector> consumer) {
+      method1542(Minecraft.getInstance().gameRenderer.mainRenderTarget(), consumer);
    }
 
    // target replaces the removed RenderSystem.outputColor/DepthTextureOverride
-   public static void method1542(RenderTarget var6, Consumer<SubmitNodeCollector> var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      boolean var3 = ImmediateRenderer.method8005() && !flag;
-      if (var3) {
-         method1543(var2);
+   public static void method1542(RenderTarget fbo, Consumer<SubmitNodeCollector> consumer) {
+      Minecraft minecraft = Minecraft.getInstance();
+      boolean flag2 = ImmediateRenderer.method8005() && !flag;
+      if (flag2) {
+         method1543(minecraft);
       }
 
       try {
          // 26.2+: submissions go through the game's FeatureRenderDispatcher into an explicit render pass
-         SubmitNodeStorage var4 = new SubmitNodeStorage();
-         var1.accept(var4);
+         SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
+         consumer.accept(submitNodeStorage);
 
          try (
-            FeatureRenderDispatcher.PreparedFrame var5 = var2.gameRenderer.featureRenderDispatcher().prepareFrame(var4);
-            RenderPass var7 = RenderSystem.getDevice()
+            FeatureRenderDispatcher.PreparedFrame prepareFrame = minecraft.gameRenderer.featureRenderDispatcher().prepareFrame(submitNodeStorage);
+            RenderPass renderPass = RenderSystem.getDevice()
                .createCommandEncoder()
-               .createRenderPass(() -> "Zenith entity preview", var6.getColorTextureView(), Optional.empty(), var6.getDepthTextureView(), OptionalDouble.empty());
+               .createRenderPass(() -> "Zenith entity preview", fbo.getColorTextureView(), Optional.empty(), fbo.getDepthTextureView(), OptionalDouble.empty());
          ) {
-            RenderSystem.bindDefaultUniforms(var7);
-            FeatureRenderDispatcher.renderAllFeatures(var7, var5);
+            RenderSystem.bindDefaultUniforms(renderPass);
+            FeatureRenderDispatcher.renderAllFeatures(renderPass, prepareFrame);
          }
       } finally {
-         if (var3) {
-            method1544(var2);
+         if (flag2) {
+            method1544(minecraft);
          }
 
          RenderState.method1881();
       }
    }
 
-   private static void method1543(Minecraft var0) {
+   private static void method1543(Minecraft minecraft) {
       RenderSystem.backupProjectionMatrix();
       RenderSystem.setProjectionMatrix(ImmediateRenderer.method8019(), ProjectionType.ORTHOGRAPHIC);
       RenderSystem.getModelViewStack().pushMatrix().set(ImmediateRenderer.matrix4f2);
-      var0.gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
-      RenderTarget var1 = var0.gameRenderer.mainRenderTarget();
-      if (var1.getDepthTexture() != null) {
-         RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(var1.getDepthTexture(), org.zenith.utility.render.RenderCompat.CLEAR_DEPTH);
+      minecraft.gameRenderer.lighting().setupFor(Entry.ENTITY_IN_UI);
+      RenderTarget mainRenderTarget = minecraft.gameRenderer.mainRenderTarget();
+      if (mainRenderTarget.getDepthTexture() != null) {
+         RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(mainRenderTarget.getDepthTexture(), org.zenith.utility.render.RenderCompat.CLEAR_DEPTH);
       }
    }
 
-   private static void method1544(Minecraft var0) {
-      var0.gameRenderer.lighting().setupFor(Entry.ITEMS_3D);
+   private static void method1544(Minecraft minecraft) {
+      minecraft.gameRenderer.lighting().setupFor(Entry.ITEMS_3D);
       RenderSystem.getModelViewStack().popMatrix();
       RenderSystem.restoreProjectionMatrix();
    }
 
-   public static <S extends EntityRenderState> void method1545(EntityRenderer<?, S> var0, S var1, PoseStack var2, CameraRenderState var4) {
-      method1542(var4x -> var0.submit(var1, var2, var4x, var4));
+   public static <S extends EntityRenderState> void method1545(EntityRenderer<?, S> entityRenderer, S state, PoseStack poseStack, CameraRenderState camera) {
+      method1542(var4x -> entityRenderer.submit(state, poseStack, var4x, camera));
    }
 }

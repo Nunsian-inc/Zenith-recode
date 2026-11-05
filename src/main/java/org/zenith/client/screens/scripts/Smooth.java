@@ -8,15 +8,15 @@ public final class Smooth {
    private float min = -Float.MAX_VALUE;
    private float max = Float.MAX_VALUE;
 
-   public Smooth(float var1) {
-      this.speed = var1;
+   public Smooth(float speed) {
+      this.speed = speed;
    }
 
    public float update() {
-      long var1 = System.nanoTime();
-      float var3 = Math.min(0.1F, (float)(var1 - this.last) / 1.0E9F);
-      this.last = var1;
-      this.value = this.value + (this.target - this.value) * (1.0F - (float)Math.exp(-var3 * this.speed));
+      long nanoTime = System.nanoTime();
+      float f = Math.min(0.1F, (float)(nanoTime - this.last) / 1.0E9F);
+      this.last = nanoTime;
+      this.value = this.value + (this.target - this.value) * (1.0F - (float)Math.exp(-f * this.speed));
       if (Math.abs(this.target - this.value) < 0.05F) {
          this.value = this.target;
       }
@@ -32,33 +32,33 @@ public final class Smooth {
       return this.target;
    }
 
-   public void target(float var1) {
-      this.target = var1;
+   public void target(float target) {
+      this.target = target;
    }
 
-   public void add(float var1) {
-      this.target = Math.max(this.min, Math.min(this.max, this.target + var1));
+   public void add(float lineHeight) {
+      this.target = Math.max(this.min, Math.min(this.max, this.target + lineHeight));
    }
 
-   public void clamp(float var1, float var2) {
-      this.min = var1;
-      this.max = var2;
-      this.target = Math.max(var1, Math.min(var2, this.target));
-      this.value = Math.max(var1, Math.min(var2, this.value));
+   public void clamp(float min, float max) {
+      this.min = min;
+      this.max = max;
+      this.target = Math.max(min, Math.min(max, this.target));
+      this.value = Math.max(min, Math.min(max, this.value));
    }
 
-   public void reset(float var1) {
-      this.value = var1;
-      this.target = var1;
+   public void reset(float target) {
+      this.value = target;
+      this.target = target;
       this.last = System.nanoTime();
    }
 
-   public static float press(long var0, long var2) {
-      if (var0 <= 0L) {
+   public static float press(long l, long l2) {
+      if (l <= 0L) {
          return 0.0F;
       } else {
-         float var4 = (float)(System.currentTimeMillis() - var0) / (float)var2;
-         return var4 >= 1.0F ? 0.0F : (1.0F - var4) * (1.0F - var4);
+         float f = (float)(System.currentTimeMillis() - l) / (float)l2;
+         return f >= 1.0F ? 0.0F : (1.0F - f) * (1.0F - f);
       }
    }
 }

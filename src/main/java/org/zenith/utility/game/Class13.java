@@ -38,128 +38,128 @@ public final class Class13 {
    private float floatValue14;
    private Class13.Entry entry;
 
-   public float[] method1911(Minecraft var1, Rotation var2, LivingEntity var3, float var4, float var5, float var6) {
-      if (var1.player != null && var3 != null && var3.getBoundingBox() != null && this.isFinite(var6) && !(var6 <= 0.0F)) {
-         Vec3 var7 = var1.player.position();
-         AABB var8 = var3.getBoundingBox();
-         Vec3 var9 = this.method1916(var3, var8);
-         Vec3 var10 = this.method1915(var1, var7);
-         float[] var11 = this.method1912(var1, var2, var1.player.getEyePosition(), var3, var8, var4, var5, var9, var10, var6);
-         if (var11 != null) {
-            this.entry = new Class13.Entry(var11, var7, var8, var6);
+   public float[] method1911(Minecraft minecraft, Rotation rotation, LivingEntity livingEntity, float floatValue, float f, float x) {
+      if (minecraft.player != null && livingEntity != null && livingEntity.getBoundingBox() != null && this.isFinite(x) && !(x <= 0.0F)) {
+         Vec3 position = minecraft.player.position();
+         AABB boundingBox = livingEntity.getBoundingBox();
+         Vec3 vec = this.method1916(livingEntity, boundingBox);
+         Vec3 vec2 = this.method1915(minecraft, position);
+         float[] floats = this.method1912(minecraft, rotation, minecraft.player.getEyePosition(), livingEntity, boundingBox, floatValue, f, vec, vec2, x);
+         if (floats != null) {
+            this.entry = new Class13.Entry(floats, position, boundingBox, x);
          }
 
-         return var11;
+         return floats;
       } else {
          return null;
       }
    }
 
    private float[] method1912(
-      Minecraft var1, Rotation var2, Vec3 var3, LivingEntity var4, AABB var5, float var6, float var7, Vec3 var8, Vec3 var9, float var10
+      Minecraft minecraft, Rotation rotation, Vec3 eyePosition, LivingEntity livingEntity, AABB boundingBox, float floatValue, float f, Vec3 vec, Vec3 vec2, float x
    ) {
-      Vec3 var11 = this.method1918(var5);
-      Vec2f var12 = var2.method3131(this.method1917(var3, var11));
-      float var13 = var12.getFloatValue();
-      float var14 = var12.getFloatValue2();
-      if (this.isFinite(var13) && this.isFinite(var14)) {
-         Vec3 var15 = this.method1913(var1, var2, var3);
-         AABB var16 = this.method1914(var4, var5, var8);
-         Vec2f var17 = var2.method3131(this.method1917(var15, this.method1918(var16)));
-         float var18 = var17.getFloatValue();
-         float var19 = var17.getFloatValue2();
-         if (this.isFinite(var18) && this.isFinite(var19)) {
-            float var20 = Float.MAX_VALUE;
-            float var21 = -Float.MAX_VALUE;
-            float var22 = Float.MAX_VALUE;
-            float var23 = -Float.MAX_VALUE;
+      Vec3 vec3 = this.method1918(boundingBox);
+      Vec2f vec2f = rotation.method3131(this.method1917(eyePosition, vec3));
+      float floatValue2 = vec2f.getFloatValue();
+      float y = vec2f.getFloatValue2();
+      if (this.isFinite(floatValue2) && this.isFinite(y)) {
+         Vec3 eyePosition2 = this.method1913(minecraft, rotation, eyePosition);
+         AABB aabb = this.method1914(livingEntity, boundingBox, vec);
+         Vec2f vec2f2 = rotation.method3131(this.method1917(eyePosition2, this.method1918(aabb)));
+         float floatValue3 = vec2f2.getFloatValue();
+         float x2 = vec2f2.getFloatValue2();
+         if (this.isFinite(floatValue3) && this.isFinite(x2)) {
+            float y2 = Float.MAX_VALUE;
+            float y3 = -Float.MAX_VALUE;
+            float y4 = Float.MAX_VALUE;
+            float y5 = -Float.MAX_VALUE;
 
-            for (Vec3 var27 : this.method1919(var5)) {
-               Vec2f var28 = var2.method3131(this.method1917(var3, var27));
-               float var29 = var28.getFloatValue();
-               float var30 = var28.getFloatValue2();
-               if (this.isFinite(var29) && this.isFinite(var30)) {
-                  var29 = this.method1921(var29, var13);
-                  var20 = Math.min(var20, var29);
-                  var21 = Math.max(var21, var29);
-                  var22 = Math.min(var22, var30);
-                  var23 = Math.max(var23, var30);
+            for (Vec3 vec4 : this.method1919(boundingBox)) {
+               Vec2f vec2f3 = rotation.method3131(this.method1917(eyePosition, vec4));
+               float floatValue4 = vec2f3.getFloatValue();
+               float x3 = vec2f3.getFloatValue2();
+               if (this.isFinite(floatValue4) && this.isFinite(x3)) {
+                  floatValue4 = this.method1921(floatValue4, floatValue2);
+                  y2 = Math.min(y2, floatValue4);
+                  y3 = Math.max(y3, floatValue4);
+                  y4 = Math.min(y4, x3);
+                  y5 = Math.max(y5, x3);
                }
             }
 
-            if (var20 == Float.MAX_VALUE) {
-               var21 = var13;
-               var20 = var13;
-               var23 = var14;
-               var22 = var14;
+            if (y2 == Float.MAX_VALUE) {
+               y3 = floatValue2;
+               y2 = floatValue2;
+               y5 = y;
+               y4 = y;
             }
 
-            float var65 = var21 - var20;
-            float var66 = var23 - var22;
-            float var67 = (float)(var11.x - var3.x);
-            float var68 = Math.abs((float)(var11.y - var3.y));
-            float var69 = (float)(var11.z - var3.z);
-            float var71 = (float)var3.distanceTo(var11);
-            float var72 = this.hypot(var67, var69);
-            boolean var31 = var20 <= 0.0F && var21 >= 0.0F;
-            boolean var32 = var22 <= 0.0F && var23 >= 0.0F;
-            float var33 = var31 && Math.abs(var65) > 1.0E-6F ? Mth.clamp(-var20 / var65, 0.0F, 1.0F) : 0.0F;
-            float var34 = var32 && Math.abs(var66) > 1.0E-6F ? Mth.clamp(-var22 / var66, 0.0F, 1.0F) : 0.0F;
-            boolean var35 = var31 && var32;
-            this.floatValue5 = var35 ? Mth.clamp(this.floatValue5 + 1.0F, 0.0F, 50.0F) : 0.0F;
-            this.floatValue6 = var35 ? 0.0F : Math.min(this.floatValue6 + 1.0F, 8.0F);
-            float var38 = var6 - this.floatValue;
-            float var39 = var7 - this.floatValue2;
-            float var40 = var38 - this.floatValue3;
-            float var41 = var39 - this.floatValue4;
-            float var42 = this.entry == null ? var13 : this.method1924(this.entry.floatValues[0], this.entry.floatValue);
-            float var43 = this.entry == null ? var14 : this.method1924(this.entry.floatValues[1], this.entry.floatValue);
-            float var44 = this.entry == null ? var71 : this.entry.floatValues[16];
-            float var45 = Mth.wrapDegrees(var13 - var42);
-            float var46 = var14 - var43;
-            float var47 = var71 - var44;
-            float var48 = var13 / Math.max(Math.abs(var65), 0.1F);
-            float var49 = var14 / Math.max(Math.abs(var66), 0.1F);
-            float var50 = this.hypot(var13, var14);
-            float var51 = (float)Math.atan2(var14, var13);
-            float var52 = this.method1923(var6, var10);
-            float var53 = this.method1923(var7, var10);
-            float var54 = this.method1922(var13, var10);
-            float var55 = this.method1922(var14, var10);
-            float var56 = 0.0F;
-            float var57 = 0.0F;
-            float var58 = 0.0F;
-            float var59 = 0.0F;
+            float y6 = y3 - y2;
+            float y7 = y5 - y4;
+            float f2 = (float)(vec3.x - eyePosition.x);
+            float f3 = Math.abs((float)(vec3.y - eyePosition.y));
+            float y8 = (float)(vec3.z - eyePosition.z);
+            float f4 = (float)eyePosition.distanceTo(vec3);
+            float hypot = this.hypot(f2, y8);
+            boolean flag = y2 <= 0.0F && y3 >= 0.0F;
+            boolean flag2 = y4 <= 0.0F && y5 >= 0.0F;
+            float f5 = flag && Math.abs(y6) > 1.0E-6F ? Mth.clamp(-y2 / y6, 0.0F, 1.0F) : 0.0F;
+            float f6 = flag2 && Math.abs(y7) > 1.0E-6F ? Mth.clamp(-y4 / y7, 0.0F, 1.0F) : 0.0F;
+            boolean flag3 = flag && flag2;
+            this.floatValue5 = flag3 ? Mth.clamp(this.floatValue5 + 1.0F, 0.0F, 50.0F) : 0.0F;
+            this.floatValue6 = flag3 ? 0.0F : Math.min(this.floatValue6 + 1.0F, 8.0F);
+            float floatValue4 = floatValue - this.floatValue;
+            float floatValue5 = f - this.floatValue2;
+            float floatValue6 = floatValue4 - this.floatValue3;
+            float floatValue7 = floatValue5 - this.floatValue4;
+            float f7 = this.entry == null ? floatValue2 : this.method1924(this.entry.floatValues[0], this.entry.floatValue);
+            float f8 = this.entry == null ? y : this.method1924(this.entry.floatValues[1], this.entry.floatValue);
+            float floatValue8 = this.entry == null ? f4 : this.entry.floatValues[16];
+            float y9 = Mth.wrapDegrees(floatValue2 - f7);
+            float y10 = y - f8;
+            float f9 = f4 - floatValue8;
+            float f10 = floatValue2 / Math.max(Math.abs(y6), 0.1F);
+            float f11 = y / Math.max(Math.abs(y7), 0.1F);
+            float hypot2 = this.hypot(floatValue2, y);
+            float f12 = (float)Math.atan2(y, floatValue2);
+            float f13 = this.method1923(floatValue, x);
+            float f14 = this.method1923(f, x);
+            float f15 = this.method1922(floatValue2, x);
+            float f16 = this.method1922(y, x);
+            float f17 = 0.0F;
+            float f18 = 0.0F;
+            float f19 = 0.0F;
+            float f20 = 0.0F;
             if (this.entry != null) {
-               float var60 = this.entry.floatValues[0];
-               float var61 = this.entry.floatValues[1];
-               float var62 = var60 - var52;
-               float var63 = var61 - var53;
-               var56 = Math.abs(var60) - Math.abs(var62);
-               var57 = Math.abs(var61) - Math.abs(var63);
-               var58 = this.method1920(var54 - var62, var10);
-               var59 = var55 - var63;
+               float floatValue9 = this.entry.floatValues[0];
+               float floatValue10 = this.entry.floatValues[1];
+               float f21 = floatValue9 - f13;
+               float f22 = floatValue10 - f14;
+               f17 = Math.abs(floatValue9) - Math.abs(f21);
+               f18 = Math.abs(floatValue10) - Math.abs(f22);
+               f19 = this.method1920(f15 - f21, x);
+               f20 = f16 - f22;
             }
 
-            this.floatValue9 = var52 != 0.0F ? this.floatValue9 + 1.0F : 0.0F;
-            this.floatValue10 = var53 != 0.0F ? this.floatValue10 + 1.0F : 0.0F;
-            int var73 = this.method1925(var52);
-            int var74 = this.method1925(var53);
-            this.floatValue13 = this.method1927(var52, var73, this.intValue, this.floatValue13);
-            this.floatValue14 = this.method1927(var53, var74, this.intValue2, this.floatValue14);
-            float var75 = this.method1928(var52, this.floatValue13);
-            float var76 = this.method1928(var53, this.floatValue14);
-            this.floatValue11 = this.method1926(var73, this.intValue, this.floatValue11);
-            this.floatValue12 = this.method1926(var74, this.intValue2, this.floatValue12);
-            if (var73 != 0) {
-               this.intValue = var73;
+            this.floatValue9 = f13 != 0.0F ? this.floatValue9 + 1.0F : 0.0F;
+            this.floatValue10 = f14 != 0.0F ? this.floatValue10 + 1.0F : 0.0F;
+            int intValue = this.method1925(f13);
+            int n = this.method1925(f14);
+            this.floatValue13 = this.method1927(f13, intValue, this.intValue, this.floatValue13);
+            this.floatValue14 = this.method1927(f14, n, this.intValue2, this.floatValue14);
+            float f21 = this.method1928(f13, this.floatValue13);
+            float f22 = this.method1928(f14, this.floatValue14);
+            this.floatValue11 = this.method1926(intValue, this.intValue, this.floatValue11);
+            this.floatValue12 = this.method1926(n, this.intValue2, this.floatValue12);
+            if (intValue != 0) {
+               this.intValue = intValue;
             }
 
-            if (var74 != 0) {
-               this.intValue2 = var74;
+            if (n != 0) {
+               this.intValue2 = n;
             }
 
-            if (var35) {
+            if (flag3) {
                this.floatValue7 = Mth.clamp(this.flag ? this.floatValue7 + 1.0F : 1.0F, 0.0F, 176.0F);
                this.floatValue8 = 0.0F;
             } else {
@@ -167,74 +167,74 @@ public final class Class13 {
                this.floatValue8 = Mth.clamp(this.flag ? 1.0F : this.floatValue8 + 1.0F, 0.0F, 8.0F);
             }
 
-            float[] var64 = new float[]{
-               var54,
-               var55,
-               this.method1922(var20, var10),
-               this.method1922(var21, var10),
-               this.method1922(var22, var10),
-               this.method1922(var23, var10),
-               this.method1922(var65, var10),
-               this.method1922(var66, var10),
-               var48,
-               var49,
-               this.method1922(var50, var10),
-               (float)Math.sin(var51),
-               (float)Math.cos(var51),
-               var33,
-               var34,
-               var35 ? 1.0F : 0.0F,
-               var71,
-               var72,
-               var68,
+            float[] floats = new float[]{
+               f15,
+               f16,
+               this.method1922(y2, x),
+               this.method1922(y3, x),
+               this.method1922(y4, x),
+               this.method1922(y5, x),
+               this.method1922(y6, x),
+               this.method1922(y7, x),
+               f10,
+               f11,
+               this.method1922(hypot2, x),
+               (float)Math.sin(f12),
+               (float)Math.cos(f12),
+               f5,
+               f6,
+               flag3 ? 1.0F : 0.0F,
+               f4,
+               hypot,
+               f3,
                this.floatValue5,
                this.floatValue6,
                this.floatValue7,
                this.floatValue8,
-               this.method1922(var45, var10),
-               this.method1922(var46, var10),
-               var47,
-               var58,
-               var59,
-               this.method1922(var18, var10),
-               this.method1922(var19, var10),
-               (float)var8.x,
-               (float)var8.y,
-               (float)var8.z,
-               var52,
-               var53,
-               var52,
-               var53,
-               this.method1923(var38, var10),
-               this.method1923(var39, var10),
-               this.method1923(var40, var10),
-               this.method1923(var41, var10),
+               this.method1922(y9, x),
+               this.method1922(y10, x),
+               f9,
+               f19,
+               f20,
+               this.method1922(floatValue3, x),
+               this.method1922(x2, x),
+               (float)vec.x,
+               (float)vec.y,
+               (float)vec.z,
+               f13,
+               f14,
+               f13,
+               f14,
+               this.method1923(floatValue4, x),
+               this.method1923(floatValue5, x),
+               this.method1923(floatValue6, x),
+               this.method1923(floatValue7, x),
                this.floatValue9,
                this.floatValue10,
                this.floatValue11,
                this.floatValue12,
-               var56,
-               var57,
-               var75,
-               var76,
+               f17,
+               f18,
+               f21,
+               f22,
                this.floatValue13,
                this.floatValue14,
-               var1.player.input.keyPresses.forward() ? 1.0F : 0.0F,
-               var1.player.input.keyPresses.backward() ? 1.0F : 0.0F,
-               var1.player.input.keyPresses.left() ? 1.0F : 0.0F,
-               var1.player.input.keyPresses.right() ? 1.0F : 0.0F,
-               var1.player.input.keyPresses.jump() ? 1.0F : 0.0F,
-               (float)var9.x,
-               (float)var9.y,
-               (float)var9.z
+               minecraft.player.input.keyPresses.forward() ? 1.0F : 0.0F,
+               minecraft.player.input.keyPresses.backward() ? 1.0F : 0.0F,
+               minecraft.player.input.keyPresses.left() ? 1.0F : 0.0F,
+               minecraft.player.input.keyPresses.right() ? 1.0F : 0.0F,
+               minecraft.player.input.keyPresses.jump() ? 1.0F : 0.0F,
+               (float)vec2.x,
+               (float)vec2.y,
+               (float)vec2.z
             };
-            if (var64.length == 59 && this.method1929(var64)) {
-               this.floatValue = var6;
-               this.floatValue2 = var7;
-               this.floatValue3 = var38;
-               this.floatValue4 = var39;
-               this.flag = var35;
-               return var64;
+            if (floats.length == 59 && this.method1929(floats)) {
+               this.floatValue = floatValue;
+               this.floatValue2 = f;
+               this.floatValue3 = floatValue4;
+               this.floatValue4 = floatValue5;
+               this.flag = flag3;
+               return floats;
             } else {
                return null;
             }
@@ -267,141 +267,141 @@ public final class Class13 {
       this.entry = null;
    }
 
-   private Vec3 method1913(Minecraft var1, Rotation var2, Vec3 var3) {
-      Vec3 var4 = var1.player.position();
-      Vec3 var5 = var3.subtract(var4);
+   private Vec3 method1913(Minecraft minecraft, Rotation rotation, Vec3 eyePosition) {
+      Vec3 position = minecraft.player.position();
+      Vec3 vec = eyePosition.subtract(position);
 
       try {
-         PlayerSimulation var6 = PlayerSimulation.method6033(PlayerSimulation.Entry.method6092(var1.player.input.keyPresses));
-         var6.floatValue = var2.getFloatValue();
-         var6.floatValue2 = var2.getFloatValue2();
-         var6.tick();
-         var6.tick();
-         Vec3 var7 = var6.vec3d.add(var5);
-         return this.method1930(var7) ? var7 : var3;
-      } catch (Throwable var8) {
-         return var3;
+         PlayerSimulation playerSimulation = PlayerSimulation.method6033(PlayerSimulation.Entry.method6092(minecraft.player.input.keyPresses));
+         playerSimulation.floatValue = rotation.getFloatValue();
+         playerSimulation.floatValue2 = rotation.getFloatValue2();
+         playerSimulation.tick();
+         playerSimulation.tick();
+         Vec3 deltaMovement = playerSimulation.vec3d.add(vec);
+         return this.method1930(deltaMovement) ? deltaMovement : eyePosition;
+      } catch (Throwable e) {
+         return eyePosition;
       }
    }
 
-   private AABB method1914(LivingEntity var1, AABB var2, Vec3 var3) {
-      if (var1 instanceof Player var4) {
+   private AABB method1914(LivingEntity livingEntity, AABB boundingBox, Vec3 vec) {
+      if (livingEntity instanceof Player player) {
          try {
-            PlayerSimulation var5 = PlayerSimulation.method6034(var4, PlayerSimulation.Entry.method6093(var4));
-            var5.tick();
-            var5.tick();
-            if (var5.box != null && this.method1930(var5.vec3d)) {
-               return var5.box;
+            PlayerSimulation playerSimulation = PlayerSimulation.method6034(player, PlayerSimulation.Entry.method6093(player));
+            playerSimulation.tick();
+            playerSimulation.tick();
+            if (playerSimulation.box != null && this.method1930(playerSimulation.vec3d)) {
+               return playerSimulation.box;
             }
-         } catch (Throwable var6) {
+         } catch (Throwable e) {
          }
       }
 
-      Vec3 var7 = var3 == null ? Vec3.ZERO : var3.scale(2.0);
-      return this.method1930(var7) ? var2.move(var7) : var2;
+      Vec3 deltaMovement = vec == null ? Vec3.ZERO : vec.scale(2.0);
+      return this.method1930(deltaMovement) ? boundingBox.move(deltaMovement) : boundingBox;
    }
 
-   private Vec3 method1915(Minecraft var1, Vec3 var2) {
+   private Vec3 method1915(Minecraft minecraft, Vec3 position) {
       if (this.entry != null) {
-         Vec3 var3 = var2.subtract(this.entry.vec3d);
-         if (this.method1930(var3) && var3.lengthSqr() > 1.0E-10) {
-            return var3;
+         Vec3 deltaMovement = position.subtract(this.entry.vec3d);
+         if (this.method1930(deltaMovement) && deltaMovement.lengthSqr() > 1.0E-10) {
+            return deltaMovement;
          }
       }
 
-      Vec3 var4 = var1.player.getDeltaMovement();
-      return this.method1930(var4) ? var4 : Vec3.ZERO;
+      Vec3 deltaMovement = minecraft.player.getDeltaMovement();
+      return this.method1930(deltaMovement) ? deltaMovement : Vec3.ZERO;
    }
 
-   private Vec3 method1916(LivingEntity var1, AABB var2) {
+   private Vec3 method1916(LivingEntity livingEntity, AABB boundingBox) {
       if (this.entry != null && this.entry.box != null) {
-         Vec3 var3 = this.method1918(var2).subtract(this.method1918(this.entry.box));
-         if (this.method1930(var3) && var3.lengthSqr() > 1.0E-10) {
-            return var3;
+         Vec3 deltaMovement = this.method1918(boundingBox).subtract(this.method1918(this.entry.box));
+         if (this.method1930(deltaMovement) && deltaMovement.lengthSqr() > 1.0E-10) {
+            return deltaMovement;
          }
       }
 
-      Vec3 var4 = var1.getDeltaMovement();
-      return this.method1930(var4) ? var4 : Vec3.ZERO;
+      Vec3 deltaMovement = livingEntity.getDeltaMovement();
+      return this.method1930(deltaMovement) ? deltaMovement : Vec3.ZERO;
    }
 
-   private Rotation method1917(Vec3 var1, Vec3 var2) {
-      return RotationUtils.method6912(var2.subtract(var1));
+   private Rotation method1917(Vec3 eyePosition, Vec3 vec) {
+      return RotationUtils.method6912(vec.subtract(eyePosition));
    }
 
-   private Vec3 method1918(AABB var1) {
-      return new Vec3((var1.minX + var1.maxX) * 0.5, (var1.minY + var1.maxY) * 0.5, (var1.minZ + var1.maxZ) * 0.5);
+   private Vec3 method1918(AABB boundingBox) {
+      return new Vec3((boundingBox.minX + boundingBox.maxX) * 0.5, (boundingBox.minY + boundingBox.maxY) * 0.5, (boundingBox.minZ + boundingBox.maxZ) * 0.5);
    }
 
-   private Vec3[] method1919(AABB var1) {
+   private Vec3[] method1919(AABB boundingBox) {
       return new Vec3[]{
-         new Vec3(var1.minX, var1.minY, var1.minZ),
-         new Vec3(var1.minX, var1.minY, var1.maxZ),
-         new Vec3(var1.minX, var1.maxY, var1.minZ),
-         new Vec3(var1.minX, var1.maxY, var1.maxZ),
-         new Vec3(var1.maxX, var1.minY, var1.minZ),
-         new Vec3(var1.maxX, var1.minY, var1.maxZ),
-         new Vec3(var1.maxX, var1.maxY, var1.minZ),
-         new Vec3(var1.maxX, var1.maxY, var1.maxZ)
+         new Vec3(boundingBox.minX, boundingBox.minY, boundingBox.minZ),
+         new Vec3(boundingBox.minX, boundingBox.minY, boundingBox.maxZ),
+         new Vec3(boundingBox.minX, boundingBox.maxY, boundingBox.minZ),
+         new Vec3(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ),
+         new Vec3(boundingBox.maxX, boundingBox.minY, boundingBox.minZ),
+         new Vec3(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ),
+         new Vec3(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ),
+         new Vec3(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ)
       };
    }
 
-   private float method1920(float var1, float var2) {
-      float var3 = 360.0F / var2;
-      float var4 = var1 % var3;
-      if (var4 >= var3 * 0.5F) {
-         var4 -= var3;
-      } else if (var4 < -var3 * 0.5F) {
-         var4 += var3;
+   private float method1920(float f, float x) {
+      float f2 = 360.0F / x;
+      float f3 = f % f2;
+      if (f3 >= f2 * 0.5F) {
+         f3 -= f2;
+      } else if (f3 < -f2 * 0.5F) {
+         f3 += f2;
       }
 
-      return var4;
+      return f3;
    }
 
-   private float method1921(float var1, float var2) {
-      float var3 = var1 - var2;
-      return !Float.isFinite(var3) ? var1 : var2 + Mth.wrapDegrees(var3);
+   private float method1921(float f, float f2) {
+      float angle = f - f2;
+      return !Float.isFinite(angle) ? f : f2 + Mth.wrapDegrees(angle);
    }
 
-   private float method1922(float var1, float var2) {
-      return var1 / var2;
+   private float method1922(float y, float x) {
+      return y / x;
    }
 
-   private float method1923(float var1, float var2) {
-      return Math.round(var1 / var2);
+   private float method1923(float floatValue, float x) {
+      return Math.round(floatValue / x);
    }
 
-   private float method1924(float var1, float var2) {
-      return var1 * var2;
+   private float method1924(float floatValue, float f) {
+      return floatValue * f;
    }
 
-   private float hypot(float var1, float var2) {
-      return (float)Math.sqrt(var1 * var1 + var2 * var2);
+   private float hypot(float f, float y) {
+      return (float)Math.sqrt(f * f + y * y);
    }
 
-   private int method1925(float var1) {
-      return var1 > 0.0F ? 1 : (var1 < 0.0F ? -1 : 0);
+   private int method1925(float f) {
+      return f > 0.0F ? 1 : (f < 0.0F ? -1 : 0);
    }
 
-   private float method1926(int var1, int var2, float var3) {
-      return var1 != 0 && var2 != 0 && var1 != var2 ? 0.0F : var3 + 1.0F;
+   private float method1926(int intValue, int n, float f) {
+      return intValue != 0 && n != 0 && intValue != n ? 0.0F : f + 1.0F;
    }
 
-   private float method1927(float var1, int var2, int var3, float var4) {
-      if (var2 == 0) {
+   private float method1927(float f, int intValue, int n, float f2) {
+      if (intValue == 0) {
          return 0.0F;
       } else {
-         return var3 != 0 && var2 == var3 ? Math.max(var4, Math.abs(var1)) : Math.abs(var1);
+         return n != 0 && intValue == n ? Math.max(f2, Math.abs(f)) : Math.abs(f);
       }
    }
 
-   private float method1928(float var1, float var2) {
-      return var2 > 0.0F ? Math.abs(var1) / var2 : 0.0F;
+   private float method1928(float f, float f2) {
+      return f2 > 0.0F ? Math.abs(f) / f2 : 0.0F;
    }
 
-   private boolean method1929(float[] var1) {
-      for (float var5 : var1) {
-         if (!this.isFinite(var5)) {
+   private boolean method1929(float[] floats) {
+      for (float x : floats) {
+         if (!this.isFinite(x)) {
             return false;
          }
       }
@@ -409,12 +409,12 @@ public final class Class13 {
       return true;
    }
 
-   private boolean isFinite(float var1) {
-      return Float.isFinite(var1);
+   private boolean isFinite(float x) {
+      return Float.isFinite(x);
    }
 
-   private boolean method1930(Vec3 var1) {
-      return var1 != null && Double.isFinite(var1.x) && Double.isFinite(var1.y) && Double.isFinite(var1.z);
+   private boolean method1930(Vec3 deltaMovement) {
+      return deltaMovement != null && Double.isFinite(deltaMovement.x) && Double.isFinite(deltaMovement.y) && Double.isFinite(deltaMovement.z);
    }
 
    private static final class Entry {
@@ -423,11 +423,11 @@ public final class Class13 {
       private final AABB box;
       private final float floatValue;
 
-      private Entry(float[] var1, Vec3 var2, AABB var3, float var4) {
-         this.floatValues = (float[])var1.clone();
-         this.vec3d = var2;
-         this.box = var3;
-         this.floatValue = var4;
+      private Entry(float[] floats, Vec3 vec3d, AABB box, float floatValue) {
+         this.floatValues = (float[])floats.clone();
+         this.vec3d = vec3d;
+         this.box = box;
+         this.floatValue = floatValue;
       }
    }
 }

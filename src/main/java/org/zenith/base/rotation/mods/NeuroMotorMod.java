@@ -36,26 +36,26 @@ public final class NeuroMotorMod extends Util22 {
       if (flag) {
          return motorNet;
       } else {
-         MotorNet var0 = null;
+         MotorNet motorNet2 = null;
 
-         try (InputStream var1 = method3877()) {
-            var0 = MotorNet.method3616(var1);
-            status = "NeuroMotor загружен. " + var0.text2;
-         } catch (Exception var11) {
-            var0 = null;
-            status = "NeuroMotor НЕ загружен: " + var11.getMessage();
+         try (InputStream inputStream = method3877()) {
+            motorNet2 = MotorNet.method3616(inputStream);
+            status = "NeuroMotor загружен. " + motorNet2.text2;
+         } catch (Exception e) {
+            motorNet2 = null;
+            status = "NeuroMotor НЕ загружен: " + e.getMessage();
          } finally {
-            motorNet = var0;
+            motorNet = motorNet2;
             flag = true;
          }
 
          System.out.println(status);
          if (mc != null && mc.player != null) {
-            String var13 = status;
-            mc.execute(() -> ChatLogger.method2019(var13));
+            String str = status;
+            mc.execute(() -> ChatLogger.method2019(str));
          }
 
-         return var0;
+         return motorNet2;
       }
    }
 
@@ -76,17 +76,17 @@ public final class NeuroMotorMod extends Util22 {
    }
 
    private static InputStream method3877() throws IOException {
-      for (Path var1 : items) {
-         if (Files.isRegularFile(var1)) {
-            return Files.newInputStream(var1);
+      for (Path path : items) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var2 = NeuroMotorMod.class.getClassLoader().getResourceAsStream("models/motor_v10.json");
-      if (var2 == null) {
+      InputStream resourceAsStream = NeuroMotorMod.class.getClassLoader().getResourceAsStream("models/motor_v10.json");
+      if (resourceAsStream == null) {
          throw new IOException("motor_v10.json не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var2;
+         return resourceAsStream;
       }
    }
 
@@ -108,85 +108,85 @@ public final class NeuroMotorMod extends Util22 {
    }
 
    private static double method3879() {
-      double var0 = mc.options.sensitivity().get() * 0.6F + 0.2F;
-      return var0 * var0 * var0 * 8.0 * 0.15;
+      double d = mc.options.sensitivity().get() * 0.6F + 0.2F;
+      return d * d * d * 8.0 * 0.15;
    }
 
    public Rotation method3880() {
-      Rotation var1 = rotationManager.method7844();
+      Rotation rotation = rotationManager.method7844();
       if (!method3876()) {
          this.reset();
-         return var1;
+         return rotation;
       } else {
-         MotorNet var2 = motorNet;
-         if (var2 == null) {
+         MotorNet motorNet2 = motorNet;
+         if (motorNet2 == null) {
             this.reset();
-            return mc.player == null ? var1 : new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
+            return mc.player == null ? rotation : new Rotation(mc.player.getYRot(), mc.player.getXRot(), true);
          } else {
-            LivingEntity var3 = AuraModule.INSTANCE.method6358();
-            if (mc.player != null && var3 != null && var3.isAlive()) {
-               int var4 = mc.player.tickCount;
-               if (var4 == this.intValue2 && this.rotation != null) {
+            LivingEntity livingEntity = AuraModule.INSTANCE.method6358();
+            if (mc.player != null && livingEntity != null && livingEntity.isAlive()) {
+               int tickCount = mc.player.tickCount;
+               if (tickCount == this.intValue2 && this.rotation != null) {
                   return this.rotation;
                } else {
-                  if (this.intValue != Integer.MIN_VALUE && var4 != this.intValue + 1) {
+                  if (this.intValue != Integer.MIN_VALUE && tickCount != this.intValue + 1) {
                      this.reset();
                   }
 
-                  this.intValue = var4;
+                  this.intValue = tickCount;
                   if (this.doubleValues == null) {
-                     this.doubleValues = new double[var2.intValue][2];
+                     this.doubleValues = new double[motorNet2.intValue][2];
                   }
 
-                  AABB var5 = var3.getBoundingBox();
-                  Vec3 var6 = mc.player.getEyePosition();
-                  Input var7 = mc.player.input.keyPresses;
-                  double[] var8 = new double[]{
-                     var7.forward() ? 1.0 : 0.0, var7.backward() ? 1.0 : 0.0, var7.left() ? 1.0 : 0.0, var7.right() ? 1.0 : 0.0, var7.jump() ? 1.0 : 0.0
+                  AABB boundingBox = livingEntity.getBoundingBox();
+                  Vec3 eyePosition = mc.player.getEyePosition();
+                  Input keyPresses = mc.player.input.keyPresses;
+                  double[] doubles = new double[]{
+                     keyPresses.forward() ? 1.0 : 0.0, keyPresses.backward() ? 1.0 : 0.0, keyPresses.left() ? 1.0 : 0.0, keyPresses.right() ? 1.0 : 0.0, keyPresses.jump() ? 1.0 : 0.0
                   };
-                  double[] var9 = MotorNet.method3612(
-                     var1.getFloatValue(),
-                     var1.getFloatValue2(),
-                     new double[]{var6.x, var6.y, var6.z},
-                     new double[]{var5.minX, var5.minY, var5.minZ, var5.maxX, var5.maxY, var5.maxZ},
-                     var8,
+                  double[] original = MotorNet.method3612(
+                     rotation.getFloatValue(),
+                     rotation.getFloatValue2(),
+                     new double[]{eyePosition.x, eyePosition.y, eyePosition.z},
+                     new double[]{boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ},
+                     doubles,
                      mc.player.onGround() ? 1.0 : 0.0,
                      mc.player.isSprinting() ? 1.0 : 0.0,
                      mc.player.getAttackStrengthScale(0.0F)
                   );
-                  Vec3 var10 = mc.player.getDeltaMovement();
-                  var9 = var2.method3613(var9, var1.getFloatValue(), new double[]{var10.x, var10.y, var10.z});
-                  double[] var11 = new double[var2.intValue8];
+                  Vec3 deltaMovement = mc.player.getDeltaMovement();
+                  original = motorNet2.method3613(original, rotation.getFloatValue(), new double[]{deltaMovement.x, deltaMovement.y, deltaMovement.z});
+                  double[] doubles2 = new double[motorNet2.intValue8];
 
-                  for (int var12 = 0; var12 < var11.length; var12++) {
-                     var11[var12] = this.random.nextDouble();
+                  for (int i = 0; i < doubles2.length; i++) {
+                     doubles2[i] = this.random.nextDouble();
                   }
 
-                  MotorNet.Entry var21 = var2.method3611(this.doubleValues, var9, this.doubleValues2, var11);
-                  double var13 = method3879();
-                  double var15 = var21.doubleValue * var13;
-                  double var17 = var21.doubleValue2 * var13;
+                  MotorNet.Entry entry = motorNet2.method3611(this.doubleValues, original, this.doubleValues2, doubles2);
+                  double d = method3879();
+                  double floatValue = entry.doubleValue * d;
+                  double random = entry.doubleValue2 * d;
 
-                  for (int var19 = 0; var19 + 1 < this.doubleValues.length; var19++) {
-                     this.doubleValues[var19] = this.doubleValues[var19 + 1];
+                  for (int i = 0; i + 1 < this.doubleValues.length; i++) {
+                     this.doubleValues[i] = this.doubleValues[i + 1];
                   }
 
-                  this.doubleValues[this.doubleValues.length - 1] = new double[]{var15, var17};
-                  this.doubleValues2[0] = var21.doubleValue;
-                  this.doubleValues2[1] = var21.doubleValue2;
-                  Rotation var22 = var1.method3140((float)var15, (float)var17);
-                  this.intValue2 = var4;
-                  this.rotation = var22;
-                  return var22;
+                  this.doubleValues[this.doubleValues.length - 1] = new double[]{floatValue, random};
+                  this.doubleValues2[0] = entry.doubleValue;
+                  this.doubleValues2[1] = entry.doubleValue2;
+                  Rotation rotation2 = rotation.method3140((float)floatValue, (float)random);
+                  this.intValue2 = tickCount;
+                  this.rotation = rotation2;
+                  return rotation2;
                }
             } else {
                this.reset();
                if (mc.player != null) {
-                  mc.player.setYRot(var1.getFloatValue());
-                  mc.player.setXRot(var1.getFloatValue2());
+                  mc.player.setYRot(rotation.getFloatValue());
+                  mc.player.setXRot(rotation.getFloatValue2());
                }
 
-               return var1;
+               return rotation;
             }
          }
       }

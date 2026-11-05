@@ -78,7 +78,7 @@ public final class TrapTpModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player == null || mc.level == null) {
          this.queue.clear();
          this.disableSelf();
@@ -92,27 +92,27 @@ public final class TrapTpModule extends Module {
    }
 
    @EventTarget
-   public void method1519(WorldRenderEvent var1) {
+   public void method1519(WorldRenderEvent event) {
       if (this.vec3d != null && mc.player != null) {
-         int var2 = Zenith.getInstance().getStyleManager().getClientColor(90).method7287();
-         this.method1526(var1.getMatrixStack(), this.method1523(), var2);
+         int color = Zenith.getInstance().getStyleManager().getClientColor(90).method7287();
+         this.method1526(event.getMatrixStack(), this.method1523(), color);
       }
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && var1.getPacket3() != null) {
-         if (var1.getPacket3() instanceof ClientboundDisconnectPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && event.getPacket3() != null) {
+         if (event.getPacket3() instanceof ClientboundDisconnectPacket) {
             mc.execute(() -> this.method1520(false));
-         } else if (var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+         } else if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> this.method1520(true));
          }
       }
    }
 
-   private void method1520(boolean var1) {
+   private void method1520(boolean flag) {
       if (this.isEnabled()) {
-         if (var1) {
+         if (flag) {
             this.queue.removeIf(BlinkUtils::method1444);
          } else {
             this.queue.clear();
@@ -123,11 +123,11 @@ public final class TrapTpModule extends Module {
    }
 
    @EventTarget(0)
-   public void method1521(OutgoingPacketEvent var1) {
-      if (!var1.isCancelled() && !this.flag && !BlinkModule.INSTANCE.method6732() && var1.getPacket4() != null) {
+   public void method1521(OutgoingPacketEvent event) {
+      if (!event.isCancelled() && !this.flag && !BlinkModule.INSTANCE.method6732() && event.getPacket4() != null) {
          if (mc.player != null && mc.level != null) {
-            var1.cancel();
-            this.queue.add(var1.getPacket4());
+            event.cancel();
+            this.queue.add(event.getPacket4());
          } else {
             this.queue.clear();
          }
@@ -148,10 +148,10 @@ public final class TrapTpModule extends Module {
 
    private boolean method1524() {
       if (mc.player != null && this.vec3d != null) {
-         double var1 = mc.player.getX() - this.vec3d.x;
-         double var3 = mc.player.getZ() - this.vec3d.z;
-         double var5 = this.method1523() + 1.0;
-         return var1 * var1 + var3 * var3 > var5 * var5;
+         double d = mc.player.getX() - this.vec3d.x;
+         double d2 = mc.player.getZ() - this.vec3d.z;
+         double d3 = this.method1523() + 1.0;
+         return d * d + d2 * d2 > d3 * d3;
       } else {
          return true;
       }
@@ -163,15 +163,15 @@ public final class TrapTpModule extends Module {
       if (!this.queue.isEmpty() && mc.getConnection() != null) {
          this.flag = true;
 
-         Packet var1;
+         Packet packet;
          try {
-            while ((var1 = this.queue.poll()) != null) {
-               mc.getConnection().send(var1);
+            while ((packet = this.queue.poll()) != null) {
+               mc.getConnection().send(packet);
             }
-         } catch (Throwable var4) {
+         } catch (Throwable e) {
             this.flag = false;
             this.queue.clear();
-            throw var4;
+            throw e;
          }
 
          this.flag = false;
@@ -182,9 +182,9 @@ public final class TrapTpModule extends Module {
       }
    }
 
-   private void method1526(PoseStack var1, double var2, int var4) {
-      Vec3 var5 = this.vec3d.add(0.0, 0.02, 0.0);
-      Vec3 var6 = var5.subtract(mc.getEntityRenderDispatcher().camera.position());
+   private void method1526(PoseStack matrixStack, double floatValue, int color) {
+      Vec3 vec = this.vec3d.add(0.0, 0.02, 0.0);
+      Vec3 vec2 = vec.subtract(mc.getEntityRenderDispatcher().camera.position());
       GL11.glEnable(2881);
       RenderState.method1871();
       RenderState.method1878();
@@ -192,28 +192,28 @@ public final class TrapTpModule extends Module {
       RenderState.method1877();
       RenderState.method1874(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_CONSTANT_ALPHA);
       RenderState.method1898("core/position_color");
-      BufferBuilder var7 = Tesselator.getInstance().begin(PrimitiveTopology.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-      int var8 = 0;
+      BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+      int n = 0;
 
-      for (byte var9 = 90; var8 <= var9; var8++) {
-         Vec3 var10 = MathUtils.method2653(var8, var9, var2);
-         Vec3 var11 = MathUtils.method2653(var8 + 1, var9, var2);
+      for (byte i = 90; n <= i; n++) {
+         Vec3 vec3 = MathUtils.method2653(n, i, floatValue);
+         Vec3 vec4 = MathUtils.method2653(n + 1, i, floatValue);
          GlowUtil.method2235(
-            var1, var7, var6.add(var10), var6.add(var10.x, var10.y + 2.0, var10.z), ColorUtils.method6439(var4, 0.2F), ColorUtils.method6439(var4, 0.0F)
+            matrixStack, begin, vec2.add(vec3), vec2.add(vec3.x, vec3.y + 2.0, vec3.z), ColorUtils.method6439(color, 0.2F), ColorUtils.method6439(color, 0.0F)
          );
-         GlowUtil.method2245(var5.add(var10), var5.add(var11), var4, 2.0F, true);
+         GlowUtil.method2245(vec.add(vec3), vec.add(vec4), color, 2.0F, true);
       }
 
-      var8 = 0;
+      n = 0;
 
-      for (byte var13 = 90; var8 <= var13; var8++) {
-         Vec3 var14 = MathUtils.method2653(var8, var13, var2);
+      for (byte i = 90; n <= i; n++) {
+         Vec3 vec3 = MathUtils.method2653(n, i, floatValue);
          GlowUtil.method2235(
-            var1, var7, var6.add(var14), var6.add(var14.x, var14.y - 2.0, var14.z), ColorUtils.method6439(var4, 0.2F), ColorUtils.method6439(var4, 0.0F)
+            matrixStack, begin, vec2.add(vec3), vec2.add(vec3.x, vec3.y - 2.0, vec3.z), ColorUtils.method6439(color, 0.2F), ColorUtils.method6439(color, 0.0F)
          );
       }
 
-      ImmediateRenderer.method8015(var7.buildOrThrow());
+      ImmediateRenderer.method8015(begin.buildOrThrow());
       RenderState.method1876();
       RenderState.method1879();
       RenderState.method1882(true);

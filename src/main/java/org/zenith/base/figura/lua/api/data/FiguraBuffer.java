@@ -246,38 +246,38 @@ public class FiguraBuffer implements AutoCloseable {
    public String readString(Integer length, String encoding) {
       this.checkIsClosed();
       length = length == null ? this.available() : Math.max(length, 0);
-      Charset var10000;
+      Charset charset2;
       if (encoding == null) {
-         var10000 = StandardCharsets.UTF_8;
+         charset2 = StandardCharsets.UTF_8;
       } else {
          String charset = encoding.toLowerCase(Locale.US);
          switch (charset) {
             case "utf_16":
             case "utf16":
-               var10000 = StandardCharsets.UTF_16;
+               charset2 = StandardCharsets.UTF_16;
                break;
             case "utf_16be":
             case "utf16be":
-               var10000 = StandardCharsets.UTF_16BE;
+               charset2 = StandardCharsets.UTF_16BE;
                break;
             case "utf_16le":
             case "utf16le":
-               var10000 = StandardCharsets.UTF_16LE;
+               charset2 = StandardCharsets.UTF_16LE;
                break;
             case "ascii":
-               var10000 = StandardCharsets.US_ASCII;
+               charset2 = StandardCharsets.US_ASCII;
                break;
             case "iso_8859_1":
             case "iso88591":
-               var10000 = StandardCharsets.ISO_8859_1;
+               charset2 = StandardCharsets.ISO_8859_1;
                break;
             default:
-               var10000 = StandardCharsets.UTF_8;
+               charset2 = StandardCharsets.UTF_8;
          }
       }
 
       byte[] strBuf = this.readNBytes(length);
-      return new String(strBuf, var10000);
+      return new String(strBuf, charset2);
    }
 
    @LuaWhitelist
@@ -465,37 +465,37 @@ public class FiguraBuffer implements AutoCloseable {
    )
    public int writeString(@LuaNotNil String val, String encoding) {
       this.checkIsClosed();
-      Charset var10000;
+      Charset charset2;
       if (encoding == null) {
-         var10000 = StandardCharsets.UTF_8;
+         charset2 = StandardCharsets.UTF_8;
       } else {
          String charset = encoding.toLowerCase(Locale.US);
          switch (charset) {
             case "utf_16":
             case "utf16":
-               var10000 = StandardCharsets.UTF_16;
+               charset2 = StandardCharsets.UTF_16;
                break;
             case "utf_16be":
             case "utf16be":
-               var10000 = StandardCharsets.UTF_16BE;
+               charset2 = StandardCharsets.UTF_16BE;
                break;
             case "utf_16le":
             case "utf16le":
-               var10000 = StandardCharsets.UTF_16LE;
+               charset2 = StandardCharsets.UTF_16LE;
                break;
             case "ascii":
-               var10000 = StandardCharsets.US_ASCII;
+               charset2 = StandardCharsets.US_ASCII;
                break;
             case "iso_8859_1":
             case "iso88591":
-               var10000 = StandardCharsets.ISO_8859_1;
+               charset2 = StandardCharsets.ISO_8859_1;
                break;
             default:
-               var10000 = StandardCharsets.UTF_8;
+               charset2 = StandardCharsets.UTF_8;
          }
       }
 
-      byte[] strBytes = val.getBytes(var10000);
+      byte[] strBytes = val.getBytes(charset2);
       this.writeBytes(strBytes);
       return strBytes.length;
    }

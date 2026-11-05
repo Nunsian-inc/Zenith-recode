@@ -2,5 +2,5 @@ package org.zenith.utility.misc;
 
 @FunctionalInterface
 public interface ColorProvider {
-   int color(int var1);
+   int color(int n);
 }

@@ -12,7 +12,7 @@ public abstract class MixinScriptWorldTime {
       method = {"totalTicks()J"},
       at = {@At("RETURN")}
    )
-   private long zenith$scriptTime(long var1) {
-      return !ModuleHookDefinitions.class1212.active() ? var1 : (long)ModuleHookDefinitions.method6118(ModuleHookDefinitions.class1212, var1);
+   private long zenith$scriptTime(long returnValue) {
+      return !ModuleHookDefinitions.class1212.active() ? returnValue : (long)ModuleHookDefinitions.method6118(ModuleHookDefinitions.class1212, returnValue);
    }
 }

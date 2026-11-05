@@ -159,26 +159,26 @@ public class AutoWardenModule extends Module {
    }
 
    public List<Integer> method3950() {
-      String var1 = method3952(this.homeAnarchy);
-      String var2 = method3952(this.wardenAnarchies);
-      String var3 = var1 + "|" + var2;
-      if (this.text != null && this.text.equals(var3)) {
+      String str = method3952(this.homeAnarchy);
+      String str2 = method3952(this.wardenAnarchies);
+      String text = str + "|" + str2;
+      if (this.text != null && this.text.equals(text)) {
          return this.items;
       } else {
-         this.text = var3;
+         this.text = text;
          this.items.clear();
-         int var4;
-         if ((var4 = method3953(var1)) > 0) {
-            this.items.add(var4);
+         int n;
+         if ((n = method3953(str)) > 0) {
+            this.items.add(n);
          }
 
-         for (int var6 : method3954(var2)) {
+         for (int n2 : method3954(str2)) {
             if (this.items.size() >= 10) {
                break;
             }
 
-            if (!this.items.contains(var6)) {
-               this.items.add(var6);
+            if (!this.items.contains(n2)) {
+               this.items.add(n2);
             }
          }
 
@@ -187,43 +187,43 @@ public class AutoWardenModule extends Module {
    }
 
    public void method3951() {
-      String var1 = this.items.isEmpty() ? "" : String.valueOf(this.items.getFirst());
-      String var2 = this.items.stream().skip(1L).map(String::valueOf).collect(Collectors.joining(", "));
-      this.homeAnarchy.setValue(var1);
-      this.wardenAnarchies.setValue(var2);
-      this.text = var1 + "|" + var2;
+      String string = this.items.isEmpty() ? "" : String.valueOf(this.items.getFirst());
+      String str = this.items.stream().skip(1L).map(String::valueOf).collect(Collectors.joining(", "));
+      this.homeAnarchy.setValue(string);
+      this.wardenAnarchies.setValue(str);
+      this.text = string + "|" + str;
    }
 
-   private static String method3952(TextSetting var0) {
-      return var0.getValue() == null ? "" : var0.getValue();
+   private static String method3952(TextSetting homeAnarchy) {
+      return homeAnarchy.getValue() == null ? "" : homeAnarchy.getValue();
    }
 
-   private static int method3953(String var0) {
-      var var1 = method3954(var0).iterator();
-      return var1.hasNext() ? (Integer)var1.next() : -1;
+   private static int method3953(String str) {
+      var iterator = method3954(str).iterator();
+      return iterator.hasNext() ? (Integer)iterator.next() : -1;
    }
 
-   private static List<Integer> method3954(String var0) {
-      ArrayList<Integer> var1 = new ArrayList<>();
+   private static List<Integer> method3954(String str) {
+      ArrayList<Integer> integers = new ArrayList<>();
 
-      for (String var5 : var0.split("[^0-9]+")) {
-         if (!var5.isEmpty() && var5.length() <= 3) {
+      for (String str2 : str.split("[^0-9]+")) {
+         if (!str2.isEmpty() && str2.length() <= 3) {
             try {
-               int var6;
-               if ((var6 = Integer.parseInt(var5)) >= 1 && var6 <= 999 && !var1.contains(var6)) {
-                  var1.add(var6);
+               int n;
+               if ((n = Integer.parseInt(str2)) >= 1 && n <= 999 && !integers.contains(n)) {
+                  integers.add(n);
                }
-            } catch (NumberFormatException var7) {
+            } catch (NumberFormatException e) {
             }
          }
       }
 
-      return var1;
+      return integers;
    }
 
    private int method3955() {
-      var var1 = this.method3950();
-      return (var1.isEmpty()) ? -1 : (Integer)var1.getFirst();
+      var integers = this.method3950();
+      return (integers.isEmpty()) ? -1 : (Integer)integers.getFirst();
    }
 
    private boolean method3956() {
@@ -235,18 +235,18 @@ public class AutoWardenModule extends Module {
       super.onEnable();
       if (this.isEnabledRaw()) {
          if (mc.player != null && mc.level != null) {
-            var var10000 = this.method3950();
-            if (var10000.isEmpty()) {
-               int var1;
-               if ((var1 = PvpDetector.method2724()) < 0) {
+            var integers = this.method3950();
+            if (integers.isEmpty()) {
+               int n;
+               if ((n = PvpDetector.method2724()) < 0) {
                   this.notify("Заполни «Анархия дома» в настройках модуля");
                   this.setToggled(false);
                   return;
                }
 
-               this.homeAnarchy.setValue(String.valueOf(var1));
+               this.homeAnarchy.setValue(String.valueOf(n));
                this.text = null;
-               this.notify("Анархия дома не задана — взял текущую: " + var1);
+               this.notify("Анархия дома не задана — взял текущую: " + n);
             }
 
             this.intValue2 = 1;
@@ -255,12 +255,12 @@ public class AutoWardenModule extends Module {
             this.items4.clear();
             PvpDetector.reset();
             this.notify("Shift + Пробел — быстрое выключение функции");
-            Settings var2 = BaritoneAPI.getSettings();
-            var2.avoidance.value = Boolean.TRUE;
-            var2.maxFallHeightNoWater.value = 256;
-            var2.blockFreeLook.value = Boolean.TRUE;
-            var2.randomLooking.value = 1.0;
-            var2.randomLooking113.value = 1.0;
+            Settings settings = BaritoneAPI.getSettings();
+            settings.avoidance.value = Boolean.TRUE;
+            settings.maxFallHeightNoWater.value = 256;
+            settings.blockFreeLook.value = Boolean.TRUE;
+            settings.randomLooking.value = 1.0;
+            settings.randomLooking113.value = 1.0;
             this.method3957(true);
          } else {
             this.setToggled(false);
@@ -271,11 +271,11 @@ public class AutoWardenModule extends Module {
    @Override
    public void onDisable() {
       super.onDisable();
-      Settings var1 = BaritoneAPI.getSettings();
-      var1.allowBreak.value = Boolean.FALSE;
-      var1.allowPlace.value = Boolean.FALSE;
-      var1.avoidance.value = Boolean.FALSE;
-      var1.maxFallHeightNoWater.value = 3;
+      Settings settings = BaritoneAPI.getSettings();
+      settings.allowBreak.value = Boolean.FALSE;
+      settings.allowPlace.value = Boolean.FALSE;
+      settings.avoidance.value = Boolean.FALSE;
+      settings.maxFallHeightNoWater.value = 3;
       this.method3957(false);
       this.method4032();
       this.method3977();
@@ -286,30 +286,30 @@ public class AutoWardenModule extends Module {
       this.intValue5 = -1;
    }
 
-   private void method3957(boolean var1) {
-      Settings var2 = BaritoneAPI.getSettings();
-      if (var2 != null) {
-         List var3 = (List)var2.blocksToAvoid.value;
+   private void method3957(boolean flag) {
+      Settings settings = BaritoneAPI.getSettings();
+      if (settings != null) {
+         List list = (List)settings.blocksToAvoid.value;
 
          try {
-            for (Block var5 : BuiltInRegistries.BLOCK) {
-               if (var5.defaultBlockState().is(BlockTags.CANDLES)) {
-                  if (var1) {
-                     if (!var3.contains(var5)) {
-                        var3.add(var5);
+            for (Block block : BuiltInRegistries.BLOCK) {
+               if (block.defaultBlockState().is(BlockTags.CANDLES)) {
+                  if (flag) {
+                     if (!list.contains(block)) {
+                        list.add(block);
                      }
                   } else {
-                     var3.remove(var5);
+                     list.remove(block);
                   }
                }
             }
-         } catch (IllegalStateException var6) {
+         } catch (IllegalStateException e) {
          }
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.gui.screen() instanceof DeathScreen && mc.player != null && mc.player.deathTime >= 5) {
          mc.player.respawn();
       }
@@ -330,11 +330,11 @@ public class AutoWardenModule extends Module {
          if (mc.options.keyShift.isDown() && mc.options.keyJump.isDown()) {
             this.setToggled(false);
          } else {
-            for (Warden var3 : mc.level.getEntitiesOfClass(Warden.class, mc.player.getBoundingBox().inflate(256.0), var0 -> true)) {
-               this.items4.put(var3.blockPosition(), mc.player.tickCount + 100);
+            for (Warden warden : mc.level.getEntitiesOfClass(Warden.class, mc.player.getBoundingBox().inflate(256.0), warden2 -> true)) {
+               this.items4.put(warden.blockPosition(), mc.player.tickCount + 100);
             }
 
-            this.items4.values().removeIf(var0 -> mc.player.tickCount > var0);
+            this.items4.values().removeIf(n -> mc.player.tickCount > n);
             if (!this.method4029()) {
                if (this.text3 != null) {
                   if (mc.player.tickCount >= 20 && mc.player.tickCount < 30) {
@@ -385,21 +385,21 @@ public class AutoWardenModule extends Module {
    }
 
    @EventTarget
-   public void onChatReceive(ChatReceiveEvent var1) {
-      if (mc.player != null && var1.getText() != null) {
-         String var2 = var1.getText().getString();
-         if (var2.contains("Помянем. Вы погибли")) {
+   public void onChatReceive(ChatReceiveEvent event) {
+      if (mc.player != null && event.getText() != null) {
+         String string = event.getText().getString();
+         if (string.contains("Помянем. Вы погибли")) {
             this.flag = true;
-            if (this.reportKillers.isEnabled() && var2.contains("Вас убил")) {
-               StringBuilder var3 = new StringBuilder();
+            if (this.reportKillers.isEnabled() && string.contains("Вас убил")) {
+               StringBuilder builder = new StringBuilder();
 
-               for (MobEffectInstance var5 : mc.player.getActiveEffects()) {
-                  var3.append(var5.getEffect().value().getDisplayName().getString()).append(", ");
+               for (MobEffectInstance activeEffect : mc.player.getActiveEffects()) {
+                  builder.append(activeEffect.getEffect().value().getDisplayName().getString()).append(", ");
                }
 
-               this.notify("Эффекты при смерти: " + (var3.isEmpty() ? "нет" : var3.toString().trim()));
+               this.notify("Эффекты при смерти: " + (builder.isEmpty() ? "нет" : builder.toString().trim()));
                if (!mc.player.hasEffect(MobEffects.GLOWING) && !this.method4001(2.0)) {
-                  this.text3 = var2.split("Вас убил ")[1].split(",")[0].trim();
+                  this.text3 = string.split("Вас убил ")[1].split(",")[0].trim();
                }
             }
          }
@@ -407,42 +407,42 @@ public class AutoWardenModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && mc.player != null) {
-         String var2 = null;
-         if (var1.getPacket3() instanceof ClientboundSoundPacket var3) {
-            var2 = this.method3958(var3.getSound());
-         } else if (var1.getPacket3() instanceof ClientboundSoundEntityPacket var4) {
-            var2 = this.method3958(var4.getSound());
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && mc.player != null) {
+         String str = null;
+         if (event.getPacket3() instanceof ClientboundSoundPacket clientboundSoundPacket) {
+            str = this.method3958(clientboundSoundPacket.getSound());
+         } else if (event.getPacket3() instanceof ClientboundSoundEntityPacket soundEntityPacket) {
+            str = this.method3958(soundEntityPacket.getSound());
          }
 
-         if (var2 != null) {
-            if (var2.contains("warden.roar") || var2.contains("warden.angry") || var2.contains("warden.sonic")) {
+         if (str != null) {
+            if (str.contains("warden.roar") || str.contains("warden.angry") || str.contains("warden.sonic")) {
                this.intValue3 = mc.player.tickCount + 100;
             }
          }
       }
    }
 
-   private String method3958(Holder<SoundEvent> var1) {
-      return var1 != null && !var1.unwrapKey().isEmpty() ? ((ResourceKey)var1.unwrapKey().get()).identifier().getPath() : null;
+   private String method3958(Holder<SoundEvent> sound) {
+      return sound != null && !sound.unwrapKey().isEmpty() ? ((ResourceKey)sound.unwrapKey().get()).identifier().getPath() : null;
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (mc.player != null) {
          if (!mc.player.onGround() && !mc.player.onClimbable()) {
-            var1.method3040(false);
+            event.method3040(false);
          }
 
          if (this.humanLook.isEnabled() && mc.player.onGround() && this.method3998() > 70.0F) {
-            var1.method3042(0.0F, 0.0F);
-            var1.method3039(false);
+            event.method3042(0.0F, 0.0F);
+            event.method3039(false);
          }
 
          if (this.method4034() && mc.player.getMainHandItem().isEmpty() && !this.method4001(3.0)) {
-            int var2 = mc.player.tickCount % 10 <= ThreadLocalRandom.current().nextFloat(3.0F, 8.0F) ? -1 : 1;
-            var1.method3042(var2, var2);
+            int n = mc.player.tickCount % 10 <= ThreadLocalRandom.current().nextFloat(3.0F, 8.0F) ? -1 : 1;
+            event.method3042(n, n);
          }
       }
    }
@@ -471,20 +471,20 @@ public class AutoWardenModule extends Module {
       this.items2.clear();
       this.items3.clear();
       if (mc.player.tickCount % 20 == 0) {
-         StringBuilder var1 = new StringBuilder("Собираем (возможно не хватает) -> ");
+         StringBuilder builder = new StringBuilder("Собираем (возможно не хватает) -> ");
          if (this.method4017() < 1) {
-            var1.append("зелье невидимости, ");
+            builder.append("зелье невидимости, ");
          }
 
          if (InventoryUtils.method920(Items.GOLDEN_CARROT) < 3) {
-            var1.append("золотая морковь, ");
+            builder.append("золотая морковь, ");
          }
 
          if (this.useSpeed.isEnabled() && this.method4015(this::method4025) < 0) {
-            var1.append("зелье скорости ");
+            builder.append("зелье скорости ");
          }
 
-         if (mc.player.tickCount % 200 == 0 && !var1.isEmpty() && !this.method4012()) {
+         if (mc.player.tickCount % 200 == 0 && !builder.isEmpty() && !this.method4012()) {
             mc.player.closeContainer();
          }
       }
@@ -501,20 +501,20 @@ public class AutoWardenModule extends Module {
                this.method3977();
             }
          } else {
-            var var1 = this.method3950();
-            if (var1.size() <= 1) {
+            var integers = this.method3950();
+            if (integers.size() <= 1) {
                if (mc.player.tickCount % 20 == 0) {
                   this.notify("Анархии Вардена не заданы — вписать через запятую в настройках функции");
                }
             } else {
-               if (this.intValue2 >= var1.size()) {
+               if (this.intValue2 >= integers.size()) {
                   this.intValue2 = 1;
                }
 
-               int var2 = (Integer)var1.get(this.intValue2);
-               if (PvpDetector.method2724() != var2) {
+               int n = (Integer)integers.get(this.intValue2);
+               if (PvpDetector.method2724() != n) {
                   if (mc.player.tickCount % 10 == 0 && mc.player.tickCount > 10) {
-                     mc.player.connection.sendCommand("an" + var2);
+                     mc.player.connection.sendCommand("an" + n);
                   }
                } else {
                   if (mc.player.tickCount > 5) {
@@ -527,22 +527,22 @@ public class AutoWardenModule extends Module {
    }
 
    private int method3962() {
-      MobEffectInstance var1 = mc.player.getEffect(MobEffects.INVISIBILITY);
-      return var1 == null ? 0 : var1.getDuration() / 20;
+      MobEffectInstance effect = mc.player.getEffect(MobEffects.INVISIBILITY);
+      return effect == null ? 0 : effect.getDuration() / 20;
    }
 
    private void method3963() {
-      MobEffectInstance var1 = mc.player.getEffect(MobEffects.INVISIBILITY);
-      boolean var2;
-      if (!(var2 = mc.player.hasEffect(MobEffects.GLOWING) || var1 != null && var1.getDuration() >= 400)
-         && var1 == null
+      MobEffectInstance effect = mc.player.getEffect(MobEffects.INVISIBILITY);
+      boolean flag;
+      if (!(flag = mc.player.hasEffect(MobEffects.GLOWING) || effect != null && effect.getDuration() >= 400)
+         && effect == null
          && this.method4017() < 1
          && mc.player.tickCount % 5 == 0
          && !PvpDetector.method2725()) {
          this.method4000("ухожу домой: невидимости нет и зелий в инвентаре нет");
          this.type = AutoWardenModule.Type.ESCAPE;
       } else {
-         if (!var2) {
+         if (!flag) {
             this.method4028(this::method4024);
          }
 
@@ -550,7 +550,7 @@ public class AutoWardenModule extends Module {
             if (mc.player.tickCount % 50 == 0) {
                mc.player.connection.sendCommand("home");
             }
-         } else if (var2) {
+         } else if (flag) {
             if ((this.useSpeed.isEnabled() && mc.player.getEffect(MobEffects.SPEED) == null ? this.method4015(this::method4025) : -1) < 0) {
                this.method3982();
             } else {
@@ -575,24 +575,24 @@ public class AutoWardenModule extends Module {
    }
 
    private boolean method3965() {
-      boolean var1 = this.method3968();
-      int var2 = this.method4016();
-      int var3;
-      int var4 = Math.max(var3 = this.method3966(), this.method3967(20));
-      int var5 = mc.player.getFoodData().getFoodLevel();
+      boolean flag = this.method3968();
+      int n = this.method4016();
+      int n2;
+      int n3 = Math.max(n2 = this.method3966(), this.method3967(20));
+      int foodLevel = mc.player.getFoodData().getFoodLevel();
       if (mc.player.tickCount > 100) {
-         String var6 = null;
-         if (var1) {
-            var6 = "варден агрится";
-         } else if (var2 > var4) {
-            var6 = "инвентарь полон: " + var2 + " > " + var4;
-         } else if (var5 < 8) {
-            var6 = "голод " + var5;
+         String str = null;
+         if (flag) {
+            str = "варден агрится";
+         } else if (n > n3) {
+            str = "инвентарь полон: " + n + " > " + n3;
+         } else if (foodLevel < 8) {
+            str = "голод " + foodLevel;
          }
 
-         if (var6 != null) {
-            this.method4000("ухожу: " + var6);
-            if (var1) {
+         if (str != null) {
+            this.method4000("ухожу: " + str);
+            if (flag) {
                this.flag = true;
             }
 
@@ -601,14 +601,14 @@ public class AutoWardenModule extends Module {
          }
       }
 
-      if (!PvpDetector.method2725() && var2 > var3) {
-         this.method4000("ухожу сдавать: " + var2 + " слотов > порога " + var3);
+      if (!PvpDetector.method2725() && n > n2) {
+         this.method4000("ухожу сдавать: " + n + " слотов > порога " + n2);
          this.type = AutoWardenModule.Type.ESCAPE;
          return true;
       } else {
-         int var7;
-         if ((var7 = PvpDetector.method2726()) >= 0 && var7 < 7 && !this.method4036(14.0) && var2 > var3 - 1) {
-            this.method4000("ухожу под конец пвп: " + var2 + " слотов, пвп " + var7 + " сек");
+         int n4;
+         if ((n4 = PvpDetector.method2726()) >= 0 && n4 < 7 && !this.method4036(14.0) && n > n2 - 1) {
+            this.method4000("ухожу под конец пвп: " + n + " слотов, пвп " + n4 + " сек");
             this.type = AutoWardenModule.Type.ESCAPE;
             return true;
          } else {
@@ -621,23 +621,23 @@ public class AutoWardenModule extends Module {
       return Math.max(1, this.method3967((int)this.escapeLoot.getValue3()));
    }
 
-   private int method3967(int var1) {
-      double var2 = this.lootPriority.method2101("module.autoWarden.lootPriority.low")
+   private int method3967(int n) {
+      double d = this.lootPriority.method2101("module.autoWarden.lootPriority.low")
          ? 1.5
          : (this.lootPriority.method2101("module.autoWarden.lootPriority.high") ? 0.8 : 1.0);
-      return (int)(var1 * var2);
+      return (int)(n * d);
    }
 
    private boolean method3968() {
       if (mc.player.tickCount >= this.intValue3) {
          return false;
       } else {
-         for (Entity var2 : mc.level.entitiesForRendering()) {
-            double var4;
-            if (var2 instanceof Warden var3
-               && (var4 = mc.player.distanceToSqr(var3)) < 900.0
-               && this.method3970(var3)
-               && (var4 < 16.0 || this.method3969(var3))) {
+         for (Entity entity : mc.level.entitiesForRendering()) {
+            double d;
+            if (entity instanceof Warden warden
+               && (d = mc.player.distanceToSqr(warden)) < 900.0
+               && this.method3970(warden)
+               && (d < 16.0 || this.method3969(warden))) {
                return true;
             }
          }
@@ -646,18 +646,18 @@ public class AutoWardenModule extends Module {
       }
    }
 
-   private boolean method3969(Warden var1) {
-      return (mc.player.getX() - var1.getX()) * (var1.getX() - var1.xo) + (mc.player.getZ() - var1.getZ()) * (var1.getZ() - var1.zo) > 0.01;
+   private boolean method3969(Warden warden) {
+      return (mc.player.getX() - warden.getX()) * (warden.getX() - warden.xo) + (mc.player.getZ() - warden.getZ()) * (warden.getZ() - warden.zo) > 0.01;
    }
 
-   private boolean method3970(Warden var1) {
-      double var2 = Math.toDegrees(Math.atan2(-(mc.player.getX() - var1.getX()), mc.player.getZ() - var1.getZ()));
-      return Math.abs(((var1.getVisualRotationYInDegrees() - var2) % 360.0 + 540.0) % 360.0 - 180.0) < 10.0;
+   private boolean method3970(Warden warden) {
+      double d = Math.toDegrees(Math.atan2(-(mc.player.getX() - warden.getX()), mc.player.getZ() - warden.getZ()));
+      return Math.abs(((warden.getVisualRotationYInDegrees() - d) % 360.0 + 540.0) % 360.0 - 180.0) < 10.0;
    }
 
-   private boolean method3971(BlockPos var1) {
-      for (BlockPos var3 : this.items4.keySet()) {
-         if (var3.distSqr(var1) < 25.0) {
+   private boolean method3971(BlockPos pos) {
+      for (BlockPos pos2 : this.items4.keySet()) {
+         if (pos2.distSqr(pos) < 25.0) {
             return true;
          }
       }
@@ -665,68 +665,68 @@ public class AutoWardenModule extends Module {
       return false;
    }
 
-   private void method3972(boolean var1) {
+   private void method3972(boolean flag) {
       this.method4013();
       this.method4014();
       if (this.blockPos3 == null
          || mc.player.distanceToSqr(Vec3.atCenterOf(this.blockPos3)) <= 16.0
-         || this.method3974(this.blockPos3.getX(), this.blockPos3.getZ(), var1) < 16.0) {
-         this.blockPos3 = this.method3973(var1);
+         || this.method3974(this.blockPos3.getX(), this.blockPos3.getZ(), flag) < 16.0) {
+         this.blockPos3 = this.method3973(flag);
          this.method4000("бегу в " + this.blockPos3);
       }
 
       this.method3975(this.blockPos3);
    }
 
-   private BlockPos method3973(boolean var1) {
-      BlockPos var2 = null;
-      double var3 = -1.0;
-      int var5 = mc.player.blockPosition().getY();
+   private BlockPos method3973(boolean flag) {
+      BlockPos pos = null;
+      double d = -1.0;
+      int y = mc.player.blockPosition().getY();
 
-      for (byte var6 = 0; var6 < 360; var6 += 30) {
-         int var7 = this.method3980((int)(mc.player.getX() + Math.cos(Math.toRadians(var6)) * 45.0));
-         int var8 = this.method3981((int)(mc.player.getZ() + Math.sin(Math.toRadians(var6)) * 45.0));
-         double var9;
-         if ((var9 = this.method3974(var7, var8, var1)) > var3) {
-            var3 = var9;
-            var2 = new BlockPos(var7, var5, var8);
+      for (byte i = 0; i < 360; i += 30) {
+         int x = this.method3980((int)(mc.player.getX() + Math.cos(Math.toRadians(i)) * 45.0));
+         int z = this.method3981((int)(mc.player.getZ() + Math.sin(Math.toRadians(i)) * 45.0));
+         double d2;
+         if ((d2 = this.method3974(x, z, flag)) > d) {
+            d = d2;
+            pos = new BlockPos(x, y, z);
          }
       }
 
-      return var2;
+      return pos;
    }
 
-   private double method3974(int var1, int var2, boolean var3) {
-      double var4 = Double.MAX_VALUE;
+   private double method3974(int x, int z, boolean flag) {
+      double d = Double.MAX_VALUE;
 
-      for (Entity var7 : mc.level.entitiesForRendering()) {
-         if (var7 != mc.player && (var7 instanceof Player || var3 && var7 instanceof Warden)) {
-            var4 = Math.min(var4, Math.hypot(var7.getX() - var1, var7.getZ() - var2));
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity != mc.player && (entity instanceof Player || flag && entity instanceof Warden)) {
+            d = Math.min(d, Math.hypot(entity.getX() - x, entity.getZ() - z));
          }
       }
 
-      return var4;
+      return d;
    }
 
-   private void method3975(BlockPos var1) {
-      if (var1 != null) {
-         BlockPos var2 = new BlockPos(this.method3980(var1.getX()), var1.getY(), this.method3981(var1.getZ()));
-         if (!var2.equals(this.blockPos2) || !this.method3976()) {
-            this.blockPos2 = var2;
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalBlock(var2));
+   private void method3975(BlockPos blockPos3) {
+      if (blockPos3 != null) {
+         BlockPos pos = new BlockPos(this.method3980(blockPos3.getX()), blockPos3.getY(), this.method3981(blockPos3.getZ()));
+         if (!pos.equals(this.blockPos2) || !this.method3976()) {
+            this.blockPos2 = pos;
+            BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalBlock(pos));
          }
       }
    }
 
    private boolean method3976() {
-      boolean var10000;
+      boolean flag;
       try {
-         var10000 = BaritoneAPI.getProvider() != null && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().hasPath();
-      } catch (Throwable var2) {
+         flag = BaritoneAPI.getProvider() != null && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().hasPath();
+      } catch (Throwable e) {
          return false;
       }
 
-      return var10000;
+      return flag;
    }
 
    private void method3977() {
@@ -748,62 +748,62 @@ public class AutoWardenModule extends Module {
          && mc.player.getZ() <= this.box.maxZ;
    }
 
-   private int method3980(int var1) {
-      return this.box == null ? var1 : (int)Math.max(this.box.minX + 10.0, Math.min(this.box.maxX - 10.0, (double)var1));
+   private int method3980(int x) {
+      return this.box == null ? x : (int)Math.max(this.box.minX + 10.0, Math.min(this.box.maxX - 10.0, (double)x));
    }
 
-   private int method3981(int var1) {
-      return this.box == null ? var1 : (int)Math.max(this.box.minZ + 10.0, Math.min(this.box.maxZ - 10.0, (double)var1));
+   private int method3981(int z) {
+      return this.box == null ? z : (int)Math.max(this.box.minZ + 10.0, Math.min(this.box.maxZ - 10.0, (double)z));
    }
 
    private void method3982() {
-      AbstractContainerScreen var1 = this.method4010();
-      if (var1 != null) {
-         this.method4005(var1);
+      AbstractContainerScreen containerScreen = this.method4010();
+      if (containerScreen != null) {
+         this.method4005(containerScreen);
       } else {
-         BlockPos var2 = this.method3983();
-         if (var2 == null) {
+         BlockPos key = this.method3983();
+         if (key == null) {
             this.method4000("цели нет: подходящих сундуков не нашлось");
             if (mc.player.tickCount % 40 == 0) {
                this.type = AutoWardenModule.Type.ESCAPE;
                this.flag = true;
             }
          } else {
-            double var3;
-            if ((var3 = mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(var2))) > 20.0) {
-               if (var3 > 10.0) {
+            double d;
+            if ((d = mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(key))) > 20.0) {
+               if (d > 10.0) {
                   this.method4014();
                }
 
-               BlockPos var8 = this.method3993(var2.above()) ? var2.above() : this.method3990(var2);
-               BlockPos var6 = var8 == null ? var2.above() : var8;
-               this.method4000("иду к " + var2 + " (точка " + var6 + ")");
-               this.method3975(var6);
+               BlockPos above = this.method3993(key.above()) ? key.above() : this.method3990(key);
+               BlockPos blockPos3 = above == null ? key.above() : above;
+               this.method4000("иду к " + key + " (точка " + blockPos3 + ")");
+               this.method3975(blockPos3);
             } else {
                if (this.method4033()) {
                   this.method3977();
                }
 
-               long var5;
-               if ((var5 = PvpDetector.method2721(var2)) > 1000L && this.method4037(var2, 7.0)) {
-                  this.method4000("жду " + var2 + ": рядом игрок");
-               } else if (var5 > 0L) {
-                  this.method4000("жду " + var2 + ": сами вычерпали, лут через " + var5 / 1000L + " сек");
-               } else if (this.items2.getOrDefault(var2, 0) >= 3) {
-                  this.method4000("выдоен " + var2 + ", беру следующий");
-               } else if (this.method3995(mc.player.getEyePosition(), var2) == null) {
-                  BlockPos var7 = this.method3990(var2);
-                  if (var7 != null) {
-                     this.method4000("не вижу " + var2 + ", перехожу на " + var7);
-                     this.method3975(var7);
+               long l;
+               if ((l = PvpDetector.method2721(key)) > 1000L && this.method4037(key, 7.0)) {
+                  this.method4000("жду " + key + ": рядом игрок");
+               } else if (l > 0L) {
+                  this.method4000("жду " + key + ": сами вычерпали, лут через " + l / 1000L + " сек");
+               } else if (this.items2.getOrDefault(key, 0) >= 3) {
+                  this.method4000("выдоен " + key + ", беру следующий");
+               } else if (this.method3995(mc.player.getEyePosition(), key) == null) {
+                  BlockPos blockPos3 = this.method3990(key);
+                  if (blockPos3 != null) {
+                     this.method4000("не вижу " + key + ", перехожу на " + blockPos3);
+                     this.method3975(blockPos3);
                   } else {
-                     this.method4000("не вижу " + var2 + " и встать негде — бросаю");
-                     this.method3984(var2);
+                     this.method4000("не вижу " + key + " и встать негде — бросаю");
+                     this.method3984(key);
                   }
                } else {
-                  if (this.method3999(var2, 1)) {
-                     this.items2.merge(var2, 1, Integer::sum);
-                     PvpDetector.method2723(var2);
+                  if (this.method3999(key, 1)) {
+                     this.items2.merge(key, 1, Integer::sum);
+                     PvpDetector.method2723(key);
                   }
                }
             }
@@ -832,243 +832,243 @@ public class AutoWardenModule extends Module {
          }
       }
 
-      BlockPos var1 = this.method3987();
-      if (var1 != null && !var1.equals(this.blockPos)) {
+      BlockPos blockPos = this.method3987();
+      if (blockPos != null && !blockPos.equals(this.blockPos)) {
          this.stopWatch.reset();
       }
 
-      this.blockPos = var1;
-      return var1;
+      this.blockPos = blockPos;
+      return blockPos;
    }
 
-   private void method3984(BlockPos var1) {
-      this.method4000("бросаю " + var1 + " на 30 сек");
-      this.items3.put(var1, mc.player.tickCount + 600);
+   private void method3984(BlockPos key) {
+      this.method4000("бросаю " + key + " на 30 сек");
+      this.items3.put(key, mc.player.tickCount + 600);
       this.blockPos = null;
       this.stopWatch.reset();
    }
 
-   private boolean method3985(BlockPos var1) {
-      return this.method3986(var1) == null;
+   private boolean method3985(BlockPos blockPos) {
+      return this.method3986(blockPos) == null;
    }
 
-   private String method3986(BlockPos var1) {
-      if (mc.player.tickCount < this.items3.getOrDefault(var1, -32768 << 16 | 0)) {
+   private String method3986(BlockPos blockPos) {
+      if (mc.player.tickCount < this.items3.getOrDefault(blockPos, -32768 << 16 | 0)) {
          return "в списке пропущенных";
-      } else if (this.items2.getOrDefault(var1, 0) >= 3) {
+      } else if (this.items2.getOrDefault(blockPos, 0) >= 3) {
          return "уже выдоен";
       } else {
-         long var2;
-         return (var2 = PvpDetector.method2721(var1)) <= 20000L ? null : "мы его вычерпали, лут через " + var2 / 1000L + " сек";
+         long l;
+         return (l = PvpDetector.method2721(blockPos)) <= 20000L ? null : "мы его вычерпали, лут через " + l / 1000L + " сек";
       }
    }
 
    private BlockPos method3987() {
-      BlockPos var1 = null;
-      byte var2 = 99;
-      double var3 = Double.MAX_VALUE;
-      BlockPos var5 = null;
-      long var6 = Long.MAX_VALUE;
+      BlockPos pos = null;
+      byte b = 99;
+      double d = Double.MAX_VALUE;
+      BlockPos pos2 = null;
+      long l = Long.MAX_VALUE;
 
-      for (BlockPos var9 : this.method3989()) {
-         if (this.method3985(var9) && (!this.method3988(var9) || !this.method3971(var9) && !this.method4038(var9))) {
-            double var11 = mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(var9));
-            long var13;
-            if ((var13 = PvpDetector.method2721(var9)) > 0L && var13 < var6) {
-               var5 = var9;
-               var6 = var13;
+      for (BlockPos pos3 : this.method3989()) {
+         if (this.method3985(pos3) && (!this.method3988(pos3) || !this.method3971(pos3) && !this.method4038(pos3))) {
+            double d2 = mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos3));
+            long l2;
+            if ((l2 = PvpDetector.method2721(pos3)) > 0L && l2 < l) {
+               pos2 = pos3;
+               l = l2;
             }
 
-            boolean var15;
-            byte var16;
-            if ((var15 = var13 <= 0L) && var11 <= 144.0) {
-               var16 = 0;
-            } else if (var15 && var11 <= 625.0) {
-               var16 = 1;
-            } else if (var13 <= 20000L) {
-               var16 = 2;
+            boolean flag;
+            byte b2;
+            if ((flag = l2 <= 0L) && d2 <= 144.0) {
+               b2 = 0;
+            } else if (flag && d2 <= 625.0) {
+               b2 = 1;
+            } else if (l2 <= 20000L) {
+               b2 = 2;
             } else {
-               if (!var15) {
+               if (!flag) {
                   continue;
                }
 
-               var16 = 3;
+               b2 = 3;
             }
 
-            double var17 = Vec3.atCenterOf(var9).y - mc.player.getEyeY();
-            double var19 = var9.getX() + 0.5 - mc.player.getX();
-            double var21 = var9.getZ() + 0.5 - mc.player.getZ();
-            double var23 = var19 * var19 + var21 * var21 + (var17 > 0.0 ? 2 : 1) * var17 * var17;
-            if (var16 < var2 || var16 == var2 && var23 < var3) {
-               var2 = var16;
-               var3 = var23;
-               var1 = var9;
+            double d3 = Vec3.atCenterOf(pos3).y - mc.player.getEyeY();
+            double d4 = pos3.getX() + 0.5 - mc.player.getX();
+            double d5 = pos3.getZ() + 0.5 - mc.player.getZ();
+            double d6 = d4 * d4 + d5 * d5 + (d3 > 0.0 ? 2 : 1) * d3 * d3;
+            if (b2 < b || b2 == b && d6 < d) {
+               b = b2;
+               d = d6;
+               pos = pos3;
             }
          }
       }
 
-      if (var1 == null && var5 != null) {
-         this.method4000("нечего лутать, иду ждать " + var5 + " (" + var6 / 1000L + " сек)");
-         return var5;
+      if (pos == null && pos2 != null) {
+         this.method4000("нечего лутать, иду ждать " + pos2 + " (" + l / 1000L + " сек)");
+         return pos2;
       } else {
-         return var1;
+         return pos;
       }
    }
 
-   private boolean method3988(BlockPos var1) {
-      return mc.level.hasChunk(var1.getX() >> 4, var1.getZ() >> 4);
+   private boolean method3988(BlockPos pos) {
+      return mc.level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4);
    }
 
    private List<BlockPos> method3989() {
-      var var1 = new ArrayList<>(PvpDetector.method2728());
+      var poses = new ArrayList<>(PvpDetector.method2728());
 
-      for (BlockPos var3 : PvpDetector.method2718()) {
-         if (!var1.contains(var3) && mc.player.distanceToSqr(Vec3.atCenterOf(var3)) <= 6400.0) {
-            var1.add(var3);
+      for (BlockPos pos : PvpDetector.method2718()) {
+         if (!poses.contains(pos) && mc.player.distanceToSqr(Vec3.atCenterOf(pos)) <= 6400.0) {
+            poses.add(pos);
          }
       }
 
-      return var1;
+      return poses;
    }
 
-   private BlockPos method3990(BlockPos var1) {
-      BlockPos var2 = this.method3991(var1, 1);
-      return var2 != null ? var2 : this.method3991(var1, 3);
+   private BlockPos method3990(BlockPos key) {
+      BlockPos pos = this.method3991(key, 1);
+      return pos != null ? pos : this.method3991(key, 3);
    }
 
-   private BlockPos method3991(BlockPos var1, int var2) {
-      double var3;
-      double var5 = (var3 = mc.player.blockInteractionRange() + 0.4) * var3;
-      Vec3 var7 = Vec3.atCenterOf(var1);
-      BlockPos var8 = null;
-      double var9 = Double.MAX_VALUE;
+   private BlockPos method3991(BlockPos key, int n) {
+      double d;
+      double d2 = (d = mc.player.blockInteractionRange() + 0.4) * d;
+      Vec3 atCenterOf = Vec3.atCenterOf(key);
+      BlockPos offset = null;
+      double d3 = Double.MAX_VALUE;
 
-      for (int var11 = -var2; var11 <= var2; var11++) {
-         for (int var12 = -var2; var12 <= var2; var12++) {
-            for (int var13 = -var2; var13 <= 1; var13++) {
-               BlockPos var14 = var1.offset(var11, var13, var12);
-               double var15 = Vec3.atCenterOf(var14).distanceToSqr(var7);
-               if (!var14.equals(var1) && !(var15 >= var9) && !(var15 > var5) && this.method3992(var14) && this.method3994(var14, var1)) {
-                  var9 = var15;
-                  var8 = var14;
+      for (int i = -n; i <= n; i++) {
+         for (int j = -n; j <= n; j++) {
+            for (int k = -n; k <= 1; k++) {
+               BlockPos pos = key.offset(i, k, j);
+               double d4 = Vec3.atCenterOf(pos).distanceToSqr(atCenterOf);
+               if (!pos.equals(key) && !(d4 >= d3) && !(d4 > d2) && this.method3992(pos) && this.method3994(pos, key)) {
+                  d3 = d4;
+                  offset = pos;
                }
             }
          }
       }
 
-      return var8;
+      return offset;
    }
 
-   private boolean method3992(BlockPos var1) {
-      return this.method3993(var1) && this.method3993(var1.above()) && !this.method3993(var1.below());
+   private boolean method3992(BlockPos above) {
+      return this.method3993(above) && this.method3993(above.above()) && !this.method3993(above.below());
    }
 
-   private boolean method3993(BlockPos var1) {
-      return mc.level.getBlockState(var1).getCollisionShape(mc.level, var1).isEmpty();
+   private boolean method3993(BlockPos above) {
+      return mc.level.getBlockState(above).getCollisionShape(mc.level, above).isEmpty();
    }
 
-   private boolean method3994(BlockPos var1, BlockPos var2) {
-      Vec3 var3 = Vec3.atCenterOf(var1).add(0.0, mc.player.getEyeHeight(mc.player.getPose()) - 0.5, 0.0);
-      Vec3 var4 = this.method3995(var3, var2);
-      double var5 = mc.player.blockInteractionRange() - 0.2;
-      return var4 != null && var3.distanceToSqr(var4) <= var5 * var5;
+   private boolean method3994(BlockPos pos, BlockPos key) {
+      Vec3 eyePosition = Vec3.atCenterOf(pos).add(0.0, mc.player.getEyeHeight(mc.player.getPose()) - 0.5, 0.0);
+      Vec3 vec = this.method3995(eyePosition, key);
+      double d = mc.player.blockInteractionRange() - 0.2;
+      return vec != null && eyePosition.distanceToSqr(vec) <= d * d;
    }
 
-   private Vec3 method3995(Vec3 var1, BlockPos var2) {
-      double var3;
-      double var5 = (var3 = mc.player.blockInteractionRange() - 0.15) * var3;
-      Vec3 var7 = Vec3.atCenterOf(var2);
-      Vec3 var8 = null;
-      double var9 = Double.MAX_VALUE;
+   private Vec3 method3995(Vec3 eyePosition, BlockPos key) {
+      double d;
+      double d2 = (d = mc.player.blockInteractionRange() - 0.15) * d;
+      Vec3 atCenterOf = Vec3.atCenterOf(key);
+      Vec3 vec = null;
+      double d3 = Double.MAX_VALUE;
 
-      for (double var11 = -0.4; var11 <= 0.41; var11 += 0.4) {
-         for (double var13 = -0.4; var13 <= 0.41; var13 += 0.4) {
-            for (double var15 = -0.4; var15 <= 0.41; var15 += 0.4) {
-               Vec3 var17 = var7.add(var11, var13, var15);
-               double var18;
-               if (!((var18 = var1.distanceToSqr(var17)) >= var9)
-                  && !(var18 > var5)
-                  && this.method3996(var1, Rotation.method3128(var17, var1), var2) != null) {
-                  var9 = var18;
-                  var8 = var17;
+      for (double x = -0.4; x <= 0.41; x += 0.4) {
+         for (double y = -0.4; y <= 0.41; y += 0.4) {
+            for (double z = -0.4; z <= 0.41; z += 0.4) {
+               Vec3 vec2 = atCenterOf.add(x, y, z);
+               double d4;
+               if (!((d4 = eyePosition.distanceToSqr(vec2)) >= d3)
+                  && !(d4 > d2)
+                  && this.method3996(eyePosition, Rotation.method3128(vec2, eyePosition), key) != null) {
+                  d3 = d4;
+                  vec = vec2;
                }
             }
          }
       }
 
-      return var8;
+      return vec;
    }
 
-   private BlockHitResult method3996(Vec3 var1, Rotation var2, BlockPos var3) {
-      BlockHitResult var4 = TargetUtils.method3216(
-         var1,
-         var2,
+   private BlockHitResult method3996(Vec3 eyePosition, Rotation rotation2, BlockPos key) {
+      BlockHitResult blockHitResult = TargetUtils.method3216(
+         eyePosition,
+         rotation2,
          mc.player.blockInteractionRange(),
-         var1x -> var1x != null && var1x.getType() == HitResult.Type.BLOCK && var1x.getBlockPos().equals(var3)
+         var1x -> var1x != null && var1x.getType() == HitResult.Type.BLOCK && var1x.getBlockPos().equals(key)
       );
-      return var4 != null && var4.getType() == HitResult.Type.BLOCK && var4.getBlockPos().equals(var3) ? var4 : null;
+      return blockHitResult != null && blockHitResult.getType() == HitResult.Type.BLOCK && blockHitResult.getBlockPos().equals(key) ? blockHitResult : null;
    }
 
    @EventTarget
-   public void method3997(Event5 var1) {
-      Rotation var2 = this.rotation;
-      boolean var3 = this.humanLook.isEnabled();
-      if (var2 == null && var3) {
-         var2 = RotationLock.method2708();
+   public void method3997(Event5 event) {
+      Rotation rotation = this.rotation;
+      boolean enabled = this.humanLook.isEnabled();
+      if (rotation == null && enabled) {
+         rotation = RotationLock.method2708();
       }
 
-      if (var2 != null) {
-         Rotation var4 = var2;
-         RotationConfig var5 = var3 ? bcCameraTestnerv.getRotationConfig17() : bcCameraTestnerv.getRotationConfig();
-         rotationManager.method7849(new RotationRequest(var4, () -> bcCameraTestnerv.method1851(var5, var4), var5), 4, this);
+      if (rotation != null) {
+         Rotation rotation2 = rotation;
+         RotationConfig rotationConfig17 = enabled ? bcCameraTestnerv.getRotationConfig17() : bcCameraTestnerv.getRotationConfig();
+         rotationManager.method7849(new RotationRequest(rotation2, () -> bcCameraTestnerv.method1851(rotationConfig17, rotation2), rotationConfig17), 4, this);
       }
    }
 
    private float method3998() {
-      Rotation var1 = RotationLock.method2708();
-      return var1 != null && this.rotation == null
-         ? Math.abs(Mth.wrapDegrees(var1.getFloatValue() - rotationManager.method7844().getFloatValue()))
+      Rotation rotation = RotationLock.method2708();
+      return rotation != null && this.rotation == null
+         ? Math.abs(Mth.wrapDegrees(rotation.getFloatValue() - rotationManager.method7844().getFloatValue()))
          : 0.0F;
    }
 
-   private boolean method3999(BlockPos var1, int var2) {
-      if (var1 != null && !this.method4011()) {
-         Vec3 var3 = mc.player.getEyePosition();
-         Vec3 var4 = this.method3995(var3, var1);
-         if (var4 == null) {
+   private boolean method3999(BlockPos key, int n) {
+      if (key != null && !this.method4011()) {
+         Vec3 eyePosition = mc.player.getEyePosition();
+         Vec3 vec = this.method3995(eyePosition, key);
+         if (vec == null) {
             this.rotation = null;
             this.method4000("interact: точку прицела не нашёл");
             return false;
          } else {
-            Rotation var5 = Rotation.method3128(var4, var3);
-            this.rotation = var5;
-            if (mc.player.tickCount % var2 != 0) {
+            Rotation rotation = Rotation.method3128(vec, eyePosition);
+            this.rotation = rotation;
+            if (mc.player.tickCount % n != 0) {
                return false;
             } else {
-               Rotation var6 = rotationManager.getRotation2();
-               float var7;
-               if ((var7 = var6.method3130(var5)) > 5.0F) {
+               Rotation rotation2 = rotationManager.getRotation2();
+               float f;
+               if ((f = rotation2.method3130(rotation)) > 5.0F) {
                   this.method4000(
                      String.format(
                         "interact: ротация не доведена, промах %.1f (надо %.1f/%.1f, сервер %.1f/%.1f, current %s)",
-                        var7,
-                        var5.getFloatValue(),
-                        var5.getFloatValue2(),
-                        var6.getFloatValue(),
-                        var6.getFloatValue2(),
+                        f,
+                        rotation.getFloatValue(),
+                        rotation.getFloatValue2(),
+                        rotation2.getFloatValue(),
+                        rotation2.getFloatValue2(),
                         rotationManager.getCurrentRotation() == null ? "null" : "есть"
                      )
                   );
                   return false;
                } else {
-                  BlockHitResult var8 = this.method3996(var3, var6, var1);
-                  if (var8 == null) {
-                     this.method4000("interact: луч не дотянулся до " + var1);
+                  BlockHitResult blockHit = this.method3996(eyePosition, rotation2, key);
+                  if (blockHit == null) {
+                     this.method4000("interact: луч не дотянулся до " + key);
                      return false;
                   } else {
-                     mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, var8);
+                     mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
                      org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
-                     this.method4000("interact: ОТКРЫВАЮ " + var1);
+                     this.method4000("interact: ОТКРЫВАЮ " + key);
                      return true;
                   }
                }
@@ -1081,16 +1081,16 @@ public class AutoWardenModule extends Module {
       }
    }
 
-   private void method4000(String var1) {
-      if (this.debug.isEnabled() && !var1.equals(this.text2)) {
-         this.text2 = var1;
-         this.notify("[trace] " + var1);
+   private void method4000(String str) {
+      if (this.debug.isEnabled() && !str.equals(this.text2)) {
+         this.text2 = str;
+         this.notify("[trace] " + str);
       }
    }
 
-   private boolean method4001(double var1) {
-      for (BlockPos var4 : PvpDetector.method2728()) {
-         if (mc.player.distanceToSqr(Vec3.atCenterOf(var4)) <= var1 * var1) {
+   private boolean method4001(double d) {
+      for (BlockPos pos : PvpDetector.method2728()) {
+         if (mc.player.distanceToSqr(Vec3.atCenterOf(pos)) <= d * d) {
             return true;
          }
       }
@@ -1098,19 +1098,19 @@ public class AutoWardenModule extends Module {
       return false;
    }
 
-   private BlockPos method4002(boolean var1) {
-      BlockPos var2 = mc.player.blockPosition();
-      MutableBlockPos var3 = new MutableBlockPos();
+   private BlockPos method4002(boolean flag) {
+      BlockPos blockPosition = mc.player.blockPosition();
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var4 = -4; var4 <= 4; var4++) {
-         for (int var5 = -4; var5 <= 4; var5++) {
-            for (int var6 = -4; var6 <= 4; var6++) {
-               var3.set(var2.getX() + var4, var2.getY() + var5, var2.getZ() + var6);
-               if (mc.level.getBlockState(var3).is(Blocks.CHEST) && this.method4003(var3) == var1 && mc.level.getBlockState(var3.above()).isAir()) {
-                  BlockHitResult var7 = mc.level
-                     .clip(new ClipContext(mc.player.getEyePosition(), Vec3.atCenterOf(var3), net.minecraft.world.level.ClipContext.Block.COLLIDER, Fluid.NONE, mc.player));
-                  if (var7.getBlockPos().equals(var3)) {
-                     return var3.immutable();
+      for (int i = -4; i <= 4; i++) {
+         for (int j = -4; j <= 4; j++) {
+            for (int k = -4; k <= 4; k++) {
+               mutablePos.set(blockPosition.getX() + i, blockPosition.getY() + j, blockPosition.getZ() + k);
+               if (mc.level.getBlockState(mutablePos).is(Blocks.CHEST) && this.method4003(mutablePos) == flag && mc.level.getBlockState(mutablePos.above()).isAir()) {
+                  BlockHitResult clip = mc.level
+                     .clip(new ClipContext(mc.player.getEyePosition(), Vec3.atCenterOf(mutablePos), net.minecraft.world.level.ClipContext.Block.COLLIDER, Fluid.NONE, mc.player));
+                  if (clip.getBlockPos().equals(mutablePos)) {
+                     return mutablePos.immutable();
                   }
                }
             }
@@ -1120,20 +1120,20 @@ public class AutoWardenModule extends Module {
       return null;
    }
 
-   private boolean method4003(BlockPos var1) {
-      if (mc.level.getBlockState(var1.below()).is(Blocks.HOPPER)) {
+   private boolean method4003(BlockPos mutablePos) {
+      if (mc.level.getBlockState(mutablePos.below()).is(Blocks.HOPPER)) {
          return true;
       } else {
-         BlockState var2 = mc.level.getBlockState(var1);
-         if (var2.hasProperty(BlockStateProperties.CHEST_TYPE) && var2.getValue(BlockStateProperties.CHEST_TYPE) != ChestType.SINGLE) {
-            for (Direction var4 : Direction.Plane.HORIZONTAL) {
-               BlockPos var5 = var1.relative(var4);
-               BlockState var6 = mc.level.getBlockState(var5);
-               if (var6.is(Blocks.CHEST)
-                  && var6.getValue(BlockStateProperties.CHEST_TYPE) != ChestType.SINGLE
-                  && var6.getValue(BlockStateProperties.CHEST_TYPE) != var2.getValue(BlockStateProperties.CHEST_TYPE)
-                  && var6.getValue(BlockStateProperties.HORIZONTAL_FACING) == var2.getValue(BlockStateProperties.HORIZONTAL_FACING)
-                  && mc.level.getBlockState(var5.below()).is(Blocks.HOPPER)) {
+         BlockState blockState = mc.level.getBlockState(mutablePos);
+         if (blockState.hasProperty(BlockStateProperties.CHEST_TYPE) && blockState.getValue(BlockStateProperties.CHEST_TYPE) != ChestType.SINGLE) {
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+               BlockPos relative = mutablePos.relative(direction);
+               BlockState blockState2 = mc.level.getBlockState(relative);
+               if (blockState2.is(Blocks.CHEST)
+                  && blockState2.getValue(BlockStateProperties.CHEST_TYPE) != ChestType.SINGLE
+                  && blockState2.getValue(BlockStateProperties.CHEST_TYPE) != blockState.getValue(BlockStateProperties.CHEST_TYPE)
+                  && blockState2.getValue(BlockStateProperties.HORIZONTAL_FACING) == blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+                  && mc.level.getBlockState(relative.below()).is(Blocks.HOPPER)) {
                   return true;
                }
             }
@@ -1145,104 +1145,104 @@ public class AutoWardenModule extends Module {
       }
    }
 
-   private void method4004(boolean var1, boolean var2, AutoWardenModule.Type var3) {
-      if (!var1) {
+   private void method4004(boolean flag, boolean flag2, AutoWardenModule.Type type) {
+      if (!flag) {
          if (this.method4013()) {
-            if (var2 && this.type == AutoWardenModule.Type.SAVE) {
+            if (flag2 && this.type == AutoWardenModule.Type.SAVE) {
             }
 
-            this.type = var3;
+            this.type = type;
          }
       } else {
-         AbstractContainerScreen var4 = this.method4010();
-         if (var4 != null) {
-            if (var2) {
-               this.method4006(var4);
+         AbstractContainerScreen containerScreen = this.method4010();
+         if (containerScreen != null) {
+            if (flag2) {
+               this.method4006(containerScreen);
             } else {
-               this.method4007(var4);
+               this.method4007(containerScreen);
             }
          } else {
-            this.method3999(this.method4002(var2), 2);
+            this.method3999(this.method4002(flag2), 2);
          }
       }
    }
 
-   private void method4005(AbstractContainerScreen<?> var1) {
+   private void method4005(AbstractContainerScreen<?> containerScreen) {
       if (this.method4033()) {
          this.method3977();
       } else if (mc.player.tickCount % 2 == 0) {
-         Slot var2 = this.method4008(var1, false, var1x -> !var1x.isEmpty() && !this.method4021(var1x));
-         if (var2 == null) {
+         Slot slot = this.method4008(containerScreen, false, var1x -> !var1x.isEmpty() && !this.method4021(var1x));
+         if (slot == null) {
             this.method4013();
          } else {
-            this.method4009(var1, var2, 0, ContainerInput.QUICK_MOVE);
+            this.method4009(containerScreen, slot, 0, ContainerInput.QUICK_MOVE);
          }
       }
    }
 
-   private void method4006(AbstractContainerScreen<?> var1) {
+   private void method4006(AbstractContainerScreen<?> containerScreen) {
       if (mc.player.tickCount % 2 == 0) {
-         boolean var2 = false;
-         boolean var3 = false;
-         int var4 = 0;
+         boolean flag = false;
+         boolean flag2 = false;
+         int n = 0;
 
-         for (Slot var6 : var1.getMenu().slots) {
-            if (var4 >= 4) {
+         for (Slot slot : containerScreen.getMenu().slots) {
+            if (n >= 4) {
                return;
             }
 
-            ItemStack var7 = var6.getItem();
-            if (var6.container == mc.player.getInventory() && !var7.isEmpty() && (!this.useSpeed.isEnabled() || !this.method4025(var7))) {
-               if (!var2 && this.method4024(var7)) {
-                  var2 = true;
-               } else if (!var3 && var7.is(Items.GOLDEN_CARROT)) {
-                  var3 = true;
+            ItemStack carried = slot.getItem();
+            if (slot.container == mc.player.getInventory() && !carried.isEmpty() && (!this.useSpeed.isEnabled() || !this.method4025(carried))) {
+               if (!flag && this.method4024(carried)) {
+                  flag = true;
+               } else if (!flag2 && carried.is(Items.GOLDEN_CARROT)) {
+                  flag2 = true;
                } else {
-                  this.method4009(var1, var6, 0, ContainerInput.QUICK_MOVE);
-                  var4++;
+                  this.method4009(containerScreen, slot, 0, ContainerInput.QUICK_MOVE);
+                  n++;
                }
             }
          }
       }
    }
 
-   private void method4007(AbstractContainerScreen<?> var1) {
+   private void method4007(AbstractContainerScreen<?> containerScreen) {
       if (mc.player.tickCount % 2 == 0) {
-         ItemStack var2 = var1.getMenu().getCarried();
-         if (!var2.isEmpty()) {
-            java.util.function.Predicate<ItemStack> var3 = var1x -> var1x.isEmpty() || ItemStack.isSameItemSameComponents(var1x, var2);
-            if (this.method4019(var2)) {
-               this.method4009(var1, this.method4008(var1, true, var3), 1, ContainerInput.PICKUP);
+         ItemStack carried = containerScreen.getMenu().getCarried();
+         if (!carried.isEmpty()) {
+            java.util.function.Predicate<ItemStack> predicate = var1x -> var1x.isEmpty() || ItemStack.isSameItemSameComponents(var1x, carried);
+            if (this.method4019(carried)) {
+               this.method4009(containerScreen, this.method4008(containerScreen, true, predicate), 1, ContainerInput.PICKUP);
             } else {
-               this.method4009(var1, this.method4008(var1, false, var3), 0, ContainerInput.PICKUP);
+               this.method4009(containerScreen, this.method4008(containerScreen, false, predicate), 0, ContainerInput.PICKUP);
             }
          } else {
-            this.method4009(var1, this.method4008(var1, false, this::method4019), 0, ContainerInput.PICKUP);
+            this.method4009(containerScreen, this.method4008(containerScreen, false, this::method4019), 0, ContainerInput.PICKUP);
          }
       }
    }
 
-   private Slot method4008(AbstractContainerScreen<?> var1, boolean var2, Predicate<ItemStack> var3) {
-      for (Slot var5 : var1.getMenu().slots) {
-         if (var5.container == mc.player.getInventory() == var2 && var3.test(var5.getItem())) {
-            return var5;
+   private Slot method4008(AbstractContainerScreen<?> containerScreen, boolean flag, Predicate<ItemStack> predicate) {
+      for (Slot slot : containerScreen.getMenu().slots) {
+         if (slot.container == mc.player.getInventory() == flag && predicate.test(slot.getItem())) {
+            return slot;
          }
       }
 
       return null;
    }
 
-   private void method4009(AbstractContainerScreen<?> var1, Slot var2, int var3, ContainerInput var4) {
-      if (var2 != null) {
-         mc.gameMode.handleContainerInput(var1.getMenu().containerId, var2.index, var3, var4, mc.player);
+   private void method4009(AbstractContainerScreen<?> containerScreen, Slot slot, int buttonNum, ContainerInput containerInput) {
+      if (slot != null) {
+         mc.gameMode.handleContainerInput(containerScreen.getMenu().containerId, slot.index, buttonNum, containerInput, mc.player);
       }
    }
 
    private AbstractContainerScreen<?> method4010() {
-      return mc.gui.screen() instanceof AbstractContainerScreen var1
+      return mc.gui.screen() instanceof AbstractContainerScreen containerScreen
             && !(mc.gui.screen() instanceof InventoryScreen)
             && !(mc.player.containerMenu instanceof InventoryMenu)
-         ? var1
+         ? containerScreen
          : null;
    }
 
@@ -1251,8 +1251,8 @@ public class AutoWardenModule extends Module {
    }
 
    private boolean method4012() {
-      AbstractContainerScreen var1 = this.method4010();
-      return var1 != null && !var1.getMenu().getCarried().isEmpty();
+      AbstractContainerScreen containerScreen = this.method4010();
+      return containerScreen != null && !containerScreen.getMenu().getCarried().isEmpty();
    }
 
    private boolean method4013() {
@@ -1265,21 +1265,21 @@ public class AutoWardenModule extends Module {
 
    private void method4014() {
       if (!mc.player.getMainHandItem().isEmpty()) {
-         for (int var1 = 0; var1 < 9; var1++) {
-            if (mc.player.getInventory().getItem(var1).isEmpty()) {
-               mc.player.getInventory().setSelectedSlot(var1);
+         for (int i = 0; i < 9; i++) {
+            if (mc.player.getInventory().getItem(i).isEmpty()) {
+               mc.player.getInventory().setSelectedSlot(i);
                return;
             }
          }
 
-         for (int var2 = 9; var2 < 36; var2++) {
-            if (mc.player.getInventory().getItem(var2).isEmpty()) {
+         for (int i = 9; i < 36; i++) {
+            if (mc.player.getInventory().getItem(i).isEmpty()) {
                if (mc.player.tickCount % 10 >= 2 && this.method4033()) {
                   this.method3977();
                }
 
                if (mc.player.tickCount % 10 == 4) {
-                  InventoryUtils.method904(var2, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, false);
+                  InventoryUtils.method904(i, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, false);
                }
 
                return;
@@ -1288,10 +1288,10 @@ public class AutoWardenModule extends Module {
       }
    }
 
-   private int method4015(Predicate<ItemStack> var1) {
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (var1.test(mc.player.getInventory().getItem(var2))) {
-            return var2;
+   private int method4015(Predicate<ItemStack> predicate) {
+      for (int i = 0; i < 36; i++) {
+         if (predicate.test(mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
@@ -1299,64 +1299,64 @@ public class AutoWardenModule extends Module {
    }
 
    private int method4016() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (!mc.player.getInventory().getItem(var2).isEmpty()) {
-            var1++;
+      for (int i = 0; i < 36; i++) {
+         if (!mc.player.getInventory().getItem(i).isEmpty()) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
    private int method4017() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (this.method4024(mc.player.getInventory().getItem(var2))) {
-            var1++;
+      for (int i = 0; i < 36; i++) {
+         if (this.method4024(mc.player.getInventory().getItem(i))) {
+            n++;
          }
       }
 
       if (this.method4024(mc.player.getOffhandItem())) {
-         var1++;
+         n++;
       }
 
-      return var1;
+      return n;
    }
 
    private boolean method4018() {
       return this.method4017() < 1 || InventoryUtils.method920(Items.GOLDEN_CARROT) < 3 || this.useSpeed.isEnabled() && this.method4015(this::method4025) < 0;
    }
 
-   private boolean method4019(ItemStack var1) {
-      if (var1.isEmpty()) {
+   private boolean method4019(ItemStack carried) {
+      if (carried.isEmpty()) {
          return false;
-      } else if (this.method4024(var1) && this.method4017() < 1) {
+      } else if (this.method4024(carried) && this.method4017() < 1) {
          return true;
       } else {
-         return var1.is(Items.GOLDEN_CARROT) && InventoryUtils.method920(Items.GOLDEN_CARROT) < 3
+         return carried.is(Items.GOLDEN_CARROT) && InventoryUtils.method920(Items.GOLDEN_CARROT) < 3
             ? true
-            : this.useSpeed.isEnabled() && this.method4025(var1) && this.method4015(this::method4025) < 0;
+            : this.useSpeed.isEnabled() && this.method4025(carried) && this.method4015(this::method4025) < 0;
       }
    }
 
    private boolean method4020() {
-      boolean var1 = false;
-      boolean var2 = false;
+      boolean flag = false;
+      boolean flag2 = false;
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         ItemStack var4 = mc.player.getInventory().getItem(var3);
-         if (!var4.isEmpty() && (!this.useSpeed.isEnabled() || !this.method4025(var4))) {
-            if (!var1 && this.method4024(var4)) {
-               var1 = true;
+      for (int i = 0; i < 36; i++) {
+         ItemStack carried = mc.player.getInventory().getItem(i);
+         if (!carried.isEmpty() && (!this.useSpeed.isEnabled() || !this.method4025(carried))) {
+            if (!flag && this.method4024(carried)) {
+               flag = true;
             } else {
-               if (var2 || !var4.is(Items.GOLDEN_CARROT)) {
+               if (flag2 || !carried.is(Items.GOLDEN_CARROT)) {
                   return true;
                }
 
-               var2 = true;
+               flag2 = true;
             }
          }
       }
@@ -1364,87 +1364,87 @@ public class AutoWardenModule extends Module {
       return false;
    }
 
-   private boolean method4021(ItemStack var1) {
+   private boolean method4021(ItemStack stack) {
       return this.lootPriority.method2101("module.autoWarden.lootPriority.low")
          ? false
-         : this.method4023(var1) || this.lootPriority.method2101("module.autoWarden.lootPriority.high") && this.method4022(var1);
+         : this.method4023(stack) || this.lootPriority.method2101("module.autoWarden.lootPriority.high") && this.method4022(stack);
    }
 
-   private boolean method4022(ItemStack var1) {
-      Item var2 = var1.getItem();
-      return var2 instanceof ArrowItem
-         || Util10.method2177(var2.getDefaultInstance())
-         || var2.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.AXES)
-         || var1.is(Items.CHORUS_FRUIT)
-         || var1.is(Items.DISC_FRAGMENT_5)
-         || var1.is(Items.NAUTILUS_SHELL)
-         || var1.is(Items.BOOKSHELF)
-         || var1.is(Items.COOKED_MUTTON)
-         || var1.is(Items.SKELETON_SPAWN_EGG)
-         || var1.is(Items.CREEPER_SPAWN_EGG)
-         || var1.is(Items.ZOMBIE_SPAWN_EGG)
-         || var1.is(Items.VINDICATOR_SPAWN_EGG)
-         || var1.is(Items.PIGLIN_SPAWN_EGG)
-         || var1.is(Items.FIRE_CHARGE)
-         || var1.is(Items.LEATHER)
-         || var1.is(Items.SHULKER_SHELL)
-         || var1.is(Items.EXPERIENCE_BOTTLE)
-         || var1.is(Items.WITHER_ROSE)
-         || var1.is(Items.EMERALD)
-         || var1.is(Items.SUGAR)
-         || InventoryUtils.method918(var1, "potion-popper")
-         || var1.has(DataComponents.JUKEBOX_PLAYABLE)
-         || var1.is(Items.GHAST_TEAR)
-         || var1.is(Items.DRAGON_BREATH)
-         || var1.is(Items.VEX_SPAWN_EGG)
-         || var1.is(Items.ENDERMITE_SPAWN_EGG)
-         || var1.is(Items.CAT_SPAWN_EGG)
-         || var1.is(Items.ENCHANTING_TABLE)
-         || var1.is(Items.DIAMOND_HELMET)
-         || var1.is(Items.DIAMOND_CHESTPLATE)
-         || var1.is(Items.DIAMOND_LEGGINGS)
-         || var1.is(Items.DIAMOND_BOOTS);
+   private boolean method4022(ItemStack stack) {
+      Item item = stack.getItem();
+      return item instanceof ArrowItem
+         || Util10.method2177(item.getDefaultInstance())
+         || item.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.AXES)
+         || stack.is(Items.CHORUS_FRUIT)
+         || stack.is(Items.DISC_FRAGMENT_5)
+         || stack.is(Items.NAUTILUS_SHELL)
+         || stack.is(Items.BOOKSHELF)
+         || stack.is(Items.COOKED_MUTTON)
+         || stack.is(Items.SKELETON_SPAWN_EGG)
+         || stack.is(Items.CREEPER_SPAWN_EGG)
+         || stack.is(Items.ZOMBIE_SPAWN_EGG)
+         || stack.is(Items.VINDICATOR_SPAWN_EGG)
+         || stack.is(Items.PIGLIN_SPAWN_EGG)
+         || stack.is(Items.FIRE_CHARGE)
+         || stack.is(Items.LEATHER)
+         || stack.is(Items.SHULKER_SHELL)
+         || stack.is(Items.EXPERIENCE_BOTTLE)
+         || stack.is(Items.WITHER_ROSE)
+         || stack.is(Items.EMERALD)
+         || stack.is(Items.SUGAR)
+         || InventoryUtils.method918(stack, "potion-popper")
+         || stack.has(DataComponents.JUKEBOX_PLAYABLE)
+         || stack.is(Items.GHAST_TEAR)
+         || stack.is(Items.DRAGON_BREATH)
+         || stack.is(Items.VEX_SPAWN_EGG)
+         || stack.is(Items.ENDERMITE_SPAWN_EGG)
+         || stack.is(Items.CAT_SPAWN_EGG)
+         || stack.is(Items.ENCHANTING_TABLE)
+         || stack.is(Items.DIAMOND_HELMET)
+         || stack.is(Items.DIAMOND_CHESTPLATE)
+         || stack.is(Items.DIAMOND_LEGGINGS)
+         || stack.is(Items.DIAMOND_BOOTS);
    }
 
-   private boolean method4023(ItemStack var1) {
-      Item var2 = var1.getItem();
-      return var2.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.SHOVELS)
-         || var2.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.AXES)
-         || var2 instanceof BannerItem
-         || var2 instanceof SmithingTemplateItem && !var1.is(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-         || var1.is(Items.BLAZE_ROD)
-         || var1.is(Items.ENCHANTED_BOOK)
-         || var1.is(Items.TRIDENT)
-         || var1.is(Items.NAME_TAG)
-         || var1.is(Items.SCULK)
-         || var1.is(Items.SCULK_SENSOR)
-         || var1.is(Items.ENDER_CHEST)
-         || var1.is(Items.REINFORCED_DEEPSLATE)
-         || var1.is(Items.PUFFERFISH)
-         || var1.is(Items.HONEY_BOTTLE)
-         || var1.is(Items.FERMENTED_SPIDER_EYE)
-         || var1.is(Items.ANVIL)
-         || var1.is(Items.COOKED_PORKCHOP);
+   private boolean method4023(ItemStack stack) {
+      Item item = stack.getItem();
+      return item.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.SHOVELS)
+         || item.builtInRegistryHolder().is(net.minecraft.tags.ItemTags.AXES)
+         || item instanceof BannerItem
+         || item instanceof SmithingTemplateItem && !stack.is(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+         || stack.is(Items.BLAZE_ROD)
+         || stack.is(Items.ENCHANTED_BOOK)
+         || stack.is(Items.TRIDENT)
+         || stack.is(Items.NAME_TAG)
+         || stack.is(Items.SCULK)
+         || stack.is(Items.SCULK_SENSOR)
+         || stack.is(Items.ENDER_CHEST)
+         || stack.is(Items.REINFORCED_DEEPSLATE)
+         || stack.is(Items.PUFFERFISH)
+         || stack.is(Items.HONEY_BOTTLE)
+         || stack.is(Items.FERMENTED_SPIDER_EYE)
+         || stack.is(Items.ANVIL)
+         || stack.is(Items.COOKED_PORKCHOP);
    }
 
-   private boolean method4024(ItemStack var1) {
-      return this.method4026(var1, MobEffects.INVISIBILITY);
+   private boolean method4024(ItemStack carried) {
+      return this.method4026(carried, MobEffects.INVISIBILITY);
    }
 
-   private boolean method4025(ItemStack var1) {
-      return this.method4026(var1, MobEffects.SPEED);
+   private boolean method4025(ItemStack carried) {
+      return this.method4026(carried, MobEffects.SPEED);
    }
 
-   private boolean method4026(ItemStack var1, Holder<MobEffect> var2) {
-      if (!var1.is(Items.POTION)) {
+   private boolean method4026(ItemStack carried, Holder<MobEffect> holder) {
+      if (!carried.is(Items.POTION)) {
          return false;
       } else {
-         PotionContents var3 = var1.get(DataComponents.POTION_CONTENTS);
-         if (var3 == null) {
+         PotionContents potionContents = carried.get(DataComponents.POTION_CONTENTS);
+         if (potionContents == null) {
             return false;
          } else {
-            for (MobEffectInstance var5 : var3.getAllEffects()) {
-               if (var5.getEffect().equals(var2)) {
+            for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
+               if (allEffect.getEffect().equals(holder)) {
                   return true;
                }
             }
@@ -1458,16 +1458,16 @@ public class AutoWardenModule extends Module {
       return this.intValue4 != 0;
    }
 
-   private void method4028(Predicate<ItemStack> var1) {
+   private void method4028(Predicate<ItemStack> predicate) {
       if (this.intValue4 == 0 && mc.player.tickCount > 20) {
          if (this.method4011()) {
             this.method4013();
          } else {
-            Slot var2 = InventoryUtils.method910(var1x -> var1x.container == mc.player.getInventory() && var1.test(var1x.getItem()));
-            if (var2 != null) {
+            Slot slot = InventoryUtils.method910(var1x -> var1x.container == mc.player.getInventory() && predicate.test(var1x.getItem()));
+            if (slot != null) {
                this.method3977();
-               this.intValue5 = var2.index;
-               InventoryUtils.method900(var2, InteractionHand.OFF_HAND, false);
+               this.intValue5 = slot.index;
+               InventoryUtils.method900(slot, InteractionHand.OFF_HAND, false);
                this.intValue4 = 1;
                this.stopWatch2.reset();
             }
@@ -1554,10 +1554,10 @@ public class AutoWardenModule extends Module {
    }
 
    private boolean method4035() {
-      AABB var1 = mc.player.getBoundingBox().inflate(0.05, 0.0, 0.05);
+      AABB inflate = mc.player.getBoundingBox().inflate(0.05, 0.0, 0.05);
 
-      for (BlockPos var3 : BlockPos.betweenClosed(BlockPos.containing(var1.minX, var1.minY, var1.minZ), BlockPos.containing(var1.maxX, var1.maxY, var1.maxZ))) {
-         if (!mc.level.getBlockState(var3).isAir()) {
+      for (BlockPos pos : BlockPos.betweenClosed(BlockPos.containing(inflate.minX, inflate.minY, inflate.minZ), BlockPos.containing(inflate.maxX, inflate.maxY, inflate.maxZ))) {
+         if (!mc.level.getBlockState(pos).isAir()) {
             return true;
          }
       }
@@ -1565,9 +1565,9 @@ public class AutoWardenModule extends Module {
       return false;
    }
 
-   private boolean method4036(double var1) {
-      for (Player var4 : mc.level.players()) {
-         if (var4 != mc.player && mc.player.distanceToSqr(var4) < var1 * var1) {
+   private boolean method4036(double d) {
+      for (Player player : mc.level.players()) {
+         if (player != mc.player && mc.player.distanceToSqr(player) < d * d) {
             return true;
          }
       }
@@ -1575,9 +1575,9 @@ public class AutoWardenModule extends Module {
       return false;
    }
 
-   private boolean method4037(BlockPos var1, double var2) {
-      for (Player var5 : mc.level.players()) {
-         if (var5 != mc.player && var5.position().distanceToSqr(Vec3.atCenterOf(var1)) < var2 * var2) {
+   private boolean method4037(BlockPos key, double d) {
+      for (Player player : mc.level.players()) {
+         if (player != mc.player && player.position().distanceToSqr(Vec3.atCenterOf(key)) < d * d) {
             return true;
          }
       }
@@ -1585,12 +1585,12 @@ public class AutoWardenModule extends Module {
       return false;
    }
 
-   private boolean method4038(BlockPos var1) {
-      for (Player var3 : mc.level.players()) {
-         if (var3 != mc.player
-            && !(var3.position().distanceToSqr(Vec3.atCenterOf(var1)) >= 20.0)
+   private boolean method4038(BlockPos pos) {
+      for (Player player : mc.level.players()) {
+         if (player != mc.player
+            && !(player.position().distanceToSqr(Vec3.atCenterOf(pos)) >= 20.0)
             && Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
-               .anyMatch(var1x -> Util10.method2181(var3.getItemBySlot(var1x)))) {
+               .anyMatch(var1x -> Util10.method2181(player.getItemBySlot(var1x)))) {
             return true;
          }
       }
@@ -1654,58 +1654,58 @@ public class AutoWardenModule extends Module {
    }
 
    private String method4040() {
-      BlockPos var1 = this.blockPos;
-      if (var1 == null) {
+      BlockPos blockPos = this.blockPos;
+      if (blockPos == null) {
          return "цели нет";
       } else {
-         Vec3 var2 = mc.player.getEyePosition();
-         Vec3 var3 = this.method3995(var2, var1);
-         String var4 = "-";
-         if (var3 != null) {
-            Rotation var5 = Rotation.method3128(var3, var2);
-            var4 = String.format("%.1f", rotationManager.getRotation2().method3130(var5));
+         Vec3 eyePosition = mc.player.getEyePosition();
+         Vec3 vec = this.method3995(eyePosition, blockPos);
+         String str = "-";
+         if (vec != null) {
+            Rotation rotation = Rotation.method3128(vec, eyePosition);
+            str = String.format("%.1f", rotationManager.getRotation2().method3130(rotation));
          }
 
          return "вижу "
-            + (var3 != null)
+            + (vec != null)
             + " | откр "
-            + this.items2.getOrDefault(var1, 0)
+            + this.items2.getOrDefault(blockPos, 0)
             + "/3 | ост "
-            + PvpDetector.method2729(var1)
+            + PvpDetector.method2729(blockPos)
             + " | дист "
-            + (int)Math.sqrt(var2.distanceToSqr(Vec3.atCenterOf(var1)))
+            + (int)Math.sqrt(eyePosition.distanceToSqr(Vec3.atCenterOf(blockPos)))
             + " | угол "
-            + var4;
+            + str;
       }
    }
 
    private BlockPos method4041() {
-      BlockPos var1 = mc.player.blockPosition();
-      MutableBlockPos var2 = new MutableBlockPos();
-      BlockPos var3 = null;
-      double var4 = Double.MAX_VALUE;
+      BlockPos blockPosition = mc.player.blockPosition();
+      MutableBlockPos mutablePos = new MutableBlockPos();
+      BlockPos immutable = null;
+      double d = Double.MAX_VALUE;
 
-      for (int var6 = -16; var6 <= 16; var6++) {
-         for (int var7 = -6; var7 <= 6; var7++) {
-            for (int var8 = -16; var8 <= 16; var8++) {
-               var2.set(var1.getX() + var6, var1.getY() + var7, var1.getZ() + var8);
-               double var9;
-               if (mc.level.getBlockState(var2).is(Blocks.CHEST)
-                  && this.method4003(var2)
-                  && mc.level.getBlockState(var2.above()).isAir()
-                  && (var9 = mc.player.distanceToSqr(Vec3.atCenterOf(var2))) < var4) {
-                  var4 = var9;
-                  var3 = var2.immutable();
+      for (int i = -16; i <= 16; i++) {
+         for (int j = -6; j <= 6; j++) {
+            for (int k = -16; k <= 16; k++) {
+               mutablePos.set(blockPosition.getX() + i, blockPosition.getY() + j, blockPosition.getZ() + k);
+               double d2;
+               if (mc.level.getBlockState(mutablePos).is(Blocks.CHEST)
+                  && this.method4003(mutablePos)
+                  && mc.level.getBlockState(mutablePos.above()).isAir()
+                  && (d2 = mc.player.distanceToSqr(Vec3.atCenterOf(mutablePos))) < d) {
+                  d = d2;
+                  immutable = mutablePos.immutable();
                }
             }
          }
       }
 
-      return var3;
+      return immutable;
    }
 
-   private void notify(String var1) {
-      ChatLogger.method2019("Auto Warden: " + var1);
+   private void notify(String str) {
+      ChatLogger.method2019("Auto Warden: " + str);
    }
 
    private static enum Type {

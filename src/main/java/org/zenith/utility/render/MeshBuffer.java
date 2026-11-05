@@ -33,182 +33,182 @@ public final class MeshBuffer implements AutoCloseable {
    private int intValue;
    private PrimitiveTopology drawMode = PrimitiveTopology.QUADS;
 
-   public MeshBuffer(String var1) {
-      this.text = var1;
+   public MeshBuffer(String text) {
+      this.text = text;
    }
 
    public boolean isEmpty() {
       return this.gpuBuffer == null || this.intValue == 0;
    }
 
-   public void method6583(@Nullable MeshData var1) {
-      if (var1 != null) {
-         MeshData var2 = var1;
+   public void method6583(@Nullable MeshData buffer) {
+      if (buffer != null) {
+         MeshData meshData = buffer;
 
          try {
-            DrawState var3 = var1.drawState();
-            ByteBuffer var4 = var1.vertexBuffer();
-            if (this.gpuBuffer != null && !this.gpuBuffer.isClosed() && this.gpuBuffer.size() >= var4.remaining()) {
-               RenderSystem.getDevice().createCommandEncoder().writeToBuffer(this.gpuBuffer.slice(0L, var4.remaining()), var4);
+            DrawState drawState = buffer.drawState();
+            ByteBuffer vertexBuffer = buffer.vertexBuffer();
+            if (this.gpuBuffer != null && !this.gpuBuffer.isClosed() && this.gpuBuffer.size() >= vertexBuffer.remaining()) {
+               RenderSystem.getDevice().createCommandEncoder().writeToBuffer(this.gpuBuffer.slice(0L, vertexBuffer.remaining()), vertexBuffer);
             } else {
                this.close();
-               this.gpuBuffer = RenderSystem.getDevice().createBuffer(() -> this.text, 40, var4);
+               this.gpuBuffer = RenderSystem.getDevice().createBuffer(() -> this.text, 40, vertexBuffer);
             }
 
-            this.intValue = var3.indexCount();
-            this.drawMode = var3.primitiveTopology();
-         } catch (Throwable var6) {
-            if (var1 != null) {
+            this.intValue = drawState.indexCount();
+            this.drawMode = drawState.primitiveTopology();
+         } catch (Throwable e) {
+            if (buffer != null) {
                try {
-                  var2.close();
-               } catch (Throwable var5) {
-                  var6.addSuppressed(var5);
+                  meshData.close();
+               } catch (Throwable ex) {
+                  e.addSuppressed(ex);
                }
             }
 
-            throw var6;
+            throw e;
          }
 
-         if (var1 != null) {
-            var1.close();
+         if (buffer != null) {
+            buffer.close();
          }
       }
    }
 
-   public void method6584(RenderPipeline var1, Matrix4f var2) {
-      this.method6587(var1, var2, null, null);
+   public void method6584(RenderPipeline pipeline, Matrix4f modelView) {
+      this.method6587(pipeline, modelView, null, null);
    }
 
-   public void method6585(ShaderDefinition var1, VertexFormat var2, Matrix4f var3, @Nullable RenderTarget var4) {
-      this.method6587(var1.method5561(var2, this.drawMode, RenderState.method1904()), var3, var4, var1.method5562());
+   public void method6585(ShaderDefinition shaderDefinition, VertexFormat vertexFormat, Matrix4f modelView, @Nullable RenderTarget fbo) {
+      this.method6587(shaderDefinition.method5561(vertexFormat, this.drawMode, RenderState.method1904()), modelView, fbo, shaderDefinition.method5562());
    }
 
-   public void method6586(RenderPipeline var1, Matrix4f var2, @Nullable RenderTarget var3) {
-      this.method6587(var1, var2, var3, null);
+   public void method6586(RenderPipeline pipeline, Matrix4f modelView, @Nullable RenderTarget fbo) {
+      this.method6587(pipeline, modelView, fbo, null);
    }
 
-   public void method6587(RenderPipeline var1, Matrix4f var2, @Nullable RenderTarget var3, @Nullable GpuBufferSlice var4) {
-      method6589(List.of(this), var1, var2, var3, var4);
+   public void method6587(RenderPipeline pipeline, Matrix4f modelView, @Nullable RenderTarget fbo, @Nullable GpuBufferSlice gpuBufferSlice) {
+      method6589(List.of(this), pipeline, modelView, fbo, gpuBufferSlice);
    }
 
-   public static void method6588(List<MeshBuffer> var0, List<Matrix4f> var1, RenderPipeline var2, @Nullable RenderTarget var3) {
-      int var4 = var0.size();
-      int var5 = 0;
-      PrimitiveTopology var6 = null;
+   public static void method6588(List<MeshBuffer> layerMeshes, List<Matrix4f> subList, RenderPipeline pipeline, @Nullable RenderTarget fbo) {
+      int size = layerMeshes.size();
+      int indexCount = 0;
+      PrimitiveTopology drawMode = null;
 
-      for (int var7 = 0; var7 < var4; var7++) {
-         MeshBuffer var8 = (MeshBuffer)var0.get(var7);
-         if (!var8.isEmpty()) {
-            if (var6 != null && var8.drawMode != var6) {
-               for (int var9 = 0; var9 < var4; var9++) {
-                  ((MeshBuffer)var0.get(var9)).method6586(var2, (Matrix4f)var1.get(var9), var3);
+      for (int i = 0; i < size; i++) {
+         MeshBuffer meshBuffer = (MeshBuffer)layerMeshes.get(i);
+         if (!meshBuffer.isEmpty()) {
+            if (drawMode != null && meshBuffer.drawMode != drawMode) {
+               for (int j = 0; j < size; j++) {
+                  ((MeshBuffer)layerMeshes.get(j)).method6586(pipeline, (Matrix4f)subList.get(j), fbo);
                }
 
                return;
             }
 
-            var6 = var8.drawMode;
-            var5 = Math.max(var5, var8.intValue);
+            drawMode = meshBuffer.drawMode;
+            indexCount = Math.max(indexCount, meshBuffer.intValue);
          }
       }
 
-      if (var6 != null) {
-         AutoStorageIndexBuffer var19 = RenderSystem.getSequentialBuffer(var6);
-         GpuBuffer var20 = var19.getBuffer(var5);
+      if (drawMode != null) {
+         AutoStorageIndexBuffer sequentialBuffer = RenderSystem.getSequentialBuffer(drawMode);
+         GpuBuffer buffer = sequentialBuffer.getBuffer(indexCount);
          vector4f.set(RenderState.getFloatValue(), RenderState.getFloatValue2(), RenderState.getFloatValue3(), RenderState.getAlpha());
-         GpuBufferSlice[] var21 = new GpuBufferSlice[var4];
+         GpuBufferSlice[] gpuBufferSlices = new GpuBufferSlice[size];
 
-         for (int var10 = 0; var10 < var4; var10++) {
-            if (!((MeshBuffer)var0.get(var10)).isEmpty()) {
-               var21[var10] = RenderSystem.getDynamicUniforms().writeTransform(new Matrix4f((Matrix4fc)var1.get(var10)), vector4f, vector3f, matrix4f);
+         for (int i = 0; i < size; i++) {
+            if (!((MeshBuffer)layerMeshes.get(i)).isEmpty()) {
+               gpuBufferSlices[i] = RenderSystem.getDynamicUniforms().writeTransform(new Matrix4f((Matrix4fc)subList.get(i)), vector4f, vector3f, matrix4f);
             }
          }
 
-         RenderTarget var22 = var3 != null ? var3 : BlitUtils.method6452();
-         GpuTextureView var11 = var22.getColorTextureView();
-         GpuTextureView var12 = var22.hasDepth() ? var22.getDepthTextureView() : null;
+         RenderTarget renderTarget = fbo != null ? fbo : BlitUtils.method6452();
+         GpuTextureView colorTextureView = renderTarget.getColorTextureView();
+         GpuTextureView depthTextureView = renderTarget.hasDepth() ? renderTarget.getDepthTextureView() : null;
 
-         try (RenderPass var13 = RenderSystem.getDevice()
+         try (RenderPass renderPass = RenderSystem.getDevice()
                .createCommandEncoder()
-               .createRenderPass(() -> "Zenith mesh", var11, java.util.Optional.empty(), var12, OptionalDouble.empty())) {
-            var13.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(var2));
-            RenderSystem.bindDefaultUniforms(var13);
+               .createRenderPass(() -> "Zenith mesh", colorTextureView, java.util.Optional.empty(), depthTextureView, OptionalDouble.empty())) {
+            renderPass.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(pipeline));
+            RenderSystem.bindDefaultUniforms(renderPass);
 
-            for (int var14 = 0; var14 < 8; var14++) {
-               GpuTextureView var15 = RenderState.method1894(var14);
-               if (var15 != null) {
-                  String var16 = LightUtil.texts3[var14];
-                  if (org.zenith.utility.render.ImmediateRenderer.hasSampler(var2, var16)) {
-                     var13.setUniform(var16, var15, RenderState.method1896(var14));
+            for (int i = 0; i < 8; i++) {
+               GpuTextureView textureView = RenderState.method1894(i);
+               if (textureView != null) {
+                  String name = LightUtil.texts3[i];
+                  if (org.zenith.utility.render.ImmediateRenderer.hasSampler(pipeline, name)) {
+                     renderPass.setUniform(name, textureView, RenderState.method1896(i));
                   }
                }
             }
 
-            var13.setIndexBuffer(var20, var19.type());
+            renderPass.setIndexBuffer(buffer, sequentialBuffer.type());
 
-            for (int var23 = 0; var23 < var4; var23++) {
-               MeshBuffer var24 = (MeshBuffer)var0.get(var23);
-               if (!var24.isEmpty()) {
-                  var13.setUniform("DynamicTransforms", var21[var23]);
-                  var13.setVertexBuffer(0, var24.gpuBuffer.slice());
-                  var13.drawIndexed(var24.intValue, 1, 0, 0, 0);
+            for (int i = 0; i < size; i++) {
+               MeshBuffer meshBuffer = (MeshBuffer)layerMeshes.get(i);
+               if (!meshBuffer.isEmpty()) {
+                  renderPass.setUniform("DynamicTransforms", gpuBufferSlices[i]);
+                  renderPass.setVertexBuffer(0, meshBuffer.gpuBuffer.slice());
+                  renderPass.drawIndexed(meshBuffer.intValue, 1, 0, 0, 0);
                }
             }
          }
       }
    }
 
-   public static void method6589(List<MeshBuffer> var0, RenderPipeline var1, Matrix4f var2, @Nullable RenderTarget var3, @Nullable GpuBufferSlice var4) {
-      int var5 = 0;
-      PrimitiveTopology var6 = null;
+   public static void method6589(List<MeshBuffer> meshBuffers, RenderPipeline pipeline, Matrix4f modelView, @Nullable RenderTarget fbo, @Nullable GpuBufferSlice gpuBufferSlice) {
+      int indexCount = 0;
+      PrimitiveTopology drawMode = null;
 
-      for (MeshBuffer var8 : var0) {
-         if (!var8.isEmpty()) {
-            var5 = Math.max(var5, var8.intValue);
-            var6 = var8.drawMode;
+      for (MeshBuffer meshBuffer : meshBuffers) {
+         if (!meshBuffer.isEmpty()) {
+            indexCount = Math.max(indexCount, meshBuffer.intValue);
+            drawMode = meshBuffer.drawMode;
          }
       }
 
-      if (var6 != null) {
-         AutoStorageIndexBuffer var19 = RenderSystem.getSequentialBuffer(var6);
-         GpuBuffer var20 = var19.getBuffer(var5);
-         GpuBufferSlice var9 = RenderSystem.getDynamicUniforms()
+      if (drawMode != null) {
+         AutoStorageIndexBuffer sequentialBuffer = RenderSystem.getSequentialBuffer(drawMode);
+         GpuBuffer buffer = sequentialBuffer.getBuffer(indexCount);
+         GpuBufferSlice writeTransform = RenderSystem.getDynamicUniforms()
             .writeTransform(
-               var2,
+               modelView,
                vector4f.set(RenderState.getFloatValue(), RenderState.getFloatValue2(), RenderState.getFloatValue3(), RenderState.getAlpha()),
                vector3f,
                matrix4f
             );
-         RenderTarget var10 = var3 != null ? var3 : BlitUtils.method6452();
-         GpuTextureView var11 = var10.getColorTextureView();
-         GpuTextureView var12 = var10.hasDepth() ? var10.getDepthTextureView() : null;
+         RenderTarget renderTarget = fbo != null ? fbo : BlitUtils.method6452();
+         GpuTextureView colorTextureView = renderTarget.getColorTextureView();
+         GpuTextureView depthTextureView = renderTarget.hasDepth() ? renderTarget.getDepthTextureView() : null;
 
-         try (RenderPass var13 = RenderSystem.getDevice()
+         try (RenderPass renderPass = RenderSystem.getDevice()
                .createCommandEncoder()
-               .createRenderPass(() -> "Zenith mesh", var11, java.util.Optional.empty(), var12, OptionalDouble.empty())) {
-            var13.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(var1));
-            RenderSystem.bindDefaultUniforms(var13);
-            var13.setUniform("DynamicTransforms", var9);
-            if (var4 != null) {
-               var13.setUniform("ZenithData", var4);
+               .createRenderPass(() -> "Zenith mesh", colorTextureView, java.util.Optional.empty(), depthTextureView, OptionalDouble.empty())) {
+            renderPass.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(pipeline));
+            RenderSystem.bindDefaultUniforms(renderPass);
+            renderPass.setUniform("DynamicTransforms", writeTransform);
+            if (gpuBufferSlice != null) {
+               renderPass.setUniform("ZenithData", gpuBufferSlice);
             }
 
-            for (int var14 = 0; var14 < 8; var14++) {
-               GpuTextureView var15 = RenderState.method1894(var14);
-               if (var15 != null) {
-                  String var16 = LightUtil.texts3[var14];
-                  if (org.zenith.utility.render.ImmediateRenderer.hasSampler(var1, var16)) {
-                     var13.setUniform(var16, var15, RenderState.method1896(var14));
+            for (int i = 0; i < 8; i++) {
+               GpuTextureView textureView = RenderState.method1894(i);
+               if (textureView != null) {
+                  String name = LightUtil.texts3[i];
+                  if (org.zenith.utility.render.ImmediateRenderer.hasSampler(pipeline, name)) {
+                     renderPass.setUniform(name, textureView, RenderState.method1896(i));
                   }
                }
             }
 
-            var13.setIndexBuffer(var20, var19.type());
+            renderPass.setIndexBuffer(buffer, sequentialBuffer.type());
 
-            for (MeshBuffer var22 : var0) {
-               if (!var22.isEmpty() && var22.drawMode == var6) {
-                  var13.setVertexBuffer(0, var22.gpuBuffer.slice());
-                  var13.drawIndexed(var22.intValue, 1, 0, 0, 0);
+            for (MeshBuffer meshBuffer : meshBuffers) {
+               if (!meshBuffer.isEmpty() && meshBuffer.drawMode == drawMode) {
+                  renderPass.setVertexBuffer(0, meshBuffer.gpuBuffer.slice());
+                  renderPass.drawIndexed(meshBuffer.intValue, 1, 0, 0, 0);
                }
             }
          }

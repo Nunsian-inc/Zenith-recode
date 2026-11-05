@@ -31,12 +31,12 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
    private KawaseShaderKey kawaseShaderKey;
    private KawaseShaderKey maskShaderKey;
 
-   public void capture(MenuDrawContext var1, float var2) {
-      if (mc.getShaderManager() != null && !(var2 <= 0.0F)) {
+   public void capture(MenuDrawContext graphics, float px) {
+      if (mc.getShaderManager() != null && !(px <= 0.0F)) {
          MsdfRenderer.flushBatch();
-         RenderTarget var3 = mc.gameRenderer.mainRenderTarget();
-         this.ensureFramebuffers(var3);
-         this.blurCurrentFramebuffer(var3, MatrixUtils.method664(var1.pose()), var2);
+         RenderTarget mainRenderTarget = mc.gameRenderer.mainRenderTarget();
+         this.ensureFramebuffers(mainRenderTarget);
+         this.blurCurrentFramebuffer(mainRenderTarget, MatrixUtils.method664(graphics.pose()), px);
       }
    }
 
@@ -44,7 +44,7 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
       return this.backgroundFbo == null ? null : this.backgroundFbo.getColorTextureView();
    }
 
-   public void render(Matrix4f var1, float var2, float var3, float var4, float var5, ProxyDotRadiusData var6, ZenithColor var7) {
+   public void render(Matrix4f pose, float floatValue, float y, float width, float height, ProxyDotRadiusData headerRadius, ZenithColor zenithColor) {
       if (this.backgroundFbo != null && mc.getShaderManager() != null) {
          if (this.maskShaderKey == null) {
             this.maskShaderKey = new KawaseShaderKey(ResourceProvider.getShaderIdentifier("wtf/data"), DefaultVertexFormat.POSITION_COLOR);
@@ -58,17 +58,17 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
 
             try {
                RenderState.method1889(0, this.backgroundFbo.getColorTextureView());
-               KawaseShaderKey var8 = this.maskShaderKey.method5165();
-               if (var8 != null) {
-                  var8.method5166("Size").method7413(var4, var5);
-                  var8.method5166("Radius").method7415(var6.getFloatValue(), var6.getFloatValue4(), var6.getFloatValue2(), var6.getFloatValue3());
-                  var8.method5166("Smoothness").method7412(0.01F);
-                  BufferBuilder var9 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                  var9.addVertex(var1, var2, var3, 0.0F).setColor(var7.method7287());
-                  var9.addVertex(var1, var2, var3 + var5, 0.0F).setColor(var7.method7287());
-                  var9.addVertex(var1, var2 + var4, var3 + var5, 0.0F).setColor(var7.method7287());
-                  var9.addVertex(var1, var2 + var4, var3, 0.0F).setColor(var7.method7287());
-                  ImmediateRenderer.method8015(var9.buildOrThrow());
+               KawaseShaderKey kawaseShaderKey = this.maskShaderKey.method5165();
+               if (kawaseShaderKey != null) {
+                  kawaseShaderKey.method5166("Size").method7413(width, height);
+                  kawaseShaderKey.method5166("Radius").method7415(headerRadius.getFloatValue(), headerRadius.getFloatValue4(), headerRadius.getFloatValue2(), headerRadius.getFloatValue3());
+                  kawaseShaderKey.method5166("Smoothness").method7412(0.01F);
+                  BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
+                  begin.addVertex(pose, floatValue, y, 0.0F).setColor(zenithColor.method7287());
+                  begin.addVertex(pose, floatValue, y + height, 0.0F).setColor(zenithColor.method7287());
+                  begin.addVertex(pose, floatValue + width, y + height, 0.0F).setColor(zenithColor.method7287());
+                  begin.addVertex(pose, floatValue + width, y, 0.0F).setColor(zenithColor.method7287());
+                  ImmediateRenderer.method8015(begin.buildOrThrow());
                   return;
                }
             } finally {
@@ -80,84 +80,84 @@ public final class MainMenuBlurRenderer implements MinecraftAccess {
       }
    }
 
-   private void blurCurrentFramebuffer(RenderTarget var1, Matrix4f var2, float var3) {
+   private void blurCurrentFramebuffer(RenderTarget mainRenderTarget, Matrix4f pose, float px) {
       if (this.kawaseShaderKey == null) {
          this.kawaseShaderKey = new KawaseShaderKey(ResourceProvider.getShaderIdentifier("kawase_blur/data"), DefaultVertexFormat.POSITION_COLOR);
       }
 
       if (this.isShaderReady(this.kawaseShaderKey)) {
-         float var4 = 1.0F / this.backgroundFbo.width;
-         float var5 = 1.0F / this.backgroundFbo.height;
-         RenderState.Data2 var6 = RenderState.method1904();
+         float width = 1.0F / this.backgroundFbo.width;
+         float height = 1.0F / this.backgroundFbo.height;
+         RenderState.Data2 data2 = RenderState.method1904();
          RenderState.method1872();
          RenderState.method1877();
 
          try {
-            this.downsample(var1, this.backgroundFbo);
-            TextureTarget var7 = this.backgroundFbo;
-            TextureTarget var8 = this.tempFbo;
+            this.downsample(mainRenderTarget, this.backgroundFbo);
+            TextureTarget backgroundFbo = this.backgroundFbo;
+            TextureTarget tempFbo = this.tempFbo;
 
-            for (float var12 : KAWASE_OFFSETS) {
-               float var13 = var12 * var3 / 10.0F;
-               if (!this.kawasePass(BlitUtils.method6450(var7), var8, var2, var4, var5, var13)) {
+            for (float f : KAWASE_OFFSETS) {
+               float batchRange = f * px / 10.0F;
+               if (!this.kawasePass(BlitUtils.method6450(backgroundFbo), tempFbo, pose, width, height, batchRange)) {
                   return;
                }
 
-               TextureTarget var14 = var7;
-               var7 = var8;
-               var8 = var14;
+               TextureTarget textureTarget = backgroundFbo;
+               backgroundFbo = tempFbo;
+               tempFbo = textureTarget;
             }
          } finally {
             RenderState.method1893(0);
-            RenderState.method1905(var6);
+            RenderState.method1905(data2);
          }
       }
    }
 
-   private void downsample(RenderTarget var1, RenderTarget var2) {
-      BlitUtils.method6455(BlitUtils.method6450(var1), var2);
+   private void downsample(RenderTarget mainRenderTarget, RenderTarget backgroundFbo) {
+      BlitUtils.method6455(BlitUtils.method6450(mainRenderTarget), backgroundFbo);
    }
 
-   private boolean kawasePass(GpuTextureView var1, RenderTarget var2, Matrix4f var3, float var4, float var5, float var6) {
-      ImmediateRenderer.method8013(var2);
-      RenderState.method1889(0, var1);
-      KawaseShaderKey var7 = this.kawaseShaderKey.method5165();
-      if (var7 == null) {
+   private boolean kawasePass(GpuTextureView colorTextureView, RenderTarget tempFbo, Matrix4f pose, float width, float height, float batchRange) {
+      ImmediateRenderer.method8013(tempFbo);
+      RenderState.method1889(0, colorTextureView);
+      KawaseShaderKey kawaseShaderKey = this.kawaseShaderKey.method5165();
+      if (kawaseShaderKey == null) {
          ImmediateRenderer.method8013(null);
          RenderState.method1893(0);
          return false;
       } else {
-         var7.method5166("Resolution").method7413(var4, var5);
-         var7.method5166("Offset").method7412(var6);
-         BufferBuilder var8 = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
-         ShapeRenderer.method7161(var3, var8, 0.0F, 0.0F, var2.width, var2.height, -1);
-         ImmediateRenderer.method8010(var2.width, var2.height);
-         ImmediateRenderer.method8015(var8.buildOrThrow());
+         kawaseShaderKey.method5166("Resolution").method7413(width, height);
+         kawaseShaderKey.method5166("Offset").method7412(batchRange);
+         BufferBuilder begin = Tesselator.getInstance().begin(PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
+         ShapeRenderer.method7161(pose, begin, 0.0F, 0.0F, tempFbo.width, tempFbo.height, -1);
+         ImmediateRenderer.method8010(tempFbo.width, tempFbo.height);
+         ImmediateRenderer.method8015(begin.buildOrThrow());
          RenderState.method1893(0);
          return true;
       }
    }
 
-   private void ensureFramebuffers(RenderTarget var1) {
-      int var2 = Math.max(1, var1.width / 2);
-      int var3 = Math.max(1, var1.height / 2);
-      this.backgroundFbo = this.ensureFramebuffer(this.backgroundFbo, var2, var3);
-      this.tempFbo = this.ensureFramebuffer(this.tempFbo, var2, var3);
+   private void ensureFramebuffers(RenderTarget mainRenderTarget) {
+      int width = Math.max(1, mainRenderTarget.width / 2);
+      int height = Math.max(1, mainRenderTarget.height / 2);
+      this.backgroundFbo = this.ensureFramebuffer(this.backgroundFbo, width, height);
+      this.tempFbo = this.ensureFramebuffer(this.tempFbo, width, height);
    }
 
-   private TextureTarget ensureFramebuffer(TextureTarget var1, int var2, int var3) {
-      if (var1 == null) {
-         var1 = BlitUtils.method6448("zenith menu blur", var2, var3, false);
-      } else if (var1.width != var2 || var1.height != var3) {
-         BlitUtils.method6457(var1, var2, var3);
+   private TextureTarget ensureFramebuffer(TextureTarget backgroundFbo, int width, int height) {
+      if (backgroundFbo == null) {
+         backgroundFbo = BlitUtils.method6448("zenith menu blur", width, height, false);
+      } else if (backgroundFbo.width != width || backgroundFbo.height != height) {
+         BlitUtils.method6457(backgroundFbo, width, height);
       }
 
-      return var1;
+      return backgroundFbo;
    }
 
-   private boolean isShaderReady(KawaseShaderKey var1) {
-      ShaderManager var2 = mc.getShaderManager();
-      return var2 == null ? false : org.zenith.utility.render.LightUtil.shaderSource(var1.getIdentifier(), ShaderType.FRAGMENT) != null;
+   private boolean isShaderReady(KawaseShaderKey maskShaderKey) {
+      ShaderManager shaderManager = mc.getShaderManager();
+      return shaderManager == null ? false : org.zenith.utility.render.LightUtil.shaderSource(maskShaderKey.getIdentifier(), ShaderType.FRAGMENT) != null;
    }
 
    public void close() {

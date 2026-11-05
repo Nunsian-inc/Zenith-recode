@@ -51,9 +51,9 @@ public abstract class MixinInGameHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void onRenderStatusEffectOverlay(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
+   public void onRenderStatusEffectOverlay(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
       if (InterfaceModule.INSTANCE.isEnabled() && InterfaceModule.INSTANCE.method6828()) {
-         var3.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -61,17 +61,17 @@ public abstract class MixinInGameHud {
       method = {"extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V"},
       at = {@At("TAIL")}
    )
-   public void onRender(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
-      CustomDrawContext var4 = new CustomDrawContext(var1);
-      var1.pose().pushMatrix();
+   public void onRender(GuiGraphicsExtractor context, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
+      CustomDrawContext customDrawContext = new CustomDrawContext(context);
+      context.pose().pushMatrix();
 
       try {
-         EventManager.call(new DrawEvent(var4, var2.getGameTimeDeltaPartialTick(false)));
-      } catch (Exception var6) {
-         var6.printStackTrace();
+         EventManager.call(new DrawEvent(customDrawContext, deltaTracker.getGameTimeDeltaPartialTick(false)));
+      } catch (Exception e) {
+         e.printStackTrace();
       }
 
-      var1.pose().popMatrix();
+      context.pose().popMatrix();
    }
 
    @Inject(
@@ -79,18 +79,18 @@ public abstract class MixinInGameHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void removeVanillaCrosshair(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
+   private void removeVanillaCrosshair(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
       if (Util4.method1287()) {
-         var3.cancel();
+         callbackInfo.cancel();
       } else {
          try {
-            CrosshairModule var4 = CrosshairModule.INSTANCE;
-            if (var4.isEnabled()) {
-               var1.pose().translate(0.0F, 0.0F);
-               var3.cancel();
+            CrosshairModule crosshairModule = CrosshairModule.INSTANCE;
+            if (crosshairModule.isEnabled()) {
+               guiGraphicsExtractor.pose().translate(0.0F, 0.0F);
+               callbackInfo.cancel();
             }
-         } catch (Exception var5) {
-            var5.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
@@ -100,11 +100,11 @@ public abstract class MixinInGameHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void renderMainHud(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
+   private void renderMainHud(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
       if (MinecraftAccess.mc.gameMode.getPlayerMode() != GameType.SPECTATOR) {
-         InterfaceModule var4 = InterfaceModule.INSTANCE;
-         if (var4.isEnabled() && var4.method6812()) {
-            var3.cancel();
+         InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+         if (interfaceModule.isEnabled() && interfaceModule.method6812()) {
+            callbackInfo.cancel();
          }
       }
    }
@@ -116,10 +116,10 @@ public abstract class MixinInGameHud {
          target = "Lnet/minecraft/client/gui/contextualbar/ContextualBar;extractExperienceLevel(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;I)V"
       )
    )
-   private void zenith$skipExperienceLevel(GuiGraphicsExtractor var1, Font var2, int var3) {
-      InterfaceModule var4 = InterfaceModule.INSTANCE;
-      if (MinecraftAccess.mc.gameMode.getPlayerMode() == GameType.SPECTATOR || !var4.isEnabled() || !var4.method6812()) {
-         ContextualBar.extractExperienceLevel(var1, var2, var3);
+   private void zenith$skipExperienceLevel(GuiGraphicsExtractor graphics, Font font, int experienceLevel) {
+      InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+      if (MinecraftAccess.mc.gameMode.getPlayerMode() == GameType.SPECTATOR || !interfaceModule.isEnabled() || !interfaceModule.method6812()) {
+         ContextualBar.extractExperienceLevel(graphics, font, experienceLevel);
       }
    }
 
@@ -128,10 +128,10 @@ public abstract class MixinInGameHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void inject(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
-      InterfaceModule var4 = InterfaceModule.INSTANCE;
-      if (var4.isEnabled() && var4.method6813()) {
-         var3.cancel();
+   private void inject(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
+      InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+      if (interfaceModule.isEnabled() && interfaceModule.method6813()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -140,11 +140,11 @@ public abstract class MixinInGameHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void injectRenderOverlayMessage(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
+   private void injectRenderOverlayMessage(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
       if (MinecraftAccess.mc.gameMode.getPlayerMode() != GameType.SPECTATOR) {
-         InterfaceModule var4 = InterfaceModule.INSTANCE;
-         if (var4.isEnabled() && var4.method6812()) {
-            var3.cancel();
+         InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+         if (interfaceModule.isEnabled() && interfaceModule.method6812()) {
+            callbackInfo.cancel();
          }
       }
    }
@@ -154,10 +154,10 @@ public abstract class MixinInGameHud {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void injectRenderScoreboardSidebar(GuiGraphicsExtractor var1, DeltaTracker var2, CallbackInfo var3) {
-      InterfaceModule var4 = InterfaceModule.INSTANCE;
-      if (NoRenderModule.INSTANCE.method4528() || var4.isEnabled() && var4.method6811()) {
-         var3.cancel();
+   private void injectRenderScoreboardSidebar(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
+      InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+      if (NoRenderModule.INSTANCE.method4528() || interfaceModule.isEnabled() && interfaceModule.method6811()) {
+         callbackInfo.cancel();
       }
    }
 
@@ -169,58 +169,58 @@ public abstract class MixinInGameHud {
       ),
       index = 1
    )
-   private Component zenith$modifyScoreboardName(Component var1) {
-      Component var2 = ScoreboardParser.method7076(var1);
-      if (var2 == null) {
+   private Component zenith$modifyScoreboardName(Component header) {
+      Component name = ScoreboardParser.method7076(header);
+      if (name == null) {
          return Component.empty();
       } else {
          if (NameProtectModule.INSTANCE.isEnabled() && MinecraftAccess.mc.player != null) {
-            String var3 = MinecraftAccess.mc.player.getScoreboardName();
-            Component var4 = NameProtectModule.INSTANCE.getText();
-            String var5 = var2.getString();
-            boolean var6 = var5.contains(var3);
-            String var7 = null;
-            if (!var6 && var4 != null) {
-               if (var5.contains("Группа:")) {
-                  var7 = "Группа:";
-               } else if (var5.contains("Ранг:")) {
-                  var7 = "Ранг:";
+            String scoreboardName = MinecraftAccess.mc.player.getScoreboardName();
+            Component text = NameProtectModule.INSTANCE.getText();
+            String string = name.getString();
+            boolean contains = string.contains(scoreboardName);
+            String str = null;
+            if (!contains && text != null) {
+               if (string.contains("Группа:")) {
+                  str = "Группа:";
+               } else if (string.contains("Ранг:")) {
+                  str = "Ранг:";
                }
             }
 
-            if (var6 || var7 != null) {
-               String var8 = NameProtectModule.method5141();
-               this.zenith$validateProtectedRows(var3, var8, var4);
-               Object var9 = this.zenith$protectedRows.get(var2);
-               if (var9 == null) {
-                  var9 = var6 ? TextUtils.method2110(var2, var3, var8) : TextUtils.method2114(var2, var7, var4);
+            if (contains || str != null) {
+               String zenith$protectedRowsName = NameProtectModule.method5141();
+               this.zenith$validateProtectedRows(scoreboardName, zenith$protectedRowsName, text);
+               Object zenith$protectedRow = this.zenith$protectedRows.get(name);
+               if (zenith$protectedRow == null) {
+                  zenith$protectedRow = contains ? TextUtils.method2110(name, scoreboardName, zenith$protectedRowsName) : TextUtils.method2114(name, str, text);
                   if (this.zenith$protectedRows.size() >= 32) {
                      this.zenith$protectedRows.clear();
                   }
 
-                  this.zenith$protectedRows.put(var2, (Component)var9);
+                  this.zenith$protectedRows.put(name, (Component)zenith$protectedRow);
                }
 
-               return (Component)var9;
+               return (Component)zenith$protectedRow;
             }
          }
 
-         return var2;
+         return name;
       }
    }
 
    @Unique
-   private void zenith$validateProtectedRows(String var1, String var2, Component var3) {
-      Language var4 = Language.getInstance();
-      if (!var1.equals(this.zenith$protectedRowsSelf)
-         || !Objects.equals(var2, this.zenith$protectedRowsName)
-         || var3 != this.zenith$protectedRowsPrefix
-         || var4 != this.zenith$protectedRowsLanguage) {
+   private void zenith$validateProtectedRows(String zenith$protectedRowsSelf, String zenith$protectedRowsName, Component zenith$protectedRowsPrefix) {
+      Language zenith$protectedRowsLanguage = Language.getInstance();
+      if (!zenith$protectedRowsSelf.equals(this.zenith$protectedRowsSelf)
+         || !Objects.equals(zenith$protectedRowsName, this.zenith$protectedRowsName)
+         || zenith$protectedRowsPrefix != this.zenith$protectedRowsPrefix
+         || zenith$protectedRowsLanguage != this.zenith$protectedRowsLanguage) {
          this.zenith$protectedRows.clear();
-         this.zenith$protectedRowsSelf = var1;
-         this.zenith$protectedRowsName = var2;
-         this.zenith$protectedRowsPrefix = var3;
-         this.zenith$protectedRowsLanguage = var4;
+         this.zenith$protectedRowsSelf = zenith$protectedRowsSelf;
+         this.zenith$protectedRowsName = zenith$protectedRowsName;
+         this.zenith$protectedRowsPrefix = zenith$protectedRowsPrefix;
+         this.zenith$protectedRowsLanguage = zenith$protectedRowsLanguage;
       }
    }
 
@@ -228,15 +228,15 @@ public abstract class MixinInGameHud {
       method = {"extractPlayerHealth(Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$saturation(GuiGraphicsExtractor var1, CallbackInfo var2) {
+   private void zenith$saturation(GuiGraphicsExtractor context, CallbackInfo callbackInfo) {
       if (MinecraftAccess.mc.player != null
          && MinecraftAccess.mc.gameMode != null
          && MinecraftAccess.mc.gameMode.getPlayerMode() != GameType.SPECTATOR) {
-         InterfaceModule var3 = InterfaceModule.INSTANCE;
-         if (!var3.isEnabled() || !var3.method6812()) {
-            int var4 = var1.guiWidth() / 2 + 91;
-            int var5 = var1.guiHeight() - 39;
-            StatusBarColors.method1755(var1, MinecraftAccess.mc.player, var5, var4);
+         InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+         if (!interfaceModule.isEnabled() || !interfaceModule.method6812()) {
+            int n = context.guiWidth() / 2 + 91;
+            int n2 = context.guiHeight() - 39;
+            StatusBarColors.method1755(context, MinecraftAccess.mc.player, n2, n);
          }
       }
    }
@@ -246,14 +246,14 @@ public abstract class MixinInGameHud {
       at = @At("STORE"),
       ordinal = 3
    )
-   private int modifyM(int var1, GuiGraphicsExtractor var2) {
+   private int modifyM(int n, GuiGraphicsExtractor guiGraphicsExtractor) {
       if (MinecraftAccess.mc.gameMode.getPlayerMode() != GameType.SPECTATOR) {
-         InterfaceModule var3 = InterfaceModule.INSTANCE;
-         if (var3.isEnabled() && var3.method6812()) {
-            return var2.guiWidth() / 2 + 90 + 36;
+         InterfaceModule interfaceModule = InterfaceModule.INSTANCE;
+         if (interfaceModule.isEnabled() && interfaceModule.method6812()) {
+            return guiGraphicsExtractor.guiWidth() / 2 + 90 + 36;
          }
       }
 
-      return var1;
+      return n;
    }
 }

@@ -158,9 +158,9 @@ public final class RotationRecorderModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundPlayerPositionPacket) {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundPlayerPositionPacket) {
             mc.execute(() -> {
                if (this.isEnabled()) {
                   this.method4936();
@@ -172,104 +172,104 @@ public final class RotationRecorderModule extends Module {
    }
 
    @EventTarget
-   public void method4915(AttackEvent var1) {
-      if (var1.getType4() == AttackEvent.Type.POST && mc.player != null && var1.getEntity() instanceof LivingEntity var2) {
+   public void method4915(AttackEvent event) {
+      if (event.getType4() == AttackEvent.Type.POST && mc.player != null && event.getEntity() instanceof LivingEntity livingEntity) {
          this.flag5 = true;
-         int var5 = mc.player.tickCount;
-         RotationRecorderModule.Entry9 var4 = this.items.get(var2.getId());
-         if (this.entry7 != null && var5 > this.entry7.intValue4) {
+         int tickCount = mc.player.tickCount;
+         RotationRecorderModule.Entry9 entry9 = this.items.get(livingEntity.getId());
+         if (this.entry7 != null && tickCount > this.entry7.intValue4) {
             this.method4935();
          }
 
          if (this.entry7 != null) {
-            if (!this.entry7.method5026(var2)) {
+            if (!this.entry7.method5026(livingEntity)) {
                this.method4937();
             } else {
-               this.entry7.intValue3 = var5;
-               this.entry7.intValue4 = Math.max(this.entry7.intValue4, var5 + 40);
+               this.entry7.intValue3 = tickCount;
+               this.entry7.intValue4 = Math.max(this.entry7.intValue4, tickCount + 40);
             }
          } else {
-            if (var4 != null && var4.method5031(var2) && var4.deque.size() >= 21) {
-               this.method4932(var2, var4, var5);
+            if (entry9 != null && entry9.method5031(livingEntity) && entry9.deque.size() >= 21) {
+               this.method4932(livingEntity, entry9, tickCount);
             }
          }
       }
    }
 
    @EventTarget
-   public void method4916(Event2 var1) {
+   public void method4916(Event2 event) {
       if (!mc.isPaused() && mc.player != null && mc.level != null && !mc.player.isSpectator()) {
          if (this.entry7 != null && mc.player.tickCount > this.entry7.intValue4) {
             this.method4935();
          }
 
-         boolean var2 = this.flag5;
+         boolean flag = this.flag5;
          this.flag5 = false;
-         float var3 = this.flag3 ? rotationManager.method7844().getFloatValue() : mc.player.getYRot();
-         float var4 = this.flag3 ? rotationManager.method7844().getFloatValue2() : mc.player.getXRot();
-         Rotation var5 = new Rotation(var3, var4);
+         float floatValue = this.flag3 ? rotationManager.method7844().getFloatValue() : mc.player.getYRot();
+         float xRot = this.flag3 ? rotationManager.method7844().getFloatValue2() : mc.player.getXRot();
+         Rotation rotation = new Rotation(floatValue, xRot);
          if (!this.flag4) {
-            this.floatValue = var3;
-            this.floatValue2 = var4;
+            this.floatValue = floatValue;
+            this.floatValue2 = xRot;
             this.flag4 = true;
          }
 
-         float var6 = Mth.wrapDegrees(mc.player.getYRot() - this.floatValue);
-         float var7 = mc.player.getXRot() - this.floatValue2;
-         int var8 = 0;
+         float f = Mth.wrapDegrees(mc.player.getYRot() - this.floatValue);
+         float f2 = mc.player.getXRot() - this.floatValue2;
+         int n = 0;
          if (this.flag3) {
-            Rotation var9 = new Rotation(mc.player.yRotLast, mc.player.xRotLast);
-            Vec2f var10 = var9.method3131(zenith.getRotationManager().method7844());
-            Vec2f var11 = new Vec2f(var6, var7);
-            var6 = var10.getFloatValue();
-            var7 = var10.getFloatValue2();
-            var8 = var10.getFloatValue() == var11.getFloatValue()
-                  && var10.getFloatValue2() == var11.getFloatValue2()
+            Rotation rotation2 = new Rotation(mc.player.yRotLast, mc.player.xRotLast);
+            Vec2f vec2f = rotation2.method3131(zenith.getRotationManager().method7844());
+            Vec2f vec2f2 = new Vec2f(f, f2);
+            f = vec2f.getFloatValue();
+            f2 = vec2f.getFloatValue2();
+            n = vec2f.getFloatValue() == vec2f2.getFloatValue()
+                  && vec2f.getFloatValue2() == vec2f2.getFloatValue2()
                   && mc.player.getYRot() == zenith.getRotationManager().method7844().getFloatValue()
                   && mc.player.getXRot() == zenith.getRotationManager().method7844().getFloatValue2()
                ? 0
                : 1;
          }
 
-         Input var25 = this.method4970();
-         AABB var26 = mc.player.getBoundingBox();
-         Vec3 var27 = mc.player.getEyePosition();
-         byte var12 = 0;
-         RotationRecorderModule.Entry10 var13 = null;
-         RotationRecorderModule.Entry3 var14 = null;
-         Vec3 var15 = null;
-         HashSet var16 = new HashSet();
+         Input keyPresses = this.method4970();
+         AABB boundingBox = mc.player.getBoundingBox();
+         Vec3 eyePosition = mc.player.getEyePosition();
+         byte b = 0;
+         RotationRecorderModule.Entry10 entry10 = null;
+         RotationRecorderModule.Entry3 entry3 = null;
+         Vec3 vec = null;
+         HashSet hashSet = new HashSet();
 
-         for (Entity var18 : mc.level.entitiesForRendering()) {
-            if (var18 instanceof LivingEntity var19 && var19 != mc.player && var19.isAlive() && !(mc.player.distanceToSqr(var19) > 256.0)) {
-               AABB var20 = this.method4931(var19);
-               Vec3 var21 = this.method4920(var19);
-               if (var20 != null && var21 != null) {
-                  if (var12 == 0) {
-                     var12 = 1;
-                     var13 = this.method4957(var26);
-                     var14 = this.method4975(var3, var4, var25);
-                     var15 = this.method4919(var5, var27, var25);
+         for (Entity entity : mc.level.entitiesForRendering()) {
+            if (entity instanceof LivingEntity livingEntity && livingEntity != mc.player && livingEntity.isAlive() && !(mc.player.distanceToSqr(livingEntity) > 256.0)) {
+               AABB move = this.method4931(livingEntity);
+               Vec3 vec3d = this.method4920(livingEntity);
+               if (move != null && vec3d != null) {
+                  if (b == 0) {
+                     b = 1;
+                     entry10 = this.method4957(boundingBox);
+                     entry3 = this.method4975(floatValue, xRot, keyPresses);
+                     vec = this.method4919(rotation, eyePosition, keyPresses);
                   }
 
-                  RotationRecorderModule.Entry9 var22 = this.items
+                  RotationRecorderModule.Entry9 entry9 = this.items
                      .compute(
-                        var19.getId(),
-                        (var1x, var2x) -> (RotationRecorderModule.Entry9)(var2x != null && var2x.method5031(var19)
+                        livingEntity.getId(),
+                        (var1x, var2x) -> (RotationRecorderModule.Entry9)(var2x != null && var2x.method5031(livingEntity)
                            ? var2x
-                           : new RotationRecorderModule.Entry9(var19))
+                           : new RotationRecorderModule.Entry9(livingEntity))
                      );
-                  var16.add(var19.getId());
-                  this.method4938(var22);
-                  RotationRecorderModule.Entry var23 = this.entry;
-                  RotationRecorderModule.Entry var24 = this.method4955(
-                     var5, var27, var19, var20, var21, var6, var7, var25, var2, (var8 != 0), var13, var14, var15
+                  hashSet.add(livingEntity.getId());
+                  this.method4938(entry9);
+                  RotationRecorderModule.Entry entry = this.entry;
+                  RotationRecorderModule.Entry entry2 = this.method4955(
+                     rotation, eyePosition, livingEntity, move, vec3d, f, f2, keyPresses, flag, (n != 0), entry10, entry3, vec
                   );
-                  this.method4939(var22);
-                  if (var24 != null) {
-                     var22.method5032(var24);
-                     if (this.entry7 != null && this.entry7.method5026(var19) && var23 != null) {
-                        this.method4934(var23, var24);
+                  this.method4939(entry9);
+                  if (entry2 != null) {
+                     entry9.method5032(entry2);
+                     if (this.entry7 != null && this.entry7.method5026(livingEntity) && entry != null) {
+                        this.method4934(entry, entry2);
                      }
                   }
                }
@@ -278,13 +278,13 @@ public final class RotationRecorderModule extends Module {
 
          this.items
             .entrySet()
-            .removeIf(var2x -> !(var16.contains(var2x.getKey()) || this.entry7 != null && this.entry7.intValue == var2x.getKey()));
-         if (this.entry7 != null && !var16.contains(this.entry7.intValue)) {
+            .removeIf(var2x -> !(hashSet.contains(var2x.getKey()) || this.entry7 != null && this.entry7.intValue == var2x.getKey()));
+         if (this.entry7 != null && !hashSet.contains(this.entry7.intValue)) {
             this.method4937();
          }
 
-         this.floatValue = var3;
-         this.floatValue2 = var4;
+         this.floatValue = floatValue;
+         this.floatValue2 = xRot;
       } else {
          this.method4935();
          this.method4940();
@@ -292,232 +292,232 @@ public final class RotationRecorderModule extends Module {
    }
 
    private RotationRecorderModule.Data2 method4917(
-      Rotation var1,
-      Vec3 var2,
-      Vec3 var3,
-      LivingEntity var4,
-      AABB var5,
-      Vec3 var6,
-      float var7,
-      float var8,
-      Vec3 var9,
-      Vec3 var10,
-      float var11,
-      Input var12,
-      boolean var13,
-      boolean var14
+      Rotation rotation,
+      Vec3 eyePosition,
+      Vec3 vec,
+      LivingEntity livingEntity,
+      AABB move,
+      Vec3 vec3d,
+      float f,
+      float f2,
+      Vec3 vec2,
+      Vec3 vec3,
+      float floatValue,
+      Input keyPresses,
+      boolean flag,
+      boolean flag2
    ) {
-      Vec3[] var15 = new Vec3[]{
-         new Vec3(var5.minX, var5.minY, var5.minZ),
-         new Vec3(var5.minX, var5.minY, var5.maxZ),
-         new Vec3(var5.minX, var5.maxY, var5.minZ),
-         new Vec3(var5.minX, var5.maxY, var5.maxZ),
-         new Vec3(var5.maxX, var5.minY, var5.minZ),
-         new Vec3(var5.maxX, var5.minY, var5.maxZ),
-         new Vec3(var5.maxX, var5.maxY, var5.minZ),
-         new Vec3(var5.maxX, var5.maxY, var5.maxZ)
+      Vec3[] vecs = new Vec3[]{
+         new Vec3(move.minX, move.minY, move.minZ),
+         new Vec3(move.minX, move.minY, move.maxZ),
+         new Vec3(move.minX, move.maxY, move.minZ),
+         new Vec3(move.minX, move.maxY, move.maxZ),
+         new Vec3(move.maxX, move.minY, move.minZ),
+         new Vec3(move.maxX, move.minY, move.maxZ),
+         new Vec3(move.maxX, move.maxY, move.minZ),
+         new Vec3(move.maxX, move.maxY, move.maxZ)
       };
-      Vec3 var16 = new Vec3((var5.minX + var5.maxX) * 0.5, (var5.minY + var5.maxY) * 0.5, (var5.minZ + var5.maxZ) * 0.5);
-      Rotation var17 = this.method4918(var2, var16);
-      Vec2f var18 = var1.method3131(var17);
-      float var19 = var18.getFloatValue();
-      float var20 = var18.getFloatValue2();
-      if (this.isFinite(var19) && this.isFinite(var20)) {
-         AABB var21 = var5.move(var6.subtract(var4.position()));
-         Vec2f var22 = var1.method3131(this.method4918(var3, this.method4923(var21)));
-         float var23 = var22.getFloatValue();
-         float var24 = var22.getFloatValue2();
-         if (this.isFinite(var23) && this.isFinite(var24)) {
-            float var25;
-            float var26 = (float)Math.sin(var25 = (float)Math.toRadians(var23));
-            float var27 = (float)Math.cos(var25);
-            Vec3 var28 = var6.add(var4.getEyePosition().subtract(var4.position()));
-            Rotation var29 = new Rotation(var4.getYRot(), var4.getXRot());
-            Vec2f var30 = var29.method3131(this.method4918(var28, var2));
-            float var31 = var30.getFloatValue();
-            float var32 = var30.getFloatValue2();
-            Vec3 var33 = var2.subtract(var28);
-            if (this.isFinite(var31) && this.isFinite(var32) && this.method4977(var33) && !(var33.lengthSqr() <= 1.0E-10)) {
-               float var34 = (float)Math.toRadians(var31);
-               float var35 = (float)Math.toRadians(var32);
-               float var36 = (float)Mth.clamp(var29.method3135().dot(var33.normalize()), -1.0, 1.0);
-               float var37 = Float.MAX_VALUE;
-               float var38 = -Float.MAX_VALUE;
-               float var39 = Float.MAX_VALUE;
-               float var40 = -Float.MAX_VALUE;
+      Vec3 vec4 = new Vec3((move.minX + move.maxX) * 0.5, (move.minY + move.maxY) * 0.5, (move.minZ + move.maxZ) * 0.5);
+      Rotation rotation2 = this.method4918(eyePosition, vec4);
+      Vec2f vec2f = rotation.method3131(rotation2);
+      float floatValue2 = vec2f.getFloatValue();
+      float floatValue3 = vec2f.getFloatValue2();
+      if (this.isFinite(floatValue2) && this.isFinite(floatValue3)) {
+         AABB aabb = move.move(vec3d.subtract(livingEntity.position()));
+         Vec2f vec2f2 = rotation.method3131(this.method4918(vec, this.method4923(aabb)));
+         float floatValue4 = vec2f2.getFloatValue();
+         float floatValue5 = vec2f2.getFloatValue2();
+         if (this.isFinite(floatValue4) && this.isFinite(floatValue5)) {
+            float f3;
+            float f4 = (float)Math.sin(f3 = (float)Math.toRadians(floatValue4));
+            float f5 = (float)Math.cos(f3);
+            Vec3 eyePosition2 = vec3d.add(livingEntity.getEyePosition().subtract(livingEntity.position()));
+            Rotation rotation3 = new Rotation(livingEntity.getYRot(), livingEntity.getXRot());
+            Vec2f vec2f3 = rotation3.method3131(this.method4918(eyePosition2, eyePosition));
+            float floatValue6 = vec2f3.getFloatValue();
+            float floatValue7 = vec2f3.getFloatValue2();
+            Vec3 vec3d2 = eyePosition.subtract(eyePosition2);
+            if (this.isFinite(floatValue6) && this.isFinite(floatValue7) && this.method4977(vec3d2) && !(vec3d2.lengthSqr() <= 1.0E-10)) {
+               float f6 = (float)Math.toRadians(floatValue6);
+               float f7 = (float)Math.toRadians(floatValue7);
+               float f8 = (float)Mth.clamp(rotation3.method3135().dot(vec3d2.normalize()), -1.0, 1.0);
+               float f9 = Float.MAX_VALUE;
+               float f10 = -Float.MAX_VALUE;
+               float f11 = Float.MAX_VALUE;
+               float f12 = -Float.MAX_VALUE;
 
-               for (Vec3 var44 : var15) {
-                  Rotation var45 = this.method4918(var2, var44);
-                  Vec2f var46 = var1.method3131(var45);
-                  float var47 = var46.getFloatValue();
-                  float var48 = var46.getFloatValue2();
-                  if (this.isFinite(var47) && this.isFinite(var48)) {
-                     var47 = method4953(var47, var19);
-                     var37 = Math.min(var37, var47);
-                     var38 = Math.max(var38, var47);
-                     var39 = Math.min(var39, var48);
-                     var40 = Math.max(var40, var48);
+               for (Vec3 vec5 : vecs) {
+                  Rotation rotation4 = this.method4918(eyePosition, vec5);
+                  Vec2f vec2f4 = rotation.method3131(rotation4);
+                  float floatValue8 = vec2f4.getFloatValue();
+                  float floatValue9 = vec2f4.getFloatValue2();
+                  if (this.isFinite(floatValue8) && this.isFinite(floatValue9)) {
+                     floatValue8 = method4953(floatValue8, floatValue2);
+                     f9 = Math.min(f9, floatValue8);
+                     f10 = Math.max(f10, floatValue8);
+                     f11 = Math.min(f11, floatValue9);
+                     f12 = Math.max(f12, floatValue9);
                   }
                }
 
-               if (var37 == Float.MAX_VALUE) {
-                  var37 = var19;
-                  var38 = var19;
-                  var39 = var20;
-                  var40 = var20;
+               if (f9 == Float.MAX_VALUE) {
+                  f9 = floatValue2;
+                  f10 = floatValue2;
+                  f11 = floatValue3;
+                  f12 = floatValue3;
                }
 
-               var19 = method4953(var19, var19);
-               float var98 = var38 - var37;
-               float var99 = var40 - var39;
-               float var100 = (float)(var16.x - var2.x);
-               float var101 = (float)(var16.y - var2.y);
-               float var102 = (float)(var16.z - var2.z);
-               float var103 = (float)var2.distanceTo(var16);
-               float var105 = this.hypot(var100, var102);
-               Vec3 var106 = var16.add(var9);
-               Vec2f var49 = var17.method3131(this.method4918(var2, var106));
-               float var50 = (float)var2.distanceTo(var106) - var103;
-               Vec3 var51 = var2.add(var10);
-               Vec2f var52 = var17.method3131(this.method4918(var51, var16));
-               float var53 = (float)var51.distanceTo(var16) - var103;
-               if (this.isFinite(var49.getFloatValue())
-                  && this.isFinite(var49.getFloatValue2())
-                  && this.isFinite(var50)
-                  && this.isFinite(var52.getFloatValue())
-                  && this.isFinite(var52.getFloatValue2())
-                  && this.isFinite(var53)) {
-                  int var54 = var37 <= 0.0F && var38 >= 0.0F ? 1 : 0;
-                  int var55 = var39 <= 0.0F && var40 >= 0.0F ? 1 : 0;
-                  float var56 = 0.0F;
-                  if (var54 != 0 && Math.abs(var98) > 1.0E-6F) {
-                     var56 = Mth.clamp((0.0F - var37) / var98, 0.0F, 1.0F);
+               floatValue2 = method4953(floatValue2, floatValue2);
+               float f13 = f10 - f9;
+               float f14 = f12 - f11;
+               float f15 = (float)(vec4.x - eyePosition.x);
+               float f16 = (float)(vec4.y - eyePosition.y);
+               float f17 = (float)(vec4.z - eyePosition.z);
+               float floatValue8 = (float)eyePosition.distanceTo(vec4);
+               float hypot = this.hypot(f15, f17);
+               Vec3 vec5 = vec4.add(vec2);
+               Vec2f vec2f4 = rotation2.method3131(this.method4918(eyePosition, vec5));
+               float floatValue9 = (float)eyePosition.distanceTo(vec5) - floatValue8;
+               Vec3 eyePosition3 = eyePosition.add(vec3);
+               Vec2f vec2f5 = rotation2.method3131(this.method4918(eyePosition3, vec4));
+               float floatValue10 = (float)eyePosition3.distanceTo(vec4) - floatValue8;
+               if (this.isFinite(vec2f4.getFloatValue())
+                  && this.isFinite(vec2f4.getFloatValue2())
+                  && this.isFinite(floatValue9)
+                  && this.isFinite(vec2f5.getFloatValue())
+                  && this.isFinite(vec2f5.getFloatValue2())
+                  && this.isFinite(floatValue10)) {
+                  int n = f9 <= 0.0F && f10 >= 0.0F ? 1 : 0;
+                  int n2 = f11 <= 0.0F && f12 >= 0.0F ? 1 : 0;
+                  float f18 = 0.0F;
+                  if (n != 0 && Math.abs(f13) > 1.0E-6F) {
+                     f18 = Mth.clamp((0.0F - f9) / f13, 0.0F, 1.0F);
                   }
 
-                  float var57 = 0.0F;
-                  if (var55 != 0 && Math.abs(var99) > 1.0E-6F) {
-                     var57 = Mth.clamp((0.0F - var39) / var99, 0.0F, 1.0F);
+                  float f19 = 0.0F;
+                  if (n2 != 0 && Math.abs(f14) > 1.0E-6F) {
+                     f19 = Mth.clamp((0.0F - f11) / f14, 0.0F, 1.0F);
                   }
 
-                  int var58 = var54 != 0 && var55 != 0 ? 1 : 0;
-                  this.floatValue7 = var58 != 0 ? Mth.clamp(this.floatValue7 + 1.0F, 0.0F, 50.0F) : 0.0F;
-                  this.floatValue8 = var58 != 0 ? 0.0F : Mth.clamp(this.floatValue8 + 1.0F, 0.0F, 50.0F);
-                  float var61 = var7 - this.floatValue3;
-                  float var62 = var8 - this.floatValue4;
-                  float var63 = var61 - this.floatValue5;
-                  float var64 = var62 - this.floatValue6;
-                  float var65 = this.entry != null ? this.method4926(this.entry.data24.getData3().getFloatValue(), this.entry.floatValue2) : var19;
-                  float var66 = this.entry != null ? this.method4926(this.entry.data24.getData3().getFloatValue2(), this.entry.floatValue2) : var20;
-                  float var67 = this.entry != null ? this.entry.data2.getData17().getFloatValue() : var103;
-                  float var68 = Mth.wrapDegrees(var19 - var65);
-                  float var69 = var20 - var66;
-                  float var70 = var103 - var67;
-                  float var71 = Mth.clamp(var20 / Math.max(Math.abs(var99), 0.1F), -20.0F, 20.0F);
-                  float var72 = (float)Math.sqrt(var19 * var19 + var20 * var20);
-                  Vec3 var73 = var16.subtract(var2).normalize();
-                  Vec3 var74 = var1.method3135().normalize();
-                  Vec3 var75 = new Rotation(var1.getFloatValue() + 90.0F, 0.0F).method3135().normalize();
-                  Vec3 var76 = var75.cross(var74).normalize();
-                  float var77 = (float)var73.dot(var75);
-                  float var78 = (float)var73.dot(var76);
-                  float var79 = (float)var73.dot(var74);
-                  float var80 = this.method4925(var7, var11);
-                  float var81 = this.method4925(var8, var11);
-                  float var82 = this.method4924(var20, var11);
-                  float var83 = 0.0F;
-                  float var84 = 0.0F;
-                  float var85 = 0.0F;
-                  float var86 = 0.0F;
+                  int n3 = n != 0 && n2 != 0 ? 1 : 0;
+                  this.floatValue7 = n3 != 0 ? Mth.clamp(this.floatValue7 + 1.0F, 0.0F, 50.0F) : 0.0F;
+                  this.floatValue8 = n3 != 0 ? 0.0F : Mth.clamp(this.floatValue8 + 1.0F, 0.0F, 50.0F);
+                  float f20 = f - this.floatValue3;
+                  float f21 = f2 - this.floatValue4;
+                  float f22 = f20 - this.floatValue5;
+                  float f23 = f21 - this.floatValue6;
+                  float f24 = this.entry != null ? this.method4926(this.entry.data24.getData3().getFloatValue(), this.entry.floatValue2) : floatValue2;
+                  float f25 = this.entry != null ? this.method4926(this.entry.data24.getData3().getFloatValue2(), this.entry.floatValue2) : floatValue3;
+                  float floatValue11 = this.entry != null ? this.entry.data2.getData17().getFloatValue() : floatValue8;
+                  float floatValue12 = Mth.wrapDegrees(floatValue2 - f24);
+                  float floatValue13 = floatValue3 - f25;
+                  float f26 = floatValue8 - floatValue11;
+                  float f27 = Mth.clamp(floatValue3 / Math.max(Math.abs(f14), 0.1F), -20.0F, 20.0F);
+                  float floatValue14 = (float)Math.sqrt(floatValue2 * floatValue2 + floatValue3 * floatValue3);
+                  Vec3 vec6 = vec4.subtract(eyePosition).normalize();
+                  Vec3 vec7 = rotation.method3135().normalize();
+                  Vec3 vec8 = new Rotation(rotation.getFloatValue() + 90.0F, 0.0F).method3135().normalize();
+                  Vec3 vec9 = vec8.cross(vec7).normalize();
+                  float f28 = (float)vec6.dot(vec8);
+                  float f29 = (float)vec6.dot(vec9);
+                  float f30 = (float)vec6.dot(vec7);
+                  float floatValue15 = this.method4925(f, floatValue);
+                  float f31 = this.method4925(f2, floatValue);
+                  float f32 = this.method4924(floatValue3, floatValue);
+                  float f33 = 0.0F;
+                  float f34 = 0.0F;
+                  float f35 = 0.0F;
+                  float f36 = 0.0F;
                   if (this.entry != null) {
-                     float var87 = this.entry.data24.getData3().getFloatValue();
-                     float var88 = this.entry.data24.getData3().getFloatValue2();
-                     float var89 = var87 - var80;
-                     float var90 = var88 - var81;
-                     float var91 = Mth.wrapDegrees(this.method4926(var89, var11));
-                     float var92 = this.method4924(var91, var11);
-                     var83 = Math.abs(var87) - Math.abs(var92);
-                     var84 = Math.abs(var88) - Math.abs(var90);
-                     var85 = this.method4924(Mth.wrapDegrees(var19 - var91), var11);
-                     var86 = var82 - var90;
+                     float floatValue16 = this.entry.data24.getData3().getFloatValue();
+                     float f37 = this.entry.data24.getData3().getFloatValue2();
+                     float floatValue17 = floatValue16 - floatValue15;
+                     float f38 = f37 - f31;
+                     float floatValue18 = Mth.wrapDegrees(this.method4926(floatValue17, floatValue));
+                     float f39 = this.method4924(floatValue18, floatValue);
+                     f33 = Math.abs(floatValue16) - Math.abs(f39);
+                     f34 = Math.abs(f37) - Math.abs(f38);
+                     f35 = this.method4924(Mth.wrapDegrees(floatValue2 - floatValue18), floatValue);
+                     f36 = f32 - f38;
                   }
 
-                  this.floatValue9 = var80 != 0.0F ? this.floatValue9 + 1.0F : 0.0F;
-                  this.floatValue10 = var81 != 0.0F ? this.floatValue10 + 1.0F : 0.0F;
-                  int var107 = this.method4927(var80);
-                  int var108 = this.method4927(var81);
-                  this.floatValue13 = this.method4929(var80, var107, this.intValue2, this.floatValue13);
-                  this.floatValue14 = this.method4929(var81, var108, this.intValue3, this.floatValue14);
-                  float var109 = this.method4930(var80, this.floatValue13);
-                  float var110 = this.method4930(var81, this.floatValue14);
-                  this.floatValue11 = this.method4928(var107, this.intValue2, this.floatValue11);
-                  this.floatValue12 = this.method4928(var108, this.intValue3, this.floatValue12);
-                  this.intValue2 = var107 != 0 ? var107 : this.intValue2;
-                  this.intValue3 = var108 != 0 ? var108 : this.intValue3;
-                  float var111 = var12.forward() ? 1.0F : 0.0F;
-                  float var112 = var12.backward() ? 1.0F : 0.0F;
-                  float var93 = var12.left() ? 1.0F : 0.0F;
-                  float var94 = var12.right() ? 1.0F : 0.0F;
-                  float var95 = var12.jump() ? 1.0F : 0.0F;
-                  RotationRecorderModule.Data2 var96 = new RotationRecorderModule.Data2(
+                  this.floatValue9 = floatValue15 != 0.0F ? this.floatValue9 + 1.0F : 0.0F;
+                  this.floatValue10 = f31 != 0.0F ? this.floatValue10 + 1.0F : 0.0F;
+                  int n4 = this.method4927(floatValue15);
+                  int n5 = this.method4927(f31);
+                  this.floatValue13 = this.method4929(floatValue15, n4, this.intValue2, this.floatValue13);
+                  this.floatValue14 = this.method4929(f31, n5, this.intValue3, this.floatValue14);
+                  float f37 = this.method4930(floatValue15, this.floatValue13);
+                  float f38 = this.method4930(f31, this.floatValue14);
+                  this.floatValue11 = this.method4928(n4, this.intValue2, this.floatValue11);
+                  this.floatValue12 = this.method4928(n5, this.intValue3, this.floatValue12);
+                  this.intValue2 = n4 != 0 ? n4 : this.intValue2;
+                  this.intValue3 = n5 != 0 ? n5 : this.intValue3;
+                  float floatValue16 = keyPresses.forward() ? 1.0F : 0.0F;
+                  float f39 = keyPresses.backward() ? 1.0F : 0.0F;
+                  float f40 = keyPresses.left() ? 1.0F : 0.0F;
+                  float f41 = keyPresses.right() ? 1.0F : 0.0F;
+                  float f42 = keyPresses.jump() ? 1.0F : 0.0F;
+                  RotationRecorderModule.Data2 data2 = new RotationRecorderModule.Data2(
                      new RotationRecorderModule.Data6(
-                        this.method4924(var37 - var19, var11),
-                        this.method4924(var38 - var19, var11),
-                        this.method4924(var39 - var20, var11),
-                        this.method4924(var40 - var20, var11),
-                        var71,
-                        this.method4924(var72, var11),
-                        var77,
-                        var78,
-                        var79,
-                        var56,
-                        var57,
-                        (var58 != 0)
+                        this.method4924(f9 - floatValue2, floatValue),
+                        this.method4924(f10 - floatValue2, floatValue),
+                        this.method4924(f11 - floatValue3, floatValue),
+                        this.method4924(f12 - floatValue3, floatValue),
+                        f27,
+                        this.method4924(floatValue14, floatValue),
+                        f28,
+                        f29,
+                        f30,
+                        f18,
+                        f19,
+                        (n3 != 0)
                      ),
-                     new RotationRecorderModule.Data17(var103, var105, var101, this.floatValue7, this.floatValue8),
+                     new RotationRecorderModule.Data17(floatValue8, hypot, f16, this.floatValue7, this.floatValue8),
                      new RotationRecorderModule.Data7(
-                        this.method4924(var68, var11),
-                        this.method4924(var69, var11),
-                        var70,
-                        var85,
-                        var86,
-                        var26,
-                        var27,
-                        this.method4924(var24, var11),
-                        new RotationRecorderModule.Data5(this.method4924(var49.getFloatValue(), var11), this.method4924(var49.getFloatValue2(), var11), var50)
+                        this.method4924(floatValue12, floatValue),
+                        this.method4924(floatValue13, floatValue),
+                        f26,
+                        f35,
+                        f36,
+                        f4,
+                        f5,
+                        this.method4924(floatValue5, floatValue),
+                        new RotationRecorderModule.Data5(this.method4924(vec2f4.getFloatValue(), floatValue), this.method4924(vec2f4.getFloatValue2(), floatValue), floatValue9)
                      ),
-                     new RotationRecorderModule.Data12((float)Math.sin(var34), (float)Math.cos(var34), (float)Math.sin(var35), (float)Math.cos(var35), var36),
+                     new RotationRecorderModule.Data12((float)Math.sin(f6), (float)Math.cos(f6), (float)Math.sin(f7), (float)Math.cos(f7), f8),
                      new RotationRecorderModule.Data13(
-                        var80,
-                        var81,
-                        this.method4925(var61, var11),
-                        this.method4925(var62, var11),
-                        this.method4925(var63, var11),
-                        this.method4925(var64, var11),
+                        floatValue15,
+                        f31,
+                        this.method4925(f20, floatValue),
+                        this.method4925(f21, floatValue),
+                        this.method4925(f22, floatValue),
+                        this.method4925(f23, floatValue),
                         this.floatValue9,
                         this.floatValue10,
                         this.floatValue11,
                         this.floatValue12,
-                        var83,
-                        var84,
-                        var109,
-                        var110,
+                        f33,
+                        f34,
+                        f37,
+                        f38,
                         this.floatValue13,
                         this.floatValue14
                      ),
-                     new RotationRecorderModule.Data16(var111, var112, var93, var94, var95),
-                     new RotationRecorderModule.Data5(this.method4924(var52.getFloatValue(), var11), this.method4924(var52.getFloatValue2(), var11), var53),
+                     new RotationRecorderModule.Data16(floatValue16, f39, f40, f41, f42),
+                     new RotationRecorderModule.Data5(this.method4924(vec2f5.getFloatValue(), floatValue), this.method4924(vec2f5.getFloatValue2(), floatValue), floatValue10),
                      new RotationRecorderModule.Data22(
-                        mc.player.getAttackStrengthScale(0.0F), Mth.clamp((float)mc.player.attackStrengthTicker, 0.0F, 50.0F), var13, var14
+                        mc.player.getAttackStrengthScale(0.0F), Mth.clamp((float)mc.player.attackStrengthTicker, 0.0F, 50.0F), flag, flag2
                      )
                   );
-                  if (!var96.method4982()) {
+                  if (!data2.method4982()) {
                      return null;
                   } else {
-                     this.floatValue3 = var7;
-                     this.floatValue4 = var8;
-                     this.floatValue5 = var61;
-                     this.floatValue6 = var62;
-                     return var96;
+                     this.floatValue3 = f;
+                     this.floatValue4 = f2;
+                     this.floatValue5 = f20;
+                     this.floatValue6 = f21;
+                     return data2;
                   }
                } else {
                   return null;
@@ -533,144 +533,144 @@ public final class RotationRecorderModule extends Module {
       }
    }
 
-   private Rotation method4918(Vec3 var1, Vec3 var2) {
-      return RotationUtils.method6912(var2.subtract(var1));
+   private Rotation method4918(Vec3 eyePosition, Vec3 vec) {
+      return RotationUtils.method6912(vec.subtract(eyePosition));
    }
 
-   private Vec3 method4919(Rotation var1, Vec3 var2, Input var3) {
-      Vec3 var4 = mc.player.position();
-      Vec3 var5 = var2.subtract(var4);
+   private Vec3 method4919(Rotation rotation, Vec3 eyePosition, Input keyPresses) {
+      Vec3 position = mc.player.position();
+      Vec3 vec = eyePosition.subtract(position);
 
-      Vec3 var10000;
+      Vec3 vec2;
       try {
-         PlayerSimulation var6 = PlayerSimulation.method6033(PlayerSimulation.Entry.method6092(var3));
-         var6.floatValue = var1.getFloatValue();
-         var6.floatValue2 = var1.getFloatValue2();
-         var6.tick();
-         Vec3 var7 = var6.vec3d.add(var5);
-         var10000 = this.method4977(var7) ? var7 : var2;
-      } catch (Throwable var8) {
-         return var2;
+         PlayerSimulation playerSimulation = PlayerSimulation.method6033(PlayerSimulation.Entry.method6092(keyPresses));
+         playerSimulation.floatValue = rotation.getFloatValue();
+         playerSimulation.floatValue2 = rotation.getFloatValue2();
+         playerSimulation.tick();
+         Vec3 vec3d = playerSimulation.vec3d.add(vec);
+         vec2 = this.method4977(vec3d) ? vec3d : eyePosition;
+      } catch (Throwable e) {
+         return eyePosition;
       }
 
-      return var10000;
+      return vec2;
    }
 
-   private Vec3 method4920(LivingEntity var1) {
-      if (var1 != null && var1.getPositionCodec() != null) {
-         Vec3 var2 = var1.getPositionCodec().getBase();
-         return this.method4977(var2) ? var2 : null;
+   private Vec3 method4920(LivingEntity livingEntity) {
+      if (livingEntity != null && livingEntity.getPositionCodec() != null) {
+         Vec3 base = livingEntity.getPositionCodec().getBase();
+         return this.method4977(base) ? base : null;
       } else {
          return null;
       }
    }
 
-   private Vec3 method4921(Vec3 var1) {
-      if (this.entry != null && var1 != null) {
-         Vec3 var2 = var1.subtract(this.entry.vec3d);
-         return this.method4977(var2) ? var2 : Vec3.ZERO;
+   private Vec3 method4921(Vec3 position) {
+      if (this.entry != null && position != null) {
+         Vec3 vec3d = position.subtract(this.entry.vec3d);
+         return this.method4977(vec3d) ? vec3d : Vec3.ZERO;
       } else {
          return Vec3.ZERO;
       }
    }
 
-   private Vec3 method4922(AABB var1) {
-      if (this.entry != null && var1 != null) {
-         RotationRecorderModule.Data20 var2 = this.entry.data24.getData3().getData20();
-         Vec3 var3 = this.method4923(var1);
-         Vec3 var4 = var3.subtract(new Vec3(var2.getFloatValue(), var2.getFloatValue2(), var2.getFloatValue3()));
-         return this.method4977(var4) ? var4 : Vec3.ZERO;
+   private Vec3 method4922(AABB move) {
+      if (this.entry != null && move != null) {
+         RotationRecorderModule.Data20 data20 = this.entry.data24.getData3().getData20();
+         Vec3 vec = this.method4923(move);
+         Vec3 vec3d = vec.subtract(new Vec3(data20.getFloatValue(), data20.getFloatValue2(), data20.getFloatValue3()));
+         return this.method4977(vec3d) ? vec3d : Vec3.ZERO;
       } else {
          return Vec3.ZERO;
       }
    }
 
-   private Vec3 method4923(AABB var1) {
-      return new Vec3((var1.minX + var1.maxX) * 0.5, (var1.minY + var1.maxY) * 0.5, (var1.minZ + var1.maxZ) * 0.5);
+   private Vec3 method4923(AABB move) {
+      return new Vec3((move.minX + move.maxX) * 0.5, (move.minY + move.maxY) * 0.5, (move.minZ + move.maxZ) * 0.5);
    }
 
-   private float hypot(float var1, float var2) {
-      return (float)Math.sqrt(var1 * var1 + var2 * var2);
+   private float hypot(float f, float f2) {
+      return (float)Math.sqrt(f * f + f2 * f2);
    }
 
-   private float method4924(float var1, float var2) {
-      return var1 / var2;
+   private float method4924(float floatValue, float f) {
+      return floatValue / f;
    }
 
-   private float method4925(float var1, float var2) {
-      return Math.round(var1 / var2);
+   private float method4925(float f, float floatValue) {
+      return Math.round(f / floatValue);
    }
 
-   private float method4926(float var1, float var2) {
-      return this.isFinite(var2) && var2 > 0.0F ? var1 * var2 : var1;
+   private float method4926(float floatValue, float f) {
+      return this.isFinite(f) && f > 0.0F ? floatValue * f : floatValue;
    }
 
-   private int method4927(float var1) {
-      if (var1 > 0.0F) {
+   private int method4927(float f) {
+      if (f > 0.0F) {
          return 1;
       } else {
-         return var1 < 0.0F ? -1 : 0;
+         return f < 0.0F ? -1 : 0;
       }
    }
 
-   private float method4928(int var1, int var2, float var3) {
-      return var1 != 0 && var2 != 0 && var1 != var2 ? 0.0F : Math.min(var3 + 1.0F, 50.0F);
+   private float method4928(int n, int n2, float f) {
+      return n != 0 && n2 != 0 && n != n2 ? 0.0F : Math.min(f + 1.0F, 50.0F);
    }
 
-   private float method4929(float var1, int var2, int var3, float var4) {
-      float var5 = Math.abs(var1);
-      if (var2 == 0) {
+   private float method4929(float f, int n, int n2, float f2) {
+      float f3 = Math.abs(f);
+      if (n == 0) {
          return 0.0F;
       } else {
-         return var3 != 0 && var2 == var3 ? Math.max(var4, var5) : var5;
+         return n2 != 0 && n == n2 ? Math.max(f2, f3) : f3;
       }
    }
 
-   private float method4930(float var1, float var2) {
-      return var2 > 0.0F ? Math.abs(var1) / var2 : 0.0F;
+   private float method4930(float f, float f2) {
+      return f2 > 0.0F ? Math.abs(f) / f2 : 0.0F;
    }
 
-   private AABB method4931(LivingEntity var1) {
-      return var1 == null ? null : var1.getBoundingBox();
+   private AABB method4931(LivingEntity livingEntity) {
+      return livingEntity == null ? null : livingEntity.getBoundingBox();
    }
 
-   private void method4932(LivingEntity var1, RotationRecorderModule.Entry9 var2, int var3) {
-      var var4 = new ArrayList<>(var2.deque);
-      int var5;
-      if ((var5 = var4.size() - 20 - 1) >= 0) {
-         for (int var6 = var5; var6 < var4.size() - 1; var6++) {
-            if (((RotationRecorderModule.Entry)var4.get(var6 + 1)).intValue2 != ((RotationRecorderModule.Entry)var4.get(var6)).intValue2 + 1) {
+   private void method4932(LivingEntity livingEntity, RotationRecorderModule.Entry9 entry9, int tickCount) {
+      var entries = new ArrayList<>(entry9.deque);
+      int n;
+      if ((n = entries.size() - 20 - 1) >= 0) {
+         for (int i = n; i < entries.size() - 1; i++) {
+            if (((RotationRecorderModule.Entry)entries.get(i + 1)).intValue2 != ((RotationRecorderModule.Entry)entries.get(i)).intValue2 + 1) {
                return;
             }
          }
 
          this.entry4 = new RotationRecorderModule.Entry4();
 
-         for (int var7 = var5; var7 < var4.size() - 1; var7++) {
-            if (!this.entry4.method4999(this.method4933((RotationRecorderModule.Entry)var4.get(var7), (RotationRecorderModule.Entry)var4.get(var7 + 1)))) {
+         for (int i = n; i < entries.size() - 1; i++) {
+            if (!this.entry4.method4999(this.method4933((RotationRecorderModule.Entry)entries.get(i), (RotationRecorderModule.Entry)entries.get(i + 1)))) {
                this.method4937();
                return;
             }
          }
 
-         RotationRecorderModule.Entry var8 = (RotationRecorderModule.Entry)var4.get(var4.size() - 1);
-         this.entry7 = new RotationRecorderModule.Entry7(var1.getId(), var1.getUUID(), var8.intValue2, var3, var3 + 40);
+         RotationRecorderModule.Entry entry = (RotationRecorderModule.Entry)entries.get(entries.size() - 1);
+         this.entry7 = new RotationRecorderModule.Entry7(livingEntity.getId(), livingEntity.getUUID(), entry.intValue2, tickCount, tickCount + 40);
       }
    }
 
-   private RotationRecorderModule.Entry5 method4933(RotationRecorderModule.Entry var1, RotationRecorderModule.Entry var2) {
-      RotationRecorderModule.Entry3 var3 = this.method4974(var1, var1, this.method4972(var1), this.method4973(var1));
-      return RotationRecorderModule.Entry5.method5006(var1, var2, var3, false);
+   private RotationRecorderModule.Entry5 method4933(RotationRecorderModule.Entry entry, RotationRecorderModule.Entry entry2) {
+      RotationRecorderModule.Entry3 entry3 = this.method4974(entry, entry, this.method4972(entry), this.method4973(entry));
+      return RotationRecorderModule.Entry5.method5006(entry, entry2, entry3, false);
    }
 
-   private void method4934(RotationRecorderModule.Entry var1, RotationRecorderModule.Entry var2) {
+   private void method4934(RotationRecorderModule.Entry entry, RotationRecorderModule.Entry entry2) {
       if (this.entry7 != null && this.entry4 != null) {
-         if (var1.intValue2 >= this.entry7.intValue2) {
-            if (var1.intValue2 == this.entry7.intValue2 && var2.intValue2 == this.entry7.intValue2 + 1) {
-               if (!this.entry4.method4999(this.method4933(var1, var2))) {
+         if (entry.intValue2 >= this.entry7.intValue2) {
+            if (entry.intValue2 == this.entry7.intValue2 && entry2.intValue2 == this.entry7.intValue2 + 1) {
+               if (!this.entry4.method4999(this.method4933(entry, entry2))) {
                   this.method4937();
                } else {
-                  this.entry7.intValue2 = var2.intValue2;
+                  this.entry7.intValue2 = entry2.intValue2;
                }
             } else {
                this.method4937();
@@ -681,8 +681,8 @@ public final class RotationRecorderModule extends Module {
 
    private void method4935() {
       if (this.entry7 != null && this.entry4 != null && this.entry7.intValue2 >= this.entry7.intValue4) {
-         int var1 = Math.max(0, this.entry7.intValue2 - this.entry7.intValue3);
-         this.entry4.method5000(var1);
+         int n = Math.max(0, this.entry7.intValue2 - this.entry7.intValue3);
+         this.entry4.method5000(n);
          this.entry7 = null;
       } else {
          this.method4937();
@@ -691,8 +691,8 @@ public final class RotationRecorderModule extends Module {
 
    private void method4936() {
       if (this.entry7 != null && this.entry4 != null) {
-         int var1 = Math.max(0, this.entry7.intValue2 - this.entry7.intValue3);
-         this.entry4.method5000(var1);
+         int n = Math.max(0, this.entry7.intValue2 - this.entry7.intValue3);
+         this.entry4.method5000(n);
          this.entry7 = null;
       } else {
          this.method4937();
@@ -707,39 +707,39 @@ public final class RotationRecorderModule extends Module {
       this.entry7 = null;
    }
 
-   private void method4938(RotationRecorderModule.Entry9 var1) {
-      this.floatValue3 = var1.floatValue;
-      this.floatValue4 = var1.floatValue2;
-      this.floatValue5 = var1.floatValue3;
-      this.floatValue6 = var1.floatValue4;
-      this.floatValue7 = var1.floatValue5;
-      this.floatValue8 = var1.floatValue6;
-      this.floatValue9 = var1.floatValue7;
-      this.floatValue10 = var1.floatValue8;
-      this.intValue2 = var1.intValue2;
-      this.intValue3 = var1.intValue3;
-      this.floatValue11 = var1.floatValue9;
-      this.floatValue12 = var1.floatValue10;
-      this.floatValue13 = var1.floatValue11;
-      this.floatValue14 = var1.floatValue12;
-      this.entry = var1.deque.peekLast();
+   private void method4938(RotationRecorderModule.Entry9 entry9) {
+      this.floatValue3 = entry9.floatValue;
+      this.floatValue4 = entry9.floatValue2;
+      this.floatValue5 = entry9.floatValue3;
+      this.floatValue6 = entry9.floatValue4;
+      this.floatValue7 = entry9.floatValue5;
+      this.floatValue8 = entry9.floatValue6;
+      this.floatValue9 = entry9.floatValue7;
+      this.floatValue10 = entry9.floatValue8;
+      this.intValue2 = entry9.intValue2;
+      this.intValue3 = entry9.intValue3;
+      this.floatValue11 = entry9.floatValue9;
+      this.floatValue12 = entry9.floatValue10;
+      this.floatValue13 = entry9.floatValue11;
+      this.floatValue14 = entry9.floatValue12;
+      this.entry = entry9.deque.peekLast();
    }
 
-   private void method4939(RotationRecorderModule.Entry9 var1) {
-      var1.floatValue = this.floatValue3;
-      var1.floatValue2 = this.floatValue4;
-      var1.floatValue3 = this.floatValue5;
-      var1.floatValue4 = this.floatValue6;
-      var1.floatValue5 = this.floatValue7;
-      var1.floatValue6 = this.floatValue8;
-      var1.floatValue7 = this.floatValue9;
-      var1.floatValue8 = this.floatValue10;
-      var1.intValue2 = this.intValue2;
-      var1.intValue3 = this.intValue3;
-      var1.floatValue9 = this.floatValue11;
-      var1.floatValue10 = this.floatValue12;
-      var1.floatValue11 = this.floatValue13;
-      var1.floatValue12 = this.floatValue14;
+   private void method4939(RotationRecorderModule.Entry9 entry9) {
+      entry9.floatValue = this.floatValue3;
+      entry9.floatValue2 = this.floatValue4;
+      entry9.floatValue3 = this.floatValue5;
+      entry9.floatValue4 = this.floatValue6;
+      entry9.floatValue5 = this.floatValue7;
+      entry9.floatValue6 = this.floatValue8;
+      entry9.floatValue7 = this.floatValue9;
+      entry9.floatValue8 = this.floatValue10;
+      entry9.intValue2 = this.intValue2;
+      entry9.intValue3 = this.intValue3;
+      entry9.floatValue9 = this.floatValue11;
+      entry9.floatValue10 = this.floatValue12;
+      entry9.floatValue11 = this.floatValue13;
+      entry9.floatValue12 = this.floatValue14;
    }
 
    private void method4940() {
@@ -773,26 +773,26 @@ public final class RotationRecorderModule extends Module {
       this.intValue = 0;
 
       try {
-         Path var1 = this.method4943();
-         Files.createDirectories(var1.getParent());
-         int var2 = (!Files.exists(var1) || Files.size(var1) == 0L) && Zenith.getInstance().getEntry().getUsername().equals("Bogdan") ? 1 : 0;
-         this.bufferedWriter = Files.newBufferedWriter(var1, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-         this.method4952((var2 != 0));
-      } catch (IOException var3) {
+         Path path = this.method4943();
+         Files.createDirectories(path.getParent());
+         int n = (!Files.exists(path) || Files.size(path) == 0L) && Zenith.getInstance().getEntry().getUsername().equals("Bogdan") ? 1 : 0;
+         this.bufferedWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+         this.method4952((n != 0));
+      } catch (IOException e) {
          this.bufferedWriter = null;
          this.flag = true;
-         System.err.println("[RotationRecorder] Failed to open dataset writer: " + var3.getMessage());
+         System.err.println("[RotationRecorder] Failed to open dataset writer: " + e.getMessage());
       }
    }
 
    private void method4942() {
-      Path var1 = path.getParent().toAbsolutePath();
+      Path absolutePath = path.getParent().toAbsolutePath();
 
       try {
-         Files.createDirectories(var1);
-         new ProcessBuilder("explorer.exe", var1.toString()).start();
-      } catch (IOException var3) {
-         System.err.println("[RotationRecorder] Failed to open recordings folder: " + var3.getMessage());
+         Files.createDirectories(absolutePath);
+         new ProcessBuilder("explorer.exe", absolutePath.toString()).start();
+      } catch (IOException e) {
+         System.err.println("[RotationRecorder] Failed to open recordings folder: " + e.getMessage());
       }
    }
 
@@ -849,70 +849,70 @@ public final class RotationRecorderModule extends Module {
          Files.createDirectories(path3.getParent());
          this.method4946();
          this.bufferedWriter2 = Files.newBufferedWriter(path3, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-      } catch (IOException var2) {
+      } catch (IOException e) {
          this.bufferedWriter2 = null;
          this.flag2 = true;
-         System.err.println("[RotationRecorder] Failed to open snapshot writer: " + var2.getMessage());
+         System.err.println("[RotationRecorder] Failed to open snapshot writer: " + e.getMessage());
       }
    }
 
    private void method4946() {
       this.longValue3 = 1L;
       if (Files.exists(path3)) {
-         long var1;
-         if ((var1 = this.method4950()) > 0L) {
-            this.longValue3 = var1;
+         long l;
+         if ((l = this.method4950()) > 0L) {
+            this.longValue3 = l;
          } else {
-            long var3 = 0L;
+            long l2 = 0L;
 
-            try (BufferedReader var5 = Files.newBufferedReader(path3, StandardCharsets.UTF_8)) {
-               String var6;
-               while ((var6 = var5.readLine()) != null) {
-                  long var7;
-                  if ((var7 = this.method4947(var6)) > var3) {
-                     var3 = var7;
+            try (BufferedReader bufferedReader = Files.newBufferedReader(path3, StandardCharsets.UTF_8)) {
+               String line;
+               while ((line = bufferedReader.readLine()) != null) {
+                  long l3;
+                  if ((l3 = this.method4947(line)) > l2) {
+                     l2 = l3;
                   }
                }
 
-               this.longValue3 = var3 + 1L;
-            } catch (IOException var11) {
-               System.err.println("[RotationRecorder] Failed to scan existing snapshots; starting from snapshot_id=1: " + var11.getMessage());
+               this.longValue3 = l2 + 1L;
+            } catch (IOException e) {
+               System.err.println("[RotationRecorder] Failed to scan existing snapshots; starting from snapshot_id=1: " + e.getMessage());
                this.longValue3 = 1L;
             }
          }
       }
    }
 
-   private long method4947(String var1) {
-      int var2;
-      if ((var2 = var1.indexOf("\"snapshot_id\"")) < 0) {
+   private long method4947(String line) {
+      int indexOf;
+      if ((indexOf = line.indexOf("\"snapshot_id\"")) < 0) {
          return -1L;
       } else {
-         int var3;
-         if ((var3 = var1.indexOf(58, var2)) < 0) {
+         int n;
+         if ((n = line.indexOf(58, indexOf)) < 0) {
             return -1L;
          } else {
-            int var4 = var3 + 1;
+            int index = n + 1;
 
-            while (var4 < var1.length() && Character.isWhitespace(var1.charAt(var4))) {
-               var4++;
+            while (index < line.length() && Character.isWhitespace(line.charAt(index))) {
+               index++;
             }
 
-            int var5 = var4;
-            if (var4 < var1.length() && var1.charAt(var4) == '-') {
-               var4++;
+            int beginIndex = index;
+            if (index < line.length() && line.charAt(index) == '-') {
+               index++;
             }
 
-            while (var4 < var1.length() && Character.isDigit(var1.charAt(var4))) {
-               var4++;
+            while (index < line.length() && Character.isDigit(line.charAt(index))) {
+               index++;
             }
 
-            if (var4 <= var5) {
+            if (index <= beginIndex) {
                return -1L;
             } else {
                try {
-                  return Long.parseLong(var1.substring(var5, var4));
-               } catch (NumberFormatException var7) {
+                  return Long.parseLong(line.substring(beginIndex, index));
+               } catch (NumberFormatException e) {
                   return -1L;
                }
             }
@@ -969,12 +969,12 @@ public final class RotationRecorderModule extends Module {
             return;
          }
 
-         String var1 = this.longValue3 + " " + Files.size(path3) + " " + Files.getLastModifiedTime(path3).toMillis();
-         Files.writeString(path4, var1, StandardCharsets.UTF_8);
-      } catch (IOException var4) {
+         String csq = this.longValue3 + " " + Files.size(path3) + " " + Files.getLastModifiedTime(path3).toMillis();
+         Files.writeString(path4, csq, StandardCharsets.UTF_8);
+      } catch (IOException e) {
          try {
             Files.deleteIfExists(path4);
-         } catch (IOException var3) {
+         } catch (IOException ex) {
          }
       }
    }
@@ -984,74 +984,74 @@ public final class RotationRecorderModule extends Module {
          if (!Files.exists(path4)) {
             return -1L;
          } else {
-            String[] var1 = Files.readString(path4, StandardCharsets.UTF_8).trim().split("\\s+");
-            if (var1.length != 3) {
+            String[] strings = Files.readString(path4, StandardCharsets.UTF_8).trim().split("\\s+");
+            if (strings.length != 3) {
                return -1L;
             } else {
-               long var2 = Long.parseLong(var1[0]);
-               long var4 = Long.parseLong(var1[1]);
-               long var6 = Long.parseLong(var1[2]);
-               return var2 >= 1L && var4 == Files.size(path3) && var6 == Files.getLastModifiedTime(path3).toMillis() ? var2 : -1L;
+               long l = Long.parseLong(strings[0]);
+               long l2 = Long.parseLong(strings[1]);
+               long l3 = Long.parseLong(strings[2]);
+               return l >= 1L && l2 == Files.size(path3) && l3 == Files.getLastModifiedTime(path3).toMillis() ? l : -1L;
             }
          }
-      } catch (RuntimeException | IOException var8) {
+      } catch (RuntimeException | IOException e) {
          return -1L;
       }
    }
 
-   private void method4951(long var1, RotationRecorderModule.Entry5 var3) {
+   private void method4951(long longValue, RotationRecorderModule.Entry5 entry5) {
       if (this.bufferedWriter != null && !this.flag) {
-         if (var3 != null && var3.isValid()) {
+         if (entry5 != null && entry5.isValid()) {
             try {
-               StringBuilder var4 = new StringBuilder(16384);
-               var4.append(var1).append(',');
-               var4.append(var3.longValue).append(',');
-               var4.append(var3.intValue);
-               var4.append(',').append(var3.floatValue);
+               StringBuilder stringBuilder = new StringBuilder(16384);
+               stringBuilder.append(longValue).append(',');
+               stringBuilder.append(entry5.longValue).append(',');
+               stringBuilder.append(entry5.intValue);
+               stringBuilder.append(',').append(entry5.floatValue);
                if (this.flag3) {
-                  var3.method5008(var4);
+                  entry5.method5008(stringBuilder);
                } else {
-                  var3.method5007(var4);
+                  entry5.method5007(stringBuilder);
                }
 
-               this.bufferedWriter.write(var4.toString());
+               this.bufferedWriter.write(stringBuilder.toString());
                this.bufferedWriter.newLine();
                this.longValue++;
                this.intValue++;
                if (this.longValue % 128L == 0L) {
                   this.bufferedWriter.flush();
                }
-            } catch (IllegalStateException | IOException var5) {
+            } catch (IllegalStateException | IOException e) {
                this.flag = true;
-               System.err.println("[RotationRecorder] Failed to write dataset row: " + var5.getMessage());
+               System.err.println("[RotationRecorder] Failed to write dataset row: " + e.getMessage());
             }
          }
       }
    }
 
-   private void method4952(boolean var1) throws IOException {
-      if (var1 && this.bufferedWriter != null) {
-         StringBuilder var2 = new StringBuilder(16384);
-         var2.append("session_id,timestamp_ms,player_age,mouse_degrees_per_count");
+   private void method4952(boolean flag) throws IOException {
+      if (flag && this.bufferedWriter != null) {
+         StringBuilder stringBuilder = new StringBuilder(16384);
+         stringBuilder.append("session_id,timestamp_ms,player_age,mouse_degrees_per_count");
          if (this.flag3) {
-            RotationRecorderModule.Entry5.method5003(new RotationRecorderModule.Entry8(var2));
+            RotationRecorderModule.Entry5.method5003(new RotationRecorderModule.Entry8(stringBuilder));
          } else {
-            RotationRecorderModule.Entry5.method5002(new RotationRecorderModule.Entry8(var2));
+            RotationRecorderModule.Entry5.method5002(new RotationRecorderModule.Entry8(stringBuilder));
          }
 
-         this.bufferedWriter.write(var2.toString());
+         this.bufferedWriter.write(stringBuilder.toString());
          this.bufferedWriter.newLine();
          this.bufferedWriter.flush();
       }
    }
 
-   private static float method4953(float var0, float var1) {
-      float var2;
-      return !Float.isFinite(var2 = var0 - var1) ? var0 : var1 + Mth.wrapDegrees(var2);
+   private static float method4953(float f, float f2) {
+      float angle;
+      return !Float.isFinite(angle = f - f2) ? f : f2 + Mth.wrapDegrees(angle);
    }
 
-   private boolean isFinite(float var1) {
-      return (!Float.isNaN(var1) && !Float.isInfinite(var1));
+   private boolean isFinite(float floatValue) {
+      return (!Float.isNaN(floatValue) && !Float.isInfinite(floatValue));
    }
 
    private long method4954() {
@@ -1060,53 +1060,53 @@ public final class RotationRecorderModule extends Module {
    }
 
    private RotationRecorderModule.Entry method4955(
-      Rotation var1,
-      Vec3 var2,
-      LivingEntity var3,
-      AABB var4,
-      Vec3 var5,
-      float var6,
-      float var7,
-      Input var8,
-      boolean var9,
-      boolean var10,
-      RotationRecorderModule.Entry10 var11,
-      RotationRecorderModule.Entry3 var12,
-      Vec3 var13
+      Rotation rotation,
+      Vec3 eyePosition,
+      LivingEntity livingEntity,
+      AABB move,
+      Vec3 vec3d,
+      float f,
+      float f2,
+      Input keyPresses,
+      boolean flag,
+      boolean flag2,
+      RotationRecorderModule.Entry10 entry10,
+      RotationRecorderModule.Entry3 entry3,
+      Vec3 vec
    ) {
-      Vec3 var14 = mc.player.position();
-      Vec3 var15 = this.method4922(var4);
-      Vec3 var16 = this.method4921(var14);
-      float var17 = Rotation.method3138();
-      if (this.isFinite(var17) && !(var17 <= 0.0F)) {
-         boolean var18 = mc.player.onGround();
-         RotationRecorderModule.Data2 var19 = this.method4917(var1, var2, var13, var3, var4, var5, var6, var7, var15, var16, var17, var8, var18, var9);
-         if (var19 != null && var19.method4982()) {
-            float var20 = var1.getFloatValue();
-            float var21 = var1.getFloatValue2();
-            Vec3 var22 = mc.player.getEyePosition();
-            Vec3 var23 = mc.player.getDeltaMovement();
-            AABB var24 = mc.player.getBoundingBox();
-            Vec3 var25 = this.entry == null ? var14 : this.entry.vec3d;
-            Vec3 var26 = this.method4923(var4);
-            float var27 = this.method4924(var1.method3131(this.method4918(var2, var26)).getFloatValue(), var17);
-            float var28 = this.method4924(var1.method3131(this.method4918(var2, var26)).getFloatValue2(), var17);
-            boolean var29 = this.method4971();
-            RotationRecorderModule.Data10 var30 = this.method4956(mc.player.isSprinting(), var24, var11);
-            if (!var30.method4982()) {
+      Vec3 position = mc.player.position();
+      Vec3 vec3d2 = this.method4922(move);
+      Vec3 vec2 = this.method4921(position);
+      float floatValue = Rotation.method3138();
+      if (this.isFinite(floatValue) && !(floatValue <= 0.0F)) {
+         boolean flag3 = mc.player.onGround();
+         RotationRecorderModule.Data2 data2 = this.method4917(rotation, eyePosition, vec, livingEntity, move, vec3d, f, f2, vec3d2, vec2, floatValue, keyPresses, flag3, flag);
+         if (data2 != null && data2.method4982()) {
+            float floatValue2 = rotation.getFloatValue();
+            float f3 = rotation.getFloatValue2();
+            Vec3 eyePosition2 = mc.player.getEyePosition();
+            Vec3 deltaMovement = mc.player.getDeltaMovement();
+            AABB boundingBox = mc.player.getBoundingBox();
+            Vec3 vec3d3 = this.entry == null ? position : this.entry.vec3d;
+            Vec3 vec3d4 = this.method4923(move);
+            float floatValue3 = this.method4924(rotation.method3131(this.method4918(eyePosition, vec3d4)).getFloatValue(), floatValue);
+            float f4 = this.method4924(rotation.method3131(this.method4918(eyePosition, vec3d4)).getFloatValue2(), floatValue);
+            boolean flag4 = this.method4971();
+            RotationRecorderModule.Data10 data10 = this.method4956(mc.player.isSprinting(), boundingBox, entry10);
+            if (!data10.method4982()) {
                return null;
             } else {
-               RotationRecorderModule.Data24 var31 = new RotationRecorderModule.Data24(
+               RotationRecorderModule.Data24 data24 = new RotationRecorderModule.Data24(
                   new RotationRecorderModule.Data19(
-                     RotationRecorderModule.Data20.method5034(var14),
-                     RotationRecorderModule.Data20.method5034(var22),
-                     var20,
-                     var21,
-                     RotationRecorderModule.Data20.method5034(var23),
-                     RotationRecorderModule.Data20.method5034(var25),
-                     RotationRecorderModule.Data9.method5011(var24)
+                     RotationRecorderModule.Data20.method5034(position),
+                     RotationRecorderModule.Data20.method5034(eyePosition2),
+                     floatValue2,
+                     f3,
+                     RotationRecorderModule.Data20.method5034(deltaMovement),
+                     RotationRecorderModule.Data20.method5034(vec3d3),
+                     RotationRecorderModule.Data9.method5011(boundingBox)
                   ),
-                  RotationRecorderModule.Data21.method5036(var8),
+                  RotationRecorderModule.Data21.method5036(keyPresses),
                   new RotationRecorderModule.Data4(
                      mc.player.horizontalCollision,
                      mc.player.verticalCollision,
@@ -1125,27 +1125,27 @@ public final class RotationRecorderModule extends Module {
                      mc.player.isSpectator()
                   ),
                   new RotationRecorderModule.Data3(
-                     RotationRecorderModule.Data9.method5011(var4),
-                     RotationRecorderModule.Data20.method5034(var26),
-                     RotationRecorderModule.Data20.method5034(var5),
-                     RotationRecorderModule.Data20.method5034(var15),
-                     var27,
-                     var28
+                     RotationRecorderModule.Data9.method5011(move),
+                     RotationRecorderModule.Data20.method5034(vec3d4),
+                     RotationRecorderModule.Data20.method5034(vec3d),
+                     RotationRecorderModule.Data20.method5034(vec3d2),
+                     floatValue3,
+                     f4
                   ),
-                  RotationRecorderModule.Data.method4980(var12)
+                  RotationRecorderModule.Data.method4980(entry3)
                );
-               return !var31.method4982()
+               return !data24.method4982()
                   ? null
                   : new RotationRecorderModule.Entry(
-                     var19,
-                     var31,
-                     var30,
-                     var14,
-                     var23,
-                     var24,
-                     var8,
-                     var18,
-                     var29,
+                     data2,
+                     data24,
+                     data10,
+                     position,
+                     deltaMovement,
+                     boundingBox,
+                     keyPresses,
+                     flag3,
+                     flag4,
                      mc.player.isSprinting(),
                      (float)mc.player.fallDistance,
                      mc.player.noJumpDelay,
@@ -1159,8 +1159,8 @@ public final class RotationRecorderModule extends Module {
                      mc.player.getPose(),
                      mc.player.isCrouching(),
                      mc.player.isVisuallyCrawling(),
-                     var10,
-                     var17,
+                     flag2,
+                     floatValue,
                      System.currentTimeMillis(),
                      mc.player.tickCount
                   );
@@ -1173,25 +1173,25 @@ public final class RotationRecorderModule extends Module {
       }
    }
 
-   private RotationRecorderModule.Data10 method4956(boolean var1, AABB var2, RotationRecorderModule.Entry10 var3) {
-      MobEffectInstance var4 = this.method4966(MobEffects.LEVITATION);
-      MobEffectInstance var5 = this.method4966(MobEffects.JUMP_BOOST);
-      boolean var6 = this.method4967(MobEffects.SLOW_FALLING);
-      boolean var7 = this.method4967(MobEffects.BLINDNESS);
-      boolean var8 = this.method4967(MobEffects.DOLPHINS_GRACE);
-      int var9 = var3 == null ? (var2 == null ? 0 : Mth.floor(var2.minX)) : var3.intValue;
-      int var10 = var3 == null ? (var2 == null ? 0 : Mth.floor(var2.minY)) : var3.intValue2;
-      int var11 = var3 == null ? (var2 == null ? 0 : Mth.floor(var2.minZ)) : var3.intValue3;
-      int var12 = var3 == null ? 0 : var3.intValue4;
-      int var13 = var3 == null ? 0 : var3.intValue5;
-      int var14 = var3 == null ? 0 : var3.intValue6;
-      long var15 = var3 == null ? -1L : var3.longValue;
-      int var17 = var3 == null ? 0 : var3.intValue7;
-      int var18 = var3 != null && var15 >= 0L ? 1 : 0;
+   private RotationRecorderModule.Data10 method4956(boolean sprinting, AABB boundingBox, RotationRecorderModule.Entry10 entry10) {
+      MobEffectInstance mobEffectInstance = this.method4966(MobEffects.LEVITATION);
+      MobEffectInstance mobEffectInstance2 = this.method4966(MobEffects.JUMP_BOOST);
+      boolean flag = this.method4967(MobEffects.SLOW_FALLING);
+      boolean flag2 = this.method4967(MobEffects.BLINDNESS);
+      boolean flag3 = this.method4967(MobEffects.DOLPHINS_GRACE);
+      int intValue = entry10 == null ? (boundingBox == null ? 0 : Mth.floor(boundingBox.minX)) : entry10.intValue;
+      int n = entry10 == null ? (boundingBox == null ? 0 : Mth.floor(boundingBox.minY)) : entry10.intValue2;
+      int n2 = entry10 == null ? (boundingBox == null ? 0 : Mth.floor(boundingBox.minZ)) : entry10.intValue3;
+      int n3 = entry10 == null ? 0 : entry10.intValue4;
+      int n4 = entry10 == null ? 0 : entry10.intValue5;
+      int n5 = entry10 == null ? 0 : entry10.intValue6;
+      long longValue = entry10 == null ? -1L : entry10.longValue;
+      int n6 = entry10 == null ? 0 : entry10.intValue7;
+      int n7 = entry10 != null && longValue >= 0L ? 1 : 0;
       return new RotationRecorderModule.Data10(
-         new RotationRecorderModule.Data14(30.0F, false, 2.0F, (float)var18),
+         new RotationRecorderModule.Data14(30.0F, false, 2.0F, (float)n7),
          new RotationRecorderModule.Data8(
-            var1,
+            sprinting,
             mc.player.getAbilities().mayfly,
             mc.player.isNoGravity(),
             mc.player.shouldDiscardFriction(),
@@ -1205,105 +1205,105 @@ public final class RotationRecorderModule extends Module {
             this.method4968(Attributes.WATER_MOVEMENT_EFFICIENCY, 0.0F)
          ),
          new RotationRecorderModule.Data18(
-            var6, var4 != null, var5 != null, var7, var8, var4 == null ? -1.0F : var4.getAmplifier(), var5 == null ? -1.0F : var5.getAmplifier()
+            flag, mobEffectInstance != null, mobEffectInstance2 != null, flag2, flag3, mobEffectInstance == null ? -1.0F : mobEffectInstance.getAmplifier(), mobEffectInstance2 == null ? -1.0F : mobEffectInstance2.getAmplifier()
          ),
-         new RotationRecorderModule.Data15((float)var15, (float)var9, (float)var10, (float)var11, (float)var12, (float)var13, (float)var14, (float)var17)
+         new RotationRecorderModule.Data15((float)longValue, (float)intValue, (float)n, (float)n2, (float)n3, (float)n4, (float)n5, (float)n6)
       );
    }
 
-   private RotationRecorderModule.Entry10 method4957(AABB var1) {
-      if (var1 != null && this.bufferedWriter2 != null && !this.flag2) {
-         int var2 = Mth.floor(var1.minX) - 6;
-         int var3 = Mth.floor(var1.minY) - 3;
-         int var4 = Mth.floor(var1.minZ) - 6;
-         int var5 = Mth.floor(var1.maxX) + 6;
-         int var6 = Mth.floor(var1.maxY) + 5;
-         int var7 = Mth.floor(var1.maxZ) + 6;
-         int var8 = var5 - var2 + 1;
-         int var9 = var6 - var3 + 1;
-         int var10 = var7 - var4 + 1;
-         if (var8 > 0 && var9 > 0 && var10 > 0) {
-            long var11 = this.longValue3++;
-            IdentityHashMap var13 = new IdentityHashMap();
-            HashMap var14 = null;
-            ArrayList var15 = new ArrayList();
-            int[] var16 = new int[var8 * var9 * var10];
-            int var17 = 0;
-            var15.add(this.method4959());
-            MutableBlockPos var18 = new MutableBlockPos();
+   private RotationRecorderModule.Entry10 method4957(AABB boundingBox) {
+      if (boundingBox != null && this.bufferedWriter2 != null && !this.flag2) {
+         int intValue = Mth.floor(boundingBox.minX) - 6;
+         int n = Mth.floor(boundingBox.minY) - 3;
+         int n2 = Mth.floor(boundingBox.minZ) - 6;
+         int n3 = Mth.floor(boundingBox.maxX) + 6;
+         int n4 = Mth.floor(boundingBox.maxY) + 5;
+         int n5 = Mth.floor(boundingBox.maxZ) + 6;
+         int intValue2 = n3 - intValue + 1;
+         int n6 = n4 - n + 1;
+         int n7 = n5 - n2 + 1;
+         if (intValue2 > 0 && n6 > 0 && n7 > 0) {
+            long lng = this.longValue3++;
+            IdentityHashMap map = new IdentityHashMap();
+            HashMap map2 = null;
+            ArrayList arrayList = new ArrayList();
+            int[] ints = new int[intValue2 * n6 * n7];
+            int n8 = 0;
+            arrayList.add(this.method4959());
+            MutableBlockPos mutablePos = new MutableBlockPos();
 
-            for (int var19 = var3; var19 <= var6; var19++) {
-               for (int var20 = var4; var20 <= var7; var20++) {
-                  for (int var21 = var2; var21 <= var5; var21++) {
-                     var18.set(var21, var19, var20);
-                     BlockState var22 = mc.level.getBlockState(var18);
-                     FluidState var23 = mc.level.getFluidState(var18);
-                     Integer var24;
-                     if (var22 != null && !var22.isAir() || var23 != null && !var23.isEmpty()) {
-                        if (var22 != null && var23 == var22.getFluidState()) {
-                           var24 = (Integer)var13.get(var22);
-                           if (var24 == null) {
-                              var24 = var15.size();
-                              var13.put(var22, var24);
-                              var15.add(this.method4960(var22, var23, var18));
+            for (int i = n; i <= n4; i++) {
+               for (int j = n2; j <= n5; j++) {
+                  for (int k = intValue; k <= n3; k++) {
+                     mutablePos.set(k, i, j);
+                     BlockState blockState = mc.level.getBlockState(mutablePos);
+                     FluidState fluidState = mc.level.getFluidState(mutablePos);
+                     Integer size;
+                     if (blockState != null && !blockState.isAir() || fluidState != null && !fluidState.isEmpty()) {
+                        if (blockState != null && fluidState == blockState.getFluidState()) {
+                           size = (Integer)map.get(blockState);
+                           if (size == null) {
+                              size = arrayList.size();
+                              map.put(blockState, size);
+                              arrayList.add(this.method4960(blockState, fluidState, mutablePos));
                            }
                         } else {
-                           if (var14 == null) {
-                              var14 = new HashMap();
+                           if (map2 == null) {
+                              map2 = new HashMap();
                            }
 
-                           String var25 = this.method4958(var22, var23);
-                           var24 = (Integer)var14.get(var25);
-                           if (var24 == null) {
-                              var24 = var15.size();
-                              var14.put(var25, var24);
-                              var15.add(this.method4960(var22, var23, var18));
+                           String key = this.method4958(blockState, fluidState);
+                           size = (Integer)map2.get(key);
+                           if (size == null) {
+                              size = arrayList.size();
+                              map2.put(key, size);
+                              arrayList.add(this.method4960(blockState, fluidState, mutablePos));
                            }
                         }
                      } else {
-                        var24 = 0;
+                        size = 0;
                      }
 
-                     var16[var17++] = var24;
+                     ints[n8++] = size;
                   }
                }
             }
 
             try {
-               StringBuilder var27 = new StringBuilder(32768);
-               var27.append('{');
-               var27.append("\"snapshot_id\":").append(var11).append(',');
-               var27.append("\"snapshot_version\":").append(1).append(',');
-               var27.append("\"schema\":\"rotation_world_snapshot_v7\",");
-               var27.append("\"session_hint\":").append(this.entry4 == null ? 0L : this.entry4.longValue).append(',');
-               var27.append("\"player_age\":").append(mc.player.tickCount).append(',');
-               this.method4964(var27, "origin", var2, var3, var4).append(',');
-               this.method4964(var27, "size", var8, var9, var10).append(',');
-               var27.append("\"palette\":[");
+               StringBuilder builder = new StringBuilder(32768);
+               builder.append('{');
+               builder.append("\"snapshot_id\":").append(lng).append(',');
+               builder.append("\"snapshot_version\":").append(1).append(',');
+               builder.append("\"schema\":\"rotation_world_snapshot_v7\",");
+               builder.append("\"session_hint\":").append(this.entry4 == null ? 0L : this.entry4.longValue).append(',');
+               builder.append("\"player_age\":").append(mc.player.tickCount).append(',');
+               this.method4964(builder, "origin", intValue, n, n2).append(',');
+               this.method4964(builder, "size", intValue2, n6, n7).append(',');
+               builder.append("\"palette\":[");
 
-               for (int var28 = 0; var28 < var15.size(); var28++) {
-                  if (var28 > 0) {
-                     var27.append(',');
+               for (int i = 0; i < arrayList.size(); i++) {
+                  if (i > 0) {
+                     builder.append(',');
                   }
 
-                  var27.append((String)var15.get(var28));
+                  builder.append((String)arrayList.get(i));
                }
 
-               var27.append("],\"blocks_rle\":");
-               this.method4965(var27, var16, var17);
-               var27.append('}');
-               this.bufferedWriter2.write(var27.toString());
+               builder.append("],\"blocks_rle\":");
+               this.method4965(builder, ints, n8);
+               builder.append('}');
+               this.bufferedWriter2.write(builder.toString());
                this.bufferedWriter2.newLine();
                this.longValue2++;
                if (this.longValue2 % 128L == 0L) {
                   this.bufferedWriter2.flush();
                }
-            } catch (Throwable var26) {
+            } catch (Throwable e) {
                this.flag2 = true;
                return null;
             }
 
-            return new RotationRecorderModule.Entry10(var11, var2, var3, var4, var8, var9, var10, 1);
+            return new RotationRecorderModule.Entry10(lng, intValue, n, n2, intValue2, n6, n7, 1);
          } else {
             return null;
          }
@@ -1312,191 +1312,191 @@ public final class RotationRecorderModule extends Module {
       }
    }
 
-   private String method4958(BlockState var1, FluidState var2) {
-      return var1 != null && !var1.isAir() || var2 != null && !var2.isEmpty() ? var1 + "|" + var2 : "minecraft:air|empty";
+   private String method4958(BlockState blockState, FluidState fluidState) {
+      return blockState != null && !blockState.isAir() || fluidState != null && !fluidState.isEmpty() ? blockState + "|" + fluidState : "minecraft:air|empty";
    }
 
    private String method4959() {
       return "{\"name\":\"minecraft:air\",\"state\":\"minecraft:air\",\"slipperiness\":0.6,\"velocity_multiplier\":1.0,\"jump_velocity_multiplier\":1.0,\"fluid_type\":\"none\",\"fluid_height\":0.0,\"fluid_velocity\":[0.0,0.0,0.0],\"climbable\":false,\"powder_snow\":false,\"collision_boxes\":[]}";
    }
 
-   private String method4960(BlockState var1, FluidState var2, BlockPos var3) {
-      String var4 = var1 == null ? "minecraft:air" : String.valueOf(BuiltInRegistries.BLOCK.getKey(var1.getBlock()));
-      String var5 = var1 == null ? var4 : var1.toString();
-      float var6 = var1 == null ? 0.6F : var1.getBlock().getFriction();
-      float var7 = var1 == null ? 1.0F : var1.getBlock().getSpeedFactor();
-      float var8 = var1 == null ? 1.0F : var1.getBlock().getJumpFactor();
-      int var9 = var1 != null && var1.is(BlockTags.CLIMBABLE) ? 1 : 0;
-      boolean var10 = var4.equals("minecraft:powder_snow");
-      String var11 = "none";
-      float var12 = 0.0F;
-      Vec3 var13 = Vec3.ZERO;
-      if (var2 != null && !var2.isEmpty()) {
-         if (var2.is(FluidTags.WATER)) {
-            var11 = "water";
-         } else if (var2.is(FluidTags.LAVA)) {
-            var11 = "lava";
+   private String method4960(BlockState blockState, FluidState fluidState, BlockPos mutablePos) {
+      String string = blockState == null ? "minecraft:air" : String.valueOf(BuiltInRegistries.BLOCK.getKey(blockState.getBlock()));
+      String str = blockState == null ? string : blockState.toString();
+      float friction = blockState == null ? 0.6F : blockState.getBlock().getFriction();
+      float speedFactor = blockState == null ? 1.0F : blockState.getBlock().getSpeedFactor();
+      float jumpFactor = blockState == null ? 1.0F : blockState.getBlock().getJumpFactor();
+      int n = blockState != null && blockState.is(BlockTags.CLIMBABLE) ? 1 : 0;
+      boolean flag = string.equals("minecraft:powder_snow");
+      String string2 = "none";
+      float height = 0.0F;
+      Vec3 flow = Vec3.ZERO;
+      if (fluidState != null && !fluidState.isEmpty()) {
+         if (fluidState.is(FluidTags.WATER)) {
+            string2 = "water";
+         } else if (fluidState.is(FluidTags.LAVA)) {
+            string2 = "lava";
          } else {
-            var11 = "other";
+            string2 = "other";
          }
 
-         var12 = var2.getHeight(mc.level, var3);
-         var13 = var2.getFlow(mc.level, var3);
+         height = fluidState.getHeight(mc.level, mutablePos);
+         flow = fluidState.getFlow(mc.level, mutablePos);
       }
 
-      StringBuilder var14 = new StringBuilder(1024);
-      var14.append('{');
-      this.method4962(var14, "name", var4).append(',');
-      this.method4962(var14, "state", var5).append(',');
-      var14.append("\"slipperiness\":").append(var6).append(',');
-      var14.append("\"velocity_multiplier\":").append(var7).append(',');
-      var14.append("\"jump_velocity_multiplier\":").append(var8).append(',');
-      this.method4962(var14, "fluid_type", var11).append(',');
-      var14.append("\"fluid_height\":").append(var12).append(',');
-      var14.append("\"fluid_velocity\":[").append((float)var13.x).append(',').append((float)var13.y).append(',').append((float)var13.z).append("],");
-      var14.append("\"climbable\":").append((var9 != 0)).append(',');
-      var14.append("\"powder_snow\":").append(var10).append(',');
-      var14.append("\"collision_boxes\":");
-      this.method4961(var14, var1, var3);
-      var14.append('}');
-      return var14.toString();
+      StringBuilder builder = new StringBuilder(1024);
+      builder.append('{');
+      this.method4962(builder, "name", string).append(',');
+      this.method4962(builder, "state", str).append(',');
+      builder.append("\"slipperiness\":").append(friction).append(',');
+      builder.append("\"velocity_multiplier\":").append(speedFactor).append(',');
+      builder.append("\"jump_velocity_multiplier\":").append(jumpFactor).append(',');
+      this.method4962(builder, "fluid_type", string2).append(',');
+      builder.append("\"fluid_height\":").append(height).append(',');
+      builder.append("\"fluid_velocity\":[").append((float)flow.x).append(',').append((float)flow.y).append(',').append((float)flow.z).append("],");
+      builder.append("\"climbable\":").append((n != 0)).append(',');
+      builder.append("\"powder_snow\":").append(flag).append(',');
+      builder.append("\"collision_boxes\":");
+      this.method4961(builder, blockState, mutablePos);
+      builder.append('}');
+      return builder.toString();
    }
 
-   private void method4961(StringBuilder var1, BlockState var2, BlockPos var3) {
-      var1.append('[');
-      if (var2 != null) {
+   private void method4961(StringBuilder builder, BlockState blockState, BlockPos mutablePos) {
+      builder.append('[');
+      if (blockState != null) {
          try {
-            VoxelShape var4 = var2.getCollisionShape(mc.level, var3);
-            var var5 = var4.toAabbs();
+            VoxelShape collisionShape = blockState.getCollisionShape(mc.level, mutablePos);
+            var aabbs = collisionShape.toAabbs();
 
-            for (int var6 = 0; var6 < var5.size(); var6++) {
-               if (var6 > 0) {
-                  var1.append(',');
+            for (int i = 0; i < aabbs.size(); i++) {
+               if (i > 0) {
+                  builder.append(',');
                }
 
-               AABB var7 = (AABB)var5.get(var6);
-               var1.append('[')
-                  .append((float)var7.minX)
+               AABB aabb = (AABB)aabbs.get(i);
+               builder.append('[')
+                  .append((float)aabb.minX)
                   .append(',')
-                  .append((float)var7.minY)
+                  .append((float)aabb.minY)
                   .append(',')
-                  .append((float)var7.minZ)
+                  .append((float)aabb.minZ)
                   .append(',')
-                  .append((float)var7.maxX)
+                  .append((float)aabb.maxX)
                   .append(',')
-                  .append((float)var7.maxY)
+                  .append((float)aabb.maxY)
                   .append(',')
-                  .append((float)var7.maxZ)
+                  .append((float)aabb.maxZ)
                   .append(']');
             }
-         } catch (Throwable var8) {
+         } catch (Throwable e) {
          }
       }
 
-      var1.append(']');
+      builder.append(']');
    }
 
-   private StringBuilder method4962(StringBuilder var1, String var2, String var3) {
-      var1.append('"').append(var2).append("\":\"").append(this.method4963(var3)).append('"');
-      return var1;
+   private StringBuilder method4962(StringBuilder builder, String str, String string) {
+      builder.append('"').append(str).append("\":\"").append(this.method4963(string)).append('"');
+      return builder;
    }
 
-   private String method4963(String var1) {
-      if (var1 == null) {
+   private String method4963(String string) {
+      if (string == null) {
          return "";
       } else {
-         StringBuilder var2 = new StringBuilder(var1.length() + 16);
+         StringBuilder builder = new StringBuilder(string.length() + 16);
 
-         for (int var3 = 0; var3 < var1.length(); var3++) {
-            char var4;
-            if ((var4 = var1.charAt(var3)) == '\\' || var4 == '"') {
-               var2.append('\\').append(var4);
-            } else if (var4 == '\n') {
-               var2.append("\\n");
-            } else if (var4 == '\r') {
-               var2.append("\\r");
-            } else if (var4 == '\t') {
-               var2.append("\\t");
+         for (int i = 0; i < string.length(); i++) {
+            char charAt;
+            if ((charAt = string.charAt(i)) == '\\' || charAt == '"') {
+               builder.append('\\').append(charAt);
+            } else if (charAt == '\n') {
+               builder.append("\\n");
+            } else if (charAt == '\r') {
+               builder.append("\\r");
+            } else if (charAt == '\t') {
+               builder.append("\\t");
             } else {
-               var2.append(var4);
+               builder.append(charAt);
             }
          }
 
-         return var2.toString();
+         return builder.toString();
       }
    }
 
-   private StringBuilder method4964(StringBuilder var1, String var2, int var3, int var4, int var5) {
-      var1.append('"').append(var2).append("\":[").append(var3).append(',').append(var4).append(',').append(var5).append(']');
-      return var1;
+   private StringBuilder method4964(StringBuilder builder, String str, int intValue, int n, int n2) {
+      builder.append('"').append(str).append("\":[").append(intValue).append(',').append(n).append(',').append(n2).append(']');
+      return builder;
    }
 
-   private void method4965(StringBuilder var1, int[] var2, int var3) {
-      var1.append('[');
-      if (var3 > 0) {
-         int var4 = var2[0];
-         int var5 = 1;
-         byte var6 = 1;
+   private void method4965(StringBuilder builder, int[] ints, int n) {
+      builder.append('[');
+      if (n > 0) {
+         int n2 = ints[0];
+         int n3 = 1;
+         byte b = 1;
 
-         for (int var7 = 1; var7 < var3; var7++) {
-            int var8;
-            if ((var8 = var2[var7]) == var4) {
-               var5++;
+         for (int i = 1; i < n; i++) {
+            int n4;
+            if ((n4 = ints[i]) == n2) {
+               n3++;
             } else {
-               if (var6 == 0) {
-                  var1.append(',');
+               if (b == 0) {
+                  builder.append(',');
                }
 
-               var1.append('[').append(var4).append(',').append(var5).append(']');
-               var6 = 0;
-               var4 = var8;
-               var5 = 1;
+               builder.append('[').append(n2).append(',').append(n3).append(']');
+               b = 0;
+               n2 = n4;
+               n3 = 1;
             }
          }
 
-         if (var6 == 0) {
-            var1.append(',');
+         if (b == 0) {
+            builder.append(',');
          }
 
-         var1.append('[').append(var4).append(',').append(var5).append(']');
+         builder.append('[').append(n2).append(',').append(n3).append(']');
       }
 
-      var1.append(']');
+      builder.append(']');
    }
 
-   private MobEffectInstance method4966(Holder<MobEffect> var1) {
-      if (var1 == null) {
+   private MobEffectInstance method4966(Holder<MobEffect> effect) {
+      if (effect == null) {
          return null;
       } else {
-         MobEffectInstance var10000;
+         MobEffectInstance mobEffectInstance;
          try {
-            MobEffectInstance var2 = mc.player.getEffect(var1);
-            var10000 = var2 != null && var2.getDuration() > 0 ? var2 : null;
-         } catch (Throwable var3) {
+            MobEffectInstance effect2 = mc.player.getEffect(effect);
+            mobEffectInstance = effect2 != null && effect2.getDuration() > 0 ? effect2 : null;
+         } catch (Throwable e) {
             return null;
          }
 
-         return var10000;
+         return mobEffectInstance;
       }
    }
 
-   private boolean method4967(Holder<MobEffect> var1) {
-      return (this.method4966(var1) != null);
+   private boolean method4967(Holder<MobEffect> effect) {
+      return (this.method4966(effect) != null);
    }
 
-   private float method4968(Holder<Attribute> var1, float var2) {
-      if (var1 == null) {
-         return var2;
+   private float method4968(Holder<Attribute> attribute, float f) {
+      if (attribute == null) {
+         return f;
       } else {
-         float var10000;
+         float f2;
          try {
-            double var3;
-            var10000 = Double.isFinite(var3 = mc.player.getAttributes().getValue(var1)) ? (float)var3 : var2;
-         } catch (Throwable var5) {
-            return var2;
+            double d;
+            f2 = Double.isFinite(d = mc.player.getAttributes().getValue(attribute)) ? (float)d : f;
+         } catch (Throwable e) {
+            return f;
          }
 
-         return var10000;
+         return f2;
       }
    }
 
@@ -1526,79 +1526,79 @@ public final class RotationRecorderModule extends Module {
             && !mc.player.isFallFlying());
    }
 
-   private float method4972(RotationRecorderModule.Entry var1) {
-      return var1.data24.getData19().getFloatValue();
+   private float method4972(RotationRecorderModule.Entry entry) {
+      return entry.data24.getData19().getFloatValue();
    }
 
-   private float method4973(RotationRecorderModule.Entry var1) {
-      return var1.data24.getData19().getFloatValue2();
+   private float method4973(RotationRecorderModule.Entry entry) {
+      return entry.data24.getData19().getFloatValue2();
    }
 
-   private RotationRecorderModule.Entry3 method4974(RotationRecorderModule.Entry var1, RotationRecorderModule.Entry var2, float var3, float var4) {
-      return this.method4976(var1, var2, var3, var4);
+   private RotationRecorderModule.Entry3 method4974(RotationRecorderModule.Entry entry, RotationRecorderModule.Entry entry2, float floatValue, float f) {
+      return this.method4976(entry, entry2, floatValue, f);
    }
 
-   private RotationRecorderModule.Entry3 method4975(float var1, float var2, Input var3) {
-      Vec3 var4 = mc.player.position();
-      Vec3 var5 = mc.player.getDeltaMovement();
+   private RotationRecorderModule.Entry3 method4975(float floatValue, float xRot, Input keyPresses) {
+      Vec3 position = mc.player.position();
+      Vec3 deltaMovement = mc.player.getDeltaMovement();
 
       try {
-         PlayerSimulation var6 = PlayerSimulation.method6033(PlayerSimulation.Entry.method6092(var3));
-         var6.floatValue = var1;
-         var6.floatValue2 = var2;
-         var6.tick();
-         Vec3 var7 = var6.vec3d.subtract(var4);
-         return this.method4977(var7) && this.method4977(var6.vec3d) && this.method4977(var6.vec3d2)
-            ? new RotationRecorderModule.Entry3(true, var7, var6.vec3d, var6.vec3d2, var6.flag4, var6.flag5, var6.flag6)
-            : RotationRecorderModule.Entry3.method4998(var4, var5);
-      } catch (Throwable var8) {
-         return RotationRecorderModule.Entry3.method4998(var4, var5);
+         PlayerSimulation playerSimulation = PlayerSimulation.method6033(PlayerSimulation.Entry.method6092(keyPresses));
+         playerSimulation.floatValue = floatValue;
+         playerSimulation.floatValue2 = xRot;
+         playerSimulation.tick();
+         Vec3 vec3d = playerSimulation.vec3d.subtract(position);
+         return this.method4977(vec3d) && this.method4977(playerSimulation.vec3d) && this.method4977(playerSimulation.vec3d2)
+            ? new RotationRecorderModule.Entry3(true, vec3d, playerSimulation.vec3d, playerSimulation.vec3d2, playerSimulation.flag4, playerSimulation.flag5, playerSimulation.flag6)
+            : RotationRecorderModule.Entry3.method4998(position, deltaMovement);
+      } catch (Throwable e) {
+         return RotationRecorderModule.Entry3.method4998(position, deltaMovement);
       }
    }
 
-   private RotationRecorderModule.Entry3 method4976(RotationRecorderModule.Entry var1, RotationRecorderModule.Entry var2, float var3, float var4) {
+   private RotationRecorderModule.Entry3 method4976(RotationRecorderModule.Entry entry, RotationRecorderModule.Entry entry2, float floatValue, float f) {
       try {
-         PlayerSimulation var5 = PlayerSimulation.method6033(new PlayerSimulation.Entry(var2.playerInput));
-         var5.vec3d = var1.vec3d;
-         var5.vec3d2 = var1.vec3d2;
-         var5.box = var1.box;
-         var5.floatValue = var3;
-         var5.floatValue2 = var4;
-         var5.flag = var2.flag3;
-         var5.floatValue3 = var1.floatValue;
-         var5.intValue = var1.intValue;
-         var5.flag2 = var1.flag4;
-         var5.flag3 = var1.flag5;
-         var5.flag4 = var1.flag;
-         var5.flag5 = var1.flag6;
-         var5.flag6 = var1.flag7;
-         var5.flag7 = var1.flag8;
-         var5.flag8 = var1.flag9;
-         var5.flag9 = var1.flag10;
-         var5.entityPose = var1.entityPose;
-         var5.inSneakingPose = var1.flag11;
-         var5.flag10 = var1.flag12;
-         var5.tick();
-         Vec3 var6 = var5.vec3d.subtract(var1.vec3d);
-         return this.method4977(var6) && this.method4977(var5.vec3d) && this.method4977(var5.vec3d2)
-            ? new RotationRecorderModule.Entry3(true, var6, var5.vec3d, var5.vec3d2, var5.flag4, var5.flag5, var5.flag6)
-            : RotationRecorderModule.Entry3.method4998(var1.vec3d, var1.vec3d2);
-      } catch (Throwable var7) {
-         return RotationRecorderModule.Entry3.method4998(var1.vec3d, var1.vec3d2);
+         PlayerSimulation playerSimulation = PlayerSimulation.method6033(new PlayerSimulation.Entry(entry2.playerInput));
+         playerSimulation.vec3d = entry.vec3d;
+         playerSimulation.vec3d2 = entry.vec3d2;
+         playerSimulation.box = entry.box;
+         playerSimulation.floatValue = floatValue;
+         playerSimulation.floatValue2 = f;
+         playerSimulation.flag = entry2.flag3;
+         playerSimulation.floatValue3 = entry.floatValue;
+         playerSimulation.intValue = entry.intValue;
+         playerSimulation.flag2 = entry.flag4;
+         playerSimulation.flag3 = entry.flag5;
+         playerSimulation.flag4 = entry.flag;
+         playerSimulation.flag5 = entry.flag6;
+         playerSimulation.flag6 = entry.flag7;
+         playerSimulation.flag7 = entry.flag8;
+         playerSimulation.flag8 = entry.flag9;
+         playerSimulation.flag9 = entry.flag10;
+         playerSimulation.entityPose = entry.entityPose;
+         playerSimulation.inSneakingPose = entry.flag11;
+         playerSimulation.flag10 = entry.flag12;
+         playerSimulation.tick();
+         Vec3 vec3d = playerSimulation.vec3d.subtract(entry.vec3d);
+         return this.method4977(vec3d) && this.method4977(playerSimulation.vec3d) && this.method4977(playerSimulation.vec3d2)
+            ? new RotationRecorderModule.Entry3(true, vec3d, playerSimulation.vec3d, playerSimulation.vec3d2, playerSimulation.flag4, playerSimulation.flag5, playerSimulation.flag6)
+            : RotationRecorderModule.Entry3.method4998(entry.vec3d, entry.vec3d2);
+      } catch (Throwable e) {
+         return RotationRecorderModule.Entry3.method4998(entry.vec3d, entry.vec3d2);
       }
    }
 
-   private boolean method4977(Vec3 var1) {
-      return (var1 != null && this.isFinite((float)var1.x) && this.isFinite((float)var1.y) && this.isFinite((float)var1.z));
+   private boolean method4977(Vec3 vec3d) {
+      return (vec3d != null && this.isFinite((float)vec3d.x) && this.isFinite((float)vec3d.y) && this.isFinite((float)vec3d.z));
    }
 
-   private static boolean method4978(float... var0) {
-      float[] var1 = var0;
-      int var2 = var0.length;
+   private static boolean method4978(float... floats) {
+      float[] floats2 = floats;
+      int length = floats.length;
 
-      for (int var3 = 0; var3 < var2; var3++) {
-         float var4;
-         if (!Float.isFinite(var4 = var1[var3])) {
+      for (int i = 0; i < length; i++) {
+         float f;
+         if (!Float.isFinite(f = floats2[i])) {
             return false;
          }
       }
@@ -1661,50 +1661,50 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data(
-         boolean var1,
-         RotationRecorderModule.Data20 var2,
-         RotationRecorderModule.Data20 var3,
-         RotationRecorderModule.Data20 var4,
-         boolean var5,
-         boolean var6,
-         boolean var7
+         boolean flag,
+         RotationRecorderModule.Data20 data20,
+         RotationRecorderModule.Data20 data202,
+         RotationRecorderModule.Data20 data203,
+         boolean flag2,
+         boolean flag3,
+         boolean flag4
       ) {
-         this.flag = var1;
-         this.data20 = var2;
-         this.data202 = var3;
-         this.data203 = var4;
-         this.flag2 = var5;
-         this.flag3 = var6;
-         this.flag4 = var7;
+         this.flag = flag;
+         this.data20 = data20;
+         this.data202 = data202;
+         this.data203 = data203;
+         this.flag2 = flag2;
+         this.flag3 = flag3;
+         this.flag4 = flag4;
       }
 
-      private static void method4979(RotationRecorderModule.Entry8 var0) {
-         var0.method5029("base_sim_ok");
-         RotationRecorderModule.Data20.method5035(var0, "base_sim_motion");
-         RotationRecorderModule.Data20.method5035(var0, "base_sim_pos");
-         RotationRecorderModule.Data20.method5035(var0, "base_sim_velocity");
-         var0.method5029("base_sim_on_ground", "base_sim_horizontal_collision", "base_sim_vertical_collision");
+      private static void method4979(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029("base_sim_ok");
+         RotationRecorderModule.Data20.method5035(entry8, "base_sim_motion");
+         RotationRecorderModule.Data20.method5035(entry8, "base_sim_pos");
+         RotationRecorderModule.Data20.method5035(entry8, "base_sim_velocity");
+         entry8.method5029("base_sim_on_ground", "base_sim_horizontal_collision", "base_sim_vertical_collision");
       }
 
-      private static RotationRecorderModule.Data method4980(RotationRecorderModule.Entry3 var0) {
+      private static RotationRecorderModule.Data method4980(RotationRecorderModule.Entry3 entry3) {
          return new RotationRecorderModule.Data(
-            var0.flag,
-            RotationRecorderModule.Data20.method5034(var0.vec3d),
-            RotationRecorderModule.Data20.method5034(var0.vec3d2),
-            RotationRecorderModule.Data20.method5034(var0.vec3d3),
-            var0.flag2,
-            var0.flag3,
-            var0.flag4
+            entry3.flag,
+            RotationRecorderModule.Data20.method5034(entry3.vec3d),
+            RotationRecorderModule.Data20.method5034(entry3.vec3d2),
+            RotationRecorderModule.Data20.method5034(entry3.vec3d3),
+            entry3.flag2,
+            entry3.flag3,
+            entry3.flag4
          );
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5022(this.flag);
-         this.data20.method4981(var1);
-         this.data202.method4981(var1);
-         this.data203.method4981(var1);
-         var1.method5022(this.flag2, this.flag3, this.flag4);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5022(this.flag);
+         this.data20.method4981(entry6);
+         this.data202.method4981(entry6);
+         this.data203.method4981(entry6);
+         entry6.method5022(this.flag2, this.flag3, this.flag4);
       }
 
       @Override
@@ -1781,26 +1781,26 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data10(
-         RotationRecorderModule.Data14 var1, RotationRecorderModule.Data8 var2, RotationRecorderModule.Data18 var3, RotationRecorderModule.Data15 var4
+         RotationRecorderModule.Data14 data14, RotationRecorderModule.Data8 data8, RotationRecorderModule.Data18 data18, RotationRecorderModule.Data15 data15
       ) {
-         this.data14 = var1;
-         this.data8 = var2;
-         this.data18 = var3;
-         this.data15 = var4;
+         this.data14 = data14;
+         this.data8 = data8;
+         this.data18 = data18;
+         this.data15 = data15;
       }
 
-      private static void method5013(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data14.method5019(var0);
-         RotationRecorderModule.Data8.method4996(var0);
-         RotationRecorderModule.Data18.method5028(var0);
-         RotationRecorderModule.Data15.method5023(var0);
+      private static void method5013(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data14.method5019(entry8);
+         RotationRecorderModule.Data8.method4996(entry8);
+         RotationRecorderModule.Data18.method5028(entry8);
+         RotationRecorderModule.Data15.method5023(entry8);
       }
 
-      private RotationRecorderModule.Data10 method5014(RotationRecorderModule.Data10 var1, boolean var2, boolean var3) {
-         return new RotationRecorderModule.Data10(this.data14.method5020(var3, var1.data14.floatValue3), this.data8.method4997(var2), this.data18, var1.data15);
+      private RotationRecorderModule.Data10 method5014(RotationRecorderModule.Data10 data10, boolean flag, boolean flag2) {
+         return new RotationRecorderModule.Data10(this.data14.method5020(flag2, data10.data14.floatValue3), this.data8.method4997(flag), this.data18, data10.data15);
       }
 
-      private boolean method5015(boolean var1) {
+      private boolean method5015(boolean flag) {
          return !this.data8.flag3
             && !this.data8.flag4
             && !this.data8.flag5
@@ -1809,15 +1809,15 @@ public final class RotationRecorderModule extends Module {
             && !this.data18.flag3
             && !this.data18.flag4
             && !this.data18.flag5
-            && (!var1 || this.data8.floatValue > 6.0F);
+            && (!flag || this.data8.floatValue > 6.0F);
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         this.data14.method4981(var1);
-         this.data8.method4981(var1);
-         this.data18.method4981(var1);
-         this.data15.method4981(var1);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         this.data14.method4981(entry6);
+         this.data8.method4981(entry6);
+         this.data18.method4981(entry6);
+         this.data15.method4981(entry6);
       }
 
       @Override
@@ -1871,18 +1871,18 @@ public final class RotationRecorderModule extends Module {
          return "Data11[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + "]";
       }
 
-      private Data11(float var1, float var2) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
+      private Data11(float floatValue, float f) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
 
-      private static void method5016(RotationRecorderModule.Entry8 var0) {
-         var0.method5029("target_yaw_mouse_count", "target_pitch_mouse_count");
+      private static void method5016(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029("target_yaw_mouse_count", "target_pitch_mouse_count");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2);
       }
 
       @Override
@@ -1943,16 +1943,16 @@ public final class RotationRecorderModule extends Module {
          return "Data12[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + "]";
       }
 
-      private Data12(float var1, float var2, float var3, float var4, float var5) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
+      private Data12(float floatValue, float f, float f2, float f3, float f4) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
       }
 
-      private static void method5017(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method5017(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "target_look_at_player_yaw_error_sin",
             "target_look_at_player_yaw_error_cos",
             "target_look_at_player_pitch_error_sin",
@@ -1962,8 +1962,8 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5);
       }
 
       @Override
@@ -2092,43 +2092,43 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data13(
-         float var1,
-         float var2,
-         float var3,
-         float var4,
-         float var5,
-         float var6,
-         float var7,
-         float var8,
-         float var9,
-         float var10,
-         float var11,
-         float var12,
-         float var13,
-         float var14,
-         float var15,
-         float var16
+         float floatValue,
+         float f,
+         float f2,
+         float f3,
+         float f4,
+         float f5,
+         float f6,
+         float f7,
+         float f8,
+         float f9,
+         float f10,
+         float f11,
+         float f12,
+         float f13,
+         float f14,
+         float f15
       ) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
-         this.floatValue9 = var9;
-         this.floatValue10 = var10;
-         this.floatValue11 = var11;
-         this.floatValue12 = var12;
-         this.floatValue13 = var13;
-         this.floatValue14 = var14;
-         this.floatValue15 = var15;
-         this.floatValue16 = var16;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
+         this.floatValue10 = f9;
+         this.floatValue11 = f10;
+         this.floatValue12 = f11;
+         this.floatValue13 = f12;
+         this.floatValue14 = f13;
+         this.floatValue15 = f14;
+         this.floatValue16 = f15;
       }
 
-      private static void method5018(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method5018(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "yaw_mouse_count",
             "pitch_mouse_count",
             "yaw_acceleration_mouse_counts",
@@ -2149,8 +2149,8 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(
             this.floatValue,
             this.floatValue2,
             this.floatValue3,
@@ -2296,26 +2296,26 @@ public final class RotationRecorderModule extends Module {
          return "Data14[" + "floatValue=" + this.floatValue + ", " + "flag=" + this.flag + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data14(float var1, boolean var2, float var3, float var4) {
-         this.floatValue = var1;
-         this.flag = var2;
-         this.floatValue2 = var3;
-         this.floatValue3 = var4;
+      private Data14(float floatValue, boolean flag, float f, float f2) {
+         this.floatValue = floatValue;
+         this.flag = flag;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
       }
 
-      private static void method5019(RotationRecorderModule.Entry8 var0) {
-         var0.method5029("recorder_schema_version", "simpy_supported_v0", "simpy_schema_version", "simpy_world_mode");
+      private static void method5019(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029("recorder_schema_version", "simpy_supported_v0", "simpy_schema_version", "simpy_world_mode");
       }
 
-      private RotationRecorderModule.Data14 method5020(boolean var1, float var2) {
-         return new RotationRecorderModule.Data14(this.floatValue, var1, this.floatValue2, var2);
+      private RotationRecorderModule.Data14 method5020(boolean flag, float f) {
+         return new RotationRecorderModule.Data14(this.floatValue, flag, this.floatValue2, f);
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue);
-         var1.method5022(this.flag);
-         var1.method5021(this.floatValue2, this.floatValue3);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue);
+         entry6.method5022(this.flag);
+         entry6.method5021(this.floatValue2, this.floatValue3);
       }
 
       @Override
@@ -2399,19 +2399,19 @@ public final class RotationRecorderModule extends Module {
          return "Data15[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + ", " + "floatValue8=" + this.floatValue8 + "]";
       }
 
-      private Data15(float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
+      private Data15(float floatValue, float intValue, float f, float f2, float f3, float f4, float f5, float f6) {
+         this.floatValue = floatValue;
+         this.floatValue2 = intValue;
+         this.floatValue3 = f;
+         this.floatValue4 = f2;
+         this.floatValue5 = f3;
+         this.floatValue6 = f4;
+         this.floatValue7 = f5;
+         this.floatValue8 = f6;
       }
 
-      private static void method5023(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method5023(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "snapshot_id",
             "snapshot_origin_x",
             "snapshot_origin_y",
@@ -2424,8 +2424,8 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(
             this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5, this.floatValue6, this.floatValue7, this.floatValue8
          );
       }
@@ -2514,27 +2514,27 @@ public final class RotationRecorderModule extends Module {
          return "Data16[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + "]";
       }
 
-      private Data16(float var1, float var2, float var3, float var4, float var5) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
+      private Data16(float floatValue, float f, float f2, float f3, float f4) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
       }
 
-      private static RotationRecorderModule.Data16 method5024(Input var0) {
+      private static RotationRecorderModule.Data16 method5024(Input playerInput) {
          return new RotationRecorderModule.Data16(
-            var0.forward() ? 1.0F : 0.0F, var0.backward() ? 1.0F : 0.0F, var0.left() ? 1.0F : 0.0F, var0.right() ? 1.0F : 0.0F, var0.jump() ? 1.0F : 0.0F
+            playerInput.forward() ? 1.0F : 0.0F, playerInput.backward() ? 1.0F : 0.0F, playerInput.left() ? 1.0F : 0.0F, playerInput.right() ? 1.0F : 0.0F, playerInput.jump() ? 1.0F : 0.0F
          );
       }
 
-      private static void method5025(RotationRecorderModule.Entry8 var0) {
-         var0.method5029("movement_input_forward", "movement_input_backward", "movement_input_left", "movement_input_right", "movement_input_jump");
+      private static void method5025(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029("movement_input_forward", "movement_input_backward", "movement_input_left", "movement_input_right", "movement_input_jump");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5);
       }
 
       @Override
@@ -2607,16 +2607,16 @@ public final class RotationRecorderModule extends Module {
          return "Data17[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + "]";
       }
 
-      private Data17(float var1, float var2, float var3, float var4, float var5) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
+      private Data17(float floatValue, float hypot, float f, float f2, float f3) {
+         this.floatValue = floatValue;
+         this.floatValue2 = hypot;
+         this.floatValue3 = f;
+         this.floatValue4 = f2;
+         this.floatValue5 = f3;
       }
 
-      private static void method5027(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method5027(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "target_center_distance",
             "target_center_horizontal_distance",
             "target_center_vertical_distance",
@@ -2626,8 +2626,8 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5);
       }
 
       @Override
@@ -2710,18 +2710,18 @@ public final class RotationRecorderModule extends Module {
          return "Data18[" + "flag=" + this.flag + ", " + "flag2=" + this.flag2 + ", " + "flag3=" + this.flag3 + ", " + "flag4=" + this.flag4 + ", " + "flag5=" + this.flag5 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + "]";
       }
 
-      private Data18(boolean var1, boolean var2, boolean var3, boolean var4, boolean var5, float var6, float var7) {
-         this.flag = var1;
-         this.flag2 = var2;
-         this.flag3 = var3;
-         this.flag4 = var4;
-         this.flag5 = var5;
-         this.floatValue = var6;
-         this.floatValue2 = var7;
+      private Data18(boolean flag, boolean flag2, boolean flag3, boolean flag4, boolean flag5, float floatValue, float amplifier) {
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.flag3 = flag3;
+         this.flag4 = flag4;
+         this.flag5 = flag5;
+         this.floatValue = floatValue;
+         this.floatValue2 = amplifier;
       }
 
-      private static void method5028(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method5028(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "effect_slow_falling",
             "effect_levitation",
             "effect_jump_boost",
@@ -2733,9 +2733,9 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5);
-         var1.method5021(this.floatValue, this.floatValue2);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5);
+         entry6.method5021(this.floatValue, this.floatValue2);
       }
 
       @Override
@@ -2827,40 +2827,40 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data19(
-         RotationRecorderModule.Data20 var1,
-         RotationRecorderModule.Data20 var2,
-         float var3,
-         float var4,
-         RotationRecorderModule.Data20 var5,
-         RotationRecorderModule.Data20 var6,
-         RotationRecorderModule.Data9 var7
+         RotationRecorderModule.Data20 data20,
+         RotationRecorderModule.Data20 data202,
+         float floatValue,
+         float f,
+         RotationRecorderModule.Data20 data203,
+         RotationRecorderModule.Data20 data204,
+         RotationRecorderModule.Data9 data9
       ) {
-         this.data20 = var1;
-         this.data202 = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.data203 = var5;
-         this.data204 = var6;
-         this.data9 = var7;
+         this.data20 = data20;
+         this.data202 = data202;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.data203 = data203;
+         this.data204 = data204;
+         this.data9 = data9;
       }
 
-      private static void method5033(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data20.method5035(var0, "player_pos");
-         RotationRecorderModule.Data20.method5035(var0, "player_eye");
-         var0.method5029("player_yaw", "player_pitch");
-         RotationRecorderModule.Data20.method5035(var0, "player_velocity");
-         RotationRecorderModule.Data20.method5035(var0, "player_prev_pos");
-         RotationRecorderModule.Data9.method5012(var0, "player_bbox");
+      private static void method5033(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data20.method5035(entry8, "player_pos");
+         RotationRecorderModule.Data20.method5035(entry8, "player_eye");
+         entry8.method5029("player_yaw", "player_pitch");
+         RotationRecorderModule.Data20.method5035(entry8, "player_velocity");
+         RotationRecorderModule.Data20.method5035(entry8, "player_prev_pos");
+         RotationRecorderModule.Data9.method5012(entry8, "player_bbox");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         this.data20.method4981(var1);
-         this.data202.method4981(var1);
-         var1.method5021(this.floatValue, this.floatValue2);
-         this.data203.method4981(var1);
-         this.data204.method4981(var1);
-         this.data9.method4981(var1);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         this.data20.method4981(entry6);
+         this.data202.method4981(entry6);
+         entry6.method5021(this.floatValue, this.floatValue2);
+         this.data203.method4981(entry6);
+         this.data204.method4981(entry6);
+         this.data9.method4981(entry6);
       }
 
       @Override
@@ -2962,52 +2962,52 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data2(
-         RotationRecorderModule.Data6 var1,
-         RotationRecorderModule.Data17 var2,
-         RotationRecorderModule.Data7 var3,
-         RotationRecorderModule.Data12 var4,
-         RotationRecorderModule.Data13 var5,
-         RotationRecorderModule.Data16 var6,
-         RotationRecorderModule.Data5 var7,
-         RotationRecorderModule.Data22 var8
+         RotationRecorderModule.Data6 data6,
+         RotationRecorderModule.Data17 data17,
+         RotationRecorderModule.Data7 data7,
+         RotationRecorderModule.Data12 data12,
+         RotationRecorderModule.Data13 data13,
+         RotationRecorderModule.Data16 data16,
+         RotationRecorderModule.Data5 data5,
+         RotationRecorderModule.Data22 data22
       ) {
-         this.data6 = var1;
-         this.data17 = var2;
-         this.data7 = var3;
-         this.data12 = var4;
-         this.data13 = var5;
-         this.data16 = var6;
-         this.data5 = var7;
-         this.data22 = var8;
+         this.data6 = data6;
+         this.data17 = data17;
+         this.data7 = data7;
+         this.data12 = data12;
+         this.data13 = data13;
+         this.data16 = data16;
+         this.data5 = data5;
+         this.data22 = data22;
       }
 
-      private static void method4983(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data6.method4994(var0);
-         RotationRecorderModule.Data17.method5027(var0);
-         RotationRecorderModule.Data7.method4995(var0);
-         RotationRecorderModule.Data12.method5017(var0);
-         RotationRecorderModule.Data13.method5018(var0);
-         RotationRecorderModule.Data16.method5025(var0);
-         RotationRecorderModule.Data5.method4993(var0, "player_motion_predicted_1t");
-         RotationRecorderModule.Data22.method5038(var0);
+      private static void method4983(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data6.method4994(entry8);
+         RotationRecorderModule.Data17.method5027(entry8);
+         RotationRecorderModule.Data7.method4995(entry8);
+         RotationRecorderModule.Data12.method5017(entry8);
+         RotationRecorderModule.Data13.method5018(entry8);
+         RotationRecorderModule.Data16.method5025(entry8);
+         RotationRecorderModule.Data5.method4993(entry8, "player_motion_predicted_1t");
+         RotationRecorderModule.Data22.method5038(entry8);
       }
 
-      private RotationRecorderModule.Data2 method4984(RotationRecorderModule.Entry var1) {
+      private RotationRecorderModule.Data2 method4984(RotationRecorderModule.Entry entry) {
          return new RotationRecorderModule.Data2(
-            this.data6, this.data17, this.data7, this.data12, this.data13, RotationRecorderModule.Data16.method5024(var1.playerInput), this.data5, this.data22
+            this.data6, this.data17, this.data7, this.data12, this.data13, RotationRecorderModule.Data16.method5024(entry.playerInput), this.data5, this.data22
          );
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         this.data6.method4981(var1);
-         this.data17.method4981(var1);
-         this.data7.method4981(var1);
-         this.data12.method4981(var1);
-         this.data13.method4981(var1);
-         this.data16.method4981(var1);
-         this.data5.method4981(var1);
-         this.data22.method4981(var1);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         this.data6.method4981(entry6);
+         this.data17.method4981(entry6);
+         this.data7.method4981(entry6);
+         this.data12.method4981(entry6);
+         this.data13.method4981(entry6);
+         this.data16.method4981(entry6);
+         this.data5.method4981(entry6);
+         this.data22.method4981(entry6);
       }
 
       @Override
@@ -3022,7 +3022,7 @@ public final class RotationRecorderModule extends Module {
             && this.data22.method4982();
       }
 
-      private float[] method4985(RotationRecorderModule.Data3 var1) {
+      private float[] method4985(RotationRecorderModule.Data3 data3) {
          return new float[]{
             this.data6.floatValue,
             this.data6.floatValue2,
@@ -3046,8 +3046,8 @@ public final class RotationRecorderModule extends Module {
             this.data7.floatValue3,
             this.data7.floatValue4,
             this.data7.floatValue5,
-            var1.floatValue,
-            var1.floatValue2,
+            data3.floatValue,
+            data3.floatValue2,
             this.data7.data5.floatValue,
             this.data7.data5.floatValue2,
             this.data7.data5.floatValue3,
@@ -3081,13 +3081,13 @@ public final class RotationRecorderModule extends Module {
          };
       }
 
-      private float[] method4986(RotationRecorderModule.Data3 var1) {
-         float[] var2 = this.method4985(var1);
-         float[] var3 = new float[var2.length + 1];
-         System.arraycopy(var2, 0, var3, 0, 47);
-         var3[47] = this.data16.floatValue5;
-         System.arraycopy(var2, 47, var3, 48, var2.length - 47);
-         return var3;
+      private float[] method4986(RotationRecorderModule.Data3 data3) {
+         float[] floats = this.method4985(data3);
+         float[] floats2 = new float[floats.length + 1];
+         System.arraycopy(floats, 0, floats2, 0, 47);
+         floats2[47] = this.data16.floatValue5;
+         System.arraycopy(floats, 47, floats2, 48, floats.length - 47);
+         return floats2;
       }
 
       public RotationRecorderModule.Data6 getData6() {
@@ -3157,23 +3157,23 @@ public final class RotationRecorderModule extends Module {
          return "Data20[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data20(float var1, float var2, float var3) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
+      private Data20(float floatValue, float y, float z) {
+         this.floatValue = floatValue;
+         this.floatValue2 = y;
+         this.floatValue3 = z;
       }
 
-      private static RotationRecorderModule.Data20 method5034(Vec3 var0) {
-         return new RotationRecorderModule.Data20((float)var0.x, (float)var0.y, (float)var0.z);
+      private static RotationRecorderModule.Data20 method5034(Vec3 vec3d) {
+         return new RotationRecorderModule.Data20((float)vec3d.x, (float)vec3d.y, (float)vec3d.z);
       }
 
-      private static void method5035(RotationRecorderModule.Entry8 var0, String var1) {
-         var0.method5029(var1 + "_x", var1 + "_y", var1 + "_z");
+      private static void method5035(RotationRecorderModule.Entry8 entry8, String str) {
+         entry8.method5029(str + "_x", str + "_y", str + "_z");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3);
       }
 
       @Override
@@ -3248,29 +3248,29 @@ public final class RotationRecorderModule extends Module {
          return "Data21[" + "flag=" + this.flag + ", " + "flag2=" + this.flag2 + ", " + "flag3=" + this.flag3 + ", " + "flag4=" + this.flag4 + ", " + "flag5=" + this.flag5 + ", " + "flag6=" + this.flag6 + ", " + "flag7=" + this.flag7 + "]";
       }
 
-      private Data21(boolean var1, boolean var2, boolean var3, boolean var4, boolean var5, boolean var6, boolean var7) {
-         this.flag = var1;
-         this.flag2 = var2;
-         this.flag3 = var3;
-         this.flag4 = var4;
-         this.flag5 = var5;
-         this.flag6 = var6;
-         this.flag7 = var7;
+      private Data21(boolean flag, boolean backward, boolean left, boolean right, boolean jump, boolean shift, boolean sprint) {
+         this.flag = flag;
+         this.flag2 = backward;
+         this.flag3 = left;
+         this.flag4 = right;
+         this.flag5 = jump;
+         this.flag6 = shift;
+         this.flag7 = sprint;
       }
 
-      private static RotationRecorderModule.Data21 method5036(Input var0) {
-         return new RotationRecorderModule.Data21(var0.forward(), var0.backward(), var0.left(), var0.right(), var0.jump(), var0.shift(), var0.sprint());
+      private static RotationRecorderModule.Data21 method5036(Input keyPresses) {
+         return new RotationRecorderModule.Data21(keyPresses.forward(), keyPresses.backward(), keyPresses.left(), keyPresses.right(), keyPresses.jump(), keyPresses.shift(), keyPresses.sprint());
       }
 
-      private static void method5037(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method5037(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "input_forward_raw", "input_backward_raw", "input_left_raw", "input_right_raw", "input_jump_raw", "input_sneak_raw", "input_sprint_raw"
          );
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5, this.flag6, this.flag7);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5, this.flag6, this.flag7);
       }
 
       @Override
@@ -3346,21 +3346,21 @@ public final class RotationRecorderModule extends Module {
          return "Data22[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "flag=" + this.flag + ", " + "flag2=" + this.flag2 + "]";
       }
 
-      private Data22(float var1, float var2, boolean var3, boolean var4) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.flag = var3;
-         this.flag2 = var4;
+      private Data22(float floatValue, float f, boolean flag, boolean flag2) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.flag = flag;
+         this.flag2 = flag2;
       }
 
-      private static void method5038(RotationRecorderModule.Entry8 var0) {
-         var0.method5029("attack_cooldown_progress", "ticks_since_last_attack_clamped", "state_on_ground", "did_attack_previous_tick");
+      private static void method5038(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029("attack_cooldown_progress", "ticks_since_last_attack_clamped", "state_on_ground", "did_attack_previous_tick");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2);
-         var1.method5022(this.flag, this.flag2);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2);
+         entry6.method5022(this.flag, this.flag2);
       }
 
       @Override
@@ -3409,17 +3409,17 @@ public final class RotationRecorderModule extends Module {
          return "Data23[" + "flag=" + this.flag + "]";
       }
 
-      private Data23(boolean var1) {
-         this.flag = var1;
+      private Data23(boolean flag) {
+         this.flag = flag;
       }
 
-      private static void method5039(RotationRecorderModule.Entry8 var0) {
-         var0.method5029("dirty_physics_flag");
+      private static void method5039(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029("dirty_physics_flag");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5022(this.flag);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5022(this.flag);
       }
 
       @Override
@@ -3477,44 +3477,44 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data24(
-         RotationRecorderModule.Data19 var1,
-         RotationRecorderModule.Data21 var2,
-         RotationRecorderModule.Data4 var3,
-         RotationRecorderModule.Data3 var4,
-         RotationRecorderModule.Data var5
+         RotationRecorderModule.Data19 data19,
+         RotationRecorderModule.Data21 data21,
+         RotationRecorderModule.Data4 data4,
+         RotationRecorderModule.Data3 data3,
+         RotationRecorderModule.Data data
       ) {
-         this.data19 = var1;
-         this.data21 = var2;
-         this.data4 = var3;
-         this.data3 = var4;
-         this.data = var5;
+         this.data19 = data19;
+         this.data21 = data21;
+         this.data4 = data4;
+         this.data3 = data3;
+         this.data = data;
       }
 
-      private static void method5040(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data19.method5033(var0);
-         RotationRecorderModule.Data21.method5037(var0);
-         RotationRecorderModule.Data4.method4992(var0);
-         RotationRecorderModule.Data3.method4987(var0);
-         RotationRecorderModule.Data.method4979(var0);
+      private static void method5040(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data19.method5033(entry8);
+         RotationRecorderModule.Data21.method5037(entry8);
+         RotationRecorderModule.Data4.method4992(entry8);
+         RotationRecorderModule.Data3.method4987(entry8);
+         RotationRecorderModule.Data.method4979(entry8);
       }
 
-      private RotationRecorderModule.Data24 method5041(Input var1, RotationRecorderModule.Entry3 var2) {
+      private RotationRecorderModule.Data24 method5041(Input playerInput, RotationRecorderModule.Entry3 entry3) {
          return new RotationRecorderModule.Data24(
             this.data19,
-            RotationRecorderModule.Data21.method5036(var1),
-            this.data4.method4991(var1.jump()),
+            RotationRecorderModule.Data21.method5036(playerInput),
+            this.data4.method4991(playerInput.jump()),
             this.data3,
-            RotationRecorderModule.Data.method4980(var2)
+            RotationRecorderModule.Data.method4980(entry3)
          );
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         this.data19.method4981(var1);
-         this.data21.method4981(var1);
-         this.data4.method4981(var1);
-         this.data3.method4981(var1);
-         this.data.method4981(var1);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         this.data19.method4981(entry6);
+         this.data21.method4981(entry6);
+         this.data4.method4981(entry6);
+         this.data3.method4981(entry6);
+         this.data.method4981(entry6);
       }
 
       @Override
@@ -3593,36 +3593,36 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data3(
-         RotationRecorderModule.Data9 var1,
-         RotationRecorderModule.Data20 var2,
-         RotationRecorderModule.Data20 var3,
-         RotationRecorderModule.Data20 var4,
-         float var5,
-         float var6
+         RotationRecorderModule.Data9 data9,
+         RotationRecorderModule.Data20 data20,
+         RotationRecorderModule.Data20 data202,
+         RotationRecorderModule.Data20 data203,
+         float floatValue,
+         float f
       ) {
-         this.data9 = var1;
-         this.data20 = var2;
-         this.data202 = var3;
-         this.data203 = var4;
-         this.floatValue = var5;
-         this.floatValue2 = var6;
+         this.data9 = data9;
+         this.data20 = data20;
+         this.data202 = data202;
+         this.data203 = data203;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
 
-      private static void method4987(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data9.method5012(var0, "target_box");
-         RotationRecorderModule.Data20.method5035(var0, "target_center");
-         RotationRecorderModule.Data20.method5035(var0, "target_tracked_pos");
-         RotationRecorderModule.Data20.method5035(var0, "target_visual_motion_raw");
-         var0.method5029("target_center_delta_yaw_count_units", "target_center_delta_pitch_count_units");
+      private static void method4987(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data9.method5012(entry8, "target_box");
+         RotationRecorderModule.Data20.method5035(entry8, "target_center");
+         RotationRecorderModule.Data20.method5035(entry8, "target_tracked_pos");
+         RotationRecorderModule.Data20.method5035(entry8, "target_visual_motion_raw");
+         entry8.method5029("target_center_delta_yaw_count_units", "target_center_delta_pitch_count_units");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         this.data9.method4981(var1);
-         this.data20.method4981(var1);
-         this.data202.method4981(var1);
-         this.data203.method4981(var1);
-         var1.method5021(this.floatValue, this.floatValue2);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         this.data9.method4981(entry6);
+         this.data20.method4981(entry6);
+         this.data202.method4981(entry6);
+         this.data203.method4981(entry6);
+         entry6.method5021(this.floatValue, this.floatValue2);
       }
 
       @Override
@@ -3754,40 +3754,40 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data4(
-         boolean var1,
-         boolean var2,
-         boolean var3,
-         boolean var4,
-         boolean var5,
-         boolean var6,
-         boolean var7,
-         boolean var8,
-         float var9,
-         float var10,
-         float var11,
-         boolean var12,
-         boolean var13,
-         boolean var14,
-         boolean var15
+         boolean flag,
+         boolean verticalCollision,
+         boolean inWater,
+         boolean swimming,
+         boolean underWater,
+         boolean fallFlying,
+         boolean crouching,
+         boolean visuallyCrawling,
+         float floatValue,
+         float fallDistance,
+         float noJumpDelay,
+         boolean jumping,
+         boolean passenger,
+         boolean flying,
+         boolean spectator
       ) {
-         this.flag = var1;
-         this.flag2 = var2;
-         this.flag3 = var3;
-         this.flag4 = var4;
-         this.flag5 = var5;
-         this.flag6 = var6;
-         this.flag7 = var7;
-         this.flag8 = var8;
-         this.floatValue = var9;
-         this.floatValue2 = var10;
-         this.floatValue3 = var11;
-         this.flag9 = var12;
-         this.flag10 = var13;
-         this.flag11 = var14;
-         this.flag12 = var15;
+         this.flag = flag;
+         this.flag2 = verticalCollision;
+         this.flag3 = inWater;
+         this.flag4 = swimming;
+         this.flag5 = underWater;
+         this.flag6 = fallFlying;
+         this.flag7 = crouching;
+         this.flag8 = visuallyCrawling;
+         this.floatValue = floatValue;
+         this.floatValue2 = fallDistance;
+         this.floatValue3 = noJumpDelay;
+         this.flag9 = jumping;
+         this.flag10 = passenger;
+         this.flag11 = flying;
+         this.flag12 = spectator;
       }
 
-      private RotationRecorderModule.Data4 method4991(boolean var1) {
+      private RotationRecorderModule.Data4 method4991(boolean jump) {
          return new RotationRecorderModule.Data4(
             this.flag,
             this.flag2,
@@ -3800,15 +3800,15 @@ public final class RotationRecorderModule extends Module {
             this.floatValue,
             this.floatValue2,
             this.floatValue3,
-            var1,
+            jump,
             this.flag10,
             this.flag11,
             this.flag12
          );
       }
 
-      private static void method4992(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method4992(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "state_horizontal_collision",
             "state_vertical_collision",
             "state_touching_water",
@@ -3828,10 +3828,10 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5, this.flag6, this.flag7, this.flag8);
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3);
-         var1.method5022(this.flag9, this.flag10, this.flag11, this.flag12);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5, this.flag6, this.flag7, this.flag8);
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3);
+         entry6.method5022(this.flag9, this.flag10, this.flag11, this.flag12);
       }
 
       @Override
@@ -3934,19 +3934,19 @@ public final class RotationRecorderModule extends Module {
          return "Data5[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + "]";
       }
 
-      private Data5(float var1, float var2, float var3) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
+      private Data5(float floatValue, float f, float f2) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
       }
 
-      private static void method4993(RotationRecorderModule.Entry8 var0, String var1) {
-         var0.method5029(var1 + "_yaw_change_count_units", var1 + "_pitch_change_count_units", var1 + "_distance_change");
+      private static void method4993(RotationRecorderModule.Entry8 entry8, String str) {
+         entry8.method5029(str + "_yaw_change_count_units", str + "_pitch_change_count_units", str + "_distance_change");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3);
       }
 
       @Override
@@ -4047,24 +4047,24 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data6(
-         float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10, float var11, boolean var12
+         float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8, float f9, float f10, boolean flag
       ) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
-         this.floatValue9 = var9;
-         this.floatValue10 = var10;
-         this.floatValue11 = var11;
-         this.flag = var12;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
+         this.floatValue10 = f9;
+         this.floatValue11 = f10;
+         this.flag = flag;
       }
 
-      private static void method4994(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method4994(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "target_box_min_yaw_from_center_count_units",
             "target_box_max_yaw_from_center_count_units",
             "target_box_min_pitch_from_center_count_units",
@@ -4081,8 +4081,8 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(
             this.floatValue,
             this.floatValue2,
             this.floatValue3,
@@ -4095,7 +4095,7 @@ public final class RotationRecorderModule extends Module {
             this.floatValue10,
             this.floatValue11
          );
-         var1.method5022(this.flag);
+         entry6.method5022(this.flag);
       }
 
       @Override
@@ -4228,20 +4228,20 @@ public final class RotationRecorderModule extends Module {
          return "Data7[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + ", " + "floatValue8=" + this.floatValue8 + ", " + "data5=" + this.data5 + "]";
       }
 
-      private Data7(float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, RotationRecorderModule.Data5 var9) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
-         this.data5 = var9;
+      private Data7(float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7, RotationRecorderModule.Data5 data5) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.data5 = data5;
       }
 
-      private static void method4995(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method4995(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "target_center_delta_yaw_change_count_units",
             "target_center_delta_pitch_change_count_units",
             "target_center_distance_change",
@@ -4251,15 +4251,15 @@ public final class RotationRecorderModule extends Module {
             "player_sim_1t_tracked_target_center_delta_yaw_cos",
             "player_sim_1t_tracked_target_center_delta_pitch_count_units"
          );
-         RotationRecorderModule.Data5.method4993(var0, "target_motion_predicted_1t");
+         RotationRecorderModule.Data5.method4993(entry8, "target_motion_predicted_1t");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(
             this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5, this.floatValue6, this.floatValue7, this.floatValue8
          );
-         this.data5.method4981(var1);
+         this.data5.method4981(entry6);
       }
 
       @Override
@@ -4387,35 +4387,35 @@ public final class RotationRecorderModule extends Module {
       }
 
       private Data8(
-         boolean var1,
-         boolean var2,
-         boolean var3,
-         boolean var4,
-         boolean var5,
-         float var6,
-         float var7,
-         float var8,
-         float var9,
-         float var10,
-         float var11,
-         float var12
+         boolean flag,
+         boolean mayfly,
+         boolean noGravity,
+         boolean shouldDiscardFriction,
+         boolean usingItem,
+         float floatValue,
+         float maxUpStep,
+         float f,
+         float f2,
+         float f3,
+         float f4,
+         float f5
       ) {
-         this.flag = var1;
-         this.flag2 = var2;
-         this.flag3 = var3;
-         this.flag4 = var4;
-         this.flag5 = var5;
-         this.floatValue = var6;
-         this.floatValue2 = var7;
-         this.floatValue3 = var8;
-         this.floatValue4 = var9;
-         this.floatValue5 = var10;
-         this.floatValue6 = var11;
-         this.floatValue7 = var12;
+         this.flag = flag;
+         this.flag2 = mayfly;
+         this.flag3 = noGravity;
+         this.flag4 = shouldDiscardFriction;
+         this.flag5 = usingItem;
+         this.floatValue = floatValue;
+         this.floatValue2 = maxUpStep;
+         this.floatValue3 = f;
+         this.floatValue4 = f2;
+         this.floatValue5 = f3;
+         this.floatValue6 = f4;
+         this.floatValue7 = f5;
       }
 
-      private static void method4996(RotationRecorderModule.Entry8 var0) {
-         var0.method5029(
+      private static void method4996(RotationRecorderModule.Entry8 entry8) {
+         entry8.method5029(
             "state_sprinting",
             "state_allow_flying",
             "state_no_gravity",
@@ -4431,9 +4431,9 @@ public final class RotationRecorderModule extends Module {
          );
       }
 
-      private RotationRecorderModule.Data8 method4997(boolean var1) {
+      private RotationRecorderModule.Data8 method4997(boolean flag) {
          return new RotationRecorderModule.Data8(
-            var1,
+            flag,
             this.flag2,
             this.flag3,
             this.flag4,
@@ -4449,9 +4449,9 @@ public final class RotationRecorderModule extends Module {
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5);
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5, this.floatValue6, this.floatValue7);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5022(this.flag, this.flag2, this.flag3, this.flag4, this.flag5);
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5, this.floatValue6, this.floatValue7);
       }
 
       @Override
@@ -4559,26 +4559,26 @@ public final class RotationRecorderModule extends Module {
          return "Data9[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + "]";
       }
 
-      private Data9(float var1, float var2, float var3, float var4, float var5, float var6) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
+      private Data9(float floatValue, float minY, float minZ, float maxX, float maxY, float maxZ) {
+         this.floatValue = floatValue;
+         this.floatValue2 = minY;
+         this.floatValue3 = minZ;
+         this.floatValue4 = maxX;
+         this.floatValue5 = maxY;
+         this.floatValue6 = maxZ;
       }
 
-      private static RotationRecorderModule.Data9 method5011(AABB var0) {
-         return new RotationRecorderModule.Data9((float)var0.minX, (float)var0.minY, (float)var0.minZ, (float)var0.maxX, (float)var0.maxY, (float)var0.maxZ);
+      private static RotationRecorderModule.Data9 method5011(AABB boundingBox) {
+         return new RotationRecorderModule.Data9((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ, (float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
       }
 
-      private static void method5012(RotationRecorderModule.Entry8 var0, String var1) {
-         var0.method5029(var1 + "_min_x", var1 + "_min_y", var1 + "_min_z", var1 + "_max_x", var1 + "_max_y", var1 + "_max_z");
+      private static void method5012(RotationRecorderModule.Entry8 entry8, String str) {
+         entry8.method5029(str + "_min_x", str + "_min_y", str + "_min_z", str + "_max_x", str + "_max_y", str + "_max_z");
       }
 
       @Override
-      public void method4981(RotationRecorderModule.Entry6 var1) {
-         var1.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5, this.floatValue6);
+      public void method4981(RotationRecorderModule.Entry6 entry6) {
+         entry6.method5021(this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4, this.floatValue5, this.floatValue6);
       }
 
       @Override
@@ -4640,59 +4640,59 @@ public final class RotationRecorderModule extends Module {
       private final int intValue2;
 
       private Entry(
-         RotationRecorderModule.Data2 var1,
-         RotationRecorderModule.Data24 var2,
-         RotationRecorderModule.Data10 var3,
-         Vec3 var4,
-         Vec3 var5,
-         AABB var6,
-         Input var7,
-         boolean var8,
-         boolean var9,
-         boolean var10,
-         float var11,
-         int var12,
-         boolean var13,
-         boolean var14,
-         boolean var15,
-         boolean var16,
-         boolean var17,
-         boolean var18,
-         boolean var19,
-         Pose var20,
-         boolean var21,
-         boolean var22,
-         boolean var23,
-         float var24,
-         long var25,
-         int var27
+         RotationRecorderModule.Data2 data2,
+         RotationRecorderModule.Data24 data24,
+         RotationRecorderModule.Data10 data10,
+         Vec3 vec3d,
+         Vec3 vec3d2,
+         AABB box,
+         Input playerInput,
+         boolean flag,
+         boolean flag2,
+         boolean sprinting,
+         float floatValue,
+         int intValue,
+         boolean jumping,
+         boolean fallFlying,
+         boolean horizontalCollision,
+         boolean verticalCollision,
+         boolean inWater,
+         boolean swimming,
+         boolean underWater,
+         Pose entityPose,
+         boolean crouching,
+         boolean visuallyCrawling,
+         boolean flag3,
+         float f,
+         long longValue,
+         int tickCount
       ) {
-         this.data2 = var1;
-         this.data24 = var2;
-         this.data10 = var3;
-         this.vec3d = var4;
-         this.vec3d2 = var5;
-         this.box = var6;
-         this.playerInput = var7;
-         this.flag = var8;
-         this.flag2 = var9;
-         this.flag3 = var10;
-         this.floatValue = var11;
-         this.intValue = var12;
-         this.flag4 = var13;
-         this.flag5 = var14;
-         this.flag6 = var15;
-         this.flag7 = var16;
-         this.flag8 = var17;
-         this.flag9 = var18;
-         this.flag10 = var19;
-         this.entityPose = var20;
-         this.flag11 = var21;
-         this.flag12 = var22;
-         this.flag13 = var23;
-         this.floatValue2 = var24;
-         this.longValue = var25;
-         this.intValue2 = var27;
+         this.data2 = data2;
+         this.data24 = data24;
+         this.data10 = data10;
+         this.vec3d = vec3d;
+         this.vec3d2 = vec3d2;
+         this.box = box;
+         this.playerInput = playerInput;
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.flag3 = sprinting;
+         this.floatValue = floatValue;
+         this.intValue = intValue;
+         this.flag4 = jumping;
+         this.flag5 = fallFlying;
+         this.flag6 = horizontalCollision;
+         this.flag7 = verticalCollision;
+         this.flag8 = inWater;
+         this.flag9 = swimming;
+         this.flag10 = underWater;
+         this.entityPose = entityPose;
+         this.flag11 = crouching;
+         this.flag12 = visuallyCrawling;
+         this.flag13 = flag3;
+         this.floatValue2 = f;
+         this.longValue = longValue;
+         this.intValue2 = tickCount;
       }
    }
 
@@ -4706,15 +4706,15 @@ public final class RotationRecorderModule extends Module {
       private final int intValue6;
       private final int intValue7;
 
-      private Entry10(long var1, int var3, int var4, int var5, int var6, int var7, int var8, int var9) {
-         this.longValue = var1;
-         this.intValue = var3;
-         this.intValue2 = var4;
-         this.intValue3 = var5;
-         this.intValue4 = var6;
-         this.intValue5 = var7;
-         this.intValue6 = var8;
-         this.intValue7 = var9;
+      private Entry10(long longValue, int intValue, int n, int n2, int n3, int n4, int n5, int n6) {
+         this.longValue = longValue;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = n2;
+         this.intValue4 = n3;
+         this.intValue5 = n4;
+         this.intValue6 = n5;
+         this.intValue7 = n6;
       }
    }
 
@@ -4724,57 +4724,57 @@ public final class RotationRecorderModule extends Module {
       private UUID uUID = null;
       private int intValue2 = Integer.MIN_VALUE;
 
-      public float[] method4988(LivingEntity var1, Rotation var2, boolean var3) {
-         return this.method4990(var1, var2, var3, false);
+      public float[] method4988(LivingEntity livingEntity, Rotation rotation, boolean flag) {
+         return this.method4990(livingEntity, rotation, flag, false);
       }
 
-      public float[] method4989(LivingEntity var1, Rotation var2, boolean var3) {
-         return this.method4990(var1, var2, var3, true);
+      public float[] method4989(LivingEntity livingEntity, Rotation rotation, boolean flag) {
+         return this.method4990(livingEntity, rotation, flag, true);
       }
 
-      private float[] method4990(LivingEntity var1, Rotation var2, boolean var3, boolean var4) {
+      private float[] method4990(LivingEntity livingEntity, Rotation rotation, boolean flag, boolean flag2) {
          if (RotationRecorderModule.mc.player != null
             && RotationRecorderModule.mc.level != null
-            && var1 != null
-            && var1.isAlive()
-            && var2 != null
-            && !var2.method3137()) {
-            if (var1.getId() != this.intValue
-               || !var1.getUUID().equals(this.uUID)
+            && livingEntity != null
+            && livingEntity.isAlive()
+            && rotation != null
+            && !rotation.method3137()) {
+            if (livingEntity.getId() != this.intValue
+               || !livingEntity.getUUID().equals(this.uUID)
                || this.intValue2 != Integer.MIN_VALUE && RotationRecorderModule.mc.player.tickCount != this.intValue2 + 1) {
                this.reset();
-               this.intValue = var1.getId();
-               this.uUID = var1.getUUID();
+               this.intValue = livingEntity.getId();
+               this.uUID = livingEntity.getUUID();
             }
 
-            float var5 = var2.getFloatValue();
-            float var6 = var2.getFloatValue2();
+            float floatValue = rotation.getFloatValue();
+            float xRot = rotation.getFloatValue2();
             if (!this.rotationRecorderModule.flag4) {
-               this.rotationRecorderModule.floatValue = var5;
-               this.rotationRecorderModule.floatValue2 = var6;
+               this.rotationRecorderModule.floatValue = floatValue;
+               this.rotationRecorderModule.floatValue2 = xRot;
                this.rotationRecorderModule.flag4 = true;
             }
 
-            float var7 = Mth.wrapDegrees(var5 - this.rotationRecorderModule.floatValue);
-            float var8 = var6 - this.rotationRecorderModule.floatValue2;
-            Input var9 = this.rotationRecorderModule.method4970();
-            AABB var10 = this.rotationRecorderModule.method4931(var1);
-            Vec3 var11 = this.rotationRecorderModule.method4920(var1);
-            if (var10 != null && var11 != null) {
-               RotationRecorderModule.Entry3 var12 = this.rotationRecorderModule.method4975(var5, var6, var9);
-               Vec3 var13 = RotationRecorderModule.mc.player.getEyePosition();
-               RotationRecorderModule.Entry var14 = this.rotationRecorderModule
+            float f = Mth.wrapDegrees(floatValue - this.rotationRecorderModule.floatValue);
+            float f2 = xRot - this.rotationRecorderModule.floatValue2;
+            Input keyPresses = this.rotationRecorderModule.method4970();
+            AABB move = this.rotationRecorderModule.method4931(livingEntity);
+            Vec3 vec3d = this.rotationRecorderModule.method4920(livingEntity);
+            if (move != null && vec3d != null) {
+               RotationRecorderModule.Entry3 entry3 = this.rotationRecorderModule.method4975(floatValue, xRot, keyPresses);
+               Vec3 eyePosition = RotationRecorderModule.mc.player.getEyePosition();
+               RotationRecorderModule.Entry entry = this.rotationRecorderModule
                   .method4955(
-                     var2, var13, var1, var10, var11, var7, var8, var9, var3, false, null, var12, this.rotationRecorderModule.method4919(var2, var13, var9)
+                     rotation, eyePosition, livingEntity, move, vec3d, f, f2, keyPresses, flag, false, null, entry3, this.rotationRecorderModule.method4919(rotation, eyePosition, keyPresses)
                   );
-               this.rotationRecorderModule.floatValue = var5;
-               this.rotationRecorderModule.floatValue2 = var6;
+               this.rotationRecorderModule.floatValue = floatValue;
+               this.rotationRecorderModule.floatValue2 = xRot;
                this.intValue2 = RotationRecorderModule.mc.player.tickCount;
-               if (var14 == null) {
+               if (entry == null) {
                   return null;
                } else {
-                  this.rotationRecorderModule.entry = var14;
-                  return var4 ? var14.data2.method4986(var14.data24.getData3()) : var14.data2.method4985(var14.data24.getData3());
+                  this.rotationRecorderModule.entry = entry;
+                  return flag2 ? entry.data2.method4986(entry.data24.getData3()) : entry.data2.method4985(entry.data24.getData3());
                }
             } else {
                this.reset();
@@ -4803,18 +4803,18 @@ public final class RotationRecorderModule extends Module {
       private final boolean flag3;
       private final boolean flag4;
 
-      private Entry3(boolean var1, Vec3 var2, Vec3 var3, Vec3 var4, boolean var5, boolean var6, boolean var7) {
-         this.flag = var1;
-         this.vec3d = var2;
-         this.vec3d2 = var3;
-         this.vec3d3 = var4;
-         this.flag2 = var5;
-         this.flag3 = var6;
-         this.flag4 = var7;
+      private Entry3(boolean flag, Vec3 vec3d, Vec3 vec3d2, Vec3 vec3d3, boolean flag2, boolean flag3, boolean flag4) {
+         this.flag = flag;
+         this.vec3d = vec3d;
+         this.vec3d2 = vec3d2;
+         this.vec3d3 = vec3d3;
+         this.flag2 = flag2;
+         this.flag3 = flag3;
+         this.flag4 = flag4;
       }
 
-      private static RotationRecorderModule.Entry3 method4998(Vec3 var0, Vec3 var1) {
-         return new RotationRecorderModule.Entry3(false, Vec3.ZERO, var0, var1, false, false, false);
+      private static RotationRecorderModule.Entry3 method4998(Vec3 position, Vec3 deltaMovement) {
+         return new RotationRecorderModule.Entry3(false, Vec3.ZERO, position, deltaMovement, false, false, false);
       }
    }
 
@@ -4822,27 +4822,27 @@ public final class RotationRecorderModule extends Module {
       private final List<RotationRecorderModule.Entry5> items = new ArrayList<>();
       private final long longValue = RotationRecorderModule.this.method4954();
 
-      private boolean method4999(RotationRecorderModule.Entry5 var1) {
-         if (var1 != null && var1.isValid()) {
-            this.items.add(var1);
+      private boolean method4999(RotationRecorderModule.Entry5 entry5) {
+         if (entry5 != null && entry5.isValid()) {
+            this.items.add(entry5);
             return true;
          } else {
             return false;
          }
       }
 
-      private void method5000(int var1) {
-         int var2 = Math.max(0, this.items.size() - var1);
-         if (var2 <= 0) {
+      private void method5000(int n) {
+         int n2 = Math.max(0, this.items.size() - n);
+         if (n2 <= 0) {
             this.items.clear();
             RotationRecorderModule.this.entry4 = null;
          } else {
-            for (int var3 = 0; var3 < var2; var3++) {
-               RotationRecorderModule.this.method4951(this.longValue, this.items.get(var3));
+            for (int i = 0; i < n2; i++) {
+               RotationRecorderModule.this.method4951(this.longValue, this.items.get(i));
             }
 
             if (!RotationRecorderModule.this.disableLogs.isEnabled()) {
-               ChatLogger.method2019("RotationRecorder: wrote " + var2);
+               ChatLogger.method2019("RotationRecorder: wrote " + n2);
             }
 
             this.items.clear();
@@ -4869,118 +4869,118 @@ public final class RotationRecorderModule extends Module {
       private final int intValue;
       private final float floatValue;
 
-      private static void method5002(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data2.method4983(var0);
-         RotationRecorderModule.Data24.method5040(var0);
-         RotationRecorderModule.Data10.method5013(var0);
-         RotationRecorderModule.Data23.method5039(var0);
-         RotationRecorderModule.Data11.method5016(var0);
+      private static void method5002(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data2.method4983(entry8);
+         RotationRecorderModule.Data24.method5040(entry8);
+         RotationRecorderModule.Data10.method5013(entry8);
+         RotationRecorderModule.Data23.method5039(entry8);
+         RotationRecorderModule.Data11.method5016(entry8);
       }
 
-      private static void method5003(RotationRecorderModule.Entry8 var0) {
-         RotationRecorderModule.Data2.method4983(var0);
-         RotationRecorderModule.Data24.method5040(var0);
-         RotationRecorderModule.Data10.method5013(var0);
-         RotationRecorderModule.Data23.method5039(var0);
-         var0.method5029("isAim");
-         RotationRecorderModule.Data11.method5016(var0);
+      private static void method5003(RotationRecorderModule.Entry8 entry8) {
+         RotationRecorderModule.Data2.method4983(entry8);
+         RotationRecorderModule.Data24.method5040(entry8);
+         RotationRecorderModule.Data10.method5013(entry8);
+         RotationRecorderModule.Data23.method5039(entry8);
+         entry8.method5029("isAim");
+         RotationRecorderModule.Data11.method5016(entry8);
       }
 
       private static int method5004() {
-         RotationRecorderModule.Entry8 var0 = new RotationRecorderModule.Entry8(new StringBuilder());
-         method5002(var0);
-         return var0.method5030();
+         RotationRecorderModule.Entry8 entry8 = new RotationRecorderModule.Entry8(new StringBuilder());
+         method5002(entry8);
+         return entry8.method5030();
       }
 
       private static int method5005() {
-         RotationRecorderModule.Entry8 var0 = new RotationRecorderModule.Entry8(new StringBuilder());
-         method5003(var0);
-         return var0.method5030();
+         RotationRecorderModule.Entry8 entry8 = new RotationRecorderModule.Entry8(new StringBuilder());
+         method5003(entry8);
+         return entry8.method5030();
       }
 
       private Entry5(
-         RotationRecorderModule.Data2 var1,
-         RotationRecorderModule.Data24 var2,
-         RotationRecorderModule.Data10 var3,
-         RotationRecorderModule.Data23 var4,
-         RotationRecorderModule.Data11 var5,
-         boolean var6,
-         long var7,
-         int var9,
-         float var10
+         RotationRecorderModule.Data2 data2,
+         RotationRecorderModule.Data24 data24,
+         RotationRecorderModule.Data10 data10,
+         RotationRecorderModule.Data23 data23,
+         RotationRecorderModule.Data11 data11,
+         boolean flag,
+         long longValue,
+         int intValue,
+         float floatValue
       ) {
-         this.data2 = var1;
-         this.data24 = var2;
-         this.data10 = var3;
-         this.data23 = var4;
-         this.data11 = var5;
-         this.flag = var6;
-         this.longValue = var7;
-         this.intValue = var9;
-         this.floatValue = var10;
+         this.data2 = data2;
+         this.data24 = data24;
+         this.data10 = data10;
+         this.data23 = data23;
+         this.data11 = data11;
+         this.flag = flag;
+         this.longValue = longValue;
+         this.intValue = intValue;
+         this.floatValue = floatValue;
       }
 
       private static RotationRecorderModule.Entry5 method5006(
-         RotationRecorderModule.Entry var0, RotationRecorderModule.Entry var1, RotationRecorderModule.Entry3 var2, boolean var3
+         RotationRecorderModule.Entry entry, RotationRecorderModule.Entry entry2, RotationRecorderModule.Entry3 entry3, boolean flag
       ) {
-         boolean var4 = var3 || var0.flag2 || var1.flag2 || !var2.flag;
-         boolean var5 = !var4 && method5009(var0) && method5009(var1);
+         boolean flag2 = flag || entry.flag2 || entry2.flag2 || !entry3.flag;
+         boolean flag3 = !flag2 && method5009(entry) && method5009(entry2);
          return new RotationRecorderModule.Entry5(
-            var0.data2.method4984(var0),
-            var0.data24.method5041(var0.playerInput, var2),
-            var0.data10.method5014(var0.data10, var0.flag3, var5),
-            new RotationRecorderModule.Data23(var4),
-            new RotationRecorderModule.Data11(var1.data2.getData13().getFloatValue(), var1.data2.getData13().getFloatValue2()),
-            var1.flag13,
-            var0.longValue,
-            var0.intValue2,
-            var0.floatValue2
+            entry.data2.method4984(entry),
+            entry.data24.method5041(entry.playerInput, entry3),
+            entry.data10.method5014(entry.data10, entry.flag3, flag3),
+            new RotationRecorderModule.Data23(flag2),
+            new RotationRecorderModule.Data11(entry2.data2.getData13().getFloatValue(), entry2.data2.getData13().getFloatValue2()),
+            entry2.flag13,
+            entry.longValue,
+            entry.intValue2,
+            entry.floatValue2
          );
       }
 
-      private void method5007(StringBuilder var1) {
-         RotationRecorderModule.Entry6 var2 = new RotationRecorderModule.Entry6(var1);
-         this.data2.method4981(var2);
-         this.data24.method4981(var2);
-         this.data10.method4981(var2);
-         this.data23.method4981(var2);
-         this.data11.method4981(var2);
-         if (var2.getIntValue() != CONST_intValue) {
-            throw new IllegalStateException("CSV schema mismatch: header has " + CONST_intValue + " columns, data tick has " + var2.getIntValue());
+      private void method5007(StringBuilder stringBuilder) {
+         RotationRecorderModule.Entry6 entry6 = new RotationRecorderModule.Entry6(stringBuilder);
+         this.data2.method4981(entry6);
+         this.data24.method4981(entry6);
+         this.data10.method4981(entry6);
+         this.data23.method4981(entry6);
+         this.data11.method4981(entry6);
+         if (entry6.getIntValue() != CONST_intValue) {
+            throw new IllegalStateException("CSV schema mismatch: header has " + CONST_intValue + " columns, data tick has " + entry6.getIntValue());
          }
       }
 
-      private void method5008(StringBuilder var1) {
-         RotationRecorderModule.Entry6 var2 = new RotationRecorderModule.Entry6(var1);
-         this.data2.method4981(var2);
-         this.data24.method4981(var2);
-         this.data10.method4981(var2);
-         this.data23.method4981(var2);
-         var2.method5022(this.flag);
-         this.data11.method4981(var2);
-         if (var2.getIntValue() != CONST_intValue2) {
-            throw new IllegalStateException("Aim CSV schema mismatch: header has " + CONST_intValue2 + " columns, data tick has " + var2.getIntValue());
+      private void method5008(StringBuilder stringBuilder) {
+         RotationRecorderModule.Entry6 entry6 = new RotationRecorderModule.Entry6(stringBuilder);
+         this.data2.method4981(entry6);
+         this.data24.method4981(entry6);
+         this.data10.method4981(entry6);
+         this.data23.method4981(entry6);
+         entry6.method5022(this.flag);
+         this.data11.method4981(entry6);
+         if (entry6.getIntValue() != CONST_intValue2) {
+            throw new IllegalStateException("Aim CSV schema mismatch: header has " + CONST_intValue2 + " columns, data tick has " + entry6.getIntValue());
          }
       }
 
-      private static boolean method5009(RotationRecorderModule.Entry var0) {
-         return var0 != null
-            && !var0.flag2
-            && !var0.flag5
-            && !var0.flag8
-            && !var0.flag9
-            && !var0.flag10
-            && !var0.flag6
-            && !var0.flag11
-            && !var0.flag12
-            && !var0.playerInput.shift()
-            && method5010(var0.entityPose)
-            && var0.data10 != null
-            && var0.data10.method5015(var0.flag3);
+      private static boolean method5009(RotationRecorderModule.Entry entry) {
+         return entry != null
+            && !entry.flag2
+            && !entry.flag5
+            && !entry.flag8
+            && !entry.flag9
+            && !entry.flag10
+            && !entry.flag6
+            && !entry.flag11
+            && !entry.flag12
+            && !entry.playerInput.shift()
+            && method5010(entry.entityPose)
+            && entry.data10 != null
+            && entry.data10.method5015(entry.flag3);
       }
 
-      private static boolean method5010(Pose var0) {
-         return var0 == null || var0 == Pose.STANDING || var0 == Pose.CROUCHING;
+      private static boolean method5010(Pose entityPose) {
+         return entityPose == null || entityPose == Pose.STANDING || entityPose == Pose.CROUCHING;
       }
 
       private boolean isValid() {
@@ -5004,20 +5004,20 @@ public final class RotationRecorderModule extends Module {
       private final StringBuilder stringBuilder;
       private int intValue;
 
-      private Entry6(StringBuilder var1) {
-         this.stringBuilder = var1;
+      private Entry6(StringBuilder stringBuilder) {
+         this.stringBuilder = stringBuilder;
       }
 
-      private void method5021(float... var1) {
-         for (float var5 : var1) {
-            this.stringBuilder.append(',').append(var5);
+      private void method5021(float... floatValue) {
+         for (float f : floatValue) {
+            this.stringBuilder.append(',').append(f);
             this.intValue++;
          }
       }
 
-      private void method5022(boolean... var1) {
-         for (boolean var5 : var1) {
-            this.stringBuilder.append(',').append(var5 ? 1.0F : 0.0F);
+      private void method5022(boolean... flag) {
+         for (boolean flag2 : flag) {
+            this.stringBuilder.append(',').append(flag2 ? 1.0F : 0.0F);
             this.intValue++;
          }
       }
@@ -5034,16 +5034,16 @@ public final class RotationRecorderModule extends Module {
       private int intValue3;
       private int intValue4;
 
-      private Entry7(int var1, UUID var2, int var3, int var4, int var5) {
-         this.intValue = var1;
-         this.uUID = var2;
-         this.intValue2 = var3;
-         this.intValue3 = var4;
-         this.intValue4 = var5;
+      private Entry7(int intValue, UUID uUID, int n, int tickCount, int n2) {
+         this.intValue = intValue;
+         this.uUID = uUID;
+         this.intValue2 = n;
+         this.intValue3 = tickCount;
+         this.intValue4 = n2;
       }
 
-      private boolean method5026(LivingEntity var1) {
-         return var1 != null && this.intValue == var1.getId() && this.uUID.equals(var1.getUUID());
+      private boolean method5026(LivingEntity livingEntity) {
+         return livingEntity != null && this.intValue == livingEntity.getId() && this.uUID.equals(livingEntity.getUUID());
       }
    }
 
@@ -5051,21 +5051,21 @@ public final class RotationRecorderModule extends Module {
       private final StringBuilder stringBuilder;
       private final Map<String, Boolean> items = new LinkedHashMap<>();
 
-      private Entry8(StringBuilder var1) {
-         this.stringBuilder = var1;
+      private Entry8(StringBuilder stringBuilder) {
+         this.stringBuilder = stringBuilder;
       }
 
-      private void method5029(String... var1) {
-         for (String var5 : var1) {
-            if (var5 == null || var5.isBlank()) {
+      private void method5029(String... strings) {
+         for (String str : strings) {
+            if (str == null || str.isBlank()) {
                throw new IllegalArgumentException("CSV column name must not be blank");
             }
 
-            if (this.items.put(var5, Boolean.TRUE) != null) {
-               throw new IllegalArgumentException("Duplicate CSV column: " + var5);
+            if (this.items.put(str, Boolean.TRUE) != null) {
+               throw new IllegalArgumentException("Duplicate CSV column: " + str);
             }
 
-            this.stringBuilder.append(',').append(var5);
+            this.stringBuilder.append(',').append(str);
          }
       }
 
@@ -5093,17 +5093,17 @@ public final class RotationRecorderModule extends Module {
       private float floatValue11;
       private float floatValue12;
 
-      private Entry9(LivingEntity var1) {
-         this.intValue = var1.getId();
-         this.uUID = var1.getUUID();
+      private Entry9(LivingEntity livingEntity) {
+         this.intValue = livingEntity.getId();
+         this.uUID = livingEntity.getUUID();
       }
 
-      private boolean method5031(LivingEntity var1) {
-         return var1 != null && this.intValue == var1.getId() && this.uUID.equals(var1.getUUID());
+      private boolean method5031(LivingEntity livingEntity) {
+         return livingEntity != null && this.intValue == livingEntity.getId() && this.uUID.equals(livingEntity.getUUID());
       }
 
-      private void method5032(RotationRecorderModule.Entry var1) {
-         this.deque.addLast(var1);
+      private void method5032(RotationRecorderModule.Entry entry) {
+         this.deque.addLast(entry);
 
          while (this.deque.size() > 64) {
             this.deque.removeFirst();
@@ -5112,7 +5112,7 @@ public final class RotationRecorderModule extends Module {
    }
 
    private interface Handler {
-      void method4981(RotationRecorderModule.Entry6 var1);
+      void method4981(RotationRecorderModule.Entry6 entry6);
 
       boolean method4982();
    }

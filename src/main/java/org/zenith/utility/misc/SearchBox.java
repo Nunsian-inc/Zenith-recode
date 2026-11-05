@@ -72,72 +72,72 @@ public class SearchBox implements MinecraftAccess {
    private final transient SearchBox.Entry entry = new SearchBox.Entry();
    public Animation animation = new Animation(400L, 0.2F, Easing.INSTANCE13);
 
-   public SearchBox(UVPair var1, Font var2, String var3, float var4) {
-      this.font = var2;
-      this.text2 = var3;
-      this.width = var4;
-      this.vector2f = var1;
+   public SearchBox(UVPair vector2f, Font font, String text, float width) {
+      this.font = font;
+      this.text2 = text;
+      this.width = width;
+      this.vector2f = vector2f;
    }
 
-   public void method987(CustomDrawContext var1, float var2, float var3, ZenithColor var4, ZenithColor var5) {
-      this.vector2f = new UVPair(var2, var3);
+   public void method987(CustomDrawContext menuDrawContext, float floatValue, float centeredTextY, ZenithColor zenithColor, ZenithColor zenithColor2) {
+      this.vector2f = new UVPair(floatValue, centeredTextY);
       this.cursor = Mth.clamp(this.cursor, 0, this.text.length());
-      this.floatValue = var2;
-      boolean var6 = this.isEmpty();
+      this.floatValue = floatValue;
+      boolean empty = this.isEmpty();
       if (this.multiline) {
-         this.method988(var1, var2, var3, var4, var5, var6);
+         this.method988(menuDrawContext, floatValue, centeredTextY, zenithColor, zenithColor2, empty);
       } else {
-         String var7 = this.masked ? "*".repeat(this.text.length()) : this.text;
-         float var8 = this.width;
-         SearchBox.Entry var9 = this.entry;
-         int var10;
-         int var11;
-         if (var9.font == this.font && var9.intValue == this.cursor && var9.flag == this.masked && var9.floatValue == var8 && this.text.equals(var9.text)) {
-            var10 = var9.intValue2;
-            var11 = var9.intValue3;
+         String repeat = this.masked ? "*".repeat(this.text.length()) : this.text;
+         float width = this.width;
+         SearchBox.Entry entry = this.entry;
+         int beginIndex;
+         int cursor;
+         if (entry.font == this.font && entry.intValue == this.cursor && entry.flag == this.masked && entry.floatValue == width && this.text.equals(entry.text)) {
+            beginIndex = entry.intValue2;
+            cursor = entry.intValue3;
          } else {
-            var10 = 0;
+            beginIndex = 0;
 
-            while (this.font.width(var7.substring(var10, this.cursor)) > var8) {
-               var10++;
+            while (this.font.width(repeat.substring(beginIndex, this.cursor)) > width) {
+               beginIndex++;
             }
 
-            var11 = this.cursor;
+            cursor = this.cursor;
 
-            while (var11 < var7.length() && this.font.width(var7.substring(var10, var11 + 1)) <= var8) {
-               var11++;
+            while (cursor < repeat.length() && this.font.width(repeat.substring(beginIndex, cursor + 1)) <= width) {
+               cursor++;
             }
 
-            var9.text = this.text;
-            var9.flag = this.masked;
-            var9.intValue = this.cursor;
-            var9.floatValue = var8;
-            var9.font = this.font;
-            var9.intValue2 = var10;
-            var9.intValue3 = var11;
+            entry.text = this.text;
+            entry.flag = this.masked;
+            entry.intValue = this.cursor;
+            entry.floatValue = width;
+            entry.font = this.font;
+            entry.intValue2 = beginIndex;
+            entry.intValue3 = cursor;
          }
 
-         String var12 = var7.substring(var10, var11);
-         if (this.flag && !var12.isEmpty()) {
-            var1.drawRect(var2 - 1.0F, var3 - 1.0F, Math.min(this.font.width(var12), var8) + 2.0F, this.font.height() + 2.0F, var5.method7294(0.5F));
+         String text = repeat.substring(beginIndex, cursor);
+         if (this.flag && !text.isEmpty()) {
+            menuDrawContext.drawRect(floatValue - 1.0F, centeredTextY - 1.0F, Math.min(this.font.width(text), width) + 2.0F, this.font.height() + 2.0F, zenithColor2.method7294(0.5F));
          }
 
-         if (var6) {
-            var1.drawText(this.font, this.method994(this.text2), var2, var3, var5);
+         if (empty) {
+            menuDrawContext.drawText(this.font, this.method994(this.text2), floatValue, centeredTextY, zenithColor2);
          } else {
-            var1.drawText(this.font, var12, var2, var3, var4);
+            menuDrawContext.drawText(this.font, text, floatValue, centeredTextY, zenithColor);
          }
 
          if (this.selected && System.currentTimeMillis() - this.longValue > 200L) {
-            float var13 = var6 ? 0.0F : this.font.width(var7.substring(var10, this.cursor));
-            float var14 = this.floatValue + Math.min(var13, this.width);
+            float f = empty ? 0.0F : this.font.width(repeat.substring(beginIndex, this.cursor));
+            float floatValue2 = this.floatValue + Math.min(f, this.width);
             this.animation.setDuration(250L);
-            var1.drawRect(
-               var14,
-               var3 - 1.0F,
+            menuDrawContext.drawRect(
+               floatValue2,
+               centeredTextY - 1.0F,
                1.0F,
                this.font.height() + 2.0F,
-               var4.method7294(
+               zenithColor.method7294(
                   this.animation
                      .method2808(this.animation.getValue() == 0.2F ? 1.0F : (this.animation.getValue() == 1.0F ? 0.2F : this.animation.getFloatValue2()))
                )
@@ -146,36 +146,36 @@ public class SearchBox implements MinecraftAccess {
       }
    }
 
-   private void method988(CustomDrawContext var1, float var2, float var3, ZenithColor var4, ZenithColor var5, boolean var6) {
-      String var7 = this.masked ? "*".repeat(this.text.length()) : this.text;
-      if (var6) {
-         var var8 = this.method989(1, this.text2 == null ? "" : this.text2);
+   private void method988(CustomDrawContext menuDrawContext, float floatValue, float centeredTextY, ZenithColor zenithColor, ZenithColor zenithColor2, boolean empty) {
+      String repeat = this.masked ? "*".repeat(this.text.length()) : this.text;
+      if (empty) {
+         var strings = this.method989(1, this.text2 == null ? "" : this.text2);
 
-         for (int var9 = 0; var9 < var8.size() && (var9 + 1) * this.font.height() <= this.height; var9++) {
-            var1.drawText(this.font, (String)var8.get(var9), var2, var3 + var9 * this.font.height(), var5);
+         for (int i = 0; i < strings.size() && (i + 1) * this.font.height() <= this.height; i++) {
+            menuDrawContext.drawText(this.font, (String)strings.get(i), floatValue, centeredTextY + i * this.font.height(), zenithColor2);
          }
       } else {
-         var var12 = this.method989(0, var7);
-         float var14 = this.font.height();
+         var strings = this.method989(0, repeat);
+         float height = this.font.height();
 
-         for (int var10 = 0; var10 < var12.size() && (var10 + 1) * var14 <= this.height; var10++) {
-            var1.drawText(this.font, (String)var12.get(var10), var2, var3 + var10 * var14, var4);
+         for (int i = 0; i < strings.size() && (i + 1) * height <= this.height; i++) {
+            menuDrawContext.drawText(this.font, (String)strings.get(i), floatValue, centeredTextY + i * height, zenithColor);
          }
       }
 
-      float var13 = this.font.height();
+      float height = this.font.height();
       if (this.selected && System.currentTimeMillis() - this.longValue > 200L) {
-         var var15 = this.method989(2, var7.substring(0, this.cursor));
-         int var16 = Math.max(0, var15.size() - 1);
-         if ((var16 + 1) * var13 <= this.height) {
-            String var11 = var15.isEmpty() ? "" : (String)var15.get(var16);
+         var strings = this.method989(2, repeat.substring(0, this.cursor));
+         int n = Math.max(0, strings.size() - 1);
+         if ((n + 1) * height <= this.height) {
+            String text = strings.isEmpty() ? "" : (String)strings.get(n);
             this.animation.setDuration(250L);
-            var1.drawRect(
-               var2 + this.font.width(var11),
-               var3 + var16 * var13 - 1.0F,
+            menuDrawContext.drawRect(
+               floatValue + this.font.width(text),
+               centeredTextY + n * height - 1.0F,
                1.0F,
-               var13 + 2.0F,
-               var4.method7294(
+               height + 2.0F,
+               zenithColor.method7294(
                   this.animation
                      .method2808(this.animation.getValue() == 0.2F ? 1.0F : (this.animation.getValue() == 1.0F ? 0.2F : this.animation.getFloatValue2()))
                )
@@ -184,89 +184,89 @@ public class SearchBox implements MinecraftAccess {
       }
    }
 
-   private List<String> method989(int var1, String var2) {
-      SearchBox.Entry var3 = this.entry;
-      if (var3.fonts[var1] == this.font && var3.floatValues[var1] == this.width && var2.equals(var3.texts[var1])) {
-         return var3.itemss[var1];
+   private List<String> method989(int n, String repeat) {
+      SearchBox.Entry entry = this.entry;
+      if (entry.fonts[n] == this.font && entry.floatValues[n] == this.width && repeat.equals(entry.texts[n])) {
+         return entry.itemss[n];
       } else {
-         var var4 = Collections.unmodifiableList(this.method990(var2));
-         var3.texts[var1] = var2;
-         var3.floatValues[var1] = this.width;
-         var3.fonts[var1] = this.font;
-         var3.itemss[var1] = var4;
-         return var4;
+         var unmodifiableList = Collections.unmodifiableList(this.method990(repeat));
+         entry.texts[n] = repeat;
+         entry.floatValues[n] = this.width;
+         entry.fonts[n] = this.font;
+         entry.itemss[n] = unmodifiableList;
+         return unmodifiableList;
       }
    }
 
-   private List<String> method990(String var1) {
-      ArrayList<String> var2 = new ArrayList<>();
-      StringBuilder var3 = new StringBuilder();
+   private List<String> method990(String repeat) {
+      ArrayList<String> strings = new ArrayList<>();
+      StringBuilder builder = new StringBuilder();
 
-      for (int var4 = 0; var4 < var1.length(); var4++) {
-         char var5 = var1.charAt(var4);
-         if (var5 == '\n') {
-            var2.add(var3.toString());
-            var3.setLength(0);
+      for (int i = 0; i < repeat.length(); i++) {
+         char charAt = repeat.charAt(i);
+         if (charAt == '\n') {
+            strings.add(builder.toString());
+            builder.setLength(0);
          } else {
-            if (!var3.isEmpty() && this.font.width(var3.toString() + var5) > this.width) {
-               var2.add(var3.toString());
-               var3.setLength(0);
+            if (!builder.isEmpty() && this.font.width(builder.toString() + charAt) > this.width) {
+               strings.add(builder.toString());
+               builder.setLength(0);
             }
 
-            var3.append(var5);
+            builder.append(charAt);
          }
       }
 
-      var2.add(var3.toString());
-      return var2;
+      strings.add(builder.toString());
+      return strings;
    }
 
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      UVPair var6 = this.getVector2f();
-      float var7 = this.multiline ? Math.max(this.font.height(), this.height) : this.font.height();
-      this.selected = var5.getIntValue() == 0 && MathUtils.method2647(var1, var3, var6.u(), var6.v() - 3.0F, this.width, var7 + 6.0F);
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+      UVPair vector2f = this.getVector2f();
+      float height = this.multiline ? Math.max(this.font.height(), this.height) : this.font.height();
+      this.selected = enum2.getIntValue() == 0 && MathUtils.method2647(x, y, vector2f.u(), vector2f.v() - 3.0F, this.width, height + 6.0F);
       if (this.selected) {
          this.flag = false;
          if (!this.multiline) {
-            this.method991(var1);
+            this.method991(x);
          }
       }
 
       return this.selected;
    }
 
-   private void method991(double var1) {
-      String var3 = this.masked ? "*".repeat(this.text.length()) : this.text;
+   private void method991(double x) {
+      String repeat = this.masked ? "*".repeat(this.text.length()) : this.text;
       this.cursor = Mth.clamp(this.cursor, 0, this.text.length());
-      int var4 = 0;
+      int beginIndex = 0;
 
-      while (var4 < this.cursor && this.font.width(var3.substring(var4, this.cursor)) > this.width) {
-         var4++;
+      while (beginIndex < this.cursor && this.font.width(repeat.substring(beginIndex, this.cursor)) > this.width) {
+         beginIndex++;
       }
 
-      float var5 = Mth.clamp((float)var1 - this.vector2f.u(), 0.0F, this.width);
-      int var6 = var4;
+      float f = Mth.clamp((float)x - this.vector2f.u(), 0.0F, this.width);
+      int cursor = beginIndex;
 
-      for (float var7 = 0.0F; var6 < var3.length(); var6++) {
-         float var8 = this.font.width(var3.substring(var4, var6 + 1));
-         if (var8 > this.width || var5 < (var7 + var8) / 2.0F) {
+      for (float width = 0.0F; cursor < repeat.length(); cursor++) {
+         float width2 = this.font.width(repeat.substring(beginIndex, cursor + 1));
+         if (width2 > this.width || f < (width + width2) / 2.0F) {
             break;
          }
 
-         var7 = var8;
+         width = width2;
       }
 
-      this.cursor = var6;
+      this.cursor = cursor;
       this.longValue = System.currentTimeMillis();
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (!this.selected) {
          return false;
-      } else if (var1 == 256) {
+      } else if (keyCode == 256) {
          this.selected = false;
          return true;
-      } else if (var1 == 257) {
+      } else if (keyCode == 257) {
          if (this.multiline) {
             this.method992("\n", this.cursor);
             this.cursor++;
@@ -280,26 +280,26 @@ public class SearchBox implements MinecraftAccess {
          this.longValue = System.currentTimeMillis();
          this.cursor = Mth.clamp(this.cursor, 0, this.text.length());
          if (org.zenith.utility.misc.KeyCompat.isKeyDown(341)) {
-            if (var1 == 86) {
-               String var4 = mc.keyboardHandler.getClipboard();
+            if (keyCode == 86) {
+               String clipboard = mc.keyboardHandler.getClipboard();
                if (this.flag) {
                   this.text = "";
                   this.cursor = 0;
                   this.flag = false;
                }
 
-               this.cursor = this.cursor + this.method992(var4, this.cursor);
+               this.cursor = this.cursor + this.method992(clipboard, this.cursor);
                this.flag = false;
-            } else if (var1 == 65) {
+            } else if (keyCode == 65) {
                this.flag = true;
                this.cursor = this.text.length();
-            } else if (var1 == 67 && this.selected && this.flag) {
+            } else if (keyCode == 67 && this.selected && this.flag) {
                mc.keyboardHandler.setClipboard(this.text);
             }
-         } else if (var1 == 261 && !this.text.isEmpty()) {
+         } else if (keyCode == 261 && !this.text.isEmpty()) {
             this.method993(this.cursor + 1);
             this.flag = false;
-         } else if (var1 == 259 && !this.text.isEmpty()) {
+         } else if (keyCode == 259 && !this.text.isEmpty()) {
             if (this.flag) {
                this.text = "";
                this.cursor = 0;
@@ -314,24 +314,24 @@ public class SearchBox implements MinecraftAccess {
                   }
                }
             }
-         } else if (var1 == 262) {
+         } else if (keyCode == 262) {
             this.cursor++;
             if (org.zenith.utility.misc.KeyCompat.isKeyDown(341)) {
                this.cursor = this.text.length();
             }
 
             this.flag = false;
-         } else if (var1 == 263) {
+         } else if (keyCode == 263) {
             this.cursor--;
             if (org.zenith.utility.misc.KeyCompat.isKeyDown(341)) {
                this.cursor = 0;
             }
 
             this.flag = false;
-         } else if (var1 == 269) {
+         } else if (keyCode == 269) {
             this.cursor = this.text.length();
             this.flag = false;
-         } else if (var1 == 268) {
+         } else if (keyCode == 268) {
             this.cursor = 0;
             this.flag = false;
          }
@@ -341,7 +341,7 @@ public class SearchBox implements MinecraftAccess {
       }
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (!this.selected) {
          return false;
       } else {
@@ -353,127 +353,127 @@ public class SearchBox implements MinecraftAccess {
             this.flag = false;
          }
 
-         this.cursor = this.cursor + this.method992(Character.toString(var1), this.cursor);
+         this.cursor = this.cursor + this.method992(Character.toString(codepoint), this.cursor);
          this.cursor = Mth.clamp(this.cursor, 0, this.text.length());
          return true;
       }
    }
 
-   private int method992(String var1, int var2) {
-      String var3 = this.method995(var1);
-      var3 = this.method996(var3);
-      StringBuilder var4 = new StringBuilder();
+   private int method992(String clipboard, int cursor) {
+      String str = this.method995(clipboard);
+      str = this.method996(str);
+      StringBuilder builder = new StringBuilder();
 
-      for (char var8 : var3.toCharArray()) {
-         if (this.type.method999(var8)) {
-            var4.append(var8);
+      for (char ch : str.toCharArray()) {
+         if (this.type.method999(ch)) {
+            builder.append(ch);
          }
       }
 
-      String var10 = var4.toString();
-      if (this.text.length() + var10.length() > this.maxLength) {
-         int var11 = this.maxLength - this.text.length();
-         if (var11 <= 0) {
+      String string = builder.toString();
+      if (this.text.length() + string.length() > this.maxLength) {
+         int n = this.maxLength - this.text.length();
+         if (n <= 0) {
             return 0;
          }
 
-         var10 = var10.substring(0, Math.min(var11, var10.length()));
+         string = string.substring(0, Math.min(n, string.length()));
       }
 
-      StringBuilder var12 = new StringBuilder();
-      boolean var13 = false;
+      StringBuilder builder2 = new StringBuilder();
+      boolean flag = false;
 
-      for (int var14 = 0; var14 < this.text.length(); var14++) {
-         if (var14 == var2) {
-            var13 = true;
-            var12.append(var10);
+      for (int i = 0; i < this.text.length(); i++) {
+         if (i == cursor) {
+            flag = true;
+            builder2.append(string);
          }
 
-         var12.append(this.text.charAt(var14));
+         builder2.append(this.text.charAt(i));
       }
 
-      if (!var13) {
-         var12.append(var10);
+      if (!flag) {
+         builder2.append(string);
       }
 
-      this.text = var12.toString();
-      return var10.length();
+      this.text = builder2.toString();
+      return string.length();
    }
 
-   private void method993(int var1) {
-      StringBuilder var2 = new StringBuilder();
+   private void method993(int cursor) {
+      StringBuilder builder = new StringBuilder();
 
-      for (int var3 = 0; var3 < this.text.length(); var3++) {
-         if (var3 != var1 - 1) {
-            var2.append(this.text.charAt(var3));
+      for (int i = 0; i < this.text.length(); i++) {
+         if (i != cursor - 1) {
+            builder.append(this.text.charAt(i));
          }
       }
 
-      this.text = var2.toString();
+      this.text = builder.toString();
    }
 
    public boolean isEmpty() {
       return this.text.isEmpty();
    }
 
-   private String method994(String var1) {
-      if (var1 != null && !var1.isEmpty() && !(this.width <= 0.0F) && !(this.font.width(var1) <= this.width)) {
-         int var2 = var1.length();
+   private String method994(String text) {
+      if (text != null && !text.isEmpty() && !(this.width <= 0.0F) && !(this.font.width(text) <= this.width)) {
+         int length = text.length();
 
-         while (var2 > 0 && this.font.width(var1.substring(0, var2)) > this.width) {
-            var2--;
+         while (length > 0 && this.font.width(text.substring(0, length)) > this.width) {
+            length--;
          }
 
-         return var1.substring(0, var2);
+         return text.substring(0, length);
       } else {
-         return var1 == null ? "" : var1;
+         return text == null ? "" : text;
       }
    }
 
-   private String method995(String var1) {
-      if (var1 != null && !var1.isEmpty()) {
+   private String method995(String clipboard) {
+      if (clipboard != null && !clipboard.isEmpty()) {
          return switch (this.type) {
-            case ENGLISH, ENGLISH_NUMBERS, ENGLISH_NAME, SERVER_ADDRESS -> method997(var1, items);
-            default -> var1;
+            case ENGLISH, ENGLISH_NUMBERS, ENGLISH_NAME, SERVER_ADDRESS -> method997(clipboard, items);
+            default -> clipboard;
          };
       } else {
-         return var1;
+         return clipboard;
       }
    }
 
-   private String method996(String var1) {
-      if (var1 != null && !var1.isEmpty() && this.type2 != SearchBox.Type2.NO_LIMIT) {
-         StringBuilder var2 = new StringBuilder(var1.length());
+   private String method996(String str) {
+      if (str != null && !str.isEmpty() && this.type2 != SearchBox.Type2.NO_LIMIT) {
+         StringBuilder builder = new StringBuilder(str.length());
 
-         for (int var3 = 0; var3 < var1.length(); var3++) {
-            char var4 = var1.charAt(var3);
-            if (!Character.isWhitespace(var4)) {
-               var2.append(var4);
+         for (int i = 0; i < str.length(); i++) {
+            char charAt = str.charAt(i);
+            if (!Character.isWhitespace(charAt)) {
+               builder.append(charAt);
             }
          }
 
-         return var2.toString();
+         return builder.toString();
       } else {
-         return var1;
+         return str;
       }
    }
 
-   private static String method997(String var0, Map<Character, Character> var1) {
-      StringBuilder var2 = new StringBuilder(var0.length());
+   private static String method997(String clipboard, Map<Character, Character> items) {
+      StringBuilder builder = new StringBuilder(clipboard.length());
 
-      for (int var3 = 0; var3 < var0.length(); var3++) {
-         char var4 = var0.charAt(var3);
-         char var5 = Character.toLowerCase(var4);
-         Character var6 = (Character)var1.get(var5);
-         if (var6 == null) {
-            var2.append(var4);
+      for (int i = 0; i < clipboard.length(); i++) {
+         char charAt = clipboard.charAt(i);
+         char lowerCase = Character.toLowerCase(charAt);
+         Character ch = (Character)items.get(lowerCase);
+         if (ch == null) {
+            builder.append(charAt);
          } else {
-            char var7 = Character.isUpperCase(var4) ? Character.toUpperCase(var6) : var6;
-            var2.append(var7);
+            char upperCase = Character.isUpperCase(charAt) ? Character.toUpperCase(ch) : ch;
+            builder.append(upperCase);
          }
       }
 
-      return var2.toString();
+      return builder.toString();
    }
 
    @Generated
@@ -567,148 +567,148 @@ public class SearchBox implements MinecraftAccess {
    }
 
    @Generated
-   public void setText(String var1) {
-      this.text = var1;
+   public void setText(String text) {
+      this.text = text;
    }
 
    @Generated
-   public void setSelected(boolean var1) {
-      this.selected = var1;
+   public void setSelected(boolean selected) {
+      this.selected = selected;
    }
 
    @Generated
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
    @Generated
-   public void setCursor(int var1) {
-      this.cursor = var1;
+   public void setCursor(int cursor) {
+      this.cursor = cursor;
    }
 
    @Generated
-   public void setFloatValue(float var1) {
-      this.floatValue = var1;
+   public void setFloatValue(float floatValue) {
+      this.floatValue = floatValue;
    }
 
    @Generated
-   public void setFont(Font var1) {
-      this.font = var1;
+   public void setFont(Font font) {
+      this.font = font;
    }
 
    @Generated
-   public void setVector2f(UVPair var1) {
-      this.vector2f = var1;
+   public void setVector2f(UVPair vector2f) {
+      this.vector2f = vector2f;
    }
 
    @Generated
-   public void setText2(String var1) {
-      this.text2 = var1;
+   public void setText2(String tr) {
+      this.text2 = tr;
    }
 
    @Generated
-   public void setWidth(float var1) {
-      this.width = var1;
+   public void setWidth(float width) {
+      this.width = width;
    }
 
    @Generated
-   public void setHeight(float var1) {
-      this.height = var1;
+   public void setHeight(float height) {
+      this.height = height;
    }
 
    @Generated
-   public void setMultiline(boolean var1) {
-      this.multiline = var1;
+   public void setMultiline(boolean multiline) {
+      this.multiline = multiline;
    }
 
    @Generated
-   public void setLongValue(long var1) {
-      this.longValue = var1;
+   public void setLongValue(long longValue) {
+      this.longValue = longValue;
    }
 
    @Generated
-   public void setMaxLength(int var1) {
-      this.maxLength = var1;
+   public void setMaxLength(int maxLength) {
+      this.maxLength = maxLength;
    }
 
    @Generated
-   public void setType(SearchBox.Type var1) {
-      this.type = var1;
+   public void setType(SearchBox.Type type) {
+      this.type = type;
    }
 
    @Generated
-   public void setType2(SearchBox.Type2 var1) {
-      this.type2 = var1;
+   public void setType2(SearchBox.Type2 type2) {
+      this.type2 = type2;
    }
 
    @Generated
-   public void setScrollOffset(float var1) {
-      this.scrollOffset = var1;
+   public void setScrollOffset(float scrollOffset) {
+      this.scrollOffset = scrollOffset;
    }
 
    @Generated
-   public void setMasked(boolean var1) {
-      this.masked = var1;
+   public void setMasked(boolean masked) {
+      this.masked = masked;
    }
 
    @Generated
-   public void setAnimation(Animation var1) {
-      this.animation = var1;
+   public void setAnimation(Animation animation) {
+      this.animation = animation;
    }
 
    @Generated
    @Override
-   public boolean equals(Object var1) {
-      if (var1 == this) {
+   public boolean equals(Object obj) {
+      if (obj == this) {
          return true;
-      } else if (!(var1 instanceof SearchBox var2)) {
+      } else if (!(obj instanceof SearchBox searchBox)) {
          return false;
-      } else if (!var2.method998(this)) {
+      } else if (!searchBox.method998(this)) {
          return false;
-      } else if (this.isSelected() != var2.isSelected()) {
+      } else if (this.isSelected() != searchBox.isSelected()) {
          return false;
-      } else if (this.isFlag() != var2.isFlag()) {
+      } else if (this.isFlag() != searchBox.isFlag()) {
          return false;
-      } else if (this.getCursor() != var2.getCursor()) {
+      } else if (this.getCursor() != searchBox.getCursor()) {
          return false;
-      } else if (Float.compare(this.getFloatValue(), var2.getFloatValue()) != 0) {
+      } else if (Float.compare(this.getFloatValue(), searchBox.getFloatValue()) != 0) {
          return false;
-      } else if (Float.compare(this.getWidth(), var2.getWidth()) != 0) {
+      } else if (Float.compare(this.getWidth(), searchBox.getWidth()) != 0) {
          return false;
-      } else if (Float.compare(this.getHeight(), var2.getHeight()) != 0) {
+      } else if (Float.compare(this.getHeight(), searchBox.getHeight()) != 0) {
          return false;
-      } else if (this.isMultiline() != var2.isMultiline()) {
+      } else if (this.isMultiline() != searchBox.isMultiline()) {
          return false;
-      } else if (this.getLongValue() != var2.getLongValue()) {
+      } else if (this.getLongValue() != searchBox.getLongValue()) {
          return false;
-      } else if (this.getMaxLength() != var2.getMaxLength()) {
+      } else if (this.getMaxLength() != searchBox.getMaxLength()) {
          return false;
-      } else if (Float.compare(this.getScrollOffset(), var2.getScrollOffset()) != 0) {
+      } else if (Float.compare(this.getScrollOffset(), searchBox.getScrollOffset()) != 0) {
          return false;
-      } else if (this.isMasked() != var2.isMasked()) {
+      } else if (this.isMasked() != searchBox.isMasked()) {
          return false;
       } else {
-         String var3 = this.getText();
-         String var4 = var2.getText();
-         if (var3 == null ? var4 == null : var3.equals(var4)) {
-            Font var5 = this.getFont();
-            Font var6 = var2.getFont();
-            if (var5 == null ? var6 == null : var5.equals(var6)) {
-               UVPair var7 = this.getVector2f();
-               UVPair var8 = var2.getVector2f();
-               if (var7 == null ? var8 == null : var7.equals(var8)) {
-                  String var9 = this.getText2();
-                  String var10 = var2.getText2();
-                  if (var9 == null ? var10 == null : var9.equals(var10)) {
-                     SearchBox.Type var11 = this.getType();
-                     SearchBox.Type var12 = var2.getType();
-                     if (var11 == null ? var12 == null : var11.equals(var12)) {
-                        SearchBox.Type2 var13 = this.getType2();
-                        SearchBox.Type2 var14 = var2.getType2();
-                        if (var13 == null ? var14 == null : var13.equals(var14)) {
-                           Animation var15 = this.getAnimation();
-                           Animation var16 = var2.getAnimation();
-                           return var15 == null ? var16 == null : var15.equals(var16);
+         String text = this.getText();
+         String anObject = searchBox.getText();
+         if (text == null ? anObject == null : text.equals(anObject)) {
+            Font font = this.getFont();
+            Font font2 = searchBox.getFont();
+            if (font == null ? font2 == null : font.equals(font2)) {
+               UVPair vector2f = this.getVector2f();
+               UVPair uvPair = searchBox.getVector2f();
+               if (vector2f == null ? uvPair == null : vector2f.equals(uvPair)) {
+                  String str = this.getText2();
+                  String anObject2 = searchBox.getText2();
+                  if (str == null ? anObject2 == null : str.equals(anObject2)) {
+                     SearchBox.Type type = this.getType();
+                     SearchBox.Type type2 = searchBox.getType();
+                     if (type == null ? type2 == null : type.equals(type2)) {
+                        SearchBox.Type2 type22 = this.getType2();
+                        SearchBox.Type2 type23 = searchBox.getType2();
+                        if (type22 == null ? type23 == null : type22.equals(type23)) {
+                           Animation animation = this.getAnimation();
+                           Animation animation2 = searchBox.getAnimation();
+                           return animation == null ? animation2 == null : animation.equals(animation2);
                         } else {
                            return false;
                         }
@@ -731,41 +731,41 @@ public class SearchBox implements MinecraftAccess {
    }
 
    @Generated
-   public boolean method998(Object var1) {
-      return var1 instanceof SearchBox;
+   public boolean method998(Object obj) {
+      return obj instanceof SearchBox;
    }
 
    @Generated
    @Override
    public int hashCode() {
-      byte var1 = 59;
-      int var2 = 1;
-      var2 = var2 * 59 + (this.isSelected() ? 79 : 97);
-      var2 = var2 * 59 + (this.isFlag() ? 79 : 97);
-      var2 = var2 * 59 + this.getCursor();
-      var2 = var2 * 59 + Float.floatToIntBits(this.getFloatValue());
-      var2 = var2 * 59 + Float.floatToIntBits(this.getWidth());
-      var2 = var2 * 59 + Float.floatToIntBits(this.getHeight());
-      var2 = var2 * 59 + (this.isMultiline() ? 79 : 97);
-      long var3 = this.getLongValue();
-      var2 = var2 * 59 + (int)(var3 >>> 32 ^ var3);
-      var2 = var2 * 59 + this.getMaxLength();
-      var2 = var2 * 59 + Float.floatToIntBits(this.getScrollOffset());
-      var2 = var2 * 59 + (this.isMasked() ? 79 : 97);
-      String var5 = this.getText();
-      var2 = var2 * 59 + (var5 == null ? 43 : var5.hashCode());
-      Font var6 = this.getFont();
-      var2 = var2 * 59 + (var6 == null ? 43 : var6.hashCode());
-      UVPair var7 = this.getVector2f();
-      var2 = var2 * 59 + (var7 == null ? 43 : var7.hashCode());
-      String var8 = this.getText2();
-      var2 = var2 * 59 + (var8 == null ? 43 : var8.hashCode());
-      SearchBox.Type var9 = this.getType();
-      var2 = var2 * 59 + (var9 == null ? 43 : var9.hashCode());
-      SearchBox.Type2 var10 = this.getType2();
-      var2 = var2 * 59 + (var10 == null ? 43 : var10.hashCode());
-      Animation var11 = this.getAnimation();
-      return var2 * 59 + (var11 == null ? 43 : var11.hashCode());
+      byte b = 59;
+      int n = 1;
+      n = n * 59 + (this.isSelected() ? 79 : 97);
+      n = n * 59 + (this.isFlag() ? 79 : 97);
+      n = n * 59 + this.getCursor();
+      n = n * 59 + Float.floatToIntBits(this.getFloatValue());
+      n = n * 59 + Float.floatToIntBits(this.getWidth());
+      n = n * 59 + Float.floatToIntBits(this.getHeight());
+      n = n * 59 + (this.isMultiline() ? 79 : 97);
+      long longValue = this.getLongValue();
+      n = n * 59 + (int)(longValue >>> 32 ^ longValue);
+      n = n * 59 + this.getMaxLength();
+      n = n * 59 + Float.floatToIntBits(this.getScrollOffset());
+      n = n * 59 + (this.isMasked() ? 79 : 97);
+      String text = this.getText();
+      n = n * 59 + (text == null ? 43 : text.hashCode());
+      Font font = this.getFont();
+      n = n * 59 + (font == null ? 43 : font.hashCode());
+      UVPair vector2f = this.getVector2f();
+      n = n * 59 + (vector2f == null ? 43 : vector2f.hashCode());
+      String str = this.getText2();
+      n = n * 59 + (str == null ? 43 : str.hashCode());
+      SearchBox.Type type = this.getType();
+      n = n * 59 + (type == null ? 43 : type.hashCode());
+      SearchBox.Type2 type2 = this.getType2();
+      n = n * 59 + (type2 == null ? 43 : type2.hashCode());
+      Animation animation = this.getAnimation();
+      return n * 59 + (animation == null ? 43 : animation.hashCode());
    }
 
    @Generated
@@ -837,16 +837,16 @@ public class SearchBox implements MinecraftAccess {
       NUMBERS_ONLY,
       DECIMAL_NUMBER;
 
-      public boolean method999(char var1) {
+      public boolean method999(char ch) {
          return switch (this) {
             case ANY -> true;
-            case ENGLISH -> Character.isLetter(var1) && var1 <= 127 && Character.isAlphabetic(var1);
-            case ENGLISH_NUMBERS -> Character.isLetterOrDigit(var1) && var1 <= 127;
-            case ENGLISH_NAME -> Character.isLetterOrDigit(var1) && var1 <= 127 || var1 == '_';
-            case SERVER_ADDRESS -> Character.isLetterOrDigit(var1) && var1 <= 127 || var1 == '.' || var1 == ':' || var1 == '-' || var1 == '_';
-            case CYRILLIC -> String.valueOf(var1).matches("[А-Яа-яЁё]");
-            case NUMBERS_ONLY -> Character.isDigit(var1);
-            case DECIMAL_NUMBER -> Character.isDigit(var1) || var1 == '-' || var1 == '.' || var1 == ',';
+            case ENGLISH -> Character.isLetter(ch) && ch <= 127 && Character.isAlphabetic(ch);
+            case ENGLISH_NUMBERS -> Character.isLetterOrDigit(ch) && ch <= 127;
+            case ENGLISH_NAME -> Character.isLetterOrDigit(ch) && ch <= 127 || ch == '_';
+            case SERVER_ADDRESS -> Character.isLetterOrDigit(ch) && ch <= 127 || ch == '.' || ch == ':' || ch == '-' || ch == '_';
+            case CYRILLIC -> String.valueOf(ch).matches("[А-Яа-яЁё]");
+            case NUMBERS_ONLY -> Character.isDigit(ch);
+            case DECIMAL_NUMBER -> Character.isDigit(ch) || ch == '-' || ch == '.' || ch == ',';
          };
       }
    }

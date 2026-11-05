@@ -1,7 +1,7 @@
 package dev.porno.playerAnim.core.data.quarktool;
 
 public interface Playable {
-   int playForward(int var1) throws QuarkParsingError;
+   int playForward(int time) throws QuarkParsingError;
 
-   int playBackward(int var1) throws QuarkParsingError;
+   int playBackward(int time) throws QuarkParsingError;
 }

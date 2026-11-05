@@ -10,9 +10,9 @@ public class BlockPlacedEvent implements Event {
    private final BlockState blockState;
 
    @Generated
-   public BlockPlacedEvent(BlockPos var1, BlockState var2) {
-      this.blockPos = var1;
-      this.blockState = var2;
+   public BlockPlacedEvent(BlockPos blockPos, BlockState blockState) {
+      this.blockPos = blockPos;
+      this.blockState = blockState;
    }
 
    @Generated

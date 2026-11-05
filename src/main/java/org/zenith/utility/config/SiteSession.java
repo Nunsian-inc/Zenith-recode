@@ -31,17 +31,17 @@ public final class SiteSession {
    }
 
    public static String method2289() {
-      String var0 = text3;
-      long var1 = System.currentTimeMillis();
-      if (!var0.isEmpty()) {
-         if (path != null && var1 - longValue >= 10000L) {
+      String str = text3;
+      long now = System.currentTimeMillis();
+      if (!str.isEmpty()) {
+         if (path != null && now - longValue >= 10000L) {
             synchronized (SiteSession.class) {
                if (System.currentTimeMillis() - longValue < 10000L) {
                   return text3;
                } else {
                   longValue = System.currentTimeMillis();
-                  Path var4 = path;
-                  if (var4 != null && method2290(var4) != longValue2) {
+                  Path path2 = path;
+                  if (path2 != null && method2290(path2) != longValue2) {
                      text3 = method2293();
                   }
 
@@ -49,9 +49,9 @@ public final class SiteSession {
                }
             }
          } else {
-            return var0;
+            return str;
          }
-      } else if (var1 - longValue < 10000L) {
+      } else if (now - longValue < 10000L) {
          return "";
       } else {
          synchronized (SiteSession.class) {
@@ -66,10 +66,10 @@ public final class SiteSession {
       }
    }
 
-   private static long method2290(Path var0) {
+   private static long method2290(Path path) {
       try {
-         return Files.isRegularFile(var0) ? Files.getLastModifiedTime(var0).toMillis() : -1L;
-      } catch (Exception var2) {
+         return Files.isRegularFile(path) ? Files.getLastModifiedTime(path).toMillis() : -1L;
+      } catch (Exception e) {
          return -1L;
       }
    }
@@ -90,20 +90,20 @@ public final class SiteSession {
    private static String method2293() {
       path = null;
       longValue2 = 0L;
-      String var0 = method2300(System.getProperty("zenith.site.token", ""), "property");
-      if (!var0.isEmpty()) {
-         return var0;
+      String str = method2300(System.getProperty("zenith.site.token", ""), "property");
+      if (!str.isEmpty()) {
+         return str;
       } else {
-         var0 = method2300(System.getenv("ZENITH_SITE_TOKEN"), "environment");
-         if (!var0.isEmpty()) {
-            return var0;
+         str = method2300(System.getenv("ZENITH_SITE_TOKEN"), "environment");
+         if (!str.isEmpty()) {
+            return str;
          } else {
-            var0 = method2295();
-            if (!var0.isEmpty()) {
-               return var0;
+            str = method2295();
+            if (!str.isEmpty()) {
+               return str;
             } else {
-               var0 = method2297();
-               return !var0.isEmpty() ? var0 : method2294();
+               str = method2297();
+               return !str.isEmpty() ? str : method2294();
             }
          }
       }
@@ -111,22 +111,22 @@ public final class SiteSession {
 
    private static String method2294() {
       try {
-         File var0 = Zenith.file;
-         return var0 == null ? "" : method2298(var0.toPath().resolve("site-token.txt"));
-      } catch (Throwable var1) {
+         File file = Zenith.file;
+         return file == null ? "" : method2298(file.toPath().resolve("site-token.txt"));
+      } catch (Throwable e) {
          return "";
       }
    }
 
    private static String method2295() {
-      for (Method var3 : method2296()) {
+      for (Method method : method2296()) {
          try {
-            Object var4 = var3.invoke(null);
-            String var5 = method2300(var4 == null ? "" : var4.toString(), "protection");
-            if (!var5.isEmpty()) {
-               return var5;
+            Object obj = method.invoke(null);
+            String str = method2300(obj == null ? "" : obj.toString(), "protection");
+            if (!str.isEmpty()) {
+               return str;
             }
-         } catch (RuntimeException | ReflectiveOperationException var6) {
+         } catch (RuntimeException | ReflectiveOperationException e) {
          }
       }
 
@@ -134,107 +134,107 @@ public final class SiteSession {
    }
 
    private static Method[] method2296() {
-      Method[] var0 = methods;
-      if (var0 != null) {
-         return var0;
+      Method[] methods2 = methods;
+      if (methods2 != null) {
+         return methods2;
       } else {
-         ArrayList var1 = new ArrayList();
+         ArrayList arrayList = new ArrayList();
 
          try {
-            Class var2 = Class.forName("ru.session.Session");
+            Class clazz = Class.forName("ru.session.Session");
 
-            for (String var6 : new String[]{"getToken", "getSessionToken", "token"}) {
+            for (String name : new String[]{"getToken", "getSessionToken", "token"}) {
                try {
-                  var1.add(var2.getMethod(var6));
-               } catch (RuntimeException | ReflectiveOperationException var8) {
+                  arrayList.add(clazz.getMethod(name));
+               } catch (RuntimeException | ReflectiveOperationException e) {
                }
             }
-         } catch (RuntimeException | ReflectiveOperationException var9) {
+         } catch (RuntimeException | ReflectiveOperationException e) {
          }
 
-         var0 = (Method[])var1.toArray(new Method[0]);
-         methods = var0;
-         return var0;
+         methods2 = (Method[])arrayList.toArray(new Method[0]);
+         methods = methods2;
+         return methods2;
       }
    }
 
    private static String method2297() {
-      Path var0 = method2299();
-      return var0 == null ? "" : method2298(var0.resolve("Zenith-Launcher").resolve("session.token"));
+      Path path = method2299();
+      return path == null ? "" : method2298(path.resolve("Zenith-Launcher").resolve("session.token"));
    }
 
-   private static String method2298(Path var0) {
+   private static String method2298(Path path2) {
       try {
-         if (!Files.isReadable(var0)) {
+         if (!Files.isReadable(path2)) {
             return "";
-         } else if (Files.size(var0) > 4160L) {
-            method2301(var0.getFileName().toString(), "файл " + Files.size(var0) + " байт");
+         } else if (Files.size(path2) > 4160L) {
+            method2301(path2.getFileName().toString(), "файл " + Files.size(path2) + " байт");
             return "";
          } else {
-            long var1 = Files.getLastModifiedTime(var0).toMillis();
-            String var3 = method2300(new String(Files.readAllBytes(var0), StandardCharsets.UTF_8), var0.getFileName().toString());
-            if (!var3.isEmpty()) {
-               path = var0;
-               longValue2 = var1;
+            long millis = Files.getLastModifiedTime(path2).toMillis();
+            String str = method2300(new String(Files.readAllBytes(path2), StandardCharsets.UTF_8), path2.getFileName().toString());
+            if (!str.isEmpty()) {
+               path = path2;
+               longValue2 = millis;
             }
 
-            return var3;
+            return str;
          }
-      } catch (Exception var4) {
+      } catch (Exception e) {
          return "";
       }
    }
 
    private static Path method2299() {
-      String var0 = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+      String lowerCase = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
 
       try {
-         if (var0.contains("win")) {
-            String var4 = System.getenv("LOCALAPPDATA");
-            return var4 != null && !var4.isBlank() ? Path.of(var4) : null;
+         if (lowerCase.contains("win")) {
+            String getenv = System.getenv("LOCALAPPDATA");
+            return getenv != null && !getenv.isBlank() ? Path.of(getenv) : null;
          } else {
-            String var1 = System.getProperty("user.home", "");
-            if (var1.isBlank()) {
+            String property = System.getProperty("user.home", "");
+            if (property.isBlank()) {
                return null;
-            } else if (!var0.contains("mac") && !var0.contains("darwin")) {
-               String var2 = System.getenv("XDG_DATA_HOME");
-               return var2 != null && !var2.isBlank() ? Path.of(var2) : Path.of(var1, ".local", "share");
+            } else if (!lowerCase.contains("mac") && !lowerCase.contains("darwin")) {
+               String getenv = System.getenv("XDG_DATA_HOME");
+               return getenv != null && !getenv.isBlank() ? Path.of(getenv) : Path.of(property, ".local", "share");
             } else {
-               return Path.of(var1, "Library", "Application Support");
+               return Path.of(property, "Library", "Application Support");
             }
          }
-      } catch (RuntimeException var3) {
+      } catch (RuntimeException e) {
          return null;
       }
    }
 
-   private static String method2300(String var0, String var1) {
-      if (var0 == null) {
+   private static String method2300(String property, String string) {
+      if (property == null) {
          return "";
       } else {
-         String var2 = var0.strip();
-         if (var2.isEmpty()) {
+         String str = property.strip();
+         if (str.isEmpty()) {
             return "";
-         } else if (var2.length() >= 8 && var2.length() <= 4096) {
-            for (int var3 = 0; var3 < var2.length(); var3++) {
-               char var4 = var2.charAt(var3);
-               if (var4 <= ' ' || var4 > '~') {
-                  method2301(var1, "непечатаемый символ, длина " + var2.length());
+         } else if (str.length() >= 8 && str.length() <= 4096) {
+            for (int i = 0; i < str.length(); i++) {
+               char charAt = str.charAt(i);
+               if (charAt <= ' ' || charAt > '~') {
+                  method2301(string, "непечатаемый символ, длина " + str.length());
                   return "";
                }
             }
 
-            return var2;
+            return str;
          } else {
-            method2301(var1, "длина " + var2.length());
+            method2301(string, "длина " + str.length());
             return "";
          }
       }
    }
 
-   private static void method2301(String var0, String var1) {
-      if (items.add(var0)) {
-         logger.warn("Сайт: токен сессии из {} отвергнут ({})", var0, var1);
+   private static void method2301(String string, String str) {
+      if (items.add(string)) {
+         logger.warn("Сайт: токен сессии из {} отвергнут ({})", string, str);
       }
    }
 }

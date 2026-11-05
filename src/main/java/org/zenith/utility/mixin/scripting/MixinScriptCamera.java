@@ -17,9 +17,9 @@ public abstract class MixinScriptCamera {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$hurtCam(net.minecraft.client.renderer.state.level.CameraRenderState var2, PoseStack var1, CallbackInfo var3) {
+   private void zenith$hurtCam(net.minecraft.client.renderer.state.level.CameraRenderState cameraRenderState, PoseStack poseStack, CallbackInfo callbackInfo) {
       if (ModuleHookDefinitions.method6119(ModuleHookDefinitions.class129)) {
-         var3.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -28,9 +28,9 @@ public abstract class MixinScriptCamera {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$viewBob(net.minecraft.client.renderer.state.level.CameraRenderState var2, PoseStack var1, CallbackInfo var3) {
+   private void zenith$viewBob(net.minecraft.client.renderer.state.level.CameraRenderState cameraRenderState, PoseStack poseStack, CallbackInfo callbackInfo) {
       if (ModuleHookDefinitions.method6119(ModuleHookDefinitions.class1210)) {
-         var3.cancel();
+         callbackInfo.cancel();
       }
    }
 

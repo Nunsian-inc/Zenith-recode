@@ -16,8 +16,8 @@ public final class ShulkerTooltipComponent implements ClientTooltipComponent {
    private static final int slotOffsetX = 8;
    private static final int slotOffsetY = 7;
 
-   public ShulkerTooltipComponent(NonNullList<ItemStack> var1) {
-      this.items = var1;
+   public ShulkerTooltipComponent(NonNullList<ItemStack> items) {
+      this.items = items;
    }
 
    @Override
@@ -38,13 +38,13 @@ public final class ShulkerTooltipComponent implements ClientTooltipComponent {
    public void extractImage(Font textRenderer, int x, int y, int width, int height, GuiGraphicsExtractor context) {
       context.blit(RenderPipelines.GUI_TEXTURED, shulkerGuiTexture, x, y, 0.0F, 0.0F, 176, 67, 176, 67);
 
-      for (int var7 = 0; var7 < 27; var7++) {
-         ItemStack var8 = this.items.get(var7);
-         if (!var8.isEmpty()) {
-            int var9 = x + 8 + var7 % 9 * 18;
-            int var10 = y + 7 + var7 / 9 * 18;
-            context.item(var8, var9, var10);
-            context.itemDecorations(textRenderer, var8, var9, var10);
+      for (int i = 0; i < 27; i++) {
+         ItemStack itemStack = this.items.get(i);
+         if (!itemStack.isEmpty()) {
+            int n = x + 8 + i % 9 * 18;
+            int y2 = y + 7 + i / 9 * 18;
+            context.item(itemStack, n, y2);
+            context.itemDecorations(textRenderer, itemStack, n, y2);
          }
       }
    }

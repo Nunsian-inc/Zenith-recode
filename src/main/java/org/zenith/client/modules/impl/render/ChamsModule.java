@@ -157,20 +157,20 @@ public final class ChamsModule extends Module {
       return ModulePreviewStage.Kind.CHAMS;
    }
 
-   public boolean method5600(LivingEntityRenderState var1) {
+   public boolean method5600(LivingEntityRenderState entityRenderState) {
       if (!flag3) {
-         if (this.isEnabled() && mc.player != null && mc.level != null && var1 instanceof AvatarRenderState var2) {
-            return mc.level.getEntity(var2.id) instanceof AbstractClientPlayer var3 ? this.method5609(var3) : false;
+         if (this.isEnabled() && mc.player != null && mc.level != null && entityRenderState instanceof AvatarRenderState avatarRenderState) {
+            return mc.level.getEntity(avatarRenderState.id) instanceof AbstractClientPlayer entity ? this.method5609(entity) : false;
          } else {
             return false;
          }
       } else {
-         return this.isEnabled() && var1 instanceof AvatarRenderState;
+         return this.isEnabled() && entityRenderState instanceof AvatarRenderState;
       }
    }
 
    @Nullable
-   public RenderType method5601(Identifier var1) {
+   public RenderType method5601(Identifier textureLocation) {
       if (this.texture.isSelected(1)) {
          return renderLayer2 != null ? renderLayer2 : (renderLayer2 = method5616("zenith_chams_oil", kawaseShaderKey2));
       } else if (this.texture.isSelected(2)) {
@@ -192,15 +192,15 @@ public final class ChamsModule extends Module {
       return this.method5606() && this.method5608();
    }
 
-   public int method5603(int var1) {
-      int var2 = Math.clamp((long)Math.round(255.0F), 0, 255);
-      return var2 << 24 | var1 & 16777215;
+   public int method5603(int color) {
+      int n = Math.clamp((long)Math.round(255.0F), 0, 255);
+      return n << 24 | color & 16777215;
    }
 
-   public int method5604(int var1) {
-      int[] var2 = this.method5629();
-      int var3 = var2.length > 0 ? var2[0] : var1;
-      return this.method5603(var3);
+   public int method5604(int color) {
+      int[] ints = this.method5629();
+      int n = ints.length > 0 ? ints[0] : color;
+      return this.method5603(n);
    }
 
    public static ChamsModule.Entry method5605() {
@@ -208,20 +208,20 @@ public final class ChamsModule extends Module {
    }
 
    private boolean method5606() {
-      KawaseShaderKey var1 = this.method5607();
-      if (var1 == kawaseShaderKey && flag2) {
+      KawaseShaderKey kawaseShaderKey2 = this.method5607();
+      if (kawaseShaderKey2 == kawaseShaderKey && flag2) {
          return true;
-      } else if (items.contains(var1)) {
+      } else if (items.contains(kawaseShaderKey2)) {
          return true;
       } else {
-         boolean var2 = LightUtil.method6712(var1.getIdentifier());
-         if (var1 == kawaseShaderKey) {
-            flag2 = var2;
-         } else if (var2) {
-            items.add(var1);
+         boolean flag = LightUtil.method6712(kawaseShaderKey2.getIdentifier());
+         if (kawaseShaderKey2 == kawaseShaderKey) {
+            flag2 = flag;
+         } else if (flag) {
+            items.add(kawaseShaderKey2);
          }
 
-         return var2;
+         return flag;
       }
    }
 
@@ -243,17 +243,17 @@ public final class ChamsModule extends Module {
       }
    }
 
-   private boolean method5609(AbstractClientPlayer var1) {
-      if (!var1.isAlive() || var1.isSpectator()) {
+   private boolean method5609(AbstractClientPlayer entity) {
+      if (!entity.isAlive() || entity.isSpectator()) {
          return false;
-      } else if (var1 == mc.player) {
+      } else if (entity == mc.player) {
          return this.method5611() && mc.options.getCameraType() != CameraType.FIRST_PERSON;
       } else if (!this.method5610()) {
          return false;
       } else {
-         return !this.method5612() && Zenith.getInstance().getFriends().method7626(var1)
+         return !this.method5612() && Zenith.getInstance().getFriends().method7626(entity)
             ? false
-            : !AntiBotModule.INSTANCE.isEnabled() || !AntiBotModule.INSTANCE.method2785(var1);
+            : !AntiBotModule.INSTANCE.isEnabled() || !AntiBotModule.INSTANCE.method2785(entity);
       }
    }
 
@@ -282,57 +282,57 @@ public final class ChamsModule extends Module {
    }
 
    @Nullable
-   private static RenderType method5616(String var0, KawaseShaderKey var1) {
-      RenderState.Data var2 = RenderState.method1906();
+   private static RenderType method5616(String name, KawaseShaderKey kawaseShaderKey2) {
+      RenderState.Data data = RenderState.method1906();
       RenderState.method1871();
       RenderState.method1873();
       RenderState.method1877();
       RenderState.method1878();
       RenderState.method1882(true);
-      RenderPipeline var3 = var1.method5561(DefaultVertexFormat.ENTITY, PrimitiveTopology.QUADS, RenderState.method1904());
-      RenderState.method1907(var2);
-      if (var1 == kawaseShaderKey) {
-         flag2 = var1.text3 == null;
+      RenderPipeline pipeline = kawaseShaderKey2.method5561(DefaultVertexFormat.ENTITY, PrimitiveTopology.QUADS, RenderState.method1904());
+      RenderState.method1907(data);
+      if (kawaseShaderKey2 == kawaseShaderKey) {
+         flag2 = kawaseShaderKey2.text3 == null;
       }
 
-      UniformBinder.method5480(var3, var1, () -> {
+      UniformBinder.method5480(pipeline, kawaseShaderKey2, () -> {
          int[] var1x = INSTANCE.method5629();
-         method5631(var1, "iTime", INSTANCE.method5627());
-         method5633(var1, "PrimaryColor", var1x[0]);
-         method5633(var1, "SecondaryColor", var1x[1]);
-         method5631(var1, "AlphaMul", 1.0F);
-         method5631(var1, "FresnelPower", 1.8F);
-         method5631(var1, "Freq", INSTANCE.method5628());
-         method5631(var1, "ColorTransfer", var1 == kawaseShaderKey ? 0.0F : 0.75F);
-         method5631(var1, "Brightness", INSTANCE.brightness.getValue3());
-         method5631(var1, "MirrorEnabled", 1.0F);
-         method5632(var1, mc.getWindow().getWidth(), mc.getWindow().getHeight());
+         method5631(kawaseShaderKey2, "iTime", INSTANCE.method5627());
+         method5633(kawaseShaderKey2, "PrimaryColor", var1x[0]);
+         method5633(kawaseShaderKey2, "SecondaryColor", var1x[1]);
+         method5631(kawaseShaderKey2, "AlphaMul", 1.0F);
+         method5631(kawaseShaderKey2, "FresnelPower", 1.8F);
+         method5631(kawaseShaderKey2, "Freq", INSTANCE.method5628());
+         method5631(kawaseShaderKey2, "ColorTransfer", kawaseShaderKey2 == kawaseShaderKey ? 0.0F : 0.75F);
+         method5631(kawaseShaderKey2, "Brightness", INSTANCE.brightness.getValue3());
+         method5631(kawaseShaderKey2, "MirrorEnabled", 1.0F);
+         method5632(kawaseShaderKey2, mc.getWindow().getWidth(), mc.getWindow().getHeight());
       }, INSTANCE::method5618, INSTANCE::isEnabled);
-      return ChamsRenderLayer.method3202(var0, var3, null, true, true, true);
+      return ChamsRenderLayer.method3202(name, pipeline, null, true, true, true);
    }
 
    private void method5617() {
       if (mc.level != null && mc.getWindow() != null && mc.gameRenderer.mainRenderTarget() != null) {
          synchronized (obj) {
-            long var2 = this.method5626();
-            if (longValue != var2) {
-               ChamsModule.Entry var4 = method5605();
+            long l = this.method5626();
+            if (longValue != l) {
+               ChamsModule.Entry entry = method5605();
 
                try {
-                  int var5 = Math.max(1, mc.gameRenderer.mainRenderTarget().width);
-                  int var6 = Math.max(1, mc.gameRenderer.mainRenderTarget().height);
-                  this.method5619(Math.max(1, var5 / 2), Math.max(1, var6 / 2));
+                  int n = Math.max(1, mc.gameRenderer.mainRenderTarget().width);
+                  int n2 = Math.max(1, mc.gameRenderer.mainRenderTarget().height);
+                  this.method5619(Math.max(1, n / 2), Math.max(1, n2 / 2));
                   if (simpleFramebuffer != null) {
                      BlitUtils.method6453(mc.gameRenderer.mainRenderTarget(), simpleFramebuffer);
                      if (this.method5615()) {
                         this.method5621();
                      }
 
-                     longValue = var2;
+                     longValue = l;
                      return;
                   }
                } finally {
-                  var4.restore();
+                  entry.restore();
                }
             }
          }
@@ -345,26 +345,26 @@ public final class ChamsModule extends Module {
       }
    }
 
-   private void method5619(int var1, int var2) {
-      int var3 = Math.max(1, var1 / 2);
-      int var4 = Math.max(1, var2 / 2);
-      int var5 = Math.max(1, var1 / 4);
-      int var6 = Math.max(1, var2 / 4);
+   private void method5619(int width, int height) {
+      int n = Math.max(1, width / 2);
+      int height2 = Math.max(1, height / 2);
+      int width2 = Math.max(1, width / 4);
+      int height3 = Math.max(1, height / 4);
       if (simpleFramebuffer == null
          || simpleFramebuffer2 == null
          || simpleFramebuffer3 == null
-         || simpleFramebuffer.width != var1
-         || simpleFramebuffer.height != var2
-         || simpleFramebuffer2.width != var3
-         || simpleFramebuffer2.height != var4
-         || simpleFramebuffer3.width != var5
-         || simpleFramebuffer3.height != var6) {
+         || simpleFramebuffer.width != width
+         || simpleFramebuffer.height != height
+         || simpleFramebuffer2.width != n
+         || simpleFramebuffer2.height != height2
+         || simpleFramebuffer3.width != width2
+         || simpleFramebuffer3.height != height3) {
          method5634(simpleFramebuffer);
          method5634(simpleFramebuffer2);
          method5634(simpleFramebuffer3);
-         simpleFramebuffer = BlitUtils.method6448("zenith chams copy", var1, var2, false);
-         simpleFramebuffer2 = BlitUtils.method6448("zenith chams blur 1", var3, var4, false);
-         simpleFramebuffer3 = BlitUtils.method6448("zenith chams blur 2", var5, var6, false);
+         simpleFramebuffer = BlitUtils.method6448("zenith chams copy", width, height, false);
+         simpleFramebuffer2 = BlitUtils.method6448("zenith chams blur 1", n, height2, false);
+         simpleFramebuffer3 = BlitUtils.method6448("zenith chams blur 2", width2, height3, false);
          method5620(simpleFramebuffer);
          method5620(simpleFramebuffer2);
          method5620(simpleFramebuffer3);
@@ -372,7 +372,7 @@ public final class ChamsModule extends Module {
       }
    }
 
-   private static void method5620(TextureTarget var0) {
+   private static void method5620(TextureTarget simpleFramebuffer) {
    }
 
    private void method5621() {
@@ -381,44 +381,44 @@ public final class ChamsModule extends Module {
          RenderState.method1877();
          RenderState.method1879();
          RenderState.method1882(false);
-         ScissorState var1 = RenderSystem.getScissorStateForRenderTypeDraws();
-         boolean var2 = var1.enabled();
-         int var3 = var1.x();
-         int var4 = var1.y();
-         int var5 = var1.width();
-         int var6 = var1.height();
+         ScissorState scissorStateForRenderTypeDraws = RenderSystem.getScissorStateForRenderTypeDraws();
+         boolean enabled = scissorStateForRenderTypeDraws.enabled();
+         int x = scissorStateForRenderTypeDraws.x();
+         int y = scissorStateForRenderTypeDraws.y();
+         int width = scissorStateForRenderTypeDraws.width();
+         int height = scissorStateForRenderTypeDraws.height();
          RenderState.method1901();
 
          try {
             this.method5622();
          } finally {
-            if (var2) {
-               RenderState.method1900(var3, var4, var5, var6);
+            if (enabled) {
+               RenderState.method1900(x, y, width, height);
             }
          }
       }
    }
 
    private void method5622() {
-      float var1 = Math.max(0.0F, this.blurStrength.getValue3());
-      float var2 = Math.max(0.05F, 3.4F) * (0.35F + var1 * 0.08F) * 0.54F;
-      this.method5623(shaderProgram, simpleFramebuffer, simpleFramebuffer2, var2);
-      this.method5623(shaderProgram, simpleFramebuffer2, simpleFramebuffer3, var2);
-      this.method5623(shaderProgram2, simpleFramebuffer3, simpleFramebuffer2, var2);
-      this.method5623(shaderProgram2, simpleFramebuffer2, simpleFramebuffer, var2);
+      float f = Math.max(0.0F, this.blurStrength.getValue3());
+      float f2 = Math.max(0.05F, 3.4F) * (0.35F + f * 0.08F) * 0.54F;
+      this.method5623(shaderProgram, simpleFramebuffer, simpleFramebuffer2, f2);
+      this.method5623(shaderProgram, simpleFramebuffer2, simpleFramebuffer3, f2);
+      this.method5623(shaderProgram2, simpleFramebuffer3, simpleFramebuffer2, f2);
+      this.method5623(shaderProgram2, simpleFramebuffer2, simpleFramebuffer, f2);
    }
 
-   private void method5623(ShaderProgram var1, TextureTarget var2, TextureTarget var3, float var4) {
-      if (var1 != null && var2 != null && var3 != null) {
-         var1.method5517();
-         var1.method5518("image", 0);
-         var1.method5519("offset", var4);
-         var1.method5521("resolution", 1.0F / Math.max(1.0F, (float)var3.width), 1.0F / Math.max(1.0F, (float)var3.height));
-         RenderState.method1889(0, BlitUtils.method6450(var2));
-         ImmediateRenderer.method8013(var3);
+   private void method5623(ShaderProgram shaderProgram, TextureTarget simpleFramebuffer2, TextureTarget textureTarget, float f) {
+      if (shaderProgram != null && simpleFramebuffer2 != null && textureTarget != null) {
+         shaderProgram.method5517();
+         shaderProgram.method5518("image", 0);
+         shaderProgram.method5519("offset", f);
+         shaderProgram.method5521("resolution", 1.0F / Math.max(1.0F, (float)textureTarget.width), 1.0F / Math.max(1.0F, (float)textureTarget.height));
+         RenderState.method1889(0, BlitUtils.method6450(simpleFramebuffer2));
+         ImmediateRenderer.method8013(textureTarget);
          HandShaders.method6282();
          RenderState.method1893(0);
-         var1.unbind();
+         shaderProgram.unbind();
       }
    }
 
@@ -432,7 +432,7 @@ public final class ChamsModule extends Module {
             shaderProgram = new ShaderProgram("chams_kawase", "kawase_down", "kawase");
             shaderProgram2 = new ShaderProgram("chams_kawase", "kawase_up", "kawase");
             return true;
-         } catch (RuntimeException var1) {
+         } catch (RuntimeException e) {
             method5625();
             flag = true;
             return false;
@@ -458,9 +458,9 @@ public final class ChamsModule extends Module {
       if (mc.level == null) {
          return Long.MIN_VALUE;
       } else {
-         long var1 = mc.level.getGameTime();
-         int var3 = Float.floatToIntBits(mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
-         return var1 << 32 ^ var3 & 4294967295L;
+         long gameTime = mc.level.getGameTime();
+         int floatToIntBits = Float.floatToIntBits(mc.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+         return gameTime << 32 ^ floatToIntBits & 4294967295L;
       }
    }
 
@@ -468,9 +468,9 @@ public final class ChamsModule extends Module {
       if (mc.level == null) {
          return 0.0F;
       } else {
-         float var1 = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-         double var2 = (double)(mc.level.getGameTime() % 100000L) + var1;
-         return (float)(var2 * 0.05 * 1.15F);
+         float gameTimeDeltaPartialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+         double d = (double)(mc.level.getGameTime() % 100000L) + gameTimeDeltaPartialTick;
+         return (float)(d * 0.05 * 1.15F);
       }
    }
 
@@ -480,39 +480,39 @@ public final class ChamsModule extends Module {
 
    private int[] method5629() {
       if (this.colorMode.isSelected(0)) {
-         float var4 = (float)(System.currentTimeMillis() % 9000L) / 9000.0F;
-         return new int[]{method5630(var4), method5630(var4 + 0.1F)};
+         float f = (float)(System.currentTimeMillis() % 9000L) / 9000.0F;
+         return new int[]{method5630(f), method5630(f + 0.1F)};
       } else if (this.colorMode.isSelected(1)) {
-         int var3 = Zenith.getInstance().getStyleManager().getClientColor(0).method7287();
-         int var5 = Zenith.getInstance().getStyleManager().getClientColor(180).method7287();
-         return new int[]{var3, var5};
+         int n = Zenith.getInstance().getStyleManager().getClientColor(0).method7287();
+         int n2 = Zenith.getInstance().getStyleManager().getClientColor(180).method7287();
+         return new int[]{n, n2};
       } else {
-         int var1 = this.customColor.method1445();
-         int var2 = this.secondColor.isEnabled() ? this.colorSetting.method1445() : var1;
-         return new int[]{var1, var2};
+         int n = this.customColor.method1445();
+         int n2 = this.secondColor.isEnabled() ? this.colorSetting.method1445() : n;
+         return new int[]{n, n2};
       }
    }
 
-   private static int method5630(float var0) {
-      float var1 = var0 - (float)Math.floor(var0);
-      return ZenithColor.method7297(var1, 0.72F, 1.0F).method7287();
+   private static int method5630(float f) {
+      float hue = f - (float)Math.floor(f);
+      return ZenithColor.method7297(hue, 0.72F, 1.0F).method7287();
    }
 
-   private static void method5631(KawaseShaderKey var0, String var1, float var2) {
-      var0.method5166(var1).method7412(var2);
+   private static void method5631(KawaseShaderKey kawaseShaderKey2, String key, float batchRange) {
+      kawaseShaderKey2.method5166(key).method7412(batchRange);
    }
 
-   private static void method5632(KawaseShaderKey var0, float var1, float var2) {
-      var0.method5166("ScreenSize").method7413(var1, var2);
+   private static void method5632(KawaseShaderKey kawaseShaderKey2, float width, float height) {
+      kawaseShaderKey2.method5166("ScreenSize").method7413(width, height);
    }
 
-   private static void method5633(KawaseShaderKey var0, String var1, int var2) {
-      var0.method5166(var1).method7414(ColorUtils.method6424(var2), ColorUtils.method6425(var2), ColorUtils.method6426(var2));
+   private static void method5633(KawaseShaderKey kawaseShaderKey2, String key, int intValue) {
+      kawaseShaderKey2.method5166(key).method7414(ColorUtils.method6424(intValue), ColorUtils.method6425(intValue), ColorUtils.method6426(intValue));
    }
 
-   private static void method5634(TextureTarget var0) {
-      if (var0 != null) {
-         var0.destroyBuffers();
+   private static void method5634(TextureTarget simpleFramebuffer) {
+      if (simpleFramebuffer != null) {
+         simpleFramebuffer.destroyBuffers();
       }
    }
 

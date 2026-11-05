@@ -31,8 +31,8 @@ public final class ChatMessage {
       return "ChatMessage[" + "time=" + this.time + ", " + "text=" + this.text + "]";
    }
 
-   public ChatMessage(String var1, Component var2) {
-      this.time = var1;
-      this.text = var2;
+   public ChatMessage(String time, Component text) {
+      this.time = time;
+      this.text = text;
    }
 }

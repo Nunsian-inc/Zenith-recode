@@ -41,26 +41,26 @@ public final class BoundsData {
       return "BoundsData[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + "]";
    }
 
-   public BoundsData(float var1, float var2, float var3, float var4) {
-      this.floatValue = var1;
-      this.floatValue2 = var2;
-      this.floatValue3 = var3;
-      this.floatValue4 = var4;
+   public BoundsData(float floatValue, float y, float width, float height) {
+      this.floatValue = floatValue;
+      this.floatValue2 = y;
+      this.floatValue3 = width;
+      this.floatValue4 = height;
    }
 
-   public boolean contains(double var1, double var3) {
-      return MathUtils.method2647(var1, var3, this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4);
+   public boolean contains(double lastClickX, double lastClickY) {
+      return MathUtils.method2647(lastClickX, lastClickY, this.floatValue, this.floatValue2, this.floatValue3, this.floatValue4);
    }
 
-   public boolean method8092(double var1, double var3, float var5) {
-      return MathUtils.method2647(var1, var3, this.floatValue - var5, this.floatValue2 - var5, this.floatValue3 + var5 * 2.0F, this.floatValue4 + var5 * 2.0F);
+   public boolean method8092(double x, double lastClickY, float f) {
+      return MathUtils.method2647(x, lastClickY, this.floatValue - f, this.floatValue2 - f, this.floatValue3 + f * 2.0F, this.floatValue4 + f * 2.0F);
    }
 
-   public boolean method8093(BoundsData var1) {
-      return this.floatValue < var1.getFloatValue() + var1.width()
-         && this.floatValue + this.floatValue3 > var1.getFloatValue()
-         && this.floatValue2 < var1.getFloatValue2() + var1.height()
-         && this.floatValue2 + this.floatValue4 > var1.getFloatValue2();
+   public boolean method8093(BoundsData boundsData) {
+      return this.floatValue < boundsData.getFloatValue() + boundsData.width()
+         && this.floatValue + this.floatValue3 > boundsData.getFloatValue()
+         && this.floatValue2 < boundsData.getFloatValue2() + boundsData.height()
+         && this.floatValue2 + this.floatValue4 > boundsData.getFloatValue2();
    }
 
    public float getFloatValue() {

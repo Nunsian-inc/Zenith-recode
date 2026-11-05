@@ -22,81 +22,81 @@ public class SkullItemMatcher extends ItemMatcher {
    private final String text;
    private final String text2;
 
-   public SkullItemMatcher(String var1, ItemMatcher.Type var2, String var3) {
-      this(var3, var1, var1, var2);
+   public SkullItemMatcher(String str, ItemMatcher.Type type, String text) {
+      this(text, str, str, type);
    }
 
-   public SkullItemMatcher(String var1, String var2, String var3, ItemMatcher.Type var4) {
-      super(Items.PLAYER_HEAD.getDefaultInstance(), var2, var3, var4);
-      this.text = var1;
-      this.text2 = this.method2783(var1);
-      Builder var5 = DataComponentPatch.builder();
-      var var6 = Optional.of("");
-      var var7 = Optional.of(UUID.randomUUID());
-      ImmutableMultimap var8 = ImmutableMultimap.of("textures", new Property("textures", var1));
-      PropertyMap var9 = new PropertyMap(var8);
-      ResolvableProfile var10 = ResolvableProfile.createResolved(new GameProfile(var7.orElse(UUID.randomUUID()), var6.orElse(""), var9));
-      var5.set(DataComponents.PROFILE, var10);
-      ItemInput var11 = new ItemInput(this.itemStack.typeHolder(), var5.build());
+   public SkullItemMatcher(String text, String str, String str2, ItemMatcher.Type type) {
+      super(Items.PLAYER_HEAD.getDefaultInstance(), str, str2, type);
+      this.text = text;
+      this.text2 = this.method2783(text);
+      Builder builder = DataComponentPatch.builder();
+      var optionalStr = Optional.of("");
+      var optionalUuid = Optional.of(UUID.randomUUID());
+      ImmutableMultimap properties = ImmutableMultimap.of("textures", new Property("textures", text));
+      PropertyMap propertyMap = new PropertyMap(properties);
+      ResolvableProfile resolved = ResolvableProfile.createResolved(new GameProfile(optionalUuid.orElse(UUID.randomUUID()), optionalStr.orElse(""), propertyMap));
+      builder.set(DataComponents.PROFILE, resolved);
+      ItemInput itemInput = new ItemInput(this.itemStack.typeHolder(), builder.build());
 
       try {
-         this.itemStack = var11.createItemStack(1);
-      } catch (CommandSyntaxException var13) {
+         this.itemStack = itemInput.createItemStack(1);
+      } catch (CommandSyntaxException e) {
       }
    }
 
-   private String method2783(String var1) {
+   private String method2783(String text) {
       try {
-         String var2 = new String(Base64.getDecoder().decode(var1));
-         int var3 = var2.indexOf("\"url\"");
-         if (var3 != -1) {
-            int var4 = var2.indexOf("\"", var3 + 5);
-            if (var4 != -1) {
-               int var5 = var2.indexOf("\"", var4 + 1);
-               if (var5 != -1) {
-                  return var2.substring(var4 + 1, var5);
+         String str = new String(Base64.getDecoder().decode(text));
+         int indexOf = str.indexOf("\"url\"");
+         if (indexOf != -1) {
+            int n = str.indexOf("\"", indexOf + 5);
+            if (n != -1) {
+               int endIndex = str.indexOf("\"", n + 1);
+               if (endIndex != -1) {
+                  return str.substring(n + 1, endIndex);
                }
             }
          }
-      } catch (Exception var6) {
+      } catch (Exception e) {
       }
 
       return null;
    }
 
    @Override
-   public boolean method2672(ItemStack var1) {
-      if (!super.method2672(var1)) {
+   public boolean method2672(ItemStack stack) {
+      if (!super.method2672(stack)) {
          return false;
       } else {
-         ResolvableProfile var2 = var1.get(DataComponents.PROFILE);
-         if (var2 != null) {
-            PropertyMap var3 = var2.partialProfile().properties();
-            if (var3 != null && var3.containsKey("textures")) {
-               for (Property var5 : var3.get("textures")) {
+         ResolvableProfile resolvableProfile = stack.get(DataComponents.PROFILE);
+         if (resolvableProfile != null) {
+            PropertyMap properties = resolvableProfile.partialProfile().properties();
+            if (properties != null && properties.containsKey("textures")) {
+               for (Property property : properties.get("textures")) {
                   if (this.text2 != null) {
-                     String var6 = this.method2783(var5.value());
-                     if (var6 != null && var6.equals(this.text2)) {
+                     String str = this.method2783(property.value());
+                     if (str != null && str.equals(this.text2)) {
                         return true;
                      }
                   }
 
-                  if (var5.value().contains(this.text)) {
+                  if (property.value().contains(this.text)) {
                      return true;
                   }
                }
             }
          }
 
-         CustomData var7 = var1.get(DataComponents.CUSTOM_DATA);
-         CompoundTag var8 = var7 != null ? var7.copyTag() : null;
-         if (var8 != null && var8.contains("SkullOwner")) {
-            String var9 = var8.get("SkullOwner").toString();
-            if (this.text2 != null && var9.contains(this.text2)) {
+         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+         CompoundTag copyTag = customData != null ? customData.copyTag() : null;
+         if (copyTag != null && copyTag.contains("SkullOwner")) {
+            String string = copyTag.get("SkullOwner").toString();
+            if (this.text2 != null && string.contains(this.text2)) {
                return true;
             }
 
-            if (var9.contains(this.text)) {
+            if (string.contains(this.text)) {
                return true;
             }
          }

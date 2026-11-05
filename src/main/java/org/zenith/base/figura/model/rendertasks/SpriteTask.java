@@ -124,7 +124,7 @@ public class SpriteTask extends RenderTask {
       if (texture instanceof String s) {
          try {
             this.texture = Identifier.parse(s);
-         } catch (Exception var7) {
+         } catch (Exception e) {
             this.texture = MissingTextureAtlasSprite.getLocation();
          }
 
@@ -152,8 +152,8 @@ public class SpriteTask extends RenderTask {
          this.recalculateVertices();
          return this;
       } else {
-         String var10002 = String.valueOf(width);
-         throw new LuaError("Invalid texture size: " + var10002 + "x" + height);
+         String str = String.valueOf(width);
+         throw new LuaError("Invalid texture size: " + str + "x" + height);
       }
    }
 
@@ -360,7 +360,7 @@ public class SpriteTask extends RenderTask {
       try {
          this.renderType = RenderTypes.valueOf(renderType.toUpperCase(Locale.US));
          return this;
-      } catch (Exception var3) {
+      } catch (Exception e) {
          throw new LuaError("Illegal RenderType: \"" + renderType + "\".");
       }
    }

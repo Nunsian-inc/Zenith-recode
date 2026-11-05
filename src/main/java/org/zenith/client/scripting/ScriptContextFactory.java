@@ -19,15 +19,15 @@ public final class ScriptContextFactory extends ContextFactory {
    public static final long CONST_longValue = 250L;
    public static final long CONST_longValue2 = 3000L;
    public static final int CONST_intValue = 1000;
-   private static final ClassShutter classShutter = var0 -> false;
+   private static final ClassShutter classShutter = str -> false;
    private static final WrapFactory wrapFactory = new WrapFactory() {
       @Override
-      public Scriptable wrapAsJavaObject(Context var1, Scriptable var2, Object var3, Class<?> var4) {
+      public Scriptable wrapAsJavaObject(Context context, Scriptable scriptable, Object obj, Class<?> clazz) {
          throw Context.reportRuntimeError("доступ к Java закрыт");
       }
 
       @Override
-      public Scriptable wrapJavaClass(Context var1, Scriptable var2, Class<?> var3) {
+      public Scriptable wrapJavaClass(Context context, Scriptable scriptable, Class<?> clazz) {
          throw Context.reportRuntimeError("доступ к Java закрыт");
       }
    };
@@ -91,17 +91,17 @@ public final class ScriptContextFactory extends ContextFactory {
          }
 
          return threadMXBean.isThreadCpuTimeEnabled();
-      } catch (RuntimeException var1) {
+      } catch (RuntimeException e) {
          return false;
       }
    }
 
    private static MemoryPoolMXBean method7403() {
-      for (MemoryPoolMXBean var1 : ManagementFactory.getMemoryPoolMXBeans()) {
-         if (var1.getType() == MemoryType.HEAP && var1.isCollectionUsageThresholdSupported()) {
-            String var2 = var1.getName().toLowerCase(Locale.ROOT);
-            if (var2.contains("old") || var2.contains("tenured")) {
-               return var1;
+      for (MemoryPoolMXBean memoryPoolMXBean : ManagementFactory.getMemoryPoolMXBeans()) {
+         if (memoryPoolMXBean.getType() == MemoryType.HEAP && memoryPoolMXBean.isCollectionUsageThresholdSupported()) {
+            String lowerCase = memoryPoolMXBean.getName().toLowerCase(Locale.ROOT);
+            if (lowerCase.contains("old") || lowerCase.contains("tenured")) {
+               return memoryPoolMXBean;
             }
          }
       }
@@ -115,15 +115,15 @@ public final class ScriptContextFactory extends ContextFactory {
 
    public static boolean method7405() {
       if (memoryPoolMXBean != null) {
-         MemoryUsage var0 = memoryPoolMXBean.getCollectionUsage();
-         long var1 = memoryPoolMXBean.getUsage().getMax();
-         if (var0 != null && var1 > 0L && var0.getUsed() > var1 * 0.94) {
+         MemoryUsage collectionUsage = memoryPoolMXBean.getCollectionUsage();
+         long max = memoryPoolMXBean.getUsage().getMax();
+         if (collectionUsage != null && max > 0L && collectionUsage.getUsed() > max * 0.94) {
             return true;
          }
       }
 
-      Runtime var3 = Runtime.getRuntime();
-      return var3.maxMemory() - (var3.totalMemory() - var3.freeMemory()) < 50331648L;
+      Runtime runtime = Runtime.getRuntime();
+      return runtime.maxMemory() - (runtime.totalMemory() - runtime.freeMemory()) < 50331648L;
    }
 
    private ScriptContextFactory() {
@@ -131,33 +131,33 @@ public final class ScriptContextFactory extends ContextFactory {
 
    @Override
    public Context makeContext() {
-      Context var1 = super.makeContext();
-      var1.setLanguageVersion(200);
-      var1.setOptimizationLevel(-1);
-      var1.setMaximumInterpreterStackDepth(1000);
-      var1.setInstructionObserverThreshold(5000);
-      var1.setClassShutter(classShutter);
-      var1.setWrapFactory(wrapFactory);
-      var1.setGeneratingDebug(true);
-      return var1;
+      Context context = super.makeContext();
+      context.setLanguageVersion(200);
+      context.setOptimizationLevel(-1);
+      context.setMaximumInterpreterStackDepth(1000);
+      context.setInstructionObserverThreshold(5000);
+      context.setClassShutter(classShutter);
+      context.setWrapFactory(wrapFactory);
+      context.setGeneratingDebug(true);
+      return context;
    }
 
    @Override
-   public boolean hasFeature(Context var1, int var2) {
-      return switch (var2) {
+   public boolean hasFeature(Context context, int n) {
+      return switch (n) {
          case 6, 13, 20, 21 -> false;
-         default -> super.hasFeature(var1, var2);
+         default -> super.hasFeature(context, n);
          case 10, 14 -> true;
       };
    }
 
    @Override
-   public void observeInstructionCount(Context var1, int var2) {
-      if (var1.getThreadLocal(ScriptContextFactory.Entry2.class) instanceof ScriptContextFactory.Entry2 var4 && var4.longValue != 0L) {
-         long var5 = System.currentTimeMillis();
-         if (method7404() <= var4.longValue && var5 <= var4.longValue2) {
-            if (var5 - var4.longValue3 > 20L) {
-               var4.longValue3 = var5;
+   public void observeInstructionCount(Context context, int n) {
+      if (context.getThreadLocal(ScriptContextFactory.Entry2.class) instanceof ScriptContextFactory.Entry2 entry2 && entry2.longValue != 0L) {
+         long now = System.currentTimeMillis();
+         if (method7404() <= entry2.longValue && now <= entry2.longValue2) {
+            if (now - entry2.longValue3 > 20L) {
+               entry2.longValue3 = now;
                if (method7405()) {
                   throw new ScriptContextFactory.Entry("скрипт исчерпал память");
                }
@@ -169,11 +169,11 @@ public final class ScriptContextFactory extends ContextFactory {
    }
 
    private static org.mozilla.javascript.Script method7406() {
-      Context var0 = INSTANCE.enterContext();
+      Context enterContext = INSTANCE.enterContext();
 
-      org.mozilla.javascript.Script var1;
+      org.mozilla.javascript.Script compileString;
       try {
-         var1 = var0.compileString(
+         compileString = enterContext.compileString(
             "(function () {\n  var LIMIT = 1000000;\n  function guard(owner, name, check) {\n    var original = owner[name];\n    if (typeof original !== 'function') return;\n    Object.defineProperty(owner, name, {\n      value: function () { check.apply(this, arguments); return original.apply(this, arguments); },\n      writable: false, configurable: false, enumerable: false\n    });\n  }\n  function big(n) { return typeof n === 'number' && n > LIMIT; }\n  guard(String.prototype, 'repeat', function (n) {\n    if (String(this).length * (+n || 0) > LIMIT) throw new RangeError('строка больше миллиона символов');\n  });\n  guard(String.prototype, 'padStart', function (n) { if (big(+n)) throw new RangeError('строка больше миллиона символов'); });\n  guard(String.prototype, 'padEnd', function (n) { if (big(+n)) throw new RangeError('строка больше миллиона символов'); });\n  guard(Array.prototype, 'fill', function () { if (big(this.length)) throw new RangeError('массив больше миллиона элементов'); });\n  guard(Array.prototype, 'join', function () { if (big(this.length)) throw new RangeError('массив больше миллиона элементов'); });\n  guard(Array, 'from', function (src) { if (src != null && big(src.length)) throw new RangeError('массив больше миллиона элементов'); });\n  ['map', 'forEach', 'filter', 'reduce', 'reduceRight', 'some', 'every', 'indexOf', 'lastIndexOf', 'includes',\n   'find', 'findIndex', 'sort', 'reverse', 'splice', 'slice', 'concat', 'copyWithin', 'entries', 'keys', 'values',\n   'toString', 'toLocaleString', 'flat', 'flatMap'].forEach(function (name) {\n    guard(Array.prototype, name, function () { if (big(this.length)) throw new RangeError('массив больше миллиона элементов'); });\n  });\n  guard(String.prototype, 'split', function () { if (String(this).length > LIMIT) throw new RangeError('строка больше миллиона символов'); });\n})();\n",
             "guards",
             1,
@@ -183,69 +183,69 @@ public final class ScriptContextFactory extends ContextFactory {
          Context.exit();
       }
 
-      return var1;
+      return compileString;
    }
 
    public static void method7407() {
       if ((++intValue & 4095) == 0) {
-         Context var0 = Context.getCurrentContext();
-         if (var0 != null && var0.getFactory() == INSTANCE) {
-            if (var0.getThreadLocal(ScriptContextFactory.Entry2.class) instanceof ScriptContextFactory.Entry2 var2
-               && var2.longValue != 0L
-               && (method7404() > var2.longValue || System.currentTimeMillis() > var2.longValue2)) {
+         Context currentContext = Context.getCurrentContext();
+         if (currentContext != null && currentContext.getFactory() == INSTANCE) {
+            if (currentContext.getThreadLocal(ScriptContextFactory.Entry2.class) instanceof ScriptContextFactory.Entry2 entry2
+               && entry2.longValue != 0L
+               && (method7404() > entry2.longValue || System.currentTimeMillis() > entry2.longValue2)) {
                throw new ScriptContextFactory.Entry("регулярное выражение работает слишком долго");
             }
          }
       }
    }
 
-   public static ScriptableObject method7408(Context var0) {
-      ScriptableObject var1 = var0.initSafeStandardObjects(null, false);
+   public static ScriptableObject method7408(Context context) {
+      ScriptableObject initSafeStandardObjects = context.initSafeStandardObjects(null, false);
 
-      for (String var5 : texts) {
-         var1.delete(var5);
+      for (String text : texts) {
+         initSafeStandardObjects.delete(text);
       }
 
-      script.exec(var0, var1);
-      return var1;
+      script.exec(context, initSafeStandardObjects);
+      return initSafeStandardObjects;
    }
 
    public static Context method7409() {
       return INSTANCE.enterContext();
    }
 
-   public static Object method7410(long var0, Callable var2, Scriptable var3, Object[] var4) {
-      Context var5 = INSTANCE.enterContext();
-      ScriptContextFactory.Entry2 var6 = var5.getThreadLocal(ScriptContextFactory.Entry2.class) instanceof ScriptContextFactory.Entry2 var7
-         ? var7
+   public static Object method7410(long l, Callable function, Scriptable scope, Object[] scriptableObject) {
+      Context enterContext = INSTANCE.enterContext();
+      ScriptContextFactory.Entry2 entry2 = enterContext.getThreadLocal(ScriptContextFactory.Entry2.class) instanceof ScriptContextFactory.Entry2 entry22
+         ? entry22
          : new ScriptContextFactory.Entry2();
-      long var14 = var6.longValue;
-      boolean var9 = var14 == 0L;
+      long longValue = entry2.longValue;
+      boolean flag = longValue == 0L;
 
-      Object var10;
+      Object obj;
       try {
-         if (var9) {
-            var6.longValue = method7404() + var0;
-            var6.longValue2 = System.currentTimeMillis() + var0 * 6L + 500L;
-            var6.longValue3 = 0L;
-            var5.putThreadLocal(ScriptContextFactory.Entry2.class, var6);
+         if (flag) {
+            entry2.longValue = method7404() + l;
+            entry2.longValue2 = System.currentTimeMillis() + l * 6L + 500L;
+            entry2.longValue3 = 0L;
+            enterContext.putThreadLocal(ScriptContextFactory.Entry2.class, entry2);
          }
 
-         var10 = var2.call(var5, var3, var3, var4);
+         obj = function.call(enterContext, scope, scope, scriptableObject);
       } finally {
-         if (var9) {
-            var6.longValue = 0L;
+         if (flag) {
+            entry2.longValue = 0L;
          }
 
          Context.exit();
       }
 
-      return var10;
+      return obj;
    }
 
    public static final class Entry extends Error {
-      public Entry(String var1) {
-         super(var1, null, false, false);
+      public Entry(String message) {
+         super(message, null, false, false);
       }
    }
 

@@ -84,45 +84,45 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    private final WorldBorder zenithWorldBorder = new WorldBorder();
 
    public BotWorld(
-      BotPlayHandler var1, ClientLevelData var2, ResourceKey<Level> var3, Holder<DimensionType> var4, int var5, int var6, boolean var7, long var8, int var10
+      BotPlayHandler networkHandler, ClientLevelData clientWorldProperties, ResourceKey<Level> dimension, Holder<DimensionType> dimensionType, int chunkLoadDistance, int simulationDistance, boolean debug, long seed, int seaLevel
    ) {
-      super(var2, var3, var1.getRegistryManager(), var4, true, var7, var8, 1000000);
-      this.networkHandler = var1;
-      this.chunkManager = new BotChunkManager(this, var5);
+      super(clientWorldProperties, dimension, networkHandler.getRegistryManager(), dimensionType, true, debug, seed, 1000000);
+      this.networkHandler = networkHandler;
+      this.chunkManager = new BotChunkManager(this, chunkLoadDistance);
       this.tickManager = new TickRateManager();
-      this.clientWorldProperties = var2;
-      this.seaLevel = var10;
+      this.clientWorldProperties = clientWorldProperties;
+      this.seaLevel = seaLevel;
       this.setSpawnPos(new BlockPos(8, 64, 8), 0.0F);
-      this.simulationDistance = var6;
+      this.simulationDistance = simulationDistance;
       this.updateSkyBrightness();
    }
 
-   public synchronized void addRenderListener(BotWorld.RenderListener var1) {
-      BotWorld.RenderListener[] var2 = this.renderListeners;
+   public synchronized void addRenderListener(BotWorld.RenderListener renderListener) {
+      BotWorld.RenderListener[] renderListeners = this.renderListeners;
 
-      for (BotWorld.RenderListener var6 : var2) {
-         if (var6 == var1) {
+      for (BotWorld.RenderListener renderListener2 : renderListeners) {
+         if (renderListener2 == renderListener) {
             return;
          }
       }
 
-      BotWorld.RenderListener[] var7 = Arrays.copyOf(var2, var2.length + 1);
-      var7[var2.length] = var1;
-      this.renderListeners = var7;
+      BotWorld.RenderListener[] renderListeners2 = Arrays.copyOf(renderListeners, renderListeners.length + 1);
+      renderListeners2[renderListeners.length] = renderListener;
+      this.renderListeners = renderListeners2;
    }
 
-   public synchronized void removeRenderListener(BotWorld.RenderListener var1) {
-      BotWorld.RenderListener[] var2 = this.renderListeners;
+   public synchronized void removeRenderListener(BotWorld.RenderListener renderListener) {
+      BotWorld.RenderListener[] renderListeners = this.renderListeners;
 
-      for (int var3 = 0; var3 < var2.length; var3++) {
-         if (var2[var3] == var1) {
-            if (var2.length == 1) {
+      for (int i = 0; i < renderListeners.length; i++) {
+         if (renderListeners[i] == renderListener) {
+            if (renderListeners.length == 1) {
                this.renderListeners = NO_LISTENERS;
             } else {
-               BotWorld.RenderListener[] var4 = new BotWorld.RenderListener[var2.length - 1];
-               System.arraycopy(var2, 0, var4, 0, var3);
-               System.arraycopy(var2, var3 + 1, var4, var3, var2.length - var3 - 1);
-               this.renderListeners = var4;
+               BotWorld.RenderListener[] renderListeners2 = new BotWorld.RenderListener[renderListeners.length - 1];
+               System.arraycopy(renderListeners, 0, renderListeners2, 0, i);
+               System.arraycopy(renderListeners, i + 1, renderListeners2, i, renderListeners.length - i - 1);
+               this.renderListeners = renderListeners2;
             }
 
             return;
@@ -138,8 +138,8 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return this.entitySetVersion;
    }
 
-   public void setBotPlayer(@Nullable BotPlayer var1) {
-      this.botPlayer = var1;
+   public void setBotPlayer(@Nullable BotPlayer botPlayer) {
+      this.botPlayer = botPlayer;
    }
 
    @Nullable
@@ -147,23 +147,23 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return this.botPlayer;
    }
 
-   public void handlePlayerActionResponse(int var1) {
-      this.pendingUpdateManager.processPendingUpdates(var1, this);
+   public void handlePlayerActionResponse(int sequence) {
+      this.pendingUpdateManager.processPendingUpdates(sequence, this);
    }
 
-   public void handleBlockUpdate(BlockPos var1, BlockState var2, int var3) {
-      if (!this.pendingUpdateManager.hasPendingUpdate(var1, var2)) {
-         super.setBlock(var1, var2, var3, 512);
+   public void handleBlockUpdate(BlockPos pos, BlockState blockState, int updateFlags) {
+      if (!this.pendingUpdateManager.hasPendingUpdate(pos, blockState)) {
+         super.setBlock(pos, blockState, updateFlags, 512);
       }
    }
 
-   public void processPendingUpdate(BlockPos var1, BlockState var2, Vec3 var3) {
-      BlockState var4 = this.getBlockState(var1);
-      if (var4 != var2) {
-         this.setBlock(var1, var2, 19);
-         BotPlayer var5 = this.botPlayer;
-         if (var5 != null && this == var5.level() && var5.isColliding(var1, var2)) {
-            var5.absSnapTo(var3.x, var3.y, var3.z);
+   public void processPendingUpdate(BlockPos pos, BlockState blockState, Vec3 playerPos) {
+      BlockState blockState2 = this.getBlockState(pos);
+      if (blockState2 != blockState) {
+         this.setBlock(pos, blockState, 19);
+         BotPlayer botPlayer = this.botPlayer;
+         if (botPlayer != null && this == botPlayer.level() && botPlayer.isColliding(pos, blockState)) {
+            botPlayer.absSnapTo(playerPos.x, playerPos.y, playerPos.z);
          }
       }
    }
@@ -175,44 +175,44 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    @Override
    public boolean setBlock(BlockPos pos, BlockState state, int flags, int maxUpdateDepth) {
       if (this.pendingUpdateManager.hasPendingSequence() && this.botPlayer != null) {
-         BlockState var5 = this.getBlockState(pos);
-         boolean var6 = super.setBlock(pos, state, flags, maxUpdateDepth);
-         if (var6) {
-            this.pendingUpdateManager.addPendingUpdate(pos, var5, this.botPlayer);
+         BlockState blockState = this.getBlockState(pos);
+         boolean setBlock = super.setBlock(pos, state, flags, maxUpdateDepth);
+         if (setBlock) {
+            this.pendingUpdateManager.addPendingUpdate(pos, blockState, this.botPlayer);
          }
 
-         return var6;
+         return setBlock;
       } else {
          return super.setBlock(pos, state, flags, maxUpdateDepth);
       }
    }
 
-   public void enqueueChunkUpdate(Runnable var1) {
-      this.chunkUpdaters.add(var1);
+   public void enqueueChunkUpdate(Runnable runnable) {
+      this.chunkUpdaters.add(runnable);
    }
 
    public void runQueuedChunkUpdates() {
-      int var1 = this.chunkUpdaters.size();
-      int var2 = var1 < 1000 ? Math.max(10, var1 / 10) : var1;
+      int size = this.chunkUpdaters.size();
+      int n = size < 1000 ? Math.max(10, size / 10) : size;
 
-      for (int var3 = 0; var3 < var2; var3++) {
-         Runnable var4 = this.chunkUpdaters.poll();
-         if (var4 == null) {
+      for (int i = 0; i < n; i++) {
+         Runnable chunkUpdater = this.chunkUpdaters.poll();
+         if (chunkUpdater == null) {
             break;
          }
 
-         var4.run();
+         chunkUpdater.run();
       }
    }
 
-   public void tick(BooleanSupplier var1) {
+   public void tick(BooleanSupplier shouldKeepTicking) {
       this.getWorldBorder().tick();
       this.updateSkyBrightness();
       if (this.tickRateManager().runsNormally()) {
          this.tickTime();
       }
 
-      this.chunkManager.tick(var1, true);
+      this.chunkManager.tick(shouldKeepTicking, true);
    }
 
    private void tickTime() {
@@ -221,8 +221,8 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    }
 
    // 26.x: time of day lives in world clocks (ClientClockManager on the handler), the packet only sets game time here
-   public void setTime(long var1) {
-      this.clientWorldProperties.setGameTime(var1);
+   public void setTime(long time) {
+      this.clientWorldProperties.setGameTime(time);
    }
 
    @Override
@@ -235,67 +235,67 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    }
 
    public void tickEntities() {
-      this.entityList.forEach(var1 -> {
-         if (!var1.isRemoved() && !var1.isPassenger() && !this.tickManager.isEntityFrozen(var1)) {
-            this.guardEntityTick(this::tickEntity, var1);
+      this.entityList.forEach(entity -> {
+         if (!entity.isRemoved() && !entity.isPassenger() && !this.tickManager.isEntityFrozen(entity)) {
+            this.guardEntityTick(this::tickEntity, entity);
          }
       });
       this.tickBlockEntities();
    }
 
-   public boolean hasEntity(Entity var1) {
-      return this.entityList.contains(var1);
+   public boolean hasEntity(Entity entity) {
+      return this.entityList.contains(entity);
    }
 
    @Override
    public boolean shouldTickDeath(Entity entity) {
-      BotPlayer var2 = this.botPlayer;
-      return var2 != null && entity.chunkPosition().getChessboardDistance(var2.chunkPosition()) <= this.simulationDistance;
+      BotPlayer botPlayer = this.botPlayer;
+      return botPlayer != null && entity.chunkPosition().getChessboardDistance(botPlayer.chunkPosition()) <= this.simulationDistance;
    }
 
-   public void tickEntity(Entity var1) {
-      var1.setOldPosAndRot();
-      var1.tickCount++;
-      var1.tick();
+   public void tickEntity(Entity passenger) {
+      passenger.setOldPosAndRot();
+      passenger.tickCount++;
+      passenger.tick();
 
-      for (Entity var3 : var1.getPassengers()) {
-         this.tickPassenger(var1, var3);
+      for (Entity entity : passenger.getPassengers()) {
+         this.tickPassenger(passenger, entity);
       }
    }
 
-   private void tickPassenger(Entity var1, Entity var2) {
-      if (!var2.isRemoved() && var2.getVehicle() == var1) {
-         if (var2 instanceof Player || this.entityList.contains(var2)) {
-            var2.setOldPosAndRot();
-            var2.tickCount++;
-            var2.rideTick();
+   private void tickPassenger(Entity passenger, Entity entity) {
+      if (!entity.isRemoved() && entity.getVehicle() == passenger) {
+         if (entity instanceof Player || this.entityList.contains(entity)) {
+            entity.setOldPosAndRot();
+            entity.tickCount++;
+            entity.rideTick();
 
-            for (Entity var4 : var2.getPassengers()) {
-               this.tickPassenger(var2, var4);
+            for (Entity passenger2 : entity.getPassengers()) {
+               this.tickPassenger(entity, passenger2);
             }
          }
       } else {
-         var2.stopRiding();
+         entity.stopRiding();
       }
    }
 
-   public void unloadBlockEntities(LevelChunk var1) {
-      var1.clearAllBlockEntities();
-      this.chunkManager.getLightEngine().setLightEnabled(var1.getPos(), false);
-      this.entityManager.stopTicking(var1.getPos());
+   public void unloadBlockEntities(LevelChunk andSet) {
+      andSet.clearAllBlockEntities();
+      this.chunkManager.getLightEngine().setLightEnabled(andSet.getPos(), false);
+      this.entityManager.stopTicking(andSet.getPos());
    }
 
-   public void resetChunkColor(ChunkPos var1) {
-      this.entityManager.startTicking(var1);
+   public void resetChunkColor(ChunkPos chunkPos) {
+      this.entityManager.startTicking(chunkPos);
 
-      for (BotWorld.RenderListener var5 : this.renderListeners) {
-         var5.onChunkChanged(var1.x(), var1.z());
+      for (BotWorld.RenderListener renderListener : this.renderListeners) {
+         renderListener.onChunkChanged(chunkPos.x(), chunkPos.z());
       }
    }
 
-   public void onChunkUnload(long var1) {
-      for (BotWorld.RenderListener var6 : this.renderListeners) {
-         var6.onSectionChanged(SectionPos.x(var1), SectionPos.y(var1), SectionPos.z(var1));
+   public void onChunkUnload(long sectionNode) {
+      for (BotWorld.RenderListener renderListener : this.renderListeners) {
+         renderListener.onSectionChanged(SectionPos.x(sectionNode), SectionPos.y(sectionNode), SectionPos.z(sectionNode));
       }
    }
 
@@ -308,16 +308,16 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return this.entityManager.count();
    }
 
-   public void addEntity(Entity var1) {
-      this.removeEntity(var1.getId(), RemovalReason.DISCARDED);
-      this.entityManager.addEntity(var1);
+   public void addEntity(Entity botPlayer) {
+      this.removeEntity(botPlayer.getId(), RemovalReason.DISCARDED);
+      this.entityManager.addEntity(botPlayer);
    }
 
-   public void removeEntity(int var1, RemovalReason var2) {
-      Entity var3 = this.getEntities().get(var1);
-      if (var3 != null) {
-         var3.setRemoved(var2);
-         var3.onClientRemoval();
+   public void removeEntity(int itemId, RemovalReason reason) {
+      Entity entity = this.getEntities().get(itemId);
+      if (entity != null) {
+         entity.setRemoved(reason);
+         entity.onClientRemoval();
       }
    }
 
@@ -343,10 +343,10 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    ) {
    }
 
-   public void playSoundFromEntity(Entity var1, SoundEvent var2, SoundSource var3, float var4, float var5) {
+   public void playSoundFromEntity(Entity entity, SoundEvent event, SoundSource soundSource, float f, float f2) {
    }
 
-   public void playSound(double var1, double var3, double var5, SoundEvent var7, SoundSource var8, float var9, float var10, boolean var11) {
+   public void playSound(double d, double d2, double d3, SoundEvent event, SoundSource soundSource, float f, float f2, boolean flag) {
    }
 
    @Override
@@ -359,16 +359,16 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    ) {
    }
 
-   public void addImportantParticle(ParticleOptions var1, double var2, double var4, double var6, double var8, double var10, double var12) {
+   public void addImportantParticle(ParticleOptions particleOptions, double d, double d2, double d3, double d4, double d5, double d6) {
    }
 
-   public void addImportantParticle(ParticleOptions var1, boolean var2, double var3, double var5, double var7, double var9, double var11, double var13) {
+   public void addImportantParticle(ParticleOptions particleOptions, boolean flag, double d, double d2, double d3, double d4, double d5, double d6) {
    }
 
    @Override
    public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
-      for (BotWorld.RenderListener var8 : this.renderListeners) {
-         var8.onBlockChanged(pos);
+      for (BotWorld.RenderListener renderListener : this.renderListeners) {
+         renderListener.onBlockChanged(pos);
       }
    }
 
@@ -445,11 +445,11 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return this.mapStates.get(id);
    }
 
-   public void putClientsideMapState(MapId var1, MapItemSavedData var2) {
-      this.mapStates.put(var1, var2);
+   public void putClientsideMapState(MapId mapId, MapItemSavedData mapData) {
+      this.mapStates.put(mapId, mapData);
    }
 
-   public void putMapState(MapId var1, MapItemSavedData var2) {
+   public void putMapState(MapId mapId, MapItemSavedData mapItemSavedData) {
    }
 
    public MapId increaseAndGetMapId() {
@@ -486,8 +486,8 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return colorResolver.getColor(this.getBiome(pos).value(), pos.getX(), pos.getZ());
    }
 
-   public void setSpawnPos(BlockPos var1, float var2) {
-      this.setRespawnData(new RespawnData(GlobalPos.of(this.dimension(), var1), var2, 0.0F));
+   public void setSpawnPos(BlockPos pos, float yaw) {
+      this.setRespawnData(new RespawnData(GlobalPos.of(this.dimension(), pos), yaw, 0.0F));
    }
 
    @Override
@@ -518,8 +518,8 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return Map.copyOf(this.mapStates);
    }
 
-   public void putMapStates(Map<MapId, MapItemSavedData> var1) {
-      this.mapStates.putAll(var1);
+   public void putMapStates(Map<MapId, MapItemSavedData> mapStates) {
+      this.mapStates.putAll(mapStates);
    }
 
    @Override
@@ -532,8 +532,8 @@ public final class BotWorld extends Level implements net.minecraft.client.render
       return "Chunks[Bot] W: " + this.chunkManager.gatherStats() + " E: " + this.entityManager.gatherStats();
    }
 
-   public void setSimulationDistance(int var1) {
-      this.simulationDistance = var1;
+   public void setSimulationDistance(int simulationDistance) {
+      this.simulationDistance = simulationDistance;
    }
 
    public int getSimulationDistance() {
@@ -556,48 +556,48 @@ public final class BotWorld extends Level implements net.minecraft.client.render
    }
 
    private final class BotEntityHandler implements LevelCallback<Entity> {
-      public void onCreated(Entity var1) {
+      public void onCreated(Entity entity) {
          BotWorld.this.entitySetVersion++;
       }
 
-      public void onDestroyed(Entity var1) {
+      public void onDestroyed(Entity entity) {
          BotWorld.this.entitySetVersion++;
       }
 
-      public void onTickingStart(Entity var1) {
-         BotWorld.this.entityList.add(var1);
+      public void onTickingStart(Entity entity) {
+         BotWorld.this.entityList.add(entity);
       }
 
-      public void onTickingEnd(Entity var1) {
-         BotWorld.this.entityList.remove(var1);
+      public void onTickingEnd(Entity entity) {
+         BotWorld.this.entityList.remove(entity);
       }
 
-      public void onTrackingStart(Entity var1) {
-         if (var1 instanceof Player var2) {
-            BotWorld.this.players.add(var2);
-         } else if (var1 instanceof EnderDragon var3) {
-            BotWorld.this.enderDragonParts.addAll(Arrays.asList(var3.getSubEntities()));
+      public void onTrackingStart(Entity entity) {
+         if (entity instanceof Player player) {
+            BotWorld.this.players.add(player);
+         } else if (entity instanceof EnderDragon enderDragon) {
+            BotWorld.this.enderDragonParts.addAll(Arrays.asList(enderDragon.getSubEntities()));
          }
       }
 
-      public void onTrackingEnd(Entity var1) {
-         var1.unRide();
-         if (var1 instanceof Player var2) {
-            BotWorld.this.players.remove(var2);
-         } else if (var1 instanceof EnderDragon var3) {
-            BotWorld.this.enderDragonParts.removeAll(Arrays.asList(var3.getSubEntities()));
+      public void onTrackingEnd(Entity entity) {
+         entity.unRide();
+         if (entity instanceof Player player) {
+            BotWorld.this.players.remove(player);
+         } else if (entity instanceof EnderDragon enderDragon) {
+            BotWorld.this.enderDragonParts.removeAll(Arrays.asList(enderDragon.getSubEntities()));
          }
       }
 
-      public void onSectionChange(Entity var1) {
+      public void onSectionChange(Entity entity) {
       }
    }
 
    public interface RenderListener {
-      void onBlockChanged(BlockPos var1);
+      void onBlockChanged(BlockPos pos);
 
-      void onChunkChanged(int var1, int var2);
+      void onChunkChanged(int x, int z);
 
-      void onSectionChanged(int var1, int var2, int var3);
+      void onSectionChanged(int x, int y, int z);
    }
 }

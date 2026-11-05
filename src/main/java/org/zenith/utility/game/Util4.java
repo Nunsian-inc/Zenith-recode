@@ -24,56 +24,56 @@ public final class Util4 {
    private Util4() {
    }
 
-   public static boolean method1278(int var0) {
-      return !items.isEmpty() && items.containsKey(var0);
+   public static boolean method1278(int id) {
+      return !items.isEmpty() && items.containsKey(id);
    }
 
-   public static int method1279(int var0, int var1) {
-      Integer var2 = items.get(var0);
-      return var2 == null ? var1 : var2 & 16777215;
+   public static int method1279(int id, int teamColor) {
+      Integer n = items.get(id);
+      return n == null ? teamColor : n & 16777215;
    }
 
-   public static boolean method1280(int var0) {
-      return !items3.isEmpty() && items3.containsKey(var0);
+   public static boolean method1280(int id) {
+      return !items3.isEmpty() && items3.containsKey(id);
    }
 
    public static float method1281() {
       if (items4.isEmpty()) {
          return 1.0F;
       } else {
-         float var0 = 1.0F;
+         float f = 1.0F;
 
-         for (float var2 : items4.values()) {
-            var0 = Math.max(var0, var2);
+         for (float f2 : items4.values()) {
+            f = Math.max(f, f2);
          }
 
-         return var0;
+         return f;
       }
    }
 
-   public static void method1282(Script var0, int var1, Integer var2) {
-      if (var2 == null) {
-         items.remove(var1);
-         items2.remove(var1);
+   public static void method1282(Script workspace, int id, Integer n) {
+      if (n == null) {
+         items.remove(id);
+         items2.remove(id);
       } else {
-         items.put(var1, var2);
-         items2.put(var1, var0);
+         items.put(id, n);
+         items2.put(id, workspace);
       }
    }
 
-   public static void method1283(Script var0, int var1, boolean var2) {
-      if (var2) {
-         items3.put(var1, var0);
+   public static void method1283(Script workspace, int id, boolean flag) {
+      if (flag) {
+         items3.put(id, workspace);
       } else {
-         items3.remove(var1);
+         items3.remove(id);
       }
    }
 
-   public static void method1284(Script var0, float var1) {
-      if (var1 <= 1.001F) {
-         items4.remove(var0);
+   public static void method1284(Script workspace, float f) {
+      if (f <= 1.001F) {
+         items4.remove(workspace);
       } else {
-         items4.put(var0, Math.min(50.0F, var1));
+         items4.put(workspace, Math.min(50.0F, f));
       }
    }
 
@@ -81,27 +81,27 @@ public final class Util4 {
       return identifier != null || identifier2 != null;
    }
 
-   public static PlayerSkin method1286(PlayerSkin var0) {
-      Identifier var1 = identifier;
-      Identifier var2 = identifier2;
-      if (var1 != null && (script == null || !script.isRunning())) {
+   public static PlayerSkin method1286(PlayerSkin returnValue) {
+      Identifier id = identifier;
+      Identifier identifier22 = identifier2;
+      if (id != null && (script == null || !script.isRunning())) {
          identifier = null;
-         var1 = null;
+         id = null;
       }
 
-      if (var2 != null && (script2 == null || !script2.isRunning())) {
+      if (identifier22 != null && (script2 == null || !script2.isRunning())) {
          identifier2 = null;
-         var2 = null;
+         identifier22 = null;
       }
 
-      if (var1 == null && var2 == null) {
-         return var0;
+      if (id == null && identifier22 == null) {
+         return returnValue;
       } else {
-         Object var3 = var1 == null ? var0.body() : new ResourceTexture(var1, var1);
-         Object var4 = var2 == null ? var0.cape() : new ResourceTexture(var2, var2);
-         Object var5 = var2 == null ? var0.elytra() : var4;
-         PlayerModelType var6 = var1 == null ? var0.model() : (flag ? PlayerModelType.SLIM : PlayerModelType.WIDE);
-         return new PlayerSkin((Texture)var3, (Texture)var4, (Texture)var5, var6, var0.secure());
+         Object body = id == null ? returnValue.body() : new ResourceTexture(id, id);
+         Object cape = identifier22 == null ? returnValue.cape() : new ResourceTexture(identifier22, identifier22);
+         Object elytra = identifier22 == null ? returnValue.elytra() : cape;
+         PlayerModelType model = id == null ? returnValue.model() : (flag ? PlayerModelType.SLIM : PlayerModelType.WIDE);
+         return new PlayerSkin((Texture)body, (Texture)cape, (Texture)elytra, model, returnValue.secure());
       }
    }
 
@@ -109,39 +109,39 @@ public final class Util4 {
       return ScriptImGui.method648();
    }
 
-   public static void method1288(Script var0, Identifier var1, boolean var2) {
-      script = var1 == null ? null : var0;
-      flag = var2;
-      identifier = var1;
+   public static void method1288(Script workspace, Identifier texture, boolean flag2) {
+      script = texture == null ? null : workspace;
+      flag = flag2;
+      identifier = texture;
    }
 
-   public static void method1289(Script var0, Identifier var1) {
-      script2 = var1 == null ? null : var0;
-      identifier2 = var1;
+   public static void method1289(Script workspace, Identifier texture) {
+      script2 = texture == null ? null : workspace;
+      identifier2 = texture;
    }
 
-   public static void method1290(Script var0) {
-      if (script == var0) {
+   public static void method1290(Script workspace) {
+      if (script == workspace) {
          identifier = null;
          script = null;
       }
 
-      if (script2 == var0) {
+      if (script2 == workspace) {
          identifier2 = null;
          script2 = null;
       }
    }
 
-   public static void method1291(Script var0) {
-      items2.entrySet().removeIf(var1 -> {
-         if (var1.getValue() == var0) {
-            items.remove(var1.getKey());
+   public static void method1291(Script workspace) {
+      items2.entrySet().removeIf(entry -> {
+         if (entry.getValue() == workspace) {
+            items.remove(entry.getKey());
             return true;
          } else {
             return false;
          }
       });
-      items3.values().removeIf(var1 -> var1 == var0);
-      items4.remove(var0);
+      items3.values().removeIf(script -> script == workspace);
+      items4.remove(workspace);
    }
 }

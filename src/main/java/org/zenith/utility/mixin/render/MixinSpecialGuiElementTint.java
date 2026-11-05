@@ -20,9 +20,9 @@ public class MixinSpecialGuiElementTint {
       )
    )
    private BlitRenderState zenith$elementColor(
-      BlitRenderState var1, @Local(argsOnly = true) PictureInPictureRenderState var2
+      BlitRenderState blitRenderState, @Local(argsOnly = true) PictureInPictureRenderState inPictureRenderState
    ) {
-      Object var3 = var2 instanceof OversizedItemRenderState var4 ? var4.guiItemRenderState() : var2;
-      return GuiVertexBatch.method99(var1, var3);
+      Object guiItemRenderState = inPictureRenderState instanceof OversizedItemRenderState itemRenderState ? itemRenderState.guiItemRenderState() : inPictureRenderState;
+      return GuiVertexBatch.method99(blitRenderState, guiItemRenderState);
    }
 }

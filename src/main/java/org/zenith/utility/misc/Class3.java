@@ -34,25 +34,25 @@ public final class Class3 {
    public double doubleValue13;
    public double doubleValue14;
 
-   public Class3(Class15.Type4 var1, double var2, double var4) {
-      this.type4 = var1;
-      this.doubleValue = var2;
-      this.doubleValue2 = var4;
+   public Class3(Class15.Type4 type4, double doubleValue, double d) {
+      this.type4 = type4;
+      this.doubleValue = doubleValue;
+      this.doubleValue2 = d;
    }
 
    public boolean method423() {
       return this.type4 == Class15.Type4.FLYER || this.type4 == Class15.Type4.FLOATER;
    }
 
-   public int method424(double var1) {
-      this.doubleValue12 = Math.min(this.doubleValue12 + Math.max(0.0, var1), 0.25);
+   public int method424(double d) {
+      this.doubleValue12 = Math.min(this.doubleValue12 + Math.max(0.0, d), 0.25);
 
-      int var3;
-      for (var3 = 0; this.doubleValue12 >= 0.05 && var3 < 5; var3++) {
+      int n;
+      for (n = 0; this.doubleValue12 >= 0.05 && n < 5; n++) {
          this.doubleValue12 -= 0.05;
       }
 
-      return var3;
+      return n;
    }
 
    public void begin() {
@@ -64,36 +64,36 @@ public final class Class3 {
       this.flag3 = false;
    }
 
-   public void method425(Vec3 var1) {
-      this.doubleValue3 = this.doubleValue6 = var1.x;
-      this.doubleValue4 = this.doubleValue7 = var1.y;
-      this.doubleValue5 = this.doubleValue8 = var1.z;
+   public void method425(Vec3 vec) {
+      this.doubleValue3 = this.doubleValue6 = vec.x;
+      this.doubleValue4 = this.doubleValue7 = vec.y;
+      this.doubleValue5 = this.doubleValue8 = vec.z;
       this.doubleValue9 = this.doubleValue10 = this.doubleValue11 = 0.0;
       this.doubleValue12 = 0.0;
    }
 
-   public void method426(double var1, double var3, double var5, double var7, double var9) {
-      double var11 = var1 - this.doubleValue3;
-      double var13 = var5 - this.doubleValue5;
-      double var15 = Math.sqrt(var11 * var11 + var13 * var13);
-      if (var15 > 0.05) {
-         double var17 = Math.min(1.0, var15 / 2.0) * var7;
-         double var19 = !this.method423() && !this.flag ? 0.25 : 1.0;
-         double var21 = this.method423() ? 0.062 : 0.06;
-         this.doubleValue9 += var11 / var15 * var17 * var21 * var19;
-         this.doubleValue11 += var13 / var15 * var17 * var21 * var19;
+   public void method426(double x, double y, double z, double d, double hover) {
+      double d2 = x - this.doubleValue3;
+      double d3 = z - this.doubleValue5;
+      double d4 = Math.sqrt(d2 * d2 + d3 * d3);
+      if (d4 > 0.05) {
+         double d5 = Math.min(1.0, d4 / 2.0) * d;
+         double d6 = !this.method423() && !this.flag ? 0.25 : 1.0;
+         double d7 = this.method423() ? 0.062 : 0.06;
+         this.doubleValue9 += d2 / d4 * d5 * d7 * d6;
+         this.doubleValue11 += d3 / d4 * d5 * d7 * d6;
       }
 
       if (this.method423()) {
          this.doubleValue14 += 0.08;
-         double var23 = var3 + var9 + Math.sin(this.doubleValue14) * (this.type4 == Class15.Type4.FLOATER ? 0.12 : 0.06);
-         double var26 = Mth.clamp(var23 - this.doubleValue4, -0.25, 0.25);
+         double d5 = y + hover + Math.sin(this.doubleValue14) * (this.type4 == Class15.Type4.FLOATER ? 0.12 : 0.06);
+         double d6 = Mth.clamp(d5 - this.doubleValue4, -0.25, 0.25);
 
-         while (this.method434(this.doubleValue3, this.doubleValue4 + var26, this.doubleValue5) && var26 < 1.0) {
-            var26 += 0.1;
+         while (this.method434(this.doubleValue3, this.doubleValue4 + d6, this.doubleValue5) && d6 < 1.0) {
+            d6 += 0.1;
          }
 
-         this.doubleValue4 += var26 * 0.25;
+         this.doubleValue4 += d6 * 0.25;
          this.doubleValue10 = 0.0;
          this.flag = false;
          this.method432(false);
@@ -105,33 +105,33 @@ public final class Class3 {
          this.method431();
          this.method432(true);
          this.method433(true);
-         float var24 = this.flag ? 0.78F : 0.91F;
-         this.doubleValue9 *= var24;
-         this.doubleValue11 *= var24;
+         float f = this.flag ? 0.78F : 0.91F;
+         this.doubleValue9 *= f;
+         this.doubleValue11 *= f;
       }
 
-      double var25 = this.doubleValue3 - this.doubleValue6;
-      double var27 = this.doubleValue5 - this.doubleValue8;
-      this.doubleValue13 = Math.sqrt(var25 * var25 + var27 * var27) / 0.05;
+      double d5 = this.doubleValue3 - this.doubleValue6;
+      double d6 = this.doubleValue5 - this.doubleValue8;
+      this.doubleValue13 = Math.sqrt(d5 * d5 + d6 * d6) / 0.05;
    }
 
-   public void method427(double var1) {
+   public void method427(double d) {
       if (this.flag && this.doubleValue10 <= 0.0) {
-         this.doubleValue10 = var1;
+         this.doubleValue10 = d;
          this.flag = false;
       }
    }
 
-   public void method428(double var1, double var3, float var5) {
-      float var6 = (float)Math.toDegrees(Math.atan2(var3 - this.doubleValue5, var1 - this.doubleValue3)) - 90.0F;
-      float var7 = Mth.wrapDegrees(var6 - this.floatValue);
-      this.floatValue = this.floatValue + Mth.clamp(var7 * 0.28F, -var5, var5);
+   public void method428(double x, double z, float max) {
+      float f = (float)Math.toDegrees(Math.atan2(z - this.doubleValue5, x - this.doubleValue3)) - 90.0F;
+      float f2 = Mth.wrapDegrees(f - this.floatValue);
+      this.floatValue = this.floatValue + Mth.clamp(f2 * 0.28F, -max, max);
    }
 
-   public void method429(double var1, double var3) {
-      float var5 = (float)Math.toDegrees(Math.atan2(var3 - this.doubleValue5, var1 - this.doubleValue3)) - 90.0F;
-      float var6 = Mth.clamp(Mth.wrapDegrees(var5 - this.floatValue), -55.0F, 55.0F);
-      this.floatValue3 = this.floatValue3 + (var6 - this.floatValue3) * 0.2F;
+   public void method429(double x, double z) {
+      float f = (float)Math.toDegrees(Math.atan2(z - this.doubleValue5, x - this.doubleValue3)) - 90.0F;
+      float f2 = Mth.clamp(Mth.wrapDegrees(f - this.floatValue), -55.0F, 55.0F);
+      this.floatValue3 = this.floatValue3 + (f2 - this.floatValue3) * 0.2F;
    }
 
    private void method430() {
@@ -143,25 +143,25 @@ public final class Class3 {
    }
 
    private void method431() {
-      boolean var1 = this.flag;
+      boolean flag = this.flag;
       this.flag = false;
       if (!this.method434(this.doubleValue3, this.doubleValue4 + this.doubleValue10, this.doubleValue5)) {
          this.doubleValue4 = this.doubleValue4 + this.doubleValue10;
       } else {
          if (this.doubleValue10 < 0.0) {
-            double var2 = this.doubleValue4 + this.doubleValue10;
-            double var4 = this.doubleValue4;
+            double d = this.doubleValue4 + this.doubleValue10;
+            double d2 = this.doubleValue4;
 
-            for (int var6 = 0; var6 < 8; var6++) {
-               double var7 = (var2 + var4) * 0.5;
-               if (this.method434(this.doubleValue3, var7, this.doubleValue5)) {
-                  var2 = var7;
+            for (int i = 0; i < 8; i++) {
+               double minY = (d + d2) * 0.5;
+               if (this.method434(this.doubleValue3, minY, this.doubleValue5)) {
+                  d = minY;
                } else {
-                  var4 = var7;
+                  d2 = minY;
                }
             }
 
-            this.doubleValue4 = var4;
+            this.doubleValue4 = d2;
             this.flag = true;
          }
 
@@ -172,24 +172,24 @@ public final class Class3 {
          this.flag = true;
       }
 
-      this.flag3 = this.flag && !var1;
+      this.flag3 = this.flag && !flag;
    }
 
-   private void method432(boolean var1) {
+   private void method432(boolean flag) {
       if (!(Math.abs(this.doubleValue9) <= 1.0E-5)) {
          if (!this.method434(this.doubleValue3 + this.doubleValue9, this.doubleValue4, this.doubleValue5)) {
             this.doubleValue3 = this.doubleValue3 + this.doubleValue9;
          } else {
-            for (double var2 = 0.1; var2 <= (var1 ? 0.6 : 1.2); var2 += 0.1) {
-               if (!this.method434(this.doubleValue3 + this.doubleValue9, this.doubleValue4 + var2, this.doubleValue5)
-                  && !this.method434(this.doubleValue3, this.doubleValue4 + var2, this.doubleValue5)) {
-                  this.doubleValue4 += var2;
+            for (double d = 0.1; d <= (flag ? 0.6 : 1.2); d += 0.1) {
+               if (!this.method434(this.doubleValue3 + this.doubleValue9, this.doubleValue4 + d, this.doubleValue5)
+                  && !this.method434(this.doubleValue3, this.doubleValue4 + d, this.doubleValue5)) {
+                  this.doubleValue4 += d;
                   this.doubleValue3 = this.doubleValue3 + this.doubleValue9;
                   return;
                }
             }
 
-            if (var1 && this.flag && !this.method434(this.doubleValue3 + Math.signum(this.doubleValue9) * 0.35, this.doubleValue4 + 1.1, this.doubleValue5)) {
+            if (flag && this.flag && !this.method434(this.doubleValue3 + Math.signum(this.doubleValue9) * 0.35, this.doubleValue4 + 1.1, this.doubleValue5)) {
                this.doubleValue10 = 0.52;
             }
 
@@ -198,21 +198,21 @@ public final class Class3 {
       }
    }
 
-   private void method433(boolean var1) {
+   private void method433(boolean flag) {
       if (!(Math.abs(this.doubleValue11) <= 1.0E-5)) {
          if (!this.method434(this.doubleValue3, this.doubleValue4, this.doubleValue5 + this.doubleValue11)) {
             this.doubleValue5 = this.doubleValue5 + this.doubleValue11;
          } else {
-            for (double var2 = 0.1; var2 <= (var1 ? 0.6 : 1.2); var2 += 0.1) {
-               if (!this.method434(this.doubleValue3, this.doubleValue4 + var2, this.doubleValue5 + this.doubleValue11)
-                  && !this.method434(this.doubleValue3, this.doubleValue4 + var2, this.doubleValue5)) {
-                  this.doubleValue4 += var2;
+            for (double d = 0.1; d <= (flag ? 0.6 : 1.2); d += 0.1) {
+               if (!this.method434(this.doubleValue3, this.doubleValue4 + d, this.doubleValue5 + this.doubleValue11)
+                  && !this.method434(this.doubleValue3, this.doubleValue4 + d, this.doubleValue5)) {
+                  this.doubleValue4 += d;
                   this.doubleValue5 = this.doubleValue5 + this.doubleValue11;
                   return;
                }
             }
 
-            if (var1 && this.flag && !this.method434(this.doubleValue3, this.doubleValue4 + 1.1, this.doubleValue5 + Math.signum(this.doubleValue11) * 0.35)) {
+            if (flag && this.flag && !this.method434(this.doubleValue3, this.doubleValue4 + 1.1, this.doubleValue5 + Math.signum(this.doubleValue11) * 0.35)) {
                this.doubleValue10 = 0.52;
             }
 
@@ -221,28 +221,28 @@ public final class Class3 {
       }
    }
 
-   public boolean method434(double var1, double var3, double var5) {
+   public boolean method434(double d, double minY, double d2) {
       return mc.level != null
          && !mc.level
             .noCollision(
-               new AABB(var1 - this.doubleValue, var3, var5 - this.doubleValue, var1 + this.doubleValue, var3 + this.doubleValue2, var5 + this.doubleValue)
+               new AABB(d - this.doubleValue, minY, d2 - this.doubleValue, d + this.doubleValue, minY + this.doubleValue2, d2 + this.doubleValue)
             );
    }
 
-   public Vec3 method435(float var1) {
+   public Vec3 method435(float alpha1) {
       return new Vec3(
-         Mth.lerp((double)var1, this.doubleValue6, this.doubleValue3),
-         Mth.lerp((double)var1, this.doubleValue7, this.doubleValue4),
-         Mth.lerp((double)var1, this.doubleValue8, this.doubleValue5)
+         Mth.lerp((double)alpha1, this.doubleValue6, this.doubleValue3),
+         Mth.lerp((double)alpha1, this.doubleValue7, this.doubleValue4),
+         Mth.lerp((double)alpha1, this.doubleValue8, this.doubleValue5)
       );
    }
 
-   public float method436(float var1) {
-      return this.floatValue2 + Mth.wrapDegrees(this.floatValue - this.floatValue2) * var1;
+   public float method436(float alpha1) {
+      return this.floatValue2 + Mth.wrapDegrees(this.floatValue - this.floatValue2) * alpha1;
    }
 
-   public float method437(float var1) {
-      return this.floatValue4 + (this.floatValue3 - this.floatValue4) * var1;
+   public float method437(float alpha1) {
+      return this.floatValue4 + (this.floatValue3 - this.floatValue4) * alpha1;
    }
 
    public float method438() {

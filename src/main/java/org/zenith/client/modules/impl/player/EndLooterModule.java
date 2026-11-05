@@ -124,26 +124,26 @@ public class EndLooterModule extends Module {
    }
 
    public List<Integer> method3887() {
-      String var1 = method3888(this.homeAnarchy);
-      String var2 = method3888(this.lootAnarchies);
-      String var3 = var1 + "|" + var2;
-      if (this.text != null && this.text.equals(var3)) {
+      String str = method3888(this.homeAnarchy);
+      String str2 = method3888(this.lootAnarchies);
+      String text = str + "|" + str2;
+      if (this.text != null && this.text.equals(text)) {
          return this.items;
       } else {
-         this.text = var3;
+         this.text = text;
          this.items.clear();
-         int var4;
-         if ((var4 = method3889(var1)) > 0) {
-            this.items.add(var4);
+         int n;
+         if ((n = method3889(str)) > 0) {
+            this.items.add(n);
          }
 
-         for (int var6 : method3890(var2)) {
+         for (int n2 : method3890(str2)) {
             if (this.items.size() >= 10) {
                break;
             }
 
-            if (!this.items.contains(var6)) {
-               this.items.add(var6);
+            if (!this.items.contains(n2)) {
+               this.items.add(n2);
             }
          }
 
@@ -151,36 +151,36 @@ public class EndLooterModule extends Module {
       }
    }
 
-   private static String method3888(TextSetting var0) {
-      return var0.getValue() == null ? "" : var0.getValue();
+   private static String method3888(TextSetting homeAnarchy) {
+      return homeAnarchy.getValue() == null ? "" : homeAnarchy.getValue();
    }
 
-   private static int method3889(String var0) {
-      var var1 = method3890(var0).iterator();
-      return var1.hasNext() ? (Integer)var1.next() : -1;
+   private static int method3889(String str) {
+      var iterator = method3890(str).iterator();
+      return iterator.hasNext() ? (Integer)iterator.next() : -1;
    }
 
-   private static List<Integer> method3890(String var0) {
-      ArrayList<Integer> var1 = new ArrayList<>();
+   private static List<Integer> method3890(String str) {
+      ArrayList<Integer> integers = new ArrayList<>();
 
-      for (String var5 : var0.split("[^0-9]+")) {
-         if (!var5.isEmpty() && var5.length() <= 3) {
+      for (String str2 : str.split("[^0-9]+")) {
+         if (!str2.isEmpty() && str2.length() <= 3) {
             try {
-               int var6;
-               if ((var6 = Integer.parseInt(var5)) >= 1 && var6 <= 999 && !var1.contains(var6)) {
-                  var1.add(var6);
+               int n;
+               if ((n = Integer.parseInt(str2)) >= 1 && n <= 999 && !integers.contains(n)) {
+                  integers.add(n);
                }
-            } catch (NumberFormatException var7) {
+            } catch (NumberFormatException e) {
             }
          }
       }
 
-      return var1;
+      return integers;
    }
 
    private int method3891() {
-      var var1 = this.method3887();
-      return (var1.isEmpty()) ? -1 : (Integer)var1.getFirst();
+      var integers = this.method3887();
+      return (integers.isEmpty()) ? -1 : (Integer)integers.getFirst();
    }
 
    private boolean method3892() {
@@ -192,18 +192,18 @@ public class EndLooterModule extends Module {
       super.onEnable();
       if (this.isEnabledRaw()) {
          if (mc.player != null && mc.level != null) {
-            var var10000 = this.method3887();
-            if (var10000.isEmpty()) {
-               int var1;
-               if ((var1 = PvpDetector.method2724()) < 0) {
+            var integers = this.method3887();
+            if (integers.isEmpty()) {
+               int n;
+               if ((n = PvpDetector.method2724()) < 0) {
                   this.notify("Заполни «Анархия дома» в настройках модуля");
                   this.setToggled(false);
                   return;
                }
 
-               this.homeAnarchy.setValue(String.valueOf(var1));
+               this.homeAnarchy.setValue(String.valueOf(n));
                this.text = null;
-               this.notify("Анархия дома не задана — взял текущую: " + var1);
+               this.notify("Анархия дома не задана — взял текущую: " + n);
             }
 
             this.intValue = 1;
@@ -213,21 +213,21 @@ public class EndLooterModule extends Module {
             this.items2.clear();
             this.items3.clear();
             this.notify("Shift + Пробел — быстрое выключение функции");
-            Settings var2 = BaritoneAPI.getSettings();
+            Settings settings = BaritoneAPI.getSettings();
             if (!this.flag) {
-               this.booleanValue = (Boolean)var2.avoidance.value;
-               this.integer = (Integer)var2.maxFallHeightNoWater.value;
-               this.booleanValue2 = (Boolean)var2.blockFreeLook.value;
-               this.doubleValue = (Double)var2.randomLooking.value;
-               this.doubleValue2 = (Double)var2.randomLooking113.value;
+               this.booleanValue = (Boolean)settings.avoidance.value;
+               this.integer = (Integer)settings.maxFallHeightNoWater.value;
+               this.booleanValue2 = (Boolean)settings.blockFreeLook.value;
+               this.doubleValue = (Double)settings.randomLooking.value;
+               this.doubleValue2 = (Double)settings.randomLooking113.value;
                this.flag = true;
             }
 
-            var2.avoidance.value = Boolean.TRUE;
-            var2.maxFallHeightNoWater.value = 256;
-            var2.blockFreeLook.value = Boolean.TRUE;
-            var2.randomLooking.value = 1.0;
-            var2.randomLooking113.value = 1.0;
+            settings.avoidance.value = Boolean.TRUE;
+            settings.maxFallHeightNoWater.value = 256;
+            settings.blockFreeLook.value = Boolean.TRUE;
+            settings.randomLooking.value = 1.0;
+            settings.randomLooking113.value = 1.0;
          } else {
             this.setToggled(false);
          }
@@ -238,12 +238,12 @@ public class EndLooterModule extends Module {
    public void onDisable() {
       super.onDisable();
       if (this.flag) {
-         Settings var1 = BaritoneAPI.getSettings();
-         var1.avoidance.value = this.booleanValue;
-         var1.maxFallHeightNoWater.value = this.integer;
-         var1.blockFreeLook.value = this.booleanValue2;
-         var1.randomLooking.value = this.doubleValue;
-         var1.randomLooking113.value = this.doubleValue2;
+         Settings settings = BaritoneAPI.getSettings();
+         settings.avoidance.value = this.booleanValue;
+         settings.maxFallHeightNoWater.value = this.integer;
+         settings.blockFreeLook.value = this.booleanValue2;
+         settings.randomLooking.value = this.doubleValue;
+         settings.randomLooking113.value = this.doubleValue2;
          this.flag = false;
       }
 
@@ -256,7 +256,7 @@ public class EndLooterModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.gui.screen() instanceof DeathScreen && mc.player != null && mc.player.deathTime >= 5) {
          mc.player.respawn();
          this.flag2 = true;
@@ -301,11 +301,11 @@ public class EndLooterModule extends Module {
    }
 
    @EventTarget
-   public void method3893(Event5 var1) {
-      Rotation var2 = this.rotation;
-      if (var2 != null) {
+   public void method3893(Event5 event) {
+      Rotation rotation = this.rotation;
+      if (rotation != null) {
          rotationManager.method7849(
-            new RotationRequest(var2, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var2), bcCameraTestnerv.getRotationConfig()),
+            new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
             4,
             this
          );
@@ -344,20 +344,20 @@ public class EndLooterModule extends Module {
                this.method3945();
             }
          } else {
-            var var1 = this.method3887();
-            if (var1.size() <= 1) {
+            var integers = this.method3887();
+            if (integers.size() <= 1) {
                if (mc.player.tickCount % 20 == 0) {
                   this.notify("Анархии лутания не заданы — вписать через запятую в настройках функции");
                }
             } else {
-               if (this.intValue >= var1.size()) {
+               if (this.intValue >= integers.size()) {
                   this.intValue = 1;
                }
 
-               int var2 = (Integer)var1.get(this.intValue);
-               if (PvpDetector.method2724() != var2) {
+               int n = (Integer)integers.get(this.intValue);
+               if (PvpDetector.method2724() != n) {
                   if (mc.player.tickCount % 10 == 0 && mc.player.tickCount > 10) {
-                     mc.player.connection.sendCommand("an" + var2);
+                     mc.player.connection.sendCommand("an" + n);
                   }
                } else {
                   if (mc.player.tickCount > 5) {
@@ -370,15 +370,15 @@ public class EndLooterModule extends Module {
    }
 
    private void method3897() {
-      MobEffectInstance var1 = mc.player.getEffect(MobEffects.INVISIBILITY);
-      boolean var2;
-      if (!(var2 = mc.player.hasEffect(MobEffects.GLOWING) || var1 != null && var1.getDuration() >= 400)
-         && var1 == null
+      MobEffectInstance effect = mc.player.getEffect(MobEffects.INVISIBILITY);
+      boolean flag;
+      if (!(flag = mc.player.hasEffect(MobEffects.GLOWING) || effect != null && effect.getDuration() >= 400)
+         && effect == null
          && this.method3928() < 1
          && mc.player.tickCount % 5 == 0
          && !PvpDetector.method2725()) {
          this.type = EndLooterModule.Type.ESCAPE;
-      } else if (!var2) {
+      } else if (!flag) {
          this.method3936(this::method3932);
       } else if (!this.method3902()) {
          if (mc.player.tickCount % 50 == 0) {
@@ -409,8 +409,8 @@ public class EndLooterModule extends Module {
          this.type = EndLooterModule.Type.ESCAPE;
          return true;
       } else {
-         int var1;
-         if ((var1 = PvpDetector.method2726()) >= 0 && var1 < 7 && !this.method3942(14.0) && this.method3927() > 7) {
+         int n;
+         if ((n = PvpDetector.method2726()) >= 0 && n < 7 && !this.method3942(14.0) && this.method3927() > 7) {
             this.type = EndLooterModule.Type.ESCAPE;
             return true;
          } else {
@@ -422,45 +422,45 @@ public class EndLooterModule extends Module {
    private void method3900() {
       this.method3924();
       this.method3925();
-      BlockPos var1 = null;
-      double var2 = -1.0;
-      int var4 = mc.player.blockPosition().getY();
+      BlockPos pos = null;
+      double d = -1.0;
+      int y = mc.player.blockPosition().getY();
 
-      for (byte var5 = 0; var5 < 360; var5 += 30) {
-         int var6 = (int)(mc.player.getX() + Math.cos(Math.toRadians(var5)) * 25.0);
-         int var7 = (int)(mc.player.getZ() + Math.sin(Math.toRadians(var5)) * 25.0);
-         double var8;
-         if ((var8 = this.method3901(var6, var7)) > var2) {
-            var2 = var8;
-            var1 = new BlockPos(var6, var4, var7);
+      for (byte i = 0; i < 360; i += 30) {
+         int x = (int)(mc.player.getX() + Math.cos(Math.toRadians(i)) * 25.0);
+         int z = (int)(mc.player.getZ() + Math.sin(Math.toRadians(i)) * 25.0);
+         double d2;
+         if ((d2 = this.method3901(x, z)) > d) {
+            d = d2;
+            pos = new BlockPos(x, y, z);
          }
       }
 
-      this.method3944(var1);
+      this.method3944(pos);
    }
 
-   private double method3901(int var1, int var2) {
-      double var3 = Double.MAX_VALUE;
+   private double method3901(int x, int z) {
+      double d = Double.MAX_VALUE;
 
-      for (Entity var6 : mc.level.entitiesForRendering()) {
-         if (var6 != mc.player && var6 instanceof Player) {
-            var3 = Math.min(var3, Math.hypot(var6.getX() - var1, var6.getZ() - var2));
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity != mc.player && entity instanceof Player) {
+            d = Math.min(d, Math.hypot(entity.getX() - x, entity.getZ() - z));
          }
       }
 
-      return var3;
+      return d;
    }
 
    private boolean method3902() {
       if (!mc.level.dimension().identifier().toString().equals("minecraft:the_end")) {
          return false;
       } else {
-         BlockPos var1 = mc.player.blockPosition();
+         BlockPos blockPosition = mc.player.blockPosition();
 
-         for (int var2 = -3; var2 <= 1; var2++) {
-            for (int var3 = -4; var3 <= 4; var3++) {
-               for (int var4 = -4; var4 <= 4; var4++) {
-                  if (mc.level.getBlockState(var1.offset(var3, var2, var4)).is(Blocks.END_STONE)) {
+         for (int i = -3; i <= 1; i++) {
+            for (int j = -4; j <= 4; j++) {
+               for (int k = -4; k <= 4; k++) {
+                  if (mc.level.getBlockState(blockPosition.offset(j, i, k)).is(Blocks.END_STONE)) {
                      return true;
                   }
                }
@@ -475,24 +475,24 @@ public class EndLooterModule extends Module {
       if (this.method3922()) {
          this.method3924();
       } else {
-         long var1 = System.currentTimeMillis();
-         this.items2.values().removeIf(var2 -> var1 > var2);
+         long now = System.currentTimeMillis();
+         this.items2.values().removeIf(l -> now > l);
          if (this.stopWatch3.method7546(350L)) {
             this.stopWatch3.reset();
             this.items3 = this.method3904();
          }
 
-         BlockPos var3 = this.method3905();
-         if (var3 != null) {
+         BlockPos pos = this.method3905();
+         if (pos != null) {
             this.stopWatch4.reset();
-            this.method3906(var3, var1);
+            this.method3906(pos, now);
          } else {
             this.blockPos = null;
             if (this.useBrush.isEnabled()) {
-               BlockPos var4 = this.method3907();
-               if (var4 != null) {
+               BlockPos blockPos = this.method3907();
+               if (blockPos != null) {
                   this.stopWatch4.reset();
-                  this.method3908(var4);
+                  this.method3908(blockPos);
                   return;
                }
             }
@@ -509,21 +509,21 @@ public class EndLooterModule extends Module {
    }
 
    private List<BlockPos> method3904() {
-      ArrayList<BlockPos> var1 = new ArrayList<>();
-      int var2 = (int)this.scanRadius.getValue3();
-      int var3 = Math.max(1, (int)Math.ceil(var2 / 16.0));
-      ChunkPos var4 = mc.player.chunkPosition();
+      ArrayList<BlockPos> poses = new ArrayList<>();
+      int n = (int)this.scanRadius.getValue3();
+      int n2 = Math.max(1, (int)Math.ceil(n / 16.0));
+      ChunkPos chunkPosition = mc.player.chunkPosition();
 
-      for (int var5 = var4.x() - var3; var5 <= var4.x() + var3; var5++) {
-         for (int var6 = var4.z() - var3; var6 <= var4.z() + var3; var6++) {
-            if (mc.level.hasChunk(var5, var6)) {
-               LevelChunk var7 = mc.level.getChunk(var5, var6);
-               if (var7 != null) {
-                  for (Entry var9 : var7.getBlockEntities().entrySet()) {
-                     if (var9.getValue() instanceof DecoratedPotBlockEntity) {
-                        BlockPos var10 = (BlockPos)var9.getKey();
-                        if (!(mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(var10)) > (double)var2 * var2)) {
-                           var1.add(var10.immutable());
+      for (int i = chunkPosition.x() - n2; i <= chunkPosition.x() + n2; i++) {
+         for (int j = chunkPosition.z() - n2; j <= chunkPosition.z() + n2; j++) {
+            if (mc.level.hasChunk(i, j)) {
+               LevelChunk chunk = mc.level.getChunk(i, j);
+               if (chunk != null) {
+                  for (Entry entry : chunk.getBlockEntities().entrySet()) {
+                     if (entry.getValue() instanceof DecoratedPotBlockEntity) {
+                        BlockPos key = (BlockPos)entry.getKey();
+                        if (!(mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(key)) > (double)n * n)) {
+                           poses.add(key.immutable());
                         }
                      }
                   }
@@ -532,14 +532,14 @@ public class EndLooterModule extends Module {
          }
       }
 
-      return var1;
+      return poses;
    }
 
    private BlockPos method3905() {
       if (this.blockPos != null && this.method3910(this.blockPos)) {
-         boolean var10000 = this.items2.containsKey(this.blockPos);
+         boolean containsKey = this.items2.containsKey(this.blockPos);
 
-         if (!var10000 && !this.stopWatch2.method7546(6000L)) {
+         if (!containsKey && !this.stopWatch2.method7546(6000L)) {
             return this.blockPos;
          }
       }
@@ -548,45 +548,45 @@ public class EndLooterModule extends Module {
          this.method3911(this.blockPos, "не приблизился за 6 секунд");
       }
 
-      BlockPos var1 = null;
-      double var2 = Double.MAX_VALUE;
+      BlockPos pos = null;
+      double d = Double.MAX_VALUE;
 
-      for (BlockPos var5 : this.items3) {
-         boolean var8 = this.items2.containsKey(var5);
+      for (BlockPos pos2 : this.items3) {
+         boolean containsKey = this.items2.containsKey(pos2);
 
-         double var6;
-         if (!var8
-            && this.method3910(var5)
-            && !this.method3943(var5, this.playerRadius.getValue3())
-            && (var6 = mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(var5))) < var2) {
-            var2 = var6;
-            var1 = var5;
+         double d2;
+         if (!containsKey
+            && this.method3910(pos2)
+            && !this.method3943(pos2, this.playerRadius.getValue3())
+            && (d2 = mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos2))) < d) {
+            d = d2;
+            pos = pos2;
          }
       }
 
-      if (var1 != null && !var1.equals(this.blockPos)) {
-         this.blockPos = var1;
+      if (pos != null && !pos.equals(this.blockPos)) {
+         this.blockPos = pos;
          this.intValue2 = 0;
          this.stopWatch2.reset();
       }
 
-      return var1;
+      return pos;
    }
 
-   private void method3906(BlockPos var1, long var2) {
-      BlockHitResult var4 = this.method3913(var1);
-      if (var4 == null) {
-         this.method3944(var1);
+   private void method3906(BlockPos pos, long now) {
+      BlockHitResult blockHitResult = this.method3913(pos);
+      if (blockHitResult == null) {
+         this.method3944(pos);
       } else {
-         Rotation var5 = Rotation.method3128(var4.getLocation(), mc.player.getEyePosition());
-         this.rotation = var5;
-         if (!(rotationManager.getRotation2().method3130(var5) > 5.0F)) {
-            if (var2 >= this.longValue) {
+         Rotation rotation = Rotation.method3128(blockHitResult.getLocation(), mc.player.getEyePosition());
+         this.rotation = rotation;
+         if (!(rotationManager.getRotation2().method3130(rotation) > 5.0F)) {
+            if (now >= this.longValue) {
                if (this.intValue2 >= 2) {
-                  this.method3911(var1, "не сломалась после разрешённых попыток");
+                  this.method3911(pos, "не сломалась после разрешённых попыток");
                } else {
-                  this.longValue = var2 + 650L + ThreadLocalRandom.current().nextLong(350L);
-                  if (mc.gameMode.startDestroyBlock(var1, var4.getDirection())) {
+                  this.longValue = now + 650L + ThreadLocalRandom.current().nextLong(350L);
+                  if (mc.gameMode.startDestroyBlock(pos, blockHitResult.getDirection())) {
                      this.intValue2++;
                      org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
                   }
@@ -600,36 +600,36 @@ public class EndLooterModule extends Module {
       if (this.blockPos2 != null && mc.level.getBlockState(this.blockPos2).is(Blocks.SUSPICIOUS_SAND) && !this.stopWatch2.method7546(6000L)) {
          return this.blockPos2;
       } else {
-         int var1 = Math.min(24, (int)this.scanRadius.getValue3());
-         BlockPos var2 = mc.player.blockPosition();
-         MutableBlockPos var3 = new MutableBlockPos();
-         BlockPos var4 = null;
-         double var5 = Double.MAX_VALUE;
-         int var7 = var2.getX() - var1 >> 4;
-         int var8 = var2.getY() - 12 >> 4;
-         int var9 = var2.getZ() - var1 >> 4;
-         int var10 = (var2.getX() + var1 >> 4) - var7 + 1;
-         int var11 = (var2.getY() + 12 >> 4) - var8 + 1;
-         int var12 = (var2.getZ() + var1 >> 4) - var9 + 1;
-         boolean[] var13 = new boolean[var10 * var11 * var12];
-         boolean var14 = false;
+         int n = Math.min(24, (int)this.scanRadius.getValue3());
+         BlockPos blockPosition = mc.player.blockPosition();
+         MutableBlockPos mutablePos = new MutableBlockPos();
+         BlockPos immutable = null;
+         double d = Double.MAX_VALUE;
+         int n2 = blockPosition.getX() - n >> 4;
+         int n3 = blockPosition.getY() - 12 >> 4;
+         int n4 = blockPosition.getZ() - n >> 4;
+         int n5 = (blockPosition.getX() + n >> 4) - n2 + 1;
+         int n6 = (blockPosition.getY() + 12 >> 4) - n3 + 1;
+         int n7 = (blockPosition.getZ() + n >> 4) - n4 + 1;
+         boolean[] flags = new boolean[n5 * n6 * n7];
+         boolean flag = false;
 
-         for (int var15 = 0; var15 < var10; var15++) {
-            for (int var16 = 0; var16 < var12; var16++) {
-               int var10000 = var7 + var15;
-               int var18 = var9 + var16;
-               int var17 = var10000;
-               if (mc.level.hasChunk(var17, var18)) {
-                  LevelChunk var19 = mc.level.getChunk(var17, var18);
-                  LevelChunkSection[] var20 = var19.getSections();
+         for (int i = 0; i < n5; i++) {
+            for (int j = 0; j < n7; j++) {
+               int n8 = n2 + i;
+               int chunkZ = n4 + j;
+               int chunkX = n8;
+               if (mc.level.hasChunk(chunkX, chunkZ)) {
+                  LevelChunk chunk = mc.level.getChunk(chunkX, chunkZ);
+                  LevelChunkSection[] sections = chunk.getSections();
 
-                  for (int var21 = 0; var21 < var11; var21++) {
-                     int var22;
-                     if ((var22 = var19.getSectionIndex(var8 + var21 << 4)) >= 0 && var22 < var20.length) {
-                        LevelChunkSection var23 = var20[var22];
-                        if (!var23.hasOnlyAir() && var23.maybeHas(var0 -> var0.is(Blocks.SUSPICIOUS_SAND))) {
-                           var13[(var15 * var11 + var21) * var12 + var16] = true;
-                           var14 = true;
+                  for (int k = 0; k < n6; k++) {
+                     int sectionIndex;
+                     if ((sectionIndex = chunk.getSectionIndex(n3 + k << 4)) >= 0 && sectionIndex < sections.length) {
+                        LevelChunkSection levelChunkSection = sections[sectionIndex];
+                        if (!levelChunkSection.hasOnlyAir() && levelChunkSection.maybeHas(blockState -> blockState.is(Blocks.SUSPICIOUS_SAND))) {
+                           flags[(i * n6 + k) * n7 + j] = true;
+                           flag = true;
                         }
                      }
                   }
@@ -637,56 +637,56 @@ public class EndLooterModule extends Module {
             }
          }
 
-         for (int var24 = -var1; var14 && var24 <= var1; var24++) {
-            for (int var25 = -12; var25 <= 12; var25++) {
-               for (int var26 = -var1; var26 <= var1; var26++) {
-                  var3.set(var2.getX() + var24, var2.getY() + var25, var2.getZ() + var26);
-                  if (var13[(((var3.getX() >> 4) - var7) * var11 + ((var3.getY() >> 4) - var8)) * var12 + ((var3.getZ() >> 4) - var9)]
-                     && mc.level.getBlockState(var3).is(Blocks.SUSPICIOUS_SAND)) {
-                     BlockPos var27 = var3.immutable();
-                     boolean var29 = this.items2.containsKey(var27);
-                     double var28;
-                     if (!var29 && !this.method3943(var27, this.playerRadius.getValue3()) && (var28 = mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(var27))) < var5) {
-                        var5 = var28;
-                        var4 = var27;
+         for (int i = -n; flag && i <= n; i++) {
+            for (int j = -12; j <= 12; j++) {
+               for (int k = -n; k <= n; k++) {
+                  mutablePos.set(blockPosition.getX() + i, blockPosition.getY() + j, blockPosition.getZ() + k);
+                  if (flags[(((mutablePos.getX() >> 4) - n2) * n6 + ((mutablePos.getY() >> 4) - n3)) * n7 + ((mutablePos.getZ() >> 4) - n4)]
+                     && mc.level.getBlockState(mutablePos).is(Blocks.SUSPICIOUS_SAND)) {
+                     BlockPos pos = mutablePos.immutable();
+                     boolean containsKey = this.items2.containsKey(pos);
+                     double d2;
+                     if (!containsKey && !this.method3943(pos, this.playerRadius.getValue3()) && (d2 = mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos))) < d) {
+                        d = d2;
+                        immutable = pos;
                      }
                   }
                }
             }
          }
 
-         if (var4 != null && !var4.equals(this.blockPos2)) {
-            this.blockPos2 = var4;
+         if (immutable != null && !immutable.equals(this.blockPos2)) {
+            this.blockPos2 = immutable;
             this.stopWatch2.reset();
          }
 
-         return var4;
+         return immutable;
       }
    }
 
-   private void method3908(BlockPos var1) {
-      int var2;
-      if ((var2 = this.method3926(var0 -> var0.is(Items.BRUSH))) < 0) {
-         this.method3911(var1, "нет кисти археолога");
+   private void method3908(BlockPos blockPos) {
+      int selected;
+      if ((selected = this.method3926(stack -> stack.is(Items.BRUSH))) < 0) {
+         this.method3911(blockPos, "нет кисти археолога");
       } else {
-         BlockHitResult var3 = this.method3913(var1);
-         if (var3 == null) {
-            this.method3944(var1);
+         BlockHitResult blockHit = this.method3913(blockPos);
+         if (blockHit == null) {
+            this.method3944(blockPos);
          } else {
-            if (var2 < 9) {
-               mc.player.getInventory().setSelectedSlot(var2);
+            if (selected < 9) {
+               mc.player.getInventory().setSelectedSlot(selected);
             } else if (mc.player.tickCount % 10 == 0) {
-               InventoryUtils.method904(var2, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, false);
+               InventoryUtils.method904(selected, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, false);
                return;
             }
 
-            Rotation var4 = Rotation.method3128(var3.getLocation(), mc.player.getEyePosition());
-            this.rotation = var4;
-            if (!(rotationManager.getRotation2().method3130(var4) > 5.0F)) {
+            Rotation rotation = Rotation.method3128(blockHit.getLocation(), mc.player.getEyePosition());
+            this.rotation = rotation;
+            if (!(rotationManager.getRotation2().method3130(rotation) > 5.0F)) {
                if (this.stopWatch2.method7546(15000L)) {
-                  this.method3911(var1, "песок не чистится слишком долго");
+                  this.method3911(blockPos, "песок не чистится слишком долго");
                } else {
-                  mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, var3);
+                  mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
                   org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
                }
             }
@@ -696,20 +696,20 @@ public class EndLooterModule extends Module {
 
    private void method3909() {
       if (mc.player.tickCount % 60 == 0) {
-         double var1 = mc.player.tickCount / 60 * 2.4;
-         this.method3944(mc.player.blockPosition().offset((int)(Math.cos(var1) * 16.0), 0, (int)(Math.sin(var1) * 16.0)));
+         double d = mc.player.tickCount / 60 * 2.4;
+         this.method3944(mc.player.blockPosition().offset((int)(Math.cos(d) * 16.0), 0, (int)(Math.sin(d) * 16.0)));
       }
    }
 
-   private boolean method3910(BlockPos var1) {
-      return var1 != null && mc.level.getBlockEntity(var1) instanceof DecoratedPotBlockEntity;
+   private boolean method3910(BlockPos blockPos) {
+      return blockPos != null && mc.level.getBlockEntity(blockPos) instanceof DecoratedPotBlockEntity;
    }
 
-   private void method3911(BlockPos var1, String var2) {
-      if (var1 != null) {
-         this.items2.put(var1, System.currentTimeMillis() + 60000L);
+   private void method3911(BlockPos blockPos, String str) {
+      if (blockPos != null) {
+         this.items2.put(blockPos, System.currentTimeMillis() + 60000L);
          if (this.debug.isEnabled()) {
-            this.notify("Пропускаю " + var1.toShortString() + " — " + var2);
+            this.notify("Пропускаю " + blockPos.toShortString() + " — " + str);
          }
 
          this.method3912();
@@ -723,21 +723,21 @@ public class EndLooterModule extends Module {
       this.stopWatch2.reset();
    }
 
-   private BlockHitResult method3913(BlockPos var1) {
-      Vec3 var2 = mc.player.getEyePosition();
-      double var3 = mc.player.blockInteractionRange() - 0.2;
-      Vec3 var5 = net.minecraft.world.phys.Vec3.atCenterOf(var1);
-      if (var2.distanceToSqr(var5) > var3 * var3) {
+   private BlockHitResult method3913(BlockPos pos) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      double d = mc.player.blockInteractionRange() - 0.2;
+      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      if (eyePosition.distanceToSqr(atCenterOf) > d * d) {
          return null;
       } else {
-         for (double var6 = -0.4; var6 <= 0.41; var6 += 0.4) {
-            for (double var8 = -0.4; var8 <= 0.41; var8 += 0.4) {
-               for (double var10 = -0.4; var10 <= 0.41; var10 += 0.4) {
-                  Vec3 var12 = var5.add(var6, var8, var10);
-                  if (!(var2.distanceToSqr(var12) > var3 * var3)) {
-                     BlockHitResult var13 = mc.level.clip(new ClipContext(var2, var12, Block.COLLIDER, Fluid.NONE, mc.player));
-                     if (var13.getBlockPos().equals(var1)) {
-                        return var13;
+         for (double x = -0.4; x <= 0.41; x += 0.4) {
+            for (double y = -0.4; y <= 0.41; y += 0.4) {
+               for (double z = -0.4; z <= 0.41; z += 0.4) {
+                  Vec3 vec = atCenterOf.add(x, y, z);
+                  if (!(eyePosition.distanceToSqr(vec) > d * d)) {
+                     BlockHitResult clip = mc.level.clip(new ClipContext(eyePosition, vec, Block.COLLIDER, Fluid.NONE, mc.player));
+                     if (clip.getBlockPos().equals(pos)) {
+                        return clip;
                      }
                   }
                }
@@ -748,100 +748,100 @@ public class EndLooterModule extends Module {
       }
    }
 
-   private void method3914(boolean var1, boolean var2, EndLooterModule.Type var3) {
-      if (!var1) {
+   private void method3914(boolean flag, boolean flag2, EndLooterModule.Type type) {
+      if (!flag) {
          if (this.method3924()) {
-            this.type = var3;
+            this.type = type;
          }
       } else {
-         AbstractContainerScreen var4 = this.method3921();
-         if (var4 != null) {
-            if (var2) {
-               this.method3915(var4);
+         AbstractContainerScreen containerScreen = this.method3921();
+         if (containerScreen != null) {
+            if (flag2) {
+               this.method3915(containerScreen);
             } else {
-               this.method3916(var4);
+               this.method3916(containerScreen);
             }
          } else {
-            this.method3920(this.method3919(var2));
+            this.method3920(this.method3919(flag2));
          }
       }
    }
 
-   private void method3915(AbstractContainerScreen<?> var1) {
+   private void method3915(AbstractContainerScreen<?> containerScreen) {
       if (mc.player.tickCount % 2 == 0) {
-         boolean var2 = false;
-         boolean var3 = false;
-         int var4 = 0;
+         boolean flag = false;
+         boolean flag2 = false;
+         int n = 0;
 
-         for (Slot var6 : var1.getMenu().slots) {
-            if (var4 >= 4) {
+         for (Slot slot : containerScreen.getMenu().slots) {
+            if (n >= 4) {
                return;
             }
 
-            ItemStack var7 = var6.getItem();
-            if (var6.container == mc.player.getInventory()
-               && !var7.isEmpty()
-               && (!this.useSpeed.isEnabled() || !this.method3933(var7))
-               && !var7.is(Items.BRUSH)) {
-               if (!var2 && this.method3932(var7)) {
-                  var2 = true;
-               } else if (!var3 && var7.is(Items.GOLDEN_CARROT)) {
-                  var3 = true;
+            ItemStack carried = slot.getItem();
+            if (slot.container == mc.player.getInventory()
+               && !carried.isEmpty()
+               && (!this.useSpeed.isEnabled() || !this.method3933(carried))
+               && !carried.is(Items.BRUSH)) {
+               if (!flag && this.method3932(carried)) {
+                  flag = true;
+               } else if (!flag2 && carried.is(Items.GOLDEN_CARROT)) {
+                  flag2 = true;
                } else {
-                  this.method3918(var1, var6, 0, ContainerInput.QUICK_MOVE);
-                  var4++;
+                  this.method3918(containerScreen, slot, 0, ContainerInput.QUICK_MOVE);
+                  n++;
                }
             }
          }
       }
    }
 
-   private void method3916(AbstractContainerScreen<?> var1) {
+   private void method3916(AbstractContainerScreen<?> containerScreen) {
       if (mc.player.tickCount % 2 == 0) {
-         ItemStack var2 = var1.getMenu().getCarried();
-         if (!var2.isEmpty()) {
-            java.util.function.Predicate<ItemStack> var3 = var1x -> var1x.isEmpty() || ItemStack.isSameItemSameComponents(var1x, var2);
-            if (this.method3930(var2)) {
-               this.method3918(var1, this.method3917(var1, true, var3), 1, ContainerInput.PICKUP);
+         ItemStack carried = containerScreen.getMenu().getCarried();
+         if (!carried.isEmpty()) {
+            java.util.function.Predicate<ItemStack> predicate = var1x -> var1x.isEmpty() || ItemStack.isSameItemSameComponents(var1x, carried);
+            if (this.method3930(carried)) {
+               this.method3918(containerScreen, this.method3917(containerScreen, true, predicate), 1, ContainerInput.PICKUP);
             } else {
-               this.method3918(var1, this.method3917(var1, false, var3), 0, ContainerInput.PICKUP);
+               this.method3918(containerScreen, this.method3917(containerScreen, false, predicate), 0, ContainerInput.PICKUP);
             }
          } else {
-            this.method3918(var1, this.method3917(var1, false, this::method3930), 0, ContainerInput.PICKUP);
+            this.method3918(containerScreen, this.method3917(containerScreen, false, this::method3930), 0, ContainerInput.PICKUP);
          }
       }
    }
 
-   private Slot method3917(AbstractContainerScreen<?> var1, boolean var2, Predicate<ItemStack> var3) {
-      for (Slot var5 : var1.getMenu().slots) {
-         if (var5.container == mc.player.getInventory() == var2 && var3.test(var5.getItem())) {
-            return var5;
+   private Slot method3917(AbstractContainerScreen<?> containerScreen, boolean flag, Predicate<ItemStack> predicate) {
+      for (Slot slot : containerScreen.getMenu().slots) {
+         if (slot.container == mc.player.getInventory() == flag && predicate.test(slot.getItem())) {
+            return slot;
          }
       }
 
       return null;
    }
 
-   private void method3918(AbstractContainerScreen<?> var1, Slot var2, int var3, ContainerInput var4) {
-      if (var2 != null) {
-         mc.gameMode.handleContainerInput(var1.getMenu().containerId, var2.index, var3, var4, mc.player);
+   private void method3918(AbstractContainerScreen<?> containerScreen, Slot slot, int buttonNum, ContainerInput containerInput) {
+      if (slot != null) {
+         mc.gameMode.handleContainerInput(containerScreen.getMenu().containerId, slot.index, buttonNum, containerInput, mc.player);
       }
    }
 
-   private BlockPos method3919(boolean var1) {
-      BlockPos var2 = mc.player.blockPosition();
-      MutableBlockPos var3 = new MutableBlockPos();
+   private BlockPos method3919(boolean flag) {
+      BlockPos blockPosition = mc.player.blockPosition();
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var4 = -4; var4 <= 4; var4++) {
-         for (int var5 = -4; var5 <= 4; var5++) {
-            for (int var6 = -4; var6 <= 4; var6++) {
-               var3.set(var2.getX() + var4, var2.getY() + var5, var2.getZ() + var6);
-               if (mc.level.getBlockState(var3).is(Blocks.CHEST)
-                  && mc.level.getBlockState(var3.below()).is(Blocks.HOPPER) == var1
-                  && mc.level.getBlockState(var3.above()).isAir()) {
-                  BlockPos var7 = var3.immutable();
-                  if (this.method3913(var7) != null) {
-                     return var7;
+      for (int i = -4; i <= 4; i++) {
+         for (int j = -4; j <= 4; j++) {
+            for (int k = -4; k <= 4; k++) {
+               mutablePos.set(blockPosition.getX() + i, blockPosition.getY() + j, blockPosition.getZ() + k);
+               if (mc.level.getBlockState(mutablePos).is(Blocks.CHEST)
+                  && mc.level.getBlockState(mutablePos.below()).is(Blocks.HOPPER) == flag
+                  && mc.level.getBlockState(mutablePos.above()).isAir()) {
+                  BlockPos immutable = mutablePos.immutable();
+                  if (this.method3913(immutable) != null) {
+                     return immutable;
                   }
                }
             }
@@ -851,16 +851,16 @@ public class EndLooterModule extends Module {
       return null;
    }
 
-   private void method3920(BlockPos var1) {
-      if (var1 != null && !this.method3922()) {
-         BlockHitResult var2 = this.method3913(var1);
-         if (var2 == null) {
-            this.method3944(var1);
+   private void method3920(BlockPos pos) {
+      if (pos != null && !this.method3922()) {
+         BlockHitResult blockHit = this.method3913(pos);
+         if (blockHit == null) {
+            this.method3944(pos);
          } else {
-            Rotation var3 = Rotation.method3128(var2.getLocation(), mc.player.getEyePosition());
-            this.rotation = var3;
-            if (mc.player.tickCount % 2 == 0 && !(rotationManager.getRotation2().method3130(var3) > 5.0F)) {
-               mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, var2);
+            Rotation rotation = Rotation.method3128(blockHit.getLocation(), mc.player.getEyePosition());
+            this.rotation = rotation;
+            if (mc.player.tickCount % 2 == 0 && !(rotationManager.getRotation2().method3130(rotation) > 5.0F)) {
+               mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             }
          }
@@ -868,10 +868,10 @@ public class EndLooterModule extends Module {
    }
 
    private AbstractContainerScreen<?> method3921() {
-      return mc.gui.screen() instanceof AbstractContainerScreen var1
+      return mc.gui.screen() instanceof AbstractContainerScreen containerScreen
             && !(mc.gui.screen() instanceof InventoryScreen)
             && !(mc.player.containerMenu instanceof InventoryMenu)
-         ? var1
+         ? containerScreen
          : null;
    }
 
@@ -880,8 +880,8 @@ public class EndLooterModule extends Module {
    }
 
    private boolean method3923() {
-      AbstractContainerScreen var1 = this.method3921();
-      return var1 != null && !var1.getMenu().getCarried().isEmpty();
+      AbstractContainerScreen containerScreen = this.method3921();
+      return containerScreen != null && !containerScreen.getMenu().getCarried().isEmpty();
    }
 
    private boolean method3924() {
@@ -894,19 +894,19 @@ public class EndLooterModule extends Module {
 
    private void method3925() {
       if (!mc.player.getMainHandItem().isEmpty()) {
-         for (int var1 = 0; var1 < 9; var1++) {
-            if (mc.player.getInventory().getItem(var1).isEmpty()) {
-               mc.player.getInventory().setSelectedSlot(var1);
+         for (int i = 0; i < 9; i++) {
+            if (mc.player.getInventory().getItem(i).isEmpty()) {
+               mc.player.getInventory().setSelectedSlot(i);
                return;
             }
          }
       }
    }
 
-   private int method3926(Predicate<ItemStack> var1) {
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (var1.test(mc.player.getInventory().getItem(var2))) {
-            return var2;
+   private int method3926(Predicate<ItemStack> predicate) {
+      for (int i = 0; i < 36; i++) {
+         if (predicate.test(mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
@@ -914,69 +914,69 @@ public class EndLooterModule extends Module {
    }
 
    private int method3927() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (!mc.player.getInventory().getItem(var2).isEmpty()) {
-            var1++;
+      for (int i = 0; i < 36; i++) {
+         if (!mc.player.getInventory().getItem(i).isEmpty()) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
    private int method3928() {
-      int var1 = 0;
+      int n = 0;
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         if (this.method3932(mc.player.getInventory().getItem(var2))) {
-            var1++;
+      for (int i = 0; i < 36; i++) {
+         if (this.method3932(mc.player.getInventory().getItem(i))) {
+            n++;
          }
       }
 
       if (this.method3932(mc.player.getOffhandItem())) {
-         var1++;
+         n++;
       }
 
-      return var1;
+      return n;
    }
 
    private boolean method3929() {
       return this.method3928() < 1
          || InventoryUtils.method920(Items.GOLDEN_CARROT) < 3
-         || this.useBrush.isEnabled() && this.method3926(var0 -> var0.is(Items.BRUSH)) < 0
+         || this.useBrush.isEnabled() && this.method3926(stack -> stack.is(Items.BRUSH)) < 0
          || this.useSpeed.isEnabled() && this.method3926(this::method3933) < 0;
    }
 
-   private boolean method3930(ItemStack var1) {
-      if (var1.isEmpty()) {
+   private boolean method3930(ItemStack carried) {
+      if (carried.isEmpty()) {
          return false;
-      } else if (this.method3932(var1) && this.method3928() < 1) {
+      } else if (this.method3932(carried) && this.method3928() < 1) {
          return true;
-      } else if (var1.is(Items.GOLDEN_CARROT) && InventoryUtils.method920(Items.GOLDEN_CARROT) < 3) {
+      } else if (carried.is(Items.GOLDEN_CARROT) && InventoryUtils.method920(Items.GOLDEN_CARROT) < 3) {
          return true;
       } else {
-         return this.useBrush.isEnabled() && var1.is(Items.BRUSH) && this.method3926(var0 -> var0.is(Items.BRUSH)) < 0
+         return this.useBrush.isEnabled() && carried.is(Items.BRUSH) && this.method3926(stack -> stack.is(Items.BRUSH)) < 0
             ? true
-            : this.useSpeed.isEnabled() && this.method3933(var1) && this.method3926(this::method3933) < 0;
+            : this.useSpeed.isEnabled() && this.method3933(carried) && this.method3926(this::method3933) < 0;
       }
    }
 
    private boolean method3931() {
-      boolean var1 = false;
-      boolean var2 = false;
+      boolean flag = false;
+      boolean flag2 = false;
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         ItemStack var4 = mc.player.getInventory().getItem(var3);
-         if (!var4.isEmpty() && !var4.is(Items.BRUSH) && (!this.useSpeed.isEnabled() || !this.method3933(var4))) {
-            if (!var1 && this.method3932(var4)) {
-               var1 = true;
+      for (int i = 0; i < 36; i++) {
+         ItemStack carried = mc.player.getInventory().getItem(i);
+         if (!carried.isEmpty() && !carried.is(Items.BRUSH) && (!this.useSpeed.isEnabled() || !this.method3933(carried))) {
+            if (!flag && this.method3932(carried)) {
+               flag = true;
             } else {
-               if (var2 || !var4.is(Items.GOLDEN_CARROT)) {
+               if (flag2 || !carried.is(Items.GOLDEN_CARROT)) {
                   return true;
                }
 
-               var2 = true;
+               flag2 = true;
             }
          }
       }
@@ -984,24 +984,24 @@ public class EndLooterModule extends Module {
       return false;
    }
 
-   private boolean method3932(ItemStack var1) {
-      return this.method3934(var1, MobEffects.INVISIBILITY);
+   private boolean method3932(ItemStack carried) {
+      return this.method3934(carried, MobEffects.INVISIBILITY);
    }
 
-   private boolean method3933(ItemStack var1) {
-      return this.method3934(var1, MobEffects.SPEED);
+   private boolean method3933(ItemStack carried) {
+      return this.method3934(carried, MobEffects.SPEED);
    }
 
-   private boolean method3934(ItemStack var1, Holder<MobEffect> var2) {
-      if (!var1.is(Items.POTION)) {
+   private boolean method3934(ItemStack carried, Holder<MobEffect> holder) {
+      if (!carried.is(Items.POTION)) {
          return false;
       } else {
-         PotionContents var3 = var1.get(DataComponents.POTION_CONTENTS);
-         if (var3 == null) {
+         PotionContents potionContents = carried.get(DataComponents.POTION_CONTENTS);
+         if (potionContents == null) {
             return false;
          } else {
-            for (MobEffectInstance var5 : var3.getAllEffects()) {
-               if (var5.getEffect().equals(var2)) {
+            for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
+               if (allEffect.getEffect().equals(holder)) {
                   return true;
                }
             }
@@ -1015,16 +1015,16 @@ public class EndLooterModule extends Module {
       return this.intValue3 != 0;
    }
 
-   private void method3936(Predicate<ItemStack> var1) {
+   private void method3936(Predicate<ItemStack> predicate) {
       if (this.intValue3 == 0 && mc.player.tickCount > 20) {
          if (this.method3922()) {
             this.method3924();
          } else {
-            Slot var2 = InventoryUtils.method910(var1x -> var1x.container == mc.player.getInventory() && var1.test(var1x.getItem()));
-            if (var2 != null) {
+            Slot slot = InventoryUtils.method910(var1x -> var1x.container == mc.player.getInventory() && predicate.test(var1x.getItem()));
+            if (slot != null) {
                this.method3945();
-               this.intValue4 = var2.index;
-               InventoryUtils.method900(var2, InteractionHand.OFF_HAND, false);
+               this.intValue4 = slot.index;
+               InventoryUtils.method900(slot, InteractionHand.OFF_HAND, false);
                this.intValue3 = 1;
                this.stopWatch.reset();
             }
@@ -1097,9 +1097,9 @@ public class EndLooterModule extends Module {
       return mc.player.getDeltaMovement().horizontalDistanceSqr() > 0.0025;
    }
 
-   private boolean method3942(double var1) {
-      for (Entity var4 : mc.level.entitiesForRendering()) {
-         if (var4 instanceof Player var5 && var5 != mc.player && mc.player.distanceToSqr(var5) < var1 * var1) {
+   private boolean method3942(double d) {
+      for (Entity entity : mc.level.entitiesForRendering()) {
+         if (entity instanceof Player player && player != mc.player && mc.player.distanceToSqr(player) < d * d) {
             return true;
          }
       }
@@ -1107,12 +1107,12 @@ public class EndLooterModule extends Module {
       return false;
    }
 
-   private boolean method3943(BlockPos var1, double var2) {
-      if (var2 <= 0.0) {
+   private boolean method3943(BlockPos pos, double d) {
+      if (d <= 0.0) {
          return false;
       } else {
-         for (Entity var5 : mc.level.entitiesForRendering()) {
-            if (var5 instanceof Player var6 && var6 != mc.player && var6.position().distanceToSqr(Vec3.atCenterOf(var1)) < var2 * var2) {
+         for (Entity entity : mc.level.entitiesForRendering()) {
+            if (entity instanceof Player player && player != mc.player && player.position().distanceToSqr(Vec3.atCenterOf(pos)) < d * d) {
                return true;
             }
          }
@@ -1121,10 +1121,10 @@ public class EndLooterModule extends Module {
       }
    }
 
-   private void method3944(BlockPos var1) {
-      if (var1 != null) {
+   private void method3944(BlockPos pos) {
+      if (pos != null) {
          if (mc.player.tickCount % 10 == 0 || !this.method3941() && mc.player.tickCount % 5 == 0) {
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalBlock(var1));
+            BaritoneAPI.getProvider().getPrimaryBaritone().getCustomGoalProcess().setGoalAndPath(new GoalBlock(pos));
          }
       }
    }
@@ -1165,12 +1165,12 @@ public class EndLooterModule extends Module {
             + " | лут "
             + this.method3931()
             + " | кисть "
-            + (this.method3926(var0 -> var0.is(Items.BRUSH)) >= 0)
+            + (this.method3926(stack -> stack.is(Items.BRUSH)) >= 0)
       );
    }
 
-   private void notify(String var1) {
-      ChatLogger.method2019("End Looter: " + var1);
+   private void notify(String str) {
+      ChatLogger.method2019("End Looter: " + str);
    }
 
    private static enum Type {

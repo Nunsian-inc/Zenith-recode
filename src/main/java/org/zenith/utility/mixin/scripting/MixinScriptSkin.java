@@ -16,12 +16,12 @@ public abstract class MixinScriptSkin {
       at = {@At("RETURN")},
       cancellable = true
    )
-   private void zenith$scriptSkin(CallbackInfoReturnable<PlayerSkin> var1) {
+   private void zenith$scriptSkin(CallbackInfoReturnable<PlayerSkin> callbackInfoReturnable) {
       if (Util4.method1285()) {
          if ((Object)this == Minecraft.getInstance().player) {
-            PlayerSkin var2 = (PlayerSkin)var1.getReturnValue();
-            if (var2 != null) {
-               var1.setReturnValue(Util4.method1286(var2));
+            PlayerSkin returnValue = (PlayerSkin)callbackInfoReturnable.getReturnValue();
+            if (returnValue != null) {
+               callbackInfoReturnable.setReturnValue(Util4.method1286(returnValue));
             }
          }
       }

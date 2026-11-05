@@ -75,7 +75,7 @@ public final class CrimsonEmbersModule extends Module {
    }
 
    private CrimsonEmbersModule() {
-      this.emberShards.setHandler((var1, var3, var5) -> this.method7765(var1, var3, var5, SoundEvents.TRIDENT_HIT, 0.5F, 1.35F));
+      this.emberShards.setHandler((emberShard, y, z) -> this.method7765(emberShard, y, z, SoundEvents.TRIDENT_HIT, 0.5F, 1.35F));
    }
 
    @Override
@@ -98,74 +98,74 @@ public final class CrimsonEmbersModule extends Module {
    }
 
    @EventTarget
-   public void method7761(AttackEvent var1) {
-      if (var1.getType4() == AttackEvent.Type.POST && this.shards.isEnabled()) {
-         Entity var2 = var1.getEntity();
-         if (var2 instanceof LivingEntity var3 && var2 != mc.player) {
+   public void method7761(AttackEvent event) {
+      if (event.getType4() == AttackEvent.Type.POST && this.shards.isEnabled()) {
+         Entity entity = event.getEntity();
+         if (entity instanceof LivingEntity livingEntity && entity != mc.player) {
             if (this.queue.size() < 8) {
-               this.queue.offer(var3);
+               this.queue.offer(livingEntity);
             }
          }
       }
    }
 
    @EventTarget
-   public void method7762(CameraPosEvent var1) {
+   public void method7762(CameraPosEvent event) {
       if (this.shake.isEnabled()) {
-         float var2 = this.emberShards.getFloatValue();
-         if (!(var2 <= 0.001F)) {
-            double var3 = (System.nanoTime() - this.longValue) / 1.0E9;
-            double var5 = 0.075 * var2 * var2;
-            var1.setVec3d(var1.getVec3d().add(Math.sin(var3 * 61.0) * var5, Math.sin(var3 * 53.0 + 1.3) * var5, Math.sin(var3 * 67.0 + 2.1) * var5));
+         float floatValue = this.emberShards.getFloatValue();
+         if (!(floatValue <= 0.001F)) {
+            double d = (System.nanoTime() - this.longValue) / 1.0E9;
+            double d2 = 0.075 * floatValue * floatValue;
+            event.setVec3d(event.getVec3d().add(Math.sin(d * 61.0) * d2, Math.sin(d * 53.0 + 1.3) * d2, Math.sin(d * 67.0 + 2.1) * d2));
          }
       }
    }
 
    @EventTarget
-   public void method7763(WorldRenderEvent var1) {
-      LocalPlayer var2 = mc.player;
-      if (var2 != null && mc.level != null) {
+   public void method7763(WorldRenderEvent event) {
+      LocalPlayer player = mc.player;
+      if (player != null && mc.level != null) {
          if (mc.level != this.clientWorld) {
             this.reset();
             this.clientWorld = mc.level;
          }
 
-         long var3 = System.nanoTime();
-         float var5 = this.longValue2 == 0L ? 0.0F : Math.min(0.1F, (float)(var3 - this.longValue2) / 1.0E9F);
-         this.longValue2 = var3;
-         float var6 = var1.getFloatValue();
-         Camera var7 = mc.getEntityRenderDispatcher().camera;
-         if (var7 != null) {
+         long nanoTime = System.nanoTime();
+         float f = this.longValue2 == 0L ? 0.0F : Math.min(0.1F, (float)(nanoTime - this.longValue2) / 1.0E9F);
+         this.longValue2 = nanoTime;
+         float floatValue = event.getFloatValue();
+         Camera camera = mc.getEntityRenderDispatcher().camera;
+         if (camera != null) {
             if (this.emberField == null) {
                this.emberField = new EmberField();
             }
 
-            boolean var8 = var2.isAlive() && !var2.isSpectator() && !var2.isInvisible();
-            if (var8) {
-               this.emberField.method7018(var2, var6, var5, (var3 - this.longValue) / 1.0E9, this.span.getValue3());
-               this.method7764(var2, var6);
-               this.emberField.method7019(this.emberShards, var5, this.density.getValue3());
+            boolean flag = player.isAlive() && !player.isSpectator() && !player.isInvisible();
+            if (flag) {
+               this.emberField.method7018(player, floatValue, f, (nanoTime - this.longValue) / 1.0E9, this.span.getValue3());
+               this.method7764(player, floatValue);
+               this.emberField.method7019(this.emberShards, f, this.density.getValue3());
             } else {
                this.queue.clear();
             }
 
-            this.emberShards.update(var5, var6);
-            this.glowboost.method3232(var7, Math.max(0.03F, this.glow.getValue3()));
+            this.emberShards.update(f, floatValue);
+            this.glowboost.method3232(camera, Math.max(0.03F, this.glow.getValue3()));
             this.emberShards.method7587(this.glowboost, this.color());
-            this.glowboost.method3253(var1.getMatrixStack());
+            this.glowboost.method3253(event.getMatrixStack());
          }
       } else {
          this.reset();
       }
    }
 
-   private void method7764(LocalPlayer var1, float var2) {
-      LivingEntity var3;
-      while ((var3 = this.queue.poll()) != null) {
-         if (!var3.isRemoved()
-            && !(var3.distanceToSqr(var1) > 576.0)
-            && this.emberField.method7020(this.emberShards, var3, Math.round(this.volley.getValue3()), var2)) {
-            this.method7765(var1.getX(), var1.getY() + 1.4, var1.getZ(), SoundEvents.TRIDENT_THROW.value(), 0.6F, 1.6F);
+   private void method7764(LocalPlayer player, float floatValue) {
+      LivingEntity referent;
+      while ((referent = this.queue.poll()) != null) {
+         if (!referent.isRemoved()
+            && !(referent.distanceToSqr(player) > 576.0)
+            && this.emberField.method7020(this.emberShards, referent, Math.round(this.volley.getValue3()), floatValue)) {
+            this.method7765(player.getX(), player.getY() + 1.4, player.getZ(), SoundEvents.TRIDENT_THROW.value(), 0.6F, 1.6F);
          }
       }
    }
@@ -178,9 +178,9 @@ public final class CrimsonEmbersModule extends Module {
       }
    }
 
-   private void method7765(double var1, double var3, double var5, SoundEvent var7, float var8, float var9) {
+   private void method7765(double emberShard, double y, double z, SoundEvent sound, float volume, float f) {
       if (this.sounds.isEnabled() && mc.level != null) {
-         mc.level.playLocalSound(var1, var3, var5, var7, SoundSource.PLAYERS, var8, var9 * (0.92F + this.random.nextFloat() * 0.16F), false);
+         mc.level.playLocalSound(emberShard, y, z, sound, SoundSource.PLAYERS, volume, f * (0.92F + this.random.nextFloat() * 0.16F), false);
       }
    }
 }

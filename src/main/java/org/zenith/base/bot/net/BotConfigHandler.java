@@ -51,11 +51,11 @@ public final class BotConfigHandler extends BotCommonHandler implements Tickable
    @Nullable
    private KnownPacksManager dataPackManager;
 
-   public BotConfigHandler(BotClient var1, BotConnection var2, BotConnectionState var3) {
-      super(var1, var2, var3);
-      this.profile = var3.profile();
-      this.receivedRegistries = var3.receivedRegistries();
-      this.enabledFeatures = var3.enabledFeatures();
+   public BotConfigHandler(BotClient client, BotConnection connection, BotConnectionState botConnectionState) {
+      super(client, connection, botConnectionState);
+      this.profile = botConnectionState.profile();
+      this.receivedRegistries = botConnectionState.receivedRegistries();
+      this.enabledFeatures = botConnectionState.enabledFeatures();
    }
 
    @Override
@@ -96,23 +96,23 @@ public final class BotConfigHandler extends BotCommonHandler implements Tickable
       if (this.connection.isOpen() && this.connection.getPacketListener() == this) {
          this.installMissingWolfVariantFallback();
 
-         Frozen var2;
+         Frozen openClientDataPack;
          try {
-            var2 = this.openClientDataPack(var1 -> this.clientRegistries.createRegistryManager(var1, this.receivedRegistries));
-         } catch (RuntimeException var5) {
-            LOGGER.error("Bot {} registry loading failed", this.client.name(), var5);
+            openClientDataPack = this.openClientDataPack(knownDataSource -> this.clientRegistries.createRegistryManager(knownDataSource, this.receivedRegistries));
+         } catch (RuntimeException e) {
+            LOGGER.error("Bot {} registry loading failed", this.client.name(), e);
             this.connection.disconnect(Component.literal("registry loading failed"));
             return;
          }
 
-         BotConnectionState var3 = new BotConnectionState(
-            this.profile, var2, this.enabledFeatures, this.brand, this.serverCookies, this.customReportDetails, this.serverLinks
+         BotConnectionState botConnectionState = new BotConnectionState(
+            this.profile, openClientDataPack, this.enabledFeatures, this.brand, this.serverCookies, this.customReportDetails, this.serverLinks
          );
-         BotPlayHandler var4 = new BotPlayHandler(this.client, this.connection, var3);
-         this.client.setPlayHandler(var4);
-         this.connection.transitionInbound(GameProtocols.CLIENTBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(var2)), var4);
+         BotPlayHandler botPlayHandler = new BotPlayHandler(this.client, this.connection, botConnectionState);
+         this.client.setPlayHandler(botPlayHandler);
+         this.connection.transitionInbound(GameProtocols.CLIENTBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(openClientDataPack)), botPlayHandler);
          this.connection.send(ServerboundFinishConfigurationPacket.INSTANCE);
-         this.connection.transitionOutbound(GameProtocols.SERVERBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(var2), new Context() {
+         this.connection.transitionOutbound(GameProtocols.SERVERBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(openClientDataPack), new Context() {
             @Override
             public boolean hasInfiniteMaterials() {
                return false;
@@ -126,22 +126,22 @@ public final class BotConfigHandler extends BotCommonHandler implements Tickable
       }
    }
 
-   private <T> T openClientDataPack(Function<ResourceProvider, T> var1) {
+   private <T> T openClientDataPack(Function<ResourceProvider, T> function) {
       if (this.dataPackManager == null) {
-         return (T)var1.apply(ResourceProvider.EMPTY);
+         return (T)function.apply(ResourceProvider.EMPTY);
       } else {
-         Object var3;
-         try (CloseableResourceManager var2 = this.dataPackManager.createResourceManager()) {
-            var3 = var1.apply(var2);
+         Object obj;
+         try (CloseableResourceManager resourceManager = this.dataPackManager.createResourceManager()) {
+            obj = function.apply(resourceManager);
          }
 
-         return (T)var3;
+         return (T)obj;
       }
    }
 
    private void installMissingWolfVariantFallback() {
       if (this.receivedRegistryEntries.getOrDefault(Registries.WOLF_VARIANT, 0) <= 0) {
-         var var1 = List.of(
+         var resourceKeys = List.of(
             WolfVariants.PALE,
             WolfVariants.SPOTTED,
             WolfVariants.SNOWY,
@@ -152,14 +152,14 @@ public final class BotConfigHandler extends BotCommonHandler implements Tickable
             WolfVariants.CHESTNUT,
             WolfVariants.STRIPED
          );
-         var var2 = var1.stream().map(var0 -> new PackedRegistryEntry(var0.identifier(), Optional.empty())).toList();
-         this.clientRegistries.putDynamicRegistry(Registries.WOLF_VARIANT, var2);
+         var entries = resourceKeys.stream().map(resourceKey -> new PackedRegistryEntry(resourceKey.identifier(), Optional.empty())).toList();
+         this.clientRegistries.putDynamicRegistry(Registries.WOLF_VARIANT, entries);
          if (this.dataPackManager == null) {
             this.dataPackManager = new KnownPacksManager();
             this.dataPackManager.trySelectingPacks(List.of(BuiltInPackSource.CORE_PACK_INFO));
          }
 
-         LOGGER.debug("Bot {} installed wolf_variant registry fallback ({} entries)", this.client.name(), var2.size());
+         LOGGER.debug("Bot {} installed wolf_variant registry fallback ({} entries)", this.client.name(), entries.size());
       }
    }
 

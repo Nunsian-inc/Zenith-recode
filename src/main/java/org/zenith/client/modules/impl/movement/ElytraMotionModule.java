@@ -49,11 +49,11 @@ public final class ElytraMotionModule extends Module {
    }
 
    @EventTarget
-   public void method6853(KeyEvent var1) {
+   public void method6853(KeyEvent event) {
    }
 
    @EventTarget
-   public void method6854(UpdateEvent var1) {
+   public void method6854(UpdateEvent event) {
       if (!mc.player.isFallFlying()) {
          this.flag = false;
       } else {
@@ -71,25 +71,25 @@ public final class ElytraMotionModule extends Module {
    }
 
    public boolean method6855() {
-      AABB var1 = ElytraTargetModule.INSTANCE.getBox();
-      if (var1 == null) {
+      AABB box = ElytraTargetModule.INSTANCE.getBox();
+      if (box == null) {
          return false;
       } else {
          return this.mode.isSelected(0)
-            ? mc.player.distanceToSqr(var1.getCenter()) <= this.distance.getValue3() * this.distance.getValue3()
+            ? mc.player.distanceToSqr(box.getCenter()) <= this.distance.getValue3() * this.distance.getValue3()
             : mc.player.getBoundingBox().intersects(ElytraTargetModule.INSTANCE.getBox());
       }
    }
 
    @EventTarget
-   public void method6856(PlayerMoveEvent var1) {
+   public void method6856(PlayerMoveEvent event) {
       if (this.flag) {
-         var1.setVec3d(Vec3.ZERO);
+         event.setVec3d(Vec3.ZERO);
       }
    }
 
    @EventTarget
-   public void method6857(PacketEvent var1) {
+   public void method6857(PacketEvent event) {
    }
 
    @Generated

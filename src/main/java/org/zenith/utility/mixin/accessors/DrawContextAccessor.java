@@ -19,8 +19,8 @@ public interface DrawContextAccessor {
    int zenith$mouseY();
 
    @Invoker("itemBar")
-   void callDrawItemBar(ItemStack var1, int var2, int var3);
+   void callDrawItemBar(ItemStack itemStack, int intValue, int n);
 
    @Invoker("itemCooldown")
-   void callDrawCooldownProgress(ItemStack var1, int var2, int var3);
+   void callDrawCooldownProgress(ItemStack itemStack, int intValue, int n);
 }

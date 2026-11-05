@@ -6,8 +6,8 @@ import com.darkmagician6.eventapi.events.Typed;
 public abstract class TypedEvent implements Event, Typed {
    private final byte byteValue;
 
-   public TypedEvent(byte var1) {
-      this.byteValue = var1;
+   public TypedEvent(byte byteValue) {
+      this.byteValue = byteValue;
    }
 
    @Override

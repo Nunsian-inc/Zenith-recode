@@ -103,21 +103,21 @@ public final class LyricsFetcher {
    private LyricsFetcher() {
    }
 
-   public static LyricsFetcher.Data2 method528(String var0, String var1, double var2) {
-      if (var0 != null && !var0.isBlank()) {
-         String var4 = method530(var0, var1);
-         LyricsFetcher.Data2 var5 = items.get(var4);
-         if (var5 != null) {
-            return var5;
+   public static LyricsFetcher.Data2 method528(String title, String str, double d) {
+      if (title != null && !title.isBlank()) {
+         String str2 = method530(title, str);
+         LyricsFetcher.Data2 data2 = items.get(str2);
+         if (data2 != null) {
+            return data2;
          } else {
-            if (items2.add(var4)) {
-               Thread var6 = new Thread(() -> {
-                  LyricsFetcher.Data2 var5x = method533(var4, var0, var1, var2);
-                  items.put(var4, var5x);
-                  items2.remove(var4);
+            if (items2.add(str2)) {
+               Thread thread = new Thread(() -> {
+                  LyricsFetcher.Data2 var5x = method533(str2, title, str, d);
+                  items.put(str2, var5x);
+                  items2.remove(str2);
                }, "zenith-lyrics");
-               var6.setDaemon(true);
-               var6.start();
+               thread.setDaemon(true);
+               thread.start();
             }
 
             return LyricsFetcher.Data2.INSTANCE2;
@@ -127,250 +127,250 @@ public final class LyricsFetcher {
       }
    }
 
-   public static double method529(String var0, String var1) {
-      if (var0 != null && !var0.isBlank()) {
-         LyricsFetcher.Data2 var2 = items.get(method530(var0, var1));
-         return var2 == null ? 0.0 : var2.getDoubleValue();
+   public static double method529(String title, String str) {
+      if (title != null && !title.isBlank()) {
+         LyricsFetcher.Data2 data2 = items.get(method530(title, str));
+         return data2 == null ? 0.0 : data2.getDoubleValue();
       } else {
          return 0.0;
       }
    }
 
-   private static String method530(String var0, String var1) {
-      LyricsFetcher.Data var2 = data;
-      if (var2 != null && var2.title() == var0 && var2.getText2() == var1) {
-         return var2.key();
+   private static String method530(String title, String str) {
+      LyricsFetcher.Data data2 = data;
+      if (data2 != null && data2.title() == title && data2.getText2() == str) {
+         return data2.key();
       } else {
-         String var3 = (method531(var1) + " - " + method532(var0)).toLowerCase(Locale.ROOT);
-         data = new LyricsFetcher.Data(var0, var1, var3);
-         return var3;
+         String lowerCase = (method531(str) + " - " + method532(title)).toLowerCase(Locale.ROOT);
+         data = new LyricsFetcher.Data(title, str, lowerCase);
+         return lowerCase;
       }
    }
 
-   public static String method531(String var0) {
-      String var1 = var0 == null ? "" : var0;
+   public static String method531(String str) {
+      String str2 = str == null ? "" : str;
 
-      for (String var5 : new String[]{" — ", " – ", " - "}) {
-         int var6 = var1.indexOf(var5);
-         if (var6 > 0) {
-            var1 = var1.substring(0, var6);
+      for (String str3 : new String[]{" — ", " – ", " - "}) {
+         int indexOf = str2.indexOf(str3);
+         if (indexOf > 0) {
+            str2 = str2.substring(0, indexOf);
             break;
          }
       }
 
-      return var1.trim();
+      return str2.trim();
    }
 
-   public static String method532(String var0) {
-      return pattern2.matcher(var0).replaceAll("").trim();
+   public static String method532(String title) {
+      return pattern2.matcher(title).replaceAll("").trim();
    }
 
-   private static LyricsFetcher.Data2 method533(String var0, String var1, String var2, double var3) {
-      Path var5 = null;
+   private static LyricsFetcher.Data2 method533(String str, String title, String str2, double d) {
+      Path path = null;
 
       try {
-         Path var6 = Zenith.file.toPath().resolve("media").resolve("lyrics");
-         Files.createDirectories(var6);
-         var5 = var6.resolve(Integer.toHexString(var0.hashCode()) + ".json");
-         if (Files.isRegularFile(var5)) {
-            LyricsFetcher.Data2 var7 = method539(JsonParser.parseString(Files.readString(var5, StandardCharsets.UTF_8)).getAsJsonObject());
-            if (var7 != null) {
-               return var7;
+         Path dir = Zenith.file.toPath().resolve("media").resolve("lyrics");
+         Files.createDirectories(dir);
+         path = dir.resolve(Integer.toHexString(str.hashCode()) + ".json");
+         if (Files.isRegularFile(path)) {
+            LyricsFetcher.Data2 data2 = method539(JsonParser.parseString(Files.readString(path, StandardCharsets.UTF_8)).getAsJsonObject());
+            if (data2 != null) {
+               return data2;
             }
          }
-      } catch (Throwable var16) {
+      } catch (Throwable e) {
       }
 
-      String var18 = method532(var1);
-      String var19 = method531(var2);
-      JsonObject var8 = null;
+      String anotherString = method532(title);
+      String anotherString2 = method531(str2);
+      JsonObject jsonObject = null;
 
       try {
-         JsonElement var9 = method540(
-            "https://lrclib.net/api/get?track_name=" + encode(var18) + "&artist_name=" + encode(var19) + (var3 > 0.0 ? "&duration=" + Math.round(var3) : "")
+         JsonElement jsonElement = method540(
+            "https://lrclib.net/api/get?track_name=" + encode(anotherString) + "&artist_name=" + encode(anotherString2) + (d > 0.0 ? "&duration=" + Math.round(d) : "")
          );
-         if (var9 != null && var9.isJsonObject() && var9.getAsJsonObject().has("id")) {
-            var8 = var9.getAsJsonObject();
+         if (jsonElement != null && jsonElement.isJsonObject() && jsonElement.getAsJsonObject().has("id")) {
+            jsonObject = jsonElement.getAsJsonObject();
          }
 
-         if (var8 == null || !method538(var8, "syncedLyrics")) {
-            ArrayList<String> var10 = new ArrayList();
-            var10.add("track_name=" + encode(var18) + "&artist_name=" + encode(var19));
-            var10.add("q=" + encode(var19 + " " + var18));
-            String var11 = method537(var19);
-            if (!var11.equalsIgnoreCase(var19)) {
-               var10.add("q=" + encode(var11 + " " + var18));
-               var10.add("q=" + encode(var11 + " " + method537(var18)));
-               var10.add("q=" + encode(var11));
+         if (jsonObject == null || !method538(jsonObject, "syncedLyrics")) {
+            ArrayList<String> strings = new ArrayList();
+            strings.add("track_name=" + encode(anotherString) + "&artist_name=" + encode(anotherString2));
+            strings.add("q=" + encode(anotherString2 + " " + anotherString));
+            String anotherString3 = method537(anotherString2);
+            if (!anotherString3.equalsIgnoreCase(anotherString2)) {
+               strings.add("q=" + encode(anotherString3 + " " + anotherString));
+               strings.add("q=" + encode(anotherString3 + " " + method537(anotherString)));
+               strings.add("q=" + encode(anotherString3));
             }
 
-            var10.add("track_name=" + encode(var18));
+            strings.add("track_name=" + encode(anotherString));
 
-            for (String var13 : var10) {
-               JsonObject var14 = method534(method540("https://lrclib.net/api/search?" + var13), var18, var19, var3);
-               if (var14 != null && (var8 == null || method538(var14, "syncedLyrics"))) {
-                  var8 = var14;
-                  if (method538(var14, "syncedLyrics")) {
+            for (String str3 : strings) {
+               JsonObject json = method534(method540("https://lrclib.net/api/search?" + str3), anotherString, anotherString2, d);
+               if (json != null && (jsonObject == null || method538(json, "syncedLyrics"))) {
+                  jsonObject = json;
+                  if (method538(json, "syncedLyrics")) {
                      break;
                   }
                }
             }
          }
-      } catch (Throwable var17) {
+      } catch (Throwable e) {
       }
 
-      if (var8 == null) {
+      if (jsonObject == null) {
          return LyricsFetcher.Data2.INSTANCE;
       } else {
          try {
-            if (var5 != null) {
-               Files.writeString(var5, var8.toString(), StandardCharsets.UTF_8);
+            if (path != null) {
+               Files.writeString(path, jsonObject.toString(), StandardCharsets.UTF_8);
             }
-         } catch (Throwable var15) {
+         } catch (Throwable e) {
          }
 
-         LyricsFetcher.Data2 var20 = method539(var8);
-         return var20 == null ? LyricsFetcher.Data2.INSTANCE : var20;
+         LyricsFetcher.Data2 data2 = method539(jsonObject);
+         return data2 == null ? LyricsFetcher.Data2.INSTANCE : data2;
       }
    }
 
-   private static JsonObject method534(JsonElement var0, String var1, String var2, double var3) {
-      if (var0 != null && var0.isJsonArray()) {
-         String var5 = method536(var1);
-         String var6 = method536(method537(var2));
-         JsonObject var7 = null;
-         double var8 = Double.MAX_VALUE;
+   private static JsonObject method534(JsonElement jsonElement, String anotherString, String str, double d) {
+      if (jsonElement != null && jsonElement.isJsonArray()) {
+         String anObject = method536(anotherString);
+         String str2 = method536(method537(str));
+         JsonObject jsonObject = null;
+         double d2 = Double.MAX_VALUE;
 
-         for (JsonElement var11 : var0.getAsJsonArray()) {
-            if (var11.isJsonObject()) {
-               JsonObject var12 = var11.getAsJsonObject();
-               String var13 = method536(method535(var12, "trackName"));
-               String var14 = method536(method537(method535(var12, "artistName")));
-               boolean var15 = !var5.isEmpty() && (var13.equals(var5) || var13.contains(var5) || var5.contains(var13) && var13.length() > 3);
-               if (var15) {
-                  double var16 = var12.has("duration") && !var12.get("duration").isJsonNull() ? var12.get("duration").getAsDouble() : 0.0;
-                  boolean var18 = !var6.isEmpty() && (var14.contains(var6) || var6.contains(var14) || var13.contains(var6));
-                  boolean var19 = var3 > 0.0 && var16 > 0.0 && Math.abs(var16 - var3) <= 3.0;
-                  if (var18 || var19) {
-                     double var20 = (var3 > 0.0 && var16 > 0.0 ? Math.abs(var16 - var3) : 20.0)
-                        - (method538(var12, "syncedLyrics") ? 1000 : 0)
-                        - (var18 ? 50 : 0);
-                     if (var20 < var8) {
-                        var8 = var20;
-                        var7 = var12;
+         for (JsonElement json : jsonElement.getAsJsonArray()) {
+            if (json.isJsonObject()) {
+               JsonObject jsonObject2 = json.getAsJsonObject();
+               String str3 = method536(method535(jsonObject2, "trackName"));
+               String str4 = method536(method537(method535(jsonObject2, "artistName")));
+               boolean flag = !anObject.isEmpty() && (str3.equals(anObject) || str3.contains(anObject) || anObject.contains(str3) && str3.length() > 3);
+               if (flag) {
+                  double d3 = jsonObject2.has("duration") && !jsonObject2.get("duration").isJsonNull() ? jsonObject2.get("duration").getAsDouble() : 0.0;
+                  boolean flag2 = !str2.isEmpty() && (str4.contains(str2) || str2.contains(str4) || str3.contains(str2));
+                  boolean flag3 = d > 0.0 && d3 > 0.0 && Math.abs(d3 - d) <= 3.0;
+                  if (flag2 || flag3) {
+                     double d4 = (d > 0.0 && d3 > 0.0 ? Math.abs(d3 - d) : 20.0)
+                        - (method538(jsonObject2, "syncedLyrics") ? 1000 : 0)
+                        - (flag2 ? 50 : 0);
+                     if (d4 < d2) {
+                        d2 = d4;
+                        jsonObject = jsonObject2;
                      }
                   }
                }
             }
          }
 
-         return var7;
+         return jsonObject;
       } else {
          return null;
       }
    }
 
-   private static String method535(JsonObject var0, String var1) {
-      return var0.has(var1) && !var0.get(var1).isJsonNull() ? var0.get(var1).getAsString() : "";
+   private static String method535(JsonObject json, String memberName) {
+      return json.has(memberName) && !json.get(memberName).isJsonNull() ? json.get(memberName).getAsString() : "";
    }
 
-   private static String method536(String var0) {
-      StringBuilder var1 = new StringBuilder();
+   private static String method536(String anotherString) {
+      StringBuilder builder = new StringBuilder();
 
-      for (char var5 : method537(var0.toLowerCase(Locale.ROOT)).toCharArray()) {
-         if (Character.isLetterOrDigit(var5)) {
-            var1.append(var5);
+      for (char ch : method537(anotherString.toLowerCase(Locale.ROOT)).toCharArray()) {
+         if (Character.isLetterOrDigit(ch)) {
+            builder.append(ch);
          }
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
-   public static String method537(String var0) {
-      StringBuilder var1 = new StringBuilder();
+   public static String method537(String anotherString) {
+      StringBuilder builder = new StringBuilder();
 
-      for (char var5 : var0.toCharArray()) {
-         char var6 = Character.toLowerCase(var5);
-         String var7 = null;
+      for (char ch : anotherString.toCharArray()) {
+         char lowerCase = Character.toLowerCase(ch);
+         String text = null;
 
-         for (byte var8 = 0; var8 < texts.length; var8 += 2) {
-            if (texts[var8].charAt(0) == var6) {
-               var7 = texts[var8 + 1];
+         for (byte i = 0; i < texts.length; i += 2) {
+            if (texts[i].charAt(0) == lowerCase) {
+               text = texts[i + 1];
                break;
             }
          }
 
-         if (var7 == null) {
-            var1.append(var5);
-         } else if (Character.isUpperCase(var5) && !var7.isEmpty()) {
-            var1.append(Character.toUpperCase(var7.charAt(0))).append(var7.substring(1));
+         if (text == null) {
+            builder.append(ch);
+         } else if (Character.isUpperCase(ch) && !text.isEmpty()) {
+            builder.append(Character.toUpperCase(text.charAt(0))).append(text.substring(1));
          } else {
-            var1.append(var7);
+            builder.append(text);
          }
       }
 
-      return var1.toString();
+      return builder.toString();
    }
 
-   private static boolean method538(JsonObject var0, String var1) {
-      return var0.has(var1) && !var0.get(var1).isJsonNull() && !var0.get(var1).getAsString().isBlank();
+   private static boolean method538(JsonObject jsonObject, String memberName) {
+      return jsonObject.has(memberName) && !jsonObject.get(memberName).isJsonNull() && !jsonObject.get(memberName).getAsString().isBlank();
    }
 
-   private static LyricsFetcher.Data2 method539(JsonObject var0) {
-      boolean var1 = var0.has("instrumental") && !var0.get("instrumental").isJsonNull() && var0.get("instrumental").getAsBoolean();
-      double var2 = var0.has("duration") && !var0.get("duration").isJsonNull() ? var0.get("duration").getAsDouble() : 0.0;
-      if (method538(var0, "syncedLyrics")) {
-         ArrayList<LyricsFetcher.Data3> var19 = new ArrayList<>();
+   private static LyricsFetcher.Data2 method539(JsonObject jsonObject) {
+      boolean flag = jsonObject.has("instrumental") && !jsonObject.get("instrumental").isJsonNull() && jsonObject.get("instrumental").getAsBoolean();
+      double doubleValue = jsonObject.has("duration") && !jsonObject.get("duration").isJsonNull() ? jsonObject.get("duration").getAsDouble() : 0.0;
+      if (method538(jsonObject, "syncedLyrics")) {
+         ArrayList<LyricsFetcher.Data3> list = new ArrayList<>();
 
-         for (String var23 : var0.get("syncedLyrics").getAsString().split("\n")) {
-            Matcher var9 = pattern.matcher(var23);
-            ArrayList<Double> var10 = new ArrayList();
+         for (String input : jsonObject.get("syncedLyrics").getAsString().split("\n")) {
+            Matcher matcher = pattern.matcher(input);
+            ArrayList<Double> doubles = new ArrayList();
 
-            int var11;
-            for (var11 = 0; var9.find(); var11 = var9.end()) {
-               double var12 = Double.parseDouble(var9.group(1));
-               double var14 = Double.parseDouble(var9.group(2));
-               String var16 = var9.group(3);
-               double var17 = var16 == null ? 0.0 : Double.parseDouble(var16) / Math.pow(10.0, var16.length());
-               var10.add(var12 * 60.0 + var14 + var17);
+            int end;
+            for (end = 0; matcher.find(); end = matcher.end()) {
+               double d = Double.parseDouble(matcher.group(1));
+               double d2 = Double.parseDouble(matcher.group(2));
+               String group = matcher.group(3);
+               double d3 = group == null ? 0.0 : Double.parseDouble(group) / Math.pow(10.0, group.length());
+               doubles.add(d * 60.0 + d2 + d3);
             }
 
-            if (!var10.isEmpty()) {
-               String var24 = var23.substring(var11).trim();
+            if (!doubles.isEmpty()) {
+               String text = input.substring(end).trim();
 
-               for (double var25 : var10) {
-                  var19.add(new LyricsFetcher.Data3(var25, var24));
+               for (double d : doubles) {
+                  list.add(new LyricsFetcher.Data3(d, text));
                }
             }
          }
 
-         var19.sort((var0x, var1x) -> Double.compare(var0x.time(), var1x.time()));
-         return new LyricsFetcher.Data2(Collections.unmodifiableList(var19), true, var1, var2);
-      } else if (!method538(var0, "plainLyrics")) {
-         return var1 ? new LyricsFetcher.Data2(List.of(), false, true, var2) : null;
+         list.sort((var0x, var1x) -> Double.compare(var0x.time(), var1x.time()));
+         return new LyricsFetcher.Data2(Collections.unmodifiableList(list), true, flag, doubleValue);
+      } else if (!method538(jsonObject, "plainLyrics")) {
+         return flag ? new LyricsFetcher.Data2(List.of(), false, true, doubleValue) : null;
       } else {
-         ArrayList var4 = new ArrayList();
+         ArrayList list = new ArrayList();
 
-         for (String var8 : var0.get("plainLyrics").getAsString().split("\n")) {
-            var4.add(new LyricsFetcher.Data3(-1.0, var8.trim()));
+         for (String str : jsonObject.get("plainLyrics").getAsString().split("\n")) {
+            list.add(new LyricsFetcher.Data3(-1.0, str.trim()));
          }
 
-         return new LyricsFetcher.Data2(Collections.unmodifiableList(var4), false, var1, var2);
+         return new LyricsFetcher.Data2(Collections.unmodifiableList(list), false, flag, doubleValue);
       }
    }
 
-   private static JsonElement method540(String var0) throws Exception {
-      HttpRequest var1 = HttpRequest.newBuilder(URI.create(var0))
+   private static JsonElement method540(String str) throws Exception {
+      HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(str))
          .timeout(Duration.ofSeconds(8L))
          .header("User-Agent", "ZenithClient/3.5 (https://zenithdlc.com)")
          .GET()
          .build();
-      HttpResponse var2 = httpClient.send(var1, BodyHandlers.ofString(StandardCharsets.UTF_8));
-      return var2.statusCode() != 200 ? null : JsonParser.parseString((String)var2.body());
+      HttpResponse send = httpClient.send(httpRequest, BodyHandlers.ofString(StandardCharsets.UTF_8));
+      return send.statusCode() != 200 ? null : JsonParser.parseString((String)send.body());
    }
 
-   private static String encode(String var0) {
-      return URLEncoder.encode(var0, StandardCharsets.UTF_8);
+   private static String encode(String anotherString) {
+      return URLEncoder.encode(anotherString, StandardCharsets.UTF_8);
    }
 
    private static final class Data {
@@ -407,10 +407,10 @@ public final class LyricsFetcher {
          return "Data[" + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + "]";
       }
 
-      private Data(String var1, String var2, String var3) {
-         this.text = var1;
-         this.text2 = var2;
-         this.text3 = var3;
+      private Data(String text, String str, String lowerCase) {
+         this.text = text;
+         this.text2 = str;
+         this.text3 = lowerCase;
       }
 
       public String title() {
@@ -467,23 +467,23 @@ public final class LyricsFetcher {
       public static final LyricsFetcher.Data2 INSTANCE = new LyricsFetcher.Data2(List.of(), false, false, 0.0);
       public static final LyricsFetcher.Data2 INSTANCE2 = new LyricsFetcher.Data2(List.of(), false, false, 0.0);
 
-      public Data2(List<LyricsFetcher.Data3> var1, boolean var2, boolean var3, double var4) {
-         this.items = var1;
-         this.flag = var2;
-         this.flag2 = var3;
-         this.doubleValue = var4;
+      public Data2(List<LyricsFetcher.Data3> items, boolean flag, boolean flag2, double doubleValue) {
+         this.items = items;
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.doubleValue = doubleValue;
       }
 
-      public int method541(double var1) {
+      public int method541(double d) {
          if (this.flag && !this.items.isEmpty()) {
-            int var3 = -1;
-            int var4 = 0;
+            int n = -1;
+            int n2 = 0;
 
-            while (var4 < this.items.size() && this.items.get(var4).time() <= var1 + 0.15) {
-               var3 = var4++;
+            while (n2 < this.items.size() && this.items.get(n2).time() <= d + 0.15) {
+               n = n2++;
             }
 
-            return var3;
+            return n;
          } else {
             return -1;
          }
@@ -535,9 +535,9 @@ public final class LyricsFetcher {
          return "Data3[" + "doubleValue=" + this.doubleValue + ", " + "text=" + this.text + "]";
       }
 
-      public Data3(double var1, String var3) {
-         this.doubleValue = var1;
-         this.text = var3;
+      public Data3(double doubleValue, String text) {
+         this.doubleValue = doubleValue;
+         this.text = text;
       }
 
       public double time() {

@@ -38,13 +38,13 @@ public final class VoiceState {
    private VoicePlaybackThread voicePlaybackThread;
    private volatile boolean flag7;
 
-   public VoiceState(VoiceState.Handler var1) {
-      this.handler = var1;
+   public VoiceState(VoiceState.Handler handler) {
+      this.handler = handler;
    }
 
-   public synchronized void method5359(VoiceState.Data var1) {
+   public synchronized void method5359(VoiceState.Data data) {
       if (this.voiceCaptureThread == null) {
-         this.data = var1;
+         this.data = data;
          this.text = "";
          this.text2 = "";
          this.voiceCaptureThread = new VoiceCaptureThread(this);
@@ -73,40 +73,40 @@ public final class VoiceState {
       return this.voiceCaptureThread != null;
    }
 
-   public void setData(VoiceState.Data var1) {
-      this.data = var1;
+   public void setData(VoiceState.Data data) {
+      this.data = data;
    }
 
    public VoiceState.Data getData() {
       return this.data;
    }
 
-   public void method5361(boolean var1, int var2) {
-      if ((this.flag2 || this.intValue != 0) && !var1 && var2 == 0) {
+   public void method5361(boolean flag, int n) {
+      if ((this.flag2 || this.intValue != 0) && !flag && n == 0) {
          this.longValue = System.currentTimeMillis();
       }
 
-      this.flag2 = var1;
-      this.intValue = var2 & 29;
+      this.flag2 = flag;
+      this.intValue = n & 29;
    }
 
    public int getIntValue() {
       return this.intValue;
    }
 
-   public void setFlag3(boolean var1) {
-      this.flag3 = var1;
+   public void setFlag3(boolean flag) {
+      this.flag3 = flag;
    }
 
    public boolean isFlag3() {
       return this.flag3;
    }
 
-   public void method5362(boolean var1) {
-      this.flag4 = var1;
-      if (var1) {
-         for (VoiceSpeakerStream var3 : this.concurrentHashMap.values()) {
-            var3.voiceFrameBuffer.reset();
+   public void method5362(boolean flag) {
+      this.flag4 = flag;
+      if (flag) {
+         for (VoiceSpeakerStream voiceSpeakerStream : this.concurrentHashMap.values()) {
+            voiceSpeakerStream.voiceFrameBuffer.reset();
          }
       }
    }
@@ -115,24 +115,24 @@ public final class VoiceState {
       return this.flag4;
    }
 
-   public void setFlag(boolean var1) {
-      this.flag = var1;
+   public void setFlag(boolean flag) {
+      this.flag = flag;
    }
 
-   public void setItems(Map<Long, Float> var1) {
-      this.items = var1;
+   public void setItems(Map<Long, Float> items) {
+      this.items = items;
    }
 
-   public void setItems2(Map<Long, VoiceState.Data2> var1) {
-      this.items2 = var1;
+   public void setItems2(Map<Long, VoiceState.Data2> map) {
+      this.items2 = map;
    }
 
-   public void method5363(boolean var1) {
-      this.flag5 = var1;
-      if (!var1) {
-         VoiceSpeakerStream var2 = this.concurrentHashMap.get(-1L);
-         if (var2 != null) {
-            var2.voiceFrameBuffer.reset();
+   public void method5363(boolean flag) {
+      this.flag5 = flag;
+      if (!flag) {
+         VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(-1L);
+         if (voiceSpeakerStream != null) {
+            voiceSpeakerStream.voiceFrameBuffer.reset();
          }
       }
    }
@@ -141,8 +141,8 @@ public final class VoiceState {
       return this.flag5;
    }
 
-   public void setFloatValue(float var1) {
-      this.floatValue = var1;
+   public void setFloatValue(float floatValue) {
+      this.floatValue = floatValue;
    }
 
    public boolean isFlag6() {
@@ -170,100 +170,100 @@ public final class VoiceState {
    }
 
    public Set<Long> method5364() {
-      long var1 = System.currentTimeMillis();
-      HashSet<Long> var3 = new HashSet<>();
-      this.concurrentHashMap.forEach((var3x, var4) -> {
-         if (var4.voiceFrameBuffer.active() || var1 - var4.longValue2 < 1000L) {
-            var3.add(var3x);
+      long now = System.currentTimeMillis();
+      HashSet<Long> longs = new HashSet<>();
+      this.concurrentHashMap.forEach((var3x, voiceSpeakerStream) -> {
+         if (voiceSpeakerStream.voiceFrameBuffer.active() || now - voiceSpeakerStream.longValue2 < 1000L) {
+            longs.add(var3x);
          }
       });
-      return var3;
+      return longs;
    }
 
-   public boolean method5365(long var1) {
-      VoiceSpeakerStream var3 = this.concurrentHashMap.get(var1);
-      return var3 != null && var3.method1551(System.currentTimeMillis());
+   public boolean method5365(long uid) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(uid);
+      return voiceSpeakerStream != null && voiceSpeakerStream.method1551(System.currentTimeMillis());
    }
 
-   public float method5366(long var1) {
-      VoiceSpeakerStream var3 = this.concurrentHashMap.get(var1);
-      return var3 != null && var3.method1551(System.currentTimeMillis()) ? var3.floatValue2 : -100.0F;
+   public float method5366(long uid) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(uid);
+      return voiceSpeakerStream != null && voiceSpeakerStream.method1551(System.currentTimeMillis()) ? voiceSpeakerStream.floatValue2 : -100.0F;
    }
 
-   public boolean method5367(long var1) {
-      VoiceSpeakerStream var3 = this.concurrentHashMap.get(var1);
-      return var3 != null && (var3.intValue & 1) != 0;
+   public boolean method5367(long uid) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(uid);
+      return voiceSpeakerStream != null && (voiceSpeakerStream.intValue & 1) != 0;
    }
 
-   public int method5368(long var1) {
-      VoiceSpeakerStream var3 = this.concurrentHashMap.get(var1);
-      return var3 == null ? 0 : var3.intValue;
+   public int method5368(long key) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(key);
+      return voiceSpeakerStream == null ? 0 : voiceSpeakerStream.intValue;
    }
 
-   public boolean method5369(long var1) {
-      VoiceSpeakerStream var3 = this.concurrentHashMap.get(var1);
-      return var3 != null && (var3.intValue & 29) != 0;
+   public boolean method5369(long uid) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(uid);
+      return voiceSpeakerStream != null && (voiceSpeakerStream.intValue & 29) != 0;
    }
 
-   public int method5370(long var1) {
-      VoiceSpeakerStream var3 = this.concurrentHashMap.get(var1);
-      return var3 == null ? this.data.getIntValue2() : var3.intValue2;
+   public int method5370(long key) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(key);
+      return voiceSpeakerStream == null ? this.data.getIntValue2() : voiceSpeakerStream.intValue2;
    }
 
-   public void method5371(CloudPackets.Data16 var1) {
+   public void method5371(CloudPackets.Data16 data16) {
       if (this.flag7 && !this.flag4) {
-         if (this.items.containsKey(var1.uid())) {
-            if (!var1.method1823() || this.flag) {
+         if (this.items.containsKey(data16.uid())) {
+            if (!data16.method1823() || this.flag) {
                this.method5372(
-                  var1.uid(),
-                  var1.getIntValue3(),
-                  var1.getByteValues(),
-                  var1.method1824(),
-                  var1.getIntValue() & 29,
-                  Math.max(8, Math.min(128, var1.getIntValue2()))
+                  data16.uid(),
+                  data16.getIntValue3(),
+                  data16.getByteValues(),
+                  data16.method1824(),
+                  data16.getIntValue() & 29,
+                  Math.max(8, Math.min(128, data16.getIntValue2()))
                );
             }
          }
       }
    }
 
-   private void method5372(long var1, int var3, byte[] var4, boolean var5, int var6, int var7) {
-      VoiceSpeakerStream var8 = this.concurrentHashMap.get(var1);
-      if (var8 == null) {
-         if (var5 || this.concurrentHashMap.size() >= 16) {
+   private void method5372(long uid, int intValue, byte[] byteValues, boolean flag, int n, int n2) {
+      VoiceSpeakerStream voiceSpeakerStream = this.concurrentHashMap.get(uid);
+      if (voiceSpeakerStream == null) {
+         if (flag || this.concurrentHashMap.size() >= 16) {
             return;
          }
 
-         var8 = this.concurrentHashMap.computeIfAbsent(var1, VoiceSpeakerStream::new);
+         voiceSpeakerStream = this.concurrentHashMap.computeIfAbsent(uid, VoiceSpeakerStream::new);
       }
 
-      var8.method1549(var3, var4, var5, var6, var7, System.currentTimeMillis());
+      voiceSpeakerStream.method1549(intValue, byteValues, flag, n, n2, System.currentTimeMillis());
    }
 
    public Collection<VoiceSpeakerStream> method5373() {
       return this.concurrentHashMap.values();
    }
 
-   public void method5374(long var1, long var3) {
-      this.concurrentHashMap.values().removeIf(var4 -> var4.intValue3 == 0 && !var4.voiceFrameBuffer.active() && var1 - var4.longValue2 > var3);
+   public void method5374(long now, long l) {
+      this.concurrentHashMap.values().removeIf(voiceSpeakerStream -> voiceSpeakerStream.intValue3 == 0 && !voiceSpeakerStream.voiceFrameBuffer.active() && now - voiceSpeakerStream.longValue2 > l);
    }
 
-   public void method5375(long var1) {
-      for (VoiceSpeakerStream var4 : this.concurrentHashMap.values()) {
-         if (var4.voiceFrameBuffer.active()) {
-            var4.voiceFrameBuffer.reset();
+   public void method5375(long now) {
+      for (VoiceSpeakerStream voiceSpeakerStream : this.concurrentHashMap.values()) {
+         if (voiceSpeakerStream.voiceFrameBuffer.active()) {
+            voiceSpeakerStream.voiceFrameBuffer.reset();
          }
       }
    }
 
-   public VoiceState.Data2 method5376(VoiceSpeakerStream var1) {
-      if (var1.longValue == -1L) {
+   public VoiceState.Data2 method5376(VoiceSpeakerStream voiceSpeakerStream) {
+      if (voiceSpeakerStream.longValue == -1L) {
          return new VoiceState.Data2(0.0F, 0.0F, 0.0F, this.floatValue);
       } else if (this.flag4) {
          return VoiceState.Data2.INSTANCE;
       } else {
-         VoiceState.Data2 var2 = this.items2.get(var1.longValue);
-         return var2 == null ? VoiceState.Data2.INSTANCE : var2;
+         VoiceState.Data2 data2 = this.items2.get(voiceSpeakerStream.longValue);
+         return data2 == null ? VoiceState.Data2.INSTANCE : data2;
       }
    }
 
@@ -275,7 +275,7 @@ public final class VoiceState {
       return this.intValue != 0;
    }
 
-   public boolean method5378(long var1, long var3) {
+   public boolean method5378(long now, long l) {
       if (this.flag3) {
          return false;
       } else if (this.flag5) {
@@ -283,7 +283,7 @@ public final class VoiceState {
       } else if (!this.handler.method377()) {
          return false;
       } else {
-         return !this.data.isFlag() ? true : this.flag2 || this.intValue != 0 || var1 - this.longValue < var3;
+         return !this.data.isFlag() ? true : this.flag2 || this.intValue != 0 || now - this.longValue < l;
       }
    }
 
@@ -291,41 +291,41 @@ public final class VoiceState {
       return !this.flag3 && this.handler.method377();
    }
 
-   public void method5380(int var1, int var2, int var3, byte[] var4, int var5) {
+   public void method5380(int n, int n2, int n3, byte[] byteValues, int n4) {
       if (this.handler.method377()) {
-         this.handler.method378(var1, var2, var3, var4, var5);
+         this.handler.method378(n, n2, n3, byteValues, n4);
       }
    }
 
-   public void method5381(int var1, byte[] var2, int var3) {
+   public void method5381(int intValue, byte[] byteValues, int newLength) {
       if (this.flag5) {
-         byte[] var4 = Arrays.copyOf(var2, var3);
-         this.method5372(-1L, var1, var4, false, 1, 8);
+         byte[] bytes = Arrays.copyOf(byteValues, newLength);
+         this.method5372(-1L, intValue, bytes, false, 1, 8);
       }
    }
 
-   public void setFlag6(boolean var1) {
-      this.flag6 = var1;
+   public void setFlag6(boolean flag) {
+      this.flag6 = flag;
    }
 
-   public void setFloatValue2(float var1) {
-      this.floatValue2 = var1;
+   public void setFloatValue2(float f) {
+      this.floatValue2 = f;
    }
 
-   public void setText(String var1) {
-      this.text = var1;
+   public void setText(String text) {
+      this.text = text;
    }
 
-   public void setText2(String var1) {
-      this.text2 = var1;
+   public void setText2(String str) {
+      this.text2 = str;
    }
 
-   public void method5382(String var1) {
-      this.text3 = var1 == null ? "" : var1;
+   public void method5382(String alcGetString) {
+      this.text3 = alcGetString == null ? "" : alcGetString;
    }
 
-   public void method5383(String var1) {
-      this.text4 = var1 == null ? "" : var1;
+   public void method5383(String alcGetString) {
+      this.text4 = alcGetString == null ? "" : alcGetString;
    }
 
    public static final class Data {
@@ -403,18 +403,18 @@ public final class VoiceState {
       }
       public static final VoiceState.Data INSTANCE = new VoiceState.Data(true, -45.0F, 1.0F, 32000, 48, false, "", "", true, true, 0);
 
-      public Data(boolean var1, float var2, float var3, int var4, int var5, boolean var6, String var7, String var8, boolean var9, boolean var10, int var11) {
-         this.flag = var1;
-         this.floatValue = var2;
-         this.floatValue2 = var3;
-         this.intValue = var4;
-         this.intValue2 = var5;
-         this.flag2 = var6;
-         this.text = var7;
-         this.text2 = var8;
-         this.flag3 = var9;
-         this.flag4 = var10;
-         this.intValue3 = var11;
+      public Data(boolean flag, float floatValue, float f, int intValue, int n, boolean flag2, String text, String str, boolean enabled, boolean enabled2, int n2) {
+         this.flag = flag;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.flag2 = flag2;
+         this.text = text;
+         this.text2 = str;
+         this.flag3 = enabled;
+         this.flag4 = enabled2;
+         this.intValue3 = n2;
       }
 
       public boolean isFlag() {
@@ -507,16 +507,16 @@ public final class VoiceState {
       }
       public static final VoiceState.Data2 INSTANCE = new VoiceState.Data2(0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 
-      public Data2(float var1, float var2, float var3, float var4) {
-         this(var1, var2, var3, var4, 0.0F);
+      public Data2(float floatValue, float f, float f2, float floatValue2) {
+         this(floatValue, f, f2, floatValue2, 0.0F);
       }
 
-      public Data2(float var1, float var2, float var3, float var4, float var5) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
+      public Data2(float floatValue, float f, float f2, float f3, float f4) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
       }
 
       public float getFloatValue() {
@@ -543,6 +543,6 @@ public final class VoiceState {
    public interface Handler {
       boolean method377();
 
-      void method378(int var1, int var2, int var3, byte[] var4, int var5);
+      void method378(int n, int n2, int n3, byte[] byteValues, int n4);
    }
 }

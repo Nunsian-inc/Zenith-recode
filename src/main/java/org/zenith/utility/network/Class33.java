@@ -22,13 +22,13 @@ public final class Class33 implements MinecraftAccess {
       return this.predicate != null;
    }
 
-   public boolean method5302(Predicate<ItemStack> var1) {
-      return mc.player != null && this.method5306(var1) != null;
+   public boolean method5302(Predicate<ItemStack> predicate) {
+      return mc.player != null && this.method5306(predicate) != null;
    }
 
-   public void method5303(Predicate<ItemStack> var1) {
+   public void method5303(Predicate<ItemStack> predicate) {
       if (this.predicate == null && mc.player != null) {
-         this.predicate = var1;
+         this.predicate = predicate;
          this.intValue = mc.player.tickCount;
          this.flag = false;
       }
@@ -39,17 +39,17 @@ public final class Class33 implements MinecraftAccess {
       this.flag = false;
    }
 
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.flag && this.predicate != null) {
-         var1.method3044();
+         event.method3044();
       }
    }
 
    public boolean method5304() {
       if (this.predicate != null && mc.player != null && mc.gameMode != null) {
          if (mc.player.tickCount - this.intValue <= 20 && mc.player.containerMenu == mc.player.inventoryMenu) {
-            Slot var1 = this.method5306(this.predicate);
-            if (var1 == null) {
+            Slot slot = this.method5306(this.predicate);
+            if (slot == null) {
                this.cancel();
                return false;
             } else if (InventorySettingModule.INSTANCE.method2397() && this.method5305()) {
@@ -61,7 +61,7 @@ public final class Class33 implements MinecraftAccess {
 
                return false;
             } else {
-               InventoryUtils.method901(var1, this.method5307(), false);
+               InventoryUtils.method901(slot, this.method5307(), false);
                InventoryUtils.closeScreen();
                this.cancel();
                return true;
@@ -76,14 +76,14 @@ public final class Class33 implements MinecraftAccess {
    }
 
    private boolean method5305() {
-      Input var1 = mc.player.lastSentInput;
-      return var1.jump() || var1.forward() || var1.backward() || var1.left() || var1.right() || mc.player.isSprinting();
+      Input lastSentInput = mc.player.lastSentInput;
+      return lastSentInput.jump() || lastSentInput.forward() || lastSentInput.backward() || lastSentInput.left() || lastSentInput.right() || mc.player.isSprinting();
    }
 
-   private Slot method5306(Predicate<ItemStack> var1) {
-      for (Slot var3 : mc.player.inventoryMenu.slots) {
-         if (var3.index >= 9 && var3.index <= 35 && var1.test(var3.getItem())) {
-            return var3;
+   private Slot method5306(Predicate<ItemStack> predicate) {
+      for (Slot slot : mc.player.inventoryMenu.slots) {
+         if (slot.index >= 9 && slot.index <= 35 && predicate.test(slot.getItem())) {
+            return slot;
          }
       }
 
@@ -91,35 +91,35 @@ public final class Class33 implements MinecraftAccess {
    }
 
    private int method5307() {
-      for (int var1 = 0; var1 < 9; var1++) {
-         if (mc.player.getInventory().getItem(var1).isEmpty()) {
-            return var1;
+      for (int i = 0; i < 9; i++) {
+         if (mc.player.getInventory().getItem(i).isEmpty()) {
+            return i;
          }
       }
 
-      int var3 = mc.player.getInventory().getSelectedSlot();
+      int selectedSlot = mc.player.getInventory().getSelectedSlot();
 
-      for (int var2 = 8; var2 >= 0; var2--) {
-         if (var2 != var3 && !method5308(mc.player.getInventory().getItem(var2))) {
-            return var2;
+      for (int i = 8; i >= 0; i--) {
+         if (i != selectedSlot && !method5308(mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
-      return var3 == 8 ? 7 : 8;
+      return selectedSlot == 8 ? 7 : 8;
    }
 
-   private static boolean method5308(ItemStack var0) {
-      return var0.is(ItemTags.SWORDS)
-         || var0.is(ItemTags.AXES)
-         || var0.is(Items.TOTEM_OF_UNDYING)
-         || var0.is(Items.GOLDEN_APPLE)
-         || var0.is(Items.ENCHANTED_GOLDEN_APPLE)
-         || var0.is(Items.END_CRYSTAL)
-         || var0.is(Items.OBSIDIAN)
-         || var0.is(Items.ENDER_PEARL)
-         || var0.is(Items.COBWEB)
-         || var0.is(Items.RESPAWN_ANCHOR)
-         || var0.is(Items.GLOWSTONE)
-         || var0.is(Items.MACE);
+   private static boolean method5308(ItemStack stack) {
+      return stack.is(ItemTags.SWORDS)
+         || stack.is(ItemTags.AXES)
+         || stack.is(Items.TOTEM_OF_UNDYING)
+         || stack.is(Items.GOLDEN_APPLE)
+         || stack.is(Items.ENCHANTED_GOLDEN_APPLE)
+         || stack.is(Items.END_CRYSTAL)
+         || stack.is(Items.OBSIDIAN)
+         || stack.is(Items.ENDER_PEARL)
+         || stack.is(Items.COBWEB)
+         || stack.is(Items.RESPAWN_ANCHOR)
+         || stack.is(Items.GLOWSTONE)
+         || stack.is(Items.MACE);
    }
 }

@@ -18,18 +18,18 @@ public class CommandArgumentType implements ArgumentType<String> {
       return new CommandArgumentType();
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      StringBuilder var2 = new StringBuilder();
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      StringBuilder builder = new StringBuilder();
 
-      while (var1.canRead()) {
-         var2.append(var1.read());
+      while (stringReader.canRead()) {
+         builder.append(stringReader.read());
       }
 
-      return var2.toString();
+      return builder.toString();
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(EXAMPLES, var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(EXAMPLES, builder);
    }
 
    public Collection<String> getExamples() {

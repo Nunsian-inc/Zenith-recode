@@ -40,109 +40,109 @@ public final class ModelJsonParser {
    private ModelJsonParser() {
    }
 
-   public static Class15 method107(String var0, JsonObject var1, Identifier var2) {
-      JsonObject var3 = method124(var1, "texture");
-      float[] var4 = method129(var3 == null ? null : var3.get("size"), 2, 64.0F);
-      int var5 = Math.max(1, (int)var4[0]);
-      int var6 = Math.max(1, (int)var4[1]);
-      JsonArray var7 = method125(var1, "bones");
-      var var8 = method123(var7);
-      int var9 = Math.max(1, var8.size());
-      String[] var10 = new String[var9];
-      int[] var11 = new int[var9];
-      float[] var12 = new float[var9 * 3];
-      float[] var13 = new float[var9 * 3];
-      int[] var14 = new int[var9];
-      int[] var15 = new int[var9];
-      Class15.Type2[] var16 = new Class15.Type2[var9];
-      float[] var17 = new float[var9 * 4];
-      HashMap var18 = new HashMap();
-      if (var8.isEmpty()) {
-         var10[0] = "root";
-         var11[0] = -1;
-         var14[0] = -1;
-         var15[0] = 6;
-         var16[0] = Class15.Type2.NONE;
+   public static Class15 method107(String text, JsonObject jsonObject, Identifier identifier) {
+      JsonObject json = method124(jsonObject, "texture");
+      float[] floats = method129(json == null ? null : json.get("size"), 2, 64.0F);
+      int intValue = Math.max(1, (int)floats[0]);
+      int n = Math.max(1, (int)floats[1]);
+      JsonArray jsonArray = method125(jsonObject, "bones");
+      var jsons = method123(jsonArray);
+      int n2 = Math.max(1, jsons.size());
+      String[] texts = new String[n2];
+      int[] intValues = new int[n2];
+      float[] floatValues = new float[n2 * 3];
+      float[] floatValues2 = new float[n2 * 3];
+      int[] intValues2 = new int[n2];
+      int[] intValues3 = new int[n2];
+      Class15.Type2[] type2s = new Class15.Type2[n2];
+      float[] floatValues3 = new float[n2 * 4];
+      HashMap map = new HashMap();
+      if (jsons.isEmpty()) {
+         texts[0] = "root";
+         intValues[0] = -1;
+         intValues2[0] = -1;
+         intValues3[0] = 6;
+         type2s[0] = Class15.Type2.NONE;
       }
 
-      for (int var19 = 0; var19 < var8.size(); var19++) {
-         JsonObject var20 = (JsonObject)var8.get(var19);
-         String var21 = method126(var20, "name", "bone" + var19);
-         var10[var19] = var21;
-         Integer var22 = (Integer)var18.get(method126(var20, "parent", ""));
-         var11[var19] = var22 == null ? -1 : var22;
-         float[] var23 = method129(var20.get("pivot"), 3, 0.0F);
-         float[] var24 = method129(var20.get("rotation"), 3, 0.0F);
+      for (int i = 0; i < jsons.size(); i++) {
+         JsonObject jsonObject2 = (JsonObject)jsons.get(i);
+         String key = method126(jsonObject2, "name", "bone" + i);
+         texts[i] = key;
+         Integer n3 = (Integer)map.get(method126(jsonObject2, "parent", ""));
+         intValues[i] = n3 == null ? -1 : n3;
+         float[] floats2 = method129(jsonObject2.get("pivot"), 3, 0.0F);
+         float[] floats3 = method129(jsonObject2.get("rotation"), 3, 0.0F);
 
-         for (int var25 = 0; var25 < 3; var25++) {
-            var12[var19 * 3 + var25] = var23[var25];
-            var13[var19 * 3 + var25] = (float)Math.toRadians(var24[var25]);
+         for (int j = 0; j < 3; j++) {
+            floatValues[i * 3 + j] = floats2[j];
+            floatValues2[i * 3 + j] = (float)Math.toRadians(floats3[j]);
          }
 
-         var14[var19] = var11[var19] < 0 ? method121(method126(var20, "anchor", null)) : -1;
-         var15[var19] = var11[var19] >= 0 ? var15[var11[var19]] : (var14[var19] >= 0 ? var14[var19] : 6);
-         JsonObject var49 = method124(var20, "driver");
-         var16[var19] = var49 == null ? Class15.Type2.NONE : method122(method126(var49, "type", "none"));
-         float[] var26 = method129(var49 == null ? null : var49.get("args"), 4, 0.0F);
-         System.arraycopy(var26, 0, var17, var19 * 4, 4);
-         var18.put(var21, var19);
+         intValues2[i] = intValues[i] < 0 ? method121(method126(jsonObject2, "anchor", null)) : -1;
+         intValues3[i] = intValues[i] >= 0 ? intValues3[intValues[i]] : (intValues2[i] >= 0 ? intValues2[i] : 6);
+         JsonObject jsonObject3 = method124(jsonObject2, "driver");
+         type2s[i] = jsonObject3 == null ? Class15.Type2.NONE : method122(method126(jsonObject3, "type", "none"));
+         float[] floats4 = method129(jsonObject3 == null ? null : jsonObject3.get("args"), 4, 0.0F);
+         System.arraycopy(floats4, 0, floatValues3, i * 4, 4);
+         map.put(key, i);
       }
 
-      ArrayList<ModelJsonParser.Data> var38 = new ArrayList<>();
+      ArrayList<ModelJsonParser.Data> datas = new ArrayList<>();
 
-      for (int var39 = 0; var39 < var8.size(); var39++) {
-         JsonArray var41 = method125((JsonObject)var8.get(var39), "cubes");
-         float var43 = Float.NaN;
-         if (var11[var39] < 0 && var14[var39] == Class15.Type.RIGHT_ARM.ordinal()) {
-            var43 = -1.0F;
-         } else if (var11[var39] < 0 && var14[var39] == Class15.Type.LEFT_ARM.ordinal()) {
-            var43 = 1.0F;
+      for (int i = 0; i < jsons.size(); i++) {
+         JsonArray jsonArray2 = method125((JsonObject)jsons.get(i), "cubes");
+         float f = Float.NaN;
+         if (intValues[i] < 0 && intValues2[i] == Class15.Type.RIGHT_ARM.ordinal()) {
+            f = -1.0F;
+         } else if (intValues[i] < 0 && intValues2[i] == Class15.Type.LEFT_ARM.ordinal()) {
+            f = 1.0F;
          }
 
-         for (JsonElement var47 : var41) {
-            if (var47.isJsonObject()) {
-               method110(var38, var39, var47.getAsJsonObject(), var5, var6, var43);
+         for (JsonElement jsonElement : jsonArray2) {
+            if (jsonElement.isJsonObject()) {
+               method110(datas, i, jsonElement.getAsJsonObject(), intValue, n, f);
             }
          }
       }
 
-      var38.sort((var1x, var2x) -> {
-         int var3x = Integer.compare(var15[var1x.intValue], var15[var2x.intValue]);
+      datas.sort((var1x, var2x) -> {
+         int var3x = Integer.compare(intValues3[var1x.intValue], intValues3[var2x.intValue]);
          return var3x != 0 ? var3x : Integer.compare(var1x.intValue, var2x.intValue);
       });
-      int var40 = var38.size();
-      float[] var42 = new float[var40 * 12];
-      float[] var44 = new float[var40 * 8];
-      float[] var46 = new float[var40 * 3];
-      int[] var48 = new int[var40];
-      int[] var50 = new int[var40];
+      int size = datas.size();
+      float[] floatValues4 = new float[size * 12];
+      float[] floatValues5 = new float[size * 8];
+      float[] floatValues6 = new float[size * 3];
+      int[] intValues4 = new int[size];
+      int[] intValues5 = new int[size];
 
-      for (int var51 = 0; var51 < var40; var51++) {
-         ModelJsonParser.Data var27 = (ModelJsonParser.Data)var38.get(var51);
-         System.arraycopy(var27.floatValues, 0, var42, var51 * 12, 12);
-         System.arraycopy(var27.floatValues2, 0, var44, var51 * 8, 8);
-         System.arraycopy(var27.floatValues3, 0, var46, var51 * 3, 3);
-         var48[var51] = var27.intValue;
-         var50[var51] = var27.intValue2;
+      for (int i = 0; i < size; i++) {
+         ModelJsonParser.Data data = (ModelJsonParser.Data)datas.get(i);
+         System.arraycopy(data.floatValues, 0, floatValues4, i * 12, 12);
+         System.arraycopy(data.floatValues2, 0, floatValues5, i * 8, 8);
+         System.arraycopy(data.floatValues3, 0, floatValues6, i * 3, 3);
+         intValues4[i] = data.intValue;
+         intValues5[i] = data.intValue2;
       }
 
-      if (var0 != null && (var0.startsWith("clothing/") || var0.startsWith("characters/") || var0.startsWith("politicians/"))) {
-         method108(var42, var48, var11, var14);
+      if (text != null && (text.startsWith("clothing/") || text.startsWith("characters/") || text.startsWith("politicians/"))) {
+         method108(floatValues4, intValues4, intValues, intValues2);
       }
 
-      var var52 = method113(method124(var1, "clips"), var18, var9);
-      var var53 = method115(method125(var1, "effects"), var18);
-      Class15.Data3 var28 = method117(method124(var1, "pet"));
-      Class15.Data2 var29 = method118(method124(var1, "weapon"), var18);
-      Class15.Data var30 = method119(method124(var1, "skin"), var18);
-      float var31 = method127(var1, "lod", 24.0F);
-      float[] var32 = method112(var42, var48, var11, var12, var13, var14);
-      byte var33 = 0;
+      var items = method113(method124(jsonObject, "clips"), map, n2);
+      var list = method115(method125(jsonObject, "effects"), map);
+      Class15.Data3 data3 = method117(method124(jsonObject, "pet"));
+      Class15.Data2 data2 = method118(method124(jsonObject, "weapon"), map);
+      Class15.Data data = method119(method124(jsonObject, "skin"), map);
+      float floatValue = method127(jsonObject, "lod", 24.0F);
+      float[] floatValues7 = method112(floatValues4, intValues4, intValues, floatValues, floatValues2, intValues2);
+      byte b = 0;
 
-      for (JsonElement var35 : method125(var1, "hides")) {
-         String var36 = var35.getAsString().toLowerCase(Locale.ROOT);
+      for (JsonElement jsonElement : method125(jsonObject, "hides")) {
+         String lowerCase = jsonElement.getAsString().toLowerCase(Locale.ROOT);
 
-         var33 |= switch (var36) {
+         b |= switch (lowerCase) {
             case "hat" -> 1;
             case "jacket" -> 2;
             case "sleeves" -> 4;
@@ -153,467 +153,467 @@ public final class ModelJsonParser {
       }
 
       return new Class15(
-         var0,
-         var2,
-         var5,
-         var6,
-         var10,
-         var11,
-         var12,
-         var13,
-         var14,
-         var15,
-         var16,
-         var17,
-         var42,
-         var44,
-         var46,
-         var48,
-         var50,
-         var52,
-         var53,
-         var28,
-         var29,
-         var30,
-         var31,
-         var32,
-         var33
+         text,
+         identifier,
+         intValue,
+         n,
+         texts,
+         intValues,
+         floatValues,
+         floatValues2,
+         intValues2,
+         intValues3,
+         type2s,
+         floatValues3,
+         floatValues4,
+         floatValues5,
+         floatValues6,
+         intValues4,
+         intValues5,
+         items,
+         list,
+         data3,
+         data2,
+         data,
+         floatValue,
+         floatValues7,
+         b
       );
    }
 
-   private static void method108(float[] var0, int[] var1, int[] var2, int[] var3) {
-      int var4 = Class15.Type.RIGHT_ARM.ordinal();
-      int var5 = Class15.Type.LEFT_ARM.ordinal();
+   private static void method108(float[] floatValues4, int[] intValues4, int[] intValues, int[] intValues2) {
+      int ordinal = Class15.Type.RIGHT_ARM.ordinal();
+      int n = Class15.Type.LEFT_ARM.ordinal();
 
-      for (int var6 = 0; var6 < var1.length; var6++) {
-         int var7 = var1[var6];
-         if (var2[var7] < 0 && (var3[var7] == var4 || var3[var7] == var5)) {
-            float var8 = var3[var7] == var4 ? -0.0625F : 0.0625F;
+      for (int i = 0; i < intValues4.length; i++) {
+         int n2 = intValues4[i];
+         if (intValues[n2] < 0 && (intValues2[n2] == ordinal || intValues2[n2] == n)) {
+            float f = intValues2[n2] == ordinal ? -0.0625F : 0.0625F;
 
-            for (int var9 = 0; var9 < 4; var9++) {
-               int var10 = var6 * 12 + var9 * 3;
-               var0[var10] = var8 + method109(var0[var10] - var8);
-               var0[var10 + 2] = method109(var0[var10 + 2]);
+            for (int j = 0; j < 4; j++) {
+               int n3 = i * 12 + j * 3;
+               floatValues4[n3] = f + method109(floatValues4[n3] - f);
+               floatValues4[n3 + 2] = method109(floatValues4[n3 + 2]);
             }
          }
       }
    }
 
-   private static float method109(float var0) {
-      float var1 = Math.abs(var0);
-      if (var1 <= 0.14375F) {
-         return var0;
+   private static float method109(float sign) {
+      float f = Math.abs(sign);
+      if (f <= 0.14375F) {
+         return sign;
       } else {
-         float var2 = var1 - 0.14375F;
-         float var3 = 0.14375F + 0.0125F * var2 / (var2 + 0.0125F);
-         return Math.copySign(var3, var0);
+         float f2 = f - 0.14375F;
+         float magnitude = 0.14375F + 0.0125F * f2 / (f2 + 0.0125F);
+         return Math.copySign(magnitude, sign);
       }
    }
 
-   private static void method110(List<ModelJsonParser.Data> var0, int var1, JsonObject var2, int var3, int var4, float var5) {
-      float[] var6 = method129(var2.get("from"), 3, 0.0F);
-      float[] var7 = method129(var2.get("size"), 3, 0.0F);
-      float var8 = method127(var2, "inflate", 0.0F);
-      boolean var9 = method128(var2, "mirror");
-      float[] var10 = method129(var2.get("rotation"), 3, 0.0F);
-      boolean var11 = var10[0] == 0.0F && var10[1] == 0.0F && var10[2] == 0.0F;
-      boolean var12 = !Float.isNaN(var5)
-         && var11
-         && var6[0] - var8 < var5
-         && var6[0] + var7[0] + var8 > var5
-         && var6[2] - var8 < 0.0F
-         && var6[2] + var7[2] + var8 > 0.0F;
-      int var13 = (var12 ? 32 : 0)
-         | (method128(var2, "glow") ? 1 : 0)
-         | (method128(var2, "translucent") ? 2 : 0)
-         | (method128(var2, "detail") ? 4 : 0)
-         | (method128(var2, "glass") ? 10 : 0)
-         | (var2.has("sparkle") && var2.get("sparkle").isJsonPrimitive() && method128(var2, "sparkle") ? 16 : 0);
-      HashSet var14 = new HashSet();
-      if (var2.has("sparkle") && var2.get("sparkle").isJsonArray()) {
-         for (JsonElement var16 : var2.getAsJsonArray("sparkle")) {
-            var14.add(var16.getAsString());
+   private static void method110(List<ModelJsonParser.Data> datas, int intValue, JsonObject jsonObject, int n, int n2, float f) {
+      float[] floats = method129(jsonObject.get("from"), 3, 0.0F);
+      float[] floats2 = method129(jsonObject.get("size"), 3, 0.0F);
+      float f2 = method127(jsonObject, "inflate", 0.0F);
+      boolean flag = method128(jsonObject, "mirror");
+      float[] floats3 = method129(jsonObject.get("rotation"), 3, 0.0F);
+      boolean flag2 = floats3[0] == 0.0F && floats3[1] == 0.0F && floats3[2] == 0.0F;
+      boolean flag3 = !Float.isNaN(f)
+         && flag2
+         && floats[0] - f2 < f
+         && floats[0] + floats2[0] + f2 > f
+         && floats[2] - f2 < 0.0F
+         && floats[2] + floats2[2] + f2 > 0.0F;
+      int n3 = (flag3 ? 32 : 0)
+         | (method128(jsonObject, "glow") ? 1 : 0)
+         | (method128(jsonObject, "translucent") ? 2 : 0)
+         | (method128(jsonObject, "detail") ? 4 : 0)
+         | (method128(jsonObject, "glass") ? 10 : 0)
+         | (jsonObject.has("sparkle") && jsonObject.get("sparkle").isJsonPrimitive() && method128(jsonObject, "sparkle") ? 16 : 0);
+      HashSet hashSet = new HashSet();
+      if (jsonObject.has("sparkle") && jsonObject.get("sparkle").isJsonArray()) {
+         for (JsonElement json : jsonObject.getAsJsonArray("sparkle")) {
+            hashSet.add(json.getAsString());
          }
       }
 
-      float var36 = var6[0] - var8;
-      float var37 = var6[1] - var8;
-      float var17 = var6[2] - var8;
-      float var18 = var6[0] + var7[0] + var8;
-      float var19 = var6[1] + var7[1] + var8;
-      float var20 = var6[2] + var7[2] + var8;
-      if (var9) {
-         float var21 = var18;
-         var18 = var36;
-         var36 = var21;
+      float f3 = floats[0] - f2;
+      float f4 = floats[1] - f2;
+      float f5 = floats[2] - f2;
+      float f6 = floats[0] + floats2[0] + f2;
+      float f7 = floats[1] + floats2[1] + f2;
+      float f8 = floats[2] + floats2[2] + f2;
+      if (flag) {
+         float f9 = f6;
+         f6 = f3;
+         f3 = f9;
       }
 
-      float[][] var38 = new float[][]{
-         {var36, var37, var17},
-         {var18, var37, var17},
-         {var18, var19, var17},
-         {var36, var19, var17},
-         {var36, var37, var20},
-         {var18, var37, var20},
-         {var18, var19, var20},
-         {var36, var19, var20}
+      float[][] floatses = new float[][]{
+         {f3, f4, f5},
+         {f6, f4, f5},
+         {f6, f7, f5},
+         {f3, f7, f5},
+         {f3, f4, f8},
+         {f6, f4, f8},
+         {f6, f7, f8},
+         {f3, f7, f8}
       };
-      float[] var22 = method129(var2.get("rotation"), 3, 0.0F);
-      Matrix3f var23 = null;
-      if (var22[0] != 0.0F || var22[1] != 0.0F || var22[2] != 0.0F) {
-         float[] var24 = method129(var2.get("origin"), 3, 0.0F);
-         var23 = new Matrix3f().rotationZYX((float)Math.toRadians(var22[2]), (float)Math.toRadians(var22[1]), (float)Math.toRadians(var22[0]));
-         Vector3f var25 = new Vector3f();
+      float[] floats4 = method129(jsonObject.get("rotation"), 3, 0.0F);
+      Matrix3f rotationZYX = null;
+      if (floats4[0] != 0.0F || floats4[1] != 0.0F || floats4[2] != 0.0F) {
+         float[] floats5 = method129(jsonObject.get("origin"), 3, 0.0F);
+         rotationZYX = new Matrix3f().rotationZYX((float)Math.toRadians(floats4[2]), (float)Math.toRadians(floats4[1]), (float)Math.toRadians(floats4[0]));
+         Vector3f vec = new Vector3f();
 
-         for (float[] var29 : var38) {
-            var25.set(var29[0] - var24[0], var29[1] - var24[1], var29[2] - var24[2]);
-            var23.transform(var25);
-            var29[0] = var25.x + var24[0];
-            var29[1] = var25.y + var24[1];
-            var29[2] = var25.z + var24[2];
+         for (float[] floats6 : floatses) {
+            vec.set(floats6[0] - floats5[0], floats6[1] - floats5[1], floats6[2] - floats5[2]);
+            rotationZYX.transform(vec);
+            floats6[0] = vec.x + floats5[0];
+            floats6[1] = vec.y + floats5[1];
+            floats6[2] = vec.z + floats5[2];
          }
       }
 
-      float[][] var39 = method111(var2, var7);
+      float[][] floatses2 = method111(jsonObject, floats2);
 
-      for (int var40 = 0; var40 < 6; var40++) {
-         float[] var41 = var39[var40];
-         if (var41 != null) {
-            int[] var42 = CONST_intValues[var40];
-            float[] var43 = new float[12];
+      for (int i = 0; i < 6; i++) {
+         float[] floats5 = floatses2[i];
+         if (floats5 != null) {
+            int[] ints = CONST_intValues[i];
+            float[] floatValues = new float[12];
 
-            for (int var44 = 0; var44 < 4; var44++) {
-               float[] var30 = var38[var42[var9 ? 3 - var44 : var44]];
-               var43[var44 * 3] = var30[0] / 16.0F;
-               var43[var44 * 3 + 1] = var30[1] / 16.0F;
-               var43[var44 * 3 + 2] = var30[2] / 16.0F;
+            for (int j = 0; j < 4; j++) {
+               float[] floats6 = floatses[ints[flag ? 3 - j : j]];
+               floatValues[j * 3] = floats6[0] / 16.0F;
+               floatValues[j * 3 + 1] = floats6[1] / 16.0F;
+               floatValues[j * 3 + 2] = floats6[2] / 16.0F;
             }
 
-            float var45 = var41[0] / var3;
-            float var46 = var41[1] / var4;
-            float var31 = var41[2] / var3;
-            float var32 = var41[3] / var4;
-            float[] var33 = var9
-               ? new float[]{var31, var32, var45, var32, var45, var46, var31, var46}
-               : new float[]{var31, var46, var45, var46, var45, var32, var31, var32};
-            Vector3f var34 = new Vector3f(CONST_floatValues2[var40][0] * (var9 ? -1 : 1), CONST_floatValues2[var40][1], CONST_floatValues2[var40][2]);
-            if (var23 != null) {
-               var23.transform(var34);
+            float f9 = floats5[0] / n;
+            float f10 = floats5[1] / n2;
+            float f11 = floats5[2] / n;
+            float f12 = floats5[3] / n2;
+            float[] floatValues2 = flag
+               ? new float[]{f11, f12, f9, f12, f9, f10, f11, f10}
+               : new float[]{f11, f10, f9, f10, f9, f12, f11, f12};
+            Vector3f vec = new Vector3f(CONST_floatValues2[i][0] * (flag ? -1 : 1), CONST_floatValues2[i][1], CONST_floatValues2[i][2]);
+            if (rotationZYX != null) {
+               rotationZYX.transform(vec);
             }
 
-            int var35 = var14.contains(texts[var40]) ? var13 | 16 : var13;
-            var0.add(new ModelJsonParser.Data(var1, var35, var43, var33, new float[]{var34.x, var34.y, var34.z}));
+            int n4 = hashSet.contains(texts[i]) ? n3 | 16 : n3;
+            datas.add(new ModelJsonParser.Data(intValue, n4, floatValues, floatValues2, new float[]{vec.x, vec.y, vec.z}));
          }
       }
    }
 
-   private static float[][] method111(JsonObject var0, float[] var1) {
-      float[][] var2 = new float[6][];
-      JsonElement var3 = var0.get("faces");
-      if (var3 != null && var3.isJsonObject()) {
-         JsonObject var20 = var3.getAsJsonObject();
+   private static float[][] method111(JsonObject jsonObject, float[] floats) {
+      float[][] floatses = new float[6][];
+      JsonElement jsonElement = jsonObject.get("faces");
+      if (jsonElement != null && jsonElement.isJsonObject()) {
+         JsonObject json = jsonElement.getAsJsonObject();
 
-         for (int var21 = 0; var21 < 6; var21++) {
-            JsonElement var22 = var20.get(texts[var21]);
-            if (var22 != null && var22.isJsonArray() && var22.getAsJsonArray().size() >= 4) {
-               var2[var21] = method129(var22, 4, 0.0F);
+         for (int i = 0; i < 6; i++) {
+            JsonElement jsonElement2 = json.get(texts[i]);
+            if (jsonElement2 != null && jsonElement2.isJsonArray() && jsonElement2.getAsJsonArray().size() >= 4) {
+               floatses[i] = method129(jsonElement2, 4, 0.0F);
             }
          }
 
-         return var2;
+         return floatses;
       } else {
-         JsonElement var4 = var0.get("uv");
-         if (var4 != null && var4.isJsonArray()) {
-            float[] var5 = method129(var4, 2, 0.0F);
-            float var6 = var5[0];
-            float var7 = var5[1];
-            float var8 = var1[0];
-            float var9 = var1[1];
-            float var10 = var1[2];
-            float var12 = var6 + var10;
-            float var13 = var6 + var10 + var8;
-            float var14 = var6 + var10 + var8 + var8;
-            float var15 = var6 + var10 + var8 + var10;
-            float var16 = var6 + var10 + var8 + var10 + var8;
-            float var18 = var7 + var10;
-            float var19 = var7 + var10 + var9;
-            var2[0] = new float[]{var12, var7, var13, var18};
-            var2[1] = new float[]{var13, var18, var14, var7};
-            var2[2] = new float[]{var6, var18, var12, var19};
-            var2[3] = new float[]{var12, var18, var13, var19};
-            var2[4] = new float[]{var13, var18, var15, var19};
-            var2[5] = new float[]{var15, var18, var16, var19};
-            return var2;
+         JsonElement jsonElement2 = jsonObject.get("uv");
+         if (jsonElement2 != null && jsonElement2.isJsonArray()) {
+            float[] floats2 = method129(jsonElement2, 2, 0.0F);
+            float f = floats2[0];
+            float f2 = floats2[1];
+            float f3 = floats[0];
+            float f4 = floats[1];
+            float f5 = floats[2];
+            float f6 = f + f5;
+            float f7 = f + f5 + f3;
+            float f8 = f + f5 + f3 + f3;
+            float f9 = f + f5 + f3 + f5;
+            float f10 = f + f5 + f3 + f5 + f3;
+            float f11 = f2 + f5;
+            float f12 = f2 + f5 + f4;
+            floatses[0] = new float[]{f6, f2, f7, f11};
+            floatses[1] = new float[]{f7, f11, f8, f2};
+            floatses[2] = new float[]{f, f11, f6, f12};
+            floatses[3] = new float[]{f6, f11, f7, f12};
+            floatses[4] = new float[]{f7, f11, f9, f12};
+            floatses[5] = new float[]{f9, f11, f10, f12};
+            return floatses;
          } else {
-            return var2;
+            return floatses;
          }
       }
    }
 
-   private static float[] method112(float[] var0, int[] var1, int[] var2, float[] var3, float[] var4, int[] var5) {
-      int var6 = var2.length;
-      Matrix4f[] var7 = new Matrix4f[var6];
+   private static float[] method112(float[] floatValues4, int[] intValues4, int[] intValues, float[] floatValues, float[] floatValues2, int[] intValues2) {
+      int length = intValues.length;
+      Matrix4f[] matrixes = new Matrix4f[length];
 
-      for (int var8 = 0; var8 < var6; var8++) {
-         Matrix4f var9 = var2[var8] >= 0 ? new Matrix4f(var7[var2[var8]]) : new Matrix4f();
-         if (var2[var8] < 0 && var5[var8] >= 0) {
-            float[] var10 = CONST_floatValues[var5[var8]];
-            var9.translate(var10[0] / 16.0F, var10[1] / 16.0F, var10[2] / 16.0F);
+      for (int i = 0; i < length; i++) {
+         Matrix4f matrix = intValues[i] >= 0 ? new Matrix4f(matrixes[intValues[i]]) : new Matrix4f();
+         if (intValues[i] < 0 && intValues2[i] >= 0) {
+            float[] floats = CONST_floatValues[intValues2[i]];
+            matrix.translate(floats[0] / 16.0F, floats[1] / 16.0F, floats[2] / 16.0F);
          } else {
-            var9.translate(var3[var8 * 3] / 16.0F, var3[var8 * 3 + 1] / 16.0F, var3[var8 * 3 + 2] / 16.0F);
+            matrix.translate(floatValues[i * 3] / 16.0F, floatValues[i * 3 + 1] / 16.0F, floatValues[i * 3 + 2] / 16.0F);
          }
 
-         var9.rotateZYX(var4[var8 * 3 + 2], var4[var8 * 3 + 1], var4[var8 * 3]);
-         var7[var8] = var9;
+         matrix.rotateZYX(floatValues2[i * 3 + 2], floatValues2[i * 3 + 1], floatValues2[i * 3]);
+         matrixes[i] = matrix;
       }
 
-      float[] var14 = new float[]{Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE};
-      Vector3f var15 = new Vector3f();
+      float[] floats = new float[]{Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE};
+      Vector3f vec = new Vector3f();
 
-      for (int var16 = 0; var16 < var1.length; var16++) {
-         Matrix4f var11 = var7[var1[var16]];
+      for (int i = 0; i < intValues4.length; i++) {
+         Matrix4f matrix = matrixes[intValues4[i]];
 
-         for (int var12 = 0; var12 < 4; var12++) {
-            int var13 = var16 * 12 + var12 * 3;
-            var11.transformPosition(var0[var13], var0[var13 + 1], var0[var13 + 2], var15);
-            var14[0] = Math.min(var14[0], var15.x);
-            var14[1] = Math.min(var14[1], var15.y);
-            var14[2] = Math.min(var14[2], var15.z);
-            var14[3] = Math.max(var14[3], var15.x);
-            var14[4] = Math.max(var14[4], var15.y);
-            var14[5] = Math.max(var14[5], var15.z);
+         for (int j = 0; j < 4; j++) {
+            int n = i * 12 + j * 3;
+            matrix.transformPosition(floatValues4[n], floatValues4[n + 1], floatValues4[n + 2], vec);
+            floats[0] = Math.min(floats[0], vec.x);
+            floats[1] = Math.min(floats[1], vec.y);
+            floats[2] = Math.min(floats[2], vec.z);
+            floats[3] = Math.max(floats[3], vec.x);
+            floats[4] = Math.max(floats[4], vec.y);
+            floats[5] = Math.max(floats[5], vec.z);
          }
       }
 
-      return var1.length == 0 ? new float[6] : var14;
+      return intValues4.length == 0 ? new float[6] : floats;
    }
 
-   private static Map<String, Class37> method113(JsonObject var0, Map<String, Integer> var1, int var2) {
-      if (var0 == null) {
+   private static Map<String, Class37> method113(JsonObject json, Map<String, Integer> map, int n) {
+      if (json == null) {
          return Collections.emptyMap();
       } else {
-         LinkedHashMap var3 = new LinkedHashMap();
+         LinkedHashMap map2 = new LinkedHashMap();
 
-         for (Entry var5 : var0.entrySet()) {
-            if (((JsonElement)var5.getValue()).isJsonObject()) {
-               JsonObject var6 = ((JsonElement)var5.getValue()).getAsJsonObject();
-               HashMap var7 = new HashMap();
-               JsonObject var8 = method124(var6, "bones");
-               float var9 = 0.0F;
-               if (var8 != null) {
-                  for (Entry var11 : var8.entrySet()) {
-                     Integer var12 = (Integer)var1.get(var11.getKey());
-                     if (var12 != null && ((JsonElement)var11.getValue()).isJsonObject()) {
-                        JsonObject var13 = ((JsonElement)var11.getValue()).getAsJsonObject();
-                        boolean var14 = !method128(var13, "linear");
-                        Class37.Entry[] var15 = new Class37.Entry[]{
-                           method114(var13.get("rotation"), var14, 0.0F),
-                           method114(var13.get("position"), var14, 0.0F),
-                           method114(var13.get("scale"), var14, 1.0F)
+         for (Entry entry : json.entrySet()) {
+            if (((JsonElement)entry.getValue()).isJsonObject()) {
+               JsonObject jsonObject = ((JsonElement)entry.getValue()).getAsJsonObject();
+               HashMap map3 = new HashMap();
+               JsonObject json2 = method124(jsonObject, "bones");
+               float f = 0.0F;
+               if (json2 != null) {
+                  for (Entry entry2 : json2.entrySet()) {
+                     Integer key = (Integer)map.get(entry2.getKey());
+                     if (key != null && ((JsonElement)entry2.getValue()).isJsonObject()) {
+                        JsonObject jsonObject2 = ((JsonElement)entry2.getValue()).getAsJsonObject();
+                        boolean flag = !method128(jsonObject2, "linear");
+                        Class37.Entry[] entries = new Class37.Entry[]{
+                           method114(jsonObject2.get("rotation"), flag, 0.0F),
+                           method114(jsonObject2.get("position"), flag, 0.0F),
+                           method114(jsonObject2.get("scale"), flag, 1.0F)
                         };
 
-                        for (Class37.Entry var19 : var15) {
-                           if (var19 != null) {
-                              var9 = Math.max(var9, var19.floatValues[var19.floatValues.length - 1]);
+                        for (Class37.Entry entry3 : entries) {
+                           if (entry3 != null) {
+                              f = Math.max(f, entry3.floatValues[entry3.floatValues.length - 1]);
                            }
                         }
 
-                        var7.put(var12, var15);
+                        map3.put(key, entries);
                      }
                   }
                }
 
-               float var20 = method127(var6, "length", var9);
-               boolean var21 = !var6.has("loop") || method128(var6, "loop");
-               var3.put((String)var5.getKey(), new Class37((String)var5.getKey(), var20 <= 0.0F ? var9 : var20, var21, var7, var2));
+               float f2 = method127(jsonObject, "length", f);
+               boolean flag = !jsonObject.has("loop") || method128(jsonObject, "loop");
+               map2.put((String)entry.getKey(), new Class37((String)entry.getKey(), f2 <= 0.0F ? f : f2, flag, map3, n));
             }
          }
 
-         return var3;
+         return map2;
       }
    }
 
-   private static Class37.Entry method114(JsonElement var0, boolean var1, float var2) {
-      if (var0 != null && var0.isJsonArray()) {
-         JsonArray var3 = var0.getAsJsonArray();
-         ArrayList<float[]> var4 = new ArrayList<>(var3.size());
+   private static Class37.Entry method114(JsonElement jsonElement, boolean flag, float f) {
+      if (jsonElement != null && jsonElement.isJsonArray()) {
+         JsonArray jsonArray = jsonElement.getAsJsonArray();
+         ArrayList<float[]> floatses = new ArrayList<>(jsonArray.size());
 
-         for (JsonElement var6 : var3) {
-            if (var6.isJsonArray()) {
-               JsonArray var7 = var6.getAsJsonArray();
-               float var8 = var7.size() > 0 ? var7.get(0).getAsFloat() : 0.0F;
-               float var9 = var7.size() > 1 ? var7.get(1).getAsFloat() : var2;
-               float var10 = var7.size() > 2 ? var7.get(2).getAsFloat() : var9;
-               float var11 = var7.size() > 3 ? var7.get(3).getAsFloat() : var10;
-               var4.add(new float[]{var8, var9, var10, var11});
+         for (JsonElement json : jsonArray) {
+            if (json.isJsonArray()) {
+               JsonArray jsonArray2 = json.getAsJsonArray();
+               float f2 = jsonArray2.size() > 0 ? jsonArray2.get(0).getAsFloat() : 0.0F;
+               float f3 = jsonArray2.size() > 1 ? jsonArray2.get(1).getAsFloat() : f;
+               float f4 = jsonArray2.size() > 2 ? jsonArray2.get(2).getAsFloat() : f3;
+               float f5 = jsonArray2.size() > 3 ? jsonArray2.get(3).getAsFloat() : f4;
+               floatses.add(new float[]{f2, f3, f4, f5});
             }
          }
 
-         if (var4.isEmpty()) {
+         if (floatses.isEmpty()) {
             return null;
          } else {
-            var4.sort((var0x, var1x) -> Float.compare(var0x[0], var1x[0]));
-            float[] var12 = new float[var4.size()];
-            float[] var13 = new float[var4.size() * 3];
+            floatses.sort((var0x, var1x) -> Float.compare(var0x[0], var1x[0]));
+            float[] floatValues = new float[floatses.size()];
+            float[] floatValues2 = new float[floatses.size() * 3];
 
-            for (int var14 = 0; var14 < var4.size(); var14++) {
-               float[] var15 = (float[])var4.get(var14);
-               var12[var14] = var15[0];
-               var13[var14 * 3] = var15[1];
-               var13[var14 * 3 + 1] = var15[2];
-               var13[var14 * 3 + 2] = var15[3];
+            for (int i = 0; i < floatses.size(); i++) {
+               float[] floats = (float[])floatses.get(i);
+               floatValues[i] = floats[0];
+               floatValues2[i * 3] = floats[1];
+               floatValues2[i * 3 + 1] = floats[2];
+               floatValues2[i * 3 + 2] = floats[3];
             }
 
-            return new Class37.Entry(var12, var13, var1);
+            return new Class37.Entry(floatValues, floatValues2, flag);
          }
       } else {
          return null;
       }
    }
 
-   private static List<Class15.Data4> method115(JsonArray var0, Map<String, Integer> var1) {
-      ArrayList<Class15.Data4> var2 = new ArrayList<>();
+   private static List<Class15.Data4> method115(JsonArray jsonArray, Map<String, Integer> map) {
+      ArrayList<Class15.Data4> data4s = new ArrayList<>();
 
-      for (JsonElement var4 : var0) {
-         if (var4.isJsonObject()) {
-            Class15.Data4 var5 = method116(var4.getAsJsonObject(), var1);
-            if (var5 != null) {
-               var2.add(var5);
+      for (JsonElement jsonElement : jsonArray) {
+         if (jsonElement.isJsonObject()) {
+            Class15.Data4 data4 = method116(jsonElement.getAsJsonObject(), map);
+            if (data4 != null) {
+               data4s.add(data4);
             }
          }
       }
 
-      return var2;
+      return data4s;
    }
 
-   private static Class15.Data4 method116(JsonObject var0, Map<String, Integer> var1) {
-      ParticleOptions var2 = method120(method126(var0, "particle", null));
-      if (var2 == null) {
+   private static Class15.Data4 method116(JsonObject jsonObject, Map<String, Integer> map) {
+      ParticleOptions particleEffect = method120(method126(jsonObject, "particle", null));
+      if (particleEffect == null) {
          return null;
       } else {
-         Integer var3 = (Integer)var1.get(method126(var0, "bone", ""));
-         float[] var4 = method129(var0.get("offset"), 3, 0.0F);
-         float[] var5 = method129(var0.get("velocity"), 3, 0.0F);
+         Integer n = (Integer)map.get(method126(jsonObject, "bone", ""));
+         float[] floats = method129(jsonObject.get("offset"), 3, 0.0F);
+         float[] floats2 = method129(jsonObject.get("velocity"), 3, 0.0F);
 
-         Class15.Type3 var6;
+         Class15.Type3 type3;
          try {
-            var6 = Class15.Type3.valueOf(method126(var0, "when", "always").toUpperCase(Locale.ROOT));
-         } catch (IllegalArgumentException var8) {
-            var6 = Class15.Type3.ALWAYS;
+            type3 = Class15.Type3.valueOf(method126(jsonObject, "when", "always").toUpperCase(Locale.ROOT));
+         } catch (IllegalArgumentException e) {
+            type3 = Class15.Type3.ALWAYS;
          }
 
          return new Class15.Data4(
-            var2,
-            var3 == null ? -1 : var3,
-            var4[0],
-            var4[1],
-            var4[2],
-            method127(var0, "rate", 1.0F),
-            var5[0],
-            var5[1],
-            var5[2],
-            method127(var0, "spread", 0.05F),
-            var6
+            particleEffect,
+            n == null ? -1 : n,
+            floats[0],
+            floats[1],
+            floats[2],
+            method127(jsonObject, "rate", 1.0F),
+            floats2[0],
+            floats2[1],
+            floats2[2],
+            method127(jsonObject, "spread", 0.05F),
+            type3
          );
       }
    }
 
-   private static Class15.Data3 method117(JsonObject var0) {
-      if (var0 == null) {
+   private static Class15.Data3 method117(JsonObject jsonObject) {
+      if (jsonObject == null) {
          return null;
       } else {
-         Class15.Type4 var1;
+         Class15.Type4 type4;
          try {
-            var1 = Class15.Type4.valueOf(method126(var0, "kind", "walker").toUpperCase(Locale.ROOT));
-         } catch (IllegalArgumentException var5) {
-            var1 = Class15.Type4.WALKER;
+            type4 = Class15.Type4.valueOf(method126(jsonObject, "kind", "walker").toUpperCase(Locale.ROOT));
+         } catch (IllegalArgumentException e) {
+            type4 = Class15.Type4.WALKER;
          }
 
-         ArrayList var2 = new ArrayList();
+         ArrayList coll = new ArrayList();
 
-         for (JsonElement var4 : method125(var0, "behaviors")) {
-            var2.add(var4.getAsString().toLowerCase(Locale.ROOT));
+         for (JsonElement jsonElement : method125(jsonObject, "behaviors")) {
+            coll.add(jsonElement.getAsString().toLowerCase(Locale.ROOT));
          }
 
          return new Class15.Data3(
-            var1,
-            method127(var0, "scale", 1.0F),
-            method127(var0, "speed", 1.0F),
-            method127(var0, "hover", 0.0F),
-            method126(var0, "quirk", ""),
-            method120(method126(var0, "accent", null)),
-            List.copyOf(var2)
+            type4,
+            method127(jsonObject, "scale", 1.0F),
+            method127(jsonObject, "speed", 1.0F),
+            method127(jsonObject, "hover", 0.0F),
+            method126(jsonObject, "quirk", ""),
+            method120(method126(jsonObject, "accent", null)),
+            List.copyOf(coll)
          );
       }
    }
 
-   private static Class15.Data2 method118(JsonObject var0, Map<String, Integer> var1) {
-      if (var0 == null) {
+   private static Class15.Data2 method118(JsonObject jsonObject, Map<String, Integer> map) {
+      if (jsonObject == null) {
          return null;
       } else {
-         float[] var2 = method129(var0.get("grip"), 3, 0.0F);
-         Integer var3 = (Integer)var1.get(method126(var0, "arrowBone", ""));
+         float[] floats = method129(jsonObject.get("grip"), 3, 0.0F);
+         Integer n = (Integer)map.get(method126(jsonObject, "arrowBone", ""));
          return new Class15.Data2(
-            var2[0],
-            var2[1],
-            var2[2],
-            method127(var0, "angle", 0.0F),
-            method127(var0, "roll", 0.0F),
-            method127(var0, "scale", 1.0F),
-            method120(method126(var0, "trail", null)),
-            method120(method126(var0, "hit", null)),
-            var3 == null ? -1 : var3
+            floats[0],
+            floats[1],
+            floats[2],
+            method127(jsonObject, "angle", 0.0F),
+            method127(jsonObject, "roll", 0.0F),
+            method127(jsonObject, "scale", 1.0F),
+            method120(method126(jsonObject, "trail", null)),
+            method120(method126(jsonObject, "hit", null)),
+            n == null ? -1 : n
          );
       }
    }
 
-   private static Class15.Data method119(JsonObject var0, Map<String, Integer> var1) {
-      if (var0 == null) {
+   private static Class15.Data method119(JsonObject jsonObject, Map<String, Integer> map) {
+      if (jsonObject == null) {
          return null;
       } else {
-         float[] var2 = new float[18];
-         boolean var3 = false;
-         JsonObject var4 = method124(var0, "idlePose");
-         if (var4 != null) {
-            String[] var5 = new String[]{"head", "body", "right_arm", "left_arm", "right_leg", "left_leg"};
+         float[] floats = new float[18];
+         boolean flag = false;
+         JsonObject json = method124(jsonObject, "idlePose");
+         if (json != null) {
+            String[] strings = new String[]{"head", "body", "right_arm", "left_arm", "right_leg", "left_leg"};
 
-            for (int var6 = 0; var6 < var5.length; var6++) {
-               if (var4.has(var5[var6])) {
-                  float[] var7 = method129(var4.get(var5[var6]), 3, 0.0F);
+            for (int i = 0; i < strings.length; i++) {
+               if (json.has(strings[i])) {
+                  float[] floats2 = method129(json.get(strings[i]), 3, 0.0F);
 
-                  for (int var8 = 0; var8 < 3; var8++) {
-                     var2[var6 * 3 + var8] = (float)Math.toRadians(var7[var8]);
+                  for (int j = 0; j < 3; j++) {
+                     floats[i * 3 + j] = (float)Math.toRadians(floats2[j]);
                   }
 
-                  var3 = true;
+                  flag = true;
                }
             }
          }
 
-         return new Class15.Data(var3 ? var2 : null, !var0.has("hideArmor") || method128(var0, "hideArmor"), method115(method125(var0, "aura"), var1));
+         return new Class15.Data(flag ? floats : null, !jsonObject.has("hideArmor") || method128(jsonObject, "hideArmor"), method115(method125(jsonObject, "aura"), map));
       }
    }
 
-   public static ParticleOptions method120(String var0) {
-      if (var0 != null && !var0.isBlank()) {
-         String var1 = var0.strip().toLowerCase(Locale.ROOT);
-         if (var1.startsWith("dust:")) {
-            String[] var6 = var1.split(":");
+   public static ParticleOptions method120(String str) {
+      if (str != null && !str.isBlank()) {
+         String lowerCase = str.strip().toLowerCase(Locale.ROOT);
+         if (lowerCase.startsWith("dust:")) {
+            String[] strings = lowerCase.split(":");
 
             try {
-               int var7 = Integer.parseInt(var6[1].replace("#", ""), 16);
-               float var8 = var6.length > 2 ? Float.parseFloat(var6[2]) : 1.0F;
-               return new DustParticleOptions(var7, var8);
-            } catch (RuntimeException var5) {
+               int color = Integer.parseInt(strings[1].replace("#", ""), 16);
+               float scale = strings.length > 2 ? Float.parseFloat(strings[2]) : 1.0F;
+               return new DustParticleOptions(color, scale);
+            } catch (RuntimeException e) {
                return null;
             }
          } else {
-            Identifier var2 = Identifier.tryParse(var1.contains(":") ? var1 : "minecraft:" + var1);
-            if (var2 == null) {
+            Identifier tryParse = Identifier.tryParse(lowerCase.contains(":") ? lowerCase : "minecraft:" + lowerCase);
+            if (tryParse == null) {
                return null;
             } else {
-               ParticleType var3 = BuiltInRegistries.PARTICLE_TYPE.getValue(var2);
-               return var3 instanceof SimpleParticleType var4 ? var4 : null;
+               ParticleType particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(tryParse);
+               return particleType instanceof SimpleParticleType simpleParticleType ? simpleParticleType : null;
             }
          }
       } else {
@@ -621,110 +621,110 @@ public final class ModelJsonParser {
       }
    }
 
-   private static int method121(String var0) {
-      if (var0 == null) {
+   private static int method121(String str) {
+      if (str == null) {
          return -1;
       } else {
          try {
-            return Class15.Type.valueOf(var0.strip().toUpperCase(Locale.ROOT)).ordinal();
-         } catch (IllegalArgumentException var2) {
+            return Class15.Type.valueOf(str.strip().toUpperCase(Locale.ROOT)).ordinal();
+         } catch (IllegalArgumentException e) {
             return -1;
          }
       }
    }
 
-   private static Class15.Type2 method122(String var0) {
+   private static Class15.Type2 method122(String str) {
       try {
-         return Class15.Type2.valueOf(var0.strip().toUpperCase(Locale.ROOT));
-      } catch (IllegalArgumentException var2) {
+         return Class15.Type2.valueOf(str.strip().toUpperCase(Locale.ROOT));
+      } catch (IllegalArgumentException e) {
          return Class15.Type2.NONE;
       }
    }
 
-   private static List<JsonObject> method123(JsonArray var0) {
-      ArrayList var1 = new ArrayList();
+   private static List<JsonObject> method123(JsonArray jsonArray) {
+      ArrayList arrayList = new ArrayList();
 
-      for (JsonElement var3 : var0) {
-         if (var3.isJsonObject()) {
-            var1.add(var3.getAsJsonObject());
+      for (JsonElement jsonElement : jsonArray) {
+         if (jsonElement.isJsonObject()) {
+            arrayList.add(jsonElement.getAsJsonObject());
          }
       }
 
-      List<JsonObject> var8 = new ArrayList<>(var1.size());
-      HashSet var9 = new HashSet();
-      boolean var4 = true;
+      List<JsonObject> jsons = new ArrayList<>(arrayList.size());
+      HashSet hashSet = new HashSet();
+      boolean flag = true;
 
-      while (!var1.isEmpty() && var4) {
-         var4 = false;
-         int var5 = 0;
+      while (!arrayList.isEmpty() && flag) {
+         flag = false;
+         int index = 0;
 
-         while (var5 < var1.size()) {
-            JsonObject var6 = (JsonObject)var1.get(var5);
-            String var7 = method126(var6, "parent", null);
-            if (var7 != null && !var9.contains(var7)) {
-               var5++;
+         while (index < arrayList.size()) {
+            JsonObject jsonObject = (JsonObject)arrayList.get(index);
+            String str = method126(jsonObject, "parent", null);
+            if (str != null && !hashSet.contains(str)) {
+               index++;
             } else {
-               var8.add(var6);
-               var9.add(method126(var6, "name", ""));
-               var1.remove(var5);
-               var4 = true;
+               jsons.add(jsonObject);
+               hashSet.add(method126(jsonObject, "name", ""));
+               arrayList.remove(index);
+               flag = true;
             }
          }
       }
 
-      var8.addAll(var1);
-      return var8;
+      jsons.addAll(arrayList);
+      return jsons;
    }
 
-   private static JsonObject method124(JsonObject var0, String var1) {
-      return var0 != null && var0.has(var1) && var0.get(var1).isJsonObject() ? var0.getAsJsonObject(var1) : null;
+   private static JsonObject method124(JsonObject jsonObject, String memberName) {
+      return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonObject() ? jsonObject.getAsJsonObject(memberName) : null;
    }
 
-   private static JsonArray method125(JsonObject var0, String var1) {
-      return var0 != null && var0.has(var1) && var0.get(var1).isJsonArray() ? var0.getAsJsonArray(var1) : new JsonArray();
+   private static JsonArray method125(JsonObject jsonObject, String memberName) {
+      return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonArray() ? jsonObject.getAsJsonArray(memberName) : new JsonArray();
    }
 
-   private static String method126(JsonObject var0, String var1, String var2) {
+   private static String method126(JsonObject jsonObject, String memberName, String str) {
       try {
-         return var0 != null && var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsString() : var2;
-      } catch (RuntimeException var4) {
-         return var2;
+         return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() ? jsonObject.get(memberName).getAsString() : str;
+      } catch (RuntimeException e) {
+         return str;
       }
    }
 
-   private static float method127(JsonObject var0, String var1, float var2) {
+   private static float method127(JsonObject jsonObject, String memberName, float f) {
       try {
-         return var0 != null && var0.has(var1) && var0.get(var1).isJsonPrimitive() ? var0.get(var1).getAsFloat() : var2;
-      } catch (RuntimeException var4) {
-         return var2;
+         return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() ? jsonObject.get(memberName).getAsFloat() : f;
+      } catch (RuntimeException e) {
+         return f;
       }
    }
 
-   private static boolean method128(JsonObject var0, String var1) {
+   private static boolean method128(JsonObject jsonObject, String memberName) {
       try {
-         return var0 != null && var0.has(var1) && var0.get(var1).isJsonPrimitive() && var0.get(var1).getAsBoolean();
-      } catch (RuntimeException var3) {
+         return jsonObject != null && jsonObject.has(memberName) && jsonObject.get(memberName).isJsonPrimitive() && jsonObject.get(memberName).getAsBoolean();
+      } catch (RuntimeException e) {
          return false;
       }
    }
 
-   private static float[] method129(JsonElement var0, int var1, float var2) {
-      float[] var3 = new float[var1];
-      Arrays.fill(var3, var2);
-      if (var0 != null && var0.isJsonArray()) {
-         JsonArray var4 = var0.getAsJsonArray();
+   private static float[] method129(JsonElement jsonElement, int n, float f) {
+      float[] floats = new float[n];
+      Arrays.fill(floats, f);
+      if (jsonElement != null && jsonElement.isJsonArray()) {
+         JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-         for (int var5 = 0; var5 < var1 && var5 < var4.size(); var5++) {
+         for (int i = 0; i < n && i < jsonArray.size(); i++) {
             try {
-               var3[var5] = var4.get(var5).getAsFloat();
-            } catch (RuntimeException var7) {
-               var3[var5] = var2;
+               floats[i] = jsonArray.get(i).getAsFloat();
+            } catch (RuntimeException e) {
+               floats[i] = f;
             }
          }
 
-         return var3;
+         return floats;
       } else {
-         return var3;
+         return floats;
       }
    }
 
@@ -772,12 +772,12 @@ public final class ModelJsonParser {
          return "Data[" + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "floatValues=" + this.floatValues + ", " + "floatValues2=" + this.floatValues2 + ", " + "floatValues3=" + this.floatValues3 + "]";
       }
 
-      private Data(int var1, int var2, float[] var3, float[] var4, float[] var5) {
-         this.intValue = var1;
-         this.intValue2 = var2;
-         this.floatValues = var3;
-         this.floatValues2 = var4;
-         this.floatValues3 = var5;
+      private Data(int intValue, int n, float[] floatValues, float[] floatValues2, float[] floatValues3) {
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.floatValues = floatValues;
+         this.floatValues2 = floatValues2;
+         this.floatValues3 = floatValues3;
       }
 
       public int getIntValue() {

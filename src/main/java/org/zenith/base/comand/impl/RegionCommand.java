@@ -11,32 +11,32 @@ import org.zenith.Zenith;
 import org.zenith.base.comand.api.CommandAbstract;
 
 public class RegionCommand extends CommandAbstract {
-   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_X = (var0, var1) -> {
-      LocalPlayer var2 = Minecraft.getInstance().player;
-      if (var2 != null) {
-         BlockPos var3 = var2.blockPosition();
-         var1.suggest(var3.getX());
+   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_X = (commandContext, suggestionsBuilder) -> {
+      LocalPlayer player = Minecraft.getInstance().player;
+      if (player != null) {
+         BlockPos blockPosition = player.blockPosition();
+         suggestionsBuilder.suggest(blockPosition.getX());
       }
 
-      return var1.buildFuture();
+      return suggestionsBuilder.buildFuture();
    };
-   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_Y = (var0, var1) -> {
-      LocalPlayer var2 = Minecraft.getInstance().player;
-      if (var2 != null) {
-         BlockPos var3 = var2.blockPosition();
-         var1.suggest(var3.getY());
+   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_Y = (commandContext, suggestionsBuilder) -> {
+      LocalPlayer player = Minecraft.getInstance().player;
+      if (player != null) {
+         BlockPos blockPosition = player.blockPosition();
+         suggestionsBuilder.suggest(blockPosition.getY());
       }
 
-      return var1.buildFuture();
+      return suggestionsBuilder.buildFuture();
    };
-   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_Z = (var0, var1) -> {
-      LocalPlayer var2 = Minecraft.getInstance().player;
-      if (var2 != null) {
-         BlockPos var3 = var2.blockPosition();
-         var1.suggest(var3.getZ());
+   private final SuggestionProvider<SharedSuggestionProvider> SUGGEST_Z = (commandContext, suggestionsBuilder) -> {
+      LocalPlayer player = Minecraft.getInstance().player;
+      if (player != null) {
+         BlockPos blockPosition = player.blockPosition();
+         suggestionsBuilder.suggest(blockPosition.getZ());
       }
 
-      return var1.buildFuture();
+      return suggestionsBuilder.buildFuture();
    };
 
    public RegionCommand() {
@@ -44,8 +44,8 @@ public class RegionCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(
          literal("pos1")
             .then(
                arg("x", IntegerArgumentType.integer())
@@ -53,17 +53,17 @@ public class RegionCommand extends CommandAbstract {
                   .then(
                      arg("y", IntegerArgumentType.integer())
                         .suggests(this.SUGGEST_Y)
-                        .then(arg("z", IntegerArgumentType.integer()).suggests(this.SUGGEST_Z).executes(var0 -> {
-                           int var1x = IntegerArgumentType.getInteger(var0, "x");
-                           int var2 = IntegerArgumentType.getInteger(var0, "y");
-                           int var3 = IntegerArgumentType.getInteger(var0, "z");
-                           Zenith.getInstance().getTimedBlockPos().method474(new BlockPos(var1x, var2, var3));
+                        .then(arg("z", IntegerArgumentType.integer()).suggests(this.SUGGEST_Z).executes(suggest -> {
+                           int var1x = IntegerArgumentType.getInteger(suggest, "x");
+                           int integer = IntegerArgumentType.getInteger(suggest, "y");
+                           int z = IntegerArgumentType.getInteger(suggest, "z");
+                           Zenith.getInstance().getTimedBlockPos().method474(new BlockPos(var1x, integer, z));
                            return 1;
                         }))
                   )
             )
       );
-      var1.then(
+      literalArgumentBuilder.then(
          literal("pos2")
             .then(
                arg("x", IntegerArgumentType.integer())
@@ -71,17 +71,17 @@ public class RegionCommand extends CommandAbstract {
                   .then(
                      arg("y", IntegerArgumentType.integer())
                         .suggests(this.SUGGEST_Y)
-                        .then(arg("z", IntegerArgumentType.integer()).suggests(this.SUGGEST_Z).executes(var0 -> {
-                           int var1x = IntegerArgumentType.getInteger(var0, "x");
-                           int var2 = IntegerArgumentType.getInteger(var0, "y");
-                           int var3 = IntegerArgumentType.getInteger(var0, "z");
-                           Zenith.getInstance().getTimedBlockPos().method475(new BlockPos(var1x, var2, var3));
+                        .then(arg("z", IntegerArgumentType.integer()).suggests(this.SUGGEST_Z).executes(suggest -> {
+                           int var1x = IntegerArgumentType.getInteger(suggest, "x");
+                           int integer = IntegerArgumentType.getInteger(suggest, "y");
+                           int z = IntegerArgumentType.getInteger(suggest, "z");
+                           Zenith.getInstance().getTimedBlockPos().method475(new BlockPos(var1x, integer, z));
                            return 1;
                         }))
                   )
             )
       );
-      var1.then(literal("clear").executes(var0 -> {
+      literalArgumentBuilder.then(literal("clear").executes(commandContext -> {
          Zenith.getInstance().getTimedBlockPos().clear();
          return 1;
       }));

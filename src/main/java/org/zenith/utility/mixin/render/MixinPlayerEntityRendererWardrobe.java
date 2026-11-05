@@ -18,9 +18,9 @@ public class MixinPlayerEntityRendererWardrobe {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$skinArm(PoseStack var1, SubmitNodeCollector var2, int var3, Identifier var4, ModelPart var5, boolean var6, CallbackInfo var7) {
-      if (WardrobeRenderer.method6690((AvatarRenderer)(Object)this, var1, var2, var3, var5, var6, true)) {
-         var7.cancel();
+   private void zenith$skinArm(PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int n, Identifier id, ModelPart modelPart, boolean flag, CallbackInfo callbackInfo) {
+      if (WardrobeRenderer.method6690((AvatarRenderer)(Object)this, poseStack, orderedRenderCommandQueue, n, modelPart, flag, true)) {
+         callbackInfo.cancel();
       }
    }
 
@@ -28,7 +28,7 @@ public class MixinPlayerEntityRendererWardrobe {
       method = {"renderHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;Lnet/minecraft/client/model/geom/ModelPart;Z)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$clothingArm(PoseStack var1, SubmitNodeCollector var2, int var3, Identifier var4, ModelPart var5, boolean var6, CallbackInfo var7) {
-      WardrobeRenderer.method6690((AvatarRenderer)(Object)this, var1, var2, var3, var5, var6, false);
+   private void zenith$clothingArm(PoseStack poseStack, SubmitNodeCollector orderedRenderCommandQueue, int n, Identifier id, ModelPart modelPart, boolean flag, CallbackInfo callbackInfo) {
+      WardrobeRenderer.method6690((AvatarRenderer)(Object)this, poseStack, orderedRenderCommandQueue, n, modelPart, flag, false);
    }
 }

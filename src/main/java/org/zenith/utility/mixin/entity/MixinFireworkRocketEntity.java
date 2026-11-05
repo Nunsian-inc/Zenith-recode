@@ -29,20 +29,20 @@ public abstract class MixinFireworkRocketEntity {
          ordinal = 0
       )}
    )
-   private Vec3 hookExtendedFirework(Vec3 var1) {
-      Minecraft var2 = Minecraft.getInstance();
-      if (this.attachedToEntity != var2.player || var2.player == null) {
-         return var1;
+   private Vec3 hookExtendedFirework(Vec3 vec3d) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (this.attachedToEntity != minecraft.player || minecraft.player == null) {
+         return vec3d;
       } else if (ModuleHookDefinitions.class123.active()) {
-         Fireworks var3 = ((FireworkRocketEntity)(Object)this).getItem().get(DataComponents.FIREWORKS);
-         int var4 = var3 == null ? 0 : var3.flightDuration();
-         Rotation var5 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         Vec3 var6 = var5 == null ? var2.player.getLookAngle() : var5.method3135();
+         Fireworks fireworks = ((FireworkRocketEntity)(Object)this).getItem().get(DataComponents.FIREWORKS);
+         int flightDuration = fireworks == null ? 0 : fireworks.flightDuration();
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         Vec3 lookAngle = currentRotation == null ? minecraft.player.getLookAngle() : currentRotation.method3135();
          return ModuleHookDefinitions.class123
-               .method1645(new ModuleHookDefinitions.Entry4(var1, this.attachedToEntity.getDeltaMovement(), var6, this.life, 10 * (1 + var4)))
+               .method1645(new ModuleHookDefinitions.Entry4(vec3d, this.attachedToEntity.getDeltaMovement(), lookAngle, this.life, 10 * (1 + flightDuration)))
             .vec3d;
       } else {
-         return var1;
+         return vec3d;
       }
    }
 
@@ -53,12 +53,12 @@ public abstract class MixinFireworkRocketEntity {
          target = "Lnet/minecraft/world/entity/LivingEntity;getLookAngle()Lnet/minecraft/world/phys/Vec3;"
       )}
    )
-   private Vec3 getRotationVector(Vec3 var1) {
+   private Vec3 getRotationVector(Vec3 vec) {
       if (this.attachedToEntity != Minecraft.getInstance().player) {
-         return var1;
+         return vec;
       } else {
-         Rotation var2 = Zenith.getInstance().getRotationManager().getCurrentRotation();
-         return var2 == null ? var1 : var2.method3135();
+         Rotation currentRotation = Zenith.getInstance().getRotationManager().getCurrentRotation();
+         return currentRotation == null ? vec : currentRotation.method3135();
       }
    }
 }

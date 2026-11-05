@@ -8,15 +8,15 @@ public class MenuDrawContext extends CustomDrawContext {
    private final int mouseY;
    private final float delta;
 
-   public MenuDrawContext(GuiGraphicsExtractor var1, int var2, int var3, float var4) {
-      super(var1);
-      this.mouseX = var2;
-      this.mouseY = var3;
-      this.delta = var4;
+   public MenuDrawContext(GuiGraphicsExtractor menuDrawContext, int mouseX, int mouseY, float delta) {
+      super(menuDrawContext);
+      this.mouseX = mouseX;
+      this.mouseY = mouseY;
+      this.delta = delta;
    }
 
-   public static MenuDrawContext method8080(GuiGraphicsExtractor var0, int var1, int var2, float var3) {
-      return new MenuDrawContext(var0, var1, var2, var3);
+   public static MenuDrawContext method8080(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+      return new MenuDrawContext(context, mouseX, mouseY, deltaTicks);
    }
 
    @Generated

@@ -42,444 +42,444 @@ public final class BotHeldItemRenderer implements MinecraftAccess {
    private float equipProgressOffHand;
    private float prevEquipProgressOffHand;
 
-   public void tick(BotPlayer var1) {
+   public void tick(BotPlayer player) {
       this.prevEquipProgressMainHand = this.equipProgressMainHand;
       this.prevEquipProgressOffHand = this.equipProgressOffHand;
-      ItemStack var2 = var1.getMainHandItem();
-      ItemStack var3 = var1.getOffhandItem();
-      if (this.shouldSkipHandAnimationOnSwap(this.mainHand, var2)) {
-         this.mainHand = var2;
+      ItemStack mainHandItem = player.getMainHandItem();
+      ItemStack offhandItem = player.getOffhandItem();
+      if (this.shouldSkipHandAnimationOnSwap(this.mainHand, mainHandItem)) {
+         this.mainHand = mainHandItem;
       }
 
-      if (this.shouldSkipHandAnimationOnSwap(this.offHand, var3)) {
-         this.offHand = var3;
+      if (this.shouldSkipHandAnimationOnSwap(this.offHand, offhandItem)) {
+         this.offHand = offhandItem;
       }
 
-      if (var1.isRiding()) {
+      if (player.isRiding()) {
          this.equipProgressMainHand = Mth.clamp(this.equipProgressMainHand - 0.4F, 0.0F, 1.0F);
          this.equipProgressOffHand = Mth.clamp(this.equipProgressOffHand - 0.4F, 0.0F, 1.0F);
       } else {
-         float var4 = var1.getAttackStrengthScale(1.0F);
-         float var5 = this.mainHand != var2 ? 0.0F : var4 * var4 * var4;
-         float var6 = this.offHand != var3 ? 0.0F : 1.0F;
-         this.equipProgressMainHand = this.equipProgressMainHand + Mth.clamp(var5 - this.equipProgressMainHand, -0.4F, 0.4F);
-         this.equipProgressOffHand = this.equipProgressOffHand + Mth.clamp(var6 - this.equipProgressOffHand, -0.4F, 0.4F);
+         float attackStrengthScale = player.getAttackStrengthScale(1.0F);
+         float f = this.mainHand != mainHandItem ? 0.0F : attackStrengthScale * attackStrengthScale * attackStrengthScale;
+         float f2 = this.offHand != offhandItem ? 0.0F : 1.0F;
+         this.equipProgressMainHand = this.equipProgressMainHand + Mth.clamp(f - this.equipProgressMainHand, -0.4F, 0.4F);
+         this.equipProgressOffHand = this.equipProgressOffHand + Mth.clamp(f2 - this.equipProgressOffHand, -0.4F, 0.4F);
       }
 
       if (this.equipProgressMainHand < 0.1F) {
-         this.mainHand = var2;
+         this.mainHand = mainHandItem;
       }
 
       if (this.equipProgressOffHand < 0.1F) {
-         this.offHand = var3;
+         this.offHand = offhandItem;
       }
    }
 
-   public void snap(BotPlayer var1) {
-      this.mainHand = var1.getMainHandItem();
-      this.offHand = var1.getOffhandItem();
+   public void snap(BotPlayer player) {
+      this.mainHand = player.getMainHandItem();
+      this.offHand = player.getOffhandItem();
       this.equipProgressMainHand = this.prevEquipProgressMainHand = 1.0F;
       this.equipProgressOffHand = this.prevEquipProgressOffHand = 1.0F;
    }
 
-   private boolean shouldSkipHandAnimationOnSwap(ItemStack var1, ItemStack var2) {
-      return ItemStack.matches(var1, var2) || !mc.getItemModelResolver().shouldPlaySwapAnimation(var2);
+   private boolean shouldSkipHandAnimationOnSwap(ItemStack mainHand, ItemStack mainHandItem) {
+      return ItemStack.matches(mainHand, mainHandItem) || !mc.getItemModelResolver().shouldPlaySwapAnimation(mainHandItem);
    }
 
-   public void render(BotPlayer var1, @Nullable BotPlayHandler var2, float var3, PoseStack var4, SubmitNodeCollector var5, int var6) {
-      float var7 = var1.getSwingAnimation(var3);
-      InteractionHand var8 = var1.getCurrentSwing() != null ? var1.getCurrentSwing().hand() : InteractionHand.MAIN_HAND;
-      float var9 = var1.getXRot(var3);
-      BotHeldItemRenderer.HandRenderType var10 = getHandRenderType(var1);
-      if (var10.renderMainHand) {
-         float var11 = var8 == InteractionHand.MAIN_HAND ? var7 : 0.0F;
-         float var12 = 1.0F - Mth.lerp(var3, this.prevEquipProgressMainHand, this.equipProgressMainHand);
-         this.renderFirstPersonItem(var1, var2, var3, var9, InteractionHand.MAIN_HAND, var11, this.mainHand, var12, var4, var5, var6);
+   public void render(BotPlayer player, @Nullable BotPlayHandler playHandler, float tickDelta, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+      float swingAnimation = player.getSwingAnimation(tickDelta);
+      InteractionHand hand = player.getCurrentSwing() != null ? player.getCurrentSwing().hand() : InteractionHand.MAIN_HAND;
+      float xRot = player.getXRot(tickDelta);
+      BotHeldItemRenderer.HandRenderType handRenderType = getHandRenderType(player);
+      if (handRenderType.renderMainHand) {
+         float x = hand == InteractionHand.MAIN_HAND ? swingAnimation : 0.0F;
+         float f = 1.0F - Mth.lerp(tickDelta, this.prevEquipProgressMainHand, this.equipProgressMainHand);
+         this.renderFirstPersonItem(player, playHandler, tickDelta, xRot, InteractionHand.MAIN_HAND, x, this.mainHand, f, poseStack, submitNodeCollector, lightCoords);
       }
 
-      if (var10.renderOffHand) {
-         float var13 = var8 == InteractionHand.OFF_HAND ? var7 : 0.0F;
-         float var14 = 1.0F - Mth.lerp(var3, this.prevEquipProgressOffHand, this.equipProgressOffHand);
-         this.renderFirstPersonItem(var1, var2, var3, var9, InteractionHand.OFF_HAND, var13, this.offHand, var14, var4, var5, var6);
+      if (handRenderType.renderOffHand) {
+         float x = hand == InteractionHand.OFF_HAND ? swingAnimation : 0.0F;
+         float f = 1.0F - Mth.lerp(tickDelta, this.prevEquipProgressOffHand, this.equipProgressOffHand);
+         this.renderFirstPersonItem(player, playHandler, tickDelta, xRot, InteractionHand.OFF_HAND, x, this.offHand, f, poseStack, submitNodeCollector, lightCoords);
       }
    }
 
-   private static BotHeldItemRenderer.HandRenderType getHandRenderType(BotPlayer var0) {
-      ItemStack var1 = var0.getMainHandItem();
-      ItemStack var2 = var0.getOffhandItem();
-      boolean var3 = var1.is(Items.BOW) || var2.is(Items.BOW);
-      boolean var4 = var1.is(Items.CROSSBOW) || var2.is(Items.CROSSBOW);
-      if (!var3 && !var4) {
+   private static BotHeldItemRenderer.HandRenderType getHandRenderType(BotPlayer player) {
+      ItemStack mainHandItem = player.getMainHandItem();
+      ItemStack offhandItem = player.getOffhandItem();
+      boolean flag = mainHandItem.is(Items.BOW) || offhandItem.is(Items.BOW);
+      boolean flag2 = mainHandItem.is(Items.CROSSBOW) || offhandItem.is(Items.CROSSBOW);
+      if (!flag && !flag2) {
          return BotHeldItemRenderer.HandRenderType.RENDER_BOTH_HANDS;
-      } else if (var0.isUsingItem()) {
-         return getUsingItemHandRenderType(var0);
+      } else if (player.isUsingItem()) {
+         return getUsingItemHandRenderType(player);
       } else {
-         return isChargedCrossbow(var1) ? BotHeldItemRenderer.HandRenderType.RENDER_MAIN_HAND_ONLY : BotHeldItemRenderer.HandRenderType.RENDER_BOTH_HANDS;
+         return isChargedCrossbow(mainHandItem) ? BotHeldItemRenderer.HandRenderType.RENDER_MAIN_HAND_ONLY : BotHeldItemRenderer.HandRenderType.RENDER_BOTH_HANDS;
       }
    }
 
-   private static BotHeldItemRenderer.HandRenderType getUsingItemHandRenderType(BotPlayer var0) {
-      ItemStack var1 = var0.getUseItem();
-      InteractionHand var2 = var0.getUsedItemHand();
-      if (!var1.is(Items.BOW) && !var1.is(Items.CROSSBOW)) {
-         return var2 == InteractionHand.MAIN_HAND && isChargedCrossbow(var0.getOffhandItem())
+   private static BotHeldItemRenderer.HandRenderType getUsingItemHandRenderType(BotPlayer player) {
+      ItemStack useItem = player.getUseItem();
+      InteractionHand usedItemHand = player.getUsedItemHand();
+      if (!useItem.is(Items.BOW) && !useItem.is(Items.CROSSBOW)) {
+         return usedItemHand == InteractionHand.MAIN_HAND && isChargedCrossbow(player.getOffhandItem())
             ? BotHeldItemRenderer.HandRenderType.RENDER_MAIN_HAND_ONLY
             : BotHeldItemRenderer.HandRenderType.RENDER_BOTH_HANDS;
       } else {
-         return BotHeldItemRenderer.HandRenderType.shouldOnlyRender(var2);
+         return BotHeldItemRenderer.HandRenderType.shouldOnlyRender(usedItemHand);
       }
    }
 
-   private static boolean isChargedCrossbow(ItemStack var0) {
-      return var0.is(Items.CROSSBOW) && CrossbowItem.isCharged(var0);
+   private static boolean isChargedCrossbow(ItemStack mainHandItem) {
+      return mainHandItem.is(Items.CROSSBOW) && CrossbowItem.isCharged(mainHandItem);
    }
 
    private void renderFirstPersonItem(
-      BotPlayer var1,
-      @Nullable BotPlayHandler var2,
-      float var3,
-      float var4,
-      InteractionHand var5,
-      float var6,
-      ItemStack var7,
-      float var8,
-      PoseStack var9,
-      SubmitNodeCollector var10,
-      int var11
+      BotPlayer player,
+      @Nullable BotPlayHandler playHandler,
+      float tickDelta,
+      float xRot,
+      InteractionHand interactionHand,
+      float x,
+      ItemStack mainHand,
+      float f,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int lightCoords
    ) {
-      if (!var1.isScoping()) {
-         boolean var12 = var5 == InteractionHand.MAIN_HAND;
-         HumanoidArm var13 = var12 ? var1.getMainArm() : var1.getMainArm().getOpposite();
-         var9.pushPose();
-         if (var7.isEmpty()) {
-            if (var12 && !var1.isInvisible()) {
-               this.renderArmHoldingItem(var1, var2, var9, var10, var11, var8, var6, var13);
+      if (!player.isScoping()) {
+         boolean flag = interactionHand == InteractionHand.MAIN_HAND;
+         HumanoidArm mainArm = flag ? player.getMainArm() : player.getMainArm().getOpposite();
+         poseStack.pushPose();
+         if (mainHand.isEmpty()) {
+            if (flag && !player.isInvisible()) {
+               this.renderArmHoldingItem(player, playHandler, poseStack, submitNodeCollector, lightCoords, f, x, mainArm);
             }
-         } else if (var7.has(DataComponents.MAP_ID)) {
-            if (var12 && this.offHand.isEmpty()) {
-               this.renderMapInBothHands(var1, var2, var9, var10, var11, var4, var8, var6);
+         } else if (mainHand.has(DataComponents.MAP_ID)) {
+            if (flag && this.offHand.isEmpty()) {
+               this.renderMapInBothHands(player, playHandler, poseStack, submitNodeCollector, lightCoords, xRot, f, x);
             } else {
-               this.renderMapInOneHand(var1, var2, var9, var10, var11, var8, var13, var6, var7);
+               this.renderMapInOneHand(player, playHandler, poseStack, submitNodeCollector, lightCoords, f, mainArm, x, mainHand);
             }
-         } else if (var7.is(Items.CROSSBOW)) {
-            boolean var14 = CrossbowItem.isCharged(var7);
-            boolean var15 = var13 == HumanoidArm.RIGHT;
-            int var16 = var15 ? 1 : -1;
-            if (var1.isUsingItem() && var1.getUseItemRemainingTicks() > 0 && var1.getUsedItemHand() == var5) {
-               this.applyEquipOffset(var9, var13, var8);
-               var9.translate(var16 * -0.4785682F, -0.094387F, 0.05731531F);
-               var9.rotate(Axis.XP.rotationDegrees(-11.935F));
-               var9.rotate(Axis.YP.rotationDegrees(var16 * 65.3F));
-               var9.rotate(Axis.ZP.rotationDegrees(var16 * -9.785F));
-               float var17 = var7.getUseDuration(var1) - (var1.getUseItemRemainingTicks() - var3 + 1.0F);
-               float var18 = var17 / CrossbowItem.getChargeDuration(var7, var1);
-               if (var18 > 1.0F) {
-                  var18 = 1.0F;
+         } else if (mainHand.is(Items.CROSSBOW)) {
+            boolean charged = CrossbowItem.isCharged(mainHand);
+            boolean flag2 = mainArm == HumanoidArm.RIGHT;
+            int n = flag2 ? 1 : -1;
+            if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == interactionHand) {
+               this.applyEquipOffset(poseStack, mainArm, f);
+               poseStack.translate(n * -0.4785682F, -0.094387F, 0.05731531F);
+               poseStack.rotate(Axis.XP.rotationDegrees(-11.935F));
+               poseStack.rotate(Axis.YP.rotationDegrees(n * 65.3F));
+               poseStack.rotate(Axis.ZP.rotationDegrees(n * -9.785F));
+               float f2 = mainHand.getUseDuration(player) - (player.getUseItemRemainingTicks() - tickDelta + 1.0F);
+               float f3 = f2 / CrossbowItem.getChargeDuration(mainHand, player);
+               if (f3 > 1.0F) {
+                  f3 = 1.0F;
                }
 
-               if (var18 > 0.1F) {
-                  float var19 = Mth.sin((var17 - 0.1F) * 1.3F) * (var18 - 0.1F);
-                  var9.translate(0.0F, var19 * 0.004F, 0.0F);
+               if (f3 > 0.1F) {
+                  float f4 = Mth.sin((f2 - 0.1F) * 1.3F) * (f3 - 0.1F);
+                  poseStack.translate(0.0F, f4 * 0.004F, 0.0F);
                }
 
-               var9.translate(0.0F, 0.0F, var18 * 0.04F);
-               var9.scale(1.0F, 1.0F, 1.0F + var18 * 0.2F);
-               var9.rotate(Axis.YN.rotationDegrees(var16 * 45.0F));
+               poseStack.translate(0.0F, 0.0F, f3 * 0.04F);
+               poseStack.scale(1.0F, 1.0F, 1.0F + f3 * 0.2F);
+               poseStack.rotate(Axis.YN.rotationDegrees(n * 45.0F));
             } else {
-               this.swingArm(var6, var8, var9, var16, var13);
-               if (var14 && var6 < 0.001F && var12) {
-                  var9.translate(var16 * -0.641864F, 0.0F, 0.0F);
-                  var9.rotate(Axis.YP.rotationDegrees(var16 * 10.0F));
+               this.swingArm(x, f, poseStack, n, mainArm);
+               if (charged && x < 0.001F && flag) {
+                  poseStack.translate(n * -0.641864F, 0.0F, 0.0F);
+                  poseStack.rotate(Axis.YP.rotationDegrees(n * 10.0F));
                }
             }
 
             this.renderItem(
-               var1, var7, var15 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !var15, var9, var10, var11
+               player, mainHand, flag2 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !flag2, poseStack, submitNodeCollector, lightCoords
             );
          } else {
-            boolean var20 = var13 == HumanoidArm.RIGHT;
-            int var21 = var20 ? 1 : -1;
-            if (var1.isUsingItem() && var1.getUseItemRemainingTicks() > 0 && var1.getUsedItemHand() == var5) {
-               switch (var7.getUseAnimation()) {
+            boolean flag2 = mainArm == HumanoidArm.RIGHT;
+            int n = flag2 ? 1 : -1;
+            if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == interactionHand) {
+               switch (mainHand.getUseAnimation()) {
                   case NONE:
-                     this.applyEquipOffset(var9, var13, var8);
+                     this.applyEquipOffset(poseStack, mainArm, f);
                      break;
                   case EAT:
                   case DRINK:
-                     this.applyEatOrDrinkTransformation(var9, var3, var13, var7, var1);
-                     this.applyEquipOffset(var9, var13, var8);
+                     this.applyEatOrDrinkTransformation(poseStack, tickDelta, mainArm, mainHand, player);
+                     this.applyEquipOffset(poseStack, mainArm, f);
                      break;
                   case BLOCK:
-                     this.applyEquipOffset(var9, var13, var8);
-                     if (!(var7.getItem() instanceof ShieldItem)) {
-                        var9.translate(var21 * -0.14142136F, 0.08F, 0.14142136F);
-                        var9.rotate(Axis.XP.rotationDegrees(-102.25F));
-                        var9.rotate(Axis.YP.rotationDegrees(var21 * 13.365F));
-                        var9.rotate(Axis.ZP.rotationDegrees(var21 * 78.05F));
+                     this.applyEquipOffset(poseStack, mainArm, f);
+                     if (!(mainHand.getItem() instanceof ShieldItem)) {
+                        poseStack.translate(n * -0.14142136F, 0.08F, 0.14142136F);
+                        poseStack.rotate(Axis.XP.rotationDegrees(-102.25F));
+                        poseStack.rotate(Axis.YP.rotationDegrees(n * 13.365F));
+                        poseStack.rotate(Axis.ZP.rotationDegrees(n * 78.05F));
                      }
                      break;
                   case BOW:
-                     this.applyEquipOffset(var9, var13, var8);
-                     var9.translate(var21 * -0.2785682F, 0.18344387F, 0.15731531F);
-                     var9.rotate(Axis.XP.rotationDegrees(-13.935F));
-                     var9.rotate(Axis.YP.rotationDegrees(var21 * 35.3F));
-                     var9.rotate(Axis.ZP.rotationDegrees(var21 * -9.785F));
-                     float var23 = var7.getUseDuration(var1) - (var1.getUseItemRemainingTicks() - var3 + 1.0F);
-                     float var25 = var23 / 20.0F;
-                     var25 = (var25 * var25 + var25 * 2.0F) / 3.0F;
-                     if (var25 > 1.0F) {
-                        var25 = 1.0F;
+                     this.applyEquipOffset(poseStack, mainArm, f);
+                     poseStack.translate(n * -0.2785682F, 0.18344387F, 0.15731531F);
+                     poseStack.rotate(Axis.XP.rotationDegrees(-13.935F));
+                     poseStack.rotate(Axis.YP.rotationDegrees(n * 35.3F));
+                     poseStack.rotate(Axis.ZP.rotationDegrees(n * -9.785F));
+                     float f2 = mainHand.getUseDuration(player) - (player.getUseItemRemainingTicks() - tickDelta + 1.0F);
+                     float f3 = f2 / 20.0F;
+                     f3 = (f3 * f3 + f3 * 2.0F) / 3.0F;
+                     if (f3 > 1.0F) {
+                        f3 = 1.0F;
                      }
 
-                     if (var25 > 0.1F) {
-                        float var28 = Mth.sin((var23 - 0.1F) * 1.3F) * (var25 - 0.1F);
-                        var9.translate(0.0F, var28 * 0.004F, 0.0F);
+                     if (f3 > 0.1F) {
+                        float f4 = Mth.sin((f2 - 0.1F) * 1.3F) * (f3 - 0.1F);
+                        poseStack.translate(0.0F, f4 * 0.004F, 0.0F);
                      }
 
-                     var9.translate(0.0F, 0.0F, var25 * 0.04F);
-                     var9.scale(1.0F, 1.0F, 1.0F + var25 * 0.2F);
-                     var9.rotate(Axis.YN.rotationDegrees(var21 * 45.0F));
+                     poseStack.translate(0.0F, 0.0F, f3 * 0.04F);
+                     poseStack.scale(1.0F, 1.0F, 1.0F + f3 * 0.2F);
+                     poseStack.rotate(Axis.YN.rotationDegrees(n * 45.0F));
                      break;
                   case SPEAR:
-                     this.applyEquipOffset(var9, var13, var8);
-                     var9.translate(var21 * -0.5F, 0.7F, 0.1F);
-                     var9.rotate(Axis.XP.rotationDegrees(-55.0F));
-                     var9.rotate(Axis.YP.rotationDegrees(var21 * 35.3F));
-                     var9.rotate(Axis.ZP.rotationDegrees(var21 * -9.785F));
-                     float var22 = var7.getUseDuration(var1) - (var1.getUseItemRemainingTicks() - var3 + 1.0F);
-                     float var24 = Math.min(var22 / 10.0F, 1.0F);
-                     if (var24 > 0.1F) {
-                        float var27 = Mth.sin((var22 - 0.1F) * 1.3F) * (var24 - 0.1F);
-                        var9.translate(0.0F, var27 * 0.004F, 0.0F);
+                     this.applyEquipOffset(poseStack, mainArm, f);
+                     poseStack.translate(n * -0.5F, 0.7F, 0.1F);
+                     poseStack.rotate(Axis.XP.rotationDegrees(-55.0F));
+                     poseStack.rotate(Axis.YP.rotationDegrees(n * 35.3F));
+                     poseStack.rotate(Axis.ZP.rotationDegrees(n * -9.785F));
+                     float f4 = mainHand.getUseDuration(player) - (player.getUseItemRemainingTicks() - tickDelta + 1.0F);
+                     float f5 = Math.min(f4 / 10.0F, 1.0F);
+                     if (f5 > 0.1F) {
+                        float f6 = Mth.sin((f4 - 0.1F) * 1.3F) * (f5 - 0.1F);
+                        poseStack.translate(0.0F, f6 * 0.004F, 0.0F);
                      }
 
-                     var9.translate(0.0F, 0.0F, var24 * 0.2F);
-                     var9.scale(1.0F, 1.0F, 1.0F + var24 * 0.2F);
-                     var9.rotate(Axis.YN.rotationDegrees(var21 * 45.0F));
+                     poseStack.translate(0.0F, 0.0F, f5 * 0.2F);
+                     poseStack.scale(1.0F, 1.0F, 1.0F + f5 * 0.2F);
+                     poseStack.rotate(Axis.YN.rotationDegrees(n * 45.0F));
                      break;
                   case BRUSH:
-                     this.applyBrushTransformation(var9, var3, var13, var1, var8);
+                     this.applyBrushTransformation(poseStack, tickDelta, mainArm, player, f);
                      break;
                   case BUNDLE:
                   default:
-                     this.swingArm(var6, var8, var9, var21, var13);
+                     this.swingArm(x, f, poseStack, n, mainArm);
                }
-            } else if (var1.isAutoSpinAttack()) {
-               this.applyEquipOffset(var9, var13, var8);
-               var9.translate(var21 * -0.4F, 0.8F, 0.3F);
-               var9.rotate(Axis.YP.rotationDegrees(var21 * 65.0F));
-               var9.rotate(Axis.ZP.rotationDegrees(var21 * -85.0F));
+            } else if (player.isAutoSpinAttack()) {
+               this.applyEquipOffset(poseStack, mainArm, f);
+               poseStack.translate(n * -0.4F, 0.8F, 0.3F);
+               poseStack.rotate(Axis.YP.rotationDegrees(n * 65.0F));
+               poseStack.rotate(Axis.ZP.rotationDegrees(n * -85.0F));
             } else {
-               this.swingArm(var6, var8, var9, var21, var13);
+               this.swingArm(x, f, poseStack, n, mainArm);
             }
 
             this.renderItem(
-               var1, var7, var20 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !var20, var9, var10, var11
+               player, mainHand, flag2 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !flag2, poseStack, submitNodeCollector, lightCoords
             );
          }
 
-         var9.popPose();
+         poseStack.popPose();
       }
    }
 
-   private void renderItem(BotPlayer var1, ItemStack var2, ItemDisplayContext var3, boolean var4, PoseStack var5, SubmitNodeCollector var6, int var7) {
-      if (!var2.isEmpty()) {
-         ItemStackRenderState var8 = new ItemStackRenderState();
-         mc.getItemModelResolver().updateForTopItem(var8, var2, var3, var1.level(), var1, var1.getId() + var3.ordinal());
-         var8.submit(var5, var6, var7, OverlayTexture.NO_OVERLAY, 0);
+   private void renderItem(BotPlayer player, ItemStack mainHand, ItemDisplayContext displayContext, boolean flag, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+      if (!mainHand.isEmpty()) {
+         ItemStackRenderState itemStackRenderState = new ItemStackRenderState();
+         mc.getItemModelResolver().updateForTopItem(itemStackRenderState, mainHand, displayContext, player.level(), player, player.getId() + displayContext.ordinal());
+         itemStackRenderState.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, 0);
       }
    }
 
    private void renderArmHoldingItem(
-      BotPlayer var1, @Nullable BotPlayHandler var2, PoseStack var3, SubmitNodeCollector var4, int var5, float var6, float var7, HumanoidArm var8
+      BotPlayer player, @Nullable BotPlayHandler playHandler, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, float f, float x, HumanoidArm mainArm
    ) {
-      boolean var9 = var8 != HumanoidArm.LEFT;
-      float var10 = var9 ? 1.0F : -1.0F;
-      float var11 = Mth.sqrt(var7);
-      float var12 = -0.3F * Mth.sin(var11 * (float) Math.PI);
-      float var13 = 0.4F * Mth.sin(var11 * (float) (Math.PI * 2));
-      float var14 = -0.4F * Mth.sin(var7 * (float) Math.PI);
-      var3.translate(var10 * (var12 + 0.64000005F), var13 + -0.6F + var6 * -0.6F, var14 + -0.71999997F);
-      var3.rotate(Axis.YP.rotationDegrees(var10 * 45.0F));
-      float var15 = Mth.sin(var7 * var7 * (float) Math.PI);
-      float var16 = Mth.sin(var11 * (float) Math.PI);
-      var3.rotate(Axis.YP.rotationDegrees(var10 * var16 * 70.0F));
-      var3.rotate(Axis.ZP.rotationDegrees(var10 * var15 * -20.0F));
-      var3.translate(var10 * -1.0F, 3.6F, 3.5F);
-      var3.rotate(Axis.ZP.rotationDegrees(var10 * 120.0F));
-      var3.rotate(Axis.XP.rotationDegrees(200.0F));
-      var3.rotate(Axis.YP.rotationDegrees(var10 * -135.0F));
-      var3.translate(var10 * 5.6F, 0.0F, 0.0F);
-      this.renderArm(var1, var2, var3, var4, var5, var8);
+      boolean flag = mainArm != HumanoidArm.LEFT;
+      float f2 = flag ? 1.0F : -1.0F;
+      float f3 = Mth.sqrt(x);
+      float f4 = -0.3F * Mth.sin(f3 * (float) Math.PI);
+      float f5 = 0.4F * Mth.sin(f3 * (float) (Math.PI * 2));
+      float f6 = -0.4F * Mth.sin(x * (float) Math.PI);
+      poseStack.translate(f2 * (f4 + 0.64000005F), f5 + -0.6F + f * -0.6F, f6 + -0.71999997F);
+      poseStack.rotate(Axis.YP.rotationDegrees(f2 * 45.0F));
+      float f7 = Mth.sin(x * x * (float) Math.PI);
+      float f8 = Mth.sin(f3 * (float) Math.PI);
+      poseStack.rotate(Axis.YP.rotationDegrees(f2 * f8 * 70.0F));
+      poseStack.rotate(Axis.ZP.rotationDegrees(f2 * f7 * -20.0F));
+      poseStack.translate(f2 * -1.0F, 3.6F, 3.5F);
+      poseStack.rotate(Axis.ZP.rotationDegrees(f2 * 120.0F));
+      poseStack.rotate(Axis.XP.rotationDegrees(200.0F));
+      poseStack.rotate(Axis.YP.rotationDegrees(f2 * -135.0F));
+      poseStack.translate(f2 * 5.6F, 0.0F, 0.0F);
+      this.renderArm(player, playHandler, poseStack, submitNodeCollector, lightCoords, mainArm);
    }
 
-   private void renderArm(BotPlayer var1, @Nullable BotPlayHandler var2, PoseStack var3, SubmitNodeCollector var4, int var5, HumanoidArm var6) {
-      PlayerSkin var7 = BotPlayerRenderer.resolveSkin(var1, var2);
-      AvatarRenderer var8 = BotPlayerRenderer.rendererFor(var7.model());
-      if (var8 != null) {
-         Identifier var9 = var7.body().texturePath();
-         if (var6 == HumanoidArm.RIGHT) {
-            var8.renderRightHand(var3, var4, var5, var9, true);
+   private void renderArm(BotPlayer player, @Nullable BotPlayHandler playHandler, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, HumanoidArm mainArm) {
+      PlayerSkin skin = BotPlayerRenderer.resolveSkin(player, playHandler);
+      AvatarRenderer rendererFor = BotPlayerRenderer.rendererFor(skin.model());
+      if (rendererFor != null) {
+         Identifier texturePath = skin.body().texturePath();
+         if (mainArm == HumanoidArm.RIGHT) {
+            rendererFor.renderRightHand(poseStack, submitNodeCollector, lightCoords, texturePath, true);
          } else {
-            var8.renderLeftHand(var3, var4, var5, var9, true);
+            rendererFor.renderLeftHand(poseStack, submitNodeCollector, lightCoords, texturePath, true);
          }
       }
    }
 
    private void renderMapInOneHand(
-      BotPlayer var1,
-      @Nullable BotPlayHandler var2,
-      PoseStack var3,
-      SubmitNodeCollector var4,
-      int var5,
-      float var6,
-      HumanoidArm var7,
-      float var8,
-      ItemStack var9
+      BotPlayer player,
+      @Nullable BotPlayHandler playHandler,
+      PoseStack poseStack,
+      SubmitNodeCollector submitNodeCollector,
+      int lightCoords,
+      float f,
+      HumanoidArm mainArm,
+      float x,
+      ItemStack mainHand
    ) {
-      float var10 = var7 == HumanoidArm.RIGHT ? 1.0F : -1.0F;
-      var3.translate(var10 * 0.125F, -0.125F, 0.0F);
-      if (!var1.isInvisible()) {
-         var3.pushPose();
-         var3.rotate(Axis.ZP.rotationDegrees(var10 * 10.0F));
-         this.renderArmHoldingItem(var1, var2, var3, var4, var5, var6, var8, var7);
-         var3.popPose();
+      float f2 = mainArm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+      poseStack.translate(f2 * 0.125F, -0.125F, 0.0F);
+      if (!player.isInvisible()) {
+         poseStack.pushPose();
+         poseStack.rotate(Axis.ZP.rotationDegrees(f2 * 10.0F));
+         this.renderArmHoldingItem(player, playHandler, poseStack, submitNodeCollector, lightCoords, f, x, mainArm);
+         poseStack.popPose();
       }
 
-      var3.pushPose();
-      var3.translate(var10 * 0.51F, -0.08F + var6 * -1.2F, -0.75F);
-      float var11 = Mth.sqrt(var8);
-      float var12 = Mth.sin(var11 * (float) Math.PI);
-      float var13 = -0.5F * var12;
-      float var14 = 0.4F * Mth.sin(var11 * (float) (Math.PI * 2));
-      float var15 = -0.3F * Mth.sin(var8 * (float) Math.PI);
-      var3.translate(var10 * var13, var14 - 0.3F * var12, var15);
-      var3.rotate(Axis.XP.rotationDegrees(var12 * -45.0F));
-      var3.rotate(Axis.YP.rotationDegrees(var10 * var12 * -30.0F));
-      this.renderFirstPersonMap(var1, var3, var4, var5, var9);
-      var3.popPose();
+      poseStack.pushPose();
+      poseStack.translate(f2 * 0.51F, -0.08F + f * -1.2F, -0.75F);
+      float f3 = Mth.sqrt(x);
+      float f4 = Mth.sin(f3 * (float) Math.PI);
+      float f5 = -0.5F * f4;
+      float f6 = 0.4F * Mth.sin(f3 * (float) (Math.PI * 2));
+      float zo = -0.3F * Mth.sin(x * (float) Math.PI);
+      poseStack.translate(f2 * f5, f6 - 0.3F * f4, zo);
+      poseStack.rotate(Axis.XP.rotationDegrees(f4 * -45.0F));
+      poseStack.rotate(Axis.YP.rotationDegrees(f2 * f4 * -30.0F));
+      this.renderFirstPersonMap(player, poseStack, submitNodeCollector, lightCoords, mainHand);
+      poseStack.popPose();
    }
 
    private void renderMapInBothHands(
-      BotPlayer var1, @Nullable BotPlayHandler var2, PoseStack var3, SubmitNodeCollector var4, int var5, float var6, float var7, float var8
+      BotPlayer player, @Nullable BotPlayHandler playHandler, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, float xRot, float f, float x
    ) {
-      float var9 = Mth.sqrt(var8);
-      float var10 = -0.2F * Mth.sin(var8 * (float) Math.PI);
-      float var11 = -0.4F * Mth.sin(var9 * (float) Math.PI);
-      var3.translate(0.0F, -var10 / 2.0F, var11);
-      float var12 = this.getMapAngle(var6);
-      var3.translate(0.0F, 0.04F + var7 * -1.2F + var12 * -0.5F, -0.72F);
-      var3.rotate(Axis.XP.rotationDegrees(var12 * -85.0F));
-      if (!var1.isInvisible()) {
-         var3.pushPose();
-         var3.rotate(Axis.YP.rotationDegrees(90.0F));
-         this.renderPlainArm(var1, var2, var3, var4, var5, HumanoidArm.RIGHT);
-         this.renderPlainArm(var1, var2, var3, var4, var5, HumanoidArm.LEFT);
-         var3.popPose();
+      float f2 = Mth.sqrt(x);
+      float f3 = -0.2F * Mth.sin(x * (float) Math.PI);
+      float zo = -0.4F * Mth.sin(f2 * (float) Math.PI);
+      poseStack.translate(0.0F, -f3 / 2.0F, zo);
+      float mapAngle = this.getMapAngle(xRot);
+      poseStack.translate(0.0F, 0.04F + f * -1.2F + mapAngle * -0.5F, -0.72F);
+      poseStack.rotate(Axis.XP.rotationDegrees(mapAngle * -85.0F));
+      if (!player.isInvisible()) {
+         poseStack.pushPose();
+         poseStack.rotate(Axis.YP.rotationDegrees(90.0F));
+         this.renderPlainArm(player, playHandler, poseStack, submitNodeCollector, lightCoords, HumanoidArm.RIGHT);
+         this.renderPlainArm(player, playHandler, poseStack, submitNodeCollector, lightCoords, HumanoidArm.LEFT);
+         poseStack.popPose();
       }
 
-      float var13 = Mth.sin(var9 * (float) Math.PI);
-      var3.rotate(Axis.XP.rotationDegrees(var13 * 20.0F));
-      var3.scale(2.0F, 2.0F, 2.0F);
-      this.renderFirstPersonMap(var1, var3, var4, var5, this.mainHand);
+      float f4 = Mth.sin(f2 * (float) Math.PI);
+      poseStack.rotate(Axis.XP.rotationDegrees(f4 * 20.0F));
+      poseStack.scale(2.0F, 2.0F, 2.0F);
+      this.renderFirstPersonMap(player, poseStack, submitNodeCollector, lightCoords, this.mainHand);
    }
 
-   private void renderPlainArm(BotPlayer var1, @Nullable BotPlayHandler var2, PoseStack var3, SubmitNodeCollector var4, int var5, HumanoidArm var6) {
-      var3.pushPose();
-      float var7 = var6 == HumanoidArm.RIGHT ? 1.0F : -1.0F;
-      var3.rotate(Axis.YP.rotationDegrees(92.0F));
-      var3.rotate(Axis.XP.rotationDegrees(45.0F));
-      var3.rotate(Axis.ZP.rotationDegrees(var7 * -41.0F));
-      var3.translate(var7 * 0.3F, -1.1F, 0.45F);
-      this.renderArm(var1, var2, var3, var4, var5, var6);
-      var3.popPose();
+   private void renderPlainArm(BotPlayer player, @Nullable BotPlayHandler playHandler, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, HumanoidArm mainArm) {
+      poseStack.pushPose();
+      float f = mainArm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+      poseStack.rotate(Axis.YP.rotationDegrees(92.0F));
+      poseStack.rotate(Axis.XP.rotationDegrees(45.0F));
+      poseStack.rotate(Axis.ZP.rotationDegrees(f * -41.0F));
+      poseStack.translate(f * 0.3F, -1.1F, 0.45F);
+      this.renderArm(player, playHandler, poseStack, submitNodeCollector, lightCoords, mainArm);
+      poseStack.popPose();
    }
 
-   private void renderFirstPersonMap(BotPlayer var1, PoseStack var2, SubmitNodeCollector var3, int var4, ItemStack var5) {
-      var2.rotate(Axis.YP.rotationDegrees(180.0F));
-      var2.rotate(Axis.ZP.rotationDegrees(180.0F));
-      var2.scale(0.38F, 0.38F, 0.38F);
-      var2.translate(-0.5F, -0.5F, 0.0F);
-      var2.scale(0.0078125F, 0.0078125F, 0.0078125F);
-      MapId var7 = var5.get(DataComponents.MAP_ID);
-      MapItemSavedData var8 = MapItem.getSavedData(var7, var1.level());
-      var3.submitCustomGeometry(var2, var8 == null ? MAP_BACKGROUND : MAP_BACKGROUND_CHECKERBOARD, (var10, var9) -> {
-         var9.addVertex(var10, -7.0F, 135.0F, 0.0F).setColor(-1).setUv(0.0F, 1.0F).setLight(var4);
-         var9.addVertex(var10, 135.0F, 135.0F, 0.0F).setColor(-1).setUv(1.0F, 1.0F).setLight(var4);
-         var9.addVertex(var10, 135.0F, -7.0F, 0.0F).setColor(-1).setUv(1.0F, 0.0F).setLight(var4);
-         var9.addVertex(var10, -7.0F, -7.0F, 0.0F).setColor(-1).setUv(0.0F, 0.0F).setLight(var4);
+   private void renderFirstPersonMap(BotPlayer player, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, ItemStack mainHand) {
+      poseStack.rotate(Axis.YP.rotationDegrees(180.0F));
+      poseStack.rotate(Axis.ZP.rotationDegrees(180.0F));
+      poseStack.scale(0.38F, 0.38F, 0.38F);
+      poseStack.translate(-0.5F, -0.5F, 0.0F);
+      poseStack.scale(0.0078125F, 0.0078125F, 0.0078125F);
+      MapId id = mainHand.get(DataComponents.MAP_ID);
+      MapItemSavedData savedData = MapItem.getSavedData(id, player.level());
+      submitNodeCollector.submitCustomGeometry(poseStack, savedData == null ? MAP_BACKGROUND : MAP_BACKGROUND_CHECKERBOARD, (pose, consumer) -> {
+         consumer.addVertex(pose, -7.0F, 135.0F, 0.0F).setColor(-1).setUv(0.0F, 1.0F).setLight(lightCoords);
+         consumer.addVertex(pose, 135.0F, 135.0F, 0.0F).setColor(-1).setUv(1.0F, 1.0F).setLight(lightCoords);
+         consumer.addVertex(pose, 135.0F, -7.0F, 0.0F).setColor(-1).setUv(1.0F, 0.0F).setLight(lightCoords);
+         consumer.addVertex(pose, -7.0F, -7.0F, 0.0F).setColor(-1).setUv(0.0F, 0.0F).setLight(lightCoords);
       });
-      if (var8 != null) {
-         MapRenderer var11 = mc.getMapRenderer();
-         var11.extractRenderState(var7, var8, this.mapRenderState);
-         var11.render(this.mapRenderState, var2, var3, false, var4);
+      if (savedData != null) {
+         MapRenderer mapRenderer = mc.getMapRenderer();
+         mapRenderer.extractRenderState(id, savedData, this.mapRenderState);
+         mapRenderer.render(this.mapRenderState, poseStack, submitNodeCollector, false, lightCoords);
       }
    }
 
-   private float getMapAngle(float var1) {
-      float var2 = 1.0F - var1 / 45.0F + 0.1F;
-      var2 = Mth.clamp(var2, 0.0F, 1.0F);
-      return -Mth.cos(var2 * (float) Math.PI) * 0.5F + 0.5F;
+   private float getMapAngle(float xRot) {
+      float f = 1.0F - xRot / 45.0F + 0.1F;
+      f = Mth.clamp(f, 0.0F, 1.0F);
+      return -Mth.cos(f * (float) Math.PI) * 0.5F + 0.5F;
    }
 
-   private void applyEatOrDrinkTransformation(PoseStack var1, float var2, HumanoidArm var3, ItemStack var4, BotPlayer var5) {
-      float var6 = var5.getUseItemRemainingTicks() - var2 + 1.0F;
-      float var7 = var6 / var4.getUseDuration(var5);
-      if (var7 < 0.8F) {
-         float var8 = Mth.abs(Mth.cos(var6 / 4.0F * (float) Math.PI) * 0.1F);
-         var1.translate(0.0F, var8, 0.0F);
+   private void applyEatOrDrinkTransformation(PoseStack poseStack, float tickDelta, HumanoidArm mainArm, ItemStack mainHand, BotPlayer player) {
+      float f = player.getUseItemRemainingTicks() - tickDelta + 1.0F;
+      float f2 = f / mainHand.getUseDuration(player);
+      if (f2 < 0.8F) {
+         float yo = Mth.abs(Mth.cos(f / 4.0F * (float) Math.PI) * 0.1F);
+         poseStack.translate(0.0F, yo, 0.0F);
       }
 
-      float var10 = 1.0F - (float)Math.pow(var7, 27.0);
-      int var9 = var3 == HumanoidArm.RIGHT ? 1 : -1;
-      var1.translate(var10 * 0.6F * var9, var10 * -0.5F, 0.0F);
-      var1.rotate(Axis.YP.rotationDegrees(var9 * var10 * 90.0F));
-      var1.rotate(Axis.XP.rotationDegrees(var10 * 10.0F));
-      var1.rotate(Axis.ZP.rotationDegrees(var9 * var10 * 30.0F));
+      float f3 = 1.0F - (float)Math.pow(f2, 27.0);
+      int n = mainArm == HumanoidArm.RIGHT ? 1 : -1;
+      poseStack.translate(f3 * 0.6F * n, f3 * -0.5F, 0.0F);
+      poseStack.rotate(Axis.YP.rotationDegrees(n * f3 * 90.0F));
+      poseStack.rotate(Axis.XP.rotationDegrees(f3 * 10.0F));
+      poseStack.rotate(Axis.ZP.rotationDegrees(n * f3 * 30.0F));
    }
 
-   private void applyBrushTransformation(PoseStack var1, float var2, HumanoidArm var3, BotPlayer var4, float var5) {
-      this.applyEquipOffset(var1, var3, var5);
-      float var6 = var4.getUseItemRemainingTicks() % 10;
-      float var7 = var6 - var2 + 1.0F;
-      float var8 = 1.0F - var7 / 10.0F;
-      float var9 = -15.0F + 75.0F * Mth.cos(var8 * 2.0F * (float) Math.PI);
-      if (var3 != HumanoidArm.RIGHT) {
-         var1.translate(0.1, 0.83, 0.35);
-         var1.rotate(Axis.XP.rotationDegrees(-80.0F));
-         var1.rotate(Axis.YP.rotationDegrees(-90.0F));
-         var1.rotate(Axis.XP.rotationDegrees(var9));
-         var1.translate(-0.3, 0.22, 0.35);
+   private void applyBrushTransformation(PoseStack poseStack, float tickDelta, HumanoidArm mainArm, BotPlayer player, float f) {
+      this.applyEquipOffset(poseStack, mainArm, f);
+      float f2 = player.getUseItemRemainingTicks() % 10;
+      float f3 = f2 - tickDelta + 1.0F;
+      float f4 = 1.0F - f3 / 10.0F;
+      float angle = -15.0F + 75.0F * Mth.cos(f4 * 2.0F * (float) Math.PI);
+      if (mainArm != HumanoidArm.RIGHT) {
+         poseStack.translate(0.1, 0.83, 0.35);
+         poseStack.rotate(Axis.XP.rotationDegrees(-80.0F));
+         poseStack.rotate(Axis.YP.rotationDegrees(-90.0F));
+         poseStack.rotate(Axis.XP.rotationDegrees(angle));
+         poseStack.translate(-0.3, 0.22, 0.35);
       } else {
-         var1.translate(-0.25, 0.22, 0.35);
-         var1.rotate(Axis.XP.rotationDegrees(-80.0F));
-         var1.rotate(Axis.YP.rotationDegrees(90.0F));
-         var1.rotate(Axis.XP.rotationDegrees(var9));
+         poseStack.translate(-0.25, 0.22, 0.35);
+         poseStack.rotate(Axis.XP.rotationDegrees(-80.0F));
+         poseStack.rotate(Axis.YP.rotationDegrees(90.0F));
+         poseStack.rotate(Axis.XP.rotationDegrees(angle));
       }
    }
 
-   private void applySwingOffset(PoseStack var1, HumanoidArm var2, float var3) {
-      int var4 = var2 == HumanoidArm.RIGHT ? 1 : -1;
-      float var5 = Mth.sin(var3 * var3 * (float) Math.PI);
-      var1.rotate(Axis.YP.rotationDegrees(var4 * (45.0F + var5 * -20.0F)));
-      float var6 = Mth.sin(Mth.sqrt(var3) * (float) Math.PI);
-      var1.rotate(Axis.ZP.rotationDegrees(var4 * var6 * -20.0F));
-      var1.rotate(Axis.XP.rotationDegrees(var6 * -80.0F));
-      var1.rotate(Axis.YP.rotationDegrees(var4 * -45.0F));
+   private void applySwingOffset(PoseStack poseStack, HumanoidArm mainArm, float x) {
+      int n = mainArm == HumanoidArm.RIGHT ? 1 : -1;
+      float f = Mth.sin(x * x * (float) Math.PI);
+      poseStack.rotate(Axis.YP.rotationDegrees(n * (45.0F + f * -20.0F)));
+      float f2 = Mth.sin(Mth.sqrt(x) * (float) Math.PI);
+      poseStack.rotate(Axis.ZP.rotationDegrees(n * f2 * -20.0F));
+      poseStack.rotate(Axis.XP.rotationDegrees(f2 * -80.0F));
+      poseStack.rotate(Axis.YP.rotationDegrees(n * -45.0F));
    }
 
-   private void applyEquipOffset(PoseStack var1, HumanoidArm var2, float var3) {
-      int var4 = var2 == HumanoidArm.RIGHT ? 1 : -1;
-      var1.translate(var4 * 0.56F, -0.52F + var3 * -0.6F, -0.72F);
+   private void applyEquipOffset(PoseStack poseStack, HumanoidArm mainArm, float f) {
+      int n = mainArm == HumanoidArm.RIGHT ? 1 : -1;
+      poseStack.translate(n * 0.56F, -0.52F + f * -0.6F, -0.72F);
    }
 
-   private void swingArm(float var1, float var2, PoseStack var3, int var4, HumanoidArm var5) {
-      float var6 = -0.4F * Mth.sin(Mth.sqrt(var1) * (float) Math.PI);
-      float var7 = 0.2F * Mth.sin(Mth.sqrt(var1) * (float) (Math.PI * 2));
-      float var8 = -0.2F * Mth.sin(var1 * (float) Math.PI);
-      var3.translate(var4 * var6, var7, var8);
-      this.applyEquipOffset(var3, var5, var2);
-      this.applySwingOffset(var3, var5, var1);
+   private void swingArm(float x, float f, PoseStack poseStack, int n, HumanoidArm mainArm) {
+      float f2 = -0.4F * Mth.sin(Mth.sqrt(x) * (float) Math.PI);
+      float yo = 0.2F * Mth.sin(Mth.sqrt(x) * (float) (Math.PI * 2));
+      float zo = -0.2F * Mth.sin(x * (float) Math.PI);
+      poseStack.translate(n * f2, yo, zo);
+      this.applyEquipOffset(poseStack, mainArm, f);
+      this.applySwingOffset(poseStack, mainArm, x);
    }
 
    private static enum HandRenderType {
@@ -490,13 +490,13 @@ public final class BotHeldItemRenderer implements MinecraftAccess {
       public final boolean renderMainHand;
       public final boolean renderOffHand;
 
-      private HandRenderType(boolean var3, boolean var4) {
-         this.renderMainHand = var3;
-         this.renderOffHand = var4;
+      private HandRenderType(boolean renderMainHand, boolean renderOffHand) {
+         this.renderMainHand = renderMainHand;
+         this.renderOffHand = renderOffHand;
       }
 
-      public static BotHeldItemRenderer.HandRenderType shouldOnlyRender(InteractionHand var0) {
-         return var0 == InteractionHand.MAIN_HAND ? RENDER_MAIN_HAND_ONLY : RENDER_OFF_HAND_ONLY;
+      public static BotHeldItemRenderer.HandRenderType shouldOnlyRender(InteractionHand usedItemHand) {
+         return usedItemHand == InteractionHand.MAIN_HAND ? RENDER_MAIN_HAND_ONLY : RENDER_OFF_HAND_ONLY;
       }
    }
 }

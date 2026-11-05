@@ -23,22 +23,22 @@ public class MixinEntityRenderer {
          target = "Lnet/minecraft/core/BlockPos;containing(Lnet/minecraft/core/Position;)Lnet/minecraft/core/BlockPos;"
       )}
    )
-   private BlockPos zenith$liftPetLightSample(BlockPos var1, Entity var2, float var3) {
-      if (PetManager.method4559() && PetManager.method4557(var2.getId())) {
-         Level var4 = var2.level();
-         BlockPos var5 = var1;
+   private BlockPos zenith$liftPetLightSample(BlockPos pos, Entity entity, float f) {
+      if (PetManager.method4559() && PetManager.method4557(entity.getId())) {
+         Level level = entity.level();
+         BlockPos pos2 = pos;
 
-         for (int var6 = 0; var6 < 2; var6++) {
-            if (var4.getBrightness(LightLayer.SKY, var5) > 0 || var4.getBrightness(LightLayer.BLOCK, var5) > 0) {
-               return var5;
+         for (int i = 0; i < 2; i++) {
+            if (level.getBrightness(LightLayer.SKY, pos2) > 0 || level.getBrightness(LightLayer.BLOCK, pos2) > 0) {
+               return pos2;
             }
 
-            var5 = var5.above();
+            pos2 = pos2.above();
          }
 
-         return var5;
+         return pos2;
       } else {
-         return var1;
+         return pos;
       }
    }
 
@@ -49,16 +49,16 @@ public class MixinEntityRenderer {
          target = "Lnet/minecraft/world/entity/Entity;getTeamColor()I"
       )
    )
-   private int zenith$shaderEspGlowColor(Entity var1) {
-      if (Util4.method1278(var1.getId())) {
-         return Util4.method1279(var1.getId(), var1.getTeamColor());
+   private int zenith$shaderEspGlowColor(Entity entity) {
+      if (Util4.method1278(entity.getId())) {
+         return Util4.method1279(entity.getId(), entity.getTeamColor());
       } else {
-         ShaderESPModule var2 = ShaderESPModule.INSTANCE;
-         if (var2 != null && var2.isEnabled() && var2.method4584(var1)) {
-            return var2.method4587(var1);
+         ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;
+         if (shaderESPModule != null && shaderESPModule.isEnabled() && shaderESPModule.method4584(entity)) {
+            return shaderESPModule.method4587(entity);
          } else {
-            PredictionsModule var3 = PredictionsModule.INSTANCE;
-            return var3 != null && var3.method2911(var1) ? var3.method2912() : var1.getTeamColor();
+            PredictionsModule predictionsModule = PredictionsModule.INSTANCE;
+            return predictionsModule != null && predictionsModule.method2911(entity) ? predictionsModule.method2912() : entity.getTeamColor();
          }
       }
    }

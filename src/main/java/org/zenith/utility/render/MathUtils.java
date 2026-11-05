@@ -14,165 +14,165 @@ public final class MathUtils implements MinecraftAccess {
    private static final double CONST_doubleValue = Math.PI * 2;
    private static final double[] CONST_doubleValues = new double[65536];
 
-   public static double sin(double var0) {
-      int var2 = (int)(var0 * 10430.378350470453) & 65535;
-      return CONST_doubleValues[var2];
+   public static double sin(double d) {
+      int n = (int)(d * 10430.378350470453) & 65535;
+      return CONST_doubleValues[n];
    }
 
-   public static double cos(double var0) {
-      int var2 = (int)(var0 * 10430.378350470453 + 16384.0) & 65535;
-      return CONST_doubleValues[var2];
+   public static double cos(double d) {
+      int n = (int)(d * 10430.378350470453 + 16384.0) & 65535;
+      return CONST_doubleValues[n];
    }
 
-   public static float method2642(float var0, float var1, float var2) {
-      float var3 = Math.min(var2 / var1, 1.0F);
-      return var0 * (1.0F + var3 * var3 * 0.5F);
+   public static float method2642(float f, float f2, float f3) {
+      float f4 = Math.min(f3 / f2, 1.0F);
+      return f * (1.0F + f4 * f4 * 0.5F);
    }
 
-   public static float method2643(double var0, double var2) {
-      return (float)(var0 + (var2 - var0) * Math.random());
+   public static float method2643(double d, double d2) {
+      return (float)(d + (d2 - d) * Math.random());
    }
 
-   public static double method2644(double var0, double var2, double var4, double var6, double var8) {
-      return Math.pow(1.0 - var0, 3.0) * var2
-         + 3.0 * var0 * Math.pow(1.0 - var0, 2.0) * var4
-         + 3.0 * Math.pow(var0, 2.0) * (1.0 - var0) * var6
-         + Math.pow(var0, 3.0) * var8;
+   public static double method2644(double d, double x, double x2, double x3, double x4) {
+      return Math.pow(1.0 - d, 3.0) * x
+         + 3.0 * d * Math.pow(1.0 - d, 2.0) * x2
+         + 3.0 * Math.pow(d, 2.0) * (1.0 - d) * x3
+         + Math.pow(d, 3.0) * x4;
    }
 
-   public static int method2645(String var0, String var1) {
-      int var2 = var0.length();
-      int var3 = var1.length();
-      int[] var4 = new int[var3 + 1];
-      int var5 = 0;
+   public static int method2645(String str, String str2) {
+      int length = str.length();
+      int n = str2.length();
+      int[] ints = new int[n + 1];
+      int n2 = 0;
 
-      while (var5 <= var3) {
-         var4[var5] = var5++;
+      while (n2 <= n) {
+         ints[n2] = n2++;
       }
 
-      for (int var10 = 1; var10 <= var2; var10++) {
-         int var6 = var4[0];
-         var4[0] = var10;
+      for (int i = 1; i <= length; i++) {
+         int n3 = ints[0];
+         ints[0] = i;
 
-         for (int var7 = 1; var7 <= var3; var7++) {
-            int var8 = var4[var7];
-            int var9 = var0.charAt(var10 - 1) == var1.charAt(var7 - 1) ? 0 : 1;
-            var4[var7] = Math.min(Math.min(var4[var7] + 1, var4[var7 - 1] + 1), var6 + var9);
-            var6 = var8;
+         for (int j = 1; j <= n; j++) {
+            int n4 = ints[j];
+            int n5 = str.charAt(i - 1) == str2.charAt(j - 1) ? 0 : 1;
+            ints[j] = Math.min(Math.min(ints[j] + 1, ints[j - 1] + 1), n3 + n5);
+            n3 = n4;
          }
       }
 
-      return var4[var3];
+      return ints[n];
    }
 
-   public static float method2646(float var0, float var1) {
-      float var2 = (var0 - var1) % 360.0F;
-      if (var2 < -180.0F) {
-         var2 += 360.0F;
-      } else if (var2 > 180.0F) {
-         var2 -= 360.0F;
+   public static float method2646(float f, float f2) {
+      float f3 = (f - f2) % 360.0F;
+      if (f3 < -180.0F) {
+         f3 += 360.0F;
+      } else if (f3 > 180.0F) {
+         f3 -= 360.0F;
       }
 
-      return var2;
+      return f3;
    }
 
-   public static boolean method2647(double var0, double var2, double var4, double var6, double var8, double var10) {
-      return var0 >= var4 && var0 <= var4 + var8 && var2 >= var6 && var2 <= var6 + var10;
+   public static boolean method2647(double x, double y, double floatValue, double d, double width, double height) {
+      return x >= floatValue && x <= floatValue + width && y >= d && y <= d + height;
    }
 
-   public static boolean method2648(double var0, double var2, int var4, int var5, int var6, int var7) {
-      return var0 >= var4 && var0 <= var6 && var2 >= var5 && var2 <= var7;
+   public static boolean method2648(double d, double d2, int n, int n2, int n3, int n4) {
+      return d >= n && d <= n3 && d2 >= n2 && d2 <= n4;
    }
 
-   public static float method2649(double var0, double var2, double var4) {
-      return (float)(var0 + (var2 - var0) * var4);
+   public static float method2649(double intValue, double d, double hover) {
+      return (float)(intValue + (d - intValue) * hover);
    }
 
-   public static float method2650(float var0, float var1) {
-      return Math.max(var0, var1) - Math.min(var0, var1);
+   public static float method2650(float y, float f) {
+      return Math.max(y, f) - Math.min(y, f);
    }
 
-   public static double method2651(double var0, double var2) {
-      if (var0 == var2) {
-         return var0;
+   public static double method2651(double d, double d2) {
+      if (d == d2) {
+         return d;
       } else {
-         if (var0 > var2) {
-            double var4 = var0;
-            var0 = var2;
-            var2 = var4;
+         if (d > d2) {
+            double d3 = d;
+            d = d2;
+            d2 = d3;
          }
 
-         return ThreadLocalRandom.current().nextDouble() * (var2 - var0) + var0;
+         return ThreadLocalRandom.current().nextDouble() * (d2 - d) + d;
       }
    }
 
-   public static double round(double var0) {
-      return (float)Math.round(var0 * 10.0) / 10.0F;
+   public static double round(double d) {
+      return (float)Math.round(d * 10.0) / 10.0F;
    }
 
-   public static float round(float var0) {
-      return Math.round(var0 * 10.0F) / 10.0F;
+   public static float round(float x) {
+      return Math.round(x * 10.0F) / 10.0F;
    }
 
-   public static double method2652(double var0, double var2) {
-      double var4 = Math.round(var0 / var2) * var2;
-      return Math.round(var4 * 100.0) / 100.0;
+   public static double method2652(double cooldownPercent, double d) {
+      double d2 = Math.round(cooldownPercent / d) * d;
+      return Math.round(d2 * 100.0) / 100.0;
    }
 
-   public static Vec3 method2653(float var0, float var1, double var2) {
-      float var4 = Math.min(var0, var1);
-      float var5 = (float)(Math.cos(var4 * doubleValue / var1) * var2);
-      float var6 = (float)(-Math.sin(var4 * doubleValue / var1) * var2);
-      return new Vec3(var5, 0.0, var6);
+   public static Vec3 method2653(float f, float f2, double floatValue) {
+      float f3 = Math.min(f, f2);
+      float x = (float)(Math.cos(f3 * doubleValue / f2) * floatValue);
+      float z = (float)(-Math.sin(f3 * doubleValue / f2) * floatValue);
+      return new Vec3(x, 0.0, z);
    }
 
-   public static Vector3d method2654(Vector3d var0, Vector3d var1) {
-      return new Vector3d(method2658(var0.x, var1.x), method2658(var0.y, var1.y), method2658(var0.z, var1.z));
+   public static Vector3d method2654(Vector3d vec, Vector3d vec2) {
+      return new Vector3d(method2658(vec.x, vec2.x), method2658(vec.y, vec2.y), method2658(vec.z, vec2.z));
    }
 
-   public static Vec3 method2655(Vec3 var0, Vec3 var1) {
-      return new Vec3(method2658(var0.x, var1.x), method2658(var0.y, var1.y), method2658(var0.z, var1.z));
+   public static Vec3 method2655(Vec3 vec3d2, Vec3 vec3d) {
+      return new Vec3(method2658(vec3d2.x, vec3d.x), method2658(vec3d2.y, vec3d.y), method2658(vec3d2.z, vec3d.z));
    }
 
-   public static Vec3 method2656(Entity var0) {
-      return var0 == null
+   public static Vec3 method2656(Entity player) {
+      return player == null
          ? Vec3.ZERO
-         : new Vec3(method2658(var0.xo, var0.getX()), method2658(var0.yo, var0.getY()), method2658(var0.zo, var0.getZ()));
+         : new Vec3(method2658(player.xo, player.getX()), method2658(player.yo, player.getY()), method2658(player.zo, player.getZ()));
    }
 
-   public static float method2657(float var0, float var1) {
-      return Mth.lerp(mc.getDeltaTracker().getGameTimeDeltaPartialTick(false), var0, var1);
+   public static float method2657(float f, float f2) {
+      return Mth.lerp(mc.getDeltaTracker().getGameTimeDeltaPartialTick(false), f, f2);
    }
 
-   public static double method2658(double var0, double var2) {
-      return Mth.lerp((double)mc.getDeltaTracker().getGameTimeDeltaPartialTick(false), var0, var2);
+   public static double method2658(double xo, double x) {
+      return Mth.lerp((double)mc.getDeltaTracker().getGameTimeDeltaPartialTick(false), xo, x);
    }
 
-   public static int method2659(double var0, int var2, int var3) {
-      return (int)Mth.lerp(mc.getDeltaTracker().getRealtimeDeltaTicks() / var0, (double)var2, (double)var3);
+   public static int method2659(double d, int n, int n2) {
+      return (int)Mth.lerp(mc.getDeltaTracker().getRealtimeDeltaTicks() / d, (double)n, (double)n2);
    }
 
-   public static float method2660(double var0, float var2, float var3) {
-      return (float)Mth.lerp(mc.getDeltaTracker().getRealtimeDeltaTicks() / var0, (double)var2, (double)var3);
+   public static float method2660(double d, float f, float floatValue) {
+      return (float)Mth.lerp(mc.getDeltaTracker().getRealtimeDeltaTicks() / d, (double)f, (double)floatValue);
    }
 
-   public static double method2661(double var0, double var2, double var4) {
-      return Mth.lerp(mc.getDeltaTracker().getRealtimeDeltaTicks() / var0, var2, var4);
+   public static double method2661(double d, double d2, double d3) {
+      return Mth.lerp(mc.getDeltaTracker().getRealtimeDeltaTicks() / d, d2, d3);
    }
 
-   public static double method2662(Vec3 var0, Vec3 var1) {
-      double var2 = var0.x() - var1.x();
-      double var4 = var0.y() - var1.y();
-      double var6 = var0.z() - var1.z();
-      return Mth.sqrt((float)(var2 * var2 + var4 * var4 + var6 * var6));
+   public static double method2662(Vec3 atCenterOf, Vec3 vec) {
+      double d = atCenterOf.x() - vec.x();
+      double d2 = atCenterOf.y() - vec.y();
+      double d3 = atCenterOf.z() - vec.z();
+      return Mth.sqrt((float)(d * d + d2 * d2 + d3 * d3));
    }
 
-   public static double method2663(double var0) {
-      return Math.abs(1.0 + Math.sin(var0)) / 2.0;
+   public static double method2663(double d) {
+      return Math.abs(1.0 + Math.sin(d)) / 2.0;
    }
 
-   public static float method2664(float var0) {
-      return (float)Math.sin(var0 * Math.PI / 2.0);
+   public static float method2664(float f) {
+      return (float)Math.sin(f * Math.PI / 2.0);
    }
 
    @Generated
@@ -181,8 +181,8 @@ public final class MathUtils implements MinecraftAccess {
    }
 
    static {
-      for (int var0 = 0; var0 < 65536; var0++) {
-         CONST_doubleValues[var0] = Math.sin(var0 * (Math.PI * 2) / 65536.0);
+      for (int i = 0; i < 65536; i++) {
+         CONST_doubleValues[i] = Math.sin(i * (Math.PI * 2) / 65536.0);
       }
    }
 }

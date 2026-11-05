@@ -127,12 +127,12 @@ public final class ScriptAiTab {
       return List.of(this.input, this.keyField, this.modelField, this.endpointField, this.addName, this.addUrl, this.addKey, this.addModel);
    }
 
-   public ScriptAiTab(ScriptsSectionPanel var1) {
-      this.panel = var1;
+   public ScriptAiTab(ScriptsSectionPanel panel) {
+      this.panel = panel;
    }
 
-   private static String t(String var0) {
-      return SectionPanel.t(var0);
+   private static String t(String description) {
+      return SectionPanel.t(description);
    }
 
    public int revision() {
@@ -140,162 +140,162 @@ public final class ScriptAiTab {
    }
 
    public boolean pollChanged() {
-      int var1 = AiChatStorage.method2741().revision();
-      if (var1 == this.seenRevision) {
+      int revision = AiChatStorage.method2741().revision();
+      if (revision == this.seenRevision) {
          return false;
       } else {
-         this.seenRevision = var1;
+         this.seenRevision = revision;
          return true;
       }
    }
 
    private void syncFields() {
-      AiSettingsStore var1 = AiSettingsStore.method4467();
-      ShownProvider var2 = var1.getShownProvider();
-      if (!var2.equals(this.shownProvider)) {
+      AiSettingsStore aiSettingsStore = AiSettingsStore.method4467();
+      ShownProvider shownProvider = aiSettingsStore.getShownProvider();
+      if (!shownProvider.equals(this.shownProvider)) {
          this.commitFields();
-         this.shownProvider = var2;
-         this.keyField.set(var1.method4469(var2));
-         this.modelField.set(var1.method4472(var2));
-         this.endpointField.set(var1.method4474(var2));
+         this.shownProvider = shownProvider;
+         this.keyField.set(aiSettingsStore.method4469(shownProvider));
+         this.modelField.set(aiSettingsStore.method4472(shownProvider));
+         this.endpointField.set(aiSettingsStore.method4474(shownProvider));
       }
    }
 
    public void commitFields() {
       if (this.shownProvider != null) {
-         AiSettingsStore var1 = AiSettingsStore.method4467();
+         AiSettingsStore aiSettingsStore = AiSettingsStore.method4467();
          if (this.keyField.changed()) {
-            var1.method4470(this.shownProvider, this.keyField.get());
+            aiSettingsStore.method4470(this.shownProvider, this.keyField.get());
             this.keyField.commit();
          }
 
          if (this.modelField.changed()) {
-            var1.method4473(this.shownProvider, this.modelField.get());
+            aiSettingsStore.method4473(this.shownProvider, this.modelField.get());
             this.modelField.commit();
          }
 
          if (this.endpointField.changed()) {
-            var1.method4475(this.shownProvider, this.endpointField.get());
+            aiSettingsStore.method4475(this.shownProvider, this.endpointField.get());
             this.endpointField.commit();
          }
       }
    }
 
-   public void build(Storage var1) {
+   public void build(Storage hostOrNull) {
       this.syncFields();
-      AiChatStorage var2 = AiChatStorage.method2741();
-      var var3 = new ArrayList<>(var2.method2745());
-      if (var3.isEmpty()) {
-         this.welcome(var1);
+      AiChatStorage aiChatStorage = AiChatStorage.method2741();
+      var entry2s = new ArrayList<>(aiChatStorage.method2745());
+      if (entry2s.isEmpty()) {
+         this.welcome(hostOrNull);
       } else {
-         float var4 = 236.0F;
+         float width = 236.0F;
 
-         for (int var5 = 0; var5 < var3.size(); var5++) {
-            AiChatStorage.Entry2 var6 = (AiChatStorage.Entry2)var3.get(var5);
-            boolean var7 = var5 == var3.size() - 1;
-            ScriptAiTab.Layout var8 = this.layout(var6, var4, var7);
-            int var9 = var5;
+         for (int i = 0; i < entry2s.size(); i++) {
+            AiChatStorage.Entry2 entry2 = (AiChatStorage.Entry2)entry2s.get(i);
+            boolean lastOne = i == entry2s.size() - 1;
+            ScriptAiTab.Layout layout = this.layout(entry2, width, lastOne);
+            int n = i;
             this.panel
                .custom(
-                  var8.height + 8.0F,
-                  (var6x, var7x, var8x, var9x, var10, var11, var12, var13) -> this.renderMessage(
-                     var6x, var7x, var8x, var9x, var10, var11, var12, var13, var1, var6, var8, var9, var7
+                  layout.height + 8.0F,
+                  (var6x, var7x, var8x, var9x, f, f2, previewAlpha, currentStyle) -> this.renderMessage(
+                     var6x, var7x, var8x, var9x, f, f2, previewAlpha, currentStyle, hostOrNull, entry2, layout, n, lastOne
                   ),
-                  () -> this.clickMessage(var1, var6, var9),
+                  () -> this.clickMessage(hostOrNull, entry2, n),
                   null
                );
          }
 
-         this.quickReplies(var1, (AiChatStorage.Entry2)var3.get(var3.size() - 1));
+         this.quickReplies(hostOrNull, (AiChatStorage.Entry2)entry2s.get(entry2s.size() - 1));
          this.panel.gap(4.0F);
       }
 
-      this.aside(var1);
-      if (var3.size() != this.seenMessages || var2.isBusy()) {
-         this.seenMessages = var3.size();
+      this.aside(hostOrNull);
+      if (entry2s.size() != this.seenMessages || aiChatStorage.isBusy()) {
+         this.seenMessages = entry2s.size();
          this.panel.scrollToEnd();
       }
    }
 
-   private List<String> suggestions(AiChatStorage.Entry2 var1) {
-      if (var1.isFlag() || var1.streaming() || AiChatStorage.method2741().isBusy()) {
+   private List<String> suggestions(AiChatStorage.Entry2 entry2) {
+      if (entry2.isFlag() || entry2.streaming() || AiChatStorage.method2741().isBusy()) {
          return List.of();
-      } else if (!var1.error().isEmpty()) {
+      } else if (!entry2.error().isEmpty()) {
          return List.of();
-      } else if (var1.isFlag3()) {
+      } else if (entry2.isFlag3()) {
          return List.of("gui.scripts.ai.quick.fix", "gui.scripts.ai.quick.simpler");
       } else {
-         return !var1.method2775().isEmpty()
+         return !entry2.method2775().isEmpty()
             ? List.of("gui.scripts.ai.quick.settings", "gui.scripts.ai.quick.prettier", "gui.scripts.ai.quick.explain", "gui.scripts.ai.quick.publish")
             : List.of("gui.scripts.ai.quick.doit", "gui.scripts.ai.quick.example");
       }
    }
 
-   private void quickReplies(Storage var1, AiChatStorage.Entry2 var2) {
-      List<String> var3 = this.suggestions(var2);
-      if (!var3.isEmpty()) {
-         Font var4 = Fonts.NEW_MEDIUM.getFont(4.5F);
-         float var5 = 220.0F;
-         ArrayList var6 = new ArrayList();
-         float var7 = 0.0F;
-         float var8 = 0.0F;
+   private void quickReplies(Storage hostOrNull, AiChatStorage.Entry2 entry2) {
+      List<String> suggestions = this.suggestions(entry2);
+      if (!suggestions.isEmpty()) {
+         Font font = Fonts.NEW_MEDIUM.getFont(4.5F);
+         float f = 220.0F;
+         ArrayList arrayList = new ArrayList();
+         float f2 = 0.0F;
+         float f3 = 0.0F;
 
-         for (String var10 : var3) {
-            float var11 = var4.width(t(var10)) + 14.0F;
-            if (var7 > 0.0F && var7 + var11 > var5) {
-               var7 = 0.0F;
-               var8 += 15.0F;
+         for (String suggestion : suggestions) {
+            float f4 = font.width(t(suggestion)) + 14.0F;
+            if (f2 > 0.0F && f2 + f4 > f) {
+               f2 = 0.0F;
+               f3 += 15.0F;
             }
 
-            var6.add(new float[]{var7, var8, var11});
-            var7 += var11 + 4.0F;
+            arrayList.add(new float[]{f2, f3, f4});
+            f2 += f4 + 4.0F;
          }
 
-         long var12 = System.currentTimeMillis();
+         long now = System.currentTimeMillis();
          this.panel
             .custom(
-               var8 + 16.0F,
-               (var6x, var7x, var8x, var9, var10x, var11x, var12x, var13) -> {
-                  ZenithColor var14 = var13.getPrimaryColor().getZenithColor();
+               f3 + 16.0F,
+               (var6x, var7x, var8x, f4, var10x, var11x, var12x, zenithStyle) -> {
+                  ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
 
-                  for (int var15 = 0; var15 < var3.size(); var15++) {
-                     float[] var16 = (float[])var6.get(var15);
-                     float var17 = Math.min(1.0F, Math.max(0.0F, (float)(System.currentTimeMillis() - var12 - var15 * 60L) / 260.0F));
-                     float var18 = 1.0F - (1.0F - var17) * (1.0F - var17) * (1.0F - var17);
-                     BoundsData var19 = new BoundsData(var9 + 8.0F + var16[0], var10x + 1.0F + var16[1] + (1.0F - var18) * 5.0F, var16[2], 12.0F);
-                     this.hits.put("quick:" + var15, var19);
-                     boolean var20 = var19.contains(var7x, var8x);
-                     float var21 = this.panel.hot("quick:" + (String)var3.get(var15), var20);
+                  for (int i = 0; i < suggestions.size(); i++) {
+                     float[] floats = (float[])arrayList.get(i);
+                     float f5 = Math.min(1.0F, Math.max(0.0F, (float)(System.currentTimeMillis() - now - i * 60L) / 260.0F));
+                     float f6 = 1.0F - (1.0F - f5) * (1.0F - f5) * (1.0F - f5);
+                     BoundsData boundsData = new BoundsData(f4 + 8.0F + floats[0], var10x + 1.0F + floats[1] + (1.0F - f6) * 5.0F, floats[2], 12.0F);
+                     this.hits.put("quick:" + i, boundsData);
+                     boolean contains = boundsData.contains(var7x, var8x);
+                     float hot = this.panel.hot("quick:" + (String)suggestions.get(i), contains);
                      var6x.drawRoundedRect(
-                        var19.getFloatValue(),
-                        var19.getFloatValue2(),
-                        var19.width(),
+                        boundsData.getFloatValue(),
+                        boundsData.getFloatValue2(),
+                        boundsData.width(),
                         12.0F,
                         ProxyDotRadiusData.method8069(6.0F),
-                        var14.method7292(0.08F + 0.14F * var21).method7294(var12x * var18)
+                        zenithColor.method7292(0.08F + 0.14F * hot).method7294(var12x * f6)
                      );
                      var6x.drawRoundedBorder(
-                        var19.getFloatValue(),
-                        var19.getFloatValue2(),
-                        var19.width(),
+                        boundsData.getFloatValue(),
+                        boundsData.getFloatValue2(),
+                        boundsData.width(),
                         12.0F,
                         0.2F,
                         ProxyDotRadiusData.method8069(6.0F),
-                        var14.method7292(0.3F + 0.4F * var21).method7294(var12x * var18)
+                        zenithColor.method7292(0.3F + 0.4F * hot).method7294(var12x * f6)
                      );
                      var6x.drawText(
-                        var4,
-                        t((String)var3.get(var15)),
-                        var19.getFloatValue() + 7.0F,
-                        var19.getFloatValue2() + (12.0F - var4.height()) / 2.0F,
-                        var14.method7295(ZenithColor.INSTANCE, 0.35F + 0.4F * var21).method7294(var12x * var18)
+                        font,
+                        t((String)suggestions.get(i)),
+                        boundsData.getFloatValue() + 7.0F,
+                        boundsData.getFloatValue2() + (12.0F - font.height()) / 2.0F,
+                        zenithColor.method7295(ZenithColor.INSTANCE, 0.35F + 0.4F * hot).method7294(var12x * f6)
                      );
                   }
                },
                () -> {
-                  for (int var3x = 0; var3x < var3.size(); var3x++) {
+                  for (int var3x = 0; var3x < suggestions.size(); var3x++) {
                      if (this.hovered(this.hits.get("quick:" + var3x))) {
-                        AiChatStorage.method2741().method2757(var1, t((String)var3.get(var3x) + ".prompt"));
+                        AiChatStorage.method2741().method2757(hostOrNull, t((String)suggestions.get(var3x) + ".prompt"));
                         this.panel.invalidate();
                         return;
                      }
@@ -306,139 +306,139 @@ public final class ScriptAiTab {
       }
    }
 
-   private void welcome(Storage var1) {
+   private void welcome(Storage hostOrNull) {
       this.panel
          .custom(
             84.0F,
             this.panel
                .entering(
                   0,
-                  (var1x, var2x, var3x, var4x, var5, var6, var7x, var8) -> {
-                     Font var9 = Fonts.NEW_SEMIBOLD.getFont(7.0F);
-                     Font var10 = Fonts.NEW_REGULAR.getFont(4.5F);
-                     ZenithColor var11 = var8.getPrimaryColor().getZenithColor();
-                     float var12 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 700.0);
-                     float var13 = var4x + var6 / 2.0F;
+                  (var1x, var2x, var3x, var4x, f, f2, var7x, zenithStyle) -> {
+                     Font font = Fonts.NEW_SEMIBOLD.getFont(7.0F);
+                     Font font2 = Fonts.NEW_REGULAR.getFont(4.5F);
+                     ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+                     float f3 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 700.0);
+                     float f4 = var4x + f2 / 2.0F;
                      var1x.drawRoundedRect(
-                        var13 - 14.0F,
-                        var5 + 10.0F,
+                        f4 - 14.0F,
+                        f + 10.0F,
                         28.0F,
                         28.0F,
                         ProxyDotRadiusData.method8069(9.0F),
-                        var11.method7292(0.12F + 0.08F * var12).method7294(var7x)
+                        zenithColor.method7292(0.12F + 0.08F * f3).method7294(var7x)
                      );
-                     Font var14 = Fonts.NEW_SEMIBOLD.getFont(10.0F);
-                     var1x.drawText(var14, "AI", var13 - var14.width("AI") / 2.0F, var5 + 24.0F - var14.height() / 2.0F, var11.method7294(var7x));
-                     String var15 = t("gui.scripts.ai.welcome");
-                     var1x.drawText(var9, var15, var13 - var9.width(var15) / 2.0F, var5 + 44.0F, var8.getTextEnable().getZenithColor().method7294(var7x));
-                     List<String> var16 = SectionPanel.wrapText(this.readyHint(), var10, var6 - 48.0F, 3);
-                     float var17 = var5 + 47.0F + var9.height();
+                     Font font3 = Fonts.NEW_SEMIBOLD.getFont(10.0F);
+                     var1x.drawText(font3, "AI", f4 - font3.width("AI") / 2.0F, f + 24.0F - font3.height() / 2.0F, zenithColor.method7294(var7x));
+                     String text = t("gui.scripts.ai.welcome");
+                     var1x.drawText(font, text, f4 - font.width(text) / 2.0F, f + 44.0F, zenithStyle.getTextEnable().getZenithColor().method7294(var7x));
+                     List<String> wrapText = SectionPanel.wrapText(this.readyHint(), font2, f2 - 48.0F, 3);
+                     float centeredTextY = f + 47.0F + font.height();
 
-                     for (String var19 : var16) {
-                        var1x.drawText(var10, var19, var13 - var10.width(var19) / 2.0F, var17, var8.getTextTertiary().getZenithColor().method7294(var7x));
-                        var17 += var10.height() + 2.0F;
+                     for (String str : wrapText) {
+                        var1x.drawText(font2, str, f4 - font2.width(str) / 2.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(var7x));
+                        centeredTextY += font2.height() + 2.0F;
                      }
                   }
                )
          );
-      int var2 = 1;
-      var var3 = AiChatStorage.method2741().method2744();
-      if (!var3.isEmpty() && var3.get(0) != AiChatStorage.method2741().getEntry()) {
-         AiChatStorage.Entry var4 = (AiChatStorage.Entry)var3.get(0);
+      int n = 1;
+      var entries = AiChatStorage.method2741().method2744();
+      if (!entries.isEmpty() && entries.get(0) != AiChatStorage.method2741().getEntry()) {
+         AiChatStorage.Entry entry = (AiChatStorage.Entry)entries.get(0);
          this.panel
             .custom(
                26.0F,
                this.panel
                   .entering(
-                     var2++,
-                     (var2x, var3x, var4x, var5, var6, var7x, var8, var9) -> {
-                        BoundsData var10 = new BoundsData(var5 + 24.0F, var6 + 1.0F, var7x - 48.0F, 22.0F);
-                        boolean var11 = var10.contains(var3x, var4x);
-                        float var12 = this.panel.hot("continue", var11);
-                        ZenithColor var13 = var9.getPrimaryColor().getZenithColor();
+                     n++,
+                     (var2x, var3x, var4x, f, f2, var7x, previewAlpha, zenithStyle) -> {
+                        BoundsData boundsData = new BoundsData(f + 24.0F, f2 + 1.0F, var7x - 48.0F, 22.0F);
+                        boolean contains = boundsData.contains(var3x, var4x);
+                        float hot = this.panel.hot("continue", contains);
+                        ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
                         var2x.drawRoundedRect(
-                           var10.getFloatValue(),
-                           var10.getFloatValue2(),
-                           var10.width(),
-                           var10.height(),
+                           boundsData.getFloatValue(),
+                           boundsData.getFloatValue2(),
+                           boundsData.width(),
+                           boundsData.height(),
                            ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F),
-                           var13.method7292(0.1F + 0.1F * var12).method7294(var8)
+                           zenithColor.method7292(0.1F + 0.1F * hot).method7294(previewAlpha)
                         );
                         var2x.drawRoundedBorder(
-                           var10.getFloatValue(),
-                           var10.getFloatValue2(),
-                           var10.width(),
-                           var10.height(),
+                           boundsData.getFloatValue(),
+                           boundsData.getFloatValue2(),
+                           boundsData.width(),
+                           boundsData.height(),
                            0.2F,
                            ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F),
-                           var13.method7292(0.35F + 0.3F * var12).method7294(var8)
+                           zenithColor.method7292(0.35F + 0.3F * hot).method7294(previewAlpha)
                         );
-                        Font var14 = Fonts.NEW_MEDIUM.getFont(4.3F);
-                        Font var15 = Fonts.NEW_MEDIUM.getFont(4.6F);
+                        Font font = Fonts.NEW_MEDIUM.getFont(4.3F);
+                        Font font2 = Fonts.NEW_MEDIUM.getFont(4.6F);
                         var2x.drawText(
-                           var14,
+                           font,
                            t("gui.scripts.ai.continue"),
-                           var10.getFloatValue() + 8.0F + var12 * 2.0F,
-                           var10.getFloatValue2() + 4.0F,
-                           var13.method7294(var8)
+                           boundsData.getFloatValue() + 8.0F + hot * 2.0F,
+                           boundsData.getFloatValue2() + 4.0F,
+                           zenithColor.method7294(previewAlpha)
                         );
                         var2x.drawText(
-                           var15,
-                           var15.clip(var4.title(), var10.width() - 50.0F),
-                           var10.getFloatValue() + 8.0F + var12 * 2.0F,
-                           var10.getFloatValue2() + 6.0F + var14.height(),
-                           var9.getTextEnable().getZenithColor().method7294(var8)
+                           font2,
+                           font2.clip(entry.title(), boundsData.width() - 50.0F),
+                           boundsData.getFloatValue() + 8.0F + hot * 2.0F,
+                           boundsData.getFloatValue2() + 6.0F + font.height(),
+                           zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                         );
-                        String var16 = ScriptsSectionPanel.ago(var4.getLongValue2());
+                        String ago = ScriptsSectionPanel.ago(entry.getLongValue2());
                         var2x.drawText(
-                           var14,
-                           var16,
-                           var10.getFloatValue() + var10.width() - 8.0F - var14.width(var16),
-                           var10.getFloatValue2() + (var10.height() - var14.height()) / 2.0F,
-                           var9.getTextTertiary().getZenithColor().method7294(var8)
+                           font,
+                           ago,
+                           boundsData.getFloatValue() + boundsData.width() - 8.0F - font.width(ago),
+                           boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+                           zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                         );
                      }
                   ),
                () -> {
-                  AiChatStorage.method2741().method2749(var4);
+                  AiChatStorage.method2741().method2749(entry);
                   this.panel.invalidate();
                },
                null
             );
       }
 
-      for (String var7 : IDEAS) {
+      for (String description : IDEAS) {
          this.panel
             .custom(
                20.0F,
                this.panel
                   .entering(
-                     var2++,
-                     (var2x, var3x, var4x, var5, var6, var7x, var8, var9) -> {
-                        BoundsData var10 = new BoundsData(var5 + 24.0F, var6 + 1.0F, var7x - 48.0F, 17.0F);
-                        boolean var11 = var10.contains(var3x, var4x);
-                        float var12 = this.panel.hot("idea:" + var7, var11);
-                        ScriptsSectionPanel.card(var2x, var9, var10.getFloatValue(), var10.getFloatValue2(), var10.width(), var10.height(), var12, var8);
-                        Font var13 = Fonts.NEW_REGULAR.getFont(4.5F);
-                        ZenithColor var14 = var9.getPrimaryColor().getZenithColor();
+                     n++,
+                     (var2x, var3x, var4x, f, f2, var7x, previewAlpha, currentStyle) -> {
+                        BoundsData boundsData = new BoundsData(f + 24.0F, f2 + 1.0F, var7x - 48.0F, 17.0F);
+                        boolean contains = boundsData.contains(var3x, var4x);
+                        float hot = this.panel.hot("idea:" + description, contains);
+                        ScriptsSectionPanel.card(var2x, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
+                        Font font = Fonts.NEW_REGULAR.getFont(4.5F);
+                        ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
                         var2x.drawText(
-                           var13,
+                           font,
                            "›",
-                           var10.getFloatValue() + 7.0F + var12 * 2.0F,
-                           var10.getFloatValue2() + (var10.height() - var13.height()) / 2.0F,
-                           var14.method7294(var8)
+                           boundsData.getFloatValue() + 7.0F + hot * 2.0F,
+                           boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+                           zenithColor.method7294(previewAlpha)
                         );
                         var2x.drawText(
-                           var13,
-                           var13.clip(t(var7), var10.width() - 24.0F),
-                           var10.getFloatValue() + 15.0F + var12 * 2.0F,
-                           var10.getFloatValue2() + (var10.height() - var13.height()) / 2.0F,
-                           var9.getTextSecondary().getZenithColor().method7295(var9.getTextEnable().getZenithColor(), var12).method7294(var8)
+                           font,
+                           font.clip(t(description), boundsData.width() - 24.0F),
+                           boundsData.getFloatValue() + 15.0F + hot * 2.0F,
+                           boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+                           currentStyle.getTextSecondary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), hot).method7294(previewAlpha)
                         );
                      }
                   ),
                () -> {
-                  this.input.set(t(var7));
+                  this.input.set(t(description));
                   this.input.setFocused(true);
                },
                null
@@ -447,502 +447,502 @@ public final class ScriptAiTab {
    }
 
    private String readyHint() {
-      AiSettingsStore var1 = AiSettingsStore.method4467();
-      ShownProvider var2 = var1.getShownProvider();
-      return !var1.method4471(var2) ? t("gui.scripts.ai.welcome.nokey").replace("{p}", var2.title()) : t("gui.scripts.ai.welcome.desc");
+      AiSettingsStore aiSettingsStore = AiSettingsStore.method4467();
+      ShownProvider shownProvider = aiSettingsStore.getShownProvider();
+      return !aiSettingsStore.method4471(shownProvider) ? t("gui.scripts.ai.welcome.nokey").replace("{p}", shownProvider.title()) : t("gui.scripts.ai.welcome.desc");
    }
 
    private static Font headFont() {
       return Fonts.NEW_MEDIUM.getFont(4.3F);
    }
 
-   private ScriptAiTab.Layout layout(AiChatStorage.Entry2 var1, float var2, boolean var3) {
-      String var4 = var1.text();
-      String var5 = !var1.isFlag() && !var1.error().isEmpty() ? this.errorText(var1) : "";
-      ScriptAiTab.CachedLayout var6 = this.layouts.get(var1);
-      if (var6 != null && var6.matches(var1, var4, var5, var2, var3)) {
-         return var6.layout();
+   private ScriptAiTab.Layout layout(AiChatStorage.Entry2 entry2, float width, boolean lastOne) {
+      String text = entry2.text();
+      String errorText = !entry2.isFlag() && !entry2.error().isEmpty() ? this.errorText(entry2) : "";
+      ScriptAiTab.CachedLayout layout = this.layouts.get(entry2);
+      if (layout != null && layout.matches(entry2, text, errorText, width, lastOne)) {
+         return layout.layout();
       } else {
-         ScriptAiTab.Layout var7 = this.computeLayout(var1, var2, var3);
+         ScriptAiTab.Layout layout2 = this.computeLayout(entry2, width, lastOne);
          this.layouts
-            .put(var1, new ScriptAiTab.CachedLayout(var4, var1.streaming(), var1.note(), var5, var1.result(), var1.getItems().size(), var2, var3, var7));
-         return var7;
+            .put(entry2, new ScriptAiTab.CachedLayout(text, entry2.streaming(), entry2.note(), errorText, entry2.result(), entry2.getItems().size(), width, lastOne, layout2));
+         return layout2;
       }
    }
 
-   private ScriptAiTab.Layout computeLayout(AiChatStorage.Entry2 var1, float var2, boolean var3) {
-      Font var4 = Fonts.NEW_REGULAR.getFont(4.6F);
-      boolean var5 = !var1.isFlag() && !var1.note();
-      float var6 = var5 ? 7.0F : 5.0F;
-      float var7 = var1.isFlag() ? Math.min(var2 * 0.78F, var2 - 16.0F) : var2 - 16.0F;
-      ArrayList<ScriptAiTab.Piece> var8 = new ArrayList();
-      String var9 = var1.text();
-      Matcher var10 = BLOCK.matcher(var9);
+   private ScriptAiTab.Layout computeLayout(AiChatStorage.Entry2 entry2, float width, boolean lastOne) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+      boolean flag = !entry2.isFlag() && !entry2.note();
+      float f = flag ? 7.0F : 5.0F;
+      float bubble = entry2.isFlag() ? Math.min(width * 0.78F, width - 16.0F) : width - 16.0F;
+      ArrayList<ScriptAiTab.Piece> pieces = new ArrayList();
+      String text = entry2.text();
+      Matcher matcher = BLOCK.matcher(text);
 
-      int var11;
-      for (var11 = 0; var10.find(); var11 = var10.end()) {
-         if (var10.start() > var11) {
-            var8.add(new ScriptAiTab.Piece(0, var9.substring(var11, var10.start()), "", 0));
+      int end;
+      for (end = 0; matcher.find(); end = matcher.end()) {
+         if (matcher.start() > end) {
+            pieces.add(new ScriptAiTab.Piece(0, text.substring(end, matcher.start()), "", 0));
          }
 
-         String var12 = var10.group(1).trim();
-         String var13 = var10.group(2);
-         String var14 = var13.stripTrailing();
-         int var15 = var14.isEmpty() ? 0 : var14.split("\n", -1).length;
-         Matcher var16 = FILE.matcher(var12);
-         if (var16.find()) {
-            var8.add(new ScriptAiTab.Piece(1, var16.group(1).trim(), var10.group(3).isEmpty() ? "…" : "", var15));
+         String input = matcher.group(1).trim();
+         String group = matcher.group(2);
+         String stripTrailing = group.stripTrailing();
+         int length = stripTrailing.isEmpty() ? 0 : stripTrailing.split("\n", -1).length;
+         Matcher matcher2 = FILE.matcher(input);
+         if (matcher2.find()) {
+            pieces.add(new ScriptAiTab.Piece(1, matcher2.group(1).trim(), matcher.group(3).isEmpty() ? "…" : "", length));
          } else {
-            var8.add(new ScriptAiTab.Piece(2, var13, var12, var15));
+            pieces.add(new ScriptAiTab.Piece(2, group, input, length));
          }
       }
 
-      if (var11 < var9.length()) {
-         var8.add(new ScriptAiTab.Piece(0, var9.substring(var11), "", 0));
+      if (end < text.length()) {
+         pieces.add(new ScriptAiTab.Piece(0, text.substring(end), "", 0));
       }
 
-      ArrayList var23 = new ArrayList();
-      float var24 = Math.max(0.0F, 7.4F - var4.height());
-      float var25 = var6;
-      float var26 = 0.0F;
-      if (!var1.getItems().isEmpty()) {
-         var25 = var6 + 48.0F;
-         var26 = 4.0F;
+      ArrayList wrapped = new ArrayList();
+      float f2 = Math.max(0.0F, 7.4F - font.height());
+      float f3 = f;
+      float f4 = 0.0F;
+      if (!entry2.getItems().isEmpty()) {
+         f3 = f + 48.0F;
+         f4 = 4.0F;
       }
 
-      if (var5) {
-         var25 += headFont().height() + 4.0F;
-         var26 = 4.0F;
+      if (flag) {
+         f3 += headFont().height() + 4.0F;
+         f4 = 4.0F;
       }
 
-      for (ScriptAiTab.Piece var17 : var8) {
-         if (var17.kind == 0) {
-            ArrayList var28 = new ArrayList();
+      for (ScriptAiTab.Piece piece : pieces) {
+         if (piece.kind == 0) {
+            ArrayList arrayList = new ArrayList();
 
-            for (String var22 : clean(var17.text).split("\n")) {
-               if (var22.isBlank()) {
-                  if (!var28.isEmpty() && !((String)var28.get(var28.size() - 1)).isEmpty()) {
-                     var28.add("");
+            for (String description : clean(piece.text).split("\n")) {
+               if (description.isBlank()) {
+                  if (!arrayList.isEmpty() && !((String)arrayList.get(arrayList.size() - 1)).isEmpty()) {
+                     arrayList.add("");
                   }
                } else {
-                  var28.addAll(SectionPanel.wrapText(var22, var4, var7 - 14.0F, 400));
+                  arrayList.addAll(SectionPanel.wrapText(description, font, bubble - 14.0F, 400));
                }
             }
 
-            while (!var28.isEmpty() && ((String)var28.get(var28.size() - 1)).isEmpty()) {
-               var28.remove(var28.size() - 1);
+            while (!arrayList.isEmpty() && ((String)arrayList.get(arrayList.size() - 1)).isEmpty()) {
+               arrayList.remove(arrayList.size() - 1);
             }
 
-            var23.add(var28);
-            if (!var28.isEmpty()) {
-               var25 += var28.size() * 7.4F;
-               var26 = var24;
+            wrapped.add(arrayList);
+            if (!arrayList.isEmpty()) {
+               f3 += arrayList.size() * 7.4F;
+               f4 = f2;
             }
-         } else if (var17.kind == 1) {
-            var23.add(List.of());
-            var25 += 16.0F;
-            var26 = 3.0F;
+         } else if (piece.kind == 1) {
+            wrapped.add(List.of());
+            f3 += 16.0F;
+            f4 = 3.0F;
          } else {
-            ArrayList var18 = new ArrayList();
-            String[] var19 = var17.text.split("\n");
+            ArrayList arrayList = new ArrayList();
+            String[] strings = piece.text.split("\n");
 
-            for (int var20 = 0; var20 < Math.min(6, var19.length); var20++) {
-               var18.add(var19[var20].replace("\t", "  "));
+            for (int i = 0; i < Math.min(6, strings.length); i++) {
+               arrayList.add(strings[i].replace("\t", "  "));
             }
 
-            var23.add(var18);
-            var25 += codeHeight(var18.size(), var17.lines) + 2.0F;
-            var26 = 2.0F;
+            wrapped.add(arrayList);
+            f3 += codeHeight(arrayList.size(), piece.lines) + 2.0F;
+            f4 = 2.0F;
          }
       }
 
-      if (var9.isEmpty() && var1.streaming()) {
-         var25 += 7.4F;
-         var26 = var24;
+      if (text.isEmpty() && entry2.streaming()) {
+         f3 += 7.4F;
+         f4 = f2;
       }
 
-      if (var5) {
-         if (!var1.error().isEmpty()) {
-            var25 += 2.0F + SectionPanel.wrapText(this.errorText(var1), var4, var7 - 14.0F, 6).size() * 7.4F;
-            var26 = var24;
+      if (flag) {
+         if (!entry2.error().isEmpty()) {
+            f3 += 2.0F + SectionPanel.wrapText(this.errorText(entry2), font, bubble - 14.0F, 6).size() * 7.4F;
+            f4 = f2;
          }
 
-         if (!var1.result().isEmpty()) {
-            var25 += 2.0F + SectionPanel.wrapText(var1.result(), var4, var7 - 14.0F, 6).size() * 7.4F;
-            var26 = var24;
+         if (!entry2.result().isEmpty()) {
+            f3 += 2.0F + SectionPanel.wrapText(entry2.result(), font, bubble - 14.0F, 6).size() * 7.4F;
+            f4 = f2;
          }
 
-         if (!var1.streaming() && hasButtons(var1, var3)) {
-            var25 += 15.0F;
-            var26 = 0.0F;
+         if (!entry2.streaming() && hasButtons(entry2, lastOne)) {
+            f3 += 15.0F;
+            f4 = 0.0F;
          }
       }
 
-      return new ScriptAiTab.Layout(var8, var23, var25 - var26 + var6, var7);
+      return new ScriptAiTab.Layout(pieces, wrapped, f3 - f4 + f, bubble);
    }
 
-   private static float codeHeight(int var0, int var1) {
-      return var0 * 6.6F + 6.0F + (var1 > 6 ? 6.6F : 0.0F);
+   private static float codeHeight(int size, int lines) {
+      return size * 6.6F + 6.0F + (lines > 6 ? 6.6F : 0.0F);
    }
 
-   private String extractCode(AiChatStorage.Entry2 var1, int var2) {
-      Matcher var3 = BLOCK.matcher(var1.text());
-      int var4 = 0;
-      int var5 = 0;
+   private String extractCode(AiChatStorage.Entry2 entry2, int n) {
+      Matcher matcher = BLOCK.matcher(entry2.text());
+      int n2 = 0;
+      int end = 0;
 
-      for (int var6 = 0; var3.find(); var4++) {
-         if (var3.start() > var5) {
-            var6++;
+      for (int i = 0; matcher.find(); n2++) {
+         if (matcher.start() > end) {
+            i++;
          }
 
-         if (var6 == var2) {
-            return var3.group(2);
+         if (i == n) {
+            return matcher.group(2);
          }
 
-         var6++;
-         var5 = var3.end();
+         i++;
+         end = matcher.end();
       }
 
-      return var4 == 0 ? var1.text() : "";
+      return n2 == 0 ? entry2.text() : "";
    }
 
-   private static String clean(String var0) {
-      return HEADING.matcher(var0.replace("**", "").replace("__", "")).replaceAll("").replace("`", "");
+   private static String clean(String text) {
+      return HEADING.matcher(text.replace("**", "").replace("__", "")).replaceAll("").replace("`", "");
    }
 
-   private static boolean hasButtons(AiChatStorage.Entry2 var0, boolean var1) {
-      return !var0.method2775().isEmpty() || !var0.error().isEmpty() || var0.isFlag3() || !var0.text().isBlank() || var1;
+   private static boolean hasButtons(AiChatStorage.Entry2 entry2, boolean lastOne) {
+      return !entry2.method2775().isEmpty() || !entry2.error().isEmpty() || entry2.isFlag3() || !entry2.text().isBlank() || lastOne;
    }
 
-   private String errorText(AiChatStorage.Entry2 var1) {
-      return var1.error().equals("nokey")
+   private String errorText(AiChatStorage.Entry2 entry2) {
+      return entry2.error().equals("nokey")
          ? t("gui.scripts.ai.nokey.msg").replace("{p}", AiSettingsStore.method4467().getShownProvider().title())
-         : var1.error();
+         : entry2.error();
    }
 
    private void renderMessage(
-      MenuDrawContext var1,
-      int var2,
-      int var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      ZenithStyle var8,
-      Storage var9,
-      AiChatStorage.Entry2 var10,
-      ScriptAiTab.Layout var11,
-      int var12,
-      boolean var13
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      float f,
+      float f2,
+      float f3,
+      float previewAlpha,
+      ZenithStyle currentStyle,
+      Storage hostOrNull,
+      AiChatStorage.Entry2 entry2,
+      ScriptAiTab.Layout layout,
+      int n,
+      boolean lastOne
    ) {
-      Font var14 = Fonts.NEW_REGULAR.getFont(4.6F);
-      Font var15 = headFont();
-      Font var16 = Fonts.NEW_REGULAR.getFont(4.3F);
-      ZenithColor var17 = var8.getPrimaryColor().getZenithColor();
-      float var18 = this.panel.hot("msg:" + var12 + ":" + var10.getLongValue(), true);
-      float var19 = (1.0F - var18) * 6.0F;
-      var7 *= var18;
-      boolean var20 = !var10.isFlag() && !var10.note();
-      float var21 = var10.isFlag() ? var4 + var6 - 8.0F - var11.bubble : var4 + 8.0F;
-      float var22 = var5 + 3.0F + var19;
-      float var23 = var11.height;
-      ProxyDotRadiusData var24 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.8F);
-      if (var10.note()) {
-         var1.drawRoundedRect(var21, var22, var11.bubble, var23, var24, var8.getDisableActiveBg().getZenithColor().method7294(var7 * 0.35F));
-         var1.drawRoundedRect(var21, var22 + 4.0F, 2.0F, var23 - 8.0F, ProxyDotRadiusData.method8069(1.0F), var17.method7294(var7 * 0.6F));
-      } else if (var10.isFlag()) {
-         var1.drawRoundedRect(var21, var22, var11.bubble, var23, var24, var17.method7292(var10.isFlag5() ? 0.08F : 0.16F).method7294(var7));
-         Font var25 = Fonts.NEW_REGULAR.getFont(4.2F);
-         String var26 = CLOCK.format(new Date(var10.getLongValue()));
-         boolean var27 = new BoundsData(var21 - 30.0F, var22, var11.bubble + 30.0F, var23).contains(var2, var3);
-         float var28 = this.panel.hot("time:" + var10.getLongValue(), var27);
-         var1.drawText(
-            var25,
-            var26,
-            var21 - 5.0F - var25.width(var26),
-            var22 + (var23 - var25.height()) / 2.0F,
-            var8.getTextTertiary().getZenithColor().method7294(var7 * (0.35F + 0.65F * var28))
+      Font font = Fonts.NEW_REGULAR.getFont(4.6F);
+      Font headFont2 = headFont();
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      float hot = this.panel.hot("msg:" + n + ":" + entry2.getLongValue(), true);
+      float f4 = (1.0F - hot) * 6.0F;
+      previewAlpha *= hot;
+      boolean flag = !entry2.isFlag() && !entry2.note();
+      float floatValue = entry2.isFlag() ? f + f3 - 8.0F - layout.bubble : f + 8.0F;
+      float y = f2 + 3.0F + f4;
+      float height = layout.height;
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.8F);
+      if (entry2.note()) {
+         menuDrawContext.drawRoundedRect(floatValue, y, layout.bubble, height, headerRadius, currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * 0.35F));
+         menuDrawContext.drawRoundedRect(floatValue, y + 4.0F, 2.0F, height - 8.0F, ProxyDotRadiusData.method8069(1.0F), zenithColor.method7294(previewAlpha * 0.6F));
+      } else if (entry2.isFlag()) {
+         menuDrawContext.drawRoundedRect(floatValue, y, layout.bubble, height, headerRadius, zenithColor.method7292(entry2.isFlag5() ? 0.08F : 0.16F).method7294(previewAlpha));
+         Font font3 = Fonts.NEW_REGULAR.getFont(4.2F);
+         String text = CLOCK.format(new Date(entry2.getLongValue()));
+         boolean contains = new BoundsData(floatValue - 30.0F, y, layout.bubble + 30.0F, height).contains(lastClickX, lastClickY);
+         float hot2 = this.panel.hot("time:" + entry2.getLongValue(), contains);
+         menuDrawContext.drawText(
+            font3,
+            text,
+            floatValue - 5.0F - font3.width(text),
+            y + (height - font3.height()) / 2.0F,
+            currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * (0.35F + 0.65F * hot2))
          );
       } else {
-         ScriptsSectionPanel.card(var1, var8, var21, var22, var11.bubble, var23, 0.0F, var7);
+         ScriptsSectionPanel.card(menuDrawContext, currentStyle, floatValue, y, layout.bubble, height, 0.0F, previewAlpha);
       }
 
-      float var35 = var22 + (var20 ? 7.0F : 5.0F);
-      if (!var10.getItems().isEmpty()) {
-         float var36 = var21 + 7.0F;
+      float centeredTextY = y + (flag ? 7.0F : 5.0F);
+      if (!entry2.getItems().isEmpty()) {
+         float floatValue2 = floatValue + 7.0F;
 
-         for (int var39 = 0; var39 < var10.getItems().size(); var39++) {
-            String var45 = var10.getItems().get(var39);
-            Identifier var29 = AiImageStore.method4639(var45);
-            int[] var30 = AiImageStore.method4638(var45);
-            float var31 = Math.max(26.400002F, Math.min(96.8F, 44.0F * var30[0] / Math.max(1, var30[1])));
-            if (var36 + var31 > var21 + var11.bubble - 7.0F) {
+         for (int i = 0; i < entry2.getItems().size(); i++) {
+            String key = entry2.getItems().get(i);
+            Identifier texture = AiImageStore.method4639(key);
+            int[] ints = AiImageStore.method4638(key);
+            float width = Math.max(26.400002F, Math.min(96.8F, 44.0F * ints[0] / Math.max(1, ints[1])));
+            if (floatValue2 + width > floatValue + layout.bubble - 7.0F) {
                break;
             }
 
-            BoundsData var32 = new BoundsData(var36, var35, var31, 44.0F);
-            this.hits.put("img:" + var39 + ":" + var12, var32);
-            float var33 = this.panel.hot("img:" + var45, var32.contains(var2, var3));
-            thumb(var1, var29, var32, 5.0F, ZenithColor.INSTANCE.method7294(var7 * (0.15F + 0.5F * var33)), var7, 1.0F);
-            if (var32.contains(var2, var3)) {
+            BoundsData boundsData = new BoundsData(floatValue2, centeredTextY, width, 44.0F);
+            this.hits.put("img:" + i + ":" + n, boundsData);
+            float hot2 = this.panel.hot("img:" + key, boundsData.contains(lastClickX, lastClickY));
+            thumb(menuDrawContext, texture, boundsData, 5.0F, ZenithColor.INSTANCE.method7294(previewAlpha * (0.15F + 0.5F * hot2)), previewAlpha, 1.0F);
+            if (boundsData.contains(lastClickX, lastClickY)) {
                HoverInfo.request(t("gui.scripts.ai.image"), t("gui.scripts.ai.image.desc"));
             }
 
-            var36 += var31 + 4.0F;
+            floatValue2 += width + 4.0F;
          }
 
-         var35 += 48.0F;
+         centeredTextY += 48.0F;
       }
 
-      if (var20) {
-         String var37 = var10.getText2().isEmpty() ? "AI" : var10.getText2();
-         var1.drawText(var15, var15.clip(var37, var11.bubble - 60.0F), var21 + 7.0F, var35, var17.method7294(var7 * 0.9F));
-         String var40 = CLOCK.format(new Date(var10.getLongValue()));
-         var1.drawText(var15, var40, var21 + var11.bubble - 7.0F - var15.width(var40), var35, var8.getTextTertiary().getZenithColor().method7294(var7 * 0.8F));
-         if (var10.streaming()) {
-            long var46 = System.currentTimeMillis();
+      if (flag) {
+         String name = entry2.getText2().isEmpty() ? "AI" : entry2.getText2();
+         menuDrawContext.drawText(headFont2, headFont2.clip(name, layout.bubble - 60.0F), floatValue + 7.0F, centeredTextY, zenithColor.method7294(previewAlpha * 0.9F));
+         String text = CLOCK.format(new Date(entry2.getLongValue()));
+         menuDrawContext.drawText(headFont2, text, floatValue + layout.bubble - 7.0F - headFont2.width(text), centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F));
+         if (entry2.streaming()) {
+            long now = System.currentTimeMillis();
 
-            for (int var54 = 0; var54 < 3; var54++) {
-               float var58 = (float)Math.sin(var46 / 180.0 - var54 * 0.9);
-               var1.drawRoundedRect(
-                  var21 + 10.0F + var15.width(var15.clip(var37, var11.bubble - 60.0F)) + var54 * 4.0F,
-                  var35 + (var15.height() - 2.0F) / 2.0F - Math.max(0.0F, var58) * 1.2F,
+            for (int i = 0; i < 3; i++) {
+               float f5 = (float)Math.sin(now / 180.0 - i * 0.9);
+               menuDrawContext.drawRoundedRect(
+                  floatValue + 10.0F + headFont2.width(headFont2.clip(name, layout.bubble - 60.0F)) + i * 4.0F,
+                  centeredTextY + (headFont2.height() - 2.0F) / 2.0F - Math.max(0.0F, f5) * 1.2F,
                   2.0F,
                   2.0F,
                   ProxyDotRadiusData.method8069(1.0F),
-                  var17.method7294(var7 * (0.4F + 0.6F * Math.max(0.0F, var58)))
+                  zenithColor.method7294(previewAlpha * (0.4F + 0.6F * Math.max(0.0F, f5)))
                );
             }
          }
 
-         var35 += var15.height() + 4.0F;
+         centeredTextY += headFont2.height() + 4.0F;
       }
 
-      ZenithColor var38 = var10.isFlag()
-         ? var8.getTextEnable().getZenithColor()
-         : var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), 0.5F);
+      ZenithColor zenithColor2 = entry2.isFlag()
+         ? currentStyle.getTextEnable().getZenithColor()
+         : currentStyle.getTextSecondary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), 0.5F);
 
-      for (int var41 = 0; var41 < var11.pieces.size(); var41++) {
-         ScriptAiTab.Piece var47 = var11.pieces.get(var41);
-         List<String> var51 = var11.wrapped.get(var41);
-         if (var47.kind == 0) {
-            for (String var61 : var51) {
-               var1.drawText(var14, var61, var21 + 7.0F, var35, var38.method7294(var7));
-               var35 += 7.4F;
+      for (int i = 0; i < layout.pieces.size(); i++) {
+         ScriptAiTab.Piece piece = layout.pieces.get(i);
+         List<String> strings = layout.wrapped.get(i);
+         if (piece.kind == 0) {
+            for (String text : strings) {
+               menuDrawContext.drawText(font, text, floatValue + 7.0F, centeredTextY, zenithColor2.method7294(previewAlpha));
+               centeredTextY += 7.4F;
             }
-         } else if (var47.kind == 1) {
-            String var56 = var47.text + "  ·  " + var47.lines + " " + t("gui.scripts.ai.lines") + var47.extra;
-            float var60 = Math.min(var11.bubble - 14.0F, var15.width(var56) + 22.0F);
-            BoundsData var64 = new BoundsData(var21 + 7.0F, var35, var60, 13.0F);
-            this.hits.put("file:" + var41 + ":" + var12, var64);
-            float var66 = this.panel.hot("chip:" + var12 + ":" + var41, var64.contains(var2, var3));
-            var1.drawRoundedRect(
-               var21 + 7.0F, var35, var60, 13.0F, ProxyDotRadiusData.method8069(4.0F), var17.method7292(0.12F + 0.12F * var66).method7294(var7)
+         } else if (piece.kind == 1) {
+            String text = piece.text + "  ·  " + piece.lines + " " + t("gui.scripts.ai.lines") + piece.extra;
+            float width = Math.min(layout.bubble - 14.0F, headFont2.width(text) + 22.0F);
+            BoundsData boundsData = new BoundsData(floatValue + 7.0F, centeredTextY, width, 13.0F);
+            this.hits.put("file:" + i + ":" + n, boundsData);
+            float hot2 = this.panel.hot("chip:" + n + ":" + i, boundsData.contains(lastClickX, lastClickY));
+            menuDrawContext.drawRoundedRect(
+               floatValue + 7.0F, centeredTextY, width, 13.0F, ProxyDotRadiusData.method8069(4.0F), zenithColor.method7292(0.12F + 0.12F * hot2).method7294(previewAlpha)
             );
-            if (var64.contains(var2, var3)) {
-               HoverInfo.request(var47.text, t("gui.scripts.ai.chip.desc"));
+            if (boundsData.contains(lastClickX, lastClickY)) {
+               HoverInfo.request(piece.text, t("gui.scripts.ai.chip.desc"));
             }
 
-            var1.drawRoundedRect(var21 + 11.0F, var35 + 3.5F, 5.0F, 6.0F, ProxyDotRadiusData.method8069(1.0F), var17.method7292(0.6F).method7294(var7));
-            var1.drawText(
-               var15,
-               var15.clip(var56, var60 - 22.0F),
-               var21 + 20.0F,
-               var35 + (13.0F - var15.height()) / 2.0F,
-               var17.method7295(ZenithColor.INSTANCE, 0.3F).method7294(var7)
+            menuDrawContext.drawRoundedRect(floatValue + 11.0F, centeredTextY + 3.5F, 5.0F, 6.0F, ProxyDotRadiusData.method8069(1.0F), zenithColor.method7292(0.6F).method7294(previewAlpha));
+            menuDrawContext.drawText(
+               headFont2,
+               headFont2.clip(text, width - 22.0F),
+               floatValue + 20.0F,
+               centeredTextY + (13.0F - headFont2.height()) / 2.0F,
+               zenithColor.method7295(ZenithColor.INSTANCE, 0.3F).method7294(previewAlpha)
             );
-            var35 += 16.0F;
+            centeredTextY += 16.0F;
          } else {
-            float var55 = codeHeight(var51.size(), var47.lines);
-            var1.drawRoundedRect(
-               var21 + 7.0F, var35, var11.bubble - 14.0F, var55, ProxyDotRadiusData.method8069(3.0F), new ZenithColor(10, 11, 16, 140).method7294(var7)
+            float codeHeight2 = codeHeight(strings.size(), piece.lines);
+            menuDrawContext.drawRoundedRect(
+               floatValue + 7.0F, centeredTextY, layout.bubble - 14.0F, codeHeight2, ProxyDotRadiusData.method8069(3.0F), new ZenithColor(10, 11, 16, 140).method7294(previewAlpha)
             );
-            float var59 = var35 + 3.0F;
+            float centeredTextY2 = centeredTextY + 3.0F;
 
-            for (String var65 : var51) {
-               var1.drawText(
-                  var16, var16.clip(var65, var11.bubble - 24.0F), var21 + 11.0F, var59, var8.getTextSecondary().getZenithColor().method7294(var7 * 0.9F)
+            for (String name : strings) {
+               menuDrawContext.drawText(
+                  font2, font2.clip(name, layout.bubble - 24.0F), floatValue + 11.0F, centeredTextY2, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha * 0.9F)
                );
-               var59 += 6.6F;
+               centeredTextY2 += 6.6F;
             }
 
-            if (var47.lines > 6) {
-               var1.drawText(var16, "… +" + (var47.lines - 6), var21 + 11.0F, var59, var8.getTextTertiary().getZenithColor().method7294(var7));
+            if (piece.lines > 6) {
+               menuDrawContext.drawText(font2, "… +" + (piece.lines - 6), floatValue + 11.0F, centeredTextY2, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             }
 
-            var35 += var55 + 2.0F;
+            centeredTextY += codeHeight2 + 2.0F;
          }
       }
 
-      if (var10.text().isEmpty() && var10.streaming()) {
-         var1.drawText(
-            var14,
+      if (entry2.text().isEmpty() && entry2.streaming()) {
+         menuDrawContext.drawText(
+            font,
             t("gui.scripts.ai.thinking"),
-            var21 + 7.0F,
-            var35,
-            var8.getTextTertiary().getZenithColor().method7294(var7 * (0.5F + 0.5F * (float)Math.abs(Math.sin(System.currentTimeMillis() / 400.0))))
+            floatValue + 7.0F,
+            centeredTextY,
+            currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * (0.5F + 0.5F * (float)Math.abs(Math.sin(System.currentTimeMillis() / 400.0))))
          );
-         var35 += 7.4F;
+         centeredTextY += 7.4F;
       }
 
-      if (var20) {
-         if (!var10.error().isEmpty()) {
-            var35 += 2.0F;
-            boolean var42 = var10.error().equals("nokey");
+      if (flag) {
+         if (!entry2.error().isEmpty()) {
+            centeredTextY += 2.0F;
+            boolean flag2 = entry2.error().equals("nokey");
 
-            for (String var52 : SectionPanel.wrapText(this.errorText(var10), var14, var11.bubble - 14.0F, 6)) {
-               var1.drawText(var14, var52, var21 + 7.0F, var35, (var42 ? WARN : ERROR).method7294(var7));
-               var35 += 7.4F;
+            for (String text : SectionPanel.wrapText(this.errorText(entry2), font, layout.bubble - 14.0F, 6)) {
+               menuDrawContext.drawText(font, text, floatValue + 7.0F, centeredTextY, (flag2 ? WARN : ERROR).method7294(previewAlpha));
+               centeredTextY += 7.4F;
             }
          }
 
-         if (!var10.result().isEmpty()) {
-            var35 += 2.0F;
+         if (!entry2.result().isEmpty()) {
+            centeredTextY += 2.0F;
 
-            for (String var49 : SectionPanel.wrapText(var10.result(), var14, var11.bubble - 14.0F, 6)) {
-               var1.drawText(var14, var49, var21 + 7.0F, var35, (var10.isFlag3() ? ERROR : OK).method7294(var7));
-               var35 += 7.4F;
+            for (String text : SectionPanel.wrapText(entry2.result(), font, layout.bubble - 14.0F, 6)) {
+               menuDrawContext.drawText(font, text, floatValue + 7.0F, centeredTextY, (entry2.isFlag3() ? ERROR : OK).method7294(previewAlpha));
+               centeredTextY += 7.4F;
             }
          }
 
-         if (!var10.streaming() && hasButtons(var10, var13)) {
-            float var44 = var21 + 7.0F;
-            float var50 = var35 + 3.0F;
-            if (!var10.method2775().isEmpty()) {
-               var44 = this.button(
-                  var1,
-                  var2,
-                  var3,
-                  var8,
-                  "apply:" + var12,
-                  var10.isFlag4() ? t("gui.scripts.ai.reapply") : t("gui.scripts.ai.apply").replace("{n}", String.valueOf(var10.method2775().size())),
-                  var44,
-                  var50,
+         if (!entry2.streaming() && hasButtons(entry2, lastOne)) {
+            float button = floatValue + 7.0F;
+            float y2 = centeredTextY + 3.0F;
+            if (!entry2.method2775().isEmpty()) {
+               button = this.button(
+                  menuDrawContext,
+                  lastClickX,
+                  lastClickY,
+                  currentStyle,
+                  "apply:" + n,
+                  entry2.isFlag4() ? t("gui.scripts.ai.reapply") : t("gui.scripts.ai.apply").replace("{n}", String.valueOf(entry2.method2775().size())),
+                  button,
+                  y2,
                   true,
-                  var7
+                  previewAlpha
                );
-               if (var10.isFlag4()) {
-                  var44 = this.button(var1, var2, var3, var8, "ide:" + var12, t("gui.scripts.ai.openIde"), var44, var50, false, var7);
+               if (entry2.isFlag4()) {
+                  button = this.button(menuDrawContext, lastClickX, lastClickY, currentStyle, "ide:" + n, t("gui.scripts.ai.openIde"), button, y2, false, previewAlpha);
                }
             }
 
-            if (var10.error().equals("nokey")) {
-               var44 = this.button(var1, var2, var3, var8, "key:" + var12, t("gui.scripts.ai.nokey.button"), var44, var50, true, var7);
-            } else if (!var10.error().isEmpty()) {
-               var44 = this.button(var1, var2, var3, var8, "retry:" + var12, t("gui.scripts.ai.retry"), var44, var50, true, var7);
+            if (entry2.error().equals("nokey")) {
+               button = this.button(menuDrawContext, lastClickX, lastClickY, currentStyle, "key:" + n, t("gui.scripts.ai.nokey.button"), button, y2, true, previewAlpha);
+            } else if (!entry2.error().isEmpty()) {
+               button = this.button(menuDrawContext, lastClickX, lastClickY, currentStyle, "retry:" + n, t("gui.scripts.ai.retry"), button, y2, true, previewAlpha);
             }
 
-            if (var10.isFlag3()) {
-               var44 = this.button(var1, var2, var3, var8, "fix:" + var12, t("gui.scripts.ai.fix"), var44, var50, false, var7);
+            if (entry2.isFlag3()) {
+               button = this.button(menuDrawContext, lastClickX, lastClickY, currentStyle, "fix:" + n, t("gui.scripts.ai.fix"), button, y2, false, previewAlpha);
             }
 
-            if (!var10.text().isBlank()) {
-               long var53 = this.pressedAt.getOrDefault("copy:" + var12, 0L);
-               boolean var62 = System.currentTimeMillis() - var53 < 1500L;
-               var44 = this.button(
-                  var1, var2, var3, var8, "copy:" + var12, t(var62 ? "gui.scripts.ai.copied" : "gui.scripts.ai.copy"), var44, var50, false, var7
+            if (!entry2.text().isBlank()) {
+               long l = this.pressedAt.getOrDefault("copy:" + n, 0L);
+               boolean flag2 = System.currentTimeMillis() - l < 1500L;
+               button = this.button(
+                  menuDrawContext, lastClickX, lastClickY, currentStyle, "copy:" + n, t(flag2 ? "gui.scripts.ai.copied" : "gui.scripts.ai.copy"), button, y2, false, previewAlpha
                );
             }
 
-            if (var13 && !AiChatStorage.method2741().isBusy()) {
-               this.button(var1, var2, var3, var8, "again:" + var12, t("gui.scripts.ai.again"), var44, var50, false, var7);
+            if (lastOne && !AiChatStorage.method2741().isBusy()) {
+               this.button(menuDrawContext, lastClickX, lastClickY, currentStyle, "again:" + n, t("gui.scripts.ai.again"), button, y2, false, previewAlpha);
             }
          }
       }
    }
 
-   private float button(MenuDrawContext var1, int var2, int var3, ZenithStyle var4, String var5, String var6, float var7, float var8, boolean var9, float var10) {
-      Font var11 = Fonts.NEW_MEDIUM.getFont(4.5F);
-      float var12 = var11.width(var6) + 12.0F;
-      BoundsData var13 = new BoundsData(var7, var8, var12, 12.0F);
-      this.hits.put(var5, var13);
-      boolean var14 = var13.contains(var2, var3);
-      float var15 = this.panel.hot("aib:" + var5, var14);
-      float var16 = Smooth.press(this.pressedAt.getOrDefault(var5, 0L), 320L);
-      ZenithColor var17 = var4.getPrimaryColor().getZenithColor();
-      ZenithColor var18 = var9
-         ? var17.method7292(0.2F + 0.18F * var15)
-         : var4.getFieldSurfaceBackground().getZenithColor().method7295(var4.getDisableActiveBg().getZenithColor(), 0.4F + var15 * 0.5F);
-      var1.drawRoundedRect(var7, var8, var12, 12.0F, ProxyDotRadiusData.method8069(6.0F), var18.method7294(var10));
-      if (var16 > 0.01F) {
-         float var19 = (1.0F - var16) * 3.0F;
-         var1.drawRoundedRect(
-            var7 - var19 / 2.0F,
-            var8 - var19 / 2.0F,
-            var12 + var19,
-            12.0F + var19,
-            ProxyDotRadiusData.method8069(6.0F + var19 / 2.0F),
-            var17.method7292(0.3F * var16).method7294(var10)
+   private float button(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, ZenithStyle currentStyle, String key, String text, float button, float y, boolean flag, float previewAlpha) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.5F);
+      float width = font.width(text) + 12.0F;
+      BoundsData boundsData = new BoundsData(button, y, width, 12.0F);
+      this.hits.put(key, boundsData);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.panel.hot("aib:" + key, contains);
+      float press = Smooth.press(this.pressedAt.getOrDefault(key, 0L), 320L);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      ZenithColor zenithColor2 = flag
+         ? zenithColor.method7292(0.2F + 0.18F * hot)
+         : currentStyle.getFieldSurfaceBackground().getZenithColor().method7295(currentStyle.getDisableActiveBg().getZenithColor(), 0.4F + hot * 0.5F);
+      menuDrawContext.drawRoundedRect(button, y, width, 12.0F, ProxyDotRadiusData.method8069(6.0F), zenithColor2.method7294(previewAlpha));
+      if (press > 0.01F) {
+         float f = (1.0F - press) * 3.0F;
+         menuDrawContext.drawRoundedRect(
+            button - f / 2.0F,
+            y - f / 2.0F,
+            width + f,
+            12.0F + f,
+            ProxyDotRadiusData.method8069(6.0F + f / 2.0F),
+            zenithColor.method7292(0.3F * press).method7294(previewAlpha)
          );
       }
 
-      var1.drawText(
-         var11,
-         var6,
-         var7 + 6.0F,
-         var8 + (12.0F - var11.height()) / 2.0F,
-         (var9
-               ? var17.method7295(ZenithColor.INSTANCE, 0.3F + var15 * 0.4F)
-               : var4.getTextSecondary().getZenithColor().method7295(var4.getTextEnable().getZenithColor(), var15))
-            .method7294(var10)
+      menuDrawContext.drawText(
+         font,
+         text,
+         button + 6.0F,
+         y + (12.0F - font.height()) / 2.0F,
+         (flag
+               ? zenithColor.method7295(ZenithColor.INSTANCE, 0.3F + hot * 0.4F)
+               : currentStyle.getTextSecondary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), hot))
+            .method7294(previewAlpha)
       );
-      return var7 + var12 + 4.0F;
+      return button + width + 4.0F;
    }
 
-   private void clickMessage(Storage var1, AiChatStorage.Entry2 var2, int var3) {
-      AiChatStorage var4 = AiChatStorage.method2741();
+   private void clickMessage(Storage hostOrNull, AiChatStorage.Entry2 entry2, int n) {
+      AiChatStorage aiChatStorage = AiChatStorage.method2741();
 
-      for (Entry var6 : this.hits.entrySet()) {
-         if (((String)var6.getKey()).endsWith(":" + var3) && this.hovered((BoundsData)var6.getValue())) {
-            this.pressedAt.put((String)var6.getKey(), System.currentTimeMillis());
-            String var7 = ((String)var6.getKey()).substring(0, ((String)var6.getKey()).indexOf(58));
+      for (Entry entry : this.hits.entrySet()) {
+         if (((String)entry.getKey()).endsWith(":" + n) && this.hovered((BoundsData)entry.getValue())) {
+            this.pressedAt.put((String)entry.getKey(), System.currentTimeMillis());
+            String str = ((String)entry.getKey()).substring(0, ((String)entry.getKey()).indexOf(58));
             label96:
-            switch (var7) {
+            switch (str) {
                case "apply":
-                  var4.method2767(var1, var2);
+                  aiChatStorage.method2767(hostOrNull, entry2);
                   break;
                case "ide":
-                  Script var16 = var4.method2747() == null ? null : var1.method1294(var4.method2747());
-                  if (var16 != null) {
-                     this.panel.openWorkspace(var16);
+                  Script workspace = aiChatStorage.method2747() == null ? null : hostOrNull.method1294(aiChatStorage.method2747());
+                  if (workspace != null) {
+                     this.panel.openWorkspace(workspace);
                   }
                   break;
                case "retry":
-                  var var15 = var4.method2745();
+                  var entry2s = aiChatStorage.method2745();
 
-                  for (int var17 = var15.indexOf(var2) - 1; var17 >= 0; var17--) {
-                     if (((AiChatStorage.Entry2)var15.get(var17)).isFlag()) {
-                        var4.method2757(var1, ((AiChatStorage.Entry2)var15.get(var17)).text());
+                  for (int i = entry2s.indexOf(entry2) - 1; i >= 0; i--) {
+                     if (((AiChatStorage.Entry2)entry2s.get(i)).isFlag()) {
+                        aiChatStorage.method2757(hostOrNull, ((AiChatStorage.Entry2)entry2s.get(i)).text());
                         break label96;
                      }
                   }
                   break;
                case "fix":
-                  var4.method2769(var1);
+                  aiChatStorage.method2769(hostOrNull);
                   break;
                case "copy":
-                  Minecraft.getInstance().keyboardHandler.setClipboard(var2.text());
+                  Minecraft.getInstance().keyboardHandler.setClipboard(entry2.text());
                   break;
                case "img":
-                  int var14 = Integer.parseInt(((String)var6.getKey()).split(":")[1]);
-                  if (var14 < var2.getItems().size()) {
-                     com.mojang.blaze3d.Blaze3D.openPath((AiImageStore.method4637(var2.getItems().get(var14)).toFile()).toPath());
+                  int n2 = Integer.parseInt(((String)entry.getKey()).split(":")[1]);
+                  if (n2 < entry2.getItems().size()) {
+                     com.mojang.blaze3d.Blaze3D.openPath((AiImageStore.method4637(entry2.getItems().get(n2)).toFile()).toPath());
                   }
                   break;
                case "file":
-                  int var10 = Integer.parseInt(((String)var6.getKey()).split(":")[1]);
-                  ScriptAiTab.CachedLayout var11 = this.layouts.get(var2);
-                  ScriptAiTab.Layout var12 = var11 != null ? var11.layout() : this.layout(var2, 236.0F, false);
-                  Script var13 = var4.method2747() == null ? null : var1.method1294(var4.method2747());
-                  if (var10 < var12.pieces.size() && var13 != null && var2.isFlag4()) {
-                     this.panel.openWorkspaceFile(var13, var12.pieces.get(var10).text);
+                  int n3 = Integer.parseInt(((String)entry.getKey()).split(":")[1]);
+                  ScriptAiTab.CachedLayout layout = this.layouts.get(entry2);
+                  ScriptAiTab.Layout layout2 = layout != null ? layout.layout() : this.layout(entry2, 236.0F, false);
+                  Script script = aiChatStorage.method2747() == null ? null : hostOrNull.method1294(aiChatStorage.method2747());
+                  if (n3 < layout2.pieces.size() && script != null && entry2.isFlag4()) {
+                     this.panel.openWorkspaceFile(script, layout2.pieces.get(n3).text);
                   } else {
-                     Minecraft.getInstance().keyboardHandler.setClipboard(this.extractCode(var2, var10));
+                     Minecraft.getInstance().keyboardHandler.setClipboard(this.extractCode(entry2, n3));
                      HudHolder.method6969().method6973("i", Component.literal(t("gui.scripts.ai.chip.copied")), 2000L);
                   }
                   break;
                case "again":
-                  var4.method2761(var1);
+                  aiChatStorage.method2761(hostOrNull);
                   break;
                case "key":
                   this.asideView = 1;
@@ -955,28 +955,28 @@ public final class ScriptAiTab {
       }
    }
 
-   public void mouse(double var1, double var3) {
-      this.lastMouseX = var1;
-      this.lastMouseY = var3;
+   public void mouse(double lastMouseX, double lastMouseY) {
+      this.lastMouseX = lastMouseX;
+      this.lastMouseY = lastMouseY;
    }
 
-   private boolean hovered(BoundsData var1) {
-      return var1 != null && var1.contains(this.lastMouseX, this.lastMouseY);
+   private boolean hovered(BoundsData hit) {
+      return hit != null && hit.contains(this.lastMouseX, this.lastMouseY);
    }
 
    private int view() {
       return this.asideView >= 0 ? this.asideView : (AiSettingsStore.method4467().method4471(AiSettingsStore.method4467().getShownProvider()) ? 0 : 1);
    }
 
-   private void aside(Storage var1) {
-      AiSettingsStore var2 = AiSettingsStore.method4467();
-      ShownProvider var3 = var2.getShownProvider();
-      int var4 = this.view();
+   private void aside(Storage hostOrNull) {
+      AiSettingsStore aiSettingsStore = AiSettingsStore.method4467();
+      ShownProvider shownProvider = aiSettingsStore.getShownProvider();
+      int view = this.view();
       this.panel
          .asideCustom(
             11.0F + GuiStyle.PADDING.intValue() * 2.0F,
-            (var1x, var2x, var3x, var4x, var5x, var6x, var7x, var8) -> this.asideTabs
-               .render(var1x, var2x, var3x, var4x + 8.0F, var5x + GuiStyle.PADDING.intValue(), var6x - 16.0F, this.view(), var7x, var8),
+            (var1x, var2x, var3x, var4x, var5x, var6x, var7x, zenithStyle) -> this.asideTabs
+               .render(var1x, var2x, var3x, var4x + 8.0F, var5x + GuiStyle.PADDING.intValue(), var6x - 16.0F, this.view(), var7x, zenithStyle),
             () -> {
                int var1x = this.asideTabs.hovered();
                if (var1x >= 0 && var1x != this.view()) {
@@ -989,8 +989,8 @@ public final class ScriptAiTab {
             },
             null
          );
-      if (var4 == 0) {
-         this.chatsAside(var1);
+      if (view == 0) {
+         this.chatsAside(hostOrNull);
       } else {
          this.leadCaption("gui.scripts.ai.caption.provider");
          this.providerGrid();
@@ -998,52 +998,52 @@ public final class ScriptAiTab {
             this.addForm();
          } else {
             this.panel.asideCaption("gui.scripts.ai.caption.key");
-            if (!var3.isFlag() && !var3.isFlag2()) {
+            if (!shownProvider.isFlag() && !shownProvider.isFlag2()) {
                this.panel.paragraph(t("gui.scripts.ai.key.local"), true);
             } else {
-               this.field(this.keyField, t("gui.scripts.ai.key.hint").replace("{p}", var3.title()), "paste", t("gui.scripts.ai.key.paste"));
-               Font var5 = Fonts.NEW_REGULAR.getFont(4.5F);
-               float var6 = 122.0F;
-               int var7 = Math.max(
-                  SectionPanel.wrapText(t("gui.scripts.ai.key.none"), var5, var6, 2).size(),
-                  SectionPanel.wrapText(t("gui.scripts.ai.key.saved").replace("{k}", AiSettingsStore.method4480("sk-ant-0000000000")), var5, var6, 2).size()
+               this.field(this.keyField, t("gui.scripts.ai.key.hint").replace("{p}", shownProvider.title()), "paste", t("gui.scripts.ai.key.paste"));
+               Font font = Fonts.NEW_REGULAR.getFont(4.5F);
+               float shownWidth = 122.0F;
+               int n = Math.max(
+                  SectionPanel.wrapText(t("gui.scripts.ai.key.none"), font, shownWidth, 2).size(),
+                  SectionPanel.wrapText(t("gui.scripts.ai.key.saved").replace("{k}", AiSettingsStore.method4480("sk-ant-0000000000")), font, shownWidth, 2).size()
                );
                this.panel
                   .asideCustom(
-                     var7 * (var5.height() + 2.0F) + 4.0F,
-                     (var3x, var4x, var5x, var6x, var7x, var8, var9, var10) -> {
-                        String var11 = AiSettingsStore.method4467().method4469(AiSettingsStore.method4467().getShownProvider());
-                        boolean var12 = !var11.isEmpty();
-                        float var13 = var12 ? this.panel.hot("keyok:" + AiSettingsStore.method4467().getShownProvider().getText(), true) : 0.0F;
-                        String var14 = var12 ? t("gui.scripts.ai.key.saved").replace("{k}", AiSettingsStore.method4480(var11)) : t("gui.scripts.ai.key.none");
-                        float var15 = var7x + 2.0F;
-                        if (var12) {
+                     n * (font.height() + 2.0F) + 4.0F,
+                     (var3x, var4x, var5x, var6x, var7x, f, f2, zenithStyle) -> {
+                        String str = AiSettingsStore.method4467().method4469(AiSettingsStore.method4467().getShownProvider());
+                        boolean flag = !str.isEmpty();
+                        float hot = flag ? this.panel.hot("keyok:" + AiSettingsStore.method4467().getShownProvider().getText(), true) : 0.0F;
+                        String description = flag ? t("gui.scripts.ai.key.saved").replace("{k}", AiSettingsStore.method4480(str)) : t("gui.scripts.ai.key.none");
+                        float centeredTextY = var7x + 2.0F;
+                        if (flag) {
                            var3x.drawRoundedRect(
                               var6x + 8.0F + 1.0F,
-                              var15 + (var5.height() - 3.0F) / 2.0F,
+                              centeredTextY + (font.height() - 3.0F) / 2.0F,
                               3.0F,
                               3.0F,
                               ProxyDotRadiusData.method8069(1.5F),
-                              OK.method7294(var9 * var13)
+                              OK.method7294(f2 * hot)
                            );
                         }
 
-                        ZenithColor var16 = (var12 ? OK.method7295(var10.getTextTertiary().getZenithColor(), 0.35F) : var10.getTextTertiary().getZenithColor())
-                           .method7294(var9 * (var12 ? var13 : 1.0F));
+                        ZenithColor zenithColor = (flag ? OK.method7295(zenithStyle.getTextTertiary().getZenithColor(), 0.35F) : zenithStyle.getTextTertiary().getZenithColor())
+                           .method7294(f2 * (flag ? hot : 1.0F));
 
-                        for (String var18 : SectionPanel.wrapText(var14, var5, var8 - 16.0F - 6.0F, var7)) {
-                           var3x.drawText(var5, var18, var6x + 8.0F + (var12 ? 6.0F : 0.0F), var15, var16);
-                           var15 += var5.height() + 2.0F;
+                        for (String text : SectionPanel.wrapText(description, font, f - 16.0F - 6.0F, n)) {
+                           var3x.drawText(font, text, var6x + 8.0F + (flag ? 6.0F : 0.0F), centeredTextY, zenithColor);
+                           centeredTextY += font.height() + 2.0F;
                         }
                      }
                   );
-               if (!var3.isFlag2()) {
+               if (!shownProvider.isFlag2()) {
                   this.panel
                      .asideAction(
                         "gui.scripts.ai.key.where",
                         MenuGlyph.NETWORK,
                         () -> "",
-                        () -> org.zenith.utility.misc.OsOpen.uri(var3.getText5()),
+                        () -> org.zenith.utility.misc.OsOpen.uri(shownProvider.getText5()),
                         "gui.scripts.ai.key.where.desc"
                      );
                }
@@ -1051,26 +1051,26 @@ public final class ScriptAiTab {
 
             this.panel.asideCaption("gui.scripts.ai.caption.model");
             this.field(this.modelField, t("gui.scripts.ai.model.hint"), null, null);
-            this.modelChips(var3);
-            if (var3.equals(ShownProvider.INSTANCE9) || var3.isFlag2()) {
+            this.modelChips(shownProvider);
+            if (shownProvider.equals(ShownProvider.INSTANCE9) || shownProvider.isFlag2()) {
                this.field(this.endpointField, t("gui.scripts.ai.endpoint.hint"), null, null);
             }
 
-            if (var3.isFlag2()) {
+            if (shownProvider.isFlag2()) {
                this.panel
                   .asideAction(
                      "gui.scripts.ai.custom.remove",
                      MenuGlyph.CLOSE,
-                     () -> this.armedDelete.equals(var3.getText()) && System.currentTimeMillis() - this.armedDeleteAt < 3000L
+                     () -> this.armedDelete.equals(shownProvider.getText()) && System.currentTimeMillis() - this.armedDeleteAt < 3000L
                         ? t("gui.scripts.market.again")
                         : "",
                      () -> {
-                        if (this.armedDelete.equals(var3.getText()) && System.currentTimeMillis() - this.armedDeleteAt < 3000L) {
+                        if (this.armedDelete.equals(shownProvider.getText()) && System.currentTimeMillis() - this.armedDeleteAt < 3000L) {
                            this.armedDelete = "";
-                           AiSettingsStore.method4467().method4477(var3);
+                           AiSettingsStore.method4467().method4477(shownProvider);
                            this.syncFields();
                         } else {
-                           this.armedDelete = var3.getText();
+                           this.armedDelete = shownProvider.getText();
                            this.armedDeleteAt = System.currentTimeMillis();
                         }
 
@@ -1081,103 +1081,103 @@ public final class ScriptAiTab {
             }
 
             this.panel.asideCaption("gui.scripts.ai.caption.behaviour");
-            this.toggle("autoApply", "gui.scripts.ai.autoApply", "gui.scripts.ai.autoApply.desc", var2::isFlag2, var2::method4478);
-            this.toggle("autoFix", "gui.scripts.ai.autoFix", "gui.scripts.ai.autoFix.desc", var2::isFlag3, var2::method4479);
+            this.toggle("autoApply", "gui.scripts.ai.autoApply", "gui.scripts.ai.autoApply.desc", aiSettingsStore::isFlag2, aiSettingsStore::method4478);
+            this.toggle("autoFix", "gui.scripts.ai.autoFix", "gui.scripts.ai.autoFix.desc", aiSettingsStore::isFlag3, aiSettingsStore::method4479);
             this.panel.paragraph(t("gui.scripts.ai.privacy"), true);
          }
       }
    }
 
-   private void leadCaption(String var1) {
-      Font var2 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      float var3 = (16.0F - var2.height()) / 2.0F - 2.0F;
+   private void leadCaption(String description) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+      float f = (16.0F - font.height()) / 2.0F - 2.0F;
       this.panel
          .asideCustom(
-            2.0F + var2.height() + var3,
-            (var2x, var3x, var4, var5, var6, var7, var8, var9) -> var2x.drawText(
-               var2, HoverInfo.spaced(t(var1).toUpperCase(Locale.ROOT)), var5 + 8.0F, var6 + 2.0F, var9.getTextTertiary().getZenithColor().method7294(var8)
+            2.0F + font.height() + f,
+            (var2x, var3x, n, f2, f3, f4, previewAlpha, zenithStyle) -> var2x.drawText(
+               font, HoverInfo.spaced(t(description).toUpperCase(Locale.ROOT)), f2 + 8.0F, f3 + 2.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
             )
          );
    }
 
-   private void cardFrame(MenuDrawContext var1, ZenithStyle var2, BoundsData var3, float var4, float var5, float var6, float var7) {
-      ScriptsSectionPanel.card(var1, var2, var3.getFloatValue(), var3.getFloatValue2(), var3.width(), var3.height(), Math.max(var4, var5 * 0.6F), var7);
-      ZenithColor var8 = var2.getPrimaryColor().getZenithColor();
-      if (var5 > 0.01F) {
-         var1.drawRoundedBorder(
-            var3.getFloatValue(),
-            var3.getFloatValue2(),
-            var3.width(),
-            var3.height(),
+   private void cardFrame(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, BoundsData boundsData, float hot, float f, float press, float previewAlpha) {
+      ScriptsSectionPanel.card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), Math.max(hot, f * 0.6F), previewAlpha);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      if (f > 0.01F) {
+         menuDrawContext.drawRoundedBorder(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
             0.25F,
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F),
-            var8.method7294(var7 * 0.7F * var5)
+            zenithColor.method7294(previewAlpha * 0.7F * f)
          );
       }
 
-      if (var6 > 0.01F) {
-         var1.drawRoundedRect(
-            var3.getFloatValue(),
-            var3.getFloatValue2(),
-            var3.width(),
-            var3.height(),
+      if (press > 0.01F) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F),
-            var8.method7292(0.16F * var6).method7294(var7)
+            zenithColor.method7292(0.16F * press).method7294(previewAlpha)
          );
       }
    }
 
-   private void iconTile(MenuDrawContext var1, ZenithStyle var2, MenuGlyph var3, float var4, float var5, float var6, boolean var7, float var8) {
-      ZenithColor var9 = var2.getPrimaryColor().getZenithColor();
-      var1.drawRoundedRect(
-         var4,
-         var5,
-         var6,
-         var6,
-         ProxyDotRadiusData.method8069(var6 * 0.28F),
-         (var7 ? var9.method7292(0.18F) : var2.getDisableActiveBg().getZenithColor().method7294(0.8F)).method7294(var8)
+   private void iconTile(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, MenuGlyph menuGlyph, float floatValue, float y, float width, boolean flag, float previewAlpha) {
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         y,
+         width,
+         width,
+         ProxyDotRadiusData.method8069(width * 0.28F),
+         (flag ? zenithColor.method7292(0.18F) : currentStyle.getDisableActiveBg().getZenithColor().method7294(0.8F)).method7294(previewAlpha)
       );
-      var3.draw(
-         var1,
-         var4 + (var6 - 6.0F) / 2.0F,
-         var5 + (var6 - 6.0F) / 2.0F,
-         (var7 ? var9.method7295(ZenithColor.INSTANCE, 0.2F) : var2.getTextSecondary().getZenithColor()).method7294(var8)
+      menuGlyph.draw(
+         menuDrawContext,
+         floatValue + (width - 6.0F) / 2.0F,
+         y + (width - 6.0F) / 2.0F,
+         (flag ? zenithColor.method7295(ZenithColor.INSTANCE, 0.2F) : currentStyle.getTextSecondary().getZenithColor()).method7294(previewAlpha)
       );
    }
 
-   private void chatsAside(Storage var1) {
-      AiChatStorage var2 = AiChatStorage.method2741();
+   private void chatsAside(Storage hostOrNull) {
+      AiChatStorage aiChatStorage = AiChatStorage.method2741();
       this.panel
          .asideCustom(
             26.0F,
             this.panel
                .asideEntering(
                   0,
-                  (var1x, var2x, var3x, var4, var5x, var6x, var7, var8x) -> {
-                     BoundsData var9 = new BoundsData(var4 + 8.0F, var5x + 2.0F, var6x - 16.0F, 22.0F);
-                     float var10 = this.panel.hot("newchat", var9.contains(var2x, var3x));
-                     float var11 = Smooth.press(this.pressedAt.getOrDefault("newchat", 0L), 320L);
-                     this.cardFrame(var1x, var8x, var9, var10, 0.0F, var11, var7);
-                     float var12 = 14.0F;
-                     this.iconTile(var1x, var8x, MenuGlyph.CHAT, var9.getFloatValue() + 4.0F, var9.getFloatValue2() + 4.0F, var12, true, var7);
-                     Font var13 = Fonts.NEW_MEDIUM.getFont(4.8F);
+                  (var1x, var2x, var3x, f, var5x, var6x, previewAlpha, var8x) -> {
+                     BoundsData boundsData = new BoundsData(f + 8.0F, var5x + 2.0F, var6x - 16.0F, 22.0F);
+                     float hot = this.panel.hot("newchat", boundsData.contains(var2x, var3x));
+                     float press = Smooth.press(this.pressedAt.getOrDefault("newchat", 0L), 320L);
+                     this.cardFrame(var1x, var8x, boundsData, hot, 0.0F, press, previewAlpha);
+                     float width = 14.0F;
+                     this.iconTile(var1x, var8x, MenuGlyph.CHAT, boundsData.getFloatValue() + 4.0F, boundsData.getFloatValue2() + 4.0F, width, true, previewAlpha);
+                     Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
                      var1x.drawText(
-                        var13,
+                        font,
                         t("gui.scripts.ai.newChat"),
-                        var9.getFloatValue() + var12 + 9.0F,
-                        var9.getFloatValue2() + (22.0F - var13.height()) / 2.0F,
-                        var8x.getTextEnable().getZenithColor().method7294(var7)
+                        boundsData.getFloatValue() + width + 9.0F,
+                        boundsData.getFloatValue2() + (22.0F - font.height()) / 2.0F,
+                        var8x.getTextEnable().getZenithColor().method7294(previewAlpha)
                      );
-                     String var14 = "+";
-                     Font var15 = Fonts.NEW_MEDIUM.getFont(6.0F);
+                     String text = "+";
+                     Font font2 = Fonts.NEW_MEDIUM.getFont(6.0F);
                      var1x.drawText(
-                        var15,
-                        var14,
-                        var9.getFloatValue() + var9.width() - 8.0F - var15.width(var14),
-                        var9.getFloatValue2() + (22.0F - var15.height()) / 2.0F,
-                        var8x.getPrimaryColor().getZenithColor().method7295(ZenithColor.INSTANCE, var10 * 0.4F).method7294(var7)
+                        font2,
+                        text,
+                        boundsData.getFloatValue() + boundsData.width() - 8.0F - font2.width(text),
+                        boundsData.getFloatValue2() + (22.0F - font2.height()) / 2.0F,
+                        var8x.getPrimaryColor().getZenithColor().method7295(ZenithColor.INSTANCE, hot * 0.4F).method7294(previewAlpha)
                      );
-                     if (var9.contains(var2x, var3x)) {
+                     if (boundsData.contains(var2x, var3x)) {
                         HoverInfo.request(t("gui.scripts.ai.newChat"), t("gui.scripts.ai.newChat.desc"));
                      }
                   }
@@ -1192,45 +1192,45 @@ public final class ScriptAiTab {
             },
             null
          );
-      if (var2.isBusy()) {
+      if (aiChatStorage.isBusy()) {
          this.panel.asideAction("gui.scripts.ai.stop", MenuGlyph.CLOSE, () -> "", () -> AiChatStorage.method2741().stop(), "gui.scripts.ai.stop.desc");
       }
 
       this.panel.asideCaption("gui.scripts.ai.caption.target");
-      int var3 = 1;
-      this.target(var1, null, var3++);
+      int n = 1;
+      this.target(hostOrNull, null, n++);
 
-      for (Script var5 : var1.method1293()) {
-         this.target(var1, var5, var3++);
+      for (Script script : hostOrNull.method1293()) {
+         this.target(hostOrNull, script, n++);
       }
 
-      List<AiChatStorage.Entry> var8 = var2.method2744();
+      List<AiChatStorage.Entry> entries = aiChatStorage.method2744();
       this.panel.asideCaption("gui.scripts.ai.caption.history");
-      if (var8.isEmpty()) {
+      if (entries.isEmpty()) {
          this.panel.paragraph(t("gui.scripts.ai.history.empty"), true);
       } else {
-         for (AiChatStorage.Entry var6 : var8.subList(0, Math.min(40, var8.size()))) {
+         for (AiChatStorage.Entry sub : entries.subList(0, Math.min(40, entries.size()))) {
             this.panel
                .asideCustom(
                   31.0F,
                   this.panel
                      .asideEntering(
-                        var3++,
-                        (var3x, var4, var5x, var6x, var7, var8x, var9, var10) -> this.renderChatRow(
-                           var3x, var4, var5x, var6x, var7, var8x, var9, var10, var1, var6
+                        n++,
+                        (var3x, lastClickX, var5x, var6x, f, var8x, previewAlpha, currentStyle) -> this.renderChatRow(
+                           var3x, lastClickX, var5x, var6x, f, var8x, previewAlpha, currentStyle, hostOrNull, sub
                         )
                      ),
                   () -> {
-                     AiChatStorage.method2741().method2749(var6);
+                     AiChatStorage.method2741().method2749(sub);
                      this.panel.invalidate();
                   },
                   null,
                   () -> {
-                     if (this.armedChat.equals(var6.getText()) && System.currentTimeMillis() - this.armedChatAt < 3000L) {
+                     if (this.armedChat.equals(sub.getText()) && System.currentTimeMillis() - this.armedChatAt < 3000L) {
                         this.armedChat = "";
-                        AiChatStorage.method2741().method2752(var6);
+                        AiChatStorage.method2741().method2752(sub);
                      } else {
-                        this.armedChat = var6.getText();
+                        this.armedChat = sub.getText();
                         this.armedChatAt = System.currentTimeMillis();
                      }
 
@@ -1240,11 +1240,11 @@ public final class ScriptAiTab {
          }
 
          this.panel.gap(2.0F);
-         if (!var2.getEntry().empty()) {
+         if (!aiChatStorage.getEntry().empty()) {
             this.panel.asideAction("gui.scripts.ai.export", MenuGlyph.STORAGE, () -> "", () -> {
                try {
-                  Path var0 = AiChatStorage.method2741().method2760();
-                  com.mojang.blaze3d.Blaze3D.openPath((var0.getParent().toFile()).toPath());
+                  Path path = AiChatStorage.method2741().method2760();
+                  com.mojang.blaze3d.Blaze3D.openPath((path.getParent().toFile()).toPath());
                } catch (Exception var1x) {
                   AiChatStorage.method2741().method2759(String.valueOf(var1x.getMessage()));
                }
@@ -1273,74 +1273,74 @@ public final class ScriptAiTab {
    }
 
    private void renderChatRow(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, Storage var9, AiChatStorage.Entry var10
+      MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle currentStyle, Storage hostOrNull, AiChatStorage.Entry sub
    ) {
-      BoundsData var11 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 28.0F);
-      boolean var12 = var11.contains(var2, var3);
-      boolean var13 = var10 == AiChatStorage.method2741().getEntry();
-      boolean var14 = this.armedChat.equals(var10.getText()) && System.currentTimeMillis() - this.armedChatAt < 3000L;
-      float var15 = this.panel.hot("chat:" + var10.getText(), var12);
-      float var16 = this.panel.hot("chatsel:" + var10.getText(), var13);
-      this.cardFrame(var1, var8, var11, var15, var16, 0.0F, var7);
-      if (var14) {
-         var1.drawRoundedRect(
-            var11.getFloatValue(),
-            var11.getFloatValue2(),
-            var11.width(),
-            var11.height(),
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 28.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      boolean flag = sub == AiChatStorage.method2741().getEntry();
+      boolean flag2 = this.armedChat.equals(sub.getText()) && System.currentTimeMillis() - this.armedChatAt < 3000L;
+      float hot = this.panel.hot("chat:" + sub.getText(), contains);
+      float hot2 = this.panel.hot("chatsel:" + sub.getText(), flag);
+      this.cardFrame(menuDrawContext, currentStyle, boundsData, hot, hot2, 0.0F, previewAlpha);
+      if (flag2) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F),
-            ERROR.method7292(0.12F).method7294(var7)
+            ERROR.method7292(0.12F).method7294(previewAlpha)
          );
       }
 
-      float var17 = 20.0F;
-      float var18 = var11.getFloatValue() + 4.0F;
-      Script var19 = var10.getText2() == null ? null : var9.method1294(var10.getText2());
-      if (var19 != null) {
-         ScriptInfoPage.drawAvatar(var1, var8, var19, var18, var11.getFloatValue2() + 4.0F, var17, var7, -2);
+      float width = 20.0F;
+      float floatValue = boundsData.getFloatValue() + 4.0F;
+      Script script = sub.getText2() == null ? null : hostOrNull.method1294(sub.getText2());
+      if (script != null) {
+         ScriptInfoPage.drawAvatar(menuDrawContext, currentStyle, script, floatValue, boundsData.getFloatValue2() + 4.0F, width, previewAlpha, -2);
       } else {
-         this.iconTile(var1, var8, MenuGlyph.CHAT, var18, var11.getFloatValue2() + 4.0F, var17, false, var7);
+         this.iconTile(menuDrawContext, currentStyle, MenuGlyph.CHAT, floatValue, boundsData.getFloatValue2() + 4.0F, width, false, previewAlpha);
       }
 
-      Font var20 = Fonts.NEW_MEDIUM.getFont(4.6F);
-      Font var21 = Fonts.NEW_REGULAR.getFont(4.3F);
-      float var22 = var18 + var17 + 5.0F;
-      String var23 = ScriptsSectionPanel.ago(var10.getLongValue2());
-      float var24 = var11.getFloatValue() + var11.width() - 5.0F;
-      float var25 = var11.getFloatValue2() + (28.0F - var20.height() - var21.height() - 2.5F) / 2.0F;
-      var1.drawText(
-         var20,
-         var20.clip(var10.title().isEmpty() ? t("gui.scripts.ai.newChat") : var10.title(), var24 - var21.width(var23) - 4.0F - var22),
-         var22,
-         var25,
-         (var13 ? var8.getTextEnable().getZenithColor() : var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), var15))
-            .method7294(var7)
+      Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+      float floatValue2 = floatValue + width + 5.0F;
+      String ago = ScriptsSectionPanel.ago(sub.getLongValue2());
+      float f4 = boundsData.getFloatValue() + boundsData.width() - 5.0F;
+      float centeredTextY = boundsData.getFloatValue2() + (28.0F - font.height() - font2.height() - 2.5F) / 2.0F;
+      menuDrawContext.drawText(
+         font,
+         font.clip(sub.title().isEmpty() ? t("gui.scripts.ai.newChat") : sub.title(), f4 - font2.width(ago) - 4.0F - floatValue2),
+         floatValue2,
+         centeredTextY,
+         (flag ? currentStyle.getTextEnable().getZenithColor() : currentStyle.getTextSecondary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), hot))
+            .method7294(previewAlpha)
       );
-      var1.drawText(
-         var21, var23, var24 - var21.width(var23), var25 + (var20.height() - var21.height()), var8.getTextTertiary().getZenithColor().method7294(var7)
+      menuDrawContext.drawText(
+         font2, ago, f4 - font2.width(ago), centeredTextY + (font.height() - font2.height()), currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      String var26 = var14 ? t("gui.scripts.ai.history.confirm") : var10.method2772();
-      var1.drawText(
-         var21,
-         var21.clip(var26, var24 - var22),
-         var22,
-         var25 + var20.height() + 2.5F,
-         (var14 ? ERROR : var8.getTextTertiary().getZenithColor()).method7294(var7)
+      String name = flag2 ? t("gui.scripts.ai.history.confirm") : sub.method2772();
+      menuDrawContext.drawText(
+         font2,
+         font2.clip(name, f4 - floatValue2),
+         floatValue2,
+         centeredTextY + font.height() + 2.5F,
+         (flag2 ? ERROR : currentStyle.getTextTertiary().getZenithColor()).method7294(previewAlpha)
       );
-      if (AiChatStorage.method2741().isBusy() && !var13 && var10.getItems().stream().anyMatch(AiChatStorage.Entry2::streaming)) {
-         float var27 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 200.0);
-         var1.drawRoundedRect(
-            var18 + var17 - 3.0F,
-            var11.getFloatValue2() + 3.0F,
+      if (AiChatStorage.method2741().isBusy() && !flag && sub.getItems().stream().anyMatch(AiChatStorage.Entry2::streaming)) {
+         float f5 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 200.0);
+         menuDrawContext.drawRoundedRect(
+            floatValue + width - 3.0F,
+            boundsData.getFloatValue2() + 3.0F,
             4.0F,
             4.0F,
             ProxyDotRadiusData.method8069(2.0F),
-            var8.getPrimaryColor().getZenithColor().method7294(var7 * var27)
+            currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * f5)
          );
       }
 
-      if (var12) {
-         HoverInfo.request(var10.title(), t("gui.scripts.ai.history.hint"));
+      if (contains) {
+         HoverInfo.request(sub.title(), t("gui.scripts.ai.history.hint"));
       }
    }
 
@@ -1348,64 +1348,64 @@ public final class ScriptAiTab {
       return 18.0F;
    }
 
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      AiChatStorage var9 = AiChatStorage.method2741();
-      Storage var10 = this.panel.hostOrNull();
-      Font var11 = Fonts.NEW_SEMIBOLD.getFont(5.2F);
-      Font var12 = Fonts.NEW_MEDIUM.getFont(4.3F);
-      ZenithColor var13 = var8.getPrimaryColor().getZenithColor();
-      String var14 = var9.getEntry().title().isEmpty() ? t("gui.scripts.ai.newChat") : var9.getEntry().title();
-      AiSettingsStore var15 = AiSettingsStore.method4467();
-      String var16 = var15.getShownProvider().title() + " · " + var15.method4472(var15.getShownProvider());
-      Script var17 = var9.method2747() != null && var10 != null ? var10.method1294(var9.method2747()) : null;
-      String var18 = var17 == null ? t("gui.scripts.ai.target.new") : var17.method1403();
-      float var19 = var4 + var6 - 8.0F;
-      float var20 = Math.min(var12.width(var16) + 12.0F, var6 * 0.34F);
-      BoundsData var21 = new BoundsData(var19 - var20, var5 + 3.0F, var20, 12.0F);
-      float var22 = Math.min(var12.width(var18) + 12.0F, var6 * 0.28F);
-      BoundsData var23 = new BoundsData(var21.getFloatValue() - 4.0F - var22, var5 + 3.0F, var22, 12.0F);
-      this.hits.put("hdr:model", var21);
-      this.hits.put("hdr:script", var23);
+   public void renderHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      AiChatStorage aiChatStorage = AiChatStorage.method2741();
+      Storage hostOrNull = this.panel.hostOrNull();
+      Font font = Fonts.NEW_SEMIBOLD.getFont(5.2F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.3F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      String name = aiChatStorage.getEntry().title().isEmpty() ? t("gui.scripts.ai.newChat") : aiChatStorage.getEntry().title();
+      AiSettingsStore aiSettingsStore = AiSettingsStore.method4467();
+      String text = aiSettingsStore.getShownProvider().title() + " · " + aiSettingsStore.method4472(aiSettingsStore.getShownProvider());
+      Script script = aiChatStorage.method2747() != null && hostOrNull != null ? hostOrNull.method1294(aiChatStorage.method2747()) : null;
+      String str = script == null ? t("gui.scripts.ai.target.new") : script.method1403();
+      float f4 = f + f3 - 8.0F;
+      float width = Math.min(font2.width(text) + 12.0F, f3 * 0.34F);
+      BoundsData boundsData = new BoundsData(f4 - width, f2 + 3.0F, width, 12.0F);
+      float width2 = Math.min(font2.width(str) + 12.0F, f3 * 0.28F);
+      BoundsData boundsData2 = new BoundsData(boundsData.getFloatValue() - 4.0F - width2, f2 + 3.0F, width2, 12.0F);
+      this.hits.put("hdr:model", boundsData);
+      this.hits.put("hdr:script", boundsData2);
 
-      for (Object[] var27 : new Object[][]{{var23, var18, "hdr:script"}, {var21, var16, "hdr:model"}}) {
-         BoundsData var28 = (BoundsData)var27[0];
-         float var29 = this.panel.hot((String)var27[2], var28.contains(var2, var3));
-         var1.drawRoundedRect(
-            var28.getFloatValue(),
-            var28.getFloatValue2(),
-            var28.width(),
+      for (Object[] objects : new Object[][]{{boundsData2, str, "hdr:script"}, {boundsData, text, "hdr:model"}}) {
+         BoundsData boundsData3 = (BoundsData)objects[0];
+         float hot = this.panel.hot((String)objects[2], boundsData3.contains(lastClickX, lastClickY));
+         menuDrawContext.drawRoundedRect(
+            boundsData3.getFloatValue(),
+            boundsData3.getFloatValue2(),
+            boundsData3.width(),
             12.0F,
             ProxyDotRadiusData.method8069(6.0F),
-            var8.getDisableActiveBg().getZenithColor().method7294((0.35F + 0.5F * var29) * var7)
+            zenithStyle.getDisableActiveBg().getZenithColor().method7294((0.35F + 0.5F * hot) * previewAlpha)
          );
-         var1.drawText(
-            var12,
-            var12.clip((String)var27[1], var28.width() - 10.0F),
-            var28.getFloatValue() + 6.0F,
-            var28.getFloatValue2() + (12.0F - var12.height()) / 2.0F,
-            var8.getTextSecondary().getZenithColor().method7295(var13, var29 * 0.6F).method7294(var7)
+         menuDrawContext.drawText(
+            font2,
+            font2.clip((String)objects[1], boundsData3.width() - 10.0F),
+            boundsData3.getFloatValue() + 6.0F,
+            boundsData3.getFloatValue2() + (12.0F - font2.height()) / 2.0F,
+            zenithStyle.getTextSecondary().getZenithColor().method7295(zenithColor, hot * 0.6F).method7294(previewAlpha)
          );
       }
 
-      var1.drawText(
-         var11,
-         var11.clip(var14, var23.getFloatValue() - var4 - 8.0F - 6.0F),
-         var4 + 8.0F,
-         var5 + (18.0F - var11.height()) / 2.0F,
-         var8.getTextEnable().getZenithColor().method7294(var7)
+      menuDrawContext.drawText(
+         font,
+         font.clip(name, boundsData2.getFloatValue() - f - 8.0F - 6.0F),
+         f + 8.0F,
+         f2 + (18.0F - font.height()) / 2.0F,
+         zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawRect(var4 + 8.0F, var5 + 17.5F, var6 - 16.0F, 0.5F, var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F));
-      if (var23.contains(var2, var3)) {
+      menuDrawContext.drawRect(f + 8.0F, f2 + 17.5F, f3 - 16.0F, 0.5F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
+      if (boundsData2.contains(lastClickX, lastClickY)) {
          HoverInfo.request(t("gui.scripts.ai.caption.target"), t("gui.scripts.ai.hdr.script"));
       }
 
-      if (var21.contains(var2, var3)) {
+      if (boundsData.contains(lastClickX, lastClickY)) {
          HoverInfo.request(t("gui.scripts.ai.caption.model"), t("gui.scripts.ai.hdr.model"));
       }
    }
 
-   public boolean clickHeader(double var1, double var3) {
-      this.mouse(var1, var3);
+   public boolean clickHeader(double lastClickX, double lastClickY) {
+      this.mouse(lastClickX, lastClickY);
       if (this.hovered(this.hits.get("hdr:script"))) {
          this.asideView = 0;
          this.panel.resetAsideScroll();
@@ -1431,55 +1431,55 @@ public final class ScriptAiTab {
       this.panel
          .asideCustom(
             this.addError.isEmpty() ? 22.0F : 34.0F,
-            (var1, var2, var3, var4, var5, var6, var7, var8) -> {
-               Font var9 = Fonts.NEW_MEDIUM.getFont(4.6F);
-               ZenithColor var10 = var8.getPrimaryColor().getZenithColor();
-               float var11 = var5 + 3.0F;
+            (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+               Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+               ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+               float y = f2 + 3.0F;
                if (!this.addError.isEmpty()) {
-                  Font var12 = Fonts.NEW_REGULAR.getFont(4.5F);
-                  var1.drawText(var12, var12.clip(this.addError, var6 - 16.0F), var4 + 8.0F, var5 + 2.0F, ERROR.method7294(var7));
-                  var11 += 12.0F;
+                  Font font2 = Fonts.NEW_REGULAR.getFont(4.5F);
+                  menuDrawContext.drawText(font2, font2.clip(this.addError, f3 - 16.0F), f + 8.0F, f2 + 2.0F, ERROR.method7294(previewAlpha));
+                  y += 12.0F;
                }
 
-               float var20 = (var6 - 16.0F - 4.0F) / 2.0F;
-               BoundsData var13 = new BoundsData(var4 + 8.0F, var11, var20, 16.0F);
-               BoundsData var14 = new BoundsData(var4 + 8.0F + var20 + 4.0F, var11, var20, 16.0F);
-               this.hits.put("add:ok", var13);
-               this.hits.put("add:cancel", var14);
-               float var15 = this.panel.hot("add:ok", var13.contains(var2, var3));
-               float var16 = this.panel.hot("add:cancel", var14.contains(var2, var3));
-               float var17 = Smooth.press(this.pressedAt.getOrDefault("add:ok", 0L), 320L);
-               var1.drawRoundedRect(
-                  var13.getFloatValue(),
-                  var13.getFloatValue2(),
-                  var13.width(),
+               float width = (f3 - 16.0F - 4.0F) / 2.0F;
+               BoundsData boundsData = new BoundsData(f + 8.0F, y, width, 16.0F);
+               BoundsData boundsData2 = new BoundsData(f + 8.0F + width + 4.0F, y, width, 16.0F);
+               this.hits.put("add:ok", boundsData);
+               this.hits.put("add:cancel", boundsData2);
+               float hot = this.panel.hot("add:ok", boundsData.contains(lastClickX, lastClickY));
+               float hover = this.panel.hot("add:cancel", boundsData2.contains(lastClickX, lastClickY));
+               float press = Smooth.press(this.pressedAt.getOrDefault("add:ok", 0L), 320L);
+               menuDrawContext.drawRoundedRect(
+                  boundsData.getFloatValue(),
+                  boundsData.getFloatValue2(),
+                  boundsData.width(),
                   16.0F,
                   ProxyDotRadiusData.method8069(4.0F),
-                  var10.method7292(0.22F + 0.2F * var15 + 0.3F * var17).method7294(var7)
+                  zenithColor.method7292(0.22F + 0.2F * hot + 0.3F * press).method7294(previewAlpha)
                );
-               var1.drawRoundedRect(
-                  var14.getFloatValue(),
-                  var14.getFloatValue2(),
-                  var14.width(),
+               menuDrawContext.drawRoundedRect(
+                  boundsData2.getFloatValue(),
+                  boundsData2.getFloatValue2(),
+                  boundsData2.width(),
                   16.0F,
                   ProxyDotRadiusData.method8069(4.0F),
-                  var8.getDisableActiveBg().getZenithColor().method7294(0.4F + 0.5F * var16).method7294(var7)
+                  zenithStyle.getDisableActiveBg().getZenithColor().method7294(0.4F + 0.5F * hover).method7294(previewAlpha)
                );
-               String var18 = t("gui.scripts.ai.custom.add");
-               String var19 = t("gui.scripts.ai.custom.cancel");
-               var1.drawText(
-                  var9,
-                  var18,
-                  var13.getFloatValue() + (var20 - var9.width(var18)) / 2.0F,
-                  var13.getFloatValue2() + (16.0F - var9.height()) / 2.0F,
-                  var10.method7295(ZenithColor.INSTANCE, 0.3F + var15 * 0.4F).method7294(var7)
+               String text = t("gui.scripts.ai.custom.add");
+               String str = t("gui.scripts.ai.custom.cancel");
+               menuDrawContext.drawText(
+                  font,
+                  text,
+                  boundsData.getFloatValue() + (width - font.width(text)) / 2.0F,
+                  boundsData.getFloatValue2() + (16.0F - font.height()) / 2.0F,
+                  zenithColor.method7295(ZenithColor.INSTANCE, 0.3F + hot * 0.4F).method7294(previewAlpha)
                );
-               var1.drawText(
-                  var9,
-                  var19,
-                  var14.getFloatValue() + (var20 - var9.width(var19)) / 2.0F,
-                  var14.getFloatValue2() + (16.0F - var9.height()) / 2.0F,
-                  var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), var16).method7294(var7)
+               menuDrawContext.drawText(
+                  font,
+                  str,
+                  boundsData2.getFloatValue() + (width - font.width(str)) / 2.0F,
+                  boundsData2.getFloatValue2() + (16.0F - font.height()) / 2.0F,
+                  zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hover).method7294(previewAlpha)
                );
             },
             () -> {
@@ -1497,21 +1497,21 @@ public final class ScriptAiTab {
    }
 
    private void submitCustom() {
-      String var1 = this.addName.get();
-      String var2 = this.addUrl.get();
-      if (var1.isEmpty()) {
+      String str = this.addName.get();
+      String string = this.addUrl.get();
+      if (str.isEmpty()) {
          this.addError = t("gui.scripts.ai.custom.err.name");
-      } else if (!var2.startsWith("http://") && !var2.startsWith("https://")) {
+      } else if (!string.startsWith("http://") && !string.startsWith("https://")) {
          this.addError = t("gui.scripts.ai.custom.err.url");
       } else if (this.addModel.get().isEmpty()) {
          this.addError = t("gui.scripts.ai.custom.err.model");
       } else {
          this.commitFields();
-         AiSettingsStore.method4467().method4476(var1, var2, this.addKey.get(), this.addModel.get());
+         AiSettingsStore.method4467().method4476(str, string, this.addKey.get(), this.addModel.get());
 
-         for (FormField var4 : List.of(this.addName, this.addUrl, this.addKey, this.addModel)) {
-            var4.clear();
-            var4.setFocused(false);
+         for (FormField formField : List.of(this.addName, this.addUrl, this.addKey, this.addModel)) {
+            formField.clear();
+            formField.setFocused(false);
          }
 
          this.adding = false;
@@ -1523,115 +1523,115 @@ public final class ScriptAiTab {
       this.panel.invalidate();
    }
 
-   private static ScriptAiTab.KeyState keyState(ShownProvider var0) {
-      if (!AiSettingsStore.method4467().method4469(var0).isEmpty()) {
+   private static ScriptAiTab.KeyState keyState(ShownProvider shownProvider) {
+      if (!AiSettingsStore.method4467().method4469(shownProvider).isEmpty()) {
          return ScriptAiTab.KeyState.SAVED;
       } else {
-         return var0.isFlag() ? ScriptAiTab.KeyState.MISSING : ScriptAiTab.KeyState.NOT_NEEDED;
+         return shownProvider.isFlag() ? ScriptAiTab.KeyState.MISSING : ScriptAiTab.KeyState.NOT_NEEDED;
       }
    }
 
-   private static void statusDot(MenuDrawContext var0, ZenithStyle var1, ScriptAiTab.KeyState var2, float var3, float var4, float var5) {
-      ProxyDotRadiusData var6 = ProxyDotRadiusData.method8069(2.0F);
-      switch (var2) {
+   private static void statusDot(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, ScriptAiTab.KeyState keyState, float floatValue, float y, float previewAlpha) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(2.0F);
+      switch (keyState) {
          case MISSING:
-            var0.drawRoundedBorder(var3, var4, 4.0F, 4.0F, 0.6F, var6, var1.getTextTertiary().getZenithColor().method7294(var5));
+            menuDrawContext.drawRoundedBorder(floatValue, y, 4.0F, 4.0F, 0.6F, headerRadius, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
             break;
          case SAVED:
-            var0.drawRoundedRect(var3, var4, 4.0F, 4.0F, var6, OK.method7294(var5));
+            menuDrawContext.drawRoundedRect(floatValue, y, 4.0F, 4.0F, headerRadius, OK.method7294(previewAlpha));
             break;
          case NOT_NEEDED:
-            var0.drawRoundedRect(var3, var4, 4.0F, 4.0F, var6, LOCAL.method7294(var5));
+            menuDrawContext.drawRoundedRect(floatValue, y, 4.0F, 4.0F, headerRadius, LOCAL.method7294(previewAlpha));
       }
    }
 
    private void providerGrid() {
-      ShownProvider[] var1 = ShownProvider.method7336();
-      byte var2 = 3;
-      int var3 = (var1.length + 1 + var2 - 1) / var2;
-      float var4 = 20.0F;
+      ShownProvider[] shownProviders = ShownProvider.method7336();
+      byte b = 3;
+      int n = (shownProviders.length + 1 + b - 1) / b;
+      float height = 20.0F;
       this.panel
          .asideCustom(
-            var3 * (var4 + 3.0F) + 2.0F,
-            (var4x, var5, var6, var7, var8, var9, var10, var11) -> {
-               float var12 = var7 + 8.0F;
-               float var13 = var9 - 16.0F;
-               float var14 = (var13 - (var2 - 1) * 3.0F) / var2;
-               ZenithColor var15 = var11.getPrimaryColor().getZenithColor();
-               Font var16 = Fonts.NEW_MEDIUM.getFont(4.7F);
+            n * (height + 3.0F) + 2.0F,
+            (var4x, lastClickX, lastClickY, f, f2, f3, f4, currentStyle) -> {
+               float f5 = f + 8.0F;
+               float f6 = f3 - 16.0F;
+               float width = (f6 - (b - 1) * 3.0F) / b;
+               ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+               Font font = Fonts.NEW_MEDIUM.getFont(4.7F);
 
-               for (int var17 = 0; var17 < var1.length; var17++) {
-                  ShownProvider var18 = var1[var17];
-                  float var19 = var12 + var17 % var2 * (var14 + 3.0F);
-                  float var20 = var8 + 1.0F + var17 / var2 * (var4 + 3.0F);
-                  BoundsData var21 = new BoundsData(var19, var20, var14, var4);
-                  this.hits.put("prov:" + var18.getText(), var21);
-                  boolean var22 = var21.contains(var5, var6);
-                  boolean var23 = AiSettingsStore.method4467().getShownProvider().equals(var18);
-                  ScriptAiTab.KeyState var24 = keyState(var18);
-                  float var25 = this.panel.hot("prov:" + var18.getText(), var22);
-                  float var26 = this.panel.hot("provsel:" + var18.getText(), var23);
-                  float var27 = this.panel.asideEnter(var17);
-                  float var28 = (1.0F - var27) * 5.0F;
-                  ProxyDotRadiusData var29 = ProxyDotRadiusData.method8069(5.0F);
+               for (int i = 0; i < shownProviders.length; i++) {
+                  ShownProvider shownProvider = shownProviders[i];
+                  float floatValue = f5 + i % b * (width + 3.0F);
+                  float y = f2 + 1.0F + i / b * (height + 3.0F);
+                  BoundsData boundsData = new BoundsData(floatValue, y, width, height);
+                  this.hits.put("prov:" + shownProvider.getText(), boundsData);
+                  boolean contains = boundsData.contains(lastClickX, lastClickY);
+                  boolean flag = AiSettingsStore.method4467().getShownProvider().equals(shownProvider);
+                  ScriptAiTab.KeyState keyState2 = keyState(shownProvider);
+                  float hot = this.panel.hot("prov:" + shownProvider.getText(), contains);
+                  float hover = this.panel.hot("provsel:" + shownProvider.getText(), flag);
+                  float asideEnter = this.panel.asideEnter(i);
+                  float f7 = (1.0F - asideEnter) * 5.0F;
+                  ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(5.0F);
                   var4x.drawRoundedRect(
-                     var19,
-                     var20 + var28,
-                     var14,
-                     var4,
-                     var29,
-                     ScriptsSectionPanel.cardFill(var11, var25 * 0.8F).method7295(var15.method7292(0.18F), var26 * 0.7F).method7294(var10 * var27)
+                     floatValue,
+                     y + f7,
+                     width,
+                     height,
+                     headerRadius,
+                     ScriptsSectionPanel.cardFill(currentStyle, hot * 0.8F).method7295(zenithColor.method7292(0.18F), hover * 0.7F).method7294(f4 * asideEnter)
                   );
                   var4x.drawRoundedBorder(
-                     var19,
-                     var20 + var28,
-                     var14,
-                     var4,
+                     floatValue,
+                     y + f7,
+                     width,
+                     height,
                      0.2F,
-                     var29,
-                     var11.getFieldBorder()
+                     headerRadius,
+                     currentStyle.getFieldBorder()
                         .getZenithColor()
                         .method7294(2.0F)
-                        .method7295(var15, var26)
-                        .method7294(var10 * var27 * (0.6F + 0.4F * Math.max(var26, var25)))
+                        .method7295(zenithColor, hover)
+                        .method7294(f4 * asideEnter * (0.6F + 0.4F * Math.max(hover, hot)))
                   );
-                  statusDot(var4x, var11, var24, var19 + var14 - 3.5F - 4.0F, var20 + var28 + 3.5F, var10 * var27);
+                  statusDot(var4x, currentStyle, keyState2, floatValue + width - 3.5F - 4.0F, y + f7 + 3.5F, f4 * asideEnter);
                   var4x.drawText(
-                     var16,
-                     var16.clip(var18.title(), var14 - 10.0F),
-                     var19 + 5.0F,
-                     var20 + var28 + (var4 - var16.height()) / 2.0F,
-                     var11.getTextSecondary()
+                     font,
+                     font.clip(shownProvider.title(), width - 10.0F),
+                     floatValue + 5.0F,
+                     y + f7 + (height - font.height()) / 2.0F,
+                     currentStyle.getTextSecondary()
                         .getZenithColor()
-                        .method7295(var11.getTextEnable().getZenithColor(), Math.max(var26, var25))
-                        .method7294(var10 * var27)
+                        .method7295(currentStyle.getTextEnable().getZenithColor(), Math.max(hover, hot))
+                        .method7294(f4 * asideEnter)
                   );
-                  if (var22) {
-                     HoverInfo.request(var18.title() + " · " + var18.getText3(), t(var24.description));
+                  if (contains) {
+                     HoverInfo.request(shownProvider.title() + " · " + shownProvider.getText3(), t(keyState2.description));
                   }
                }
 
-               int var30 = var1.length;
-               float var31 = var12 + var30 % var2 * (var14 + 3.0F);
-               float var32 = var8 + 1.0F + var30 / var2 * (var4 + 3.0F);
-               BoundsData var33 = new BoundsData(var31, var32, var14, var4);
-               this.hits.put("prov:+", var33);
-               boolean var34 = var33.contains(var5, var6);
-               float var35 = this.panel.hot("prov:+", var34 || this.adding);
-               float var36 = this.panel.asideEnter(var30);
-               float var37 = (1.0F - var36) * 5.0F;
-               ProxyDotRadiusData var38 = ProxyDotRadiusData.method8069(5.0F);
-               var4x.drawRoundedRect(var31, var32 + var37, var14, var4, var38, var15.method7292(0.06F + 0.12F * var35).method7294(var10 * var36));
-               var4x.drawRoundedBorder(var31, var32 + var37, var14, var4, 0.2F, var38, var15.method7292(0.35F + 0.4F * var35).method7294(var10 * var36));
-               String var39 = "+ " + t("gui.scripts.ai.custom.tile");
+               int length = shownProviders.length;
+               float floatValue = f5 + length % b * (width + 3.0F);
+               float y = f2 + 1.0F + length / b * (height + 3.0F);
+               BoundsData boundsData = new BoundsData(floatValue, y, width, height);
+               this.hits.put("prov:+", boundsData);
+               boolean contains = boundsData.contains(lastClickX, lastClickY);
+               float hot = this.panel.hot("prov:+", contains || this.adding);
+               float asideEnter = this.panel.asideEnter(length);
+               float f7 = (1.0F - asideEnter) * 5.0F;
+               ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(5.0F);
+               var4x.drawRoundedRect(floatValue, y + f7, width, height, headerRadius, zenithColor.method7292(0.06F + 0.12F * hot).method7294(f4 * asideEnter));
+               var4x.drawRoundedBorder(floatValue, y + f7, width, height, 0.2F, headerRadius, zenithColor.method7292(0.35F + 0.4F * hot).method7294(f4 * asideEnter));
+               String name = "+ " + t("gui.scripts.ai.custom.tile");
                var4x.drawText(
-                  var16,
-                  var16.clip(var39, var14 - 8.0F),
-                  var31 + (var14 - var16.width(var16.clip(var39, var14 - 8.0F))) / 2.0F,
-                  var32 + var37 + (var4 - var16.height()) / 2.0F,
-                  var15.method7295(ZenithColor.INSTANCE, 0.25F + var35 * 0.4F).method7294(var10 * var36)
+                  font,
+                  font.clip(name, width - 8.0F),
+                  floatValue + (width - font.width(font.clip(name, width - 8.0F))) / 2.0F,
+                  y + f7 + (height - font.height()) / 2.0F,
+                  zenithColor.method7295(ZenithColor.INSTANCE, 0.25F + hot * 0.4F).method7294(f4 * asideEnter)
                );
-               if (var34) {
+               if (contains) {
                   HoverInfo.request(t("gui.scripts.ai.custom.caption"), t("gui.scripts.ai.custom.desc"));
                }
             },
@@ -1646,11 +1646,11 @@ public final class ScriptAiTab {
 
                   this.panel.invalidate();
                } else {
-                  for (ShownProvider var5 : var1) {
-                     if (this.hovered(this.hits.get("prov:" + var5.getText()))) {
+                  for (ShownProvider shownProvider : shownProviders) {
+                     if (this.hovered(this.hits.get("prov:" + shownProvider.getText()))) {
                         this.commitFields();
                         this.adding = false;
-                        AiSettingsStore.method4467().method4468(var5);
+                        AiSettingsStore.method4467().method4468(shownProvider);
                         this.syncFields();
                         this.panel.invalidate();
                         return;
@@ -1662,127 +1662,127 @@ public final class ScriptAiTab {
          );
    }
 
-   private void field(FormField var1, String var2, String var3, String var4) {
+   private void field(FormField keyField, String name, String str, String text) {
       this.panel
          .asideCustom(
             21.0F,
-            (var5, var6, var7, var8, var9, var10, var11, var12) -> {
-               Font var13 = Fonts.NEW_MEDIUM.getFont(4.5F);
-               float var14 = var4 == null ? 0.0F : var13.width(var4) + 12.0F;
-               float var15 = var10 - 16.0F - (var14 > 0.0F ? var14 + 4.0F : 0.0F);
-               var1.render(
-                  var5,
-                  var13,
-                  var8 + 8.0F,
-                  var9 + 2.5F,
-                  var15,
-                  var11,
-                  var2,
-                  var12.getFieldSurfaceBackground().getZenithColor(),
-                  var12.getFieldBorder().getZenithColor().method7294(2.0F),
-                  var12.getPrimaryColor().getZenithColor(),
-                  var12.getTextEnable().getZenithColor(),
-                  var12.getTextTertiary().getZenithColor()
+            (menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+               Font font = Fonts.NEW_MEDIUM.getFont(4.5F);
+               float width = text == null ? 0.0F : font.width(text) + 12.0F;
+               float shownWidth = f3 - 16.0F - (width > 0.0F ? width + 4.0F : 0.0F);
+               keyField.render(
+                  menuDrawContext,
+                  font,
+                  f + 8.0F,
+                  f2 + 2.5F,
+                  shownWidth,
+                  previewAlpha,
+                  name,
+                  zenithStyle.getFieldSurfaceBackground().getZenithColor(),
+                  zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F),
+                  zenithStyle.getPrimaryColor().getZenithColor(),
+                  zenithStyle.getTextEnable().getZenithColor(),
+                  zenithStyle.getTextTertiary().getZenithColor()
                );
-               if (var4 != null) {
-                  BoundsData var16 = new BoundsData(var8 + 8.0F + var15 + 4.0F, var9 + 2.5F, var14, 16.0F);
-                  this.hits.put("aside:" + var3, var16);
-                  boolean var17 = var16.contains(var6, var7);
-                  float var18 = this.panel.hot("aside:" + var3, var17);
-                  ZenithColor var19 = var12.getPrimaryColor().getZenithColor();
-                  var5.drawRoundedRect(
-                     var16.getFloatValue(),
-                     var16.getFloatValue2(),
-                     var14,
+               if (text != null) {
+                  BoundsData boundsData = new BoundsData(f + 8.0F + shownWidth + 4.0F, f2 + 2.5F, width, 16.0F);
+                  this.hits.put("aside:" + str, boundsData);
+                  boolean contains = boundsData.contains(lastClickX, lastClickY);
+                  float hot = this.panel.hot("aside:" + str, contains);
+                  ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+                  menuDrawContext.drawRoundedRect(
+                     boundsData.getFloatValue(),
+                     boundsData.getFloatValue2(),
+                     width,
                      16.0F,
                      ProxyDotRadiusData.method8069(4.0F),
-                     var19.method7292(0.16F + 0.2F * var18).method7294(var11)
+                     zenithColor.method7292(0.16F + 0.2F * hot).method7294(previewAlpha)
                   );
-                  var5.drawText(
-                     var13,
-                     var4,
-                     var16.getFloatValue() + 6.0F,
-                     var16.getFloatValue2() + (16.0F - var13.height()) / 2.0F,
-                     var19.method7295(ZenithColor.INSTANCE, var18 * 0.5F).method7294(var11)
+                  menuDrawContext.drawText(
+                     font,
+                     text,
+                     boundsData.getFloatValue() + 6.0F,
+                     boundsData.getFloatValue2() + (16.0F - font.height()) / 2.0F,
+                     zenithColor.method7295(ZenithColor.INSTANCE, hot * 0.5F).method7294(previewAlpha)
                   );
                }
             },
             () -> {
-               if (var3 != null && this.hovered(this.hits.get("aside:" + var3))) {
+               if (str != null && this.hovered(this.hits.get("aside:" + str))) {
                   String var3x = Minecraft.getInstance().keyboardHandler.getClipboard();
-                  if (var3.equals("paste") && var3x != null && !var3x.isBlank()) {
+                  if (str.equals("paste") && var3x != null && !var3x.isBlank()) {
                      this.keyField.set(var3x.strip());
                      AiSettingsStore.method4467().method4470(AiSettingsStore.method4467().getShownProvider(), var3x.strip());
                      this.panel.invalidate();
-                  } else if (var3.equals("addpaste") && var3x != null && !var3x.isBlank()) {
+                  } else if (str.equals("addpaste") && var3x != null && !var3x.isBlank()) {
                      this.addKey.set(var3x.strip());
                   }
                } else {
-                  this.focus(var1);
+                  this.focus(keyField);
                }
             },
             null
          );
    }
 
-   private void modelChips(ShownProvider var1) {
-      Font var2 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      float var3 = 128.0F;
-      ArrayList var4 = new ArrayList();
-      float var5 = 0.0F;
-      float var6 = 0.0F;
+   private void modelChips(ShownProvider shownProvider) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.4F);
+      float f = 128.0F;
+      ArrayList arrayList = new ArrayList();
+      float f2 = 0.0F;
+      float f3 = 0.0F;
 
-      for (String var8 : var1.getItems3()) {
-         float var9 = var2.width(var8) + 10.0F;
-         if (var5 > 0.0F && var5 + var9 > var3) {
-            var5 = 0.0F;
-            var6 += 13.0F;
+      for (String text : shownProvider.getItems3()) {
+         float f4 = font.width(text) + 10.0F;
+         if (f2 > 0.0F && f2 + f4 > f) {
+            f2 = 0.0F;
+            f3 += 13.0F;
          }
 
-         var4.add(new float[]{var5, var6, var9});
-         var5 += var9 + 3.0F;
+         arrayList.add(new float[]{f2, f3, f4});
+         f2 += f4 + 3.0F;
       }
 
-      float var10 = var6 + 16.0F;
+      float customHeight = f3 + 16.0F;
       this.panel
          .asideCustom(
-            var10,
-            (var4x, var5x, var6x, var7, var8x, var9x, var10x, var11) -> {
-               for (int var12 = 0; var12 < var1.getItems3().size(); var12++) {
-                  String var13 = var1.getItems3().get(var12);
-                  float[] var14 = (float[])var4.get(var12);
-                  BoundsData var15 = new BoundsData(var7 + 8.0F + var14[0], var8x + 2.0F + var14[1], var14[2], 11.0F);
-                  this.hits.put("model:" + var13, var15);
-                  boolean var16 = var15.contains(var5x, var6x);
-                  boolean var17 = var13.equals(AiSettingsStore.method4467().method4472(var1));
-                  float var18 = this.panel.hot("model:" + var13, var16 || var17);
+            customHeight,
+            (var4x, var5x, var6x, f4, var8x, var9x, var10x, zenithStyle) -> {
+               for (int i = 0; i < shownProvider.getItems3().size(); i++) {
+                  String text = shownProvider.getItems3().get(i);
+                  float[] floats = (float[])arrayList.get(i);
+                  BoundsData boundsData = new BoundsData(f4 + 8.0F + floats[0], var8x + 2.0F + floats[1], floats[2], 11.0F);
+                  this.hits.put("model:" + text, boundsData);
+                  boolean contains = boundsData.contains(var5x, var6x);
+                  boolean flag = text.equals(AiSettingsStore.method4467().method4472(shownProvider));
+                  float hot = this.panel.hot("model:" + text, contains || flag);
                   var4x.drawRoundedRect(
-                     var15.getFloatValue(),
-                     var15.getFloatValue2(),
-                     var15.width(),
+                     boundsData.getFloatValue(),
+                     boundsData.getFloatValue2(),
+                     boundsData.width(),
                      11.0F,
                      ProxyDotRadiusData.method8069(5.5F),
-                     (var17
-                           ? var11.getPrimaryColor().getZenithColor().method7292(0.22F)
-                           : var11.getDisableActiveBg().getZenithColor().method7294(0.3F + var18 * 0.5F))
+                     (flag
+                           ? zenithStyle.getPrimaryColor().getZenithColor().method7292(0.22F)
+                           : zenithStyle.getDisableActiveBg().getZenithColor().method7294(0.3F + hot * 0.5F))
                         .method7294(var10x)
                   );
                   var4x.drawText(
-                     var2,
-                     var13,
-                     var15.getFloatValue() + 5.0F,
-                     var15.getFloatValue2() + (11.0F - var2.height()) / 2.0F,
-                     (var17
-                           ? var11.getPrimaryColor().getZenithColor().method7295(ZenithColor.INSTANCE, 0.3F)
-                           : var11.getTextTertiary().getZenithColor().method7295(var11.getTextEnable().getZenithColor(), var18))
+                     font,
+                     text,
+                     boundsData.getFloatValue() + 5.0F,
+                     boundsData.getFloatValue2() + (11.0F - font.height()) / 2.0F,
+                     (flag
+                           ? zenithStyle.getPrimaryColor().getZenithColor().method7295(ZenithColor.INSTANCE, 0.3F)
+                           : zenithStyle.getTextTertiary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hot))
                         .method7294(var10x)
                   );
                }
             },
             () -> {
-               for (String var3x : var1.getItems3()) {
+               for (String var3x : shownProvider.getItems3()) {
                   if (this.hovered(this.hits.get("model:" + var3x))) {
-                     AiSettingsStore.method4467().method4473(var1, var3x);
+                     AiSettingsStore.method4467().method4473(shownProvider, var3x);
                      this.modelField.set(var3x);
                      this.panel.invalidate();
                      return;
@@ -1793,371 +1793,371 @@ public final class ScriptAiTab {
          );
    }
 
-   private void target(Storage var1, Script var2, int var3) {
-      String var4 = var2 == null ? null : var2.getId();
+   private void target(Storage hostOrNull, Script script, int length) {
+      String id = script == null ? null : script.getId();
       this.panel
          .asideCustom(
             25.0F,
             this.panel
                .asideEntering(
-                  var3,
-                  (var4x, var5, var6, var7, var8, var9, var10, var11) -> {
-                     BoundsData var12 = new BoundsData(var7 + 8.0F, var8 + 1.0F, var9 - 16.0F, 22.0F);
-                     String var13 = AiChatStorage.method2741().method2747();
-                     boolean var14 = var4 == null ? var13 == null || var1.method1294(var13) == null : var4.equals(var13);
-                     float var15 = this.panel.hot("tgt:" + var4, var12.contains(var5, var6));
-                     float var16 = this.panel.hot("tgtsel:" + var4, var14);
-                     this.cardFrame(var4x, var11, var12, var15, var16, 0.0F, var10);
-                     float var17 = 14.0F;
-                     float var18 = var12.getFloatValue() + 4.0F;
-                     Font var19 = Fonts.NEW_MEDIUM.getFont(4.6F);
-                     Font var20 = Fonts.NEW_REGULAR.getFont(4.3F);
-                     ZenithColor var23 = var11.getTextTertiary().getZenithColor();
-                     String var21;
-                     String var22;
-                     if (var2 == null) {
-                        this.iconTile(var4x, var11, MenuGlyph.ACTION, var18, var12.getFloatValue2() + 4.0F, var17, true, var10);
-                        var21 = t("gui.scripts.ai.target.new");
-                        var22 = t("gui.scripts.ai.target.new.sub");
+                  length,
+                  (var4x, lastClickX, lastClickY, f, f2, f3, previewAlpha, currentStyle) -> {
+                     BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 22.0F);
+                     String argument = AiChatStorage.method2741().method2747();
+                     boolean contains = id == null ? argument == null || hostOrNull.method1294(argument) == null : id.equals(argument);
+                     float hot = this.panel.hot("tgt:" + id, boundsData.contains(lastClickX, lastClickY));
+                     float hot2 = this.panel.hot("tgtsel:" + id, contains);
+                     this.cardFrame(var4x, currentStyle, boundsData, hot, hot2, 0.0F, previewAlpha);
+                     float width = 14.0F;
+                     float floatValue = boundsData.getFloatValue() + 4.0F;
+                     Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+                     Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+                     ZenithColor zenithColor = currentStyle.getTextTertiary().getZenithColor();
+                     String name;
+                     String str;
+                     if (script == null) {
+                        this.iconTile(var4x, currentStyle, MenuGlyph.ACTION, floatValue, boundsData.getFloatValue2() + 4.0F, width, true, previewAlpha);
+                        name = t("gui.scripts.ai.target.new");
+                        str = t("gui.scripts.ai.target.new.sub");
                      } else {
-                        ScriptInfoPage.drawAvatar(var4x, var11, var2, var18, var12.getFloatValue2() + 4.0F, var17, var10, -2);
-                        var21 = var2.method1403();
-                        if (!var2.getError().isBlank()) {
-                           var22 = t("gui.scripts.state.failed");
-                           var23 = ERROR;
-                        } else if (var2.isRunning()) {
-                           var22 = t("gui.scripts.state.running");
-                           var23 = OK.method7295(var11.getTextTertiary().getZenithColor(), 0.3F);
+                        ScriptInfoPage.drawAvatar(var4x, currentStyle, script, floatValue, boundsData.getFloatValue2() + 4.0F, width, previewAlpha, -2);
+                        name = script.method1403();
+                        if (!script.getError().isBlank()) {
+                           str = t("gui.scripts.state.failed");
+                           zenithColor = ERROR;
+                        } else if (script.isRunning()) {
+                           str = t("gui.scripts.state.running");
+                           zenithColor = OK.method7295(currentStyle.getTextTertiary().getZenithColor(), 0.3F);
                         } else {
-                           var22 = t("gui.scripts.state.off");
+                           str = t("gui.scripts.state.off");
                         }
                      }
 
-                     float var24 = var18 + var17 + 5.0F;
-                     float var25 = var12.getFloatValue() + var12.width() - 5.0F - var24;
-                     float var26 = var12.getFloatValue2() + (22.0F - var19.height() - var20.height() - 2.0F) / 2.0F;
+                     float floatValue2 = floatValue + width + 5.0F;
+                     float width2 = boundsData.getFloatValue() + boundsData.width() - 5.0F - floatValue2;
+                     float centeredTextY = boundsData.getFloatValue2() + (22.0F - font.height() - font2.height() - 2.0F) / 2.0F;
                      var4x.drawText(
-                        var19,
-                        var19.clip(var21, var25),
-                        var24,
-                        var26,
-                        (var14
-                              ? var11.getTextEnable().getZenithColor()
-                              : var11.getTextSecondary().getZenithColor().method7295(var11.getTextEnable().getZenithColor(), var15))
-                           .method7294(var10)
+                        font,
+                        font.clip(name, width2),
+                        floatValue2,
+                        centeredTextY,
+                        (contains
+                              ? currentStyle.getTextEnable().getZenithColor()
+                              : currentStyle.getTextSecondary().getZenithColor().method7295(currentStyle.getTextEnable().getZenithColor(), hot))
+                           .method7294(previewAlpha)
                      );
-                     var4x.drawText(var20, var20.clip(var22, var25), var24, var26 + var19.height() + 2.0F, var23.method7294(var10));
+                     var4x.drawText(font2, font2.clip(str, width2), floatValue2, centeredTextY + font.height() + 2.0F, zenithColor.method7294(previewAlpha));
                   }
                ),
             () -> {
-               AiChatStorage.method2741().method2748(var4);
+               AiChatStorage.method2741().method2748(id);
                this.panel.invalidate();
             },
             null
          );
    }
 
-   private void toggle(String var1, String var2, String var3, BooleanSupplier var4, Consumer<Boolean> var5) {
+   private void toggle(String str, String description, String description2, BooleanSupplier booleanSupplier, Consumer<Boolean> consumer) {
       this.panel
          .asideCustom(
             16.0F,
-            (var5x, var6, var7, var8, var9, var10, var11, var12) -> {
-               Font var13 = Fonts.NEW_MEDIUM.getFont(4.6F);
-               boolean var14 = new BoundsData(var8, var9, var10, 16.0F).contains(var6, var7);
+            (var5x, lastClickX, lastClickY, floatValue, y, width, previewAlpha, currentStyle) -> {
+               Font font = Fonts.NEW_MEDIUM.getFont(4.6F);
+               boolean contains = new BoundsData(floatValue, y, width, 16.0F).contains(lastClickX, lastClickY);
                var5x.drawText(
-                  var13,
-                  t(var2),
-                  var8 + 8.0F,
-                  var9 + (16.0F - var13.height()) / 2.0F,
-                  (var14 ? var12.getTextEnable().getZenithColor() : var12.getTextSecondary().getZenithColor()).method7294(var11)
+                  font,
+                  t(description),
+                  floatValue + 8.0F,
+                  y + (16.0F - font.height()) / 2.0F,
+                  (contains ? currentStyle.getTextEnable().getZenithColor() : currentStyle.getTextSecondary().getZenithColor()).method7294(previewAlpha)
                );
-               this.panel.drawSwitch(var5x, "ai:" + var1, var8 + var10 - 8.0F - 14.0F, var9 + 4.0F, 14.0F, 8.0F, var4.getAsBoolean(), var11, var12);
-               if (var14) {
-                  HoverInfo.request(t(var2), t(var3));
+               this.panel.drawSwitch(var5x, "ai:" + str, floatValue + width - 8.0F - 14.0F, y + 4.0F, 14.0F, 8.0F, booleanSupplier.getAsBoolean(), previewAlpha, currentStyle);
+               if (contains) {
+                  HoverInfo.request(t(description), t(description2));
                }
             },
             () -> {
-               var5.accept(!var4.getAsBoolean());
+               consumer.accept(!booleanSupplier.getAsBoolean());
                this.panel.invalidate();
             },
             null
          );
    }
 
-   private void focus(FormField var1) {
-      for (FormField var3 : this.fields()) {
-         if (var3 != var1 && var3.isFocused()) {
-            var3.setFocused(false);
+   private void focus(FormField input) {
+      for (FormField field : this.fields()) {
+         if (field != input && field.isFocused()) {
+            field.setFocused(false);
          }
       }
 
       this.commitFields();
-      if (var1 != null) {
-         var1.setFocused(true);
+      if (input != null) {
+         input.setFocused(true);
       }
    }
 
    public FormField focused() {
-      for (FormField var2 : this.fields()) {
-         if (var2.isFocused()) {
-            return var2;
+      for (FormField field : this.fields()) {
+         if (field.isFocused()) {
+            return field;
          }
       }
 
       return null;
    }
 
-   private static void thumb(MenuDrawContext var0, Identifier var1, BoundsData var2, float var3, ZenithColor var4, float var5, float var6) {
-      ProxyDotRadiusData var7 = ProxyDotRadiusData.method8069(var3);
-      if (var1 != null) {
-         float var8 = (1.0F - Math.min(1.0F, var6)) / 2.0F;
-         var0.drawRoundedTexture(
-            var1,
-            var2.getFloatValue(),
-            var2.getFloatValue2(),
-            var2.width(),
-            var2.height(),
-            var7,
-            ZenithColor.INSTANCE.method7294(var5),
-            var8,
+   private static void thumb(MenuDrawContext menuDrawContext, Identifier texture, BoundsData boundsData, float intValue, ZenithColor zenithColor, float previewAlpha, float f) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(intValue);
+      if (texture != null) {
+         float f2 = (1.0F - Math.min(1.0F, f)) / 2.0F;
+         menuDrawContext.drawRoundedTexture(
+            texture,
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
+            headerRadius,
+            ZenithColor.INSTANCE.method7294(previewAlpha),
+            f2,
             0.0F,
-            1.0F - var8,
+            1.0F - f2,
             1.0F
          );
       } else {
-         var0.drawRoundedRect(
-            var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), var7, ZenithColor.INSTANCE.method7292(0.05F).method7294(var5)
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, ZenithColor.INSTANCE.method7292(0.05F).method7294(previewAlpha)
          );
       }
 
-      var0.drawRoundedBorder(var2.getFloatValue(), var2.getFloatValue2(), var2.width(), var2.height(), 0.3F, var7, var4);
+      menuDrawContext.drawRoundedBorder(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.3F, headerRadius, zenithColor);
    }
 
-   private static void removeBadge(MenuDrawContext var0, BoundsData var1, float var2, float var3) {
-      float var4 = var1.width();
-      ProxyDotRadiusData var5 = ProxyDotRadiusData.method8069(var4 / 2.0F);
-      var0.drawRoundedRect(
-         var1.getFloatValue(), var1.getFloatValue2(), var4, var4, var5, new ZenithColor(12, 12, 14, 190).method7295(ERROR, 0.85F * var2).method7294(var3)
+   private static void removeBadge(MenuDrawContext menuDrawContext, BoundsData boundsData, float hot, float previewAlpha) {
+      float width = boundsData.width();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(width / 2.0F);
+      menuDrawContext.drawRoundedRect(
+         boundsData.getFloatValue(), boundsData.getFloatValue2(), width, width, headerRadius, new ZenithColor(12, 12, 14, 190).method7295(ERROR, 0.85F * hot).method7294(previewAlpha)
       );
-      var0.drawRoundedBorder(
-         var1.getFloatValue(), var1.getFloatValue2(), var4, var4, 0.2F, var5, ZenithColor.INSTANCE.method7292(0.16F + 0.24F * var2).method7294(var3)
+      menuDrawContext.drawRoundedBorder(
+         boundsData.getFloatValue(), boundsData.getFloatValue2(), width, width, 0.2F, headerRadius, ZenithColor.INSTANCE.method7292(0.16F + 0.24F * hot).method7294(previewAlpha)
       );
       MediaGlyphs.close(
-         var0,
-         var1.getFloatValue() + var4 / 2.0F,
-         var1.getFloatValue2() + var4 / 2.0F,
-         var4 * 0.5F,
-         ZenithColor.INSTANCE.method7292(0.8F + 0.2F * var2).method7294(var3)
+         menuDrawContext,
+         boundsData.getFloatValue() + width / 2.0F,
+         boundsData.getFloatValue2() + width / 2.0F,
+         width * 0.5F,
+         ZenithColor.INSTANCE.method7292(0.8F + 0.2F * hot).method7294(previewAlpha)
       );
    }
 
    private boolean slashMode() {
-      String var1 = this.input.get();
-      return var1.startsWith("/") && !var1.contains(" ") && this.input.isFocused();
+      String str = this.input.get();
+      return str.startsWith("/") && !str.contains(" ") && this.input.isFocused();
    }
 
    public float footerHeight() {
-      float var1 = this.input.height(Fonts.NEW_REGULAR.getFont(4.7F), 158.0F);
-      return var1 + 12.0F + (this.pending.isEmpty() && this.importing == 0 ? 0.0F : 30.0F) + (this.slashMode() ? 13.0F : 0.0F);
+      float height = this.input.height(Fonts.NEW_REGULAR.getFont(4.7F), 158.0F);
+      return height + 12.0F + (this.pending.isEmpty() && this.importing == 0 ? 0.0F : 30.0F) + (this.slashMode() ? 13.0F : 0.0F);
    }
 
-   public void renderFooter(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      var1.drawRect(var4 + 8.0F, var5, var6 - 16.0F, 1.0F, var8.getFieldBorder().getZenithColor().method7294(var7 * 2.0F));
-      Font var9 = Fonts.NEW_REGULAR.getFont(4.7F);
-      Font var10 = Fonts.NEW_MEDIUM.getFont(4.3F);
-      AiChatStorage var11 = AiChatStorage.method2741();
-      ZenithColor var12 = var8.getPrimaryColor().getZenithColor();
-      float var13 = var5 + 6.0F;
+   public void renderFooter(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float y, float f2, float previewAlpha, ZenithStyle zenithStyle) {
+      menuDrawContext.drawRect(f + 8.0F, y, f2 - 16.0F, 1.0F, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
+      Font font = Fonts.NEW_REGULAR.getFont(4.7F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.3F);
+      AiChatStorage aiChatStorage = AiChatStorage.method2741();
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      float y2 = y + 6.0F;
       if (this.slashMode()) {
-         String var14 = this.input.get().toLowerCase(Locale.ROOT);
-         float var15 = var4 + 8.0F;
+         String lowerCase = this.input.get().toLowerCase(Locale.ROOT);
+         float floatValue = f + 8.0F;
 
-         for (String[] var19 : COMMANDS) {
-            if (var19[0].startsWith(var14)) {
-               String var20 = var19[0];
-               float var21 = var10.width(var20) + 8.0F;
-               if (var15 + var21 > var4 + var6 - 8.0F) {
+         for (String[] strings : COMMANDS) {
+            if (strings[0].startsWith(lowerCase)) {
+               String text = strings[0];
+               float width = font2.width(text) + 8.0F;
+               if (floatValue + width > f + f2 - 8.0F) {
                   break;
                }
 
-               BoundsData var22 = new BoundsData(var15, var13, var21, 10.0F);
-               this.hits.put("cmd:" + var19[0], var22);
-               boolean var23 = var22.contains(var2, var3);
-               float var24 = this.panel.hot("cmd:" + var19[0], var23);
-               var1.drawRoundedRect(
-                  var22.getFloatValue(),
-                  var22.getFloatValue2(),
-                  var21,
+               BoundsData boundsData = new BoundsData(floatValue, y2, width, 10.0F);
+               this.hits.put("cmd:" + strings[0], boundsData);
+               boolean contains = boundsData.contains(lastClickX, lastClickY);
+               float hot = this.panel.hot("cmd:" + strings[0], contains);
+               menuDrawContext.drawRoundedRect(
+                  boundsData.getFloatValue(),
+                  boundsData.getFloatValue2(),
+                  width,
                   10.0F,
                   ProxyDotRadiusData.method8069(5.0F),
-                  var12.method7292(0.14F + 0.2F * var24).method7294(var7)
+                  zenithColor.method7292(0.14F + 0.2F * hot).method7294(previewAlpha)
                );
-               var1.drawText(
-                  var10,
-                  var20,
-                  var15 + 4.0F,
-                  var13 + (10.0F - var10.height()) / 2.0F,
-                  var12.method7295(ZenithColor.INSTANCE, 0.3F + var24 * 0.4F).method7294(var7)
+               menuDrawContext.drawText(
+                  font2,
+                  text,
+                  floatValue + 4.0F,
+                  y2 + (10.0F - font2.height()) / 2.0F,
+                  zenithColor.method7295(ZenithColor.INSTANCE, 0.3F + hot * 0.4F).method7294(previewAlpha)
                );
-               if (var23) {
-                  HoverInfo.request(var20, t(var19[1]));
+               if (contains) {
+                  HoverInfo.request(text, t(strings[1]));
                }
 
-               var15 += var21 + 3.0F;
+               floatValue += width + 3.0F;
             }
          }
 
-         var13 += 13.0F;
+         y2 += 13.0F;
       }
 
       if (!this.pending.isEmpty() || this.importing > 0) {
-         float var35 = var4 + 8.0F;
-         float var37 = 24.0F;
-         String var39 = this.pending.size() + "/6";
-         float[] var41 = new float[this.pending.size()];
-         float var43 = 0.0F;
+         float floatValue = f + 8.0F;
+         float height = 24.0F;
+         String text = this.pending.size() + "/6";
+         float[] floats = new float[this.pending.size()];
+         float f3 = 0.0F;
 
-         for (int var45 = 0; var45 < var41.length; var45++) {
-            int[] var48 = AiImageStore.method4638(this.pending.get(var45));
-            var41[var45] = Math.max(var37 * 0.6F, Math.min(var37 * 2.0F, var37 * var48[0] / Math.max(1, var48[1])));
-            var43 += var41[var45];
+         for (int i = 0; i < floats.length; i++) {
+            int[] ints = AiImageStore.method4638(this.pending.get(i));
+            floats[i] = Math.max(height * 0.6F, Math.min(height * 2.0F, height * ints[0] / Math.max(1, ints[1])));
+            f3 += floats[i];
          }
 
-         float var46 = var6 - 16.0F - var10.width(var39) - 6.0F - (this.importing > 0 ? var37 + 4.0F : 0.0F) - Math.max(0, var41.length - 1) * 4.0F;
-         float var49 = var43 > var46 && var43 > 0.0F ? Math.max(0.1F, var46 / var43) : 1.0F;
+         float f4 = f2 - 16.0F - font2.width(text) - 6.0F - (this.importing > 0 ? height + 4.0F : 0.0F) - Math.max(0, floats.length - 1) * 4.0F;
+         float f5 = f3 > f4 && f3 > 0.0F ? Math.max(0.1F, f4 / f3) : 1.0F;
 
-         for (int var51 = 0; var51 < var41.length; var51++) {
-            String var54 = this.pending.get(var51);
-            Identifier var56 = AiImageStore.method4639(var54);
-            float var59 = var41[var51] * var49;
-            BoundsData var25 = new BoundsData(var35, var13, var59, var37);
-            boolean var26 = var25.contains(var2, var3);
-            float var27 = this.panel.hot("att:" + var54, var26);
-            thumb(var1, var56, var25, 4.0F, var12.method7292(0.3F + 0.4F * var27).method7294(var7), var7, var49);
-            BoundsData var28 = new BoundsData(var35 + var59 - 8.0F - 2.0F, var13 + 2.0F, 8.0F, 8.0F);
-            this.hits.put("attx:" + var51, var28);
-            if (var27 > 0.01F) {
-               removeBadge(var1, var28, this.panel.hot("attx:" + var54, var28.contains(var2, var3)), var7 * var27);
+         for (int i = 0; i < floats.length; i++) {
+            String key = this.pending.get(i);
+            Identifier texture = AiImageStore.method4639(key);
+            float width = floats[i] * f5;
+            BoundsData boundsData = new BoundsData(floatValue, y2, width, height);
+            boolean contains = boundsData.contains(lastClickX, lastClickY);
+            float hot = this.panel.hot("att:" + key, contains);
+            thumb(menuDrawContext, texture, boundsData, 4.0F, zenithColor.method7292(0.3F + 0.4F * hot).method7294(previewAlpha), previewAlpha, f5);
+            BoundsData boundsData2 = new BoundsData(floatValue + width - 8.0F - 2.0F, y2 + 2.0F, 8.0F, 8.0F);
+            this.hits.put("attx:" + i, boundsData2);
+            if (hot > 0.01F) {
+               removeBadge(menuDrawContext, boundsData2, this.panel.hot("attx:" + key, boundsData2.contains(lastClickX, lastClickY)), previewAlpha * hot);
             }
 
-            var35 += var59 + 4.0F;
+            floatValue += width + 4.0F;
          }
 
          if (this.importing > 0) {
-            float var52 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 160.0);
-            var1.drawRoundedRect(var35, var13, 24.0F, 24.0F, ProxyDotRadiusData.method8069(4.0F), var12.method7292(0.1F + 0.15F * var52).method7294(var7));
+            float f6 = 0.5F + 0.5F * (float)Math.sin(System.currentTimeMillis() / 160.0);
+            menuDrawContext.drawRoundedRect(floatValue, y2, 24.0F, 24.0F, ProxyDotRadiusData.method8069(4.0F), zenithColor.method7292(0.1F + 0.15F * f6).method7294(previewAlpha));
          }
 
-         var1.drawText(
-            var10,
-            var39,
-            var4 + var6 - 8.0F - var10.width(var39),
-            var13 + (24.0F - var10.height()) / 2.0F,
-            var8.getTextTertiary().getZenithColor().method7294(var7)
+         menuDrawContext.drawText(
+            font2,
+            text,
+            f + f2 - 8.0F - font2.width(text),
+            y2 + (24.0F - font2.height()) / 2.0F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
-         var13 += 30.0F;
+         y2 += 30.0F;
       }
 
-      String var36 = var11.method2747() != null && this.panel.hostOrNull() != null && this.panel.hostOrNull().method1294(var11.method2747()) != null
-         ? this.panel.hostOrNull().method1294(var11.method2747()).method1403()
+      String replacement = aiChatStorage.method2747() != null && this.panel.hostOrNull() != null && this.panel.hostOrNull().method1294(aiChatStorage.method2747()) != null
+         ? this.panel.hostOrNull().method1294(aiChatStorage.method2747()).method1403()
          : t("gui.scripts.ai.target.new");
-      String var38 = t("gui.scripts.ai.input.hint").replace("{s}", var36);
-      float var40 = 18.0F;
-      float var42 = var4 + 8.0F + var40 + 4.0F;
-      float var44 = var6 - 16.0F - 40.0F - var40 - 4.0F;
-      float var47 = this.input
+      String name = t("gui.scripts.ai.input.hint").replace("{s}", replacement);
+      float width = 18.0F;
+      float floatValue = f + 8.0F + width + 4.0F;
+      float shownWidth = f2 - 16.0F - 40.0F - width - 4.0F;
+      float render = this.input
          .render(
-            var1,
-            var9,
-            var42,
-            var13,
-            var44,
-            var7,
-            var38,
-            var8.getFieldSurfaceBackground().getZenithColor(),
-            var8.getFieldBorder().getZenithColor().method7294(2.0F),
-            var8.getPrimaryColor().getZenithColor(),
-            var8.getTextEnable().getZenithColor(),
-            var8.getTextTertiary().getZenithColor()
+            menuDrawContext,
+            font,
+            floatValue,
+            y2,
+            shownWidth,
+            previewAlpha,
+            name,
+            zenithStyle.getFieldSurfaceBackground().getZenithColor(),
+            zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F),
+            zenithStyle.getPrimaryColor().getZenithColor(),
+            zenithStyle.getTextEnable().getZenithColor(),
+            zenithStyle.getTextTertiary().getZenithColor()
          );
-      float var50 = (var47 - 2.0F) / 2.0F;
-      BoundsData var53 = new BoundsData(var4 + 8.0F, var13, var40, var50);
-      BoundsData var55 = new BoundsData(var4 + 8.0F, var13 + var50 + 2.0F, var40, var50);
-      this.hits.put("tool:attach", var53);
-      this.hits.put("tool:shot", var55);
+      float height = (render - 2.0F) / 2.0F;
+      BoundsData boundsData = new BoundsData(f + 8.0F, y2, width, height);
+      BoundsData boundsData2 = new BoundsData(f + 8.0F, y2 + height + 2.0F, width, height);
+      this.hits.put("tool:attach", boundsData);
+      this.hits.put("tool:shot", boundsData2);
 
-      for (Object[] var64 : new Object[][]{{var53, "attach"}, {var55, "shot"}}) {
-         BoundsData var66 = (BoundsData)var64[0];
-         String var68 = (String)var64[1];
-         boolean var29 = var66.contains(var2, var3);
-         float var30 = this.panel.hot("tool:" + var68, var29);
-         float var31 = Smooth.press(this.pressedAt.getOrDefault("tool:" + var68, 0L), 320L);
-         var1.drawRoundedRect(
-            var66.getFloatValue(),
-            var66.getFloatValue2(),
-            var66.width(),
-            var66.height(),
+      for (Object[] objects : new Object[][]{{boundsData, "attach"}, {boundsData2, "shot"}}) {
+         BoundsData boundsData3 = (BoundsData)objects[0];
+         String str = (String)objects[1];
+         boolean contains = boundsData3.contains(lastClickX, lastClickY);
+         float hot = this.panel.hot("tool:" + str, contains);
+         float press = Smooth.press(this.pressedAt.getOrDefault("tool:" + str, 0L), 320L);
+         menuDrawContext.drawRoundedRect(
+            boundsData3.getFloatValue(),
+            boundsData3.getFloatValue2(),
+            boundsData3.width(),
+            boundsData3.height(),
             ProxyDotRadiusData.method8069(4.0F),
-            var8.getFieldSurfaceBackground().getZenithColor().method7295(var12.method7292(0.3F), 0.2F + var30 * 0.5F + var31 * 0.3F).method7294(var7)
+            zenithStyle.getFieldSurfaceBackground().getZenithColor().method7295(zenithColor.method7292(0.3F), 0.2F + hot * 0.5F + press * 0.3F).method7294(previewAlpha)
          );
-         ZenithColor var32 = var8.getTextSecondary().getZenithColor().method7295(var12, var30).method7294(var7);
-         float var33 = var66.getFloatValue() + var66.width() / 2.0F;
-         float var34 = var66.getFloatValue2() + var66.height() / 2.0F;
-         if (var68.equals("attach")) {
-            var1.drawRect(var33 - 3.0F, var34 - 0.4F, 6.0F, 0.8F, var32);
-            var1.drawRect(var33 - 0.4F, var34 - 3.0F, 0.8F, 6.0F, var32);
+         ZenithColor zenithColor2 = zenithStyle.getTextSecondary().getZenithColor().method7295(zenithColor, hot).method7294(previewAlpha);
+         float f3 = boundsData3.getFloatValue() + boundsData3.width() / 2.0F;
+         float f4 = boundsData3.getFloatValue2() + boundsData3.height() / 2.0F;
+         if (str.equals("attach")) {
+            menuDrawContext.drawRect(f3 - 3.0F, f4 - 0.4F, 6.0F, 0.8F, zenithColor2);
+            menuDrawContext.drawRect(f3 - 0.4F, f4 - 3.0F, 0.8F, 6.0F, zenithColor2);
          } else {
-            var1.drawRoundedBorder(var33 - 4.0F, var34 - 2.6F, 8.0F, 5.6F, 0.4F, ProxyDotRadiusData.method8069(1.2F), var32);
-            var1.drawRoundedRect(var33 - 1.3F, var34 - 1.3F, 2.6F, 2.6F, ProxyDotRadiusData.method8069(1.3F), var32);
+            menuDrawContext.drawRoundedBorder(f3 - 4.0F, f4 - 2.6F, 8.0F, 5.6F, 0.4F, ProxyDotRadiusData.method8069(1.2F), zenithColor2);
+            menuDrawContext.drawRoundedRect(f3 - 1.3F, f4 - 1.3F, 2.6F, 2.6F, ProxyDotRadiusData.method8069(1.3F), zenithColor2);
          }
 
-         if (var29) {
-            HoverInfo.request(t("gui.scripts.ai.tool." + var68), t("gui.scripts.ai.tool." + var68 + ".desc"));
+         if (contains) {
+            HoverInfo.request(t("gui.scripts.ai.tool." + str), t("gui.scripts.ai.tool." + str + ".desc"));
          }
       }
 
-      this.sendRect = new BoundsData(var42 + var44 + 4.0F, var13, 36.0F, var47);
-      boolean var58 = this.sendRect.contains(var2, var3);
-      float var61 = this.panel.hot("ai:send", var58);
-      boolean var63 = var11.isBusy();
-      float var65 = Smooth.press(this.pressedAt.getOrDefault("send", 0L), 320L);
-      var1.drawRoundedRect(
+      this.sendRect = new BoundsData(floatValue + shownWidth + 4.0F, y2, 36.0F, render);
+      boolean contains = this.sendRect.contains(lastClickX, lastClickY);
+      float hot = this.panel.hot("ai:send", contains);
+      boolean busy = aiChatStorage.isBusy();
+      float press = Smooth.press(this.pressedAt.getOrDefault("send", 0L), 320L);
+      menuDrawContext.drawRoundedRect(
          this.sendRect.getFloatValue(),
          this.sendRect.getFloatValue2(),
          this.sendRect.width(),
          this.sendRect.height(),
          ProxyDotRadiusData.method8069(5.0F),
-         (var63 ? ERROR.method7292(0.2F + var61 * 0.15F) : var12.method7292(0.22F + var61 * 0.2F + var65 * 0.3F)).method7294(var7)
+         (busy ? ERROR.method7292(0.2F + hot * 0.15F) : zenithColor.method7292(0.22F + hot * 0.2F + press * 0.3F)).method7294(previewAlpha)
       );
-      Font var67 = Fonts.NEW_MEDIUM.getFont(4.6F);
-      String var69 = t(var63 ? "gui.scripts.ai.stop" : "gui.scripts.ai.send");
-      var1.drawText(
-         var67,
-         var69,
-         this.sendRect.getFloatValue() + (this.sendRect.width() - var67.width(var69)) / 2.0F,
-         this.sendRect.getFloatValue2() + (this.sendRect.height() - var67.height()) / 2.0F,
-         (var63 ? ERROR : var12.method7295(ZenithColor.INSTANCE, 0.3F + var61 * 0.4F)).method7294(var7)
+      Font font3 = Fonts.NEW_MEDIUM.getFont(4.6F);
+      String text = t(busy ? "gui.scripts.ai.stop" : "gui.scripts.ai.send");
+      menuDrawContext.drawText(
+         font3,
+         text,
+         this.sendRect.getFloatValue() + (this.sendRect.width() - font3.width(text)) / 2.0F,
+         this.sendRect.getFloatValue2() + (this.sendRect.height() - font3.height()) / 2.0F,
+         (busy ? ERROR : zenithColor.method7295(ZenithColor.INSTANCE, 0.3F + hot * 0.4F)).method7294(previewAlpha)
       );
-      if (var58) {
-         HoverInfo.request(var69, t("gui.scripts.ai.send.desc"));
+      if (contains) {
+         HoverInfo.request(text, t("gui.scripts.ai.send.desc"));
       }
 
-      int var70 = this.input.get().length();
-      if (var70 > 300) {
-         String var71 = var70 + "/6000";
-         var1.drawText(
-            var10,
-            var71,
-            var42 + var44 - 4.0F - var10.width(var71),
-            var13 + var47 - var10.height() - 2.0F,
-            var8.getTextTertiary().getZenithColor().method7294(var7 * 0.8F)
+      int length = this.input.get().length();
+      if (length > 300) {
+         String str = length + "/6000";
+         menuDrawContext.drawText(
+            font2,
+            str,
+            floatValue + shownWidth - 4.0F - font2.width(str),
+            y2 + render - font2.height() - 2.0F,
+            zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha * 0.8F)
          );
       }
    }
 
-   public boolean clickFooter(double var1, double var3) {
-      this.mouse(var1, var3);
-      if (this.sendRect != null && this.sendRect.contains(var1, var3)) {
+   public boolean clickFooter(double lastMouseX, double lastMouseY) {
+      this.mouse(lastMouseX, lastMouseY);
+      if (this.sendRect != null && this.sendRect.contains(lastMouseX, lastMouseY)) {
          this.pressedAt.put("send", System.currentTimeMillis());
          if (AiChatStorage.method2741().isBusy()) {
             AiChatStorage.method2741().stop();
@@ -2167,11 +2167,11 @@ public final class ScriptAiTab {
 
          return true;
       } else {
-         for (String[] var8 : COMMANDS) {
-            if (this.hovered(this.hits.get("cmd:" + var8[0]))) {
-               this.input.set(var8[0] + (var8[0].equals("/model") ? " " : ""));
+         for (String[] strings : COMMANDS) {
+            if (this.hovered(this.hits.get("cmd:" + strings[0]))) {
+               this.input.set(strings[0] + (strings[0].equals("/model") ? " " : ""));
                this.focus(this.input);
-               if (!var8[0].equals("/model")) {
+               if (!strings[0].equals("/model")) {
                   this.send();
                }
 
@@ -2188,9 +2188,9 @@ public final class ScriptAiTab {
             this.screenshot();
             return true;
          } else {
-            for (int var9 = this.pending.size() - 1; var9 >= 0; var9--) {
-               if (this.hovered(this.hits.get("attx:" + var9))) {
-                  this.pending.remove(var9);
+            for (int i = this.pending.size() - 1; i >= 0; i--) {
+               if (this.hovered(this.hits.get("attx:" + i))) {
+                  this.pending.remove(i);
                   this.panel.invalidate();
                   return true;
                }
@@ -2202,26 +2202,26 @@ public final class ScriptAiTab {
       }
    }
 
-   private void notify(String var1) {
-      HudHolder.method6969().method6973("i", Component.literal(var1), 3000L);
+   private void notify(String message) {
+      HudHolder.method6969().method6973("i", Component.literal(message), 3000L);
    }
 
-   public void attachFiles(List<Path> var1) {
-      for (Path var3 : var1) {
+   public void attachFiles(List<Path> paths) {
+      for (Path path : paths) {
          if (this.pending.size() + this.importing >= 6) {
             this.notify(t("gui.scripts.ai.attach.limit"));
             break;
          }
 
-         if (!AiImageStore.method4631(var3)) {
-            this.notify(t("gui.scripts.ai.attach.type") + " " + var3.getFileName());
+         if (!AiImageStore.method4631(path)) {
+            this.notify(t("gui.scripts.ai.attach.type") + " " + path.getFileName());
          } else {
             this.importing++;
             Thread.ofPlatform().daemon(true).name("zenith-ai-attach").start(() -> {
                try {
-                  String var2 = AiImageStore.method4632(var3);
+                  String str = AiImageStore.method4632(path);
                   Minecraft.getInstance().execute(() -> {
-                     this.pending.add(var2);
+                     this.pending.add(str);
                      this.importing--;
                      this.panel.invalidate();
                   });
@@ -2241,44 +2241,44 @@ public final class ScriptAiTab {
 
    private void pickImages() {
       Thread.ofPlatform().daemon(true).name("zenith-ai-pick").start(() -> {
-         MemoryStack var2 = MemoryStack.stackPush();
+         MemoryStack stackPush = MemoryStack.stackPush();
 
-         String var1;
+         String tinyfd_openFileDialog;
          try {
-            PointerBuffer var3 = var2.mallocPointer(5);
+            PointerBuffer mallocPointer = stackPush.mallocPointer(5);
 
-            for (String var7 : new String[]{"*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"}) {
-               var3.put(var2.UTF8(var7));
+            for (String text : new String[]{"*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"}) {
+               mallocPointer.put(stackPush.UTF8(text));
             }
 
-            var3.flip();
-            var1 = FileDialogs.tinyfd_openFileDialog(t("gui.scripts.ai.tool.attach"), "", var3, "Картинки", true);
-         } catch (Throwable var9) {
-            if (var2 != null) {
+            mallocPointer.flip();
+            tinyfd_openFileDialog = FileDialogs.tinyfd_openFileDialog(t("gui.scripts.ai.tool.attach"), "", mallocPointer, "Картинки", true);
+         } catch (Throwable e) {
+            if (stackPush != null) {
                try {
-                  var2.close();
-               } catch (Throwable var8) {
-                  var9.addSuppressed(var8);
+                  stackPush.close();
+               } catch (Throwable ex) {
+                  e.addSuppressed(ex);
                }
             }
 
-            throw var9;
+            throw e;
          }
 
-         if (var2 != null) {
-            var2.close();
+         if (stackPush != null) {
+            stackPush.close();
          }
 
-         if (var1 != null && !var1.isBlank()) {
-            ArrayList var10 = new ArrayList();
+         if (tinyfd_openFileDialog != null && !tinyfd_openFileDialog.isBlank()) {
+            ArrayList paths = new ArrayList();
 
-            for (String var14 : var1.split("\\|")) {
-               if (!var14.isBlank()) {
-                  var10.add(Path.of(var14));
+            for (String first : tinyfd_openFileDialog.split("\\|")) {
+               if (!first.isBlank()) {
+                  paths.add(Path.of(first));
                }
             }
 
-            Minecraft.getInstance().execute(() -> this.attachFiles(var10));
+            Minecraft.getInstance().execute(() -> this.attachFiles(paths));
          }
       });
    }
@@ -2287,17 +2287,17 @@ public final class ScriptAiTab {
       if (this.pending.size() + this.importing >= 6) {
          this.notify(t("gui.scripts.ai.attach.limit"));
       } else {
-         Minecraft var1 = Minecraft.getInstance();
-         if (var1.level == null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft.level == null) {
             this.notify(t("gui.scripts.ai.attach.noworld"));
          } else {
             if (!shotHooked) {
                shotHooked = true;
-               EventManager.main().subscribe(TickEvent.class, (byte)4, (var0, var1x) -> tickShot());
+               EventManager.main().subscribe(TickEvent.class, (byte)4, (obj, var1x) -> tickShot());
             }
 
             this.importing++;
-            shotReturn = var1.gui.screen();
+            shotReturn = minecraft.gui.screen();
             shotDone = var1x -> {
                this.importing--;
                if (var1x != null) {
@@ -2307,7 +2307,7 @@ public final class ScriptAiTab {
                this.panel.invalidate();
             };
             shotCountdown = 3;
-            var1.gui.setScreen(null);
+            minecraft.gui.setScreen(null);
          }
       }
    }
@@ -2316,27 +2316,27 @@ public final class ScriptAiTab {
       if (shotCountdown >= 0) {
          if (--shotCountdown <= 0) {
             shotCountdown = -1;
-            Minecraft var0 = Minecraft.getInstance();
-            Screen var1 = shotReturn;
-            var var2 = shotDone;
-            Screenshot.takeScreenshot(var0.gameRenderer.mainRenderTarget(), 1, var3 -> Thread.ofPlatform().daemon(true).start(() -> {
-               String var4 = null;
+            Minecraft minecraft = Minecraft.getInstance();
+            Screen screen = shotReturn;
+            var consumer = shotDone;
+            Screenshot.takeScreenshot(minecraft.gameRenderer.mainRenderTarget(), 1, nativeImage -> Thread.ofPlatform().daemon(true).start(() -> {
+               String str = null;
 
                try {
-                  var4 = AiImageStore.method4633(var3);
-               } catch (Exception var9) {
+                  str = AiImageStore.method4633(nativeImage);
+               } catch (Exception e) {
                } finally {
-                  var3.close();
+                  nativeImage.close();
                }
 
-               String var5 = var4;
-               var0.execute(() -> {
-                  if (var1 != null) {
-                     var0.gui.setScreen(var1);
+               String str2 = str;
+               minecraft.execute(() -> {
+                  if (screen != null) {
+                     minecraft.gui.setScreen(screen);
                   }
 
-                  if (var2 != null) {
-                     var2.accept(var5);
+                  if (consumer != null) {
+                     consumer.accept(str2);
                   }
                });
             }));
@@ -2345,78 +2345,78 @@ public final class ScriptAiTab {
    }
 
    public void send() {
-      Storage var1 = this.panel.hostOrNull();
-      String var2 = this.input.get();
-      if (var1 != null && (!var2.isEmpty() || !this.pending.isEmpty()) && !AiChatStorage.method2741().isBusy() && this.importing <= 0) {
-         if (var2.startsWith("/") && this.command(var1, var2)) {
+      Storage hostOrNull = this.panel.hostOrNull();
+      String text = this.input.get();
+      if (hostOrNull != null && (!text.isEmpty() || !this.pending.isEmpty()) && !AiChatStorage.method2741().isBusy() && this.importing <= 0) {
+         if (text.startsWith("/") && this.command(hostOrNull, text)) {
             this.input.clear();
             this.panel.invalidate();
          } else {
             this.input.clear();
-            var var3 = new ArrayList<>(this.pending);
+            var strings = new ArrayList<>(this.pending);
             this.pending.clear();
-            AiChatStorage.method2741().method2758(var1, var2, var3);
+            AiChatStorage.method2741().method2758(hostOrNull, text, strings);
             this.panel.invalidate();
          }
       }
    }
 
-   private boolean command(Storage var1, String var2) {
-      String[] var3 = var2.strip().split("\\s+", 2);
-      String var4 = var3.length > 1 ? var3[1] : "";
-      AiChatStorage var5 = AiChatStorage.method2741();
-      String var6 = var3[0].toLowerCase(Locale.ROOT);
-      switch (var6) {
+   private boolean command(Storage hostOrNull, String text) {
+      String[] strings = text.strip().split("\\s+", 2);
+      String string = strings.length > 1 ? strings[1] : "";
+      AiChatStorage aiChatStorage = AiChatStorage.method2741();
+      String lowerCase = strings[0].toLowerCase(Locale.ROOT);
+      switch (lowerCase) {
          case "/new":
-            var5.method2750(null);
+            aiChatStorage.method2750(null);
             break;
          case "/clear":
-            var5.clear();
+            aiChatStorage.clear();
             break;
          case "/fix":
-            if (var5.method2747() == null) {
-               var5.method2759(t("gui.scripts.ai.cmd.noscript"));
+            if (aiChatStorage.method2747() == null) {
+               aiChatStorage.method2759(t("gui.scripts.ai.cmd.noscript"));
             } else {
-               var5.method2769(var1);
+               aiChatStorage.method2769(hostOrNull);
             }
             break;
          case "/explain":
-            var5.method2757(var1, t("gui.scripts.ai.quick.explain.prompt"));
+            aiChatStorage.method2757(hostOrNull, t("gui.scripts.ai.quick.explain.prompt"));
             break;
          case "/shot":
             this.screenshot();
             break;
          case "/export":
             try {
-               Path var14 = var5.method2760();
-               com.mojang.blaze3d.Blaze3D.openPath((var14.getParent().toFile()).toPath());
-               var5.method2759(t("gui.scripts.ai.cmd.exported").replace("{f}", var14.getFileName().toString()));
-            } catch (Exception var13) {
-               var5.method2759(var13.getMessage());
+               Path path = aiChatStorage.method2760();
+               com.mojang.blaze3d.Blaze3D.openPath((path.getParent().toFile()).toPath());
+               aiChatStorage.method2759(t("gui.scripts.ai.cmd.exported").replace("{f}", path.getFileName().toString()));
+            } catch (Exception e) {
+               aiChatStorage.method2759(e.getMessage());
             }
             break;
          case "/model":
-            if (var4.isBlank()) {
-               var5.method2759(
+            if (string.isBlank()) {
+               aiChatStorage.method2759(
                   t("gui.scripts.ai.cmd.model.now").replace("{m}", AiSettingsStore.method4467().method4472(AiSettingsStore.method4467().getShownProvider()))
                );
             } else {
-               AiSettingsStore.method4467().method4473(AiSettingsStore.method4467().getShownProvider(), var4);
+               AiSettingsStore.method4467().method4473(AiSettingsStore.method4467().getShownProvider(), string);
                this.modelField.set(AiSettingsStore.method4467().method4472(AiSettingsStore.method4467().getShownProvider()));
-               var5.method2759(
+               aiChatStorage.method2759(
                   t("gui.scripts.ai.cmd.model.set").replace("{m}", AiSettingsStore.method4467().method4472(AiSettingsStore.method4467().getShownProvider()))
                );
             }
             break;
          case "/help":
-            StringBuilder var8 = new StringBuilder(t("gui.scripts.ai.cmd.helpTitle")).append('\n');
+            StringBuilder builder = new StringBuilder(t("gui.scripts.ai.cmd.helpTitle")).append('\n');
 
-            for (String[] var12 : COMMANDS) {
-               var8.append(var12[0]).append(" — ").append(t(var12[1])).append('\n');
+            for (String[] strings2 : COMMANDS) {
+               builder.append(strings2[0]).append(" — ").append(t(strings2[1])).append('\n');
             }
 
-            var8.append(t("gui.scripts.ai.cmd.helpTail"));
-            var5.method2759(var8.toString());
+            builder.append(t("gui.scripts.ai.cmd.helpTail"));
+            aiChatStorage.method2759(builder.toString());
             break;
          default:
             return false;
@@ -2425,71 +2425,71 @@ public final class ScriptAiTab {
       return true;
    }
 
-   public boolean keyPressed(int var1, int var2) {
-      FormField var3 = this.focused();
-      if (var3 == null) {
+   public boolean keyPressed(int keyCode, int modifiers) {
+      FormField focused = this.focused();
+      if (focused == null) {
          return false;
-      } else if (var1 == 257 || var1 == 335) {
-         var var10 = List.of(this.addName, this.addUrl, this.addKey, this.addModel);
-         int var11 = var10.indexOf(var3);
-         if (var11 >= 0) {
-            if (var11 == var10.size() - 1) {
+      } else if (keyCode == 257 || keyCode == 335) {
+         var formFields = List.of(this.addName, this.addUrl, this.addKey, this.addModel);
+         int indexOf = formFields.indexOf(focused);
+         if (indexOf >= 0) {
+            if (indexOf == formFields.size() - 1) {
                this.submitCustom();
             } else {
-               this.focus((FormField)var10.get(var11 + 1));
+               this.focus((FormField)formFields.get(indexOf + 1));
             }
 
             return true;
          } else {
-            if (var3 == this.input) {
+            if (focused == this.input) {
                this.send();
             } else {
                this.commitFields();
-               var3.setFocused(false);
+               focused.setFocused(false);
                this.panel.invalidate();
             }
 
             return true;
          }
-      } else if (var3 == this.input && var1 == 265 && this.input.get().isEmpty()) {
-         String var9 = AiChatStorage.method2741().method2762();
-         if (!var9.isEmpty()) {
-            this.input.set(var9);
+      } else if (focused == this.input && keyCode == 265 && this.input.get().isEmpty()) {
+         String description = AiChatStorage.method2741().method2762();
+         if (!description.isEmpty()) {
+            this.input.set(description);
          }
 
          return true;
-      } else if (var1 == 256 && var3 == this.input && AiChatStorage.method2741().isBusy()) {
+      } else if (keyCode == 256 && focused == this.input && AiChatStorage.method2741().isBusy()) {
          AiChatStorage.method2741().stop();
          return true;
-      } else if (var1 == 256) {
-         var3.setFocused(false);
+      } else if (keyCode == 256) {
+         focused.setFocused(false);
          this.commitFields();
          return true;
-      } else if (var3 == this.input && var1 == 86 && (var2 & 2) != 0) {
-         String var4 = Minecraft.getInstance().keyboardHandler.getClipboard();
-         if (var4 != null) {
-            for (char var8 : var4.replace("\r", "").replace('\n', ' ').replace('\t', ' ').toCharArray()) {
-               var3.charTyped(var8);
+      } else if (focused == this.input && keyCode == 86 && (modifiers & 2) != 0) {
+         String clipboard = Minecraft.getInstance().keyboardHandler.getClipboard();
+         if (clipboard != null) {
+            for (char codepoint : clipboard.replace("\r", "").replace('\n', ' ').replace('\t', ' ').toCharArray()) {
+               focused.charTyped(codepoint);
             }
          }
 
          return true;
       } else {
-         var3.keyPressed(var1, var2);
+         focused.keyPressed(keyCode, modifiers);
          return true;
       }
    }
 
-   public boolean charTyped(char var1) {
-      FormField var2 = this.focused();
-      return var2 != null && var2.charTyped(var1);
+   public boolean charTyped(char codepoint) {
+      FormField focused = this.focused();
+      return focused != null && focused.charTyped(codepoint);
    }
 
-   public void blurAll(double var1, double var3) {
-      for (FormField var6 : this.fields()) {
-         BoundsData var7 = var6.bounds();
-         if (var6.isFocused() && (var7 == null || !var7.contains(var1, var3))) {
-            var6.setFocused(false);
+   public void blurAll(double lastClickX, double lastClickY) {
+      for (FormField field : this.fields()) {
+         BoundsData bounds = field.bounds();
+         if (field.isFocused() && (bounds == null || !bounds.contains(lastClickX, lastClickY))) {
+            field.setFocused(false);
          }
       }
 
@@ -2560,27 +2560,27 @@ public final class ScriptAiTab {
          return "CachedLayout[" + "text=" + this.text + ", " + "streaming=" + this.streaming + ", " + "note=" + this.note + ", " + "error=" + this.error + ", " + "result=" + this.result + ", " + "images=" + this.images + ", " + "width=" + this.width + ", " + "lastOne=" + this.lastOne + ", " + "layout=" + this.layout + "]";
       }
 
-      private CachedLayout(String var1, boolean var2, boolean var3, String var4, String var5, int var6, float var7, boolean var8, ScriptAiTab.Layout var9) {
-         this.text = var1;
-         this.streaming = var2;
-         this.note = var3;
-         this.error = var4;
-         this.result = var5;
-         this.images = var6;
-         this.width = var7;
-         this.lastOne = var8;
-         this.layout = var9;
+      private CachedLayout(String text, boolean streaming, boolean note, String error, String result, int images, float width, boolean lastOne, ScriptAiTab.Layout layout) {
+         this.text = text;
+         this.streaming = streaming;
+         this.note = note;
+         this.error = error;
+         this.result = result;
+         this.images = images;
+         this.width = width;
+         this.lastOne = lastOne;
+         this.layout = layout;
       }
 
-      public boolean matches(AiChatStorage.Entry2 var1, String var2, String var3, float var4, boolean var5) {
-         return (this.text == var2 || this.text.equals(var2))
-            && this.streaming == var1.streaming()
-            && this.note == var1.note()
-            && this.error.equals(var3)
-            && this.result.equals(var1.result())
-            && this.images == var1.getItems().size()
-            && this.width == var4
-            && this.lastOne == var5;
+      public boolean matches(AiChatStorage.Entry2 entry2, String text, String errorText, float width, boolean lastOne) {
+         return (this.text == text || this.text.equals(text))
+            && this.streaming == entry2.streaming()
+            && this.note == entry2.note()
+            && this.error.equals(errorText)
+            && this.result.equals(entry2.result())
+            && this.images == entry2.getItems().size()
+            && this.width == width
+            && this.lastOne == lastOne;
       }
    }
 
@@ -2591,8 +2591,8 @@ public final class ScriptAiTab {
 
       private final String description;
 
-      private KeyState(String var3) {
-         this.description = var3;
+      private KeyState(String description) {
+         this.description = description;
       }
    }
 
@@ -2635,11 +2635,11 @@ public final class ScriptAiTab {
          return "Layout[" + "pieces=" + this.pieces + ", " + "wrapped=" + this.wrapped + ", " + "height=" + this.height + ", " + "bubble=" + this.bubble + "]";
       }
 
-      private Layout(List<ScriptAiTab.Piece> var1, List<List<String>> var2, float var3, float var4) {
-         this.pieces = var1;
-         this.wrapped = var2;
-         this.height = var3;
-         this.bubble = var4;
+      private Layout(List<ScriptAiTab.Piece> pieces, List<List<String>> wrapped, float height, float bubble) {
+         this.pieces = pieces;
+         this.wrapped = wrapped;
+         this.height = height;
+         this.bubble = bubble;
       }
    }
 
@@ -2682,11 +2682,11 @@ public final class ScriptAiTab {
          return "Piece[" + "kind=" + this.kind + ", " + "text=" + this.text + ", " + "extra=" + this.extra + ", " + "lines=" + this.lines + "]";
       }
 
-      private Piece(int var1, String var2, String var3, int var4) {
-         this.kind = var1;
-         this.text = var2;
-         this.extra = var3;
-         this.lines = var4;
+      private Piece(int kind, String text, String extra, int lines) {
+         this.kind = kind;
+         this.text = text;
+         this.extra = extra;
+         this.lines = lines;
       }
    }
 }

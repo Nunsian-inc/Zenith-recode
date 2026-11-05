@@ -21,9 +21,9 @@ public class MixinEntityNameTag {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$hidePlayerNameTag(EntityRenderState var1, PoseStack var2, SubmitNodeCollector var3, CameraRenderState var4, int var5, CallbackInfo var6) {
-      if (var1 instanceof AvatarRenderState var7 && (EntityESPModule.INSTANCE.method568() || PetManager.method4557(var7.id))) {
-         var6.cancel();
+   private void zenith$hidePlayerNameTag(EntityRenderState entityRenderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int n, CallbackInfo callbackInfo) {
+      if (entityRenderState instanceof AvatarRenderState avatarRenderState && (EntityESPModule.INSTANCE.method568() || PetManager.method4557(avatarRenderState.id))) {
+         callbackInfo.cancel();
       }
    }
 }

@@ -78,8 +78,8 @@ public class GsonTypeByField<T> implements TypeAdapterFactory {
             String typex;
             try {
                typex = GsonTypeByField.this.discriminator.apply(it);
-            } catch (RuntimeException var5) {
-               return (T)this.fallback(it, var5);
+            } catch (RuntimeException e) {
+               return (T)this.fallback(it, e);
             }
 
             if (typex == null) {

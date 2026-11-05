@@ -16,32 +16,32 @@ public final class BotViaVersionProvider extends BaseVersionProvider {
    @Nullable
    private final VersionProvider delegate;
 
-   public BotViaVersionProvider(@Nullable VersionProvider var1) {
-      this.delegate = var1;
+   public BotViaVersionProvider(@Nullable VersionProvider delegate) {
+      this.delegate = delegate;
    }
 
-   public ProtocolVersion getClosestServerProtocol(UserConnection var1) throws Exception {
-      Integer var2 = var1.isClientSide() ? BotVia.targetProtocol(var1.getChannel()) : null;
-      if (var2 != null) {
-         ProtocolInfo var3 = Objects.requireNonNull(var1.getProtocolInfo());
-         if (!ProtocolVersion.isRegistered(var2)) {
-            LOGGER.warn("Bot ViaVersion: protocol {} is not registered, using native", var2);
-            return var3.protocolVersion();
+   public ProtocolVersion getClosestServerProtocol(UserConnection connection) throws Exception {
+      Integer targetProtocol = connection.isClientSide() ? BotVia.targetProtocol(connection.getChannel()) : null;
+      if (targetProtocol != null) {
+         ProtocolInfo nonNull = Objects.requireNonNull(connection.getProtocolInfo());
+         if (!ProtocolVersion.isRegistered(targetProtocol)) {
+            LOGGER.warn("Bot ViaVersion: protocol {} is not registered, using native", targetProtocol);
+            return nonNull.protocolVersion();
          } else {
-            ProtocolVersion var4 = ProtocolVersion.getProtocol(var2);
-            boolean var5 = var4.equals(var3.protocolVersion()) || Via.getManager().getProtocolManager().getProtocolPath(var3.protocolVersion(), var4) != null;
-            if (!var5) {
-               LOGGER.warn("Bot ViaVersion: no protocol path {} -> {}, using native", var3.protocolVersion(), var4);
-               return var3.protocolVersion();
+            ProtocolVersion protocol = ProtocolVersion.getProtocol(targetProtocol);
+            boolean flag = protocol.equals(nonNull.protocolVersion()) || Via.getManager().getProtocolManager().getProtocolPath(nonNull.protocolVersion(), protocol) != null;
+            if (!flag) {
+               LOGGER.warn("Bot ViaVersion: no protocol path {} -> {}, using native", nonNull.protocolVersion(), protocol);
+               return nonNull.protocolVersion();
             } else {
-               LOGGER.info("Bot ViaVersion: translating {} -> {}", var3.protocolVersion(), var4);
-               return var4;
+               LOGGER.info("Bot ViaVersion: translating {} -> {}", nonNull.protocolVersion(), protocol);
+               return protocol;
             }
          }
       } else if (this.delegate != null) {
-         return this.delegate.getClosestServerProtocol(var1);
+         return this.delegate.getClosestServerProtocol(connection);
       } else {
-         return var1.isClientSide() ? Objects.requireNonNull(var1.getProtocolInfo()).protocolVersion() : super.getClosestServerProtocol(var1);
+         return connection.isClientSide() ? Objects.requireNonNull(connection.getProtocolInfo()).protocolVersion() : super.getClosestServerProtocol(connection);
       }
    }
 }

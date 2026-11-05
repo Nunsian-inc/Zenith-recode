@@ -58,33 +58,33 @@ public final class CameraTweaksModule extends Module {
    }
 
    @EventTarget
-   public void method2927(KeyEvent var1) {
+   public void method2927(KeyEvent event) {
       if (mc.gui.screen() == null) {
-         if (var1.isPress(this.zoomSetting.getKeyCode())) {
+         if (event.isPress(this.zoomSetting.getKeyCode())) {
             this.floatValue = Math.min(this.floatValue3, (float)(mc.options.fov().get() - 20));
          }
 
-         if (var1.isRelease(this.zoomSetting.getKeyCode(), true)) {
+         if (event.isRelease(this.zoomSetting.getKeyCode(), true)) {
             this.floatValue3 = this.floatValue;
             this.floatValue = mc.options.fov().get().intValue();
          }
 
-         if (var1.isPress(this.freeLookSetting.getKeyCode())) {
+         if (event.isPress(this.freeLookSetting.getKeyCode())) {
             this.perspective = mc.options.getCameraType();
          }
       }
    }
 
    @EventTarget
-   public void method2928(MouseScrollEvent var1) {
+   public void method2928(MouseScrollEvent event) {
       if (UseItemUtils.method6521(this.zoomSetting)) {
-         this.floatValue = (int)Mth.clamp(this.floatValue - var1.getDoubleValue2() * 10.0, 10.0, (double)mc.options.fov().get().intValue());
-         var1.setCancelled(true);
+         this.floatValue = (int)Mth.clamp(this.floatValue - event.getDoubleValue2() * 10.0, 10.0, (double)mc.options.fov().get().intValue());
+         event.setCancelled(true);
       }
    }
 
    @EventTarget
-   public void method2929(FovEvent var1) {
+   public void method2929(FovEvent event) {
       if (UseItemUtils.method6521(this.freeLookSetting)) {
          if (mc.options.getCameraType().isFirstPerson()) {
             mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
@@ -95,52 +95,52 @@ public final class CameraTweaksModule extends Module {
       }
 
       if (this.zoomSetting.isVisible()) {
-         var1.setIntValue(
+         event.setIntValue(
             (int)Mth.clamp(
                (this.floatValue2 = MathUtils.method2660(1.6, this.floatValue2, this.floatValue)) + 1.0F,
                10.0F,
                (float)mc.options.fov().get().intValue()
             )
          );
-         var1.cancel();
+         event.cancel();
       }
    }
 
    @EventTarget
-   public void method2930(MouseRotationEvent var1) {
+   public void method2930(MouseRotationEvent event) {
       if (UseItemUtils.method6521(this.freeLookSetting)) {
-         Rotation var2 = this.rotation != null ? this.rotation : new Rotation(mc.player.getYRot(), mc.player.getXRot());
+         Rotation rotation = this.rotation != null ? this.rotation : new Rotation(mc.player.getYRot(), mc.player.getXRot());
          this.rotation = new Rotation(
-            (float)(var2.getFloatValue() + var1.getDoubleValue() * 0.15F),
-            (float)Mth.clamp(var2.getFloatValue2() + var1.getDoubleValue2() * 0.15F, -90.0, 90.0)
+            (float)(rotation.getFloatValue() + event.getDoubleValue() * 0.15F),
+            (float)Mth.clamp(rotation.getFloatValue2() + event.getDoubleValue2() * 0.15F, -90.0, 90.0)
          );
-         var1.setCancelled(true);
+         event.setCancelled(true);
       } else {
          this.rotation = null;
       }
    }
 
    @EventTarget
-   public void method2931(CameraUpdateEvent var1) {
-      var1.setFlag(this.multiSetting.method5227(1));
+   public void method2931(CameraUpdateEvent event) {
+      event.setFlag(this.multiSetting.method5227(1));
       if (this.multiSetting.method5227(2)) {
-         var1.setFloatValue(this.distanceSetting.getValue3());
+         event.setFloatValue(this.distanceSetting.getValue3());
       }
 
       if (this.rotation != null) {
-         var1.setRotation(this.rotation);
+         event.setRotation(this.rotation);
       }
 
       if (this.multiSetting.method5227(1) || this.multiSetting.method5227(2) || this.rotation != null) {
-         var1.cancel();
+         event.cancel();
       }
    }
 
    @EventTarget
-   public void method2932(ProjectionMatrixEvent var1) {
+   public void method2932(ProjectionMatrixEvent event) {
       if (this.multiSetting.method5227(0)) {
-         var1.setFloatValue(this.ratioSetting.getValue3());
-         var1.setCancelled(true);
+         event.setFloatValue(this.ratioSetting.getValue3());
+         event.setCancelled(true);
       }
    }
 }

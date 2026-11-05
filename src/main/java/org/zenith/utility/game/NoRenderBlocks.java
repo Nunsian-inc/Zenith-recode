@@ -19,44 +19,44 @@ public final class NoRenderBlocks {
    private NoRenderBlocks() {
    }
 
-   public static boolean method5237(BlockState var0, BlockPos var1) {
-      if (!enabled || var0 == null || var1 == null) {
+   public static boolean method5237(BlockState blockState, BlockPos pos) {
+      if (!enabled || blockState == null || pos == null) {
          return false;
-      } else if (!method5238(var0)) {
+      } else if (!method5238(blockState)) {
          return false;
       } else {
-         int var2 = var1.getY();
-         if (var0.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF) && var0.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
-            var2--;
+         int y = pos.getY();
+         if (blockState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF) && blockState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
+            y--;
          }
 
-         return method5239(var1.getX(), var2, var1.getZ()) < 0.5F;
+         return method5239(pos.getX(), y, pos.getZ()) < 0.5F;
       }
    }
 
-   private static boolean method5238(BlockState var0) {
-      return NoRenderBlocks.Entry.items.contains(var0.getBlock());
+   private static boolean method5238(BlockState blockState) {
+      return NoRenderBlocks.Entry.items.contains(blockState.getBlock());
    }
 
-   private static float method5239(int var0, int var1, int var2) {
-      long var3 = var0 * -7046029254386353131L ^ var1 * -4417276706812531889L ^ var2 * 1609587929392839161L;
-      var3 ^= var3 >>> 31;
-      var3 *= -4658895280553007687L;
-      var3 ^= var3 >>> 29;
-      return (float)(var3 >>> 40) / 1.6777216E7F;
+   private static float method5239(int x, int y, int z) {
+      long l = x * -7046029254386353131L ^ y * -4417276706812531889L ^ z * 1609587929392839161L;
+      l ^= l >>> 31;
+      l *= -4658895280553007687L;
+      l ^= l >>> 29;
+      return (float)(l >>> 40) / 1.6777216E7F;
    }
 
    private static final class Entry {
       private static final Set<Block> items = build();
 
       private static Set<Block> build() {
-         ReferenceOpenHashSet var0 = new ReferenceOpenHashSet();
+         ReferenceOpenHashSet referenceOpenHashSet = new ReferenceOpenHashSet();
 
-         for (String var4 : NoRenderBlocks.texts) {
-            BuiltInRegistries.BLOCK.getOptional(Identifier.withDefaultNamespace(var4)).ifPresent(var0::add);
+         for (String text : NoRenderBlocks.texts) {
+            BuiltInRegistries.BLOCK.getOptional(Identifier.withDefaultNamespace(text)).ifPresent(referenceOpenHashSet::add);
          }
 
-         return var0;
+         return referenceOpenHashSet;
       }
    }
 }

@@ -114,11 +114,11 @@ public final class AncientFarmModule extends Module {
    private final SliderSetting tolerance = new SliderSetting("module.ancientFarm.tolerance", 12.0F, 3.0F, 40.0F, 1.0F, "module.ancientFarm.tolerance.desc", "°");
    private final BooleanSetting render = new BooleanSetting("module.ancientFarm.render", "module.ancientFarm.render.desc", true);
    private final BooleanSetting debug = new BooleanSetting("module.ancientFarm.debug", "module.ancientFarm.debug.desc", false, Zenith::method1502);
-   private static final Predicate<ItemStack> predicate = var0 -> Util10.method2177(var0) && method4258(var0) > 0.05;
-   private final ExecutorService executorService = Executors.newSingleThreadExecutor(var0 -> {
-      Thread var1 = new Thread(var0, "Zenith-AncientFarm");
-      var1.setDaemon(true);
-      return var1;
+   private static final Predicate<ItemStack> predicate = mainHandItem -> Util10.method2177(mainHandItem) && method4258(mainHandItem) > 0.05;
+   private final ExecutorService executorService = Executors.newSingleThreadExecutor(task -> {
+      Thread thread = new Thread(task, "Zenith-AncientFarm");
+      thread.setDaemon(true);
+      return thread;
    });
    private final Set<BlockPos> items = new LinkedHashSet<>();
    private final Set<BlockPos> items2 = new HashSet<>();
@@ -205,15 +205,15 @@ public final class AncientFarmModule extends Module {
    }
 
    @EventTarget
-   public void method4220(Event5 var1) {
+   public void method4220(Event5 event) {
       if (mc.player != null && mc.level != null) {
-         Vec3 var2 = this.vec3d != null ? this.vec3d : this.vec3d2;
-         if (var2 != null) {
-            Rotation var3 = RotationUtils.method6912(var2.subtract(mc.player.getEyePosition()));
-            float var4 = this.method4221();
-            Rotation var5 = new Rotation(var3.getFloatValue() + var4 / 2.0F, Mth.clamp(var3.getFloatValue2() + var4 / 4.0F, -90.0F, 90.0F));
+         Vec3 vec3d = this.vec3d != null ? this.vec3d : this.vec3d2;
+         if (vec3d != null) {
+            Rotation rotation = RotationUtils.method6912(vec3d.subtract(mc.player.getEyePosition()));
+            float f = this.method4221();
+            Rotation rotation2 = new Rotation(rotation.getFloatValue() + f / 2.0F, Mth.clamp(rotation.getFloatValue2() + f / 4.0F, -90.0F, 90.0F));
             rotationManager.method7849(
-               new RotationRequest(var5, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig3(), var5), bcCameraTestnerv.getRotationConfig3()),
+               new RotationRequest(rotation2, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig3(), rotation2), bcCameraTestnerv.getRotationConfig3()),
                7,
                this
             );
@@ -222,24 +222,24 @@ public final class AncientFarmModule extends Module {
    }
 
    private float method4221() {
-      float var1;
+      float f;
       return (float)(
          (
-               Math.sin((var1 = mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) * 0.31F) * 0.5
-                  + Math.sin(var1 * 0.73F + 1.1F) * 0.3
-                  + Math.sin(var1 * 1.7F + 2.6F) * 0.2
+               Math.sin((f = mc.player.tickCount + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) * 0.31F) * 0.5
+                  + Math.sin(f * 0.73F + 1.1F) * 0.3
+                  + Math.sin(f * 1.7F + 2.6F) * 0.2
             )
             * 8.0
       );
    }
 
-   private boolean method4222(Vec3 var1) {
-      Rotation var2 = RotationUtils.method6912(var1.subtract(mc.player.getEyePosition()));
-      return rotationManager.method7844().method3134(var2, this.tolerance.getValue3());
+   private boolean method4222(Vec3 vec3d2) {
+      Rotation rotation = RotationUtils.method6912(vec3d2.subtract(mc.player.getEyePosition()));
+      return rotationManager.method7844().method3134(rotation, this.tolerance.getValue3());
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null && mc.gameMode != null) {
          this.blockPos = null;
          this.vec3d2 = null;
@@ -247,8 +247,8 @@ public final class AncientFarmModule extends Module {
          this.method4231();
          this.method4233();
          this.method4232();
-         AncientFarmModule.Type3 var2 = this.method4260();
-         if (var2 == null || var2 == AncientFarmModule.Type3.TNT && this.type2 != AncientFarmModule.Type2.SEARCH) {
+         AncientFarmModule.Type3 type3 = this.method4260();
+         if (type3 == null || type3 == AncientFarmModule.Type3.TNT && this.type2 != AncientFarmModule.Type2.SEARCH) {
             this.method4239();
             this.method4238();
             this.flag3 = true;
@@ -272,7 +272,7 @@ public final class AncientFarmModule extends Module {
             }
          } else {
             if (this.stopWatch5.method7544(10000L)) {
-               ChatLogger.method2019("AncientFarm: " + var2.description());
+               ChatLogger.method2019("AncientFarm: " + type3.description());
             }
 
             this.setToggled(false);
@@ -289,20 +289,20 @@ public final class AncientFarmModule extends Module {
          this.method4236();
          if (!this.flag && mc.player.tickCount > 20) {
             this.flag = true;
-            ClientLevel var7 = mc.level;
+            ClientLevel level = mc.level;
             this.executorService.execute(() -> {});
          }
       } else {
-         BlockPos var1 = BlockPos.containing(this.box.getCenter());
-         BlockPos var2 = this.method4255(var1);
-         Vec3 var3 = Vec3.atCenterOf(var2 != null ? var2 : var1);
-         double var4;
-         boolean var6 = (var4 = Math.sqrt(mc.player.position().distanceToSqr(var3))) <= 25.0;
-         if (!(var4 <= 5.0) && (!var6 || this.stuckTicks < 24)) {
+         BlockPos containing = BlockPos.containing(this.box.getCenter());
+         BlockPos pos = this.method4255(containing);
+         Vec3 atCenterOf = Vec3.atCenterOf(pos != null ? pos : containing);
+         double d;
+         boolean flag = (d = Math.sqrt(mc.player.position().distanceToSqr(atCenterOf))) <= 25.0;
+         if (!(d <= 5.0) && (!flag || this.stuckTicks < 24)) {
             if (mc.player.tickCount % 40 == 0) {
                this.method4259(
                   "к территории %.1f бл | полёт %s | земля %s | ввод F%s B%s L%s R%s | v=%.2f",
-                  var4,
+                  d,
                   mc.player.getAbilities().flying ? "да" : "НЕТ",
                   mc.player.onGround() ? "да" : "нет",
                   this.flag4 ? "+" : "-",
@@ -313,124 +313,124 @@ public final class AncientFarmModule extends Module {
                );
             }
 
-            this.method4235(var3);
+            this.method4235(atCenterOf);
          } else {
             this.stuckTicks = 0;
             this.vec3d3 = null;
             this.intValue = 0;
-            this.method4259("прилетели к территории, дистанция %.1f", var4);
+            this.method4259("прилетели к территории, дистанция %.1f", d);
             this.type2 = AncientFarmModule.Type2.TNT;
          }
       }
    }
 
    private void method4224() {
-      double var1 = mc.player.blockInteractionRange();
-      List<PrimedTnt> var3 = this.method4250(10.0);
-      boolean var4 = var3.stream().anyMatch(var0 -> var0.getFuse() <= 45);
-      BlockPos var5 = java.util.stream.StreamSupport.stream(BlockPos.withinManhattan(mc.player.blockPosition(), (int)var1).spliterator(), false)
-         .filter(var0 -> mc.level.getBlockState(var0).is(Blocks.TNT))
+      double blockInteractionRange = mc.player.blockInteractionRange();
+      List<PrimedTnt> primedTnts = this.method4250(10.0);
+      boolean anyMatch = primedTnts.stream().anyMatch(primedTnt -> primedTnt.getFuse() <= 45);
+      BlockPos blockPos = java.util.stream.StreamSupport.stream(BlockPos.withinManhattan(mc.player.blockPosition(), (int)blockInteractionRange).spliterator(), false)
+         .filter(pos -> mc.level.getBlockState(pos).is(Blocks.TNT))
          .map(BlockPos::immutable)
          .findFirst()
          .orElse(null);
-      if (var5 == null && (this.intValue >= this.tntPerRun.getValue3() || var4)) {
-         if (var3.isEmpty()) {
+      if (blockPos == null && (this.intValue >= this.tntPerRun.getValue3() || anyMatch)) {
+         if (primedTnts.isEmpty()) {
             this.intValue = 0;
             this.box = null;
             this.type2 = AncientFarmModule.Type2.SEARCH;
          } else {
             this.type2 = AncientFarmModule.Type2.RETREAT;
          }
-      } else if (var4 && var5 != null) {
+      } else if (anyMatch && blockPos != null) {
          this.type2 = AncientFarmModule.Type2.RETREAT;
-      } else if (var5 != null && this.intValue >= this.tntPerRun.getValue3()) {
-         this.method4225(var5, var1);
+      } else if (blockPos != null && this.intValue >= this.tntPerRun.getValue3()) {
+         this.method4225(blockPos, blockInteractionRange);
       } else {
-         this.method4226(var1);
+         this.method4226(blockInteractionRange);
       }
    }
 
-   private void method4225(BlockPos var1, double var2) {
-      this.blockPos = var1;
-      Vec3 var4 = mc.player.getEyePosition();
-      Vec3 var5 = Vec3.atCenterOf(var1);
-      Direction var6 = null;
-      Vec3 var7 = null;
-      double var8 = Double.MAX_VALUE;
+   private void method4225(BlockPos blockPos, double blockInteractionRange) {
+      this.blockPos = blockPos;
+      Vec3 eyePosition = mc.player.getEyePosition();
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos);
+      Direction direction = null;
+      Vec3 vec = null;
+      double d = Double.MAX_VALUE;
 
-      for (Direction var13 : Direction.values()) {
-         Vec3 var14 = var5.add(var13.getStepX() * 0.45, var13.getStepY() * 0.45, var13.getStepZ() * 0.45);
-         if (!(var4.distanceTo(var14) > var2)) {
-            BlockHitResult var15 = mc.level.clip(new ClipContext(var4, var14, Block.COLLIDER, Fluid.NONE, mc.player));
-            double var16;
-            if (var15.getType() == HitResult.Type.BLOCK && var15.getBlockPos().equals(var1) && (var16 = var4.distanceToSqr(var14)) < var8) {
-               var8 = var16;
-               var7 = var14;
-               var6 = var13;
+      for (Direction direction2 : Direction.values()) {
+         Vec3 vec2 = atCenterOf.add(direction2.getStepX() * 0.45, direction2.getStepY() * 0.45, direction2.getStepZ() * 0.45);
+         if (!(eyePosition.distanceTo(vec2) > blockInteractionRange)) {
+            BlockHitResult clip = mc.level.clip(new ClipContext(eyePosition, vec2, Block.COLLIDER, Fluid.NONE, mc.player));
+            double d2;
+            if (clip.getType() == HitResult.Type.BLOCK && clip.getBlockPos().equals(blockPos) && (d2 = eyePosition.distanceToSqr(vec2)) < d) {
+               d = d2;
+               vec = vec2;
+               direction = direction2;
             }
          }
       }
 
-      if (var7 == null) {
-         this.method4235(this.method4254(var1));
+      if (vec == null) {
+         this.method4235(this.method4254(blockPos));
       } else {
          this.method4238();
          this.vec3d = null;
-         this.vec3d2 = var7;
-         if (this.method4256(var0 -> var0.is(Items.FLINT_AND_STEEL))) {
-            if (this.method4222(var7) && this.stopWatch3.method7544(250L)) {
-               UseItemUtils.method6514(new BlockHitResult(var7, var6, var1, false), InteractionHand.MAIN_HAND);
+         this.vec3d2 = vec;
+         if (this.method4256(stack -> stack.is(Items.FLINT_AND_STEEL))) {
+            if (this.method4222(vec) && this.stopWatch3.method7544(250L)) {
+               UseItemUtils.method6514(new BlockHitResult(vec, direction, blockPos, false), InteractionHand.MAIN_HAND);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
             }
          }
       }
    }
 
-   private void method4226(double var1) {
-      Vec3 var3 = mc.player.getEyePosition();
-      BlockPos var4 = java.util.stream.StreamSupport.stream(BlockPos.withinManhattan(mc.player.blockPosition(), (int)var1).spliterator(), false)
-         .filter(var0 -> mc.level.getBlockState(var0).canBeReplaced())
+   private void method4226(double blockInteractionRange) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      BlockPos blockPos = java.util.stream.StreamSupport.stream(BlockPos.withinManhattan(mc.player.blockPosition(), (int)blockInteractionRange).spliterator(), false)
+         .filter(pos -> mc.level.getBlockState(pos).canBeReplaced())
          .filter(var1x -> this.method4251(var1x.below()))
-         .filter(var0 -> !mc.player.getBoundingBox().expandTowards(mc.player.getDeltaMovement()).inflate(0.1).intersects(new AABB(var0)))
-         .filter(var4x -> this.method4252(var4x, var3, var1))
+         .filter(pos -> !mc.player.getBoundingBox().expandTowards(mc.player.getDeltaMovement()).inflate(0.1).intersects(new AABB(pos)))
+         .filter(var4x -> this.method4252(var4x, eyePosition, blockInteractionRange))
          .map(BlockPos::immutable)
-         .min(Comparator.comparingDouble(var1x -> var3.distanceToSqr(Vec3.atCenterOf(var1x))))
+         .min(Comparator.comparingDouble(var1x -> eyePosition.distanceToSqr(Vec3.atCenterOf(var1x))))
          .orElse(null);
-      if (var4 == null) {
-         Vec3 var19 = mc.player.position();
-         BlockPos var20 = null;
-         double var7 = Double.MAX_VALUE;
+      if (blockPos == null) {
+         Vec3 position = mc.player.position();
+         BlockPos immutable = null;
+         double d = Double.MAX_VALUE;
 
-         for (BlockPos var10 : BlockPos.withinManhattan(mc.player.blockPosition(), 16)) {
-            if (this.method4251(var10)) {
-               double var11 = var10.getX() + 0.5 - var19.x;
-               double var13 = var10.getY() + 0.5 - var19.y;
-               double var15 = var10.getZ() + 0.5 - var19.z;
-               double var17;
-               if ((var17 = var11 * var11 + var13 * var13 + var15 * var15) < var7) {
-                  var7 = var17;
-                  var20 = var10.immutable();
+         for (BlockPos below : BlockPos.withinManhattan(mc.player.blockPosition(), 16)) {
+            if (this.method4251(below)) {
+               double d2 = below.getX() + 0.5 - position.x;
+               double d3 = below.getY() + 0.5 - position.y;
+               double d4 = below.getZ() + 0.5 - position.z;
+               double d5;
+               if ((d5 = d2 * d2 + d3 * d3 + d4 * d4) < d) {
+                  d = d5;
+                  immutable = below.immutable();
                }
             }
          }
 
-         if (var20 != null && this.stuckTicks < 24) {
-            this.method4235(Vec3.atCenterOf(var20.above(2)));
+         if (immutable != null && this.stuckTicks < 24) {
+            this.method4235(Vec3.atCenterOf(immutable.above(2)));
          } else {
             this.box = null;
             this.intValue = 0;
             this.type2 = AncientFarmModule.Type2.SEARCH;
          }
       } else {
-         this.blockPos = var4;
-         BlockPos var5 = var4.below();
-         Vec3 var6 = new Vec3(var5.getX() + 0.5, var5.getY() + 1, var5.getZ() + 0.5);
+         this.blockPos = blockPos;
+         BlockPos below = blockPos.below();
+         Vec3 vec = new Vec3(below.getX() + 0.5, below.getY() + 1, below.getZ() + 0.5);
          this.method4238();
          this.vec3d = null;
-         this.vec3d2 = var6;
-         if (this.method4256(var0 -> var0.is(Items.TNT))) {
-            if (this.method4222(var6) && this.stopWatch3.method7544(250L)) {
-               UseItemUtils.method6514(new BlockHitResult(var6, Direction.UP, var5, false), InteractionHand.MAIN_HAND);
+         this.vec3d2 = vec;
+         if (this.method4256(stack -> stack.is(Items.TNT))) {
+            if (this.method4222(vec) && this.stopWatch3.method7544(250L)) {
+               UseItemUtils.method6514(new BlockHitResult(vec, Direction.UP, below, false), InteractionHand.MAIN_HAND);
                org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
                this.intValue++;
                this.intValue2++;
@@ -440,8 +440,8 @@ public final class AncientFarmModule extends Module {
    }
 
    private void method4227() {
-      List<PrimedTnt> var1 = this.method4250(34.0);
-      if (var1.isEmpty()) {
+      List<PrimedTnt> primedTnts = this.method4250(34.0);
+      if (primedTnts.isEmpty()) {
          this.method4259("заряд %d/%d отработал", this.intValue2, (int)this.blastsPerArea.getValue3());
          this.method4238();
          this.vec3d = null;
@@ -449,18 +449,18 @@ public final class AncientFarmModule extends Module {
          this.entry22.method4263();
          this.type2 = AncientFarmModule.Type2.MINE;
       } else {
-         Vec3 var2 = Vec3.ZERO;
+         Vec3 vec = Vec3.ZERO;
 
-         for (PrimedTnt var4 : var1) {
-            var2 = var2.add(mc.player.position().subtract(var4.position()));
+         for (PrimedTnt primedTnt : primedTnts) {
+            vec = vec.add(mc.player.position().subtract(primedTnt.position()));
          }
 
-         if (var2.lengthSqr() < 1.0E-4) {
-            var2 = new Vec3(1.0, 0.0, 0.0);
+         if (vec.lengthSqr() < 1.0E-4) {
+            vec = new Vec3(1.0, 0.0, 0.0);
          }
 
-         Vec3 var5 = var2.normalize();
-         this.method4235(mc.player.position().add(var5.x * 26.0, 6.0, var5.z * 26.0));
+         Vec3 vec2 = vec.normalize();
+         this.method4235(mc.player.position().add(vec2.x * 26.0, 6.0, vec2.z * 26.0));
       }
    }
 
@@ -469,11 +469,11 @@ public final class AncientFarmModule extends Module {
       if (!this.entry22.method4265(30L, 25L)) {
          this.method4236();
       } else {
-         BlockPos var1 = this.items
+         BlockPos blockPos2 = this.items
             .stream()
-            .min(Comparator.comparingDouble(var0 -> mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(var0))))
+            .min(Comparator.comparingDouble(pos -> mc.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(pos))))
             .orElse(null);
-         if (var1 == null) {
+         if (blockPos2 == null) {
             this.method4238();
             this.vec3d = null;
             this.blockPos2 = null;
@@ -487,28 +487,28 @@ public final class AncientFarmModule extends Module {
                this.type2 = AncientFarmModule.Type2.SEARCH;
             }
          } else {
-            if (!var1.equals(this.blockPos2)) {
-               this.blockPos2 = var1;
+            if (!blockPos2.equals(this.blockPos2)) {
+               this.blockPos2 = blockPos2;
                this.stopWatch2.reset();
             } else if (this.stopWatch2.method7546(9000L)) {
-               this.items2.add(var1);
-               this.items.remove(var1);
+               this.items2.add(blockPos2);
+               this.items.remove(blockPos2);
                this.blockPos2 = null;
                return;
             }
 
-            this.blockPos = var1;
-            double var2 = mc.player.blockInteractionRange();
-            BlockHitResult var4 = this.method4253(var1, var2);
-            if (var4 == null) {
-               this.method4235(this.method4254(var1));
+            this.blockPos = blockPos2;
+            double blockInteractionRange = mc.player.blockInteractionRange();
+            BlockHitResult blockHitResult = this.method4253(blockPos2, blockInteractionRange);
+            if (blockHitResult == null) {
+               this.method4235(this.method4254(blockPos2));
             } else {
                this.method4238();
                this.vec3d = null;
-               this.vec3d2 = var4.getLocation();
+               this.vec3d2 = blockHitResult.getLocation();
                if (this.method4256(predicate)) {
                   if (this.method4222(this.vec3d2)) {
-                     mc.gameMode.continueDestroyBlock(var1, var4.getDirection());
+                     mc.gameMode.continueDestroyBlock(blockPos2, blockHitResult.getDirection());
                      org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
                   }
                }
@@ -517,60 +517,60 @@ public final class AncientFarmModule extends Module {
       }
    }
 
-   private AABB method4229(ClientLevel var1) {
-      int var2 = (int)((Math.sqrt(var1.getChunkSource().getLoadedChunksCount()) - 1.0) / 2.0) * 16;
-      BlockPos var3 = mc.player.blockPosition();
-      WorldBorder var4 = var1.getWorldBorder();
-      boolean var5 = this.searchMode.method2101("module.ancientFarm.searchMode.top");
-      double var6 = this.rangeWeight.getValue3() / 100.0;
-      int var8 = var5 ? 90 : 20;
-      int var9 = var5 ? 118 : 60;
-      AABB var10 = null;
-      double var11 = -1.0;
-      double var13 = 0.0;
-      MutableBlockPos var15 = new MutableBlockPos();
+   private AABB method4229(ClientLevel level) {
+      int n = (int)((Math.sqrt(level.getChunkSource().getLoadedChunksCount()) - 1.0) / 2.0) * 16;
+      BlockPos blockPosition = mc.player.blockPosition();
+      WorldBorder worldBorder = level.getWorldBorder();
+      boolean flag = this.searchMode.method2101("module.ancientFarm.searchMode.top");
+      double d = this.rangeWeight.getValue3() / 100.0;
+      int n2 = flag ? 90 : 20;
+      int n3 = flag ? 118 : 60;
+      AABB aabb = null;
+      double d2 = -1.0;
+      double d3 = 0.0;
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (int var16 = var3.getX() - var2; var16 <= var3.getX() + var2; var16 += 8) {
-         for (int var17 = var3.getZ() - var2; var17 <= var3.getZ() + var2; var17 += 8) {
-            if (var1.hasChunk(var16 >> 4, var17 >> 4) && var4.isWithinBounds(var16 - 20, var17 - 20) && var4.isWithinBounds(var16 + 20, var17 + 20)) {
-               for (int var18 = var8; var18 <= var9; var18 += 8) {
-                  int var19 = 0;
-                  int var20 = 0;
-                  boolean var21 = false;
+      for (int i = blockPosition.getX() - n; i <= blockPosition.getX() + n; i += 8) {
+         for (int j = blockPosition.getZ() - n; j <= blockPosition.getZ() + n; j += 8) {
+            if (level.hasChunk(i >> 4, j >> 4) && worldBorder.isWithinBounds(i - 20, j - 20) && worldBorder.isWithinBounds(i + 20, j + 20)) {
+               for (int k = n2; k <= n3; k += 8) {
+                  int n4 = 0;
+                  int n5 = 0;
+                  boolean flag2 = false;
 
-                  for (byte var22 = -20; var22 <= 20 && !var21; var22 += 4) {
-                     for (byte var23 = -20; var23 <= 20 && !var21; var23 += 4) {
-                        for (byte var24 = -20; var24 <= 20; var24 += 4) {
-                           var15.set(var16 + var22, var18 + var23, var17 + var24);
-                           Holder var25 = var1.getBiome(var15);
-                           if (var25.is(Biomes.BASALT_DELTAS) || var25.is(Biomes.WARPED_FOREST)) {
-                              var21 = true;
+                  for (byte m = -20; m <= 20 && !flag2; m += 4) {
+                     for (byte b = -20; b <= 20 && !flag2; b += 4) {
+                        for (byte i2 = -20; i2 <= 20; i2 += 4) {
+                           mutablePos.set(i + m, k + b, j + i2);
+                           Holder biome = level.getBiome(mutablePos);
+                           if (biome.is(Biomes.BASALT_DELTAS) || biome.is(Biomes.WARPED_FOREST)) {
+                              flag2 = true;
                               break;
                            }
 
-                           var20++;
-                           BlockState var26 = var1.getBlockState(var15);
-                           if (!var26.isAir() && var26.getFluidState().isEmpty()) {
-                              var19++;
+                           n5++;
+                           BlockState blockState = level.getBlockState(mutablePos);
+                           if (!blockState.isAir() && blockState.getFluidState().isEmpty()) {
+                              n4++;
                            }
                         }
                      }
                   }
 
-                  if (!var21 && var20 != 0) {
-                     double var34 = (double)var19 / var20;
-                     double var35 = Math.sqrt(var3.distToLowCornerSqr(var16, var18, var17));
-                     double var36 = var2 > 0 ? Math.min(1.0, var35 / var2) * var6 : 0.0;
-                     double var28;
-                     if (!((var28 = var34 - var36) <= var11)) {
-                        BlockPos var30 = java.util.stream.StreamSupport.stream(BlockPos.withinManhattan(new BlockPos(var16, var18, var17), 20).spliterator(), false).filter(var1x -> {
-                           BlockState var2x = var1.getBlockState(var1x);
+                  if (!flag2 && n5 != 0) {
+                     double d4 = (double)n4 / n5;
+                     double d5 = Math.sqrt(blockPosition.distToLowCornerSqr(i, k, j));
+                     double d6 = n > 0 ? Math.min(1.0, d5 / n) * d : 0.0;
+                     double d7;
+                     if (!((d7 = d4 - d6) <= d2)) {
+                        BlockPos pos = java.util.stream.StreamSupport.stream(BlockPos.withinManhattan(new BlockPos(i, k, j), 20).spliterator(), false).filter(var1x -> {
+                           BlockState var2x = level.getBlockState(var1x);
                            return !var2x.isAir() && var2x.getFluidState().isEmpty();
                         }).map(BlockPos::immutable).findFirst().orElse(null);
-                        if (var30 != null) {
-                           var11 = var28;
-                           var13 = var34;
-                           var10 = new AABB(var30.getX() - 20, var30.getY() - 20, var30.getZ() - 20, var30.getX() + 20, var30.getY() + 20, var30.getZ() + 20);
+                        if (pos != null) {
+                           d2 = d7;
+                           d3 = d4;
+                           aabb = new AABB(pos.getX() - 20, pos.getY() - 20, pos.getZ() - 20, pos.getX() + 20, pos.getY() + 20, pos.getZ() + 20);
                         }
                      }
                   }
@@ -579,22 +579,22 @@ public final class AncientFarmModule extends Module {
          }
       }
 
-      if (var10 != null && !var10.equals(this.box2)) {
-         this.box2 = var10;
-         long var31 = Math.round(var13 * 100.0);
-         long var32 = Math.round(Math.sqrt(var3.distToCenterSqr(var10.getCenter())));
-         String var33 = "AncientFarm: нашли территорию, плотность " + var31 + "%, до неё " + var32 + " бл";
-         mc.execute(() -> ChatLogger.method2019(var33));
+      if (aabb != null && !aabb.equals(this.box2)) {
+         this.box2 = aabb;
+         long l = Math.round(d3 * 100.0);
+         long l2 = Math.round(Math.sqrt(blockPosition.distToCenterSqr(aabb.getCenter())));
+         String status = "AncientFarm: нашли территорию, плотность " + l + "%, до неё " + l2 + " бл";
+         mc.execute(() -> ChatLogger.method2019(status));
       }
 
-      return var10;
+      return aabb;
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100()) {
-         if (var1.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket var4) {
-            var4.runUpdates((var1x, var2x) -> {
+   public void onPacket(PacketEvent event) {
+      if (event.method7100()) {
+         if (event.getPacket3() instanceof ClientboundSectionBlocksUpdatePacket blocksUpdatePacket) {
+            blocksUpdatePacket.runUpdates((var1x, var2x) -> {
                if (var2x.is(Blocks.ANCIENT_DEBRIS)) {
                   this.concurrentLinkedQueue.add(var1x.immutable());
                } else {
@@ -602,11 +602,11 @@ public final class AncientFarmModule extends Module {
                }
             });
          } else {
-            if (var1.getPacket3() instanceof ClientboundBlockUpdatePacket var2) {
-               if (var2.getBlockState().is(Blocks.ANCIENT_DEBRIS)) {
-                  this.concurrentLinkedQueue.add(var2.getPos().immutable());
+            if (event.getPacket3() instanceof ClientboundBlockUpdatePacket blockUpdatePacket) {
+               if (blockUpdatePacket.getBlockState().is(Blocks.ANCIENT_DEBRIS)) {
+                  this.concurrentLinkedQueue.add(blockUpdatePacket.getPos().immutable());
                } else {
-                  this.concurrentLinkedQueue2.add(var2.getPos().immutable());
+                  this.concurrentLinkedQueue2.add(blockUpdatePacket.getPos().immutable());
                }
             }
          }
@@ -614,13 +614,13 @@ public final class AncientFarmModule extends Module {
    }
 
    private void method4230() {
-      BlockPos var1;
-      while ((var1 = this.concurrentLinkedQueue2.poll()) != null) {
-         this.items.remove(var1);
+      BlockPos pos;
+      while ((pos = this.concurrentLinkedQueue2.poll()) != null) {
+         this.items.remove(pos);
       }
 
-      while ((var1 = this.concurrentLinkedQueue.poll()) != null) {
-         if (!this.items2.contains(var1) && this.items.add(var1)) {
+      while ((pos = this.concurrentLinkedQueue.poll()) != null) {
+         if (!this.items2.contains(pos) && this.items.add(pos)) {
             this.flag2 = true;
             this.entry2.method4263();
          }
@@ -630,9 +630,9 @@ public final class AncientFarmModule extends Module {
    private void method4231() {
       this.items
          .removeIf(
-            var0 -> mc.level.getBlockState(var0).isAir()
-               || var0.distToCenterSqr(mc.player.position()) >= 6400.0
-               || !mc.level.hasChunk(var0.getX() >> 4, var0.getZ() >> 4)
+            pos -> mc.level.getBlockState(pos).isAir()
+               || pos.distToCenterSqr(mc.player.position()) >= 6400.0
+               || !mc.level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)
          );
    }
 
@@ -647,37 +647,37 @@ public final class AncientFarmModule extends Module {
 
    private void method4233() {
       if (this.stopWatch.method7544(500L)) {
-         int var1 = (int)this.scanRadius.getValue3();
-         BlockPos var2 = this.box != null && this.type2 != AncientFarmModule.Type2.SEARCH ? BlockPos.containing(this.box.getCenter()) : mc.player.blockPosition();
-         MutableBlockPos var3 = new MutableBlockPos();
-         int var4 = Math.max(var2.getY() - var1, mc.level.getMinY());
-         int var5 = Math.min(var2.getY() + var1, mc.level.getMaxY());
+         int n = (int)this.scanRadius.getValue3();
+         BlockPos containing = this.box != null && this.type2 != AncientFarmModule.Type2.SEARCH ? BlockPos.containing(this.box.getCenter()) : mc.player.blockPosition();
+         MutableBlockPos mutablePos = new MutableBlockPos();
+         int n2 = Math.max(containing.getY() - n, mc.level.getMinY());
+         int n3 = Math.min(containing.getY() + n, mc.level.getMaxY());
 
-         for (int var6 = -var1; var6 <= var1; var6++) {
-            for (int var7 = -var1; var7 <= var1; var7++) {
-               int var8 = var2.getX() + var6;
-               int var9 = var2.getZ() + var7;
-               if (mc.level.hasChunk(var8 >> 4, var9 >> 4)) {
-                  LevelChunk var10 = mc.level.getChunk(var8 >> 4, var9 >> 4);
-                  int var11 = -32768 << 16 | 0;
+         for (int i = -n; i <= n; i++) {
+            for (int j = -n; j <= n; j++) {
+               int x = containing.getX() + i;
+               int z = containing.getZ() + j;
+               if (mc.level.hasChunk(x >> 4, z >> 4)) {
+                  LevelChunk chunk = mc.level.getChunk(x >> 4, z >> 4);
+                  int n4 = -32768 << 16 | 0;
 
-                  for (int var12 = var4; var12 <= var5; var12++) {
-                     if (var12 > var11) {
-                        var11 = (var12 & -16) + 15;
-                        int var13;
-                        LevelChunkSection var14 = (var13 = var10.getSectionIndex(var12)) >= 0 && var13 < var10.getSections().length
-                           ? var10.getSection(var13)
+                  for (int k = n2; k <= n3; k++) {
+                     if (k > n4) {
+                        n4 = (k & -16) + 15;
+                        int sectionIndex;
+                        LevelChunkSection section = (sectionIndex = chunk.getSectionIndex(k)) >= 0 && sectionIndex < chunk.getSections().length
+                           ? chunk.getSection(sectionIndex)
                            : null;
-                        if (var14 != null && (var14.hasOnlyAir() || !var14.maybeHas(var0 -> var0.is(Blocks.ANCIENT_DEBRIS)))) {
-                           var12 = var11;
+                        if (section != null && (section.hasOnlyAir() || !section.maybeHas(blockState -> blockState.is(Blocks.ANCIENT_DEBRIS)))) {
+                           k = n4;
                            continue;
                         }
                      }
 
-                     var3.set(var8, var12, var9);
-                     if (mc.level.getBlockState(var3).is(Blocks.ANCIENT_DEBRIS)) {
-                        BlockPos var15 = var3.immutable();
-                        if (!this.items2.contains(var15) && this.method4234(var15) && this.items.add(var15)) {
+                     mutablePos.set(x, k, z);
+                     if (mc.level.getBlockState(mutablePos).is(Blocks.ANCIENT_DEBRIS)) {
+                        BlockPos immutable = mutablePos.immutable();
+                        if (!this.items2.contains(immutable) && this.method4234(immutable) && this.items.add(immutable)) {
                            this.flag2 = true;
                            this.entry2.method4263();
                         }
@@ -689,11 +689,11 @@ public final class AncientFarmModule extends Module {
       }
    }
 
-   private boolean method4234(BlockPos var1) {
-      for (Direction var5 : Direction.values()) {
-         BlockPos var6 = var1.relative(var5);
-         BlockState var7 = mc.level.getBlockState(var6);
-         if (var7.isAir() || !var7.getFluidState().isEmpty() || !this.method4251(var6)) {
+   private boolean method4234(BlockPos immutable) {
+      for (Direction direction : Direction.values()) {
+         BlockPos relative = immutable.relative(direction);
+         BlockState blockState = mc.level.getBlockState(relative);
+         if (blockState.isAir() || !blockState.getFluidState().isEmpty() || !this.method4251(relative)) {
             return true;
          }
       }
@@ -702,33 +702,33 @@ public final class AncientFarmModule extends Module {
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (mc.player != null && this.flag3) {
-         var1.setPlayerInput(new Input(this.flag4, this.flag5, this.flag6, this.flag7, this.flag8, this.flag9, this.flag10));
+         event.setPlayerInput(new Input(this.flag4, this.flag5, this.flag6, this.flag7, this.flag8, this.flag9, this.flag10));
       }
    }
 
-   private void method4235(Vec3 var1) {
-      this.vec3d = var1;
-      Vec3 var2 = this.vec3d4 != null ? this.vec3d4 : var1;
+   private void method4235(Vec3 vec3d) {
+      this.vec3d = vec3d;
+      Vec3 vec3d4 = this.vec3d4 != null ? this.vec3d4 : vec3d;
       this.flag3 = true;
-      double var3 = var2.x - mc.player.getX();
-      double var5 = var2.z - mc.player.getZ();
-      double var7;
-      if ((var7 = Math.sqrt(var3 * var3 + var5 * var5)) > 0.75) {
-         float var10 = Mth.wrapDegrees((float)Math.toDegrees(Math.atan2(var5, var3)) - 90.0F - mc.player.getYRot());
-         this.flag4 = var10 > -67.5F && var10 < 67.5F;
-         this.flag5 = var10 > 112.5F || var10 < -112.5F;
-         this.flag6 = var10 < -22.5F && var10 > -157.5F;
-         this.flag7 = var10 > 22.5F && var10 < 157.5F;
-         this.flag10 = var7 > 6.0 && var10 > -30.0F && var10 < 30.0F;
+      double x = vec3d4.x - mc.player.getX();
+      double y = vec3d4.z - mc.player.getZ();
+      double d;
+      if ((d = Math.sqrt(x * x + y * y)) > 0.75) {
+         float f = Mth.wrapDegrees((float)Math.toDegrees(Math.atan2(y, x)) - 90.0F - mc.player.getYRot());
+         this.flag4 = f > -67.5F && f < 67.5F;
+         this.flag5 = f > 112.5F || f < -112.5F;
+         this.flag6 = f < -22.5F && f > -157.5F;
+         this.flag7 = f > 22.5F && f < 157.5F;
+         this.flag10 = d > 6.0 && f > -30.0F && f < 30.0F;
       } else {
          this.flag4 = this.flag5 = this.flag6 = this.flag7 = this.flag10 = false;
       }
 
-      double var9 = var2.y - mc.player.getY();
-      this.flag8 = var9 > 0.4;
-      this.flag9 = var9 < -0.4;
+      double d2 = vec3d4.y - mc.player.getY();
+      this.flag8 = d2 > 0.4;
+      this.flag9 = d2 < -0.4;
       this.method4237();
    }
 
@@ -739,14 +739,14 @@ public final class AncientFarmModule extends Module {
    }
 
    private void method4237() {
-      Abilities var1 = mc.player.getAbilities();
-      if (var1.mayfly) {
+      Abilities abilities = mc.player.getAbilities();
+      if (abilities.mayfly) {
          if (mc.player.onGround()) {
             this.flag8 = true;
          } else {
-            if (!var1.flying) {
-               var1.flying = true;
-               mc.player.connection.send(new ServerboundPlayerAbilitiesPacket(var1));
+            if (!abilities.flying) {
+               abilities.flying = true;
+               mc.player.connection.send(new ServerboundPlayerAbilitiesPacket(abilities));
             }
          }
       }
@@ -801,23 +801,23 @@ public final class AncientFarmModule extends Module {
       }
    }
 
-   private void method4241(AncientFarmModule.Type var1, Predicate<ItemStack> var2) {
-      int var3 = -1;
+   private void method4241(AncientFarmModule.Type type, Predicate<ItemStack> predicate) {
+      int intValue = -1;
 
-      for (int var4 = 0; var4 < 36; var4++) {
-         if (var2.test(mc.player.getInventory().getItem(var4))) {
-            var3 = var4;
+      for (int i = 0; i < 36; i++) {
+         if (predicate.test(mc.player.getInventory().getItem(i))) {
+            intValue = i;
             break;
          }
       }
 
-      if (var3 != -1) {
-         this.deque.add(new AncientFarmModule.Entry(var1, var3, mc.player.getInventory().getSelectedSlot()));
+      if (intValue != -1) {
+         this.deque.add(new AncientFarmModule.Entry(type, intValue, mc.player.getInventory().getSelectedSlot()));
       }
    }
 
-   private boolean method4242(AncientFarmModule.Type var1) {
-      return switch (var1) {
+   private boolean method4242(AncientFarmModule.Type type) {
+      return switch (type) {
          case FOOD -> this.method4243();
          case FIRE_RESISTANCE -> this.method4247();
       };
@@ -827,128 +827,128 @@ public final class AncientFarmModule extends Module {
       return mc.player.getFoodData().getFoodLevel() <= 17;
    }
 
-   private void method4244(AncientFarmModule.Entry var1) {
-      var1.ticks++;
-      if (var1.ticks == 1) {
-         if (var1.method4262()) {
-            this.method4246(var1.intValue, var1.intValue2);
+   private void method4244(AncientFarmModule.Entry entry) {
+      entry.ticks++;
+      if (entry.ticks == 1) {
+         if (entry.method4262()) {
+            this.method4246(entry.intValue, entry.intValue2);
          } else {
-            this.method4257(var1.intValue);
+            this.method4257(entry.intValue);
          }
       } else {
-         if (!var1.flag) {
+         if (!entry.flag) {
             if (mc.player.isUsingItem()) {
-               var1.flag = true;
+               entry.flag = true;
             } else {
-               if (!this.method4242(var1.type)) {
-                  this.method4245(var1);
+               if (!this.method4242(entry.type)) {
+                  this.method4245(entry);
                   return;
                }
 
-               if (var1.ticks % 4 == 0) {
+               if (entry.ticks % 4 == 0) {
                   UseItemUtils.useItem(InteractionHand.MAIN_HAND);
                }
             }
          } else if (!mc.player.isUsingItem()) {
-            this.method4245(var1);
+            this.method4245(entry);
             return;
          }
 
-         if (var1.ticks >= 80) {
+         if (entry.ticks >= 80) {
             if (this.stopWatch4.method7544(15000L)) {
                ChatLogger.method2019("AncientFarm: применить предмет не удалось, пропускаем");
             }
 
-            this.method4245(var1);
+            this.method4245(entry);
          }
       }
    }
 
-   private void method4245(AncientFarmModule.Entry var1) {
-      if (var1.method4262()) {
-         this.method4246(var1.intValue, var1.intValue2);
+   private void method4245(AncientFarmModule.Entry entry) {
+      if (entry.method4262()) {
+         this.method4246(entry.intValue, entry.intValue2);
       } else {
-         this.method4257(var1.intValue2);
+         this.method4257(entry.intValue2);
       }
 
       this.deque.poll();
    }
 
-   private void method4246(int var1, int var2) {
-      mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, var1, var2, ContainerInput.SWAP, mc.player);
-      this.method4257(var2);
+   private void method4246(int intValue, int buttonNum) {
+      mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, intValue, buttonNum, ContainerInput.SWAP, mc.player);
+      this.method4257(buttonNum);
    }
 
    private boolean method4247() {
       return !mc.player.hasEffect(MobEffects.FIRE_RESISTANCE) || mc.player.getEffect(MobEffects.FIRE_RESISTANCE).getDuration() <= 100;
    }
 
-   private static boolean method4248(ItemStack var0) {
-      return var0.has(DataComponents.FOOD) && var0.getUseAnimation() == ItemUseAnimation.EAT;
+   private static boolean method4248(ItemStack stack) {
+      return stack.has(DataComponents.FOOD) && stack.getUseAnimation() == ItemUseAnimation.EAT;
    }
 
-   private static boolean method4249(ItemStack var0) {
-      return StreamSupport.stream(var0.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).getAllEffects().spliterator(), false)
+   private static boolean method4249(ItemStack stack) {
+      return StreamSupport.stream(stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).getAllEffects().spliterator(), false)
          .anyMatch(var0x -> var0x.getEffect() == MobEffects.FIRE_RESISTANCE);
    }
 
-   private List<PrimedTnt> method4250(double var1) {
-      return mc.level.getEntitiesOfClass(PrimedTnt.class, mc.player.getBoundingBox().inflate(var1), var0 -> true);
+   private List<PrimedTnt> method4250(double amountToAddInAllDirections) {
+      return mc.level.getEntitiesOfClass(PrimedTnt.class, mc.player.getBoundingBox().inflate(amountToAddInAllDirections), primedTnt -> true);
    }
 
-   private boolean method4251(BlockPos var1) {
-      return mc.level.getBlockState(var1).isRedstoneConductor(mc.level, var1);
+   private boolean method4251(BlockPos below) {
+      return mc.level.getBlockState(below).isRedstoneConductor(mc.level, below);
    }
 
-   private boolean method4252(BlockPos var1, Vec3 var2, double var3) {
-      Vec3 var5 = new Vec3(var1.getX() + 0.5, var1.getY(), var1.getZ() + 0.5);
-      if (!(var2.distanceTo(var5) > var3) && !(var2.subtract(var5).normalize().y <= 0.0)) {
-         BlockHitResult var6 = mc.level.clip(new ClipContext(var2, var5, Block.COLLIDER, Fluid.NONE, mc.player));
-         return var6.getType() != HitResult.Type.BLOCK || var6.getBlockPos().equals(var1.below());
+   private boolean method4252(BlockPos pos, Vec3 eyePosition, double blockInteractionRange) {
+      Vec3 vec = new Vec3(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+      if (!(eyePosition.distanceTo(vec) > blockInteractionRange) && !(eyePosition.subtract(vec).normalize().y <= 0.0)) {
+         BlockHitResult clip = mc.level.clip(new ClipContext(eyePosition, vec, Block.COLLIDER, Fluid.NONE, mc.player));
+         return clip.getType() != HitResult.Type.BLOCK || clip.getBlockPos().equals(pos.below());
       } else {
          return false;
       }
    }
 
-   private BlockHitResult method4253(BlockPos var1, double var2) {
-      Vec3 var4 = mc.player.getEyePosition();
-      Vec3 var5 = Vec3.atCenterOf(var1);
-      BlockHitResult var6 = null;
-      double var7 = Double.MAX_VALUE;
+   private BlockHitResult method4253(BlockPos blockPos2, double blockInteractionRange) {
+      Vec3 eyePosition = mc.player.getEyePosition();
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos2);
+      BlockHitResult blockHitResult = null;
+      double d = Double.MAX_VALUE;
 
-      for (Direction var12 : Direction.values()) {
-         Vec3 var13 = var5.add(var12.getStepX() * 0.48, var12.getStepY() * 0.48, var12.getStepZ() * 0.48);
-         if (!(var4.distanceTo(var13) > var2)) {
-            BlockHitResult var14 = mc.level.clip(new ClipContext(var4, var13, Block.COLLIDER, Fluid.NONE, mc.player));
-            double var15;
-            if (var14.getType() == HitResult.Type.BLOCK && var14.getBlockPos().equals(var1) && (var15 = var4.distanceToSqr(var13)) < var7) {
-               var7 = var15;
-               var6 = new BlockHitResult(var13, var12, var1, false);
+      for (Direction direction : Direction.values()) {
+         Vec3 vec = atCenterOf.add(direction.getStepX() * 0.48, direction.getStepY() * 0.48, direction.getStepZ() * 0.48);
+         if (!(eyePosition.distanceTo(vec) > blockInteractionRange)) {
+            BlockHitResult clip = mc.level.clip(new ClipContext(eyePosition, vec, Block.COLLIDER, Fluid.NONE, mc.player));
+            double d2;
+            if (clip.getType() == HitResult.Type.BLOCK && clip.getBlockPos().equals(blockPos2) && (d2 = eyePosition.distanceToSqr(vec)) < d) {
+               d = d2;
+               blockHitResult = new BlockHitResult(vec, direction, blockPos2, false);
             }
          }
       }
 
-      return var6;
+      return blockHitResult;
    }
 
-   private Vec3 method4254(BlockPos var1) {
-      Vec3 var2 = Vec3.atCenterOf(var1);
-      Vec3 var3 = mc.player.position().subtract(var2);
-      if (var3.lengthSqr() < 1.0E-4) {
-         var3 = new Vec3(0.0, 1.0, 0.0);
+   private Vec3 method4254(BlockPos blockPos) {
+      Vec3 atCenterOf = Vec3.atCenterOf(blockPos);
+      Vec3 vec = mc.player.position().subtract(atCenterOf);
+      if (vec.lengthSqr() < 1.0E-4) {
+         vec = new Vec3(0.0, 1.0, 0.0);
       }
 
-      return var2.add(var3.normalize().scale(3.0)).add(0.0, 0.5, 0.0);
+      return atCenterOf.add(vec.normalize().scale(3.0)).add(0.0, 0.5, 0.0);
    }
 
-   private BlockPos method4255(BlockPos var1) {
-      MutableBlockPos var2 = new MutableBlockPos();
+   private BlockPos method4255(BlockPos containing) {
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (BlockPos var4 : BlockPos.withinManhattan(var1, 14)) {
-         if (!this.method4251(var4)) {
-            var2.set(var4.getX(), var4.getY() + 1, var4.getZ());
-            if (!this.method4251(var2) && mc.level.getBlockState(var4).getFluidState().isEmpty()) {
-               return var4.immutable();
+      for (BlockPos below : BlockPos.withinManhattan(containing, 14)) {
+         if (!this.method4251(below)) {
+            mutablePos.set(below.getX(), below.getY() + 1, below.getZ());
+            if (!this.method4251(mutablePos) && mc.level.getBlockState(below).getFluidState().isEmpty()) {
+               return below.immutable();
             }
          }
       }
@@ -956,28 +956,28 @@ public final class AncientFarmModule extends Module {
       return null;
    }
 
-   private boolean method4256(Predicate<ItemStack> var1) {
-      if (var1.test(mc.player.getMainHandItem())) {
+   private boolean method4256(Predicate<ItemStack> predicate) {
+      if (predicate.test(mc.player.getMainHandItem())) {
          return true;
       } else {
-         int var2 = -1;
+         int intValue = -1;
 
-         for (int var3 = 0; var3 < 36; var3++) {
-            if (var1.test(mc.player.getInventory().getItem(var3))) {
-               var2 = var3;
+         for (int i = 0; i < 36; i++) {
+            if (predicate.test(mc.player.getInventory().getItem(i))) {
+               intValue = i;
                break;
             }
          }
 
-         if (var2 < 0) {
+         if (intValue < 0) {
             return false;
-         } else if (var2 < 9) {
-            this.method4257(var2);
-            return var1.test(mc.player.getMainHandItem());
+         } else if (intValue < 9) {
+            this.method4257(intValue);
+            return predicate.test(mc.player.getMainHandItem());
          } else {
             if (this.stopWatch3.method7544(250L)) {
                mc.gameMode
-                  .handleContainerInput(mc.player.inventoryMenu.containerId, var2, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, mc.player);
+                  .handleContainerInput(mc.player.inventoryMenu.containerId, intValue, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP, mc.player);
             }
 
             return false;
@@ -985,27 +985,27 @@ public final class AncientFarmModule extends Module {
       }
    }
 
-   private void method4257(int var1) {
-      if (var1 >= 0 && var1 <= 8 && mc.player.getInventory().getSelectedSlot() != var1) {
-         mc.player.getInventory().setSelectedSlot(var1);
-         mc.player.connection.send(new ServerboundSetCarriedItemPacket(var1));
+   private void method4257(int intValue) {
+      if (intValue >= 0 && intValue <= 8 && mc.player.getInventory().getSelectedSlot() != intValue) {
+         mc.player.getInventory().setSelectedSlot(intValue);
+         mc.player.connection.send(new ServerboundSetCarriedItemPacket(intValue));
       }
    }
 
-   private static double method4258(ItemStack var0) {
-      return var0.isDamageableItem() && var0.getMaxDamage() > 0 ? 1.0 - (double)var0.getDamageValue() / var0.getMaxDamage() : 1.0;
+   private static double method4258(ItemStack mainHandItem) {
+      return mainHandItem.isDamageableItem() && mainHandItem.getMaxDamage() > 0 ? 1.0 - (double)mainHandItem.getDamageValue() / mainHandItem.getMaxDamage() : 1.0;
    }
 
-   private void method4259(String var1, Object... var2) {
+   private void method4259(String format, Object... objects) {
       if (Zenith.method1502() && this.debug.isEnabled()) {
-         ChatLogger.method2019("AncientFarm: " + String.format(var1, var2));
+         ChatLogger.method2019("AncientFarm: " + String.format(format, objects));
       }
    }
 
    private AncientFarmModule.Type3 method4260() {
-      for (AncientFarmModule.Type3 var4 : AncientFarmModule.Type3.values()) {
-         if (!var4.method4267()) {
-            return var4;
+      for (AncientFarmModule.Type3 type3 : AncientFarmModule.Type3.values()) {
+         if (!type3.method4267()) {
+            return type3;
          }
       }
 
@@ -1013,10 +1013,10 @@ public final class AncientFarmModule extends Module {
    }
 
    @EventTarget
-   public void method4261(WorldRenderEvent var1) {
+   public void method4261(WorldRenderEvent event) {
       if (this.render.isEnabled() && mc.player != null && mc.level != null) {
-         for (BlockPos var3 : List.copyOf(this.items)) {
-            GlowUtil.method2230(new AABB(var3), new Color(0, 190, 255).getRGB(), 1.0F);
+         for (BlockPos pos : List.copyOf(this.items)) {
+            GlowUtil.method2230(new AABB(pos), new Color(0, 190, 255).getRGB(), 1.0F);
          }
 
          if (this.blockPos != null) {
@@ -1032,10 +1032,10 @@ public final class AncientFarmModule extends Module {
       private boolean flag;
       private int ticks;
 
-      private Entry(AncientFarmModule.Type var1, int var2, int var3) {
-         this.type = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
+      private Entry(AncientFarmModule.Type type, int intValue, int selectedSlot) {
+         this.type = type;
+         this.intValue = intValue;
+         this.intValue2 = selectedSlot;
       }
 
       private boolean method4262() {
@@ -1060,12 +1060,12 @@ public final class AncientFarmModule extends Module {
          this.longValue++;
       }
 
-      private boolean method4264(long var1) {
-         return this.longValue >= var1;
+      private boolean method4264(long l) {
+         return this.longValue >= l;
       }
 
-      private boolean method4265(long var1, long var3) {
-         return this.longValue >= var1 + this.longValue2 % (var3 + 1L);
+      private boolean method4265(long l, long l2) {
+         return this.longValue >= l + this.longValue2 % (l2 + 1L);
       }
    }
 
@@ -1088,8 +1088,8 @@ public final class AncientFarmModule extends Module {
          "в хотбаре должна быть еда",
          () -> !AncientFarmModule.INSTANCE.autoEat.isEnabled() || !AncientFarmModule.INSTANCE.method4243() || method4266(AncientFarmModule::method4248)
       ),
-      TNT("в хотбаре должен быть динамит", var0 -> var0.is(Items.TNT)),
-      FLINT_AND_STEEL("в хотбаре должно быть огниво", var0 -> var0.is(Items.FLINT_AND_STEEL)),
+      TNT("в хотбаре должен быть динамит", stack -> stack.is(Items.TNT)),
+      FLINT_AND_STEEL("в хотбаре должно быть огниво", stack -> stack.is(Items.FLINT_AND_STEEL)),
       PICKAXE("в хотбаре должна быть кирка с прочностью больше 5%", AncientFarmModule.predicate),
       FIRE_RESISTANCE(
          "в хотбаре должно быть зелье огнестойкости",
@@ -1099,17 +1099,17 @@ public final class AncientFarmModule extends Module {
       private final String text;
       private final BooleanSupplier booleanSupplier;
 
-      private Type3(String var3, BooleanSupplier var4) {
-         this.text = var3;
-         this.booleanSupplier = var4;
+      private Type3(String text, BooleanSupplier booleanSupplier) {
+         this.text = text;
+         this.booleanSupplier = booleanSupplier;
       }
 
-      private Type3(String var3, Predicate<ItemStack> var4) {
-         this(var3, () -> method4266(var4));
+      private Type3(String text, Predicate<ItemStack> predicate) {
+         this(text, () -> method4266(predicate));
       }
 
-      private static boolean method4266(Predicate<ItemStack> var0) {
-         return IntStream.range(0, 9).anyMatch(var1 -> var0.test(mc.player.getInventory().getItem(var1)));
+      private static boolean method4266(Predicate<ItemStack> predicate) {
+         return IntStream.range(0, 9).anyMatch(slot -> predicate.test(mc.player.getInventory().getItem(slot)));
       }
 
       public String description() {
@@ -1121,14 +1121,14 @@ public final class AncientFarmModule extends Module {
       }
    }
 
-   private void l1I1IlllIlI(net.minecraft.client.multiplayer.ClientLevel var1) {
-      net.minecraft.world.phys.AABB var2 = null;
+   private void l1I1IlllIlI(net.minecraft.client.multiplayer.ClientLevel level) {
+      net.minecraft.world.phys.AABB box = null;
 
       try {
-         var2 = this.method4229(var1);
+         box = this.method4229(level);
       } finally {
-         if (mc.level == var1) {
-            this.box = var2;
+         if (mc.level == level) {
+            this.box = box;
          }
 
          this.flag = false;

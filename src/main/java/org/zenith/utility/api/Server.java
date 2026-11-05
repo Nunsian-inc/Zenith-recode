@@ -101,9 +101,9 @@ public final class Server {
       }
    }
 
-   public synchronized void setEnabled(boolean var1) {
-      this.enabled = var1;
-      if (var1) {
+   public synchronized void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+      if (enabled) {
          this.start();
       } else {
          this.stop();
@@ -119,21 +119,21 @@ public final class Server {
    }
 
    private static String method219() {
-      byte[] var0 = new byte[24];
-      new SecureRandom().nextBytes(var0);
-      return HexFormat.of().formatHex(var0);
+      byte[] bytes = new byte[24];
+      new SecureRandom().nextBytes(bytes);
+      return HexFormat.of().formatHex(bytes);
    }
 
    private void method220() {
       try {
          if (Files.isRegularFile(this.path)) {
-            JsonObject var1 = JsonParser.parseString(Files.readString(this.path, StandardCharsets.UTF_8)).getAsJsonObject();
-            this.enabled = var1.has("enabled") && var1.get("enabled").getAsBoolean();
-            this.port = var1.has("port") ? var1.get("port").getAsInt() : 25610;
-            this.text2 = var1.has("token") ? var1.get("token").getAsString() : "";
+            JsonObject jsonObject = JsonParser.parseString(Files.readString(this.path, StandardCharsets.UTF_8)).getAsJsonObject();
+            this.enabled = jsonObject.has("enabled") && jsonObject.get("enabled").getAsBoolean();
+            this.port = jsonObject.has("port") ? jsonObject.get("port").getAsInt() : 25610;
+            this.text2 = jsonObject.has("token") ? jsonObject.get("token").getAsString() : "";
          }
-      } catch (Exception var2) {
-         logger.warn("MCP: не удалось прочитать настройки", var2);
+      } catch (Exception e) {
+         logger.warn("MCP: не удалось прочитать настройки", e);
       }
 
       if (this.text2.length() < 32) {
@@ -143,27 +143,27 @@ public final class Server {
 
    private void method221() {
       try {
-         JsonObject var1 = new JsonObject();
-         var1.addProperty("enabled", this.enabled);
-         var1.addProperty("port", this.port);
-         var1.addProperty("token", this.text2);
+         JsonObject json = new JsonObject();
+         json.addProperty("enabled", this.enabled);
+         json.addProperty("port", this.port);
+         json.addProperty("token", this.text2);
          Files.createDirectories(this.path.getParent());
-         Files.writeString(this.path, gson.toJson(var1), StandardCharsets.UTF_8);
-      } catch (IOException var2) {
-         logger.warn("MCP: не удалось сохранить настройки", var2);
+         Files.writeString(this.path, gson.toJson(json), StandardCharsets.UTF_8);
+      } catch (IOException e) {
+         logger.warn("MCP: не удалось сохранить настройки", e);
       }
    }
 
    private synchronized void start() {
       if (!this.isRunning()) {
-         InetAddress var1 = InetAddress.getLoopbackAddress();
+         InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
 
-         for (int var2 = 0; var2 < 10; var2++) {
+         for (int i = 0; i < 10; i++) {
             try {
-               this.serverSocket = new ServerSocket(this.port + var2, 16, var1);
-               this.port += var2;
+               this.serverSocket = new ServerSocket(this.port + i, 16, loopbackAddress);
+               this.port += i;
                break;
-            } catch (IOException var4) {
+            } catch (IOException e) {
                this.serverSocket = null;
             }
          }
@@ -171,21 +171,21 @@ public final class Server {
          if (this.serverSocket == null) {
             logger.warn("MCP: нет свободного порта рядом с {}", this.port);
          } else {
-            this.executorService = Executors.newFixedThreadPool(2, var0 -> {
-               Thread var1x = new Thread(var0, "Zenith-MCP");
+            this.executorService = Executors.newFixedThreadPool(2, task -> {
+               Thread var1x = new Thread(task, "Zenith-MCP");
                var1x.setDaemon(true);
                return var1x;
             });
-            ServerSocket var5 = this.serverSocket;
+            ServerSocket serverSocket = this.serverSocket;
             this.thread = new Thread(() -> {
-               while (!var5.isClosed()) {
+               while (!serverSocket.isClosed()) {
                   try {
-                     Socket var2x = var5.accept();
+                     Socket var2x = serverSocket.accept();
                      var2x.setSoTimeout(15000);
                      this.executorService.submit(() -> this.method223(var2x));
-                  } catch (IOException var3) {
-                     if (!var5.isClosed()) {
-                        logger.warn("MCP: ошибка приёма", var3);
+                  } catch (IOException e) {
+                     if (!serverSocket.isClosed()) {
+                        logger.warn("MCP: ошибка приёма", e);
                      }
                   }
                }
@@ -204,7 +204,7 @@ public final class Server {
          if (this.serverSocket != null) {
             this.serverSocket.close();
          }
-      } catch (IOException var2) {
+      } catch (IOException e) {
       }
 
       this.serverSocket = null;
@@ -216,28 +216,28 @@ public final class Server {
    }
 
    private void method222() {
-      Path var1 = this.path.getParent();
+      Path parent = this.path.getParent();
 
       try {
-         JsonObject var2 = new JsonObject();
-         var2.addProperty("type", "http");
-         var2.addProperty("url", this.url());
-         JsonObject var3 = new JsonObject();
-         var3.add("zenith", var2);
-         JsonObject var4 = new JsonObject();
-         var4.add("mcpServers", var3);
-         Files.writeString(var1.resolve(".mcp.json"), gson.toJson(var4), StandardCharsets.UTF_8);
-         String var5 = "# Zenith scripts — гайд для ИИ-агента\n\nВ этой папке лежат JS-скрипты клиента Zenith. Пока игра запущена и MCP включён\n(меню → Scripts → MCP), клиент отвечает по адресу из `.mcp.json`. Пользуйся инструментами,\nа не правь файлы вслепую:\n\n1. `get_api_docs` — прочитай API: оно своё, не браузерное и не Node.\n2. `list_scripts` — что есть, что включено, что упало.\n3. `read_file` / `write_file` — запись сразу перезагружает скрипт и возвращает ошибку, если она есть.\n4. `check_syntax` — проверить код без записи.\n5. `get_logs` — вывод print/console и ошибки; `run_js` — выполнить код в живом окружении скрипта.\n\nСкрипт — папка `<имя>/main.js`. Язык — ES6 (Rhino): нет class/async/spread.\nJava недоступна вовсе, только API клиента. Лимит — 250 мс на вызов.\nОбязательно прочитай раздел «Частые ошибки» в API: у сущностей методы (`player.x()`), у предметов и блоков — поля\n(`item.block`, `block.air`); `player.place` ставит блок только к опоре; долгие действия — по шагу за тик в `events.update`.\nМодуль из `Module(...)` включается в меню клиента в своей категории, переключатель скрипта только запускает скрипт.\n";
-         Files.writeString(var1.resolve("CLAUDE.md"), var5, StandardCharsets.UTF_8);
-         Files.writeString(var1.resolve("AGENTS.md"), var5, StandardCharsets.UTF_8);
-      } catch (IOException var6) {
-         logger.warn("MCP: не удалось записать файлы для агентов", var6);
+         JsonObject json = new JsonObject();
+         json.addProperty("type", "http");
+         json.addProperty("url", this.url());
+         JsonObject json2 = new JsonObject();
+         json2.add("zenith", json);
+         JsonObject jsonElement = new JsonObject();
+         jsonElement.add("mcpServers", json2);
+         Files.writeString(parent.resolve(".mcp.json"), gson.toJson(jsonElement), StandardCharsets.UTF_8);
+         String csq = "# Zenith scripts — гайд для ИИ-агента\n\nВ этой папке лежат JS-скрипты клиента Zenith. Пока игра запущена и MCP включён\n(меню → Scripts → MCP), клиент отвечает по адресу из `.mcp.json`. Пользуйся инструментами,\nа не правь файлы вслепую:\n\n1. `get_api_docs` — прочитай API: оно своё, не браузерное и не Node.\n2. `list_scripts` — что есть, что включено, что упало.\n3. `read_file` / `write_file` — запись сразу перезагружает скрипт и возвращает ошибку, если она есть.\n4. `check_syntax` — проверить код без записи.\n5. `get_logs` — вывод print/console и ошибки; `run_js` — выполнить код в живом окружении скрипта.\n\nСкрипт — папка `<имя>/main.js`. Язык — ES6 (Rhino): нет class/async/spread.\nJava недоступна вовсе, только API клиента. Лимит — 250 мс на вызов.\nОбязательно прочитай раздел «Частые ошибки» в API: у сущностей методы (`player.x()`), у предметов и блоков — поля\n(`item.block`, `block.air`); `player.place` ставит блок только к опоре; долгие действия — по шагу за тик в `events.update`.\nМодуль из `Module(...)` включается в меню клиента в своей категории, переключатель скрипта только запускает скрипт.\n";
+         Files.writeString(parent.resolve("CLAUDE.md"), csq, StandardCharsets.UTF_8);
+         Files.writeString(parent.resolve("AGENTS.md"), csq, StandardCharsets.UTF_8);
+      } catch (IOException e) {
+         logger.warn("MCP: не удалось записать файлы для агентов", e);
       }
    }
 
-   private void method223(Socket var1) {
+   private void method223(Socket socket) {
       try {
-         Socket var2 = var1;
+         Socket socket2 = socket;
 
          label166: {
             label167: {
@@ -246,163 +246,163 @@ public final class Server {
                      label169: {
                         label170: {
                            try {
-                              InputStream var3 = var1.getInputStream();
-                              String var4 = method224(var3);
-                              if (var4 == null) {
+                              InputStream inputStream = socket.getInputStream();
+                              String str = method224(inputStream);
+                              if (str == null) {
                                  break label185;
                               }
 
-                              String[] var5 = var4.split("\r\n");
-                              String[] var6 = var5[0].split(" ");
-                              if (var6.length < 2) {
-                                 method225(var1, 400, null);
+                              String[] strings = str.split("\r\n");
+                              String[] strings2 = strings[0].split(" ");
+                              if (strings2.length < 2) {
+                                 method225(socket, 400, null);
                                  break label168;
                               }
 
-                              LinkedHashMap var7 = new LinkedHashMap();
+                              LinkedHashMap map = new LinkedHashMap();
 
-                              for (int var8 = 1; var8 < var5.length; var8++) {
-                                 int var9 = var5[var8].indexOf(58);
-                                 if (var9 > 0) {
-                                    var7.put(var5[var8].substring(0, var9).trim().toLowerCase(Locale.ROOT), var5[var8].substring(var9 + 1).trim());
+                              for (int i = 1; i < strings.length; i++) {
+                                 int indexOf = strings[i].indexOf(58);
+                                 if (indexOf > 0) {
+                                    map.put(strings[i].substring(0, indexOf).trim().toLowerCase(Locale.ROOT), strings[i].substring(indexOf + 1).trim());
                                  }
                               }
 
-                              String var19 = ((String)var7.getOrDefault("host", ""));
-                              if (!var7.containsKey("origin")
-                                 && !var7.containsKey("sec-fetch-site")
-                                 && (var19.equals("127.0.0.1:" + this.port) || var19.equals("localhost:" + this.port))) {
-                                 if (!MessageDigest.isEqual(("/mcp/" + this.text2).getBytes(StandardCharsets.UTF_8), var6[1].getBytes(StandardCharsets.UTF_8))) {
-                                    method225(var1, 404, null);
+                              String str2 = ((String)map.getOrDefault("host", ""));
+                              if (!map.containsKey("origin")
+                                 && !map.containsKey("sec-fetch-site")
+                                 && (str2.equals("127.0.0.1:" + this.port) || str2.equals("localhost:" + this.port))) {
+                                 if (!MessageDigest.isEqual(("/mcp/" + this.text2).getBytes(StandardCharsets.UTF_8), strings2[1].getBytes(StandardCharsets.UTF_8))) {
+                                    method225(socket, 404, null);
                                     break label167;
                                  }
 
-                                 if (!"POST".equals(var6[0])) {
-                                    method225(var1, 405, null);
+                                 if (!"POST".equals(strings2[0])) {
+                                    method225(socket, 405, null);
                                     break label166;
                                  }
 
-                                 int var20 = Integer.parseInt(((String)var7.getOrDefault("content-length", "0")));
-                                 if (var20 > 0 && var20 <= 1048576) {
-                                    byte[] var10 = var3.readNBytes(var20);
+                                 int len = Integer.parseInt(((String)map.getOrDefault("content-length", "0")));
+                                 if (len > 0 && len <= 1048576) {
+                                    byte[] nBytes = inputStream.readNBytes(len);
                                     this.atomicInteger.incrementAndGet();
-                                    JsonElement var11 = JsonParser.parseString(new String(var10, StandardCharsets.UTF_8));
-                                    if (var11.isJsonArray()) {
-                                       JsonArray var12 = new JsonArray();
+                                    JsonElement string = JsonParser.parseString(new String(nBytes, StandardCharsets.UTF_8));
+                                    if (string.isJsonArray()) {
+                                       JsonArray jsonArray = new JsonArray();
 
-                                       for (JsonElement var14 : var11.getAsJsonArray()) {
-                                          JsonObject var15 = this.method226(var14.getAsJsonObject());
-                                          if (var15 != null) {
-                                             var12.add(var15);
+                                       for (JsonElement json : string.getAsJsonArray()) {
+                                          JsonObject json2 = this.method226(json.getAsJsonObject());
+                                          if (json2 != null) {
+                                             jsonArray.add(json2);
                                           }
                                        }
 
-                                       method225(var1, var12.isEmpty() ? 202 : 200, var12.isEmpty() ? null : var12);
+                                       method225(socket, jsonArray.isEmpty() ? 202 : 200, jsonArray.isEmpty() ? null : jsonArray);
                                     } else {
-                                       JsonObject var21 = this.method226(var11.getAsJsonObject());
-                                       method225(var1, var21 == null ? 202 : 200, var21);
+                                       JsonObject jsonElement = this.method226(string.getAsJsonObject());
+                                       method225(socket, jsonElement == null ? 202 : 200, jsonElement);
                                     }
                                     break label169;
                                  }
 
-                                 method225(var1, 413, null);
+                                 method225(socket, 413, null);
                                  break label170;
                               }
 
-                              method225(var1, 403, null);
-                           } catch (Throwable var17) {
-                              if (var1 != null) {
+                              method225(socket, 403, null);
+                           } catch (Throwable e) {
+                              if (socket != null) {
                                  try {
-                                    var2.close();
-                                 } catch (Throwable var16) {
-                                    var17.addSuppressed(var16);
+                                    socket2.close();
+                                 } catch (Throwable ex) {
+                                    e.addSuppressed(ex);
                                  }
                               }
 
-                              throw var17;
+                              throw e;
                            }
 
-                           if (var1 != null) {
-                              var1.close();
+                           if (socket != null) {
+                              socket.close();
                            }
 
                            return;
                         }
 
-                        if (var1 != null) {
-                           var1.close();
+                        if (socket != null) {
+                           socket.close();
                         }
 
                         return;
                      }
 
-                     if (var1 != null) {
-                        var1.close();
+                     if (socket != null) {
+                        socket.close();
                      }
 
                      return;
                   }
 
-                  if (var1 != null) {
-                     var1.close();
+                  if (socket != null) {
+                     socket.close();
                   }
 
                   return;
                }
 
-               if (var1 != null) {
-                  var1.close();
+               if (socket != null) {
+                  socket.close();
                }
 
                return;
             }
 
-            if (var1 != null) {
-               var1.close();
+            if (socket != null) {
+               socket.close();
             }
 
             return;
          }
 
-         if (var1 != null) {
-            var1.close();
+         if (socket != null) {
+            socket.close();
          }
-      } catch (Exception var18) {
-         logger.warn("MCP: ошибка запроса", var18);
+      } catch (Exception e) {
+         logger.warn("MCP: ошибка запроса", e);
       }
    }
 
-   private static String method224(InputStream var0) throws IOException {
-      ByteArrayOutputStream var1 = new ByteArrayOutputStream();
-      int var2 = 0;
+   private static String method224(InputStream inputStream) throws IOException {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      int n = 0;
 
-      while (var1.size() < 16384) {
-         int var3 = var0.read();
-         if (var3 < 0) {
+      while (byteArrayOutputStream.size() < 16384) {
+         int n2 = inputStream.read();
+         if (n2 < 0) {
             return null;
          }
 
-         var1.write(var3);
+         byteArrayOutputStream.write(n2);
 
-         var2 = switch (var2) {
-            case 0 -> var3 == 13 ? 1 : 0;
-            case 1 -> var3 == 10 ? 2 : 0;
-            case 2 -> var3 == 13 ? 3 : 0;
-            case 3 -> var3 == 10 ? 4 : 0;
+         n = switch (n) {
+            case 0 -> n2 == 13 ? 1 : 0;
+            case 1 -> n2 == 10 ? 2 : 0;
+            case 2 -> n2 == 13 ? 3 : 0;
+            case 3 -> n2 == 10 ? 4 : 0;
             default -> 0;
          };
-         if (var2 == 4) {
-            return var1.toString(StandardCharsets.ISO_8859_1).trim();
+         if (n == 4) {
+            return byteArrayOutputStream.toString(StandardCharsets.ISO_8859_1).trim();
          }
       }
 
       return null;
    }
 
-   private static void method225(Socket var0, int var1, JsonElement var2) throws IOException {
-      byte[] var3 = var2 == null ? new byte[0] : gson.toJson(var2).getBytes(StandardCharsets.UTF_8);
+   private static void method225(Socket socket, int n, JsonElement jsonElement) throws IOException {
+      byte[] bytes = jsonElement == null ? new byte[0] : gson.toJson(jsonElement).getBytes(StandardCharsets.UTF_8);
 
-      String var4 = switch (var1) {
+      String str = switch (n) {
          case 200 -> "OK";
          case 202 -> "Accepted";
          case 400 -> "Bad Request";
@@ -412,107 +412,107 @@ public final class Server {
          case 413 -> "Payload Too Large";
          default -> "Error";
       };
-      String var5 = "HTTP/1.1 " + var1 + " " + var4 + "\r\nContent-Type: application/json\r\nContent-Length: " + var3.length + "\r\nConnection: close\r\n\r\n";
-      OutputStream var6 = var0.getOutputStream();
-      var6.write(var5.getBytes(StandardCharsets.ISO_8859_1));
-      var6.write(var3);
-      var6.flush();
+      String str2 = "HTTP/1.1 " + n + " " + str + "\r\nContent-Type: application/json\r\nContent-Length: " + bytes.length + "\r\nConnection: close\r\n\r\n";
+      OutputStream outputStream = socket.getOutputStream();
+      outputStream.write(str2.getBytes(StandardCharsets.ISO_8859_1));
+      outputStream.write(bytes);
+      outputStream.flush();
    }
 
-   private JsonObject method226(JsonObject var1) {
-      JsonElement var2 = var1.get("id");
-      String var3 = var1.has("method") ? var1.get("method").getAsString() : "";
-      if (var2 != null && !var2.isJsonNull()) {
-         JsonObject var4 = new JsonObject();
-         var4.addProperty("jsonrpc", "2.0");
-         var4.add("id", var2);
+   private JsonObject method226(JsonObject jsonObject) {
+      JsonElement jsonElement = jsonObject.get("id");
+      String string = jsonObject.has("method") ? jsonObject.get("method").getAsString() : "";
+      if (jsonElement != null && !jsonElement.isJsonNull()) {
+         JsonObject json = new JsonObject();
+         json.addProperty("jsonrpc", "2.0");
+         json.add("id", jsonElement);
 
          try {
-            JsonObject var5 = var1.has("params") && var1.get("params").isJsonObject() ? var1.getAsJsonObject("params") : new JsonObject();
-            switch (var3) {
+            JsonObject jsonObject2 = jsonObject.has("params") && jsonObject.get("params").isJsonObject() ? jsonObject.getAsJsonObject("params") : new JsonObject();
+            switch (string) {
                case "initialize":
-                  JsonObject var14 = new JsonObject();
-                  var14.addProperty("protocolVersion", var5.has("protocolVersion") ? var5.get("protocolVersion").getAsString() : "2025-06-18");
-                  JsonObject var15 = new JsonObject();
-                  var15.add("tools", new JsonObject());
-                  var14.add("capabilities", var15);
-                  JsonObject var10 = new JsonObject();
-                  var10.addProperty("name", "zenith-scripts");
-                  var10.addProperty("version", String.valueOf(3));
-                  var14.add("serverInfo", var10);
-                  var14.addProperty("instructions", "Сначала get_api_docs, затем list_scripts. write_file сразу перезагружает скрипт и возвращает ошибку.");
-                  var4.add("result", var14);
+                  JsonObject json2 = new JsonObject();
+                  json2.addProperty("protocolVersion", jsonObject2.has("protocolVersion") ? jsonObject2.get("protocolVersion").getAsString() : "2025-06-18");
+                  JsonObject json3 = new JsonObject();
+                  json3.add("tools", new JsonObject());
+                  json2.add("capabilities", json3);
+                  JsonObject json4 = new JsonObject();
+                  json4.addProperty("name", "zenith-scripts");
+                  json4.addProperty("version", String.valueOf(3));
+                  json2.add("serverInfo", json4);
+                  json2.addProperty("instructions", "Сначала get_api_docs, затем list_scripts. write_file сразу перезагружает скрипт и возвращает ошибку.");
+                  json.add("result", json2);
                   break;
                case "ping":
-                  var4.add("result", new JsonObject());
+                  json.add("result", new JsonObject());
                   break;
                case "tools/list":
-                  JsonObject var13 = new JsonObject();
-                  var13.add("tools", McpToolSchema.method5499());
-                  var4.add("result", var13);
+                  JsonObject json5 = new JsonObject();
+                  json5.add("tools", McpToolSchema.method5499());
+                  json.add("result", json5);
                   break;
                case "tools/call":
-                  String var12 = var5.get("name").getAsString();
-                  JsonObject var9 = var5.has("arguments") && var5.get("arguments").isJsonObject() ? var5.getAsJsonObject("arguments") : new JsonObject();
-                  var4.add("result", this.method227(var12, var9));
+                  String str = jsonObject2.get("name").getAsString();
+                  JsonObject jsonObject3 = jsonObject2.has("arguments") && jsonObject2.get("arguments").isJsonObject() ? jsonObject2.getAsJsonObject("arguments") : new JsonObject();
+                  json.add("result", this.method227(str, jsonObject3));
                   break;
                default:
-                  JsonObject var8 = new JsonObject();
-                  var8.addProperty("code", 32935);
-                  var8.addProperty("message", "метод не найден: " + var3);
-                  var4.add("error", var8);
+                  JsonObject json6 = new JsonObject();
+                  json6.addProperty("code", 32935);
+                  json6.addProperty("message", "метод не найден: " + string);
+                  json.add("error", json6);
             }
-         } catch (Exception var11) {
-            JsonObject var6 = new JsonObject();
-            var6.addProperty("code", 32933);
-            var6.addProperty("message", String.valueOf(var11.getMessage()));
-            var4.add("error", var6);
+         } catch (Exception e) {
+            JsonObject json2 = new JsonObject();
+            json2.addProperty("code", 32933);
+            json2.addProperty("message", String.valueOf(e.getMessage()));
+            json.add("error", json2);
          }
 
-         return var4;
+         return json;
       } else {
          return null;
       }
    }
 
-   private JsonObject method227(String var1, JsonObject var2) {
-      JsonObject var3 = new JsonObject();
-      JsonArray var4 = new JsonArray();
-      boolean var6 = false;
+   private JsonObject method227(String str, JsonObject json) {
+      JsonObject json2 = new JsonObject();
+      JsonArray jsonArray = new JsonArray();
+      boolean flag = false;
 
-      String var5;
+      String str2;
       try {
-         var5 = method228(() -> McpToolSchema.method5502(var1, var2));
-      } catch (Exception var8) {
-         var5 = String.valueOf(var8.getMessage() == null ? var8 : var8.getMessage());
-         var6 = true;
+         str2 = method228(() -> McpToolSchema.method5502(str, json));
+      } catch (Exception e) {
+         str2 = String.valueOf(e.getMessage() == null ? e : e.getMessage());
+         flag = true;
       }
 
-      JsonObject var7 = new JsonObject();
-      var7.addProperty("type", "text");
-      var7.addProperty("text", var5);
-      var4.add(var7);
-      var3.add("content", var4);
-      var3.addProperty("isError", var6);
-      return var3;
+      JsonObject json3 = new JsonObject();
+      json3.addProperty("type", "text");
+      json3.addProperty("text", str2);
+      jsonArray.add(json3);
+      json2.add("content", jsonArray);
+      json2.addProperty("isError", flag);
+      return json2;
    }
 
-   private static String method228(Server.Handler var0) throws Exception {
-      Minecraft var1 = Minecraft.getInstance();
-      CompletableFuture var2 = new CompletableFuture();
-      var1.execute(() -> {
+   private static String method228(Server.Handler handler) throws Exception {
+      Minecraft minecraft = Minecraft.getInstance();
+      CompletableFuture future = new CompletableFuture();
+      minecraft.execute(() -> {
          try {
-            var2.complete(var0.run());
-         } catch (Throwable var3) {
-            var2.completeExceptionally(var3);
+            future.complete(handler.run());
+         } catch (Throwable e) {
+            future.completeExceptionally(e);
          }
       });
 
       try {
-         return (String)var2.get(5L, TimeUnit.SECONDS);
-      } catch (ExecutionException var6) {
-         Throwable var4 = var6.getCause();
-         throw (Exception)(var4 instanceof Exception var5 ? var5 : new RuntimeException(var4));
+         return (String)future.get(5L, TimeUnit.SECONDS);
+      } catch (ExecutionException e) {
+         Throwable cause = e.getCause();
+         throw (Exception)(cause instanceof Exception e2 ? e2 : new RuntimeException(cause));
       }
    }
 
@@ -520,13 +520,13 @@ public final class Server {
       return String.join(", ", ScriptHeaderParser.items);
    }
 
-   public static Script method230(Storage var0, JsonObject var1) {
-      String var2 = var1.has("script") ? var1.get("script").getAsString() : "";
-      Script var3 = var0.method1294(var2);
-      if (var3 == null) {
-         throw new IllegalArgumentException("скрипт не найден: " + var2);
+   public static Script method230(Storage storage, JsonObject json) {
+      String string = json.has("script") ? json.get("script").getAsString() : "";
+      Script script = storage.method1294(string);
+      if (script == null) {
+         throw new IllegalArgumentException("скрипт не найден: " + string);
       } else {
-         return var3;
+         return script;
       }
    }
 

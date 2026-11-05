@@ -32,280 +32,280 @@ public final class ScriptValueUtils {
    private ScriptValueUtils() {
    }
 
-   public static ScriptValueUtils.Entry2 method6246(Scriptable var0, ScriptableObject var1) {
-      return new ScriptValueUtils.Entry2(var0, var1);
+   public static ScriptValueUtils.Entry2 method6246(Scriptable scope, ScriptableObject scriptableObject) {
+      return new ScriptValueUtils.Entry2(scope, scriptableObject);
    }
 
-   public static ScriptValueUtils.Entry2 method6247(Scriptable var0) {
-      NativeObject var1 = new NativeObject();
-      ScriptRuntime.setBuiltinProtoAndParent(var1, var0, Builtins.Object);
-      return new ScriptValueUtils.Entry2(var0, var1);
+   public static ScriptValueUtils.Entry2 method6247(Scriptable scope) {
+      NativeObject nativeObject = new NativeObject();
+      ScriptRuntime.setBuiltinProtoAndParent(nativeObject, scope, Builtins.Object);
+      return new ScriptValueUtils.Entry2(scope, nativeObject);
    }
 
-   public static ScriptValueUtils.Entry2 method6248(Scriptable var0) {
-      return method6247(var0);
+   public static ScriptValueUtils.Entry2 method6248(Scriptable scope) {
+      return method6247(scope);
    }
 
-   public static BaseFunction method6249(Scriptable var0, String var1, ScriptValueUtils.Handler var2) {
-      Callable var3 = (var2x, var3x, var4, var5) -> {
+   public static BaseFunction method6249(Scriptable scope, String str, ScriptValueUtils.Handler handler) {
+      Callable callable = (var2x, var3x, scriptable, objects) -> {
          try {
-            Object var6 = var2.call(var5);
-            return var6 == null ? Undefined.instance : var6;
-         } catch (RhinoException | ScriptContextFactory.Entry var7) {
-            throw var7;
-         } catch (ScriptValueUtils.Entry var8) {
-            throw ScriptRuntime.constructError("Error", var8.getMessage());
-         } catch (RuntimeException var9) {
-            throw ScriptRuntime.constructError("Error", var1 + ": " + method6250(var9));
+            Object obj = handler.call(objects);
+            return obj == null ? Undefined.instance : obj;
+         } catch (RhinoException | ScriptContextFactory.Entry e) {
+            throw e;
+         } catch (ScriptValueUtils.Entry e) {
+            throw ScriptRuntime.constructError("Error", e.getMessage());
+         } catch (RuntimeException e) {
+            throw ScriptRuntime.constructError("Error", str + ": " + method6250(e));
          }
       };
-      return new LambdaFunction(var0, var1, 0, var3);
+      return new LambdaFunction(scope, str, 0, callable);
    }
 
-   private static String method6250(RuntimeException var0) {
-      String var1 = var0.getMessage();
-      if (var1 != null && !var1.isBlank()) {
-         return var1.length() > 200 ? var1.substring(0, 200) : var1;
+   private static String method6250(RuntimeException runtimeException) {
+      String message = runtimeException.getMessage();
+      if (message != null && !message.isBlank()) {
+         return message.length() > 200 ? message.substring(0, 200) : message;
       } else {
          return "внутренняя ошибка";
       }
    }
 
-   public static ScriptValueUtils.Entry method6251(String var0) {
-      return new ScriptValueUtils.Entry(var0);
+   public static ScriptValueUtils.Entry method6251(String message) {
+      return new ScriptValueUtils.Entry(message);
    }
 
-   public static Object arg(Object[] var0, int var1) {
-      return var1 < var0.length ? var0[var1] : Undefined.instance;
+   public static Object arg(Object[] objects, int n) {
+      return n < objects.length ? objects[n] : Undefined.instance;
    }
 
-   public static boolean method6252(Object[] var0, int var1) {
-      return var1 < var0.length && !method6253(var0[var1]);
+   public static boolean method6252(Object[] objects, int n) {
+      return n < objects.length && !method6253(objects[n]);
    }
 
-   public static boolean method6253(Object var0) {
-      return var0 == null || var0 == Undefined.instance;
+   public static boolean method6253(Object id) {
+      return id == null || id == Undefined.instance;
    }
 
-   public static String method6254(Object[] var0, int var1, String var2) {
-      Object var3 = arg(var0, var1);
-      return method6253(var3) ? var2 : method6255(var3);
+   public static String method6254(Object[] objects, int n, String title) {
+      Object id = arg(objects, n);
+      return method6253(id) ? title : method6255(id);
    }
 
-   public static String method6255(Object var0) {
-      if (method6253(var0)) {
+   public static String method6255(Object id) {
+      if (method6253(id)) {
          return "";
-      } else if (var0 instanceof CharSequence var6) {
-         if (var6.length() > 32768) {
+      } else if (id instanceof CharSequence charSequence) {
+         if (charSequence.length() > 32768) {
             throw method6251("строка длиннее 32768 символов");
          } else {
-            return var6.toString();
+            return charSequence.toString();
          }
-      } else if (!(var0 instanceof Number var1)) {
-         if (var0 instanceof Boolean var5) {
-            return var5.toString();
+      } else if (!(id instanceof Number number)) {
+         if (id instanceof Boolean flag) {
+            return flag.toString();
          } else {
-            String var4 = Context.toString(var0);
-            if (var4.length() > 32768) {
+            String string = Context.toString(id);
+            if (string.length() > 32768) {
                throw method6251("строка длиннее 32768 символов");
             } else {
-               return var4;
+               return string;
             }
          }
       } else {
-         double var2 = var1.doubleValue();
-         return var2 == Math.rint(var2) && !Double.isInfinite(var2) && Math.abs(var2) < 1.0E15 ? Long.toString((long)var2) : Double.toString(var2);
+         double doubleValue = number.doubleValue();
+         return doubleValue == Math.rint(doubleValue) && !Double.isInfinite(doubleValue) && Math.abs(doubleValue) < 1.0E15 ? Long.toString((long)doubleValue) : Double.toString(doubleValue);
       }
    }
 
-   public static double method6256(Object[] var0, int var1, double var2) {
-      Object var4 = arg(var0, var1);
-      if (method6253(var4)) {
-         return var2;
+   public static double method6256(Object[] objects, int n, double x) {
+      Object id = arg(objects, n);
+      if (method6253(id)) {
+         return x;
       } else {
-         double var5 = Context.toNumber(var4);
-         return Double.isNaN(var5) ? var2 : var5;
+         double number = Context.toNumber(id);
+         return Double.isNaN(number) ? x : number;
       }
    }
 
-   public static int method6257(Object[] var0, int var1, int var2) {
-      double var3 = method6256(var0, var1, var2);
-      if (var3 > 2.147483647E9) {
+   public static int method6257(Object[] objects, int n, int width) {
+      double d = method6256(objects, n, width);
+      if (d > 2.147483647E9) {
          return Integer.MAX_VALUE;
       } else {
-         return var3 < -2.1474836E9F ? Integer.MIN_VALUE : (int)var3;
+         return d < -2.1474836E9F ? Integer.MIN_VALUE : (int)d;
       }
    }
 
-   public static int method6258(Object[] var0, int var1, int var2) {
-      Object var3 = arg(var0, var1);
-      return method6253(var3) ? var2 : (int)((long)Context.toNumber(var3));
+   public static int method6258(Object[] objects, int n, int n2) {
+      Object id = arg(objects, n);
+      return method6253(id) ? n2 : (int)((long)Context.toNumber(id));
    }
 
-   public static boolean method6259(Object[] var0, int var1, boolean var2) {
-      Object var3 = arg(var0, var1);
-      return method6253(var3) ? var2 : Context.toBoolean(var3);
+   public static boolean method6259(Object[] objects, int n, boolean flag) {
+      Object id = arg(objects, n);
+      return method6253(id) ? flag : Context.toBoolean(id);
    }
 
-   public static Function method6260(Object[] var0, int var1) {
-      if (arg(var0, var1) instanceof Function var3) {
-         return var3;
+   public static Function method6260(Object[] objects, int n) {
+      if (arg(objects, n) instanceof Function function) {
+         return function;
       } else {
-         throw method6251("ожидалась функция в аргументе " + (var1 + 1));
+         throw method6251("ожидалась функция в аргументе " + (n + 1));
       }
    }
 
-   public static Function method6261(Object[] var0, int var1) {
-      return arg(var0, var1) instanceof Function var3 ? var3 : null;
+   public static Function method6261(Object[] objects, int n) {
+      return arg(objects, n) instanceof Function function ? function : null;
    }
 
-   public static Scriptable method6262(Object[] var0, int var1) {
-      Object var2 = arg(var0, var1);
-      return var2 instanceof Scriptable var3 && !(var2 instanceof Function) ? var3 : null;
+   public static Scriptable method6262(Object[] objects, int n) {
+      Object obj = arg(objects, n);
+      return obj instanceof Scriptable scriptable && !(obj instanceof Function) ? scriptable : null;
    }
 
-   public static Object method6263(Scriptable var0, String var1) {
-      if (var0 == null) {
+   public static Object method6263(Scriptable scriptable, String str) {
+      if (scriptable == null) {
          return Undefined.instance;
       } else {
-         Object var2 = ScriptableObject.getProperty(var0, var1);
-         return var2 == Scriptable.NOT_FOUND ? Undefined.instance : var2;
+         Object property = ScriptableObject.getProperty(scriptable, str);
+         return property == Scriptable.NOT_FOUND ? Undefined.instance : property;
       }
    }
 
-   public static double method6264(Scriptable var0, String var1, double var2) {
-      Object var4 = method6263(var0, var1);
-      if (method6253(var4)) {
-         return var2;
+   public static double method6264(Scriptable scriptable, String str, double d) {
+      Object id = method6263(scriptable, str);
+      if (method6253(id)) {
+         return d;
       } else {
-         double var5 = Context.toNumber(var4);
-         return Double.isNaN(var5) ? var2 : var5;
+         double number = Context.toNumber(id);
+         return Double.isNaN(number) ? d : number;
       }
    }
 
-   public static boolean method6265(Scriptable var0, String var1, boolean var2) {
-      Object var3 = method6263(var0, var1);
-      return method6253(var3) ? var2 : Context.toBoolean(var3);
+   public static boolean method6265(Scriptable scriptable, String str, boolean flag) {
+      Object id = method6263(scriptable, str);
+      return method6253(id) ? flag : Context.toBoolean(id);
    }
 
-   public static String method6266(Scriptable var0, String var1, String var2) {
-      Object var3 = method6263(var0, var1);
-      return method6253(var3) ? var2 : method6255(var3);
+   public static String method6266(Scriptable scriptable, String str, String name) {
+      Object id = method6263(scriptable, str);
+      return method6253(id) ? name : method6255(id);
    }
 
-   public static Scriptable method6267(Scriptable var0, List<?> var1) {
-      NativeArray var2 = new NativeArray(var1.toArray());
-      ScriptRuntime.setBuiltinProtoAndParent(var2, var0, Builtins.Array);
-      return var2;
+   public static Scriptable method6267(Scriptable scope, List<?> list) {
+      NativeArray nativeArray = new NativeArray(list.toArray());
+      ScriptRuntime.setBuiltinProtoAndParent(nativeArray, scope, Builtins.Array);
+      return nativeArray;
    }
 
-   public static Scriptable method6268(Scriptable var0, Object[] var1) {
-      NativeArray var2 = new NativeArray(var1);
-      ScriptRuntime.setBuiltinProtoAndParent(var2, var0, Builtins.Array);
-      return var2;
+   public static Scriptable method6268(Scriptable scope, Object[] objects) {
+      NativeArray nativeArray = new NativeArray(objects);
+      ScriptRuntime.setBuiltinProtoAndParent(nativeArray, scope, Builtins.Array);
+      return nativeArray;
    }
 
-   public static List<Object> method6269(Object var0) {
-      ArrayList<Object> var1 = new ArrayList<>();
-      if (var0 instanceof NativeArray var2) {
-         long var3 = var2.getLength();
-         if (var3 > 10000L) {
+   public static List<Object> method6269(Object id) {
+      ArrayList<Object> arrayList = new ArrayList<>();
+      if (id instanceof NativeArray nativeArray) {
+         long length = nativeArray.getLength();
+         if (length > 10000L) {
             throw method6251("массив длиннее 10000 элементов");
          }
 
-         for (int var5 = 0; var5 < var3; var5++) {
-            Object var6 = var2.get(var5, var2);
-            var1.add(var6 == Scriptable.NOT_FOUND ? Undefined.instance : var6);
+         for (int i = 0; i < length; i++) {
+            Object obj = nativeArray.get(i, nativeArray);
+            arrayList.add(obj == Scriptable.NOT_FOUND ? Undefined.instance : obj);
          }
       }
 
-      return var1;
+      return arrayList;
    }
 
-   public static Scriptable method6270(Scriptable var0, double var1, double var3, double var5) {
-      return method6247(var0).method6277("x", var1).method6277("y", var3).method6277("z", var5).getScriptableObject();
+   public static Scriptable method6270(Scriptable scope, double x, double y, double z) {
+      return method6247(scope).method6277("x", x).method6277("y", y).method6277("z", z).getScriptableObject();
    }
 
-   public static JsonElement method6271(Object var0, int var1) {
-      return method6272(var0, var1, new int[1]);
+   public static JsonElement method6271(Object id, int n) {
+      return method6272(id, n, new int[1]);
    }
 
-   private static JsonElement method6272(Object var0, int var1, int[] var2) {
-      if (var1 > 32) {
+   private static JsonElement method6272(Object id, int n, int[] ints) {
+      if (n > 32) {
          throw method6251("слишком глубокая вложенность");
-      } else if (++var2[0] > 500000) {
+      } else if (++ints[0] > 500000) {
          throw method6251("слишком большой объект (больше 500000 значений)");
-      } else if (method6253(var0)) {
+      } else if (method6253(id)) {
          return JsonNull.INSTANCE;
-      } else if (var0 instanceof Boolean var15) {
-         return new JsonPrimitive(var15);
-      } else if (var0 instanceof Number var14) {
-         return new JsonPrimitive(var14.doubleValue());
-      } else if (var0 instanceof CharSequence || var0 instanceof ConsString) {
-         return new JsonPrimitive(method6255(var0));
-      } else if (var0 instanceof NativeArray var13) {
-         JsonArray var16 = new JsonArray();
+      } else if (id instanceof Boolean bool) {
+         return new JsonPrimitive(bool);
+      } else if (id instanceof Number number) {
+         return new JsonPrimitive(number.doubleValue());
+      } else if (id instanceof CharSequence || id instanceof ConsString) {
+         return new JsonPrimitive(method6255(id));
+      } else if (id instanceof NativeArray nativeArray) {
+         JsonArray jsonArray = new JsonArray();
 
-         for (Object var18 : method6269(var13)) {
-            var16.add(method6272(var18, var1 + 1, var2));
+         for (Object obj : method6269(nativeArray)) {
+            jsonArray.add(method6272(obj, n + 1, ints));
          }
 
-         return var16;
-      } else if (var0 instanceof Function) {
+         return jsonArray;
+      } else if (id instanceof Function) {
          return JsonNull.INSTANCE;
-      } else if (var0 instanceof Scriptable var3) {
-         JsonObject var4 = new JsonObject();
-         Object[] var5 = var3.getIds();
-         if (var5.length > 10000) {
+      } else if (id instanceof Scriptable scriptable) {
+         JsonObject json = new JsonObject();
+         Object[] ids = scriptable.getIds();
+         if (ids.length > 10000) {
             throw method6251("объект больше 10000 ключей");
          } else {
-            for (Object var9 : var5) {
-               String var10 = method6255(var9);
-               Object var11 = var9 instanceof Number var12 ? var3.get(var12.intValue(), var3) : var3.get(var10, var3);
-               if (!(var11 instanceof Function)) {
-                  var4.add(var10, method6272(var11, var1 + 1, var2));
+            for (Object obj : ids) {
+               String property = method6255(obj);
+               Object id2 = obj instanceof Number number2 ? scriptable.get(number2.intValue(), scriptable) : scriptable.get(property, scriptable);
+               if (!(id2 instanceof Function)) {
+                  json.add(property, method6272(id2, n + 1, ints));
                }
             }
 
-            return var4;
+            return json;
          }
       } else {
-         return new JsonPrimitive(method6255(var0));
+         return new JsonPrimitive(method6255(id));
       }
    }
 
-   public static Object method6273(Scriptable var0, JsonElement var1) {
-      if (var1 == null || var1.isJsonNull()) {
+   public static Object method6273(Scriptable scope, JsonElement string) {
+      if (string == null || string.isJsonNull()) {
          return null;
-      } else if (var1.isJsonPrimitive()) {
-         JsonPrimitive var6 = var1.getAsJsonPrimitive();
-         if (var6.isBoolean()) {
-            return var6.getAsBoolean();
+      } else if (string.isJsonPrimitive()) {
+         JsonPrimitive jsonPrimitive = string.getAsJsonPrimitive();
+         if (jsonPrimitive.isBoolean()) {
+            return jsonPrimitive.getAsBoolean();
          } else {
-            return var6.isNumber() ? var6.getAsDouble() : var6.getAsString();
+            return jsonPrimitive.isNumber() ? jsonPrimitive.getAsDouble() : jsonPrimitive.getAsString();
          }
-      } else if (var1.isJsonArray()) {
-         ArrayList var5 = new ArrayList();
+      } else if (string.isJsonArray()) {
+         ArrayList arrayList = new ArrayList();
 
-         for (JsonElement var8 : var1.getAsJsonArray()) {
-            var5.add(method6273(var0, var8));
+         for (JsonElement json : string.getAsJsonArray()) {
+            arrayList.add(method6273(scope, json));
          }
 
-         return method6267(var0, var5);
+         return method6267(scope, arrayList);
       } else {
-         ScriptValueUtils.Entry2 var2 = method6247(var0);
+         ScriptValueUtils.Entry2 entry2 = method6247(scope);
 
-         for (Map.Entry var4 : var1.getAsJsonObject().entrySet()) {
-            var2.method6277((String)var4.getKey(), method6273(var0, (JsonElement)var4.getValue()));
+         for (Map.Entry entry : string.getAsJsonObject().entrySet()) {
+            entry2.method6277((String)entry.getKey(), method6273(scope, (JsonElement)entry.getValue()));
          }
 
-         return var2.getScriptableObject();
+         return entry2.getScriptableObject();
       }
    }
 
    public static final class Entry extends RuntimeException {
-      public Entry(String var1) {
-         super(var1, null, false, false);
+      public Entry(String message) {
+         super(message, null, false, false);
       }
    }
 
@@ -313,28 +313,28 @@ public final class ScriptValueUtils {
       private final Scriptable scriptable;
       private final ScriptableObject scriptableObject;
 
-      private Entry2(Scriptable var1, ScriptableObject var2) {
-         this.scriptable = var1;
-         this.scriptableObject = var2;
+      private Entry2(Scriptable scriptable, ScriptableObject scriptableObject) {
+         this.scriptable = scriptable;
+         this.scriptableObject = scriptableObject;
       }
 
-      public ScriptValueUtils.Entry2 method6274(String var1, ScriptValueUtils.Handler var2) {
-         this.scriptableObject.defineProperty(var1, ScriptValueUtils.method6249(this.scriptable, var1, var2), 3);
+      public ScriptValueUtils.Entry2 method6274(String str, ScriptValueUtils.Handler handler) {
+         this.scriptableObject.defineProperty(str, ScriptValueUtils.method6249(this.scriptable, str, handler), 3);
          return this;
       }
 
-      public ScriptValueUtils.Entry2 method6275(String var1, Object var2) {
-         this.scriptableObject.defineProperty(var1, var2, 1);
+      public ScriptValueUtils.Entry2 method6275(String str, Object obj) {
+         this.scriptableObject.defineProperty(str, obj, 1);
          return this;
       }
 
-      public ScriptValueUtils.Entry2 method6276(String var1, Supplier<Object> var2) {
-         this.scriptableObject.defineProperty(var1, ScriptValueUtils.method6249(this.scriptable, var1, var1x -> var2.get()), 3);
+      public ScriptValueUtils.Entry2 method6276(String str, Supplier<Object> supplier) {
+         this.scriptableObject.defineProperty(str, ScriptValueUtils.method6249(this.scriptable, str, var1x -> supplier.get()), 3);
          return this;
       }
 
-      public ScriptValueUtils.Entry2 method6277(String var1, Object var2) {
-         this.scriptableObject.put(var1, this.scriptableObject, var2);
+      public ScriptValueUtils.Entry2 method6277(String name, Object string) {
+         this.scriptableObject.put(name, this.scriptableObject, string);
          return this;
       }
 
@@ -345,6 +345,6 @@ public final class ScriptValueUtils {
 
    @FunctionalInterface
    public interface Handler {
-      Object call(Object[] var1);
+      Object call(Object[] objects);
    }
 }

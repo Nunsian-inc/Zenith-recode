@@ -263,7 +263,7 @@ public class BotScreen extends CustomScreen {
    private List<Component> scoreboardNames = List.of();
    private static final Map<BotScreen.FitKey, String> FIT_CACHE = new LinkedHashMap<BotScreen.FitKey, String>(64, 0.75F, true) {
       @Override
-      public boolean removeEldestEntry(Entry<BotScreen.FitKey, String> var1) {
+      public boolean removeEldestEntry(Entry<BotScreen.FitKey, String> eldest) {
          return this.size() > 128;
       }
    };
@@ -284,9 +284,9 @@ public class BotScreen extends CustomScreen {
       this.connectInput.setText2(tr("module.bot.connectTo"));
       this.connectInput.setType(SearchBox.Type.SERVER_ADDRESS);
       if (this.connectInput.getText().isBlank()) {
-         ServerData var1 = mc.getCurrentServer();
-         if (var1 != null && var1.ip != null && !var1.ip.isBlank()) {
-            this.connectInput.setText(var1.ip.trim());
+         ServerData currentServer = mc.getCurrentServer();
+         if (currentServer != null && currentServer.ip != null && !currentServer.ip.isBlank()) {
+            this.connectInput.setText(currentServer.ip.trim());
             this.connectInput.setCursor(this.connectInput.getText().length());
          }
       }
@@ -300,9 +300,9 @@ public class BotScreen extends CustomScreen {
       this.proxyManagerInput.setMaxLength(256);
       this.proxyManagerInput.setType(SearchBox.Type.ANY);
       if (this.selectedName == null) {
-         var var2 = HeadlessBots.allNames();
-         if (!var2.isEmpty()) {
-            this.selectedName = (String)var2.get(0);
+         var allNames = HeadlessBots.allNames();
+         if (!allNames.isEmpty()) {
+            this.selectedName = (String)allNames.get(0);
          }
       }
 
@@ -312,296 +312,296 @@ public class BotScreen extends CustomScreen {
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3) {
+   public void render(MenuDrawContext menuDrawContext, float f, float f2) {
    }
 
-   public void renderTop(MenuDrawContext var1, float var2, float var3) {
-      float var4 = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
-      float var5 = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
-      float var6 = this.screenAnimation.method2808(this.closing ? 0.0F : 1.0F);
-      if (this.closing && this.screenAnimation.isDone() && var6 <= 0.001F) {
+   public void renderTop(MenuDrawContext menuDrawContext, float mouseX, float mouseY) {
+      float floatValue = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
+      float y = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
+      float f = this.screenAnimation.method2808(this.closing ? 0.0F : 1.0F);
+      if (this.closing && this.screenAnimation.isDone() && f <= 0.001F) {
          mc.gui.setScreen(null);
       } else {
-         float var7 = clamp01(var6);
-         float var8 = var4 + 240.0F;
-         float var9 = var5 + 160.0F;
-         float var10 = this.closing ? var7 : var6;
-         float var11 = 0.88F + 0.120000005F * var10;
-         float var12 = 10.0F * (1.0F - var7);
-         float var13 = (var2 - var8) / var11 + var8;
-         float var14 = (var3 - var9 - var12) / var11 + var9;
-         var1.pose().pushMatrix();
-         var1.pose().translate(var8, var9 + var12);
-         var1.pose().scale(var11, var11);
-         var1.pose().translate(-var8, -var9);
+         float previewAlpha = clamp01(f);
+         float x = floatValue + 240.0F;
+         float f2 = y + 160.0F;
+         float f3 = this.closing ? previewAlpha : f;
+         float x2 = 0.88F + 0.120000005F * f3;
+         float f4 = 10.0F * (1.0F - previewAlpha);
+         float f5 = (mouseX - x) / x2 + x;
+         float f6 = (mouseY - f2 - f4) / x2 + f2;
+         menuDrawContext.pose().pushMatrix();
+         menuDrawContext.pose().translate(x, f2 + f4);
+         menuDrawContext.pose().scale(x2, x2);
+         menuDrawContext.pose().translate(-x, -f2);
          RenderState.method1871();
          RenderState.method1873();
-         this.renderProxyPanel(var1, var4, var5, var7, var13, var14);
-         this.renderPanels(var1, var4, var5, var7, var13, var14);
-         this.renderProxyPanelButton(var1, var4, var5, var7, var13, var14);
+         this.renderProxyPanel(menuDrawContext, floatValue, y, previewAlpha, f5, f6);
+         this.renderPanels(menuDrawContext, floatValue, y, previewAlpha, f5, f6);
+         this.renderProxyPanelButton(menuDrawContext, floatValue, y, previewAlpha, f5, f6);
          RenderState.method1883(1.0F, 1.0F, 1.0F, 1.0F);
-         var1.pose().popMatrix();
+         menuDrawContext.pose().popMatrix();
       }
    }
 
-   private void renderPanels(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
+   private void renderPanels(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, float f, float f2) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
          ServerIconCache.tick();
          RenderShaders.method5288(
-            MatrixUtils.method664(var1.pose()), var2, var3, 480.0F, 320.0F, 0.0F, 16.0F, 32.0F, -16.0F, panelRadius, shadowColor.method7294(var4)
+            MatrixUtils.method664(menuDrawContext.pose()), floatValue, y, 480.0F, 320.0F, 0.0F, 16.0F, 32.0F, -16.0F, panelRadius, shadowColor.method7294(previewAlpha)
          );
-         this.renderPanelBlur(var1, var2, var3, var4);
-         var1.drawRoundedRect(var2, var3, 240.0F, 320.0F, leftPanelRadius, leftColor.method7294(var4));
-         var1.drawRoundedRect(var2 + 240.0F, var3, 240.0F, 320.0F, rightPanelRadius, var7.getRightBackground().getZenithColor().method7294(var4));
-         var1.drawRoundedRect(var2 + 4.0F, var3 + 4.0F, 232.0F, 23.0F, headerRadius, headerColor.method7294(var4));
-         float var8 = var3 + 31.0F;
-         float var9 = centeredTextY(nickFont, var8, 23.0F);
-         float var10 = var2 + 4.0F;
-         var1.drawRoundedRect(var10, var8, 114.0F, 23.0F, headerRadius, headerColor.method7294(var4));
-         float var11 = var10 + 114.0F - 23.0F;
-         var1.drawRoundedRect(var11, var8, 23.0F, 23.0F, headerRadius, addButtonColor.method7294(var4));
-         float var12 = botIconFont.width("D");
-         var1.drawText(botIconFont, "D", var11 + (23.0F - var12) / 2.0F, centeredTextY(botIconFont, var8, 23.0F), inputEmptyColor.method7294(var4));
+         this.renderPanelBlur(menuDrawContext, floatValue, y, previewAlpha);
+         menuDrawContext.drawRoundedRect(floatValue, y, 240.0F, 320.0F, leftPanelRadius, leftColor.method7294(previewAlpha));
+         menuDrawContext.drawRoundedRect(floatValue + 240.0F, y, 240.0F, 320.0F, rightPanelRadius, currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawRoundedRect(floatValue + 4.0F, y + 4.0F, 232.0F, 23.0F, headerRadius, headerColor.method7294(previewAlpha));
+         float y2 = y + 31.0F;
+         float centeredTextY2 = centeredTextY(nickFont, y2, 23.0F);
+         float floatValue2 = floatValue + 4.0F;
+         menuDrawContext.drawRoundedRect(floatValue2, y2, 114.0F, 23.0F, headerRadius, headerColor.method7294(previewAlpha));
+         float floatValue3 = floatValue2 + 114.0F - 23.0F;
+         menuDrawContext.drawRoundedRect(floatValue3, y2, 23.0F, 23.0F, headerRadius, addButtonColor.method7294(previewAlpha));
+         float width = botIconFont.width("D");
+         menuDrawContext.drawText(botIconFont, "D", floatValue3 + (23.0F - width) / 2.0F, centeredTextY(botIconFont, y2, 23.0F), inputEmptyColor.method7294(previewAlpha));
          this.addInput.setWidth(75.0F);
-         this.addInput.method987(var1, var10 + 8.0F, var9, ZenithColor.INSTANCE.method7294(var4), inputEmptyColor.method7294(var4));
-         float var13 = var10 + 114.0F + 4.0F;
-         var1.drawRoundedRect(var13, var8, 114.0F, 23.0F, headerRadius, headerColor.method7294(var4));
+         this.addInput.method987(menuDrawContext, floatValue2 + 8.0F, centeredTextY2, ZenithColor.INSTANCE.method7294(previewAlpha), inputEmptyColor.method7294(previewAlpha));
+         float floatValue4 = floatValue2 + 114.0F + 4.0F;
+         menuDrawContext.drawRoundedRect(floatValue4, y2, 114.0F, 23.0F, headerRadius, headerColor.method7294(previewAlpha));
          this.searchInput.setWidth(98.0F);
-         this.searchInput.method987(var1, var13 + 8.0F, var9, ZenithColor.INSTANCE.method7294(var4), inputEmptyColor.method7294(var4));
-         List<String> var14 = HeadlessBots.allNames();
-         this.refreshSelection(var14);
+         this.searchInput.method987(menuDrawContext, floatValue4 + 8.0F, centeredTextY2, ZenithColor.INSTANCE.method7294(previewAlpha), inputEmptyColor.method7294(previewAlpha));
+         List<String> allNames = HeadlessBots.allNames();
+         this.refreshSelection(allNames);
          if (!this.rowAnims.isEmpty()) {
-            var var15 = this.rowAnims.keySet().iterator();
+            var iterator = this.rowAnims.keySet().iterator();
 
-            while (var15.hasNext()) {
-               String var16 = (String)var15.next();
-               boolean var17 = false;
+            while (iterator.hasNext()) {
+               String anObject = (String)iterator.next();
+               boolean flag = false;
 
-               for (String var19 : var14) {
-                  if (var19.equals(var16)) {
-                     var17 = true;
+               for (String allName : allNames) {
+                  if (allName.equals(anObject)) {
+                     flag = true;
                      break;
                   }
                }
 
-               if (!var17) {
-                  var15.remove();
+               if (!flag) {
+                  iterator.remove();
                }
             }
          }
 
-         var var46 = this.filterBots(var14);
-         float var47 = var3 + 58.0F;
-         float var48 = var47 + 211.0F;
-         this.listScroll = Math.max(0.0F, Math.min(this.listScroll, listMaxScroll(var46.size())));
-         var1.enableScissor(var2 + 4.0F, var47, var2 + 4.0F + 227.0F, var48);
+         var filterBots = this.filterBots(allNames);
+         float y3 = y + 58.0F;
+         float guiScaledHeight = y3 + 211.0F;
+         this.listScroll = Math.max(0.0F, Math.min(this.listScroll, listMaxScroll(filterBots.size())));
+         menuDrawContext.enableScissor(floatValue + 4.0F, y3, floatValue + 4.0F + 227.0F, guiScaledHeight);
 
-         for (int var49 = 0; var49 < var46.size(); var49++) {
-            this.renderListRow(var1, (String)var46.get(var49), var49, var2, var47, var48, var4, var5, var6, var7);
+         for (int i = 0; i < filterBots.size(); i++) {
+            this.renderListRow(menuDrawContext, (String)filterBots.get(i), i, floatValue, y3, guiScaledHeight, previewAlpha, f, f2, currentStyle);
          }
 
-         var1.disableScissor();
-         float var50 = var2 + 4.0F + 227.0F + 4.0F;
-         var1.drawRoundedRect(var50, var47, 1.0F, 211.0F, scrollbarRadius, scrollbarTrackColor.method7294(var4));
-         float var51 = listContentHeight(var46.size());
-         float var20 = var51 <= 211.0F ? 211.0F : Math.max(16.0F, 44521.0F / var51);
-         float var21 = listMaxScroll(var46.size());
-         float var22 = var47 + (var21 > 0.0F ? this.listScroll / var21 : 0.0F) * (211.0F - var20);
-         var1.drawRoundedRect(var50, var22, 1.0F, var20, scrollbarRadius, scrollbarThumbColor.method7294(var4));
-         this.renderBulkActionTabs(var1, var2, var3 + 275.0F, var4, var7);
-         this.renderBulkActionPayload(var1, var2, var3 + 292.0F, var4);
-         var1.drawRoundedRect(
-            var2 + 240.0F + 4.0F, var3 + 4.0F, 232.0F, 23.0F, headerRadius, var7.getSurfaceDisableBackground().getZenithColor().method7294(var4)
+         menuDrawContext.disableScissor();
+         float floatValue5 = floatValue + 4.0F + 227.0F + 4.0F;
+         menuDrawContext.drawRoundedRect(floatValue5, y3, 1.0F, 211.0F, scrollbarRadius, scrollbarTrackColor.method7294(previewAlpha));
+         float listContentHeight2 = listContentHeight(filterBots.size());
+         float height = listContentHeight2 <= 211.0F ? 211.0F : Math.max(16.0F, 44521.0F / listContentHeight2);
+         float listMaxScroll2 = listMaxScroll(filterBots.size());
+         float y4 = y3 + (listMaxScroll2 > 0.0F ? this.listScroll / listMaxScroll2 : 0.0F) * (211.0F - height);
+         menuDrawContext.drawRoundedRect(floatValue5, y4, 1.0F, height, scrollbarRadius, scrollbarThumbColor.method7294(previewAlpha));
+         this.renderBulkActionTabs(menuDrawContext, floatValue, y + 275.0F, previewAlpha, currentStyle);
+         this.renderBulkActionPayload(menuDrawContext, floatValue, y + 292.0F, previewAlpha);
+         menuDrawContext.drawRoundedRect(
+            floatValue + 240.0F + 4.0F, y + 4.0F, 232.0F, 23.0F, headerRadius, currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha)
          );
-         var1.drawRoundedRect(var2 + 240.0F + 4.0F, var3 + 4.0F, 23.0F, 23.0F, headerRadius, var7.getPanelLeftBackground().getZenithColor().method7294(var4));
-         boolean var23 = this.selectedNames.size() > 1;
-         if (var23) {
-            float var24 = botIconFont.width("P");
-            var1.drawText(
+         menuDrawContext.drawRoundedRect(floatValue + 240.0F + 4.0F, y + 4.0F, 23.0F, 23.0F, headerRadius, currentStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha));
+         boolean flag = this.selectedNames.size() > 1;
+         if (flag) {
+            float width2 = botIconFont.width("P");
+            menuDrawContext.drawText(
                botIconFont,
                "P",
-               var2 + 240.0F + 4.0F + (23.0F - var24) / 2.0F,
-               centeredTextY(botIconFont, var3 + 4.0F, 23.0F),
-               var7.getPrimaryColor().getZenithColor().method7294(var4)
+               floatValue + 240.0F + 4.0F + (23.0F - width2) / 2.0F,
+               centeredTextY(botIconFont, y + 4.0F, 23.0F),
+               currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
-            var1.drawText(
+            menuDrawContext.drawText(
                nickFont,
                tr("module.bot.selected") + ": " + this.selectedNames.size(),
-               var2 + 240.0F + 4.0F + 23.0F + 8.0F,
-               centeredTextY(nickFont, var3 + 4.0F, 23.0F),
-               var7.getTextEnable().getZenithColor().method7294(var4)
+               floatValue + 240.0F + 4.0F + 23.0F + 8.0F,
+               centeredTextY(nickFont, y + 4.0F, 23.0F),
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
             );
          } else if (this.selectedName != null) {
-            Identifier var52 = BotAvatarCache.prewarm(this.selectedName);
-            if (var52 != null) {
-               float var25 = var2 + 240.0F + 4.0F + 4.0F;
-               float var26 = var3 + 4.0F + 4.0F;
+            Identifier prewarm = BotAvatarCache.prewarm(this.selectedName);
+            if (prewarm != null) {
+               float x = floatValue + 240.0F + 4.0F + 4.0F;
+               float y5 = y + 4.0F + 4.0F;
                RenderShaders.method5294(
-                  MatrixUtils.method664(var1.pose()), var52, var25, var26, 15.0F, 15.0F, avatarRadius, ZenithColor.INSTANCE.method7294(var4)
+                  MatrixUtils.method664(menuDrawContext.pose()), prewarm, x, y5, 15.0F, 15.0F, avatarRadius, ZenithColor.INSTANCE.method7294(previewAlpha)
                );
             }
 
-            var1.drawText(
+            menuDrawContext.drawText(
                nickFont,
                this.selectedName,
-               var2 + 240.0F + 4.0F + 23.0F + 8.0F,
-               centeredTextY(nickFont, var3 + 4.0F, 23.0F),
-               var7.getTextEnable().getZenithColor().method7294(var4)
+               floatValue + 240.0F + 4.0F + 23.0F + 8.0F,
+               centeredTextY(nickFont, y + 4.0F, 23.0F),
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
             );
          }
 
-         float var53 = nickFont.width("Bot");
-         float var54 = botIconFont.width("P");
-         float var55 = var2 + 4.0F + (232.0F - var54 - 3.0F - var53) / 2.0F;
-         var1.drawText(botIconFont, "P", var55, centeredTextY(botIconFont, var3 + 4.0F, 23.0F), var7.getPrimaryColor().getZenithColor().method7294(var4));
-         var1.drawText(nickFont, "Bot", var55 + var54 + 3.0F, centeredTextY(nickFont, var3 + 4.0F, 23.0F), ZenithColor.INSTANCE.method7294(var4));
-         BotClient var27 = this.selectedClient();
-         boolean var28 = var27 != null && var27.isJoined();
-         float var29 = var2 + 319.0F;
-         float var30 = var3 + 4.0F;
-         float var31 = var29 + 157.0F - this.connectButtonWidth;
-         float var32 = var31 - 4.0F - 34.0F;
+         float width2 = nickFont.width("Bot");
+         float width3 = botIconFont.width("P");
+         float floatValue6 = floatValue + 4.0F + (232.0F - width3 - 3.0F - width2) / 2.0F;
+         menuDrawContext.drawText(botIconFont, "P", floatValue6, centeredTextY(botIconFont, y + 4.0F, 23.0F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawText(nickFont, "Bot", floatValue6 + width3 + 3.0F, centeredTextY(nickFont, y + 4.0F, 23.0F), ZenithColor.INSTANCE.method7294(previewAlpha));
+         BotClient selectedClient = this.selectedClient();
+         boolean flag2 = selectedClient != null && selectedClient.isJoined();
+         float f3 = floatValue + 319.0F;
+         float y5 = y + 4.0F;
+         float floatValue7 = f3 + 157.0F - this.connectButtonWidth;
+         float floatValue8 = floatValue7 - 4.0F - 34.0F;
          this.connectInput.setWidth(157.0F - this.connectButtonWidth - 34.0F - 4.0F - 15.0F - 8.0F);
          this.connectInput
             .method987(
-               var1,
-               var29 + 15.0F,
-               centeredTextY(nickFont, var30, 23.0F),
-               var7.getTextEnable().getZenithColor().method7294(var4),
-               var7.getTextSecondary().getZenithColor().method7294(var4)
+               menuDrawContext,
+               f3 + 15.0F,
+               centeredTextY(nickFont, y5, 23.0F),
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+               currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
             );
-         var1.drawRoundedRect(var31, var30, this.connectButtonWidth, 23.0F, headerRadius, var7.getPanelLeftBackground().getZenithColor().method7294(var4));
-         String var33 = var28 ? "P" : "Z";
-         float var34 = connectIconFont.width(var33);
-         var1.drawText(
+         menuDrawContext.drawRoundedRect(floatValue7, y5, this.connectButtonWidth, 23.0F, headerRadius, currentStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha));
+         String text = flag2 ? "P" : "Z";
+         float width4 = connectIconFont.width(text);
+         menuDrawContext.drawText(
             connectIconFont,
-            var33,
-            var31 + (this.connectButtonWidth - var34) / 2.0F,
-            centeredTextY(connectIconFont, var30, 23.0F) + 0.5F,
-            (var28 ? var7.getPrimaryColor().getZenithColor() : var7.getTextSecondary().getZenithColor()).method7294(var4)
+            text,
+            floatValue7 + (this.connectButtonWidth - width4) / 2.0F,
+            centeredTextY(connectIconFont, y5, 23.0F) + 0.5F,
+            (flag2 ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getTextSecondary().getZenithColor()).method7294(previewAlpha)
          );
-         var1.drawRoundedRect(
-            var32,
-            var30,
+         menuDrawContext.drawRoundedRect(
+            floatValue8,
+            y5,
             34.0F,
             23.0F,
             headerRadius,
-            (this.versionMenuOpen ? var7.getPrimaryColor().getZenithColor().method7293(42) : var7.getPanelLeftBackground().getZenithColor()).method7294(var4)
+            (this.versionMenuOpen ? currentStyle.getPrimaryColor().getZenithColor().method7293(42) : currentStyle.getPanelLeftBackground().getZenithColor()).method7294(previewAlpha)
          );
-         String var35 = fitText(versionFont, BotProtocolVersions.label(this.selectedProtocolVersion()), 28.0F);
-         ZenithColor var36 = this.selectedProtocolVersion() > 0 ? var7.getPrimaryColor().getZenithColor() : var7.getTextSecondary().getZenithColor();
-         var1.drawText(versionFont, var35, var32 + (34.0F - versionFont.width(var35)) / 2.0F, centeredTextY(versionFont, var30, 23.0F), var36.method7294(var4));
-         float var37 = var2 + 244.0F;
-         float var38 = var3 + 39.0F + 130.5F + 4.0F;
-         float var39 = var38 + 107.5F + 4.0F;
-         if (var28) {
-            var1.drawRoundedRect(
-               var2 + 244.0F, var3 + 39.0F, 232.0F, 130.5F, headerRadius, var7.getSurfaceDisableBackground().getZenithColor().method7294(var4)
+         String str = fitText(versionFont, BotProtocolVersions.label(this.selectedProtocolVersion()), 28.0F);
+         ZenithColor zenithColor = this.selectedProtocolVersion() > 0 ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getTextSecondary().getZenithColor();
+         menuDrawContext.drawText(versionFont, str, floatValue8 + (34.0F - versionFont.width(str)) / 2.0F, centeredTextY(versionFont, y5, 23.0F), zenithColor.method7294(previewAlpha));
+         float floatValue9 = floatValue + 244.0F;
+         float y6 = y + 39.0F + 130.5F + 4.0F;
+         float y7 = y6 + 107.5F + 4.0F;
+         if (flag2) {
+            menuDrawContext.drawRoundedRect(
+               floatValue + 244.0F, y + 39.0F, 232.0F, 130.5F, headerRadius, currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha)
             );
-            this.renderPreview(var1, var27, var2 + 244.0F, var3 + 39.0F, var4);
-            this.renderStatusPanel(var1, var27, var2 + 244.0F, var3 + 39.0F, var4, var7);
-            var1.drawRoundedRect(var37, var38, 232.0F, 107.5F, headerRadius, var7.getSurfaceDisableBackground().getZenithColor().method7294(var4));
+            this.renderPreview(menuDrawContext, selectedClient, floatValue + 244.0F, y + 39.0F, previewAlpha);
+            this.renderStatusPanel(menuDrawContext, selectedClient, floatValue + 244.0F, y + 39.0F, previewAlpha, currentStyle);
+            menuDrawContext.drawRoundedRect(floatValue9, y6, 232.0F, 107.5F, headerRadius, currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha));
          } else {
             this.closePreview();
-            float var40 = 242.0F;
-            var1.drawRoundedRect(var37, var3 + 39.0F, 232.0F, var40, headerRadius, var7.getSurfaceDisableBackground().getZenithColor().method7294(var4));
-            String var41 = tr("module.bot.noConnection");
-            float var42 = nickFont.width(var41);
-            var1.drawText(
+            float height2 = 242.0F;
+            menuDrawContext.drawRoundedRect(floatValue9, y + 39.0F, 232.0F, height2, headerRadius, currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha));
+            String tr2 = tr("module.bot.noConnection");
+            float width5 = nickFont.width(tr2);
+            menuDrawContext.drawText(
                nickFont,
-               var41,
-               var37 + (232.0F - var42) / 2.0F,
-               centeredTextY(nickFont, var3 + 39.0F, var40),
-               var7.getTextSecondary().getZenithColor().method7294(var4)
+               tr2,
+               floatValue9 + (232.0F - width5) / 2.0F,
+               centeredTextY(nickFont, y + 39.0F, height2),
+               currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
             );
          }
 
-         if (var28) {
-            float var56 = var37 + 232.0F - 48.0F;
+         if (flag2) {
+            float floatValue10 = floatValue9 + 232.0F - 48.0F;
             this.chatInput.setWidth(168.0F);
             this.chatInput
                .method987(
-                  var1,
-                  var37 + 8.0F,
-                  centeredTextY(nickFont, var39, 23.0F),
-                  var7.getTextEnable().getZenithColor().method7294(var4),
-                  var7.getTextSecondary().getZenithColor().method7294(var4)
+                  menuDrawContext,
+                  floatValue9 + 8.0F,
+                  centeredTextY(nickFont, y7, 23.0F),
+                  currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+                  currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
                );
-            var1.drawRoundedRect(var56, var39, 48.0F, 23.0F, headerRadius, var7.getPanelLeftBackground().getZenithColor().method7294(var4));
-            String var57 = tr("module.bot.send");
-            float var58 = nickFont.width(var57);
-            float var43 = connectIconFont.width("d");
-            float var44 = 2.0F;
-            float var45 = var56 + (48.0F - var43 - var44 - var58) / 2.0F;
-            var1.drawText(connectIconFont, "d", var45, centeredTextY(connectIconFont, var39, 23.0F), var7.getTextSecondary().getZenithColor().method7294(var4));
-            var1.drawText(
-               nickFont, var57, var45 + var43 + var44, centeredTextY(nickFont, var39, 23.0F), var7.getTextSecondary().getZenithColor().method7294(var4)
+            menuDrawContext.drawRoundedRect(floatValue10, y7, 48.0F, 23.0F, headerRadius, currentStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha));
+            String tr2 = tr("module.bot.send");
+            float width5 = nickFont.width(tr2);
+            float width6 = connectIconFont.width("d");
+            float f4 = 2.0F;
+            float floatValue11 = floatValue10 + (48.0F - width6 - f4 - width5) / 2.0F;
+            menuDrawContext.drawText(connectIconFont, "d", floatValue11, centeredTextY(connectIconFont, y7, 23.0F), currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+            menuDrawContext.drawText(
+               nickFont, tr2, floatValue11 + width6 + f4, centeredTextY(nickFont, y7, 23.0F), currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
             );
          } else {
             this.chatInput.setSelected(false);
          }
 
-         if (var28) {
-            this.renderChatMessages(var1, var27, var37, var38, var4, var7);
+         if (flag2) {
+            this.renderChatMessages(menuDrawContext, selectedClient, floatValue9, y6, previewAlpha, currentStyle);
          }
 
-         this.renderModuleMenu(var1, var4, var5, var6, var7);
-         this.renderVersionMenu(var1, var2, var3, var4, var5, var6, var7);
+         this.renderModuleMenu(menuDrawContext, previewAlpha, f, f2, currentStyle);
+         this.renderVersionMenu(menuDrawContext, floatValue, y, previewAlpha, f, f2, currentStyle);
       }
    }
 
-   private void renderStatusPanel(MenuDrawContext var1, BotClient var2, float var3, float var4, float var5, ZenithStyle var6) {
-      float var7 = var3 + 8.0F;
-      float var8 = var4 + 8.0F;
-      float var9 = lineHeight(nickFont) + 4.0F;
-      var1.drawText(nickFont, var2.name(), var7, var8, var6.getTextEnable().getZenithColor().method7294(var5));
-      String var10 = var2.getPhase().name();
-      float var11 = roleFont.width(var10);
-      float var12 = var11 + 8.0F;
-      float var13 = var3 + 232.0F - 8.0F - var12;
-      var1.drawRoundedRect(var13, var8 - 1.5F, var12, 10.0F, roleBadgeRadius, var6.getPrimaryColor().getZenithColor().method7293(34).method7294(var5));
-      var1.drawText(roleFont, var10, var13 + 4.0F, var8, var6.getPrimaryColor().getZenithColor().method7294(var5));
-      var8 += var9 + 4.0F;
-      this.renderBotScoreboard(var1, var2, var3, var4, var5, var6);
+   private void renderStatusPanel(MenuDrawContext menuDrawContext, BotClient selectedClient, float f, float f2, float previewAlpha, ZenithStyle currentStyle) {
+      float floatValue = f + 8.0F;
+      float centeredTextY = f2 + 8.0F;
+      float f3 = lineHeight(nickFont) + 4.0F;
+      menuDrawContext.drawText(nickFont, selectedClient.name(), floatValue, centeredTextY, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      String name = selectedClient.getPhase().name();
+      float width = roleFont.width(name);
+      float width2 = width + 8.0F;
+      float floatValue2 = f + 232.0F - 8.0F - width2;
+      menuDrawContext.drawRoundedRect(floatValue2, centeredTextY - 1.5F, width2, 10.0F, roleBadgeRadius, currentStyle.getPrimaryColor().getZenithColor().method7293(34).method7294(previewAlpha));
+      menuDrawContext.drawText(roleFont, name, floatValue2 + 4.0F, centeredTextY, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+      centeredTextY += f3 + 4.0F;
+      this.renderBotScoreboard(menuDrawContext, selectedClient, f, f2, previewAlpha, currentStyle);
    }
 
-   private void renderBotScoreboard(MenuDrawContext var1, BotClient var2, float var3, float var4, float var5, ZenithStyle var6) {
-      BotWorld var7 = var2.getWorld();
-      if (var7 != null) {
-         Component var8;
-         List var9;
+   private void renderBotScoreboard(MenuDrawContext menuDrawContext, BotClient scoreboardClient, float f, float f2, float previewAlpha, ZenithStyle currentStyle) {
+      BotWorld world = scoreboardClient.getWorld();
+      if (world != null) {
+         Component displayName;
+         List scoreboardNames;
          try {
-            synchronized (var2.getRenderStateLock()) {
+            synchronized (scoreboardClient.getRenderStateLock()) {
                label113: {
-                  Scoreboard var11 = var7.getScoreboard();
-                  synchronized (var11) {
-                     Objective var13 = null;
-                     PlayerTeam var14 = var11.getPlayersTeam(var2.name());
-                     if (var14 != null) {
-                        DisplaySlot var15 = var14.getColor().map(net.minecraft.world.scores.TeamColor::displaySlot).orElse(null);
-                        if (var15 != null) {
-                           var13 = var11.getDisplayObjective(var15);
+                  Scoreboard scoreboard = world.getScoreboard();
+                  synchronized (scoreboard) {
+                     Objective displayObjective = null;
+                     PlayerTeam playersTeam = scoreboard.getPlayersTeam(scoreboardClient.name());
+                     if (playersTeam != null) {
+                        DisplaySlot slot = playersTeam.getColor().map(net.minecraft.world.scores.TeamColor::displaySlot).orElse(null);
+                        if (slot != null) {
+                           displayObjective = scoreboard.getDisplayObjective(slot);
                         }
                      }
 
-                     if (var13 == null) {
-                        var13 = var11.getDisplayObjective(DisplaySlot.SIDEBAR);
+                     if (displayObjective == null) {
+                        displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
                      }
 
-                     if (var13 == null) {
+                     if (displayObjective == null) {
                         this.scoreboardTitle = null;
                      } else {
-                        ArrayList<PlayerScoreEntry> var26 = new ArrayList<>(var11.listPlayerScores(var13));
-                        var26.removeIf(PlayerScoreEntry::isHidden);
-                        var26.sort(net.minecraft.client.gui.Hud.SCORE_DISPLAY_ORDER);
-                        var9 = new ArrayList(var26.size());
+                        ArrayList<PlayerScoreEntry> playerScoreEntries = new ArrayList<>(scoreboard.listPlayerScores(displayObjective));
+                        playerScoreEntries.removeIf(PlayerScoreEntry::isHidden);
+                        playerScoreEntries.sort(net.minecraft.client.gui.Hud.SCORE_DISPLAY_ORDER);
+                        scoreboardNames = new ArrayList(playerScoreEntries.size());
 
-                        for (PlayerScoreEntry var17 : var26) {
-                           var9.add(PlayerTeam.formatNameForTeam(var11.getPlayersTeam(var17.owner()), var17.ownerName()));
+                        for (PlayerScoreEntry playerScoreEntry : playerScoreEntries) {
+                           scoreboardNames.add(PlayerTeam.formatNameForTeam(scoreboard.getPlayersTeam(playerScoreEntry.owner()), playerScoreEntry.ownerName()));
                         }
 
-                        var8 = var13.getDisplayName();
+                        displayName = displayObjective.getDisplayName();
                         break label113;
                      }
                   }
@@ -610,101 +610,101 @@ public class BotScreen extends CustomScreen {
                }
             }
 
-            this.scoreboardClient = var2;
-            this.scoreboardTitle = var8;
-            this.scoreboardNames = (List<Component>)var9;
-         } catch (RuntimeException var22) {
-            if (this.scoreboardClient != var2 || this.scoreboardTitle == null) {
+            this.scoreboardClient = scoreboardClient;
+            this.scoreboardTitle = displayName;
+            this.scoreboardNames = (List<Component>)scoreboardNames;
+         } catch (RuntimeException e) {
+            if (this.scoreboardClient != scoreboardClient || this.scoreboardTitle == null) {
                return;
             }
 
-            var8 = this.scoreboardTitle;
-            var9 = this.scoreboardNames;
+            displayName = this.scoreboardTitle;
+            scoreboardNames = this.scoreboardNames;
          }
 
-         float var10 = lineHeight(scoreboardFont) + 1.5F;
-         float var23 = var4 + 8.0F + 12.0F;
-         float var12 = var4 + 130.5F - 8.0F;
-         int var24 = Math.max(0, (int)((var12 - var23 - var10) / var10));
-         if (var24 > 0) {
-            List var25 = var9.size() > var24 ? var9.subList(0, var24) : var9;
-            if (!var25.isEmpty()) {
-               float var27 = var3 + 232.0F - 8.0F;
-               var1.drawText(
-                  scoreboardFont, var8, var27 - scoreboardFont.width(var8), var23, var6.getTextEnable().getZenithColor().method7294(var5).method7287()
+         float f3 = lineHeight(scoreboardFont) + 1.5F;
+         float y = f2 + 8.0F + 12.0F;
+         float f4 = f2 + 130.5F - 8.0F;
+         int n = Math.max(0, (int)((f4 - y - f3) / f3));
+         if (n > 0) {
+            List subList = scoreboardNames.size() > n ? scoreboardNames.subList(0, n) : scoreboardNames;
+            if (!subList.isEmpty()) {
+               float f5 = f + 232.0F - 8.0F;
+               menuDrawContext.drawText(
+                  scoreboardFont, displayName, f5 - scoreboardFont.width(displayName), y, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha).method7287()
                );
-               float var28 = var23 + (var10 + 1.5F);
+               float y2 = y + (f3 + 1.5F);
 
-               for (Object var18_o : (Iterable<?>)(Object)(var25)) {
-                  Component var18 = (Component)var18_o;
-                  var1.drawText(
-                     scoreboardFont, var18, var27 - scoreboardFont.width(var18), var28, var6.getTextEnable().getZenithColor().method7294(var5).method7287()
+               for (Object sub : (Iterable<?>)(Object)(subList)) {
+                  Component text = (Component)sub;
+                  menuDrawContext.drawText(
+                     scoreboardFont, text, f5 - scoreboardFont.width(text), y2, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha).method7287()
                   );
-                  var28 += var10;
+                  y2 += f3;
                }
             }
          }
       }
    }
 
-   private List<String[]> statusLines(BotClient var1) {
-      ArrayList<String[]> var2 = new ArrayList<>();
-      var2.add(new String[]{"Server", var1.getAddress()});
-      BotPlayer var3 = var1.getPlayer();
-      if (var3 != null) {
-         var2.add(new String[]{"Health", String.format(Locale.ROOT, "%.1f", var3.getHealth())});
-         var2.add(new String[]{"Pos", (int)var3.getX() + " " + (int)var3.getY() + " " + (int)var3.getZ()});
+   private List<String[]> statusLines(BotClient botClient) {
+      ArrayList<String[]> stringses = new ArrayList<>();
+      stringses.add(new String[]{"Server", botClient.getAddress()});
+      BotPlayer player = botClient.getPlayer();
+      if (player != null) {
+         stringses.add(new String[]{"Health", String.format(Locale.ROOT, "%.1f", player.getHealth())});
+         stringses.add(new String[]{"Pos", (int)player.getX() + " " + (int)player.getY() + " " + (int)player.getZ()});
       }
 
-      BotWorld var4 = var1.getWorld();
-      if (var4 != null) {
-         var2.add(new String[]{"World", var4.dimension().identifier().getPath()});
+      BotWorld world = botClient.getWorld();
+      if (world != null) {
+         stringses.add(new String[]{"World", world.dimension().identifier().getPath()});
       }
 
-      var2.add(new String[]{"RCT", var1.getRct().isActive() ? "active" : "idle"});
-      StringBuilder var5 = new StringBuilder();
+      stringses.add(new String[]{"RCT", botClient.getRct().isActive() ? "active" : "idle"});
+      StringBuilder builder = new StringBuilder();
 
-      for (BotModule var7 : var1.getModules().getModules()) {
-         if (var7.isEnabled()) {
-            if (var5.length() > 0) {
-               var5.append(", ");
+      for (BotModule botModule : botClient.getModules().getModules()) {
+         if (botModule.isEnabled()) {
+            if (builder.length() > 0) {
+               builder.append(", ");
             }
 
-            var5.append(var7.getName());
+            builder.append(botModule.getName());
          }
       }
 
-      var2.add(new String[]{"Modules", var5.length() == 0 ? "-" : var5.toString()});
-      return var2;
+      stringses.add(new String[]{"Modules", builder.length() == 0 ? "-" : builder.toString()});
+      return stringses;
    }
 
-   private void renderPreview(MenuDrawContext var1, BotClient var2, float var3, float var4, float var5) {
-      if (this.previewClient != var2) {
+   private void renderPreview(MenuDrawContext menuDrawContext, BotClient previewClient, float floatValue, float y, float previewAlpha) {
+      if (this.previewClient != previewClient) {
          this.closePreview();
-         this.previewClient = var2;
-         this.previewView = new BotWorldView(var2);
+         this.previewClient = previewClient;
+         this.previewView = new BotWorldView(previewClient);
       }
 
-      double var6 = mc.getWindow().getGuiScale();
-      int var8 = (int)(232.0 * var6);
-      int var9 = (int)(130.5 * var6);
+      double guiScale = mc.getWindow().getGuiScale();
+      int width = (int)(232.0 * guiScale);
+      int height = (int)(130.5 * guiScale);
       ScissorFlusher.flush();
-      if (this.previewView.renderToFbo(var8, var9)) {
+      if (this.previewView.renderToFbo(width, height)) {
          RenderShaders.method5298(
-            MatrixUtils.method664(var1.pose()),
+            MatrixUtils.method664(menuDrawContext.pose()),
             this.previewView.getColorAttachment(),
-            var3,
-            var4,
+            floatValue,
+            y,
             232.0F,
             130.5F,
             headerRadius,
-            ZenithColor.INSTANCE.method7294(var5),
+            ZenithColor.INSTANCE.method7294(previewAlpha),
             0.0F,
             1.0F,
             1.0F,
             0.0F
          );
-         var1.drawRoundedRect(var3, var4, 232.0F, 130.5F, headerRadius, new ZenithColor(10, 10, 14, 150).method7294(var5));
+         menuDrawContext.drawRoundedRect(floatValue, y, 232.0F, 130.5F, headerRadius, new ZenithColor(10, 10, 14, 150).method7294(previewAlpha));
       }
    }
 
@@ -725,234 +725,234 @@ public class BotScreen extends CustomScreen {
       super.removed();
    }
 
-   private void renderPanelBlur(MenuDrawContext var1, float var2, float var3, float var4) {
+   private void renderPanelBlur(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha) {
       RenderShaders.method5287(
-         MatrixUtils.method664(var1.pose()), var2, var3, 480.0F, 320.0F, 32.0F, panelRadius, blurColor.method7294(var4), true, false
+         MatrixUtils.method664(menuDrawContext.pose()), floatValue, y, 480.0F, 320.0F, 32.0F, panelRadius, blurColor.method7294(previewAlpha), true, false
       );
    }
 
-   private void renderProxyPanel(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      float var7 = this.proxyPanelAnimation.method2808(this.proxyPanelOpen ? 1.0F : 0.0F);
-      ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var8 != null) {
-         if (var7 > 0.001F) {
-            float var9 = proxyPanelRenderX(var2, var7);
-            float var10 = proxyPanelY(var3);
-            float var11 = var4 * var7;
+   private void renderProxyPanel(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, float f, float f2) {
+      float f3 = this.proxyPanelAnimation.method2808(this.proxyPanelOpen ? 1.0F : 0.0F);
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         if (f3 > 0.001F) {
+            float moduleMenuX = proxyPanelRenderX(floatValue, f3);
+            float proxyPanelY2 = proxyPanelY(y);
+            float previewAlpha2 = previewAlpha * f3;
             RenderShaders.method5299(
-               MatrixUtils.method664(var1.pose()), var9, var10 + 8.0F, 156.0F, 222.0F, 16.0F, proxyPanelRadius, shadowColor.method7294(var11)
+               MatrixUtils.method664(menuDrawContext.pose()), moduleMenuX, proxyPanelY2 + 8.0F, 156.0F, 222.0F, 16.0F, proxyPanelRadius, shadowColor.method7294(previewAlpha2)
             );
             RenderShaders.method5287(
-               MatrixUtils.method664(var1.pose()), var9, var10, 156.0F, 222.0F, 32.0F, proxyPanelRadius, blurColor.method7294(var11), true, false
+               MatrixUtils.method664(menuDrawContext.pose()), moduleMenuX, proxyPanelY2, 156.0F, 222.0F, 32.0F, proxyPanelRadius, blurColor.method7294(previewAlpha2), true, false
             );
-            var1.drawRoundedRect(var9, var10, 156.0F, 222.0F, proxyPanelRadius, var8.getRightBackground().getZenithColor().method7294(var11));
-            var1.drawRoundedRect(
-               var9, var10, 156.0F, 27.0F, ProxyDotRadiusData.method8075(10.0F), var8.getHeaderDisableBackground().getZenithColor().method7294(var11)
+            menuDrawContext.drawRoundedRect(moduleMenuX, proxyPanelY2, 156.0F, 222.0F, proxyPanelRadius, currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha2));
+            menuDrawContext.drawRoundedRect(
+               moduleMenuX, proxyPanelY2, 156.0F, 27.0F, ProxyDotRadiusData.method8075(10.0F), currentStyle.getHeaderDisableBackground().getZenithColor().method7294(previewAlpha2)
             );
-            float var12 = connectIconFont.width("Z");
-            float var13 = var9 + 4.0F + 4.0F;
-            var1.drawText(connectIconFont, "Z", var13, centeredTextY(connectIconFont, var10, 27.0F), var8.getPrimaryColor().getZenithColor().method7294(var11));
-            var1.drawText(
+            float width = connectIconFont.width("Z");
+            float floatValue2 = moduleMenuX + 4.0F + 4.0F;
+            menuDrawContext.drawText(connectIconFont, "Z", floatValue2, centeredTextY(connectIconFont, proxyPanelY2, 27.0F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha2));
+            menuDrawContext.drawText(
                nickFont,
                tr("module.bot.proxyPanel"),
-               var13 + var12 + 4.0F,
-               centeredTextY(nickFont, var10, 27.0F),
-               var8.getTextEnable().getZenithColor().method7294(var11)
+               floatValue2 + width + 4.0F,
+               centeredTextY(nickFont, proxyPanelY2, 27.0F),
+               currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha2)
             );
-            float var14 = proxyPanelCloseHitX(var9);
-            float var15 = proxyPanelCloseHitY(var10);
-            boolean var16 = var5 >= var14 && var5 <= var14 + 14.0F && var6 >= var15 && var6 <= var15 + 14.0F;
-            float var17 = proxyDeleteIconFont.width("2");
-            ZenithColor var18 = var8.getTextTertiary().getZenithColor().method7295(var8.getTextSecondary().getZenithColor(), var16 ? 0.9F : 0.0F);
-            var1.drawText(
-               proxyDeleteIconFont, "2", var14 + (14.0F - var17) / 2.0F, var15 + (14.0F - proxyDeleteIconFont.height()) / 2.0F, var18.method7294(var11)
+            float proxyPanelCloseHitX2 = proxyPanelCloseHitX(moduleMenuX);
+            float proxyPanelCloseHitY2 = proxyPanelCloseHitY(proxyPanelY2);
+            boolean flag = f >= proxyPanelCloseHitX2 && f <= proxyPanelCloseHitX2 + 14.0F && f2 >= proxyPanelCloseHitY2 && f2 <= proxyPanelCloseHitY2 + 14.0F;
+            float width2 = proxyDeleteIconFont.width("2");
+            ZenithColor zenithColor = currentStyle.getTextTertiary().getZenithColor().method7295(currentStyle.getTextSecondary().getZenithColor(), flag ? 0.9F : 0.0F);
+            menuDrawContext.drawText(
+               proxyDeleteIconFont, "2", proxyPanelCloseHitX2 + (14.0F - width2) / 2.0F, proxyPanelCloseHitY2 + (14.0F - proxyDeleteIconFont.height()) / 2.0F, zenithColor.method7294(previewAlpha2)
             );
-            this.renderProxyPanelInput(var1, var8, var9, var10 + 31.0F, var11);
-            this.renderProxyPanelList(var1, var8, var9, var10 + 53.0F, var11, var5, var6);
+            this.renderProxyPanelInput(menuDrawContext, currentStyle, moduleMenuX, proxyPanelY2 + 31.0F, previewAlpha2);
+            this.renderProxyPanelList(menuDrawContext, currentStyle, moduleMenuX, proxyPanelY2 + 53.0F, previewAlpha2, f, f2);
          }
       }
    }
 
-   private void renderProxyPanelButton(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
-         float var8 = this.proxyPanelAnimation.getValue();
-         float var9 = proxyPanelButtonX(var2);
-         float var10 = proxyPanelButtonY(var3);
-         boolean var11 = var5 >= var9 && var5 <= var9 + 18.0F && var6 >= var10 && var6 <= var10 + 18.0F;
-         ZenithColor var12 = (this.proxyPanelOpen ? var7.getHeaderDisableBackground().getZenithColor() : var7.getDisableActiveBg().getZenithColor())
-            .method7295(var7.getPrimaryColor().getZenithColor(), !var11 && !this.proxyPanelOpen ? 0.0F : 0.18F);
-         var1.drawRoundedRect(var9, var10, 18.0F, 18.0F, proxyPanelButtonRadius, var12.method7294(var4));
-         float var13 = connectIconFont.width("Z");
-         var1.drawText(
+   private void renderProxyPanelButton(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, float f, float f2) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         float f3 = this.proxyPanelAnimation.getValue();
+         float proxyPanelButtonX2 = proxyPanelButtonX(floatValue);
+         float proxyPanelButtonY2 = proxyPanelButtonY(y);
+         boolean flag = f >= proxyPanelButtonX2 && f <= proxyPanelButtonX2 + 18.0F && f2 >= proxyPanelButtonY2 && f2 <= proxyPanelButtonY2 + 18.0F;
+         ZenithColor zenithColor = (this.proxyPanelOpen ? currentStyle.getHeaderDisableBackground().getZenithColor() : currentStyle.getDisableActiveBg().getZenithColor())
+            .method7295(currentStyle.getPrimaryColor().getZenithColor(), !flag && !this.proxyPanelOpen ? 0.0F : 0.18F);
+         menuDrawContext.drawRoundedRect(proxyPanelButtonX2, proxyPanelButtonY2, 18.0F, 18.0F, proxyPanelButtonRadius, zenithColor.method7294(previewAlpha));
+         float width = connectIconFont.width("Z");
+         menuDrawContext.drawText(
             connectIconFont,
             "Z",
-            var9 + (18.0F - var13) / 2.0F,
-            centeredTextY(connectIconFont, var10, 18.0F),
-            var7.getTextSecondary().getZenithColor().method7295(var7.getPrimaryColor().getZenithColor(), var8 > 0.01F ? 1.0F : 0.0F).method7294(var4)
+            proxyPanelButtonX2 + (18.0F - width) / 2.0F,
+            centeredTextY(connectIconFont, proxyPanelButtonY2, 18.0F),
+            currentStyle.getTextSecondary().getZenithColor().method7295(currentStyle.getPrimaryColor().getZenithColor(), f3 > 0.01F ? 1.0F : 0.0F).method7294(previewAlpha)
          );
       }
    }
 
-   private void renderProxyPanelInput(MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5) {
-      float var6 = var3 + 4.0F;
-      float var7 = 126.0F;
-      var1.drawRoundedRect(var6, var4, var7, 18.0F, headerRadius, var2.getHeaderHudBackground().getZenithColor().method7294(var5));
-      this.proxyManagerInput.setWidth(var7 - 16.0F);
+   private void renderProxyPanelInput(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float moduleMenuX, float y, float previewAlpha) {
+      float floatValue = moduleMenuX + 4.0F;
+      float width = 126.0F;
+      menuDrawContext.drawRoundedRect(floatValue, y, width, 18.0F, headerRadius, currentStyle.getHeaderHudBackground().getZenithColor().method7294(previewAlpha));
+      this.proxyManagerInput.setWidth(width - 16.0F);
       this.proxyManagerInput
          .method987(
-            var1,
-            var6 + 8.0F,
-            centeredTextY(nickFont, var4, 18.0F),
-            var2.getTextEnable().getZenithColor().method7294(var5),
-            var2.getTextSecondary().getZenithColor().method7294(var5)
+            menuDrawContext,
+            floatValue + 8.0F,
+            centeredTextY(nickFont, y, 18.0F),
+            currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+            currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
          );
-      float var8 = var6 + var7 + 4.0F;
-      var1.drawRoundedRect(var8, var4, 18.0F, 18.0F, headerRadius, var2.getPrimaryColor().getZenithColor().method7294(0.25F).method7294(var5));
-      float var9 = botIconFont.width("D");
-      var1.drawText(
+      float f = floatValue + width + 4.0F;
+      menuDrawContext.drawRoundedRect(f, y, 18.0F, 18.0F, headerRadius, currentStyle.getPrimaryColor().getZenithColor().method7294(0.25F).method7294(previewAlpha));
+      float width2 = botIconFont.width("D");
+      menuDrawContext.drawText(
          botIconFont,
          "D",
-         var8 + (18.0F - var9) / 2.0F + 1.0F,
-         centeredTextY(botIconFont, var4, 18.0F),
-         var2.getPrimaryColor().getZenithColor().method7294(var5)
+         f + (18.0F - width2) / 2.0F + 1.0F,
+         centeredTextY(botIconFont, y, 18.0F),
+         currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
       );
    }
 
-   private void renderProxyPanelList(MenuDrawContext var1, ZenithStyle var2, float var3, float var4, float var5, float var6, float var7) {
-      List<String> var8 = HeadlessBots.getProxyPool();
-      this.pruneProxyHoverAnimations(var8);
-      int var9 = var8.size() + 1;
-      this.proxyPanelScroll = Math.max(0.0F, Math.min(this.proxyPanelScroll, proxyPanelMaxScroll(var9)));
-      float var10 = var3 + 4.0F;
-      float var11 = proxyPanelRowWidth();
-      float var12 = var4 + 161.0F;
-      var1.enableScissor(var10, var4, var10 + var11, var12);
-      float var13 = var4 - this.proxyPanelScroll;
+   private void renderProxyPanelList(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float moduleMenuX, float y, float previewAlpha, float f, float f2) {
+      List<String> proxyPool = HeadlessBots.getProxyPool();
+      this.pruneProxyHoverAnimations(proxyPool);
+      int n = proxyPool.size() + 1;
+      this.proxyPanelScroll = Math.max(0.0F, Math.min(this.proxyPanelScroll, proxyPanelMaxScroll(n)));
+      float floatValue = moduleMenuX + 4.0F;
+      float width = proxyPanelRowWidth();
+      float guiScaledHeight = y + 161.0F;
+      menuDrawContext.enableScissor(floatValue, y, floatValue + width, guiScaledHeight);
+      float y2 = y - this.proxyPanelScroll;
       this.renderProxyPanelRow(
-         var1,
+         menuDrawContext,
          proxyNoneKey(),
          tr("module.bot.proxyNone"),
          this.noProxyCount(),
          this.selectionHasNoProxy(),
          false,
-         var10,
-         var13,
-         var11,
-         var4,
-         var12,
-         var5,
-         var6,
-         var7,
-         var2
+         floatValue,
+         y2,
+         width,
+         y,
+         guiScaledHeight,
+         previewAlpha,
+         f,
+         f2,
+         currentStyle
       );
-      var13 += 25.0F;
+      y2 += 25.0F;
 
-      for (String var15 : var8) {
+      for (String str : proxyPool) {
          this.renderProxyPanelRow(
-            var1,
-            var15,
-            var15,
-            HeadlessBots.getProxyUseCount(var15),
-            this.selectionUsesProxy(var15),
+            menuDrawContext,
+            str,
+            str,
+            HeadlessBots.getProxyUseCount(str),
+            this.selectionUsesProxy(str),
             true,
-            var10,
-            var13,
-            var11,
-            var4,
-            var12,
-            var5,
-            var6,
-            var7,
-            var2
+            floatValue,
+            y2,
+            width,
+            y,
+            guiScaledHeight,
+            previewAlpha,
+            f,
+            f2,
+            currentStyle
          );
-         var13 += 25.0F;
+         y2 += 25.0F;
       }
 
-      var1.disableScissor();
-      float var19 = proxyPanelScrollbarX(var3);
-      var1.drawRoundedRect(var19, var4, 1.0F, 161.0F, scrollbarRadius, var2.getDisableActiveBg().getZenithColor().method7294(var5 * 0.65F));
-      if (proxyPanelMaxScroll(var9) > 0.0F) {
-         float var20 = proxyPanelContentHeight(var9);
-         float var16 = Math.max(16.0F, 25921.0F / var20);
-         float var17 = var4 + this.proxyPanelScroll / proxyPanelMaxScroll(var9) * (161.0F - var16);
-         var1.drawRoundedRect(var19, var17, 1.0F, var16, scrollbarRadius, var2.getPrimaryColor().getZenithColor().method7294(var5));
+      menuDrawContext.disableScissor();
+      float proxyPanelScrollbarX2 = proxyPanelScrollbarX(moduleMenuX);
+      menuDrawContext.drawRoundedRect(proxyPanelScrollbarX2, y, 1.0F, 161.0F, scrollbarRadius, currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha * 0.65F));
+      if (proxyPanelMaxScroll(n) > 0.0F) {
+         float proxyPanelContentHeight2 = proxyPanelContentHeight(n);
+         float height = Math.max(16.0F, 25921.0F / proxyPanelContentHeight2);
+         float y3 = y + this.proxyPanelScroll / proxyPanelMaxScroll(n) * (161.0F - height);
+         menuDrawContext.drawRoundedRect(proxyPanelScrollbarX2, y3, 1.0F, height, scrollbarRadius, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
       }
    }
 
    private void renderProxyPanelRow(
-      MenuDrawContext var1,
-      String var2,
-      String var3,
-      int var4,
-      boolean var5,
-      boolean var6,
-      float var7,
-      float var8,
-      float var9,
-      float var10,
-      float var11,
-      float var12,
-      float var13,
-      float var14,
-      ZenithStyle var15
+      MenuDrawContext menuDrawContext,
+      String proxyNoneKey,
+      String tr,
+      int noProxyCount,
+      boolean selectionHasNoProxy,
+      boolean flag,
+      float floatValue,
+      float y,
+      float width,
+      float f,
+      float guiScaledHeight,
+      float previewAlpha,
+      float f2,
+      float f3,
+      ZenithStyle currentStyle
    ) {
-      boolean var16 = var14 >= var10 && var14 <= var11 && var13 >= var7 && var13 <= var7 + var9 && var14 >= var8 && var14 <= var8 + 23.0F;
-      boolean var17 = var6 && var16 && var13 >= var7 + var9 - 18.0F;
-      Animation var18 = this.proxyHoverAnims.computeIfAbsent(var2, var0 -> new Animation(150L, 0.0F, Easing.INSTANCE15));
-      float var19 = var18.method2808(var16 ? 1.0F : 0.0F);
-      ZenithColor var20 = var15.getHeaderDisableBackground()
+      boolean flag2 = f3 >= f && f3 <= guiScaledHeight && f2 >= floatValue && f2 <= floatValue + width && f3 >= y && f3 <= y + 23.0F;
+      boolean flag3 = flag && flag2 && f2 >= floatValue + width - 18.0F;
+      Animation animation = this.proxyHoverAnims.computeIfAbsent(proxyNoneKey, proxyHoverAnim -> new Animation(150L, 0.0F, Easing.INSTANCE15));
+      float f4 = animation.method2808(flag2 ? 1.0F : 0.0F);
+      ZenithColor zenithColor = currentStyle.getHeaderDisableBackground()
          .getZenithColor()
-         .method7295(var15.getSurfaceEnableBackground().getZenithColor(), var5 ? 0.9F : var19 * 0.45F)
-         .method7294(var12);
-      var1.drawRoundedRect(var7, var8, var9, 23.0F, headerRadius, var20);
-      if (var5) {
-         float var21 = var7 + 4.0F;
-         float var22 = var8 + 4.0F;
-         float var23 = 15.0F;
-         var1.drawRoundedRect(var21, var22, 3.0F, var23, scrollbarRadius, var15.getDisableActiveBg().getZenithColor().method7294(var12));
-         var1.drawRoundedRect(var21, var22, 2.0F, var23, scrollbarRadius, var15.getPrimaryColor().getZenithColor().method7294(var12));
+         .method7295(currentStyle.getSurfaceEnableBackground().getZenithColor(), selectionHasNoProxy ? 0.9F : f4 * 0.45F)
+         .method7294(previewAlpha);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, 23.0F, headerRadius, zenithColor);
+      if (selectionHasNoProxy) {
+         float floatValue2 = floatValue + 4.0F;
+         float y2 = y + 4.0F;
+         float height = 15.0F;
+         menuDrawContext.drawRoundedRect(floatValue2, y2, 3.0F, height, scrollbarRadius, currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha));
+         menuDrawContext.drawRoundedRect(floatValue2, y2, 2.0F, height, scrollbarRadius, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
       }
 
-      String var37 = String.valueOf(var4);
-      float var38 = roleFont.width(var37);
-      HeadlessBots.ProxyPingSnapshot var39 = var6 ? HeadlessBots.getProxyPing(var2) : null;
-      String var24 = var39 == null ? "" : var39.label();
-      float var25 = var39 == null ? 0.0F : roleFont.width(var24);
-      float var26 = 8.0F + var38;
-      if (var6) {
-         var26 += var25 + 8.0F + 0.5F;
+      String text = String.valueOf(noProxyCount);
+      float width2 = roleFont.width(text);
+      HeadlessBots.ProxyPingSnapshot proxyPing = flag ? HeadlessBots.getProxyPing(proxyNoneKey) : null;
+      String label = proxyPing == null ? "" : proxyPing.label();
+      float width3 = proxyPing == null ? 0.0F : roleFont.width(label);
+      float width4 = 8.0F + width2;
+      if (flag) {
+         width4 += width3 + 8.0F + 0.5F;
       }
 
-      float var27 = var6 ? 20.0F : 8.0F;
-      float var28 = var7 + var9 - var26 - var27;
-      float var29 = 10.0F;
-      float var30 = var8 + (23.0F - var29) / 2.0F;
-      float var31 = var7 + 8.0F + 2.0F + var19;
-      String var32 = fitText(nickFont, var3, Math.max(12.0F, var28 - var31 - 4.0F));
-      var1.drawText(nickFont, var32, var31, centeredTextY(nickFont, var8, 23.0F), var15.getTextEnable().getZenithColor().method7294(var12));
-      var1.drawRoundedRect(var28, var30, var26, var29, roleBadgeRadius, var15.getPrimaryColor().getZenithColor().method7293(34).method7294(var12));
-      if (var6) {
-         var1.drawText(roleFont, var24, var28 + 4.0F, centeredTextY(roleFont, var8, 23.0F), proxyPingColor(var39, var15).method7294(var12));
-         float var33 = var28 + 4.0F + var25 + 4.0F;
-         float var34 = var8 + 8.5F;
-         var1.drawRect(var33, var34, 0.5F, 6.0F, var15.getDisableActiveBg().getZenithColor().method7294(var12));
+      float f5 = flag ? 20.0F : 8.0F;
+      float floatValue2 = floatValue + width - width4 - f5;
+      float height = 10.0F;
+      float y2 = y + (23.0F - height) / 2.0F;
+      float floatValue3 = floatValue + 8.0F + 2.0F + f4;
+      String str = fitText(nickFont, tr, Math.max(12.0F, floatValue2 - floatValue3 - 4.0F));
+      menuDrawContext.drawText(nickFont, str, floatValue3, centeredTextY(nickFont, y, 23.0F), currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      menuDrawContext.drawRoundedRect(floatValue2, y2, width4, height, roleBadgeRadius, currentStyle.getPrimaryColor().getZenithColor().method7293(34).method7294(previewAlpha));
+      if (flag) {
+         menuDrawContext.drawText(roleFont, label, floatValue2 + 4.0F, centeredTextY(roleFont, y, 23.0F), proxyPingColor(proxyPing, currentStyle).method7294(previewAlpha));
+         float floatValue4 = floatValue2 + 4.0F + width3 + 4.0F;
+         float y3 = y + 8.5F;
+         menuDrawContext.drawRect(floatValue4, y3, 0.5F, 6.0F, currentStyle.getDisableActiveBg().getZenithColor().method7294(previewAlpha));
       }
 
-      var1.drawText(
-         roleFont, var37, var28 + var26 - 4.0F - var38, centeredTextY(roleFont, var30, var29), var15.getPrimaryColor().getZenithColor().method7294(var12)
+      menuDrawContext.drawText(
+         roleFont, text, floatValue2 + width4 - 4.0F - width2, centeredTextY(roleFont, y2, height), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
       );
-      if (var6) {
-         float var40 = proxyDeleteIconFont.width("2");
-         float var41 = var7 + var9 - var40 - 8.0F;
-         float var35 = var8 + (23.0F - proxyDeleteIconFont.height()) / 2.0F;
-         ZenithColor var36 = var15.getTextTertiary().getZenithColor().method7295(var15.getTextSecondary().getZenithColor(), var17 ? 0.9F : var19 * 0.35F);
-         var1.drawText(proxyDeleteIconFont, "2", var41, var35, var36.method7294(var12));
+      if (flag) {
+         float width5 = proxyDeleteIconFont.width("2");
+         float floatValue4 = floatValue + width - width5 - 8.0F;
+         float centeredTextY2 = y + (23.0F - proxyDeleteIconFont.height()) / 2.0F;
+         ZenithColor zenithColor2 = currentStyle.getTextTertiary().getZenithColor().method7295(currentStyle.getTextSecondary().getZenithColor(), flag3 ? 0.9F : f4 * 0.35F);
+         menuDrawContext.drawText(proxyDeleteIconFont, "2", floatValue4, centeredTextY2, zenithColor2.method7294(previewAlpha));
       }
    }
 
-   private static float proxyPanelRenderX(float var0, float var1) {
-      return var0 - 8.0F - 156.0F * var1;
+   private static float proxyPanelRenderX(float floatValue, float f) {
+      return floatValue - 8.0F - 156.0F * f;
    }
 
    private static float proxyPanelListWidth() {
@@ -963,46 +963,46 @@ public class BotScreen extends CustomScreen {
       return proxyPanelListWidth() - 1.0F - 4.0F;
    }
 
-   private static float proxyPanelScrollbarX(float var0) {
-      return var0 + 156.0F - 4.0F - 1.0F;
+   private static float proxyPanelScrollbarX(float moduleMenuX) {
+      return moduleMenuX + 156.0F - 4.0F - 1.0F;
    }
 
-   private static float proxyPanelY(float var0) {
-      return var0;
+   private static float proxyPanelY(float y) {
+      return y;
    }
 
-   private static float proxyPanelButtonX(float var0) {
-      return var0 + 4.0F + 2.5F;
+   private static float proxyPanelButtonX(float floatValue) {
+      return floatValue + 4.0F + 2.5F;
    }
 
-   private static float proxyPanelButtonY(float var0) {
-      return var0 + 4.0F + 2.5F;
+   private static float proxyPanelButtonY(float y) {
+      return y + 4.0F + 2.5F;
    }
 
-   private static float proxyPanelCloseHitX(float var0) {
-      return var0 + 156.0F - 4.0F - 14.0F;
+   private static float proxyPanelCloseHitX(float moduleMenuX) {
+      return moduleMenuX + 156.0F - 4.0F - 14.0F;
    }
 
-   private static float proxyPanelCloseHitY(float var0) {
-      return var0 + 6.5F;
+   private static float proxyPanelCloseHitY(float f) {
+      return f + 6.5F;
    }
 
-   private static float proxyPanelContentHeight(int var0) {
-      return var0 <= 0 ? 0.0F : var0 * 25.0F - 2.0F;
+   private static float proxyPanelContentHeight(int n) {
+      return n <= 0 ? 0.0F : n * 25.0F - 2.0F;
    }
 
-   private static float proxyPanelMaxScroll(int var0) {
-      return Math.max(0.0F, proxyPanelContentHeight(var0) - 161.0F);
+   private static float proxyPanelMaxScroll(int n) {
+      return Math.max(0.0F, proxyPanelContentHeight(n) - 161.0F);
    }
 
-   private static ZenithColor proxyPingColor(HeadlessBots.ProxyPingSnapshot var0, ZenithStyle var1) {
-      if (var0 == null) {
-         return var1.getTextTertiary().getZenithColor();
+   private static ZenithColor proxyPingColor(HeadlessBots.ProxyPingSnapshot proxyPing, ZenithStyle currentStyle) {
+      if (proxyPing == null) {
+         return currentStyle.getTextTertiary().getZenithColor();
       } else {
-         return switch (var0.status()) {
-            case OK -> var0.latencyMs() <= 750 ? proxyPingOkColor : proxyPingSlowColor;
+         return switch (proxyPing.status()) {
+            case OK -> proxyPing.latencyMs() <= 750 ? proxyPingOkColor : proxyPingSlowColor;
             case FAILED -> proxyPingBadColor;
-            case CHECKING, UNKNOWN -> var1.getTextTertiary().getZenithColor();
+            case CHECKING, UNKNOWN -> currentStyle.getTextTertiary().getZenithColor();
          };
       }
    }
@@ -1012,24 +1012,24 @@ public class BotScreen extends CustomScreen {
    }
 
    private int noProxyCount() {
-      int var1 = 0;
+      int n = 0;
 
-      for (String var3 : HeadlessBots.allNames()) {
-         if (!HeadlessBots.hasProxy(var3)) {
-            var1++;
+      for (String allName : HeadlessBots.allNames()) {
+         if (!HeadlessBots.hasProxy(allName)) {
+            n++;
          }
       }
 
-      return var1;
+      return n;
    }
 
    private boolean selectionHasNoProxy() {
-      List<String> var1 = this.selectionNames();
-      if (var1.isEmpty()) {
+      List<String> selectionNames = this.selectionNames();
+      if (selectionNames.isEmpty()) {
          return false;
       } else {
-         for (String var3 : var1) {
-            if (HeadlessBots.hasProxy(var3)) {
+         for (String selectionName : selectionNames) {
+            if (HeadlessBots.hasProxy(selectionName)) {
                return false;
             }
          }
@@ -1038,12 +1038,12 @@ public class BotScreen extends CustomScreen {
       }
    }
 
-   private boolean selectionUsesProxy(String var1) {
-      List<String> var2 = this.selectionNames();
-      if (!var2.isEmpty() && var1 != null && !var1.isBlank()) {
-         for (String var4 : var2) {
-            String var5 = HeadlessBots.getProxy(var4);
-            if (var5 == null || !var5.equalsIgnoreCase(var1)) {
+   private boolean selectionUsesProxy(String anotherString) {
+      List<String> selectionNames = this.selectionNames();
+      if (!selectionNames.isEmpty() && anotherString != null && !anotherString.isBlank()) {
+         for (String selectionName : selectionNames) {
+            String proxy = HeadlessBots.getProxy(selectionName);
+            if (proxy == null || !proxy.equalsIgnoreCase(anotherString)) {
                return false;
             }
          }
@@ -1054,69 +1054,69 @@ public class BotScreen extends CustomScreen {
       }
    }
 
-   private void pruneProxyHoverAnimations(List<String> var1) {
-      var var2 = new HashSet<>(var1);
-      var2.add(proxyNoneKey());
-      this.proxyHoverAnims.keySet().removeIf(var1x -> !var2.contains(var1x));
+   private void pruneProxyHoverAnimations(List<String> proxyPool) {
+      var strings = new HashSet<>(proxyPool);
+      strings.add(proxyNoneKey());
+      this.proxyHoverAnims.keySet().removeIf(var1x -> !strings.contains(var1x));
    }
 
-   private void renderBulkActionTabs(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5) {
-      float var6 = var2 + 4.0F;
-      var1.drawRoundedRect(var6, var3 - 3.0F, 232.0F, 1.0F, scrollbarRadius, scrollbarThumbColor.method7294(var4));
-      float var7 = connectIconFont.width(this.bulkAction.icon);
-      float var8 = 2.0F;
-      var1.drawText(
+   private void renderBulkActionTabs(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, ZenithStyle currentStyle) {
+      float f = floatValue + 4.0F;
+      menuDrawContext.drawRoundedRect(f, y - 3.0F, 232.0F, 1.0F, scrollbarRadius, scrollbarThumbColor.method7294(previewAlpha));
+      float width = connectIconFont.width(this.bulkAction.icon);
+      float f2 = 2.0F;
+      menuDrawContext.drawText(
          connectIconFont,
          this.bulkAction.icon,
-         var6 + 3.0F,
-         centeredTextY(connectIconFont, var3, 14.0F),
-         var5.getPrimaryColor().getZenithColor().method7294(var4)
+         f + 3.0F,
+         centeredTextY(connectIconFont, y, 14.0F),
+         currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawText(
-         nickFont, tr(this.bulkAction.tabKey), var6 + 3.0F + var7 + var8, centeredTextY(nickFont, var3, 14.0F), ZenithColor.INSTANCE.method7294(var4)
+      menuDrawContext.drawText(
+         nickFont, tr(this.bulkAction.tabKey), f + 3.0F + width + f2, centeredTextY(nickFont, y, 14.0F), ZenithColor.INSTANCE.method7294(previewAlpha)
       );
-      float var9 = bulkActionModeStartX(var2);
+      float bulkActionModeStartX2 = bulkActionModeStartX(floatValue);
 
-      for (BotScreen.BulkAction var13 : BotScreen.BulkAction.values()) {
-         boolean var14 = var13 == this.bulkAction;
-         var1.drawRoundedRect(var9, var3, 14.0F, 14.0F, bulkActionModeRadius, (var14 ? headerColor : addButtonColor).method7294(var4));
-         float var15 = connectIconFont.width(var13.icon);
-         var1.drawText(
+      for (BotScreen.BulkAction bulkAction : BotScreen.BulkAction.values()) {
+         boolean flag = bulkAction == this.bulkAction;
+         menuDrawContext.drawRoundedRect(bulkActionModeStartX2, y, 14.0F, 14.0F, bulkActionModeRadius, (flag ? headerColor : addButtonColor).method7294(previewAlpha));
+         float width2 = connectIconFont.width(bulkAction.icon);
+         menuDrawContext.drawText(
             connectIconFont,
-            var13.icon,
-            var9 + (14.0F - var15) / 2.0F,
-            centeredTextY(connectIconFont, var3, 14.0F),
-            (var14 ? var5.getPrimaryColor().getZenithColor() : inputEmptyColor).method7294(var4)
+            bulkAction.icon,
+            bulkActionModeStartX2 + (14.0F - width2) / 2.0F,
+            centeredTextY(connectIconFont, y, 14.0F),
+            (flag ? currentStyle.getPrimaryColor().getZenithColor() : inputEmptyColor).method7294(previewAlpha)
          );
-         var9 += 17.0F;
+         bulkActionModeStartX2 += 17.0F;
       }
    }
 
-   private static float bulkActionModeStartX(float var0) {
-      float var1 = BotScreen.BulkAction.values().length * 14.0F + (BotScreen.BulkAction.values().length - 1) * 3.0F;
-      return var0 + 4.0F + 232.0F - var1;
+   private static float bulkActionModeStartX(float floatValue) {
+      float f = BotScreen.BulkAction.values().length * 14.0F + (BotScreen.BulkAction.values().length - 1) * 3.0F;
+      return floatValue + 4.0F + 232.0F - f;
    }
 
-   private void focusTextBox(SearchBox var1, double var2, double var4) {
-      var1.onMouseClicked(var2, var4, Enum3.LEFT);
-      if (!var1.isSelected()) {
-         var1.setSelected(true);
-         var1.setFlag(false);
+   private void focusTextBox(SearchBox proxyManagerInput, double x, double y) {
+      proxyManagerInput.onMouseClicked(x, y, Enum3.LEFT);
+      if (!proxyManagerInput.isSelected()) {
+         proxyManagerInput.setSelected(true);
+         proxyManagerInput.setFlag(false);
       }
    }
 
-   private void renderBulkActionPayload(MenuDrawContext var1, float var2, float var3, float var4) {
-      float var5 = var2 + 4.0F;
+   private void renderBulkActionPayload(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha) {
+      float f = floatValue + 4.0F;
       this.bulkActionInput.setText2(tr(this.bulkAction.placeholderKey));
       this.syncBulkActionInputRules();
-      float var6 = 164.0F;
-      var1.drawRoundedRect(var5, var3, var6, 23.0F, headerRadius, headerColor.method7294(var4));
-      this.bulkActionInput.setWidth(var6 - 16.0F);
+      float width = 164.0F;
+      menuDrawContext.drawRoundedRect(f, y, width, 23.0F, headerRadius, headerColor.method7294(previewAlpha));
+      this.bulkActionInput.setWidth(width - 16.0F);
       this.bulkActionInput
-         .method987(var1, var5 + 8.0F, centeredTextY(nickFont, var3, 23.0F), ZenithColor.INSTANCE.method7294(var4), inputEmptyColor.method7294(var4));
-      float var7 = var5 + var6 + 4.0F;
-      var1.drawRoundedRect(var7, var3, 64.0F, 23.0F, headerRadius, addButtonColor.method7294(var4));
-      this.drawCenteredIconText(var1, this.bulkAction.icon, tr(this.bulkAction.buttonKey), var7, var3, 64.0F, 23.0F, inputEmptyColor.method7294(var4));
+         .method987(menuDrawContext, f + 8.0F, centeredTextY(nickFont, y, 23.0F), ZenithColor.INSTANCE.method7294(previewAlpha), inputEmptyColor.method7294(previewAlpha));
+      float floatValue2 = f + width + 4.0F;
+      menuDrawContext.drawRoundedRect(floatValue2, y, 64.0F, 23.0F, headerRadius, addButtonColor.method7294(previewAlpha));
+      this.drawCenteredIconText(menuDrawContext, this.bulkAction.icon, tr(this.bulkAction.buttonKey), floatValue2, y, 64.0F, 23.0F, inputEmptyColor.method7294(previewAlpha));
    }
 
    private void syncBulkActionInputRules() {
@@ -1135,219 +1135,219 @@ public class BotScreen extends CustomScreen {
       }
    }
 
-   private void drawCenteredIconText(MenuDrawContext var1, String var2, String var3, float var4, float var5, float var6, float var7, ZenithColor var8) {
-      float var9 = connectIconFont.width(var2);
-      float var10 = nickFont.width(var3);
-      float var11 = 2.0F;
-      float var12 = var9 + var11 + var10;
-      if (var12 <= var6 - 6.0F) {
-         float var13 = var4 + (var6 - var12) / 2.0F;
-         var1.drawText(connectIconFont, var2, var13, centeredTextY(connectIconFont, var5, var7), var8);
-         var1.drawText(nickFont, var3, var13 + var9 + var11, centeredTextY(nickFont, var5, var7), var8);
-      } else if (var10 <= var6 - 8.0F) {
-         var1.drawText(nickFont, var3, var4 + (var6 - var10) / 2.0F, centeredTextY(nickFont, var5, var7), var8);
+   private void drawCenteredIconText(MenuDrawContext menuDrawContext, String icon, String tr, float f, float y, float f2, float height, ZenithColor zenithColor) {
+      float width = connectIconFont.width(icon);
+      float width2 = nickFont.width(tr);
+      float f3 = 2.0F;
+      float f4 = width + f3 + width2;
+      if (f4 <= f2 - 6.0F) {
+         float floatValue = f + (f2 - f4) / 2.0F;
+         menuDrawContext.drawText(connectIconFont, icon, floatValue, centeredTextY(connectIconFont, y, height), zenithColor);
+         menuDrawContext.drawText(nickFont, tr, floatValue + width + f3, centeredTextY(nickFont, y, height), zenithColor);
+      } else if (width2 <= f2 - 8.0F) {
+         menuDrawContext.drawText(nickFont, tr, f + (f2 - width2) / 2.0F, centeredTextY(nickFont, y, height), zenithColor);
       } else {
-         var1.drawText(connectIconFont, var2, var4 + (var6 - var9) / 2.0F, centeredTextY(connectIconFont, var5, var7), var8);
+         menuDrawContext.drawText(connectIconFont, icon, f + (f2 - width) / 2.0F, centeredTextY(connectIconFont, y, height), zenithColor);
       }
    }
 
    private void renderListRow(
-      MenuDrawContext var1, String var2, int var3, float var4, float var5, float var6, float var7, float var8, float var9, ZenithStyle var10
+      MenuDrawContext menuDrawContext, String selected, int n, float floatValue, float f, float guiScaledHeight, float previewAlpha, float f2, float f3, ZenithStyle currentStyle
    ) {
-      BotScreen.RowAnim var11 = this.rowAnims.computeIfAbsent(var2, var0 -> new BotScreen.RowAnim());
-      BotClient var12 = HeadlessBots.get(var2);
-      boolean var13 = var12 != null && var12.isJoined();
-      float var14 = var5 + var3 * 25.0F - this.listScroll;
-      boolean var15 = this.isMultiSelectDown() || this.isShiftDown();
-      boolean var16 = var9 >= var5 && var9 <= var6 && var8 >= var4 + 4.0F && var8 <= var4 + 4.0F + 227.0F && var9 >= var14 && var9 <= var14 + 23.0F;
-      float var17 = var11.appear.method2808(1.0F);
-      float var18 = var11.hover.method2808(var16 ? 1.0F : 0.0F);
-      float var19 = var7 * var17;
-      float var20 = var14 + (1.0F - var17) * 6.0F;
-      float var21 = var4 + 4.0F;
-      var1.drawRoundedRect(var21, var20, 227.0F, 23.0F, headerRadius, listColor.method7294(var19));
-      float var22 = var11.select.method2808(this.selectedNames.contains(var2) ? 1.0F : 0.0F);
-      var1.drawRoundedRect(var21, var20, 23.0F, 23.0F, headerRadius, listColor.method7294(var19));
-      float var23 = var21 + 227.0F - 64.0F;
-      var1.drawRoundedRect(var23, var20, 64.0F, 23.0F, headerRadius, listColor.method7294(var19));
-      if (var13) {
-         boolean var24 = !var15 && var8 >= var23 && var8 <= var23 + 64.0F && var9 >= var20 && var9 <= var20 + 23.0F && var9 >= var5 && var9 <= var6;
-         float var25 = var11.disc.method2808(var24 ? 1.0F : 0.0F);
-         float var26 = 23.0F;
-         var1.enableScissor(var21, var20, var21 + 227.0F, var20 + 23.0F);
-         if (var25 < 0.999F) {
-            String var27 = var12.getAddress();
-            String var28 = serverLabel(var27);
-            Identifier var29 = ServerIconCache.get(var27);
-            float var30 = nickFont.width(var28);
-            float var31 = var30 + (var29 != null ? 11.0F : 0.0F);
-            float var32 = var23 + (64.0F - var31) / 2.0F;
-            float var33 = var20 - var25 * var26;
-            float var34 = var19 * (1.0F - var25);
-            if (var29 != null) {
-               float var35 = var33 + 8.0F;
+      BotScreen.RowAnim rowAnim = this.rowAnims.computeIfAbsent(selected, str -> new BotScreen.RowAnim());
+      BotClient botClient = HeadlessBots.get(selected);
+      boolean flag = botClient != null && botClient.isJoined();
+      float f4 = f + n * 25.0F - this.listScroll;
+      boolean flag2 = this.isMultiSelectDown() || this.isShiftDown();
+      boolean flag3 = f3 >= f && f3 <= guiScaledHeight && f2 >= floatValue + 4.0F && f2 <= floatValue + 4.0F + 227.0F && f3 >= f4 && f3 <= f4 + 23.0F;
+      float f5 = rowAnim.appear.method2808(1.0F);
+      float f6 = rowAnim.hover.method2808(flag3 ? 1.0F : 0.0F);
+      float previewAlpha2 = previewAlpha * f5;
+      float y = f4 + (1.0F - f5) * 6.0F;
+      float floatValue2 = floatValue + 4.0F;
+      menuDrawContext.drawRoundedRect(floatValue2, y, 227.0F, 23.0F, headerRadius, listColor.method7294(previewAlpha2));
+      float hover = rowAnim.select.method2808(this.selectedNames.contains(selected) ? 1.0F : 0.0F);
+      menuDrawContext.drawRoundedRect(floatValue2, y, 23.0F, 23.0F, headerRadius, listColor.method7294(previewAlpha2));
+      float floatValue3 = floatValue2 + 227.0F - 64.0F;
+      menuDrawContext.drawRoundedRect(floatValue3, y, 64.0F, 23.0F, headerRadius, listColor.method7294(previewAlpha2));
+      if (flag) {
+         boolean flag4 = !flag2 && f2 >= floatValue3 && f2 <= floatValue3 + 64.0F && f3 >= y && f3 <= y + 23.0F && f3 >= f && f3 <= guiScaledHeight;
+         float f7 = rowAnim.disc.method2808(flag4 ? 1.0F : 0.0F);
+         float f8 = 23.0F;
+         menuDrawContext.enableScissor(floatValue2, y, floatValue2 + 227.0F, y + 23.0F);
+         if (f7 < 0.999F) {
+            String address = botClient.getAddress();
+            String text = serverLabel(address);
+            Identifier prewarm = ServerIconCache.get(address);
+            float width = nickFont.width(text);
+            float f9 = width + (prewarm != null ? 11.0F : 0.0F);
+            float x = floatValue3 + (64.0F - f9) / 2.0F;
+            float y2 = y - f7 * f8;
+            float previewAlpha3 = previewAlpha2 * (1.0F - f7);
+            if (prewarm != null) {
+               float y3 = y2 + 8.0F;
                RenderShaders.method5294(
-                  MatrixUtils.method664(var1.pose()), var29, var32, var35, 7.0F, 7.0F, serverIconRadius, ZenithColor.INSTANCE.method7294(var34)
+                  MatrixUtils.method664(menuDrawContext.pose()), prewarm, x, y3, 7.0F, 7.0F, serverIconRadius, ZenithColor.INSTANCE.method7294(previewAlpha3)
                );
-               var32 += 11.0F;
+               x += 11.0F;
             }
 
-            var1.drawText(nickFont, var28, var32, centeredTextY(nickFont, var33, 23.0F), ZenithColor.INSTANCE.method7294(var34));
+            menuDrawContext.drawText(nickFont, text, x, centeredTextY(nickFont, y2, 23.0F), ZenithColor.INSTANCE.method7294(previewAlpha3));
          }
 
-         if (var25 > 0.001F) {
-            String var42 = tr("module.bot.disconnect");
-            float var48 = connectIconFont.width("]");
-            float var53 = nickFont.width(var42);
-            float var56 = 2.0F;
-            float var57 = var23 + (64.0F - var48 - var56 - var53) / 2.0F;
-            float var58 = var20 + (1.0F - var25) * var26;
-            float var59 = var19 * var25;
-            var1.drawText(connectIconFont, "]", var57, centeredTextY(connectIconFont, var58, 23.0F), disconnectColor.method7294(var59));
-            var1.drawText(nickFont, var42, var57 + var48 + var56, centeredTextY(nickFont, var58, 23.0F), disconnectColor.method7294(var59));
+         if (f7 > 0.001F) {
+            String text = tr("module.bot.disconnect");
+            float width = connectIconFont.width("]");
+            float width2 = nickFont.width(text);
+            float f9 = 2.0F;
+            float floatValue4 = floatValue3 + (64.0F - width - f9 - width2) / 2.0F;
+            float y2 = y + (1.0F - f7) * f8;
+            float previewAlpha3 = previewAlpha2 * f7;
+            menuDrawContext.drawText(connectIconFont, "]", floatValue4, centeredTextY(connectIconFont, y2, 23.0F), disconnectColor.method7294(previewAlpha3));
+            menuDrawContext.drawText(nickFont, text, floatValue4 + width + f9, centeredTextY(nickFont, y2, 23.0F), disconnectColor.method7294(previewAlpha3));
          }
 
-         var1.disableScissor();
+         menuDrawContext.disableScissor();
       } else {
-         String var36 = "Offline";
-         float var38 = connectIconFont.width("]");
-         float var40 = nickFont.width(var36);
-         float var43 = 2.0F;
-         float var49 = var23 + (64.0F - var38 - var43 - var40) / 2.0F;
-         var1.drawText(connectIconFont, "]", var49, centeredTextY(connectIconFont, var20, 23.0F), inputEmptyColor.method7294(var19));
-         var1.drawText(nickFont, var36, var49 + var38 + var43, centeredTextY(nickFont, var20, 23.0F), inputEmptyColor.method7294(var19));
+         String text = "Offline";
+         float width = connectIconFont.width("]");
+         float width2 = nickFont.width(text);
+         float f7 = 2.0F;
+         float floatValue4 = floatValue3 + (64.0F - width - f7 - width2) / 2.0F;
+         menuDrawContext.drawText(connectIconFont, "]", floatValue4, centeredTextY(connectIconFont, y, 23.0F), inputEmptyColor.method7294(previewAlpha2));
+         menuDrawContext.drawText(nickFont, text, floatValue4 + width + f7, centeredTextY(nickFont, y, 23.0F), inputEmptyColor.method7294(previewAlpha2));
       }
 
-      boolean var37 = !var15 && var8 >= var21 && var8 <= var21 + 23.0F && var9 >= var20 && var9 <= var20 + 23.0F && var9 >= var5 && var9 <= var6;
-      float var39 = var11.delete.method2808(var37 ? 1.0F : 0.0F);
-      Identifier var41 = BotAvatarCache.prewarm(var2);
-      if (var41 != null) {
-         float var44 = var21 + 4.0F;
-         float var50 = var20 + 4.0F;
-         ZenithColor var54 = var39 > 0.0F ? ZenithColor.INSTANCE.method7295(deleteDarkColor, 0.62F * var39) : ZenithColor.INSTANCE;
-         RenderShaders.method5294(MatrixUtils.method664(var1.pose()), var41, var44, var50, 15.0F, 15.0F, avatarRadius, var54.method7294(var19));
+      boolean flag4 = !flag2 && f2 >= floatValue2 && f2 <= floatValue2 + 23.0F && f3 >= y && f3 <= y + 23.0F && f3 >= f && f3 <= guiScaledHeight;
+      float f7 = rowAnim.delete.method2808(flag4 ? 1.0F : 0.0F);
+      Identifier prewarm = BotAvatarCache.prewarm(selected);
+      if (prewarm != null) {
+         float x = floatValue2 + 4.0F;
+         float y2 = y + 4.0F;
+         ZenithColor zenithColor = f7 > 0.0F ? ZenithColor.INSTANCE.method7295(deleteDarkColor, 0.62F * f7) : ZenithColor.INSTANCE;
+         RenderShaders.method5294(MatrixUtils.method664(menuDrawContext.pose()), prewarm, x, y2, 15.0F, 15.0F, avatarRadius, zenithColor.method7294(previewAlpha2));
       }
 
-      if (var39 > 0.001F) {
-         float var45 = deleteIconFont.width("2");
-         var1.drawText(
+      if (f7 > 0.001F) {
+         float width = deleteIconFont.width("2");
+         menuDrawContext.drawText(
             deleteIconFont,
             "2",
-            var21 + (23.0F - var45) / 2.0F - 0.5F,
-            centeredTextY(deleteIconFont, var20, 23.0F) + 0.5F,
-            deleteColor.method7294(var19 * var39)
+            floatValue2 + (23.0F - width) / 2.0F - 0.5F,
+            centeredTextY(deleteIconFont, y, 23.0F) + 0.5F,
+            deleteColor.method7294(previewAlpha2 * f7)
          );
       }
 
-      if (var39 < 0.5F && HeadlessBots.hasProxy(var2)) {
-         float var46 = var21 + 23.0F - 4.0F - 4.0F;
-         float var51 = var20 + 4.0F;
-         var1.drawRoundedRect(var46, var51, 4.0F, 4.0F, proxyDotRadius, var10.getPrimaryColor().getZenithColor().method7294(var19 * (1.0F - var39 * 2.0F)));
+      if (f7 < 0.5F && HeadlessBots.hasProxy(selected)) {
+         float floatValue4 = floatValue2 + 23.0F - 4.0F - 4.0F;
+         float y2 = y + 4.0F;
+         menuDrawContext.drawRoundedRect(floatValue4, y2, 4.0F, 4.0F, proxyDotRadius, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha2 * (1.0F - f7 * 2.0F)));
       }
 
-      float var47 = var21 + 23.0F + 6.0F + var18 * 2.0F;
-      float var52 = centeredTextY(nickFont, var20, 23.0F);
-      ZenithColor var55 = var22 > 0.001F ? ZenithColor.INSTANCE.method7295(var10.getPrimaryColor().getZenithColor(), var22) : ZenithColor.INSTANCE;
-      var1.drawText(nickFont, var2, var47, var52, var55.method7294(var19));
-      this.renderRowModuleBadges(var1, var2, var47 + nickFont.width(var2) + 6.0F, var23 - 5.0F, var20, var19, var10);
+      float floatValue4 = floatValue2 + 23.0F + 6.0F + f6 * 2.0F;
+      float centeredTextY2 = centeredTextY(nickFont, y, 23.0F);
+      ZenithColor zenithColor = hover > 0.001F ? ZenithColor.INSTANCE.method7295(currentStyle.getPrimaryColor().getZenithColor(), hover) : ZenithColor.INSTANCE;
+      menuDrawContext.drawText(nickFont, selected, floatValue4, centeredTextY2, zenithColor.method7294(previewAlpha2));
+      this.renderRowModuleBadges(menuDrawContext, selected, floatValue4 + nickFont.width(selected) + 6.0F, floatValue3 - 5.0F, y, previewAlpha2, currentStyle);
    }
 
-   private void renderRowModuleBadges(MenuDrawContext var1, String var2, float var3, float var4, float var5, float var6, ZenithStyle var7) {
-      float var8 = var3;
-      float var9 = var5 + 6.5F;
-      int var10 = 0;
+   private void renderRowModuleBadges(MenuDrawContext menuDrawContext, String selected, float f, float f2, float y, float previewAlpha, ZenithStyle currentStyle) {
+      float floatValue = f;
+      float y2 = y + 6.5F;
+      int n = 0;
 
-      for (String var12 : BotModuleManager.supportedModuleNames()) {
-         if (this.isBotModuleEnabled(var2, var12)) {
-            String var13 = this.shortModuleName(var12);
-            float var14 = moduleMenuFont.width(var13) + 7.0F;
-            if (var8 + var14 > var4 || var10 >= 2) {
+      for (String supportedModuleName : BotModuleManager.supportedModuleNames()) {
+         if (this.isBotModuleEnabled(selected, supportedModuleName)) {
+            String shortModuleName = this.shortModuleName(supportedModuleName);
+            float width = moduleMenuFont.width(shortModuleName) + 7.0F;
+            if (floatValue + width > f2 || n >= 2) {
                break;
             }
 
-            var1.drawRoundedRect(var8, var9, var14, 10.0F, roleBadgeRadius, var7.getPrimaryColor().getZenithColor().method7293(34).method7294(var6));
-            var1.drawText(
-               moduleMenuFont, var13, var8 + 3.5F, centeredTextY(moduleMenuFont, var9, 10.0F), var7.getPrimaryColor().getZenithColor().method7294(var6)
+            menuDrawContext.drawRoundedRect(floatValue, y2, width, 10.0F, roleBadgeRadius, currentStyle.getPrimaryColor().getZenithColor().method7293(34).method7294(previewAlpha));
+            menuDrawContext.drawText(
+               moduleMenuFont, shortModuleName, floatValue + 3.5F, centeredTextY(moduleMenuFont, y2, 10.0F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
-            var8 += var14 + 3.0F;
-            var10++;
+            floatValue += width + 3.0F;
+            n++;
          }
       }
    }
 
-   private void renderModuleMenu(MenuDrawContext var1, float var2, float var3, float var4, ZenithStyle var5) {
-      String var6 = this.moduleMenuBotName();
-      List<String> var7 = BotModuleManager.supportedModuleNames();
-      if (var6 != null && !var7.isEmpty()) {
-         float var8 = this.moduleMenuAnimation.method2808(1.0F);
-         float var9 = var2 * clamp01(var8);
-         float var10 = this.moduleMenuY + (1.0F - var8) * 6.0F;
-         float var11 = 26.0F + var7.size() * 20.0F + Math.max(0, var7.size() - 1) * 3.0F;
+   private void renderModuleMenu(MenuDrawContext menuDrawContext, float previewAlpha, float f, float f2, ZenithStyle currentStyle) {
+      String moduleMenuBotName = this.moduleMenuBotName();
+      List<String> supportedModuleNames = BotModuleManager.supportedModuleNames();
+      if (moduleMenuBotName != null && !supportedModuleNames.isEmpty()) {
+         float f3 = this.moduleMenuAnimation.method2808(1.0F);
+         float previewAlpha2 = previewAlpha * clamp01(f3);
+         float y = this.moduleMenuY + (1.0F - f3) * 6.0F;
+         float height = 26.0F + supportedModuleNames.size() * 20.0F + Math.max(0, supportedModuleNames.size() - 1) * 3.0F;
          RenderShaders.method5299(
-            MatrixUtils.method664(var1.pose()), this.moduleMenuX, var10 + 5.0F, 118.0F, var11, 18.0F, moduleMenuRadius, shadowColor.method7294(var9)
+            MatrixUtils.method664(menuDrawContext.pose()), this.moduleMenuX, y + 5.0F, 118.0F, height, 18.0F, moduleMenuRadius, shadowColor.method7294(previewAlpha2)
          );
          RenderShaders.method5287(
-            MatrixUtils.method664(var1.pose()), this.moduleMenuX, var10, 118.0F, var11, 16.0F, moduleMenuRadius, blurColor.method7294(var9), true, false
+            MatrixUtils.method664(menuDrawContext.pose()), this.moduleMenuX, y, 118.0F, height, 16.0F, moduleMenuRadius, blurColor.method7294(previewAlpha2), true, false
          );
-         var1.drawRoundedRect(this.moduleMenuX, var10, 118.0F, var11, moduleMenuRadius, var5.getRightBackground().getZenithColor().method7294(var9));
-         float var12 = var10 + 4.0F;
-         var1.drawText(
+         menuDrawContext.drawRoundedRect(this.moduleMenuX, y, 118.0F, height, moduleMenuRadius, currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha2));
+         float y2 = y + 4.0F;
+         menuDrawContext.drawText(
             moduleMenuFont,
-            fitText(moduleMenuFont, var6, 110.0F),
+            fitText(moduleMenuFont, moduleMenuBotName, 110.0F),
             this.moduleMenuX + 4.0F,
-            centeredTextY(moduleMenuFont, var12, 18.0F),
-            var5.getTextEnable().getZenithColor().method7294(var9)
+            centeredTextY(moduleMenuFont, y2, 18.0F),
+            currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha2)
          );
-         float var13 = var12 + 18.0F;
+         float y3 = y2 + 18.0F;
 
-         for (String var15 : var7) {
-            boolean var16 = this.isBotModuleEnabled(var6, var15);
-            boolean var17 = var3 >= this.moduleMenuX + 4.0F && var3 <= this.moduleMenuX + 118.0F - 4.0F && var4 >= var13 && var4 <= var13 + 20.0F;
-            ZenithColor var18 = (var16 ? var5.getPrimaryColor().getZenithColor().method7293(42) : var5.getSurfaceDisableBackground().getZenithColor())
-               .method7295(var5.getPrimaryColor().getZenithColor(), var17 ? 0.12F : 0.0F);
-            var1.drawRoundedRect(this.moduleMenuX + 4.0F, var13, 110.0F, 20.0F, moduleMenuRowRadius, var18.method7294(var9));
-            ZenithColor var19 = var16 ? var5.getPrimaryColor().getZenithColor() : var5.getTextSecondary().getZenithColor();
-            var1.drawText(
+         for (String supportedModuleName : supportedModuleNames) {
+            boolean botModuleEnabled = this.isBotModuleEnabled(moduleMenuBotName, supportedModuleName);
+            boolean flag = f >= this.moduleMenuX + 4.0F && f <= this.moduleMenuX + 118.0F - 4.0F && f2 >= y3 && f2 <= y3 + 20.0F;
+            ZenithColor zenithColor = (botModuleEnabled ? currentStyle.getPrimaryColor().getZenithColor().method7293(42) : currentStyle.getSurfaceDisableBackground().getZenithColor())
+               .method7295(currentStyle.getPrimaryColor().getZenithColor(), flag ? 0.12F : 0.0F);
+            menuDrawContext.drawRoundedRect(this.moduleMenuX + 4.0F, y3, 110.0F, 20.0F, moduleMenuRowRadius, zenithColor.method7294(previewAlpha2));
+            ZenithColor zenithColor2 = botModuleEnabled ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getTextSecondary().getZenithColor();
+            menuDrawContext.drawText(
                moduleMenuFont,
-               fitText(moduleMenuFont, var15, 85.0F),
+               fitText(moduleMenuFont, supportedModuleName, 85.0F),
                this.moduleMenuX + 4.0F + 6.0F,
-               centeredTextY(moduleMenuFont, var13, 20.0F),
-               var19.method7294(var9)
+               centeredTextY(moduleMenuFont, y3, 20.0F),
+               zenithColor2.method7294(previewAlpha2)
             );
-            float var20 = 6.0F;
-            float var21 = this.moduleMenuX + 118.0F - 4.0F - 10.0F;
-            float var22 = var13 + (20.0F - var20) / 2.0F;
-            var1.drawRoundedRect(
-               var21,
-               var22,
-               var20,
-               var20,
-               ProxyDotRadiusData.method8069(var20 / 2.0F),
-               (var16 ? var5.getPrimaryColor().getZenithColor() : var5.getDisableActiveBg().getZenithColor()).method7294(var9)
+            float width = 6.0F;
+            float floatValue = this.moduleMenuX + 118.0F - 4.0F - 10.0F;
+            float y4 = y3 + (20.0F - width) / 2.0F;
+            menuDrawContext.drawRoundedRect(
+               floatValue,
+               y4,
+               width,
+               width,
+               ProxyDotRadiusData.method8069(width / 2.0F),
+               (botModuleEnabled ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getDisableActiveBg().getZenithColor()).method7294(previewAlpha2)
             );
-            var13 += 23.0F;
+            y3 += 23.0F;
          }
       } else {
          this.moduleMenuBotName = null;
       }
    }
 
-   private boolean isBotModuleEnabled(String var1, String var2) {
-      BotClient var3 = HeadlessBots.get(var1);
-      if (var3 != null) {
-         BotModule var4 = var3.getModules().getModule(var2);
-         if (var4 != null) {
-            return var4.isEnabled();
+   private boolean isBotModuleEnabled(String moduleMenuBotName, String supportedModuleName) {
+      BotClient botClient = HeadlessBots.get(moduleMenuBotName);
+      if (botClient != null) {
+         BotModule botModule = botClient.getModules().getModule(supportedModuleName);
+         if (botModule != null) {
+            return botModule.isEnabled();
          }
       }
 
-      return HeadlessBots.isModuleEnabledInProfile(var1, var2);
+      return HeadlessBots.isModuleEnabledInProfile(moduleMenuBotName, supportedModuleName);
    }
 
-   private String shortModuleName(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         String var2 = var1.replace("BotAuto", "A").replace("Auto", "A").replace("Bot", "");
-         return var2.length() <= 6 ? var2 : var2.substring(0, 6);
+   private String shortModuleName(String supportedModuleName) {
+      if (supportedModuleName != null && !supportedModuleName.isBlank()) {
+         String str = supportedModuleName.replace("BotAuto", "A").replace("Auto", "A").replace("Bot", "");
+         return str.length() <= 6 ? str : str.substring(0, 6);
       } else {
          return "";
       }
@@ -1357,9 +1357,9 @@ public class BotScreen extends CustomScreen {
       if (this.moduleMenuBotName == null) {
          return null;
       } else {
-         for (String var2 : HeadlessBots.allNames()) {
-            if (var2.equalsIgnoreCase(this.moduleMenuBotName)) {
-               return var2;
+         for (String allName : HeadlessBots.allNames()) {
+            if (allName.equalsIgnoreCase(this.moduleMenuBotName)) {
+               return allName;
             }
          }
 
@@ -1367,15 +1367,15 @@ public class BotScreen extends CustomScreen {
       }
    }
 
-   private void openModuleMenu(String var1, float var2, float var3) {
-      if (var1 == null) {
+   private void openModuleMenu(String moduleMenuBotName, float f, float moduleMenuY) {
+      if (moduleMenuBotName == null) {
          this.closeModuleMenu();
       } else {
          this.versionMenuOpen = false;
          this.moduleMenuAnimation.method2809(0.0F);
-         this.moduleMenuBotName = var1;
-         this.moduleMenuX = var2 + 227.0F + 3.0F;
-         this.moduleMenuY = var3;
+         this.moduleMenuBotName = moduleMenuBotName;
+         this.moduleMenuX = f + 227.0F + 3.0F;
+         this.moduleMenuY = moduleMenuY;
       }
    }
 
@@ -1383,26 +1383,26 @@ public class BotScreen extends CustomScreen {
       this.moduleMenuBotName = null;
    }
 
-   private boolean handleModuleMenuClick(double var1, double var3) {
-      String var5 = this.moduleMenuBotName();
-      List<String> var6 = BotModuleManager.supportedModuleNames();
-      if (var5 != null && !var6.isEmpty()) {
-         float var7 = 26.0F + var6.size() * 20.0F + Math.max(0, var6.size() - 1) * 3.0F;
-         boolean var8 = var1 >= this.moduleMenuX && var1 <= this.moduleMenuX + 118.0F && var3 >= this.moduleMenuY && var3 <= this.moduleMenuY + var7;
-         if (!var8) {
+   private boolean handleModuleMenuClick(double x, double y) {
+      String moduleMenuBotName = this.moduleMenuBotName();
+      List<String> supportedModuleNames = BotModuleManager.supportedModuleNames();
+      if (moduleMenuBotName != null && !supportedModuleNames.isEmpty()) {
+         float f = 26.0F + supportedModuleNames.size() * 20.0F + Math.max(0, supportedModuleNames.size() - 1) * 3.0F;
+         boolean flag = x >= this.moduleMenuX && x <= this.moduleMenuX + 118.0F && y >= this.moduleMenuY && y <= this.moduleMenuY + f;
+         if (!flag) {
             this.closeModuleMenu();
             return false;
          } else {
-            float var9 = this.moduleMenuY + 4.0F + 18.0F;
+            float f2 = this.moduleMenuY + 4.0F + 18.0F;
 
-            for (String var11 : var6) {
-               if (var1 >= this.moduleMenuX + 4.0F && var1 <= this.moduleMenuX + 118.0F - 4.0F && var3 >= var9 && var3 <= var9 + 20.0F) {
-                  boolean var12 = this.isBotModuleEnabled(var5, var11);
-                  HeadlessBots.setModuleEnabled(var5, var11, !var12);
+            for (String supportedModuleName : supportedModuleNames) {
+               if (x >= this.moduleMenuX + 4.0F && x <= this.moduleMenuX + 118.0F - 4.0F && y >= f2 && y <= f2 + 20.0F) {
+                  boolean botModuleEnabled = this.isBotModuleEnabled(moduleMenuBotName, supportedModuleName);
+                  HeadlessBots.setModuleEnabled(moduleMenuBotName, supportedModuleName, !botModuleEnabled);
                   return true;
                }
 
-               var9 += 23.0F;
+               f2 += 23.0F;
             }
 
             return true;
@@ -1417,106 +1417,106 @@ public class BotScreen extends CustomScreen {
       return this.selectedName == null ? -1 : HeadlessBots.getProtocolVersion(this.selectedName);
    }
 
-   private void applyVersionToSelection(int var1) {
-      LinkedHashSet<String> var2 = new LinkedHashSet<>(this.selectedNames);
+   private void applyVersionToSelection(int protocol) {
+      LinkedHashSet<String> strings = new LinkedHashSet<>(this.selectedNames);
       if (this.selectedName != null) {
-         var2.add(this.selectedName);
+         strings.add(this.selectedName);
       }
 
-      for (String var4 : var2) {
-         HeadlessBots.setProtocolVersion(var4, var1);
+      for (String name : strings) {
+         HeadlessBots.setProtocolVersion(name, protocol);
       }
    }
 
-   private float versionChipLeftX(float var1) {
-      return var1 + 319.0F + 157.0F - this.connectButtonWidth - 4.0F - 34.0F;
+   private float versionChipLeftX(float floatValue) {
+      return floatValue + 319.0F + 157.0F - this.connectButtonWidth - 4.0F - 34.0F;
    }
 
-   private float versionMenuX(float var1) {
-      return Math.min(this.versionChipLeftX(var1), var1 + 480.0F - 4.0F - 72.0F);
+   private float versionMenuX(float floatValue) {
+      return Math.min(this.versionChipLeftX(floatValue), floatValue + 480.0F - 4.0F - 72.0F);
    }
 
-   private float versionMenuY(float var1) {
-      return var1 + 4.0F + 23.0F + 3.0F;
+   private float versionMenuY(float y) {
+      return y + 4.0F + 23.0F + 3.0F;
    }
 
    private float versionMenuViewportHeight() {
-      int var1 = Math.min(9, BotProtocolVersions.ENTRIES.size());
-      return var1 * 14.0F + Math.max(0, var1 - 1) * 2.0F;
+      int n = Math.min(9, BotProtocolVersions.ENTRIES.size());
+      return n * 14.0F + Math.max(0, n - 1) * 2.0F;
    }
 
    private float versionMenuMaxScroll() {
-      float var1 = 16.0F;
-      float var2 = BotProtocolVersions.ENTRIES.size() * var1 - 2.0F;
-      return Math.max(0.0F, var2 - this.versionMenuViewportHeight());
+      float f = 16.0F;
+      float f2 = BotProtocolVersions.ENTRIES.size() * f - 2.0F;
+      return Math.max(0.0F, f2 - this.versionMenuViewportHeight());
    }
 
-   private void renderVersionMenu(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6, ZenithStyle var7) {
+   private void renderVersionMenu(MenuDrawContext menuDrawContext, float floatValue, float y, float previewAlpha, float f, float f2, ZenithStyle currentStyle) {
       if (this.versionMenuOpen) {
          if (this.selectedName == null) {
             this.versionMenuOpen = false;
          } else {
-            float var8 = this.versionMenuX(var2);
-            float var9 = this.versionMenuAnimation.method2808(1.0F);
-            float var10 = var4 * clamp01(var9);
-            float var11 = this.versionMenuY(var3) + (1.0F - var9) * 6.0F;
-            float var12 = this.versionMenuViewportHeight();
-            float var13 = 8.0F + var12;
+            float versionMenuX = this.versionMenuX(floatValue);
+            float f3 = this.versionMenuAnimation.method2808(1.0F);
+            float previewAlpha2 = previewAlpha * clamp01(f3);
+            float y2 = this.versionMenuY(y) + (1.0F - f3) * 6.0F;
+            float versionMenuViewportHeight = this.versionMenuViewportHeight();
+            float height = 8.0F + versionMenuViewportHeight;
             RenderShaders.method5299(
-               MatrixUtils.method664(var1.pose()), var8, var11 + 5.0F, 72.0F, var13, 18.0F, moduleMenuRadius, shadowColor.method7294(var10)
+               MatrixUtils.method664(menuDrawContext.pose()), versionMenuX, y2 + 5.0F, 72.0F, height, 18.0F, moduleMenuRadius, shadowColor.method7294(previewAlpha2)
             );
             RenderShaders.method5287(
-               MatrixUtils.method664(var1.pose()), var8, var11, 72.0F, var13, 16.0F, moduleMenuRadius, blurColor.method7294(var10), true, false
+               MatrixUtils.method664(menuDrawContext.pose()), versionMenuX, y2, 72.0F, height, 16.0F, moduleMenuRadius, blurColor.method7294(previewAlpha2), true, false
             );
-            var1.drawRoundedRect(var8, var11, 72.0F, var13, moduleMenuRadius, var7.getRightBackground().getZenithColor().method7294(var10));
+            menuDrawContext.drawRoundedRect(versionMenuX, y2, 72.0F, height, moduleMenuRadius, currentStyle.getRightBackground().getZenithColor().method7294(previewAlpha2));
             this.versionMenuScroll = Math.max(0.0F, Math.min(this.versionMenuScroll, this.versionMenuMaxScroll()));
-            float var14 = 16.0F;
-            float var15 = var11 + 4.0F;
-            int var16 = this.selectedProtocolVersion();
-            var1.enableScissor(var8, var15, var8 + 72.0F, var15 + var12);
-            float var17 = var15 - this.versionMenuScroll;
+            float f4 = 16.0F;
+            float y3 = y2 + 4.0F;
+            int selectedProtocolVersion = this.selectedProtocolVersion();
+            menuDrawContext.enableScissor(versionMenuX, y3, versionMenuX + 72.0F, y3 + versionMenuViewportHeight);
+            float y4 = y3 - this.versionMenuScroll;
 
-            for (BotProtocolVersions.Entry var19 : BotProtocolVersions.ENTRIES) {
-               if (var17 + 14.0F >= var15 && var17 <= var15 + var12) {
-                  boolean var20 = var19.protocol() == var16;
-                  boolean var21 = var5 >= var8 + 4.0F
-                     && var5 <= var8 + 72.0F - 4.0F
-                     && var6 >= Math.max(var17, var15)
-                     && var6 <= Math.min(var17 + 14.0F, var15 + var12);
-                  ZenithColor var22 = (var20 ? var7.getPrimaryColor().getZenithColor().method7293(42) : var7.getSurfaceDisableBackground().getZenithColor())
-                     .method7295(var7.getPrimaryColor().getZenithColor(), var21 ? 0.12F : 0.0F);
-                  var1.drawRoundedRect(var8 + 4.0F, var17, 64.0F, 14.0F, moduleMenuRowRadius, var22.method7294(var10));
-                  ZenithColor var23 = var20 ? var7.getPrimaryColor().getZenithColor() : var7.getTextSecondary().getZenithColor();
-                  var1.drawText(versionFont, var19.label(), var8 + 4.0F + 5.0F, centeredTextY(versionFont, var17, 14.0F), var23.method7294(var10));
+            for (BotProtocolVersions.Entry entry : BotProtocolVersions.ENTRIES) {
+               if (y4 + 14.0F >= y3 && y4 <= y3 + versionMenuViewportHeight) {
+                  boolean flag = entry.protocol() == selectedProtocolVersion;
+                  boolean flag2 = f >= versionMenuX + 4.0F
+                     && f <= versionMenuX + 72.0F - 4.0F
+                     && f2 >= Math.max(y4, y3)
+                     && f2 <= Math.min(y4 + 14.0F, y3 + versionMenuViewportHeight);
+                  ZenithColor zenithColor = (flag ? currentStyle.getPrimaryColor().getZenithColor().method7293(42) : currentStyle.getSurfaceDisableBackground().getZenithColor())
+                     .method7295(currentStyle.getPrimaryColor().getZenithColor(), flag2 ? 0.12F : 0.0F);
+                  menuDrawContext.drawRoundedRect(versionMenuX + 4.0F, y4, 64.0F, 14.0F, moduleMenuRowRadius, zenithColor.method7294(previewAlpha2));
+                  ZenithColor zenithColor2 = flag ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getTextSecondary().getZenithColor();
+                  menuDrawContext.drawText(versionFont, entry.label(), versionMenuX + 4.0F + 5.0F, centeredTextY(versionFont, y4, 14.0F), zenithColor2.method7294(previewAlpha2));
                }
 
-               var17 += var14;
+               y4 += f4;
             }
 
-            var1.disableScissor();
+            menuDrawContext.disableScissor();
          }
       }
    }
 
-   private boolean handleVersionMenuClick(double var1, double var3, float var5, float var6) {
+   private boolean handleVersionMenuClick(double x, double y, float floatValue, float f) {
       if (!this.versionMenuOpen) {
          return false;
       } else {
-         float var7 = this.versionMenuX(var5);
-         float var8 = this.versionMenuY(var6);
-         float var9 = this.versionMenuViewportHeight();
-         float var10 = 8.0F + var9;
-         boolean var11 = var1 >= var7 && var1 <= var7 + 72.0F && var3 >= var8 && var3 <= var8 + var10;
-         if (!var11) {
+         float versionMenuX = this.versionMenuX(floatValue);
+         float versionMenuY = this.versionMenuY(f);
+         float versionMenuViewportHeight = this.versionMenuViewportHeight();
+         float f2 = 8.0F + versionMenuViewportHeight;
+         boolean flag = x >= versionMenuX && x <= versionMenuX + 72.0F && y >= versionMenuY && y <= versionMenuY + f2;
+         if (!flag) {
             this.versionMenuOpen = false;
             return false;
          } else {
-            float var12 = 16.0F;
-            float var13 = (float)var3 - (var8 + 4.0F) + this.versionMenuScroll;
-            int var14 = (int)Math.floor(var13 / var12);
-            var var15 = BotProtocolVersions.ENTRIES;
-            if (var14 >= 0 && var14 < var15.size() && var13 - var14 * var12 <= 14.0F) {
-               this.applyVersionToSelection(((BotProtocolVersions.Entry)var15.get(var14)).protocol());
+            float f3 = 16.0F;
+            float f4 = (float)y - (versionMenuY + 4.0F) + this.versionMenuScroll;
+            int n = (int)Math.floor(f4 / f3);
+            var entries = BotProtocolVersions.ENTRIES;
+            if (n >= 0 && n < entries.size() && f4 - n * f3 <= 14.0F) {
+               this.applyVersionToSelection(((BotProtocolVersions.Entry)entries.get(n)).protocol());
                this.versionMenuOpen = false;
             }
 
@@ -1525,159 +1525,159 @@ public class BotScreen extends CustomScreen {
       }
    }
 
-   private void renderChatMessages(MenuDrawContext var1, BotClient var2, float var3, float var4, float var5, ZenithStyle var6) {
-      if (var2 != null) {
-         ChatMessage[] var7 = var2.getChatLog().toArray(new ChatMessage[0]);
-         if (var2 != this.chatAnimClient) {
-            this.chatAnimClient = var2;
+   private void renderChatMessages(MenuDrawContext menuDrawContext, BotClient chatAnimClient, float floatValue, float y, float previewAlpha, ZenithStyle currentStyle) {
+      if (chatAnimClient != null) {
+         ChatMessage[] elements = chatAnimClient.getChatLog().toArray(new ChatMessage[0]);
+         if (chatAnimClient != this.chatAnimClient) {
+            this.chatAnimClient = chatAnimClient;
             this.chatAnims.clear();
             this.wrapCache.clear();
 
-            for (ChatMessage var11 : var7) {
-               this.chatAnims.put(var11, new Animation(260L, 1.0F, Easing.INSTANCE15));
+            for (ChatMessage chatMessage : elements) {
+               this.chatAnims.put(chatMessage, new Animation(260L, 1.0F, Easing.INSTANCE15));
             }
          }
 
-         var var25 = Collections.newSetFromMap(new IdentityHashMap(var7.length * 2));
-         Collections.addAll(var25, var7);
-         var var26 = this.chatAnims.keySet().iterator();
+         var setFromMap = Collections.newSetFromMap(new IdentityHashMap(elements.length * 2));
+         Collections.addAll(setFromMap, elements);
+         var iterator = this.chatAnims.keySet().iterator();
 
-         while (var26.hasNext()) {
-            ChatMessage var27 = (ChatMessage)var26.next();
-            if (!var25.contains(var27)) {
-               var26.remove();
-               this.wrapCache.remove(var27);
+         while (iterator.hasNext()) {
+            ChatMessage chatMessage = (ChatMessage)iterator.next();
+            if (!setFromMap.contains(chatMessage)) {
+               iterator.remove();
+               this.wrapCache.remove(chatMessage);
             }
          }
 
-         if (var7.length > 0) {
-            float var28 = chatLineStepCache;
-            float var29 = chatTimeTopOffsetCache;
-            float var12 = var3 + 8.0F + chatTimeColumnWidthCache + 8.0F;
-            float var13 = var3 + 232.0F - 8.0F - var12;
-            float[] var14 = new float[var7.length];
-            List[] var15 = new List[var7.length];
-            float var16 = 99.5F;
-            float var17 = 0.0F;
+         if (elements.length > 0) {
+            float f = chatLineStepCache;
+            float chatTimeTopOffsetCache2 = chatTimeTopOffsetCache;
+            float x1 = floatValue + 8.0F + chatTimeColumnWidthCache + 8.0F;
+            float f2 = floatValue + 232.0F - 8.0F - x1;
+            float[] floats = new float[elements.length];
+            List[] lists = new List[elements.length];
+            float f3 = 99.5F;
+            float f4 = 0.0F;
 
-            for (int var18 = 0; var18 < var7.length; var18++) {
-               ChatMessage var19 = var7[var18];
-               Animation var20 = this.chatAnims.computeIfAbsent(var19, var0 -> new Animation(260L, 0.0F, Easing.INSTANCE15));
-               float var21 = var20.method2808(1.0F);
-               var var22 = this.wrapCache.get(var19);
-               if (var22 == null) {
-                  var22 = wrapText(var19.text(), nickFont, var13);
-                  this.wrapCache.put(var19, var22);
+            for (int i = 0; i < elements.length; i++) {
+               ChatMessage key = elements[i];
+               Animation animation = this.chatAnims.computeIfAbsent(key, chatAnim -> new Animation(260L, 0.0F, Easing.INSTANCE15));
+               float f5 = animation.method2808(1.0F);
+               var components = this.wrapCache.get(key);
+               if (components == null) {
+                  components = wrapText(key.text(), nickFont, f2);
+                  this.wrapCache.put(key, components);
                }
 
-               var14[var18] = var21;
-               var15[var18] = var22;
+               floats[i] = f5;
+               lists[i] = components;
 
-               for (int var23 = 0; var23 < var22.size(); var23++) {
-                  var17 += var28 * var21;
+               for (int j = 0; j < components.size(); j++) {
+                  f4 += f * f5;
                }
             }
 
-            float var30 = Math.max(0.0F, var17 - var16);
-            this.chatScroll = Math.max(0.0F, Math.min(this.chatScroll, var30));
-            float var31 = var4 + 107.5F - 4.0F - var17 + this.chatScroll;
-            var1.enableScissor(var3, var4, var3 + 232.0F, var4 + 107.5F);
+            float f5 = Math.max(0.0F, f4 - f3);
+            this.chatScroll = Math.max(0.0F, Math.min(this.chatScroll, f5));
+            float y2 = y + 107.5F - 4.0F - f4 + this.chatScroll;
+            menuDrawContext.enableScissor(floatValue, y, floatValue + 232.0F, y + 107.5F);
 
-            for (int var32 = 0; var32 < var7.length; var32++) {
-               float var33 = var14[var32];
-               var var34 = var15[var32];
+            for (int i = 0; i < elements.length; i++) {
+               float f6 = floats[i];
+               var list = lists[i];
 
-               for (int var35 = 0; var35 < var34.size(); var35++) {
-                  if (var31 + var28 > var4 && var31 < var4 + 107.5F) {
-                     float var24 = var5 * var33;
-                     if (var35 == 0 && var7[var32].time() != null) {
-                        var1.drawText(timeFont, var7[var32].time(), var3 + 8.0F, var31 + var29, var6.getTextTertiary().getZenithColor().method7294(var24));
+               for (int j = 0; j < list.size(); j++) {
+                  if (y2 + f > y && y2 < y + 107.5F) {
+                     float previewAlpha2 = previewAlpha * f6;
+                     if (j == 0 && elements[i].time() != null) {
+                        menuDrawContext.drawText(timeFont, elements[i].time(), floatValue + 8.0F, y2 + chatTimeTopOffsetCache2, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha2));
                      }
 
-                     var1.drawText(nickFont, (Component)var34.get(var35), var12, var31, var6.getTextEnable().getZenithColor().method7294(var24).method7287());
+                     menuDrawContext.drawText(nickFont, (Component)list.get(j), x1, y2, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha2).method7287());
                   }
 
-                  var31 += var28 * var33;
+                  y2 += f * f6;
                }
             }
 
-            var1.disableScissor();
+            menuDrawContext.disableScissor();
          }
       }
    }
 
-   private static String tr(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   private static String tr(String tabKey) {
+      return Zenith.getInstance().getLocalization().translate(tabKey);
    }
 
-   private static float centeredTextY(Font var0, float var1, float var2) {
-      FontData.MetricsData var3 = var0.getFont().getMetrics();
-      float var4 = (var3.ascender() - var3.descender()) * var0.getSize();
-      return var1 + (var2 - var4) / 2.0F;
+   private static float centeredTextY(Font nickFont, float y, float height) {
+      FontData.MetricsData metrics = nickFont.getFont().getMetrics();
+      float f = (metrics.ascender() - metrics.descender()) * nickFont.getSize();
+      return y + (height - f) / 2.0F;
    }
 
-   private static float clamp01(float var0) {
-      return Math.max(0.0F, Math.min(1.0F, var0));
+   private static float clamp01(float f) {
+      return Math.max(0.0F, Math.min(1.0F, f));
    }
 
-   private static float lineHeight(Font var0) {
-      FontData.MetricsData var1 = var0.getFont().getMetrics();
-      return (var1.ascender() - var1.descender()) * var0.getSize();
+   private static float lineHeight(Font nickFont) {
+      FontData.MetricsData metrics = nickFont.getFont().getMetrics();
+      return (metrics.ascender() - metrics.descender()) * nickFont.getSize();
    }
 
-   private static String fitText(Font var0, String var1, float var2) {
-      if (var1 != null && !var1.isEmpty()) {
-         BotScreen.FitKey var3 = new BotScreen.FitKey(var0, var1, var2);
-         String var4 = FIT_CACHE.get(var3);
-         if (var4 == null) {
-            var4 = fitTextUncached(var0, var1, var2);
-            FIT_CACHE.put(var3, var4);
+   private static String fitText(Font moduleMenuFont, String label, float maxWidth) {
+      if (label != null && !label.isEmpty()) {
+         BotScreen.FitKey fitKey = new BotScreen.FitKey(moduleMenuFont, label, maxWidth);
+         String str = FIT_CACHE.get(fitKey);
+         if (str == null) {
+            str = fitTextUncached(moduleMenuFont, label, maxWidth);
+            FIT_CACHE.put(fitKey, str);
          }
 
-         return var4;
+         return str;
       } else {
-         return var1 == null ? "" : var1;
+         return label == null ? "" : label;
       }
    }
 
-   private static String fitTextUncached(Font var0, String var1, float var2) {
-      if (var0.width(var1) <= var2) {
-         return var1;
+   private static String fitTextUncached(Font moduleMenuFont, String label, float maxWidth) {
+      if (moduleMenuFont.width(label) <= maxWidth) {
+         return label;
       } else {
-         String var3 = "...";
-         int var4 = var1.length();
+         String str = "...";
+         int length = label.length();
 
-         while (var4 > 0 && var0.width(var1.substring(0, var4) + var3) > var2) {
-            var4--;
+         while (length > 0 && moduleMenuFont.width(label.substring(0, length) + str) > maxWidth) {
+            length--;
          }
 
-         return var4 <= 0 ? var3 : var1.substring(0, var4) + var3;
+         return length <= 0 ? str : label.substring(0, length) + str;
       }
    }
 
-   private static float listContentHeight(int var0) {
-      return var0 <= 0 ? 0.0F : var0 * 25.0F - 2.0F;
+   private static float listContentHeight(int size) {
+      return size <= 0 ? 0.0F : size * 25.0F - 2.0F;
    }
 
-   private static float listMaxScroll(int var0) {
-      return Math.max(0.0F, listContentHeight(var0) - 211.0F);
+   private static float listMaxScroll(int size) {
+      return Math.max(0.0F, listContentHeight(size) - 211.0F);
    }
 
-   private List<String> filterBots(List<String> var1) {
-      String var2 = this.searchInput.getText().trim();
-      if (var2.isEmpty()) {
-         return var1;
+   private List<String> filterBots(List<String> allNames) {
+      String str = this.searchInput.getText().trim();
+      if (str.isEmpty()) {
+         return allNames;
       } else {
-         String var3 = var2.toLowerCase(Locale.ROOT);
-         ArrayList<String> var4 = new ArrayList<>();
+         String lowerCase = str.toLowerCase(Locale.ROOT);
+         ArrayList<String> strings = new ArrayList<>();
 
-         for (String var6 : var1) {
-            if (var6.toLowerCase(Locale.ROOT).contains(var3)) {
-               var4.add(var6);
+         for (String allName : allNames) {
+            if (allName.toLowerCase(Locale.ROOT).contains(lowerCase)) {
+               strings.add(allName);
             }
          }
 
-         return var4;
+         return strings;
       }
    }
 
@@ -1689,35 +1689,35 @@ public class BotScreen extends CustomScreen {
       return this.selectedName == null ? null : HeadlessBots.get(this.selectedName);
    }
 
-   private static String serverLabel(String var0) {
-      if (var0 != null && !"No Server".equalsIgnoreCase(var0)) {
-         String var1 = serverLabelCache.get(var0);
-         if (var1 != null) {
-            return var1;
+   private static String serverLabel(String address) {
+      if (address != null && !"No Server".equalsIgnoreCase(address)) {
+         String str = serverLabelCache.get(address);
+         if (str != null) {
+            return str;
          } else {
-            String var2 = computeServerLabel(var0);
-            serverLabelCache.put(var0, var2);
-            return var2;
+            String serverLabel = computeServerLabel(address);
+            serverLabelCache.put(address, serverLabel);
+            return serverLabel;
          }
       } else {
          return "";
       }
    }
 
-   private static String computeServerLabel(String var0) {
-      int var1 = var0.indexOf(58);
-      String var2 = var1 > 0 ? var0.substring(0, var1) : var0;
-      String[] var3 = var2.split("\\.");
-      if (var3.length < 2) {
-         return var2;
+   private static String computeServerLabel(String address) {
+      int indexOf = address.indexOf(58);
+      String str = indexOf > 0 ? address.substring(0, indexOf) : address;
+      String[] strings = str.split("\\.");
+      if (strings.length < 2) {
+         return str;
       } else {
-         for (String var7 : var3) {
-            if (!var7.chars().allMatch(Character::isDigit)) {
-               return var3[var3.length - 2];
+         for (String str2 : strings) {
+            if (!str2.chars().allMatch(Character::isDigit)) {
+               return strings[strings.length - 2];
             }
          }
 
-         return var2;
+         return str;
       }
    }
 
@@ -1729,199 +1729,199 @@ public class BotScreen extends CustomScreen {
          || this.connectInput.isSelected();
    }
 
-   private static List<Component> wrapText(Component var0, Font var1, float var2) {
-      ArrayList<Component> var3 = new ArrayList<>();
-      ArrayList var4 = new ArrayList();
-      float var5 = 0.0F;
-      int var6 = -1;
+   private static List<Component> wrapText(Component text, Font nickFont, float f) {
+      ArrayList<Component> components = new ArrayList<>();
+      ArrayList subList = new ArrayList();
+      float textWidth2 = 0.0F;
+      int toIndex = -1;
 
-      for (BotScreen.StyledTextFragment var8 : splitTextToGlyphs(var0)) {
-         if (var8.isLineBreak()) {
-            addWrappedLine(var3, var4);
-            var4.clear();
-            var5 = 0.0F;
-            var6 = -1;
-         } else if (!var4.isEmpty() || !var8.isWhitespace()) {
-            var4.add(var8);
-            var5 += var8.width(var1);
-            if (var8.isWhitespace()) {
-               var6 = var4.size() - 1;
+      for (BotScreen.StyledTextFragment splitTextToGlyph : splitTextToGlyphs(text)) {
+         if (splitTextToGlyph.isLineBreak()) {
+            addWrappedLine(components, subList);
+            subList.clear();
+            textWidth2 = 0.0F;
+            toIndex = -1;
+         } else if (!subList.isEmpty() || !splitTextToGlyph.isWhitespace()) {
+            subList.add(splitTextToGlyph);
+            textWidth2 += splitTextToGlyph.width(nickFont);
+            if (splitTextToGlyph.isWhitespace()) {
+               toIndex = subList.size() - 1;
             }
 
-            if (var2 > 0.0F && var5 > var2 && var4.size() > 1) {
-               if (var6 > 0) {
-                  addWrappedLine(var3, var4.subList(0, var6));
-                  var4 = new ArrayList(var4.subList(var6 + 1, var4.size()));
-                  trimLeadingWhitespace(var4);
+            if (f > 0.0F && textWidth2 > f && subList.size() > 1) {
+               if (toIndex > 0) {
+                  addWrappedLine(components, subList.subList(0, toIndex));
+                  subList = new ArrayList(subList.subList(toIndex + 1, subList.size()));
+                  trimLeadingWhitespace(subList);
                } else {
-                  BotScreen.StyledTextFragment var9 = (BotScreen.StyledTextFragment)var4.remove(var4.size() - 1);
-                  addWrappedLine(var3, var4);
-                  var4 = new ArrayList();
-                  if (!var9.isWhitespace()) {
-                     var4.add(var9);
+                  BotScreen.StyledTextFragment styledTextFragment = (BotScreen.StyledTextFragment)subList.remove(subList.size() - 1);
+                  addWrappedLine(components, subList);
+                  subList = new ArrayList();
+                  if (!styledTextFragment.isWhitespace()) {
+                     subList.add(styledTextFragment);
                   }
                }
 
-               var5 = textWidth(var4, var1);
-               var6 = lastWhitespace(var4);
+               textWidth2 = textWidth(subList, nickFont);
+               toIndex = lastWhitespace(subList);
             }
          }
       }
 
-      addWrappedLine(var3, var4);
-      return var3;
+      addWrappedLine(components, subList);
+      return components;
    }
 
-   private static List<BotScreen.StyledTextFragment> splitTextToGlyphs(Component var0) {
-      ArrayList<BotScreen.StyledTextFragment> var1 = new ArrayList<>();
-      var0.visit((var1x, var2) -> {
-         int var3 = 0;
+   private static List<BotScreen.StyledTextFragment> splitTextToGlyphs(Component text) {
+      ArrayList<BotScreen.StyledTextFragment> styledTextFragments = new ArrayList<>();
+      text.visit((var1x, str) -> {
+         int endIndex = 0;
 
-         while (var3 < var2.length()) {
-            int var4 = var2.codePointAt(var3);
-            int var5 = var3 + Character.charCount(var4);
-            var1.add(new BotScreen.StyledTextFragment(var2.substring(var3, var5), var1x));
-            var3 = var5;
+         while (endIndex < str.length()) {
+            int codePointAt = str.codePointAt(endIndex);
+            int n = endIndex + Character.charCount(codePointAt);
+            styledTextFragments.add(new BotScreen.StyledTextFragment(str.substring(endIndex, n), var1x));
+            endIndex = n;
          }
 
          return Optional.empty();
       }, Style.EMPTY);
-      return var1;
+      return styledTextFragments;
    }
 
-   private static void addWrappedLine(List<Component> var0, List<BotScreen.StyledTextFragment> var1) {
-      var var2 = new ArrayList<>(var1);
-      trimTrailingWhitespace(var2);
-      if (!var2.isEmpty()) {
-         var0.add(toText(var2));
+   private static void addWrappedLine(List<Component> components, List<BotScreen.StyledTextFragment> subList) {
+      var styledTextFragments = new ArrayList<>(subList);
+      trimTrailingWhitespace(styledTextFragments);
+      if (!styledTextFragments.isEmpty()) {
+         components.add(toText(styledTextFragments));
       }
    }
 
-   private static Component toText(List<BotScreen.StyledTextFragment> var0) {
-      MutableComponent var1 = Component.empty();
+   private static Component toText(List<BotScreen.StyledTextFragment> styledTextFragments) {
+      MutableComponent empty = Component.empty();
 
-      for (BotScreen.StyledTextFragment var3 : var0) {
-         var1.append(Component.literal(var3.value()).setStyle(var3.style()));
+      for (BotScreen.StyledTextFragment styledTextFragment : styledTextFragments) {
+         empty.append(Component.literal(styledTextFragment.value()).setStyle(styledTextFragment.style()));
       }
 
-      return var1;
+      return empty;
    }
 
-   private static float textWidth(List<BotScreen.StyledTextFragment> var0, Font var1) {
-      float var2 = 0.0F;
+   private static float textWidth(List<BotScreen.StyledTextFragment> subList, Font nickFont) {
+      float f = 0.0F;
 
-      for (BotScreen.StyledTextFragment var4 : var0) {
-         var2 += var4.width(var1);
+      for (BotScreen.StyledTextFragment sub : subList) {
+         f += sub.width(nickFont);
       }
 
-      return var2;
+      return f;
    }
 
-   private static int lastWhitespace(List<BotScreen.StyledTextFragment> var0) {
-      for (int var1 = var0.size() - 1; var1 >= 0; var1--) {
-         if (((BotScreen.StyledTextFragment)var0.get(var1)).isWhitespace()) {
-            return var1;
+   private static int lastWhitespace(List<BotScreen.StyledTextFragment> subList) {
+      for (int i = subList.size() - 1; i >= 0; i--) {
+         if (((BotScreen.StyledTextFragment)subList.get(i)).isWhitespace()) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   private static void trimLeadingWhitespace(List<BotScreen.StyledTextFragment> var0) {
-      while (!var0.isEmpty() && ((BotScreen.StyledTextFragment)var0.get(0)).isWhitespace()) {
-         var0.remove(0);
+   private static void trimLeadingWhitespace(List<BotScreen.StyledTextFragment> subList) {
+      while (!subList.isEmpty() && ((BotScreen.StyledTextFragment)subList.get(0)).isWhitespace()) {
+         subList.remove(0);
       }
    }
 
-   private static void trimTrailingWhitespace(List<BotScreen.StyledTextFragment> var0) {
-      while (!var0.isEmpty() && ((BotScreen.StyledTextFragment)var0.get(var0.size() - 1)).isWhitespace()) {
-         var0.remove(var0.size() - 1);
+   private static void trimTrailingWhitespace(List<BotScreen.StyledTextFragment> styledTextFragments) {
+      while (!styledTextFragments.isEmpty() && ((BotScreen.StyledTextFragment)styledTextFragments.get(styledTextFragments.size() - 1)).isWhitespace()) {
+         styledTextFragments.remove(styledTextFragments.size() - 1);
       }
    }
 
    private void sendChatMessage() {
-      String var1 = this.chatInput.getText();
-      BotClient var2 = this.selectedClient();
-      if (var2 != null && !var1.isBlank()) {
-         var2.sendChat(var1);
+      String text = this.chatInput.getText();
+      BotClient selectedClient = this.selectedClient();
+      if (selectedClient != null && !text.isBlank()) {
+         selectedClient.sendChat(text);
       }
 
       this.chatInput.setText("");
       this.chatInput.setCursor(0);
    }
 
-   private static boolean isValidBotName(String var0) {
-      int var1 = var0 == null ? 0 : var0.trim().length();
-      return var1 >= 3 && var1 <= 16;
+   private static boolean isValidBotName(String name) {
+      int length = name == null ? 0 : name.trim().length();
+      return length >= 3 && length <= 16;
    }
 
    private void addBotFromSearch() {
-      String var1 = this.addInput.getText().trim();
-      if (isValidBotName(var1) && HeadlessBots.add(var1)) {
+      String name = this.addInput.getText().trim();
+      if (isValidBotName(name) && HeadlessBots.add(name)) {
          this.addInput.setText("");
          this.addInput.setCursor(0);
-         this.selectOnly(var1);
+         this.selectOnly(name);
          this.listScroll = 0.0F;
       }
    }
 
    private List<String> selectionNames() {
-      var var1 = new ArrayList<>(this.selectedNames);
-      if (var1.isEmpty() && this.selectedName != null) {
-         var1.add(this.selectedName);
+      var strings = new ArrayList<>(this.selectedNames);
+      if (strings.isEmpty() && this.selectedName != null) {
+         strings.add(this.selectedName);
       }
 
-      return var1;
+      return strings;
    }
 
-   private void applyProxyToSelection(String var1) {
-      String var2 = var1 == null ? "" : var1.trim();
-      if (!var2.isBlank()) {
-         HeadlessBots.addProxy(var2);
+   private void applyProxyToSelection(String str) {
+      String string = str == null ? "" : str.trim();
+      if (!string.isBlank()) {
+         HeadlessBots.addProxy(string);
       }
 
-      for (String var4 : this.selectionNames()) {
-         HeadlessBots.setProxy(var4, var2);
+      for (String selectionName : this.selectionNames()) {
+         HeadlessBots.setProxy(selectionName, string);
       }
 
       this.proxyManagerInput.setSelected(false);
    }
 
    private void addProxyFromManager() {
-      String var1 = this.proxyManagerInput.getText().trim();
-      if (!var1.isBlank()) {
-         HeadlessBots.addProxy(var1);
+      String string = this.proxyManagerInput.getText().trim();
+      if (!string.isBlank()) {
+         HeadlessBots.addProxy(string);
          this.proxyManagerInput.setText("");
          this.proxyManagerInput.setCursor(0);
          this.proxyPanelScroll = 0.0F;
       }
    }
 
-   private boolean handleProxyPanelClick(double var1, double var3, float var5, float var6) {
-      float var7 = proxyPanelButtonX(var5);
-      float var8 = proxyPanelButtonY(var6);
-      if (var1 >= var7 && var1 <= var7 + 18.0F && var3 >= var8 && var3 <= var8 + 18.0F) {
+   private boolean handleProxyPanelClick(double x, double y, float floatValue, float f) {
+      float proxyPanelButtonX2 = proxyPanelButtonX(floatValue);
+      float proxyPanelButtonY2 = proxyPanelButtonY(f);
+      if (x >= proxyPanelButtonX2 && x <= proxyPanelButtonX2 + 18.0F && y >= proxyPanelButtonY2 && y <= proxyPanelButtonY2 + 18.0F) {
          this.proxyPanelOpen = !this.proxyPanelOpen;
          savedProxyPanelOpen = this.proxyPanelOpen;
          this.proxyManagerInput.setSelected(false);
          return true;
       } else {
-         float var9 = this.proxyPanelAnimation.getValue();
-         if (!this.proxyPanelOpen && var9 <= 0.001F) {
+         float f2 = this.proxyPanelAnimation.getValue();
+         if (!this.proxyPanelOpen && f2 <= 0.001F) {
             return false;
          } else {
-            float var10 = proxyPanelRenderX(var5, Math.max(var9, this.proxyPanelOpen ? 1.0F : 0.0F));
-            float var11 = proxyPanelY(var6);
-            if (!(var1 < var10) && !(var1 > var10 + 156.0F) && !(var3 < var11) && !(var3 > var11 + 222.0F)) {
-               float var12 = proxyPanelCloseHitX(var10);
-               float var13 = proxyPanelCloseHitY(var11);
-               if (var1 >= var12 && var1 <= var12 + 14.0F && var3 >= var13 && var3 <= var13 + 14.0F) {
+            float moduleMenuX = proxyPanelRenderX(floatValue, Math.max(f2, this.proxyPanelOpen ? 1.0F : 0.0F));
+            float proxyPanelY2 = proxyPanelY(f);
+            if (!(x < moduleMenuX) && !(x > moduleMenuX + 156.0F) && !(y < proxyPanelY2) && !(y > proxyPanelY2 + 222.0F)) {
+               float proxyPanelCloseHitX2 = proxyPanelCloseHitX(moduleMenuX);
+               float proxyPanelCloseHitY2 = proxyPanelCloseHitY(proxyPanelY2);
+               if (x >= proxyPanelCloseHitX2 && x <= proxyPanelCloseHitX2 + 14.0F && y >= proxyPanelCloseHitY2 && y <= proxyPanelCloseHitY2 + 14.0F) {
                   this.proxyPanelOpen = false;
                   savedProxyPanelOpen = false;
                   this.proxyManagerInput.setSelected(false);
                   return true;
                } else {
-                  this.handleProxyPanelBodyClick(var1, var3, var10, var11);
+                  this.handleProxyPanelBodyClick(x, y, moduleMenuX, proxyPanelY2);
                   return true;
                }
             } else {
@@ -1931,38 +1931,38 @@ public class BotScreen extends CustomScreen {
       }
    }
 
-   private void handleProxyPanelBodyClick(double var1, double var3, float var5, float var6) {
-      float var7 = var6 + 31.0F;
-      float var8 = var5 + 4.0F;
-      float var9 = 126.0F;
-      float var10 = var8 + var9 + 4.0F;
-      if (!(var3 >= var7) || !(var3 <= var7 + 18.0F)) {
-         float var11 = var6 + 53.0F;
-         float var12 = proxyPanelRowWidth();
-         if (!(var1 < var8) && !(var1 > var8 + var12) && !(var3 < var11) && !(var3 > var11 + 161.0F)) {
-            float var13 = (float)(var3 - var11 + this.proxyPanelScroll);
-            float var14 = 25.0F;
-            int var15 = (int)(var13 / var14);
-            if (var15 >= 0) {
-               if (var13 - var15 * var14 > 23.0F) {
+   private void handleProxyPanelBodyClick(double x, double y, float moduleMenuX, float f) {
+      float f2 = f + 31.0F;
+      float f3 = moduleMenuX + 4.0F;
+      float f4 = 126.0F;
+      float f5 = f3 + f4 + 4.0F;
+      if (!(y >= f2) || !(y <= f2 + 18.0F)) {
+         float f6 = f + 53.0F;
+         float proxyPanelRowWidth2 = proxyPanelRowWidth();
+         if (!(x < f3) && !(x > f3 + proxyPanelRowWidth2) && !(y < f6) && !(y > f6 + 161.0F)) {
+            float f7 = (float)(y - f6 + this.proxyPanelScroll);
+            float f8 = 25.0F;
+            int n = (int)(f7 / f8);
+            if (n >= 0) {
+               if (f7 - n * f8 > 23.0F) {
                   this.proxyManagerInput.setSelected(false);
-               } else if (var15 == 0) {
+               } else if (n == 0) {
                   this.applyProxyToSelection("");
                } else {
-                  var var16 = HeadlessBots.getProxyPool();
-                  int var17 = var15 - 1;
-                  if (var17 < var16.size()) {
-                     String var18 = (String)var16.get(var17);
-                     float var19 = var8 + var12 - 18.0F;
-                     if (var1 >= var19 && var1 <= var19 + 18.0F) {
-                        if (HeadlessBots.removeProxy(var18)) {
-                           this.proxyHoverAnims.remove(var18);
+                  var proxyPool = HeadlessBots.getProxyPool();
+                  int n2 = n - 1;
+                  if (n2 < proxyPool.size()) {
+                     String str = (String)proxyPool.get(n2);
+                     float f9 = f3 + proxyPanelRowWidth2 - 18.0F;
+                     if (x >= f9 && x <= f9 + 18.0F) {
+                        if (HeadlessBots.removeProxy(str)) {
+                           this.proxyHoverAnims.remove(str);
                            this.proxyPanelScroll = Math.min(this.proxyPanelScroll, proxyPanelMaxScroll(HeadlessBots.getProxyPool().size() + 1));
                         }
 
                         this.proxyManagerInput.setSelected(false);
                      } else {
-                        this.applyProxyToSelection(var18);
+                        this.applyProxyToSelection(str);
                      }
                   }
                }
@@ -1970,11 +1970,11 @@ public class BotScreen extends CustomScreen {
          } else {
             this.proxyManagerInput.setSelected(false);
          }
-      } else if (var1 >= var10 && var1 <= var10 + 18.0F) {
+      } else if (x >= f5 && x <= f5 + 18.0F) {
          this.addProxyFromManager();
          this.proxyManagerInput.setSelected(false);
-      } else if (var1 >= var8 && var1 <= var8 + var9) {
-         this.focusTextBox(this.proxyManagerInput, var1, var3);
+      } else if (x >= f3 && x <= f3 + f4) {
+         this.focusTextBox(this.proxyManagerInput, x, y);
          this.clearMainInputFocus();
       } else {
          this.proxyManagerInput.setSelected(false);
@@ -1990,84 +1990,84 @@ public class BotScreen extends CustomScreen {
    }
 
    private boolean isMultiSelectDown() {
-      Window var1 = mc.getWindow();
+      Window window = mc.getWindow();
       return org.zenith.utility.misc.KeyCompat.isKeyDown(341) || org.zenith.utility.misc.KeyCompat.isKeyDown(345) || org.zenith.utility.misc.KeyCompat.isKeyDown(343) || org.zenith.utility.misc.KeyCompat.isKeyDown(347);
    }
 
    private boolean isShiftDown() {
-      Window var1 = mc.getWindow();
+      Window window = mc.getWindow();
       return org.zenith.utility.misc.KeyCompat.isKeyDown(340) || org.zenith.utility.misc.KeyCompat.isKeyDown(344);
    }
 
-   private void selectOnly(String var1) {
+   private void selectOnly(String selectedName) {
       this.selectedNames.clear();
-      if (var1 != null) {
-         this.selectedNames.add(var1);
+      if (selectedName != null) {
+         this.selectedNames.add(selectedName);
       }
 
-      this.selectedName = var1;
+      this.selectedName = selectedName;
    }
 
-   private void toggleSelection(String var1) {
-      if (this.selectedNames.contains(var1)) {
-         this.selectedNames.remove(var1);
-         if (this.selectedName != null && this.selectedName.equals(var1)) {
+   private void toggleSelection(String selectedName) {
+      if (this.selectedNames.contains(selectedName)) {
+         this.selectedNames.remove(selectedName);
+         if (this.selectedName != null && this.selectedName.equals(selectedName)) {
             this.selectedName = null;
             this.chatScroll = 0.0F;
-            var var2 = this.selectedNames.iterator();
-            if (var2.hasNext()) {
-               String var3 = (String)var2.next();
-               this.selectedName = var3;
+            var iterator = this.selectedNames.iterator();
+            if (iterator.hasNext()) {
+               String str = (String)iterator.next();
+               this.selectedName = str;
             }
          }
       } else {
-         this.selectedNames.add(var1);
-         this.selectedName = var1;
+         this.selectedNames.add(selectedName);
+         this.selectedName = selectedName;
          this.chatScroll = 0.0F;
       }
    }
 
-   private void rangeSelect(List<String> var1, int var2) {
-      int var3 = -1;
+   private void rangeSelect(List<String> visibleBots, int n) {
+      int n2 = -1;
       if (this.selectedName != null) {
-         for (int var4 = 0; var4 < var1.size(); var4++) {
-            if (((String)var1.get(var4)).equalsIgnoreCase(this.selectedName)) {
-               var3 = var4;
+         for (int i = 0; i < visibleBots.size(); i++) {
+            if (((String)visibleBots.get(i)).equalsIgnoreCase(this.selectedName)) {
+               n2 = i;
                break;
             }
          }
       }
 
-      if (var3 < 0) {
-         this.selectOnly((String)var1.get(var2));
+      if (n2 < 0) {
+         this.selectOnly((String)visibleBots.get(n));
          this.chatScroll = 0.0F;
       } else {
          this.selectedNames.clear();
 
-         for (int var5 = Math.min(var3, var2); var5 <= Math.max(var3, var2); var5++) {
-            this.selectedNames.add((String)var1.get(var5));
+         for (int i = Math.min(n2, n); i <= Math.max(n2, n); i++) {
+            this.selectedNames.add((String)visibleBots.get(i));
          }
       }
    }
 
    private void selectAllVisible() {
-      var var1 = this.visibleBots();
-      if (!var1.isEmpty()) {
+      var visibleBots = this.visibleBots();
+      if (!visibleBots.isEmpty()) {
          this.selectedNames.clear();
-         this.selectedNames.addAll(var1);
+         this.selectedNames.addAll(visibleBots);
          if (this.selectedName == null || !this.selectedNames.contains(this.selectedName)) {
-            this.selectedName = (String)var1.get(0);
+            this.selectedName = (String)visibleBots.get(0);
             this.chatScroll = 0.0F;
          }
       }
    }
 
-   private void refreshSelection(List<String> var1) {
+   private void refreshSelection(List<String> allNames) {
       if (this.selectedName != null) {
-         for (String var3 : var1) {
-            if (var3.equalsIgnoreCase(this.selectedName)) {
-               if (!var3.equals(this.selectedName)) {
-                  this.selectedName = var3;
+         for (String allName : allNames) {
+            if (allName.equalsIgnoreCase(this.selectedName)) {
+               if (!allName.equals(this.selectedName)) {
+                  this.selectedName = allName;
                }
 
                return;
@@ -2077,10 +2077,10 @@ public class BotScreen extends CustomScreen {
          this.selectedName = null;
       }
 
-      for (String var7 : this.selectedNames) {
-         for (String var5 : var1) {
-            if (var5.equalsIgnoreCase(var7)) {
-               this.selectedName = var5;
+      for (String selectedName : this.selectedNames) {
+         for (String allName : allNames) {
+            if (allName.equalsIgnoreCase(selectedName)) {
+               this.selectedName = allName;
                return;
             }
          }
@@ -2097,44 +2097,44 @@ public class BotScreen extends CustomScreen {
    }
 
    private List<String> offlineSelectedNames() {
-      ArrayList<String> var1 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (String var3 : this.selectedNames) {
-         if (!HeadlessBots.isOnline(var3)) {
-            var1.add(var3);
+      for (String selectedName : this.selectedNames) {
+         if (!HeadlessBots.isOnline(selectedName)) {
+            strings.add(selectedName);
          }
       }
 
-      if (var1.isEmpty() && this.selectedName != null && !HeadlessBots.isOnline(this.selectedName)) {
-         var1.add(this.selectedName);
+      if (strings.isEmpty() && this.selectedName != null && !HeadlessBots.isOnline(this.selectedName)) {
+         strings.add(this.selectedName);
       }
 
-      return var1;
+      return strings;
    }
 
    private void doConnect() {
-      String var1 = this.connectInput.getText().trim();
-      if (var1.isBlank()) {
-         ServerData var2 = mc.getCurrentServer();
-         if (var2 != null && var2.ip != null) {
-            var1 = var2.ip.trim();
+      String lastAddress = this.connectInput.getText().trim();
+      if (lastAddress.isBlank()) {
+         ServerData currentServer = mc.getCurrentServer();
+         if (currentServer != null && currentServer.ip != null) {
+            lastAddress = currentServer.ip.trim();
          }
       }
 
-      if (var1.isBlank()) {
-         var1 = HeadlessBots.getLastAddress();
+      if (lastAddress.isBlank()) {
+         lastAddress = HeadlessBots.getLastAddress();
       }
 
-      if (!var1.isBlank()) {
-         ServerAddress var6 = ServerAddress.parseString(var1);
-         String var3 = var6.getHost();
-         int var4 = var6.getPort();
-         var var5 = this.offlineSelectedNames();
-         if (!var5.isEmpty()) {
-            if (var5.size() == 1) {
-               HeadlessBots.connect((String)var5.get(0), var3, var4);
+      if (!lastAddress.isBlank()) {
+         ServerAddress string = ServerAddress.parseString(lastAddress);
+         String host = string.getHost();
+         int port = string.getPort();
+         var offlineSelectedNames = this.offlineSelectedNames();
+         if (!offlineSelectedNames.isEmpty()) {
+            if (offlineSelectedNames.size() == 1) {
+               HeadlessBots.connect((String)offlineSelectedNames.get(0), host, port);
             } else {
-               HeadlessBots.connectAll(var5, var3, var4);
+               HeadlessBots.connectAll(offlineSelectedNames, host, port);
             }
 
             this.connectInput.setText("");
@@ -2158,11 +2158,11 @@ public class BotScreen extends CustomScreen {
    }
 
    private void doBulkRct() {
-      int var1 = this.parseRctAnarchy();
-      if (var1 >= 0) {
-         for (BotClient var3 : HeadlessBots.all()) {
-            if (var3.isJoined()) {
-               var3.getRct().reconnect(var1);
+      int rctAnarchy = this.parseRctAnarchy();
+      if (rctAnarchy >= 0) {
+         for (BotClient botClient : HeadlessBots.all()) {
+            if (botClient.isJoined()) {
+               botClient.getRct().reconnect(rctAnarchy);
             }
          }
 
@@ -2171,37 +2171,37 @@ public class BotScreen extends CustomScreen {
    }
 
    private int parseRctAnarchy() {
-      String var1 = this.bulkActionInput.getText().trim();
-      if (var1.isEmpty()) {
+      String str = this.bulkActionInput.getText().trim();
+      if (str.isEmpty()) {
          return -1;
       } else {
          try {
-            int var2 = Integer.parseInt(var1);
-            return var2 >= 1 && var2 <= 66 ? var2 : -1;
-         } catch (NumberFormatException var3) {
+            int n = Integer.parseInt(str);
+            return n >= 1 && n <= 66 ? n : -1;
+         } catch (NumberFormatException e) {
             return -1;
          }
       }
    }
 
    private void doBulkConnect() {
-      String var1 = this.bulkActionInput.getText().trim();
-      if (var1.isBlank()) {
-         ServerData var2 = mc.getCurrentServer();
-         if (var2 != null && var2.ip != null) {
-            var1 = var2.ip.trim();
+      String lastAddress = this.bulkActionInput.getText().trim();
+      if (lastAddress.isBlank()) {
+         ServerData currentServer = mc.getCurrentServer();
+         if (currentServer != null && currentServer.ip != null) {
+            lastAddress = currentServer.ip.trim();
          }
       }
 
-      if (var1.isBlank()) {
-         var1 = HeadlessBots.getLastAddress();
+      if (lastAddress.isBlank()) {
+         lastAddress = HeadlessBots.getLastAddress();
       }
 
-      if (!var1.isBlank()) {
-         var var4 = this.offlineBotNames();
-         if (!var4.isEmpty()) {
-            ServerAddress var3 = ServerAddress.parseString(var1);
-            HeadlessBots.connectAll(var4, var3.getHost(), var3.getPort());
+      if (!lastAddress.isBlank()) {
+         var offlineBotNames = this.offlineBotNames();
+         if (!offlineBotNames.isEmpty()) {
+            ServerAddress string = ServerAddress.parseString(lastAddress);
+            HeadlessBots.connectAll(offlineBotNames, string.getHost(), string.getPort());
             this.bulkActionInput.setText("");
             this.bulkActionInput.setCursor(0);
             this.bulkActionInput.setSelected(false);
@@ -2210,11 +2210,11 @@ public class BotScreen extends CustomScreen {
    }
 
    private void doBulkChat() {
-      String var1 = this.bulkActionInput.getText();
-      if (!var1.isBlank()) {
-         for (BotClient var3 : HeadlessBots.all()) {
-            if (var3.isJoined()) {
-               var3.sendChat(var1);
+      String text = this.bulkActionInput.getText();
+      if (!text.isBlank()) {
+         for (BotClient botClient : HeadlessBots.all()) {
+            if (botClient.isJoined()) {
+               botClient.sendChat(text);
             }
          }
 
@@ -2225,31 +2225,31 @@ public class BotScreen extends CustomScreen {
    }
 
    private List<String> offlineBotNames() {
-      ArrayList<String> var1 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (String var3 : HeadlessBots.allNames()) {
-         if (!HeadlessBots.isOnline(var3)) {
-            var1.add(var3);
+      for (String allName : HeadlessBots.allNames()) {
+         if (!HeadlessBots.isOnline(allName)) {
+            strings.add(allName);
          }
       }
 
-      return var1;
+      return strings;
    }
 
    @Override
-   public void onMouseClicked(double var1, double var3, Enum3 var5) {
+   public void onMouseClicked(double x, double y, Enum3 enum2) {
       if (!this.closing && this.screenAnimation.isDone()) {
-         if (var5 == Enum3.RIGHT) {
-            float var6 = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
-            float var7 = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
-            var var8 = this.visibleBots();
-            float var9 = var7 + 58.0F;
-            float var10 = var9 + 211.0F;
+         if (enum2 == Enum3.RIGHT) {
+            float f = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
+            float f2 = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
+            var visibleBots = this.visibleBots();
+            float f3 = f2 + 58.0F;
+            float f4 = f3 + 211.0F;
 
-            for (int var11 = 0; var11 < var8.size(); var11++) {
-               float var12 = var9 + var11 * 25.0F - this.listScroll;
-               if (var3 >= var9 && var3 <= var10 && var1 >= var6 + 4.0F && var1 <= var6 + 4.0F + 227.0F && var3 >= var12 && var3 <= var12 + 23.0F) {
-                  this.openModuleMenu((String)var8.get(var11), var6 + 4.0F, var12);
+            for (int i = 0; i < visibleBots.size(); i++) {
+               float moduleMenuY = f3 + i * 25.0F - this.listScroll;
+               if (y >= f3 && y <= f4 && x >= f + 4.0F && x <= f + 4.0F + 227.0F && y >= moduleMenuY && y <= moduleMenuY + 23.0F) {
+                  this.openModuleMenu((String)visibleBots.get(i), f + 4.0F, moduleMenuY);
                   return;
                }
             }
@@ -2257,36 +2257,36 @@ public class BotScreen extends CustomScreen {
             this.closeModuleMenu();
          }
 
-         if (var5 == Enum3.LEFT) {
-            float var36 = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
-            float var37 = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
-            if (this.handleProxyPanelClick(var1, var3, var36, var37)) {
+         if (enum2 == Enum3.LEFT) {
+            float floatValue = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
+            float f = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
+            if (this.handleProxyPanelClick(x, y, floatValue, f)) {
                return;
             }
 
             this.proxyManagerInput.setSelected(false);
-            if (this.handleModuleMenuClick(var1, var3)) {
+            if (this.handleModuleMenuClick(x, y)) {
                return;
             }
 
-            if (this.handleVersionMenuClick(var1, var3, var36, var37)) {
+            if (this.handleVersionMenuClick(x, y, floatValue, f)) {
                return;
             }
 
-            float var38 = var37 + 31.0F;
-            boolean var39 = var3 >= var38 && var3 <= var38 + 23.0F;
-            float var40 = var36 + 4.0F;
-            float var41 = var40 + 114.0F - 23.0F;
-            boolean var42 = var39 && var1 >= var40 && var1 <= var40 + 114.0F;
-            if (var42 && var1 >= var41) {
+            float f2 = f + 31.0F;
+            boolean flag = y >= f2 && y <= f2 + 23.0F;
+            float f3 = floatValue + 4.0F;
+            float f4 = f3 + 114.0F - 23.0F;
+            boolean flag2 = flag && x >= f3 && x <= f3 + 114.0F;
+            if (flag2 && x >= f4) {
                this.bulkActionInput.setSelected(false);
                this.addBotFromSearch();
                return;
             }
 
-            boolean var13 = var42 && var1 < var41;
-            if (var13) {
-               this.focusTextBox(this.addInput, var1, var3);
+            boolean flag3 = flag2 && x < f4;
+            if (flag3) {
+               this.focusTextBox(this.addInput, x, y);
                this.chatInput.setSelected(false);
                this.connectInput.setSelected(false);
                this.searchInput.setSelected(false);
@@ -2295,10 +2295,10 @@ public class BotScreen extends CustomScreen {
             }
 
             this.addInput.setSelected(false);
-            float var14 = var40 + 114.0F + 4.0F;
-            boolean var15 = var39 && var1 >= var14 && var1 <= var14 + 114.0F;
-            if (var15) {
-               this.focusTextBox(this.searchInput, var1, var3);
+            float f5 = f3 + 114.0F + 4.0F;
+            boolean flag4 = flag && x >= f5 && x <= f5 + 114.0F;
+            if (flag4) {
+               this.focusTextBox(this.searchInput, x, y);
                this.chatInput.setSelected(false);
                this.connectInput.setSelected(false);
                this.addInput.setSelected(false);
@@ -2307,19 +2307,19 @@ public class BotScreen extends CustomScreen {
             }
 
             this.searchInput.setSelected(false);
-            float var16 = var37 + 275.0F;
-            boolean var17 = var3 >= var16 && var3 <= var16 + 14.0F;
-            float var18 = bulkActionModeStartX(var36);
-            float var19 = var36 + 4.0F + 232.0F;
-            if (var17 && var1 >= var18 && var1 <= var19) {
-               for (BotScreen.BulkAction var23 : BotScreen.BulkAction.values()) {
-                  if (var1 >= var18 && var1 <= var18 + 14.0F) {
-                     if (this.bulkAction != var23) {
+            float f6 = f + 275.0F;
+            boolean flag5 = y >= f6 && y <= f6 + 14.0F;
+            float bulkActionModeStartX2 = bulkActionModeStartX(floatValue);
+            float f7 = floatValue + 4.0F + 232.0F;
+            if (flag5 && x >= bulkActionModeStartX2 && x <= f7) {
+               for (BotScreen.BulkAction bulkAction : BotScreen.BulkAction.values()) {
+                  if (x >= bulkActionModeStartX2 && x <= bulkActionModeStartX2 + 14.0F) {
+                     if (this.bulkAction != bulkAction) {
                         this.bulkActionInput.setText("");
                         this.bulkActionInput.setCursor(0);
                      }
 
-                     this.bulkAction = var23;
+                     this.bulkAction = bulkAction;
                      this.syncBulkActionInputRules();
                      this.clearMainInputFocus();
                      this.bulkActionInput.setSelected(true);
@@ -2327,35 +2327,35 @@ public class BotScreen extends CustomScreen {
                      return;
                   }
 
-                  var18 += 17.0F;
+                  bulkActionModeStartX2 += 17.0F;
                }
             }
 
-            float var43 = var37 + 292.0F;
-            boolean var44 = var3 >= var43 && var3 <= var43 + 23.0F;
-            if (var44 && var1 >= var36 + 4.0F && var1 <= var36 + 4.0F + 232.0F) {
-               float var45 = var36 + 4.0F;
-               float var47 = 164.0F;
-               float var24 = var45 + var47 + 4.0F;
-               if (var1 >= var24) {
+            float f8 = f + 292.0F;
+            boolean flag6 = y >= f8 && y <= f8 + 23.0F;
+            if (flag6 && x >= floatValue + 4.0F && x <= floatValue + 4.0F + 232.0F) {
+               float f9 = floatValue + 4.0F;
+               float f10 = 164.0F;
+               float f11 = f9 + f10 + 4.0F;
+               if (x >= f11) {
                   this.executeBulkAction();
                   return;
                }
 
-               boolean var25 = var1 < var45 + var47;
-               if (var25) {
+               boolean flag7 = x < f9 + f10;
+               if (flag7) {
                   this.clearMainInputFocus();
-                  this.focusTextBox(this.bulkActionInput, var1, var3);
+                  this.focusTextBox(this.bulkActionInput, x, y);
                } else {
                   this.bulkActionInput.setSelected(false);
                }
 
-               if (var25) {
+               if (flag7) {
                   return;
                }
             }
 
-            if (var44 && var1 >= var36 + 4.0F && var1 <= var36 + 4.0F + 232.0F) {
+            if (flag6 && x >= floatValue + 4.0F && x <= floatValue + 4.0F + 232.0F) {
                this.chatInput.setSelected(false);
                this.connectInput.setSelected(false);
                this.addInput.setSelected(false);
@@ -2365,41 +2365,41 @@ public class BotScreen extends CustomScreen {
             }
 
             this.bulkActionInput.setSelected(false);
-            var var46 = this.visibleBots();
-            float var48 = var37 + 58.0F;
-            float var49 = var48 + 211.0F;
+            var visibleBots = this.visibleBots();
+            float f9 = f + 58.0F;
+            float f10 = f9 + 211.0F;
 
-            for (int var50 = 0; var50 < var46.size(); var50++) {
-               float var26 = var48 + var50 * 25.0F - this.listScroll;
-               if (var3 >= var48 && var3 <= var49 && var1 >= var36 + 4.0F && var1 <= var36 + 4.0F + 227.0F && var3 >= var26 && var3 <= var26 + 23.0F) {
-                  String var27 = (String)var46.get(var50);
+            for (int i = 0; i < visibleBots.size(); i++) {
+               float f11 = f9 + i * 25.0F - this.listScroll;
+               if (y >= f9 && y <= f10 && x >= floatValue + 4.0F && x <= floatValue + 4.0F + 227.0F && y >= f11 && y <= f11 + 23.0F) {
+                  String selectedName = (String)visibleBots.get(i);
                   if (this.isMultiSelectDown()) {
-                     this.toggleSelection(var27);
+                     this.toggleSelection(selectedName);
                      return;
                   }
 
                   if (this.isShiftDown()) {
-                     this.rangeSelect(var46, var50);
+                     this.rangeSelect(visibleBots, i);
                      return;
                   }
 
-                  if (var1 <= var36 + 4.0F + 23.0F) {
-                     HeadlessBots.remove(var27);
-                     this.rowAnims.remove(var27);
-                     this.selectedNames.remove(var27);
-                     if (var27.equals(this.selectedName)) {
+                  if (x <= floatValue + 4.0F + 23.0F) {
+                     HeadlessBots.remove(selectedName);
+                     this.rowAnims.remove(selectedName);
+                     this.selectedNames.remove(selectedName);
+                     if (selectedName.equals(this.selectedName)) {
                         this.chatScroll = 0.0F;
                         this.selectedName = null;
-                        var var28 = this.selectedNames.iterator();
-                        if (var28.hasNext()) {
-                           String var29 = (String)var28.next();
-                           this.selectedName = var29;
+                        var iterator = this.selectedNames.iterator();
+                        if (iterator.hasNext()) {
+                           String str = (String)iterator.next();
+                           this.selectedName = str;
                         }
 
                         if (this.selectedName == null && this.selectedNames.isEmpty()) {
-                           var var54 = HeadlessBots.allNames();
-                           if (!var54.isEmpty()) {
-                              this.selectOnly((String)var54.get(0));
+                           var allNames = HeadlessBots.allNames();
+                           if (!allNames.isEmpty()) {
+                              this.selectOnly((String)allNames.get(0));
                            }
                         }
                      }
@@ -2407,25 +2407,25 @@ public class BotScreen extends CustomScreen {
                      return;
                   }
 
-                  if (HeadlessBots.isOnline(var27) && var1 >= var36 + 4.0F + 227.0F - 64.0F) {
-                     HeadlessBots.disconnect(var27);
+                  if (HeadlessBots.isOnline(selectedName) && x >= floatValue + 4.0F + 227.0F - 64.0F) {
+                     HeadlessBots.disconnect(selectedName);
                      return;
                   }
 
-                  this.selectOnly(var27);
+                  this.selectOnly(selectedName);
                   this.chatScroll = 0.0F;
                   return;
                }
             }
 
-            float var51 = var36 + 319.0F;
-            float var52 = var37 + 4.0F;
-            boolean var53 = var1 >= var51 && var1 <= var51 + 157.0F && var3 >= var52 && var3 <= var52 + 23.0F;
-            float var55 = var51 + 157.0F - this.connectButtonWidth;
-            if (var53 && var1 >= var55) {
-               BotClient var57 = this.selectedClient();
-               if (var57 != null && var57.isJoined()) {
-                  mc.gui.setScreen(new BotControlScreen(var57.name()));
+            float f11 = floatValue + 319.0F;
+            float f12 = f + 4.0F;
+            boolean flag7 = x >= f11 && x <= f11 + 157.0F && y >= f12 && y <= f12 + 23.0F;
+            float f13 = f11 + 157.0F - this.connectButtonWidth;
+            if (flag7 && x >= f13) {
+               BotClient selectedClient = this.selectedClient();
+               if (selectedClient != null && selectedClient.isJoined()) {
+                  mc.gui.setScreen(new BotControlScreen(selectedClient.name()));
                } else {
                   this.doConnect();
                }
@@ -2433,8 +2433,8 @@ public class BotScreen extends CustomScreen {
                return;
             }
 
-            float var56 = var55 - 4.0F - 34.0F;
-            if (var53 && var1 >= var56) {
+            float f14 = f13 - 4.0F - 34.0F;
+            if (flag7 && x >= f14) {
                this.versionMenuOpen = !this.versionMenuOpen;
                if (this.versionMenuOpen) {
                   this.versionMenuAnimation.method2809(0.0F);
@@ -2445,27 +2445,27 @@ public class BotScreen extends CustomScreen {
                return;
             }
 
-            boolean var30 = var53 && var1 < var56;
-            if (var30) {
-               this.focusTextBox(this.connectInput, var1, var3);
+            boolean flag8 = flag7 && x < f14;
+            if (flag8) {
+               this.focusTextBox(this.connectInput, x, y);
                this.chatInput.setSelected(false);
                return;
             }
 
             this.connectInput.setSelected(false);
-            BotClient var31 = this.selectedClient();
-            if (var31 != null && var31.isJoined()) {
-               float var32 = var36 + 244.0F;
-               float var33 = var37 + 39.0F + 130.5F + 4.0F + 107.5F + 4.0F;
-               float var34 = var32 + 232.0F - 48.0F;
-               if (var1 >= var34 && var1 <= var34 + 48.0F && var3 >= var33 && var3 <= var33 + 23.0F) {
+            BotClient selectedClient = this.selectedClient();
+            if (selectedClient != null && selectedClient.isJoined()) {
+               float f15 = floatValue + 244.0F;
+               float f16 = f + 39.0F + 130.5F + 4.0F + 107.5F + 4.0F;
+               float f17 = f15 + 232.0F - 48.0F;
+               if (x >= f17 && x <= f17 + 48.0F && y >= f16 && y <= f16 + 23.0F) {
                   this.sendChatMessage();
                   return;
                }
 
-               boolean var35 = var1 >= var32 && var1 <= var32 + 232.0F && var3 >= var33 && var3 <= var33 + 23.0F;
-               if (var35) {
-                  this.focusTextBox(this.chatInput, var1, var3);
+               boolean flag9 = x >= f15 && x <= f15 + 232.0F && y >= f16 && y <= f16 + 23.0F;
+               if (flag9) {
+                  this.focusTextBox(this.chatInput, x, y);
                   return;
                }
 
@@ -2473,7 +2473,7 @@ public class BotScreen extends CustomScreen {
             }
          }
 
-         super.onMouseClicked(var1, var3, var5);
+         super.onMouseClicked(x, y, enum2);
       }
    }
 
@@ -2482,81 +2482,81 @@ public class BotScreen extends CustomScreen {
       return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (!this.closing && this.screenAnimation.isDone()) {
          if (this.proxyManagerInput.isSelected()) {
-            if (var1 == 257 || var1 == 335) {
+            if (keyCode == 257 || keyCode == 335) {
                this.addProxyFromManager();
                return true;
             }
 
-            if (var1 == 256) {
+            if (keyCode == 256) {
                this.proxyManagerInput.setSelected(false);
                return true;
             }
 
-            if (this.proxyManagerInput.keyPressed(var1, var2, var3)) {
+            if (this.proxyManagerInput.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
          if (this.chatInput.isSelected()) {
-            if (var1 == 257 || var1 == 335) {
+            if (keyCode == 257 || keyCode == 335) {
                this.sendChatMessage();
                return true;
             }
 
-            if (this.chatInput.keyPressed(var1, var2, var3)) {
+            if (this.chatInput.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
          if (this.connectInput.isSelected()) {
-            if (var1 == 257 || var1 == 335) {
+            if (keyCode == 257 || keyCode == 335) {
                this.doConnect();
                return true;
             }
 
-            if (this.connectInput.keyPressed(var1, var2, var3)) {
+            if (this.connectInput.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
          if (this.addInput.isSelected()) {
-            if (var1 == 257 || var1 == 335) {
+            if (keyCode == 257 || keyCode == 335) {
                this.addBotFromSearch();
                return true;
             }
 
-            if (this.addInput.keyPressed(var1, var2, var3)) {
+            if (this.addInput.keyPressed(keyCode, keycode, modifiers)) {
                return true;
             }
          }
 
-         if (this.searchInput.isSelected() && this.searchInput.keyPressed(var1, var2, var3)) {
+         if (this.searchInput.isSelected() && this.searchInput.keyPressed(keyCode, keycode, modifiers)) {
             return true;
          } else {
             if (this.bulkActionInput.isSelected()) {
-               if (var1 == 257 || var1 == 335) {
+               if (keyCode == 257 || keyCode == 335) {
                   this.executeBulkAction();
                   return true;
                }
 
-               if (var1 == 256) {
+               if (keyCode == 256) {
                   this.bulkActionInput.setSelected(false);
                   return true;
                }
 
-               if (this.bulkActionInput.keyPressed(var1, var2, var3)) {
+               if (this.bulkActionInput.keyPressed(keyCode, keycode, modifiers)) {
                   return true;
                }
             }
 
-            if (var1 == 65 && (var3 & 10) != 0 && !this.anyInputSelected()) {
+            if (keyCode == 65 && (modifiers & 10) != 0 && !this.anyInputSelected()) {
                this.selectAllVisible();
                return true;
             } else {
-               return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+               return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
             }
          }
       } else {
@@ -2569,64 +2569,64 @@ public class BotScreen extends CustomScreen {
       return this.charTyped((char)input.codepoint(), 0);
    }
 
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.closing || !this.screenAnimation.isDone()) {
          return false;
-      } else if (this.chatInput.charTyped(var1, var2)) {
+      } else if (this.chatInput.charTyped(codepoint, n)) {
          return true;
-      } else if (this.connectInput.charTyped(var1, var2)) {
+      } else if (this.connectInput.charTyped(codepoint, n)) {
          return true;
-      } else if (this.addInput.charTyped(var1, var2)) {
+      } else if (this.addInput.charTyped(codepoint, n)) {
          return true;
-      } else if (this.searchInput.charTyped(var1, var2)) {
+      } else if (this.searchInput.charTyped(codepoint, n)) {
          return true;
-      } else if (this.bulkActionInput.charTyped(var1, var2)) {
+      } else if (this.bulkActionInput.charTyped(codepoint, n)) {
          return true;
       } else {
-         return this.proxyManagerInput.charTyped(var1, var2) ? true : super.charTyped(new CharacterEvent(var1));
+         return this.proxyManagerInput.charTyped(codepoint, n) ? true : super.charTyped(new CharacterEvent(codepoint));
       }
    }
 
    @Override
    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
       if (!this.closing && this.screenAnimation.isDone()) {
-         float var9 = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
-         float var10 = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
+         float floatValue = (mc.getWindow().getGuiScaledWidth() - 480.0F) / 2.0F;
+         float y = (mc.getWindow().getGuiScaledHeight() - 320.0F) / 2.0F;
          if (this.versionMenuOpen) {
-            float var11 = this.versionMenuX(var9);
-            float var12 = this.versionMenuY(var10);
-            float var13 = 8.0F + this.versionMenuViewportHeight();
-            if (mouseX >= var11 && mouseX <= var11 + 72.0F && mouseY >= var12 && mouseY <= var12 + var13) {
-               float var23 = 16.0F;
-               this.versionMenuScroll = Math.max(0.0F, Math.min(this.versionMenuMaxScroll(), this.versionMenuScroll - (float)verticalAmount * var23));
+            float versionMenuX = this.versionMenuX(floatValue);
+            float versionMenuY = this.versionMenuY(y);
+            float f = 8.0F + this.versionMenuViewportHeight();
+            if (mouseX >= versionMenuX && mouseX <= versionMenuX + 72.0F && mouseY >= versionMenuY && mouseY <= versionMenuY + f) {
+               float f2 = 16.0F;
+               this.versionMenuScroll = Math.max(0.0F, Math.min(this.versionMenuMaxScroll(), this.versionMenuScroll - (float)verticalAmount * f2));
                return true;
             }
          }
 
-         float var17 = this.proxyPanelAnimation.getValue();
-         if (this.proxyPanelOpen || var17 > 0.001F) {
-            float var18 = proxyPanelRenderX(var9, Math.max(var17, this.proxyPanelOpen ? 1.0F : 0.0F));
-            float var20 = proxyPanelY(var10);
-            float var14 = var20 + 53.0F;
-            if (mouseX >= var18 + 4.0F && mouseX <= var18 + 4.0F + proxyPanelListWidth() && mouseY >= var14 && mouseY <= var14 + 161.0F) {
-               int var24 = HeadlessBots.getProxyPool().size() + 1;
-               float var25 = proxyPanelMaxScroll(var24);
-               this.proxyPanelScroll = Math.max(0.0F, Math.min(var25, this.proxyPanelScroll - (float)verticalAmount * 25.0F));
+         float f = this.proxyPanelAnimation.getValue();
+         if (this.proxyPanelOpen || f > 0.001F) {
+            float proxyPanelRenderX2 = proxyPanelRenderX(floatValue, Math.max(f, this.proxyPanelOpen ? 1.0F : 0.0F));
+            float proxyPanelY2 = proxyPanelY(y);
+            float f2 = proxyPanelY2 + 53.0F;
+            if (mouseX >= proxyPanelRenderX2 + 4.0F && mouseX <= proxyPanelRenderX2 + 4.0F + proxyPanelListWidth() && mouseY >= f2 && mouseY <= f2 + 161.0F) {
+               int n = HeadlessBots.getProxyPool().size() + 1;
+               float proxyPanelMaxScroll2 = proxyPanelMaxScroll(n);
+               this.proxyPanelScroll = Math.max(0.0F, Math.min(proxyPanelMaxScroll2, this.proxyPanelScroll - (float)verticalAmount * 25.0F));
                return true;
             }
          }
 
-         float var19 = var9 + 244.0F;
-         float var21 = var10 + 39.0F + 130.5F + 4.0F;
-         if (mouseX >= var19 && mouseX <= var19 + 232.0F && mouseY >= var21 && mouseY <= var21 + 107.5F) {
+         float f2 = floatValue + 244.0F;
+         float f3 = y + 39.0F + 130.5F + 4.0F;
+         if (mouseX >= f2 && mouseX <= f2 + 232.0F && mouseY >= f3 && mouseY <= f3 + 107.5F) {
             this.chatScroll = Math.max(0.0F, this.chatScroll + (float)verticalAmount * 14.0F);
             return true;
          } else {
-            float var22 = var10 + 58.0F;
-            float var15 = var22 + 211.0F;
-            if (mouseX >= var9 + 4.0F && mouseX <= var9 + 4.0F + 227.0F && mouseY >= var22 && mouseY <= var15) {
-               float var16 = listMaxScroll(this.visibleBots().size());
-               this.listScroll = Math.max(0.0F, Math.min(var16, this.listScroll - (float)verticalAmount * 25.0F));
+            float f4 = y + 58.0F;
+            float f5 = f4 + 211.0F;
+            if (mouseX >= floatValue + 4.0F && mouseX <= floatValue + 4.0F + 227.0F && mouseY >= f4 && mouseY <= f5) {
+               float listMaxScroll2 = listMaxScroll(this.visibleBots().size());
+               this.listScroll = Math.max(0.0F, Math.min(listMaxScroll2, this.listScroll - (float)verticalAmount * 25.0F));
                return true;
             } else {
                return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
@@ -2669,11 +2669,11 @@ public class BotScreen extends CustomScreen {
       public final String buttonKey;
       public final String placeholderKey;
 
-      private BulkAction(String var3, String var4, String var5, String var6) {
-         this.icon = var3;
-         this.tabKey = var4;
-         this.buttonKey = var5;
-         this.placeholderKey = var6;
+      private BulkAction(String icon, String tabKey, String buttonKey, String placeholderKey) {
+         this.icon = icon;
+         this.tabKey = tabKey;
+         this.buttonKey = buttonKey;
+         this.placeholderKey = placeholderKey;
       }
    }
 
@@ -2711,10 +2711,10 @@ public class BotScreen extends CustomScreen {
          return "FitKey[" + "font=" + this.font + ", " + "text=" + this.text + ", " + "maxWidth=" + this.maxWidth + "]";
       }
 
-      private FitKey(Font var1, String var2, float var3) {
-         this.font = var1;
-         this.text = var2;
-         this.maxWidth = var3;
+      private FitKey(Font font, String text, float maxWidth) {
+         this.font = font;
+         this.text = text;
+         this.maxWidth = maxWidth;
       }
    }
 
@@ -2755,17 +2755,17 @@ public class BotScreen extends CustomScreen {
          return "StyledTextFragment[" + "value=" + this.value + ", " + "style=" + this.style + "]";
       }
 
-      private StyledTextFragment(String var1, Style var2) {
-         this.value = var1;
-         this.style = var2;
+      private StyledTextFragment(String str, Style style) {
+         this.value = str;
+         this.style = style;
       }
 
       private Component asText() {
          return Component.literal(this.value).setStyle(this.style);
       }
 
-      private float width(Font var1) {
-         return var1.width(this.asText());
+      private float width(Font nickFont) {
+         return nickFont.width(this.asText());
       }
 
       private boolean isLineBreak() {

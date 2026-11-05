@@ -33,8 +33,8 @@ public final class VoicePlaybackThread implements Runnable {
    private String text;
    private boolean flag2;
 
-   public VoicePlaybackThread(VoiceState var1) {
-      this.voiceState = var1;
+   public VoicePlaybackThread(VoiceState voiceState) {
+      this.voiceState = voiceState;
       this.thread = new Thread(this, "Zenith Voice Playback");
       this.thread.setDaemon(true);
       this.thread.setPriority(7);
@@ -50,7 +50,7 @@ public final class VoicePlaybackThread implements Runnable {
 
       try {
          this.thread.join(2000L);
-      } catch (InterruptedException var2) {
+      } catch (InterruptedException e) {
          Thread.currentThread().interrupt();
       }
    }
@@ -65,117 +65,117 @@ public final class VoicePlaybackThread implements Runnable {
          while (this.running) {
             this.method1584();
          }
-      } catch (Throwable var5) {
-         logger.error("Голос: поток вывода упал", var5);
-         this.voiceState.setText2("сбой вывода: " + var5);
+      } catch (Throwable e) {
+         logger.error("Голос: поток вывода упал", e);
+         this.voiceState.setText2("сбой вывода: " + e);
       } finally {
          this.close();
       }
    }
 
    private void method1584() {
-      long var1 = System.currentTimeMillis();
-      VoiceState.Data var3 = this.voiceState.getData();
-      if (this.longValue2 != 0L && (this.flag || !var3.getText2().equals(this.text) || var3.isFlag2() != this.flag2)) {
+      long now = System.currentTimeMillis();
+      VoiceState.Data data = this.voiceState.getData();
+      if (this.longValue2 != 0L && (this.flag || !data.getText2().equals(this.text) || data.isFlag2() != this.flag2)) {
          this.flag = false;
          this.close();
       }
 
-      if (this.longValue2 != 0L || var1 >= this.longValue3 && this.method1588(var3.getText2(), var3.isFlag2())) {
+      if (this.longValue2 != 0L || now >= this.longValue3 && this.method1588(data.getText2(), data.isFlag2())) {
          if (ALC10.alcGetInteger(this.longValue, 787) == 0) {
             logger.info("Голос: устройство вывода отключено");
             this.voiceState.setText2("устройство вывода отключено");
             this.close();
-            this.longValue3 = var1 + 3000L;
+            this.longValue3 = now + 3000L;
          } else {
-            for (VoiceSpeakerStream var5 : this.voiceState.method5373()) {
-               this.method1585(var5, var1);
+            for (VoiceSpeakerStream voiceSpeakerStream : this.voiceState.method5373()) {
+               this.method1585(voiceSpeakerStream, now);
             }
 
-            this.voiceState.method5374(var1, 30000L);
+            this.voiceState.method5374(now, 30000L);
             LockSupport.parkNanos(2000000L);
          }
       } else {
-         this.voiceState.method5375(var1);
+         this.voiceState.method5375(now);
          LockSupport.parkNanos(20000000L);
       }
    }
 
-   private void method1585(VoiceSpeakerStream var1, long var2) {
-      if (var1.intValue3 != 0 || var1.voiceFrameBuffer.active() && this.method1586(var1)) {
-         int var4 = var1.intValue3;
-         int var5 = AL10.alGetSourcei(var4, 4118);
+   private void method1585(VoiceSpeakerStream voiceSpeakerStream, long now) {
+      if (voiceSpeakerStream.intValue3 != 0 || voiceSpeakerStream.voiceFrameBuffer.active() && this.method1586(voiceSpeakerStream)) {
+         int source = voiceSpeakerStream.intValue3;
+         int alGetSourcei = AL10.alGetSourcei(source, 4118);
 
-         while (var5-- > 0) {
-            var1.arrayDeque.addLast(AL10.alSourceUnqueueBuffers(var4));
+         while (alGetSourcei-- > 0) {
+            voiceSpeakerStream.arrayDeque.addLast(AL10.alSourceUnqueueBuffers(source));
          }
 
-         int var6 = AL10.alGetSourcei(var4, 4117);
-         VoiceState.Data2 var7 = this.voiceState.method5376(var1);
-         int var8 = 0;
+         int n = AL10.alGetSourcei(source, 4117);
+         VoiceState.Data2 data2 = this.voiceState.method5376(voiceSpeakerStream);
+         int n2 = 0;
 
-         while (var6 < 2 && !var1.arrayDeque.isEmpty() && var8++ < 6) {
-            VoiceFrameBuffer.Data var9 = var1.voiceFrameBuffer.method8028(var2);
-            if (var9.getType2() == VoiceFrameBuffer.Type2.NONE) {
+         while (n < 2 && !voiceSpeakerStream.arrayDeque.isEmpty() && n2++ < 6) {
+            VoiceFrameBuffer.Data data = voiceSpeakerStream.voiceFrameBuffer.method8028(now);
+            if (data.getType2() == VoiceFrameBuffer.Type2.NONE) {
                break;
             }
 
-            if (var9.getType2() == VoiceFrameBuffer.Type2.END) {
-               var1.method1553();
+            if (data.getType2() == VoiceFrameBuffer.Type2.END) {
+               voiceSpeakerStream.method1553();
                break;
             }
 
-            int var10 = var1.method1552(var9);
-            if (var10 > 0) {
-               float var11 = Class9.method1531(var1.shortValues, var10);
-               var1.floatValue2 = var11;
-               if (var9.getType2() != VoiceFrameBuffer.Type2.PLC && var11 > -55.0F) {
-                  var1.longValue3 = var2;
+            int length = voiceSpeakerStream.method1552(data);
+            if (length > 0) {
+               float f = Class9.method1531(voiceSpeakerStream.shortValues, length);
+               voiceSpeakerStream.floatValue2 = f;
+               if (data.getType2() != VoiceFrameBuffer.Type2.PLC && f > -55.0F) {
+                  voiceSpeakerStream.longValue3 = now;
                }
 
-               var1.method1550(var10, var7.getFloatValue5());
-               int var12 = var1.arrayDeque.pollFirst();
+               voiceSpeakerStream.method1550(length, data2.getFloatValue5());
+               int pollFirst = voiceSpeakerStream.arrayDeque.pollFirst();
                this.shortBuffer.clear();
-               this.shortBuffer.put(var1.shortValues, 0, var10).flip();
-               AL10.alBufferData(var12, 4353, this.shortBuffer, 48000);
-               AL10.alSourceQueueBuffers(var4, var12);
-               var6++;
+               this.shortBuffer.put(voiceSpeakerStream.shortValues, 0, length).flip();
+               AL10.alBufferData(pollFirst, 4353, this.shortBuffer, 48000);
+               AL10.alSourceQueueBuffers(source, pollFirst);
+               n++;
             }
          }
 
-         AL10.alSource3f(var4, 4100, var7.getFloatValue(), var7.getFloatValue2(), var7.getFloatValue3());
-         AL10.alSourcef(var4, 4106, var7.getFloatValue4());
-         int var13 = AL10.alGetSourcei(var4, 4112);
-         if (var6 > 0 && var13 != 4114) {
-            AL10.alSourcePlay(var4);
+         AL10.alSource3f(source, 4100, data2.getFloatValue(), data2.getFloatValue2(), data2.getFloatValue3());
+         AL10.alSourcef(source, 4106, data2.getFloatValue4());
+         int alGetSourcei2 = AL10.alGetSourcei(source, 4112);
+         if (n > 0 && alGetSourcei2 != 4114) {
+            AL10.alSourcePlay(source);
          }
 
-         if (var6 == 0 && !var1.voiceFrameBuffer.active() && var2 - var1.longValue2 > 3000L) {
-            this.method1587(var1);
+         if (n == 0 && !voiceSpeakerStream.voiceFrameBuffer.active() && now - voiceSpeakerStream.longValue2 > 3000L) {
+            this.method1587(voiceSpeakerStream);
          }
       }
    }
 
-   private boolean method1586(VoiceSpeakerStream var1) {
+   private boolean method1586(VoiceSpeakerStream voiceSpeakerStream) {
       AL10.alGetError();
-      int var2 = AL10.alGenSources();
-      if (AL10.alGetError() == 0 && var2 != 0) {
-         int[] var3 = new int[6];
-         AL10.alGenBuffers(var3);
+      int alGenSources = AL10.alGenSources();
+      if (AL10.alGetError() == 0 && alGenSources != 0) {
+         int[] intValues = new int[6];
+         AL10.alGenBuffers(intValues);
          if (AL10.alGetError() != 0) {
-            AL10.alDeleteSources(var2);
+            AL10.alDeleteSources(alGenSources);
             return false;
          } else {
-            AL10.alSourcei(var2, 514, 1);
-            AL10.alSourcef(var2, 4129, 0.0F);
-            AL10.alSourcef(var2, 4110, 4.0F);
-            AL10.alSourcef(var2, 4106, 0.0F);
-            var1.intValue3 = var2;
-            var1.intValues = var3;
-            var1.arrayDeque.clear();
+            AL10.alSourcei(alGenSources, 514, 1);
+            AL10.alSourcef(alGenSources, 4129, 0.0F);
+            AL10.alSourcef(alGenSources, 4110, 4.0F);
+            AL10.alSourcef(alGenSources, 4106, 0.0F);
+            voiceSpeakerStream.intValue3 = alGenSources;
+            voiceSpeakerStream.intValues = intValues;
+            voiceSpeakerStream.arrayDeque.clear();
 
-            for (int var7 : var3) {
-               var1.arrayDeque.addLast(var7);
+            for (int intValue : intValues) {
+               voiceSpeakerStream.arrayDeque.addLast(intValue);
             }
 
             return true;
@@ -185,86 +185,86 @@ public final class VoicePlaybackThread implements Runnable {
       }
    }
 
-   private void method1587(VoiceSpeakerStream var1) {
-      if (var1.intValue3 != 0) {
-         AL10.alSourceStop(var1.intValue3);
-         AL10.alSourcei(var1.intValue3, 4105, 0);
-         AL10.alDeleteSources(var1.intValue3);
-         AL10.alDeleteBuffers(var1.intValues);
-         var1.intValue3 = 0;
-         var1.intValues = new int[0];
-         var1.arrayDeque.clear();
+   private void method1587(VoiceSpeakerStream voiceSpeakerStream) {
+      if (voiceSpeakerStream.intValue3 != 0) {
+         AL10.alSourceStop(voiceSpeakerStream.intValue3);
+         AL10.alSourcei(voiceSpeakerStream.intValue3, 4105, 0);
+         AL10.alDeleteSources(voiceSpeakerStream.intValue3);
+         AL10.alDeleteBuffers(voiceSpeakerStream.intValues);
+         voiceSpeakerStream.intValue3 = 0;
+         voiceSpeakerStream.intValues = new int[0];
+         voiceSpeakerStream.arrayDeque.clear();
       }
    }
 
-   private boolean method1588(String var1, boolean var2) {
-      long var3 = ALC10.alcOpenDevice(var1.isEmpty() ? null : var1);
-      if (var3 == 0L && !var1.isEmpty()) {
-         logger.info("Голос: вывод «{}» недоступен, беру системный", var1);
-         var3 = ALC10.alcOpenDevice((CharSequence)null);
+   private boolean method1588(String text, boolean flag) {
+      long alcOpenDevice = ALC10.alcOpenDevice(text.isEmpty() ? null : text);
+      if (alcOpenDevice == 0L && !text.isEmpty()) {
+         logger.info("Голос: вывод «{}» недоступен, беру системный", text);
+         alcOpenDevice = ALC10.alcOpenDevice((CharSequence)null);
       }
 
-      if (var3 == 0L) {
+      if (alcOpenDevice == 0L) {
          this.voiceState.setText2("устройство вывода не открывается");
          this.longValue3 = System.currentTimeMillis() + 3000L;
          return false;
       } else {
-         ALCCapabilities var5 = ALC.createCapabilities(var3);
-         if (!var5.ALC_EXT_thread_local_context) {
-            ALC10.alcCloseDevice(var3);
+         ALCCapabilities capabilities = ALC.createCapabilities(alcOpenDevice);
+         if (!capabilities.ALC_EXT_thread_local_context) {
+            ALC10.alcCloseDevice(alcOpenDevice);
             this.voiceState.setText2("OpenAL без thread-local контекста");
             this.longValue3 = Long.MAX_VALUE;
             return false;
          } else {
-            MemoryStack var8 = MemoryStack.stackPush();
+            MemoryStack stackPush = MemoryStack.stackPush();
 
-            long var6;
+            long alcCreateContext;
             try {
-               IntBuffer var9 = var8.mallocInt(7);
-               var9.put(4103).put(48000);
-               var9.put(4104).put(100);
-               if (var5.ALC_SOFT_HRTF) {
-                  var9.put(6546).put(var2 ? 1 : 0);
+               IntBuffer mallocInt = stackPush.mallocInt(7);
+               mallocInt.put(4103).put(48000);
+               mallocInt.put(4104).put(100);
+               if (capabilities.ALC_SOFT_HRTF) {
+                  mallocInt.put(6546).put(flag ? 1 : 0);
                }
 
-               var9.put(0).flip();
-               var6 = ALC10.alcCreateContext(var3, var9);
-            } catch (Throwable var12) {
-               if (var8 != null) {
+               mallocInt.put(0).flip();
+               alcCreateContext = ALC10.alcCreateContext(alcOpenDevice, mallocInt);
+            } catch (Throwable e) {
+               if (stackPush != null) {
                   try {
-                     var8.close();
-                  } catch (Throwable var11) {
-                     var12.addSuppressed(var11);
+                     stackPush.close();
+                  } catch (Throwable ex) {
+                     e.addSuppressed(ex);
                   }
                }
 
-               throw var12;
+               throw e;
             }
 
-            if (var8 != null) {
-               var8.close();
+            if (stackPush != null) {
+               stackPush.close();
             }
 
-            if (var6 != 0L && EXTThreadLocalContext.alcSetThreadContext(var6)) {
-               AL.setCurrentThread(AL.createCapabilities(var5));
+            if (alcCreateContext != 0L && EXTThreadLocalContext.alcSetThreadContext(alcCreateContext)) {
+               AL.setCurrentThread(AL.createCapabilities(capabilities));
                AL10.alDistanceModel(0);
                AL10.alListenerf(4106, 1.0F);
-               this.longValue = var3;
-               this.longValue2 = var6;
-               this.text = var1;
-               this.flag2 = var2;
+               this.longValue = alcOpenDevice;
+               this.longValue2 = alcCreateContext;
+               this.text = text;
+               this.flag2 = flag;
                this.shortBuffer = MemoryUtil.memAllocShort(960);
                this.voiceState.setText2("");
-               String var13 = var5.ALC_ENUMERATE_ALL_EXT ? ALC10.alcGetString(this.longValue, 4115) : ALC10.alcGetString(this.longValue, 4101);
-               this.voiceState.method5383(var13);
-               logger.info("Голос: вывод открыт — {}{}", var13, var5.ALC_SOFT_HRTF && var2 ? " (HRTF)" : "");
+               String alcGetString = capabilities.ALC_ENUMERATE_ALL_EXT ? ALC10.alcGetString(this.longValue, 4115) : ALC10.alcGetString(this.longValue, 4101);
+               this.voiceState.method5383(alcGetString);
+               logger.info("Голос: вывод открыт — {}{}", alcGetString, capabilities.ALC_SOFT_HRTF && flag ? " (HRTF)" : "");
                return true;
             } else {
-               if (var6 != 0L) {
-                  ALC10.alcDestroyContext(var6);
+               if (alcCreateContext != 0L) {
+                  ALC10.alcDestroyContext(alcCreateContext);
                }
 
-               ALC10.alcCloseDevice(var3);
+               ALC10.alcCloseDevice(alcOpenDevice);
                this.voiceState.setText2("контекст OpenAL не создан");
                this.longValue3 = System.currentTimeMillis() + 3000L;
                return false;
@@ -275,8 +275,8 @@ public final class VoicePlaybackThread implements Runnable {
 
    private void close() {
       if (this.longValue2 != 0L) {
-         for (VoiceSpeakerStream var2 : this.voiceState.method5373()) {
-            this.method1587(var2);
+         for (VoiceSpeakerStream voiceSpeakerStream : this.voiceState.method5373()) {
+            this.method1587(voiceSpeakerStream);
          }
 
          EXTThreadLocalContext.alcSetThreadContext(0L);

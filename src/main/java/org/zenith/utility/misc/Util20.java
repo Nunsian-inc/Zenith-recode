@@ -30,12 +30,12 @@ public final class Util20 {
    }
 
    public static boolean method5138() {
-      Thread var0 = thread;
-      return var0 != null && var0 == Thread.currentThread();
+      Thread thread2 = thread;
+      return thread2 != null && thread2 == Thread.currentThread();
    }
 
-   public static Util20.Entry method5139(BlockEntity var0) {
-      return ((Util20.Handler)var0).zenith$optData();
+   public static Util20.Entry method5139(BlockEntity blockEntity) {
+      return ((Util20.Handler)blockEntity).zenith$optData();
    }
 
    public static final class Entry {

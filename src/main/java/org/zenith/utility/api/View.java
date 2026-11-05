@@ -21,9 +21,9 @@ public final class View {
    private final Path path;
    private String lastSignature = "";
 
-   public View(Cosmetics var1, Path var2) {
-      this.cosmetics = Objects.requireNonNull(var1, "manager");
-      this.path = var2.resolve("cosmetics").resolve("view.json");
+   public View(Cosmetics cosmetics, Path path) {
+      this.cosmetics = Objects.requireNonNull(cosmetics, "manager");
+      this.path = path.resolve("cosmetics").resolve("view.json");
       this.load();
       this.lastSignature = this.method7331();
       EventManager.register(this);
@@ -34,30 +34,30 @@ public final class View {
    }
 
    public static boolean method7328() {
-      View var0 = method7330();
-      return var0 == null || var0.renderSelf.isEnabled();
+      View view = method7330();
+      return view == null || view.renderSelf.isEnabled();
    }
 
    public static boolean method7329() {
-      View var0 = method7330();
-      return var0 == null || var0.renderOthers.isEnabled();
+      View view = method7330();
+      return view == null || view.renderOthers.isEnabled();
    }
 
    private static View method7330() {
-      Zenith var0 = Zenith.getInstance();
-      return var0 == null ? null : var0.getView();
+      Zenith zenith = Zenith.getInstance();
+      return zenith == null ? null : zenith.getView();
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
-      float var2 = this.petScale.getValue3();
-      if (Math.abs(var2 - this.cosmetics.getFloatValue()) > 0.001F) {
-         this.cosmetics.method3003(var2);
+   public void onUpdate(UpdateEvent event) {
+      float f = this.petScale.getValue3();
+      if (Math.abs(f - this.cosmetics.getFloatValue()) > 0.001F) {
+         this.cosmetics.method3003(f);
       }
 
-      String var3 = this.method7331();
-      if (!var3.equals(this.lastSignature)) {
-         this.lastSignature = var3;
+      String lastSignature = this.method7331();
+      if (!lastSignature.equals(this.lastSignature)) {
+         this.lastSignature = lastSignature;
          this.save();
       }
    }
@@ -67,27 +67,27 @@ public final class View {
    }
 
    private void load() {
-      JsonObject var1 = JsonIo.method1009(this.path);
-      if (var1 == null) {
+      JsonObject json = JsonIo.method1009(this.path);
+      if (json == null) {
          this.petScale.method2400(this.cosmetics.getFloatValue());
       } else {
-         if (var1.has("renderSelf")) {
-            this.renderSelf.setEnabled(var1.get("renderSelf").getAsBoolean());
+         if (json.has("renderSelf")) {
+            this.renderSelf.setEnabled(json.get("renderSelf").getAsBoolean());
          }
 
-         if (var1.has("renderOthers")) {
-            this.renderOthers.setEnabled(var1.get("renderOthers").getAsBoolean());
+         if (json.has("renderOthers")) {
+            this.renderOthers.setEnabled(json.get("renderOthers").getAsBoolean());
          }
 
-         this.petScale.method2400(var1.has("petScale") ? var1.get("petScale").getAsFloat() : this.cosmetics.getFloatValue());
+         this.petScale.method2400(json.has("petScale") ? json.get("petScale").getAsFloat() : this.cosmetics.getFloatValue());
       }
    }
 
    private void save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("renderSelf", this.renderSelf.isEnabled());
-      var1.addProperty("renderOthers", this.renderOthers.isEnabled());
-      var1.addProperty("petScale", this.petScale.getValue3());
-      JsonIo.method1010(this.path, var1);
+      JsonObject json = new JsonObject();
+      json.addProperty("renderSelf", this.renderSelf.isEnabled());
+      json.addProperty("renderOthers", this.renderOthers.isEnabled());
+      json.addProperty("petScale", this.petScale.getValue3());
+      JsonIo.method1010(this.path, json);
    }
 }

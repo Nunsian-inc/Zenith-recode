@@ -20,8 +20,8 @@ public class BotChatEvent implements Event {
    }
 
    @Generated
-   public BotChatEvent(BotClient var1, Component var2) {
-      this.botClient = var1;
-      this.text = var2;
+   public BotChatEvent(BotClient botClient, Component text) {
+      this.botClient = botClient;
+      this.text = text;
    }
 }

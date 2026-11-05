@@ -55,36 +55,36 @@ public final class PathTeleportModule extends Module {
    }
 
    @EventTarget
-   public void method6874(KeyEvent var1) {
+   public void method6874(KeyEvent event) {
       if (mc.player != null) {
-         if (var1.isPress(this.recordingKey.getKeyCode())) {
+         if (event.isPress(this.recordingKey.getKeyCode())) {
             this.method6876();
          }
 
-         if (var1.isPress(this.moveKey.getKeyCode())) {
+         if (event.isPress(this.moveKey.getKeyCode())) {
             this.method6877();
          }
       }
    }
 
    @EventTarget
-   public void onMoveInput(MoveInputEvent var1) {
+   public void onMoveInput(MoveInputEvent event) {
       if (this.flag2) {
-         var1.method3044();
+         event.method3044();
       }
    }
 
    @EventTarget
-   public void method6875(ScreenRenderEvent var1) {
+   public void method6875(ScreenRenderEvent event) {
       if (mc.player != null && mc.level != null) {
-         this.method6881(var1, "Recording " + this.flag + "  " + KeyName.method6701(this.recordingKey.getKeyCode()), 20.0F);
-         this.method6881(var1, "Moving " + this.flag2 + "  " + KeyName.method6701(this.moveKey.getKeyCode()), 35.0F);
-         this.method6881(var1, "Points " + this.items.size(), 50.0F);
+         this.method6881(event, "Recording " + this.flag + "  " + KeyName.method6701(this.recordingKey.getKeyCode()), 20.0F);
+         this.method6881(event, "Moving " + this.flag2 + "  " + KeyName.method6701(this.moveKey.getKeyCode()), 35.0F);
+         this.method6881(event, "Points " + this.items.size(), 50.0F);
       }
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
          if (this.flag) {
             this.method6878();
@@ -127,33 +127,33 @@ public final class PathTeleportModule extends Module {
    }
 
    private void method6878() {
-      PathTeleportModule.Data var1 = new PathTeleportModule.Data(
+      PathTeleportModule.Data data = new PathTeleportModule.Data(
          mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.getYRot(), mc.player.getXRot(), mc.player.onGround()
       );
-      this.items.add(var1);
+      this.items.add(data);
    }
 
-   private boolean method6879(PathTeleportModule.Data var1, PathTeleportModule.Data var2) {
-      return Math.abs(var1.doubleValue - var2.doubleValue) > 0.001
-         || Math.abs(var1.doubleValue2 - var2.doubleValue2) > 0.001
-         || Math.abs(var1.doubleValue3 - var2.doubleValue3) > 0.001
-         || Math.abs(var1.floatValue - var2.floatValue) > 0.05F
-         || Math.abs(var1.floatValue2 - var2.floatValue2) > 0.05F
-         || var1.flag != var2.flag;
+   private boolean method6879(PathTeleportModule.Data data, PathTeleportModule.Data data2) {
+      return Math.abs(data.doubleValue - data2.doubleValue) > 0.001
+         || Math.abs(data.doubleValue2 - data2.doubleValue2) > 0.001
+         || Math.abs(data.doubleValue3 - data2.doubleValue3) > 0.001
+         || Math.abs(data.floatValue - data2.floatValue) > 0.05F
+         || Math.abs(data.floatValue2 - data2.floatValue2) > 0.05F
+         || data.flag != data2.flag;
    }
 
-   private void method6880(PathTeleportModule.Data var1) {
+   private void method6880(PathTeleportModule.Data data) {
       mc.player.setDeltaMovement(0.0, 0.0, 0.0);
-      mc.player.setOnGround(var1.flag);
-      mc.player.setPos(var1.doubleValue, var1.doubleValue2, var1.doubleValue3);
+      mc.player.setOnGround(data.flag);
+      mc.player.setPos(data.doubleValue, data.doubleValue2, data.doubleValue3);
       UseItemUtils.method6504(
-         new PosRot(var1.doubleValue, var1.doubleValue2, var1.doubleValue3, var1.floatValue, var1.floatValue2, var1.flag, mc.player.horizontalCollision)
+         new PosRot(data.doubleValue, data.doubleValue2, data.doubleValue3, data.floatValue, data.floatValue2, data.flag, mc.player.horizontalCollision)
       );
    }
 
-   private void method6881(ScreenRenderEvent var1, String var2, float var3) {
-      float var4 = mc.getWindow().getGuiScaledWidth() - Fonts.NEW_MEDIUM.getWidth(var2, 10.0F) - 20.0F;
-      var1.getMenuDrawContext().drawText(Fonts.NEW_MEDIUM.getFont(10.0F), var2, var4, var3, ZenithColor.INSTANCE);
+   private void method6881(ScreenRenderEvent event, String text, float centeredTextY) {
+      float floatValue = mc.getWindow().getGuiScaledWidth() - Fonts.NEW_MEDIUM.getWidth(text, 10.0F) - 20.0F;
+      event.getMenuDrawContext().drawText(Fonts.NEW_MEDIUM.getFont(10.0F), text, floatValue, centeredTextY, ZenithColor.INSTANCE);
    }
 
    private static final class Data {
@@ -205,13 +205,13 @@ public final class PathTeleportModule extends Module {
          return "Data[" + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "flag=" + this.flag + "]";
       }
 
-      private Data(double var1, double var3, double var5, float var7, float var8, boolean var9) {
-         this.doubleValue = var1;
-         this.doubleValue2 = var3;
-         this.doubleValue3 = var5;
-         this.floatValue = var7;
-         this.floatValue2 = var8;
-         this.flag = var9;
+      private Data(double doubleValue, double y, double z, float floatValue, float xRot, boolean flag) {
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = y;
+         this.doubleValue3 = z;
+         this.floatValue = floatValue;
+         this.floatValue2 = xRot;
+         this.flag = flag;
       }
 
       public double getDoubleValue() {

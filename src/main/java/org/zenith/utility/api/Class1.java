@@ -7,12 +7,12 @@ public class Class1 {
    public static final Class1 INSTANCE = new Class1(Long.MIN_VALUE);
    private final long longValue;
 
-   public Class1(long var1) {
-      this.longValue = var1;
+   public Class1(long longValue) {
+      this.longValue = longValue;
    }
 
-   public static Class1 method55(BlockPos var0) {
-      return new Class1(var0.asLong());
+   public static Class1 method55(BlockPos blockPos) {
+      return new Class1(blockPos.asLong());
    }
 
    public boolean method56() {
@@ -24,12 +24,12 @@ public class Class1 {
    }
 
    public JsonObject toJson() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("packedPos", this.longValue);
-      return var1;
+      JsonObject json = new JsonObject();
+      json.addProperty("packedPos", this.longValue);
+      return json;
    }
 
-   public static Class1 method58(JsonObject var0) {
-      return var0.has("packedPos") ? new Class1(var0.get("packedPos").getAsLong()) : INSTANCE;
+   public static Class1 method58(JsonObject jsonObject) {
+      return jsonObject.has("packedPos") ? new Class1(jsonObject.get("packedPos").getAsLong()) : INSTANCE;
    }
 }

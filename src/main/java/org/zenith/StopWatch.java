@@ -9,21 +9,21 @@ public class StopWatch {
       this.reset();
    }
 
-   public boolean method7544(long var1) {
-      boolean var3 = this.method7546(var1);
-      if (var3) {
+   public boolean method7544(long l) {
+      boolean flag = this.method7546(l);
+      if (flag) {
          this.reset();
       }
 
-      return var3;
+      return flag;
    }
 
-   public boolean method7545(float var1) {
-      return System.currentTimeMillis() - (long)var1 >= this.longValue;
+   public boolean method7545(float f) {
+      return System.currentTimeMillis() - (long)f >= this.longValue;
    }
 
-   public boolean method7546(long var1) {
-      return System.currentTimeMillis() - var1 >= this.longValue;
+   public boolean method7546(long l) {
+      return System.currentTimeMillis() - l >= this.longValue;
    }
 
    public void reset() {
@@ -40,7 +40,7 @@ public class StopWatch {
    }
 
    @Generated
-   public void setLongValue(long var1) {
-      this.longValue = var1;
+   public void setLongValue(long longValue) {
+      this.longValue = longValue;
    }
 }

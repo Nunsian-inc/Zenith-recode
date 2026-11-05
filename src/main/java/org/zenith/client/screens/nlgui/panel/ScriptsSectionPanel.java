@@ -167,13 +167,13 @@ public class ScriptsSectionPanel extends SectionPanel {
       this.configs.openCloudTab();
    }
 
-   public void openMarket(int var1) {
+   public void openMarket(int n) {
       if (this.workspace != null) {
          this.closeWorkspace();
       }
 
       this.selectTab(2);
-      this.market.openCategory(var1);
+      this.market.openCategory(n);
       this.invalidate();
    }
 
@@ -181,23 +181,23 @@ public class ScriptsSectionPanel extends SectionPanel {
       return host();
    }
 
-   public void openWorkspaceFile(Script var1, String var2) {
-      this.openWorkspace(var1);
-      Storage var3 = host();
-      if (var3 != null) {
+   public void openWorkspaceFile(Script workspace, String text) {
+      this.openWorkspace(workspace);
+      Storage storage = host();
+      if (storage != null) {
          try {
-            Path var4 = var1.getPath() == null ? var1.getPath2() : var3.method1346(var1, var2);
-            if (Files.isRegularFile(var4)) {
-               this.openFile(var4);
+            Path path2 = workspace.getPath() == null ? workspace.getPath2() : storage.method1346(workspace, text);
+            if (Files.isRegularFile(path2)) {
+               this.openFile(path2);
             }
-         } catch (Exception var5) {
+         } catch (Exception e) {
          }
       }
    }
 
-   public void filesDropped(List<Path> var1) {
+   public void filesDropped(List<Path> paths) {
       if (this.workspace == null && this.getActiveTab() == 3) {
-         this.ai.attachFiles(var1);
+         this.ai.attachFiles(paths);
       }
    }
 
@@ -210,56 +210,56 @@ public class ScriptsSectionPanel extends SectionPanel {
       this.asideEnteredAt = System.currentTimeMillis();
    }
 
-   public float asideEnter(int var1) {
-      float var2 = (float)(System.currentTimeMillis() - this.asideEnteredAt - Math.min(var1, 14) * 38L) / 340.0F;
-      if (var2 <= 0.0F) {
+   public float asideEnter(int length) {
+      float f = (float)(System.currentTimeMillis() - this.asideEnteredAt - Math.min(length, 14) * 38L) / 340.0F;
+      if (f <= 0.0F) {
          return 0.0F;
-      } else if (var2 >= 1.0F) {
+      } else if (f >= 1.0F) {
          return 1.0F;
       } else {
-         float var3 = 1.0F - var2;
-         return 1.0F - var3 * var3 * var3;
+         float f2 = 1.0F - f;
+         return 1.0F - f2 * f2 * f2;
       }
    }
 
-   public SectionPanel.AsideRenderer asideEntering(int var1, SectionPanel.AsideRenderer var2) {
-      return (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-         float var11 = this.asideEnter(var1);
-         if (!(var11 <= 0.001F)) {
-            var2.render(var3, var4, var5, var6 + (1.0F - var11) * 4.0F, var7 + (1.0F - var11) * 7.0F, var8, var9 * var11, var10);
+   public SectionPanel.AsideRenderer asideEntering(int length, SectionPanel.AsideRenderer asideRenderer) {
+      return (menuDrawContext, mouseX, mouseY, f, f2, asideWidth, f3, currentStyle) -> {
+         float asideEnter = this.asideEnter(length);
+         if (!(asideEnter <= 0.001F)) {
+            asideRenderer.render(menuDrawContext, mouseX, mouseY, f + (1.0F - asideEnter) * 4.0F, f2 + (1.0F - asideEnter) * 7.0F, asideWidth, f3 * asideEnter, currentStyle);
          }
       };
    }
 
-   public float enter(int var1) {
-      float var2 = (float)(System.currentTimeMillis() - this.enteredAt - Math.min(var1, 14) * 38L) / 340.0F;
-      if (var2 <= 0.0F) {
+   public float enter(int n) {
+      float f = (float)(System.currentTimeMillis() - this.enteredAt - Math.min(n, 14) * 38L) / 340.0F;
+      if (f <= 0.0F) {
          return 0.0F;
-      } else if (var2 >= 1.0F) {
+      } else if (f >= 1.0F) {
          return 1.0F;
       } else {
-         float var3 = 1.0F - var2;
-         return 1.0F - var3 * var3 * var3;
+         float f2 = 1.0F - f;
+         return 1.0F - f2 * f2 * f2;
       }
    }
 
-   public SectionPanel.AsideRenderer entering(int var1, SectionPanel.AsideRenderer var2) {
-      return (var3, var4, var5, var6, var7, var8, var9, var10) -> {
-         float var11 = this.enter(var1);
-         if (!(var11 <= 0.001F)) {
-            var2.render(var3, var4, var5, var6 + (1.0F - var11) * 4.0F, var7 + (1.0F - var11) * 7.0F, var8, var9 * var11, var10);
+   public SectionPanel.AsideRenderer entering(int n, SectionPanel.AsideRenderer asideRenderer) {
+      return (menuDrawContext, mouseX, mouseY, f, f2, asideWidth, f3, currentStyle) -> {
+         float enter = this.enter(n);
+         if (!(enter <= 0.001F)) {
+            asideRenderer.render(menuDrawContext, mouseX, mouseY, f + (1.0F - enter) * 4.0F, f2 + (1.0F - enter) * 7.0F, asideWidth, f3 * enter, currentStyle);
          }
       };
    }
 
    private ScriptInfoPage info() {
       if (this.info == null) {
-         this.info = new ScriptInfoPage(host(), this::listToast, var1 -> {
-            if (var1 == null) {
+         this.info = new ScriptInfoPage(host(), this::listToast, settingsScript -> {
+            if (settingsScript == null) {
                this.settingsScript = null;
                this.invalidate();
             } else {
-               this.openSettings(var1);
+               this.openSettings(settingsScript);
             }
          });
       }
@@ -267,14 +267,14 @@ public class ScriptsSectionPanel extends SectionPanel {
       return this.info;
    }
 
-   private void openSettings(Script var1) {
+   private void openSettings(Script settingsScript) {
       if (this.settingsScript != null && this.info != null && this.info.isDirty()) {
          this.info.apply();
       }
 
-      this.settingsScript = var1;
+      this.settingsScript = settingsScript;
       this.info().setOnClose(this::closeSettings);
-      this.info().open(var1);
+      this.info().open(settingsScript);
       this.invalidate();
    }
 
@@ -351,25 +351,25 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    private long signature() {
-      Storage var1 = host();
-      if (var1 == null) {
+      Storage storage = host();
+      if (storage == null) {
          return 0L;
       } else {
-         long var2 = this.getActiveTab() * 31L;
+         long l = this.getActiveTab() * 31L;
          if (this.storeTab()) {
-            var2 = var2 * 31L + this.market.revision();
+            l = l * 31L + this.market.revision();
          }
 
-         for (Script var5 : var1.method1293()) {
-            var2 = var2 * 31L + var5.getId().hashCode();
-            var2 = var2 * 31L + var5.getType2().ordinal();
-            var2 = var2 * 31L + var5.getError().hashCode();
-            var2 = var2 * 31L + var5.getItems3().size();
-            var2 = var2 * 31L + (var1.method1297(var5) ? 1 : 0);
+         for (Script script : storage.method1293()) {
+            l = l * 31L + script.getId().hashCode();
+            l = l * 31L + script.getType2().ordinal();
+            l = l * 31L + script.getError().hashCode();
+            l = l * 31L + script.getItems3().size();
+            l = l * 31L + (storage.method1297(script) ? 1 : 0);
          }
 
-         var2 = var2 * 31L + var1.method1328() + this.evalLines.size();
-         return var2 * 31L + (this.creatorOpen ? 1 : 0) + (Server.getInstance().isRunning() ? 2 : 0);
+         l = l * 31L + storage.method1328() + this.evalLines.size();
+         return l * 31L + (this.creatorOpen ? 1 : 0) + (Server.getInstance().isRunning() ? 2 : 0);
       }
    }
 
@@ -383,41 +383,41 @@ public class ScriptsSectionPanel extends SectionPanel {
       this.tabs(new String[]{"gui.scripts.tab.scripts", "gui.scripts.tab.configs", "gui.scripts.tab.market", "gui.scripts.tab.ai"});
       this.tabIcons(new MenuGlyph[]{MenuGlyph.CODE, MenuGlyph.CONFIGS, MenuGlyph.STORAGE, MenuGlyph.CHAT});
       if (this.getActiveTab() != 1) {
-         Storage var1 = host();
-         if (var1 == null) {
+         Storage hostOrNull = host();
+         if (hostOrNull == null) {
             this.caption("gui.scripts.unavailable");
          } else {
             switch (this.getActiveTab()) {
                case 3:
-                  this.ai.build(var1);
+                  this.ai.build(hostOrNull);
                   break;
                default:
                   this.market.syncMode(this.getActiveTab() == 2);
-                  this.market.build(var1);
+                  this.market.build(hostOrNull);
             }
          }
       }
    }
 
-   private ScriptsSectionPanel.RowInfo rowInfo(Storage var1, Script var2) {
-      long var3 = 0L;
+   private ScriptsSectionPanel.RowInfo rowInfo(Storage storage, Script workspace) {
+      long millis = 0L;
 
       try {
-         var3 = Files.getLastModifiedTime(var2.getPath2()).toMillis();
-      } catch (Exception var9) {
+         millis = Files.getLastModifiedTime(workspace.getPath2()).toMillis();
+      } catch (Exception e) {
       }
 
-      long var5 = System.currentTimeMillis();
-      ScriptsSectionPanel.FileCount var7 = this.fileCounts.get(var2.getId());
-      int var8;
-      if (var7 != null && var7.modified() == var3 && var5 - var7.countedAt() < 2000L) {
-         var8 = var7.files();
+      long now = System.currentTimeMillis();
+      ScriptsSectionPanel.FileCount fileCount = this.fileCounts.get(workspace.getId());
+      int files;
+      if (fileCount != null && fileCount.modified() == millis && now - fileCount.countedAt() < 2000L) {
+         files = fileCount.files();
       } else {
-         var8 = var1.method1345(var2).size();
-         this.fileCounts.put(var2.getId(), new ScriptsSectionPanel.FileCount(var3, var8, var5));
+         files = storage.method1345(workspace).size();
+         this.fileCounts.put(workspace.getId(), new ScriptsSectionPanel.FileCount(millis, files, now));
       }
 
-      return new ScriptsSectionPanel.RowInfo(var2, var8, var3);
+      return new ScriptsSectionPanel.RowInfo(workspace, files, millis);
    }
 
    public boolean creatorOpen() {
@@ -431,14 +431,14 @@ public class ScriptsSectionPanel extends SectionPanel {
       this.invalidate();
    }
 
-   public void openScriptSettings(Script var1) {
+   public void openScriptSettings(Script workspace) {
       if (this.workspace != null) {
          this.closeWorkspace();
       }
 
       super.selectTab(0);
       this.market.showLocal();
-      this.openSettings(var1);
+      this.openSettings(workspace);
    }
 
    public void closeSettingsIfOpen() {
@@ -449,48 +449,48 @@ public class ScriptsSectionPanel extends SectionPanel {
       this.creatorOpen = false;
    }
 
-   public void buildLocal(Storage var1) {
-      int var2 = 1;
-      ArrayList<Script> var3 = new ArrayList<>(var1.method1293());
-      String var4 = this.searchQuery().toLowerCase(Locale.ROOT).strip();
-      if (!var4.isEmpty()) {
-         var3.removeIf(
-            var1x -> !var1x.method1403().toLowerCase(Locale.ROOT).contains(var4)
-               && !var1x.getDescription().toLowerCase(Locale.ROOT).contains(var4)
-               && !var1x.getText3().toLowerCase(Locale.ROOT).contains(var4)
+   public void buildLocal(Storage hostOrNull) {
+      int n = 1;
+      ArrayList<Script> scripts = new ArrayList<>(hostOrNull.method1293());
+      String str = this.searchQuery().toLowerCase(Locale.ROOT).strip();
+      if (!str.isEmpty()) {
+         scripts.removeIf(
+            var1x -> !var1x.method1403().toLowerCase(Locale.ROOT).contains(str)
+               && !var1x.getDescription().toLowerCase(Locale.ROOT).contains(str)
+               && !var1x.getText3().toLowerCase(Locale.ROOT).contains(str)
          );
       }
 
       if (this.creatorOpen) {
-         for (int var5 = 0; var5 < TEMPLATES.length; var5++) {
-            final int var5_i = var5;
+         for (int i = 0; i < TEMPLATES.length; i++) {
+            final int var5_i = i;
             this.custom(
                 19.0F,
-               (var2x, var3x, var4x, var5x, var6x, var7x, var8x, var9) -> this.renderTemplate(var2x, var3x, var4x, var5x, var6x, var7x, var8x, var9, var5_i)
+               (var2x, var3x, var4x, var5x, var6x, var7x, var8x, currentStyle) -> this.renderTemplate(var2x, var3x, var4x, var5x, var6x, var7x, var8x, currentStyle, var5_i)
             );
          }
 
          this.gap(6.0F);
       }
 
-      if (var3.isEmpty() && !this.creatorOpen) {
+      if (scripts.isEmpty() && !this.creatorOpen) {
          this.custom(
             70.0F, this.entering(1, (var1x, var2x, var3x, var4x, var5x, var6x, var7x, var8x) -> this.renderEmpty(var1x, var4x, var5x, var6x, var7x, var8x))
          );
       }
 
-      for (Script var6 : var3) {
-         ScriptsSectionPanel.RowInfo var7 = this.rowInfo(var1, var6);
+      for (Script workspace : scripts) {
+         ScriptsSectionPanel.RowInfo rowInfo = this.rowInfo(hostOrNull, workspace);
          this.custom(
             40.0F,
             this.entering(
-               var2++,
-               (var3x, var4x, var5x, var6x, var7x, var8x, var9, var10x) -> this.renderRow(var3x, var4x, var5x, var6x, var7x, var8x, var9, var10x, var1, var7)
+               n++,
+               (var3x, var4x, var5x, var6x, var7x, var8x, previewAlpha, var10x) -> this.renderRow(var3x, var4x, var5x, var6x, var7x, var8x, previewAlpha, var10x, hostOrNull, rowInfo)
             )
          );
       }
 
-      if (this.settingsScript != null && var1.method1294(this.settingsScript.getId()) != null) {
+      if (this.settingsScript != null && hostOrNull.method1294(this.settingsScript.getId()) != null) {
          this.asideFull(
             (var1x, var2x, var3x, var4x, var5x, var6x, var7x, var8x) -> this.info()
                .renderCompact(
@@ -507,25 +507,25 @@ public class ScriptsSectionPanel extends SectionPanel {
          );
       } else {
          this.settingsScript = null;
-         var var18 = var1.method1293();
-         long var19 = var18.stream().filter(Script::isRunning).count();
-         long var8 = var18.stream().filter(var0 -> var0.getType2() == Script.Type2.FAILED).count();
-         int var10 = var18.stream().mapToInt(var0 -> var0.getItems3().size()).sum();
+         var scripts2 = hostOrNull.method1293();
+         long count = scripts2.stream().filter(Script::isRunning).count();
+         long l = scripts2.stream().filter(script -> script.getType2() == Script.Type2.FAILED).count();
+         int n2 = scripts2.stream().mapToInt(script -> script.getItems3().size()).sum();
          this.asideCaption("gui.scripts.caption.overview");
-         this.asideInfo("gui.scripts.info.running", () -> var19 + " / " + var18.size(), "gui.scripts.info.running.desc");
-         this.asideInfo("gui.scripts.info.modules", () -> String.valueOf(var10), "gui.scripts.info.modulesAll.desc");
-         if (var8 > 0L) {
-            this.asideInfo("gui.scripts.info.failed", () -> String.valueOf(var8), "gui.scripts.info.failed.desc");
+         this.asideInfo("gui.scripts.info.running", () -> count + " / " + scripts2.size(), "gui.scripts.info.running.desc");
+         this.asideInfo("gui.scripts.info.modules", () -> String.valueOf(n2), "gui.scripts.info.modulesAll.desc");
+         if (l > 0L) {
+            this.asideInfo("gui.scripts.info.failed", () -> String.valueOf(l), "gui.scripts.info.failed.desc");
          }
 
          this.asideInfo("gui.scripts.info.api", () -> "v3", "gui.scripts.info.api.desc");
-         int var11 = this.market.updatesCount(var1);
-         if (var11 > 0) {
+         int updatesCount = this.market.updatesCount(hostOrNull);
+         if (updatesCount > 0) {
             this.asideAction(
                "gui.scripts.market.updateAll",
                MenuGlyph.CLOUD,
-               () -> String.valueOf(var11),
-               () -> this.market.updateAll(var1),
+               () -> String.valueOf(updatesCount),
+               () -> this.market.updateAll(hostOrNull),
                "gui.scripts.market.updateAll.desc"
             );
          }
@@ -533,17 +533,17 @@ public class ScriptsSectionPanel extends SectionPanel {
          this.asideCaption("gui.scripts.caption.actions");
          this.asideAction("gui.scripts.home.new", MenuGlyph.ACTION, () -> this.creatorOpen ? "" : "+", this::toggleCreator, "gui.scripts.home.new.desc");
          this.asideAction("gui.scripts.reloadAll", MenuGlyph.RESET, () -> "", () -> {
-            var1.method1300();
+            hostOrNull.method1300();
             this.invalidate();
          }, "gui.scripts.reloadAll.desc");
          this.asideAction(
-            "gui.scripts.folder", MenuGlyph.STORAGE, () -> "", () -> org.zenith.utility.misc.OsOpen.file(var1.getPath().toFile()), "gui.scripts.folder.desc"
+            "gui.scripts.folder", MenuGlyph.STORAGE, () -> "", () -> org.zenith.utility.misc.OsOpen.file(hostOrNull.getPath().toFile()), "gui.scripts.folder.desc"
          );
          this.asideAction(
             "gui.scripts.api",
             MenuGlyph.TEXT,
             () -> "",
-            () -> org.zenith.utility.misc.OsOpen.file(var1.getPath().resolve("API.md").toFile()),
+            () -> org.zenith.utility.misc.OsOpen.file(hostOrNull.getPath().resolve("API.md").toFile()),
             "gui.scripts.api.desc"
          );
          this.asideAction(
@@ -553,35 +553,35 @@ public class ScriptsSectionPanel extends SectionPanel {
             () -> org.zenith.utility.misc.OsOpen.uri(RegionUtil.method2038().get(0) + "/docs/addons"),
             "gui.scripts.docs.desc"
          );
-         Server var12 = Server.getInstance();
-         this.asideAction("gui.scripts.mcp", MenuGlyph.NETWORK, () -> t(var12.isRunning() ? "gui.scripts.mcp.on" : "gui.scripts.mcp.off"), () -> {
-            var12.setEnabled(!var12.isRunning());
+         Server server = Server.getInstance();
+         this.asideAction("gui.scripts.mcp", MenuGlyph.NETWORK, () -> t(server.isRunning() ? "gui.scripts.mcp.on" : "gui.scripts.mcp.off"), () -> {
+            server.setEnabled(!server.isRunning());
             this.invalidate();
          }, "gui.scripts.mcp.desc");
-         this.market.publishSection(var1);
+         this.market.publishSection(hostOrNull);
          this.asideCaption("gui.scripts.caption.log");
-         var var13 = var1.method1295();
-         List<Storage.Data2> var14 = var13.subList(Math.max(0, var13.size() - 7), var13.size());
-         if (var14.isEmpty()) {
+         var data2s = hostOrNull.method1295();
+         List<Storage.Data2> subList = data2s.subList(Math.max(0, data2s.size() - 7), data2s.size());
+         if (subList.isEmpty()) {
             this.paragraph(t("gui.scripts.console.empty"), true);
          }
 
-         for (Storage.Data2 var16 : var14) {
+         for (Storage.Data2 sub : subList) {
             this.asideCustom(
                12.0F,
                (var1x, var2x, var3x, var4x, var5x, var6x, var7x, var8x) -> {
-                  Font var9 = Fonts.NEW_REGULAR.getFont(4.2F);
-                  String var10x = var16.getText() + "  ";
+                  Font font = Fonts.NEW_REGULAR.getFont(4.2F);
+                  String var10x = sub.getText() + "  ";
                   var1x.drawText(
-                     var9, var9.clip(var10x, var6x * 0.45F), var4x + 8.0F, var5x + 2.0F, var8x.getTextSecondary().getZenithColor().method7294(var7x)
+                     font, font.clip(var10x, var6x * 0.45F), var4x + 8.0F, var5x + 2.0F, var8x.getTextSecondary().getZenithColor().method7294(var7x)
                   );
-                  float var11x = var4x + 8.0F + var9.width(var9.clip(var10x, var6x * 0.45F));
+                  float var11x = var4x + 8.0F + font.width(font.clip(var10x, var6x * 0.45F));
                   var1x.drawText(
-                     var9,
-                     var9.clip(var16.text(), var4x + var6x - 8.0F - var11x),
+                     font,
+                     font.clip(sub.text(), var4x + var6x - 8.0F - var11x),
                      var11x,
                      var5x + 2.0F,
-                     levelColor(var16.getText2(), var8x).method7294(var7x * 0.9F)
+                     levelColor(sub.getText2(), var8x).method7294(var7x * 0.9F)
                   );
                }
             );
@@ -589,375 +589,375 @@ public class ScriptsSectionPanel extends SectionPanel {
       }
    }
 
-   public void paragraph(String var1, boolean var2) {
-      Font var3 = Fonts.NEW_REGULAR.getFont(4.5F);
-      float var4 = (var2 ? 144.0F : 236.0F) - 16.0F;
-      List<String> var5 = wrapText(var1, var3, var4, 10);
-      SectionPanel.AsideRenderer var6 = (var2x, var3x, var4x, var5x, var6x, var7x, var8, var9) -> {
-         float var10 = var6x + 3.0F;
+   public void paragraph(String description, boolean flag) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.5F);
+      float shownWidth = (flag ? 144.0F : 236.0F) - 16.0F;
+      List<String> strings = wrapText(description, font, shownWidth, 10);
+      SectionPanel.AsideRenderer entering = (var2x, var3x, var4x, var5x, var6x, var7x, previewAlpha, zenithStyle) -> {
+         float centeredTextY = var6x + 3.0F;
 
-         for (String var12 : var5) {
-            var2x.drawText(var3, var12, var5x + 8.0F, var10, var9.getTextTertiary().getZenithColor().method7294(var8));
-            var10 += var3.height() + 2.0F;
+         for (String text : strings) {
+            var2x.drawText(font, text, var5x + 8.0F, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY += font.height() + 2.0F;
          }
       };
-      float var7 = var5.size() * (var3.height() + 2.0F) + 8.0F;
-      if (var2) {
-         this.asideCustom(var7, var6);
+      float hintsHeight = strings.size() * (font.height() + 2.0F) + 8.0F;
+      if (flag) {
+         this.asideCustom(hintsHeight, entering);
       } else {
-         this.custom(var7, var6);
+         this.custom(hintsHeight, entering);
       }
    }
 
-   public static ZenithColor cardFill(ZenithStyle var0, float var1) {
-      return var0.getFieldSurfaceBackground().getZenithColor().method7295(var0.getDisableActiveBg().getZenithColor(), 0.35F + var1 * 0.55F);
+   public static ZenithColor cardFill(ZenithStyle currentStyle, float hot) {
+      return currentStyle.getFieldSurfaceBackground().getZenithColor().method7295(currentStyle.getDisableActiveBg().getZenithColor(), 0.35F + hot * 0.55F);
    }
 
-   public static void card(MenuDrawContext var0, ZenithStyle var1, float var2, float var3, float var4, float var5, float var6, float var7) {
-      ProxyDotRadiusData var8 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F);
-      var0.drawRoundedRect(var2, var3, var4, var5, var8, cardFill(var1, var6).method7294(var7));
-      var0.drawRoundedBorder(var2, var3, var4, var5, 0.15F, var8, var1.getFieldBorder().getZenithColor().method7294(2.0F + var6 * 2.0F).method7294(var7));
+   public static void card(MenuDrawContext menuDrawContext, ZenithStyle currentStyle, float floatValue, float y, float width, float height, float hot, float previewAlpha) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F);
+      menuDrawContext.drawRoundedRect(floatValue, y, width, height, headerRadius, cardFill(currentStyle, hot).method7294(previewAlpha));
+      menuDrawContext.drawRoundedBorder(floatValue, y, width, height, 0.15F, headerRadius, currentStyle.getFieldBorder().getZenithColor().method7294(2.0F + hot * 2.0F).method7294(previewAlpha));
    }
 
    public static void flowGlow(
-      MenuDrawContext var0, float var1, float var2, float var3, float var4, ProxyDotRadiusData var5, ZenithColor var6, float var7, float var8
+      MenuDrawContext menuDrawContext, float floatValue, float y, float width, float height, ProxyDotRadiusData headerRadius, ZenithColor zenithColor, float f, float previewAlpha
    ) {
-      double var9 = System.currentTimeMillis() / 1000.0;
-      double var11 = var9 * 0.42 + Math.sin(var9 * 0.31) * 0.9;
-      float var13 = (float)Math.cos(var11);
-      float var14 = (float)Math.sin(var11);
-      float var15 = var7 * (0.85F + 0.15F * (float)Math.sin(var9 * 0.8));
-      var0.drawRoundedRect(
-         var1,
-         var2,
-         var3,
-         var4,
-         var5,
+      double d = System.currentTimeMillis() / 1000.0;
+      double d2 = d * 0.42 + Math.sin(d * 0.31) * 0.9;
+      float f2 = (float)Math.cos(d2);
+      float f3 = (float)Math.sin(d2);
+      float f4 = f * (0.85F + 0.15F * (float)Math.sin(d * 0.8));
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         y,
+         width,
+         height,
+         headerRadius,
          GlowColor.method8096(
-            glowCorner(var6, -var13 - var14, var15, var8),
-            glowCorner(var6, -var13 + var14, var15, var8),
-            glowCorner(var6, var13 - var14, var15, var8),
-            glowCorner(var6, var13 + var14, var15, var8)
+            glowCorner(zenithColor, -f2 - f3, f4, previewAlpha),
+            glowCorner(zenithColor, -f2 + f3, f4, previewAlpha),
+            glowCorner(zenithColor, f2 - f3, f4, previewAlpha),
+            glowCorner(zenithColor, f2 + f3, f4, previewAlpha)
          )
       );
    }
 
-   private static ZenithColor glowCorner(ZenithColor var0, float var1, float var2, float var3) {
-      float var4 = Mth.clamp((var1 / 1.4142135F + 1.0F) * 0.5F, 0.0F, 1.0F);
-      return var0.method7292(var2 * var4 * var4 * var3);
+   private static ZenithColor glowCorner(ZenithColor zenithColor, float f, float f2, float previewAlpha) {
+      float f3 = Mth.clamp((f / 1.4142135F + 1.0F) * 0.5F, 0.0F, 1.0F);
+      return zenithColor.method7292(f2 * f3 * f3 * previewAlpha);
    }
 
-   public float hot(String var1, boolean var2) {
-      return this.hoverAnimations.computeIfAbsent(var1, var0 -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(var2 ? 1.0F : 0.0F);
+   public float hot(String key, boolean contains) {
+      return this.hoverAnimations.computeIfAbsent(key, hoverAnimation -> new Animation(160L, 0.0F, Easing.INSTANCE12)).method2808(contains ? 1.0F : 0.0F);
    }
 
-   private void renderHero(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, Storage var9) {
-      Font var10 = Fonts.NEW_SEMIBOLD.getFont(6.4F);
-      Font var11 = Fonts.NEW_REGULAR.getFont(4.5F);
-      Font var12 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      long var13 = var9.method1293().stream().filter(Script::isRunning).count();
-      long var15 = var9.method1293().stream().filter(var0 -> var0.getType2() == Script.Type2.FAILED).count();
-      var1.drawText(var10, t("gui.scripts.home.title"), var4 + 8.0F, var5 + 5.0F, var8.getTextEnable().getZenithColor().method7294(var7));
-      String var17 = var9.method1293().isEmpty()
+   private void renderHero(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle currentStyle, Storage storage) {
+      Font font = Fonts.NEW_SEMIBOLD.getFont(6.4F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.5F);
+      Font font3 = Fonts.NEW_MEDIUM.getFont(5.0F);
+      long count = storage.method1293().stream().filter(Script::isRunning).count();
+      long l = storage.method1293().stream().filter(script -> script.getType2() == Script.Type2.FAILED).count();
+      menuDrawContext.drawText(font, t("gui.scripts.home.title"), f + 8.0F, f2 + 5.0F, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      String text = storage.method1293().isEmpty()
          ? t("gui.scripts.home.none")
-         : t("gui.scripts.home.running").replace("{r}", String.valueOf(var13)).replace("{n}", String.valueOf(var9.method1293().size()))
-            + (var15 > 0L ? "  ·  " + t("gui.scripts.home.failed").replace("{n}", String.valueOf(var15)) : "");
-      var1.drawText(var11, var17, var4 + 8.0F, var5 + 7.0F + var10.height(), (var15 > 0L ? WARN : var8.getTextTertiary().getZenithColor()).method7294(var7));
-      String var18 = this.creatorOpen ? t("gui.scripts.home.cancel") : "+  " + t("gui.scripts.home.new");
-      float var19 = var12.width(var18) + 16.0F;
-      BoundsData var20 = new BoundsData(var4 + var6 - 8.0F - var19, var5 + 6.0F, var19, 15.0F);
-      boolean var21 = var20.contains(var2, var3);
-      float var22 = this.hot("hero:new", var21);
-      ZenithColor var23 = var8.getPrimaryColor().getZenithColor();
-      ProxyDotRadiusData var24 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F);
-      ZenithColor var25 = cardFill(var8, var22).method7295(var23.method7292(0.14F), (this.creatorOpen ? 0.25F : 0.6F) + var22 * 0.35F);
-      boolean var26 = this.pressFx.begin(var1, "hero:new", var20);
-      var1.drawRoundedRect(var20.getFloatValue(), var20.getFloatValue2(), var20.width(), var20.height(), var24, var25.method7294(var7));
-      this.pressFx.ink(var1, "hero:new", var20, var24.getFloatValue(), ZenithColor.INSTANCE.method7292(0.18F), var7);
-      var1.drawRoundedBorder(
-         var20.getFloatValue(), var20.getFloatValue2(), var20.width(), var20.height(), 0.15F, var24, var23.method7292(0.25F + var22 * 0.3F).method7294(var7)
+         : t("gui.scripts.home.running").replace("{r}", String.valueOf(count)).replace("{n}", String.valueOf(storage.method1293().size()))
+            + (l > 0L ? "  ·  " + t("gui.scripts.home.failed").replace("{n}", String.valueOf(l)) : "");
+      menuDrawContext.drawText(font2, text, f + 8.0F, f2 + 7.0F + font.height(), (l > 0L ? WARN : currentStyle.getTextTertiary().getZenithColor()).method7294(previewAlpha));
+      String str = this.creatorOpen ? t("gui.scripts.home.cancel") : "+  " + t("gui.scripts.home.new");
+      float width = font3.width(str) + 16.0F;
+      BoundsData boundsData = new BoundsData(f + f3 - 8.0F - width, f2 + 6.0F, width, 15.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.hot("hero:new", contains);
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F);
+      ZenithColor zenithColor2 = cardFill(currentStyle, hot).method7295(zenithColor.method7292(0.14F), (this.creatorOpen ? 0.25F : 0.6F) + hot * 0.35F);
+      boolean begin = this.pressFx.begin(menuDrawContext, "hero:new", boundsData);
+      menuDrawContext.drawRoundedRect(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), headerRadius, zenithColor2.method7294(previewAlpha));
+      this.pressFx.ink(menuDrawContext, "hero:new", boundsData, headerRadius.getFloatValue(), ZenithColor.INSTANCE.method7292(0.18F), previewAlpha);
+      menuDrawContext.drawRoundedBorder(
+         boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.15F, headerRadius, zenithColor.method7292(0.25F + hot * 0.3F).method7294(previewAlpha)
       );
-      var1.drawText(
-         var12,
-         var18,
-         var20.getFloatValue() + 8.0F,
-         var20.getFloatValue2() + (15.0F - var12.height()) / 2.0F,
-         (this.creatorOpen ? var8.getTextSecondary().getZenithColor() : var23).method7294(var7 * (0.85F + var22 * 0.15F))
+      menuDrawContext.drawText(
+         font3,
+         str,
+         boundsData.getFloatValue() + 8.0F,
+         boundsData.getFloatValue2() + (15.0F - font3.height()) / 2.0F,
+         (this.creatorOpen ? currentStyle.getTextSecondary().getZenithColor() : zenithColor).method7294(previewAlpha * (0.85F + hot * 0.15F))
       );
-      this.pressFx.end(var1, var26);
-      this.homeHits.add(new Object[]{var20, "new"});
+      this.pressFx.end(menuDrawContext, begin);
+      this.homeHits.add(new Object[]{boundsData, "new"});
    }
 
-   private void renderTemplate(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, int var9) {
-      float var10 = this.creatorAnimation.method2808(1.0F);
-      float var11 = Mth.clamp(var10 * 1.8F - var9 * 0.15F, 0.0F, 1.0F);
-      float var12 = var7 * var11;
-      float var13 = (1.0F - var11) * -4.0F;
-      BoundsData var14 = new BoundsData(var4 + 8.0F, var5 + 1.0F + var13, var6 - 16.0F, 16.0F);
-      boolean var15 = var14.contains(var2, var3);
-      float var16 = this.hot("template:" + var9, var15);
-      card(var1, var8, var14.getFloatValue(), var14.getFloatValue2(), var14.width(), var14.height(), var16, var12);
-      float var17 = this.pressFlash("hero:template:" + TEMPLATES[var9][0]);
-      if (var17 > 0.01F) {
-         var1.drawRoundedRect(
-            var14.getFloatValue(),
-            var14.getFloatValue2(),
-            var14.width(),
-            var14.height(),
+   private void renderTemplate(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float f4, ZenithStyle currentStyle, int n) {
+      float f5 = this.creatorAnimation.method2808(1.0F);
+      float f6 = Mth.clamp(f5 * 1.8F - n * 0.15F, 0.0F, 1.0F);
+      float previewAlpha = f4 * f6;
+      float f7 = (1.0F - f6) * -4.0F;
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F + f7, f3 - 16.0F, 16.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.hot("template:" + n, contains);
+      card(menuDrawContext, currentStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
+      float pressFlash = this.pressFlash("hero:template:" + TEMPLATES[n][0]);
+      if (pressFlash > 0.01F) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
             ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.7F),
-            var8.getPrimaryColor().getZenithColor().method7292(0.2F * var17).method7294(var12)
+            currentStyle.getPrimaryColor().getZenithColor().method7292(0.2F * pressFlash).method7294(previewAlpha)
          );
       }
 
-      String var19 = TEMPLATES[var9][0];
+      String str = TEMPLATES[n][0];
 
-      MenuGlyph var18 = switch (var19) {
+      MenuGlyph menuGlyph = switch (str) {
          case "hud" -> MenuGlyph.WINDOW;
          case "esp" -> MenuGlyph.BOX;
          case "combat" -> MenuGlyph.TARGET;
          case "chat" -> MenuGlyph.CHAT;
          default -> MenuGlyph.CODE;
       };
-      var18.draw(
-         var1,
-         var14.getFloatValue() + 7.0F,
-         var14.getFloatValue2() + (var14.height() - 6.0F) / 2.0F,
-         (var15 ? var8.getPrimaryColor() : var8.getTextSecondary()).getZenithColor().method7294(var12)
+      menuGlyph.draw(
+         menuDrawContext,
+         boundsData.getFloatValue() + 7.0F,
+         boundsData.getFloatValue2() + (boundsData.height() - 6.0F) / 2.0F,
+         (contains ? currentStyle.getPrimaryColor() : currentStyle.getTextSecondary()).getZenithColor().method7294(previewAlpha)
       );
-      Font var24 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var25 = Fonts.NEW_REGULAR.getFont(4.3F);
-      String var21 = t(TEMPLATES[var9][1]);
-      var1.drawText(
-         var24,
-         var21,
-         var14.getFloatValue() + 18.0F,
-         var14.getFloatValue2() + (var14.height() - var24.height()) / 2.0F,
-         var8.getTextEnable().getZenithColor().method7294(var12)
+      Font font = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.3F);
+      String text = t(TEMPLATES[n][1]);
+      menuDrawContext.drawText(
+         font,
+         text,
+         boundsData.getFloatValue() + 18.0F,
+         boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+         currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
       );
-      String var22 = var15 ? t("gui.scripts.create.value") : t(TEMPLATES[var9][1] + ".short");
-      float var23 = var14.getFloatValue() + var14.width() - 7.0F - var25.width(var22);
-      var1.drawText(
-         var25,
-         var25.clip(var22, var14.width() - 30.0F - var24.width(var21)),
-         Math.max(var23, var14.getFloatValue() + 24.0F + var24.width(var21)),
-         var14.getFloatValue2() + (var14.height() - var25.height()) / 2.0F,
-         (var15 ? var8.getPrimaryColor() : var8.getTextTertiary()).getZenithColor().method7294(var12)
+      String text2 = contains ? t("gui.scripts.create.value") : t(TEMPLATES[n][1] + ".short");
+      float f8 = boundsData.getFloatValue() + boundsData.width() - 7.0F - font2.width(text2);
+      menuDrawContext.drawText(
+         font2,
+         font2.clip(text2, boundsData.width() - 30.0F - font.width(text)),
+         Math.max(f8, boundsData.getFloatValue() + 24.0F + font.width(text)),
+         boundsData.getFloatValue2() + (boundsData.height() - font2.height()) / 2.0F,
+         (contains ? currentStyle.getPrimaryColor() : currentStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
-      this.homeHits.add(new Object[]{var14, "template:" + TEMPLATES[var9][0]});
+      this.homeHits.add(new Object[]{boundsData, "template:" + TEMPLATES[n][0]});
    }
 
-   private void renderEmpty(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6) {
-      Font var7 = Fonts.NEW_MEDIUM.getFont(5.6F);
-      Font var8 = Fonts.NEW_REGULAR.getFont(4.5F);
-      float var9 = var3 + 2.0F;
-      float var10 = 62.0F;
-      card(var1, var6, var2 + 8.0F, var9, var4 - 16.0F, var10, 0.0F, var5);
-      String var11 = t("gui.scripts.home.emptyTitle");
-      List<String> var12 = wrapText(t("gui.scripts.empty"), var8, var4 - 48.0F, 3);
-      float var13 = 6.0F;
-      float var14 = 4.0F;
-      float var15 = var8.height() + 2.0F;
-      float var16 = 6.0F + var13 + var7.height() + var14 + var12.size() * var15 - 2.0F;
-      float var17 = var9 + (var10 - var16) / 2.0F;
-      MenuGlyph.CODE.draw(var1, var2 + var4 / 2.0F - 3.0F, var17, var6.getPrimaryColor().getZenithColor().method7294(var5));
-      float var18 = var17 + 6.0F + var13;
-      var1.drawText(var7, var11, var2 + (var4 - var7.width(var11)) / 2.0F, var18, var6.getTextEnable().getZenithColor().method7294(var5));
-      float var19 = var18 + var7.height() + var14;
+   private void renderEmpty(MenuDrawContext menuDrawContext, float f, float f2, float f3, float previewAlpha, ZenithStyle currentStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(5.6F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.5F);
+      float y = f2 + 2.0F;
+      float height = 62.0F;
+      card(menuDrawContext, currentStyle, f + 8.0F, y, f3 - 16.0F, height, 0.0F, previewAlpha);
+      String text = t("gui.scripts.home.emptyTitle");
+      List<String> strings = wrapText(t("gui.scripts.empty"), font2, f3 - 48.0F, 3);
+      float f4 = 6.0F;
+      float f5 = 4.0F;
+      float f6 = font2.height() + 2.0F;
+      float f7 = 6.0F + f4 + font.height() + f5 + strings.size() * f6 - 2.0F;
+      float centeredTextY = y + (height - f7) / 2.0F;
+      MenuGlyph.CODE.draw(menuDrawContext, f + f3 / 2.0F - 3.0F, centeredTextY, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+      float centeredTextY2 = centeredTextY + 6.0F + f4;
+      menuDrawContext.drawText(font, text, f + (f3 - font.width(text)) / 2.0F, centeredTextY2, currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      float centeredTextY3 = centeredTextY2 + font.height() + f5;
 
-      for (String var21 : var12) {
-         var1.drawText(var8, var21, var2 + (var4 - var8.width(var21)) / 2.0F, var19, var6.getTextTertiary().getZenithColor().method7294(var5));
-         var19 += var8.height() + 2.0F;
+      for (String str : strings) {
+         menuDrawContext.drawText(font2, str, f + (f3 - font2.width(str)) / 2.0F, centeredTextY3, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY3 += font2.height() + 2.0F;
       }
    }
 
-   public static String ago(long var0) {
-      if (var0 <= 0L) {
+   public static String ago(long modified) {
+      if (modified <= 0L) {
          return "";
       } else {
-         long var2 = Math.max(0L, (System.currentTimeMillis() - var0) / 1000L);
-         if (var2 < 60L) {
+         long l = Math.max(0L, (System.currentTimeMillis() - modified) / 1000L);
+         if (l < 60L) {
             return t("gui.scripts.ago.now");
-         } else if (var2 < 3600L) {
-            return t("gui.scripts.ago.min").replace("{n}", String.valueOf(var2 / 60L));
+         } else if (l < 3600L) {
+            return t("gui.scripts.ago.min").replace("{n}", String.valueOf(l / 60L));
          } else {
-            return var2 < 86400L
-               ? t("gui.scripts.ago.hour").replace("{n}", String.valueOf(var2 / 3600L))
-               : t("gui.scripts.ago.day").replace("{n}", String.valueOf(var2 / 86400L));
+            return l < 86400L
+               ? t("gui.scripts.ago.hour").replace("{n}", String.valueOf(l / 3600L))
+               : t("gui.scripts.ago.day").replace("{n}", String.valueOf(l / 86400L));
          }
       }
    }
 
    private void renderRow(
-      MenuDrawContext var1,
-      int var2,
-      int var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      ZenithStyle var8,
-      Storage var9,
-      ScriptsSectionPanel.RowInfo var10
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      float f,
+      float y,
+      float f2,
+      float previewAlpha,
+      ZenithStyle currentStyle,
+      Storage hostOrNull,
+      ScriptsSectionPanel.RowInfo rowInfo
    ) {
-      Script var11 = var10.script();
-      BoundsData var12 = ScriptMarketTab.cardRect(var4, var5, var6);
-      boolean var13 = var12.contains(var2, var3);
-      boolean var14 = this.settingsScript != null && this.settingsScript.getId().equals(var11.getId());
-      float var15 = this.hot("row:" + var11.getId(), var13);
-      float var16 = this.hot("rowsel:" + var11.getId(), var14);
-      boolean var17 = var11.getType2() == Script.Type2.FAILED;
-      ZenithColor var18 = var8.getPrimaryColor().getZenithColor();
-      int var19 = var11.getColor();
-      ZenithColor var20 = var17 ? ERROR : (var19 == -1 ? var18 : new ZenithColor(var19));
-      ScriptMarketTab.drawCard(var1, var8, var12, var15, var16, this.pressFlash("row:" + var11.getId()), var20, var7);
-      float var21 = 22.0F;
-      float var22 = var12.getFloatValue() + 7.0F;
-      float var23 = ScriptMarketTab.cardAvatarY(var12);
-      Identifier var24 = ScriptIcons.get(var11);
-      if (var24 != null) {
-         var1.drawRoundedTexture(var24, var22, var23, var21, var21, ProxyDotRadiusData.method8069(var21 * 0.3F), ZenithColor.INSTANCE.method7294(var7));
+      Script script = rowInfo.script();
+      BoundsData cardRect = ScriptMarketTab.cardRect(f, y, f2);
+      boolean contains = cardRect.contains(lastClickX, lastClickY);
+      boolean flag = this.settingsScript != null && this.settingsScript.getId().equals(script.getId());
+      float hot = this.hot("row:" + script.getId(), contains);
+      float hot2 = this.hot("rowsel:" + script.getId(), flag);
+      boolean flag2 = script.getType2() == Script.Type2.FAILED;
+      ZenithColor zenithColor = currentStyle.getPrimaryColor().getZenithColor();
+      int color = script.getColor();
+      ZenithColor letterColor = flag2 ? ERROR : (color == -1 ? zenithColor : new ZenithColor(color));
+      ScriptMarketTab.drawCard(menuDrawContext, currentStyle, cardRect, hot, hot2, this.pressFlash("row:" + script.getId()), letterColor, previewAlpha);
+      float size = 22.0F;
+      float floatValue = cardRect.getFloatValue() + 7.0F;
+      float cardAvatarY = ScriptMarketTab.cardAvatarY(cardRect);
+      Identifier texture = ScriptIcons.get(script);
+      if (texture != null) {
+         menuDrawContext.drawRoundedTexture(texture, floatValue, cardAvatarY, size, size, ProxyDotRadiusData.method8069(size * 0.3F), ZenithColor.INSTANCE.method7294(previewAlpha));
       } else {
-         ScriptMarketTab.letterAvatar(var1, var20, var11.method1403(), var22, var23, var21, var7);
+         ScriptMarketTab.letterAvatar(menuDrawContext, letterColor, script.method1403(), floatValue, cardAvatarY, size, previewAlpha);
       }
 
-      ZenithColor var25 = var11.isRunning() ? OK : (var17 ? ERROR : var8.getTextTertiary().getZenithColor());
-      var1.drawRoundedRect(var22 + var21 - 4.5F, var23 + var21 - 4.5F, 6.0F, 6.0F, ProxyDotRadiusData.method8069(3.0F), cardFill(var8, var15).method7294(var7));
-      var1.drawRoundedRect(var22 + var21 - 3.5F, var23 + var21 - 3.5F, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), var25.method7294(var7));
-      float var26 = 14.0F;
-      float var27 = 8.0F;
-      float var28 = var12.getFloatValue() + var12.width() - 7.0F - var26;
-      float var29 = var12.getFloatValue2() + (var12.height() - var27) / 2.0F;
-      StoreApi.Data2 var30 = this.market.updateFor(var9, var11);
-      boolean var31 = this.market.updating(var9, var11);
-      BoundsData var32 = null;
-      if (var30 != null || var31) {
-         String var33 = t(var31 ? "gui.scripts.market.busy" : "gui.scripts.market.update");
-         var32 = ScriptMarketTab.pillRect(var12, var28 - 7.0F, var33);
-         boolean var34 = var32.contains(var2, var3);
-         ScriptMarketTab.drawPill(var1, var8, var32, var33, false, this.hot("upd:" + var11.getId(), var34), var31, var7);
-         if (var34 && var30 != null) {
-            HoverInfo.request(t("gui.scripts.market.update"), t("gui.scripts.market.update.row").replace("{v}", String.valueOf(var30.getLongValue2())));
+      ZenithColor zenithColor2 = script.isRunning() ? OK : (flag2 ? ERROR : currentStyle.getTextTertiary().getZenithColor());
+      menuDrawContext.drawRoundedRect(floatValue + size - 4.5F, cardAvatarY + size - 4.5F, 6.0F, 6.0F, ProxyDotRadiusData.method8069(3.0F), cardFill(currentStyle, hot).method7294(previewAlpha));
+      menuDrawContext.drawRoundedRect(floatValue + size - 3.5F, cardAvatarY + size - 3.5F, 4.0F, 4.0F, ProxyDotRadiusData.method8069(2.0F), zenithColor2.method7294(previewAlpha));
+      float width = 14.0F;
+      float height = 8.0F;
+      float floatValue2 = cardRect.getFloatValue() + cardRect.width() - 7.0F - width;
+      float y2 = cardRect.getFloatValue2() + (cardRect.height() - height) / 2.0F;
+      StoreApi.Data2 data2 = this.market.updateFor(hostOrNull, script);
+      boolean updating = this.market.updating(hostOrNull, script);
+      BoundsData pillRect = null;
+      if (data2 != null || updating) {
+         String pillText = t(updating ? "gui.scripts.market.busy" : "gui.scripts.market.update");
+         pillRect = ScriptMarketTab.pillRect(cardRect, floatValue2 - 7.0F, pillText);
+         boolean contains2 = pillRect.contains(lastClickX, lastClickY);
+         ScriptMarketTab.drawPill(menuDrawContext, currentStyle, pillRect, pillText, false, this.hot("upd:" + script.getId(), contains2), updating, previewAlpha);
+         if (contains2 && data2 != null) {
+            HoverInfo.request(t("gui.scripts.market.update"), t("gui.scripts.market.update.row").replace("{v}", String.valueOf(data2.getLongValue2())));
          }
       }
 
-      float var45 = ScriptMarketTab.cardTextX(var12);
-      float var46 = (var32 != null ? var32.getFloatValue() : var28) - 7.0F;
-      ScriptMarketTab.CardLines var35 = ScriptMarketTab.cardLines(var12);
-      Font var36 = ScriptMarketTab.cardNoteFont();
-      float var37 = this.hot("open:" + var11.getId(), var13 && var32 == null);
-      String var38 = t("gui.scripts.card.open");
-      float var39 = var46 - var36.width(var38);
-      float var40 = var37 > 0.01F ? var39 - 6.0F : var46;
+      float cardTextX = ScriptMarketTab.cardTextX(cardRect);
+      float f3 = (pillRect != null ? pillRect.getFloatValue() : floatValue2) - 7.0F;
+      ScriptMarketTab.CardLines cardLines = ScriptMarketTab.cardLines(cardRect);
+      Font cardNoteFont = ScriptMarketTab.cardNoteFont();
+      float hot3 = this.hot("open:" + script.getId(), contains && pillRect == null);
+      String text = t("gui.scripts.card.open");
+      float f4 = f3 - cardNoteFont.width(text);
+      float f5 = hot3 > 0.01F ? f4 - 6.0F : f3;
       ScriptMarketTab.drawTitleLine(
-         var1, var8, var11.method1403(), var11.getVersion().isBlank() ? "" : "v" + var11.getVersion(), "", null, var45, var40, var35.title(), var7
+         menuDrawContext, currentStyle, script.method1403(), script.getVersion().isBlank() ? "" : "v" + script.getVersion(), "", null, cardTextX, f5, cardLines.title(), previewAlpha
       );
-      if (var37 > 0.01F) {
-         float var41 = var35.title() + ScriptMarketTab.cardTitleFont().height() - var36.height();
-         var1.drawText(var36, var38, var39 + (1.0F - var37) * 6.0F, var41, var18.method7294(var7 * var37));
+      if (hot3 > 0.01F) {
+         float centeredTextY = cardLines.title() + ScriptMarketTab.cardTitleFont().height() - cardNoteFont.height();
+         menuDrawContext.drawText(cardNoteFont, text, f4 + (1.0F - hot3) * 6.0F, centeredTextY, zenithColor.method7294(previewAlpha * hot3));
       }
 
-      if (!var11.getError().isBlank()) {
-         ScriptMarketTab.drawDescription(var1, var8, var11.getError(), ERROR, var45, var46, var35.note(), var7);
+      if (!script.getError().isBlank()) {
+         ScriptMarketTab.drawDescription(menuDrawContext, currentStyle, script.getError(), ERROR, cardTextX, f3, cardLines.note(), previewAlpha);
       } else {
-         ScriptMarketTab.drawDescription(var1, var8, var11.getDescription(), null, var45, var46, var35.note(), var7);
+         ScriptMarketTab.drawDescription(menuDrawContext, currentStyle, script.getDescription(), null, cardTextX, f3, cardLines.note(), previewAlpha);
       }
 
-      float var47 = ScriptMarketTab.drawTags(var1, var8, Arrays.asList(var11.getText3().split(",")), var45, var45, var46, var35.meta(), var7);
-      ArrayList var42 = new ArrayList();
-      var42.add(this.stateText(var9, var11));
-      OriginUtil.Data2 var43 = OriginUtil.method6921(var11);
-      if (var43 != null) {
-         var42.add(
-            var43.mine()
+      float drawTags = ScriptMarketTab.drawTags(menuDrawContext, currentStyle, Arrays.asList(script.getText3().split(",")), cardTextX, cardTextX, f3, cardLines.meta(), previewAlpha);
+      ArrayList elements = new ArrayList();
+      elements.add(this.stateText(hostOrNull, script));
+      OriginUtil.Data2 data22 = OriginUtil.method6921(script);
+      if (data22 != null) {
+         elements.add(
+            data22.mine()
                ? t("gui.scripts.market.origin.mine")
-               : t("gui.scripts.market.origin.from").replace("{n}", var43.getText3().isBlank() ? "?" : var43.getText3())
+               : t("gui.scripts.market.origin.from").replace("{n}", data22.getText3().isBlank() ? "?" : data22.getText3())
          );
       }
 
-      if (var11.isFlag()) {
-         String var44 = ScriptPermissions.method5(var11);
-         if (!var44.isEmpty()) {
-            var42.add(t("gui.scripts.market.rights").replace("{r}", var44));
+      if (script.isFlag()) {
+         String replacement = ScriptPermissions.method5(script);
+         if (!replacement.isEmpty()) {
+            elements.add(t("gui.scripts.market.rights").replace("{r}", replacement));
          }
       }
 
-      if (!var11.getItems3().isEmpty()) {
-         var42.add(t("gui.scripts.card.modules").replace("{n}", String.valueOf(var11.getItems3().size())));
+      if (!script.getItems3().isEmpty()) {
+         elements.add(t("gui.scripts.card.modules").replace("{n}", String.valueOf(script.getItems3().size())));
       }
 
-      String var48 = ago(var10.modified());
-      if (!var48.isEmpty()) {
-         var42.add(var48);
+      String str = ago(rowInfo.modified());
+      if (!str.isEmpty()) {
+         elements.add(str);
       }
 
-      ScriptMarketTab.drawMeta(var1, String.join("  ·  ", var42), var8.getTextTertiary().getZenithColor(), var47, var45, var46, var35.meta(), var7);
-      this.drawSwitch(var1, "script:" + var11.getId(), var28, var29, var26, var27, var9.method1297(var11), var7, var8);
-      if (var13) {
-         HoverInfo.request(var11.method1403(), t("gui.scripts.card.hint"));
+      ScriptMarketTab.drawMeta(menuDrawContext, String.join("  ·  ", elements), currentStyle.getTextTertiary().getZenithColor(), drawTags, cardTextX, f3, cardLines.meta(), previewAlpha);
+      this.drawSwitch(menuDrawContext, "script:" + script.getId(), floatValue2, y2, width, height, hostOrNull.method1297(script), previewAlpha, currentStyle);
+      if (contains) {
+         HoverInfo.request(script.method1403(), t("gui.scripts.card.hint"));
       }
 
-      this.homeHits.add(new Object[]{new BoundsData(var28 - 5.0F, var12.getFloatValue2(), var26 + 12.0F, var12.height()), "toggle", var11});
-      if (var32 != null) {
-         this.homeHits.add(new Object[]{var32, "update", var11});
+      this.homeHits.add(new Object[]{new BoundsData(floatValue2 - 5.0F, cardRect.getFloatValue2(), width + 12.0F, cardRect.height()), "toggle", script});
+      if (pillRect != null) {
+         this.homeHits.add(new Object[]{pillRect, "update", script});
       }
 
-      this.homeHits.add(new Object[]{var12, "open", var11});
+      this.homeHits.add(new Object[]{cardRect, "open", script});
    }
 
-   private String stateText(Storage var1, Script var2) {
-      return switch (var2.getType2()) {
+   private String stateText(Storage hostOrNull, Script script) {
+      return switch (script.getType2()) {
          case RUNNING -> t("gui.scripts.state.running");
          case FAILED -> t("gui.scripts.state.failed");
-         default -> var1.method1297(var2) ? t("gui.scripts.state.waiting") : t("gui.scripts.state.off");
+         default -> hostOrNull.method1297(script) ? t("gui.scripts.state.waiting") : t("gui.scripts.state.off");
       };
    }
 
-   public void drawSwitch(MenuDrawContext var1, String var2, float var3, float var4, float var5, float var6, boolean var7, float var8, ZenithStyle var9) {
-      float var10 = this.switchAnimations
-         .computeIfAbsent(var2, var1x -> new Animation(220L, var7 ? 1.0F : 0.0F, Easing.INSTANCE15))
-         .method2808(var7 ? 1.0F : 0.0F);
-      ZenithColor var11 = var9.getFieldBorder().getZenithColor().method7294(3.0F);
-      var1.drawRoundedRect(
-         var3, var4, var5, var6, ProxyDotRadiusData.method8069(var6 / 2.0F), var11.method7295(var9.getPrimaryColor().getZenithColor(), var10).method7294(var8)
+   public void drawSwitch(MenuDrawContext menuDrawContext, String key, float floatValue, float y, float width, float height, boolean enabled, float previewAlpha, ZenithStyle currentStyle) {
+      float hover = this.switchAnimations
+         .computeIfAbsent(key, var1x -> new Animation(220L, enabled ? 1.0F : 0.0F, Easing.INSTANCE15))
+         .method2808(enabled ? 1.0F : 0.0F);
+      ZenithColor zenithColor = currentStyle.getFieldBorder().getZenithColor().method7294(3.0F);
+      menuDrawContext.drawRoundedRect(
+         floatValue, y, width, height, ProxyDotRadiusData.method8069(height / 2.0F), zenithColor.method7295(currentStyle.getPrimaryColor().getZenithColor(), hover).method7294(previewAlpha)
       );
-      float var12 = var6 - 2.0F;
-      float var13 = var3 + 1.0F + (var5 - var12 - 2.0F) * var10;
-      float var14 = (float)Math.sin(var10 * Math.PI) * 1.5F;
-      var1.drawRoundedRect(
-         var13 - var14 * 0.5F,
-         var4 + 1.0F,
-         var12 + var14,
-         var12,
-         ProxyDotRadiusData.method8069(var12 / 2.0F),
-         var9.getTextSecondary().getZenithColor().method7295(ZenithColor.INSTANCE, var10).method7294(var8)
+      float f = height - 2.0F;
+      float f2 = floatValue + 1.0F + (width - f - 2.0F) * hover;
+      float f3 = (float)Math.sin(hover * Math.PI) * 1.5F;
+      menuDrawContext.drawRoundedRect(
+         f2 - f3 * 0.5F,
+         y + 1.0F,
+         f + f3,
+         f,
+         ProxyDotRadiusData.method8069(f / 2.0F),
+         currentStyle.getTextSecondary().getZenithColor().method7295(ZenithColor.INSTANCE, hover).method7294(previewAlpha)
       );
    }
 
-   private float pressFlash(String var1) {
-      return Smooth.press(this.pressedAt.getOrDefault(var1, 0L), 340L);
+   private float pressFlash(String key) {
+      return Smooth.press(this.pressedAt.getOrDefault(key, 0L), 340L);
    }
 
-   private boolean handleHome(Object[] var1) {
-      Storage var2 = host();
-      if (var2 == null) {
+   private boolean handleHome(Object[] objects) {
+      Storage storage = host();
+      if (storage == null) {
          return false;
       } else {
-         String var3 = (String)var1[1];
-         if (var1.length > 2 && var1[2] instanceof Script var4) {
-            this.pressedAt.put("row:" + var4.getId(), System.currentTimeMillis());
+         String str = (String)objects[1];
+         if (objects.length > 2 && objects[2] instanceof Script script) {
+            this.pressedAt.put("row:" + script.getId(), System.currentTimeMillis());
          } else {
-            this.pressedAt.put("hero:" + var3, System.currentTimeMillis());
-            if (var1[0] instanceof BoundsData var7) {
+            this.pressedAt.put("hero:" + str, System.currentTimeMillis());
+            if (objects[0] instanceof BoundsData boundsData) {
                this.pressFx
                   .press(
-                     "hero:" + var3,
-                     this.lastClickX >= 0.0 ? this.lastClickX : var7.getFloatValue() + var7.width() / 2.0F,
-                     this.lastClickY >= 0.0 ? this.lastClickY : var7.getFloatValue2() + var7.height() / 2.0F
+                     "hero:" + str,
+                     this.lastClickX >= 0.0 ? this.lastClickX : boundsData.getFloatValue() + boundsData.width() / 2.0F,
+                     this.lastClickY >= 0.0 ? this.lastClickY : boundsData.getFloatValue2() + boundsData.height() / 2.0F
                   );
             }
          }
 
-         switch (var3) {
+         switch (str) {
             case "new":
                this.creatorOpen = !this.creatorOpen;
                this.creatorAnimation.reset(0.0F);
@@ -965,33 +965,33 @@ public class ScriptsSectionPanel extends SectionPanel {
                this.invalidate();
                break;
             case "reload":
-               var2.method1300();
+               storage.method1300();
                this.invalidate();
                break;
             case "folder":
-               com.mojang.blaze3d.Blaze3D.openPath((var2.getPath().toFile()).toPath());
+               com.mojang.blaze3d.Blaze3D.openPath((storage.getPath().toFile()).toPath());
                break;
             case "api":
-               com.mojang.blaze3d.Blaze3D.openPath((var2.getPath().resolve("API.md").toFile()).toPath());
+               com.mojang.blaze3d.Blaze3D.openPath((storage.getPath().resolve("API.md").toFile()).toPath());
                break;
             case "toggle":
-               Script var9 = (Script)var1[2];
-               var2.method1298(var9, !var2.method1297(var9));
+               Script workspace = (Script)objects[2];
+               storage.method1298(workspace, !storage.method1297(workspace));
                this.invalidate();
                break;
             case "open":
-               this.openWorkspace((Script)var1[2]);
+               this.openWorkspace((Script)objects[2]);
                break;
             case "update":
-               this.market.update(var2, (Script)var1[2]);
+               this.market.update(storage, (Script)objects[2]);
                break;
             default:
-               if (!var3.startsWith("template:")) {
+               if (!str.startsWith("template:")) {
                   return false;
                }
 
                this.creatorOpen = false;
-               this.create(var3.substring("template:".length()));
+               this.create(str.substring("template:".length()));
          }
 
          return true;
@@ -999,41 +999,41 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    private BoundsData asideViewportOrNull() {
-      float var1 = NLMenuScreen.leftWidthPanel;
-      BoundsData var2 = this.mainViewport();
-      return var2 == null
+      float leftWidthPanel = NLMenuScreen.leftWidthPanel;
+      BoundsData mainViewport = this.mainViewport();
+      return mainViewport == null
          ? null
          : new BoundsData(
-            var2.getFloatValue() + var2.width(), var2.getFloatValue2() - 30.0F, 144.0F, NLMenuScreen.contentBottom - var2.getFloatValue2() + 30.0F
+            mainViewport.getFloatValue() + mainViewport.width(), mainViewport.getFloatValue2() - 30.0F, 144.0F, NLMenuScreen.contentBottom - mainViewport.getFloatValue2() + 30.0F
          );
    }
 
-   private void create(String var1) {
-      Storage var2 = host();
-      if (var2 != null) {
-         String var3 = "script";
+   private void create(String string) {
+      Storage storage = host();
+      if (storage != null) {
+         String argument = "script";
 
-         for (int var4 = 2; var2.method1294(var3) != null || Files.exists(var2.getPath().resolve(var3)); var4++) {
-            var3 = "script" + var4;
+         for (int i = 2; storage.method1294(argument) != null || Files.exists(storage.getPath().resolve(argument)); i++) {
+            argument = "script" + i;
          }
 
          try {
-            Script var6 = var2.method1340(var3, var1);
-            var2.method1298(var6, true);
+            Script workspace = storage.method1340(argument, string);
+            storage.method1298(workspace, true);
             this.invalidate();
-            this.openWorkspace(var6);
-         } catch (Exception var5) {
-            this.evalLines.add("! " + var5.getMessage());
+            this.openWorkspace(workspace);
+         } catch (Exception e) {
+            this.evalLines.add("! " + e.getMessage());
          }
       }
    }
 
-   private static ZenithColor levelColor(String var0, ZenithStyle var1) {
-      return switch (var0) {
+   private static ZenithColor levelColor(String str, ZenithStyle currentStyle) {
+      return switch (str) {
          case "error" -> ERROR;
          case "warn" -> WARN;
-         case "eval" -> var1.getTextEnable().getZenithColor();
-         default -> var1.getTextSecondary().getZenithColor();
+         case "eval" -> currentStyle.getTextEnable().getZenithColor();
+         default -> currentStyle.getTextSecondary().getZenithColor();
       };
    }
 
@@ -1043,15 +1043,15 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderFooter(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+   public void renderFooter(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float y, float f2, float previewAlpha, ZenithStyle zenithStyle) {
       if (this.getActiveTab() == 3) {
-         this.ai.renderFooter(var1, var2, var3, var4, var5, var6, var7, var8);
+         this.ai.renderFooter(menuDrawContext, lastClickX, lastClickY, f, y, f2, previewAlpha, zenithStyle);
       }
    }
 
    @Override
-   public boolean onFooterClicked(double var1, double var3, Enum3 var5) {
-      return this.getActiveTab() == 3 && this.ai.clickFooter(var1, var3);
+   public boolean onFooterClicked(double lastMouseX, double lastMouseY, Enum3 enum2) {
+      return this.getActiveTab() == 3 && this.ai.clickFooter(lastMouseX, lastMouseY);
    }
 
    @Override
@@ -1066,45 +1066,45 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderMainHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
+   public void renderMainHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
       if (this.storeTab()) {
-         this.market.renderHeader(var1, var2, var3, var4, var5, var6, var7, var8);
+         this.market.renderHeader(menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle);
       } else if (this.getActiveTab() == 3) {
-         this.ai.renderHeader(var1, var2, var3, var4, var5, var6, var7, var8);
+         this.ai.renderHeader(menuDrawContext, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle);
       }
    }
 
    @Override
-   public void selectTab(int var1) {
-      if (var1 != this.getActiveTab()) {
+   public void selectTab(int activeTab) {
+      if (activeTab != this.getActiveTab()) {
          this.ai.commitFields();
          if (this.settingsScript != null) {
             this.closeSettings();
          }
       }
 
-      super.selectTab(var1);
+      super.selectTab(activeTab);
    }
 
-   public void openWorkspace(Script var1) {
-      Storage var2 = host();
-      if (var2 != null) {
-         OriginUtil.Data2 var3 = OriginUtil.method6921(var1);
-         if (var3 != null && !var3.mine() && StoreApi.method1960(var3.getUUID()).isFlag()) {
+   public void openWorkspace(Script workspace) {
+      Storage storage = host();
+      if (storage != null) {
+         OriginUtil.Data2 data2 = OriginUtil.method6921(workspace);
+         if (data2 != null && !data2.mine() && StoreApi.method1960(data2.getUUID()).isFlag()) {
             this.toast(t("gui.market.sealed.locked"), true);
          } else {
             if (this.code == null) {
-               this.code = new CodeArea(var2::method1343);
+               this.code = new CodeArea(storage::method1343);
             }
 
-            this.workspace = var1;
-            this.files = var2.method1345(var1);
+            this.workspace = workspace;
+            this.files = storage.method1345(workspace);
             this.moduleRows.clear();
             this.expanded.clear();
             this.filePlateReady = false;
             this.inspectorScroll = this.inspectorScrollTarget = 0.0F;
             this.consoleScroll = 0.0F;
-            this.openFile(var1.getPath2());
+            this.openFile(workspace.getPath2());
             this.infoPage = false;
             this.workspaceAnimation.reset(0.0F);
             this.workspaceAnimation.method2810(1.0F);
@@ -1128,28 +1128,28 @@ public class ScriptsSectionPanel extends SectionPanel {
       }
    }
 
-   private void openFile(Path var1) {
-      Storage var2 = host();
-      if (var2 != null && this.workspace != null) {
+   private void openFile(Path file) {
+      Storage storage = host();
+      if (storage != null && this.workspace != null) {
          try {
-            this.code.setText(Files.isRegularFile(var1) ? var2.method1306(var1) : "");
-            this.file = var1;
+            this.code.setText(Files.isRegularFile(file) ? storage.method1306(file) : "");
+            this.file = file;
             this.code.setErrorLine(Storage.method1348(this.workspace, this.file));
             this.code.setFocused(true);
             this.inputFocused = false;
-         } catch (Exception var4) {
-            this.toast(t("gui.scripts.toast.openFailed") + " " + var4.getMessage(), true);
+         } catch (Exception e) {
+            this.toast(t("gui.scripts.toast.openFailed") + " " + e.getMessage(), true);
          }
       }
    }
 
    private void save() {
-      Storage var1 = host();
-      if (var1 != null && this.workspace != null && this.file != null) {
+      Storage storage = host();
+      if (storage != null && this.workspace != null && this.file != null) {
          try {
-            var1.method1347(this.workspace, this.file, this.code.getText());
+            storage.method1347(this.workspace, this.file, this.code.getText());
             this.code.markSaved();
-            var1.method1299(this.workspace);
+            storage.method1299(this.workspace);
             this.code.setErrorLine(Storage.method1348(this.workspace, this.file));
             this.moduleRows.clear();
             if (this.workspace.getError().isBlank()) {
@@ -1157,70 +1157,70 @@ public class ScriptsSectionPanel extends SectionPanel {
             } else {
                this.toast(this.workspace.getError(), true);
             }
-         } catch (Exception var3) {
-            this.toast(t("gui.scripts.toast.saveFailed") + " " + var3.getMessage(), true);
+         } catch (Exception e) {
+            this.toast(t("gui.scripts.toast.saveFailed") + " " + e.getMessage(), true);
          }
       }
    }
 
    private void newFile() {
-      Storage var1 = host();
-      if (var1 != null && this.workspace != null) {
+      Storage storage = host();
+      if (storage != null && this.workspace != null) {
          if (this.workspace.getPath() == null) {
             this.toast(t("gui.scripts.toast.singleFile"), true);
          } else {
             try {
-               for (int var2 = 1; var2 < 100; var2++) {
-                  Path var3 = var1.method1346(this.workspace, "util" + (var2 == 1 ? "" : var2) + ".js");
-                  if (!Files.exists(var3)) {
-                     var1.method1347(this.workspace, var3, "// include(\"" + var3.getFileName() + "\")\n");
-                     this.files = var1.method1345(this.workspace);
+               for (int i = 1; i < 100; i++) {
+                  Path file = storage.method1346(this.workspace, "util" + (i == 1 ? "" : i) + ".js");
+                  if (!Files.exists(file)) {
+                     storage.method1347(this.workspace, file, "// include(\"" + file.getFileName() + "\")\n");
+                     this.files = storage.method1345(this.workspace);
                      if (this.code.isDirty()) {
                         this.save();
                      }
 
-                     this.openFile(var3);
+                     this.openFile(file);
                      return;
                   }
                }
-            } catch (Exception var4) {
-               this.toast(var4.getMessage(), true);
+            } catch (Exception e) {
+               this.toast(e.getMessage(), true);
             }
          }
       }
    }
 
-   private void listToast(String var1, boolean var2) {
+   private void listToast(String toast, boolean toastError) {
       if (this.workspace != null) {
-         this.toast(var1, var2);
+         this.toast(toast, toastError);
       } else {
-         this.evalLines.add((var2 ? "! " : "  ") + var1);
-         this.toast(var1, var2);
+         this.evalLines.add((toastError ? "! " : "  ") + toast);
+         this.toast(toast, toastError);
          this.invalidate();
       }
    }
 
-   private void toast(String var1, boolean var2) {
-      this.toast = var1;
-      this.toastError = var2;
+   private void toast(String toast, boolean toastError) {
+      this.toast = toast;
+      this.toastError = toastError;
       this.toastAt = System.currentTimeMillis();
    }
 
-   private void runScriptAction(Runnable var1) {
-      Storage var2 = host();
-      if (var2 != null && this.workspace != null) {
-         var1.run();
+   private void runScriptAction(Runnable runnable) {
+      Storage storage = host();
+      if (storage != null && this.workspace != null) {
+         runnable.run();
          this.moduleRows.clear();
          this.code.setErrorLine(Storage.method1348(this.workspace, this.file));
       }
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float y) {
       if (this.workspace != null) {
-         Storage var7 = host();
-         if (var7 != null && var7.method1294(this.workspace.getId()) != null) {
-            this.renderWorkspace(var1, var2, var3, var4, var5, var6);
+         Storage storage = host();
+         if (storage != null && storage.method1294(this.workspace.getId()) != null) {
+            this.renderWorkspace(menuDrawContext, lastClickX, lastClickY, f, f2, y);
             return;
          }
 
@@ -1229,12 +1229,12 @@ public class ScriptsSectionPanel extends SectionPanel {
       }
 
       this.homeHits.clear();
-      long var15 = System.currentTimeMillis();
-      if (var15 - this.lastCheck > 250L) {
-         this.lastCheck = var15;
-         long var9 = this.signature();
-         if (var9 != this.lastSignature) {
-            this.lastSignature = var9;
+      long now = System.currentTimeMillis();
+      if (now - this.lastCheck > 250L) {
+         this.lastCheck = now;
+         long signature = this.signature();
+         if (signature != this.lastSignature) {
+            this.lastSignature = signature;
             this.invalidate();
          }
       }
@@ -1243,39 +1243,39 @@ public class ScriptsSectionPanel extends SectionPanel {
          this.invalidate();
       }
 
-      int var16 = this.getActiveTab();
-      if (this.shownTab != var16) {
-         if (this.shownTab >= 0 && (this.shownTab == 1 || var16 == 1)) {
-            this.tabDirection = var16 > this.shownTab ? 1.0F : -1.0F;
+      int activeTab = this.getActiveTab();
+      if (this.shownTab != activeTab) {
+         if (this.shownTab >= 0 && (this.shownTab == 1 || activeTab == 1)) {
+            this.tabDirection = activeTab > this.shownTab ? 1.0F : -1.0F;
             this.tabSwitch.reset(0.0F);
             this.tabSwitch.method2810(1.0F);
          }
 
-         this.shownTab = var16;
+         this.shownTab = activeTab;
       }
 
-      float var10 = this.tabSwitch.method2808(1.0F);
-      float var11 = 14.0F * this.tabDirection * (1.0F - var10);
-      var1.pose().pushMatrix();
-      var1.pose().translate(var11, 0.0F);
+      float f3 = this.tabSwitch.method2808(1.0F);
+      float x = 14.0F * this.tabDirection * (1.0F - f3);
+      menuDrawContext.pose().pushMatrix();
+      menuDrawContext.pose().translate(x, 0.0F);
 
       try {
          if (this.configsTab()) {
-            this.configs.render(var1, var2, var3, var4 * var10, var5, var6);
+            this.configs.render(menuDrawContext, lastClickX, lastClickY, f * f3, f2, y);
          } else {
-            super.render(var1, var2, var3, var4 * var10, var5, var6);
+            super.render(menuDrawContext, lastClickX, lastClickY, f * f3, f2, y);
          }
       } finally {
-         var1.pose().popMatrix();
+         menuDrawContext.pose().popMatrix();
       }
    }
 
    @Override
-   public void renderPriority(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void renderPriority(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float floatValue, float f2) {
       if (this.configsTab()) {
-         this.configs.renderPriority(var1, var2, var3, var4, var5, var6);
+         this.configs.renderPriority(customDrawContext, mouseX, mouseY, f, floatValue, f2);
       } else {
-         super.renderPriority(var1, var2, var3, var4, var5, var6);
+         super.renderPriority(customDrawContext, mouseX, mouseY, f, floatValue, f2);
       }
    }
 
@@ -1289,56 +1289,56 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
+   public void renderHeader(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float f, float f2, float f3) {
       if (this.workspace == null) {
-         super.renderHeader(var1, var2, var3, var4, var5, var6, var7);
+         super.renderHeader(menuDrawContext, lastClickX, lastClickY, previewAlpha, f, f2, f3);
       } else {
-         ZenithStyle var8 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         if (var8 != null) {
-            float var9 = var4 * this.workspaceAnimation.getValue();
-            Font var10 = Fonts.NEW_MEDIUM.getFont(5.5F);
-            Font var11 = Fonts.NEW_MEDIUM.getFont(4.8F);
-            float var12 = var6 + 11.5F;
-            float var13 = var5 + 8.0F;
-            ZenithColor var14 = var8.getTextTertiary().getZenithColor();
-            this.headerBack = new BoundsData(var13 - 2.0F, var12 - 7.0F, 14.0F, 14.0F);
-            boolean var15 = this.headerBack.contains(var2, var3);
-            var1.drawRoundedRect(
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         if (currentStyle != null) {
+            float previewAlpha2 = previewAlpha * this.workspaceAnimation.getValue();
+            Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+            Font font2 = Fonts.NEW_MEDIUM.getFont(4.8F);
+            float f4 = f2 + 11.5F;
+            float floatValue = f + 8.0F;
+            ZenithColor zenithColor = currentStyle.getTextTertiary().getZenithColor();
+            this.headerBack = new BoundsData(floatValue - 2.0F, f4 - 7.0F, 14.0F, 14.0F);
+            boolean contains = this.headerBack.contains(lastClickX, lastClickY);
+            menuDrawContext.drawRoundedRect(
                this.headerBack.getFloatValue(),
                this.headerBack.getFloatValue2(),
                this.headerBack.width(),
                this.headerBack.height(),
                ProxyDotRadiusData.method8069(4.0F),
-               var8.getSurfaceDisableBackground().getZenithColor().method7294(var9 * (var15 ? 1.0F : 0.55F))
+               currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha2 * (contains ? 1.0F : 0.55F))
             );
-            var1.drawText(
-               var10,
+            menuDrawContext.drawText(
+               font,
                "‹",
-               this.headerBack.getFloatValue() + (14.0F - var10.width("‹")) / 2.0F,
-               var12 - var10.height() / 2.0F - 0.5F,
-               (var15 ? var8.getTextEnable() : var8.getTextSecondary()).getZenithColor().method7294(var9)
+               this.headerBack.getFloatValue() + (14.0F - font.width("‹")) / 2.0F,
+               f4 - font.height() / 2.0F - 0.5F,
+               (contains ? currentStyle.getTextEnable() : currentStyle.getTextSecondary()).getZenithColor().method7294(previewAlpha2)
             );
-            var13 += 17.0F;
-            this.headerRoot = new BoundsData(var13 - 2.0F, var12 - 7.0F, var10.width("Scripts") + 4.0F, 14.0F);
-            var13 = crumb(var1, var10, "Scripts", var13, var12, this.headerRoot.contains(var2, var3) ? var8.getTextEnable().getZenithColor() : var14, var9);
-            var13 = crumb(var1, var10, "/", var13, var12, var14.method7294(0.6F), var9);
-            var13 = crumb(var1, var10, this.workspace.method1403(), var13, var12, var8.getTextEnable().getZenithColor(), var9);
+            floatValue += 17.0F;
+            this.headerRoot = new BoundsData(floatValue - 2.0F, f4 - 7.0F, font.width("Scripts") + 4.0F, 14.0F);
+            floatValue = crumb(menuDrawContext, font, "Scripts", floatValue, f4, this.headerRoot.contains(lastClickX, lastClickY) ? currentStyle.getTextEnable().getZenithColor() : zenithColor, previewAlpha2);
+            floatValue = crumb(menuDrawContext, font, "/", floatValue, f4, zenithColor.method7294(0.6F), previewAlpha2);
+            floatValue = crumb(menuDrawContext, font, this.workspace.method1403(), floatValue, f4, currentStyle.getTextEnable().getZenithColor(), previewAlpha2);
             if (this.infoPage) {
-               var13 = crumb(var1, var10, "/", var13, var12, var14.method7294(0.6F), var9);
+               floatValue = crumb(menuDrawContext, font, "/", floatValue, f4, zenithColor.method7294(0.6F), previewAlpha2);
                crumb(
-                  var1,
-                  var10,
+                  menuDrawContext,
+                  font,
                   t("gui.scripts.ws.about") + (this.info != null && this.info.isDirty() ? "  •" : ""),
-                  var13,
-                  var12,
-                  this.info != null && this.info.isDirty() ? WARN : var8.getTextSecondary().getZenithColor(),
-                  var9
+                  floatValue,
+                  f4,
+                  this.info != null && this.info.isDirty() ? WARN : currentStyle.getTextSecondary().getZenithColor(),
+                  previewAlpha2
                );
             } else if (this.file != null) {
-               Path var16 = this.workspace.getPath() == null ? this.file.getParent() : this.workspace.getPath();
-               var13 = crumb(var1, var10, "/", var13, var12, var14.method7294(0.6F), var9);
-               String var17 = var16.relativize(this.file).toString().replace('\\', '/') + (this.code.isDirty() ? "  •" : "");
-               crumb(var1, var10, var17, var13, var12, this.code.isDirty() ? WARN : var8.getTextSecondary().getZenithColor(), var9);
+               Path parent = this.workspace.getPath() == null ? this.file.getParent() : this.workspace.getPath();
+               floatValue = crumb(menuDrawContext, font, "/", floatValue, f4, zenithColor.method7294(0.6F), previewAlpha2);
+               String text = parent.relativize(this.file).toString().replace('\\', '/') + (this.code.isDirty() ? "  •" : "");
+               crumb(menuDrawContext, font, text, floatValue, f4, this.code.isDirty() ? WARN : currentStyle.getTextSecondary().getZenithColor(), previewAlpha2);
             }
 
             this.headerActions.clear();
@@ -1393,40 +1393,40 @@ public class ScriptsSectionPanel extends SectionPanel {
             }
 
             this.headerButtons.clear();
-            float var32 = var5 + var7;
-            var var34 = new ArrayList<>(this.headerActions.entrySet());
+            float floatValue2 = f + f3;
+            var entries = new ArrayList<>(this.headerActions.entrySet());
 
-            for (int var18 = var34.size() - 1; var18 >= 0; var18--) {
-               String var19 = (String)((Map.Entry)var34.get(var18)).getKey();
-               String var20 = t(var19);
-               float var21 = var11.width(var20) + 14.0F;
-               var32 -= var21;
-               BoundsData var22 = new BoundsData(var32, var12 - 6.5F, var21, 13.0F);
-               boolean var23 = var22.contains(var2, var3);
-               boolean var24 = var19.equals("gui.scripts.ws.save");
-               ZenithColor var25 = var24
-                  ? var8.getPrimaryColor().getZenithColor().method7294(var23 ? 1.0F : 0.85F)
-                  : var8.getSurfaceDisableBackground().getZenithColor().method7294(var23 ? 1.0F : 0.6F);
-               var1.drawRoundedRect(
-                  var22.getFloatValue(), var22.getFloatValue2(), var22.width(), var22.height(), ProxyDotRadiusData.method8069(4.0F), var25.method7294(var9)
+            for (int i = entries.size() - 1; i >= 0; i--) {
+               String key = (String)((Map.Entry)entries.get(i)).getKey();
+               String text = t(key);
+               float width = font2.width(text) + 14.0F;
+               floatValue2 -= width;
+               BoundsData boundsData = new BoundsData(floatValue2, f4 - 6.5F, width, 13.0F);
+               boolean flag = boundsData.contains(lastClickX, lastClickY);
+               boolean flag2 = key.equals("gui.scripts.ws.save");
+               ZenithColor zenithColor2 = flag2
+                  ? currentStyle.getPrimaryColor().getZenithColor().method7294(flag ? 1.0F : 0.85F)
+                  : currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(flag ? 1.0F : 0.6F);
+               menuDrawContext.drawRoundedRect(
+                  boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), ProxyDotRadiusData.method8069(4.0F), zenithColor2.method7294(previewAlpha2)
                );
-               var1.drawText(
-                  var11,
-                  var20,
-                  var22.getFloatValue() + 7.0F,
-                  var12 - var11.height() / 2.0F,
-                  (var24 ? ZenithColor.INSTANCE : var8.getTextEnable().getZenithColor()).method7294(var9)
+               menuDrawContext.drawText(
+                  font2,
+                  text,
+                  boundsData.getFloatValue() + 7.0F,
+                  f4 - font2.height() / 2.0F,
+                  (flag2 ? ZenithColor.INSTANCE : currentStyle.getTextEnable().getZenithColor()).method7294(previewAlpha2)
                );
-               this.headerButtons.put(var19, var22);
-               var32 -= 4.0F;
+               this.headerButtons.put(key, boundsData);
+               floatValue2 -= 4.0F;
             }
          }
       }
    }
 
-   private static float crumb(MenuDrawContext var0, Font var1, String var2, float var3, float var4, ZenithColor var5, float var6) {
-      var0.drawText(var1, var2, var3, var4 - var1.height() / 2.0F, var5.method7294(var6));
-      return var3 + var1.width(var2) + 5.0F;
+   private static float crumb(MenuDrawContext menuDrawContext, Font font, String text, float floatValue, float f, ZenithColor zenithColor, float previewAlpha) {
+      menuDrawContext.drawText(font, text, floatValue, f - font.height() / 2.0F, zenithColor.method7294(previewAlpha));
+      return floatValue + font.width(text) + 5.0F;
    }
 
    @Override
@@ -1435,22 +1435,22 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderHeaderButtons(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
+   public void renderHeaderButtons(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float f, float y, float mainWidth, float f2) {
       if (this.workspace == null) {
-         super.renderHeaderButtons(var1, var2, var3, var4, var5, var6, var7, var8);
+         super.renderHeaderButtons(menuDrawContext, lastClickX, lastClickY, previewAlpha, f, y, mainWidth, f2);
       }
    }
 
    @Override
-   public boolean onHeaderButtonsClicked(double var1, double var3, Enum3 var5) {
+   public boolean onHeaderButtonsClicked(double lastClickX, double lastClickY, Enum3 enum2) {
       if (this.workspace == null) {
-         return super.onHeaderButtonsClicked(var1, var3, var5);
-      } else if ((this.headerBack == null || !this.headerBack.contains(var1, var3)) && (this.headerRoot == null || !this.headerRoot.contains(var1, var3))) {
-         for (Map.Entry var7 : this.headerButtons.entrySet()) {
-            if (((BoundsData)var7.getValue()).contains(var1, var3)) {
-               Runnable var8 = this.headerActions.get(var7.getKey());
-               if (var8 != null) {
-                  var8.run();
+         return super.onHeaderButtonsClicked(lastClickX, lastClickY, enum2);
+      } else if ((this.headerBack == null || !this.headerBack.contains(lastClickX, lastClickY)) && (this.headerRoot == null || !this.headerRoot.contains(lastClickX, lastClickY))) {
+         for (Map.Entry entry : this.headerButtons.entrySet()) {
+            if (((BoundsData)entry.getValue()).contains(lastClickX, lastClickY)) {
+               Runnable headerAction = this.headerActions.get(entry.getKey());
+               if (headerAction != null) {
+                  headerAction.run();
                }
 
                return true;
@@ -1465,452 +1465,452 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public void renderLeftColumn(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
-      ZenithStyle var9 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      Storage var10 = host();
-      if (var9 != null && this.workspace != null && var10 != null) {
+   public void renderLeftColumn(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, float floatValue, float y, float width, float height) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      Storage hostOrNull = host();
+      if (currentStyle != null && this.workspace != null && hostOrNull != null) {
          if (++this.filesTick % 40 == 0) {
-            long var11 = System.currentTimeMillis();
-            if (var11 - this.filesAt >= 500L) {
-               this.filesAt = var11;
-               this.files = var10.method1345(this.workspace);
+            long now = System.currentTimeMillis();
+            if (now - this.filesAt >= 500L) {
+               this.filesAt = now;
+               this.files = hostOrNull.method1345(this.workspace);
             }
          }
 
-         this.leftBounds = new BoundsData(var5, var6, var7, var8);
-         Font var33 = Fonts.NEW_MEDIUM.getFont(5.2F);
-         Font var12 = Fonts.NEW_REGULAR.getFont(4.4F);
-         Font var13 = Fonts.NEW_MEDIUM.getFont(4.2F);
-         float var14 = 10.0F;
-         this.backRect = new BoundsData(var5 + 6.0F, var6 + 6.0F, var7 - 12.0F, 14.0F);
-         boolean var15 = this.backRect.contains(var2, var3);
-         if (var15) {
-            var1.drawRoundedRect(
+         this.leftBounds = new BoundsData(floatValue, y, width, height);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+         Font font3 = Fonts.NEW_MEDIUM.getFont(4.2F);
+         float f = 10.0F;
+         this.backRect = new BoundsData(floatValue + 6.0F, y + 6.0F, width - 12.0F, 14.0F);
+         boolean contains = this.backRect.contains(lastClickX, lastClickY);
+         if (contains) {
+            menuDrawContext.drawRoundedRect(
                this.backRect.getFloatValue(),
                this.backRect.getFloatValue2(),
                this.backRect.width(),
                this.backRect.height(),
                ProxyDotRadiusData.method8069(4.0F),
-               var9.getSurfaceEnableBackground().getZenithColor().method7294(var4 * 0.4F)
+               currentStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha * 0.4F)
             );
          }
 
-         var1.drawText(
-            var33,
+         menuDrawContext.drawText(
+            font,
             "‹  " + t("gui.scripts.ws.back"),
-            var5 + var14,
-            this.backRect.getFloatValue2() + (14.0F - var33.height()) / 2.0F,
-            (var15 ? var9.getTextEnable() : var9.getTextSecondary()).getZenithColor().method7294(var4)
+            floatValue + f,
+            this.backRect.getFloatValue2() + (14.0F - font.height()) / 2.0F,
+            (contains ? currentStyle.getTextEnable() : currentStyle.getTextSecondary()).getZenithColor().method7294(previewAlpha)
          );
-         float var16 = var6 + 30.0F;
-         Font var17 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-         ScriptInfoPage.drawAvatar(var1, var9, this.workspace, var5 + var14, var16 - 1.0F, 20.0F, var4, -2);
-         var1.drawText(
-            var17,
-            var17.clip(this.workspace.method1403(), var7 - var14 * 2.0F - 25.0F),
-            var5 + var14 + 25.0F,
-            var16,
-            var9.getTextEnable().getZenithColor().method7294(var4)
+         float centeredTextY = y + 30.0F;
+         Font font4 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+         ScriptInfoPage.drawAvatar(menuDrawContext, currentStyle, this.workspace, floatValue + f, centeredTextY - 1.0F, 20.0F, previewAlpha, -2);
+         menuDrawContext.drawText(
+            font4,
+            font4.clip(this.workspace.method1403(), width - f * 2.0F - 25.0F),
+            floatValue + f + 25.0F,
+            centeredTextY,
+            currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
          );
-         var16 += var17.height() + 3.0F;
-         boolean var18 = this.workspace.getType2() == Script.Type2.FAILED;
-         ZenithColor var19 = this.workspace.isRunning() ? OK : (var18 ? ERROR : var9.getTextTertiary().getZenithColor());
-         var1.drawRoundedRect(
-            var5 + var14 + 25.0F, var16 + var12.height() / 2.0F - 1.5F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), var19.method7294(var4)
+         centeredTextY += font4.height() + 3.0F;
+         boolean flag = this.workspace.getType2() == Script.Type2.FAILED;
+         ZenithColor zenithColor = this.workspace.isRunning() ? OK : (flag ? ERROR : currentStyle.getTextTertiary().getZenithColor());
+         menuDrawContext.drawRoundedRect(
+            floatValue + f + 25.0F, centeredTextY + font2.height() / 2.0F - 1.5F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), zenithColor.method7294(previewAlpha)
          );
-         var1.drawText(
-            var12,
-            var12.clip(
-               this.stateText(var10, this.workspace) + (this.workspace.getVersion().isBlank() ? "" : "  ·  v" + this.workspace.getVersion()),
-               var7 - var14 * 2.0F - 31.0F
+         menuDrawContext.drawText(
+            font2,
+            font2.clip(
+               this.stateText(hostOrNull, this.workspace) + (this.workspace.getVersion().isBlank() ? "" : "  ·  v" + this.workspace.getVersion()),
+               width - f * 2.0F - 31.0F
             ),
-            var5 + var14 + 31.0F,
-            var16,
-            var9.getTextTertiary().getZenithColor().method7294(var4)
+            floatValue + f + 31.0F,
+            centeredTextY,
+            currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
          );
-         var16 += var12.height() + 10.0F;
+         centeredTextY += font2.height() + 10.0F;
          this.infoRect = null;
-         var1.drawText(var13, t("gui.scripts.ws.files"), var5 + var14, var16, var9.getTextTertiary().getZenithColor().method7294(var4));
-         var16 += var13.height() + 5.0F;
+         menuDrawContext.drawText(font3, t("gui.scripts.ws.files"), floatValue + f, centeredTextY, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+         centeredTextY += font3.height() + 5.0F;
          this.fileRects.clear();
-         Path var20 = this.workspace.getPath() == null ? this.workspace.getPath2().getParent() : this.workspace.getPath();
-         float var21 = this.workspaceAnimation.getValue();
-         float var22 = var6 + var8 - 44.0F;
-         float var23 = -1.0F;
+         Path parent = this.workspace.getPath() == null ? this.workspace.getPath2().getParent() : this.workspace.getPath();
+         float f2 = this.workspaceAnimation.getValue();
+         float f3 = y + height - 44.0F;
+         float floatValue2 = -1.0F;
 
-         for (int var24 = 0; var24 < this.files.size(); var24++) {
-            float var25 = var16 + var24 * 15.0F;
-            if (var25 > var22) {
+         for (int i = 0; i < this.files.size(); i++) {
+            float f4 = centeredTextY + i * 15.0F;
+            if (f4 > f3) {
                break;
             }
 
-            if (!this.infoPage && this.files.get(var24).equals(this.file)) {
-               var23 = var25;
+            if (!this.infoPage && this.files.get(i).equals(this.file)) {
+               floatValue2 = f4;
             }
          }
 
-         if (var23 >= 0.0F) {
+         if (floatValue2 >= 0.0F) {
             if (!this.filePlateReady) {
-               this.filePlate.reset(var23);
+               this.filePlate.reset(floatValue2);
                this.filePlateReady = true;
             }
 
-            float var37 = this.filePlate.method2808(var23);
-            var1.drawRoundedRect(
-               var5 + 6.0F, var37, var7 - 12.0F, 14.0F, ProxyDotRadiusData.method8069(4.0F), var9.getPrimaryColor().getZenithColor().method7294(var4 * 0.2F)
+            float y2 = this.filePlate.method2808(floatValue2);
+            menuDrawContext.drawRoundedRect(
+               floatValue + 6.0F, y2, width - 12.0F, 14.0F, ProxyDotRadiusData.method8069(4.0F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha * 0.2F)
             );
-            var1.drawRoundedRect(
-               var5 + 6.0F, var37 + 3.5F, 1.5F, 7.0F, ProxyDotRadiusData.method8069(0.75F), var9.getPrimaryColor().getZenithColor().method7294(var4)
+            menuDrawContext.drawRoundedRect(
+               floatValue + 6.0F, y2 + 3.5F, 1.5F, 7.0F, ProxyDotRadiusData.method8069(0.75F), currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha)
             );
          }
 
-         int var38 = 0;
+         int n = 0;
 
-         for (Path var26 : this.files) {
-            float var27 = var16 + var38 * 15.0F;
-            if (var27 > var22) {
+         for (Path file : this.files) {
+            float y2 = centeredTextY + n * 15.0F;
+            if (y2 > f3) {
                break;
             }
 
-            float var28 = var4 * Mth.clamp(var21 * 3.0F - var38 * 0.25F, 0.0F, 1.0F);
-            BoundsData var29 = new BoundsData(var5 + 6.0F, var27, var7 - 12.0F, 14.0F);
-            boolean var30 = !this.infoPage && var26.equals(this.file);
-            if (!var30 && var29.contains(var2, var3)) {
-               var1.drawRoundedRect(
-                  var29.getFloatValue(),
-                  var29.getFloatValue2(),
-                  var29.width(),
-                  var29.height(),
+            float previewAlpha2 = previewAlpha * Mth.clamp(f2 * 3.0F - n * 0.25F, 0.0F, 1.0F);
+            BoundsData boundsData = new BoundsData(floatValue + 6.0F, y2, width - 12.0F, 14.0F);
+            boolean flag2 = !this.infoPage && file.equals(this.file);
+            if (!flag2 && boundsData.contains(lastClickX, lastClickY)) {
+               menuDrawContext.drawRoundedRect(
+                  boundsData.getFloatValue(),
+                  boundsData.getFloatValue2(),
+                  boundsData.width(),
+                  boundsData.height(),
                   ProxyDotRadiusData.method8069(4.0F),
-                  var9.getSurfaceEnableBackground().getZenithColor().method7294(var28 * 0.35F)
+                  currentStyle.getSurfaceEnableBackground().getZenithColor().method7294(previewAlpha2 * 0.35F)
                );
             }
 
-            String var31 = var20.relativize(var26).toString().replace('\\', '/');
-            boolean var32 = Storage.method1348(this.workspace, var26) > 0;
-            (var31.endsWith(".js") ? MenuGlyph.CODE : MenuGlyph.TEXT)
+            String str = parent.relativize(file).toString().replace('\\', '/');
+            boolean flag3 = Storage.method1348(this.workspace, file) > 0;
+            (str.endsWith(".js") ? MenuGlyph.CODE : MenuGlyph.TEXT)
                .draw(
-                  var1,
-                  var29.getFloatValue() + 5.0F,
-                  var27 + 4.0F,
-                  (var30 ? var9.getPrimaryColor().getZenithColor() : var9.getTextTertiary().getZenithColor()).method7294(var28)
+                  menuDrawContext,
+                  boundsData.getFloatValue() + 5.0F,
+                  y2 + 4.0F,
+                  (flag2 ? currentStyle.getPrimaryColor().getZenithColor() : currentStyle.getTextTertiary().getZenithColor()).method7294(previewAlpha2)
                );
-            var1.drawText(
-               var12,
-               var12.clip(var31 + (var30 && this.code.isDirty() ? "  •" : ""), var29.width() - 22.0F),
-               var29.getFloatValue() + 15.0F,
-               var27 + (14.0F - var12.height()) / 2.0F,
-               (var32 ? ERROR : (var30 ? var9.getTextEnable().getZenithColor() : var9.getTextSecondary().getZenithColor())).method7294(var28)
+            menuDrawContext.drawText(
+               font2,
+               font2.clip(str + (flag2 && this.code.isDirty() ? "  •" : ""), boundsData.width() - 22.0F),
+               boundsData.getFloatValue() + 15.0F,
+               y2 + (14.0F - font2.height()) / 2.0F,
+               (flag3 ? ERROR : (flag2 ? currentStyle.getTextEnable().getZenithColor() : currentStyle.getTextSecondary().getZenithColor())).method7294(previewAlpha2)
             );
-            this.fileRects.add(new Object[]{var29, var26});
-            var38++;
+            this.fileRects.add(new Object[]{boundsData, file});
+            n++;
          }
 
          this.newFileRect = null;
          if (this.workspace.getPath() != null) {
-            float var40 = var16 + var38 * 15.0F + 2.0F;
-            this.newFileRect = new BoundsData(var5 + 6.0F, var40, var7 - 12.0F, 14.0F);
-            boolean var43 = this.newFileRect.contains(var2, var3);
-            var1.drawText(
-               var12,
+            float y2 = centeredTextY + n * 15.0F + 2.0F;
+            this.newFileRect = new BoundsData(floatValue + 6.0F, y2, width - 12.0F, 14.0F);
+            boolean contains2 = this.newFileRect.contains(lastClickX, lastClickY);
+            menuDrawContext.drawText(
+               font2,
                "+  " + t("gui.scripts.ws.newFile"),
-               var5 + 11.0F,
-               var40 + (14.0F - var12.height()) / 2.0F,
-               (var43 ? var9.getTextEnable() : var9.getTextTertiary()).getZenithColor().method7294(var4)
+               floatValue + 11.0F,
+               y2 + (14.0F - font2.height()) / 2.0F,
+               (contains2 ? currentStyle.getTextEnable() : currentStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
             );
          }
 
-         float var41 = var6 + var8 - 74.0F;
-         if (!this.infoPage && this.code != null && var41 > var16 + var38 * 15.0F + 24.0F) {
-            var1.drawText(var13, t("gui.scripts.ws.stats"), var5 + var14, var41, var9.getTextTertiary().getZenithColor().method7294(var4));
-            var41 += var13.height() + 4.0F;
-            String[] var44 = new String[]{
+         float centeredTextY2 = y + height - 74.0F;
+         if (!this.infoPage && this.code != null && centeredTextY2 > centeredTextY + n * 15.0F + 24.0F) {
+            menuDrawContext.drawText(font3, t("gui.scripts.ws.stats"), floatValue + f, centeredTextY2, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY2 += font3.height() + 4.0F;
+            String[] strings = new String[]{
                t("gui.scripts.ws.lines").replace("{n}", String.valueOf(this.code.lineCount())),
                t("gui.scripts.ws.caret").replace("{l}", String.valueOf(this.code.caretLine())).replace("{c}", String.valueOf(this.code.caretColumn())),
                t("gui.scripts.ws.modulesCount").replace("{n}", String.valueOf(this.workspace.getItems3().size()))
             };
 
-            for (String var52 : var44) {
-               var1.drawText(var12, var12.clip(var52, var7 - var14 * 2.0F), var5 + var14, var41, var9.getTextSecondary().getZenithColor().method7294(var4));
-               var41 += var12.height() + 2.5F;
+            for (String name : strings) {
+               menuDrawContext.drawText(font2, font2.clip(name, width - f * 2.0F), floatValue + f, centeredTextY2, currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+               centeredTextY2 += font2.height() + 2.5F;
             }
          }
 
-         float var45 = var6 + var8 - 36.0F;
-         var1.drawRect(var5 + var14, var45 - 6.0F, var7 - var14 * 2.0F, 1.0F, var9.getFieldBorder().getZenithColor().method7294(var4 * 2.0F));
-         String[] var47 = new String[]{
+         float centeredTextY3 = y + height - 36.0F;
+         menuDrawContext.drawRect(floatValue + f, centeredTextY3 - 6.0F, width - f * 2.0F, 1.0F, currentStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 2.0F));
+         String[] strings = new String[]{
             "Ctrl+S  " + t("gui.scripts.hint.save"), "Ctrl+Space  " + t("gui.scripts.hint.complete"), "Esc  " + t("gui.scripts.hint.back")
          };
 
-         for (String var54 : var47) {
-            var1.drawText(var12, var12.clip(var54, var7 - var14 * 2.0F), var5 + var14, var45, var9.getTextTertiary().getZenithColor().method7294(var4));
-            var45 += var12.height() + 2.5F;
+         for (String name : strings) {
+            menuDrawContext.drawText(font2, font2.clip(name, width - f * 2.0F), floatValue + f, centeredTextY3, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            centeredTextY3 += font2.height() + 2.5F;
          }
       }
    }
 
-   private void renderWorkspace(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
-         float var8 = this.workspaceAnimation.method2808(1.0F);
-         float var9 = var4 * var8;
-         float var10 = (1.0F - var8) * 8.0F;
-         float var11 = 380.0F + NLMenuScreen.extraWidth;
-         float var12 = NLMenuScreen.contentBottom - var6 - GuiStyle.PADDING.intValue() * 2.0F;
-         float var13 = var6 + var10;
+   private void renderWorkspace(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float y) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
+         float f3 = this.workspaceAnimation.method2808(1.0F);
+         float previewAlpha = f * f3;
+         float f4 = (1.0F - f3) * 8.0F;
+         float f5 = 380.0F + NLMenuScreen.extraWidth;
+         float height = NLMenuScreen.contentBottom - y - GuiStyle.PADDING.intValue() * 2.0F;
+         float y2 = y + f4;
          if (this.infoPage) {
-            this.codeBounds = new BoundsData(var5 + 8.0F, var13, var11 - 16.0F, var12);
+            this.codeBounds = new BoundsData(f2 + 8.0F, y2, f5 - 16.0F, height);
             this.inspectorBounds = null;
             this.consoleBounds = null;
             this.inputBounds = null;
-            this.info().render(var1, var2, var3, var5 + 8.0F, var13, var11 - 16.0F, var12, var9, var7);
-            this.renderToast(var1, var9, var7);
+            this.info().render(menuDrawContext, lastClickX, lastClickY, f2 + 8.0F, y2, f5 - 16.0F, height, previewAlpha, currentStyle);
+            this.renderToast(menuDrawContext, previewAlpha, currentStyle);
          } else {
-            float var14 = var13 + var12 - 62.0F;
-            this.codeBounds = new BoundsData(var5 + 8.0F, var13, var11 - 16.0F, var14 - var13 - 6.0F);
+            float y3 = y2 + height - 62.0F;
+            this.codeBounds = new BoundsData(f2 + 8.0F, y2, f5 - 16.0F, y3 - y2 - 6.0F);
             this.code
                .render(
-                  var1,
+                  menuDrawContext,
                   this.codeBounds.getFloatValue(),
                   this.codeBounds.getFloatValue2(),
                   this.codeBounds.width(),
                   this.codeBounds.height(),
-                  var2,
-                  var3,
-                  var9,
+                  lastClickX,
+                  lastClickY,
+                  previewAlpha,
                   EDITOR_BG
                );
             this.inspectorBounds = null;
-            this.consoleBounds = new BoundsData(var5 + 8.0F, var14, var11 - 16.0F, 62.0F);
-            this.renderWorkspaceConsole(var1, var9, var7);
-            this.renderToast(var1, var9, var7);
+            this.consoleBounds = new BoundsData(f2 + 8.0F, y3, f5 - 16.0F, 62.0F);
+            this.renderWorkspaceConsole(menuDrawContext, previewAlpha, currentStyle);
+            this.renderToast(menuDrawContext, previewAlpha, currentStyle);
          }
       }
    }
 
-   private void renderToast(MenuDrawContext var1, float var2, ZenithStyle var3) {
+   private void renderToast(MenuDrawContext menuDrawContext, float previewAlpha, ZenithStyle currentStyle) {
       if (!this.toast.isEmpty()) {
-         long var4 = System.currentTimeMillis() - this.toastAt;
-         float var6 = var4 < 200L ? (float)var4 / 200.0F : (var4 > 3600L ? Math.max(0.0F, 1.0F - (float)(var4 - 3600L) / 400.0F) : 1.0F);
-         if (var6 <= 0.01F) {
+         long l = System.currentTimeMillis() - this.toastAt;
+         float f = l < 200L ? (float)l / 200.0F : (l > 3600L ? Math.max(0.0F, 1.0F - (float)(l - 3600L) / 400.0F) : 1.0F);
+         if (f <= 0.01F) {
             this.toast = "";
          } else {
-            Font var7 = Fonts.NEW_MEDIUM.getFont(4.8F);
-            String var8 = var7.clip(this.toast, this.codeBounds.width() - 40.0F);
-            float var9 = var7.width(var8) + 22.0F;
-            float var10 = this.codeBounds.getFloatValue() + (this.codeBounds.width() - var9) / 2.0F;
-            float var11 = this.codeBounds.getFloatValue2() + this.codeBounds.height() - 22.0F + (1.0F - var6) * 6.0F;
-            var1.drawRoundedRect(var10, var11, var9, 15.0F, ProxyDotRadiusData.method8069(7.5F), new ZenithColor(18, 20, 28, 240).method7294(var2 * var6));
-            var1.drawRoundedRect(
-               var10 + 7.0F, var11 + 6.0F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), (this.toastError ? ERROR : OK).method7294(var2 * var6)
+            Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+            String clip = font.clip(this.toast, this.codeBounds.width() - 40.0F);
+            float width = font.width(clip) + 22.0F;
+            float floatValue = this.codeBounds.getFloatValue() + (this.codeBounds.width() - width) / 2.0F;
+            float y = this.codeBounds.getFloatValue2() + this.codeBounds.height() - 22.0F + (1.0F - f) * 6.0F;
+            menuDrawContext.drawRoundedRect(floatValue, y, width, 15.0F, ProxyDotRadiusData.method8069(7.5F), new ZenithColor(18, 20, 28, 240).method7294(previewAlpha * f));
+            menuDrawContext.drawRoundedRect(
+               floatValue + 7.0F, y + 6.0F, 3.0F, 3.0F, ProxyDotRadiusData.method8069(1.5F), (this.toastError ? ERROR : OK).method7294(previewAlpha * f)
             );
-            var1.drawText(
-               var7,
-               var8,
-               var10 + 14.0F,
-               var11 + (15.0F - var7.height()) / 2.0F,
-               (this.toastError ? ERROR.method7303(0.3F) : var3.getTextEnable().getZenithColor()).method7294(var2 * var6)
+            menuDrawContext.drawText(
+               font,
+               clip,
+               floatValue + 14.0F,
+               y + (15.0F - font.height()) / 2.0F,
+               (this.toastError ? ERROR.method7303(0.3F) : currentStyle.getTextEnable().getZenithColor()).method7294(previewAlpha * f)
             );
          }
       }
    }
 
-   private void renderInspector(MenuDrawContext var1, int var2, int var3, float var4, ZenithStyle var5) {
-      BoundsData var6 = this.inspectorBounds;
-      Font var7 = Fonts.NEW_MEDIUM.getFont(4.2F);
-      Font var8 = Fonts.NEW_MEDIUM.getFont(5.0F);
-      Font var9 = Fonts.NEW_REGULAR.getFont(4.4F);
+   private void renderInspector(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float previewAlpha, ZenithStyle currentStyle) {
+      BoundsData inspectorBounds = this.inspectorBounds;
+      Font font = Fonts.NEW_MEDIUM.getFont(4.2F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(5.0F);
+      Font font3 = Fonts.NEW_REGULAR.getFont(4.4F);
       this.inspectorHits.clear();
       this.inspectorScroll = this.inspectorScroll + (this.inspectorScrollTarget - this.inspectorScroll) * 0.3F;
       MsdfRenderer.flushBatch();
-      var1.enableScissor(var6.getFloatValue(), var6.getFloatValue2(), var6.getFloatValue() + var6.width(), var6.getFloatValue2() + var6.height());
-      float var10 = var6.getFloatValue2() + 2.0F + this.inspectorScroll;
-      float var11 = var10;
+      menuDrawContext.enableScissor(inspectorBounds.getFloatValue(), inspectorBounds.getFloatValue2(), inspectorBounds.getFloatValue() + inspectorBounds.width(), inspectorBounds.getFloatValue2() + inspectorBounds.height());
+      float y = inspectorBounds.getFloatValue2() + 2.0F + this.inspectorScroll;
+      float f = y;
       if (!this.workspace.getError().isBlank()) {
-         var1.drawText(var7, t("gui.scripts.ws.error"), var6.getFloatValue() + 2.0F, var10, ERROR.method7294(var4));
-         var10 += var7.height() + 4.0F;
-         List<String> var12 = wrapText(this.workspace.getError(), var9, var6.width() - 12.0F, 6);
-         float var13 = var12.size() * (var9.height() + 2.0F) + 8.0F;
-         BoundsData var14 = new BoundsData(var6.getFloatValue(), var10, var6.width(), var13);
-         var1.drawRoundedRect(
-            var14.getFloatValue(), var14.getFloatValue2(), var14.width(), var14.height(), ProxyDotRadiusData.method8069(4.0F), ERROR.method7294(var4 * 0.12F)
+         menuDrawContext.drawText(font, t("gui.scripts.ws.error"), inspectorBounds.getFloatValue() + 2.0F, y, ERROR.method7294(previewAlpha));
+         y += font.height() + 4.0F;
+         List<String> strings = wrapText(this.workspace.getError(), font3, inspectorBounds.width() - 12.0F, 6);
+         float height = strings.size() * (font3.height() + 2.0F) + 8.0F;
+         BoundsData boundsData = new BoundsData(inspectorBounds.getFloatValue(), y, inspectorBounds.width(), height);
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), ProxyDotRadiusData.method8069(4.0F), ERROR.method7294(previewAlpha * 0.12F)
          );
-         float var15 = var10 + 4.0F;
+         float centeredTextY = y + 4.0F;
 
-         for (String var17 : var12) {
-            var1.drawText(var9, var17, var6.getFloatValue() + 6.0F, var15, ERROR.method7303(0.3F).method7294(var4));
-            var15 += var9.height() + 2.0F;
+         for (String text : strings) {
+            menuDrawContext.drawText(font3, text, inspectorBounds.getFloatValue() + 6.0F, centeredTextY, ERROR.method7303(0.3F).method7294(previewAlpha));
+            centeredTextY += font3.height() + 2.0F;
          }
 
-         int var34 = Storage.method1348(this.workspace, this.file);
-         if (var34 > 0) {
-            this.inspectorHits.add(new Object[]{var14, (Runnable)() -> {
-               this.code.goToLine(var34);
+         int n = Storage.method1348(this.workspace, this.file);
+         if (n > 0) {
+            this.inspectorHits.add(new Object[]{boundsData, (Runnable)() -> {
+               this.code.goToLine(n);
                this.code.setFocused(true);
             }});
          }
 
-         var10 += var13 + 8.0F;
+         y += height + 8.0F;
       }
 
-      var1.drawText(var7, t("gui.scripts.ws.modules"), var6.getFloatValue() + 2.0F, var10, var5.getTextTertiary().getZenithColor().method7294(var4));
-      var10 += var7.height() + 5.0F;
+      menuDrawContext.drawText(font, t("gui.scripts.ws.modules"), inspectorBounds.getFloatValue() + 2.0F, y, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+      y += font.height() + 5.0F;
       if (this.workspace.getItems3().isEmpty()) {
-         for (String var30 : wrapText(t("gui.scripts.ws.noModules"), var9, var6.width() - 4.0F, 5)) {
-            var1.drawText(var9, var30, var6.getFloatValue() + 2.0F, var10, var5.getTextTertiary().getZenithColor().method7294(var4));
-            var10 += var9.height() + 2.0F;
+         for (String text : wrapText(t("gui.scripts.ws.noModules"), font3, inspectorBounds.width() - 4.0F, 5)) {
+            menuDrawContext.drawText(font3, text, inspectorBounds.getFloatValue() + 2.0F, y, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+            y += font3.height() + 2.0F;
          }
 
-         var10 += 6.0F;
+         y += 6.0F;
       }
 
-      for (Module1 var31 : this.workspace.getItems3().values()) {
-         BoundsData var32 = new BoundsData(var6.getFloatValue(), var10, var6.width(), 16.0F);
-         boolean var33 = var32.contains(var2, var3);
-         var1.drawRoundedRect(
-            var32.getFloatValue(),
-            var32.getFloatValue2(),
-            var32.width(),
-            var32.height(),
+      for (Module1 key : this.workspace.getItems3().values()) {
+         BoundsData boundsData = new BoundsData(inspectorBounds.getFloatValue(), y, inspectorBounds.width(), 16.0F);
+         boolean contains = boundsData.contains(lastClickX, lastClickY);
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue(),
+            boundsData.getFloatValue2(),
+            boundsData.width(),
+            boundsData.height(),
             ProxyDotRadiusData.method8069(4.0F),
-            var5.getSurfaceDisableBackground().getZenithColor().method7294(var4 * (var33 ? 0.9F : 0.55F))
+            currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha * (contains ? 0.9F : 0.55F))
          );
-         boolean var35 = this.expanded.getOrDefault(var31, true);
-         var1.drawText(
-            var8,
-            var8.clip(var31.getName(), var6.width() - 40.0F),
-            var6.getFloatValue() + 6.0F,
-            var10 + (16.0F - var8.height()) / 2.0F,
-            var5.getTextEnable().getZenithColor().method7294(var4)
+         boolean flag = this.expanded.getOrDefault(key, true);
+         menuDrawContext.drawText(
+            font2,
+            font2.clip(key.getName(), inspectorBounds.width() - 40.0F),
+            inspectorBounds.getFloatValue() + 6.0F,
+            y + (16.0F - font2.height()) / 2.0F,
+            currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
          );
-         float var36 = 13.0F;
-         float var18 = 7.0F;
-         float var19 = var6.getFloatValue() + var6.width() - var36 - 5.0F;
-         float var20 = var10 + (16.0F - var18) / 2.0F;
-         this.drawSwitch(var1, "module:" + var31.getId(), var19, var20, var36, var18, var31.isEnabled(), var4, var5);
-         this.inspectorHits.add(new Object[]{new BoundsData(var19 - 4.0F, var10, var36 + 9.0F, 16.0F), (Runnable)var31::toggle});
-         this.inspectorHits.add(new Object[]{var32, (Runnable)() -> this.expanded.put(var31, !var35)});
-         var10 += 18.0F;
-         if (var35) {
-            List<InspectorRow> var21 = this.moduleRows.computeIfAbsent(var31, var0 -> {
+         float width = 13.0F;
+         float height = 7.0F;
+         float floatValue = inspectorBounds.getFloatValue() + inspectorBounds.width() - width - 5.0F;
+         float y2 = y + (16.0F - height) / 2.0F;
+         this.drawSwitch(menuDrawContext, "module:" + key.getId(), floatValue, y2, width, height, key.isEnabled(), previewAlpha, currentStyle);
+         this.inspectorHits.add(new Object[]{new BoundsData(floatValue - 4.0F, y, width + 9.0F, 16.0F), (Runnable)key::toggle});
+         this.inspectorHits.add(new Object[]{boundsData, (Runnable)() -> this.expanded.put(key, !flag)});
+         y += 18.0F;
+         if (flag) {
+            List<InspectorRow> settingRows = this.moduleRows.computeIfAbsent(key, moduleRow -> {
                ArrayList var1x = new ArrayList();
 
-               for (Setting var3x : var0.getSettings()) {
+               for (Setting var3x : moduleRow.getSettings()) {
                   var1x.add(new InspectorRow(var3x, 0));
                }
 
                return var1x;
             });
-            InspectorRow.alignTracks(var21, var6.width());
+            InspectorRow.alignTracks(settingRows, inspectorBounds.width());
 
-            for (InspectorRow var23 : var21) {
-               if (var23.isVisible()) {
-                  float var24 = var23.height();
-                  var23.render(var1, var2, var3, var6.getFloatValue(), var10, var6.width(), var4);
-                  var10 += var24;
+            for (InspectorRow settingRow : settingRows) {
+               if (settingRow.isVisible()) {
+                  float height2 = settingRow.height();
+                  settingRow.render(menuDrawContext, lastClickX, lastClickY, inspectorBounds.getFloatValue(), y, inspectorBounds.width(), previewAlpha);
+                  y += height2;
                }
             }
 
-            var10 += 4.0F;
+            y += 4.0F;
          }
       }
 
       MsdfRenderer.flushBatch();
-      var1.disableScissor();
-      float var29 = var10 - var11;
-      this.inspectorScrollTarget = Mth.clamp(this.inspectorScrollTarget, Math.min(0.0F, var6.height() - var29 - 6.0F), 0.0F);
+      menuDrawContext.disableScissor();
+      float f2 = y - f;
+      this.inspectorScrollTarget = Mth.clamp(this.inspectorScrollTarget, Math.min(0.0F, inspectorBounds.height() - f2 - 6.0F), 0.0F);
    }
 
-   private void renderWorkspaceConsole(MenuDrawContext var1, float var2, ZenithStyle var3) {
-      BoundsData var4 = this.consoleBounds;
-      Storage var5 = host();
-      var1.drawRoundedRect(
-         var4.getFloatValue(), var4.getFloatValue2(), var4.width(), var4.height(), ProxyDotRadiusData.method8069(4.0F), EDITOR_BG.method7294(var2)
+   private void renderWorkspaceConsole(MenuDrawContext menuDrawContext, float previewAlpha, ZenithStyle currentStyle) {
+      BoundsData consoleBounds = this.consoleBounds;
+      Storage storage = host();
+      menuDrawContext.drawRoundedRect(
+         consoleBounds.getFloatValue(), consoleBounds.getFloatValue2(), consoleBounds.width(), consoleBounds.height(), ProxyDotRadiusData.method8069(4.0F), EDITOR_BG.method7294(previewAlpha)
       );
-      Font var6 = Fonts.NEW_MEDIUM.getFont(4.2F);
-      Font var7 = Fonts.NEW_REGULAR.getFont(4.4F);
-      var1.drawText(
-         var6, t("gui.scripts.ws.console"), var4.getFloatValue() + 6.0F, var4.getFloatValue2() + 5.0F, var3.getTextTertiary().getZenithColor().method7294(var2)
+      Font font = Fonts.NEW_MEDIUM.getFont(4.2F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.4F);
+      menuDrawContext.drawText(
+         font, t("gui.scripts.ws.console"), consoleBounds.getFloatValue() + 6.0F, consoleBounds.getFloatValue2() + 5.0F, currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
-      var var8 = var5 != null ? var5.method1349(this.workspace) : List.of();
-      int var9 = var8.size() + this.evalLines.size();
-      float var10 = var7.height() + 2.5F;
-      float var11 = var4.getFloatValue2() + 13.0F;
-      float var12 = 13.0F;
-      float var13 = var4.getFloatValue2() + var4.height() - var12 - 6.0F;
-      int var14 = Math.max(1, (int)((var13 - var11) / var10));
-      this.consoleScroll = Mth.clamp(this.consoleScroll, 0.0F, (float)Math.max(0, var9 - var14));
-      int var15 = Math.max(0, var9 - var14 - (int)this.consoleScroll);
-      float var16 = var11;
+      var list = storage != null ? storage.method1349(this.workspace) : List.of();
+      int n = list.size() + this.evalLines.size();
+      float f = font2.height() + 2.5F;
+      float f2 = consoleBounds.getFloatValue2() + 13.0F;
+      float height = 13.0F;
+      float f3 = consoleBounds.getFloatValue2() + consoleBounds.height() - height - 6.0F;
+      int n2 = Math.max(1, (int)((f3 - f2) / f));
+      this.consoleScroll = Mth.clamp(this.consoleScroll, 0.0F, (float)Math.max(0, n - n2));
+      int n3 = Math.max(0, n - n2 - (int)this.consoleScroll);
+      float centeredTextY = f2;
 
-      for (int var17 = var15; var17 < Math.min(var9, var15 + var14); var17++) {
-         String var18;
-         String var19;
-         if (var17 < var8.size()) {
-            Storage.Data2 var20 = (Storage.Data2)var8.get(var17);
-            var18 = TIME.format(new Date(var20.time())) + "  " + var20.text();
-            var19 = var20.getText2();
+      for (int i = n3; i < Math.min(n, n3 + n2); i++) {
+         String evalLine;
+         String str;
+         if (i < list.size()) {
+            Storage.Data2 data2 = (Storage.Data2)list.get(i);
+            evalLine = TIME.format(new Date(data2.time())) + "  " + data2.text();
+            str = data2.getText2();
          } else {
-            var18 = this.evalLines.get(var17 - var8.size());
-            var19 = var18.startsWith("! ") ? "error" : "eval";
+            evalLine = this.evalLines.get(i - list.size());
+            str = evalLine.startsWith("! ") ? "error" : "eval";
          }
 
-         var1.drawText(var7, var7.clip(var18, var4.width() - 12.0F), var4.getFloatValue() + 6.0F, var16, levelColor(var19, var3).method7294(var2));
-         var16 += var10;
+         menuDrawContext.drawText(font2, font2.clip(evalLine, consoleBounds.width() - 12.0F), consoleBounds.getFloatValue() + 6.0F, centeredTextY, levelColor(str, currentStyle).method7294(previewAlpha));
+         centeredTextY += f;
       }
 
-      this.inputBounds = new BoundsData(var4.getFloatValue() + 4.0F, var4.getFloatValue2() + var4.height() - var12 - 4.0F, var4.width() - 8.0F, var12);
-      this.renderInput(var1, this.inputBounds, var2, var3, this.workspace.isRunning() ? t("gui.scripts.ws.inputHint") : t("gui.scripts.console.hint"));
+      this.inputBounds = new BoundsData(consoleBounds.getFloatValue() + 4.0F, consoleBounds.getFloatValue2() + consoleBounds.height() - height - 4.0F, consoleBounds.width() - 8.0F, height);
+      this.renderInput(menuDrawContext, this.inputBounds, previewAlpha, currentStyle, this.workspace.isRunning() ? t("gui.scripts.ws.inputHint") : t("gui.scripts.console.hint"));
    }
 
-   private void renderInput(MenuDrawContext var1, BoundsData var2, float var3, ZenithStyle var4, String var5) {
-      Font var6 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      var1.drawRoundedRect(
-         var2.getFloatValue(),
-         var2.getFloatValue2(),
-         var2.width(),
-         var2.height(),
+   private void renderInput(MenuDrawContext menuDrawContext, BoundsData inputBounds, float previewAlpha, ZenithStyle currentStyle, String name) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      menuDrawContext.drawRoundedRect(
+         inputBounds.getFloatValue(),
+         inputBounds.getFloatValue2(),
+         inputBounds.width(),
+         inputBounds.height(),
          ProxyDotRadiusData.method8069(3.0F),
-         var4.getSurfaceDisableBackground().getZenithColor().method7294(var3 * (this.inputFocused ? 1.0F : 0.55F))
+         currentStyle.getSurfaceDisableBackground().getZenithColor().method7294(previewAlpha * (this.inputFocused ? 1.0F : 0.55F))
       );
-      boolean var7 = this.input.isEmpty();
-      String var8;
-      if (var7 && !this.inputFocused) {
-         var8 = var6.clip(var5, var2.width() - 12.0F);
+      boolean empty = this.input.isEmpty();
+      String clip;
+      if (empty && !this.inputFocused) {
+         clip = font.clip(name, inputBounds.width() - 12.0F);
       } else {
-         String var9 = this.input.toString();
-         String var10 = this.inputFocused && System.currentTimeMillis() / 530L % 2L == 0L ? "▏" : "";
+         String string = this.input.toString();
+         String str = this.inputFocused && System.currentTimeMillis() / 530L % 2L == 0L ? "▏" : "";
 
-         while (var6.width("›  " + var9 + var10) > var2.width() - 12.0F && var9.length() > 1) {
-            var9 = var9.substring(1);
+         while (font.width("›  " + string + str) > inputBounds.width() - 12.0F && string.length() > 1) {
+            string = string.substring(1);
          }
 
-         var8 = "›  " + var9 + var10;
+         clip = "›  " + string + str;
       }
 
-      var1.drawText(
-         var6,
-         var8,
-         var2.getFloatValue() + 6.0F,
-         var2.getFloatValue2() + (var2.height() - var6.height()) / 2.0F,
-         (var7 && !this.inputFocused ? var4.getTextTertiary() : var4.getTextEnable()).getZenithColor().method7294(var3)
+      menuDrawContext.drawText(
+         font,
+         clip,
+         inputBounds.getFloatValue() + 6.0F,
+         inputBounds.getFloatValue2() + (inputBounds.height() - font.height()) / 2.0F,
+         (empty && !this.inputFocused ? currentStyle.getTextTertiary() : currentStyle.getTextEnable()).getZenithColor().method7294(previewAlpha)
       );
    }
 
    private void runInput() {
-      Storage var1 = host();
-      String var2 = this.input.toString().trim();
-      if (var1 != null && !var2.isEmpty()) {
-         this.history.add(var2);
+      Storage storage = host();
+      String source = this.input.toString().trim();
+      if (storage != null && !source.isEmpty()) {
+         this.history.add(source);
          this.historyIndex = -1;
          this.input.setLength(0);
-         this.evalLines.add("> " + var2);
-         Script var3 = this.workspace != null && this.workspace.isRunning() ? this.workspace : null;
+         this.evalLines.add("> " + source);
+         Script workspace = this.workspace != null && this.workspace.isRunning() ? this.workspace : null;
 
          try {
-            this.evalLines.add("  " + var1.method1341(var3, var2));
-         } catch (Throwable var5) {
-            this.evalLines.add("! " + Storage.method1325(var5));
+            this.evalLines.add("  " + storage.method1341(workspace, source));
+         } catch (Throwable e) {
+            this.evalLines.add("! " + Storage.method1325(e));
          }
 
          while (this.evalLines.size() > 200) {
@@ -1931,105 +1931,105 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      return this.handleClick(var1, var3, var5);
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      return this.handleClick(lastClickX, lastClickY, enum2);
    }
 
-   private boolean handleClick(double var1, double var3, Enum3 var5) {
-      this.lastClickX = var1;
-      this.lastClickY = var3;
+   private boolean handleClick(double lastClickX, double lastClickY, Enum3 enum2) {
+      this.lastClickX = lastClickX;
+      this.lastClickY = lastClickY;
       if (this.configsTab()) {
-         return this.configs.onMouseClicked(var1, var3, var5);
+         return this.configs.onMouseClicked(lastClickX, lastClickY, enum2);
       } else if (this.workspace == null) {
          if (this.storeTab()) {
-            this.market.mouse(var1, var3);
-            BoundsData var12 = this.mainHeaderBounds();
-            if (var12 != null && var12.contains(var1, var3) && this.market.clickHeader()) {
+            this.market.mouse(lastClickX, lastClickY);
+            BoundsData mainHeaderBounds = this.mainHeaderBounds();
+            if (mainHeaderBounds != null && mainHeaderBounds.contains(lastClickX, lastClickY) && this.market.clickHeader()) {
                return true;
             }
 
-            if (this.market.clickRedeem(var1, var3)) {
+            if (this.market.clickRedeem(lastClickX, lastClickY)) {
                return true;
             }
          }
 
          if (this.getActiveTab() == 3) {
-            BoundsData var13 = this.mainHeaderBounds();
-            if (var13 != null && var13.contains(var1, var3) && this.ai.clickHeader(var1, var3)) {
+            BoundsData mainHeaderBounds = this.mainHeaderBounds();
+            if (mainHeaderBounds != null && mainHeaderBounds.contains(lastClickX, lastClickY) && this.ai.clickHeader(lastClickX, lastClickY)) {
                return true;
             }
 
-            this.ai.mouse(var1, var3);
-            this.ai.blurAll(var1, var3);
+            this.ai.mouse(lastClickX, lastClickY);
+            this.ai.blurAll(lastClickX, lastClickY);
          }
 
          if (this.storeTab() && this.settingsScript != null) {
-            BoundsData var14 = this.asideViewportOrNull();
-            if (var14 != null && var14.contains(var1, var3)) {
-               this.info().mouseClicked(var1, var3);
+            BoundsData asideViewportOrNull = this.asideViewportOrNull();
+            if (asideViewportOrNull != null && asideViewportOrNull.contains(lastClickX, lastClickY)) {
+               this.info().mouseClicked(lastClickX, lastClickY);
                return true;
             }
          }
 
-         if (this.storeTab() && var5 == Enum3.RIGHT) {
-            BoundsData var15 = this.mainViewport();
-            if (var15 == null || var15.contains(var1, var3)) {
-               for (Object[] var23 : new ArrayList<>(this.homeHits)) {
-                  if ("open".equals(var23[1]) && ((BoundsData)var23[0]).contains(var1, var3)) {
-                     this.openSettings((Script)var23[2]);
+         if (this.storeTab() && enum2 == Enum3.RIGHT) {
+            BoundsData mainViewport = this.mainViewport();
+            if (mainViewport == null || mainViewport.contains(lastClickX, lastClickY)) {
+               for (Object[] objects : new ArrayList<>(this.homeHits)) {
+                  if ("open".equals(objects[1]) && ((BoundsData)objects[0]).contains(lastClickX, lastClickY)) {
+                     this.openSettings((Script)objects[2]);
                      return true;
                   }
                }
             }
          }
 
-         if (this.storeTab() && var5 == Enum3.LEFT) {
-            BoundsData var16 = this.mainViewport();
-            if (var16 == null || var16.contains(var1, var3)) {
-               for (Object[] var24 : new ArrayList<>(this.homeHits)) {
-                  if (((BoundsData)var24[0]).contains(var1, var3) && this.handleHome(var24)) {
+         if (this.storeTab() && enum2 == Enum3.LEFT) {
+            BoundsData mainViewport = this.mainViewport();
+            if (mainViewport == null || mainViewport.contains(lastClickX, lastClickY)) {
+               for (Object[] objects : new ArrayList<>(this.homeHits)) {
+                  if (((BoundsData)objects[0]).contains(lastClickX, lastClickY) && this.handleHome(objects)) {
                      return true;
                   }
                }
             }
          }
 
-         BoundsData var17 = this.footerBounds();
-         if (this.inputFocused && (var17 == null || !var17.contains(var1, var3))) {
+         BoundsData footerBounds = this.footerBounds();
+         if (this.inputFocused && (footerBounds == null || !footerBounds.contains(lastClickX, lastClickY))) {
             this.inputFocused = false;
          }
 
-         return super.onMouseClicked(var1, var3, var5);
-      } else if (this.leftBounds != null && this.leftBounds.contains(var1, var3)) {
-         if (this.backRect != null && this.backRect.contains(var1, var3)) {
+         return super.onMouseClicked(lastClickX, lastClickY, enum2);
+      } else if (this.leftBounds != null && this.leftBounds.contains(lastClickX, lastClickY)) {
+         if (this.backRect != null && this.backRect.contains(lastClickX, lastClickY)) {
             this.closeWorkspace();
             return true;
-         } else if (this.infoRect != null && this.infoRect.contains(var1, var3)) {
+         } else if (this.infoRect != null && this.infoRect.contains(lastClickX, lastClickY)) {
             if (!this.infoPage) {
                this.showInfo();
             }
 
             return true;
-         } else if (this.newFileRect != null && this.newFileRect.contains(var1, var3)) {
+         } else if (this.newFileRect != null && this.newFileRect.contains(lastClickX, lastClickY)) {
             this.newFile();
             return true;
          } else {
-            for (Object[] var19 : this.fileRects) {
-               if (((BoundsData)var19[0]).contains(var1, var3)) {
-                  Path var22 = (Path)var19[1];
+            for (Object[] fileRect : this.fileRects) {
+               if (((BoundsData)fileRect[0]).contains(lastClickX, lastClickY)) {
+                  Path file = (Path)fileRect[1];
                   if (this.infoPage) {
                      this.showCode();
-                     if (var22.equals(this.file)) {
+                     if (file.equals(this.file)) {
                         return true;
                      }
                   }
 
-                  if (!var22.equals(this.file)) {
+                  if (!file.equals(this.file)) {
                      if (this.code.isDirty()) {
                         this.save();
                      }
 
-                     this.openFile(var22);
+                     this.openFile(file);
                   }
 
                   return true;
@@ -2039,57 +2039,57 @@ public class ScriptsSectionPanel extends SectionPanel {
             return true;
          }
       } else if (this.infoPage) {
-         this.info().mouseClicked(var1, var3);
+         this.info().mouseClicked(lastClickX, lastClickY);
          return true;
-      } else if (this.inputBounds != null && this.inputBounds.contains(var1, var3)) {
+      } else if (this.inputBounds != null && this.inputBounds.contains(lastClickX, lastClickY)) {
          this.inputFocused = true;
          this.code.setFocused(false);
          return true;
       } else {
          this.inputFocused = false;
-         if (this.inspectorBounds != null && this.inspectorBounds.contains(var1, var3)) {
+         if (this.inspectorBounds != null && this.inspectorBounds.contains(lastClickX, lastClickY)) {
             this.code.setFocused(false);
 
-            for (List var7 : this.moduleRows.values()) {
-               for (Object var9_o : (Iterable<?>)(Object)(var7)) {
-                  InspectorRow var9 = (InspectorRow)var9_o;
-                  if (var9.isVisible() && var9.onMouseClicked(var1, var3, var5)) {
-                     this.activeRow = var9;
+            for (List list : this.moduleRows.values()) {
+               for (Object obj : (Iterable<?>)(Object)(list)) {
+                  InspectorRow activeRow = (InspectorRow)obj;
+                  if (activeRow.isVisible() && activeRow.onMouseClicked(lastClickX, lastClickY, enum2)) {
+                     this.activeRow = activeRow;
                      return true;
                   }
                }
             }
 
-            for (Object[] var18 : this.inspectorHits) {
-               if (((BoundsData)var18[0]).contains(var1, var3)) {
-                  ((Runnable)var18[1]).run();
+            for (Object[] inspectorHit : this.inspectorHits) {
+               if (((BoundsData)inspectorHit[0]).contains(lastClickX, lastClickY)) {
+                  ((Runnable)inspectorHit[1]).run();
                   return true;
                }
             }
 
             return true;
-         } else if (this.codeBounds != null && this.codeBounds.contains(var1, var3)) {
-            return this.code.mouseClicked(var1, var3, var5 == Enum3.LEFT ? 0 : 1);
+         } else if (this.codeBounds != null && this.codeBounds.contains(lastClickX, lastClickY)) {
+            return this.code.mouseClicked(lastClickX, lastClickY, enum2 == Enum3.LEFT ? 0 : 1);
          } else {
             this.code.setFocused(false);
-            return this.consoleBounds != null && this.consoleBounds.contains(var1, var3);
+            return this.consoleBounds != null && this.consoleBounds.contains(lastClickX, lastClickY);
          }
       }
    }
 
    @Override
-   public boolean onMouseReleased(double var1, double var3, Enum3 var5) {
+   public boolean onMouseReleased(double x, double y, Enum3 enum2) {
       if (this.configsTab()) {
-         return this.configs.onMouseReleased(var1, var3, var5);
+         return this.configs.onMouseReleased(x, y, enum2);
       } else if (this.workspace == null) {
-         return super.onMouseReleased(var1, var3, var5);
+         return super.onMouseReleased(x, y, enum2);
       } else {
          this.code.mouseReleased();
 
-         for (List var7 : this.moduleRows.values()) {
-            for (Object var9_o : (Iterable<?>)(Object)(var7)) {
-               InspectorRow var9 = (InspectorRow)var9_o;
-               var9.onMouseReleased(var1, var3, var5);
+         for (List list : this.moduleRows.values()) {
+            for (Object obj : (Iterable<?>)(Object)(list)) {
+               InspectorRow inspectorRow = (InspectorRow)obj;
+               inspectorRow.onMouseReleased(x, y, enum2);
             }
          }
 
@@ -2098,16 +2098,16 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean onMouseDragged(double var1, double var3, int var5, double var6, double var8) {
+   public boolean onMouseDragged(double mouseX, double mouseY, int mouseToGlfw, double offsetX, double offsetY) {
       if (this.configsTab()) {
-         return this.configs.onMouseDragged(var1, var3, var5, var6, var8);
+         return this.configs.onMouseDragged(mouseX, mouseY, mouseToGlfw, offsetX, offsetY);
       } else if (this.workspace == null) {
-         return super.onMouseDragged(var1, var3, var5, var6, var8);
+         return super.onMouseDragged(mouseX, mouseY, mouseToGlfw, offsetX, offsetY);
       } else {
-         for (List var11 : this.moduleRows.values()) {
-            for (Object var13_o : (Iterable<?>)(Object)(var11)) {
-               InspectorRow var13 = (InspectorRow)var13_o;
-               if (var13.onMouseDragged(var1, var3)) {
+         for (List list : this.moduleRows.values()) {
+            for (Object obj : (Iterable<?>)(Object)(list)) {
+               InspectorRow inspectorRow = (InspectorRow)obj;
+               if (inspectorRow.onMouseDragged(mouseX, mouseY)) {
                   return true;
                }
             }
@@ -2118,30 +2118,30 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5, double var7) {
+   public boolean mouseScrolled(double lastClickX, double lastClickY, double d, double verticalAmount) {
       if (this.configsTab()) {
-         return this.configs.mouseScrolled(var1, var3, var5, var7);
+         return this.configs.mouseScrolled(lastClickX, lastClickY, d, verticalAmount);
       } else if (this.workspace == null) {
          if (this.settingsScript != null) {
-            BoundsData var9 = this.asideViewportOrNull();
-            if (var9 != null && var9.contains(var1, var3)) {
-               this.info().mouseScrolled(var1, var3, var7);
+            BoundsData asideViewportOrNull = this.asideViewportOrNull();
+            if (asideViewportOrNull != null && asideViewportOrNull.contains(lastClickX, lastClickY)) {
+               this.info().mouseScrolled(lastClickX, lastClickY, verticalAmount);
                return true;
             }
          }
 
-         return super.mouseScrolled(var1, var3, var5, var7);
+         return super.mouseScrolled(lastClickX, lastClickY, d, verticalAmount);
       } else if (this.infoPage) {
-         this.info().mouseScrolled(var1, var3, var7);
+         this.info().mouseScrolled(lastClickX, lastClickY, verticalAmount);
          return true;
-      } else if (this.code.mouseScrolled(var1, var3, var7)) {
+      } else if (this.code.mouseScrolled(lastClickX, lastClickY, verticalAmount)) {
          return true;
-      } else if (this.inspectorBounds != null && this.inspectorBounds.contains(var1, var3)) {
-         this.inspectorScrollTarget += (float)var7 * 18.0F;
+      } else if (this.inspectorBounds != null && this.inspectorBounds.contains(lastClickX, lastClickY)) {
+         this.inspectorScrollTarget += (float)verticalAmount * 18.0F;
          return true;
       } else {
-         if (this.consoleBounds != null && this.consoleBounds.contains(var1, var3)) {
-            this.consoleScroll += (float)var7;
+         if (this.consoleBounds != null && this.consoleBounds.contains(lastClickX, lastClickY)) {
+            this.consoleScroll += (float)verticalAmount;
          }
 
          return true;
@@ -2149,18 +2149,18 @@ public class ScriptsSectionPanel extends SectionPanel {
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.configsTab() && !this.inputFocused) {
-         return this.configs.keyPressed(var1, var2, var3);
+         return this.configs.keyPressed(keyCode, keycode, modifiers);
       } else {
-         boolean var4 = (var3 & 2) != 0;
+         boolean flag = (modifiers & 2) != 0;
          if (this.inputFocused) {
-            switch (var1) {
+            switch (keyCode) {
                case 86:
-                  if (var4) {
-                     String var5 = Minecraft.getInstance().keyboardHandler.getClipboard();
-                     if (var5 != null) {
-                        this.input.append(var5.replace("\n", " "));
+                  if (flag) {
+                     String clipboard = Minecraft.getInstance().keyboardHandler.getClipboard();
+                     if (clipboard != null) {
+                        this.input.append(clipboard.replace("\n", " "));
                      }
                   }
                   break;
@@ -2197,11 +2197,11 @@ public class ScriptsSectionPanel extends SectionPanel {
 
             return true;
          } else if (this.workspace == null) {
-            if (this.getActiveTab() == 3 && this.ai.keyPressed(var1, var3)) {
+            if (this.getActiveTab() == 3 && this.ai.keyPressed(keyCode, modifiers)) {
                return true;
             } else if (this.storeTab() && this.market.redeem.isFocused()) {
-               if (var1 != 257 && var1 != 335) {
-                  this.market.redeem.keyPressed(var1, var3);
+               if (keyCode != 257 && keyCode != 335) {
+                  this.market.redeem.keyPressed(keyCode, modifiers);
                } else {
                   this.market.doRedeem();
                }
@@ -2209,24 +2209,24 @@ public class ScriptsSectionPanel extends SectionPanel {
                return true;
             } else {
                if (this.settingsScript != null) {
-                  if (var4 && var1 == 83) {
+                  if (flag && keyCode == 83) {
                      this.info().apply();
                      return true;
                   }
 
-                  if (this.info().keyPressed(var1, var3)) {
+                  if (this.info().keyPressed(keyCode, modifiers)) {
                      return true;
                   }
 
-                  if (var1 == 256) {
+                  if (keyCode == 256) {
                      this.closeSettings();
                      return true;
                   }
                }
 
-               return super.keyPressed(var1, var2, var3);
+               return super.keyPressed(keyCode, keycode, modifiers);
             }
-         } else if (var4 && var1 == 83) {
+         } else if (flag && keyCode == 83) {
             if (this.infoPage) {
                this.info().apply();
             } else {
@@ -2235,18 +2235,18 @@ public class ScriptsSectionPanel extends SectionPanel {
 
             return true;
          } else if (this.infoPage) {
-            if (this.info().keyPressed(var1, var3)) {
+            if (this.info().keyPressed(keyCode, modifiers)) {
                return true;
-            } else if (var1 == 256) {
+            } else if (keyCode == 256) {
                this.showCode();
                return true;
             } else {
-               return var1 < 290;
+               return keyCode < 290;
             }
          } else if (this.activeRow != null && this.activeRow.isEditing()) {
-            this.activeRow.keyPressed(var1, var2, var3);
+            this.activeRow.keyPressed(keyCode, keycode, modifiers);
             return true;
-         } else if (var1 == 256) {
+         } else if (keyCode == 256) {
             if (this.code.hasCompletions()) {
                this.code.closeCompletions();
             } else {
@@ -2259,38 +2259,38 @@ public class ScriptsSectionPanel extends SectionPanel {
                this.code.setFocused(true);
             }
 
-            return this.code.keyPressed(var1, var3);
+            return this.code.keyPressed(keyCode, modifiers);
          }
       }
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
+   public boolean charTyped(char codepoint, int n) {
       if (this.configsTab() && !this.inputFocused) {
-         return this.configs.charTyped(var1, var2);
+         return this.configs.charTyped(codepoint, n);
       } else if (this.inputFocused) {
-         if (var1 >= ' ' && this.input.length() < 2000) {
-            this.input.append(var1);
+         if (codepoint >= ' ' && this.input.length() < 2000) {
+            this.input.append(codepoint);
          }
 
          return true;
       } else if (this.workspace == null) {
-         if (this.getActiveTab() == 3 && this.ai.charTyped(var1)) {
+         if (this.getActiveTab() == 3 && this.ai.charTyped(codepoint)) {
             return true;
-         } else if (this.storeTab() && this.market.redeem.charTyped(var1)) {
+         } else if (this.storeTab() && this.market.redeem.charTyped(codepoint)) {
             return true;
          } else {
-            return this.settingsScript != null && this.info().charTyped(var1) ? true : super.charTyped(var1, var2);
+            return this.settingsScript != null && this.info().charTyped(codepoint) ? true : super.charTyped(codepoint, n);
          }
       } else if (this.infoPage) {
-         this.info().charTyped(var1);
+         this.info().charTyped(codepoint);
          return true;
       } else if (this.activeRow != null && this.activeRow.isEditing()) {
-         this.activeRow.charTyped(var1, var2);
+         this.activeRow.charTyped(codepoint, n);
          return true;
       } else {
          this.code.setFocused(true);
-         return this.code.charTyped(var1);
+         return this.code.charTyped(codepoint);
       }
    }
 
@@ -2339,10 +2339,10 @@ public class ScriptsSectionPanel extends SectionPanel {
          return "FileCount[" + "modified=" + this.modified + ", " + "files=" + this.files + ", " + "countedAt=" + this.countedAt + "]";
       }
 
-      private FileCount(long var1, int var3, long var4) {
-         this.modified = var1;
-         this.files = var3;
-         this.countedAt = var4;
+      private FileCount(long modified, int files, long countedAt) {
+         this.modified = modified;
+         this.files = files;
+         this.countedAt = countedAt;
       }
    }
 
@@ -2380,10 +2380,10 @@ public class ScriptsSectionPanel extends SectionPanel {
          return "RowInfo[" + "script=" + this.script + ", " + "files=" + this.files + ", " + "modified=" + this.modified + "]";
       }
 
-      private RowInfo(Script var1, int var2, long var3) {
-         this.script = var1;
-         this.files = var2;
-         this.modified = var3;
+      private RowInfo(Script script, int files, long modified) {
+         this.script = script;
+         this.files = files;
+         this.modified = modified;
       }
    }
 }

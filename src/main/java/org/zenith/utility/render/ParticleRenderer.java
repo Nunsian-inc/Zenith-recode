@@ -34,62 +34,62 @@ public class ParticleRenderer {
    private static final PoseStack matrixStack = new PoseStack();
    private static final Map<String, List<Handler7>> items = new HashMap<>();
 
-   public static void method1476(Camera var0) {
-      Vec3 var1 = var0.position();
-      doubleValue = var1.x;
-      doubleValue2 = var1.y;
-      doubleValue3 = var1.z;
-      float var2 = var0.xRot();
-      float var3 = var0.yRot();
+   public static void method1476(Camera camera) {
+      Vec3 position = camera.position();
+      doubleValue = position.x;
+      doubleValue2 = position.y;
+      doubleValue3 = position.z;
+      float xRot = camera.xRot();
+      float yRot = camera.yRot();
       quaternionf.identity();
-      quaternionf.rotateX((float)Math.toRadians(var2));
-      quaternionf.rotateY((float)Math.toRadians(var3 + 180.0F));
+      quaternionf.rotateX((float)Math.toRadians(xRot));
+      quaternionf.rotateY((float)Math.toRadians(yRot + 180.0F));
       quaternionf2.identity();
-      quaternionf2.rotateY((float)Math.toRadians(-var3));
-      quaternionf2.rotateX((float)Math.toRadians(var2));
+      quaternionf2.rotateY((float)Math.toRadians(-yRot));
+      quaternionf2.rotateX((float)Math.toRadians(xRot));
    }
 
    @SafeVarargs
-   public static void method1477(PoseStack var0, float var1, List<? extends Handler7>... var2) {
+   public static void method1477(PoseStack poseStack, float f, List<? extends Handler7>... handler7ses) {
       items.clear();
-      int var3 = 0;
+      int n = 0;
 
-      for (List var7 : var2) {
-         if (var7 != null) {
-            for (Object var9_o : (Iterable<?>)(Object)(var7)) {
-               Handler7 var9 = (Handler7)var9_o;
-               if (!var9.method1555()) {
-                  items.computeIfAbsent(var9.method1559(), var0x -> new ArrayList<>()).add(var9);
-                  var3++;
+      for (List list : handler7ses) {
+         if (list != null) {
+            for (Object obj : (Iterable<?>)(Object)(list)) {
+               Handler7 handler7 = (Handler7)obj;
+               if (!handler7.method1555()) {
+                  items.computeIfAbsent(handler7.method1559(), var0x -> new ArrayList<>()).add(handler7);
+                  n++;
                }
             }
          }
       }
 
-      if (var3 != 0) {
+      if (n != 0) {
          method1484();
-         Tesselator var13 = Tesselator.getInstance();
+         Tesselator tesselator = Tesselator.getInstance();
 
-         for (Entry var15 : items.entrySet()) {
-            Identifier var16 = ParticleType.method1705((String)var15.getKey());
-            if (var16 != null) {
-               RenderState.method1890(0, var16);
-               List<Handler7> var17 = (List)var15.getValue();
-               BufferBuilder var18 = var13.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
-               boolean var10 = false;
+         for (Entry entry : items.entrySet()) {
+            Identifier identifier = ParticleType.method1705((String)entry.getKey());
+            if (identifier != null) {
+               RenderState.method1890(0, identifier);
+               List<Handler7> handler7s = (List)entry.getValue();
+               BufferBuilder begin = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+               boolean flag = false;
 
-               for (Handler7 var12 : var17) {
-                  if (var12.method1449(var1) >= 0.001F) {
-                     method1481(var18, var12, var1);
-                     var10 = true;
+               for (Handler7 handler7 : handler7s) {
+                  if (handler7.method1449(f) >= 0.001F) {
+                     method1481(begin, handler7, f);
+                     flag = true;
                   }
                }
 
-               if (var10) {
-                  ImmediateRenderer.method8015(var18.buildOrThrow());
+               if (flag) {
+                  ImmediateRenderer.method8015(begin.buildOrThrow());
                }
 
-               var17.clear();
+               handler7s.clear();
             }
          }
 
@@ -98,87 +98,87 @@ public class ParticleRenderer {
       }
    }
 
-   public static void method1478(PoseStack var0, List<FireflyParticle> var1, float var2, float var3) {
-      if (!var1.isEmpty()) {
+   public static void method1478(PoseStack poseStack, List<FireflyParticle> fireflyParticles, float f, float f2) {
+      if (!fireflyParticles.isEmpty()) {
          method1484();
          RenderState.method1890(0, ParticleType.Type.FIREFLY.getSupplier().get());
-         Tesselator var4 = Tesselator.getInstance();
-         BufferBuilder var5 = var4.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
-         float var6 = var3 + 2.5F;
-         boolean var7 = false;
+         Tesselator tesselator = Tesselator.getInstance();
+         BufferBuilder begin = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+         float f3 = f2 + 2.5F;
+         boolean flag = false;
 
-         for (FireflyParticle var9 : var1) {
-            Vec3 var10 = var9.method1557().lerp(var9.method1556(), var2);
-            Vec3 var11 = var9.getVec3d3();
-            double var12 = var11.length();
-            float var14 = 1.0F - (float)var9.getIntValue() / var9.getIntValue3();
-            float var15 = Math.min(var14 / 0.15F, 1.0F);
-            float var16 = var14 > 0.8F ? 1.0F - (var14 - 0.8F) / 0.2F : 1.0F;
-            float var17 = var15 * var16;
-            Vec3 var18 = var12 > 0.001 ? var11.normalize() : new Vec3(0.0, 1.0, 0.0);
-            float var19 = (float)Math.min(var12 / 0.2, 1.0);
-            float var20 = Math.max(var19 * var17, 0.1F);
-            byte var21 = 80;
+         for (FireflyParticle fireflyParticle : fireflyParticles) {
+            Vec3 vec = fireflyParticle.method1557().lerp(fireflyParticle.method1556(), f);
+            Vec3 vec3d3 = fireflyParticle.getVec3d3();
+            double length = vec3d3.length();
+            float f4 = 1.0F - (float)fireflyParticle.getIntValue() / fireflyParticle.getIntValue3();
+            float f5 = Math.min(f4 / 0.15F, 1.0F);
+            float f6 = f4 > 0.8F ? 1.0F - (f4 - 0.8F) / 0.2F : 1.0F;
+            float f7 = f5 * f6;
+            Vec3 vec2 = length > 0.001 ? vec3d3.normalize() : new Vec3(0.0, 1.0, 0.0);
+            float f8 = (float)Math.min(length / 0.2, 1.0);
+            float f9 = Math.max(f8 * f7, 0.1F);
+            byte b = 80;
 
-            for (int var22 = 0; var22 < var21; var22++) {
-               float var23 = (float)var22 / var21;
-               if (!(var23 >= var20)) {
-                  float var24 = var23 / var20;
-                  float var25 = var9.getSize() * (1.0F - var24 * 0.5F) * 2.0F * var17;
-                  float var26 = (float)Math.pow(1.0F - var24, 0.4) * var9.method1449(var2) * var17 * 0.8F;
-                  if (!(var26 < 0.01F)) {
-                     Vec3 var27 = var10.subtract(var18.scale(var24 * var20 * var6));
-                     float var28 = (float)Math.pow(1.0F - var24, 1.2) * var17;
-                     float var29 = var25 * (1.8F + var28 * 0.8F);
-                     float var30 = var26 * 0.5F * var28;
-                     if (var30 > 0.01F) {
-                        method1482(var5, var27, var29, var30, var9.method1558());
-                        var7 = true;
+            for (int i = 0; i < b; i++) {
+               float f10 = (float)i / b;
+               if (!(f10 >= f9)) {
+                  float f11 = f10 / f9;
+                  float f12 = fireflyParticle.getSize() * (1.0F - f11 * 0.5F) * 2.0F * f7;
+                  float f13 = (float)Math.pow(1.0F - f11, 0.4) * fireflyParticle.method1449(f) * f7 * 0.8F;
+                  if (!(f13 < 0.01F)) {
+                     Vec3 vec3 = vec.subtract(vec2.scale(f11 * f9 * f3));
+                     float f14 = (float)Math.pow(1.0F - f11, 1.2) * f7;
+                     float f15 = f12 * (1.8F + f14 * 0.8F);
+                     float f16 = f13 * 0.5F * f14;
+                     if (f16 > 0.01F) {
+                        method1482(begin, vec3, f15, f16, fireflyParticle.method1558());
+                        flag = true;
                      }
 
-                     method1482(var5, var27, var25, var26, var9.method1558());
-                     var7 = true;
+                     method1482(begin, vec3, f12, f13, fireflyParticle.method1558());
+                     flag = true;
                   }
                }
             }
          }
 
-         if (var7) {
-            ImmediateRenderer.method8015(var5.buildOrThrow());
+         if (flag) {
+            ImmediateRenderer.method8015(begin.buildOrThrow());
          }
 
          method1485();
       }
    }
 
-   public static void method1479(PoseStack var0, List<SpaceStarParticle> var1, float var2, float var3) {
-      if (!var1.isEmpty()) {
+   public static void method1479(PoseStack poseStack, List<SpaceStarParticle> spaceStarParticles, float f, float f2) {
+      if (!spaceStarParticles.isEmpty()) {
          method1484();
-         Tesselator var4 = Tesselator.getInstance();
+         Tesselator tesselator = Tesselator.getInstance();
          RenderState.method1890(0, ParticleType.Type.SPACE_GLOW.getSupplier().get());
-         BufferBuilder var5 = var4.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+         BufferBuilder begin = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
 
-         for (SpaceStarParticle var7 : var1) {
-            if (!var7.method1555()) {
-               Vec3 var8 = var7.method1557().lerp(var7.method1556(), var2);
-               float var9 = var7.method1449(var2);
-               if (!(var9 < 0.005F)) {
-                  method1483(var5, var8, var7.method3081(var2), var9 * 0.22F, var7.method1558(), 0.0F);
-                  method1483(var5, var8, var7.method3083(var2), var9 * 0.48F, var7.method1558(), 0.0F);
-                  Vec3 var10 = var7.getVec3d3();
-                  double var11 = var10.length();
-                  if (!(var11 <= 5.0E-4)) {
-                     Vec3 var13 = var10.normalize();
-                     float var14 = var7.method3084(var3);
-                     byte var15 = 16;
+         for (SpaceStarParticle spaceStarParticle : spaceStarParticles) {
+            if (!spaceStarParticle.method1555()) {
+               Vec3 vec = spaceStarParticle.method1557().lerp(spaceStarParticle.method1556(), f);
+               float f3 = spaceStarParticle.method1449(f);
+               if (!(f3 < 0.005F)) {
+                  method1483(begin, vec, spaceStarParticle.method3081(f), f3 * 0.22F, spaceStarParticle.method1558(), 0.0F);
+                  method1483(begin, vec, spaceStarParticle.method3083(f), f3 * 0.48F, spaceStarParticle.method1558(), 0.0F);
+                  Vec3 vec3d3 = spaceStarParticle.getVec3d3();
+                  double length = vec3d3.length();
+                  if (!(length <= 5.0E-4)) {
+                     Vec3 vec2 = vec3d3.normalize();
+                     float f4 = spaceStarParticle.method3084(f2);
+                     byte b = 16;
 
-                     for (int var16 = 1; var16 <= var15; var16++) {
-                        float var17 = (float)var16 / var15;
-                        float var18 = var9 * (float)Math.pow(1.0F - var17, 1.45F) * 0.42F;
-                        if (!(var18 < 0.01F)) {
-                           Vec3 var19 = var8.subtract(var13.scale(var17 * var14));
-                           float var20 = var7.method3083(var2) * (1.0F - var17 * 0.72F);
-                           method1483(var5, var19, var20, var18, var7.method1558(), 0.0F);
+                     for (int i = 1; i <= b; i++) {
+                        float f5 = (float)i / b;
+                        float f6 = f3 * (float)Math.pow(1.0F - f5, 1.45F) * 0.42F;
+                        if (!(f6 < 0.01F)) {
+                           Vec3 vec3 = vec.subtract(vec2.scale(f5 * f4));
+                           float f7 = spaceStarParticle.method3083(f) * (1.0F - f5 * 0.72F);
+                           method1483(begin, vec3, f7, f6, spaceStarParticle.method1558(), 0.0F);
                         }
                      }
                   }
@@ -186,106 +186,106 @@ public class ParticleRenderer {
             }
          }
 
-         ShapeRenderer.method7212(var5);
+         ShapeRenderer.method7212(begin);
          RenderState.method1890(0, ParticleType.Type.SPACE_STAR.getSupplier().get());
-         BufferBuilder var21 = var4.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+         BufferBuilder bufferBuilder = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
 
-         for (SpaceStarParticle var23 : var1) {
-            if (!var23.method1555()) {
-               Vec3 var24 = var23.method1557().lerp(var23.method1556(), var2);
-               float var25 = var23.method1449(var2);
-               if (!(var25 < 0.005F)) {
-                  method1483(var21, var24, var23.method3082(var2), var25, var23.method1558().method7303(0.35F), var23.method1560());
+         for (SpaceStarParticle spaceStarParticle : spaceStarParticles) {
+            if (!spaceStarParticle.method1555()) {
+               Vec3 vec = spaceStarParticle.method1557().lerp(spaceStarParticle.method1556(), f);
+               float f3 = spaceStarParticle.method1449(f);
+               if (!(f3 < 0.005F)) {
+                  method1483(bufferBuilder, vec, spaceStarParticle.method3082(f), f3, spaceStarParticle.method1558().method7303(0.35F), spaceStarParticle.method1560());
                }
             }
          }
 
-         ShapeRenderer.method7212(var21);
+         ShapeRenderer.method7212(bufferBuilder);
          method1485();
       }
    }
 
-   public static void method1480(PoseStack var0, Vec3 var1, Vec3 var2, float var3, float var4, ZenithColor var5, float var6) {
+   public static void method1480(PoseStack poseStack, Vec3 vec, Vec3 vec2, float f, float f2, ZenithColor zenithColor, float f3) {
       method1484();
       RenderState.method1890(0, ParticleType.Type.FIREFLY.getSupplier().get());
-      Tesselator var7 = Tesselator.getInstance();
-      BufferBuilder var8 = var7.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
-      double var9 = var2.length();
-      Vec3 var11 = var9 > 0.001 ? var2.normalize() : new Vec3(0.0, 0.0, -1.0);
-      byte var12 = 60;
-      boolean var13 = false;
+      Tesselator tesselator = Tesselator.getInstance();
+      BufferBuilder begin = tesselator.begin(PrimitiveTopology.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+      double length = vec2.length();
+      Vec3 vec3 = length > 0.001 ? vec2.normalize() : new Vec3(0.0, 0.0, -1.0);
+      byte b = 60;
+      boolean flag = false;
 
-      for (int var14 = 0; var14 < var12; var14++) {
-         float var15 = (float)var14 / var12;
-         float var16 = var4 * (1.0F - var15 * 0.7F) * 2.0F;
-         float var17 = (float)Math.pow(1.0F - var15, 0.5) * 0.9F;
-         if (!(var17 < 0.01F) && !(var16 < 0.01F)) {
-            Vec3 var18 = var1.subtract(var11.scale(var15 * var3));
-            method1482(var8, var18, var16 * 1.8F, var17 * 0.4F, var5);
-            method1482(var8, var18, var16, var17, var5);
-            var13 = true;
+      for (int i = 0; i < b; i++) {
+         float f4 = (float)i / b;
+         float f5 = f2 * (1.0F - f4 * 0.7F) * 2.0F;
+         float f6 = (float)Math.pow(1.0F - f4, 0.5) * 0.9F;
+         if (!(f6 < 0.01F) && !(f5 < 0.01F)) {
+            Vec3 vec4 = vec.subtract(vec3.scale(f4 * f));
+            method1482(begin, vec4, f5 * 1.8F, f6 * 0.4F, zenithColor);
+            method1482(begin, vec4, f5, f6, zenithColor);
+            flag = true;
          }
       }
 
-      if (var13) {
-         ImmediateRenderer.method8015(var8.buildOrThrow());
+      if (flag) {
+         ImmediateRenderer.method8015(begin.buildOrThrow());
       }
 
       method1485();
    }
 
-   private static void method1481(BufferBuilder var0, Handler7 var1, float var2) {
-      Vec3 var3 = var1.method1557().lerp(var1.method1556(), var2);
-      float var4 = (float)(var3.x - doubleValue);
-      float var5 = (float)(var3.y - doubleValue2);
-      float var6 = (float)(var3.z - doubleValue3);
-      float var7 = var1.method1449(var2);
-      if (!(var7 < 0.001F)) {
-         float var8 = var1.getSize();
-         ZenithColor var9 = var1.method1558();
-         int var10 = (int)(var7 * var9.getIntValue4()) << 24 | var9.getIntValue() << 16 | var9.getIntValue2() << 8 | var9.getIntValue3();
+   private static void method1481(BufferBuilder begin, Handler7 handler7, float f) {
+      Vec3 vec = handler7.method1557().lerp(handler7.method1556(), f);
+      float xo = (float)(vec.x - doubleValue);
+      float yo = (float)(vec.y - doubleValue2);
+      float zo = (float)(vec.z - doubleValue3);
+      float f2 = handler7.method1449(f);
+      if (!(f2 < 0.001F)) {
+         float size = handler7.getSize();
+         ZenithColor zenithColor = handler7.method1558();
+         int color = (int)(f2 * zenithColor.getIntValue4()) << 24 | zenithColor.getIntValue() << 16 | zenithColor.getIntValue2() << 8 | zenithColor.getIntValue3();
          matrixStack.pushPose();
          matrixStack.rotate(quaternionf);
-         matrixStack.translate(var4, var5, var6);
+         matrixStack.translate(xo, yo, zo);
          matrixStack.rotate(quaternionf2);
-         float var11 = var1.method1560();
-         if (var11 != 0.0F) {
-            matrixStack.rotate(Axis.ZP.rotationDegrees(var11));
+         float angle = handler7.method1560();
+         if (angle != 0.0F) {
+            matrixStack.rotate(Axis.ZP.rotationDegrees(angle));
          }
 
-         Matrix4f var12 = matrixStack.last().pose();
-         var0.addVertex(var12, 0.0F, -var8, 0.0F).setUv(0.0F, 1.0F).setColor(var10);
-         var0.addVertex(var12, -var8, -var8, 0.0F).setUv(1.0F, 1.0F).setColor(var10);
-         var0.addVertex(var12, -var8, 0.0F, 0.0F).setUv(1.0F, 0.0F).setColor(var10);
-         var0.addVertex(var12, 0.0F, 0.0F, 0.0F).setUv(0.0F, 0.0F).setColor(var10);
+         Matrix4f pose = matrixStack.last().pose();
+         begin.addVertex(pose, 0.0F, -size, 0.0F).setUv(0.0F, 1.0F).setColor(color);
+         begin.addVertex(pose, -size, -size, 0.0F).setUv(1.0F, 1.0F).setColor(color);
+         begin.addVertex(pose, -size, 0.0F, 0.0F).setUv(1.0F, 0.0F).setColor(color);
+         begin.addVertex(pose, 0.0F, 0.0F, 0.0F).setUv(0.0F, 0.0F).setColor(color);
          matrixStack.popPose();
       }
    }
 
-   private static void method1482(BufferBuilder var0, Vec3 var1, float var2, float var3, ZenithColor var4) {
-      method1483(var0, var1, var2, var3, var4, 0.0F);
+   private static void method1482(BufferBuilder begin, Vec3 vec, float f, float f2, ZenithColor zenithColor) {
+      method1483(begin, vec, f, f2, zenithColor, 0.0F);
    }
 
-   private static void method1483(BufferBuilder var0, Vec3 var1, float var2, float var3, ZenithColor var4, float var5) {
-      if (!(var3 < 0.001F)) {
-         float var6 = (float)(var1.x - doubleValue);
-         float var7 = (float)(var1.y - doubleValue2);
-         float var8 = (float)(var1.z - doubleValue3);
-         int var9 = (int)(var3 * var4.getIntValue4()) << 24 | var4.getIntValue() << 16 | var4.getIntValue2() << 8 | var4.getIntValue3();
-         float var10 = var2 / 2.0F;
+   private static void method1483(BufferBuilder begin, Vec3 vec, float f, float f2, ZenithColor zenithColor, float angle) {
+      if (!(f2 < 0.001F)) {
+         float xo = (float)(vec.x - doubleValue);
+         float yo = (float)(vec.y - doubleValue2);
+         float zo = (float)(vec.z - doubleValue3);
+         int color = (int)(f2 * zenithColor.getIntValue4()) << 24 | zenithColor.getIntValue() << 16 | zenithColor.getIntValue2() << 8 | zenithColor.getIntValue3();
+         float x = f / 2.0F;
          matrixStack.pushPose();
          matrixStack.rotate(quaternionf);
-         matrixStack.translate(var6, var7, var8);
+         matrixStack.translate(xo, yo, zo);
          matrixStack.rotate(quaternionf2);
-         if (var5 != 0.0F) {
-            matrixStack.rotate(Axis.ZP.rotationDegrees(var5));
+         if (angle != 0.0F) {
+            matrixStack.rotate(Axis.ZP.rotationDegrees(angle));
          }
 
-         Matrix4f var11 = matrixStack.last().pose();
-         var0.addVertex(var11, var10, -var10, 0.0F).setUv(0.0F, 1.0F).setColor(var9);
-         var0.addVertex(var11, -var10, -var10, 0.0F).setUv(1.0F, 1.0F).setColor(var9);
-         var0.addVertex(var11, -var10, var10, 0.0F).setUv(1.0F, 0.0F).setColor(var9);
-         var0.addVertex(var11, var10, var10, 0.0F).setUv(0.0F, 0.0F).setColor(var9);
+         Matrix4f pose = matrixStack.last().pose();
+         begin.addVertex(pose, x, -x, 0.0F).setUv(0.0F, 1.0F).setColor(color);
+         begin.addVertex(pose, -x, -x, 0.0F).setUv(1.0F, 1.0F).setColor(color);
+         begin.addVertex(pose, -x, x, 0.0F).setUv(1.0F, 0.0F).setColor(color);
+         begin.addVertex(pose, x, x, 0.0F).setUv(0.0F, 0.0F).setColor(color);
          matrixStack.popPose();
       }
    }

@@ -102,8 +102,8 @@ public final class AutoSwapModule extends Module {
    };
 
    private AutoSwapModule() {
-      for (int var1 = 0; var1 < this.entry2s.length; var1++) {
-         this.entry2s[var1] = new AutoSwapModule.Entry2();
+      for (int i = 0; i < this.entry2s.length; i++) {
+         this.entry2s[i] = new AutoSwapModule.Entry2();
       }
    }
 
@@ -114,30 +114,30 @@ public final class AutoSwapModule extends Module {
    }
 
    @EventTarget
-   public void method7682(KeyEvent var1) {
+   public void method7682(KeyEvent event) {
       if (mc.player != null && mc.player.containerMenu instanceof InventoryMenu) {
          if (this.mode.isSelected(1)) {
-            this.method7686(var1);
+            this.method7686(event);
          } else if (mc.gui.screen() == null) {
-            if (var1.getIntValue() == 1) {
-               Slot var2 = this.method7711();
-               if (var1.isPress(this.keyToSwap.getKeyCode())) {
-                  Slot var3 = InventoryUtils.method913(
+            if (event.getIntValue() == 1) {
+               Slot slot = this.method7711();
+               if (event.isPress(this.keyToSwap.getKeyCode())) {
+                  Slot slot2 = InventoryUtils.method913(
                      this.method7712(this.itemType),
-                     Comparator.comparing(var0 -> var0.getItem().isEnchanted()),
-                     var1x -> var1x != var2 && var1x.index != 46 && var1x.index != 45
+                     Comparator.comparing(slot3 -> slot3.getItem().isEnchanted()),
+                     var1x -> var1x != slot && var1x.index != 46 && var1x.index != 45
                   );
-                  Slot var4 = InventoryUtils.method913(
+                  Slot slot3 = InventoryUtils.method913(
                      this.method7712(this.swapType),
-                     Comparator.comparing(var0 -> var0.getItem().isEnchanted()),
-                     var1x -> var1x != var2 && var1x.index != 46 && var1x.index != 45
+                     Comparator.comparing(slot4 -> slot4.getItem().isEnchanted()),
+                     var1x -> var1x != slot && var1x.index != 46 && var1x.index != 45
                   );
-                  Slot var5 = var3 != null && mc.player.getOffhandItem().getItem() != var3.getItem().getItem() ? var3 : var4;
-                  this.method7710(var5);
+                  Slot slot4 = slot2 != null && mc.player.getOffhandItem().getItem() != slot2.getItem().getItem() ? slot2 : slot3;
+                  this.method7710(slot4);
                }
 
-               if (var1.isPress(this.keyToSwapCerb.getKeyCode()) && var2 != null) {
-                  this.method7710(var2);
+               if (event.isPress(this.keyToSwapCerb.getKeyCode()) && slot != null) {
+                  this.method7710(slot);
                }
             }
          }
@@ -145,14 +145,14 @@ public final class AutoSwapModule extends Module {
    }
 
    @EventTarget(4)
-   public void method7683(ScreenRenderEvent var1) {
+   public void method7683(ScreenRenderEvent event) {
       if (mc.player != null && mc.level != null) {
          if (this.mode.isSelected(1)) {
             if (mc.gui.screen() == null) {
                if (this.intValue2 != -1) {
                   this.method7732();
                } else {
-                  this.method7693(var1);
+                  this.method7693(event);
                }
             }
          } else {
@@ -164,19 +164,19 @@ public final class AutoSwapModule extends Module {
    }
 
    @EventTarget
-   public void method7684(MouseButtonEvent var1) {
+   public void method7684(MouseButtonEvent event) {
       if (this.mode.isSelected(1) && this.flag && mc.player != null && mc.level != null && mc.gui.screen() == null) {
-         if (var1.getIntValue2() == 1) {
-            float var2 = this.method7729();
-            float var3 = this.method7730();
-            float var4 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-            float var5 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-            if (var1.getIntValue() == 1 && this.method7727(var2, var3, var4, var5)) {
+         if (event.getIntValue2() == 1) {
+            float mouseX = this.method7729();
+            float mouseY = this.method7730();
+            float floatValue = mc.getWindow().getGuiScaledWidth() / 2.0F;
+            float f = mc.getWindow().getGuiScaledHeight() / 2.0F;
+            if (event.getIntValue() == 1 && this.method7727(mouseX, mouseY, floatValue, f)) {
                this.method7690();
             } else {
-               int var6;
-               if ((var6 = this.method7726(var2, var3, var4, var5, 60.0F)) != -1) {
-                  this.method7688(var1.getIntValue(), var6);
+               int n;
+               if ((n = this.method7726(mouseX, mouseY, floatValue, f, 60.0F)) != -1) {
+                  this.method7688(event.getIntValue(), n);
                }
             }
          }
@@ -184,21 +184,21 @@ public final class AutoSwapModule extends Module {
    }
 
    @EventTarget
-   public void method7685(ClickSlotEvent var1) {
+   public void method7685(ClickSlotEvent event) {
       if (this.mode.isSelected(1) && this.intValue2 != -1 && mc.player != null) {
          if (mc.gui.screen() instanceof InventoryScreen) {
-            if (var1.getSlotActionType() == ContainerInput.PICKUP) {
-               this.method7692(var1);
+            if (event.getSlotActionType() == ContainerInput.PICKUP) {
+               this.method7692(event);
             }
          }
       }
    }
 
-   private void method7686(KeyEvent var1) {
-      if (var1.isKey(this.wheelBind.getKeyCode())) {
-         if (var1.getIntValue() == 1) {
+   private void method7686(KeyEvent event) {
+      if (event.isKey(this.wheelBind.getKeyCode())) {
+         if (event.getIntValue() == 1) {
             this.method7687();
-         } else if (var1.getIntValue() == 0) {
+         } else if (event.getIntValue() == 0) {
             if (this.intValue2 != -1 && mc.gui.screen() instanceof InventoryScreen) {
                return;
             }
@@ -215,48 +215,48 @@ public final class AutoSwapModule extends Module {
       }
    }
 
-   private void method7688(int var1, int var2) {
-      if (var1 == 1) {
-         this.method7689(var2);
+   private void method7688(int intValue, int n) {
+      if (intValue == 1) {
+         this.method7689(n);
       } else {
-         if (var1 == 0) {
-            this.method7691(var2);
+         if (intValue == 0) {
+            this.method7691(n);
          }
       }
    }
 
-   private void method7689(int var1) {
-      AutoSwapModule.Entry2 var2 = this.method7723(var1);
-      if (var2 != null) {
-         var2.clear();
-         this.intValue3 = var1;
+   private void method7689(int intValue) {
+      AutoSwapModule.Entry2 entry2 = this.method7723(intValue);
+      if (entry2 != null) {
+         entry2.clear();
+         this.intValue3 = intValue;
          this.longValue2 = System.currentTimeMillis() + 250L;
       }
    }
 
    private void method7690() {
-      for (AutoSwapModule.Entry2 var4 : this.entry2s) {
-         var4.clear();
+      for (AutoSwapModule.Entry2 entry2 : this.entry2s) {
+         entry2.clear();
       }
 
       this.intValue3 = -1;
       this.longValue2 = System.currentTimeMillis() + 250L;
    }
 
-   private void method7691(int var1) {
-      this.intValue2 = var1;
+   private void method7691(int n) {
+      this.intValue2 = n;
       mc.gui.setScreen(new InventoryScreen(mc.player));
    }
 
-   private void method7692(ClickSlotEvent var1) {
-      NonNullList var2 = mc.player.containerMenu.slots;
-      if (var1.getIntValue2() >= 0 && var1.getIntValue2() < var2.size()) {
-         ItemStack var3 = ((Slot)var2.get(var1.getIntValue2())).getItem();
-         if (!var3.isEmpty() && var3.getItem() != Items.AIR) {
-            AutoSwapModule.Entry2 var4 = this.method7723(this.intValue2);
-            if (var4 != null) {
-               var4.method7733(var3);
-               var1.setCancelled(true);
+   private void method7692(ClickSlotEvent event) {
+      NonNullList slots = mc.player.containerMenu.slots;
+      if (event.getIntValue2() >= 0 && event.getIntValue2() < slots.size()) {
+         ItemStack itemStack = ((Slot)slots.get(event.getIntValue2())).getItem();
+         if (!itemStack.isEmpty() && itemStack.getItem() != Items.AIR) {
+            AutoSwapModule.Entry2 entry2 = this.method7723(this.intValue2);
+            if (entry2 != null) {
+               entry2.method7733(itemStack);
+               event.setCancelled(true);
                mc.gui.setScreen(null);
                this.method7732();
             }
@@ -264,93 +264,93 @@ public final class AutoSwapModule extends Module {
       }
    }
 
-   private void method7693(ScreenRenderEvent var1) {
-      float var2;
-      if ((var2 = this.animation.method2808(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
-         for (Animation var6 : this.animations) {
-            var6.method2809(0.0F);
+   private void method7693(ScreenRenderEvent event) {
+      float f;
+      if ((f = this.animation.method2808(this.flag ? 1.0F : 0.0F)) <= 0.005F && !this.flag) {
+         for (Animation animation : this.animations) {
+            animation.method2809(0.0F);
          }
       } else {
          if (this.flag) {
             this.method7731(true);
          }
 
-         AutoSwapModule.Entry var3 = this.method7694(var1.getMenuDrawContext(), var2);
-         if (var3 != null) {
-            if (this.flag && var3.floatValue6 > 0.4F) {
-               this.method7713(var3.intValue);
+         AutoSwapModule.Entry entry = this.method7694(event.getMenuDrawContext(), f);
+         if (entry != null) {
+            if (this.flag && entry.floatValue6 > 0.4F) {
+               this.method7713(entry.intValue);
             }
 
-            this.method7695(var3);
-            this.method7696(var3);
-            this.method7702(var3);
-            this.method7706(var3);
-            this.method7708(var3);
+            this.method7695(entry);
+            this.method7696(entry);
+            this.method7702(entry);
+            this.method7706(entry);
+            this.method7708(entry);
          }
       }
    }
 
-   private AutoSwapModule.Entry method7694(MenuDrawContext var1, float var2) {
-      float var3 = mc.getWindow().getGuiScaledWidth() / 2.0F;
-      float var4 = mc.getWindow().getGuiScaledHeight() / 2.0F;
-      float var5 = 0.85F + 0.15F * var2;
-      float var6 = 60.0F * var5;
-      float var7 = 94.0F * var5;
-      int var8 = this.flag ? this.method7726(var1.getMouseX(), var1.getMouseY(), var3, var4, var6) : -1;
-      boolean var9 = this.flag && this.method7727(var1.getMouseX(), var1.getMouseY(), var3, var4);
-      ZenithStyle var10 = zenith.getStyleManager().getCurrentStyle();
-      return var10 == null
+   private AutoSwapModule.Entry method7694(MenuDrawContext menuDrawContext, float f) {
+      float floatValue = mc.getWindow().getGuiScaledWidth() / 2.0F;
+      float f2 = mc.getWindow().getGuiScaledHeight() / 2.0F;
+      float f3 = 0.85F + 0.15F * f;
+      float f4 = 60.0F * f3;
+      float f5 = 94.0F * f3;
+      int intValue = this.flag ? this.method7726(menuDrawContext.getMouseX(), menuDrawContext.getMouseY(), floatValue, f2, f4) : -1;
+      boolean flag = this.flag && this.method7727(menuDrawContext.getMouseX(), menuDrawContext.getMouseY(), floatValue, f2);
+      ZenithStyle currentStyle = zenith.getStyleManager().getCurrentStyle();
+      return currentStyle == null
          ? null
-         : new AutoSwapModule.Entry(var1, MatrixUtils.method666(var1.pose()), var3, var4, var6, var7, var5, var2, var8, var9, var10);
+         : new AutoSwapModule.Entry(menuDrawContext, MatrixUtils.method666(menuDrawContext.pose()), floatValue, f2, f4, f5, f3, f, intValue, flag, currentStyle);
    }
 
-   private void method7695(AutoSwapModule.Entry var1) {
-      float var2;
-      if (!((var2 = zenith.getNLMenuScreen().getBlurPower()) <= 0.0F)) {
-         float var3 = var1.floatValue4 + 7.0F;
+   private void method7695(AutoSwapModule.Entry entry) {
+      float blurPower;
+      if (!((blurPower = zenith.getNLMenuScreen().getBlurPower()) <= 0.0F)) {
+         float intValue = entry.floatValue4 + 7.0F;
          RenderShaders.method5287(
-            var1.matrixStack.last().pose(),
-            var1.floatValue - var3,
-            var1.floatValue2 - var3,
-            var3 * 2.0F,
-            var3 * 2.0F,
-            var2,
-            ProxyDotRadiusData.method8069(var3),
-            ZenithColor.INSTANCE.method7294(var1.floatValue6 * 0.92F),
+            entry.matrixStack.last().pose(),
+            entry.floatValue - intValue,
+            entry.floatValue2 - intValue,
+            intValue * 2.0F,
+            intValue * 2.0F,
+            blurPower,
+            ProxyDotRadiusData.method8069(intValue),
+            ZenithColor.INSTANCE.method7294(entry.floatValue6 * 0.92F),
             true,
             false
          );
       }
    }
 
-   private void method7696(AutoSwapModule.Entry var1) {
-      float var2 = this.method7697();
-      float var3 = this.method7698();
-      float var4 = var2 - var3;
-      boolean var5 = this.intValue3 != -1 && System.currentTimeMillis() <= this.longValue2;
+   private void method7696(AutoSwapModule.Entry entry) {
+      float f = this.method7697();
+      float f2 = this.method7698();
+      float f3 = f - f2;
+      boolean flag = this.intValue3 != -1 && System.currentTimeMillis() <= this.longValue2;
 
-      for (int var6 = 0; var6 < 3; var6++) {
-         float var7 = this.animations[var6].method2808(var6 == var1.intValue ? 1.0F : 0.0F);
-         boolean var8 = this.method7714(var6);
-         AutoSwapModule.Entry3 var9 = this.method7699(var1, var7, var5 && var6 == this.intValue3, var8);
-         float var10 = var1.floatValue4 + var7 * 6.0F;
-         this.method7700(var1, var6 * var2 + var3 * 0.5F);
-         this.method7701(var1, var10, var4, var9.zenithColor, var9.zenithColor2);
-         if (var7 > 0.01F) {
+      for (int i = 0; i < 3; i++) {
+         float hover = this.animations[i].method2808(i == entry.intValue ? 1.0F : 0.0F);
+         boolean flag2 = this.method7714(i);
+         AutoSwapModule.Entry3 entry3 = this.method7699(entry, hover, flag && i == this.intValue3, flag2);
+         float f4 = entry.floatValue4 + hover * 6.0F;
+         this.method7700(entry, i * f + f2 * 0.5F);
+         this.method7701(entry, f4, f3, entry3.zenithColor, entry3.zenithColor2);
+         if (hover > 0.01F) {
             RenderShaders.method5275(
-               var1.matrixStack.last().pose(),
-               var1.floatValue - var10,
-               var1.floatValue2 - var10,
-               var10 * 2.0F,
-               var10 * 2.0F,
-               1.35F + var7,
-               var4,
+               entry.matrixStack.last().pose(),
+               entry.floatValue - f4,
+               entry.floatValue2 - f4,
+               f4 * 2.0F,
+               f4 * 2.0F,
+               1.35F + hover,
+               f3,
                0.0F,
-               var1.zenithStyle.getPrimaryColor().getZenithColor().method7294(var1.floatValue6 * var7 * 0.8F)
+               entry.zenithStyle.getPrimaryColor().getZenithColor().method7294(entry.floatValue6 * hover * 0.8F)
             );
          }
 
-         var1.matrixStack.popPose();
+         entry.matrixStack.popPose();
       }
    }
 
@@ -362,231 +362,231 @@ public final class AutoSwapModule extends Module {
       return 2.4F;
    }
 
-   private AutoSwapModule.Entry3 method7699(AutoSwapModule.Entry var1, float var2, boolean var3, boolean var4) {
-      if (var3) {
+   private AutoSwapModule.Entry3 method7699(AutoSwapModule.Entry entry, float hover, boolean flag, boolean flag2) {
+      if (flag) {
          return new AutoSwapModule.Entry3(
-            new ZenithColor(255, 90, 90, (int)(220.0F * var1.floatValue6)), new ZenithColor(210, 40, 40, (int)(170.0F * var1.floatValue6))
+            new ZenithColor(255, 90, 90, (int)(220.0F * entry.floatValue6)), new ZenithColor(210, 40, 40, (int)(170.0F * entry.floatValue6))
          );
-      } else if (var4) {
+      } else if (flag2) {
          return new AutoSwapModule.Entry3(
-            var1.zenithStyle
+            entry.zenithStyle
                .getDisableActiveBg()
                .getZenithColor()
-               .method7294(var1.floatValue6)
-               .method7295(var1.zenithStyle.getPrimaryColor().getZenithColor().method7294(var1.floatValue6), var2 * 0.45F),
-            var1.zenithStyle
+               .method7294(entry.floatValue6)
+               .method7295(entry.zenithStyle.getPrimaryColor().getZenithColor().method7294(entry.floatValue6), hover * 0.45F),
+            entry.zenithStyle
                .getRightBackground()
                .getZenithColor()
-               .method7294(var1.floatValue6 * 0.9F)
-               .method7295(var1.zenithStyle.getPrimaryColor().getZenithColor().method7296(0.55F).method7294(var1.floatValue6), var2 * 0.4F)
+               .method7294(entry.floatValue6 * 0.9F)
+               .method7295(entry.zenithStyle.getPrimaryColor().getZenithColor().method7296(0.55F).method7294(entry.floatValue6), hover * 0.4F)
          );
       } else {
-         ZenithColor var5 = var1.zenithStyle.getSurfaceDisableBackground().getZenithColor().method7294(var1.floatValue6);
-         ZenithColor var6 = var1.zenithStyle.getRightBackground().getZenithColor().method7294(var1.floatValue6 * 0.92F);
-         if (var2 <= 0.001F) {
-            return new AutoSwapModule.Entry3(var5, var6);
+         ZenithColor zenithColor = entry.zenithStyle.getSurfaceDisableBackground().getZenithColor().method7294(entry.floatValue6);
+         ZenithColor zenithColor2 = entry.zenithStyle.getRightBackground().getZenithColor().method7294(entry.floatValue6 * 0.92F);
+         if (hover <= 0.001F) {
+            return new AutoSwapModule.Entry3(zenithColor, zenithColor2);
          } else {
-            ZenithColor var7 = var1.zenithStyle
+            ZenithColor zenithColor3 = entry.zenithStyle
                .getSurfaceEnableBackground()
                .getZenithColor()
-               .method7294(var1.floatValue6)
-               .method7295(var1.zenithStyle.getPrimaryColor().getZenithColor().method7294(var1.floatValue6), var2 * 0.65F);
-            ZenithColor var8 = var1.zenithStyle.getPrimaryColor().getZenithColor().method7296(0.48F).method7294(var1.floatValue6);
-            return new AutoSwapModule.Entry3(var5.method7295(var7, var2), var6.method7295(var8, var2));
+               .method7294(entry.floatValue6)
+               .method7295(entry.zenithStyle.getPrimaryColor().getZenithColor().method7294(entry.floatValue6), hover * 0.65F);
+            ZenithColor zenithColor4 = entry.zenithStyle.getPrimaryColor().getZenithColor().method7296(0.48F).method7294(entry.floatValue6);
+            return new AutoSwapModule.Entry3(zenithColor.method7295(zenithColor3, hover), zenithColor2.method7295(zenithColor4, hover));
          }
       }
    }
 
-   private void method7700(AutoSwapModule.Entry var1, float var2) {
-      var1.matrixStack.pushPose();
-      var1.matrixStack.translate(var1.floatValue, var1.floatValue2, 0.0F);
-      var1.matrixStack.rotate(Axis.ZP.rotationDegrees(var2));
-      var1.matrixStack.translate(-var1.floatValue, -var1.floatValue2, 0.0F);
+   private void method7700(AutoSwapModule.Entry entry, float angle) {
+      entry.matrixStack.pushPose();
+      entry.matrixStack.translate(entry.floatValue, entry.floatValue2, 0.0F);
+      entry.matrixStack.rotate(Axis.ZP.rotationDegrees(angle));
+      entry.matrixStack.translate(-entry.floatValue, -entry.floatValue2, 0.0F);
    }
 
-   private void method7701(AutoSwapModule.Entry var1, float var2, float var3, ZenithColor var4, ZenithColor var5) {
+   private void method7701(AutoSwapModule.Entry entry, float f, float f2, ZenithColor zenithColor, ZenithColor zenithColor2) {
       RenderShaders.method5276(
-         var1.matrixStack.last().pose(),
-         var1.floatValue - var2,
-         var1.floatValue2 - var2,
-         var2 * 2.0F,
-         var2 * 2.0F,
-         var2 - var1.floatValue3,
-         var3,
+         entry.matrixStack.last().pose(),
+         entry.floatValue - f,
+         entry.floatValue2 - f,
+         f * 2.0F,
+         f * 2.0F,
+         f - entry.floatValue3,
+         f2,
          0.0F,
-         var4,
-         var5,
-         var5,
-         var4
+         zenithColor,
+         zenithColor2,
+         zenithColor2,
+         zenithColor
       );
    }
 
-   private void method7702(AutoSwapModule.Entry var1) {
-      for (int var2 = 0; var2 < 3; var2++) {
-         this.method7703(var1, var2, false);
+   private void method7702(AutoSwapModule.Entry entry) {
+      for (int i = 0; i < 3; i++) {
+         this.method7703(entry, i, false);
       }
 
       ScissorFlusher.flush();
 
-      for (int var3 = 0; var3 < 3; var3++) {
-         this.method7703(var1, var3, true);
+      for (int i = 0; i < 3; i++) {
+         this.method7703(entry, i, true);
       }
    }
 
-   private void method7703(AutoSwapModule.Entry var1, int var2, boolean var3) {
-      ItemStack var4 = this.method7717(var2);
-      float var5 = this.animations[var2].getValue();
-      float var6 = this.method7728(var2);
-      float var7 = (var1.floatValue3 + var1.floatValue4) / 2.0F + var5 * 4.0F;
-      float var8 = var1.floatValue + (float)Math.cos(var6) * var7;
-      float var9 = var1.floatValue2 + (float)Math.sin(var6) * var7;
-      if (!var4.isEmpty() && var4.getItem() != Items.AIR) {
-         if (var3) {
-            this.method7705(var1, var4, var8, var9);
+   private void method7703(AutoSwapModule.Entry entry, int intValue, boolean flag) {
+      ItemStack itemStack = this.method7717(intValue);
+      float f = this.animations[intValue].getValue();
+      float f2 = this.method7728(intValue);
+      float f3 = (entry.floatValue3 + entry.floatValue4) / 2.0F + f * 4.0F;
+      float f4 = entry.floatValue + (float)Math.cos(f2) * f3;
+      float f5 = entry.floatValue2 + (float)Math.sin(f2) * f3;
+      if (!itemStack.isEmpty() && itemStack.getItem() != Items.AIR) {
+         if (flag) {
+            this.method7705(entry, itemStack, f4, f5);
          } else {
-            var1.menuDrawContext.item(var4, (int)(var8 - 8.0F), (int)(var9 - 8.0F));
+            entry.menuDrawContext.item(itemStack, (int)(f4 - 8.0F), (int)(f5 - 8.0F));
          }
       } else {
-         if (!var3) {
-            this.method7704(var1, var8, var9, var5);
+         if (!flag) {
+            this.method7704(entry, f4, f5, f);
          }
       }
    }
 
-   private void method7704(AutoSwapModule.Entry var1, float var2, float var3, float var4) {
-      ZenithColor var5 = var1.zenithStyle.getTextTertiary().getZenithColor().method7294(var1.floatValue6 * (0.62F + var4 * 0.38F));
-      var1.menuDrawContext.drawRoundedRect(var2 - 5.0F, var3 - 0.7F, 10.0F, 1.4F, ProxyDotRadiusData.method8069(0.7F), var5);
-      var1.menuDrawContext.drawRoundedRect(var2 - 0.7F, var3 - 5.0F, 1.4F, 10.0F, ProxyDotRadiusData.method8069(0.7F), var5);
+   private void method7704(AutoSwapModule.Entry entry, float f, float f2, float f3) {
+      ZenithColor zenithColor = entry.zenithStyle.getTextTertiary().getZenithColor().method7294(entry.floatValue6 * (0.62F + f3 * 0.38F));
+      entry.menuDrawContext.drawRoundedRect(f - 5.0F, f2 - 0.7F, 10.0F, 1.4F, ProxyDotRadiusData.method8069(0.7F), zenithColor);
+      entry.menuDrawContext.drawRoundedRect(f - 0.7F, f2 - 5.0F, 1.4F, 10.0F, ProxyDotRadiusData.method8069(0.7F), zenithColor);
    }
 
-   private void method7705(AutoSwapModule.Entry var1, ItemStack var2, float var3, float var4) {
-      int var5;
-      if ((var5 = this.method7716(var2)) > 1) {
-         Font var6 = Fonts.NEW_SEMIBOLD.getFont(6.0F);
-         String var7 = String.valueOf(var5);
-         float var8 = var3 + 8.0F - var6.width(var7);
-         float var9 = var4 + 5.5F;
-         var1.menuDrawContext
-            .drawText(var6, var7, var8 + 0.5F, var9 + 0.5F, var1.zenithStyle.getRightBackground().getZenithColor().method7294(var1.floatValue6));
-         var1.menuDrawContext.drawText(var6, var7, var8, var9, var1.zenithStyle.getTextEnable().getZenithColor().method7294(var1.floatValue6));
+   private void method7705(AutoSwapModule.Entry entry, ItemStack itemStack, float f, float f2) {
+      int n;
+      if ((n = this.method7716(itemStack)) > 1) {
+         Font font = Fonts.NEW_SEMIBOLD.getFont(6.0F);
+         String text = String.valueOf(n);
+         float floatValue = f + 8.0F - font.width(text);
+         float centeredTextY = f2 + 5.5F;
+         entry.menuDrawContext
+            .drawText(font, text, floatValue + 0.5F, centeredTextY + 0.5F, entry.zenithStyle.getRightBackground().getZenithColor().method7294(entry.floatValue6));
+         entry.menuDrawContext.drawText(font, text, floatValue, centeredTextY, entry.zenithStyle.getTextEnable().getZenithColor().method7294(entry.floatValue6));
       }
    }
 
-   private void method7706(AutoSwapModule.Entry var1) {
-      this.method7707(var1);
+   private void method7706(AutoSwapModule.Entry entry) {
+      this.method7707(entry);
       if (mc.player != null) {
-         ItemStack var2 = mc.player.getOffhandItem();
-         if (!var2.isEmpty() && var2.getItem() != Items.AIR) {
-            var1.menuDrawContext.item(var2, (int)(var1.floatValue - 8.0F), (int)(var1.floatValue2 - 8.0F));
+         ItemStack offhandItem = mc.player.getOffhandItem();
+         if (!offhandItem.isEmpty() && offhandItem.getItem() != Items.AIR) {
+            entry.menuDrawContext.item(offhandItem, (int)(entry.floatValue - 8.0F), (int)(entry.floatValue2 - 8.0F));
          }
       }
    }
 
-   private void method7707(AutoSwapModule.Entry var1) {
-      float var2 = 32.0F * var1.floatValue5;
-      var1.menuDrawContext
+   private void method7707(AutoSwapModule.Entry entry) {
+      float intValue = 32.0F * entry.floatValue5;
+      entry.menuDrawContext
          .drawRoundedRect(
-            var1.floatValue - var2,
-            var1.floatValue2 - var2,
-            var2 * 2.0F,
-            var2 * 2.0F,
-            ProxyDotRadiusData.method8069(var2),
-            var1.zenithStyle.getLeftBackground().getZenithColor().method7294(var1.floatValue6 * 0.97F)
+            entry.floatValue - intValue,
+            entry.floatValue2 - intValue,
+            intValue * 2.0F,
+            intValue * 2.0F,
+            ProxyDotRadiusData.method8069(intValue),
+            entry.zenithStyle.getLeftBackground().getZenithColor().method7294(entry.floatValue6 * 0.97F)
          );
-      if (var1.flag) {
-         var1.menuDrawContext
+      if (entry.flag) {
+         entry.menuDrawContext
             .drawRoundedBorder(
-               var1.floatValue - var2 - 1.0F,
-               var1.floatValue2 - var2 - 1.0F,
-               (var2 + 1.0F) * 2.0F,
-               (var2 + 1.0F) * 2.0F,
+               entry.floatValue - intValue - 1.0F,
+               entry.floatValue2 - intValue - 1.0F,
+               (intValue + 1.0F) * 2.0F,
+               (intValue + 1.0F) * 2.0F,
                1.2F,
-               ProxyDotRadiusData.method8069(var2 + 1.0F),
-               var1.zenithStyle.getPrimaryColor().getZenithColor().method7294(var1.floatValue6 * 0.75F)
+               ProxyDotRadiusData.method8069(intValue + 1.0F),
+               entry.zenithStyle.getPrimaryColor().getZenithColor().method7294(entry.floatValue6 * 0.75F)
             );
       }
    }
 
-   private void method7708(AutoSwapModule.Entry var1) {
-      if (!(var1.floatValue6 <= 0.5F)) {
-         String var2;
-         String var3;
-         if (var1.flag) {
-            var2 = "Вторая рука";
-            var3 = "ПКМ очистить всё";
-         } else if (var1.intValue != -1) {
-            ItemStack var4 = this.method7717(var1.intValue);
-            boolean var5;
-            var2 = (var5 = var4.isEmpty() || var4.getItem() == Items.AIR) ? "Пустой слот" : var4.getHoverName().getString();
-            var3 = this.method7709(var1.intValue, var5);
+   private void method7708(AutoSwapModule.Entry entry) {
+      if (!(entry.floatValue6 <= 0.5F)) {
+         String string;
+         String text;
+         if (entry.flag) {
+            string = "Вторая рука";
+            text = "ПКМ очистить всё";
+         } else if (entry.intValue != -1) {
+            ItemStack stack = this.method7717(entry.intValue);
+            boolean flag;
+            string = (flag = stack.isEmpty() || stack.getItem() == Items.AIR) ? "Пустой слот" : stack.getHoverName().getString();
+            text = this.method7709(entry.intValue, flag);
          } else {
-            var2 = "AutoSwap";
-            var3 = "Наведитесь на нужный предмет";
+            string = "AutoSwap";
+            text = "Наведитесь на нужный предмет";
          }
 
-         Font var10 = Fonts.NEW_SEMIBOLD.getFont(7.5F);
-         Font var11 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         float var6 = Math.max(var10.width(var2), var11.width(var3)) + 20.0F;
-         float var7 = var1.floatValue - var6 / 2.0F;
-         float var8 = var1.floatValue2 - var1.floatValue4 - 38.0F;
-         float var9;
-         if ((var9 = zenith.getNLMenuScreen().getBlurPower()) > 0.0F) {
+         Font font = Fonts.NEW_SEMIBOLD.getFont(7.5F);
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.5F);
+         float panelWidth = Math.max(font.width(string), font2.width(text)) + 20.0F;
+         float floatValue = entry.floatValue - panelWidth / 2.0F;
+         float y = entry.floatValue2 - entry.floatValue4 - 38.0F;
+         float blurPower;
+         if ((blurPower = zenith.getNLMenuScreen().getBlurPower()) > 0.0F) {
             RenderShaders.method5287(
-               var1.matrixStack.last().pose(),
-               var7,
-               var8,
-               var6,
+               entry.matrixStack.last().pose(),
+               floatValue,
+               y,
+               panelWidth,
                27.0F,
-               var9,
+               blurPower,
                ProxyDotRadiusData.method8069(7.0F),
-               ZenithColor.INSTANCE.method7294(var1.floatValue6),
+               ZenithColor.INSTANCE.method7294(entry.floatValue6),
                true,
                false
             );
          }
 
-         var1.menuDrawContext
+         entry.menuDrawContext
             .drawRoundedRect(
-               var7,
-               var8,
-               var6,
+               floatValue,
+               y,
+               panelWidth,
                27.0F,
                ProxyDotRadiusData.method8069(7.0F),
-               var1.zenithStyle.getLeftBackground().getZenithColor().method7294(var1.floatValue6 * 0.92F)
+               entry.zenithStyle.getLeftBackground().getZenithColor().method7294(entry.floatValue6 * 0.92F)
             );
-         var1.menuDrawContext
+         entry.menuDrawContext
             .drawText(
-               var10,
-               var2,
-               var1.floatValue - var10.width(var2) / 2.0F,
-               var8 + 5.0F,
-               var1.zenithStyle.getTextEnable().getZenithColor().method7294(var1.floatValue6)
+               font,
+               string,
+               entry.floatValue - font.width(string) / 2.0F,
+               y + 5.0F,
+               entry.zenithStyle.getTextEnable().getZenithColor().method7294(entry.floatValue6)
             );
-         var1.menuDrawContext
+         entry.menuDrawContext
             .drawText(
-               var11,
-               var3,
-               var1.floatValue - var11.width(var3) / 2.0F,
-               var8 + 16.0F,
-               var1.zenithStyle.getTextSecondary().getZenithColor().method7294(var1.floatValue6)
+               font2,
+               text,
+               entry.floatValue - font2.width(text) / 2.0F,
+               y + 16.0F,
+               entry.zenithStyle.getTextSecondary().getZenithColor().method7294(entry.floatValue6)
             );
       }
    }
 
-   private String method7709(int var1, boolean var2) {
-      if (var2) {
+   private String method7709(int intValue, boolean flag) {
+      if (flag) {
          return "ЛКМ привязать";
       } else {
-         return this.method7714(var1) ? "Нет в инвентаре" : "ПКМ очистить";
+         return this.method7714(intValue) ? "Нет в инвентаре" : "ПКМ очистить";
       }
    }
 
-   private void method7710(Slot var1) {
-      if (var1 != null) {
+   private void method7710(Slot slot) {
+      if (slot != null) {
          if (KeyBindUtils.method2630(AutoTotemModule.class) && KeyBindUtils.method2630(AutoSwapModule.class)) {
             KeyBindUtils.method2627(AutoSwapModule.class, () -> {
                if (KeyBindUtils.method2630(AutoTotemModule.class)) {
-                  InventoryUtils.method900(var1, InteractionHand.OFF_HAND, true);
+                  InventoryUtils.method900(slot, InteractionHand.OFF_HAND, true);
                }
             });
             OffHandManagerModule.INSTANCE.reset();
@@ -599,14 +599,14 @@ public final class AutoSwapModule extends Module {
          ? null
          : InventoryUtils.method907(
             Items.PLAYER_HEAD,
-            var0 -> {
-               if (var0.getItem().isEmpty()) {
+            slot -> {
+               if (slot.getItem().isEmpty()) {
                   return false;
                } else {
-                  CustomData var1 = var0.getItem().get(DataComponents.CUSTOM_DATA);
-                  return var1 != null
-                     && var1.copyTag().contains("SkullOwner")
-                     && var1.copyTag()
+                  CustomData customData = slot.getItem().get(DataComponents.CUSTOM_DATA);
+                  return customData != null
+                     && customData.copyTag().contains("SkullOwner")
+                     && customData.copyTag()
                         .get("SkullOwner")
                         .toString()
                         .contains(
@@ -617,8 +617,8 @@ public final class AutoSwapModule extends Module {
          );
    }
 
-   private Item method7712(ModeSetting var1) {
-      return switch (var1.getIndex()) {
+   private Item method7712(ModeSetting itemType) {
+      return switch (itemType.getIndex()) {
          case 0 -> Items.PLAYER_HEAD;
          case 1 -> Items.TOTEM_OF_UNDYING;
          case 2 -> Items.GOLDEN_APPLE;
@@ -627,82 +627,82 @@ public final class AutoSwapModule extends Module {
       };
    }
 
-   private void method7713(int var1) {
-      if (var1 == -1) {
+   private void method7713(int intValue) {
+      if (intValue == -1) {
          this.intValue4 = -1;
-      } else if (var1 != this.intValue4) {
-         ItemStack var2 = this.method7717(var1);
-         if (var2.isEmpty() || var2.getItem() == Items.AIR) {
+      } else if (intValue != this.intValue4) {
+         ItemStack itemStack = this.method7717(intValue);
+         if (itemStack.isEmpty() || itemStack.getItem() == Items.AIR) {
             this.intValue4 = -1;
-         } else if (this.method7721(mc.player.getOffhandItem(), var2)) {
-            this.intValue4 = var1;
+         } else if (this.method7721(mc.player.getOffhandItem(), itemStack)) {
+            this.intValue4 = intValue;
          } else {
-            Slot var3 = this.method7715(var2);
-            if (var3 == null) {
-               this.intValue4 = var1;
+            Slot slot = this.method7715(itemStack);
+            if (slot == null) {
+               this.intValue4 = intValue;
             } else {
-               this.method7710(var3);
-               this.intValue4 = var1;
+               this.method7710(slot);
+               this.intValue4 = intValue;
             }
          }
       }
    }
 
-   private boolean method7714(int var1) {
-      ItemStack var2 = this.method7717(var1);
-      return !this.method7718(var2) && this.method7715(var2) == null && !this.method7722(var2);
+   private boolean method7714(int intValue) {
+      ItemStack itemStack = this.method7717(intValue);
+      return !this.method7718(itemStack) && this.method7715(itemStack) == null && !this.method7722(itemStack);
    }
 
-   private Slot method7715(ItemStack var1) {
-      return this.method7718(var1)
+   private Slot method7715(ItemStack itemStack) {
+      return this.method7718(itemStack)
          ? null
          : InventoryUtils.method913(
-            var1.getItem(),
-            Comparator.comparing(var0 -> var0.getItem().isEnchanted()),
-            var2 -> var2.index != 46 && var2.index != 45 && this.method7721(var2.getItem(), var1)
+            itemStack.getItem(),
+            Comparator.comparing(slot -> slot.getItem().isEnchanted()),
+            slot -> slot.index != 46 && slot.index != 45 && this.method7721(slot.getItem(), itemStack)
          );
    }
 
-   private int method7716(ItemStack var1) {
-      if (!this.method7718(var1) && mc.player != null && mc.player.containerMenu != null) {
-         int var2 = 0;
+   private int method7716(ItemStack itemStack) {
+      if (!this.method7718(itemStack) && mc.player != null && mc.player.containerMenu != null) {
+         int n = 0;
 
-         for (Slot var4 : mc.player.containerMenu.slots) {
-            if (var4.index != 46) {
-               ItemStack var5 = var4.getItem();
-               if (this.method7721(var5, var1)) {
-                  var2 += var5.getCount();
+         for (Slot slot : mc.player.containerMenu.slots) {
+            if (slot.index != 46) {
+               ItemStack offhandItem = slot.getItem();
+               if (this.method7721(offhandItem, itemStack)) {
+                  n += offhandItem.getCount();
                }
             }
          }
 
-         return var2;
+         return n;
       } else {
          return 0;
       }
    }
 
-   private ItemStack method7717(int var1) {
-      AutoSwapModule.Entry2 var2 = this.method7723(var1);
-      return var2 == null ? ItemStack.EMPTY : var2.method7734();
+   private ItemStack method7717(int intValue) {
+      AutoSwapModule.Entry2 entry2 = this.method7723(intValue);
+      return entry2 == null ? ItemStack.EMPTY : entry2.method7734();
    }
 
-   private boolean method7718(ItemStack var1) {
-      return var1 == null || var1.isEmpty() || var1.getItem() == Items.AIR;
+   private boolean method7718(ItemStack itemStack) {
+      return itemStack == null || itemStack.isEmpty() || itemStack.getItem() == Items.AIR;
    }
 
-   private ItemStack method7719(ItemStack var1) {
-      ItemStack var2 = var1.copy();
-      var2.setCount(1);
-      return var2;
+   private ItemStack method7719(ItemStack itemStack) {
+      ItemStack stack = itemStack.copy();
+      stack.setCount(1);
+      return stack;
    }
 
-   private ItemStack method7720(String var1) {
-      if (var1 != null && !var1.isBlank()) {
-         Identifier var2 = Identifier.tryParse(var1);
-         if (var2 != null && BuiltInRegistries.ITEM.containsKey(var2)) {
-            Item var3 = BuiltInRegistries.ITEM.getValue(var2);
-            return var3 == Items.AIR ? ItemStack.EMPTY : var3.getDefaultInstance();
+   private ItemStack method7720(String text) {
+      if (text != null && !text.isBlank()) {
+         Identifier tryParse = Identifier.tryParse(text);
+         if (tryParse != null && BuiltInRegistries.ITEM.containsKey(tryParse)) {
+            Item item = BuiltInRegistries.ITEM.getValue(tryParse);
+            return item == Items.AIR ? ItemStack.EMPTY : item.getDefaultInstance();
          } else {
             return ItemStack.EMPTY;
          }
@@ -711,29 +711,29 @@ public final class AutoSwapModule extends Module {
       }
    }
 
-   private boolean method7721(ItemStack var1, ItemStack var2) {
-      if (!var1.isEmpty() && !var2.isEmpty()) {
-         return var2.getItem() != Items.PLAYER_HEAD ? var1.getItem() == var2.getItem() : ItemStack.isSameItemSameComponents(var1, var2);
+   private boolean method7721(ItemStack offhandItem, ItemStack itemStack) {
+      if (!offhandItem.isEmpty() && !itemStack.isEmpty()) {
+         return itemStack.getItem() != Items.PLAYER_HEAD ? offhandItem.getItem() == itemStack.getItem() : ItemStack.isSameItemSameComponents(offhandItem, itemStack);
       } else {
          return false;
       }
    }
 
-   private boolean method7722(ItemStack var1) {
-      return this.method7721(mc.player.getOffhandItem(), var1);
+   private boolean method7722(ItemStack itemStack) {
+      return this.method7721(mc.player.getOffhandItem(), itemStack);
    }
 
-   private AutoSwapModule.Entry2 method7723(int var1) {
-      return var1 >= 0 && var1 < this.entry2s.length ? this.entry2s[var1] : null;
+   private AutoSwapModule.Entry2 method7723(int intValue) {
+      return intValue >= 0 && intValue < this.entry2s.length ? this.entry2s[intValue] : null;
    }
 
-   private String method7724(ItemStack var1) {
-      if (var1 != null && !var1.isEmpty() && mc.level != null) {
+   private String method7724(ItemStack itemStack) {
+      if (itemStack != null && !itemStack.isEmpty() && mc.level != null) {
          try {
-            RegistryOps var2 = mc.level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
-            DataResult var3 = ItemStack.CODEC.encodeStart(var2, var1);
-            return (String)var3.result().map(e -> String.valueOf(e)).orElse(null);
-         } catch (Exception var4) {
+            RegistryOps serializationContext = mc.level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
+            DataResult encodeStart = ItemStack.CODEC.encodeStart(serializationContext, itemStack);
+            return (String)encodeStart.result().map(e -> String.valueOf(e)).orElse(null);
+         } catch (Exception ex) {
             return null;
          }
       } else {
@@ -741,24 +741,24 @@ public final class AutoSwapModule extends Module {
       }
    }
 
-   private ItemStack method7725(String var1) {
-      if (var1 != null && !var1.isBlank() && mc.level != null) {
+   private ItemStack method7725(String json) {
+      if (json != null && !json.isBlank() && mc.level != null) {
          try {
-            JsonElement var2 = JsonParser.parseString(var1);
-            RegistryOps var3 = mc.level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
-            DataResult var4 = ItemStack.CODEC.decode(var3, var2);
-            if (var4.result().isEmpty()) {
+            JsonElement string = JsonParser.parseString(json);
+            RegistryOps serializationContext = mc.level.registryAccess().createSerializationContext(JsonOps.INSTANCE);
+            DataResult dataResult = ItemStack.CODEC.decode(serializationContext, string);
+            if (dataResult.result().isEmpty()) {
                return ItemStack.EMPTY;
             } else {
-               ItemStack var5 = (ItemStack)((Pair)var4.result().get()).getFirst();
-               if (var5.isEmpty()) {
+               ItemStack stack = (ItemStack)((Pair)dataResult.result().get()).getFirst();
+               if (stack.isEmpty()) {
                   return ItemStack.EMPTY;
                } else {
-                  var5.setCount(1);
-                  return var5;
+                  stack.setCount(1);
+                  return stack;
                }
             }
-         } catch (Exception var6) {
+         } catch (Exception e) {
             return ItemStack.EMPTY;
          }
       } else {
@@ -768,57 +768,57 @@ public final class AutoSwapModule extends Module {
 
    @Override
    public JsonObject save() {
-      JsonObject var1 = super.save();
-      JsonArray var2 = new JsonArray();
+      JsonObject json = super.save();
+      JsonArray jsonArray = new JsonArray();
 
-      for (AutoSwapModule.Entry2 var6 : this.entry2s) {
-         var2.add(var6.save());
+      for (AutoSwapModule.Entry2 entry2 : this.entry2s) {
+         jsonArray.add(entry2.save());
       }
 
-      var1.add("WheelItems", var2);
-      return var1;
+      json.add("WheelItems", jsonArray);
+      return json;
    }
 
    @Override
-   public void load(JsonObject var1) {
-      super.load(var1);
-      if (var1 != null && var1.has("WheelItems") && var1.get("WheelItems").isJsonArray()) {
-         for (AutoSwapModule.Entry2 var5 : this.entry2s) {
-            var5.clear();
+   public void load(JsonObject json) {
+      super.load(json);
+      if (json != null && json.has("WheelItems") && json.get("WheelItems").isJsonArray()) {
+         for (AutoSwapModule.Entry2 entry2 : this.entry2s) {
+            entry2.clear();
          }
 
-         JsonArray var6 = var1.getAsJsonArray("WheelItems");
+         JsonArray jsonArray = json.getAsJsonArray("WheelItems");
 
-         for (int var7 = 0; var7 < this.entry2s.length && var7 < var6.size(); var7++) {
-            this.entry2s[var7].method7735(var6.get(var7));
+         for (int i = 0; i < this.entry2s.length && i < jsonArray.size(); i++) {
+            this.entry2s[i].method7735(jsonArray.get(i));
          }
       }
    }
 
-   private int method7726(float var1, float var2, float var3, float var4, float var5) {
-      float var6 = var1 - var3;
-      float var7 = var2 - var4;
-      if ((float)Math.sqrt(var6 * var6 + var7 * var7) < var5 * 0.35F) {
+   private int method7726(float mouseX, float mouseY, float floatValue, float f, float f2) {
+      float x = mouseX - floatValue;
+      float y = mouseY - f;
+      if ((float)Math.sqrt(x * x + y * y) < f2 * 0.35F) {
          return -1;
       } else {
-         double var9;
-         if ((var9 = Math.atan2(var7, var6) + (Math.PI / 2)) < 0.0) {
-            var9 += Math.PI * 2;
+         double d;
+         if ((d = Math.atan2(y, x) + (Math.PI / 2)) < 0.0) {
+            d += Math.PI * 2;
          }
 
-         int var11;
-         return (var11 = (int)Math.floor(var9 / (Math.PI * 2) * 3.0)) >= 0 && var11 < 3 ? var11 : -1;
+         int n;
+         return (n = (int)Math.floor(d / (Math.PI * 2) * 3.0)) >= 0 && n < 3 ? n : -1;
       }
    }
 
-   private boolean method7727(float var1, float var2, float var3, float var4) {
-      float var5 = var1 - var3;
-      float var6 = var2 - var4;
-      return Math.sqrt(var5 * var5 + var6 * var6) <= 21.0;
+   private boolean method7727(float mouseX, float mouseY, float floatValue, float f) {
+      float f2 = mouseX - floatValue;
+      float f3 = mouseY - f;
+      return Math.sqrt(f2 * f2 + f3 * f3) <= 21.0;
    }
 
-   private float method7728(int var1) {
-      return (float)((-Math.PI / 2) + (Math.PI * 2) * ((var1 + 0.5) / 3.0));
+   private float method7728(int intValue) {
+      return (float)((-Math.PI / 2) + (Math.PI * 2) * ((intValue + 0.5) / 3.0));
    }
 
    private float method7729() {
@@ -829,9 +829,9 @@ public final class AutoSwapModule extends Module {
       return (float)(mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / mc.getWindow().getScreenHeight());
    }
 
-   private void method7731(boolean var1) {
+   private void method7731(boolean flag) {
       if (mc != null && mc.mouseHandler != null) {
-         if (var1) {
+         if (flag) {
             if (!this.flag2) {
                mc.mouseHandler.releaseMouse();
                this.flag2 = true;
@@ -871,29 +871,29 @@ public final class AutoSwapModule extends Module {
       private final ZenithStyle zenithStyle;
 
       private Entry(
-         MenuDrawContext var1,
-         PoseStack var2,
-         float var3,
-         float var4,
-         float var5,
-         float var6,
-         float var7,
-         float var8,
-         int var9,
-         boolean var10,
-         ZenithStyle var11
+         MenuDrawContext menuDrawContext,
+         PoseStack matrixStack,
+         float floatValue,
+         float f,
+         float f2,
+         float f3,
+         float f4,
+         float f5,
+         int intValue,
+         boolean flag,
+         ZenithStyle zenithStyle
       ) {
-         this.menuDrawContext = var1;
-         this.matrixStack = var2;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
-         this.floatValue4 = var6;
-         this.floatValue5 = var7;
-         this.floatValue6 = var8;
-         this.intValue = var9;
-         this.flag = var10;
-         this.zenithStyle = var11;
+         this.menuDrawContext = menuDrawContext;
+         this.matrixStack = matrixStack;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.intValue = intValue;
+         this.flag = flag;
+         this.zenithStyle = zenithStyle;
       }
    }
 
@@ -908,14 +908,14 @@ public final class AutoSwapModule extends Module {
          this.itemStack = null;
       }
 
-      private void method7733(ItemStack var1) {
-         if (AutoSwapModule.this.method7718(var1)) {
+      private void method7733(ItemStack itemStack) {
+         if (AutoSwapModule.this.method7718(itemStack)) {
             this.clear();
          } else {
-            ItemStack var2 = AutoSwapModule.this.method7719(var1);
-            this.text = BuiltInRegistries.ITEM.getKey(var2.getItem()).toString();
-            this.text2 = AutoSwapModule.this.method7724(var2);
-            this.itemStack = var2;
+            ItemStack stack = AutoSwapModule.this.method7719(itemStack);
+            this.text = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+            this.text2 = AutoSwapModule.this.method7724(stack);
+            this.itemStack = stack;
          }
       }
 
@@ -923,44 +923,44 @@ public final class AutoSwapModule extends Module {
          if (this.itemStack != null) {
             return this.itemStack;
          } else {
-            ItemStack var1 = AutoSwapModule.this.method7725(this.text2);
-            if (var1.isEmpty()) {
-               var1 = AutoSwapModule.this.method7720(this.text);
+            ItemStack itemStack = AutoSwapModule.this.method7725(this.text2);
+            if (itemStack.isEmpty()) {
+               itemStack = AutoSwapModule.this.method7720(this.text);
             }
 
-            this.itemStack = var1;
-            return var1;
+            this.itemStack = itemStack;
+            return itemStack;
          }
       }
 
       private JsonObject save() {
-         JsonObject var1 = new JsonObject();
-         var1.addProperty("item", this.text == null ? "minecraft:air" : this.text);
-         String var2 = this.text2;
-         if ((var2 == null || var2.isBlank()) && this.itemStack != null && !this.itemStack.isEmpty()) {
-            var2 = AutoSwapModule.this.method7724(this.itemStack);
+         JsonObject json = new JsonObject();
+         json.addProperty("item", this.text == null ? "minecraft:air" : this.text);
+         String str = this.text2;
+         if ((str == null || str.isBlank()) && this.itemStack != null && !this.itemStack.isEmpty()) {
+            str = AutoSwapModule.this.method7724(this.itemStack);
          }
 
-         if (var2 != null && !var2.isBlank()) {
-            var1.addProperty("stack", var2);
+         if (str != null && !str.isBlank()) {
+            json.addProperty("stack", str);
          }
 
-         return var1;
+         return json;
       }
 
-      private void method7735(JsonElement var1) {
+      private void method7735(JsonElement jsonElement) {
          this.clear();
-         if (var1 != null) {
-            if (var1.isJsonPrimitive()) {
-               this.text = var1.getAsString();
-            } else if (var1.isJsonObject()) {
-               JsonObject var2 = var1.getAsJsonObject();
-               this.text = var2.has("item") ? var2.get("item").getAsString() : "minecraft:air";
-               this.text2 = var2.has("stack") ? var2.get("stack").getAsString() : null;
-               ItemStack var3 = AutoSwapModule.this.method7725(this.text2);
-               if (!var3.isEmpty()) {
-                  this.itemStack = var3;
-                  this.text = BuiltInRegistries.ITEM.getKey(var3.getItem()).toString();
+         if (jsonElement != null) {
+            if (jsonElement.isJsonPrimitive()) {
+               this.text = jsonElement.getAsString();
+            } else if (jsonElement.isJsonObject()) {
+               JsonObject jsonObject = jsonElement.getAsJsonObject();
+               this.text = jsonObject.has("item") ? jsonObject.get("item").getAsString() : "minecraft:air";
+               this.text2 = jsonObject.has("stack") ? jsonObject.get("stack").getAsString() : null;
+               ItemStack itemStack = AutoSwapModule.this.method7725(this.text2);
+               if (!itemStack.isEmpty()) {
+                  this.itemStack = itemStack;
+                  this.text = BuiltInRegistries.ITEM.getKey(itemStack.getItem()).toString();
                }
             }
          }
@@ -971,9 +971,9 @@ public final class AutoSwapModule extends Module {
       private final ZenithColor zenithColor;
       private final ZenithColor zenithColor2;
 
-      private Entry3(ZenithColor var1, ZenithColor var2) {
-         this.zenithColor = var1;
-         this.zenithColor2 = var2;
+      private Entry3(ZenithColor zenithColor, ZenithColor zenithColor2) {
+         this.zenithColor = zenithColor;
+         this.zenithColor2 = zenithColor2;
       }
    }
 }

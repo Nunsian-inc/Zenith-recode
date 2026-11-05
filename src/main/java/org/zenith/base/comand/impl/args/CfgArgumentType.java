@@ -19,12 +19,12 @@ public class CfgArgumentType implements ArgumentType<String> {
       return new CfgArgumentType();
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      return var1.readString();
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      return stringReader.readString();
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      return SharedSuggestionProvider.suggest(Zenith.getInstance().getManager().method7785(), var2);
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      return SharedSuggestionProvider.suggest(Zenith.getInstance().getManager().method7785(), builder);
    }
 
    public Collection<String> getExamples() {

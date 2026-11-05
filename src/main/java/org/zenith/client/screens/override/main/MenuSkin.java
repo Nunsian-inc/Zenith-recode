@@ -20,102 +20,102 @@ public final class MenuSkin {
    private MenuSkin() {
    }
 
-   public static float radius(float var0) {
-      float var1 = InterfaceModule.method6801() * 2.0F;
-      return Math.max(MenuTheme.px(4.0F), Math.min(var1, var0 / 2.0F));
+   public static float radius(float height) {
+      float f = InterfaceModule.method6801() * 2.0F;
+      return Math.max(MenuTheme.px(4.0F), Math.min(f, height / 2.0F));
    }
 
-   public static float tileRadius(float var0) {
-      return var0 * 0.3F;
+   public static float tileRadius(float width) {
+      return width * 0.3F;
    }
 
    public static float dividerWidth() {
       return GAP * 2.0F + 1.0F;
    }
 
-   public static void panel(MenuDrawContext var0, float var1, float var2, float var3, float var4) {
-      panel(var0, var1, var2, var3, var4, radius(var4));
+   public static void panel(MenuDrawContext graphics, float floatValue, float snap, float width, float height) {
+      panel(graphics, floatValue, snap, width, height, radius(height));
    }
 
-   public static void panel(MenuDrawContext var0, float var1, float var2, float var3, float var4, float var5) {
-      ProxyDotRadiusData var6 = ProxyDotRadiusData.method8069(var5);
-      MenuSurface.blur(var0, var1, var2, var3, var4, var6, 1.0F);
-      var0.drawRoundedRect(var1, var2, var3, var4, var6, MenuTheme.panel());
+   public static void panel(MenuDrawContext graphics, float floatValue, float snap, float width, float height, float radius) {
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(radius);
+      MenuSurface.blur(graphics, floatValue, snap, width, height, headerRadius, 1.0F);
+      graphics.drawRoundedRect(floatValue, snap, width, height, headerRadius, MenuTheme.panel());
    }
 
-   public static void plate(MenuDrawContext var0, float var1, float var2, float var3, float var4, ZenithColor var5) {
-      var0.drawRoundedRect(var1, var2, var3, var4, ProxyDotRadiusData.method8069(radius(var4)), var5);
+   public static void plate(MenuDrawContext graphics, float floatValue, float snap, float width, float height, ZenithColor plate) {
+      graphics.drawRoundedRect(floatValue, snap, width, height, ProxyDotRadiusData.method8069(radius(height)), plate);
    }
 
-   public static float divider(MenuDrawContext var0, float var1, float var2, float var3) {
-      float var4 = var3 * 0.45F;
-      var0.drawRect(var1 + GAP, var2 + (var3 - var4) / 2.0F, 1.0F, var4, MenuTheme.textTertiary().method7294(0.45F));
-      return var1 + dividerWidth();
+   public static float divider(MenuDrawContext graphics, float divider, float snap, float height) {
+      float f = height * 0.45F;
+      graphics.drawRect(divider + GAP, snap + (height - f) / 2.0F, 1.0F, f, MenuTheme.textTertiary().method7294(0.45F));
+      return divider + dividerWidth();
    }
 
-   public static void accentTile(MenuDrawContext var0, float var1, float var2, float var3, MenuIcon var4) {
-      var0.drawRoundedRect(var1, var2, var3, var3, ProxyDotRadiusData.method8069(tileRadius(var3)), MenuTheme.accent());
-      iconCentered(var0, var4, var4.vector() ? var3 * 1.25F : var3 * 0.5F, var1, var2, var3, MenuTheme.onAccent());
+   public static void accentTile(MenuDrawContext graphics, float floatValue, float y, float width, MenuIcon menuIcon) {
+      graphics.drawRoundedRect(floatValue, y, width, width, ProxyDotRadiusData.method8069(tileRadius(width)), MenuTheme.accent());
+      iconCentered(graphics, menuIcon, menuIcon.vector() ? width * 1.25F : width * 0.5F, floatValue, y, width, MenuTheme.onAccent());
    }
 
-   public static void mutedTile(MenuDrawContext var0, float var1, float var2, float var3, MenuIcon var4, ZenithColor var5) {
-      var0.drawRoundedRect(var1, var2, var3, var3, ProxyDotRadiusData.method8069(tileRadius(var3)), MenuTheme.plate());
-      if (var4 != null) {
-         iconCentered(var0, var4, var4.vector() ? var3 * 1.25F : var3 * 0.5F, var1, var2, var3, var5);
+   public static void mutedTile(MenuDrawContext graphics, float floatValue, float y, float width, MenuIcon menuIcon, ZenithColor textTertiary) {
+      graphics.drawRoundedRect(floatValue, y, width, width, ProxyDotRadiusData.method8069(tileRadius(width)), MenuTheme.plate());
+      if (menuIcon != null) {
+         iconCentered(graphics, menuIcon, menuIcon.vector() ? width * 1.25F : width * 0.5F, floatValue, y, width, textTertiary);
       }
    }
 
-   public static void iconCentered(MenuDrawContext var0, MenuIcon var1, float var2, float var3, float var4, float var5, ZenithColor var6) {
-      Font var7 = var1.font(var2);
-      String var8 = var1.glyph();
-      float[] var9 = var7.inkBounds(var8);
-      if (var9 == null) {
-         var0.drawText(var7, var8, var3 + (var5 - var7.width(var8)) / 2.0F, var4 + (var5 - var7.height()) / 2.0F, var6);
+   public static void iconCentered(MenuDrawContext graphics, MenuIcon menuIcon, float f, float floatValue, float y, float width, ZenithColor textTertiary) {
+      Font font = menuIcon.font(f);
+      String glyph = menuIcon.glyph();
+      float[] inkBounds = font.inkBounds(glyph);
+      if (inkBounds == null) {
+         graphics.drawText(font, glyph, floatValue + (width - font.width(glyph)) / 2.0F, y + (width - font.height()) / 2.0F, textTertiary);
       } else {
-         var0.drawText(var7, var8, var3 + (var5 - var9[0]) / 2.0F, var4 + (var5 - var9[1]) / 2.0F - var7.baseline() + var9[2], var6);
+         graphics.drawText(font, glyph, floatValue + (width - inkBounds[0]) / 2.0F, y + (width - inkBounds[1]) / 2.0F - font.baseline() + inkBounds[2], textTertiary);
       }
    }
 
-   public static float header(MenuDrawContext var0, float var1, float var2, MenuIcon var3, String var4) {
-      float var5 = var2 + TILE_INSET;
-      accentTile(var0, var1 + TILE_INSET, var5, HEADER_TILE, var3);
-      float var6 = divider(var0, var1 + TILE_INSET + HEADER_TILE, var2, HEADER_HEIGHT);
-      Font var7 = MenuTheme.medium(12.0F);
-      var0.drawText(var7, var4, var6, var2 + (HEADER_HEIGHT - var7.height()) / 2.0F, MenuTheme.text());
-      return var6 + var7.width(var4);
+   public static float header(MenuDrawContext graphics, float floatValue, float snap, MenuIcon menuIcon, String text) {
+      float y = snap + TILE_INSET;
+      accentTile(graphics, floatValue + TILE_INSET, y, HEADER_TILE, menuIcon);
+      float f = divider(graphics, floatValue + TILE_INSET + HEADER_TILE, snap, HEADER_HEIGHT);
+      Font medium = MenuTheme.medium(12.0F);
+      graphics.drawText(medium, text, f, snap + (HEADER_HEIGHT - medium.height()) / 2.0F, MenuTheme.text());
+      return f + medium.width(text);
    }
 
-   public static float headerWidth(String var0) {
-      return TILE_INSET + HEADER_TILE + dividerWidth() + MenuTheme.medium(12.0F).width(var0) + EDGE;
+   public static float headerWidth(String text) {
+      return TILE_INSET + HEADER_TILE + dividerWidth() + MenuTheme.medium(12.0F).width(text) + EDGE;
    }
 
-   public static BoundsData listArea(MenuDrawContext var0, BoundsData var1, float var2) {
-      panel(var0, var1.getFloatValue(), var1.getFloatValue2(), var1.width(), var2);
-      return new BoundsData(var1.getFloatValue() + LIST_PAD, var1.getFloatValue2() + LIST_PAD, var1.width() - LIST_PAD * 2.0F, var2 - LIST_PAD * 2.0F);
+   public static BoundsData listArea(MenuDrawContext graphics, BoundsData boundsData, float height) {
+      panel(graphics, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), height);
+      return new BoundsData(boundsData.getFloatValue() + LIST_PAD, boundsData.getFloatValue2() + LIST_PAD, boundsData.width() - LIST_PAD * 2.0F, height - LIST_PAD * 2.0F);
    }
 
-   public static float stagger(float var0, int var1) {
-      float var2 = Math.min(0.55F, var1 * 0.07F);
-      return Math.clamp((var0 - var2) / Math.max(0.05F, 1.0F - var2), 0.0F, 1.0F);
+   public static float stagger(float f, int n) {
+      float f2 = Math.min(0.55F, n * 0.07F);
+      return Math.clamp((f - f2) / Math.max(0.05F, 1.0F - f2), 0.0F, 1.0F);
    }
 
-   public static float enterOffset(float var0, int var1) {
-      float var2 = stagger(var0, var1);
-      return (1.0F - var2) * MenuTheme.px(14.0F);
+   public static float enterOffset(float f, int n) {
+      float stagger2 = stagger(f, n);
+      return (1.0F - stagger2) * MenuTheme.px(14.0F);
    }
 
-   public static float valuePillWidth(String var0) {
-      return Math.max(ROW_TILE, MenuTheme.semibold(10.0F).width(var0) + MenuTheme.px(10.0F));
+   public static float valuePillWidth(String playerCount) {
+      return Math.max(ROW_TILE, MenuTheme.semibold(10.0F).width(playerCount) + MenuTheme.px(10.0F));
    }
 
-   public static float valuePill(MenuDrawContext var0, float var1, float var2, float var3, String var4) {
-      Font var5 = MenuTheme.semibold(10.0F);
-      float var6 = valuePillWidth(var4);
-      float var7 = ROW_TILE;
-      float var8 = var1 - var6;
-      float var9 = var2 + (var3 - var7) / 2.0F;
-      var0.drawRoundedRect(var8, var9, var6, var7, ProxyDotRadiusData.method8069(tileRadius(var7)), MenuTheme.plate());
-      var0.drawText(var5, var4, var8 + (var6 - var5.width(var4)) / 2.0F, var9 + (var7 - var5.height()) / 2.0F, MenuTheme.text());
-      return var8;
+   public static float valuePill(MenuDrawContext graphics, float f, float snap, float f2, String playerCount) {
+      Font semibold = MenuTheme.semibold(10.0F);
+      float width = valuePillWidth(playerCount);
+      float height = ROW_TILE;
+      float floatValue = f - width;
+      float y = snap + (f2 - height) / 2.0F;
+      graphics.drawRoundedRect(floatValue, y, width, height, ProxyDotRadiusData.method8069(tileRadius(height)), MenuTheme.plate());
+      graphics.drawText(semibold, playerCount, floatValue + (width - semibold.width(playerCount)) / 2.0F, y + (height - semibold.height()) / 2.0F, MenuTheme.text());
+      return floatValue;
    }
 }

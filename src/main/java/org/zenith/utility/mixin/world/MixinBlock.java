@@ -20,10 +20,10 @@ public class MixinBlock {
       method = {"setPlacedBy(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V"},
       at = {@At("HEAD")}
    )
-   public void injectPlaced(Level var1, BlockPos var2, BlockState var3, LivingEntity var4, ItemStack var5, CallbackInfo var6) {
-      if (Minecraft.getInstance().player == var4) {
-         BlockPlacedEvent var7 = new BlockPlacedEvent(var2, var3);
-         EventManager.call(var7);
+   public void injectPlaced(Level level, BlockPos blockPos, BlockState blockState, LivingEntity livingEntity, ItemStack stack, CallbackInfo callbackInfo) {
+      if (Minecraft.getInstance().player == livingEntity) {
+         BlockPlacedEvent event = new BlockPlacedEvent(blockPos, blockState);
+         EventManager.call(event);
       }
    }
 }

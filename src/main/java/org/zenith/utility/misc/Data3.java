@@ -90,33 +90,33 @@ public final class Data3 {
    public static final Data3[] data3s = new Data3[]{null, INSTANCE, INSTANCE2, INSTANCE3, INSTANCE4};
 
    public Data3(
-      boolean var1,
-      float var2,
-      float var3,
-      int var4,
-      int var5,
-      int var6,
-      float var7,
-      Data3.Type var8,
-      boolean var9,
-      boolean var10,
-      boolean var11,
-      boolean var12,
-      boolean var13
+      boolean flag,
+      float floatValue,
+      float f,
+      int intValue,
+      int n,
+      int n2,
+      float f2,
+      Data3.Type type,
+      boolean enabled,
+      boolean flag2,
+      boolean enabled2,
+      boolean enabled3,
+      boolean flag3
    ) {
-      this.flag = var1;
-      this.floatValue = var2;
-      this.floatValue2 = var3;
-      this.intValue = var4;
-      this.intValue2 = var5;
-      this.intValue3 = var6;
-      this.floatValue3 = var7;
-      this.type = var8;
-      this.flag2 = var9;
-      this.flag3 = var10;
-      this.flag4 = var11;
-      this.flag5 = var12;
-      this.flag6 = var13;
+      this.flag = flag;
+      this.floatValue = floatValue;
+      this.floatValue2 = f;
+      this.intValue = intValue;
+      this.intValue2 = n;
+      this.intValue3 = n2;
+      this.floatValue3 = f2;
+      this.type = type;
+      this.flag2 = enabled;
+      this.flag3 = flag2;
+      this.flag4 = enabled2;
+      this.flag5 = enabled3;
+      this.flag6 = flag3;
    }
 
    public boolean isFlag() {

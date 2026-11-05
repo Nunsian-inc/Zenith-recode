@@ -28,14 +28,14 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
    private BoundsData rowBounds;
    private BoundsData boxBounds;
 
-   public GuiColorSetting(ColorSetting var1) {
-      this(var1, 166.0F);
+   public GuiColorSetting(ColorSetting setting) {
+      this(setting, 166.0F);
    }
 
-   public GuiColorSetting(ColorSetting var1, float var2) {
-      super(var2, var1);
-      this.picker = new ColorPicker(var1);
-      this.pickerHeight = this.picker.height(var2);
+   public GuiColorSetting(ColorSetting setting, float width) {
+      super(width, setting);
+      this.picker = new ColorPicker(setting);
+      this.pickerHeight = this.picker.height(width);
    }
 
    @Override
@@ -49,10 +49,10 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.expanded && this.picker.onMouseClicked(var1, var3, var5)) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+      if (this.expanded && this.picker.onMouseClicked(x, y, enum2)) {
          return true;
-      } else if (this.rowBounds != null && this.rowBounds.contains(var1, var3)) {
+      } else if (this.rowBounds != null && this.rowBounds.contains(x, y)) {
          this.expanded = (!this.expanded);
          if (!this.expanded) {
             this.picker.remember();
@@ -66,75 +66,75 @@ public class GuiColorSetting extends GuiSetting<ColorSetting> {
    }
 
    @Override
-   public void onMouseReleased(double var1, double var3, Enum3 var5) {
+   public void onMouseReleased(double d, double d2, Enum3 enum2) {
       this.picker.onMouseReleased();
-      super.onMouseReleased(var1, var3, var5);
+      super.onMouseReleased(d, d2, enum2);
    }
 
    @Override
-   public boolean keyPressed(KeyEvent var1) {
-      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(var1.key()), var1.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(var1.modifiers()));
+   public boolean keyPressed(KeyEvent event) {
+      return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(event.key()), event.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(event.modifiers()));
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return (boolean)(this.expanded && this.picker.keyPressed(var1, var2, var3) ? 1 : super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3))));
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      return (boolean)(this.expanded && this.picker.keyPressed(keyCode, keycode, modifiers) ? 1 : super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers))));
    }
 
    @Override
-   public boolean charTyped(CharacterEvent var1) {
-      return this.charTyped((char)var1.codepoint(), 0);
+   public boolean charTyped(CharacterEvent event) {
+      return this.charTyped((char)event.codepoint(), 0);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      return (boolean)(this.expanded && this.picker.charTyped(var1, var2) ? 1 : super.charTyped(new CharacterEvent(var1)));
+   public boolean charTyped(char codepoint, int n) {
+      return (boolean)(this.expanded && this.picker.charTyped(codepoint, n) ? 1 : super.charTyped(new CharacterEvent(codepoint)));
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null) {
+   public void render(MenuDrawContext menuDrawContext, float x, float y, float floatValue, float f, float previewAlpha) {
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null) {
          this.animationVisible.method2807(this.setting.isVisible());
-         var6 *= this.animationVisible.getValue();
-         float var8 = this.rowHeight();
-         this.rowBounds = new BoundsData(var4, var5, this.width, var8);
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         Font var10 = Fonts.NEW_REGULAR.getFont(5.4F);
-         float var11 = this.width / 1.4F - GuiStyle.PADDING.intValue();
-         ZenithColor var12 = var7.getTextEnable().getZenithColor().method7294(var6);
-         ZenithColor var13 = var7.getTextSecondary().getZenithColor().method7294(var6);
-         ZenithColor var14 = var7.getPrimaryColor().getZenithColor().method7294(var6);
-         this.drawDefault(var1, var2, var3, "x", this.setting.getName(), this.setting.getDescription(), var9, var10, var4, var5, var11, var12, var13, var14);
-         this.boxBounds = new BoundsData(var4 + this.width - 4.0F, var5 + (var8 - 4.0F) / 2.0F, 4.0F, 4.0F);
-         float var15 = 1.5F;
-         ZenithColor var16 = this.setting.method1447(var6);
-         ZenithColor var17 = ZenithColor.INSTANCE9.method7294(var6);
-         var1.drawRoundedBorder(
-            this.boxBounds.getFloatValue() - var15,
-            this.boxBounds.getFloatValue2() - var15,
-            4.0F + var15 * 2.0F,
-            4.0F + var15 * 2.0F,
+         previewAlpha *= this.animationVisible.getValue();
+         float rowHeight = this.rowHeight();
+         this.rowBounds = new BoundsData(floatValue, f, this.width, rowHeight);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         Font font2 = Fonts.NEW_REGULAR.getFont(5.4F);
+         float maxWidth = this.width / 1.4F - GuiStyle.PADDING.intValue();
+         ZenithColor zenithColor = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor2 = currentStyle.getTextSecondary().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor3 = currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
+         this.drawDefault(menuDrawContext, x, y, "x", this.setting.getName(), this.setting.getDescription(), font, font2, floatValue, f, maxWidth, zenithColor, zenithColor2, zenithColor3);
+         this.boxBounds = new BoundsData(floatValue + this.width - 4.0F, f + (rowHeight - 4.0F) / 2.0F, 4.0F, 4.0F);
+         float f2 = 1.5F;
+         ZenithColor zenithColor4 = this.setting.method1447(previewAlpha);
+         ZenithColor clientColor = ZenithColor.INSTANCE9.method7294(previewAlpha);
+         menuDrawContext.drawRoundedBorder(
+            this.boxBounds.getFloatValue() - f2,
+            this.boxBounds.getFloatValue2() - f2,
+            4.0F + f2 * 2.0F,
+            4.0F + f2 * 2.0F,
             0.1F,
             ProxyDotRadiusData.method8069(3.0F),
-            var16
+            zenithColor4
          );
-         var1.drawRoundedRect(
+         menuDrawContext.drawRoundedRect(
             this.boxBounds.getFloatValue(),
             this.boxBounds.getFloatValue2(),
             4.0F,
             4.0F,
             ProxyDotRadiusData.method8069(3.0F),
-            GlowColor.method8096(var17, var16, var16, var17)
+            GlowColor.method8096(clientColor, zenithColor4, zenithColor4, clientColor)
          );
-         float var18;
-         if (!((var18 = this.animationExpanded.method2808(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
-            float var19 = var5 + var8;
+         float f3;
+         if (!((f3 = this.animationExpanded.method2808(this.expanded ? 1.0F : 0.0F)) <= 0.001F)) {
+            float y2 = f + rowHeight;
             this.pickerHeight = this.picker.height(this.width);
-            float var20 = this.pickerHeight * var18;
-            var1.enableScissor(var4, var19, var4 + this.width, var19 + var20);
-            this.picker.render(var1, var2, var3, var4, var19, this.width, var6);
-            var1.disableScissor();
+            float f4 = this.pickerHeight * f3;
+            menuDrawContext.enableScissor(floatValue, y2, floatValue + this.width, y2 + f4);
+            this.picker.render(menuDrawContext, x, y, floatValue, y2, this.width, previewAlpha);
+            menuDrawContext.disableScissor();
          }
       }
    }

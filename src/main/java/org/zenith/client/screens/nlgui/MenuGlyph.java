@@ -114,12 +114,12 @@ public enum MenuGlyph {
       new MenuGlyph.Rule(LIMIT_MAX, "max")
    };
 
-   private MenuGlyph(SvgIcon var3) {
-      this.icon = var3;
+   private MenuGlyph(SvgIcon icon) {
+      this.icon = icon;
    }
 
-   public static MenuGlyph forCategory(ModuleCategory var0) {
-      return switch (var0) {
+   public static MenuGlyph forCategory(ModuleCategory category) {
+      return switch (category) {
          case COMBAT -> COMBAT;
          case MOVEMENT -> MOVEMENT;
          case MISC -> MISC;
@@ -129,8 +129,8 @@ public enum MenuGlyph {
       };
    }
 
-   public static MenuGlyph forSection(NLMenuScreen.ElementsType var0) {
-      return switch (var0) {
+   public static MenuGlyph forSection(NLMenuScreen.ElementsType type) {
+      return switch (type) {
          case TOOLS -> TOOLS;
          case CLOUD -> CLOUD;
          case COSMETICS -> COSMETICS;
@@ -140,50 +140,50 @@ public enum MenuGlyph {
       };
    }
 
-   public static MenuGlyph forSetting(Setting var0) {
-      if (var0 instanceof SliderSetting) {
+   public static MenuGlyph forSetting(Setting setting) {
+      if (setting instanceof SliderSetting) {
          return SLIDER;
-      } else if (var0 instanceof ModeSetting) {
+      } else if (setting instanceof ModeSetting) {
          return MODE;
-      } else if (var0 instanceof MultiSelectSetting) {
+      } else if (setting instanceof MultiSelectSetting) {
          return MULTI;
-      } else if (var0 instanceof ColorSetting) {
+      } else if (setting instanceof ColorSetting) {
          return COLOR;
-      } else if (var0 instanceof BindSetting) {
+      } else if (setting instanceof BindSetting) {
          return KEY;
-      } else if (var0 instanceof TextSetting) {
+      } else if (setting instanceof TextSetting) {
          return TEXT;
-      } else if (var0 instanceof BlockListSetting) {
+      } else if (setting instanceof BlockListSetting) {
          return ITEMS;
-      } else if (var0 instanceof GroupSetting) {
+      } else if (setting instanceof GroupSetting) {
          return WINDOW;
       } else {
-         return var0 instanceof ButtonSetting ? ACTION : TOGGLE;
+         return setting instanceof ButtonSetting ? ACTION : TOGGLE;
       }
    }
 
-   public static MenuGlyph forSettingPurpose(Setting var0) {
-      if (var0 == null) {
+   public static MenuGlyph forSettingPurpose(Setting setting) {
+      if (setting == null) {
          return MODE;
       } else {
-         String var1 = var0.getKey();
-         if (var1 != null && !var1.isBlank()) {
-            String var2 = var1.substring(var1.lastIndexOf(46) + 1).replaceAll("([a-z0-9])([A-Z])", "$1 $2").toLowerCase(Locale.ROOT);
-            String[] var3 = var2.split("[^a-zа-яё0-9]+");
+         String key = setting.getKey();
+         if (key != null && !key.isBlank()) {
+            String lowerCase = key.substring(key.lastIndexOf(46) + 1).replaceAll("([a-z0-9])([A-Z])", "$1 $2").toLowerCase(Locale.ROOT);
+            String[] strings = lowerCase.split("[^a-zа-яё0-9]+");
 
-            for (MenuGlyph.Rule var7 : RULES) {
-               for (String var11 : var7.keywords) {
-                  for (String var15 : var3) {
-                     if (var15.equals(var11) || var15.equals(var11 + "s")) {
-                        return var7.glyph;
+            for (MenuGlyph.Rule rule : RULES) {
+               for (String keyword : rule.keywords) {
+                  for (String str : strings) {
+                     if (str.equals(keyword) || str.equals(keyword + "s")) {
+                        return rule.glyph;
                      }
                   }
                }
             }
 
-            return forSetting(var0);
+            return forSetting(setting);
          } else {
-            return forSetting(var0);
+            return forSetting(setting);
          }
       }
    }
@@ -192,26 +192,26 @@ public enum MenuGlyph {
       return this.icon;
    }
 
-   public void draw(MenuDrawContext var1, float var2, float var3, ZenithColor var4) {
-      this.icon.draw(var1, var2, var3, 6.0F, var4);
+   public void draw(MenuDrawContext menuDrawContext, float floatValue, float centeredTextY, ZenithColor zenithColor) {
+      this.icon.draw(menuDrawContext, floatValue, centeredTextY, 6.0F, zenithColor);
    }
 
    // $VF: Could not inline inconsistent finally blocks
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
-   public static void drawChevron(MenuDrawContext var0, float var1, float var2, float var3, ZenithColor var4) {
-      float var5 = 5.0F;
-      var0.pushMatrix();
+   public static void drawChevron(MenuDrawContext menuDrawContext, float f, float y, float f2, ZenithColor zenithColor) {
+      float px = 5.0F;
+      menuDrawContext.pushMatrix();
 
       try {
-         var0.pose().translate(var1 + var5 / 2.0F, var2);
-         var0.pose().rotate((float) (Math.PI / 2) * Math.clamp(var3, 0.0F, 1.0F));
-         SvgIcon.CHEVRON_RIGHT.draw(var0, -var5 / 2.0F, -var5 / 2.0F, var5, var4);
-      } catch (Throwable var8) {
-         var0.popMatrix();
-         throw var8;
+         menuDrawContext.pose().translate(f + px / 2.0F, y);
+         menuDrawContext.pose().rotate((float) (Math.PI / 2) * Math.clamp(f2, 0.0F, 1.0F));
+         SvgIcon.CHEVRON_RIGHT.draw(menuDrawContext, -px / 2.0F, -px / 2.0F, px, zenithColor);
+      } catch (Throwable e) {
+         menuDrawContext.popMatrix();
+         throw e;
       }
 
-      var0.popMatrix();
+      menuDrawContext.popMatrix();
    }
 
    private static final class Rule {
@@ -243,9 +243,9 @@ public enum MenuGlyph {
          return "Rule[" + "glyph=" + this.glyph + ", " + "keywords=" + this.keywords + "]";
       }
 
-      private Rule(MenuGlyph var1, String... var2) {
-         this.glyph = var1;
-         this.keywords = var2;
+      private Rule(MenuGlyph glyph, String... keywords) {
+         this.glyph = glyph;
+         this.keywords = keywords;
       }
    }
 }

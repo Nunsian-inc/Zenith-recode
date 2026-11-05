@@ -37,11 +37,11 @@ public class ServerButton extends ButtonScreen implements MinecraftAccess {
    private byte[] lastFavicon;
    private String pingText = "...";
 
-   public ServerButton(MenuMultiPlayerScreen var1, ServerData var2, float var3, float var4) {
-      super(var3, var4);
-      this.multiplayerScreen = var1;
-      this.serverInfo = var2;
-      this.icon = FaviconTexture.forServer(mc.getTextureManager(), var2.ip);
+   public ServerButton(MenuMultiPlayerScreen multiplayerScreen, ServerData serverInfo, float width, float height) {
+      super(width, height);
+      this.multiplayerScreen = multiplayerScreen;
+      this.serverInfo = serverInfo;
+      this.icon = FaviconTexture.forServer(mc.getTextureManager(), serverInfo.ip);
       this.pingServer();
    }
 
@@ -53,7 +53,7 @@ public class ServerButton extends ButtonScreen implements MinecraftAccess {
                this.pingText = this.serverInfo.ping + "ms";
                this.updateFavicon();
             }, () -> {}, EventLoopGroupHolder.remote(false));
-         } catch (Exception var2) {
+         } catch (Exception e) {
             this.serverInfo.setState(State.UNREACHABLE);
             this.pingText = "Error";
          }
@@ -61,53 +61,53 @@ public class ServerButton extends ButtonScreen implements MinecraftAccess {
    }
 
    private void updateFavicon() {
-      byte[] var1 = this.serverInfo.getIconBytes();
-      if (!Arrays.equals(var1, this.lastFavicon) && var1 != null) {
+      byte[] iconBytes = this.serverInfo.getIconBytes();
+      if (!Arrays.equals(iconBytes, this.lastFavicon) && iconBytes != null) {
          try {
-            this.icon.upload(NativeImage.read(var1));
-            this.lastFavicon = var1;
-         } catch (Exception var3) {
+            this.icon.upload(NativeImage.read(iconBytes));
+            this.lastFavicon = iconBytes;
+         } catch (Exception e) {
          }
       }
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5) {
-      super.render(var1, var2, var3, var4, var5);
-      ThemeStyle var6 = ThemeStyle.INSTANCE;
-      this.hoverAnimation.method2807(this.bounds.contains(var2, var3));
-      var1.drawRoundedRect(
-         var4,
-         var5,
+   public void render(MenuDrawContext graphics, float mouseX, float mouseY, float floatValue, float y) {
+      super.render(graphics, mouseX, mouseY, floatValue, y);
+      ThemeStyle themeStyle = ThemeStyle.INSTANCE;
+      this.hoverAnimation.method2807(this.bounds.contains(mouseX, mouseY));
+      graphics.drawRoundedRect(
+         floatValue,
+         y,
          this.getWidth(),
          this.getHeight(),
          ProxyDotRadiusData.method8069(6.0F),
-         var6.getZenithColor12().method7295(var6.getZenithColor8(), this.hoverAnimation.getValue())
+         themeStyle.getZenithColor12().method7295(themeStyle.getZenithColor8(), this.hoverAnimation.getValue())
       );
-      var1.drawRoundedBorder(var4, var5, this.getWidth(), this.getHeight(), -0.1F, ProxyDotRadiusData.method8069(4.0F), var6.getZenithColor13());
+      graphics.drawRoundedBorder(floatValue, y, this.getWidth(), this.getHeight(), -0.1F, ProxyDotRadiusData.method8069(4.0F), themeStyle.getZenithColor13());
       this.updateFavicon();
-      float var7 = 14.0F;
-      float var8 = (this.getHeight() - var7) / 2.0F;
-      Identifier var9 = this.icon.textureLocation();
+      float width = 14.0F;
+      float f = (this.getHeight() - width) / 2.0F;
+      Identifier textureLocation = this.icon.textureLocation();
       RenderShaders.method5294(
-         MatrixUtils.method664(var1.pose()), var9, var4 + var8, var5 + var8, var7, var7, ProxyDotRadiusData.method8069(2.0F), ZenithColor.INSTANCE
+         MatrixUtils.method664(graphics.pose()), textureLocation, floatValue + f, y + f, width, width, ProxyDotRadiusData.method8069(2.0F), ZenithColor.INSTANCE
       );
-      Font var10 = Fonts.MEDIUM.getFont(8.0F);
-      Font var11 = Fonts.MEDIUM.getFont(7.0F);
-      float var12 = var4 + var8 + var7 + 6.0F;
-      var1.drawText(var10, this.serverInfo.name, var12, var5 + var8 - 1.0F, ZenithColor.INSTANCE);
-      Component var13 = TextUtils.method2105(this.serverInfo.motd != null ? this.serverInfo.motd : Component.nullToEmpty(this.serverInfo.ip));
-      var1.enableScissor((int)var12, 0, (int)(var12 + 170.0F), mc.getWindow().getGuiScaledHeight());
-      var1.drawText(var11, var13, var12, var5 + var8 + var7 - var11.height(), var6.getZenithColor7().method7287());
-      var1.disableScissor();
-      String var14 = this.serverInfo.status != null ? this.serverInfo.status.getString() : "0/0";
-      float var15 = var11.width(this.pingText);
-      var1.drawText(var11, this.pingText, var4 + this.getWidth() - var15 - 5.0F, var5 + var8 - 1.0F, var6.getZenithColor6());
-      var1.drawText(var11, var14, var4 + this.getWidth() - var11.width(var14) - 5.0F, var5 + var8 + 10.0F, var6.getZenithColor6());
+      Font font = Fonts.MEDIUM.getFont(8.0F);
+      Font font2 = Fonts.MEDIUM.getFont(7.0F);
+      float x1 = floatValue + f + width + 6.0F;
+      graphics.drawText(font, this.serverInfo.name, x1, y + f - 1.0F, ZenithColor.INSTANCE);
+      Component text = TextUtils.method2105(this.serverInfo.motd != null ? this.serverInfo.motd : Component.nullToEmpty(this.serverInfo.ip));
+      graphics.enableScissor((int)x1, 0, (int)(x1 + 170.0F), mc.getWindow().getGuiScaledHeight());
+      graphics.drawText(font2, text, x1, y + f + width - font2.height(), themeStyle.getZenithColor7().method7287());
+      graphics.disableScissor();
+      String string = this.serverInfo.status != null ? this.serverInfo.status.getString() : "0/0";
+      float width2 = font2.width(this.pingText);
+      graphics.drawText(font2, this.pingText, floatValue + this.getWidth() - width2 - 5.0F, y + f - 1.0F, themeStyle.getZenithColor6());
+      graphics.drawText(font2, string, floatValue + this.getWidth() - font2.width(string) - 5.0F, y + f + 10.0F, themeStyle.getZenithColor6());
       RenderShaders.method5277(
-         MatrixUtils.method664(var1.pose()),
-         var4,
-         var5,
+         MatrixUtils.method664(graphics.pose()),
+         floatValue,
+         y,
          this.getWidth(),
          this.getHeight(),
          0.1F,
@@ -119,10 +119,10 @@ public class ServerButton extends ButtonScreen implements MinecraftAccess {
    }
 
    @Override
-   public void onClick(double var1, double var3, Enum3 var5) {
-      if (var5 == Enum3.LEFT) {
-         ServerAddress var6 = ServerAddress.parseString(this.serverInfo.ip);
-         ConnectScreen.startConnecting(mc.gui.screen(), mc, var6, this.serverInfo, false, null);
+   public void onClick(double d, double d2, Enum3 enum2) {
+      if (enum2 == Enum3.LEFT) {
+         ServerAddress string = ServerAddress.parseString(this.serverInfo.ip);
+         ConnectScreen.startConnecting(mc.gui.screen(), mc, string, this.serverInfo, false, null);
       }
    }
 

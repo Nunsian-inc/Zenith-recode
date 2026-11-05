@@ -32,25 +32,25 @@ public final class NoWebModule extends Module {
    }
 
    @EventTarget
-   public void method266(BlockCollisionEvent var1) {
-      if (var1.getBlock() == Blocks.COBWEB) {
+   public void method266(BlockCollisionEvent event) {
+      if (event.getBlock() == Blocks.COBWEB) {
          if (this.entry3.isSelected()) {
             mc.gameMode
-               .startPrediction(mc.level, var1x -> new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, var1.getBlockPos(), Direction.UP, var1x));
-            var1.setCancelled(true);
+               .startPrediction(mc.level, var1x -> new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, event.getBlockPos(), Direction.UP, var1x));
+            event.setCancelled(true);
          } else if (this.entry2.isSelected()) {
-            double var5 = 0.0;
+            double y = 0.0;
             if (UseItemUtils.method6520(KeyMappingHelper.getBoundKeyOf(mc.options.keyJump))) {
-               var5 = 0.8;
+               y = 0.8;
             } else if (UseItemUtils.method6520(KeyMappingHelper.getBoundKeyOf(mc.options.keyShift))) {
-               var5 = -0.8;
+               y = -0.8;
             }
 
             if (MovementInputUtils.method7418()) {
-               double[] var4 = MovementInputUtils.method7421(0.22F);
-               mc.player.setDeltaMovement(new Vec3(var4[0], var5, var4[1]));
+               double[] doubles = MovementInputUtils.method7421(0.22F);
+               mc.player.setDeltaMovement(new Vec3(doubles[0], y, doubles[1]));
             } else {
-               mc.player.setDeltaMovement(new Vec3(0.0, var5, 0.0));
+               mc.player.setDeltaMovement(new Vec3(0.0, y, 0.0));
             }
          } else {
             if (UseItemUtils.method6520(KeyMappingHelper.getBoundKeyOf(mc.options.keyJump))) {
@@ -60,8 +60,8 @@ public final class NoWebModule extends Module {
             }
 
             if (ViaCompat.method4846(mc.player.input) != 0.0F || ViaCompat.method4847(mc.player.input) != 0.0F) {
-               double[] var2 = MovementInputUtils.method7421(0.62F);
-               mc.player.setDeltaMovement(new Vec3(var2[0], mc.player.getDeltaMovement().y, var2[1]));
+               double[] doubles = MovementInputUtils.method7421(0.62F);
+               mc.player.setDeltaMovement(new Vec3(doubles[0], mc.player.getDeltaMovement().y, doubles[1]));
             }
          }
       }

@@ -6,23 +6,23 @@ import com.sun.jna.Native;
 public interface DiscordRPC extends Library {
    DiscordRPC INSTANCE = (DiscordRPC)Native.load("discord-rpc", DiscordRPC.class);
 
-   void Discord_UpdateHandlers(DiscordEventHandlers var1);
+   void Discord_UpdateHandlers(DiscordEventHandlers discordEventHandlers);
 
-   void Discord_UpdatePresence(DiscordRichPresence var1);
+   void Discord_UpdatePresence(DiscordRichPresence discordRichPresence);
 
-   void Discord_Respond(String var1, int var2);
+   void Discord_Respond(String str, int n);
 
-   void Discord_Register(String var1, String var2);
+   void Discord_Register(String str, String str2);
 
    void Discord_Shutdown();
 
    void Discord_UpdateConnection();
 
-   void Discord_RegisterSteamGame(String var1, String var2);
+   void Discord_RegisterSteamGame(String str, String str2);
 
    void Discord_RunCallbacks();
 
-   void Discord_Initialize(String var1, DiscordEventHandlers var2, boolean var3, String var4);
+   void Discord_Initialize(String str, DiscordEventHandlers handlers, boolean flag, String str2);
 
    void Discord_ClearPresence();
 
@@ -33,8 +33,8 @@ public interface DiscordRPC extends Library {
 
       public final int reply;
 
-      private DiscordReply(int var3) {
-         this.reply = var3;
+      private DiscordReply(int reply) {
+         this.reply = reply;
       }
 
       private static DiscordRPC.DiscordReply[] getReplies() {

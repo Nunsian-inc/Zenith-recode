@@ -27,9 +27,9 @@ public abstract class BotModule {
    private BotClient bot;
    private BotEventBus eventBus;
 
-   public final void bind(BotClient var1) {
-      this.bot = var1;
-      this.eventBus = var1.getEventBus();
+   public final void bind(BotClient bot) {
+      this.bot = bot;
+      this.eventBus = bot.getEventBus();
    }
 
    public void toggle() {
@@ -41,12 +41,12 @@ public abstract class BotModule {
       }
    }
 
-   public void setToggled(boolean var1) {
-      if (var1 && !this.enabled) {
+   public void setToggled(boolean toggled) {
+      if (toggled && !this.enabled) {
          this.toggle();
       }
 
-      if (!var1 && this.enabled) {
+      if (!toggled && this.enabled) {
          this.toggle();
       }
    }
@@ -84,20 +84,20 @@ public abstract class BotModule {
 
    @Nullable
    public final BotInteractionManager interaction() {
-      BotPlayHandler var1 = this.bot.getPlayHandler();
-      return var1 != null && var1.getWorld() != null ? var1.getInteractionManager() : null;
+      BotPlayHandler playHandler = this.bot.getPlayHandler();
+      return playHandler != null && playHandler.getWorld() != null ? playHandler.getInteractionManager() : null;
    }
 
    public List<Setting> getSettings() {
-      return Arrays.stream(this.getClass().getDeclaredFields()).map(var1 -> {
+      return Arrays.stream(this.getClass().getDeclaredFields()).map(field -> {
          try {
-            var1.setAccessible(true);
-            return var1.get(this);
-         } catch (IllegalAccessException var3) {
-            var3.printStackTrace();
+            field.setAccessible(true);
+            return field.get(this);
+         } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return null;
          }
-      }).filter(var0 -> var0 instanceof Setting).map(var0 -> (Setting)var0).collect(Collectors.toList());
+      }).filter(obj -> obj instanceof Setting).map(obj -> (Setting)obj).collect(Collectors.toList());
    }
 
    public List<Setting> getUiSettings() {
@@ -105,46 +105,46 @@ public abstract class BotModule {
    }
 
    public JsonObject save() {
-      JsonObject var1 = new JsonObject();
-      var1.addProperty("enabled", this.enabled);
-      JsonObject var2 = new JsonObject();
+      JsonObject json = new JsonObject();
+      json.addProperty("enabled", this.enabled);
+      JsonObject jsonObject = new JsonObject();
 
-      for (Setting var4 : this.getSettings()) {
-         var4.safe(var2);
+      for (Setting setting : this.getSettings()) {
+         setting.safe(jsonObject);
       }
 
-      var1.add("Settings", var2);
-      return var1;
+      json.add("Settings", jsonObject);
+      return json;
    }
 
-   public void load(JsonObject var1) {
-      if (var1 != null) {
-         JsonObject var2 = null;
+   public void load(JsonObject jsonObject) {
+      if (jsonObject != null) {
+         JsonObject json = null;
 
          try {
-            var2 = var1.getAsJsonObject("Settings");
-         } catch (Exception var8) {
-            var8.printStackTrace();
+            json = jsonObject.getAsJsonObject("Settings");
+         } catch (Exception e) {
+            e.printStackTrace();
          }
 
-         if (var2 != null) {
-            for (Setting var4 : this.getSettings()) {
-               if (var2.has(var4.getKey())) {
+         if (json != null) {
+            for (Setting setting : this.getSettings()) {
+               if (json.has(setting.getKey())) {
                   try {
-                     var4.load(var2);
-                  } catch (Exception var7) {
-                     System.err.println("[BotConfig] bad value " + this.name + "#" + var4.getKey() + ": " + var7);
+                     setting.load(json);
+                  } catch (Exception e) {
+                     System.err.println("[BotConfig] bad value " + this.name + "#" + setting.getKey() + ": " + e);
                   }
                }
             }
          }
 
          try {
-            if (var1.has("enabled")) {
-               this.setToggled(var1.get("enabled").getAsBoolean());
+            if (jsonObject.has("enabled")) {
+               this.setToggled(jsonObject.get("enabled").getAsBoolean());
             }
-         } catch (Exception var6) {
-            var6.printStackTrace();
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }

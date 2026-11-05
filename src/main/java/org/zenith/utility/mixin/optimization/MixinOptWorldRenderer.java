@@ -17,14 +17,14 @@ public class MixinOptWorldRenderer {
    @WrapMethod(
       method = {"extractVisibleEntities(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/culling/Frustum;Lnet/minecraft/client/DeltaTracker;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V"}
    )
-   private void zenith$markEntityStates(Camera var1, Frustum var2, DeltaTracker var3, LevelRenderState var4, Operation<Void> var5) {
-      boolean var6 = Util29.flag;
+   private void zenith$markEntityStates(Camera camera, Frustum frustum, DeltaTracker deltaTracker, LevelRenderState levelRenderState, Operation<Void> operation) {
+      boolean flag = Util29.flag;
       Util29.flag = true;
 
       try {
-         var5.call(new Object[]{var1, var2, var3, var4});
+         operation.call(new Object[]{camera, frustum, deltaTracker, levelRenderState});
       } finally {
-         Util29.flag = var6;
+         Util29.flag = flag;
       }
    }
 }

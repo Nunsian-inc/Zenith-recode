@@ -41,9 +41,9 @@ public final class BotLoginHandler implements ClientLoginPacketListener {
    private final BotConnection connection;
    private final Map<Identifier, byte[]> serverCookies = new HashMap<>();
 
-   public BotLoginHandler(BotClient var1, BotConnection var2) {
-      this.client = var1;
-      this.connection = var2;
+   public BotLoginHandler(BotClient client, BotConnection connection) {
+      this.client = client;
+      this.connection = connection;
    }
 
    @Override
@@ -51,31 +51,31 @@ public final class BotLoginHandler implements ClientLoginPacketListener {
       if (packet.shouldAuthenticate()) {
          this.connection.disconnect(Component.literal("Online-mode server is not supported by bots"));
       } else {
-         Cipher var2;
-         Cipher var3;
-         ServerboundKeyPacket var4;
+         Cipher cipher;
+         Cipher cipher2;
+         ServerboundKeyPacket serverboundKeyPacket;
          try {
-            SecretKey var5 = Crypt.generateSecretKey();
-            PublicKey var6 = packet.getPublicKey();
-            var2 = Crypt.getCipher(2, var5);
-            var3 = Crypt.getCipher(1, var5);
-            var4 = new ServerboundKeyPacket(var5, var6, packet.getChallenge());
-         } catch (Exception var7) {
-            throw new IllegalStateException("Protocol error", var7);
+            SecretKey secretKey = Crypt.generateSecretKey();
+            PublicKey publicKey = packet.getPublicKey();
+            cipher = Crypt.getCipher(2, secretKey);
+            cipher2 = Crypt.getCipher(1, secretKey);
+            serverboundKeyPacket = new ServerboundKeyPacket(secretKey, publicKey, packet.getChallenge());
+         } catch (Exception e) {
+            throw new IllegalStateException("Protocol error", e);
          }
 
-         this.connection.send(var4, PacketSendListener.thenRun(() -> this.connection.setupEncryption(var2, var3)));
+         this.connection.send(serverboundKeyPacket, PacketSendListener.thenRun(() -> this.connection.setupEncryption(cipher, cipher2)));
       }
    }
 
    @Override
    public void handleLoginFinished(ClientboundLoginFinishedPacket packet) {
       if (this.connection.isOpen() && this.connection.getPacketListener() == this) {
-         GameProfile var2 = packet.gameProfile();
+         GameProfile gameProfile = packet.gameProfile();
          this.client.setPhase(BotPhase.CONFIGURATION);
-         LOGGER.debug("Bot {} login success, profileId={}", this.client.name(), var2.id());
-         BotConnectionState var3 = new BotConnectionState(
-            var2,
+         LOGGER.debug("Bot {} login success, profileId={}", this.client.name(), gameProfile.id());
+         BotConnectionState botConnectionState = new BotConnectionState(
+            gameProfile,
             ClientRegistryLayer.createRegistryAccess().compositeAccess(),
             FeatureFlags.DEFAULT_FLAGS,
             null,
@@ -83,8 +83,8 @@ public final class BotLoginHandler implements ClientLoginPacketListener {
             Map.of(),
             ServerLinks.EMPTY
          );
-         BotConfigHandler var4 = new BotConfigHandler(this.client, this.connection, var3);
-         this.connection.transitionInbound(ConfigurationProtocols.CLIENTBOUND, var4);
+         BotConfigHandler botConfigHandler = new BotConfigHandler(this.client, this.connection, botConnectionState);
+         this.connection.transitionInbound(ConfigurationProtocols.CLIENTBOUND, botConfigHandler);
          this.connection.send(ServerboundLoginAcknowledgedPacket.INSTANCE);
          this.connection.transitionOutbound(ConfigurationProtocols.SERVERBOUND);
          this.connection.send(new ServerboundCustomPayloadPacket(new BrandPayload(this.client.getConfig().brand())));

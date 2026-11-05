@@ -9,7 +9,7 @@ public class Event4 extends CancellableEvent {
       return this.intValue;
    }
 
-   public void method1537(int var1) {
-      this.intValue = Math.max(0, var1);
+   public void method1537(int n) {
+      this.intValue = Math.max(0, n);
    }
 }

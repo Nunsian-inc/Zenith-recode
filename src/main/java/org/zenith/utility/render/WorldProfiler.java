@@ -116,22 +116,22 @@ public final class WorldProfiler {
    private WorldProfiler() {
    }
 
-   public static void setEnabled(boolean var0) {
-      if (var0 != enabled) {
-         enabled = var0;
+   public static void setEnabled(boolean enabled2) {
+      if (enabled2 != enabled) {
+         enabled = enabled2;
          flag = true;
          entry = null;
          intValue = -1;
 
-         for (WorldProfiler.Entry var4 : entrys) {
-            if (var4 != null) {
-               var4.flag = false;
-               var4.intValue2 = 0;
-               var4.intValue = 0;
+         for (WorldProfiler.Entry entry2 : entrys) {
+            if (entry2 != null) {
+               entry2.flag = false;
+               entry2.intValue2 = 0;
+               entry2.intValue = 0;
             }
          }
 
-         logger.info("[WPROF] {}", var0 ? "enabled" : "disabled");
+         logger.info("[WPROF] {}", enabled2 ? "enabled" : "disabled");
       }
    }
 
@@ -139,54 +139,54 @@ public final class WorldProfiler {
       return enabled ? System.nanoTime() : 0L;
    }
 
-   public static void method783(int var0, long var1) {
-      if (var1 != 0L && enabled) {
-         CONST_longValues[var0] = CONST_longValues[var0] + (System.nanoTime() - var1);
-         CONST_flags2[var0] = true;
+   public static void method783(int n, long l) {
+      if (l != 0L && enabled) {
+         CONST_longValues[n] = CONST_longValues[n] + (System.nanoTime() - l);
+         CONST_flags2[n] = true;
       }
    }
 
-   public static void method784(int var0) {
+   public static void method784(int n) {
       if (enabled) {
-         CONST_intValues4[var0]++;
+         CONST_intValues4[n]++;
       }
    }
 
-   public static int method785(int var0) {
+   public static int method785(int n) {
       if (enabled && entry != null) {
-         WorldProfiler.Entry var1 = entry;
-         int var2 = var1.method798();
-         int var3 = var1.method797();
-         var1.intValues2[var2] = var0;
-         var1.intValues3[var2] = var3;
-         var1.intValues4[var2] = -1;
-         GL33.glQueryCounter(var1.intValues[var3], 36392);
-         var1.longValues[var2] = System.nanoTime();
-         return slot << 20 | var2;
+         WorldProfiler.Entry entry2 = entry;
+         int n2 = entry2.method798();
+         int n3 = entry2.method797();
+         entry2.intValues2[n2] = n;
+         entry2.intValues3[n2] = n3;
+         entry2.intValues4[n2] = -1;
+         GL33.glQueryCounter(entry2.intValues[n3], 36392);
+         entry2.longValues[n2] = System.nanoTime();
+         return slot << 20 | n2;
       } else {
          return -1;
       }
    }
 
-   public static void method786(int var0) {
-      if (var0 >= 0 && enabled && entry != null) {
-         WorldProfiler.Entry var1 = entry;
-         int var2 = var0 & 1048575;
-         if (var0 >>> 20 == slot && var2 < var1.intValue2) {
-            long var3 = System.nanoTime();
-            int var5 = var1.intValues2[var2];
-            CONST_longValues[var5] = CONST_longValues[var5] + (var3 - var1.longValues[var2]);
-            CONST_flags2[var5] = true;
-            int var6 = var1.method797();
-            var1.intValues4[var2] = var6;
-            GL33.glQueryCounter(var1.intValues[var6], 36392);
+   public static void method786(int n) {
+      if (n >= 0 && enabled && entry != null) {
+         WorldProfiler.Entry entry2 = entry;
+         int n2 = n & 1048575;
+         if (n >>> 20 == slot && n2 < entry2.intValue2) {
+            long nanoTime = System.nanoTime();
+            int n3 = entry2.intValues2[n2];
+            CONST_longValues[n3] = CONST_longValues[n3] + (nanoTime - entry2.longValues[n2]);
+            CONST_flags2[n3] = true;
+            int n4 = entry2.method797();
+            entry2.intValues4[n2] = n4;
+            GL33.glQueryCounter(entry2.intValues[n4], 36392);
          }
       }
    }
 
-   public static void method787(int var0) {
+   public static void method787(int n) {
       if (enabled) {
-         intValue = var0;
+         intValue = n;
          intValue2 = 0;
       }
    }
@@ -195,155 +195,155 @@ public final class WorldProfiler {
       intValue = -1;
    }
 
-   public static Runnable method789(Runnable var0) {
+   public static Runnable method789(Runnable runnable) {
       if (enabled && intValue >= 0) {
-         int var1 = CONST_intValues2[intValue] + Math.min(intValue2, CONST_intValues3[intValue] - 1);
+         int n = CONST_intValues2[intValue] + Math.min(intValue2, CONST_intValues3[intValue] - 1);
          intValue2++;
          return () -> {
-            int var2 = method785(var1);
-            var0.run();
-            method786(var2);
+            int n2 = method785(n);
+            runnable.run();
+            method786(n2);
          };
       } else {
-         return var0;
+         return runnable;
       }
    }
 
    public static void method790() {
       if (enabled) {
-         long var0 = System.nanoTime();
-         if (lastFrame != 0L && var0 - lastFrame > 1000000000L) {
+         long nanoTime = System.nanoTime();
+         if (lastFrame != 0L && nanoTime - lastFrame > 1000000000L) {
             flag = true;
          }
 
          if (flag) {
             flag = false;
-            method794(var0);
+            method794(nanoTime);
             lastFrame = 0L;
             Arrays.fill(CONST_longValues, 0L);
             Arrays.fill(CONST_flags2, false);
             Arrays.fill(CONST_intValues4, 0);
          } else if (lastFrame != 0L) {
-            method791(var0 - lastFrame);
+            method791(nanoTime - lastFrame);
          }
 
-         lastFrame = var0;
+         lastFrame = nanoTime;
          if (entry != null) {
             entry.flag = entry.intValue2 > 0;
          }
 
          method792();
          slot = (slot + 1) % 6;
-         WorldProfiler.Entry var2 = entrys[slot];
-         if (var2 == null) {
-            var2 = new WorldProfiler.Entry();
-            entrys[slot] = var2;
+         WorldProfiler.Entry entry2 = entrys[slot];
+         if (entry2 == null) {
+            entry2 = new WorldProfiler.Entry();
+            entrys[slot] = entry2;
          }
 
-         if (var2.flag) {
+         if (entry2.flag) {
             intValue5++;
-            var2.flag = false;
+            entry2.flag = false;
          }
 
-         var2.intValue2 = 0;
-         var2.intValue = 0;
-         entry = var2;
-         if (var0 - longValue >= 3000000000L) {
-            method795(var0);
-            method794(var0);
+         entry2.intValue2 = 0;
+         entry2.intValue = 0;
+         entry = entry2;
+         if (nanoTime - longValue >= 3000000000L) {
+            method795(nanoTime);
+            method794(nanoTime);
          }
       }
    }
 
-   private static void method791(long var0) {
+   private static void method791(long l) {
       intValue3++;
-      longValue2 += var0;
-      longValue3 = Math.max(longValue3, var0);
+      longValue2 += l;
+      longValue3 = Math.max(longValue3, l);
 
-      for (int var2 = 0; var2 < 28; var2++) {
-         if (CONST_flags2[var2]) {
-            long var3 = CONST_longValues[var2];
-            CONST_longValues3[var2] = CONST_longValues3[var2] + var3;
-            CONST_longValues4[var2] = Math.max(CONST_longValues4[var2], var3);
-            CONST_intValues5[var2]++;
-            int var5 = CONST_intValues[var2];
-            if (var5 >= 0) {
-               CONST_longValues[var5] = CONST_longValues[var5] + var3;
+      for (int i = 0; i < 28; i++) {
+         if (CONST_flags2[i]) {
+            long l2 = CONST_longValues[i];
+            CONST_longValues3[i] = CONST_longValues3[i] + l2;
+            CONST_longValues4[i] = Math.max(CONST_longValues4[i], l2);
+            CONST_intValues5[i]++;
+            int n = CONST_intValues[i];
+            if (n >= 0) {
+               CONST_longValues[n] = CONST_longValues[n] + l2;
             }
 
-            CONST_longValues[var2] = 0L;
-            CONST_flags2[var2] = false;
+            CONST_longValues[i] = 0L;
+            CONST_flags2[i] = false;
          }
       }
 
-      for (int var6 = 0; var6 < 28; var6++) {
-         if (CONST_longValues[var6] != 0L) {
-            long var8 = CONST_longValues[var6];
-            CONST_longValues3[var6] = CONST_longValues3[var6] + var8;
-            CONST_longValues4[var6] = Math.max(CONST_longValues4[var6], var8);
-            CONST_intValues5[var6]++;
-            CONST_longValues[var6] = 0L;
+      for (int i = 0; i < 28; i++) {
+         if (CONST_longValues[i] != 0L) {
+            long l2 = CONST_longValues[i];
+            CONST_longValues3[i] = CONST_longValues3[i] + l2;
+            CONST_longValues4[i] = Math.max(CONST_longValues4[i], l2);
+            CONST_intValues5[i]++;
+            CONST_longValues[i] = 0L;
          }
       }
 
-      for (int var7 = 0; var7 < 3; var7++) {
-         CONST_longValues7[var7] = CONST_longValues7[var7] + CONST_intValues4[var7];
-         CONST_intValues7[var7] = Math.max(CONST_intValues7[var7], CONST_intValues4[var7]);
-         CONST_intValues4[var7] = 0;
+      for (int i = 0; i < 3; i++) {
+         CONST_longValues7[i] = CONST_longValues7[i] + CONST_intValues4[i];
+         CONST_intValues7[i] = Math.max(CONST_intValues7[i], CONST_intValues4[i]);
+         CONST_intValues4[i] = 0;
       }
    }
 
    private static void method792() {
-      for (int var0 = 1; var0 <= 6; var0++) {
-         int var1 = (slot + var0 + 6) % 6;
-         WorldProfiler.Entry var2 = entrys[var1];
-         if (var2 != null && var2.flag) {
-            int var3 = var2.intValues[var2.intValue - 1];
-            if (GL15.glGetQueryObjecti(var3, 34919) == 0) {
+      for (int i = 1; i <= 6; i++) {
+         int n = (slot + i + 6) % 6;
+         WorldProfiler.Entry entry = entrys[n];
+         if (entry != null && entry.flag) {
+            int intValue = entry.intValues[entry.intValue - 1];
+            if (GL15.glGetQueryObjecti(intValue, 34919) == 0) {
                return;
             }
 
-            intValue6 = intValue6 + (slot - var1 + 6) % 6 + 1;
-            method793(var2);
-            var2.flag = false;
+            intValue6 = intValue6 + (slot - n + 6) % 6 + 1;
+            method793(entry);
+            entry.flag = false;
          }
       }
    }
 
-   private static void method793(WorldProfiler.Entry var0) {
-      for (int var1 = 0; var1 < var0.intValue2; var1++) {
-         int var2 = var0.intValues4[var1];
-         if (var2 >= 0) {
-            long var3 = GL33.glGetQueryObjecti64(var0.intValues[var0.intValues3[var1]], 34918);
-            long var5 = GL33.glGetQueryObjecti64(var0.intValues[var2], 34918);
-            int var7 = var0.intValues2[var1];
-            long var8 = Math.max(0L, var5 - var3);
-            CONST_longValues2[var7] = CONST_longValues2[var7] + var8;
-            CONST_flags3[var7] = true;
-            int var10 = CONST_intValues[var7];
-            if (var10 >= 0) {
-               CONST_longValues2[var10] = CONST_longValues2[var10] + var8;
-               CONST_flags3[var10] = true;
+   private static void method793(WorldProfiler.Entry entry) {
+      for (int i = 0; i < entry.intValue2; i++) {
+         int n = entry.intValues4[i];
+         if (n >= 0) {
+            long glGetQueryObjecti64 = GL33.glGetQueryObjecti64(entry.intValues[entry.intValues3[i]], 34918);
+            long l = GL33.glGetQueryObjecti64(entry.intValues[n], 34918);
+            int n2 = entry.intValues2[i];
+            long l2 = Math.max(0L, l - glGetQueryObjecti64);
+            CONST_longValues2[n2] = CONST_longValues2[n2] + l2;
+            CONST_flags3[n2] = true;
+            int n3 = CONST_intValues[n2];
+            if (n3 >= 0) {
+               CONST_longValues2[n3] = CONST_longValues2[n3] + l2;
+               CONST_flags3[n3] = true;
             }
          }
       }
 
       intValue4++;
 
-      for (int var11 = 0; var11 < 28; var11++) {
-         if (CONST_flags3[var11]) {
-            long var12 = CONST_longValues2[var11];
-            CONST_longValues5[var11] = CONST_longValues5[var11] + var12;
-            CONST_longValues6[var11] = Math.max(CONST_longValues6[var11], var12);
-            CONST_intValues6[var11]++;
-            CONST_longValues2[var11] = 0L;
-            CONST_flags3[var11] = false;
+      for (int i = 0; i < 28; i++) {
+         if (CONST_flags3[i]) {
+            long l = CONST_longValues2[i];
+            CONST_longValues5[i] = CONST_longValues5[i] + l;
+            CONST_longValues6[i] = Math.max(CONST_longValues6[i], l);
+            CONST_intValues6[i]++;
+            CONST_longValues2[i] = 0L;
+            CONST_flags3[i] = false;
          }
       }
    }
 
-   private static void method794(long var0) {
-      longValue = var0;
+   private static void method794(long nanoTime) {
+      longValue = nanoTime;
       intValue3 = 0;
       longValue2 = 0L;
       longValue3 = 0L;
@@ -360,22 +360,22 @@ public final class WorldProfiler {
       Arrays.fill(CONST_intValues7, 0);
    }
 
-   private static void method795(long var0) {
+   private static void method795(long nanoTime) {
       if (intValue3 != 0) {
-         Minecraft var2 = Minecraft.getInstance();
-         RenderTarget var3 = var2.gameRenderer.mainRenderTarget();
-         String var4 = var3 != null ? var3.width + "x" + var3.height : "?";
-         double var5 = method796(longValue2) / intValue3;
-         double var7 = 0.0;
-         double var9 = 0.0;
+         Minecraft minecraft = Minecraft.getInstance();
+         RenderTarget mainRenderTarget = minecraft.gameRenderer.mainRenderTarget();
+         String str = mainRenderTarget != null ? mainRenderTarget.width + "x" + mainRenderTarget.height : "?";
+         double d = method796(longValue2) / intValue3;
+         double d2 = 0.0;
+         double d3 = 0.0;
 
-         for (int var11 = 0; var11 < 28; var11++) {
-            if (CONST_flags[var11]) {
+         for (int i = 0; i < 28; i++) {
+            if (CONST_flags[i]) {
                if (intValue4 > 0) {
-                  var7 += method796(CONST_longValues5[var11]) / intValue4;
+                  d2 += method796(CONST_longValues5[i]) / intValue4;
                }
 
-               var9 += method796(CONST_longValues3[var11]) / intValue3;
+               d3 += method796(CONST_longValues3[i]) / intValue3;
             }
          }
 
@@ -383,63 +383,63 @@ public final class WorldProfiler {
             String.format(
                Locale.ROOT,
                "[WPROF] ==== %.1fs | frames %d | frame avg %.3f ms (%.0f fps) max %.3f | res=%s | gpu frames %d lag %.1f dropped %d | weather total/frame: gpu %.3f ms, cpu %.3f ms",
-               method796(var0 - longValue) / 1000.0,
+               method796(nanoTime - longValue) / 1000.0,
                intValue3,
-               var5,
-               var5 > 0.0 ? 1000.0 / var5 : 0.0,
+               d,
+               d > 0.0 ? 1000.0 / d : 0.0,
                method796(longValue3),
-               var4,
+               str,
                intValue4,
                intValue4 > 0 ? (double)intValue6 / intValue4 : 0.0,
                intValue5,
-               var7,
-               var9
+               d2,
+               d3
             )
          );
 
-         for (int var13 = 0; var13 < 28; var13++) {
-            if (CONST_intValues5[var13] != 0 || CONST_intValues6[var13] != 0) {
-               StringBuilder var12 = new StringBuilder(128);
-               var12.append("[WPROF] ").append(String.format(Locale.ROOT, "%-18s", texts[var13]));
-               if (CONST_intValues6[var13] > 0) {
-                  var12.append(
+         for (int i = 0; i < 28; i++) {
+            if (CONST_intValues5[i] != 0 || CONST_intValues6[i] != 0) {
+               StringBuilder builder = new StringBuilder(128);
+               builder.append("[WPROF] ").append(String.format(Locale.ROOT, "%-18s", texts[i]));
+               if (CONST_intValues6[i] > 0) {
+                  builder.append(
                      String.format(
                         Locale.ROOT,
                         " gpu avg %7.3f max %7.3f",
-                        method796(CONST_longValues5[var13]) / CONST_intValues6[var13],
-                        method796(CONST_longValues6[var13])
+                        method796(CONST_longValues5[i]) / CONST_intValues6[i],
+                        method796(CONST_longValues6[i])
                      )
                   );
                } else {
-                  var12.append("                              ");
+                  builder.append("                              ");
                }
 
-               if (CONST_intValues5[var13] > 0) {
-                  var12.append(
+               if (CONST_intValues5[i] > 0) {
+                  builder.append(
                      String.format(
                         Locale.ROOT,
                         " | cpu avg %7.3f max %7.3f",
-                        method796(CONST_longValues3[var13]) / CONST_intValues5[var13],
-                        method796(CONST_longValues4[var13])
+                        method796(CONST_longValues3[i]) / CONST_intValues5[i],
+                        method796(CONST_longValues4[i])
                      )
                   );
                }
 
-               var12.append(String.format(Locale.ROOT, " | n %d/%d", Math.max(CONST_intValues5[var13], CONST_intValues6[var13]), intValue3));
-               logger.info(var12.toString());
+               builder.append(String.format(Locale.ROOT, " | n %d/%d", Math.max(CONST_intValues5[i], CONST_intValues6[i]), intValue3));
+               logger.info(builder.toString());
             }
          }
 
-         for (int var14 = 0; var14 < 3; var14++) {
-            if (CONST_longValues7[var14] != 0L) {
+         for (int i = 0; i < 3; i++) {
+            if (CONST_longValues7[i] != 0L) {
                logger.info(
                   String.format(
                      Locale.ROOT,
                      "[WPROF] %-18s avg %.3f/frame max %d total %d",
-                     texts2[var14],
-                     (double)CONST_longValues7[var14] / intValue3,
-                     CONST_intValues7[var14],
-                     CONST_longValues7[var14]
+                     texts2[i],
+                     (double)CONST_longValues7[i] / intValue3,
+                     CONST_intValues7[i],
+                     CONST_longValues7[i]
                   )
                );
             }
@@ -447,8 +447,8 @@ public final class WorldProfiler {
       }
    }
 
-   private static double method796(long var0) {
-      return var0 / 1000000.0;
+   private static double method796(long l) {
+      return l / 1000000.0;
    }
 
    static {
@@ -458,8 +458,8 @@ public final class WorldProfiler {
       CONST_intValues[5] = 4;
       CONST_intValues[6] = 4;
 
-      for (int var0 = 8; var0 <= 12; var0++) {
-         CONST_intValues[var0] = 7;
+      for (int i = 8; i <= 12; i++) {
+         CONST_intValues[i] = 7;
       }
 
       CONST_flags[0] = true;
@@ -504,13 +504,13 @@ public final class WorldProfiler {
 
       public int method797() {
          if (this.intValue == this.intValues.length) {
-            int[] var1 = Arrays.copyOf(this.intValues, Math.max(16, this.intValues.length * 2));
+            int[] intValues = Arrays.copyOf(this.intValues, Math.max(16, this.intValues.length * 2));
 
-            for (int var2 = this.intValues.length; var2 < var1.length; var2++) {
-               var1[var2] = GL15.glGenQueries();
+            for (int i = this.intValues.length; i < intValues.length; i++) {
+               intValues[i] = GL15.glGenQueries();
             }
 
-            this.intValues = var1;
+            this.intValues = intValues;
          }
 
          return this.intValue++;
@@ -518,11 +518,11 @@ public final class WorldProfiler {
 
       public int method798() {
          if (this.intValue2 == this.intValues2.length) {
-            int var1 = this.intValue2 * 2;
-            this.intValues2 = Arrays.copyOf(this.intValues2, var1);
-            this.intValues3 = Arrays.copyOf(this.intValues3, var1);
-            this.intValues4 = Arrays.copyOf(this.intValues4, var1);
-            this.longValues = Arrays.copyOf(this.longValues, var1);
+            int newLength = this.intValue2 * 2;
+            this.intValues2 = Arrays.copyOf(this.intValues2, newLength);
+            this.intValues3 = Arrays.copyOf(this.intValues3, newLength);
+            this.intValues4 = Arrays.copyOf(this.intValues4, newLength);
+            this.longValues = Arrays.copyOf(this.longValues, newLength);
          }
 
          return this.intValue2++;

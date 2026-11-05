@@ -20,10 +20,10 @@ public abstract class MixinBaritoneCachedWorld {
       cancellable = true,
       require = 0
    )
-   private void zenith$skipPackingWhenCacheDisabled(LevelChunk var1, CallbackInfo var2) {
-      Settings var3 = BaritoneAPI.getSettings();
-      if (var3 != null && Boolean.FALSE.equals(var3.chunkCaching.value)) {
-         var2.cancel();
+   private void zenith$skipPackingWhenCacheDisabled(LevelChunk levelChunk, CallbackInfo callbackInfo) {
+      Settings settings = BaritoneAPI.getSettings();
+      if (settings != null && Boolean.FALSE.equals(settings.chunkCaching.value)) {
+         callbackInfo.cancel();
       }
    }
 }

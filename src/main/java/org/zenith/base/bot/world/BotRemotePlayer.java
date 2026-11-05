@@ -15,16 +15,16 @@ public class BotRemotePlayer extends Player {
    private Vec3 clientVelocity = Vec3.ZERO;
    private int velocityLerpDivisor;
 
-   public BotRemotePlayer(BotWorld var1, BotPlayHandler var2, GameProfile var3) {
-      super(var1, var3);
-      this.networkHandler = var2;
+   public BotRemotePlayer(BotWorld world, BotPlayHandler networkHandler, GameProfile profile) {
+      super(world, profile);
+      this.networkHandler = networkHandler;
       this.noPhysics = true;
    }
 
    @Nullable
    private GameType getListedGameMode() {
-      PlayerInfo var1 = this.networkHandler.getPlayerListEntry(this.getUUID());
-      return var1 == null ? null : var1.getGameMode();
+      PlayerInfo playerListEntry = this.networkHandler.getPlayerListEntry(this.getUUID());
+      return playerListEntry == null ? null : playerListEntry.getGameMode();
    }
 
    @Override
@@ -91,7 +91,7 @@ public class BotRemotePlayer extends Player {
 
    @Override
    public GameType gameMode() {
-      GameType var1 = this.getListedGameMode();
-      return var1 != null ? var1 : GameType.SURVIVAL;
+      GameType listedGameMode = this.getListedGameMode();
+      return listedGameMode != null ? listedGameMode : GameType.SURVIVAL;
    }
 }

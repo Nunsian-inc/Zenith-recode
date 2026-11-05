@@ -28,8 +28,8 @@ public abstract class MixinRenderLayerUniforms {
          target = "Lnet/minecraft/client/renderer/DynamicGpuData;writeTransform(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)Lcom/mojang/renderpearl/api/buffers/GpuBufferSlice;"
       )
    )
-   private com.mojang.renderpearl.api.buffers.GpuBufferSlice zenith$shaderColor(net.minecraft.client.renderer.DynamicGpuData var1, org.joml.Matrix4f var2, org.joml.Matrix4f var3) {
-      Vector4fc var4 = GuiVertexBatch.method105(new org.joml.Vector4f(1.0F, 1.0F, 1.0F, 1.0F));
-      return var1.writeTransform(var2, new org.joml.Vector4f(var4), new org.joml.Vector3f(), var3);
+   private com.mojang.renderpearl.api.buffers.GpuBufferSlice zenith$shaderColor(net.minecraft.client.renderer.DynamicGpuData dynamicGpuData, org.joml.Matrix4f modelView, org.joml.Matrix4f textureMatrix) {
+      Vector4fc vector4fc = GuiVertexBatch.method105(new org.joml.Vector4f(1.0F, 1.0F, 1.0F, 1.0F));
+      return dynamicGpuData.writeTransform(modelView, new org.joml.Vector4f(vector4fc), new org.joml.Vector3f(), textureMatrix);
    }
 }

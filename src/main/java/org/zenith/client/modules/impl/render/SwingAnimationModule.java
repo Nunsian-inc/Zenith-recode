@@ -53,102 +53,102 @@ public final class SwingAnimationModule extends Module {
       return !this.isEnabled() ? false : !this.onlyAura.isEnabled() || AuraModule.INSTANCE.isEnabled() && AuraModule.INSTANCE.method6358() != null;
    }
 
-   public int method3269(int var1) {
-      float var2 = this.duration.getValue3();
-      if (!Float.isFinite(var2)) {
-         var2 = 2.0F;
+   public int method3269(int n) {
+      float f = this.duration.getValue3();
+      if (!Float.isFinite(f)) {
+         f = 2.0F;
       }
 
-      return Math.max(1, (int)(var1 * Mth.clamp(var2, 1.0F, 5.0F)));
+      return Math.max(1, (int)(n * Mth.clamp(f, 1.0F, 5.0F)));
    }
 
-   public void method3270(PoseStack var1, float var2, float var3, HumanoidArm var4) {
-      int var5 = var4 == HumanoidArm.RIGHT ? 1 : -1;
-      int var6 = Mth.clamp(this.animationMode.getIndex(), 0, 8);
-      float var7 = Mth.clamp(var2, 0.0F, 1.0F);
-      float var8 = Mth.sin(Mth.sqrt(var7) * (float) Math.PI);
-      float var9 = Mth.sin(var7 * (float) Math.PI);
-      if (var6 <= 6) {
-         var1.translate(-var5 * 0.56F, 0.52F + var3 * 0.6F, 0.72F);
+   public void method3270(PoseStack poseStack, float f, float f2, HumanoidArm humanoidArm) {
+      int n = humanoidArm == HumanoidArm.RIGHT ? 1 : -1;
+      int n2 = Mth.clamp(this.animationMode.getIndex(), 0, 8);
+      float x = Mth.clamp(f, 0.0F, 1.0F);
+      float f3 = Mth.sin(Mth.sqrt(x) * (float) Math.PI);
+      float f4 = Mth.sin(x * (float) Math.PI);
+      if (n2 <= 6) {
+         poseStack.translate(-n * 0.56F, 0.52F + f2 * 0.6F, 0.72F);
       }
 
-      switch (var6) {
+      switch (n2) {
          case 1:
-            if (var7 > 0.0F) {
-               var1.translate(var5 * 0.56F, var3 * -0.2F - 0.5F, -0.7F);
-               var1.rotate(Axis.YP.rotationDegrees(var5 * 45.0F));
-               var1.rotate(Axis.XP.rotationDegrees(var8 * -85.0F));
-               var1.translate(var5 * -0.1F, 0.28F, 0.2F);
-               var1.rotate(Axis.XP.rotationDegrees(-85.0F));
+            if (x > 0.0F) {
+               poseStack.translate(n * 0.56F, f2 * -0.2F - 0.5F, -0.7F);
+               poseStack.rotate(Axis.YP.rotationDegrees(n * 45.0F));
+               poseStack.rotate(Axis.XP.rotationDegrees(f3 * -85.0F));
+               poseStack.translate(n * -0.1F, 0.28F, 0.2F);
+               poseStack.rotate(Axis.XP.rotationDegrees(-85.0F));
             } else {
-               method3271(var1, var5, var3);
-               method3272(var1, var7, var5);
+               method3271(poseStack, n, f2);
+               method3272(poseStack, x, n);
             }
             break;
          case 2:
-            method3271(var1, var5, 0.0F);
-            var1.rotate(Axis.XP.rotationDegrees(50.0F));
-            var1.rotate(Axis.YP.rotationDegrees(var5 * -60.0F));
-            var1.rotate(Axis.ZP.rotationDegrees(var5 * (110.0F + 20.0F * var8)));
+            method3271(poseStack, n, 0.0F);
+            poseStack.rotate(Axis.XP.rotationDegrees(50.0F));
+            poseStack.rotate(Axis.YP.rotationDegrees(n * -60.0F));
+            poseStack.rotate(Axis.ZP.rotationDegrees(n * (110.0F + 20.0F * f3)));
             break;
          case 3:
-            method3271(var1, var5, 0.0F);
-            var1.rotate(Axis.XP.rotationDegrees(50.0F));
-            var1.rotate(Axis.YP.rotationDegrees(var5 * (-30.0F * (1.0F - var8) - 30.0F)));
-            var1.rotate(Axis.ZP.rotationDegrees(var5 * 110.0F));
+            method3271(poseStack, n, 0.0F);
+            poseStack.rotate(Axis.XP.rotationDegrees(50.0F));
+            poseStack.rotate(Axis.YP.rotationDegrees(n * (-30.0F * (1.0F - f3) - 30.0F)));
+            poseStack.rotate(Axis.ZP.rotationDegrees(n * 110.0F));
             break;
          case 4:
-            method3271(var1, var5, 0.0F);
-            var1.translate(var5 * 0.1F, -0.2F, -0.3F);
-            var1.rotate(Axis.XP.rotationDegrees(-30.0F * var9 - 36.0F));
-            var1.rotate(Axis.YP.rotationDegrees(var5 * 25.0F * var9));
-            var1.rotate(Axis.ZP.rotationDegrees(var5 * 12.0F));
+            method3271(poseStack, n, 0.0F);
+            poseStack.translate(n * 0.1F, -0.2F, -0.3F);
+            poseStack.rotate(Axis.XP.rotationDegrees(-30.0F * f4 - 36.0F));
+            poseStack.rotate(Axis.YP.rotationDegrees(n * 25.0F * f4));
+            poseStack.rotate(Axis.ZP.rotationDegrees(n * 12.0F));
             break;
          case 5:
-            method3271(var1, var5, 0.0F);
-            var1.translate(0.0F, -0.2F, -0.4F);
-            var1.rotate(Axis.XP.rotationDegrees(-120.0F * var8 - 3.0F));
+            method3271(poseStack, n, 0.0F);
+            poseStack.translate(0.0F, -0.2F, -0.4F);
+            poseStack.rotate(Axis.XP.rotationDegrees(-120.0F * f3 - 3.0F));
             break;
          case 6:
-            method3271(var1, var5, var3);
-            var1.translate(0.0F, 0.12F * var9, 0.0F);
-            method3272(var1, var7, var5);
+            method3271(poseStack, n, f2);
+            poseStack.translate(0.0F, 0.12F * f4, 0.0F);
+            method3272(poseStack, x, n);
             break;
          case 7:
-            float var10 = Mth.sin(var7 * (float) Math.PI * 2.0F) * var9;
-            method3273(var1, var5, 0.0F, 0.2F, -0.1F, -0.16F * var10, 0.1F * var9, -0.12F * var9, -35.0F * var9, 55.0F * var10, -45.0F * var10);
+            float f5 = Mth.sin(x * (float) Math.PI * 2.0F) * f4;
+            method3273(poseStack, n, 0.0F, 0.2F, -0.1F, -0.16F * f5, 0.1F * f4, -0.12F * f4, -35.0F * f4, 55.0F * f5, -45.0F * f5);
             break;
          case 8:
-            float var11 = Mth.sin(var7 * (float) Math.PI * 3.0F) * var9 * (1.0F - var7);
-            method3273(var1, var5, 0.0F, -0.1F, 0.05F, -0.05F * var8, 0.06F * var8, -0.22F * var8, -65.0F * var8 + 12.0F * var11, 10.0F * var11, 15.0F * var8);
+            float f6 = Mth.sin(x * (float) Math.PI * 3.0F) * f4 * (1.0F - x);
+            method3273(poseStack, n, 0.0F, -0.1F, 0.05F, -0.05F * f3, 0.06F * f3, -0.22F * f3, -65.0F * f3 + 12.0F * f6, 10.0F * f6, 15.0F * f3);
             break;
          default:
-            method3271(var1, var5, 0.0F);
-            method3272(var1, var7, var5);
+            method3271(poseStack, n, 0.0F);
+            method3272(poseStack, x, n);
       }
    }
 
-   private static void method3271(PoseStack var0, int var1, float var2) {
-      var0.translate(var1 * 0.56F, -0.52F - var2 * 0.6F, -0.72F);
+   private static void method3271(PoseStack poseStack, int n, float f) {
+      poseStack.translate(n * 0.56F, -0.52F - f * 0.6F, -0.72F);
    }
 
-   private static void method3272(PoseStack var0, float var1, int var2) {
-      float var3 = Mth.sin(var1 * var1 * (float) Math.PI);
-      float var4 = Mth.sin(Mth.sqrt(var1) * (float) Math.PI);
-      var0.rotate(Axis.YP.rotationDegrees(var2 * (45.0F - var3 * 20.0F)));
-      var0.rotate(Axis.ZP.rotationDegrees(var2 * var4 * -20.0F));
-      var0.rotate(Axis.XP.rotationDegrees(var4 * -80.0F));
-      var0.rotate(Axis.YP.rotationDegrees(var2 * -45.0F));
+   private static void method3272(PoseStack poseStack, float x, int n) {
+      float f = Mth.sin(x * x * (float) Math.PI);
+      float f2 = Mth.sin(Mth.sqrt(x) * (float) Math.PI);
+      poseStack.rotate(Axis.YP.rotationDegrees(n * (45.0F - f * 20.0F)));
+      poseStack.rotate(Axis.ZP.rotationDegrees(n * f2 * -20.0F));
+      poseStack.rotate(Axis.XP.rotationDegrees(f2 * -80.0F));
+      poseStack.rotate(Axis.YP.rotationDegrees(n * -45.0F));
    }
 
    private static void method3273(
-      PoseStack var0, int var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, float var10
+      PoseStack poseStack, int n, float f, float yo, float zo, float f2, float yo2, float zo2, float f3, float f4, float f5
    ) {
-      var0.translate(var1 * var2, var3, var4);
-      var0.translate(var1 * var5, var6, var7);
-      var0.rotate(
-         new Quaternionf().rotationXYZ(var8 * (float) (Math.PI / 180.0), var1 * var9 * (float) (Math.PI / 180.0), var1 * var10 * (float) (Math.PI / 180.0))
+      poseStack.translate(n * f, yo, zo);
+      poseStack.translate(n * f2, yo2, zo2);
+      poseStack.rotate(
+         new Quaternionf().rotationXYZ(f3 * (float) (Math.PI / 180.0), n * f4 * (float) (Math.PI / 180.0), n * f5 * (float) (Math.PI / 180.0))
       );
-      var0.translate(-var1 * var2, -var3, -var4);
+      poseStack.translate(-n * f, -yo, -zo);
    }
 }

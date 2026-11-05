@@ -15,10 +15,10 @@ public class HolyWorldEvent {
    private final long longValue;
    private final String text2;
 
-   public HolyWorldEvent(String var1, String var2, long var3) {
-      this.type = HolyWorldEvent.Type.method7746(var1);
-      this.text = var2;
-      this.longValue = var3;
+   public HolyWorldEvent(String key, String text, long longValue) {
+      this.type = HolyWorldEvent.Type.method7746(key);
+      this.text = text;
+      this.longValue = longValue;
       this.text2 = this.method7744();
    }
 
@@ -31,17 +31,17 @@ public class HolyWorldEvent {
    }
 
    public boolean method7743() {
-      Matcher var1 = pattern.matcher(this.text);
+      Matcher matcher = pattern.matcher(this.text);
 
-      while (var1.find()) {
-         String var2 = var1.group(2);
-         if (var2 != null && var2.length() > 0) {
+      while (matcher.find()) {
+         String group = matcher.group(2);
+         if (group != null && group.length() > 0) {
             try {
-               int var3 = Integer.parseInt(var2);
-               if (var3 > 0) {
+               int n = Integer.parseInt(group);
+               if (n > 0) {
                   return true;
                }
-            } catch (NumberFormatException var4) {
+            } catch (NumberFormatException e) {
                return true;
             }
          }
@@ -51,85 +51,85 @@ public class HolyWorldEvent {
    }
 
    private String method7744() {
-      ArrayList<HolyWorldEvent.Data> var1 = new ArrayList();
-      Matcher var2 = pattern.matcher(this.text);
+      ArrayList<HolyWorldEvent.Data> datas = new ArrayList();
+      Matcher matcher = pattern.matcher(this.text);
 
-      while (var2.find()) {
-         String var3 = var2.group(1);
-         String var4 = var2.group(2);
-         if (var4 != null && var4.length() > 0) {
+      while (matcher.find()) {
+         String group = matcher.group(1);
+         String str = matcher.group(2);
+         if (str != null && str.length() > 0) {
             try {
-               int var5 = Integer.parseInt(var4);
-               if (var5 > 0) {
-                  var1.add(new HolyWorldEvent.Data(var5, var3));
+               int intValue = Integer.parseInt(str);
+               if (intValue > 0) {
+                  datas.add(new HolyWorldEvent.Data(intValue, group));
                }
-            } catch (NumberFormatException var13) {
+            } catch (NumberFormatException e) {
             }
          }
       }
 
-      if (var1.isEmpty()) {
+      if (datas.isEmpty()) {
          return "";
       } else {
-         var1.sort(Comparator.comparingInt(var0 -> var0.intValue));
-         int var14 = var1.size();
-         ArrayList var15 = new ArrayList();
-         ArrayList var16 = new ArrayList();
-         ArrayList var6 = new ArrayList();
-         ArrayList var7 = new ArrayList();
+         datas.sort(Comparator.comparingInt(data -> data.intValue));
+         int size = datas.size();
+         ArrayList arrayList = new ArrayList();
+         ArrayList arrayList2 = new ArrayList();
+         ArrayList arrayList3 = new ArrayList();
+         ArrayList arrayList4 = new ArrayList();
 
-         for (HolyWorldEvent.Data var9 : var1) {
-            if (var9.intValue >= 1 && var9.intValue <= 14) {
-               var15.add(var9);
-            } else if (var9.intValue >= 15 && var9.intValue <= 32) {
-               var16.add(var9);
-            } else if (var9.intValue >= 33 && var9.intValue <= 47) {
-               var6.add(var9);
-            } else if (var9.intValue >= 48) {
-               var7.add(var9);
+         for (HolyWorldEvent.Data data : datas) {
+            if (data.intValue >= 1 && data.intValue <= 14) {
+               arrayList.add(data);
+            } else if (data.intValue >= 15 && data.intValue <= 32) {
+               arrayList2.add(data);
+            } else if (data.intValue >= 33 && data.intValue <= 47) {
+               arrayList3.add(data);
+            } else if (data.intValue >= 48) {
+               arrayList4.add(data);
             }
          }
 
-         ArrayList var17 = new ArrayList();
-         byte var18 = 4;
-         if (var14 <= 4) {
-            for (HolyWorldEvent.Data var11 : var1) {
-               var17.add(this.method7745(var11));
+         ArrayList elements = new ArrayList();
+         byte b = 4;
+         if (size <= 4) {
+            for (HolyWorldEvent.Data data : datas) {
+               elements.add(this.method7745(data));
             }
          } else {
-            ArrayList var19 = new ArrayList();
-            var19.add(var15);
-            var19.add(var16);
-            var19.add(var6);
-            var19.add(var7);
-            int[] var21 = new int[4];
+            ArrayList arrayList5 = new ArrayList();
+            arrayList5.add(arrayList);
+            arrayList5.add(arrayList2);
+            arrayList5.add(arrayList3);
+            arrayList5.add(arrayList4);
+            int[] ints = new int[4];
 
-            for (int var12 = 0; var12 < 4 && var17.size() < var18; var12++) {
-               if (!((List)var19.get(var12)).isEmpty()) {
-                  var17.add(this.method7745((HolyWorldEvent.Data)((List)var19.get(var12)).get(0)));
-                  var21[var12] = 1;
+            for (int i = 0; i < 4 && elements.size() < b; i++) {
+               if (!((List)arrayList5.get(i)).isEmpty()) {
+                  elements.add(this.method7745((HolyWorldEvent.Data)((List)arrayList5.get(i)).get(0)));
+                  ints[i] = 1;
                }
             }
 
-            for (int var22 = 0; var22 < 4 && var17.size() < var18; var22++) {
-               while (var21[var22] < ((List)var19.get(var22)).size() && var17.size() < var18) {
-                  var17.add(this.method7745((HolyWorldEvent.Data)((List)var19.get(var22)).get(var21[var22])));
-                  var21[var22]++;
+            for (int i = 0; i < 4 && elements.size() < b; i++) {
+               while (ints[i] < ((List)arrayList5.get(i)).size() && elements.size() < b) {
+                  elements.add(this.method7745((HolyWorldEvent.Data)((List)arrayList5.get(i)).get(ints[i])));
+                  ints[i]++;
                }
             }
          }
 
-         String var20 = String.join(", ", var17);
-         if (var14 > 4) {
-            var20 = var20 + "...";
+         String str = String.join(", ", elements);
+         if (size > 4) {
+            str = str + "...";
          }
 
-         return var20;
+         return str;
       }
    }
 
-   private String method7745(HolyWorldEvent.Data var1) {
-      return var1.text != null && !var1.text.isEmpty() ? var1.intValue + " " + var1.text : String.valueOf(var1.intValue);
+   private String method7745(HolyWorldEvent.Data data) {
+      return data.text != null && !data.text.isEmpty() ? data.intValue + " " + data.text : String.valueOf(data.intValue);
    }
 
    @Generated
@@ -181,9 +181,9 @@ public class HolyWorldEvent {
          return "Data[" + "intValue=" + this.intValue + ", " + "text=" + this.text + "]";
       }
 
-      private Data(int var1, String var2) {
-         this.intValue = var1;
-         this.text = var2;
+      private Data(int intValue, String text) {
+         this.intValue = intValue;
+         this.text = text;
       }
 
       public int getIntValue() {
@@ -214,17 +214,17 @@ public class HolyWorldEvent {
       private final String text;
       private final String text2;
 
-      private Type(String var3, String var4) {
-         this.text = var3;
-         this.text2 = var4;
+      private Type(String text, String str) {
+         this.text = text;
+         this.text2 = str;
       }
 
-      public static HolyWorldEvent.Type method7746(String var0) {
-         if (var0 == null) {
+      public static HolyWorldEvent.Type method7746(String key) {
+         if (key == null) {
             return UNKNOWN;
          } else {
-            String var1 = var0.toUpperCase(Locale.ROOT);
-            switch (var1) {
+            String upperCase = key.toUpperCase(Locale.ROOT);
+            switch (upperCase) {
                case "GOLDEN_FORTRESS":
                   return GOLD_RUSH;
                case "PARCELS":
@@ -235,8 +235,8 @@ public class HolyWorldEvent {
                   return EXPERT;
                default:
                   try {
-                     return valueOf(var1);
-                  } catch (IllegalArgumentException var4) {
+                     return valueOf(upperCase);
+                  } catch (IllegalArgumentException e) {
                      return UNKNOWN;
                   }
             }

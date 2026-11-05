@@ -15,13 +15,13 @@ public class CalcCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.executes(var0 -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Использование: .calc <выражение>");
          ChatLogger.method2020(ChatLogger.Type.INFO, "Пример: .calc (2 + 2) * 2 или .calc 64 * 3.5кк, подробнее: .calc help");
          return 1;
       });
-      var1.then(literal("help").executes(var0 -> {
+      literalArgumentBuilder.then(literal("help").executes(commandContext -> {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Операторы: + - * / ^ и скобки, умножение можно писать как x или х");
          ChatLogger.method2020(ChatLogger.Type.INFO, "Числа: 1.5 или 1,5; суффиксы к/кк/ккк: 1кк = 1 000 000");
          ChatLogger.method2020(ChatLogger.Type.INFO, "Процент от числа: .calc 250 + 10% = 275, .calc 1кк - 15% = 850 000");
@@ -29,51 +29,51 @@ public class CalcCommand extends CommandAbstract {
          ChatLogger.method2020(ChatLogger.Type.INFO, "Пример: .calc sqrt(16) + 2 ^ 10 или .calc (27 * 1.8кк) - 10%");
          return 1;
       }));
-      var1.then(arg("expression", StringArgumentType.greedyString()).executes(var1x -> {
-         String var2 = ((String)var1x.getArgument("expression", String.class)).trim();
+      literalArgumentBuilder.then(arg("expression", StringArgumentType.greedyString()).executes(var1x -> {
+         String str = ((String)var1x.getArgument("expression", String.class)).trim();
 
          try {
-            double var3 = new CalcCommand.ExpressionParser(var2).parse();
-            ChatLogger.method2020(ChatLogger.Type.INFO, var2 + " = " + this.format(var3));
-         } catch (CalcCommand.CalcException var5) {
-            ChatLogger.method2020(ChatLogger.Type.ERROR, var5.getMessage());
+            double d = new CalcCommand.ExpressionParser(str).parse();
+            ChatLogger.method2020(ChatLogger.Type.INFO, str + " = " + this.format(d));
+         } catch (CalcCommand.CalcException e) {
+            ChatLogger.method2020(ChatLogger.Type.ERROR, e.getMessage());
          }
 
          return 1;
       }));
    }
 
-   private String format(double var1) {
-      BigDecimal var3 = BigDecimal.valueOf(var1).setScale(10, RoundingMode.HALF_UP).stripTrailingZeros();
-      if (var3.compareTo(BigDecimal.ZERO) == 0) {
-         var3 = BigDecimal.ZERO;
+   private String format(double d) {
+      BigDecimal stripTrailingZeros = BigDecimal.valueOf(d).setScale(10, RoundingMode.HALF_UP).stripTrailingZeros();
+      if (stripTrailingZeros.compareTo(BigDecimal.ZERO) == 0) {
+         stripTrailingZeros = BigDecimal.ZERO;
       }
 
-      String var4 = var3.toPlainString();
-      boolean var5 = var4.startsWith("-");
-      if (var5) {
-         var4 = var4.substring(1);
+      String plainString = stripTrailingZeros.toPlainString();
+      boolean startsWith = plainString.startsWith("-");
+      if (startsWith) {
+         plainString = plainString.substring(1);
       }
 
-      int var6 = var4.indexOf(46);
-      String var7 = var6 == -1 ? var4 : var4.substring(0, var6);
-      String var8 = var6 == -1 ? "" : var4.substring(var6);
-      StringBuilder var9 = new StringBuilder();
+      int indexOf = plainString.indexOf(46);
+      String str = indexOf == -1 ? plainString : plainString.substring(0, indexOf);
+      String str2 = indexOf == -1 ? "" : plainString.substring(indexOf);
+      StringBuilder builder = new StringBuilder();
 
-      for (int var10 = 0; var10 < var7.length(); var10++) {
-         if (var10 > 0 && (var7.length() - var10) % 3 == 0) {
-            var9.append(' ');
+      for (int i = 0; i < str.length(); i++) {
+         if (i > 0 && (str.length() - i) % 3 == 0) {
+            builder.append(' ');
          }
 
-         var9.append(var7.charAt(var10));
+         builder.append(str.charAt(i));
       }
 
-      return (var5 ? "-" : "") + var9 + var8;
+      return (startsWith ? "-" : "") + builder + str2;
    }
 
    private static final class CalcException extends RuntimeException {
-      public CalcException(String var1) {
-         super(var1);
+      public CalcException(String message) {
+         super(message);
       }
    }
 
@@ -81,8 +81,8 @@ public class CalcCommand extends CommandAbstract {
       private final String src;
       private int pos;
 
-      public ExpressionParser(String var1) {
-         this.src = var1.toLowerCase(Locale.ROOT)
+      public ExpressionParser(String str) {
+         this.src = str.toLowerCase(Locale.ROOT)
             .replace(',', '.')
             .replace('x', '*')
             .replace('х', '*')
@@ -93,104 +93,104 @@ public class CalcCommand extends CommandAbstract {
       }
 
       public double parse() {
-         double var1 = this.expression();
+         double expression = this.expression();
          this.skipWs();
          if (this.pos < this.src.length()) {
             throw this.err("Лишний символ '" + this.src.charAt(this.pos) + "'", this.pos);
-         } else if (Double.isNaN(var1)) {
+         } else if (Double.isNaN(expression)) {
             throw new CalcCommand.CalcException("Результат не определён");
-         } else if (Double.isInfinite(var1)) {
+         } else if (Double.isInfinite(expression)) {
             throw new CalcCommand.CalcException("Результат слишком большой");
          } else {
-            return var1;
+            return expression;
          }
       }
 
       private double expression() {
-         double var1 = resolve(this.term());
+         double d = resolve(this.term());
 
          while (true) {
             this.skipWs();
-            char var3 = this.peek();
-            if (var3 != '+' && var3 != '-') {
-               return var1;
+            char c = this.peek();
+            if (c != '+' && c != '-') {
+               return d;
             }
 
             this.pos++;
-            CalcCommand.Val var4 = this.term();
-            double var5 = var4.pct() ? var1 * var4.v() / 100.0 : var4.v();
-            var1 = var3 == '+' ? var1 + var5 : var1 - var5;
+            CalcCommand.Val term = this.term();
+            double d2 = term.pct() ? d * term.v() / 100.0 : term.v();
+            d = c == '+' ? d + d2 : d - d2;
          }
       }
 
       private CalcCommand.Val term() {
-         CalcCommand.Val var1 = this.unary();
+         CalcCommand.Val unary = this.unary();
 
          while (true) {
             this.skipWs();
-            char var2 = this.peek();
-            if (var2 != '*' && var2 != '/') {
-               if (var2 != '(') {
-                  return var1;
+            char c = this.peek();
+            if (c != '*' && c != '/') {
+               if (c != '(') {
+                  return unary;
                }
 
-               var1 = this.multiply(var1, this.unary(), false);
+               unary = this.multiply(unary, this.unary(), false);
             } else {
                this.pos++;
-               var1 = this.multiply(var1, this.unary(), var2 == '/');
+               unary = this.multiply(unary, this.unary(), c == '/');
             }
          }
       }
 
-      private CalcCommand.Val multiply(CalcCommand.Val var1, CalcCommand.Val var2, boolean var3) {
-         double var4 = resolve(var1);
-         double var6 = resolve(var2);
-         if (var3) {
-            if (var6 == 0.0) {
+      private CalcCommand.Val multiply(CalcCommand.Val unary, CalcCommand.Val val, boolean flag) {
+         double d = resolve(unary);
+         double d2 = resolve(val);
+         if (flag) {
+            if (d2 == 0.0) {
                throw new CalcCommand.CalcException("Деление на ноль");
             } else {
-               return new CalcCommand.Val(var4 / var6, false);
+               return new CalcCommand.Val(d / d2, false);
             }
          } else {
-            return new CalcCommand.Val(var4 * var6, false);
+            return new CalcCommand.Val(d * d2, false);
          }
       }
 
       private CalcCommand.Val unary() {
          this.skipWs();
-         char var1 = this.peek();
-         if (var1 == '+') {
+         char c = this.peek();
+         if (c == '+') {
             this.pos++;
             return this.unary();
-         } else if (var1 == '-') {
+         } else if (c == '-') {
             this.pos++;
-            CalcCommand.Val var2 = this.unary();
-            return new CalcCommand.Val(-var2.v(), var2.pct());
+            CalcCommand.Val unary = this.unary();
+            return new CalcCommand.Val(-unary.v(), unary.pct());
          } else {
             return this.power();
          }
       }
 
       private CalcCommand.Val power() {
-         CalcCommand.Val var1 = this.postfix();
+         CalcCommand.Val postfix = this.postfix();
          this.skipWs();
          if (this.peek() != '^') {
-            return var1;
+            return postfix;
          } else {
             this.pos++;
-            CalcCommand.Val var2 = this.unary();
-            return new CalcCommand.Val(Math.pow(resolve(var1), resolve(var2)), false);
+            CalcCommand.Val unary = this.unary();
+            return new CalcCommand.Val(Math.pow(resolve(postfix), resolve(unary)), false);
          }
       }
 
       private CalcCommand.Val postfix() {
-         double var1 = this.primary();
+         double primary = this.primary();
          this.skipWs();
          if (this.peek() == '%') {
             this.pos++;
-            return new CalcCommand.Val(var1, true);
+            return new CalcCommand.Val(primary, true);
          } else {
-            return new CalcCommand.Val(var1, false);
+            return new CalcCommand.Val(primary, false);
          }
       }
 
@@ -199,77 +199,77 @@ public class CalcCommand extends CommandAbstract {
          if (this.pos >= this.src.length()) {
             throw this.err("Ожидалось число", this.pos);
          } else {
-            char var1 = this.src.charAt(this.pos);
-            if (var1 == '(') {
-               int var2 = this.pos++;
-               double var3 = this.expression();
+            char charAt = this.src.charAt(this.pos);
+            if (charAt == '(') {
+               int pos = this.pos++;
+               double expression = this.expression();
                this.skipWs();
                if (this.peek() != ')') {
-                  throw this.err("Не закрыта скобка", var2);
+                  throw this.err("Не закрыта скобка", pos);
                } else {
                   this.pos++;
-                  return var3;
+                  return expression;
                }
-            } else if (Character.isDigit(var1) || var1 == '.') {
+            } else if (Character.isDigit(charAt) || charAt == '.') {
                return this.number();
-            } else if (Character.isLetter(var1)) {
+            } else if (Character.isLetter(charAt)) {
                return this.identifier();
             } else {
-               throw this.err("Непонятный символ '" + var1 + "'", this.pos);
+               throw this.err("Непонятный символ '" + charAt + "'", this.pos);
             }
          }
       }
 
       private double number() {
-         int var1 = this.pos;
-         boolean var2 = false;
+         int pos = this.pos;
+         boolean flag = false;
 
          while (this.pos < this.src.length()) {
-            char var3 = this.src.charAt(this.pos);
-            if (Character.isDigit(var3)) {
+            char charAt = this.src.charAt(this.pos);
+            if (Character.isDigit(charAt)) {
                this.pos++;
             } else {
-               if (var3 != '.' || var2) {
+               if (charAt != '.' || flag) {
                   break;
                }
 
-               var2 = true;
+               flag = true;
                this.pos++;
             }
          }
 
-         String var7 = this.src.substring(var1, this.pos);
-         if (var7.equals(".")) {
-            throw this.err("Непонятное число", var1);
+         String str = this.src.substring(pos, this.pos);
+         if (str.equals(".")) {
+            throw this.err("Непонятное число", pos);
          } else {
-            double var4 = Double.parseDouble(var7);
+            double d = Double.parseDouble(str);
 
-            int var6;
-            for (var6 = 0; this.pos < this.src.length() && (this.src.charAt(this.pos) == 1082 || this.src.charAt(this.pos) == 'k'); this.pos++) {
-               var6++;
+            int n;
+            for (n = 0; this.pos < this.src.length() && (this.src.charAt(this.pos) == 1082 || this.src.charAt(this.pos) == 'k'); this.pos++) {
+               n++;
             }
 
-            if (var6 > 4) {
-               throw this.err("Слишком длинный суффикс из 'к'", this.pos - var6);
+            if (n > 4) {
+               throw this.err("Слишком длинный суффикс из 'к'", this.pos - n);
             } else {
-               if (var6 > 0) {
-                  var4 *= Math.pow(1000.0, var6);
+               if (n > 0) {
+                  d *= Math.pow(1000.0, n);
                }
 
-               return var4;
+               return d;
             }
          }
       }
 
       private double identifier() {
-         int var1 = this.pos;
+         int pos = this.pos;
 
          while (this.pos < this.src.length() && Character.isLetter(this.src.charAt(this.pos))) {
             this.pos++;
          }
 
-         String var2 = this.src.substring(var1, this.pos);
-         switch (var2) {
+         String str = this.src.substring(pos, this.pos);
+         switch (str) {
             case "pi":
             case "пи":
                return Math.PI;
@@ -278,40 +278,40 @@ public class CalcCommand extends CommandAbstract {
             default:
                this.skipWs();
                if (this.peek() != '(') {
-                  throw this.err("Неизвестная функция или константа '" + var2 + "'", var1);
+                  throw this.err("Неизвестная функция или константа '" + str + "'", pos);
                } else {
-                  int var3 = this.pos++;
-                  double var6 = this.expression();
+                  int n = this.pos++;
+                  double expression = this.expression();
                   this.skipWs();
                   if (this.peek() != ')') {
-                     throw this.err("Не закрыта скобка", var3);
+                     throw this.err("Не закрыта скобка", n);
                   } else {
                      this.pos++;
-                     return this.apply(var2, var6, var1);
+                     return this.apply(str, expression, pos);
                   }
                }
          }
       }
 
-      private double apply(String var1, double var2, int var4) {
-         return switch (var1) {
-            case "sqrt" -> Math.sqrt(var2);
-            case "cbrt" -> Math.cbrt(var2);
-            case "abs" -> Math.abs(var2);
-            case "round" -> Math.round(var2);
-            case "floor" -> Math.floor(var2);
-            case "ceil" -> Math.ceil(var2);
-            case "sin" -> Math.sin(var2);
-            case "cos" -> Math.cos(var2);
-            case "tan" -> Math.tan(var2);
-            case "ln" -> Math.log(var2);
-            case "log" -> Math.log10(var2);
-            default -> throw this.err("Неизвестная функция '" + var1 + "'", var4);
+      private double apply(String str, double expression, int pos) {
+         return switch (str) {
+            case "sqrt" -> Math.sqrt(expression);
+            case "cbrt" -> Math.cbrt(expression);
+            case "abs" -> Math.abs(expression);
+            case "round" -> Math.round(expression);
+            case "floor" -> Math.floor(expression);
+            case "ceil" -> Math.ceil(expression);
+            case "sin" -> Math.sin(expression);
+            case "cos" -> Math.cos(expression);
+            case "tan" -> Math.tan(expression);
+            case "ln" -> Math.log(expression);
+            case "log" -> Math.log10(expression);
+            default -> throw this.err("Неизвестная функция '" + str + "'", pos);
          };
       }
 
-      private static double resolve(CalcCommand.Val var0) {
-         return var0.pct() ? var0.v() / 100.0 : var0.v();
+      private static double resolve(CalcCommand.Val unary) {
+         return unary.pct() ? unary.v() / 100.0 : unary.v();
       }
 
       private char peek() {
@@ -324,8 +324,8 @@ public class CalcCommand extends CommandAbstract {
          }
       }
 
-      private CalcCommand.CalcException err(String var1, int var2) {
-         return new CalcCommand.CalcException(var1 + " (позиция " + (var2 + 1) + ")");
+      private CalcCommand.CalcException err(String str, int pos) {
+         return new CalcCommand.CalcException(str + " (позиция " + (pos + 1) + ")");
       }
    }
 
@@ -358,9 +358,9 @@ public class CalcCommand extends CommandAbstract {
          return "Val[" + "v=" + this.v + ", " + "pct=" + this.pct + "]";
       }
 
-      private Val(double var1, boolean var3) {
-         this.v = var1;
-         this.pct = var3;
+      private Val(double primary, boolean pct) {
+         this.v = primary;
+         this.pct = pct;
       }
    }
 }

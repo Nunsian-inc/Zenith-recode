@@ -9,8 +9,8 @@ public class PacketEvent extends CancellableEvent {
    private Packet<?> packet;
    private PacketListener packetListener;
 
-   public PacketEvent(PacketEvent.Type var1, Packet<?> var2) {
-      this(var1, var2, null);
+   public PacketEvent(PacketEvent.Type type, Packet<?> packet) {
+      this(type, packet, null);
    }
 
    public boolean method7099() {
@@ -37,20 +37,20 @@ public class PacketEvent extends CancellableEvent {
    }
 
    @Generated
-   public void setPacket2(Packet<?> var1) {
-      this.packet = var1;
+   public void setPacket2(Packet<?> packet) {
+      this.packet = packet;
    }
 
    @Generated
-   public void setPacketListener(PacketListener var1) {
-      this.packetListener = var1;
+   public void setPacketListener(PacketListener packetListener) {
+      this.packetListener = packetListener;
    }
 
    @Generated
-   public PacketEvent(PacketEvent.Type var1, Packet<?> var2, PacketListener var3) {
-      this.type = var1;
-      this.packet = var2;
-      this.packetListener = var3;
+   public PacketEvent(PacketEvent.Type type, Packet<?> packet, PacketListener packetListener) {
+      this.type = type;
+      this.packet = packet;
+      this.packetListener = packetListener;
    }
 
    public static enum Type {

@@ -31,8 +31,8 @@ public class NpcCommand extends CommandAbstract {
    }
 
    @Override
-   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1) {
-      var1.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)literal("spawn").then(literal("naked").executes(var1x -> {
+   public void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literalArgumentBuilder) {
+      literalArgumentBuilder.then(((LiteralArgumentBuilder)((LiteralArgumentBuilder)literal("spawn").then(literal("naked").executes(var1x -> {
          this.spawn(false);
          return 1;
       }))).then(literal("wear").executes(var1x -> {
@@ -42,15 +42,15 @@ public class NpcCommand extends CommandAbstract {
          this.spawn(true);
          return 1;
       }));
-      var1.then(literal("kill").executes(var1x -> {
+      literalArgumentBuilder.then(literal("kill").executes(var1x -> {
          this.kill();
          return 1;
       }));
-      var1.then(literal("totem").executes(var1x -> {
+      literalArgumentBuilder.then(literal("totem").executes(var1x -> {
          this.totem();
          return 1;
       }));
-      var1.executes(var0 -> {
+      literalArgumentBuilder.executes(commandContext -> {
          ChatLogger.method2019("Использование: .npc spawn [wear|naked], .npc totem и .npc kill");
          return 1;
       });
@@ -62,46 +62,46 @@ public class NpcCommand extends CommandAbstract {
       } else if (!TotemParticlesModule.INSTANCE.isEnabled()) {
          ChatLogger.method2019("Раздел Totem выключен: Particles -> Тотем");
       } else {
-         Object var1 = this.npc != null ? this.npc : mc.player;
-         TotemParticlesModule.INSTANCE.method4697((Entity)var1);
+         Object npc = this.npc != null ? this.npc : mc.player;
+         TotemParticlesModule.INSTANCE.method4697((Entity)npc);
          ChatLogger.method2019(this.npc != null ? "Тотем разыгран на манекене" : "Тотем разыгран на тебе");
       }
    }
 
-   private void spawn(boolean var1) {
+   private void spawn(boolean flag) {
       if (mc.level != null && mc.player != null) {
          if (this.npc != null) {
             this.remove(RemovalReason.DISCARDED);
          }
 
-         float var2 = mc.player.getYRot();
-         Vec3 var3 = mc.player.position().add(Vec3.directionFromRotation(0.0F, var2).scale(3.0));
-         float var4 = var2 + 180.0F;
+         float yRot = mc.player.getYRot();
+         Vec3 anchor = mc.player.position().add(Vec3.directionFromRotation(0.0F, yRot).scale(3.0));
+         float yBodyRot = yRot + 180.0F;
          this.npc = new Npc(mc.level, new GameProfile(UUID.randomUUID(), "NPC"));
          this.npc.setId(this.nextEntityId());
-         this.npc.snapTo(var3, var4, 0.0F);
-         this.npc.setYHeadRot(var4);
-         this.npc.yBodyRot = var4;
-         this.npc.yBodyRotO = var4;
-         this.npc.yHeadRotO = var4;
+         this.npc.snapTo(anchor, yBodyRot, 0.0F);
+         this.npc.setYHeadRot(yBodyRot);
+         this.npc.yBodyRot = yBodyRot;
+         this.npc.yBodyRotO = yBodyRot;
+         this.npc.yHeadRotO = yBodyRot;
          this.npc.setHealth(this.npc.getMaxHealth());
-         if (var1) {
+         if (flag) {
             equipNetherite(this.npc);
          }
 
          mc.level.addEntity(this.npc);
-         this.anchor = var3;
+         this.anchor = anchor;
          ChatLogger.method2019("Манекен поставлен, убрать: .npc kill");
       } else {
          ChatLogger.method2019("Манекен можно поставить только в мире");
       }
    }
 
-   private static void equipNetherite(Npc var0) {
-      var0.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.NETHERITE_HELMET));
-      var0.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.NETHERITE_CHESTPLATE));
-      var0.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.NETHERITE_LEGGINGS));
-      var0.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.NETHERITE_BOOTS));
+   private static void equipNetherite(Npc npc) {
+      npc.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.NETHERITE_HELMET));
+      npc.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.NETHERITE_CHESTPLATE));
+      npc.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.NETHERITE_LEGGINGS));
+      npc.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.NETHERITE_BOOTS));
    }
 
    private void kill() {
@@ -113,12 +113,12 @@ public class NpcCommand extends CommandAbstract {
       }
    }
 
-   private void remove(RemovalReason var1) {
+   private void remove(RemovalReason reason) {
       if (this.npc != null) {
          if (mc.level != null && mc.level.getEntity(this.npc.getId()) == this.npc) {
-            mc.level.removeEntity(this.npc.getId(), var1);
+            mc.level.removeEntity(this.npc.getId(), reason);
          } else {
-            this.npc.setRemoved(var1);
+            this.npc.setRemoved(reason);
             this.npc.onClientRemoval();
          }
 
@@ -128,7 +128,7 @@ public class NpcCommand extends CommandAbstract {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.npc != null) {
          if (mc.level != null && mc.level.getEntity(this.npc.getId()) == this.npc) {
             this.npc.setHealth(this.npc.getMaxHealth());
@@ -149,14 +149,14 @@ public class NpcCommand extends CommandAbstract {
    }
 
    private int nextEntityId() {
-      for (int var1 = 0; var1 < 1000000; var1++) {
+      for (int i = 0; i < 1000000; i++) {
          if (this.nextEntityId <= 2146483647) {
             this.nextEntityId = Integer.MAX_VALUE;
          }
 
-         int var2 = --this.nextEntityId;
-         if (mc.level == null || mc.level.getEntity(var2) == null) {
-            return var2;
+         int id = --this.nextEntityId;
+         if (mc.level == null || mc.level.getEntity(id) == null) {
+            return id;
          }
       }
 

@@ -10,12 +10,12 @@ public class CraftPresetData {
    private final String[] texts2 = new String[9];
    private int intValue = 0;
 
-   public CraftPresetData(String var1) {
-      this.text = var1 == null ? "" : var1;
+   public CraftPresetData(String str) {
+      this.text = str == null ? "" : str;
 
-      for (int var2 = 0; var2 < 9; var2++) {
-         this.texts[var2] = "";
-         this.texts2[var2] = "";
+      for (int i = 0; i < 9; i++) {
+         this.texts[i] = "";
+         this.texts2[i] = "";
       }
    }
 
@@ -43,38 +43,38 @@ public class CraftPresetData {
       return this.intValue;
    }
 
-   public String method6200(int var1) {
-      return this.texts[var1];
+   public String method6200(int n) {
+      return this.texts[n];
    }
 
-   public String method6201(int var1) {
-      return this.texts2[var1];
+   public String method6201(int n) {
+      return this.texts2[n];
    }
 
    public boolean method6202() {
       if (this.text2 != null && !this.text2.isBlank()) {
-         int var1 = 0;
+         int n = 0;
 
-         for (int var2 = 0; var2 < 9; var2++) {
-            if (this.texts[var2] != null && !this.texts[var2].isBlank()) {
-               var1++;
+         for (int i = 0; i < 9; i++) {
+            if (this.texts[i] != null && !this.texts[i].isBlank()) {
+               n++;
             }
          }
 
-         return var1 >= 2;
+         return n >= 2;
       } else {
          return false;
       }
    }
 
-   public void method6203(String var1, String var2, String[] var3, String[] var4, int var5) {
-      this.text2 = var1 == null ? "" : var1;
-      this.text3 = var2 == null ? "" : var2;
-      this.intValue = Math.max(0, var5);
+   public void method6203(String identifier, String anotherString, String[] strings, String[] strings2, int n) {
+      this.text2 = identifier == null ? "" : identifier;
+      this.text3 = anotherString == null ? "" : anotherString;
+      this.intValue = Math.max(0, n);
 
-      for (int var6 = 0; var6 < 9; var6++) {
-         this.texts[var6] = var3 != null && var6 < var3.length && var3[var6] != null ? var3[var6] : "";
-         this.texts2[var6] = var4 != null && var6 < var4.length && var4[var6] != null ? var4[var6] : "";
+      for (int i = 0; i < 9; i++) {
+         this.texts[i] = strings != null && i < strings.length && strings[i] != null ? strings[i] : "";
+         this.texts2[i] = strings2 != null && i < strings2.length && strings2[i] != null ? strings2[i] : "";
       }
    }
 
@@ -83,15 +83,15 @@ public class CraftPresetData {
       this.text3 = "";
       this.intValue = 0;
 
-      for (int var1 = 0; var1 < 9; var1++) {
-         this.texts[var1] = "";
-         this.texts2[var1] = "";
+      for (int i = 0; i < 9; i++) {
+         this.texts[i] = "";
+         this.texts2[i] = "";
       }
    }
 
-   public String method6205(AutoCraftModule var1) {
+   public String method6205(AutoCraftModule autoCraftModule) {
       return !this.method6202()
          ? "AutoCraft: craft item in crafting table to add preset"
-         : "AutoCraft: take crafted item to save " + var1.method1107(this.text2, this.text3);
+         : "AutoCraft: take crafted item to save " + autoCraftModule.method1107(this.text2, this.text3);
    }
 }

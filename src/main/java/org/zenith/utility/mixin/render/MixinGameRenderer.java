@@ -47,7 +47,7 @@ public abstract class MixinGameRenderer {
    private Camera mainCamera;
 
    @Shadow
-   private void renderItemInHand(CameraRenderState var1, PlayerRenderState var2, GpuTextureView var3) {
+   private void renderItemInHand(CameraRenderState cameraRenderState, PlayerRenderState playerRenderState, GpuTextureView depthTextureView) {
    }
 
    // fov / projection / crosshair hooks moved to MixinCamera and MixinMinecraftClient (26.3 moved that code there)
@@ -57,9 +57,9 @@ public abstract class MixinGameRenderer {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$skipCoveredWorld(CallbackInfo var2) {
+   private void zenith$skipCoveredWorld(CallbackInfo callbackInfo) {
       if (NowPlayingScreen.coversWorld()) {
-         var2.cancel();
+         callbackInfo.cancel();
       }
    }
 
@@ -67,7 +67,7 @@ public abstract class MixinGameRenderer {
       method = {"renderLevel()V"},
       at = {@At("HEAD")}
    )
-   private void beginWorldGrade(CallbackInfo var2) {
+   private void beginWorldGrade(CallbackInfo callbackInfo) {
       FrameTimer.beginFrame();
    }
 
@@ -75,7 +75,7 @@ public abstract class MixinGameRenderer {
       method = {"renderLevel()V"},
       at = {@At("RETURN")}
    )
-   private void endWorldGrade(CallbackInfo var2) {
+   private void endWorldGrade(CallbackInfo callbackInfo) {
       FrameTimer.endFrame();
    }
 
@@ -86,19 +86,19 @@ public abstract class MixinGameRenderer {
          target = "Lnet/minecraft/client/renderer/GameRenderer;renderItemInHand(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;Lcom/mojang/renderpearl/api/textures/GpuTextureView;)V"
       )
    )
-   public void afterRenderHand(GameRenderer var1, CameraRenderState var6, PlayerRenderState var3, GpuTextureView var4) {
-      float var2 = var6.cameraEntityPartialTicks;
-      ShaderHandModule var5 = ShaderHandModule.INSTANCE;
-      if (var5 != null && var5.isEnabled()) {
+   public void afterRenderHand(GameRenderer gameRenderer, CameraRenderState cameraRenderState, PlayerRenderState playerRenderState, GpuTextureView depthTextureView) {
+      float cameraEntityPartialTicks = cameraRenderState.cameraEntityPartialTicks;
+      ShaderHandModule shaderHandModule = ShaderHandModule.INSTANCE;
+      if (shaderHandModule != null && shaderHandModule.isEnabled()) {
          if (!HandShaders.isInitialized()) {
             HandShaders.method6278();
          }
 
          HandShaders.method6281();
          // the module swaps mainRenderTarget to its own framebuffer; draw the hand against that depth too
-         var5.method1239(() -> this.renderItemInHand(var6, var3, MinecraftAccess.mc.gameRenderer.mainRenderTarget.getDepthTextureView()), var2);
+         shaderHandModule.method1239(() -> this.renderItemInHand(cameraRenderState, playerRenderState, MinecraftAccess.mc.gameRenderer.mainRenderTarget.getDepthTextureView()), cameraEntityPartialTicks);
       } else {
-         this.renderItemInHand(var6, var3, var4);
+         this.renderItemInHand(cameraRenderState, playerRenderState, depthTextureView);
       }
    }
 
@@ -110,19 +110,19 @@ public abstract class MixinGameRenderer {
          shift = Shift.AFTER
       )}
    )
-   public void hookWorldRender(CallbackInfo var2, @Local(ordinal = 0) Matrix4f var3) {
+   public void hookWorldRender(CallbackInfo callbackInfo, @Local(ordinal = 0) Matrix4f mat) {
       // 26.3 keeps the view rotation in the camera render state instead of a renderLevel local
-      net.minecraft.client.renderer.state.level.LevelRenderState var7 = MinecraftAccess.mc.gameRenderer.gameRenderState().levelRenderState;
-      Matrix4f var4 = new Matrix4f(var7.cameraRenderState.viewRotationMatrix);
-      PoseStack var5 = new PoseStack();
-      var5.mulPose(var4);
-      GlowUtil.method2250(new Matrix4f(var3));
+      net.minecraft.client.renderer.state.level.LevelRenderState levelRenderState = MinecraftAccess.mc.gameRenderer.gameRenderState().levelRenderState;
+      Matrix4f matrix = new Matrix4f(levelRenderState.cameraRenderState.viewRotationMatrix);
+      PoseStack poseStack = new PoseStack();
+      poseStack.mulPose(matrix);
+      GlowUtil.method2250(new Matrix4f(mat));
       GlowUtil.method2251(RenderSystem.getModelViewMatrixCopy());
-      GlowUtil.method2252(var4);
+      GlowUtil.method2252(matrix);
       ProjectionUtils.method299();
-      WorldRenderEvent var6 = new WorldRenderEvent(var5, var7.worldPartialTicks);
-      EventManager.call(var6);
-      GlowUtil.method2226(var6.getMatrixStack());
+      WorldRenderEvent event = new WorldRenderEvent(poseStack, levelRenderState.worldPartialTicks);
+      EventManager.call(event);
+      GlowUtil.method2226(event.getMatrixStack());
    }
 
    // ScreenRenderEvent moved to MixinGuiExtraction (26.3 extracts the GUI in Gui.extractRenderState)

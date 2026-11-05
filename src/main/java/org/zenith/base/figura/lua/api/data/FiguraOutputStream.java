@@ -27,8 +27,8 @@ public class FiguraOutputStream extends OutputStream {
    public void write(int b) {
       try {
          this.destinationStream.write(b);
-      } catch (IOException var3) {
-         throw new LuaError(var3);
+      } catch (IOException e) {
+         throw new LuaError(e);
       }
    }
 

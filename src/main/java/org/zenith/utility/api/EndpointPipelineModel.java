@@ -69,130 +69,130 @@ public final class EndpointPipelineModel {
    private final float[] floatValues31;
    private final float[] floatValues32;
 
-   private EndpointPipelineModel(JsonObject var1) {
-      method5711("neuraim_java_endpoint_pipeline_v1".equals(method5705(var1, "format")), "unexpected endpoint model format");
-      JsonObject var2 = method5703(var1, "runtime");
-      this.intValue = method5707(var2, "history_ticks");
-      this.intValue2 = method5707(var2, "endpoint_horizon_ticks");
-      this.intValue3 = method5707(var2, "planner_noise_refresh_ticks");
-      this.floatValue = method5706(var2, "motor_magnitude_std_fraction");
+   private EndpointPipelineModel(JsonObject json) {
+      method5711("neuraim_java_endpoint_pipeline_v1".equals(method5705(json, "format")), "unexpected endpoint model format");
+      JsonObject json2 = method5703(json, "runtime");
+      this.intValue = method5707(json2, "history_ticks");
+      this.intValue2 = method5707(json2, "endpoint_horizon_ticks");
+      this.intValue3 = method5707(json2, "planner_noise_refresh_ticks");
+      this.floatValue = method5706(json2, "motor_magnitude_std_fraction");
       method5711(this.intValue == 20 && this.intValue2 == 5, "unsupported temporal contract");
-      JsonObject var3 = method5703(var1, "features");
-      JsonArray var4 = method5704(var3, "columns");
-      this.intValue4 = var4.size();
+      JsonObject json3 = method5703(json, "features");
+      JsonArray jsonArray = method5704(json3, "columns");
+      this.intValue4 = jsonArray.size();
       method5711(this.intValue4 == 55, "closed-loop planner requires 55 features");
-      method5711("movement_input_jump".equals(var4.get(47).getAsString()), "planner feature order mismatch at movement_input_jump");
-      this.intValues = method5709(var3, "motor_feature_indices", 14);
-      JsonObject var5 = method5703(var1, "planner");
-      JsonObject var6 = method5703(var5, "architecture");
-      method5711(method5707(var6, "input_dim") == this.intValue4, "planner input width mismatch");
-      this.intValue5 = method5707(var6, "hidden_dim");
-      method5711(method5707(var6, "num_layers") == 1, "only one planner GRU layer is supported");
-      JsonObject var7 = method5703(var5, "scales");
-      this.floatValues = method5708(var7, "feature_mean", this.intValue4);
-      this.floatValues2 = method5708(var7, "feature_scale", this.intValue4);
-      this.floatValues3 = method5708(var7, "log_magnitude_mean", 2);
-      this.floatValues4 = method5708(var7, "log_magnitude_scale", 2);
+      method5711("movement_input_jump".equals(jsonArray.get(47).getAsString()), "planner feature order mismatch at movement_input_jump");
+      this.intValues = method5709(json3, "motor_feature_indices", 14);
+      JsonObject json4 = method5703(json, "planner");
+      JsonObject json5 = method5703(json4, "architecture");
+      method5711(method5707(json5, "input_dim") == this.intValue4, "planner input width mismatch");
+      this.intValue5 = method5707(json5, "hidden_dim");
+      method5711(method5707(json5, "num_layers") == 1, "only one planner GRU layer is supported");
+      JsonObject json6 = method5703(json4, "scales");
+      this.floatValues = method5708(json6, "feature_mean", this.intValue4);
+      this.floatValues2 = method5708(json6, "feature_scale", this.intValue4);
+      this.floatValues3 = method5708(json6, "log_magnitude_mean", 2);
+      this.floatValues4 = method5708(json6, "log_magnitude_scale", 2);
 
-      for (float var11 : this.floatValues2) {
-         method5711(var11 > 0.0F, "invalid feature scale");
+      for (float f : this.floatValues2) {
+         method5711(f > 0.0F, "invalid feature scale");
       }
 
-      JsonObject var13 = method5703(var5, "weights");
-      this.floatValues5 = method5710(var13, "encoder.weight_ih_l0", 3 * this.intValue5, this.intValue4);
-      this.floatValues6 = method5710(var13, "encoder.weight_hh_l0", 3 * this.intValue5, this.intValue5);
-      this.floatValues8 = method5708(var13, "encoder.bias_ih_l0", 3 * this.intValue5);
-      this.floatValues9 = method5708(var13, "encoder.bias_hh_l0", 3 * this.intValue5);
-      this.floatValues7 = method5710(var13, "context.0.weight", this.intValue5, this.intValue5);
-      this.floatValues10 = method5708(var13, "context.0.bias", this.intValue5);
-      this.floatValues11 = method5710(var13, "mode_head.weight", 4, this.intValue5);
-      this.floatValues14 = method5708(var13, "mode_head.bias", 4);
-      this.floatValues12 = method5710(var13, "sign_head.weight", 2, this.intValue5);
-      this.floatValues15 = method5708(var13, "sign_head.bias", 2);
-      this.floatValues13 = method5710(var13, "magnitude_head.weight", 4, this.intValue5);
-      this.floatValues16 = method5708(var13, "magnitude_head.bias", 4);
-      JsonObject var14 = method5703(var1, "motor");
-      JsonObject var15 = method5703(var14, "architecture");
-      this.intValue6 = method5707(var15, "hidden_dim");
-      this.intValue7 = method5707(var15, "style_dim");
-      this.floatValue2 = method5706(var15, "sign_prior_strength");
-      method5711(method5707(var15, "history_ticks") == this.intValue, "motor history mismatch");
-      JsonObject var16 = method5703(var14, "scales");
-      this.floatValue3 = method5706(var16, "action_yaw");
-      this.floatValue4 = method5706(var16, "action_pitch");
-      this.floatValue5 = method5706(var16, "endpoint_yaw");
-      this.floatValue6 = method5706(var16, "endpoint_pitch");
-      JsonObject var12 = method5703(var14, "weights");
-      this.floatValues17 = method5710(var12, "history_encoder.weight_ih_l0", 3 * this.intValue6, 14);
-      this.floatValues18 = method5710(var12, "history_encoder.weight_hh_l0", 3 * this.intValue6, this.intValue6);
-      this.floatValues20 = method5708(var12, "history_encoder.bias_ih_l0", 3 * this.intValue6);
-      this.floatValues21 = method5708(var12, "history_encoder.bias_hh_l0", 3 * this.intValue6);
-      this.floatValues19 = method5710(var12, "context.0.weight", this.intValue6, this.intValue6 + 2 + this.intValue7 + 12);
-      this.floatValues22 = method5708(var12, "context.0.bias", this.intValue6);
-      this.floatValues23 = method5710(var12, "decoder.weight_ih", 3 * this.intValue6, 17);
-      this.floatValues24 = method5710(var12, "decoder.weight_hh", 3 * this.intValue6, this.intValue6);
-      this.floatValues25 = method5708(var12, "decoder.bias_ih", 3 * this.intValue6);
-      this.floatValues26 = method5708(var12, "decoder.bias_hh", 3 * this.intValue6);
-      this.floatValues27 = method5710(var12, "active_head.weight", 2, this.intValue6);
-      this.floatValues30 = method5708(var12, "active_head.bias", 2);
-      this.floatValues28 = method5710(var12, "sign_head.weight", 2, this.intValue6);
-      this.floatValues31 = method5708(var12, "sign_head.bias", 2);
-      this.floatValues29 = method5710(var12, "magnitude_head.weight", 2, this.intValue6);
-      this.floatValues32 = method5708(var12, "magnitude_head.bias", 2);
+      JsonObject json7 = method5703(json4, "weights");
+      this.floatValues5 = method5710(json7, "encoder.weight_ih_l0", 3 * this.intValue5, this.intValue4);
+      this.floatValues6 = method5710(json7, "encoder.weight_hh_l0", 3 * this.intValue5, this.intValue5);
+      this.floatValues8 = method5708(json7, "encoder.bias_ih_l0", 3 * this.intValue5);
+      this.floatValues9 = method5708(json7, "encoder.bias_hh_l0", 3 * this.intValue5);
+      this.floatValues7 = method5710(json7, "context.0.weight", this.intValue5, this.intValue5);
+      this.floatValues10 = method5708(json7, "context.0.bias", this.intValue5);
+      this.floatValues11 = method5710(json7, "mode_head.weight", 4, this.intValue5);
+      this.floatValues14 = method5708(json7, "mode_head.bias", 4);
+      this.floatValues12 = method5710(json7, "sign_head.weight", 2, this.intValue5);
+      this.floatValues15 = method5708(json7, "sign_head.bias", 2);
+      this.floatValues13 = method5710(json7, "magnitude_head.weight", 4, this.intValue5);
+      this.floatValues16 = method5708(json7, "magnitude_head.bias", 4);
+      JsonObject json8 = method5703(json, "motor");
+      JsonObject json9 = method5703(json8, "architecture");
+      this.intValue6 = method5707(json9, "hidden_dim");
+      this.intValue7 = method5707(json9, "style_dim");
+      this.floatValue2 = method5706(json9, "sign_prior_strength");
+      method5711(method5707(json9, "history_ticks") == this.intValue, "motor history mismatch");
+      JsonObject json10 = method5703(json8, "scales");
+      this.floatValue3 = method5706(json10, "action_yaw");
+      this.floatValue4 = method5706(json10, "action_pitch");
+      this.floatValue5 = method5706(json10, "endpoint_yaw");
+      this.floatValue6 = method5706(json10, "endpoint_pitch");
+      JsonObject json11 = method5703(json8, "weights");
+      this.floatValues17 = method5710(json11, "history_encoder.weight_ih_l0", 3 * this.intValue6, 14);
+      this.floatValues18 = method5710(json11, "history_encoder.weight_hh_l0", 3 * this.intValue6, this.intValue6);
+      this.floatValues20 = method5708(json11, "history_encoder.bias_ih_l0", 3 * this.intValue6);
+      this.floatValues21 = method5708(json11, "history_encoder.bias_hh_l0", 3 * this.intValue6);
+      this.floatValues19 = method5710(json11, "context.0.weight", this.intValue6, this.intValue6 + 2 + this.intValue7 + 12);
+      this.floatValues22 = method5708(json11, "context.0.bias", this.intValue6);
+      this.floatValues23 = method5710(json11, "decoder.weight_ih", 3 * this.intValue6, 17);
+      this.floatValues24 = method5710(json11, "decoder.weight_hh", 3 * this.intValue6, this.intValue6);
+      this.floatValues25 = method5708(json11, "decoder.bias_ih", 3 * this.intValue6);
+      this.floatValues26 = method5708(json11, "decoder.bias_hh", 3 * this.intValue6);
+      this.floatValues27 = method5710(json11, "active_head.weight", 2, this.intValue6);
+      this.floatValues30 = method5708(json11, "active_head.bias", 2);
+      this.floatValues28 = method5710(json11, "sign_head.weight", 2, this.intValue6);
+      this.floatValues31 = method5708(json11, "sign_head.bias", 2);
+      this.floatValues29 = method5710(json11, "magnitude_head.weight", 2, this.intValue6);
+      this.floatValues32 = method5708(json11, "magnitude_head.bias", 2);
    }
 
-   public static EndpointPipelineModel method5681(Path var0) throws IOException {
-      EndpointPipelineModel var2;
-      try (BufferedReader var1 = Files.newBufferedReader(var0, StandardCharsets.UTF_8)) {
-         var2 = method5683(var1);
+   public static EndpointPipelineModel method5681(Path path) throws IOException {
+      EndpointPipelineModel endpointPipelineModel;
+      try (BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+         endpointPipelineModel = method5683(bufferedReader);
       }
 
-      return var2;
+      return endpointPipelineModel;
    }
 
-   public static EndpointPipelineModel method5682(InputStream var0) throws IOException {
-      EndpointPipelineModel var2;
-      try (InputStreamReader var1 = new InputStreamReader(var0, StandardCharsets.UTF_8)) {
-         var2 = method5683(var1);
+   public static EndpointPipelineModel method5682(InputStream resourceAsStream) throws IOException {
+      EndpointPipelineModel endpointPipelineModel;
+      try (InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8)) {
+         endpointPipelineModel = method5683(inputStreamReader);
       }
 
-      return var2;
+      return endpointPipelineModel;
    }
 
-   private static EndpointPipelineModel method5683(Reader var0) throws IOException {
+   private static EndpointPipelineModel method5683(Reader bufferedReader) throws IOException {
       try {
-         JsonObject var1 = (JsonObject)new Gson().fromJson(var0, JsonObject.class);
-         method5711(var1 != null, "empty endpoint model JSON");
-         return new EndpointPipelineModel(var1);
-      } catch (RuntimeException var2) {
-         throw new IOException("invalid Neuraim endpoint model: " + var2.getMessage(), var2);
+         JsonObject json = (JsonObject)new Gson().fromJson(bufferedReader, JsonObject.class);
+         method5711(json != null, "empty endpoint model JSON");
+         return new EndpointPipelineModel(json);
+      } catch (RuntimeException e) {
+         throw new IOException("invalid Neuraim endpoint model: " + e.getMessage(), e);
       }
    }
 
    public static EndpointPipelineModel method5684() {
-      for (Path var1 : List.of(
+      for (Path path : List.of(
          Path.of("models", "neuraim_endpoint_pipeline_v1.json"),
          Path.of("run", "models", "neuraim_endpoint_pipeline_v1.json"),
          Path.of("neuraim_endpoint_pipeline_v1.json"),
          Path.of("..", "models", "neuraim_endpoint_pipeline_v1.json")
       )) {
-         if (Files.isRegularFile(var1)) {
+         if (Files.isRegularFile(path)) {
             try {
-               EndpointPipelineModel var2 = method5681(var1);
-               System.out.println("[Neuraim] Loaded endpoint pipeline " + var1.toAbsolutePath());
-               return var2;
-            } catch (IOException var4) {
-               System.err.println("[Neuraim] Failed to load " + var1 + ": " + var4.getMessage());
+               EndpointPipelineModel endpointPipelineModel = method5681(path);
+               System.out.println("[Neuraim] Loaded endpoint pipeline " + path.toAbsolutePath());
+               return endpointPipelineModel;
+            } catch (IOException e) {
+               System.err.println("[Neuraim] Failed to load " + path + ": " + e.getMessage());
             }
          }
       }
 
-      InputStream var5 = EndpointPipelineModel.class.getClassLoader().getResourceAsStream("models/neuraim_endpoint_pipeline_v1.json");
-      if (var5 != null) {
+      InputStream resourceAsStream = EndpointPipelineModel.class.getClassLoader().getResourceAsStream("models/neuraim_endpoint_pipeline_v1.json");
+      if (resourceAsStream != null) {
          try {
-            return method5682(var5);
-         } catch (IOException var3) {
-            System.err.println("[Neuraim] Bundled endpoint pipeline is invalid: " + var3.getMessage());
+            return method5682(resourceAsStream);
+         } catch (IOException e) {
+            System.err.println("[Neuraim] Bundled endpoint pipeline is invalid: " + e.getMessage());
          }
       }
 
@@ -200,77 +200,77 @@ public final class EndpointPipelineModel {
       return null;
    }
 
-   public int[] method5685(float[][] var1, float[] var2) {
-      this.method5691(var1);
-      method5711(var2 != null && var2.length == 5, "planner noise width mismatch");
-      float[] var3 = new float[this.intValue5];
+   public int[] method5685(float[][] floatses, float[] floats) {
+      this.method5691(floatses);
+      method5711(floats != null && floats.length == 5, "planner noise width mismatch");
+      float[] floats2 = new float[this.intValue5];
 
-      for (float[] var7 : var1) {
-         float[] var8 = new float[this.intValue4];
+      for (float[] floats3 : floatses) {
+         float[] floats4 = new float[this.intValue4];
 
-         for (int var9 = 0; var9 < this.intValue4; var9++) {
-            var8[var9] = (var7[var9] - this.floatValues[var9]) / this.floatValues2[var9];
+         for (int i = 0; i < this.intValue4; i++) {
+            floats4[i] = (floats3[i] - this.floatValues[i]) / this.floatValues2[i];
          }
 
-         var3 = method5692(var8, var3, this.floatValues5, this.floatValues6, this.floatValues8, this.floatValues9, this.intValue5);
+         floats2 = method5692(floats4, floats2, this.floatValues5, this.floatValues6, this.floatValues8, this.floatValues9, this.intValue5);
       }
 
-      float[] var19 = method5698(method5693(this.floatValues7, this.floatValues10, var3));
-      float[] var20 = method5693(this.floatValues11, this.floatValues14, var19);
-      float[] var21 = method5693(this.floatValues12, this.floatValues15, var19);
-      float[] var22 = method5693(this.floatValues13, this.floatValues16, var19);
-      float var23 = method5695(var2[0]);
-      float[] var24 = method5694(var20);
-      int var10 = 3;
-      float var11 = 0.0F;
+      float[] floats3 = method5698(method5693(this.floatValues7, this.floatValues10, floats2));
+      float[] floats4 = method5693(this.floatValues11, this.floatValues14, floats3);
+      float[] floats5 = method5693(this.floatValues12, this.floatValues15, floats3);
+      float[] floats6 = method5693(this.floatValues13, this.floatValues16, floats3);
+      float f = method5695(floats[0]);
+      float[] floats7 = method5694(floats4);
+      int n = 3;
+      float f2 = 0.0F;
 
-      for (int var12 = 0; var12 < var24.length; var12++) {
-         var11 += var24[var12];
-         if (var23 <= var11) {
-            var10 = var12;
+      for (int i = 0; i < floats7.length; i++) {
+         f2 += floats7[i];
+         if (f <= f2) {
+            n = i;
             break;
          }
       }
 
-      int[] var25 = new int[2];
+      int[] ints = new int[2];
 
-      for (int var13 = 0; var13 < 2; var13++) {
-         if ((var10 & 1 << var13) != 0) {
-            float var14 = method5695(var2[1 + var13]) < method5697(var21[var13]) ? 1.0F : -1.0F;
-            float var15 = -3.0F + 4.5F * method5697(var22[2 + var13]);
-            float var16 = var22[var13] + (float)Math.exp(var15) * var2[3 + var13];
-            float var17 = var16 * this.floatValues4[var13] + this.floatValues3[var13];
-            int var18 = method5702(Math.max(1.0, Math.expm1(var17)));
-            var25[var13] = var14 > 0.0F ? var18 : -var18;
+      for (int i = 0; i < 2; i++) {
+         if ((n & 1 << i) != 0) {
+            float f3 = method5695(floats[1 + i]) < method5697(floats5[i]) ? 1.0F : -1.0F;
+            float f4 = -3.0F + 4.5F * method5697(floats6[2 + i]);
+            float f5 = floats6[i] + (float)Math.exp(f4) * floats[3 + i];
+            float x = f5 * this.floatValues4[i] + this.floatValues3[i];
+            int n2 = method5702(Math.max(1.0, Math.expm1(x)));
+            ints[i] = f3 > 0.0F ? n2 : -n2;
          }
       }
 
-      return var25;
+      return ints;
    }
 
-   public int[] method5686(float[][] var1, int[] var2, float[] var3, Random var4) {
-      method5711(var4 != null, "random is required");
-      float[] var5 = new float[2];
-      float[] var6 = new float[2];
-      float[] var7 = new float[2];
+   public int[] method5686(float[][] floatses, int[] ints, float[] floats, Random random) {
+      method5711(random != null, "random is required");
+      float[] floats2 = new float[2];
+      float[] floats3 = new float[2];
+      float[] floats4 = new float[2];
 
-      for (int var8 = 0; var8 < 2; var8++) {
-         var5[var8] = var4.nextFloat();
-         var6[var8] = var4.nextFloat();
-         var7[var8] = (float)var4.nextGaussian();
+      for (int i = 0; i < 2; i++) {
+         floats2[i] = random.nextFloat();
+         floats3[i] = random.nextFloat();
+         floats4[i] = (float)random.nextGaussian();
       }
 
-      return this.method5687(var1, var2, var3, var5, var6, var7);
+      return this.method5687(floatses, ints, floats, floats2, floats3, floats4);
    }
 
-   public int[] method5687(float[][] var1, int[] var2, float[] var3, float[] var4, float[] var5, float[] var6) {
-      this.method5691(var1);
-      method5711(var2 != null && var2.length == 2, "endpoint width mismatch");
-      method5711(var3 != null && var3.length == this.intValue7, "motor style width mismatch");
-      method5711(var4 != null && var4.length == 2, "active noise width mismatch");
-      method5711(var5 != null && var5.length == 2, "sign noise width mismatch");
-      method5711(var6 != null && var6.length == 2, "magnitude noise width mismatch");
-      float[] var7 = new float[]{
+   public int[] method5687(float[][] floatses, int[] ints, float[] floats, float[] floats2, float[] floats3, float[] floats4) {
+      this.method5691(floatses);
+      method5711(ints != null && ints.length == 2, "endpoint width mismatch");
+      method5711(floats != null && floats.length == this.intValue7, "motor style width mismatch");
+      method5711(floats2 != null && floats2.length == 2, "active noise width mismatch");
+      method5711(floats3 != null && floats3.length == 2, "sign noise width mismatch");
+      method5711(floats4 != null && floats4.length == 2, "magnitude noise width mismatch");
+      float[] floats5 = new float[]{
          this.floatValue3,
          this.floatValue4,
          this.floatValue3,
@@ -286,94 +286,94 @@ public final class EndpointPipelineModel {
          this.floatValue3,
          this.floatValue4
       };
-      float[] var8 = new float[this.intValue6];
+      float[] floats6 = new float[this.intValue6];
 
-      for (float[] var12 : var1) {
-         float[] var13 = new float[14];
+      for (float[] floats7 : floatses) {
+         float[] floats8 = new float[14];
 
-         for (int var14 = 0; var14 < var13.length; var14++) {
-            var13[var14] = var12[this.intValues[var14]] / var7[var14];
+         for (int i = 0; i < floats8.length; i++) {
+            floats8[i] = floats7[this.intValues[i]] / floats5[i];
          }
 
-         var8 = method5692(var13, var8, this.floatValues17, this.floatValues18, this.floatValues20, this.floatValues21, this.intValue6);
+         floats6 = method5692(floats8, floats6, this.floatValues17, this.floatValues18, this.floatValues20, this.floatValues21, this.intValue6);
       }
 
-      float[][] var32 = this.method5688(var1);
-      float[] var33 = new float[]{
+      float[][] floatses2 = this.method5688(floatses);
+      float[] floats7 = new float[]{
          this.floatValue3, this.floatValue3, 50.0F, 50.0F, 1.0F, this.floatValue3, this.floatValue4, this.floatValue4, 50.0F, 50.0F, 1.0F, this.floatValue4
       };
-      float[] var34 = new float[12];
-      int var35 = 0;
+      float[] floats8 = new float[12];
+      int n = 0;
 
-      for (int var36 = 0; var36 < 2; var36++) {
-         for (int var38 = 0; var38 < 6; var38++) {
-            var34[var35] = var32[var36][var38] / var33[var35++];
+      for (int i = 0; i < 2; i++) {
+         for (int j = 0; j < 6; j++) {
+            floats8[n] = floatses2[i][j] / floats7[n++];
          }
       }
 
-      float[] var37 = new float[]{var2[0] / this.floatValue5, var2[1] / this.floatValue6};
-      float[] var39 = method5700(var8, var37, var3, var34);
-      var8 = method5699(method5693(this.floatValues19, this.floatValues22, var39));
-      float[] var15 = var1[var1.length - 1];
-      float[] var16 = method5700(var37, var34, new float[]{var15[27] / this.floatValue3, var15[28] / this.floatValue4}, new float[]{0.2F});
-      var8 = method5692(var16, var8, this.floatValues23, this.floatValues24, this.floatValues25, this.floatValues26, this.intValue6);
-      float[] var17 = method5693(this.floatValues27, this.floatValues30, var8);
-      float[] var18 = method5693(this.floatValues28, this.floatValues31, var8);
-      float[] var19 = method5693(this.floatValues29, this.floatValues32, var8);
-      float[] var20 = new float[]{this.floatValue3, this.floatValue4};
-      int[] var21 = new int[2];
+      float[] floats9 = new float[]{ints[0] / this.floatValue5, ints[1] / this.floatValue6};
+      float[] floats10 = method5700(floats6, floats9, floats, floats8);
+      floats6 = method5699(method5693(this.floatValues19, this.floatValues22, floats10));
+      float[] floats11 = floatses[floatses.length - 1];
+      float[] floats12 = method5700(floats9, floats8, new float[]{floats11[27] / this.floatValue3, floats11[28] / this.floatValue4}, new float[]{0.2F});
+      floats6 = method5692(floats12, floats6, this.floatValues23, this.floatValues24, this.floatValues25, this.floatValues26, this.intValue6);
+      float[] floats13 = method5693(this.floatValues27, this.floatValues30, floats6);
+      float[] floats14 = method5693(this.floatValues28, this.floatValues31, floats6);
+      float[] floats15 = method5693(this.floatValues29, this.floatValues32, floats6);
+      float[] floats16 = new float[]{this.floatValue3, this.floatValue4};
+      int[] ints2 = new int[2];
 
-      for (int var22 = 0; var22 < 2; var22++) {
-         if (!(var4[var22] >= method5697(var17[var22]))) {
-            float var23 = Math.signum((float)var2[var22]);
-            boolean var24 = var5[var22] < method5697(var18[var22] + this.floatValue2 * var23);
-            double var25 = Math.max(1.0, Math.abs(var2[var22]) / 5.0 + Math.tanh(var19[var22]) * var20[var22] * 0.5);
-            double var27 = var25 + var20[var22] * this.floatValue * var6[var22];
-            int var29 = Math.max(1, method5702(var27));
-            var21[var22] = var24 ? var29 : -var29;
+      for (int i = 0; i < 2; i++) {
+         if (!(floats2[i] >= method5697(floats13[i]))) {
+            float f = Math.signum((float)ints[i]);
+            boolean flag = floats3[i] < method5697(floats14[i] + this.floatValue2 * f);
+            double d = Math.max(1.0, Math.abs(ints[i]) / 5.0 + Math.tanh(floats15[i]) * floats16[i] * 0.5);
+            double d2 = d + floats16[i] * this.floatValue * floats4[i];
+            int n2 = Math.max(1, method5702(d2));
+            ints2[i] = flag ? n2 : -n2;
          }
       }
 
-      return var21;
+      return ints2;
    }
 
-   private float[][] method5688(float[][] var1) {
-      float[] var2 = var1[var1.length - 1];
-      float[][] var3 = new float[2][6];
-      int[] var4 = new int[]{27, 28};
-      int[] var5 = new int[]{29, 30};
-      int[] var6 = new int[]{33, 34};
-      int[] var7 = new int[]{35, 36};
-      int[] var8 = new int[]{41, 42};
+   private float[][] method5688(float[][] floatses) {
+      float[] floats = floatses[floatses.length - 1];
+      float[][] floatses2 = new float[2][6];
+      int[] ints = new int[]{27, 28};
+      int[] ints2 = new int[]{29, 30};
+      int[] ints3 = new int[]{33, 34};
+      int[] ints4 = new int[]{35, 36};
+      int[] ints5 = new int[]{41, 42};
 
-      for (int var9 = 0; var9 < 2; var9++) {
-         float var10 = 0.0F;
+      for (int i = 0; i < 2; i++) {
+         float f = 0.0F;
 
-         for (int var11 = var1.length - 1; var11 >= 0; var11--) {
-            float var12 = var1[var11][var4[var9]];
-            if (var12 != 0.0F) {
-               var10 = Math.signum(var12);
+         for (int j = floatses.length - 1; j >= 0; j--) {
+            float f2 = floatses[j][ints[i]];
+            if (f2 != 0.0F) {
+               f = Math.signum(f2);
                break;
             }
          }
 
-         var3[var9][0] = var2[var4[var9]];
-         var3[var9][1] = var2[var5[var9]];
-         var3[var9][2] = var2[var6[var9]];
-         var3[var9][3] = var10 == 0.0F ? 50.0F : var2[var7[var9]];
-         var3[var9][4] = var10;
-         var3[var9][5] = var2[var8[var9]];
+         floatses2[i][0] = floats[ints[i]];
+         floatses2[i][1] = floats[ints2[i]];
+         floatses2[i][2] = floats[ints3[i]];
+         floatses2[i][3] = f == 0.0F ? 50.0F : floats[ints4[i]];
+         floatses2[i][4] = f;
+         floatses2[i][5] = floats[ints5[i]];
       }
 
-      return var3;
+      return floatses2;
    }
 
-   public float[] method5689(Random var1) {
-      return method5701(var1, 5);
+   public float[] method5689(Random random) {
+      return method5701(random, 5);
    }
 
-   public float[] method5690(Random var1) {
-      return method5701(var1, this.intValue7);
+   public float[] method5690(Random random) {
+      return method5701(random, this.intValue7);
    }
 
    public int getIntValue4() {
@@ -388,240 +388,240 @@ public final class EndpointPipelineModel {
       return this.intValue3;
    }
 
-   private void method5691(float[][] var1) {
-      method5711(var1 != null && var1.length == this.intValue, "history tick count mismatch");
+   private void method5691(float[][] floatses) {
+      method5711(floatses != null && floatses.length == this.intValue, "history tick count mismatch");
 
-      for (float[] var5 : var1) {
-         method5711(var5 != null && var5.length == this.intValue4, "history feature width mismatch");
+      for (float[] floats : floatses) {
+         method5711(floats != null && floats.length == this.intValue4, "history feature width mismatch");
 
-         for (float var9 : var5) {
-            method5711(Float.isFinite(var9), "non-finite history feature");
+         for (float f : floats) {
+            method5711(Float.isFinite(f), "non-finite history feature");
          }
       }
    }
 
-   private static float[] method5692(float[] var0, float[] var1, float[][] var2, float[][] var3, float[] var4, float[] var5, int var6) {
-      float[] var7 = method5693(var2, var4, var0);
-      float[] var8 = method5693(var3, var5, var1);
-      float[] var9 = new float[var6];
+   private static float[] method5692(float[] floats, float[] floats2, float[][] floatValues5, float[][] floatValues6, float[] floatValues8, float[] floatValues9, int n) {
+      float[] floats3 = method5693(floatValues5, floatValues8, floats);
+      float[] floats4 = method5693(floatValues6, floatValues9, floats2);
+      float[] floats5 = new float[n];
 
-      for (int var10 = 0; var10 < var6; var10++) {
-         float var11 = method5697(var7[var10] + var8[var10]);
-         float var12 = method5697(var7[var6 + var10] + var8[var6 + var10]);
-         float var13 = (float)Math.tanh(var7[2 * var6 + var10] + var11 * var8[2 * var6 + var10]);
-         var9[var10] = (1.0F - var12) * var13 + var12 * var1[var10];
+      for (int i = 0; i < n; i++) {
+         float f = method5697(floats3[i] + floats4[i]);
+         float f2 = method5697(floats3[n + i] + floats4[n + i]);
+         float tanh = (float)Math.tanh(floats3[2 * n + i] + f * floats4[2 * n + i]);
+         floats5[i] = (1.0F - f2) * tanh + f2 * floats2[i];
       }
 
-      return var9;
+      return floats5;
    }
 
-   private static float[] method5693(float[][] var0, float[] var1, float[] var2) {
-      float[] var3 = new float[var0.length];
+   private static float[] method5693(float[][] floatValues7, float[] floatValues10, float[] floats) {
+      float[] floats2 = new float[floatValues7.length];
 
-      for (int var4 = 0; var4 < var0.length; var4++) {
-         float var5 = var1[var4];
+      for (int i = 0; i < floatValues7.length; i++) {
+         float f = floatValues10[i];
 
-         for (int var6 = 0; var6 < var2.length; var6++) {
-            var5 += var0[var4][var6] * var2[var6];
+         for (int j = 0; j < floats.length; j++) {
+            f += floatValues7[i][j] * floats[j];
          }
 
-         var3[var4] = var5;
+         floats2[i] = f;
       }
 
-      return var3;
+      return floats2;
    }
 
-   private static float[] method5694(float[] var0) {
-      float var1 = -Float.MAX_VALUE;
+   private static float[] method5694(float[] floats) {
+      float f = -Float.MAX_VALUE;
 
-      for (float var5 : var0) {
-         var1 = Math.max(var1, var5);
+      for (float f2 : floats) {
+         f = Math.max(f, f2);
       }
 
-      float[] var6 = new float[var0.length];
-      float var7 = 0.0F;
+      float[] floats2 = new float[floats.length];
+      float f2 = 0.0F;
 
-      for (int var8 = 0; var8 < var0.length; var8++) {
-         var6[var8] = (float)Math.exp(var0[var8] - var1);
-         var7 += var6[var8];
+      for (int i = 0; i < floats.length; i++) {
+         floats2[i] = (float)Math.exp(floats[i] - f);
+         f2 += floats2[i];
       }
 
-      for (int var9 = 0; var9 < var6.length; var9++) {
-         var6[var9] /= var7;
+      for (int i = 0; i < floats2.length; i++) {
+         floats2[i] /= f2;
       }
 
-      return var6;
+      return floats2;
    }
 
-   private static float method5695(float var0) {
-      return Math.max(1.0E-7F, Math.min(0.9999999F, 0.5F * (1.0F + method5696(var0 * 0.70710677F))));
+   private static float method5695(float f) {
+      return Math.max(1.0E-7F, Math.min(0.9999999F, 0.5F * (1.0F + method5696(f * 0.70710677F))));
    }
 
-   private static float method5696(float var0) {
-      float var1 = var0 < 0.0F ? -1.0F : 1.0F;
-      double var2 = Math.abs((double)var0);
-      double var4 = 1.0 / (1.0 + 0.5 * var2);
-      double var6 = var4
+   private static float method5696(float f) {
+      float f2 = f < 0.0F ? -1.0F : 1.0F;
+      double d = Math.abs((double)f);
+      double d2 = 1.0 / (1.0 + 0.5 * d);
+      double d3 = d2
          * Math.exp(
-            -var2 * var2
+            -d * d
                - 1.26551223
-               + var4
+               + d2
                   * (
                      1.00002368
-                        + var4
+                        + d2
                            * (
                               0.37409196
-                                 + var4
+                                 + d2
                                     * (
                                        0.09678418
-                                          + var4
+                                          + d2
                                              * (
                                                 -0.18628806
-                                                   + var4
-                                                      * (0.27886807 + var4 * (-1.13520398 + var4 * (1.48851587 + var4 * (-0.82215223 + var4 * 0.17087277))))
+                                                   + d2
+                                                      * (0.27886807 + d2 * (-1.13520398 + d2 * (1.48851587 + d2 * (-0.82215223 + d2 * 0.17087277))))
                                              )
                                     )
                            )
                   )
          );
-      return (float)(var1 * (1.0 - var6));
+      return (float)(f2 * (1.0 - d3));
    }
 
-   private static float method5697(float var0) {
-      return (float)(1.0 / (1.0 + Math.exp(-var0)));
+   private static float method5697(float f) {
+      return (float)(1.0 / (1.0 + Math.exp(-f)));
    }
 
-   private static float[] method5698(float[] var0) {
-      for (int var1 = 0; var1 < var0.length; var1++) {
-         if (var0[var1] < 0.0F) {
-            var0[var1] = (float)Math.expm1(var0[var1]);
+   private static float[] method5698(float[] floats) {
+      for (int i = 0; i < floats.length; i++) {
+         if (floats[i] < 0.0F) {
+            floats[i] = (float)Math.expm1(floats[i]);
          }
       }
 
-      return var0;
+      return floats;
    }
 
-   private static float[] method5699(float[] var0) {
-      for (int var1 = 0; var1 < var0.length; var1++) {
-         var0[var1] = (float)Math.tanh(var0[var1]);
+   private static float[] method5699(float[] floats) {
+      for (int i = 0; i < floats.length; i++) {
+         floats[i] = (float)Math.tanh(floats[i]);
       }
 
-      return var0;
+      return floats;
    }
 
-   private static float[] method5700(float[]... var0) {
-      int var1 = 0;
+   private static float[] method5700(float[]... floatses) {
+      int n = 0;
 
-      for (float[] var5 : var0) {
-         var1 += var5.length;
+      for (float[] floats : floatses) {
+         n += floats.length;
       }
 
-      float[] var8 = new float[var1];
-      int var9 = 0;
+      float[] floats = new float[n];
+      int n2 = 0;
 
-      for (float[] var7 : var0) {
-         System.arraycopy(var7, 0, var8, var9, var7.length);
-         var9 += var7.length;
+      for (float[] floats2 : floatses) {
+         System.arraycopy(floats2, 0, floats, n2, floats2.length);
+         n2 += floats2.length;
       }
 
-      return var8;
+      return floats;
    }
 
-   private static float[] method5701(Random var0, int var1) {
-      float[] var2 = new float[var1];
+   private static float[] method5701(Random random, int n) {
+      float[] floats = new float[n];
 
-      for (int var3 = 0; var3 < var1; var3++) {
-         var2[var3] = (float)var0.nextGaussian();
+      for (int i = 0; i < n; i++) {
+         floats[i] = (float)random.nextGaussian();
       }
 
-      return var2;
+      return floats;
    }
 
-   private static int method5702(double var0) {
-      if (!Double.isFinite(var0)) {
+   private static int method5702(double d) {
+      if (!Double.isFinite(d)) {
          return 0;
-      } else if (var0 >= 2.147483647E9) {
+      } else if (d >= 2.147483647E9) {
          return Integer.MAX_VALUE;
       } else {
-         return var0 <= -2.1474836E9F ? Integer.MIN_VALUE : (int)Math.round(var0);
+         return d <= -2.1474836E9F ? Integer.MIN_VALUE : (int)Math.round(d);
       }
    }
 
-   private static JsonObject method5703(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method5711(var2 != null && var2.isJsonObject(), "missing object " + var1);
-      return var2.getAsJsonObject();
+   private static JsonObject method5703(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method5711(jsonElement != null && jsonElement.isJsonObject(), "missing object " + memberName);
+      return jsonElement.getAsJsonObject();
    }
 
-   private static JsonArray method5704(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method5711(var2 != null && var2.isJsonArray(), "missing array " + var1);
-      return var2.getAsJsonArray();
+   private static JsonArray method5704(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method5711(jsonElement != null && jsonElement.isJsonArray(), "missing array " + memberName);
+      return jsonElement.getAsJsonArray();
    }
 
-   private static String method5705(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method5711(var2 != null && var2.isJsonPrimitive(), "missing string " + var1);
-      return var2.getAsString();
+   private static String method5705(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method5711(jsonElement != null && jsonElement.isJsonPrimitive(), "missing string " + memberName);
+      return jsonElement.getAsString();
    }
 
-   private static float method5706(JsonObject var0, String var1) {
-      JsonElement var2 = var0.get(var1);
-      method5711(var2 != null && var2.isJsonPrimitive(), "missing number " + var1);
-      float var3 = var2.getAsFloat();
-      method5711(Float.isFinite(var3), "non-finite " + var1);
-      return var3;
+   private static float method5706(JsonObject json, String memberName) {
+      JsonElement jsonElement = json.get(memberName);
+      method5711(jsonElement != null && jsonElement.isJsonPrimitive(), "missing number " + memberName);
+      float f = jsonElement.getAsFloat();
+      method5711(Float.isFinite(f), "non-finite " + memberName);
+      return f;
    }
 
-   private static int method5707(JsonObject var0, String var1) {
-      return Math.round(method5706(var0, var1));
+   private static int method5707(JsonObject json, String memberName) {
+      return Math.round(method5706(json, memberName));
    }
 
-   private static float[] method5708(JsonObject var0, String var1, int var2) {
-      JsonArray var3 = method5704(var0, var1);
-      method5711(var3.size() == var2, var1 + " length mismatch");
-      float[] var4 = new float[var2];
+   private static float[] method5708(JsonObject json, String memberName, int n) {
+      JsonArray jsonArray = method5704(json, memberName);
+      method5711(jsonArray.size() == n, memberName + " length mismatch");
+      float[] floats = new float[n];
 
-      for (int var5 = 0; var5 < var2; var5++) {
-         var4[var5] = var3.get(var5).getAsFloat();
-         method5711(Float.isFinite(var4[var5]), "non-finite " + var1);
+      for (int i = 0; i < n; i++) {
+         floats[i] = jsonArray.get(i).getAsFloat();
+         method5711(Float.isFinite(floats[i]), "non-finite " + memberName);
       }
 
-      return var4;
+      return floats;
    }
 
-   private static int[] method5709(JsonObject var0, String var1, int var2) {
-      JsonArray var3 = method5704(var0, var1);
-      method5711(var3.size() == var2, var1 + " length mismatch");
-      int[] var4 = new int[var2];
+   private static int[] method5709(JsonObject json, String memberName, int n) {
+      JsonArray jsonArray = method5704(json, memberName);
+      method5711(jsonArray.size() == n, memberName + " length mismatch");
+      int[] ints = new int[n];
 
-      for (int var5 = 0; var5 < var2; var5++) {
-         var4[var5] = var3.get(var5).getAsInt();
+      for (int i = 0; i < n; i++) {
+         ints[i] = jsonArray.get(i).getAsInt();
       }
 
-      return var4;
+      return ints;
    }
 
-   private static float[][] method5710(JsonObject var0, String var1, int var2, int var3) {
-      JsonArray var4 = method5704(var0, var1);
-      method5711(var4.size() == var2, var1 + " rows mismatch");
-      float[][] var5 = new float[var2][var3];
+   private static float[][] method5710(JsonObject json, String memberName, int n, int n2) {
+      JsonArray jsonArray = method5704(json, memberName);
+      method5711(jsonArray.size() == n, memberName + " rows mismatch");
+      float[][] floatses = new float[n][n2];
 
-      for (int var6 = 0; var6 < var2; var6++) {
-         JsonArray var7 = var4.get(var6).getAsJsonArray();
-         method5711(var7.size() == var3, var1 + " columns mismatch");
+      for (int i = 0; i < n; i++) {
+         JsonArray jsonArray2 = jsonArray.get(i).getAsJsonArray();
+         method5711(jsonArray2.size() == n2, memberName + " columns mismatch");
 
-         for (int var8 = 0; var8 < var3; var8++) {
-            var5[var6][var8] = var7.get(var8).getAsFloat();
+         for (int j = 0; j < n2; j++) {
+            floatses[i][j] = jsonArray2.get(j).getAsFloat();
          }
       }
 
-      return var5;
+      return floatses;
    }
 
-   private static void method5711(boolean var0, String var1) {
-      if (!var0) {
-         throw new IllegalArgumentException(var1);
+   private static void method5711(boolean finite, String str) {
+      if (!finite) {
+         throw new IllegalArgumentException(str);
       }
    }
 }

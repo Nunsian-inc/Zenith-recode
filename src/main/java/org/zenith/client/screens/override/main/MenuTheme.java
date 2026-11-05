@@ -16,12 +16,12 @@ public final class MenuTheme {
    private MenuTheme() {
    }
 
-   public static float px(float var0) {
-      return var0 * 0.5F;
+   public static float px(float f) {
+      return f * 0.5F;
    }
 
-   public static String t(String var0) {
-      return Zenith.getInstance().getLocalization().translate(var0);
+   public static String t(String labelKey) {
+      return Zenith.getInstance().getLocalization().translate(labelKey);
    }
 
    public static ZenithStyle style() {
@@ -80,63 +80,63 @@ public final class MenuTheme {
       return ZenithColor.INSTANCE;
    }
 
-   public static Font regular(float var0) {
-      return Fonts.NEW_REGULAR.getFont(px(var0));
+   public static Font regular(float f) {
+      return Fonts.NEW_REGULAR.getFont(px(f));
    }
 
-   public static Font medium(float var0) {
-      return Fonts.NEW_MEDIUM.getFont(px(var0));
+   public static Font medium(float f) {
+      return Fonts.NEW_MEDIUM.getFont(px(f));
    }
 
-   public static Font semibold(float var0) {
-      return Fonts.NEW_SEMIBOLD.getFont(px(var0));
+   public static Font semibold(float f) {
+      return Fonts.NEW_SEMIBOLD.getFont(px(f));
    }
 
-   public static Font icon(float var0) {
-      return Fonts.NEW_ICONS.getFont(px(var0));
+   public static Font icon(float f) {
+      return Fonts.NEW_ICONS.getFont(px(f));
    }
 
-   public static Font legacyIcon(float var0) {
-      return Fonts.ICONS.getFont(px(var0));
+   public static Font legacyIcon(float f) {
+      return Fonts.ICONS.getFont(px(f));
    }
 
-   public static float snap(float var0) {
-      Window var1 = Minecraft.getInstance().getWindow();
-      if (var1 == null) {
-         return var0;
+   public static float snap(float floatValue) {
+      Window window = Minecraft.getInstance().getWindow();
+      if (window == null) {
+         return floatValue;
       } else {
-         double var2 = var1.getGuiScale();
-         return var2 <= 0.0 ? var0 : (float)(Math.round(var0 * var2) / var2);
+         double guiScale = window.getGuiScale();
+         return guiScale <= 0.0 ? floatValue : (float)(Math.round(floatValue * guiScale) / guiScale);
       }
    }
 
-   public static List<String> wrap(Font var0, String var1, float var2) {
-      ArrayList<String> var3 = new ArrayList<>();
-      if (var1 != null && !var1.isEmpty()) {
-         if (var0.width(var1) <= var2) {
-            var3.add(var1);
-            return var3;
+   public static List<String> wrap(Font regular, String description, float width) {
+      ArrayList<String> strings = new ArrayList<>();
+      if (description != null && !description.isEmpty()) {
+         if (regular.width(description) <= width) {
+            strings.add(description);
+            return strings;
          } else {
-            StringBuilder var4 = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
 
-            for (String var8 : var1.split(" ")) {
-               String var9 = var4.isEmpty() ? var8 : var4 + " " + var8;
-               if (var0.width(var9) > var2 && !var4.isEmpty()) {
-                  var3.add(var4.toString());
-                  var4 = new StringBuilder(var8);
+            for (String str : description.split(" ")) {
+               String text = builder.isEmpty() ? str : builder + " " + str;
+               if (regular.width(text) > width && !builder.isEmpty()) {
+                  strings.add(builder.toString());
+                  builder = new StringBuilder(str);
                } else {
-                  var4 = new StringBuilder(var9);
+                  builder = new StringBuilder(text);
                }
             }
 
-            if (!var4.isEmpty()) {
-               var3.add(var4.toString());
+            if (!builder.isEmpty()) {
+               strings.add(builder.toString());
             }
 
-            return var3;
+            return strings;
          }
       } else {
-         return var3;
+         return strings;
       }
    }
 }

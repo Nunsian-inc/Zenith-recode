@@ -10,164 +10,164 @@ import org.zenith.base.figura.mixin.render.layers.elytra.ElytraModelAccessor;
 
 public enum VanillaModelProvider {
    HEAD(model -> {
-      ModelPart var10000;
+      ModelPart head;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.head;
+         head = m.head;
       } else {
-         var10000 = null;
+         head = null;
       }
 
-      return var10000;
+      return head;
    }),
    BODY(model -> {
-      ModelPart var10000;
+      ModelPart body;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.body;
+         body = m.body;
       } else {
-         var10000 = null;
+         body = null;
       }
 
-      return var10000;
+      return body;
    }),
    LEFT_ARM(model -> {
-      ModelPart var10000;
+      ModelPart leftArm;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.leftArm;
+         leftArm = m.leftArm;
       } else {
-         var10000 = null;
+         leftArm = null;
       }
 
-      return var10000;
+      return leftArm;
    }),
    RIGHT_ARM(model -> {
-      ModelPart var10000;
+      ModelPart rightArm;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.rightArm;
+         rightArm = m.rightArm;
       } else {
-         var10000 = null;
+         rightArm = null;
       }
 
-      return var10000;
+      return rightArm;
    }),
    LEFT_LEG(model -> {
-      ModelPart var10000;
+      ModelPart leftLeg;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.leftLeg;
+         leftLeg = m.leftLeg;
       } else {
-         var10000 = null;
+         leftLeg = null;
       }
 
-      return var10000;
+      return leftLeg;
    }),
    RIGHT_LEG(model -> {
-      ModelPart var10000;
+      ModelPart rightLeg;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.rightLeg;
+         rightLeg = m.rightLeg;
       } else {
-         var10000 = null;
+         rightLeg = null;
       }
 
-      return var10000;
+      return rightLeg;
    }),
    HAT(model -> {
-      ModelPart var10000;
+      ModelPart hat;
       if (model instanceof HumanoidModel<?> m) {
-         var10000 = m.hat;
+         hat = m.hat;
       } else {
-         var10000 = null;
+         hat = null;
       }
 
-      return var10000;
+      return hat;
    }),
    JACKET(model -> {
-      ModelPart var10000;
+      ModelPart jacket;
       if (model instanceof PlayerModel m) {
-         var10000 = m.jacket;
+         jacket = m.jacket;
       } else {
-         var10000 = null;
+         jacket = null;
       }
 
-      return var10000;
+      return jacket;
    }),
    LEFT_SLEEVE(model -> {
-      ModelPart var10000;
+      ModelPart leftSleeve;
       if (model instanceof PlayerModel m) {
-         var10000 = m.leftSleeve;
+         leftSleeve = m.leftSleeve;
       } else {
-         var10000 = null;
+         leftSleeve = null;
       }
 
-      return var10000;
+      return leftSleeve;
    }),
    RIGHT_SLEEVE(model -> {
-      ModelPart var10000;
+      ModelPart rightSleeve;
       if (model instanceof PlayerModel m) {
-         var10000 = m.rightSleeve;
+         rightSleeve = m.rightSleeve;
       } else {
-         var10000 = null;
+         rightSleeve = null;
       }
 
-      return var10000;
+      return rightSleeve;
    }),
    LEFT_PANTS(model -> {
-      ModelPart var10000;
+      ModelPart leftPants;
       if (model instanceof PlayerModel m) {
-         var10000 = m.leftPants;
+         leftPants = m.leftPants;
       } else {
-         var10000 = null;
+         leftPants = null;
       }
 
-      return var10000;
+      return leftPants;
    }),
    RIGHT_PANTS(model -> {
-      ModelPart var10000;
+      ModelPart rightPants;
       if (model instanceof PlayerModel m) {
-         var10000 = m.rightPants;
+         rightPants = m.rightPants;
       } else {
-         var10000 = null;
+         rightPants = null;
       }
 
-      return var10000;
+      return rightPants;
    }),
    CAPE(model -> {
-      ModelPart var10000;
+      ModelPart figura$getCloak;
       if (model instanceof PlayerModelCapeAccessor m) {
-         var10000 = m.figura$getCloak();
+         figura$getCloak = m.figura$getCloak();
       } else {
-         var10000 = null;
+         figura$getCloak = null;
       }
 
-      return var10000;
+      return figura$getCloak;
    }),
    FAKE_CAPE(model -> {
-      ModelPart var10000;
+      ModelPart figura$getFakeCloak;
       if (model instanceof PlayerModelCapeAccessor m) {
-         var10000 = m.figura$getFakeCloak();
+         figura$getFakeCloak = m.figura$getFakeCloak();
       } else {
-         var10000 = null;
+         figura$getFakeCloak = null;
       }
 
-      return var10000;
+      return figura$getFakeCloak;
    }),
    LEFT_ELYTRON(model -> {
-      ModelPart var10000;
+      ModelPart leftWing;
       if (model instanceof ElytraModelAccessor m) {
-         var10000 = m.getLeftWing();
+         leftWing = m.getLeftWing();
       } else {
-         var10000 = null;
+         leftWing = null;
       }
 
-      return var10000;
+      return leftWing;
    }),
    RIGHT_ELYTRON(model -> {
-      ModelPart var10000;
+      ModelPart rightWing;
       if (model instanceof ElytraModelAccessor m) {
-         var10000 = m.getRightWing();
+         rightWing = m.getRightWing();
       } else {
-         var10000 = null;
+         rightWing = null;
       }
 
-      return var10000;
+      return rightWing;
    });
 
    public final Function<EntityModel<?>, ModelPart> func;

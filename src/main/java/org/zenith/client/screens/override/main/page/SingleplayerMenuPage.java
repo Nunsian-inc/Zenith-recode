@@ -58,8 +58,8 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
    private BoundsData viewport = new BoundsData(0.0F, 0.0F, 0.0F, 0.0F);
    private int loadGeneration;
 
-   public SingleplayerMenuPage(Screen var1) {
-      this.parent = var1;
+   public SingleplayerMenuPage(Screen parent) {
+      this.parent = parent;
       this.createButton.onClick(this::createWorld);
    }
 
@@ -86,8 +86,8 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
    }
 
    private void closeRows() {
-      for (SingleplayerMenuPage.Row var2 : this.rows) {
-         var2.icon.close();
+      for (SingleplayerMenuPage.Row row : this.rows) {
+         row.icon.close();
       }
 
       this.rows.clear();
@@ -97,13 +97,13 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
       this.closeRows();
       this.scroll.reset();
       this.loading = true;
-      int var1 = ++this.loadGeneration;
-      LevelStorageSource var2 = mc.getLevelSource();
+      int n = ++this.loadGeneration;
+      LevelStorageSource levelSource = mc.getLevelSource();
 
       try {
-         LevelCandidates var3 = var2.findLevelCandidates();
-         var2.loadLevelSummaries(var3).thenAcceptAsync(var2x -> {
-            if (var1 == this.loadGeneration) {
+         LevelCandidates levelCandidates = levelSource.findLevelCandidates();
+         levelSource.loadLevelSummaries(levelCandidates).thenAcceptAsync(var2x -> {
+            if (n == this.loadGeneration) {
                this.closeRows();
 
                for (LevelSummary var4x : var2x) {
@@ -115,7 +115,7 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
                this.loading = false;
             }
          }, mc);
-      } catch (Exception var4) {
+      } catch (Exception e) {
          this.loading = false;
       }
    }
@@ -124,104 +124,104 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
       CreateWorldScreen.openFresh(mc, () -> mc.gui.setScreen(this.parent));
    }
 
-   private void play(SingleplayerMenuPage.Row var1) {
-      if (!var1.summary.isLocked() && !var1.summary.requiresManualConversion()) {
-         mc.createWorldOpenFlows().openWorld(var1.summary.getLevelId(), () -> mc.gui.setScreen(this.parent));
+   private void play(SingleplayerMenuPage.Row row) {
+      if (!row.summary.isLocked() && !row.summary.requiresManualConversion()) {
+         mc.createWorldOpenFlows().openWorld(row.summary.getLevelId(), () -> mc.gui.setScreen(this.parent));
       }
    }
 
-   private void confirmDelete(SingleplayerMenuPage.Row var1) {
-      Screen var2 = mc.gui.screen();
+   private void confirmDelete(SingleplayerMenuPage.Row row) {
+      Screen screen = mc.gui.screen();
       mc.gui.setScreen(
          new ConfirmScreen(
-            var3 -> {
-               if (var3) {
-                  this.delete(var1);
+            flag -> {
+               if (flag) {
+                  this.delete(row);
                }
 
-               mc.gui.setScreen(var2);
+               mc.gui.setScreen(screen);
             },
             Component.translatable("selectWorld.deleteQuestion"),
-            Component.translatable("selectWorld.deleteWarning", var1.summary.getLevelName()),
+            Component.translatable("selectWorld.deleteWarning", row.summary.getLevelName()),
             Component.translatable("selectWorld.deleteButton"),
             CommonComponents.GUI_CANCEL
          )
       );
    }
 
-   private void delete(SingleplayerMenuPage.Row var1) {
-      try (LevelStorageAccess var2 = mc.getLevelSource().validateAndCreateAccess(var1.summary.getLevelId())) {
-         var2.deleteLevel();
-      } catch (Exception var7) {
+   private void delete(SingleplayerMenuPage.Row row) {
+      try (LevelStorageAccess validateAndCreateAccess = mc.getLevelSource().validateAndCreateAccess(row.summary.getLevelId())) {
+         validateAndCreateAccess.deleteLevel();
+      } catch (Exception e) {
       }
 
       this.reload();
    }
 
    @Override
-   public void layout(BoundsData var1) {
-      float var2 = var1.getFloatValue2() + LIST_HEIGHT + CONTROLS_GAP;
-      float var3 = this.createButton.preferredWidth();
-      this.createButton.setBounds(var1.getFloatValue() + (var1.width() - var3) / 2.0F, var2, var3, MenuButton.HEIGHT);
+   public void layout(BoundsData boundsData) {
+      float f = boundsData.getFloatValue2() + LIST_HEIGHT + CONTROLS_GAP;
+      float preferredWidth = this.createButton.preferredWidth();
+      this.createButton.setBounds(boundsData.getFloatValue() + (boundsData.width() - preferredWidth) / 2.0F, f, preferredWidth, MenuButton.HEIGHT);
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-      BoundsData var5 = MenuSkin.listArea(var1, var4, LIST_HEIGHT);
-      float var6 = var5.width() - RAIL_GAP - RAIL_WIDTH;
-      float var7 = this.rows.isEmpty() ? 0.0F : this.rows.size() * ROW_HEIGHT + (this.rows.size() - 1) * ROW_GAP;
-      this.scroll.update(var5.height(), var7);
-      this.viewport = new BoundsData(var5.getFloatValue(), var5.getFloatValue2(), var6, var5.height());
-      float var8 = this.entrance.method2808(1.0F);
-      var1.enableScissor(var5.getFloatValue(), var5.getFloatValue2(), var5.getFloatValue() + var6, var5.getFloatValue2() + var5.height());
-      float var9 = var5.getFloatValue2() - this.scroll.offset();
-      int var10 = 0;
+   public void render(MenuDrawContext graphics, float mouseX, float mouseY, BoundsData boundsData) {
+      BoundsData listArea = MenuSkin.listArea(graphics, boundsData, LIST_HEIGHT);
+      float width = listArea.width() - RAIL_GAP - RAIL_WIDTH;
+      float content = this.rows.isEmpty() ? 0.0F : this.rows.size() * ROW_HEIGHT + (this.rows.size() - 1) * ROW_GAP;
+      this.scroll.update(listArea.height(), content);
+      this.viewport = new BoundsData(listArea.getFloatValue(), listArea.getFloatValue2(), width, listArea.height());
+      float f = this.entrance.method2808(1.0F);
+      graphics.enableScissor(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.getFloatValue() + width, listArea.getFloatValue2() + listArea.height());
+      float y = listArea.getFloatValue2() - this.scroll.offset();
+      int n = 0;
 
-      for (SingleplayerMenuPage.Row var12 : this.rows) {
-         var12.bounds = new BoundsData(var5.getFloatValue(), var9, var6, ROW_HEIGHT);
-         if (var9 + ROW_HEIGHT >= var5.getFloatValue2() && var9 <= var5.getFloatValue2() + var5.height()) {
-            var12.render(var1, var2, var3, var5.getFloatValue(), var9 + MenuSkin.enterOffset(var8, var10), var6);
+      for (SingleplayerMenuPage.Row row : this.rows) {
+         row.bounds = new BoundsData(listArea.getFloatValue(), y, width, ROW_HEIGHT);
+         if (y + ROW_HEIGHT >= listArea.getFloatValue2() && y <= listArea.getFloatValue2() + listArea.height()) {
+            row.render(graphics, mouseX, mouseY, listArea.getFloatValue(), y + MenuSkin.enterOffset(f, n), width);
          }
 
-         var9 += ROW_HEIGHT + ROW_GAP;
-         var10++;
+         y += ROW_HEIGHT + ROW_GAP;
+         n++;
       }
 
-      var1.disableScissor();
+      graphics.disableScissor();
       if (this.rows.isEmpty()) {
-         Font var13 = MenuTheme.medium(12.0F);
-         String var14 = MenuTheme.t(this.loading ? "menu.singleplayer.loading" : "menu.singleplayer.empty");
-         var1.drawText(
-            var13,
-            var14,
-            var5.getFloatValue() + (var6 - var13.width(var14)) / 2.0F,
-            var5.getFloatValue2() + (var5.height() - var13.height()) / 2.0F,
+         Font medium = MenuTheme.medium(12.0F);
+         String text = MenuTheme.t(this.loading ? "menu.singleplayer.loading" : "menu.singleplayer.empty");
+         graphics.drawText(
+            medium,
+            text,
+            listArea.getFloatValue() + (width - medium.width(text)) / 2.0F,
+            listArea.getFloatValue2() + (listArea.height() - medium.height()) / 2.0F,
             MenuTheme.textTertiary()
          );
       }
 
-      this.scroll.renderRail(var1, var5.getFloatValue() + var5.width() - RAIL_WIDTH, var5.getFloatValue2(), var5.height());
-      this.createButton.render(var1, var2, var3);
+      this.scroll.renderRail(graphics, listArea.getFloatValue() + listArea.width() - RAIL_WIDTH, listArea.getFloatValue2(), listArea.height());
+      this.createButton.render(graphics, mouseX, mouseY);
    }
 
    @Override
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      if (this.createButton.mouseClicked(var1, var3, var5)) {
+   public boolean mouseClicked(double lastClickX, double lastClickY, int glfwButton) {
+      if (this.createButton.mouseClicked(lastClickX, lastClickY, glfwButton)) {
          return true;
-      } else if (var5 == 0 && this.viewport.contains(var1, var3)) {
-         for (SingleplayerMenuPage.Row var7 : this.rows) {
-            if (var7.playBounds.contains(var1, var3)) {
-               this.play(var7);
+      } else if (glfwButton == 0 && this.viewport.contains(lastClickX, lastClickY)) {
+         for (SingleplayerMenuPage.Row row : this.rows) {
+            if (row.playBounds.contains(lastClickX, lastClickY)) {
+               this.play(row);
                return true;
             }
 
-            if (var7.removeBounds.contains(var1, var3)) {
-               this.confirmDelete(var7);
+            if (row.removeBounds.contains(lastClickX, lastClickY)) {
+               this.confirmDelete(row);
                return true;
             }
 
-            if (var7.bounds.contains(var1, var3)) {
-               this.play(var7);
+            if (row.bounds.contains(lastClickX, lastClickY)) {
+               this.play(row);
                return true;
             }
          }
@@ -233,8 +233,8 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5) {
-      return this.scroll.scroll(var5, ROW_HEIGHT + ROW_GAP);
+   public boolean mouseScrolled(double d, double d2, double d3) {
+      return this.scroll.scroll(d3, ROW_HEIGHT + ROW_GAP);
    }
 
    private final class Row {
@@ -244,67 +244,67 @@ public final class SingleplayerMenuPage implements MainMenuPage, MinecraftAccess
       private BoundsData removeBounds = new BoundsData(0.0F, 0.0F, 0.0F, 0.0F);
       private BoundsData playBounds = new BoundsData(0.0F, 0.0F, 0.0F, 0.0F);
 
-      private Row(LevelSummary var2) {
-         this.summary = var2;
-         this.icon = FaviconTexture.forWorld(MinecraftAccess.mc.getTextureManager(), var2.getLevelId());
+      private Row(LevelSummary summary) {
+         this.summary = summary;
+         this.icon = FaviconTexture.forWorld(MinecraftAccess.mc.getTextureManager(), summary.getLevelId());
          this.loadIcon();
       }
 
       private void loadIcon() {
-         Path var1 = this.summary.getIcon();
-         if (var1 != null && Files.isRegularFile(var1)) {
-            try (InputStream var2 = Files.newInputStream(var1)) {
-               this.icon.upload(NativeImage.read(var2));
-            } catch (Exception var7) {
+         Path icon = this.summary.getIcon();
+         if (icon != null && Files.isRegularFile(icon)) {
+            try (InputStream inputStream = Files.newInputStream(icon)) {
+               this.icon.upload(NativeImage.read(inputStream));
+            } catch (Exception e) {
             }
          }
       }
 
-      private void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
-         boolean var7 = this.bounds.contains(var2, var3);
+      private void render(MenuDrawContext graphics, float mouseX, float mouseY, float floatValue, float snap, float width) {
+         boolean contains = this.bounds.contains(mouseX, mouseY);
          MenuSkin.plate(
-            var1, var4, var5, var6, SingleplayerMenuPage.ROW_HEIGHT, var7 ? MenuTheme.plate().method7295(MenuTheme.track(), 0.5F) : MenuTheme.plate()
+            graphics, floatValue, snap, width, SingleplayerMenuPage.ROW_HEIGHT, contains ? MenuTheme.plate().method7295(MenuTheme.track(), 0.5F) : MenuTheme.plate()
          );
-         Identifier var8 = this.icon.textureLocation();
-         float var9 = var5 + (SingleplayerMenuPage.ROW_HEIGHT - SingleplayerMenuPage.ICON_SIZE) / 2.0F;
+         Identifier textureLocation = this.icon.textureLocation();
+         float y = snap + (SingleplayerMenuPage.ROW_HEIGHT - SingleplayerMenuPage.ICON_SIZE) / 2.0F;
          RenderShaders.method5294(
-            MatrixUtils.method664(var1.pose()),
-            var8,
-            var4 + MenuSkin.EDGE,
-            var9,
+            MatrixUtils.method664(graphics.pose()),
+            textureLocation,
+            floatValue + MenuSkin.EDGE,
+            y,
             SingleplayerMenuPage.ICON_SIZE,
             SingleplayerMenuPage.ICON_SIZE,
             ProxyDotRadiusData.method8069(MenuSkin.tileRadius(SingleplayerMenuPage.ICON_SIZE)),
             ZenithColor.INSTANCE
          );
-         float var10 = MenuSkin.divider(var1, var4 + MenuSkin.EDGE + SingleplayerMenuPage.ICON_SIZE, var5, SingleplayerMenuPage.ROW_HEIGHT);
-         Font var11 = MenuTheme.medium(11.0F);
-         Font var12 = MenuTheme.regular(10.0F);
-         float var13 = MenuTheme.px(30.0F);
-         float var14 = var5 + (SingleplayerMenuPage.ROW_HEIGHT - var13) / 2.0F;
-         var1.drawText(var11, this.summary.getLevelName(), var10, var14, MenuTheme.text());
-         var1.drawText(var12, this.details(), var10, var14 + MenuTheme.px(18.0F), MenuTheme.textTertiary());
-         float var15 = var4 + var6 - MenuSkin.EDGE;
-         float var16 = MenuTheme.px(12.0F);
-         float var17 = var5 + (SingleplayerMenuPage.ROW_HEIGHT - var16) / 2.0F;
-         this.playBounds = new BoundsData(var15 - var16, var17, var16, var16);
-         this.removeBounds = new BoundsData(var15 - var16 * 2.0F - MenuTheme.px(4.0F), var17, var16, var16);
-         Font var18 = MenuIcons.REMOVE.font(12.0F);
-         var1.drawText(
-            var18,
+         float divider = MenuSkin.divider(graphics, floatValue + MenuSkin.EDGE + SingleplayerMenuPage.ICON_SIZE, snap, SingleplayerMenuPage.ROW_HEIGHT);
+         Font medium = MenuTheme.medium(11.0F);
+         Font regular = MenuTheme.regular(10.0F);
+         float px = MenuTheme.px(30.0F);
+         float centeredTextY = snap + (SingleplayerMenuPage.ROW_HEIGHT - px) / 2.0F;
+         graphics.drawText(medium, this.summary.getLevelName(), divider, centeredTextY, MenuTheme.text());
+         graphics.drawText(regular, this.details(), divider, centeredTextY + MenuTheme.px(18.0F), MenuTheme.textTertiary());
+         float f = floatValue + width - MenuSkin.EDGE;
+         float px2 = MenuTheme.px(12.0F);
+         float y2 = snap + (SingleplayerMenuPage.ROW_HEIGHT - px2) / 2.0F;
+         this.playBounds = new BoundsData(f - px2, y2, px2, px2);
+         this.removeBounds = new BoundsData(f - px2 * 2.0F - MenuTheme.px(4.0F), y2, px2, px2);
+         Font font = MenuIcons.REMOVE.font(12.0F);
+         graphics.drawText(
+            font,
             MenuIcons.REMOVE.glyph(),
             this.removeBounds.getFloatValue(),
-            var17 + (var16 - var18.height()) / 2.0F,
-            this.removeBounds.contains(var2, var3) ? MenuTheme.danger() : MenuTheme.textTertiary()
+            y2 + (px2 - font.height()) / 2.0F,
+            this.removeBounds.contains(mouseX, mouseY) ? MenuTheme.danger() : MenuTheme.textTertiary()
          );
-         Font var19 = MenuIcons.PLAY.font(12.0F);
-         var1.drawText(var19, MenuIcons.PLAY.glyph(), this.playBounds.getFloatValue(), var17 + (var16 - var19.height()) / 2.0F, MenuTheme.accent());
+         Font font2 = MenuIcons.PLAY.font(12.0F);
+         graphics.drawText(font2, MenuIcons.PLAY.glyph(), this.playBounds.getFloatValue(), y2 + (px2 - font2.height()) / 2.0F, MenuTheme.accent());
       }
 
       private String details() {
-         String var1 = this.summary.getGameMode().getLongDisplayName().getString();
-         String var2 = this.summary.getLastPlayed() <= 0L ? "-" : SingleplayerMenuPage.LAST_PLAYED.format(Instant.ofEpochMilli(this.summary.getLastPlayed()));
-         return var1 + " - " + var2;
+         String string = this.summary.getGameMode().getLongDisplayName().getString();
+         String str = this.summary.getLastPlayed() <= 0L ? "-" : SingleplayerMenuPage.LAST_PLAYED.format(Instant.ofEpochMilli(this.summary.getLastPlayed()));
+         return string + " - " + str;
       }
    }
 }

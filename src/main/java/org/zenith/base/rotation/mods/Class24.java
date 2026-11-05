@@ -23,52 +23,52 @@ public final class Class24 extends Util22 {
    private int intValue = Integer.MIN_VALUE;
    private int intValue2 = Integer.MIN_VALUE;
 
-   public Class24.Data method3535(Rotation var1, Vec3 var2, AABB var3, float var4, boolean var5) {
-      Vec2f var6 = this.method3541(var1, var2, var3);
-      if (var6 == null) {
-         return new Class24.Data(var1, false, false, false);
+   public Class24.Data method3535(Rotation rotation, Vec3 vec, AABB aabb, float f, boolean flag) {
+      Vec2f vec2f = this.method3541(rotation, vec, aabb);
+      if (vec2f == null) {
+         return new Class24.Data(rotation, false, false, false);
       } else {
-         float var7 = var6.getFloatValue() * 1.1F;
-         float var8 = var6.getFloatValue2();
-         boolean var9 = Math.abs(var7) <= 1.0E-4F && Math.abs(var8) <= 1.0E-4F;
-         float var10 = Float.isFinite(var4) ? Math.max(0.0F, var4) : 0.0F;
-         boolean var11 = Math.abs(var7) <= var10 && Math.abs(var8) <= var10;
-         if (!var9 && (var11 || var5)) {
-            Rotation var12 = var1.method3140(this.method3544(var7, var10), this.method3544(var8, var10));
-            return new Class24.Data(var12, true, false, var11);
+         float floatValue = vec2f.getFloatValue() * 1.1F;
+         float floatValue2 = vec2f.getFloatValue2();
+         boolean flag2 = Math.abs(floatValue) <= 1.0E-4F && Math.abs(floatValue2) <= 1.0E-4F;
+         float max = Float.isFinite(f) ? Math.max(0.0F, f) : 0.0F;
+         boolean flag3 = Math.abs(floatValue) <= max && Math.abs(floatValue2) <= max;
+         if (!flag2 && (flag3 || flag)) {
+            Rotation rotation2 = rotation.method3140(this.method3544(floatValue, max), this.method3544(floatValue2, max));
+            return new Class24.Data(rotation2, true, false, flag3);
          } else {
-            return new Class24.Data(var1, true, var9, var11);
+            return new Class24.Data(rotation, true, flag2, flag3);
          }
       }
    }
 
-   public Class24.Data method3536(Rotation var1, Rotation var2, Vec3 var3, AABB var4, float var5, int var6, int var7) {
-      Vec2f var8 = this.method3541(var1, var3, var4);
-      if (var8 == null) {
+   public Class24.Data method3536(Rotation rotation, Rotation rotation2, Vec3 vec, AABB aabb, float f, int intValue, int tickCount) {
+      Vec2f vec2f = this.method3541(rotation, vec, aabb);
+      if (vec2f == null) {
          this.method3537();
-         return new Class24.Data(var1, false, false, false);
+         return new Class24.Data(rotation, false, false, false);
       } else {
-         float var9 = Float.isFinite(var5) ? Math.max(0.0F, var5) : 0.0F;
-         float var10 = this.method3544(var8.getFloatValue() * 1.1F, var9);
-         float var11 = this.method3544(var8.getFloatValue2(), var9);
-         boolean var12 = Math.abs(var8.getFloatValue() * 1.1F) <= var9 && Math.abs(var8.getFloatValue2()) <= var9;
-         boolean var13 = this.intValue == var6 && (this.intValue2 == var7 || this.intValue2 == var7 - 1) && this.rotation != null;
-         if (!var13) {
-            this.method3538(var1, var2, var9);
+         float max = Float.isFinite(f) ? Math.max(0.0F, f) : 0.0F;
+         float f2 = this.method3544(vec2f.getFloatValue() * 1.1F, max);
+         float f3 = this.method3544(vec2f.getFloatValue2(), max);
+         boolean flag = Math.abs(vec2f.getFloatValue() * 1.1F) <= max && Math.abs(vec2f.getFloatValue2()) <= max;
+         boolean flag2 = this.intValue == intValue && (this.intValue2 == tickCount || this.intValue2 == tickCount - 1) && this.rotation != null;
+         if (!flag2) {
+            this.method3538(rotation, rotation2, max);
          }
 
-         Vec2f var14 = this.rotation.method3131(var1);
-         this.floatValue = this.method3539(this.floatValue, var10, var14.getFloatValue(), false);
+         Vec2f vec2f2 = this.rotation.method3131(rotation);
+         this.floatValue = this.method3539(this.floatValue, f2, vec2f2.getFloatValue(), false);
          this.floatValue2 = 0.0F;
-         this.floatValue = this.method3544(this.floatValue, var9);
-         this.floatValue2 = this.method3544(this.floatValue2, var9);
-         Rotation var15 = var1.method3140(this.floatValue, this.floatValue2);
-         Vec2f var16 = this.method3541(var15, var3, var4);
-         boolean var17 = var16 != null && Math.abs(var16.getFloatValue()) <= 1.0E-4F && Math.abs(var16.getFloatValue2()) <= 1.0E-4F;
-         this.rotation = var1;
-         this.intValue = var6;
-         this.intValue2 = var7;
-         return new Class24.Data(var15, true, var17, var12);
+         this.floatValue = this.method3544(this.floatValue, max);
+         this.floatValue2 = this.method3544(this.floatValue2, max);
+         Rotation rotation3 = rotation.method3140(this.floatValue, this.floatValue2);
+         Vec2f vec2f3 = this.method3541(rotation3, vec, aabb);
+         boolean flag3 = vec2f3 != null && Math.abs(vec2f3.getFloatValue()) <= 1.0E-4F && Math.abs(vec2f3.getFloatValue2()) <= 1.0E-4F;
+         this.rotation = rotation;
+         this.intValue = intValue;
+         this.intValue2 = tickCount;
+         return new Class24.Data(rotation3, true, flag3, flag);
       }
    }
 
@@ -80,64 +80,64 @@ public final class Class24 extends Util22 {
       this.intValue2 = Integer.MIN_VALUE;
    }
 
-   private void method3538(Rotation var1, Rotation var2, float var3) {
-      Vec2f var4 = var1.method3131(var2);
-      if (Float.isFinite(var4.getFloatValue())
-         && Float.isFinite(var4.getFloatValue2())
-         && Math.abs(var4.getFloatValue()) <= var3
-         && Math.abs(var4.getFloatValue2()) <= var3) {
-         this.floatValue = var4.getFloatValue();
-         this.floatValue2 = var4.getFloatValue2();
+   private void method3538(Rotation rotation, Rotation rotation2, float max) {
+      Vec2f vec2f = rotation.method3131(rotation2);
+      if (Float.isFinite(vec2f.getFloatValue())
+         && Float.isFinite(vec2f.getFloatValue2())
+         && Math.abs(vec2f.getFloatValue()) <= max
+         && Math.abs(vec2f.getFloatValue2()) <= max) {
+         this.floatValue = vec2f.getFloatValue();
+         this.floatValue2 = vec2f.getFloatValue2();
       } else {
          this.floatValue = 0.0F;
          this.floatValue2 = 0.0F;
       }
 
-      this.rotation = var1;
+      this.rotation = rotation;
    }
 
-   private float method3539(float var1, float var2, float var3, boolean var4) {
-      if (Math.abs(var3) <= 0.001F) {
-         return var1;
+   private float method3539(float floatValue, float f, float floatValue2, boolean flag) {
+      if (Math.abs(floatValue2) <= 0.001F) {
+         return floatValue;
       } else {
-         float var5 = var2 - var1;
-         if (Math.abs(var5) <= 1.0E-4F) {
-            return var2;
+         float f2 = f - floatValue;
+         if (Math.abs(f2) <= 1.0E-4F) {
+            return f;
          } else {
-            boolean var6 = Math.signum(var3) == Math.signum(var5);
-            float var7 = var6 ? (var4 ? 1.25F : 1.75F) : (var4 ? 0.75F : 0.4F);
-            float var8 = 100.0F;
-            float var9 = Mth.clamp(var3 * (var7 - 1.0F), -var8, var8);
-            return this.method3540(var1, var1 + var9, var2);
+            boolean flag2 = Math.signum(floatValue2) == Math.signum(f2);
+            float f3 = flag2 ? (flag ? 1.25F : 1.75F) : (flag ? 0.75F : 0.4F);
+            float max = 100.0F;
+            float f4 = Mth.clamp(floatValue2 * (f3 - 1.0F), -max, max);
+            return this.method3540(floatValue, floatValue + f4, f);
          }
       }
    }
 
-   private float method3540(float var1, float var2, float var3) {
-      boolean var4 = (var3 - var1) * (var3 - var2) < 0.0F;
-      return var4 ? var3 : var2;
+   private float method3540(float floatValue, float f, float f2) {
+      boolean flag = (f2 - floatValue) * (f2 - f) < 0.0F;
+      return flag ? f2 : f;
    }
 
-   private Vec2f method3541(Rotation var1, Vec3 var2, AABB var3) {
-      Vec3 var4 = var3.getCenter();
-      return var1.method3131(this.method3542(var2, var4));
+   private Vec2f method3541(Rotation rotation, Vec3 vec, AABB aabb) {
+      Vec3 center = aabb.getCenter();
+      return rotation.method3131(this.method3542(vec, center));
    }
 
-   private Rotation method3542(Vec3 var1, Vec3 var2) {
-      return RotationUtils.method6912(var2.subtract(var1));
+   private Rotation method3542(Vec3 vec, Vec3 center) {
+      return RotationUtils.method6912(center.subtract(vec));
    }
 
-   private float method3543(float var1, float var2) {
-      return var1 > 0.0F ? var1 : Math.min(var2, 0.0F);
+   private float method3543(float f, float f2) {
+      return f > 0.0F ? f : Math.min(f2, 0.0F);
    }
 
-   private float method3544(float var1, float var2) {
-      return Mth.clamp(var1, -var2, var2);
+   private float method3544(float floatValue, float max) {
+      return Mth.clamp(floatValue, -max, max);
    }
 
-   private float method3545(float var1, float var2) {
-      float var3 = var1 - var2;
-      return !Float.isFinite(var3) ? var1 : var2 + Mth.wrapDegrees(var3);
+   private float method3545(float f, float f2) {
+      float angle = f - f2;
+      return !Float.isFinite(angle) ? f : f2 + Mth.wrapDegrees(angle);
    }
 
    public static final class Data {
@@ -179,11 +179,11 @@ public final class Class24 extends Util22 {
          return "Data[" + "rotation=" + this.rotation + ", " + "flag=" + this.flag + ", " + "flag2=" + this.flag2 + ", " + "flag3=" + this.flag3 + "]";
       }
 
-      public Data(Rotation var1, boolean var2, boolean var3, boolean var4) {
-         this.rotation = var1;
-         this.flag = var2;
-         this.flag2 = var3;
-         this.flag3 = var4;
+      public Data(Rotation rotation, boolean flag, boolean flag2, boolean flag3) {
+         this.rotation = rotation;
+         this.flag = flag;
+         this.flag2 = flag2;
+         this.flag3 = flag3;
       }
 
       public boolean isFlag() {

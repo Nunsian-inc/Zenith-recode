@@ -108,24 +108,24 @@ public class BotAutoMine extends BotModule {
    }
 
    @EventTarget
-   public void onBotUpdate(BotUpdateEvent var1) {
-      this.world = var1.getWorld();
-      this.player = var1.getPlayer();
-      BotPlayHandler var2 = this.handler();
-      this.interaction = var2 == null ? null : var2.getInteractionManager();
-      if (this.world != null && this.player != null && this.interaction != null && var2 != null) {
+   public void onBotUpdate(BotUpdateEvent event) {
+      this.world = event.getWorld();
+      this.player = event.getPlayer();
+      BotPlayHandler handler = this.handler();
+      this.interaction = handler == null ? null : handler.getInteractionManager();
+      if (this.world != null && this.player != null && this.interaction != null && handler != null) {
          this.currentRotation = new Rotation(this.player.getYRot(), this.player.getXRot());
          this.nextRouteBlock = null;
-         var var3 = this.onTeleportation();
-         if (var3 != null) {
+         var blockMines = this.onTeleportation();
+         if (blockMines != null) {
             this.onRepair();
             if (!this.isEnabled()) {
                return;
             }
 
             this.onDrop();
-            this.onBreak(var3);
-            if (!this.onMove(var3)) {
+            this.onBreak(blockMines);
+            if (!this.onMove(blockMines)) {
                this.setRotation(this.currentRotation.method3140((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0)));
             }
          }
@@ -140,85 +140,85 @@ public class BotAutoMine extends BotModule {
       this.interaction = this.interaction();
    }
 
-   private boolean onMove(List<BotAutoMine.BlockMine> var1) {
-      BlockPos var2 = this.findBestMovingTarget(var1);
-      if (var2 == null) {
+   private boolean onMove(List<BotAutoMine.BlockMine> blockMines) {
+      BlockPos bestMovingTarget = this.findBestMovingTarget(blockMines);
+      if (bestMovingTarget == null) {
          return false;
       } else {
-         Pathfinder.Entry2 var3 = Pathfinder.method759(this.world, this.player.blockPosition(), var2, MOVE_PATH_SETTINGS).orElse(null);
-         this.nextRouteBlock = var3 == null ? (!this.player.onGround() ? var2 : null) : var3.method779(this.player.position());
+         Pathfinder.Entry2 entry2 = Pathfinder.method759(this.world, this.player.blockPosition(), bestMovingTarget, MOVE_PATH_SETTINGS).orElse(null);
+         this.nextRouteBlock = entry2 == null ? (!this.player.onGround() ? bestMovingTarget : null) : entry2.method779(this.player.position());
          if (this.nextRouteBlock == null) {
             return false;
          } else {
-            Vec3 var4 = this.player.getEyePosition(1.0F);
-            Vec3 var5 = Pathfinder.method761(this.nextRouteBlock);
-            Rotation var6 = Rotation.method3128(new Vec3(var5.x, var4.y, var5.z), var4);
-            Rotation var7 = this.currentRotation
-               .method3141(this.currentRotation.method3131(var6))
+            Vec3 eyePosition = this.player.getEyePosition(1.0F);
+            Vec3 vec = Pathfinder.method761(this.nextRouteBlock);
+            Rotation rotation = Rotation.method3128(new Vec3(vec.x, eyePosition.y, vec.z), eyePosition);
+            Rotation currentRotation = this.currentRotation
+               .method3141(this.currentRotation.method3131(rotation))
                .method3140((float)MathUtils.method2651(-5.0, 5.0), (float)MathUtils.method2651(-5.0, 5.0));
-            this.setRotation(var7);
+            this.setRotation(currentRotation);
             return true;
          }
       }
    }
 
-   private void applyInput(boolean var1) {
+   private void applyInput(boolean forward) {
       if (this.player != null) {
-         ViaCompat.method4848(this.player.input, var1 ? 1.0F : 0.0F);
+         ViaCompat.method4848(this.player.input, forward ? 1.0F : 0.0F);
          ViaCompat.method4849(this.player.input, 0.0F);
-         this.player.input.keyPresses = new Input(var1, false, false, false, false, false, var1);
+         this.player.input.keyPresses = new Input(forward, false, false, false, false, false, forward);
       }
    }
 
-   private void setRotation(Rotation var1) {
-      this.currentRotation = var1;
-      this.player.setYRot(Mth.wrapDegrees(var1.getFloatValue()));
-      this.player.setXRot(Mth.clamp(var1.getFloatValue2(), -90.0F, 90.0F));
+   private void setRotation(Rotation currentRotation) {
+      this.currentRotation = currentRotation;
+      this.player.setYRot(Mth.wrapDegrees(currentRotation.getFloatValue()));
+      this.player.setXRot(Mth.clamp(currentRotation.getFloatValue2(), -90.0F, 90.0F));
    }
 
    private void onDrop() {
-      BotPlayHandler var1 = this.handler();
-      Component var2 = var1.getCurrentScreenTitle();
-      if (var2 != null && var2.getString().toLowerCase(Locale.ROOT).contains("для продажи")) {
-         if (this.player.containerMenu instanceof ChestMenu var3) {
-            int var5;
-            if (this.moveBuyerResources() && (var5 = this.getContainerSlotCount(var3)) > 0) {
-               this.clickSlot(var5 - 1, 0, ContainerInput.QUICK_MOVE);
+      BotPlayHandler handler = this.handler();
+      Component currentScreenTitle = handler.getCurrentScreenTitle();
+      if (currentScreenTitle != null && currentScreenTitle.getString().toLowerCase(Locale.ROOT).contains("для продажи")) {
+         if (this.player.containerMenu instanceof ChestMenu chestMenu) {
+            int containerSlotCount;
+            if (this.moveBuyerResources() && (containerSlotCount = this.getContainerSlotCount(chestMenu)) > 0) {
+               this.clickSlot(containerSlotCount - 1, 0, ContainerInput.QUICK_MOVE);
             }
 
-            Slot var6 = this.findTrashSlot();
-            if (var6 != null) {
-               this.clickSlot(var6.index, 1, ContainerInput.THROW);
+            Slot trashSlot = this.findTrashSlot();
+            if (trashSlot != null) {
+               this.clickSlot(trashSlot.index, 1, ContainerInput.THROW);
             }
          }
       } else {
          if (this.player.tickCount % 40 == 0) {
-            var1.sendCommand("buyer");
+            handler.sendCommand("buyer");
          }
       }
    }
 
    private boolean moveBuyerResources() {
-      byte var1 = 0;
-      int var2 = 0;
+      byte b = 0;
+      int n = 0;
 
-      for (Slot var4 : this.player.containerMenu.slots) {
-         if (this.isPlayerInventorySlot(var4) && this.isBuyerResource(var4.getItem())) {
-            if (var2 > 5) {
+      for (Slot slot : this.player.containerMenu.slots) {
+         if (this.isPlayerInventorySlot(slot) && this.isBuyerResource(slot.getItem())) {
+            if (n > 5) {
                break;
             }
 
-            this.clickSlot(var4.index, 0, ContainerInput.QUICK_MOVE);
-            var2++;
-            var1 = 1;
+            this.clickSlot(slot.index, 0, ContainerInput.QUICK_MOVE);
+            n++;
+            b = 1;
          }
       }
 
-      return (var1 != 0);
+      return (b != 0);
    }
 
-   private boolean isBuyerResource(ItemStack var1) {
-      return (!var1.isEmpty() && BUYER_ITEMS.contains(var1.getItem()));
+   private boolean isBuyerResource(ItemStack stack) {
+      return (!stack.isEmpty() && BUYER_ITEMS.contains(stack.getItem()));
    }
 
    private Slot findTrashSlot() {
@@ -227,166 +227,166 @@ public class BotAutoMine extends BotModule {
          .slots
          .stream()
          .filter(this::isPlayerInventorySlot)
-         .filter(var1 -> this.isTrash(var1.getItem()))
+         .filter(slot -> this.isTrash(slot.getItem()))
          .findFirst()
          .orElse(null);
    }
 
-   private boolean isPlayerInventorySlot(Slot var1) {
-      if (this.player.containerMenu instanceof ChestMenu var2) {
-         int var4 = this.getContainerSlotCount(var2);
-         return !(var1.container != this.player.getInventory() && (var1.index < var4 || var1.index >= var4 + 36));
+   private boolean isPlayerInventorySlot(Slot slot) {
+      if (this.player.containerMenu instanceof ChestMenu chestMenu) {
+         int containerSlotCount = this.getContainerSlotCount(chestMenu);
+         return !(slot.container != this.player.getInventory() && (slot.index < containerSlotCount || slot.index >= containerSlotCount + 36));
       } else {
-         return (var1.container == this.player.getInventory() && var1.index >= 9 && var1.index <= 44);
+         return (slot.container == this.player.getInventory() && slot.index >= 9 && slot.index <= 44);
       }
    }
 
-   private int getContainerSlotCount(ChestMenu var1) {
-      return Math.min(var1.getContainer().getContainerSize(), Math.max(0, this.player.containerMenu.slots.size() - 36));
+   private int getContainerSlotCount(ChestMenu chestMenu) {
+      return Math.min(chestMenu.getContainer().getContainerSize(), Math.max(0, this.player.containerMenu.slots.size() - 36));
    }
 
-   private boolean isTrash(ItemStack var1) {
-      if (!var1.isEmpty() && !var1.is(Items.PLAYER_HEAD) && !var1.is(Items.TRIPWIRE_HOOK) && !this.isBuyerResource(var1)) {
-         return (var1.getItem() instanceof BlockItem var2 && !MineTargetFinder.method1934(var2.getBlock()));
+   private boolean isTrash(ItemStack stack) {
+      if (!stack.isEmpty() && !stack.is(Items.PLAYER_HEAD) && !stack.is(Items.TRIPWIRE_HOOK) && !this.isBuyerResource(stack)) {
+         return (stack.getItem() instanceof BlockItem blockItem && !MineTargetFinder.method1934(blockItem.getBlock()));
       } else {
          return false;
       }
    }
 
-   private void clickSlot(int var1, int var2, ContainerInput var3) {
-      this.interaction.clickSlot(this.player.containerMenu.containerId, var1, var2, var3, this.player);
+   private void clickSlot(int index, int buttonNum, ContainerInput containerInput) {
+      this.interaction.clickSlot(this.player.containerMenu.containerId, index, buttonNum, containerInput, this.player);
    }
 
-   private void onBreak(List<BotAutoMine.BlockMine> var1) {
-      ItemStack var2 = this.player.getMainHandItem();
-      if (Util10.method2177(var2) && var2.getMaxDamage() - var2.getDamageValue() >= 30) {
-         ArrayList var3 = new ArrayList();
+   private void onBreak(List<BotAutoMine.BlockMine> blockMines) {
+      ItemStack mainHandItem = this.player.getMainHandItem();
+      if (Util10.method2177(mainHandItem) && mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() >= 30) {
+         ArrayList arrayList = new ArrayList();
 
-         for (BotAutoMine.BlockMine var5 : var1) {
-            if (this.isStaticMineable(var5)) {
-               var3.add(var5.pos());
+         for (BotAutoMine.BlockMine blockMine : blockMines) {
+            if (this.isStaticMineable(blockMine)) {
+               arrayList.add(blockMine.pos());
             }
          }
 
          this.skippedBlocks.clear();
 
-         for (int var6 = 0; var6 < 6; var6++) {
-            BotAutoMine.BreakTarget var7 = this.findBestBreakTarget(var3);
-            if (var7 == null) {
+         for (int i = 0; i < 6; i++) {
+            BotAutoMine.BreakTarget bestBreakTarget = this.findBestBreakTarget(arrayList);
+            if (bestBreakTarget == null) {
                break;
             }
 
-            this.grimSuperBypass(0.0, var7.rotation());
-            if (this.interaction.updateBlockBreakingProgress(var7.hitResult().getBlockPos(), var7.hitResult().getDirection())) {
-               this.skipDrillArea(var7.hitResult().getBlockPos());
+            this.grimSuperBypass(0.0, bestBreakTarget.rotation());
+            if (this.interaction.updateBlockBreakingProgress(bestBreakTarget.hitResult().getBlockPos(), bestBreakTarget.hitResult().getDirection())) {
+               this.skipDrillArea(bestBreakTarget.hitResult().getBlockPos());
             }
          }
       }
    }
 
-   private BotAutoMine.BreakTarget findBestBreakTarget(List<BlockPos> var1) {
-      Vec3 var2 = this.player.getEyePosition(1.0F);
-      double var3 = this.player.blockInteractionRange();
-      double var5 = 5.4;
-      HashSet<BlockPos> var7 = new HashSet();
+   private BotAutoMine.BreakTarget findBestBreakTarget(List<BlockPos> poses) {
+      Vec3 eyePosition = this.player.getEyePosition(1.0F);
+      double blockInteractionRange = this.player.blockInteractionRange();
+      double d = 5.4;
+      HashSet<BlockPos> poses2 = new HashSet();
 
-      for (BlockPos var9 : var1) {
-         if (!this.skippedBlocks.contains(var9)) {
-            var7.add(var9);
+      for (BlockPos pos : poses) {
+         if (!this.skippedBlocks.contains(pos)) {
+            poses2.add(pos);
          }
       }
 
-      ArrayList<BotAutoMine.BreakCandidate> var15 = new ArrayList();
-      MutableBlockPos var16 = new MutableBlockPos();
+      ArrayList<BotAutoMine.BreakCandidate> breakCandidates = new ArrayList();
+      MutableBlockPos mutablePos = new MutableBlockPos();
 
-      for (BlockPos var11 : var7) {
-         if (this.isWithinMineRange(var11, var2, var5, var3)) {
-            var15.add(new BotAutoMine.BreakCandidate(var11, this.countDrillCoverage(var11, var7, var16), MineTargetFinder.method1939(var2, var11)));
+      for (BlockPos pos : poses2) {
+         if (this.isWithinMineRange(pos, eyePosition, d, blockInteractionRange)) {
+            breakCandidates.add(new BotAutoMine.BreakCandidate(pos, this.countDrillCoverage(pos, poses2, mutablePos), MineTargetFinder.method1939(eyePosition, pos)));
          }
       }
 
-      var15.sort(BREAK_CANDIDATE_ORDER);
+      breakCandidates.sort(BREAK_CANDIDATE_ORDER);
 
-      for (BotAutoMine.BreakCandidate var18 : var15) {
-         BlockPos var12 = var18.pos();
-         Rotation var13 = this.currentRotation.method3141(this.currentRotation.method3131(Rotation.method3128(net.minecraft.world.phys.Vec3.atCenterOf(var12), var2)));
-         BlockHitResult var14 = BotRaytracing.rayTracePos(
-            this.world, this.player, var2, var13, var3, var1x -> (var1x != null && var12.equals(var1x.getBlockPos()))
+      for (BotAutoMine.BreakCandidate breakCandidate : breakCandidates) {
+         BlockPos pos = breakCandidate.pos();
+         Rotation rotation = this.currentRotation.method3141(this.currentRotation.method3131(Rotation.method3128(net.minecraft.world.phys.Vec3.atCenterOf(pos), eyePosition)));
+         BlockHitResult rayTracePos = BotRaytracing.rayTracePos(
+            this.world, this.player, eyePosition, rotation, blockInteractionRange, var1x -> (var1x != null && pos.equals(var1x.getBlockPos()))
          );
-         if (var14 != null && var14.getType() != Type.MISS) {
-            return new BotAutoMine.BreakTarget(var13, var14, var18.drillCoverage(), var18.distanceSquared());
+         if (rayTracePos != null && rayTracePos.getType() != Type.MISS) {
+            return new BotAutoMine.BreakTarget(rotation, rayTracePos, breakCandidate.drillCoverage(), breakCandidate.distanceSquared());
          }
       }
 
       return null;
    }
 
-   private BlockPos findBestMovingTarget(List<BotAutoMine.BlockMine> var1) {
-      Vec3 var2 = this.player.getEyePosition(1.0F);
-      double var3 = this.player.blockInteractionRange();
-      BlockPos var5 = null;
-      double var6 = Double.MAX_VALUE;
+   private BlockPos findBestMovingTarget(List<BotAutoMine.BlockMine> blockMines) {
+      Vec3 eyePosition = this.player.getEyePosition(1.0F);
+      double blockInteractionRange = this.player.blockInteractionRange();
+      BlockPos pos = null;
+      double d = Double.MAX_VALUE;
 
-      for (BotAutoMine.BlockMine var9 : var1) {
-         if (this.isMineable(var9) && !(Math.abs(var9.pos().getY() + 0.5 - var2.y) > var3)) {
-            double var10 = var9.pos().getX() + 0.5 - var2.x;
-            double var12 = var9.pos().getZ() + 0.5 - var2.z;
-            double var14;
-            if ((var14 = var10 * var10 + var12 * var12) < var6) {
-               var5 = var9.pos();
-               var6 = var14;
+      for (BotAutoMine.BlockMine blockMine : blockMines) {
+         if (this.isMineable(blockMine) && !(Math.abs(blockMine.pos().getY() + 0.5 - eyePosition.y) > blockInteractionRange)) {
+            double d2 = blockMine.pos().getX() + 0.5 - eyePosition.x;
+            double d3 = blockMine.pos().getZ() + 0.5 - eyePosition.z;
+            double d4;
+            if ((d4 = d2 * d2 + d3 * d3) < d) {
+               pos = blockMine.pos();
+               d = d4;
             }
          }
       }
 
-      return var5 != null ? new BlockPos(var5.getX(), this.player.getBlockY(), var5.getZ()) : null;
+      return pos != null ? new BlockPos(pos.getX(), this.player.getBlockY(), pos.getZ()) : null;
    }
 
-   private boolean isMineable(BotAutoMine.BlockMine var1) {
-      return (!this.skippedBlocks.contains(var1.pos()) && this.isStaticMineable(var1));
+   private boolean isMineable(BotAutoMine.BlockMine blockMine) {
+      return (!this.skippedBlocks.contains(blockMine.pos()) && this.isStaticMineable(blockMine));
    }
 
-   private boolean isStaticMineable(BotAutoMine.BlockMine var1) {
-      BlockState var2 = var1.state();
-      return (!var2.isAir() && var2.getFluidState().isEmpty() && var2.getDestroySpeed(this.world, var1.pos()) >= 0.0F && !var2.is(Blocks.OBSIDIAN));
+   private boolean isStaticMineable(BotAutoMine.BlockMine blockMine) {
+      BlockState state = blockMine.state();
+      return (!state.isAir() && state.getFluidState().isEmpty() && state.getDestroySpeed(this.world, blockMine.pos()) >= 0.0F && !state.is(Blocks.OBSIDIAN));
    }
 
-   private boolean isWithinMineRange(BlockPos var1, Vec3 var2, double var3, double var5) {
-      Vec3 var7 = net.minecraft.world.phys.Vec3.atCenterOf(var1);
-      return (Math.abs(var7.x - var2.x) <= var3 && Math.abs(var7.y - var2.y) <= var5 && Math.abs(var7.z - var2.z) <= var3);
+   private boolean isWithinMineRange(BlockPos pos, Vec3 eyePosition, double d, double blockInteractionRange) {
+      Vec3 atCenterOf = net.minecraft.world.phys.Vec3.atCenterOf(pos);
+      return (Math.abs(atCenterOf.x - eyePosition.x) <= d && Math.abs(atCenterOf.y - eyePosition.y) <= blockInteractionRange && Math.abs(atCenterOf.z - eyePosition.z) <= d);
    }
 
-   private int countDrillCoverage(BlockPos var1, Set<BlockPos> var2, MutableBlockPos var3) {
-      int var4 = 0;
+   private int countDrillCoverage(BlockPos pos, Set<BlockPos> poses, MutableBlockPos mutablePos) {
+      int n = 0;
 
-      for (int var5 = -1; var5 <= 1; var5++) {
-         for (int var6 = -1; var6 <= 1; var6++) {
-            for (int var7 = -1; var7 <= 1; var7++) {
-               if (var2.contains(var3.setWithOffset(var1, var5, var6, var7))) {
-                  var4++;
+      for (int i = -1; i <= 1; i++) {
+         for (int j = -1; j <= 1; j++) {
+            for (int k = -1; k <= 1; k++) {
+               if (poses.contains(mutablePos.setWithOffset(pos, i, j, k))) {
+                  n++;
                }
             }
          }
       }
 
-      return var4;
+      return n;
    }
 
-   private void skipDrillArea(BlockPos var1) {
-      for (BlockPos var3 : BlockPos.betweenClosed(var1.offset(-1, -1, -1), var1.offset(1, 1, 1))) {
-         this.skippedBlocks.add(var3.immutable());
+   private void skipDrillArea(BlockPos blockPos) {
+      for (BlockPos pos : BlockPos.betweenClosed(blockPos.offset(-1, -1, -1), blockPos.offset(1, 1, 1))) {
+         this.skippedBlocks.add(pos.immutable());
       }
    }
 
-   private void grimSuperBypass(double var1, Rotation var3) {
+   private void grimSuperBypass(double d, Rotation rotation) {
       this.handler()
          .sendPacket(
             new PosRot(
                this.player.getX(),
-               this.player.getY() + var1,
+               this.player.getY() + d,
                this.player.getZ(),
-               var3.getFloatValue(),
-               var3.getFloatValue2(),
+               rotation.getFloatValue(),
+               rotation.getFloatValue2(),
                this.player.onGround(),
                this.player.horizontalCollision
             )
@@ -406,9 +406,9 @@ public class BotAutoMine extends BotModule {
       } else {
          this.combinedMineSwitched = false;
          this.selectedMine = null;
-         MineTargetFinder.Data var1 = MineTargetFinder.method1933(this.mineMode.method2101("module.autoMine.modeNether"));
-         if (MineTargetFinder.method1938(var1, this.world) && !(this.getMineDistance(var1) > 25.0)) {
-            return this.getAvailableMine(var1);
+         MineTargetFinder.Data selectedMine = MineTargetFinder.method1933(this.mineMode.method2101("module.autoMine.modeNether"));
+         if (MineTargetFinder.method1938(selectedMine, this.world) && !(this.getMineDistance(selectedMine) > 25.0)) {
+            return this.getAvailableMine(selectedMine);
          } else {
             this.handleWarpTp();
             return null;
@@ -417,26 +417,26 @@ public class BotAutoMine extends BotModule {
    }
 
    private List<BotAutoMine.BlockMine> selectCombinedMine() {
-      MineTargetFinder.Data var1 = MineTargetFinder.method1933(false);
-      MineTargetFinder.Data var2 = MineTargetFinder.method1933(true);
-      if (MineTargetFinder.method1938(var1, this.world) && MineTargetFinder.method1938(var2, this.world)) {
-         var var3 = this.getArena(var1);
-         var var4 = this.getArena(var2);
-         boolean var5 = this.isMineAvailable(var3);
-         boolean var6 = this.isMineAvailable(var4);
+      MineTargetFinder.Data selectedMine = MineTargetFinder.method1933(false);
+      MineTargetFinder.Data data = MineTargetFinder.method1933(true);
+      if (MineTargetFinder.method1938(selectedMine, this.world) && MineTargetFinder.method1938(data, this.world)) {
+         var arena = this.getArena(selectedMine);
+         var blockMines = this.getArena(data);
+         boolean mineAvailable = this.isMineAvailable(arena);
+         boolean flag = this.isMineAvailable(blockMines);
          if (this.selectedMine != null) {
             if (this.getMineDistance(this.selectedMine) > 25.0) {
                this.handleWarpTp();
                return null;
             }
 
-            boolean var7;
-            if ((var7 = this.selectedMine.equals(var2)) && var6) {
-               return var4;
+            boolean flag2;
+            if ((flag2 = this.selectedMine.equals(data)) && flag) {
+               return blockMines;
             }
 
-            if (!var7 && var5) {
-               return var3;
+            if (!flag2 && mineAvailable) {
+               return arena;
             }
 
             if (this.combinedMineSwitched) {
@@ -445,9 +445,9 @@ public class BotAutoMine extends BotModule {
             }
          }
 
-         if (!var5 && !var6) {
-            MineTargetFinder.Data var10 = this.selectedMine == null ? var1 : this.selectedMine;
-            if (MineTargetFinder.method1938(var10, this.world) && !(this.getMineDistance(var10) > 25.0)) {
+         if (!mineAvailable && !flag) {
+            MineTargetFinder.Data selectedMine2 = this.selectedMine == null ? selectedMine : this.selectedMine;
+            if (MineTargetFinder.method1938(selectedMine2, this.world) && !(this.getMineDistance(selectedMine2) > 25.0)) {
                this.reconnectToRandomAnarchy();
                return null;
             } else {
@@ -455,15 +455,15 @@ public class BotAutoMine extends BotModule {
                return null;
             }
          } else {
-            MineTargetFinder.Data var9 = this.selectedMine;
-            int var8 = !var6 || var5 && !(this.getFillPercentage(var4) > this.getFillPercentage(var3)) ? 0 : 1;
-            this.selectedMine = var8 != 0 ? var2 : var1;
-            if (!this.selectedMine.equals(var9)) {
-               this.combinedMineSwitched = (var9 != null);
+            MineTargetFinder.Data selectedMine2 = this.selectedMine;
+            int n = !flag || mineAvailable && !(this.getFillPercentage(blockMines) > this.getFillPercentage(arena)) ? 0 : 1;
+            this.selectedMine = n != 0 ? data : selectedMine;
+            if (!this.selectedMine.equals(selectedMine2)) {
+               this.combinedMineSwitched = (selectedMine2 != null);
                this.sendWarpCommand();
                return null;
             } else {
-               return var8 != 0 ? var4 : var3;
+               return n != 0 ? blockMines : arena;
             }
          }
       } else {
@@ -493,11 +493,11 @@ public class BotAutoMine extends BotModule {
          : MineTargetFinder.method1933(this.mineMode.method2101("module.autoMine.modeNether"));
    }
 
-   private boolean hasLoadedMineBlocks(MineTargetFinder.Data var1) {
-      for (BlockPos var3 : BlockPos.betweenClosed(
-         var1.getIntValue(), var1.getIntValue3(), var1.getIntValue5(), var1.getIntValue2(), var1.getIntValue4(), var1.getIntValue6()
+   private boolean hasLoadedMineBlocks(MineTargetFinder.Data expectedMineBounds) {
+      for (BlockPos pos : BlockPos.betweenClosed(
+         expectedMineBounds.getIntValue(), expectedMineBounds.getIntValue3(), expectedMineBounds.getIntValue5(), expectedMineBounds.getIntValue2(), expectedMineBounds.getIntValue4(), expectedMineBounds.getIntValue6()
       )) {
-         if (this.world.hasChunkAt(var3) && !this.world.getBlockState(var3).isAir()) {
+         if (this.world.hasChunkAt(pos) && !this.world.getBlockState(pos).isAir()) {
             return true;
          }
       }
@@ -505,112 +505,112 @@ public class BotAutoMine extends BotModule {
       return false;
    }
 
-   private void displayMineDistance(MineTargetFinder.Data var1) {
-      this.bot().systemMessage(String.valueOf(this.getMineDistance(var1)));
+   private void displayMineDistance(MineTargetFinder.Data selectedMine) {
+      this.bot().systemMessage(String.valueOf(this.getMineDistance(selectedMine)));
    }
 
-   private double getMineDistance(MineTargetFinder.Data var1) {
-      double var2 = (var1.getIntValue() + var1.getIntValue2() + 1.0) * 0.5;
-      double var4 = (var1.getIntValue5() + var1.getIntValue6() + 1.0) * 0.5;
-      double var6 = Math.abs(this.player.getX() - var2);
-      double var8 = Math.abs(this.player.getZ() - var4);
-      return Math.hypot(var6, var8);
+   private double getMineDistance(MineTargetFinder.Data selectedMine) {
+      double d = (selectedMine.getIntValue() + selectedMine.getIntValue2() + 1.0) * 0.5;
+      double d2 = (selectedMine.getIntValue5() + selectedMine.getIntValue6() + 1.0) * 0.5;
+      double x = Math.abs(this.player.getX() - d);
+      double y = Math.abs(this.player.getZ() - d2);
+      return Math.hypot(x, y);
    }
 
-   private List<BotAutoMine.BlockMine> getAvailableMine(MineTargetFinder.Data var1) {
-      var var2 = this.getArena(var1);
-      if (!this.isMineAvailable(var2)) {
+   private List<BotAutoMine.BlockMine> getAvailableMine(MineTargetFinder.Data selectedMine) {
+      var arena = this.getArena(selectedMine);
+      if (!this.isMineAvailable(arena)) {
          this.reconnectToRandomAnarchy();
          return null;
       } else {
-         return var2;
+         return arena;
       }
    }
 
-   private boolean isMineAvailable(List<BotAutoMine.BlockMine> var1) {
-      if (var1.size() - this.countAirBlocks(var1) < 600L) {
+   private boolean isMineAvailable(List<BotAutoMine.BlockMine> arena) {
+      if (arena.size() - this.countAirBlocks(arena) < 600L) {
          return false;
       } else {
-         return !(this.player.onGround() && !this.hasReachableBlockByHeight(var1));
+         return !(this.player.onGround() && !this.hasReachableBlockByHeight(arena));
       }
    }
 
-   private boolean hasReachableBlockByHeight(List<BotAutoMine.BlockMine> var1) {
-      int var2 = Mth.floor(this.player.getEyeY() + this.player.blockInteractionRange() - 1.0);
-      return var1.stream().anyMatch(var1x -> (!var1x.state().isAir() && !var1x.state().is(Blocks.OBSIDIAN) && var1x.pos().getY() <= var2));
+   private boolean hasReachableBlockByHeight(List<BotAutoMine.BlockMine> arena) {
+      int n = Mth.floor(this.player.getEyeY() + this.player.blockInteractionRange() - 1.0);
+      return arena.stream().anyMatch(var1x -> (!var1x.state().isAir() && !var1x.state().is(Blocks.OBSIDIAN) && var1x.pos().getY() <= n));
    }
 
-   private long countAirBlocks(List<BotAutoMine.BlockMine> var1) {
-      return var1.stream().filter(var0 -> var0.state().isAir()).count();
+   private long countAirBlocks(List<BotAutoMine.BlockMine> arena) {
+      return arena.stream().filter(blockMine -> blockMine.state().isAir()).count();
    }
 
-   private double getFillPercentage(List<BotAutoMine.BlockMine> var1) {
-      if (var1 != null) {
-         if (var1.isEmpty()) {
-            return 1 != 0 ? 0.0 : 1.0 - (double)this.countAirBlocks(var1) / var1.size();
+   private double getFillPercentage(List<BotAutoMine.BlockMine> arena) {
+      if (arena != null) {
+         if (arena.isEmpty()) {
+            return 1 != 0 ? 0.0 : 1.0 - (double)this.countAirBlocks(arena) / arena.size();
          }
       }
 
-      return var1.isEmpty() ? 0.0 : 1.0 - (double)this.countAirBlocks(var1) / var1.size();
+      return arena.isEmpty() ? 0.0 : 1.0 - (double)this.countAirBlocks(arena) / arena.size();
    }
 
    public void onRepair() {
       if (this.player.tickCount % 20 == 0) {
-         ItemStack var1 = this.player.getMainHandItem();
-         if (Util10.method2177(var1) && var1.getMaxDamage() - var1.getDamageValue() < 30) {
+         ItemStack mainHandItem = this.player.getMainHandItem();
+         if (Util10.method2177(mainHandItem) && mainHandItem.getMaxDamage() - mainHandItem.getDamageValue() < 30) {
             if (this.player.getItemInHand(InteractionHand.OFF_HAND).is(Items.EXPERIENCE_BOTTLE)) {
                this.useItem(InteractionHand.OFF_HAND);
             } else {
-               Slot var2 = this.player
+               Slot slot = this.player
                   .containerMenu
                   .slots
                   .stream()
-                  .filter(var0 -> var0.getItem().is(Items.EXPERIENCE_BOTTLE))
-                  .max(Comparator.comparingInt(var0 -> var0.index))
+                  .filter(slot2 -> slot2.getItem().is(Items.EXPERIENCE_BOTTLE))
+                  .max(Comparator.comparingInt(slot2 -> slot2.index))
                   .orElse(null);
-               if (var2 == null) {
+               if (slot == null) {
                   this.bot().systemMessage("AutoMine: в хотбаре закончились пузырьки опыта");
                   this.toggle();
-               } else if (var2.container instanceof Inventory || var2.container instanceof PlayerEnderChestContainer) {
-                  this.clickSlot(var2.index, 40, ContainerInput.SWAP);
+               } else if (slot.container instanceof Inventory || slot.container instanceof PlayerEnderChestContainer) {
+                  this.clickSlot(slot.index, 40, ContainerInput.SWAP);
                }
             }
          }
       }
    }
 
-   private void useItem(InteractionHand var1) {
-      if (this.interaction.interactItem(this.player, var1) instanceof Success var3 && var3.swingSource() == SwingSource.PREDICTED) {
-         this.player.swing(var1);
+   private void useItem(InteractionHand hand) {
+      if (this.interaction.interactItem(this.player, hand) instanceof Success success && success.swingSource() == SwingSource.PREDICTED) {
+         this.player.swing(hand);
       }
    }
 
-   private List<BotAutoMine.BlockMine> getArena(MineTargetFinder.Data var1) {
+   private List<BotAutoMine.BlockMine> getArena(MineTargetFinder.Data selectedMine) {
       return this.getBlocksInZone(
-         new BlockPos(var1.getIntValue(), var1.getIntValue3(), var1.getIntValue5()),
-         new BlockPos(var1.getIntValue2(), var1.getIntValue4(), var1.getIntValue6())
+         new BlockPos(selectedMine.getIntValue(), selectedMine.getIntValue3(), selectedMine.getIntValue5()),
+         new BlockPos(selectedMine.getIntValue2(), selectedMine.getIntValue4(), selectedMine.getIntValue6())
       );
    }
 
-   private List<BotAutoMine.BlockMine> getBlocksInZone(BlockPos var1, BlockPos var2) {
-      ArrayList<BotAutoMine.BlockMine> var3 = new ArrayList<>();
-      int var4 = Math.min(var1.getX(), var2.getX());
-      int var5 = Math.max(var1.getX(), var2.getX());
-      int var6 = Math.min(var1.getY(), var2.getY());
-      int var7 = Math.max(var1.getY(), var2.getY());
-      int var8 = Math.min(var1.getZ(), var2.getZ());
-      int var9 = Math.max(var1.getZ(), var2.getZ());
+   private List<BotAutoMine.BlockMine> getBlocksInZone(BlockPos pos, BlockPos pos2) {
+      ArrayList<BotAutoMine.BlockMine> blockMines = new ArrayList<>();
+      int n = Math.min(pos.getX(), pos2.getX());
+      int n2 = Math.max(pos.getX(), pos2.getX());
+      int n3 = Math.min(pos.getY(), pos2.getY());
+      int n4 = Math.max(pos.getY(), pos2.getY());
+      int n5 = Math.min(pos.getZ(), pos2.getZ());
+      int n6 = Math.max(pos.getZ(), pos2.getZ());
 
-      for (int var10 = var4; var10 <= var5; var10++) {
-         for (int var11 = var6; var11 <= var7; var11++) {
-            for (int var12 = var8; var12 <= var9; var12++) {
-               BlockPos var13 = new BlockPos(var10, var11, var12);
-               var3.add(new BotAutoMine.BlockMine(var13, this.world.getBlockState(var13)));
+      for (int i = n; i <= n2; i++) {
+         for (int j = n3; j <= n4; j++) {
+            for (int k = n5; k <= n6; k++) {
+               BlockPos pos3 = new BlockPos(i, j, k);
+               blockMines.add(new BotAutoMine.BlockMine(pos3, this.world.getBlockState(pos3)));
             }
          }
       }
 
-      return var3;
+      return blockMines;
    }
 
    public void handleWarpTp() {
@@ -620,10 +620,10 @@ public class BotAutoMine extends BotModule {
    }
 
    private void sendWarpCommand() {
-      boolean var1 = this.mineMode.method2101("module.autoMine.modeCombined")
+      boolean flag = this.mineMode.method2101("module.autoMine.modeCombined")
          ? MineTargetFinder.method1933(true).equals(this.selectedMine)
          : this.mineMode.method2101("module.autoMine.modeNether");
-      this.handler().sendCommand(var1 ? "warp mine2" : "warp mine");
+      this.handler().sendCommand(flag ? "warp mine2" : "warp mine");
       this.mineDataCooldown = 20;
    }
 
@@ -633,15 +633,15 @@ public class BotAutoMine extends BotModule {
       this.mineDataCooldown = 0;
       this.combinedMineSwitched = false;
       this.skippedBlocks.clear();
-      int var1 = this.rct().currentAnarchyHere();
+      int currentAnarchyHere = this.rct().currentAnarchyHere();
 
-      int var2;
+      int nextInt;
       do {
-         while ((var2 = ThreadLocalRandom.current().nextInt(1, 64)) == var1) {
+         while ((nextInt = ThreadLocalRandom.current().nextInt(1, 64)) == currentAnarchyHere) {
          }
-      } while (var2 == 2 || var2 == 17 || var2 == 33 || var2 == 49);
+      } while (nextInt == 2 || nextInt == 17 || nextInt == 33 || nextInt == 49);
 
-      this.rct().reconnect(var2);
+      this.rct().reconnect(nextInt);
    }
 
    private BotRctService rct() {
@@ -682,9 +682,9 @@ public class BotAutoMine extends BotModule {
          return "BlockMine[" + "pos=" + this.pos + ", " + "state=" + this.state + "]";
       }
 
-      private BlockMine(BlockPos var1, BlockState var2) {
-         this.pos = var1;
-         this.state = var2;
+      private BlockMine(BlockPos pos, BlockState state) {
+         this.pos = pos;
+         this.state = state;
       }
    }
 
@@ -722,10 +722,10 @@ public class BotAutoMine extends BotModule {
          return "BreakCandidate[" + "pos=" + this.pos + ", " + "drillCoverage=" + this.drillCoverage + ", " + "distanceSquared=" + this.distanceSquared + "]";
       }
 
-      private BreakCandidate(BlockPos var1, int var2, double var3) {
-         this.pos = var1;
-         this.drillCoverage = var2;
-         this.distanceSquared = var3;
+      private BreakCandidate(BlockPos pos, int drillCoverage, double distanceSquared) {
+         this.pos = pos;
+         this.drillCoverage = drillCoverage;
+         this.distanceSquared = distanceSquared;
       }
    }
 
@@ -768,11 +768,11 @@ public class BotAutoMine extends BotModule {
          return "BreakTarget[" + "rotation=" + this.rotation + ", " + "hitResult=" + this.hitResult + ", " + "drillCoverage=" + this.drillCoverage + ", " + "distanceSquared=" + this.distanceSquared + "]";
       }
 
-      private BreakTarget(Rotation var1, BlockHitResult var2, int var3, double var4) {
-         this.rotation = var1;
-         this.hitResult = var2;
-         this.drillCoverage = var3;
-         this.distanceSquared = var4;
+      private BreakTarget(Rotation rotation, BlockHitResult hitResult, int drillCoverage, double distanceSquared) {
+         this.rotation = rotation;
+         this.hitResult = hitResult;
+         this.drillCoverage = drillCoverage;
+         this.distanceSquared = distanceSquared;
       }
    }
 }

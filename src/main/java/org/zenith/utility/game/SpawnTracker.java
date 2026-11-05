@@ -63,60 +63,60 @@ public final class SpawnTracker implements MinecraftAccess {
       return vec3d != null || flag;
    }
 
-   public static boolean method6207(Object var0) {
-      return isActive() && owner == var0;
+   public static boolean method6207(Object obj) {
+      return isActive() && owner == obj;
    }
 
    public static boolean method6208() {
       return mc.player != null && method6225(mc.player.getY());
    }
 
-   public static void method6209(Object var0) {
-      if (method6207(var0)) {
+   public static void method6209(Object obj) {
+      if (method6207(obj)) {
          reset();
       }
    }
 
-   public static boolean method6210(Vec3 var0) {
-      if (method6206() && method6232(var0) && method6236(var0)) {
-         Vec3 var1 = mc.player.position();
-         Vec3 var2 = method6226(var1);
-         return method6232(var2) && !method6227(var1, var2) && !method6227(var2, var0);
+   public static boolean method6210(Vec3 vec3d) {
+      if (method6206() && method6232(vec3d) && method6236(vec3d)) {
+         Vec3 position = mc.player.position();
+         Vec3 vec = method6226(position);
+         return method6232(vec) && !method6227(position, vec) && !method6227(vec, vec3d);
       } else {
          return false;
       }
    }
 
-   public static boolean method6211(Object var0, Vec3 var1) {
-      return method6221(var0) && method6206() && method6223(var0, var1);
+   public static boolean method6211(Object obj, Vec3 vec3d) {
+      return method6221(obj) && method6206() && method6223(obj, vec3d);
    }
 
-   public static boolean method6212(Entity var0) {
+   public static boolean method6212(Entity entity) {
       reset();
-      return var0 != null
+      return entity != null
          && method6206()
-         && var0.level() == mc.level
-         && !var0.isRemoved()
-         && method6239(var0)
-         && method6223(null, var0.position());
+         && entity.level() == mc.level
+         && !entity.isRemoved()
+         && method6239(entity)
+         && method6223(null, entity.position());
    }
 
-   public static boolean method6213(Object var0, double var1, double var3, boolean var5) {
-      if (method6221(var0) && method6206() && method6232(new Vec3(var1, -66.0, var3))) {
-         method6222(var0);
+   public static boolean method6213(Object obj, double x, double z, boolean flag3) {
+      if (method6221(obj) && method6206() && method6232(new Vec3(x, -66.0, z))) {
+         method6222(obj);
          flag = true;
-         flag2 = var5;
-         doubleValue = var1;
-         doubleValue2 = var3;
-         Vec3 var6 = mc.player.position();
-         Vec3 var7 = method6226(var6);
-         if (method6225(var6.y)) {
-            vec3d2 = method6229(var6.x, var6.z);
-         } else if (method6227(var6, var7)) {
-            method6224(method6228(var6.x, var6.y, var6.z, -66.0));
+         flag2 = flag3;
+         doubleValue = x;
+         doubleValue2 = z;
+         Vec3 position = mc.player.position();
+         Vec3 vec3d = method6226(position);
+         if (method6225(position.y)) {
+            vec3d2 = method6229(position.x, position.z);
+         } else if (method6227(position, vec3d)) {
+            method6224(method6228(position.x, position.y, position.z, -66.0));
          } else {
-            method6224(var7);
-            vec3d2 = method6229(var6.x, var6.z);
+            method6224(vec3d);
+            vec3d2 = method6229(position.x, position.z);
          }
 
          cooldown = 2;
@@ -126,12 +126,12 @@ public final class SpawnTracker implements MinecraftAccess {
       }
    }
 
-   public static boolean method6214(Object var0) {
-      if (method6221(var0) && method6206()) {
-         Vec3 var1 = mc.player.position();
-         Vec3 var2 = method6226(var1);
-         if (method6232(var2) && !method6227(var1, var2)) {
-            method6224(var2);
+   public static boolean method6214(Object obj) {
+      if (method6221(obj) && method6206()) {
+         Vec3 position = mc.player.position();
+         Vec3 vec3d = method6226(position);
+         if (method6232(vec3d) && !method6227(position, vec3d)) {
+            method6224(vec3d);
             return true;
          } else {
             return false;
@@ -141,14 +141,14 @@ public final class SpawnTracker implements MinecraftAccess {
       }
    }
 
-   public static Vec3 method6215(Vec3 var0) {
-      if (method6238(var0)) {
-         return var0;
-      } else if (var0 != null && mc.player != null && mc.level != null && method6232(var0)) {
-         for (int var1 = 1; var1 <= 2; var1++) {
-            Vec3 var2 = var0.add(0.0, var1, 0.0);
-            if (method6238(var2)) {
-               return var2;
+   public static Vec3 method6215(Vec3 vec3d) {
+      if (method6238(vec3d)) {
+         return vec3d;
+      } else if (vec3d != null && mc.player != null && mc.level != null && method6232(vec3d)) {
+         for (int i = 1; i <= 2; i++) {
+            Vec3 vec = vec3d.add(0.0, i, 0.0);
+            if (method6238(vec)) {
+               return vec;
             }
          }
 
@@ -159,7 +159,7 @@ public final class SpawnTracker implements MinecraftAccess {
    }
 
    @EventTarget(0)
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (isActive()) {
          if (++intValue <= 100 && ++intValue2 <= 12000) {
             if (cooldown > 0) {
@@ -187,18 +187,18 @@ public final class SpawnTracker implements MinecraftAccess {
       if (!method6232(new Vec3(doubleValue, -66.0, doubleValue2))) {
          reset();
       } else if (!method6217()) {
-         Vec3 var0 = mc.player.position();
-         if (Math.hypot(var0.x - doubleValue, var0.z - doubleValue2) > 0.5) {
-            method6218(var0);
+         Vec3 position = mc.player.position();
+         if (Math.hypot(position.x - doubleValue, position.z - doubleValue2) > 0.5) {
+            method6218(position);
          } else if (flag2) {
-            if (method6225(var0.y)) {
+            if (method6225(position.y)) {
                reset();
             } else {
-               method6224(method6228(var0.x, var0.y, var0.z, -66.0));
+               method6224(method6228(position.x, position.y, position.z, -66.0));
                cooldown = 2;
             }
          } else {
-            method6219(var0);
+            method6219(position);
          }
       }
    }
@@ -207,18 +207,18 @@ public final class SpawnTracker implements MinecraftAccess {
       if (vec3d2 == null) {
          return false;
       } else {
-         Vec3 var0 = mc.player.position();
-         if (!method6232(vec3d2) || method6227(var0, vec3d2)) {
+         Vec3 position = mc.player.position();
+         if (!method6232(vec3d2) || method6227(position, vec3d2)) {
             vec3d2 = null;
             return true;
-         } else if (!method6225(var0.y) && method6225(vec3d2.y)) {
+         } else if (!method6225(position.y) && method6225(vec3d2.y)) {
             vec3d2 = null;
-            method6218(var0);
+            method6218(position);
             return true;
          } else {
             if (method6225(vec3d2.y)) {
-               if (!method6235(var0.x, var0.z, vec3d2.x, vec3d2.z)) {
-                  vec3d2 = method6230(var0.x, var0.z);
+               if (!method6235(position.x, position.z, vec3d2.x, vec3d2.z)) {
+                  vec3d2 = method6230(position.x, position.z);
                   if (vec3d2 == null) {
                      return true;
                   }
@@ -235,43 +235,43 @@ public final class SpawnTracker implements MinecraftAccess {
       }
    }
 
-   private static void method6218(Vec3 var0) {
-      if (!method6225(var0.y)) {
-         method6224(method6228(var0.x, var0.y, var0.z, -66.0));
+   private static void method6218(Vec3 position) {
+      if (!method6225(position.y)) {
+         method6224(method6228(position.x, position.y, position.z, -66.0));
          cooldown = 2;
       } else {
-         Vec3 var1 = method6230(var0.x, var0.z);
-         if (var1 != null) {
-            method6220(var1);
+         Vec3 vec = method6230(position.x, position.z);
+         if (vec != null) {
+            method6220(vec);
          }
       }
    }
 
-   private static void method6219(Vec3 var0) {
-      Double var1 = method6231(doubleValue, doubleValue2);
-      if (var1 != null) {
-         if (method6237(doubleValue, var0.y, doubleValue2) && Math.abs(var0.y - var1) <= 1.0) {
+   private static void method6219(Vec3 position) {
+      Double d = method6231(doubleValue, doubleValue2);
+      if (d != null) {
+         if (method6237(doubleValue, position.y, doubleValue2) && Math.abs(position.y - d) <= 1.0) {
             reset();
          } else {
-            Vec3 var2 = method6228(doubleValue, var0.y, doubleValue2, var1);
-            if (method6225(var2.y)) {
-               method6220(var2);
+            Vec3 vec = method6228(doubleValue, position.y, doubleValue2, d);
+            if (method6225(vec.y)) {
+               method6220(vec);
             } else {
-               vec3d2 = var2;
+               vec3d2 = vec;
                cooldown = 2;
             }
          }
       }
    }
 
-   private static void method6220(Vec3 var0) {
-      vec3d2 = var0;
+   private static void method6220(Vec3 vec) {
+      vec3d2 = vec;
       method6224(method6226(mc.player.position()));
       cooldown = 2;
    }
 
-   private static boolean method6221(Object var0) {
-      if (var0 != null && isActive() && owner != var0) {
+   private static boolean method6221(Object obj) {
+      if (obj != null && isActive() && owner != obj) {
          return false;
       } else {
          reset();
@@ -279,18 +279,18 @@ public final class SpawnTracker implements MinecraftAccess {
       }
    }
 
-   private static void method6222(Object var0) {
-      owner = var0;
+   private static void method6222(Object obj) {
+      owner = obj;
       clientWorld = mc.level;
       clientPlayerEntity = mc.player;
    }
 
-   private static boolean method6223(Object var0, Vec3 var1) {
-      if (!method6210(var1)) {
+   private static boolean method6223(Object obj, Vec3 vec) {
+      if (!method6210(vec)) {
          return false;
       } else {
-         method6222(var0);
-         vec3d = var1;
+         method6222(obj);
+         vec3d = vec;
          cooldown = 2;
          method6224(method6226(mc.player.position()));
          return true;
@@ -312,77 +312,77 @@ public final class SpawnTracker implements MinecraftAccess {
       clientPlayerEntity = null;
    }
 
-   private static void method6224(Vec3 var0) {
-      if (mc.player.position().distanceToSqr(var0) > 1.0E-6) {
+   private static void method6224(Vec3 vec3d) {
+      if (mc.player.position().distanceToSqr(vec3d) > 1.0E-6) {
          intValue = 0;
       }
 
       mc.player.setDeltaMovement(Vec3.ZERO);
-      mc.player.setPos(var0.x, var0.y, var0.z);
+      mc.player.setPos(vec3d.x, vec3d.y, vec3d.z);
    }
 
-   private static boolean method6225(double var0) {
-      return Math.abs(var0 - -66.0) <= 0.001;
+   private static boolean method6225(double y) {
+      return Math.abs(y - -66.0) <= 0.001;
    }
 
-   private static Vec3 method6226(Vec3 var0) {
-      return new Vec3(var0.x, -66.0, var0.z);
+   private static Vec3 method6226(Vec3 position) {
+      return new Vec3(position.x, -66.0, position.z);
    }
 
-   private static boolean method6227(Vec3 var0, Vec3 var1) {
-      return Math.hypot(var0.x - var1.x, var0.z - var1.z) > 80.001 || Math.abs(var0.y - var1.y) > 200.001;
+   private static boolean method6227(Vec3 position, Vec3 vec3d) {
+      return Math.hypot(position.x - vec3d.x, position.z - vec3d.z) > 80.001 || Math.abs(position.y - vec3d.y) > 200.001;
    }
 
-   private static Vec3 method6228(double var0, double var2, double var4, double var6) {
-      double var8 = var6 - var2;
-      return new Vec3(var0, Math.abs(var8) <= 200.0 ? var6 : var2 + Math.copySign(200.0, var8), var4);
+   private static Vec3 method6228(double x, double y, double z, double d) {
+      double sign = d - y;
+      return new Vec3(x, Math.abs(sign) <= 200.0 ? d : y + Math.copySign(200.0, sign), z);
    }
 
-   private static Vec3 method6229(double var0, double var2) {
-      double var4 = doubleValue - var0;
-      double var6 = doubleValue2 - var2;
-      double var8 = Math.hypot(var4, var6);
-      if (var8 <= 0.001) {
+   private static Vec3 method6229(double x, double z) {
+      double d = doubleValue - x;
+      double y = doubleValue2 - z;
+      double hypot = Math.hypot(d, y);
+      if (hypot <= 0.001) {
          return null;
       } else {
-         return var8 <= 80.0 ? new Vec3(doubleValue, -66.0, doubleValue2) : new Vec3(var0 + var4 / var8 * 80.0, -66.0, var2 + var6 / var8 * 80.0);
+         return hypot <= 80.0 ? new Vec3(doubleValue, -66.0, doubleValue2) : new Vec3(x + d / hypot * 80.0, -66.0, z + y / hypot * 80.0);
       }
    }
 
-   private static Vec3 method6230(double var0, double var2) {
-      Vec3 var4 = method6229(var0, var2);
-      if (var4 != null && !method6235(var0, var2, var4.x, var4.z)) {
-         double var5 = var4.x - var0;
-         double var7 = var4.z - var2;
-         double var9 = Math.hypot(var5, var7);
-         double var11 = var5 / var9;
-         double var13 = var7 / var9;
-         double var15 = 0.0;
+   private static Vec3 method6230(double x, double z) {
+      Vec3 vec = method6229(x, z);
+      if (vec != null && !method6235(x, z, vec.x, vec.z)) {
+         double d = vec.x - x;
+         double y = vec.z - z;
+         double hypot = Math.hypot(d, y);
+         double d2 = d / hypot;
+         double d3 = y / hypot;
+         double d4 = 0.0;
 
-         for (double var17 = 16.0; var17 < var9 && method6235(var0, var2, var0 + var11 * var17, var2 + var13 * var17); var17 += 16.0) {
-            var15 = var17;
+         for (double d5 = 16.0; d5 < hypot && method6235(x, z, x + d2 * d5, z + d3 * d5); d5 += 16.0) {
+            d4 = d5;
          }
 
-         return var15 < 16.0 ? null : new Vec3(var0 + var11 * var15, -66.0, var2 + var13 * var15);
+         return d4 < 16.0 ? null : new Vec3(x + d2 * d4, -66.0, z + d3 * d4);
       } else {
-         return var4;
+         return vec;
       }
    }
 
-   private static Double method6231(double var0, double var2) {
-      if (!method6234(var0, var2)) {
+   private static Double method6231(double doubleValue, double z) {
+      if (!method6234(doubleValue, z)) {
          return null;
       } else {
-         int var4 = mc.level.getHeight(Types.WORLD_SURFACE, Mth.floor(var0), Mth.floor(var2));
-         if (var4 <= mc.level.getMinY() + 1) {
+         int height = mc.level.getHeight(Types.WORLD_SURFACE, Mth.floor(doubleValue), Mth.floor(z));
+         if (height <= mc.level.getMinY() + 1) {
             return null;
          } else {
-            while (var4 <= mc.level.getMaxY()) {
-               if (method6237(var0, var4, var2)) {
-                  return (double)var4;
+            while (height <= mc.level.getMaxY()) {
+               if (method6237(doubleValue, height, z)) {
+                  return (double)height;
                }
 
-               var4++;
+               height++;
             }
 
             return null;
@@ -390,32 +390,32 @@ public final class SpawnTracker implements MinecraftAccess {
       }
    }
 
-   private static boolean method6232(Vec3 var0) {
-      if (var0 != null && Double.isFinite(var0.x) && Double.isFinite(var0.y) && Double.isFinite(var0.z)) {
-         BlockPos var1 = BlockPos.containing(var0);
-         return Level.isInSpawnableBounds(var1) && mc.level.getWorldBorder().isWithinBounds(var1);
+   private static boolean method6232(Vec3 vec3d) {
+      if (vec3d != null && Double.isFinite(vec3d.x) && Double.isFinite(vec3d.y) && Double.isFinite(vec3d.z)) {
+         BlockPos containing = BlockPos.containing(vec3d);
+         return Level.isInSpawnableBounds(containing) && mc.level.getWorldBorder().isWithinBounds(containing);
       } else {
          return false;
       }
    }
 
-   private static boolean method6233(int var0, int var1) {
-      return mc.level.getChunkSource().getChunk(var0, var1, ChunkStatus.FULL, false) instanceof LevelChunk;
+   private static boolean method6233(int x, int z) {
+      return mc.level.getChunkSource().getChunk(x, z, ChunkStatus.FULL, false) instanceof LevelChunk;
    }
 
-   private static boolean method6234(double var0, double var2) {
-      return method6233(Mth.floor(var0) >> 4, Mth.floor(var2) >> 4);
+   private static boolean method6234(double x, double z) {
+      return method6233(Mth.floor(x) >> 4, Mth.floor(z) >> 4);
    }
 
-   private static boolean method6235(double var0, double var2, double var4, double var6) {
-      int var8 = Math.min(Mth.floor(var0), Mth.floor(var4)) >> 4;
-      int var9 = Math.max(Mth.floor(var0), Mth.floor(var4)) >> 4;
-      int var10 = Math.min(Mth.floor(var2), Mth.floor(var6)) >> 4;
-      int var11 = Math.max(Mth.floor(var2), Mth.floor(var6)) >> 4;
+   private static boolean method6235(double x, double z, double maxX, double maxZ) {
+      int n = Math.min(Mth.floor(x), Mth.floor(maxX)) >> 4;
+      int n2 = Math.max(Mth.floor(x), Mth.floor(maxX)) >> 4;
+      int n3 = Math.min(Mth.floor(z), Mth.floor(maxZ)) >> 4;
+      int n4 = Math.max(Mth.floor(z), Mth.floor(maxZ)) >> 4;
 
-      for (int var12 = var8; var12 <= var9; var12++) {
-         for (int var13 = var10; var13 <= var11; var13++) {
-            if (!method6233(var12, var13)) {
+      for (int i = n; i <= n2; i++) {
+         for (int j = n3; j <= n4; j++) {
+            if (!method6233(i, j)) {
                return false;
             }
          }
@@ -424,24 +424,24 @@ public final class SpawnTracker implements MinecraftAccess {
       return true;
    }
 
-   private static boolean method6236(Vec3 var0) {
-      AABB var1 = mc.player.getDimensions(Pose.STANDING).makeBoundingBox(var0);
-      return method6235(var1.minX, var1.minZ, var1.maxX, var1.maxZ);
+   private static boolean method6236(Vec3 vec3d) {
+      AABB boundingBox = mc.player.getDimensions(Pose.STANDING).makeBoundingBox(vec3d);
+      return method6235(boundingBox.minX, boundingBox.minZ, boundingBox.maxX, boundingBox.maxZ);
    }
 
-   private static boolean method6237(double var0, double var2, double var4) {
-      AABB var6 = mc.player.getDimensions(Pose.STANDING).makeBoundingBox(var0, var2, var4);
-      return method6235(var6.minX, var6.minZ, var6.maxX, var6.maxZ) && !mc.level.getBlockCollisions(mc.player, var6).iterator().hasNext();
+   private static boolean method6237(double doubleValue, double y, double z) {
+      AABB boundingBox = mc.player.getDimensions(Pose.STANDING).makeBoundingBox(doubleValue, y, z);
+      return method6235(boundingBox.minX, boundingBox.minZ, boundingBox.maxX, boundingBox.maxZ) && !mc.level.getBlockCollisions(mc.player, boundingBox).iterator().hasNext();
    }
 
-   private static boolean method6238(Vec3 var0) {
-      return mc.player != null && mc.level != null && method6232(var0) && method6237(var0.x, var0.y, var0.z);
+   private static boolean method6238(Vec3 vec3d) {
+      return mc.player != null && mc.level != null && method6232(vec3d) && method6237(vec3d.x, vec3d.y, vec3d.z);
    }
 
-   private static boolean method6239(Entity var0) {
-      Vec3 var1 = var0.position();
-      AABB var2 = mc.player.getDimensions(Pose.STANDING).makeBoundingBox(var1);
-      return method6232(var1) && method6235(var2.minX, var2.minZ, var2.maxX, var2.maxZ) && !mc.level.getBlockCollisions(mc.player, var2).iterator().hasNext();
+   private static boolean method6239(Entity entity) {
+      Vec3 position = entity.position();
+      AABB boundingBox = mc.player.getDimensions(Pose.STANDING).makeBoundingBox(position);
+      return method6232(position) && method6235(boundingBox.minX, boundingBox.minZ, boundingBox.maxX, boundingBox.maxZ) && !mc.level.getBlockCollisions(mc.player, boundingBox).iterator().hasNext();
    }
 
    static {

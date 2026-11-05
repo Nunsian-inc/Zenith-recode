@@ -65,6 +65,6 @@ public enum Interpolation {
    }
 
    private interface IInterpolation {
-      FiguraVec3 generate(Keyframe[] var1, int var2, int var3, float var4, float var5, TransformType var6);
+      FiguraVec3 generate(Keyframe[] keyframes, int currentFrame, int targetFrame, float strength, float delta, TransformType type);
    }
 }

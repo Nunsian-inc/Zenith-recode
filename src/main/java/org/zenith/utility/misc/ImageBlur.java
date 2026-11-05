@@ -9,144 +9,144 @@ public class ImageBlur {
    public float floatValue;
    public Kernel kernel;
 
-   public ImageBlur(float var1) {
-      this.method2286(var1);
+   public ImageBlur(float floatValue) {
+      this.method2286(floatValue);
    }
 
-   public static void method2283(@NotNull Kernel var0, int[] var1, int[] var2, int var3, int var4, boolean var5, boolean var6, boolean var7, int var8) {
-      float[] var9 = var0.getKernelData(null);
-      int var10 = var0.getWidth();
-      int var11 = var10 / 2;
+   public static void method2283(@NotNull Kernel kernel, int[] rgbArray, int[] ints, int width, int height, boolean flag, boolean flag2, boolean flag3, int n) {
+      float[] kernelData = kernel.getKernelData(null);
+      int width2 = kernel.getWidth();
+      int n2 = width2 / 2;
 
-      for (int var12 = 0; var12 < var4; var12++) {
-         int var13 = var12;
-         int var14 = var12 * var3;
+      for (int i = 0; i < height; i++) {
+         int n3 = i;
+         int n4 = i * width;
 
-         for (int var15 = 0; var15 < var3; var15++) {
-            float var16 = 0.0F;
-            float var17 = 0.0F;
-            float var18 = 0.0F;
-            float var19 = 0.0F;
-            int var20 = var11;
+         for (int j = 0; j < width; j++) {
+            float f = 0.0F;
+            float f2 = 0.0F;
+            float f3 = 0.0F;
+            float f4 = 0.0F;
+            int n5 = n2;
 
-            for (int var21 = -var11; var21 <= var11; var21++) {
-               float var22 = var9[var20 + var21];
-               if (var22 != 0.0F) {
-                  int var23 = var15 + var21;
-                  if (var23 < 0) {
-                     if (var8 == 1) {
-                        var23 = 0;
-                     } else if (var8 == 2) {
-                        var23 = (var15 + var3) % var3;
+            for (int k = -n2; k <= n2; k++) {
+               float f5 = kernelData[n5 + k];
+               if (f5 != 0.0F) {
+                  int n6 = j + k;
+                  if (n6 < 0) {
+                     if (n == 1) {
+                        n6 = 0;
+                     } else if (n == 2) {
+                        n6 = (j + width) % width;
                      }
-                  } else if (var23 >= var3) {
-                     if (var8 == 1) {
-                        var23 = var3 - 1;
-                     } else if (var8 == 2) {
-                        var23 = (var15 + var3) % var3;
+                  } else if (n6 >= width) {
+                     if (n == 1) {
+                        n6 = width - 1;
+                     } else if (n == 2) {
+                        n6 = (j + width) % width;
                      }
                   }
 
-                  int var24 = var1[var14 + var23];
-                  int var25 = var24 >> 24 & 0xFF;
-                  int var26 = var24 >> 16 & 0xFF;
-                  int var27 = var24 >> 8 & 0xFF;
-                  int var28 = var24 & 0xFF;
-                  if (var6) {
-                     float var29 = var25 * 0.003921569F;
-                     var26 = (int)(var26 * var29);
-                     var27 = (int)(var27 * var29);
-                     var28 = (int)(var28 * var29);
+                  int n7 = rgbArray[n4 + n6];
+                  int n8 = n7 >> 24 & 0xFF;
+                  int n9 = n7 >> 16 & 0xFF;
+                  int n10 = n7 >> 8 & 0xFF;
+                  int n11 = n7 & 0xFF;
+                  if (flag2) {
+                     float f6 = n8 * 0.003921569F;
+                     n9 = (int)(n9 * f6);
+                     n10 = (int)(n10 * f6);
+                     n11 = (int)(n11 * f6);
                   }
 
-                  var19 += var22 * var25;
-                  var16 += var22 * var26;
-                  var17 += var22 * var27;
-                  var18 += var22 * var28;
+                  f4 += f5 * n8;
+                  f += f5 * n9;
+                  f2 += f5 * n10;
+                  f3 += f5 * n11;
                }
             }
 
-            if (var7 && var19 != 0.0F && var19 != 255.0F) {
-               float var30 = 255.0F / var19;
-               var16 *= var30;
-               var17 *= var30;
-               var18 *= var30;
+            if (flag3 && f4 != 0.0F && f4 != 255.0F) {
+               float f5 = 255.0F / f4;
+               f *= f5;
+               f2 *= f5;
+               f3 *= f5;
             }
 
-            int var31 = var5 ? method2284((int)(var19 + 0.5)) : 255;
-            int var32 = method2284((int)(var16 + 0.5));
-            int var33 = method2284((int)(var17 + 0.5));
-            int var34 = method2284((int)(var18 + 0.5));
-            var2[var13] = var31 << 24 | var32 << 16 | var33 << 8 | var34;
-            var13 += var4;
+            int n6 = flag ? method2284((int)(f4 + 0.5)) : 255;
+            int n7 = method2284((int)(f + 0.5));
+            int n8 = method2284((int)(f2 + 0.5));
+            int n9 = method2284((int)(f3 + 0.5));
+            ints[n3] = n6 << 24 | n7 << 16 | n8 << 8 | n9;
+            n3 += height;
          }
       }
    }
 
-   public static int method2284(int var0) {
-      return var0 < 0 ? 0 : Math.min(var0, 255);
+   public static int method2284(int n) {
+      return n < 0 ? 0 : Math.min(n, 255);
    }
 
-   public static Kernel method2285(float var0) {
-      int var1 = (int)Math.ceil(var0);
-      int var2 = var1 * 2 + 1;
-      float[] var3 = new float[var2];
-      float var4 = var0 / 3.0F;
-      float var5 = 2.0F * var4 * var4;
-      float var6 = (float) (Math.PI * 2) * var4;
-      float var7 = (float)Math.sqrt(var6);
-      float var8 = var0 * var0;
-      float var9 = 0.0F;
-      int var10 = 0;
+   public static Kernel method2285(float floatValue) {
+      int n = (int)Math.ceil(floatValue);
+      int width = n * 2 + 1;
+      float[] data = new float[width];
+      float f = floatValue / 3.0F;
+      float f2 = 2.0F * f * f;
+      float f3 = (float) (Math.PI * 2) * f;
+      float f4 = (float)Math.sqrt(f3);
+      float f5 = floatValue * floatValue;
+      float f6 = 0.0F;
+      int n2 = 0;
 
-      for (int var11 = -var1; var11 <= var1; var11++) {
-         float var12 = var11 * var11;
-         if (var12 > var8) {
-            var3[var10] = 0.0F;
+      for (int i = -n; i <= n; i++) {
+         float f7 = i * i;
+         if (f7 > f5) {
+            data[n2] = 0.0F;
          } else {
-            var3[var10] = (float)Math.exp(-var12 / var5) / var7;
+            data[n2] = (float)Math.exp(-f7 / f2) / f4;
          }
 
-         var9 += var3[var10];
-         var10++;
+         f6 += data[n2];
+         n2++;
       }
 
-      for (int var13 = 0; var13 < var2; var13++) {
-         var3[var13] /= var9;
+      for (int i = 0; i < width; i++) {
+         data[i] /= f6;
       }
 
-      return new Kernel(var2, 1, var3);
+      return new Kernel(width, 1, data);
    }
 
-   public void method2286(float var1) {
-      this.floatValue = var1;
-      this.kernel = method2285(var1);
+   public void method2286(float floatValue) {
+      this.floatValue = floatValue;
+      this.kernel = method2285(floatValue);
    }
 
-   public BufferedImage method2287(BufferedImage var1, BufferedImage var2) {
-      int var3 = var1.getWidth();
-      int var4 = var1.getHeight();
-      if (var2 == null) {
-         var2 = this.method2288(var1, null);
+   public BufferedImage method2287(BufferedImage bufferedImage, BufferedImage bufferedImage2) {
+      int width = bufferedImage.getWidth();
+      int height = bufferedImage.getHeight();
+      if (bufferedImage2 == null) {
+         bufferedImage2 = this.method2288(bufferedImage, null);
       }
 
-      int[] var5 = new int[var3 * var4];
-      int[] var6 = new int[var3 * var4];
-      var1.getRGB(0, 0, var3, var4, var5, 0, var3);
+      int[] rgbArray = new int[width * height];
+      int[] ints = new int[width * height];
+      bufferedImage.getRGB(0, 0, width, height, rgbArray, 0, width);
       if (this.floatValue > 0.0F) {
-         method2283(this.kernel, var5, var6, var3, var4, true, true, false, 1);
-         method2283(this.kernel, var6, var5, var4, var3, true, false, true, 1);
+         method2283(this.kernel, rgbArray, ints, width, height, true, true, false, 1);
+         method2283(this.kernel, ints, rgbArray, height, width, true, false, true, 1);
       }
 
-      var2.setRGB(0, 0, var3, var4, var5, 0, var3);
-      return var2;
+      bufferedImage2.setRGB(0, 0, width, height, rgbArray, 0, width);
+      return bufferedImage2;
    }
 
-   public BufferedImage method2288(BufferedImage var1, ColorModel var2) {
-      if (var2 == null) {
-         var2 = var1.getColorModel();
+   public BufferedImage method2288(BufferedImage bufferedImage, ColorModel cm) {
+      if (cm == null) {
+         cm = bufferedImage.getColorModel();
       }
 
-      return new BufferedImage(var2, var2.createCompatibleWritableRaster(var1.getWidth(), var1.getHeight()), var2.isAlphaPremultiplied(), null);
+      return new BufferedImage(cm, cm.createCompatibleWritableRaster(bufferedImage.getWidth(), bufferedImage.getHeight()), cm.isAlphaPremultiplied(), null);
    }
 }

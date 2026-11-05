@@ -105,12 +105,12 @@ public final class Script {
    private static final Pattern pattern3 = Pattern.compile("[a-z]{2,24}|xn--[a-z0-9-]{2,59}");
    private volatile Script.Data data;
 
-   public Script(Storage var1, String var2, Path var3, Path var4) {
-      this.storage = var1;
-      this.text = var2;
-      this.path = var3;
-      this.path2 = var4;
-      this.name = var2;
+   public Script(Storage storage, String text, Path path, Path path2) {
+      this.storage = storage;
+      this.text = text;
+      this.path = path;
+      this.path2 = path2;
+      this.name = text;
    }
 
    public Storage getStorage() {
@@ -161,13 +161,13 @@ public final class Script {
       return this.items;
    }
 
-   public static boolean method1404(String var0) {
-      if (var0.length() <= 253 && pattern2.matcher(var0).matches() && !var0.startsWith(".") && !var0.endsWith(".") && !var0.contains("..")) {
-         String[] var1 = var0.split("\\.");
-         if (var1.length < 2) {
+   public static boolean method1404(String lowerCase) {
+      if (lowerCase.length() <= 253 && pattern2.matcher(lowerCase).matches() && !lowerCase.startsWith(".") && !lowerCase.endsWith(".") && !lowerCase.contains("..")) {
+         String[] strings = lowerCase.split("\\.");
+         if (strings.length < 2) {
             return false;
          } else {
-            return !pattern3.matcher(var1[var1.length - 1]).matches() ? false : !items9.contains(var0);
+            return !pattern3.matcher(strings[strings.length - 1]).matches() ? false : !items9.contains(lowerCase);
          }
       } else {
          return false;
@@ -175,27 +175,27 @@ public final class Script {
    }
 
    private List<String> method1405() {
-      String var1 = this.text5;
-      Script.Data var2 = this.data;
-      if (var2 == null || var2.source() != var1) {
-         ArrayList var3 = new ArrayList();
+      String input = this.text5;
+      Script.Data data = this.data;
+      if (data == null || data.source() != input) {
+         ArrayList coll = new ArrayList();
 
-         for (String var7 : pattern.split(var1)) {
-            String var8 = var7.strip().toLowerCase(Locale.ROOT);
-            if (var8.startsWith("*.")) {
-               var8 = var8.substring(2);
+         for (String str : pattern.split(input)) {
+            String lowerCase = str.strip().toLowerCase(Locale.ROOT);
+            if (lowerCase.startsWith("*.")) {
+               lowerCase = lowerCase.substring(2);
             }
 
-            if (method1404(var8)) {
-               var3.add(var8);
+            if (method1404(lowerCase)) {
+               coll.add(lowerCase);
             }
          }
 
-         var2 = new Script.Data(var1, List.copyOf(var3));
-         this.data = var2;
+         data = new Script.Data(input, List.copyOf(coll));
+         this.data = data;
       }
 
-      return var2.getItems();
+      return data.getItems();
    }
 
    public boolean method1406() {
@@ -207,20 +207,20 @@ public final class Script {
    }
 
    public List<String> method1408() {
-      ArrayList<String> var1 = new ArrayList<>();
+      ArrayList<String> strings = new ArrayList<>();
 
-      for (String var5 : pattern.split(this.text5)) {
-         String var6 = var5.strip().toLowerCase(Locale.ROOT);
-         if (var6.startsWith("*.")) {
-            var6 = var6.substring(2);
+      for (String str : pattern.split(this.text5)) {
+         String lowerCase = str.strip().toLowerCase(Locale.ROOT);
+         if (lowerCase.startsWith("*.")) {
+            lowerCase = lowerCase.substring(2);
          }
 
-         if (!var6.isEmpty() && !method1404(var6)) {
-            var1.add(var5.strip());
+         if (!lowerCase.isEmpty() && !method1404(lowerCase)) {
+            strings.add(str.strip());
          }
       }
 
-      return var1;
+      return strings;
    }
 
    public long[] method1409() {
@@ -242,7 +242,7 @@ public final class Script {
       if (this.scope == null) {
          return null;
       } else {
-         return this.scope.get("exports", this.scope) instanceof Scriptable var2 ? var2 : null;
+         return this.scope.get("exports", this.scope) instanceof Scriptable scriptable ? scriptable : null;
       }
    }
 
@@ -274,13 +274,13 @@ public final class Script {
       return this.items3;
    }
 
-   public <T extends AutoCloseable> T method1413(T var1) {
-      this.items2.add(var1);
-      return (T)var1;
+   public <T extends AutoCloseable> T method1413(T value) {
+      this.items2.add(value);
+      return (T)value;
    }
 
-   public void method1414(Script.Type var1, Function var2) {
-      this.method1416(var1, var2);
+   public void method1414(Script.Type key, Function function) {
+      this.method1416(key, function);
    }
 
    public Map<String, Setting> getItems6() {
@@ -303,13 +303,13 @@ public final class Script {
       }
    }
 
-   public void method1416(Script.Type var1, Function var2) {
-      this.items4.computeIfAbsent(var1, var0 -> new ArrayList<>()).add(var2);
+   public void method1416(Script.Type key, Function function) {
+      this.items4.computeIfAbsent(key, type -> new ArrayList<>()).add(function);
    }
 
-   public List<Function> method1417(Script.Type var1) {
-      var var2 = this.items4.get(var1);
-      return var2 == null ? List.of() : var2;
+   public List<Function> method1417(Script.Type type) {
+      var functions = this.items4.get(type);
+      return functions == null ? List.of() : functions;
    }
 
    private static final class Data {
@@ -341,9 +341,9 @@ public final class Script {
          return "Data[" + "text=" + this.text + ", " + "items=" + this.items + "]";
       }
 
-      private Data(String var1, List<String> var2) {
-         this.text = var1;
-         this.items = var2;
+      private Data(String text, List<String> items) {
+         this.text = text;
+         this.items = items;
       }
 
       public String source() {

@@ -16,64 +16,64 @@ public final class BakedQuadCache {
    private BakedQuadCache() {
    }
 
-   public static List<BakedQuad> method5533(List<BakedQuad> var0) {
-      int var1 = var0.size();
-      if (var1 < 8) {
-         return var0;
+   public static List<BakedQuad> method5533(List<BakedQuad> bakedQuads) {
+      int size = bakedQuads.size();
+      if (size < 8) {
+         return bakedQuads;
       } else {
-         BakedQuad var2 = (BakedQuad)var0.get(0);
-         BakedQuad var3 = (BakedQuad)var0.get(var1 - 1);
-         BakedQuadCache.Data var4 = items.get(var3);
-         if (var4 == null || var4.intValue != var1 || var4.bakedQuad != var2) {
-            var4 = new BakedQuadCache.Data(var2, var1, method5534(var0));
-            items.put(var3, var4);
+         BakedQuad bakedQuad = (BakedQuad)bakedQuads.get(0);
+         BakedQuad bakedQuad2 = (BakedQuad)bakedQuads.get(size - 1);
+         BakedQuadCache.Data data = items.get(bakedQuad2);
+         if (data == null || data.intValue != size || data.bakedQuad != bakedQuad) {
+            data = new BakedQuadCache.Data(bakedQuad, size, method5534(bakedQuads));
+            items.put(bakedQuad2, data);
          }
 
-         return var4.items == null ? var0 : var4.items;
+         return data.items == null ? bakedQuads : data.items;
       }
    }
 
-   private static List<BakedQuad> method5534(List<BakedQuad> var0) {
-      int var1 = 0;
-      int var2 = 0;
+   private static List<BakedQuad> method5534(List<BakedQuad> bakedQuads) {
+      int initialCapacity = 0;
+      int n = 0;
 
-      for (int var3 = var0.size(); var2 < var3; var2++) {
-         BakedQuad var4 = (BakedQuad)var0.get(var2);
-         if (var4.direction().getAxis() == Axis.Z) {
-            var1++;
-         } else if (!method5535(var4)) {
+      for (int i = bakedQuads.size(); n < i; n++) {
+         BakedQuad bakedQuad = (BakedQuad)bakedQuads.get(n);
+         if (bakedQuad.direction().getAxis() == Axis.Z) {
+            initialCapacity++;
+         } else if (!method5535(bakedQuad)) {
             return null;
          }
       }
 
-      if (var1 != 0 && var1 != var0.size()) {
-         List<BakedQuad> var6 = new ArrayList<>(var1);
-         int var7 = 0;
+      if (initialCapacity != 0 && initialCapacity != bakedQuads.size()) {
+         List<BakedQuad> coll = new ArrayList<>(initialCapacity);
+         int n2 = 0;
 
-         for (int var8 = var0.size(); var7 < var8; var7++) {
-            BakedQuad var5 = (BakedQuad)var0.get(var7);
-            if (var5.direction().getAxis() == Axis.Z) {
-               var6.add(var5);
+         for (int i = bakedQuads.size(); n2 < i; n2++) {
+            BakedQuad bakedQuad = (BakedQuad)bakedQuads.get(n2);
+            if (bakedQuad.direction().getAxis() == Axis.Z) {
+               coll.add(bakedQuad);
             }
          }
 
-         return List.copyOf(var6);
+         return List.copyOf(coll);
       } else {
          return null;
       }
    }
 
-   private static boolean method5535(BakedQuad var0) {
-      float var1 = Float.MAX_VALUE;
-      float var2 = -Float.MAX_VALUE;
+   private static boolean method5535(BakedQuad bakedQuad) {
+      float f = Float.MAX_VALUE;
+      float f2 = -Float.MAX_VALUE;
 
-      for (int var3 = 0; var3 < 4; var3++) {
-         Vector3fc var4 = var0.position(var3);
-         var1 = Math.min(var1, var4.z());
-         var2 = Math.max(var2, var4.z());
+      for (int i = 0; i < 4; i++) {
+         Vector3fc position = bakedQuad.position(i);
+         f = Math.min(f, position.z());
+         f2 = Math.max(f2, position.z());
       }
 
-      return var2 - var1 <= 0.0626F;
+      return f2 - f <= 0.0626F;
    }
 
    private static final class Data {
@@ -110,10 +110,10 @@ public final class BakedQuadCache {
          return "Data[" + "bakedQuad=" + this.bakedQuad + ", " + "intValue=" + this.intValue + ", " + "items=" + this.items + "]";
       }
 
-      private Data(BakedQuad var1, int var2, List<BakedQuad> var3) {
-         this.bakedQuad = var1;
-         this.intValue = var2;
-         this.items = var3;
+      private Data(BakedQuad bakedQuad, int intValue, List<BakedQuad> items) {
+         this.bakedQuad = bakedQuad;
+         this.intValue = intValue;
+         this.items = items;
       }
 
       public BakedQuad getBakedQuad() {

@@ -27,38 +27,38 @@ public final class SettingsBackup implements MinecraftAccess {
    }
 
    public static void apply() {
-      Settings var0 = BaritoneAPI.getSettings();
-      if (var0 != null) {
+      Settings settings = BaritoneAPI.getSettings();
+      if (settings != null) {
          if (booleanValue == null) {
-            booleanValue = (Boolean)var0.allowBreak.value;
-            booleanValue2 = (Boolean)var0.allowPlace.value;
-            booleanValue3 = (Boolean)var0.allowParkourPlace.value;
-            integer = (Integer)var0.maxFallHeightNoWater.value;
-            booleanValue4 = (Boolean)var0.remainWithExistingLookDirection.value;
-            doubleValue = (Double)var0.randomLooking.value;
-            doubleValue2 = (Double)var0.randomLooking113.value;
+            booleanValue = (Boolean)settings.allowBreak.value;
+            booleanValue2 = (Boolean)settings.allowPlace.value;
+            booleanValue3 = (Boolean)settings.allowParkourPlace.value;
+            integer = (Integer)settings.maxFallHeightNoWater.value;
+            booleanValue4 = (Boolean)settings.remainWithExistingLookDirection.value;
+            doubleValue = (Double)settings.randomLooking.value;
+            doubleValue2 = (Double)settings.randomLooking113.value;
          }
 
-         var0.allowBreak.value = Boolean.FALSE;
-         var0.allowPlace.value = Boolean.FALSE;
-         var0.allowParkourPlace.value = Boolean.FALSE;
-         var0.maxFallHeightNoWater.value = 6;
-         var0.remainWithExistingLookDirection.value = Boolean.FALSE;
-         var0.randomLooking.value = 0.6;
-         var0.randomLooking113.value = 0.0;
+         settings.allowBreak.value = Boolean.FALSE;
+         settings.allowPlace.value = Boolean.FALSE;
+         settings.allowParkourPlace.value = Boolean.FALSE;
+         settings.maxFallHeightNoWater.value = 6;
+         settings.remainWithExistingLookDirection.value = Boolean.FALSE;
+         settings.randomLooking.value = 0.6;
+         settings.randomLooking113.value = 0.0;
       }
    }
 
    public static void restore() {
-      Settings var0 = BaritoneAPI.getSettings();
-      if (var0 != null && booleanValue != null) {
-         var0.allowBreak.value = booleanValue;
-         var0.allowPlace.value = booleanValue2;
-         var0.allowParkourPlace.value = booleanValue3;
-         var0.maxFallHeightNoWater.value = integer;
-         var0.remainWithExistingLookDirection.value = booleanValue4;
-         var0.randomLooking.value = doubleValue;
-         var0.randomLooking113.value = doubleValue2;
+      Settings settings = BaritoneAPI.getSettings();
+      if (settings != null && booleanValue != null) {
+         settings.allowBreak.value = booleanValue;
+         settings.allowPlace.value = booleanValue2;
+         settings.allowParkourPlace.value = booleanValue3;
+         settings.maxFallHeightNoWater.value = integer;
+         settings.remainWithExistingLookDirection.value = booleanValue4;
+         settings.randomLooking.value = doubleValue;
+         settings.randomLooking113.value = doubleValue2;
       }
 
       booleanValue = null;
@@ -76,22 +76,22 @@ public final class SettingsBackup implements MinecraftAccess {
             if (flag) {
                flag = false;
 
-               for (Input var9 : inputs) {
-                  KeyMapping var10 = method2523(var9);
-                  if (var10 != null) {
-                     var10.setDown(false);
+               for (Input input : inputs) {
+                  KeyMapping keyMapping = method2523(input);
+                  if (keyMapping != null) {
+                     keyMapping.setDown(false);
                   }
                }
             }
          } else {
-            IInputOverrideHandler var0 = BaritoneAPI.getProvider().getPrimaryBaritone().getInputOverrideHandler();
+            IInputOverrideHandler inputOverrideHandler = BaritoneAPI.getProvider().getPrimaryBaritone().getInputOverrideHandler();
             flag = true;
 
-            for (Input var4 : inputs) {
-               if (var4 != Input.SPRINT || !mc.player.isInWater()) {
-                  KeyMapping var5 = method2523(var4);
-                  if (var5 != null) {
-                     var5.setDown(var0.isInputForcedDown(var4));
+            for (Input input : inputs) {
+               if (input != Input.SPRINT || !mc.player.isInWater()) {
+                  KeyMapping keyMapping = method2523(input);
+                  if (keyMapping != null) {
+                     keyMapping.setDown(inputOverrideHandler.isInputForcedDown(input));
                   }
                }
             }
@@ -99,8 +99,8 @@ public final class SettingsBackup implements MinecraftAccess {
       }
    }
 
-   private static KeyMapping method2523(Input var0) {
-      return switch (var0) {
+   private static KeyMapping method2523(Input input) {
+      return switch (input) {
          case MOVE_FORWARD -> mc.options.keyUp;
          case MOVE_BACK -> mc.options.keyDown;
          case MOVE_LEFT -> mc.options.keyLeft;
@@ -115,7 +115,7 @@ public final class SettingsBackup implements MinecraftAccess {
    static {
       EventManager.register(new Object() {
          @EventTarget
-         public void onUpdate(UpdateEvent var1) {
+         public void onUpdate(UpdateEvent event) {
             SettingsBackup.method2522();
          }
       });

@@ -10,32 +10,32 @@ import java.util.regex.Pattern;
 public class EnchantTranslations {
    public static final Map<String, String> items = new HashMap<>();
 
-   public static List<EnchantMatcher> method4710(String var0) {
-      ArrayList<EnchantMatcher> var1 = new ArrayList<>();
-      String var2 = var0.trim();
-      if (var2.startsWith("[") && var2.endsWith("]")) {
-         var2 = var2.substring(1, var2.length() - 1);
+   public static List<EnchantMatcher> method4710(String str) {
+      ArrayList<EnchantMatcher> enchantMatchers = new ArrayList<>();
+      String input = str.trim();
+      if (input.startsWith("[") && input.endsWith("]")) {
+         input = input.substring(1, input.length() - 1);
       }
 
-      Pattern var3 = Pattern.compile("(EnchantCustom|EnchantVanilla) \\[checked=([^,]+), level=(\\d+)]");
-      Matcher var4 = var3.matcher(var2);
+      Pattern compile = Pattern.compile("(EnchantCustom|EnchantVanilla) \\[checked=([^,]+), level=(\\d+)]");
+      Matcher matcher = compile.matcher(input);
 
-      while (var4.find()) {
-         String var5 = var4.group(1);
-         String var6 = var4.group(2);
-         int var7 = Integer.parseInt(var4.group(3));
-         String var8 = items.getOrDefault(var6, var6);
-         EnchantMatcher var9;
-         if (var5.equals("EnchantCustom")) {
-            var9 = new CustomEnchantMatcher(var8, var6, var7);
+      while (matcher.find()) {
+         String group = matcher.group(1);
+         String key = matcher.group(2);
+         int intOr = Integer.parseInt(matcher.group(3));
+         String stringOr = items.getOrDefault(key, key);
+         EnchantMatcher customEnchantMatcher;
+         if (group.equals("EnchantCustom")) {
+            customEnchantMatcher = new CustomEnchantMatcher(stringOr, key, intOr);
          } else {
-            var9 = new VanillaEnchantMatcher(var8, var6, var7);
+            customEnchantMatcher = new VanillaEnchantMatcher(stringOr, key, intOr);
          }
 
-         var1.add(var9);
+         enchantMatchers.add(customEnchantMatcher);
       }
 
-      return var1;
+      return enchantMatchers;
    }
 
    static {

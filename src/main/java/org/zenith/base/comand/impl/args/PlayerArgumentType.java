@@ -18,8 +18,8 @@ public class PlayerArgumentType implements ArgumentType<String>, MinecraftAccess
    private static final Collection<String> EXAMPLES = List.of("Steve", "Alex", "Bogdan");
    private final boolean displayedNames;
 
-   private PlayerArgumentType(boolean var1) {
-      this.displayedNames = var1;
+   private PlayerArgumentType(boolean displayedNames) {
+      this.displayedNames = displayedNames;
    }
 
    public static PlayerArgumentType create() {
@@ -30,18 +30,18 @@ public class PlayerArgumentType implements ArgumentType<String>, MinecraftAccess
       return new PlayerArgumentType(true);
    }
 
-   public String parse(StringReader var1) throws CommandSyntaxException {
-      return var1.readUnquotedString();
+   public String parse(StringReader stringReader) throws CommandSyntaxException {
+      return stringReader.readUnquotedString();
    }
 
-   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> var1, SuggestionsBuilder var2) {
-      var var3 = mc.getConnection().getOnlinePlayers().stream().map(var0 -> var0.getProfile().name());
+   public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+      var values = mc.getConnection().getOnlinePlayers().stream().map(onlinePlayer -> onlinePlayer.getProfile().name());
       if (this.displayedNames && StreamerModeModule.INSTANCE.method6289() && mc.player != null) {
-         String var4 = mc.player.getScoreboardName();
-         var3 = var3.filter(var1x -> !var1x.equals(var4)).map(StreamerModeModule.INSTANCE::method6291);
+         String scoreboardName = mc.player.getScoreboardName();
+         values = values.filter(var1x -> !var1x.equals(scoreboardName)).map(StreamerModeModule.INSTANCE::method6291);
       }
 
-      return SharedSuggestionProvider.suggest(var3, var2);
+      return SharedSuggestionProvider.suggest(values, builder);
    }
 
    public Collection<String> getExamples() {

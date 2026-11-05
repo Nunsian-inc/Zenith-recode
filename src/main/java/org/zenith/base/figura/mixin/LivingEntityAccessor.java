@@ -11,5 +11,5 @@ public interface LivingEntityAccessor {
    boolean figura$isJumping();
 
    @Invoker("updateWalkAnimation")
-   void figura$updateWalkAnimation(float var1);
+   void figura$updateWalkAnimation(float distance);
 }

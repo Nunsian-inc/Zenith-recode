@@ -45,13 +45,13 @@ public final class ElytraHelperModule extends Module {
    }
 
    @EventTarget
-   public void method7452(MoveInputEvent var1) {
+   public void method7452(MoveInputEvent event) {
       if (mc.player.isAlive() && mc.player.containerMenu instanceof InventoryMenu) {
          if (Zenith.getInstance().getTaskScheduler().method5116()
             && this.startSetting.isEnabled()
             && Objects.requireNonNull(mc.player).getItemBySlot(EquipmentSlot.CHEST).getItem().equals(Items.ELYTRA)) {
             if (mc.player.onGround()) {
-               var1.method3041(true);
+               event.method3041(true);
             } else if (!mc.player.isFallFlying()) {
                if (this.sprintSetting.isEnabled()
                   && mc.player.isSprintingPossible(true)
@@ -61,17 +61,17 @@ public final class ElytraHelperModule extends Module {
                   mc.player.setSprinting(true);
                }
 
-               var1.method3041(!mc.player.lastSentInput.jump());
+               event.method3041(!mc.player.lastSentInput.jump());
             } else if (mc.player.isFallFlying() && mc.player.horizontalCollision) {
-               var1.setPlayerInput(
+               event.setPlayerInput(
                   new Input(
                      false,
-                     var1.getPlayerInput().backward(),
-                     var1.getPlayerInput().left(),
-                     var1.getPlayerInput().right(),
-                     var1.getPlayerInput().jump(),
-                     var1.getPlayerInput().shift(),
-                     var1.getPlayerInput().sprint()
+                     event.getPlayerInput().backward(),
+                     event.getPlayerInput().left(),
+                     event.getPlayerInput().right(),
+                     event.getPlayerInput().jump(),
+                     event.getPlayerInput().shift(),
+                     event.getPlayerInput().sprint()
                   )
                );
             }
@@ -80,18 +80,18 @@ public final class ElytraHelperModule extends Module {
    }
 
    @EventTarget
-   public void method7453(KeyEvent var1) {
-      if (var1.isPress(this.elytraSetting.getKeyCode())) {
+   public void method7453(KeyEvent event) {
+      if (event.isPress(this.elytraSetting.getKeyCode())) {
          this.method7454();
-      } else if (var1.isPress(this.fireworkSetting.getKeyCode()) && mc.player.isFallFlying()) {
+      } else if (event.isPress(this.fireworkSetting.getKeyCode()) && mc.player.isFallFlying()) {
          InventoryUtils.useFireworkInFlight();
       }
    }
 
    public void method7454() {
-      Slot var1 = this.method7455();
-      if (var1 != null) {
-         InventoryUtils.method934(var1, 6, true, false);
+      Slot slot = this.method7455();
+      if (slot != null) {
+         InventoryUtils.method934(slot, 6, true, false);
       }
    }
 
@@ -106,9 +106,9 @@ public final class ElytraHelperModule extends Module {
                Items.GOLDEN_CHESTPLATE,
                Items.LEATHER_CHESTPLATE
             ),
-            Comparator.comparingInt(var0 -> var0.index)
+            Comparator.comparingInt(slot -> slot.index)
          )
-         : InventoryUtils.method912(mc.player.inventoryMenu, Items.ELYTRA, Comparator.comparingInt(var0 -> var0.index), var0 -> true);
+         : InventoryUtils.method912(mc.player.inventoryMenu, Items.ELYTRA, Comparator.comparingInt(slot -> slot.index), slot -> true);
    }
 
    public boolean method7456() {

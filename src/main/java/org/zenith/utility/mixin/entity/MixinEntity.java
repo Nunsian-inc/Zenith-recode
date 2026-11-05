@@ -31,10 +31,10 @@ public abstract class MixinEntity implements MinecraftAccess {
    public float yRotO;
 
    @Shadow
-   public abstract void setXRot(float var1);
+   public abstract void setXRot(float xRot);
 
    @Shadow
-   public abstract void setYRot(float var1);
+   public abstract void setYRot(float yRot);
 
    @Shadow
    public abstract float getYRot();
@@ -49,10 +49,10 @@ public abstract class MixinEntity implements MinecraftAccess {
       method = {"moveOrInterpolateTo(Lnet/minecraft/world/entity/PositionPath;FFZ)V"},
       at = {@At("HEAD")}
    )
-   private void zenith$trackServerPos(net.minecraft.world.entity.PositionPath var1, float var2, float var3, boolean var7, CallbackInfo var4) {
-      if (var1 != null && (Object)this instanceof Handler6 var5) {
-         Vec3 var6 = var1.endPosition();
-         var5.zenithDLC$trackServerPos(var6.x, var6.y, var6.z);
+   private void zenith$trackServerPos(net.minecraft.world.entity.PositionPath positionPath, float f, float f2, boolean flag, CallbackInfo callbackInfo) {
+      if (positionPath != null && (Object)this instanceof Handler6 handler6) {
+         Vec3 endPosition = positionPath.endPosition();
+         handler6.zenithDLC$trackServerPos(endPosition.x, endPosition.y, endPosition.z);
       }
    }
 
@@ -61,9 +61,9 @@ public abstract class MixinEntity implements MinecraftAccess {
       at = {@At("HEAD")},
       cancellable = true
    )
-   public void bypassSpeed(CallbackInfoReturnable<Boolean> var1) {
+   public void bypassSpeed(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
       if (AntiInvisibleModule.INSTANCE.isEnabled() && ((Object)this == mc.player || Zenith.getInstance().getFriends().method7627(this.getScoreboardName()))) {
-         var1.setReturnValue(false);
+         callbackInfoReturnable.setReturnValue(false);
       }
    }
 
@@ -74,19 +74,19 @@ public abstract class MixinEntity implements MinecraftAccess {
          target = "Lnet/minecraft/world/entity/Entity;getYRot()F"
       )
    )
-   public float movementCorrection(Entity var1) {
-      return var1 instanceof LocalPlayer && Zenith.getInstance().getRotationManager().getCurrentRotation() != null
+   public float movementCorrection(Entity entity) {
+      return entity instanceof LocalPlayer && Zenith.getInstance().getRotationManager().getCurrentRotation() != null
          ? Zenith.getInstance().getRotationManager().getCurrentRotation().getFloatValue()
-         : var1.getYRot();
+         : entity.getYRot();
    }
 
    @Inject(
       method = {"moveRelative(FLnet/minecraft/world/phys/Vec3;)V"},
       at = {@At("TAIL")}
    )
-   private void zenith$movePost(float var1, Vec3 var2, CallbackInfo var3) {
+   private void zenith$movePost(float speed, Vec3 vec3d, CallbackInfo callbackInfo) {
       if (mc.player != null && (Object)this == mc.player) {
-         EventManager.call(new MovementCorrectionEvent(var1, var2));
+         EventManager.call(new MovementCorrectionEvent(speed, vec3d));
       }
    }
 
@@ -95,17 +95,17 @@ public abstract class MixinEntity implements MinecraftAccess {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void zenith$shaderEspGlowing(CallbackInfoReturnable<Boolean> var1) {
-      Entity var2 = (Entity)(Object)this;
-      if (Util4.method1278(var2.getId())) {
-         var1.setReturnValue(true);
+   private void zenith$shaderEspGlowing(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+      Entity entity = (Entity)(Object)this;
+      if (Util4.method1278(entity.getId())) {
+         callbackInfoReturnable.setReturnValue(true);
       } else {
-         ShaderESPModule var3 = ShaderESPModule.INSTANCE;
-         if (var3 != null && var3.isEnabled() && var3.method4584(var2)) {
-            var1.setReturnValue(true);
+         ShaderESPModule shaderESPModule = ShaderESPModule.INSTANCE;
+         if (shaderESPModule != null && shaderESPModule.isEnabled() && shaderESPModule.method4584(entity)) {
+            callbackInfoReturnable.setReturnValue(true);
          } else {
-            if (PredictionsModule.INSTANCE.method2911(var2)) {
-               var1.setReturnValue(true);
+            if (PredictionsModule.INSTANCE.method2911(entity)) {
+               callbackInfoReturnable.setReturnValue(true);
             }
          }
       }

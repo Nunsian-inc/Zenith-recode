@@ -44,7 +44,7 @@ public final class NoSlowModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.entry2.isSelected() && mc.player != null && mc.level != null && !mc.player.isFallFlying() && mc.player.isUsingItem()) {
          this.intValue++;
       } else {
@@ -53,22 +53,22 @@ public final class NoSlowModule extends Module {
    }
 
    @EventTarget
-   public void method1474(NoSlowEvent var1) {
+   public void method1474(NoSlowEvent event) {
       if (this.entry.isSelected() && mc.player.getTicksUsingItem() % 2 == 0) {
-         var1.setCancelled(true);
+         event.setCancelled(true);
       }
 
       if (this.entry2.isSelected() && !mc.player.isFallFlying()) {
-         int var2 = CONST_intValues[this.intValue2 % CONST_intValues.length];
-         if (this.intValue >= var2) {
-            var1.setCancelled(true);
+         int n = CONST_intValues[this.intValue2 % CONST_intValues.length];
+         if (this.intValue >= n) {
+            event.setCancelled(true);
             this.intValue = 0;
             this.intValue2++;
          }
       }
 
       if (this.entry3.isSelected()) {
-         InteractionHand var3 = mc.player.getUsedItemHand();
+         InteractionHand usedItemHand = mc.player.getUsedItemHand();
          if (this.sprint.isEnabled()) {
             mc.player
                .setSprinting(
@@ -79,8 +79,8 @@ public final class NoSlowModule extends Module {
                );
          }
 
-         UseItemUtils.useItem(var3.equals(InteractionHand.MAIN_HAND) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
-         var1.setCancelled(true);
+         UseItemUtils.useItem(usedItemHand.equals(InteractionHand.MAIN_HAND) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+         event.setCancelled(true);
       }
    }
 

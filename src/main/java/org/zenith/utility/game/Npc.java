@@ -11,18 +11,18 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.Vec3;
 
 public class Npc extends RemotePlayer {
-   public Npc(ClientLevel var1, GameProfile var2) {
-      super(var1, var2);
+   public Npc(ClientLevel level, GameProfile gameProfile) {
+      super(level, gameProfile);
    }
 
    @Override
    public boolean skipAttackInteraction(Entity attacker) {
       this.animateHurt(this.method7023(attacker));
-      Minecraft var2 = Minecraft.getInstance();
-      if (var2.player != null) {
+      Minecraft minecraft = Minecraft.getInstance();
+      if (minecraft.player != null) {
          this.level()
             .playSound(
-               var2.player,
+               minecraft.player,
                this.getX(),
                this.getY(),
                this.getZ(),
@@ -36,13 +36,13 @@ public class Npc extends RemotePlayer {
       return false;
    }
 
-   private float method7023(Entity var1) {
-      if (var1 == null) {
+   private float method7023(Entity attacker) {
+      if (attacker == null) {
          return 0.0F;
       } else {
-         double var2 = var1.getX() - this.getX();
-         double var4 = var1.getZ() - this.getZ();
-         return (float)(Mth.atan2(var4, var2) * 180.0 / Math.PI - this.getYRot());
+         double x = attacker.getX() - this.getX();
+         double y = attacker.getZ() - this.getZ();
+         return (float)(Mth.atan2(y, x) * 180.0 / Math.PI - this.getYRot());
       }
    }
 

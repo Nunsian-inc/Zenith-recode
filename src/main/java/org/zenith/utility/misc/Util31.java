@@ -7,8 +7,8 @@ public final class Util31 {
    public static final float CONST_floatValue2 = 16.0F;
    public static final float CONST_floatValue3 = 1.35F;
 
-   public static float[] method7850(CosmeticType.Type var0) {
-      return switch (var0) {
+   public static float[] method7850(CosmeticType.Type type) {
+      return switch (type) {
          case LEFT_ARM -> new float[]{0.3125F, 0.125F};
          case RIGHT_ARM -> new float[]{-0.3125F, 0.125F};
          case LEFT_LEG -> new float[]{0.11875F, 0.75F};
@@ -17,33 +17,33 @@ public final class Util31 {
       };
    }
 
-   private static boolean method7851(CosmeticType var0) {
-      return var0 != CosmeticType.PET && var0 != CosmeticType.FLYING_PET ? var0.getType() != CosmeticType.Type.NONE : false;
+   private static boolean method7851(CosmeticType cosmeticType) {
+      return cosmeticType != CosmeticType.PET && cosmeticType != CosmeticType.FLYING_PET ? cosmeticType.getType() != CosmeticType.Type.NONE : false;
    }
 
    private Util31() {
    }
 
-   public static Util31.Data method7852(CosmeticPartInfo.Data var0, CosmeticPartInfo.Type var1, CosmeticType var2) {
-      if (var0 == null) {
+   public static Util31.Data method7852(CosmeticPartInfo.Data data, CosmeticPartInfo.Type type, CosmeticType cosmeticType) {
+      if (data == null) {
          return new Util31.Data(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, false);
       } else {
-         boolean var3 = var1 == CosmeticPartInfo.Type.BEDROCK;
-         float var4 = var3 ? 16.0F : 1.0F;
-         float var5 = var3 ? -1.0F : 1.0F;
-         float var6 = var3 ? Math.abs(var0.getFloatValue8()) : var0.getFloatValue8();
-         boolean var7 = method7851(var2);
+         boolean flag = type == CosmeticPartInfo.Type.BEDROCK;
+         float f = flag ? 16.0F : 1.0F;
+         float f2 = flag ? -1.0F : 1.0F;
+         float f3 = flag ? Math.abs(data.getFloatValue8()) : data.getFloatValue8();
+         boolean flag2 = method7851(cosmeticType);
          return new Util31.Data(
-            var0.getFloatValue(),
-            var0.getFloatValue2(),
-            var0.getFloatValue3(),
-            var0.getFloatValue4(),
-            var0.getFloatValue5(),
-            var0.getFloatValue6(),
-            var0.getFloatValue7() * var4,
-            var6 * var4 * var5,
-            var0.getFloatValue9() * var4 * var5,
-            var7
+            data.getFloatValue(),
+            data.getFloatValue2(),
+            data.getFloatValue3(),
+            data.getFloatValue4(),
+            data.getFloatValue5(),
+            data.getFloatValue6(),
+            data.getFloatValue7() * f,
+            f3 * f * f2,
+            data.getFloatValue9() * f * f2,
+            flag2
          );
       }
    }
@@ -117,17 +117,17 @@ public final class Util31 {
          return "Data[" + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "floatValue4=" + this.floatValue4 + ", " + "floatValue5=" + this.floatValue5 + ", " + "floatValue6=" + this.floatValue6 + ", " + "floatValue7=" + this.floatValue7 + ", " + "floatValue8=" + this.floatValue8 + ", " + "floatValue9=" + this.floatValue9 + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data(float var1, float var2, float var3, float var4, float var5, float var6, float var7, float var8, float var9, boolean var10) {
-         this.floatValue = var1;
-         this.floatValue2 = var2;
-         this.floatValue3 = var3;
-         this.floatValue4 = var4;
-         this.floatValue5 = var5;
-         this.floatValue6 = var6;
-         this.floatValue7 = var7;
-         this.floatValue8 = var8;
-         this.floatValue9 = var9;
-         this.flag = var10;
+      public Data(float floatValue, float f, float f2, float f3, float f4, float f5, float f6, float f7, float f8, boolean flag) {
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.floatValue4 = f3;
+         this.floatValue5 = f4;
+         this.floatValue6 = f5;
+         this.floatValue7 = f6;
+         this.floatValue8 = f7;
+         this.floatValue9 = f8;
+         this.flag = flag;
       }
 
       public boolean method7853() {

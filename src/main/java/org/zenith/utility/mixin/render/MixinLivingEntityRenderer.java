@@ -38,11 +38,11 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
          target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;solveBodyRot(Lnet/minecraft/world/entity/LivingEntity;FF)F"
       )}
    )
-   public float changeYaw(float var1, LivingEntity var2) {
-      RotationManager var3 = Zenith.getInstance().getRotationManager();
-      return !var2.equals(mc.player) || var3.method7845() || SpeedModule.INSTANCE.isEnabled() && SpeedModule.INSTANCE.method6606()
-         ? var1
-         : Mth.rotLerp(GlowUtil.getTickDelta(), var3.getRotation().getFloatValue(), var3.getCurrentRotation().getFloatValue());
+   public float changeYaw(float f, LivingEntity livingEntity) {
+      RotationManager rotationManager = Zenith.getInstance().getRotationManager();
+      return !livingEntity.equals(mc.player) || rotationManager.method7845() || SpeedModule.INSTANCE.isEnabled() && SpeedModule.INSTANCE.method6606()
+         ? f
+         : Mth.rotLerp(GlowUtil.getTickDelta(), rotationManager.getRotation().getFloatValue(), rotationManager.getCurrentRotation().getFloatValue());
    }
 
    @ModifyExpressionValue(
@@ -52,11 +52,11 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
          target = "Lnet/minecraft/util/Mth;rotLerp(FFF)F"
       )}
    )
-   public float changeHeadYaw(float var1, LivingEntity var2) {
-      RotationManager var3 = Zenith.getInstance().getRotationManager();
-      return !var2.equals(mc.player) || var3.method7845() || SpeedModule.INSTANCE.isEnabled() && SpeedModule.INSTANCE.method6606()
-         ? var1
-         : Mth.rotLerp(GlowUtil.getTickDelta(), var3.getRotation().getFloatValue(), var3.getCurrentRotation().getFloatValue());
+   public float changeHeadYaw(float f, LivingEntity livingEntity) {
+      RotationManager rotationManager = Zenith.getInstance().getRotationManager();
+      return !livingEntity.equals(mc.player) || rotationManager.method7845() || SpeedModule.INSTANCE.isEnabled() && SpeedModule.INSTANCE.method6606()
+         ? f
+         : Mth.rotLerp(GlowUtil.getTickDelta(), rotationManager.getRotation().getFloatValue(), rotationManager.getCurrentRotation().getFloatValue());
    }
 
    @ModifyExpressionValue(
@@ -66,19 +66,19 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
          target = "Lnet/minecraft/world/entity/LivingEntity;getXRot(F)F"
       )}
    )
-   public float changePitch(float var1, LivingEntity var2) {
-      RotationManager var3 = Zenith.getInstance().getRotationManager();
-      return !var2.equals(mc.player) || var3.method7845() || SpeedModule.INSTANCE.isEnabled() && SpeedModule.INSTANCE.method6606()
-         ? var1
-         : Mth.rotLerp(GlowUtil.getTickDelta(), var3.getRotation().getFloatValue2(), var3.getCurrentRotation().getFloatValue2());
+   public float changePitch(float f, LivingEntity livingEntity) {
+      RotationManager rotationManager = Zenith.getInstance().getRotationManager();
+      return !livingEntity.equals(mc.player) || rotationManager.method7845() || SpeedModule.INSTANCE.isEnabled() && SpeedModule.INSTANCE.method6606()
+         ? f
+         : Mth.rotLerp(GlowUtil.getTickDelta(), rotationManager.getRotation().getFloatValue2(), rotationManager.getCurrentRotation().getFloatValue2());
    }
 
    @Shadow
    @Nullable
-   public abstract RenderType getRenderType(LivingEntityRenderState var1, boolean var2, boolean var3, boolean var4);
+   public abstract RenderType getRenderType(LivingEntityRenderState entityRenderState, boolean flag, boolean flag2, boolean flag3);
 
    @Shadow
-   public abstract Identifier getTextureLocation(S var1);
+   public abstract Identifier getTextureLocation(S value);
 
    @Redirect(
       method = {"submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V"},
@@ -87,28 +87,28 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
          target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;getRenderType(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;ZZZ)Lnet/minecraft/client/renderer/rendertype/RenderType;"
       )
    )
-   private RenderType renderHook(LivingEntityRenderer var1, LivingEntityRenderState var2, boolean var3, boolean var4, boolean var5) {
-      ChamsModule var6 = ChamsModule.INSTANCE;
-      if (var6.method5600(var2)) {
-         var6.method5599();
-         if (var6.method5602()) {
-            RenderType var8 = var6.method5601(this.getTextureLocation((S)var2));
-            if (var8 != null) {
-               return var8;
+   private RenderType renderHook(LivingEntityRenderer livingEntityRenderer, LivingEntityRenderState entityRenderState, boolean flag, boolean flag2, boolean flag3) {
+      ChamsModule chamsModule = ChamsModule.INSTANCE;
+      if (chamsModule.method5600(entityRenderState)) {
+         chamsModule.method5599();
+         if (chamsModule.method5602()) {
+            RenderType renderType = chamsModule.method5601(this.getTextureLocation((S)entityRenderState));
+            if (renderType != null) {
+               return renderType;
             }
          }
 
-         return this.getRenderType(var2, var3, true, var5);
+         return this.getRenderType(entityRenderState, flag, true, flag3);
       } else {
-         if (!var4 && !var3 && var2.isInvisibleToPlayer && var2.boundingBoxWidth == 0.6F && EventManager.hasListeners(LivingRenderColorEvent.class)) {
-            LivingRenderColorEvent var7 = new LivingRenderColorEvent(-1);
-            EventManager.call(var7);
-            if (var7.isCancelled()) {
-               var4 = true;
+         if (!flag2 && !flag && entityRenderState.isInvisibleToPlayer && entityRenderState.boundingBoxWidth == 0.6F && EventManager.hasListeners(LivingRenderColorEvent.class)) {
+            LivingRenderColorEvent event = new LivingRenderColorEvent(-1);
+            EventManager.call(event);
+            if (event.isCancelled()) {
+               flag2 = true;
             }
          }
 
-         return this.getRenderType(var2, var3, var4, var5);
+         return this.getRenderType(entityRenderState, flag, flag2, flag3);
       }
    }
 
@@ -120,28 +120,28 @@ public abstract class MixinLivingEntityRenderer<T extends LivingEntity, S extend
       )
    )
    private void renderModelHook(
-      SubmitNodeCollector var1,
-      Model var2,
-      Object var3,
-      PoseStack var4,
-      RenderType var5,
-      int var6,
-      int var7,
-      int var8,
-      UvMapping var9,
-      int var10,
-      @Local(ordinal = 0,argsOnly = true) LivingEntityRenderState var12
+      SubmitNodeCollector submitNodeCollector,
+      Model model,
+      Object state,
+      PoseStack poseStack,
+      RenderType renderType,
+      int lightCoords,
+      int overlayCoords,
+      int color,
+      UvMapping uvMapping,
+      int outlineColor,
+      @Local(ordinal = 0,argsOnly = true) LivingEntityRenderState entityRenderState
    ) {
-      var7 = LivingEntityRendererAccessor.overrideOverlay.orElse(var7);
-      ChamsModule var13 = ChamsModule.INSTANCE;
-      if (var13.method5600(var12)) {
-         var8 = var13.method5602() ? var13.method5603(var8) : var13.method5604(var8);
-      } else if (var12.isInvisibleToPlayer && EventManager.hasListeners(LivingRenderColorEvent.class)) {
-         LivingRenderColorEvent var14 = new LivingRenderColorEvent(var8);
-         EventManager.call(var14);
-         var8 = var14.getColor();
+      overlayCoords = LivingEntityRendererAccessor.overrideOverlay.orElse(overlayCoords);
+      ChamsModule chamsModule = ChamsModule.INSTANCE;
+      if (chamsModule.method5600(entityRenderState)) {
+         color = chamsModule.method5602() ? chamsModule.method5603(color) : chamsModule.method5604(color);
+      } else if (entityRenderState.isInvisibleToPlayer && EventManager.hasListeners(LivingRenderColorEvent.class)) {
+         LivingRenderColorEvent event = new LivingRenderColorEvent(color);
+         EventManager.call(event);
+         color = event.getColor();
       }
 
-      var1.submitModel(var2, var3, var4, var5, var6, var7, var8, var9, var10);
+      submitNodeCollector.submitModel(model, state, poseStack, renderType, lightCoords, overlayCoords, color, uvMapping, outlineColor);
    }
 }

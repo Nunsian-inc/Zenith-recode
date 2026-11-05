@@ -146,15 +146,15 @@ public final class LuaTypeManager {
             try {
                Object result = method.invoke(caller, actual);
                return result instanceof Varargs varargs ? varargs : LuaTypeManager.this.javaToLua(result);
-            } catch (InvocationTargetException var8) {
-               Throwable cause = var8.getCause();
+            } catch (InvocationTargetException e) {
+               Throwable cause = e.getCause();
                if (cause instanceof LuaError luaError) {
                   throw luaError;
                } else {
-                  throw new LuaError(cause == null ? var8 : cause);
+                  throw new LuaError(cause == null ? e : cause);
                }
-            } catch (ReflectiveOperationException var9) {
-               throw new LuaError(var9);
+            } catch (ReflectiveOperationException e) {
+               throw new LuaError(e);
             }
          }
 

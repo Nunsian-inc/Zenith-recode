@@ -85,19 +85,19 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
          this.step().enter();
       } else {
          OnboardingUtil.complete();
-         boolean var1 = false;
+         boolean flag = false;
 
-         for (OnboardingScreen.Step var3 : this.steps) {
-            if (var3 instanceof OnboardingScreen.ServerStep var4 && var4.picked() != null) {
-               var1 = true;
+         for (OnboardingScreen.Step step : this.steps) {
+            if (step instanceof OnboardingScreen.ServerStep serverStep && serverStep.picked() != null) {
+               flag = true;
                break;
             }
          }
 
-         MainMenuScreen var5 = Zenith.getInstance().getMainMenuScreen();
-         mc.gui.setScreen(var5);
-         if (var1) {
-            var5.select(2);
+         MainMenuScreen mainMenuScreen = Zenith.getInstance().getMainMenuScreen();
+         mc.gui.setScreen(mainMenuScreen);
+         if (flag) {
+            mainMenuScreen.select(2);
          }
       }
    }
@@ -106,8 +106,8 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
    public void init() {
       Zenith.getInstance().getMenuParticleRenderer().init();
       if (!this.prepared) {
-         for (OnboardingScreen.Step var2 : this.steps) {
-            var2.prepare();
+         for (OnboardingScreen.Step step : this.steps) {
+            step.prepare();
          }
 
          this.prepared = true;
@@ -121,71 +121,71 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
 
    @Override
    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-      MenuDrawContext var5 = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
-      Window var6 = mc.getWindow();
-      float var7 = var6.getGuiScaledWidth();
-      float var8 = var6.getGuiScaledHeight();
-      var5.drawTexture(Zenith.method1501("menu/background.png"), 0.0F, 0.0F, var7, var8, ZenithColor.INSTANCE);
-      Zenith.getInstance().getMenuParticleRenderer().renderParticles(var5);
+      MenuDrawContext graphics = MenuDrawContext.method8080(context, mouseX, mouseY, deltaTicks);
+      Window window = mc.getWindow();
+      float guiScaledWidth = window.getGuiScaledWidth();
+      float guiScaledHeight = window.getGuiScaledHeight();
+      graphics.drawTexture(Zenith.method1501("menu/background.png"), 0.0F, 0.0F, guiScaledWidth, guiScaledHeight, ZenithColor.INSTANCE);
+      Zenith.getInstance().getMenuParticleRenderer().renderParticles(graphics);
       this.openTransition.method2808(1.0F);
       this.stepTransition.method2808(1.0F);
-      OnboardingScreen.Step var9 = this.step();
-      float var10 = var9.bodyHeight();
-      float var11 = NUMBER_HEIGHT + GUTTER + TITLE_BLOCK + GUTTER + var10 + GUTTER + MenuButton.HEIGHT + GUTTER + STEPS_HEIGHT;
-      float var12 = MenuTheme.snap(Math.max(MenuTheme.px(12.0F), (var8 - var11) / 2.0F));
-      float var13 = MenuTheme.snap(var7 / 2.0F);
-      float var14 = Math.min(DESCRIPTION_WIDTH, var7 - MenuTheme.px(64.0F));
-      float var15 = (1.0F - this.openTransition.getValue()) * MenuTheme.px(40.0F);
-      var5.pose().pushMatrix();
-      var5.pose().translate(0.0F, var15);
-      this.drawNumber(var5, var13, var12);
-      float var16 = (1.0F - this.stepTransition.getValue()) * MenuTheme.px(24.0F);
-      var5.pose().pushMatrix();
-      var5.pose().translate(0.0F, var16);
-      float var17 = var12 + NUMBER_HEIGHT + GUTTER;
-      this.drawTitle(var5, var9, var13, var17, var14);
-      float var18 = var17 + TITLE_BLOCK + GUTTER;
-      BoundsData var19 = new BoundsData(var13 - var14 / 2.0F, var18, var14, var10);
-      var9.layout(var19);
-      var9.render(var5, mouseX, mouseY, var19);
-      this.primaryButton.setBounds(var13 - BUTTON_WIDTH / 2.0F, var18 + var10 + GUTTER + var15 + var16, BUTTON_WIDTH, MenuButton.HEIGHT);
-      this.primaryButton.setEnabled(var9.canAdvance());
-      var5.pose().pushMatrix();
-      var5.pose().translate(0.0F, -(var15 + var16));
-      this.primaryButton.render(var5, mouseX, mouseY);
-      var5.pose().popMatrix();
-      var5.pose().popMatrix();
-      this.drawSteps(var5, var13, var18 + var10 + GUTTER + MenuButton.HEIGHT + GUTTER);
-      var5.pose().popMatrix();
+      OnboardingScreen.Step step = this.step();
+      float bodyHeight = step.bodyHeight();
+      float f = NUMBER_HEIGHT + GUTTER + TITLE_BLOCK + GUTTER + bodyHeight + GUTTER + MenuButton.HEIGHT + GUTTER + STEPS_HEIGHT;
+      float snap = MenuTheme.snap(Math.max(MenuTheme.px(12.0F), (guiScaledHeight - f) / 2.0F));
+      float snap2 = MenuTheme.snap(guiScaledWidth / 2.0F);
+      float width = Math.min(DESCRIPTION_WIDTH, guiScaledWidth - MenuTheme.px(64.0F));
+      float y = (1.0F - this.openTransition.getValue()) * MenuTheme.px(40.0F);
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(0.0F, y);
+      this.drawNumber(graphics, snap2, snap);
+      float y2 = (1.0F - this.stepTransition.getValue()) * MenuTheme.px(24.0F);
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(0.0F, y2);
+      float f2 = snap + NUMBER_HEIGHT + GUTTER;
+      this.drawTitle(graphics, step, snap2, f2, width);
+      float y3 = f2 + TITLE_BLOCK + GUTTER;
+      BoundsData boundsData = new BoundsData(snap2 - width / 2.0F, y3, width, bodyHeight);
+      step.layout(boundsData);
+      step.render(graphics, mouseX, mouseY, boundsData);
+      this.primaryButton.setBounds(snap2 - BUTTON_WIDTH / 2.0F, y3 + bodyHeight + GUTTER + y + y2, BUTTON_WIDTH, MenuButton.HEIGHT);
+      this.primaryButton.setEnabled(step.canAdvance());
+      graphics.pose().pushMatrix();
+      graphics.pose().translate(0.0F, -(y + y2));
+      this.primaryButton.render(graphics, mouseX, mouseY);
+      graphics.pose().popMatrix();
+      graphics.pose().popMatrix();
+      this.drawSteps(graphics, snap2, y3 + bodyHeight + GUTTER + MenuButton.HEIGHT + GUTTER);
+      graphics.pose().popMatrix();
    }
 
-   private void drawNumber(MenuDrawContext var1, float var2, float var3) {
-      Font var4 = MenuTheme.semibold(32.0F);
-      String var5 = String.valueOf(this.index + 1);
-      var1.drawText(var4, var5, var2 - var4.width(var5) / 2.0F, var3 + (NUMBER_HEIGHT - var4.height()) / 2.0F, MenuTheme.text().method7294(0.16F));
+   private void drawNumber(MenuDrawContext graphics, float f, float snap) {
+      Font semibold = MenuTheme.semibold(32.0F);
+      String text = String.valueOf(this.index + 1);
+      graphics.drawText(semibold, text, f - semibold.width(text) / 2.0F, snap + (NUMBER_HEIGHT - semibold.height()) / 2.0F, MenuTheme.text().method7294(0.16F));
    }
 
-   private void drawTitle(MenuDrawContext var1, OnboardingScreen.Step var2, float var3, float var4, float var5) {
-      Font var6 = MenuTheme.semibold(16.0F);
-      var2.drawTitle(var1, var6, var3, var4);
-      Font var7 = MenuTheme.regular(12.0F);
-      float var8 = var4 + MenuTheme.px(28.0F);
+   private void drawTitle(MenuDrawContext graphics, OnboardingScreen.Step step, float f, float f2, float width) {
+      Font semibold = MenuTheme.semibold(16.0F);
+      step.drawTitle(graphics, semibold, f, f2);
+      Font regular = MenuTheme.regular(12.0F);
+      float centeredTextY = f2 + MenuTheme.px(28.0F);
 
-      for (String var10 : MenuTheme.wrap(var7, var2.description(), var5)) {
-         var1.drawText(var7, var10, var3 - var7.width(var10) / 2.0F, var8, MenuTheme.textSecondary());
-         var8 += MenuTheme.px(16.0F);
+      for (String text : MenuTheme.wrap(regular, step.description(), width)) {
+         graphics.drawText(regular, text, f - regular.width(text) / 2.0F, centeredTextY, MenuTheme.textSecondary());
+         centeredTextY += MenuTheme.px(16.0F);
       }
    }
 
-   private void drawSteps(MenuDrawContext var1, float var2, float var3) {
-      float var4 = this.steps.size() * STEP_BAR_WIDTH + (this.steps.size() - 1) * STEP_BAR_GAP;
-      float var5 = var2 - var4 / 2.0F;
-      float var6 = var3 + (STEPS_HEIGHT - STEP_BAR_HEIGHT) / 2.0F;
-      ProxyDotRadiusData var7 = ProxyDotRadiusData.method8069(STEP_BAR_HEIGHT / 2.0F);
+   private void drawSteps(MenuDrawContext graphics, float f, float f2) {
+      float f3 = this.steps.size() * STEP_BAR_WIDTH + (this.steps.size() - 1) * STEP_BAR_GAP;
+      float floatValue = f - f3 / 2.0F;
+      float y = f2 + (STEPS_HEIGHT - STEP_BAR_HEIGHT) / 2.0F;
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(STEP_BAR_HEIGHT / 2.0F);
 
-      for (int var8 = 0; var8 < this.steps.size(); var8++) {
-         var1.drawRoundedRect(var5, var6, STEP_BAR_WIDTH, STEP_BAR_HEIGHT, var7, var8 <= this.index ? MenuTheme.accent() : MenuTheme.track());
-         var5 += STEP_BAR_WIDTH + STEP_BAR_GAP;
+      for (int i = 0; i < this.steps.size(); i++) {
+         graphics.drawRoundedRect(floatValue, y, STEP_BAR_WIDTH, STEP_BAR_HEIGHT, headerRadius, i <= this.index ? MenuTheme.accent() : MenuTheme.track());
+         floatValue += STEP_BAR_WIDTH + STEP_BAR_GAP;
       }
    }
 
@@ -194,11 +194,11 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       return this.mouseClicked(click.x(), click.y(), org.zenith.utility.misc.KeyCompat.mouseToGlfw(click.button()));
    }
 
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      if (this.primaryButton.mouseClicked(var1, var3, var5)) {
+   public boolean mouseClicked(double x, double y, int mouseToGlfw) {
+      if (this.primaryButton.mouseClicked(x, y, mouseToGlfw)) {
          return true;
       } else {
-         return this.step().mouseClicked(var1, var3, var5) ? true : super.mouseClicked(new MouseButtonEvent(var1, var3, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(var5), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);
+         return this.step().mouseClicked(x, y, mouseToGlfw) ? true : super.mouseClicked(new MouseButtonEvent(x, y, new MouseButtonInfo(org.zenith.utility.misc.KeyCompat.mouseToSdl(mouseToGlfw), org.zenith.utility.misc.KeyCompat.modsToSdl(0))), false);
       }
    }
 
@@ -212,21 +212,21 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       return this.keyPressed(org.zenith.utility.misc.KeyCompat.toGlfw(input.key()), input.keycode(), org.zenith.utility.misc.KeyCompat.modsToGlfw(input.modifiers()));
    }
 
-   public boolean keyPressed(int var1, int var2, int var3) {
-      if (this.step().keyPressed(var1)) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
+      if (this.step().keyPressed(keyCode)) {
          return true;
-      } else if (var1 == 257 && this.step().canAdvance()) {
+      } else if (keyCode == 257 && this.step().canAdvance()) {
          this.advance();
          return true;
       } else {
-         return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(var1), var2, org.zenith.utility.misc.KeyCompat.modsToSdl(var3)));
+         return super.keyPressed(new KeyEvent(org.zenith.utility.misc.KeyCompat.toSdl(keyCode), keycode, org.zenith.utility.misc.KeyCompat.modsToSdl(modifiers)));
       }
    }
 
    @Override
    public void removed() {
-      for (OnboardingScreen.Step var2 : this.steps) {
-         var2.close();
+      for (OnboardingScreen.Step step : this.steps) {
+         step.close();
       }
 
       super.removed();
@@ -254,14 +254,14 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
          this.since = Util.getMillis();
       }
 
-      private float of(int var1) {
-         float var2 = (float)(Util.getMillis() - this.since) / 1000.0F - var1 * 0.05F;
-         float var3 = Math.min(1.0F, Math.max(0.0F, var2 / 0.3F));
-         return var3 * var3 * (3.0F - 2.0F * var3);
+      private float of(int n) {
+         float f = (float)(Util.getMillis() - this.since) / 1000.0F - n * 0.05F;
+         float f2 = Math.min(1.0F, Math.max(0.0F, f / 0.3F));
+         return f2 * f2 * (3.0F - 2.0F * f2);
       }
 
-      private float lift(int var1) {
-         return (1.0F - this.of(var1)) * MenuTheme.px(16.0F);
+      private float lift(int n) {
+         return (1.0F - this.of(n)) * MenuTheme.px(16.0F);
       }
    }
 
@@ -285,23 +285,23 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       public void prepare() {
          this.modules.clear();
 
-         for (String var2 : WANTED) {
-            Module var3 = Zenith.getInstance().getModuleManager().method2484(var2);
-            if (var3 != null) {
-               this.modules.add(var3);
+         for (String string : WANTED) {
+            Module moduleValue = Zenith.getInstance().getModuleManager().method2484(string);
+            if (moduleValue != null) {
+               this.modules.add(moduleValue);
             }
          }
 
          if (this.modules.isEmpty()) {
-            var var4 = Zenith.getInstance().getModuleManager().getItems();
-            this.modules.addAll(var4.subList(0, Math.min(5, var4.size())));
+            var items = Zenith.getInstance().getModuleManager().getItems();
+            this.modules.addAll(items.subList(0, Math.min(5, items.size())));
          }
       }
 
       @Override
-      public void drawTitle(MenuDrawContext var1, Font var2, float var3, float var4) {
-         String var5 = "Set your primary hotkeys.";
-         var1.drawText(var2, var5, var3 - var2.width(var5) / 2.0F, var4, MenuTheme.text());
+      public void drawTitle(MenuDrawContext menuDrawContext, Font font, float f, float centeredTextY) {
+         String text = "Set your primary hotkeys.";
+         menuDrawContext.drawText(font, text, f - font.width(text) / 2.0F, centeredTextY, MenuTheme.text());
       }
 
       @Override
@@ -325,70 +325,70 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
+      public void render(MenuDrawContext menuDrawContext, float f, float f2, BoundsData boundsData) {
          this.bounds = new BoundsData[this.modules.size()];
-         float var5 = this.modules.size() * ITEM_WIDTH + Math.max(0, this.modules.size() - 1) * ITEM_GAP;
-         float var6 = var4.getFloatValue() + (var4.width() - var5) / 2.0F;
+         float f3 = this.modules.size() * ITEM_WIDTH + Math.max(0, this.modules.size() - 1) * ITEM_GAP;
+         float floatValue = boundsData.getFloatValue() + (boundsData.width() - f3) / 2.0F;
 
-         for (int var7 = 0; var7 < this.modules.size(); var7++) {
-            this.bounds[var7] = new BoundsData(var6, var4.getFloatValue2(), ITEM_WIDTH, var4.height());
-            this.drawModule(var1, this.modules.get(var7), var7, var6, var4.getFloatValue2() + this.appear.lift(var7), this.appear.of(var7));
-            var6 += ITEM_WIDTH + ITEM_GAP;
+         for (int i = 0; i < this.modules.size(); i++) {
+            this.bounds[i] = new BoundsData(floatValue, boundsData.getFloatValue2(), ITEM_WIDTH, boundsData.height());
+            this.drawModule(menuDrawContext, this.modules.get(i), i, floatValue, boundsData.getFloatValue2() + this.appear.lift(i), this.appear.of(i));
+            floatValue += ITEM_WIDTH + ITEM_GAP;
          }
       }
 
-      private void drawModule(MenuDrawContext var1, Module var2, int var3, float var4, float var5, float var6) {
-         boolean var7 = var2.getKeyCode() > 0;
-         boolean var8 = this.binding == var3;
-         float var9 = MenuTheme.snap(var4 + (ITEM_WIDTH - KEY_BOX) / 2.0F);
-         ProxyDotRadiusData var10 = ProxyDotRadiusData.method8069(KEY_RADIUS);
-         if (var7 && !var8) {
-            var1.drawRoundedRect(var9, var5, KEY_BOX, KEY_BOX, var10, MenuTheme.accent().method7294(var6));
+      private void drawModule(MenuDrawContext menuDrawContext, Module moduleValue, int n, float floatValue, float y, float previewAlpha) {
+         boolean flag = moduleValue.getKeyCode() > 0;
+         boolean flag2 = this.binding == n;
+         float snap = MenuTheme.snap(floatValue + (ITEM_WIDTH - KEY_BOX) / 2.0F);
+         ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(KEY_RADIUS);
+         if (flag && !flag2) {
+            menuDrawContext.drawRoundedRect(snap, y, KEY_BOX, KEY_BOX, headerRadius, MenuTheme.accent().method7294(previewAlpha));
          } else {
-            var1.drawRoundedRect(var9, var5, KEY_BOX, KEY_BOX, var10, MenuTheme.surface().method7294(var6));
-            var1.drawRoundedBorder(var9, var5, KEY_BOX, KEY_BOX, -0.1F, var10, (var8 ? MenuTheme.accent() : MenuTheme.border()).method7294(var6));
+            menuDrawContext.drawRoundedRect(snap, y, KEY_BOX, KEY_BOX, headerRadius, MenuTheme.surface().method7294(previewAlpha));
+            menuDrawContext.drawRoundedBorder(snap, y, KEY_BOX, KEY_BOX, -0.1F, headerRadius, (flag2 ? MenuTheme.accent() : MenuTheme.border()).method7294(previewAlpha));
          }
 
-         Font var11 = MenuTheme.semibold(16.0F);
-         String var12 = var8 ? "..." : keyName(var2.getKeyCode());
-         var1.drawText(
-            var11,
-            var12,
-            var9 + (KEY_BOX - var11.width(var12)) / 2.0F,
-            var5 + (KEY_BOX - var11.height()) / 2.0F,
-            (var7 && !var8 ? MenuTheme.onAccent() : MenuTheme.textSecondary()).method7294(var6)
+         Font semibold = MenuTheme.semibold(16.0F);
+         String text = flag2 ? "..." : keyName(moduleValue.getKeyCode());
+         menuDrawContext.drawText(
+            semibold,
+            text,
+            snap + (KEY_BOX - semibold.width(text)) / 2.0F,
+            y + (KEY_BOX - semibold.height()) / 2.0F,
+            (flag && !flag2 ? MenuTheme.onAccent() : MenuTheme.textSecondary()).method7294(previewAlpha)
          );
-         ModuleCategory var13 = var2.getCategory();
-         MenuIcon var14 = MenuIcons.forCategory(var13);
-         Font var15 = MenuTheme.medium(12.0F);
-         Font var16 = var14.font(12.0F);
-         float var17 = var14.width(12.0F) + MenuTheme.px(4.0F) + var15.width(var2.getName());
-         float var18 = var4 + (ITEM_WIDTH - var17) / 2.0F;
-         float var19 = var5 + KEY_BOX + MenuTheme.px(16.0F);
-         var1.drawText(var16, var14.glyph(), var18, var19, MenuTheme.accent().method7294(var6));
-         var1.drawText(var15, var2.getName(), var18 + var14.width(12.0F) + MenuTheme.px(4.0F), var19, MenuTheme.text().method7294(var6));
-         Font var20 = MenuTheme.regular(10.0F);
-         String var21 = var13.getName();
-         var1.drawText(var20, var21, var4 + (ITEM_WIDTH - var20.width(var21)) / 2.0F, var19 + MenuTheme.px(18.0F), MenuTheme.textSecondary().method7294(var6));
+         ModuleCategory category = moduleValue.getCategory();
+         MenuIcon menuIcon = MenuIcons.forCategory(category);
+         Font medium = MenuTheme.medium(12.0F);
+         Font font = menuIcon.font(12.0F);
+         float f = menuIcon.width(12.0F) + MenuTheme.px(4.0F) + medium.width(moduleValue.getName());
+         float floatValue2 = floatValue + (ITEM_WIDTH - f) / 2.0F;
+         float centeredTextY = y + KEY_BOX + MenuTheme.px(16.0F);
+         menuDrawContext.drawText(font, menuIcon.glyph(), floatValue2, centeredTextY, MenuTheme.accent().method7294(previewAlpha));
+         menuDrawContext.drawText(medium, moduleValue.getName(), floatValue2 + menuIcon.width(12.0F) + MenuTheme.px(4.0F), centeredTextY, MenuTheme.text().method7294(previewAlpha));
+         Font regular = MenuTheme.regular(10.0F);
+         String name = category.getName();
+         menuDrawContext.drawText(regular, name, floatValue + (ITEM_WIDTH - regular.width(name)) / 2.0F, centeredTextY + MenuTheme.px(18.0F), MenuTheme.textSecondary().method7294(previewAlpha));
       }
 
-      private static String keyName(int var0) {
-         if (var0 <= 0) {
+      private static String keyName(int keyCode) {
+         if (keyCode <= 0) {
             return "-";
          } else {
-            String var1 = org.zenith.utility.misc.KeyCompat.keyName(var0);
-            return var1 != null && !var1.isBlank() ? var1.toUpperCase() : Type.KEYBOARD.getOrCreate(org.zenith.utility.misc.KeyCompat.toSdl(var0)).getDisplayName().getString().toUpperCase();
+            String keyName = org.zenith.utility.misc.KeyCompat.keyName(keyCode);
+            return keyName != null && !keyName.isBlank() ? keyName.toUpperCase() : Type.KEYBOARD.getOrCreate(org.zenith.utility.misc.KeyCompat.toSdl(keyCode)).getDisplayName().getString().toUpperCase();
          }
       }
 
       @Override
-      public boolean mouseClicked(double var1, double var3, int var5) {
-         if (var5 != 0) {
+      public boolean mouseClicked(double lastClickX, double lastClickY, int n) {
+         if (n != 0) {
             return false;
          } else {
-            for (int var6 = 0; var6 < this.bounds.length; var6++) {
-               if (this.bounds[var6] != null && this.bounds[var6].contains(var1, var3)) {
-                  this.binding = this.binding == var6 ? -1 : var6;
+            for (int i = 0; i < this.bounds.length; i++) {
+               if (this.bounds[i] != null && this.bounds[i].contains(lastClickX, lastClickY)) {
+                  this.binding = this.binding == i ? -1 : i;
                   return true;
                }
             }
@@ -398,9 +398,9 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public boolean keyPressed(int var1) {
+      public boolean keyPressed(int n) {
          if (this.binding >= 0 && this.binding < this.modules.size()) {
-            this.modules.get(this.binding).setKeyCode(var1 != 256 && var1 != 261 ? var1 : -1);
+            this.modules.get(this.binding).setKeyCode(n != 256 && n != 261 ? n : -1);
             this.binding = -1;
             return true;
          } else {
@@ -437,11 +437,11 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       @Override
       public void prepare() {
          this.close();
-         ServerList var1 = new ServerList(mcStatic());
-         var1.load();
+         ServerList serverList = new ServerList(mcStatic());
+         serverList.load();
 
-         for (int var2 = 0; var2 < var1.size(); var2++) {
-            this.entries.add(new OnboardingScreen.ServerStep.Entry(var1.get(var2)));
+         for (int i = 0; i < serverList.size(); i++) {
+            this.entries.add(new OnboardingScreen.ServerStep.Entry(serverList.get(i)));
          }
 
          this.entries.add(new OnboardingScreen.ServerStep.Entry(null));
@@ -457,9 +457,9 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void drawTitle(MenuDrawContext var1, Font var2, float var3, float var4) {
-         String var5 = "Where are you playing today?";
-         var1.drawText(var2, var5, var3 - var2.width(var5) / 2.0F, var4, MenuTheme.text());
+      public void drawTitle(MenuDrawContext menuDrawContext, Font font, float f, float centeredTextY) {
+         String text = "Where are you playing today?";
+         menuDrawContext.drawText(font, text, f - font.width(text) / 2.0F, centeredTextY, MenuTheme.text());
       }
 
       @Override
@@ -483,39 +483,39 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
+      public void render(MenuDrawContext menuDrawContext, float f, float f2, BoundsData boundsData) {
          this.bounds = new BoundsData[this.entries.size()];
-         float var5 = this.entries.size() * ITEM_WIDTH + (this.entries.size() - 1) * ITEM_GAP;
-         this.scroll.update(var4.width(), var5);
-         var1.enableScissor(var4.getFloatValue(), var4.getFloatValue2(), var4.getFloatValue() + var4.width(), var4.getFloatValue2() + var4.height());
-         float var6 = var4.getFloatValue() + Math.max(0.0F, (var4.width() - var5) / 2.0F) - this.scroll.offset();
+         float content = this.entries.size() * ITEM_WIDTH + (this.entries.size() - 1) * ITEM_GAP;
+         this.scroll.update(boundsData.width(), content);
+         menuDrawContext.enableScissor(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.getFloatValue() + boundsData.width(), boundsData.getFloatValue2() + boundsData.height());
+         float floatValue = boundsData.getFloatValue() + Math.max(0.0F, (boundsData.width() - content) / 2.0F) - this.scroll.offset();
 
-         for (int var7 = 0; var7 < this.entries.size(); var7++) {
-            this.bounds[var7] = new BoundsData(var6, var4.getFloatValue2(), ITEM_WIDTH, var4.height());
-            this.entries.get(var7).render(var1, var6, var4.getFloatValue2() + this.appear.lift(var7), var7 == this.selected, this.appear.of(var7));
-            var6 += ITEM_WIDTH + ITEM_GAP;
+         for (int i = 0; i < this.entries.size(); i++) {
+            this.bounds[i] = new BoundsData(floatValue, boundsData.getFloatValue2(), ITEM_WIDTH, boundsData.height());
+            this.entries.get(i).render(menuDrawContext, floatValue, boundsData.getFloatValue2() + this.appear.lift(i), i == this.selected, this.appear.of(i));
+            floatValue += ITEM_WIDTH + ITEM_GAP;
          }
 
-         var1.disableScissor();
+         menuDrawContext.disableScissor();
       }
 
       @Override
       public void close() {
-         for (OnboardingScreen.ServerStep.Entry var2 : this.entries) {
-            var2.close();
+         for (OnboardingScreen.ServerStep.Entry entry : this.entries) {
+            entry.close();
          }
 
          this.entries.clear();
       }
 
       @Override
-      public boolean mouseClicked(double var1, double var3, int var5) {
-         if (var5 != 0) {
+      public boolean mouseClicked(double lastClickX, double lastClickY, int n) {
+         if (n != 0) {
             return false;
          } else {
-            for (int var6 = 0; var6 < this.bounds.length; var6++) {
-               if (this.bounds[var6] != null && this.bounds[var6].contains(var1, var3)) {
-                  this.selected = var6;
+            for (int i = 0; i < this.bounds.length; i++) {
+               if (this.bounds[i] != null && this.bounds[i].contains(lastClickX, lastClickY)) {
+                  this.selected = i;
                   return true;
                }
             }
@@ -525,8 +525,8 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public boolean mouseScrolled(double var1) {
-         return this.scroll.scroll(var1, ITEM_WIDTH + ITEM_GAP);
+      public boolean mouseScrolled(double d) {
+         return this.scroll.scroll(d, ITEM_WIDTH + ITEM_GAP);
       }
 
       private static final class Entry {
@@ -534,111 +534,111 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
          private final FaviconTexture icon;
          private byte[] lastFavicon;
 
-         private Entry(ServerData var1) {
-            this.info = var1;
-            this.icon = var1 == null ? null : FaviconTexture.forServer(OnboardingScreen.ServerStep.mcStatic().getTextureManager(), var1.ip);
+         private Entry(ServerData info) {
+            this.info = info;
+            this.icon = info == null ? null : FaviconTexture.forServer(OnboardingScreen.ServerStep.mcStatic().getTextureManager(), info.ip);
          }
 
-         private void render(MenuDrawContext var1, float var2, float var3, boolean var4, float var5) {
-            float var6 = MenuTheme.snap(var2 + (OnboardingScreen.ServerStep.ITEM_WIDTH - OnboardingScreen.ServerStep.CIRCLE) / 2.0F);
-            if (var4) {
-               var1.drawRoundedBorder(
-                  var6,
-                  var3,
+         private void render(MenuDrawContext menuDrawContext, float floatValue, float y, boolean flag, float previewAlpha) {
+            float snap = MenuTheme.snap(floatValue + (OnboardingScreen.ServerStep.ITEM_WIDTH - OnboardingScreen.ServerStep.CIRCLE) / 2.0F);
+            if (flag) {
+               menuDrawContext.drawRoundedBorder(
+                  snap,
+                  y,
                   OnboardingScreen.ServerStep.CIRCLE,
                   OnboardingScreen.ServerStep.CIRCLE,
                   -0.1F,
                   ProxyDotRadiusData.method8069(OnboardingScreen.ServerStep.CIRCLE / 2.0F),
-                  ZenithColor.INSTANCE.method7294(var5)
+                  ZenithColor.INSTANCE.method7294(previewAlpha)
                );
             }
 
-            float var7 = var6 + (OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.ICON) / 2.0F;
-            float var8 = var3 + (OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.ICON) / 2.0F;
+            float f = snap + (OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.ICON) / 2.0F;
+            float y2 = y + (OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.ICON) / 2.0F;
             if (this.info == null) {
-               var1.drawRoundedRect(
-                  var7,
-                  var8,
+               menuDrawContext.drawRoundedRect(
+                  f,
+                  y2,
                   OnboardingScreen.ServerStep.ICON,
                   OnboardingScreen.ServerStep.ICON,
                   ProxyDotRadiusData.method8069(OnboardingScreen.ServerStep.ICON / 2.0F),
-                  MenuTheme.accent().method7294(var5)
+                  MenuTheme.accent().method7294(previewAlpha)
                );
-               Font var9 = MenuIcons.SPARKLE.font(28.0F);
-               var1.drawText(
-                  var9,
+               Font font = MenuIcons.SPARKLE.font(28.0F);
+               menuDrawContext.drawText(
+                  font,
                   MenuIcons.SPARKLE.glyph(),
-                  var7 + (OnboardingScreen.ServerStep.ICON - MenuIcons.SPARKLE.width(28.0F)) / 2.0F,
-                  var8 + (OnboardingScreen.ServerStep.ICON - var9.height()) / 2.0F,
-                  MenuTheme.onAccent().method7294(var5)
+                  f + (OnboardingScreen.ServerStep.ICON - MenuIcons.SPARKLE.width(28.0F)) / 2.0F,
+                  y2 + (OnboardingScreen.ServerStep.ICON - font.height()) / 2.0F,
+                  MenuTheme.onAccent().method7294(previewAlpha)
                );
             } else {
                this.syncFavicon();
                RenderShaders.method5294(
-                  MatrixUtils.method664(var1.pose()),
+                  MatrixUtils.method664(menuDrawContext.pose()),
                   this.icon.textureLocation(),
-                  var7,
-                  var8,
+                  f,
+                  y2,
                   OnboardingScreen.ServerStep.ICON,
                   OnboardingScreen.ServerStep.ICON,
                   ProxyDotRadiusData.method8069(OnboardingScreen.ServerStep.ICON / 2.0F),
-                  ZenithColor.INSTANCE.method7294(var5)
+                  ZenithColor.INSTANCE.method7294(previewAlpha)
                );
             }
 
-            if (var4) {
-               float var18 = var6 + OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.BADGE;
-               float var10 = var3 + OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.BADGE;
-               var1.drawRoundedRect(
-                  var18,
-                  var10,
+            if (flag) {
+               float floatValue2 = snap + OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.BADGE;
+               float y3 = y + OnboardingScreen.ServerStep.CIRCLE - OnboardingScreen.ServerStep.BADGE;
+               menuDrawContext.drawRoundedRect(
+                  floatValue2,
+                  y3,
                   OnboardingScreen.ServerStep.BADGE,
                   OnboardingScreen.ServerStep.BADGE,
                   ProxyDotRadiusData.method8069(OnboardingScreen.ServerStep.BADGE / 2.0F),
-                  MenuTheme.accent().method7294(var5)
+                  MenuTheme.accent().method7294(previewAlpha)
                );
-               var1.drawRoundedBorder(
-                  var18,
-                  var10,
+               menuDrawContext.drawRoundedBorder(
+                  floatValue2,
+                  y3,
                   OnboardingScreen.ServerStep.BADGE,
                   OnboardingScreen.ServerStep.BADGE,
                   -0.1F,
                   ProxyDotRadiusData.method8069(OnboardingScreen.ServerStep.BADGE / 2.0F),
-                  ZenithColor.INSTANCE.method7294(var5)
+                  ZenithColor.INSTANCE.method7294(previewAlpha)
                );
-               Font var11 = MenuIcons.ACCEPT.font(10.0F);
-               var1.drawText(
-                  var11,
+               Font font = MenuIcons.ACCEPT.font(10.0F);
+               menuDrawContext.drawText(
+                  font,
                   MenuIcons.ACCEPT.glyph(),
-                  var18 + (OnboardingScreen.ServerStep.BADGE - MenuIcons.ACCEPT.width(10.0F)) / 2.0F,
-                  var10 + (OnboardingScreen.ServerStep.BADGE - var11.height()) / 2.0F,
-                  ZenithColor.INSTANCE.method7294(var5)
+                  floatValue2 + (OnboardingScreen.ServerStep.BADGE - MenuIcons.ACCEPT.width(10.0F)) / 2.0F,
+                  y3 + (OnboardingScreen.ServerStep.BADGE - font.height()) / 2.0F,
+                  ZenithColor.INSTANCE.method7294(previewAlpha)
                );
             }
 
-            Font var19 = MenuTheme.medium(12.0F);
-            String var20 = this.info == null ? "Universal" : this.info.name;
-            float var21 = var3 + OnboardingScreen.ServerStep.CIRCLE + MenuTheme.px(8.0F);
-            var1.enableScissor(var2, var21, var2 + OnboardingScreen.ServerStep.ITEM_WIDTH, var21 + var19.height());
-            var1.drawText(var19, var20, var2 + (OnboardingScreen.ServerStep.ITEM_WIDTH - var19.width(var20)) / 2.0F, var21, MenuTheme.text().method7294(var5));
-            var1.disableScissor();
-            Font var12 = MenuTheme.regular(10.0F);
-            String var13 = this.info == null ? "?" : (this.info.status == null ? "-" : this.info.status.getString());
-            Font var14 = MenuIcons.ONLINE.font(10.0F);
-            float var15 = MenuIcons.ONLINE.width(10.0F) + MenuTheme.px(4.0F) + var12.width(var13);
-            float var16 = var2 + (OnboardingScreen.ServerStep.ITEM_WIDTH - var15) / 2.0F;
-            float var17 = var3 + OnboardingScreen.ServerStep.CIRCLE + MenuTheme.px(26.0F);
-            var1.drawText(var14, MenuIcons.ONLINE.glyph(), var16, var17, MenuTheme.accent().method7294(var5));
-            var1.drawText(var12, var13, var16 + MenuIcons.ONLINE.width(10.0F) + MenuTheme.px(4.0F), var17, MenuTheme.text().method7294(var5));
+            Font medium = MenuTheme.medium(12.0F);
+            String name = this.info == null ? "Universal" : this.info.name;
+            float y3 = y + OnboardingScreen.ServerStep.CIRCLE + MenuTheme.px(8.0F);
+            menuDrawContext.enableScissor(floatValue, y3, floatValue + OnboardingScreen.ServerStep.ITEM_WIDTH, y3 + medium.height());
+            menuDrawContext.drawText(medium, name, floatValue + (OnboardingScreen.ServerStep.ITEM_WIDTH - medium.width(name)) / 2.0F, y3, MenuTheme.text().method7294(previewAlpha));
+            menuDrawContext.disableScissor();
+            Font regular = MenuTheme.regular(10.0F);
+            String string = this.info == null ? "?" : (this.info.status == null ? "-" : this.info.status.getString());
+            Font font = MenuIcons.ONLINE.font(10.0F);
+            float f2 = MenuIcons.ONLINE.width(10.0F) + MenuTheme.px(4.0F) + regular.width(string);
+            float floatValue2 = floatValue + (OnboardingScreen.ServerStep.ITEM_WIDTH - f2) / 2.0F;
+            float centeredTextY = y + OnboardingScreen.ServerStep.CIRCLE + MenuTheme.px(26.0F);
+            menuDrawContext.drawText(font, MenuIcons.ONLINE.glyph(), floatValue2, centeredTextY, MenuTheme.accent().method7294(previewAlpha));
+            menuDrawContext.drawText(regular, string, floatValue2 + MenuIcons.ONLINE.width(10.0F) + MenuTheme.px(4.0F), centeredTextY, MenuTheme.text().method7294(previewAlpha));
          }
 
          private void syncFavicon() {
-            byte[] var1 = this.info.getIconBytes();
-            if (var1 != null && !Arrays.equals(var1, this.lastFavicon)) {
+            byte[] iconBytes = this.info.getIconBytes();
+            if (iconBytes != null && !Arrays.equals(iconBytes, this.lastFavicon)) {
                try {
-                  this.icon.upload(NativeImage.read(var1));
-                  this.lastFavicon = var1;
-               } catch (Exception var3) {
+                  this.icon.upload(NativeImage.read(iconBytes));
+                  this.lastFavicon = iconBytes;
+               } catch (Exception e) {
                }
             }
          }
@@ -660,12 +660,12 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
 
       String buttonLabel();
 
-      void render(MenuDrawContext var1, float var2, float var3, BoundsData var4);
+      void render(MenuDrawContext graphics, float mouseX, float mouseY, BoundsData boundsData);
 
-      default void drawTitle(MenuDrawContext var1, Font var2, float var3, float var4) {
+      default void drawTitle(MenuDrawContext graphics, Font semibold, float f, float f2) {
       }
 
-      default void layout(BoundsData var1) {
+      default void layout(BoundsData boundsData) {
       }
 
       default void prepare() {
@@ -684,15 +684,15 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
          return true;
       }
 
-      default boolean mouseClicked(double var1, double var3, int var5) {
+      default boolean mouseClicked(double x, double y, int mouseToGlfw) {
          return false;
       }
 
-      default boolean mouseScrolled(double var1) {
+      default boolean mouseScrolled(double verticalAmount) {
          return false;
       }
 
-      default boolean keyPressed(int var1) {
+      default boolean keyPressed(int keyCode) {
          return false;
       }
    }
@@ -710,9 +710,9 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
 
       @Override
       public void prepare() {
-         var var1 = Zenith.getInstance().getStyleManager().getStyles();
-         ZenithStyle var2 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-         this.selected = Math.max(0, var1.indexOf(var2));
+         var styles = Zenith.getInstance().getStyleManager().getStyles();
+         ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+         this.selected = Math.max(0, styles.indexOf(currentStyle));
       }
 
       @Override
@@ -721,9 +721,9 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void drawTitle(MenuDrawContext var1, Font var2, float var3, float var4) {
-         String var5 = "Select your visual theme.";
-         var1.drawText(var2, var5, var3 - var2.width(var5) / 2.0F, var4, MenuTheme.text());
+      public void drawTitle(MenuDrawContext menuDrawContext, Font font, float f, float centeredTextY) {
+         String text = "Select your visual theme.";
+         menuDrawContext.drawText(font, text, f - font.width(text) / 2.0F, centeredTextY, MenuTheme.text());
       }
 
       @Override
@@ -747,77 +747,77 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-         var var5 = Zenith.getInstance().getStyleManager().getStyles();
-         this.bounds = new BoundsData[var5.size()];
-         float var6 = var5.size() * ITEM_WIDTH + (var5.size() - 1) * ITEM_GAP;
-         this.scroll.update(var4.width(), var6);
-         var1.enableScissor(var4.getFloatValue(), var4.getFloatValue2(), var4.getFloatValue() + var4.width(), var4.getFloatValue2() + var4.height());
-         float var7 = var4.getFloatValue() + Math.max(0.0F, (var4.width() - var6) / 2.0F) - this.scroll.offset();
+      public void render(MenuDrawContext menuDrawContext, float f, float f2, BoundsData boundsData) {
+         var styles = Zenith.getInstance().getStyleManager().getStyles();
+         this.bounds = new BoundsData[styles.size()];
+         float content = styles.size() * ITEM_WIDTH + (styles.size() - 1) * ITEM_GAP;
+         this.scroll.update(boundsData.width(), content);
+         menuDrawContext.enableScissor(boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.getFloatValue() + boundsData.width(), boundsData.getFloatValue2() + boundsData.height());
+         float floatValue = boundsData.getFloatValue() + Math.max(0.0F, (boundsData.width() - content) / 2.0F) - this.scroll.offset();
 
-         for (int var8 = 0; var8 < var5.size(); var8++) {
-            this.bounds[var8] = new BoundsData(var7, var4.getFloatValue2(), ITEM_WIDTH, var4.height());
-            this.drawTheme(var1, (ZenithStyle)var5.get(var8), var8 == this.selected, var7, var4.getFloatValue2() + this.appear.lift(var8), this.appear.of(var8));
-            var7 += ITEM_WIDTH + ITEM_GAP;
+         for (int i = 0; i < styles.size(); i++) {
+            this.bounds[i] = new BoundsData(floatValue, boundsData.getFloatValue2(), ITEM_WIDTH, boundsData.height());
+            this.drawTheme(menuDrawContext, (ZenithStyle)styles.get(i), i == this.selected, floatValue, boundsData.getFloatValue2() + this.appear.lift(i), this.appear.of(i));
+            floatValue += ITEM_WIDTH + ITEM_GAP;
          }
 
-         var1.disableScissor();
+         menuDrawContext.disableScissor();
       }
 
-      private void drawTheme(MenuDrawContext var1, ZenithStyle var2, boolean var3, float var4, float var5, float var6) {
-         float var7 = MenuTheme.snap(var4 + (ITEM_WIDTH - CIRCLE) / 2.0F);
-         if (var3) {
-            var1.drawRoundedBorder(var7, var5, CIRCLE, CIRCLE, -0.1F, ProxyDotRadiusData.method8069(CIRCLE / 2.0F), ZenithColor.INSTANCE.method7294(var6));
+      private void drawTheme(MenuDrawContext menuDrawContext, ZenithStyle zenithStyle, boolean flag, float floatValue, float y, float previewAlpha) {
+         float snap = MenuTheme.snap(floatValue + (ITEM_WIDTH - CIRCLE) / 2.0F);
+         if (flag) {
+            menuDrawContext.drawRoundedBorder(snap, y, CIRCLE, CIRCLE, -0.1F, ProxyDotRadiusData.method8069(CIRCLE / 2.0F), ZenithColor.INSTANCE.method7294(previewAlpha));
          }
 
-         float var8 = var7 + (CIRCLE - FILL) / 2.0F;
-         float var9 = var5 + (CIRCLE - FILL) / 2.0F;
-         ZenithColor var10 = var2.getPrimaryColor().getZenithColor().method7294(var6);
-         ZenithColor var11 = var2.getSecondaryPrimaryColor().getZenithColor().method7294(var6);
-         var1.drawRoundedRect(
-            var8,
-            var9,
+         float f = snap + (CIRCLE - FILL) / 2.0F;
+         float y2 = y + (CIRCLE - FILL) / 2.0F;
+         ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha);
+         ZenithColor zenithColor3 = zenithStyle.getSecondaryPrimaryColor().getZenithColor().method7294(previewAlpha);
+         menuDrawContext.drawRoundedRect(
+            f,
+            y2,
             FILL,
             FILL,
             ProxyDotRadiusData.method8069(FILL / 2.0F),
-            GlowColor.method8096(var10, var10.method7295(var11, 0.5F), var11, var11.method7295(var10, 0.5F))
+            GlowColor.method8096(zenithColor, zenithColor.method7295(zenithColor3, 0.5F), zenithColor3, zenithColor3.method7295(zenithColor, 0.5F))
          );
-         if (var3) {
-            float var12 = var7 + CIRCLE - BADGE;
-            float var13 = var5 + CIRCLE - BADGE;
-            var1.drawRoundedRect(var12, var13, BADGE, BADGE, ProxyDotRadiusData.method8069(BADGE / 2.0F), var10);
-            var1.drawRoundedBorder(var12, var13, BADGE, BADGE, -0.1F, ProxyDotRadiusData.method8069(BADGE / 2.0F), ZenithColor.INSTANCE.method7294(var6));
-            Font var14 = MenuIcons.ACCEPT.font(10.0F);
-            var1.drawText(
-               var14,
+         if (flag) {
+            float floatValue2 = snap + CIRCLE - BADGE;
+            float y3 = y + CIRCLE - BADGE;
+            menuDrawContext.drawRoundedRect(floatValue2, y3, BADGE, BADGE, ProxyDotRadiusData.method8069(BADGE / 2.0F), zenithColor);
+            menuDrawContext.drawRoundedBorder(floatValue2, y3, BADGE, BADGE, -0.1F, ProxyDotRadiusData.method8069(BADGE / 2.0F), ZenithColor.INSTANCE.method7294(previewAlpha));
+            Font font = MenuIcons.ACCEPT.font(10.0F);
+            menuDrawContext.drawText(
+               font,
                MenuIcons.ACCEPT.glyph(),
-               var12 + (BADGE - MenuIcons.ACCEPT.width(10.0F)) / 2.0F,
-               var13 + (BADGE - var14.height()) / 2.0F,
-               ZenithColor.INSTANCE.method7294(var6)
+               floatValue2 + (BADGE - MenuIcons.ACCEPT.width(10.0F)) / 2.0F,
+               y3 + (BADGE - font.height()) / 2.0F,
+               ZenithColor.INSTANCE.method7294(previewAlpha)
             );
          }
 
-         Font var15 = MenuTheme.medium(12.0F);
-         String var16 = var2.getName();
-         var1.drawText(var15, var16, var4 + (ITEM_WIDTH - var15.width(var16)) / 2.0F, var5 + CIRCLE + MenuTheme.px(8.0F), MenuTheme.text().method7294(var6));
+         Font medium = MenuTheme.medium(12.0F);
+         String name = zenithStyle.getName();
+         menuDrawContext.drawText(medium, name, floatValue + (ITEM_WIDTH - medium.width(name)) / 2.0F, y + CIRCLE + MenuTheme.px(8.0F), MenuTheme.text().method7294(previewAlpha));
       }
 
       @Override
       public void commit() {
-         var var1 = Zenith.getInstance().getStyleManager().getStyles();
-         if (this.selected >= 0 && this.selected < var1.size()) {
-            Zenith.getInstance().getStyleManager().setCurrentStyle((ZenithStyle)var1.get(this.selected));
+         var styles = Zenith.getInstance().getStyleManager().getStyles();
+         if (this.selected >= 0 && this.selected < styles.size()) {
+            Zenith.getInstance().getStyleManager().setCurrentStyle((ZenithStyle)styles.get(this.selected));
          }
       }
 
       @Override
-      public boolean mouseClicked(double var1, double var3, int var5) {
-         if (var5 != 0) {
+      public boolean mouseClicked(double lastClickX, double lastClickY, int n) {
+         if (n != 0) {
             return false;
          } else {
-            for (int var6 = 0; var6 < this.bounds.length; var6++) {
-               if (this.bounds[var6] != null && this.bounds[var6].contains(var1, var3)) {
-                  this.selected = var6;
+            for (int i = 0; i < this.bounds.length; i++) {
+               if (this.bounds[i] != null && this.bounds[i].contains(lastClickX, lastClickY)) {
+                  this.selected = i;
                   this.commit();
                   return true;
                }
@@ -828,8 +828,8 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public boolean mouseScrolled(double var1) {
-         return this.scroll.scroll(var1, ITEM_WIDTH + ITEM_GAP);
+      public boolean mouseScrolled(double d) {
+         return this.scroll.scroll(d, ITEM_WIDTH + ITEM_GAP);
       }
    }
 
@@ -844,18 +844,18 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void drawTitle(MenuDrawContext var1, Font var2, float var3, float var4) {
-         String var5 = "Welcome back, ";
-         String var6 = username();
-         float var7 = var2.width(var5) + var2.width(var6);
-         float var8 = var3 - var7 / 2.0F;
-         var1.drawText(var2, var5, var8, var4, MenuTheme.text());
-         var1.drawText(var2, var6, var8 + var2.width(var5), var4, MenuTheme.accent());
+      public void drawTitle(MenuDrawContext menuDrawContext, Font font, float f, float centeredTextY) {
+         String text = "Welcome back, ";
+         String str = username();
+         float f2 = font.width(text) + font.width(str);
+         float floatValue = f - f2 / 2.0F;
+         menuDrawContext.drawText(font, text, floatValue, centeredTextY, MenuTheme.text());
+         menuDrawContext.drawText(font, str, floatValue + font.width(text), centeredTextY, MenuTheme.accent());
       }
 
       private static String username() {
-         String var0 = Zenith.getInstance().getEntry().getUsername();
-         return var0 != null && !var0.isEmpty() ? var0 + "." : "Guest";
+         String username = Zenith.getInstance().getEntry().getUsername();
+         return username != null && !username.isEmpty() ? username + "." : "Guest";
       }
 
       @Override
@@ -879,45 +879,45 @@ public final class OnboardingScreen extends Screen implements MinecraftAccess {
       }
 
       @Override
-      public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-         Zenith.Entry var5 = Zenith.getInstance().getEntry();
-         var var6 = List.of(
-            new String[]{var5.getText2() == null ? "-" : var5.getText2(), "UID"},
-            new String[]{var5.method1504().getName(), "Role"},
+      public void render(MenuDrawContext menuDrawContext, float f, float f2, BoundsData boundsData) {
+         Zenith.Entry entry = Zenith.getInstance().getEntry();
+         var stringses = List.of(
+            new String[]{entry.getText2() == null ? "-" : entry.getText2(), "UID"},
+            new String[]{entry.method1504().getName(), "Role"},
             new String[]{"3.5", "Version"}
          );
-         var var7 = List.of(MenuIcons.UID, MenuIcons.ROLE, MenuIcons.VERSION);
-         float var8 = var6.size() * ITEM_WIDTH + (var6.size() - 1) * ITEM_GAP;
-         float var9 = var4.getFloatValue() + (var4.width() - var8) / 2.0F;
+         var menuIcons = List.of(MenuIcons.UID, MenuIcons.ROLE, MenuIcons.VERSION);
+         float f3 = stringses.size() * ITEM_WIDTH + (stringses.size() - 1) * ITEM_GAP;
+         float f4 = boundsData.getFloatValue() + (boundsData.width() - f3) / 2.0F;
 
-         for (int var10 = 0; var10 < var6.size(); var10++) {
+         for (int i = 0; i < stringses.size(); i++) {
             this.drawItem(
-               var1,
-               (MenuIcon)var7.get(var10),
-               ((String[])var6.get(var10))[0],
-               ((String[])var6.get(var10))[1],
-               var9,
-               var4.getFloatValue2() + this.appear.lift(var10),
-               this.appear.of(var10)
+               menuDrawContext,
+               (MenuIcon)menuIcons.get(i),
+               ((String[])stringses.get(i))[0],
+               ((String[])stringses.get(i))[1],
+               f4,
+               boundsData.getFloatValue2() + this.appear.lift(i),
+               this.appear.of(i)
             );
-            var9 += ITEM_WIDTH + ITEM_GAP;
+            f4 += ITEM_WIDTH + ITEM_GAP;
          }
       }
 
-      private void drawItem(MenuDrawContext var1, MenuIcon var2, String var3, String var4, float var5, float var6, float var7) {
-         Font var8 = var2.font(48.0F);
-         Font var9 = MenuTheme.medium(14.0F);
-         Font var10 = MenuTheme.regular(11.0F);
-         var1.drawText(
-            var8,
-            var2.glyph(),
-            var5 + (ITEM_WIDTH - var2.width(48.0F)) / 2.0F,
-            var6 + (MenuTheme.px(48.0F) - var8.height()) / 2.0F,
-            MenuTheme.accent().method7294(var7)
+      private void drawItem(MenuDrawContext menuDrawContext, MenuIcon menuIcon, String text, String str, float f, float f2, float previewAlpha) {
+         Font font = menuIcon.font(48.0F);
+         Font medium = MenuTheme.medium(14.0F);
+         Font regular = MenuTheme.regular(11.0F);
+         menuDrawContext.drawText(
+            font,
+            menuIcon.glyph(),
+            f + (ITEM_WIDTH - menuIcon.width(48.0F)) / 2.0F,
+            f2 + (MenuTheme.px(48.0F) - font.height()) / 2.0F,
+            MenuTheme.accent().method7294(previewAlpha)
          );
-         float var11 = var6 + MenuTheme.px(64.0F);
-         var1.drawText(var9, var3, var5 + (ITEM_WIDTH - var9.width(var3)) / 2.0F, var11, MenuTheme.text().method7294(var7));
-         var1.drawText(var10, var4, var5 + (ITEM_WIDTH - var10.width(var4)) / 2.0F, var11 + MenuTheme.px(20.0F), MenuTheme.textTertiary().method7294(var7));
+         float centeredTextY = f2 + MenuTheme.px(64.0F);
+         menuDrawContext.drawText(medium, text, f + (ITEM_WIDTH - medium.width(text)) / 2.0F, centeredTextY, MenuTheme.text().method7294(previewAlpha));
+         menuDrawContext.drawText(regular, str, f + (ITEM_WIDTH - regular.width(str)) / 2.0F, centeredTextY + MenuTheme.px(20.0F), MenuTheme.textTertiary().method7294(previewAlpha));
       }
    }
 }

@@ -136,14 +136,14 @@ public class LuaScriptBuilderVisitor extends Visitor {
                element.accept(this);
             }
          }
-      } catch (Throwable var7) {
+      } catch (Throwable e) {
          try {
             b.close();
-         } catch (Throwable var61) {
-            var7.addSuppressed(var61);
+         } catch (Throwable ex) {
+            e.addSuppressed(ex);
          }
 
-         throw var7;
+         throw e;
       }
 
       b.close();

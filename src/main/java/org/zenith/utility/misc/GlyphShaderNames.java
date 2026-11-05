@@ -37,15 +37,15 @@ public final class GlyphShaderNames {
 
    private static boolean method1419() {
       try {
-         Minecraft var0 = Minecraft.getInstance();
-         if (var0 == null) {
+         Minecraft minecraft = Minecraft.getInstance();
+         if (minecraft == null) {
             return true;
          } else {
-            ResourceManager var1 = var0.getResourceManager();
-            VanillaPackResources var2 = var0.getVanillaPackResources();
-            if (var1 != null && var2 != null) {
-               for (String var6 : texts) {
-                  if (method1420(var1, var2, var6 + ".vsh") || method1420(var1, var2, var6 + ".fsh")) {
+            ResourceManager resourceManager = minecraft.getResourceManager();
+            VanillaPackResources vanillaPackResources = minecraft.getVanillaPackResources();
+            if (resourceManager != null && vanillaPackResources != null) {
+               for (String text : texts) {
+                  if (method1420(resourceManager, vanillaPackResources, text + ".vsh") || method1420(resourceManager, vanillaPackResources, text + ".fsh")) {
                      return true;
                   }
                }
@@ -55,18 +55,18 @@ public final class GlyphShaderNames {
                return true;
             }
          }
-      } catch (Throwable var7) {
+      } catch (Throwable e) {
          return true;
       }
    }
 
-   private static boolean method1420(ResourceManager var0, VanillaPackResources var1, String var2) {
-      var var3 = var0.getResource(Identifier.withDefaultNamespace("shaders/core/" + var2));
-      if (var3.isEmpty()) {
+   private static boolean method1420(ResourceManager resourceManager, VanillaPackResources vanillaPackResources, String str) {
+      var resource = resourceManager.getResource(Identifier.withDefaultNamespace("shaders/core/" + str));
+      if (resource.isEmpty()) {
          return false;
       } else {
-         PackResources var4 = ((Resource)var3.get()).source();
-         return var4 != null && var4 != var1;
+         PackResources source = ((Resource)resource.get()).source();
+         return source != null && source != vanillaPackResources;
       }
    }
 }

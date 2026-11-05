@@ -31,39 +31,39 @@ public final class EmoteRegistry {
    );
    private static final List<String> items2 = List.of("/assets/zenith/emotes/spemotes/index.txt");
    private final CompletableFuture<Map<String, EmoteInfo>> completableFuture = CompletableFuture.<Map<String, EmoteInfo>>supplyAsync(
-         EmoteRegistry::method1589, var0 -> {
-            Thread var1 = new Thread(var0, "Zenith Emote Loader");
-            var1.setDaemon(true);
-            var1.start();
+         EmoteRegistry::method1589, task -> {
+            Thread thread = new Thread(task, "Zenith Emote Loader");
+            thread.setDaemon(true);
+            thread.start();
          }
       )
-      .exceptionally(var0 -> {
-         logger.error("Could not load built-in Zenith emotes", var0);
+      .exceptionally(throwable -> {
+         logger.error("Could not load built-in Zenith emotes", throwable);
          return Map.of();
       });
 
    private static Map<String, EmoteInfo> method1589() {
-      LinkedHashMap var0 = new LinkedHashMap();
+      LinkedHashMap map = new LinkedHashMap();
 
-      for (String var2 : items) {
-         method1594(var2).ifPresent(var1 -> var0.put(var1.getText(), var1));
+      for (String text : items) {
+         method1594(text).ifPresent(emoteInfo -> map.put(emoteInfo.getText(), emoteInfo));
       }
 
-      for (String var5 : items2) {
-         method1593(var5).forEach(var1 -> method1594(var1).ifPresent(var1x -> var0.put(var1x.getText(), var1x)));
+      for (String name : items2) {
+         method1593(name).forEach(text -> method1594(text).ifPresent(var1x -> map.put(var1x.getText(), var1x)));
       }
 
-      var var4 = Collections.unmodifiableMap(var0);
-      logger.info("Loaded {} built-in Zenith emotes", var4.size());
-      return var4;
+      var unmodifiableMap = Collections.unmodifiableMap(map);
+      logger.info("Loaded {} built-in Zenith emotes", unmodifiableMap.size());
+      return unmodifiableMap;
    }
 
    private Map<String, EmoteInfo> method1590() {
       return this.completableFuture.join();
    }
 
-   public Optional<EmoteInfo> method1591(String var1) {
-      return var1 != null && !var1.isBlank() ? Optional.ofNullable(this.method1590().get(method1596(var1))) : Optional.empty();
+   public Optional<EmoteInfo> method1591(String text) {
+      return text != null && !text.isBlank() ? Optional.ofNullable(this.method1590().get(method1596(text))) : Optional.empty();
    }
 
    public Collection<EmoteInfo> all() {
@@ -74,98 +74,98 @@ public final class EmoteRegistry {
       return List.copyOf(this.method1590().keySet());
    }
 
-   private static List<String> method1593(String var0) {
+   private static List<String> method1593(String name) {
       try {
-         List var3;
-         try (InputStream var1 = EmoteRegistry.class.getResourceAsStream(var0)) {
-            if (var1 == null) {
-               logger.warn("Missing built-in emote index {}", var0);
+         List list;
+         try (InputStream resourceAsStream = EmoteRegistry.class.getResourceAsStream(name)) {
+            if (resourceAsStream == null) {
+               logger.warn("Missing built-in emote index {}", name);
                return List.of();
             }
 
-            try (BufferedReader var2 = new BufferedReader(new InputStreamReader(var1, StandardCharsets.UTF_8))) {
-               var3 = var2.lines().map(String::trim).filter(var0x -> !var0x.isEmpty() && !var0x.startsWith("#")).toList();
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
+               list = bufferedReader.lines().map(String::trim).filter(var0x -> !var0x.isEmpty() && !var0x.startsWith("#")).toList();
             }
          }
 
-         return var3;
-      } catch (IOException var9) {
-         logger.warn("Could not load built-in emote index {}", var0, var9);
+         return list;
+      } catch (IOException e) {
+         logger.warn("Could not load built-in emote index {}", name, e);
          return List.of();
       }
    }
 
-   private static Optional<EmoteInfo> method1594(String var0) {
-      String var1 = "/assets/zenith/emotes/" + var0 + ".json";
+   private static Optional<EmoteInfo> method1594(String text) {
+      String name = "/assets/zenith/emotes/" + text + ".json";
 
       try {
-         Optional var5;
-         try (InputStream var2 = EmoteRegistry.class.getResourceAsStream(var1)) {
-            if (var2 == null) {
-               logger.warn("Missing built-in emote resource {}", var1);
+         Optional optional;
+         try (InputStream resourceAsStream = EmoteRegistry.class.getResourceAsStream(name)) {
+            if (resourceAsStream == null) {
+               logger.warn("Missing built-in emote resource {}", name);
                return Optional.empty();
             }
 
-            var var3 = EmotecraftGsonCodec.INSTANCE.decode(var2);
-            if (var3.isEmpty()) {
-               logger.warn("Built-in emote {} contains no animations", var0);
+            var keyframeAnimations = EmotecraftGsonCodec.INSTANCE.decode(resourceAsStream);
+            if (keyframeAnimations.isEmpty()) {
+               logger.warn("Built-in emote {} contains no animations", text);
                return Optional.empty();
             }
 
-            KeyframeAnimation var4 = (KeyframeAnimation)var3.iterator().next();
-            var5 = Optional.of(
+            KeyframeAnimation keyframeAnimation = (KeyframeAnimation)keyframeAnimations.iterator().next();
+            optional = Optional.of(
                new EmoteInfo(
-                  method1596(var0),
-                  var4.getUuid(),
-                  method1595(var4, "name", method1597(var0)),
-                  method1595(var4, "author", "Unknown"),
-                  Identifier.fromNamespaceAndPath("Zenith".toLowerCase(Locale.ROOT), "emotes/" + var0 + ".png"),
-                  var4
+                  method1596(text),
+                  keyframeAnimation.getUuid(),
+                  method1595(keyframeAnimation, "name", method1597(text)),
+                  method1595(keyframeAnimation, "author", "Unknown"),
+                  Identifier.fromNamespaceAndPath("Zenith".toLowerCase(Locale.ROOT), "emotes/" + text + ".png"),
+                  keyframeAnimation
                )
             );
          }
 
-         return var5;
-      } catch (RuntimeException | IOException var8) {
-         logger.warn("Could not load built-in emote {}", var0, var8);
+         return optional;
+      } catch (RuntimeException | IOException e) {
+         logger.warn("Could not load built-in emote {}", text, e);
          return Optional.empty();
       }
    }
 
-   private static String method1595(KeyframeAnimation var0, String var1, String var2) {
-      if (var0.extraData.get(var1) instanceof String var4 && !var4.isBlank()) {
+   private static String method1595(KeyframeAnimation keyframeAnimation, String key, String str) {
+      if (keyframeAnimation.extraData.get(key) instanceof String json && !json.isBlank()) {
          try {
-            JsonElement var5 = JsonParser.parseString(var4);
-            if (var5.isJsonPrimitive() && var5.getAsJsonPrimitive().isString()) {
-               return var5.getAsString();
+            JsonElement string = JsonParser.parseString(json);
+            if (string.isJsonPrimitive() && string.getAsJsonPrimitive().isString()) {
+               return string.getAsString();
             }
 
-            if (var5.isJsonObject()) {
-               JsonObject var6 = var5.getAsJsonObject();
-               if (var6.has("fallback") && var6.get("fallback").isJsonPrimitive()) {
-                  return var6.get("fallback").getAsString();
+            if (string.isJsonObject()) {
+               JsonObject jsonObject = string.getAsJsonObject();
+               if (jsonObject.has("fallback") && jsonObject.get("fallback").isJsonPrimitive()) {
+                  return jsonObject.get("fallback").getAsString();
                }
             }
-         } catch (RuntimeException var7) {
+         } catch (RuntimeException e) {
          }
 
-         return var4;
+         return json;
       } else {
-         return var2;
+         return str;
       }
    }
 
-   private static String method1596(String var0) {
-      return var0.trim().toLowerCase(Locale.ROOT).replace(' ', '_');
+   private static String method1596(String text) {
+      return text.trim().toLowerCase(Locale.ROOT).replace(' ', '_');
    }
 
-   private static String method1597(String var0) {
-      ArrayList var1 = new ArrayList();
+   private static String method1597(String text) {
+      ArrayList elements = new ArrayList();
 
-      for (String var5 : var0.split("_")) {
-         var1.add(var5.isEmpty() ? var5 : Character.toUpperCase(var5.charAt(0)) + var5.substring(1));
+      for (String str : text.split("_")) {
+         elements.add(str.isEmpty() ? str : Character.toUpperCase(str.charAt(0)) + str.substring(1));
       }
 
-      return String.join(" ", var1);
+      return String.join(" ", elements);
    }
 }

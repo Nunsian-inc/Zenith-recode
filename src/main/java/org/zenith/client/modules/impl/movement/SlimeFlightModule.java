@@ -27,45 +27,45 @@ public final class SlimeFlightModule extends Module {
    public boolean flag = false;
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.flag) {
          mc.player.setXRot(60.0F);
          this.flag = false;
       }
    }
 
-   private Block method4512(BlockPos var1) {
-      return mc.level.getBlockState(var1).getBlock();
+   private Block method4512(BlockPos blockPos) {
+      return mc.level.getBlockState(blockPos).getBlock();
    }
 
    @EventTarget
-   public void method4513(PlayerMoveEvent var1) {
-      BlockPos var2 = new BlockPos(mc.player.getBlockX() + 1, mc.player.getBlockY(), mc.player.getBlockZ());
-      BlockPos var3 = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() + 1);
-      BlockPos var4 = new BlockPos(mc.player.getBlockX() - 1, mc.player.getBlockY(), mc.player.getBlockZ());
-      BlockPos var5 = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() - 1);
-      int var6 = InventoryUtils.method922(var0 -> mc.player.getInventory().getItem(var0).getItem() == Items.SLIME_BLOCK);
-      HitResult var7 = mc.hitResult;
+   public void method4513(PlayerMoveEvent event) {
+      BlockPos pos = new BlockPos(mc.player.getBlockX() + 1, mc.player.getBlockY(), mc.player.getBlockZ());
+      BlockPos blockPos = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() + 1);
+      BlockPos pos2 = new BlockPos(mc.player.getBlockX() - 1, mc.player.getBlockY(), mc.player.getBlockZ());
+      BlockPos pos3 = new BlockPos(mc.player.getBlockX(), mc.player.getBlockY(), mc.player.getBlockZ() - 1);
+      int selected = InventoryUtils.method922(slot -> mc.player.getInventory().getItem(slot).getItem() == Items.SLIME_BLOCK);
+      HitResult hitResult = mc.hitResult;
       if (mc.player.horizontalCollision) {
-         if (this.method4512(var2) == Blocks.SLIME_BLOCK
-            || this.method4512(var3) == Blocks.SLIME_BLOCK
-            || this.method4512(var4) == Blocks.SLIME_BLOCK
-            || this.method4512(var5) == Blocks.SLIME_BLOCK) {
+         if (this.method4512(pos) == Blocks.SLIME_BLOCK
+            || this.method4512(blockPos) == Blocks.SLIME_BLOCK
+            || this.method4512(pos2) == Blocks.SLIME_BLOCK
+            || this.method4512(pos3) == Blocks.SLIME_BLOCK) {
             if (!(mc.player.getDeltaMovement().y <= -1.0)) {
-               if (var7 instanceof BlockHitResult var8) {
-                  Direction var9 = var8.getDirection();
-                  if (this.method4512(var8.getBlockPos()) == Blocks.AIR) {
+               if (hitResult instanceof BlockHitResult blockHitResult) {
+                  Direction direction = blockHitResult.getDirection();
+                  if (this.method4512(blockHitResult.getBlockPos()) == Blocks.AIR) {
                      return;
                   }
 
-                  BlockHitResult var10 = new BlockHitResult(var8.getLocation(), var9, var8.getBlockPos(), true);
-                  if (var6 != -1) {
-                     mc.player.getInventory().setSelectedSlot(var6);
+                  BlockHitResult blockHit = new BlockHitResult(blockHitResult.getLocation(), direction, blockHitResult.getBlockPos(), true);
+                  if (selected != -1) {
+                     mc.player.getInventory().setSelectedSlot(selected);
                   }
 
                   this.flag = true;
                   if (this.cooldown >= 1) {
-                     mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, var10);
+                     mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, blockHit);
                      mc.player.setDeltaMovement(mc.player.getDeltaMovement().x, 0.62, mc.player.getDeltaMovement().z);
                      org.zenith.utility.game.SwingCompat.swing(mc.player, InteractionHand.MAIN_HAND);
                      this.cooldown = 0;

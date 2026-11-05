@@ -29,26 +29,26 @@ public class KeybindsHud extends Interface {
    private final Animation animation2 = new Animation(200L, 0.0F, Easing.INSTANCE13);
    private final Animation animation3 = new Animation(200L, 0.0F, Easing.INSTANCE13);
 
-   public KeybindsHud(String var1, float var2, float var3, float var4, float var5, float var6, float var7, Interface.Type var8) {
-      super(var1, var2, var3, var4, var5, var6, var7, var8);
+   public KeybindsHud(String text, float floatValue, float f, float f2, float f3, float f4, float f5, Interface.Type type) {
+      super(text, floatValue, f, f2, f3, f4, f5, type);
    }
 
    @Override
-   public void method8(CustomDrawContext var1) {
-      for (Module var3 : Zenith.getInstance().getModuleManager().getItems()) {
-         if (var3.isEnabled() && var3.getKeyCode() != -1 && !this.items.contains(var3)) {
-            this.linkedHashSet.addLast(new KeybindsHud.Entry(var3));
-            this.items.add(var3);
+   public void method8(CustomDrawContext customDrawContext) {
+      for (Module moduleValue : Zenith.getInstance().getModuleManager().getItems()) {
+         if (moduleValue.isEnabled() && moduleValue.getKeyCode() != -1 && !this.items.contains(moduleValue)) {
+            this.linkedHashSet.addLast(new KeybindsHud.Entry(moduleValue));
+            this.items.add(moduleValue);
          }
       }
 
-      var var12 = this.linkedHashSet.iterator();
+      var iterator = this.linkedHashSet.iterator();
 
-      while (var12.hasNext()) {
-         KeybindsHud.Entry var13 = (KeybindsHud.Entry)var12.next();
-         if ((!var13.module.isEnabled() || var13.module.getKeyCode() == -1) && var13.method6488()) {
-            var12.remove();
-            this.items.remove(var13.module);
+      while (iterator.hasNext()) {
+         KeybindsHud.Entry entry = (KeybindsHud.Entry)iterator.next();
+         if ((!entry.module.isEnabled() || entry.module.getKeyCode() == -1) && entry.method6488()) {
+            iterator.remove();
+            this.items.remove(entry.module);
          }
       }
 
@@ -58,40 +58,40 @@ public class KeybindsHud extends Interface {
          this.animation2.method2808(this.linkedHashSet.size() == 1 && this.linkedHashSet.getFirst().animation.getFloatValue2() == 0.0F ? 0.0F : 1.0F);
       }
 
-      float var14 = this.floatValue;
-      float var4 = this.floatValue2;
-      float var5 = (float)(
+      float floatValue = this.floatValue;
+      float y1 = this.floatValue2;
+      float height = (float)(
          20.0F + GuiStyle.PADDING.intValue() / 2.0F
-            + this.linkedHashSet.stream().mapToDouble(var0 -> (var0.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var0.animation.getValue()).sum()
+            + this.linkedHashSet.stream().mapToDouble(entry -> (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue()).sum()
       );
-      float var6 = (float)this.linkedHashSet.stream().mapToDouble(KeybindsHud.Entry::method6486).max().orElse(0.0);
-      var6 = this.animation.method2808(Math.max(HudListLayout.method7638("n", "Keybinds"), var6));
-      this.width = var6;
-      this.height = var5;
+      float width = (float)this.linkedHashSet.stream().mapToDouble(KeybindsHud.Entry::method6486).max().orElse(0.0);
+      width = this.animation.method2808(Math.max(HudListLayout.method7638("n", "Keybinds"), width));
+      this.width = width;
+      this.height = height;
       this.animation3
          .method2807(mc.gui.screen() instanceof ChatScreen || Zenith.getInstance().getNLMenuScreen().isRenderHud() || !this.linkedHashSet.isEmpty());
-      var1.pushMatrix();
-      float var7 = InterfaceModule.method6801();
-      var1.pose().translate(var14 + var6 / 2.0F, var4 + var5 / 2.0F);
-      var1.pose().scale(this.animation3.getValue(), this.animation3.getValue());
-      var1.pose().translate(-(var14 + var6 / 2.0F), -(var4 + var5 / 2.0F));
-      HudListLayout.method7635(var1, var14, var4, var6, var5);
-      HudListLayout.method7636(var1, var14, var4, var6, "n", "Keybinds");
+      customDrawContext.pushMatrix();
+      float f = InterfaceModule.method6801();
+      customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + height / 2.0F);
+      customDrawContext.pose().scale(this.animation3.getValue(), this.animation3.getValue());
+      customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + height / 2.0F));
+      HudListLayout.method7635(customDrawContext, floatValue, y1, width, height);
+      HudListLayout.method7636(customDrawContext, floatValue, y1, width, "n", "Keybinds");
       if (this.animation3.getValue() == 1.0F) {
-         float var8 = var4 + 20.0F;
-         int var9 = 0;
-         var1.enableScissor((int)var14, (int)var4, (int)(var14 + var6), (int)(var4 + var5));
+         float f2 = y1 + 20.0F;
+         int n = 0;
+         customDrawContext.enableScissor((int)floatValue, (int)y1, (int)(floatValue + width), (int)(y1 + height));
 
-         for (KeybindsHud.Entry var11 : this.linkedHashSet) {
-            var11.method6487(var1, var14, var8, var6, var9, var7);
-            var8 += (var11.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * var11.animation.getValue();
-            var9++;
+         for (KeybindsHud.Entry entry : this.linkedHashSet) {
+            entry.method6487(customDrawContext, floatValue, f2, width, n, f);
+            f2 += (entry.getHeight() + GuiStyle.PADDING.intValue() / 2.0F) * entry.animation.getValue();
+            n++;
          }
 
-         var1.disableScissor();
+         customDrawContext.disableScissor();
       }
 
-      var1.popMatrix();
+      customDrawContext.popMatrix();
    }
 
    @Override
@@ -103,8 +103,8 @@ public class KeybindsHud extends Interface {
       private final Animation animation = new Animation(150L, Easing.INSTANCE13);
       private final Module module;
 
-      public Entry(Module var2) {
-         this.module = var2;
+      public Entry(Module moduleValue) {
+         this.module = moduleValue;
       }
 
       private String method6485() {
@@ -119,26 +119,26 @@ public class KeybindsHud extends Interface {
          return 14.0F;
       }
 
-      public void method6487(CustomDrawContext var1, float var2, float var3, float var4, int var5, float var6) {
+      public void method6487(CustomDrawContext customDrawContext, float floatValue, float y1, float width, int n, float f) {
          this.animation.method2808(this.module.isEnabled() && this.module.getKeyCode() != -1 ? 1.0F : 0.0F);
-         var1.pushMatrix();
-         var1.pose().translate(var2 + var4 / 2.0F, var3 + this.getHeight() / 2.0F);
-         float var7 = this.animation.getValue();
-         var1.pose().scale(var7, var7);
-         var1.pose().translate(-(var2 + var4 / 2.0F), -(var3 + this.getHeight() / 2.0F));
-         float var8 = HudListLayout.method7639(var1, var2, var3, this.module.getCategory().getIcon());
-         HudListLayout.method7644(var1, var8, var3, this.module.getName());
-         HudListLayout.method7646(var1, var2, var3, var4, this.method6485());
-         var1.popMatrix();
+         customDrawContext.pushMatrix();
+         customDrawContext.pose().translate(floatValue + width / 2.0F, y1 + this.getHeight() / 2.0F);
+         float x = this.animation.getValue();
+         customDrawContext.pose().scale(x, x);
+         customDrawContext.pose().translate(-(floatValue + width / 2.0F), -(y1 + this.getHeight() / 2.0F));
+         float floatValue2 = HudListLayout.method7639(customDrawContext, floatValue, y1, this.module.getCategory().getIcon());
+         HudListLayout.method7644(customDrawContext, floatValue2, y1, this.module.getName());
+         HudListLayout.method7646(customDrawContext, floatValue, y1, width, this.method6485());
+         customDrawContext.popMatrix();
       }
 
       @Override
-      public boolean equals(Object var1) {
-         if (this == var1) {
+      public boolean equals(Object obj) {
+         if (this == obj) {
             return true;
-         } else if (var1 != null && this.getClass() == var1.getClass()) {
-            KeybindsHud.Entry var2 = (KeybindsHud.Entry)var1;
-            return Objects.equals(this.module.getId(), var2.module.getId());
+         } else if (obj != null && this.getClass() == obj.getClass()) {
+            KeybindsHud.Entry entry = (KeybindsHud.Entry)obj;
+            return Objects.equals(this.module.getId(), entry.module.getId());
          } else {
             return false;
          }
@@ -153,8 +153,8 @@ public class KeybindsHud extends Interface {
          return Objects.hash(this.module.getId());
       }
 
-      public int compareTo(KeybindsHud.Entry var1) {
-         return this.module.getName().compareTo(var1.module.getName());
+      public int compareTo(KeybindsHud.Entry entry) {
+         return this.module.getName().compareTo(entry.module.getName());
       }
    }
 }

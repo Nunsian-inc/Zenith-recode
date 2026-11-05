@@ -106,10 +106,10 @@ public final class ChestStealerModule extends Module {
    }
 
    @EventTarget
-   public void method3075(WorldRenderEvent var1) {
-      if (mc.player.containerMenu instanceof ChestMenu var2 && mc.gui.screen() != null) {
-         if (this.lastId != var2.containerId) {
-            this.lastId = var2.containerId;
+   public void method3075(WorldRenderEvent event) {
+      if (mc.player.containerMenu instanceof ChestMenu chestMenu && mc.gui.screen() != null) {
+         if (this.lastId != chestMenu.containerId) {
+            this.lastId = chestMenu.containerId;
             this.stopWatch2.reset();
             this.stopWatch3.reset();
             this.stopWatch.reset();
@@ -125,20 +125,20 @@ public final class ChestStealerModule extends Module {
             this.flag = true;
          }
 
-         String var14 = mc.gui.screen().getTitle().getString();
-         String var4 = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.auction");
-         String var5 = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.purchases");
-         boolean var6 = var14.contains(var4) || var14.contains(var5);
-         int var7 = var2.getContainer().getContainerSize();
-         List<Integer> var8 = IntStream.range(0, var7).boxed().collect(Collectors.toList());
-         Collections.shuffle(var8);
-         if (!var6) {
-            for (int var10 : var8) {
-               Slot var11 = var2.getSlot(var10);
-               if (var11.hasItem()) {
-                  long var12 = (long)MathUtils.method2651(Math.min(this.method3072(), this.method3073()), Math.max(this.method3072(), this.method3073()));
-                  if (this.stopWatch.method7546(var12 * 50L)) {
-                     mc.gameMode.handleContainerInput(var2.containerId, var10, 0, ContainerInput.QUICK_MOVE, mc.player);
+         String string = mc.gui.screen().getTitle().getString();
+         String str = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.auction");
+         String str2 = Zenith.getInstance().getLocalization().translate("module.chestStealer.title.purchases");
+         boolean flag = string.contains(str) || string.contains(str2);
+         int containerSize = chestMenu.getContainer().getContainerSize();
+         List<Integer> list = IntStream.range(0, containerSize).boxed().collect(Collectors.toList());
+         Collections.shuffle(list);
+         if (!flag) {
+            for (int index : list) {
+               Slot slot = chestMenu.getSlot(index);
+               if (slot.hasItem()) {
+                  long l = (long)MathUtils.method2651(Math.min(this.method3072(), this.method3073()), Math.max(this.method3072(), this.method3073()));
+                  if (this.stopWatch.method7546(l * 50L)) {
+                     mc.gameMode.handleContainerInput(chestMenu.containerId, index, 0, ContainerInput.QUICK_MOVE, mc.player);
                      this.stopWatch.reset();
                      this.flag2 = false;
                      break;
@@ -147,8 +147,8 @@ public final class ChestStealerModule extends Module {
             }
          }
 
-         boolean var15 = this.method3076(var2);
-         if (this.closeScreen.isEnabled() && var15) {
+         boolean flag2 = this.method3076(chestMenu);
+         if (this.closeScreen.isEnabled() && flag2) {
             if (!this.flag2) {
                this.flag2 = true;
                this.stopWatch3.reset();
@@ -167,9 +167,9 @@ public final class ChestStealerModule extends Module {
       }
    }
 
-   private boolean method3076(ChestMenu var1) {
-      for (int var2 = 0; var2 < (var1.getContainer().getContainerSize() == 90 ? 54 : 27); var2++) {
-         if (var1.getSlot(var2).hasItem()) {
+   private boolean method3076(ChestMenu chestMenu) {
+      for (int i = 0; i < (chestMenu.getContainer().getContainerSize() == 90 ? 54 : 27); i++) {
+         if (chestMenu.getSlot(i).hasItem()) {
             return false;
          }
       }

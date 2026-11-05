@@ -12,26 +12,26 @@ import org.zenith.ZenithAccess;
 public abstract class CommandAbstract implements ZenithAccess {
    private final String command;
 
-   public CommandAbstract(String var1) {
-      this.command = var1;
+   public CommandAbstract(String command) {
+      this.command = command;
    }
 
-   public void register(CommandDispatcher<SharedSuggestionProvider> var1) {
-      LiteralArgumentBuilder var2 = LiteralArgumentBuilder.literal(this.command);
-      this.execute(var2);
-      var1.register(var2);
+   public void register(CommandDispatcher<SharedSuggestionProvider> dispatcher) {
+      LiteralArgumentBuilder literal = LiteralArgumentBuilder.literal(this.command);
+      this.execute(literal);
+      dispatcher.register(literal);
    }
 
-   public abstract void execute(LiteralArgumentBuilder<SharedSuggestionProvider> var1);
+   public abstract void execute(LiteralArgumentBuilder<SharedSuggestionProvider> literal);
 
    @NotNull
-   public static <T> RequiredArgumentBuilder<SharedSuggestionProvider, T> arg(String var0, ArgumentType<T> var1) {
-      return RequiredArgumentBuilder.argument(var0, var1);
+   public static <T> RequiredArgumentBuilder<SharedSuggestionProvider, T> arg(String name, ArgumentType<T> word) {
+      return RequiredArgumentBuilder.argument(name, word);
    }
 
    @NotNull
-   public static LiteralArgumentBuilder<SharedSuggestionProvider> literal(String var0) {
-      return LiteralArgumentBuilder.literal(var0);
+   public static LiteralArgumentBuilder<SharedSuggestionProvider> literal(String name) {
+      return LiteralArgumentBuilder.literal(name);
    }
 
    @Generated

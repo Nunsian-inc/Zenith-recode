@@ -7,18 +7,18 @@ public class ButtonSetting extends Setting {
    private String text;
    private Runnable runnable;
 
-   public ButtonSetting(String var1, Runnable var2) {
-      this(var1, "t", var2);
+   public ButtonSetting(String key, Runnable runnable) {
+      this(key, "t", runnable);
    }
 
-   public ButtonSetting(String var1, String var2, Runnable var3) {
-      this(var1, var2, "", var3);
+   public ButtonSetting(String key, String text, Runnable runnable) {
+      this(key, text, "", runnable);
    }
 
-   public ButtonSetting(String var1, String var2, String var3, Runnable var4) {
-      super(var1, var3);
-      this.runnable = var4;
-      this.text = var2;
+   public ButtonSetting(String key, String text, String description, Runnable runnable) {
+      super(key, description);
+      this.runnable = runnable;
+      this.text = text;
    }
 
    public void toggle() {
@@ -26,11 +26,11 @@ public class ButtonSetting extends Setting {
    }
 
    @Override
-   public void safe(JsonObject var1) {
+   public void safe(JsonObject json) {
    }
 
    @Override
-   public void load(JsonObject var1) {
+   public void load(JsonObject json) {
    }
 
    @Generated
@@ -44,12 +44,12 @@ public class ButtonSetting extends Setting {
    }
 
    @Generated
-   public void setText(String var1) {
-      this.text = var1;
+   public void setText(String text) {
+      this.text = text;
    }
 
    @Generated
-   public void setRunnable(Runnable var1) {
-      this.runnable = var1;
+   public void setRunnable(Runnable runnable) {
+      this.runnable = runnable;
    }
 }

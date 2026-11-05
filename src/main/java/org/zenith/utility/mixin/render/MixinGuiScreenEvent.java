@@ -27,21 +27,21 @@ public class MixinGuiScreenEvent {
       at = {@At(value = "FIELD", target = "Lnet/minecraft/client/gui/Gui;overlay:Lnet/minecraft/client/gui/screens/Overlay;", ordinal = 0)}
    )
    private void renderScreenHook(
-      DeltaTracker var1, boolean var2, boolean var3, CallbackInfo var4, @Local(ordinal = 0) int var5, @Local(ordinal = 1) int var6, @Local GuiGraphicsExtractor var7
+      DeltaTracker deltaTracker, boolean flag, boolean flag2, CallbackInfo callbackInfo, @Local(ordinal = 0) int mouseX, @Local(ordinal = 1) int mouseY, @Local GuiGraphicsExtractor context
    ) {
       ScissorFlusher.flush();
-      var7.pose().pushMatrix();
+      context.pose().pushMatrix();
 
       try {
-         EventManager.call(new ScreenRenderEvent(MenuDrawContext.method8080(var7, var5, var6, MinecraftAccess.mc.getDeltaTracker().getGameTimeDeltaPartialTick(false))));
+         EventManager.call(new ScreenRenderEvent(MenuDrawContext.method8080(context, mouseX, mouseY, MinecraftAccess.mc.getDeltaTracker().getGameTimeDeltaPartialTick(false))));
          ScissorFlusher.flush();
-      } catch (Exception var9) {
+      } catch (Exception e) {
       }
 
-      var7.pose().popMatrix();
-      RenderTarget var8 = MinecraftAccess.mc.gameRenderer.mainRenderTarget();
-      if (var8.getDepthTexture() != null) {
-         RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(var8.getDepthTexture(), RenderCompat.CLEAR_DEPTH);
+      context.pose().popMatrix();
+      RenderTarget mainRenderTarget = MinecraftAccess.mc.gameRenderer.mainRenderTarget();
+      if (mainRenderTarget.getDepthTexture() != null) {
+         RenderSystem.getDevice().createCommandEncoder().clearDepthTexture(mainRenderTarget.getDepthTexture(), RenderCompat.CLEAR_DEPTH);
       }
 
       RenderState.method1881();
@@ -53,9 +53,9 @@ public class MixinGuiScreenEvent {
       at = @At("HEAD"),
       argsOnly = true
    )
-   private net.minecraft.client.gui.screens.Screen mixin$modifySetScreenArg(net.minecraft.client.gui.screens.Screen var1) {
-      org.zenith.client.events.SetScreenEvent var2 = new org.zenith.client.events.SetScreenEvent(var1);
-      EventManager.call(var2);
-      return var2.getScreen();
+   private net.minecraft.client.gui.screens.Screen mixin$modifySetScreenArg(net.minecraft.client.gui.screens.Screen screen) {
+      org.zenith.client.events.SetScreenEvent event = new org.zenith.client.events.SetScreenEvent(screen);
+      EventManager.call(event);
+      return event.getScreen();
    }
 }

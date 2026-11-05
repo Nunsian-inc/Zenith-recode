@@ -43,29 +43,29 @@ public class ClientSounds implements MinecraftAccess {
       Registry.register(BuiltInRegistries.SOUND_EVENT, this.soundEvent14.location(), this.soundEvent14);
    }
 
-   public void method1561(SoundEvent var1) {
-      this.method1576(var1, InterfaceModule.INSTANCE.volume.getValue3(), 1.0F);
+   public void method1561(SoundEvent soundEvent5) {
+      this.method1576(soundEvent5, InterfaceModule.INSTANCE.volume.getValue3(), 1.0F);
    }
 
    public void method1562() {
-      float var1 = InterfaceModule.INSTANCE.volume.getValue3();
-      this.method1576(this.soundEvent7, var1 * 0.75F, 0.9F);
-      this.method1576(this.soundEvent5, var1 * 0.45F, 1.5F);
+      float f = InterfaceModule.INSTANCE.volume.getValue3();
+      this.method1576(this.soundEvent7, f * 0.75F, 0.9F);
+      this.method1576(this.soundEvent5, f * 0.45F, 1.5F);
    }
 
    public void method1563() {
-      float var1 = InterfaceModule.INSTANCE.volume.getValue3();
-      this.method1576(this.soundEvent8, var1 * 0.7F, 1.05F);
-      this.method1576(this.soundEvent6, var1 * 0.4F, 0.85F);
+      float f = InterfaceModule.INSTANCE.volume.getValue3();
+      this.method1576(this.soundEvent8, f * 0.7F, 1.05F);
+      this.method1576(this.soundEvent6, f * 0.4F, 0.85F);
    }
 
-   public void method1564(int var1, int var2) {
-      float var3 = var2 > 1 ? (float)var1 / (var2 - 1) : 0.0F;
-      this.method1576(this.soundEvent10, InterfaceModule.INSTANCE.volume.getValue3() * 0.6F, 0.94F + var3 * 0.2F);
+   public void method1564(int ordinal, int length) {
+      float f = length > 1 ? (float)ordinal / (length - 1) : 0.0F;
+      this.method1576(this.soundEvent10, InterfaceModule.INSTANCE.volume.getValue3() * 0.6F, 0.94F + f * 0.2F);
    }
 
-   public void method1565(boolean var1) {
-      this.method1576(var1 ? this.soundEvent3 : this.soundEvent4, InterfaceModule.INSTANCE.volume.getValue3(), 1.0F);
+   public void method1565(boolean enabled) {
+      this.method1576(enabled ? this.soundEvent3 : this.soundEvent4, InterfaceModule.INSTANCE.volume.getValue3(), 1.0F);
    }
 
    public void method1566() {
@@ -84,38 +84,38 @@ public class ClientSounds implements MinecraftAccess {
       this.method1576(this.soundEvent14, InterfaceModule.INSTANCE.volume.getValue3() * 0.55F, 1.0F);
    }
 
-   public void method1570(boolean var1) {
-      this.method1576(var1 ? this.soundEvent8 : this.soundEvent7, InterfaceModule.INSTANCE.volume.getValue3() * 0.8F, 1.0F);
+   public void method1570(boolean flag) {
+      this.method1576(flag ? this.soundEvent8 : this.soundEvent7, InterfaceModule.INSTANCE.volume.getValue3() * 0.8F, 1.0F);
    }
 
-   public void method1571(float var1) {
-      this.method1576(this.soundEvent9, InterfaceModule.INSTANCE.volume.getValue3() * 0.5F, 0.92F + Mth.clamp(var1, 0.0F, 1.0F) * 0.28F);
+   public void method1571(float progress) {
+      this.method1576(this.soundEvent9, InterfaceModule.INSTANCE.volume.getValue3() * 0.5F, 0.92F + Mth.clamp(progress, 0.0F, 1.0F) * 0.28F);
    }
 
    public void method1572() {
-      float var1 = InterfaceModule.INSTANCE.volume.getValue3();
-      this.method1576(this.soundEvent7, var1 * 0.55F, 1.25F);
-      this.method1576(this.soundEvent5, var1 * 0.35F, 1.6F);
+      float f = InterfaceModule.INSTANCE.volume.getValue3();
+      this.method1576(this.soundEvent7, f * 0.55F, 1.25F);
+      this.method1576(this.soundEvent5, f * 0.35F, 1.6F);
    }
 
    public void method1573() {
-      float var1 = InterfaceModule.INSTANCE.volume.getValue3();
-      this.method1576(this.soundEvent5, var1 * 0.5F, 0.95F);
-      this.method1576(this.soundEvent7, var1 * 0.3F, 0.8F);
+      float f = InterfaceModule.INSTANCE.volume.getValue3();
+      this.method1576(this.soundEvent5, f * 0.5F, 0.95F);
+      this.method1576(this.soundEvent7, f * 0.3F, 0.8F);
    }
 
    public void method1574() {
-      float var1 = InterfaceModule.INSTANCE.volume.getValue3();
-      this.method1576(this.soundEvent7, var1 * 0.6F, 1.1F);
-      this.method1576(this.soundEvent9, var1 * 0.35F, 1.35F);
+      float f = InterfaceModule.INSTANCE.volume.getValue3();
+      this.method1576(this.soundEvent7, f * 0.6F, 1.1F);
+      this.method1576(this.soundEvent9, f * 0.35F, 1.35F);
    }
 
    public void method1575() {
       this.method1576(this.soundEvent9, InterfaceModule.INSTANCE.volume.getValue3() * 0.3F, 1.45F);
    }
 
-   public void method1576(SoundEvent var1, float var2, float var3) {
-      mc.getSoundManager().play(SimpleSoundInstance.forUI(var1, var3, var2));
+   public void method1576(SoundEvent soundEvent5, float volume, float pitch) {
+      mc.getSoundManager().play(SimpleSoundInstance.forUI(soundEvent5, pitch, volume));
    }
 
    @Generated

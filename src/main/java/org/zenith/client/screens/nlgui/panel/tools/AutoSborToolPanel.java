@@ -124,8 +124,8 @@ public class AutoSborToolPanel extends ToolTab {
 
    @Override
    public void build() {
-      InventoryPreset var1 = set();
-      if (this.selectedSlot >= 0 && var1.method871(this.selectedSlot)) {
+      InventoryPreset inventoryPreset = set();
+      if (this.selectedSlot >= 0 && inventoryPreset.method871(this.selectedSlot)) {
          this.selectedSlot = -1;
       }
 
@@ -147,44 +147,44 @@ public class AutoSborToolPanel extends ToolTab {
    }
 
    private void buildCatalog() {
-      String var1 = this.catalogQuery();
-      int var2 = 7;
-      int var3 = 0;
+      String catalogQuery = this.catalogQuery();
+      int n = 7;
+      int listCount = 0;
 
-      for (ItemMatcher var5 : InventoryPreset.method891(module().method206())) {
-         String var6 = var5.getText2() == null ? var5.getText22() : var5.getText2();
-         if (var6 != null && !var6.isBlank() && (var1.isEmpty() || var6.toLowerCase(Locale.ROOT).contains(var1))) {
-            var3++;
+      for (ItemMatcher key : InventoryPreset.method891(module().method206())) {
+         String name = key.getText2() == null ? key.getText22() : key.getText2();
+         if (name != null && !name.isBlank() && (catalogQuery.isEmpty() || name.toLowerCase(Locale.ROOT).contains(catalogQuery))) {
+            listCount++;
             this.custom(
                22.0F,
                this.entering(
-                  var2++,
-                  (var3x, var4, var5x, var6x, var7, var8, var9, var10) -> this.renderCatalogRow(var3x, var4, var5x, var6x, var7, var8, var9, var10, var5, var6)
+                  n++,
+                  (var3x, lastClickX, var5x, var6x, f, f2, previewAlpha, zenithStyle) -> this.renderCatalogRow(var3x, lastClickX, var5x, var6x, f, f2, previewAlpha, zenithStyle, key, name)
                ),
-               () -> this.place(var5),
-               () -> this.inSetCounts.containsKey(var5),
-               () -> this.removeAll(var5)
+               () -> this.place(key),
+               () -> this.inSetCounts.containsKey(key),
+               () -> this.removeAll(key)
             );
          }
       }
 
-      this.listCount = var3;
-      if (var3 == 0) {
+      this.listCount = listCount;
+      if (listCount == 0) {
          this.custom(
             76.0F,
             this.entering(
                7,
-               (var1x, var2x, var3x, var4, var5x, var6x, var7, var8) -> this.emptyCard(
+               (var1x, var2x, var3x, f, var5x, var6x, previewAlpha, zenithStyle) -> this.emptyCard(
                   var1x,
-                  var8,
-                  var4 + 8.0F,
+                  zenithStyle,
+                  f + 8.0F,
                   var5x + 2.0F,
                   var6x - 16.0F,
                   70.0F,
                   MenuGlyph.SEARCH,
                   capitalize(t("gui.tools.inv.catalog.none")),
                   t("gui.tools.inv.catalog.none.desc"),
-                  var7
+                  previewAlpha
                )
             )
          );
@@ -192,35 +192,35 @@ public class AutoSborToolPanel extends ToolTab {
    }
 
    private void buildHistory() {
-      List<ItemEntry> var1 = module().getInventorySnapshot().method1863();
-      this.listCount = var1.size();
-      if (var1.isEmpty()) {
+      List<ItemEntry> itemEntries = module().getInventorySnapshot().method1863();
+      this.listCount = itemEntries.size();
+      if (itemEntries.isEmpty()) {
          this.custom(
             76.0F,
             this.entering(
                7,
-               (var1x, var2x, var3, var4x, var5, var6, var7, var8) -> this.emptyCard(
+               (var1x, var2x, n, var4x, f, f2, previewAlpha, zenithStyle) -> this.emptyCard(
                   var1x,
-                  var8,
+                  zenithStyle,
                   var4x + 8.0F,
-                  var5 + 2.0F,
-                  var6 - 16.0F,
+                  f + 2.0F,
+                  f2 - 16.0F,
                   70.0F,
                   MenuGlyph.TIMER,
                   capitalize(t("gui.tools.inv.history.none")),
                   t("gui.tools.inv.history.none.desc"),
-                  var7
+                  previewAlpha
                )
             )
          );
       } else {
-         int var2 = 7;
+         int n = 7;
 
-         for (ItemEntry var4 : var1) {
+         for (ItemEntry itemEntry : itemEntries) {
             this.custom(
                22.0F,
                this.entering(
-                  var2++, (var2x, var3, var4x, var5, var6, var7, var8, var9) -> this.renderHistoryRow(var2x, var3, var4x, var5, var6, var7, var8, var9, var4)
+                  n++, (var2x, lastClickX, var4x, f, f2, f3, previewAlpha, zenithStyle) -> this.renderHistoryRow(var2x, lastClickX, var4x, f, f2, f3, previewAlpha, zenithStyle, itemEntry)
                )
             );
          }
@@ -230,56 +230,56 @@ public class AutoSborToolPanel extends ToolTab {
    private void buildAside() {
       this.asideCaption("gui.tools.inv.list.presets");
       this.asideCustom(22.0F, this.entering(1, this::renderNameField));
-      this.asideCustom(23.0F, this.entering(2, (var1x, var2x, var3, var4x, var5, var6, var7, var8) -> {
-         BoundsData var9 = new BoundsData(var4x + 8.0F, var5 + 2.0F, var6 - 16.0F, 17.0F);
-         if (this.button(var1x, var8, "capture", var9, MenuGlyph.STORAGE, t("gui.tools.inv.capture"), 0, true, var2x, var3, var7)) {
+      this.asideCustom(23.0F, this.entering(2, (var1x, var2x, lastClickY, var4x, f, f2, previewAlpha, zenithStyle) -> {
+         BoundsData boundsData = new BoundsData(var4x + 8.0F, f + 2.0F, f2 - 16.0F, 17.0F);
+         if (this.button(var1x, zenithStyle, "capture", boundsData, MenuGlyph.STORAGE, t("gui.tools.inv.capture"), 0, true, var2x, lastClickY, previewAlpha)) {
             HoverInfo.request(t("gui.tools.inv.capture"), t("gui.tools.inv.capture.desc"));
          }
       }), this::captureInventory, null);
-      List<SborList> var1 = presets().method1229(module().method206());
-      if (var1.isEmpty()) {
+      List<SborList> sborLists = presets().method1229(module().method206());
+      if (sborLists.isEmpty()) {
          this.asideCustom(
             30.0F,
             this.entering(
                3,
-               (var0, var1x, var2x, var3, var4x, var5, var6, var7) -> {
-                  BoundsData var8 = new BoundsData(var3 + 8.0F, var4x + 2.0F, var5 - 16.0F, 24.0F);
-                  var0.drawRoundedBorder(
-                     var8.getFloatValue(),
-                     var8.getFloatValue2(),
-                     var8.width(),
-                     var8.height(),
+               (menuDrawContext, var1x, var2x, f, var4x, f2, previewAlpha, zenithStyle) -> {
+                  BoundsData boundsData = new BoundsData(f + 8.0F, var4x + 2.0F, f2 - 16.0F, 24.0F);
+                  menuDrawContext.drawRoundedBorder(
+                     boundsData.getFloatValue(),
+                     boundsData.getFloatValue2(),
+                     boundsData.width(),
+                     boundsData.height(),
                      0.3F,
                      ProxyDotRadiusData.method8069(CARD_ROUND),
-                     var7.getFieldBorder().getZenithColor().method7294(var6 * 3.0F)
+                     zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * 3.0F)
                   );
-                  Font var9 = Fonts.NEW_REGULAR.getFont(4.3F);
-                  String var10 = var9.clip(t("gui.tools.inv.presets.none"), var8.width() - 10.0F);
-                  var0.drawText(
-                     var9,
-                     var10,
-                     var8.getFloatValue() + (var8.width() - var9.width(var10)) / 2.0F,
-                     var8.getFloatValue2() + (var8.height() - var9.height()) / 2.0F,
-                     var7.getTextTertiary().getZenithColor().method7294(var6)
+                  Font font = Fonts.NEW_REGULAR.getFont(4.3F);
+                  String clip = font.clip(t("gui.tools.inv.presets.none"), boundsData.width() - 10.0F);
+                  menuDrawContext.drawText(
+                     font,
+                     clip,
+                     boundsData.getFloatValue() + (boundsData.width() - font.width(clip)) / 2.0F,
+                     boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+                     zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
                   );
-                  if (var8.contains(var1x, var2x)) {
+                  if (boundsData.contains(var1x, var2x)) {
                      HoverInfo.request(t("gui.tools.inv.presets.none"), t("gui.tools.inv.presets.none.desc"));
                   }
                }
             )
          );
       } else {
-         int var2 = 3;
+         int n = 3;
 
-         for (SborList var4 : var1) {
+         for (SborList sborList : sborLists) {
             this.asideCustom(
                22.0F,
                this.entering(
-                  var2++, (var2x, var3, var4x, var5, var6, var7, var8, var9) -> this.renderPreset(var2x, var3, var4x, var5, var6, var7, var8, var9, var4)
+                  n++, (var2x, lastClickX, var4x, f, f2, f3, previewAlpha, zenithStyle) -> this.renderPreset(var2x, lastClickX, var4x, f, f2, f3, previewAlpha, zenithStyle, sborList)
                ),
-               () -> this.loadPreset(var4),
+               () -> this.loadPreset(sborList),
                null,
-               () -> this.deletePreset(var4)
+               () -> this.deletePreset(sborList)
             );
          }
       }
@@ -297,50 +297,50 @@ public class AutoSborToolPanel extends ToolTab {
             76.0F,
             this.entering(
                6,
-               (var1x, var2x, var3x, var4, var5, var6, var7, var8) -> this.emptyCard(
+               (var1x, var2x, var3x, f, f2, f3, previewAlpha, zenithStyle) -> this.emptyCard(
                   var1x,
-                  var8,
-                  var4 + 8.0F,
-                  var5 + 2.0F,
-                  var6 - 16.0F,
+                  zenithStyle,
+                  f + 8.0F,
+                  f2 + 2.0F,
+                  f3 - 16.0F,
                   70.0F,
                   MenuGlyph.SLOT,
                   capitalize(t("gui.tools.inv.slot.none")),
                   t("gui.tools.inv.slot.none.desc"),
-                  var7
+                  previewAlpha
                )
             )
          );
       } else {
-         int var1 = this.selectedSlot;
-         InventoryPreset var2 = set();
-         ItemMatcher var3 = var2.method870(var1);
+         int selectedSlot = this.selectedSlot;
+         InventoryPreset inventoryPreset = set();
+         ItemMatcher itemMatcher = inventoryPreset.method870(selectedSlot);
          this.asideCustom(
             38.0F,
-            this.entering(6, (var3x, var4, var5, var6, var7, var8, var9, var10) -> this.renderSlotHead(var3x, var6, var7, var8, var9, var10, var1, var3))
+            this.entering(6, (var3x, n, n2, f, f2, f3, previewAlpha, zenithStyle) -> this.renderSlotHead(var3x, f, f2, f3, previewAlpha, zenithStyle, selectedSlot, itemMatcher))
          );
-         if (InventoryPreset.method885(var3)) {
+         if (InventoryPreset.method885(itemMatcher)) {
             this.asideCustom(
                22.0F,
                this.entering(
                   7,
-                  (var3x, var4, var5, var6, var7, var8, var9, var10) -> {
-                     BoundsData[] var11 = this.drawStepper(
+                  (var3x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+                     BoundsData[] drawStepper = this.drawStepper(
                         var3x,
-                        var4,
-                        var5,
-                        var6,
-                        var7,
-                        var8,
-                        var9,
-                        var10,
+                        lastClickX,
+                        lastClickY,
+                        f,
+                        f2,
+                        f3,
+                        previewAlpha,
+                        zenithStyle,
                         "count",
                         t("gui.tools.inv.count"),
-                        String.valueOf(var2.method877(var1)),
+                        String.valueOf(inventoryPreset.method877(selectedSlot)),
                         "gui.tools.inv.count.desc"
                      );
-                     this.countMinus = var11[0];
-                     this.countPlus = var11[1];
+                     this.countMinus = drawStepper[0];
+                     this.countPlus = drawStepper[1];
                   }
                )
             );
@@ -350,61 +350,61 @@ public class AutoSborToolPanel extends ToolTab {
             22.0F,
             this.entering(
                8,
-               (var3x, var4, var5, var6, var7, var8, var9, var10) -> {
-                  long var11 = var2.method879(var1);
-                  BoundsData[] var13 = this.drawStepper(
+               (var3x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+                  long l = inventoryPreset.method879(selectedSlot);
+                  BoundsData[] drawStepper = this.drawStepper(
                      var3x,
-                     var4,
-                     var5,
-                     var6,
-                     var7,
-                     var8,
-                     var9,
-                     var10,
+                     lastClickX,
+                     lastClickY,
+                     f,
+                     f2,
+                     f3,
+                     previewAlpha,
+                     zenithStyle,
                      "price",
                      t("gui.tools.inv.price"),
-                     var11 <= 0L ? t("gui.tools.inv.price.any") : String.valueOf(var11),
+                     l <= 0L ? t("gui.tools.inv.price.any") : String.valueOf(l),
                      "gui.tools.inv.price.desc"
                   );
-                  this.priceMinus = var13[0];
-                  this.pricePlus = var13[1];
+                  this.priceMinus = drawStepper[0];
+                  this.pricePlus = drawStepper[1];
                }
             )
          );
-         if (InventoryPreset.method886(var3)) {
+         if (InventoryPreset.method886(itemMatcher)) {
             this.asideCustom(
                22.0F,
                this.entering(
                   9,
-                  (var3x, var4, var5, var6, var7, var8, var9, var10) -> {
-                     BoundsData[] var11 = this.drawStepper(
+                  (var3x, lastClickX, lastClickY, f, f2, f3, previewAlpha, zenithStyle) -> {
+                     BoundsData[] drawStepper = this.drawStepper(
                         var3x,
-                        var4,
-                        var5,
-                        var6,
-                        var7,
-                        var8,
-                        var9,
-                        var10,
+                        lastClickX,
+                        lastClickY,
+                        f,
+                        f2,
+                        f3,
+                        previewAlpha,
+                        zenithStyle,
                         "durability",
                         t("gui.tools.inv.durability"),
-                        Math.round(var2.method881(var1) * 100.0F) + "%",
+                        Math.round(inventoryPreset.method881(selectedSlot) * 100.0F) + "%",
                         "gui.tools.inv.durability.desc"
                      );
-                     this.durabilityMinus = var11[0];
-                     this.durabilityPlus = var11[1];
+                     this.durabilityMinus = drawStepper[0];
+                     this.durabilityPlus = drawStepper[1];
                   }
                )
             );
          }
 
-         this.asideCustom(25.0F, this.entering(10, (var1x, var2x, var3x, var4, var5, var6, var7, var8) -> {
-            BoundsData var9 = new BoundsData(var4 + 8.0F, var5 + 4.0F, var6 - 16.0F, 17.0F);
-            if (this.button(var1x, var8, "remove", var9, MenuGlyph.CLOSE, t("gui.tools.inv.remove"), 2, true, var2x, var3x, var7)) {
+         this.asideCustom(25.0F, this.entering(10, (var1x, var2x, var3x, f, f2, f3, previewAlpha, zenithStyle) -> {
+            BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 4.0F, f3 - 16.0F, 17.0F);
+            if (this.button(var1x, zenithStyle, "remove", boundsData, MenuGlyph.CLOSE, t("gui.tools.inv.remove"), 2, true, var2x, var3x, previewAlpha)) {
                HoverInfo.request(t("gui.tools.inv.remove"), t("gui.tools.inv.remove.desc"));
             }
          }), () -> {
-            var2.method875(var1);
+            inventoryPreset.method875(selectedSlot);
             this.selectedSlot = -1;
             this.markDirty();
             this.invalidate();
@@ -412,34 +412,34 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private void renderSetHead(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      float var10 = var5 + (22.0F - var9.height()) / 2.0F;
-      caption(var1, var8, t("gui.tools.inv.caption.set"), var4 + 8.0F, var10, var7);
-      int var11 = set().method872();
-      Font var12 = Fonts.NEW_MEDIUM.getFont(4.4F);
-      String var13 = var11 + " / 36";
-      float var14 = var12.width(var13);
-      float var15 = var4 + var6 - 8.0F;
-      var1.drawText(
-         var12,
-         var13,
-         var15 - var14,
-         var5 + (22.0F - var12.height()) / 2.0F,
-         (var11 > 0 ? var8.getTextEnable() : var8.getTextTertiary()).getZenithColor().method7294(var7)
+   private void renderSetHead(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+      float centeredTextY = f2 + (22.0F - font.height()) / 2.0F;
+      caption(menuDrawContext, zenithStyle, t("gui.tools.inv.caption.set"), f + 8.0F, centeredTextY, previewAlpha);
+      int n3 = set().method872();
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.4F);
+      String text = n3 + " / 36";
+      float width = font2.width(text);
+      float f4 = f + f3 - 8.0F;
+      menuDrawContext.drawText(
+         font2,
+         text,
+         f4 - width,
+         f2 + (22.0F - font2.height()) / 2.0F,
+         (n3 > 0 ? zenithStyle.getTextEnable() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
-      float var16 = 46.0F;
+      float width2 = 46.0F;
       progress(
-         var1,
-         var8,
-         var15 - var14 - 6.0F - var16,
-         var5 + 11.0F - 1.25F,
-         var16,
+         menuDrawContext,
+         zenithStyle,
+         f4 - width - 6.0F - width2,
+         f2 + 11.0F - 1.25F,
+         width2,
          2.5F,
-         var11 / 36.0F,
-         var8.getPrimaryColor().getZenithColor(),
+         n3 / 36.0F,
+         zenithStyle.getPrimaryColor().getZenithColor(),
          module().isEnabled(),
-         var7
+         previewAlpha
       );
    }
 
@@ -451,67 +451,67 @@ public class AutoSborToolPanel extends ToolTab {
       return 4.0F * this.slotSize() + 9.0F;
    }
 
-   private void renderGrid(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = this.slotSize();
-      float var10 = var4 + 8.0F;
-      InventoryPreset var11 = set();
-      ProxyDotRadiusData var12 = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.55F);
-      ZenithColor var13 = var8.getPrimaryColor().getZenithColor();
-      int var14 = -1;
-      float[] var15 = new float[36];
-      float[] var16 = new float[36];
+   private void renderGrid(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float slotSize = this.slotSize();
+      float f4 = f + 8.0F;
+      InventoryPreset inventoryPreset = set();
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(GuiStyle.ROUND.intValue() * 0.55F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      int selectedSlot = -1;
+      float[] floats = new float[36];
+      float[] floats2 = new float[36];
 
-      for (int var17 = 0; var17 < 36; var17++) {
-         float var18 = var10 + var17 % 9 * (var9 + 3.0F);
-         float var19 = var5 + var17 / 9 * (var9 + 3.0F);
-         BoundsData var20 = new BoundsData(var18, var19, var9, var9);
-         this.slotBounds[var17] = var20;
-         boolean var21 = var20.contains(var2, var3);
-         if (var21) {
-            var14 = var17;
+      for (int i = 0; i < 36; i++) {
+         float floatValue = f4 + i % 9 * (slotSize + 3.0F);
+         float y = f2 + i / 9 * (slotSize + 3.0F);
+         BoundsData boundsData = new BoundsData(floatValue, y, slotSize, slotSize);
+         this.slotBounds[i] = boundsData;
+         boolean contains = boundsData.contains(lastClickX, lastClickY);
+         if (contains) {
+            selectedSlot = i;
          }
 
-         float var22 = this.hot("slot:" + var17, var21);
-         float var23 = this.hot("slotsel:" + var17, var17 == this.selectedSlot);
-         var15[var17] = var22;
-         var16[var17] = var23;
-         boolean var24 = var11.method871(var17);
-         float var25 = this.pressed("slotp:" + var17);
-         float var26 = var25 * 1.4F;
-         float var27 = var18 + var26 / 2.0F;
-         float var28 = var19 + var26 / 2.0F - var22 * 0.6F;
-         float var29 = var9 - var26;
-         ZenithColor var30 = var24
-            ? var8.getPanelLeftBackground().getZenithColor().method7295(var8.getDisableActiveBg().getZenithColor(), var22 * 0.8F)
-            : cardFill(var8, var22).method7295(var13.method7292(0.14F), 0.25F + var23 * 0.5F);
-         var1.drawRoundedRect(var27, var28, var29, var29, var12, var30.method7294(var7));
-         if (var23 > 0.01F) {
-            var1.drawRoundedBorder(var27, var28, var29, var29, 0.4F, var12, var13.method7292(0.85F * var23).method7294(var7));
-         } else if (!var24) {
-            var1.drawRoundedBorder(var27, var28, var29, var29, 0.15F, var12, var8.getFieldBorder().getZenithColor().method7294(var7 * (2.0F + var22 * 2.0F)));
+         float hot = this.hot("slot:" + i, contains);
+         float hot2 = this.hot("slotsel:" + i, i == this.selectedSlot);
+         floats[i] = hot;
+         floats2[i] = hot2;
+         boolean flag = inventoryPreset.method871(i);
+         float pressed = this.pressed("slotp:" + i);
+         float f5 = pressed * 1.4F;
+         float floatValue2 = floatValue + f5 / 2.0F;
+         float y2 = y + f5 / 2.0F - hot * 0.6F;
+         float width = slotSize - f5;
+         ZenithColor zenithColor2 = flag
+            ? zenithStyle.getPanelLeftBackground().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), hot * 0.8F)
+            : cardFill(zenithStyle, hot).method7295(zenithColor.method7292(0.14F), 0.25F + hot2 * 0.5F);
+         menuDrawContext.drawRoundedRect(floatValue2, y2, width, width, headerRadius, zenithColor2.method7294(previewAlpha));
+         if (hot2 > 0.01F) {
+            menuDrawContext.drawRoundedBorder(floatValue2, y2, width, width, 0.4F, headerRadius, zenithColor.method7292(0.85F * hot2).method7294(previewAlpha));
+         } else if (!flag) {
+            menuDrawContext.drawRoundedBorder(floatValue2, y2, width, width, 0.15F, headerRadius, zenithStyle.getFieldBorder().getZenithColor().method7294(previewAlpha * (2.0F + hot * 2.0F)));
          }
       }
 
       HudBatchState.begin();
 
       try {
-         for (int var34 = 0; var34 < 36; var34++) {
-            ItemMatcher var36 = var11.method870(var34);
-            if (var36 != null && !var36.getItemStack().isEmpty()) {
-               BoundsData var38 = this.slotBounds[var34];
-               float var40 = this.since("place:" + var34, 380L);
-               float var43 = 1.0F - (1.0F - var40) * (1.0F - var40) * (1.0F - var40);
-               float var46 = var43 * (1.0F + (float)Math.sin(var40 * Math.PI) * 0.18F);
-               float var47 = var9 * 0.65F * var46;
-               if (!(var47 < 1.0F)) {
-                  float var48 = var15[var34] * 0.6F;
+         for (int i = 0; i < 36; i++) {
+            ItemMatcher itemMatcher = inventoryPreset.method870(i);
+            if (itemMatcher != null && !itemMatcher.getItemStack().isEmpty()) {
+               BoundsData slotBound = this.slotBounds[i];
+               float since = this.since("place:" + i, 380L);
+               float f5 = 1.0F - (1.0F - since) * (1.0F - since) * (1.0F - since);
+               float f6 = f5 * (1.0F + (float)Math.sin(since * Math.PI) * 0.18F);
+               float f7 = slotSize * 0.65F * f6;
+               if (!(f7 < 1.0F)) {
+                  float f8 = floats[i] * 0.6F;
                   this.drawItem(
-                     var1,
-                     var36.getItemStack(),
-                     var38.getFloatValue() + (var9 - var47) / 2.0F,
-                     var38.getFloatValue2() + (var9 - var47) / 2.0F - var48,
-                     var47,
-                     var7
+                     menuDrawContext,
+                     itemMatcher.getItemStack(),
+                     slotBound.getFloatValue() + (slotSize - f7) / 2.0F,
+                     slotBound.getFloatValue2() + (slotSize - f7) / 2.0F - f8,
+                     f7,
+                     previewAlpha
                   );
                }
             }
@@ -520,69 +520,69 @@ public class AutoSborToolPanel extends ToolTab {
          HudBatchState.end();
       }
 
-      Font var35 = Fonts.NEW_MEDIUM.getFont(4.2F);
+      Font font = Fonts.NEW_MEDIUM.getFont(4.2F);
 
-      for (int var37 = 0; var37 < 36; var37++) {
-         BoundsData var39 = this.slotBounds[var37];
-         if (var11.method871(var37)) {
-            float var41 = Math.max(var15[var37], var16[var37]);
-            float var44 = var16[var37];
-            if (var41 > 0.02F) {
+      for (int i = 0; i < 36; i++) {
+         BoundsData slotBound = this.slotBounds[i];
+         if (inventoryPreset.method871(i)) {
+            float f5 = Math.max(floats[i], floats2[i]);
+            float hover = floats2[i];
+            if (f5 > 0.02F) {
                this.drawPlus(
-                  var1,
-                  var39.getFloatValue() + var9 / 2.0F,
-                  var39.getFloatValue2() + var9 / 2.0F,
-                  5.0F + 1.5F * var44,
-                  var8.getTextTertiary().getZenithColor().method7295(var13, var44).method7294(var7 * var41)
+                  menuDrawContext,
+                  slotBound.getFloatValue() + slotSize / 2.0F,
+                  slotBound.getFloatValue2() + slotSize / 2.0F,
+                  5.0F + 1.5F * hover,
+                  zenithStyle.getTextTertiary().getZenithColor().method7295(zenithColor, hover).method7294(previewAlpha * f5)
                );
             }
          } else {
-            int var42 = var11.method877(var37);
-            if (var42 > 1) {
-               String var45 = String.valueOf(var42);
-               var1.drawText(
-                  var35,
-                  var45,
-                  var39.getFloatValue() + var9 - 2.0F - var35.width(var45),
-                  var39.getFloatValue2() + var9 - 2.0F - var35.height(),
-                  var8.getTextEnable().getZenithColor().method7294(var7)
+            int n = inventoryPreset.method877(i);
+            if (n > 1) {
+               String text = String.valueOf(n);
+               menuDrawContext.drawText(
+                  font,
+                  text,
+                  slotBound.getFloatValue() + slotSize - 2.0F - font.width(text),
+                  slotBound.getFloatValue2() + slotSize - 2.0F - font.height(),
+                  zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha)
                );
             }
 
-            if (var11.method879(var37) > 0L) {
-               dot(var1, var39.getFloatValue() + 3.5F, var39.getFloatValue2() + 3.5F, 2.2F, var13, 0.0F, var7);
+            if (inventoryPreset.method879(i) > 0L) {
+               dot(menuDrawContext, slotBound.getFloatValue() + 3.5F, slotBound.getFloatValue2() + 3.5F, 2.2F, zenithColor, 0.0F, previewAlpha);
             }
          }
       }
 
-      if (var14 >= 0) {
+      if (selectedSlot >= 0) {
          HoverInfo.request(
-            t("gui.tools.inv.slot") + " " + (var14 + 1), t(var11.method871(var14) ? "gui.tools.inv.slot.empty.desc" : "gui.tools.inv.slot.filled.desc")
+            t("gui.tools.inv.slot") + " " + (selectedSlot + 1), t(inventoryPreset.method871(selectedSlot) ? "gui.tools.inv.slot.empty.desc" : "gui.tools.inv.slot.filled.desc")
          );
       }
    }
 
-   private void drawPlus(MenuDrawContext var1, float var2, float var3, float var4, ZenithColor var5) {
-      var1.drawRect(var2 - var4 / 2.0F, var3 - 0.5F, var4, 1.0F, var5);
-      var1.drawRect(var2 - 0.5F, var3 - var4 / 2.0F, 1.0F, var4, var5);
+   private void drawPlus(MenuDrawContext menuDrawContext, float f, float f2, float width, ZenithColor zenithColor) {
+      menuDrawContext.drawRect(f - width / 2.0F, f2 - 0.5F, width, 1.0F, zenithColor);
+      menuDrawContext.drawRect(f - 0.5F, f2 - width / 2.0F, 1.0F, width, zenithColor);
    }
 
-   private void renderHint(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = Fonts.NEW_REGULAR.getFont(4.4F);
-      String var10 = fit(var9, t(this.hintKey()), var6 - 16.0F - 10.0F);
-      float var11 = var9.width(var10);
-      float var12 = var4 + (var6 - var11) / 2.0F;
-      boolean var13 = this.selectedSlot >= 0;
-      if (var13) {
-         dot(var1, var12 - 5.0F, var5 + 6.5F, 2.4F, var8.getPrimaryColor().getZenithColor(), pulse(1.0F), var7);
+   private void renderHint(MenuDrawContext menuDrawContext, int n, int n2, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = Fonts.NEW_REGULAR.getFont(4.4F);
+      String text = fit(font, t(this.hintKey()), f3 - 16.0F - 10.0F);
+      float width = font.width(text);
+      float floatValue = f + (f3 - width) / 2.0F;
+      boolean flag = this.selectedSlot >= 0;
+      if (flag) {
+         dot(menuDrawContext, floatValue - 5.0F, f2 + 6.5F, 2.4F, zenithStyle.getPrimaryColor().getZenithColor(), pulse(1.0F), previewAlpha);
       }
 
-      var1.drawText(
-         var9,
-         var10,
-         var12,
-         var5 + (13.0F - var9.height()) / 2.0F,
-         (var13 ? var8.getTextSecondary() : var8.getTextTertiary()).getZenithColor().method7294(var7)
+      menuDrawContext.drawText(
+         font,
+         text,
+         floatValue,
+         f2 + (13.0F - font.height()) / 2.0F,
+         (flag ? zenithStyle.getTextSecondary() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
    }
 
@@ -594,439 +594,439 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private void renderButtons(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = var6 - 16.0F;
-      float var10 = (var9 - 5.0F) / 2.0F;
-      this.clearButton = new BoundsData(var4 + 8.0F, var5 + 3.0F, var10, 17.0F);
-      this.saveButton = new BoundsData(var4 + 8.0F + var10 + 5.0F, var5 + 3.0F, var10, 17.0F);
-      boolean var11 = set().isEmpty();
-      if (this.button(var1, var8, "clear", this.clearButton, MenuGlyph.CLOSE, t("gui.tools.inv.clear"), 2, !var11, var2, var3, var7)) {
+   private void renderButtons(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float f4 = f3 - 16.0F;
+      float width = (f4 - 5.0F) / 2.0F;
+      this.clearButton = new BoundsData(f + 8.0F, f2 + 3.0F, width, 17.0F);
+      this.saveButton = new BoundsData(f + 8.0F + width + 5.0F, f2 + 3.0F, width, 17.0F);
+      boolean empty = set().isEmpty();
+      if (this.button(menuDrawContext, zenithStyle, "clear", this.clearButton, MenuGlyph.CLOSE, t("gui.tools.inv.clear"), 2, !empty, lastClickX, lastClickY, previewAlpha)) {
          HoverInfo.request(t("gui.tools.inv.clear"), t("gui.tools.inv.clear.desc"));
       }
 
-      if (this.button(var1, var8, "save", this.saveButton, MenuGlyph.CHECK, t("gui.tools.inv.presets.save"), 1, !var11, var2, var3, var7)) {
+      if (this.button(menuDrawContext, zenithStyle, "save", this.saveButton, MenuGlyph.CHECK, t("gui.tools.inv.presets.save"), 1, !empty, lastClickX, lastClickY, previewAlpha)) {
          HoverInfo.request(t("gui.tools.inv.presets.save"), t("gui.tools.inv.presets.save.desc"));
       }
 
-      if (var11) {
+      if (empty) {
          this.clearButton = null;
          this.saveButton = null;
       }
    }
 
-   private void renderServerStrip(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      Font var9 = Fonts.NEW_MEDIUM.getFont(4.0F);
-      caption(var1, var8, t("gui.tools.inv.server"), var4 + 8.0F, var5 + (20.0F - var9.height()) / 2.0F, var7);
-      float var10 = this.serverStrip.width();
-      float var11 = var4 + var6 - 8.0F - var10;
-      float var12 = var5 + 4.5F;
-      this.serverStripBounds = new BoundsData(var11, var12, var10, 11.0F);
-      this.serverStrip.render(var1, var2, var3, var11, var12, var10 + 1.0F, serverIndex(), var7, var8);
+   private void renderServerStrip(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      Font font = Fonts.NEW_MEDIUM.getFont(4.0F);
+      caption(menuDrawContext, zenithStyle, t("gui.tools.inv.server"), f + 8.0F, f2 + (20.0F - font.height()) / 2.0F, previewAlpha);
+      float width = this.serverStrip.width();
+      float floatValue = f + f3 - 8.0F - width;
+      float y = f2 + 4.5F;
+      this.serverStripBounds = new BoundsData(floatValue, y, width, 11.0F);
+      this.serverStrip.render(menuDrawContext, lastClickX, lastClickY, floatValue, y, width + 1.0F, serverIndex(), previewAlpha, zenithStyle);
    }
 
    private static int serverIndex() {
-      String var0 = module().method206();
+      String anObject = module().method206();
 
-      for (int var1 = 0; var1 < SERVERS.length; var1++) {
-         if (SERVERS[var1].equals(var0)) {
-            return var1;
+      for (int i = 0; i < SERVERS.length; i++) {
+         if (SERVERS[i].equals(anObject)) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   private void renderSearchField(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      this.searchField = new BoundsData(var4 + 8.0F, var5 + 2.0F, var6 - 16.0F, 18.0F);
-      this.drawField(var1, var2, var3, "search", this.searchField, this.searchInput(), MenuGlyph.SEARCH, var7, var8);
+   private void renderSearchField(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      this.searchField = new BoundsData(f + 8.0F, f2 + 2.0F, f3 - 16.0F, 18.0F);
+      this.drawField(menuDrawContext, lastClickX, lastClickY, "search", this.searchField, this.searchInput(), MenuGlyph.SEARCH, previewAlpha, zenithStyle);
    }
 
-   private void renderListStrip(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      float var9 = var5 + 4.5F;
-      float var10 = this.listStrip.width();
-      this.stripBounds = new BoundsData(var4 + 8.0F, var9, var10, 11.0F);
-      this.listStrip.render(var1, var2, var3, var4 + 8.0F, var9, var10 + 1.0F, this.listMode, var7, var8);
-      Font var11 = Fonts.NEW_MEDIUM.getFont(4.2F);
-      String var12 = String.valueOf(this.listCount);
-      var1.drawText(
-         var11,
-         var12,
-         var4 + var6 - 8.0F - var11.width(var12),
-         var5 + (20.0F - var11.height()) / 2.0F,
-         var8.getTextTertiary().getZenithColor().method7294(var7)
+   private void renderListStrip(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      float y = f2 + 4.5F;
+      float width = this.listStrip.width();
+      this.stripBounds = new BoundsData(f + 8.0F, y, width, 11.0F);
+      this.listStrip.render(menuDrawContext, lastClickX, lastClickY, f + 8.0F, y, width + 1.0F, this.listMode, previewAlpha, zenithStyle);
+      Font font = Fonts.NEW_MEDIUM.getFont(4.2F);
+      String text = String.valueOf(this.listCount);
+      menuDrawContext.drawText(
+         font,
+         text,
+         f + f3 - 8.0F - font.width(text),
+         f2 + (20.0F - font.height()) / 2.0F,
+         zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
    }
 
-   private void drawField(MenuDrawContext var1, int var2, int var3, String var4, BoundsData var5, SearchBox var6, MenuGlyph var7, float var8, ZenithStyle var9) {
-      boolean var10 = var6.isSelected();
-      float var11 = this.hot("field:" + var4, var5.contains(var2, var3));
-      float var12 = this.hot("focus:" + var4, var10);
-      ProxyDotRadiusData var13 = ProxyDotRadiusData.method8069(CARD_ROUND);
-      ZenithColor var14 = var9.getPrimaryColor().getZenithColor();
-      var1.drawRoundedRect(
-         var5.getFloatValue(),
-         var5.getFloatValue2(),
-         var5.width(),
-         var5.height(),
-         var13,
-         var9.getPanelLeftBackground().getZenithColor().method7295(var9.getDisableActiveBg().getZenithColor(), var11 * 0.4F).method7294(var8)
+   private void drawField(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, String str, BoundsData searchField, SearchBox searchInput, MenuGlyph menuGlyph, float previewAlpha, ZenithStyle zenithStyle) {
+      boolean selected = searchInput.isSelected();
+      float hot = this.hot("field:" + str, searchField.contains(lastClickX, lastClickY));
+      float hover = this.hot("focus:" + str, selected);
+      ProxyDotRadiusData headerRadius = ProxyDotRadiusData.method8069(CARD_ROUND);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      menuDrawContext.drawRoundedRect(
+         searchField.getFloatValue(),
+         searchField.getFloatValue2(),
+         searchField.width(),
+         searchField.height(),
+         headerRadius,
+         zenithStyle.getPanelLeftBackground().getZenithColor().method7295(zenithStyle.getDisableActiveBg().getZenithColor(), hot * 0.4F).method7294(previewAlpha)
       );
-      var1.drawRoundedBorder(
-         var5.getFloatValue(),
-         var5.getFloatValue2(),
-         var5.width(),
-         var5.height(),
-         0.2F + var12 * 0.15F,
-         var13,
-         var9.getFieldBorder().getZenithColor().method7294(2.0F + var11 * 2.0F).method7295(var14.method7292(0.7F), var12).method7294(var8)
+      menuDrawContext.drawRoundedBorder(
+         searchField.getFloatValue(),
+         searchField.getFloatValue2(),
+         searchField.width(),
+         searchField.height(),
+         0.2F + hover * 0.15F,
+         headerRadius,
+         zenithStyle.getFieldBorder().getZenithColor().method7294(2.0F + hot * 2.0F).method7295(zenithColor.method7292(0.7F), hover).method7294(previewAlpha)
       );
-      var7.draw(
-         var1,
-         var5.getFloatValue() + 6.0F,
-         var5.getFloatValue2() + (var5.height() - 6.0F) / 2.0F,
-         var9.getTextTertiary().getZenithColor().method7295(var14, var12).method7294(var8)
+      menuGlyph.draw(
+         menuDrawContext,
+         searchField.getFloatValue() + 6.0F,
+         searchField.getFloatValue2() + (searchField.height() - 6.0F) / 2.0F,
+         zenithStyle.getTextTertiary().getZenithColor().method7295(zenithColor, hover).method7294(previewAlpha)
       );
-      Font var15 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      var6.setFont(var15);
-      var6.setWidth(var5.width() - 22.0F);
-      var6.method987(
-         var1,
-         var5.getFloatValue() + 16.0F,
-         var5.getFloatValue2() + (var5.height() - var15.height()) / 2.0F,
-         var9.getTextEnable().getZenithColor().method7294(var8),
-         var9.getTextTertiary().getZenithColor().method7294(var8)
+      Font font = Fonts.NEW_MEDIUM.getFont(4.8F);
+      searchInput.setFont(font);
+      searchInput.setWidth(searchField.width() - 22.0F);
+      searchInput.method987(
+         menuDrawContext,
+         searchField.getFloatValue() + 16.0F,
+         searchField.getFloatValue2() + (searchField.height() - font.height()) / 2.0F,
+         zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha),
+         zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha)
       );
    }
 
    private void renderCatalogRow(
-      MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, ItemMatcher var9, String var10
+      MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, ItemMatcher key, String name
    ) {
-      BoundsData var11 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 19.0F);
-      boolean var12 = var11.contains(var2, var3);
-      int var13 = this.inSetCounts.getOrDefault(var9, 0);
-      String var14 = "cat:" + System.identityHashCode(var9);
-      float var15 = this.hot(var14, var12);
-      float var16 = this.hot(var14 + ":on", var13 > 0);
-      ZenithColor var17 = var8.getPrimaryColor().getZenithColor();
-      if (var16 > 0.01F) {
-         accentCard(var1, var8, var11.getFloatValue(), var11.getFloatValue2(), var11.width(), var11.height(), var15, var7, var17, var16 * 0.55F);
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 19.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      int n = this.inSetCounts.getOrDefault(key, 0);
+      String anObject = "cat:" + System.identityHashCode(key);
+      float hot = this.hot(anObject, contains);
+      float hot2 = this.hot(anObject + ":on", n > 0);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      if (hot2 > 0.01F) {
+         accentCard(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha, zenithColor, hot2 * 0.55F);
       } else {
-         card(var1, var8, var11.getFloatValue(), var11.getFloatValue2(), var11.width(), var11.height(), var15, var7);
+         card(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
       }
 
-      float var18 = var11.height() - 6.0F;
-      tile(var1, var8, var11.getFloatValue() + 3.0F, var11.getFloatValue2() + 3.0F, var18, var17, var16 * 0.5F + var15 * 0.2F, var7);
+      float width = boundsData.height() - 6.0F;
+      tile(menuDrawContext, zenithStyle, boundsData.getFloatValue() + 3.0F, boundsData.getFloatValue2() + 3.0F, width, zenithColor, hot2 * 0.5F + hot * 0.2F, previewAlpha);
       this.drawItem(
-         var1,
-         var9.getItemStack(),
-         var11.getFloatValue() + 3.0F + (var18 - 11.0F) / 2.0F,
-         var11.getFloatValue2() + 3.0F + (var18 - 11.0F) / 2.0F - var15 * 0.6F,
+         menuDrawContext,
+         key.getItemStack(),
+         boundsData.getFloatValue() + 3.0F + (width - 11.0F) / 2.0F,
+         boundsData.getFloatValue2() + 3.0F + (width - 11.0F) / 2.0F - hot * 0.6F,
          11.0F,
-         var7
+         previewAlpha
       );
-      Font var19 = Fonts.NEW_MEDIUM.getFont(4.9F);
-      Font var20 = Fonts.NEW_MEDIUM.getFont(4.1F);
-      float var21 = var11.getFloatValue() + var11.width() - 5.0F;
-      if (var13 > 0) {
-         String var22 = "×" + var13;
-         float var23 = pillWidth(var20, var22);
-         pill(var1, var20, var21 - var23, var11.getFloatValue2() + (var11.height() - var20.height() - 3.6F) / 2.0F, var22, var17, var7);
-         var21 -= var23 + 4.0F;
+      Font font = Fonts.NEW_MEDIUM.getFont(4.9F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.1F);
+      float f4 = boundsData.getFloatValue() + boundsData.width() - 5.0F;
+      if (n > 0) {
+         String text = "×" + n;
+         float pillWidth2 = pillWidth(font2, text);
+         pill(menuDrawContext, font2, f4 - pillWidth2, boundsData.getFloatValue2() + (boundsData.height() - font2.height() - 3.6F) / 2.0F, text, zenithColor, previewAlpha);
+         f4 -= pillWidth2 + 4.0F;
       }
 
-      if (var15 > 0.02F) {
-         float var25 = 10.0F;
-         float var27 = var21 - var25;
-         float var24 = var11.getFloatValue2() + (var11.height() - var25) / 2.0F;
-         var1.drawRoundedRect(var27, var24, var25, var25, ProxyDotRadiusData.method8069(var25 / 2.0F), var17.method7292(0.2F * var15).method7294(var7));
-         this.drawPlus(var1, var27 + var25 / 2.0F, var24 + var25 / 2.0F, 4.5F, var17.method7294(var7 * var15));
-         var21 -= var25 + 4.0F;
+      if (hot > 0.02F) {
+         float width2 = 10.0F;
+         float floatValue = f4 - width2;
+         float y = boundsData.getFloatValue2() + (boundsData.height() - width2) / 2.0F;
+         menuDrawContext.drawRoundedRect(floatValue, y, width2, width2, ProxyDotRadiusData.method8069(width2 / 2.0F), zenithColor.method7292(0.2F * hot).method7294(previewAlpha));
+         this.drawPlus(menuDrawContext, floatValue + width2 / 2.0F, y + width2 / 2.0F, 4.5F, zenithColor.method7294(previewAlpha * hot));
+         f4 -= width2 + 4.0F;
       }
 
-      float var26 = var11.getFloatValue() + 3.0F + var18 + 6.0F;
-      var1.drawText(
-         var19,
-         var19.clip(var10, var21 - var26),
-         var26,
-         var11.getFloatValue2() + (var11.height() - var19.height()) / 2.0F,
-         var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), Math.max(var16, var15 * 0.7F)).method7294(var7)
+      float floatValue = boundsData.getFloatValue() + 3.0F + width + 6.0F;
+      menuDrawContext.drawText(
+         font,
+         font.clip(name, f4 - floatValue),
+         floatValue,
+         boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+         zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), Math.max(hot2, hot * 0.7F)).method7294(previewAlpha)
       );
-      if (var12) {
-         HoverInfo.request(var10, t("gui.tools.inv.catalog.desc"));
+      if (contains) {
+         HoverInfo.request(name, t("gui.tools.inv.catalog.desc"));
       }
    }
 
-   private void renderHistoryRow(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, ItemEntry var9) {
-      BoundsData var10 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 19.0F);
-      boolean var11 = var10.contains(var2, var3);
+   private void renderHistoryRow(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, ItemEntry itemEntry) {
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 19.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
       card(
-         var1,
-         var8,
-         var10.getFloatValue(),
-         var10.getFloatValue2(),
-         var10.width(),
-         var10.height(),
-         this.hot("hist:" + System.identityHashCode(var9), var11),
-         var7
+         menuDrawContext,
+         zenithStyle,
+         boundsData.getFloatValue(),
+         boundsData.getFloatValue2(),
+         boundsData.width(),
+         boundsData.height(),
+         this.hot("hist:" + System.identityHashCode(itemEntry), contains),
+         previewAlpha
       );
-      float var12 = var10.height() - 6.0F;
-      tile(var1, var8, var10.getFloatValue() + 3.0F, var10.getFloatValue2() + 3.0F, var12, OK, 0.25F, var7);
+      float width = boundsData.height() - 6.0F;
+      tile(menuDrawContext, zenithStyle, boundsData.getFloatValue() + 3.0F, boundsData.getFloatValue2() + 3.0F, width, OK, 0.25F, previewAlpha);
       this.drawItem(
-         var1, var9.getItemStack(), var10.getFloatValue() + 3.0F + (var12 - 11.0F) / 2.0F, var10.getFloatValue2() + 3.0F + (var12 - 11.0F) / 2.0F, 11.0F, var7
+         menuDrawContext, itemEntry.getItemStack(), boundsData.getFloatValue() + 3.0F + (width - 11.0F) / 2.0F, boundsData.getFloatValue2() + 3.0F + (width - 11.0F) / 2.0F, 11.0F, previewAlpha
       );
-      Font var13 = Fonts.NEW_MEDIUM.getFont(4.9F);
-      Font var14 = Fonts.NEW_MEDIUM.getFont(4.1F);
-      String var15 = String.valueOf(var9.getLongValue());
-      float var16 = pillWidth(var14, var15);
-      float var17 = var10.getFloatValue() + var10.width() - 5.0F;
-      pill(var1, var14, var17 - var16, var10.getFloatValue2() + (var10.height() - var14.height() - 3.6F) / 2.0F, var15, OK, var7);
-      float var18 = var10.getFloatValue() + 3.0F + var12 + 6.0F;
-      String var19 = var9.getText() + "  ×" + var9.getIntValue();
-      var1.drawText(
-         var13,
-         var13.clip(var19, var17 - var16 - 5.0F - var18),
-         var18,
-         var10.getFloatValue2() + (var10.height() - var13.height()) / 2.0F,
-         var8.getTextSecondary().getZenithColor().method7294(var7)
+      Font font = Fonts.NEW_MEDIUM.getFont(4.9F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.1F);
+      String text = String.valueOf(itemEntry.getLongValue());
+      float pillWidth2 = pillWidth(font2, text);
+      float f4 = boundsData.getFloatValue() + boundsData.width() - 5.0F;
+      pill(menuDrawContext, font2, f4 - pillWidth2, boundsData.getFloatValue2() + (boundsData.height() - font2.height() - 3.6F) / 2.0F, text, OK, previewAlpha);
+      float floatValue = boundsData.getFloatValue() + 3.0F + width + 6.0F;
+      String name = itemEntry.getText() + "  ×" + itemEntry.getIntValue();
+      menuDrawContext.drawText(
+         font,
+         font.clip(name, f4 - pillWidth2 - 5.0F - floatValue),
+         floatValue,
+         boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+         zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
       );
-      if (var11) {
-         HoverInfo.request(var9.getText(), t("gui.tools.inv.history.desc"));
+      if (contains) {
+         HoverInfo.request(itemEntry.getText(), t("gui.tools.inv.history.desc"));
       }
    }
 
-   private void renderNameField(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      this.nameField = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 18.0F);
-      this.drawField(var1, var2, var3, "name", this.nameField, this.nameInput(), MenuGlyph.CONFIGS, var7, var8);
+   private void renderNameField(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      this.nameField = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 18.0F);
+      this.drawField(menuDrawContext, lastClickX, lastClickY, "name", this.nameField, this.nameInput(), MenuGlyph.CONFIGS, previewAlpha, zenithStyle);
    }
 
-   private void renderPreset(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8, SborList var9) {
-      BoundsData var10 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 19.0F);
-      boolean var11 = var10.contains(var2, var3);
-      float var12 = this.hot("preset:" + var9.getName(), var11);
-      card(var1, var8, var10.getFloatValue(), var10.getFloatValue2(), var10.width(), var10.height(), var12, var7);
-      float var13 = var10.height() - 6.0F;
-      ZenithColor var14 = var8.getPrimaryColor().getZenithColor();
-      tile(var1, var8, var10.getFloatValue() + 3.0F, var10.getFloatValue2() + 3.0F, var13, var14, 0.35F + var12 * 0.3F, var7);
+   private void renderPreset(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, SborList sborList) {
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 19.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.hot("preset:" + sborList.getName(), contains);
+      card(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), hot, previewAlpha);
+      float width = boundsData.height() - 6.0F;
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      tile(menuDrawContext, zenithStyle, boundsData.getFloatValue() + 3.0F, boundsData.getFloatValue2() + 3.0F, width, zenithColor, 0.35F + hot * 0.3F, previewAlpha);
       MenuGlyph.CONFIGS
-         .draw(var1, var10.getFloatValue() + 3.0F + (var13 - 6.0F) / 2.0F, var10.getFloatValue2() + 3.0F + (var13 - 6.0F) / 2.0F, var14.method7294(var7));
-      Font var15 = Fonts.NEW_MEDIUM.getFont(4.9F);
-      Font var16 = Fonts.NEW_MEDIUM.getFont(4.1F);
-      String var17 = String.valueOf(var9.size());
-      float var18 = pillWidth(var16, var17);
-      float var19 = var10.getFloatValue() + var10.width() - 5.0F;
+         .draw(menuDrawContext, boundsData.getFloatValue() + 3.0F + (width - 6.0F) / 2.0F, boundsData.getFloatValue2() + 3.0F + (width - 6.0F) / 2.0F, zenithColor.method7294(previewAlpha));
+      Font font = Fonts.NEW_MEDIUM.getFont(4.9F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.1F);
+      String text = String.valueOf(sborList.size());
+      float pillWidth2 = pillWidth(font2, text);
+      float f4 = boundsData.getFloatValue() + boundsData.width() - 5.0F;
       pill(
-         var1,
-         var16,
-         var19 - var18,
-         var10.getFloatValue2() + (var10.height() - var16.height() - 3.6F) / 2.0F,
-         var17,
-         var8.getTextSecondary().getZenithColor(),
-         var7
+         menuDrawContext,
+         font2,
+         f4 - pillWidth2,
+         boundsData.getFloatValue2() + (boundsData.height() - font2.height() - 3.6F) / 2.0F,
+         text,
+         zenithStyle.getTextSecondary().getZenithColor(),
+         previewAlpha
       );
-      float var20 = var10.getFloatValue() + 3.0F + var13 + 6.0F;
-      var1.drawText(
-         var15,
-         var15.clip(var9.getName(), var19 - var18 - 5.0F - var20),
-         var20,
-         var10.getFloatValue2() + (var10.height() - var15.height()) / 2.0F,
-         var8.getTextSecondary().getZenithColor().method7295(var8.getTextEnable().getZenithColor(), var12).method7294(var7)
+      float floatValue = boundsData.getFloatValue() + 3.0F + width + 6.0F;
+      menuDrawContext.drawText(
+         font,
+         font.clip(sborList.getName(), f4 - pillWidth2 - 5.0F - floatValue),
+         floatValue,
+         boundsData.getFloatValue2() + (boundsData.height() - font.height()) / 2.0F,
+         zenithStyle.getTextSecondary().getZenithColor().method7295(zenithStyle.getTextEnable().getZenithColor(), hot).method7294(previewAlpha)
       );
-      if (var11) {
-         HoverInfo.request(var9.getName(), t("gui.tools.inv.presets.desc"));
+      if (contains) {
+         HoverInfo.request(sborList.getName(), t("gui.tools.inv.presets.desc"));
       }
    }
 
-   private void renderRunCard(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, ZenithStyle var8) {
-      AutoInventoryModule var9 = module();
-      boolean var10 = var9.isEnabled();
-      BoundsData var11 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 70.0F);
-      ZenithColor var12 = var8.getPrimaryColor().getZenithColor();
+   private void renderRunCard(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle) {
+      AutoInventoryModule autoInventoryModule = module();
+      boolean enabled = autoInventoryModule.isEnabled();
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 70.0F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
       accentCard(
-         var1, var8, var11.getFloatValue(), var11.getFloatValue2(), var11.width(), var11.height(), 0.0F, var7, var12, var10 ? 0.4F + 0.2F * pulse(0.7F) : 0.1F
+         menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.0F, previewAlpha, zenithColor, enabled ? 0.4F + 0.2F * pulse(0.7F) : 0.1F
       );
-      this.startButton = new BoundsData(var11.getFloatValue() + 5.0F, var11.getFloatValue2() + 5.0F, var11.width() - 10.0F, 20.0F);
-      String var13 = t(var10 ? "gui.tools.inv.stop" : "gui.tools.inv.start");
-      if (this.button(var1, var8, "start", this.startButton, var10 ? MenuGlyph.CLOSE : MenuGlyph.CHECK, var13, var10 ? 2 : 1, true, var2, var3, var7)) {
-         HoverInfo.request(var13, t(var10 ? "gui.tools.inv.stop.desc" : "gui.tools.inv.start.desc"));
+      this.startButton = new BoundsData(boundsData.getFloatValue() + 5.0F, boundsData.getFloatValue2() + 5.0F, boundsData.width() - 10.0F, 20.0F);
+      String name = t(enabled ? "gui.tools.inv.stop" : "gui.tools.inv.start");
+      if (this.button(menuDrawContext, zenithStyle, "start", this.startButton, enabled ? MenuGlyph.CLOSE : MenuGlyph.CHECK, name, enabled ? 2 : 1, true, lastClickX, lastClickY, previewAlpha)) {
+         HoverInfo.request(name, t(enabled ? "gui.tools.inv.stop.desc" : "gui.tools.inv.start.desc"));
       }
 
-      if (var10) {
-         this.shimmer(var1, this.startButton, DANGER, var7);
+      if (enabled) {
+         this.shimmer(menuDrawContext, this.startButton, DANGER, previewAlpha);
       }
 
-      int var14 = var9.getIntValue4();
-      int var15 = var9.getIntValue5();
-      Font var16 = Fonts.NEW_REGULAR.getFont(4.3F);
-      Font var17 = Fonts.NEW_MEDIUM.getFont(4.3F);
-      float var18 = var11.getFloatValue() + 7.0F;
-      float var19 = var11.getFloatValue() + var11.width() - 7.0F;
-      float var20 = this.startButton.getFloatValue2() + this.startButton.height() + 6.0F;
-      var1.drawText(var16, t("gui.tools.inv.progress"), var18, var20, var8.getTextTertiary().getZenithColor().method7294(var7));
-      String var21 = var14 <= 0 ? "-" : var15 + " / " + var14;
-      var1.drawText(var17, var21, var19 - var17.width(var21), var20, var8.getTextSecondary().getZenithColor().method7294(var7));
-      progress(var1, var8, var18, var20 + var16.height() + 3.0F, var19 - var18, 3.0F, var14 <= 0 ? 0.0F : (float)var15 / var14, var12, var10, var7);
-      float var22 = var20 + var16.height() + 11.0F;
-      ZenithColor var23 = var10 ? var12 : var8.getTextTertiary().getZenithColor();
-      dot(var1, var18 + 1.5F, var22 + var16.height() / 2.0F, 3.0F, var23, var10 ? pulse(1.2F) : 0.0F, var7);
-      String var24 = var9.method211();
-      String var25 = var9.method212();
-      String var26 = var24 + (var25 != null && !var25.isBlank() ? "  ·  " + var25 : "");
-      var1.drawText(
-         var16,
-         var16.clip(var26, var19 - var18 - 7.0F),
-         var18 + 6.0F,
-         var22,
-         (var10 ? var8.getTextSecondary() : var8.getTextTertiary()).getZenithColor().method7294(var7)
+      int n = autoInventoryModule.getIntValue4();
+      int n2 = autoInventoryModule.getIntValue5();
+      Font font = Fonts.NEW_REGULAR.getFont(4.3F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.3F);
+      float floatValue = boundsData.getFloatValue() + 7.0F;
+      float f4 = boundsData.getFloatValue() + boundsData.width() - 7.0F;
+      float centeredTextY = this.startButton.getFloatValue2() + this.startButton.height() + 6.0F;
+      menuDrawContext.drawText(font, t("gui.tools.inv.progress"), floatValue, centeredTextY, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+      String text = n <= 0 ? "-" : n2 + " / " + n;
+      menuDrawContext.drawText(font2, text, f4 - font2.width(text), centeredTextY, zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha));
+      progress(menuDrawContext, zenithStyle, floatValue, centeredTextY + font.height() + 3.0F, f4 - floatValue, 3.0F, n <= 0 ? 0.0F : (float)n2 / n, zenithColor, enabled, previewAlpha);
+      float centeredTextY2 = centeredTextY + font.height() + 11.0F;
+      ZenithColor zenithColor2 = enabled ? zenithColor : zenithStyle.getTextTertiary().getZenithColor();
+      dot(menuDrawContext, floatValue + 1.5F, centeredTextY2 + font.height() / 2.0F, 3.0F, zenithColor2, enabled ? pulse(1.2F) : 0.0F, previewAlpha);
+      String str = autoInventoryModule.method211();
+      String str2 = autoInventoryModule.method212();
+      String name2 = str + (str2 != null && !str2.isBlank() ? "  ·  " + str2 : "");
+      menuDrawContext.drawText(
+         font,
+         font.clip(name2, f4 - floatValue - 7.0F),
+         floatValue + 6.0F,
+         centeredTextY2,
+         (enabled ? zenithStyle.getTextSecondary() : zenithStyle.getTextTertiary()).getZenithColor().method7294(previewAlpha)
       );
-      if (new BoundsData(var18, var22 - 2.0F, var19 - var18, var16.height() + 4.0F).contains(var2, var3)) {
+      if (new BoundsData(floatValue, centeredTextY2 - 2.0F, f4 - floatValue, font.height() + 4.0F).contains(lastClickX, lastClickY)) {
          HoverInfo.request(t("gui.tools.inv.status"), t("gui.tools.inv.status.desc"));
       }
    }
 
-   private void renderSlotHead(MenuDrawContext var1, float var2, float var3, float var4, float var5, ZenithStyle var6, int var7, ItemMatcher var8) {
-      BoundsData var9 = new BoundsData(var2 + 8.0F, var3 + 2.0F, var4 - 16.0F, 34.0F);
-      ZenithColor var10 = var6.getPrimaryColor().getZenithColor();
-      accentCard(var1, var6, var9.getFloatValue(), var9.getFloatValue2(), var9.width(), var9.height(), 0.0F, var5, var10, 0.3F);
-      float var11 = var9.height() - 8.0F;
-      tile(var1, var6, var9.getFloatValue() + 4.0F, var9.getFloatValue2() + 4.0F, var11, var10, 0.5F, var5);
-      float var12 = this.since("place:" + var7, 380L);
-      float var13 = 16.0F * (1.0F + (float)Math.sin(var12 * Math.PI) * 0.12F);
+   private void renderSlotHead(MenuDrawContext menuDrawContext, float f, float f2, float f3, float previewAlpha, ZenithStyle zenithStyle, int selectedSlot, ItemMatcher itemMatcher) {
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 2.0F, f3 - 16.0F, 34.0F);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      accentCard(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), 0.0F, previewAlpha, zenithColor, 0.3F);
+      float width = boundsData.height() - 8.0F;
+      tile(menuDrawContext, zenithStyle, boundsData.getFloatValue() + 4.0F, boundsData.getFloatValue2() + 4.0F, width, zenithColor, 0.5F, previewAlpha);
+      float since = this.since("place:" + selectedSlot, 380L);
+      float f4 = 16.0F * (1.0F + (float)Math.sin(since * Math.PI) * 0.12F);
       this.drawItem(
-         var1, var8.getItemStack(), var9.getFloatValue() + 4.0F + (var11 - var13) / 2.0F, var9.getFloatValue2() + 4.0F + (var11 - var13) / 2.0F, var13, var5
+         menuDrawContext, itemMatcher.getItemStack(), boundsData.getFloatValue() + 4.0F + (width - f4) / 2.0F, boundsData.getFloatValue2() + 4.0F + (width - f4) / 2.0F, f4, previewAlpha
       );
-      Font var14 = Fonts.NEW_MEDIUM.getFont(5.2F);
-      Font var15 = Fonts.NEW_REGULAR.getFont(4.2F);
-      Font var16 = Fonts.NEW_MEDIUM.getFont(4.1F);
-      float var17 = var9.getFloatValue() + 4.0F + var11 + 7.0F;
-      float var18 = var9.getFloatValue() + var9.width() - 6.0F - var17;
-      String var19 = var8.getText2() == null ? var8.getText22() : var8.getText2();
-      var1.drawText(var14, var14.clip(var19, var18), var17, var9.getFloatValue2() + 6.0F, var6.getTextEnable().getZenithColor().method7294(var5));
-      float var20 = var9.getFloatValue2() + 8.0F + var14.height();
-      String var21 = t("gui.tools.inv.slot") + " " + (var7 + 1);
-      var1.drawText(var15, var21, var17, var20 + 1.0F, var6.getTextTertiary().getZenithColor().method7294(var5));
-      String var22 = t("gui.tools.inv.have") + " " + this.haveCount;
-      pill(var1, var16, var17 + var15.width(var21) + 5.0F, var20, var22, this.haveCount > 0 ? OK : var6.getTextTertiary().getZenithColor(), var5);
+      Font font = Fonts.NEW_MEDIUM.getFont(5.2F);
+      Font font2 = Fonts.NEW_REGULAR.getFont(4.2F);
+      Font font3 = Fonts.NEW_MEDIUM.getFont(4.1F);
+      float floatValue = boundsData.getFloatValue() + 4.0F + width + 7.0F;
+      float width2 = boundsData.getFloatValue() + boundsData.width() - 6.0F - floatValue;
+      String name = itemMatcher.getText2() == null ? itemMatcher.getText22() : itemMatcher.getText2();
+      menuDrawContext.drawText(font, font.clip(name, width2), floatValue, boundsData.getFloatValue2() + 6.0F, zenithStyle.getTextEnable().getZenithColor().method7294(previewAlpha));
+      float centeredTextY = boundsData.getFloatValue2() + 8.0F + font.height();
+      String text = t("gui.tools.inv.slot") + " " + (selectedSlot + 1);
+      menuDrawContext.drawText(font2, text, floatValue, centeredTextY + 1.0F, zenithStyle.getTextTertiary().getZenithColor().method7294(previewAlpha));
+      String str = t("gui.tools.inv.have") + " " + this.haveCount;
+      pill(menuDrawContext, font3, floatValue + font2.width(text) + 5.0F, centeredTextY, str, this.haveCount > 0 ? OK : zenithStyle.getTextTertiary().getZenithColor(), previewAlpha);
    }
 
    private BoundsData[] drawStepper(
-      MenuDrawContext var1,
-      int var2,
-      int var3,
-      float var4,
-      float var5,
-      float var6,
-      float var7,
-      ZenithStyle var8,
-      String var9,
-      String var10,
-      String var11,
-      String var12
+      MenuDrawContext menuDrawContext,
+      int lastClickX,
+      int lastClickY,
+      float f,
+      float f2,
+      float f3,
+      float previewAlpha,
+      ZenithStyle zenithStyle,
+      String str,
+      String name,
+      String name2,
+      String key
    ) {
-      BoundsData var13 = new BoundsData(var4 + 8.0F, var5 + 1.0F, var6 - 16.0F, 19.0F);
-      boolean var14 = var13.contains(var2, var3);
-      card(var1, var8, var13.getFloatValue(), var13.getFloatValue2(), var13.width(), var13.height(), this.hot("step:" + var9, var14), var7);
-      if (var14 && var12 != null) {
-         HoverInfo.request(var10, t(var12));
+      BoundsData boundsData = new BoundsData(f + 8.0F, f2 + 1.0F, f3 - 16.0F, 19.0F);
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      card(menuDrawContext, zenithStyle, boundsData.getFloatValue(), boundsData.getFloatValue2(), boundsData.width(), boundsData.height(), this.hot("step:" + str, contains), previewAlpha);
+      if (contains && key != null) {
+         HoverInfo.request(name, t(key));
       }
 
-      Font var15 = Fonts.NEW_MEDIUM.getFont(4.9F);
-      Font var16 = Fonts.NEW_MEDIUM.getFont(4.8F);
-      float var17 = var13.getFloatValue2() + var13.height() / 2.0F;
-      float var18 = 13.0F;
-      float var19 = var13.getFloatValue() + var13.width() - 4.0F - 62.0F;
-      var1.drawText(
-         var15,
-         fit(var15, var10, var19 - var13.getFloatValue() - 10.0F),
-         var13.getFloatValue() + 7.0F,
-         var17 - var15.height() / 2.0F,
-         var8.getTextSecondary().getZenithColor().method7294(var7)
+      Font font = Fonts.NEW_MEDIUM.getFont(4.9F);
+      Font font2 = Fonts.NEW_MEDIUM.getFont(4.8F);
+      float f4 = boundsData.getFloatValue2() + boundsData.height() / 2.0F;
+      float height = 13.0F;
+      float floatValue = boundsData.getFloatValue() + boundsData.width() - 4.0F - 62.0F;
+      menuDrawContext.drawText(
+         font,
+         fit(font, name, floatValue - boundsData.getFloatValue() - 10.0F),
+         boundsData.getFloatValue() + 7.0F,
+         f4 - font.height() / 2.0F,
+         zenithStyle.getTextSecondary().getZenithColor().method7294(previewAlpha)
       );
-      var1.drawRoundedRect(
-         var19,
-         var17 - var18 / 2.0F,
+      menuDrawContext.drawRoundedRect(
+         floatValue,
+         f4 - height / 2.0F,
          62.0F,
-         var18,
-         ProxyDotRadiusData.method8069(var18 / 2.0F),
-         var8.getPanelLeftBackground().getZenithColor().method7294(var7)
+         height,
+         ProxyDotRadiusData.method8069(height / 2.0F),
+         zenithStyle.getPanelLeftBackground().getZenithColor().method7294(previewAlpha)
       );
-      BoundsData var20 = new BoundsData(var19 + 1.0F, var17 - 5.5F, 11.0F, 11.0F);
-      BoundsData var21 = new BoundsData(var19 + 62.0F - 11.0F - 1.0F, var17 - 5.5F, 11.0F, 11.0F);
-      this.stepperButton(var1, var2, var3, var9 + ":minus", var20, false, var7, var8);
-      this.stepperButton(var1, var2, var3, var9 + ":plus", var21, true, var7, var8);
-      float var22 = var20.getFloatValue() + 11.0F;
-      float var23 = var21.getFloatValue() - var22;
-      String var24 = fit(var16, var11, var23);
-      float var25 = Math.max(this.pressed("step:" + var9 + ":minus"), this.pressed("step:" + var9 + ":plus"));
-      ZenithColor var26 = var8.getTextEnable().getZenithColor().method7295(var8.getPrimaryColor().getZenithColor(), var25);
-      var1.drawText(var16, var24, var22 + (var23 - var16.width(var24)) / 2.0F, var17 - var16.height() / 2.0F - var25 * 0.8F, var26.method7294(var7));
-      return new BoundsData[]{var20, var21};
+      BoundsData boundsData2 = new BoundsData(floatValue + 1.0F, f4 - 5.5F, 11.0F, 11.0F);
+      BoundsData boundsData3 = new BoundsData(floatValue + 62.0F - 11.0F - 1.0F, f4 - 5.5F, 11.0F, 11.0F);
+      this.stepperButton(menuDrawContext, lastClickX, lastClickY, str + ":minus", boundsData2, false, previewAlpha, zenithStyle);
+      this.stepperButton(menuDrawContext, lastClickX, lastClickY, str + ":plus", boundsData3, true, previewAlpha, zenithStyle);
+      float f5 = boundsData2.getFloatValue() + 11.0F;
+      float f6 = boundsData3.getFloatValue() - f5;
+      String text = fit(font2, name2, f6);
+      float hover = Math.max(this.pressed("step:" + str + ":minus"), this.pressed("step:" + str + ":plus"));
+      ZenithColor zenithColor = zenithStyle.getTextEnable().getZenithColor().method7295(zenithStyle.getPrimaryColor().getZenithColor(), hover);
+      menuDrawContext.drawText(font2, text, f5 + (f6 - font2.width(text)) / 2.0F, f4 - font2.height() / 2.0F - hover * 0.8F, zenithColor.method7294(previewAlpha));
+      return new BoundsData[]{boundsData2, boundsData3};
    }
 
-   private void stepperButton(MenuDrawContext var1, int var2, int var3, String var4, BoundsData var5, boolean var6, float var7, ZenithStyle var8) {
-      boolean var9 = var5.contains(var2, var3);
-      float var10 = this.hot("sb:" + var4, var9);
-      float var11 = this.pressed("step:" + var4);
-      ZenithColor var12 = var8.getPrimaryColor().getZenithColor();
-      float var13 = var11 * 1.2F;
-      if (var10 > 0.01F || var11 > 0.01F) {
-         var1.drawRoundedRect(
-            var5.getFloatValue() - var13 / 2.0F,
-            var5.getFloatValue2() - var13 / 2.0F,
-            var5.width() + var13,
-            var5.height() + var13,
-            ProxyDotRadiusData.method8069((var5.height() + var13) / 2.0F),
-            var12.method7292(0.14F * var10 + 0.3F * var11).method7294(var7)
+   private void stepperButton(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, String str, BoundsData boundsData, boolean flag, float previewAlpha, ZenithStyle zenithStyle) {
+      boolean contains = boundsData.contains(lastClickX, lastClickY);
+      float hot = this.hot("sb:" + str, contains);
+      float pressed = this.pressed("step:" + str);
+      ZenithColor zenithColor = zenithStyle.getPrimaryColor().getZenithColor();
+      float f = pressed * 1.2F;
+      if (hot > 0.01F || pressed > 0.01F) {
+         menuDrawContext.drawRoundedRect(
+            boundsData.getFloatValue() - f / 2.0F,
+            boundsData.getFloatValue2() - f / 2.0F,
+            boundsData.width() + f,
+            boundsData.height() + f,
+            ProxyDotRadiusData.method8069((boundsData.height() + f) / 2.0F),
+            zenithColor.method7292(0.14F * hot + 0.3F * pressed).method7294(previewAlpha)
          );
       }
 
-      ZenithColor var14 = var8.getTextSecondary()
+      ZenithColor zenithColor2 = zenithStyle.getTextSecondary()
          .getZenithColor()
-         .method7295(var12.method7295(ZenithColor.INSTANCE, 0.3F), Math.max(var10, var11))
-         .method7294(var7);
-      float var15 = var5.getFloatValue() + var5.width() / 2.0F;
-      float var16 = var5.getFloatValue2() + var5.height() / 2.0F;
-      var1.drawRect(var15 - 2.5F, var16 - 0.5F, 5.0F, 1.0F, var14);
-      if (var6) {
-         var1.drawRect(var15 - 0.5F, var16 - 2.5F, 1.0F, 5.0F, var14);
+         .method7295(zenithColor.method7295(ZenithColor.INSTANCE, 0.3F), Math.max(hot, pressed))
+         .method7294(previewAlpha);
+      float f2 = boundsData.getFloatValue() + boundsData.width() / 2.0F;
+      float f3 = boundsData.getFloatValue2() + boundsData.height() / 2.0F;
+      menuDrawContext.drawRect(f2 - 2.5F, f3 - 0.5F, 5.0F, 1.0F, zenithColor2);
+      if (flag) {
+         menuDrawContext.drawRect(f2 - 0.5F, f3 - 2.5F, 1.0F, 5.0F, zenithColor2);
       }
    }
 
-   private static String capitalize(String var0) {
-      return var0 != null && !var0.isEmpty() ? var0.substring(0, 1).toUpperCase(Locale.ROOT) + var0.substring(1) : "";
+   private static String capitalize(String str) {
+      return str != null && !str.isEmpty() ? str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1) : "";
    }
 
-   private void place(ItemMatcher var1) {
-      InventoryPreset var2 = set();
-      int var3 = this.selectedSlot;
-      if (var3 < 0 || !var2.method871(var3)) {
-         var3 = var2.method873();
+   private void place(ItemMatcher key) {
+      InventoryPreset inventoryPreset = set();
+      int selectedSlot = this.selectedSlot;
+      if (selectedSlot < 0 || !inventoryPreset.method871(selectedSlot)) {
+         selectedSlot = inventoryPreset.method873();
       }
 
-      if (var3 < 0) {
+      if (selectedSlot < 0) {
          ChatLogger.method2021(t("gui.tools.inv.full"));
       } else {
-         var2.method874(var3, var1);
-         this.mark("place:" + var3);
-         this.selectedSlot = var3;
+         inventoryPreset.method874(selectedSlot, key);
+         this.mark("place:" + selectedSlot);
+         this.selectedSlot = selectedSlot;
          this.haveAt = 0L;
          this.markDirty();
          this.invalidate();
       }
    }
 
-   private void removeAll(ItemMatcher var1) {
-      InventoryPreset var2 = set();
-      boolean var3 = false;
+   private void removeAll(ItemMatcher key) {
+      InventoryPreset inventoryPreset = set();
+      boolean flag = false;
 
-      for (int var4 = 0; var4 < 36; var4++) {
-         if (var2.method870(var4) == var1) {
-            var2.method875(var4);
-            var3 = true;
+      for (int i = 0; i < 36; i++) {
+         if (inventoryPreset.method870(i) == key) {
+            inventoryPreset.method875(i);
+            flag = true;
          }
       }
 
-      if (var3) {
-         if (this.selectedSlot >= 0 && var2.method871(this.selectedSlot)) {
+      if (flag) {
+         if (this.selectedSlot >= 0 && inventoryPreset.method871(this.selectedSlot)) {
             this.selectedSlot = -1;
          }
 
@@ -1035,28 +1035,28 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private void loadPreset(SborList var1) {
+   private void loadPreset(SborList sborList) {
       this.selectedSlot = -1;
-      int var2 = var1.method1753(set());
+      int n = sborList.method1753(set());
 
-      for (int var3 = 0; var3 < 36; var3++) {
-         if (!set().method871(var3)) {
-            this.mark("place:" + var3);
+      for (int i = 0; i < 36; i++) {
+         if (!set().method871(i)) {
+            this.mark("place:" + i);
          }
       }
 
       this.markDirty();
       this.invalidate();
-      String var4 = t("gui.tools.inv.presets.loaded").replace("{name}", var1.getName());
-      if (var2 > 0) {
-         ChatLogger.method2021(var4 + " " + t("gui.tools.inv.presets.lost").replace("{count}", String.valueOf(var2)));
+      String status = t("gui.tools.inv.presets.loaded").replace("{name}", sborList.getName());
+      if (n > 0) {
+         ChatLogger.method2021(status + " " + t("gui.tools.inv.presets.lost").replace("{count}", String.valueOf(n)));
       } else {
-         ChatLogger.method2019(var4);
+         ChatLogger.method2019(status);
       }
    }
 
-   private void deletePreset(SborList var1) {
-      if (presets().method1232(var1)) {
+   private void deletePreset(SborList sborList) {
+      if (presets().method1232(sborList)) {
          this.markDirty();
          this.invalidate();
       }
@@ -1073,61 +1073,61 @@ public class AutoSborToolPanel extends ToolTab {
       if (mc.player == null) {
          ChatLogger.method2021(t("gui.tools.inv.capture.noPlayer"));
       } else {
-         AutoInventoryModule.Data2 var1 = module().method208();
+         AutoInventoryModule.Data2 data2 = module().method208();
          this.selectedSlot = -1;
-         if (var1.getIntValue() == 0) {
+         if (data2.getIntValue() == 0) {
             this.markDirty();
             this.invalidate();
             ChatLogger.method2021(t("gui.tools.inv.capture.none"));
          } else {
-            for (int var2 = 0; var2 < 36; var2++) {
-               if (!set().method871(var2)) {
-                  this.mark("place:" + var2);
+            for (int i = 0; i < 36; i++) {
+               if (!set().method871(i)) {
+                  this.mark("place:" + i);
                }
             }
 
-            String var5 = this.inputName();
-            if (var5.isEmpty()) {
-               var5 = presets().method1233(t("gui.tools.inv.capture.name"), module().method206());
+            String inputName = this.inputName();
+            if (inputName.isEmpty()) {
+               inputName = presets().method1233(t("gui.tools.inv.capture.name"), module().method206());
             }
 
-            presets().method1231(SborList.method1752(var5, set()));
+            presets().method1231(SborList.method1752(inputName, set()));
             this.clearInput();
             this.markDirty();
             this.invalidate();
-            String var3 = t("gui.tools.inv.capture.done").replace("{name}", var5).replace("{count}", String.valueOf(var1.getIntValue()));
-            int var4 = var1.getIntValue2() + var1.getIntValue3();
-            if (var4 > 0) {
-               var3 = var3 + " " + t("gui.tools.inv.capture.missed").replace("{count}", String.valueOf(var4));
+            String status = t("gui.tools.inv.capture.done").replace("{name}", inputName).replace("{count}", String.valueOf(data2.getIntValue()));
+            int n = data2.getIntValue2() + data2.getIntValue3();
+            if (n > 0) {
+               status = status + " " + t("gui.tools.inv.capture.missed").replace("{count}", String.valueOf(n));
             }
 
-            ChatLogger.method2019(var3);
+            ChatLogger.method2019(status);
          }
       }
    }
 
    private void savePreset() {
-      String var1 = this.inputName();
-      if (var1.isEmpty()) {
+      String inputName = this.inputName();
+      if (inputName.isEmpty()) {
          ChatLogger.method2021(t("gui.tools.inv.presets.needName"));
       } else {
-         InventoryPreset var2 = set();
-         if (var2.isEmpty()) {
+         InventoryPreset inventoryPreset = set();
+         if (inventoryPreset.isEmpty()) {
             ChatLogger.method2021(t("gui.tools.inv.presets.needItems"));
          } else {
-            boolean var3 = presets().method1230(var1, module().method206()) != null;
-            presets().method1231(SborList.method1752(var1, var2));
+            boolean flag = presets().method1230(inputName, module().method206()) != null;
+            presets().method1231(SborList.method1752(inputName, inventoryPreset));
             this.clearInput();
             this.markDirty();
             this.invalidate();
-            ChatLogger.method2019(t(var3 ? "gui.tools.inv.presets.replaced" : "gui.tools.inv.presets.saved").replace("{name}", var1));
+            ChatLogger.method2019(t(flag ? "gui.tools.inv.presets.replaced" : "gui.tools.inv.presets.saved").replace("{name}", inputName));
          }
       }
    }
 
    private String inputName() {
-      String var1 = this.nameInput().getText();
-      return var1 == null ? "" : var1.trim();
+      String text = this.nameInput().getText();
+      return text == null ? "" : text.trim();
    }
 
    private void clearInput() {
@@ -1141,9 +1141,9 @@ public class AutoSborToolPanel extends ToolTab {
 
    @Override
    public void close() {
-      Manager var1 = Zenith.getInstance().getManager();
-      if (var1.method7790()) {
-         var1.save();
+      Manager manager = Zenith.getInstance().getManager();
+      if (manager.method7790()) {
+         manager.save();
       }
 
       super.close();
@@ -1166,18 +1166,18 @@ public class AutoSborToolPanel extends ToolTab {
    }
 
    private String catalogQuery() {
-      String var1 = this.searchInput().getText();
-      var1 = var1 == null ? "" : var1.trim().toLowerCase(Locale.ROOT);
-      return var1.isEmpty() ? this.searchQuery() : var1;
+      String text = this.searchInput().getText();
+      text = text == null ? "" : text.trim().toLowerCase(Locale.ROOT);
+      return text.isEmpty() ? this.searchQuery() : text;
    }
 
-   private void focus(SearchBox var1) {
-      this.searchInput().setSelected(var1 == this.searchInput);
-      this.nameInput().setSelected(var1 == this.nameInput);
+   private void focus(SearchBox searchInput) {
+      this.searchInput().setSelected(searchInput == this.searchInput);
+      this.nameInput().setSelected(searchInput == this.nameInput);
    }
 
    @Override
-   public void render(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, int lastClickX, int lastClickY, float panelAlpha, float f, float y) {
       Arrays.fill(this.slotBounds, null);
       this.stripBounds = null;
       this.serverStripBounds = null;
@@ -1192,29 +1192,29 @@ public class AutoSborToolPanel extends ToolTab {
       this.pricePlus = null;
       this.durabilityMinus = null;
       this.durabilityPlus = null;
-      super.render(var1, var2, var3, var4, var5, var6);
+      super.render(menuDrawContext, lastClickX, lastClickY, panelAlpha, f, y);
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (hit(this.searchField, var1, var3)) {
+   public boolean onMouseClicked(double lastClickX, double lastClickY, Enum3 enum2) {
+      if (hit(this.searchField, lastClickX, lastClickY)) {
          this.focus(this.searchInput());
          Zenith.getInstance().getClientSounds().method1570(false);
          return true;
-      } else if (hit(this.nameField, var1, var3)) {
+      } else if (hit(this.nameField, lastClickX, lastClickY)) {
          this.focus(this.nameInput());
          Zenith.getInstance().getClientSounds().method1570(false);
          return true;
       } else {
-         BoundsData var6 = this.mainViewport();
-         if (var6 == null || !var6.contains(var1, var3)) {
+         BoundsData mainViewport = this.mainViewport();
+         if (mainViewport == null || !mainViewport.contains(lastClickX, lastClickY)) {
             this.focus(null);
          }
 
-         if (var5 == Enum3.LEFT && hit(this.startButton, var1, var3)) {
-            BoundsData var7 = this.asideViewport();
-            if (var7 == null || var7.contains(var1, var3)) {
-               this.pressButton("start", var1, var3);
+         if (enum2 == Enum3.LEFT && hit(this.startButton, lastClickX, lastClickY)) {
+            BoundsData asideViewport = this.asideViewport();
+            if (asideViewport == null || asideViewport.contains(lastClickX, lastClickY)) {
+               this.pressButton("start", lastClickX, lastClickY);
                module().toggle();
                Zenith.getInstance().getClientSounds().method1570(false);
                this.invalidate();
@@ -1222,21 +1222,21 @@ public class AutoSborToolPanel extends ToolTab {
             }
          }
 
-         if (var6 != null && var6.contains(var1, var3)) {
-            if (this.serverStripBounds != null && this.serverStripBounds.contains(var1, var3)) {
-               int var9 = this.serverStrip.hovered();
-               if (var9 >= 0) {
-                  this.selectServer(var9);
+         if (mainViewport != null && mainViewport.contains(lastClickX, lastClickY)) {
+            if (this.serverStripBounds != null && this.serverStripBounds.contains(lastClickX, lastClickY)) {
+               int hovered = this.serverStrip.hovered();
+               if (hovered >= 0) {
+                  this.selectServer(hovered);
                   Zenith.getInstance().getClientSounds().method1570(false);
                   return true;
                }
             }
 
-            if (this.stripBounds != null && this.stripBounds.contains(var1, var3)) {
-               int var10 = this.listStrip.hovered();
-               if (var10 >= 0) {
-                  if (var10 != this.listMode) {
-                     this.listMode = var10;
+            if (this.stripBounds != null && this.stripBounds.contains(lastClickX, lastClickY)) {
+               int hovered = this.listStrip.hovered();
+               if (hovered >= 0) {
+                  if (hovered != this.listMode) {
+                     this.listMode = hovered;
                      this.resetScroll();
                      this.replayMainFrom(this.listFrom);
                      this.invalidate();
@@ -1247,37 +1247,37 @@ public class AutoSborToolPanel extends ToolTab {
                }
             }
 
-            if (var5 == Enum3.LEFT && hit(this.clearButton, var1, var3)) {
-               this.pressButton("clear", var1, var3);
+            if (enum2 == Enum3.LEFT && hit(this.clearButton, lastClickX, lastClickY)) {
+               this.pressButton("clear", lastClickX, lastClickY);
                this.clearSet();
                Zenith.getInstance().getClientSounds().method1570(true);
                return true;
             }
 
-            if (var5 == Enum3.LEFT && hit(this.saveButton, var1, var3)) {
-               this.pressButton("save", var1, var3);
+            if (enum2 == Enum3.LEFT && hit(this.saveButton, lastClickX, lastClickY)) {
+               this.pressButton("save", lastClickX, lastClickY);
                this.savePreset();
                Zenith.getInstance().getClientSounds().method1570(false);
                return true;
             }
 
-            for (int var11 = 0; var11 < 36; var11++) {
-               BoundsData var8 = this.slotBounds[var11];
-               if (var8 != null && var8.contains(var1, var3)) {
-                  this.mark("slotp:" + var11);
-                  this.onSlotClicked(var11, var5);
+            for (int i = 0; i < 36; i++) {
+               BoundsData slotBound = this.slotBounds[i];
+               if (slotBound != null && slotBound.contains(lastClickX, lastClickY)) {
+                  this.mark("slotp:" + i);
+                  this.onSlotClicked(i, enum2);
                   return true;
                }
             }
          }
 
-         return this.clickStepper(var1, var3) ? true : super.onMouseClicked(var1, var3, var5);
+         return this.clickStepper(lastClickX, lastClickY) ? true : super.onMouseClicked(lastClickX, lastClickY, enum2);
       }
    }
 
-   private void selectServer(int var1) {
-      if (var1 >= 0 && var1 < SERVERS.length && !SERVERS[var1].equals(module().method206())) {
-         module().getServer().set(SERVERS[var1]);
+   private void selectServer(int hovered) {
+      if (hovered >= 0 && hovered < SERVERS.length && !SERVERS[hovered].equals(module().method206())) {
+         module().getServer().set(SERVERS[hovered]);
          this.selectedSlot = -1;
          this.haveAt = 0L;
          this.resetScroll();
@@ -1287,12 +1287,12 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private void onSlotClicked(int var1, Enum3 var2) {
-      InventoryPreset var3 = set();
-      if (var2 == Enum3.RIGHT) {
-         if (!var3.method871(var1)) {
-            var3.method875(var1);
-            if (this.selectedSlot == var1) {
+   private void onSlotClicked(int selectedSlot, Enum3 enum2) {
+      InventoryPreset inventoryPreset = set();
+      if (enum2 == Enum3.RIGHT) {
+         if (!inventoryPreset.method871(selectedSlot)) {
+            inventoryPreset.method875(selectedSlot);
+            if (this.selectedSlot == selectedSlot) {
                this.selectedSlot = -1;
             }
 
@@ -1302,7 +1302,7 @@ public class AutoSborToolPanel extends ToolTab {
 
          Zenith.getInstance().getClientSounds().method1570(true);
       } else {
-         this.selectedSlot = this.selectedSlot == var1 ? -1 : var1;
+         this.selectedSlot = this.selectedSlot == selectedSlot ? -1 : selectedSlot;
          this.haveAt = 0L;
          Zenith.getInstance().getClientSounds().method1570(false);
          this.replayAsideFrom(this.slotFrom);
@@ -1310,33 +1310,33 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private boolean clickStepper(double var1, double var3) {
-      BoundsData var5 = this.asideViewport();
-      if (var5 != null && !var5.contains(var1, var3)) {
+   private boolean clickStepper(double lastClickX, double lastClickY) {
+      BoundsData asideViewport = this.asideViewport();
+      if (asideViewport != null && !asideViewport.contains(lastClickX, lastClickY)) {
          return false;
       } else if (this.selectedSlot < 0) {
          return false;
       } else {
-         InventoryPreset var6 = set();
-         int var7 = this.selectedSlot;
-         int var8 = WindowUtils.method5476() ? 10 : 1;
-         if (hit(this.countMinus, var1, var3)) {
-            var6.method878(var7, var6.method877(var7) - var8);
+         InventoryPreset inventoryPreset = set();
+         int selectedSlot = this.selectedSlot;
+         int n = WindowUtils.method5476() ? 10 : 1;
+         if (hit(this.countMinus, lastClickX, lastClickY)) {
+            inventoryPreset.method878(selectedSlot, inventoryPreset.method877(selectedSlot) - n);
             return this.stepped("count:minus");
-         } else if (hit(this.countPlus, var1, var3)) {
-            var6.method878(var7, var6.method877(var7) + var8);
+         } else if (hit(this.countPlus, lastClickX, lastClickY)) {
+            inventoryPreset.method878(selectedSlot, inventoryPreset.method877(selectedSlot) + n);
             return this.stepped("count:plus");
-         } else if (hit(this.priceMinus, var1, var3)) {
-            var6.method880(var7, var6.method879(var7) - 1000L * var8);
+         } else if (hit(this.priceMinus, lastClickX, lastClickY)) {
+            inventoryPreset.method880(selectedSlot, inventoryPreset.method879(selectedSlot) - 1000L * n);
             return this.stepped("price:minus");
-         } else if (hit(this.pricePlus, var1, var3)) {
-            var6.method880(var7, var6.method879(var7) + 1000L * var8);
+         } else if (hit(this.pricePlus, lastClickX, lastClickY)) {
+            inventoryPreset.method880(selectedSlot, inventoryPreset.method879(selectedSlot) + 1000L * n);
             return this.stepped("price:plus");
-         } else if (hit(this.durabilityMinus, var1, var3)) {
-            var6.method882(var7, var6.method881(var7) - 0.05F);
+         } else if (hit(this.durabilityMinus, lastClickX, lastClickY)) {
+            inventoryPreset.method882(selectedSlot, inventoryPreset.method881(selectedSlot) - 0.05F);
             return this.stepped("durability:minus");
-         } else if (hit(this.durabilityPlus, var1, var3)) {
-            var6.method882(var7, var6.method881(var7) + 0.05F);
+         } else if (hit(this.durabilityPlus, lastClickX, lastClickY)) {
+            inventoryPreset.method882(selectedSlot, inventoryPreset.method881(selectedSlot) + 0.05F);
             return this.stepped("durability:plus");
          } else {
             return false;
@@ -1344,21 +1344,21 @@ public class AutoSborToolPanel extends ToolTab {
       }
    }
 
-   private boolean stepped(String var1) {
-      this.mark("step:" + var1);
+   private boolean stepped(String str) {
+      this.mark("step:" + str);
       this.markDirty();
       Zenith.getInstance().getClientSounds().method1570(false);
       return true;
    }
 
-   private static boolean hit(BoundsData var0, double var1, double var3) {
-      return var0 != null && var0.contains(var1, var3);
+   private static boolean hit(BoundsData searchField, double lastClickX, double lastClickY) {
+      return searchField != null && searchField.contains(lastClickX, lastClickY);
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
+   public boolean keyPressed(int keyCode, int keycode, int modifiers) {
       if (this.searchInput().isSelected()) {
-         if (var1 == 256) {
+         if (keyCode == 256) {
             this.searchInput().setText("");
             this.searchInput().setCursor(0);
             this.searchInput().setSelected(false);
@@ -1367,7 +1367,7 @@ public class AutoSborToolPanel extends ToolTab {
             return true;
          }
 
-         if (this.searchInput().keyPressed(var1, var2, var3)) {
+         if (this.searchInput().keyPressed(keyCode, keycode, modifiers)) {
             this.resetScroll();
             this.invalidate();
             return true;
@@ -1375,32 +1375,32 @@ public class AutoSborToolPanel extends ToolTab {
       }
 
       if (this.nameInput().isSelected()) {
-         if (var1 == 256) {
+         if (keyCode == 256) {
             this.nameInput().setSelected(false);
             return true;
          }
 
-         if (var1 == 257 || var1 == 335) {
+         if (keyCode == 257 || keyCode == 335) {
             this.savePreset();
             return true;
          }
 
-         if (this.nameInput().keyPressed(var1, var2, var3)) {
+         if (this.nameInput().keyPressed(keyCode, keycode, modifiers)) {
             return true;
          }
       }
 
-      return super.keyPressed(var1, var2, var3);
+      return super.keyPressed(keyCode, keycode, modifiers);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      if (this.searchInput().isSelected() && this.searchInput().charTyped(var1, var2)) {
+   public boolean charTyped(char codepoint, int n) {
+      if (this.searchInput().isSelected() && this.searchInput().charTyped(codepoint, n)) {
          this.resetScroll();
          this.invalidate();
          return true;
       } else {
-         return this.nameInput().isSelected() && this.nameInput().charTyped(var1, var2) ? true : super.charTyped(var1, var2);
+         return this.nameInput().isSelected() && this.nameInput().charTyped(codepoint, n) ? true : super.charTyped(codepoint, n);
       }
    }
 
@@ -1408,7 +1408,7 @@ public class AutoSborToolPanel extends ToolTab {
    public void tick() {
       this.refreshSetCounts();
       this.refreshHave();
-      String var1 = module().method206()
+      String contentSignature = module().method206()
          + "|"
          + set().method872()
          + "|"
@@ -1417,20 +1417,20 @@ public class AutoSborToolPanel extends ToolTab {
          + presets().method1229(module().method206()).size()
          + "|"
          + (this.listMode == 1 ? module().getInventorySnapshot().method1863().size() : 0);
-      if (!var1.equals(this.contentSignature)) {
-         this.contentSignature = var1;
+      if (!contentSignature.equals(this.contentSignature)) {
+         this.contentSignature = contentSignature;
          this.invalidate();
       }
    }
 
    private void refreshSetCounts() {
       this.inSetCounts.clear();
-      InventoryPreset var1 = set();
+      InventoryPreset inventoryPreset = set();
 
-      for (int var2 = 0; var2 < 36; var2++) {
-         ItemMatcher var3 = var1.method870(var2);
-         if (var3 != null && !var3.getItemStack().isEmpty()) {
-            this.inSetCounts.merge(var3, var1.method877(var2), Integer::sum);
+      for (int i = 0; i < 36; i++) {
+         ItemMatcher key = inventoryPreset.method870(i);
+         if (key != null && !key.getItemStack().isEmpty()) {
+            this.inSetCounts.merge(key, inventoryPreset.method877(i), Integer::sum);
          }
       }
    }
@@ -1440,17 +1440,17 @@ public class AutoSborToolPanel extends ToolTab {
          this.haveSlot = -1;
          this.haveCount = 0;
       } else {
-         long var1 = System.currentTimeMillis();
-         if (this.selectedSlot != this.haveSlot || var1 >= this.haveAt) {
+         long now = System.currentTimeMillis();
+         if (this.selectedSlot != this.haveSlot || now >= this.haveAt) {
             this.haveSlot = this.selectedSlot;
-            this.haveAt = var1 + 400L;
+            this.haveAt = now + 400L;
             this.haveCount = 0;
-            ItemMatcher var3 = set().method870(this.selectedSlot);
-            if (mc.player != null && var3 != null) {
-               for (int var4 = 0; var4 < mc.player.getInventory().getContainerSize(); var4++) {
-                  ItemStack var5 = mc.player.getInventory().getItem(var4);
-                  if (var5 != null && !var5.isEmpty() && var3.method2672(var5)) {
-                     this.haveCount = this.haveCount + Math.max(1, var5.getCount());
+            ItemMatcher itemMatcher = set().method870(this.selectedSlot);
+            if (mc.player != null && itemMatcher != null) {
+               for (int i = 0; i < mc.player.getInventory().getContainerSize(); i++) {
+                  ItemStack stack = mc.player.getInventory().getItem(i);
+                  if (stack != null && !stack.isEmpty() && itemMatcher.method2672(stack)) {
+                     this.haveCount = this.haveCount + Math.max(1, stack.getCount());
                   }
                }
             }

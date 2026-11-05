@@ -26,13 +26,13 @@ public class GuiModeSetting extends GuiSetting<ModeSetting> {
    private BoundsData bounds;
    private boolean expanded;
 
-   public GuiModeSetting(ModeSetting var1) {
-      this(var1, 166.0F);
+   public GuiModeSetting(ModeSetting setting) {
+      this(setting, 166.0F);
    }
 
-   public GuiModeSetting(ModeSetting var1, float var2) {
-      super(var2, var1);
-      this.options = new ModeOptions(var1);
+   public GuiModeSetting(ModeSetting setting, float width) {
+      super(width, setting);
+      this.options = new ModeOptions(setting);
    }
 
    @Override
@@ -41,11 +41,11 @@ public class GuiModeSetting extends GuiSetting<ModeSetting> {
    }
 
    @Override
-   public boolean onMouseClicked(double var1, double var3, Enum3 var5) {
-      if (this.setting.isVisible() && (var5 == Enum3.LEFT || var5 == Enum3.RIGHT)) {
-         if (this.expanded && this.options.onMouseClicked(var1, var3, var5)) {
+   public boolean onMouseClicked(double x, double y, Enum3 enum2) {
+      if (this.setting.isVisible() && (enum2 == Enum3.LEFT || enum2 == Enum3.RIGHT)) {
+         if (this.expanded && this.options.onMouseClicked(x, y, enum2)) {
             return true;
-         } else if (this.bounds != null && this.bounds.contains(var1, var3)) {
+         } else if (this.bounds != null && this.bounds.contains(x, y)) {
             this.expanded = (!this.expanded);
             this.options.clearBounds();
             Zenith.getInstance().getClientSounds().method1570(false);
@@ -59,66 +59,66 @@ public class GuiModeSetting extends GuiSetting<ModeSetting> {
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, float var4, float var5, float var6) {
+   public void render(MenuDrawContext menuDrawContext, float lastClickX, float lastClickY, float floatValue, float y, float previewAlpha) {
       this.options.clearBounds();
       this.bounds = null;
       this.animationVisible.method2807(this.setting.isVisible());
-      var6 *= this.animationVisible.getValue();
-      ZenithStyle var7 = Zenith.getInstance().getStyleManager().getCurrentStyle();
-      if (var7 != null && !(var6 <= 0.01F)) {
-         float var8 = this.animationExpanded.method2808(this.expanded ? 1.0F : 0.0F);
-         Font var9 = Fonts.NEW_MEDIUM.getFont(5.5F);
-         Font var10 = Fonts.NEW_MEDIUM.getFont(5.01F);
-         this.bounds = new BoundsData(var4, var5, this.width, this.rowHeight());
-         boolean var11 = this.bounds.contains(var2, var3);
-         ZenithColor var12 = var7.getTextEnable().getZenithColor().method7294(var6);
-         String var13 = this.expanded
+      previewAlpha *= this.animationVisible.getValue();
+      ZenithStyle currentStyle = Zenith.getInstance().getStyleManager().getCurrentStyle();
+      if (currentStyle != null && !(previewAlpha <= 0.01F)) {
+         float f = this.animationExpanded.method2808(this.expanded ? 1.0F : 0.0F);
+         Font font = Fonts.NEW_MEDIUM.getFont(5.5F);
+         Font font2 = Fonts.NEW_MEDIUM.getFont(5.01F);
+         this.bounds = new BoundsData(floatValue, y, this.width, this.rowHeight());
+         boolean contains = this.bounds.contains(lastClickX, lastClickY);
+         ZenithColor zenithColor = currentStyle.getTextEnable().getZenithColor().method7294(previewAlpha);
+         String name = this.expanded
             ? String.valueOf(this.setting.getValues().size())
             : (this.setting.getValue2() == null ? "—" : this.setting.getValue2().getName());
-         float var14 = Math.min(this.width * 0.4F, Math.max(10.0F, var10.width(var13)));
-         float var15 = var4 + this.width - var14 - 10.0F;
-         float var16 = var4;
+         float labelLimit = Math.min(this.width * 0.4F, Math.max(10.0F, font2.width(name)));
+         float floatValue2 = floatValue + this.width - labelLimit - 10.0F;
+         float floatValue3 = floatValue;
          if (Zenith.getInstance().getNLMenuScreen().isRenderIcon()) {
-            MenuGlyph.MODE.draw(var1, var4, var5 + (this.rowHeight() - 6.0F) / 2.0F, var7.getPrimaryColor().getZenithColor().method7294(var6));
-            var16 = var4 + (6.0F + GuiStyle.PADDING.intValue());
+            MenuGlyph.MODE.draw(menuDrawContext, floatValue, y + (this.rowHeight() - 6.0F) / 2.0F, currentStyle.getPrimaryColor().getZenithColor().method7294(previewAlpha));
+            floatValue3 = floatValue + (6.0F + GuiStyle.PADDING.intValue());
          }
 
          this.labelScroll
             .render(
-               var1,
-               var9,
+               menuDrawContext,
+               font,
                this.setting.getName(),
-               var16,
-               var5 + (this.rowHeight() - var9.height()) / 2.0F,
-               Math.max(0.0F, var15 - GuiStyle.PADDING.intValue() - var16),
-               var12,
-               var11
+               floatValue3,
+               y + (this.rowHeight() - font.height()) / 2.0F,
+               Math.max(0.0F, floatValue2 - GuiStyle.PADDING.intValue() - floatValue3),
+               zenithColor,
+               contains
             );
          this.valueScroll
             .render(
-               var1,
-               var10,
-               var13,
-               var15,
-               var5 + (this.rowHeight() - var10.height()) / 2.0F,
-               var14,
-               var7.getTextTertiary().getZenithColor().method7294(var6),
-               var11
+               menuDrawContext,
+               font2,
+               name,
+               floatValue2,
+               y + (this.rowHeight() - font2.height()) / 2.0F,
+               labelLimit,
+               currentStyle.getTextTertiary().getZenithColor().method7294(previewAlpha),
+               contains
             );
-         MenuGlyph.drawChevron(var1, var4 + this.width - 5.0F, var5 + this.rowHeight() / 2.0F, var8, var12);
-         if (var11) {
+         MenuGlyph.drawChevron(menuDrawContext, floatValue + this.width - 5.0F, y + this.rowHeight() / 2.0F, f, zenithColor);
+         if (contains) {
             HoverInfo.request(this.setting.getName(), this.setting.getDescription());
          }
 
-         float var17;
-         if ((var17 = this.options.height(this.width) * var8) > 0.01F) {
-            float var18 = var5 + this.rowHeight();
-            var1.enableScissor(var4, var18, var4 + this.width, var18 + var17);
+         float f2;
+         if ((f2 = this.options.height(this.width) * f) > 0.01F) {
+            float y2 = y + this.rowHeight();
+            menuDrawContext.enableScissor(floatValue, y2, floatValue + this.width, y2 + f2);
 
             try {
-               this.options.render(var1, var2, var3, var4, var18, this.width, var17, var6 * var8, (this.expanded && var6 > 0.99F), var7);
+               this.options.render(menuDrawContext, lastClickX, lastClickY, floatValue, y2, this.width, f2, previewAlpha * f, (this.expanded && previewAlpha > 0.99F), currentStyle);
             } finally {
-               var1.disableScissor();
+               menuDrawContext.disableScissor();
             }
          }
       }

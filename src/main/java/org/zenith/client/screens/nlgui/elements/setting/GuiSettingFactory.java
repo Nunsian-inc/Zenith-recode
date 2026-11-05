@@ -17,27 +17,27 @@ public final class GuiSettingFactory {
    private GuiSettingFactory() {
    }
 
-   public static GuiSetting<?> create(Setting var0, float var1) {
-      if (var0 instanceof SliderSetting var11) {
-         return new GuiNumberSetting(var11, var1);
-      } else if (var0 instanceof ModeSetting var10) {
-         return new GuiModeSetting(var10, var1);
-      } else if (var0 instanceof MultiSelectSetting var9) {
-         return new GuiMultiBooleanSetting(var9, var1);
-      } else if (var0 instanceof BooleanSetting var8) {
-         return new GuiBooleanSetting(var8, var1);
-      } else if (var0 instanceof ColorSetting var7) {
-         return new GuiColorSetting(var7, var1);
-      } else if (var0 instanceof ButtonSetting var6) {
-         return new GuiButtonSetting(var6, var1);
-      } else if (var0 instanceof BlockListSetting var5) {
-         return new GuiItemSelectSetting(var5, var1);
-      } else if (var0 instanceof BindSetting var4) {
-         return new GuiKeySetting(var4, var1);
-      } else if (var0 instanceof TextSetting var3) {
-         return new GuiStringSetting(var3, var1);
+   public static GuiSetting<?> create(Setting setting, float width) {
+      if (setting instanceof SliderSetting sliderSetting) {
+         return new GuiNumberSetting(sliderSetting, width);
+      } else if (setting instanceof ModeSetting modeSetting) {
+         return new GuiModeSetting(modeSetting, width);
+      } else if (setting instanceof MultiSelectSetting multiSelectSetting) {
+         return new GuiMultiBooleanSetting(multiSelectSetting, width);
+      } else if (setting instanceof BooleanSetting booleanSetting) {
+         return new GuiBooleanSetting(booleanSetting, width);
+      } else if (setting instanceof ColorSetting colorSetting) {
+         return new GuiColorSetting(colorSetting, width);
+      } else if (setting instanceof ButtonSetting buttonSetting) {
+         return new GuiButtonSetting(buttonSetting, width);
+      } else if (setting instanceof BlockListSetting blockListSetting) {
+         return new GuiItemSelectSetting(blockListSetting, width);
+      } else if (setting instanceof BindSetting bindSetting) {
+         return new GuiKeySetting(bindSetting, width);
+      } else if (setting instanceof TextSetting textSetting) {
+         return new GuiStringSetting(textSetting, width);
       } else {
-         return var0 instanceof GroupSetting var2 ? new GuiWindowSetting(var2, var1) : null;
+         return setting instanceof GroupSetting groupSetting ? new GuiWindowSetting(groupSetting, width) : null;
       }
    }
 }

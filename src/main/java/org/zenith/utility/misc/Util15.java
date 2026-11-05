@@ -8,16 +8,16 @@ public final class Util15 {
    private Util15() {
    }
 
-   public static void method2703(float var0) {
-      floatValue = var0;
+   public static void method2703(float returnValueF) {
+      floatValue = returnValueF;
    }
 
    public static float method2704() {
-      float var0 = floatValue;
-      if (var0 <= 1.0F || var0 >= 179.0F) {
-         var0 = Minecraft.getInstance().options.fov().get().floatValue();
+      float angdeg = floatValue;
+      if (angdeg <= 1.0F || angdeg >= 179.0F) {
+         angdeg = Minecraft.getInstance().options.fov().get().floatValue();
       }
 
-      return (float)Math.tan(Math.toRadians(var0) * 0.5);
+      return (float)Math.tan(Math.toRadians(angdeg) * 0.5);
    }
 }

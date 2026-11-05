@@ -48,8 +48,8 @@ public class PingFunction extends LuaFunction {
             this.function.invoke(args);
             this.owner.tick.use(this.owner.luaRuntime.getInstructions());
             return NIL;
-         } catch (StackOverflowError | Exception var3) {
-            this.owner.luaRuntime.error(var3);
+         } catch (StackOverflowError | Exception e) {
+            this.owner.luaRuntime.error(e);
             return NIL;
          }
       } else {

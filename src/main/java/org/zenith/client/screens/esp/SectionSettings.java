@@ -11,19 +11,19 @@ public final class SectionSettings {
    private SectionSettings() {
    }
 
-   public static List<Setting> of(Module var0) {
-      ArrayList<Setting> var1 = new ArrayList<>();
-      var1.add(new SectionSettings.ModuleToggle("module.esp.section.enabled", var0));
-      var1.addAll(var0.getSettings());
-      return var1;
+   public static List<Setting> of(Module sectionPreviewOwner) {
+      ArrayList<Setting> settings = new ArrayList<>();
+      settings.add(new SectionSettings.ModuleToggle("module.esp.section.enabled", sectionPreviewOwner));
+      settings.addAll(sectionPreviewOwner.getSettings());
+      return settings;
    }
 
    private static final class ModuleToggle extends BooleanSetting {
       private final Module module;
 
-      private ModuleToggle(String var1, Module var2) {
-         super(var1, var2.isEnabled());
-         this.module = var2;
+      private ModuleToggle(String key, Module sectionPreviewOwner) {
+         super(key, sectionPreviewOwner.isEnabled());
+         this.module = sectionPreviewOwner;
       }
 
       @Override
@@ -37,11 +37,11 @@ public final class SectionSettings {
       }
 
       @Override
-      public void safe(JsonObject var1) {
+      public void safe(JsonObject json) {
       }
 
       @Override
-      public void load(JsonObject var1) {
+      public void load(JsonObject json) {
       }
    }
 }

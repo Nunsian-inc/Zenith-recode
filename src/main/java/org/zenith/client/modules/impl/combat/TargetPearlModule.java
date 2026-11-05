@@ -71,21 +71,21 @@ public final class TargetPearlModule extends Module {
    }
 
    @EventTarget
-   public void method4829(EntityAddEvent var1) {
+   public void method4829(EntityAddEvent event) {
       if (mc.level != null && mc.player != null) {
-         if (var1.getEntity() instanceof ThrownEnderpearl var2 && var2.getOwner() == null) {
+         if (event.getEntity() instanceof ThrownEnderpearl entity && entity.getOwner() == null) {
             mc.level
                .players()
                .stream()
-               .filter(var1x -> var1x != mc.player && var1x.distanceTo(var2) <= 3.0F)
-               .min(Comparator.comparingDouble(var1x -> var1x.distanceTo(var2)))
-               .ifPresent(var2::setOwner);
+               .filter(var1x -> var1x != mc.player && var1x.distanceTo(entity) <= 3.0F)
+               .min(Comparator.comparingDouble(var1x -> var1x.distanceTo(entity)))
+               .ifPresent(entity::setOwner);
          }
       }
    }
 
    @EventTarget
-   public void method4830(Event5 var1) {
+   public void method4830(Event5 event) {
       if (mc.player == null || mc.level == null) {
          this.method4843();
       } else if (this.flag) {
@@ -100,9 +100,9 @@ public final class TargetPearlModule extends Module {
          this.method4843();
          this.stopWatch.reset();
       } else {
-         Rotation var2 = Zenith.getInstance().getRotationManager().getRotation2();
-         if (this.rotation != null && this.vec3d != null && this.versionSetting.isSelected(0) && this.method4836(var2, this.vec3d)) {
-            this.rotation = var2;
+         Rotation rotation2 = Zenith.getInstance().getRotationManager().getRotation2();
+         if (this.rotation != null && this.vec3d != null && this.versionSetting.isSelected(0) && this.method4836(rotation2, this.vec3d)) {
+            this.rotation = rotation2;
             this.method4841();
             this.method4842();
          } else {
@@ -118,7 +118,7 @@ public final class TargetPearlModule extends Module {
    }
 
    @EventTarget(0)
-   public void method4831(InteractItemEvent var1) {
+   public void method4831(InteractItemEvent event) {
       if (this.flag && mc.player != null) {
          if (mc.player.getMainHandItem().is(Items.ENDER_PEARL) || mc.player.getOffhandItem().is(Items.ENDER_PEARL)) {
             this.method4843();
@@ -141,110 +141,110 @@ public final class TargetPearlModule extends Module {
             : UseItemUtils.method6510()
                .filter(ThrownEnderpearl.class::isInstance)
                .map(ThrownEnderpearl.class::cast)
-               .noneMatch(var0 -> Objects.equals(var0.getOwner(), mc.player));
+               .noneMatch(thrownEnderpearl -> Objects.equals(thrownEnderpearl.getOwner(), mc.player));
       }
    }
 
    private void method4833() {
-      PredictionsModule var1 = PredictionsModule.INSTANCE;
-      Vec3 var2 = mc.player.position();
-      Rotation var3 = Zenith.getInstance().getRotationManager().method7844();
+      PredictionsModule predictionsModule = PredictionsModule.INSTANCE;
+      Vec3 position = mc.player.position();
+      Rotation rotation = Zenith.getInstance().getRotationManager().method7844();
       this.rotation = null;
       this.vec3d = null;
       UseItemUtils.method6510()
          .filter(ThrownEnderpearl.class::isInstance)
          .map(ThrownEnderpearl.class::cast)
          .filter(this::method4834)
-         .map(var1::method2919)
+         .map(predictionsModule::method2919)
          .filter(Objects::nonNull)
          .map(HitResult::getLocation)
-         .filter(var2x -> var2x.distanceTo(var2) >= this.distanceSetting.getValue3())
+         .filter(var2x -> var2x.distanceTo(position) >= this.distanceSetting.getValue3())
          .map(var1x -> new TargetPearlModule.Data(var1x, this.method4835(var1x)))
-         .filter(var0 -> var0.rotation() != null)
-         .min(Comparator.comparingDouble(var1x -> var3.method3131(var1x.rotation()).method5327()))
+         .filter(data -> data.rotation() != null)
+         .min(Comparator.comparingDouble(var1x -> rotation.method3131(var1x.rotation()).method5327()))
          .ifPresent(var1x -> {
             this.rotation = var1x.rotation();
             this.vec3d = var1x.getVec3d();
          });
    }
 
-   private boolean method4834(ThrownEnderpearl var1) {
-      Entity var2 = var1.getOwner();
-      if (var2 == null || var2 == mc.player || Zenith.getInstance().getFriends().method7626(var2)) {
+   private boolean method4834(ThrownEnderpearl thrownEnderpearl) {
+      Entity owner = thrownEnderpearl.getOwner();
+      if (owner == null || owner == mc.player || Zenith.getInstance().getFriends().method7626(owner)) {
          return false;
       } else if (!this.targetSetting.isSelected(1) && AuraModule.INSTANCE.isEnabled()) {
-         LivingEntity var3 = AuraModule.INSTANCE.getLivingEntity22();
-         return var3 == null || var3.equals(var2);
+         LivingEntity livingEntity22 = AuraModule.INSTANCE.getLivingEntity22();
+         return livingEntity22 == null || livingEntity22.equals(owner);
       } else {
          return true;
       }
    }
 
-   private Rotation method4835(Vec3 var1) {
-      Vec3 var2 = this.method4839();
-      Vec3 var3 = this.method4840();
-      MutableBlockPos var4 = new MutableBlockPos();
-      float var5 = (float)(Mth.atan2(var1.z - var2.z, var1.x - var2.x) * (180.0 / Math.PI)) - 90.0F;
-      float var6 = Float.NaN;
-      double var7 = Double.MAX_VALUE;
-      double var9 = this.method4837(new Rotation(var5, 89.0F), var1, var2, var3, var4);
+   private Rotation method4835(Vec3 vec3d) {
+      Vec3 vec = this.method4839();
+      Vec3 vec2 = this.method4840();
+      MutableBlockPos mutablePos = new MutableBlockPos();
+      float yRot = (float)(Mth.atan2(vec3d.z - vec.z, vec3d.x - vec.x) * (180.0 / Math.PI)) - 90.0F;
+      float f = Float.NaN;
+      double d = Double.MAX_VALUE;
+      double d2 = this.method4837(new Rotation(yRot, 89.0F), vec3d, vec, vec2, mutablePos);
 
-      for (int var11 = 0; var11 < 179; var11++) {
-         double var12 = var11 == 178 ? Double.MAX_VALUE : this.method4837(new Rotation(var5, 89 - (var11 + 1)), var1, var2, var3, var4);
-         if (var9 < 8.0 && var9 <= var7 && var9 <= var12) {
-            var6 = 89 - var11;
+      for (int i = 0; i < 179; i++) {
+         double d3 = i == 178 ? Double.MAX_VALUE : this.method4837(new Rotation(yRot, 89 - (i + 1)), vec3d, vec, vec2, mutablePos);
+         if (d2 < 8.0 && d2 <= d && d2 <= d3) {
+            f = 89 - i;
             break;
          }
 
-         var7 = var9;
-         var9 = var12;
+         d = d2;
+         d2 = d3;
       }
 
-      if (Float.isNaN(var6)) {
+      if (Float.isNaN(f)) {
          return null;
       } else {
-         Rotation var19 = null;
-         double var20 = Double.MAX_VALUE;
+         Rotation rotation = null;
+         double d3 = Double.MAX_VALUE;
 
-         for (float var14 = var6 - 1.0F; var14 <= var6 + 1.0F; var14 += 0.1F) {
-            for (float var15 = var5 - 1.5F; var15 <= var5 + 1.5F; var15 += 0.5F) {
-               Rotation var16 = new Rotation(var15, Mth.clamp(var14, -90.0F, 90.0F));
-               double var17;
-               if ((var17 = this.method4837(var16, var1, var2, var3, var4)) < var20) {
-                  var20 = var17;
-                  var19 = var16;
+         for (float f2 = f - 1.0F; f2 <= f + 1.0F; f2 += 0.1F) {
+            for (float yRot2 = yRot - 1.5F; yRot2 <= yRot + 1.5F; yRot2 += 0.5F) {
+               Rotation rotation2 = new Rotation(yRot2, Mth.clamp(f2, -90.0F, 90.0F));
+               double d4;
+               if ((d4 = this.method4837(rotation2, vec3d, vec, vec2, mutablePos)) < d3) {
+                  d3 = d4;
+                  rotation = rotation2;
                }
             }
          }
 
-         return var20 <= 2.0 ? var19 : null;
+         return d3 <= 2.0 ? rotation : null;
       }
    }
 
-   private boolean method4836(Rotation var1, Vec3 var2) {
-      return var1 != null && this.method4837(var1, var2, this.method4839(), this.method4840(), new MutableBlockPos()) <= 2.0;
+   private boolean method4836(Rotation rotation2, Vec3 vec3d) {
+      return rotation2 != null && this.method4837(rotation2, vec3d, this.method4839(), this.method4840(), new MutableBlockPos()) <= 2.0;
    }
 
-   private double method4837(Rotation var1, Vec3 var2, Vec3 var3, Vec3 var4, MutableBlockPos var5) {
-      Vec3 var6 = this.method4838(var1, var3, var4, var5);
-      return var6 == null ? Double.MAX_VALUE : var6.distanceTo(var2);
+   private double method4837(Rotation rotation, Vec3 vec3d, Vec3 vec, Vec3 vec2, MutableBlockPos mutablePos) {
+      Vec3 vec3 = this.method4838(rotation, vec, vec2, mutablePos);
+      return vec3 == null ? Double.MAX_VALUE : vec3.distanceTo(vec3d);
    }
 
-   private Vec3 method4838(Rotation var1, Vec3 var2, Vec3 var3, MutableBlockPos var4) {
-      Vec3 var5 = var2;
-      Vec3 var6 = var1.method3135().scale(1.5).add(var3);
+   private Vec3 method4838(Rotation rotation, Vec3 vec, Vec3 vec2, MutableBlockPos mutablePos) {
+      Vec3 from = vec;
+      Vec3 vec3 = rotation.method3135().scale(1.5).add(vec2);
 
-      for (int var7 = 0; var7 < 200; var7++) {
-         Vec3 var8 = var5.add(var6);
-         BlockHitResult var9 = mc.level.clip(new ClipContext(var5, var8, Block.COLLIDER, Fluid.NONE, mc.player));
-         if (var9.getType() != Type.MISS) {
-            return var9.getLocation();
+      for (int i = 0; i < 200; i++) {
+         Vec3 to = from.add(vec3);
+         BlockHitResult clip = mc.level.clip(new ClipContext(from, to, Block.COLLIDER, Fluid.NONE, mc.player));
+         if (clip.getType() != Type.MISS) {
+            return clip.getLocation();
          }
 
-         boolean var10 = mc.level.getBlockState(var4.set(var5.x, var5.y, var5.z)).getFluidState().is(FluidTags.WATER);
-         var6 = var6.scale(var10 ? 0.8 : 0.99).add(0.0, -0.03, 0.0);
-         var5 = var8;
-         if (var8.y < mc.level.getMinY() - 64) {
+         boolean is = mc.level.getBlockState(mutablePos.set(from.x, from.y, from.z)).getFluidState().is(FluidTags.WATER);
+         vec3 = vec3.scale(is ? 0.8 : 0.99).add(0.0, -0.03, 0.0);
+         from = to;
+         if (to.y < mc.level.getMinY() - 64) {
             return null;
          }
       }
@@ -257,17 +257,17 @@ public final class TargetPearlModule extends Module {
    }
 
    private Vec3 method4840() {
-      Vec3 var1 = mc.player.position().subtract(mc.player.xo, mc.player.yo, mc.player.zo);
-      return new Vec3(var1.x, mc.player.onGround() ? 0.0 : var1.y, var1.z);
+      Vec3 vec = mc.player.position().subtract(mc.player.xo, mc.player.yo, mc.player.zo);
+      return new Vec3(vec.x, mc.player.onGround() ? 0.0 : vec.y, vec.z);
    }
 
    private void method4841() {
-      Rotation var1 = this.rotation;
-      if (var1 != null) {
+      Rotation rotation = this.rotation;
+      if (rotation != null) {
          Zenith.getInstance()
             .getRotationManager()
             .method7848(
-               new RotationRequest(var1, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), var1), bcCameraTestnerv.getRotationConfig()),
+               new RotationRequest(rotation, () -> bcCameraTestnerv.method1851(bcCameraTestnerv.getRotationConfig(), rotation), bcCameraTestnerv.getRotationConfig()),
                20,
                this,
                2
@@ -329,9 +329,9 @@ public final class TargetPearlModule extends Module {
          return "Data[" + "vec3d=" + this.vec3d + ", " + "rotation=" + this.rotation + "]";
       }
 
-      private Data(Vec3 var1, Rotation var2) {
-         this.vec3d = var1;
-         this.rotation = var2;
+      private Data(Vec3 vec3d, Rotation rotation) {
+         this.vec3d = vec3d;
+         this.rotation = rotation;
       }
 
       public Vec3 getVec3d() {

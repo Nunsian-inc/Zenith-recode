@@ -44,15 +44,15 @@ public final class ChatCompose {
    }
 
    public static String server() {
-      Minecraft var0 = mc();
-      if (var0 != null && var0.level != null) {
-         ServerData var1 = var0.getCurrentServer();
-         if (var1 != null && var1.isRealm()) {
+      Minecraft minecraft = mc();
+      if (minecraft != null && minecraft.level != null) {
+         ServerData currentServer = minecraft.getCurrentServer();
+         if (currentServer != null && currentServer.isRealm()) {
             return "realms";
-         } else if (var1 != null && var1.ip != null && !var1.ip.isBlank()) {
-            return ServerNameUtils.normalize(var1.ip);
+         } else if (currentServer != null && currentServer.ip != null && !currentServer.ip.isBlank()) {
+            return ServerNameUtils.normalize(currentServer.ip);
          } else {
-            return var0.isLocalServer() ? "singleplayer" : "";
+            return minecraft.isLocalServer() ? "singleplayer" : "";
          }
       } else {
          return "";
@@ -60,13 +60,13 @@ public final class ChatCompose {
    }
 
    public static String mode() {
-      Minecraft var0 = mc();
-      if (var0 != null && var0.level != null) {
+      Minecraft minecraft = mc();
+      if (minecraft != null && minecraft.level != null) {
          try {
-            Scoreboard var1 = var0.level.getScoreboard();
-            Objective var2 = var1.getDisplayObjective(DisplaySlot.SIDEBAR);
-            return var2 == null ? "" : ServerNameUtils.method5641(var2.getDisplayName().getString());
-         } catch (RuntimeException var3) {
+            Scoreboard scoreboard = minecraft.level.getScoreboard();
+            Objective displayObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR);
+            return displayObjective == null ? "" : ServerNameUtils.method5641(displayObjective.getDisplayName().getString());
+         } catch (RuntimeException e) {
             return "";
          }
       } else {
@@ -75,302 +75,302 @@ public final class ChatCompose {
    }
 
    public static String dimension() {
-      Minecraft var0 = mc();
-      if (var0 != null && var0.level != null) {
-         String var1 = var0.level.dimension().identifier().toString();
-         int var2 = var1.indexOf(58);
-         return var2 < 0 ? var1 : var1.substring(var2 + 1);
+      Minecraft minecraft = mc();
+      if (minecraft != null && minecraft.level != null) {
+         String string = minecraft.level.dimension().identifier().toString();
+         int indexOf = string.indexOf(58);
+         return indexOf < 0 ? string : string.substring(indexOf + 1);
       } else {
          return "";
       }
    }
 
    public static String whereTag() {
-      Zenith var0 = Zenith.getInstance();
-      Share var1 = var0 == null ? null : var0.getShare();
-      if (var1 != null && !var1.server.isEnabled()) {
+      Zenith zenith = Zenith.getInstance();
+      Share share = zenith == null ? null : zenith.getShare();
+      if (share != null && !share.server.isEnabled()) {
          return "";
       } else {
-         String var2 = server();
-         return var2.isEmpty() ? "" : Coord.method5171("at").method5177("s", var2).method5177("m", mode()).method5177("d", dimension()).toString();
+         String str = server();
+         return str.isEmpty() ? "" : Coord.method5171("at").method5177("s", str).method5177("m", mode()).method5177("d", dimension()).toString();
       }
    }
 
    public static boolean inWorld() {
-      Minecraft var0 = mc();
-      return var0 != null && var0.player != null && var0.level != null;
+      Minecraft minecraft = mc();
+      return minecraft != null && minecraft.player != null && minecraft.level != null;
    }
 
    public static boolean hasItems() {
-      Minecraft var0 = mc();
-      if (var0 != null && var0.player != null) {
-         Inventory var1 = var0.player.getInventory();
+      Minecraft minecraft = mc();
+      if (minecraft != null && minecraft.player != null) {
+         Inventory inventory = minecraft.player.getInventory();
 
-         for (int var2 = 0; var2 < var1.getNonEquipmentItems().size() && var2 < 36; var2++) {
-            if (!var1.getNonEquipmentItems().get(var2).isEmpty()) {
+         for (int i = 0; i < inventory.getNonEquipmentItems().size() && i < 36; i++) {
+            if (!inventory.getNonEquipmentItems().get(i).isEmpty()) {
                return true;
             }
          }
 
-         for (EquipmentSlot var5 : ARMOR_SLOTS) {
-            if (!var0.player.getItemBySlot(var5).isEmpty()) {
+         for (EquipmentSlot slot : ARMOR_SLOTS) {
+            if (!minecraft.player.getItemBySlot(slot).isEmpty()) {
                return true;
             }
          }
 
-         return !var0.player.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty();
+         return !minecraft.player.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty();
       } else {
          return false;
       }
    }
 
-   public static String coordsHere(String var0) {
-      Minecraft var1 = mc();
-      if (var1 != null && var1.player != null) {
-         BlockPos var2 = var1.player.blockPosition();
-         return coords(var2.getX(), var2.getY(), var2.getZ(), dimension(), var0);
+   public static String coordsHere(String str) {
+      Minecraft minecraft = mc();
+      if (minecraft != null && minecraft.player != null) {
+         BlockPos blockPosition = minecraft.player.blockPosition();
+         return coords(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), dimension(), str);
       } else {
          return "";
       }
    }
 
-   public static String coords(int var0, int var1, int var2, String var3, String var4) {
+   public static String coords(int x, int y, int z, String dimension, String str) {
       return Coord.method5171("coord")
-         .method5178("x", var0)
-         .method5178("y", var1)
-         .method5178("z", var2)
-         .method5177("d", var3)
+         .method5178("x", x)
+         .method5178("y", y)
+         .method5178("z", z)
+         .method5177("d", dimension)
          .method5177("s", server())
-         .method5177("n", var4)
+         .method5177("n", str)
          .toString();
    }
 
-   public static String inventory(boolean var0, boolean var1) {
-      Minecraft var2 = mc();
-      if (var2 != null && var2.player != null) {
-         Inventory var3 = var2.player.getInventory();
-         ArrayList var4 = new ArrayList();
+   public static String inventory(boolean flag, boolean siteMode) {
+      Minecraft minecraft = mc();
+      if (minecraft != null && minecraft.player != null) {
+         Inventory inventory = minecraft.player.getInventory();
+         ArrayList arrayList = new ArrayList();
 
-         for (int var5 = 0; var5 < var3.getNonEquipmentItems().size() && var5 < 36; var5++) {
-            add(var4, var5, var3.getNonEquipmentItems().get(var5));
+         for (int i = 0; i < inventory.getNonEquipmentItems().size() && i < 36; i++) {
+            add(arrayList, i, inventory.getNonEquipmentItems().get(i));
          }
 
-         for (int var8 = 0; var8 < ARMOR_SLOTS.length; var8++) {
-            add(var4, 36 + var8, var2.player.getItemBySlot(ARMOR_SLOTS[var8]));
+         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
+            add(arrayList, 36 + i, minecraft.player.getItemBySlot(ARMOR_SLOTS[i]));
          }
 
-         ItemStack var9 = var2.player.getItemBySlot(EquipmentSlot.OFFHAND);
-         if (!var9.isEmpty()) {
-            add(var4, 40, var9);
+         ItemStack itemBySlot = minecraft.player.getItemBySlot(EquipmentSlot.OFFHAND);
+         if (!itemBySlot.isEmpty()) {
+            add(arrayList, 40, itemBySlot);
          }
 
-         if (var4.isEmpty()) {
+         if (arrayList.isEmpty()) {
             return "";
          } else {
-            int var6 = var1 ? (var0 ? 860 : 380) : 240;
-            String var7 = pack(var4, var6);
-            return var7 == null ? "" : var7;
+            int n = siteMode ? (flag ? 860 : 380) : 240;
+            String str = pack(arrayList, n);
+            return str == null ? "" : str;
          }
       } else {
          return "";
       }
    }
 
-   private static void add(List<String> var0, int var1, ItemStack var2) {
-      if (var2 != null && !var2.isEmpty()) {
-         Identifier var3 = BuiltInRegistries.ITEM.getKey(var2.getItem());
-         String var4 = var3.getNamespace().equals("minecraft") ? var3.getPath() : var3.toString();
-         StringBuilder var5 = new StringBuilder().append(var1).append(':').append(var4).append(':').append(Math.max(1, Math.min(127, var2.getCount())));
-         if (var2.hasFoil()) {
-            var5.append(":g");
+   private static void add(List<String> strings, int n, ItemStack itemBySlot) {
+      if (itemBySlot != null && !itemBySlot.isEmpty()) {
+         Identifier key = BuiltInRegistries.ITEM.getKey(itemBySlot.getItem());
+         String path = key.getNamespace().equals("minecraft") ? key.getPath() : key.toString();
+         StringBuilder builder = new StringBuilder().append(n).append(':').append(path).append(':').append(Math.max(1, Math.min(127, itemBySlot.getCount())));
+         if (itemBySlot.hasFoil()) {
+            builder.append(":g");
          }
 
-         var0.add(var5.toString());
+         strings.add(builder.toString());
       }
    }
 
-   private static String pack(List<String> var0, int var1) {
-      var var2 = new ArrayList<>(var0);
-      String var3 = server();
+   private static String pack(List<String> strings, int n) {
+      var elements = new ArrayList<>(strings);
+      String dimension = server();
 
       while (true) {
-         String var4 = Coord.method5171("inv").method5177("s", var3).method5177("v", encode(String.join(";", var2))).toString();
-         if (var4.length() <= var1) {
-            return var4;
+         String string = Coord.method5171("inv").method5177("s", dimension).method5177("v", encode(String.join(";", elements))).toString();
+         if (string.length() <= n) {
+            return string;
          }
 
-         int var5 = lastBackpack(var2);
-         if (var5 < 0) {
+         int index = lastBackpack(elements);
+         if (index < 0) {
             return null;
          }
 
-         var2.remove(var5);
+         elements.remove(index);
       }
    }
 
-   private static int lastBackpack(List<String> var0) {
-      for (int var1 = var0.size() - 1; var1 >= 0; var1--) {
-         int var2 = slotOf((String)var0.get(var1));
-         if (var2 >= 9 && var2 < 36) {
-            return var1;
+   private static int lastBackpack(List<String> elements) {
+      for (int i = elements.size() - 1; i >= 0; i--) {
+         int n = slotOf((String)elements.get(i));
+         if (n >= 9 && n < 36) {
+            return i;
          }
       }
 
-      for (int var3 = var0.size() - 1; var3 >= 0; var3--) {
-         int var4 = slotOf((String)var0.get(var3));
-         if (var4 >= 0 && var4 < 9) {
-            return var3;
+      for (int i = elements.size() - 1; i >= 0; i--) {
+         int n = slotOf((String)elements.get(i));
+         if (n >= 0 && n < 9) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   private static int slotOf(String var0) {
-      int var1 = var0.indexOf(58);
-      if (var1 <= 0) {
+   private static int slotOf(String str) {
+      int indexOf = str.indexOf(58);
+      if (indexOf <= 0) {
          return -1;
       } else {
          try {
-            return Integer.parseInt(var0.substring(0, var1));
-         } catch (NumberFormatException var3) {
+            return Integer.parseInt(str.substring(0, indexOf));
+         } catch (NumberFormatException e) {
             return -1;
          }
       }
    }
 
-   private static String encode(String var0) {
-      byte[] var1 = var0.getBytes(StandardCharsets.UTF_8);
-      Deflater var2 = new Deflater(9);
+   private static String encode(String str) {
+      byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+      Deflater deflater = new Deflater(9);
 
-      String var5;
+      String str2;
       try {
-         var2.setInput(var1);
-         var2.finish();
-         byte[] var3 = new byte[Math.max(64, var1.length)];
-         int var4 = var2.deflate(var3);
-         if (var2.finished()) {
-            byte[] var10 = new byte[var4];
-            System.arraycopy(var3, 0, var10, 0, var4);
-            return "1" + Base64.getUrlEncoder().withoutPadding().encodeToString(var10);
+         deflater.setInput(bytes);
+         deflater.finish();
+         byte[] output = new byte[Math.max(64, bytes.length)];
+         int deflate = deflater.deflate(output);
+         if (deflater.finished()) {
+            byte[] src = new byte[deflate];
+            System.arraycopy(output, 0, src, 0, deflate);
+            return "1" + Base64.getUrlEncoder().withoutPadding().encodeToString(src);
          }
 
-         var5 = "0" + Base64.getUrlEncoder().withoutPadding().encodeToString(var1);
+         str2 = "0" + Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
       } finally {
-         var2.end();
+         deflater.end();
       }
 
-      return var5;
+      return str2;
    }
 
-   private static String decode(String var0) {
-      if (var0 != null && var0.length() >= 2) {
-         char var1 = var0.charAt(0);
+   private static String decode(String str) {
+      if (str != null && str.length() >= 2) {
+         char charAt = str.charAt(0);
 
-         byte[] var2;
+         byte[] bytes;
          try {
-            var2 = Base64.getUrlDecoder().decode(var0.substring(1));
-         } catch (IllegalArgumentException var11) {
+            bytes = Base64.getUrlDecoder().decode(str.substring(1));
+         } catch (IllegalArgumentException e) {
             return "";
          }
 
-         if (var1 == '0') {
-            return new String(var2, StandardCharsets.UTF_8);
+         if (charAt == '0') {
+            return new String(bytes, StandardCharsets.UTF_8);
          } else {
-            Inflater var3 = new Inflater();
+            Inflater inflater = new Inflater();
 
-            String var5;
+            String str2;
             try {
-               var3.setInput(var2);
-               byte[] var4 = new byte[4096];
-               int var14 = var3.inflate(var4);
-               return new String(var4, 0, var14, StandardCharsets.UTF_8);
-            } catch (DataFormatException var12) {
-               var5 = "";
+               inflater.setInput(bytes);
+               byte[] output = new byte[4096];
+               int inflate = inflater.inflate(output);
+               return new String(output, 0, inflate, StandardCharsets.UTF_8);
+            } catch (DataFormatException e) {
+               str2 = "";
             } finally {
-               var3.end();
+               inflater.end();
             }
 
-            return var5;
+            return str2;
          }
       } else {
          return "";
       }
    }
 
-   public static CloudInventoryData inventoryOf(Coord var0) {
-      if (var0 == null) {
+   public static CloudInventoryData inventoryOf(Coord card) {
+      if (card == null) {
          return null;
       } else {
-         String var1 = decode(var0.method5169("v", ""));
-         if (var1.isEmpty()) {
+         String str = decode(card.method5169("v", ""));
+         if (str.isEmpty()) {
             return null;
          } else {
-            ArrayList var2 = new ArrayList();
-            ArrayList var3 = new ArrayList();
+            ArrayList arrayList = new ArrayList();
+            ArrayList arrayList2 = new ArrayList();
 
-            for (int var4 = 0; var4 < 36; var4++) {
-               var2.add(ItemStack.EMPTY);
+            for (int i = 0; i < 36; i++) {
+               arrayList.add(ItemStack.EMPTY);
             }
 
-            for (int var19 = 0; var19 < 4; var19++) {
-               var3.add(ItemStack.EMPTY);
+            for (int i = 0; i < 4; i++) {
+               arrayList2.add(ItemStack.EMPTY);
             }
 
-            ItemStack var20 = ItemStack.EMPTY;
+            ItemStack stack = ItemStack.EMPTY;
 
-            for (String var8 : var1.split(";")) {
-               String[] var9 = var8.split(":");
-               if (var9.length >= 3) {
-                  boolean var10 = var9.length > 3 && "g".equals(var9[var9.length - 1]);
-                  int var11 = var10 ? var9.length - 2 : var9.length - 1;
-                  if (var11 >= 2) {
-                     int var12;
-                     int var13;
+            for (String str2 : str.split(";")) {
+               String[] original = str2.split(":");
+               if (original.length >= 3) {
+                  boolean flag = original.length > 3 && "g".equals(original[original.length - 1]);
+                  int to = flag ? original.length - 2 : original.length - 1;
+                  if (to >= 2) {
+                     int index;
+                     int n;
                      try {
-                        var12 = Integer.parseInt(var9[0]);
-                        var13 = Integer.parseInt(var9[var11]);
-                     } catch (NumberFormatException var18) {
+                        index = Integer.parseInt(original[0]);
+                        n = Integer.parseInt(original[to]);
+                     } catch (NumberFormatException e) {
                         continue;
                      }
 
-                     String var14 = String.join(":", Arrays.copyOfRange(var9, 1, var11));
-                     Identifier var15 = Identifier.tryParse(var14.indexOf(58) < 0 ? "minecraft:" + var14 : var14);
-                     if (var15 != null && BuiltInRegistries.ITEM.containsKey(var15)) {
-                        Item var16 = BuiltInRegistries.ITEM.getValue(var15);
-                        ItemStack var17 = new ItemStack(var16, Math.max(1, Math.min(127, var13)));
-                        if (var10) {
-                           var17.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+                     String str3 = String.join(":", Arrays.copyOfRange(original, 1, to));
+                     Identifier tryParse = Identifier.tryParse(str3.indexOf(58) < 0 ? "minecraft:" + str3 : str3);
+                     if (tryParse != null && BuiltInRegistries.ITEM.containsKey(tryParse)) {
+                        Item item = BuiltInRegistries.ITEM.getValue(tryParse);
+                        ItemStack stack2 = new ItemStack(item, Math.max(1, Math.min(127, n)));
+                        if (flag) {
+                           stack2.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
                         }
 
-                        if (var12 >= 0 && var12 < 36) {
-                           var2.set(var12, var17);
-                        } else if (var12 >= 36 && var12 < 40) {
-                           var3.set(var12 - 36, var17);
-                        } else if (var12 == 40) {
-                           var20 = var17;
+                        if (index >= 0 && index < 36) {
+                           arrayList.set(index, stack2);
+                        } else if (index >= 36 && index < 40) {
+                           arrayList2.set(index - 36, stack2);
+                        } else if (index == 40) {
+                           stack = stack2;
                         }
                      }
                   }
                }
             }
 
-            return new CloudInventoryData(var2, var3, var20);
+            return new CloudInventoryData(arrayList, arrayList2, stack);
          }
       }
    }
 
-   public static String dimensionLabel(String var0) {
-      if (var0 == null) {
+   public static String dimensionLabel(String str) {
+      if (str == null) {
          return "";
       } else {
-         String var1 = var0.toLowerCase(Locale.ROOT);
+         String lowerCase = str.toLowerCase(Locale.ROOT);
 
-         return switch (var1) {
+         return switch (lowerCase) {
             case "overworld", "minecraft:overworld" -> "Верхний мир";
             case "the_nether", "minecraft:the_nether" -> "Ад";
             case "the_end", "minecraft:the_end" -> "Край";
-            default -> var0;
+            default -> str;
          };
       }
    }

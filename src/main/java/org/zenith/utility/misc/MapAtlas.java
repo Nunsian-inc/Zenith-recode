@@ -15,31 +15,31 @@ public final class MapAtlas {
    }
 
    @Nullable
-   public MapAtlas.Data method6151(TextureManager var1) {
-      MapAtlasPage var2 = this.items.isEmpty() ? null : this.items.get(this.items.size() - 1);
-      if (var2 == null || var2.isFull()) {
+   public MapAtlas.Data method6151(TextureManager zenith$getTextureManager) {
+      MapAtlasPage mapAtlasPage = this.items.isEmpty() ? null : this.items.get(this.items.size() - 1);
+      if (mapAtlasPage == null || mapAtlasPage.isFull()) {
          try {
-            var2 = new MapAtlasPage(var1);
-         } catch (Throwable var6) {
+            mapAtlasPage = new MapAtlasPage(zenith$getTextureManager);
+         } catch (Throwable e) {
             return null;
          }
 
-         this.items.add(var2);
+         this.items.add(mapAtlasPage);
       }
 
-      int var3 = var2.method5416();
-      if (var3 < 0) {
+      int n = mapAtlasPage.method5416();
+      if (n < 0) {
          return null;
       } else {
-         int var4 = var3 % 16 * 128;
-         int var5 = var3 / 16 * 128;
-         return new MapAtlas.Data(var2, var4, var5);
+         int intValue = n % 16 * 128;
+         int n2 = n / 16 * 128;
+         return new MapAtlas.Data(mapAtlasPage, intValue, n2);
       }
    }
 
-   public void method6152(TextureManager var1) {
-      for (MapAtlasPage var3 : this.items) {
-         var3.method5418(var1);
+   public void method6152(TextureManager textureManager) {
+      for (MapAtlasPage mapAtlasPage : this.items) {
+         mapAtlasPage.method5418(textureManager);
       }
 
       this.items.clear();
@@ -79,10 +79,10 @@ public final class MapAtlas {
          return "Data[" + "mapAtlasPage=" + this.mapAtlasPage + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data(MapAtlasPage var1, int var2, int var3) {
-         this.mapAtlasPage = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
+      public Data(MapAtlasPage mapAtlasPage, int intValue, int n) {
+         this.mapAtlasPage = mapAtlasPage;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
 
       public Identifier method6153() {

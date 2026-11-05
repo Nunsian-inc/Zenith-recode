@@ -63,127 +63,127 @@ public final class ProxyMenuPage implements MainMenuPage {
    }
 
    private void addProxy() {
-      ProxyConfig var1 = ProxyConfig.method439(this.addressField.getValue(), this.pendingType);
-      if (var1 != null) {
-         this.manager().method6537(var1);
+      ProxyConfig name = ProxyConfig.method439(this.addressField.getValue(), this.pendingType);
+      if (name != null) {
+         this.manager().method6537(name);
          this.addressField.clear();
          this.addressField.setFocused(false);
       }
    }
 
    @Override
-   public void layout(BoundsData var1) {
-      float var2 = var1.getFloatValue2() + LIST_HEIGHT + CONTROLS_GAP;
-      float var3 = this.typeButton.preferredWidth();
-      float var4 = var1.width() - var3 - MenuButton.HEIGHT - CONTROL_GAP - BUTTON_GAP;
-      this.addressField.setBounds(var1.getFloatValue(), var2, var4, MenuTextField.HEIGHT);
-      this.typeButton.setBounds(var1.getFloatValue() + var4 + CONTROL_GAP, var2, var3, MenuButton.HEIGHT);
-      this.addButton.setBounds(var1.getFloatValue() + var1.width() - MenuButton.HEIGHT, var2, MenuButton.HEIGHT, MenuButton.HEIGHT);
+   public void layout(BoundsData boundsData) {
+      float f = boundsData.getFloatValue2() + LIST_HEIGHT + CONTROLS_GAP;
+      float preferredWidth = this.typeButton.preferredWidth();
+      float preferredWidth2 = boundsData.width() - preferredWidth - MenuButton.HEIGHT - CONTROL_GAP - BUTTON_GAP;
+      this.addressField.setBounds(boundsData.getFloatValue(), f, preferredWidth2, MenuTextField.HEIGHT);
+      this.typeButton.setBounds(boundsData.getFloatValue() + preferredWidth2 + CONTROL_GAP, f, preferredWidth, MenuButton.HEIGHT);
+      this.addButton.setBounds(boundsData.getFloatValue() + boundsData.width() - MenuButton.HEIGHT, f, MenuButton.HEIGHT, MenuButton.HEIGHT);
    }
 
    @Override
-   public void render(MenuDrawContext var1, float var2, float var3, BoundsData var4) {
-      var var5 = this.manager().method6535();
-      BoundsData var6 = MenuSkin.listArea(var1, var4, LIST_HEIGHT);
-      float var7 = var6.width() - RAIL_GAP - RAIL_WIDTH;
-      float var8 = var5.isEmpty() ? 0.0F : var5.size() * ROW_HEIGHT + (var5.size() - 1) * ROW_GAP;
-      this.scroll.update(var6.height(), var8);
-      this.viewport = new BoundsData(var6.getFloatValue(), var6.getFloatValue2(), var7, var6.height());
-      this.rowBounds = new BoundsData[var5.size()];
-      this.removeBounds = new BoundsData[var5.size()];
-      float var9 = this.entrance.method2808(1.0F);
-      var1.enableScissor(var6.getFloatValue(), var6.getFloatValue2(), var6.getFloatValue() + var7, var6.getFloatValue2() + var6.height());
-      float var10 = var6.getFloatValue2() - this.scroll.offset();
+   public void render(MenuDrawContext graphics, float mouseX, float mouseY, BoundsData boundsData) {
+      var proxyConfigs = this.manager().method6535();
+      BoundsData listArea = MenuSkin.listArea(graphics, boundsData, LIST_HEIGHT);
+      float width = listArea.width() - RAIL_GAP - RAIL_WIDTH;
+      float content = proxyConfigs.isEmpty() ? 0.0F : proxyConfigs.size() * ROW_HEIGHT + (proxyConfigs.size() - 1) * ROW_GAP;
+      this.scroll.update(listArea.height(), content);
+      this.viewport = new BoundsData(listArea.getFloatValue(), listArea.getFloatValue2(), width, listArea.height());
+      this.rowBounds = new BoundsData[proxyConfigs.size()];
+      this.removeBounds = new BoundsData[proxyConfigs.size()];
+      float f = this.entrance.method2808(1.0F);
+      graphics.enableScissor(listArea.getFloatValue(), listArea.getFloatValue2(), listArea.getFloatValue() + width, listArea.getFloatValue2() + listArea.height());
+      float y = listArea.getFloatValue2() - this.scroll.offset();
 
-      for (int var11 = 0; var11 < var5.size(); var11++) {
-         this.renderRow(var1, var2, var3, (ProxyConfig)var5.get(var11), var11, var6.getFloatValue(), var10 + MenuSkin.enterOffset(var9, var11), var7);
-         this.rowBounds[var11] = new BoundsData(var6.getFloatValue(), var10, var7, ROW_HEIGHT);
-         var10 += ROW_HEIGHT + ROW_GAP;
+      for (int i = 0; i < proxyConfigs.size(); i++) {
+         this.renderRow(graphics, mouseX, mouseY, (ProxyConfig)proxyConfigs.get(i), i, listArea.getFloatValue(), y + MenuSkin.enterOffset(f, i), width);
+         this.rowBounds[i] = new BoundsData(listArea.getFloatValue(), y, width, ROW_HEIGHT);
+         y += ROW_HEIGHT + ROW_GAP;
       }
 
-      var1.disableScissor();
-      if (var5.isEmpty()) {
-         Font var13 = MenuTheme.medium(12.0F);
-         String var12 = MenuTheme.t("menu.proxy.empty");
-         var1.drawText(
-            var13,
-            var12,
-            var6.getFloatValue() + (var7 - var13.width(var12)) / 2.0F,
-            var6.getFloatValue2() + (var6.height() - var13.height()) / 2.0F,
+      graphics.disableScissor();
+      if (proxyConfigs.isEmpty()) {
+         Font medium = MenuTheme.medium(12.0F);
+         String text = MenuTheme.t("menu.proxy.empty");
+         graphics.drawText(
+            medium,
+            text,
+            listArea.getFloatValue() + (width - medium.width(text)) / 2.0F,
+            listArea.getFloatValue2() + (listArea.height() - medium.height()) / 2.0F,
             MenuTheme.textTertiary()
          );
       }
 
-      this.scroll.renderRail(var1, var6.getFloatValue() + var6.width() - RAIL_WIDTH, var6.getFloatValue2(), var6.height());
-      this.addressField.render(var1, var2, var3);
-      this.typeButton.render(var1, var2, var3);
-      this.addButton.render(var1, var2, var3);
+      this.scroll.renderRail(graphics, listArea.getFloatValue() + listArea.width() - RAIL_WIDTH, listArea.getFloatValue2(), listArea.height());
+      this.addressField.render(graphics, mouseX, mouseY);
+      this.typeButton.render(graphics, mouseX, mouseY);
+      this.addButton.render(graphics, mouseX, mouseY);
    }
 
-   private void renderRow(MenuDrawContext var1, float var2, float var3, ProxyConfig var4, int var5, float var6, float var7, float var8) {
-      BoundsData var9 = new BoundsData(var6, var7, var8, ROW_HEIGHT);
-      this.rowBounds[var5] = var9;
-      boolean var10 = this.manager().getIntValue2() == var5;
-      boolean var11 = var9.contains(var2, var3);
-      ZenithColor var12 = var11 ? MenuTheme.plate().method7295(MenuTheme.track(), 0.5F) : MenuTheme.plate();
-      MenuSkin.plate(var1, var6, var7, var8, ROW_HEIGHT, var10 ? var12.method7295(MenuTheme.accent(), 0.18F) : var12);
-      Font var13 = MenuTheme.medium(11.0F);
-      Font var14 = MenuTheme.regular(10.0F);
-      float var15 = MenuTheme.px(30.0F);
-      float var16 = var7 + (ROW_HEIGHT - var15) / 2.0F;
-      float var17 = MenuSkin.ROW_TILE;
-      float var18 = var7 + (ROW_HEIGHT - var17) / 2.0F;
-      if (var10) {
-         MenuSkin.accentTile(var1, var6 + MenuSkin.EDGE, var18, var17, MenuIcons.PROXY);
+   private void renderRow(MenuDrawContext graphics, float mouseX, float mouseY, ProxyConfig proxyConfig, int n, float floatValue, float snap, float width) {
+      BoundsData boundsData = new BoundsData(floatValue, snap, width, ROW_HEIGHT);
+      this.rowBounds[n] = boundsData;
+      boolean flag = this.manager().getIntValue2() == n;
+      boolean contains = boundsData.contains(mouseX, mouseY);
+      ZenithColor plate = contains ? MenuTheme.plate().method7295(MenuTheme.track(), 0.5F) : MenuTheme.plate();
+      MenuSkin.plate(graphics, floatValue, snap, width, ROW_HEIGHT, flag ? plate.method7295(MenuTheme.accent(), 0.18F) : plate);
+      Font medium = MenuTheme.medium(11.0F);
+      Font regular = MenuTheme.regular(10.0F);
+      float px = MenuTheme.px(30.0F);
+      float centeredTextY = snap + (ROW_HEIGHT - px) / 2.0F;
+      float f = MenuSkin.ROW_TILE;
+      float y = snap + (ROW_HEIGHT - f) / 2.0F;
+      if (flag) {
+         MenuSkin.accentTile(graphics, floatValue + MenuSkin.EDGE, y, f, MenuIcons.PROXY);
       } else {
-         MenuSkin.mutedTile(var1, var6 + MenuSkin.EDGE, var18, var17, MenuIcons.PROXY, MenuTheme.textTertiary());
+         MenuSkin.mutedTile(graphics, floatValue + MenuSkin.EDGE, y, f, MenuIcons.PROXY, MenuTheme.textTertiary());
       }
 
-      float var19 = MenuSkin.divider(var1, var6 + MenuSkin.EDGE + var17, var7, ROW_HEIGHT);
-      var1.drawText(var13, var4.method441(), var19, var16, MenuTheme.text());
-      String var20 = var4.getType().name() + (var4.method440() ? " - " + MenuTheme.t("menu.proxy.authenticated") : "");
-      var1.drawText(var14, var20, var19, var16 + MenuTheme.px(18.0F), MenuTheme.textSecondary());
-      String var21 = MenuTheme.t(var10 ? "menu.proxy.active" : "menu.proxy.idle");
-      Font var22 = MenuTheme.medium(10.0F);
-      float var23 = var6 + var8 - MenuSkin.EDGE;
-      float var24 = MenuTheme.px(12.0F);
-      float var25 = var7 + (ROW_HEIGHT - var24) / 2.0F;
-      BoundsData var26 = new BoundsData(var23 - var24, var25, var24, var24);
-      this.removeBounds[var5] = var26;
-      var1.drawText(
-         var22,
-         var21,
-         var26.getFloatValue() - MenuTheme.px(8.0F) - var22.width(var21),
-         var7 + (ROW_HEIGHT - var22.height()) / 2.0F,
-         var10 ? MenuTheme.accent() : MenuTheme.textTertiary()
+      float divider = MenuSkin.divider(graphics, floatValue + MenuSkin.EDGE + f, snap, ROW_HEIGHT);
+      graphics.drawText(medium, proxyConfig.method441(), divider, centeredTextY, MenuTheme.text());
+      String text = proxyConfig.getType().name() + (proxyConfig.method440() ? " - " + MenuTheme.t("menu.proxy.authenticated") : "");
+      graphics.drawText(regular, text, divider, centeredTextY + MenuTheme.px(18.0F), MenuTheme.textSecondary());
+      String str = MenuTheme.t(flag ? "menu.proxy.active" : "menu.proxy.idle");
+      Font font = MenuTheme.medium(10.0F);
+      float f2 = floatValue + width - MenuSkin.EDGE;
+      float px2 = MenuTheme.px(12.0F);
+      float y2 = snap + (ROW_HEIGHT - px2) / 2.0F;
+      BoundsData boundsData2 = new BoundsData(f2 - px2, y2, px2, px2);
+      this.removeBounds[n] = boundsData2;
+      graphics.drawText(
+         font,
+         str,
+         boundsData2.getFloatValue() - MenuTheme.px(8.0F) - font.width(str),
+         snap + (ROW_HEIGHT - font.height()) / 2.0F,
+         flag ? MenuTheme.accent() : MenuTheme.textTertiary()
       );
-      Font var27 = MenuIcons.REMOVE.font(12.0F);
-      var1.drawText(
-         var27,
+      Font font2 = MenuIcons.REMOVE.font(12.0F);
+      graphics.drawText(
+         font2,
          MenuIcons.REMOVE.glyph(),
-         var26.getFloatValue(),
-         var25 + (var24 - var27.height()) / 2.0F,
-         var26.contains(var2, var3) ? MenuTheme.danger() : MenuTheme.textTertiary()
+         boundsData2.getFloatValue(),
+         y2 + (px2 - font2.height()) / 2.0F,
+         boundsData2.contains(mouseX, mouseY) ? MenuTheme.danger() : MenuTheme.textTertiary()
       );
    }
 
    @Override
-   public boolean mouseClicked(double var1, double var3, int var5) {
-      if (this.addressField.mouseClicked(var1, var3, var5)) {
+   public boolean mouseClicked(double lastClickX, double lastClickY, int glfwButton) {
+      if (this.addressField.mouseClicked(lastClickX, lastClickY, glfwButton)) {
          return true;
-      } else if (this.typeButton.mouseClicked(var1, var3, var5)) {
+      } else if (this.typeButton.mouseClicked(lastClickX, lastClickY, glfwButton)) {
          return true;
-      } else if (this.addButton.mouseClicked(var1, var3, var5)) {
+      } else if (this.addButton.mouseClicked(lastClickX, lastClickY, glfwButton)) {
          return true;
-      } else if (var5 == 0 && this.viewport.contains(var1, var3)) {
-         for (int var6 = 0; var6 < this.rowBounds.length; var6++) {
-            if (this.removeBounds[var6] != null && this.removeBounds[var6].contains(var1, var3)) {
-               this.manager().method6538(var6);
+      } else if (glfwButton == 0 && this.viewport.contains(lastClickX, lastClickY)) {
+         for (int i = 0; i < this.rowBounds.length; i++) {
+            if (this.removeBounds[i] != null && this.removeBounds[i].contains(lastClickX, lastClickY)) {
+               this.manager().method6538(i);
                return true;
             }
 
-            if (this.rowBounds[var6] != null && this.rowBounds[var6].contains(var1, var3)) {
-               this.manager().select(var6);
+            if (this.rowBounds[i] != null && this.rowBounds[i].contains(lastClickX, lastClickY)) {
+               this.manager().select(i);
                return true;
             }
          }
@@ -195,17 +195,17 @@ public final class ProxyMenuPage implements MainMenuPage {
    }
 
    @Override
-   public boolean mouseScrolled(double var1, double var3, double var5) {
-      return this.scroll.scroll(var5, ROW_HEIGHT + ROW_GAP);
+   public boolean mouseScrolled(double d, double d2, double d3) {
+      return this.scroll.scroll(d3, ROW_HEIGHT + ROW_GAP);
    }
 
    @Override
-   public boolean keyPressed(int var1, int var2, int var3) {
-      return this.addressField.keyPressed(var1, var2, var3);
+   public boolean keyPressed(int n, int n2, int n3) {
+      return this.addressField.keyPressed(n, n2, n3);
    }
 
    @Override
-   public boolean charTyped(char var1, int var2) {
-      return this.addressField.charTyped(var1, var2);
+   public boolean charTyped(char c, int n) {
+      return this.addressField.charTyped(c, n);
    }
 }

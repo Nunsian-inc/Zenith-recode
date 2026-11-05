@@ -41,68 +41,68 @@ public final class SkinPreview {
    private SkinPreview() {
    }
 
-   public static PlayerSkin textures(String var0, UUID var1) {
-      String var2 = var0 == null ? "" : var0.toLowerCase(Locale.ROOT);
-      PlayerSkin var3 = CACHE.get(var2);
-      if (var3 != null) {
-         return var3;
+   public static PlayerSkin textures(String input, UUID profileId) {
+      String lowerCase = input == null ? "" : input.toLowerCase(Locale.ROOT);
+      PlayerSkin playerSkin = CACHE.get(lowerCase);
+      if (playerSkin != null) {
+         return playerSkin;
       } else {
-         if (var0 != null && VALID_NAME.matcher(var0).matches() && PENDING.putIfAbsent(var2, Boolean.TRUE) == null) {
-            resolve(var2, var0, var1);
+         if (input != null && VALID_NAME.matcher(input).matches() && PENDING.putIfAbsent(lowerCase, Boolean.TRUE) == null) {
+            resolve(lowerCase, input, profileId);
          }
 
-         return fallback(var2, var1);
+         return fallback(lowerCase, profileId);
       }
    }
 
-   private static PlayerSkin fallback(String var0, UUID var1) {
-      if (var0.isEmpty()) {
-         return DefaultPlayerSkin.get(var1);
+   private static PlayerSkin fallback(String lowerCase, UUID profileId) {
+      if (lowerCase.isEmpty()) {
+         return DefaultPlayerSkin.get(profileId);
       } else {
-         int var2 = Math.floorMod(var0.hashCode(), FALLBACKS.length);
-         PlayerSkin var3 = FALLBACKS[var2];
-         if (var3 == null) {
-            var3 = new PlayerSkin(
-               new ResourceTexture(Zenith.method1501("skins/" + BUNDLED[var2][0]), Zenith.method1501("skins/" + BUNDLED[var2][0] + ".png")),
+         int floorMod = Math.floorMod(lowerCase.hashCode(), FALLBACKS.length);
+         PlayerSkin playerSkin = FALLBACKS[floorMod];
+         if (playerSkin == null) {
+            playerSkin = new PlayerSkin(
+               new ResourceTexture(Zenith.method1501("skins/" + BUNDLED[floorMod][0]), Zenith.method1501("skins/" + BUNDLED[floorMod][0] + ".png")),
                null,
                null,
-               PlayerModelType.valueOf(BUNDLED[var2][1]),
+               PlayerModelType.valueOf(BUNDLED[floorMod][1]),
                false
             );
-            FALLBACKS[var2] = var3;
+            FALLBACKS[floorMod] = playerSkin;
          }
 
-         return var3;
+         return playerSkin;
       }
    }
 
-   private static void resolve(String var0, String var1, UUID var2) {
-      Minecraft var3 = Minecraft.getInstance();
-      HttpRequest var4 = HttpRequest.newBuilder()
-         .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + var1))
+   private static void resolve(String lowerCase, String input, UUID profileId) {
+      Minecraft minecraft = Minecraft.getInstance();
+      HttpRequest httpRequest = HttpRequest.newBuilder()
+         .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + input))
          .timeout(Duration.ofSeconds(10L))
          .GET()
          .build();
-      HTTP.sendAsync(var4, BodyHandlers.ofString())
+      HTTP.sendAsync(httpRequest, BodyHandlers.ofString())
          .thenApply(var1x -> {
             if (var1x.statusCode() != 200) {
-               return var2;
+               return profileId;
             } else {
                JsonObject var2x = JsonParser.parseString(var1x.body()).getAsJsonObject();
                return undash(var2x.get("id").getAsString());
             }
          })
-         .exceptionally(var1x -> var2)
-         .thenAccept(var3x -> var3.execute(() -> var3.getSkinManager().get(new GameProfile(var3x, var1)).whenComplete((var1xxx, var2xxx) -> {
+         .exceptionally(var1x -> profileId)
+         .thenAccept(var3x -> minecraft.execute(() -> minecraft.getSkinManager().get(new GameProfile(var3x, input)).whenComplete((var1xxx, var2xxx) -> {
             if (var2xxx == null && var1xxx != null && var1xxx.isPresent()) {
-               CACHE.put(var0, var1xxx.get());
+               CACHE.put(lowerCase, var1xxx.get());
             }
 
-            PENDING.remove(var0);
+            PENDING.remove(lowerCase);
          })));
    }
 
-   private static UUID undash(String var0) {
-      return UUID.fromString(var0.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"));
+   private static UUID undash(String string) {
+      return UUID.fromString(string.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"));
    }
 }

@@ -28,18 +28,18 @@ public class MotorHand2 extends Util22 {
       } else {
          flag = true;
 
-         try (InputStream var0 = method3427()) {
-            motorHand = MotorHand.method3593(var0);
+         try (InputStream inputStream = method3427()) {
+            motorHand = MotorHand.method3593(inputStream);
             status = "MotorClaude (рука без модели) загружен. " + motorHand.text2;
-         } catch (Exception var5) {
+         } catch (Exception e) {
             motorHand = null;
-            status = "MotorClaude НЕ загружен: " + var5.getMessage();
+            status = "MotorClaude НЕ загружен: " + e.getMessage();
          }
 
          System.out.println(status);
          if (mc != null && mc.player != null) {
-            String var6 = status;
-            mc.execute(() -> ChatLogger.method2019(var6));
+            String str = status;
+            mc.execute(() -> ChatLogger.method2019(str));
          }
 
          return motorHand;
@@ -47,17 +47,17 @@ public class MotorHand2 extends Util22 {
    }
 
    private static InputStream method3427() throws IOException {
-      for (Path var1 : List.of(Path.of("motor_hand.json"), Path.of("models", "motor_hand.json"), Path.of("..", "models", "motor_hand.json"))) {
-         if (Files.isRegularFile(var1)) {
-            return Files.newInputStream(var1);
+      for (Path path : List.of(Path.of("motor_hand.json"), Path.of("models", "motor_hand.json"), Path.of("..", "models", "motor_hand.json"))) {
+         if (Files.isRegularFile(path)) {
+            return Files.newInputStream(path);
          }
       }
 
-      InputStream var2 = MotorHand2.class.getClassLoader().getResourceAsStream("models/motor_hand.json");
-      if (var2 == null) {
+      InputStream resourceAsStream = MotorHand2.class.getClassLoader().getResourceAsStream("models/motor_hand.json");
+      if (resourceAsStream == null) {
          throw new IOException("motor_hand.json не найден ни рядом с клиентом, ни в jar");
       } else {
-         return var2;
+         return resourceAsStream;
       }
    }
 
@@ -77,43 +77,43 @@ public class MotorHand2 extends Util22 {
    }
 
    private static double method3429() {
-      double var0 = mc.options.sensitivity().get() * 0.6F + 0.2F;
-      return var0 * var0 * var0 * 8.0 * 0.15;
+      double d = mc.options.sensitivity().get() * 0.6F + 0.2F;
+      return d * d * d * 8.0 * 0.15;
    }
 
-   public Rotation method3430(Rotation var1) {
-      Rotation var2 = zenith.getRotationManager().method7844();
-      MotorHand var3 = method3426();
-      if (var3 != null && mc.player != null && var1 != null) {
-         int var4 = mc.player.tickCount;
-         if (var4 == this.intValue2 && this.rotation != null) {
+   public Rotation method3430(Rotation rotation) {
+      Rotation rotation2 = zenith.getRotationManager().method7844();
+      MotorHand motorHand = method3426();
+      if (motorHand != null && mc.player != null && rotation != null) {
+         int tickCount = mc.player.tickCount;
+         if (tickCount == this.intValue2 && this.rotation != null) {
             return this.rotation;
          } else {
-            if (this.intValue != Integer.MIN_VALUE && var4 != this.intValue + 1) {
+            if (this.intValue != Integer.MIN_VALUE && tickCount != this.intValue + 1) {
                this.reset();
             }
 
-            this.intValue = var4;
+            this.intValue = tickCount;
             if (this.entry == null) {
-               this.entry = var3.method3588();
+               this.entry = motorHand.method3588();
             }
 
-            double var5 = method3429();
-            double[] var7 = var3.method3592(
+            double d = method3429();
+            double[] doubles = motorHand.method3592(
                this.entry,
-               new double[]{var1.getFloatValue(), var1.getFloatValue2()},
-               new double[]{var2.getFloatValue(), var2.getFloatValue2()},
-               var5,
+               new double[]{rotation.getFloatValue(), rotation.getFloatValue2()},
+               new double[]{rotation2.getFloatValue(), rotation2.getFloatValue2()},
+               d,
                this.random.nextDouble()
             );
-            Rotation var8 = var2.method3140((float)(var7[0] * var5), (float)(var7[1] * var5));
-            this.intValue2 = var4;
-            this.rotation = var8;
-            return var8;
+            Rotation rotation3 = rotation2.method3140((float)(doubles[0] * d), (float)(doubles[1] * d));
+            this.intValue2 = tickCount;
+            this.rotation = rotation3;
+            return rotation3;
          }
       } else {
          this.reset();
-         return var2;
+         return rotation2;
       }
    }
 }

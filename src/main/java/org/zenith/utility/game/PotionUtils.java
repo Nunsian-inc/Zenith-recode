@@ -18,27 +18,27 @@ public final class PotionUtils implements MinecraftAccess {
    private PotionUtils() {
    }
 
-   public static List<MobEffectInstance> method2321(ItemStack var0) {
-      ArrayList<MobEffectInstance> var1 = new ArrayList<>();
-      if (var0 != null && !var0.isEmpty()) {
-         PotionContents var2 = var0.get(DataComponents.POTION_CONTENTS);
-         if (var2 == null) {
-            return var1;
+   public static List<MobEffectInstance> method2321(ItemStack useItem) {
+      ArrayList<MobEffectInstance> mobEffectInstances = new ArrayList<>();
+      if (useItem != null && !useItem.isEmpty()) {
+         PotionContents potionContents = useItem.get(DataComponents.POTION_CONTENTS);
+         if (potionContents == null) {
+            return mobEffectInstances;
          } else {
-            for (MobEffectInstance var4 : var2.getAllEffects()) {
-               var1.add(var4);
+            for (MobEffectInstance allEffect : potionContents.getAllEffects()) {
+               mobEffectInstances.add(allEffect);
             }
 
-            return var1;
+            return mobEffectInstances;
          }
       } else {
-         return var1;
+         return mobEffectInstances;
       }
    }
 
-   public static boolean method2322(ItemStack var0, Holder<MobEffect> var1) {
-      for (MobEffectInstance var3 : method2321(var0)) {
-         if (var3.getEffect().equals(var1)) {
+   public static boolean method2322(ItemStack useItem, Holder<MobEffect> effect) {
+      for (MobEffectInstance mobEffectInstance : method2321(useItem)) {
+         if (mobEffectInstance.getEffect().equals(effect)) {
             return true;
          }
       }
@@ -46,22 +46,22 @@ public final class PotionUtils implements MinecraftAccess {
       return false;
    }
 
-   public static boolean method2323(ItemStack var0) {
-      return var0 != null && !var0.isEmpty() && var0.is(Items.SPLASH_POTION);
+   public static boolean method2323(ItemStack useItem) {
+      return useItem != null && !useItem.isEmpty() && useItem.is(Items.SPLASH_POTION);
    }
 
-   public static boolean method2324(ItemStack var0) {
-      return var0 != null && !var0.isEmpty() && var0.is(Items.POTION);
+   public static boolean method2324(ItemStack useItem) {
+      return useItem != null && !useItem.isEmpty() && useItem.is(Items.POTION);
    }
 
-   public static int method2325(Predicate<ItemStack> var0) {
-      int var1 = method2326(var0);
-      if (var1 != -1) {
-         return var1;
+   public static int method2325(Predicate<ItemStack> predicate) {
+      int n = method2326(predicate);
+      if (n != -1) {
+         return n;
       } else {
-         for (int var2 = 9; var2 < 36; var2++) {
-            if (var0.test(mc.player.getInventory().getItem(var2))) {
-               return var2;
+         for (int i = 9; i < 36; i++) {
+            if (predicate.test(mc.player.getInventory().getItem(i))) {
+               return i;
             }
          }
 
@@ -69,28 +69,28 @@ public final class PotionUtils implements MinecraftAccess {
       }
    }
 
-   public static int method2326(Predicate<ItemStack> var0) {
-      for (int var1 = 0; var1 < 9; var1++) {
-         if (var0.test(mc.player.getInventory().getItem(var1))) {
-            return var1;
+   public static int method2326(Predicate<ItemStack> predicate) {
+      for (int i = 0; i < 9; i++) {
+         if (predicate.test(mc.player.getInventory().getItem(i))) {
+            return i;
          }
       }
 
       return -1;
    }
 
-   public static int method2327(int var0) {
-      return var0 < 9 ? 36 + var0 : var0;
+   public static int method2327(int slot) {
+      return slot < 9 ? 36 + slot : slot;
    }
 
-   public static void method2328(int var0, int var1) {
-      mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method2327(var0), var1, ContainerInput.SWAP, mc.player);
+   public static void method2328(int slot, int selectedSlot) {
+      mc.gameMode.handleContainerInput(mc.player.inventoryMenu.containerId, method2327(slot), selectedSlot, ContainerInput.SWAP, mc.player);
       InventoryUtils.closeScreen();
    }
 
-   public static void method2329(int var0) {
-      if (mc.player.getInventory().getSelectedSlot() != var0) {
-         mc.player.getInventory().setSelectedSlot(var0);
+   public static void method2329(int slot) {
+      if (mc.player.getInventory().getSelectedSlot() != slot) {
+         mc.player.getInventory().setSelectedSlot(slot);
       }
 
       mc.gameMode.ensureHasSentCarriedItem();

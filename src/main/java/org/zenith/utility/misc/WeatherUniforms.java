@@ -7,54 +7,54 @@ public final class WeatherUniforms {
    }
 
    public static void method799(
-      WeatherUniforms.Handler var0,
-      WeatherFlakeChannel var1,
-      float var2,
-      float var3,
-      float var4,
-      double var5,
-      double var7,
-      double var9,
-      float var11,
-      float var12,
-      float var13,
-      float var14
+      WeatherUniforms.Handler data,
+      WeatherFlakeChannel weatherFlakeChannel,
+      float floatValue,
+      float f,
+      float floatValue2,
+      double x,
+      double y,
+      double z,
+      float floatValue3,
+      float floatValue4,
+      float floatValue5,
+      float floatValue6
    ) {
-      var0.method259("Intensity", var2);
-      var0.method259("time", var4);
-      var0.method260("CameraPosition", (float)var5, (float)var7, (float)var9);
-      var0.method259("SkyPitch", var11);
-      var0.method259("SkyYaw", var12);
-      var0.method259("TanHalfFov", var13);
-      var0.method259("Aspect", var14);
-      method800(var0, "SkyZenith", var1.floatValues);
-      method800(var0, "SkyHorizon", var1.floatValues2);
-      method800(var0, "SkyNadir", var1.floatValues3);
-      method800(var0, "SunDir", var1.floatValues4);
-      method800(var0, "SunColor", var1.floatValues5);
-      var0.method259("SunSize", var1.floatValue2);
-      var0.method259("SunGlare", var1.floatValue3);
-      var0.method259("CloudCover", var1.floatValue4);
-      var0.method259("CloudDark", var1.floatValue5);
-      var0.method259("CloudSpeed", var1.floatValue6);
-      var0.method259("CloudScale", var1.floatValue7);
-      method800(var0, "CloudLit", var1.floatValues7);
-      method800(var0, "CloudShadow", var1.floatValues8);
-      var0.method259("StarAmount", var1.floatValue8);
-      var0.method259("BandAmount", var1.floatValue9);
-      var0.method259("AuroraAmount", var1.floatValue10);
-      var0.method259("MeteorAmount", var1.floatValue11);
-      var0.method259("HazeAmount", var1.floatValue12);
-      method800(var0, "HazeColor", var1.floatValues9);
-      method800(var0, "GlowDir", var1.floatValues6);
-      var0.method259("GlowFocus", var1.floatValue);
-      var0.method259("FrostAmount", var1.flag ? Math.clamp(var1.floatValue23, 0.0F, 1.0F) * Math.clamp(var2, 0.0F, 1.0F) * 0.55F : 0.0F);
-      var0.method259("Flash", var3);
-      method800(var0, "FlashColor", var1.floatValues10);
+      data.method259("Intensity", floatValue);
+      data.method259("time", floatValue2);
+      data.method260("CameraPosition", (float)x, (float)y, (float)z);
+      data.method259("SkyPitch", floatValue3);
+      data.method259("SkyYaw", floatValue4);
+      data.method259("TanHalfFov", floatValue5);
+      data.method259("Aspect", floatValue6);
+      method800(data, "SkyZenith", weatherFlakeChannel.floatValues);
+      method800(data, "SkyHorizon", weatherFlakeChannel.floatValues2);
+      method800(data, "SkyNadir", weatherFlakeChannel.floatValues3);
+      method800(data, "SunDir", weatherFlakeChannel.floatValues4);
+      method800(data, "SunColor", weatherFlakeChannel.floatValues5);
+      data.method259("SunSize", weatherFlakeChannel.floatValue2);
+      data.method259("SunGlare", weatherFlakeChannel.floatValue3);
+      data.method259("CloudCover", weatherFlakeChannel.floatValue4);
+      data.method259("CloudDark", weatherFlakeChannel.floatValue5);
+      data.method259("CloudSpeed", weatherFlakeChannel.floatValue6);
+      data.method259("CloudScale", weatherFlakeChannel.floatValue7);
+      method800(data, "CloudLit", weatherFlakeChannel.floatValues7);
+      method800(data, "CloudShadow", weatherFlakeChannel.floatValues8);
+      data.method259("StarAmount", weatherFlakeChannel.floatValue8);
+      data.method259("BandAmount", weatherFlakeChannel.floatValue9);
+      data.method259("AuroraAmount", weatherFlakeChannel.floatValue10);
+      data.method259("MeteorAmount", weatherFlakeChannel.floatValue11);
+      data.method259("HazeAmount", weatherFlakeChannel.floatValue12);
+      method800(data, "HazeColor", weatherFlakeChannel.floatValues9);
+      method800(data, "GlowDir", weatherFlakeChannel.floatValues6);
+      data.method259("GlowFocus", weatherFlakeChannel.floatValue);
+      data.method259("FrostAmount", weatherFlakeChannel.flag ? Math.clamp(weatherFlakeChannel.floatValue23, 0.0F, 1.0F) * Math.clamp(floatValue, 0.0F, 1.0F) * 0.55F : 0.0F);
+      data.method259("Flash", f);
+      method800(data, "FlashColor", weatherFlakeChannel.floatValues10);
    }
 
-   private static void method800(WeatherUniforms.Handler var0, String var1, float[] var2) {
-      var0.method260(var1, var2[0], var2[1], var2[2]);
+   private static void method800(WeatherUniforms.Handler data, String str, float[] floatValues) {
+      data.method260(str, floatValues[0], floatValues[1], floatValues[2]);
    }
 
    public static final class Data implements WeatherUniforms.Handler {
@@ -81,18 +81,18 @@ public final class WeatherUniforms {
          return "Data[" + "entry=" + this.entry + "]";
       }
 
-      public Data(PostEffectManager.Entry var1) {
-         this.entry = var1;
+      public Data(PostEffectManager.Entry entry) {
+         this.entry = entry;
       }
 
       @Override
-      public void method259(String var1, float var2) {
-         this.entry.method2828(var1, var2);
+      public void method259(String str, float floatValue) {
+         this.entry.method2828(str, floatValue);
       }
 
       @Override
-      public void method260(String var1, float var2, float var3, float var4) {
-         this.entry.method2830(var1, var2, var3, var4);
+      public void method260(String str, float f, float f2, float f3) {
+         this.entry.method2830(str, f, f2, f3);
       }
 
       public PostEffectManager.Entry getEntry() {
@@ -101,8 +101,8 @@ public final class WeatherUniforms {
    }
 
    public interface Handler {
-      void method259(String var1, float var2);
+      void method259(String str, float floatValue);
 
-      void method260(String var1, float var2, float var3, float var4);
+      void method260(String str, float x, float y, float z);
    }
 }

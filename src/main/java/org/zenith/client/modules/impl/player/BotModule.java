@@ -28,16 +28,16 @@ public final class BotModule extends Module {
    }
 
    @EventTarget
-   public void method4085(KeyEvent var1) {
-      if (var1.isPress(this.openGui.getKeyCode())) {
+   public void method4085(KeyEvent event) {
+      if (event.isPress(this.openGui.getKeyCode())) {
          this.method4084();
       }
    }
 
    @EventTarget(3)
-   public void method4086(ScreenRenderEvent var1) {
-      if (mc.gui.screen() instanceof BotScreen var2) {
-         var2.renderTop(var1.getMenuDrawContext(), var1.getMenuDrawContext().getMouseX(), var1.getMenuDrawContext().getMouseY());
+   public void method4086(ScreenRenderEvent event) {
+      if (mc.gui.screen() instanceof BotScreen botScreen) {
+         botScreen.renderTop(event.getMenuDrawContext(), event.getMenuDrawContext().getMouseX(), event.getMenuDrawContext().getMouseY());
       }
    }
 }

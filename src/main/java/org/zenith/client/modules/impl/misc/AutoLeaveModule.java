@@ -42,7 +42,7 @@ public final class AutoLeaveModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.method2709()) {
          this.intValue++;
       } else {
@@ -64,15 +64,15 @@ public final class AutoLeaveModule extends Module {
       if (mc.player.getHealth() < this.health.getValue3() && this.factor.method5227(0)) {
          return true;
       } else {
-         boolean var1 = this.factor.method5227(1);
-         boolean var2 = this.factor.method5227(2);
-         if (!var1 && !var2) {
+         boolean flag = this.factor.method5227(1);
+         boolean flag2 = this.factor.method5227(2);
+         if (!flag && !flag2) {
             return false;
          } else {
-            for (Player var4 : mc.level.players()) {
-               if (!Zenith.getInstance().getFriends().method7626(var4)
-                  && var4 != mc.player
-                  && (!var2 || !(var4.distanceToSqr(mc.player) > this.leaveRadius.getValue3() * this.leaveRadius.getValue3()))) {
+            for (Player player : mc.level.players()) {
+               if (!Zenith.getInstance().getFriends().method7626(player)
+                  && player != mc.player
+                  && (!flag2 || !(player.distanceToSqr(mc.player) > this.leaveRadius.getValue3() * this.leaveRadius.getValue3()))) {
                   return true;
                }
             }

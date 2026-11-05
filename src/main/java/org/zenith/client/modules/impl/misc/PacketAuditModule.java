@@ -94,55 +94,55 @@ public class PacketAuditModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      Packet var2 = var1.getPacket3();
-      if (var2 != null) {
-         if (!var1.method7100()) {
+   public void onPacket(PacketEvent event) {
+      Packet packet3 = event.getPacket3();
+      if (packet3 != null) {
+         if (!event.method7100()) {
             if (this.outgoing.isEnabled()) {
-               String var15 = var2.getClass().getSimpleName();
-               this.items5.computeIfAbsent(var15, var0 -> new AtomicInteger()).incrementAndGet();
-               this.method247("sent:" + var15, var2);
+               String simpleName = packet3.getClass().getSimpleName();
+               this.items5.computeIfAbsent(simpleName, str -> new AtomicInteger()).incrementAndGet();
+               this.method247("sent:" + simpleName, packet3);
             }
          } else {
-            this.method247(var2.getClass().getSimpleName(), var2);
+            this.method247(packet3.getClass().getSimpleName(), packet3);
             if (this.census.isEnabled()) {
-               this.items2.computeIfAbsent(var2.getClass().getSimpleName(), var0 -> new AtomicInteger()).incrementAndGet();
+               this.items2.computeIfAbsent(packet3.getClass().getSimpleName(), str -> new AtomicInteger()).incrementAndGet();
             }
 
             if (this.details.isEnabled()) {
-               if (var2 instanceof ClientboundSetObjectivePacket var3) {
-                  this.method249("scoreboard.objective", var3.getObjectiveName() + " = " + this.method250(var3.getDisplayName()));
-               } else if (var2 instanceof ClientboundSetScorePacket var4) {
+               if (packet3 instanceof ClientboundSetObjectivePacket setObjectivePacket) {
+                  this.method249("scoreboard.objective", setObjectivePacket.getObjectiveName() + " = " + this.method250(setObjectivePacket.getDisplayName()));
+               } else if (packet3 instanceof ClientboundSetScorePacket setScorePacket) {
                   this.method249(
                      "scoreboard.score",
-                     var4.objectiveName()
+                     setScorePacket.objectiveName()
                         + " "
-                        + var4.owner()
+                        + setScorePacket.owner()
                         + " = "
-                        + var4.score()
-                        + var4.display().map(var1x -> " [" + this.method250(var1x) + "]").orElse("")
+                        + setScorePacket.score()
+                        + setScorePacket.display().map(var1x -> " [" + this.method250(var1x) + "]").orElse("")
                   );
-               } else if (var2 instanceof ClientboundSetPlayerTeamPacket var5) {
-                  this.method249("team", var5.getName() + " " + var5.getTeamAction() + " members=" + var5.getPlayers());
-               } else if (var2 instanceof ClientboundTabListPacket var6) {
-                  this.method249("tab.header", this.method250(var6.header()));
-                  this.method249("tab.footer", this.method250(var6.footer()));
-               } else if (var2 instanceof ClientboundPlayerInfoUpdatePacket var7) {
-                  for (Entry var14 : var7.entries()) {
-                     if (var14.displayName() != null) {
-                        this.method249("tab.entry", this.method250(var14.displayName()) + " ping=" + var14.latency());
+               } else if (packet3 instanceof ClientboundSetPlayerTeamPacket setPlayerTeamPacket) {
+                  this.method249("team", setPlayerTeamPacket.getName() + " " + setPlayerTeamPacket.getTeamAction() + " members=" + setPlayerTeamPacket.getPlayers());
+               } else if (packet3 instanceof ClientboundTabListPacket tabListPacket) {
+                  this.method249("tab.header", this.method250(tabListPacket.header()));
+                  this.method249("tab.footer", this.method250(tabListPacket.footer()));
+               } else if (packet3 instanceof ClientboundPlayerInfoUpdatePacket playerInfoUpdatePacket) {
+                  for (Entry entry : playerInfoUpdatePacket.entries()) {
+                     if (entry.displayName() != null) {
+                        this.method249("tab.entry", this.method250(entry.displayName()) + " ping=" + entry.latency());
                      }
                   }
-               } else if (var2 instanceof ClientboundOpenScreenPacket var8) {
-                  this.method249("screen.open", this.method250(var8.getTitle()) + " type=" + var8.getType());
-               } else if (var2 instanceof ClientboundSetTitleTextPacket var9) {
-                  this.method249("title", this.method250(var9.text()));
-               } else if (var2 instanceof ClientboundSetSubtitleTextPacket var10) {
-                  this.method249("subtitle", this.method250(var10.text()));
-               } else if (var2 instanceof ClientboundSetActionBarTextPacket var11) {
-                  this.method249("actionbar", this.method250(var11.text()));
-               } else if (var2 instanceof ClientboundCustomPayloadPacket var12) {
-                  this.method249("payload", var12.payload().type().id().toString());
+               } else if (packet3 instanceof ClientboundOpenScreenPacket openScreenPacket) {
+                  this.method249("screen.open", this.method250(openScreenPacket.getTitle()) + " type=" + openScreenPacket.getType());
+               } else if (packet3 instanceof ClientboundSetTitleTextPacket setTitleTextPacket) {
+                  this.method249("title", this.method250(setTitleTextPacket.text()));
+               } else if (packet3 instanceof ClientboundSetSubtitleTextPacket setSubtitleTextPacket) {
+                  this.method249("subtitle", this.method250(setSubtitleTextPacket.text()));
+               } else if (packet3 instanceof ClientboundSetActionBarTextPacket setActionBarTextPacket) {
+                  this.method249("actionbar", this.method250(setActionBarTextPacket.text()));
+               } else if (packet3 instanceof ClientboundCustomPayloadPacket customPayloadPacket) {
+                  this.method249("payload", customPayloadPacket.payload().type().id().toString());
                }
             }
          }
@@ -150,11 +150,11 @@ public class PacketAuditModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (this.snapshots.isEnabled()) {
-         long var2 = System.currentTimeMillis();
-         if (var2 - this.lastSnapshot >= 30000L) {
-            this.lastSnapshot = var2;
+         long now = System.currentTimeMillis();
+         if (now - this.lastSnapshot >= 30000L) {
+            this.lastSnapshot = now;
             this.method246();
          }
       }
@@ -163,130 +163,130 @@ public class PacketAuditModule extends Module {
    private void method246() {
       if (mc.getConnection() != null && mc.level != null) {
          this.line("--- snapshot ---");
-         Collection<PlayerInfo> var1 = mc.getConnection().getOnlinePlayers();
-         this.line("tab.size| " + var1.size());
+         Collection<PlayerInfo> onlinePlayers = mc.getConnection().getOnlinePlayers();
+         this.line("tab.size| " + onlinePlayers.size());
 
-         for (PlayerInfo var3 : var1) {
-            PlayerTeam var4 = var3.getTeam();
+         for (PlayerInfo onlinePlayer : onlinePlayers) {
+            PlayerTeam team = onlinePlayer.getTeam();
             this.line(
                "tab| "
-                  + var3.getProfile().name()
+                  + onlinePlayer.getProfile().name()
                   + " uuid="
-                  + var3.getProfile().id()
+                  + onlinePlayer.getProfile().id()
                   + " ping="
-                  + var3.getLatency()
+                  + onlinePlayer.getLatency()
                   + " mode="
-                  + var3.getGameMode()
+                  + onlinePlayer.getGameMode()
                   + " team="
-                  + (var4 == null ? "-" : var4.getName())
+                  + (team == null ? "-" : team.getName())
                   + " display="
-                  + this.method250(var3.getTabListDisplayName())
+                  + this.method250(onlinePlayer.getTabListDisplayName())
             );
          }
 
-         Scoreboard var7 = mc.level.getScoreboard();
+         Scoreboard scoreboard = mc.level.getScoreboard();
 
-         for (Objective var11 : var7.getObjectives()) {
-            this.line("obj| " + var11.getName() + " crit=" + var11.getCriteria().getName() + " display=" + this.method250(var11.getDisplayName()));
+         for (Objective objective : scoreboard.getObjectives()) {
+            this.line("obj| " + objective.getName() + " crit=" + objective.getCriteria().getName() + " display=" + this.method250(objective.getDisplayName()));
 
-            for (PlayerScoreEntry var6 : var7.listPlayerScores(var11)) {
-               this.line("score| " + var11.getName() + " " + var6.owner() + " = " + var6.value());
+            for (PlayerScoreEntry listPlayerScore : scoreboard.listPlayerScores(objective)) {
+               this.line("score| " + objective.getName() + " " + listPlayerScore.owner() + " = " + listPlayerScore.value());
             }
          }
 
-         for (PlayerTeam var12 : var7.getPlayerTeams()) {
+         for (PlayerTeam playerTeam : scoreboard.getPlayerTeams()) {
             this.line(
                "team.full| "
-                  + var12.getName()
+                  + playerTeam.getName()
                   + " prefix="
-                  + this.method250(var12.getPlayerPrefix())
+                  + this.method250(playerTeam.getPlayerPrefix())
                   + " suffix="
-                  + this.method250(var12.getPlayerSuffix())
+                  + this.method250(playerTeam.getPlayerSuffix())
                   + " color="
-                  + var12.getColor()
+                  + playerTeam.getColor()
                   + " members="
-                  + var12.getPlayers()
+                  + playerTeam.getPlayers()
             );
          }
 
-         LinkedHashMap var10 = new LinkedHashMap();
+         LinkedHashMap map = new LinkedHashMap();
 
-         for (Entity var14 : mc.level.entitiesForRendering()) {
-            var10.merge(var14.getType().toString(), 1, (a, b) -> (Integer)a + (Integer)b);
+         for (Entity entity : mc.level.entitiesForRendering()) {
+            map.merge(entity.getType().toString(), 1, (a, b) -> (Integer)a + (Integer)b);
          }
 
-         this.line("entities| " + var10);
+         this.line("entities| " + map);
       }
    }
 
-   private void method247(String var1, Packet<?> var2) {
+   private void method247(String simpleName, Packet<?> packet3) {
       if (this.raw.isEnabled()) {
-         if (!items.contains(var1.replace("sent:", ""))) {
-            AtomicInteger var3 = this.items4.computeIfAbsent(var1, var0 -> new AtomicInteger());
-            if (var3.incrementAndGet() <= 4) {
-               this.line("raw| " + var1 + " " + this.method248(var2));
+         if (!items.contains(simpleName.replace("sent:", ""))) {
+            AtomicInteger counter = this.items4.computeIfAbsent(simpleName, str -> new AtomicInteger());
+            if (counter.incrementAndGet() <= 4) {
+               this.line("raw| " + simpleName + " " + this.method248(packet3));
             }
          }
       }
    }
 
-   private String method248(Object var1) {
-      StringBuilder var2 = new StringBuilder();
+   private String method248(Object packet3) {
+      StringBuilder builder = new StringBuilder();
 
-      for (Class var3 = var1.getClass(); var3 != null && var3 != Object.class; var3 = var3.getSuperclass()) {
-         for (Field var7 : var3.getDeclaredFields()) {
-            if (!Modifier.isStatic(var7.getModifiers())) {
+      for (Class clazz = packet3.getClass(); clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+         for (Field declaredField : clazz.getDeclaredFields()) {
+            if (!Modifier.isStatic(declaredField.getModifiers())) {
                try {
-                  var7.setAccessible(true);
-                  Object var8 = var7.get(var1);
-                  String var9 = var8 instanceof Component var10 ? this.method250(var10) : String.valueOf(var8);
-                  if (var9.length() > 400) {
-                     var9 = var9.substring(0, 400) + "...";
+                  declaredField.setAccessible(true);
+                  Object obj = declaredField.get(packet3);
+                  String str = obj instanceof Component displayName ? this.method250(displayName) : String.valueOf(obj);
+                  if (str.length() > 400) {
+                     str = str.substring(0, 400) + "...";
                   }
 
-                  var2.append(var7.getName()).append('=').append(var9).append("; ");
-               } catch (Throwable var11) {
+                  builder.append(declaredField.getName()).append('=').append(str).append("; ");
+               } catch (Throwable e) {
                }
             }
          }
       }
 
-      return var2.toString();
+      return builder.toString();
    }
 
-   private void method249(String var1, String var2) {
-      if (var2 != null && !var2.isBlank()) {
-         var var3 = this.items3.computeIfAbsent(var1, var0 -> new HashSet<>());
-         if (var3.size() < 40 && var3.add(var2)) {
-            this.line(var1 + "| " + var2);
+   private void method249(String key, String string) {
+      if (string != null && !string.isBlank()) {
+         var strings = this.items3.computeIfAbsent(key, str -> new HashSet<>());
+         if (strings.size() < 40 && strings.add(string)) {
+            this.line(key + "| " + string);
          }
       }
    }
 
-   private String method250(Component var1) {
-      return var1 == null ? "" : pattern.matcher(var1.getString()).replaceAll("").trim();
+   private String method250(Component displayName) {
+      return displayName == null ? "" : pattern.matcher(displayName.getString()).replaceAll("").trim();
    }
 
    private void method251() {
-      long var1 = Math.max(1L, (System.currentTimeMillis() - this.longValue) / 1000L);
-      this.line("=== PacketAudit report (" + var1 + " c) ===");
-      ArrayList<java.util.Map.Entry> var3 = new ArrayList<>(this.items2.entrySet());
-      var3.sort((var0, var1x) -> Integer.compare(((AtomicInteger)var1x.getValue()).get(), ((AtomicInteger)var0.getValue()).get()));
+      long l = Math.max(1L, (System.currentTimeMillis() - this.longValue) / 1000L);
+      this.line("=== PacketAudit report (" + l + " c) ===");
+      ArrayList<java.util.Map.Entry> entries = new ArrayList<>(this.items2.entrySet());
+      entries.sort((entry, var1x) -> Integer.compare(((AtomicInteger)var1x.getValue()).get(), ((AtomicInteger)entry.getValue()).get()));
 
-      for (java.util.Map.Entry var5 : var3) {
+      for (java.util.Map.Entry entry : entries) {
          this.line(
-            String.format("%-46s %6d  %.1f/с", var5.getKey(), ((AtomicInteger)var5.getValue()).get(), (double)((AtomicInteger)var5.getValue()).get() / var1)
+            String.format("%-46s %6d  %.1f/с", entry.getKey(), ((AtomicInteger)entry.getValue()).get(), (double)((AtomicInteger)entry.getValue()).get() / l)
          );
       }
 
       if (!this.items5.isEmpty()) {
          this.line("--- исходящие ---");
-         ArrayList<java.util.Map.Entry> var7 = new ArrayList<>(this.items5.entrySet());
-         var7.sort((var0, var1x) -> Integer.compare(((AtomicInteger)var1x.getValue()).get(), ((AtomicInteger)var0.getValue()).get()));
+         ArrayList<java.util.Map.Entry> entries2 = new ArrayList<>(this.items5.entrySet());
+         entries2.sort((entry, var1x) -> Integer.compare(((AtomicInteger)var1x.getValue()).get(), ((AtomicInteger)entry.getValue()).get()));
 
-         for (java.util.Map.Entry var6 : var7) {
+         for (java.util.Map.Entry entry : entries2) {
             this.line(
-               String.format("%-46s %6d  %.1f/s", var6.getKey(), ((AtomicInteger)var6.getValue()).get(), (double)((AtomicInteger)var6.getValue()).get() / var1)
+               String.format("%-46s %6d  %.1f/s", entry.getKey(), ((AtomicInteger)entry.getValue()).get(), (double)((AtomicInteger)entry.getValue()).get() / l)
             );
          }
       }
@@ -297,22 +297,22 @@ public class PacketAuditModule extends Module {
 
    private void method252() {
       try {
-         File var1 = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
-         if (!var1.exists() && !var1.mkdirs()) {
+         File file = new File(Minecraft.getInstance().gameDirectory, "zenith-itemdump");
+         if (!file.exists() && !file.mkdirs()) {
             return;
          }
 
-         File var2 = new File(var1, "packetaudit-" + System.currentTimeMillis() + ".log");
-         this.printWriter = new PrintWriter(new FileWriter(var2, true), true);
-         ChatLogger.method2019("PacketAudit: " + var2.getName());
-      } catch (Exception var3) {
+         File file2 = new File(file, "packetaudit-" + System.currentTimeMillis() + ".log");
+         this.printWriter = new PrintWriter(new FileWriter(file2, true), true);
+         ChatLogger.method2019("PacketAudit: " + file2.getName());
+      } catch (Exception e) {
          this.printWriter = null;
       }
    }
 
-   private void line(String var1) {
+   private void line(String x) {
       if (this.printWriter != null) {
-         this.printWriter.println(var1);
+         this.printWriter.println(x);
       }
    }
 
@@ -320,7 +320,7 @@ public class PacketAuditModule extends Module {
       if (this.printWriter != null) {
          try {
             this.printWriter.close();
-         } catch (Exception var2) {
+         } catch (Exception e) {
          }
 
          this.printWriter = null;

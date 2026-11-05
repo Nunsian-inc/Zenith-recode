@@ -20,26 +20,26 @@ public final class SkyPass {
    private SkyPass() {
    }
 
-   public static boolean method7267(FrameGraphBuilder var0, int var1, int var2, TargetBundle var3, Camera var4) {
-      WeatherModule var5 = WeatherModule.INSTANCE;
-      if (!var5.method3099()) {
+   public static boolean method7267(FrameGraphBuilder frame, int width, int height, TargetBundle targets, Camera mainCamera) {
+      WeatherModule weatherModule = WeatherModule.INSTANCE;
+      if (!weatherModule.method3099()) {
          return false;
       } else {
-         PostChain var6 = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.MAIN_TARGETS);
-         if (var6 == null) {
+         PostChain postChain = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.MAIN_TARGETS);
+         if (postChain == null) {
             return false;
          } else {
-            float var7 = var1 / Math.max((float)var2, 1.0F);
-            float var8 = Util15.method2704();
-            float var9 = (float)Math.toRadians(var4.xRot());
-            float var10 = (float)(Math.PI - Math.toRadians(var4.yRot()));
-            Vec3 var11 = var4.position();
-            PostEffectManager.Entry var12 = entry;
+            float f = width / Math.max((float)height, 1.0F);
+            float f2 = Util15.method2704();
+            float f3 = (float)Math.toRadians(mainCamera.xRot());
+            float f4 = (float)(Math.PI - Math.toRadians(mainCamera.yRot()));
+            Vec3 position = mainCamera.position();
+            PostEffectManager.Entry entry2 = entry;
             WeatherUniforms.method799(
-               data, var5.method3085(), var5.method3098(), var5.method3104(), var5.method3096(), var11.x, var11.y, var11.z, var9, var10, var8, var7
+               data, weatherModule.method3085(), weatherModule.method3098(), weatherModule.method3104(), weatherModule.method3096(), position.x, position.y, position.z, f3, f4, f2, f
             );
-            PostEffectManager.method2819(var6, identifier, var12);
-            var6.addToFrame(var0, var1, var2, var3);
+            PostEffectManager.method2819(postChain, identifier, entry2);
+            postChain.addToFrame(frame, width, height, targets);
             return true;
          }
       }

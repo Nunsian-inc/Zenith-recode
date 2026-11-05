@@ -122,345 +122,345 @@ public final class CloudPackets {
    private CloudPackets() {
    }
 
-   public static ByteBuffer method1783(long var0, String var2, String var3, String var4, String var5, byte[] var6, String var7) {
-      boolean var8 = var7 != null && !var7.isEmpty() && var7.length() <= 2048;
-      FriendlyByteBuf var9 = method1820(1, 128 + (var8 ? var7.length() + 3 : 0));
-      var9.writeVarInt(5);
-      var9.writeVarLong(var0);
-      var9.writeUtf(var2, 32);
-      var9.writeUtf(var3, 16);
-      var9.writeUtf(var4, 36);
-      var9.writeUtf(var5, 32);
-      var9.writeBytes(var6, 0, 32);
-      if (var8) {
-         var9.writeUtf(var7, 2048);
+   public static ByteBuffer method1783(long l, String str, String str2, String string, String str3, byte[] src, String str4) {
+      boolean flag = str4 != null && !str4.isEmpty() && str4.length() <= 2048;
+      FriendlyByteBuf friendlyByteBuf = method1820(1, 128 + (flag ? str4.length() + 3 : 0));
+      friendlyByteBuf.writeVarInt(5);
+      friendlyByteBuf.writeVarLong(l);
+      friendlyByteBuf.writeUtf(str, 32);
+      friendlyByteBuf.writeUtf(str2, 16);
+      friendlyByteBuf.writeUtf(string, 36);
+      friendlyByteBuf.writeUtf(str3, 32);
+      friendlyByteBuf.writeBytes(src, 0, 32);
+      if (flag) {
+         friendlyByteBuf.writeUtf(str4, 2048);
       }
 
-      return method1821(var9);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1784(Collection<String> var0) {
-      ArrayList<String> var1 = new ArrayList(Math.min(var0.size(), 200));
+   public static ByteBuffer method1784(Collection<String> all) {
+      ArrayList<String> strings = new ArrayList(Math.min(all.size(), 200));
 
-      for (String var3 : var0) {
-         if (var1.size() >= 200) {
+      for (String str : all) {
+         if (strings.size() >= 200) {
             break;
          }
 
-         if (var3 != null && !var3.isEmpty() && var3.length() <= 32) {
-            var1.add(var3);
+         if (str != null && !str.isEmpty() && str.length() <= 32) {
+            strings.add(str);
          }
       }
 
-      int var6 = var1.size();
-      FriendlyByteBuf var7 = method1820(2, 16 + var6 * 20);
-      var7.writeVarInt(var6);
+      int size = strings.size();
+      FriendlyByteBuf friendlyByteBuf = method1820(2, 16 + size * 20);
+      friendlyByteBuf.writeVarInt(size);
 
-      for (String var5 : var1) {
-         var7.writeUtf(var5, 32);
+      for (String str : strings) {
+         friendlyByteBuf.writeUtf(str, 32);
       }
 
-      return method1821(var7);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1785(int var0, String var1) {
-      FriendlyByteBuf var2 = method1820(3, 32);
-      var2.writeByte(var0);
-      var2.writeUtf(var1, 32);
-      return method1821(var2);
+   public static ByteBuffer method1785(int n, String username) {
+      FriendlyByteBuf friendlyByteBuf = method1820(3, 32);
+      friendlyByteBuf.writeByte(n);
+      friendlyByteBuf.writeUtf(username, 32);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1786(String var0) {
-      FriendlyByteBuf var1 = method1820(4, 24);
-      var1.writeUtf(var0, 32);
-      return method1821(var1);
+   public static ByteBuffer method1786(String str) {
+      FriendlyByteBuf friendlyByteBuf = method1820(4, 24);
+      friendlyByteBuf.writeUtf(str, 32);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1787(String var0) {
-      FriendlyByteBuf var1 = method1820(5, 40);
-      var1.writeUtf(var0, 32);
-      return method1821(var1);
+   public static ByteBuffer method1787(String username) {
+      FriendlyByteBuf friendlyByteBuf = method1820(5, 40);
+      friendlyByteBuf.writeUtf(username, 32);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1788(String var0) {
-      FriendlyByteBuf var1 = method1820(6, 40);
-      var1.writeUtf(var0, 32);
-      return method1821(var1);
+   public static ByteBuffer method1788(String username) {
+      FriendlyByteBuf friendlyByteBuf = method1820(6, 40);
+      friendlyByteBuf.writeUtf(username, 32);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1789(String var0, String var1) {
-      FriendlyByteBuf var2 = method1820(16, 128);
-      var2.writeUtf(method1819(var0, 64), 64);
-      var2.writeUtf(method1819(var1, 64), 64);
-      return method1821(var2);
+   public static ByteBuffer method1789(String text, String str) {
+      FriendlyByteBuf friendlyByteBuf = method1820(16, 128);
+      friendlyByteBuf.writeUtf(method1819(text, 64), 64);
+      friendlyByteBuf.writeUtf(method1819(str, 64), 64);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1790(double var0, double var2, double var4, float var6, float var7) {
-      FriendlyByteBuf var8 = method1820(17, 40);
-      var8.writeDouble(var0);
-      var8.writeDouble(var2);
-      var8.writeDouble(var4);
-      var8.writeFloat(var6);
-      var8.writeFloat(var7);
-      return method1821(var8);
+   public static ByteBuffer method1790(double x, double y, double z, float yRot, float xRot) {
+      FriendlyByteBuf friendlyByteBuf = method1820(17, 40);
+      friendlyByteBuf.writeDouble(x);
+      friendlyByteBuf.writeDouble(y);
+      friendlyByteBuf.writeDouble(z);
+      friendlyByteBuf.writeFloat(yRot);
+      friendlyByteBuf.writeFloat(xRot);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1791(float var0, float var1, float var2, int var3) {
-      FriendlyByteBuf var4 = method1820(18, 16);
-      var4.writeFloat(var0);
-      var4.writeFloat(var1);
-      var4.writeFloat(var2);
-      var4.writeByte(var3);
-      return method1821(var4);
+   public static ByteBuffer method1791(float health, float maxHealth, float absorptionAmount, int foodLevel) {
+      FriendlyByteBuf friendlyByteBuf = method1820(18, 16);
+      friendlyByteBuf.writeFloat(health);
+      friendlyByteBuf.writeFloat(maxHealth);
+      friendlyByteBuf.writeFloat(absorptionAmount);
+      friendlyByteBuf.writeByte(foodLevel);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1792(List<CloudPackets.Data7> var0) {
-      FriendlyByteBuf var1 = method1820(19, 16 + var0.size() * 24);
-      var1.writeVarInt(var0.size());
+   public static ByteBuffer method1792(List<CloudPackets.Data7> data7s) {
+      FriendlyByteBuf friendlyByteBuf = method1820(19, 16 + data7s.size() * 24);
+      friendlyByteBuf.writeVarInt(data7s.size());
 
-      for (CloudPackets.Data7 var3 : var0) {
-         var1.writeUtf(var3.getText().length() > 96 ? "" : var3.getText(), 96);
-         var1.writeByte(var3.count());
-         var1.writeVarInt(var3.getIntValue2());
+      for (CloudPackets.Data7 data7 : data7s) {
+         friendlyByteBuf.writeUtf(data7.getText().length() > 96 ? "" : data7.getText(), 96);
+         friendlyByteBuf.writeByte(data7.count());
+         friendlyByteBuf.writeVarInt(data7.getIntValue2());
       }
 
-      return method1821(var1);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1793(String var0, List<CloudPackets.Data9> var1) {
-      int var2 = Math.min(var1.size(), 12);
-      FriendlyByteBuf var3 = method1820(20, 16 + var2 * 48);
-      var3.writeUtf(method1819(var0, 16), 16);
-      var3.writeVarInt(var2);
+   public static ByteBuffer method1793(String text, List<CloudPackets.Data9> data9s) {
+      int n = Math.min(data9s.size(), 12);
+      FriendlyByteBuf friendlyByteBuf = method1820(20, 16 + n * 48);
+      friendlyByteBuf.writeUtf(method1819(text, 16), 16);
+      friendlyByteBuf.writeVarInt(n);
 
-      for (int var4 = 0; var4 < var2; var4++) {
-         CloudPackets.Data9 var5 = (CloudPackets.Data9)var1.get(var4);
-         var3.writeUtf(var5.getText(), 40);
-         var3.writeVarInt(var5.getIntValue());
-         var3.writeInt(var5.getIntValue2());
+      for (int i = 0; i < n; i++) {
+         CloudPackets.Data9 data9 = (CloudPackets.Data9)data9s.get(i);
+         friendlyByteBuf.writeUtf(data9.getText(), 40);
+         friendlyByteBuf.writeVarInt(data9.getIntValue());
+         friendlyByteBuf.writeInt(data9.getIntValue2());
       }
 
-      return method1821(var3);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1794(int var0, String var1) {
-      FriendlyByteBuf var2 = method1820(32, 16 + var1.length() * 3);
-      var2.writeByte(var0);
-      var2.writeUtf(var1, 256);
-      return method1821(var2);
+   public static ByteBuffer method1794(int n, String str) {
+      FriendlyByteBuf friendlyByteBuf = method1820(32, 16 + str.length() * 3);
+      friendlyByteBuf.writeByte(n);
+      friendlyByteBuf.writeUtf(str, 256);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1795(long var0) {
-      FriendlyByteBuf var2 = method1820(34, 10);
-      var2.writeVarLong(var0);
-      return method1821(var2);
+   public static ByteBuffer method1795(long deleteMenuMessage) {
+      FriendlyByteBuf friendlyByteBuf = method1820(34, 10);
+      friendlyByteBuf.writeVarLong(deleteMenuMessage);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1796(String var0, String var1, double var2, double var4, double var6, String var8, int var9, String var10) {
-      FriendlyByteBuf var11 = method1820(33, 232);
-      var11.writeUtf(method1819(var0, 64), 64);
-      var11.writeUtf(method1819(var1, 64), 64);
-      var11.writeDouble(var2);
-      var11.writeDouble(var4);
-      var11.writeDouble(var6);
-      var11.writeUtf(var8, 32);
-      var11.writeInt(var9);
-      var11.writeUtf(var10, 36);
-      return method1821(var11);
+   public static ByteBuffer method1796(String text, String str, double x, double y, double z, String str2, int n, String str3) {
+      FriendlyByteBuf friendlyByteBuf = method1820(33, 232);
+      friendlyByteBuf.writeUtf(method1819(text, 64), 64);
+      friendlyByteBuf.writeUtf(method1819(str, 64), 64);
+      friendlyByteBuf.writeDouble(x);
+      friendlyByteBuf.writeDouble(y);
+      friendlyByteBuf.writeDouble(z);
+      friendlyByteBuf.writeUtf(str2, 32);
+      friendlyByteBuf.writeInt(n);
+      friendlyByteBuf.writeUtf(str3, 36);
+      return method1821(friendlyByteBuf);
    }
 
-   public static ByteBuffer method1797(int var0, int var1, int var2, byte[] var3, int var4) {
-      ByteBuffer var5 = ByteBuffer.allocate(5 + var4);
-      var5.put((byte)35);
-      var5.put((byte)var0);
-      var5.put((byte)Math.max(0, Math.min(255, var1)));
-      var5.putShort((short)var2);
-      var5.put(var3, 0, var4);
-      return var5.flip();
+   public static ByteBuffer method1797(int n, int n2, int n3, byte[] src, int length) {
+      ByteBuffer allocate = ByteBuffer.allocate(5 + length);
+      allocate.put((byte)35);
+      allocate.put((byte)n);
+      allocate.put((byte)Math.max(0, Math.min(255, n2)));
+      allocate.putShort((short)n3);
+      allocate.put(src, 0, length);
+      return allocate.flip();
    }
 
-   public static ByteBuffer method1798(int var0) {
-      return ByteBuffer.wrap(new byte[]{36, (byte)var0});
+   public static ByteBuffer method1798(int n) {
+      return ByteBuffer.wrap(new byte[]{36, (byte)n});
    }
 
-   public static ByteBuffer method1799(int var0, String var1) {
-      FriendlyByteBuf var2 = method1820(37, 16 + var1.length() * 3);
-      var2.writeVarInt(var0);
-      var2.writeUtf(var1, 8192);
-      return method1821(var2);
+   public static ByteBuffer method1799(int n, String string) {
+      FriendlyByteBuf friendlyByteBuf = method1820(37, 16 + string.length() * 3);
+      friendlyByteBuf.writeVarInt(n);
+      friendlyByteBuf.writeUtf(string, 8192);
+      return method1821(friendlyByteBuf);
    }
 
-   public static CloudPackets.Data4 method1800(FriendlyByteBuf var0) {
-      return new CloudPackets.Data4(var0.readVarInt(), var0.readUtf(64), var0.readBoolean());
+   public static CloudPackets.Data4 method1800(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data4(friendlyByteBuf.readVarInt(), friendlyByteBuf.readUtf(64), friendlyByteBuf.readBoolean());
    }
 
-   public static CloudPackets.Data12 method1801(FriendlyByteBuf var0) {
-      long var1 = var0.readVarLong();
-      String var3 = var0.readUtf(32);
-      long var4 = var0.readLong();
-      int var6 = var0.readVarInt();
-      int var7 = var0.isReadable() ? var0.readVarInt() : 0;
-      return new CloudPackets.Data12(var1, var3, var4, var6, var7);
+   public static CloudPackets.Data12 method1801(FriendlyByteBuf friendlyByteBuf) {
+      long varLong = friendlyByteBuf.readVarLong();
+      String utf = friendlyByteBuf.readUtf(32);
+      long l = friendlyByteBuf.readLong();
+      int varInt = friendlyByteBuf.readVarInt();
+      int n = friendlyByteBuf.isReadable() ? friendlyByteBuf.readVarInt() : 0;
+      return new CloudPackets.Data12(varLong, utf, l, varInt, n);
    }
 
-   public static CloudPackets.Data16 method1802(FriendlyByteBuf var0) {
-      long var1 = var0.readVarLong();
-      short var3 = var0.readUnsignedByte();
-      short var4 = var0.readUnsignedByte();
-      int var5 = var0.readUnsignedShort();
-      int var6 = var0.readableBytes();
-      if (var6 > 400) {
-         throw new IllegalStateException("голос: " + var6 + " байт");
+   public static CloudPackets.Data16 method1802(FriendlyByteBuf friendlyByteBuf) {
+      long varLong = friendlyByteBuf.readVarLong();
+      short unsignedByte = friendlyByteBuf.readUnsignedByte();
+      short s = friendlyByteBuf.readUnsignedByte();
+      int unsignedShort = friendlyByteBuf.readUnsignedShort();
+      int readableBytes = friendlyByteBuf.readableBytes();
+      if (readableBytes > 400) {
+         throw new IllegalStateException("голос: " + readableBytes + " байт");
       } else {
-         byte[] var7 = new byte[var6];
-         var0.readBytes(var7);
-         return new CloudPackets.Data16(var1, var3, var4, var5, var7);
+         byte[] dst = new byte[readableBytes];
+         friendlyByteBuf.readBytes(dst);
+         return new CloudPackets.Data16(varLong, unsignedByte, s, unsignedShort, dst);
       }
    }
 
-   public static CloudPackets.Data6 method1803(FriendlyByteBuf var0) {
-      return new CloudPackets.Data6(var0.readVarLong(), var0.readUnsignedByte());
+   public static CloudPackets.Data6 method1803(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data6(friendlyByteBuf.readVarLong(), friendlyByteBuf.readUnsignedByte());
    }
 
-   public static CloudPackets.Data18 method1804(FriendlyByteBuf var0) {
-      int var1 = var0.readVarInt();
-      long var2 = var0.readVarLong();
-      String var4 = var0.readUtf(32);
-      String var5 = var0.readUtf(1048576);
-      JsonElement var6 = JsonParser.parseString(var5.isEmpty() ? "{}" : var5);
-      return new CloudPackets.Data18(var1, var2, var4, var6.isJsonObject() ? var6.getAsJsonObject() : new JsonObject());
+   public static CloudPackets.Data18 method1804(FriendlyByteBuf friendlyByteBuf) {
+      int varInt = friendlyByteBuf.readVarInt();
+      long varLong = friendlyByteBuf.readVarLong();
+      String utf = friendlyByteBuf.readUtf(32);
+      String str = friendlyByteBuf.readUtf(1048576);
+      JsonElement string = JsonParser.parseString(str.isEmpty() ? "{}" : str);
+      return new CloudPackets.Data18(varInt, varLong, utf, string.isJsonObject() ? string.getAsJsonObject() : new JsonObject());
    }
 
-   public static CloudPackets.Data method1805(FriendlyByteBuf var0) {
-      return new CloudPackets.Data(var0.readUnsignedByte(), var0.readUtf(256));
+   public static CloudPackets.Data method1805(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data(friendlyByteBuf.readUnsignedByte(), friendlyByteBuf.readUtf(256));
    }
 
-   public static CloudPackets.Data8 method1806(FriendlyByteBuf var0) {
-      return new CloudPackets.Data8(var0.readVarLong(), var0.readUtf(32), var0.readUtf(16));
+   public static CloudPackets.Data8 method1806(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data8(friendlyByteBuf.readVarLong(), friendlyByteBuf.readUtf(32), friendlyByteBuf.readUtf(16));
    }
 
-   public static long method1807(FriendlyByteBuf var0) {
-      return var0.readVarLong();
+   public static long method1807(FriendlyByteBuf friendlyByteBuf) {
+      return friendlyByteBuf.readVarLong();
    }
 
-   public static List<CloudPackets.Data14> method1808(FriendlyByteBuf var0) {
-      int var1 = var0.readVarInt();
-      if (var1 == 0) {
+   public static List<CloudPackets.Data14> method1808(FriendlyByteBuf friendlyByteBuf) {
+      int varInt = friendlyByteBuf.readVarInt();
+      if (varInt == 0) {
          return List.of();
-      } else if (var1 >= 0 && var1 <= 200) {
-         List<Data14> var2 = new ArrayList<>(var1);
+      } else if (varInt >= 0 && varInt <= 200) {
+         List<Data14> data14s = new ArrayList<>(varInt);
 
-         for (int var3 = 0; var3 < var1; var3++) {
-            var2.add(new CloudPackets.Data14(var0.readUtf(32), var0.readUnsignedByte() == 1));
+         for (int i = 0; i < varInt; i++) {
+            data14s.add(new CloudPackets.Data14(friendlyByteBuf.readUtf(32), friendlyByteBuf.readUnsignedByte() == 1));
          }
 
-         return var2;
+         return data14s;
       } else {
          return null;
       }
    }
 
-   public static CloudPackets.Data17 method1809(FriendlyByteBuf var0) {
-      return new CloudPackets.Data17(var0.readUtf(32), var0.readUnsignedByte());
+   public static CloudPackets.Data17 method1809(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data17(friendlyByteBuf.readUtf(32), friendlyByteBuf.readUnsignedByte());
    }
 
-   public static CloudPackets.Data5 method1810(FriendlyByteBuf var0) {
-      return new CloudPackets.Data5(var0.readVarLong(), var0.readUtf(64), var0.readUtf(64));
+   public static CloudPackets.Data5 method1810(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data5(friendlyByteBuf.readVarLong(), friendlyByteBuf.readUtf(64), friendlyByteBuf.readUtf(64));
    }
 
-   public static CloudPackets.Data2 method1811(FriendlyByteBuf var0) {
-      return new CloudPackets.Data2(var0.readVarLong(), var0.readDouble(), var0.readDouble(), var0.readDouble(), var0.readFloat(), var0.readFloat());
+   public static CloudPackets.Data2 method1811(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data2(friendlyByteBuf.readVarLong(), friendlyByteBuf.readDouble(), friendlyByteBuf.readDouble(), friendlyByteBuf.readDouble(), friendlyByteBuf.readFloat(), friendlyByteBuf.readFloat());
    }
 
-   public static CloudPackets.Data3 method1812(FriendlyByteBuf var0) {
-      return new CloudPackets.Data3(var0.readVarLong(), var0.readFloat(), var0.readFloat(), var0.readFloat(), var0.readUnsignedByte());
+   public static CloudPackets.Data3 method1812(FriendlyByteBuf friendlyByteBuf) {
+      return new CloudPackets.Data3(friendlyByteBuf.readVarLong(), friendlyByteBuf.readFloat(), friendlyByteBuf.readFloat(), friendlyByteBuf.readFloat(), friendlyByteBuf.readUnsignedByte());
    }
 
-   public static CloudPackets.Data11 method1813(FriendlyByteBuf var0) {
-      long var1 = var0.readVarLong();
-      int var3 = var0.readVarInt();
-      if (var3 >= 0 && var3 <= 48) {
-         CloudPackets.Data7[] var4 = new CloudPackets.Data7[var3];
+   public static CloudPackets.Data11 method1813(FriendlyByteBuf friendlyByteBuf) {
+      long varLong = friendlyByteBuf.readVarLong();
+      int varInt = friendlyByteBuf.readVarInt();
+      if (varInt >= 0 && varInt <= 48) {
+         CloudPackets.Data7[] data7s = new CloudPackets.Data7[varInt];
 
-         for (int var5 = 0; var5 < var3; var5++) {
-            String var6 = var0.readUtf(96);
-            short var7 = var0.readUnsignedByte();
-            int var8 = var0.readVarInt();
-            var4[var5] = var6.isEmpty() ? CloudPackets.Data7.INSTANCE : new CloudPackets.Data7(var6, var7, var8);
+         for (int i = 0; i < varInt; i++) {
+            String utf = friendlyByteBuf.readUtf(96);
+            short unsignedByte = friendlyByteBuf.readUnsignedByte();
+            int n = friendlyByteBuf.readVarInt();
+            data7s[i] = utf.isEmpty() ? CloudPackets.Data7.INSTANCE : new CloudPackets.Data7(utf, unsignedByte, n);
          }
 
-         return new CloudPackets.Data11(var1, var4);
+         return new CloudPackets.Data11(varLong, data7s);
       } else {
-         throw new IllegalStateException("инвентарь: " + var3 + " слотов");
+         throw new IllegalStateException("инвентарь: " + varInt + " слотов");
       }
    }
 
-   public static CloudPackets.Data15 method1814(FriendlyByteBuf var0) {
-      long var1 = var0.readVarLong();
-      String var3 = var0.readUtf(16);
-      int var4 = var0.readVarInt();
-      if (var4 >= 0 && var4 <= 12) {
-         CloudPackets.Data9[] var5 = new CloudPackets.Data9[var4];
+   public static CloudPackets.Data15 method1814(FriendlyByteBuf friendlyByteBuf) {
+      long varLong = friendlyByteBuf.readVarLong();
+      String utf = friendlyByteBuf.readUtf(16);
+      int varInt = friendlyByteBuf.readVarInt();
+      if (varInt >= 0 && varInt <= 12) {
+         CloudPackets.Data9[] elements = new CloudPackets.Data9[varInt];
 
-         for (int var6 = 0; var6 < var4; var6++) {
-            var5[var6] = new CloudPackets.Data9(var0.readUtf(40), var0.readVarInt(), var0.readInt());
+         for (int i = 0; i < varInt; i++) {
+            elements[i] = new CloudPackets.Data9(friendlyByteBuf.readUtf(40), friendlyByteBuf.readVarInt(), friendlyByteBuf.readInt());
          }
 
-         return new CloudPackets.Data15(var1, var3, List.of(var5));
+         return new CloudPackets.Data15(varLong, utf, List.of(elements));
       } else {
-         throw new IllegalStateException("косметика: " + var4 + " слотов");
+         throw new IllegalStateException("косметика: " + varInt + " слотов");
       }
    }
 
-   public static CloudPackets.Data13 method1815(FriendlyByteBuf var0) {
-      long var1 = var0.readVarLong();
-      String var3 = var0.readUtf(32);
-      short var4 = var0.readUnsignedByte();
-      long var5 = var0.readLong();
-      String var7 = var0.readUtf(256);
-      long var8 = var0.isReadable() ? var0.readVarLong() : 0L;
-      return new CloudPackets.Data13(var1, var3, var4, var5, var7, var8);
+   public static CloudPackets.Data13 method1815(FriendlyByteBuf friendlyByteBuf) {
+      long varLong = friendlyByteBuf.readVarLong();
+      String utf = friendlyByteBuf.readUtf(32);
+      short unsignedByte = friendlyByteBuf.readUnsignedByte();
+      long time = friendlyByteBuf.readLong();
+      String str = friendlyByteBuf.readUtf(256);
+      long l = friendlyByteBuf.isReadable() ? friendlyByteBuf.readVarLong() : 0L;
+      return new CloudPackets.Data13(varLong, utf, unsignedByte, time, str, l);
    }
 
-   public static long method1816(FriendlyByteBuf var0) {
-      return var0.readVarLong();
+   public static long method1816(FriendlyByteBuf friendlyByteBuf) {
+      return friendlyByteBuf.readVarLong();
    }
 
-   public static CloudPackets.Data10 method1817(FriendlyByteBuf var0) {
+   public static CloudPackets.Data10 method1817(FriendlyByteBuf friendlyByteBuf) {
       return new CloudPackets.Data10(
-         var0.readVarLong(),
-         var0.readUtf(32),
-         var0.readUtf(64),
-         var0.readUtf(64),
-         var0.readDouble(),
-         var0.readDouble(),
-         var0.readDouble(),
-         var0.readUtf(32),
-         var0.readInt(),
-         var0.readUtf(36)
+         friendlyByteBuf.readVarLong(),
+         friendlyByteBuf.readUtf(32),
+         friendlyByteBuf.readUtf(64),
+         friendlyByteBuf.readUtf(64),
+         friendlyByteBuf.readDouble(),
+         friendlyByteBuf.readDouble(),
+         friendlyByteBuf.readDouble(),
+         friendlyByteBuf.readUtf(32),
+         friendlyByteBuf.readInt(),
+         friendlyByteBuf.readUtf(36)
       );
    }
 
-   public static FriendlyByteBuf method1818(ByteBuffer var0) {
-      return new FriendlyByteBuf(Unpooled.wrappedBuffer(var0));
+   public static FriendlyByteBuf method1818(ByteBuffer buffer) {
+      return new FriendlyByteBuf(Unpooled.wrappedBuffer(buffer));
    }
 
-   private static String method1819(String var0, int var1) {
-      if (var0 == null) {
+   private static String method1819(String text, int endIndex) {
+      if (text == null) {
          return "";
       } else {
-         return var0.length() > var1 ? var0.substring(0, var1) : var0;
+         return text.length() > endIndex ? text.substring(0, endIndex) : text;
       }
    }
 
-   private static FriendlyByteBuf method1820(int var0, int var1) {
-      FriendlyByteBuf var2 = new FriendlyByteBuf(Unpooled.buffer(var1));
-      var2.writeByte(var0);
-      return var2;
+   private static FriendlyByteBuf method1820(int n, int initialCapacity) {
+      FriendlyByteBuf friendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer(initialCapacity));
+      friendlyByteBuf.writeByte(n);
+      return friendlyByteBuf;
    }
 
-   private static ByteBuffer method1821(FriendlyByteBuf var0) {
-      return var0.nioBuffer();
+   private static ByteBuffer method1821(FriendlyByteBuf friendlyByteBuf) {
+      return friendlyByteBuf.nioBuffer();
    }
 
    public static final class Data {
@@ -492,9 +492,9 @@ public final class CloudPackets {
          return "Data[" + "intValue=" + this.intValue + ", " + "text=" + this.text + "]";
       }
 
-      public Data(int var1, String var2) {
-         this.intValue = var1;
-         this.text = var2;
+      public Data(int intValue, String text) {
+         this.intValue = intValue;
+         this.text = text;
       }
 
       public int getIntValue() {
@@ -575,17 +575,17 @@ public final class CloudPackets {
          return "Data10[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + ", " + "text3=" + this.text3 + ", " + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "text4=" + this.text4 + ", " + "intValue=" + this.intValue + ", " + "text5=" + this.text5 + "]";
       }
 
-      public Data10(long var1, String var3, String var4, String var5, double var6, double var8, double var10, String var12, int var13, String var14) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
-         this.text3 = var5;
-         this.doubleValue = var6;
-         this.doubleValue2 = var8;
-         this.doubleValue3 = var10;
-         this.text4 = var12;
-         this.intValue = var13;
-         this.text5 = var14;
+      public Data10(long longValue, String text, String utf, String str, double doubleValue, double d, double d2, String utf2, int intValue, String utf3) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = utf;
+         this.text3 = str;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.text4 = utf2;
+         this.intValue = intValue;
+         this.text5 = utf3;
       }
 
       public long uid() {
@@ -658,9 +658,9 @@ public final class CloudPackets {
          return "Data11[" + "longValue=" + this.longValue + ", " + "data7s=" + this.data7s + "]";
       }
 
-      public Data11(long var1, CloudPackets.Data7[] var3) {
-         this.longValue = var1;
-         this.data7s = var3;
+      public Data11(long longValue, CloudPackets.Data7[] data7s) {
+         this.longValue = longValue;
+         this.data7s = data7s;
       }
 
       public long uid() {
@@ -716,12 +716,12 @@ public final class CloudPackets {
          return "Data12[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "longValue2=" + this.longValue2 + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data12(long var1, String var3, long var4, int var6, int var7) {
-         this.longValue = var1;
-         this.text = var3;
-         this.longValue2 = var4;
-         this.intValue = var6;
-         this.intValue2 = var7;
+      public Data12(long longValue, String text, long l, int intValue, int n) {
+         this.longValue = longValue;
+         this.text = text;
+         this.longValue2 = l;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
 
       public long uid() {
@@ -790,13 +790,13 @@ public final class CloudPackets {
          return "Data13[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "intValue=" + this.intValue + ", " + "longValue2=" + this.longValue2 + ", " + "text2=" + this.text2 + ", " + "longValue3=" + this.longValue3 + "]";
       }
 
-      public Data13(long var1, String var3, int var4, long var5, String var7, long var8) {
-         this.longValue = var1;
-         this.text = var3;
-         this.intValue = var4;
-         this.longValue2 = var5;
-         this.text2 = var7;
-         this.longValue3 = var8;
+      public Data13(long longValue, String text, int intValue, long time, String str, long l) {
+         this.longValue = longValue;
+         this.text = text;
+         this.intValue = intValue;
+         this.longValue2 = time;
+         this.text2 = str;
+         this.longValue3 = l;
       }
 
       public long uid() {
@@ -853,9 +853,9 @@ public final class CloudPackets {
          return "Data14[" + "text=" + this.text + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data14(String var1, boolean var2) {
-         this.text = var1;
-         this.flag = var2;
+      public Data14(String text, boolean flag) {
+         this.text = text;
+         this.flag = flag;
       }
 
       public String username() {
@@ -901,10 +901,10 @@ public final class CloudPackets {
          return "Data15[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "items=" + this.items + "]";
       }
 
-      public Data15(long var1, String var3, List<CloudPackets.Data9> var4) {
-         this.longValue = var1;
-         this.text = var3;
-         this.items = var4;
+      public Data15(long longValue, String text, List<CloudPackets.Data9> items) {
+         this.longValue = longValue;
+         this.text = text;
+         this.items = items;
       }
 
       public long uid() {
@@ -964,12 +964,12 @@ public final class CloudPackets {
          return "Data16[" + "longValue=" + this.longValue + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + ", " + "intValue3=" + this.intValue3 + ", " + "byteValues=" + this.byteValues + "]";
       }
 
-      public Data16(long var1, int var3, int var4, int var5, byte[] var6) {
-         this.longValue = var1;
-         this.intValue = var3;
-         this.intValue2 = var4;
-         this.intValue3 = var5;
-         this.byteValues = var6;
+      public Data16(long longValue, int intValue, int n, int unsignedShort, byte[] byteValues) {
+         this.longValue = longValue;
+         this.intValue = intValue;
+         this.intValue2 = n;
+         this.intValue3 = unsignedShort;
+         this.byteValues = byteValues;
       }
 
       public boolean method1823() {
@@ -1030,9 +1030,9 @@ public final class CloudPackets {
          return "Data17[" + "text=" + this.text + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data17(String var1, int var2) {
-         this.text = var1;
-         this.intValue = var2;
+      public Data17(String text, int intValue) {
+         this.text = text;
+         this.intValue = intValue;
       }
 
       public String getText() {
@@ -1083,11 +1083,11 @@ public final class CloudPackets {
          return "Data18[" + "intValue=" + this.intValue + ", " + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "jsonObject=" + this.jsonObject + "]";
       }
 
-      public Data18(int var1, long var2, String var4, JsonObject var5) {
-         this.intValue = var1;
-         this.longValue = var2;
-         this.text = var4;
-         this.jsonObject = var5;
+      public Data18(int intValue, long longValue, String text, JsonObject jsonObject) {
+         this.intValue = intValue;
+         this.longValue = longValue;
+         this.text = text;
+         this.jsonObject = jsonObject;
       }
 
       public int kind() {
@@ -1156,13 +1156,13 @@ public final class CloudPackets {
          return "Data2[" + "longValue=" + this.longValue + ", " + "doubleValue=" + this.doubleValue + ", " + "doubleValue2=" + this.doubleValue2 + ", " + "doubleValue3=" + this.doubleValue3 + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + "]";
       }
 
-      public Data2(long var1, double var3, double var5, double var7, float var9, float var10) {
-         this.longValue = var1;
-         this.doubleValue = var3;
-         this.doubleValue2 = var5;
-         this.doubleValue3 = var7;
-         this.floatValue = var9;
-         this.floatValue2 = var10;
+      public Data2(long longValue, double doubleValue, double d, double d2, float floatValue, float f) {
+         this.longValue = longValue;
+         this.doubleValue = doubleValue;
+         this.doubleValue2 = d;
+         this.doubleValue3 = d2;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
       }
 
       public long uid() {
@@ -1234,12 +1234,12 @@ public final class CloudPackets {
          return "Data3[" + "longValue=" + this.longValue + ", " + "floatValue=" + this.floatValue + ", " + "floatValue2=" + this.floatValue2 + ", " + "floatValue3=" + this.floatValue3 + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data3(long var1, float var3, float var4, float var5, int var6) {
-         this.longValue = var1;
-         this.floatValue = var3;
-         this.floatValue2 = var4;
-         this.floatValue3 = var5;
-         this.intValue = var6;
+      public Data3(long longValue, float floatValue, float f, float f2, int intValue) {
+         this.longValue = longValue;
+         this.floatValue = floatValue;
+         this.floatValue2 = f;
+         this.floatValue3 = f2;
+         this.intValue = intValue;
       }
 
       public long uid() {
@@ -1297,10 +1297,10 @@ public final class CloudPackets {
          return "Data4[" + "intValue=" + this.intValue + ", " + "text=" + this.text + ", " + "flag=" + this.flag + "]";
       }
 
-      public Data4(int var1, String var2, boolean var3) {
-         this.intValue = var1;
-         this.text = var2;
-         this.flag = var3;
+      public Data4(int intValue, String text, boolean flag) {
+         this.intValue = intValue;
+         this.text = text;
+         this.flag = flag;
       }
 
       public int protocol() {
@@ -1350,10 +1350,10 @@ public final class CloudPackets {
          return "Data5[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + "]";
       }
 
-      public Data5(long var1, String var3, String var4) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
+      public Data5(long longValue, String text, String utf) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = utf;
       }
 
       public long uid() {
@@ -1398,9 +1398,9 @@ public final class CloudPackets {
          return "Data6[" + "longValue=" + this.longValue + ", " + "intValue=" + this.intValue + "]";
       }
 
-      public Data6(long var1, int var3) {
-         this.longValue = var1;
-         this.intValue = var3;
+      public Data6(long longValue, int intValue) {
+         this.longValue = longValue;
+         this.intValue = intValue;
       }
 
       public long uid() {
@@ -1447,10 +1447,10 @@ public final class CloudPackets {
       }
       public static final CloudPackets.Data7 INSTANCE = new CloudPackets.Data7("", 0, 0);
 
-      public Data7(String var1, int var2, int var3) {
-         this.text = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
+      public Data7(String text, int intValue, int n) {
+         this.text = text;
+         this.intValue = intValue;
+         this.intValue2 = n;
       }
 
       public boolean isEmpty() {
@@ -1504,10 +1504,10 @@ public final class CloudPackets {
          return "Data8[" + "longValue=" + this.longValue + ", " + "text=" + this.text + ", " + "text2=" + this.text2 + "]";
       }
 
-      public Data8(long var1, String var3, String var4) {
-         this.longValue = var1;
-         this.text = var3;
-         this.text2 = var4;
+      public Data8(long longValue, String text, String utf) {
+         this.longValue = longValue;
+         this.text = text;
+         this.text2 = utf;
       }
 
       public long uid() {
@@ -1557,15 +1557,15 @@ public final class CloudPackets {
          return "Data9[" + "text=" + this.text + ", " + "intValue=" + this.intValue + ", " + "intValue2=" + this.intValue2 + "]";
       }
 
-      public Data9(String var1, int var2, int var3) {
-         this.text = var1;
-         this.intValue = var2;
-         this.intValue2 = var3;
+      public Data9(String text, int intValue, int floatToIntBits) {
+         this.text = text;
+         this.intValue = intValue;
+         this.intValue2 = floatToIntBits;
       }
 
       public CosmeticType method1822() {
-         CosmeticType[] var1 = CosmeticType.values();
-         return this.intValue >= 0 && this.intValue < var1.length ? var1[this.intValue] : CosmeticType.UNKNOWN;
+         CosmeticType[] values = CosmeticType.values();
+         return this.intValue >= 0 && this.intValue < values.length ? values[this.intValue] : CosmeticType.UNKNOWN;
       }
 
       public String getText() {

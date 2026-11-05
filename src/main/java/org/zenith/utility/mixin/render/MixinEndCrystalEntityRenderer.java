@@ -23,18 +23,18 @@ public class MixinEndCrystalEntityRenderer {
       )}
    )
    private void zenith$crystalSkin(
-      SubmitNodeCollector var1,
-      Model<?> var2,
-      Object var3,
-      PoseStack var4,
-      net.minecraft.resources.Identifier var5,
-      int var6,
-      int var7,
-      int var8,
-      Operation<Void> var10
+      SubmitNodeCollector orderedRenderCommandQueue,
+      Model<?> model,
+      Object obj,
+      PoseStack poseStack,
+      net.minecraft.resources.Identifier id,
+      int n,
+      int n2,
+      int n3,
+      Operation<Void> operation
    ) {
-      if (!(var3 instanceof EndCrystalRenderState var11 && CrystalAnimation.method4463(var11, var4, var1))) {
-         var10.call(new Object[]{var1, var2, var3, var4, var5, var6, var7, var8});
+      if (!(obj instanceof EndCrystalRenderState endCrystalRenderState && CrystalAnimation.method4463(endCrystalRenderState, poseStack, orderedRenderCommandQueue))) {
+         operation.call(new Object[]{orderedRenderCommandQueue, model, obj, poseStack, id, n, n2, n3});
       }
    }
 }

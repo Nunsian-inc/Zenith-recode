@@ -7,13 +7,13 @@ import org.zenith.utility.render.display.base.BoundsData;
 import org.zenith.utility.render.display.base.MenuDrawContext;
 
 public abstract class ElementPanel extends Panel {
-   public abstract void renderHeader(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7);
+   public abstract void renderHeader(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float floatValue, float animationPosY, float f2);
 
    public abstract void close();
 
    public abstract List<? extends Element> getElements();
 
-   public void renderPriority(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6) {
+   public void renderPriority(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float floatValue, float f2) {
    }
 
    public float getButtonWidth() {
@@ -36,21 +36,21 @@ public abstract class ElementPanel extends Panel {
       return false;
    }
 
-   public void renderLeftColumn(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
+   public void renderLeftColumn(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float f2, float y, float leftWidthPanel, float heightPanel) {
    }
 
    public boolean isHeaderSearchOnly() {
       return false;
    }
 
-   public void renderHeaderButtons(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7, float var8) {
+   public void renderHeaderButtons(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float f2, float animationPosY, float buttonWidth, float alpha1) {
    }
 
-   public boolean onHeaderButtonsClicked(double var1, double var3, Enum3 var5) {
+   public boolean onHeaderButtonsClicked(double x, double y, Enum3 enum2) {
       return false;
    }
 
-   public boolean onMouseDragged(double var1, double var3, int var5, double var6, double var8) {
+   public boolean onMouseDragged(double doubleValue, double mouseY, int mouseToGlfw, double offsetX, double offsetY) {
       return false;
    }
 
@@ -68,14 +68,14 @@ public abstract class ElementPanel extends Panel {
    public void tick() {
    }
 
-   public void renderRightPanel(MenuDrawContext var1, int var2, int var3, float var4, float var5, float var6, float var7) {
+   public void renderRightPanel(MenuDrawContext customDrawContext, int mouseX, int mouseY, float f, float f2, float y, float alpha1) {
    }
 
-   public BoundsData getRightPanelBlurBounds(float var1, float var2, float var3, float var4) {
+   public BoundsData getRightPanelBlurBounds(float f, float y, float f2, float alpha1) {
       return null;
    }
 
-   public float getRightPanelBlurProgress(float var1, float var2) {
-      return var1 * var2;
+   public float getRightPanelBlurProgress(float f, float f2) {
+      return f * f2;
    }
 }

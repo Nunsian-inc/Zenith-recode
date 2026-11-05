@@ -73,10 +73,10 @@ public final class BoatFlyModule extends Module {
    }
 
    @EventTarget
-   public void onUpdate(UpdateEvent var1) {
+   public void onUpdate(UpdateEvent event) {
       if (mc.player != null && mc.level != null) {
-         if (mc.player.getVehicle() instanceof AbstractBoat var2 && var2.getControllingPassenger() == mc.player) {
-            this.abstractBoatEntity = var2;
+         if (mc.player.getVehicle() instanceof AbstractBoat abstractBoatEntity && abstractBoatEntity.getControllingPassenger() == mc.player) {
+            this.abstractBoatEntity = abstractBoatEntity;
             this.intValue = 0;
          } else {
             this.flag = false;
@@ -96,9 +96,9 @@ public final class BoatFlyModule extends Module {
 
          if (this.debug.isEnabled() && ++this.intValue3 >= 20) {
             this.intValue3 = 0;
-            int var4;
-            if ((var4 = this.atomicInteger.getAndSet(0)) > 0) {
-               ChatLogger.method2019("BoatFly: проигнорировано откатов за секунду: " + var4);
+            int andSet;
+            if ((andSet = this.atomicInteger.getAndSet(0)) > 0) {
+               ChatLogger.method2019("BoatFly: проигнорировано откатов за секунду: " + andSet);
             }
          }
       } else {
@@ -131,53 +131,53 @@ public final class BoatFlyModule extends Module {
    }
 
    @EventTarget
-   public void onPacket(PacketEvent var1) {
-      if (var1.method7100() && this.flag && this.mode.isSelected(0) && var1.getPacket3() instanceof ClientboundMoveVehiclePacket) {
-         var1.cancel();
+   public void onPacket(PacketEvent event) {
+      if (event.method7100() && this.flag && this.mode.isSelected(0) && event.getPacket3() instanceof ClientboundMoveVehiclePacket) {
+         event.cancel();
          this.atomicInteger.incrementAndGet();
       }
    }
 
-   public Vec3 method1932(AbstractBoat var1, Vec3 var2) {
-      if (this.isEnabled() && mc.player != null && var1.getControllingPassenger() == mc.player) {
+   public Vec3 method1932(AbstractBoat abstractBoat, Vec3 vec) {
+      if (this.isEnabled() && mc.player != null && abstractBoat.getControllingPassenger() == mc.player) {
          this.flag = true;
-         float var3 = mc.player.getYRot();
-         var1.setYRot(var3);
-         Input var4 = mc.player.input.keyPresses;
-         double var5 = (var4.forward() ? 1.0 : 0.0) - (var4.backward() ? 1.0 : 0.0);
-         double var7 = (var4.left() ? 1.0 : 0.0) - (var4.right() ? 1.0 : 0.0);
-         double var9 = 0.0;
-         double var11 = 0.0;
-         double var13;
-         if ((var13 = Math.sqrt(var5 * var5 + var7 * var7)) > 0.0) {
-            double var15 = this.speed.getValue3() / 20.0 / var13;
-            double var17;
-            double var19 = Math.sin(var17 = Math.toRadians(var3));
-            double var21 = Math.cos(var17);
-            var9 = (var7 * var21 - var5 * var19) * var15;
-            var11 = (var5 * var21 + var7 * var19) * var15;
+         float yRot = mc.player.getYRot();
+         abstractBoat.setYRot(yRot);
+         Input keyPresses = mc.player.input.keyPresses;
+         double d = (keyPresses.forward() ? 1.0 : 0.0) - (keyPresses.backward() ? 1.0 : 0.0);
+         double d2 = (keyPresses.left() ? 1.0 : 0.0) - (keyPresses.right() ? 1.0 : 0.0);
+         double x = 0.0;
+         double z = 0.0;
+         double d3;
+         if ((d3 = Math.sqrt(d * d + d2 * d2)) > 0.0) {
+            double d4 = this.speed.getValue3() / 20.0 / d3;
+            double d5;
+            double d6 = Math.sin(d5 = Math.toRadians(yRot));
+            double d7 = Math.cos(d5);
+            x = (d2 * d7 - d * d6) * d4;
+            z = (d * d7 + d2 * d6) * d4;
          }
 
-         double var23 = 0.0;
+         double y = 0.0;
          if (this.vertical.isEnabled()) {
-            var23 = ((var4.jump() ? 1.0 : 0.0) - (var4.sprint() ? 1.0 : 0.0)) * this.verticalSpeed.getValue3() / 20.0;
+            y = ((keyPresses.jump() ? 1.0 : 0.0) - (keyPresses.sprint() ? 1.0 : 0.0)) * this.verticalSpeed.getValue3() / 20.0;
          }
 
          this.intValue2++;
          if (this.flag2) {
-            var23 += 0.04;
+            y += 0.04;
             this.flag2 = false;
-         } else if (this.antiKick.isEnabled() && var23 >= 0.0 && this.intValue2 % 40 == 0 && !var1.onGround()) {
-            var23 -= 0.04;
+         } else if (this.antiKick.isEnabled() && y >= 0.0 && this.intValue2 % 40 == 0 && !abstractBoat.onGround()) {
+            y -= 0.04;
             this.flag2 = true;
          }
 
-         Vec3 var24 = new Vec3(var9, var23, var11);
-         var1.setDeltaMovement(var24);
-         var1.fallDistance = 0.0;
-         return var24;
+         Vec3 deltaMovement = new Vec3(x, y, z);
+         abstractBoat.setDeltaMovement(deltaMovement);
+         abstractBoat.fallDistance = 0.0;
+         return deltaMovement;
       } else {
-         return var2;
+         return vec;
       }
    }
 }

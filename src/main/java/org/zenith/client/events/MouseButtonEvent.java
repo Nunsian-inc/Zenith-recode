@@ -18,8 +18,8 @@ public class MouseButtonEvent extends EventCancellable {
    }
 
    @Generated
-   public MouseButtonEvent(int var1, int var2) {
-      this.intValue = var1;
-      this.intValue2 = var2;
+   public MouseButtonEvent(int intValue, int n) {
+      this.intValue = intValue;
+      this.intValue2 = n;
    }
 }
